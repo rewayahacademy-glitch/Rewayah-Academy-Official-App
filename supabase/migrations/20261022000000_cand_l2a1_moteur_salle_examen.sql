@@ -110,9 +110,10 @@
 -- * C6 questionnaire (spec 2.1, CAND-01) : les reponses sont des CODES ;
 --   aucune saisie libre ; une valeur hors liste est refusee
 --   (reponses_invalides, champ nomme). Les listes que la spec ne fixe pas
---   (niveau de lecture et de tajwid, riwayat, publics, ijaza et experience,
---   forme des creneaux) sont des propositions a soumettre au directeur (spec
---   0.2 bis), comme les libelles : le serveur rend des codes, l'ecran les
+--   (niveau de lecture et de tajwid, riwayat, experience ;
+--   les langues, la memorisation, l'ijaza, les publics et les classes
+--   souhaitees sont decides le 22/10, C17) sont des propositions a soumettre
+--   au directeur (spec 0.2 bis), comme les libelles : le serveur rend des codes, l'ecran les
 --   affiche par cles i18n fr et ar (jamais un code brut) ;
 -- * C7 brouillon (au serveur, CAND-F15 : choix a soumettre au directeur,
 --   spec 0.2 bis) : un document de source candidat marque brouillon, a la
@@ -236,7 +237,129 @@
 --   changement est refuse (22023) ; ceux qui s'appliquent sont recopies,
 --   avant et apres, dans l'evenement (details.changements). Un responsable
 --   pose est un membre actif de la direction du meme cote que la candidature
---   (4.2, ligne 28), sinon 42501.
+--   (4.2, ligne 28), sinon 42501 ;
+-- * C17 questionnaire selon les reponses du directeur du 22/10/2026
+--   (docs/current/DECISION-CANDIDATURES-2026-10-21.md, section 1 ter ;
+--   audit CANDIDATURES/AUDIT_QUESTIONNAIRE_SALLE_EXAMEN_2026-10-22.md). La
+--   version salle-examen-1 n'est appliquee nulle part : elle se corrige ici,
+--   sur place, sans version suivante.
+--   - languesExplication : aucun plafond (pas de max : le plafond est le
+--     nombre d'options, sans doublon) ; l'arabe (ar) n'est pas une langue de
+--     cours (cle "exclure" du champ) mais reste un choix de langueMaternelle,
+--     qui devient facultative ; poular, peul et fulfulde sont une seule
+--     entree, le code poular du referentiel langues_cours (plus de ff) ; les
+--     langues du public vise y sont : poular, francais et english du
+--     referentiel, puis hors referentiel man (malinke, maninka), sus
+--     (soussou), sw (swahili), ha (haoussa), wo, bm (bambara), snk (soninke)
+--     et mnk (mandinka), codes ISO 639 de la convention de MAPPAGE 3.2 (une
+--     langue ouverte plus tard dans langues_cours prend ce code) ; "autre"
+--     est la sortie "autre langue" : un code, jamais un texte libre, que la
+--     copie en salle 3 (L2B) ne recopie pas dans teacher_profiles.languages ;
+--   - memorisation et ijaza sont deux questions : niveauMemorisationDeclare
+--     (la quantite : aucune, moins_10_juz, de_10_a_29_juz, coran_entier) et
+--     ijazaPresentable (oui, pret_test, non) ;
+--   - publics : les tranches d'age au choix, au moins une (6_9, 10_13,
+--     14_17, adultes) ;
+--   - classesSouhaitees (1, 2 ou 3 dans la definition) remplace
+--     heuresParSemaine. Le plafond de trois Classes par enseignant est celui
+--     de la decision du 22/10, reglable par la direction (reglage
+--     enseignant.classes_max) : les migrations 20261022000200 et
+--     20261022000300 font proposer de 1 a ce maximum et accepter de 1 a 80,
+--     sans nouvelle version du questionnaire ;
+--   - moyensAccessibles : champ FACULTATIF et purement informatif, la liste
+--     de tous les moyens connus du referentiel de paiement de L6 (les
+--     operateurs actifs du catalogue, meme ceux qu'aucun pays ne confirme).
+--     Il deroge a "les candidats ne voient que les options confirmees"
+--     (options_paiement_confirmees, L6) sans rien dire de ce qui est
+--     confirme. Il n'est JAMAIS lu par le calcul du paiement
+--     (private.paiement_declaration ne lit que paysVersement, compteBancaire
+--     et operateurs) ni par un controle (le controle questionnaire_complet de
+--     L2A2 l'ecarte comme operateurs) : la condition d'entree en salle 2
+--     reste paiement_compatible ;
+--   - la continuite (tenir sa Classe aux memes jours et heures) est une
+--     clause du texte des conditions acceptees : rien dans ce questionnaire ;
+--   - les codes d'une liste de valeurs peuvent commencer par un chiffre.
+-- * C18 disponibilites declarees, au format que lit l'affectation (directeur,
+--   22/10/2026 : « les formulaires de base ne sont pas des references [...] la
+--   grille horaire [...] est-ce qu'elle peut couvrir tout ce que l'academie a
+--   besoin pour determiner reellement les creneaux de l'enseignant et les
+--   faire matcher avec ceux de l'eleve ? »). Une Classe, ce sont trois seances
+--   par semaine aux memes jours, a une heure de debut ENTIERE
+--   (offres_horaires.heure_locale, groupe_creneaux.hour_local), de 60 ou 90
+--   minutes (offres_horaires.duree_minutes) ; l'affectation lit
+--   weekly_availability (weekday ISO 1 a 7, hour_local entiere 0 a 23,
+--   timezone_iana). La premiere forme du champ (creneaux a la demi-heure, avec
+--   un second fuseau) ne pouvait y entrer qu'en devinant. Le champ est
+--   maintenant une liste de plages par jour :
+--       [{"jour": 1, "debut": "18:00", "fin": "21:00"}, ...]
+--   - jour ISO 1 (lundi) a 7 ; debut "HH:00" ; fin "HH:00" ou "24:00" ; fin
+--     apres debut, donc au moins une heure par plage ; au moins une plage
+--     (champ requis) ; au plus 168 (7 jours de 24 plages d'une heure : le plus
+--     que permette l'absence de chevauchement) ;
+--   - deux plages d'un meme jour ne se recouvrent pas. Le refus est rendu avec
+--     sa cause nommee : reponses_invalides, champs [disponibilitesDeclarees],
+--     motifs {disponibilitesDeclarees: plages_qui_se_chevauchent} (la cle
+--     motifs n'est rendue que si une cause est nommee). Une plage identique a
+--     une autre se recouvre ; deux plages qui se touchent (18 h-19 h puis
+--     19 h-21 h) ne se recouvrent pas ;
+--   - aucun fuseau dans la grille : les heures sont celles de fuseauIana, le
+--     seul fuseau du questionnaire, jamais converties (« Fuseaux IANA en
+--     stockage, UTC pour les instants »). Une plage ne passe pas minuit : de
+--     22 h a 1 h, deux plages (jour D de 22:00 a 24:00, jour D+1 de 00:00 a
+--     01:00) ;
+--   - l'ancienne forme ({fuseau, creneaux}) est invalide (version non
+--     appliquee, corrigee sur place comme le reste de C17).
+--   Comment les plages deviennent des lignes de weekly_availability a
+--   l'entree en salle 3 (L2B ; PAS ECRIT ICI : aucune fonction n'ecrit
+--   weekly_availability pour un candidat, et la spec 2.1 la demande apres
+--   l'entree) : une ligne par heure couverte, c'est-a-dire, pour chaque plage,
+--   une ligne pour chaque heure h de debut a fin - 1 :
+--   (profile_id du compte enseignant, weekday = jour, hour_local = h,
+--   timezone_iana = fuseauIana). Lundi 18:00-21:00 donne les heures 18, 19 et
+--   20 du jour 1 ; mercredi 22:00-24:00 donne 22 et 23 du jour 3 ; une plage
+--   de n heures donne n lignes. La cle unique (profile_id, weekday,
+--   hour_local) ignore le fuseau, mais fuseauIana est unique et c'est le meme
+--   que l'entree recopie dans teacher_profiles.timezone_iana (mon_fuseau()) ;
+--   l'absence de chevauchement garantit qu'aucune heure n'est produite deux
+--   fois (ON CONFLICT DO NOTHING reste la ceinture). weekly_availability n'a
+--   aucun droit de modification (une case se pose ou se retire). La regle
+--   vaut que la copie soit directe ou un brouillon confirme par l'enseignant
+--   (a trancher en L2B). Le scenario de ce lot pose cette regle
+--   d'expansion et prouve qu'une plage valide donne des lignes que la table
+--   accepte et que le predicat d'affectation lit heure par heure.
+--   Ce que l'import ne fait pas : les formulaires d'origine ne donnent aucun
+--   jour (« de 8 h a 10 h du soir », sans jour), donc rien ne pre-remplit ce
+--   champ (MAPPAGE_IMPORT_FORMULAIRES.md 3.5).
+--   Ce qui MANQUE, cote affectation et hors de ce lot (non corrige ici), pour
+--   qu'un cours adulte de 90 minutes soit compare correctement, c'est-a-dire
+--   avec DEUX heures couvertes. Constat teste localement le 22/10, sur le
+--   predicat app_private.verifier_affectation_enseignant_base (corps de
+--   20261021210200, renomme par 20261022000200) :
+--   - il lit une duree UNIQUE, le reglage session_duration_minutes (60 par
+--     defaut, 20261021210200:121), pour toutes les Classes, alors que l'offre
+--     porte sa duree (offres_horaires.duree_minutes, 60 enfant et 90 adulte,
+--     0043:326, 0043:536-537) et que groupes n'a aucune colonne de duree ;
+--   - la couverture exige qu'UNE SEULE ligne d'une heure contienne toute la
+--     seance (busy_debut <= debut et busy_debut + 1 h >= debut + duree,
+--     20261021210200:199) : deux heures declarees (18 h et 19 h) ne couvrent
+--     donc jamais une seance de 90 minutes commencant a 18 h. Teste : avec les
+--     lignes 18 et 19 du mercredi et la duree 90, « enseignant non disponible :
+--     jour 3, heure 18 » ; avec la duree 60 (defaut), une Classe adulte est
+--     acceptee sur la seule heure 18, dont elle depasse la fin de 30 minutes ;
+--   - les collisions (20261021210200:255-256) et le plafond horaire
+--     (20261021210200:167) comptent aussi la meme duree pour les deux Classes
+--     en presence, alors qu'une Classe adulte occupe 90 minutes.
+--   Pour une comparaison correcte : (1) la duree de chaque Classe lue a la
+--   Classe (colonne de duree posee a la creation depuis l'offre, ou lue par
+--   groupes.offre_id, a defaut par le public) et non au reglage global ; (2)
+--   une couverture par l'UNION des lignes consecutives : une seance de d
+--   minutes commencant a l'heure H exige les lignes H a H + ceil(d / 60) - 1
+--   (deux lignes pour 90 minutes), en passant au jour suivant apres l'heure 23
+--   (jour 7 vers jour 1) ; (3) collisions et plafond calcules avec la duree
+--   propre a chaque Classe ; (4) la meme lecture cote eleve (le motif de
+--   l'eleve est aussi heure par heure) et dans enseignants_pour_classe et
+--   enseignants_pour_public (creneaux libres : pour une Classe de 90 minutes,
+--   l'heure H n'est utilisable que si H et H + 1 sont libres).
 --
 -- Conservation (CAND-Q21, CAND-BR-14, spec 8.4) : public.candidature_gestes
 -- (en ajout seul, aucun effacement, pas meme par le proprietaire) garde le
@@ -345,8 +468,14 @@ BEGIN
                WHERE pg_catalog.jsonb_typeof(l) <> 'string') THEN
       RETURN false;
     END IF;
+    -- Un code ISO 639 (deux ou trois lettres), ou "autre" : la sortie
+    -- "autre langue" (C17), jamais un texte libre.
     IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_array_elements_text(p -> 'languesHorsReferentiel') l(code)
-               WHERE l.code !~ '^[a-z]{2,3}$') THEN
+               WHERE l.code !~ '^([a-z]{2,3}|autre)$') THEN
+      RETURN false;
+    END IF;
+    IF (SELECT pg_catalog.count(DISTINCT l) FROM pg_catalog.jsonb_array_elements(p -> 'languesHorsReferentiel') l)
+       <> pg_catalog.jsonb_array_length(p -> 'languesHorsReferentiel') THEN
       RETURN false;
     END IF;
   END IF;
@@ -367,7 +496,7 @@ BEGIN
         RETURN false;
       END IF;
       IF v_c ? 'liste' AND (pg_catalog.jsonb_typeof(v_c -> 'liste') IS DISTINCT FROM 'string'
-                            OR (v_c ->> 'liste') NOT IN ('langues', 'pays', 'fuseaux', 'operateurs_confirmes')) THEN
+                            OR (v_c ->> 'liste') NOT IN ('langues', 'pays', 'fuseaux', 'operateurs_confirmes', 'moyens_connus')) THEN
         RETURN false;
       END IF;
       IF v_c ? 'valeurs' THEN
@@ -380,7 +509,7 @@ BEGIN
           RETURN false;
         END IF;
         IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_array_elements_text(v_c -> 'valeurs') v(code)
-                   WHERE v.code !~ '^[a-z][a-z0-9_]{0,59}$')
+                   WHERE v.code !~ '^[a-z0-9][a-z0-9_]{0,59}$')
            OR (SELECT pg_catalog.count(DISTINCT v) FROM pg_catalog.jsonb_array_elements(v_c -> 'valeurs') v)
               <> pg_catalog.jsonb_array_length(v_c -> 'valeurs') THEN
           RETURN false;
@@ -388,6 +517,20 @@ BEGIN
       END IF;
     ELSIF v_c ? 'valeurs' OR v_c ? 'liste' THEN
       RETURN false;
+    END IF;
+    -- "exclure" (C17) : des codes de langue que ce champ ne propose pas bien
+    -- qu'ils soient dans la liste "langues" (l'arabe n'est pas une langue de
+    -- cours). Sans autre usage.
+    IF v_c ? 'exclure' THEN
+      IF (v_c ->> 'liste') IS DISTINCT FROM 'langues'
+         OR pg_catalog.jsonb_typeof(v_c -> 'exclure') <> 'array'
+         OR pg_catalog.jsonb_array_length(v_c -> 'exclure') = 0
+         OR EXISTS (SELECT 1 FROM pg_catalog.jsonb_array_elements(v_c -> 'exclure') e
+                    WHERE pg_catalog.jsonb_typeof(e) <> 'string' OR (e #>> '{}') !~ '^([a-z]{2,3}|autre)$')
+         OR (SELECT pg_catalog.count(DISTINCT e) FROM pg_catalog.jsonb_array_elements(v_c -> 'exclure') e)
+            <> pg_catalog.jsonb_array_length(v_c -> 'exclure') THEN
+        RETURN false;
+      END IF;
     END IF;
     IF (v_c ? 'min' AND (pg_catalog.jsonb_typeof(v_c -> 'min') <> 'number' OR (v_c ->> 'min') !~ '^[0-9]{1,3}$'))
        OR (v_c ? 'max' AND (pg_catalog.jsonb_typeof(v_c -> 'max') <> 'number' OR (v_c ->> 'max') !~ '^[0-9]{1,3}$')) THEN
@@ -446,22 +589,24 @@ CREATE TRIGGER candidature_questionnaires_immuable
 -- deja fixes ; L6 pour paysVersement, compteBancaire, operateurs). Les cles
 -- reprennent celles du mappage, pour que le pre-remplissage de L3 s'y range.
 -- Listes proposees, a soumettre au directeur (spec 0.2 bis) : riwayat (les
--- vingt riwayat des dix lectures), niveauLectureTajwid, publics (codes de
--- enseignants_pour_public : enfant, adulte), ijazaPresentable et
--- experienceDebutants (oui, non), creneaux d'une demi-heure, jour 1 = lundi
--- (ISO 8601), dans un fuseau IANA declare avec eux.
+-- vingt riwayat des dix lectures), niveauLectureTajwid, experienceDebutants
+-- (oui, non). Decidees le 22/10 (C17) : langues,
+-- memorisation, ijaza, publics, classes souhaitees ; moyensAccessibles
+-- (informatif) est nouveau. Les disponibilites (C18) sont des plages par jour
+-- ISO (1 = lundi) a bornes en heures entieres, dans le fuseau de fuseauIana. Les langues proposees : poular, francais et
+-- english (referentiel langues_cours), puis les codes de languesHorsReferentiel
+-- dans l'ordre ; "autre" ferme la liste.
 INSERT INTO public.candidature_questionnaires (version, type_code, definition, courant)
 VALUES ('salle-examen-1', 'enseignant', $definition$
 {
-  "languesHorsReferentiel": ["ar", "ff", "ha", "wo", "ps", "ur", "snk", "bm", "sw", "mnk", "om", "am",
-                             "yo", "bn", "fa", "id", "so", "hi", "uz", "tr", "de", "pt", "ru"],
+  "languesHorsReferentiel": ["man", "sus", "sw", "ha", "wo", "bm", "snk", "mnk", "ar", "ps", "ur", "om", "am",
+                             "yo", "bn", "fa", "id", "so", "hi", "uz", "tr", "de", "pt", "ru", "autre"],
   "champs": [
-    {"code": "langueMaternelle", "carte": "langues", "type": "choix", "liste": "langues", "requis": true},
+    {"code": "langueMaternelle", "carte": "langues", "type": "choix", "liste": "langues", "requis": false},
     {"code": "languesExplication", "carte": "langues", "type": "choix_multiple", "liste": "langues",
-     "requis": true, "min": 1, "max": 10},
+     "exclure": ["ar"], "requis": true, "min": 1},
     {"code": "niveauMemorisationDeclare", "carte": "recitation", "type": "choix", "requis": true,
-     "valeurs": ["coran_entier", "ijaza_lecture_enseignement", "plus_de_10_juz", "moins_de_10_juz",
-                 "bonne_lecture_sans_memorisation"]},
+     "valeurs": ["aucune", "moins_10_juz", "de_10_a_29_juz", "coran_entier"]},
     {"code": "niveauLectureTajwid", "carte": "recitation", "type": "choix", "requis": true,
      "valeurs": ["lecture_sans_regles_tajwid", "tajwid_applique", "tajwid_enseigne"]},
     {"code": "riwayat", "carte": "recitation", "type": "choix_multiple", "requis": true, "min": 1, "max": 20,
@@ -469,23 +614,25 @@ VALUES ('salle-examen-1', 'enseignant', $definition$
                  "hisham", "ibn_dhakwan", "khalaf_an_hamza", "khallad", "abu_al_harith",
                  "ad_duri_al_kisai", "ibn_wardan", "ibn_jammaz", "ruways", "rawh", "ishaq", "idris"]},
     {"code": "ijazaPresentable", "carte": "recitation", "type": "choix", "requis": true,
-     "valeurs": ["oui", "non"]},
+     "valeurs": ["oui", "pret_test", "non"]},
     {"code": "experienceDebutants", "carte": "recitation", "type": "choix", "requis": true,
      "valeurs": ["oui", "non"]},
     {"code": "disponibilitesDeclarees", "carte": "disponibilites", "type": "creneaux", "requis": true,
-     "min": 1, "max": 42},
+     "min": 1, "max": 168},
     {"code": "fuseauIana", "carte": "disponibilites", "type": "choix", "liste": "fuseaux", "requis": true},
-    {"code": "heuresParSemaine", "carte": "disponibilites", "type": "choix", "requis": true,
-     "valeurs": ["moins_de_3", "de_3_a_5", "de_6_a_10", "plus_de_10"]},
+    {"code": "classesSouhaitees", "carte": "disponibilites", "type": "choix", "requis": true,
+     "valeurs": ["1", "2", "3"]},
     {"code": "debutPossible", "carte": "disponibilites", "type": "choix", "requis": true,
      "valeurs": ["immediat", "mois_prochain", "sous_3_mois", "inconnu"]},
-    {"code": "publics", "carte": "publics", "type": "choix_multiple", "requis": true, "min": 1, "max": 2,
-     "valeurs": ["enfant", "adulte"]},
+    {"code": "publics", "carte": "publics", "type": "choix_multiple", "requis": true, "min": 1, "max": 4,
+     "valeurs": ["6_9", "10_13", "14_17", "adultes"]},
     {"code": "paysResidence", "carte": "versement", "type": "choix", "liste": "pays", "requis": true},
     {"code": "paysVersement", "carte": "versement", "type": "choix", "liste": "pays", "requis": true},
     {"code": "compteBancaire", "carte": "versement", "type": "booleen", "requis": true},
     {"code": "operateurs", "carte": "versement", "type": "choix_multiple", "liste": "operateurs_confirmes",
-     "dependDe": "paysVersement", "requis": false, "min": 0, "max": 10}
+     "dependDe": "paysVersement", "requis": false, "min": 0, "max": 10},
+    {"code": "moyensAccessibles", "carte": "versement", "type": "choix_multiple", "liste": "moyens_connus",
+     "requis": false, "min": 0}
   ]
 }
 $definition$::jsonb, true);
@@ -929,8 +1076,10 @@ BEGIN
   ELSIF p_champ ? 'valeurs' THEN
     RETURN (p_champ -> 'valeurs') ? p_valeur;
   ELSIF p_champ ->> 'liste' = 'langues' THEN
-    RETURN EXISTS (SELECT 1 FROM pg_catalog.jsonb_array_elements(private.questionnaire_langues(p_definition)) o
-                   WHERE o ->> 'code' = p_valeur);
+    -- Les codes que le champ exclut (C17) ne sont pas permis, meme saisis a la main.
+    RETURN NOT coalesce((p_champ -> 'exclure') ? p_valeur, false)
+           AND EXISTS (SELECT 1 FROM pg_catalog.jsonb_array_elements(private.questionnaire_langues(p_definition)) o
+                       WHERE o ->> 'code' = p_valeur);
   ELSIF p_champ ->> 'liste' = 'pays' THEN
     RETURN EXISTS (SELECT 1 FROM private.pays_iso_3166 x WHERE x.code = p_valeur);
   ELSIF p_champ ->> 'liste' = 'fuseaux' THEN
@@ -940,6 +1089,11 @@ BEGIN
       SELECT 1 FROM public.referentiel_paiement l
        WHERE l.pays = p_pays_versement AND l.methode = 'mobile_money' AND l.etat = 'confirme'
          AND l.operateur = p_valeur);
+  ELSIF p_champ ->> 'liste' = 'moyens_connus' THEN
+    -- Tous les moyens connus du catalogue de L6, confirmes ou non, quel que
+    -- soit le pays (C17) : un champ informatif, que rien ne lit.
+    RETURN EXISTS (SELECT 1 FROM public.referentiel_paiement_operateurs o
+                    WHERE o.code = p_valeur AND o.actif);
   END IF;
   RETURN false;
 END;
@@ -947,7 +1101,9 @@ $function$;
 
 -- Les options rendues a l'ecran pour un champ (listes fermees lues au
 -- serveur). Les operateurs dependent du pays de versement : l'ecran les lit
--- par options_paiement_confirmees (L6) ; rien ici.
+-- par options_paiement_confirmees (L6) ; rien ici. Les langues d'un champ
+-- sans les codes qu'il exclut (C17). Les moyens connus : code, methode et nom
+-- de marque de chaque operateur actif du catalogue, sans aucun pays ni etat.
 CREATE FUNCTION private.questionnaire_options(p_definition jsonb, p_champ jsonb)
 RETURNS jsonb
 LANGUAGE plpgsql
@@ -959,7 +1115,15 @@ BEGIN
   IF p_champ ? 'valeurs' THEN
     RETURN p_champ -> 'valeurs';
   ELSIF p_champ ->> 'liste' = 'langues' THEN
-    RETURN private.questionnaire_langues(p_definition);
+    RETURN (SELECT coalesce(pg_catalog.jsonb_agg(x.o ORDER BY x.rang), '[]'::jsonb)
+              FROM pg_catalog.jsonb_array_elements(private.questionnaire_langues(p_definition))
+                   WITH ORDINALITY AS x(o, rang)
+             WHERE NOT coalesce((p_champ -> 'exclure') ? (x.o ->> 'code'), false));
+  ELSIF p_champ ->> 'liste' = 'moyens_connus' THEN
+    RETURN (SELECT coalesce(pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
+                     'code', o.code, 'methode', o.methode, 'nom', o.nom) ORDER BY o.cree_le, o.code), '[]'::jsonb)
+              FROM public.referentiel_paiement_operateurs o
+             WHERE o.actif);
   ELSIF p_champ ->> 'liste' = 'pays' THEN
     RETURN (SELECT pg_catalog.jsonb_agg(x.code ORDER BY x.rang) FROM private.pays_iso_3166 x);
   ELSIF p_champ ->> 'liste' = 'fuseaux' THEN
@@ -971,9 +1135,16 @@ BEGIN
 END;
 $function$;
 
--- Des creneaux declares : {fuseau, creneaux: [{jour, debut, fin}]}, fuseau
--- propose, jour de 1 (lundi) a 7, heures a la demi-heure, fin apres debut
--- (24:00 permis), sans doublon, au plus p_max. Rend valide, vide ou invalide.
+-- Des plages de disponibilite declarees (C18) : une liste de
+-- {jour, debut, fin}, jour de 1 (lundi) a 7 (ISO 8601), debut "HH:00" et fin
+-- "HH:00" ou "24:00" (bornes en heures ENTIERES : c'est la maille de
+-- weekly_availability, que lit l'affectation), fin apres debut (donc au moins
+-- une heure par plage), au moins une plage, au plus p_max, sans que deux
+-- plages d'un meme jour se chevauchent (deux plages qui se touchent, fin d'une
+-- egale au debut de l'autre, ne se chevauchent pas). Aucun fuseau ici : c'est
+-- celui du champ fuseauIana, le seul de la grille. Rend 'valide', 'vide',
+-- 'chevauchement' (toutes les plages sont bien formees, deux se recouvrent :
+-- le refus que l'examen nomme plages_qui_se_chevauchent) ou 'invalide'.
 CREATE FUNCTION private.questionnaire_creneaux(p jsonb, p_max integer)
 RETURNS text
 LANGUAGE plpgsql
@@ -985,28 +1156,17 @@ DECLARE
   v_e jsonb;
   v_n integer;
 BEGIN
-  IF pg_catalog.jsonb_typeof(p) IS DISTINCT FROM 'object' THEN
+  IF pg_catalog.jsonb_typeof(p) IS DISTINCT FROM 'array' THEN
     RETURN 'invalide';
   END IF;
-  IF (SELECT pg_catalog.array_agg(k ORDER BY k) FROM pg_catalog.jsonb_object_keys(p) k)
-     IS DISTINCT FROM ARRAY['creneaux', 'fuseau']::text[] THEN
-    RETURN 'invalide';
-  END IF;
-  IF pg_catalog.jsonb_typeof(p -> 'fuseau') IS DISTINCT FROM 'string'
-     OR NOT private.questionnaire_fuseau_propose(p ->> 'fuseau') THEN
-    RETURN 'invalide';
-  END IF;
-  IF pg_catalog.jsonb_typeof(p -> 'creneaux') IS DISTINCT FROM 'array' THEN
-    RETURN 'invalide';
-  END IF;
-  v_n := pg_catalog.jsonb_array_length(p -> 'creneaux');
+  v_n := pg_catalog.jsonb_array_length(p);
   IF v_n = 0 THEN
     RETURN 'vide';
   END IF;
   IF v_n > p_max THEN
     RETURN 'invalide';
   END IF;
-  FOR v_e IN SELECT e FROM pg_catalog.jsonb_array_elements(p -> 'creneaux') AS e LOOP
+  FOR v_e IN SELECT e FROM pg_catalog.jsonb_array_elements(p) AS e LOOP
     IF pg_catalog.jsonb_typeof(v_e) IS DISTINCT FROM 'object' THEN
       RETURN 'invalide';
     END IF;
@@ -1020,16 +1180,26 @@ BEGIN
        OR pg_catalog.jsonb_typeof(v_e -> 'fin') IS DISTINCT FROM 'string' THEN
       RETURN 'invalide';
     END IF;
-    IF (v_e ->> 'debut') !~ '^([01][0-9]|2[0-3]):(00|30)$'
-       OR (v_e ->> 'fin') !~ '^(([01][0-9]|2[0-3]):(00|30)|24:00)$' THEN
+    IF (v_e ->> 'debut') !~ '^([01][0-9]|2[0-3]):00$'
+       OR (v_e ->> 'fin') !~ '^(([01][0-9]|2[0-3]):00|24:00)$' THEN
       RETURN 'invalide';
     END IF;
-    IF (v_e ->> 'fin')::time <= (v_e ->> 'debut')::time AND (v_e ->> 'fin') <> '24:00' THEN
+    IF pg_catalog.substr(v_e ->> 'fin', 1, 2)::integer <= pg_catalog.substr(v_e ->> 'debut', 1, 2)::integer THEN
       RETURN 'invalide';
     END IF;
   END LOOP;
-  IF (SELECT pg_catalog.count(DISTINCT e) FROM pg_catalog.jsonb_array_elements(p -> 'creneaux') e) <> v_n THEN
-    RETURN 'invalide';
+  -- Deux plages du meme jour se recouvrent quand chacune commence avant que
+  -- l'autre finisse. Une plage identique a une autre se recouvre elle-meme.
+  IF EXISTS (
+    SELECT 1
+      FROM pg_catalog.jsonb_array_elements(p) WITH ORDINALITY AS a(e, i)
+      JOIN pg_catalog.jsonb_array_elements(p) WITH ORDINALITY AS b(e, j)
+        ON a.i < b.j
+       AND a.e -> 'jour' = b.e -> 'jour'
+       AND pg_catalog.substr(a.e ->> 'debut', 1, 2)::integer < pg_catalog.substr(b.e ->> 'fin', 1, 2)::integer
+       AND pg_catalog.substr(b.e ->> 'debut', 1, 2)::integer < pg_catalog.substr(a.e ->> 'fin', 1, 2)::integer
+  ) THEN
+    RETURN 'chevauchement';
   END IF;
   RETURN 'valide';
 END;
@@ -1038,7 +1208,10 @@ $function$;
 -- Examine des reponses contre une definition : les reponses valides
 -- (gardees), les champs invalides (valeur hors liste ou mal formee), les
 -- champs requis manquants, les cles inconnues. Une valeur nulle vaut absente ;
--- une liste vide d'un champ requis aussi.
+-- une liste vide d'un champ requis aussi. Quand la cause d'un champ invalide
+-- a un nom, il est rendu sous "motifs" (champ -> cause) ; la cle n'est rendue
+-- que si elle n'est pas vide. Aujourd'hui, une seule cause nommee :
+-- plages_qui_se_chevauchent (disponibilitesDeclarees, C18).
 CREATE FUNCTION private.questionnaire_examiner(p_definition jsonb, p_reponses jsonb)
 RETURNS jsonb
 LANGUAGE plpgsql
@@ -1058,6 +1231,7 @@ DECLARE
   v_etat text;
   v_pays text;
   v_valides jsonb := '{}'::jsonb;
+  v_motifs jsonb := '{}'::jsonb;
   v_invalides text[] := ARRAY[]::text[];
   v_manquants text[] := ARRAY[]::text[];
   v_inconnus text[];
@@ -1112,6 +1286,9 @@ BEGIN
       END IF;
     ELSIF v_type = 'creneaux' THEN
       v_etat := private.questionnaire_creneaux(v_v, v_max);
+      IF v_etat = 'chevauchement' THEN
+        v_motifs := v_motifs || pg_catalog.jsonb_build_object(v_code, 'plages_qui_se_chevauchent');
+      END IF;
     END IF;
     IF v_etat = 'valide' THEN
       v_valides := v_valides || pg_catalog.jsonb_build_object(v_code, v_v);
@@ -1127,7 +1304,9 @@ BEGIN
     'reponses', v_valides,
     'invalides', pg_catalog.to_jsonb(v_invalides),
     'manquants', pg_catalog.to_jsonb(v_manquants),
-    'inconnus', pg_catalog.to_jsonb(v_inconnus));
+    'inconnus', pg_catalog.to_jsonb(v_inconnus))
+    || CASE WHEN v_motifs = '{}'::jsonb THEN '{}'::jsonb
+            ELSE pg_catalog.jsonb_build_object('motifs', v_motifs) END;
 END;
 $function$;
 
@@ -1873,7 +2052,9 @@ BEGIN
   v_ex := private.questionnaire_examiner(v_q.definition, p_reponses);
   IF pg_catalog.jsonb_array_length(v_ex -> 'invalides') > 0 OR pg_catalog.jsonb_array_length(v_ex -> 'inconnus') > 0 THEN
     RETURN pg_catalog.jsonb_build_object('erreur', 'reponses_invalides',
-                                         'champs', (v_ex -> 'invalides') || (v_ex -> 'inconnus'));
+                                         'champs', (v_ex -> 'invalides') || (v_ex -> 'inconnus'))
+           || CASE WHEN v_ex ? 'motifs' THEN pg_catalog.jsonb_build_object('motifs', v_ex -> 'motifs')
+                   ELSE '{}'::jsonb END;
   END IF;
   v_doc := private.questionnaire_ecrire(v_id, v_q.version, v_ex -> 'reponses', false);
   PERFORM private.candidature_geste_appliquer(v_id, 'enregistrer_reponses', (v_o ->> 'variante')::smallint,
@@ -1941,7 +2122,9 @@ BEGIN
   v_ex := private.questionnaire_examiner(v_q.definition, p_reponses);
   IF pg_catalog.jsonb_array_length(v_ex -> 'invalides') > 0 OR pg_catalog.jsonb_array_length(v_ex -> 'inconnus') > 0 THEN
     RETURN pg_catalog.jsonb_build_object('erreur', 'reponses_invalides',
-                                         'champs', (v_ex -> 'invalides') || (v_ex -> 'inconnus'));
+                                         'champs', (v_ex -> 'invalides') || (v_ex -> 'inconnus'))
+           || CASE WHEN v_ex ? 'motifs' THEN pg_catalog.jsonb_build_object('motifs', v_ex -> 'motifs')
+                   ELSE '{}'::jsonb END;
   END IF;
   IF pg_catalog.jsonb_array_length(v_ex -> 'manquants') > 0 THEN
     RETURN pg_catalog.jsonb_build_object('erreur', 'reponses_incompletes', 'champs', v_ex -> 'manquants');
@@ -2788,6 +2971,28 @@ BEGIN
                                               {"code": "fuseauIana", "liste": "fuseaux"},
                                               {"code": "langueMaternelle", "liste": "langues"}]'::jsonb) THEN
     RAISE EXCEPTION 'CAND-L2A1 : questionnaire courant absent ou sans les cles de L6';
+  END IF;
+
+  -- Le questionnaire du 22/10 (C17) : langues sans plafond ni arabe de cours
+  -- ni ff, memorisation et ijaza separees, tranches d'age, classes
+  -- souhaitees a la place des heures, moyens accessibles informatifs.
+  IF NOT EXISTS (
+       SELECT 1 FROM public.candidature_questionnaires q
+        WHERE q.courant AND q.type_code = 'enseignant'
+          AND (q.definition -> 'champs') @> '[{"code": "langueMaternelle", "requis": false},
+                                              {"code": "languesExplication", "requis": true, "min": 1, "exclure": ["ar"]},
+                                              {"code": "niveauMemorisationDeclare",
+                                               "valeurs": ["aucune", "moins_10_juz", "de_10_a_29_juz", "coran_entier"]},
+                                              {"code": "ijazaPresentable", "valeurs": ["oui", "pret_test", "non"]},
+                                              {"code": "publics", "min": 1, "valeurs": ["6_9", "10_13", "14_17", "adultes"]},
+                                              {"code": "classesSouhaitees", "requis": true, "valeurs": ["1", "2", "3"]},
+                                              {"code": "moyensAccessibles", "requis": false, "liste": "moyens_connus"}]'::jsonb
+          AND NOT EXISTS (SELECT 1 FROM pg_catalog.jsonb_array_elements(q.definition -> 'champs') c
+                           WHERE c ->> 'code' IN ('heuresParSemaine')
+                              OR (c ->> 'code' = 'languesExplication' AND c ? 'max'))
+          AND NOT ((q.definition -> 'languesHorsReferentiel') ? 'ff')
+          AND (q.definition -> 'languesHorsReferentiel') @> '["man", "sus", "sw", "ha", "wo", "bm", "snk", "mnk", "ar", "autre"]'::jsonb) THEN
+    RAISE EXCEPTION 'CAND-L2A1 : le questionnaire courant differe des reponses du directeur du 22/10';
   END IF;
 
   -- Les regles : motif exige exactement ou la colonne Motif de 4.2 dit oui ;

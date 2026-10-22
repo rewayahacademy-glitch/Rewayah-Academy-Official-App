@@ -23,6 +23,11 @@
 -- L2-24 (reouverture et paiement_non_disponible, transition 9), L2-25 (fin d'un
 -- complement de salle 2), L2-26 (vocabulaire des gestes groupables,
 -- lire_candidature), plus l'entretien planifie fige pour L4.
+-- Section (p), reponses du directeur du 22/10 (questionnaire de CAND-L2A1, C17) :
+-- le controle questionnaire_complet ecarte moyensAccessibles (champ
+-- informatif) ; sans langue maternelle ni plafond de langues il reste complet ;
+-- les anciens codes (ijaza, public, heures) le rendent incomplet ; admission de
+-- bout en bout malgre un moyen accessible invalide.
 -- Chaque controle leve 'CAND-L2A2 ROUGE : ...' s'il echoue. A rejouer sur une
 -- base NEUVE (stub_auth puis toutes les migrations) ; le scenario pose ses
 -- propres fixtures, publie une version de TEST du cadre religieux dans sa
@@ -187,17 +192,17 @@ ON CONFLICT (key) DO UPDATE SET value = excluded.value;
 -- Les reponses completes d'un candidat d'Arabie saoudite (compte bancaire) et
 -- d'un candidat du Nigeria (Afrique, CAND-Q05 ouvert).
 SELECT pg_temp.garde('complet_sa', $j$
-{"langueMaternelle": "ar", "languesExplication": ["ar", "francais"],
+{"langueMaternelle": "ar", "languesExplication": ["francais", "poular"],
  "niveauMemorisationDeclare": "coran_entier", "niveauLectureTajwid": "tajwid_enseigne",
  "riwayat": ["hafs", "warsh"], "ijazaPresentable": "oui", "experienceDebutants": "oui",
- "disponibilitesDeclarees": {"fuseau": "Asia/Riyadh",
-   "creneaux": [{"jour": 1, "debut": "20:00", "fin": "22:00"}, {"jour": 3, "debut": "22:00", "fin": "24:00"}]},
- "fuseauIana": "Asia/Riyadh", "heuresParSemaine": "de_6_a_10", "debutPossible": "immediat",
- "publics": ["enfant", "adulte"], "paysResidence": "SA", "paysVersement": "SA", "compteBancaire": true,
+ "disponibilitesDeclarees": [{"jour": 1, "debut": "20:00", "fin": "22:00"},
+                              {"jour": 3, "debut": "22:00", "fin": "24:00"}],
+ "fuseauIana": "Asia/Riyadh", "classesSouhaitees": "2", "debutPossible": "immediat",
+ "publics": ["6_9", "adultes"], "paysResidence": "SA", "paysVersement": "SA", "compteBancaire": true,
  "operateurs": []}
 $j$::jsonb);
 SELECT pg_temp.garde('complet_ng', pg_temp.lu('complet_sa')
-  || '{"paysResidence": "NG", "paysVersement": "NG", "fuseauIana": "Africa/Lagos", "publics": ["enfant"]}'::jsonb);
+  || '{"paysResidence": "NG", "paysVersement": "NG", "fuseauIana": "Africa/Lagos", "publics": ["6_9"]}'::jsonb);
 
 -- Candidatures (hommes sauf 06 et 27).
 SELECT pg_temp.cand('01', 'male', 'prequalification', 'a_completer', 'en_cours', false, NULL);
@@ -1671,10 +1676,113 @@ SELECT pg_temp.garde('vu', jsonb_build_object(
 SELECT pg_temp.vrai(pg_temp.lu('vu') = '{"a2_01": 0, "a1_06": 0, "a2_06": 1}'::jsonb,
   'journal : les gestes de ce lot ne se lisent que du cote de la candidature (C15)');
 
+-- ------------------------------------------------------------
+-- (p) Questionnaire du 22/10 (CAND-L2A1, C17) : le controle
+-- questionnaire_complet et les moyens accessibles
+-- ------------------------------------------------------------
+-- 32 : un moyen accessible hors catalogue (champ informatif, ecarte du
+-- controle) ; 33 : sans langue maternelle, treize langues d'explication ;
+-- 34 a 37 : ce que le controle lit toujours (ancien code d'ijaza, l'arabe pour
+-- seule langue de cours, heures a la place des classes, ancien code de public).
+SELECT pg_temp.cand('32', 'male', 'prequalification', 'en_examen', 'en_cours', false,
+  pg_temp.lu('complet_sa') || '{"moyensAccessibles": ["moyen_inconnu_du_catalogue"]}'::jsonb);
+SELECT pg_temp.cand('33', 'male', 'prequalification', 'en_examen', 'en_cours', false,
+  (pg_temp.lu('complet_sa') - 'langueMaternelle')
+  || '{"languesExplication": ["poular", "francais", "english", "man", "sus", "sw", "ha", "wo", "bm", "snk", "mnk", "yo", "autre"],
+       "moyensAccessibles": ["wave", "orange_money"]}'::jsonb);
+SELECT pg_temp.cand('34', 'male', 'prequalification', 'en_examen', 'en_cours', false,
+  pg_temp.lu('complet_sa') || '{"ijazaPresentable": "pret_a_un_test"}'::jsonb);
+SELECT pg_temp.cand('35', 'male', 'prequalification', 'en_examen', 'en_cours', false,
+  pg_temp.lu('complet_sa') || '{"languesExplication": ["ar"]}'::jsonb);
+SELECT pg_temp.cand('36', 'male', 'prequalification', 'en_examen', 'en_cours', false,
+  (pg_temp.lu('complet_sa') - 'classesSouhaitees') || '{"heuresParSemaine": "de_6_a_10"}'::jsonb);
+SELECT pg_temp.cand('37', 'male', 'prequalification', 'en_examen', 'en_cours', false,
+  pg_temp.lu('complet_sa') || '{"publics": ["enfant"]}'::jsonb);
+SELECT pg_temp.vrai((SELECT jsonb_object_agg(right(c.id::text, 2), private.candidature_questionnaire_envoye(c))
+                       FROM public.candidatures c
+                      WHERE c.id IN (pg_temp.c('32'), pg_temp.c('33'), pg_temp.c('34'), pg_temp.c('35'),
+                                     pg_temp.c('36'), pg_temp.c('37')))
+    = '{"32": "complet", "33": "complet", "34": "incomplet", "35": "incomplet", "36": "incomplet", "37": "incomplet"}'::jsonb,
+  'questionnaire_complet : complet malgre un moyen accessible hors catalogue, sans langue maternelle, avec treize langues ; incomplet pour un ancien code d''ijaza, l''arabe seul, des heures sans classes, un ancien code de public');
+-- Contre-epreuve : sans l'exclusion, le meme document serait incomplet ; c'est
+-- bien l'exclusion de moyensAccessibles qui le protege.
+SELECT pg_temp.vrai(
+  (private.questionnaire_examiner(
+     (SELECT q.definition FROM public.candidature_questionnaires q WHERE q.courant AND q.type_code = 'enseignant'),
+     (SELECT r.reponses FROM public.candidature_reponses r WHERE r.candidature_id = pg_temp.c('32')))
+   -> 'invalides') = '["moyensAccessibles"]'::jsonb
+  AND (private.questionnaire_examiner(
+     (SELECT q.definition FROM public.candidature_questionnaires q WHERE q.courant AND q.type_code = 'enseignant'),
+     (SELECT r.reponses - 'accordRemuneration' - 'operateurs' - 'moyensAccessibles'
+        FROM public.candidature_reponses r WHERE r.candidature_id = pg_temp.c('32')))
+   -> 'invalides') = '[]'::jsonb,
+  'contre-epreuve : le document de 32 examine en entier a un champ invalide (moyensAccessibles) ; ecarte comme le fait le controle, il est complet');
+-- La seule fonction qui nomme la cle est l'exclusion du controle : ni le
+-- paiement, ni une autre fonction, ni un declencheur.
+SELECT pg_temp.vrai((SELECT jsonb_agg(n.nspname || '.' || p.proname ORDER BY n.nspname, p.proname)
+                       FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+                      WHERE n.nspname IN ('public', 'private', 'app_private') AND p.prosrc LIKE '%moyensAccessibles%')
+    = '["private.candidature_questionnaire_envoye"]'::jsonb,
+  'moyensAccessibles : une seule fonction du schema le nomme, l''exclusion du controle questionnaire_complet');
+-- De bout en bout : 32, dont le moyen accessible est invalide, est admise en
+-- Salle de verification et d'entretien (moyen confirme, cadre accepte).
+INSERT INTO public.contract_acceptances (profile_id, contract_kind, version)
+VALUES (pg_temp.p('32'), 'teacher_religious_framework', 'test-cadre-1');
+SELECT pg_temp.garde('cf32', pg_temp.en(pg_temp.p('a1'), 'admin',
+  $$SELECT public.confirmer_moyen_paiement_candidat(pg_temp.c('32'), 'virement_bancaire', NULL, 1, 'cle-confirmer-32')$$));
+SELECT pg_temp.garde('ad32', pg_temp.en(pg_temp.p('a1'), 'admin',
+  $$SELECT public.admettre_salle_verification(pg_temp.c('32'), 3, 'cle-admission-32')$$));
+SELECT pg_temp.vrai(pg_temp.lu('cf32') ->> 'paiement' = 'compatible'
+  AND pg_temp.lu('ad32') -> 'candidature' @> '{"etape": "verifications", "etat": "entretien_a_planifier"}'::jsonb
+  AND (SELECT count(*) FROM public.candidature_evenements
+        WHERE candidature_id = pg_temp.c('32') AND type = 'transition'
+          AND details @> '{"transition": 10, "controles": [{"nom": "paiement_compatible", "valeur": true},
+                                                           {"nom": "cadre_religieux", "valeur": true},
+                                                           {"nom": "questionnaire_complet", "valeur": true}]}'::jsonb) = 1,
+  'admission de bout en bout : un moyen accessible invalide ne bloque ni le questionnaire ni l''admission ; le controle de paiement reste celui de la transition 24');
+
+-- ------------------------------------------------------------
+-- (q) CLASSES-PLAFOND : le controle questionnaire_complet ne depend pas du
+-- maximum de Classes par enseignant pour une reponse deja envoyee
+-- ------------------------------------------------------------
+-- 38 a repondu « 3 », 39 « 5 », 71 « 80 », 72 « 81 » (hors de toute borne).
+-- Quel que soit le maximum que la direction regle (3 par defaut, puis 1, 5, 80,
+-- 2, et 4), 38, 39 et 71 restent completes et 72 incomplete : une reponse
+-- valide le jour de l'envoi ne bloque jamais l'admission pour un reglage que
+-- la candidate n'a pas touche (« 5 », valide au maximum de 5, l'est encore
+-- quand il redescend a 4, a 3 ou a 1).
+CREATE FUNCTION pg_temp.regler(p_n integer) RETURNS void
+LANGUAGE sql SECURITY DEFINER AS $$
+  UPDATE public.app_config SET value = pg_catalog.to_jsonb(p_n) WHERE key = 'enseignant.classes_max';
+$$;
+SELECT pg_temp.cand('38', 'male', 'prequalification', 'en_examen', 'en_cours', false,
+  pg_temp.lu('complet_sa') || '{"classesSouhaitees": "3"}'::jsonb);
+SELECT pg_temp.cand('39', 'male', 'prequalification', 'en_examen', 'en_cours', false,
+  pg_temp.lu('complet_sa') || '{"classesSouhaitees": "5"}'::jsonb);
+SELECT pg_temp.cand('71', 'male', 'prequalification', 'en_examen', 'en_cours', false,
+  pg_temp.lu('complet_sa') || '{"classesSouhaitees": "80"}'::jsonb);
+SELECT pg_temp.cand('72', 'male', 'prequalification', 'en_examen', 'en_cours', false,
+  pg_temp.lu('complet_sa') || '{"classesSouhaitees": "81"}'::jsonb);
+DO $classes_plafond_controle$
+DECLARE
+  v_max integer;
+BEGIN
+  FOREACH v_max IN ARRAY ARRAY[3, 5, 4, 3, 2, 1, 80, 4] LOOP
+    PERFORM pg_temp.regler(v_max);
+    PERFORM pg_temp.vrai((SELECT jsonb_object_agg(right(c.id::text, 2), private.candidature_questionnaire_envoye(c))
+                           FROM public.candidatures c
+                          WHERE c.id IN (pg_temp.c('38'), pg_temp.c('39'), pg_temp.c('71'), pg_temp.c('72')))
+        = '{"38": "complet", "39": "complet", "71": "complet", "72": "incomplet"}'::jsonb,
+      'questionnaire_complet, maximum de Classes regle a ' || v_max
+      || ' : « 3 », « 5 » et « 80 » restent complets, « 81 » incomplet (le reglage n''invalide aucune reponse envoyee)');
+  END LOOP;
+  PERFORM pg_temp.regler(3);
+END $classes_plafond_controle$;
+
 DO $fin$
 BEGIN
-  IF current_setting('test.n')::int <> 232 THEN
-    RAISE EXCEPTION 'CAND-L2A2 ROUGE : % controles executes, 232 attendus', current_setting('test.n');
+  IF current_setting('test.n')::int <> 244 THEN
+    RAISE EXCEPTION 'CAND-L2A2 ROUGE : % controles executes, 244 attendus', current_setting('test.n');
   END IF;
   RAISE NOTICE 'CAND-L2A2 : % controles verts', current_setting('test.n');
 END $fin$;

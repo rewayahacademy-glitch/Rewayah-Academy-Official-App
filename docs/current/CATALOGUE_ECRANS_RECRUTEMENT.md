@@ -670,7 +670,7 @@ avant l'état `envoye`.
      code brut, `CONS` §9) ;
   3. **Récitation** : niveau de mémorisation, niveau de lecture et de tajwid,
      riwaya, ijaza présentable (oui, non), expérience avec les débutants ;
-  4. **Disponibilités** : créneaux, fuseau, heures par semaine, date de début ;
+  4. **Disponibilités** : plages par jour en heures entières (une grille jour par heure, jamais de demi-heure), fuseau (le seul de la grille), classes souhaitées, date de début ; deux plages d'un même jour ne se recouvrent pas (cause nommée `plages_qui_se_chevauchent`) ;
   5. **Publics** que vous pouvez enseigner ;
   6. **Pays et versement** : pays de résidence, pays de versement, compte bancaire
      (oui, non), opérateurs parmi les seules lignes confirmées du pays de versement ;

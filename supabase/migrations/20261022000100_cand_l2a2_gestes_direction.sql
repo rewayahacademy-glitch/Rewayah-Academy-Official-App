@@ -86,7 +86,9 @@
 --   ou non_accepte ; questionnaire_complet : absent, perime, incomplet ou
 --   questionnaire_absent). Le questionnaire se lit sur le dernier document
 --   envoye (jamais un brouillon), sans la cle accordRemuneration ni les
---   operateurs, que le controle de paiement couvre ;
+--   operateurs, que le controle de paiement couvre, ni moyensAccessibles,
+--   champ informatif que ni un controle ni le paiement ne lisent (CAND-L2A1,
+--   C17, reponses du directeur du 22/10) ;
 -- * D7 reouverture (19), lecture stricte : compte_conforme (la regle de
 --   CAND-L1B, nommee au lieu d'etre levee : role du type, pending_kyc, non
 --   supprime, non expire, aucun engagement d'enseignant) ; questionnaire a
@@ -420,7 +422,8 @@ BEGIN
   IF v_doc.questionnaire_version IS DISTINCT FROM v_q.version THEN
     RETURN 'perime';
   END IF;
-  v_ex := private.questionnaire_examiner(v_q.definition, v_doc.reponses - 'accordRemuneration' - 'operateurs');
+  v_ex := private.questionnaire_examiner(v_q.definition,
+    v_doc.reponses - 'accordRemuneration' - 'operateurs' - 'moyensAccessibles');
   IF pg_catalog.jsonb_array_length(v_ex -> 'manquants') > 0
      OR pg_catalog.jsonb_array_length(v_ex -> 'invalides') > 0 THEN
     RETURN 'incomplet';

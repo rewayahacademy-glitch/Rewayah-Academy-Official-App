@@ -171,9 +171,10 @@ s'applique sans choix explicite, et un groupe sans choix reste `aCorriger`.
 Rejouer le même fichier n'ajoute rien (clé : classeur, onglet, horodatage de la
 réponse). Une ligne réimportée après correction dans le classeur garde sa
 référence source ; la correction s'inscrit dans l'historique de la candidature,
-jamais comme une candidature nouvelle. Les créneaux exprimés en heure de La
-Mecque sont conservés avec leur fuseau IANA (`Asia/Riyadh`), jamais convertis en
-heure absolue ni recopiés dans `weekly_availability`.
+jamais comme une candidature nouvelle. Les créneaux de la colonne J (heure de La
+Mecque, sans aucun jour) ne pré-remplissent aucun champ ; leur libellé est gardé tel
+quel, jamais converti en heure absolue ni recopié dans `weekly_availability`
+(`MAP §3.5`).
 
 ## 3. Le candidat, dans `/attente` (`CAND-01` à `CAND-03`)
 
@@ -194,9 +195,9 @@ autorisée (voie 2).
 | Méthode | Entrée | Sortie | Erreurs propres | Dépend de |
 | :--- | :--- | :--- | :--- | :--- |
 | `conditionsRemuneration` | aucune | part de l'enseignant en pour mille par public, **lue en base** ; **jamais un montant ni la devise** (taux par élève présent et par heure compris : décision du directeur du 22/10) ; règle de l'élève absent, période de versement et frais, affichés seulement une fois posés en base (`CAND-BR-12`) ; jamais écrits en dur | - | - |
-| `questionnaire` | aucune | `Questionnaire` : `version`, questions et options (pays, langues du référentiel, opérateurs **confirmés** pour le pays de versement, lus au serveur) | - | `CAND-Q05`, `CAND-Q13`, `CAND-Q15` |
-| `enregistrerBrouillon` (ajouté par L2A1 le 22/10, à confirmer avec `CAND-F15`) | `version`, `reponses` partielles, `versionAttendue` (version du brouillon ouvert, 0 sans brouillon), `cleIdempotence` | version du brouillon, champs requis encore manquants, `complet` ; jamais les réponses, relues par `questionnaire` ; la version de la candidature ne change pas | `QuestionnairePerime`, `ReponsesInvalides` (champs nommés), `ConflitBrouillon` (version courante rendue), `TransitionInterdite` | `CAND-Q05` |
-| `envoyerReponses` | `version`, `reponses`, `accordRemuneration`, `versionConditions` (version des conditions affichées, ajoutée par L2A1), `versionAttendue`, `cleIdempotence` | état relu (`etat_dossier()`) | `QuestionnairePerime` (version courante rendue), `ReponsesIncompletes` (champs nommés), `AccordRemunerationRequis`, `ConditionsIndisponibles`, `ConditionsPerimees` (version courante rendue : l'accord ne vaut que pour les conditions lues), `EngagementNonAccepte` (version requise rendue), `ConflitCandidature` ; aucune transition sans les trois | `CAND-Q05`, `CAND-Q11` |
+| `questionnaire` | aucune | `Questionnaire` : `version`, questions et options (pays, langues du référentiel, opérateurs **confirmés** pour le pays de versement, lus au serveur ; depuis le 22/10, les langues sont propres à chaque champ : `languesExplication` sans l'arabe et sans plafond, `langueMaternelle` facultative avec lui, une option `autre` ; et `moyensAccessibles`, champ facultatif et informatif dont les options sont tous les moyens connus du catalogue de paiement, `{code, methode, nom}`, que le serveur ne lit jamais pour le paiement ; depuis le 22/10 aussi, `disponibilitesDeclarees` est une **liste de plages** `{jour, debut, fin}` : jour ISO 1 à 7, heures entières `HH:00` (fin `24:00` admise), sans chevauchement, dans le seul fuseau de `fuseauIana`, spec consolidée 2.1 bis) | - | `CAND-Q05`, `CAND-Q13`, `CAND-Q15` |
+| `enregistrerBrouillon` (ajouté par L2A1 le 22/10, à confirmer avec `CAND-F15`) | `version`, `reponses` partielles, `versionAttendue` (version du brouillon ouvert, 0 sans brouillon), `cleIdempotence` | version du brouillon, champs requis encore manquants, `complet` ; jamais les réponses, relues par `questionnaire` ; la version de la candidature ne change pas | `QuestionnairePerime`, `ReponsesInvalides` (champs nommés ; une cause nommée sous `motifs` quand elle existe, aujourd'hui `plages_qui_se_chevauchent` pour `disponibilitesDeclarees`), `ConflitBrouillon` (version courante rendue), `TransitionInterdite` | `CAND-Q05` |
+| `envoyerReponses` | `version`, `reponses`, `accordRemuneration`, `versionConditions` (version des conditions affichées, ajoutée par L2A1), `versionAttendue`, `cleIdempotence` | état relu (`etat_dossier()`) | `QuestionnairePerime` (version courante rendue), `ReponsesInvalides` (comme ci-dessus), `ReponsesIncompletes` (champs nommés), `AccordRemunerationRequis`, `ConditionsIndisponibles`, `ConditionsPerimees` (version courante rendue : l'accord ne vaut que pour les conditions lues), `EngagementNonAccepte` (version requise rendue), `ConflitCandidature` ; aucune transition sans les trois | `CAND-Q05`, `CAND-Q11` |
 | `retirer` | `versionAttendue`, `cleIdempotence` | état relu (`retiree`) | `ConflitCandidature`, `TransitionInterdite` | - |
 
 L'engagement religieux ne prend **pas** de port neuf : il passe par la page

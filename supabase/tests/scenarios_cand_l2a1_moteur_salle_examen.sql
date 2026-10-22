@@ -22,6 +22,18 @@
 -- tabulations, fins de ligne ou espaces Unicode refuse (L2-10) ; envoi aux
 -- conditions perimees refuse ; politique sans part : conditions
 -- indisponibles ; dimension paiement rendue au candidat.
+-- Repris le 22/10 selon les reponses du directeur (C17, DECISION-CANDIDATURES
+-- section 1 ter) : (o) langues d'explication sans plafond, ni arabe de cours ni
+-- ff, poular unique, "autre", langue maternelle facultative ; memorisation et
+-- ijaza separees ; tranches d'age ; classes souhaitees a la place des heures ;
+-- moyens accessibles informatifs, jamais lus par le paiement ni par un
+-- controle (contre-epreuve : memes reponses, paiement identique).
+-- Repris le 22/10 (C18, disponibilites au format que lit l'affectation) : (q)
+-- plages par jour ISO a bornes en heures entieres, sans second fuseau, sans
+-- chevauchement (refus rendu avec sa cause nommee par l'examen et par les deux
+-- RPC), au moins une heure ; l'expansion « une ligne par heure couverte » donne
+-- des lignes que weekly_availability accepte et que le predicat d'affectation
+-- lit, et un chevauchement donnerait deux fois la meme ligne (cle unique).
 -- Chaque controle leve 'CAND-L2A1 ROUGE : ...' s'il echoue. A rejouer sur une
 -- base NEUVE (stub_auth puis toutes les migrations) ; le scenario pose ses
 -- propres fixtures, publie une version de TEST du cadre religieux dans sa
@@ -103,6 +115,13 @@ LANGUAGE sql SECURITY DEFINER AS $$
     'accords', (SELECT count(*) FROM public.contract_acceptances a
                   JOIN public.candidatures c ON c.profile_id = a.profile_id WHERE c.id = p_id),
     'ligne', (SELECT md5(to_jsonb(c)::text) FROM public.candidatures c WHERE c.id = p_id));
+$$;
+
+-- Fixe le nombre maximal de Classes par enseignant (CLASSES-PLAFOND). DEFINER
+-- (proprietaire du scenario) : le candidat ne lit ni n'ecrit app_config.
+CREATE FUNCTION pg_temp.regler(p_n integer) RETURNS void
+LANGUAGE sql SECURITY DEFINER AS $$
+  UPDATE public.app_config SET value = pg_catalog.to_jsonb(p_n) WHERE key = 'enseignant.classes_max';
 $$;
 
 -- Une fixture dans la premiere source d'une regle du moteur (L2-9, L2-10),
@@ -215,17 +234,24 @@ FROM (VALUES
 -- Les reponses completes d'un candidat d'Arabie saoudite (compte bancaire) et
 -- d'un candidat du Nigeria (Afrique, CAND-Q05 ouvert).
 SELECT pg_temp.garde('complet_sa', $j$
-{"langueMaternelle": "ar", "languesExplication": ["ar", "francais"],
+{"langueMaternelle": "ar", "languesExplication": ["francais", "poular"],
  "niveauMemorisationDeclare": "coran_entier", "niveauLectureTajwid": "tajwid_enseigne",
  "riwayat": ["hafs", "warsh"], "ijazaPresentable": "oui", "experienceDebutants": "oui",
- "disponibilitesDeclarees": {"fuseau": "Asia/Riyadh",
-   "creneaux": [{"jour": 1, "debut": "20:00", "fin": "22:00"}, {"jour": 3, "debut": "22:00", "fin": "24:00"}]},
- "fuseauIana": "Asia/Riyadh", "heuresParSemaine": "de_6_a_10", "debutPossible": "immediat",
- "publics": ["enfant", "adulte"], "paysResidence": "SA", "paysVersement": "SA", "compteBancaire": true,
+ "disponibilitesDeclarees": [{"jour": 1, "debut": "20:00", "fin": "22:00"},
+                              {"jour": 3, "debut": "22:00", "fin": "24:00"}],
+ "fuseauIana": "Asia/Riyadh", "classesSouhaitees": "2", "debutPossible": "immediat",
+ "publics": ["6_9", "adultes"], "paysResidence": "SA", "paysVersement": "SA", "compteBancaire": true,
  "operateurs": []}
 $j$::jsonb);
-SELECT pg_temp.garde('complet_ng', pg_temp.lu('complet_sa')
-  || '{"paysResidence": "NG", "paysVersement": "NG", "fuseauIana": "Africa/Lagos", "publics": ["enfant"]}'::jsonb);
+-- Le Nigeria (C17) : sans langue maternelle (facultative), treize langues
+-- d'explication (plus de dix : aucun plafond), les quatre tranches d'age, et
+-- trois moyens accessibles dont aucun n'est confirme dans le pays.
+SELECT pg_temp.garde('complet_ng', (pg_temp.lu('complet_sa') - 'langueMaternelle')
+  || '{"paysResidence": "NG", "paysVersement": "NG", "fuseauIana": "Africa/Lagos",
+       "publics": ["6_9", "10_13", "14_17", "adultes"], "classesSouhaitees": "3",
+       "languesExplication": ["poular", "francais", "english", "man", "sus", "sw", "ha", "wo", "bm", "snk",
+                              "mnk", "yo", "autre"],
+       "moyensAccessibles": ["wave", "orange_money", "moov_money"]}'::jsonb);
 
 -- ------------------------------------------------------------
 -- (a) Droits, empreintes F86, aides internes, tables
@@ -435,10 +461,10 @@ SET LOCAL ROLE authenticated;
 SELECT pg_temp.garde('q', public.questionnaire_salle_examen());
 RESET ROLE;
 SELECT pg_temp.vrai(pg_temp.lu('q') ->> 'version' = 'salle-examen-1'
-  AND jsonb_array_length(pg_temp.lu('q') -> 'champs') = 16
+  AND jsonb_array_length(pg_temp.lu('q') -> 'champs') = 17
   AND pg_temp.lu('q') ->> 'candidatureVersion' = '1'
   AND pg_temp.lu('q') -> 'dernieresReponses' = 'null'::jsonb,
-  'questionnaire : version courante, 16 champs, version de la candidature, aucune reponse encore');
+  'questionnaire : version courante, 17 champs, version de la candidature, aucune reponse encore');
 SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c
                                  WHERE c ->> 'type' NOT IN ('choix', 'choix_multiple', 'booleen', 'creneaux'))
   AND NOT EXISTS (SELECT 1 FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c
@@ -461,6 +487,100 @@ SELECT pg_temp.vrai((SELECT c -> 'options' FROM jsonb_array_elements(pg_temp.lu(
   AND NOT EXISTS (SELECT 1 FROM jsonb_array_elements(pg_temp.lu('q') #> '{champs,0,options}') o
                    WHERE o ->> 'code' IN ('autre_a_preciser', 'Français', 'arabe')),
   'langues : codes du referentiel d''abord (poular, francais, english), puis ISO 639 hors referentiel marques ; jamais un nom ni autre_a_preciser');
+
+-- (d-22/10) Les reponses du directeur sur les langues (C17).
+SELECT pg_temp.garde('opt_mat', (SELECT jsonb_agg(o ->> 'code') FROM jsonb_array_elements(
+  (SELECT c -> 'options' FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c WHERE c ->> 'code' = 'langueMaternelle')) o));
+SELECT pg_temp.garde('opt_exp', (SELECT jsonb_agg(o ->> 'code') FROM jsonb_array_elements(
+  (SELECT c -> 'options' FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c WHERE c ->> 'code' = 'languesExplication')) o));
+SELECT pg_temp.vrai(NOT (SELECT c ? 'max' FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c
+                          WHERE c ->> 'code' = 'languesExplication')
+  AND (SELECT c ->> 'requis' = 'true' AND c ->> 'min' = '1' FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c
+        WHERE c ->> 'code' = 'languesExplication')
+  AND jsonb_array_length(pg_temp.lu('opt_exp')) = 27
+  AND jsonb_array_length(pg_temp.lu('opt_mat')) = 28,
+  'langues d''explication : aucun plafond (pas de max, 27 options), au moins une ; langue maternelle : 28 options');
+SELECT pg_temp.vrai(NOT pg_temp.lu('opt_exp') ? 'ar' AND pg_temp.lu('opt_mat') ? 'ar'
+  AND NOT pg_temp.lu('opt_exp') ?| ARRAY['ff', 'peul', 'fulfulde', 'fula', 'arabe']
+  AND NOT pg_temp.lu('opt_mat') ?| ARRAY['ff', 'peul', 'fulfulde', 'fula', 'arabe'],
+  'l''arabe n''est pas une langue de cours mais reste une langue maternelle ; plus de ff : poular, peul et fulfulde ne font qu''une entree');
+SELECT pg_temp.vrai(pg_temp.lu('opt_exp') @> '["poular", "francais", "english", "man", "sus", "sw", "ha", "wo", "bm", "snk", "mnk", "autre"]'::jsonb
+  AND pg_temp.lu('opt_mat') @> '["poular", "francais", "english", "man", "sus", "sw", "ha", "wo", "bm", "snk", "mnk", "autre"]'::jsonb
+  AND pg_temp.lu('opt_exp') ->> 0 = 'poular' AND pg_temp.lu('opt_exp') ->> 26 = 'autre'
+  AND pg_temp.lu('opt_mat') ->> 27 = 'autre'
+  AND (SELECT count(*) FROM jsonb_array_elements_text(pg_temp.lu('opt_exp')) x WHERE x = 'poular') = 1
+  AND (SELECT count(*) FROM jsonb_array_elements_text(pg_temp.lu('opt_exp')) x WHERE x = 'autre') = 1,
+  'langues du public vise : poular (referentiel), francais, english, malinke (man), soussou (sus), swahili, haoussa, wolof, bambara, soninke, mandinka ; poular en tete, "autre langue" a la fin, une seule fois');
+SELECT pg_temp.vrai((SELECT c ->> 'requis' = 'false' FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c
+                      WHERE c ->> 'code' = 'langueMaternelle'),
+  'langue maternelle : facultative');
+
+-- (d-22/10) Memorisation et ijaza : deux questions ; tranches d'age ; classes.
+SELECT pg_temp.vrai((SELECT c -> 'options' FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c
+                      WHERE c ->> 'code' = 'niveauMemorisationDeclare')
+    = '["aucune", "moins_10_juz", "de_10_a_29_juz", "coran_entier"]'::jsonb
+  AND (SELECT c -> 'options' FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c
+        WHERE c ->> 'code' = 'ijazaPresentable') = '["oui", "pret_test", "non"]'::jsonb
+  AND (SELECT c ->> 'requis' = 'true' FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c
+        WHERE c ->> 'code' IN ('niveauMemorisationDeclare') )
+  AND (SELECT c ->> 'requis' = 'true' FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c
+        WHERE c ->> 'code' IN ('ijazaPresentable')),
+  'memorisation (aucune, moins de 10 juz'', de 10 a 29 juz'', Coran entier) et ijaza (oui, pret a un test, non) : deux questions, obligatoires');
+SELECT pg_temp.vrai((SELECT c -> 'options' FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c
+                      WHERE c ->> 'code' = 'publics') = '["6_9", "10_13", "14_17", "adultes"]'::jsonb
+  AND (SELECT c ->> 'type' = 'choix_multiple' AND c ->> 'min' = '1' AND c ->> 'max' = '4'
+         FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c WHERE c ->> 'code' = 'publics'),
+  'publics : quatre tranches d''age (6-9, 10-13, 14-17, adultes), plusieurs au choix, au moins une');
+SELECT pg_temp.vrai((SELECT c -> 'options' FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c
+                      WHERE c ->> 'code' = 'classesSouhaitees') = '["1", "2", "3"]'::jsonb
+  AND (SELECT c ->> 'type' = 'choix' AND c ->> 'requis' = 'true' AND c ->> 'carte' = 'disponibilites'
+         FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c WHERE c ->> 'code' = 'classesSouhaitees')
+  AND NOT EXISTS (SELECT 1 FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c
+                   WHERE c ->> 'code' = 'heuresParSemaine'),
+  'classes souhaitees : 1, 2 ou 3 (le maximum de Classes par enseignant en vigueur, 3 par defaut) ; heuresParSemaine n''existe plus');
+
+-- (p-22/10) Les classes souhaitees suivent le reglage « nombre maximal de
+-- Classes par enseignant » (enseignant.classes_max, CLASSES-PLAFOND) : le
+-- questionnaire servi propose de 1 au maximum, sans nouvelle version.
+CREATE FUNCTION pg_temp.options_classes() RETURNS jsonb
+LANGUAGE sql AS $$
+  SELECT c -> 'options' FROM jsonb_array_elements(public.questionnaire_salle_examen() -> 'champs') c
+   WHERE c ->> 'code' = 'classesSouhaitees';
+$$;
+SELECT pg_temp.regler(5);
+SELECT pg_temp.vrai(pg_temp.options_classes() = '["1", "2", "3", "4", "5"]'::jsonb,
+  'classes souhaitees : le maximum passe a 5, le questionnaire servi propose de 1 a 5');
+SELECT pg_temp.regler(2);
+SELECT pg_temp.vrai(pg_temp.options_classes() = '["1", "2"]'::jsonb,
+  'classes souhaitees : le maximum baisse a 2, le questionnaire servi propose 1 et 2');
+SELECT pg_temp.regler(1);
+SELECT pg_temp.vrai(pg_temp.options_classes() = '["1"]'::jsonb,
+  'classes souhaitees : le maximum baisse a 1, le questionnaire servi propose 1');
+SELECT pg_temp.regler(80);
+SELECT pg_temp.vrai(jsonb_array_length(pg_temp.options_classes()) = 80
+  AND pg_temp.options_classes() -> 0 = '"1"'::jsonb AND pg_temp.options_classes() -> 79 = '"80"'::jsonb,
+  'classes souhaitees : au maximum de 80, quatre-vingts options en codes de texte');
+SELECT pg_temp.regler(3);
+SELECT pg_temp.vrai(pg_temp.options_classes() = '["1", "2", "3"]'::jsonb,
+  'classes souhaitees : le maximum revient a 3, le questionnaire servi propose de nouveau 1, 2, 3');
+
+-- (d-22/10) Moyens accessibles : facultatif, la liste de tous les moyens
+-- connus du catalogue de L6 (confirmes ou non), sans pays ni etat.
+SELECT pg_temp.vrai((SELECT c ->> 'requis' = 'false' AND c ->> 'type' = 'choix_multiple'
+                            AND c ->> 'carte' = 'versement' AND c ->> 'min' = '0' AND NOT c ? 'dependDe'
+                       FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c WHERE c ->> 'code' = 'moyensAccessibles')
+  AND (SELECT c -> 'options' FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c
+        WHERE c ->> 'code' = 'moyensAccessibles')
+    = (SELECT jsonb_agg(jsonb_build_object('code', o.code, 'methode', o.methode, 'nom', o.nom) ORDER BY o.cree_le, o.code)
+         FROM public.referentiel_paiement_operateurs o WHERE o.actif)
+  AND NOT EXISTS (SELECT 1 FROM jsonb_array_elements((SELECT c -> 'options' FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c
+                                                      WHERE c ->> 'code' = 'moyensAccessibles')) o
+                   WHERE o ?| ARRAY['pays', 'etat', 'confirme', 'ligne', 'notes', 'prestataire'])
+  AND EXISTS (SELECT 1 FROM public.referentiel_paiement_operateurs o
+               WHERE o.code = 'moov_money'
+                 AND NOT EXISTS (SELECT 1 FROM public.referentiel_paiement l
+                                  WHERE l.operateur = o.code AND l.etat = 'confirme')),
+  'moyens accessibles : facultatif, les operateurs actifs du catalogue de L6 (code, methode, nom) meme ceux qu''aucun pays ne confirme, sans pays ni etat ; operateurs, lui, reste lu par pays de versement');
 SELECT pg_temp.vrai((SELECT c -> 'options' FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c
                       WHERE c ->> 'code' = 'paysVersement')
     = (SELECT jsonb_agg(code ORDER BY rang) FROM private.pays_iso_3166)
@@ -480,7 +600,7 @@ SELECT pg_temp.garde('t01', pg_temp.trace('ca2acccc-0000-4000-8000-000000000001'
 SELECT pg_temp.qui('ca2a0000-0000-4000-8000-000000000001', 'teacher');
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.garde('b1', public.enregistrer_reponses_salle_examen('salle-examen-1',
-  '{"paysResidence": "SA", "langueMaternelle": "ar", "languesExplication": ["ar", "francais"]}', 0,
+  '{"paysResidence": "SA", "langueMaternelle": "ar", "languesExplication": ["francais", "poular"]}', 0,
   'cle-brouillon-c01-1'));
 SELECT pg_temp.garde('q1', public.questionnaire_salle_examen());
 RESET ROLE;
@@ -490,7 +610,7 @@ SELECT pg_temp.vrai(pg_temp.lu('b1') ->> 'rejoue' = 'false' AND pg_temp.lu('b1')
   AND NOT pg_temp.lu('b1') -> 'manquants' ? 'operateurs'
   AND pg_temp.lu('q1') ->> 'versionBrouillon' = '1' AND pg_temp.lu('q1') ->> 'candidatureVersion' = '1'
   AND pg_temp.lu('q1') #> '{dernieresReponses,reponses}'
-      = '{"paysResidence": "SA", "langueMaternelle": "ar", "languesExplication": ["ar", "francais"]}'::jsonb
+      = '{"paysResidence": "SA", "langueMaternelle": "ar", "languesExplication": ["francais", "poular"]}'::jsonb
   AND pg_temp.lu('q1') #> '{dernieresReponses,brouillon}' = 'true'::jsonb,
   'brouillon partiel accepte : version du brouillon 1, champs requis manquants nommes (operateurs facultatif), reponses relues par le questionnaire, jamais rendues par l''enregistrement');
 SELECT pg_temp.vrai((SELECT count(*) FROM public.candidature_reponses
@@ -533,7 +653,28 @@ BEGIN
       ('{"paysResidence": "sa"}', 'paysResidence', 'pays en minuscules'),
       ('{"langueMaternelle": "autre_a_preciser"}', 'langueMaternelle', 'autre_a_preciser n''est pas une langue'),
       ('{"langueMaternelle": "Français"}', 'langueMaternelle', 'langue par son nom'),
-      ('{"languesExplication": ["ar", "ar"]}', 'languesExplication', 'langue en double'),
+      ('{"languesExplication": ["francais", "francais"]}', 'languesExplication', 'langue en double'),
+      ('{"languesExplication": ["ar"]}', 'languesExplication', 'l''arabe n''est pas une langue de cours'),
+      ('{"languesExplication": ["francais", "ar"]}', 'languesExplication', 'l''arabe parmi d''autres langues de cours'),
+      ('{"languesExplication": ["ff"]}', 'languesExplication', 'ff n''existe plus : poular'),
+      ('{"langueMaternelle": "ff"}', 'langueMaternelle', 'ff n''existe plus : poular'),
+      ('{"languesExplication": ["peul"]}', 'languesExplication', 'peul n''est pas un code : poular'),
+      ('{"languesExplication": "poular"}', 'languesExplication', 'une langue au lieu d''une liste'),
+      ('{"heuresParSemaine": "de_6_a_10"}', 'heuresParSemaine', 'heuresParSemaine n''existe plus'),
+      ('{"classesSouhaitees": "81"}', 'classesSouhaitees', 'quatre-vingt-une classes : au-dela de la borne du reglage (80)'),
+      ('{"classesSouhaitees": "0"}', 'classesSouhaitees', 'zero classe'),
+      ('{"classesSouhaitees": 2}', 'classesSouhaitees', 'un nombre au lieu du code'),
+      ('{"classesSouhaitees": ["2"]}', 'classesSouhaitees', 'une liste au lieu d''un choix'),
+      ('{"niveauMemorisationDeclare": "plus_de_10_juz"}', 'niveauMemorisationDeclare', 'ancien code de memorisation'),
+      ('{"niveauMemorisationDeclare": "ijaza_lecture_enseignement"}', 'niveauMemorisationDeclare', 'l''ijaza n''est plus un niveau de memorisation'),
+      ('{"ijazaPresentable": "pret_a_un_test"}', 'ijazaPresentable', 'ancien code de l''ijaza : pret_test'),
+      ('{"publics": ["enfant"]}', 'publics', 'ancien code de public : enfant'),
+      ('{"publics": ["adulte"]}', 'publics', 'ancien code de public : adulte'),
+      ('{"publics": ["6_9", "6_9"]}', 'publics', 'tranche en double'),
+      ('{"publics": ["6_9", "10_13", "14_17", "adultes", "adultes"]}', 'publics', 'cinq tranches pour quatre'),
+      ('{"moyensAccessibles": ["virement_bancaire"]}', 'moyensAccessibles', 'un moyen hors du catalogue des operateurs'),
+      ('{"moyensAccessibles": ["wave", "wave"]}', 'moyensAccessibles', 'moyen en double'),
+      ('{"moyensAccessibles": "wave"}', 'moyensAccessibles', 'un moyen au lieu d''une liste'),
       ('{"riwayat": ["autre"]}', 'riwayat', 'riwaya hors liste'),
       ('{"niveauMemorisationDeclare": "j''ai tout appris"}', 'niveauMemorisationDeclare', 'texte libre'),
       ('{"commentaire": "texte libre"}', 'commentaire', 'cle inconnue'),
@@ -542,16 +683,46 @@ BEGIN
       ('{"compteBancaire": "oui"}', 'compteBancaire', 'booleen en texte'),
       ('{"publics": ["enfant", "famille"]}', 'publics', 'public hors liste'),
       ('{"paysVersement": "SA", "operateurs": ["wave"]}', 'operateurs', 'operateur sans ligne confirmee du pays'),
-      ('{"disponibilitesDeclarees": {"fuseau": "Asia/Riyadh", "creneaux": [{"jour": 8, "debut": "20:00", "fin": "22:00"}]}}',
+      ('{"disponibilitesDeclarees": {"fuseau": "Asia/Riyadh", "creneaux": [{"jour": 1, "debut": "20:00", "fin": "22:00"}]}}',
+       'disponibilitesDeclarees', 'ancienne forme : un objet avec un second fuseau et des creneaux'),
+      ('{"disponibilitesDeclarees": [{"jour": 8, "debut": "20:00", "fin": "22:00"}]}',
        'disponibilitesDeclarees', 'jour 8'),
-      ('{"disponibilitesDeclarees": {"fuseau": "Asia/Riyadh", "creneaux": [{"jour": 1, "debut": "20:15", "fin": "22:00"}]}}',
-       'disponibilitesDeclarees', 'heure hors demi-heure'),
-      ('{"disponibilitesDeclarees": {"fuseau": "Asia/Riyadh", "creneaux": [{"jour": 1, "debut": "22:00", "fin": "20:00"}]}}',
+      ('{"disponibilitesDeclarees": [{"jour": 0, "debut": "20:00", "fin": "22:00"}]}',
+       'disponibilitesDeclarees', 'jour 0'),
+      ('{"disponibilitesDeclarees": [{"jour": "1", "debut": "20:00", "fin": "22:00"}]}',
+       'disponibilitesDeclarees', 'jour en texte'),
+      ('{"disponibilitesDeclarees": [{"jour": 1.5, "debut": "20:00", "fin": "22:00"}]}',
+       'disponibilitesDeclarees', 'jour decimal'),
+      ('{"disponibilitesDeclarees": [{"jour": 1, "debut": "20:15", "fin": "22:00"}]}',
+       'disponibilitesDeclarees', 'debut avec des minutes (20:15)'),
+      ('{"disponibilitesDeclarees": [{"jour": 1, "debut": "20:30", "fin": "22:00"}]}',
+       'disponibilitesDeclarees', 'debut a la demi-heure (l''ancienne maille)'),
+      ('{"disponibilitesDeclarees": [{"jour": 1, "debut": "20:00", "fin": "21:30"}]}',
+       'disponibilitesDeclarees', 'fin a la demi-heure (l''ancienne maille)'),
+      ('{"disponibilitesDeclarees": [{"jour": 1, "debut": "8:00", "fin": "10:00"}]}',
+       'disponibilitesDeclarees', 'heure sans zero de tete'),
+      ('{"disponibilitesDeclarees": [{"jour": 1, "debut": "22:00", "fin": "20:00"}]}',
        'disponibilitesDeclarees', 'fin avant debut'),
-      ('{"disponibilitesDeclarees": {"fuseau": "US/Eastern", "creneaux": [{"jour": 1, "debut": "20:00", "fin": "22:00"}]}}',
-       'disponibilitesDeclarees', 'creneaux dans un alias de fuseau'),
-      ('{"disponibilitesDeclarees": {"fuseau": "Asia/Riyadh", "creneaux": [{"jour": 1, "debut": "20:00", "fin": "22:00", "note": "x"}]}}',
-       'disponibilitesDeclarees', 'creneau a cle libre')
+      ('{"disponibilitesDeclarees": [{"jour": 1, "debut": "20:00", "fin": "20:00"}]}',
+       'disponibilitesDeclarees', 'fin egale au debut : aucune heure'),
+      ('{"disponibilitesDeclarees": [{"jour": 1, "debut": "20:00", "fin": "00:00"}]}',
+       'disponibilitesDeclarees', 'fin a minuit ecrite 00:00 (24:00 est la seule ecriture)'),
+      ('{"disponibilitesDeclarees": [{"jour": 1, "debut": "24:00", "fin": "24:00"}]}',
+       'disponibilitesDeclarees', 'debut a 24:00'),
+      ('{"disponibilitesDeclarees": [{"jour": 1, "debut": "20:00", "fin": "25:00"}]}',
+       'disponibilitesDeclarees', 'fin a 25:00'),
+      ('{"disponibilitesDeclarees": [{"jour": 1, "debut": "20:00", "fin": "22:00", "note": "x"}]}',
+       'disponibilitesDeclarees', 'plage a cle libre'),
+      ('{"disponibilitesDeclarees": [{"jour": 1, "debut": "20:00", "fin": "22:00", "fuseau": "Asia/Riyadh"}]}',
+       'disponibilitesDeclarees', 'un fuseau dans la plage : le fuseau est celui de fuseauIana'),
+      ('{"disponibilitesDeclarees": [{"jour": 1, "debut": "20:00"}]}',
+       'disponibilitesDeclarees', 'plage sans fin'),
+      ('{"disponibilitesDeclarees": [null]}', 'disponibilitesDeclarees', 'plage nulle'),
+      ('{"disponibilitesDeclarees": ["lundi soir"]}', 'disponibilitesDeclarees', 'plage en texte'),
+      ('{"disponibilitesDeclarees": "lundi soir"}', 'disponibilitesDeclarees', 'texte libre au lieu de plages'),
+      ('{"disponibilitesDeclarees": {}}', 'disponibilitesDeclarees', 'objet vide'),
+      ('{"disponibilitesDeclarees": [{"jour": 1, "debut": "18:00", "fin": "21:00"}, {"jour": 1, "debut": "20:00", "fin": "22:00"}]}',
+       'disponibilitesDeclarees', 'deux plages du meme jour qui se chevauchent')
     ) AS t(reponses, champ, cas) LOOP
     v_n := v_n + 1;
     v_r := public.enregistrer_reponses_salle_examen('salle-examen-1', v.reponses::jsonb, 1,
@@ -562,6 +733,403 @@ BEGIN
 END $invalides$;
 SELECT pg_temp.vrai(pg_temp.trace('ca2acccc-0000-4000-8000-000000000001') = pg_temp.lu('t01'),
   'reponses invalides : 0 ecriture (ni document, ni version, ni cle)');
+
+-- (q-22/10) Le refus d'un chevauchement de plages est NOMME, par les deux RPC
+-- qui examinent des reponses (C18) : reponses_invalides, le champ, et sa cause
+-- sous « motifs ». Un autre champ invalide, ou une autre cause (une demi-heure),
+-- n'en porte pas : la cle motifs n'est rendue que si une cause est nommee.
+SELECT pg_temp.garde('t01', pg_temp.trace('ca2acccc-0000-4000-8000-000000000001'));
+SELECT pg_temp.qui('ca2a0000-0000-4000-8000-000000000001', 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.garde('chev_enreg', public.enregistrer_reponses_salle_examen('salle-examen-1',
+  '{"disponibilitesDeclarees": [{"jour": 1, "debut": "18:00", "fin": "21:00"}, {"jour": 1, "debut": "20:00", "fin": "22:00"}]}',
+  1, 'cle-chevauchement-c01-1'));
+SELECT pg_temp.garde('chev_enreg_deux', public.enregistrer_reponses_salle_examen('salle-examen-1',
+  '{"paysResidence": "XX", "disponibilitesDeclarees": [{"jour": 2, "debut": "18:00", "fin": "19:00"}, {"jour": 2, "debut": "18:00", "fin": "19:00"}]}',
+  1, 'cle-chevauchement-c01-2'));
+SELECT pg_temp.garde('chev_envoi', public.envoyer_reponses_salle_examen('salle-examen-1',
+  pg_temp.lu('complet_sa') || '{"disponibilitesDeclarees": [{"jour": 3, "debut": "08:00", "fin": "12:00"}, {"jour": 3, "debut": "11:00", "fin": "13:00"}]}',
+  true, 'v2.0.0', 1, 'cle-chevauchement-c01-3'));
+SELECT pg_temp.garde('demi_enreg', public.enregistrer_reponses_salle_examen('salle-examen-1',
+  '{"disponibilitesDeclarees": [{"jour": 1, "debut": "20:30", "fin": "22:00"}]}', 1, 'cle-demi-heure-c01-1'));
+SELECT pg_temp.garde('demi_envoi', public.envoyer_reponses_salle_examen('salle-examen-1',
+  pg_temp.lu('complet_sa') || '{"disponibilitesDeclarees": [{"jour": 1, "debut": "20:00", "fin": "22:30"}]}',
+  true, 'v2.0.0', 1, 'cle-demi-heure-c01-2'));
+RESET ROLE;
+SELECT pg_temp.vrai(pg_temp.lu('chev_enreg') = '{"erreur": "reponses_invalides", "champs": ["disponibilitesDeclarees"],
+      "motifs": {"disponibilitesDeclarees": "plages_qui_se_chevauchent"}}'::jsonb
+  AND pg_temp.lu('chev_envoi') = pg_temp.lu('chev_enreg')
+  AND pg_temp.lu('chev_enreg_deux') = '{"erreur": "reponses_invalides", "champs": ["disponibilitesDeclarees", "paysResidence"],
+      "motifs": {"disponibilitesDeclarees": "plages_qui_se_chevauchent"}}'::jsonb,
+  'enregistrer et envoyer : plages qui se chevauchent refusees avec la cause nommee (plages_qui_se_chevauchent) ; un autre champ invalide a cote ne perd pas sa place dans champs');
+SELECT pg_temp.vrai(pg_temp.lu('demi_enreg') = '{"erreur": "reponses_invalides", "champs": ["disponibilitesDeclarees"]}'::jsonb
+  AND pg_temp.lu('demi_envoi') = pg_temp.lu('demi_enreg')
+  AND NOT pg_temp.lu('demi_enreg') ? 'motifs',
+  'contre-epreuve : une demi-heure est refusee sans cause nommee (pas de cle motifs) : le chevauchement n''est pas le fourre-tout des plages invalides');
+SELECT pg_temp.vrai(pg_temp.trace('ca2acccc-0000-4000-8000-000000000001') = pg_temp.lu('t01'),
+  'refus de chevauchement et de demi-heure : 0 ecriture (ni document, ni version, ni cle) ; envoi refuse = aucun accord, aucune transition');
+
+-- (e-22/10) Ce que le questionnaire accepte (reponses du directeur, C17) :
+-- les valeurs decidees, les champs facultatifs absents, aucun plafond de
+-- langues. Examen direct de la definition courante.
+SELECT pg_temp.garde('def', (SELECT q.definition FROM public.candidature_questionnaires q
+                              WHERE q.courant AND q.type_code = 'enseignant'));
+CREATE FUNCTION pg_temp.examen(p_reponses jsonb) RETURNS jsonb
+LANGUAGE sql AS $$
+  SELECT private.questionnaire_examiner(pg_temp.lu('def'), p_reponses) - 'reponses';
+$$;
+DO $acceptees$
+DECLARE
+  v_rien constant jsonb := '{"invalides": [], "manquants": [], "inconnus": []}';
+  v_tout jsonb;
+  v_code text;
+BEGIN
+  PERFORM pg_temp.vrai(pg_temp.examen(pg_temp.lu('complet_sa')) = v_rien
+    AND pg_temp.examen(pg_temp.lu('complet_ng')) = v_rien,
+    'les deux jeux de reponses completes (Arabie saoudite, Nigeria) sont valides');
+  PERFORM pg_temp.vrai(pg_temp.examen(pg_temp.lu('complet_sa') - 'langueMaternelle') = v_rien
+    AND pg_temp.examen((pg_temp.lu('complet_sa') - 'langueMaternelle') || '{"langueMaternelle": null}') = v_rien,
+    'langue maternelle facultative : absente ou nulle, les reponses restent completes');
+  PERFORM pg_temp.vrai(pg_temp.examen(pg_temp.lu('complet_sa') - 'classesSouhaitees')
+        = '{"invalides": [], "manquants": ["classesSouhaitees"], "inconnus": []}'
+    AND pg_temp.examen(pg_temp.lu('complet_sa') - 'languesExplication')
+        = '{"invalides": [], "manquants": ["languesExplication"], "inconnus": []}'
+    AND pg_temp.examen((pg_temp.lu('complet_sa') - 'publics') || '{"publics": []}')
+        = '{"invalides": [], "manquants": ["publics"], "inconnus": []}'
+    AND pg_temp.examen(pg_temp.lu('complet_sa') || '{"languesExplication": []}')
+        = '{"invalides": [], "manquants": ["languesExplication"], "inconnus": []}',
+    'classes souhaitees, langues d''explication (au moins une) et publics (au moins une tranche) restent obligatoires');
+  -- Aucun plafond : toutes les options en une fois.
+  v_tout := pg_temp.lu('opt_exp');
+  PERFORM pg_temp.vrai(jsonb_array_length(v_tout) = 27
+    AND pg_temp.examen(pg_temp.lu('complet_sa') || jsonb_build_object('languesExplication', v_tout)) = v_rien,
+    'langues d''explication : les 27 options choisies ensemble sont valides (aucun plafond)');
+  FOR v_code IN SELECT jsonb_array_elements_text(pg_temp.lu('opt_mat')) LOOP
+    PERFORM pg_temp.vrai(pg_temp.examen(pg_temp.lu('complet_sa') || jsonb_build_object('langueMaternelle', v_code)) = v_rien,
+      'langue maternelle valide : ' || v_code);
+  END LOOP;
+  FOREACH v_code IN ARRAY ARRAY['aucune', 'moins_10_juz', 'de_10_a_29_juz', 'coran_entier'] LOOP
+    PERFORM pg_temp.vrai(pg_temp.examen(pg_temp.lu('complet_sa') || jsonb_build_object('niveauMemorisationDeclare', v_code)) = v_rien,
+      'memorisation valide : ' || v_code);
+  END LOOP;
+  FOREACH v_code IN ARRAY ARRAY['oui', 'pret_test', 'non'] LOOP
+    PERFORM pg_temp.vrai(pg_temp.examen(pg_temp.lu('complet_sa') || jsonb_build_object('ijazaPresentable', v_code)) = v_rien,
+      'ijaza valide : ' || v_code);
+  END LOOP;
+  FOREACH v_code IN ARRAY ARRAY['1', '2', '3'] LOOP
+    PERFORM pg_temp.vrai(pg_temp.examen(pg_temp.lu('complet_sa') || jsonb_build_object('classesSouhaitees', v_code)) = v_rien,
+      'classes souhaitees valides : ' || v_code);
+  END LOOP;
+  FOREACH v_code IN ARRAY ARRAY['6_9', '10_13', '14_17', 'adultes'] LOOP
+    PERFORM pg_temp.vrai(pg_temp.examen(pg_temp.lu('complet_sa') || jsonb_build_object('publics', jsonb_build_array(v_code))) = v_rien,
+      'une seule tranche d''age suffit : ' || v_code);
+  END LOOP;
+  PERFORM pg_temp.vrai(pg_temp.examen(pg_temp.lu('complet_sa') || '{"publics": ["6_9", "10_13", "14_17", "adultes"]}') = v_rien,
+    'les quatre tranches d''age ensemble sont valides');
+  -- Moyens accessibles : absent, vide, un ou tous les moyens connus.
+  PERFORM pg_temp.vrai(pg_temp.examen(pg_temp.lu('complet_sa') - 'moyensAccessibles') = v_rien
+    AND pg_temp.examen(pg_temp.lu('complet_sa') || '{"moyensAccessibles": []}') = v_rien
+    AND pg_temp.examen(pg_temp.lu('complet_sa') || '{"moyensAccessibles": ["moov_money"]}') = v_rien
+    AND pg_temp.examen(pg_temp.lu('complet_sa') || '{"moyensAccessibles": ["wave", "orange_money", "moov_money"]}') = v_rien,
+    'moyens accessibles : facultatif, vide, un seul ou tous les moyens connus (meme sans ligne confirmee)');
+  -- Un operateur retire du catalogue (actif = false) n'est plus propose ni accepte.
+  UPDATE public.referentiel_paiement_operateurs SET actif = false WHERE code = 'moov_money';
+  PERFORM pg_temp.vrai(pg_temp.examen(pg_temp.lu('complet_sa') || '{"moyensAccessibles": ["moov_money"]}')
+        = '{"invalides": ["moyensAccessibles"], "manquants": [], "inconnus": []}'
+    AND NOT EXISTS (SELECT 1 FROM jsonb_array_elements(private.questionnaire_options(pg_temp.lu('def'),
+          (SELECT c FROM jsonb_array_elements(pg_temp.lu('def') -> 'champs') c WHERE c ->> 'code' = 'moyensAccessibles'))) o
+          WHERE o ->> 'code' = 'moov_money'),
+    'un operateur desactive du catalogue n''est plus propose ni accepte dans les moyens accessibles');
+  UPDATE public.referentiel_paiement_operateurs SET actif = true WHERE code = 'moov_money';
+  PERFORM pg_temp.vrai(pg_temp.examen(pg_temp.lu('complet_sa') || '{"moyensAccessibles": ["moov_money"]}') = v_rien,
+    'operateur reactive : de nouveau accepte');
+END $acceptees$;
+
+-- (q-22/10) Les disponibilites au format que lit l'affectation (C18) : des
+-- plages par jour ISO a bornes en heures entieres, sans second fuseau.
+DO $plages$
+DECLARE
+  v_rien constant jsonb := '{"invalides": [], "manquants": [], "inconnus": []}';
+  v_chev constant jsonb := '{"invalides": ["disponibilitesDeclarees"], "manquants": [], "inconnus": [],
+    "motifs": {"disponibilitesDeclarees": "plages_qui_se_chevauchent"}}';
+  v_generique constant jsonb := '{"invalides": ["disponibilitesDeclarees"], "manquants": [], "inconnus": []}';
+  v_manque constant jsonb := '{"invalides": [], "manquants": ["disponibilitesDeclarees"], "inconnus": []}';
+  v_cas record;
+  v_champ jsonb := (SELECT c FROM jsonb_array_elements(pg_temp.lu('def') -> 'champs') c
+                     WHERE c ->> 'code' = 'disponibilitesDeclarees');
+  v_toute_la_semaine jsonb;
+BEGIN
+  -- La definition : un champ de plages, requis, sans liste, et UN SEUL champ de
+  -- fuseau dans tout le questionnaire (fuseauIana).
+  PERFORM pg_temp.vrai(v_champ @> '{"type": "creneaux", "requis": true, "min": 1, "max": 168}'
+    AND NOT v_champ ? 'liste' AND NOT v_champ ? 'valeurs'
+    AND (SELECT count(*) FROM jsonb_array_elements(pg_temp.lu('def') -> 'champs') c
+          WHERE c ->> 'liste' = 'fuseaux') = 1
+    AND (SELECT c ->> 'code' FROM jsonb_array_elements(pg_temp.lu('def') -> 'champs') c
+          WHERE c ->> 'liste' = 'fuseaux') = 'fuseauIana',
+    'disponibilitesDeclarees : plages requises (de 1 a 168), et fuseauIana est le seul fuseau du questionnaire');
+
+  -- Ce qui est accepte.
+  FOR v_cas IN SELECT * FROM (VALUES
+      ('une seule heure', '[{"jour": 1, "debut": "18:00", "fin": "19:00"}]'),
+      ('plusieurs heures du soir', '[{"jour": 1, "debut": "18:00", "fin": "21:00"}]'),
+      ('la journee entiere, de minuit a 24:00', '[{"jour": 7, "debut": "00:00", "fin": "24:00"}]'),
+      ('la derniere heure de la journee', '[{"jour": 5, "debut": "23:00", "fin": "24:00"}]'),
+      ('la premiere heure de la journee', '[{"jour": 2, "debut": "00:00", "fin": "01:00"}]'),
+      ('les memes heures deux jours de suite', '[{"jour": 1, "debut": "18:00", "fin": "21:00"}, {"jour": 2, "debut": "18:00", "fin": "21:00"}]'),
+      ('deux plages qui se touchent (19:00 est la fin de l''une et le debut de l''autre)',
+       '[{"jour": 1, "debut": "18:00", "fin": "19:00"}, {"jour": 1, "debut": "19:00", "fin": "21:00"}]'),
+      ('deux plages separees d''une heure', '[{"jour": 1, "debut": "08:00", "fin": "09:00"}, {"jour": 1, "debut": "10:00", "fin": "11:00"}]'),
+      ('plages dans le desordre', '[{"jour": 3, "debut": "22:00", "fin": "24:00"}, {"jour": 1, "debut": "08:00", "fin": "09:00"}, {"jour": 3, "debut": "06:00", "fin": "07:00"}]'),
+      ('une nuit a cheval sur minuit : deux plages, sur deux jours',
+       '[{"jour": 4, "debut": "22:00", "fin": "24:00"}, {"jour": 5, "debut": "00:00", "fin": "01:00"}]')
+    ) AS t(cas, plages) LOOP
+    PERFORM pg_temp.vrai(pg_temp.examen(pg_temp.lu('complet_sa')
+                           || jsonb_build_object('disponibilitesDeclarees', v_cas.plages::jsonb)) = v_rien,
+      'plages acceptees : ' || v_cas.cas);
+  END LOOP;
+  -- Le maximum : 7 jours de 24 plages d'une heure (168), sans chevauchement.
+  SELECT jsonb_agg(jsonb_build_object('jour', j, 'debut', to_char(h, 'FM00') || ':00', 'fin', to_char(h + 1, 'FM00') || ':00')
+                   ORDER BY j, h)
+    INTO v_toute_la_semaine FROM generate_series(1, 7) j, generate_series(0, 23) h;
+  PERFORM pg_temp.vrai(jsonb_array_length(v_toute_la_semaine) = 168
+    AND pg_temp.examen(pg_temp.lu('complet_sa') || jsonb_build_object('disponibilitesDeclarees', v_toute_la_semaine)) = v_rien,
+    'plages acceptees : toute la semaine en 168 plages d''une heure (le maximum de la definition)');
+  PERFORM pg_temp.vrai(pg_temp.examen(pg_temp.lu('complet_sa')
+        || jsonb_build_object('disponibilitesDeclarees', v_toute_la_semaine || '[{"jour": 1, "debut": "00:00", "fin": "01:00"}]'))
+        = v_generique,
+    'plus de 168 plages : refusees comme invalides (le maximum est verifie avant le chevauchement)');
+
+  -- Le chevauchement, refuse avec sa cause nommee.
+  FOR v_cas IN SELECT * FROM (VALUES
+      ('recouvrement partiel', '[{"jour": 1, "debut": "18:00", "fin": "21:00"}, {"jour": 1, "debut": "20:00", "fin": "22:00"}]'),
+      ('recouvrement partiel, plages listees dans l''autre ordre', '[{"jour": 1, "debut": "20:00", "fin": "22:00"}, {"jour": 1, "debut": "18:00", "fin": "21:00"}]'),
+      ('recouvrement d''une seule heure', '[{"jour": 6, "debut": "18:00", "fin": "20:00"}, {"jour": 6, "debut": "19:00", "fin": "21:00"}]'),
+      ('une plage contenue dans une autre', '[{"jour": 2, "debut": "08:00", "fin": "12:00"}, {"jour": 2, "debut": "09:00", "fin": "10:00"}]'),
+      ('deux plages identiques', '[{"jour": 3, "debut": "18:00", "fin": "21:00"}, {"jour": 3, "debut": "18:00", "fin": "21:00"}]'),
+      ('jusqu''a 24:00', '[{"jour": 7, "debut": "22:00", "fin": "24:00"}, {"jour": 7, "debut": "23:00", "fin": "24:00"}]'),
+      ('le recouvrement est la troisieme plage, apres deux plages qui se touchent',
+       '[{"jour": 1, "debut": "18:00", "fin": "19:00"}, {"jour": 1, "debut": "19:00", "fin": "21:00"}, {"jour": 1, "debut": "20:00", "fin": "22:00"}]'),
+      ('recouvrement un jour, rien un autre',
+       '[{"jour": 1, "debut": "18:00", "fin": "21:00"}, {"jour": 2, "debut": "18:00", "fin": "21:00"}, {"jour": 2, "debut": "20:00", "fin": "21:00"}]')
+    ) AS t(cas, plages) LOOP
+    PERFORM pg_temp.vrai(pg_temp.examen(pg_temp.lu('complet_sa')
+                           || jsonb_build_object('disponibilitesDeclarees', v_cas.plages::jsonb)) = v_chev,
+      'chevauchement refuse, cause nommee : ' || v_cas.cas);
+  END LOOP;
+  -- Contre-epreuve : les memes heures un autre jour, ou bout a bout, ne se
+  -- chevauchent pas (acceptees plus haut) ; et un champ mal forme n'est jamais
+  -- range sous la cause « chevauchement », meme si deux plages se recouvrent
+  -- aussi (la forme se verifie d'abord).
+  PERFORM pg_temp.vrai(pg_temp.examen(pg_temp.lu('complet_sa') || jsonb_build_object('disponibilitesDeclarees',
+        '[{"jour": 1, "debut": "18:00", "fin": "21:00"}, {"jour": 1, "debut": "20:00", "fin": "22:30"}]'::jsonb)) = v_generique
+    AND pg_temp.examen(pg_temp.lu('complet_sa') || jsonb_build_object('disponibilitesDeclarees',
+        '[{"jour": 1, "debut": "18:00", "fin": "21:00"}, {"jour": 1, "debut": "20:00", "fin": "22:00", "note": "x"}]'::jsonb)) = v_generique,
+    'un recouvrement dans des plages dont une est mal formee : refus generique, sans cause nommee');
+
+  -- Vide ou absent : manquant (champ requis), jamais invalide.
+  PERFORM pg_temp.vrai(pg_temp.examen(pg_temp.lu('complet_sa') || '{"disponibilitesDeclarees": []}') = v_manque
+    AND pg_temp.examen(pg_temp.lu('complet_sa') || '{"disponibilitesDeclarees": null}') = v_manque
+    AND pg_temp.examen(pg_temp.lu('complet_sa') - 'disponibilitesDeclarees') = v_manque,
+    'aucune plage (liste vide, nulle ou absente) : champ requis manquant, pas invalide');
+END $plages$;
+
+-- (q-22/10) Une ligne par heure couverte. Les plages deviennent des lignes de
+-- weekly_availability a l'entree en salle 3 (L2B, pas ecrit dans ce lot) : la
+-- regle d'expansion est posee ici, en fonction de test, et prouvee contre la
+-- vraie table et contre le vrai predicat d'affectation.
+CREATE FUNCTION pg_temp.heures_couvertes(p_plages jsonb) RETURNS TABLE (weekday smallint, hour_local smallint)
+LANGUAGE sql AS $$
+  SELECT (e ->> 'jour')::smallint, h::smallint
+    FROM jsonb_array_elements(p_plages) e
+   CROSS JOIN LATERAL generate_series(substr(e ->> 'debut', 1, 2)::integer, substr(e ->> 'fin', 1, 2)::integer - 1) h;
+$$;
+DO $expansion$
+DECLARE
+  v_t1 constant uuid := 'ca2a0000-0000-4000-8000-0000000000c1';
+  v_t2 constant uuid := 'ca2a0000-0000-4000-8000-0000000000c2';
+  v_plages constant jsonb := '[{"jour": 3, "debut": "18:00", "fin": "21:00"}, {"jour": 5, "debut": "22:00", "fin": "24:00"}]';
+  v_chevauche constant jsonb := '[{"jour": 3, "debut": "18:00", "fin": "21:00"}, {"jour": 3, "debut": "20:00", "fin": "22:00"}]';
+  v_classe uuid;
+  v_ok boolean;
+  v_cas record;
+BEGIN
+  -- Deux enseignants prets a recevoir une Classe (compte provisoire actif, piece validee, francais).
+  INSERT INTO auth.users (id, email) VALUES (v_t1, 'cand-l2a1-c1@test.invalid'), (v_t2, 'cand-l2a1-c2@test.invalid');
+  INSERT INTO public.profiles (id, immutable_id, role, first_name, last_name, account_status, gender)
+  VALUES (v_t1, 'CA2A-ENS-00C1', 'teacher', 'Zaynab', 'Paris', 'provisional_active', 'female'),
+         (v_t2, 'CA2A-ENS-00C2', 'teacher', 'Zakaria', 'Riyad', 'provisional_active', 'male');
+  INSERT INTO public.teacher_profiles (profile_id, country, languages, weekly_hours_cap, kyc_status, timezone_iana)
+  VALUES (v_t1, 'FR', ARRAY['francais'], 40, 'approved', 'Europe/Paris'),
+         (v_t2, 'SA', ARRAY['francais'], 40, 'approved', 'Asia/Riyadh');
+
+  -- 1. Les plages valides (fuseauIana = Europe/Paris) donnent cinq lignes que la table accepte :
+  --    mercredi 18, 19, 20 ; vendredi 22, 23.
+  INSERT INTO public.weekly_availability (profile_id, weekday, hour_local, timezone_iana)
+  SELECT v_t1, x.weekday, x.hour_local, 'Europe/Paris' FROM pg_temp.heures_couvertes(v_plages) x;
+  PERFORM pg_temp.vrai((SELECT jsonb_agg(jsonb_build_array(weekday, hour_local) ORDER BY weekday, hour_local)
+                          FROM public.weekly_availability WHERE profile_id = v_t1)
+      = '[[3, 18], [3, 19], [3, 20], [5, 22], [5, 23]]'::jsonb
+    AND pg_temp.examen(pg_temp.lu('complet_sa') || jsonb_build_object('disponibilitesDeclarees', v_plages)) =
+        '{"invalides": [], "manquants": [], "inconnus": []}'::jsonb,
+    'une ligne par heure couverte : mercredi 18:00-21:00 et vendredi 22:00-24:00 donnent les heures 18, 19, 20 et 22, 23, que la table accepte');
+
+  -- 2. Le predicat d'affectation lit ces lignes heure par heure (Classe de 60 minutes, la duree du reglage).
+  FOR v_cas IN SELECT * FROM (VALUES
+      (3, 18, true), (3, 19, true), (3, 20, true), (5, 22, true), (5, 23, true),
+      (3, 17, false), (3, 21, false), (5, 21, false), (4, 18, false), (5, 0, false)
+    ) AS t(jour, heure, couverte) LOOP
+    v_classe := gen_random_uuid();
+    INSERT INTO public.groupes (id, teacher_id, etat, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana)
+    VALUES (v_classe, NULL, 'en_attente_enseignant', 'enfant', 5, 'Q22 plage ' || v_cas.jour || '-' || v_cas.heure,
+            v_cas.jour, v_cas.heure, 'Europe/Paris');
+    BEGIN
+      PERFORM app_private.verifier_affectation_enseignant(v_classe, v_t1, true);
+      v_ok := true;
+    EXCEPTION WHEN raise_exception THEN
+      IF SQLERRM NOT LIKE 'enseignant non disponible: jour ' || v_cas.jour || ', heure ' || v_cas.heure || ',%' THEN
+        RAISE EXCEPTION 'CAND-L2A1 ROUGE : motif inattendu pour le jour %, heure % : %', v_cas.jour, v_cas.heure, SQLERRM;
+      END IF;
+      v_ok := false;
+    END;
+    PERFORM pg_temp.vrai(v_ok = v_cas.couverte,
+      'le predicat d''affectation lit la plage : Classe le jour ' || v_cas.jour || ' a ' || v_cas.heure || ' h '
+      || CASE WHEN v_cas.couverte THEN 'couverte, acceptee' ELSE 'hors plage, refusee (enseignant non disponible)' END);
+  END LOOP;
+
+  -- 3. Le fuseau de la plage est celui de fuseauIana : une Classe donnee dans un autre fuseau se
+  --    compare en instants. Riyad (UTC+3) 18:00 est Conakry (UTC+0) 15:00, sans changement d'heure.
+  INSERT INTO public.weekly_availability (profile_id, weekday, hour_local, timezone_iana)
+  SELECT v_t2, x.weekday, x.hour_local, 'Asia/Riyadh'
+    FROM pg_temp.heures_couvertes('[{"jour": 2, "debut": "18:00", "fin": "19:00"}]') x;
+  FOR v_cas IN SELECT * FROM (VALUES (15, true), (16, false), (18, false)) AS t(heure, couverte) LOOP
+    v_classe := gen_random_uuid();
+    INSERT INTO public.groupes (id, teacher_id, etat, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana)
+    VALUES (v_classe, NULL, 'en_attente_enseignant', 'enfant', 5, 'Q22 fuseau ' || v_cas.heure, 2, v_cas.heure, 'Africa/Conakry');
+    BEGIN
+      PERFORM app_private.verifier_affectation_enseignant(v_classe, v_t2, true);
+      v_ok := true;
+    EXCEPTION WHEN raise_exception THEN
+      IF SQLERRM NOT LIKE 'enseignant non disponible:%' THEN
+        RAISE EXCEPTION 'CAND-L2A1 ROUGE : motif inattendu a Conakry, heure % : %', v_cas.heure, SQLERRM;
+      END IF;
+      v_ok := false;
+    END;
+    PERFORM pg_temp.vrai(v_ok = v_cas.couverte,
+      'plage mardi 18:00-19:00 a Riyad : Classe a Conakry le mardi a ' || v_cas.heure || ' h '
+      || CASE WHEN v_cas.couverte THEN '(15 h Conakry = 18 h Riyad) acceptee' ELSE 'refusee' END);
+  END LOOP;
+
+  -- 4. Contre-epreuve : sans l'interdiction du chevauchement, l'expansion produirait deux fois la
+  --    meme ligne (mercredi 20 h), que la cle unique de la table refuse. C'est ce que le refus
+  --    « plages_qui_se_chevauchent » evite en amont.
+  PERFORM pg_temp.vrai((SELECT count(*) - count(DISTINCT (weekday, hour_local)) FROM pg_temp.heures_couvertes(v_chevauche)) = 1
+    AND pg_temp.examen(pg_temp.lu('complet_sa') || jsonb_build_object('disponibilitesDeclarees', v_chevauche))
+        = '{"invalides": ["disponibilitesDeclarees"], "manquants": [], "inconnus": [],
+            "motifs": {"disponibilitesDeclarees": "plages_qui_se_chevauchent"}}'::jsonb,
+    'contre-epreuve : des plages qui se chevauchent donneraient une heure en double (mercredi 20 h), et l''examen les refuse');
+  BEGIN
+    INSERT INTO public.weekly_availability (profile_id, weekday, hour_local, timezone_iana)
+    SELECT 'ca2a0000-0000-4000-8000-0000000000b1', x.weekday, x.hour_local, 'Europe/Paris'
+      FROM pg_temp.heures_couvertes(v_chevauche) x;
+    RAISE EXCEPTION 'CAND-L2A1 ROUGE : l''expansion de plages qui se chevauchent a ete acceptee par la table';
+  EXCEPTION WHEN unique_violation THEN
+    PERFORM pg_temp.ok('contre-epreuve : la cle unique de weekly_availability refuse l''expansion de plages qui se chevauchent');
+  END;
+END $expansion$;
+
+-- (p-22/10) L'EXAMEN ne depend PAS du maximum de Classes par enseignant : il
+-- accepte tout entier de 1 a 80 (la borne du reglage) pour classesSouhaitees,
+-- quel que soit le maximum en vigueur. Une reponse valide a l'envoi ne devient
+-- jamais invalide parce que la direction regle le maximum (le meme examen
+-- relit les reponses envoyees : etat_dossier(), controle questionnaire_complet
+-- de L2A2) : « 5 », valide au maximum de 5, l'est encore a 4, a 3, a 1. Seules
+-- les options proposees a l'ecran suivent le maximum.
+DO $classes_plafond$
+DECLARE
+  v_rien constant jsonb := '{"invalides": [], "manquants": [], "inconnus": []}';
+  v_invalide constant jsonb := '{"invalides": ["classesSouhaitees"], "manquants": [], "inconnus": []}';
+  v_champ jsonb := (SELECT c FROM jsonb_array_elements(pg_temp.lu('def') -> 'champs') c WHERE c ->> 'code' = 'classesSouhaitees');
+  v_code text;
+  v_max integer;
+BEGIN
+  -- Aux maximums 3 (defaut), 5, 2, 1, 80 : memes valeurs acceptees (1, 3, 4, 5,
+  -- 80), memes valeurs refusees (0, 81), et l'ecran propose de 1 au maximum.
+  FOREACH v_max IN ARRAY ARRAY[3, 5, 2, 1, 80] LOOP
+    PERFORM pg_temp.regler(v_max);
+    PERFORM pg_temp.vrai(
+          pg_temp.examen(pg_temp.lu('complet_sa') || '{"classesSouhaitees": "1"}') = v_rien
+      AND pg_temp.examen(pg_temp.lu('complet_sa') || '{"classesSouhaitees": "3"}') = v_rien
+      AND pg_temp.examen(pg_temp.lu('complet_sa') || '{"classesSouhaitees": "4"}') = v_rien
+      AND pg_temp.examen(pg_temp.lu('complet_sa') || '{"classesSouhaitees": "5"}') = v_rien
+      AND pg_temp.examen(pg_temp.lu('complet_sa') || '{"classesSouhaitees": "80"}') = v_rien
+      AND pg_temp.examen(pg_temp.lu('complet_sa') || '{"classesSouhaitees": "0"}') = v_invalide
+      AND pg_temp.examen(pg_temp.lu('complet_sa') || '{"classesSouhaitees": "81"}') = v_invalide
+      AND pg_temp.examen(pg_temp.lu('complet_ng')) = v_rien
+      AND private.questionnaire_options(pg_temp.lu('def'), v_champ)
+          = (SELECT jsonb_agg(to_jsonb(n::text) ORDER BY n) FROM generate_series(1, v_max) n),
+      'classes souhaitees, maximum ' || v_max || ' : l''examen accepte 1, 3, 4, 5 et 80 (une reponse envoyee ne devient jamais invalide), refuse 0 et 81 ; l''ecran propose 1 a ' || v_max);
+  END LOOP;
+  -- Les formes refusees le sont aussi au maximum de 80.
+  FOREACH v_code IN ARRAY ARRAY['0', '00', '01', '+3', '3.0', ' 3', '3 ', 'trois', '', '-1', '100', '1e1'] LOOP
+    PERFORM pg_temp.vrai(pg_temp.examen(pg_temp.lu('complet_sa') || jsonb_build_object('classesSouhaitees', v_code)) = v_invalide,
+      'classes souhaitees : forme refusee meme au maximum de 80 : « ' || v_code || ' »');
+  END LOOP;
+  PERFORM pg_temp.vrai(NOT private.questionnaire_permis(pg_temp.lu('def'), v_champ, NULL, NULL),
+    'classes souhaitees : une valeur nulle n''est pas permise');
+  -- Le maximum ne touche aucun autre champ a valeurs fermees.
+  PERFORM pg_temp.vrai(pg_temp.examen(pg_temp.lu('complet_sa') || '{"ijazaPresentable": "4"}')
+        = '{"invalides": ["ijazaPresentable"], "manquants": [], "inconnus": []}'
+    AND pg_temp.examen(pg_temp.lu('complet_sa') || '{"debutPossible": "4"}')
+        = '{"invalides": ["debutPossible"], "manquants": [], "inconnus": []}',
+    'le maximum de Classes ne rend valide aucun autre champ a valeurs fermees (« 4 » refuse ailleurs)');
+  PERFORM pg_temp.regler(3);
+END $classes_plafond$;
+
+-- La definition elle-meme : forme verifiee par la contrainte de la table
+-- (cle "exclure" reservee aux langues, codes de langue, listes nommees).
+DO $definition_forme$
+DECLARE
+  v_def jsonb := pg_temp.lu('def');
+  v_champs jsonb := pg_temp.lu('def') -> 'champs';
+BEGIN
+  PERFORM pg_temp.vrai(private.questionnaire_definition_valide(v_def), 'la definition courante est valide');
+  PERFORM pg_temp.vrai(
+    NOT private.questionnaire_definition_valide(jsonb_set(v_def, '{languesHorsReferentiel}', v_def -> 'languesHorsReferentiel' || '["autre_a_preciser"]'))
+    AND NOT private.questionnaire_definition_valide(jsonb_set(v_def, '{languesHorsReferentiel}', v_def -> 'languesHorsReferentiel' || '["Français"]'))
+    AND NOT private.questionnaire_definition_valide(jsonb_set(v_def, '{languesHorsReferentiel}', v_def -> 'languesHorsReferentiel' || '["ha"]'))
+    AND private.questionnaire_definition_valide(jsonb_set(v_def, '{languesHorsReferentiel}', v_def -> 'languesHorsReferentiel' || '["kri"]')),
+    'langues hors referentiel : un code ISO 639 ou "autre", jamais autre_a_preciser, un nom ou un doublon');
+  PERFORM pg_temp.vrai(
+    NOT private.questionnaire_definition_valide(jsonb_build_object('champs', jsonb_build_array(
+      '{"code": "publics", "type": "choix_multiple", "requis": true, "valeurs": ["a"], "exclure": ["ar"]}'::jsonb)))
+    AND NOT private.questionnaire_definition_valide(jsonb_build_object('champs', jsonb_build_array(
+      '{"code": "pays", "type": "choix", "requis": true, "liste": "pays", "exclure": ["ar"]}'::jsonb)))
+    AND NOT private.questionnaire_definition_valide(jsonb_build_object('champs', jsonb_build_array(
+      '{"code": "langues", "type": "choix", "requis": true, "liste": "langues", "exclure": []}'::jsonb)))
+    AND NOT private.questionnaire_definition_valide(jsonb_build_object('champs', jsonb_build_array(
+      '{"code": "langues", "type": "choix", "requis": true, "liste": "langues", "exclure": ["ar", "ar"]}'::jsonb)))
+    AND NOT private.questionnaire_definition_valide(jsonb_build_object('champs', jsonb_build_array(
+      '{"code": "langues", "type": "choix", "requis": true, "liste": "langues", "exclure": [1]}'::jsonb)))
+    AND private.questionnaire_definition_valide(jsonb_build_object('champs', jsonb_build_array(
+      '{"code": "langues", "type": "choix", "requis": true, "liste": "langues", "exclure": ["ar", "ps"]}'::jsonb))),
+    'exclure : une liste non vide, distincte, de codes de langue, sur une liste "langues" seulement');
+  PERFORM pg_temp.vrai(
+    private.questionnaire_definition_valide(jsonb_build_object('champs', jsonb_build_array(
+      '{"code": "champx", "type": "choix", "requis": true, "valeurs": ["1", "2", "6_9"]}'::jsonb)))
+    AND NOT private.questionnaire_definition_valide(jsonb_build_object('champs', jsonb_build_array(
+      '{"code": "champx", "type": "choix", "requis": true, "valeurs": ["_1"]}'::jsonb)))
+    AND NOT private.questionnaire_definition_valide(jsonb_build_object('champs', jsonb_build_array(
+      '{"code": "champx", "type": "choix", "requis": true, "valeurs": ["A"]}'::jsonb)))
+    AND NOT private.questionnaire_definition_valide(jsonb_build_object('champs', jsonb_build_array(
+      '{"code": "champx", "type": "choix", "requis": true, "liste": "moyens_inconnus"}'::jsonb)))
+    AND private.questionnaire_definition_valide(jsonb_build_object('champs', jsonb_build_array(
+      '{"code": "champx", "type": "choix_multiple", "requis": false, "liste": "moyens_connus"}'::jsonb))),
+    'codes de valeurs : un chiffre peut ouvrir un code (1, 6_9), pas un tiret bas ni une majuscule ; seules les listes nommees existent');
+  PERFORM pg_temp.vrai(jsonb_array_length(v_champs) = 17
+    AND (SELECT count(DISTINCT c ->> 'code') FROM jsonb_array_elements(v_champs) c) = 17,
+    'dix-sept champs, tous de code distinct');
+END $definition_forme$;
 
 -- Un second brouillon met a jour le meme document ; une cle deja prise pour
 -- un autre geste est refusee ; une cle de brouillon plus ancienne que la
@@ -849,6 +1417,112 @@ SELECT pg_temp.vrai(pg_temp.lu('n1') #>> '{candidature,etat}' = 'paiement_non_di
   AND (SELECT count(*) FROM public.audit_logs WHERE row_id = 'ca2acccc-0000-4000-8000-000000000002'
           AND action IN ('candidature_geste', 'candidature_effet_paiement')) = 2,
   'envoi depuis l''Afrique : transition 6 puis transition 8 (L6), une ligne d''audit chacune, issue en cours');
+
+-- Le document envoye depuis le Nigeria garde ce que le directeur a decide (C17) :
+-- treize langues d'explication (plus de dix), pas de langue maternelle, les
+-- quatre tranches d'age, trois classes, trois moyens accessibles.
+SELECT pg_temp.vrai((SELECT jsonb_array_length(reponses -> 'languesExplication') = 13
+                            AND NOT reponses ? 'langueMaternelle'
+                            AND reponses -> 'publics' = '["6_9", "10_13", "14_17", "adultes"]'::jsonb
+                            AND reponses ->> 'classesSouhaitees' = '3'
+                            AND reponses -> 'moyensAccessibles' = '["wave", "orange_money", "moov_money"]'::jsonb
+                            AND envoye_le IS NOT NULL AND NOT brouillon
+                       FROM public.candidature_reponses WHERE candidature_id = 'ca2acccc-0000-4000-8000-000000000002'),
+  'envoi du Nigeria : 13 langues d''explication, sans langue maternelle, quatre tranches d''age, trois classes, trois moyens accessibles, tout garde');
+
+-- (o) CONTRE-EPREUVE : les moyens accessibles ne sont lus ni par le calcul du
+-- paiement ni par un controle. Memes reponses avec et sans eux : meme
+-- declaration, meme dimension paiement, meme controle paiement_compatible.
+-- Declarer tous les moyens du catalogue ne rend compatible personne qui n'a ni
+-- compte bancaire ni operateur confirme dans son pays.
+CREATE FUNCTION pg_temp.paiement_avec(p_id uuid, p_reponses jsonb) RETURNS jsonb
+LANGUAGE plpgsql AS $$
+DECLARE
+  v_doc uuid;
+  v_r jsonb;
+BEGIN
+  INSERT INTO public.candidature_reponses (candidature_id, questionnaire_version, reponses, source, soumis_le)
+  VALUES (p_id, 'salle-examen-1', p_reponses, 'candidat', pg_catalog.clock_timestamp() + interval '1 hour')
+  RETURNING id INTO v_doc;
+  v_r := jsonb_build_object('declaration', private.paiement_declaration(p_id),
+                            'etat', private.paiement_etat(p_id),
+                            'compatible', private.paiement_compatible(p_id));
+  DELETE FROM public.candidature_reponses WHERE id = v_doc;
+  RETURN v_r;
+END $$;
+SELECT pg_temp.garde('t01', pg_temp.trace('ca2acccc-0000-4000-8000-000000000001'));
+SELECT pg_temp.garde('pm_sa0', pg_temp.paiement_avec('ca2acccc-0000-4000-8000-000000000001', pg_temp.lu('complet_sa')));
+SELECT pg_temp.garde('pm_sa1', pg_temp.paiement_avec('ca2acccc-0000-4000-8000-000000000001',
+  pg_temp.lu('complet_sa') || '{"moyensAccessibles": ["wave", "orange_money", "moov_money"]}'));
+SELECT pg_temp.garde('pm_sa2', pg_temp.paiement_avec('ca2acccc-0000-4000-8000-000000000001',
+  pg_temp.lu('complet_sa') || '{"compteBancaire": false, "moyensAccessibles": []}'));
+SELECT pg_temp.garde('pm_sa3', pg_temp.paiement_avec('ca2acccc-0000-4000-8000-000000000001',
+  pg_temp.lu('complet_sa') || '{"compteBancaire": false, "moyensAccessibles": ["wave", "orange_money", "moov_money"]}'));
+SELECT pg_temp.garde('pm_ng0', pg_temp.paiement_avec('ca2acccc-0000-4000-8000-000000000002',
+  pg_temp.lu('complet_ng') - 'moyensAccessibles'));
+SELECT pg_temp.garde('pm_ng1', pg_temp.paiement_avec('ca2acccc-0000-4000-8000-000000000002', pg_temp.lu('complet_ng')));
+SELECT pg_temp.garde('pm_ng2', pg_temp.paiement_avec('ca2acccc-0000-4000-8000-000000000002',
+  (pg_temp.lu('complet_ng') - 'moyensAccessibles') || '{"compteBancaire": false}'));
+SELECT pg_temp.garde('pm_ng3', pg_temp.paiement_avec('ca2acccc-0000-4000-8000-000000000002',
+  pg_temp.lu('complet_ng') || '{"compteBancaire": false}'));
+SELECT pg_temp.vrai(pg_temp.lu('pm_sa0') = pg_temp.lu('pm_sa1')
+  AND pg_temp.lu('pm_sa0') -> 'etat' = '"a_verifier"'::jsonb
+  AND pg_temp.lu('pm_sa0') #> '{declaration}' = '{"paysVersement": "SA", "compteBancaire": true, "operateurs": []}'::jsonb
+  AND pg_temp.lu('pm_ng0') = pg_temp.lu('pm_ng1')
+  AND pg_temp.lu('pm_ng0') -> 'etat' = '"incompatible"'::jsonb
+  AND pg_temp.lu('pm_ng0') #> '{declaration}' = '{"paysVersement": "NG", "compteBancaire": true, "operateurs": []}'::jsonb,
+  'contre-epreuve : memes reponses avec et sans moyens accessibles, meme declaration (trois cles seulement), meme dimension paiement (Arabie saoudite a verifier, Nigeria incompatible)');
+SELECT pg_temp.vrai(pg_temp.lu('pm_sa2') = pg_temp.lu('pm_sa3')
+  AND pg_temp.lu('pm_sa3') -> 'etat' = '"incompatible"'::jsonb
+  AND pg_temp.lu('pm_sa3') -> 'compatible' = 'false'::jsonb
+  AND pg_temp.lu('pm_ng2') = pg_temp.lu('pm_ng3')
+  AND pg_temp.lu('pm_ng3') -> 'etat' = '"incompatible"'::jsonb
+  AND pg_temp.lu('pm_ng3') -> 'compatible' = 'false'::jsonb,
+  'contre-epreuve : sans compte bancaire ni operateur confirme, cocher tous les moyens connus ne rend personne compatible (le controle de paiement reste la condition d''entree en salle 2)');
+-- Contre-epreuve decisive : une ligne de mobile money CONFIRMEE (Turquie,
+-- hors d'Afrique, posee dans un sous-bloc annule). Le meme operateur declare
+-- dans `operateurs` rend le paiement a verifier ; declare dans
+-- `moyensAccessibles` il ne change rien.
+DO $ligne_confirmee$
+DECLARE
+  v_base jsonb := pg_temp.lu('complet_sa')
+    || '{"paysResidence": "TR", "paysVersement": "TR", "fuseauIana": "Europe/Istanbul", "compteBancaire": false}';
+  v_sans jsonb;
+  v_operateur jsonb;
+  v_accessible jsonb;
+BEGIN
+  BEGIN
+    INSERT INTO public.referentiel_paiement (pays, methode, operateur, etat, source, source_ref, verifie_le)
+    VALUES ('TR', 'mobile_money', 'wave', 'confirme', 'decision_directeur', 'scenario CAND-L2A1', current_date);
+    v_sans := pg_temp.paiement_avec('ca2acccc-0000-4000-8000-000000000001', v_base || '{"operateurs": []}');
+    v_operateur := pg_temp.paiement_avec('ca2acccc-0000-4000-8000-000000000001', v_base || '{"operateurs": ["wave"]}');
+    v_accessible := pg_temp.paiement_avec('ca2acccc-0000-4000-8000-000000000001',
+      v_base || '{"operateurs": [], "moyensAccessibles": ["wave"]}');
+    RAISE EXCEPTION 'annule' USING ERRCODE = 'P0001';
+  EXCEPTION WHEN raise_exception THEN
+    IF SQLERRM <> 'annule' THEN
+      RAISE;
+    END IF;
+  END;
+  PERFORM pg_temp.vrai(v_sans -> 'etat' = '"incompatible"'::jsonb
+    AND v_operateur -> 'etat' = '"a_verifier"'::jsonb
+    AND v_accessible -> 'etat' = '"incompatible"'::jsonb
+    AND v_accessible = v_sans
+    AND NOT EXISTS (SELECT 1 FROM public.referentiel_paiement WHERE pays = 'TR' AND methode = 'mobile_money'),
+    'contre-epreuve decisive : avec une ligne confirmee, wave dans operateurs rend le paiement a verifier, wave dans moyensAccessibles le laisse incompatible, comme sans rien (ligne annulee ensuite)');
+END $ligne_confirmee$;
+SELECT pg_temp.vrai(pg_temp.trace('ca2acccc-0000-4000-8000-000000000001') = pg_temp.lu('t01')
+  AND NOT EXISTS (SELECT 1 FROM pg_catalog.pg_proc p
+                    JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+                   WHERE n.nspname IN ('private', 'public', 'app_private')
+                     AND p.proname LIKE 'paiement\_%' AND p.prosrc LIKE '%moyensAccessibles%')
+  AND NOT EXISTS (SELECT 1 FROM pg_catalog.pg_proc p
+                    JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+                   WHERE n.nspname IN ('private', 'public', 'app_private')
+                     AND (p.proname LIKE '%controle%' OR p.proname LIKE 'cand%' OR p.proname LIKE 'candidature%')
+                     AND p.prosrc LIKE '%moyensAccessibles%'
+                     AND p.proname <> 'candidature_questionnaire_envoye'),
+  'moyens accessibles : aucune fonction de paiement ni aucun controle ne cite la cle (seule l''exclusion du controle questionnaire_complet de L2A2 la nomme), 0 ecriture restante');
 
 -- ------------------------------------------------------------
 -- (h) Transition 17 : retrait par le candidat (CAND-03)
@@ -1380,8 +2054,8 @@ DO $brouillons_c12$
 BEGIN
   FOR i IN 1..25 LOOP
     PERFORM pg_temp.garde('b12_' || i, public.enregistrer_reponses_salle_examen('salle-examen-1',
-      (pg_temp.lu('complet_sa') - 'riwayat') || jsonb_build_object('heuresParSemaine',
-        CASE WHEN i % 2 = 0 THEN 'de_3_a_5' ELSE 'de_6_a_10' END),
+      (pg_temp.lu('complet_sa') - 'riwayat') || jsonb_build_object('classesSouhaitees',
+        CASE WHEN i % 2 = 0 THEN '1' ELSE '2' END),
       i - 1, 'cle-brouillon-c12-' || lpad(i::text, 2, '0')));
   END LOOP;
 END $brouillons_c12$;
@@ -1403,7 +2077,9 @@ SELECT pg_temp.vrai((SELECT count(*) FROM public.candidature_gestes) > 0
   AND NOT EXISTS (SELECT 1 FROM public.candidature_gestes g
                    WHERE jsonb_path_exists(g.resultat, 'lax $.**.reponses')
                       OR jsonb_path_exists(g.resultat, 'lax $.**.paysResidence')
-                      OR jsonb_path_exists(g.resultat, 'lax $.**.langueMaternelle'))
+                      OR jsonb_path_exists(g.resultat, 'lax $.**.langueMaternelle')
+                      OR jsonb_path_exists(g.resultat, 'lax $.**.languesExplication')
+                      OR jsonb_path_exists(g.resultat, 'lax $.**.moyensAccessibles'))
   AND NOT EXISTS (SELECT 1 FROM public.candidature_brouillon_cles b
                    WHERE jsonb_path_exists(b.resultat, 'lax $.**.reponses')
                       OR jsonb_path_exists(b.resultat, 'lax $.**.paysResidence')),
@@ -1618,8 +2294,8 @@ SELECT pg_temp.vrai(pg_temp.lu('cond3') = '{"disponible": false}'::jsonb
 
 DO $fin$
 BEGIN
-  IF current_setting('test.n')::int <> 245 THEN
-    RAISE EXCEPTION 'CAND-L2A1 ROUGE : % controles executes, 245 attendus', current_setting('test.n');
+  IF current_setting('test.n')::int <> 417 THEN
+    RAISE EXCEPTION 'CAND-L2A1 ROUGE : % controles executes, 417 attendus', current_setting('test.n');
   END IF;
   RAISE NOTICE 'CAND-L2A1 : % controles verts', current_setting('test.n');
 END $fin$;

@@ -56,6 +56,7 @@ Statuts : **DÉCIDÉ** (directeur, daté) · **PROPOSÉ** (non adopté) · **REM
 | Rythme | 3 séances/semaine, même enseignant sur tous les jours | DÉCIDÉ 29/09 | PRÉSENT |
 | Durée | Enfant 60 min avec courte pause (5 min) ; adulte 90 min | 12/10 | Pause 6 min dans `0043` : écart mineur, réglage |
 | Capacité | Enfant 5, adulte 6, **débutants 4** ; valeur effective = celle de la Classe | DÉCIDÉ V3 30/09 + V4 02/10, confirmé 12/10 | ÉCART : pas de capacité « débutant » |
+| Charge maximale d'un enseignant | **Trois Classes au plus, réglable par la direction** (réglage `enseignant.classes_max`, 1 à 80) ; une Classe close et un remplacement ponctuel ne comptent pas | DÉCIDÉ 22/10 (`DECISION-CANDIDATURES-2026-10-21.md`, 1 ter) | PRÉSENT côté serveur, `testé localement` (migrations `20261022000200` et `20261022000300`) ; ÉCART : l'écran Règles et les phrases de refus du client ne le connaissent pas encore |
 | Minimum pour ouvrir | **4** ; en dessous, autorisation et budget tracés | DÉCIDÉ V3 + V4 | ÉCART : `groupe.minimum_lancement` = 3 (choix d'agent) |
 | Formation d'une classe | 14 jours au plus, point à J7 ; prolongation de 7 jours avec accord du demandeur | DÉCIDÉ 30/09 (ATT-01) | À vérifier dans le suivi des demandes |
 | Entrée dans une classe existante | Au début d'un mois, après placement | DÉCIDÉ 30/09 (CAL-03) | — |
