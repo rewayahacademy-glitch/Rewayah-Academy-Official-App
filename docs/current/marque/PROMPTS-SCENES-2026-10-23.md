@@ -1,5 +1,9 @@
 # Scènes à générer pour le site public (23/10/2026, style et couleurs revus le même jour)
 
+> **Projet annulé par le directeur le 23/10/2026** (« on annule le projet des nouvelles images. il faut
+> conserver ce qu'on a ») : le site garde ses rendus actuels. Ces prompts restent comme référence pour une
+> image future (registre de marque, M-32 et O-22).
+
 **Consignes du directeur (23/10/2026)** : un prompt par scène, complet, sans en coller plusieurs ; le **style de
 dessin** de ses références (dessin vectoriel à plat, formes simples, une lumière qui sort d'une porte ou d'une
 fenêtre), **mais les couleurs de l'application**, pas celles des références ; **visages sans yeux** (consigne
