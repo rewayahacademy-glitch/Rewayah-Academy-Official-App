@@ -118,6 +118,30 @@ const MODELES: Record<string, (d: Donnees) => Omit<Contenu, 'raison'>> = {
       ],
     }
   },
+  // Candidats inscrits aux formulaires Google, prevenus de creer leur compte
+  // (DECISION-CANDIDATURES-2026-10-21.md, « Le message qui previent les inscrits
+  // des formulaires Google », regles 1 a 8). Donnees : `date_reponse` (horodatage
+  // importe, ISO), `formulaire` (nom du formulaire), `prenom` facultatif. Aucune
+  // reponse du formulaire n'entre dans le message.
+  lien_inscription: (d) => {
+    const quand = dateLongue(d.date_reponse)
+    const nom = typeof d.formulaire === 'string' && d.formulaire.trim() ? ` « ${d.formulaire.trim()} »` : ''
+    const rappel = `${quand ? `Le ${quand}, vous` : 'Vous'} avez répondu à notre formulaire${nom}.`
+    return {
+      sujet: 'Votre candidature à Rewayah Academy : créez votre compte',
+      apercu: rappel,
+      titre: 'Votre candidature continue dans l’application',
+      blocs: [
+        { type: 'texte', texte: bonjour(d) },
+        { type: 'texte', texte: rappel },
+        { type: 'texte', texte: 'Ce formulaire servait à proposer votre candidature pour enseigner le Coran à Rewayah Academy, en petite classe et en visio.' },
+        { type: 'texte', texte: 'Les candidatures se font désormais dans l’application Rewayah Academy, et vos réponses y sont déjà. Créez votre compte avec la même adresse e-mail que dans le formulaire : votre candidature s’y retrouvera d’elle-même.' },
+        { type: 'bouton', libelle: 'Créer mon compte', href: `${APP}/inscription` },
+        { type: 'texte', texte: 'Rien à payer : postuler et créer son compte sont gratuits. Aucun candidat ne paie, à aucune étape, et l’académie ne vous demandera jamais d’argent.' },
+        { type: 'note', texte: 'Nous ne vous demanderons jamais de mot de passe ni de paiement par message. Le lien mène à notre adresse officielle, app.rewayahacademy.com. Si vous n’avez pas rempli ce formulaire, ignorez ce message.' },
+      ],
+    }
+  },
   message_libre: (d) => libre(d),
   nouvelles: (d) => libre(d),
 }

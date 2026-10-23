@@ -86,5 +86,29 @@ l'envoi par Workspace). À ajouter :
 - Workspace : environ 2 000 envois par jour et par compte. Au-delà, `COURRIEL_TRANSPORT=resend`
   (clé `RESEND_API_KEY`, domaine vérifié chez Resend, DKIM sur un sous-domaine).
 - Les e-mails sont en français ; les autres langues de l'application suivront avec la langue du profil.
-- Les candidatures (branche `claude/lucid-mccarthy-qpk6yq`) n'ont pas encore d'e-mails
-  automatiques ; la direction leur écrit dans la catégorie `recrutement`.
+- Candidatures : le modèle `lien_inscription` existe ; le geste « Prévenir » du lot Recrutement
+  s'y branche (§7).
+
+## 7. Brancher un nouvel envoi (pour les autres lots)
+
+Une seule file : `public.courriels_sortants`. On y entre par `public.courriel_enfiler`, depuis une
+fonction `SECURITY DEFINER` (propriétaire `postgres`, `search_path = ''`) ; aucun client n'a le droit
+de l'appeler directement.
+
+```sql
+PERFORM public.courriel_enfiler(
+  'recrutement',                 -- categorie (alias recrutement@)
+  'lien_inscription',            -- modele (supabase/functions/_shared/courriel/modeles.ts)
+  v_adresse,                     -- destinataire ; normalisee en minuscules
+  NULL,                          -- profil s'il existe (prenom ajoute, compte enfant exclu), sinon NULL
+  pg_catalog.jsonb_build_object('date_reponse', v_horodatage,   -- timestamptz, ecrit en toutes lettres
+                                'formulaire', v_nom_formulaire,  -- nom du formulaire
+                                'prenom', v_prenom),             -- facultatif
+  'candidat_prevenu:' || v_reponse_id::text);  -- cle d'idempotence : jamais deux fois
+```
+
+Rend l'`uuid` de la ligne, ou `NULL` si la clé existe déjà (déjà mis en file), si la catégorie est
+désactivée ou si l'adresse est exclue. Un nouveau modèle s'ajoute dans `modeles.ts`, avec son test dans
+`courriel_test.ts`. Modèle `lien_inscription` (candidats des formulaires Google) : règles 1 à 8 de
+`DECISION-CANDIDATURES-2026-10-21.md`, présent dans le code et testé (Deno 8/8) ; le branchement de
+« Prévenir » revient au lot Recrutement.
