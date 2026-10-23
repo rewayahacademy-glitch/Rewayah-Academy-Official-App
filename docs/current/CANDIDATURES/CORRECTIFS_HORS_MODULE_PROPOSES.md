@@ -912,6 +912,11 @@ Doivent rester verts : toute la liste de la CI, en particulier
 - **`modifier_groupe` peut toujours déplacer une classe vers une collision.**
   - CF1-B6 le vise aussi.
   - Il faut le même appel après sa mise à jour, dans un lot à part.
+  - **Fait le 23/10/2026** (lot CLASSES-DUREE, suite, `testé localement`, ni staging ni
+    production) : `supabase/migrations/20261023000000_classes_duree_bout_en_bout.sql` pose le
+    contrôle sur les tables (`groupes_horaire_verifie_enseignant`,
+    `groupe_creneaux_verifie_enseignant`), donc pour la RPC et pour l'écriture directe de la
+    direction ; mêmes refus et même SQLSTATE que l'affectation (spec consolidée, 2.1 bis).
 - **Production.** Le registre de production s'arrêtait à `0042` le 10/10. Ce lot
   ne s'y applique qu'après toute la chaîne qui porte `etat`, `genre_public` et
   `0082`.

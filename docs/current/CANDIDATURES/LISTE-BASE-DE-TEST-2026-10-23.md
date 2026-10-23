@@ -61,6 +61,7 @@ nouveau feu vert du directeur sur cette liste précise ; le collage passe par la
 | # | Fichier | DELETE/DROP/TRUNCATE | Qui l'applique |
 |---|---|---|---|
 | 16 | `20261022000600_cand_l3_inscription_import_rapprochement.sql` | 6 | directeur (éditeur SQL) |
+| 17 | `20261023000000_classes_duree_bout_en_bout.sql` | 0 | directeur (page de collage), détail ci-dessous |
 
 Après chaque fichier, Claude vérifie en lecture (`list_migrations`, présence des tables et
 fonctions, droits) avant le suivant. Une erreur arrête la suite ; rien n'est réessayé à
@@ -72,3 +73,32 @@ L'aperçu Vercel `staging` (il naît d'une pull request vers `main`, qui demande
 du module avec des comptes de test : Salle d'examen, carte de partage, « Vos autres
 talents », liste et fiche des candidatures, réglage du plafond de Classes. Aucune personne
 réelle des formulaires n'y est importée.
+
+### Détail du fichier 17 (durée des Classes de bout en bout)
+
+- Décompte par `grep -ciE '\b(delete from|drop |truncate)\b'` (commentaires compris) : **0**, et 0 aussi avec
+  le motif large `\b(delete|drop|truncate)\b`. Les seuls mots proches sont la colonne `deleted_at`. Le fichier
+  passe donc sans la seconde confirmation du serveur : Claude peut l'appliquer après le feu vert (retirer
+  `BEGIN;` et `COMMIT;`, ou l'envelopper avec `tool/envelopper_pour_editeur_sql.py` si les fins de ligne de
+  Windows sont en jeu ; la règle du 23/10 veut une page de collage pour ce que le directeur colle).
+- **Ce qu'elle fait** : `materialiser_seances_groupe` prend la durée de la Classe ; les séances à venir non
+  commencées sont alignées sur la durée de leur Classe, **une fois, dans la migration** ; deux déclencheurs
+  (`groupes`, `groupe_creneaux`) repassent le prédicat d'affectation (et refusent un horaire que des séances déjà
+  matérialisées de l'enseignant occupent) quand l'horaire d'une Classe qui a son enseignant change ; un déclencheur
+  `BEFORE` sur `groupe_creneaux` ordonne les verrous (pas d'interblocage) ; un déclencheur sur `app_config` refuse un
+  réglage de durée hors de 15 à 240 minutes ; `enseignants_pour_classe`, `enseignants_pour_public` et
+  `transferer_eleve` comptent la durée de la Classe. Neuf fonctions nouvelles de `app_private`, aucune exécutable par
+  un client ; aucune table, aucune colonne, aucune policy touchée.
+- **À savoir avant le feu vert** : la migration **s'arrête et annule tout** si le rallongement d'une séance
+  d'adultes en chevauche une autre (même enseignant, remplaçant désigné ou même élève) ; le message donne le
+  nombre et les identifiants (séance, Classe, début, autre séance). **Avant** de la coller, lancer le contrôle en
+  lecture seule `tool/controle_avant_migration_duree.sql` dans l'éditeur SQL de staging : aucune ligne rendue =
+  la migration passera ; une ligne par chevauchement = elle s'arrêterait (déplacer ou annuler l'une des deux
+  séances, puis relancer le contrôle). Les séances d'adultes rallongées sont payées 1 h 30 au lieu de 1 h, ce qui est
+  conforme à la décision du 19/10 (`DECISION-TARIFS-2026-10-18.md` : 1,57 $ par élève présent et par heure, 3 x 90
+  min) : la paie se calcule à la minute et n'est pas modifiée.
+- **Ordre** : après le 15 ; elle ne dépend que du 14 (`app_private.duree_seance_minutes`) et du 12
+  (`verifier_affectation_enseignant_base`).
+- **Vérification de Claude après application** : les neuf fonctions et les quatre déclencheurs présents, les quatre
+  fonctions de `public` à l'empreinte F86 du dépôt, aucune fonction nouvelle exécutable par `anon`, `authenticated`
+  ni `agent_ro`, `select count(*) from app_private.seances_a_venir_a_realigner()` = 0.

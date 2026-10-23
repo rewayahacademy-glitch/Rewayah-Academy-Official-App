@@ -20,6 +20,7 @@ import 'package:rewayah_academy/core/capacites/port_creation_classe.dart';
 import 'package:rewayah_academy/core/capacites/port_enseignants_classe.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/offres/affectation_refusee.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart'
     show Creneau;
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
@@ -331,9 +332,9 @@ void main() {
       expect(_de(l, 'x1').genreInconnu, isTrue);
       expect(_de(l, 'x1').choisissable, isFalse);
       expect(
-        l.where((EnseignantClasse e) => e.choisissable).map(
-          (EnseignantClasse e) => e.enseignant.id,
-        ),
+        l
+            .where((EnseignantClasse e) => e.choisissable)
+            .map((EnseignantClasse e) => e.enseignant.id),
         unorderedEquals(<String>['h1', 'h2', 'f1']),
       );
     });
@@ -915,6 +916,56 @@ void main() {
       );
       expect(groupes.seuilsModifies, <int>[3]);
     });
+
+    // CLASSES-DUREE (23/10/2026) : la feuille renvoie l'horaire qu'elle a lu ;
+    // si la classe a ete deplacee entre-temps, le serveur repasse le predicat
+    // d'affectation et peut refuser. Une phrase par motif, jamais le SQL.
+    for (final MotifRefusAffectation motif in <MotifRefusAffectation>[
+      MotifRefusAffectation.nonDisponible,
+      MotifRefusAffectation.chevauchementClasse,
+      MotifRefusAffectation.chevauchementSeance,
+      MotifRefusAffectation.plafond,
+      MotifRefusAffectation.genreIncompatible,
+      MotifRefusAffectation.enseignantIndisponible,
+    ]) {
+      testWidgets('refus de deplacement (${motif.name}) : sa phrase, la '
+          'feuille reste ouverte, rien n\'est enregistre', (
+        WidgetTester tester,
+      ) async {
+        final FauxGroupesFormL2 groupes = FauxGroupesFormL2()
+          ..echecModification = AffectationRefusee(motif);
+        tester.view.physicalSize = const Size(1440, 1600);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await tester.pumpWidget(_hote(_surcharges(groupes: groupes)));
+        await tester.pumpAndSettle();
+        await _presser(tester, find.byType(MenuActions).first);
+        await _presser(
+          tester,
+          find.text(t.admin.groupes.actionModifierSeuil).last,
+        );
+        await _presser(tester, find.byKey(SelecteurEntier.clePuce(3)));
+        await _presser(
+          tester,
+          find.text(t.admin.groupes.modifierSeuilEnvoyer).last,
+        );
+
+        // La feuille ne change que le seuil : quel que soit le motif, sa phrase
+        // le dit (jamais « l'horaire n'est pas change »).
+        final String attendu = t.admin.groupes.refusDeplacement.seuil;
+        expect(find.text(attendu), findsOneWidget);
+        for (final String sql in <String>[
+          'enseignant non disponible',
+          'chevauchement avec',
+          'AffectationRefusee',
+          'MotifRefusAffectation',
+        ]) {
+          expect(find.textContaining(sql), findsNothing);
+        }
+        expect(groupes.seuilsModifies, isEmpty);
+        expect(find.text(t.admin.groupes.modifierSeuilEnvoyer), findsWidgets);
+      });
+    }
   });
 
   group('CLASSE-FORM-1 : gardes de rendu', () {

@@ -140,6 +140,10 @@ class FauxGroupesFormL2 implements ServiceGroupes {
   /// Les seuils envoyes par la feuille « Seuil maximal ».
   final List<int> seuilsModifies = <int>[];
 
+  /// L'erreur que `modifier` leve quand elle est posee (CLASSES-DUREE : le
+  /// serveur refuse l'horaire que la feuille renvoie).
+  Exception? echecModification;
+
   /// Les ajouts : eleve et motif.
   final List<(String, String)> ajouts = <(String, String)>[];
 
@@ -176,7 +180,11 @@ class FauxGroupesFormL2 implements ServiceGroupes {
     required String libelle,
     required int seuilMax,
     required Creneau creneau,
-  }) async => seuilsModifies.add(seuilMax);
+  }) async {
+    final Exception? echec = echecModification;
+    if (echec != null) throw echec;
+    seuilsModifies.add(seuilMax);
+  }
 
   @override
   Future<void> ajouterEleve({

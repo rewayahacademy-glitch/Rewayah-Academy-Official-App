@@ -116,3 +116,39 @@ MotifRefusAffectation motifRefusAffectation({
   }
   return MotifRefusAffectation.inconnu;
 }
+
+/// CLASSES-DUREE (23/10/2026) : le motif d'un refus de DEPLACEMENT d'une
+/// classe qui a deja son enseignant, ou `null` quand l'erreur n'en est pas un.
+///
+/// `modifier_groupe` repasse le predicat d'affectation quand le jour, l'heure
+/// ou le fuseau d'une classe change (migration `20261023000000`) : le serveur
+/// refuse avec les MEMES messages et le meme SQLSTATE (P0001) que
+/// l'affectation. Les autres refus de `modifier_groupe` (droit de la direction,
+/// fuseau inconnu, seuil trop bas, classe close) ne sont pas des refus
+/// d'horaire : ils rendent `null` et gardent leur chemin d'avant.
+MotifRefusAffectation? motifRefusDeplacementClasse({
+  required String? code,
+  required String message,
+}) {
+  // 23P01 : la contrainte d'exclusion sessions_no_teacher_overlap, quand un
+  // chevauchement echappe encore au controle nomme du serveur (par exemple deux
+  // eleves communs). Meme phrase que le chevauchement de seance, jamais le texte
+  // technique.
+  if (code == '23P01') return MotifRefusAffectation.chevauchementSeance;
+  if (code != 'P0001') return null;
+  final MotifRefusAffectation motif = motifRefusAffectation(
+    code: code,
+    message: message,
+  );
+  return switch (motif) {
+    MotifRefusAffectation.enseignantIndisponible ||
+    MotifRefusAffectation.genreIncompatible ||
+    MotifRefusAffectation.plafond ||
+    MotifRefusAffectation.nonDisponible ||
+    MotifRefusAffectation.chevauchementClasse ||
+    MotifRefusAffectation.chevauchementSeance => motif,
+    MotifRefusAffectation.reservee ||
+    MotifRefusAffectation.classeIndisponible ||
+    MotifRefusAffectation.inconnu => null,
+  };
+}
