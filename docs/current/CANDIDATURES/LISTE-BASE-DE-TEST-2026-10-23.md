@@ -51,6 +51,17 @@ nouveau feu vert).
 Le décompte des mots compte aussi les commentaires et les droits (`REVOKE ... DELETE`,
 `ON DELETE CASCADE`) : il dit seulement quel chemin passe sans seconde confirmation.
 
+## Prochaine livraison sur la base de test (pas encore appliquée)
+
+Ajoutée le 23/10/2026, après l'installation des quinze ci-dessus. Rien n'est appliqué sans un
+nouveau feu vert du directeur sur cette liste précise ; le collage passe par la page de collage
+(`tool/page_migrations/generer.py`, règle du 23/10/2026). Rejeu complet local avec ces fichiers :
+124 scénarios verts sur 125 (le rouge `avis_*` est antérieur).
+
+| # | Fichier | DELETE/DROP/TRUNCATE | Qui l'applique |
+|---|---|---|---|
+| 16 | `20261022000600_cand_l3_inscription_import_rapprochement.sql` | 6 | directeur (éditeur SQL) |
+
 Après chaque fichier, Claude vérifie en lecture (`list_migrations`, présence des tables et
 fonctions, droits) avant le suivant. Une erreur arrête la suite ; rien n'est réessayé à
 l'aveugle.

@@ -55,6 +55,8 @@ declare
     -- CPT-SUPPR-EXPORT (18/10) : la personne annule sa demande de suppression (compte valide).
     'annuler_suppression_compte()',
     'annuler_upload_bibliotheque(uuid)',
+    -- CAND-L3 (23/10) : apercu d'import des formulaires, super-admin en double verification (aal2) exigee en base, aucune ecriture sauf le journal d'acces.
+    'apercu_import_formulaires(text,text,text,jsonb,text)',
     -- CAND-L2A2 (22/10) : apercu d'une action groupee, direction active de son cote (trace des candidatures hors portee).
     'apercu_lot_candidats(text,uuid[])',
     'autoriser_ecoute_archive(uuid)',
@@ -74,6 +76,8 @@ declare
     'completer_kyc_document()',
     'completer_niveau_demande_horaire(uuid)',
     'configurer_canal_support(text,text)',
+    -- CAND-L3 (23/10) : confirmation de l'import des formulaires (super-admin, aal2, cle d'idempotence, jeton HMAC).
+    'confirmer_import_formulaires(text,text,text,text,jsonb,text,jsonb,text)',
     'confirmer_import_inscriptions(text,text,jsonb)',
     'confirmer_upload_bibliotheque(uuid,text,bigint,text,text)',
     'controleur_ajouter_complement(uuid,text,text)',
@@ -103,6 +107,8 @@ declare
     'definir_partage_classe(uuid,boolean,text,text)',
     -- CAND-L2A2 (22/10) : confirmation et retrait consignes par la direction (transitions 24 et 17), direction active de son cote (moteur).
     'confirmer_moyen_paiement_candidat(uuid,text,text,integer,text)',
+    -- CAND-L3 (23/10) : personne prevenue par le lien d'inscription (transition 26), direction active de son cote (moteur).
+    'consigner_prevenu_candidat(uuid,text,text,date,integer,text)',
     'consigner_retrait_candidat(uuid,text,date,text,integer,text)',
     'definir_politique_observation_groupe(uuid,text,smallint,integer,integer)',
     -- CAND-L2A2 (22/10) : responsable d'une candidature (transition 28), direction active de son cote (moteur).
@@ -152,6 +158,8 @@ declare
     'fac_traiter_relances_du_jour()',
     'finance_validation_decider(uuid,text,text,uuid)',
     'fusionner_classes(uuid,uuid,text)',
+    -- CAND-L3 (23/10) : reponse importee gardee pour suivi (transition 2), direction active de son cote.
+    'garder_formulaire_pour_suivi(uuid)',
     'geler_archive_seance(uuid,text,boolean)',
     'guard_app_config_history()',
     'guard_assignment_cap()',
@@ -172,8 +180,14 @@ declare
     'lire_contact_candidature(uuid)',
     -- CAND-L6 (21/10) : referentiel de paiement, lecture qui journalise l'exception super-admin.
     'lire_referentiel_paiement(text)',
+    -- CAND-L3 (23/10) : listes de la direction (personnes a prevenir, reponses importees), lecture bornee a son cote et journalisee.
+    'lister_a_prevenir_candidats(boolean,integer)',
+    'lister_formulaires_importes(jsonb,integer)',
     'lister_candidatures(jsonb,text,integer)',
+    'lister_rapprochements_candidats(integer)',
     'indicateurs_admin()',
+    -- CAND-L3 (23/10) : inscription publique ou sur invitation (compte, accord, plafond horaire ; la candidature suit la confirmation du courriel).
+    'inscrire_candidat(text,text,text,gender,text,text,text)',
     'inscrire_comptable_invite(text,text,text,gender)',
     'inscrire_titulaire(text,text,text,gender,text,boolean)',
     'inscrire_enseignant_invite(text,text,text,gender)',
@@ -233,6 +247,8 @@ declare
     -- FI-BR-06 (18/10) : titulaire du foyer, compte valide (bf1_est_titulaire).
     'recharge_payer(uuid,uuid)',
     'recharge_verifier_montants(jsonb)',
+    -- CAND-L3 (23/10) : reponse importee rattachee a une candidature par la direction (transition 27), direction active de son cote (moteur).
+    'rattacher_formulaire_candidat(uuid,uuid,integer,text)',
     'rechercher_personne_par_matricule(text)',
     'reclamer_preinscription_apres_preuve()',
     -- CAND-L2A2 (22/10) : refus d'une candidature (transition 16), direction active de son cote (moteur, motif et modele).

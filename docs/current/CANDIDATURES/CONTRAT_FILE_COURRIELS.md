@@ -5,7 +5,8 @@
 le site public »). Ce document lui dit ce que le module des candidatures écrit,
 ce qu'elle lit, ce qu'elle écrit en retour, et ce que personne n'écrit jamais.
 
-**Statut :** `spécifié`, **proposition**. Rien de ce qui suit n'existe en base :
+**Statut :** `spécifié`, **proposition**. Rien de ce qui suit n'existe en base,
+sauf `candidatures.langue` (prérequis L3, posé le 23/10 par CAND-L3 ; section 9) :
 la file s'écrit au lot L5 (`SPEC_CONSOLIDEE_CANDIDATURES_2026-10-21.md`, désormais
 `CONS`, section 11). Les noms de table, de fonctions et de modèles sont proposés ;
 L5 peut les changer, pas les règles. Une règle de `CONS` 7.3 qui diffère d'ici
@@ -240,7 +241,16 @@ paramètres ni l'adresse.
   (`lib/core/i18n/langue_demarrage.dart:78-88`, `profiles` sans colonne de langue,
   `M/0001_fondations.sql:71-84`). L3 ajoute `candidatures.langue` (`fr` ou `ar`,
   non nulle pour une candidature avec compte), remplie par la RPC d'inscription
-  avec la langue de l'app à ce moment.
+  avec la langue de l'app à ce moment. **Fait le 23/10 (CAND-L3, `testé localement`)** :
+  `candidatures.langue` existe (`fr` ou `ar`, contrainte) et `inscrire_candidat` la remplit
+  depuis son paramètre `p_langue`, jamais déduite (une langue absente ou inconnue refuse l'inscription,
+  champ `langue` nommé). Elle reste **nulle** pour une candidature née avant ce lot, pour une ligne `recue`
+  gardée pour suivi (une personne sans compte) et pour un compte né de l'ancienne
+  `inscrire_enseignant_invite`, qui ne crée pas de candidature : la reprise de L3 (spec 3.3) les
+  renseigne, et pour une ligne sans compte l'envoi suit la règle de la section 2 (`ar` pour l'import du
+  questionnaire arabe). **La file elle-même n'existe toujours pas** : CAND-L3 n'écrit aucune ligne
+  `a_envoyer`, `lister_a_prevenir_candidats` et `consigner_prevenu_candidat` ne servent que le lien
+  d'inscription envoyé hors de l'app (WhatsApp, `CAND-Q06`).
 - **Prérequis L3 : le code d'invitation.** `inviter_enseignant` et
   `invitations_enseignant_admin()` rendent aujourd'hui le code à la direction
   (`M/20261016100300_contrats_invitations_enseignant.sql:63-64`, `:76-91`, `:134`,

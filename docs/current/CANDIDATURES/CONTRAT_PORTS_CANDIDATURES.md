@@ -150,7 +150,11 @@ journalisé côté serveur ; `historique` pagine par curseur et rend l'auteur pa
   paiement de `aVerifier` à `compatible` ou `incompatible` ; une ligne
   `enVerification` ne se confirme jamais (`CAND-Q05`).
 - **`consignerPrevenu`** constate un envoi fait ailleurs : canal et modèle, jamais
-  un texte libre (`CAND-Q10`).
+  un texte libre (`CAND-Q10`). Livré le 23/10 par `consigner_prevenu_candidat` (section 2) : seul canal
+  `whatsapp`, seul modèle `lien_inscription`, pour une candidature `recue` sans courriel valide.
+- **`garderPourSuivi`** et **`rattacher`** (CAND-L3, 23/10) sont les gestes 2 et 27 : voir la section 2
+  (`garder_formulaire_pour_suivi`, `rattacher_formulaire_candidat`) ; `capacites().gestes` les rend vrais pour la
+  direction de son côté.
 - **`consignerRetrait`** : demande du candidat reçue hors de l'application, avec son
   canal et sa date ; un entretien planifié est annulé, son issue reste. Une sortie
   décidée sans demande du candidat est un `refuser`.
@@ -160,7 +164,8 @@ journalisé côté serveur ; `historique` pagine par curseur et rend l'auteur pa
   **`leverRestriction`** et **`rouvrir`** revérifient les contrôles
   (`ControlesNonSatisfaits`).
 - **Lot** : `preparerLot` n'accepte que `inviter`, `mettreEnPause`, `leverPause`,
-  `refuser`, `consignerPrevenu` et `confirmer` ; tout autre geste rend
+  `refuser`, `consignerPrevenu` et `confirmer` (au 23/10, le serveur ne groupe que `mettreEnPause`, `leverPause` et
+  `refuser`) ; tout autre geste rend
   `GesteNonGroupable` et se fait dossier par dossier. Une candidature sans
   courriel valide est `exclue` d'un lot `inviter` dès l'aperçu.
 
@@ -233,9 +238,12 @@ n'écrit rien. `capacites_import_inscriptions()` (migration
 différence de `confirmer_import_inscriptions`, qui ne l'exige pas, le nouvel
 import exige l'aal2 en base.
 
-**Garanties.** L'import n'écrit **que** des candidatures à l'étape `recue` ; il ne
-crée ni compte, ni invitation, ni pièce, ni accord. Aucun rapprochement ne
-s'applique sans choix explicite, et un groupe sans choix reste `aCorriger`.
+**Garanties.** L'import n'écrit **que** des réponses importées (tel que livré le 23/10 ; la
+spécification parlait de candidatures à l'étape `recue` : ce n'est plus qu'un geste de la direction, « garder
+pour suivi ») ; il ne crée ni compte, ni invitation, ni pièce, ni accord, ni candidature. Aucun rapprochement ne
+s'applique sans choix explicite ; tel que livré le 23/10, un groupe sans choix suit la décision `CAND-Q16` (la
+plus récente l'emporte, les autres restent en historique) au lieu de rester `aCorriger` (écart soumis, spécification
+consolidée 0.2 bis).
 Rejouer le même fichier n'ajoute rien (clé : classeur, onglet, horodatage de la
 réponse). Une ligne réimportée après correction dans le classeur garde sa
 référence source ; la correction s'inscrit dans l'historique de la candidature,
@@ -243,6 +251,46 @@ jamais comme une candidature nouvelle. Les créneaux de la colonne J (heure de L
 Mecque, sans aucun jour) ne pré-remplissent aucun champ ; leur libellé est gardé tel
 quel, jamais converti en heure absolue ni recopié dans `weekly_availability`
 (`MAP §3.5`).
+
+**Tel que livré par CAND-L3 (23/10, `présent dans le code`, `testé localement`, ni staging ni
+production).** Les trois méthodes ci-dessus deviennent deux RPC, car l'analyse se fait tout entière au
+serveur : le client envoie le fichier, il ne le lit pas
+(`supabase/migrations/20261022000600_cand_l3_inscription_import_rapprochement.sql`,
+`supabase/tests/scenarios_cand_l3_inscription_import.sql`). Les deux sont réservées au super-admin de `0088`
+(`42501` sinon, direction ou non) et exigent l'aal2 **en base** : en aal1, elles rendent
+`{erreur: 'double_verification_requise', ecritureEffectuee: false}`, sans écriture
+(`DoubleVerificationRequise`). `capacites_candidatures()` rend `peutImporter` vrai pour le seul super-admin en
+aal2, et `doubleVerificationRequise` vrai pour lui en aal1.
+
+| Méthode du port | RPC | Entrée | Sortie |
+| :--- | :--- | :--- | :--- |
+| `analyser` et `essaiABlanc` (une seule opération) | `apercu_import_formulaires(p_csv, p_classeur, p_onglet, p_mappage?, p_fuseau?)` | `p_csv` (5 Mo au plus), `p_classeur` et `p_onglet` (200 signes, sans barre verticale ; ils entrent dans la référence source), `p_mappage` optionnel (position de colonne vers champ, pour un en-tête inconnu), `p_fuseau` optionnel (fuseau de l'horodatage du fichier, UTC par défaut) | `{ecritureEffectuee: false, jeton, entetes, compteurs, groupes, lignes}`. `compteurs` : `lignesLues`, `nouvelles`, `corrigees`, `dejaConnues`, `ignorees`, `aCorriger`, `historique`, `personnes`. `groupes` : pour chaque groupe de doublons, `id` (empreinte de ses lignes, stable d'un fichier corrigé à l'autre), `nature` (`courriel` ou `telephone`), `taille`, `lignes` (numéros du fichier), `retenueProposee` (numéro, ou nul quand la retenue est déjà en base ou quand les lignes sont distinctes), `retenueDansLaBase`, `choisi`, `choix`. `lignes` : `ligne`, `issue` (`nouvelle`, `corrigee`, `deja_connue`, `ignoree`, `a_corriger`), `motifs`, `avertissements`, `courrielAObtenir`, `indicatifAConfirmer`, `groupe`, `etatFinal`. **Aucun nom, courriel ni téléphone n'est rendu**, ni dans les premières lignes : « contacts masqués » est devenu « contacts absents ». Une ligne d'audit de compteurs |
+| `confirmer` | `confirmer_import_formulaires(p_csv, p_classeur, p_onglet, p_jeton, p_choix, p_cle_idempotence, p_mappage?, p_fuseau?)` | le même fichier, le `jeton` de l'aperçu, `p_choix` : liste de `{groupe, retenue}` où `retenue` est la référence source de la ligne retenue ou `distinctes`, `p_cle_idempotence` (8 à 200 signes) | `{ecritureEffectuee: true, lot, compteurs, choix, lignes, rejoue}`. `lignes` : `ligne`, `reference` (classeur, onglet, horodatage écrit), `issue`, `etatFinal`, `motifs`, `avertissements`, jamais un nom |
+
+Erreurs rendues (jamais une exception, aucune écriture) : `fichier_illisible` (avec `cause`), `fichier_vide`,
+`entetes_ambigus`, `mappage_incomplet` (champs nommés), `jeton_perime` (le fichier, le classeur, l'onglet, le
+mappage ou le fuseau a changé depuis l'aperçu), `cle_idempotence_reutilisee` (la clé d'un autre fichier ou d'un autre
+auteur), `choix_invalide` (groupes nommés : un groupe inconnu, une retenue qui n'est pas dans le groupe, deux choix
+pour un groupe). Exceptions : `22023` (arguments absents ou hors bornes), `42501`.
+
+**Doublons.** Le groupe se forme de proche en proche sur toutes les lignes que la base garde (historique compris), avec les contacts et le genre qu'elle gardait avant la correction d'une ligne du fichier : rejouer un fichier ne le défait pas, et corriger un contact ou le genre d'une ligne libère ses voisines. Sans choix, la plus récente l'emporte (`CAND-Q16`) ; `choix` d'un groupe l'emporte et est gardé : un
+fichier corrigé qui se rejoue sans choix ne le défait pas (`choisi: true`). Deux genres différents ne forment jamais un
+groupe. Une ligne gardée pour suivi ou rattachée à une candidature n'est jamais mise en historique.
+
+**Ce que l'écran lit ensuite**, de la direction de son côté (le super-admin lit les deux, la lecture est
+journalisée ; la direction au genre inconnu est refusée, `42501`) :
+
+| Méthode | RPC | Entrée | Sortie |
+| :--- | :--- | :--- | :--- |
+| `reponsesImportees` | `lister_formulaires_importes(p_filtre?, p_page)` | `FiltreFormulaires` : `etat` (`active`, `historique`), `suivi`, `rattachee`, `aPrevenir` (booléens), `recherche` (référence exacte, courriel exact, nom partiel normalisé) ; une clé inconnue ou mal typée rend `22023` ; page de 50 | `{lignes, total, page, taillePage, compteurs}` ; une ligne : `id`, `reference`, `nomComplet`, `recueLe`, `etat`, `courrielAObtenir`, `indicatifAConfirmer`, `suivi`, `candidatureSuivieId`, `rattachee`, `prevenu`, `aPrevenir` ; `compteurs` : `actives`, `historique`, `suivies`, `rattachees`, `aPrevenir`. Ni courriel ni téléphone ni réponses de la ligne |
+| `garderPourSuivi` | `garder_formulaire_pour_suivi(p_reponse)` | l'identifiant de la ligne | `{rejoue, candidature}` (l'état de la candidature `recue` sans compte) ; `{erreur: 'absente' \| 'hors_portee' \| 'ligne_historique' \| 'deja_rattachee'}` ; le rejeu rend la même candidature |
+| `aPrevenir` | `lister_a_prevenir_candidats(p_inclure_prevenus?, p_page)` | `inclurePrevenus` (faux par défaut) | `{lignes, total, page, taillePage}` : les candidatures `recue` sans compte et sans courriel valide, de son côté, avec `prevenu`, `prevenuLe`, `canal`, `dateEnvoi`, et `accordWhatsapp` (la réponse de la personne à « j'accepte que l'équipe me contacte par WhatsApp » : vrai, faux, ou nul sans réponse importée ; montrée, jamais filtrée : spécification consolidée 0.2 bis) |
+| `consignerPrevenu` | `consigner_prevenu_candidat(p_id, p_canal, p_modele, p_date, p_version_attendue, p_cle_idempotence)` | `canal` `whatsapp`, `modele` `lien_inscription` (listes fermées de `capacites_candidatures().listes`, `canauxPrevenu` et `modelesPrevenu`), `date` de l'envoi (non future), version attendue, clé | l'état relu de la candidature ; `canal_inconnu`, `modele_inconnu`, `date_future`, `courriel_disponible` (une personne qui a un courriel valide s'invite, elle ne se prévient pas), et les refus du moteur (`absente`, `hors_portee`, `conflit_candidature` avec la version courante, `transition_interdite`, `cle_idempotence_reutilisee`) |
+| `rapprochements` | `lister_rapprochements_candidats(p_page)` | page | `{lignes, total, page, taillePage}` : les propositions par téléphone en attente **qui tiennent encore** (la ligne et la candidature du même côté, le même téléphone, la candidature pas déjà reliée à une ligne), avec les deux noms (la ligne importée, la candidature) |
+| `rattacher` | `rattacher_formulaire_candidat(p_id, p_reponse, p_version_attendue, p_cle_idempotence)` | la candidature, la ligne proposée, version attendue, clé | `{candidature, prerempli}` (les codes des champs pré-remplis) ; `proposition_inconnue` (aussi quand la ligne a changé de côté ou de téléphone depuis la proposition), `reponse_deja_rattachee`, `candidature_deja_rattachee`, et les refus du moteur (comme `consignerPrevenu`). La ligne `recue` de suivi éventuelle est retirée : la personne est inscrite |
+
+`consignerPrevenu` n'est **pas** groupable (le lot de `CAND-BR-06` le refuse) : son action groupée vient avec la file
+des courriels (L5). Aucune de ces méthodes n'envoie de message.
 
 ## 3. Le candidat, dans `/attente` (`CAND-01` à `CAND-03`)
 
@@ -376,6 +424,26 @@ qui est à la fois la famille et le code du texte libre.
   active les lit (`journal_audit`).
 - **Aucune dépendance de décision** : ni un contrôle de passage, ni le paiement, ni `etat_dossier()` ne
   lit le catalogue.
+
+## 3 quater. L'inscription du candidat (`PortInscriptionCandidat`, `CAND-04`, `CAND-BR-17`)
+
+Lot CAND-L3 (23/10), `présent dans le code`, `testé localement`, ni staging ni production
+(`supabase/migrations/20261022000600_cand_l3_inscription_import_rapprochement.sql`). Appelé par une session
+**avec adresse et sans profil** (un compte créé par l'authentification, courriel confirmé ou non) ; une direction ou
+tout compte qui a déjà un profil reçoit `42501`.
+
+| Méthode | RPC | Entrée | Sortie |
+| :--- | :--- | :--- | :--- |
+| `ouverte` | `inscription_candidat_ouverte()` | aucune (session authentifiée ; `anon` refusé) | `{ouverte, versionConfidentialite}` : la clé de mise en ligne `candidatures.inscription_publique_ouverte`, **fausse** tant que le directeur ne l'ouvre pas, et la version de confidentialité que le serveur attend ; jamais l'état du plafond |
+| `inscrire` | `inscrire_candidat(p_code?, p_first_name, p_last_name, p_gender, p_telephone, p_langue, p_version_confidentialite)` | `code` : nul pour le lien public, ou le code d'invitation (lié à l'adresse) ; prénom et nom ; `gender` (`male` ou `female`) ; téléphone **avec indicatif** (« + » ou « 00 ») ; `langue` `fr` ou `ar` (celle de l'écran, jamais déduite) ; `versionConfidentialite` : la version acceptée (`2026-10-v1`) | `{resultat}` : `acceptee` (aussi au-delà du plafond horaire, sans rien écrire : la réponse est la même), `fermee` (lien public, clé fausse), `courriel_non_confirme` (aucune candidature n'est créée), `inconnue`, `deja_utilisee`, `expiree` (invitation), `invalide` avec `champs` nommés (`prenom`, `nom`, `genre`, `langue`, `telephone`), `confidentialite_requise` ou `confidentialite_perimee` avec `versionCourante`, `confidentialite_indisponible` |
+
+Ce que l'appel écrit : un profil de la même forme que celui de l'invitation (rôle `teacher`, `pending_kyc`, sans foyer,
+`private.creer_profil_inscription_interne`), l'accord de confidentialité (version, porte, date), la candidature en
+`prequalification` / `a_completer` avec `candidatures.langue`, ses contacts, un événement, et le rapprochement avec
+les réponses importées (spécification consolidée 3.4). Une ligne `recue` gardée pour suivi, du même courriel et du même
+côté, **devient** la candidature de la personne. L'écran ne rend jamais au candidat que `resultat` : rien du
+rapprochement. `inscrire_enseignant_invite` reste en service tant que le client de `CAND-04` n'a pas basculé ; elle ne
+demande ni téléphone ni accord et ne crée pas de candidature.
 
 ## 4. `PortReferentielPaiement` (`ADM-24`, et une des sources de `CPT-BR-10` : la compatibilité par corridor, ni l'activation des prestataires ni leur solde)
 

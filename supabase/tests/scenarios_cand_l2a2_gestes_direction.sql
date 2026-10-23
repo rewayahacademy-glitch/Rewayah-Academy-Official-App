@@ -388,19 +388,20 @@ SELECT pg_temp.vrai(pg_temp.lu('cap_a1') @> '{"peutLire": true, "peutDecider": t
   AND pg_temp.lu('cap_a1') -> 'gestes' = '{"demanderComplement": true, "cloreComplement": true, "admettreVerifications": true,
     "confirmerMoyenPaiement": true, "infirmerMoyenPaiement": true, "mettreEnPause": true, "leverPause": true,
     "refuser": true, "consignerRetrait": true, "rouvrir": true, "definirResponsable": true, "agirEnLot": true,
-    "inviter": false, "consignerPrevenu": false, "garderPourSuivi": false, "rattacher": false,
+    "inviter": false, "consignerPrevenu": true, "garderPourSuivi": true, "rattacher": true,
     "planifierEntretien": false, "consignerEntretien": false, "pieceACorriger": false, "validerPiece": false,
     "restreindre": false, "leverRestriction": false, "noterIndisponibilite": false,
     "leverIndisponibilite": false}'::jsonb,
-  'direction homme : decide de son cote ; une capacite par geste, vraie pour les seuls gestes que le serveur sait faire');
+  'direction homme : decide de son cote ; une capacite par geste, vraie pour les seuls gestes que le serveur sait faire (CAND-L3 : prevenu, garder pour suivi et rattacher le sont desormais)');
 SELECT pg_temp.vrai(pg_temp.lu('cap_a1') -> 'listes' = '{
     "modelesRefus": ["refus_general", "refus_niveau", "refus_besoins", "refus_sans_reponse"],
     "modelesPause": ["pause_attente_besoin", "pause_attente_informations", "pause_demande_candidat", "pause_general"],
     "complementSalleExamen": ["langues", "recitation", "disponibilites", "publics", "versement", "cadre_religieux"],
     "complementSalleVerification": ["piece_identite", "cadre_religieux", "contrat", "avis"],
     "canauxRetrait": ["conversation", "courriel"],
-    "codesClotureComplement": ["complement_clos"]}'::jsonb,
-  'listes fermees rendues a l''ecran : modeles, elements par salle, canaux du retrait, code de cloture du complement (D20)');
+    "codesClotureComplement": ["complement_clos"],
+    "canauxPrevenu": ["whatsapp"], "modelesPrevenu": ["lien_inscription"]}'::jsonb,
+  'listes fermees rendues a l''ecran : modeles, elements par salle, canaux du retrait, code de cloture du complement (D20) ; CAND-L3 (23/10) : canal et modele du geste « prevenu »');
 SELECT pg_temp.vrai(pg_temp.lu('cap_a3') @> '{"peutLire": false, "peutDecider": false, "peutEcrireReferentiel": false,
     "gestesGroupables": []}'::jsonb
   AND NOT EXISTS (SELECT 1 FROM jsonb_each(pg_temp.lu('cap_a3') -> 'gestes') g WHERE g.value <> 'false'::jsonb)
