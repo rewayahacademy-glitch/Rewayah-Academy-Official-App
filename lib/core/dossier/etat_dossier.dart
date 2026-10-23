@@ -1,6 +1,34 @@
 import 'package:flutter/foundation.dart';
 
+import '../candidature/modeles_candidature.dart';
 import '../domain/enums.dart';
+
+/// Ce que le titulaire d'un foyer a choisi a l'inscription (L5-01).
+///
+/// Garde par le serveur (`households.usage_inscription`) : il choisit la
+/// variante du contrat, meme apres un rechargement ou sur un autre appareil.
+enum UsageTitulaire {
+  /// « Moi uniquement » : un eleve adulte, son propre tuteur.
+  moi('moi'),
+
+  /// « Moi et ma famille » : un tuteur de foyer.
+  famille('famille');
+
+  const UsageTitulaire(this.valeurSql);
+
+  /// La valeur ecrite en base.
+  final String valeurSql;
+
+  /// La valeur lue en base, ou `null`.
+  static UsageTitulaire? depuisSql(Object? valeur) {
+    for (final UsageTitulaire u in values) {
+      if (u.valeurSql == valeur) {
+        return u;
+      }
+    }
+    return null;
+  }
+}
 
 /// Ce qui manque au dossier, tel que le portail d'attente le lira.
 ///
@@ -20,6 +48,12 @@ class EtatDossier {
     this.deposeLe,
     this.contratSigne = false,
     this.accuseSigne = false,
+    this.codeConduiteSigne = true,
+    this.correctionAutorisee,
+    this.pieceRequise = true,
+    this.usage,
+    this.suitDesCours = false,
+    this.candidature = CandidatureDossier.aucune,
   });
 
   /// L'etat d'un compte dont le profil reste a creer.
@@ -41,6 +75,12 @@ class EtatDossier {
       deposeLe: depose is String ? DateTime.tryParse(depose)?.toLocal() : null,
       contratSigne: json['contrat_signe'] == true,
       accuseSigne: json['accuse_signe'] == true,
+      codeConduiteSigne: json['code_conduite_signe'] as bool? ?? true,
+      correctionAutorisee: json['correction_autorisee'] as bool?,
+      pieceRequise: json['piece_requise'] as bool? ?? true,
+      usage: UsageTitulaire.depuisSql(json['usage']),
+      suitDesCours: json['suit_des_cours'] == true,
+      candidature: CandidatureDossier.depuisJson(json['candidature']),
     );
   }
 
@@ -72,6 +112,36 @@ class EtatDossier {
   /// Vrai quand la carte d'accuse de l'ADR-011 a ete accusee.
   final bool accuseSigne;
 
+  /// CAND-Q15 conduite : faux quand le code de conduite reste a accepter a sa
+  /// version requise. Le serveur rend vrai pour tout compte qui n'est pas
+  /// enseignant : l'ecran ne lit aucun role pour le savoir. Absent d'un
+  /// serveur d'avant ce lot, qui ne l'exigeait pas : vrai.
+  final bool codeConduiteSigne;
+
+  /// Faux quand l'administration interdit la correction d'un dossier refuse.
+  /// Absent de la reponse actuelle d'`etat_dossier()` (AD-BR-28) : nul, et la
+  /// correction reste permise comme avant.
+  final bool? correctionAutorisee;
+
+  /// Faux quand le serveur dit qu'aucune piece n'est attendue. K-47 : la
+  /// piece ne concerne que l'enseignant (voir [pieceExigee]) ; il n'y a plus
+  /// de dispense famille. Absent de la reponse actuelle d'`etat_dossier()`
+  /// (AD-BR-29) : vrai, comme avant.
+  final bool pieceRequise;
+
+  /// L5-01 : « Moi » ou « Famille », garde par le serveur pour le titulaire
+  /// d'un foyer ; `null` pour les autres roles et les comptes d'avant.
+  final UsageTitulaire? usage;
+
+  /// L5-01 : vrai quand le titulaire a sa propre fiche d'eleve.
+  final bool suitDesCours;
+
+  /// CAND-L2A1 (C12) : la candidature du compte, telle que le serveur la rend
+  /// (`etat_dossier().candidature`). [CandidatureDossier.aucune] pour un
+  /// compte sans candidature, et pour un serveur d'avant ce lot, qui ne rend
+  /// pas la cle : le portail garde alors ses cinq etats d'aujourd'hui.
+  final CandidatureDossier candidature;
+
   /// Ce que le portail d'attente doit afficher.
   ///
   /// L'ordre compte : un compte suspendu le reste quel que soit l'etat de son
@@ -81,28 +151,49 @@ class EtatDossier {
     if (statutCompte == AccountStatus.disabled) {
       return EtapeDossier.suspendu;
     }
-    if (statutPiece == StatutPiece.refusee) {
+    // K-47 (HL-A-6) : un tuteur n'a pas de piece, donc pas de refus de piece,
+    // meme s'il en avait depose une avant la decision.
+    if (statutPiece == StatutPiece.refusee && !estTuteur) {
       return EtapeDossier.refuse;
     }
     if (manquants.isNotEmpty) {
       return EtapeDossier.incomplet;
     }
-    return EtapeDossier.enVerification;
+    // Personne ne verifie le dossier d'un tuteur : son acces attend le
+    // serveur (BR-1), pas une validation.
+    return estTuteur
+        ? EtapeDossier.accesEnPreparation
+        : EtapeDossier.enVerification;
   }
+
+  /// Vrai pour un tuteur (famille ou eleve adulte). K-47 : la piece
+  /// d'identite et la validation ne concernent que l'enseignant.
+  bool get estTuteur => role == AppRole.guardian;
+
+  /// Vrai quand un profil existe sans role lisible : ni tuteur ni enseignant
+  /// ne se devinent, le portail le dit illisible (jamais une piece demandee).
+  bool get roleIllisible => profilExiste && role == null;
+
+  /// Vrai quand une piece d'identite est attendue : pour l'enseignant
+  /// seulement (K-47), meme tant que `etat_dossier()` ne rend pas
+  /// `piece_requise`. Un role absent n'exige rien.
+  bool get pieceExigee => pieceRequise && role == AppRole.teacher;
 
   /// Ce qu'il reste a fournir, dans l'ordre ou l'ecran le proposera.
   ///
   /// Deux ou trois elements au maximum, chacun avec son bouton : jamais un
-  /// formulaire long (`docs/produit/parcours-utilisateurs.md`, `TUT-00b`).
+  /// formulaire long (`docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md`, `TUT-00b`).
   ///
   /// L'accuse vient **avant** le contrat, et non l'inverse : il dit en langage
   /// clair ce que le contrat formalisera ensuite. Une clause signee au milieu
   /// d'un texte long n'informe personne, et c'est exactement le litige que
-  /// l'ADR-011 cherche a eviter.
+  /// l'ADR-011 cherche a eviter. Le code de conduite suit le contrat, sur la
+  /// meme page des accords, et precede la piece.
   List<PieceManquante> get manquants => <PieceManquante>[
     if (!accuseSigne) PieceManquante.accuse,
     if (!contratSigne) PieceManquante.contrat,
-    if (!pieceDeposee || statutPiece == StatutPiece.refusee)
+    if (!codeConduiteSigne) PieceManquante.codeConduite,
+    if (pieceExigee && (!pieceDeposee || statutPiece == StatutPiece.refusee))
       PieceManquante.pieceIdentite,
   ];
 
@@ -117,7 +208,13 @@ class EtatDossier {
       other.motifRefus == motifRefus &&
       other.deposeLe == deposeLe &&
       other.contratSigne == contratSigne &&
-      other.accuseSigne == accuseSigne;
+      other.accuseSigne == accuseSigne &&
+      other.codeConduiteSigne == codeConduiteSigne &&
+      other.correctionAutorisee == correctionAutorisee &&
+      other.pieceRequise == pieceRequise &&
+      other.usage == usage &&
+      other.suitDesCours == suitDesCours &&
+      other.candidature == candidature;
 
   @override
   int get hashCode => Object.hash(
@@ -130,16 +227,26 @@ class EtatDossier {
     deposeLe,
     contratSigne,
     accuseSigne,
+    codeConduiteSigne,
+    correctionAutorisee,
+    pieceRequise,
+    usage,
+    suitDesCours,
+    candidature,
   );
 }
 
-/// Les quatre etats du portail d'attente.
+/// Les cinq etats du portail d'attente.
 enum EtapeDossier {
   /// Il manque des pieces. Une liste courte, chacune avec son bouton.
   incomplet,
 
-  /// Tout est depose, l'academie verifie.
+  /// Tout est depose, l'academie verifie (enseignant).
   enVerification,
+
+  /// Tuteur : accords signes, aucune piece a fournir ; l'acces s'ouvre cote
+  /// serveur (BR-1). Aucune verification, aucun delai promis.
+  accesEnPreparation,
 
   /// Refuse, avec un motif et de quoi corriger.
   refuse,
@@ -155,6 +262,10 @@ enum PieceManquante {
 
   /// La signature du contrat ou des conditions.
   contrat,
+
+  /// Le code de conduite de l'enseignant, a accepter avant l'activation
+  /// (CAND-Q15 conduite). Il se lit et s'accepte sur la page des accords.
+  codeConduite,
 
   /// La piece d'identite.
   pieceIdentite,

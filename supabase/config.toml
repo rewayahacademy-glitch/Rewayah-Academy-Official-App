@@ -236,26 +236,44 @@ otp_length = 6
 # Number of seconds before the email OTP expires (defaults to 1 hour).
 otp_expiry = 3600
 
-# Use a production-ready SMTP server
-# [auth.email.smtp]
-# enabled = true
-# host = "smtp.sendgrid.net"
-# port = 587
-# user = "apikey"
-# pass = "env(SENDGRID_API_KEY)"
-# admin_email = "admin@email.com"
-# sender_name = "Admin"
+# COURRIELS-1 (23/10/2026) : Supabase Auth envoie par le SMTP de Google
+# Workspace, depuis support@ (alias du compte SMTP_UTILISATEUR). Le mot de passe
+# d'application vit dans l'environnement, jamais ici. Sur le projet distant, ces
+# reglages se posent aussi dans Authentication > SMTP Settings (voir
+# docs/current/COURRIELS.md) ; les modeles ci-dessous sont generes par
+# supabase/templates/generer.ts depuis le gabarit commun des e-mails.
+[auth.email.smtp]
+enabled = true
+host = "smtp.gmail.com"
+port = 465
+user = "env(SMTP_UTILISATEUR)"
+pass = "env(SMTP_MOT_DE_PASSE)"
+admin_email = "support@rewayahacademy.com"
+sender_name = "Rewayah Academy"
 
-# Uncomment to customize email template
-# [auth.email.template.invite]
-# subject = "You have been invited"
-# content_path = "./supabase/templates/invite.html"
+[auth.email.template.magic_link]
+subject = "Votre lien de connexion à Rewayah Academy"
+content_path = "./supabase/templates/magic_link.html"
 
-# Uncomment to customize notification email template
-# [auth.email.notification.password_changed]
-# enabled = true
-# subject = "Your password has been changed"
-# content_path = "./supabase/templates/password_changed_notification.html"
+[auth.email.template.confirmation]
+subject = "Confirmez votre adresse e-mail"
+content_path = "./supabase/templates/confirmation.html"
+
+[auth.email.template.invite]
+subject = "Votre accès à Rewayah Academy"
+content_path = "./supabase/templates/invite.html"
+
+[auth.email.template.recovery]
+subject = "Choisir un nouveau mot de passe"
+content_path = "./supabase/templates/recovery.html"
+
+[auth.email.template.email_change]
+subject = "Confirmez votre nouvelle adresse e-mail"
+content_path = "./supabase/templates/email_change.html"
+
+[auth.email.template.reauthentication]
+subject = "Votre code de vérification"
+content_path = "./supabase/templates/reauthentication.html"
 
 [auth.sms]
 # Allow/disallow new user signups via SMS to your project.
@@ -308,8 +326,8 @@ max_enrolled_factors = 10
 
 # Control MFA via App Authenticator (TOTP)
 [auth.mfa.totp]
-enroll_enabled = false
-verify_enabled = false
+enroll_enabled = true
+verify_enabled = true
 
 # Configure MFA via Phone Messaging
 [auth.mfa.phone]
@@ -416,6 +434,32 @@ enabled = false
 [functions.livekit-webhook]
 verify_jwt = false
 
+# COURRIELS-1 : appelee par pg_cron, sans jeton Supabase ; la porte est le
+# secret COURRIELS_ENVOI_SECRET (en-tete x-courriels-secret), verifie dans la
+# fonction en temps constant.
+[functions.courriels-envoi]
+verify_jwt = false
+
+# COURRIELS-1 : desinscription en un clic (RFC 8058) et bouton de la page
+# publique, sans compte ; la RPC est appelee avec la cle publique.
+[functions.courriel-desinscription]
+verify_jwt = false
+
+# FI-BR-06 : Stripe ne porte pas de jeton Supabase ; la signature
+# `Stripe-Signature` est verifiee dans la fonction (STRIPE_WEBHOOK_SECRET).
+[functions.stripe-webhook]
+verify_jwt = false
+
+# FI-BR-06 : seul le titulaire connecte ouvre la page de paiement.
+[functions.recharge-payer]
+verify_jwt = true
+
+[functions.bibliotheque-lecture]
+verify_jwt = true
+
+[functions.bibliotheque-upload]
+verify_jwt = true
+
 # OAuth server configuration
 [auth.oauth_server]
 # Enable OAuth server functionality
@@ -466,3 +510,6 @@ enabled = true
 # declarative_schema_path = "./schemas"
 # JSON string passed through to pg-delta SQL formatting.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":80,\"commaStyle\":\"trailing\"}"
+
+[functions.regroupements-pages]
+verify_jwt = true

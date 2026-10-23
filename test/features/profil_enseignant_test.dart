@@ -6,6 +6,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/offres/offre_horaire.dart';
+import 'package:rewayah_academy/core/offres/service_offres.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/profil/service_acceptations.dart';
 import 'package:rewayah_academy/core/profil/service_declaration.dart';
@@ -13,8 +15,10 @@ import 'package:rewayah_academy/core/profil/service_profil_enseignant.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/core/widgets/stat_tile.dart';
+import 'package:rewayah_academy/features/profil_enseignant/declaration_choix.dart';
 import 'package:rewayah_academy/features/profil_enseignant/profil_enseignant_page.dart';
 
 import '../support/harnais.dart';
@@ -50,7 +54,9 @@ ProfilEnseignant _profilDeTest({
   String prenom = 'Aicha',
   String identifiant = 'RA-ENS-0007',
   String? pays = 'GN',
-  List<String> langues = const <String>['Français', 'Arabe'],
+  // Des codes de `langues_cours` et une saisie libre, comme la base les
+  // porte (CAND-Q15, lot langue).
+  List<String> langues = const <String>['francais', 'Arabe'],
   int? plafondHeures = 20,
   AccountStatus? statutCompte = AccountStatus.active,
   VerificationEnseignant? verification = VerificationEnseignant.validee,
@@ -91,6 +97,7 @@ Future<_Monte> _monter(
   List<Acceptation> acceptations = const <Acceptation>[],
   bool echecAcceptations = false,
   bool horsLigne = false,
+  Future<List<LangueCours>> Function()? referentiel,
 }) async {
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1;
@@ -113,6 +120,16 @@ Future<_Monte> _monter(
         ),
         serviceAuthProvider.overrideWithValue(auth),
         serviceDeclarationProvider.overrideWithValue(declaration),
+        // FORM-L8 : les langues se cochent parmi celles que l'academie publie,
+        // et le profil les nomme par ce referentiel.
+        referentielLanguesProvider.overrideWith(
+          (_) =>
+              referentiel?.call() ??
+              Future<List<LangueCours>>.value(const <LangueCours>[
+                LangueCours(code: 'poular', nom: 'Poular'),
+                LangueCours(code: 'francais', nom: 'Français'),
+              ]),
+        ),
         servicePlanningProvider.overrideWithValue(FauxServicePlanning()),
         serviceReseauProvider.overrideWithValue(
           FauxServiceReseau(horsLigneRendu: horsLigne),
@@ -179,18 +196,19 @@ void main() {
         ];
 
     for (final ({AccountStatus? statut, String attendu}) c in cas) {
-      testWidgets('${c.statut?.valeurSql ?? 'illisible'} se dit en une phrase', (
-        WidgetTester tester,
-      ) async {
-        await _monter(
-          tester,
-          profil: _profilDeTest(statutCompte: c.statut),
-          statutSession: c.statut,
-        );
-        await tester.pumpAndSettle();
+      testWidgets(
+        '${c.statut?.valeurSql ?? 'illisible'} se dit en une phrase',
+        (WidgetTester tester) async {
+          await _monter(
+            tester,
+            profil: _profilDeTest(statutCompte: c.statut),
+            statutSession: c.statut,
+          );
+          await tester.pumpAndSettle();
 
-        expect(find.text(c.attendu), findsOneWidget);
-      });
+          expect(find.text(c.attendu), findsOneWidget);
+        },
+      );
     }
 
     testWidgets('un statut illisible ne se replie JAMAIS sur « verifie »', (
@@ -209,22 +227,23 @@ void main() {
       expect(find.text(t.enseignant.profil.statutInconnu), findsOneWidget);
     });
 
-    testWidgets('une divergence entre le statut affiche et celui du routeur se dit', (
-      WidgetTester tester,
-    ) async {
-      // `account_status` est lu par deux chemins : la session gouverne la porte
-      // du routeur, le profil alimente l'ecran. Rien ne garantit qu'ils soient
-      // du meme instant, et l'enseignant ne doit pas decouvrir l'ecart en
-      // butant sur un acces.
-      await _monter(
-        tester,
-        profil: _profilDeTest(statutCompte: AccountStatus.active),
-        statutSession: AccountStatus.pendingKyc,
-      );
-      await tester.pumpAndSettle();
+    testWidgets(
+      'une divergence entre le statut affiche et celui du routeur se dit',
+      (WidgetTester tester) async {
+        // `account_status` est lu par deux chemins : la session gouverne la porte
+        // du routeur, le profil alimente l'ecran. Rien ne garantit qu'ils soient
+        // du meme instant, et l'enseignant ne doit pas decouvrir l'ecart en
+        // butant sur un acces.
+        await _monter(
+          tester,
+          profil: _profilDeTest(statutCompte: AccountStatus.active),
+          statutSession: AccountStatus.pendingKyc,
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.text(t.enseignant.profil.statutDivergent), findsOneWidget);
-    });
+        expect(find.text(t.enseignant.profil.statutDivergent), findsOneWidget);
+      },
+    );
 
     testWidgets('sans divergence, rien n est annonce', (
       WidgetTester tester,
@@ -263,7 +282,10 @@ void main() {
       await tester.pumpAndSettle();
 
       // La feuille est ouverte, et rien n'est encore parti.
-      expect(find.text(t.enseignant.profil.deconnexionConsequence), findsOneWidget);
+      expect(
+        find.text(t.enseignant.profil.deconnexionConsequence),
+        findsOneWidget,
+      );
       expect(monte.auth.deconnexions, 0);
 
       await tester.tap(find.text(t.enseignant.profil.deconnexionConfirmer));
@@ -324,7 +346,7 @@ void main() {
       WidgetTester tester,
     ) async {
       // Le talon d'avant ce lot refabriquait deux compteurs depuis
-      // `seancesProvider` et `elevesEnAttenteProvider`, dont l'un dedupliquait
+      // `seancesProvider` et un feed d'eleves en attente (retire, L3-02), dont l'un dedupliquait
       // `seances.map(eleveId).toSet()` -- fragile depuis le pivot groupes, ou
       // `mes_seances_v` rend une ligne par eleve. Ces deux lectures ont disparu,
       // et leurs libelles avec elles.
@@ -336,7 +358,11 @@ void main() {
       expect(find.text('GN'), findsOneWidget);
       expect(find.text('Français, Arabe'), findsOneWidget);
       expect(
-        find.text(t.enseignant.profil.plafondValeur(nombre: 20)),
+        find.text(
+          LibellesGroupe.valeurSeule(
+            t.enseignant.profil.plafondValeur(nombre: 20),
+          ),
+        ),
         findsOneWidget,
       );
 
@@ -472,18 +498,50 @@ void main() {
       final _Monte monte = await _monter(tester, profil: _profilDeTest());
       await tester.pumpAndSettle();
 
+      // FORM-L8 : les langues se cochent, la langue hors liste (« Arabe »)
+      // reste cochee ; on decoche « Français » et on coche « Poular ». Les
+      // cartes portent des noms, l'ecriture des codes (CAND-Q15).
       await _taperLigne(tester, t.enseignant.profil.langues);
-      await tester.enterText(find.byType(TextField), 'Peul , Arabe,');
-      await tester.tap(find.text(t.enseignant.profil.enregistrer));
+      expect(find.byType(TextField), findsNothing);
+      await tester.tap(find.byKey(FeuilleLangues.carteKey('Français')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(FeuilleLangues.carteKey('Poular')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(FeuilleLangues.enregistrerKey));
       await tester.pumpAndSettle();
 
       expect(monte.declaration.ecritures, hasLength(1));
       expect(monte.declaration.ecritures.single.pays, isNull);
       expect(monte.declaration.ecritures.single.langues, <String>[
-        'Peul',
         'Arabe',
+        'poular',
       ]);
       expect(find.text(t.enseignant.profil.enregistre), findsOneWidget);
+    });
+
+    testWidgets('un nom enregistre par un ancien client repart en code', (
+      WidgetTester tester,
+    ) async {
+      // Avant la correction, le profil portait le nom. La feuille coche la
+      // carte de sa langue, une seule fois, et l'enregistrement envoie le
+      // code.
+      final _Monte monte = await _monter(
+        tester,
+        profil: _profilDeTest(langues: const <String>['Français', 'Arabe']),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Français, Arabe'), findsOneWidget);
+
+      await _taperLigne(tester, t.enseignant.profil.langues);
+      expect(find.byKey(FeuilleLangues.carteKey('Français')), findsOneWidget);
+      await tester.tap(find.byKey(FeuilleLangues.enregistrerKey));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(monte.declaration.ecritures.single.langues, <String>[
+        'francais',
+        'Arabe',
+      ]);
     });
 
     testWidgets('un echec d ecriture se dit, et ne ment pas sur la valeur', (
@@ -493,16 +551,21 @@ void main() {
       await tester.pumpAndSettle();
       monte.declaration.erreurAJeter = StateError('refus du serveur');
 
+      // FORM-L8 : le pays se choisit dans la liste. « GN », declare hors
+      // liste, revient dans « Autre » ; on choisit le Senegal.
       await _taperLigne(tester, t.enseignant.profil.pays);
-      await tester.enterText(find.byType(TextField), 'SN');
-      await tester.tap(find.text(t.enseignant.profil.enregistrer));
+      await tester.ensureVisible(find.byKey(FeuillePays.carteKey('Sénégal')));
+      await tester.tap(find.byKey(FeuillePays.carteKey('Sénégal')));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byKey(FeuillePays.enregistrerKey));
+      await tester.tap(find.byKey(FeuillePays.enregistrerKey));
       await tester.pumpAndSettle();
 
       expect(find.text(t.enseignant.profil.editionErreur), findsOneWidget);
       // L'ecran n'a aucun etat local de profil : il reaffiche ce que la lecture
       // rend, donc l'ancienne valeur.
       expect(find.text('GN'), findsOneWidget);
-      expect(find.text('SN'), findsNothing);
+      expect(find.text('Sénégal'), findsNothing);
     });
 
     testWidgets('le plafond hebdomadaire ne s edite pas', (
@@ -519,5 +582,109 @@ void main() {
 
       expect(find.text(t.enseignant.profil.enregistrer), findsNothing);
     });
+  });
+
+  group('ENS-05 : la ligne des langues ne montre jamais un code', () {
+    testWidgets('referentiel en chargement : sa forme, pas les codes', (
+      WidgetTester tester,
+    ) async {
+      final Completer<List<LangueCours>> jamais =
+          Completer<List<LangueCours>>();
+      await _monter(
+        tester,
+        profil: _profilDeTest(),
+        referentiel: () => jamais.future,
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.text(t.enseignant.profil.langues), findsOneWidget);
+      expect(find.textContaining('francais'), findsNothing);
+      expect(find.textContaining('Arabe'), findsNothing);
+      expect(find.byType(Skeleton), findsOneWidget);
+    });
+
+    testWidgets('referentiel illisible : la ligne le dit, sans code', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        profil: _profilDeTest(),
+        referentiel: () =>
+            Future<List<LangueCours>>.error(StateError('panne reseau')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.enseignant.profil.languesErreur), findsOneWidget);
+      expect(find.textContaining('francais'), findsNothing);
+      // Le reste du profil reste lisible.
+      expect(find.text('RA-ENS-0007'), findsOneWidget);
+    });
+
+    testWidgets('referentiel illisible, en arabe : la ligne le dit en arabe', (
+      WidgetTester tester,
+    ) async {
+      // Revue CAND-Q15 (lot langue) : la cle n'avait pas de traduction
+      // arabe, et slang retombait sur la phrase francaise. Sans traduction,
+      // `t` rend la meme chaine dans les deux langues : le `findsNothing`
+      // sur le francais echoue.
+      final String francais = AppLocale.fr
+          .buildSync()
+          .enseignant
+          .profil
+          .languesErreur;
+      // L'arabe est une bibliotheque differee : il se charge hors du temps
+      // simule du test.
+      await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
+      addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+      await _monter(
+        tester,
+        profil: _profilDeTest(),
+        referentiel: () =>
+            Future<List<LangueCours>>.error(StateError('panne reseau')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.enseignant.profil.languesErreur), findsOneWidget);
+      expect(find.text(francais), findsNothing);
+      expect(find.textContaining('francais'), findsNothing);
+    });
+
+    testWidgets('une langue retiree de l onboarding reste nommee', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        profil: _profilDeTest(langues: const <String>['poular', 'Wolof']),
+        referentiel: () async => const <LangueCours>[
+          LangueCours(code: 'poular', nom: 'Poular', actif: false),
+          LangueCours(code: 'francais', nom: 'Français'),
+        ],
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Poular, Wolof'), findsOneWidget);
+      expect(find.textContaining('poular'), findsNothing);
+    });
+  });
+
+  group('ASSETS-DIR-1 : la politique de controle, rangee dans l espace '
+      'enseignant', () {
+    for (final bool echec in <bool>[false, true]) {
+      testWidgets('le lien ouvre la politique (lecture des acceptations '
+          '${echec ? 'en echec' : 'vide'})', (WidgetTester tester) async {
+        await _monter(
+          tester,
+          profil: _profilDeTest(),
+          echecAcceptations: echec,
+        );
+        await tester.pumpAndSettle();
+
+        // Un texte fixe : lisible quel que soit l'etat des acceptations.
+        await _taperLigne(tester, t.contrat.politique.lien);
+        expect(find.text(t.contrat.politique.titre), findsOneWidget);
+        expect(find.text(t.contrat.politique.s10.titre), findsOneWidget);
+      });
+    }
   });
 }

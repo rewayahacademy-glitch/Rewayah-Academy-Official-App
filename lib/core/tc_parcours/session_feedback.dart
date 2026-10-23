@@ -163,5 +163,5 @@ class TendanceFeedback {
 /// **Cinq, et c'est une valeur de repli, pas une regle gravee.** Le seuil
 /// appartient a `app_config`, le magasin cle/valeur deja employe pour les trois
 /// seuils de presence : il doit se regler sans redeploiement. La demande est
-/// ecrite dans `docs/teaching-core/TC_CONTRACT_REQUEST_H.md` section 3.
+/// ecrite dans `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_H.md` section 3.
 const int seuilTendanceParDefaut = 5;

@@ -1,73 +1,102 @@
 import 'dart:async';
-import 'dart:io' show Platform;
 
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/appairage/code_local.dart';
 import '../../core/appairage/profils_locaux.dart';
 import '../../core/appairage/service_enfant.dart';
 import '../../core/cache/secure/stockage_securise.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
-import '../../core/theme/app_metriques.dart';
+import '../../core/icons/app_icons.dart';
+import '../../core/router/routes.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
-import '../../core/widgets/avatar_tile.dart';
-import '../../core/widgets/marque_page.dart';
+import '../../core/widgets/avatar_nom.dart';
+import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pin_pad.dart';
-import '../../core/widgets/pressable.dart';
+import 'saisie_code_page.dart';
 
 /// Les moments successifs de `ELV-01`.
-enum _Moment {
+enum MomentConnexionEleve {
   /// On regarde ce que cet appareil connait deja.
   chargement,
 
-  /// Aucun profil : il faut un code.
+  /// Aucun profil au depart : la saisie du code vit sur sa propre route
+  /// (`/connexion/eleve/code`) et l'ecran y renvoie.
   saisieCode,
 
-  /// Des profils existent : l'enfant choisit le sien.
+  /// Des profils existent : l'eleve choisit le sien.
   choixProfil,
+
+  /// Plus aucun profil apres un retrait : l'ecran le dit et propose un code.
+  vide,
 
   /// Premier usage d'un profil sur cet appareil : il choisit son code.
   creationCode,
 
+  /// Il confirme le code qu'il vient de choisir.
+  confirmationCode,
+
   /// Le profil a deja un code : il le saisit.
   saisieCodePersonnel,
+
+  /// Code bon : la connexion s'ouvre (reseau).
+  ouverture,
 }
 
-/// `ELV-01` : la connexion de l'eleve.
+/// `ELV-01` : l'appareil de l'eleve, partage ou non (`/connexion/eleve`).
 ///
-/// **Sur un appareil deja appaire, l'ecran de code ne reapparait jamais** :
-/// l'enfant voit directement le choix de profil
-/// (`docs/produit/parcours-utilisateurs.md`).
+/// **Choix du profil, puis code personnel.** Sur un appareil deja connecte,
+/// l'eleve voit les profils que cet appareil connait (grille de deux colonnes
+/// de cartes, manifeste section 2, cartes « genre » #11 et avatars du
+/// selecteur), touche le sien, puis saisit son code. « Ajouter un profil sur
+/// cet appareil » mene a la saisie d'un nouveau code : un deuxieme eleve peut
+/// ainsi utiliser la meme tablette (C05 3.1 point 2).
 ///
-/// Le code personnel se cree ici, sur l'appareil, juste apres l'appairage, en
-/// presence du tuteur qui vient de montrer le code. **Il n'est jamais transmis**
-/// (ADR-005) : il n'existe aucun champ en base pour le recevoir, et
+/// Le code personnel se cree ici, juste apres la connexion de l'appareil, puis
+/// la connexion s'ouvre aussitot (sans le redemander). **Il n'est jamais
+/// transmis** (ADR-005) : la comparaison est locale, et
 /// `test/appairage/code_local_test.dart` relit cette source pour le verifier.
+///
+/// Les erreurs du pave sont toutes dites : code faux (sous les pastilles),
+/// deux codes differents, appareil retire par le tuteur (le profil est alors
+/// oublie sur cet appareil), pas de reseau, trop d'essais, echec general
+/// (C05 3.1 point 3). Pendant l'ouverture, le pave est fige et l'attente dite,
+/// bornee par [delaiOuverture] : au-dela, le pave et le retour reviennent.
 class EleveConnexionPage extends ConsumerStatefulWidget {
   /// Cree l'ecran de connexion de l'eleve.
   const EleveConnexionPage({super.key});
+
+  /// La cle de la carte d'un profil.
+  static Key carteKey(String profilId) =>
+      ValueKey<String>('eleve-connexion-profil-$profilId');
+
+  /// La cle du message d'erreur du moment courant.
+  static const Key messageKey = ValueKey<String>('eleve-connexion-message');
+
+  /// Attente maximale de l'ouverture de la connexion (fonction Edge puis
+  /// `verifyOTP`) : au-dela, le pave revient avec le message d'echec.
+  static const Duration delaiOuverture = Duration(seconds: 20);
 
   @override
   ConsumerState<EleveConnexionPage> createState() => _EleveConnexionPageState();
 }
 
 class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
-  final TextEditingController _code = TextEditingController();
-
-  _Moment _moment = _Moment.chargement;
+  MomentConnexionEleve _moment = MomentConnexionEleve.chargement;
   List<ProfilLocal> _profils = const <ProfilLocal>[];
   ProfilLocal? _choisi;
   String? _premierEssai;
-  bool _enCours = false;
   bool _erreurCode = false;
   String? _message;
+  bool _aideOubli = false;
 
   @override
   void initState() {
@@ -75,27 +104,49 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
     unawaited(_charger());
   }
 
-  @override
-  void dispose() {
-    _code.dispose();
-    super.dispose();
+  GoRouter? get _routeur => GoRouter.maybeOf(context);
+
+  /// Le profil que la saisie ou le scanner vient de connecter, passe en
+  /// `extra` (jamais dans l'adresse). Absent hors de ce parcours.
+  ProfilLocal? _profilQuiArrive() {
+    try {
+      final Object? extra = GoRouterState.of(context).extra;
+      return extra is ProfilLocal ? extra : null;
+    } on Object {
+      return null;
+    }
   }
+
+  /// La saisie d'un code, dont le retour revient ici quand des profils
+  /// existent (`?depuis=profils`, parametre non sensible).
+  void _versSaisie({bool depuisProfils = false}) {
+    _routeur?.go(
+      depuisProfils
+          ? Uri(
+              path: Routes.connexionEleveCode,
+              queryParameters: <String, String>{'depuis': 'profils'},
+            ).toString()
+          : Routes.connexionEleveCode,
+    );
+  }
+
+  /// Les profils par prenom, dans un sens explicite (la base locale n'en
+  /// garantit aucun).
+  static List<ProfilLocal> _trier(List<ProfilLocal> profils) =>
+      <ProfilLocal>[...profils]..sort((ProfilLocal a, ProfilLocal b) {
+        final int parPrenom = a.prenom.toLowerCase().compareTo(
+          b.prenom.toLowerCase(),
+        );
+        return parPrenom != 0 ? parPrenom : a.id.compareTo(b.id);
+      });
 
   /// Ce que cet appareil connait deja, quand il sait le dire.
   ///
-  /// **Un echec ici ne bloque pas l'entree.** La base locale s'ouvre sur un
-  /// moteur propre a la plateforme, et sur le web il lui faut deux fichiers
-  /// servis a la racine (`sqlite3.wasm` et `drift_worker.js`). Quand ils
-  /// manquaient, l'ouverture echouait, cette methode n'avait pas de `catch`, et
-  /// comme elle est lancee en `unawaited` l'echec partait dans le vide :
-  /// `setState` n'etait jamais appele et l'ecran restait indefiniment sur son
-  /// indicateur de chargement. L'operateur voyait un ecran qui ne chargeait
-  /// jamais, sans un message, sans une erreur.
-  ///
-  /// La memoire des profils est un **confort**, pas une condition d'entree :
-  /// sans elle, on demande un code, ce qui est exactement l'etat d'un appareil
-  /// qui n'a jamais ete appaire. C'est le pire cas acceptable ; un chargement
-  /// sans fin ne l'est pas.
+  /// **Un echec ici ne bloque pas l'entree** : la memoire des profils est un
+  /// confort, pas une condition. Sans elle, on demande un code, ce qui est
+  /// l'etat d'un appareil jamais connecte (sur le web, la base locale depend
+  /// de deux fichiers servis a la racine ; leur absence laissait l'ecran sur
+  /// un chargement sans fin).
   Future<void> _charger() async {
     List<ProfilLocal> profils = const <ProfilLocal>[];
     try {
@@ -106,63 +157,40 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
     if (!mounted) {
       return;
     }
+
+    // Arrivee depuis la saisie ou le scanner (`connecterCetAppareil`) : le
+    // jeton est deja range, on passe droit au code personnel de ce profil,
+    // meme si la base locale n'a pas pu le retenir.
+    final ProfilLocal? arrive = _profilQuiArrive();
+    if (arrive != null) {
+      if (!profils.any((ProfilLocal p) => p.id == arrive.id)) {
+        profils = <ProfilLocal>[...profils, arrive];
+      }
+      setState(() => _profils = _trier(profils));
+      await _choisirProfil(arrive);
+      return;
+    }
+
     setState(() {
-      _profils = profils;
-      _moment = profils.isEmpty ? _Moment.saisieCode : _Moment.choixProfil;
+      _profils = _trier(profils);
+      _moment = profils.isEmpty
+          ? MomentConnexionEleve.saisieCode
+          : MomentConnexionEleve.choixProfil;
     });
-  }
-
-  Future<void> _appairer() async {
-    setState(() {
-      _enCours = true;
-      _message = null;
-    });
-    try {
-      final StockageSecurise coffre = ref.read(stockageSecuriseProvider);
-      final AppairageReussi resultat = await ref
-          .read(serviceEnfantProvider)
-          .appairer(
-            code: _code.text.trim().toUpperCase(),
-            empreinteAppareil: await coffre.empreinteAppareil(),
-            plateforme: _plateforme(),
-          );
-
-      // Le jeton n'est rendu qu'une fois : il est ecrit avant toute autre
-      // chose, sinon l'appairage serait a refaire.
-      await coffre.enregistrerJetonAppareil(
-        resultat.profilId,
-        resultat.jetonAppareil,
-      );
-      final ProfilLocal profil = ProfilLocal(
-        id: resultat.profilId,
-        prenom: resultat.prenom,
-        identifiantImmuable: '',
-      );
-      await ref.read(profilsLocauxProvider).enregistrer(profil);
-
-      if (mounted) {
-        setState(() {
-          _profils = <ProfilLocal>[..._profils, profil];
-          _choisi = profil;
-          _code.clear();
-          _moment = _Moment.creationCode;
-        });
-      }
-    } on Object {
-      if (mounted) {
-        setState(() => _message = t.eleveConnexion.codeErreur);
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _enCours = false);
-      }
+    if (profils.isEmpty) {
+      _versSaisie();
     }
   }
 
   Future<void> _choisirProfil(ProfilLocal profil) async {
-    final String? empreinte = await ref
-        .read(stockageSecuriseProvider)
-        .empreintePin(profil.id);
+    String? empreinte;
+    try {
+      empreinte = await ref
+          .read(stockageSecuriseProvider)
+          .empreintePin(profil.id);
+    } on Object {
+      empreinte = null;
+    }
     if (!mounted) {
       return;
     }
@@ -170,10 +198,43 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
       _choisi = profil;
       _erreurCode = false;
       _premierEssai = null;
+      _message = null;
+      _aideOubli = false;
       _moment = empreinte == null
-          ? _Moment.creationCode
-          : _Moment.saisieCodePersonnel;
+          ? MomentConnexionEleve.creationCode
+          : MomentConnexionEleve.saisieCodePersonnel;
     });
+  }
+
+  /// Retour au choix des profils (ou a la connexion s'il n'y en a plus).
+  void _versChoix({String? message}) {
+    setState(() {
+      _choisi = null;
+      _premierEssai = null;
+      _erreurCode = false;
+      _aideOubli = false;
+      _message = message;
+      _moment = _profils.isEmpty
+          ? MomentConnexionEleve.vide
+          : MomentConnexionEleve.choixProfil;
+    });
+  }
+
+  void _retour() {
+    switch (_moment) {
+      case MomentConnexionEleve.creationCode:
+      case MomentConnexionEleve.confirmationCode:
+      case MomentConnexionEleve.saisieCodePersonnel:
+        _versChoix();
+      case MomentConnexionEleve.ouverture:
+        // L'ouverture est en vol : on ne quitte pas au milieu.
+        break;
+      case MomentConnexionEleve.chargement:
+      case MomentConnexionEleve.saisieCode:
+      case MomentConnexionEleve.choixProfil:
+      case MomentConnexionEleve.vide:
+        _routeur?.go(Routes.connexion);
+    }
   }
 
   Future<void> _creerCode(String saisie) async {
@@ -181,34 +242,43 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
     if (profil == null) {
       return;
     }
-    if (_premierEssai == null) {
+    if (_moment == MomentConnexionEleve.creationCode) {
       setState(() {
         _premierEssai = saisie;
-        _erreurCode = false;
+        _message = null;
+        _moment = MomentConnexionEleve.confirmationCode;
       });
       return;
     }
     if (_premierEssai != saisie) {
       setState(() {
         _premierEssai = null;
-        _erreurCode = true;
-        _message = t.eleveConnexion.codeDifferent;
+        _message = t.eleveConnexion.pin.different;
+        _moment = MomentConnexionEleve.creationCode;
       });
       return;
     }
 
     // `sceller` produit un sel et une empreinte : le code lui-meme n'est ecrit
     // nulle part, pas meme dans le coffre.
-    await ref
-        .read(stockageSecuriseProvider)
-        .enregistrerEmpreintePin(profil.id, CodeLocal.sceller(saisie));
-    if (mounted) {
-      setState(() {
-        _premierEssai = null;
-        _message = null;
-        _moment = _Moment.saisieCodePersonnel;
-      });
+    try {
+      await ref
+          .read(stockageSecuriseProvider)
+          .enregistrerEmpreintePin(profil.id, CodeLocal.sceller(saisie));
+    } on Object {
+      if (mounted) {
+        setState(() {
+          _premierEssai = null;
+          _message = t.eleveConnexion.pin.echec;
+          _moment = MomentConnexionEleve.creationCode;
+        });
+      }
+      return;
     }
+    _premierEssai = null;
+    // Le code vient d'etre choisi deux fois : la connexion s'ouvre aussitot,
+    // sans le redemander.
+    await _ouvrir(profil);
   }
 
   Future<void> _verifierCode(String saisie) async {
@@ -217,235 +287,458 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
       return;
     }
     final StockageSecurise coffre = ref.read(stockageSecuriseProvider);
-    final String? scelle = await coffre.empreintePin(profil.id);
+    final String? scelle;
+    try {
+      scelle = await coffre.empreintePin(profil.id);
+    } on Object {
+      if (mounted) {
+        setState(() => _message = t.eleveConnexion.pin.echec);
+      }
+      return;
+    }
 
     // La comparaison est LOCALE : aucun appel reseau ne recoit la saisie.
     if (!CodeLocal.correspond(saisie, scelle)) {
       if (mounted) {
-        setState(() => _erreurCode = true);
-      }
-      return;
-    }
-
-    final String? jeton = await coffre.jetonAppareil(profil.id);
-    if (jeton == null) {
-      // Le tuteur a revoque cet appareil : le profil reste affiche tant qu'on
-      // ne le sait pas, il disparait des qu'on l'apprend.
-      await ref.read(profilsLocauxProvider).oublier(profil.id);
-      if (mounted) {
         setState(() {
-          _profils = _profils
-              .where((ProfilLocal p) => p.id != profil.id)
-              .toList();
-          _moment = _profils.isEmpty ? _Moment.saisieCode : _Moment.choixProfil;
-          _message = t.eleveConnexion.codeExpire;
+          _erreurCode = true;
+          _message = null;
         });
       }
       return;
     }
+    await _ouvrir(profil);
+  }
 
+  /// Ouvre la connexion par le jeton d'appareil de [profil].
+  Future<void> _ouvrir(ProfilLocal profil) async {
+    final StockageSecurise coffre = ref.read(stockageSecuriseProvider);
+    if (!mounted) {
+      return;
+    }
     setState(() {
-      _enCours = true;
       _erreurCode = false;
+      _message = null;
+      _moment = MomentConnexionEleve.ouverture;
     });
+
+    // La lecture du coffre peut echouer : le pave revient, avec le message
+    // d'echec, au lieu de rester fige sur « Connexion en cours ».
+    final String? jeton;
     try {
-      await ref.read(serviceEnfantProvider).ouvrirSession(jeton);
+      jeton = await coffre.jetonAppareil(profil.id);
     } on Object {
       if (mounted) {
-        setState(() => _message = t.eleveConnexion.codeExpire);
+        setState(() {
+          _moment = MomentConnexionEleve.saisieCodePersonnel;
+          _message = t.eleveConnexion.pin.echec;
+        });
       }
-    } finally {
-      if (mounted) {
-        setState(() => _enCours = false);
-      }
+      return;
     }
+    if (jeton == null) {
+      // Le jeton n'est plus sur cet appareil (coffre vide, sauvegarde
+      // restauree) : rien ne dit que le tuteur l'a retire, l'ecran ne
+      // l'affirme donc pas.
+      await _oublier(
+        profil,
+        message: t.eleveConnexion.profils.jetonAbsent(
+          dePrenom: deDevant(profil.prenom),
+        ),
+      );
+      return;
+    }
+    try {
+      // Borne : sans reponse du serveur, le pave revient avec le message
+      // d'echec au lieu d'une attente sans issue.
+      await ref
+          .read(serviceEnfantProvider)
+          .ouvrirSession(jeton)
+          .timeout(EleveConnexionPage.delaiOuverture);
+      // Succes : le routeur quitte `/connexion` des que la session est la.
+    } on Object catch (erreur) {
+      final MotifRefusAppairage motif = MotifRefusAppairage.depuis(erreur);
+      if (motif == MotifRefusAppairage.revoque) {
+        await _oublier(
+          profil,
+          message: t.eleveConnexion.profils.retire(prenom: profil.prenom),
+        );
+        return;
+      }
+      if (!mounted) {
+        return;
+      }
+      final p = t.eleveConnexion.pin;
+      setState(() {
+        _moment = MomentConnexionEleve.saisieCodePersonnel;
+        _message = switch (motif) {
+          MotifRefusAppairage.horsLigne => p.horsLigne,
+          MotifRefusAppairage.tropDEssais => p.tropDEssais,
+          _ => p.echec,
+        };
+      });
+    }
+  }
+
+  /// [profil] ne peut plus se connecter depuis cet appareil (le serveur dit
+  /// l'appareil retire, ou son jeton n'est plus dans le coffre) : le profil,
+  /// son jeton et l'empreinte de son code quittent cet appareil, et l'ecran
+  /// dit [message], propre a chaque cause.
+  Future<void> _oublier(ProfilLocal profil, {required String message}) async {
+    final StockageSecurise coffre = ref.read(stockageSecuriseProvider);
+    try {
+      await ref.read(profilsLocauxProvider).oublier(profil.id);
+      await coffre.oublierAppareil(profil.id);
+      await coffre.effacerEmpreintePin(profil.id);
+    } on Object {
+      // Au pire, le profil reapparaitra et le serveur refusera encore.
+    }
+    if (!mounted) {
+      return;
+    }
+    _profils = _profils.where((ProfilLocal p) => p.id != profil.id).toList();
+    _versChoix(message: message);
   }
 
   @override
   Widget build(BuildContext context) {
+    final ProfilLocal? choisi = _choisi;
+    final String? titre = switch (_moment) {
+      MomentConnexionEleve.choixProfil => t.eleveConnexion.choisirProfil,
+      MomentConnexionEleve.creationCode ||
+      MomentConnexionEleve.confirmationCode ||
+      MomentConnexionEleve.saisieCodePersonnel ||
+      MomentConnexionEleve.ouverture =>
+        choisi == null
+            ? null
+            : t.eleveConnexion.pin.bonjour(prenom: choisi.prenom),
+      _ => null,
+    };
+
+    final Widget contenu = switch (_moment) {
+      MomentConnexionEleve.chargement || MomentConnexionEleve.saisieCode =>
+        Center(child: Text(t.commun.chargement)),
+      MomentConnexionEleve.choixProfil => _ChoixProfil(
+        profils: _profils,
+        message: _message,
+        onProfil: (ProfilLocal p) => unawaited(_choisirProfil(p)),
+        onAjouter: () => _versSaisie(depuisProfils: true),
+      ),
+      MomentConnexionEleve.vide => EtatSysteme(
+        nature: NatureEtat.aucunResultat,
+        titre: t.eleveConnexion.profils.videTitre,
+        phrase: _message ?? t.eleveConnexion.profils.vide,
+        libelleAction: t.eleveConnexion.profils.videAction,
+        onAction: _versSaisie,
+      ),
+      MomentConnexionEleve.creationCode ||
+      MomentConnexionEleve.confirmationCode ||
+      MomentConnexionEleve.saisieCodePersonnel ||
+      MomentConnexionEleve.ouverture => _Pave(
+        profil: choisi,
+        moment: _moment,
+        enErreur: _erreurCode,
+        message: _message,
+        aideOubli: _aideOubli,
+        plusieursProfils: _profils.length > 1,
+        onComplet: (String code) => unawaited(
+          _moment == MomentConnexionEleve.saisieCodePersonnel
+              ? _verifierCode(code)
+              : _creerCode(code),
+        ),
+        onChangerProfil: _versChoix,
+        onOubli: () => setState(() => _aideOubli = !_aideOubli),
+        // Le nouveau code d'appairage efface l'ancien code personnel
+        // (`connecterCetAppareil`) : l'eleve en choisit un nouveau.
+        onNouveauCode: () => _versSaisie(depuisProfils: true),
+      ),
+    };
+
+    // Telephone : a meme la page. Tablette et bureau : le panneau centre
+    // commun aux trois taches de l'appareil eleve (saisie, scanner, ici), dont
+    // le disque retour et le titre sont alignes sur le panneau (REVUE R-07).
+    final bool mobile = AppGabarit.de(context) == Gabarit.mobile;
+    final VoidCallback? retour = _moment == MomentConnexionEleve.ouverture
+        ? null
+        : _retour;
+    if (mobile) {
+      return PageShell(titre: titre, onRetour: retour, child: contenu);
+    }
     return PageShell(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          const MarquePage(),
-          Ecart.vXxxl,
-          Align(
-            alignment: Alignment.topCenter,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 460),
-              child: AppCard(
-                child: switch (_moment) {
-                  _Moment.chargement => Center(child: Text(t.commun.chargement)),
-                  _Moment.saisieCode => _saisieCode(),
-                  _Moment.choixProfil => _choixProfil(),
-                  _Moment.creationCode => _pave(
-                    titre: _premierEssai == null
-                        ? t.eleveConnexion.nouveauCode
-                        : t.eleveConnexion.nouveauCodeConfirmer,
-                    onComplet: (String code) => unawaited(_creerCode(code)),
-                  ),
-                  _Moment.saisieCodePersonnel => _pave(
-                    titre: t.pin.titre,
-                    onComplet: (String code) => unawaited(_verifierCode(code)),
-                  ),
-                },
-              ),
-            ),
-          ),
-        ],
+      child: PanneauAppareilEleve(
+        titre: titre,
+        onRetour: retour,
+        child: contenu,
       ),
     );
   }
+}
 
-  Widget _saisieCode() {
+/// Le message d'erreur du moment, annonce des qu'il apparait.
+class _Message extends StatelessWidget {
+  const _Message(this.texte);
+
+  final String texte;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    liveRegion: true,
+    child: Text(
+      texte,
+      key: EleveConnexionPage.messageKey,
+      textAlign: TextAlign.center,
+      style: AppPalette.of(context).inkAlert
+          .applyTo(Theme.of(context).textTheme.bodyMedium ?? const TextStyle()),
+    ),
+  );
+}
+
+class _ChoixProfil extends StatelessWidget {
+  const _ChoixProfil({
+    required this.profils,
+    required this.message,
+    required this.onProfil,
+    required this.onAjouter,
+  });
+
+  final List<ProfilLocal> profils;
+  final String? message;
+  final void Function(ProfilLocal profil) onProfil;
+  final VoidCallback onAjouter;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    // Deux colonnes, comme les cartes de choix de l'admission ; a 150 % de
+    // texte et plus, une seule (repli en pile).
+    final bool pile =
+        MediaQuery.textScalerOf(context).scale(1) >=
+        AppGabarit.seuilTexteColonne;
+    final int colonnes = pile ? 1 : 2;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Text(t.eleveConnexion.entrerCode, style: textes.headlineSmall),
-        Ecart.vMd,
-        Text(t.eleveConnexion.codeInvite, style: textes.bodyLarge),
-        Ecart.vXxl,
-        TextField(
-          controller: _code,
-          onChanged: (String _) => setState(() {}),
-          textCapitalization: TextCapitalization.characters,
-          textAlign: TextAlign.center,
-          maxLength: 6,
-          style: textes.headlineMedium,
-          inputFormatters: <TextInputFormatter>[
-            const UpperCaseTextFormatter(),
-            FilteringTextInputFormatter.allow(RegExp('[A-Z2-9]')),
-          ],
-          decoration: InputDecoration(errorText: _message),
+    final List<Widget> rangees = <Widget>[];
+    for (int i = 0; i < profils.length; i += colonnes) {
+      final List<ProfilLocal> rangee = profils.sublist(
+        i,
+        i + colonnes > profils.length ? profils.length : i + colonnes,
+      );
+      rangees.add(
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              for (int j = 0; j < colonnes; j++) ...<Widget>[
+                if (j > 0) Ecart.hLg,
+                Expanded(
+                  child: j < rangee.length
+                      ? _CarteProfil(
+                          profil: rangee[j],
+                          onPress: () => onProfil(rangee[j]),
+                        )
+                      : const SizedBox.shrink(),
+                ),
+              ],
+            ],
+          ),
         ),
-        Ecart.vXl,
-        ActionPrincipale(
-          libelle: t.commun.valider,
-          enCours: _enCours,
-          onPress: _code.text.trim().length == 6
-              ? () => unawaited(_appairer())
-              : null,
-        ),
-        // Le bloc « scanner le carre » n'apparait pas : aucun lecteur de code
-        // n'est disponible sur cette version. Un bouton qui echoue apres le
-        // geste coute plus cher qu'un bouton absent, exactement comme le bouton
-        // d'ajout d'appareil de TUT-02.
-      ],
-    );
-  }
-
-  Widget _choixProfil() {
-    final TextTheme textes = Theme.of(context).textTheme;
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Text(
-          t.eleveConnexion.choisirProfil,
-          textAlign: TextAlign.center,
-          style: textes.headlineSmall,
+          t.eleveConnexion.profils.phrase,
+          style: palette.inkMuted.applyTo(
+            textes.bodyLarge ?? const TextStyle(),
+          ),
         ),
-        Ecart.vXxxl,
-        // Composition volontairement asymetrique, en leger decalage d'une tuile
-        // a l'autre : l'ecran doit ressembler a une invitation, pas a un menu
-        // de reglages.
-        for (int i = 0; i < _profils.length; i++)
-          Padding(
-            padding: EdgeInsetsDirectional.only(
-              bottom: AppSpacing.xxl,
-              start: i.isEven ? 0 : AppSpacing.xxxl,
-              end: i.isEven ? AppSpacing.xxxl : 0,
-            ),
-            child: _TuileProfil(
-              profil: _profils[i],
-              onPress: () => unawaited(_choisirProfil(_profils[i])),
-            ),
+        Ecart.vXxl,
+        for (int i = 0; i < rangees.length; i++) ...<Widget>[
+          if (i > 0) Ecart.vLg,
+          rangees[i],
+        ],
+        if (message != null) ...<Widget>[Ecart.vXl, _Message(message!)],
+        Ecart.vXxl,
+        ActionPrincipale(
+          libelle: t.eleveConnexion.profils.ajouter,
+          niveau: NiveauAction.secondaire,
+          prefixe: Icon(AppIcons.ajouter.repos),
+          onPress: onAjouter,
+        ),
+        Ecart.vSm,
+        Text(
+          t.eleveConnexion.profils.ajouterLegende,
+          textAlign: TextAlign.center,
+          style: palette.inkMuted.applyTo(
+            textes.bodySmall ?? const TextStyle(),
           ),
-        if (_message != null)
-          Text(
-            _message!,
-            textAlign: TextAlign.center,
-            style: AppPalette.of(context).inkAlert
-                .applyTo(textes.bodyMedium ?? const TextStyle()),
-          ),
-      ],
-    );
-  }
-
-  Widget _pave({
-    required String titre,
-    required void Function(String code) onComplet,
-  }) {
-    return Column(
-      children: <Widget>[
-        Text(titre, style: Theme.of(context).textTheme.titleLarge),
-        Ecart.vXl,
-        PinPad(
-          onCodeComplet: onComplet,
-          enErreur: _erreurCode,
-          longueur: CodeLocal.longueur,
         ),
       ],
     );
   }
 }
 
-/// La tuile d'un profil : une photo, un prenom, une grande cible.
-class _TuileProfil extends StatelessWidget {
-  const _TuileProfil({required this.profil, required this.onPress});
+/// La carte d'un profil : l'initiale (ou la photo), le prenom, une grande
+/// cible.
+class _CarteProfil extends StatelessWidget {
+  const _CarteProfil({required this.profil, required this.onPress});
 
   final ProfilLocal profil;
   final VoidCallback onPress;
 
   @override
   Widget build(BuildContext context) {
-    final AppMetriques metriques = AppMetriques.of(context);
-
-    return Pressable(
+    return AppCard(
+      key: EleveConnexionPage.carteKey(profil.id),
       onPress: onPress,
-      libelleSemantique: profil.prenom,
-      respecterCibleTactile: false,
-      child: Column(
-        children: <Widget>[
-          AvatarTile(
-            prenom: profil.prenom,
-            diametre: metriques.cibleTactile * 2,
-          ),
-          Ecart.vMd,
-          Text(profil.prenom, style: Theme.of(context).textTheme.titleLarge),
-        ],
+      libelleSemantique: t.eleveConnexion.profils.profilLibelle(
+        quePrenom: queDevant(profil.prenom),
+      ),
+      // AVATAR-1 : avatar centre, prenom centre dessous sur le meme axe.
+      child: Center(
+        child: AvatarNom.vertical(
+          prenom: profil.prenom,
+          diametre: AppAvatar.grand,
+          styleNom: Theme.of(context).textTheme.titleLarge,
+        ),
       ),
     );
   }
 }
 
-/// Met la saisie en majuscules : le code est affiche en majuscules chez le
-/// tuteur, et la base le compare en majuscules.
-class UpperCaseTextFormatter extends TextInputFormatter {
-  /// Cree le formateur.
-  const UpperCaseTextFormatter();
+class _Pave extends StatelessWidget {
+  const _Pave({
+    required this.profil,
+    required this.moment,
+    required this.enErreur,
+    required this.message,
+    required this.aideOubli,
+    required this.plusieursProfils,
+    required this.onComplet,
+    required this.onChangerProfil,
+    required this.onOubli,
+    required this.onNouveauCode,
+  });
+
+  final ProfilLocal? profil;
+  final MomentConnexionEleve moment;
+  final bool enErreur;
+  final String? message;
+  final bool aideOubli;
+  final bool plusieursProfils;
+  final void Function(String code) onComplet;
+  final VoidCallback onChangerProfil;
+  final VoidCallback onOubli;
+  final VoidCallback onNouveauCode;
 
   @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue _,
-    TextEditingValue apres,
-  ) => TextEditingValue(
-    text: apres.text.toUpperCase(),
-    selection: apres.selection,
-  );
-}
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final p = t.eleveConnexion.pin;
+    final bool ouverture = moment == MomentConnexionEleve.ouverture;
+    final String? consigne = switch (moment) {
+      MomentConnexionEleve.creationCode => p.creer,
+      MomentConnexionEleve.confirmationCode => p.confirmer,
+      _ => null,
+    };
 
-String _plateforme() {
-  if (kIsWeb) {
-    return 'web';
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        if (profil != null)
+          Center(
+            // AVATAR-1 : avatar centre, prenom centre dessous.
+            child: AvatarNom.vertical(
+              prenom: profil!.prenom,
+              diametre: AppAvatar.grand,
+              styleNom: Theme.of(context).textTheme.titleMedium,
+            ),
+          ),
+        // En saisie, le pave porte deja sa consigne parlee (« Entre ton
+        // code ») : la repeter au-dessus faisait doublon (planche contre E3).
+        if (consigne != null) ...<Widget>[
+          Ecart.vLg,
+          Text(
+            consigne,
+            textAlign: TextAlign.center,
+            style: palette.inkStrong.applyTo(
+              textes.titleLarge ?? const TextStyle(),
+            ),
+          ),
+        ],
+        if (moment == MomentConnexionEleve.creationCode) ...<Widget>[
+          Ecart.vSm,
+          Text(
+            p.creerPhrase,
+            textAlign: TextAlign.center,
+            style: palette.inkMuted.applyTo(
+              textes.bodyMedium ?? const TextStyle(),
+            ),
+          ),
+        ],
+        if (message != null) ...<Widget>[Ecart.vMd, _Message(message!)],
+        Ecart.vXl,
+        if (ouverture)
+          Semantics(
+            liveRegion: true,
+            child: Column(
+              children: <Widget>[
+                const SizedBox.square(
+                  dimension: AppSpacing.xxxl,
+                  child: CircularProgressIndicator(),
+                ),
+                Ecart.vMd,
+                Text(p.ouverture, textAlign: TextAlign.center),
+              ],
+            ),
+          )
+        else
+          // Une cle par moment : la confirmation repart d'un pave vide.
+          PinPad(
+            key: ValueKey<MomentConnexionEleve>(moment),
+            onCodeComplet: onComplet,
+            enErreur: enErreur,
+            longueur: CodeLocal.longueur,
+          ),
+        if (!ouverture) ...<Widget>[
+          Ecart.vXl,
+          if (moment == MomentConnexionEleve.saisieCodePersonnel) ...<Widget>[
+            ActionPrincipale(
+              libelle: p.oublie,
+              niveau: NiveauAction.tertiaire,
+              onPress: onOubli,
+            ),
+            if (aideOubli) ...<Widget>[
+              Semantics(
+                liveRegion: true,
+                child: Text(
+                  p.oubliePhrase,
+                  textAlign: TextAlign.center,
+                  style: palette.inkMuted.applyTo(
+                    textes.bodyMedium ?? const TextStyle(),
+                  ),
+                ),
+              ),
+              Ecart.vSm,
+              ActionPrincipale(
+                libelle: p.oublieAction,
+                niveau: NiveauAction.secondaire,
+                onPress: onNouveauCode,
+              ),
+              Ecart.vSm,
+            ],
+          ],
+          if (plusieursProfils)
+            ActionPrincipale(
+              libelle: p.changerProfil,
+              niveau: NiveauAction.tertiaire,
+              onPress: onChangerProfil,
+            ),
+        ],
+      ],
+    );
   }
-  if (Platform.isAndroid) {
-    return 'android';
-  }
-  if (Platform.isIOS) {
-    return 'ios';
-  }
-  return 'windows';
 }

@@ -50,12 +50,24 @@ class SegmentVersetLigne {
   final bool termineLAyah;
 }
 
+/// Ce qu'une ligne imprimee porte.
+enum TypeLigneMushaf {
+  /// Une ligne de texte : des segments de versets, justifiee sur le cadre.
+  texte,
+
+  /// Le cadre de sourate (titre), centre, sur une ligne a lui seul.
+  enteteSourate,
+
+  /// La basmala qui ouvre une sourate, centree, sur une ligne a elle seule.
+  basmala,
+}
+
 /// Une ligne d'une page du mushaf.
 ///
 /// C'est le contrat `SectionLigne` de `TEACHING_CORE_CONTRACTS.md` : l'unite
 /// que le renderer pose, une fois qu'une source de layout reelle la fournit.
-/// Il n'en existe **aucune** aujourd'hui, donc aucun `SectionLigne` n'est
-/// construit par le moteur : voir [DisponibiliteLayout].
+/// Aucun `SectionLigne` n'est construit par le moteur lui-meme : voir
+/// [DisponibiliteLayout].
 @immutable
 class SectionLigne {
   /// Cree une ligne.
@@ -63,6 +75,9 @@ class SectionLigne {
     required this.numero,
     required this.segments,
     this.centree = false,
+    this.type = TypeLigneMushaf.texte,
+    this.sourate,
+    this.termineLaSourate = false,
   });
 
   /// Son rang sur la page, de 1 au nombre de lignes de l'edition.
@@ -72,8 +87,18 @@ class SectionLigne {
   final List<SegmentVersetLigne> segments;
 
   /// Vrai pour les lignes qui ne se justifient pas : titre de sourate,
-  /// basmala, et les deux lignes d'Al-Fatiha.
+  /// basmala, et les lignes d'Al-Fatiha.
   final bool centree;
+
+  /// La nature de la ligne.
+  final TypeLigneMushaf type;
+
+  /// La sourate d'un cadre ou d'une basmala ; `null` pour une ligne de texte.
+  final int? sourate;
+
+  /// Vrai quand la ligne de texte porte la fin d'une sourate : l'edition la
+  /// laisse courte et centree quand elle ne remplit pas le cadre.
+  final bool termineLaSourate;
 }
 
 /// La mise en page d'une page du mushaf, telle que l'edition la compose.
@@ -85,6 +110,10 @@ class LayoutPage {
     required this.lignes,
     required this.nombreLignes,
     required this.ratioLargeurSurHauteur,
+    this.juz,
+    this.hizb,
+    this.rubDansHizb,
+    this.quartsDebutes = const <int>[],
   });
 
   /// La page concernee.
@@ -100,6 +129,18 @@ class LayoutPage {
 
   /// La proportion du cadre de texte, largeur divisee par hauteur.
   final double ratioLargeurSurHauteur;
+
+  /// Le juz du premier verset de la page, de 1 a 30.
+  final int? juz;
+
+  /// Le hizb du premier verset de la page, de 1 a 60.
+  final int? hizb;
+
+  /// Le quart parcouru dans le hizb au premier verset : 0 (debut), 1, 2, 3.
+  final int? rubDansHizb;
+
+  /// Les quarts de hizb (1 a 240) qui commencent sur cette page.
+  final List<int> quartsDebutes;
 }
 
 /// La source de mise en page du mushaf.

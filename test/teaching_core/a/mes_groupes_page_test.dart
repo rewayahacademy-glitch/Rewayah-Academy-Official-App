@@ -1,6 +1,7 @@
 // `Override` n'est pas exporte par l'entree principale de Riverpod 3.
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/tc_groupe/port_groupes.dart';
@@ -12,6 +13,7 @@ import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/carte_groupe.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/mes_groupes_page.dart';
 
+import '../../support/annonces.dart';
 import 'faux/faux_groupes.dart';
 import 'faux/faux_reseau.dart';
 import 'support/hote_tc_a.dart';
@@ -28,6 +30,24 @@ Future<void> _poser(
 }
 
 void main() {
+  test('K-59 : les phrases dites a l appui d un Rejoindre en attente ne '
+      'redisent jamais « hors ligne » (seul le bandeau le dit)', () async {
+    for (final AppLocale langue in AppLocale.values) {
+      final Traductions tr = await langue.build();
+      for (final String phrase in <String>[
+        tr.eleve.accueil.horsLigneDetail,
+        tr.eleve.accueil.entreeSePrepare,
+        tr.tc.groupe.carte.entreeAttendReseau,
+        tr.tc.groupe.carte.entreeSePrepare,
+      ]) {
+        expect(phrase.toLowerCase(), isNot(contains('hors ligne')));
+        expect(phrase.toLowerCase(), isNot(contains('hors-ligne')));
+        expect(phrase.toLowerCase(), isNot(contains('offline')));
+        expect(phrase, isNot(contains('غير متصل')), reason: phrase);
+      }
+    }
+  });
+
   testWidgets('la liste montre les groupes du jeu de demonstration', (
     WidgetTester tester,
   ) async {
@@ -36,7 +56,7 @@ void main() {
 
       expect(find.text(LibellesGroupe.mesGroupesTitre), findsOneWidget);
       expect(find.byType(CarteGroupe), findsNWidgets(7));
-      expect(find.text('Groupe Al-Fatiha'), findsOneWidget);
+      expect(find.text('Classe Al-Fatiha'), findsOneWidget);
       // La capacite de chaque groupe vient de sa donnee : deux seuils
       // differents cohabitent dans la meme liste.
       expect(find.text('4 / 5'), findsOneWidget);
@@ -108,26 +128,61 @@ void main() {
     });
   });
 
-  testWidgets('hors ligne, les cartes restent lisibles et la porte se ferme', (
+  testWidgets('hors ligne, les cartes restent lisibles et Rejoindre, jamais '
+      'grise, dit quand entrer sans entrer (BOUTONS-GRISES-1)', (
     WidgetTester tester,
   ) async {
     await avecLargeur(tester, largeurMobile, () async {
-      await _poser(
-        tester,
-        surcharges: surchargesDemonstration(horsLigne: true),
+      final List<String> annonces = ecouterAnnonces(tester);
+      int appels = 0;
+      await tester.pumpWidget(
+        hoteTcA(
+          MesGroupesPage(onRejoindre: (_) => appels++),
+          surcharges: surchargesDemonstration(horsLigne: true),
+        ),
       );
+      await tester.pump();
+      await tester.pump();
 
       // Une seule source d'etat reseau, celle du bandeau partage.
       expect(find.byType(OfflineBanner), findsOneWidget);
       expect(find.byType(CarteGroupe), findsNWidgets(7));
+      final Finder rejoindre = find.widgetWithText(
+        ActionPrincipale,
+        LibellesGroupe.rejoindre,
+      );
       final Iterable<ActionPrincipale> boutons = tester
-          .widgetList<ActionPrincipale>(
-            find.widgetWithText(ActionPrincipale, LibellesGroupe.rejoindre),
-          );
+          .widgetList<ActionPrincipale>(rejoindre);
       expect(boutons, isNotEmpty);
       for (final ActionPrincipale bouton in boutons) {
-        expect(bouton.onPress, isNull);
+        expect(bouton.onPress, isNotNull);
       }
+      expect(find.text(t.tc.groupe.carte.entreeAttendReseau), findsNothing);
+
+      await tester.ensureVisible(rejoindre.first);
+      await tester.tap(rejoindre.first);
+      await tester.pump();
+      expect(appels, 0);
+      expect(find.text(t.tc.groupe.carte.entreeAttendReseau), findsOneWidget);
+      expect(annonces, <String>[t.tc.groupe.carte.entreeAttendReseau]);
+      // La phrase ne redit pas « hors ligne » : seul le bandeau le dit.
+      expect(
+        t.tc.groupe.carte.entreeAttendReseau.toLowerCase(),
+        isNot(contains('hors ligne')),
+      );
+    });
+  });
+
+  testWidgets('sans rappel branche, aucun Rejoindre (jamais grise)', (
+    WidgetTester tester,
+  ) async {
+    await avecLargeur(tester, largeurMobile, () async {
+      await _poser(tester, surcharges: surchargesDemonstration());
+      expect(find.byType(CarteGroupe), findsNWidgets(7));
+      expect(
+        find.widgetWithText(ActionPrincipale, LibellesGroupe.rejoindre),
+        findsNothing,
+      );
     });
   });
 
@@ -159,7 +214,7 @@ void main() {
     await avecLargeur(tester, largeurMobile, () async {
       await _poser(tester, surcharges: surchargesDemonstration());
       // Le Groupe est permanent : il existe avant d'avoir une seance.
-      expect(find.text('Groupe Sabil'), findsOneWidget);
+      expect(find.text('Classe Sabil'), findsOneWidget);
       expect(find.text(LibellesGroupe.aucuneSeance), findsOneWidget);
     });
   });
@@ -173,7 +228,10 @@ void main() {
         surcharges: surchargesDemonstration(maintenant: ancreDemonstration),
       );
 
-      expect(find.textContaining('Cours dans 3 h 28'), findsOneWidget);
+      expect(
+        find.textContaining('Cours dans 3\u00A0h\u00A028'),
+        findsOneWidget,
+      );
       expect(
         find.textContaining(LibellesGroupe.salleOuverteCourt),
         findsWidgets,
@@ -182,7 +240,7 @@ void main() {
         find.textContaining(LibellesGroupe.attenteAvantDebut),
         findsOneWidget,
       );
-      expect(find.textContaining('Reste 28 min'), findsOneWidget);
+      expect(find.textContaining('Reste 28\u00A0min'), findsOneWidget);
       expect(find.textContaining(LibellesGroupe.prolongee), findsOneWidget);
       expect(find.textContaining(LibellesGroupe.terminee), findsOneWidget);
       expect(find.text(LibellesGroupe.aucuneSeance), findsOneWidget);

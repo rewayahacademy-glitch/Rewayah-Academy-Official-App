@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'recharger_adresse.dart';
 import 'session_agent.dart';
 
 /// Le nom du parametre d'URL qui porte le jeton d'observation.
@@ -37,3 +38,9 @@ String? jetonAgentDeLUrl([Uri? adresse]) {
 final Provider<EchecAgent?> echecAgentProvider = Provider<EchecAgent?>(
   (Ref ref) => null,
 );
+
+/// Relance l'ouverture d'une session d'agent : recharge l'adresse courante,
+/// jeton compris, pour que `main()` refasse la remise (EA-HL-DOUBLE-1f).
+/// Surchargeable en test.
+final Provider<void Function()> relancerOuvertureAgentProvider =
+    Provider<void Function()>((Ref ref) => rechargerAdresse);

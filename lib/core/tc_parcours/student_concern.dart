@@ -14,13 +14,23 @@ enum CategorieSignalement {
   /// Demande de changement de groupe, d'horaire, d'enseignant.
   changement('changement'),
 
-  /// Ce qui n'entre dans aucune des quatre autres.
+  /// La securite d'un enfant (PE, 18/10/2026). **Prioritaire** : la direction
+  /// le lit tout de suite ; l'enseignant (meme celui qui le depose, une fois
+  /// envoye) et les familles ne le lisent jamais. Il n'a pas de message pour la
+  /// famille et ne se transmet pas.
+  securiteEnfant('securite_enfant'),
+
+  /// Ce qui n'entre dans aucune des autres.
   autre('autre');
 
   const CategorieSignalement(this.valeurSql);
 
   /// La valeur telle qu'elle est attendue en base.
   final String valeurSql;
+
+  /// Vrai pour la securite d'un enfant : signalement prioritaire, jamais lu
+  /// par l'enseignant concerne ni par la famille.
+  bool get estSecuriteEnfant => this == CategorieSignalement.securiteEnfant;
 
   /// Lit une categorie depuis sa valeur SQL. `null` sur valeur inconnue.
   static CategorieSignalement? depuisSql(String? valeur) {
@@ -126,6 +136,11 @@ class StudentConcern {
        assert(
          transmisLeUtc == null || familySummary != null,
          'rien ne part a la famille sans un message ecrit pour elle',
+       ),
+       assert(
+         categorie != CategorieSignalement.securiteEnfant ||
+             (familySummary == null && transmisLeUtc == null),
+         'un signalement de securite d un enfant ne part jamais a la famille',
        );
 
   /// L'identifiant du signalement.
@@ -174,7 +189,9 @@ class StudentConcern {
   /// sans message ecrit pour elle, il n'y a rien a transmettre, et surtout pas
   /// la note interne.
   bool get peutEtreTransmis =>
-      familySummary != null && familySummary!.trim().isNotEmpty;
+      !categorie.estSecuriteEnfant &&
+      familySummary != null &&
+      familySummary!.trim().isNotEmpty;
 
   /// Ce que la famille recoit, ou `null` quand il n'y a rien a lui dire.
   ///
@@ -263,8 +280,7 @@ class ResumeFamilleSignalement {
     'categorie': categorie.valeurSql,
     'message': message,
     if (transmisA != null) 'transmis_a': transmisA!.valeurSql,
-    if (transmisLeUtc != null)
-      'transmis_le': transmisLeUtc!.toIso8601String(),
+    if (transmisLeUtc != null) 'transmis_le': transmisLeUtc!.toIso8601String(),
   };
 }
 

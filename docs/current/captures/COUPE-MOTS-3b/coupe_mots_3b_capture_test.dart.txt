@@ -1,0 +1,267 @@
+// COUPE-MOTS-3b : captures des ecrans corriges par COUPE-MOTS-3, au-dela de
+// 320 px x2 clair (deja dans docs/current/captures/COUPE-MOTS-3/) :
+// 320 px x2 sombre (Interface standard et guidee), 390 px et 1440 px, clair
+// et sombre, francais (LTR) et arabe (RTL).
+// - `espaceclasse_ens` : l'Espace Classe enseignant de demonstration, cadre
+//   sur « Progression de la Classe » puis « Ressources recentes ».
+// - `espaceclasse_elv` : l'Espace Classe eleve de demonstration, cadre sur
+//   la progression (« Chapitre 1 · 60 % »).
+// - `observation_recap` : l'etape 5 de l'observation du Controleur.
+// Prefixe des PNG : variable `CAPTURE_PREFIXE` (avant | apres) ;
+// `CAPTURE_ARABE_SEUL=1` ne garde que l'arabe a 320 px x2 (clair, sombre)
+// et a 390 px clair : l'avant de l'isolat bidi (point 4). Saute sans CAPTURE_DIR (voir LISEZ-MOI.md).
+
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/tc_horloge/emplacement_entree.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
+import 'package:rewayah_academy/features/controleur/observation_controle.dart';
+import 'package:rewayah_academy/features/controleur/observation_controle_page.dart';
+import 'package:rewayah_academy/features/demo/classe_demo.dart'
+    show EtatDemoClasse;
+import 'package:rewayah_academy/features/demo/demo_classe_page.dart';
+
+import 'outil_capture.dart';
+
+final String _prefixe = Platform.environment['CAPTURE_PREFIXE'] ?? 'apres';
+final bool _arabeSeul = Platform.environment['CAPTURE_ARABE_SEUL'] == '1';
+
+typedef _Variante = ({
+  String nom,
+  double largeur,
+  double hauteur,
+  double echelle,
+  Brightness clarte,
+  InterfaceMode interface,
+});
+
+const List<_Variante> _toutes = <_Variante>[
+  (
+    nom: '320x2_clair',
+    largeur: 320,
+    hauteur: 1500,
+    echelle: 2,
+    clarte: Brightness.light,
+    interface: InterfaceMode.standard,
+  ),
+  (
+    nom: '320x2_sombre',
+    largeur: 320,
+    hauteur: 1500,
+    echelle: 2,
+    clarte: Brightness.dark,
+    interface: InterfaceMode.standard,
+  ),
+  (
+    nom: '320x2_sombre_guidee',
+    largeur: 320,
+    hauteur: 1500,
+    echelle: 2,
+    clarte: Brightness.dark,
+    interface: InterfaceMode.enfant,
+  ),
+  (
+    nom: '390_clair',
+    largeur: 390,
+    hauteur: 1100,
+    echelle: 1,
+    clarte: Brightness.light,
+    interface: InterfaceMode.standard,
+  ),
+  (
+    nom: '390_sombre',
+    largeur: 390,
+    hauteur: 1100,
+    echelle: 1,
+    clarte: Brightness.dark,
+    interface: InterfaceMode.standard,
+  ),
+  (
+    nom: '1440_clair',
+    largeur: 1440,
+    hauteur: 900,
+    echelle: 1,
+    clarte: Brightness.light,
+    interface: InterfaceMode.standard,
+  ),
+  (
+    nom: '1440_sombre',
+    largeur: 1440,
+    hauteur: 900,
+    echelle: 1,
+    clarte: Brightness.dark,
+    interface: InterfaceMode.standard,
+  ),
+];
+
+Future<void> _toucher(WidgetTester tester, Finder f) async {
+  await tester.ensureVisible(f);
+  await tester.pumpAndSettle();
+  await tester.tap(f);
+  await tester.pumpAndSettle();
+}
+
+void main() {
+  group('Capture : COUPE-MOTS-3b', skip: sautSansCapture, () {
+    setUpAll(() async {
+      await chargerPolicesDuDepot();
+      await LocaleSettings.setLocale(AppLocale.ar);
+      await LocaleSettings.setLocale(AppLocale.fr);
+    });
+
+    for (final AppLocale langue in AppLocale.values) {
+      if (_arabeSeul && langue != AppLocale.ar) continue;
+      for (final _Variante v in _toutes) {
+        if (_arabeSeul &&
+            !<String>{
+              '320x2_clair',
+              '320x2_sombre',
+              '390_clair',
+            }.contains(v.nom)) {
+          continue;
+        }
+        final String suffixe = '${v.nom}_${langue.languageCode}';
+
+        for (final RoleEntree role in <RoleEntree>[
+          RoleEntree.enseignant,
+          RoleEntree.eleve,
+        ]) {
+          final String ecran = role == RoleEntree.enseignant ? 'ens' : 'elv';
+          testWidgets('${_prefixe}_espaceclasse_${ecran}_$suffixe', (
+            WidgetTester tester,
+          ) async {
+            LocaleSettings.setLocaleSync(langue);
+            addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+            fixerVueCapture(tester, Size(v.largeur, v.hauteur), 1);
+            final GoRouter routeur = GoRouter(
+              initialLocation: adresseDemoClasse(role, EtatDemoClasse.aVenir),
+              routes: routesDemoClasse('dev'),
+            );
+            addTearDown(routeur.dispose);
+            await tester.pumpWidget(
+              ProviderScope(
+                child: TranslationProvider(
+                  child: RepaintBoundary(
+                    key: cadreCapture,
+                    child: Builder(
+                      builder: (BuildContext context) => MaterialApp.router(
+                        debugShowCheckedModeBanner: false,
+                        theme: AppTheme.pour(v.interface, v.clarte),
+                        locale: TranslationProvider.of(context).flutterLocale,
+                        supportedLocales: AppLocaleUtils.supportedLocales,
+                        localizationsDelegates:
+                            GlobalMaterialLocalizations.delegates,
+                        builder: (BuildContext c, Widget? app) => MediaQuery(
+                          data: MediaQuery.of(
+                            c,
+                          ).copyWith(textScaler: TextScaler.linear(v.echelle)),
+                          child: app!,
+                        ),
+                        routerConfig: routeur,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+            await stabiliser(tester);
+            final Finder titre = role == RoleEntree.enseignant
+                ? find.text(t.enseignant.ficheGroupe.progressionTitre)
+                : find.textContaining('Chapitre 1').first;
+            await tester.ensureVisible(titre);
+            await stabiliser(tester);
+            debugPrint(
+              'PNG ${await capturer(tester, '${_prefixe}_espaceclasse_${ecran}_$suffixe')}',
+            );
+          });
+        }
+
+        testWidgets('${_prefixe}_observation_recap_$suffixe', (
+          WidgetTester tester,
+        ) async {
+          LocaleSettings.setLocaleSync(langue);
+          addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+          fixerVueCapture(
+            tester,
+            Size(v.largeur, v.echelle == 2 ? 1400 : 900),
+            1,
+          );
+          final CompteRenduEnSuspens visite = CompteRenduEnSuspens(
+            seanceId: 'seance-A',
+            classe: 'Classe Al-Fajr',
+            debut: DateTime(2026, 9, 28, 16),
+          );
+          await tester.pumpWidget(
+            hoteCapture(
+              ObservationControlePage(seanceId: visite.seanceId),
+              echelleTexte: v.echelle,
+              interfaceMode: v.interface,
+              themeMode: v.clarte == Brightness.dark
+                  ? ThemeMode.dark
+                  : ThemeMode.light,
+              surcharges: <Override>[
+                visitesObserveesProvider.overrideWith(
+                  () => VisitesObservees(<String, CompteRenduEnSuspens>{
+                    visite.seanceId: visite,
+                  }),
+                ),
+                rosterControleProvider.overrideWith(
+                  (Ref _) async => const <EleveRoster>[
+                    EleveRoster(id: 'e1', prenom: 'Mariam', initialeNom: 'S'),
+                  ],
+                ),
+              ],
+            ),
+          );
+          await tester.pumpAndSettle();
+          await _toucher(
+            tester,
+            find.byKey(
+              ObservationControlePage.cleNature(NatureObservation.aSuivre),
+            ),
+          );
+          await _toucher(tester, find.text(t.commun.continuer).last);
+          await _toucher(
+            tester,
+            find.byKey(
+              ObservationControlePage.cleDomaine(DomaineObservation.pedagogie),
+            ),
+          );
+          await _toucher(tester, find.text(t.commun.continuer).last);
+          await _toucher(
+            tester,
+            find.byKey(
+              ObservationControlePage.clePersonne(
+                PersonneConcernee.elevePrecis,
+              ),
+            ),
+          );
+          await _toucher(
+            tester,
+            find.byKey(ObservationControlePage.cleEleve('e1')),
+          );
+          await _toucher(tester, find.text(t.commun.continuer).last);
+          await _toucher(tester, find.text(t.commun.continuer).last);
+          final Finder question = find.textContaining(
+            t.controleur.observation.questionRecap,
+          );
+          expect(question, findsOneWidget);
+          await tester.ensureVisible(question);
+          await stabiliser(tester);
+          debugPrint(
+            'PNG ${await capturer(tester, '${_prefixe}_observation_recap_$suffixe')}',
+          );
+        });
+      }
+    }
+  });
+}

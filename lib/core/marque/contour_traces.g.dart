@@ -1,0 +1,19 @@
+// GENERE par tool/generer_contour.dart : ne pas modifier a la main.
+//
+// Traces recopies octet pour octet depuis assets/brand/logo/
+// (livraison du directeur, 10/10/2026). Regenerer :
+//   dart run tool/generer_contour.dart
+
+import 'dessin_contour.dart';
+
+/// `assets/brand/logo/violet/symbole-contour.svg`.
+const DessinContour symboleContour = DessinContour(
+  source: 'assets/brand/logo/violet/symbole-contour.svg',
+  largeur: 743,
+  hauteur: 734,
+  epaisseur: 17,
+  traces: <String>[
+    r'M371.501 236.58C454.344 236.581 521.5 303.759 521.5 386.63V695.403C489.742 710.2 455.471 720.505 419.501 725.5V392.95L246.658 362.79L366.253 431.535V658.836L221.5 699.399V386.63C221.5 376.324 221.424 360.082 225.244 350.483C242.553 286.358 302.186 236.58 371.501 236.58Z',
+    r'M371.501 8.5C571.98 8.50046 734.5 170.742 734.5 370.874C734.5 412.307 727.536 452.116 714.71 489.198C714.602 489.509 714.49 489.821 714.382 490.132C685.961 571.568 629.251 639.774 556 683.014V382.127C556 280.196 473.397 197.566 371.501 197.566C269.605 197.566 187 280.196 187 382.127V683.014C80.1564 619.943 8.50028 503.762 8.5 370.874C8.50013 170.742 171.022 8.50017 371.501 8.5Z',
+  ],
+);

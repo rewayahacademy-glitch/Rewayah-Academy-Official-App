@@ -69,6 +69,40 @@ enum OutilTrait {
   }
 }
 
+/// TB-7b (plan V2 §4.2, §20 « Options ») : l'epaisseur d'un trait, en
+/// trois choix courts. Elle multiplie l'epaisseur de base de l'outil (qui
+/// suit la largeur de la page, §9) ; aucune valeur libre, aucun curseur
+/// (« sans palette graphique professionnelle »).
+enum EpaisseurTrait {
+  /// Pour ecrire un mot dans une marge.
+  fine('fine', 0.5),
+
+  /// Le defaut.
+  moyenne('moyenne', 1),
+
+  /// Pour entourer ou souligner de loin.
+  epaisse('epaisse', 2);
+
+  const EpaisseurTrait(this.valeurSql, this.facteur);
+
+  /// La valeur telle qu'elle voyage avec le trait.
+  final String valeurSql;
+
+  /// Le multiplicateur de l'epaisseur de base.
+  final double facteur;
+
+  /// Lit une epaisseur depuis sa valeur. `null` sur valeur inconnue : le
+  /// rendu retombe alors sur [moyenne].
+  static EpaisseurTrait? depuisSql(String? valeur) {
+    for (final EpaisseurTrait epaisseur in EpaisseurTrait.values) {
+      if (epaisseur.valeurSql == valeur) {
+        return epaisseur;
+      }
+    }
+    return null;
+  }
+}
+
 /// Un point d'un trait, en coordonnees **normalisees**.
 ///
 /// Normalisees **relativement au bloc ancre**, pas a l'ecran ni a la page :
@@ -133,6 +167,7 @@ class TraitVectoriel {
     this.intention,
     this.pression,
     this.inclinaison,
+    this.epaisseur,
   });
 
   /// L'identifiant du trait.
@@ -159,6 +194,10 @@ class TraitVectoriel {
   /// L'inclinaison du stylet, `null` si le materiel ne la fournit pas.
   final double? inclinaison;
 
+  /// TB-7b : l'epaisseur choisie, `null` pour un trait d'avant ce choix
+  /// (rendu en [EpaisseurTrait.moyenne]).
+  final EpaisseurTrait? epaisseur;
+
   /// Le meme trait, avec un autre jeu de points.
   TraitVectoriel avecPoints(List<PointNormalise> nouveaux) => TraitVectoriel(
     id: id,
@@ -168,6 +207,7 @@ class TraitVectoriel {
     intention: intention,
     pression: pression,
     inclinaison: inclinaison,
+    epaisseur: epaisseur,
   );
 
   @override
@@ -179,7 +219,8 @@ class TraitVectoriel {
       other.outil == outil &&
       other.intention == intention &&
       other.pression == pression &&
-      other.inclinaison == inclinaison;
+      other.inclinaison == inclinaison &&
+      other.epaisseur == epaisseur;
 
   @override
   int get hashCode => Object.hash(
@@ -190,6 +231,7 @@ class TraitVectoriel {
     intention,
     pression,
     inclinaison,
+    epaisseur,
   );
 }
 

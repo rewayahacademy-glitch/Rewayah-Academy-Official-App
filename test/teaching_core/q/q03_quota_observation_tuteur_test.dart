@@ -36,10 +36,16 @@ void main() {
   group('Q-03 : le budget d observation est borne par le serveur', () {
     test('les defauts normatifs sont ceux de la specification', () {
       expect(politiqueHeritee.observationActivee, isTrue);
-      expect(politiqueHeritee.maxVisitsPerSession, 1);
+      // **Ce test encodait les ANCIENS defauts comme etant la specification**
+      // -- 1 visite, 120 s -- et restait vert parce qu il lit une fixture et
+      // jamais la base. La migration `0036`, appliquee en production le
+      // 21/09/2026, pose 2 visites, 120 s par visite, 240 s au total.
+      // Mesure faite sur `app_config` avant et apres.
+      expect(politiqueHeritee.maxVisitsPerSession, 2);
+      expect(politiqueHeritee.maxParVisite, const Duration(seconds: 120));
       expect(
         politiqueHeritee.maxTotalObservationTime,
-        const Duration(seconds: 120),
+        const Duration(seconds: 240),
       );
       expect(politiqueHeritee.microAutorise, isFalse);
       expect(politiqueHeritee.cameraAutorisee, isFalse);
@@ -48,7 +54,11 @@ void main() {
       expect(politiqueHeritee.admissionEnseignantRequise, isFalse);
     });
 
-    test('une seule visite, et la seconde est refusee', () {
+    test('la SECONDE visite est accordee, la troisieme refusee', () {
+      // C est toute la regle produit : le tuteur vient voir si son enfant
+      // participe, il peut tomber a un moment ou ce n est pas son tour, il
+      // ressort et revient. Ce retour est ce que l ancien quota de 1
+      // interdisait.
       final FauxServeurObservation serveur = FauxServeurObservation(
         politique: politiqueHeritee,
       );
@@ -60,11 +70,22 @@ void main() {
         serveur,
         _t0.add(const Duration(minutes: 5)),
       );
-      expect(seconde.autorise, isFalse);
-      expect(seconde.motifRefus, MotifRefusObservation.quotaVisitesAtteint);
+      expect(seconde.autorise, isTrue);
+      expect(seconde.motifRefus, isNull);
+      serveur.sortir(
+        maintenantUtc: _t0.add(const Duration(minutes: 5, seconds: 30)),
+      );
+
+      final ResultatEntreeObservation troisieme = _entrer(
+        serveur,
+        _t0.add(const Duration(minutes: 10)),
+      );
+      expect(troisieme.autorise, isFalse);
+      expect(troisieme.motifRefus, MotifRefusObservation.quotaVisitesAtteint);
       // Le temps non consomme n ouvre aucun droit : le quota de VISITES tombe
       // en premier, et c est bien ainsi qu il faut le dire a la famille.
-      expect(seconde.budget?.restant, const Duration(seconds: 80));
+      // 240 - (40 + 30) = 170.
+      expect(troisieme.budget?.restant, const Duration(seconds: 170));
     });
 
     test('un compte a rebours client trafique ne prolonge rien', () {

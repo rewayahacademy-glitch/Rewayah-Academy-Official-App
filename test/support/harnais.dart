@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,6 +15,7 @@ import 'package:rewayah_academy/core/appairage/service_enfant.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/cache/secure/stockage_securise.dart';
 import 'package:rewayah_academy/core/cache/sync/file_rapports.dart';
+import 'package:rewayah_academy/core/capacites/port_consentements.dart';
 import 'package:rewayah_academy/core/controle/service_controle.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
@@ -24,14 +26,15 @@ import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/journal/service_journal.dart';
-import 'package:rewayah_academy/core/matching/service_attribution.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/priere/reglages_priere.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
+import 'package:rewayah_academy/core/profil/service_acceptations.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/session/source_session.dart';
 import 'package:rewayah_academy/core/suivi/service_suivi.dart';
@@ -39,6 +42,8 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
+
+import 'sens_et_echelle.dart';
 
 /// L'hote minimal d'un ecran sous test.
 ///
@@ -59,22 +64,38 @@ Widget hote(
   ),
 );
 
+/// Un appareil sans personne connectee, pour un ecran monte seul : les
+/// lectures d'argent suivent la personne de la session (revue FI-VAGUE-R
+/// R7-04), et la source reelle lirait Supabase. La session reste « sans
+/// profil » du debut a la fin : aucune relecture parasite.
+Override sansPersonneConnectee() =>
+    sourceSessionProvider.overrideWithValue(FausseSourceSession());
+
 /// L'hote d'un ecran qui navigue.
 ///
 /// Certains ecrans de l'etape 3 se terminent par un `go` vers le portail : sans
 /// routeur, ils echouent au moment ou l'on teste justement ce qu'ils font de
 /// reussi. Le routeur du test reste minimal, il ne rejoue pas celui de
 /// l'application.
+///
+/// [themeMode], [direction] et [echelle] servent aux captures (sombre, RTL,
+/// texte x2 ; EA-HL-DOUBLE-1d) ; par defaut, l'arbre reste celui d'avant.
 Widget hoteRoutant({
   required String depart,
   required List<RouteBase> routes,
   List<Override> surcharges = const <Override>[],
   InterfaceMode mode = InterfaceMode.standard,
+  ThemeMode themeMode = ThemeMode.light,
+  TextDirection? direction,
+  double echelle = 1,
 }) => ProviderScope(
   overrides: surcharges,
   child: TranslationProvider(
     child: MaterialApp.router(
       theme: AppTheme.pour(mode, Brightness.light),
+      darkTheme: AppTheme.pour(mode, Brightness.dark),
+      themeMode: themeMode,
+      builder: sensEtEchelle(direction: direction, echelle: echelle),
       routerConfig: GoRouter(initialLocation: depart, routes: routes),
     ),
   ),
@@ -92,8 +113,23 @@ class FauxServiceDossier implements ServiceDossier {
   final List<({AppRole role, String prenom, String nom, Genre? genre})>
   profilsCrees = <({AppRole role, String prenom, String nom, Genre? genre})>[];
 
+  /// Le code d'invitation transmis a chaque creation de profil (nul hors
+  /// enseignant invite).
+  final List<String?> codesInvitation = <String?>[];
+
+  /// L5-01 : l'usage et la reponse « suit des cours » de chaque creation.
+  final List<({UsageTitulaire? usage, bool suitDesCours})> usages =
+      <({UsageTitulaire? usage, bool suitDesCours})>[];
+
+  /// Vrai pour simuler le service de la demonstration.
+  @override
+  bool demonstration = false;
+
   /// Les contrats acceptes.
   final List<SorteContrat> contratsAcceptes = <SorteContrat>[];
+
+  /// Les versions acceptees, dans le meme ordre que [contratsAcceptes].
+  final List<String> versionsAcceptees = <String>[];
 
   /// Les pieces deposees.
   final List<PieceAEnvoyer> depots = <PieceAEnvoyer>[];
@@ -116,8 +152,13 @@ class FauxServiceDossier implements ServiceDossier {
     required String prenom,
     required String nom,
     Genre? genre,
+    String? codeInvitation,
+    UsageTitulaire? usage,
+    bool suitDesCours = false,
   }) async {
     _peutEchouer();
+    codesInvitation.add(codeInvitation);
+    usages.add((usage: usage, suitDesCours: suitDesCours));
     profilsCrees.add((role: role, prenom: prenom, nom: nom, genre: genre));
   }
 
@@ -131,6 +172,7 @@ class FauxServiceDossier implements ServiceDossier {
   Future<void> accepterContrat(SorteContrat sorte, String version) async {
     _peutEchouer();
     contratsAcceptes.add(sorte);
+    versionsAcceptees.add(version);
   }
 
   @override
@@ -403,9 +445,22 @@ class FauxServiceValidation implements ServiceValidation {
     return file;
   }
 
+  /// Les cles signees, dans l'ordre (AD-7).
+  final List<String> apercus = <String>[];
+
+  /// Ce que la signature doit jeter (AD-7 : StorageException 404...).
+  Object? erreurApercu;
+
   @override
-  Future<String> apercu(String cleObjet) async =>
-      'https://exemple.test/$cleObjet';
+  Future<String> apercu(String cleObjet) async {
+    apercus.add(cleObjet);
+    final Object? erreur = erreurApercu;
+    if (erreur != null) {
+      // ignore: only_throw_errors
+      throw erreur;
+    }
+    return 'https://exemple.test/$cleObjet';
+  }
 
   @override
   Future<void> decider({
@@ -424,9 +479,6 @@ class FauxServicePlanning implements ServicePlanning {
 
   /// Les seances rendues.
   List<Seance> seancesRendues = const <Seance>[];
-
-  /// Les affectations rendues.
-  List<Affectation> affectationsRendues = const <Affectation>[];
 
   /// Le fuseau rendu.
   String fuseau = 'Europe/Paris';
@@ -480,44 +532,15 @@ class FauxServicePlanning implements ServicePlanning {
   }
 
   @override
-  Future<List<Seance>> seances() async => seancesRendues;
-
-  @override
-  Future<List<Affectation>> affectations() async => affectationsRendues;
+  Future<List<Seance>> seances({String? eleveId}) async => seancesRendues;
 }
 
 /// Un service de matching en memoire.
 class FauxServiceMatching implements ServiceMatching {
-  /// Le feed rendu.
-  List<EleveEnAttente> feed = const <EleveEnAttente>[];
-
-  /// Les prises demandees.
-  final List<({String eleveId, Creneau creneau})> prises =
-      <({String eleveId, Creneau creneau})>[];
-
   /// Les demandes deposees.
   final List<({SorteDemande sorte, String sujetId, String motif, int? valeur})>
   demandes =
       <({SorteDemande sorte, String sujetId, String motif, int? valeur})>[];
-
-  /// Ce que la prochaine prise doit jeter.
-  Object? erreurPrise;
-
-  @override
-  Future<List<EleveEnAttente>> elevesEnAttente() async => feed;
-
-  @override
-  Future<void> prendre({
-    required String eleveId,
-    required Creneau creneau,
-  }) async {
-    final Object? erreur = erreurPrise;
-    if (erreur != null) {
-      // ignore: only_throw_errors
-      throw erreur;
-    }
-    prises.add((eleveId: eleveId, creneau: creneau));
-  }
 
   @override
   Future<void> demander({
@@ -596,94 +619,6 @@ class FauxServiceAdmin implements ServiceAdmin {
   }
 }
 
-/// Un service d'attribution en memoire.
-///
-/// `ADM-05` est le seul ecran du produit dont les deux listes viennent de deux
-/// lectures distinctes : sans ce faux, on ne pourrait mesurer ni l'ordre de la
-/// file, ni le motif exige hors disponibilite.
-class FauxServiceAttribution implements ServiceAttribution {
-  /// La colonne de gauche.
-  List<FoyerEnAttente> foyers = const <FoyerEnAttente>[];
-
-  /// La colonne de droite, par eleve.
-  final Map<String, List<EnseignantCandidat>> enseignants =
-      <String, List<EnseignantCandidat>>{};
-
-  /// Les attributions demandees, dans l'ordre.
-  final List<
-    ({String eleveId, String enseignantId, Creneau creneau, String? motif})
-  >
-  attributions =
-      <({String eleveId, String enseignantId, Creneau creneau, String? motif})>[];
-
-  /// Ce que la lecture de la file doit jeter.
-  Object? erreurFoyers;
-
-  /// Ce que la lecture des enseignants doit jeter.
-  Object? erreurEnseignants;
-
-  /// Ce que la prochaine attribution doit jeter.
-  Object? erreurAttribution;
-
-  /// Le temps que prend une lecture.
-  ///
-  /// Sans lui, aucun test ne peut regarder l'ecran **pendant** le chargement :
-  /// un faux qui rend tout de suite resout son futur dans la micro-tache que le
-  /// premier `pump` vide, et l'etat d'attente n'existe jamais.
-  Duration delai = Duration.zero;
-
-  Future<void> _attendre() async {
-    if (delai > Duration.zero) {
-      await Future<void>.delayed(delai);
-    }
-  }
-
-  @override
-  Future<List<FoyerEnAttente>> foyersEnAttente() async {
-    await _attendre();
-    final Object? erreur = erreurFoyers;
-    if (erreur != null) {
-      // ignore: only_throw_errors
-      throw erreur;
-    }
-    return foyers;
-  }
-
-  @override
-  Future<List<EnseignantCandidat>> enseignantsPour(String eleveId) async {
-    await _attendre();
-    final Object? erreur = erreurEnseignants;
-    if (erreur != null) {
-      // ignore: only_throw_errors
-      throw erreur;
-    }
-    return enseignants[eleveId] ?? const <EnseignantCandidat>[];
-  }
-
-  @override
-  Future<void> attribuer({
-    required String eleveId,
-    required String enseignantId,
-    required Creneau creneau,
-    String? motif,
-  }) async {
-    final Object? erreur = erreurAttribution;
-    if (erreur != null) {
-      // ignore: only_throw_errors
-      throw erreur;
-    }
-    attributions.add((
-      eleveId: eleveId,
-      enseignantId: enseignantId,
-      creneau: creneau,
-      motif: motif,
-    ));
-    // Le faux relit ce qu'il a ecrit, comme la base : l'eleve attribue quitte
-    // la file, et c'est ce que l'ecran doit refleter sans etat local.
-    foyers = foyers.where((FoyerEnAttente f) => f.eleveId != eleveId).toList();
-  }
-}
-
 /// Un journal d'audit en memoire.
 ///
 /// Il **pagine pour de vrai** plutot que de rendre tout d'un coup : `ADM-04`
@@ -709,7 +644,14 @@ class FauxServiceJournal implements ServiceJournal {
     ({String? acteur, String? type, DateTime? depuis, CurseurJournal? curseur})
   >
   lectures =
-      <({String? acteur, String? type, DateTime? depuis, CurseurJournal? curseur})>[];
+      <
+        ({
+          String? acteur,
+          String? type,
+          DateTime? depuis,
+          CurseurJournal? curseur,
+        })
+      >[];
 
   /// Ce que la lecture doit jeter.
   Object? erreurEntrees;
@@ -753,7 +695,9 @@ class FauxServiceJournal implements ServiceJournal {
       );
     }
     if (depuis != null) {
-      retenues = retenues.where((EntreeJournal e) => !e.survenuLe.isBefore(depuis));
+      retenues = retenues.where(
+        (EntreeJournal e) => !e.survenuLe.isBefore(depuis),
+      );
     }
     if (curseur != null) {
       // Le meme keyset que la base : strictement avant le couple donne.
@@ -933,10 +877,7 @@ class FauxStockageSecurise implements StockageSecurise {
   Future<String?> jetonAppareil(String profilId) async => jetons[profilId];
 
   @override
-  Future<void> enregistrerJetonAppareil(
-    String profilId,
-    String jeton,
-  ) async {
+  Future<void> enregistrerJetonAppareil(String profilId, String jeton) async {
     jetons[profilId] = jeton;
   }
 
@@ -946,8 +887,7 @@ class FauxStockageSecurise implements StockageSecurise {
   }
 
   @override
-  Future<String?> empreintePin(String profilId) async =>
-      empreintes[profilId];
+  Future<String?> empreintePin(String profilId) async => empreintes[profilId];
 
   @override
   Future<void> enregistrerEmpreintePin(
@@ -1026,9 +966,6 @@ class FauxServiceVideo implements ServiceVideo {
   /// Les seances ou une visite de controle a ete inscrite, dans l'ordre.
   final List<String> observations = <String>[];
 
-  /// Les seances ou un tuteur s'est inscrit comme temoin, dans l'ordre.
-  final List<String> assistances = <String>[];
-
   /// Ce que la prochaine inscription doit jeter, s'il y a lieu.
   ///
   /// Sans lui, le refus de la porte ne serait pas mesurable : il vient de la
@@ -1044,16 +981,6 @@ class FauxServiceVideo implements ServiceVideo {
       throw refus;
     }
     observations.add(seanceId);
-  }
-
-  @override
-  Future<void> assisterEnTuteur(String seanceId) async {
-    final Object? refus = refusInscription;
-    if (refus != null) {
-      // ignore: only_throw_errors
-      throw refus;
-    }
-    assistances.add(seanceId);
   }
 
   @override
@@ -1402,7 +1329,7 @@ class FauxServiceSuivi implements ServiceSuivi {
   int lectures = 0;
 
   @override
-  Future<List<Seance>> seances() async {
+  Future<List<Seance>> seances({String? eleveId}) async {
     lectures++;
     final Duration? attente = delai;
     if (attente != null) {
@@ -1428,7 +1355,7 @@ class FauxServiceSuivi implements ServiceSuivi {
 ///
 /// **Aucun agent metier ne modifie ce faux.** Un besoin non couvert se demande
 /// par `CONTRACT_REQUEST_<AGENT>.md`
-/// (`docs/architecture/TEACHER_FILE_OWNERSHIP.md`).
+/// (`docs/archive/2026-09-pre-remise-a-plat/architecture/TEACHER_FILE_OWNERSHIP.md`).
 class FauxServiceEnseignant implements ServiceEnseignant {
   /// Les seances rendues.
   List<SeanceEnseignant> seancesRendues = const <SeanceEnseignant>[];
@@ -1466,7 +1393,7 @@ class FauxServiceEnseignant implements ServiceEnseignant {
   ///
   /// Nul par defaut. Sans delai, un faux resout son futur dans la micro-tache
   /// que le premier `pump` vide, et l'etat de chargement n'existe jamais : c'est
-  /// la meme raison qu'a [FauxServiceAttribution].
+  /// la meme raison que pour les autres faux a delai.
   Duration? delai;
 
   /// Combien de fois les seances ont ete lues.
@@ -1553,13 +1480,13 @@ class FauxDepotRapports implements DepotRapports {
   Object? erreurAJeter;
 
   /// Les cles presentes, du plus ancien au plus recent.
-  List<String> get cles => (_lignes.values.toList()
-        ..sort(
-          (RapportEnAttente a, RapportEnAttente b) =>
-              a.redigeA.compareTo(b.redigeA),
-        ))
-      .map((RapportEnAttente r) => r.cleIdempotence)
-      .toList(growable: false);
+  List<String> get cles =>
+      (_lignes.values.toList()..sort(
+            (RapportEnAttente a, RapportEnAttente b) =>
+                a.redigeA.compareTo(b.redigeA),
+          ))
+          .map((RapportEnAttente r) => r.cleIdempotence)
+          .toList(growable: false);
 
   @override
   Future<List<RapportEnAttente>> enAttente() async =>
@@ -1617,6 +1544,52 @@ SeanceEnseignant seanceDeTest({
   minutesInterruption: minutesInterruption,
 );
 
+/// Un port de consentements en memoire (contrat K6).
+class FauxPortConsentements implements PortConsentements {
+  /// Ce que [signees] renvoie.
+  List<Acceptation> signeesRendues = <Acceptation>[];
+
+  /// Ce que [aRenouveler] renvoie.
+  List<ConsentementRequis> aRenouvelerRendu = <ConsentementRequis>[];
+
+  /// Ce que la prochaine lecture ou ecriture doit jeter.
+  Object? erreurAJeter;
+
+  /// Les acceptations enregistrees par [accepter].
+  final List<({SorteContrat sorte, String version})> accepteEnregistre =
+      <({SorteContrat sorte, String version})>[];
+
+  @override
+  Future<List<Acceptation>> signees() async {
+    if (erreurAJeter case final Object e) {
+      // ignore: only_throw_errors
+      throw e;
+    }
+    return signeesRendues;
+  }
+
+  @override
+  Future<List<ConsentementRequis>> aRenouveler() async {
+    if (erreurAJeter case final Object e) {
+      // ignore: only_throw_errors
+      throw e;
+    }
+    return aRenouvelerRendu;
+  }
+
+  @override
+  Future<void> accepter({
+    required SorteContrat sorte,
+    required String version,
+  }) async {
+    if (erreurAJeter case final Object e) {
+      // ignore: only_throw_errors
+      throw e;
+    }
+    accepteEnregistre.add((sorte: sorte, version: version));
+  }
+}
+
 /// Un eleve pret a l'emploi dans un test.
 MembreSeance membreDeTest({
   String studentId = 'e1',
@@ -1631,3 +1604,13 @@ MembreSeance membreDeTest({
   niveau: niveau,
   riwaya: riwaya,
 );
+
+/// Une image PNG synthetique de 1 x 1 (transparente) : jamais une vraie piece.
+final Uint8List pngSynthetique = Uint8List.fromList(<int>[
+  0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, //
+  0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, //
+  0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4, 0x89, 0x00, 0x00, 0x00, //
+  0x0A, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9C, 0x63, 0x00, 0x01, 0x00, 0x00, //
+  0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00, 0x00, 0x00, 0x00, 0x49, //
+  0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82,
+]);

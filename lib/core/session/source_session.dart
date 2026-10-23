@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../domain/enums.dart';
+import '../theme/app_delais.dart';
 import 'claims_jwt.dart';
 import 'session_state.dart';
 
@@ -63,10 +64,17 @@ class SourceSessionSupabase implements SourceSession {
     // `profiles_self_select`.
     final _ProfilLu profil = await _lireProfil(profileId);
 
+    final AppRole? role = AppRole.depuisSql(claims.role);
+
     return SessionState(
       resolue: true,
       profileId: profileId,
-      role: AppRole.depuisSql(claims.role),
+      role: role,
+      // Le serveur refuse (42501) tout appel du controleur en `aal1` : l'ecran
+      // d'enrolement ou de verification est la seule porte ouverte. Faux pour
+      // les autres comptes, et pour une session d'observation d'agent.
+      mfaRequise:
+          role == AppRole.controller && claims.niveauAssurance != 'aal2',
       householdId: claims.householdId,
       accountStatus: profil.statut,
       interfaceMode: profil.mode,
@@ -76,11 +84,20 @@ class SourceSessionSupabase implements SourceSession {
 
   Future<_ProfilLu> _lireProfil(String profileId) async {
     try {
+      // Borne : sans elle, une requete sans reponse laissait l'ecran de
+      // demarrage indefiniment (C01 section 4).
       final Map<String, dynamic>? ligne = await _client
           .from('profiles')
-          .select('account_status, student_profiles(interface_mode)')
+          // La cle est nommee : student_profiles porte deux cles vers profiles
+          // (profile_id et titulaire_profile_id, 0052) et un embed sans nom
+          // echoue en PGRST201, ce qui fermait tout compte sur le portail.
+          .select(
+            'account_status, '
+            'student_profiles!student_profiles_profile_id_fkey(interface_mode)',
+          )
           .eq('id', profileId)
-          .maybeSingle();
+          .maybeSingle()
+          .timeout(AppDelais.requeteMax);
 
       // Aucune ligne, mais la requete a abouti : le compte existe et son profil
       // reste a creer. C'est une inscription a terminer, pas un dossier a
@@ -113,12 +130,21 @@ class SourceSessionSupabase implements SourceSession {
         InterfaceMode.standard,
         LectureProfil.echouee,
       );
-    } on Object {
-      // Meme raisonnement pour une panne reseau : on ferme.
+    } on TypeError {
+      // Une ligne illisible : le serveur a repondu, autrement qu'attendu.
       return const _ProfilLu(
         null,
         InterfaceMode.standard,
         LectureProfil.echouee,
+      );
+    } on Object {
+      // Aucune reponse exploitable du serveur : reseau coupe, delai depasse,
+      // transport en echec. On ferme aussi, mais sur l'etat hors ligne, qui
+      // n'ouvre rien et le dit (mandat Tuteur V1 section 8, X21).
+      return const _ProfilLu(
+        null,
+        InterfaceMode.standard,
+        LectureProfil.injoignable,
       );
     }
   }

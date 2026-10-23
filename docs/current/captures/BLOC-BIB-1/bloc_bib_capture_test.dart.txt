@@ -1,0 +1,103 @@
+// BLOC-BIB-1 : captures avant / apres du titre de la Bibliotheque a texte
+// x2 (revue BENTO-3b-R, C5 et m2), sur l'accueil de l'eleve adulte,
+// l'Espace Groupe de l'eleve et l'Espace Classe de l'enseignant.
+// 320 et 390 px, texte x2, clair ; 320x2 aussi en sombre et en RTL.
+// `BLOC_BIB_PHASE` (avant | apres) prefixe les fichiers.
+// Saute sans CAPTURE_DIR (voir LISEZ-MOI.md). A copier dans test/capture/.
+
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/tc_horloge/emplacement_entree.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/features/demo/classe_demo.dart'
+    show EtatDemoClasse;
+import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
+import 'package:rewayah_academy/features/demo/demo_classe_page.dart';
+
+import 'outil_capture.dart';
+
+final String _phase = Platform.environment['BLOC_BIB_PHASE'] ?? 'apres';
+
+Future<void> _monter(
+  WidgetTester tester,
+  String adresse,
+  ThemeMode mode,
+  TextDirection sens,
+) async {
+  final GoRouter routeur = GoRouter(
+    initialLocation: adresse,
+    routes: <RouteBase>[...routesDemoAdulte('dev'), ...routesDemoClasse('dev')],
+  );
+  addTearDown(routeur.dispose);
+  await tester.pumpWidget(
+    ProviderScope(
+      child: TranslationProvider(
+        child: RepaintBoundary(
+          key: cadreCapture,
+          child: MaterialApp.router(
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+            darkTheme: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+            themeMode: mode,
+            locale: AppLocale.fr.flutterLocale,
+            supportedLocales: AppLocaleUtils.supportedLocales,
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            builder: (BuildContext c, Widget? app) => MediaQuery(
+              data: MediaQuery.of(c)
+                  .copyWith(textScaler: const TextScaler.linear(2)),
+              child: Directionality(textDirection: sens, child: app!),
+            ),
+            routerConfig: routeur,
+          ),
+        ),
+      ),
+    ),
+  );
+  await stabiliser(tester);
+}
+
+void main() {
+  group('Capture : BLOC-BIB-1', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+
+    final Map<String, (String, double)> ecrans = <String, (String, double)>{
+      'adulte': (adresseDemoAdulte(EcranDemoAdulte.accueil), 4400),
+      'espacegroupe': (
+        adresseDemoClasse(RoleEntree.eleve, EtatDemoClasse.aVenir),
+        3600,
+      ),
+      'espaceclasse_ens': (
+        adresseDemoClasse(RoleEntree.enseignant, EtatDemoClasse.aVenir),
+        6000,
+      ),
+    };
+    final List<(double, ThemeMode, TextDirection)> cas =
+        <(double, ThemeMode, TextDirection)>[
+          (320, ThemeMode.light, TextDirection.ltr),
+          (390, ThemeMode.light, TextDirection.ltr),
+          (320, ThemeMode.dark, TextDirection.ltr),
+          (320, ThemeMode.light, TextDirection.rtl),
+        ];
+    for (final (double l, ThemeMode m, TextDirection s) in cas) {
+      for (final MapEntry<String, (String, double)> e in ecrans.entries) {
+        final String nom =
+            '${_phase}_${e.key}_${l.toInt()}x2_'
+            '${m == ThemeMode.light ? 'clair' : 'sombre'}'
+            '${s == TextDirection.rtl ? '_rtl' : ''}';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(tester, Size(l, e.value.$2), 1);
+          await _monter(tester, e.value.$1, m, s);
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
+      }
+    }
+  });
+}

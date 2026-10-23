@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show AuthException;
 
 import '../../core/auth/service_auth.dart';
+import '../../core/config/env.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/marque/logo_google.dart';
 import '../../core/router/routes.dart';
@@ -15,9 +16,76 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/controle_segmente.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/marque_page.dart';
 import '../../core/widgets/page_shell.dart';
+import '../demo/mode_demonstration.dart';
+import '../demo/racine_demonstrable.dart';
 import 'feuille_appareil_eleve.dart';
+import 'recuperation_page.dart';
+
+/// L'environnement compile, lu par un provider pour que les tests le
+/// surchargent. La garde reste [environnementAutoriseDemo], la meme que
+/// `/demo/*` : ce provider ne fait que lui passer la valeur.
+final Provider<String> environnementConnexionProvider = Provider<String>(
+  (Ref ref) => Env.environnement,
+);
+
+/// Le chemin que prend le bouton principal. Le libelle et l'action sortent de
+/// cette seule fonction, pour que le bouton ne mente jamais.
+enum CheminConnexion {
+  /// Mot de passe de demonstration saisi : connexion sans lien.
+  motDePasse,
+
+  /// Adresse fictive de demonstration, sans mot de passe : entree directe.
+  demoDirecte,
+
+  /// Tous les autres cas : un lien part par courriel.
+  lien,
+}
+
+/// Le chemin pour un etat donne du formulaire. Pure, pour etre testee seule.
+CheminConnexion cheminConnexion({
+  required bool demo,
+  required String courriel,
+  required String motDePasse,
+}) {
+  if (!demo) {
+    return CheminConnexion.lien;
+  }
+  if (motDePasse.isNotEmpty) {
+    return CheminConnexion.motDePasse;
+  }
+  if (accesDemoDepuisCourriel(courriel) != null) {
+    return CheminConnexion.demoDirecte;
+  }
+  return CheminConnexion.lien;
+}
+
+/// L4 (audit d'entree du 17/10/2026, E1-E2) : deux chemins distincts.
+///
+/// Le meme lien par courriel cree le compte ou connecte : c'est le serveur
+/// qui decide. Mais le visiteur doit savoir lequel il prend. Le mode change
+/// le titre, la phrase et le bouton ; en creation, les sorties reservees aux
+/// comptes existants (appareil d'un eleve, lien expire) s'effacent.
+enum ModeConnexion {
+  /// « J'ai deja un compte ».
+  connexion,
+
+  /// « Creer un compte ».
+  creation,
+}
+
+/// Le parametre d'adresse qui ouvre la connexion en mode creation
+/// (`/connexion?mode=creer`), depuis le site public par exemple.
+const String parametreModeCreation = 'creer';
+
+/// Le mode lu dans l'adresse : creation pour `?mode=creer`, sinon connexion.
+ModeConnexion modeDepuisAdresse(Uri adresse) =>
+    adresse.queryParameters['mode'] == parametreModeCreation
+    ? ModeConnexion.creation
+    : ModeConnexion.connexion;
 
 /// Largeur de la carte d'entree.
 ///
@@ -34,7 +102,7 @@ const double _largeurCarte = 460;
 ///
 /// L'etat « lien envoye » ne se ferme pas tout seul et ne compte pas a rebours :
 /// rien ne se ferme sur minuterie dans ce produit
-/// (`docs/produit/parcours-utilisateurs.md`, regles communes).
+/// (`docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md`, regles communes).
 ///
 /// ## Trois poids d'action, une seule bordure
 ///
@@ -56,13 +124,28 @@ const double _largeurCarte = 460;
 /// champ, au moment ou l'on appuie.
 class ConnexionPage extends ConsumerStatefulWidget {
   /// Cree l'ecran de connexion.
-  const ConnexionPage({super.key, this.demoAuth});
+  const ConnexionPage({
+    super.key,
+    this.demoAuth,
+    this.urlRetour,
+    this.mode = ModeConnexion.connexion,
+  });
+
+  /// Le chemin propose a l'ouverture ; le visiteur peut en changer.
+  final ModeConnexion mode;
 
   /// Force le mode demonstration, sans lire [demoAuthActiveProvider].
   ///
   /// Reserve aux tests de widget et au Playground. En production, c'est la
   /// compilation qui decide, par `DEMO_AUTH`.
   final bool? demoAuth;
+
+  /// L'URL d'arrivee a examiner, pour les tests ; par defaut [Uri.base].
+  ///
+  /// Quand le fournisseur ramene l'usager avec une erreur (lien expire, deja
+  /// utilise, refuse), la connexion l'envoie a la recuperation avec le motif
+  /// au lieu de le laisser sur un formulaire muet (C03 section 9).
+  final Uri? urlRetour;
 
   @override
   ConsumerState<ConnexionPage> createState() => _ConnexionPageState();
@@ -74,6 +157,25 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
   bool _envoi = false;
   bool _envoye = false;
   String? _erreur;
+  bool _renvoi = false;
+  bool _renvoye = false;
+  String? _erreurRenvoi;
+  late ModeConnexion _mode = widget.mode;
+
+  @override
+  void initState() {
+    super.initState();
+    final MotifRecuperation? motif = motifDepuisUrlRetour(
+      widget.urlRetour ?? Uri.base,
+    );
+    if (motif != null) {
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        if (mounted) {
+          GoRouter.of(context).go(cheminRecuperation(motif));
+        }
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -82,14 +184,29 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
     super.dispose();
   }
 
-  /// Vrai quand l'ecran doit proposer le raccourci de demonstration.
+  /// Vrai quand l'ecran propose le champ de mot de passe de demonstration.
+  ///
+  /// Deux verrous, tous deux hors production : le drapeau de compilation
+  /// (`AUTH_PAR_MOT_DE_PASSE`) et la garde d'environnement de `/demo/*`.
   ///
   /// `read` et non `watch` : c'est une decision de compilation, elle ne change
   /// pas sous les pieds d'un ecran deja monte.
-  bool get _demo => widget.demoAuth ?? ref.read(demoAuthActiveProvider);
+  bool get _demo =>
+      widget.demoAuth ??
+      (ref.read(demoAuthActiveProvider) &&
+          environnementAutoriseDemo(ref.read(environnementConnexionProvider)));
 
-  Future<void> _soumettre() =>
-      _demo ? _ouvrirDemonstration() : _envoyerLien();
+  /// Le chemin decide de l'action ; le libelle de [_Saisie] lit la meme fonction.
+  Future<void> _soumettre() {
+    final CheminConnexion chemin = cheminConnexion(
+      demo: _demo,
+      courriel: _courriel.text,
+      motDePasse: _motDePasse.text,
+    );
+    return chemin == CheminConnexion.lien
+        ? _envoyerLien()
+        : _ouvrirDemonstration();
+  }
 
   Future<void> _envoyerLien() async {
     if (!courrielPlausible(_courriel.text)) {
@@ -103,15 +220,47 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
     try {
       await ref.read(serviceAuthProvider).envoyerLienCourriel(_courriel.text);
       if (mounted) {
-        setState(() => _envoye = true);
+        setState(() {
+          _envoye = true;
+          _renvoye = false;
+          _erreurRenvoi = null;
+        });
       }
-    } on Object {
+    } on Object catch (erreur) {
       if (mounted) {
-        setState(() => _erreur = t.connexion.erreurEnvoi);
+        setState(() => _erreur = phraseEchecEnvoi(issueEchecEnvoi(erreur)));
       }
     } finally {
       if (mounted) {
         setState(() => _envoi = false);
+      }
+    }
+  }
+
+  /// « Renvoyer le lien » : la meme demande, dite differemment une fois
+  /// partie (le message le plus recent est le seul a suivre).
+  Future<void> _renvoyerLien() async {
+    if (_renvoi) {
+      return;
+    }
+    setState(() {
+      _renvoi = true;
+      _erreurRenvoi = null;
+    });
+    try {
+      await ref.read(serviceAuthProvider).envoyerLienCourriel(_courriel.text);
+      if (mounted) {
+        setState(() => _renvoye = true);
+      }
+    } on Object catch (erreur) {
+      if (mounted) {
+        setState(
+          () => _erreurRenvoi = phraseEchecEnvoi(issueEchecEnvoi(erreur)),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _renvoi = false);
       }
     }
   }
@@ -131,6 +280,10 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
         await ref
             .read(serviceAuthProvider)
             .connexionMotDePasse(_courriel.text.trim(), _motDePasse.text);
+      }
+    } on AuthException {
+      if (mounted) {
+        setState(() => _erreur = t.connexion.erreurMotDePasse);
       }
     } on Object {
       if (mounted) {
@@ -160,6 +313,16 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
         setState(() => _erreur = t.connexion.erreurEnvoi);
       }
     }
+  }
+
+  /// « Un probleme pour vous connecter ? » : la recuperation s'ouvre avec le
+  /// courriel deja saisi ici (FORM-L10), s'il y en a un.
+  void _versRecuperation() {
+    final String courriel = _courriel.text.trim();
+    GoRouter.of(context).go(
+      Routes.connexionRecuperation,
+      extra: courriel.isEmpty ? null : courriel,
+    );
   }
 
   Future<void> _entreeEleve() async {
@@ -193,7 +356,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    const MarquePage(),
+                    const MarquePage(logo: true),
                     respiration,
                     ConstrainedBox(
                       constraints: const BoxConstraints(
@@ -205,22 +368,44 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
                         child: _envoye
                             ? _LienEnvoye(
                                 courriel: _courriel.text.trim(),
-                                onChangerAdresse: () =>
-                                    setState(() => _envoye = false),
+                                renvoi: _renvoi,
+                                renvoye: _renvoye,
+                                erreurRenvoi: _erreurRenvoi,
+                                onRenvoyer: () => unawaited(_renvoyerLien()),
+                                onChangerAdresse: () => setState(() {
+                                  _envoye = false;
+                                  _renvoye = false;
+                                  _erreurRenvoi = null;
+                                }),
+                                onProbleme: _versRecuperation,
                               )
                             : _Saisie(
                                 courriel: _courriel,
                                 motDePasse: _motDePasse,
                                 demo: _demo,
+                                mode: _mode,
+                                onMode: (ModeConnexion m) => setState(() {
+                                  _mode = m;
+                                  _erreur = null;
+                                }),
                                 erreur: _erreur,
                                 envoi: _envoi,
                                 onChanged: () => setState(() {}),
                                 onSoumettre: () => unawaited(_soumettre()),
                                 onGoogle: () => unawaited(_google()),
                                 onEleve: () => unawaited(_entreeEleve()),
+                                onProbleme: _versRecuperation,
                               ),
                       ),
                     ),
+                    Ecart.vLg,
+                    LienFleche(
+                      libelle: t.juridique.titre,
+                      onPress: () =>
+                          GoRouter.of(context).push(Routes.juridique),
+                    ),
+                    // Hors production seulement : sans lanceur, rien.
+                    const EntreeDemonstration(),
                   ],
                 ),
               ),
@@ -235,17 +420,23 @@ class _Saisie extends StatelessWidget {
     required this.courriel,
     required this.motDePasse,
     required this.demo,
+    required this.mode,
+    required this.onMode,
     required this.erreur,
     required this.envoi,
     required this.onChanged,
     required this.onSoumettre,
     required this.onGoogle,
     required this.onEleve,
+    required this.onProbleme,
   });
 
+  final VoidCallback onProbleme;
   final TextEditingController courriel;
   final TextEditingController motDePasse;
   final bool demo;
+  final ModeConnexion mode;
+  final ValueChanged<ModeConnexion> onMode;
   final String? erreur;
   final bool envoi;
   final VoidCallback onChanged;
@@ -257,14 +448,46 @@ class _Saisie extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    // Lu au rendu : chaque frappe reconstruit l'ecran (onChanged).
+    final CheminConnexion chemin = cheminConnexion(
+      demo: demo,
+      courriel: courriel.text,
+      motDePasse: motDePasse.text,
+    );
+    final bool versLien = chemin == CheminConnexion.lien;
+    final bool creation = mode == ModeConnexion.creation;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text(t.connexion.titre, style: textes.headlineMedium),
+        // L4 : deux chemins distincts, choisis avant tout le reste.
+        ControleSegmente<ModeConnexion>(
+          key: const ValueKey<String>('connexion-mode'),
+          segments: <Segment<ModeConnexion>>[
+            Segment<ModeConnexion>(
+              valeur: ModeConnexion.connexion,
+              libelle: t.connexion.modeConnexion,
+            ),
+            Segment<ModeConnexion>(
+              valeur: ModeConnexion.creation,
+              libelle: t.connexion.modeCreation,
+            ),
+          ],
+          valeur: mode,
+          onChange: onMode,
+        ),
+        Ecart.vXl,
+        Text(
+          creation ? t.connexion.titreCreation : t.connexion.titre,
+          style: textes.headlineMedium,
+        ),
         Ecart.vMd,
         Text(
-          t.connexion.intro,
+          !versLien
+              ? t.connexion.introDemo
+              : creation
+              ? t.connexion.introCreation
+              : t.connexion.intro,
           style: palette.inkMuted.applyTo(
             textes.bodyMedium ?? const TextStyle(),
           ),
@@ -298,7 +521,11 @@ class _Saisie extends StatelessWidget {
         ],
         Ecart.vXl,
         ActionPrincipale(
-          libelle: t.connexion.envoyerLien,
+          libelle: !versLien
+              ? t.connexion.entrerDemo
+              : creation
+              ? t.connexion.envoyerLienCreation
+              : t.connexion.envoyerLien,
           onPress: onSoumettre,
           enCours: envoi,
         ),
@@ -332,28 +559,46 @@ class _Saisie extends StatelessWidget {
             prefixe: const LogoGoogle(),
           ),
 
-          // L'entree de l'eleve, en texte seul : c'est un parcours different,
-          // pas une autre facon de faire le meme. Elle etait au meme rang que
-          // Google, avec le meme filet, et son libelle -- « J'ai un code » --
-          // ne disait ni a qui elle s'adressait ni ou trouver ce code. La
-          // feuille qui s'ouvre au clic porte desormais cette explication.
-          Ecart.vSection,
-          Text(
-            t.connexion.appareilEleveAide,
-            textAlign: TextAlign.center,
-            style: palette.inkMuted.applyTo(
-              textes.bodySmall ?? const TextStyle(),
+          // L4 : en creation, les sorties reservees aux comptes existants
+          // s'effacent (appareil d'un eleve, lien expire).
+          if (!creation) ...<Widget>[
+            // L'entree de l'eleve, en texte seul : c'est un parcours different,
+            // pas une autre facon de faire le meme. Elle etait au meme rang que
+            // Google, avec le meme filet, et son libelle -- « J'ai un code » --
+            // ne disait ni a qui elle s'adressait ni ou trouver ce code. La
+            // feuille qui s'ouvre au clic porte desormais cette explication.
+            Ecart.vSection,
+            Text(
+              t.connexion.appareilEleveAide,
+              textAlign: TextAlign.center,
+              style: palette.inkMuted.applyTo(
+                textes.bodySmall ?? const TextStyle(),
+              ),
             ),
-          ),
-          Ecart.vSm,
-          Align(
-            child: ActionPrincipale(
-              libelle: t.connexion.appareilEleve,
-              onPress: onEleve,
-              niveau: NiveauAction.tertiaire,
-              pleineLargeur: false,
+            Ecart.vSm,
+            Align(
+              child: ActionPrincipale(
+                libelle: t.connexion.appareilEleve,
+                onPress: onEleve,
+                niveau: NiveauAction.tertiaire,
+                pleineLargeur: false,
+              ),
             ),
-          ),
+            Ecart.vLg,
+            const Divider(),
+            Ecart.vSm,
+            // Une sortie discrete : la recuperation d'acces (lien expire ou
+            // jamais recu).
+            Center(
+              child: ActionPrincipale(
+                key: const ValueKey<String>('connexion-probleme'),
+                libelle: t.connexion.probleme,
+                onPress: onProbleme,
+                niveau: NiveauAction.tertiaire,
+                pleineLargeur: false,
+              ),
+            ),
+          ],
         ],
       ],
     );
@@ -422,10 +667,23 @@ class _Champ extends StatelessWidget {
 }
 
 class _LienEnvoye extends StatelessWidget {
-  const _LienEnvoye({required this.courriel, required this.onChangerAdresse});
+  const _LienEnvoye({
+    required this.courriel,
+    required this.renvoi,
+    required this.renvoye,
+    required this.erreurRenvoi,
+    required this.onRenvoyer,
+    required this.onChangerAdresse,
+    required this.onProbleme,
+  });
 
   final String courriel;
+  final bool renvoi;
+  final bool renvoye;
+  final String? erreurRenvoi;
+  final VoidCallback onRenvoyer;
   final VoidCallback onChangerAdresse;
+  final VoidCallback onProbleme;
 
   @override
   Widget build(BuildContext context) {
@@ -437,17 +695,53 @@ class _LienEnvoye extends StatelessWidget {
       children: <Widget>[
         Text(t.connexion.lienEnvoye, style: textes.headlineMedium),
         Ecart.vMd,
-        Text(
-          t.connexion.lienEnvoyeDetail(courriel: courriel),
-          style: palette.inkMuted.applyTo(
-            textes.bodyMedium ?? const TextStyle(),
+        Semantics(
+          liveRegion: true,
+          child: Text(
+            renvoye
+                ? t.connexion.renvoye(courriel: courriel)
+                : t.connexion.lienEnvoyeDetail(courriel: courriel),
+            key: const ValueKey<String>('connexion-envoye-detail'),
+            style: palette.inkMuted.applyTo(
+              textes.bodyMedium ?? const TextStyle(),
+            ),
           ),
         ),
+        if (erreurRenvoi != null) ...<Widget>[
+          Ecart.vMd,
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              erreurRenvoi!,
+              key: const ValueKey<String>('connexion-erreur-renvoi'),
+              // E2 : l'encre d'alerte du produit, pas celle de Material.
+              style: palette.inkAlert.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+          ),
+        ],
         Ecart.vXxl,
+        ActionPrincipale(
+          key: const ValueKey<String>('connexion-renvoyer'),
+          libelle: t.connexion.renvoyer,
+          onPress: onRenvoyer,
+          enCours: renvoi,
+          niveau: NiveauAction.secondaire,
+        ),
+        Ecart.vLg,
         Align(
           child: ActionPrincipale(
             libelle: t.connexion.changerAdresse,
             onPress: onChangerAdresse,
+            niveau: NiveauAction.tertiaire,
+            pleineLargeur: false,
+          ),
+        ),
+        Align(
+          child: ActionPrincipale(
+            libelle: t.connexion.probleme,
+            onPress: onProbleme,
             niveau: NiveauAction.tertiaire,
             pleineLargeur: false,
           ),

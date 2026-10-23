@@ -95,6 +95,7 @@ class EtatOutils {
     this.intention = IntentionPedagogique.aRevoir,
     this.portee = PorteeAnnotation.temporaire,
     this.pointeur,
+    this.epaisseur = EpaisseurTrait.moyenne,
   });
 
   /// L'outil retenu. `null` = aucun, le support se lit normalement.
@@ -130,11 +131,18 @@ class EtatOutils {
   /// etat le temps du geste, et ne produit aucune couche d'annotation.
   final ContentPosition? pointeur;
 
+  /// TB-7b : l'epaisseur des prochains traits (« Epaisseur », choix court).
+  final EpaisseurTrait epaisseur;
+
   /// Vrai quand le chrome doit s'effacer : c'est le propre du focus.
   bool get chromeReduit => focus != null;
 
   /// Vrai quand le stylet est arme.
   bool get styletArme => outilActif == OutilDock.stylet;
+
+  /// TB-7b : vrai quand le Pointeur est retenu (indication temporaire,
+  /// sans trace).
+  bool get pointeurArme => outilActif == OutilDock.pointeur;
 
   /// Copie l'etat en changeant ce qui est donne.
   ///
@@ -152,6 +160,7 @@ class EtatOutils {
     PorteeAnnotation? portee,
     ContentPosition? pointeur,
     bool retirerPointeur = false,
+    EpaisseurTrait? epaisseur,
   }) => EtatOutils(
     outilActif: retirerOutil ? null : (outilActif ?? this.outilActif),
     position: position ?? this.position,
@@ -161,6 +170,7 @@ class EtatOutils {
     intention: intention ?? this.intention,
     portee: portee ?? this.portee,
     pointeur: retirerPointeur ? null : (pointeur ?? this.pointeur),
+    epaisseur: epaisseur ?? this.epaisseur,
   );
 
   @override
@@ -173,7 +183,8 @@ class EtatOutils {
       other.outilTrait == outilTrait &&
       other.intention == intention &&
       other.portee == portee &&
-      other.pointeur == pointeur;
+      other.pointeur == pointeur &&
+      other.epaisseur == epaisseur;
 
   @override
   int get hashCode => Object.hash(
@@ -185,6 +196,7 @@ class EtatOutils {
     intention,
     portee,
     pointeur,
+    epaisseur,
   );
 }
 
@@ -248,6 +260,10 @@ class ControleurOutils extends Notifier<EtatOutils> {
   /// Change l'intention courante.
   void choisirIntention(IntentionPedagogique intention) =>
       state = state.copier(intention: intention);
+
+  /// TB-7b : change l'epaisseur des prochains traits.
+  void choisirEpaisseur(EpaisseurTrait epaisseur) =>
+      state = state.copier(epaisseur: epaisseur);
 
   /// Change la portee des annotations posees.
   void choisirPortee(PorteeAnnotation portee) =>

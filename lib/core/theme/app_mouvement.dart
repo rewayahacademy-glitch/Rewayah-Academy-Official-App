@@ -2,8 +2,8 @@ import 'package:flutter/widgets.dart';
 
 /// Le budget de mouvement de l'application.
 ///
-/// Source : `docs/design/04-systeme-mouvement.md`, valeurs resumees dans
-/// `docs/produit/design-tokens.md` section 11.
+/// Source : `docs/archive/2026-09-pre-remise-a-plat/design/04-systeme-mouvement.md`, valeurs resumees dans
+/// `docs/archive/2026-09-pre-remise-a-plat/produit/design-tokens.md` section 11.
 ///
 /// **C'est le seul fichier du depot autorise a poser une duree d'animation
 /// litterale ou a nommer une [Curve]** : `tool/verifier_jetons.dart` echoue sur
@@ -34,6 +34,9 @@ abstract final class AppMouvement {
   /// l'entree**, d'environ un tiers.
   static const Duration feuilleFermeture = Duration(milliseconds: 120);
 
+  /// Decalage entre deux elements d'une liste echelonnee (A-13, 17/10/2026).
+  static const Duration echelon = Duration(milliseconds: 35);
+
   /// Plafond absolu. Une animation plus longue que ca n'explique plus, elle
   /// fait attendre.
   static const Duration plafond = Duration(milliseconds: 400);
@@ -52,6 +55,28 @@ abstract final class AppMouvement {
   /// sens des deux (`04-systeme-mouvement.md` section 4).
   static const Duration pulsation = Duration(milliseconds: 1200);
 
+  /// Periode d'un battement complet du point de la pastille « En direct »
+  /// (ON-AIR-1, demande du directeur du 01/10/2026 : cycle d'environ 1,5 s).
+  ///
+  /// **Hors du budget de transition**, comme [pulsation] : elle signale un
+  /// etat qui dure, elle n'explique pas un changement. Plus lente que
+  /// [pulsation] (1,2 s, imminence) pour que les deux ne se confondent pas.
+  static const Duration pulsationDirect = Duration(milliseconds: 1500);
+
+  /// Nombre de battements du point « En direct » avant qu'il reste fixe :
+  /// trois fois [pulsationDirect], soit 4,5 s, **sous les cinq secondes** au
+  /// dela desquelles WCAG 2.2.2 exige une commande d'arret. Le mot « En
+  /// direct » reste, le point reste, seul le battement s'arrete.
+  static const int battementsDirect = 3;
+
+  /// Rayon maximal du halo du point « En direct », en multiple du diametre du
+  /// point (ON-AIR-1). Le halo grossit de 1 a 1 + cette valeur en s'effacant.
+  static const double ampleurHaloDirect = 1.2;
+
+  /// Opacite de depart du halo du point « En direct », avant qu'il s'efface.
+  /// Posee sur le halo seul, jamais sur le texte.
+  static const double opaciteHaloDirect = 0.45;
+
   /// Temps d'affichage d'un retour local, avant sa disparition.
   static const Duration retourLocalMaintien = Duration(seconds: 3);
 
@@ -65,6 +90,14 @@ abstract final class AppMouvement {
   /// Tout ce qui entre. Rapide au depart, s'installe doucement.
   static const Curve selection = Curves.easeOut;
   static const Curve entree = Curves.easeOutCubic;
+
+  /// Courbe du battement du point « En direct » : douce aux deux bouts, sans
+  /// rebond (voir [pulsationDirect]).
+  static const Curve pulsationCourbe = Curves.easeInOut;
+
+  /// Courbe « emphasized » de Material 3, pour les transitions de page
+  /// (A-13, 17/10/2026).
+  static const Curve accentuee = Curves.easeInOutCubicEmphasized;
 
   /// Tout ce qui sort.
   static const Curve sortie = Curves.easeInCubic;

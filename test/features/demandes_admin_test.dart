@@ -5,11 +5,14 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admin/service_admin.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/bento_tile.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_demandes/demandes_page.dart';
 
@@ -145,7 +148,9 @@ void main() {
           .getTopLeft(find.text(t.admin.demandes.reclame))
           .dy;
       final double yRegles = tester
-          .getTopLeft(find.text(t.admin.demandes.feuille(prenom: 'Aissatou')))
+          .getTopLeft(
+            find.text(t.admin.demandes.feuille(dePrenom: deDevant('Aissatou'))),
+          )
           .dy;
       final double yVerdict = tester
           .getTopLeft(find.text(t.admin.demandes.verdict))
@@ -175,9 +180,11 @@ void main() {
       );
       expect(
         find.text(
-          t.admin.demandes.reclameRegle(
-            regle: t.admin.demandes.regleDuree,
-            valeur: '30',
+          LibellesGroupe.insecable(
+            t.admin.demandes.reclameRegle(
+              regle: t.admin.demandes.regleDuree,
+              valeur: '30',
+            ),
           ),
         ),
         findsOneWidget,
@@ -225,8 +232,16 @@ void main() {
         ActionPrincipale,
         t.admin.demandes.refuser,
       );
-      expect(tester.widget<ActionPrincipale>(refuser).onPress, isNull);
+      // Jamais grise (K-56) : presse sans motif, il dit ce qui manque.
+      expect(tester.widget<ActionPrincipale>(refuser).onPress, isNotNull);
+      await tester.tap(refuser);
+      await tester.pumpAndSettle();
+      expect(find.text(t.formulaire.motif.manque), findsOneWidget);
+      expect(admin.verdicts, isEmpty);
 
+      // FORM-L1 : « Autre » ouvre le champ libre.
+      await tester.tap(find.byKey(SelecteurMotif.cleAutre));
+      await tester.pumpAndSettle();
       await tester.enterText(
         find.byType(TextField),
         'La duree actuelle a ete posee la semaine derniere.',
@@ -259,6 +274,22 @@ void main() {
 
       expect(find.text(t.commun.reessayer), findsOneWidget);
     });
+
+    // EA-HORS-LIGNE-1b : une panne quelconque, en ligne, n'est pas « Pas de
+    // reseau », et une file qui n'a pas charge n'a rien de consultable.
+    testWidgets(
+      'une panne dit que la file n a pas charge, pas « Pas de reseau »',
+      (WidgetTester tester) async {
+        await _monter(
+          tester,
+          admin: FauxServiceAdmin()..erreurFile = StateError('reseau'),
+        );
+
+        expect(find.text(t.admin.demandes.erreurFile), findsOneWidget);
+        expect(find.textContaining(t.reseau.horsLigne), findsNothing);
+        expect(find.textContaining('consultable'), findsNothing);
+      },
+    );
   });
 
   group('La feuille de regles : la plateforme et l applique, cote a cote', () {
@@ -288,7 +319,9 @@ void main() {
         of: tuileDuree,
         matching: find.text(
           t.admin.demandes.plateforme(
-            valeur: t.admin.demandes.minutes(valeur: '60'),
+            valeur: LibellesGroupe.insecable(
+              t.admin.demandes.minutes(valeur: '60'),
+            ),
           ),
         ),
       );
@@ -296,7 +329,9 @@ void main() {
         of: tuileDuree,
         matching: find.text(
           t.admin.demandes.effective(
-            valeur: t.admin.demandes.minutes(valeur: '45'),
+            valeur: LibellesGroupe.insecable(
+              t.admin.demandes.minutes(valeur: '45'),
+            ),
           ),
         ),
       );
@@ -389,7 +424,9 @@ void main() {
       expect(
         find.text(
           t.admin.demandes.historiqueLigne(
-            valeur: t.admin.demandes.minutes(valeur: '30'),
+            valeur: LibellesGroupe.insecable(
+              t.admin.demandes.minutes(valeur: '30'),
+            ),
             debut: '01/07/2026',
             fin: '20/08/2026',
           ),
@@ -440,11 +477,28 @@ void main() {
       );
       // Une regle sans motif ne se relit pas six mois plus tard : la base la
       // refuse, et l'ecran ne fait pas semblant.
-      expect(tester.widget<ActionPrincipale>(poser).onPress, isNull);
+      // Jamais grise (K-56) : presse trop tot, il dit ce qui manque.
+      expect(tester.widget<ActionPrincipale>(poser).onPress, isNotNull);
+      await tester.tap(poser);
+      await tester.pumpAndSettle();
+      expect(find.text(t.admin.demandes.manqueValeur), findsOneWidget);
 
-      await tester.tap(find.text(t.admin.demandes.minutes(valeur: '45')));
+      await tester.tap(
+        find.text(
+          LibellesGroupe.insecable(t.admin.demandes.minutes(valeur: '45')),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(poser);
+      await tester.pumpAndSettle();
+      expect(find.text(t.formulaire.motif.manque), findsOneWidget);
+      expect(regles.posees, isEmpty);
+
+      await tester.ensureVisible(find.byKey(SelecteurMotif.cleAutre));
+      await tester.tap(find.byKey(SelecteurMotif.cleAutre));
+      await tester.pumpAndSettle();
       await tester.enterText(
-        find.byType(TextField),
+        find.byType(TextField).last,
         'Trajet entre deux cours.',
       );
       await tester.pumpAndSettle();
@@ -483,12 +537,14 @@ void main() {
         ActionPrincipale,
         t.admin.demandes.cloreEnvoyer,
       );
-      expect(tester.widget<ActionPrincipale>(clore).onPress, isNull);
+      expect(tester.widget<ActionPrincipale>(clore).onPress, isNotNull);
+      await tester.tap(clore);
+      await tester.pumpAndSettle();
+      expect(find.text(t.formulaire.motif.manque), findsOneWidget);
+      expect(regles.closes, isEmpty);
 
-      await tester.enterText(
-        find.byType(TextField),
-        'Elle a grandi, retour a la duree commune.',
-      );
+      // FORM-L1 : le motif propose part tel quel.
+      await tester.tap(find.text(t.motifs.cloreSurcharge.termine));
       await tester.pumpAndSettle();
       await tester.tap(clore);
       await tester.pumpAndSettle();

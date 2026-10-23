@@ -32,7 +32,7 @@
       "general": "contact@rewayahacademy.com",
       "support": "support@rewayahacademy.com",
       "recruitment": "recrutement@rewayahacademy.com",
-      "billing": "invoice@rewayahacademy.com"
+      "billing": "invoices@rewayahacademy.com"
     }
   },
   "pages": {
@@ -438,7 +438,7 @@
           ],
           "paragraphs": [
             "La taxe de votre pays et le montant en euros, livres ou dollars canadiens s’affichent au paiement. Les conditions de vente complètes sont dans la page Conditions.",
-            "Pour une question liée à une facture ou à la facturation, écrivez à invoice@rewayahacademy.com."
+            "Pour une question liée à une facture ou à la facturation, écrivez à invoices@rewayahacademy.com."
           ],
           "links": [
             {
@@ -447,7 +447,7 @@
             },
             {
               "label": "Écrire au service de facturation",
-              "href": "mailto:invoice@rewayahacademy.com"
+              "href": "mailto:invoices@rewayahacademy.com"
             }
           ]
         }
@@ -678,12 +678,12 @@
           "id": "facturation",
           "title": "À qui adresser une question de facture ?",
           "paragraphs": [
-            "Pour une question de facturation, écrivez à invoice@rewayahacademy.com."
+            "Pour une question de facturation, écrivez à invoices@rewayahacademy.com."
           ],
           "links": [
             {
               "label": "Contacter la facturation",
-              "href": "mailto:invoice@rewayahacademy.com"
+              "href": "mailto:invoices@rewayahacademy.com"
             }
           ]
         }
@@ -819,12 +819,12 @@
           "id": "facturation",
           "title": "Facturation",
           "paragraphs": [
-            "Pour les factures et questions de facturation : invoice@rewayahacademy.com."
+            "Pour les factures et questions de facturation : invoices@rewayahacademy.com."
           ],
           "links": [
             {
-              "label": "Écrire à invoice@rewayahacademy.com",
-              "href": "mailto:invoice@rewayahacademy.com"
+              "label": "Écrire à invoices@rewayahacademy.com",
+              "href": "mailto:invoices@rewayahacademy.com"
             }
           ]
         },

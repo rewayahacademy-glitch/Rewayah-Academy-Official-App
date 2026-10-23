@@ -108,7 +108,14 @@ const List<String> clesRegles = <String>[
   'child_ui_mode_max_age',
   'max_devices_per_student',
   'max_concurrent_sessions_per_profile',
+  // Le nombre maximal de Classes par enseignant (decision du directeur du
+  // 22/10/2026, migration 20261022000200_classes_plafond_par_enseignant.sql) :
+  // 3 par defaut, de 1 a 80. Un serveur d'avant ce lot ne la rend pas.
+  cleClassesParEnseignant,
 ];
+
+/// La cle du reglage « Classes au plus par enseignant ».
+const String cleClassesParEnseignant = 'enseignant.classes_max';
 
 /// Les cles du domaine Configuration > Fonctionnalites.
 const List<String> clesFonctionnalites = <String>[
@@ -134,6 +141,7 @@ const List<String> clesObservation = <String>[
 const List<String> clesConservationDonnees = <String>[
   'recording_retention_days',
   'kyc_retention_days',
+  'compte.suppression_delai_jours',
 ];
 
 /// Les valeurs de Configuration > Regles.
@@ -152,7 +160,6 @@ final FutureProvider<List<ValeurConfig>> valeursFonctionnalitesProvider =
 /// Les valeurs de Configuration > Conservation des donnees.
 final FutureProvider<List<ValeurConfig>> valeursConservationDonneesProvider =
     FutureProvider<List<ValeurConfig>>(
-      (Ref ref) => ref
-          .watch(serviceConfigurationProvider)
-          .lire(clesConservationDonnees),
+      (Ref ref) =>
+          ref.watch(serviceConfigurationProvider).lire(clesConservationDonnees),
     );

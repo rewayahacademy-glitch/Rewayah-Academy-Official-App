@@ -8,7 +8,7 @@ import '../widgets/offline_banner.dart';
 ///
 /// L'etape 2 pose l'arborescence, pas les ecrans metier : ceux-ci arrivent a
 /// l'etape 3 et suivantes, chacun a partir de sa fiche dans
-/// `docs/produit/parcours-utilisateurs.md`.
+/// `docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md`.
 ///
 /// Ce widget n'est pas un ecran vide : il nomme la destination, pour qu'une
 /// navigation de test dise ou elle a mene.

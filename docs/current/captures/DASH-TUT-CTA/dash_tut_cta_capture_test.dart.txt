@@ -1,0 +1,226 @@
+// BENTO-2c : captures des corrections de la revue BENTO-2b-R. Aujourd'hui
+// avec 4 cahiers en retard (« Voir tout » affiche) a 320 x2, 390 x2 et 1440 ;
+// accueil famille aux bornes (320 x1/x2, 600 et 620 x2, 863/864, 1024,
+// 1440 x2). Clair et sombre, hauteur 2600 partout (c2),
+// 3600 pour la journee sur telephone (4 cahiers a texte double).
+// Saute sans CAPTURE_DIR (voir LISEZ-MOI.md).
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/appairage/service_appairage.dart';
+import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/enseignant/depot_cahiers.dart';
+import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
+import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/matching/service_matching.dart';
+import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
+import 'package:rewayah_academy/core/presence/service_presence.dart';
+import 'package:rewayah_academy/core/priere/service_priere.dart';
+import 'package:rewayah_academy/core/regles/service_regles.dart';
+import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/router/app_router.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/seance_famille/port_seances_famille.dart';
+import 'package:rewayah_academy/core/seance_famille/seance_famille.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/tc_parcours/port_travail_a_venir.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/video/pre_vol.dart';
+import 'package:rewayah_academy/features/journee/journee_page.dart';
+
+import '../fixtures/tuteur/faux_classes_foyer.dart';
+import '../fixtures/tuteur/faux_seances_famille.dart';
+import '../fixtures/tuteur/foyers.dart';
+import '../router/support_routeur.dart' hide stabiliser;
+import '../support/harnais.dart';
+import 'outil_capture.dart';
+
+const SessionState _sessionEnseignant = SessionState(
+  resolue: true,
+  role: AppRole.teacher,
+  profileId: 't1',
+  accountStatus: AccountStatus.active,
+  lectureProfil: LectureProfil.presente,
+);
+
+List<Override> _surchargesJournee() => <Override>[
+  sourceSessionProvider.overrideWithValue(
+    FausseSourceSession(_sessionEnseignant),
+  ),
+  serviceEnseignantProvider.overrideWithValue(
+    FauxServiceEnseignant()
+      ..seancesRendues = <SeanceEnseignant>[
+        seanceDeTest(
+          id: 'an-nour',
+          debut: DateTime(2026, 9, 28, 17, 30),
+          nbParticipants: 4,
+          groupeId: 'g-an-nour',
+          groupeLibelle: 'An-Nour',
+        ),
+        seanceDeTest(
+          id: 'al-fajr',
+          debut: DateTime(2026, 9, 28, 19),
+          nbParticipants: 5,
+          groupeId: 'g-al-fajr',
+          groupeLibelle: 'Al-Fajr',
+        ),
+      ]
+      ..retardsRendus = <CahierEnRetard>[
+        for (final (String, String, int) c in <(String, String, int)>[
+          ('a', 'Al-Badr', 26),
+          ('b', 'As-Salam', 25),
+          ('c', 'Al-Fatiha', 23),
+          ('d', 'Al-Ikhlas', 22),
+        ])
+          CahierEnRetard(
+            seanceId: c.$1,
+            debut: DateTime(2026, 9, c.$3, 17),
+            fin: DateTime(2026, 9, c.$3, 17, 45),
+            nbParticipants: 3,
+            heuresDeRetard: 30,
+            groupeId: 'g-${c.$1}',
+            groupeLibelle: c.$2,
+          ),
+      ],
+  ),
+  stockagePreferencesProvider.overrideWithValue(StockagePreferencesMemoire()),
+  depotRapportsProvider.overrideWithValue(FauxDepotRapports()),
+  serviceMatchingProvider.overrideWithValue(FauxServiceMatching()),
+  serviceReglesProvider.overrideWithValue(FauxServiceRegles()),
+  servicePriereProvider.overrideWithValue(FauxServicePriere()),
+  servicePreVolProvider.overrideWithValue(FauxServicePreVol()),
+  servicePresenceProvider.overrideWithValue(FauxServicePresence()),
+  serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+  maintenantJourneeProvider.overrideWithValue(() => DateTime(2026, 9, 28, 16)),
+];
+
+/// L'accueil famille sur le vrai routeur (comme accueil_famille_test.dart),
+/// dans le cadre de capture.
+Future<void> _monterFamille(
+  WidgetTester tester,
+  ThemeMode mode,
+  double echelle, {
+  bool blocage = false,
+}) async {
+  const String a1 = 'foyer-a-eleve-1';
+  final FauxServiceAppairage appairage = FauxServiceAppairage()
+    ..elevesRendus = FoyersFictifs.foyerA
+    ..appareilsRendus = blocage ? <AppareilAppaire>[] : <AppareilAppaire>[
+      AppareilAppaire(
+        id: 'app-1',
+        profilId: a1,
+        prenom: 'Eleve A1',
+        plateforme: 'Android',
+        appaireA: DateTime.utc(2026, 9, 1),
+      ),
+    ];
+  final FauxSeancesFamille seances = FauxSeancesFamille(
+    seances: <SeanceFamille>[
+      seanceFictive(
+        seanceId: 's1',
+        eleveId: a1,
+        debutUtc: instantServeurFige.add(const Duration(hours: 3)),
+        statut: StatutSeance.planifiee,
+        heureFoyer: heureRendue('Europe/Paris', 'Paris', '18:10'),
+      ),
+      seanceFictive(
+        seanceId: 's0',
+        eleveId: a1,
+        debutUtc: instantServeurFige.subtract(const Duration(days: 2)),
+        statut: StatutSeance.terminee,
+        heureFoyer: heureRendue(
+          'Europe/Paris',
+          'Paris',
+          '18:00',
+          date: 'Samedi 19 septembre',
+        ),
+      ),
+    ],
+  );
+  late GoRouter routeur;
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: <Override>[
+        ...surchargesRouteur(
+          FausseSourceSession(sessionActive(AppRole.guardian)),
+          appairage: appairage,
+        ),
+        portSeancesFamilleProvider.overrideWithValue(seances),
+        portClassesFoyerProvider.overrideWithValue(
+          FauxClassesFoyer(
+            classes: <ClasseFoyer>[
+              ClasseFoyer(eleveId: a1, classe: classeFictive()),
+            ],
+          ),
+        ),
+        portTravailAVenirProvider.overrideWithValue(null),
+      ],
+      child: TranslationProvider(
+        child: RepaintBoundary(
+          key: cadreCapture,
+          child: Consumer(
+            builder: (BuildContext _, WidgetRef ref, Widget? _) {
+              routeur = ref.read(routeurProvider);
+              return MaterialApp.router(
+                debugShowCheckedModeBanner: false,
+                theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+                darkTheme: AppTheme.pour(
+                  InterfaceMode.standard,
+                  Brightness.dark,
+                ),
+                themeMode: mode,
+                builder: (BuildContext c, Widget? app) => MediaQuery(
+                  data: MediaQuery.of(c)
+                      .copyWith(textScaler: TextScaler.linear(echelle)),
+                  child: app!,
+                ),
+                routerConfig: routeur,
+              );
+            },
+          ),
+        ),
+      ),
+    ),
+  );
+  await stabiliser(tester);
+  routeur.go(Routes.tuteurAccueil);
+  await stabiliser(tester);
+}
+
+void main() {
+  group('Capture : DASH-TUT-CTA', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+
+    String nom(double l, double e, ThemeMode m) =>
+        '${l.toInt()}${e == 1 ? '' : 'x2'}_'
+        '${m == ThemeMode.light ? 'clair' : 'sombre'}';
+
+    for (final ThemeMode m in const <ThemeMode>[
+      ThemeMode.light,
+      ThemeMode.dark,
+    ]) {
+      for (final bool blocage in const <bool>[false, true]) {
+        for (final (double, double) c in const <(double, double)>[
+          (320, 2),
+          (390, 1),
+          (1440, 1),
+        ]) {
+          final String n =
+              'famille_${blocage ? 'blocage' : 'sans_blocage'}_${nom(c.$1, c.$2, m)}';
+          testWidgets(n, (WidgetTester tester) async {
+            fixerVueCapture(tester, Size(c.$1, c.$1 < 600 ? 3200 : 1800), 1);
+            await _monterFamille(tester, m, c.$2, blocage: blocage);
+            expect(tester.takeException(), isNull);
+            debugPrint('PNG ${await capturer(tester, n)}');
+          });
+        }
+      }
+    }
+  });
+}

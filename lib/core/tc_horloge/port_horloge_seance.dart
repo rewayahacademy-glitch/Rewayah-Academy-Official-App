@@ -2,8 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // `StreamProviderFamily` n'est pas exporte par l'entree principale de
 // `flutter_riverpod` : meme convention que `service_planning.dart`.
 import 'package:flutter_riverpod/misc.dart' show StreamProviderFamily;
+import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../config/env.dart';
 import 'demonstration_horloge.dart';
+import 'horloge_supabase.dart';
 import 'session_clock_vm.dart';
 
 /// L'acces au temps d'une seance.
@@ -17,7 +20,7 @@ import 'session_clock_vm.dart';
 ///
 /// Les trois capacites serveur dont ce port a besoin **n'existent pas encore** :
 /// `join_opens_at` configurable, horloge serveur, et rendu des conversions.
-/// Elles sont chiffrees dans `docs/teaching-core/TC_CONTRACT_REQUEST_A.md`.
+/// Elles sont chiffrees dans `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_A.md`.
 abstract class PortHorlogeSeance {
   /// L'horloge d'une occurrence, resolue cote serveur (conversions incluses).
   Future<SessionClockVM?> horlogeDe({
@@ -41,18 +44,25 @@ abstract class PortHorlogeSeance {
   Future<DateTime> maintenantServeurUtc();
 }
 
+/// Choisit le port selon le mode de compilation.
+///
+/// **En production, le temps vient du serveur** (`horloge_seance()` et
+/// `maintenant_serveur()`, migrations `0030` et `0033`, presentes en
+/// production le 23 septembre 2026). Le double ancre au 21 septembre ne sort
+/// que sous `PLAYGROUND=true`.
+PortHorlogeSeance portHorlogeSelon({required bool demo}) => demo
+    ? HorlogeSeanceDemonstration()
+    : HorlogeSeanceSupabase(Supabase.instance.client);
+
 /// Le port du temps employe par l'application.
 ///
 /// Il suit le patron de declaration du depot, celui des trente et un services
 /// existants : l'interface, son implementation et le provider dans le meme
 /// voisinage, sans racine d'injection.
-///
-/// **Le defaut est un double de demonstration**, et il le restera tant que le
-/// serveur ne saura ni rendre une conversion, ni donner son heure. Agent Z
-/// remplace ce defaut par l'adaptateur reel une fois la section 4 de
-/// `TC_CONTRACT_REQUEST_A.md` livree.
 final Provider<PortHorlogeSeance> portHorlogeSeanceProvider =
-    Provider<PortHorlogeSeance>((Ref ref) => HorlogeSeanceDemonstration());
+    Provider<PortHorlogeSeance>(
+      (Ref ref) => portHorlogeSelon(demo: Env.playgroundActif),
+    );
 
 /// Le temps d'un groupe, rafraichi a la cadence du port.
 ///

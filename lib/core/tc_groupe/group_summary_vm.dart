@@ -5,7 +5,7 @@ import '../tc_horloge/session_clock_vm.dart';
 /// Le titre d'un enseignant dans le contexte cours.
 ///
 /// **Sayyid / Sayyida, jamais Ustaz** (decision `D-02`). Les deux formes arabes
-/// vivent dans `docs/teaching-core/i18n/tc_i18n_A.json` : c'est la seule
+/// vivent dans `docs/archive/2026-09-pre-remise-a-plat/teaching-core/i18n/tc_i18n_A.json` : c'est la seule
 /// exception a la regle « aucun agent ne produit de traduction arabe ».
 ///
 /// Aucune colonne de la base ne porte ce titre aujourd'hui : il est demande en
@@ -116,6 +116,7 @@ class EnseignantVM {
     required this.titre,
     required this.nomAffichage,
     this.photoUrlOuCle,
+    this.pays,
   });
 
   /// Identifiant du profil enseignant.
@@ -129,6 +130,12 @@ class EnseignantVM {
 
   /// Cle de stockage de la photo. `null` quand la photo manque.
   final String? photoUrlOuCle;
+
+  /// Le pays declare par l'enseignant (`teacher_profiles.country`, nom en
+  /// clair, FORM-L8), affiche sur sa carte a tous les roles (ENS-PAYS-1).
+  /// `null` quand il n'est pas declare, ou tant que la vue ne l'expose pas
+  /// (BR-1, `docs/current/ENS-PAYS-1_BR.md`) : rien ne s'affiche alors.
+  final String? pays;
 
   /// Vrai quand la photo obligatoire n'est pas la.
   ///

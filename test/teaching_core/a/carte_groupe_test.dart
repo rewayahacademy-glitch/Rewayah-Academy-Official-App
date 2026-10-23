@@ -7,6 +7,7 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/carte_groupe.dart';
 
+import '../../support/annonces.dart';
 import 'support/hote_tc_a.dart';
 
 const HorlogeAffichee _riyad = HorlogeAffichee(
@@ -39,7 +40,7 @@ GroupSummaryVM _groupe({
 }) {
   final GroupSummaryVM base = GroupSummaryVM(
     groupeId: 'g-1',
-    libelle: 'Groupe Al-Fatiha',
+    libelle: 'Classe Al-Fatiha',
     couleurJeton: const JetonCouleurGroupe(index: 0, codeStable: 'g04'),
     enseignant: EnseignantVM(
       enseignantId: 'e-1',
@@ -86,7 +87,7 @@ void main() {
       ),
     );
 
-    expect(find.text('Groupe Al-Fatiha'), findsOneWidget);
+    expect(find.text('Classe Al-Fatiha'), findsOneWidget);
     expect(find.text('4 / 5'), findsOneWidget);
     expect(find.text('Sayyid Youssouf'), findsOneWidget);
     expect(find.text('Lecture du Coran · Niveau 2'), findsOneWidget);
@@ -122,7 +123,7 @@ void main() {
       ),
     );
     expect(find.text(LibellesGroupe.rejoindre), findsNothing);
-    expect(find.textContaining('Cours dans 3 h 28'), findsOneWidget);
+    expect(find.textContaining('Cours dans 3\u00A0h\u00A028'), findsOneWidget);
   });
 
   testWidgets('a T-20, le bouton Rejoindre apparait', (
@@ -132,6 +133,7 @@ void main() {
       tester,
       CarteGroupe(
         groupe: _groupe(maintenant: DateTime.utc(2026, 9, 21, 14, 40)),
+        onRejoindre: () {},
       ),
     );
     expect(find.text(LibellesGroupe.rejoindre), findsOneWidget);
@@ -218,26 +220,54 @@ void main() {
         onOuvrir: () => ouvertures++,
       ),
     );
-    await tester.tap(find.text('Groupe Al-Fatiha'));
+    await tester.tap(find.text('Classe Al-Fatiha'));
     await tester.pump();
     expect(ouvertures, 1);
   });
 
-  testWidgets(
-    'le bouton Rejoindre reste inactif tant qu il n est pas branche',
-    (WidgetTester tester) async {
-      await _poser(
-        tester,
-        CarteGroupe(
-          groupe: _groupe(maintenant: DateTime.utc(2026, 9, 21, 14, 40)),
-        ),
-      );
-      final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
-        find.widgetWithText(ActionPrincipale, LibellesGroupe.rejoindre),
-      );
-      expect(bouton.onPress, isNull);
-    },
-  );
+  testWidgets('sans rappel branche, aucun Rejoindre : jamais grise '
+      '(BOUTONS-GRISES-1)', (WidgetTester tester) async {
+    await _poser(
+      tester,
+      CarteGroupe(
+        groupe: _groupe(maintenant: DateTime.utc(2026, 9, 21, 14, 40)),
+      ),
+    );
+    expect(
+      find.widgetWithText(ActionPrincipale, LibellesGroupe.rejoindre),
+      findsNothing,
+    );
+  });
+
+  testWidgets('en attente : Rejoindre actif, l appui dit la phrase, '
+      'l annonce et n entre pas (BOUTONS-GRISES-1)', (
+    WidgetTester tester,
+  ) async {
+    final List<String> annonces = ecouterAnnonces(tester);
+    int appels = 0;
+    await _poser(
+      tester,
+      CarteGroupe(
+        groupe: _groupe(maintenant: DateTime.utc(2026, 9, 21, 14, 40)),
+        onRejoindre: () => appels++,
+        attenteEntree: 'Attendez un instant.',
+      ),
+    );
+    final Finder rejoindre = find.widgetWithText(
+      ActionPrincipale,
+      LibellesGroupe.rejoindre,
+    );
+    expect(tester.widget<ActionPrincipale>(rejoindre).onPress, isNotNull);
+    await tester.tap(rejoindre);
+    await tester.pump();
+    expect(appels, 0);
+    expect(find.text('Attendez un instant.'), findsOneWidget);
+    expect(annonces, <String>['Attendez un instant.']);
+    expect(
+      tester.getSemantics(find.text('Attendez un instant.')),
+      matchesSemantics(isLiveRegion: true, label: 'Attendez un instant.'),
+    );
+  });
 
   testWidgets('le groupe complet porte un libelle, pas seulement une couleur', (
     WidgetTester tester,

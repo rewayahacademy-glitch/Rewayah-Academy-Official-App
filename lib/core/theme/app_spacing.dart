@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 /// Echelle d'espacement fixe : 4, 8, 12, 16, 20, 24, 32, 40, 48, 64.
 ///
 /// Aucune valeur ponctuelle en dehors de cette echelle
-/// (`docs/produit/design-tokens.md` section 7). `tool/verifier_jetons.dart`
+/// (`docs/archive/2026-09-pre-remise-a-plat/produit/design-tokens.md` section 7). `tool/verifier_jetons.dart`
 /// echoue sur toute valeur d'espacement litterale hors echelle dans `lib/`.
 ///
 /// La refonte l'a etendue vers le haut : les paliers courts servaient
@@ -58,8 +58,8 @@ abstract final class AppSpacing {
 
 /// Le rythme de la page : gouttieres, largeur de contenu, largeur de lecture.
 ///
-/// Source : `docs/produit/design-tokens.md` section 7 et
-/// `docs/design/01-systeme-visuel.md` section 6.
+/// Source : `docs/archive/2026-09-pre-remise-a-plat/produit/design-tokens.md` section 7 et
+/// `docs/archive/2026-09-pre-remise-a-plat/design/01-systeme-visuel.md` section 6.
 abstract final class AppPage {
   /// Gouttiere laterale sur mobile.
   static const double gouttiereMobile = AppSpacing.lg;
@@ -77,6 +77,12 @@ abstract final class AppPage {
   static const double largeurLecture = 800;
   static const double largeurGestion = 1440;
   static const double largeurEtatVide = 400;
+
+  /// Largeur maximale d'une surface modale hors telephone : feuille bornee sur
+  /// tablette, boite de dialogue sur bureau. Une feuille de telephone etiree
+  /// sur toute la largeur d'un ecran large est interdite (manifeste visuel du
+  /// chantier Tuteur V1, section 6.1 : colonne centree de 480 a 560).
+  static const double largeurDialogue = 560;
   static const double hauteurBouton = 52;
   static const double hauteurChoix = 112;
   static const double hauteurReglage = 64;
@@ -92,7 +98,7 @@ abstract final class AppPage {
 /// Cibles tactiles minimales.
 ///
 /// 72pt en mode enfant, 48pt en mode standard
-/// (`docs/architecture/etape-2-core-flutter.md` section 2, ligne `BentoTile`).
+/// (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-2-core-flutter.md` section 2, ligne `BentoTile`).
 abstract final class AppTouchTarget {
   /// Cible minimale en mode enfant.
   static const double enfant = 72;

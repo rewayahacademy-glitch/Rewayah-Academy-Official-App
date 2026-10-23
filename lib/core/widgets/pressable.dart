@@ -12,7 +12,7 @@ import '../theme/app_spacing.dart';
 ///
 /// Le survol n'existe pas au doigt et le clavier n'existe pas au telephone :
 /// un composant ne doit donc jamais faire reposer un etat sur un seul des deux
-/// (`docs/design/05-regles-responsive.md` section 5). Les trois voyants sont
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 5). Les trois voyants sont
 /// exposes ensemble pour que le composant qui porte une surface puisse les
 /// traiter ensemble.
 @immutable
@@ -54,7 +54,7 @@ class EtatPression {
 /// **Reserve a la galerie.** Le survol, la pression et le focus naissent de la
 /// souris et du clavier : ils ne se declenchent pas depuis l'exterieur. Sans ce
 /// forcage, la galerie ne pourrait pas montrer les dix etats cote a cote, ce
-/// que `docs/design/07-catalogue-composants.md` section 5 exige, et la seule
+/// que `docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 5 exige, et la seule
 /// facon de les voir serait de promener une souris sur chaque composant.
 ///
 /// Il est pose **au dessus** des composants plutot que passe en parametre a
@@ -85,14 +85,14 @@ class PressionForcee extends InheritedWidget {
 /// Echelle 0.98, 100 ms, retour haptique moyen. **Aucun `onTap` nu ailleurs
 /// dans le code** : `tool/verifier_jetons.dart` echoue si un autre fichier de
 /// `lib/` en declare un
-/// (`docs/architecture/etape-2-core-flutter.md` section 2).
+/// (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-2-core-flutter.md` section 2).
 ///
 /// Une seule implementation garantit que deux boutons de deux ecrans differents
 /// ne repondent jamais differemment au doigt.
 ///
 /// **Le lot C lui ajoute les deux entrees qui manquaient au Web** : le survol
 /// de la souris et l'anneau de focus du clavier
-/// (`docs/design/07-catalogue-composants.md` section 1). Ils sont rendus ici et
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 1). Ils sont rendus ici et
 /// non dans chaque composant, pour la meme raison que la pression : deux
 /// anneaux de focus dessines a deux endroits finiraient par ne plus se
 /// ressembler.
@@ -107,6 +107,10 @@ class Pressable extends StatefulWidget {
     this.respecterCibleTactile = true,
     this.arrondiFocus,
     this.autofocus = false,
+    this.selectionne,
+    this.coche,
+    this.focusNode,
+    this.lien = false,
   }) : constructeur = null;
 
   /// Cree une zone pressable dont le contenu suit l'etat d'interaction.
@@ -124,6 +128,10 @@ class Pressable extends StatefulWidget {
     this.respecterCibleTactile = true,
     this.arrondiFocus,
     this.autofocus = false,
+    this.selectionne,
+    this.coche,
+    this.focusNode,
+    this.lien = false,
   }) : child = null;
 
   /// Le contenu rendu, quand il ne depend pas de l'etat.
@@ -153,6 +161,21 @@ class Pressable extends StatefulWidget {
 
   /// Prend le focus des l'apparition. Reserve au premier champ d'une feuille.
   final bool autofocus;
+
+  /// Etat de selection annonce (`Semantics.selected`). Nul : non annonce.
+  final bool? selectionne;
+
+  /// Etat de case annonce (`Semantics.checked`). Nul : non annonce.
+  final bool? coche;
+
+  /// Annonce un lien (Semantics.link) plutot qu'un bouton : il mene a un
+  /// endroit, il n'engage rien.
+  final bool lien;
+
+  /// Le noeud de focus de la zone, pour qu'un ecran puisse y poser le focus
+  /// ou que l'appelant le rende a cette zone (le bouton qui a ouvert un
+  /// panneau, a sa fermeture).
+  final FocusNode? focusNode;
 
   /// Duree de l'animation de pression : le retour tactile du budget de
   /// mouvement, jamais une valeur posee ici (`app_mouvement.dart`).
@@ -262,9 +285,13 @@ class _PressableState extends State<Pressable>
     );
 
     // The ring is outside the hit target: no layout shift and no clipping.
+    // `passthrough` : le contenu recoit les memes contraintes avec ou sans
+    // focus (la cible minimale ci-dessous l'etire pareil) ; sinon il
+    // reprendrait sa taille naturelle, cale en haut et au debut (TB-7a).
     if (etat.focus) {
       contenu = Stack(
         clipBehavior: Clip.none,
+        fit: StackFit.passthrough,
         children: <Widget>[
           contenu,
           PositionedDirectional(
@@ -300,12 +327,16 @@ class _PressableState extends State<Pressable>
     }
 
     return Semantics(
-      button: _pressable,
+      button: _pressable && !widget.lien,
+      link: widget.lien,
       enabled: _pressable,
+      selected: widget.selectionne,
+      checked: widget.coche,
       label: widget.libelleSemantique,
       child: FocusableActionDetector(
         enabled: _pressable,
         autofocus: widget.autofocus,
+        focusNode: widget.focusNode,
         mouseCursor: _pressable
             ? SystemMouseCursors.click
             : SystemMouseCursors.basic,
@@ -319,9 +350,23 @@ class _PressableState extends State<Pressable>
             setState(() => _focus = focus);
           }
         },
+        // Deux intentions, une seule action (CLAVIER-ENTREE-1, WCAG 2.1.1).
+        // Hors Web, Entree, Entree du pave numerique et Espace donnent
+        // `ActivateIntent`. Sur le Web, Flutter ne lie a `ActivateIntent`
+        // que la barre d'espace : Entree et Entree du pave numerique y
+        // donnent `ButtonActivateIntent` (« enter activates buttons, but not
+        // other controls », `WidgetsApp.defaultShortcuts`). Sans la seconde
+        // entree, Entree ne declenchait rien dans le navigateur. Une touche
+        // ne produit qu'une intention : aucun double declenchement.
         actions: <Type, Action<Intent>>{
           ActivateIntent: CallbackAction<ActivateIntent>(
             onInvoke: (ActivateIntent _) {
+              _activerAuClavier();
+              return null;
+            },
+          ),
+          ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(
+            onInvoke: (ButtonActivateIntent _) {
               _activerAuClavier();
               return null;
             },

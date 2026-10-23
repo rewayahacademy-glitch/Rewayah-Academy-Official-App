@@ -31,14 +31,14 @@ enum TailleBento {
 /// Seul bloc de grille de l'application : aucun ecran ne redefinit sa propre
 /// carte. La cible tactile suit le mode d'interface, 72pt en mode enfant et
 /// 44pt en mode standard, sans que l'ecran ait a le savoir
-/// (`docs/architecture/etape-2-core-flutter.md` section 2).
+/// (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-2-core-flutter.md` section 2).
 ///
 /// **Le lot C lui donne sa profondeur.** Jusque la, une tuile etait posee sur
 /// `surfaceCanvas`, c'est-a-dire sur la couleur du fond de page, sans ombre et
 /// avec un filet optionnel : elle ne se distinguait donc de la page par rien du
 /// tout. Elle vit maintenant sur `surfaceRaised`, avec son filet et son ombre,
 /// comme toute surface elevee du produit
-/// (`docs/design/01-systeme-visuel.md` section 2).
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/01-systeme-visuel.md` section 2).
 class BentoTile extends StatelessWidget {
   /// Cree une tuile.
   const BentoTile({
@@ -69,7 +69,7 @@ class BentoTile extends StatelessWidget {
   /// des etats ou une bordure porte du sens en dehors de l'interaction. Le cas
   /// du produit est le bloc imminent d'`ELV-02` sous mouvement reduit, ou la
   /// bordure fixe **remplace** la pulsation supprimee : l'information portee par
-  /// la pulsation doit survivre (`docs/design/04-systeme-mouvement.md`
+  /// la pulsation doit survivre (`docs/archive/2026-09-pre-remise-a-plat/design/04-systeme-mouvement.md`
   /// section 5).
   final bool contourFort;
 

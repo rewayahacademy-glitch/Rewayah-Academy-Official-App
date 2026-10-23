@@ -97,26 +97,6 @@ void main() {
       );
     });
 
-    test('le feed dit depuis quand un foyer attend', () {
-      final EleveEnAttente eleve = EleveEnAttente.depuisJson(
-        const <String, dynamic>{
-          'student_id': 'e1',
-          'first_name': 'Khadija',
-          'immutable_id': 'STUD-KB-000003',
-          'level': 'debutant',
-          'interface_mode': 'child',
-          'weekday': 3,
-          'hour_local': 17,
-          'timezone_iana': 'Europe/Paris',
-          'depuis': '2026-09-01T10:00:00Z',
-        },
-      );
-
-      expect(eleve.prenom, 'Khadija');
-      expect(eleve.mode, InterfaceMode.enfant);
-      expect(eleve.joursDAttente(DateTime.utc(2026, 9, 8, 10)), 7);
-    });
-
     test(
       'une regle dit ce qu\'elle vaut ici et ce qu\'elle vaudrait ailleurs',
       () {

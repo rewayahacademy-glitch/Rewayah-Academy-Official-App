@@ -1,0 +1,13 @@
+Expected: no matching candidates
+  Actual: _TextWidgetFinder:<Found 1 widget with text "Réessayer": [
+   Which: means one was found but none were expected
+  file://test/features/accueil_ma_deux_colonnes_test.dart line 359
+Expected: no matching candidates
+  Actual: _TextWidgetFinder:<Found 1 widget with text "Réessayer": [
+   Which: means one was found but none were expected
+  file://test/features/accueil_ma_deux_colonnes_test.dart line 359
+Expected: no matching candidates
+  Actual: _KeyWidgetFinder:<Found 1 widget with key [<'ma3-squelette'>]: [
+   Which: means one was found but none were expected
+  file://test/features/accueil_ma_deux_colonnes_test.dart line 441
+00:03 +0 -3: Some tests failed.

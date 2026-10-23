@@ -7,7 +7,7 @@ import 'package:flutter/widgets.dart';
 /// connait par son chemin. Ce ne sont pas des jetons du produit : ce sont les
 /// couleurs d'une marque tierce. Elles ne se declinent pas, ne suivent pas le
 /// theme clair/sombre, et **ne se miroitent pas en RTL**
-/// (`docs/design/06-accessibilite.md` section 5, « ne se miroitent pas : [...]
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/06-accessibilite.md` section 5, « ne se miroitent pas : [...]
 /// les logos »). Le logo se pose tel quel ou pas du tout.
 ///
 /// Les quatre traces sont recopies **mot pour mot** de la ressource officielle

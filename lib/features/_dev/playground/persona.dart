@@ -66,14 +66,8 @@ class Graine {
   /// Les seances de l'appelant.
   List<Seance> seances = const <Seance>[];
 
-  /// Les affectations qui concernent l'appelant.
-  List<Affectation> affectations = const <Affectation>[];
-
   /// Les creneaux poses, par profil.
   Map<String, List<Creneau>> creneaux = const <String, List<Creneau>>{};
-
-  /// Le feed d'eleves sans enseignant.
-  List<EleveEnAttente> feed = const <EleveEnAttente>[];
 
   /// La file des demandes de l'administration.
   List<Demande> demandes = const <Demande>[];
@@ -146,10 +140,8 @@ Persona personne({
     ..appareilsRendus = graine.appareils;
   final FauxServicePlanning planning = FauxServicePlanning()
     ..seancesRendues = graine.seances
-    ..affectationsRendues = graine.affectations
     ..creneaux.addAll(graine.creneaux);
-  final FauxServiceMatching matching = FauxServiceMatching()
-    ..feed = graine.feed;
+  final FauxServiceMatching matching = FauxServiceMatching();
   final FauxServiceAdmin admin = FauxServiceAdmin()
     ..indicateursRendus = graine.indicateurs
     ..file = graine.demandes;
@@ -233,8 +225,10 @@ List<Persona> personasDuBench({required DateTime maintenant}) => <Persona>[
     ),
   ),
   personne(
-    id: 'famille-incomplet',
-    libelle: 'Famille - dossier incomplet',
+    // AD-NETTOYAGE (n2) : K-47, le tuteur n'a plus de « dossier » ; ce persona
+    // est celui dont les accords ne sont pas encore signes.
+    id: 'famille-accords',
+    libelle: 'Famille - accords a signer',
     graine: Graine(
       session: _sessionTuteur(AccountStatus.pendingKyc),
       etatDossier: const EtatDossier(
@@ -245,37 +239,17 @@ List<Persona> personasDuBench({required DateTime maintenant}) => <Persona>[
     ),
   ),
   personne(
-    id: 'famille-verification',
-    libelle: 'Famille - dossier en verification',
+    // K-47 (HL-A-6) : le tuteur ne depose aucune piece ; accords signes, il
+    // attend seulement l'ouverture de son acces (BR-1). Plus de persona
+    // famille « en verification » ni « piece refusee ».
+    id: 'famille-acces',
+    libelle: 'Famille - acces en preparation',
     graine: Graine(
       session: _sessionTuteur(AccountStatus.pendingKyc),
-      etatDossier: EtatDossier(
+      etatDossier: const EtatDossier(
         profilExiste: true,
         role: AppRole.guardian,
         statutCompte: AccountStatus.pendingKyc,
-        pieceDeposee: true,
-        statutPiece: StatutPiece.enAttente,
-        deposeLe: maintenant.subtract(const Duration(days: 2)),
-        contratSigne: true,
-        accuseSigne: true,
-      ),
-    ),
-  ),
-  personne(
-    id: 'famille-refus',
-    libelle: 'Famille - piece refusee',
-    graine: Graine(
-      session: _sessionTuteur(AccountStatus.pendingKyc),
-      etatDossier: EtatDossier(
-        profilExiste: true,
-        role: AppRole.guardian,
-        statutCompte: AccountStatus.pendingKyc,
-        pieceDeposee: true,
-        statutPiece: StatutPiece.refusee,
-        motifRefus:
-            'La photo est trop sombre pour verifier l\'identite. '
-            'Reprenez-la en plein jour, sans flash ni reflet.',
-        deposeLe: maintenant.subtract(const Duration(days: 5)),
         contratSigne: true,
         accuseSigne: true,
       ),
@@ -288,12 +262,12 @@ List<Persona> personasDuBench({required DateTime maintenant}) => <Persona>[
   ),
   personne(
     id: 'eleve-standard',
-    libelle: 'Eleve (interface standard)',
+    libelle: 'Élève (interface standard)',
     graine: _graineEleve(InterfaceMode.standard, maintenant),
   ),
   personne(
     id: 'eleve-enfant',
-    libelle: 'Eleve (interface enfant)',
+    libelle: 'Élève (Mode Accessibilité)',
     graine: _graineEleve(InterfaceMode.enfant, maintenant),
   ),
   personne(
@@ -373,22 +347,6 @@ Graine _graineEleve(InterfaceMode mode, DateTime maintenant) =>
           statut: StatutSeance.planifiee,
         ),
       ]
-      ..affectations = <Affectation>[
-        Affectation(
-          id: 'a-1',
-          enseignantId: enseignant,
-          enseignantPrenom: enseignantPrenom,
-          enseignantIdentifiant: 'imm-t-1',
-          eleveId: eleve1,
-          elevePrenom: prenom1,
-          creneau: Creneau(
-            jour: maintenant.weekday,
-            heure: 16,
-            fuseau: 'Europe/Paris',
-          ),
-          depuis: maintenant.subtract(const Duration(days: 30)),
-        ),
-      ]
       ..prieres = <String, ReglagesPriere>{enseignant: _reglagesPriere()};
 
 /// La graine de l'enseignant : creneaux, feed, regles bornees en base.
@@ -412,36 +370,6 @@ Graine _graineEnseignant(DateTime maintenant) =>
         ),
         _seance(id: 's-2', debut: maintenant, statut: StatutSeance.planifiee),
       ]
-      ..affectations = <Affectation>[
-        Affectation(
-          id: 'a-1',
-          enseignantId: enseignant,
-          enseignantPrenom: enseignantPrenom,
-          enseignantIdentifiant: 'imm-t-1',
-          eleveId: eleve1,
-          elevePrenom: prenom1,
-          creneau: Creneau(
-            jour: maintenant.weekday,
-            heure: 16,
-            fuseau: 'Europe/Paris',
-          ),
-          depuis: maintenant.subtract(const Duration(days: 30)),
-        ),
-        Affectation(
-          id: 'a-2',
-          enseignantId: enseignant,
-          enseignantPrenom: enseignantPrenom,
-          enseignantIdentifiant: 'imm-t-1',
-          eleveId: eleve2,
-          elevePrenom: prenom2,
-          creneau: Creneau(
-            jour: maintenant.weekday,
-            heure: 18,
-            fuseau: 'Europe/Paris',
-          ),
-          depuis: maintenant.subtract(const Duration(days: 10)),
-        ),
-      ]
       ..creneaux = <String, List<Creneau>>{
         enseignant: <Creneau>[
           Creneau(
@@ -458,20 +386,6 @@ Graine _graineEnseignant(DateTime maintenant) =>
           ),
         ],
       }
-      ..feed = <EleveEnAttente>[
-        EleveEnAttente(
-          eleveId: 'e-3',
-          prenom: 'Amina',
-          identifiantImmuable: 'imm-e-3',
-          creneau: Creneau(
-            jour: maintenant.weekday,
-            heure: 16,
-            fuseau: 'Europe/Paris',
-          ),
-          depuis: maintenant.subtract(const Duration(days: 5)),
-          mode: InterfaceMode.standard,
-        ),
-      ]
       ..regles = <String, List<RegleProfil>>{
         enseignant: <RegleProfil>[
           _regle(
@@ -555,22 +469,6 @@ Graine _graineTuteur(DateTime maintenant) =>
           id: 's-3',
           debut: maintenant.add(const Duration(days: 1)),
           statut: StatutSeance.planifiee,
-        ),
-      ]
-      ..affectations = <Affectation>[
-        Affectation(
-          id: 'a-1',
-          enseignantId: enseignant,
-          enseignantPrenom: enseignantPrenom,
-          enseignantIdentifiant: 'imm-t-1',
-          eleveId: eleve1,
-          elevePrenom: prenom1,
-          creneau: Creneau(
-            jour: maintenant.weekday,
-            heure: 16,
-            fuseau: 'Europe/Paris',
-          ),
-          depuis: maintenant.subtract(const Duration(days: 30)),
         ),
       ]
       ..creneaux = <String, List<Creneau>>{

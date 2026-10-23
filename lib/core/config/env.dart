@@ -4,7 +4,7 @@ import 'dart:convert';
 ///
 /// **Aucune valeur reelle n'est ecrite dans le depot.** Les cles vivent dans
 /// les secrets GitHub et Supabase, jamais en dur
-/// (`docs/agent-onboarding.md` etape D). Voir `dart_define.example.json` pour
+/// (`docs/archive/2026-09-pre-remise-a-plat/agent-onboarding.md` etape D). Voir `dart_define.example.json` pour
 /// la forme attendue.
 ///
 /// Lancement local :
@@ -32,6 +32,24 @@ abstract final class Env {
   /// Faux par defaut : une version de production ne compile pas le Playground.
   static const bool playgroundActif = bool.fromEnvironment('PLAYGROUND');
 
+  /// Active la mise en page du Mushaf de Medine en 15 lignes (MUSHAF-15L) :
+  /// `portLayoutMushafProvider` rend alors `LayoutMadina15` au lieu de
+  /// `LayoutLignesIndisponible`.
+  ///
+  /// Vrai par defaut depuis le 16/10/2026 (constat du directeur : les
+  /// versions deployees montraient la composition approchee, les captures du
+  /// lot la page de Medine). `--dart-define=MUSHAF_15L=false` revient a
+  /// l'ancienne composition.
+  static const bool mushaf15L = bool.fromEnvironment(
+    'MUSHAF_15L',
+    defaultValue: true,
+  );
+
+  /// Le drapeau MUSHAF-15L effectivement applique (developpement et galerie
+  /// l'allument).
+  static bool get mushaf15LActif =>
+      mushaf15L || galerieActive || playgroundActif;
+
   /// Active le raccourci de connexion par courriel fictif, sans Supabase
   /// (`SessionControleur.ouvrirDemo`).
   ///
@@ -39,6 +57,65 @@ abstract final class Env {
   static const bool authParMotDePasseActive = bool.fromEnvironment(
     'AUTH_PAR_MOT_DE_PASSE',
   );
+
+  /// Active l'observation reelle par le tuteur (visite d'une seance en
+  /// direct, contrat K4).
+  ///
+  /// **Faux par defaut, et force a faux hors developpement et staging quoi
+  /// qu'on passe** (point P3 du chantier Tuteur V1) : l'observation ne
+  /// s'ouvre pas sur une
+  /// protection locale tant que le serveur ne garantit ni la presence de
+  /// l'enfant, ni la fin de visite, ni l'emission du jeton video (dependances
+  /// DB-OBS-01, 02, 03, 05). Faux, le bloc Observation dit « pas encore
+  /// ouverte » ; le parcours complet se montre en simulation (tests,
+  /// Playground). Le forcage vit ici, dans le code, et non dans la seule
+  /// commande de deploiement : une compilation de production ou d'apercu qui
+  /// passerait `OBSERVATION_TUTEUR_REELLE=true` n'ouvrirait rien.
+  static const bool observationTuteurReelle = bool.fromEnvironment(
+    'OBSERVATION_TUTEUR_REELLE',
+  );
+
+  /// L'interrupteur d'observation reelle effectivement applique.
+  ///
+  /// Faux partout sauf en `developpement` et `staging`, quelle que soit la
+  /// valeur compilee de [observationTuteurReelle]. Les ecrans le lisent par
+  /// `observationTuteurReelleProvider`, jamais ici.
+  static bool get observationTuteurReelleActive => observationTuteurReelleSelon(
+    demandee: observationTuteurReelle,
+    environnement: environnement,
+  );
+
+  /// La regle de forcage, pure pour etre verifiee sans compilation dediee.
+  ///
+  /// **Liste d'autorisation, pas d'exclusion.** `developpement` depuis le
+  /// debut ; `staging` depuis la decision A-09 (audit final du 16/10/2026,
+  /// apres la vague 1 de securite) pour recetter l'observation a quatre
+  /// roles sur la preversion. `production` reste fermee tant qu'aucune
+  /// recette n'a ete signee. Une valeur mal orthographiee (`Production`,
+  /// `Staging`) reste fermee : c'est pour cela qu'on ne passe pas par une
+  /// liste d'exclusion. Attention : les apercus de pull request sont compiles
+  /// avec `ENVIRONNEMENT=staging` et, a ce jour, les memes cles Supabase que
+  /// la production (`flutter-deploy.yml`) ; n'y passer
+  /// `OBSERVATION_TUTEUR_REELLE=true` qu'une fois l'apercu pointe sur STAGING.
+  static bool observationTuteurReelleSelon({
+    required bool demandee,
+    required String environnement,
+  }) =>
+      demandee &&
+      (environnement == 'developpement' || environnement == 'staging');
+
+  /// L'adresse du site public (`https://hote`), sans chemin : l'origine des
+  /// liens que l'application donne a partager (CAND-06, la carte « Faites
+  /// connaitre Rewayah »).
+  ///
+  /// **Vide par defaut, et c'est voulu.** Sur le web, l'application et le site
+  /// public sont servis par la meme origine (`flutter-deploy.yml` construit
+  /// `fr/` a cote de l'application) : sans valeur, le lien prend l'origine de
+  /// la page ouverte, comme `lienAvisPour`. Hors du web, sans valeur, aucun
+  /// lien n'existe et la carte ne se propose pas. Une adresse invalide (pas de
+  /// `https`, pas d'hote) est ignoree. Voir `lienOffre`
+  /// (`lib/core/partage_offre/lien_offre.dart`).
+  static const String siteUrl = String.fromEnvironment('SITE_URL');
 
   /// DSN Sentry du projet Flutter (onboarding etape F, critere 0.6).
   ///
@@ -60,6 +137,11 @@ abstract final class Env {
     'ENVIRONNEMENT',
     defaultValue: 'developpement',
   );
+
+  /// Vrai quand la compilation declare `ENVIRONNEMENT`. Faux, [environnement]
+  /// n'est que la valeur par defaut : les demonstrations restent fermees en
+  /// publication (DEMO-ENV-1).
+  static const bool environnementDeclare = bool.hasEnvironment('ENVIRONNEMENT');
 
   /// Vrai quand la configuration minimale est presente et plausible.
   static bool get configuree =>

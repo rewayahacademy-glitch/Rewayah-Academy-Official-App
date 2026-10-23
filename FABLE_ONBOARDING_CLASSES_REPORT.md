@@ -232,9 +232,9 @@ Aucun HEX local, aucun composant nouveau, aucun « mode enfant » séparé.
 
 | Fichier | Contenu |
 | :--- | :--- |
-| `docs/produit/onboarding-questions-expliquees.md` | **Chaque question expliquée**, en particulier les trois qui prêtent à confusion : langue du cours ≠ langue de l'interface, niveau déclaré ≠ grade, « moments » qui classent sans filtrer |
-| `docs/produit/badges-et-grades.md` | Les badges : 8 grades, leurs noms humains, **le tableau des privilèges**. Conclusion : 5 des 8 privilèges reposent déjà sur des mécanismes existants ; recommandation de **ne pas construire** de système de badges mais de brancher les politiques existantes sur `student_profiles.level` |
-| `docs/architecture/decisions.md` | ADR-029, ADR-030, ADR-031 |
+| `docs/archive/2026-09-pre-remise-a-plat/produit/onboarding-questions-expliquees.md` | **Chaque question expliquée**, en particulier les trois qui prêtent à confusion : langue du cours ≠ langue de l'interface, niveau déclaré ≠ grade, « moments » qui classent sans filtrer |
+| `docs/archive/2026-09-pre-remise-a-plat/produit/badges-et-grades.md` | Les badges : 8 grades, leurs noms humains, **le tableau des privilèges**. Conclusion : 5 des 8 privilèges reposent déjà sur des mécanismes existants ; recommandation de **ne pas construire** de système de badges mais de brancher les politiques existantes sur `student_profiles.level` |
+| `docs/archive/2026-09-pre-remise-a-plat/architecture/decisions.md` | ADR-029, ADR-030, ADR-031 |
 | `FABLE_BACKEND_CONTRACT_ONBOARDING_CLASSES.md` | Le contrat serveur |
 
 ---
@@ -319,8 +319,8 @@ lib/features/parcours_offres/bloc_parcours.dart
 lib/features/parcours_offres/libelles_parcours.dart
 test/parcours/parcours_offres_test.dart
 test/parcours/faux_service_offres.dart
-docs/produit/badges-et-grades.md
-docs/produit/onboarding-questions-expliquees.md
+docs/archive/2026-09-pre-remise-a-plat/produit/badges-et-grades.md
+docs/archive/2026-09-pre-remise-a-plat/produit/onboarding-questions-expliquees.md
 FABLE_ONBOARDING_CLASSES_REPORT.md
 FABLE_BACKEND_CONTRACT_ONBOARDING_CLASSES.md
 ```
@@ -333,7 +333,7 @@ lib/core/i18n/strings.g.dart       (régénéré par slang)
 lib/core/router/routes.dart        (2 constantes ajoutées)
 lib/core/router/app_router.dart    (1 import, 1 GoRoute)
 lib/features/accueil_famille/accueil_famille_page.dart  (1 import, 1 widget)
-docs/architecture/decisions.md     (ADR-029, ADR-030, ADR-031)
+docs/archive/2026-09-pre-remise-a-plat/architecture/decisions.md     (ADR-029, ADR-030, ADR-031)
 ```
 
 **Non modifiés, et c'est délibéré** : `test/support/harnais.dart`, toute policy

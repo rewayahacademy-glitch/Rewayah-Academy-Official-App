@@ -7,6 +7,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/page_shell.dart';
 
@@ -61,18 +62,29 @@ class _AgentEntreePageEtat extends ConsumerState<AgentEntreePage> {
           Ecart.vXxl,
 
           if (echec != null) ...<Widget>[
-            _Refus(echec: echec),
+            _Refus(
+              echec: echec,
+              onReessayer: () => ref.read(relancerOuvertureAgentProvider)(),
+            ),
             Ecart.vXxl,
           ],
 
-          TextField(
-            controller: _jeton,
-            onChanged: (String _) => setState(() {}),
-            autocorrect: false,
-            enableSuggestions: false,
-            decoration: InputDecoration(
-              labelText: t.agent.jeton,
-              hintText: t.agent.jetonExemple,
+          // EA-HL-DOUBLE-1f : le libelle est pose au-dessus du champ, et non
+          // dans le champ, ou il etait tronque a 320 px en texte x2 (K-54).
+          // Il n'est lu qu'une fois : par le champ.
+          ExcludeSemantics(
+            child: Text(t.agent.jeton, style: textes.titleSmall),
+          ),
+          Ecart.vSm,
+          Semantics(
+            label: t.agent.jeton,
+            textField: true,
+            child: TextField(
+              controller: _jeton,
+              onChanged: (String _) => setState(() {}),
+              autocorrect: false,
+              enableSuggestions: false,
+              decoration: InputDecoration(hintText: t.agent.jetonExemple),
             ),
           ),
           Ecart.vLg,
@@ -88,12 +100,14 @@ class _AgentEntreePageEtat extends ConsumerState<AgentEntreePage> {
                   Text(t.agent.entrer, style: textes.titleSmall),
                   Ecart.vSm,
                   SelectableText(
-                    Uri.base.replace(
-                      path: Routes.agentEntree,
-                      queryParameters: <String, String>{
-                        parametreJetonAgent: saisi,
-                      },
-                    ).toString(),
+                    Uri.base
+                        .replace(
+                          path: Routes.agentEntree,
+                          queryParameters: <String, String>{
+                            parametreJetonAgent: saisi,
+                          },
+                        )
+                        .toString(),
                     style: textes.bodySmall,
                   ),
                 ],
@@ -108,9 +122,12 @@ class _AgentEntreePageEtat extends ConsumerState<AgentEntreePage> {
 
 /// Ce qui n'a pas marche, dit en clair.
 class _Refus extends StatelessWidget {
-  const _Refus({required this.echec});
+  const _Refus({required this.echec, required this.onReessayer});
 
   final EchecAgent echec;
+
+  /// Relance l'ouverture (rechargement de l'adresse, jeton compris).
+  final VoidCallback onReessayer;
 
   @override
   Widget build(BuildContext context) {
@@ -121,12 +138,14 @@ class _Refus extends StatelessWidget {
     // client ne va pas etre plus bavard qu'elle.
     final (String titre, String detail) = switch (echec) {
       EchecAgent.jetonRefuse => (t.agent.refus, t.agent.refusDetail),
-      EchecAgent.serviceIndisponible ||
-      EchecAgent.reponseIllisible => (
+      EchecAgent.serviceIndisponible || EchecAgent.reponseIllisible => (
         t.agent.indisponible,
         t.agent.indisponibleDetail,
       ),
     };
+    // EA-HL-DOUBLE-1f : « Reessayez dans un instant » a son action. Un jeton
+    // refuse ne se reessaye pas : il se redemande a l'academie.
+    final bool reessayable = echec != EchecAgent.jetonRefuse;
 
     return AppCard(
       contourFort: true,
@@ -142,6 +161,15 @@ class _Refus extends StatelessWidget {
                 Text(titre, style: textes.titleSmall),
                 Ecart.vXs,
                 Text(detail, style: textes.bodySmall),
+                if (reessayable) ...<Widget>[
+                  Ecart.vMd,
+                  ActionPrincipale(
+                    libelle: t.agent.reessayer,
+                    niveau: NiveauAction.secondaire,
+                    pleineLargeur: false,
+                    onPress: onReessayer,
+                  ),
+                ],
               ],
             ),
           ),

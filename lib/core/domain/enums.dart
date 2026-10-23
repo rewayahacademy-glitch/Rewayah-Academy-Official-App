@@ -110,8 +110,15 @@ enum InterfaceMode {
 ///
 /// **Un seul usage dans tout le produit** : confier un dossier d'identite a un
 /// membre du personnel du meme genre (audit 1.3). Il ne pilote aucun droit,
-/// aucun affichage, aucune notification. Quand il est inconnu, la lecture des
-/// dossiers est refusee, jamais filtree a moitie.
+/// aucune notification. Quand il est inconnu, la lecture des dossiers est
+/// refusee, jamais filtree a moitie.
+///
+/// **Une exception d'affichage, decidee par le directeur le 22/10/2026** : la
+/// carte que la personne partage depuis la salle d'attente prend la variante de
+/// son genre (la teinte et la branche fleurie) et l'invitation a partager dit « une sœur »
+/// ou « une personne » (`core/partage_offre/port_genre_partageur.dart`). Le
+/// genre y est lu sur le profil de la personne, jamais devine, et inconnu il
+/// donne la variante neutre.
 enum Genre {
   /// Homme.
   homme('male'),
@@ -146,7 +153,8 @@ enum TypePiece {
   /// Titre de sejour.
   titreSejour('residence_permit'),
 
-  /// Autre piece, decrite en saisie libre.
+  /// Autre piece officielle : une carte a part entiere du depot, choisie
+  /// explicitement (`other` en base). Aucun champ libre ne l'accompagne.
   autre('other');
 
   const TypePiece(this.valeurSql);
@@ -204,7 +212,11 @@ enum SorteContrat {
   /// La carte a accuser une fois : enregistrement audio et visite de controle
   /// (ADR-011). Elle n'est pas un contrat, mais elle suit la meme regle : elle
   /// se signe une fois et ne se modifie jamais.
-  accuseEnregistrementControle('recording_and_control_notice');
+  accuseEnregistrementControle('recording_and_control_notice'),
+
+  /// Le code de conduite de l'enseignant (PE, 18/10/2026). Meme regle que
+  /// l'accuse : il se signe une fois par version et ne se modifie jamais.
+  codeConduiteEnseignant('teacher_conduct_code');
 
   const SorteContrat(this.valeurSql);
 

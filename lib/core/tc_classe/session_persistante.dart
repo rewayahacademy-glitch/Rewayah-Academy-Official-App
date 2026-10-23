@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../observabilite/journal_dev.dart';
 import '../tc_horloge/session_clock_vm.dart';
 import '../video/livekit_session_provider.dart';
 import '../video/pre_vol.dart';
@@ -206,9 +207,7 @@ class ControleurSessionPersistante
     }
     _ouvertureEnCours = true;
     try {
-      _poser(
-        EtatSessionPersistante(enArrierePlan: _etat.enArrierePlan),
-      );
+      _poser(EtatSessionPersistante(enArrierePlan: _etat.enArrierePlan));
 
       final ResultatPreVol materiel = await preVol();
       if (!materiel.peutEntrer) {
@@ -252,7 +251,7 @@ class ControleurSessionPersistante
         // Le moteur a deja pose son etat d'echec et tout libere ; il ne reste
         // qu'a nommer la cause. Aucun detail technique ne remonte a l'ecran :
         // « ICE failed » ne se lit pas devant un enfant.
-        debugPrint('entree en Classe Live impossible : $erreur');
+        journalDev('entree en Classe Live impossible : $erreur');
         _poser(
           EtatSessionPersistante(
             enArrierePlan: _etat.enArrierePlan,

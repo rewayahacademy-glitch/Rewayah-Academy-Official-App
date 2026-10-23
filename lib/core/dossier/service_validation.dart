@@ -6,7 +6,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../admin/service_comptes.dart' show EtatPiece;
 import '../domain/enums.dart';
-import 'service_dossier.dart';
 
 /// Un dossier a valider, tel que `dossiers_en_attente()` le rend.
 ///
@@ -61,6 +60,8 @@ class DossierAValider {
       prenom: json['first_name'] as String? ?? '',
       nom: json['last_name'] as String? ?? '',
       identifiantImmuable: json['immutable_id'] as String? ?? '',
+      // K-47 (HL-A-6) : un role illisible retombe sur guardian, que la file
+      // ADM-02 ecarte (enseignants seulement) : jamais pris pour un enseignant.
       role: AppRole.depuisSql(json['role'] as String?) ?? AppRole.guardian,
       etatPiece: EtatPiece.depuisSql(json['etat_piece'] as String?),
       inscritLeConnue: inscription,
@@ -139,8 +140,7 @@ class DossierAValider {
   /// sa place que sur la fiche `ADM-02`, ou l'un des trois constats porte
   /// justement sur lui (« le nom correspond a celui du compte ») : ailleurs,
   /// il allonge la ligne sans rien ajouter au jugement (ADR-008).
-  String get libelleCourt =>
-      prenom.isEmpty ? identifiantImmuable : prenom;
+  String get libelleCourt => prenom.isEmpty ? identifiantImmuable : prenom;
 
   /// Vrai quand un verdict est possible : il faut une piece, et qu'elle soit
   /// visible par ce lecteur.
@@ -148,8 +148,7 @@ class DossierAValider {
   /// **Un dossier sans piece n'est pas jugeable, et ce n'est pas une panne** :
   /// il n'y a rien a constater, donc rien a trancher. L'ecran le dit au lieu
   /// de proposer deux boutons qui echoueraient.
-  bool get jugeable =>
-      documentId != null && etatPiece == EtatPiece.aVerifier;
+  bool get jugeable => documentId != null && etatPiece == EtatPiece.aVerifier;
 
   /// Depuis combien de jours cette personne attend, en jours pleins.
   int joursDAttente(DateTime maintenant) =>
@@ -166,8 +165,10 @@ abstract interface class ServiceValidation {
   /// La file, la plus ancienne en premier.
   Future<List<DossierAValider>> enAttente();
 
-  /// Une URL signee de courte duree pour l'apercu de la piece.
-  Future<String> apercu(String cleObjet);
+  /// Une URL signee de courte duree pour l'apercu de la piece, demandee par
+  /// l'identifiant du DOCUMENT : la cle d'objet est resolue par le serveur
+  /// (fonction `piece-identite-acces`), jamais envoyee par le client.
+  Future<String> apercu(String documentId);
 
   /// Le verdict. Un refus exige un motif : la base le refuse sans.
   Future<void> decider({
@@ -184,6 +185,16 @@ abstract interface class ServiceValidation {
 class GenreLecteurInconnu implements Exception {
   /// Cree l'exception.
   const GenreLecteurInconnu();
+}
+
+/// Levee quand la porte `piece-identite-acces` refuse l'apercu (statut 403).
+///
+/// Ce n'est pas une panne : la visibilite de la piece depend du genre du
+/// lecteur (migration `0088`), et le serveur a tranche. L'ecran le dit comme
+/// tel, sans parler d'erreur.
+class ApercuRefuse implements Exception {
+  /// Cree l'exception.
+  const ApercuRefuse();
 }
 
 /// L'implementation reelle.
@@ -217,10 +228,29 @@ class ServiceValidationSupabase implements ServiceValidation {
     }
   }
 
+  /// La porte `piece-identite-acces` : elle verifie le compte, journalise
+  /// l'acces, resout la cle d'objet cote serveur et signe une lecture courte.
+  /// Le corps ne porte que l'identifiant du document.
   @override
-  Future<String> apercu(String cleObjet) => _client.storage
-      .from(ServiceDossierSupabase.seauKyc)
-      .createSignedUrl(cleObjet, dureeApercuSecondes);
+  Future<String> apercu(String documentId) async {
+    try {
+      final FunctionResponse reponse = await _client.functions.invoke(
+        'piece-identite-acces',
+        body: <String, dynamic>{'document_id': documentId},
+      );
+      final Object? corps = reponse.data;
+      final Object? url = corps is Map ? corps['url'] : null;
+      if (url is! String || url.isEmpty) {
+        throw const FormatException('Apercu de piece sans URL.');
+      }
+      return url;
+    } on FunctionException catch (erreur) {
+      if (erreur.status == 403) {
+        throw const ApercuRefuse();
+      }
+      rethrow;
+    }
+  }
 
   @override
   Future<void> decider({
@@ -244,7 +274,19 @@ final Provider<ServiceValidation> serviceValidationProvider =
     );
 
 /// La file des dossiers a valider.
+///
+/// `retry: null` (aucune retentative automatique) : Riverpod 3 relance tout
+/// seul, avec un delai croissant (200 ms a 6,4 s, jusqu'a dix fois, ~32 s au
+/// total), toute erreur qui n'etend pas `Error` (dont `GenreLecteurInconnu`,
+/// une `Exception`) avant de la rendre par `.future` -- `ref.watch` la voit
+/// tout de suite (`hasError` monte independamment de `isLoading`), mais
+/// `ref.read(...future)` reste en attente jusqu'a la derniere retentative.
+/// Sans ce reglage, l'ecran resterait sur son squelette pendant ~32 s avant
+/// de dire enfin « Renseignez votre genre... » (AD-5) : le bouton
+/// « Reessayer » de l'ecran est la retentative explicite, la base n'en doit
+/// pas rejouer une en silence derriere lui.
 final FutureProvider<List<DossierAValider>> dossiersEnAttenteProvider =
     FutureProvider<List<DossierAValider>>(
       (Ref ref) => ref.watch(serviceValidationProvider).enAttente(),
+      retry: (int retryCount, Object error) => null,
     );

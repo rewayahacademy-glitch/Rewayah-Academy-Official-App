@@ -22,6 +22,9 @@ import '../../core/theme/app_typography.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/rosace_verset.dart';
+import 'page_madina_15.dart';
+import 'police_mushaf.dart';
+import 'textes_lecteur_coran.dart';
 
 /// Le rendu « page du mushaf ».
 ///
@@ -44,6 +47,18 @@ class VuePageMushaf extends ConsumerWidget {
   /// Cree le rendu page.
   const VuePageMushaf({super.key});
 
+  /// Vrai quand la place tient deux pages en vis-a-vis.
+  ///
+  /// Partage avec les fleches de page (MUSHAF-15L), qui doivent savoir de
+  /// combien de pages elles tournent : une ouverture compte deux pages.
+  static bool doublePageDans(BoxConstraints contraintes, Gabarit gabarit) =>
+      PlancheMushafVM.tientEnDoublePage(
+        largeurDisponible: contraintes.maxWidth - gabarit.gouttiere * 2,
+        hauteurDisponible: contraintes.maxHeight,
+        ecartEntrePages: AppSpacing.lg,
+        gabaritLarge: gabarit.estLarge,
+      );
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final int page = ref.watch(
@@ -54,12 +69,7 @@ class VuePageMushaf extends ConsumerWidget {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints contraintes) {
         // [RESPONSIVE]
-        final bool doublePage = PlancheMushafVM.tientEnDoublePage(
-          largeurDisponible: contraintes.maxWidth - gabarit.gouttiere * 2,
-          hauteurDisponible: contraintes.maxHeight,
-          ecartEntrePages: AppSpacing.lg,
-          gabaritLarge: gabarit.estLarge,
-        );
+        final bool doublePage = doublePageDans(contraintes, gabarit);
 
         return _Feuilleteur(
           // Changer de forme d'ouverture change la numerotation des feuillets :
@@ -103,15 +113,13 @@ class _FeuilleteurEtat extends ConsumerState<_Feuilleteur> {
     super.dispose();
   }
 
-  int _feuilletDe(int page) =>
-      widget.doublePage ? (page - 1) ~/ 2 : page - 1;
+  int _feuilletDe(int page) => widget.doublePage ? (page - 1) ~/ 2 : page - 1;
 
   int _pageDe(int feuillet) =>
       widget.doublePage ? feuillet * 2 + 1 : feuillet + 1;
 
-  int get _nombreFeuillets => widget.doublePage
-      ? (pagesMushafMedine / 2).ceil()
-      : pagesMushafMedine;
+  int get _nombreFeuillets =>
+      widget.doublePage ? (pagesMushafMedine / 2).ceil() : pagesMushafMedine;
 
   @override
   Widget build(BuildContext context) {
@@ -137,13 +145,13 @@ class _FeuilleteurEtat extends ConsumerState<_Feuilleteur> {
       textDirection: TextDirection.rtl,
       child: PageView.builder(
         controller: _controleur,
+        // Les pages voisines sont preparees avant le geste : tourner une page
+        // ne montre jamais un cadre vide (MUSHAF-15L).
+        allowImplicitScrolling: true,
         itemCount: _nombreFeuillets,
         onPageChanged: (int feuillet) => ref
             .read(lectureCoranProvider.notifier)
-            .allerA(
-              _pageDe(feuillet),
-              origine: OrigineNavigation.personnelle,
-            ),
+            .allerA(_pageDe(feuillet), origine: OrigineNavigation.personnelle),
         itemBuilder: (BuildContext context, int feuillet) => OuvertureMushaf(
           pageDeDroite: _pageDe(feuillet),
           doublePage: widget.doublePage,
@@ -178,6 +186,11 @@ class OuvertureMushaf extends ConsumerWidget {
     final int? numeroGauche = doublePage
         ? GeometrieMushaf.pageDeGaucheDe(pageDeDroite)
         : null;
+    // Le texte KFGQPC va avec UthmanicHafs, et seulement avec elle : sans la
+    // police, la page de Medine ne se dessine pas, la page du mushaf rend le
+    // texte Tanzil simple en police arabe de l'application.
+    final bool police =
+        ref.watch(policeMushafDisponibleProvider).value ?? false;
 
     final AsyncValue<PageMushafVM> droite = ref.watch(
       pageMushafProvider(pageDeDroite),
@@ -200,10 +213,18 @@ class OuvertureMushaf extends ConsumerWidget {
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints contraintes) {
-        final double utile = math.max(
-          0,
-          contraintes.maxWidth - gouttiere * 2,
-        );
+        // MUSHAF-15L : la page de Medine n'est ni dans une carte ni dans une
+        // zone defilante. Elle occupe toute la place entre l'en-tete et la
+        // barre de navigation, avec une gouttiere fine, comme dans les
+        // applications de mushaf : le corps du texte est calcule pour que les
+        // quinze lignes remplissent la hauteur et la largeur.
+        if (planche != null &&
+            police &&
+            planche.pages.every((PageMushafVM p) => p.estMadina15) &&
+            contraintes.hasBoundedHeight) {
+          return _OuvertureMadina15(planche: planche, contraintes: contraintes);
+        }
+        final double utile = math.max(0, contraintes.maxWidth - gouttiere * 2);
         final bool deuxCadres = planche?.estDouble ?? numeroGauche != null;
         final double largeurCadre = deuxCadres
             ? math.max(0, (utile - AppSpacing.lg) / 2)
@@ -236,10 +257,7 @@ class OuvertureMushaf extends ConsumerWidget {
                       const SizedBox(width: AppSpacing.lg),
                     SizedBox(
                       width: largeurCadre,
-                      child: CadrePageMushaf(
-                        vue: page,
-                        largeur: largeurCadre,
-                      ),
+                      child: CadrePageMushaf(vue: page, largeur: largeurCadre),
                     ),
                   ],
               ],
@@ -266,6 +284,57 @@ class OuvertureMushaf extends ConsumerWidget {
       return null;
     }
     return PlancheMushafVM.doublePage(droite: droite, gauche: gauche);
+  }
+}
+
+/// Une ouverture du Mushaf de Medine : une page seule, ou deux pages en
+/// vis-a-vis (grand ecran), chacune remplissant la hauteur disponible.
+class _OuvertureMadina15 extends StatelessWidget {
+  const _OuvertureMadina15({required this.planche, required this.contraintes});
+
+  final PlancheMushafVM planche;
+  final BoxConstraints contraintes;
+
+  @override
+  Widget build(BuildContext context) {
+    // Une gouttiere fine : la page est la matiere de l'ecran.
+    const double gouttiere = AppSpacing.xs;
+    final int n = planche.pages.length;
+    final double ecart = n > 1 ? AppSpacing.md : 0;
+    final double largeurPage = math.max(
+      0,
+      (contraintes.maxWidth - 2 * gouttiere - ecart * (n - 1)) / n,
+    );
+    final double hauteur = math.max(0, contraintes.maxHeight - 2 * gouttiere);
+    return Padding(
+      padding: const EdgeInsets.all(gouttiere),
+      child: Semantics(
+        label: planche.estDouble
+            ? t.tc.coran.mushaf.ouverture(
+                droite: planche.droite.numero,
+                gauche: planche.gauche!.numero,
+              )
+            : null,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            for (final PageMushafVM page in planche.pages) ...<Widget>[
+              if (page != planche.droite) SizedBox(width: ecart),
+              Semantics(
+                label: page.cote == CoteDePage.droite
+                    ? t.tc.coran.mushaf.coteDroite
+                    : t.tc.coran.mushaf.coteGauche,
+                child: PageMadina15(
+                  vue: page,
+                  largeur: largeurPage,
+                  hauteur: hauteur,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -349,23 +418,26 @@ class _ContenuDePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // MA-TUTOIEMENT-1 : l'enrobage peut fournir ses phrases (vouvoiement).
+    final TextesLecteurCoran? enrobage = TextesLecteurCoran.de(context);
     return switch (vue.etat) {
       EtatLecteur.chargement => const Center(
         child: CircularProgressIndicator.adaptive(),
       ),
-      EtatLecteur.indisponible => Center(
-        child: EmptyState(
+      EtatLecteur.indisponible => EtatSansTexteLecteur(
+        EmptyState(
           message: t.eleve.coran.indisponible,
-          invitation: t.eleve.coran.indisponibleDetail,
+          invitation:
+              enrobage?.indisponibleDetail ?? t.eleve.coran.indisponibleDetail,
           icone: AppIcons.horsLigne,
           libelleAction: t.eleve.coran.reessayer,
           onAction: () => ref.invalidate(pageCorpusProvider(vue.numero)),
         ),
       ),
-      EtatLecteur.corpusAbsent => Center(
-        child: EmptyState(
+      EtatLecteur.corpusAbsent => EtatSansTexteLecteur(
+        EmptyState(
           message: t.eleve.coran.absent,
-          invitation: t.eleve.coran.absentDetail,
+          invitation: enrobage?.absentDetail ?? t.eleve.coran.absentDetail,
           icone: AppIcons.rienAAfficher,
         ),
       ),
@@ -383,7 +455,7 @@ class _ContenuDePage extends ConsumerWidget {
 ///   aucune donnee a rendre ;
 /// - **flux continu** : les versets exacts de la page, composes dans la largeur
 ///   du cadre. C'est le chemin courant, et [NoticeComposition] le dit.
-class TexteDePage extends StatelessWidget {
+class TexteDePage extends ConsumerWidget {
   /// Cree le texte d'une page.
   const TexteDePage({required this.vue, required this.largeur, super.key});
 
@@ -394,7 +466,23 @@ class TexteDePage extends StatelessWidget {
   final double largeur;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool police =
+        ref.watch(policeMushafDisponibleProvider).value ?? false;
+    // MUSHAF-15L : une source de layout reelle (quinze lignes, cadres de
+    // sourate, basmala, rosaces) se compose en page du Mushaf de Medine, avec
+    // UthmanicHafs. Sans elle, jamais le texte KFGQPC : le flux Tanzil simple.
+    if (vue.estMadina15 && police) {
+      return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints contraintes) =>
+            PageMadina15(
+              vue: vue,
+              largeur: contraintes.maxWidth.isFinite
+                  ? contraintes.maxWidth
+                  : largeur,
+            ),
+      );
+    }
     final AppPalette palette = AppPalette.of(context);
     // La mesure vient du CADRE, pas de l'ecran : c'est toute la difference
     // avec le rendu actuel, et c'est ce qui rend la page reconnaissable.
@@ -413,7 +501,7 @@ class TexteDePage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          if (vue.lignes.isNotEmpty)
+          if (vue.lignes.isNotEmpty && !vue.estMadina15)
             for (final SectionLigne ligne in vue.lignes)
               LigneComposee(ligne: ligne, style: base, echelle: metrique)
           else
@@ -461,7 +549,8 @@ class LigneComposee extends StatelessWidget {
     return Text.rich(
       TextSpan(
         children: <InlineSpan>[
-          for (final SegmentVersetLigne segment in ligne.segments) ...<InlineSpan>[
+          for (final SegmentVersetLigne segment
+              in ligne.segments) ...<InlineSpan>[
             TextSpan(text: segment.texte),
             if (segment.termineLAyah) ...<InlineSpan>[
               const TextSpan(text: ' '),
@@ -580,28 +669,37 @@ class EnteteSourate extends StatelessWidget {
 }
 
 /// Le pied de page : numero, juz, cote, et l'etat de la composition.
-class _PiedDePage extends StatelessWidget {
+class _PiedDePage extends ConsumerWidget {
   const _PiedDePage({required this.vue});
 
   final PageMushafVM vue;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool police =
+        ref.watch(policeMushafDisponibleProvider).value ?? false;
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        NoticeComposition(fidelite: vue.fidelite),
+        NoticeComposition(
+          // Sans la police, la page est composee d'apres le texte Tanzil : la
+          // composition n'est pas celle de l'edition.
+          fidelite: vue.estMadina15 && !police
+              ? DisponibiliteLayout.indisponible
+              : vue.fidelite,
+        ),
         const SizedBox(height: AppSpacing.sm),
         Text(
           <String>[
-            t.eleve.coran.page(
+            t.commun.formats.pageSur(
               page: '${vue.numero}',
               total: '${vue.nombrePages}',
             ),
-            if (vue.juzNumero != null) t.eleve.coran.juz(juz: '${vue.juzNumero}'),
+            if (vue.juzNumero != null)
+              t.eleve.coran.juz(juz: '${vue.juzNumero}'),
             vue.cote == CoteDePage.droite
                 ? t.tc.coran.mushaf.coteDroite
                 : t.tc.coran.mushaf.coteGauche,
@@ -629,7 +727,15 @@ class NoticeComposition extends StatelessWidget {
   final DisponibiliteLayout fidelite;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => Directionality(
+    // MUSHAF-DIR-1 : une phrase francaise, au sens de la langue de
+    // l'interface (le point final reste a la fin), meme posee dans une page
+    // feuilletee de droite a gauche.
+    textDirection: sensInterface(context),
+    child: _notice(context),
+  );
+
+  Widget _notice(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
 
@@ -637,9 +743,7 @@ class NoticeComposition extends StatelessWidget {
       return Text(
         t.tc.coran.fidelite.fidele,
         textAlign: TextAlign.center,
-        style: palette.inkFaint.applyTo(
-          textes.labelSmall ?? const TextStyle(),
-        ),
+        style: palette.inkFaint.applyTo(textes.labelSmall ?? const TextStyle()),
       );
     }
 

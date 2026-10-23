@@ -280,9 +280,6 @@ class FauxServiceVideoClasse implements ServiceVideo {
   Future<void> observerEnControle(String seanceId) async {}
 
   @override
-  Future<void> assisterEnTuteur(String seanceId) async {}
-
-  @override
   Future<void> annoncerSortie(String seanceId) async {
     sorties.add(seanceId);
     journal.add('annonce');
@@ -362,6 +359,29 @@ class FauxAnnonceObservation implements PortAnnonceObservation {
   Stream<List<AnnonceObservation>> annonces(String sessionId) {
     demandes.add(sessionId);
     return Stream<List<AnnonceObservation>>.value(lignes);
+  }
+}
+
+/// L'annonce cote ENFANT, en memoire.
+///
+/// Le vrai port interroge `annonce_observation_pour_moi` (`0040`), qui ne rend
+/// que la ligne de l'appelant. Ce faux rend un booleen unique pour la meme
+/// raison : un enfant n'a jamais acces qu'a SON propre etat, et rendre une
+/// liste ici laisserait croire le contraire.
+class FauxAnnonceObservationEnfant implements PortAnnonceObservationEnfant {
+  /// Cree le faux.
+  FauxAnnonceObservationEnfant({this.observe = false});
+
+  /// Ce que le flux porte : vrai quand le tuteur de cet enfant regarde.
+  bool observe;
+
+  /// Les seances pour lesquelles un flux a ete demande.
+  final List<String> demandes = <String>[];
+
+  @override
+  Stream<bool> monTuteurObserve(String sessionId) {
+    demandes.add(sessionId);
+    return Stream<bool>.value(observe);
   }
 }
 

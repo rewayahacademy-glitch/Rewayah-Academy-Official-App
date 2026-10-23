@@ -8,6 +8,8 @@ import '../../core/auth/service_auth.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/offres/offre_horaire.dart';
+import '../../core/offres/service_offres.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/profil/service_acceptations.dart';
 import '../../core/profil/service_declaration.dart';
@@ -16,21 +18,36 @@ import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
-import '../../core/widgets/app_card.dart';
-import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/raccourci_tactile.dart';
 import '../../core/widgets/section_header.dart';
-import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../code_conduite/code_conduite.dart';
+import '../dossier/politique_controle.dart';
+import '../paiements_recus/rubrique_recevoir_paiements.dart';
+import 'declaration_choix.dart';
+import 'photo_publique.dart';
+
+/// Le nom public de l'enseignant, avec son titre Sayyid ou Sayyida (R18, E16).
+///
+/// Le modele [ProfilEnseignant] ne porte pas encore le titre : la
+/// demonstration fixe ce nom, la production le branchera a BR-1. Rien n'est
+/// calcule cote client ; sans valeur, l'en-tete garde le prenom.
+final Provider<String?> nomPublicEnseignantProvider = Provider<String?>(
+  (Ref _) => null,
+);
 
 /// `ENS-05` : qui suis-je pour l'academie, et ou regle-je ce qui m'appartient.
 ///
@@ -50,7 +67,15 @@ import '../../core/widgets/status_pill.dart';
 /// pouvoir faire.
 class ProfilEnseignantPage extends ConsumerWidget {
   /// Cree l'ecran de profil de l'enseignant.
-  const ProfilEnseignantPage({super.key});
+  const ProfilEnseignantPage({super.key, this.onOuvrirRevenus});
+
+  /// Ouvre Mes revenus (FI-10). Nul : la route `/enseignant/revenus`, la
+  /// demonstration y met sa propre adresse.
+  final void Function(BuildContext context)? onOuvrirRevenus;
+
+  /// L'ouverture par defaut : la pose de la branche Profil.
+  static void ouvrirRevenus(BuildContext context) =>
+      unawaited(context.push(Routes.enseignantRevenus));
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -85,6 +110,7 @@ class ProfilEnseignantPage extends ConsumerWidget {
             profil: lu,
             statutSession: statutSession,
             horsLigne: horsLigne,
+            onOuvrirRevenus: onOuvrirRevenus ?? ouvrirRevenus,
           ),
         // Une lecture qui aboutit sans rien trouver n'est pas un echec : ce
         // compte n'a pas de ligne `teacher_profiles`, et seule l'academie peut
@@ -116,29 +142,38 @@ class _Corps extends StatelessWidget {
     required this.profil,
     required this.statutSession,
     required this.horsLigne,
+    required this.onOuvrirRevenus,
   });
 
   final ProfilEnseignant profil;
   final AccountStatus? statutSession;
   final bool horsLigne;
+  final void Function(BuildContext context) onOuvrirRevenus;
 
   @override
   Widget build(BuildContext context) {
+    // Ordre du doc 04 section 23.1 : identite et photo publique en tete
+    // (00_MAQUETTES planche 4), informations professionnelles, statut,
+    // contrats, reglages ; la deconnexion reste en bas, a part.
     final Widget identite = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        AppCard(dominante: true, child: _Entete(profil: profil)),
+        _Entete(profil: profil),
         Ecart.vSection,
-        _Statut(profil: profil, statutSession: statutSession),
+        _Declaration(profil: profil, horsLigne: horsLigne),
       ],
     );
 
     final Widget reglages = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        _Declaration(profil: profil, horsLigne: horsLigne),
+        _Statut(profil: profil, statutSession: statutSession),
         Ecart.vSection,
         const _Contrat(),
+        Ecart.vSection,
+        _Remuneration(onOuvrir: onOuvrirRevenus),
+        // CPT-BEN-2 : « Recevoir mes paiements », selon la capacite du port.
+        const RubriqueRecevoirPaiements(),
         Ecart.vSection,
         const _Personnel(),
       ],
@@ -162,46 +197,102 @@ class _Corps extends StatelessWidget {
   }
 }
 
-/// L'identite professionnelle autorisee : prenom et identifiant immuable.
+/// L'en-tete : la photo publique, le prenom et l'identifiant immuable, puis
+/// « Changer la photo » (00_MAQUETTES planche 4, ENS-05).
 ///
-/// Rien d'autre n'est montre, et c'est exactement ce que le produit expose deja
-/// aux familles (ADR-008).
-class _Entete extends StatelessWidget {
+/// Ni badge « verifie », ni biographie, ni specialite (R1 a R3 de la
+/// planche) : c'est exactement ce que le produit expose deja aux familles
+/// (ADR-008), plus la photo de `ENS-05A`.
+class _Entete extends ConsumerWidget {
   const _Entete({required this.profil});
 
   final ProfilEnseignant profil;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final TextTheme textes = Theme.of(context).textTheme;
+    final String? cle = ref.watch(photoPubliqueProvider);
+    void choisir() =>
+        unawaited(ouvrirPhotoPublique(context, prenom: profil.prenom));
 
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        _Identite(
+          profil: profil,
+          nomPublic: ref.watch(nomPublicEnseignantProvider),
+          cle: cle,
+          textes: textes,
+          onPhoto: choisir,
+        ),
+        // Une action secondaire n'est jamais un bouton plein (K-56,
+        // PHOTO-LIEN-1) : une ligne de lien, texte et fleche, et toucher la
+        // photo ouvre le meme choix.
+        LienFleche(
+          libelle: cle == null
+              ? t.enseignant.photo.choisir
+              : t.enseignant.photo.changer,
+          onPress: choisir,
+        ),
+      ],
+    );
+  }
+}
+
+class _Identite extends StatelessWidget {
+  const _Identite({
+    required this.profil,
+    required this.nomPublic,
+    required this.cle,
+    required this.textes,
+    required this.onPhoto,
+  });
+
+  final ProfilEnseignant profil;
+  final String? nomPublic;
+  final String? cle;
+  final TextTheme textes;
+
+  /// Ouvre le choix de la photo (toucher la photo, comme le lien).
+  final VoidCallback onPhoto;
+
+  @override
+  Widget build(BuildContext context) {
+    final String? titre = nomPublic?.trim();
     return Row(
       children: <Widget>[
-        AvatarTile(prenom: profil.prenom),
+        RaccourciTactile(
+          onPress: onPhoto,
+          child: PortraitPublic(
+            prenom: profil.prenom,
+            cle: cle,
+            diametre: AppSpacing.respiration + AppSpacing.xxxl,
+          ),
+        ),
         Ecart.hLg,
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              // Le nom avec son titre (R18) ; le prenom seul tant que le titre
+              // n'est pas fourni.
               Text(
-                profil.prenom.isEmpty
+                titre != null && titre.isNotEmpty
+                    ? titre
+                    : profil.prenom.isEmpty
                     ? t.enseignant.profil.nonRenseigne
                     : profil.prenom,
                 style: textes.headlineSmall,
               ),
               Ecart.vXs,
+              // L'identifiant immuable, en ligne discrete : jamais un code
+              // technique comme identite (R18).
               Text(
                 profil.identifiant.isEmpty
                     ? t.enseignant.profil.nonRenseigne
                     : profil.identifiant,
-                style: textes.bodyLarge,
-              ),
-              Ecart.vXs,
-              // L'identifiant immuable est ce que les familles voient : il vaut
-              // mieux le dire ici qu'une seconde ligne de reglage ailleurs.
-              Text(
-                t.enseignant.profil.identifiantDetail,
-                style: textes.bodySmall,
+                style: AppPalette.of(context).inkMuted
+                    .applyTo(textes.bodySmall ?? const TextStyle()),
               ),
             ],
           ),
@@ -234,49 +325,43 @@ class _Statut extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        SectionHeader(titre: t.enseignant.profil.statutSection),
-        AppCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              // La pastille garde sa largeur intrinseque : une colonne etiree
-              // lui donnerait toute la largeur de la carte, et un aplat large
-              // n'est plus une pastille (`01-systeme-visuel.md` section 3).
-              Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: StatusPill(libelle: libelle, ton: ton),
+        GroupeReglages(
+          titre: t.enseignant.profil.statutSection,
+          lignes: <LigneRubrique>[
+            // Une ligne d'etat calme (K-42 point 3) : la pastille dit l'etat,
+            // la legende dit ce qu'il permet.
+            LigneRubrique(
+              icone: AppIcons.profil,
+              libelle: detail,
+              marque: StatusPill(libelle: libelle, ton: ton),
+            ),
+            LigneRubrique(
+              icone: AppIcons.controleQualite,
+              libelle: t.enseignant.profil.verification,
+              valeur: switch (profil.verification) {
+                VerificationEnseignant.enAttente =>
+                  t.enseignant.profil.verificationEnAttente,
+                VerificationEnseignant.validee =>
+                  t.enseignant.profil.verificationValidee,
+                VerificationEnseignant.refusee =>
+                  t.enseignant.profil.verificationRefusee,
+                null => t.enseignant.profil.nonRenseigne,
+              },
+            ),
+          ],
+        ),
+        if (divergent) ...<Widget>[
+          Ecart.vMd,
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              t.enseignant.profil.statutDivergent,
+              style: palette.inkWarning.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
               ),
-              Ecart.vMd,
-              Text(detail, style: textes.bodyMedium),
-              if (divergent) ...<Widget>[
-                Ecart.vMd,
-                Semantics(
-                  liveRegion: true,
-                  child: Text(
-                    t.enseignant.profil.statutDivergent,
-                    style: palette.inkWarning.applyTo(
-                      textes.bodyMedium ?? const TextStyle(),
-                    ),
-                  ),
-                ),
-              ],
-            ],
+            ),
           ),
-        ),
-        SettingRow(
-          title: t.enseignant.profil.verification,
-          value: switch (profil.verification) {
-            VerificationEnseignant.enAttente =>
-              t.enseignant.profil.verificationEnAttente,
-            VerificationEnseignant.validee =>
-              t.enseignant.profil.verificationValidee,
-            VerificationEnseignant.refusee =>
-              t.enseignant.profil.verificationRefusee,
-            null => t.enseignant.profil.nonRenseigne,
-          },
-          icon: AppIcons.controleQualite,
-          enabled: false,
-        ),
+        ],
       ],
     );
   }
@@ -317,9 +402,13 @@ class _Statut extends StatelessWidget {
 
 /// Ce que l'enseignant declare, et qu'il peut corriger.
 ///
-/// Deux lignes editables, pas trois : `country` et `languages` sont du texte
-/// libre en base, donc un champ libre dit exactement ce que la colonne accepte.
-/// `timezone_iana`, lui, demande un libelle IANA valide -- la fonction SQL le
+/// Deux lignes editables, pas trois. `country` est du texte libre en base et
+/// `languages` porte des codes de `langues_cours` (CAND-Q15, lot langue), mais
+/// l'ecran les fait **choisir** (K-57, FORM-L8) : le pays dans une liste
+/// preselectionnee d'apres le fuseau, les langues parmi celles que l'academie
+/// propose (`referentielLanguesProvider`), le clavier seulement en dernier
+/// recours (« Autre »). Les langues s'affichent par leur nom, jamais par leur
+/// code. `timezone_iana`, lui, demande un libelle IANA valide -- la fonction SQL le
 /// verifie et refuse le reste -- et aucun inventaire de fuseaux n'est tranche
 /// dans le produit : il reste donc en lecture, et la demande est ecrite dans
 /// `CONTRACT_REQUEST_E.md`. Un champ qui refuserait une saisie que l'enseignant
@@ -337,23 +426,30 @@ class _Declaration extends ConsumerStatefulWidget {
 class _DeclarationState extends ConsumerState<_Declaration> {
   String? _message;
 
-  Future<void> _editer({
+  /// Ouvre une feuille de choix, puis ecrit la reponse et relit le profil.
+  ///
+  /// Pays et langues se **choisissent** (K-57, FORM-L8) : la feuille rend la
+  /// valeur retenue, ou `null` si l'enseignant la referme sans enregistrer.
+  Future<void> _editer<T extends Object>({
     required String titre,
-    required String valeur,
-    required String? indice,
-    required Future<void> Function(String saisie) ecrire,
+    required Widget Function() feuille,
+    required Future<void> Function(T choix) ecrire,
   }) async {
-    final String? saisie = await AppBottomSheet.ouvrir<String>(
+    // La feuille vit dans la route du navigateur, au-dessus d'un eventuel
+    // ProviderScope imbrique (la demonstration) : on lui passe le conteneur
+    // de l'ecran, comme pour la photo publique.
+    final ProviderContainer conteneur = ProviderScope.containerOf(context);
+    final T? choix = await AppBottomSheet.ouvrir<T>(
       context,
       titre: titre,
       constructeur: (BuildContext _) =>
-          _FeuilleTexte(valeur: valeur, indice: indice),
+          UncontrolledProviderScope(container: conteneur, child: feuille()),
     );
-    if (saisie == null || !mounted) {
+    if (choix == null || !mounted) {
       return;
     }
     try {
-      await ecrire(saisie);
+      await ecrire(choix);
       if (!mounted) {
         return;
       }
@@ -379,126 +475,149 @@ class _DeclarationState extends ConsumerState<_Declaration> {
     final TextTheme textes = Theme.of(context).textTheme;
     final ProfilEnseignant profil = widget.profil;
     final AsyncValue<String> fuseau = ref.watch(monFuseauProvider);
-    final String langues = profil.langues.join(', ');
+    final _LanguesLues langues = _LanguesLues.depuis(
+      profil.langues,
+      ref.watch(referentielLanguesProvider),
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        SectionHeader(titre: t.enseignant.profil.identite),
         if (widget.horsLigne) ...<Widget>[
           Text(t.enseignant.profil.horsLigne, style: textes.bodySmall),
           Ecart.vSm,
         ],
-        SettingRow(
-          title: t.enseignant.profil.pays,
-          value: profil.pays ?? t.enseignant.profil.nonRenseigne,
-          icon: AppIcons.foyer,
-          // Un bouton qui ne peut pas aboutir n'est pas rendu : hors ligne, la
-          // ligne redevient une lecture et la phrase ci-dessus l'explique.
-          onPress: widget.horsLigne
-              ? null
-              : () => unawaited(
-                  _editer(
-                    titre: t.enseignant.profil.modifierPays,
-                    valeur: profil.pays ?? '',
-                    indice: null,
-                    ecrire: (String saisie) => _service.declarer(pays: saisie),
-                  ),
-                ),
-        ),
-        SettingRow(
-          title: t.enseignant.profil.langues,
-          value: langues.isEmpty ? t.enseignant.profil.nonRenseigne : langues,
-          icon: AppIcons.reglages,
-          onPress: widget.horsLigne
-              ? null
-              : () => unawaited(
-                  _editer(
-                    titre: t.enseignant.profil.modifierLangues,
-                    valeur: langues,
-                    indice: t.enseignant.profil.languesIndice,
-                    ecrire: (String saisie) =>
-                        _service.declarer(langues: _listeDeLangues(saisie)),
-                  ),
-                ),
-        ),
-        SettingRow(
-          title: t.enseignant.profil.fuseau,
-          description: t.enseignant.profil.fuseauDetail,
-          value: fuseau.hasValue
-              ? fuseau.requireValue
-              : t.enseignant.profil.nonRenseigne,
-          icon: AppIcons.creneaux,
-          enabled: false,
-        ),
-        SettingRow(
-          title: t.enseignant.profil.plafond,
-          description: t.enseignant.profil.plafondDetail,
-          value: profil.plafondHeures == null
-              ? t.enseignant.profil.nonRenseigne
-              : t.enseignant.profil.plafondValeur(
-                  nombre: profil.plafondHeures!,
-                ),
-          icon: AppIcons.journee,
-          enabled: false,
+        // Lignes groupees, chaque ligne entiere cliquable quand elle s'edite
+        // (UX_REVIEW_04 ligne ENS-05, cible d'au moins 48).
+        GroupeReglages(
+          titre: t.enseignant.profil.identite,
+          lignes: <LigneRubrique>[
+            LigneRubrique(
+              libelle: t.enseignant.profil.pays,
+              valeur: profil.pays ?? t.enseignant.profil.nonRenseigne,
+              icone: AppIcons.foyer,
+              // Un bouton qui ne peut pas aboutir n'est pas rendu : hors
+              // ligne, la ligne redevient une lecture et la phrase l'explique.
+              onPress: widget.horsLigne
+                  ? null
+                  : () => unawaited(
+                      _editer<String>(
+                        titre: t.enseignant.profil.modifierPays,
+                        // Le fuseau deja lu preselectionne le pays ; tant
+                        // qu'il n'est pas la, la liste reste dans son ordre.
+                        feuille: () => FeuillePays(
+                          paysDeclare: profil.pays,
+                          fuseau: fuseau.value,
+                        ),
+                        ecrire: (String pays) => _service.declarer(pays: pays),
+                      ),
+                    ),
+            ),
+            LigneRubrique(
+              libelle: t.enseignant.profil.langues,
+              valeur: langues.valeur,
+              // Le referentiel n'est pas encore lu : la ligne montre sa forme
+              // de chargement, jamais les codes bruts.
+              marque: langues.enChargement
+                  ? const SizedBox(
+                      width: AppSpacing.respiration * 2,
+                      child: Skeleton(hauteur: AppSpacing.md),
+                    )
+                  : null,
+              icone: AppIcons.cours,
+              onPress: widget.horsLigne
+                  ? null
+                  : () => unawaited(
+                      _editer<List<String>>(
+                        titre: t.enseignant.profil.modifierLangues,
+                        feuille: () =>
+                            FeuilleLangues(declarees: profil.langues),
+                        ecrire: (List<String> choisies) =>
+                            _service.declarer(langues: choisies),
+                      ),
+                    ),
+            ),
+            LigneRubrique(
+              libelle: t.enseignant.profil.fuseau,
+              legende: t.enseignant.profil.fuseauDetail,
+              valeur: fuseau.hasValue
+                  ? fuseau.requireValue
+                  : t.enseignant.profil.nonRenseigne,
+              icone: AppIcons.horloge,
+            ),
+            LigneRubrique(
+              libelle: t.enseignant.profil.plafond,
+              legende: t.enseignant.profil.plafondDetail,
+              valeur: profil.plafondHeures == null
+                  ? t.enseignant.profil.nonRenseigne
+                  : LibellesGroupe.valeurSeule(
+                      t.enseignant.profil.plafondValeur(
+                        nombre: profil.plafondHeures!,
+                      ),
+                    ),
+              icone: AppIcons.journee,
+            ),
+          ],
         ),
         LocalFeedback(message: _message),
       ],
     );
   }
-
-  /// Decoupe une saisie en langues, sans garder de vide.
-  static List<String> _listeDeLangues(String saisie) => saisie
-      .split(',')
-      .map((String langue) => langue.trim())
-      .where((String langue) => langue.isNotEmpty)
-      .toList(growable: false);
 }
 
-/// Un champ unique, dans une feuille courte.
-class _FeuilleTexte extends StatefulWidget {
-  const _FeuilleTexte({required this.valeur, required this.indice});
+/// Ce que la ligne « Langues » affiche, d'apres le profil et le referentiel.
+///
+/// Le profil porte des codes (`francais`) ; seul le referentiel des langues,
+/// retirees comprises, les nomme (`nomLangueCours`). Tant qu'il n'est pas lu,
+/// la ligne montre sa forme de chargement ; s'il est illisible (panne, hors
+/// ligne sans lecture precedente), elle le dit. Dans aucun cas elle n'affiche
+/// un code. Une lecture precedente reste affichee pendant qu'une nouvelle
+/// echoue ou se fait.
+@immutable
+class _LanguesLues {
+  const _LanguesLues({required this.valeur, required this.enChargement});
 
-  final String valeur;
-  final String? indice;
-
-  @override
-  State<_FeuilleTexte> createState() => _FeuilleTexteState();
-}
-
-class _FeuilleTexteState extends State<_FeuilleTexte> {
-  late final TextEditingController _saisie = TextEditingController(
-    text: widget.valeur,
-  );
-
-  @override
-  void dispose() {
-    _saisie.dispose();
-    super.dispose();
+  factory _LanguesLues.depuis(
+    List<String> declarees,
+    AsyncValue<List<LangueCours>> referentiel,
+  ) {
+    final List<String> valeurs = <String>[
+      for (final String v in declarees)
+        if (v.trim().isNotEmpty) v,
+    ];
+    if (valeurs.isEmpty) {
+      return _LanguesLues(
+        valeur: t.enseignant.profil.nonRenseigne,
+        enChargement: false,
+      );
+    }
+    final List<LangueCours>? lues = referentiel.value;
+    if (lues != null) {
+      return _LanguesLues(
+        valeur: <String>{
+          for (final String v in valeurs) nomLangueCours(v, lues),
+        }.join(', '),
+        enChargement: false,
+      );
+    }
+    if (referentiel.hasError) {
+      return _LanguesLues(
+        valeur: t.enseignant.profil.languesErreur,
+        enChargement: false,
+      );
+    }
+    return const _LanguesLues(valeur: null, enChargement: true);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        TextField(
-          controller: _saisie,
-          autofocus: true,
-          decoration: InputDecoration(helperText: widget.indice),
-        ),
-        Ecart.vXl,
-        ActionPrincipale(
-          libelle: t.enseignant.profil.enregistrer,
-          onPress: () => Navigator.of(context).pop(_saisie.text.trim()),
-        ),
-      ],
-    );
-  }
+  /// Le texte de fin de ligne, ou `null` pendant le chargement.
+  final String? valeur;
+
+  /// Vrai tant que le referentiel n'est pas lu.
+  final bool enChargement;
 }
 
-/// Le contrat et les accuses, en lecture seule et pour toujours.
+/// Le contrat et les accuses, en lecture seule et pour toujours, puis le
+/// lien vers la politique de controle des enseignants.
 ///
 /// Sans cette section, un enseignant valide ne peut plus les relire du tout :
 /// `deciderRedirection` ferme `/attente/*` des que le compte devient actif.
@@ -515,7 +634,10 @@ class _Contrat extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        SectionHeader(titre: t.enseignant.profil.contratSection),
+        // Le groupe porte son titre ; les etats vides et d'echec gardent le
+        // leur.
+        if (!acceptations.hasValue || acceptations.requireValue.isEmpty)
+          SectionHeader(titre: t.enseignant.profil.contratSection),
         // L'erreur reste locale a la section : les autres restent lisibles, et
         // la deconnexion aussi.
         switch (acceptations) {
@@ -530,19 +652,21 @@ class _Contrat extends ConsumerWidget {
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      for (final Acceptation lue in acceptations.requireValue)
-                        SettingRow(
-                          key: ValueKey<String>(
-                            '${lue.sorte.valeurSql}-${lue.version}',
-                          ),
-                          title: _libelle(lue.sorte),
-                          description: t.enseignant.profil.contratDetail(
-                            version: lue.version,
-                            date: _date(lue.accepteeLe),
-                          ),
-                          icon: AppIcons.dossiers,
-                          enabled: false,
-                        ),
+                      GroupeReglages(
+                        titre: t.enseignant.profil.contratSection,
+                        lignes: <LigneRubrique>[
+                          for (final Acceptation lue
+                              in acceptations.requireValue)
+                            LigneRubrique(
+                              libelle: _libelle(lue.sorte),
+                              legende: t.enseignant.profil.contratDetail(
+                                version: lue.version,
+                                date: _date(lue.accepteeLe),
+                              ),
+                              icone: AppIcons.dossiers,
+                            ),
+                        ],
+                      ),
                       Ecart.vSm,
                       Text(
                         t.enseignant.profil.contratLectureSeule,
@@ -558,6 +682,27 @@ class _Contrat extends ConsumerWidget {
           ),
           _ => const Skeleton.liste(lignes: 2),
         },
+        // La politique de controle que le contrat fait « confirmer avoir
+        // recue », « disponible dans votre espace » (clause du contrat) : un
+        // texte fixe, lisible quel que soit l'etat de la lecture des
+        // acceptations.
+        Ecart.vSm,
+        LienFleche(
+          libelle: t.contrat.politique.lien,
+          onPress: () => unawaited(ouvrirPolitiqueControle(context)),
+        ),
+        // PE : le code de conduite se lit et s'accepte ici ; tant qu'il n'est
+        // pas accepte, la ligne le dit.
+        Ecart.vSm,
+        if (acceptations.hasValue &&
+            acceptationCodeConduite(acceptations.requireValue) ==
+                null) ...<Widget>[
+          Text(t.codeConduite.aAccepter, style: textes.bodySmall),
+        ],
+        LienFleche(
+          libelle: t.codeConduite.lien,
+          onPress: () => unawaited(ouvrirCodeConduite(context)),
+        ),
       ],
     );
   }
@@ -567,11 +712,34 @@ class _Contrat extends ConsumerWidget {
     SorteContrat.conditionsTuteur => t.enseignant.profil.contratConditions,
     SorteContrat.accuseEnregistrementControle =>
       t.enseignant.profil.contratAccuse,
+    SorteContrat.codeConduiteEnseignant =>
+      t.enseignant.profil.contratCodeConduite,
   };
 
   String _date(DateTime quand) =>
       '${quand.day.toString().padLeft(2, '0')}/'
       '${quand.month.toString().padLeft(2, '0')}/${quand.year}';
+}
+
+/// La remuneration (FI-10) : une seule rubrique, Mes revenus, l'estimation
+/// du mois (guide Finance V4 §4, « une seule surface de reference »).
+class _Remuneration extends StatelessWidget {
+  const _Remuneration({required this.onOuvrir});
+
+  final void Function(BuildContext context) onOuvrir;
+
+  @override
+  Widget build(BuildContext context) => GroupeReglages(
+    titre: t.enseignant.profil.remuneration,
+    lignes: <LigneRubrique>[
+      LigneRubrique(
+        libelle: t.enseignant.profil.revenus,
+        legende: t.enseignant.profil.revenusDetail,
+        icone: AppIcons.finance,
+        onPress: () => onOuvrir(context),
+      ),
+    ],
+  );
 }
 
 /// L'acces aux surfaces reellement personnelles.
@@ -580,26 +748,25 @@ class _Contrat extends ConsumerWidget {
 /// `/compte/reglages` existent, portent les seules preferences reelles du
 /// produit, et restent ouvertes a un compte actif. Le chemin de retour a 390 de
 /// large est la barre basse elle-meme : `_CoquilleSecondaire` rend `/compte/*`
-/// dans `NavShell` avec les trois destinations de l'enseignant, aucune active.
+/// dans `NavShell` avec les quatre destinations de l'enseignant, aucune active.
 class _Personnel extends StatelessWidget {
   const _Personnel();
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        SectionHeader(titre: t.enseignant.profil.personnel),
-        SettingRow(
-          title: t.compte.profil,
-          description: t.compte.profilDetail,
-          icon: AppIcons.profil,
+    return GroupeReglages(
+      titre: t.enseignant.profil.personnel,
+      lignes: <LigneRubrique>[
+        LigneRubrique(
+          libelle: t.compte.profil,
+          legende: t.compte.profilDetail,
+          icone: AppIcons.profil,
           onPress: () => context.push(Routes.compteProfil),
         ),
-        SettingRow(
-          title: t.compte.reglages,
-          description: t.compte.reglagesDetail,
-          icon: AppIcons.reglages,
+        LigneRubrique(
+          libelle: t.compte.reglages,
+          legende: t.compte.reglagesDetail,
+          icone: AppIcons.reglages,
           onPress: () => context.push(Routes.compteReglages),
         ),
       ],
@@ -624,8 +791,7 @@ class _Deconnexion extends ConsumerWidget {
     // lire pendant `build` aurait un autre defaut, moins visible : il
     // construirait le client Supabase au montage, et tout test qui monte cet
     // ecran sans surcharger le service echouerait avant d'avoir rien mesure.
-    onPress: () =>
-        unawaited(_demander(context, ref.read(serviceAuthProvider))),
+    onPress: () => unawaited(_demander(context, ref.read(serviceAuthProvider))),
   );
 
   Future<void> _demander(BuildContext context, ServiceAuth auth) async {

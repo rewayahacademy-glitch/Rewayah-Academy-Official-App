@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/accessibilite/signaler_manque.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_groupe/palette_groupe.dart';
@@ -10,6 +11,8 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/avatar_nom.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/status_pill.dart';
 import 'photo_enseignant.dart';
 
@@ -67,7 +70,15 @@ class CarteGroupe extends StatelessWidget {
     this.onOuvrir,
     this.onRejoindre,
     this.urlPhotoEnseignant,
+    this.rejoindreRetire = false,
+    this.attenteEntree,
   });
+
+  /// L'entree ne peut pas encore aboutir (hors ligne, acces qui se lit
+  /// encore) : « Rejoindre » reste present et actif, jamais grise
+  /// (BOUTONS-GRISES-1) ; l'appui dit cette phrase sous le bouton et
+  /// l'annonce, sans entrer. Nulle, l'appui entre.
+  final String? attenteEntree;
 
   /// Le groupe montre.
   final GroupSummaryVM groupe;
@@ -75,11 +86,18 @@ class CarteGroupe extends StatelessWidget {
   /// Ce que fait un tap sur la carte.
   final VoidCallback? onOuvrir;
 
-  /// Ce que fait le bouton « Rejoindre ».
+  /// Ce que fait le bouton « Rejoindre ». Nul (rien de branche), le bouton
+  /// n'est pas rendu : jamais grise.
   final VoidCallback? onRejoindre;
 
   /// L'URL signee de la photo, quand l'hote sait la resoudre.
   final String? urlPhotoEnseignant;
+
+  /// Vrai quand les seances de l'eleve sont fermees (FI-9a, guide §1.7) :
+  /// une limite de droit, pas une panne. Le bouton est alors absent, jamais
+  /// grise ; l'hote dit l'etat avec la copie neutre, sans cause. La carte
+  /// garde son geste d'ouverture : l'Espace Groupe reste lisible.
+  final bool rejoindreRetire;
 
   @override
   Widget build(BuildContext context) {
@@ -91,12 +109,12 @@ class CarteGroupe extends StatelessWidget {
       onPress: onOuvrir,
       libelleSemantique: LibellesGroupe.ouvrirGroupe(groupe.libelle),
       entete: _Entete(groupe: groupe),
-      actions: groupe.rejoindreOuvert
-          ? ActionPrincipale(
-              libelle: LibellesGroupe.rejoindre,
-              onPress: onRejoindre,
-            )
-          : null,
+      actions: switch (onRejoindre) {
+        final VoidCallback rejoindre
+            when groupe.rejoindreOuvert && !rejoindreRetire =>
+          _Rejoindre(onRejoindre: rejoindre, attente: attenteEntree),
+        _ => null,
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
@@ -133,6 +151,64 @@ class CarteGroupe extends StatelessWidget {
   }
 }
 
+/// « Rejoindre », jamais grise (BOUTONS-GRISES-1). Tant que [attente] est
+/// posee, l'appui n'entre pas : il dit la phrase sous le bouton (region
+/// live) et l'annonce au lecteur d'ecran.
+class _Rejoindre extends StatefulWidget {
+  const _Rejoindre({required this.onRejoindre, this.attente});
+
+  final VoidCallback onRejoindre;
+  final String? attente;
+
+  @override
+  State<_Rejoindre> createState() => _RejoindreEtat();
+}
+
+class _RejoindreEtat extends State<_Rejoindre> {
+  bool _attenteDite = false;
+
+  @override
+  void didUpdateWidget(_Rejoindre ancien) {
+    super.didUpdateWidget(ancien);
+    if (widget.attente == null) _attenteDite = false;
+  }
+
+  void _appui() {
+    final String? attente = widget.attente;
+    if (attente == null) {
+      widget.onRejoindre();
+      return;
+    }
+    setState(() => _attenteDite = true);
+    signalerManque(context, attente);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final String? attente = widget.attente;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        ActionPrincipale(libelle: LibellesGroupe.rejoindre, onPress: _appui),
+        if (_attenteDite && attente != null) ...<Widget>[
+          Ecart.vSm,
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              attente,
+              key: const ValueKey<String>('carte-groupe-attente-entree'),
+              style: AppPalette.of(context).inkMuted.applyTo(
+                Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
 /// Le nom du groupe, son repere de couleur et sa capacite reelle.
 class _Entete extends StatelessWidget {
   const _Entete({required this.groupe});
@@ -142,38 +218,78 @@ class _Entete extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
+    final TextStyle styleNom = textes.titleMedium ?? const TextStyle();
+    final TextStyle styleCapacite = textes.labelLarge ?? const TextStyle();
+    final String capacite = LibellesGroupe.capacite(
+      membres: groupe.nombreMembres,
+      seuil: groupe.seuilMax,
+    );
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        LisereGroupe(jeton: groupe.couleurJeton),
-        Ecart.hMd,
-        Expanded(
-          child: Text(
-            groupe.libelle,
-            style: textes.titleMedium ?? const TextStyle(),
-          ),
-        ),
-        Ecart.hMd,
-        // `4 / 5` ou `3 / 4` : jamais un plafond ecrit dans cet ecran. La
-        // phrase complete est reservee aux technologies d'assistance, qui
-        // liraient « quatre barre oblique cinq » sans elle.
-        Semantics(
-          label: LibellesGroupe.capacitePhrase(
-            membres: groupe.nombreMembres,
-            seuil: groupe.seuilMax,
-          ),
-          child: ExcludeSemantics(
-            child: Text(
-              LibellesGroupe.capacite(
-                membres: groupe.nombreMembres,
-                seuil: groupe.seuilMax,
+    final Widget nom = Text(groupe.libelle, style: styleNom);
+    // `4 / 5` ou `3 / 4` : jamais un plafond ecrit dans cet ecran. La
+    // phrase complete est reservee aux technologies d'assistance, qui
+    // liraient « quatre barre oblique cinq » sans elle.
+    final Widget valeur = Semantics(
+      label: LibellesGroupe.capacitePhrase(
+        membres: groupe.nombreMembres,
+        seuil: groupe.seuilMax,
+      ),
+      child: ExcludeSemantics(child: Text(capacite, style: styleCapacite)),
+    );
+
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints contraintes) {
+        // AR-TC-1 : la capacite reste a cote du nom tant que le mot le plus
+        // long du nom y tient entier ; sinon (320 px, texte x2, « 4 من 5 »)
+        // elle passe sous le nom, et aucun mot n'est coupe.
+        final TextScaler echelle = MediaQuery.textScalerOf(context);
+        final TextDirection sens = Directionality.of(context);
+        double largeur(String texte, TextStyle style) {
+          final TextPainter mesure = TextPainter(
+            text: TextSpan(text: texte, style: style),
+            textDirection: sens,
+            textScaler: echelle,
+            maxLines: 1,
+          )..layout();
+          final double l = mesure.width;
+          mesure.dispose();
+          return l;
+        }
+        final double motLePlusLong = groupe.libelle
+            .split(RegExp(r'\s+'))
+            .map((String mot) => largeur(mot, styleNom))
+            .fold(0, (double a, double b) => a > b ? a : b);
+        final bool aCote =
+            AppSpacing.xs +
+                2 * AppSpacing.md +
+                motLePlusLong +
+                largeur(capacite, styleCapacite) <=
+            contraintes.maxWidth;
+
+        final Widget ligneNom = Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            LisereGroupe(jeton: groupe.couleurJeton),
+            Ecart.hMd,
+            Expanded(child: nom),
+            if (aCote) ...<Widget>[Ecart.hMd, valeur],
+          ],
+        );
+        if (aCote) return ligneNom;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ligneNom,
+            Padding(
+              padding: const EdgeInsetsDirectional.only(
+                start: AppSpacing.xs + AppSpacing.md,
               ),
-              style: textes.labelLarge ?? const TextStyle(),
+              child: valeur,
             ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 }
@@ -195,48 +311,40 @@ class _Enseignant extends StatelessWidget {
       niveau: groupe.niveauHumain,
     );
 
-    return Row(
+    // AVATAR-1 : couple avatar + nom du composant partage, nom et une ligne
+    // de role (cours et niveau) ; les etats se lisent dessous.
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        PhotoEnseignant(enseignant: enseignant, urlSignee: urlPhotoEnseignant),
-        Ecart.hLg,
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(
-                LibellesGroupe.enseignantNomme(enseignant),
-                style: textes.titleSmall ?? const TextStyle(),
-              ),
-              if (coursEtNiveau.isNotEmpty) ...<Widget>[
-                Ecart.vXs,
-                Text(
-                  coursEtNiveau,
-                  style: palette.inkMuted.applyTo(
-                    textes.bodySmall ?? const TextStyle(),
-                  ),
-                ),
-              ],
-              if (enseignant.photoManquante) ...<Widget>[
-                Ecart.vSm,
-                // Un etat, pas une couleur : `StatusPill` refuse par
-                // construction une pastille sans libelle.
-                StatusPill(
-                  libelle: LibellesGroupe.photoManquante,
-                  ton: TonEtat.avertissement,
-                ),
-              ],
-              if (groupe.complet) ...<Widget>[
-                Ecart.vSm,
-                StatusPill(
-                  libelle: LibellesGroupe.complet,
-                  ton: TonEtat.neutre,
-                ),
-              ],
-            ],
+        AvatarNom.enLigne(
+          prenom: enseignant.nomAffichage,
+          nom: LibellesGroupe.enseignantNomme(enseignant),
+          pays: enseignant.pays,
+          role: coursEtNiveau.isEmpty ? null : coursEtNiveau,
+          ecart: AppSpacing.lg,
+          styleNom: textes.titleSmall,
+          styleRole: palette.inkMuted.applyTo(
+            textes.bodySmall ?? const TextStyle(),
+          ),
+          avatar: PhotoEnseignant(
+            enseignant: enseignant,
+            urlSignee: urlPhotoEnseignant,
           ),
         ),
+        if (enseignant.photoManquante) ...<Widget>[
+          Ecart.vSm,
+          // Un etat, pas une couleur : `StatusPill` refuse par construction
+          // une pastille sans libelle.
+          StatusPill(
+            libelle: LibellesGroupe.photoManquante,
+            ton: TonEtat.avertissement,
+          ),
+        ],
+        if (groupe.complet) ...<Widget>[
+          Ecart.vSm,
+          StatusPill(libelle: LibellesGroupe.complet, ton: TonEtat.neutre),
+        ],
       ],
     );
   }
@@ -261,6 +369,12 @@ class _ProchaineSeance extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
+          // Une seance en cours se reconnait au premier coup d'oeil
+          // (ON-AIR-1) ; la ligne d'etat garde le temps restant.
+          if (horloge.enDirect) ...<Widget>[
+            const PastilleEtatSeance(etat: EtatPastilleSeance.enDirect),
+            Ecart.vSm,
+          ],
           Text(
             LibellesGroupe.prochainCours,
             style: palette.inkMuted.applyTo(
@@ -280,9 +394,7 @@ class _ProchaineSeance extends StatelessWidget {
           Ecart.vXs,
           Text(
             LibellesGroupe.joindre(
-              LibellesGroupe.duree(
-                LibellesGroupe.dureeLisible(occurrence.duree),
-              ),
+              LibellesGroupe.dureeCarte(occurrence.duree),
               LibellesGroupe.ligneEtat(horloge),
             ),
             style: palette.inkMuted.applyTo(

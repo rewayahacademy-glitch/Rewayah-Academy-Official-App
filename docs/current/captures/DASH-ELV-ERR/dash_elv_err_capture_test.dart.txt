@@ -1,0 +1,49 @@
+// DASH-ELV-ERR : l'accueil eleve quand la lecture des cours echoue.
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/planning/journee.dart';
+import 'package:rewayah_academy/core/planning/service_planning.dart';
+import 'package:rewayah_academy/core/priere/service_priere.dart';
+import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/features/accueil_eleve/accueil_eleve_page.dart';
+
+import '../support/harnais.dart';
+import 'outil_capture.dart';
+
+List<Override> _surcharges() => <Override>[
+  servicePlanningProvider.overrideWithValue(FauxServicePlanning()),
+  servicePriereProvider.overrideWithValue(FauxServicePriere()),
+  serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+  seancesProvider.overrideWith(
+    (_) => Future<List<Seance>>.error(StateError('reseau')),
+  ),
+];
+
+void main() {
+  group('Capture : DASH-ELV-ERR', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (Size, ThemeMode, String, double) cas
+        in <(Size, ThemeMode, String, double)>[
+          (const Size(320, 1400), ThemeMode.light, 'elv_err_320x2_clair', 2),
+          (const Size(320, 1400), ThemeMode.dark, 'elv_err_320x2_sombre', 2),
+          (const Size(390, 900), ThemeMode.light, 'elv_err_390_clair', 1),
+          (const Size(390, 900), ThemeMode.dark, 'elv_err_390_sombre', 1),
+          (const Size(1440, 900), ThemeMode.light, 'elv_err_1440_clair', 1),
+        ]) {
+      testWidgets(cas.$3, (WidgetTester tester) async {
+        fixerVueCapture(tester, cas.$1, 1);
+        await tester.pumpWidget(
+          hoteCapture(
+            AccueilElevePage(horloge: () => DateTime(2026, 9, 8, 17)),
+            surcharges: _surcharges(),
+            themeMode: cas.$2,
+            echelleTexte: cas.$4,
+          ),
+        );
+        await stabiliser(tester);
+        debugPrint('PNG ${await capturer(tester, cas.$3)}');
+      });
+    }
+  });
+}

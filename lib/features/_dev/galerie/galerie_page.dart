@@ -26,7 +26,7 @@ import 'catalogue_galerie.dart';
 /// propre, et `tool/verifier_jetons.dart` le verifie comme le reste de `lib/`.
 ///
 /// **Le lot C en fait la preuve du catalogue** et non plus une page de
-/// demonstration (`docs/design/07-catalogue-composants.md` section 5). Les
+/// demonstration (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 5). Les
 /// cinq axes que la section exige sont les cinq bascules de la barre de
 /// reglages : largeur, langue, taille de texte, mouvement, mode d'interface.
 ///
@@ -411,8 +411,11 @@ class _Paires extends StatelessWidget {
       'surfaceRaised': palette.surfaceRaised,
       'surfaceCanvas': palette.surfaceCanvas,
       'surfaceSunken': palette.surfaceSunken,
+      'surfaceOverlay': palette.surfaceOverlay,
+      'surfaceMiseEnAvant': palette.surfaceMiseEnAvant,
     };
     final Map<String, AppColorPair> pleines = <String, AppColorPair>{
+      'surfaceActionDouce': palette.surfaceActionDouce,
       'surfacePrimary': palette.surfacePrimary,
       'surfaceSuccess': palette.surfaceSuccess,
       'surfaceWarning': palette.surfaceWarning,
@@ -465,6 +468,29 @@ class _Paires extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
             child: Text(e.key, style: e.value.applyTo(base)),
+          ),
+        Ecart.vMd,
+        // Les points de statut, toujours doubles d'un libelle : c'est ainsi
+        // qu'ils se posent dans les ecrans.
+        for (final MapEntry<String, AppIndicatorColor> e
+            in <String, AppIndicatorColor>{
+              'point succes': palette.pointsStatut.succes,
+              'point attention': palette.pointsStatut.attention,
+              'point alerte': palette.pointsStatut.alerte,
+              'point neutre': palette.pointsStatut.neutre,
+            }.entries)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            child: Row(
+              children: <Widget>[
+                SizedBox.square(
+                  dimension: AppSpacing.md,
+                  child: DecoratedBox(decoration: e.value.pastille()),
+                ),
+                Ecart.hSm,
+                Text(e.key, style: palette.surfaceCanvas.applyTo(base)),
+              ],
+            ),
           ),
         Ecart.vMd,
         // Les trois bordures, cote a cote : seule la troisieme porte du sens.
@@ -589,12 +615,22 @@ class _EchelleTexte extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
+    // Les quinze roles, pas un echantillon : la bascule DM Sans / Plus Jakarta
+    // Sans du 24/09/2026 se juge role par role, famille et graisse lisibles.
     final Map<String, TextStyle?> roles = <String, TextStyle?>{
+      'displayLarge': echelle.displayLarge,
       'displaySmall': echelle.displaySmall,
+      'headlineLarge': echelle.headlineLarge,
       'headlineMedium': echelle.headlineMedium,
+      'headlineSmall': echelle.headlineSmall,
       'titleLarge': echelle.titleLarge,
+      'titleMedium': echelle.titleMedium,
+      'titleSmall': echelle.titleSmall,
       'bodyLarge': echelle.bodyLarge,
       'bodyMedium': echelle.bodyMedium,
+      'bodySmall': echelle.bodySmall,
+      'labelLarge': echelle.labelLarge,
+      'labelMedium': echelle.labelMedium,
       'labelSmall': echelle.labelSmall,
     };
 
@@ -607,7 +643,8 @@ class _EchelleTexte extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
             child: Text(
-              '${e.key} ${e.value?.fontSize?.round()}',
+              '${e.key} ${e.value?.fontSize?.round()} '
+              '${e.value?.fontFamily} ${e.value?.fontWeight?.value}',
               style: palette.surfaceCanvas.applyTo(
                 e.value ?? const TextStyle(),
               ),
@@ -624,51 +661,59 @@ class _Polices extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    final TextStyle base =
-        Theme.of(context).textTheme.titleLarge ?? const TextStyle();
+    final TextTheme textes = Theme.of(context).textTheme;
+    final TextStyle titre = palette.surfaceCanvas.applyTo(
+      textes.headlineSmall ?? const TextStyle(),
+    );
+    final TextStyle corps = palette.surfaceCanvas.applyTo(
+      textes.bodyLarge ?? const TextStyle(),
+    );
 
+    // Aucun `fontFamily` pose ici (regle `police-hors-typographie`) : chaque
+    // echantillon passe par un role du theme ou par un style d'AppTypography,
+    // c'est-a-dire par ce que les ecrans voient vraiment.
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          'InstrumentSans : les Makharij se corrigent a l’oreille',
-          style: palette.surfaceCanvas
-              .applyTo(base)
-              .copyWith(fontFamily: AppFontFamily.corps),
-        ),
+        Text('DM Sans, titre : Séance à préparer, élève', style: titre),
         Ecart.vMd,
         Text(
-          'BricolageGrotesque : Prochain cours jeudi',
-          style: palette.surfaceCanvas
-              .applyTo(base)
-              .copyWith(fontFamily: AppFontFamily.titre),
+          'Plus Jakarta Sans, corps : « Ça commence jeudi à 17 h 30 », '
+          'l’œuvre, Réglages, où, âge',
+          style: corps,
         ),
         Ecart.vMd,
         // Les chiffres tabulaires ne se voient que compares : deux lignes de
-        // chiffres differents doivent aligner leurs colonnes.
+        // chiffres differents doivent aligner leurs colonnes. Le style chiffre
+        // est en Plus Jakarta Sans, seule famille francaise qui porte `tnum`.
         Text(
-          '11 111\n00 000',
-          style: AppTypography.tabulaire(palette.surfaceCanvas.applyTo(base)),
+          '11:11 111\n00:00 000',
+          style: palette.surfaceCanvas.applyTo(AppTypography.chiffre()),
+        ),
+        Ecart.vMd,
+        // Un titre DM Sans passe par `tabulaire` bascule sur Plus Jakarta Sans :
+        // DM Sans n'a pas de chiffres tabulaires.
+        Text(
+          'Visite 1/2 : 01:42',
+          style: AppTypography.tabulaire(
+            palette.surfaceCanvas.applyTo(
+              textes.titleMedium ?? const TextStyle(),
+            ),
+          ),
         ),
         Ecart.vMd,
         // L'echantillon mixte. C'est la seule facon de juger si la hauteur d'x
-        // et la graisse d'Instrument Sans s'accordent a Noto Sans Arabic : les
-        // deux polices doivent se lire sur UNE ligne, pas cote a cote sur deux.
-        // C'est une intention de conception, pas une mesure : elle se tranche
-        // a l'oeil (question ouverte 21 du registre).
-        Text(
-          'Sourate الفاتحة, verset 5 : اهدنا الصراط المستقيم',
-          style: palette.surfaceCanvas.applyTo(base),
-        ),
+        // et la graisse de Plus Jakarta Sans s'accordent a Noto Sans Arabic :
+        // les deux polices doivent se lire sur UNE ligne, pas cote a cote sur
+        // deux. C'est une intention de conception, pas une mesure : elle se
+        // tranche a l'oeil (question ouverte 21 du registre).
+        Text('Sourate الفاتحة, verset 5 : اهدنا الصراط المستقيم', style: corps),
         Ecart.vMd,
+        // Le repli arabe de tous les styles est Noto Sans Arabic : un texte
+        // arabe seul le prend sans qu'aucun `fontFamily` soit pose.
         Directionality(
           textDirection: TextDirection.rtl,
-          child: Text(
-            'نوتو عربي',
-            style: palette.surfaceCanvas
-                .applyTo(base)
-                .copyWith(fontFamily: AppFontFamily.arabeInterface),
-          ),
+          child: Text('نوتو عربي', style: corps),
         ),
         Ecart.vMd,
         Directionality(

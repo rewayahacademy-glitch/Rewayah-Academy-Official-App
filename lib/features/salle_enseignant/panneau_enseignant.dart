@@ -5,9 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/coran/service_coran.dart';
 import '../../core/coran/vue_lecteur.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
-import '../../core/theme/app_gabarit.dart';
+import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -15,6 +16,7 @@ import '../../core/theme/app_typography.dart';
 import '../../core/video/video_session_provider.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
+import '../../core/widgets/barre_precedent_suivant.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/pressable.dart';
@@ -57,7 +59,11 @@ import 'vue_presentation.dart';
 /// chose du parent qu'une largeur contrainte. Il se rend aux trois gabarits.
 class PanneauEnseignantSalle extends ConsumerWidget {
   /// Cree le panneau pour une seance.
-  const PanneauEnseignantSalle({required this.seanceId, super.key});
+  const PanneauEnseignantSalle({
+    required this.seanceId,
+    this.peutPresenter = true,
+    super.key,
+  });
 
   /// La seance en cours.
   ///
@@ -68,6 +74,14 @@ class PanneauEnseignantSalle extends ConsumerWidget {
   /// faudra pour journaliser un tour de page le jour ou le protocole le
   /// demandera.
   final String seanceId;
+
+  /// Le droit de presenter, celui du jeton (`can_publish_data`).
+  ///
+  /// Vrai par defaut : l'integration n'insere aujourd'hui ce panneau que pour
+  /// un enseignant dont le jeton porte ce droit (voir le commentaire de
+  /// `build`). C'est la ligne qui le branchera ; elle permet deja de verifier
+  /// l'etat « sans droit » a sa vraie place (SALLE-ERR-320-1).
+  final bool peutPresenter;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -94,7 +108,7 @@ class PanneauEnseignantSalle extends ConsumerWidget {
         // qu'il n'existe pas, l'integration n'insere ce panneau que pour un
         // enseignant dont le jeton porte ce droit, et le parametre reste porte
         // par la vue pure pour qu'une seule ligne suffise a le brancher.
-        peutPresenter: true,
+        peutPresenter: peutPresenter,
       ),
     );
   }
@@ -125,13 +139,12 @@ class _CorpsEtat extends ConsumerState<_Corps> {
 
   /// Ouvre la bibliotheque, puis presente ce qui y a ete choisi.
   Future<void> _ouvrirBibliotheque() async {
-    final ({int sourate, int verset})? choix = await AppBottomSheet.ouvrir<
-      ({int sourate, int verset})
-    >(
-      context,
-      titre: t.enseignant.salle.bibliotheque,
-      constructeur: (BuildContext _) => const _Bibliotheque(),
-    );
+    final ({int sourate, int verset})? choix =
+        await AppBottomSheet.ouvrir<({int sourate, int verset})>(
+          context,
+          titre: t.enseignant.salle.bibliotheque,
+          constructeur: (BuildContext _) => const _Bibliotheque(),
+        );
     if (choix == null || !mounted) {
       return;
     }
@@ -208,7 +221,9 @@ class _CorpsEtat extends ConsumerState<_Corps> {
           Ecart.vSm,
           Text(
             t.enseignant.salle.sansDroitPresentation,
-            style: Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
+            style: AppPalette.of(context).surfaceInverse.applyTo(
+              Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
+            ),
           ),
         ],
       ],
@@ -246,6 +261,10 @@ class _Reference extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
+    // SALLE-ENCRE-1 (reserve R1 de C1-SALLE-R) : le panneau se pose sur le
+    // fond de la salle (`surfaceInverse`, `PageImmersive`) ; un style du theme
+    // porte l'encre des surfaces claires et y disparaissait.
+    final AppColorPair salle = AppPalette.of(context).surfaceInverse;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -258,13 +277,16 @@ class _Reference extends StatelessWidget {
               total: '$pagesMushafMedine',
               reference: pointeur.reference,
             ),
-            style: AppTypography.tabulaire(
-              textes.labelLarge ?? const TextStyle(),
+            style: salle.applyTo(
+              AppTypography.tabulaire(textes.labelLarge ?? const TextStyle()),
             ),
           ),
         if (_mot(vue) case final String mot) ...<Widget>[
           Ecart.vXs,
-          Text(mot, style: textes.bodySmall ?? const TextStyle()),
+          Text(
+            mot,
+            style: salle.applyTo(textes.bodySmall ?? const TextStyle()),
+          ),
         ],
       ],
     );
@@ -283,6 +305,8 @@ class _PagePresentee extends ConsumerWidget {
       pageCoranProvider(contenu.page),
     );
     final AsyncValue<List<Sourate>?> sourates = ref.watch(souratesProvider);
+    // SALLE-ENCRE-1 : les etats sans page se posent sur le fond de la salle.
+    final AppColorPair salle = AppPalette.of(context).surfaceInverse;
 
     final VueLecteur lecteur = VueLecteur.depuis(
       pageDemandee: contenu.page,
@@ -306,12 +330,14 @@ class _PagePresentee extends ConsumerWidget {
         icone: AppIcons.horsLigne,
         libelleAction: t.commun.reessayer,
         onAction: () => ref.invalidate(pageCoranProvider(contenu.page)),
+        encre: salle,
       ),
       EtatLecteur.corpusAbsent => EmptyState(
         message: t.enseignant.salle.corpusAbsent,
         invitation: t.enseignant.salle.corpusAbsentDetail,
         icone: AppIcons.rienAAfficher,
         registre: RegistreVide.subi,
+        encre: salle,
       ),
       EtatLecteur.lecture => _Texte(lecteur: lecteur),
     };
@@ -365,21 +391,21 @@ class _Texte extends StatelessWidget {
                     child: Text.rich(
                       TextSpan(
                         children: <InlineSpan>[
-                          for (final VersetCoran verset in section.versets)
-                            ...<InlineSpan>[
-                              TextSpan(text: '${verset.texte} '),
-                              WidgetSpan(
-                                alignment: PlaceholderAlignment.middle,
-                                // Un numero de verset est un repere de mise en
-                                // page, pas du texte revele : un lecteur d'ecran
-                                // doit lire le verset, pas epeler son numero au
-                                // milieu de la phrase.
-                                child: ExcludeSemantics(
-                                  child: RosaceVerset(numero: verset.numero),
-                                ),
+                          for (final VersetCoran verset
+                              in section.versets) ...<InlineSpan>[
+                            TextSpan(text: '${verset.texte} '),
+                            WidgetSpan(
+                              alignment: PlaceholderAlignment.middle,
+                              // Un numero de verset est un repere de mise en
+                              // page, pas du texte revele : un lecteur d'ecran
+                              // doit lire le verset, pas epeler son numero au
+                              // milieu de la phrase.
+                              child: ExcludeSemantics(
+                                child: RosaceVerset(numero: verset.numero),
                               ),
-                              const TextSpan(text: ' '),
-                            ],
+                            ),
+                            const TextSpan(text: ' '),
+                          ],
                         ],
                       ),
                       textAlign: TextAlign.justify,
@@ -421,6 +447,8 @@ class _Vide extends StatelessWidget {
       // Un vide qu'on ne peut pas combler ne propose rien : tant que la salle
       // n'est pas connectee, ouvrir le Coran n'atteindrait personne.
       registre: possible ? RegistreVide.actionnable : RegistreVide.subi,
+      // SALLE-ENCRE-1 : pose sur le fond de la salle.
+      encre: AppPalette.of(context).surfaceInverse,
     );
   }
 }
@@ -431,10 +459,10 @@ class _Vide extends StatelessWidget {
 /// l'enseignant pendant un cours de Coran ; le cacher derriere trois points
 /// couterait un geste a chaque verset.
 ///
-/// `[RESPONSIVE]` Les deux verbes ne se mettent cote a cote que sur grand
-/// gabarit. Sur 390 points, et plus encore a 200 % d'echelle de texte, deux
-/// libelles complets dans une meme rangee se tronquent -- et un verbe tronque ne
-/// vaut rien, la ou le catalogue exige justement un verbe et pas une fleche.
+/// `[RESPONSIVE]` NAV-FLECHES-1 : deux fleches rondes de part et d'autre de la
+/// page presentee ([BarrePrecedentSuivant]), a toutes les largeurs. Les verbes
+/// complets (« Presenter la page precedente ») sont lus par le lecteur
+/// d'ecran ; a l'ecran, une fleche ne se tronque pas, a 320 points ni a 200 %.
 class _Commandes extends StatelessWidget {
   const _Commandes({
     required this.vue,
@@ -453,39 +481,41 @@ class _Commandes extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Gabarit gabarit = AppGabarit.de(context);
     final int? avant = vue.pagePrecedente;
     final int? apres = vue.pageSuivante;
 
-    final Widget precedente = ActionPrincipale(
-      libelle: t.enseignant.salle.precedente,
-      niveau: NiveauAction.secondaire,
-      onPress: actives && avant != null ? () => onPresenter(avant) : null,
-    );
-    final Widget suivante = ActionPrincipale(
-      libelle: t.enseignant.salle.suivante,
-      niveau: NiveauAction.secondaire,
-      onPress: actives && apres != null ? () => onPresenter(apres) : null,
-    );
-
+    // NAV-FLECHES-1 : fleche, page presentee, fleche, a toutes les largeurs.
+    // Premiere ou derniere page : la fleche n'est pas rendue.
+    final int page = vue.contenu?.page ?? 1;
+    // SALLE-ENCRE-1 : la position et « Ouvrir le Coran » se posent sur le
+    // fond de la salle, et en prennent l'encre.
+    final AppColorPair salle = AppPalette.of(context).surfaceInverse;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        if (gabarit.estLarge)
-          Row(
-            children: <Widget>[
-              Expanded(child: precedente),
-              Ecart.hSm,
-              Expanded(child: suivante),
-            ],
-          )
-        else ...<Widget>[precedente, Ecart.vSm, suivante],
+        BarrePrecedentSuivant(
+          position: t.salle.seance.page(page: page, pages: pagesMushafMedine),
+          positionSemantique: t.salle.seance.pageSemantique(
+            page: page,
+            pages: pagesMushafMedine,
+          ),
+          libellePrecedent: t.enseignant.salle.precedente,
+          libelleSuivant: t.enseignant.salle.suivante,
+          // Borne atteinte : rappel nul, la fleche disparait. Commande
+          // momentanement inactive (reconnexion, envoi en cours) : la fleche
+          // reste, inerte et attenuee, au lieu de disparaitre sans explication.
+          actives: actives,
+          onPrecedent: avant != null ? () => onPresenter(avant) : null,
+          onSuivant: apres != null ? () => onPresenter(apres) : null,
+          encrePosition: salle,
+        ),
         Ecart.vSm,
         ActionPrincipale(
           libelle: t.salle.ouvrirCoran,
           niveau: NiveauAction.tertiaire,
           onPress: actives ? onBibliotheque : null,
+          encre: salle,
         ),
       ],
     );
@@ -550,12 +580,10 @@ class _LigneSourate extends StatelessWidget {
       // Le libelle parle dit l'ACTE, parce qu'un element se lit par ce qu'il
       // declenche : ici, presenter le debut de cette sourate a tout le groupe.
       libelleSemantique: t.enseignant.salle.presenterSourate(
-        sourate: sourate.nomTranslittere,
+        deSourate: deDevant(sourate.nomTranslittere),
       ),
-      onPress: () => Navigator.of(context).pop((
-        sourate: sourate.numero,
-        verset: 1,
-      )),
+      onPress: () =>
+          Navigator.of(context).pop((sourate: sourate.numero, verset: 1)),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
         child: Row(

@@ -6,13 +6,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/service_diagnostics.dart';
 import '../../core/admin/service_programme.dart';
+import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/selecteur_motif.dart';
 import '../../core/widgets/selecteur_niveau_programme.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
@@ -41,6 +45,10 @@ class _DiagnosticsPageEtat extends ConsumerState<DiagnosticsPage> {
   bool _envoi = false;
   String? _erreur;
 
+  /// Vrai quand le motif manque : il se dit sous les puces (drapeau, jamais
+  /// une comparaison de textes).
+  bool _motifManquant = false;
+
   @override
   void dispose() {
     _motif.dispose();
@@ -51,14 +59,30 @@ class _DiagnosticsPageEtat extends ConsumerState<DiagnosticsPage> {
     _niveauId = null;
     _motif.clear();
     _erreur = null;
+    _motifManquant = false;
   });
 
   Future<void> _decider(String studentId) async {
     final String? niveauId = _niveauId;
-    if (niveauId == null) return;
+    // Bouton jamais grise (K-56) : presse trop tot, il dit ce qui manque.
+    if (niveauId == null) {
+      setState(() {
+        _erreur = t.admin.diagnostics.manqueNiveau;
+        _motifManquant = false;
+      });
+      return;
+    }
+    if (_motif.text.trim().isEmpty) {
+      setState(() {
+        _erreur = null;
+        _motifManquant = true;
+      });
+      return;
+    }
     setState(() {
       _envoi = true;
       _erreur = null;
+      _motifManquant = false;
     });
     try {
       await ref
@@ -92,34 +116,35 @@ class _DiagnosticsPageEtat extends ConsumerState<DiagnosticsPage> {
     return PageShell(
       titre: t.admin.diagnostics.titre,
       entete: SousNavigationDomaine(onglets: ongletsPedagogie(), indexActif: 0),
-      child: switch (versionActive) {
-        AsyncValue<VersionProgramme?>(hasValue: true) =>
-          versionActive.requireValue == null
-              ? EmptyState(
-                  message: t.admin.diagnostics.aucunProgramme,
-                  invitation: t.admin.diagnostics.aucunProgrammeDetail,
-                  icone: AppIcons.rienAAfficher,
-                  registre: RegistreVide.subi,
-                )
-              : _Corps(
-                  version: versionActive.requireValue!,
-                  niveauId: _niveauId,
-                  motif: _motif,
-                  envoi: _envoi,
-                  erreur: _erreur,
-                  onNiveau: (String id) => setState(() => _niveauId = id),
-                  onMotifChange: (String _) => setState(() {}),
-                  onDecider: (String studentId) =>
-                      unawaited(_decider(studentId)),
-                ),
-        AsyncValue<VersionProgramme?>(hasError: true) => EmptyState(
-          message: t.admin.diagnostics.erreur,
-          icone: AppIcons.avertissement,
-          libelleAction: t.commun.reessayer,
-          onAction: () => ref.invalidate(versionActiveProgrammeProvider),
+      child: BlocAsynchrone<VersionProgramme?>(
+        valeur: versionActive,
+        squelette: const Skeleton.liste(lignes: 4),
+        titreEchec: t.admin.diagnostics.erreur,
+        onReessayer: () => ref.invalidate(versionActiveProgrammeProvider),
+        vide: EmptyState(
+          message: t.admin.diagnostics.aucunProgramme,
+          invitation: t.admin.diagnostics.aucunProgrammeDetail,
+          icone: AppIcons.rienAAfficher,
+          registre: RegistreVide.subi,
         ),
-        _ => const Skeleton.liste(lignes: 4),
-      },
+        construire: (VersionProgramme? version) => _Corps(
+          version: version!,
+          niveauId: _niveauId,
+          motif: _motif,
+          envoi: _envoi,
+          erreur: _erreur,
+          motifManquant: _motifManquant,
+          onNiveau: (String id) => setState(() {
+            _niveauId = id;
+            _erreur = null;
+          }),
+          onMotifChange: (String _) => setState(() {
+            _erreur = null;
+            _motifManquant = false;
+          }),
+          onDecider: (String studentId) => unawaited(_decider(studentId)),
+        ),
+      ),
     );
   }
 }
@@ -131,6 +156,7 @@ class _Corps extends ConsumerWidget {
     required this.motif,
     required this.envoi,
     required this.erreur,
+    required this.motifManquant,
     required this.onNiveau,
     required this.onMotifChange,
     required this.onDecider,
@@ -141,6 +167,9 @@ class _Corps extends ConsumerWidget {
   final TextEditingController motif;
   final bool envoi;
   final String? erreur;
+
+  /// Vrai quand le motif manque : il se dit sous les puces.
+  final bool motifManquant;
   final void Function(String niveauId) onNiveau;
   final void Function(String motif) onMotifChange;
   final void Function(String studentId) onDecider;
@@ -154,37 +183,31 @@ class _Corps extends ConsumerWidget {
       niveauxProgrammeProvider(version.id),
     );
 
-    return switch (file) {
-      // Les getters, jamais le type d'execution : meme regle que
-      // `admin_dossiers/dossiers_page.dart`.
-      AsyncValue<List<EleveADiagnostiquer>>(hasValue: true) =>
-        file.requireValue.isEmpty
-            ? EmptyState(
-                message: t.admin.diagnostics.aucun,
-                invitation: t.admin.diagnostics.aucunDetail,
-                icone: AppIcons.succes,
-                registre: RegistreVide.bonneNouvelle,
-              )
-            : _Decision(
-                eleve: file.requireValue.first,
-                restants: file.requireValue.length,
-                niveaux: niveaux,
-                niveauId: niveauId,
-                motif: motif,
-                envoi: envoi,
-                erreur: erreur,
-                onNiveau: onNiveau,
-                onMotifChange: onMotifChange,
-                onDecider: () => onDecider(file.requireValue.first.studentId),
-              ),
-      AsyncValue<List<EleveADiagnostiquer>>(hasError: true) => EmptyState(
-        message: t.admin.diagnostics.erreur,
-        icone: AppIcons.avertissement,
-        libelleAction: t.commun.reessayer,
-        onAction: () => ref.invalidate(diagnosticsATraiterProvider),
+    return BlocAsynchrone<List<EleveADiagnostiquer>>(
+      valeur: file,
+      squelette: const Skeleton.liste(lignes: 4),
+      titreEchec: t.admin.diagnostics.erreur,
+      onReessayer: () => ref.invalidate(diagnosticsATraiterProvider),
+      vide: EmptyState(
+        message: t.admin.diagnostics.aucun,
+        invitation: t.admin.diagnostics.aucunDetail,
+        icone: AppIcons.succes,
+        registre: RegistreVide.bonneNouvelle,
       ),
-      _ => const Skeleton.liste(lignes: 4),
-    };
+      construire: (List<EleveADiagnostiquer> v) => _Decision(
+        eleve: v.first,
+        restants: v.length,
+        niveaux: niveaux,
+        niveauId: niveauId,
+        motif: motif,
+        envoi: envoi,
+        erreur: erreur,
+        motifManquant: motifManquant,
+        onNiveau: onNiveau,
+        onMotifChange: onMotifChange,
+        onDecider: () => onDecider(v.first.studentId),
+      ),
+    );
   }
 }
 
@@ -197,6 +220,7 @@ class _Decision extends StatelessWidget {
     required this.motif,
     required this.envoi,
     required this.erreur,
+    required this.motifManquant,
     required this.onNiveau,
     required this.onMotifChange,
     required this.onDecider,
@@ -209,6 +233,9 @@ class _Decision extends StatelessWidget {
   final TextEditingController motif;
   final bool envoi;
   final String? erreur;
+
+  /// Vrai quand le motif manque : il se dit sous les puces.
+  final bool motifManquant;
   final void Function(String niveauId) onNiveau;
   final void Function(String motif) onMotifChange;
   final VoidCallback onDecider;
@@ -224,7 +251,7 @@ class _Decision extends StatelessWidget {
         Text(
           restants == 1
               ? t.admin.diagnostics.restantUn
-              : t.admin.diagnostics.restants(n: '$restants'),
+              : t.admin.diagnostics.restants(n: restants),
           style: textes.bodySmall,
         ),
         Ecart.vXl,
@@ -233,16 +260,13 @@ class _Decision extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(eleve.libelle, style: textes.titleLarge),
-              Text(
-                switch (jours) {
-                  <= 0 => t.admin.diagnostics.inscritAujourdhui,
-                  1 => t.admin.diagnostics.inscritDepuisUnJour,
-                  final int j => t.admin.diagnostics.inscritDepuis(
-                    jours: '$j',
-                  ),
-                },
-                style: textes.bodySmall,
-              ),
+              Text(switch (jours) {
+                <= 0 => t.admin.diagnostics.inscritAujourdhui,
+                1 => t.admin.diagnostics.inscritDepuisUnJour,
+                final int j => LibellesGroupe.insecable(
+                  t.admin.diagnostics.inscritDepuis(jours: j),
+                ),
+              }, style: textes.bodySmall),
             ],
           ),
         ),
@@ -266,23 +290,26 @@ class _Decision extends StatelessWidget {
         Ecart.vSm,
         Text(t.admin.diagnostics.motifRequis, style: textes.bodySmall),
         Ecart.vSm,
-        TextField(
-          controller: motif,
-          maxLines: 2,
-          onChanged: onMotifChange,
-          decoration: InputDecoration(labelText: t.admin.diagnostics.champMotif),
+        SelecteurMotif(
+          motifs: MotifsProposes.placement(),
+          controleur: motif,
+          libelleChamp: t.admin.diagnostics.champMotif,
+          // Le motif manquant se dit sous les puces.
+          erreur: motifManquant ? t.formulaire.motif.manque : null,
+          onChange: onMotifChange,
         ),
         if (erreur != null) ...<Widget>[
           Ecart.vMd,
-          Text(erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+          Text(
+            erreur!,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
         ],
         Ecart.vLg,
         ActionPrincipale(
           libelle: t.admin.diagnostics.decider,
           enCours: envoi,
-          onPress: niveauId == null || motif.text.trim().isEmpty
-              ? null
-              : onDecider,
+          onPress: onDecider,
         ),
       ],
     );

@@ -13,7 +13,7 @@ import 'service_etat_partage.dart';
 /// **Le defaut est un bouchon en memoire, et il est declare comme tel.** La
 /// table `session_shared_content` n'existe pas : la migration est interdite en
 /// phase parallele (decision D-12) et la demande SQL est ecrite dans
-/// `docs/teaching-core/TC_CONTRACT_REQUEST_F.md`.
+/// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_F.md`.
 ///
 /// Consequence honnete tant qu'Agent Z n'a pas applique cette migration : un
 /// arrivant tardif **sur un autre appareil** ne recupere rien, puisque le

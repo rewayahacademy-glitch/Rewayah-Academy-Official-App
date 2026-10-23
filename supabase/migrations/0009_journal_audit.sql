@@ -1,9 +1,9 @@
 -- 0009 : `ADM-04`, le journal d'audit.
 --
--- Perimetre fixe par docs/produit/parcours-utilisateurs.md section 5
+-- Perimetre fixe par docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md section 5
 -- (« Lecture seule. Filtres par acteur, par type d'evenement, par periode.
 -- Aucun bouton d'action, aucune exception ») et par
--- docs/design/05-regles-responsive.md section 3 (« Cartes / Cartes / Tableau
+-- docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md section 3 (« Cartes / Cartes / Tableau
 -- dense, c'est sa forme naturelle »).
 --
 -- Aucune table, aucune colonne, aucune policy : `audit_logs` existe depuis

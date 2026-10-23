@@ -1,12 +1,106 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../i18n/isolat_bidi.dart';
+import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/action_principale.dart';
 import '../widgets/app_bottom_sheet.dart';
+import '../widgets/choix_nombre.dart';
+import '../widgets/selecteur_motif.dart';
 import '../widgets/setting_row.dart';
 import 'service_configuration.dart';
+
+/// Les valeurs proposees d'un reglage entier (FORM-L13).
+///
+/// **Les puces ne sont que des raccourcis** : une valeur saisie par « Autre »
+/// est acceptee des qu'elle est un entier positif ou nul, comme avant FORM-L13
+/// (decide par delegation le 08/10). Seule exception : un plafond [max] qui a
+/// une source ecrite (migration ou `docs/current`), citee en commentaire.
+@immutable
+class ReglageEntierPropose {
+  /// Cree une proposition.
+  const ReglageEntierPropose({required this.proposees, this.max});
+
+  /// Les valeurs proposees en puces.
+  final List<int> proposees;
+
+  /// Le plafond de la saisie libre, seulement s'il a une source ecrite ; nul
+  /// sinon (toute valeur >= 0 est acceptee).
+  final int? max;
+}
+
+/// Les propositions des treize reglages entiers de Configuration, par cle
+/// `app_config` (FORM-L13, decide par delegation le 05/10).
+///
+/// **Aucune regle metier n'est inventee ici** : chaque valeur proposee vient
+/// d'un defaut de migration, d'une valeur deja proposee ailleurs dans le code
+/// ou de `docs/current`. La source de chaque ligne est dans
+/// `docs/current/FORM-L1-7-13_MOTIFS.md` (section L13). Le serveur n'impose
+/// aucune borne ; l'ecran n'en ajoute aucune sans source ecrite (08/10).
+const Map<String, ReglageEntierPropose>
+reglagesEntiersProposes = <String, ReglageEntierPropose>{
+  // Defaut 5 (0001_fondations).
+  'absence_threshold_minutes': ReglageEntierPropose(
+    proposees: <int>[5, 10, 15],
+  ),
+  // Defaut 60 (0005) ; 45 et 90 : doc 07 ; liste de `FeuilleRegle`.
+  'session_duration_minutes': ReglageEntierPropose(
+    proposees: <int>[30, 45, 60, 90],
+  ),
+  // Defaut 45 (0005) ; liste de `FeuilleRegle`.
+  'session_paid_minimum_minutes': ReglageEntierPropose(
+    proposees: <int>[30, 45, 60],
+  ),
+  // Defaut 30 (0005) ; liste de `FeuilleRegle`.
+  'break_minutes_between_sessions': ReglageEntierPropose(
+    proposees: <int>[15, 30, 45],
+  ),
+  // Defaut 5 (0005) ; liste de `FeuilleRegle` ; 6 : doc 07 (adultes).
+  'max_students_per_teacher': ReglageEntierPropose(
+    proposees: <int>[3, 4, 5, 6],
+  ),
+  // Defaut 4 (0005, 0033).
+  'matching_horizon_weeks': ReglageEntierPropose(proposees: <int>[2, 4, 8]),
+  // Defaut 11 (0001) ; 15 et 18 : bornes des tranches d'age (0043).
+  'camera_auto_allow_min_age': ReglageEntierPropose(
+    proposees: <int>[11, 15, 18],
+  ),
+  // Defaut 8 (0001) ; 7 et 10 : bornes des tranches d'age (0043).
+  'child_ui_mode_max_age': ReglageEntierPropose(proposees: <int>[7, 8, 10]),
+  // Defaut 2. Plafond 2 : source ecrite, regle C11 de
+  // `supabase/migrations/0001_fondations.sql` (« deux appareils actifs
+  // max par eleve », garde `guard_devices_max`).
+  'max_devices_per_student': ReglageEntierPropose(
+    proposees: <int>[1, 2],
+    max: 2,
+  ),
+  // Defaut 1 (0001).
+  'max_concurrent_sessions_per_profile': ReglageEntierPropose(
+    proposees: <int>[1, 2],
+  ),
+  // Defaut 3 (decision du directeur du 22/10/2026). Plafond 80 : source
+  // ecrite, le declencheur `app_config_classes_max` refuse au-dela
+  // (`20261022000200_classes_plafond_par_enseignant.sql`).
+  'enseignant.classes_max': ReglageEntierPropose(
+    proposees: <int>[1, 2, 3, 4, 5, 6],
+    max: 80,
+  ),
+  // Defaut 2 (0001), 7 (0017) ; 5 et 6 : doc 07 (capacites + enseignant).
+  'max_participants_per_session': ReglageEntierPropose(
+    proposees: <int>[2, 5, 6, 7],
+  ),
+  // Defaut 30 (0001, doc 06).
+  'recording_retention_days': ReglageEntierPropose(proposees: <int>[7, 15, 30]),
+  // Defaut 90 (0004).
+  'kyc_retention_days': ReglageEntierPropose(proposees: <int>[30, 60, 90]),
+  // Defaut 14 (20261018150000) : delai de reflexion avant qu'une demande de
+  // suppression de compte puisse etre traitee.
+  'compte.suppression_delai_jours': ReglageEntierPropose(
+    proposees: <int>[7, 14, 30],
+  ),
+};
 
 /// Une ligne Configuration qui edite un entier de `app_config` par une
 /// feuille de saisie -- meme mecanique que `_FeuilleTraitement` de
@@ -81,6 +175,8 @@ class ConfigLigneEntiere extends ConsumerWidget {
       titre: titre,
       constructeur: (BuildContext _) => _FeuilleEntiere(
         valeurInitiale: valeur,
+        proposition: reglagesEntiersProposes[cle],
+        affichage: affichage,
         champValeur: champValeur,
         envoyer: envoyer,
         valeurInvalide: valeurInvalide,
@@ -96,6 +192,8 @@ class ConfigLigneEntiere extends ConsumerWidget {
 class _FeuilleEntiere extends StatefulWidget {
   const _FeuilleEntiere({
     required this.valeurInitiale,
+    required this.proposition,
+    required this.affichage,
     required this.champValeur,
     required this.envoyer,
     required this.valeurInvalide,
@@ -105,6 +203,10 @@ class _FeuilleEntiere extends StatefulWidget {
   });
 
   final int valeurInitiale;
+
+  /// Les valeurs proposees ; nul pour une cle sans proposition (champ seul).
+  final ReglageEntierPropose? proposition;
+  final String Function(int valeur) affichage;
   final String champValeur;
   final String envoyer;
   final String valeurInvalide;
@@ -117,22 +219,28 @@ class _FeuilleEntiere extends StatefulWidget {
 }
 
 class _FeuilleEntiereEtat extends State<_FeuilleEntiere> {
-  late final TextEditingController _champ = TextEditingController(
-    text: '${widget.valeurInitiale}',
-  );
+  late int? _choisie = widget.valeurInitiale;
   bool _envoi = false;
   String? _erreur;
 
-  @override
-  void dispose() {
-    _champ.dispose();
-    super.dispose();
-  }
-
   Future<void> _envoyer() async {
-    final int? v = int.tryParse(_champ.text.trim());
+    final ReglageEntierPropose? p = widget.proposition;
+    final int? v = _choisie;
     if (v == null || v < 0) {
       setState(() => _erreur = widget.valeurInvalide);
+      return;
+    }
+    // Seul un plafond a source ecrite refuse une valeur (08/10).
+    if (p?.max case final int max when v > max) {
+      setState(
+        // DUREE-FOND-1 : une valeur ancree pour s'afficher seule
+        // (« 30 jours », marque U+200E en tete) perd son ancre au milieu de
+        // la phrase.
+        () => _erreur = t.formulaire.entier.horsBornes(
+          min: sansAncre(widget.affichage(0)),
+          max: sansAncre(widget.affichage(max)),
+        ),
+      );
       return;
     }
     setState(() {
@@ -155,12 +263,32 @@ class _FeuilleEntiereEtat extends State<_FeuilleEntiere> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        TextField(
-          controller: _champ,
-          keyboardType: TextInputType.number,
-          autofocus: true,
-          decoration: InputDecoration(labelText: widget.champValeur),
-        ),
+        if (widget.proposition case final ReglageEntierPropose p)
+          SelecteurEntier(
+            proposees: p.proposees,
+            max: p.max,
+            affichage: widget.affichage,
+            valeurInitiale: widget.valeurInitiale,
+            libelleChamp: widget.champValeur,
+            onChange: (int? v) => setState(() {
+              _choisie = v;
+              _erreur = null;
+            }),
+          )
+        else
+          // Sans proposition, la valeur se choisit au pas a pas, jamais au
+          // clavier (decision du 17/10).
+          ChoixNombre(
+            libelle: widget.champValeur,
+            valeur: _choisie ?? widget.valeurInitiale,
+            affichage: widget.affichage,
+            libelleMoins: t.choix.diminuer,
+            libellePlus: t.choix.augmenter,
+            onChange: (int v) => setState(() {
+              _choisie = v;
+              _erreur = null;
+            }),
+          ),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,
           Text(

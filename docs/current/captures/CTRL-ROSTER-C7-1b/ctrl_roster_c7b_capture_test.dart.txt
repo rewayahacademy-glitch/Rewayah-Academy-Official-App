@@ -1,0 +1,184 @@
+// CTRL-ROSTER-C7-1b : le libelle « Prenom N. » isole (U+2068 ... U+2069).
+// Meme roster que la revue (Mariam S / Abd al-Rahman Ben Salah / عائشة نور) :
+// liste en arabe 320 px x2 sombre, liste en francais 1440 px clair,
+// recapitulatif en arabe 320 px x2, Historique en arabe et en francais.
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
+import 'package:rewayah_academy/features/controleur/historique_controleur.dart';
+import 'package:rewayah_academy/features/controleur/historique_controleur_page.dart';
+import 'package:rewayah_academy/features/controleur/observation_controle.dart';
+import 'package:rewayah_academy/features/controleur/observation_controle_page.dart';
+
+import 'outil_capture.dart';
+
+const List<EleveRoster> _roster = <EleveRoster>[
+  EleveRoster(id: 'e1', prenom: 'Mariam', initialeNom: 'S'),
+  EleveRoster(id: 'e2', prenom: 'Abd al-Rahman', initialeNom: 'Ben Salah'),
+  EleveRoster(id: 'e3', prenom: 'عائشة', initialeNom: 'نور'),
+];
+
+Future<void> _toucher(WidgetTester tester, Finder f) async {
+  await tester.ensureVisible(f);
+  await tester.pumpAndSettle();
+  await tester.tap(f);
+  await tester.pumpAndSettle();
+}
+
+Future<void> _roster_(
+  WidgetTester tester, {
+  required AppLocale langue,
+  required Size taille,
+  double echelle = 1,
+  ThemeMode theme = ThemeMode.light,
+}) async {
+  LocaleSettings.setLocaleSync(langue);
+  addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+  fixerVueCapture(tester, taille, 2);
+  final CompteRenduEnSuspens visite = CompteRenduEnSuspens(
+    seanceId: 'seance-A',
+    classe: 'Classe An-Nour',
+    debut: DateTime(2026, 9, 28, 16),
+  );
+  await tester.pumpWidget(
+    hoteCapture(
+      ObservationControlePage(seanceId: visite.seanceId),
+      echelleTexte: echelle,
+      themeMode: theme,
+      surcharges: <Override>[
+        visitesObserveesProvider.overrideWith(
+          () => VisitesObservees(<String, CompteRenduEnSuspens>{
+            visite.seanceId: visite,
+          }),
+        ),
+        rosterControleProvider.overrideWith((Ref _) async => _roster),
+      ],
+    ),
+  );
+  await tester.pumpAndSettle();
+  await _toucher(
+    tester,
+    find.byKey(ObservationControlePage.cleNature(NatureObservation.aSuivre)),
+  );
+  await _toucher(tester, find.text(t.commun.continuer).last);
+  await _toucher(
+    tester,
+    find.byKey(
+      ObservationControlePage.cleDomaine(DomaineObservation.pedagogie),
+    ),
+  );
+  await _toucher(tester, find.text(t.commun.continuer).last);
+  await _toucher(
+    tester,
+    find.byKey(
+      ObservationControlePage.clePersonne(PersonneConcernee.elevePrecis),
+    ),
+  );
+}
+
+class _Historique implements PortHistorique {
+  const _Historique();
+
+  @override
+  Future<List<RapportControle>> rapports() async => <RapportControle>[
+    RapportControle(
+      id: 'bidi',
+      missionId: 'mission-bidi',
+      classe: 'Classe An-Nour',
+      enseignant: 'Sayyid Karim',
+      debut: DateTime(2026, 9, 21, 18),
+      dureeObservee: const Duration(minutes: 44),
+      statut: StatutRapport.envoye,
+      choix: ChoixCompteRendu.rienASignaler,
+      presents: <String>[for (final EleveRoster e in _roster) e.nomAffiche],
+    ),
+  ];
+
+  @override
+  Future<ComplementRapport> ajouterComplement(
+    String rapportId, {
+    required String texte,
+    String? motif,
+  }) async => throw StateError('capture');
+}
+
+void main() {
+  setUpAll(() async {
+    await chargerPolicesDuDepot();
+    await LocaleSettings.setLocale(AppLocale.ar);
+    await LocaleSettings.setLocale(AppLocale.fr);
+  });
+
+  group('CTRL-ROSTER-C7-1b', skip: sautSansCapture, () {
+    testWidgets('liste ar 320 x2 sombre', (WidgetTester tester) async {
+      await _roster_(
+        tester,
+        langue: AppLocale.ar,
+        taille: const Size(320, 1400),
+        echelle: 2,
+        theme: ThemeMode.dark,
+      );
+      await tester.ensureVisible(
+        find.byKey(ObservationControlePage.cleEleve('e3')),
+      );
+      await tester.pumpAndSettle();
+      await capturer(tester, 'liste_ar_320_x2_sombre');
+    });
+
+    testWidgets('liste fr 1440 clair', (WidgetTester tester) async {
+      await _roster_(
+        tester,
+        langue: AppLocale.fr,
+        taille: const Size(1440, 900),
+      );
+      await tester.ensureVisible(
+        find.byKey(ObservationControlePage.cleEleve('e3')),
+      );
+      await tester.pumpAndSettle();
+      await capturer(tester, 'liste_fr_1440_clair');
+    });
+
+    testWidgets('recapitulatif ar 320 x2', (WidgetTester tester) async {
+      await _roster_(
+        tester,
+        langue: AppLocale.ar,
+        taille: const Size(320, 1400),
+        echelle: 2,
+      );
+      await _toucher(
+        tester,
+        find.byKey(ObservationControlePage.cleEleve('e1')),
+      );
+      await _toucher(tester, find.text(t.commun.continuer).last);
+      await _toucher(tester, find.text(t.commun.continuer).last);
+      await capturer(tester, 'recapitulatif_ar_320_x2_clair');
+    });
+
+    for (final AppLocale langue in AppLocale.values) {
+      testWidgets('historique ${langue.languageCode}', (
+        WidgetTester tester,
+      ) async {
+        LocaleSettings.setLocaleSync(langue);
+        addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+        fixerVueCapture(tester, const Size(390, 1400), 2);
+        await tester.pumpWidget(
+          hoteCapture(
+            HistoriqueControleurPage(maintenant: DateTime(2026, 9, 22)),
+            surcharges: <Override>[
+              portHistoriqueProvider.overrideWithValue(const _Historique()),
+            ],
+          ),
+        );
+        await tester.pumpAndSettle();
+        await _toucher(
+          tester,
+          find.byKey(HistoriqueControleurPage.ligneKey('bidi')),
+        );
+        await capturer(tester, 'historique_${langue.languageCode}_390_clair');
+      });
+    }
+  });
+}

@@ -1,220 +1,188 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/appairage/service_appairage.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/icons/app_icons.dart';
+import '../../core/reseau/etat_sans_donnees.dart';
+import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/action_principale.dart';
-import '../../core/widgets/avatar_tile.dart';
-import '../../core/widgets/bento_tile.dart';
-import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/bloc_asynchrone.dart';
+import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/skeleton.dart';
+import 'liste_appareils_eleve.dart';
 
-/// `TUT-02` : le foyer et ses appareils.
+/// `/tuteur/foyer/appareils` : les appareils du foyer.
 ///
-/// **Liste dense, pas de grandes cartes.** C'est un ecran de gestion, pas un
-/// ecran de suivi affectif, et le registre visuel doit le dire
-/// (`docs/produit/parcours-utilisateurs.md`).
+/// Composition (manifeste section 2 : « Nom, profils autorises, gestion »,
+/// lignes de Mon compte #6 ; contenu de l'ancienne capture « Foyer Member »
+/// #30) : UN groupe a filets « Profils eleves », une ligne par profil (prenom,
+/// appareils connectes et leurs noms, chevron vers ses appareils), puis
+/// l'explication de l'appareil partage. Bureau : le groupe a gauche,
+/// l'explication a droite.
 ///
-/// A la limite de deux appareils, le bouton d'ajout **est remplace par un
-/// message** au lieu de rester actif puis d'echouer : un bouton qui echoue
-/// apres le geste coute plus cher en confiance qu'un bouton absent.
+/// **Une fonction, un seul endroit** : le retrait et la connexion d'un
+/// appareil vivent sur la page de chaque profil
+/// (`/tuteur/foyer/:eleveId/appareils`) ; cette page y mene. L'ajout d'un
+/// profil eleve vit au Foyer : ici, seul l'etat vide y invite.
+///
+/// Aucun compteur decoratif, aucune limite codee (DB-APP-04), aucun
+/// « appareil familial » invente : la vue ne sait pas regrouper un appareil
+/// partage (DB-APP-05), l'explication le dit.
+///
+/// Etats : chargement (squelette), contenu, vide (aucun profil), erreur
+/// (« Reessayer »), hors ligne sans donnees.
 class AppareilsPage extends ConsumerWidget {
-  /// Cree l'ecran du foyer.
-  const AppareilsPage({super.key});
+  /// Cree la page.
+  const AppareilsPage({super.key, this.onAller, this.onRetour});
 
-  // Reprise au lot R4 : l'ecran passait par un `Scaffold` propre, un
-  // `OfflineBanner` pose a la main et un tirage-pour-rafraichir
-  // (`RefreshIndicator` invalidant les deux providers du foyer) autour de son
-  // `ListView`. Il passe desormais par `PageShell`, qui porte deja le fond, le
-  // bandeau hors ligne et la gouttiere du gabarit.
-  //
-  // Dette assumee : **le tirage-pour-rafraichir disparait**, meme sort et
-  // meme raison que sur `TUT-00b`, `TUT-01`, `ENS-02` et `ADM-01` (voir leurs
-  // fiches, section 6) : un `RefreshIndicator` autour d'un `ListView` a
-  // besoin d'etre l'enfant direct d'un `Expanded` pour ne pas planter en
-  // hauteur non bornee, et `PageShell` ne donne pas cette garantie a son
-  // `child`. C'est le cinquieme ecran qui la demande.
+  /// Ouvre un chemin (ajout, appareils d'un profil) ; par defaut, le
+  /// routeur. La demonstration adulte y garde la personne dans sa coquille.
+  final void Function(String chemin)? onAller;
+
+  /// Le retour ; par defaut, le Foyer par le routeur (niveau 2).
+  final VoidCallback? onRetour;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final TextTheme textes = Theme.of(context).textTheme;
-    final AsyncValue<List<EleveDuFoyer>> eleves = ref.watch(
-      elevesDuFoyerProvider,
+    final AsyncValue<DonneesAppareilsFoyer> donnees = ref.watch(
+      donneesAppareilsFoyerProvider,
     );
-    final AsyncValue<List<AppareilAppaire>> appareils = ref.watch(
-      appareilsDuFoyerProvider,
-    );
+    final AsyncValue<bool> reseau = ref.watch(horsLigneProvider);
+    final bool horsLigne = reseau.hasValue && reseau.requireValue;
+    final void Function(String chemin)? aller =
+        onAller ?? GoRouter.maybeOf(context)?.go;
+
+    // Tant que le Foyer du lot B n'est pas livre, la destination Foyer rend
+    // cette page (STUB de `foyer_page.dart`) : a sa propre racine, elle n'a
+    // pas de retour. A `/tuteur/foyer/appareils`, le retour mene au Foyer.
+    final bool niveau2 = _cheminCourant(context) != Routes.tuteurFoyer;
+
+    final Widget corps = horsLigne && !donnees.hasValue
+        // Le bandeau de `PageShell` dit le reseau, le bloc dit ce qui manque
+        // (EA-HL-DOUBLE-1).
+        ? EtatSansDonnees(
+            quoi: t.appareils.foyer.sansDonnees,
+            onAction: () => relireAppareilsFoyer(ref),
+          )
+        : BlocAsynchrone<DonneesAppareilsFoyer>(
+            valeur: donnees,
+            squelette: const _Squelette(),
+            onReessayer: () => relireAppareilsFoyer(ref),
+            estVide: (DonneesAppareilsFoyer d) => d.eleves.isEmpty,
+            vide: EtatSysteme(
+              nature: NatureEtat.aucunResultat,
+              titre: t.appareils.foyer.videTitre,
+              phrase: t.appareils.foyer.vide,
+              libelleAction: t.appareils.foyer.videAction,
+              onAction: () => aller?.call(Routes.tuteurAjouterEnfant),
+            ),
+            construire: (DonneesAppareilsFoyer d) => _Contenu(
+              donnees: d,
+              onProfil: (String eleveId) =>
+                  aller?.call(Routes.ficheEleveSousPage(eleveId, 'appareils')),
+            ),
+          );
 
     return PageShell(
-      titre: t.appareils.titre,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          // La regle de l'ADR-010 est affichee en clair : deux appareils au
-          // maximum, un seul en cours a la fois.
-          Text(t.appareils.regle, style: textes.bodySmall),
-          Ecart.vXl,
-          if (eleves.hasValue && eleves.requireValue.isEmpty)
-            EmptyState(
-              message: t.enfant.aucun,
-              invitation: t.enfant.aucunDetail,
-              libelleAction: t.enfant.titre,
-              onAction: () =>
-                  GoRouter.of(context).go(Routes.tuteurAjouterEnfant),
-            )
-          else ...<Widget>[
-            for (final EleveDuFoyer eleve
-                in eleves.value ?? const <EleveDuFoyer>[])
-              Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-                child: _BlocEleve(
-                  eleve: eleve,
-                  appareils: (appareils.value ?? const <AppareilAppaire>[])
-                      .where(
-                        (AppareilAppaire a) =>
-                            a.profilId == eleve.id && a.actif,
-                      )
-                      .toList(),
-                  onRevoquer: (String id) async {
-                    await ref.read(serviceAppairageProvider).revoquer(id);
-                    ref.invalidate(appareilsDuFoyerProvider);
-                  },
-                ),
-              ),
-            Ecart.vLg,
-            ActionPrincipale(
-              libelle: t.enfant.titre,
-              onPress: () =>
-                  GoRouter.of(context).go(Routes.tuteurAjouterEnfant),
-              niveau: NiveauAction.secondaire,
-            ),
-          ],
-        ],
-      ),
+      titre: t.appareils.foyer.titre,
+      onRetour:
+          onRetour ??
+          (niveau2 && aller != null ? () => aller(Routes.tuteurFoyer) : null),
+      child: corps,
     );
   }
 }
 
-class _BlocEleve extends StatelessWidget {
-  const _BlocEleve({
-    required this.eleve,
-    required this.appareils,
-    required this.onRevoquer,
-  });
+class _Contenu extends StatelessWidget {
+  const _Contenu({required this.donnees, required this.onProfil});
 
-  final EleveDuFoyer eleve;
-  final List<AppareilAppaire> appareils;
-  final Future<void> Function(String appareilId) onRevoquer;
-
-  bool get _limiteAtteinte =>
-      appareils.length >= ServiceAppairage.appareilsParEleve;
+  final DonneesAppareilsFoyer donnees;
+  final void Function(String eleveId) onProfil;
 
   @override
   Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final f = t.appareils.foyer;
+    final bool bureau = AppGabarit.de(context) == Gabarit.desktop;
 
-    return BentoTile(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              // Photo reelle si elle existe, repli sur les initiales, jamais une
-              // icone d'erreur (ADR-012). L'URL signee arrive a l'etape 4 avec
-              // TUT-05 : ici, le repli est la normale.
-              AvatarTile(prenom: eleve.prenom, diametre: AppSpacing.xxxl * 2),
-              Ecart.hMd,
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(eleve.prenom, style: textes.titleMedium),
-                    Text(eleve.identifiantImmuable, style: textes.bodySmall),
-                  ],
-                ),
+    final List<Widget> principal = <Widget>[
+      Text(
+        f.phrase,
+        style: palette.inkMuted.applyTo(textes.bodyLarge ?? const TextStyle()),
+      ),
+      Ecart.vXxl,
+      GroupeReglages(
+        titre: f.groupeProfils,
+        lignes: <LigneRubrique>[
+          for (final EleveDuFoyer eleve in elevesParPrenom(donnees.eleves))
+            LigneRubrique(
+              icone: AppIcons.profil,
+              libelle: eleve.prenom,
+              legende: resumeAppareils(
+                appareilsActifsDe(eleve.id, donnees.appareils),
               ),
-            ],
-          ),
-          Ecart.vMd,
-          if (appareils.isEmpty)
-            Text(t.vide.aucunAppareil, style: textes.bodySmall)
-          else
-            for (final AppareilAppaire appareil in appareils)
-              _LigneAppareil(
-                appareil: appareil,
-                onRevoquer: () => unawaited(onRevoquer(appareil.id)),
-              ),
-          Ecart.vMd,
-          // Le bouton disparait, il ne devient pas inerte : la limite s'explique
-          // au lieu de se heurter.
-          if (_limiteAtteinte)
-            Text(
-              t.appareils.limiteAtteinte(prenom: eleve.prenom),
-              style: palette.inkAlert.applyTo(
-                textes.bodySmall ?? const TextStyle(),
-              ),
-            )
-          else
-            ActionPrincipale(
-              libelle: t.appareils.ajouter,
-              onPress: () =>
-                  GoRouter.of(context).go(Routes.appairerPour(eleve.id)),
+              onPress: () => onProfil(eleve.id),
             ),
         ],
       ),
+    ];
+
+    final Widget partage = EncartAppareils(
+      icone: AppIcons.verrou,
+      titre: f.partageTitre,
+      phrase: f.partage,
     );
-  }
-}
 
-class _LigneAppareil extends StatelessWidget {
-  const _LigneAppareil({required this.appareil, required this.onRevoquer});
-
-  final AppareilAppaire appareil;
-  final VoidCallback onRevoquer;
-
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-      child: Row(
+    if (bureau) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Expanded(
+            flex: 3,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(appareil.plateforme, style: textes.bodyMedium),
-                Text(
-                  appareil.derniereUtilisation == null
-                      ? t.appareils.jamaisUtilise
-                      : t.appareils.derniereUtilisation(
-                          quand: _jour(appareil.derniereUtilisation!),
-                        ),
-                  style: textes.bodySmall,
-                ),
-              ],
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: principal,
             ),
           ),
-          Ecart.hMd,
-          ActionPrincipale(
-            libelle: t.appareils.revoquer,
-            onPress: onRevoquer,
-            niveau: NiveauAction.secondaire,
-            pleineLargeur: false,
-          ),
+          const SizedBox(width: AppSpacing.section),
+          Expanded(flex: 2, child: partage),
         ],
-      ),
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[...principal, Ecart.vSection, partage],
     );
   }
 }
 
-String _jour(DateTime quand) =>
-    '${quand.day.toString().padLeft(2, '0')}/'
-    '${quand.month.toString().padLeft(2, '0')}/${quand.year}';
+class _Squelette extends StatelessWidget {
+  const _Squelette();
+
+  @override
+  Widget build(BuildContext context) => const Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: <Widget>[
+      Skeleton(hauteur: AppSpacing.xxxl),
+      Ecart.vXxl,
+      Skeleton(hauteur: AppSpacing.respiration * 3),
+    ],
+  );
+}
+
+/// Le chemin de l'ecran courant, `null` hors routeur.
+String? _cheminCourant(BuildContext context) {
+  try {
+    return GoRouterState.of(context).uri.path;
+  } on Object {
+    return null;
+  }
+}

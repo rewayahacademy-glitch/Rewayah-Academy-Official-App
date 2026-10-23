@@ -10,7 +10,7 @@ import 'app_bottom_sheet.dart';
 ///
 /// **Seul point d'entree d'une confirmation destructive.** Jamais
 /// `clic vers suppression`, et jamais une `AlertDialog` posee dans un ecran :
-/// `docs/design/07-catalogue-composants.md` section 6 interdit tout autre
+/// `docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 6 interdit tout autre
 /// chemin.
 ///
 /// Trois regles portees par l'API elle-meme, et non par la relecture
@@ -37,6 +37,7 @@ class ConfirmDestructive extends StatelessWidget {
     required this.onAnnuler,
     super.key,
     this.irreversible = false,
+    this.libelleAnnuler,
   });
 
   /// La question, qui nomme l'objet : « Retirer Aicha du foyer ? »
@@ -61,16 +62,26 @@ class ConfirmDestructive extends StatelessWidget {
   /// besoin de cette feuille du tout.
   final bool irreversible;
 
+  /// Le libelle du renoncement, quand un texte exact le nomme (« Rester »).
+  /// Par defaut : « Annuler ».
+  final String? libelleAnnuler;
+
   /// Ouvre la confirmation et rend `true` si la personne a confirme.
   ///
   /// Rend `false` en cas d'annulation **comme en cas de fermeture par le
   /// glissement ou par `Echap`** : une feuille fermee n'a rien confirme.
+  ///
+  /// Sur bureau, la meme confirmation s'ouvre en boite de dialogue centree
+  /// (`AppBottomSheet.ouvrir`, `FormeModale.dialogue`) : memes actions, meme
+  /// ordre de lecture et de tabulation, « Annuler » toujours avant le
+  /// destructif au clavier.
   static Future<bool> demander(
     BuildContext context, {
     required String question,
     required String consequence,
     required String libelleConfirmer,
     bool irreversible = false,
+    String? libelleAnnuler,
   }) async {
     final bool? reponse = await AppBottomSheet.ouvrir<bool>(
       context,
@@ -80,6 +91,7 @@ class ConfirmDestructive extends StatelessWidget {
         consequence: consequence,
         libelleConfirmer: libelleConfirmer,
         irreversible: irreversible,
+        libelleAnnuler: libelleAnnuler,
         onConfirmer: () => Navigator.of(contexte).pop(true),
         onAnnuler: () => Navigator.of(contexte).pop(false),
       ),
@@ -87,6 +99,7 @@ class ConfirmDestructive extends StatelessWidget {
       // que la consequence, et les deux actions vivent dans la zone collee.
       actions: (BuildContext contexte) => _Actions(
         libelleConfirmer: libelleConfirmer,
+        libelleAnnuler: libelleAnnuler,
         onConfirmer: () => Navigator.of(contexte).pop(true),
         onAnnuler: () => Navigator.of(contexte).pop(false),
       ),
@@ -129,9 +142,11 @@ class _Actions extends StatelessWidget {
     required this.libelleConfirmer,
     required this.onConfirmer,
     required this.onAnnuler,
+    this.libelleAnnuler,
   });
 
   final String libelleConfirmer;
+  final String? libelleAnnuler;
   final VoidCallback onConfirmer;
   final VoidCallback onAnnuler;
 
@@ -162,7 +177,7 @@ class _Actions extends StatelessWidget {
           FocusTraversalOrder(
             order: const NumericFocusOrder(1),
             child: ActionPrincipale(
-              libelle: t.commun.annuler,
+              libelle: libelleAnnuler ?? t.commun.annuler,
               onPress: onAnnuler,
               niveau: NiveauAction.secondaire,
             ),

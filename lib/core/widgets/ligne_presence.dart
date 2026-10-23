@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../i18n/strings.g.dart';
 import '../presence/service_presence.dart';
 import '../presence/vue_presence.dart';
+import '../tc_groupe/libelles_tc_groupe.dart';
 import '../theme/app_spacing.dart';
 import 'status_pill.dart';
 
@@ -89,18 +90,29 @@ class LignePresence extends StatelessWidget {
       RepereTemps.entree =>
         minutes <= 0
             ? t.presence.entreeInstant
-            : t.presence.entreeMinutes(minutes: '$minutes'),
+            : LibellesGroupe.insecable(
+                t.presence.entreeMinutes(minutes: '$minutes'),
+              ),
       // Un retard sous la minute n'existe pas : le seuil est de cinq minutes
       // par defaut, et il se regle en base, jamais ici.
-      RepereTemps.retard => t.presence.retardMinutes(minutes: '$minutes'),
+      // DUREE-INSECABLE-4 : insecable seulement. La phrase suit le role
+      // (« Eleve · 7 min apres l'heure ») : l'ancre de sens se pose sur la
+      // ligne entiere, et seulement quand la duree la commence ([build]).
+      RepereTemps.retard => LibellesGroupe.insecable(
+        t.presence.retardMinutes(minutes: '$minutes'),
+      ),
       RepereTemps.silence =>
         minutes <= 0
             ? t.presence.silenceInstant
-            : t.presence.silenceMinutes(minutes: '$minutes'),
+            : LibellesGroupe.insecable(
+                t.presence.silenceMinutes(minutes: '$minutes'),
+              ),
       RepereTemps.attente =>
         minutes <= 0
             ? t.presence.attenteInstant
-            : t.presence.attenteMinutes(minutes: '$minutes'),
+            : LibellesGroupe.insecable(
+                t.presence.attenteMinutes(minutes: '$minutes'),
+              ),
       RepereTemps.aucun => null,
     };
   }
@@ -113,11 +125,13 @@ class LignePresence extends StatelessWidget {
     // Les parties basses se lisent d'un trait : le role, la duree, et le mot
     // qui dit qu'une decision a fige l'etat. Trois `Text` separes feraient
     // trois annonces pour une seule personne.
-    final String detail = <String>[
-      if (role case final String r when r.isNotEmpty) r,
-      ?dit,
-      if (afficherConsolide && vue.consolide) t.presence.consolide,
-    ].join(' · ');
+    final String detail = LibellesGroupe.ancreSens(
+      <String>[
+        if (role case final String r when r.isNotEmpty) r,
+        ?dit,
+        if (afficherConsolide && vue.consolide) t.presence.consolide,
+      ].join(' · '),
+    );
 
     return MergeSemantics(
       child: Column(

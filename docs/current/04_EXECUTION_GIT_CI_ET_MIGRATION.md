@@ -1,0 +1,17 @@
+# Rewayah - protocole d'exécution, nettoyage et publication documentaire
+Version : 22 septembre 2026. À appliquer sur le dépôt réel par l'agent chargé de l'intégration ; aucun acte Git distant n'a été accompli en rédigeant ce fichier.
+
+## 1. État initial prouvé
+Collecter `git status`, worktrees, `remote -v` en masquant les secrets, branche par défaut, branches locales et distantes, commits ahead/behind, PR ouvertes, workflows, hooks et déploiements Vercel récents. Identifier tous les agents actifs et leurs ownerships. Obtenir les preuves des audits, notamment CORE24 Classes V2 branche `integration/core24-classes-v2`, commit `e8beeb7a` contre `9a3ff0d` et rapport de non conformité. Ne jamais le fusionner sur la foi d'un nombre de fichiers présents.
+
+## 2. Remplacement documentaire
+Créer une branche dédiée depuis la base stable, copier les cinq fichiers `00` à `04` dans `docs/current/` ; adapter `CLAUDE.md` racine en index court vers `00` et le document utile à la tâche. Adapter les instructions locales qui pointent vers les vieux fichiers. Rechercher les références à `docs/`, `CLAUDE.md`, `.clauderules`, mémoires, prompts et anciens ADR dans le dépôt et la CI ; classifier chaque cible : active / historique / privée / générée / inconnue. Mettre les anciens documents en archive Git clairement exclue des lectures courantes, si la conservation est nécessaire pour audit. Éviter l'effacement aveugle d'une mémoire d'agent qui porte des décisions, accès, traces ou travail inédit. Les fichiers produits par d'autres agents restent sous leur ownership jusqu'à leur fin et leur intégration.
+
+## 3. Branches Git
+Produire un tableau nom, dernier commit, auteur, date, PR, merge-base, unique commits, fichiers uniques, agent actif, état des tests, décision proposée. Conserver `main`, les branches protégées, branches de PR ouvertes, celles avec commits uniques, celles d'agents actifs et toute branche requise pour rollback. Consolider seulement les branches terminées, intégrées et vérifiées. Rédiger la liste exacte des suppressions envisagées avec hash et méthode de restauration. Faire valider explicitement cette liste par le directeur avant `git push --delete`, `git branch -D`, reset forcé ou effacement de mémoires. Ne jamais forcer un push vers `main`.
+
+## 4. Réparation CI et Vercel
+Depuis les logs du dernier push `main` non déployé, isoler : événement Git absent, workflow non déclenché, job en erreur, build en erreur, upload absent, mauvais projet/branche, domaine ou runtime en erreur. Vérifier les permissions GitHub/Vercel et secrets côté provider via procédures sûres. Corriger dans branche dédiée, exécuter le même build et ses tests, vérifier l'aperçu, puis intégrer suivant protections et autorisations du dépôt. Déclencher un commit `main` traçable ; constater webhook, build, deployment ID et URL avec version attendue. Si besoin d'un accès externe ou d'une permission indisponible, livrer diagnostic exact et action requise sans déclarer la panne résolue.
+
+## 5. Conditions d'intégration
+Un agent modifie seulement ses fichiers attribués, évite le worktree des autres, signale une interface partagée plutôt que créer un service rival. Intégrateur unique des migrations, routeur, dépendances et CI. Pour chaque lot : diff restreint, tests significatifs, RLS quand pertinent, preuve fonctionnelle et revue UX. Laisser CORE24 bloqué tant que ses écarts de parcours, raccordement et exécution ne sont pas résolus. Reporter le nettoyage irréversible après état prouvé et validation humaine sur les cibles exactes.

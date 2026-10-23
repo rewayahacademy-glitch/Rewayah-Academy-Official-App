@@ -1,6 +1,6 @@
 -- 0004 : ce que l'etape 3 exige de la base
 --
--- Source de verite : docs/architecture/etape-3-auth-kyc.md
+-- Source de verite : docs/archive/2026-09-pre-remise-a-plat/architecture/etape-3-auth-kyc.md
 --
 -- Cette migration corrige les cinq defauts de la section 2 de ce document, puis
 -- ajoute les tables et fonctions dont l'inscription, le KYC et l'appairage ont

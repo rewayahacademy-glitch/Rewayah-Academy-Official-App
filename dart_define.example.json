@@ -1,11 +1,14 @@
 {
-  "_lisez_moi": "Copiez ce fichier en dart_define.json et remplissez les valeurs. dart_define.json est ignore par git : aucune cle ne doit etre versionnee (docs/agent-onboarding.md etape D).",
+  "_lisez_moi": "Copiez ce fichier en dart_define.json et remplissez les valeurs. dart_define.json est ignore par git : aucune cle ne doit etre versionnee (docs/archive/2026-09-pre-remise-a-plat/agent-onboarding.md etape D).",
 
   "SUPABASE_URL": "https://gggmtelinlpseweouyav.supabase.co",
   "SUPABASE_ANON_KEY": "",
 
   "_galerie": "Mettez GALERIE a true pour compiler la galerie de composants sur /_galerie. Une version de production la laisse a false.",
   "GALERIE": false,
+
+  "_site": "Origine du site public (https://hote, sans chemin), pour le lien de la carte a partager (CAND-06). Laissez vide sur le web : l'application prend alors l'origine de la page ouverte, qui est aussi celle du site public. Hors du web, vide veut dire : aucune carte proposee.",
+  "SITE_URL": "",
 
   "_supervision": "DSN du projet Sentry Flutter (onboarding etape F, critere 0.6). Laissez vide pour ne rien envoyer : sans DSN, la supervision ne demarre pas, ce qui est le bon reglage sur un poste de developpement. La valeur reelle est dans les secrets GitHub sous SENTRY_DSN_FLUTTER.",
   "SENTRY_DSN_FLUTTER": "",
