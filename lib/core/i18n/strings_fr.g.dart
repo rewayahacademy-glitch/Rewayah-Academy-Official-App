@@ -22701,8 +22701,8 @@ class Traductions$admin$candidatures$erreurs$fr {
 	/// fr: 'Cette candidature n'existe pas, ou plus. Revenez à la liste des candidatures.'
 	String get absente => 'Cette candidature n\'existe pas, ou plus. Revenez à la liste des candidatures.';
 
-	/// fr: 'Aucun geste n'est possible sans connexion. Reconnectez-vous pour agir.'
-	String get horsLigne => 'Aucun geste n\'est possible sans connexion. Reconnectez-vous pour agir.';
+	/// fr: 'Les gestes reviennent dès le retour du réseau.'
+	String get horsLigne => 'Les gestes reviennent dès le retour du réseau.';
 
 	/// fr: 'Rien n'a été fait. Indiquez le motif.'
 	String get motifRequis => 'Rien n\'a été fait. Indiquez le motif.';
@@ -42464,7 +42464,7 @@ extension on Traductions {
 			'admin.candidatures.erreurs.conflit' => 'Cette candidature a changé depuis son ouverture. Actualisez-la avant d\'agir.',
 			'admin.candidatures.erreurs.horsPortee' => 'Vous n\'avez pas accès à cette candidature. Revenez à la liste des candidatures.',
 			'admin.candidatures.erreurs.absente' => 'Cette candidature n\'existe pas, ou plus. Revenez à la liste des candidatures.',
-			'admin.candidatures.erreurs.horsLigne' => 'Aucun geste n\'est possible sans connexion. Reconnectez-vous pour agir.',
+			'admin.candidatures.erreurs.horsLigne' => 'Les gestes reviennent dès le retour du réseau.',
 			'admin.candidatures.erreurs.motifRequis' => 'Rien n\'a été fait. Indiquez le motif.',
 			'admin.candidatures.erreurs.modeleRequis' => 'Rien n\'a été fait. Choisissez le message que la personne lira.',
 			'admin.candidatures.erreurs.modeleInconnu' => 'Ce message n\'est plus proposé. Choisissez-en un autre.',
