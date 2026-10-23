@@ -246,6 +246,7 @@ Inspection après ces corrections :
 | Recette 43 (jurés Sonnet) | 7,77 | 6,40 | 6,33 | « presque », sans plafond ; hiérarchie des titres jugée réglée |
 | Recette 44 (jurés Sonnet) | 7,80 | 6,33 | 6,33 | « presque », sans plafond ; sans les plafonds, les trois sites à 0,2 point près (Rewayah 7,8, Waking Up 7,6, Hallow 7,65) |
 | Recette 45 (jurés Sonnet) | 7,70 | 7,90 | 7,40 | « presque » ; pied de page et questions de l'accueil jugés réglés ; tour bref (2 min), un juré sans aucun plafond pour les références |
+| Recette 46 (jurés Sonnet) | 7,73 | voir texte | voir texte | « presque » ; Cours et Académie sans partage image et texte (réglé selon les jurés) |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -885,3 +886,9 @@ l'auteur sans son nom ; le pied de page passe à 0,23 écran. Sur Cours et Acad�
 la largeur. Les jurés donnent le pied de page et les questions réglés, les pages intérieures en partie. Ce tour a été
 très court (2 minutes) et un juré n'a appliqué aucun plafond aux références, ce qui les remonte (Hallow 7,90, Waking Up
 7,40) ; Rewayah à 7,70, toujours « presque ».
+
+**Recette 46.** Avant elle : « Apprendre avec un enseignant » (Cours) et « La famille fait partie du parcours »
+(Académie) en phrase centrée, l'image dessous ; Académie finit sur une bande centrée. Les jurés donnent ces deux
+points réglés. Toujours « presque » : ils demandent maintenant de varier aussi la phrase centrée (qui se répète à son
+tour), les trois chapitres de l'accueil, et les reprises des mêmes rendus d'une page à l'autre (limite fixée par le
+directeur).
