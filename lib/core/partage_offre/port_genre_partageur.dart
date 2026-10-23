@@ -1,7 +1,7 @@
 // Le genre de la personne qui partage la carte (CAND-06).
 //
 // **Un seul usage, decide par le directeur le 22/10/2026** : choisir la variante
-// de la carte (la teinte et la silhouette, `VarianteCarte`) et dire « une sœur »
+// de la carte (la teinte et la branche fleurie, `VarianteCarte`) et dire « une sœur »
 // ou « une personne » dans l'invitation a partager. Le genre est **lu** sur le
 // profil de la personne (`profiles.gender`, lisible par son titulaire seulement :
 // politique `profiles_self_select`), **jamais devine** d'un prenom ou d'une

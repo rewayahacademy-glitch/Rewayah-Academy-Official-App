@@ -16,10 +16,10 @@
 //
 // **Deux variantes** (`VarianteCarte`, lue sur le profil de la personne qui
 // partage, jamais devinee) : les hommes (et le genre inconnu), sans personnage ;
-// les femmes, une teinte plus douce et une silhouette sobre, sans visage, qui
-// marche dans la lumiere, avec quelques fleurs ton sur ton. **Quatre langues**
-// (`LangueCarte`) : francais, anglais, portugais, arabe ; en arabe le texte se
-// met en miroir, jamais le logo ni le symbole.
+// les femmes, une teinte plus douce et, tres discrete, une fine branche fleurie
+// ton sur ton au bas du chemin, sans aucun personnage (directeur, 23/10/2026).
+// **Quatre langues** (`LangueCarte`) : francais, anglais, portugais, arabe ; en
+// arabe le texte se met en miroir, jamais le logo ni le symbole.
 //
 // Rendue par Flutter, puis exportee en PNG (`rendu_carte.dart`) : elle ne suit
 // donc ni le theme de l'ecran, ni la taille de texte de l'appareil, ni

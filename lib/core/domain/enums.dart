@@ -115,7 +115,7 @@ enum InterfaceMode {
 ///
 /// **Une exception d'affichage, decidee par le directeur le 22/10/2026** : la
 /// carte que la personne partage depuis la salle d'attente prend la variante de
-/// son genre (teinte et silhouette) et l'invitation a partager dit « une sœur »
+/// son genre (la teinte et la branche fleurie) et l'invitation a partager dit « une sœur »
 /// ou « une personne » (`core/partage_offre/port_genre_partageur.dart`). Le
 /// genre y est lu sur le profil de la personne, jamais devine, et inconnu il
 /// donne la variante neutre.

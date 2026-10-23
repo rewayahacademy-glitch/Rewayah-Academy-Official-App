@@ -1258,10 +1258,15 @@ avant l'état `envoye`.
 - **Variante de la carte** : lue sur le profil, **jamais devinée**. **Hommes**, et **genre
   inconnu** (profil illisible, hors ligne, aucun port) : la composition sans personnage, aux mots
   neutres (« une personne ») ; c'est le choix fait pour l'inconnu. **Femmes** : mêmes règles de
-  marque, une teinte mauve prune plus douce (`#6B3A87`, porte rose lavande `#FCEFF6`), une
-  silhouette de femme voilée, de dos, sans visage, qui marche dans la lumière, et quelques
-  fleurs ton sur ton. **Les couleurs des femmes sont proposées, hors charte** (comme les teintes d'identité,
-  `M-23`) : le directeur les valide sur les captures.
+  marque, une teinte mauve prune plus douce (`#6B3A87`, porte rose lavande `#FCEFF6`) et, **depuis
+  le 23/10/2026, aucun personnage** (le dessin d'une femme voilée, rejeté par le directeur :
+  « il faut le supprimer, n'utilise pas de personnage ») : seulement une **fine branche fleurie
+  en trait**, ton sur ton, au bas du chemin de lumière (`branche_fleurie.dart` : une tige
+  courbe qui entre par le bord de la carte, deux brins, des feuilles en amande, trois petites
+  fleurs à cinq pétales et deux boutons, dans la couleur du cœur de la lumière sur le chemin,
+  faible contraste, jamais au-dessus du texte, du QR ni du logo, aucun dégradé). **Les couleurs
+  des femmes sont proposées, hors charte** (comme les teintes d'identité, `M-23`) : le
+  directeur les valide sur les captures.
 - **Contenu de la page, dans l'ordre** : le titre (l'invitation, au masculin ou au féminin) ;
   « Langue de la carte » et ses quatre puces ; l'aperçu de la carte ; la mention « Facultatif »
   **avant les boutons** ; les trois gestes ; le retour du geste ; la ligne « Lien de
@@ -1345,8 +1350,8 @@ avant l'état `envoye`.
   lien », « Découvrir l'offre ». **Règle à y inscrire** : aucun texte ne demande d'agir pour
   l'académie, son nom n'est jamais le motif (consigne du 22/10).
 - **À confirmer par le directeur avant toute mise en ligne** :
-  1. les **couleurs de la variante des femmes** (proposées, hors charte), la **silhouette** et
-     les fleurs ;
+  1. les **couleurs de la variante des femmes** (proposées, hors charte) et la **branche
+     fleurie** (23/10, sans personnage) ;
   2. les **textes anglais et portugais** de la carte (écrits d'après le français et l'arabe, sans
      validation demandée) et la relecture arabe de « تعلُّم القرآن في فصل صغير » ;
   3. l'étiquette « Langue de la carte » et « Je partage » en arabe (« أشارك ») ;
@@ -1377,8 +1382,9 @@ avant l'état `envoye`.
   12 % d'opacité, **le même dessin pixel pour pixel en français et en arabe, seulement déplacé
   avec la porte**, axe commun avec la porte, zone de protection du logo libre ; **aucun dégradé**
   (mesuré dans les pixels : que des aplats) ; la porte petite avec du vide, le chemin en
-  trapèze qui sort de son seuil et s'élargit ; la silhouette sur le chemin, absente chez les
-  hommes ; QR relu module par module dans le PNG exporté, dans chaque langue et chaque variante
+  trapèze qui sort de son seuil et s'élargit ; la branche fleurie sur le chemin (dans le chemin, hors de la
+  lumière vive, ton sur ton à faible contraste, jamais de forme plus sombre que le chemin),
+  absente chez les hommes ; **aucun personnage** sur aucune variante ; QR relu module par module dans le PNG exporté, dans chaque langue et chaque variante
   (0 module faux) ; PNG de 1080 x 1920 ; mêmes octets en clair, en sombre, à 200 % de texte et
   en Interface guidée ; contrastes mesurés pour chaque variante (texte 4,5:1, formes porteuses
   de sens 3:1, y compris sous le trait du symbole) ; un seul bouton plein dans chaque état ;
@@ -1387,7 +1393,7 @@ avant l'état `envoye`.
   fermeture par la personne ; refus ; erreur synchrone). **Non prouvé** : le menu de partage réel
   d'un téléphone (iOS Safari, Chrome Android) ; la lecture réelle de `profiles.gender` sur
   staging.
-- **Preuves (22/10/2026, refonte)** : 232 tests dans `test/features/partage_offre` (la carte dans ses quatre langues et ses deux variantes, le rendu réel en PNG, la page, la tuile du portail, les textes de l'app en français et en arabe, les textes de la carte) ; 29 dans `test/core/partage_offre` (le lien, les langues, la variante, les réglages) ; 48 dans `test/core/marque` (le symbole contour) ; routeur, outils et i18n relancés avec eux : 1173 tests passent ; 815 tests des écrans voisins (portail, dossier, recrutement, candidature, routeur, dossiers de l'administration) passent ; 46 captures (`test/capture/partage_capture_test.dart`, avec `CAPTURE_DIR`, dossier `PARTAGE-v2/`) : la carte en 1080 x 1920 et en 540 x 960 pour chaque variante et chaque langue, la page à 390 et 1440 (français, arabe, sombre, choix d'une langue), la tuile, et chaque état ; `dart analyze --fatal-infos` : 0 problème ; `dart run tool/verifier_jetons.dart` : 1139 fichiers, 0 violation ; `tool/verifier_revue.dart` : `wrap-filtres` à 0 (les puces sont déclarées « choix de formulaire »), `test/tool/garde_fous_test.dart` passe. Spécifié, présent dans le code, testé localement ; **ni testé sur staging, ni déployé**.
+- **Preuves (22/10/2026, refonte)** : 232 tests dans `test/features/partage_offre` (la carte dans ses quatre langues et ses deux variantes, le rendu réel en PNG, la page, la tuile du portail, les textes de l'app en français et en arabe, les textes de la carte) ; 29 dans `test/core/partage_offre` (le lien, les langues, la variante, les réglages) ; 48 dans `test/core/marque` (le symbole contour) ; routeur, outils et i18n relancés avec eux : 1173 tests passent ; 815 tests des écrans voisins (portail, dossier, recrutement, candidature, routeur, dossiers de l'administration) passent ; 46 captures (`test/capture/partage_capture_test.dart`, avec `CAPTURE_DIR`, dossier `PARTAGE-v2/` ; reprise du 23/10/2026 sans personnage : dossier `PARTAGE-v3/`) : la carte en 1080 x 1920 et en 540 x 960 pour chaque variante et chaque langue, la page à 390 et 1440 (français, arabe, sombre, choix d'une langue), la tuile, et chaque état ; `dart analyze --fatal-infos` : 0 problème ; `dart run tool/verifier_jetons.dart` : 1139 fichiers, 0 violation ; `tool/verifier_revue.dart` : `wrap-filtres` à 0 (les puces sont déclarées « choix de formulaire »), `test/tool/garde_fous_test.dart` passe. Spécifié, présent dans le code, testé localement ; **ni testé sur staging, ni déployé**.
 
 ### CAND-07 : Vos autres talents (parcours facultatif de la salle d'attente)
 

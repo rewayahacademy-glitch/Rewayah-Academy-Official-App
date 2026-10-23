@@ -22,6 +22,7 @@ import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/brand_logo.dart';
+import 'package:rewayah_academy/features/partage_offre/branche_fleurie.dart';
 import 'package:rewayah_academy/features/partage_offre/carte_partage.dart';
 import 'package:rewayah_academy/features/partage_offre/decor_carte.dart';
 import 'package:rewayah_academy/features/partage_offre/textes_carte.dart';
@@ -818,33 +819,49 @@ void main() {
       expect(cadre.top - basDuTrait, greaterThanOrEqualTo(8));
     });
 
-    test(
-      'la silhouette des femmes marche sur la lumiere, en petite figure',
-      () {
-        expect(g.cheminPath.contains(g.pieds), isTrue);
-        expect(g.coeurPath.contains(g.pieds), isTrue);
-        expect(g.hauteurSilhouette, lessThan(0.3 * bande.height));
-        expect(g.hauteurSilhouette, greaterThan(0.15 * bande.height));
-        final Rect s = g.silhouettePath.getBounds();
-        expect(s.bottom, closeTo(g.pieds.dy, 0.5));
-        expect(s.height, closeTo(g.hauteurSilhouette, 0.01 * bande.height));
-        // Elle reste loin de la porte, et ses pieds sont dans le chemin, de
-        // l'air dessous.
-        expect(s.right, lessThan(g.porte.left - 24));
-        expect(
-          g.cheminPath.contains(g.pieds.translate(0, 0.03 * bande.height)),
-          isTrue,
-        );
-        // Chaque fleur est ton sur ton, dans le chemin mais hors de la lumiere
-        // vive (derriere elle), et plus petite qu'elle.
-        for (final (Offset, double) f in g.fleurs) {
-          expect(g.cheminPath.contains(f.$1), isTrue, reason: '${f.$1}');
-          expect(g.coeurPath.contains(f.$1), isFalse, reason: '${f.$1}');
-          expect(f.$1.dx, lessThan(s.left));
-          expect(f.$2, lessThan(0.2 * g.hauteurSilhouette));
+    test('la branche fleurie des femmes reste sur le chemin, hors de la '
+        'lumiere vive, loin du texte : petite, en un coin', () {
+      final BrancheFleurie b = g.branche;
+      final Rect zone = b.bornes;
+      // Elle entre par le bord de la carte, au bas du chemin, et reste a
+      // gauche : loin de la porte, au plus pres du bord oppose.
+      expect(zone.left, lessThanOrEqualTo(0));
+      expect(zone.width, lessThan(0.4 * bande.width));
+      expect(zone.right, lessThan(g.porte.left - 120));
+      // Sous la signature et le seuil, avant le QR : jamais au-dessus du texte,
+      // du logo ni de l'appel.
+      expect(zone.top, greaterThan(g.seuil + 0.1 * bande.height));
+      expect(zone.bottom, lessThanOrEqualTo(0.92 * bande.height));
+      // Chaque point du trait et de chaque feuille est dans le chemin, et
+      // aucun dans la lumiere vive : ton sur ton, rien ne depasse.
+      for (final Offset p in <Offset>[
+        ...b.pointsDesTiges(),
+        ...b.pointsDesFeuilles(),
+      ]) {
+        expect(g.cheminPath.contains(p), isTrue, reason: 'chemin : $p');
+        expect(g.coeurPath.contains(p), isFalse, reason: 'coeur : $p');
+      }
+      // Trois fleurs a cinq petales, petites (moins de 3 pour cent de la
+      // bande en rayon) ; chaque pointe de petale est dans le chemin.
+      expect(b.fleurs, hasLength(3));
+      for (final FleurDeBranche f in b.fleurs) {
+        expect(f.rayon, lessThan(0.03 * bande.height));
+        expect(f.rayon, greaterThan(0.015 * bande.height));
+        for (int i = 0; i < 5; i++) {
+          final Offset pointe =
+              f.centre +
+              Offset.fromDirection(
+                f.angle + i * 2 * 3.141592653589793 / 5,
+                f.rayon,
+              );
+          expect(g.cheminPath.contains(pointe), isTrue, reason: '$pointe');
+          expect(g.coeurPath.contains(pointe), isFalse, reason: '$pointe');
+          expect(g.cheminPath.contains(f.pointDePetale(i)), isTrue);
         }
-      },
-    );
+      }
+      // Un fil : le trait est mince (au plus 2 points).
+      expect(BrancheFleurie.epaisseurTige, lessThanOrEqualTo(2));
+    });
 
     for (final VarianteCarte v in VarianteCarte.values) {
       testWidgets(
@@ -891,44 +908,84 @@ void main() {
       );
     }
 
-    testWidgets('la silhouette n\'existe que pour les femmes', (
-      WidgetTester tester,
-    ) async {
-      final Offset corps = _surLaCarte(
-        Offset(g.pieds.dx, g.pieds.dy - g.hauteurSilhouette * 0.45),
-      );
-      // Un petale de la premiere fleur : au-dessus de son centre.
-      final (Offset, double) premiere = g.fleurs.first;
-      final Offset fleur = _surLaCarte(
-        premiere.$1.translate(0, -0.55 * premiere.$2),
-      );
+    testWidgets('la branche fleurie n\'existe que pour les femmes : fleurs et '
+        'tige ton sur ton, le centre de la fleur est le chemin, aucun '
+        'personnage', (WidgetTester tester) async {
+      final BrancheFleurie b = g.branche;
+      final FleurDeBranche fleur = b.fleurs.first;
+      final Offset petale = _surLaCarte(fleur.pointDePetale(0));
+      final Offset centre = _surLaCarte(fleur.centre);
+      final List<Offset> tige = b.pointsDesTiges();
+      final Offset surLaTige = _surLaCarte(tige[tige.length ~/ 4]);
       final ImageCarte femmes = await imageCarte(
         tester,
         variante: VarianteCarte.femmes,
       );
       final ImageCarte hommes = await imageCarte(tester);
-      final Color sil = AppPaletteCarte.femmes.silhouette.background;
-      expect(femmes.enPoints(corps), sil);
-      expect(femmes.enPoints(fleur), AppPaletteCarte.femmes.coeur.background);
-      expect(hommes.enPoints(corps), isNot(sil));
+      const AppPaletteCarte f = AppPaletteCarte.femmes;
+      expect(femmes.enPoints(petale), f.coeur.background, reason: 'un petale');
+      expect(femmes.enPoints(surLaTige), f.coeur.background, reason: 'la tige');
       expect(
-        <Color>[
+        femmes.enPoints(centre),
+        f.chemin.background,
+        reason: 'le centre de la fleur est le chemin',
+      );
+      for (final Offset p in <Offset>[petale, centre, surLaTige]) {
+        expect(
+          hommes.enPoints(p),
           AppPaletteCarte.hommes.chemin.background,
-          AppPaletteCarte.hommes.coeur.background,
-        ],
-        contains(hommes.enPoints(corps)),
-        reason: 'sans personnage : la lumiere seule',
-      );
-      expect(
-        hommes.enPoints(fleur),
-        AppPaletteCarte.hommes.chemin.background,
-        reason: 'sans fleur non plus : le chemin seul',
-      );
+          reason: 'sans fleur ni branche chez les hommes : le chemin seul, $p',
+        );
+      }
     });
+
+    for (final VarianteCarte v in VarianteCarte.values) {
+      testWidgets('${v.name} : aucune figure sur le chemin, que ses deux aplats '
+          '(le chemin et sa lumiere)', (WidgetTester tester) async {
+        final ImageCarte image = await imageCarte(tester, variante: v);
+        final AppPaletteCarte c = _couleurs(v);
+        final Color bas = c.chemin.background;
+        final Color haut = c.coeur.background;
+        int controles = 0;
+        // Tout l'interieur du chemin (a 3 points de ses bords), au demi-point :
+        // chaque pixel est entre le chemin et sa lumiere, canal par canal
+        // (la couleur d'un bord adouci est un melange des deux). Une forme
+        // plus sombre, un personnage par exemple, sortirait de la boite.
+        for (double x = 0; x < bande.width; x += 1) {
+          for (double y = g.seuil; y < bande.height; y += 1) {
+            final Offset p = Offset(x, y);
+            if (<Offset>[
+              p,
+              p.translate(3, 0),
+              p.translate(-3, 0),
+              p.translate(0, 3),
+              p.translate(0, -3),
+            ].any((Offset q) => !g.cheminPath.contains(q))) {
+              continue;
+            }
+            final Color px = image.enPoints(_surLaCarte(p));
+            controles++;
+            for (final (double, double, double) canal
+                in <(double, double, double)>[
+                  (px.r, bas.r, haut.r),
+                  (px.g, bas.g, haut.g),
+                  (px.b, bas.b, haut.b),
+                ]) {
+              expect(
+                canal.$1 * 255,
+                inInclusiveRange(canal.$2 * 255 - 1.5, canal.$3 * 255 + 1.5),
+                reason: '${v.name} : $p',
+              );
+            }
+          }
+        }
+        expect(controles, greaterThan(5000));
+      });
+    }
 
     testWidgets(
       'en arabe, la scene est en miroir : la porte passe du cote du debut de '
-      'ligne, la silhouette marche vers elle',
+      'ligne, la branche fleurie le suit',
       (WidgetTester tester) async {
         final ImageCarte fr = await imageCarte(
           tester,
@@ -949,15 +1006,13 @@ void main() {
         // Le meme point, de l'autre cote, n'est plus la porte.
         expect(fr.enPoints(porteAr), isNot(c.porte.background));
         expect(ar.enPoints(porteFr), isNot(c.porte.background));
-        // La silhouette est en miroir elle aussi.
-        final Offset corps = Offset(
-          g.pieds.dx,
-          g.pieds.dy - g.hauteurSilhouette * 0.45,
-        );
-        expect(fr.enPoints(_surLaCarte(corps)), c.silhouette.background);
+        // La branche est en miroir elle aussi, avec la scene.
+        final Offset petale = g.branche.fleurs.first.pointDePetale(0);
+        expect(fr.enPoints(_surLaCarte(petale)), c.coeur.background);
+        expect(ar.enPoints(_surLaCarte(petale, rtl: true)), c.coeur.background);
         expect(
-          ar.enPoints(_surLaCarte(corps, rtl: true)),
-          c.silhouette.background,
+          fr.enPoints(_surLaCarte(petale, rtl: true)),
+          isNot(c.coeur.background),
         );
       },
     );
@@ -1061,18 +1116,24 @@ void main() {
           greaterThanOrEqualTo(seuilTexte),
           reason: 'le QR',
         );
-        // La silhouette sur le chemin qu'elle marche, et sur son coeur.
-        expect(
-          contraste(c.silhouette.background, c.chemin.background),
-          greaterThanOrEqualTo(seuilComposant),
-          reason: 'la silhouette sur le chemin',
-        );
-        expect(
-          contraste(c.silhouette.background, c.coeur.background),
-          greaterThanOrEqualTo(seuilComposant),
-          reason: 'la silhouette sur le coeur',
-        );
       });
+
+      test(
+        '${v.name} : le chemin et sa lumiere sont un decor, lisible en second '
+        'regard seulement : faible contraste',
+        () {
+          final AppPaletteCarte c = _couleurs(v);
+          final double ecart = contraste(
+            c.coeur.background,
+            c.chemin.background,
+          );
+          // La branche fleurie est ton sur ton, dans la couleur de la lumiere
+          // posee sur le chemin : visible, mais sous les 3:1 d'une forme qui porte
+          // un sens.
+          expect(ecart, greaterThan(1.3), reason: 'on la voit');
+          expect(ecart, lessThan(seuilComposant), reason: 'sans la crier');
+        },
+      );
     }
 
     for (final LangueCarte l in LangueCarte.values) {

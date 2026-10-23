@@ -1,10 +1,10 @@
-// Captures de CAND-06 (la carte a partager, redessinee le 22/10/2026) : la carte
+// Captures de CAND-06 (la carte a partager, redessinee le 22/10/2026, puis sans personnage le 23/10/2026) : la carte
 // seule (l'export de 1080 x 1920 puis sa reduction de 540 x 960) dans chaque
 // variante (hommes, femmes) et chaque langue (francais, anglais, portugais,
 // arabe) ; la page de partage a 390x844 et 1440x900, en francais et en arabe de
 // droite a gauche, pour chaque variante ; la tuile dans le portail ; puis les
 // etats (pas de lien, image non preparee, appareil sans menu de partage, texte
-// agrandi). Tout sort dans `PARTAGE-v2/`.
+// agrandi). Tout sort dans `PARTAGE-v3/`.
 //
 // Saute sans CAPTURE_DIR (voir test/capture/LISEZ-MOI.md).
 
@@ -129,7 +129,7 @@ Future<void> _enBas(WidgetTester tester) async {
 
 Future<void> _photo(WidgetTester tester, String nom) async {
   await _enHaut(tester);
-  await capturer(tester, 'PARTAGE-v2/$nom');
+  await capturer(tester, 'PARTAGE-v3/$nom');
 }
 
 /// La carte seule, a l'echelle 1,5 (540 x 960), puis l'export reel de 1080 x
@@ -169,11 +169,11 @@ Future<void> _carte(
   );
   await tester.pumpAndSettle();
   final String nom = '${variante.name}_${langue.code}';
-  await capturer(tester, 'PARTAGE-v2/carte_${nom}_540x960');
+  await capturer(tester, 'PARTAGE-v3/carte_${nom}_540x960');
   final Uint8List png = (await tester.runAsync(() => rendreCarteEnPng(cle)))!;
   await tester.runAsync(
     () =>
-        File(cheminSortie('PARTAGE-v2/carte_export_${nom}_1080x1920'))
+        File(cheminSortie('PARTAGE-v3/carte_export_${nom}_1080x1920'))
             .writeAsBytes(png),
   );
 }
@@ -242,7 +242,7 @@ void main() {
       testWidgets('page $nom 390 fr, les gestes', (WidgetTester tester) async {
         await _monter(tester, genre: v.$2);
         await _enBas(tester);
-        await capturer(tester, 'PARTAGE-v2/page-gestes_${nom}_390_fr');
+        await capturer(tester, 'PARTAGE-v3/page-gestes_${nom}_390_fr');
       });
 
       testWidgets('page $nom 390 sombre fr', (WidgetTester tester) async {
@@ -294,7 +294,7 @@ void main() {
         ..erreur = StateError('pas peinte');
       await _monter(tester, rendu: casse, genre: Genre.femme);
       await _enBas(tester);
-      await capturer(tester, 'PARTAGE-v2/etat-image-non-preparee_390_fr');
+      await capturer(tester, 'PARTAGE-v3/etat-image-non-preparee_390_fr');
     });
 
     testWidgets('etat : appareil sans menu de partage', (
@@ -302,7 +302,7 @@ void main() {
     ) async {
       await _monter(tester, niveau: NiveauPartage.aucun, genre: Genre.femme);
       await _enBas(tester);
-      await capturer(tester, 'PARTAGE-v2/etat-sans-menu_femmes_390_fr');
+      await capturer(tester, 'PARTAGE-v3/etat-sans-menu_femmes_390_fr');
     });
 
     testWidgets('etat : apres « Copier le lien »', (WidgetTester tester) async {
@@ -315,7 +315,7 @@ void main() {
       await tester.tap(find.byKey(const ValueKey<String>('partage-copier')));
       await tester.pumpAndSettle();
       await _enBas(tester);
-      await capturer(tester, 'PARTAGE-v2/etat-lien-copie_femmes_390_fr');
+      await capturer(tester, 'PARTAGE-v3/etat-lien-copie_femmes_390_fr');
     });
 
     testWidgets('texte agrandi 320 x2', (WidgetTester tester) async {

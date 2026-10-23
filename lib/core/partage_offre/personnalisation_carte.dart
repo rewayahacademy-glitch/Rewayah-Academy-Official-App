@@ -89,7 +89,8 @@ enum VarianteCarte {
   /// Les hommes, et le genre inconnu : la composition sans personnage.
   hommes,
 
-  /// Les femmes : une teinte plus douce et une silhouette sobre, sans visage.
+  /// Les femmes : une teinte plus douce et une fine branche fleurie ton sur ton,
+  /// sans aucun personnage.
   femmes;
 
   /// La variante d'un genre lu sur le profil ; `null` (inconnu) donne la

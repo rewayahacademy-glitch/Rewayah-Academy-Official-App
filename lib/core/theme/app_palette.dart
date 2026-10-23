@@ -529,16 +529,13 @@ class AppPointsStatut {
   final AppIndicatorColor neutre;
 
   /// Interpolation, requise par [ThemeExtension].
-  static AppPointsStatut lerp(
-    AppPointsStatut a,
-    AppPointsStatut b,
-    double t,
-  ) => AppPointsStatut(
-    succes: AppIndicatorColor.lerp(a.succes, b.succes, t),
-    attention: AppIndicatorColor.lerp(a.attention, b.attention, t),
-    alerte: AppIndicatorColor.lerp(a.alerte, b.alerte, t),
-    neutre: AppIndicatorColor.lerp(a.neutre, b.neutre, t),
-  );
+  static AppPointsStatut lerp(AppPointsStatut a, AppPointsStatut b, double t) =>
+      AppPointsStatut(
+        succes: AppIndicatorColor.lerp(a.succes, b.succes, t),
+        attention: AppIndicatorColor.lerp(a.attention, b.attention, t),
+        alerte: AppIndicatorColor.lerp(a.alerte, b.alerte, t),
+        neutre: AppIndicatorColor.lerp(a.neutre, b.neutre, t),
+      );
 
   @override
   bool operator ==(Object other) =>
@@ -662,15 +659,17 @@ const List<AppColorPair> _accentsProfilSombres = <AppColorPair>[
 ///   theme sombre (`#BA98FB`) pour le chemin de lumiere, le lavis d'accent
 ///   (`#EEE6FA`) pour la porte. Rien de nouveau.
 /// - [femmes] : directeur, 22/10/2026, « une teinte plus douce et feminine,
-///   voisine de la marque » : un mauve prune, une porte lavande rosee, une
-///   silhouette prune sombre. **Valeurs proposees, hors charte de marque** (comme
-///   les teintes d'identite, M-23) : elles n'existent que sur cette carte, et
-///   le directeur les valide sur les captures.
+///   voisine de la marque » : un mauve prune, une porte lavande rosee ; puis,
+///   le 23/10/2026, une fine branche fleurie ton sur ton, dans la couleur du coeur de la lumiere,
+///   et aucun personnage (directeur, 23/10/2026). **Valeurs proposees, hors
+///   charte de marque** (comme les teintes d'identite, M-23) : elles n'existent
+///   que sur cette carte, et le directeur les valide sur les captures.
 ///
 /// Aucun degrade : chaque couleur est un aplat. Chaque texte est mesure a 4,5:1
-/// sur son fond, et chaque forme porteuse de sens (la porte, la plaque du QR, la
-/// silhouette) a 3:1, par `test/features/partage_offre/carte_partage_test.dart` ;
-/// le chemin de lumiere est un decor, que rien ne demande de lire.
+/// sur son fond, et chaque forme porteuse de sens (la porte, la plaque du QR) a
+/// 3:1, par `test/features/partage_offre/carte_partage_test.dart` ;
+/// le chemin de lumiere et la branche fleurie sont un decor, que rien ne demande
+/// de lire : la branche est a faible contraste, voulue.
 enum AppPaletteCarte {
   /// Les hommes, et le genre inconnu.
   hommes(
@@ -690,10 +689,6 @@ enum AppPaletteCarte {
     coeur: AppColorPair(
       background: Color(0xFFBA98FB),
       onBackground: Color(0xFF25113F),
-    ),
-    silhouette: AppColorPair(
-      background: Color(0xFF25113F),
-      onBackground: Color(0xFFEEE6FA),
     ),
     filigrane: AppInkColor(Color(0xFFFFFFFF)),
   ),
@@ -717,10 +712,6 @@ enum AppPaletteCarte {
       background: Color(0xFFC9A0D8),
       onBackground: Color(0xFF3E1D52),
     ),
-    silhouette: AppColorPair(
-      background: Color(0xFF3E1D52),
-      onBackground: Color(0xFFFCEFF6),
-    ),
     filigrane: AppInkColor(Color(0xFFFFFFFF)),
   );
 
@@ -730,7 +721,6 @@ enum AppPaletteCarte {
     required this.porte,
     required this.chemin,
     required this.coeur,
-    required this.silhouette,
     required this.filigrane,
   });
 
@@ -750,9 +740,6 @@ enum AppPaletteCarte {
   /// Le second aplat du chemin (le plus clair, pres de la porte). Au plus deux
   /// aplats superposes : aucun degrade.
   final AppColorPair coeur;
-
-  /// L'aplat de la silhouette (variante des femmes), plus sombre que le chemin.
-  final AppColorPair silhouette;
 
   /// L'encre du trait du filigrane : du blanc, que le rendu pose a tres faible
   /// opacite ([opaciteFiligrane]).
