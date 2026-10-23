@@ -76,6 +76,18 @@ Le directeur colle donc lui-même le fichier dans l'éditeur SQL du projet « Re
 Claude vérifie ensuite en lecture (colonnes, fonctions, droits ; liste au détail du fichier 18).
 La base de test n'a encore ni le 16, ni le 17, ni le 18.
 
+**Collé en production par le directeur le 24/10/2026 vers 1 h (Paris), fichier brut.** Vérification en
+lecture : les deux colonnes présentes ; `lire_nom_latin` et `confirmer_nom_latin` exécutables par
+`authenticated` seulement ; `private.nom_est_latin` par personne. Les cinq fonctions posées gardent les
+retours chariot de Windows (leçon du 23/10, `docs/orchestration/LECONS-MIGRATIONS-STAGING.md`) : une fois
+ces caractères retirés, leurs empreintes sont identiques à la base locale. Onze fonctions plus anciennes de
+la production en ont aussi (16 en tout). La version n'est pas inscrite dans l'historique.
+Correctif remis au directeur : la normalisation de `docs/orchestration/staging/normalisation_fins_de_ligne_editeur_sql.sql`,
+suivie de l'inscription de `20261024000000 cand_nom_latin`, enveloppée par
+`tool/envelopper_pour_editeur_sql.py`, sans effacement, essayée en local (collage CRLF compris).
+À vérifier après son collage : `select count(*) from pg_proc where strpos(prosrc, chr(13)) > 0` vaut 0,
+empreintes identiques à la base locale, version présente dans `list_migrations`.
+
 ## Prochaine livraison sur la base de test (pas encore appliquée)
 
 Ajoutée le 23/10/2026, après l'installation des quinze ci-dessus. Rien n'est appliqué sans un
