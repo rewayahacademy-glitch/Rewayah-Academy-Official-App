@@ -34424,7 +34424,7 @@ class Traductions$courriels$admin$ecrire$fr {
 	String get sansDonneesCategories => 'Les catégories n\'ont pas pu être chargées';
 
 	/// fr: 'Aucune catégorie n'est active : impossible d'écrire pour le moment.'
-	String get pasDeCategorie => 'Aucune catégorie n\'est active : impossible d\'écrire pour le moment.';
+	String get pasDeCategorie => 'Aucune catégorie n\'est active : impossible d\'écrire pour le moment.';
 
 	late final Traductions$courriels$admin$ecrire$champ$fr champ = Traductions$courriels$admin$ecrire$champ$fr.internal(_root);
 	late final Traductions$courriels$admin$ecrire$retour$fr retour = Traductions$courriels$admin$ecrire$retour$fr.internal(_root);
@@ -34473,7 +34473,7 @@ class Traductions$courriels$admin$adresses$fr {
 	// Translations
 
 	/// fr: 'Chaque catégorie part de son adresse, et les réponses arrivent dans la boîte indiquée. Cette liste se lit ici ; elle ne se modifie pas dans l'application.'
-	String get intro => 'Chaque catégorie part de son adresse, et les réponses arrivent dans la boîte indiquée. Cette liste se lit ici ; elle ne se modifie pas dans l\'application.';
+	String get intro => 'Chaque catégorie part de son adresse, et les réponses arrivent dans la boîte indiquée. Cette liste se lit ici ; elle ne se modifie pas dans l\'application.';
 
 	late final Traductions$courriels$admin$adresses$champs$fr champs = Traductions$courriels$admin$adresses$champs$fr.internal(_root);
 
@@ -38829,7 +38829,7 @@ class Traductions$courriels$admin$ecrire$champ$fr {
 	String get corps => 'Écrivez un message de 1 à 5000 caractères.';
 
 	/// fr: 'Cette personne ne peut pas recevoir cet e-mail : compte d'enfant ou désinscription.'
-	String get destinataireExclu => 'Cette personne ne peut pas recevoir cet e-mail : compte d\'enfant ou désinscription.';
+	String get destinataireExclu => 'Cette personne ne peut pas recevoir cet e-mail : compte d\'enfant ou désinscription.';
 }
 
 // Path: courriels.admin.ecrire.retour
@@ -38850,10 +38850,10 @@ class Traductions$courriels$admin$ecrire$retour$fr {
 	String get refus => 'Seule la direction connectée peut écrire un e-mail.';
 
 	/// fr: 'L'envoi n'est pas confirmé. Regardez la liste des envois avant de recommencer : le même e-mail ne sera pas mis en file deux fois.'
-	String get echec => 'L\'envoi n\'est pas confirmé. Regardez la liste des envois avant de recommencer : le même e-mail ne sera pas mis en file deux fois.';
+	String get echec => 'L\'envoi n\'est pas confirmé. Regardez la liste des envois avant de recommencer : le même e-mail ne sera pas mis en file deux fois.';
 
 	/// fr: 'Rien n'est parti : le réseau est absent. Réessayez dès son retour.'
-	String get horsLigne => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.';
+	String get horsLigne => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.';
 }
 
 // Path: courriels.admin.file.filtre
@@ -38967,13 +38967,13 @@ class Traductions$courriels$admin$file$retour$fr {
 	String get introuvable => 'Cet e-mail n\'est plus à relancer. La liste est mise à jour.';
 
 	/// fr: 'La remise en file n'est pas confirmée. La liste est relue : vérifiez l'état de l'e-mail avant de recommencer.'
-	String get echec => 'La remise en file n\'est pas confirmée. La liste est relue : vérifiez l\'état de l\'e-mail avant de recommencer.';
+	String get echec => 'La remise en file n\'est pas confirmée. La liste est relue : vérifiez l\'état de l\'e-mail avant de recommencer.';
 
 	/// fr: 'Seule la direction connectée peut relancer un e-mail.'
 	String get refus => 'Seule la direction connectée peut relancer un e-mail.';
 
 	/// fr: 'Rien n'est parti : le réseau est absent. Réessayez dès son retour.'
-	String get horsLigne => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.';
+	String get horsLigne => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.';
 }
 
 // Path: courriels.admin.adresses.champs
@@ -50108,17 +50108,17 @@ extension on Traductions {
 			'courriels.admin.ecrire.envoyer' => 'Envoyer le message',
 			'courriels.admin.ecrire.erreurCategories' => 'Les catégories n\'ont pas pu être chargées. Réessayez.',
 			'courriels.admin.ecrire.sansDonneesCategories' => 'Les catégories n\'ont pas pu être chargées',
-			'courriels.admin.ecrire.pasDeCategorie' => 'Aucune catégorie n\'est active : impossible d\'écrire pour le moment.',
+			'courriels.admin.ecrire.pasDeCategorie' => 'Aucune catégorie n\'est active : impossible d\'écrire pour le moment.',
 			'courriels.admin.ecrire.champ.adresse' => 'Entrez une adresse e-mail valide.',
 			'courriels.admin.ecrire.champ.categorie' => 'Choisissez une catégorie.',
 			'courriels.admin.ecrire.champ.sujet' => 'Donnez un sujet de 1 à 120 caractères.',
 			'courriels.admin.ecrire.champ.corps' => 'Écrivez un message de 1 à 5000 caractères.',
-			'courriels.admin.ecrire.champ.destinataireExclu' => 'Cette personne ne peut pas recevoir cet e-mail : compte d\'enfant ou désinscription.',
+			'courriels.admin.ecrire.champ.destinataireExclu' => 'Cette personne ne peut pas recevoir cet e-mail : compte d\'enfant ou désinscription.',
 			'courriels.admin.ecrire.retour.misEnFile' => 'Envoi dans la minute. Suivez-le dans la liste des envois.',
 			'courriels.admin.ecrire.retour.voir' => 'Voir les envois',
 			'courriels.admin.ecrire.retour.refus' => 'Seule la direction connectée peut écrire un e-mail.',
-			'courriels.admin.ecrire.retour.echec' => 'L\'envoi n\'est pas confirmé. Regardez la liste des envois avant de recommencer : le même e-mail ne sera pas mis en file deux fois.',
-			'courriels.admin.ecrire.retour.horsLigne' => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.',
+			'courriels.admin.ecrire.retour.echec' => 'L\'envoi n\'est pas confirmé. Regardez la liste des envois avant de recommencer : le même e-mail ne sera pas mis en file deux fois.',
+			'courriels.admin.ecrire.retour.horsLigne' => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.',
 			'courriels.admin.file.filtre.tous' => 'Tous',
 			'courriels.admin.file.filtre.enAttente' => 'En file',
 			'courriels.admin.file.filtre.envoi' => 'En cours d\'envoi',
@@ -50147,10 +50147,10 @@ extension on Traductions {
 			'courriels.admin.file.sansDonnees' => 'Les envois n\'ont pas pu être chargés',
 			'courriels.admin.file.retour.relance' => 'Remis en file. Envoi dans la minute.',
 			'courriels.admin.file.retour.introuvable' => 'Cet e-mail n\'est plus à relancer. La liste est mise à jour.',
-			'courriels.admin.file.retour.echec' => 'La remise en file n\'est pas confirmée. La liste est relue : vérifiez l\'état de l\'e-mail avant de recommencer.',
+			'courriels.admin.file.retour.echec' => 'La remise en file n\'est pas confirmée. La liste est relue : vérifiez l\'état de l\'e-mail avant de recommencer.',
 			'courriels.admin.file.retour.refus' => 'Seule la direction connectée peut relancer un e-mail.',
-			'courriels.admin.file.retour.horsLigne' => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.',
-			'courriels.admin.adresses.intro' => 'Chaque catégorie part de son adresse, et les réponses arrivent dans la boîte indiquée. Cette liste se lit ici ; elle ne se modifie pas dans l\'application.',
+			'courriels.admin.file.retour.horsLigne' => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.',
+			'courriels.admin.adresses.intro' => 'Chaque catégorie part de son adresse, et les réponses arrivent dans la boîte indiquée. Cette liste se lit ici ; elle ne se modifie pas dans l\'application.',
 			'courriels.admin.adresses.champs.expediteur' => 'Part de',
 			'courriels.admin.adresses.champs.nom' => 'Nom affiché',
 			'courriels.admin.adresses.champs.reponses' => 'Réponses à',

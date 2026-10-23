@@ -12305,20 +12305,20 @@
         "envoyer": "Envoyer le message",
         "erreurCategories": "Les catégories n'ont pas pu être chargées. Réessayez.",
         "sansDonneesCategories": "Les catégories n'ont pas pu être chargées",
-        "pasDeCategorie": "Aucune catégorie n'est active : impossible d'écrire pour le moment.",
+        "pasDeCategorie": "Aucune catégorie n'est active : impossible d'écrire pour le moment.",
         "champ": {
           "adresse": "Entrez une adresse e-mail valide.",
           "categorie": "Choisissez une catégorie.",
           "sujet": "Donnez un sujet de 1 à 120 caractères.",
           "corps": "Écrivez un message de 1 à 5000 caractères.",
-          "destinataireExclu": "Cette personne ne peut pas recevoir cet e-mail : compte d'enfant ou désinscription."
+          "destinataireExclu": "Cette personne ne peut pas recevoir cet e-mail : compte d'enfant ou désinscription."
         },
         "retour": {
           "misEnFile": "Envoi dans la minute. Suivez-le dans la liste des envois.",
           "voir": "Voir les envois",
           "refus": "Seule la direction connectée peut écrire un e-mail.",
-          "echec": "L'envoi n'est pas confirmé. Regardez la liste des envois avant de recommencer : le même e-mail ne sera pas mis en file deux fois.",
-          "horsLigne": "Rien n'est parti : le réseau est absent. Réessayez dès son retour."
+          "echec": "L'envoi n'est pas confirmé. Regardez la liste des envois avant de recommencer : le même e-mail ne sera pas mis en file deux fois.",
+          "horsLigne": "Rien n'est parti : le réseau est absent. Réessayez dès son retour."
         }
       },
       "file": {
@@ -12359,13 +12359,13 @@
         "retour": {
           "relance": "Remis en file. Envoi dans la minute.",
           "introuvable": "Cet e-mail n'est plus à relancer. La liste est mise à jour.",
-          "echec": "La remise en file n'est pas confirmée. La liste est relue : vérifiez l'état de l'e-mail avant de recommencer.",
+          "echec": "La remise en file n'est pas confirmée. La liste est relue : vérifiez l'état de l'e-mail avant de recommencer.",
           "refus": "Seule la direction connectée peut relancer un e-mail.",
-          "horsLigne": "Rien n'est parti : le réseau est absent. Réessayez dès son retour."
+          "horsLigne": "Rien n'est parti : le réseau est absent. Réessayez dès son retour."
         }
       },
       "adresses": {
-        "intro": "Chaque catégorie part de son adresse, et les réponses arrivent dans la boîte indiquée. Cette liste se lit ici ; elle ne se modifie pas dans l'application.",
+        "intro": "Chaque catégorie part de son adresse, et les réponses arrivent dans la boîte indiquée. Cette liste se lit ici ; elle ne se modifie pas dans l'application.",
         "champs": {
           "expediteur": "Part de",
           "nom": "Nom affiché",
