@@ -240,7 +240,8 @@ Inspection après ces corrections :
 | Recette 37 (jurés Sonnet) | 7,77 | 6,75 | 6,50 | « presque », sans plafond |
 | Recette 38 (jurés Sonnet) | 7,90 | 6,92 | 6,90 | « presque », sans plafond |
 | Recette 39 (jurés Sonnet) | 7,90 | 6,57 | 6,33 | « presque », sans plafond |
-| Recette 40 (jurés Sonnet) | 7,78 | 6,78 | 6,50 | « presque », sans plafond ; dernière recette (directeur, 23/10 : « il faut en finir ») |
+| Recette 40 (jurés Sonnet) | 7,78 | 6,78 | 6,50 | « presque », sans plafond ; le directeur demande d'en finir (23/10) |
+| Recette 41 (jurés Sonnet) | 7,80 | 6,90 | 6,50 | « presque », sans plafond ; dernière recette, après WW1, WW2 et WW6 |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -831,6 +832,16 @@ demande :
 | WW5 | Titres de section à 2,4 fois le texte, hiérarchie plate sous le premier écran (2 jurés) | Titres de section plus grands |
 | WW6 | Liens fléchés secondaires de 16 px, faibles à côté des titres (2 jurés) | 18 à 20 px, soulignés, 44 px de hauteur touchable |
 | WW7 | Tarifs : une seule image sur la page (inspecteur) | Un détail sans personne à côté d'« À savoir » et en fin de page, sans casser les mises en page des dates et des règles |
+
+**Recette 41, la dernière.** Faits avant elle, pendant la nuit du 23/10 : WW1 (pied de page au bureau sur quatre
+rangées, 0,31 écran ; la langue et le crédit sur la ligne des pages Facebook), WW2 (« Les cours en bref » sans
+pastilles : la première ligne en phrase, les autres en liste à puces d'arche sur deux colonnes, mots inchangés),
+WW6 (liens fléchés : ils étaient déjà à 21 px ; un trait discret au repos, plein au survol). Les trois jurés
+donnent WW2 réglé, WW1 et WW6 en partie ; Rewayah à 7,80, devant Hallow (6,90) et Waking Up (6,50), et toujours
+« presque ». Ils relèvent encore : sous les deux prix de l'accueil, quatre tuiles pleines ; le même partage arche
+et texte de page en page ; une hiérarchie de titres trop douce sous le premier écran ; aucune preuve vivante hors
+du simulateur (piste : les prochaines classes ouvertes, lues dans les horaires publiés). Rien de cela n'est repris
+sans demande du directeur.
 
 ## Hors de portée de l'agent
 
