@@ -241,7 +241,8 @@ Inspection après ces corrections :
 | Recette 38 (jurés Sonnet) | 7,90 | 6,92 | 6,90 | « presque », sans plafond |
 | Recette 39 (jurés Sonnet) | 7,90 | 6,57 | 6,33 | « presque », sans plafond |
 | Recette 40 (jurés Sonnet) | 7,78 | 6,78 | 6,50 | « presque », sans plafond ; le directeur demande d'en finir (23/10) |
-| Recette 41 (jurés Sonnet) | 7,80 | 6,90 | 6,50 | « presque », sans plafond ; dernière recette, après WW1, WW2 et WW6 |
+| Recette 41 (jurés Sonnet) | 7,80 | 6,90 | 6,50 | « presque », sans plafond, après WW1, WW2 et WW6 |
+| Recette 42 (jurés Sonnet) | 7,67 | 6,80 | 6,67 | « presque », sans plafond ; dernière recette |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -842,6 +843,16 @@ donnent WW2 réglé, WW1 et WW6 en partie ; Rewayah à 7,80, devant Hallow (6,90
 et texte de page en page ; une hiérarchie de titres trop douce sous le premier écran ; aucune preuve vivante hors
 du simulateur (piste : les prochaines classes ouvertes, lues dans les horaires publiés). Rien de cela n'est repris
 sans demande du directeur.
+
+**Recette 42.** Avant elle : les quatre engagements sous les prix de l'accueil en liste à puces d'arche (et non en
+tuiles pleines) ; les titres de section pleine largeur à 64 px au bureau (3,2 fois le texte), ceux posés à côté
+d'une image restent à 56 px pour ne jamais dépasser deux lignes (vérifié sur les 18 pages à 1100, 1280 et 1440 px).
+Les jurés donnent les engagements réglés, la hiérarchie en partie ; Rewayah à 7,67, devant Hallow (6,80) et Waking Up
+(6,67), toujours « presque ». Leurs demandes changent d'un tour à l'autre : le pied de page, jugé « en partie réglé »
+à 0,31 écran au tour 41, est « non réglé » au tour 42, qui demande 0,18 écran et le retrait des quatre adresses
+(décision de contenu du directeur). Un juré relève un contraste de 4,48:1 sur les tuiles violettes : mesuré dans la
+page, le texte est blanc pur sur #8652E6, soit 4,81:1 (conforme AA) ; l'écart vient de la compression des captures.
+Un contrôle de contraste sur chaque texte des 18 pages, à 1440 et 390 px, ne trouve aucun texte sous le seuil.
 
 ## Hors de portée de l'agent
 
