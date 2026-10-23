@@ -5,7 +5,9 @@
 -- categorie part de l'alias Google Workspace qui lui est dedie : une reponse
 -- de la famille arrive dans la boite qui traite le sujet.
 --
--- Ce qui envoie : la fonction Edge `courriels-envoi` reserve un lot
+-- Ce qui met en file : chaque notification privee (demandes, classes,
+-- remplacements, controle, paiements) et chaque invitation au foyer ; la
+-- direction, a la main. Ce qui envoie : la fonction Edge `courriels-envoi` reserve un lot
 -- (`courriels_reserver`), compose le message, l'envoie, puis consigne le
 -- resultat (`courriel_consigner`). Les e-mails d'authentification (lien ou
 -- code de connexion) ne passent pas par la file : le hook « Send Email » de
@@ -177,7 +179,9 @@ $function$;
 -- Declencheurs metier
 -- ------------------------------------------------------------------
 
--- Notifications privees (CT-BR) : chaque notification part aussi par e-mail.
+-- Notifications privees (CT-BR, puis C29, FAC-F-01) : chaque notification part
+-- aussi par e-mail. Les relances de paiement, suspensions et retablissements
+-- creent deja une notification : elles passent par ici, sans second chemin.
 CREATE FUNCTION public.courriel_depuis_notification()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -186,12 +190,16 @@ SET search_path = ''
 AS $function$
 BEGIN
   PERFORM public.courriel_enfiler(
-    CASE WHEN NEW.evenement IN ('enseignant_affecte', 'remplacement_propose', 'remplacement_pris')
-         THEN 'classes' ELSE 'inscription' END,
+    CASE
+      WHEN NEW.evenement IN ('paiement_relance', 'acces_suspendu_paiement', 'acces_retabli_paiement')
+        THEN 'facturation'
+      WHEN NEW.evenement IN ('demande_recue', 'classe_validee', 'demande_close', 'demande_presentation')
+        THEN 'inscription'
+      ELSE 'classes' END,
     NEW.evenement,
     public.courriel_adresse_profil(NEW.destinataire),
     NEW.destinataire,
-    pg_catalog.jsonb_build_object('destination', NEW.destination),
+    NEW.params || pg_catalog.jsonb_build_object('destination', NEW.destination),
     'notification:' || NEW.id::text);
   RETURN NULL;
 END;
@@ -228,32 +236,6 @@ $function$;
 CREATE TRIGGER courriel_invitation_foyer
   AFTER INSERT ON public.email_outbox_invitation_foyer
   FOR EACH ROW EXECUTE FUNCTION public.courriel_depuis_invitation_foyer();
-
--- Relances de paiement, suspension et retablissement (FAC-F-01).
-CREATE FUNCTION public.courriel_depuis_relance()
-RETURNS trigger
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = ''
-AS $function$
-DECLARE
-  v_f record;
-BEGIN
-  SELECT f.mois, f.total_mineur, f.devise INTO v_f
-    FROM public.factures_mensuelles f WHERE f.id = NEW.facture_id;
-  PERFORM public.courriel_enfiler(
-    'facturation', 'paiement_' || NEW.action,
-    public.courriel_adresse_profil(NEW.profile_id), NEW.profile_id,
-    pg_catalog.jsonb_build_object('mois', v_f.mois, 'total_mineur', v_f.total_mineur,
-                                  'devise', v_f.devise, 'jours_avant', NEW.jours_avant),
-    'relance:' || NEW.id::text);
-  RETURN NULL;
-END;
-$function$;
-
-CREATE TRIGGER courriel_relance_paiement
-  AFTER INSERT ON public.relances_paiement
-  FOR EACH ROW EXECUTE FUNCTION public.courriel_depuis_relance();
 
 -- ------------------------------------------------------------------
 -- Envoi manuel et suivi (direction)
@@ -501,8 +483,7 @@ DECLARE
     'public.courriel_enfiler(text,text,text,uuid,jsonb,text,text,uuid)'::regprocedure,
     'public.courriel_adresse_profil(uuid)'::regprocedure,
     'public.courriel_depuis_notification()'::regprocedure,
-    'public.courriel_depuis_invitation_foyer()'::regprocedure,
-    'public.courriel_depuis_relance()'::regprocedure];
+    'public.courriel_depuis_invitation_foyer()'::regprocedure];
   v_public regprocedure := 'public.courriel_desinscrire(text)'::regprocedure;
   v_garde text;
 BEGIN

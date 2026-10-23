@@ -1,5 +1,6 @@
 -- COURRIELS-1 (23/10/2026) : file unique des e-mails. Migration 20261023120000.
---   1. une notification privee met un e-mail en file, categorie et alias justes ;
+--   1. une notification privee met un e-mail en file, categorie et alias justes
+--      (demande, classe, relance de paiement depuis invoice@) ;
 --      rejouer la meme cle n'en ajoute pas ;
 --   2. un compte enfant (adresse technique) ne recoit jamais d'e-mail ;
 --   3. une invitation au foyer part de la categorie « compte » ;
@@ -71,6 +72,12 @@ INSERT INTO public.notifications(destinataire, evenement, destination)
 VALUES ('c0e10000-0000-4000-8000-0000000000b1', 'enseignant_affecte', '/tuteur/demandes');
 SELECT pg_temp.vrai((SELECT categorie FROM public.courriels_sortants WHERE modele = 'enseignant_affecte') = 'classes',
                     '1 enseignant affecte : categorie classes');
+INSERT INTO public.notifications(destinataire, evenement, params, destination)
+VALUES ('c0e10000-0000-4000-8000-0000000000b1', 'paiement_relance', '{"jours_avant": 3}', '/tuteur/foyer/recharge');
+SELECT pg_temp.vrai((SELECT s.categorie = 'facturation' AND (s.donnees->>'jours_avant')::int = 3
+                       AND c.expediteur_adresse = 'invoice@rewayahacademy.com'
+                       FROM public.courriels_sortants s JOIN public.courriel_categories c ON c.code = s.categorie
+                      WHERE s.modele = 'paiement_relance'), '1 relance de paiement : facturation, depuis invoice@');
 SELECT pg_temp.vrai(public.courriel_enfiler('inscription', 'classe_validee', 'x@test.invalid', NULL, '{}',
                       'notification:c0e10000-0000-4000-8000-000000000d01') IS NULL, '1 meme cle : rien de plus');
 
