@@ -915,12 +915,10 @@ li, dd { text-wrap: wrap; }
   .site-main { position: relative; z-index: 1; background: var(--fond); }
   .site-footer { position: sticky; bottom: 0; z-index: 0; }
 }
-.site-footer__inner { position: relative; max-width: var(--contenu); margin-inline: auto; display: grid; gap: var(--e-10); font-size: var(--t-petit); }
-.site-footer .brand img { width: 220px; margin-bottom: var(--e-6); }
-.footer-identity p, .footer-identity address { font-style: normal; color: var(--sur-pied-doux); }
-.footer-identity address { margin-top: var(--e-3); }
-.footer-identity address span, .footer-identity p span { display: block; }
-.footer-title { font-weight: 700; margin-bottom: var(--e-3); font-size: var(--t-corps); }
+.site-footer__inner { position: relative; max-width: var(--contenu); margin-inline: auto; display: grid; gap: var(--e-6); font-size: var(--t-petit); }
+.site-footer .brand img { width: 150px; }
+.footer-identity { display: flex; align-items: center; }
+.footer-title { font-weight: 700; font-size: var(--t-corps); }
 .pied-volet > summary { list-style: none; }
 .pied-volet > summary::-webkit-details-marker { display: none; }
 .site-footer ul { display: grid; }
@@ -928,76 +926,61 @@ li, dd { text-wrap: wrap; }
 .site-footer a:hover { text-decoration: underline; }
 .footer-contacts { gap: var(--e-3); }
 .footer-contacts strong { display: block; }
-.footer-contacts a { display: grid; gap: 2px; align-content: center; color: var(--sur-pied-doux); min-height: 32px; }
+.footer-contacts a { display: grid; gap: 2px; align-content: center; min-height: 0; color: var(--sur-pied-doux); }
 .footer-contacts a strong { color: var(--sur-pied); }
+.footer-contacts__adresse { white-space: nowrap; }
 .footer-legal ul { display: flex; flex-wrap: wrap; gap: 0 var(--e-6); }
-.footer-bottom { display: grid; gap: var(--e-3); color: var(--sur-pied-doux); }
-.footer-bottom > div { display: grid; gap: var(--e-2); }
-.footer-bottom a { text-decoration: underline; min-height: 32px; }
-/* Bureau : des rangees. Le logo et l'adresse ; les pages ; les quatre adresses ; les liens legaux ; la langue, la page
-   Facebook et l'auteur du site. Les volets restent ouverts et leur titre s'efface (la navigation garde son nom). */
+/* Volet legal : les pages legales, puis la societe, son adresse et les deux pages Facebook, en petit. */
+.pied-legal { display: grid; gap: var(--e-3); }
+.pied-societe { display: flex; flex-wrap: wrap; align-items: center; gap: 0 var(--e-6); color: var(--sur-pied-doux); }
+.pied-societe p, .pied-societe address { margin: 0; font-style: normal; }
+.pied-societe p > span:not(:last-child)::after { content: ' ·'; }
+.pied-societe address span:not(:last-child)::after { content: ','; }
+.pied-societe a { min-height: 32px; color: var(--sur-pied-doux); text-decoration: underline; }
+.site-footer .site-footer__inner .footer-bottom { display: flex; flex-wrap: wrap; gap: 0 var(--e-5); margin: 0; color: var(--sur-pied-doux); font-size: 15px; }
+.footer-bottom span { white-space: nowrap; }
+/* Bureau : le logo et les pages ; les quatre adresses ; les pages legales, la societe et Facebook ; la langue et
+   l'auteur du site. Les volets restent ouverts et leur titre s'efface (chaque navigation garde son nom). */
 @media (min-width: 1100px) {
-  .site-footer { padding-top: var(--e-12); }
-  .site-footer__inner { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); row-gap: var(--e-6); }
+  .site-footer { padding-top: var(--e-12); padding-bottom: var(--e-8); }
+  .site-footer__inner { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); row-gap: var(--e-5); }
   .pied-volet > summary { display: none; }
-  .footer-identity, .pied-volet, .footer-bottom { grid-column: 1 / -1; }
-  .footer-identity { display: flex; flex-wrap: wrap; align-items: center; gap: var(--e-2) var(--e-6); }
-  .site-footer .footer-identity .brand img { width: 150px; margin-bottom: 0; }
-  .footer-identity p span, .footer-identity address span { display: inline; }
-  .footer-identity p span:not(:last-child)::after { content: ' ·'; }
-  .footer-identity address span:not(:last-child)::after { content: ','; }
-  .footer-identity address { margin-top: 0; }
-  .pied-volet--liens ul { display: flex; flex-wrap: wrap; gap: 0 var(--e-8); font-size: var(--t-corps); }
-  .pied-volet--liens a { min-height: 44px; color: var(--sur-pied); }
-  .site-footer .site-footer__inner .footer-identity p, .site-footer .site-footer__inner .footer-identity address { font-size: 16px; }
+  .footer-identity { grid-column: 1 / span 2; }
+  .pied-volet--liens { grid-column: 3 / -1; align-self: center; }
+  .pied-volet--liens ul { display: flex; flex-wrap: wrap; justify-content: end; gap: 0 var(--e-6); }
+  .pied-volet--liens a { color: var(--sur-pied); }
+  .pied-volet--contacts, .pied-volet--legal, .footer-bottom { grid-column: 1 / -1; }
   .site-footer .footer-contacts { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--e-4) var(--e-10); }
-  .footer-contacts a { min-height: 0; font-size: 16px; }
-  .footer-contacts__adresse { white-space: nowrap; }
-  .footer-legal ul { gap: 0 var(--e-6); }
-  .footer-bottom { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: var(--e-6); font-size: 16px; }
-  .footer-bottom > div { display: flex; flex-wrap: wrap; justify-content: end; gap: var(--e-1) var(--e-6); }
+  .site-footer .footer-contacts a { font-size: 16px; }
+  .site-footer .pied-societe { font-size: 15px; }
 }
-/* Sous 1100 px : l'identite en phrases ; « Decouvrir », « Nous contacter » et « Informations legales » en volets fermes
-   (ouverts sans script) ; les liens en lignes qui se suivent. */
+/* Sous 1100 px : le logo, trois volets fermes (ouverts sans script et a l'impression), une ligne pour l'auteur. */
 @media (max-width: 1099px) {
-  .footer-identity address span { display: inline; }
-  .footer-identity address span:not(:last-child)::after { content: ','; }
-  .footer-identity address { margin-top: var(--e-1); }
   .pied-volet > summary { display: flex; align-items: center; justify-content: space-between; min-height: 52px; margin: 0; cursor: pointer; font-size: 18px; }
   .pied-volet > summary::after { content: ''; flex: none; width: 14px; height: 14px; background: linear-gradient(currentColor, currentColor) center / 100% 2px no-repeat, linear-gradient(currentColor, currentColor) center / 2px 100% no-repeat; transition: transform .2s var(--courbe-sortie, ease-out); }
   .pied-volet[open] > summary::after { transform: rotate(45deg); }
   .pied-volet[open] > :last-child { padding-bottom: var(--e-4); }
+  .site-footer__inner > .pied-volet + .pied-volet { margin-top: calc(-1 * var(--e-6)); }
   .pied-volet--liens ul, .footer-legal ul { display: flex; flex-wrap: wrap; gap: 0 var(--e-5); }
   .pied-volet--liens a, .footer-legal a { white-space: nowrap; }
   .footer-contacts { gap: var(--e-2); }
-  .footer-contacts a { min-height: 0; }
-  .footer-contacts__adresse { white-space: nowrap; }
-  .footer-bottom { display: flex; flex-wrap: wrap; align-items: center; gap: var(--e-1) var(--e-5); }
-  .footer-bottom > div { display: contents; }
-  .footer-bottom a { text-decoration: none; min-height: 28px; }
+  .site-footer .pied-societe { display: grid; gap: var(--e-1); font-size: 15px; }
 }
-/* Tablette : l'identite a gauche, les trois volets a droite, l'un sous l'autre. */
+/* Tablette : le logo a gauche, les trois volets a droite. */
 @media (min-width: 600px) and (max-width: 1099px) {
   .site-footer { padding-top: var(--e-12); }
-  .site-footer__inner { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto auto auto 1fr; gap: var(--e-8); }
-  .footer-identity { grid-column: 1; grid-row: 1 / span 4; }
+  .site-footer__inner { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto auto auto 1fr; column-gap: var(--e-8); }
+  .footer-identity { grid-column: 1; grid-row: 1 / span 4; align-self: start; padding-top: var(--e-2); }
   .pied-volet { grid-column: 2; }
-  .pied-volet + .pied-volet { margin-top: calc(-1 * var(--e-8)); }
   .footer-bottom { grid-column: 1 / -1; }
 }
 /* Telephone : plus serre. */
 @media (max-width: 599px) {
   .site-footer { padding: var(--e-10) var(--marge) var(--e-6); }
-  .site-footer__inner { gap: var(--e-6); font-size: 16px; }
-  .site-footer .brand img { width: 140px; margin-bottom: var(--e-3); }
-  .footer-identity p, .footer-identity address { font-size: 15px; }
-  .footer-identity p span { display: inline; }
-  .footer-identity p span:not(:last-child)::after { content: ' ·'; }
-  .site-footer__inner > .pied-volet + .pied-volet { margin-top: calc(-1 * var(--e-6)); }
+  .site-footer .brand img { width: 140px; }
   .footer-legal a { font-size: 15px; min-height: 32px; }
   .pied-volet--liens a { min-height: 36px; }
   .footer-contacts a { font-size: 16px; }
-  .footer-bottom, .footer-bottom a { font-size: 15px; }
 }
 
 /* --- Page introuvable --------------------------------------------------------- */
