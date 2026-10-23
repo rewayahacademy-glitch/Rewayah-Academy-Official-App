@@ -2418,3 +2418,11 @@ li, dd { text-wrap: wrap; }
 .lien-fleche > span::after { transform: scaleX(1); opacity: .35; transition: opacity var(--mv-micro) var(--mv-entree); }
 .lien-fleche:hover > span::after, .lien-fleche:focus-visible > span::after { opacity: 1; }
 .contact-ligne .lien-fleche > span::after { bottom: -4px; }
+/* Accueil, sous les deux prix : les quatre engagements communs en liste a puces d'arche, et non en tuiles pleines qui
+   ressemblaient a des boutons (deux jures, recette 41). Les mots ne changent pas. */
+.deux-champs__communs li { display: block; padding: 0 0 0 1.4em; border-radius: 0; background: none; font-weight: 500; }
+.deux-champs__communs li::before { content: ''; position: absolute; inset-inline-start: 0; top: .5em; width: .6em; height: .75em; border-radius: var(--arche); background: currentColor; opacity: .55; }
+/* Titres de section un cran plus grands au bureau : 64 px contre 20 px de texte (trois fois et plus), et non 56. */
+@media (min-width: 1100px) { :root { --t-titre: clamp(28px, 4.45vw, 64px); } }
+/* A cote d'une image, la colonne est etroite : ces titres gardent 56 px (deux lignes au plus). */
+@media (min-width: 1100px) { .section--figure .section__texte h2 { font-size: clamp(28px, 3.9vw, 56px); } }
