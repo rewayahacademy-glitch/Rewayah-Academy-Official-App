@@ -23,6 +23,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:rewayah_academy/core/candidature/candidatures_direction_supabase.dart';
 import 'package:rewayah_academy/core/candidature/gestes_candidature.dart';
+import 'package:rewayah_academy/core/candidature/modeles_autres_competences.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature_detail.dart';
 import 'package:rewayah_academy/core/candidature/port_candidatures_direction.dart';
@@ -605,6 +606,91 @@ void main() {
         expect(d.autreCote, isFalse);
       },
     );
+
+    test('« Vos autres talents » : lues avec le dossier, jamais devinees', () async {
+      final CandidaturesDirectionSupabase port = _port(
+        (_Appel _) => _ok(<String, Object?>{
+          ..._dossier(),
+          'autresCompetences': <String, Object?>{
+            'domaines': <String, String>{
+              'comptabilite': 'metier',
+              'autre': 'debutant',
+              // Un niveau que cette version ne connait pas : ignore, pas un
+              // niveau presume.
+              'assistanat': 'expert',
+            },
+            'autreTexte': 'Secrétariat médical',
+            'disponibilite': 'mi_temps',
+            'accord': true,
+            'accordLe': '2026-10-22T14:05:00Z',
+            'majLe': '2026-10-22T14:05:00Z',
+          },
+        }),
+        <_Appel>[],
+      );
+      final DetailCandidature d = await port.lire('c1');
+      final ReponsesAutresCompetences? r = d.autresCompetences;
+      expect(r, isNotNull);
+      expect(r!.domaines, <String, NiveauCompetence>{
+        'comptabilite': NiveauCompetence.metier,
+        'autre': NiveauCompetence.debutant,
+      });
+      expect(r.autreTexte, 'Secrétariat médical');
+      expect(r.disponibilite, DisponibiliteMission.miTemps);
+      expect(r.accord, isTrue);
+      expect(r.accordLe, DateTime.utc(2026, 10, 22, 14, 5));
+    });
+
+    test('sans reponse : aucune competence, jamais un bloc vide', () async {
+      for (final Object? brut in <Object?>[
+        null,
+        <String, Object?>{},
+        // Une disponibilite inconnue n'est pas une reponse.
+        <String, Object?>{
+          'domaines': <String, String>{'comptabilite': 'metier'},
+          'disponibilite': 'jamais',
+          'accord': true,
+        },
+      ]) {
+        final CandidaturesDirectionSupabase port = _port(
+          (_Appel _) => _ok(<String, Object?>{
+            ..._dossier(),
+            'autresCompetences': brut,
+          }),
+          <_Appel>[],
+        );
+        expect((await port.lire('c1')).autresCompetences, isNull);
+      }
+      // Et un dossier d'avant le lot n'a pas la cle.
+      final CandidaturesDirectionSupabase ancien = _port(
+        (_Appel _) => _ok(_dossier()),
+        <_Appel>[],
+      );
+      expect((await ancien.lire('c1')).autresCompetences, isNull);
+    });
+
+    test('l accord retire reste lu tel quel : pas d accord, pas de date', () async {
+      final CandidaturesDirectionSupabase port = _port(
+        (_Appel _) => _ok(<String, Object?>{
+          ..._dossier(),
+          'autresCompetences': <String, Object?>{
+            'domaines': <String, String>{'comptabilite': 'experience'},
+            'autreTexte': null,
+            'disponibilite': 'pas_maintenant',
+            'accord': false,
+            'accordLe': null,
+            'majLe': '2026-10-22T14:05:00Z',
+          },
+        }),
+        <_Appel>[],
+      );
+      final ReponsesAutresCompetences r =
+          (await port.lire('c1')).autresCompetences!;
+      expect(r.accord, isFalse);
+      expect(r.accordLe, isNull);
+      expect(r.autreTexte, isNull);
+      expect(r.disponibilite, DisponibiliteMission.pasMaintenant);
+    });
 
     test('hors portee et absente sont rendues, jamais confondues', () async {
       await expectLater(

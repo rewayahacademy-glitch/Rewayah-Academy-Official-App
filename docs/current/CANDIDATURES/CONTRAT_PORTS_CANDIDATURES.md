@@ -281,7 +281,7 @@ conception : `PROPOSITION_AUTRES_COMPETENCES.md` (section 7 pour le serveur). Pa
 de la salle d'attente, **après l'envoi** de la Salle d'examen. **Ce n'est pas un état** : ni
 `etat_dossier()` ni la candidature n'en portent rien ; le port lit et écrit ses propres
 réponses. Lot serveur `présent dans le code`, `testé localement` le 22/10, ni staging ni
-production ; aucun adaptateur `*_supabase.dart` n'existe encore. **Les compétences proposées sont
+production ; l'adaptateur `lib/core/candidature/autres_competences_supabase.dart` et l'écran `CAND-07` sont `présents dans le code` et `testés localement` (faux client HTTP) le 23/10 ; rien n'est `testé sur staging` ni `déployé`. **Les compétences proposées sont
 celles du catalogue** (section 3 ter) : précises, regroupées par famille, que la direction complète
 sans nouvelle version de l'app (décision du directeur du 22/10 : « il faut être spécifique dans ce
 que tu vas demander comme compétence »).
@@ -328,7 +328,10 @@ familles** : `communication` (`reseaux_sociaux`, `relations_publiques`, `design_
 `juridique_donnees`), `pedagogie` (`conception_programmes`, `formation_enseignants`,
 `qualite_cours`, `tests_niveau`, `accompagnement_enfants`), `technique` (`developpement`,
 `assistance_technique`, `donnees_tableurs`) et `autre` (`autre`). Lot serveur `présent dans le
-code`, `testé localement` le 22/10, ni staging ni production.
+code`, `testé localement` le 22/10, ni staging ni production. **Côté Dart (23/10)** : `lire` est
+`présent dans le code` (`CatalogueCompetencesSupabase`, port `PortCatalogueCompetences`, lu par la
+fiche `ADM-21` et le menu de domaine d'`ADM-20` pour nommer les compétences ajoutées depuis) ;
+**`enregistrer` n'est pas construit** : l'écran du catalogue de la direction n'existe pas.
 
 **`EntreeCatalogue`** : `code` (stable pour toujours : une réponse ancienne le cite), `famille`,
 `ordre` (rang dans la famille), `libelle` (1 à 80 caractères, une ligne), `exemple?` (1 à 200),

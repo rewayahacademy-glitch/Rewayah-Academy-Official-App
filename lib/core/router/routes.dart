@@ -99,6 +99,13 @@ abstract final class Routes {
   /// page revient au portail.
   static const String attentePartage = '/attente/partage';
 
+  /// CAND-07 : « Vos autres talents », le parcours facultatif de la salle
+  /// d'attente, apres l'envoi de la candidature (competences precises, niveau,
+  /// disponibilite, accord d'etre contacte pour une mission). Sous `/attente`,
+  /// ouvert au compte en attente ; sans candidature pour le compte, la page
+  /// revient au portail.
+  static const String attenteTalents = '/attente/talents';
+
   // --- Eleve, meme arborescence en mode enfant et en mode standard --------
 
   /// Accueil eleve.

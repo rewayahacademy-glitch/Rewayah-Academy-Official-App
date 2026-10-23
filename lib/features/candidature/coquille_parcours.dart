@@ -150,22 +150,35 @@ class CoquilleParcours extends StatelessWidget {
 }
 
 /// Une ligne d'indication sous la question : ce qui manque pour continuer
-/// (K-59), annoncee au lecteur d'ecran.
+/// (K-59), annoncee au lecteur d'ecran. [discret] : une precision et non un
+/// manque (le nombre de choix faits, ce qui sera possible plus tard), en encre
+/// attenuee.
 class IndicationParcours extends StatelessWidget {
   /// Cree la ligne.
-  const IndicationParcours({required this.message, super.key});
+  const IndicationParcours({
+    required this.message,
+    super.key,
+    this.discret = false,
+  });
 
   /// Le message.
   final String message;
 
+  /// Vrai : encre attenuee, au lieu de l'encre d'alerte.
+  final bool discret;
+
   @override
-  Widget build(BuildContext context) => Semantics(
-    liveRegion: true,
-    child: Text(
-      message,
-      textAlign: TextAlign.center,
-      style: AppPalette.of(context).inkAlert
-          .applyTo(Theme.of(context).textTheme.bodyMedium ?? const TextStyle()),
-    ),
-  );
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    return Semantics(
+      liveRegion: true,
+      child: Text(
+        message,
+        textAlign: TextAlign.center,
+        style: (discret ? palette.inkMuted : palette.inkAlert).applyTo(
+          Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+        ),
+      ),
+    );
+  }
 }

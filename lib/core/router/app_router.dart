@@ -169,6 +169,7 @@ import '../../features/suivi_foyer/detail_observations_page.dart';
 import '../../features/suivi_foyer/detail_seance_page.dart';
 import '../../features/suivi_foyer/observations_page.dart';
 import '../../features/suivi_foyer/suivi_foyer_page.dart';
+import '../../features/talents/talents_page.dart';
 import '../../features/tc_catalogue/routes_tc_b.dart';
 import '../../features/tc_mes_groupes/routes_tc_a.dart';
 import '../../features/tc_mushaf/mushaf_page.dart';
@@ -426,6 +427,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.attentePartage,
         builder: (BuildContext _, GoRouterState _) =>
             const PartageOffrePage(),
+      ),
+      // CAND-07 : « Vos autres talents ». Declaree meme sans le lot serveur : une
+      // adresse tapee montre la phrase de capacite indisponible.
+      GoRoute(
+        path: Routes.attenteTalents,
+        builder: (BuildContext _, GoRouterState _) => const TalentsPage(),
       ),
 
       // Compte. Cet espace est partage par les roles actifs, mais ses

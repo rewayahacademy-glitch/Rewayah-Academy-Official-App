@@ -19,6 +19,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 
+import 'modeles_autres_competences.dart';
 import 'modeles_candidature.dart';
 
 /// Ce que la direction peut faire de la file, lu au serveur
@@ -198,6 +199,10 @@ class FiltreCandidatures {
     this.enPause,
     this.paiement,
     this.paysResidence,
+    this.competenceDomaine,
+    this.competenceNiveauMin,
+    this.competenceDisponibilite,
+    this.competenceAccord,
   });
 
   /// Le texte cherche : nom partiel, reference `CAND-` exacte, courriel exact.
@@ -222,6 +227,24 @@ class FiltreCandidatures {
 
   /// Le pays de residence declare (code ISO a deux lettres majuscules).
   final String? paysResidence;
+
+  /// Autres competences (CAND-07) : un **code du catalogue** ou une **famille**
+  /// (tous les codes de cette famille, desactives compris). Chaque cle de
+  /// competence exige qu'une reponse existe : la liste ne rend alors que les
+  /// personnes qui ont repondu a « Vos autres talents ».
+  final String? competenceDomaine;
+
+  /// Autres competences : ce niveau ou plus. Sans domaine, « au moins un domaine a
+  /// ce niveau ».
+  final NiveauCompetence? competenceNiveauMin;
+
+  /// Autres competences : la disponibilite exacte (elle ne se classe pas).
+  final DisponibiliteMission? competenceDisponibilite;
+
+  /// Autres competences : vrai, seulement les personnes qui acceptent d'etre
+  /// contactees ; faux, celles qui ont repondu sans accord. La recherche d'une
+  /// personne pour une mission envoie toujours vrai.
+  final bool? competenceAccord;
 
   /// Le texte cherche, sans les blancs de bord.
   String get rechercheNette => recherche.trim();
@@ -254,7 +277,11 @@ class FiltreCandidatures {
       issue == null &&
       enPause == null &&
       paiement == null &&
-      paysResidence == null;
+      paysResidence == null &&
+      competenceDomaine == null &&
+      competenceNiveauMin == null &&
+      competenceDisponibilite == null &&
+      competenceAccord == null;
 
   /// Le nombre d'axes poses (la recherche compte pour un).
   int get nombreAxes =>
@@ -264,7 +291,11 @@ class FiltreCandidatures {
       (issue == null ? 0 : 1) +
       (enPause == null ? 0 : 1) +
       (paiement == null ? 0 : 1) +
-      (paysResidence == null ? 0 : 1);
+      (paysResidence == null ? 0 : 1) +
+      (competenceDomaine == null ? 0 : 1) +
+      (competenceNiveauMin == null ? 0 : 1) +
+      (competenceDisponibilite == null ? 0 : 1) +
+      (competenceAccord == null ? 0 : 1);
 
   /// Le meme filtre, un axe change. Une fonction par axe rend `null` possible
   /// (« tous »).
@@ -276,6 +307,10 @@ class FiltreCandidatures {
     bool? Function()? enPause,
     EtatVersement? Function()? paiement,
     String? Function()? paysResidence,
+    String? Function()? competenceDomaine,
+    NiveauCompetence? Function()? competenceNiveauMin,
+    DisponibiliteMission? Function()? competenceDisponibilite,
+    bool? Function()? competenceAccord,
   }) => FiltreCandidatures(
     recherche: recherche ?? this.recherche,
     etape: etape == null ? this.etape : etape(),
@@ -284,6 +319,18 @@ class FiltreCandidatures {
     enPause: enPause == null ? this.enPause : enPause(),
     paiement: paiement == null ? this.paiement : paiement(),
     paysResidence: paysResidence == null ? this.paysResidence : paysResidence(),
+    competenceDomaine: competenceDomaine == null
+        ? this.competenceDomaine
+        : competenceDomaine(),
+    competenceNiveauMin: competenceNiveauMin == null
+        ? this.competenceNiveauMin
+        : competenceNiveauMin(),
+    competenceDisponibilite: competenceDisponibilite == null
+        ? this.competenceDisponibilite
+        : competenceDisponibilite(),
+    competenceAccord: competenceAccord == null
+        ? this.competenceAccord
+        : competenceAccord(),
   );
 
   /// Le meme filtre sans aucun axe : « Effacer les filtres ».
@@ -298,7 +345,11 @@ class FiltreCandidatures {
       other.issue == issue &&
       other.enPause == enPause &&
       other.paiement == paiement &&
-      other.paysResidence == paysResidence;
+      other.paysResidence == paysResidence &&
+      other.competenceDomaine == competenceDomaine &&
+      other.competenceNiveauMin == competenceNiveauMin &&
+      other.competenceDisponibilite == competenceDisponibilite &&
+      other.competenceAccord == competenceAccord;
 
   @override
   int get hashCode => Object.hash(
@@ -309,6 +360,10 @@ class FiltreCandidatures {
     enPause,
     paiement,
     paysResidence,
+    competenceDomaine,
+    competenceNiveauMin,
+    competenceDisponibilite,
+    competenceAccord,
   );
 }
 

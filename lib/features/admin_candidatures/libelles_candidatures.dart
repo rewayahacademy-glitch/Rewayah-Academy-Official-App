@@ -5,12 +5,14 @@
 // l'etape, ni l'etat, ni un compteur.
 library;
 
+import '../../core/candidature/modeles_autres_competences.dart';
 import '../../core/candidature/modeles_candidature.dart';
 import '../../core/candidature/modeles_candidatures_direction.dart';
 import '../../core/i18n/identifiant_insecable.dart';
 import '../../core/i18n/pays_iso.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/widgets/status_pill.dart';
+import '../talents/libelles_talents.dart';
 
 /// Le nom entier de la salle d'une etape, ou `null` avant la Salle d'examen
 /// (reçue, invitee) : ces deux etapes n'ont pas de salle, leur etat le dit.
@@ -189,6 +191,20 @@ String? rappelFiltres(FiltreCandidatures filtre) {
       filtre.enPause! ? r.etats.enPause : r.filtres.sansPause,
     if (filtre.paiement != null) libelleVersement(filtre.paiement!),
     if (filtre.paysResidence != null) libellePays(filtre.paysResidence)!,
+    // Autres competences (CAND-07) : chaque axe pose, en mots.
+    if (filtre.competenceDomaine != null)
+      nomDomaineFiltre(filtre.competenceDomaine!),
+    if (filtre.competenceNiveauMin != null)
+      switch (filtre.competenceNiveauMin!) {
+        NiveauCompetence.metier => r.filtres.talents.niveauMetier,
+        _ => r.filtres.talents.niveauExperience,
+      },
+    if (filtre.competenceDisponibilite != null)
+      libelleDisponibilite(filtre.competenceDisponibilite!),
+    if (filtre.competenceAccord != null)
+      filtre.competenceAccord!
+          ? r.filtres.talents.accordDonne
+          : r.filtres.talents.accordAbsent,
   ];
   return morceaux.isEmpty
       ? null

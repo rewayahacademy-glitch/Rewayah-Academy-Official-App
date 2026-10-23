@@ -1478,6 +1478,7 @@ class Traductions$recrutement$fr {
 	late final Traductions$recrutement$retrait$fr retrait = Traductions$recrutement$retrait$fr.internal(_root);
 	late final Traductions$recrutement$questionnaire$fr questionnaire = Traductions$recrutement$questionnaire$fr.internal(_root);
 	late final Traductions$recrutement$parcours$fr parcours = Traductions$recrutement$parcours$fr.internal(_root);
+	late final Traductions$recrutement$talents$fr talents = Traductions$recrutement$talents$fr.internal(_root);
 }
 
 // Path: dossiers
@@ -6839,6 +6840,28 @@ class Traductions$recrutement$parcours$fr {
 
 	/// fr: 'Choisissez au moins une heure de début pour le {jour}.'
 	String choisirHeureJour({required Object jour}) => 'Choisissez au moins une heure de début pour le ${jour}.';
+}
+
+// Path: recrutement.talents
+class Traductions$recrutement$talents$fr {
+	Traductions$recrutement$talents$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vos autres talents'
+	String get titre => 'Vos autres talents';
+
+	late final Traductions$recrutement$talents$tuile$fr tuile = Traductions$recrutement$talents$tuile$fr.internal(_root);
+	late final Traductions$recrutement$talents$intro$fr intro = Traductions$recrutement$talents$intro$fr.internal(_root);
+	late final Traductions$recrutement$talents$competences$fr competences = Traductions$recrutement$talents$competences$fr.internal(_root);
+	late final Traductions$recrutement$talents$c$fr c = Traductions$recrutement$talents$c$fr.internal(_root);
+	late final Traductions$recrutement$talents$niveaux$fr niveaux = Traductions$recrutement$talents$niveaux$fr.internal(_root);
+	late final Traductions$recrutement$talents$disponibilite$fr disponibilite = Traductions$recrutement$talents$disponibilite$fr.internal(_root);
+	late final Traductions$recrutement$talents$lecture$fr lecture = Traductions$recrutement$talents$lecture$fr.internal(_root);
+	late final Traductions$recrutement$talents$etats$fr etats = Traductions$recrutement$talents$etats$fr.internal(_root);
+	late final Traductions$recrutement$talents$erreurs$fr erreurs = Traductions$recrutement$talents$erreurs$fr.internal(_root);
 }
 
 // Path: dossiers.file
@@ -21599,6 +21622,291 @@ class Traductions$recrutement$parcours$moyens$fr {
 	String get nonElimine => 'Cette question est facultative et n\'élimine personne : votre candidature ne dépend pas de votre réponse. Elle aide l\'académie à connaître les moyens utilisés là où vous vivez.';
 }
 
+// Path: recrutement.talents.tuile
+class Traductions$recrutement$talents$tuile$fr {
+	Traductions$recrutement$talents$tuile$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Facultatif. Cela ne change rien à votre candidature d'enseignant.'
+	String get facultatif => 'Facultatif. Cela ne change rien à votre candidature d\'enseignant.';
+
+	/// fr: 'Vos réponses sont enregistrées. Vous pouvez les modifier.'
+	String get enregistre => 'Vos réponses sont enregistrées. Vous pouvez les modifier.';
+
+	/// fr: 'Vos réponses sont enregistrées. Vous pouvez les retirer.'
+	String get enregistreClose => 'Vos réponses sont enregistrées. Vous pouvez les retirer.';
+}
+
+// Path: recrutement.talents.intro
+class Traductions$recrutement$talents$intro$fr {
+	Traductions$recrutement$talents$intro$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'L'académie grandit. Elle aura besoin d'aide pour s'organiser, accompagner les familles, tenir ses comptes ou se faire connaître. Si vous savez faire autre chose, dites-le : nous vous contacterons d'abord, avant de publier une annonce.'
+	String get texte => 'L\'académie grandit. Elle aura besoin d\'aide pour s\'organiser, accompagner les familles, tenir ses comptes ou se faire connaître. Si vous savez faire autre chose, dites-le : nous vous contacterons d\'abord, avant de publier une annonce.';
+
+	late final Traductions$recrutement$talents$intro$facultatif$fr facultatif = Traductions$recrutement$talents$intro$facultatif$fr.internal(_root);
+	late final Traductions$recrutement$talents$intro$usage$fr usage = Traductions$recrutement$talents$intro$usage$fr.internal(_root);
+	late final Traductions$recrutement$talents$intro$liberte$fr liberte = Traductions$recrutement$talents$intro$liberte$fr.internal(_root);
+	late final Traductions$recrutement$talents$intro$missions$fr missions = Traductions$recrutement$talents$intro$missions$fr.internal(_root);
+}
+
+// Path: recrutement.talents.competences
+class Traductions$recrutement$talents$competences$fr {
+	Traductions$recrutement$talents$competences$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Que savez-vous faire d'autre ?'
+	String get titre => 'Que savez-vous faire d\'autre ?';
+
+	/// fr: 'Touchez toutes les compétences que vous avez. Chaque carte donne un exemple. Si la vôtre n'y est pas, choisissez « Autre domaine » en bas de la liste.'
+	String get explication => 'Touchez toutes les compétences que vous avez. Chaque carte donne un exemple. Si la vôtre n\'y est pas, choisissez « Autre domaine » en bas de la liste.';
+
+	late final Traductions$recrutement$talents$competences$familles$fr familles = Traductions$recrutement$talents$competences$familles$fr.internal(_root);
+
+	/// fr: '(zero) {Aucune compétence choisie} (one) {{n} compétence choisie} (other) {{n} compétences choisies}'
+	String choisies({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		zero: 'Aucune compétence choisie',
+		one: '${n} compétence choisie',
+		other: '${n} compétences choisies',
+	);
+
+	/// fr: 'Cette compétence n'est plus proposée. Vous pouvez la garder ou la décocher.'
+	String get nonProposee => 'Cette compétence n\'est plus proposée. Vous pouvez la garder ou la décocher.';
+
+	/// fr: 'Votre domaine, en quelques mots'
+	String get autreChamp => 'Votre domaine, en quelques mots';
+
+	/// fr: 'Une seule ligne suffit.'
+	String get autreAide => 'Une seule ligne suffit.';
+
+	/// fr: 'Choisissez au moins une compétence pour continuer.'
+	String get manque => 'Choisissez au moins une compétence pour continuer.';
+
+	/// fr: 'Dites en quelques mots de quel domaine il s'agit, ou décochez « Autre domaine ».'
+	String get autreVide => 'Dites en quelques mots de quel domaine il s\'agit, ou décochez « Autre domaine ».';
+
+	/// fr: 'Votre texte est trop long : {max} signes au plus. Raccourcissez-le.'
+	String autreTropLong({required Object max}) => 'Votre texte est trop long : ${max} signes au plus. Raccourcissez-le.';
+}
+
+// Path: recrutement.talents.c
+class Traductions$recrutement$talents$c$fr {
+	Traductions$recrutement$talents$c$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$recrutement$talents$c$reseaux_sociaux$fr reseaux_sociaux = Traductions$recrutement$talents$c$reseaux_sociaux$fr.internal(_root);
+	late final Traductions$recrutement$talents$c$relations_publiques$fr relations_publiques = Traductions$recrutement$talents$c$relations_publiques$fr.internal(_root);
+	late final Traductions$recrutement$talents$c$design_graphique$fr design_graphique = Traductions$recrutement$talents$c$design_graphique$fr.internal(_root);
+	late final Traductions$recrutement$talents$c$montage_video$fr montage_video = Traductions$recrutement$talents$c$montage_video$fr.internal(_root);
+	late final Traductions$recrutement$talents$c$photographie$fr photographie = Traductions$recrutement$talents$c$photographie$fr.internal(_root);
+	late final Traductions$recrutement$talents$c$redaction_contenus$fr redaction_contenus = Traductions$recrutement$talents$c$redaction_contenus$fr.internal(_root);
+	late final Traductions$recrutement$talents$c$publicite_en_ligne$fr publicite_en_ligne = Traductions$recrutement$talents$c$publicite_en_ligne$fr.internal(_root);
+	late final Traductions$recrutement$talents$c$traduction$fr traduction = Traductions$recrutement$talents$c$traduction$fr.internal(_root);
+	late final Traductions$recrutement$talents$c$assistanat$fr assistanat = Traductions$recrutement$talents$c$assistanat$fr.internal(_root);
+	late final Traductions$recrutement$talents$c$coordination_groupe$fr coordination_groupe = Traductions$recrutement$talents$c$coordination_groupe$fr.internal(_root);
+	late final Traductions$recrutement$talents$c$accueil_familles$fr accueil_familles = Traductions$recrutement$talents$c$accueil_familles$fr.internal(_root);
+	late final Traductions$recrutement$talents$c$gestion_projet$fr gestion_projet = Traductions$recrutement$talents$c$gestion_projet$fr.internal(_root);
+	late final Traductions$recrutement$talents$c$ressources_humaines$fr ressources_humaines = Traductions$recrutement$talents$c$ressources_humaines$fr.internal(_root);
+	late final Traductions$recrutement$talents$c$comptabilite$fr comptabilite = Traductions$recrutement$talents$c$comptabilite$fr.internal(_root);
+	late final Traductions$recrutement$talents$c$gestion_financiere$fr gestion_financiere = Traductions$recrutement$talents$c$gestion_financiere$fr.internal(_root);
+	late final Traductions$recrutement$talents$c$juridique_donnees$fr juridique_donnees = Traductions$recrutement$talents$c$juridique_donnees$fr.internal(_root);
+	late final Traductions$recrutement$talents$c$conception_programmes$fr conception_programmes = Traductions$recrutement$talents$c$conception_programmes$fr.internal(_root);
+	late final Traductions$recrutement$talents$c$formation_enseignants$fr formation_enseignants = Traductions$recrutement$talents$c$formation_enseignants$fr.internal(_root);
+	late final Traductions$recrutement$talents$c$qualite_cours$fr qualite_cours = Traductions$recrutement$talents$c$qualite_cours$fr.internal(_root);
+	late final Traductions$recrutement$talents$c$tests_niveau$fr tests_niveau = Traductions$recrutement$talents$c$tests_niveau$fr.internal(_root);
+	late final Traductions$recrutement$talents$c$accompagnement_enfants$fr accompagnement_enfants = Traductions$recrutement$talents$c$accompagnement_enfants$fr.internal(_root);
+	late final Traductions$recrutement$talents$c$developpement$fr developpement = Traductions$recrutement$talents$c$developpement$fr.internal(_root);
+	late final Traductions$recrutement$talents$c$assistance_technique$fr assistance_technique = Traductions$recrutement$talents$c$assistance_technique$fr.internal(_root);
+	late final Traductions$recrutement$talents$c$donnees_tableurs$fr donnees_tableurs = Traductions$recrutement$talents$c$donnees_tableurs$fr.internal(_root);
+	late final Traductions$recrutement$talents$c$autre$fr autre = Traductions$recrutement$talents$c$autre$fr.internal(_root);
+}
+
+// Path: recrutement.talents.niveaux
+class Traductions$recrutement$talents$niveaux$fr {
+	Traductions$recrutement$talents$niveaux$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Quel est votre niveau ?'
+	String get titre => 'Quel est votre niveau ?';
+
+	/// fr: 'Pour chaque compétence, dites où vous en êtes. Cela aide l'académie à vous proposer une mission qui vous convient.'
+	String get explication => 'Pour chaque compétence, dites où vous en êtes. Cela aide l\'académie à vous proposer une mission qui vous convient.';
+
+	/// fr: 'Comment choisir'
+	String get legende => 'Comment choisir';
+
+	late final Traductions$recrutement$talents$niveaux$debutant$fr debutant = Traductions$recrutement$talents$niveaux$debutant$fr.internal(_root);
+	late final Traductions$recrutement$talents$niveaux$experience$fr experience = Traductions$recrutement$talents$niveaux$experience$fr.internal(_root);
+	late final Traductions$recrutement$talents$niveaux$metier$fr metier = Traductions$recrutement$talents$niveaux$metier$fr.internal(_root);
+
+	/// fr: 'Niveau pour {competence}'
+	String niveauDe({required Object competence}) => 'Niveau pour ${competence}';
+
+	/// fr: 'Choisissez votre niveau en « {competence} » pour continuer.'
+	String manque({required Object competence}) => 'Choisissez votre niveau en « ${competence} » pour continuer.';
+}
+
+// Path: recrutement.talents.disponibilite
+class Traductions$recrutement$talents$disponibilite$fr {
+	Traductions$recrutement$talents$disponibilite$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Quand pourriez-vous aider ?'
+	String get titre => 'Quand pourriez-vous aider ?';
+
+	/// fr: 'Dites combien de temps vous pourriez donner à une mission, à côté de l'enseignement. Plus bas, dites si l'académie peut vous contacter.'
+	String get explication => 'Dites combien de temps vous pourriez donner à une mission, à côté de l\'enseignement. Plus bas, dites si l\'académie peut vous contacter.';
+
+	late final Traductions$recrutement$talents$disponibilite$quelques_heures$fr quelques_heures = Traductions$recrutement$talents$disponibilite$quelques_heures$fr.internal(_root);
+	late final Traductions$recrutement$talents$disponibilite$mi_temps$fr mi_temps = Traductions$recrutement$talents$disponibilite$mi_temps$fr.internal(_root);
+	late final Traductions$recrutement$talents$disponibilite$plus$fr plus = Traductions$recrutement$talents$disponibilite$plus$fr.internal(_root);
+	late final Traductions$recrutement$talents$disponibilite$pas_maintenant$fr pas_maintenant = Traductions$recrutement$talents$disponibilite$pas_maintenant$fr.internal(_root);
+
+	/// fr: 'J'accepte que l'académie me contacte pour une mission dans ces domaines.'
+	String get accord => 'J\'accepte que l\'académie me contacte pour une mission dans ces domaines.';
+
+	/// fr: 'Sans cette case, l'académie lit vos réponses mais ne vous propose aucune mission.'
+	String get accordNote => 'Sans cette case, l\'académie lit vos réponses mais ne vous propose aucune mission.';
+
+	/// fr: 'Choisissez votre disponibilité pour continuer.'
+	String get manque => 'Choisissez votre disponibilité pour continuer.';
+
+	/// fr: 'Enregistrer mes réponses'
+	String get enregistrer => 'Enregistrer mes réponses';
+}
+
+// Path: recrutement.talents.lecture
+class Traductions$recrutement$talents$lecture$fr {
+	Traductions$recrutement$talents$lecture$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vos réponses sont enregistrées.'
+	String get enregistre => 'Vos réponses sont enregistrées.';
+
+	/// fr: 'Dernière mise à jour le {date}.'
+	String misesAJour({required Object date}) => 'Dernière mise à jour le ${date}.';
+
+	/// fr: 'Vos compétences'
+	String get competences => 'Vos compétences';
+
+	/// fr: 'Autre domaine : {texte}'
+	String autreDomaine({required Object texte}) => 'Autre domaine : ${texte}';
+
+	/// fr: 'Votre disponibilité'
+	String get disponibilite => 'Votre disponibilité';
+
+	/// fr: 'Contact pour une mission'
+	String get contact => 'Contact pour une mission';
+
+	/// fr: 'Vous acceptez que l'académie vous contacte.'
+	String get contactOui => 'Vous acceptez que l\'académie vous contacte.';
+
+	/// fr: 'Vous n'avez pas donné cet accord : l'académie ne vous contactera pas.'
+	String get contactNon => 'Vous n\'avez pas donné cet accord : l\'académie ne vous contactera pas.';
+
+	/// fr: 'Modifier mes réponses'
+	String get modifier => 'Modifier mes réponses';
+
+	/// fr: 'Retirer mes réponses'
+	String get retirer => 'Retirer mes réponses';
+
+	/// fr: 'Retirer vos réponses ?'
+	String get retraitQuestion => 'Retirer vos réponses ?';
+
+	/// fr: 'L'académie n'aura plus vos compétences ni l'accord qui lui permet de vous contacter. Vous pourrez répondre de nouveau quand vous le voulez.'
+	String get retraitConsequence => 'L\'académie n\'aura plus vos compétences ni l\'accord qui lui permet de vous contacter. Vous pourrez répondre de nouveau quand vous le voulez.';
+
+	/// fr: 'Retirer mes réponses'
+	String get retraitConfirmer => 'Retirer mes réponses';
+
+	/// fr: 'Votre candidature d'enseignant est terminée : vous ne pouvez plus modifier ces réponses. Vous pouvez encore les retirer.'
+	String get close => 'Votre candidature d\'enseignant est terminée : vous ne pouvez plus modifier ces réponses. Vous pouvez encore les retirer.';
+
+	/// fr: 'Vos réponses sont retirées.'
+	String get retire => 'Vos réponses sont retirées.';
+}
+
+// Path: recrutement.talents.etats
+class Traductions$recrutement$talents$etats$fr {
+	Traductions$recrutement$talents$etats$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Cette étape n'est pas encore ouverte'
+	String get nonEnvoyeTitre => 'Cette étape n\'est pas encore ouverte';
+
+	/// fr: 'Elle s'ouvre quand votre candidature est envoyée. Terminez d'abord votre candidature.'
+	String get nonEnvoye => 'Elle s\'ouvre quand votre candidature est envoyée. Terminez d\'abord votre candidature.';
+
+	/// fr: 'Cette étape est terminée'
+	String get closTitre => 'Cette étape est terminée';
+
+	/// fr: 'Votre candidature d'enseignant n'est plus en cours : il n'y a rien à ajouter ici.'
+	String get clos => 'Votre candidature d\'enseignant n\'est plus en cours : il n\'y a rien à ajouter ici.';
+
+	/// fr: 'Vos autres talents n'ont pas pu être chargés.'
+	String get nonCharge => 'Vos autres talents n\'ont pas pu être chargés.';
+}
+
+// Path: recrutement.talents.erreurs
+class Traductions$recrutement$talents$erreurs$fr {
+	Traductions$recrutement$talents$erreurs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vos réponses ont changé depuis l'ouverture de cette page (sur un autre appareil, par exemple). Revoyez-les, puis enregistrez de nouveau.'
+	String get conflit => 'Vos réponses ont changé depuis l\'ouverture de cette page (sur un autre appareil, par exemple). Revoyez-les, puis enregistrez de nouveau.';
+
+	/// fr: 'Une des compétences choisies n'est plus proposée : elle est retirée de votre choix. Revoyez vos réponses, puis enregistrez de nouveau.'
+	String get desactivee => 'Une des compétences choisies n\'est plus proposée : elle est retirée de votre choix. Revoyez vos réponses, puis enregistrez de nouveau.';
+
+	/// fr: 'Une de vos réponses n'est pas valide. Revoyez-les, puis enregistrez de nouveau.'
+	String get invalides => 'Une de vos réponses n\'est pas valide. Revoyez-les, puis enregistrez de nouveau.';
+
+	/// fr: 'Il est possible que vos réponses ne soient pas parvenues jusqu'à Rewayah. Réessayez : elles ne seront pas enregistrées deux fois.'
+	String get incertain => 'Il est possible que vos réponses ne soient pas parvenues jusqu\'à Rewayah. Réessayez : elles ne seront pas enregistrées deux fois.';
+
+	/// fr: 'Vos réponses pourront être enregistrées plus tard, quand la connexion reviendra.'
+	String get horsLigne => 'Vos réponses pourront être enregistrées plus tard, quand la connexion reviendra.';
+
+	/// fr: 'Vos réponses n'ont pas pu être enregistrées. Réessayez dans un instant.'
+	String get echec => 'Vos réponses n\'ont pas pu être enregistrées. Réessayez dans un instant.';
+
+	/// fr: 'Il est possible que le retrait ne soit pas parvenu jusqu'à Rewayah. Réessayez : il ne sera pas fait deux fois.'
+	String get retraitIncertain => 'Il est possible que le retrait ne soit pas parvenu jusqu\'à Rewayah. Réessayez : il ne sera pas fait deux fois.';
+
+	/// fr: 'Le retrait pourra être fait plus tard, quand la connexion reviendra.'
+	String get retraitHorsLigne => 'Le retrait pourra être fait plus tard, quand la connexion reviendra.';
+
+	/// fr: 'Le retrait n'a pas abouti. Réessayez dans un instant.'
+	String get retraitEchec => 'Le retrait n\'a pas abouti. Réessayez dans un instant.';
+}
+
 // Path: dossiers.revue.etats
 class Traductions$dossiers$revue$etats$fr {
 	Traductions$dossiers$revue$etats$fr.internal(this._root);
@@ -21735,6 +22043,8 @@ class Traductions$admin$candidatures$filtres$fr {
 
 	/// fr: 'Pays de résidence'
 	String get pays => 'Pays de résidence';
+
+	late final Traductions$admin$candidatures$filtres$talents$fr talents = Traductions$admin$candidatures$filtres$talents$fr.internal(_root);
 }
 
 // Path: admin.candidatures.tri
@@ -22065,6 +22375,8 @@ class Traductions$admin$candidatures$detail$fr {
 
 	/// fr: 'Non satisfait'
 	String get controlesFaux => 'Non satisfait';
+
+	late final Traductions$admin$candidatures$detail$talents$fr talents = Traductions$admin$candidatures$detail$talents$fr.internal(_root);
 }
 
 // Path: admin.candidatures.controles
@@ -34685,6 +34997,681 @@ class Traductions$recrutement$parcours$q$moyensAccessibles$fr {
 	String get court => 'Moyens de paiement du pays';
 }
 
+// Path: recrutement.talents.intro.facultatif
+class Traductions$recrutement$talents$intro$facultatif$fr {
+	Traductions$recrutement$talents$intro$facultatif$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Facultatif'
+	String get titre => 'Facultatif';
+
+	/// fr: 'Cela ne change rien à votre candidature d'enseignant.'
+	String get texte => 'Cela ne change rien à votre candidature d\'enseignant.';
+}
+
+// Path: recrutement.talents.intro.usage
+class Traductions$recrutement$talents$intro$usage$fr {
+	Traductions$recrutement$talents$intro$usage$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce que nous en faisons'
+	String get titre => 'Ce que nous en faisons';
+
+	/// fr: 'Vos réponses servent seulement à vous proposer une mission de l'académie. La direction les lit, et elle seule.'
+	String get texte => 'Vos réponses servent seulement à vous proposer une mission de l\'académie. La direction les lit, et elle seule.';
+}
+
+// Path: recrutement.talents.intro.liberte
+class Traductions$recrutement$talents$intro$liberte$fr {
+	Traductions$recrutement$talents$intro$liberte$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vous gardez la main'
+	String get titre => 'Vous gardez la main';
+
+	/// fr: 'Vous pouvez modifier vos réponses ou les retirer quand vous le voulez, et retirer l'accord qui permet de vous contacter.'
+	String get texte => 'Vous pouvez modifier vos réponses ou les retirer quand vous le voulez, et retirer l\'accord qui permet de vous contacter.';
+}
+
+// Path: recrutement.talents.intro.missions
+class Traductions$recrutement$talents$intro$missions$fr {
+	Traductions$recrutement$talents$intro$missions$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Chaque mission a ses conditions'
+	String get titre => 'Chaque mission a ses conditions';
+
+	/// fr: 'L'académie vous les présente quand elle vous contacte. Cette page ne promet aucune mission.'
+	String get texte => 'L\'académie vous les présente quand elle vous contacte. Cette page ne promet aucune mission.';
+}
+
+// Path: recrutement.talents.competences.familles
+class Traductions$recrutement$talents$competences$familles$fr {
+	Traductions$recrutement$talents$competences$familles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Communication et image'
+	String get communication => 'Communication et image';
+
+	/// fr: 'Administration et organisation'
+	String get administration => 'Administration et organisation';
+
+	/// fr: 'Finances et droit'
+	String get financesDroit => 'Finances et droit';
+
+	/// fr: 'Pédagogie'
+	String get pedagogie => 'Pédagogie';
+
+	/// fr: 'Technique'
+	String get technique => 'Technique';
+
+	/// fr: 'Autre domaine'
+	String get autre => 'Autre domaine';
+}
+
+// Path: recrutement.talents.c.reseaux_sociaux
+class Traductions$recrutement$talents$c$reseaux_sociaux$fr {
+	Traductions$recrutement$talents$c$reseaux_sociaux$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Gestion des réseaux sociaux'
+	String get libelle => 'Gestion des réseaux sociaux';
+
+	/// fr: 'Animer les comptes de l'académie sur les réseaux sociaux.'
+	String get description => 'Animer les comptes de l\'académie sur les réseaux sociaux.';
+
+	/// fr: 'Publier chaque semaine, répondre aux messages et aux commentaires'
+	String get exemple => 'Publier chaque semaine, répondre aux messages et aux commentaires';
+}
+
+// Path: recrutement.talents.c.relations_publiques
+class Traductions$recrutement$talents$c$relations_publiques$fr {
+	Traductions$recrutement$talents$c$relations_publiques$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Relations publiques et partenariats'
+	String get libelle => 'Relations publiques et partenariats';
+
+	/// fr: 'Faire connaître l'académie à ceux qui peuvent la soutenir.'
+	String get description => 'Faire connaître l\'académie à ceux qui peuvent la soutenir.';
+
+	/// fr: 'Présenter l'académie à une mosquée, une association ou un média'
+	String get exemple => 'Présenter l\'académie à une mosquée, une association ou un média';
+}
+
+// Path: recrutement.talents.c.design_graphique
+class Traductions$recrutement$talents$c$design_graphique$fr {
+	Traductions$recrutement$talents$c$design_graphique$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Design graphique'
+	String get libelle => 'Design graphique';
+
+	/// fr: 'Créer des visuels clairs et soignés.'
+	String get description => 'Créer des visuels clairs et soignés.';
+
+	/// fr: 'Une affiche, une carte à partager, un visuel pour les réseaux'
+	String get exemple => 'Une affiche, une carte à partager, un visuel pour les réseaux';
+}
+
+// Path: recrutement.talents.c.montage_video
+class Traductions$recrutement$talents$c$montage_video$fr {
+	Traductions$recrutement$talents$c$montage_video$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Montage vidéo et animation'
+	String get libelle => 'Montage vidéo et animation';
+
+	/// fr: 'Monter et animer de courtes vidéos.'
+	String get description => 'Monter et animer de courtes vidéos.';
+
+	/// fr: 'Couper une vidéo, ajouter des sous-titres, animer un titre'
+	String get exemple => 'Couper une vidéo, ajouter des sous-titres, animer un titre';
+}
+
+// Path: recrutement.talents.c.photographie
+class Traductions$recrutement$talents$c$photographie$fr {
+	Traductions$recrutement$talents$c$photographie$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Photographie et prise de vue'
+	String get libelle => 'Photographie et prise de vue';
+
+	/// fr: 'Prendre des photos, des vidéos ou des prises de son de qualité.'
+	String get description => 'Prendre des photos, des vidéos ou des prises de son de qualité.';
+
+	/// fr: 'Photographier un événement, enregistrer une courte présentation'
+	String get exemple => 'Photographier un événement, enregistrer une courte présentation';
+}
+
+// Path: recrutement.talents.c.redaction_contenus
+class Traductions$recrutement$talents$c$redaction_contenus$fr {
+	Traductions$recrutement$talents$c$redaction_contenus$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Rédaction et création de contenus'
+	String get libelle => 'Rédaction et création de contenus';
+
+	/// fr: 'Écrire des textes justes et agréables à lire.'
+	String get description => 'Écrire des textes justes et agréables à lire.';
+
+	/// fr: 'Un article, un texte pour les réseaux, une lettre d'information'
+	String get exemple => 'Un article, un texte pour les réseaux, une lettre d\'information';
+}
+
+// Path: recrutement.talents.c.publicite_en_ligne
+class Traductions$recrutement$talents$c$publicite_en_ligne$fr {
+	Traductions$recrutement$talents$c$publicite_en_ligne$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Publicité en ligne'
+	String get libelle => 'Publicité en ligne';
+
+	/// fr: 'Préparer et suivre des campagnes de publicité sur internet.'
+	String get description => 'Préparer et suivre des campagnes de publicité sur internet.';
+
+	/// fr: 'Choisir le public visé, lancer une campagne, suivre les résultats'
+	String get exemple => 'Choisir le public visé, lancer une campagne, suivre les résultats';
+}
+
+// Path: recrutement.talents.c.traduction
+class Traductions$recrutement$talents$c$traduction$fr {
+	Traductions$recrutement$talents$c$traduction$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Traduction'
+	String get libelle => 'Traduction';
+
+	/// fr: 'Traduire des textes d'une langue à une autre.'
+	String get description => 'Traduire des textes d\'une langue à une autre.';
+
+	/// fr: 'Des messages aux familles, des sous-titres, un texte du site'
+	String get exemple => 'Des messages aux familles, des sous-titres, un texte du site';
+}
+
+// Path: recrutement.talents.c.assistanat
+class Traductions$recrutement$talents$c$assistanat$fr {
+	Traductions$recrutement$talents$c$assistanat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Assistanat administratif ou de direction'
+	String get libelle => 'Assistanat administratif ou de direction';
+
+	/// fr: 'Aider la direction à s'organiser au quotidien.'
+	String get description => 'Aider la direction à s\'organiser au quotidien.';
+
+	/// fr: 'Tenir un agenda, rédiger des courriers, suivre des dossiers'
+	String get exemple => 'Tenir un agenda, rédiger des courriers, suivre des dossiers';
+}
+
+// Path: recrutement.talents.c.coordination_groupe
+class Traductions$recrutement$talents$c$coordination_groupe$fr {
+	Traductions$recrutement$talents$c$coordination_groupe$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Coordination d'une communauté'
+	String get libelle => 'Coordination d\'une communauté';
+
+	/// fr: 'Animer et accompagner une communauté de personnes, par exemple celle des sœurs ou celle des parents.'
+	String get description => 'Animer et accompagner une communauté de personnes, par exemple celle des sœurs ou celle des parents.';
+
+	/// fr: 'Accueillir les nouvelles et les nouveaux, répondre aux questions, faire circuler les informations'
+	String get exemple => 'Accueillir les nouvelles et les nouveaux, répondre aux questions, faire circuler les informations';
+}
+
+// Path: recrutement.talents.c.accueil_familles
+class Traductions$recrutement$talents$c$accueil_familles$fr {
+	Traductions$recrutement$talents$c$accueil_familles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Accueil et suivi des familles'
+	String get libelle => 'Accueil et suivi des familles';
+
+	/// fr: 'Être le premier contact des familles qui s'inscrivent.'
+	String get description => 'Être le premier contact des familles qui s\'inscrivent.';
+
+	/// fr: 'Répondre à une question, accompagner une inscription, prendre des nouvelles'
+	String get exemple => 'Répondre à une question, accompagner une inscription, prendre des nouvelles';
+}
+
+// Path: recrutement.talents.c.gestion_projet
+class Traductions$recrutement$talents$c$gestion_projet$fr {
+	Traductions$recrutement$talents$c$gestion_projet$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Planification et gestion de projet'
+	String get libelle => 'Planification et gestion de projet';
+
+	/// fr: 'Organiser un travail à plusieurs, du début à la fin.'
+	String get description => 'Organiser un travail à plusieurs, du début à la fin.';
+
+	/// fr: 'Établir un calendrier, répartir les tâches, suivre l'avancement'
+	String get exemple => 'Établir un calendrier, répartir les tâches, suivre l\'avancement';
+}
+
+// Path: recrutement.talents.c.ressources_humaines
+class Traductions$recrutement$talents$c$ressources_humaines$fr {
+	Traductions$recrutement$talents$c$ressources_humaines$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ressources humaines et recrutement'
+	String get libelle => 'Ressources humaines et recrutement';
+
+	/// fr: 'Choisir et accueillir les personnes qui rejoignent l'équipe.'
+	String get description => 'Choisir et accueillir les personnes qui rejoignent l\'équipe.';
+
+	/// fr: 'Mener un entretien, comparer des candidatures, accueillir un nouvel enseignant'
+	String get exemple => 'Mener un entretien, comparer des candidatures, accueillir un nouvel enseignant';
+}
+
+// Path: recrutement.talents.c.comptabilite
+class Traductions$recrutement$talents$c$comptabilite$fr {
+	Traductions$recrutement$talents$c$comptabilite$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Comptabilité'
+	String get libelle => 'Comptabilité';
+
+	/// fr: 'Tenir les comptes de l'académie.'
+	String get description => 'Tenir les comptes de l\'académie.';
+
+	/// fr: 'Enregistrer les factures, suivre les paiements, préparer un bilan'
+	String get exemple => 'Enregistrer les factures, suivre les paiements, préparer un bilan';
+}
+
+// Path: recrutement.talents.c.gestion_financiere
+class Traductions$recrutement$talents$c$gestion_financiere$fr {
+	Traductions$recrutement$talents$c$gestion_financiere$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Gestion financière'
+	String get libelle => 'Gestion financière';
+
+	/// fr: 'Suivre l'argent et préparer les décisions.'
+	String get description => 'Suivre l\'argent et préparer les décisions.';
+
+	/// fr: 'Construire un budget, suivre la trésorerie'
+	String get exemple => 'Construire un budget, suivre la trésorerie';
+}
+
+// Path: recrutement.talents.c.juridique_donnees
+class Traductions$recrutement$talents$c$juridique_donnees$fr {
+	Traductions$recrutement$talents$c$juridique_donnees$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Juridique et protection des données'
+	String get libelle => 'Juridique et protection des données';
+
+	/// fr: 'Veiller à ce que l'académie respecte la loi et protège les données personnelles.'
+	String get description => 'Veiller à ce que l\'académie respecte la loi et protège les données personnelles.';
+
+	/// fr: 'Relire un contrat, écrire des conditions d'utilisation, protéger la vie privée'
+	String get exemple => 'Relire un contrat, écrire des conditions d\'utilisation, protéger la vie privée';
+}
+
+// Path: recrutement.talents.c.conception_programmes
+class Traductions$recrutement$talents$c$conception_programmes$fr {
+	Traductions$recrutement$talents$c$conception_programmes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Conception de programmes et de supports'
+	String get libelle => 'Conception de programmes et de supports';
+
+	/// fr: 'Préparer ce que les élèves apprennent, et les supports pour l'enseigner.'
+	String get description => 'Préparer ce que les élèves apprennent, et les supports pour l\'enseigner.';
+
+	/// fr: 'Un plan de cours, une fiche, une série d'exercices'
+	String get exemple => 'Un plan de cours, une fiche, une série d\'exercices';
+}
+
+// Path: recrutement.talents.c.formation_enseignants
+class Traductions$recrutement$talents$c$formation_enseignants$fr {
+	Traductions$recrutement$talents$c$formation_enseignants$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Formation et accompagnement des enseignants'
+	String get libelle => 'Formation et accompagnement des enseignants';
+
+	/// fr: 'Aider les enseignants à progresser.'
+	String get description => 'Aider les enseignants à progresser.';
+
+	/// fr: 'Former un nouvel enseignant, le conseiller après une séance'
+	String get exemple => 'Former un nouvel enseignant, le conseiller après une séance';
+}
+
+// Path: recrutement.talents.c.qualite_cours
+class Traductions$recrutement$talents$c$qualite_cours$fr {
+	Traductions$recrutement$talents$c$qualite_cours$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Observation et qualité des cours'
+	String get libelle => 'Observation et qualité des cours';
+
+	/// fr: 'Observer des séances et aider à les améliorer.'
+	String get description => 'Observer des séances et aider à les améliorer.';
+
+	/// fr: 'Assister à une séance, faire un retour écrit'
+	String get exemple => 'Assister à une séance, faire un retour écrit';
+}
+
+// Path: recrutement.talents.c.tests_niveau
+class Traductions$recrutement$talents$c$tests_niveau$fr {
+	Traductions$recrutement$talents$c$tests_niveau$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Tests de niveau'
+	String get libelle => 'Tests de niveau';
+
+	/// fr: 'Situer le niveau d'un nouvel élève.'
+	String get description => 'Situer le niveau d\'un nouvel élève.';
+
+	/// fr: 'Écouter un nouvel élève réciter avant son entrée dans une Classe'
+	String get exemple => 'Écouter un nouvel élève réciter avant son entrée dans une Classe';
+}
+
+// Path: recrutement.talents.c.accompagnement_enfants
+class Traductions$recrutement$talents$c$accompagnement_enfants$fr {
+	Traductions$recrutement$talents$c$accompagnement_enfants$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Accompagnement des enfants'
+	String get libelle => 'Accompagnement des enfants';
+
+	/// fr: 'Aider les enfants qui ont besoin d'une attention particulière.'
+	String get description => 'Aider les enfants qui ont besoin d\'une attention particulière.';
+
+	/// fr: 'Psychologie de l'enfant, besoins particuliers, enfants très timides'
+	String get exemple => 'Psychologie de l\'enfant, besoins particuliers, enfants très timides';
+}
+
+// Path: recrutement.talents.c.developpement
+class Traductions$recrutement$talents$c$developpement$fr {
+	Traductions$recrutement$talents$c$developpement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Développement web ou mobile'
+	String get libelle => 'Développement web ou mobile';
+
+	/// fr: 'Programmer des sites et des applications.'
+	String get description => 'Programmer des sites et des applications.';
+
+	/// fr: 'Un site, une application, un outil interne'
+	String get exemple => 'Un site, une application, un outil interne';
+}
+
+// Path: recrutement.talents.c.assistance_technique
+class Traductions$recrutement$talents$c$assistance_technique$fr {
+	Traductions$recrutement$talents$c$assistance_technique$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Assistance technique aux familles et aux enseignants'
+	String get libelle => 'Assistance technique aux familles et aux enseignants';
+
+	/// fr: 'Dépanner à distance les personnes qui ont un souci technique.'
+	String get description => 'Dépanner à distance les personnes qui ont un souci technique.';
+
+	/// fr: 'Aider à se connecter, régler le son ou la caméra'
+	String get exemple => 'Aider à se connecter, régler le son ou la caméra';
+}
+
+// Path: recrutement.talents.c.donnees_tableurs
+class Traductions$recrutement$talents$c$donnees_tableurs$fr {
+	Traductions$recrutement$talents$c$donnees_tableurs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Données et tableurs'
+	String get libelle => 'Données et tableurs';
+
+	/// fr: 'Organiser des chiffres et en tirer des tableaux clairs.'
+	String get description => 'Organiser des chiffres et en tirer des tableaux clairs.';
+
+	/// fr: 'Un tableau de suivi, des statistiques, un rapport'
+	String get exemple => 'Un tableau de suivi, des statistiques, un rapport';
+}
+
+// Path: recrutement.talents.c.autre
+class Traductions$recrutement$talents$c$autre$fr {
+	Traductions$recrutement$talents$c$autre$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Autre domaine'
+	String get libelle => 'Autre domaine';
+
+	/// fr: 'Une compétence qui n'est pas dans la liste.'
+	String get description => 'Une compétence qui n\'est pas dans la liste.';
+}
+
+// Path: recrutement.talents.niveaux.debutant
+class Traductions$recrutement$talents$niveaux$debutant$fr {
+	Traductions$recrutement$talents$niveaux$debutant$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Je débute'
+	String get libelle => 'Je débute';
+
+	/// fr: 'Vous connaissez les bases et vous apprenez encore.'
+	String get description => 'Vous connaissez les bases et vous apprenez encore.';
+}
+
+// Path: recrutement.talents.niveaux.experience
+class Traductions$recrutement$talents$niveaux$experience$fr {
+	Traductions$recrutement$talents$niveaux$experience$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'J'ai de l'expérience'
+	String get libelle => 'J\'ai de l\'expérience';
+
+	/// fr: 'Vous l'avez déjà fait plusieurs fois, pour vous ou pour d'autres.'
+	String get description => 'Vous l\'avez déjà fait plusieurs fois, pour vous ou pour d\'autres.';
+}
+
+// Path: recrutement.talents.niveaux.metier
+class Traductions$recrutement$talents$niveaux$metier$fr {
+	Traductions$recrutement$talents$niveaux$metier$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'C'est mon métier'
+	String get libelle => 'C\'est mon métier';
+
+	/// fr: 'Vous le faites, ou vous l'avez fait, comme profession.'
+	String get description => 'Vous le faites, ou vous l\'avez fait, comme profession.';
+}
+
+// Path: recrutement.talents.disponibilite.quelques_heures
+class Traductions$recrutement$talents$disponibilite$quelques_heures$fr {
+	Traductions$recrutement$talents$disponibilite$quelques_heures$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Quelques heures par semaine'
+	String get libelle => 'Quelques heures par semaine';
+
+	/// fr: 'Une aide légère, à côté de vos autres activités.'
+	String get description => 'Une aide légère, à côté de vos autres activités.';
+}
+
+// Path: recrutement.talents.disponibilite.mi_temps
+class Traductions$recrutement$talents$disponibilite$mi_temps$fr {
+	Traductions$recrutement$talents$disponibilite$mi_temps$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Un mi-temps'
+	String get libelle => 'Un mi-temps';
+
+	/// fr: 'À peu près la moitié d'un temps plein.'
+	String get description => 'À peu près la moitié d\'un temps plein.';
+}
+
+// Path: recrutement.talents.disponibilite.plus
+class Traductions$recrutement$talents$disponibilite$plus$fr {
+	Traductions$recrutement$talents$disponibilite$plus$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Plus d'un mi-temps'
+	String get libelle => 'Plus d\'un mi-temps';
+
+	/// fr: 'Une grande partie de votre temps.'
+	String get description => 'Une grande partie de votre temps.';
+}
+
+// Path: recrutement.talents.disponibilite.pas_maintenant
+class Traductions$recrutement$talents$disponibilite$pas_maintenant$fr {
+	Traductions$recrutement$talents$disponibilite$pas_maintenant$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pas pour l'instant'
+	String get libelle => 'Pas pour l\'instant';
+
+	/// fr: 'Vous voulez seulement que l'académie connaisse vos talents.'
+	String get description => 'Vous voulez seulement que l\'académie connaisse vos talents.';
+}
+
+// Path: admin.candidatures.filtres.talents
+class Traductions$admin$candidatures$filtres$talents$fr {
+	Traductions$admin$candidatures$filtres$talents$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Autres compétences'
+	String get domaine => 'Autres compétences';
+
+	/// fr: '{famille} : toutes'
+	String familleToutes({required Object famille}) => '${famille} : toutes';
+
+	/// fr: 'Niveau de compétence'
+	String get niveau => 'Niveau de compétence';
+
+	/// fr: 'A de l'expérience ou plus'
+	String get niveauExperience => 'A de l\'expérience ou plus';
+
+	/// fr: 'En fait son métier'
+	String get niveauMetier => 'En fait son métier';
+
+	/// fr: 'Disponibilité pour une mission'
+	String get disponibilite => 'Disponibilité pour une mission';
+
+	/// fr: 'Accord de contact'
+	String get accord => 'Accord de contact';
+
+	/// fr: 'Accord donné'
+	String get accordDonne => 'Accord donné';
+
+	/// fr: 'Répondu sans accord'
+	String get accordAbsent => 'Répondu sans accord';
+}
+
 // Path: admin.candidatures.etats.provenance
 class Traductions$admin$candidatures$etats$provenance$fr {
 	Traductions$admin$candidatures$etats$provenance$fr.internal(this._root);
@@ -34803,6 +35790,44 @@ class Traductions$admin$candidatures$detail$etatsPiece$fr {
 
 	/// fr: 'Validée'
 	String get validee => 'Validée';
+}
+
+// Path: admin.candidatures.detail.talents
+class Traductions$admin$candidatures$detail$talents$fr {
+	Traductions$admin$candidatures$detail$talents$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Autres compétences'
+	String get titre => 'Autres compétences';
+
+	/// fr: 'Cette personne n'a pas rempli « Vos autres talents ».'
+	String get aucune => 'Cette personne n\'a pas rempli « Vos autres talents ».';
+
+	late final Traductions$admin$candidatures$detail$talents$niveaux$fr niveaux = Traductions$admin$candidatures$detail$talents$niveaux$fr.internal(_root);
+
+	/// fr: 'Autre domaine : {texte}'
+	String autre({required Object texte}) => 'Autre domaine : ${texte}';
+
+	/// fr: 'Compétence sans libellé disponible'
+	String get competenceInconnue => 'Compétence sans libellé disponible';
+
+	/// fr: 'Disponibilité pour une mission'
+	String get disponibilite => 'Disponibilité pour une mission';
+
+	/// fr: 'Accord de contact'
+	String get accord => 'Accord de contact';
+
+	/// fr: 'Donné le {date}'
+	String accordDonne({required Object date}) => 'Donné le ${date}';
+
+	/// fr: 'Non donné : ne proposer aucune mission'
+	String get accordAbsent => 'Non donné : ne proposer aucune mission';
+
+	/// fr: 'Dernière mise à jour le {date}.'
+	String misesAJour({required Object date}) => 'Dernière mise à jour le ${date}.';
 }
 
 // Path: admin.candidatures.controles.noms
@@ -37931,6 +38956,24 @@ class Traductions$recrutement$parcours$q$compteBancaire$options$fr {
 	late final Traductions$recrutement$parcours$q$compteBancaire$options$non$fr non = Traductions$recrutement$parcours$q$compteBancaire$options$non$fr.internal(_root);
 }
 
+// Path: admin.candidatures.detail.talents.niveaux
+class Traductions$admin$candidatures$detail$talents$niveaux$fr {
+	Traductions$admin$candidatures$detail$talents$niveaux$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Débute'
+	String get debutant => 'Débute';
+
+	/// fr: 'A de l'expérience'
+	String get experience => 'A de l\'expérience';
+
+	/// fr: 'En fait son métier'
+	String get metier => 'En fait son métier';
+}
+
 // Path: com.annonces.administration.moderation.regleMotif
 class Traductions$com$annonces$administration$moderation$regleMotif$fr {
 	Traductions$com$annonces$administration$moderation$regleMotif$fr.internal(this._root);
@@ -40830,6 +41873,164 @@ extension on Traductions {
 			'recrutement.parcours.choisirJour' => 'Choisissez au moins un jour pour continuer.',
 			'recrutement.parcours.choisirHeure' => 'Choisissez au moins une heure de début pour continuer.',
 			'recrutement.parcours.choisirHeureJour' => ({required Object jour}) => 'Choisissez au moins une heure de début pour le ${jour}.',
+			'recrutement.talents.titre' => 'Vos autres talents',
+			'recrutement.talents.tuile.facultatif' => 'Facultatif. Cela ne change rien à votre candidature d\'enseignant.',
+			'recrutement.talents.tuile.enregistre' => 'Vos réponses sont enregistrées. Vous pouvez les modifier.',
+			'recrutement.talents.tuile.enregistreClose' => 'Vos réponses sont enregistrées. Vous pouvez les retirer.',
+			'recrutement.talents.intro.texte' => 'L\'académie grandit. Elle aura besoin d\'aide pour s\'organiser, accompagner les familles, tenir ses comptes ou se faire connaître. Si vous savez faire autre chose, dites-le : nous vous contacterons d\'abord, avant de publier une annonce.',
+			'recrutement.talents.intro.facultatif.titre' => 'Facultatif',
+			'recrutement.talents.intro.facultatif.texte' => 'Cela ne change rien à votre candidature d\'enseignant.',
+			'recrutement.talents.intro.usage.titre' => 'Ce que nous en faisons',
+			'recrutement.talents.intro.usage.texte' => 'Vos réponses servent seulement à vous proposer une mission de l\'académie. La direction les lit, et elle seule.',
+			'recrutement.talents.intro.liberte.titre' => 'Vous gardez la main',
+			'recrutement.talents.intro.liberte.texte' => 'Vous pouvez modifier vos réponses ou les retirer quand vous le voulez, et retirer l\'accord qui permet de vous contacter.',
+			'recrutement.talents.intro.missions.titre' => 'Chaque mission a ses conditions',
+			_ => null,
+		} ?? switch (path) {
+			'recrutement.talents.intro.missions.texte' => 'L\'académie vous les présente quand elle vous contacte. Cette page ne promet aucune mission.',
+			'recrutement.talents.competences.titre' => 'Que savez-vous faire d\'autre ?',
+			'recrutement.talents.competences.explication' => 'Touchez toutes les compétences que vous avez. Chaque carte donne un exemple. Si la vôtre n\'y est pas, choisissez « Autre domaine » en bas de la liste.',
+			'recrutement.talents.competences.familles.communication' => 'Communication et image',
+			'recrutement.talents.competences.familles.administration' => 'Administration et organisation',
+			'recrutement.talents.competences.familles.financesDroit' => 'Finances et droit',
+			'recrutement.talents.competences.familles.pedagogie' => 'Pédagogie',
+			'recrutement.talents.competences.familles.technique' => 'Technique',
+			'recrutement.talents.competences.familles.autre' => 'Autre domaine',
+			'recrutement.talents.competences.choisies' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, zero: 'Aucune compétence choisie', one: '${n} compétence choisie', other: '${n} compétences choisies', ), 
+			'recrutement.talents.competences.nonProposee' => 'Cette compétence n\'est plus proposée. Vous pouvez la garder ou la décocher.',
+			'recrutement.talents.competences.autreChamp' => 'Votre domaine, en quelques mots',
+			'recrutement.talents.competences.autreAide' => 'Une seule ligne suffit.',
+			'recrutement.talents.competences.manque' => 'Choisissez au moins une compétence pour continuer.',
+			'recrutement.talents.competences.autreVide' => 'Dites en quelques mots de quel domaine il s\'agit, ou décochez « Autre domaine ».',
+			'recrutement.talents.competences.autreTropLong' => ({required Object max}) => 'Votre texte est trop long : ${max} signes au plus. Raccourcissez-le.',
+			'recrutement.talents.c.reseaux_sociaux.libelle' => 'Gestion des réseaux sociaux',
+			'recrutement.talents.c.reseaux_sociaux.description' => 'Animer les comptes de l\'académie sur les réseaux sociaux.',
+			'recrutement.talents.c.reseaux_sociaux.exemple' => 'Publier chaque semaine, répondre aux messages et aux commentaires',
+			'recrutement.talents.c.relations_publiques.libelle' => 'Relations publiques et partenariats',
+			'recrutement.talents.c.relations_publiques.description' => 'Faire connaître l\'académie à ceux qui peuvent la soutenir.',
+			'recrutement.talents.c.relations_publiques.exemple' => 'Présenter l\'académie à une mosquée, une association ou un média',
+			'recrutement.talents.c.design_graphique.libelle' => 'Design graphique',
+			'recrutement.talents.c.design_graphique.description' => 'Créer des visuels clairs et soignés.',
+			'recrutement.talents.c.design_graphique.exemple' => 'Une affiche, une carte à partager, un visuel pour les réseaux',
+			'recrutement.talents.c.montage_video.libelle' => 'Montage vidéo et animation',
+			'recrutement.talents.c.montage_video.description' => 'Monter et animer de courtes vidéos.',
+			'recrutement.talents.c.montage_video.exemple' => 'Couper une vidéo, ajouter des sous-titres, animer un titre',
+			'recrutement.talents.c.photographie.libelle' => 'Photographie et prise de vue',
+			'recrutement.talents.c.photographie.description' => 'Prendre des photos, des vidéos ou des prises de son de qualité.',
+			'recrutement.talents.c.photographie.exemple' => 'Photographier un événement, enregistrer une courte présentation',
+			'recrutement.talents.c.redaction_contenus.libelle' => 'Rédaction et création de contenus',
+			'recrutement.talents.c.redaction_contenus.description' => 'Écrire des textes justes et agréables à lire.',
+			'recrutement.talents.c.redaction_contenus.exemple' => 'Un article, un texte pour les réseaux, une lettre d\'information',
+			'recrutement.talents.c.publicite_en_ligne.libelle' => 'Publicité en ligne',
+			'recrutement.talents.c.publicite_en_ligne.description' => 'Préparer et suivre des campagnes de publicité sur internet.',
+			'recrutement.talents.c.publicite_en_ligne.exemple' => 'Choisir le public visé, lancer une campagne, suivre les résultats',
+			'recrutement.talents.c.traduction.libelle' => 'Traduction',
+			'recrutement.talents.c.traduction.description' => 'Traduire des textes d\'une langue à une autre.',
+			'recrutement.talents.c.traduction.exemple' => 'Des messages aux familles, des sous-titres, un texte du site',
+			'recrutement.talents.c.assistanat.libelle' => 'Assistanat administratif ou de direction',
+			'recrutement.talents.c.assistanat.description' => 'Aider la direction à s\'organiser au quotidien.',
+			'recrutement.talents.c.assistanat.exemple' => 'Tenir un agenda, rédiger des courriers, suivre des dossiers',
+			'recrutement.talents.c.coordination_groupe.libelle' => 'Coordination d\'une communauté',
+			'recrutement.talents.c.coordination_groupe.description' => 'Animer et accompagner une communauté de personnes, par exemple celle des sœurs ou celle des parents.',
+			'recrutement.talents.c.coordination_groupe.exemple' => 'Accueillir les nouvelles et les nouveaux, répondre aux questions, faire circuler les informations',
+			'recrutement.talents.c.accueil_familles.libelle' => 'Accueil et suivi des familles',
+			'recrutement.talents.c.accueil_familles.description' => 'Être le premier contact des familles qui s\'inscrivent.',
+			'recrutement.talents.c.accueil_familles.exemple' => 'Répondre à une question, accompagner une inscription, prendre des nouvelles',
+			'recrutement.talents.c.gestion_projet.libelle' => 'Planification et gestion de projet',
+			'recrutement.talents.c.gestion_projet.description' => 'Organiser un travail à plusieurs, du début à la fin.',
+			'recrutement.talents.c.gestion_projet.exemple' => 'Établir un calendrier, répartir les tâches, suivre l\'avancement',
+			'recrutement.talents.c.ressources_humaines.libelle' => 'Ressources humaines et recrutement',
+			'recrutement.talents.c.ressources_humaines.description' => 'Choisir et accueillir les personnes qui rejoignent l\'équipe.',
+			'recrutement.talents.c.ressources_humaines.exemple' => 'Mener un entretien, comparer des candidatures, accueillir un nouvel enseignant',
+			'recrutement.talents.c.comptabilite.libelle' => 'Comptabilité',
+			'recrutement.talents.c.comptabilite.description' => 'Tenir les comptes de l\'académie.',
+			'recrutement.talents.c.comptabilite.exemple' => 'Enregistrer les factures, suivre les paiements, préparer un bilan',
+			'recrutement.talents.c.gestion_financiere.libelle' => 'Gestion financière',
+			'recrutement.talents.c.gestion_financiere.description' => 'Suivre l\'argent et préparer les décisions.',
+			'recrutement.talents.c.gestion_financiere.exemple' => 'Construire un budget, suivre la trésorerie',
+			'recrutement.talents.c.juridique_donnees.libelle' => 'Juridique et protection des données',
+			'recrutement.talents.c.juridique_donnees.description' => 'Veiller à ce que l\'académie respecte la loi et protège les données personnelles.',
+			'recrutement.talents.c.juridique_donnees.exemple' => 'Relire un contrat, écrire des conditions d\'utilisation, protéger la vie privée',
+			'recrutement.talents.c.conception_programmes.libelle' => 'Conception de programmes et de supports',
+			'recrutement.talents.c.conception_programmes.description' => 'Préparer ce que les élèves apprennent, et les supports pour l\'enseigner.',
+			'recrutement.talents.c.conception_programmes.exemple' => 'Un plan de cours, une fiche, une série d\'exercices',
+			'recrutement.talents.c.formation_enseignants.libelle' => 'Formation et accompagnement des enseignants',
+			'recrutement.talents.c.formation_enseignants.description' => 'Aider les enseignants à progresser.',
+			'recrutement.talents.c.formation_enseignants.exemple' => 'Former un nouvel enseignant, le conseiller après une séance',
+			'recrutement.talents.c.qualite_cours.libelle' => 'Observation et qualité des cours',
+			'recrutement.talents.c.qualite_cours.description' => 'Observer des séances et aider à les améliorer.',
+			'recrutement.talents.c.qualite_cours.exemple' => 'Assister à une séance, faire un retour écrit',
+			'recrutement.talents.c.tests_niveau.libelle' => 'Tests de niveau',
+			'recrutement.talents.c.tests_niveau.description' => 'Situer le niveau d\'un nouvel élève.',
+			'recrutement.talents.c.tests_niveau.exemple' => 'Écouter un nouvel élève réciter avant son entrée dans une Classe',
+			'recrutement.talents.c.accompagnement_enfants.libelle' => 'Accompagnement des enfants',
+			'recrutement.talents.c.accompagnement_enfants.description' => 'Aider les enfants qui ont besoin d\'une attention particulière.',
+			'recrutement.talents.c.accompagnement_enfants.exemple' => 'Psychologie de l\'enfant, besoins particuliers, enfants très timides',
+			'recrutement.talents.c.developpement.libelle' => 'Développement web ou mobile',
+			'recrutement.talents.c.developpement.description' => 'Programmer des sites et des applications.',
+			'recrutement.talents.c.developpement.exemple' => 'Un site, une application, un outil interne',
+			'recrutement.talents.c.assistance_technique.libelle' => 'Assistance technique aux familles et aux enseignants',
+			'recrutement.talents.c.assistance_technique.description' => 'Dépanner à distance les personnes qui ont un souci technique.',
+			'recrutement.talents.c.assistance_technique.exemple' => 'Aider à se connecter, régler le son ou la caméra',
+			'recrutement.talents.c.donnees_tableurs.libelle' => 'Données et tableurs',
+			'recrutement.talents.c.donnees_tableurs.description' => 'Organiser des chiffres et en tirer des tableaux clairs.',
+			'recrutement.talents.c.donnees_tableurs.exemple' => 'Un tableau de suivi, des statistiques, un rapport',
+			'recrutement.talents.c.autre.libelle' => 'Autre domaine',
+			'recrutement.talents.c.autre.description' => 'Une compétence qui n\'est pas dans la liste.',
+			'recrutement.talents.niveaux.titre' => 'Quel est votre niveau ?',
+			'recrutement.talents.niveaux.explication' => 'Pour chaque compétence, dites où vous en êtes. Cela aide l\'académie à vous proposer une mission qui vous convient.',
+			'recrutement.talents.niveaux.legende' => 'Comment choisir',
+			'recrutement.talents.niveaux.debutant.libelle' => 'Je débute',
+			'recrutement.talents.niveaux.debutant.description' => 'Vous connaissez les bases et vous apprenez encore.',
+			'recrutement.talents.niveaux.experience.libelle' => 'J\'ai de l\'expérience',
+			'recrutement.talents.niveaux.experience.description' => 'Vous l\'avez déjà fait plusieurs fois, pour vous ou pour d\'autres.',
+			'recrutement.talents.niveaux.metier.libelle' => 'C\'est mon métier',
+			'recrutement.talents.niveaux.metier.description' => 'Vous le faites, ou vous l\'avez fait, comme profession.',
+			'recrutement.talents.niveaux.niveauDe' => ({required Object competence}) => 'Niveau pour ${competence}',
+			'recrutement.talents.niveaux.manque' => ({required Object competence}) => 'Choisissez votre niveau en « ${competence} » pour continuer.',
+			'recrutement.talents.disponibilite.titre' => 'Quand pourriez-vous aider ?',
+			'recrutement.talents.disponibilite.explication' => 'Dites combien de temps vous pourriez donner à une mission, à côté de l\'enseignement. Plus bas, dites si l\'académie peut vous contacter.',
+			'recrutement.talents.disponibilite.quelques_heures.libelle' => 'Quelques heures par semaine',
+			'recrutement.talents.disponibilite.quelques_heures.description' => 'Une aide légère, à côté de vos autres activités.',
+			'recrutement.talents.disponibilite.mi_temps.libelle' => 'Un mi-temps',
+			'recrutement.talents.disponibilite.mi_temps.description' => 'À peu près la moitié d\'un temps plein.',
+			'recrutement.talents.disponibilite.plus.libelle' => 'Plus d\'un mi-temps',
+			'recrutement.talents.disponibilite.plus.description' => 'Une grande partie de votre temps.',
+			'recrutement.talents.disponibilite.pas_maintenant.libelle' => 'Pas pour l\'instant',
+			'recrutement.talents.disponibilite.pas_maintenant.description' => 'Vous voulez seulement que l\'académie connaisse vos talents.',
+			'recrutement.talents.disponibilite.accord' => 'J\'accepte que l\'académie me contacte pour une mission dans ces domaines.',
+			'recrutement.talents.disponibilite.accordNote' => 'Sans cette case, l\'académie lit vos réponses mais ne vous propose aucune mission.',
+			'recrutement.talents.disponibilite.manque' => 'Choisissez votre disponibilité pour continuer.',
+			'recrutement.talents.disponibilite.enregistrer' => 'Enregistrer mes réponses',
+			'recrutement.talents.lecture.enregistre' => 'Vos réponses sont enregistrées.',
+			'recrutement.talents.lecture.misesAJour' => ({required Object date}) => 'Dernière mise à jour le ${date}.',
+			'recrutement.talents.lecture.competences' => 'Vos compétences',
+			'recrutement.talents.lecture.autreDomaine' => ({required Object texte}) => 'Autre domaine : ${texte}',
+			'recrutement.talents.lecture.disponibilite' => 'Votre disponibilité',
+			'recrutement.talents.lecture.contact' => 'Contact pour une mission',
+			'recrutement.talents.lecture.contactOui' => 'Vous acceptez que l\'académie vous contacte.',
+			'recrutement.talents.lecture.contactNon' => 'Vous n\'avez pas donné cet accord : l\'académie ne vous contactera pas.',
+			'recrutement.talents.lecture.modifier' => 'Modifier mes réponses',
+			'recrutement.talents.lecture.retirer' => 'Retirer mes réponses',
+			'recrutement.talents.lecture.retraitQuestion' => 'Retirer vos réponses ?',
+			'recrutement.talents.lecture.retraitConsequence' => 'L\'académie n\'aura plus vos compétences ni l\'accord qui lui permet de vous contacter. Vous pourrez répondre de nouveau quand vous le voulez.',
+			'recrutement.talents.lecture.retraitConfirmer' => 'Retirer mes réponses',
+			'recrutement.talents.lecture.close' => 'Votre candidature d\'enseignant est terminée : vous ne pouvez plus modifier ces réponses. Vous pouvez encore les retirer.',
+			'recrutement.talents.lecture.retire' => 'Vos réponses sont retirées.',
+			'recrutement.talents.etats.nonEnvoyeTitre' => 'Cette étape n\'est pas encore ouverte',
+			'recrutement.talents.etats.nonEnvoye' => 'Elle s\'ouvre quand votre candidature est envoyée. Terminez d\'abord votre candidature.',
+			'recrutement.talents.etats.closTitre' => 'Cette étape est terminée',
+			'recrutement.talents.etats.clos' => 'Votre candidature d\'enseignant n\'est plus en cours : il n\'y a rien à ajouter ici.',
+			'recrutement.talents.etats.nonCharge' => 'Vos autres talents n\'ont pas pu être chargés.',
+			'recrutement.talents.erreurs.conflit' => 'Vos réponses ont changé depuis l\'ouverture de cette page (sur un autre appareil, par exemple). Revoyez-les, puis enregistrez de nouveau.',
+			'recrutement.talents.erreurs.desactivee' => 'Une des compétences choisies n\'est plus proposée : elle est retirée de votre choix. Revoyez vos réponses, puis enregistrez de nouveau.',
+			'recrutement.talents.erreurs.invalides' => 'Une de vos réponses n\'est pas valide. Revoyez-les, puis enregistrez de nouveau.',
+			'recrutement.talents.erreurs.incertain' => 'Il est possible que vos réponses ne soient pas parvenues jusqu\'à Rewayah. Réessayez : elles ne seront pas enregistrées deux fois.',
+			'recrutement.talents.erreurs.horsLigne' => 'Vos réponses pourront être enregistrées plus tard, quand la connexion reviendra.',
+			'recrutement.talents.erreurs.echec' => 'Vos réponses n\'ont pas pu être enregistrées. Réessayez dans un instant.',
+			'recrutement.talents.erreurs.retraitIncertain' => 'Il est possible que le retrait ne soit pas parvenu jusqu\'à Rewayah. Réessayez : il ne sera pas fait deux fois.',
+			'recrutement.talents.erreurs.retraitHorsLigne' => 'Le retrait pourra être fait plus tard, quand la connexion reviendra.',
+			'recrutement.talents.erreurs.retraitEchec' => 'Le retrait n\'a pas abouti. Réessayez dans un instant.',
 			'dossiers.titre' => 'Dossiers à valider',
 			'dossiers.sousTitre' => 'Examinez les dossiers prêts pour une décision.',
 			'dossiers.aucun' => 'Aucun dossier n\'attend de validation.',
@@ -40842,8 +42043,6 @@ extension on Traductions {
 			'dossiers.file.chargementProlonge' => 'Le chargement prend plus de temps que prévu.',
 			'dossiers.file.suivantsErreur' => 'Impossible de charger les dossiers suivants.',
 			'dossiers.file.indisponible' => 'La consultation des dossiers est indisponible pour le moment.',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.file.selectionRetiree' => 'Ce dossier n’est plus disponible dans la file.',
 			'dossiers.file.actualiser' => 'Actualiser les dossiers',
 			'dossiers.file.aucuneSelection' => 'Sélectionnez un dossier à examiner.',
@@ -40984,6 +42183,15 @@ extension on Traductions {
 			'admin.candidatures.filtres.sansPause' => 'Pas en pause',
 			'admin.candidatures.filtres.versement' => 'Versement',
 			'admin.candidatures.filtres.pays' => 'Pays de résidence',
+			'admin.candidatures.filtres.talents.domaine' => 'Autres compétences',
+			'admin.candidatures.filtres.talents.familleToutes' => ({required Object famille}) => '${famille} : toutes',
+			'admin.candidatures.filtres.talents.niveau' => 'Niveau de compétence',
+			'admin.candidatures.filtres.talents.niveauExperience' => 'A de l\'expérience ou plus',
+			'admin.candidatures.filtres.talents.niveauMetier' => 'En fait son métier',
+			'admin.candidatures.filtres.talents.disponibilite' => 'Disponibilité pour une mission',
+			'admin.candidatures.filtres.talents.accord' => 'Accord de contact',
+			'admin.candidatures.filtres.talents.accordDonne' => 'Accord donné',
+			'admin.candidatures.filtres.talents.accordAbsent' => 'Répondu sans accord',
 			'admin.candidatures.tri.titre' => 'Trier par',
 			'admin.candidatures.tri.activite' => 'Dernière activité',
 			'admin.candidatures.tri.reception' => 'Date de réception',
@@ -41101,6 +42309,18 @@ extension on Traductions {
 			'admin.candidatures.detail.etatsPiece.validee' => 'Validée',
 			'admin.candidatures.detail.controlesVrai' => 'Satisfait',
 			'admin.candidatures.detail.controlesFaux' => 'Non satisfait',
+			'admin.candidatures.detail.talents.titre' => 'Autres compétences',
+			'admin.candidatures.detail.talents.aucune' => 'Cette personne n\'a pas rempli « Vos autres talents ».',
+			'admin.candidatures.detail.talents.niveaux.debutant' => 'Débute',
+			'admin.candidatures.detail.talents.niveaux.experience' => 'A de l\'expérience',
+			'admin.candidatures.detail.talents.niveaux.metier' => 'En fait son métier',
+			'admin.candidatures.detail.talents.autre' => ({required Object texte}) => 'Autre domaine : ${texte}',
+			'admin.candidatures.detail.talents.competenceInconnue' => 'Compétence sans libellé disponible',
+			'admin.candidatures.detail.talents.disponibilite' => 'Disponibilité pour une mission',
+			'admin.candidatures.detail.talents.accord' => 'Accord de contact',
+			'admin.candidatures.detail.talents.accordDonne' => ({required Object date}) => 'Donné le ${date}',
+			'admin.candidatures.detail.talents.accordAbsent' => 'Non donné : ne proposer aucune mission',
+			'admin.candidatures.detail.talents.misesAJour' => ({required Object date}) => 'Dernière mise à jour le ${date}.',
 			'admin.candidatures.controles.noms.compteConforme' => 'Compte conforme',
 			'admin.candidatures.controles.noms.cadreReligieux' => 'Cadre religieux et pédagogique accepté',
 			'admin.candidatures.controles.noms.questionnaireComplet' => 'Questionnaire complet à la version courante',
@@ -41179,6 +42399,8 @@ extension on Traductions {
 			'admin.candidatures.retrait.canaux.courriel' => 'Par courriel',
 			'admin.candidatures.retrait.date' => 'Jour de la demande',
 			'admin.candidatures.retrait.canalManquant' => 'Choisissez comment la demande est arrivée.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.candidatures.retrait.dateManquante' => 'Choisissez le jour de la demande.',
 			'admin.candidatures.retrait.aide' => 'Entre la réception de la candidature et aujourd\'hui.',
 			'admin.candidatures.pause.reprise' => 'Reprise prévue',
@@ -41356,8 +42578,6 @@ extension on Traductions {
 			'admin.tableau.attenteAujourdhui' => 'Déposé aujourd\'hui',
 			'admin.tableau.attenteUnJour' => 'En attente depuis 1 jour',
 			'admin.tableau.sousTitre' => 'Vue d\'ensemble de l\'activité et des éléments à traiter.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.tableau.activite.titre' => 'Activité récente',
 			'admin.tableau.activite.voirTout' => 'Voir tout le journal',
 			'admin.tableau.activite.vide' => 'Aucune activité récente.',
@@ -41693,6 +42913,8 @@ extension on Traductions {
 			'admin.groupes.formulaire.genreFemmesDetailSansSource' => 'À choisir pour une classe de femmes. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que vous choisissez une enseignante.',
 			'admin.groupes.formulaire.genreGarconsDetailSansSource' => 'À choisir pour une classe de garçons. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que l\'enseignant choisi est un homme.',
 			'admin.groupes.formulaire.genreFillesDetailSansSource' => 'À choisir pour une classe de filles. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que vous choisissez une enseignante.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.formulaire.genreNonEnregistre' => 'Le genre guide le choix de l\'enseignant. Il sera enregistré avec la classe dès que le serveur l\'acceptera : pour l\'instant, il ne l\'est pas.',
 			'admin.groupes.formulaire.aideEnseignant' => 'Les enseignants sont classés du plus adapté au moins adapté : genre de la classe, créneau libre, puis le moins de classes en cours.',
 			'admin.groupes.formulaire.aideEnseignantSansSource' => 'Les enseignants sont classés du moins chargé au plus chargé, et un enseignant déjà en classe à ce créneau ne se choisit pas. Leur genre et leurs disponibilités ne sont pas encore lisibles ici : vérifiez-les vous-même.',
@@ -41870,8 +43092,6 @@ extension on Traductions {
 			'admin.regroupements.classesExistantes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} classe est déjà ouverte sur ce créneau : la nouvelle s\'ajoute, aucune n\'est modifiée.', other: '${n} classes sont déjà ouvertes sur ce créneau : la nouvelle s\'ajoute, aucune n\'est modifiée.', ), 
 			'admin.regroupements.liste.rechercheLibelle' => 'Rechercher une demande',
 			'admin.regroupements.liste.rechercheAide' => 'Langue, fuseau ou nom de la classe créée',
-			_ => null,
-		} ?? switch (path) {
 			'admin.regroupements.liste.filtreToutes' => 'Toutes',
 			'admin.regroupements.liste.filtreAFinir' => 'Enseignant à confirmer',
 			'admin.regroupements.liste.filtrePrets' => 'Prêtes',
@@ -42207,6 +43427,8 @@ extension on Traductions {
 			'admin.journal.videDetail' => 'Chaque lecture de dossier, chaque décision et chaque attribution viendra s\'inscrire ici.',
 			'admin.journal.videFiltre' => 'Aucun événement ne correspond',
 			'admin.journal.videFiltreDetail' => 'Élargissez la période, ou relâchez un filtre.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.journal.effacerFiltres' => 'Effacer les filtres',
 			'admin.journal.erreur' => 'Le journal n\'a pas pu être lu. Réessayez dans un instant.',
 			'admin.journal.erreurSuite' => 'Les entrées plus anciennes n\'ont pas pu être lues.',
@@ -42384,8 +43606,6 @@ extension on Traductions {
 			'admin.agents.colonneUsage' => 'Ouvertures',
 			'admin.agents.colonneEtat' => 'État',
 			'admin.agents.parcoursEleve' => 'Élève',
-			_ => null,
-		} ?? switch (path) {
 			'admin.agents.parcoursTuteur' => 'Tuteur',
 			'admin.agents.parcoursEnseignant' => 'Enseignant',
 			'admin.agents.parcoursControleur' => 'Contrôle qualité',
@@ -42721,6 +43941,8 @@ extension on Traductions {
 			'admin.finance.pai.reference' => 'Référence du paiement (facultatif)',
 			'admin.finance.pai.referenceAide' => 'Par exemple le numéro du virement : il aide à retrouver ce paiement plus tard.',
 			'admin.finance.pai.enregistrer' => ({required Object dePrenom}) => 'Enregistrer le paiement ${dePrenom}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pai.annuler' => 'Annuler',
 			'admin.finance.pai.fermer' => 'Fermer',
 			'admin.finance.pai.reessayer' => 'Réessayer',
@@ -42898,8 +44120,6 @@ extension on Traductions {
 			'admin.fusion.refusAutre' => ({required Object motif}) => 'Le transfert n\'a pas eu lieu : ${motif}. Vérifiez la classe, puis recommencez.',
 			'admin.fusion.transfertNonConfirme' => 'Le transfert n\'est pas confirmé : la réponse du serveur n\'est pas arrivée. Pressez de nouveau : la même demande sera reprise, sans transfert en double.',
 			'admin.fusion.historiqueTitre' => ({required Object deLibelle}) => 'Historique ${deLibelle}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.fusion.historiqueVide' => 'Aucun mouvement',
 			'admin.fusion.historiqueVideDetail' => 'Les fusions et les transferts de cette classe apparaîtront ici.',
 			'admin.fusion.historiqueErreur' => 'L\'historique n\'a pas pu être lu. Réessayez dans un instant.',
@@ -43235,6 +44455,8 @@ extension on Traductions {
 			'admin.bibliotheque.attribution.chargementPlus' => 'Chargement…',
 			'admin.bibliotheque.attribution.nonPublie' => 'Ce support n\'est pas publié. Publiez une version avant de l\'attribuer à des classes.',
 			'admin.bibliotheque.attribution.erreur' => 'Les classes n\'ont pas pu être chargées. Réessayez.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.attribution.attribuer' => ({required Object nombre}) => 'Attribuer à ${nombre} classe(s)',
 			'admin.bibliotheque.attribution.attribuerAucune' => 'Choisissez au moins une classe avant d\'attribuer.',
 			'admin.bibliotheque.attribution.attribuee' => 'Support attribué. Les classes choisies le voient maintenant.',
@@ -43412,8 +44634,6 @@ extension on Traductions {
 			'nav.motSymbole' => 'Rewayah',
 			'nav.logoAccueil' => 'Rewayah Academy, accueil',
 			'nav.replier' => 'Replier la navigation',
-			_ => null,
-		} ?? switch (path) {
 			'nav.deplier' => 'Déplier la navigation',
 			'compte.donnees.titre' => 'Mes données',
 			'compte.donnees.sousTitre' => 'Une copie de vos données, ou la suppression de votre compte.',
@@ -43749,6 +44969,8 @@ extension on Traductions {
 			'historique.compteRendu.titre' => 'Compte rendu pédagogique',
 			'historique.compteRendu.travaille' => 'Ce qui a été travaillé',
 			'historique.compteRendu.appreciation' => 'Appréciation de la séance',
+			_ => null,
+		} ?? switch (path) {
 			'historique.compteRendu.aRenforcer' => 'À renforcer',
 			'historique.compteRendu.aPreparer' => 'À préparer pour la prochaine séance',
 			'historique.compteRendu.commentaire' => 'Commentaire partagé',
@@ -43926,8 +45148,6 @@ extension on Traductions {
 			'tuteur.accueil.travailIndisponible' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
 			'tuteur.accueil.travailIllisible' => 'Le travail à préparer n\'a pas pu être lu.',
 			'tuteur.accueil.rienAPreparer' => 'Rien à préparer pour l\'instant',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.derniereSeance' => 'Dernière séance',
 			'tuteur.accueil.voirHistorique' => 'Voir l\'historique',
 			'tuteur.accueil.detailsSeance' => 'Détails de la séance',
@@ -44263,6 +45483,8 @@ extension on Traductions {
 			'enseignant.bienvenue.salutationSansNom' => 'Bienvenue.',
 			'enseignant.bienvenue.dossierValide' => 'Votre dossier est validé.',
 			'enseignant.bienvenue.sousTitre' => 'Préparez votre espace avant votre première Classe.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.bienvenue.aCompleter' => 'À compléter',
 			'enseignant.bienvenue.compteur' => ({required Object fait, required Object total}) => '${fait} sur ${total}',
 			'enseignant.bienvenue.prerequisPhoto' => 'Ajouter ma photo professionnelle',
@@ -44440,8 +45662,6 @@ extension on Traductions {
 			'enseignant.cahier.nominaux' => 'Rien à signaler',
 			'enseignant.cahier.curriculumFige' => 'Le niveau et le programme sont ceux de l\'académie : ils ne se modifient pas depuis le cahier de transmission.',
 			'enseignant.cahier.valider' => 'Valider le cahier de transmission',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.validerTout' => 'Tout est conforme, valider',
 			'enseignant.cahier.validerSansConstat' => 'Déposer sans le constat',
 			'enseignant.cahier.retourJournee' => 'Retour à ma journée',
@@ -44777,6 +45997,8 @@ extension on Traductions {
 			'enseignant.revenus.releveVide' => 'Aucun mois arrêté pour l\'instant',
 			'enseignant.revenus.releveVideDetail' => 'Chaque mois apparaîtra ici une fois arrêté par l\'académie.',
 			'enseignant.revenus.mention' => 'Ce montant est une estimation, pas une paie définitive. Le relevé arrêté par l\'académie fait foi.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.revenus.vide' => 'Aucune heure assurée ce mois-ci',
 			'enseignant.revenus.videDetail' => 'L\'estimation apparaîtra après votre première séance assurée du mois.',
 			'controleur.mfa.titreEnrolement' => 'Protégez votre compte de contrôleur',
@@ -44954,8 +46176,6 @@ extension on Traductions {
 			'controleur.echanges.vide' => 'Aucun échange avec l\'administration pour le moment.',
 			'controleur.echanges.contexte' => 'Contexte de la visite, joint automatiquement',
 			'controleur.echanges.cleClasse' => 'Classe',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.echanges.cleDate' => 'Date',
 			'controleur.echanges.cleHeure' => 'Heure',
 			'controleur.echanges.auteurVous' => 'Vous',
@@ -45291,6 +46511,8 @@ extension on Traductions {
 			'tc.observation.entree.modeDiscretDetail' => 'Invisible pour les participants. Sans micro ni caméra, sans annonce.',
 			'tc.observation.entree.modeVisible' => 'Rejoindre la classe',
 			'tc.observation.entree.modeVisibleDetail' => 'Visible par tous sous le nom Administration Rewayah. Micro et caméra permis, annonce faite.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.entree.nomInstitutionnel' => 'Administration Rewayah',
 			'tc.observation.entree.visiteJournalisee' => 'Visite journalisée : identité, séance, entrée, sortie et durée.',
 			'tc.observation.entree.roleSansObservation' => 'Votre compte n\'observe pas les séances.',
@@ -45468,8 +46690,6 @@ extension on Traductions {
 			'tc.parcours.feedback.confiance.tresBien' => 'Tout à fait',
 			'tc.parcours.feedback.merci' => 'Merci.',
 			'tc.parcours.feedback.tendance.titre' => 'Retour des élèves',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.feedback.tendance.sousSeuil' => 'Pas encore assez de retours pour dégager une tendance.',
 			'tc.parcours.feedback.tendance.anonyme' => 'Les retours sont anonymes et agrégés. Ils ne suffisent jamais, seuls, à une décision.',
 			'tc.parcours.signalement.titre' => 'Signaler un besoin',
@@ -45805,6 +47025,8 @@ extension on Traductions {
 			'adulte.reprise.etat' => 'État',
 			'adulte.reprise.etats.deposee' => 'Déposée',
 			'adulte.reprise.etats.refuseeParTitulaire' => 'Refusée par le titulaire',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.reprise.etats.attenteAdministration' => 'En attente de l\'administration',
 			'adulte.reprise.etats.validee' => 'Validée',
 			'adulte.reprise.etats.refusee' => 'Refusée',
@@ -45982,8 +47204,6 @@ extension on Traductions {
 			'motifs.signalement.technique.camera' => 'La caméra ou le micro n\'a pas fonctionné.',
 			'motifs.signalement.changement.classe' => 'Un changement de classe est à l\'étude.',
 			'motifs.signalement.changement.niveau' => 'Le niveau de la classe ne semble plus adapté.',
-			_ => null,
-		} ?? switch (path) {
 			'motifs.signalement.changement.suite' => 'L\'académie reviendra vers vous pour en parler.',
 			'suiviFamille.titre' => 'Suivi des demandes',
 			'suiviFamille.contexte' => 'Chaque demande avance étape par étape. Vous êtes prévenu à chaque passage.',
@@ -46319,6 +47539,8 @@ extension on Traductions {
 			'com.messages.entree.ecrireA' => ({required Object nom}) => 'Écrire à ${nom}',
 			'com.messages.entree.conversationAvec' => ({required Object nom}) => 'Conversation avec ${nom}',
 			'com.messages.entree.voirTout' => 'Voir toutes les conversations',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.entree.toutes' => 'Toutes vos conversations',
 			'com.messages.entree.aLireUne' => '1 conversation à lire',
 			'com.messages.entree.aLire' => ({required Object nombre}) => '${nombre} conversations à lire',
@@ -46496,8 +47718,6 @@ extension on Traductions {
 			'com.communaute.sections' => 'Catégories de la Communauté enseignants',
 			'com.communaute.toutes' => 'Toutes',
 			'com.communaute.videTitre' => 'Aucune publication',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.rechercheVideTitre' => 'Aucun résultat',
 			'com.communaute.rechercheVide' => 'Aucune publication ne correspond à votre recherche. Essayez un autre mot.',
 			'com.communaute.videToutes' => 'Aucune publication pour le moment.',
@@ -46833,6 +48053,8 @@ extension on Traductions {
 			'com.studio.demo.f.activiteRemplacant' => 'Choisir le remplaçant de mardi pour la Classe An-Nour',
 			'com.studio.demo.f.objetRemplacement' => 'Remplacement de mardi',
 			'com.studio.demo.f.activiteOuverture' => 'Valider l\'ouverture d\'une Classe le samedi matin',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.demo.f.objetClasseSamedi' => 'Classe du samedi matin',
 			'com.studio.demo.f.activiteCloture' => 'Clôture du mois de septembre',
 			'com.studio.demo.f.objetCloture' => 'Clôture de septembre',
@@ -47010,8 +48232,6 @@ extension on Traductions {
 			'com.annonces.demo.f.adminStudioReponse' => 'Studio : nouvelle réponse à votre message sur le programme de printemps',
 			'com.annonces.demo.f.adminStudioDecision' => 'Studio : une décision est demandée sur le support de la leçon 4',
 			'com.annonces.demo.f.adminStudioAssigne' => 'Studio : la relecture du support de Tajwid vous est assignée',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demo.f.adminStudioInterne' => 'Annonce interne de l\'équipe Studio : réunion d\'équipe jeudi à 18 h',
 			'com.annonces.demo.f.adminStudioContexte' => 'Studio : un support est prêt pour la Classe An-Nour',
 			'com.annonces.demo.f.annonceNourTitre' => 'Récitation de fin de trimestre devant les familles',
@@ -47347,6 +48567,8 @@ extension on Traductions {
 			'comptable.paiements.actions.signalerEcart' => 'Signaler un écart',
 			'comptable.paiements.actions.selectionner' => ({required Object nom}) => 'Sélectionner le paiement de ${nom}',
 			'comptable.paiements.actions.selectionnerPrets' => 'Sélectionner tous les paiements prêts',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.actions.payerSelection' => 'Payer la sélection',
 			'comptable.paiements.actions.viderSelection' => 'Vider la sélection',
 			'comptable.paiements.actions.voirProfil' => 'Voir le profil de paiement',
@@ -47524,8 +48746,6 @@ extension on Traductions {
 			'comptable.encaissements.affectation' => 'Affectation par profil',
 			'comptable.encaissements.affectationAucune' => 'La source n\'a rendu aucune affectation pour cet encaissement.',
 			'comptable.encaissements.rapprochement' => 'Rapprochement',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.rapprochementAucun' => 'Pas encore rapproché',
 			'comptable.encaissements.ouvrirRapprochement' => 'Ouvrir le rapprochement',
 			'comptable.encaissements.confirmeNote' => '« Confirmé » s\'affiche seulement après la confirmation du prestataire.',
@@ -47861,6 +49081,8 @@ extension on Traductions {
 			'comptable.direction.reservePanneau.alimentationDetail' => 'Comment la Réserve se remplit sans geste du Comptable.',
 			'comptable.direction.reservePanneau.regle.desactivee' => 'Désactivée',
 			'comptable.direction.reservePanneau.regle.desactiveeDetail' => 'Aucune alimentation automatique.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.reservePanneau.regle.montantFixe' => 'Somme fixe',
 			'comptable.direction.reservePanneau.regle.montantFixeDetail' => 'La même somme à chaque échéance.',
 			'comptable.direction.reservePanneau.regle.pourcentage' => 'Pourcentage',
@@ -48038,8 +49260,6 @@ extension on Traductions {
 			'reprisesAdmin.titre' => 'Reprises de foyer',
 			'reprisesAdmin.sousTitre' => 'Demandes d\'un second adulte pour devenir titulaire du foyer. L\'administration décide.',
 			'reprisesAdmin.demandeur' => 'Demandeur',
-			_ => null,
-		} ?? switch (path) {
 			'reprisesAdmin.foyer' => 'Foyer',
 			'reprisesAdmin.deposeeLe' => 'Déposée le',
 			'reprisesAdmin.etat.aExaminer' => 'À examiner',
@@ -48375,6 +49595,8 @@ extension on Traductions {
 			'avis.admin.titre' => 'Avis',
 			'avis.admin.sousTitre' => 'Les avis des familles et des élèves. La direction les lit, les publie ou les refuse. Elle ne modifie jamais un texte.',
 			'avis.admin.outil' => 'Avis des familles',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.outilDetail' => 'Créer un lien de collecte, lire les avis, les publier ou les refuser',
 			'avis.admin.sections.libelle' => 'Sections des avis',
 			'avis.admin.sections.avis' => 'Avis',

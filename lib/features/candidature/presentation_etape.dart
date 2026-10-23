@@ -24,9 +24,10 @@ import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/grille_bento.dart';
 import '../../core/widgets/pile_cartes.dart';
 
-/// Une tuile de presentation.
-class _Tuile {
-  const _Tuile(this.icone, this.titre, this.texte);
+/// Une tuile d'information : une icone, un titre court, une phrase.
+class TuileInformation {
+  /// Cree une tuile.
+  const TuileInformation(this.icone, this.titre, this.texte);
 
   final AppIcon icone;
   final String titre;
@@ -34,18 +35,32 @@ class _Tuile {
 }
 
 /// Le contenu des trois ecrans : titre, introduction, tuiles.
-({String titre, String intro, List<_Tuile> tuiles}) _contenu(int rang) {
+({String titre, String intro, List<TuileInformation> tuiles}) _contenu(
+  int rang,
+) {
   final p = t.recrutement.parcours.presentation;
   switch (rang) {
     case 1:
       return (
         titre: p.p1.titre,
         intro: p.p1.intro,
-        tuiles: <_Tuile>[
-          _Tuile(AppIcons.coran, p.p1.academie.titre, p.p1.academie.texte),
-          _Tuile(AppIcons.succes, p.p1.liberte.titre, p.p1.liberte.texte),
-          _Tuile(AppIcons.verrou, p.p1.donnees.titre, p.p1.donnees.texte),
-          _Tuile(
+        tuiles: <TuileInformation>[
+          TuileInformation(
+            AppIcons.coran,
+            p.p1.academie.titre,
+            p.p1.academie.texte,
+          ),
+          TuileInformation(
+            AppIcons.succes,
+            p.p1.liberte.titre,
+            p.p1.liberte.texte,
+          ),
+          TuileInformation(
+            AppIcons.verrou,
+            p.p1.donnees.titre,
+            p.p1.donnees.texte,
+          ),
+          TuileInformation(
             AppIcons.classes,
             p.p1.separation.titre,
             p.p1.separation.texte,
@@ -56,11 +71,19 @@ class _Tuile {
       return (
         titre: p.p2.titre,
         intro: p.p2.intro,
-        tuiles: <_Tuile>[
-          _Tuile(AppIcons.classes, p.p2.classe.titre, p.p2.classe.texte),
-          _Tuile(AppIcons.horloge, p.p2.horaires.titre, p.p2.horaires.texte),
-          _Tuile(AppIcons.camera, p.p2.visio.titre, p.p2.visio.texte),
-          _Tuile(
+        tuiles: <TuileInformation>[
+          TuileInformation(
+            AppIcons.classes,
+            p.p2.classe.titre,
+            p.p2.classe.texte,
+          ),
+          TuileInformation(
+            AppIcons.horloge,
+            p.p2.horaires.titre,
+            p.p2.horaires.texte,
+          ),
+          TuileInformation(AppIcons.camera, p.p2.visio.titre, p.p2.visio.texte),
+          TuileInformation(
             AppIcons.paiements,
             p.p2.remuneration.titre,
             p.p2.remuneration.texte,
@@ -71,10 +94,18 @@ class _Tuile {
       return (
         titre: p.p3.titre,
         intro: p.p3.intro,
-        tuiles: <_Tuile>[
-          _Tuile(AppIcons.cahier, p.p3.examen.titre, p.p3.examen.texte),
-          _Tuile(AppIcons.camera, p.p3.entretien.titre, p.p3.entretien.texte),
-          _Tuile(
+        tuiles: <TuileInformation>[
+          TuileInformation(
+            AppIcons.cahier,
+            p.p3.examen.titre,
+            p.p3.examen.texte,
+          ),
+          TuileInformation(
+            AppIcons.camera,
+            p.p3.entretien.titre,
+            p.p3.entretien.texte,
+          ),
+          TuileInformation(
             AppIcons.dossiers,
             p.p3.verification.titre,
             p.p3.verification.texte,
@@ -102,20 +133,36 @@ class TuilesPresentation extends StatelessWidget {
   /// La cle de la zone des tuiles.
   static const Key zoneKey = ValueKey<String>('presentation-tuiles');
 
+  @override
+  Widget build(BuildContext context) =>
+      TuilesInformation(tuiles: _contenu(rang).tuiles);
+}
+
+/// Des tuiles d'information (trois ou quatre), en pile sur telephone, en grille
+/// Bento sur grand ecran : la premiere est la tuile principale, large. Sert aux
+/// ecrans de presentation du questionnaire et a l'introduction de « Vos autres
+/// talents ».
+class TuilesInformation extends StatelessWidget {
+  /// Cree la zone de tuiles.
+  const TuilesInformation({required this.tuiles, super.key});
+
+  /// Les tuiles, la principale d'abord.
+  final List<TuileInformation> tuiles;
+
   /// La hauteur d'une ligne de la grille Bento de presentation.
   static const double _hauteurLigne = AppPage.hauteurChoix + AppSpacing.section;
 
   @override
   Widget build(BuildContext context) {
-    final List<_Tuile> tuiles = _contenu(rang).tuiles;
     return LayoutBuilder(
-      key: zoneKey,
+      key: TuilesPresentation.zoneKey,
       builder: (BuildContext context, BoxConstraints c) {
         if (c.maxWidth < GrilleBento.seuilQuatreColonnes) {
           // Telephone : une pile de tuiles, l'icone a cote du texte.
           return PileCartes(
             children: <Widget>[
-              for (final _Tuile u in tuiles) _TuileHorizontale(tuile: u),
+              for (final TuileInformation u in tuiles)
+                _TuileHorizontale(tuile: u),
             ],
           );
         }
@@ -126,7 +173,7 @@ class TuilesPresentation extends StatelessWidget {
           hauteurMinimale: true,
           hauteurDeLigne: _hauteurLigne,
           tuiles: <TuileBento>[
-            for (final (int i, _Tuile u) in tuiles.indexed)
+            for (final (int i, TuileInformation u) in tuiles.indexed)
               TuileBento(
                 etendue: i == 0 ? EtendueBento.large : EtendueBento.carree,
                 etendueLarge: _etendueLarge(i, tuiles.length),
@@ -190,7 +237,7 @@ class _Disque extends StatelessWidget {
 class _Textes extends StatelessWidget {
   const _Textes({required this.tuile, this.premiere = false});
 
-  final _Tuile tuile;
+  final TuileInformation tuile;
   final bool premiere;
 
   @override
@@ -222,7 +269,7 @@ class _Textes extends StatelessWidget {
 class _TuileHorizontale extends StatelessWidget {
   const _TuileHorizontale({required this.tuile});
 
-  final _Tuile tuile;
+  final TuileInformation tuile;
 
   @override
   Widget build(BuildContext context) => BentoTile(
@@ -240,7 +287,7 @@ class _TuileHorizontale extends StatelessWidget {
 class _TuileVerticale extends StatelessWidget {
   const _TuileVerticale({required this.tuile, required this.premiere});
 
-  final _Tuile tuile;
+  final TuileInformation tuile;
   final bool premiere;
 
   @override

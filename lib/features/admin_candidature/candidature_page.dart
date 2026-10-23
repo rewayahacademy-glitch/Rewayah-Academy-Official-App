@@ -49,6 +49,7 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../admin_candidatures/libelles_candidatures.dart';
+import 'bloc_autres_competences.dart';
 import 'blocs_candidature.dart';
 import 'feuille_geste.dart';
 import 'gestes_proposes.dart';
@@ -299,6 +300,9 @@ class _Contenu extends ConsumerWidget {
     );
     final Widget controles = BlocControles(detail: detail);
     final Widget reponses = BlocReponses(detail: detail, nomsOperateurs: noms);
+    // CAND-07 : ce que la personne a repondu a « Vos autres talents », lu pour
+    // poser une question de vive voix a l'entretien ; jamais pour decider.
+    final Widget autresCompetences = BlocAutresCompetences(detail: detail);
     final Widget pieceEntretien = BlocPieceEntretien(
       detail: detail,
       onOuvrirDossier: onOuvrirDossier,
@@ -336,6 +340,7 @@ class _Contenu extends ConsumerWidget {
             blocages,
             action,
             reponses,
+            autresCompetences,
             controles,
             pieceEntretien,
             responsable,
@@ -355,6 +360,7 @@ class _Contenu extends ConsumerWidget {
             Expanded(
               child: colonne(<Widget>[
                 reponses,
+                autresCompetences,
                 pieceEntretien,
                 responsable,
                 affectation,

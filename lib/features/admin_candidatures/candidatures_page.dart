@@ -35,8 +35,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/admin_domaine.dart';
+import '../../core/candidature/modeles_autres_competences.dart';
 import '../../core/candidature/modeles_candidature.dart';
 import '../../core/candidature/modeles_candidatures_direction.dart';
+import '../../core/candidature/port_autres_competences.dart';
 import '../../core/candidature/port_candidatures_direction.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
@@ -68,6 +70,7 @@ import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/selecteur_section.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
+import '../talents/libelles_talents.dart';
 import 'carte_alertes.dart';
 import 'libelles_candidatures.dart';
 import 'ligne_candidature.dart';
@@ -320,8 +323,99 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
           ],
           onChoix: (String? p) => _filtrer(_filtre.avec(paysResidence: () => p)),
         ),
+        ..._filtresCompetences(tous),
       ],
     );
+  }
+
+  /// Les quatre axes des autres competences (CAND-07, « Vos autres talents ») :
+  /// le domaine (une famille, ou une competence du catalogue), le niveau minimum,
+  /// la disponibilite et l'accord d'etre contacte. Le serveur ne rend ces
+  /// personnes que si elles ont repondu ; aucune note, aucun classement.
+  ///
+  /// Les familles sont une liste fermee que l'application nomme : le menu du
+  /// domaine marche sans le catalogue. Les competences s'y ajoutent des que la
+  /// direction lit le catalogue (le sien, complet, desactivees comprises).
+  List<Widget> _filtresCompetences(EntreeFiltre<T> Function<T>() tous) {
+    final f = t.admin.candidatures.filtres.talents;
+    final CatalogueCompetences? catalogue = ref
+        .watch(catalogueCompetencesProvider)
+        .value;
+    final List<EntreeFiltre<String>> domaines = <EntreeFiltre<String>>[
+      tous<String>(),
+      for (final FamilleCompetence famille in FamilleCompetence.values) ...<EntreeFiltre<String>>[
+        // La famille « autre » n'a qu'une competence, du meme nom : une seule
+        // entree.
+        if (famille != FamilleCompetence.autre)
+          EntreeFiltre<String>(
+            valeur: famille.valeurSql,
+            libelle: f.familleToutes(famille: titreFamille(famille)),
+          ),
+        for (final EntreeCatalogue e
+            in catalogue?.competences ?? const <EntreeCatalogue>[])
+          if (e.familleCode == famille.valeurSql)
+            EntreeFiltre<String>(
+              valeur: e.code,
+              libelle: nomDomaineFiltre(e.code, catalogue: catalogue),
+            ),
+      ],
+    ];
+    return <Widget>[
+      MenuFiltre<String>(
+        key: const ValueKey<String>('candidatures-filtre-competence'),
+        libelle: f.domaine,
+        valeur: _filtre.competenceDomaine,
+        entrees: domaines,
+        onChoix: (String? d) =>
+            _filtrer(_filtre.avec(competenceDomaine: () => d)),
+      ),
+      MenuFiltre<NiveauCompetence>(
+        key: const ValueKey<String>('candidatures-filtre-competence-niveau'),
+        libelle: f.niveau,
+        valeur: _filtre.competenceNiveauMin,
+        entrees: <EntreeFiltre<NiveauCompetence>>[
+          tous<NiveauCompetence>(),
+          EntreeFiltre<NiveauCompetence>(
+            valeur: NiveauCompetence.experience,
+            libelle: f.niveauExperience,
+          ),
+          EntreeFiltre<NiveauCompetence>(
+            valeur: NiveauCompetence.metier,
+            libelle: f.niveauMetier,
+          ),
+        ],
+        onChoix: (NiveauCompetence? n) =>
+            _filtrer(_filtre.avec(competenceNiveauMin: () => n)),
+      ),
+      MenuFiltre<DisponibiliteMission>(
+        key: const ValueKey<String>(
+          'candidatures-filtre-competence-disponibilite',
+        ),
+        libelle: f.disponibilite,
+        valeur: _filtre.competenceDisponibilite,
+        entrees: <EntreeFiltre<DisponibiliteMission>>[
+          tous<DisponibiliteMission>(),
+          for (final DisponibiliteMission d in DisponibiliteMission.values)
+            EntreeFiltre<DisponibiliteMission>(
+              valeur: d,
+              libelle: libelleDisponibilite(d),
+            ),
+        ],
+        onChoix: (DisponibiliteMission? d) =>
+            _filtrer(_filtre.avec(competenceDisponibilite: () => d)),
+      ),
+      MenuFiltre<bool>(
+        key: const ValueKey<String>('candidatures-filtre-competence-accord'),
+        libelle: f.accord,
+        valeur: _filtre.competenceAccord,
+        entrees: <EntreeFiltre<bool>>[
+          tous<bool>(),
+          EntreeFiltre<bool>(valeur: true, libelle: f.accordDonne),
+          EntreeFiltre<bool>(valeur: false, libelle: f.accordAbsent),
+        ],
+        onChoix: (bool? a) => _filtrer(_filtre.avec(competenceAccord: () => a)),
+      ),
+    ];
   }
 
   // --- Liste --------------------------------------------------------------

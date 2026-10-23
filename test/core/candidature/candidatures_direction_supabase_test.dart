@@ -19,6 +19,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:rewayah_academy/core/candidature/candidatures_direction_supabase.dart';
+import 'package:rewayah_academy/core/candidature/modeles_autres_competences.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidatures_direction.dart';
 import 'package:rewayah_academy/core/candidature/port_candidatures_direction.dart';
@@ -240,6 +241,11 @@ void main() {
         'paiement',
         'paysResidence',
         'recherche',
+        // CAND-AUTRES : les quatre axes des autres competences.
+        'competenceDomaine',
+        'competenceNiveauMin',
+        'competenceDisponibilite',
+        'competenceAccord',
       ];
       final Map<String, Object> envoye = filtreEnJson(
         const FiltreCandidatures(
@@ -250,9 +256,73 @@ void main() {
           enPause: true,
           paiement: EtatVersement.incompatible,
           paysResidence: 'FR',
+          competenceDomaine: 'comptabilite',
+          competenceNiveauMin: NiveauCompetence.experience,
+          competenceDisponibilite: DisponibiliteMission.miTemps,
+          competenceAccord: true,
         ),
       );
       expect(connues, containsAll(envoye.keys));
+      expect(
+        envoye.keys,
+        containsAll(<String>[
+          'competenceDomaine',
+          'competenceNiveauMin',
+          'competenceDisponibilite',
+          'competenceAccord',
+        ]),
+      );
+    });
+
+    test('les autres competences : un code ou une famille, un niveau, la '
+        'disponibilite exacte, l accord, avec leurs valeurs ecrites en base', () {
+      expect(
+        filtreEnJson(
+          const FiltreCandidatures(
+            competenceDomaine: 'finances_droit',
+            competenceNiveauMin: NiveauCompetence.metier,
+            competenceDisponibilite: DisponibiliteMission.plus,
+            competenceAccord: true,
+          ),
+        ),
+        <String, Object>{
+          'competenceDomaine': 'finances_droit',
+          'competenceNiveauMin': 'metier',
+          'competenceDisponibilite': 'plus',
+          'competenceAccord': true,
+        },
+      );
+    });
+
+    test('une cle sans valeur ne part pas : aucun axe de competence', () {
+      expect(filtreEnJson(const FiltreCandidatures()), isEmpty);
+      expect(
+        filtreEnJson(
+          const FiltreCandidatures(competenceNiveauMin: NiveauCompetence.debutant),
+        ),
+        <String, Object>{'competenceNiveauMin': 'debutant'},
+      );
+    });
+
+    test('un filtre de competence part avec la page demandee', () async {
+      final List<_Appel> appels = <_Appel>[];
+      final CandidaturesDirectionSupabase port = _port(
+        (_Appel a) => _ok(_page()),
+        appels,
+      );
+      await port.lister(
+        filtre: const FiltreCandidatures(
+          competenceDomaine: 'comptabilite',
+          competenceAccord: true,
+        ),
+        tri: TriCandidatures.activite,
+        page: 2,
+      );
+      expect(appels.single.corps['p_filtre'], <String, dynamic>{
+        'competenceDomaine': 'comptabilite',
+        'competenceAccord': true,
+      });
+      expect(appels.single.corps['p_page'], 2);
     });
 
     group('la recherche part comme le serveur la compare', () {
@@ -491,6 +561,31 @@ void main() {
         a.avec(etape: () => EtapeCandidature.confirmee).avec(etape: () => null),
         a,
       );
+    });
+
+    test('le filtre : les quatre axes de competence se comptent, se '
+        'comparent et s efface', () {
+      const FiltreCandidatures vide = FiltreCandidatures();
+      final FiltreCandidatures f = vide
+          .avec(competenceDomaine: () => 'comptabilite')
+          .avec(competenceNiveauMin: () => NiveauCompetence.experience)
+          .avec(competenceDisponibilite: () => DisponibiliteMission.miTemps)
+          .avec(competenceAccord: () => true);
+      expect(f.estVide, isFalse);
+      expect(f.nombreAxes, 4);
+      expect(f.efface, vide);
+      expect(f.efface.estVide, isTrue);
+      // Un axe de plus : un autre filtre, donc une autre lecture.
+      expect(f, isNot(f.avec(competenceAccord: () => null)));
+      expect(f.avec(competenceAccord: () => null).nombreAxes, 3);
+      expect(f.hashCode, equals(
+        vide
+            .avec(competenceDomaine: () => 'comptabilite')
+            .avec(competenceNiveauMin: () => NiveauCompetence.experience)
+            .avec(competenceDisponibilite: () => DisponibiliteMission.miTemps)
+            .avec(competenceAccord: () => true)
+            .hashCode,
+      ));
     });
 
     test('la requete : deux requetes egales partagent leur lecture', () {

@@ -180,9 +180,15 @@ spécialistes en pédagogie, etc. »). Besoin `CAND-BR-19` (`DEPENDANCES_BACKEND
    `technique`, `autre`) sont une liste fermée, parce qu'une famille s'affiche avec un titre traduit
    dans l'app. Une septième famille passe par une migration et un libellé, pas par l'écran du catalogue.
 
-**Ce qui reste, hors serveur** : l'écran de trois cartes, ses textes (`mots-rewayah`, passage par le
-directeur), le port Dart et son adaptateur, la tuile du portail, l'affichage côté direction (ligne
-« Autres compétences » de la fiche, filtre de la liste par code ou par famille), **l'écran du
-catalogue de la direction** (ajouter, modifier, désactiver ; port `PortCatalogueCompetences`,
-`CONTRAT_PORTS_CANDIDATURES.md` section 3 ter), la file de contact (`L5`), la conservation
-(`CAND-Q21`).
+**Construit côté app le 23/10/2026** (`présent dans le code`, `testé localement` ; ni `testé sur
+staging` ni `déployé`) : l'écran de quatre pages (`CAND-07`, fiche dans
+`CATALOGUE_ECRANS_RECRUTEMENT.md`), ses textes en français et en arabe, le port Dart et son
+adaptateur (`autres_competences_supabase.dart`), la tuile du portail, la ligne « Autres
+compétences » de la fiche (`ADM-21`) et quatre filtres de la liste (`ADM-20` : domaine par famille ou
+par compétence, niveau minimum, disponibilité, accord). **Les sept points ci-dessus attendent le
+directeur** ; la fiche `CAND-07` reprend ceux que l'écran rend visibles.
+
+**Ce qui reste** : **l'écran du catalogue de la direction** (ajouter, modifier, désactiver ; port
+`PortCatalogueCompetences`, `CONTRAT_PORTS_CANDIDATURES.md` section 3 ter : seule la lecture est
+construite), la file de contact (`L5`), la conservation (`CAND-Q21`), et tout essai contre un
+serveur réel (staging).

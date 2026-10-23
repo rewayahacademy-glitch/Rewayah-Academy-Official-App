@@ -26,6 +26,7 @@ import '../connexion/recuperation_page.dart'
     show IssueEnvoiLien, issueEchecEnvoi;
 import '../inscription/brouillon_inscription.dart';
 import '../partage_offre/tuile_partage.dart';
+import '../talents/tuile_talents.dart';
 
 /// `TUT-00b` : le portail d'attente, refondu (05 section A, sous-paquet 3).
 ///
@@ -247,6 +248,11 @@ class _AttentePageState extends ConsumerState<AttentePage> {
               if (candidature != null &&
                   candidature.issue == IssueCandidature.enCours)
                 const TuilePartageOffre(),
+              // CAND-07 : « Vos autres talents », facultatif, sous la tuile de
+              // partage. Le serveur dit si elle s'ouvre (apres l'envoi de la
+              // candidature) ou s'il reste des reponses a relire ou a retirer
+              // (candidature terminee) : sinon rien n'est rendu.
+              if (candidature != null) const TuileTalents(),
             ],
           ),
         ),

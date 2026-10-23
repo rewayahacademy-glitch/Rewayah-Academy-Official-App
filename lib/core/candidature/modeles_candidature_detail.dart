@@ -19,6 +19,7 @@ library;
 
 import 'package:flutter/foundation.dart';
 
+import 'modeles_autres_competences.dart';
 import 'modeles_candidature.dart';
 import 'modeles_candidatures_direction.dart';
 
@@ -171,6 +172,7 @@ class DetailCandidature {
     this.restrictionCause,
     this.controles,
     this.piece,
+    this.autresCompetences,
     this.autreCote = false,
   });
 
@@ -210,6 +212,9 @@ class DetailCandidature {
             ])
           : null,
       piece: EtatPiece.depuisSql(brut['piece']),
+      autresCompetences: ReponsesAutresCompetences.depuisJson(
+        brut['autresCompetences'],
+      ),
       autreCote: brut['autreCote'] == true,
     );
   }
@@ -240,6 +245,12 @@ class DetailCandidature {
 
   /// L'etat de la piece, ou `null` : le serveur ne le sert pas encore.
   final EtatPiece? piece;
+
+  /// Les autres competences de la personne (« Vos autres talents », CAND-07),
+  /// ou `null` quand elle n'a rien repondu. Dans la meme portee que le dossier.
+  /// Jamais lues pour decider : un controle de passage, le paiement et l'etat de
+  /// la candidature ne les connaissent pas.
+  final ReponsesAutresCompetences? autresCompetences;
 
   /// Vrai quand la candidature est de l'autre cote (femmes ou hommes) que le
   /// lecteur, lue par l'exception du super-admin. **Le serveur ne rend pas

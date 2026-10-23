@@ -1596,6 +1596,7 @@ class _Traductions$recrutement$ar extends Traductions$recrutement$fr {
 	@override late final _Traductions$recrutement$retrait$ar retrait = _Traductions$recrutement$retrait$ar._(_root);
 	@override late final _Traductions$recrutement$questionnaire$ar questionnaire = _Traductions$recrutement$questionnaire$ar._(_root);
 	@override late final _Traductions$recrutement$parcours$ar parcours = _Traductions$recrutement$parcours$ar._(_root);
+	@override late final _Traductions$recrutement$talents$ar talents = _Traductions$recrutement$talents$ar._(_root);
 }
 
 // Path: sansDonnees
@@ -8147,6 +8148,25 @@ class _Traductions$recrutement$parcours$ar extends Traductions$recrutement$parco
 	@override String choisirHeureJour({required Object jour}) => 'اختر ساعة بدء واحدة على الأقل ليوم ⁨${jour}⁩.';
 }
 
+// Path: recrutement.talents
+class _Traductions$recrutement$talents$ar extends Traductions$recrutement$talents$fr {
+	_Traductions$recrutement$talents$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'مواهبك الأخرى';
+	@override late final _Traductions$recrutement$talents$tuile$ar tuile = _Traductions$recrutement$talents$tuile$ar._(_root);
+	@override late final _Traductions$recrutement$talents$intro$ar intro = _Traductions$recrutement$talents$intro$ar._(_root);
+	@override late final _Traductions$recrutement$talents$competences$ar competences = _Traductions$recrutement$talents$competences$ar._(_root);
+	@override late final _Traductions$recrutement$talents$c$ar c = _Traductions$recrutement$talents$c$ar._(_root);
+	@override late final _Traductions$recrutement$talents$niveaux$ar niveaux = _Traductions$recrutement$talents$niveaux$ar._(_root);
+	@override late final _Traductions$recrutement$talents$disponibilite$ar disponibilite = _Traductions$recrutement$talents$disponibilite$ar._(_root);
+	@override late final _Traductions$recrutement$talents$lecture$ar lecture = _Traductions$recrutement$talents$lecture$ar._(_root);
+	@override late final _Traductions$recrutement$talents$etats$ar etats = _Traductions$recrutement$talents$etats$ar._(_root);
+	@override late final _Traductions$recrutement$talents$erreurs$ar erreurs = _Traductions$recrutement$talents$erreurs$ar._(_root);
+}
+
 // Path: argent.acces
 class _Traductions$argent$acces$ar extends Traductions$argent$acces$fr {
 	_Traductions$argent$acces$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -11542,6 +11562,7 @@ class _Traductions$admin$candidatures$filtres$ar extends Traductions$admin$candi
 	@override String get sansPause => 'غير متوقفة مؤقتًا';
 	@override String get versement => 'صرف الراتب';
 	@override String get pays => 'بلد الإقامة';
+	@override late final _Traductions$admin$candidatures$filtres$talents$ar talents = _Traductions$admin$candidatures$filtres$talents$ar._(_root);
 }
 
 // Path: admin.candidatures.tri
@@ -11708,6 +11729,7 @@ class _Traductions$admin$candidatures$detail$ar extends Traductions$admin$candid
 	@override late final _Traductions$admin$candidatures$detail$etatsPiece$ar etatsPiece = _Traductions$admin$candidatures$detail$etatsPiece$ar._(_root);
 	@override String get controlesVrai => 'مستوفى';
 	@override String get controlesFaux => 'غير مستوفى';
+	@override late final _Traductions$admin$candidatures$detail$talents$ar talents = _Traductions$admin$candidatures$detail$talents$ar._(_root);
 }
 
 // Path: admin.candidatures.controles
@@ -14475,6 +14497,184 @@ class _Traductions$recrutement$parcours$moyens$ar extends Traductions$recrutemen
 	@override String get nonElimine => 'هذا السؤال اختياري ولا يستبعد أحدًا: لا يتوقف طلب ترشحك على إجابتك. يساعد الأكاديمية على معرفة الوسائل المستعملة حيث تعيش.';
 }
 
+// Path: recrutement.talents.tuile
+class _Traductions$recrutement$talents$tuile$ar extends Traductions$recrutement$talents$tuile$fr {
+	_Traductions$recrutement$talents$tuile$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get facultatif => 'اختياري. لا يغيّر ذلك شيئًا في طلب ترشحك للتدريس.';
+	@override String get enregistre => 'إجاباتك محفوظة. يمكنك تعديلها.';
+	@override String get enregistreClose => 'إجاباتك محفوظة. يمكنك سحبها.';
+}
+
+// Path: recrutement.talents.intro
+class _Traductions$recrutement$talents$intro$ar extends Traductions$recrutement$talents$intro$fr {
+	_Traductions$recrutement$talents$intro$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get texte => 'تنمو الأكاديمية، وستحتاج إلى من يساعدها في التنظيم ومرافقة الأسر ومسك الحسابات والتعريف بها. إن كان لديك ما تُتقنه غير التدريس فأخبرنا به: سنتواصل معك أولًا قبل نشر أي إعلان.';
+	@override late final _Traductions$recrutement$talents$intro$facultatif$ar facultatif = _Traductions$recrutement$talents$intro$facultatif$ar._(_root);
+	@override late final _Traductions$recrutement$talents$intro$usage$ar usage = _Traductions$recrutement$talents$intro$usage$ar._(_root);
+	@override late final _Traductions$recrutement$talents$intro$liberte$ar liberte = _Traductions$recrutement$talents$intro$liberte$ar._(_root);
+	@override late final _Traductions$recrutement$talents$intro$missions$ar missions = _Traductions$recrutement$talents$intro$missions$ar._(_root);
+}
+
+// Path: recrutement.talents.competences
+class _Traductions$recrutement$talents$competences$ar extends Traductions$recrutement$talents$competences$fr {
+	_Traductions$recrutement$talents$competences$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'ما الذي تُتقنه أيضًا؟';
+	@override String get explication => 'المس كل مهارة لديك. تعرض كل بطاقة مثالًا. وإن لم تجد مهارتك فاختر «مجال آخر» في آخر القائمة.';
+	@override late final _Traductions$recrutement$talents$competences$familles$ar familles = _Traductions$recrutement$talents$competences$familles$ar._(_root);
+	@override String choisies({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لم تختر أي مهارة',
+		one: 'مهارة واحدة مختارة',
+		two: 'مهارتان مختارتان',
+		few: '⁨${n}⁩ مهارات مختارة',
+		many: '⁨${n}⁩ مهارة مختارة',
+		other: '⁨${n}⁩ مهارة مختارة',
+	);
+	@override String get nonProposee => 'لم تعد هذه المهارة مقترحة. يمكنك الإبقاء عليها أو إلغاء اختيارها.';
+	@override String get autreChamp => 'مجالك، في بضع كلمات';
+	@override String get autreAide => 'يكفي سطر واحد.';
+	@override String get manque => 'اختر مهارة واحدة على الأقل للمتابعة.';
+	@override String get autreVide => 'اكتب في بضع كلمات ما هو المجال، أو ألغِ اختيار «مجال آخر».';
+	@override String autreTropLong({required Object max}) => 'نصّك طويل جدًا: ⁨${max}⁩ حرفًا على الأكثر. اختصره.';
+}
+
+// Path: recrutement.talents.c
+class _Traductions$recrutement$talents$c$ar extends Traductions$recrutement$talents$c$fr {
+	_Traductions$recrutement$talents$c$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$recrutement$talents$c$reseaux_sociaux$ar reseaux_sociaux = _Traductions$recrutement$talents$c$reseaux_sociaux$ar._(_root);
+	@override late final _Traductions$recrutement$talents$c$relations_publiques$ar relations_publiques = _Traductions$recrutement$talents$c$relations_publiques$ar._(_root);
+	@override late final _Traductions$recrutement$talents$c$design_graphique$ar design_graphique = _Traductions$recrutement$talents$c$design_graphique$ar._(_root);
+	@override late final _Traductions$recrutement$talents$c$montage_video$ar montage_video = _Traductions$recrutement$talents$c$montage_video$ar._(_root);
+	@override late final _Traductions$recrutement$talents$c$photographie$ar photographie = _Traductions$recrutement$talents$c$photographie$ar._(_root);
+	@override late final _Traductions$recrutement$talents$c$redaction_contenus$ar redaction_contenus = _Traductions$recrutement$talents$c$redaction_contenus$ar._(_root);
+	@override late final _Traductions$recrutement$talents$c$publicite_en_ligne$ar publicite_en_ligne = _Traductions$recrutement$talents$c$publicite_en_ligne$ar._(_root);
+	@override late final _Traductions$recrutement$talents$c$traduction$ar traduction = _Traductions$recrutement$talents$c$traduction$ar._(_root);
+	@override late final _Traductions$recrutement$talents$c$assistanat$ar assistanat = _Traductions$recrutement$talents$c$assistanat$ar._(_root);
+	@override late final _Traductions$recrutement$talents$c$coordination_groupe$ar coordination_groupe = _Traductions$recrutement$talents$c$coordination_groupe$ar._(_root);
+	@override late final _Traductions$recrutement$talents$c$accueil_familles$ar accueil_familles = _Traductions$recrutement$talents$c$accueil_familles$ar._(_root);
+	@override late final _Traductions$recrutement$talents$c$gestion_projet$ar gestion_projet = _Traductions$recrutement$talents$c$gestion_projet$ar._(_root);
+	@override late final _Traductions$recrutement$talents$c$ressources_humaines$ar ressources_humaines = _Traductions$recrutement$talents$c$ressources_humaines$ar._(_root);
+	@override late final _Traductions$recrutement$talents$c$comptabilite$ar comptabilite = _Traductions$recrutement$talents$c$comptabilite$ar._(_root);
+	@override late final _Traductions$recrutement$talents$c$gestion_financiere$ar gestion_financiere = _Traductions$recrutement$talents$c$gestion_financiere$ar._(_root);
+	@override late final _Traductions$recrutement$talents$c$juridique_donnees$ar juridique_donnees = _Traductions$recrutement$talents$c$juridique_donnees$ar._(_root);
+	@override late final _Traductions$recrutement$talents$c$conception_programmes$ar conception_programmes = _Traductions$recrutement$talents$c$conception_programmes$ar._(_root);
+	@override late final _Traductions$recrutement$talents$c$formation_enseignants$ar formation_enseignants = _Traductions$recrutement$talents$c$formation_enseignants$ar._(_root);
+	@override late final _Traductions$recrutement$talents$c$qualite_cours$ar qualite_cours = _Traductions$recrutement$talents$c$qualite_cours$ar._(_root);
+	@override late final _Traductions$recrutement$talents$c$tests_niveau$ar tests_niveau = _Traductions$recrutement$talents$c$tests_niveau$ar._(_root);
+	@override late final _Traductions$recrutement$talents$c$accompagnement_enfants$ar accompagnement_enfants = _Traductions$recrutement$talents$c$accompagnement_enfants$ar._(_root);
+	@override late final _Traductions$recrutement$talents$c$developpement$ar developpement = _Traductions$recrutement$talents$c$developpement$ar._(_root);
+	@override late final _Traductions$recrutement$talents$c$assistance_technique$ar assistance_technique = _Traductions$recrutement$talents$c$assistance_technique$ar._(_root);
+	@override late final _Traductions$recrutement$talents$c$donnees_tableurs$ar donnees_tableurs = _Traductions$recrutement$talents$c$donnees_tableurs$ar._(_root);
+	@override late final _Traductions$recrutement$talents$c$autre$ar autre = _Traductions$recrutement$talents$c$autre$ar._(_root);
+}
+
+// Path: recrutement.talents.niveaux
+class _Traductions$recrutement$talents$niveaux$ar extends Traductions$recrutement$talents$niveaux$fr {
+	_Traductions$recrutement$talents$niveaux$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'ما مستواك؟';
+	@override String get explication => 'لكل مهارة، أخبرنا أين أنت منها. يساعد ذلك الأكاديمية على اقتراح مهمة تناسبك.';
+	@override String get legende => 'كيف تختار';
+	@override late final _Traductions$recrutement$talents$niveaux$debutant$ar debutant = _Traductions$recrutement$talents$niveaux$debutant$ar._(_root);
+	@override late final _Traductions$recrutement$talents$niveaux$experience$ar experience = _Traductions$recrutement$talents$niveaux$experience$ar._(_root);
+	@override late final _Traductions$recrutement$talents$niveaux$metier$ar metier = _Traductions$recrutement$talents$niveaux$metier$ar._(_root);
+	@override String niveauDe({required Object competence}) => 'المستوى في ⁨${competence}⁩';
+	@override String manque({required Object competence}) => 'اختر مستواك في «⁨${competence}⁩» للمتابعة.';
+}
+
+// Path: recrutement.talents.disponibilite
+class _Traductions$recrutement$talents$disponibilite$ar extends Traductions$recrutement$talents$disponibilite$fr {
+	_Traductions$recrutement$talents$disponibilite$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'متى يمكنك المساعدة؟';
+	@override String get explication => 'أخبرنا كم من الوقت يمكنك تخصيصه لمهمة، إلى جانب التدريس. وفي الأسفل، أخبرنا إن كانت الأكاديمية تستطيع التواصل معك.';
+	@override late final _Traductions$recrutement$talents$disponibilite$quelques_heures$ar quelques_heures = _Traductions$recrutement$talents$disponibilite$quelques_heures$ar._(_root);
+	@override late final _Traductions$recrutement$talents$disponibilite$mi_temps$ar mi_temps = _Traductions$recrutement$talents$disponibilite$mi_temps$ar._(_root);
+	@override late final _Traductions$recrutement$talents$disponibilite$plus$ar plus = _Traductions$recrutement$talents$disponibilite$plus$ar._(_root);
+	@override late final _Traductions$recrutement$talents$disponibilite$pas_maintenant$ar pas_maintenant = _Traductions$recrutement$talents$disponibilite$pas_maintenant$ar._(_root);
+	@override String get accord => 'أوافق على أن تتواصل معي الأكاديمية من أجل مهمة في هذه المجالات.';
+	@override String get accordNote => 'إن لم تحدّد هذه الخانة، فالأكاديمية تقرأ إجاباتك لكنها لا تقترح عليك أي مهمة.';
+	@override String get manque => 'اختر مدى توفرك للمتابعة.';
+	@override String get enregistrer => 'حفظ إجاباتي';
+}
+
+// Path: recrutement.talents.lecture
+class _Traductions$recrutement$talents$lecture$ar extends Traductions$recrutement$talents$lecture$fr {
+	_Traductions$recrutement$talents$lecture$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get enregistre => 'إجاباتك محفوظة.';
+	@override String misesAJour({required Object date}) => 'آخر تحديث في ⁨${date}⁩.';
+	@override String get competences => 'مهاراتك';
+	@override String autreDomaine({required Object texte}) => 'مجال آخر: ⁨${texte}⁩';
+	@override String get disponibilite => 'مدى توفرك';
+	@override String get contact => 'التواصل من أجل مهمة';
+	@override String get contactOui => 'توافق على أن تتواصل معك الأكاديمية.';
+	@override String get contactNon => 'لم تمنح هذه الموافقة: لن تتواصل معك الأكاديمية.';
+	@override String get modifier => 'تعديل إجاباتي';
+	@override String get retirer => 'سحب إجاباتي';
+	@override String get retraitQuestion => 'هل تسحب إجاباتك؟';
+	@override String get retraitConsequence => 'لن تحتفظ الأكاديمية بمهاراتك ولا بالموافقة التي تتيح لها التواصل معك. يمكنك الإجابة من جديد متى شئت.';
+	@override String get retraitConfirmer => 'سحب إجاباتي';
+	@override String get close => 'انتهى طلب ترشحك للتدريس: لم يعد تعديل هذه الإجابات ممكنًا، لكن يمكنك سحبها.';
+	@override String get retire => 'تم سحب إجاباتك.';
+}
+
+// Path: recrutement.talents.etats
+class _Traductions$recrutement$talents$etats$ar extends Traductions$recrutement$talents$etats$fr {
+	_Traductions$recrutement$talents$etats$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get nonEnvoyeTitre => 'هذه الخطوة لم تُفتح بعد';
+	@override String get nonEnvoye => 'تُفتح عند إرسال طلب ترشحك. أنهِ طلب ترشحك أولًا.';
+	@override String get closTitre => 'انتهت هذه الخطوة';
+	@override String get clos => 'لم يعد طلب ترشحك للتدريس جاريًا: لا شيء تضيفه هنا.';
+	@override String get nonCharge => 'تعذّر تحميل «مواهبك الأخرى».';
+}
+
+// Path: recrutement.talents.erreurs
+class _Traductions$recrutement$talents$erreurs$ar extends Traductions$recrutement$talents$erreurs$fr {
+	_Traductions$recrutement$talents$erreurs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get conflit => 'تغيّرت إجاباتك منذ فتح هذه الصفحة (من جهاز آخر مثلًا). راجعها ثم احفظ من جديد.';
+	@override String get desactivee => 'لم تعد إحدى المهارات التي اخترتها مقترحة، وقد أُزيلت من اختيارك. راجع إجاباتك ثم احفظ من جديد.';
+	@override String get invalides => 'إحدى إجاباتك تحتاج إلى مراجعة. راجعها ثم احفظ من جديد.';
+	@override String get incertain => 'قد لا تكون إجاباتك قد وصلت إلى أكاديمية الرواية. أعد المحاولة: لن تُسجَّل مرتين.';
+	@override String get horsLigne => 'سيمكن حفظ إجاباتك لاحقًا، عند عودة الاتصال.';
+	@override String get echec => 'لم يكتمل حفظ إجاباتك. أعد المحاولة بعد لحظة.';
+	@override String get retraitIncertain => 'قد لا يكون طلب السحب قد وصل إلى أكاديمية الرواية. أعد المحاولة: لن يتم مرتين.';
+	@override String get retraitHorsLigne => 'سيمكن السحب لاحقًا، عند عودة الاتصال.';
+	@override String get retraitEchec => 'لم يكتمل السحب. أعد المحاولة بعد لحظة.';
+}
+
 // Path: juridique.mentions.s1
 class _Traductions$juridique$mentions$s1$ar extends Traductions$juridique$mentions$s1$fr {
 	_Traductions$juridique$mentions$s1$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -16333,6 +16533,24 @@ class _Traductions$com$annonces$demo$f$ar extends Traductions$com$annonces$demo$
 	@override String get controleurReponse => 'رد الإدارة على تقريرك';
 }
 
+// Path: admin.candidatures.filtres.talents
+class _Traductions$admin$candidatures$filtres$talents$ar extends Traductions$admin$candidatures$filtres$talents$fr {
+	_Traductions$admin$candidatures$filtres$talents$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get domaine => 'مهارات أخرى';
+	@override String familleToutes({required Object famille}) => '⁨${famille}⁩: الكل';
+	@override String get niveau => 'مستوى المهارة';
+	@override String get niveauExperience => 'صاحب خبرة فأكثر';
+	@override String get niveauMetier => 'يمارسها مهنةً';
+	@override String get disponibilite => 'مدى التوفر لمهمة';
+	@override String get accord => 'الموافقة على التواصل';
+	@override String get accordDonne => 'الموافقة ممنوحة';
+	@override String get accordAbsent => 'أجاب دون موافقة';
+}
+
 // Path: admin.candidatures.etats.provenance
 class _Traductions$admin$candidatures$etats$provenance$ar extends Traductions$admin$candidatures$etats$provenance$fr {
 	_Traductions$admin$candidatures$etats$provenance$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -16401,6 +16619,25 @@ class _Traductions$admin$candidatures$detail$etatsPiece$ar extends Traductions$a
 	@override String get deposee => 'مودَعة';
 	@override String get aCorriger => 'تحتاج إلى تصحيح';
 	@override String get validee => 'مصادَق عليها';
+}
+
+// Path: admin.candidatures.detail.talents
+class _Traductions$admin$candidatures$detail$talents$ar extends Traductions$admin$candidatures$detail$talents$fr {
+	_Traductions$admin$candidatures$detail$talents$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'مهارات أخرى';
+	@override String get aucune => 'لم يُجب صاحب الطلب عن «مواهبك الأخرى».';
+	@override late final _Traductions$admin$candidatures$detail$talents$niveaux$ar niveaux = _Traductions$admin$candidatures$detail$talents$niveaux$ar._(_root);
+	@override String autre({required Object texte}) => 'مجال آخر: ⁨${texte}⁩';
+	@override String get competenceInconnue => 'مهارة دون تسمية متاحة';
+	@override String get disponibilite => 'مدى التوفر لمهمة';
+	@override String get accord => 'الموافقة على التواصل';
+	@override String accordDonne({required Object date}) => 'مُنحت في ⁨${date}⁩';
+	@override String get accordAbsent => 'لم تُمنح: لا تُقترح أي مهمة';
+	@override String misesAJour({required Object date}) => 'آخر تحديث في ⁨${date}⁩.';
 }
 
 // Path: admin.candidatures.controles.noms
@@ -17223,6 +17460,441 @@ class _Traductions$recrutement$parcours$q$moyensAccessibles$ar extends Traductio
 	@override String get court => 'وسائل الدفع في بلدك';
 }
 
+// Path: recrutement.talents.intro.facultatif
+class _Traductions$recrutement$talents$intro$facultatif$ar extends Traductions$recrutement$talents$intro$facultatif$fr {
+	_Traductions$recrutement$talents$intro$facultatif$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'اختياري';
+	@override String get texte => 'لا يغيّر ذلك شيئًا في طلب ترشحك للتدريس.';
+}
+
+// Path: recrutement.talents.intro.usage
+class _Traductions$recrutement$talents$intro$usage$ar extends Traductions$recrutement$talents$intro$usage$fr {
+	_Traductions$recrutement$talents$intro$usage$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'ماذا نفعل بإجاباتك';
+	@override String get texte => 'تُستعمل إجاباتك فقط لاقتراح مهمة عليك في الأكاديمية. تقرؤها الإدارة وحدها.';
+}
+
+// Path: recrutement.talents.intro.liberte
+class _Traductions$recrutement$talents$intro$liberte$ar extends Traductions$recrutement$talents$intro$liberte$fr {
+	_Traductions$recrutement$talents$intro$liberte$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'القرار بيدك';
+	@override String get texte => 'يمكنك تعديل إجاباتك أو سحبها متى شئت، وسحب الموافقة التي تتيح التواصل معك.';
+}
+
+// Path: recrutement.talents.intro.missions
+class _Traductions$recrutement$talents$intro$missions$ar extends Traductions$recrutement$talents$intro$missions$fr {
+	_Traductions$recrutement$talents$intro$missions$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'لكل مهمة شروطها';
+	@override String get texte => 'تعرضها عليك الأكاديمية عندما تتواصل معك. هذه الصفحة لا تَعِد بأي مهمة.';
+}
+
+// Path: recrutement.talents.competences.familles
+class _Traductions$recrutement$talents$competences$familles$ar extends Traductions$recrutement$talents$competences$familles$fr {
+	_Traductions$recrutement$talents$competences$familles$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get communication => 'التواصل والصورة';
+	@override String get administration => 'الإدارة والتنظيم';
+	@override String get financesDroit => 'المالية والقانون';
+	@override String get pedagogie => 'التربية والتعليم';
+	@override String get technique => 'التقنية';
+	@override String get autre => 'مجال آخر';
+}
+
+// Path: recrutement.talents.c.reseaux_sociaux
+class _Traductions$recrutement$talents$c$reseaux_sociaux$ar extends Traductions$recrutement$talents$c$reseaux_sociaux$fr {
+	_Traductions$recrutement$talents$c$reseaux_sociaux$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'إدارة وسائل التواصل الاجتماعي';
+	@override String get description => 'إدارة حسابات الأكاديمية على وسائل التواصل الاجتماعي.';
+	@override String get exemple => 'النشر كل أسبوع والرد على الرسائل والتعليقات';
+}
+
+// Path: recrutement.talents.c.relations_publiques
+class _Traductions$recrutement$talents$c$relations_publiques$ar extends Traductions$recrutement$talents$c$relations_publiques$fr {
+	_Traductions$recrutement$talents$c$relations_publiques$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'العلاقات العامة والشراكات';
+	@override String get description => 'التعريف بالأكاديمية لدى من يستطيع دعمها.';
+	@override String get exemple => 'عرض الأكاديمية على مسجد أو جمعية أو وسيلة إعلام';
+}
+
+// Path: recrutement.talents.c.design_graphique
+class _Traductions$recrutement$talents$c$design_graphique$ar extends Traductions$recrutement$talents$c$design_graphique$fr {
+	_Traductions$recrutement$talents$c$design_graphique$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'التصميم الغرافيكي';
+	@override String get description => 'إعداد تصاميم واضحة وأنيقة.';
+	@override String get exemple => 'ملصق، بطاقة للمشاركة، تصميم لوسائل التواصل';
+}
+
+// Path: recrutement.talents.c.montage_video
+class _Traductions$recrutement$talents$c$montage_video$ar extends Traductions$recrutement$talents$c$montage_video$fr {
+	_Traductions$recrutement$talents$c$montage_video$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'مونتاج الفيديو والتحريك';
+	@override String get description => 'مونتاج مقاطع فيديو قصيرة وتحريكها.';
+	@override String get exemple => 'قصّ فيديو، إضافة ترجمة نصية، تحريك عنوان';
+}
+
+// Path: recrutement.talents.c.photographie
+class _Traductions$recrutement$talents$c$photographie$ar extends Traductions$recrutement$talents$c$photographie$fr {
+	_Traductions$recrutement$talents$c$photographie$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'التصوير';
+	@override String get description => 'التقاط صور وفيديوهات وتسجيلات صوتية بجودة جيدة.';
+	@override String get exemple => 'تصوير فعالية، تسجيل عرض قصير';
+}
+
+// Path: recrutement.talents.c.redaction_contenus
+class _Traductions$recrutement$talents$c$redaction_contenus$ar extends Traductions$recrutement$talents$c$redaction_contenus$fr {
+	_Traductions$recrutement$talents$c$redaction_contenus$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'كتابة المحتوى وصناعته';
+	@override String get description => 'كتابة نصوص سليمة وممتعة للقراءة.';
+	@override String get exemple => 'مقال، نص لوسائل التواصل، رسالة إخبارية';
+}
+
+// Path: recrutement.talents.c.publicite_en_ligne
+class _Traductions$recrutement$talents$c$publicite_en_ligne$ar extends Traductions$recrutement$talents$c$publicite_en_ligne$fr {
+	_Traductions$recrutement$talents$c$publicite_en_ligne$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'الإعلان عبر الإنترنت';
+	@override String get description => 'إعداد حملات إعلانية على الإنترنت ومتابعتها.';
+	@override String get exemple => 'تحديد الجمهور المستهدف، إطلاق حملة، متابعة النتائج';
+}
+
+// Path: recrutement.talents.c.traduction
+class _Traductions$recrutement$talents$c$traduction$ar extends Traductions$recrutement$talents$c$traduction$fr {
+	_Traductions$recrutement$talents$c$traduction$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'الترجمة';
+	@override String get description => 'نقل النصوص من لغة إلى أخرى.';
+	@override String get exemple => 'رسائل إلى الأسر، ترجمة نصية لمقاطع الفيديو، نص من الموقع';
+}
+
+// Path: recrutement.talents.c.assistanat
+class _Traductions$recrutement$talents$c$assistanat$ar extends Traductions$recrutement$talents$c$assistanat$fr {
+	_Traductions$recrutement$talents$c$assistanat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'المساعدة الإدارية ومساعدة الإدارة';
+	@override String get description => 'مساعدة الإدارة على تنظيم عملها اليومي.';
+	@override String get exemple => 'مسك جدول المواعيد، كتابة المراسلات، متابعة الملفات';
+}
+
+// Path: recrutement.talents.c.coordination_groupe
+class _Traductions$recrutement$talents$c$coordination_groupe$ar extends Traductions$recrutement$talents$c$coordination_groupe$fr {
+	_Traductions$recrutement$talents$c$coordination_groupe$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'تنسيق مجتمع من الأشخاص';
+	@override String get description => 'تنشيط مجتمع من الأشخاص ومرافقته، كمجتمع الأخوات أو مجتمع أولياء الأمور.';
+	@override String get exemple => 'استقبال القادمين الجدد، الإجابة عن الأسئلة، نشر المعلومات';
+}
+
+// Path: recrutement.talents.c.accueil_familles
+class _Traductions$recrutement$talents$c$accueil_familles$ar extends Traductions$recrutement$talents$c$accueil_familles$fr {
+	_Traductions$recrutement$talents$c$accueil_familles$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'استقبال الأسر ومتابعتها';
+	@override String get description => 'أن تكون أول جهة تتواصل معها الأسر التي تسجّل.';
+	@override String get exemple => 'الإجابة عن سؤال، مرافقة تسجيل، الاطمئنان على أسرة';
+}
+
+// Path: recrutement.talents.c.gestion_projet
+class _Traductions$recrutement$talents$c$gestion_projet$ar extends Traductions$recrutement$talents$c$gestion_projet$fr {
+	_Traductions$recrutement$talents$c$gestion_projet$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'التخطيط وإدارة المشاريع';
+	@override String get description => 'تنظيم عمل جماعي من بدايته إلى نهايته.';
+	@override String get exemple => 'وضع جدول زمني، توزيع المهام، متابعة التقدم';
+}
+
+// Path: recrutement.talents.c.ressources_humaines
+class _Traductions$recrutement$talents$c$ressources_humaines$ar extends Traductions$recrutement$talents$c$ressources_humaines$fr {
+	_Traductions$recrutement$talents$c$ressources_humaines$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'الموارد البشرية والتوظيف';
+	@override String get description => 'اختيار من ينضمون إلى الفريق واستقبالهم.';
+	@override String get exemple => 'إجراء مقابلة، مقارنة الطلبات، استقبال معلم جديد';
+}
+
+// Path: recrutement.talents.c.comptabilite
+class _Traductions$recrutement$talents$c$comptabilite$ar extends Traductions$recrutement$talents$c$comptabilite$fr {
+	_Traductions$recrutement$talents$c$comptabilite$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'المحاسبة';
+	@override String get description => 'مسك حسابات الأكاديمية.';
+	@override String get exemple => 'تسجيل الفواتير، متابعة المدفوعات، إعداد ميزانية ختامية';
+}
+
+// Path: recrutement.talents.c.gestion_financiere
+class _Traductions$recrutement$talents$c$gestion_financiere$ar extends Traductions$recrutement$talents$c$gestion_financiere$fr {
+	_Traductions$recrutement$talents$c$gestion_financiere$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'التسيير المالي';
+	@override String get description => 'متابعة الأموال وتحضير القرارات.';
+	@override String get exemple => 'إعداد ميزانية تقديرية، متابعة السيولة';
+}
+
+// Path: recrutement.talents.c.juridique_donnees
+class _Traductions$recrutement$talents$c$juridique_donnees$ar extends Traductions$recrutement$talents$c$juridique_donnees$fr {
+	_Traductions$recrutement$talents$c$juridique_donnees$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'القانون وحماية البيانات';
+	@override String get description => 'السهر على احترام الأكاديمية للقانون وحمايتها للبيانات الشخصية.';
+	@override String get exemple => 'مراجعة عقد، كتابة شروط الاستعمال، حماية الخصوصية';
+}
+
+// Path: recrutement.talents.c.conception_programmes
+class _Traductions$recrutement$talents$c$conception_programmes$ar extends Traductions$recrutement$talents$c$conception_programmes$fr {
+	_Traductions$recrutement$talents$c$conception_programmes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'تصميم المناهج والمواد التعليمية';
+	@override String get description => 'إعداد ما يتعلمه الطلاب والمواد التي يُدرَّس بها.';
+	@override String get exemple => 'خطة درس، بطاقة، سلسلة تمارين';
+}
+
+// Path: recrutement.talents.c.formation_enseignants
+class _Traductions$recrutement$talents$c$formation_enseignants$ar extends Traductions$recrutement$talents$c$formation_enseignants$fr {
+	_Traductions$recrutement$talents$c$formation_enseignants$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'تكوين المعلمين ومرافقتهم';
+	@override String get description => 'مساعدة المعلمين على التقدّم.';
+	@override String get exemple => 'تكوين معلم جديد، إسداء النصح له بعد حصة';
+}
+
+// Path: recrutement.talents.c.qualite_cours
+class _Traductions$recrutement$talents$c$qualite_cours$ar extends Traductions$recrutement$talents$c$qualite_cours$fr {
+	_Traductions$recrutement$talents$c$qualite_cours$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'ملاحظة الدروس وجودتها';
+	@override String get description => 'ملاحظة الحصص والمساعدة على تحسينها.';
+	@override String get exemple => 'حضور حصة، كتابة ملاحظات مكتوبة';
+}
+
+// Path: recrutement.talents.c.tests_niveau
+class _Traductions$recrutement$talents$c$tests_niveau$ar extends Traductions$recrutement$talents$c$tests_niveau$fr {
+	_Traductions$recrutement$talents$c$tests_niveau$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'اختبارات تحديد المستوى';
+	@override String get description => 'تحديد مستوى طالب جديد.';
+	@override String get exemple => 'الاستماع إلى تلاوة طالب جديد قبل دخوله فصلًا';
+}
+
+// Path: recrutement.talents.c.accompagnement_enfants
+class _Traductions$recrutement$talents$c$accompagnement_enfants$ar extends Traductions$recrutement$talents$c$accompagnement_enfants$fr {
+	_Traductions$recrutement$talents$c$accompagnement_enfants$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'مرافقة الأطفال';
+	@override String get description => 'مساعدة الأطفال الذين يحتاجون إلى عناية خاصة.';
+	@override String get exemple => 'علم نفس الطفل، الاحتياجات الخاصة، الأطفال شديدو الخجل';
+}
+
+// Path: recrutement.talents.c.developpement
+class _Traductions$recrutement$talents$c$developpement$ar extends Traductions$recrutement$talents$c$developpement$fr {
+	_Traductions$recrutement$talents$c$developpement$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'تطوير الويب أو تطبيقات الجوال';
+	@override String get description => 'برمجة المواقع والتطبيقات.';
+	@override String get exemple => 'موقع، تطبيق، أداة داخلية';
+}
+
+// Path: recrutement.talents.c.assistance_technique
+class _Traductions$recrutement$talents$c$assistance_technique$ar extends Traductions$recrutement$talents$c$assistance_technique$fr {
+	_Traductions$recrutement$talents$c$assistance_technique$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'الدعم التقني للأسر والمعلمين';
+	@override String get description => 'حلّ المشكلات التقنية عن بُعد لمن يواجهها.';
+	@override String get exemple => 'المساعدة على الاتصال، ضبط الصوت والكاميرا';
+}
+
+// Path: recrutement.talents.c.donnees_tableurs
+class _Traductions$recrutement$talents$c$donnees_tableurs$ar extends Traductions$recrutement$talents$c$donnees_tableurs$fr {
+	_Traductions$recrutement$talents$c$donnees_tableurs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'البيانات والجداول';
+	@override String get description => 'تنظيم الأرقام واستخلاص جداول واضحة منها.';
+	@override String get exemple => 'جدول متابعة، إحصاءات، تقرير';
+}
+
+// Path: recrutement.talents.c.autre
+class _Traductions$recrutement$talents$c$autre$ar extends Traductions$recrutement$talents$c$autre$fr {
+	_Traductions$recrutement$talents$c$autre$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'مجال آخر';
+	@override String get description => 'مهارة غير مذكورة في القائمة.';
+}
+
+// Path: recrutement.talents.niveaux.debutant
+class _Traductions$recrutement$talents$niveaux$debutant$ar extends Traductions$recrutement$talents$niveaux$debutant$fr {
+	_Traductions$recrutement$talents$niveaux$debutant$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'أبتدئ';
+	@override String get description => 'تعرف الأساسيات وما زلت تتعلم.';
+}
+
+// Path: recrutement.talents.niveaux.experience
+class _Traductions$recrutement$talents$niveaux$experience$ar extends Traductions$recrutement$talents$niveaux$experience$fr {
+	_Traductions$recrutement$talents$niveaux$experience$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'لديّ خبرة';
+	@override String get description => 'سبق أن مارستها عدة مرات، لنفسك أو لغيرك.';
+}
+
+// Path: recrutement.talents.niveaux.metier
+class _Traductions$recrutement$talents$niveaux$metier$ar extends Traductions$recrutement$talents$niveaux$metier$fr {
+	_Traductions$recrutement$talents$niveaux$metier$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'هذه مهنتي';
+	@override String get description => 'تمارسها أو مارستها بصفة مهنية.';
+}
+
+// Path: recrutement.talents.disponibilite.quelques_heures
+class _Traductions$recrutement$talents$disponibilite$quelques_heures$ar extends Traductions$recrutement$talents$disponibilite$quelques_heures$fr {
+	_Traductions$recrutement$talents$disponibilite$quelques_heures$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'بضع ساعات في الأسبوع';
+	@override String get description => 'مساعدة خفيفة إلى جانب أنشطتك الأخرى.';
+}
+
+// Path: recrutement.talents.disponibilite.mi_temps
+class _Traductions$recrutement$talents$disponibilite$mi_temps$ar extends Traductions$recrutement$talents$disponibilite$mi_temps$fr {
+	_Traductions$recrutement$talents$disponibilite$mi_temps$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'نصف دوام';
+	@override String get description => 'قرابة نصف الدوام الكامل.';
+}
+
+// Path: recrutement.talents.disponibilite.plus
+class _Traductions$recrutement$talents$disponibilite$plus$ar extends Traductions$recrutement$talents$disponibilite$plus$fr {
+	_Traductions$recrutement$talents$disponibilite$plus$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'أكثر من نصف دوام';
+	@override String get description => 'جزء كبير من وقتك.';
+}
+
+// Path: recrutement.talents.disponibilite.pas_maintenant
+class _Traductions$recrutement$talents$disponibilite$pas_maintenant$ar extends Traductions$recrutement$talents$disponibilite$pas_maintenant$fr {
+	_Traductions$recrutement$talents$disponibilite$pas_maintenant$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'ليس في الوقت الحالي';
+	@override String get description => 'تريد فقط أن تعرف الأكاديمية مواهبك.';
+}
+
 // Path: avis.admin.liens.etat
 class _Traductions$avis$admin$liens$etat$ar extends Traductions$avis$admin$liens$etat$fr {
 	_Traductions$avis$admin$liens$etat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -17264,6 +17936,18 @@ class _Traductions$com$annonces$administration$moderation$regles$ar extends Trad
 	@override String get pasVente => 'لا بيع لمنتج أو خدمة';
 	@override String get pasSollicitation => 'لا التماس تجاري';
 	@override String get pasDonnees => 'لا بيانات شخصية لطالب أو عائلة';
+}
+
+// Path: admin.candidatures.detail.talents.niveaux
+class _Traductions$admin$candidatures$detail$talents$niveaux$ar extends Traductions$admin$candidatures$detail$talents$niveaux$fr {
+	_Traductions$admin$candidatures$detail$talents$niveaux$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get debutant => 'مبتدئ';
+	@override String get experience => 'صاحب خبرة';
+	@override String get metier => 'يمارسها مهنةً';
 }
 
 // Path: recrutement.parcours.presentation.p1.academie
@@ -21377,6 +22061,15 @@ extension on TraductionsAr {
 			'admin.candidatures.filtres.sansPause' => 'غير متوقفة مؤقتًا',
 			'admin.candidatures.filtres.versement' => 'صرف الراتب',
 			'admin.candidatures.filtres.pays' => 'بلد الإقامة',
+			'admin.candidatures.filtres.talents.domaine' => 'مهارات أخرى',
+			'admin.candidatures.filtres.talents.familleToutes' => ({required Object famille}) => '⁨${famille}⁩: الكل',
+			'admin.candidatures.filtres.talents.niveau' => 'مستوى المهارة',
+			'admin.candidatures.filtres.talents.niveauExperience' => 'صاحب خبرة فأكثر',
+			'admin.candidatures.filtres.talents.niveauMetier' => 'يمارسها مهنةً',
+			'admin.candidatures.filtres.talents.disponibilite' => 'مدى التوفر لمهمة',
+			'admin.candidatures.filtres.talents.accord' => 'الموافقة على التواصل',
+			'admin.candidatures.filtres.talents.accordDonne' => 'الموافقة ممنوحة',
+			'admin.candidatures.filtres.talents.accordAbsent' => 'أجاب دون موافقة',
 			'admin.candidatures.tri.titre' => 'الترتيب حسب',
 			'admin.candidatures.tri.activite' => 'آخر نشاط',
 			'admin.candidatures.tri.reception' => 'تاريخ الاستلام',
@@ -21494,6 +22187,18 @@ extension on TraductionsAr {
 			'admin.candidatures.detail.etatsPiece.validee' => 'مصادَق عليها',
 			'admin.candidatures.detail.controlesVrai' => 'مستوفى',
 			'admin.candidatures.detail.controlesFaux' => 'غير مستوفى',
+			'admin.candidatures.detail.talents.titre' => 'مهارات أخرى',
+			'admin.candidatures.detail.talents.aucune' => 'لم يُجب صاحب الطلب عن «مواهبك الأخرى».',
+			'admin.candidatures.detail.talents.niveaux.debutant' => 'مبتدئ',
+			'admin.candidatures.detail.talents.niveaux.experience' => 'صاحب خبرة',
+			'admin.candidatures.detail.talents.niveaux.metier' => 'يمارسها مهنةً',
+			'admin.candidatures.detail.talents.autre' => ({required Object texte}) => 'مجال آخر: ⁨${texte}⁩',
+			'admin.candidatures.detail.talents.competenceInconnue' => 'مهارة دون تسمية متاحة',
+			'admin.candidatures.detail.talents.disponibilite' => 'مدى التوفر لمهمة',
+			'admin.candidatures.detail.talents.accord' => 'الموافقة على التواصل',
+			'admin.candidatures.detail.talents.accordDonne' => ({required Object date}) => 'مُنحت في ⁨${date}⁩',
+			'admin.candidatures.detail.talents.accordAbsent' => 'لم تُمنح: لا تُقترح أي مهمة',
+			'admin.candidatures.detail.talents.misesAJour' => ({required Object date}) => 'آخر تحديث في ⁨${date}⁩.',
 			'admin.candidatures.controles.noms.compteConforme' => 'الحساب مطابق',
 			'admin.candidatures.controles.noms.cadreReligieux' => 'الإطار الديني والتربوي مقبول',
 			'admin.candidatures.controles.noms.questionnaireComplet' => 'الاستبيان مكتمل بنسخته الحالية',
@@ -21660,6 +22365,8 @@ extension on TraductionsAr {
 			'admin.importInscriptions.serveur.titre' => 'تحقّق الخادم',
 			'admin.importInscriptions.serveur.foyers' => 'الأسر التي عدّها الخادم',
 			'admin.importInscriptions.serveur.personnes' => 'الأشخاص الذين عدّهم الخادم',
+			_ => null,
+		} ?? switch (path) {
 			'admin.importInscriptions.serveur.refusees' => 'الأسطر التي رفضها الخادم',
 			'admin.importInscriptions.serveur.indisponible' => 'تعذّر على الخادم تأكيد هذه المعاينة. ارجع وأعد المحاولة.',
 			'admin.importInscriptions.ligne' => ({required Object fichier, required Object ligne, required Object motif}) => '⁨${fichier}⁩، السطر ⁨${ligne}⁩: ⁨${motif}⁩',
@@ -21681,8 +22388,6 @@ extension on TraductionsAr {
 			'admin.importInscriptions.motif.ageTropJeune' => 'هذا الشخص أصغر من الحد الأدنى لسنّ الصفوف.',
 			'admin.importInscriptions.motif.adulteTropJeune' => 'هذا الشخص المذكور كبالغ قاصر.',
 			'admin.importInscriptions.motif.foyerSansAdulte' => 'لم يُذكر أي بالغ لهذه الأسرة من القاصرين.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.importInscriptions.motif.serveur' => 'الخادم يرفض هذا السطر.',
 			'admin.importInscriptions.mots.titre' => 'كلمات الترحيب',
 			'admin.importInscriptions.mots.intro' => 'تتلقى كل أسرة كلمة ترحيب مملوءة بالأسماء المعروفة. يمكنك إرفاق كلمتك الخاصة لجميع الأسر أو لأسرة واحدة.',
@@ -22174,6 +22879,8 @@ extension on TraductionsAr {
 			'admin.regles.ageInterfaceEnfant' => 'العمر الأقصى لواجهة الطفل',
 			'admin.regles.ageInterfaceEnfantDetail' => 'دون هذا العمر، ينتقل الملف إلى الواجهة المبسطة عند إنشائه.',
 			'admin.regles.appareilsParEleve' => 'الأجهزة لكل طالب',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regles.appareilsParEleveDetail' => 'عدد الأجهزة التي يمكن أن تكون نشطة لطالب في الوقت نفسه.',
 			'admin.regles.seancesSimultanees' => 'الحصص المتزامنة لكل ملف',
 			'admin.regles.seancesSimultaneesDetail' => 'عدد الحصص التي يمكن لملف واحد متابعتها في الوقت نفسه.',
@@ -22195,8 +22902,6 @@ extension on TraductionsAr {
 			'admin.fonctionnalites.participantsMaxDetail' => 'عدد المشاركين المسموح به حين تكون الحصص متعددة المشاركين مفعَّلة.',
 			'admin.fonctionnalites.uniteNombre' => ({required Object n}) => '⁨${n}⁩',
 			'admin.protectionEnfants.titre' => 'حماية الأطفال',
-			_ => null,
-		} ?? switch (path) {
 			'admin.protectionEnfants.intro' => 'يتلقى المسؤول، مع الإدارة، بلاغات سلامة الطفل. يظهر اسمه وبريده الإلكتروني للمعلمين الذين يبلّغون. اترك الحقلين فارغين: تقول الشاشة حينئذٍ إن الإدارة تتلقى البلاغ.',
 			'admin.protectionEnfants.nom' => 'الاسم المعروض',
 			'admin.protectionEnfants.nomDetail' => 'الاسم الذي يراه المعلمون.',
@@ -22688,6 +23393,8 @@ extension on TraductionsAr {
 			'admin.regroupements.decoupageAttente' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا أحد في الانتظار', one: 'طالب واحد في الانتظار', two: 'طالبان في الانتظار', few: '⁨${n}⁩ طلاب في الانتظار', many: '⁨${n}⁩ طالبًا في الانتظار', other: '⁨${n}⁩ طالب في الانتظار', ), 
 			'admin.regroupements.decoupage' => ({required Object detail}) => 'التقسيم المتوقع: ⁨${detail}⁩.',
 			'admin.regroupements.contexteReparti' => 'سيُوزَّع طلاب هذه الطلبات بحسب التقسيم المبيّن أدناه. ثم تؤكدون المعلم المقترح.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regroupements.classesExistantes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا فصل مفتوح بعدُ في هذا الموعد.', one: 'يوجد فصل واحد مفتوح في هذا الموعد: ينضم إليه الفصل الجديد دون تعديل أي فصل.', two: 'يوجد فصلان مفتوحان في هذا الموعد: ينضم إليهما الفصل الجديد دون تعديل أي فصل.', few: 'يوجد ⁨${n}⁩ فصول مفتوحة في هذا الموعد: ينضم إليها الفصل الجديد دون تعديل أي فصل.', many: 'يوجد ⁨${n}⁩ فصلًا مفتوحًا في هذا الموعد: ينضم إليها الفصل الجديد دون تعديل أي فصل.', other: 'يوجد ⁨${n}⁩ فصل مفتوح في هذا الموعد: ينضم إليها الفصل الجديد دون تعديل أي فصل.', ), 
 			'admin.regroupements.liste.rechercheLibelle' => 'البحث عن طلب',
 			'admin.regroupements.liste.rechercheAide' => 'اللغة أو المنطقة الزمنية أو اسم الفصل المنشأ',
@@ -22709,8 +23416,6 @@ extension on TraductionsAr {
 			'admin.planning.semaineSemantique' => ({required Object date}) => 'أسبوع ⁨${date}⁩',
 			'admin.planning.precedente' => 'الأسبوع السابق',
 			'admin.planning.suivante' => 'الأسبوع التالي',
-			_ => null,
-		} ?? switch (path) {
 			'admin.planning.cetteSemaine' => 'العودة إلى هذا الأسبوع',
 			'admin.planning.horaire' => ({required Object debut, required Object fin}) => 'من ⁨${debut}⁩ إلى ⁨${fin}⁩',
 			'admin.planning.sansEnseignant' => 'دون معلم',
@@ -23202,6 +23907,8 @@ extension on TraductionsAr {
 			'comptable.graphiques.masquerValeurs' => 'إخفاء القيم',
 			'comptable.graphiques.repartitionTitre' => 'التوزيع حسب الصندوق',
 			'comptable.graphiques.repartitionResume' => ({required Object n}) => 'التوزيع بين ⁨${n}⁩ صناديق.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.graphiques.mensuelTitre' => 'الوارد والصادر خلال 6 أشهر',
 			'comptable.graphiques.mensuelResume' => ({required Object debut, required Object fin}) => 'الوارد والصادر من ⁨${debut}⁩ إلى ⁨${fin}⁩.',
 			'comptable.graphiques.fluxTitre' => 'تدفق الخزينة خلال 30 يومًا',
@@ -23223,8 +23930,6 @@ extension on TraductionsAr {
 			'comptable.graphiques.vide' => 'لا بيانات للرسم',
 			'comptable.graphiques.videDetail' => 'تظهر المخططات هنا بمجرد تسجيل مقبوضات أو مدفوعات.',
 			'comptable.graphiques.erreur' => 'تعذّرت قراءة المخططات: ربما لم تصل القراءة إلى رواية. أعد المحاولة بعد لحظة.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.graphiques.sansDonnees' => 'تعذّر تحميل المخططات',
 			'comptable.graphiques.exporterRapport' => 'تصدير التقرير',
 			'comptable.graphiques.exporterSelection' => 'تصدير المحدد',
@@ -23716,6 +24421,8 @@ extension on TraductionsAr {
 			'comptable.encaissements.rap.journalVide' => 'لا توجد عملية مسجلة لهذه المعاملة.',
 			'comptable.encaissements.rap.beneficiaire' => 'المستفيد',
 			'comptable.encaissements.rap.motif' => 'السبب',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.rap.montant' => 'المبلغ',
 			'comptable.encaissements.rap.source' => 'المصدر',
 			'comptable.encaissements.rap.demandeLe' => ({required Object date}) => 'طُلب في ${date}',
@@ -23737,8 +24444,6 @@ extension on TraductionsAr {
 			'comptable.encaissements.rapprochementTitre' => 'المطابقة',
 			'comptable.encaissements.rapprochementSousTitre' => 'ربط كل معاملة بما كان ينتظرها.',
 			'comptable.beneficiaires.intro' => 'ملف الدفع لكل معلم ولكل متعاقد. المستفيد وحده يُدخل بياناته أو يعدّلها: يمكنك تذكيره، أو طلب تحديث منه، أو إيقاف مدفوعاته.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.filtreTous' => 'الكل',
 			'comptable.beneficiaires.filtreInfos' => 'معلومات ناقصة',
 			'comptable.beneficiaires.filtreVerification' => 'قيد التحقق',
@@ -24230,6 +24935,8 @@ extension on TraductionsAr {
 			'ficheEleve.informations.choisir' => 'اختيار صورة',
 			'ficheEleve.informations.changer' => 'تغيير الصورة',
 			'ficheEleve.informations.apercuTitre' => 'معاينة',
+			_ => null,
+		} ?? switch (path) {
 			'ficheEleve.informations.apercuPhrase' => 'تحقّق من الصورة قبل إرسالها.',
 			'ficheEleve.informations.apercuIllisible' => 'لا تظهر المعاينة على هذا الجهاز. يمكن مع ذلك إرسال الصورة.',
 			'ficheEleve.informations.envoyer' => 'إرسال هذه الصورة',
@@ -24251,8 +24958,6 @@ extension on TraductionsAr {
 			'ficheEleve.inscription.lecture' => 'جارٍ القراءة',
 			'ficheEleve.inscription.etatInconnu' => 'حالة الاستبيان لا تظهر بعد.',
 			'ficheEleve.inscription.aRemplir' => 'للتعبئة',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.inscription.horaireAChoisir' => 'مُعبّأ، الموعد للاختيار',
 			'ficheEleve.inscription.horaireRetire' => 'سُحب الموعد، يجب اختياره من جديد',
 			'ficheEleve.inscription.echangeAPrevoir' => 'التفضيل محفوظ، لقاء تحديد المستوى للجدولة',
@@ -24744,6 +25449,8 @@ extension on TraductionsAr {
 			'foyer.sousTitre' => 'ملفات الطلاب في أسرتك',
 			'foyer.membres' => 'ملفات الطلاب',
 			'foyer.vide.titre' => 'لا ملف طالب حتى الآن',
+			_ => null,
+		} ?? switch (path) {
 			'foyer.vide.phrase' => 'أضف ملف طالب لتسجيله في فصل وربط جهازه.',
 			'foyer.membre.sansClasse' => 'لا فصل بعد',
 			'foyer.membre.classeEchec' => 'تعذّرت قراءة الفصل',
@@ -24765,8 +25472,6 @@ extension on TraductionsAr {
 			'foyer.monProfil.retour' => 'العودة إلى الأسرة',
 			'foyer.ajout.suivant' => 'التالي',
 			'foyer.ajout.creer' => 'إنشاء الملف',
-			_ => null,
-		} ?? switch (path) {
 			'foyer.ajout.porte.illisibleTitre' => 'تعذّرت قراءة حسابك',
 			'foyer.ajout.porte.illisiblePhrase' => 'لا نعرف بعد أي الملفات يمكنك إضافتها. أعد المحاولة بعد لحظة.',
 			'foyer.ajout.pourQui.question' => 'لمن ملف الطالب هذا؟',
@@ -25258,6 +25963,8 @@ extension on TraductionsAr {
 			'protectionEnfants.categorie' => 'سلامة طفل',
 			'protectionEnfants.prioritaireTitre' => 'إبلاغ ذو أولوية',
 			'protectionEnfants.prioritaireDetail' => 'تقرؤه الإدارة والمسؤول عن حماية الأطفال فورًا. لا يراه المعلم المعني ولا الأسر الأخرى أبدًا. لا تُرسل أي رسالة إلى الأسرة.',
+			_ => null,
+		} ?? switch (path) {
 			'protectionEnfants.urgence' => 'في حال وجود خطر داهم، اتصل أولًا بخدمات الطوارئ في بلدك.',
 			'protectionEnfants.direction' => 'تتلقى الإدارة بلاغك.',
 			'protectionEnfants.recuPar' => ({required Object nom}) => '⁨${nom}⁩ والإدارة يتلقيان بلاغك.',
@@ -25279,8 +25986,6 @@ extension on TraductionsAr {
 			'codeConduite.accepter' => 'أوافق على مدونة السلوك',
 			'codeConduite.accepteLe' => ({required Object date, required Object version}) => 'تمت الموافقة في ⁨${date}⁩. الإصدار ⁨${version}⁩.',
 			'codeConduite.erreur' => 'لم تُسجَّل موافقتك. أعد المحاولة بعد قليل.',
-			_ => null,
-		} ?? switch (path) {
 			'codeConduite.erreurLecture' => 'تعذّرت قراءة موافقاتك. أعد المحاولة.',
 			'codeConduite.aAccepter' => 'تنتظر موافقتك',
 			'contrat.titre' => 'ما توقّع عليه',
@@ -25772,6 +26477,8 @@ extension on TraductionsAr {
 			'recherche.contexte.missionEnseignant' => ({required Object enseignant}) => 'مهمة مراقبة · ⁨${enseignant}⁩',
 			'recherche.contexte.eleveDeClasse' => ({required Object classe}) => 'طالب في فصل ⁨${classe}⁩',
 			'recherche.contexte.enseignantDeClasse' => ({required Object classe}) => 'معلّم فصل ⁨${classe}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.contexte.personneFoyer' => 'ملف من أسرتك',
 			'recherche.contexte.personneFoyerClasse' => ({required Object classe}) => 'ملف من أسرتك · ⁨${classe}⁩',
 			'recherche.contexte.personneParIdentifiant' => 'وُجد بمعرّفه',
@@ -25793,8 +26500,6 @@ extension on TraductionsAr {
 			'recrutement.invitations.comptable.vide' => 'لا توجد دعوة محاسب حاليًا',
 			'recrutement.invitations.comptable.videDetail' => 'ادعُ محاسبًا بعنوان بريده الإلكتروني: يظهر الرمز هنا.',
 			'recrutement.candidat.comptable.titre' => 'رمز المحاسب الخاص بك',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.candidat.comptable.intro' => 'للتسجيل كمحاسب، أدخل رمز الدعوة الذي تلقيته من الإدارة.',
 			'recrutement.candidat.comptable.valideDetail' => 'يمكنك إنشاء ملفك كمحاسب.',
 			'recrutement.candidat.comptable.indisponible' => 'سيتوفر التحقق من رموز المحاسبين عند ربط الخادم.',
@@ -26244,6 +26949,164 @@ extension on TraductionsAr {
 			'recrutement.parcours.choisirJour' => 'اختر يومًا واحدًا على الأقل للمتابعة.',
 			'recrutement.parcours.choisirHeure' => 'اختر ساعة بدء واحدة على الأقل للمتابعة.',
 			'recrutement.parcours.choisirHeureJour' => ({required Object jour}) => 'اختر ساعة بدء واحدة على الأقل ليوم ⁨${jour}⁩.',
+			'recrutement.talents.titre' => 'مواهبك الأخرى',
+			'recrutement.talents.tuile.facultatif' => 'اختياري. لا يغيّر ذلك شيئًا في طلب ترشحك للتدريس.',
+			'recrutement.talents.tuile.enregistre' => 'إجاباتك محفوظة. يمكنك تعديلها.',
+			'recrutement.talents.tuile.enregistreClose' => 'إجاباتك محفوظة. يمكنك سحبها.',
+			'recrutement.talents.intro.texte' => 'تنمو الأكاديمية، وستحتاج إلى من يساعدها في التنظيم ومرافقة الأسر ومسك الحسابات والتعريف بها. إن كان لديك ما تُتقنه غير التدريس فأخبرنا به: سنتواصل معك أولًا قبل نشر أي إعلان.',
+			'recrutement.talents.intro.facultatif.titre' => 'اختياري',
+			'recrutement.talents.intro.facultatif.texte' => 'لا يغيّر ذلك شيئًا في طلب ترشحك للتدريس.',
+			'recrutement.talents.intro.usage.titre' => 'ماذا نفعل بإجاباتك',
+			'recrutement.talents.intro.usage.texte' => 'تُستعمل إجاباتك فقط لاقتراح مهمة عليك في الأكاديمية. تقرؤها الإدارة وحدها.',
+			'recrutement.talents.intro.liberte.titre' => 'القرار بيدك',
+			'recrutement.talents.intro.liberte.texte' => 'يمكنك تعديل إجاباتك أو سحبها متى شئت، وسحب الموافقة التي تتيح التواصل معك.',
+			'recrutement.talents.intro.missions.titre' => 'لكل مهمة شروطها',
+			'recrutement.talents.intro.missions.texte' => 'تعرضها عليك الأكاديمية عندما تتواصل معك. هذه الصفحة لا تَعِد بأي مهمة.',
+			'recrutement.talents.competences.titre' => 'ما الذي تُتقنه أيضًا؟',
+			'recrutement.talents.competences.explication' => 'المس كل مهارة لديك. تعرض كل بطاقة مثالًا. وإن لم تجد مهارتك فاختر «مجال آخر» في آخر القائمة.',
+			'recrutement.talents.competences.familles.communication' => 'التواصل والصورة',
+			'recrutement.talents.competences.familles.administration' => 'الإدارة والتنظيم',
+			'recrutement.talents.competences.familles.financesDroit' => 'المالية والقانون',
+			'recrutement.talents.competences.familles.pedagogie' => 'التربية والتعليم',
+			'recrutement.talents.competences.familles.technique' => 'التقنية',
+			'recrutement.talents.competences.familles.autre' => 'مجال آخر',
+			'recrutement.talents.competences.choisies' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم تختر أي مهارة', one: 'مهارة واحدة مختارة', two: 'مهارتان مختارتان', few: '⁨${n}⁩ مهارات مختارة', many: '⁨${n}⁩ مهارة مختارة', other: '⁨${n}⁩ مهارة مختارة', ), 
+			'recrutement.talents.competences.nonProposee' => 'لم تعد هذه المهارة مقترحة. يمكنك الإبقاء عليها أو إلغاء اختيارها.',
+			'recrutement.talents.competences.autreChamp' => 'مجالك، في بضع كلمات',
+			'recrutement.talents.competences.autreAide' => 'يكفي سطر واحد.',
+			'recrutement.talents.competences.manque' => 'اختر مهارة واحدة على الأقل للمتابعة.',
+			'recrutement.talents.competences.autreVide' => 'اكتب في بضع كلمات ما هو المجال، أو ألغِ اختيار «مجال آخر».',
+			'recrutement.talents.competences.autreTropLong' => ({required Object max}) => 'نصّك طويل جدًا: ⁨${max}⁩ حرفًا على الأكثر. اختصره.',
+			'recrutement.talents.c.reseaux_sociaux.libelle' => 'إدارة وسائل التواصل الاجتماعي',
+			'recrutement.talents.c.reseaux_sociaux.description' => 'إدارة حسابات الأكاديمية على وسائل التواصل الاجتماعي.',
+			'recrutement.talents.c.reseaux_sociaux.exemple' => 'النشر كل أسبوع والرد على الرسائل والتعليقات',
+			'recrutement.talents.c.relations_publiques.libelle' => 'العلاقات العامة والشراكات',
+			'recrutement.talents.c.relations_publiques.description' => 'التعريف بالأكاديمية لدى من يستطيع دعمها.',
+			'recrutement.talents.c.relations_publiques.exemple' => 'عرض الأكاديمية على مسجد أو جمعية أو وسيلة إعلام',
+			'recrutement.talents.c.design_graphique.libelle' => 'التصميم الغرافيكي',
+			'recrutement.talents.c.design_graphique.description' => 'إعداد تصاميم واضحة وأنيقة.',
+			'recrutement.talents.c.design_graphique.exemple' => 'ملصق، بطاقة للمشاركة، تصميم لوسائل التواصل',
+			'recrutement.talents.c.montage_video.libelle' => 'مونتاج الفيديو والتحريك',
+			'recrutement.talents.c.montage_video.description' => 'مونتاج مقاطع فيديو قصيرة وتحريكها.',
+			'recrutement.talents.c.montage_video.exemple' => 'قصّ فيديو، إضافة ترجمة نصية، تحريك عنوان',
+			'recrutement.talents.c.photographie.libelle' => 'التصوير',
+			'recrutement.talents.c.photographie.description' => 'التقاط صور وفيديوهات وتسجيلات صوتية بجودة جيدة.',
+			_ => null,
+		} ?? switch (path) {
+			'recrutement.talents.c.photographie.exemple' => 'تصوير فعالية، تسجيل عرض قصير',
+			'recrutement.talents.c.redaction_contenus.libelle' => 'كتابة المحتوى وصناعته',
+			'recrutement.talents.c.redaction_contenus.description' => 'كتابة نصوص سليمة وممتعة للقراءة.',
+			'recrutement.talents.c.redaction_contenus.exemple' => 'مقال، نص لوسائل التواصل، رسالة إخبارية',
+			'recrutement.talents.c.publicite_en_ligne.libelle' => 'الإعلان عبر الإنترنت',
+			'recrutement.talents.c.publicite_en_ligne.description' => 'إعداد حملات إعلانية على الإنترنت ومتابعتها.',
+			'recrutement.talents.c.publicite_en_ligne.exemple' => 'تحديد الجمهور المستهدف، إطلاق حملة، متابعة النتائج',
+			'recrutement.talents.c.traduction.libelle' => 'الترجمة',
+			'recrutement.talents.c.traduction.description' => 'نقل النصوص من لغة إلى أخرى.',
+			'recrutement.talents.c.traduction.exemple' => 'رسائل إلى الأسر، ترجمة نصية لمقاطع الفيديو، نص من الموقع',
+			'recrutement.talents.c.assistanat.libelle' => 'المساعدة الإدارية ومساعدة الإدارة',
+			'recrutement.talents.c.assistanat.description' => 'مساعدة الإدارة على تنظيم عملها اليومي.',
+			'recrutement.talents.c.assistanat.exemple' => 'مسك جدول المواعيد، كتابة المراسلات، متابعة الملفات',
+			'recrutement.talents.c.coordination_groupe.libelle' => 'تنسيق مجتمع من الأشخاص',
+			'recrutement.talents.c.coordination_groupe.description' => 'تنشيط مجتمع من الأشخاص ومرافقته، كمجتمع الأخوات أو مجتمع أولياء الأمور.',
+			'recrutement.talents.c.coordination_groupe.exemple' => 'استقبال القادمين الجدد، الإجابة عن الأسئلة، نشر المعلومات',
+			'recrutement.talents.c.accueil_familles.libelle' => 'استقبال الأسر ومتابعتها',
+			'recrutement.talents.c.accueil_familles.description' => 'أن تكون أول جهة تتواصل معها الأسر التي تسجّل.',
+			'recrutement.talents.c.accueil_familles.exemple' => 'الإجابة عن سؤال، مرافقة تسجيل، الاطمئنان على أسرة',
+			'recrutement.talents.c.gestion_projet.libelle' => 'التخطيط وإدارة المشاريع',
+			'recrutement.talents.c.gestion_projet.description' => 'تنظيم عمل جماعي من بدايته إلى نهايته.',
+			'recrutement.talents.c.gestion_projet.exemple' => 'وضع جدول زمني، توزيع المهام، متابعة التقدم',
+			'recrutement.talents.c.ressources_humaines.libelle' => 'الموارد البشرية والتوظيف',
+			'recrutement.talents.c.ressources_humaines.description' => 'اختيار من ينضمون إلى الفريق واستقبالهم.',
+			'recrutement.talents.c.ressources_humaines.exemple' => 'إجراء مقابلة، مقارنة الطلبات، استقبال معلم جديد',
+			'recrutement.talents.c.comptabilite.libelle' => 'المحاسبة',
+			'recrutement.talents.c.comptabilite.description' => 'مسك حسابات الأكاديمية.',
+			'recrutement.talents.c.comptabilite.exemple' => 'تسجيل الفواتير، متابعة المدفوعات، إعداد ميزانية ختامية',
+			'recrutement.talents.c.gestion_financiere.libelle' => 'التسيير المالي',
+			'recrutement.talents.c.gestion_financiere.description' => 'متابعة الأموال وتحضير القرارات.',
+			'recrutement.talents.c.gestion_financiere.exemple' => 'إعداد ميزانية تقديرية، متابعة السيولة',
+			'recrutement.talents.c.juridique_donnees.libelle' => 'القانون وحماية البيانات',
+			'recrutement.talents.c.juridique_donnees.description' => 'السهر على احترام الأكاديمية للقانون وحمايتها للبيانات الشخصية.',
+			'recrutement.talents.c.juridique_donnees.exemple' => 'مراجعة عقد، كتابة شروط الاستعمال، حماية الخصوصية',
+			'recrutement.talents.c.conception_programmes.libelle' => 'تصميم المناهج والمواد التعليمية',
+			'recrutement.talents.c.conception_programmes.description' => 'إعداد ما يتعلمه الطلاب والمواد التي يُدرَّس بها.',
+			'recrutement.talents.c.conception_programmes.exemple' => 'خطة درس، بطاقة، سلسلة تمارين',
+			'recrutement.talents.c.formation_enseignants.libelle' => 'تكوين المعلمين ومرافقتهم',
+			'recrutement.talents.c.formation_enseignants.description' => 'مساعدة المعلمين على التقدّم.',
+			'recrutement.talents.c.formation_enseignants.exemple' => 'تكوين معلم جديد، إسداء النصح له بعد حصة',
+			'recrutement.talents.c.qualite_cours.libelle' => 'ملاحظة الدروس وجودتها',
+			'recrutement.talents.c.qualite_cours.description' => 'ملاحظة الحصص والمساعدة على تحسينها.',
+			'recrutement.talents.c.qualite_cours.exemple' => 'حضور حصة، كتابة ملاحظات مكتوبة',
+			'recrutement.talents.c.tests_niveau.libelle' => 'اختبارات تحديد المستوى',
+			'recrutement.talents.c.tests_niveau.description' => 'تحديد مستوى طالب جديد.',
+			'recrutement.talents.c.tests_niveau.exemple' => 'الاستماع إلى تلاوة طالب جديد قبل دخوله فصلًا',
+			'recrutement.talents.c.accompagnement_enfants.libelle' => 'مرافقة الأطفال',
+			'recrutement.talents.c.accompagnement_enfants.description' => 'مساعدة الأطفال الذين يحتاجون إلى عناية خاصة.',
+			'recrutement.talents.c.accompagnement_enfants.exemple' => 'علم نفس الطفل، الاحتياجات الخاصة، الأطفال شديدو الخجل',
+			'recrutement.talents.c.developpement.libelle' => 'تطوير الويب أو تطبيقات الجوال',
+			'recrutement.talents.c.developpement.description' => 'برمجة المواقع والتطبيقات.',
+			'recrutement.talents.c.developpement.exemple' => 'موقع، تطبيق، أداة داخلية',
+			'recrutement.talents.c.assistance_technique.libelle' => 'الدعم التقني للأسر والمعلمين',
+			'recrutement.talents.c.assistance_technique.description' => 'حلّ المشكلات التقنية عن بُعد لمن يواجهها.',
+			'recrutement.talents.c.assistance_technique.exemple' => 'المساعدة على الاتصال، ضبط الصوت والكاميرا',
+			'recrutement.talents.c.donnees_tableurs.libelle' => 'البيانات والجداول',
+			'recrutement.talents.c.donnees_tableurs.description' => 'تنظيم الأرقام واستخلاص جداول واضحة منها.',
+			'recrutement.talents.c.donnees_tableurs.exemple' => 'جدول متابعة، إحصاءات، تقرير',
+			'recrutement.talents.c.autre.libelle' => 'مجال آخر',
+			'recrutement.talents.c.autre.description' => 'مهارة غير مذكورة في القائمة.',
+			'recrutement.talents.niveaux.titre' => 'ما مستواك؟',
+			'recrutement.talents.niveaux.explication' => 'لكل مهارة، أخبرنا أين أنت منها. يساعد ذلك الأكاديمية على اقتراح مهمة تناسبك.',
+			'recrutement.talents.niveaux.legende' => 'كيف تختار',
+			'recrutement.talents.niveaux.debutant.libelle' => 'أبتدئ',
+			'recrutement.talents.niveaux.debutant.description' => 'تعرف الأساسيات وما زلت تتعلم.',
+			'recrutement.talents.niveaux.experience.libelle' => 'لديّ خبرة',
+			'recrutement.talents.niveaux.experience.description' => 'سبق أن مارستها عدة مرات، لنفسك أو لغيرك.',
+			'recrutement.talents.niveaux.metier.libelle' => 'هذه مهنتي',
+			'recrutement.talents.niveaux.metier.description' => 'تمارسها أو مارستها بصفة مهنية.',
+			'recrutement.talents.niveaux.niveauDe' => ({required Object competence}) => 'المستوى في ⁨${competence}⁩',
+			'recrutement.talents.niveaux.manque' => ({required Object competence}) => 'اختر مستواك في «⁨${competence}⁩» للمتابعة.',
+			'recrutement.talents.disponibilite.titre' => 'متى يمكنك المساعدة؟',
+			'recrutement.talents.disponibilite.explication' => 'أخبرنا كم من الوقت يمكنك تخصيصه لمهمة، إلى جانب التدريس. وفي الأسفل، أخبرنا إن كانت الأكاديمية تستطيع التواصل معك.',
+			'recrutement.talents.disponibilite.quelques_heures.libelle' => 'بضع ساعات في الأسبوع',
+			'recrutement.talents.disponibilite.quelques_heures.description' => 'مساعدة خفيفة إلى جانب أنشطتك الأخرى.',
+			'recrutement.talents.disponibilite.mi_temps.libelle' => 'نصف دوام',
+			'recrutement.talents.disponibilite.mi_temps.description' => 'قرابة نصف الدوام الكامل.',
+			'recrutement.talents.disponibilite.plus.libelle' => 'أكثر من نصف دوام',
+			'recrutement.talents.disponibilite.plus.description' => 'جزء كبير من وقتك.',
+			'recrutement.talents.disponibilite.pas_maintenant.libelle' => 'ليس في الوقت الحالي',
+			'recrutement.talents.disponibilite.pas_maintenant.description' => 'تريد فقط أن تعرف الأكاديمية مواهبك.',
+			'recrutement.talents.disponibilite.accord' => 'أوافق على أن تتواصل معي الأكاديمية من أجل مهمة في هذه المجالات.',
+			'recrutement.talents.disponibilite.accordNote' => 'إن لم تحدّد هذه الخانة، فالأكاديمية تقرأ إجاباتك لكنها لا تقترح عليك أي مهمة.',
+			'recrutement.talents.disponibilite.manque' => 'اختر مدى توفرك للمتابعة.',
+			'recrutement.talents.disponibilite.enregistrer' => 'حفظ إجاباتي',
+			'recrutement.talents.lecture.enregistre' => 'إجاباتك محفوظة.',
+			'recrutement.talents.lecture.misesAJour' => ({required Object date}) => 'آخر تحديث في ⁨${date}⁩.',
+			'recrutement.talents.lecture.competences' => 'مهاراتك',
+			'recrutement.talents.lecture.autreDomaine' => ({required Object texte}) => 'مجال آخر: ⁨${texte}⁩',
+			'recrutement.talents.lecture.disponibilite' => 'مدى توفرك',
+			'recrutement.talents.lecture.contact' => 'التواصل من أجل مهمة',
+			'recrutement.talents.lecture.contactOui' => 'توافق على أن تتواصل معك الأكاديمية.',
+			'recrutement.talents.lecture.contactNon' => 'لم تمنح هذه الموافقة: لن تتواصل معك الأكاديمية.',
+			'recrutement.talents.lecture.modifier' => 'تعديل إجاباتي',
+			'recrutement.talents.lecture.retirer' => 'سحب إجاباتي',
+			'recrutement.talents.lecture.retraitQuestion' => 'هل تسحب إجاباتك؟',
+			'recrutement.talents.lecture.retraitConsequence' => 'لن تحتفظ الأكاديمية بمهاراتك ولا بالموافقة التي تتيح لها التواصل معك. يمكنك الإجابة من جديد متى شئت.',
+			'recrutement.talents.lecture.retraitConfirmer' => 'سحب إجاباتي',
+			'recrutement.talents.lecture.close' => 'انتهى طلب ترشحك للتدريس: لم يعد تعديل هذه الإجابات ممكنًا، لكن يمكنك سحبها.',
+			'recrutement.talents.lecture.retire' => 'تم سحب إجاباتك.',
+			'recrutement.talents.etats.nonEnvoyeTitre' => 'هذه الخطوة لم تُفتح بعد',
+			'recrutement.talents.etats.nonEnvoye' => 'تُفتح عند إرسال طلب ترشحك. أنهِ طلب ترشحك أولًا.',
+			'recrutement.talents.etats.closTitre' => 'انتهت هذه الخطوة',
+			'recrutement.talents.etats.clos' => 'لم يعد طلب ترشحك للتدريس جاريًا: لا شيء تضيفه هنا.',
+			'recrutement.talents.etats.nonCharge' => 'تعذّر تحميل «مواهبك الأخرى».',
+			'recrutement.talents.erreurs.conflit' => 'تغيّرت إجاباتك منذ فتح هذه الصفحة (من جهاز آخر مثلًا). راجعها ثم احفظ من جديد.',
+			'recrutement.talents.erreurs.desactivee' => 'لم تعد إحدى المهارات التي اخترتها مقترحة، وقد أُزيلت من اختيارك. راجع إجاباتك ثم احفظ من جديد.',
+			'recrutement.talents.erreurs.invalides' => 'إحدى إجاباتك تحتاج إلى مراجعة. راجعها ثم احفظ من جديد.',
+			'recrutement.talents.erreurs.incertain' => 'قد لا تكون إجاباتك قد وصلت إلى أكاديمية الرواية. أعد المحاولة: لن تُسجَّل مرتين.',
+			'recrutement.talents.erreurs.horsLigne' => 'سيمكن حفظ إجاباتك لاحقًا، عند عودة الاتصال.',
+			'recrutement.talents.erreurs.echec' => 'لم يكتمل حفظ إجاباتك. أعد المحاولة بعد لحظة.',
+			'recrutement.talents.erreurs.retraitIncertain' => 'قد لا يكون طلب السحب قد وصل إلى أكاديمية الرواية. أعد المحاولة: لن يتم مرتين.',
+			'recrutement.talents.erreurs.retraitHorsLigne' => 'سيمكن السحب لاحقًا، عند عودة الاتصال.',
+			'recrutement.talents.erreurs.retraitEchec' => 'لم يكتمل السحب. أعد المحاولة بعد لحظة.',
 			'sansDonnees.mesDonnees' => 'تعذّر تحميل معلومات حذف الحساب',
 			'sansDonnees.paiementsRecus' => 'تعذّر تحميل مدفوعاتك المستلمة',
 			'sansDonnees.revenus' => 'تعذّر تحميل مداخيلك',
@@ -26307,8 +27170,6 @@ extension on TraductionsAr {
 			'juridique.conditions.s2.blocs.0' => 'يسجّل وليّ أمر بالغ الطفلَ ويتابعه، وهو من يقرّر عنه. انظروا نص حماية الأطفال.',
 			'juridique.conditions.s2.blocs.1' => 'تقدّمون معلومات صحيحة وتحتفظون ببيانات دخولكم لأنفسكم. يُدخَل إلى الحصة عبر الحساب، لا عبر رابط عام.',
 			'juridique.conditions.s3.titre' => '٣. الحصص',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.conditions.s3.blocs.0' => 'تُعقد الحصص في موعد ثابت مع المعلم نفسه. والحضور في الوقت جزء من الالتزام.',
 			'juridique.conditions.s3.blocs.1' => 'تبقى الحصة المختصرة مستحقة إذا حضر الطالب مدة كافية. أما الحصة التي تلغيها الأكاديمية أو المعلم فتُعوَّض.',
 			'juridique.conditions.s3.blocs.2' => 'قد يحضر مراقب الجودة الحصص دون أن يراه أحد، وقد يُسجَّل الدرس. وإذا صار التسجيل فعليًا فسنخبركم قبل ذلك.',

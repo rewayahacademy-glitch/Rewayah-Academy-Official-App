@@ -2675,6 +2675,260 @@
       "choisirJour": "Choisissez au moins un jour pour continuer.",
       "choisirHeure": "Choisissez au moins une heure de début pour continuer.",
       "choisirHeureJour": "Choisissez au moins une heure de début pour le {jour}."
+    },
+    "talents": {
+      "titre": "Vos autres talents",
+      "tuile": {
+        "facultatif": "Facultatif. Cela ne change rien à votre candidature d'enseignant.",
+        "enregistre": "Vos réponses sont enregistrées. Vous pouvez les modifier.",
+        "enregistreClose": "Vos réponses sont enregistrées. Vous pouvez les retirer."
+      },
+      "intro": {
+        "texte": "L'académie grandit. Elle aura besoin d'aide pour s'organiser, accompagner les familles, tenir ses comptes ou se faire connaître. Si vous savez faire autre chose, dites-le\u00a0: nous vous contacterons d'abord, avant de publier une annonce.",
+        "facultatif": {
+          "titre": "Facultatif",
+          "texte": "Cela ne change rien à votre candidature d'enseignant."
+        },
+        "usage": {
+          "titre": "Ce que nous en faisons",
+          "texte": "Vos réponses servent seulement à vous proposer une mission de l'académie. La direction les lit, et elle seule."
+        },
+        "liberte": {
+          "titre": "Vous gardez la main",
+          "texte": "Vous pouvez modifier vos réponses ou les retirer quand vous le voulez, et retirer l'accord qui permet de vous contacter."
+        },
+        "missions": {
+          "titre": "Chaque mission a ses conditions",
+          "texte": "L'académie vous les présente quand elle vous contacte. Cette page ne promet aucune mission."
+        }
+      },
+      "competences": {
+        "titre": "Que savez-vous faire d'autre\u00a0?",
+        "explication": "Touchez toutes les compétences que vous avez. Chaque carte donne un exemple. Si la vôtre n'y est pas, choisissez «\u00a0Autre domaine\u00a0» en bas de la liste.",
+        "familles": {
+          "communication": "Communication et image",
+          "administration": "Administration et organisation",
+          "financesDroit": "Finances et droit",
+          "pedagogie": "Pédagogie",
+          "technique": "Technique",
+          "autre": "Autre domaine"
+        },
+        "choisies(param=n)": {
+          "zero": "Aucune compétence choisie",
+          "one": "{n} compétence choisie",
+          "other": "{n} compétences choisies"
+        },
+        "nonProposee": "Cette compétence n'est plus proposée. Vous pouvez la garder ou la décocher.",
+        "autreChamp": "Votre domaine, en quelques mots",
+        "autreAide": "Une seule ligne suffit.",
+        "manque": "Choisissez au moins une compétence pour continuer.",
+        "autreVide": "Dites en quelques mots de quel domaine il s'agit, ou décochez «\u00a0Autre domaine\u00a0».",
+        "autreTropLong": "Votre texte est trop long\u00a0: {max} signes au plus. Raccourcissez-le."
+      },
+      "c": {
+        "reseaux_sociaux": {
+          "libelle": "Gestion des réseaux sociaux",
+          "description": "Animer les comptes de l'académie sur les réseaux sociaux.",
+          "exemple": "Publier chaque semaine, répondre aux messages et aux commentaires"
+        },
+        "relations_publiques": {
+          "libelle": "Relations publiques et partenariats",
+          "description": "Faire connaître l'académie à ceux qui peuvent la soutenir.",
+          "exemple": "Présenter l'académie à une mosquée, une association ou un média"
+        },
+        "design_graphique": {
+          "libelle": "Design graphique",
+          "description": "Créer des visuels clairs et soignés.",
+          "exemple": "Une affiche, une carte à partager, un visuel pour les réseaux"
+        },
+        "montage_video": {
+          "libelle": "Montage vidéo et animation",
+          "description": "Monter et animer de courtes vidéos.",
+          "exemple": "Couper une vidéo, ajouter des sous-titres, animer un titre"
+        },
+        "photographie": {
+          "libelle": "Photographie et prise de vue",
+          "description": "Prendre des photos, des vidéos ou des prises de son de qualité.",
+          "exemple": "Photographier un événement, enregistrer une courte présentation"
+        },
+        "redaction_contenus": {
+          "libelle": "Rédaction et création de contenus",
+          "description": "Écrire des textes justes et agréables à lire.",
+          "exemple": "Un article, un texte pour les réseaux, une lettre d'information"
+        },
+        "publicite_en_ligne": {
+          "libelle": "Publicité en ligne",
+          "description": "Préparer et suivre des campagnes de publicité sur internet.",
+          "exemple": "Choisir le public visé, lancer une campagne, suivre les résultats"
+        },
+        "traduction": {
+          "libelle": "Traduction",
+          "description": "Traduire des textes d'une langue à une autre.",
+          "exemple": "Des messages aux familles, des sous-titres, un texte du site"
+        },
+        "assistanat": {
+          "libelle": "Assistanat administratif ou de direction",
+          "description": "Aider la direction à s'organiser au quotidien.",
+          "exemple": "Tenir un agenda, rédiger des courriers, suivre des dossiers"
+        },
+        "coordination_groupe": {
+          "libelle": "Coordination d'une communauté",
+          "description": "Animer et accompagner une communauté de personnes, par exemple celle des sœurs ou celle des parents.",
+          "exemple": "Accueillir les nouvelles et les nouveaux, répondre aux questions, faire circuler les informations"
+        },
+        "accueil_familles": {
+          "libelle": "Accueil et suivi des familles",
+          "description": "Être le premier contact des familles qui s'inscrivent.",
+          "exemple": "Répondre à une question, accompagner une inscription, prendre des nouvelles"
+        },
+        "gestion_projet": {
+          "libelle": "Planification et gestion de projet",
+          "description": "Organiser un travail à plusieurs, du début à la fin.",
+          "exemple": "Établir un calendrier, répartir les tâches, suivre l'avancement"
+        },
+        "ressources_humaines": {
+          "libelle": "Ressources humaines et recrutement",
+          "description": "Choisir et accueillir les personnes qui rejoignent l'équipe.",
+          "exemple": "Mener un entretien, comparer des candidatures, accueillir un nouvel enseignant"
+        },
+        "comptabilite": {
+          "libelle": "Comptabilité",
+          "description": "Tenir les comptes de l'académie.",
+          "exemple": "Enregistrer les factures, suivre les paiements, préparer un bilan"
+        },
+        "gestion_financiere": {
+          "libelle": "Gestion financière",
+          "description": "Suivre l'argent et préparer les décisions.",
+          "exemple": "Construire un budget, suivre la trésorerie"
+        },
+        "juridique_donnees": {
+          "libelle": "Juridique et protection des données",
+          "description": "Veiller à ce que l'académie respecte la loi et protège les données personnelles.",
+          "exemple": "Relire un contrat, écrire des conditions d'utilisation, protéger la vie privée"
+        },
+        "conception_programmes": {
+          "libelle": "Conception de programmes et de supports",
+          "description": "Préparer ce que les élèves apprennent, et les supports pour l'enseigner.",
+          "exemple": "Un plan de cours, une fiche, une série d'exercices"
+        },
+        "formation_enseignants": {
+          "libelle": "Formation et accompagnement des enseignants",
+          "description": "Aider les enseignants à progresser.",
+          "exemple": "Former un nouvel enseignant, le conseiller après une séance"
+        },
+        "qualite_cours": {
+          "libelle": "Observation et qualité des cours",
+          "description": "Observer des séances et aider à les améliorer.",
+          "exemple": "Assister à une séance, faire un retour écrit"
+        },
+        "tests_niveau": {
+          "libelle": "Tests de niveau",
+          "description": "Situer le niveau d'un nouvel élève.",
+          "exemple": "Écouter un nouvel élève réciter avant son entrée dans une Classe"
+        },
+        "accompagnement_enfants": {
+          "libelle": "Accompagnement des enfants",
+          "description": "Aider les enfants qui ont besoin d'une attention particulière.",
+          "exemple": "Psychologie de l'enfant, besoins particuliers, enfants très timides"
+        },
+        "developpement": {
+          "libelle": "Développement web ou mobile",
+          "description": "Programmer des sites et des applications.",
+          "exemple": "Un site, une application, un outil interne"
+        },
+        "assistance_technique": {
+          "libelle": "Assistance technique aux familles et aux enseignants",
+          "description": "Dépanner à distance les personnes qui ont un souci technique.",
+          "exemple": "Aider à se connecter, régler le son ou la caméra"
+        },
+        "donnees_tableurs": {
+          "libelle": "Données et tableurs",
+          "description": "Organiser des chiffres et en tirer des tableaux clairs.",
+          "exemple": "Un tableau de suivi, des statistiques, un rapport"
+        },
+        "autre": {
+          "libelle": "Autre domaine",
+          "description": "Une compétence qui n'est pas dans la liste."
+        }
+      },
+      "niveaux": {
+        "titre": "Quel est votre niveau\u00a0?",
+        "explication": "Pour chaque compétence, dites où vous en êtes. Cela aide l'académie à vous proposer une mission qui vous convient.",
+        "legende": "Comment choisir",
+        "debutant": {
+          "libelle": "Je débute",
+          "description": "Vous connaissez les bases et vous apprenez encore."
+        },
+        "experience": {
+          "libelle": "J'ai de l'expérience",
+          "description": "Vous l'avez déjà fait plusieurs fois, pour vous ou pour d'autres."
+        },
+        "metier": {
+          "libelle": "C'est mon métier",
+          "description": "Vous le faites, ou vous l'avez fait, comme profession."
+        },
+        "niveauDe": "Niveau pour {competence}",
+        "manque": "Choisissez votre niveau en «\u00a0{competence}\u00a0» pour continuer."
+      },
+      "disponibilite": {
+        "titre": "Quand pourriez-vous aider\u00a0?",
+        "explication": "Dites combien de temps vous pourriez donner à une mission, à côté de l'enseignement. Plus bas, dites si l'académie peut vous contacter.",
+        "quelques_heures": {
+          "libelle": "Quelques heures par semaine",
+          "description": "Une aide légère, à côté de vos autres activités."
+        },
+        "mi_temps": {
+          "libelle": "Un mi-temps",
+          "description": "À peu près la moitié d'un temps plein."
+        },
+        "plus": {
+          "libelle": "Plus d'un mi-temps",
+          "description": "Une grande partie de votre temps."
+        },
+        "pas_maintenant": {
+          "libelle": "Pas pour l'instant",
+          "description": "Vous voulez seulement que l'académie connaisse vos talents."
+        },
+        "accord": "J'accepte que l'académie me contacte pour une mission dans ces domaines.",
+        "accordNote": "Sans cette case, l'académie lit vos réponses mais ne vous propose aucune mission.",
+        "manque": "Choisissez votre disponibilité pour continuer.",
+        "enregistrer": "Enregistrer mes réponses"
+      },
+      "lecture": {
+        "enregistre": "Vos réponses sont enregistrées.",
+        "misesAJour": "Dernière mise à jour le {date}.",
+        "competences": "Vos compétences",
+        "autreDomaine": "Autre domaine\u00a0: {texte}",
+        "disponibilite": "Votre disponibilité",
+        "contact": "Contact pour une mission",
+        "contactOui": "Vous acceptez que l'académie vous contacte.",
+        "contactNon": "Vous n'avez pas donné cet accord\u00a0: l'académie ne vous contactera pas.",
+        "modifier": "Modifier mes réponses",
+        "retirer": "Retirer mes réponses",
+        "retraitQuestion": "Retirer vos réponses\u00a0?",
+        "retraitConsequence": "L'académie n'aura plus vos compétences ni l'accord qui lui permet de vous contacter. Vous pourrez répondre de nouveau quand vous le voulez.",
+        "retraitConfirmer": "Retirer mes réponses",
+        "close": "Votre candidature d'enseignant est terminée\u00a0: vous ne pouvez plus modifier ces réponses. Vous pouvez encore les retirer.",
+        "retire": "Vos réponses sont retirées."
+      },
+      "etats": {
+        "nonEnvoyeTitre": "Cette étape n'est pas encore ouverte",
+        "nonEnvoye": "Elle s'ouvre quand votre candidature est envoyée. Terminez d'abord votre candidature.",
+        "closTitre": "Cette étape est terminée",
+        "clos": "Votre candidature d'enseignant n'est plus en cours\u00a0: il n'y a rien à ajouter ici.",
+        "nonCharge": "Vos autres talents n'ont pas pu être chargés."
+      },
+      "erreurs": {
+        "conflit": "Vos réponses ont changé depuis l'ouverture de cette page (sur un autre appareil, par exemple). Revoyez-les, puis enregistrez de nouveau.",
+        "desactivee": "Une des compétences choisies n'est plus proposée\u00a0: elle est retirée de votre choix. Revoyez vos réponses, puis enregistrez de nouveau.",
+        "invalides": "Une de vos réponses n'est pas valide. Revoyez-les, puis enregistrez de nouveau.",
+        "incertain": "Il est possible que vos réponses ne soient pas parvenues jusqu'à Rewayah. Réessayez\u00a0: elles ne seront pas enregistrées deux fois.",
+        "horsLigne": "Vos réponses pourront être enregistrées plus tard, quand la connexion reviendra.",
+        "echec": "Vos réponses n'ont pas pu être enregistrées. Réessayez dans un instant.",
+        "retraitIncertain": "Il est possible que le retrait ne soit pas parvenu jusqu'à Rewayah. Réessayez\u00a0: il ne sera pas fait deux fois.",
+        "retraitHorsLigne": "Le retrait pourra être fait plus tard, quand la connexion reviendra.",
+        "retraitEchec": "Le retrait n'a pas abouti. Réessayez dans un instant."
+      }
     }
   },
   "dossiers": {
@@ -2865,7 +3119,18 @@
         "pause": "Pause",
         "sansPause": "Pas en pause",
         "versement": "Versement",
-        "pays": "Pays de résidence"
+        "pays": "Pays de résidence",
+        "talents": {
+          "domaine": "Autres compétences",
+          "familleToutes": "{famille}\u00a0: toutes",
+          "niveau": "Niveau de compétence",
+          "niveauExperience": "A de l'expérience ou plus",
+          "niveauMetier": "En fait son métier",
+          "disponibilite": "Disponibilité pour une mission",
+          "accord": "Accord de contact",
+          "accordDonne": "Accord donné",
+          "accordAbsent": "Répondu sans accord"
+        }
       },
       "tri": {
         "titre": "Trier par",
@@ -3014,7 +3279,23 @@
           "validee": "Validée"
         },
         "controlesVrai": "Satisfait",
-        "controlesFaux": "Non satisfait"
+        "controlesFaux": "Non satisfait",
+        "talents": {
+          "titre": "Autres compétences",
+          "aucune": "Cette personne n'a pas rempli «\u00a0Vos autres talents\u00a0».",
+          "niveaux": {
+            "debutant": "Débute",
+            "experience": "A de l'expérience",
+            "metier": "En fait son métier"
+          },
+          "autre": "Autre domaine\u00a0: {texte}",
+          "competenceInconnue": "Compétence sans libellé disponible",
+          "disponibilite": "Disponibilité pour une mission",
+          "accord": "Accord de contact",
+          "accordDonne": "Donné le {date}",
+          "accordAbsent": "Non donné\u00a0: ne proposer aucune mission",
+          "misesAJour": "Dernière mise à jour le {date}."
+        }
       },
       "controles": {
         "noms": {

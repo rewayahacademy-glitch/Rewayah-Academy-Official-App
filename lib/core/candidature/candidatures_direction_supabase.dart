@@ -33,7 +33,8 @@
 //
 // Les filtres envoyes sont exactement les cles que le serveur connait
 // (`type`, `etape`, `etat`, `issue`, `enPause`, `paiement`, `paysResidence`,
-// `recherche`) : une cle inconnue serait refusee (`22023`). Une cle sans valeur
+// `recherche`, et depuis CAND-AUTRES `competenceDomaine`, `competenceNiveauMin`,
+// `competenceDisponibilite`, `competenceAccord`) : une cle inconnue serait refusee (`22023`). Une cle sans valeur
 // n'est pas envoyee.
 
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -313,6 +314,16 @@ Map<String, Object> filtreEnJson(FiltreCandidatures filtre) => <String, Object>{
   if (filtre.enPause != null) 'enPause': filtre.enPause!,
   if (filtre.paiement != null) 'paiement': filtre.paiement!.valeurSql,
   if (filtre.paysResidence != null) 'paysResidence': filtre.paysResidence!,
+  // Autres competences (CAND-07) : un code du catalogue ou une famille, le niveau
+  // minimum, la disponibilite exacte, l'accord d'etre contacte.
+  if (filtre.competenceDomaine != null)
+    'competenceDomaine': filtre.competenceDomaine!,
+  if (filtre.competenceNiveauMin != null)
+    'competenceNiveauMin': filtre.competenceNiveauMin!.valeurSql,
+  if (filtre.competenceDisponibilite != null)
+    'competenceDisponibilite': filtre.competenceDisponibilite!.valeurSql,
+  if (filtre.competenceAccord != null)
+    'competenceAccord': filtre.competenceAccord!,
 };
 
 /// Les deux refus d'une lecture de dossier, rendus dans la reponse.

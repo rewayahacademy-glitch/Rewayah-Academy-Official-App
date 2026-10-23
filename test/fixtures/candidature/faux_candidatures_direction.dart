@@ -12,6 +12,7 @@
 import 'dart:async';
 
 import 'package:rewayah_academy/core/candidature/gestes_candidature.dart';
+import 'package:rewayah_academy/core/candidature/modeles_autres_competences.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature_detail.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidatures_direction.dart';
@@ -145,6 +146,7 @@ DetailCandidature detailTest({
   List<DocumentReponses>? documents,
   List<ControleCandidature>? controles,
   EtatPiece? piece,
+  ReponsesAutresCompetences? autresCompetences,
   DateTime? derniereActivite,
   DateTime? recueLe,
 }) => DetailCandidature(
@@ -185,6 +187,7 @@ DetailCandidature detailTest({
       ],
   controles: controles,
   piece: piece,
+  autresCompetences: autresCompetences,
 );
 
 /// Les capacites d'une direction qui decide et dont le serveur ouvre les
@@ -601,6 +604,7 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
     documents: d.documents,
     controles: d.controles,
     piece: d.piece,
+    autresCompetences: d.autresCompetences,
   );
 
   CompteursAlertes _alertesDuServeur() => CompteursAlertes(

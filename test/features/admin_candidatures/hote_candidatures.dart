@@ -33,6 +33,7 @@ Future<void> monterCandidatures(
   void Function(List<String> identifiants)? agir,
   bool invitations = false,
   bool comptable = false,
+  List<Override> surcharges = const <Override>[],
 }) => monterRecrutement(
   tester,
   chemin: Routes.adminPersonnesCandidatures,
@@ -49,6 +50,7 @@ Future<void> monterCandidatures(
     portInvitationsComptableProvider.overrideWithValue(
       comptable ? InvitationsDemo() : null,
     ),
+    ...surcharges,
   ],
   horsLigne: horsLigne,
   largeur: largeur,
