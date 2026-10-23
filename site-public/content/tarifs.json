@@ -79,7 +79,7 @@
     ],
     "suspension_jour": 4,
     "place_gardee_jours": 14,
-    "place_liberee_jour": 18
+    "place_liberee_jour": 16
   },
   "enseignant": {
     "taux_par_eleve_present_heure_mineur": {

@@ -1,0 +1,703 @@
+{
+  "largeurs": [
+    640,
+    1024,
+    1600
+  ],
+  "note": "Illustrations fournies par le directeur (dossier Drive « images du site public », 21/10/2026), détourées et harmonisées : arches de 02 et 12 recolorées en lavande ; 04 et 09 remplacées par leur jumelle lavande 08. Toujours légendées « Illustration » (cahier visuel C.4). Calques animables : le tapis du chemin et les mains de l'élève dans la transmission, séparés de la scène (GrabCut) et bouchés derrière (LaMa) ; au repos, le fond et le calque redonnent l'image entière. Gros plans : recadrages carrés de quatre scènes (forme « cercle », la halqa du symbole), pour ne pas répéter l’arche entière d’une section à l’autre. Détails : six recadrages serrés, sans l’arche (forme « cercle »), pour garder l’arche entière aux hauts de page et aux grandes scènes.",
+  "images": {
+    "chemin": {
+      "source": "07",
+      "largeur": 2676,
+      "hauteur": 1388,
+      "alt": "Une mère et sa fille marchent sur un chemin violet vers une porte ouverte dans une arche en forme de livre, où une classe est assise avec son enseignante.",
+      "porte": [
+        0.682,
+        0.495
+      ],
+      "calques": {
+        "anime": "tapis",
+        "noms": [
+          "tapis"
+        ],
+        "zone": [
+          0,
+          0.7,
+          0.52,
+          0.3
+        ]
+      }
+    },
+    "halqa": {
+      "source": "06",
+      "largeur": 1014,
+      "hauteur": 974,
+      "alt": "Vue du dessus : un enseignant et quatre élèves assis en cercle, chacun devant son pupitre de lecture."
+    },
+    "eleve-enseignante": {
+      "source": "03",
+      "largeur": 1029,
+      "hauteur": 1151,
+      "alt": "Une élève assise devant son pupitre de lecture, face à son enseignante installée sous l’arche."
+    },
+    "eleve-enseignante-b": {
+      "source": "05",
+      "largeur": 1012,
+      "hauteur": 1152,
+      "alt": "Une jeune élève lit devant son pupitre ; son enseignante l’écoute, assise sous l’arche."
+    },
+    "transmission-lavande": {
+      "source": "08",
+      "largeur": 2080,
+      "hauteur": 1559,
+      "alt": "À travers la porte d’une arche en forme de livre, deux mains tendent un Coran à deux autres mains.",
+      "calques": {
+        "anime": "mains",
+        "noms": [
+          "mains"
+        ]
+      }
+    },
+    "boucle": {
+      "source": "02",
+      "largeur": 2550,
+      "hauteur": 1257,
+      "alt": "Un chemin violet en forme de boucle infinie relie des familles, un enseignant et son élève, jusqu’à une arche ouverte."
+    },
+    "pere-fils": {
+      "source": "12",
+      "largeur": 1121,
+      "hauteur": 1196,
+      "alt": "Un père accompagne son fils jusqu’à la porte ouverte, où l’enseignant attend avec son pupitre de lecture."
+    },
+    "mere-porte": {
+      "source": "01",
+      "largeur": 1164,
+      "hauteur": 1187,
+      "alt": "Une mère se tient à la porte ouverte et regarde sa fille lire avec son enseignante."
+    },
+    "adulte-femme": {
+      "source": "15",
+      "largeur": 1016,
+      "hauteur": 1165,
+      "alt": "Une femme assise sur un tabouret suit le cours de son enseignante, installée sous l’arche."
+    },
+    "adulte-homme": {
+      "source": "11",
+      "largeur": 1051,
+      "hauteur": 1161,
+      "alt": "Un homme assis sur un tabouret écoute son enseignant, installé sous l’arche avec son pupitre."
+    },
+    "adulte-femme-livre": {
+      "source": "10",
+      "largeur": 1150,
+      "hauteur": 1184,
+      "alt": "Une femme, un livre à la main, se tient devant une arche ouverte sur un paysage de dunes."
+    },
+    "adulte-homme-livre": {
+      "source": "13",
+      "largeur": 1093,
+      "hauteur": 1156,
+      "alt": "Un homme, un livre à la main, se tient sur le seuil d’une arche ouverte sur des dunes."
+    },
+    "place": {
+      "source": "14",
+      "largeur": 1005,
+      "hauteur": 1025,
+      "alt": "Un coussin et un pupitre de lecture attendent devant la porte, où un enseignant est déjà assis."
+    },
+    "gros-plan-lecture": {
+      "source": "03",
+      "largeur": 710,
+      "hauteur": 710,
+      "alt": "Gros plan : une élève lit face à son enseignante, chacune devant son pupitre de lecture.",
+      "forme": "cercle",
+      "recadrage": [
+        20,
+        440,
+        730,
+        1150
+      ]
+    },
+    "gros-plan-enseignant": {
+      "source": "11",
+      "largeur": 710,
+      "hauteur": 710,
+      "alt": "Gros plan : un élève adulte, assis sur un tabouret, écoute un enseignant qui lit devant son pupitre.",
+      "forme": "cercle",
+      "recadrage": [
+        40,
+        400,
+        750,
+        1110
+      ]
+    },
+    "gros-plan-famille": {
+      "source": "01",
+      "largeur": 760,
+      "hauteur": 760,
+      "alt": "Gros plan : une mère regarde, depuis la porte, sa fille qui lit avec son enseignante.",
+      "forme": "cercle",
+      "recadrage": [
+        100,
+        350,
+        860,
+        1110
+      ]
+    },
+    "gros-plan-pere-fils": {
+      "source": "12",
+      "largeur": 740,
+      "hauteur": 740,
+      "alt": "Gros plan : un père accompagne son fils, un livre à la main, jusqu’à l’enseignant qui l’attend.",
+      "forme": "cercle",
+      "recadrage": [
+        60,
+        370,
+        800,
+        1110
+      ]
+    },
+    "detail-enseignante": {
+      "source": "03",
+      "largeur": 420,
+      "hauteur": 420,
+      "alt": "Gros plan : une enseignante lit, assise, le livre ouvert sur les genoux.",
+      "recadrage": [
+        350,
+        500,
+        770,
+        920
+      ],
+      "forme": "cercle"
+    },
+    "detail-halqa": {
+      "source": "06",
+      "largeur": 520,
+      "hauteur": 520,
+      "alt": "Vue du dessus : deux élèves lisent, chacun devant son pupitre de lecture.",
+      "recadrage": [
+        170,
+        470,
+        690,
+        990
+      ],
+      "forme": "cercle"
+    },
+    "detail-livre-homme": {
+      "source": "13",
+      "largeur": 480,
+      "hauteur": 600,
+      "alt": "Un homme en longue tunique, un livre à la main, se tient près d’une porte ouverte et regarde des dunes de sable pâle.",
+      "recadrage": [
+        220,
+        430,
+        700,
+        1030
+      ],
+      "forme": "arche"
+    },
+    "detail-livre-femme": {
+      "source": "10",
+      "largeur": 540,
+      "hauteur": 675,
+      "alt": "Une femme en hijab violet, un livre à la main, se tient devant une porte ouverte sur des dunes.",
+      "recadrage": [
+        10,
+        470,
+        550,
+        1145
+      ],
+      "forme": "arche"
+    },
+    "detail-pupitre": {
+      "source": "15",
+      "largeur": 480,
+      "hauteur": 600,
+      "alt": "Une enseignante en hijab sombre, assise en tailleur, regarde devant elle, un livre ouvert sur son pupitre de lecture.",
+      "recadrage": [
+        360,
+        500,
+        840,
+        1100
+      ],
+      "forme": "arche"
+    },
+    "detail-place": {
+      "source": "14",
+      "largeur": 410,
+      "hauteur": 410,
+      "alt": "Un coussin et un pupitre de lecture attendent l’élève.",
+      "recadrage": [
+        0,
+        615,
+        410,
+        1025
+      ],
+      "forme": "cercle"
+    },
+    "detail-eleve-haut": {
+      "source": "06 (scène publiée, 1014 px)",
+      "largeur": 380,
+      "hauteur": 380,
+      "alt": "Vue du dessus : un élève coiffé d’un bonnet violet lit un livre ouvert posé sur un pupitre de lecture en bois.",
+      "recadrage": [
+        466,
+        576,
+        846,
+        956
+      ],
+      "forme": "cercle"
+    },
+    "detail-enseignant-haut": {
+      "source": "06 (scène publiée, 1014 px)",
+      "largeur": 380,
+      "hauteur": 380,
+      "alt": "Vu d’en haut, l’enseignant, en habit sombre et calotte blanche, lit le Coran posé sur son pupitre.",
+      "recadrage": [
+        407,
+        23,
+        787,
+        403
+      ],
+      "forme": "cercle"
+    },
+    "detail-tabouret": {
+      "source": "11",
+      "largeur": 520,
+      "hauteur": 650,
+      "alt": "Un homme en longue tunique mauve, assis sur un petit tabouret en bois, tient un livre posé sur ses genoux près d’une porte ouverte.",
+      "recadrage": [
+        -22,
+        494,
+        498,
+        1144
+      ],
+      "forme": "arche"
+    },
+    "detail-mere-fille": {
+      "source": "07",
+      "largeur": 488,
+      "hauteur": 610,
+      "alt": "Vue de dos, une mère en abaya noire et hijab blanc tient la main de sa fille, en robe mauve avec un sac à dos, et marche avec elle vers la porte de la classe.",
+      "recadrage": [
+        1282,
+        532,
+        1770,
+        1142
+      ],
+      "forme": "arche"
+    },
+    "detail-mere-dos": {
+      "source": "01",
+      "largeur": 620,
+      "hauteur": 775,
+      "alt": "Une mère vêtue de noir et d’un voile blanc, vue de dos, se tient debout près d’une porte ouverte.",
+      "recadrage": [
+        -115,
+        380,
+        505,
+        1155
+      ],
+      "forme": "arche"
+    },
+    "detail-fille-lecture": {
+      "source": "03",
+      "largeur": 468,
+      "hauteur": 585,
+      "alt": "Une jeune fille en hijab blanc est agenouillée devant un Coran ouvert, posé sur un pupitre en bois, près d’une porte entrouverte.",
+      "recadrage": [
+        9,
+        554,
+        477,
+        1139
+      ],
+      "forme": "arche"
+    },
+    "detail-enseignant-place": {
+      "source": "14",
+      "largeur": 380,
+      "hauteur": 475,
+      "alt": "Gros plan : un enseignant est assis en tailleur, les mains jointes, dans la pièce éclairée, de l’autre côté de la porte ouverte.",
+      "recadrage": [
+        368,
+        380,
+        748,
+        855
+      ],
+      "forme": "arche"
+    },
+    "detail-boucle": {
+      "source": "02",
+      "largeur": 856,
+      "hauteur": 856,
+      "alt": "Sur un chemin violet, un père pose la main sur l’épaule de son fils, deux enfants marchent main dans la main et un élève est assis face à son enseignant, devant un Coran ouvert sur un pupitre en bois.",
+      "recadrage": [
+        487,
+        366,
+        1343,
+        1222
+      ],
+      "forme": "cercle"
+    },
+    "detail-pupitre-coran": {
+      "source": "05",
+      "largeur": 480,
+      "hauteur": 600,
+      "alt": "Vue de dos, une élève en hijab blanc est à genoux devant un Coran ouvert sur son pupitre de lecture.",
+      "recadrage": [
+        0,
+        540,
+        480,
+        1140
+      ],
+      "forme": "arche"
+    },
+    "detail-main-epaule": {
+      "source": "12",
+      "largeur": 540,
+      "hauteur": 675,
+      "alt": "Devant une porte ouverte, un père pose la main sur l’épaule de son fils, qui porte une calotte violette et tient un livre.",
+      "recadrage": [
+        20,
+        430,
+        560,
+        1105
+      ],
+      "forme": "arche"
+    },
+    "detail-famille-chemin": {
+      "source": "02",
+      "largeur": 360,
+      "hauteur": 450,
+      "alt": "Deux enfants, un grand et un plus jeune, marchent main dans la main sur le chemin violet.",
+      "recadrage": [
+        590,
+        760,
+        950,
+        1210
+      ],
+      "forme": "arche"
+    },
+    "detail-desert": {
+      "source": "10",
+      "largeur": 440,
+      "hauteur": 550,
+      "alt": "Par la porte ouverte, on voit des dunes de sable pâle sous une lumière douce.",
+      "recadrage": [
+        392,
+        472,
+        832,
+        1022
+      ],
+      "forme": "arche"
+    },
+    "detail-mains-livre": {
+      "source": "13",
+      "largeur": 260,
+      "hauteur": 260,
+      "alt": "Gros plan : des mains tiennent un livre fermé contre une longue tunique mauve, devant des dunes.",
+      "recadrage": [
+        340,
+        575,
+        600,
+        835
+      ],
+      "forme": "cercle"
+    },
+    "detail-deux-eleves": {
+      "source": "06 (scène publiée, 1014 px)",
+      "largeur": 524,
+      "hauteur": 524,
+      "alt": "Vus d’en haut, deux élèves, l’un en calotte blanche et l’autre en calotte violette, lisent chacun un livre ouvert posé sur un pupitre de lecture en bois.",
+      "recadrage": [
+        490,
+        358,
+        1014,
+        882
+      ],
+      "forme": "cercle"
+    },
+    "detail-fille-enseignante": {
+      "source": "01",
+      "largeur": 480,
+      "hauteur": 600,
+      "alt": "Derrière la porte ouverte, une fillette au voile blanc regarde son enseignante, qui pose la main sur le livre ouvert de leur pupitre de lecture.",
+      "recadrage": [
+        420,
+        470,
+        900,
+        1070
+      ],
+      "forme": "arche"
+    },
+    "plan-pere-fils": {
+      "source": "12 (rendu d’origine avec son fond, arche harmonisée)",
+      "largeur": 865,
+      "hauteur": 934,
+      "alt": "Un père, la main sur l’épaule de son fils qui tient un livre, s’arrête avec lui au seuil d’une porte ouverte ; à l’intérieur, l’enseignant lit, assis devant son pupitre.",
+      "recadrage": [
+        1337,
+        452,
+        2202,
+        1386
+      ]
+    },
+    "petite-classe": {
+      "source": "lot 2, image_911ed81e (21/10), scène 5 « la petite classe », détourée, étalonnée plus chaud, posée dans un cercle",
+      "largeur": 693,
+      "hauteur": 693,
+      "alt": "Vue du dessus : quatre élèves, chacun chez soi sur son îlot, devant un pupitre ou un ordinateur, entourent leur enseignante assise au centre ; un anneau violet relie les îlots.",
+      "recadrage": [
+        403,
+        115,
+        1022,
+        657
+      ],
+      "forme": "cercle",
+      "taille": "detail"
+    },
+    "detail-arche-livre": {
+      "source": "14 (scène publiée, 1005 px), sans personne",
+      "largeur": 540,
+      "hauteur": 540,
+      "alt": "Le haut d’une arche faite des pages d’un livre ; dessous, une porte ouverte sur une pièce claire.",
+      "recadrage": [
+        80,
+        0,
+        620,
+        540
+      ],
+      "forme": "cercle"
+    },
+    "detail-porte-lumiere": {
+      "source": "05, sans personne",
+      "largeur": 452,
+      "hauteur": 452,
+      "alt": "Le haut d’une porte ouverte sous une arche en forme de livre, avec sa charnière et la lumière douce de la pièce derrière.",
+      "recadrage": [
+        138,
+        184,
+        590,
+        636
+      ],
+      "forme": "cercle"
+    },
+    "detail-seuil-desert": {
+      "source": "13, sans personne",
+      "largeur": 450,
+      "hauteur": 450,
+      "alt": "Derrière le bord de la porte, des dunes de sable pâle s’étendent au-delà du seuil.",
+      "recadrage": [
+        513,
+        610,
+        963,
+        1060
+      ],
+      "forme": "cercle"
+    },
+    "detail-poignee": {
+      "source": "15, sans personne",
+      "largeur": 380,
+      "hauteur": 475,
+      "alt": "La lumière douce de la pièce éclaire une porte entrouverte et sa poignée.",
+      "recadrage": [
+        202,
+        293,
+        582,
+        768
+      ],
+      "forme": "arche"
+    },
+    "detail-lumiere-sol": {
+      "source": "12, sans personne",
+      "largeur": 450,
+      "hauteur": 450,
+      "alt": "Une porte violette ouverte, vue de côté sous une arche en pages de livre, laisse voir la lumière douce de la pièce.",
+      "recadrage": [
+        266,
+        186,
+        716,
+        636
+      ],
+      "forme": "cercle"
+    },
+    "detail-pages-arche": {
+      "source": "12, sans personne",
+      "largeur": 450,
+      "hauteur": 562,
+      "alt": "La tranche des pages d’un livre fermé, courbée en arche, sous sa couverture violette ; à gauche, la lumière d’une porte ouverte.",
+      "recadrage": [
+        552,
+        118,
+        1002,
+        680
+      ],
+      "forme": "arche"
+    },
+    "halqa-haut": {
+      "source": "06 (scène publiée, 1014 px), haut de la scène : l’enseignant et les deux élèves des côtés",
+      "largeur": 960,
+      "hauteur": 553,
+      "alt": "Vue du dessus : l’enseignant et deux élèves, assis en cercle, chacun devant son pupitre de lecture.",
+      "recadrage": [
+        30,
+        30,
+        990,
+        583
+      ]
+    },
+    "arche-haut": {
+      "source": "12, haut de l’arche sans personne, bas fondu",
+      "largeur": 890,
+      "hauteur": 425,
+      "alt": "Le haut d’une arche faite des pages d’un livre, qui s’efface vers le bas.",
+      "recadrage": [
+        170,
+        15,
+        1060,
+        440
+      ]
+    },
+    "halqa-cercle": {
+      "source": "06, rendu d’origine avec son sol (le cercle de lumière)",
+      "largeur": 1200,
+      "hauteur": 1200,
+      "alt": "Vue du dessus : un enseignant et quatre élèves assis en cercle dans une flaque de lumière, chacun devant son pupitre de lecture.",
+      "recadrage": [
+        300,
+        170,
+        1500,
+        1370
+      ],
+      "forme": "cercle"
+    },
+    "decor-tapis-boucle": {
+      "source": "02, rendu d’origine, sans personne",
+      "largeur": 650,
+      "hauteur": 650,
+      "alt": "Un tapis violet dessine une large courbe sur un sol mauve clair.",
+      "recadrage": [
+        190,
+        743,
+        840,
+        1393
+      ],
+      "forme": "cercle"
+    },
+    "decor-arche-sombre": {
+      "source": "02, rendu d’origine, sans personne",
+      "largeur": 590,
+      "hauteur": 590,
+      "alt": "Le haut d'une arche en forme de livre fermé, violet sombre, vue d'en haut, avec une porte ouverte sur la lumière.",
+      "recadrage": [
+        1725,
+        0,
+        2315,
+        590
+      ],
+      "forme": "cercle"
+    },
+    "decor-arche-dessus": {
+      "source": "06, rendu d’origine, sans personne",
+      "largeur": 668,
+      "hauteur": 668,
+      "alt": "Vue plongeante sur l'arche en forme de livre fermé, dont la tranche des pages dessine une courbe, avec sa porte entrouverte sur un cercle de lumière.",
+      "recadrage": [
+        94,
+        0,
+        762,
+        668
+      ],
+      "forme": "cercle"
+    },
+    "decor-tapis-vague": {
+      "source": "07, rendu d’origine, sans personne",
+      "largeur": 520,
+      "hauteur": 520,
+      "alt": "Un tapis violet déroulé sur un sol clair ondule en deux vagues douces.",
+      "recadrage": [
+        630,
+        1016,
+        1150,
+        1536
+      ],
+      "forme": "cercle"
+    },
+    "detail-croisee": {
+      "source": "02",
+      "largeur": 400,
+      "hauteur": 500,
+      "alt": "Au croisement de deux chemins violets, un enseignant assis lit avec un jeune élève, le pupitre de lecture entre eux.",
+      "recadrage": [
+        990,
+        550,
+        1390,
+        1050
+      ],
+      "forme": "arche"
+    },
+    "detail-entree": {
+      "source": "02, l’arche entière avec sa marge (le haut de l’arche n’est plus coupé par le cadre)",
+      "largeur": 680,
+      "hauteur": 850,
+      "alt": "Un jeune garçon en tunique blanche suit le chemin violet et passe la porte d’une arche en forme de livre.",
+      "recadrage": [
+        1478,
+        -56,
+        2158,
+        794
+      ],
+      "forme": "arche"
+    },
+    "detail-femme-tabouret": {
+      "source": "15",
+      "largeur": 480,
+      "hauteur": 600,
+      "alt": "Vue de dos, une femme en hijab violet, assise sur un tabouret en bois, un livre sur les genoux, regarde vers une porte ouverte.",
+      "recadrage": [
+        0,
+        540,
+        480,
+        1140
+      ],
+      "forme": "arche"
+    },
+    "portrait-directeur": {
+      "source": "photo fournie par le directeur le 21/10/2026, recadrée en 4:5 (buste), désaturée vers le noir et blanc : ombres à l’encre de l’app (#110E20), clairs au lavande des cadres (#EEE6FA), 8 % de gris neutre ; une marque du mur (un clou) retirée, le visage n’est pas retouché ; sans métadonnées",
+      "largeur": 1792,
+      "hauteur": 2240,
+      "alt": "Abdoulaye Mouhidine Sow, directeur et fondateur de Rewayah Academy, en calotte brodée et chemise sombre, le regard tourné vers la droite.",
+      "photo": {
+        "legende": "Abdoulaye Mouhidine Sow, directeur et fondateur"
+      }
+    },
+    "portrait-directeur-visage": {
+      "source": "même photo que portrait-directeur, cadrée en largeur (5:4) sur le visage, de la calotte au col, pour l’accueil ; désaturée vers le noir et blanc : ombres à l’encre de l’app (#110E20), clairs au lavande des cadres (#EEE6FA), 8 % de gris neutre ; une marque du mur (un clou) retirée, le visage n’est pas retouché ; sans métadonnées",
+      "largeur": 1792,
+      "hauteur": 1434,
+      "alt": "Abdoulaye Mouhidine Sow, directeur et fondateur de Rewayah Academy, en calotte brodée, le regard tourné vers la droite.",
+      "photo": {
+        "legende": "Abdoulaye Mouhidine Sow, directeur et fondateur"
+      }
+    },
+    "portrait-fondateur-alimou": {
+      "source": "photo fournie par le directeur le 22/10/2026 (Drive, dossier « Alim & Ahmad », fond blanc), détouré (BiRefNet), posé sur le mur clair de la photo du directeur, cadré tête et épaules en 4:5 (la tête fait 60 % de la hauteur), netteté légèrement relevée, peau éclaircie à la luminosité de celle du directeur, étalonnage A3 de sa photo (ombres #110E20, clairs #EEE6FA, 8 % de gris) ; visage non retouché ; sans métadonnées",
+      "largeur": 554,
+      "hauteur": 693,
+      "alt": "Mamadou Alimou Diallo, fondateur de Rewayah Academy, en calotte brodée et tunique claire, de face.",
+      "photo": {
+        "legende": "Mamadou Alimou Diallo, fondateur"
+      }
+    },
+    "portrait-fondateur-ahmad": {
+      "source": "photo choisie par Ahmad Diallo et transmise par le directeur le 22/10/2026 (assis devant une tenture brodée), détouré (BiRefNet), posé sur le mur clair de la photo du directeur, cadré tête et épaules en 4:5 (la tête fait 60 % de la hauteur), netteté légèrement relevée, peau éclaircie à la luminosité de celle du directeur, étalonnage A3 de sa photo (ombres #110E20, clairs #EEE6FA, 8 % de gris) ; visage non retouché ; sans métadonnées",
+      "largeur": 426,
+      "hauteur": 534,
+      "alt": "Ahmad Diallo, fondateur de Rewayah Academy, en calotte brodée et grand boubou, souriant, de face.",
+      "photo": {
+        "legende": "Ahmad Diallo, fondateur"
+      }
+    }
+  }
+}

@@ -226,6 +226,79 @@ def formules_editoriales(chemin: Path = TARIFS_FALLBACK) -> dict:
             for nom in ("enfant", "adulte")}
 
 
+def places_fiche(phrases: list[str]) -> dict[int, str]:
+    """Au bureau, la place de chaque phrase d'un encart dans une grille de six colonnes : le prix, puis sa phrase juste
+    dessous ; les phrases longues en tuiles de même largeur sur une rangée, les courtes en tuiles de même largeur sur la
+    suivante (trois de deux colonnes, deux de trois) : les bords extérieurs des deux rangées tombent sur les mêmes lignes."""
+    places = {1: "--c: 1 / -1; --r: 1", 0: "--c: 1 / -1; --r: 2"}
+    autres = list(range(2, len(phrases)))
+    rang = 3
+    for groupe in ([k for k in autres if len(phrases[k]) > 60], [k for k in autres if len(phrases[k]) <= 60]):
+        if not groupe:
+            continue
+        largeur = 6 // len(groupe) if len(groupe) <= 3 else 2
+        for i, k in enumerate(groupe):
+            places[k] = f"--c: {1 + (i * largeur) % 6} / span {largeur}; --r: {rang + (i * largeur) // 6}"
+        rang += (len(groupe) * largeur + 5) // 6
+    return places
+
+
+def calendrier_paiement(chemin: Path = TARIFS_FALLBACK) -> dict:
+    """Le calendrier du paiement de la décision du 18/10 (renouvellement, rappels, délai de grâce, suspension, place
+    gardée puis libérée) et la durée de la première semaine remboursée. La base les garde hors de tarifs_publics().
+    La place est gardée `place_gardee_jours` jours comptés depuis le renouvellement, comme la base les compte
+    (jusqu'au 15 inclus), et libérée le lendemain (décision du 23/10/2026)."""
+    f = json.loads(chemin.read_text(encoding="utf-8"), object_pairs_hook=_unique_object)
+    c = dict(f["calendrier_paiement"], premiere_semaine_jours=f["premiere_semaine_remboursee_jours"])
+    if c["grace_jours"] != list(range(c["renouvellement_jour"], c["suspension_jour"])) \
+            or c["place_liberee_jour"] != c["renouvellement_jour"] + c["place_gardee_jours"] + 1 \
+            or c["place_liberee_jour"] <= c["suspension_jour"]:
+        raise ValueError("Calendrier du paiement incohérent dans la décision des tarifs")
+    return c
+
+
+def encarts_publics(chemin: Path = TARIFS_FALLBACK) -> dict:
+    """Les textes que la décision du 18/10 (consigne 3) fait publier tels quels sur les cours, les familles et le recrutement.
+    Seule la typographie change : une espace insécable avant « $ » et « % », pour qu'un montant ne se coupe pas."""
+    f = json.loads(chemin.read_text(encoding="utf-8"), object_pairs_hook=_unique_object)
+    return {cle: re.sub(r"(\d) ([$%])", "\\1\u00a0\\2", texte) for cle, texte in f["site_public"].items()}
+
+
+def encarts_suivis(politique: dict) -> dict:
+    """Les encarts tels quels quand la politique affichée est celle de la décision. Si la base publie d'autres
+    valeurs (prix, âge adulte, tailles de classe), les mêmes phrases reprennent celles de la base, paie comprise :
+    le site ne montre jamais deux prix pour la même formule."""
+    textes = encarts_publics()
+    fichier = politique_affichee(tarifs_depuis_fichier())
+    cles = ("tarifEnfantMineur", "tarifAdulteMineur", "ageAdulte", "devise")
+    if all(politique[k] == fichier[k] for k in cles) and politique["classes"] == fichier["classes"]:
+        return textes
+    part = json.loads(TARIFS_FALLBACK.read_text(encoding="utf-8"))["enseignant"]["part_du_prix_pour_mille"]
+
+    def valeurs(q: dict) -> list[str]:
+        c, age = q["classes"], q["ageAdulte"]
+        paie_enfant = round(q["tarifEnfantMineur"] * part["enfant"] * c["tailleEnfant"] / 100_000)
+        paie_adulte = round(q["tarifAdulteMineur"] * part["adulte"] * c["tailleAdulte"] / 100_000)
+        dollars = lambda n: fmt_montant(n * 100, q["devise"])
+        return [fmt_montant(q["tarifEnfantMineur"], q["devise"]), fmt_montant(q["tarifAdulteMineur"], q["devise"]),
+                f"{AGE_ENFANT_MIN} à {age - 1} ans", f"à partir de {age} ans",
+                f"de {c['ouvertureMinimum']} à {c['tailleEnfant']} élèves",
+                f"de {c['ouvertureMinimum']} à {c['tailleAdulte']} personnes",
+                f"classes de {c['ouvertureMinimum']} à {c['tailleAdulte']} élèves",
+                dollars(paie_enfant), dollars(paie_adulte), dollars(round(3 * paie_adulte))]
+
+    anciennes, nouvelles = valeurs(fichier), valeurs(politique)
+    suivis = {}
+    for cle, texte in textes.items():
+        # En deux temps, par des jetons, pour qu'une nouvelle valeur ne soit jamais remplacée à son tour.
+        for i, ancienne in enumerate(anciennes):
+            texte = re.sub(rf"(?<![\d,]){re.escape(ancienne)}", f"\x00{i}\x00", texte)
+        for i, nouvelle in enumerate(nouvelles):
+            texte = texte.replace(f"\x00{i}\x00", nouvelle)
+        suivis[cle] = texte
+    return suivis
+
+
 def charger_tarifs(env: dict[str, str] | None = None, ouvrir=None, journal=print) -> tuple[dict, str]:
     """Base d'abord, fichier de la décision sinon. Rend (tarifs, origine)."""
     try:
@@ -282,28 +355,26 @@ def prix_apres_remise(prix: int, rang: int, remises: list[dict]) -> int:
     return max(0, prix + applicable["montantMineur"])
 
 
-def lignes_remises_rang(politique: dict) -> list[tuple[str, str]]:
-    """Les lignes « membre du foyer / remise » : la première sans remise, puis une par palier."""
+def lignes_remises_foyer(politique: dict) -> list[tuple[str, str]]:
+    """Les remises du foyer dites en phrase (« Le 2e membre inscrit du foyer, sur sa place. », « 8 % »), une par rang de depart."""
     remises = politique["remisesFoyer"]
-    if not remises:
-        return [("Tous les membres", "Aucune")]
     lignes = []
-    premier = remises[0]["aPartirDuRang"]
-    lignes.append(("1er membre" if premier == 2 else f"1er au {fmt_rang(premier - 1)} membre", "Aucune"))
     for i, r in enumerate(remises):
-        suivant = remises[i + 1]["aPartirDuRang"] if i + 1 < len(remises) else None
         rang = r["aPartirDuRang"]
+        suivant = remises[i + 1]["aPartirDuRang"] if i + 1 < len(remises) else None
         if suivant is None:
-            etiquette = f"{fmt_rang(rang)} membre et suivants"
+            objet = f"Le {fmt_rang(rang)} membre inscrit du foyer et les suivants, sur leur place."
         elif suivant == rang + 1:
-            etiquette = f"{fmt_rang(rang)} membre"
+            objet = f"Le {fmt_rang(rang)} membre inscrit du foyer, sur sa place."
         else:
-            etiquette = f"{fmt_rang(rang)} au {fmt_rang(suivant - 1)} membre"
+            objet = f"Du {fmt_rang(rang)} au {fmt_rang(suivant - 1)} membre inscrit du foyer, sur leur place."
         if "pourMille" in r:
             valeur = fmt_pour_mille(r["pourMille"])
         else:
-            valeur = fmt_montant(-r["montantMineur"], politique["devise"]) + " en moins"
-        lignes.append((etiquette, valeur))
+            # Le grand chiffre reste un montant ; « en moins » passe dans la phrase.
+            valeur = fmt_montant(-r["montantMineur"], politique["devise"])
+            objet = "En moins pour " + objet[0].lower() + objet[1:]
+        lignes.append((objet, valeur))
     return lignes
 
 
@@ -323,6 +394,17 @@ def politique_affichee(tarifs: dict) -> dict:
     return tarifs["suivante"] or tarifs["courante"]
 
 
+def notes_prix(tarifs: dict, aujourdhui: date) -> list[str]:
+    """Les mentions qui accompagnent les prix : date d'effet s'il y a lieu, puis monnaies et taxes du paiement.
+    Les monnaies sont celles de la décision (mentions_sous_la_grille), pas « votre monnaie »."""
+    p = politique_affichee(tarifs)
+    hors_taxes = "hors taxes" if p["horsTaxes"] else "taxes comprises"
+    notes = [f"Prix en {NOMS_DEVISES.get(p['devise'], p['devise'])}, {hors_taxes}. La taxe de votre pays et le montant"
+             " en euros, livres ou dollars canadiens s’affichent au paiement."]
+    date_note = note_date_effet(tarifs, aujourdhui)
+    return [date_note] + notes if date_note else notes
+
+
 def note_date_effet(tarifs: dict, aujourdhui: date) -> str:
     """Phrase sur la date d'effet quand la politique affichée n'est pas encore en vigueur."""
     p = politique_affichee(tarifs)
@@ -337,11 +419,34 @@ def note_date_effet(tarifs: dict, aujourdhui: date) -> str:
     return texte
 
 
-def _tableau(legende: str, colonnes: tuple[str, str], lignes: list[tuple[str, str]]) -> str:
-    corps = "".join(f'<tr><th scope="row">{esc(a)}</th><td>{esc(b)}</td></tr>' for a, b in lignes)
-    return (f'<table class="price-table"><caption>{esc(legende)}</caption><thead><tr>'
-            f'<th scope="col">{esc(colonnes[0])}</th><th scope="col">{esc(colonnes[1])}</th></tr></thead>'
-            f'<tbody>{corps}</tbody></table>')
+def lie(phrase: str) -> str:
+    """Fourchettes, durees, pourcentages et nombres restent avec leur unite (« 6 à 17 ans », « 5 min », « 5 % de remise ») ;
+    une preposition reste avec le nombre qui la suit (« de 3 à 5 élèves ») ; espace insecable avant « : ; ? ! » ; le dernier
+    mot ne reste pas seul."""
+    e = "[ \u00a0]"
+    phrase = re.sub(r" ([:;?!])", "\u00a0\\1", phrase)
+    phrase = re.sub(rf"(\d+){e}à{e}(\d+)", "\\1\u00a0à\u00a0\\2", phrase)
+    phrase = re.sub(rf"(\d+){e}h{e}(\d+)", "\\1\u00a0h\u00a0\\2", phrase)
+    phrase = re.sub(rf"(\d+(?:,\d+)?){e}(%|\$){e}(de|d’)(?:{e})?", lambda m: f"{m[1]}\u00a0{m[2]}\u00a0{m[3]}" + ("\u00a0" if m[3] == "de" else ""), phrase)
+    phrase = re.sub(rf"(\d+(?:,\d+)?){e}(%|\$)", "\\1\u00a0\\2", phrase)
+    phrase = re.sub(rf"(\d+){e}(élèves|ans|personnes|séances|minutes|min|h|enfants|adultes|mois|semaines|jours?)\b", "\\1\u00a0\\2", phrase)
+    phrase = re.sub(rf"(?<![\w’'])(de|à|dès|par|sur){e}(?=\d)", "\\1\u00a0", phrase)
+    phrase = re.sub(rf"(?<![\w’'])(le|la|de|du|à|au|en|et|ou|un|ne|ce|se|sa|y|a) (?=\S)", "\\1\u00a0", phrase)
+    tete, espace, dernier = phrase.rpartition(" ")
+    precedent = tete.rsplit(" ", 1)[-1]
+    if espace and len(dernier) <= 12 and len(precedent) + 1 + len(dernier) <= 14 and len(tete.split()) >= 3:
+        phrase = f"{tete}\u00a0{dernier}"
+    return phrase
+
+
+def _tableau(legende: str, colonnes: tuple[str, str], lignes: list[tuple[str, str]], css: str = "") -> str:
+    # Les rôles ARIA gardent la lecture en tableau quand l'affichage change (le coût d'une famille posé en tuiles).
+    corps = "".join(f'<tr role="row"><th scope="row" role="rowheader">{esc(lie(a))}</th><td role="cell">{esc(lie(b))}</td></tr>'
+                    for a, b in lignes)
+    classe = f"price-table {css}".strip()
+    return (f'<table class="{classe}" role="table"><caption>{esc(legende)}</caption><thead role="rowgroup"><tr role="row">'
+            f'<th scope="col" role="columnheader">{esc(colonnes[0])}</th><th scope="col" role="columnheader">{esc(colonnes[1])}</th></tr></thead>'
+            f'<tbody role="rowgroup">{corps}</tbody></table>')
 
 
 def lignes_grille(politique: dict) -> list[tuple[str, str]]:
@@ -361,57 +466,90 @@ def rendre_tarifs_section(nom: str, tarifs: dict, aujourdhui: date) -> str:
     if nom == "grille":
         hors_taxes = "hors taxes" if p["horsTaxes"] else "taxes comprises"
         html_ = _tableau(f"Par élève et par mois, {hors_taxes}", ("Formule", "Prix par mois"), lignes_grille(p))
-        notes = [f"Prix en {NOMS_DEVISES.get(devise, devise)}, {hors_taxes}. La taxe de votre pays et le montant"
-                 " dans votre monnaie sont indiqués au paiement."]
-        date_note = note_date_effet(tarifs, aujourdhui)
-        if date_note:
-            notes.insert(0, date_note)
-        return html_ + "".join(f'<p class="price-note">{esc(n)}</p>' for n in notes)
+        return html_ + "".join(f'<p class="price-note">{esc(n)}</p>' for n in notes_prix(tarifs, aujourdhui))
     if nom == "remises":
-        parties = [_tableau("Remise selon le rang dans le foyer", ("Rang d’inscription", "Remise"),
-                            lignes_remises_rang(p))]
-        points = []
+        # Chaque remise en grand chiffre, avec ce a quoi elle s'applique dessous : une liste ouverte, sans tableau ni cartes.
+        remises = [(valeur, objet) for objet, valeur in lignes_remises_foyer(p)]
         pre = p["prepaiement"]
         if pre and pre["trimestrielPourMille"]:
-            points.append(f"Paiement au trimestre : {fmt_pour_mille(pre['trimestrielPourMille'])} de remise.")
+            remises.append((fmt_pour_mille(pre["trimestrielPourMille"]), "Paiement au trimestre."))
         if pre and pre["annuelPourMille"]:
-            points.append(f"Paiement à l'année : {fmt_pour_mille(pre['annuelPourMille'])} de remise.")
+            remises.append((fmt_pour_mille(pre["annuelPourMille"]), "Paiement à l'année."))
         if p["parrainageCreditMineur"]:
-            credit = fmt_montant(p["parrainageCreditMineur"], devise)
-            points.append(f"Parrainage : {credit} de crédit pour vous et pour la famille parrainée,"
-                          " après son premier mois.")
+            remises.append((fmt_montant(p["parrainageCreditMineur"], devise),
+                            "Parrainage : un crédit pour vous et pour la famille parrainée, après son premier mois."))
         if p["bourse"] and p["bourse"]["pourMille"]:
-            duree = f", revue tous les {p['bourse']['dureeMois']} mois" if p["bourse"]["dureeMois"] else ""
-            points.append(f"Bourse : {fmt_pour_mille(p['bourse']['pourMille'])} de remise pour les familles en difficulté"
-                          f" et les personnes récemment converties, sur demande écrite{duree}."
-                          " Les places sont limitées et la bourse ne se cumule avec aucune autre remise.")
-        if p["cumulMaxPourMille"]:
-            points.append(f"Les remises du foyer, du prépaiement et du parrainage ne dépassent jamais"
-                          f" {fmt_pour_mille(p['cumulMaxPourMille'])} du prix.")
-        liste = ('<ul class="fact-list">' + "".join(f"<li><strong>{esc(t)}</strong></li>" for t in points) + "</ul>"
-                 if points else "")
-        return parties[0] + liste
+            # Les mots de encart_remises ; le non-cumul est dit une fois, dans la phrase de la section.
+            remises.append((fmt_pour_mille(p["bourse"]["pourMille"]),
+                            "Bourse, pour les familles en difficulté et les personnes récemment converties, sur demande"
+                            " écrite. Les places sont limitées."))
+        liste = ('<ul class="remises">' + "".join(
+            f'<li class="remise"><span class="remise__valeur">{esc(v)}</span><span class="remise__objet">{esc(lie(o))}</span></li>'
+            for v, o in remises) + "</ul>") if remises else ""
+        cumul = (f'<p class="price-note">{esc(lie("Les remises du foyer, du prépaiement et du parrainage ne dépassent jamais " + fmt_pour_mille(p["cumulMaxPourMille"]) + " du prix."))}</p>'
+                 if p["cumulMaxPourMille"] else "")
+        return liste + cumul
+    if nom == "echeances":
+        # Les dates que la page Annulation renvoie à cette page (« les dates exactes sont celles de la politique
+        # tarifaire en vigueur »), lues dans la décision du 18/10 : la base ne les publie pas (tarifs_publics).
+        c = calendrier_paiement()
+        jour = lambda n: "1er" if n == 1 else str(n)
+        rappels = [f"{n} jour{'s' if n > 1 else ''}" for n in c["relances_jours_avant"]]
+        rappels = ", ".join(rappels[:-1]) + " et " + rappels[-1] if len(rappels) > 1 else rappels[0]
+        grace = c["grace_jours"]
+        etapes = [
+            (f"{c['premiere_semaine_jours']} jours",
+             "Après la première séance, pour arrêter et être remboursé en entier si le cours ne convient pas."),
+            (f"Le {jour(c['renouvellement_jour'])}",
+             f"Le renouvellement du mois. Si le paiement n’est pas passé, des rappels {rappels} avant."),
+            (f"Du {jour(grace[0])} au {jour(grace[-1])}",
+             "Sans paiement, l’élève suit ses cours ; l’impayé s’affiche dans le compte."),
+            (f"À partir du {jour(c['suspension_jour'])}",
+             f"Sans paiement, l’accès aux séances est suspendu. La place est gardée jusqu’au {jour(c['place_liberee_jour'] - 1)}."),
+            (f"Le {jour(c['place_liberee_jour'])}",
+             "La place est libérée pour la liste d’attente. Le retour reste possible, sans frais."),
+        ]
+        # Les dates sont celles de la politique affichée : si elle n'est pas encore en vigueur, la page le dit.
+        effet = politique_affichee(tarifs)["dateEffet"]
+        note = (f'<p class="price-note">{esc(lie(f"Ces dates s’appliquent à partir du {fmt_date(effet)}."))}</p>'
+                if date.fromisoformat(effet) > aujourdhui else "")
+        return ('<ul class="remises remises--echeances">' + "".join(
+            f'<li class="remise"><span class="remise__valeur">{esc(lie(v))}</span><span class="remise__objet">{esc(lie(o))}</span></li>'
+            for v, o in etapes) + "</ul>" + note)
     if nom == "famille":
         lignes = [(f"{n} enfant{'s' if n > 1 else ''}", fmt_montant(total, devise))
                   for n, total in famille_enfants(p)]
-        return (_tableau("Total par mois pour une famille d’enfants", ("Inscrits", "Total par mois"), lignes)
+        # Le tableau de la decision du 18/10, pose sans cases ni bandes : le total en grand sur chaque ligne.
+        return (_tableau("Total par mois pour une famille d’enfants", ("Inscrits", "Total par mois"), lignes, "price-table--famille")
                 + '<p class="price-note">Le rang suit l’ordre d’inscription dans le foyer. Montants hors taxes.</p>')
-    if nom == "classes":
-        formules = formules_editoriales()
-        c = p["classes"]
+    if nom == "fiches-eleves":
+        e = encarts_suivis(p)
 
-        def ligne(public: str, cle: str, taille: int) -> tuple[str, str]:
-            f = formules[cle]
-            pause = f" dont {f['pause_minutes']} min de pause" if f["pause_minutes"] else ""
-            duree = f["duree_minutes"]
-            heures = f"{duree // 60} h" + (f" {duree % 60}" if duree % 60 else "") if duree >= 60 else f"{duree} min"
-            return public, (f"{f['seances_par_semaine']} séances par semaine, {heures}{pause}, "
-                            f"de {c['ouvertureMinimum']} à {taille} élèves")
-        lignes = [ligne("Enfants et adolescents", "enfant", c["tailleEnfant"]),
-                  ligne("Adultes", "adulte", c["tailleAdulte"])]
-        return (_tableau("Une classe, un enseignant attitré, une heure fixe", ("Public", "Organisation"), lignes)
-                + f'<p class="price-note">Une classe ouvre dès {c["ouvertureMinimum"]} inscrits. Avant cela, vous êtes'
-                  ' en liste d’attente et rien n’est facturé.</p>')
+        # Les phrases de l'encart, sans en changer un mot, posees une par ligne pour se lire d'un coup d'oeil.
+        # Une fourchette (« 3 à 5 ») et un nombre suivi de son unite ne se coupent pas.
+        # Le prix (« 55 $ par mois, hors taxes. ») garde ses mots ; son montant seul se pose en grand.
+        def ligne(ph: str) -> str:
+            m = re.match(r"(\d+(?:,\d+)?[ \u00a0]\$) (.+)$", ph)
+            if not m:
+                return f"<li>{esc(lie(ph))}</li>"
+            return f'<li class="fiche__prix"><span class="fiche__montant">{esc(lie(m[1]))}</span> {esc(lie(m[2]))}</li>'
+
+        def lignes(texte: str) -> str:
+            phrases = re.split(r"(?<=\.) (?=[A-ZÀ-Ý0-9])", texte)
+            places = places_fiche(phrases)
+            return '<ul class="fiche__lignes">' + "".join(
+                (ligne(ph) if k < 2 or len(ph) > 60 else ligne(ph).replace("<li", '<li class="fiche__court"', 1))
+                .replace(">", f' style="{places[k]}">', 1) if k in places else ligne(ph)
+                for k, ph in enumerate(phrases)) + "</ul>"
+        # Un choix Enfants / Adultes montre une fiche a la fois ; les deux restent publiees telles quelles.
+        return ('<div class="fiches-bloc"><div class="fiches__choix" role="group" aria-label="Afficher la fiche">'
+                '<input type="radio" name="fiche-public" id="fiche-enfants" checked><label for="fiche-enfants">Enfants</label>'
+                '<input type="radio" name="fiche-public" id="fiche-adultes"><label for="fiche-adultes">Adultes</label></div>'
+                '<div class="fiches">'
+                f'<article class="fiche"><h3>Enfants et\u00a0adolescents</h3>{lignes(e["encart_enfant"])}</article>'
+                f'<article class="fiche"><h3>Adultes</h3>{lignes(e["encart_adulte"])}</article></div></div>')
+    if nom == "fiche-enseignant":
+        return f'<div class="fiches"><article class="fiche"><p>{esc(encarts_suivis(p)["encart_enseignant"])}</p></article></div>'
     raise ValueError(f"Section générée inconnue : {nom}")
 
 

@@ -32,7 +32,7 @@ Part de l'enseignant pour les **enfants portée de 21 % à 22,5 %** du prix ; **
 | Paie enseignant (19/10) | 1,99 $ par élève présent et par heure | 1,57 $ |
 | Part de l'enseignant (19/10) | 47 % | 47 % |
 
-Remises : 2e inscrit du foyer -8 %, 3e et suivants -17 %, trimestre -5 %, année -10 %, parrainage 20 $ de crédit chacun, bourse -30 % (non cumulable, 5 % des élèves au plus, revue tous les 6 mois). Foyer, prépaiement et parrainage cumulés : 25 % du prix au plus. Pas d'essai gratuit : première semaine remboursée. Renouvellement le 1er ; relances J-7, J-3, J-1 ; grâce du 1er au 3 ; suspension le 4 ; place gardée 14 jours, libérée le 18.
+Remises : 2e inscrit du foyer -8 %, 3e et suivants -17 %, trimestre -5 %, année -10 %, parrainage 20 $ de crédit chacun, bourse -30 % (non cumulable, 5 % des élèves au plus, revue tous les 6 mois). Foyer, prépaiement et parrainage cumulés : 25 % du prix au plus. Pas d'essai gratuit : première semaine remboursée. Renouvellement le 1er ; relances J-7, J-3, J-1 ; grâce du 1er au 3 ; suspension le 4 ; place gardée jusqu'au 15 (14 jours après le renouvellement), libérée le 16 (23/10/2026, point 4 ci-dessous).
 
 ## Ce que cette décision remplace
 
@@ -45,7 +45,7 @@ Toute valeur ci-dessous est **caduque** ; ne pas la reprendre, même si elle fig
 | Remise foyer 0 / 5 / 10 % ; ou 5 $ au 3e et 7 $ au 4e | Dossier maître (contrat CFO) ; politique `v1.0.0` ; simulation du 17/10 | -8 % au 2e, -17 % au 3e et suivants |
 | Paie horaire par classe (4 $ de base, 7 $ de plafond) ; ou 20 $ par élève | Règles de rémunération en base ; politique `v1.0.0` ; dossier maître (proposition) | 1,99 $ (enfant) et 1,57 $ (adulte) par élève présent et par heure, 47 % du prix (19/10) |
 | Crédits prépayés qui expirent (50 $ pour 60 jours) | Specs d'origine | Abonnement mensuel renouvelé le 1er |
-| Place gardée 7 jours | Guide Finance V4 §1.7 ; politique `v1.0.0` | 14 jours après la suspension du 4 |
+| Place gardée 7 jours ; puis 14 jours après la suspension, libérée le 18 (version du 18/10 de ce document) | Guide Finance V4 §1.7 ; politique `v1.0.0` ; document du directeur du 18/10 | Gardée jusqu'au 15, libérée le 16 (23/10/2026) |
 | Groupe ouvert à 4 élèves | Politique `v1.0.0` (`minimum_ouverture`) | 3 élèves |
 | 0,95 $ (enfant) et 1,00 $ (adulte) par élève présent et par heure, parts de 22,5 % et 30 % ; palier 1,05 et 1,15 $ ; plafond 1,30 et 1,50 $ | Version du 18/10 de ce document et du document du directeur ; politique `v2.0.0` en base avant la migration `20261019130000` | 1,99 $ et 1,57 $, 47 % du prix (19/10) |
 | Page publique `/fr/tarifs` (« les deux premiers membres gardent leur tarif ») | `site-public/content/pages.json` | Grille, remises et mentions de ce document |
@@ -55,6 +55,7 @@ Toute valeur ci-dessous est **caduque** ; ne pas la reprendre, même si elle fig
 1. **Âge de la formule adulte.** Le document fixait l'adulte à 15 ans ; les règles du programme (29/09, confirmées le 12/10) le fixent à 18 ans. **Directeur, 18/10/2026 : 18 ans.** Enfant 6 à 17 ans (55 $, 3 x 60 min, classe enfant), adulte 18 ans et plus (65 $, 3 x 90 min, classe adulte). Cohortes du programme inchangées (6-9, 10-13, 14-17, 18+) ; aucun mineur dans une classe d'adultes. La pause enfant suit le programme (5 min) et « mode enfant » devient « Interface guidée par défaut de 6 à 9 ans » (vocabulaire et registre du 14/10). Le document du directeur est corrigé en conséquence.
 2. **Essai.** Le guide Finance V4 prévoyait 2 séances d'essai ; le document du 18/10 le remplace par la première semaine remboursée. La politique publiée porte `essai_actif = false`.
 3. **Cahier de transmission.** Le document le veut hebdomadaire ; l'application en tient un par séance. Ce n'est pas un tarif : la paie du mois est mise en attente tant que le cahier de la semaine manque, et le passage au cahier hebdomadaire est inscrit comme lot à part dans la passation.
+4. **Place d'un impayé.** Le document du 18/10 disait : place gardée 14 jours après la suspension du 4, libérée le 18 ; la base compte les 14 jours depuis le renouvellement du 1er (`v_conservation := v_mois + jours_conservation_place`), soit une place gardée jusqu'au 15 inclus. **Directeur, 23/10/2026 (décision confiée à Claude, « dans l'intérêt de l'académie, on ne peut pas laisser les gens nous manipuler ») : la place est gardée jusqu'au 15 et libérée le 16.** C'est la règle la plus stricte des deux, la plus simple à dire (14 jours après le renouvellement) et celle que la base applique déjà : `jours_conservation_place` reste 14, aucune migration. Le site public l'affiche (`calendrier_paiement.place_liberee_jour` = 16).
 
 ## Points ouverts du document, valeurs par défaut appliquées
 

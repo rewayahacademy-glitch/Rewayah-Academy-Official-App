@@ -36,6 +36,7 @@ def _charger(nom: str):
 
 BUILDER = _charger("build_site")
 TARIFS = BUILDER.tarifs_mod
+TARIFS_DECISION = TARIFS.TARIFS_FALLBACK
 NODE = shutil.which("node")
 NBSP = " "
 
@@ -159,6 +160,17 @@ class LectureDeLaBase(unittest.TestCase):
         rendu = "\n".join(p.read_text(encoding="utf-8") for p in sortie.rglob("*.html"))
         self.assertIn(f"60{NBSP}$", rendu)
         self.assertIn("à partir du 1er janvier 2099", rendu)
+        # Les encarts de la décision suivent la politique affichée : jamais deux prix pour la même formule.
+        cours = (sortie / "fr" / "cours.html").read_text(encoding="utf-8")
+        # La place de chaque tuile au bureau (style calculé au build) n'entre pas dans la comparaison des mots.
+        fiches = re.sub(r' style="--c: [^"]*"', "", cours[cours.index('class="fiches"'):])
+        # Le montant se pose en grand dans sa propre balise ; la phrase de l'encart reste entiere une fois les balises otees.
+        self.assertIn(f'<li class="fiche__prix"><span class="fiche__montant">60{NBSP}$</span> par mois, hors{NBSP}taxes.</li>', fiches)
+        texte_fiches = re.sub(r"<[^>]+>", "", fiches)
+        self.assertIn(f"60{NBSP}$ par mois, hors{NBSP}taxes.", texte_fiches)
+        self.assertNotIn(f"55{NBSP}$ par mois", texte_fiches)
+        recrutement = (sortie / "fr" / "recrutement.html").read_text(encoding="utf-8")
+        self.assertIn(f"141{NBSP}$ par mois pour une classe d", recrutement)
         for interdit in (faux.url, "127.0.0.1", "cle-secrete-de-test", "apikey", "rpc/tarifs_publics"):
             self.assertNotIn(interdit, rendu)
         self.assertIsNone(re.search(r"supabase\.co(?!m)", rendu))
@@ -219,19 +231,64 @@ class PageGeneree(unittest.TestCase):
 
     def test_la_page_tarifs_affiche_les_valeurs_en_vigueur(self) -> None:
         texte = re.sub(r"<[^>]+>", "|", self.tarifs_html)
+        # Le texte courant lie ses petits mots par des espaces insecables : les phrases se comparent sans elles.
+        plat = texte.replace(NBSP, " ")
         for attendu in (f"55{NBSP}$", f"65{NBSP}$", f"105,60{NBSP}$", f"151,25{NBSP}$", f"196,90{NBSP}$",
                         f"8{NBSP}%", f"17{NBSP}%", f"5{NBSP}%", f"10{NBSP}%", f"30{NBSP}%", f"25{NBSP}%",
                         f"20{NBSP}$", "6 à 17 ans", "18 ans et plus", "hors taxes",
                         "la première semaine est remboursée"):
-            self.assertIn(attendu, texte)
+            self.assertIn(attendu, texte if NBSP in attendu else plat)
         for caduc in ("Aucun montant n'est affiché", "Les deux premiers membres gardent leur tarif",
                       "momentanément indisponibles", "50 $", "60 $"):
             self.assertNotIn(caduc, self.tarifs_html)
         self.assertNotIn("—", self.tarifs_html)
 
+    def test_les_dates_du_paiement_sont_celles_de_la_decision(self) -> None:
+        # La page Annulation renvoie à la page Tarifs pour les dates exactes : elles doivent y être, et ce sont
+        # celles de la décision du 18/10 (renouvellement le 1er, rappels J-7, J-3, J-1, délai de grâce du 1er au 3,
+        # suspension le 4 ; première semaine : 7 jours), avec la place gardée jusqu'au 15 et libérée le 16 (23/10).
+        plat = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", self.tarifs_html).replace(NBSP, " "))
+        for attendu in ("Les dates du paiement", "7 jours Après la première séance", "Le 1er Le renouvellement du mois",
+                        "des rappels 7 jours, 3 jours et 1 jour avant", "Du 1er au 3", "À partir du 4 Sans paiement",
+                        "La place est gardée jusqu’au 15", "Le 16 La place est libérée"):
+            self.assertIn(attendu, plat)
+        # Un nombre ne se separe pas de son unite en fin de ligne.
+        self.assertIn(f"1{NBSP}jour", self.tarifs_html)
+        self.assertIn(f"14{NBSP}jours", self.tarifs_html)
+        annulation = (OUTPUT / "fr" / "legal" / "annulation-remboursement.html").read_text(encoding="utf-8")
+        self.assertIn("politique tarifaire en vigueur (page Tarifs)", annulation.replace(NBSP, " "))
+        c = json.loads(TARIFS_DECISION.read_text(encoding="utf-8"))["calendrier_paiement"]
+        mauvais = copy.deepcopy(json.loads(TARIFS_DECISION.read_text(encoding="utf-8")))
+        mauvais["calendrier_paiement"]["place_liberee_jour"] = c["suspension_jour"] + c["place_gardee_jours"]
+        chemin = OUTPUT.parent / ".qa-calendrier.json"
+        chemin.write_text(json.dumps(mauvais), encoding="utf-8")
+        try:
+            with self.assertRaisesRegex(ValueError, "incohérent"):
+                TARIFS.calendrier_paiement(chemin)
+        finally:
+            chemin.unlink()
+
+    def test_les_tuiles_des_encarts_remplissent_leur_rangee(self) -> None:
+        # Au bureau, le prix puis sa phrase sur toute la largeur ; chaque rangée de tuiles occupe exactement les six
+        # colonnes, avec des tuiles de même largeur, pour que les bords des rangées tombent sur la même grille.
+        for cle in ("encart_enfant", "encart_adulte"):
+            phrases = re.split(r"(?<=\.) (?=[A-ZÀ-Ý0-9])", TARIFS.encarts_publics()[cle])
+            places = TARIFS.places_fiche(phrases)
+            self.assertEqual((places[1], places[0]), ("--c: 1 / -1; --r: 1", "--c: 1 / -1; --r: 2"))
+            rangees: dict[int, list[tuple[int, int]]] = {}
+            for k in range(2, len(phrases)):
+                m = re.fullmatch(r"--c: (\d+) / span (\d+); --r: (\d+)", places[k])
+                self.assertIsNotNone(m, places[k])
+                rangees.setdefault(int(m[3]), []).append((int(m[1]), int(m[2])))
+            for rang, cases in rangees.items():
+                cases.sort()
+                self.assertEqual(sum(s for _, s in cases), 6, (cle, rang))
+                self.assertEqual(len({s for _, s in cases}), 1, (cle, rang))
+                self.assertTrue(all(a + s == b for (a, s), (b, _) in zip(cases, cases[1:])), (cle, rang))
+
     def test_l_accueil_lit_les_memes_donnees(self) -> None:
         self.assertIn(f"55{NBSP}$", self.accueil)
-        self.assertIn("commencent au 2e membre", self.accueil)
+        self.assertIn("commencent au 2e membre", self.accueil.replace(NBSP, " "))
         self.assertNotIn("Selon le tarif en vigueur", self.accueil)
 
     def test_les_donnees_injectees_sont_celles_du_calcul(self) -> None:
@@ -253,7 +310,7 @@ class PageGeneree(unittest.TestCase):
         self.assertIn("Le simulateur demande JavaScript", self.tarifs_html)
         for identifiant in ("sim-total", "sim-paiement", "sim-parrainage", "sim-students", "sim-result"):
             self.assertIn(f'id="{identifiant}"', self.tarifs_html)
-        for libelle in ("<label>Nombre d’élèves", "<label>Paiement", "<label>Parrainage"):
+        for libelle in ('<label for="sim-total">Nombre d’élèves', "<label>Paiement", "<label>Parrainage"):
             self.assertIn(libelle, self.tarifs_html)
 
     def test_le_simulateur_n_a_aucun_nombre_de_tarif_en_dur(self) -> None:
@@ -263,9 +320,8 @@ class PageGeneree(unittest.TestCase):
         for nombre in ("5500", "6500", "2000", "250", "170", "80", "55", "65", "18", "20", "30", "12", "1000", "100"):
             self.assertIsNone(re.search(rf"(?<![\w.]){nombre}(?![\w.])", source), nombre)
 
-    def test_indexation_toujours_fermee(self) -> None:
-        with self.assertRaisesRegex(ValueError, "preview-only"):
-            BUILDER.build(OUTPUT, "https://rewayah-academy.vercel.app", True, env={})
+    def test_apercu_jamais_indexe(self) -> None:
+        # L'indexation n'est ouverte que par la construction de production (test_build_site_qa.ProductionSiteQA).
         self.assertIn('content="noindex,nofollow"', self.tarifs_html)
 
     def test_pages_juridiques_sans_repere_a_completer(self) -> None:
