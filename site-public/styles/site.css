@@ -949,7 +949,7 @@ li, dd { text-wrap: wrap; }
   .footer-identity address { margin-top: 0; }
   .pied-volet--liens ul { display: flex; flex-wrap: wrap; gap: 0 var(--e-8); font-size: var(--t-corps); }
   .pied-volet--liens a { min-height: 44px; color: var(--sur-pied); }
-  .site-footer .site-footer__inner .footer-identity p, .site-footer .site-footer__inner .footer-identity address { font-size: 15px; }
+  .site-footer .site-footer__inner .footer-identity p, .site-footer .site-footer__inner .footer-identity address { font-size: 16px; }
   .site-footer .footer-contacts { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--e-4) var(--e-10); }
   .footer-contacts a { min-height: 0; font-size: 16px; }
   .footer-contacts__adresse { white-space: nowrap; }
