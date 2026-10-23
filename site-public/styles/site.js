@@ -126,12 +126,17 @@ if (typeof document !== 'undefined') {
   // Pied de page : sous 1100 px, « Decouvrir » et « Nous contacter » se replient ; ouverts au-dela, et sans script.
   const volets = document.querySelectorAll('.pied-volet');
   const telephone = window.matchMedia('(max-width: 1099px)');
+  const impression = window.matchMedia('print');
   const plier = () => volets.forEach((volet) => {
+    // A l'impression, tout s'imprime : les volets restent ouverts, meme en portrait.
+    if (impression.matches) { volet.open = true; return; }
     volet.open = !telephone.matches;
     volet.querySelector('summary').tabIndex = telephone.matches ? 0 : -1;
   });
   plier();
   telephone.addEventListener('change', plier);
+  window.addEventListener('beforeprint', () => volets.forEach((volet) => { volet.open = true; }));
+  window.addEventListener('afterprint', plier);
 }
 
 function initialiserSimulateur(simulator, d) {

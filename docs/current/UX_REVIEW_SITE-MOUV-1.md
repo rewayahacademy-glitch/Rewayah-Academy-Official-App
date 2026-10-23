@@ -791,6 +791,16 @@ Inspection des six pages : 0 FAIL hors Tarifs (une image, voulu). Aucun texte co
 | UU7 | Cours : « Trois séances par semaine » éparpillée | L'arche à gauche, le titre, le texte et les deux liens à droite |
 | UU8 | Accueil : la ligne « Arrêter l'animation du tapis » | Un rond de 44 px avec son seul signe ; son nom reste lu par les lecteurs d'écran et s'affiche au survol |
 
+Relecture adverse de ce tour (trois relecteurs, chaque relevé vérifié par un second agent chargé de le réfuter) : six défauts confirmés, tous corrigés et vérifiés en rejouant les scripts des relecteurs.
+
+| # | Relevé confirmé | Correction |
+|---|---|---|
+| UU9 | Chapitres : un texte effacé restait cliquable (un lien invisible ouvrait une page) | Effacé, le texte ne prend plus les clics ; il les reprend s'il reçoit le focus |
+| UU10 | Chapitres : en passant au mouvement réduit page ouverte, un texte effacé restait invisible | L'effacement ne joue qu'à l'écran et sans mouvement réduit |
+| UU11 | Impression en paysage : le texte des chapitres déjà passés manquait | Même règle : rien n'est effacé à l'impression |
+| UU12 | Impression en portrait depuis un ordinateur : les volets du pied de page se fermaient (adresses perdues) | À l'impression, les volets restent ouverts ; ils retrouvent leur état ensuite |
+| UU13 | Tarifs : la phrase « pas d'essai » sur trois lignes ; onze tailles de texte sur la page | Deux lignes ; tailles réunies (les dates, la phrase et les totaux d'une famille ensemble, les remises à la taille des titres de section) |
+
 ## Hors de portée de l'agent
 
 - `.github/workflows/flutter-deploy.yml` vérifie la présence de 8 fichiers du site, mais pas de `motion.js`. Le garde du dépôt interdit à l'agent d'écrire dans `.github/`. Le test `test_only_approved_public_assets_are_copied` couvre ce fichier côté tests.

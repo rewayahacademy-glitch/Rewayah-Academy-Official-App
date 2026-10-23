@@ -156,7 +156,9 @@
       var suivant = textesChapitres[i + 1];
       if (!suivant) return;
       var haut = (suivant.querySelector('h2') || suivant).getBoundingClientRect().top;
-      bloc.style.setProperty('--sortie', borne((haut - h * 0.6) / (h * 0.15)).toFixed(3));
+      var sortie = borne((haut - h * 0.6) / (h * 0.15));
+      bloc.style.setProperty('--sortie', sortie.toFixed(3));
+      bloc.toggleAttribute('data-efface', sortie < 0.05);
     });
   }
 

@@ -2325,8 +2325,12 @@ li, dd { text-wrap: wrap; }
   /* Le dernier a la hauteur de la fenetre : son texte se centre dans le chapitre, sans epinglage, et part avec l'image. */
   .chapitre:last-child { display: flex; flex-direction: column; justify-content: center; }
   .chapitre:last-child .chapitre__texte { position: static; translate: none; }
-  /* Le texte qui sort s'efface avant que l'arche change d'image (valeur posee par motion.js). */
+}
+/* Le texte qui sort s'efface avant que l'arche change d'image (valeur posee par motion.js) ; efface, il ne prend plus
+   les clics. Ecran seulement, et pas en mouvement reduit : rien ne manque a l'impression ni a qui coupe le mouvement. */
+@media screen and (min-width: 840px) and (prefers-reduced-motion: no-preference) {
   .chapitre__texte { opacity: var(--sortie, 1); }
+  .chapitre__texte[data-efface]:not(:focus-within) { pointer-events: none; }
   .chapitre__texte:focus-within { opacity: 1; }
 }
 
