@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/candidature/nom_latin.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/indicatifs_telephoniques.dart';
 import '../../core/router/routes.dart';
@@ -72,6 +73,7 @@ class BrouillonInscription {
     this.usage,
     this.prenom = '',
     this.nom = '',
+    this.nomLatin = '',
     this.genre,
     this.profilCree = false,
     this.parentSuitDesCours,
@@ -90,6 +92,11 @@ class BrouillonInscription {
 
   /// Le nom saisi.
   final String nom;
+
+  /// Le nom en lettres latines que la personne a confirme (candidat
+  /// enseignant dont le nom saisi n'est pas en alphabet latin, decision du
+  /// directeur du 23/10/2026) ; vide sinon.
+  final String nomLatin;
 
   /// Le genre retenu.
   final Genre? genre;
@@ -127,6 +134,25 @@ class BrouillonInscription {
   /// Vrai quand l'identite est remplie.
   bool get identiteRemplie => prenom.trim().isNotEmpty && nom.trim().isNotEmpty;
 
+  /// Vrai quand l'etape d'identite pose une question de plus, « Votre nom en
+  /// lettres latines » : le candidat enseignant dont le nom saisi porte une
+  /// autre ecriture que l'alphabet latin. Les autres usages n'ont pas de
+  /// candidature ni de liste : ils n'en entendent pas parler.
+  bool get nomLatinDemande =>
+      usage == UsageInscription.enseignant &&
+      nomDemandeEcritureLatine('$prenom $nom');
+
+  /// Vrai quand l'identite est complete : remplie et, si la question de plus
+  /// est posee, repondue par un nom en lettres latines.
+  bool get identiteComplete =>
+      identiteRemplie && (!nomLatinDemande || nomEstLatin(nomLatin));
+
+  /// Le nom latin a envoyer au serveur apres l'inscription, ou `null` quand la
+  /// question n'a pas ete posee (ou pas repondue).
+  String? get nomLatinAEnvoyer => nomLatinDemande && nomEstLatin(nomLatin)
+      ? nomLatinNettoye(nomLatin)
+      : null;
+
   /// L'indicatif (sans « + ») du pays choisi, ou `null`.
   String? get indicatif => indicatifDuPays(paysTelephone);
 
@@ -148,7 +174,7 @@ class BrouillonInscription {
     if (usage == null) {
       return Routes.inscriptionUsage;
     }
-    if (!identiteRemplie) {
+    if (!identiteComplete) {
       return Routes.inscriptionIdentite;
     }
     if (genre == null) {
@@ -165,6 +191,7 @@ class BrouillonInscription {
     UsageInscription? usage,
     String? prenom,
     String? nom,
+    String? nomLatin,
     Genre? genre,
     bool? profilCree,
     bool? parentSuitDesCours,
@@ -177,6 +204,7 @@ class BrouillonInscription {
     usage: usage ?? this.usage,
     prenom: prenom ?? this.prenom,
     nom: nom ?? this.nom,
+    nomLatin: nomLatin ?? this.nomLatin,
     genre: genre ?? this.genre,
     profilCree: profilCree ?? this.profilCree,
     parentSuitDesCours: parentSuitDesCours ?? this.parentSuitDesCours,
@@ -222,9 +250,18 @@ class BrouillonInscriptionControleur extends Notifier<BrouillonInscription> {
   void choisirParentSuitDesCours({required bool suit}) =>
       state = state.copier(parentSuitDesCours: suit);
 
-  /// Retient l'identite.
-  void saisirIdentite({required String prenom, required String nom}) =>
-      state = state.copier(prenom: prenom.trim(), nom: nom.trim());
+  /// Retient l'identite, et le nom en lettres latines quand l'etape l'a
+  /// demande (vide sinon : un nom latin ne survit pas a un nom qui n'en
+  /// demande plus).
+  void saisirIdentite({
+    required String prenom,
+    required String nom,
+    String nomLatin = '',
+  }) => state = state.copier(
+    prenom: prenom.trim(),
+    nom: nom.trim(),
+    nomLatin: nomLatinNettoye(nomLatin),
+  );
 
   /// Retient le genre.
   void choisirGenre(Genre genre) => state = state.copier(genre: genre);

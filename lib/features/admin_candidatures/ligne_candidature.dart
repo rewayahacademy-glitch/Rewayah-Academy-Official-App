@@ -169,6 +169,56 @@ List<ColonneDonnees<LigneCandidature>> colonnesCandidatures({
   ];
 }
 
+/// La seconde ligne du nom : le nom d'origine, garde tel quel (isole pour son
+/// sens), puis la reference. Le nom d'origine est en petit : c'est le nom
+/// latin qui fait reference (decision du directeur du 23/10/2026).
+String secondeLigneNom(LigneCandidature ligne) {
+  final String? origine = nomOrigineAffiche(ligne);
+  return origine == null
+      ? referenceAffichee(ligne)
+      : '${isolerSens(origine)} · ${referenceAffichee(ligne)}';
+}
+
+/// Le nom de reference d'une ligne (en lettres latines) et, quand il n'est
+/// qu'une proposition, la marque « a confirmer » : un mot, jamais la couleur
+/// seule.
+class NomDeLigne extends StatelessWidget {
+  /// Cree le nom.
+  const NomDeLigne({required this.ligne, required this.style, super.key});
+
+  /// La ligne.
+  final LigneCandidature ligne;
+
+  /// Le style du nom.
+  final TextStyle style;
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget nom = TexteSansCoupure(nomAffiche(ligne), style: style);
+    if (!nomAConfirmer(ligne)) {
+      return nom;
+    }
+    final AppPalette palette = AppPalette.of(context);
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Flexible(child: nom),
+        Ecart.hSm,
+        Semantics(
+          label: t.admin.candidatures.liste.nomAConfirmerSemantique,
+          excludeSemantics: true,
+          child: Text(
+            t.admin.candidatures.liste.nomAConfirmer,
+            style: palette.inkWarning.applyTo(
+              Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 /// La cellule du nom : le nom, la reference dessous, et le repere des
 /// informations manquantes quand il y en a.
 class _CelluleNom extends StatelessWidget {
@@ -188,14 +238,14 @@ class _CelluleNom extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              TexteSansCoupure(
-                nomAffiche(ligne),
+              NomDeLigne(
+                ligne: ligne,
                 style: palette.inkStrong.applyTo(
                   textes.titleSmall ?? const TextStyle(),
                 ),
               ),
               TexteSansCoupure(
-                referenceAffichee(ligne),
+                secondeLigneNom(ligne),
                 style: palette.inkMuted.applyTo(
                   textes.bodySmall ?? const TextStyle(),
                 ),
@@ -405,6 +455,8 @@ class CarteCandidature extends StatelessWidget {
 
     final String semantique = <String>[
       nomAffiche(ligne),
+      if (nomAConfirmer(ligne))
+        t.admin.candidatures.liste.nomAConfirmerSemantique,
       referenceAffichee(ligne),
       ?salle,
       ?etat?.libelle,
@@ -446,16 +498,13 @@ class CarteCandidature extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      TexteSansCoupure(
-                        nomAffiche(ligne),
+                      NomDeLigne(
+                        ligne: ligne,
                         style: palette.inkStrong.applyTo(
                           textes.titleMedium ?? const TextStyle(),
                         ),
                       ),
-                      TexteSansCoupure(
-                        referenceAffichee(ligne),
-                        style: attenue,
-                      ),
+                      TexteSansCoupure(secondeLigneNom(ligne), style: attenue),
                     ],
                   ),
                 ),

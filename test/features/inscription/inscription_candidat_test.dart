@@ -26,11 +26,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/accessibilite/texte_sans_coupure.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
+import 'package:rewayah_academy/core/candidature/nom_latin.dart';
 import 'package:rewayah_academy/core/candidature/port_inscription_candidat.dart';
+import 'package:rewayah_academy/core/candidature/port_nom_latin.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
+import 'package:rewayah_academy/core/i18n/isolat_bidi.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/recrutement/port_invitations_enseignant.dart';
@@ -48,6 +52,7 @@ import 'package:rewayah_academy/features/inscription/inscription_page.dart';
 import 'package:rewayah_academy/features/juridique/textes_juridiques.dart';
 
 import '../../fixtures/candidature/faux_inscription_candidat.dart';
+import '../../fixtures/candidature/faux_nom_latin.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 import '../../support/sens_et_echelle.dart';
@@ -97,6 +102,7 @@ Future<_Hote> _monter(
   bool horsLigne = false,
   bool Function()? compteExiste,
   FausseSourceSession? sessionImposee,
+  FauxNomLatin? nomLatin,
   Size taille = const Size(390, 844),
   double echelle = 1,
   ThemeMode mode = ThemeMode.light,
@@ -182,6 +188,7 @@ Future<_Hote> _monter(
         portInscriptionCandidatProvider.overrideWithValue(
           inscriptionAbsente ?? false ? null : port,
         ),
+        portNomLatinProvider.overrideWithValue(nomLatin),
         horsLigneProvider.overrideWith(
           (Ref _) => Stream<bool>.value(horsLigne),
         ),
@@ -1516,6 +1523,273 @@ void main() {
         expect(colonne.width, lessThanOrEqualTo(560));
       },
     );
+  });
+
+  group('le nom en lettres latines (decision du directeur du 23/10/2026)', () {
+    const Key champLatin = Key('inscription-nom-latin');
+    const Key raison = Key('inscription-nom-latin-raison');
+    const String prenomArabe = 'محمد';
+    const String nomArabe = 'الدوسري';
+
+    Future<_Hote> versLIdentite(
+      WidgetTester tester, {
+      bool enseignant = true,
+      FauxNomLatin? nomLatin,
+      Size taille = const Size(390, 844),
+    }) async {
+      final _Hote hote = await _monter(
+        tester,
+        nomLatin: nomLatin,
+        taille: taille,
+      );
+      final BrouillonInscriptionControleur c = _conteneur(tester)
+          .read(brouillonInscriptionProvider.notifier);
+      if (enseignant) {
+        c.deposerSansCode();
+      } else {
+        c.choisirUsage(UsageInscription.famille);
+      }
+      hote.routeur.go(Routes.inscriptionIdentite);
+      await tester.pumpAndSettle();
+      return hote;
+    }
+
+    Future<void> ecrire(WidgetTester tester, String prenom, String nom) async {
+      await tester.enterText(
+        find.byKey(const Key('inscription-prenom')),
+        prenom,
+      );
+      await tester.enterText(find.byKey(const Key('inscription-nom')), nom);
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('un nom en lettres latines : aucune question de plus', (
+      WidgetTester tester,
+    ) async {
+      await versLIdentite(tester);
+      await ecrire(tester, 'Amina', 'Diallo');
+      expect(find.byKey(champLatin), findsNothing);
+      expect(find.text(t.inscription.nomLatin.libelle), findsNothing);
+    });
+
+    testWidgets(
+      'un nom en arabe : la question arrive avec la proposition et sa raison',
+      (WidgetTester tester) async {
+        await versLIdentite(tester);
+        await ecrire(tester, prenomArabe, nomArabe);
+        expect(find.byKey(champLatin), findsOneWidget);
+        expect(
+          tester.widget<TextField>(find.byKey(champLatin)).controller!.text,
+          proposerNomLatin('$prenomArabe $nomArabe'),
+        );
+        expect(find.text(t.inscription.nomLatin.libelle), findsOneWidget);
+        // Pourquoi on le demande (K-58), dans les mots de la decision.
+        expect(
+          tester.widget<TexteSansCoupure>(find.byKey(raison)).texte,
+          t.inscription.nomLatin.raison,
+        );
+        expect(find.text(t.inscription.nomLatin.aide), findsOneWidget);
+        // Un seul bouton plein.
+        verifierUnSeulBoutonPlein(tester);
+      },
+    );
+
+    testWidgets(
+      'la proposition suit le nom tant que la personne n\'y a pas touche',
+      (WidgetTester tester) async {
+        await versLIdentite(tester);
+        await ecrire(tester, prenomArabe, nomArabe);
+        await ecrire(tester, prenomArabe, 'الحبشي');
+        expect(
+          tester.widget<TextField>(find.byKey(champLatin)).controller!.text,
+          proposerNomLatin('$prenomArabe الحبشي'),
+        );
+        // La personne corrige : la proposition ne reprend plus la main.
+        await tester.enterText(find.byKey(champLatin), 'Muhammad Al-Habshi');
+        await ecrire(tester, prenomArabe, 'الدوسري');
+        expect(
+          tester.widget<TextField>(find.byKey(champLatin)).controller!.text,
+          'Muhammad Al-Habshi',
+        );
+      },
+    );
+
+    testWidgets('le champ latin se lit de gauche a droite, en arabe aussi', (
+      WidgetTester tester,
+    ) async {
+      await _precharger(tester, garderArabe: true);
+      await versLIdentite(tester);
+      await ecrire(tester, prenomArabe, nomArabe);
+      expect(
+        tester.widget<TextField>(find.byKey(champLatin)).textDirection,
+        TextDirection.ltr,
+      );
+      expect(
+        find.text(t.inscription.nomLatin.libelle),
+        findsOneWidget,
+        reason: 'la question existe en arabe',
+      );
+    });
+
+    testWidgets(
+      'un champ latin vide ou non latin : on reste, la phrase dit quoi faire',
+      (WidgetTester tester) async {
+        final _Hote hote = await versLIdentite(tester);
+        await ecrire(tester, prenomArabe, nomArabe);
+        await tester.enterText(find.byKey(champLatin), '');
+        await _continuer(tester);
+        expect(hote.chemin, Routes.inscriptionIdentite);
+        expect(find.text(t.inscription.nomLatin.erreur), findsOneWidget);
+        await tester.enterText(find.byKey(champLatin), 'Muhammad محمد');
+        await _continuer(tester);
+        expect(hote.chemin, Routes.inscriptionIdentite);
+        expect(find.text(t.inscription.nomLatin.erreur), findsOneWidget);
+      },
+    );
+
+    testWidgets('« Continuer » confirme la proposition ou la correction', (
+      WidgetTester tester,
+    ) async {
+      final _Hote hote = await versLIdentite(tester);
+      await ecrire(tester, prenomArabe, nomArabe);
+      await tester.enterText(
+        find.byKey(champLatin),
+        '  Muhammad   Al-Dossari ',
+      );
+      await _continuer(tester);
+      expect(hote.chemin, Routes.inscriptionGenre);
+      final BrouillonInscription b = _brouillon(tester);
+      expect(b.nomLatin, 'Muhammad Al-Dossari');
+      expect(b.nomLatinAEnvoyer, 'Muhammad Al-Dossari');
+    });
+
+    testWidgets('un parent ou un eleve adulte n\'entend jamais la question', (
+      WidgetTester tester,
+    ) async {
+      final _Hote hote = await versLIdentite(tester, enseignant: false);
+      await ecrire(tester, prenomArabe, nomArabe);
+      expect(find.byKey(champLatin), findsNothing);
+      await _continuer(tester);
+      expect(hote.chemin, Routes.inscriptionGenre);
+      expect(_brouillon(tester).nomLatinAEnvoyer, isNull);
+    });
+
+    testWidgets('le nom latin confirme se voit au recapitulatif', (
+      WidgetTester tester,
+    ) async {
+      final _Hote hote = await _monter(tester);
+      final BrouillonInscriptionControleur c = _conteneur(tester)
+          .read(brouillonInscriptionProvider.notifier);
+      c
+        ..deposerSansCode()
+        ..saisirIdentite(
+          prenom: prenomArabe,
+          nom: nomArabe,
+          nomLatin: 'Mohamed Al-Dousari',
+        )
+        ..choisirGenre(Genre.homme)
+        ..saisirTelephone(pays: 'FR', numero: '06 12 34 56 78');
+      hote.routeur.go(Routes.inscriptionRecapitulatif);
+      await tester.pumpAndSettle();
+      expect(find.text(isolerSens('Mohamed Al-Dousari')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('inscription-modifier-nom-latin')),
+        findsOneWidget,
+      );
+    });
+
+    Future<_Hote> jusqueAuRecap(
+      WidgetTester tester,
+      FauxNomLatin nomLatin, {
+      String latin = 'Mohamed Al-Dousari',
+      bool question = true,
+    }) async {
+      final _Hote hote = await _monter(tester, nomLatin: nomLatin);
+      _conteneur(tester).read(brouillonInscriptionProvider.notifier)
+        ..deposerSansCode()
+        ..saisirIdentite(
+          prenom: question ? prenomArabe : 'Amina',
+          nom: question ? nomArabe : 'Diallo',
+          nomLatin: question ? latin : '',
+        )
+        ..choisirGenre(Genre.homme)
+        ..saisirTelephone(pays: 'FR', numero: '06 12 34 56 78');
+      hote.routeur.go(Routes.inscriptionRecapitulatif);
+      await tester.pumpAndSettle();
+      return hote;
+    }
+
+    testWidgets('apres l\'inscription, seul le texte confirme part, une fois', (
+      WidgetTester tester,
+    ) async {
+      final FauxNomLatin nom = FauxNomLatin(
+        nomComplet: '$prenomArabe $nomArabe',
+      );
+      final _Hote hote = await jusqueAuRecap(tester, nom);
+      await _cocherEtCreer(tester);
+      expect(hote.candidat.creations, hasLength(1));
+      // Le nom d'origine part tel quel dans l'inscription.
+      expect(hote.candidat.appels.single.prenom, prenomArabe);
+      expect(hote.candidat.appels.single.nom, nomArabe);
+      expect(nom.confirmations, <String>['Mohamed Al-Dousari']);
+      expect(hote.chemin, Routes.attente);
+    });
+
+    testWidgets('aucune question posee : aucun nom latin envoye', (
+      WidgetTester tester,
+    ) async {
+      final FauxNomLatin nom = FauxNomLatin(nomComplet: 'Amina Diallo');
+      final _Hote hote = await jusqueAuRecap(tester, nom, question: false);
+      await _cocherEtCreer(tester);
+      expect(hote.candidat.creations, hasLength(1));
+      expect(nom.confirmations, isEmpty);
+    });
+
+    testWidgets(
+      'un echec de la confirmation ne bloque rien : la Salle d\'examen le redemandera',
+      (WidgetTester tester) async {
+        final FauxNomLatin nom = FauxNomLatin(
+          nomComplet: '$prenomArabe $nomArabe',
+        )..panneConfirmation = panneReseauNomLatin;
+        final _Hote hote = await jusqueAuRecap(tester, nom);
+        await _cocherEtCreer(tester);
+        expect(hote.candidat.creations, hasLength(1));
+        expect(nom.confirmations, hasLength(1));
+        expect(nom.nomLatin, isNull);
+        expect(hote.chemin, Routes.attente);
+      },
+    );
+
+    testWidgets('sans port du nom latin, l\'inscription se fait comme avant', (
+      WidgetTester tester,
+    ) async {
+      final _Hote hote = await _monter(tester);
+      _conteneur(tester).read(brouillonInscriptionProvider.notifier)
+        ..deposerSansCode()
+        ..saisirIdentite(
+          prenom: prenomArabe,
+          nom: nomArabe,
+          nomLatin: 'Mohamed Al-Dousari',
+        )
+        ..choisirGenre(Genre.homme)
+        ..saisirTelephone(pays: 'FR', numero: '06 12 34 56 78');
+      hote.routeur.go(Routes.inscriptionRecapitulatif);
+      await tester.pumpAndSettle();
+      await _cocherEtCreer(tester);
+      expect(hote.candidat.creations, hasLength(1));
+      expect(hote.chemin, Routes.attente);
+    });
+
+    testWidgets('390 et 1440 : la question tient sans debordement', (
+      WidgetTester tester,
+    ) async {
+      for (final Size taille in const <Size>[Size(390, 844), Size(1440, 900)]) {
+        await versLIdentite(tester, taille: taille);
+        await ecrire(tester, prenomArabe, nomArabe);
+        expect(tester.takeException(), isNull);
+        expect(find.byKey(champLatin), findsOneWidget);
+      }
+    });
   });
 }
 

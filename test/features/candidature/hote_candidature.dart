@@ -120,6 +120,7 @@ Future<void> monterQuestionnaire(
   TextDirection? direction,
   ThemeMode themeMode = ThemeMode.light,
   FauxServiceDossier? dossier,
+  List<Override> surchargesEnPlus = const <Override>[],
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -131,13 +132,16 @@ Future<void> monterQuestionnaire(
       echelle: echelle,
       direction: direction,
       themeMode: themeMode,
-      surcharges: surchargesCandidature(
-        port: port,
-        etat: etat ?? etatCandidat(candidature: candidatureAFaire()),
-        dossier: dossier,
-        horsLigne: horsLigne,
-        fuseauAppareil: fuseauAppareil,
-      ),
+      surcharges: <Override>[
+        ...surchargesCandidature(
+          port: port,
+          etat: etat ?? etatCandidat(candidature: candidatureAFaire()),
+          dossier: dossier,
+          horsLigne: horsLigne,
+          fuseauAppareil: fuseauAppareil,
+        ),
+        ...surchargesEnPlus,
+      ],
     ),
   );
   if (attendre) {

@@ -8,6 +8,7 @@ library;
 import '../../core/candidature/modeles_autres_competences.dart';
 import '../../core/candidature/modeles_candidature.dart';
 import '../../core/candidature/modeles_candidatures_direction.dart';
+import '../../core/candidature/nom_latin.dart';
 import '../../core/i18n/identifiant_insecable.dart';
 import '../../core/i18n/pays_iso.dart';
 import '../../core/i18n/strings.g.dart';
@@ -144,9 +145,37 @@ String dateCourteCandidature(DateTime instant) {
       .replaceAll('\u2069', '');
 }
 
-/// Le nom d'une ligne pour un lecteur d'ecran : jamais vide.
-String nomAffiche(LigneCandidature ligne) =>
-    ligne.nomComplet.trim().isEmpty ? ligne.reference : ligne.nomComplet.trim();
+/// Le nom de reference d'une ligne, en lettres latines (decision du directeur
+/// du 23/10/2026) : le nom latin confirme ; sinon, quand le nom d'origine n'est
+/// pas latin, la proposition de translitteration (marquee « a confirmer », voir
+/// [nomAConfirmer]) ; sinon le nom d'origine. Jamais vide : la reference
+/// `CAND-...` tient lieu de nom a une ligne sans nom. C'est lui que montrent la
+/// liste, le lecteur d'ecran et le tri.
+String nomAffiche(LigneCandidature ligne) {
+  final String? latin = ligne.nomLatin?.trim();
+  if (latin != null && latin.isNotEmpty) {
+    return latin;
+  }
+  final String origine = ligne.nomComplet.trim();
+  if (ligne.nomLatinAConfirmer) {
+    final String proposition = proposerNomLatin(origine);
+    if (proposition.isNotEmpty) {
+      return proposition;
+    }
+  }
+  return origine.isEmpty ? ligne.reference : origine;
+}
+
+/// Le nom d'origine, a montrer en second quand il differe du nom de reference
+/// (en petit sous le nom latin) ; `null` quand il n'y a rien de plus a dire.
+String? nomOrigineAffiche(LigneCandidature ligne) {
+  final String origine = ligne.nomComplet.trim();
+  return origine.isEmpty || origine == nomAffiche(ligne) ? null : origine;
+}
+
+/// Vrai quand le nom montre est une proposition que la personne n'a pas
+/// confirmee : la liste le marque « a confirmer ».
+bool nomAConfirmer(LigneCandidature ligne) => ligne.nomLatinAConfirmer;
 
 /// Les marques d'informations manquantes d'une ligne, en mots.
 List<String> marquesDeLigne(LigneCandidature ligne) {

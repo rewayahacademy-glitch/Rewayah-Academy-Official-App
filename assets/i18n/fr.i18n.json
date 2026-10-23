@@ -958,6 +958,12 @@
     "creer": "Créer mon compte",
     "erreur": "La création du compte n'a pas abouti. Réessayez dans un instant.",
     "champRequis": "Cette réponse est nécessaire pour continuer.",
+    "nomLatin": {
+      "libelle": "Votre nom en lettres latines",
+      "raison": "Pour les listes, les attestations et les échanges avec l'académie.",
+      "aide": "Voici notre proposition. Corrigez-la si votre nom ne s'écrit pas ainsi.",
+      "erreur": "Écrivez votre nom avec les lettres de l'alphabet latin (a, b, c) pour continuer."
+    },
     "etapeCourte": "{n} sur {total}",
     "retourEtape": "Revenir à l'étape précédente",
     "seDeconnecter": "Se déconnecter",
@@ -2125,6 +2131,17 @@
       "horsLigne": "Le retrait pourra être fait quand la connexion reviendra.",
       "interdit": "Votre candidature ne peut plus être retirée depuis cette page.",
       "conflit": "Votre candidature a changé depuis l'ouverture de cette page. Relisez-la, puis réessayez."
+    },
+    "nomLatin": {
+      "titre": "Votre nom en lettres latines",
+      "explication": "Votre nom est écrit dans une autre écriture. Pour les listes, les attestations et les échanges avec l'académie, nous avons besoin de son écriture en lettres latines.",
+      "libelle": "Votre nom en lettres latines",
+      "aide": "Voici notre proposition. Corrigez-la si votre nom ne s'écrit pas ainsi, puis confirmez.",
+      "origine": "Votre nom tel que vous l'avez écrit : {nom}",
+      "confirmer": "Confirmer mon nom",
+      "plusTard": "Plus tard",
+      "erreur": "Écrivez votre nom avec les lettres de l'alphabet latin (a, b, c) pour continuer.",
+      "echec": "Votre nom n'est pas confirmé. Vérifiez votre connexion, puis réessayez."
     },
     "questionnaire": {
       "titre": "Votre candidature",
@@ -3539,6 +3556,8 @@
         "axe": "{axe} : {valeur}",
         "colonnePays": "Pays",
         "repereManques": "Informations manquantes : {marques}",
+        "nomAConfirmer": "à confirmer",
+        "nomAConfirmerSemantique": "Nom en lettres latines à confirmer",
         "separateurMarques": ", ",
         "synthese": {
           "informationsManquantes": {

@@ -7,11 +7,13 @@ import 'package:go_router/go_router.dart';
 import '../../../core/candidature/port_inscription_candidat.dart';
 import '../../../core/candidature/port_ma_candidature.dart'
     show HorsLigneCandidature;
+import '../../../core/candidature/port_nom_latin.dart';
 import '../../../core/capacites/capacite_indisponible.dart';
 import '../../../core/capacites/permission_insuffisante.dart';
 import '../../../core/domain/enums.dart';
 import '../../../core/dossier/etat_dossier.dart';
 import '../../../core/dossier/service_dossier.dart';
+import '../../../core/i18n/isolat_bidi.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/recrutement/port_invitations_comptable.dart';
@@ -196,7 +198,7 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
     }
     final Genre? genre = brouillon.genre;
     final String? telephone = brouillon.telephone;
-    if (genre == null || telephone == null || !brouillon.identiteRemplie) {
+    if (genre == null || telephone == null || !brouillon.identiteComplete) {
       context.go(brouillon.premiereEtapeManquante);
       return;
     }
@@ -285,6 +287,7 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
         ref
             .read(brouillonInscriptionProvider.notifier)
             .noterInscriptionEnvoyee();
+        await _confirmerNomLatin(brouillon);
         // Le code reste retenu tant que la session n'a pas confirme le compte :
         // si la relecture echoue, « Reessayer » rejoue l'envoi avec ce code
         // (un compte deja cree repond 42501, donc la suite) au lieu de renvoyer
@@ -327,6 +330,25 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
         _echec(t.inscription.candidat.confidentialitePerimee, reessayer: false);
       case InscriptionConfidentialiteIndisponible():
         _echec(t.inscription.candidat.indisponible, reessayer: false);
+    }
+  }
+
+  /// Envoie le nom en lettres latines que la personne a confirme a l'etape
+  /// d'identite (decision du directeur du 23/10/2026), une fois la candidature
+  /// creee. **Au mieux** : un echec (reseau, plafond horaire sans compte, lot
+  /// serveur absent) ne bloque rien ; le nom reste « a confirmer » et la Salle
+  /// d'examen le redemande. Le serveur ne translittere jamais : seul le texte
+  /// confirme part.
+  Future<void> _confirmerNomLatin(BrouillonInscription brouillon) async {
+    final String? nomLatin = brouillon.nomLatinAEnvoyer;
+    final PortNomLatin? port = ref.read(portNomLatinProvider);
+    if (nomLatin == null || port == null) {
+      return;
+    }
+    try {
+      await port.confirmer(nomLatin);
+    } on Object {
+      // Voir ci-dessus : la Salle d'examen le redemandera.
     }
   }
 
@@ -520,6 +542,16 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
               'inscription-modifier-identite',
             ),
           ),
+          if (candidat && brouillon.nomLatinAEnvoyer != null)
+            LigneRubrique(
+              icone: AppIcons.profil,
+              libelle: t.inscription.nomLatin.libelle,
+              legende: isolerSens(brouillon.nomLatinAEnvoyer!),
+              controle: modifier(
+                Routes.inscriptionIdentite,
+                'inscription-modifier-nom-latin',
+              ),
+            ),
           LigneRubrique(
             icone: AppIcons.profil,
             libelle: t.inscription.recap.genre,

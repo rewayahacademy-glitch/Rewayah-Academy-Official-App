@@ -39,6 +39,8 @@ LigneCandidature ligneTest({
   String id = 'c1',
   String? reference,
   String nom = 'Amina Diallo',
+  String? nomLatin,
+  bool nomLatinAConfirmer = false,
   EtapeCandidature? etape = EtapeCandidature.prequalification,
   EtatCandidature? etat = EtatCandidature.enExamen,
   IssueCandidature issue = IssueCandidature.enCours,
@@ -57,6 +59,8 @@ LigneCandidature ligneTest({
   id: id,
   reference: reference ?? 'CAND-${id.toUpperCase().padLeft(6, '0')}',
   nomComplet: nom,
+  nomLatin: nomLatin,
+  nomLatinAConfirmer: nomLatinAConfirmer,
   type: 'enseignant',
   etape: etape,
   etat: etat,
@@ -127,6 +131,8 @@ DetailCandidature detailTest({
   String id = 'c1',
   String? reference,
   String nom = 'Amina Diallo',
+  String? nomLatin,
+  bool nomLatinAConfirmer = false,
   EtapeCandidature? etape = EtapeCandidature.prequalification,
   EtatCandidature? etat = EtatCandidature.enExamen,
   IssueCandidature issue = IssueCandidature.enCours,
@@ -155,6 +161,8 @@ DetailCandidature detailTest({
     id: id,
     reference: reference ?? 'CAND-${id.toUpperCase().padLeft(6, '0')}',
     nomComplet: nom,
+    nomLatin: nomLatin,
+    nomLatinAConfirmer: nomLatinAConfirmer,
     type: 'enseignant',
     etape: etape,
     etat: etat,
@@ -839,6 +847,8 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
       id: l.id,
       reference: l.reference,
       nomComplet: l.nomComplet,
+      nomLatin: l.nomLatin,
+      nomLatinAConfirmer: l.nomLatinAConfirmer,
       type: l.type,
       etape: l.etape,
       etat: l.etat,
@@ -907,7 +917,8 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
     final String q = f.rechercheNette.toLowerCase();
     if (q.isNotEmpty) {
       return l.reference.toLowerCase() == q ||
-          l.nomComplet.toLowerCase().contains(q);
+          l.nomComplet.toLowerCase().contains(q) ||
+          (l.nomLatin ?? '').toLowerCase().contains(q);
     }
     return true;
   }
@@ -923,7 +934,9 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
     TriCandidatures.recente => (b.recueLe ?? b.derniereActivite).compareTo(
       a.recueLe ?? a.derniereActivite,
     ),
-    TriCandidatures.nom => a.nomComplet.compareTo(b.nomComplet),
+    TriCandidatures.nom => (a.nomLatin ?? a.nomComplet).compareTo(
+      b.nomLatin ?? b.nomComplet,
+    ),
   };
 }
 

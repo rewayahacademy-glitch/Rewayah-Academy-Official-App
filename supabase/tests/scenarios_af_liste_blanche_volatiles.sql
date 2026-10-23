@@ -79,6 +79,8 @@ declare
     -- CAND-L3 (23/10) : confirmation de l'import des formulaires (super-admin, aal2, cle d'idempotence, jeton HMAC).
     'confirmer_import_formulaires(text,text,text,text,jsonb,text,jsonb,text)',
     'confirmer_import_inscriptions(text,text,jsonb)',
+    -- CAND-NOM-LATIN (23/10) : le titulaire d'une candidature confirme son nom en lettres latines (garde positive sur la candidature du compte valide ; aucune garde de role ; jamais la direction).
+    'confirmer_nom_latin(text)',
     'confirmer_upload_bibliotheque(uuid,text,bigint,text,text)',
     'controleur_ajouter_complement(uuid,text,text)',
     'controleur_envoyer_message(uuid,uuid,text)',

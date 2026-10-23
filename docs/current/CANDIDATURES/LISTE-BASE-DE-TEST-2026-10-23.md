@@ -62,10 +62,37 @@ nouveau feu vert du directeur sur cette liste précise ; le collage passe par la
 |---|---|---|---|
 | 16 | `20261022000600_cand_l3_inscription_import_rapprochement.sql` | 6 | directeur (éditeur SQL) |
 | 17 | `20261023000000_classes_duree_bout_en_bout.sql` | 0 | directeur (page de collage), détail ci-dessous |
+| 18 | `20261024000000_cand_nom_latin.sql` | 0 | directeur (page de collage), détail ci-dessous |
 
 Après chaque fichier, Claude vérifie en lecture (`list_migrations`, présence des tables et
 fonctions, droits) avant le suivant. Une erreur arrête la suite ; rien n'est réessayé à
 l'aveugle.
+
+### Détail du fichier 18 (le nom en lettres latines)
+
+- Ajouté le 23/10/2026 pour la décision « Les noms dans une seule écriture sur les listes »
+  (`DECISION-CANDIDATURES-2026-10-21.md`). Décompte par `grep -ciw 'delete\|drop\|truncate'` (commentaires
+  compris) : **0**. Le fichier passe donc sans la seconde confirmation du serveur ; il garde `BEGIN;` et
+  `COMMIT;` : à coller par la page de collage (enveloppe contre les fins de ligne de Windows), comme la règle du
+  23/10.
+- **Ce qu'elle fait** : deux colonnes sur `candidatures` (`nom_latin`, `nom_latin_confirme_le`, nulles ensemble) ;
+  une aide privée `private.nom_est_latin` (aucun compte ne l'exécute) ; `private.cand_ligne_json` rend deux clés de
+  plus (`nomLatin`, `nomLatinAConfirmer`) ; deux RPC pour le titulaire d'une candidature (`lire_nom_latin`,
+  `confirmer_nom_latin`) ; `lister_candidatures` redéfinie (la recherche porte aussi sur le nom latin, le tri par nom
+  suit le nom latin). Aucune table nouvelle, aucune policy touchée, aucune donnée existante modifiée.
+- **Ordre** : après le 17 ; elle ne dépend que du 16 (`private.candidature_du_titulaire`, `lister_candidatures` du
+  fichier `20261022000500`, déjà posé avant le 16).
+- **Rejeu local** : scénario `supabase/tests/scenarios_cand_nom_latin.sql` (59 contrôles), rouge sans la migration ;
+  rejeu complet avec les 18 fichiers : 126 scénarios verts sur 127 (le rouge est `scenarios_af_liste_blanche_volatiles`,
+  pour les quatre fonctions `avis_*`, antérieur ; `confirmer_nom_latin` y est déclarée). Deux scénarios antérieurs
+  (`scenarios_cand_l1_socle`, `scenarios_cand_autres_competences`) comptaient les clés d'une ligne de liste : mis à
+  vingt et une clés.
+- **Vérification de Claude après application** : les deux colonnes présentes, les trois fonctions de `public` à
+  l'empreinte F86 du dépôt (commentaire `md5_functiondef` à jour), aucune fonction nouvelle exécutable par `anon`,
+  `service_role` ni `agent_ro`, `private.nom_est_latin` exécutable par personne, `lister_candidatures` rend une
+  ligne à 21 clés.
+- **Liste blanche des volatiles** : `confirmer_nom_latin(text)` est ajoutée à
+  `supabase/tests/scenarios_af_liste_blanche_volatiles.sql` (garde positive sur la candidature du titulaire).
 
 ## Ce que la base de test permettra ensuite
 

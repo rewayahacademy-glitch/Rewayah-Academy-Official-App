@@ -28,11 +28,13 @@ import 'core/candidature/candidatures_direction_supabase.dart';
 import 'core/candidature/import_candidatures_supabase.dart';
 import 'core/candidature/inscription_candidat_supabase.dart';
 import 'core/candidature/ma_candidature_supabase.dart';
+import 'core/candidature/nom_latin_supabase.dart';
 import 'core/candidature/port_autres_competences.dart';
 import 'core/candidature/port_candidatures_direction.dart';
 import 'core/candidature/port_import_candidatures.dart';
 import 'core/candidature/port_inscription_candidat.dart';
 import 'core/candidature/port_ma_candidature.dart';
+import 'core/candidature/port_nom_latin.dart';
 import 'core/capacites/acces_supabase.dart';
 import 'core/capacites/avis_supabase.dart';
 import 'core/capacites/classes_foyer_supabase.dart';
@@ -237,6 +239,12 @@ List<Override> _surchargesAppReelle() => <Override>[
   // disponible.
   portInscriptionCandidatProvider.overrideWithValue(
     InscriptionCandidatSupabase(Supabase.instance.client),
+  ),
+  // CAND-NOM-LATIN : le nom en lettres latines du candidat, confirme par lui
+  // (question a l'inscription, puis dans la Salle d'examen). Sans le lot
+  // serveur, la question ne se pose pas.
+  portNomLatinProvider.overrideWithValue(
+    NomLatinSupabase(Supabase.instance.client),
   ),
   portTirageControleProvider.overrideWithValue(
     PortTirageControleSupabase(Supabase.instance.client),
