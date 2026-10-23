@@ -88,6 +88,12 @@ suivie de l'inscription de `20261024000000 cand_nom_latin`, enveloppée par
 À vérifier après son collage : `select count(*) from pg_proc where strpos(prosrc, chr(13)) > 0` vaut 0,
 empreintes identiques à la base locale, version présente dans `list_migrations`.
 
+**Correctif collé par le directeur le 24/10/2026, vérifié en lecture** : 0 fonction avec un retour chariot
+(16 avant) ; `20261024000000 cand_nom_latin` inscrite à l'historique ; les cinq fonctions du fichier 18 à
+l'empreinte exacte de la base locale (`cand_ligne_json` adebd658…, `confirmer_nom_latin` 70a44b76…,
+`lire_nom_latin` 4ab87e93…, `lister_candidatures` d73aaa2c…, `nom_est_latin` ef7575ae…) ; les trois
+fonctions publiques exécutables par `authenticated`, aucune par `anon`. **Le fichier 18 est en production.**
+
 ## Prochaine livraison sur la base de test (pas encore appliquée)
 
 Ajoutée le 23/10/2026, après l'installation des quinze ci-dessus. Rien n'est appliqué sans un
