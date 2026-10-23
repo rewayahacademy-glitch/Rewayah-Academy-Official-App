@@ -42,10 +42,7 @@ void main() {
       // Pas de carte, pas de squelette, pas d'emplacement vide : un avis
       // facultatif ne se signale pas quand il n'est pas demande.
       expect(find.byType(AppCard), findsNothing);
-      expect(
-        find.text(t.tc.parcours.feedback.cours.intitule),
-        findsNothing,
-      );
+      expect(find.text(t.tc.parcours.feedback.cours.intitule), findsNothing);
     });
 
     testWidgets('echantillonnee, elle pose une question et trois choix', (
@@ -61,10 +58,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(
-        find.text(t.tc.parcours.feedback.cours.intitule),
-        findsOneWidget,
-      );
+      expect(find.text(t.tc.parcours.feedback.cours.intitule), findsOneWidget);
       expect(find.text(t.tc.parcours.feedback.cours.difficile), findsOneWidget);
       expect(find.text(t.tc.parcours.feedback.cours.bien), findsOneWidget);
       expect(find.text(t.tc.parcours.feedback.cours.tresBien), findsOneWidget);
@@ -91,14 +85,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(t.tc.parcours.feedback.merci), findsOneWidget);
-      expect(
-        find.text(t.tc.parcours.feedback.cours.intitule),
-        findsNothing,
-      );
+      expect(find.text(t.tc.parcours.feedback.cours.intitule), findsNothing);
 
-      final TendanceFeedback tendance = await depot.tendance(
-        groupeId: _groupe,
-      );
+      final TendanceFeedback tendance = await depot.tendance(groupeId: _groupe);
       expect(tendance.nombreEchantillons, 1);
     });
   });

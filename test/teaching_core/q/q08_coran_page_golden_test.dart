@@ -63,10 +63,11 @@ void main() {
     test('page 604 : trois sourates completes ferment le Mushaf', () {
       final List<SegmentPage> page = goldenPagesMushaf[604]!;
       expect(page, hasLength(3));
-      expect(
-        page.map((SegmentPage s) => s.sourate).toList(),
-        <int>[112, 113, 114],
-      );
+      expect(page.map((SegmentPage s) => s.sourate).toList(), <int>[
+        112,
+        113,
+        114,
+      ]);
       for (final SegmentPage s in page) {
         expect(s.ayahDebut, 1);
         expect(s.nombreVersets, goldenVersetsParSourate[s.sourate]);
@@ -164,18 +165,21 @@ void main() {
   });
 
   group('Q-08 : la fidelite Mushaf n est pas disponible, et le dit', () {
-    test('sans ligne peuplee ni asset de layout, la reponse est indisponible', () {
-      // Decision D-23 : Agent C ne fabrique pas une fausse page. Tant que
-      // `verset.ligne` est NULL sur les 6236 lignes -- ce que 0013 assume
-      // explicitement -- la disponibilite vaut `indisponible`.
-      expect(
-        disponibiliteLayout(
-          lignesPeuplees: lignesVersetPeupleesDansLaBaseline,
-          assetsLayoutFournis: assetsLayoutFournisDansLaBaseline,
-        ),
-        DisponibiliteLayoutGolden.indisponible,
-      );
-    });
+    test(
+      'sans ligne peuplee ni asset de layout, la reponse est indisponible',
+      () {
+        // Decision D-23 : Agent C ne fabrique pas une fausse page. Tant que
+        // `verset.ligne` est NULL sur les 6236 lignes -- ce que 0013 assume
+        // explicitement -- la disponibilite vaut `indisponible`.
+        expect(
+          disponibiliteLayout(
+            lignesPeuplees: lignesVersetPeupleesDansLaBaseline,
+            assetsLayoutFournis: assetsLayoutFournisDansLaBaseline,
+          ),
+          DisponibiliteLayoutGolden.indisponible,
+        );
+      },
+    );
 
     test('une seule des deux sources donne un mode degrade, jamais fidele', () {
       expect(

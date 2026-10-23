@@ -16,11 +16,11 @@ import '../../support/monter_recrutement.dart';
 
 /// Monte la file des candidatures.
 ///
-/// [port] nul : aucun port (la capacite indisponible). [ouvrir] et [agir]
-/// sont les destinations d'`ADM-21` et d'`ADM-22` ; nulles, comme dans le
-/// routeur d'aujourd'hui, la ligne ne s'ouvre pas et « Agir sur la selection »
-/// n'est pas rendu. [invitations] pose le port des invitations
-/// d'enseignant, [comptable] celui des invitations de comptable.
+/// [port] nul : aucun port (la capacite indisponible). [ouvrir] est la
+/// destination d'`ADM-21` ; nulle, la ligne ne s'ouvre pas. Le traitement groupe
+/// n'a pas de destination : la page le porte (LISTES-1). [invitations] pose le
+/// port des invitations d'enseignant, [comptable] celui des invitations de
+/// comptable.
 Future<void> monterCandidatures(
   WidgetTester tester, {
   PortCandidaturesDirection? port,
@@ -30,17 +30,13 @@ Future<void> monterCandidatures(
   double echelle = 1,
   TextDirection? direction,
   void Function(LigneCandidature ligne)? ouvrir,
-  void Function(List<String> identifiants)? agir,
   bool invitations = false,
   bool comptable = false,
   List<Override> surcharges = const <Override>[],
 }) => monterRecrutement(
   tester,
   chemin: Routes.adminPersonnesCandidatures,
-  ecran: (_) => CandidaturesPage(
-    ouvrirCandidature: ouvrir,
-    agirSurSelection: agir,
-  ),
+  ecran: (_) => CandidaturesPage(ouvrirCandidature: ouvrir),
   autres: const <String>[Routes.adminPersonnesInvitations],
   surcharges: <Override>[
     portCandidaturesDirectionProvider.overrideWithValue(port),

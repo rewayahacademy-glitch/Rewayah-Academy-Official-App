@@ -150,8 +150,7 @@ class VueLecteur {
   int? get pagePrecedente => pageAffichee > 1 ? pageAffichee - 1 : null;
 
   /// La page suivante, ou `null` a la fin du mushaf.
-  int? get pageSuivante =>
-      pageAffichee < nombrePages ? pageAffichee + 1 : null;
+  int? get pageSuivante => pageAffichee < nombrePages ? pageAffichee + 1 : null;
 
   /// Les sourates presentes sur la page, dans l'ordre du texte.
   List<int> get souratesPresentes =>

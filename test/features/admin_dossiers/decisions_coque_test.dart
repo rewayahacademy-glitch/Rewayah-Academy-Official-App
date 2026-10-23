@@ -250,10 +250,12 @@ void main() {
     }
     expect(
       find.descendant(
-        of: find.ancestor(
-          of: find.text(t.dossiers.refus.corps),
-          matching: find.byType(Scrollable),
-        ).first,
+        of: find
+            .ancestor(
+              of: find.text(t.dossiers.refus.corps),
+              matching: find.byType(Scrollable),
+            )
+            .first,
         matching: find.widgetWithText(ActionPrincipale, t.dossiers.refuser),
       ),
       findsNothing,

@@ -60,23 +60,26 @@ void main() {
       );
     });
 
-    test('entre a T-20, dix-huit minutes apres T0 : dix-huit, pas trente-huit', () {
-      // Le chiffre de la decision D-13, mot pour mot : « un eleve entre a
-      // T-20 verrait en salle depuis 38 min pour un cours commence il y a
-      // 18 min ».
-      final DateTime debut = debutSeanceAvantDst;
-      final DateTime entree = debut.subtract(const Duration(minutes: 20));
-      final DateTime maintenant = debut.add(const Duration(minutes: 18));
+    test(
+      'entre a T-20, dix-huit minutes apres T0 : dix-huit, pas trente-huit',
+      () {
+        // Le chiffre de la decision D-13, mot pour mot : « un eleve entre a
+        // T-20 verrait en salle depuis 38 min pour un cours commence il y a
+        // 18 min ».
+        final DateTime debut = debutSeanceAvantDst;
+        final DateTime entree = debut.subtract(const Duration(minutes: 20));
+        final DateTime maintenant = debut.add(const Duration(minutes: 18));
 
-      final Duration creditee = dureeAcademique(
-        entreLe: entree,
-        debutSeance: debut,
-        maintenant: maintenant,
-      );
+        final Duration creditee = dureeAcademique(
+          entreLe: entree,
+          debutSeance: debut,
+          maintenant: maintenant,
+        );
 
-      expect(creditee, const Duration(minutes: 18));
-      expect(creditee, isNot(const Duration(minutes: 38)));
-    });
+        expect(creditee, const Duration(minutes: 18));
+        expect(creditee, isNot(const Duration(minutes: 38)));
+      },
+    );
 
     test('entre en retard : la duree part de l entree, pas du debut', () {
       final DateTime debut = debutSeanceAvantDst;

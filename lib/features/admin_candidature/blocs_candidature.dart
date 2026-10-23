@@ -339,7 +339,7 @@ class BlocProchaineAction extends StatelessWidget {
               ? MenuActions(
                   key: cleMenu,
                   points: true,
-                  tooltip: r.detail.autresGestes,
+                  libelle: r.detail.autresGestes,
                   actions: <EntreeAction>[
                     for (final GesteCandidature g in gestes.autres)
                       EntreeAction(

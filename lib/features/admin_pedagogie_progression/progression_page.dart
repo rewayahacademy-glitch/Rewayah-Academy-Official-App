@@ -8,11 +8,13 @@ import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/recherche/normalisation_recherche.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
+import '../../core/widgets/champ_recherche.dart';
 import '../../core/widgets/chargement_avec_delais.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
@@ -44,6 +46,16 @@ class ProgressionPage extends ConsumerStatefulWidget {
 class _ProgressionPageEtat extends ConsumerState<ProgressionPage> {
   /// Le cycle retenu. `null` veut dire « tous ».
   String? _cycle;
+
+  /// Le texte cherche (LISTES-1, lot 4). La liste est lue en entier, la
+  /// recherche est donc faite ici, sans aller-retour serveur.
+  final TextEditingController _recherche = TextEditingController();
+
+  @override
+  void dispose() {
+    _recherche.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +94,8 @@ class _ProgressionPageEtat extends ConsumerState<ProgressionPage> {
                 eleves: v,
                 cycle: _cycle,
                 onCycle: (String? c) => setState(() => _cycle = c),
+                recherche: _recherche,
+                onRecherche: (String _) => setState(() {}),
                 onPoserException: (
                   EleveProgression e,
                   TypeExceptionProgression type,
@@ -104,6 +118,8 @@ class _Corps extends StatelessWidget {
     required this.eleves,
     required this.cycle,
     required this.onCycle,
+    required this.recherche,
+    required this.onRecherche,
     required this.onPoserException,
     required this.onClorerException,
     required this.onPromouvoir,
@@ -112,6 +128,8 @@ class _Corps extends StatelessWidget {
   final List<EleveProgression> eleves;
   final String? cycle;
   final void Function(String? cycle) onCycle;
+  final TextEditingController recherche;
+  final ValueChanged<String> onRecherche;
   final void Function(EleveProgression eleve, TypeExceptionProgression type)
   onPoserException;
   final void Function(EleveProgression eleve) onClorerException;
@@ -126,25 +144,63 @@ class _Corps extends StatelessWidget {
             .toSet()
             .toList(growable: false)
           ..sort();
-    final List<EleveProgression> visibles = eleves
+    // La recherche d'abord : les compteurs des cycles disent ce que la recherche
+    // laisse, pas la liste entiere (un « Tous les cycles 16 » au-dessus de trois
+    // lignes serait faux).
+    final String requete = normaliserPourRecherche(recherche.text);
+    final List<EleveProgression> trouves = requete.isEmpty
+        ? eleves
+        : eleves
+              .where(
+                (EleveProgression e) => correspondTousLesTermes(
+                  normaliserPourRecherche(
+                    '${e.libelle} ${e.identifiant} ${e.groupeLibelle ?? ''}',
+                  ),
+                  requete,
+                ),
+              )
+              .toList(growable: false);
+    final List<EleveProgression> visibles = trouves
         .where((EleveProgression e) => cycle == null || e.niveauCycle == cycle)
         .toList(growable: false);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final Widget compteur = Semantics(
+      liveRegion: true,
+      child: Text(
+        visibles.length == eleves.length
+            ? t.admin.progression.nombreEleves(n: visibles.length)
+            : t.admin.progression.nombreSurTotal(
+                n: '${visibles.length}',
+                total: '${eleves.length}',
+              ),
+        key: const ValueKey<String>('progression-compteur'),
+        style: textes.bodySmall,
+      ),
+    );
 
     return ColonneCorps(
       minimumEtire: DataCollection.minimumLisible(context),
       children: <Widget>[
+        ChampRecherche(
+          cleChamp: const ValueKey<String>('progression-recherche'),
+          controleur: recherche,
+          libelle: t.admin.progression.rechercheLibelle,
+          aide: t.admin.progression.rechercheAide,
+          onChange: onRecherche,
+        ),
+        Ecart.vMd,
         RangeeFiltres(
           filtres: <Widget>[
             FilterPill(
               libelle: t.admin.progression.filtreTousCycles,
-              compteur: eleves.length,
+              compteur: trouves.length,
               retenue: cycle == null,
               onPress: () => onCycle(null),
             ),
             for (final String valeur in cycles)
               FilterPill(
                 libelle: valeur,
-                compteur: eleves
+                compteur: trouves
                     .where((EleveProgression e) => e.niveauCycle == valeur)
                     .length,
                 retenue: cycle == valeur,
@@ -152,93 +208,105 @@ class _Corps extends StatelessWidget {
               ),
           ],
         ),
-        Ecart.vLg,
+        Ecart.vMd,
+        compteur,
+        Ecart.vSm,
         PlaceCollection(
-          child: DataCollection<EleveProgression>(
-            defileAvecLaPage: !DataCollection.enTableau(context),
-            lignes: visibles,
-            cle: (EleveProgression e) => ValueKey<String>(e.studentId),
-            colonnes: <ColonneDonnees<EleveProgression>>[
-              ColonneDonnees<EleveProgression>(
-                titre: t.admin.progression.colonneEleve,
-                role: RoleColonne.identifiante,
-                flex: 2,
-                texte: (EleveProgression e) => e.libelle,
-              ),
-              ColonneDonnees<EleveProgression>(
-                titre: t.admin.progression.colonneGroupe,
-                texte: (EleveProgression e) =>
-                    e.groupeLibelle ?? t.admin.progression.sansGroupe,
-              ),
-              ColonneDonnees<EleveProgression>(
-                titre: t.admin.progression.colonneNiveau,
-                texte: (EleveProgression e) =>
-                    e.niveauNomHumain ?? t.admin.progression.sansNiveau,
-              ),
-              ColonneDonnees<EleveProgression>(
-                titre: t.admin.progression.colonneDepuis,
-                tabulaire: true,
-                texte: (EleveProgression e) => _depuis(e.niveauDepuis),
-              ),
-              ColonneDonnees<EleveProgression>(
-                titre: t.admin.progression.colonneException,
-                role: RoleColonne.aPart,
-                texte: (EleveProgression e) => e.exceptionActiveType == null
-                    ? ''
-                    : _libelleType(e.exceptionActiveType!),
-                rendu: (BuildContext _, EleveProgression e) =>
-                    e.exceptionActiveType == null
-                    ? const SizedBox.shrink()
-                    : StatusPill(
-                        libelle: _libelleType(e.exceptionActiveType!),
-                        ton:
-                            e.exceptionActiveType ==
-                                TypeExceptionProgression.blocage
-                            ? TonEtat.avertissement
-                            : TonEtat.neutre,
+          child: visibles.isEmpty
+              ? EmptyState(
+                  message: t.admin.progression.aucunAvecCeFiltre,
+                  invitation: t.admin.progression.aucunAvecCeFiltreDetail,
+                  icone: AppIcons.rienAAfficher,
+                  registre: RegistreVide.subi,
+                  // Une recherche ou un cycle qui ne trouve rien se retire d'un
+                  // geste (relecture du code R-10).
+                  libelleAction: t.commun.listes.toutEffacer,
+                  onAction: () {
+                    recherche.clear();
+                    onRecherche('');
+                    onCycle(null);
+                  },
+                )
+              : DataCollection<EleveProgression>(
+                  defileAvecLaPage: !DataCollection.enTableau(context),
+                  lignes: visibles,
+                  cle: (EleveProgression e) => ValueKey<String>(e.studentId),
+                  actionsLigne: (BuildContext _, EleveProgression e) =>
+                      MenuActions(
+                        points: true,
+                        objet: e.libelle,
+                        actions: <EntreeAction>[
+                          if (e.exceptionActiveId == null) ...<EntreeAction>[
+                            EntreeAction(
+                              libelle: t.admin.progression.actionPoserBlocage,
+                              onChoix: () => onPoserException(
+                                e,
+                                TypeExceptionProgression.blocage,
+                              ),
+                            ),
+                            EntreeAction(
+                              libelle:
+                                  t.admin.progression.actionPoserDerogation,
+                              onChoix: () => onPoserException(
+                                e,
+                                TypeExceptionProgression.derogation,
+                              ),
+                            ),
+                          ] else
+                            EntreeAction(
+                              libelle: t.admin.progression.actionCloreException,
+                              onChoix: () => onClorerException(e),
+                            ),
+                          if (e.niveauId != null)
+                            EntreeAction(
+                              libelle: t.admin.progression.actionPromouvoir,
+                              onChoix: () => onPromouvoir(e),
+                            ),
+                        ],
                       ),
-              ),
-              ColonneDonnees<EleveProgression>(
-                titre: '',
-                role: RoleColonne.aPart,
-                flex: 0,
-                // Vide a dessein, meme convention que
-                // `admin_groupes/groupes_page.dart`.
-                texte: (EleveProgression _) => '',
-                rendreMemeSiTexteVide: true,
-                rendu: (BuildContext _, EleveProgression e) => MenuActions(
-                  tooltip: e.libelle,
-                  actions: <EntreeAction>[
-                    if (e.exceptionActiveId == null) ...<EntreeAction>[
-                      EntreeAction(
-                        libelle: t.admin.progression.actionPoserBlocage,
-                        onChoix: () => onPoserException(
-                          e,
-                          TypeExceptionProgression.blocage,
-                        ),
-                      ),
-                      EntreeAction(
-                        libelle: t.admin.progression.actionPoserDerogation,
-                        onChoix: () => onPoserException(
-                          e,
-                          TypeExceptionProgression.derogation,
-                        ),
-                      ),
-                    ] else
-                      EntreeAction(
-                        libelle: t.admin.progression.actionCloreException,
-                        onChoix: () => onClorerException(e),
-                      ),
-                    if (e.niveauId != null)
-                      EntreeAction(
-                        libelle: t.admin.progression.actionPromouvoir,
-                        onChoix: () => onPromouvoir(e),
-                      ),
+                  colonnes: <ColonneDonnees<EleveProgression>>[
+                    ColonneDonnees<EleveProgression>(
+                      titre: t.admin.progression.colonneEleve,
+                      role: RoleColonne.identifiante,
+                      flex: 2,
+                      texte: (EleveProgression e) => e.libelle,
+                    ),
+                    ColonneDonnees<EleveProgression>(
+                      titre: t.admin.progression.colonneGroupe,
+                      texte: (EleveProgression e) =>
+                          e.groupeLibelle ?? t.admin.progression.sansGroupe,
+                    ),
+                    ColonneDonnees<EleveProgression>(
+                      titre: t.admin.progression.colonneNiveau,
+                      texte: (EleveProgression e) =>
+                          e.niveauNomHumain ?? t.admin.progression.sansNiveau,
+                    ),
+                    ColonneDonnees<EleveProgression>(
+                      titre: t.admin.progression.colonneDepuis,
+                      tabulaire: true,
+                      texte: (EleveProgression e) => _depuis(e.niveauDepuis),
+                    ),
+                    ColonneDonnees<EleveProgression>(
+                      titre: t.admin.progression.colonneException,
+                      role: RoleColonne.aPart,
+                      texte: (EleveProgression e) =>
+                          e.exceptionActiveType == null
+                          ? ''
+                          : _libelleType(e.exceptionActiveType!),
+                      rendu: (BuildContext _, EleveProgression e) =>
+                          e.exceptionActiveType == null
+                          ? const SizedBox.shrink()
+                          : StatusPill(
+                              libelle: _libelleType(e.exceptionActiveType!),
+                              ton:
+                                  e.exceptionActiveType ==
+                                      TypeExceptionProgression.blocage
+                                  ? TonEtat.avertissement
+                                  : TonEtat.neutre,
+                            ),
+                    ),
                   ],
                 ),
-              ),
-            ],
-          ),
         ),
       ],
     );

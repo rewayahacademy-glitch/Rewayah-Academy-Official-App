@@ -62,8 +62,7 @@ class FauxServeurObservation {
 
   /// Le budget courant, tel que le serveur le calcule.
   BudgetObservation budget() {
-    final Duration restant =
-        politique.maxTotalObservationTime - _tempsConsomme;
+    final Duration restant = politique.maxTotalObservationTime - _tempsConsomme;
     final MotifRefusObservation? motif = _motifRefus();
     return BudgetObservation(
       policyVersion: politique.policyVersion,

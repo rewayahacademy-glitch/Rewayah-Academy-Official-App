@@ -26,6 +26,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/menu_actions.dart';
 import 'package:rewayah_academy/features/admin_fusion/feuilles_fusion.dart';
 import 'package:rewayah_academy/features/admin_fusion/fusion_libelles.dart';
 import 'package:rewayah_academy/features/admin_groupes/groupes_page.dart';
@@ -649,7 +650,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await monterPage(tester, _Banc());
-      await tester.tap(find.byTooltip(RegExp('Garçons débutants')).first);
+      await tester.tap(_menuDe('Garçons débutants').first);
       await tester.pumpAndSettle();
       expect(find.text(t.admin.fusion.actionFusionner), findsOneWidget);
       expect(find.text(t.admin.fusion.actionTransferer), findsOneWidget);
@@ -670,7 +671,7 @@ void main() {
           ),
       ];
       await monterPage(tester, _Banc(classes: fermees));
-      await tester.tap(find.byTooltip(RegExp('Garçons débutants')).first);
+      await tester.tap(_menuDe('Garçons débutants').first);
       await tester.pumpAndSettle();
       expect(find.text(t.admin.fusion.actionFusionner), findsNothing);
       expect(find.text(t.admin.fusion.actionTransferer), findsNothing);
@@ -680,3 +681,9 @@ void main() {
     });
   });
 }
+
+/// Le menu d'actions dont l'objet contient [nom] : le declencheur n'a plus
+/// d'infobulle (LISTES-1), il se trouve par son objet.
+Finder _menuDe(String nom) => find.byWidgetPredicate(
+  (Widget w) => w is MenuActions && (w.objet ?? '').contains(nom),
+);

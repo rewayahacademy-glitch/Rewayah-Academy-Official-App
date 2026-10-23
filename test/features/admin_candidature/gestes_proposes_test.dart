@@ -11,6 +11,7 @@ import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature_detail.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidatures_direction.dart';
 import 'package:rewayah_academy/features/admin_candidature/gestes_proposes.dart';
+import 'package:rewayah_academy/features/admin_candidatures/menu_ligne_candidature.dart';
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
 
@@ -247,5 +248,104 @@ void main() {
       _pour(detailTest(enPause: true)).autres,
       isNot(contains(GesteCandidature.mettreEnPause)),
     );
+  });
+
+  group('la meme table pour une ligne de la file (LISTES-1)', () {
+    final List<DetailCandidature> details = <DetailCandidature>[
+      detailTest(),
+      detailTest(paiement: EtatVersement.compatible),
+      detailTest(enPause: true),
+      detailTest(issue: IssueCandidature.refusee),
+      detailTest(issue: IssueCandidature.retiree),
+      detailTest(etape: EtapeCandidature.verifications, etat: null),
+      detailTest(etape: EtapeCandidature.recue, etat: null),
+      detailTest(etape: EtapeCandidature.confirmee, etat: null),
+      detailTest(etat: EtatCandidature.aCompleter),
+    ];
+
+    test('une ligne propose exactement ce que son dossier propose, sans la cause de restriction', () {
+      for (final DetailCandidature d in details) {
+        final GestesProposes dossier = gestesProposes(d, capacitesGestes);
+        final GestesProposes ligne = gestesProposesPourLigne(
+          d.ligne,
+          capacitesGestes,
+        );
+        expect(ligne.principal, dossier.principal);
+        expect(ligne.autres.toSet(), dossier.autres.toSet());
+        for (final GesteCandidature g in GesteCandidature.values) {
+          expect(
+            gestePermisPourLigne(g, d.ligne),
+            gestePermis(g, d),
+            reason: '${g.name} / ${d.ligne.etape} ${d.ligne.etat}',
+          );
+        }
+      }
+    });
+
+    test(
+      'le menu d\'une ligne range les destructifs a la fin, en un groupe',
+      () {
+        for (final DetailCandidature d in details) {
+          final List<GesteCandidature> autres = gestesDuMenuLigne(
+            d.ligne,
+            capacitesGestes,
+          );
+          final int premier = autres.indexWhere(
+            (GesteCandidature g) => g.destructif,
+          );
+          if (premier < 0) continue;
+          expect(
+            autres.sublist(premier).every((GesteCandidature g) => g.destructif),
+            isTrue,
+            reason: '$autres',
+          );
+        }
+      },
+    );
+
+    test('sansResponsable masque seulement « Choisir le responsable »', () {
+      final DetailCandidature d = detailTest();
+      final GestesProposes avec = gestesProposesPourLigne(
+        d.ligne,
+        capacitesGestes,
+      );
+      final GestesProposes sans = gestesProposesPourLigne(
+        d.ligne,
+        capacitesGestes,
+        sansResponsable: true,
+      );
+      expect(avec.autres, contains(GesteCandidature.definirResponsable));
+      expect(sans.autres, isNot(contains(GesteCandidature.definirResponsable)));
+      expect(
+        sans.autres.toSet(),
+        avec.autres.toSet()..remove(GesteCandidature.definirResponsable),
+      );
+    });
+
+    test('confirmer un moyen d\'une confirmee sous restriction : seulement avec la cause lue dans le dossier', () {
+      final DetailCandidature d = detailTest(
+        etape: EtapeCandidature.confirmee,
+        etat: null,
+        restreinte: true,
+        restrictionCause: 'paiement',
+        paiement: EtatVersement.aVerifier,
+      );
+      // Le dossier la lit : le geste est permis.
+      expect(gestePermis(GesteCandidature.confirmerMoyenPaiement, d), isTrue);
+      // La ligne ne la porte pas : le menu de la ligne ne le propose pas, et le
+      // dossier, lu avant la feuille, reste l'autorite.
+      expect(
+        gestePermisPourLigne(GesteCandidature.confirmerMoyenPaiement, d.ligne),
+        isFalse,
+      );
+      expect(
+        gestePermisPourLigne(
+          GesteCandidature.confirmerMoyenPaiement,
+          d.ligne,
+          restrictionCause: 'paiement',
+        ),
+        isTrue,
+      );
+    });
   });
 }

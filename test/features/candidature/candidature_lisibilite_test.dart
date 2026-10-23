@@ -180,17 +180,18 @@ void main() {
     });
   }
 
-  testWidgets('arabe de droite a gauche, 320 x2 : le parcours alternatif se lit', (
-    WidgetTester tester,
-  ) async {
-    await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
-    await _parcoursAlternatif(
-      tester,
-      taille: const Size(320, 568),
-      echelle: 2,
-      direction: TextDirection.rtl,
-    );
-  });
+  testWidgets(
+    'arabe de droite a gauche, 320 x2 : le parcours alternatif se lit',
+    (WidgetTester tester) async {
+      await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
+      await _parcoursAlternatif(
+        tester,
+        taille: const Size(320, 568),
+        echelle: 2,
+        direction: TextDirection.rtl,
+      );
+    },
+  );
 
   // Le portail et les etats de la page, aux gabarits les plus durs.
   List<(String, CandidatureDossier)> etatsPortail(AppLocale langue) =>

@@ -29,7 +29,6 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/app_card.dart';
-import '../../core/widgets/barre_precedent_suivant.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/champ_etiquete.dart';
 import '../../core/widgets/champ_recherche.dart';
@@ -42,6 +41,7 @@ import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pays_enseignant.dart';
+import '../../core/widgets/pied_de_liste.dart';
 import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/selecteur_motif.dart';
 import '../../core/widgets/selecteur_personne.dart';
@@ -566,7 +566,8 @@ class _Inspecteur extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 MenuActions(
-                  tooltip: classe.nom,
+                  points: true,
+                  objet: classe.nom,
                   actions: <EntreeAction>[
                     EntreeAction(
                       libelle: t.admin.groupes.actionModifierSeuil,
@@ -643,10 +644,6 @@ class _Corps extends StatelessWidget {
         icone: AppIcons.rienAAfficher,
       );
     }
-    final String position = t.commun.formats.pageSur(
-      page: '${page.page}',
-      total: '${page.pages}',
-    );
     return DataCollection<ClasseListee>(
       estSelectionnee: choisie == null
           ? null
@@ -654,41 +651,47 @@ class _Corps extends StatelessWidget {
       lignes: visibles,
       cle: (ClasseListee c) => ValueKey<String>(c.id),
       onSelectionner: onSelectionner,
-      // R17 : la position dans la liste, puis la navigation de page (les
-      // fleches disparaissent aux bornes, NAV-FLECHES-1).
-      piedDePage: Column(
-        key: const ValueKey<String>('classes-pagination'),
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Ecart.vLg,
-          TexteSansCoupure(
-            l.resume(
-              debut: '${page.debut}',
-              fin: '${page.fin}',
-              total: '${page.total}',
-            ),
-            key: const ValueKey<String>('classes-resume'),
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          if (page.pages > 1) ...<Widget>[
-            Ecart.vSm,
-            BarrePrecedentSuivant(
-              position: position,
-              positionSemantique: l.positionSemantique(
-                page: '${page.page}',
-                total: '${page.pages}',
-              ),
-              libellePrecedent: l.precedente,
-              libelleSuivant: l.suivante,
-              onPrecedent: page.page > 1 ? () => onPage(page.page - 1) : null,
-              onSuivant: page.page < page.pages
-                  ? () => onPage(page.page + 1)
-                  : null,
-            ),
-          ],
-        ],
+      // LISTES-1 : le menu de la ligne est posé hors de la cible de la ligne
+      // (la ligne ouvre l'inspecteur, le menu ne l'ouvre pas). Une classe
+      // clôturée n'a plus d'actions : sa place reste réservée, pour que les
+      // cartes et les lignes restent alignées.
+      actionsLigne: (BuildContext contexte, ClasseListee c) => c.groupe.actif
+          ? MenuActions(
+              points: true,
+              objet: c.nom,
+              actions: <EntreeAction>[
+                EntreeAction(
+                  libelle: t.admin.groupes.actionAjouter,
+                  onChoix: () => onAjouter(c),
+                ),
+                EntreeAction(
+                  libelle: t.admin.groupes.actionModifierSeuil,
+                  onChoix: () => onModifierSeuil(c),
+                ),
+                EntreeAction(
+                  libelle: t.admin.groupes.actionObservation,
+                  onChoix: () => onObservation(c),
+                ),
+                ..._actionsFusion(contexte, c),
+                EntreeAction(
+                  libelle: t.admin.groupes.actionCloturer,
+                  destructif: true,
+                  onChoix: () => onCloturer(c),
+                ),
+              ],
+            )
+          : SizedBox.square(dimension: AppMetriques.of(contexte).cibleTactile),
+      // R17 : la position dans la liste (« 1-50 sur 634 ») et la navigation de
+      // page, dans le pied commun des listes, **colle sous le tableau** : il se
+      // defilait avec les lignes, et sur 634 classes ni compteur ni pagination ne
+      // se voyaient (LISTES-1, relecture visuelle A-02). Les fleches disparaissent
+      // aux bornes (NAV-FLECHES-1).
+      piedCollant: PiedDeListe(
+        debut: page.debut,
+        fin: page.fin,
+        total: page.total,
+        onPrecedent: page.page > 1 ? () => onPage(page.page - 1) : null,
+        onSuivant: page.page < page.pages ? () => onPage(page.page + 1) : null,
       ),
       colonnes: <ColonneDonnees<ClasseListee>>[
         ColonneDonnees<ClasseListee>(
@@ -748,49 +751,6 @@ class _Corps extends StatelessWidget {
           texte: (ClasseListee c) => _libelleEtat(c.etat),
           rendu: (BuildContext _, ClasseListee c) =>
               _PastilleEtat(etat: c.etat),
-        ),
-        ColonneDonnees<ClasseListee>(
-          titre: '',
-          role: RoleColonne.aPart,
-          flex: 0,
-          // Vide a dessein : un menu d'actions n'a rien a dire en
-          // texte. `rendreMemeSiTexteVide` fait rendre `rendu` quand
-          // meme, sans faire disparaitre la cellule comme le ferait
-          // un texte vide par defaut.
-          texte: (ClasseListee _) => '',
-          rendreMemeSiTexteVide: true,
-          rendu: (BuildContext contexte, ClasseListee c) => c.groupe.actif
-              ? MenuActions(
-                  tooltip: c.nom,
-                  actions: <EntreeAction>[
-                    EntreeAction(
-                      libelle: t.admin.groupes.actionAjouter,
-                      onChoix: () => onAjouter(c),
-                    ),
-                    EntreeAction(
-                      libelle: t.admin.groupes.actionModifierSeuil,
-                      onChoix: () => onModifierSeuil(c),
-                    ),
-                    EntreeAction(
-                      libelle: t.admin.groupes.actionObservation,
-                      onChoix: () => onObservation(c),
-                    ),
-                    ..._actionsFusion(contexte, c),
-                    EntreeAction(
-                      libelle: t.admin.groupes.actionCloturer,
-                      destructif: true,
-                      onChoix: () => onCloturer(c),
-                    ),
-                  ],
-                )
-              // Une classe cloturee n'a plus d'actions. En tableau, sa
-              // cellule garde la largeur du menu (sa cible tactile) : sans
-              // elle, la colonne sans flex retrecit et decale la ligne.
-              : DataCollection.enTableau(contexte)
-              ? SizedBox.square(
-                  dimension: AppMetriques.of(contexte).cibleTactile,
-                )
-              : const SizedBox.shrink(),
         ),
       ],
     );
@@ -1581,7 +1541,8 @@ class _FeuilleDetail extends ConsumerWidget {
                           contentPadding: EdgeInsets.zero,
                           title: Text(membre.libelle),
                           trailing: MenuActions(
-                            tooltip: membre.libelle,
+                            points: true,
+                            objet: membre.libelle,
                             actions: <EntreeAction>[
                               EntreeAction(
                                 libelle: t.admin.groupes.actionRetirer,

@@ -10,8 +10,10 @@
 // - tout est lu au serveur : le filtre, le tri et la page partent au port, une
 //   seule page de 50 est demandee a la fois, le total est celui du filtre ;
 // - « Gardees pour suivi » n'existe que si le serveur l'ouvre ;
-// - zero bouton plein sans selection, un seul avec ; un bouton qui ne peut pas
-//   aboutir n'est pas rendu (hors ligne, destination absente) ;
+// - la synthese ne dit que les alertes que le serveur sert ; la selection se
+//   garde d'une page a l'autre et se retire, avec un message, quand un filtre
+//   change ; aucun bouton plein sur la page (le traitement groupe passe par une
+//   feuille) ; un bouton qui ne peut pas aboutir n'est pas rendu (hors ligne) ;
 // - 320 px a texte x2, en francais et en arabe (droite a gauche), et 1440.
 import 'dart:async';
 
@@ -19,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidatures_direction.dart';
+import 'package:rewayah_academy/core/candidature/modeles_lot_candidatures.dart';
 import 'package:rewayah_academy/core/candidature/port_candidatures_direction.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/permission_insuffisante.dart';
@@ -27,13 +30,17 @@ import 'package:rewayah_academy/core/reseau/etat_sans_donnees.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/barre_selection.dart';
+import 'package:rewayah_academy/core/widgets/case_a_cocher.dart';
 import 'package:rewayah_academy/core/widgets/data_collection.dart';
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
-import 'package:rewayah_academy/core/widgets/filter_pill.dart';
+import 'package:rewayah_academy/core/widgets/pied_de_liste.dart';
+import 'package:rewayah_academy/core/widgets/pressable.dart';
+import 'package:rewayah_academy/core/widgets/puce_filtre_actif.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
-import 'package:rewayah_academy/features/admin_candidatures/carte_alertes.dart';
+import 'package:rewayah_academy/features/admin_candidatures/candidatures_page.dart';
 import 'package:rewayah_academy/features/admin_candidatures/libelles_candidatures.dart';
 import 'package:rewayah_academy/features/admin_candidatures/ligne_candidature.dart';
+import 'package:rewayah_academy/features/admin_candidatures/synthese_candidatures.dart';
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
 import '../../support/garde_interface.dart';
@@ -130,6 +137,17 @@ Future<void> _pageSuivante(WidgetTester tester) async {
   await laisser(tester);
 }
 
+/// Choisit un tri dans le menu de tri des cartes (une icone au bout des filtres).
+Future<void> _choisirTri(WidgetTester tester, String libelle) async {
+  final Finder menu = _cle('candidatures-tri');
+  await tester.ensureVisible(menu);
+  await tester.pump();
+  await tester.tap(menu);
+  await tester.pumpAndSettle();
+  await tester.tap(find.text(libelle).last);
+  await tester.pumpAndSettle();
+}
+
 int _boutonsPleins(WidgetTester tester) => find
     .byWidgetPredicate(
       (Widget w) =>
@@ -145,25 +163,29 @@ void main() {
     testWidgets('capacite indisponible : une phrase, ni liste ni donnee', (
       tester,
     ) async {
-      await monterCandidatures(tester, port: const CandidaturesDirectionIndisponible());
+      await monterCandidatures(
+        tester,
+        port: const CandidaturesDirectionIndisponible(),
+      );
       expect(_cle('candidatures-indisponible'), findsOneWidget);
       expect(find.text(t.commun.etats.branchementServeur), findsOneWidget);
       expect(_cle('candidatures-recherche'), findsNothing);
-      expect(find.byType(CarteAlertes), findsNothing);
+      expect(find.byType(SyntheseCandidatures), findsNothing);
       expect(find.byType(ActionPrincipale), findsNothing);
       for (final String code in _codesBruts) {
         expect(find.textContaining(code), findsNothing, reason: code);
       }
     });
 
-    testWidgets('sans port (production avant le lot serveur) : la meme phrase', (
-      tester,
-    ) async {
-      await monterCandidatures(tester);
-      expect(_cle('candidatures-indisponible'), findsOneWidget);
-      expect(find.text(t.commun.etats.branchementServeur), findsOneWidget);
-      expect(find.byType(EmptyState), findsNothing);
-    });
+    testWidgets(
+      'sans port (production avant le lot serveur) : la meme phrase',
+      (tester) async {
+        await monterCandidatures(tester);
+        expect(_cle('candidatures-indisponible'), findsOneWidget);
+        expect(find.text(t.commun.etats.branchementServeur), findsOneWidget);
+        expect(find.byType(EmptyState), findsNothing);
+      },
+    );
 
     testWidgets('chargement : un squelette, pas de fausse donnee', (
       tester,
@@ -180,58 +202,65 @@ void main() {
       await laisser(tester);
     });
 
-    testWidgets('contenu : nom, reference, salle, etat en mots, jamais un code', (
-      tester,
-    ) async {
-      await monterCandidatures(
-        tester,
-        port: FauxCandidaturesDirection(lignes: _lignes()),
-      );
-      final r = t.admin.candidatures;
-      final s = t.recrutement.salles;
-      for (final String nom in <String>[
-        'Amina Diallo',
-        'Bilal Haddad',
-        'Carla Mendes',
-        'Dina Saidi',
-        'Emna Gharbi',
-        'Farah Nasser',
-      ]) {
-        expect(find.text(nom), findsOneWidget, reason: nom);
-      }
-      // La reference ne se montre qu'a la direction, a traits d'union
-      // insecables.
-      expect(find.text('CAND‑0000A1'), findsOneWidget);
-      // Les noms de salle s'ecrivent en entier, dans les cartes comme dans les
-      // puces de filtre.
-      Finder dansCartes(String texte) => find.descendant(
-        of: find.byType(CarteCandidature),
-        matching: find.text(texte),
-      );
-      expect(dansCartes(s.examen), findsNWidgets(3));
-      expect(dansCartes(s.verification), findsOneWidget);
-      expect(dansCartes(s.prets), findsOneWidget);
-      // Chaque etat par son mot.
-      expect(find.text(r.etats.enExamen), findsOneWidget);
-      expect(find.text(r.etats.entretienAPlanifier), findsOneWidget);
-      expect(find.text(r.etats.indisponible), findsOneWidget);
-      expect(find.text(r.etats.invitee), findsOneWidget);
-      expect(find.text(r.etats.enPause), findsOneWidget);
-      expect(find.text(r.etats.refusee), findsOneWidget);
-      // Le versement et la derniere activite, avec leur mot.
-      expect(
-        find.text(r.ligne.versement(etat: r.etats.versement.aVerifier)),
-        findsOneWidget,
-      );
-      expect(find.text(r.ligne.courrielAObtenir), findsOneWidget);
-      expect(find.text(r.ligne.indicatifAConfirmer), findsOneWidget);
-      expect(find.textContaining('20 oct. 2026'), findsOneWidget);
-      // Le total reel du filtre.
-      expect(find.text(r.total(n: 6)), findsOneWidget);
-      for (final String code in _codesBruts) {
-        expect(find.textContaining(code), findsNothing, reason: code);
-      }
-    });
+    testWidgets(
+      'contenu : nom, reference, salle, etat en mots, jamais un code',
+      (tester) async {
+        await monterCandidatures(
+          tester,
+          port: FauxCandidaturesDirection(lignes: _lignes()),
+        );
+        final r = t.admin.candidatures;
+        final s = t.recrutement.salles;
+        for (final String nom in <String>[
+          'Amina Diallo',
+          'Bilal Haddad',
+          'Carla Mendes',
+          'Dina Saidi',
+          'Emna Gharbi',
+          'Farah Nasser',
+        ]) {
+          expect(find.text(nom), findsOneWidget, reason: nom);
+        }
+        // La reference ne se montre qu'a la direction, a traits d'union
+        // insecables.
+        expect(find.text('CAND‑0000A1'), findsOneWidget);
+        // Les noms de salle s'ecrivent en entier, dans les cartes comme dans les
+        // puces de filtre.
+        Finder dansCartes(String texte) => find.descendant(
+          of: find.byType(CarteCandidature),
+          matching: find.text(texte),
+        );
+        expect(dansCartes(s.examen), findsNWidgets(3));
+        expect(dansCartes(s.verification), findsOneWidget);
+        expect(dansCartes(s.prets), findsOneWidget);
+        // Chaque etat par son mot.
+        expect(find.text(r.etats.enExamen), findsOneWidget);
+        expect(find.text(r.etats.entretienAPlanifier), findsOneWidget);
+        expect(find.text(r.etats.indisponible), findsOneWidget);
+        expect(find.text(r.etats.invitee), findsOneWidget);
+        expect(find.text(r.etats.enPause), findsOneWidget);
+        expect(find.text(r.etats.refusee), findsOneWidget);
+        // Le versement et la derniere activite, avec leur mot.
+        // (sur une ligne de valeurs, avec un point median entre elles).
+        expect(
+          find.textContaining(
+            r.ligne.versement(etat: r.etats.versement.aVerifier),
+          ),
+          findsOneWidget,
+        );
+        expect(find.textContaining(r.ligne.courrielAObtenir), findsOneWidget);
+        expect(
+          find.textContaining(r.ligne.indicatifAConfirmer),
+          findsOneWidget,
+        );
+        expect(find.textContaining('20 oct. 2026'), findsOneWidget);
+        // Le total reel du filtre.
+        expect(find.text(r.total(n: 6)), findsOneWidget);
+        for (final String code in _codesBruts) {
+          expect(find.textContaining(code), findsNothing, reason: code);
+        }
+      },
+    );
 
     testWidgets('aucun courriel, telephone ni genre dans le rendu', (
       tester,
@@ -251,7 +280,7 @@ void main() {
       await monterCandidatures(tester, port: FauxCandidaturesDirection());
       expect(_cle('candidatures-vide'), findsOneWidget);
       expect(find.text(t.admin.candidatures.vide), findsOneWidget);
-      expect(find.byType(CarteAlertes), findsNothing);
+      expect(find.byType(SyntheseCandidatures), findsNothing);
       expect(_cle('candidatures-recherche'), findsNothing);
       expect(_boutonsPleins(tester), 0);
     });
@@ -263,10 +292,7 @@ void main() {
       );
       await monterCandidatures(tester, port: port);
       expect(_cle('candidatures-erreur'), findsOneWidget);
-      expect(
-        find.text(t.admin.candidatures.lectureEchec),
-        findsOneWidget,
-      );
+      expect(find.text(t.admin.candidatures.lectureEchec), findsOneWidget);
       // Aucune cause affirmee cote service.
       expect(find.textContaining('hors ligne'), findsNothing);
       expect(find.textContaining('connexion'), findsNothing);
@@ -276,22 +302,20 @@ void main() {
       expect(port.appels, hasLength(2));
     });
 
-    testWidgets('hors ligne, rien de lu : ce qui manque, sans redire le reseau', (
-      tester,
-    ) async {
-      await monterCandidatures(
-        tester,
-        horsLigne: true,
-        port: FauxCandidaturesDirection(
-          erreurLister: (int _) => StateError('hors ligne'),
-        ),
-      );
-      expect(find.byType(EtatSansDonnees), findsOneWidget);
-      expect(
-        find.text(t.admin.candidatures.sansDonnees),
-        findsOneWidget,
-      );
-    });
+    testWidgets(
+      'hors ligne, rien de lu : ce qui manque, sans redire le reseau',
+      (tester) async {
+        await monterCandidatures(
+          tester,
+          horsLigne: true,
+          port: FauxCandidaturesDirection(
+            erreurLister: (int _) => StateError('hors ligne'),
+          ),
+        );
+        expect(find.byType(EtatSansDonnees), findsOneWidget);
+        expect(find.text(t.admin.candidatures.sansDonnees), findsOneWidget);
+      },
+    );
 
     testWidgets('hors ligne, liste lue : elle reste, aucune action proposee', (
       tester,
@@ -301,18 +325,21 @@ void main() {
         horsLigne: true,
         port: FauxCandidaturesDirection(
           lignes: _lignes(),
-          capacitesRendues: capacitesQuiDecide,
+          capacitesRendues: capacitesGestes,
         ),
-        agir: (_) {},
       );
       expect(find.text('Amina Diallo'), findsOneWidget);
       expect(find.byType(EtatSansDonnees), findsNothing);
-      await tester.tap(_cle('candidatures-selectionner'));
+      await tester.tap(find.byKey(cleCase('a1')));
       await laisser(tester);
-      await tester.tap(_cle('candidature-a1'));
-      await laisser(tester);
-      expect(find.text(t.admin.candidatures.selection.horsLigne), findsOneWidget);
-      expect(find.byKey(BarreSelection.cleAction), findsNothing);
+      // La barre dit pourquoi aucune operation n'est offerte (jamais grisee).
+      expect(
+        find.text(t.admin.candidatures.selection.horsLigne),
+        findsOneWidget,
+      );
+      for (final GesteLot g in GesteLot.values) {
+        expect(find.byKey(CandidaturesPage.cleOperationLot(g)), findsNothing);
+      }
       expect(_boutonsPleins(tester), 0);
     });
 
@@ -336,12 +363,9 @@ void main() {
         ),
       );
       expect(_cle('candidatures-genre-inconnu'), findsOneWidget);
-      expect(
-        find.text(t.admin.candidatures.genreInconnuTitre),
-        findsOneWidget,
-      );
+      expect(find.text(t.admin.candidatures.genreInconnuTitre), findsOneWidget);
       expect(find.text(t.admin.candidatures.genreInconnu), findsOneWidget);
-      expect(find.byType(CarteAlertes), findsNothing);
+      expect(find.byType(SyntheseCandidatures), findsNothing);
     });
 
     testWidgets('exception du super-admin : un bandeau en tete, sinon rien', (
@@ -371,39 +395,83 @@ void main() {
     });
   });
 
-  group('alertes', () {
-    testWidgets('quatre alertes dans une seule carte, deux non servies', (
-      tester,
-    ) async {
+  group('synthese : le compteur et les alertes que le serveur sert', () {
+    testWidgets('deux alertes servies, deux jamais affichees', (tester) async {
       await monterCandidatures(
         tester,
         port: FauxCandidaturesDirection(lignes: _lignes()),
       );
-      expect(find.byType(CarteAlertes), findsOneWidget);
-      for (final String nom in <String>[
-        'bloquees',
-        'entretiensEnRetard',
-        'informationsManquantes',
-        'confirmeesIndisponibles',
-      ]) {
-        expect(find.byKey(CarteAlertes.cleAlerte(nom)), findsOneWidget);
-      }
-      final a = t.admin.candidatures.alertes;
-      expect(find.text(a.bloquees), findsOneWidget);
-      expect(find.text(a.entretiensEnRetard), findsOneWidget);
-      expect(find.text(a.informationsManquantes), findsOneWidget);
-      expect(find.text(a.confirmeesIndisponibles), findsOneWidget);
-      // Servi : une candidature a completer en cours, hors pause (celle de
-      // Emna est en pause : elle n'entre dans aucune alerte) -> 0 ici.
-      // Non servis : le serveur d'aujourd'hui rend NULL, l'ecran le dit seul.
+      expect(find.byType(SyntheseCandidatures), findsOneWidget);
+      final s = t.admin.candidatures.liste.synthese;
+      // Servies : informations manquantes (0 : Emna est en pause) et
+      // confirmees indisponibles (Carla).
       expect(
-        find.text(t.commun.etats.branchementServeur),
-        findsNWidgets(2),
+        find.byKey(SyntheseCandidatures.cleAlerte('informationsManquantes')),
+        findsOneWidget,
       );
+      expect(find.text(s.informationsManquantes(n: 0)), findsOneWidget);
+      expect(find.text(s.confirmeesIndisponibles(n: 1)), findsOneWidget);
+      // Non servies (NULL cote serveur) : ni mot, ni « Disponible au
+      // branchement serveur », ni zero invente.
+      final a = t.admin.candidatures.alertes;
+      expect(find.text(a.bloquees), findsNothing);
+      expect(find.text(a.entretiensEnRetard), findsNothing);
+      expect(find.text(t.commun.etats.branchementServeur), findsNothing);
       expect(find.text(a.rien), findsNothing);
+      // Le compteur de candidatures du filtre.
+      expect(find.byKey(SyntheseCandidatures.cleTotal), findsOneWidget);
+      expect(find.text(t.admin.candidatures.total(n: 6)), findsOneWidget);
     });
 
-    testWidgets('alertes a zero : chaque compteur dit 0, « Rien a traiter »', (
+    testWidgets(
+      'une alerte n\'est pas pressable : aucune cle de filtre ne lui est equivalente',
+      (tester) async {
+        final FauxCandidaturesDirection port = FauxCandidaturesDirection(
+          lignes: _lignes(),
+          alertes: const CompteursAlertes(
+            informationsManquantes: 12,
+            confirmeesIndisponibles: 2,
+          ),
+        );
+        await monterCandidatures(tester, port: port);
+        final int avant = port.appels.length;
+        await tester.tap(
+          find.byKey(SyntheseCandidatures.cleAlerte('informationsManquantes')),
+          warnIfMissed: false,
+        );
+        await laisser(tester);
+        expect(port.appels, hasLength(avant));
+        expect(
+          find.descendant(
+            of: find.byKey(
+              SyntheseCandidatures.cleAlerte('informationsManquantes'),
+            ),
+            matching: find.byType(Pressable),
+          ),
+          findsNothing,
+        );
+      },
+    );
+
+    testWidgets('les nombres sont ceux du serveur, jamais recalcules', (
+      tester,
+    ) async {
+      await monterCandidatures(
+        tester,
+        port: FauxCandidaturesDirection(
+          lignes: _lignes(),
+          alertes: const CompteursAlertes(
+            informationsManquantes: 12,
+            confirmeesIndisponibles: 2,
+          ),
+        ),
+      );
+      final s = t.admin.candidatures.liste.synthese;
+      expect(find.text(s.informationsManquantes(n: 12)), findsOneWidget);
+      expect(find.text(s.confirmeesIndisponibles(n: 2)), findsOneWidget);
+    });
+
+    testWidgets('quatre alertes servies a zero : « Rien a traiter »', (
       tester,
     ) async {
       await monterCandidatures(
@@ -418,72 +486,63 @@ void main() {
           ),
         ),
       );
-      expect(
-        find.descendant(
-          of: find.byType(CarteAlertes),
-          matching: find.text('0'),
-        ),
-        findsNWidgets(4),
-      );
-      expect(find.byKey(CarteAlertes.cleRien), findsOneWidget);
+      expect(find.byKey(SyntheseCandidatures.cleRien), findsOneWidget);
       expect(find.text(t.admin.candidatures.alertes.rien), findsOneWidget);
-    });
-
-    testWidgets('les nombres sont ceux du serveur, jamais recalcules', (
-      tester,
-    ) async {
-      await monterCandidatures(
-        tester,
-        port: FauxCandidaturesDirection(
-          lignes: _lignes(),
-          alertes: const CompteursAlertes(
-            bloquees: 7,
-            entretiensEnRetard: 3,
-            informationsManquantes: 12,
-            confirmeesIndisponibles: 2,
-          ),
-        ),
-      );
-      for (final String n in <String>['7', '3', '12', '2']) {
-        expect(
-          find.descendant(
-            of: find.byType(CarteAlertes),
-            matching: find.text(n),
-          ),
-          findsOneWidget,
-          reason: n,
-        );
-      }
-      expect(find.byKey(CarteAlertes.cleRien), findsNothing);
     });
   });
 
   group('filtres, tri, pages : tout part au serveur', () {
-    testWidgets('puces des salles avec compteurs, rendus par le serveur', (
+    /// Ouvre le menu des salles et rend le texte de ses entrees.
+    Future<List<String>> entreesSalle(WidgetTester tester) async {
+      await ouvrirMenuFiltre(tester, _cle('candidatures-filtre-salle'));
+      return <String>[
+        for (final Element e
+            in find
+                .descendant(
+                  of: find.byWidgetPredicate(
+                    (Widget w) =>
+                        w.runtimeType.toString().startsWith('PopupMenuItem<'),
+                  ),
+                  matching: find.byType(Text),
+                )
+                .evaluate())
+          (e.widget as Text).data!,
+      ];
+    }
+
+    testWidgets('le menu des salles dit ses compteurs, rendus par le serveur', (
       tester,
     ) async {
       await monterCandidatures(
         tester,
         port: FauxCandidaturesDirection(lignes: _lignes()),
       );
-      int? compteur(String cle) =>
-          tester.widget<FilterPill>(_cle(cle)).compteur;
+      final l = t.admin.candidatures.liste;
+      final f = t.admin.candidatures.filtres;
       // En cours seulement : Farah (refusee) n'est pas comptee.
-      expect(compteur('candidatures-filtre-examen'), 2);
-      expect(compteur('candidatures-filtre-verification'), 1);
-      expect(compteur('candidatures-filtre-prets'), 1);
-      expect(compteur('candidatures-filtre-invitees'), 1);
-      expect(tester.widget<FilterPill>(_cle('candidatures-filtre-toutes')).compteur, isNull);
+      expect(await entreesSalle(tester), <String>[
+        l.toutesSalles,
+        l.avecCompteur(libelle: f.invitees, n: 1),
+        l.avecCompteur(libelle: t.recrutement.salles.examen, n: 2),
+        l.avecCompteur(libelle: t.recrutement.salles.verification, n: 1),
+        l.avecCompteur(libelle: t.recrutement.salles.prets, n: 1),
+      ]);
     });
 
-    testWidgets('« Gardees pour suivi » : ni puce ni mot sans le serveur', (
+    testWidgets('« Gardees pour suivi » : ni entree ni mot sans le serveur', (
       tester,
     ) async {
       await monterCandidatures(
         tester,
         port: FauxCandidaturesDirection(lignes: _lignes()),
       );
-      expect(_cle('candidatures-filtre-gardees'), findsNothing);
+      final List<String> entrees = await entreesSalle(tester);
+      expect(
+        entrees.any(
+          (String e) => e.contains(t.admin.candidatures.filtres.gardees),
+        ),
+        isFalse,
+      );
       expect(find.text(t.admin.candidatures.filtres.gardees), findsNothing);
     });
 
@@ -501,30 +560,100 @@ void main() {
         ),
         largeur: 1440,
       );
+      final List<String> entrees = await entreesSalle(tester);
       expect(
-        find.text(t.admin.candidatures.filtres.gardees).hitTestable(),
-        findsWidgets,
+        entrees.any(
+          (String e) => e.contains(t.admin.candidatures.filtres.gardees),
+        ),
+        isTrue,
       );
     });
 
-    testWidgets('une puce de salle filtre au serveur, la retoucher la relache', (
-      tester,
-    ) async {
-      final FauxCandidaturesDirection port = FauxCandidaturesDirection(
-        lignes: _lignes(),
-      );
-      await monterCandidatures(tester, port: port);
-      await toucherFiltre(tester, _cle('candidatures-filtre-examen'));
-      await laisser(tester);
-      expect(port.appels.last.filtre.etape, EtapeCandidature.prequalification);
-      expect(port.appels.last.page, 1);
-      expect(find.text('Bilal Haddad'), findsNothing);
-      expect(find.text('Amina Diallo'), findsOneWidget);
-      await toucherFiltre(tester, _cle('candidatures-filtre-examen'));
-      await laisser(tester);
-      expect(port.appels.last.filtre.etape, isNull);
-      expect(find.text('Bilal Haddad'), findsOneWidget);
-    });
+    testWidgets(
+      'une salle filtre au serveur, « Toutes les salles » la relache',
+      (tester) async {
+        final FauxCandidaturesDirection port = FauxCandidaturesDirection(
+          lignes: _lignes(),
+        );
+        await monterCandidatures(tester, port: port);
+        await ouvrirMenuFiltre(tester, _cle('candidatures-filtre-salle'));
+        await tester.tap(find.textContaining(t.recrutement.salles.examen).last);
+        await tester.pumpAndSettle();
+        await fermerPlus(tester);
+        await laisser(tester);
+        expect(
+          port.appels.last.filtre.etape,
+          EtapeCandidature.prequalification,
+        );
+        expect(port.appels.last.page, 1);
+        expect(find.text('Bilal Haddad'), findsNothing);
+        expect(find.text('Amina Diallo'), findsOneWidget);
+        // Le filtre en cours se voit sur son bouton (la salle retenue), sans
+        // rangee de puces qui le redise (relecture visuelle C-07) ; « Toutes les
+        // salles » le relache.
+        final String puce = t.admin.candidatures.liste.axe(
+          axe: t.admin.candidatures.liste.salle,
+          valeur: t.recrutement.salles.examen,
+        );
+        expect(find.text(puce), findsNothing);
+        expect(find.byKey(FiltresActifs.cleToutEffacer), findsNothing);
+        await ouvrirMenuFiltre(tester, _cle('candidatures-filtre-salle'));
+        await tester.tap(
+          find.text(t.admin.candidatures.liste.toutesSalles).last,
+        );
+        await tester.pumpAndSettle();
+        await fermerPlus(tester);
+        await laisser(tester);
+        expect(port.appels.last.filtre.etape, isNull);
+        expect(find.text('Bilal Haddad'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'les filtres en cours : une puce par axe, « Tout effacer » les retire tous',
+      (tester) async {
+        final FauxCandidaturesDirection port = FauxCandidaturesDirection(
+          lignes: _lignes(),
+        );
+        await monterCandidatures(tester, port: port);
+        // Sans filtre : aucune rangee de filtres en cours.
+        expect(find.byKey(FiltresActifs.cleToutEffacer), findsNothing);
+        await ouvrirMenuFiltre(tester, _cle('candidatures-filtre-etat'));
+        await tester.tap(find.text(t.admin.candidatures.etats.enExamen).last);
+        await tester.pumpAndSettle();
+        await fermerPlus(tester);
+        await laisser(tester);
+        await ouvrirMenuFiltre(tester, _cle('candidatures-filtre-versement'));
+        await tester.tap(
+          find.text(libelleVersement(EtatVersement.aVerifier)).last,
+        );
+        await tester.pumpAndSettle();
+        await fermerPlus(tester);
+        await laisser(tester);
+        final f = t.admin.candidatures.filtres;
+        final l = t.admin.candidatures.liste;
+        // L'etat se lit sur son bouton : pas de puce qui le redise.
+        expect(
+          find.text(
+            l.axe(axe: f.etat, valeur: t.admin.candidatures.etats.enExamen),
+          ),
+          findsNothing,
+        );
+        expect(
+          find.text(
+            l.axe(
+              axe: f.versement,
+              valeur: libelleVersement(EtatVersement.aVerifier),
+            ),
+          ),
+          findsOneWidget,
+        );
+        await tester.tap(find.byKey(FiltresActifs.cleToutEffacer));
+        await laisser(tester);
+        expect(port.appels.last.filtre.estVide, isTrue);
+        expect(find.byKey(FiltresActifs.cleToutEffacer), findsNothing);
+      },
+    );
 
     testWidgets('la recherche part 300 ms apres la derniere frappe', (
       tester,
@@ -558,26 +687,30 @@ void main() {
       expect(find.text(t.admin.candidatures.aucunResultat), findsOneWidget);
       // Les filtres posés sont rappeles, avec la recherche.
       expect(
-        find.text(t.admin.candidatures.rappel.filtres(
-          filtres: t.admin.candidatures.rappel.recherche(texte: 'zzz'),
-        )),
+        find.text(
+          t.admin.candidatures.rappel.filtres(
+            filtres: t.admin.candidatures.rappel.recherche(texte: 'zzz'),
+          ),
+        ),
         findsOneWidget,
       );
       // La recherche et les commandes restent : on peut corriger.
       expect(_cle('candidatures-recherche'), findsOneWidget);
-      await tester.tap(find.text(t.admin.journal.effacerFiltres));
+      await tester.tap(find.text(t.commun.listes.toutEffacer).last);
       await laisser(tester);
       expect(port.appels.last.filtre.estVide, isTrue);
       expect(find.text('Amina Diallo'), findsOneWidget);
     });
 
-    testWidgets('un menu « Plus » filtre au serveur : l\'etat', (tester) async {
+    testWidgets('le menu de l\'etat filtre au serveur', (tester) async {
       final FauxCandidaturesDirection port = FauxCandidaturesDirection(
         lignes: _lignes(),
       );
       await monterCandidatures(tester, port: port);
       await ouvrirMenuFiltre(tester, _cle('candidatures-filtre-etat'));
-      await tester.tap(find.text(t.admin.candidatures.etats.entretienAPlanifier).last);
+      await tester.tap(
+        find.text(t.admin.candidatures.etats.entretienAPlanifier).last,
+      );
       await tester.pumpAndSettle();
       await fermerPlus(tester);
       await laisser(tester);
@@ -586,7 +719,9 @@ void main() {
       expect(find.text('Amina Diallo'), findsNothing);
     });
 
-    testWidgets('le tri part au serveur et revient a la page 1', (tester) async {
+    testWidgets('le tri part au serveur et revient a la page 1', (
+      tester,
+    ) async {
       final FauxCandidaturesDirection port = FauxCandidaturesDirection(
         lignes: lignesEnMasse(120),
       );
@@ -595,17 +730,51 @@ void main() {
       // Page 2 d'abord : un tri qui change revient a la page 1.
       await _pageSuivante(tester);
       expect(port.appels.last.page, 2);
-      final Finder tri = find.descendant(
-        of: _cle('candidatures-tri'),
-        matching: find.text(t.admin.candidatures.tri.reception),
-      );
-      await tester.ensureVisible(tri);
-      await tester.pump();
-      await tester.tap(tri);
+      await _choisirTri(tester, t.admin.candidatures.tri.reception);
       await laisser(tester);
       expect(port.appels.last.tri, TriCandidatures.recente);
       expect(port.appels.last.page, 1);
+      // Le tri par nom, que le serveur sert aussi.
+      await _choisirTri(tester, t.admin.candidatures.colonnes.nom);
+      await laisser(tester);
+      expect(port.appels.last.tri, TriCandidatures.nom);
     });
+
+    testWidgets(
+      '1440 : l\'en-tete de date porte le tri serveur, la colonne le suit',
+      (tester) async {
+        final FauxCandidaturesDirection port = FauxCandidaturesDirection(
+          lignes: <LigneCandidature>[
+            ligneTest(
+              id: 'x1',
+              nom: 'Xavier',
+              derniereActivite: DateTime.utc(2026, 10, 20, 9, 5),
+              recueLe: DateTime.utc(2026, 9, 3, 14, 30),
+            ),
+          ],
+        );
+        await monterCandidatures(
+          tester,
+          port: port,
+          largeur: 1440,
+          hauteur: 1800,
+        );
+        final r = t.admin.candidatures;
+        expect(find.text(r.tri.activite), findsOneWidget);
+        expect(find.text('20 oct. 2026'), findsOneWidget);
+        // Un toucher passe au tri par reception : la colonne change de date.
+        await tester.tap(find.text(r.tri.activite));
+        await laisser(tester);
+        expect(port.appels.last.tri, TriCandidatures.recente);
+        expect(find.text(r.tri.reception), findsOneWidget);
+        expect(find.text('3 sept. 2026'), findsOneWidget);
+        expect(find.text('20 oct. 2026'), findsNothing);
+        // Les autres colonnes n'ont pas de tri invente ; le nom a celui du serveur.
+        await tester.tap(find.text(r.colonnes.nom));
+        await laisser(tester);
+        expect(port.appels.last.tri, TriCandidatures.nom);
+      },
+    );
 
     testWidgets('1 000 lignes : une page de 50 a la fois, total reel', (
       tester,
@@ -618,14 +787,16 @@ void main() {
       expect(port.appels.single.page, 1);
       expect(find.byType(CarteCandidature), findsNWidgets(50));
       expect(find.text(t.admin.candidatures.total(n: 1000)), findsOneWidget);
+      // Le pied dit la tranche et la taille de page que le serveur impose, sans
+      // faux selecteur.
       expect(
-        find.text(t.admin.candidatures.resume(debut: '1', fin: '50', total: '1000')),
+        find.text(t.commun.listes.tranche(debut: 1, fin: 50, total: 1000)),
         findsOneWidget,
       );
-      expect(
-        find.text(t.commun.formats.pageSur(page: '1', total: '20')),
-        findsOneWidget,
-      );
+      // Etroit (cartes), la navigation reste seule : la mention de la taille de
+      // page n'y est pas (elle est dite des 480 points de large).
+      expect(find.text(t.commun.listes.parPage(n: 50)), findsNothing);
+      expect(find.byKey(PiedDeListe.cleTaille), findsNothing);
       // Page suivante : une seule page de plus est demandee.
       await _pageSuivante(tester);
       await laisser(tester);
@@ -635,27 +806,31 @@ void main() {
       expect(find.text('Personne 0050'), findsOneWidget);
       expect(find.text('Personne 0000'), findsNothing);
       expect(
-        find.text(t.commun.formats.pageSur(page: '2', total: '20')),
+        find.text(t.commun.listes.tranche(debut: 51, fin: 100, total: 1000)),
         findsOneWidget,
       );
       // Un changement de filtre revient a la page 1.
-      await toucherFiltre(tester, _cle('candidatures-filtre-prets'));
+      await ouvrirMenuFiltre(tester, _cle('candidatures-filtre-salle'));
+      await tester.tap(find.textContaining(t.recrutement.salles.prets).last);
+      await tester.pumpAndSettle();
+      await fermerPlus(tester);
       await laisser(tester);
       expect(port.appels.last.page, 1);
     });
   });
 
-  group('selection', () {
+  group('selection et traitement groupe : la barre', () {
     Future<FauxCandidaturesDirection> monter(
       WidgetTester tester, {
-      bool agir = true,
       bool horsLigne = false,
       double largeur = 390,
       double hauteur = 3000,
-      CapacitesCandidatures caps = capacitesQuiDecide,
+      CapacitesCandidatures caps = capacitesGestes,
+      List<LigneCandidature>? lignes,
+      void Function(LigneCandidature)? ouvrir,
     }) async {
       final FauxCandidaturesDirection port = FauxCandidaturesDirection(
-        lignes: _lignes(),
+        lignes: lignes ?? _lignes(),
         capacitesRendues: caps,
       );
       await monterCandidatures(
@@ -664,154 +839,289 @@ void main() {
         horsLigne: horsLigne,
         largeur: largeur,
         hauteur: hauteur,
-        agir: agir ? (_) {} : null,
+        ouvrir: ouvrir,
       );
       return port;
     }
 
-    testWidgets('sans le droit d\'agir en lot : aucun lien « Selectionner »', (
+    Future<void> cocher(WidgetTester tester, String id) async {
+      final Finder f = find.byKey(cleCase(id));
+      await tester.ensureVisible(f);
+      await tester.pump();
+      await tester.tap(f);
+      await laisser(tester);
+    }
+
+    Finder casePage() => find.byWidgetPredicate(
+      (Widget w) => w is CaseACocher && w.libelle == t.commun.listes.cocherPage,
+    );
+
+    testWidgets('sans le droit d\'agir en lot : ni case ni barre', (
       tester,
     ) async {
       await monter(tester, caps: capacitesQuiLit);
-      expect(_cle('candidatures-selectionner'), findsNothing);
+      expect(find.byType(CaseACocher), findsNothing);
+      expect(find.byKey(CandidaturesPage.cleBarreLot), findsNothing);
       expect(_boutonsPleins(tester), 0);
     });
 
-    testWidgets('zero bouton plein sans selection, un seul avec', (tester) async {
-      await monter(tester);
-      expect(_cle('candidatures-selectionner'), findsOneWidget);
-      expect(_boutonsPleins(tester), 0);
-      await tester.tap(_cle('candidatures-selectionner'));
-      await laisser(tester);
-      // En mode selection sans ligne retenue : pas de barre, pas de bouton.
-      expect(find.byKey(BarreSelection.cleBarre), findsNothing);
-      expect(_boutonsPleins(tester), 0);
-      await tester.tap(_cle('candidature-a1'));
-      await laisser(tester);
-      await tester.tap(_cle('candidature-b2'));
-      await laisser(tester);
-      expect(find.byKey(BarreSelection.cleBarre), findsOneWidget);
-      expect(
-        find.text(t.admin.candidatures.selection.retenues(n: 2)),
-        findsOneWidget,
-      );
-      expect(find.byKey(BarreSelection.cleAction), findsOneWidget);
-      expect(find.text(t.admin.candidatures.selection.agir), findsOneWidget);
-      expect(_boutonsPleins(tester), 1);
-      verifierUnSeulBoutonPlein(tester);
-    });
-
-    testWidgets('« Agir sur la selection » recoit les identifiants retenus', (
+    testWidgets('une case par ligne, pas de barre sans selection', (
       tester,
     ) async {
-      List<String>? recus;
-      final FauxCandidaturesDirection port = FauxCandidaturesDirection(
-        lignes: _lignes(),
-        capacitesRendues: capacitesQuiDecide,
-      );
-      await monterCandidatures(tester, port: port, agir: (List<String> ids) => recus = ids);
-      await tester.tap(_cle('candidatures-selectionner'));
-      await laisser(tester);
-      await tester.tap(_cle('candidature-c3'));
-      await laisser(tester);
-      await tester.tap(_cle('candidature-a1'));
-      await laisser(tester);
-      await tester.tap(find.byKey(BarreSelection.cleAction));
-      await laisser(tester);
-      expect(recus, unorderedEquals(<String>['a1', 'c3']));
+      await monter(tester);
+      expect(find.byType(CaseACocher), findsNWidgets(6));
+      expect(find.byKey(CandidaturesPage.cleBarreLot), findsNothing);
+      expect(_boutonsPleins(tester), 0);
     });
 
     testWidgets(
-      'sans destination (ADM-22 pas construit) : le mode selection n\'est pas offert',
+      'la barre : le compte, les trois operations du serveur, la limite dite',
       (tester) async {
-        // Le serveur ouvre l'action en lot, mais rien ne la recoit : ni lien
-        // « Selectionner », ni barre, ni phrase « pas encore ouverte ».
-        await monter(tester, agir: false);
-        expect(_cle('candidatures-selectionner'), findsNothing);
-        await tester.tap(_cle('candidature-a1'), warnIfMissed: false);
-        await laisser(tester);
-        expect(find.byKey(BarreSelection.cleBarre), findsNothing);
-        expect(find.byType(IndicateurCase), findsNothing);
-        expect(find.text(t.commun.etats.indisponible.phrase), findsNothing);
+        await monter(tester);
+        await cocher(tester, 'a1');
+        await cocher(tester, 'b2');
+        expect(find.byKey(CandidaturesPage.cleBarreLot), findsOneWidget);
+        expect(
+          find.text(t.admin.candidatures.lot.selectionnees(n: 2)),
+          findsOneWidget,
+        );
+        for (final GesteLot g in GesteLot.values) {
+          expect(
+            find.byKey(CandidaturesPage.cleOperationLot(g)),
+            findsOneWidget,
+            reason: g.valeurSql,
+          );
+        }
+        expect(find.text(t.admin.candidatures.lot.refuser), findsOneWidget);
+        // Les autres gestes se font un par un : la barre le dit.
+        expect(
+          find.text(t.admin.candidatures.lot.autresGestes),
+          findsOneWidget,
+        );
+        // Aucun bouton plein : le parcours passe par une feuille.
         expect(_boutonsPleins(tester), 0);
+        verifierUnSeulBoutonPlein(tester);
       },
     );
 
-    testWidgets('toucher une ligne retenue la relache, « Tout relacher » sort du mode', (
+    testWidgets('une operation que le serveur n\'ouvre pas n\'est pas rendue', (
+      tester,
+    ) async {
+      await monter(
+        tester,
+        caps: CapacitesCandidatures(
+          peutLire: true,
+          genreLecteurConnu: true,
+          peutDecider: true,
+          gestes: <String, bool>{...capacitesGestes.gestes, 'refuser': false},
+          listes: capacitesGestes.listes,
+        ),
+      );
+      await cocher(tester, 'a1');
+      expect(
+        find.byKey(CandidaturesPage.cleOperationLot(GesteLot.refuser)),
+        findsNothing,
+      );
+      expect(
+        find.byKey(CandidaturesPage.cleOperationLot(GesteLot.mettreEnPause)),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('cocher une case n\'ouvre pas la candidature, et inversement', (
+      tester,
+    ) async {
+      LigneCandidature? ouverte;
+      await monter(tester, ouvrir: (LigneCandidature l) => ouverte = l);
+      await cocher(tester, 'a1');
+      expect(ouverte, isNull);
+      await tester.tap(_cle('candidature-b2'));
+      await laisser(tester);
+      expect(ouverte?.id, 'b2');
+      // Ouvrir une ligne ne la coche pas.
+      expect(
+        find.text(t.admin.candidatures.lot.selectionnees(n: 1)),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('« Deselectionner » vide la selection et la barre', (
       tester,
     ) async {
       await monter(tester);
-      await tester.tap(_cle('candidatures-selectionner'));
-      await laisser(tester);
-      await tester.tap(_cle('candidature-a1'));
-      await laisser(tester);
-      expect(find.byKey(BarreSelection.cleBarre), findsOneWidget);
-      await tester.tap(_cle('candidature-a1'));
-      await laisser(tester);
-      expect(find.byKey(BarreSelection.cleBarre), findsNothing);
-      await tester.tap(_cle('candidature-a1'));
-      await laisser(tester);
+      await cocher(tester, 'a1');
+      expect(find.byKey(CandidaturesPage.cleBarreLot), findsOneWidget);
       await tester.tap(find.byKey(BarreSelection.cleRelacher));
       await laisser(tester);
-      expect(find.byKey(BarreSelection.cleBarre), findsNothing);
-      expect(find.byType(IndicateurCase), findsNothing);
+      expect(find.byKey(CandidaturesPage.cleBarreLot), findsNothing);
       expect(
-        find.text(t.admin.candidatures.selection.selectionner),
-        findsOneWidget,
+        tester.widget<CaseACocher>(find.byKey(cleCase('a1'))).valeur,
+        isFalse,
       );
     });
 
-    testWidgets('la selection se garde d\'une page a l\'autre', (tester) async {
-      final FauxCandidaturesDirection port = FauxCandidaturesDirection(
-        lignes: lignesEnMasse(120),
-        capacitesRendues: capacitesQuiDecide,
-      );
-      await monterCandidatures(tester, port: port, agir: (_) {});
-      await tester.tap(_cle('candidatures-selectionner'));
-      await laisser(tester);
-      await tester.tap(_cle('candidature-m0'));
-      await laisser(tester);
-      await _pageSuivante(tester);
-      await laisser(tester);
-      await tester.tap(_cle('candidature-m50'));
-      await laisser(tester);
-      expect(
-        find.text(t.admin.candidatures.selection.retenues(n: 2)),
-        findsOneWidget,
-      );
+    testWidgets('cocher une ligne retenue la relache', (tester) async {
+      await monter(tester);
+      await cocher(tester, 'a1');
+      await cocher(tester, 'a1');
+      expect(find.byKey(CandidaturesPage.cleBarreLot), findsNothing);
     });
 
-    testWidgets('1440 : le tableau coche aussi sa case, une seule barre', (
+    testWidgets(
+      'la selection se garde d\'une page a l\'autre, avec son compte',
+      (tester) async {
+        final FauxCandidaturesDirection port = FauxCandidaturesDirection(
+          lignes: lignesEnMasse(120),
+          capacitesRendues: capacitesGestes,
+        );
+        await monterCandidatures(tester, port: port);
+        await cocher(tester, 'm0');
+        await _pageSuivante(tester);
+        await laisser(tester);
+        await cocher(tester, 'm50');
+        final l = t.admin.candidatures.lot;
+        // Deux retenues, dont une seule sur cette page : le compte est dit.
+        expect(
+          find.text(
+            l.avecDont(
+              selection: l.selectionnees(n: 2),
+              dont: l.dontPage(n: 1),
+            ),
+          ),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets('un filtre qui change retire la selection, et le dit', (
       tester,
     ) async {
-      await monter(tester, largeur: 1440, hauteur: 1800);
-      expect(find.byType(DataCollection<LigneCandidature>), findsOneWidget);
-      await tester.tap(_cle('candidatures-selectionner'));
+      final FauxCandidaturesDirection port = await monter(tester);
+      await cocher(tester, 'a1');
+      expect(find.byKey(CandidaturesPage.cleBarreLot), findsOneWidget);
+      await ouvrirMenuFiltre(tester, _cle('candidatures-filtre-etat'));
+      await tester.tap(find.text(t.admin.candidatures.etats.enExamen).last);
+      await tester.pumpAndSettle();
+      await fermerPlus(tester);
       await laisser(tester);
-      await tester.tap(_cle('candidature-a1'));
-      await laisser(tester);
+      expect(port.appels.last.filtre.etat, EtatCandidature.enExamen);
+      expect(find.byKey(CandidaturesPage.cleBarreLot), findsNothing);
       expect(
-        find.text(t.admin.candidatures.selection.retenues(n: 1)),
+        find.text(t.admin.candidatures.lot.selectionRetiree),
         findsOneWidget,
       );
-      expect(tester.widget<Checkbox>(_cle('candidature-case-a1')).value, isTrue);
-      expect(tester.widget<Checkbox>(_cle('candidature-case-b2')).value, isFalse);
-      verifierUnSeulBoutonPlein(tester);
+      // Sans selection a retirer, un filtre ne dit rien.
+      await ouvrirMenuFiltre(tester, _cle('candidatures-filtre-etat'));
+      await tester.tap(
+        find.text(t.admin.candidatures.etats.entretienAPlanifier).last,
+      );
+      await tester.pumpAndSettle();
+      await fermerPlus(tester);
+      await laisser(tester);
+      expect(
+        find.text(t.admin.candidatures.lot.selectionRetiree),
+        findsOneWidget,
+      );
     });
+
+    testWidgets('une recherche qui change retire la selection, et le dit', (
+      tester,
+    ) async {
+      await monter(tester);
+      await cocher(tester, 'a1');
+      await tester.enterText(_cle('candidatures-recherche'), 'bil');
+      await tester.pump(const Duration(milliseconds: 400));
+      await laisser(tester);
+      expect(find.byKey(CandidaturesPage.cleBarreLot), findsNothing);
+      expect(
+        find.text(t.admin.candidatures.lot.selectionRetiree),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets(
+      'le tri ne retire pas la selection : les identifiants restent',
+      (tester) async {
+        await monter(tester);
+        await cocher(tester, 'a1');
+        await _choisirTri(tester, t.admin.candidatures.tri.reception);
+        await laisser(tester);
+        expect(find.byKey(CandidaturesPage.cleBarreLot), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      '1440 : « cocher la page » ne coche que la page visible, au plafond de 200',
+      (tester) async {
+        final FauxCandidaturesDirection port = FauxCandidaturesDirection(
+          lignes: lignesEnMasse(300),
+          capacitesRendues: capacitesGestes,
+        );
+        await monterCandidatures(
+          tester,
+          port: port,
+          largeur: 1440,
+          hauteur: 1800,
+        );
+        expect(find.byType(DataCollection<LigneCandidature>), findsOneWidget);
+        await tester.tap(casePage());
+        await laisser(tester);
+        expect(
+          find.text(t.admin.candidatures.lot.selectionnees(n: 50)),
+          findsOneWidget,
+        );
+        // Cinq pages de 50 : la quatrieme atteint 200, la cinquieme ne s'ajoute pas.
+        for (int page = 2; page <= 5; page++) {
+          await tester.tap(find.byKey(const ValueKey<String>('nav-suivant')));
+          await laisser(tester);
+          await tester.tap(casePage());
+          await laisser(tester);
+        }
+        final l = t.admin.candidatures.lot;
+        expect(find.textContaining(l.selectionnees(n: 200)), findsOneWidget);
+        expect(find.text(l.plafond(n: plafondLotCandidatures)), findsOneWidget);
+        // La page n'est pas « tous les resultats » : un seul appel par page.
+        expect(port.appels.map((AppelLister a) => a.page), <int>[
+          1,
+          2,
+          3,
+          4,
+          5,
+        ]);
+      },
+    );
+
+    testWidgets(
+      'hors ligne : la barre dit pourquoi aucune operation n\'est offerte',
+      (tester) async {
+        await monter(tester, horsLigne: true);
+        await cocher(tester, 'a1');
+        expect(
+          find.text(t.admin.candidatures.selection.horsLigne),
+          findsOneWidget,
+        );
+        for (final GesteLot g in GesteLot.values) {
+          expect(find.byKey(CandidaturesPage.cleOperationLot(g)), findsNothing);
+        }
+      },
+    );
   });
 
   group('ouvrir une candidature', () {
-    testWidgets('sans destination (ADM-21 pas construit) : la ligne ne se touche pas', (
+    testWidgets(
+      'sans destination (ADM-21 pas construit) : la ligne ne se touche pas',
+      (tester) async {
+        await monterCandidatures(
+          tester,
+          port: FauxCandidaturesDirection(lignes: _lignes()),
+        );
+        expect(tester.widget<AppCard>(_cle('candidature-a1')).onPress, isNull);
+      },
+    );
+
+    testWidgets('avec une destination : la ligne entiere ouvre', (
       tester,
     ) async {
-      await monterCandidatures(
-        tester,
-        port: FauxCandidaturesDirection(lignes: _lignes()),
-      );
-      expect(tester.widget<AppCard>(_cle('candidature-a1')).onPress, isNull);
-    });
-
-    testWidgets('avec une destination : la ligne entiere ouvre', (tester) async {
       LigneCandidature? ouverte;
       await monterCandidatures(
         tester,
@@ -821,24 +1131,6 @@ void main() {
       await tester.tap(_cle('candidature-b2'));
       await laisser(tester);
       expect(ouverte?.id, 'b2');
-    });
-
-    testWidgets('en selection, la ligne coche au lieu d\'ouvrir', (tester) async {
-      LigneCandidature? ouverte;
-      await monterCandidatures(
-        tester,
-        port: FauxCandidaturesDirection(
-          lignes: _lignes(),
-          capacitesRendues: capacitesQuiDecide,
-        ),
-        ouvrir: (LigneCandidature l) => ouverte = l,
-        agir: (_) {},
-      );
-      await tester.tap(_cle('candidatures-selectionner'));
-      await laisser(tester);
-      await tester.tap(_cle('candidature-b2'));
-      await laisser(tester);
-      expect(ouverte, isNull);
     });
   });
 
@@ -874,7 +1166,9 @@ void main() {
       expect(_cle('candidatures-invitations'), findsOneWidget);
     });
 
-    testWidgets('le lien est en tete, avant les alertes', (tester) async {
+    testWidgets('le lien est en tete de page, avant la recherche', (
+      tester,
+    ) async {
       await monterCandidatures(
         tester,
         port: FauxCandidaturesDirection(lignes: _lignes()),
@@ -882,7 +1176,7 @@ void main() {
       );
       expect(
         tester.getTopLeft(_cle('candidatures-invitations')).dy,
-        lessThan(tester.getTopLeft(find.byType(CarteAlertes)).dy),
+        lessThan(tester.getTopLeft(_cle('candidatures-recherche')).dy),
       );
     });
 
@@ -943,7 +1237,9 @@ void main() {
   });
 
   group('gabarits', () {
-    testWidgets('1440 : un tableau dense, ses colonnes nommees', (tester) async {
+    testWidgets('1440 : un tableau dense, ses colonnes nommees', (
+      tester,
+    ) async {
       await monterCandidatures(
         tester,
         port: FauxCandidaturesDirection(lignes: _lignes()),
@@ -955,11 +1251,11 @@ void main() {
       final c = t.admin.candidatures.colonnes;
       for (final String titre in <String>[
         c.nom,
-        c.salle,
+        t.admin.candidatures.liste.salle,
         c.etat,
-        c.pays,
+        t.admin.candidatures.liste.colonnePays,
         c.versement,
-        c.activite,
+        t.admin.candidatures.tri.activite,
       ]) {
         expect(
           find.descendant(
@@ -974,7 +1270,9 @@ void main() {
       expect(_boutonsPleins(tester), 0);
     });
 
-    testWidgets('390 : une carte par candidature, pas de tableau', (tester) async {
+    testWidgets('390 : une carte par candidature, pas de tableau', (
+      tester,
+    ) async {
       await monterCandidatures(
         tester,
         port: FauxCandidaturesDirection(lignes: _lignes()),
@@ -1013,9 +1311,8 @@ void main() {
           tester,
           port: FauxCandidaturesDirection(
             lignes: _lignes(),
-            capacitesRendues: capacitesQuiDecide,
+            capacitesRendues: capacitesGestes,
           ),
-          agir: (_) {},
           largeur: 320,
           hauteur: 6000,
           echelle: 2,
@@ -1023,12 +1320,16 @@ void main() {
         );
         expect(tester.takeException(), isNull);
         verifierUnSeulBoutonPlein(tester);
-        await tester.tap(_cle('candidatures-selectionner'));
-        await laisser(tester);
-        await tester.tap(_cle('candidature-a1'));
+        final Finder aCocher = find.byKey(cleCase('a1'));
+        await tester.ensureVisible(aCocher);
+        await tester.pump();
+        await tester.tap(aCocher);
         await laisser(tester);
         expect(tester.takeException(), isNull);
-        expect(_boutonsPleins(tester), 1);
+        // La barre du lot n'a aucun bouton plein : le parcours passe par une
+        // feuille.
+        expect(find.byKey(CandidaturesPage.cleBarreLot), findsOneWidget);
+        expect(_boutonsPleins(tester), 0);
         verifierUnSeulBoutonPlein(tester);
       });
     }
@@ -1045,8 +1346,10 @@ void main() {
       final r = t.admin.candidatures;
       expect(r.titre, isNot('Candidatures'));
       expect(find.text(r.titre), findsWidgets);
-      expect(find.text(r.alertes.bloquees), findsOneWidget);
-      expect(find.text(r.alertes.bloquees), findsOneWidget);
+      expect(
+        find.text(r.liste.synthese.confirmeesIndisponibles(n: 1)),
+        findsOneWidget,
+      );
       expect(find.text(t.recrutement.salles.verification), findsWidgets);
       expect(find.textContaining('Candidatures'), findsNothing);
       expect(find.textContaining('Rechercher'), findsNothing);
@@ -1054,21 +1357,22 @@ void main() {
     });
   });
 
-  testWidgets('en arabe, la date garde l\'ordre de sa langue, sans isolat interne', (
-    tester,
-  ) async {
-    await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
-    final String date = dateCourteCandidature(DateTime.utc(2026, 10, 22, 12));
-    // Un isolat dans un isolat ne voit aucune lettre forte : la date se lisait
-    // « 2026 أكتوبر 22 ». Le texte qui la porte l'isole deja une fois.
-    expect(date.contains('\u2068'), isFalse);
-    expect(date.contains('\u2069'), isFalse);
-    expect(date, contains('22'));
-    expect(date, contains('2026'));
-    expect(date.indexOf('22'), lessThan(date.indexOf('2026')));
-    final String phrase = t.admin.candidatures.ligne.activite(date: date);
-    expect(RegExp('[\u0600-\u06FF]').hasMatch(phrase), isTrue);
-  });
+  testWidgets(
+    'en arabe, la date garde l\'ordre de sa langue, sans isolat interne',
+    (tester) async {
+      await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
+      final String date = dateCourteCandidature(DateTime.utc(2026, 10, 22, 12));
+      // Un isolat dans un isolat ne voit aucune lettre forte : la date se lisait
+      // « 2026 أكتوبر 22 ». Le texte qui la porte l'isole deja une fois.
+      expect(date.contains('\u2068'), isFalse);
+      expect(date.contains('\u2069'), isFalse);
+      expect(date, contains('22'));
+      expect(date, contains('2026'));
+      expect(date.indexOf('22'), lessThan(date.indexOf('2026')));
+      final String phrase = t.admin.candidatures.ligne.activite(date: date);
+      expect(RegExp('[\u0600-\u06FF]').hasMatch(phrase), isTrue);
+    },
+  );
 
   test('capacites : une cle absente vaut faux, jamais un droit suppose', () {
     final CapacitesCandidatures c = CapacitesCandidatures.depuisJson(
@@ -1082,10 +1386,9 @@ void main() {
   });
 
   test('un compteur non servi reste nul', () {
-    final CompteursAlertes a = CompteursAlertes.depuisJson(const <String, dynamic>{
-      'informationsManquantes': 4,
-      'bloquees': null,
-    });
+    final CompteursAlertes a = CompteursAlertes.depuisJson(
+      const <String, dynamic>{'informationsManquantes': 4, 'bloquees': null},
+    );
     expect(a.informationsManquantes, 4);
     expect(a.bloquees, isNull);
     expect(a.tousServis, isFalse);

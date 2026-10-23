@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admin/service_evaluations.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/menu_actions.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_evaluations/evaluations_page.dart';
 
 import '../../support/annonces.dart';
@@ -69,7 +70,12 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await _presser(tester, find.byTooltip('Mariam'));
+    await _presser(
+      tester,
+      find.byWidgetPredicate(
+        (Widget w) => w is MenuActions && w.objet == 'Mariam',
+      ),
+    );
     await _presser(
       tester,
       find.text(t.admin.evaluations.actionEnregistrerResultat).last,

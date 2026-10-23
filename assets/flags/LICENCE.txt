@@ -6,13 +6,25 @@ Source : flag-icons 7.5.0 (https://github.com/lipis/flag-icons), paquet npm
 profil enseignant (FORM-L8, `paysProposes`) :
 fr be es gb ie gn sn ml mr ma ci bf tg ng ne td cm ca us.
 
+Ajout du 23/10/2026 (LISTES-1, drapeaux des listes d'administration : le pays
+de residence d'une candidature est un code ISO, pas un des 19 noms) : 46 pays
+de plus, de la meme source et de la meme version, pour l'Afrique de l'Ouest
+(bj gm gw sl lr gh cv), l'Afrique centrale (cg cd ga gq cf st), l'Afrique de
+l'Est (dj so ke tz ug et er sd ss km mg mu sc rw bi), le Maghreb et l'Egypte
+(dz tn ly eg), l'Europe de l'Ouest (de it nl pt ch lu at), l'Amerique du Nord
+(mx) et le Golfe (sa ae qa kw bh om).
+
 Transformation : chaque SVG est rasterise en PNG 64 x 48 (4:3), palette
 indexee, sans autre modification du dessin.
 
 Ajout du 23/10/2026 (CAND-04, demande du directeur : un drapeau pour chaque pays
 de la liste des indicatifs, lib/core/i18n/indicatifs_telephoniques.dart) : 229
 autres pays, meme source, meme version (flag-icons 7.5.0, flags/4x3), meme
-format 64 x 48, rendus par Chromium sans autre modification du dessin.
+format 64 x 48, rendus par Chromium sans autre modification du dessin. Codes :
+ad ae af ag ai al am ao aq ar as at au aw ax az ba bb bd be bf bg bh bi bj bl bm bn bo bq br bs bt bw by bz ca cc cd cf cg ch ci ck cl cm cn co cr cu cv cw cx cy cz de dj dk dm do dz ec ee eg eh er es et fi fj fk fm fo fr ga gb gd ge gf gg gh gi gl gm gn gp gq gr gs gt gu gw gy hk hm hn hr ht hu id ie il im in io iq ir is it je jm jo jp ke kg kh ki km kn kp kr kw ky kz la lb lc li lk lr ls lt lu lv ly ma mc md me mf mg mh mk ml mm mn mo mp mq mr ms mt mu mv mw mx my mz na nc ne nf ng ni nl no np nr nu nz om pa pe pf pg ph pk pl pm pn pr ps pt pw py qa re ro rs ru rw sa sb sc sd se sg sh si sj sk sl sm sn so sr ss st sv sx sy sz tc td tf tg th tj tk tl tm tn to tr tt tv tw tz ua ug um us uy uz va vc ve vg vi vn vu wf ws ye yt za zm zw.
+indexee, sans autre modification du dessin (rendu par le Chromium sans
+interface, les 46 derniers). Aucun autre pays n'est embarque : un pays sans
+image s'ecrit par son nom seul, le nom ne disparait jamais.
 
 Licence d'origine (MIT), reproduite integralement :
 

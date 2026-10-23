@@ -52,8 +52,9 @@ void main() {
     });
 
     test('une revision d etat partage ne le touche pas', () {
-      final EtatLectureCoran etat = const EtatLectureCoran.ouverture()
-          .versZoom(2.5);
+      final EtatLectureCoran etat = const EtatLectureCoran.ouverture().versZoom(
+        2.5,
+      );
 
       final EtatLectureCoran apres = etat.fusionnerPartage(
         _partage(revision: 1),
@@ -152,8 +153,10 @@ void main() {
     });
 
     test('aucun etat partage laisse le lecteur ou il est', () {
-      final EtatLectureCoran etat = const EtatLectureCoran.ouverture()
-          .versPage(12, origine: OrigineNavigation.personnelle);
+      final EtatLectureCoran etat = const EtatLectureCoran.ouverture().versPage(
+        12,
+        origine: OrigineNavigation.personnelle,
+      );
 
       expect(etat.fusionnerPartage(null, pagePartagee: 99).page, 12);
     });
@@ -162,8 +165,10 @@ void main() {
       // Le cas reel : la position partagee designe une autre ressource, ou un
       // ancrage que le mushaf ne sait pas lire. Mieux vaut rester en place que
       // sauter a la page 1.
-      final EtatLectureCoran etat = const EtatLectureCoran.ouverture()
-          .versPage(12, origine: OrigineNavigation.personnelle);
+      final EtatLectureCoran etat = const EtatLectureCoran.ouverture().versPage(
+        12,
+        origine: OrigineNavigation.personnelle,
+      );
 
       final EtatLectureCoran apres = etat.fusionnerPartage(
         _partage(revision: 1),
@@ -177,8 +182,10 @@ void main() {
 
   group('origine de navigation', () {
     test('une navigation personnelle porte son origine', () {
-      final EtatLectureCoran etat = const EtatLectureCoran.ouverture()
-          .versPage(3, origine: OrigineNavigation.personnelle);
+      final EtatLectureCoran etat = const EtatLectureCoran.ouverture().versPage(
+        3,
+        origine: OrigineNavigation.personnelle,
+      );
 
       expect(etat.origine, OrigineNavigation.personnelle);
     });

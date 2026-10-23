@@ -204,10 +204,7 @@ const List<(String, List<String>)> parcoursComplet = <(String, List<String>)>[
   ('experienceDebutants', <String>['option-experienceDebutants-oui']),
   ('publics', <String>['option-publics-6_9']),
   ('fuseauIana', <String>['fuseau-oui']),
-  (
-    'jours',
-    <String>['option-jour-1', 'option-jour-3', 'option-jour-5'],
-  ),
+  ('jours', <String>['option-jour-1', 'option-jour-3', 'option-jour-5']),
   ('heures', <String>['heure-1-18', 'heure-1-19']),
   ('memes', <String>['option-memes-oui']),
   ('semaine', <String>[]),

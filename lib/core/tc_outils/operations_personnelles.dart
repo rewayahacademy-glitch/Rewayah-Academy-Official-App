@@ -201,20 +201,20 @@ class ControleurHistorique extends Notifier<HistoriquePersonnel> {
     operations: <OperationPersonnelle>[
       for (final OperationPersonnelle o in state.operations)
         if (o is TraitsGommesPersonnels &&
-            o.traits.any((TraitVectoriel t) => t.id == id))
-          ...<OperationPersonnelle>[
-            if (o.traits.length > 1)
-              TraitsGommesPersonnels(
-                traits: List<TraitVectoriel>.unmodifiable(<TraitVectoriel>[
-                  for (final TraitVectoriel t in o.traits)
-                    if (t.id != id) t,
-                ]),
-                surface: o.surface,
-                portee: o.portee,
-                sessionId: o.sessionId,
-              ),
-          ]
-        else
+            o.traits.any(
+              (TraitVectoriel t) => t.id == id,
+            )) ...<OperationPersonnelle>[
+          if (o.traits.length > 1)
+            TraitsGommesPersonnels(
+              traits: List<TraitVectoriel>.unmodifiable(<TraitVectoriel>[
+                for (final TraitVectoriel t in o.traits)
+                  if (t.id != id) t,
+              ]),
+              surface: o.surface,
+              portee: o.portee,
+              sessionId: o.sessionId,
+            ),
+        ] else
           o,
     ],
     retires: <String>{...state.retires}..remove(id),

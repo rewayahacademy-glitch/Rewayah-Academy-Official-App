@@ -66,25 +66,22 @@ class CreationClasseRefusee implements Exception {
 /// d'affectation (`0082`, repris par `20261021210200`), avec leur motif. Le
 /// prefixe suffit, et deux messages portent un accent que le serveur ecrit
 /// tel quel : on compare sans eux.
-const List<(String, MotifRefusCreationClasse)> _prefixes =
-    <(String, MotifRefusCreationClasse)>[
-      ('creation de groupe reservee', MotifRefusCreationClasse.reservee),
-      ('cet enseignant n', MotifRefusCreationClasse.compteEnseignant),
-      (
-        'enseignant indisponible',
-        MotifRefusCreationClasse.enseignantNonEligible,
-      ),
-      (
-        'enseignant incompatible avec le public',
-        MotifRefusCreationClasse.genreIncompatible,
-      ),
-      ('plafond horaire enseignant', MotifRefusCreationClasse.plafond),
-      (
-        'chevauchement avec une classe',
-        MotifRefusCreationClasse.chevauchementClasse,
-      ),
-      ('chevauchement avec une s', MotifRefusCreationClasse.chevauchementSeance),
-    ];
+const List<(String, MotifRefusCreationClasse)>
+_prefixes = <(String, MotifRefusCreationClasse)>[
+  ('creation de groupe reservee', MotifRefusCreationClasse.reservee),
+  ('cet enseignant n', MotifRefusCreationClasse.compteEnseignant),
+  ('enseignant indisponible', MotifRefusCreationClasse.enseignantNonEligible),
+  (
+    'enseignant incompatible avec le public',
+    MotifRefusCreationClasse.genreIncompatible,
+  ),
+  ('plafond horaire enseignant', MotifRefusCreationClasse.plafond),
+  (
+    'chevauchement avec une classe',
+    MotifRefusCreationClasse.chevauchementClasse,
+  ),
+  ('chevauchement avec une s', MotifRefusCreationClasse.chevauchementSeance),
+];
 
 /// Le motif d'un refus serveur, d'apres son SQLSTATE ([code]) et son
 /// [message]. Fonction pure : aucune phrase ici, et le message n'est jamais

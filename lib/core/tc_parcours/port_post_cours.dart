@@ -274,8 +274,7 @@ class PostCoursDepuisCahier implements PortPostCours {
     }
     final DateTime debut = _maintenant();
     return <LearningAssignment>[
-      for (final ContentRange plage
-          in ranges.take(plafondActionsAvantCours))
+      for (final ContentRange plage in ranges.take(plafondActionsAvantCours))
         LearningAssignment(
           id: _generateur.v4(),
           groupId: groupeId,

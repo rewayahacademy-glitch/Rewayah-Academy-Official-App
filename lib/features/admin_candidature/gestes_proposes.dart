@@ -41,8 +41,27 @@ class GestesProposes {
 
 /// Depuis cet etat, le serveur peut-il accepter ce geste ? (Sources permises de
 /// CAND-L2A1, restreintes aux gestes que CAND-L2A2 ouvre.)
-bool gestePermis(GesteCandidature geste, DetailCandidature detail) {
-  final LigneCandidature l = detail.ligne;
+bool gestePermis(GesteCandidature geste, DetailCandidature detail) =>
+    gestePermisPourLigne(
+      geste,
+      detail.ligne,
+      restrictionCause: detail.restrictionCause,
+    );
+
+/// La meme table, lue sur **l'etat d'une ligne de la file** (LISTES-1) : le menu
+/// d'une ligne n'a pas lu le dossier, il propose ce que la ligne permet, puis
+/// l'ecran relit le dossier et rappelle [gestePermis] avant d'ouvrir la
+/// feuille. **Une seule table**, pas une copie.
+///
+/// [restrictionCause] est la cause d'une restriction : la ligne ne la porte pas
+/// (elle n'est que dans le dossier). Sans elle, la confirmation d'un moyen de
+/// versement d'une candidature confirmee sous restriction n'est pas proposee
+/// depuis la ligne : elle se fait depuis le dossier, qui la lit.
+bool gestePermisPourLigne(
+  GesteCandidature geste,
+  LigneCandidature l, {
+  String? restrictionCause,
+}) {
   final bool enCours = l.issue == IssueCandidature.enCours;
   final bool sansPause = enCours && !l.enPause;
   final EtapeCandidature? etape = l.etape;
@@ -67,7 +86,7 @@ bool gestePermis(GesteCandidature geste, DetailCandidature detail) {
           (enExamen ||
               (etape == EtapeCandidature.confirmee &&
                   l.restreinte &&
-                  detail.restrictionCause == 'paiement'));
+                  restrictionCause == 'paiement'));
     case GesteCandidature.infirmerMoyenPaiement:
       return sansPause &&
           enExamen &&
@@ -91,18 +110,20 @@ bool gestePermis(GesteCandidature geste, DetailCandidature detail) {
 /// l'etat »), parmi les gestes que le serveur ouvre : en pause, lever la pause ;
 /// en examen, confirmer le moyen de versement a verifier, puis, le versement
 /// confirme, admettre. Ailleurs, aucune : la raison s'ecrit.
-GesteCandidature? _prochaine(DetailCandidature detail) {
-  final LigneCandidature l = detail.ligne;
+GesteCandidature? _prochaine(
+  LigneCandidature l,
+  bool Function(GesteCandidature) permis,
+) {
   if (l.issue != IssueCandidature.enCours) {
     return null;
   }
   if (l.enPause) {
     return GesteCandidature.leverPause;
   }
-  if (gestePermis(GesteCandidature.confirmerMoyenPaiement, detail)) {
+  if (permis(GesteCandidature.confirmerMoyenPaiement)) {
     return GesteCandidature.confirmerMoyenPaiement;
   }
-  if (gestePermis(GesteCandidature.admettreVerifications, detail) &&
+  if (permis(GesteCandidature.admettreVerifications) &&
       l.paiement == EtatVersement.compatible) {
     return GesteCandidature.admettreVerifications;
   }
@@ -129,21 +150,47 @@ const List<GesteCandidature> _ordreMenu = <GesteCandidature>[
 GestesProposes gestesProposes(
   DetailCandidature detail,
   CapacitesCandidatures caps,
-) {
+) => gestesProposesPourLigne(
+  detail.ligne,
+  caps,
+  restrictionCause: detail.restrictionCause,
+);
+
+/// Les gestes proposes pour une **ligne de la file** : la meme table et le meme
+/// ordre que [gestesProposes] (LISTES-1). Voir [gestePermisPourLigne] pour la
+/// cause de restriction.
+///
+/// **L'ordre est celui de la fiche** ([_ordreMenu]), inchange : la fiche est un
+/// ecran hors du perimetre des listes (relecture du code R-8). Le menu d'une
+/// ligne range lui-meme les gestes **destructifs** a la suite, en un seul groupe
+/// (`gestesDuMenuLigne`).
+///
+/// [sansResponsable] : « Choisir le responsable » n'est pas propose. Le menu
+/// d'une ligne le masque tant que la liste des responsables n'est pas servie
+/// (`CAND-BR-04`) : elle se lit par candidature, et un geste qui ne peut pas
+/// aboutir n'est pas offert.
+GestesProposes gestesProposesPourLigne(
+  LigneCandidature ligne,
+  CapacitesCandidatures caps, {
+  String? restrictionCause,
+  bool sansResponsable = false,
+}) {
   if (!caps.peutDecider) {
     return const GestesProposes();
   }
-  bool ouvert(GesteCandidature g) =>
-      caps.geste(g.capacite) && gestePermis(g, detail);
-  final GesteCandidature? prochaine = _prochaine(detail);
+  bool permis(GesteCandidature g) =>
+      gestePermisPourLigne(g, ligne, restrictionCause: restrictionCause);
+  bool ouvert(GesteCandidature g) => caps.geste(g.capacite) && permis(g);
+  final GesteCandidature? prochaine = _prochaine(ligne, permis);
   final GesteCandidature? principal = prochaine != null && ouvert(prochaine)
       ? prochaine
       : null;
-  return GestesProposes(
-    principal: principal,
-    autres: <GesteCandidature>[
-      for (final GesteCandidature g in _ordreMenu)
-        if (g != principal && ouvert(g)) g,
-    ],
-  );
+  final List<GesteCandidature> autres = <GesteCandidature>[
+    for (final GesteCandidature g in _ordreMenu)
+      if (g != principal &&
+          ouvert(g) &&
+          !(sansResponsable && g == GesteCandidature.definirResponsable))
+        g,
+  ];
+  return GestesProposes(principal: principal, autres: autres);
 }

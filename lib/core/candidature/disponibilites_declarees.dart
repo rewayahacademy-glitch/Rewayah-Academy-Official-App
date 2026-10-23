@@ -108,9 +108,7 @@ List<IntervalleCours> intervallesDesCours(
 @immutable
 class DisponibilitesDeclarees {
   /// Cree les disponibilites a partir des heures de debut de chaque jour.
-  const DisponibilitesDeclarees([
-    this._debuts = const <int, Set<int>>{},
-  ]);
+  const DisponibilitesDeclarees([this._debuts = const <int, Set<int>>{}]);
 
   /// Lit les plages que le serveur rend (ou qu'un brouillon a gardees) et en
   /// deduit les heures de debut possibles d'un cours de [dureeMinutes] : un
@@ -127,9 +125,10 @@ class DisponibilitesDeclarees {
     final Map<int, Set<int>> debuts = <int, Set<int>>{};
     for (int jour = 1; jour <= joursParSemaine; jour++) {
       for (int h = 0; h < heuresParJour; h++) {
-        final bool possible = heuresTouchees(h, dureeMinutes).every(
-          (int touchee) => libres.contains(_indice(jour, touchee)),
-        );
+        final bool possible = heuresTouchees(
+          h,
+          dureeMinutes,
+        ).every((int touchee) => libres.contains(_indice(jour, touchee)));
         if (possible) {
           (debuts[jour] ??= <int>{}).add(h);
         }
@@ -230,16 +229,16 @@ class DisponibilitesDeclarees {
 
   @override
   int get hashCode => Object.hashAll(<Object?>[
-    for (int j = 1; j <= joursParSemaine; j++) Object.hashAllUnordered(debuts(j)),
+    for (int j = 1; j <= joursParSemaine; j++)
+      Object.hashAllUnordered(debuts(j)),
   ]);
 }
 
-Map<int, Set<int>> _figer(Map<int, Set<int>> debuts) => Map<int, Set<int>>.unmodifiable(
-  <int, Set<int>>{
-    for (final MapEntry<int, Set<int>> e in debuts.entries)
-      e.key: Set<int>.unmodifiable(e.value),
-  },
-);
+Map<int, Set<int>> _figer(Map<int, Set<int>> debuts) =>
+    Map<int, Set<int>>.unmodifiable(<int, Set<int>>{
+      for (final MapEntry<int, Set<int>> e in debuts.entries)
+        e.key: Set<int>.unmodifiable(e.value),
+    });
 
 /// L'indice d'une heure de la semaine : de 0 (lundi 0 h) a 167 (dimanche
 /// 23 h). Une heure au-dela de 23 passe au jour suivant, et le dimanche rejoint

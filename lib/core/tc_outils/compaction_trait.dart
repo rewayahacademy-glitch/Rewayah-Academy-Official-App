@@ -40,7 +40,11 @@ void _rdp(
   double pireEcart = 0;
   int pire = debut;
   for (int i = debut + 1; i < fin; i++) {
-    final double ecart = _distanceAuSegment(points[i], points[debut], points[fin]);
+    final double ecart = _distanceAuSegment(
+      points[i],
+      points[debut],
+      points[fin],
+    );
     if (ecart > pireEcart) {
       pireEcart = ecart;
       pire = i;
@@ -63,17 +67,17 @@ double _distanceAuSegment(
   final double dy = b.y - a.y;
   final double longueur = dx * dx + dy * dy;
   if (longueur == 0) {
-    return math.sqrt(
-      math.pow(point.x - a.x, 2) + math.pow(point.y - a.y, 2),
-    ).toDouble();
+    return math
+        .sqrt(math.pow(point.x - a.x, 2) + math.pow(point.y - a.y, 2))
+        .toDouble();
   }
   double t = ((point.x - a.x) * dx + (point.y - a.y) * dy) / longueur;
   t = t.clamp(0, 1);
   final double projX = a.x + t * dx;
   final double projY = a.y + t * dy;
-  return math.sqrt(
-    math.pow(point.x - projX, 2) + math.pow(point.y - projY, 2),
-  ).toDouble();
+  return math
+      .sqrt(math.pow(point.x - projX, 2) + math.pow(point.y - projY, 2))
+      .toDouble();
 }
 
 /// Un trait en cours de trace.
@@ -135,11 +139,7 @@ class TraitEnCours {
   ///
   /// [pression] et [inclinaison] sont **facultatives** : un ecran sans capteur
   /// ne les fournit pas, et rien dans la suite ne les rend obligatoires.
-  void ajouter(
-    PointNormalise point, {
-    double? pression,
-    double? inclinaison,
-  }) {
+  void ajouter(PointNormalise point, {double? pression, double? inclinaison}) {
     _points.add(point);
     if (pression != null) {
       _pressions.add(pression);

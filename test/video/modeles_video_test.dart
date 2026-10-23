@@ -63,7 +63,10 @@ void main() {
       // Le jour ou un troisieme fournisseur apparaitra cote serveur, une
       // application non mise a jour doit continuer de fonctionner plutot que
       // de lever. Le Cloud est le repli sur, c'est lui qui fournit TURN.
-      expect(FournisseurVideo.depuis('quelque_chose_de_neuf'), FournisseurVideo.cloud);
+      expect(
+        FournisseurVideo.depuis('quelque_chose_de_neuf'),
+        FournisseurVideo.cloud,
+      );
       expect(FournisseurVideo.depuis(null), FournisseurVideo.cloud);
     });
   });

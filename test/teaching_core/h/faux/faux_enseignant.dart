@@ -51,8 +51,7 @@ class FauxServiceEnseignant implements ServiceEnseignant {
       const <CahierEnRetard>[];
 
   @override
-  Future<List<GroupeEnseignant>> groupes() async =>
-      const <GroupeEnseignant>[];
+  Future<List<GroupeEnseignant>> groupes() async => const <GroupeEnseignant>[];
 
   @override
   Future<List<MembreSeance>> membresDuGroupe(String groupeId) async =>
@@ -63,8 +62,7 @@ class FauxServiceEnseignant implements ServiceEnseignant {
       const <MembreSeance>[];
 
   @override
-  Future<List<SeanceEnseignant>> seances() async =>
-      const <SeanceEnseignant>[];
+  Future<List<SeanceEnseignant>> seances() async => const <SeanceEnseignant>[];
 }
 
 /// Le depot local des rapports en attente, en memoire.

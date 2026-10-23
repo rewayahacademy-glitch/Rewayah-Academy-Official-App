@@ -64,8 +64,7 @@ class ContentRange {
   bool chevauche(ContentRange autre) {
     if (autre.resourceId != resourceId) return false;
     if (autre.typeAncrage != typeAncrage) return false;
-    return _rang(debut) <= _rang(autre.fin) &&
-        _rang(autre.debut) <= _rang(fin);
+    return _rang(debut) <= _rang(autre.fin) && _rang(autre.debut) <= _rang(fin);
   }
 
   @override

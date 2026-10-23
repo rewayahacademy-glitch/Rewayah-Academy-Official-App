@@ -179,7 +179,8 @@ import '../../features/tc_mushaf/routes_tc_c.dart';
 import '../../features/tc_observation_ui/routes_tc_g.dart';
 import '../admin/admin_domaine.dart';
 import '../alertes/port_alertes.dart';
-import '../candidature/modeles_candidatures_direction.dart' show LigneCandidature;
+import '../candidature/modeles_candidatures_direction.dart'
+    show LigneCandidature;
 import '../config/env.dart';
 import '../domain/enums.dart';
 import '../dossier/resignature_contrat.dart';
@@ -432,8 +433,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // adresse tapee montre la phrase de capacite indisponible.
       GoRoute(
         path: Routes.attentePartage,
-        builder: (BuildContext _, GoRouterState _) =>
-            const PartageOffrePage(),
+        builder: (BuildContext _, GoRouterState _) => const PartageOffrePage(),
       ),
       // CAND-07 : « Vos autres talents ». Declaree meme sans le lot serveur : une
       // adresse tapee montre la phrase de capacite indisponible.
@@ -1595,8 +1595,8 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext contexte, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
           child: CandidaturesPage(
-            ouvrirCandidature: (LigneCandidature ligne) =>
-                GoRouter.of(contexte).push<void>(
+            ouvrirCandidature: (LigneCandidature ligne) => GoRouter.of(contexte)
+                .push<void>(
                   Routes.adminPersonnesCandidaturePour(ligne.reference),
                   extra: ligne.id,
                 ),
@@ -1664,6 +1664,9 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           // DASH-ADM-ECHUS : `?filtre=echus` ouvre la page sur les acces echus.
           child: ComptesPage(
             echusSeulement: etat.uri.queryParameters['filtre'] == 'echus',
+            // LISTES-3 : role, etat, recherche et tri dans l'adresse (retour
+            // arriere, lien partage).
+            requete: etat.uri.queryParameters,
           ),
         ),
       ),

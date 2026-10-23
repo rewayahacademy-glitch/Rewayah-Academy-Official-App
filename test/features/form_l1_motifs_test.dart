@@ -441,15 +441,11 @@ void main() {
         // Aucune borne inventee (08/10) : seuls les plafonds a source ecrite
         // restent : C11 (appareils, 2) et le declencheur
         // `app_config_classes_max` (Classes par enseignant, 80).
-        expect(
-          e.value.max,
-          switch (e.key) {
-            'max_devices_per_student' => 2,
-            'enseignant.classes_max' => 80,
-            _ => isNull,
-          },
-          reason: e.key,
-        );
+        expect(e.value.max, switch (e.key) {
+          'max_devices_per_student' => 2,
+          'enseignant.classes_max' => 80,
+          _ => isNull,
+        }, reason: e.key);
         for (final int v in e.value.proposees) {
           expect(v, greaterThanOrEqualTo(0), reason: e.key);
           if (e.value.max case final int max) {

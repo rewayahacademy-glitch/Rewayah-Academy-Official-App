@@ -135,10 +135,7 @@ void main() {
       final PageMushafVM autreDroite = vueDe(3);
 
       expect(
-        () => PlancheMushafVM.doublePage(
-          droite: droite,
-          gauche: autreDroite,
-        ),
+        () => PlancheMushafVM.doublePage(droite: droite, gauche: autreDroite),
         throwsA(isA<AssertionError>()),
       );
     });
@@ -237,20 +234,14 @@ void main() {
       expect(vue.ratioLargeurSurHauteur, GeometrieMushaf.ratioCadreTexte);
     });
 
-    test(
-      'une source qui se dit fidele sans rendre de ligne ne l est pas',
-      () {
-        // Le piege qu'on refuse : une source branchee, une page sans donnees,
-        // et un moteur qui afficherait quand meme « composition de l edition ».
-        final PageMushafVM vue = vueDe(
-          1,
-          fidelite: DisponibiliteLayout.fidele,
-        );
+    test('une source qui se dit fidele sans rendre de ligne ne l est pas', () {
+      // Le piege qu'on refuse : une source branchee, une page sans donnees,
+      // et un moteur qui afficherait quand meme « composition de l edition ».
+      final PageMushafVM vue = vueDe(1, fidelite: DisponibiliteLayout.fidele);
 
-        expect(vue.fidelite, DisponibiliteLayout.indisponible);
-        expect(vue.compositionApprochee, isTrue);
-      },
-    );
+      expect(vue.fidelite, DisponibiliteLayout.indisponible);
+      expect(vue.compositionApprochee, isTrue);
+    });
 
     test('avec de vraies lignes, la page se declare fidele', () {
       final PageMushafVM vue = vueDe(

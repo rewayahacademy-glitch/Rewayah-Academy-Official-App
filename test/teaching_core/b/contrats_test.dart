@@ -94,9 +94,10 @@ void main() {
 
     test('une position d une autre ressource ne tombe jamais dedans', () {
       expect(
-        pages(1, 100).contient(
-          const ContentPosition.page(resourceId: 'autre', page: 50),
-        ),
+        pages(
+          1,
+          100,
+        ).contient(const ContentPosition.page(resourceId: 'autre', page: 50)),
         isFalse,
       );
     });
@@ -109,11 +110,7 @@ void main() {
           sourate: 2,
           ayah: 250,
         ),
-        fin: const ContentPosition.ayah(
-          resourceId: 'r1',
-          sourate: 3,
-          ayah: 10,
-        ),
+        fin: const ContentPosition.ayah(resourceId: 'r1', sourate: 3, ayah: 10),
       );
 
       expect(
@@ -139,8 +136,10 @@ void main() {
 
   group('Enumerations : aucun repli silencieux', () {
     test('un type de ressource inconnu rend null', () {
-      expect(TypeRessource.depuisSql('structured_text'),
-          TypeRessource.texteStructure);
+      expect(
+        TypeRessource.depuisSql('structured_text'),
+        TypeRessource.texteStructure,
+      );
       expect(TypeRessource.depuisSql('video'), isNull);
       expect(TypeRessource.depuisSql(null), isNull);
     });

@@ -612,7 +612,10 @@ void main() {
       await tester.tap(_action(p.publier));
       await tester.pumpAndSettle();
       // La confirmation dit la portee et ne promet rien de plus.
-      expect(find.text(p.confirmerPublier(dePrenom: deDevant('Yusuf'))), findsWidgets);
+      expect(
+        find.text(p.confirmerPublier(dePrenom: deDevant('Yusuf'))),
+        findsWidgets,
+      );
       expect(find.text(p.consequencePublier), findsOneWidget);
       await tester.tap(find.text(p.publier).last);
       await tester.pumpAndSettle();

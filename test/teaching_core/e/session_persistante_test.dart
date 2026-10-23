@@ -1,4 +1,4 @@
-﻿import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/tc_classe/port_session_persistante.dart';
 import 'package:rewayah_academy/core/tc_classe/session_persistante.dart';
@@ -90,14 +90,17 @@ void main() {
       expect(t.controleur.etatCourant.cours, isNull);
     });
 
-    test('un moteur qui echoue nomme le reseau, sans detail technique', () async {
-      final _Banc t = monter(erreurEntree: StateError('ICE failed'));
+    test(
+      'un moteur qui echoue nomme le reseau, sans detail technique',
+      () async {
+        final _Banc t = monter(erreurEntree: StateError('ICE failed'));
 
-      await t.controleur.ouvrir(cours: cours, preVol: t.preVol.verifier);
+        await t.controleur.ouvrir(cours: cours, preVol: t.preVol.verifier);
 
-      expect(t.controleur.etatCourant.refus, MotifRefusSalle.reseau);
-      expect(t.controleur.etatCourant.cours, isNull);
-    });
+        expect(t.controleur.etatCourant.refus, MotifRefusSalle.reseau);
+        expect(t.controleur.etatCourant.cours, isNull);
+      },
+    );
 
     test('un second appel ne rejoint pas une seconde fois', () async {
       // **C'est le retour instantane depuis la barre « Cours en cours ».** Une
@@ -203,20 +206,23 @@ void main() {
   });
 
   group('projection sur le contrat', () {
-    test('sans horloge, le port rend un SessionEnCours a horloge nulle', () async {
-      // `SessionEnCours.horloge` est nullable depuis l'amendement §3 de
-      // TC_CONTRACT_REQUEST_E.md : l'horloge serveur n'existe pas encore, et
-      // fabriquer une horloge locale resterait interdit, mais taire tout le
-      // cours privait la barre « Cours en cours » de tout retour possible.
-      final _Banc t = monter();
+    test(
+      'sans horloge, le port rend un SessionEnCours a horloge nulle',
+      () async {
+        // `SessionEnCours.horloge` est nullable depuis l'amendement §3 de
+        // TC_CONTRACT_REQUEST_E.md : l'horloge serveur n'existe pas encore, et
+        // fabriquer une horloge locale resterait interdit, mais taire tout le
+        // cours privait la barre « Cours en cours » de tout retour possible.
+        final _Banc t = monter();
 
-      await t.controleur.ouvrir(cours: cours, preVol: t.preVol.verifier);
+        await t.controleur.ouvrir(cours: cours, preVol: t.preVol.verifier);
 
-      expect(t.controleur.etatCourant.cours, isNotNull);
-      final SessionEnCours? rendu = await t.controleur.courante();
-      expect(rendu, isNotNull);
-      expect(rendu!.horloge, isNull);
-    });
+        expect(t.controleur.etatCourant.cours, isNotNull);
+        final SessionEnCours? rendu = await t.controleur.courante();
+        expect(rendu, isNotNull);
+        expect(rendu!.horloge, isNull);
+      },
+    );
 
     test('avec horloge, le port rend un SessionEnCours', () async {
       final _Banc t = monter();

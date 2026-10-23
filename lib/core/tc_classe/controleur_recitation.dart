@@ -35,7 +35,8 @@ class ControleurRecitation extends Notifier<FileRecitation> {
   void arreter() => state = state.sansActif;
 
   /// Remplace la file d'attente, sans toucher a qui recite.
-  void poserLaFile(List<String> academyIds) => state = state.avecFile(academyIds);
+  void poserLaFile(List<String> academyIds) =>
+      state = state.avecFile(academyIds);
 
   /// Oublie tout. Appele a la sortie du cours, jamais a la sortie d'un ecran.
   void reinitialiser() => state = FileRecitation.vide;

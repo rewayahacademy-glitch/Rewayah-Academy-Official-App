@@ -298,10 +298,7 @@ void main() {
       // Une reponse efface l'indication, et le bouton avance.
       await toucherCle(tester, 'option-languesExplication-poular');
       await continuer(tester);
-      expect(
-        _texte(t.recrutement.parcours.choisirPlusieurs),
-        findsNothing,
-      );
+      expect(_texte(t.recrutement.parcours.choisirPlusieurs), findsNothing);
       expect(
         _texte(t.recrutement.parcours.q.niveauMemorisationDeclare.titre),
         findsOneWidget,
@@ -353,7 +350,9 @@ void main() {
           'coran_entier',
         ]) {
           expect(
-            find.byKey(ValueKey<String>('option-niveauMemorisationDeclare-$code')),
+            find.byKey(
+              ValueKey<String>('option-niveauMemorisationDeclare-$code'),
+            ),
             findsOneWidget,
             reason: code,
           );
@@ -401,15 +400,33 @@ void main() {
         await repondreAvant(tester, 'publics');
         final o = t.recrutement.parcours.q.publics;
         expect(_texte(o.titre), findsOneWidget);
-        for (final String code in <String>['6_9', '10_13', '14_17', 'adultes']) {
+        for (final String code in <String>[
+          '6_9',
+          '10_13',
+          '14_17',
+          'adultes',
+        ]) {
           expect(
             find.byKey(ValueKey<String>('option-publics-$code')),
             findsOneWidget,
             reason: code,
           );
         }
-        for (final ({String libelle, String description, String explication, String exemple}) x
-            in <({String libelle, String description, String explication, String exemple})>[
+        for (final ({
+              String libelle,
+              String description,
+              String explication,
+              String exemple,
+            })
+            x
+            in <
+              ({
+                String libelle,
+                String description,
+                String explication,
+                String exemple,
+              })
+            >[
               (
                 libelle: o.options.o_6_9.libelle,
                 description: o.options.o_6_9.description,
@@ -596,7 +613,10 @@ void main() {
         expect(_texte(l.dansReferentiel), findsNothing);
         expect(_texte(l.horsReferentiel), findsNothing);
         await toucherCle(tester, 'choix-recherche-autre');
-        await tester.enterText(find.byKey(ChoixAvecRecherche.champKey), 'pacht');
+        await tester.enterText(
+          find.byKey(ChoixAvecRecherche.champKey),
+          'pacht',
+        );
         await tester.pumpAndSettle();
         // Les resultats sont des cartes, pas des lignes.
         expect(
@@ -630,12 +650,16 @@ void main() {
         await tester.enterText(find.byKey(ChoixAvecRecherche.champKey), mot);
         await tester.pumpAndSettle();
         expect(
-          find.byKey(const ValueKey<String>('option-languesExplication-poular')),
+          find.byKey(
+            const ValueKey<String>('option-languesExplication-poular'),
+          ),
           findsOneWidget,
           reason: mot,
         );
         expect(
-          find.byKey(const ValueKey<String>('option-languesExplication-francais')),
+          find.byKey(
+            const ValueKey<String>('option-languesExplication-francais'),
+          ),
           findsNothing,
           reason: mot,
         );
@@ -882,7 +906,10 @@ void main() {
         await auxJours(tester);
         verifierUnSeulBoutonPlein(tester);
         for (int j = 1; j <= 7; j++) {
-          expect(find.byKey(DisponibilitesEtape.carteJourKey(j)), findsOneWidget);
+          expect(
+            find.byKey(DisponibilitesEtape.carteJourKey(j)),
+            findsOneWidget,
+          );
         }
         final r = t.recrutement.parcours.creneaux;
         for (final String raccourci in <String>[
@@ -984,10 +1011,7 @@ void main() {
         // L'heure de chez la personne, nommee.
         expect(_texte(r.fuseauRappel(lieu: 'Paris')), findsOneWidget);
         // La fin du cours se calcule : la question le dit.
-        expect(
-          find.textContaining('Un cours d\'enfants dure'),
-          findsOneWidget,
-        );
+        expect(find.textContaining('Un cours d\'enfants dure'), findsOneWidget);
       },
     );
 
@@ -998,10 +1022,7 @@ void main() {
         await auxJours(tester);
         await toucherCle(tester, 'option-jour-1');
         await continuer(tester);
-        expect(
-          find.byKey(DisponibilitesEtape.resumeKey),
-          findsOneWidget,
-        );
+        expect(find.byKey(DisponibilitesEtape.resumeKey), findsOneWidget);
         expect(
           _texte(t.recrutement.parcours.creneaux.heuresChoisies(n: 0)),
           findsOneWidget,
@@ -1057,7 +1078,9 @@ void main() {
         await continuer(tester);
         await toucherCle(tester, 'heure-1-18');
         expect(
-          find.textContaining('vous enseignez de 18\u00a0h à 19\u00a0h\u00a030.'),
+          find.textContaining(
+            'vous enseignez de 18\u00a0h à 19\u00a0h\u00a030.',
+          ),
           findsOneWidget,
         );
         // Un cours d'enfants n'est pas dit : cette personne n'en enseigne pas.
@@ -1086,7 +1109,9 @@ void main() {
         await toucherCle(tester, 'heure-2-9');
         await continuer(tester);
         expect(
-          _texte(t.recrutement.parcours.q.disponibilitesDeclarees.semaine.titre),
+          _texte(
+            t.recrutement.parcours.q.disponibilitesDeclarees.semaine.titre,
+          ),
           findsOneWidget,
         );
         expect(find.byKey(DisponibilitesEtape.jourKey(2)), findsOneWidget);
@@ -1115,11 +1140,13 @@ void main() {
         final q = t.recrutement.parcours.q.disponibilitesDeclarees.memes;
         expect(_texte(q.titre), findsOneWidget);
         expect(
-          _texte(q.explication(
-            jours: 'lundi, mercredi et vendredi',
-            premier: 'lundi',
-            heures: '18\u00a0h, 19\u00a0h',
-          )),
+          _texte(
+            q.explication(
+              jours: 'lundi, mercredi et vendredi',
+              premier: 'lundi',
+              heures: '18\u00a0h, 19\u00a0h',
+            ),
+          ),
           findsOneWidget,
         );
         // Chaque carte est decrite.
@@ -1132,7 +1159,9 @@ void main() {
         await toucherCle(tester, 'option-memes-oui');
         await continuer(tester);
         expect(
-          _texte(t.recrutement.parcours.q.disponibilitesDeclarees.semaine.titre),
+          _texte(
+            t.recrutement.parcours.q.disponibilitesDeclarees.semaine.titre,
+          ),
           findsOneWidget,
         );
         for (final int j in <int>[1, 3, 5]) {
@@ -1473,7 +1502,11 @@ void main() {
         expect(m.nonElimine, contains('facultative'));
         expect(m.nonElimine, contains('n\'élimine personne'));
         // Tous les moyens connus, par leur nom propre ; jamais un code.
-        for (final String nom in <String>['Wave', 'Orange Money', 'Moov Money']) {
+        for (final String nom in <String>[
+          'Wave',
+          'Orange Money',
+          'Moov Money',
+        ]) {
           expect(_texte(nom), findsOneWidget, reason: nom);
         }
         expect(find.text('moov_money'), findsNothing);

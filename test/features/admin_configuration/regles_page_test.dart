@@ -90,7 +90,8 @@ void main() {
   testWidgets('chargement : un squelette, aucune ligne', (
     WidgetTester tester,
   ) async {
-    final _Config config = _Config(_toutesLesCles())..attente = Completer<void>();
+    final _Config config = _Config(_toutesLesCles())
+      ..attente = Completer<void>();
     tester.view.physicalSize = const Size(390, 900);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);

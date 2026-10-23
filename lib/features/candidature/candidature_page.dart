@@ -296,7 +296,9 @@ class _ParcoursState extends ConsumerState<_Parcours> {
       return IndicationParcours(message: renvoi);
     }
     if (_c.brouillonNonGarde) {
-      return IndicationParcours(message: t.recrutement.parcours.sauvegardeEchec);
+      return IndicationParcours(
+        message: t.recrutement.parcours.sauvegardeEchec,
+      );
     }
     return null;
   }

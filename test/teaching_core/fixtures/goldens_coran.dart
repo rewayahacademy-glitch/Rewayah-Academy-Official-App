@@ -166,8 +166,5 @@ List<int> doublePageDe(
   final bool estRecto = page % 2 == pageRecto;
   final int gauche = estRecto ? page - 1 : page;
   final int droite = estRecto ? page : page + 1;
-  return <int>[
-    if (gauche >= 1) gauche,
-    if (droite <= pages) droite,
-  ];
+  return <int>[if (gauche >= 1) gauche, if (droite <= pages) droite];
 }

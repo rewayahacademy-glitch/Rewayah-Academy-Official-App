@@ -14,8 +14,9 @@ enum FournisseurVideo {
   autoHeberge;
 
   /// Lit la valeur rendue par la base.
-  static FournisseurVideo depuis(String? valeur) =>
-      valeur == 'self_hosted' ? FournisseurVideo.autoHeberge : FournisseurVideo.cloud;
+  static FournisseurVideo depuis(String? valeur) => valeur == 'self_hosted'
+      ? FournisseurVideo.autoHeberge
+      : FournisseurVideo.cloud;
 }
 
 /// Ce qu'un participant a le droit de faire dans la salle.
@@ -37,13 +38,14 @@ class CapacitesSalle {
   });
 
   /// Lit les capacites rendues par `create-room-token`.
-  factory CapacitesSalle.depuisJson(Map<String, dynamic> json) => CapacitesSalle(
-    peutPublier: json['can_publish'] as bool? ?? false,
-    peutPublierVideo: json['can_publish_video'] as bool? ?? false,
-    peutPublierDonnees: json['can_publish_data'] as bool? ?? false,
-    peutRecevoir: json['can_subscribe'] as bool? ?? true,
-    invisible: json['hidden'] as bool? ?? false,
-  );
+  factory CapacitesSalle.depuisJson(Map<String, dynamic> json) =>
+      CapacitesSalle(
+        peutPublier: json['can_publish'] as bool? ?? false,
+        peutPublierVideo: json['can_publish_video'] as bool? ?? false,
+        peutPublierDonnees: json['can_publish_data'] as bool? ?? false,
+        peutRecevoir: json['can_subscribe'] as bool? ?? true,
+        invisible: json['hidden'] as bool? ?? false,
+      );
 
   /// Le participant peut publier au moins sa voix.
   final bool peutPublier;
@@ -91,7 +93,8 @@ class AccesSalle {
     fournisseur: FournisseurVideo.depuis(json['provider'] as String?),
     role: json['role'] as String? ?? '',
     capacites: CapacitesSalle.depuisJson(
-      (json['capabilities'] as Map<String, dynamic>?) ?? const <String, dynamic>{},
+      (json['capabilities'] as Map<String, dynamic>?) ??
+          const <String, dynamic>{},
     ),
     expireLe:
         DateTime.tryParse(json['expire_le'] as String? ?? '')?.toLocal() ??

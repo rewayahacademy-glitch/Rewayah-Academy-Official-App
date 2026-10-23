@@ -56,9 +56,7 @@ class PlanMasquage {
   /// Masquer une plage deja masquee la **referme** : c'est le geste naturel
   /// apres une revelation, et il ne cree pas de doublon.
   PlanMasquage masquer(ContentRange plage) => PlanMasquage(
-    plages: plages.contains(plage)
-        ? plages
-        : <ContentRange>[...plages, plage],
+    plages: plages.contains(plage) ? plages : <ContentRange>[...plages, plage],
     revelees: _sans(revelees, plage),
   );
 
@@ -86,8 +84,7 @@ class PlanMasquage {
   PlanMasquage toutRefermer() => PlanMasquage(plages: plages);
 
   /// Revele tout ce qui est masque.
-  PlanMasquage toutReveler() =>
-      PlanMasquage(plages: plages, revelees: plages);
+  PlanMasquage toutReveler() => PlanMasquage(plages: plages, revelees: plages);
 
   /// Retire tout masquage.
   PlanMasquage vider() => aucun;
@@ -106,5 +103,6 @@ class PlanMasquage {
       listEquals(other.revelees, revelees);
 
   @override
-  int get hashCode => Object.hash(Object.hashAll(plages), Object.hashAll(revelees));
+  int get hashCode =>
+      Object.hash(Object.hashAll(plages), Object.hashAll(revelees));
 }

@@ -42,7 +42,10 @@ AccesBeneficiaire _suspendu() => AccesBeneficiaire(
 Widget _hote(Widget ecran, {Brightness luminosite = Brightness.light}) {
   final GoRouter routeur = GoRouter(
     routes: <RouteBase>[
-      GoRoute(path: '/', builder: (_, _) => Scaffold(body: ecran)),
+      GoRoute(
+        path: '/',
+        builder: (_, _) => Scaffold(body: ecran),
+      ),
       GoRoute(
         path: Routes.tuteurFoyerRecharge,
         builder: (_, GoRouterState etat) => Scaffold(
@@ -83,30 +86,37 @@ void main() {
         caseSensitive: false,
       );
       for (final Text texte in tester.widgetList<Text>(find.byType(Text))) {
-        expect(interdit.hasMatch(texte.data ?? ''), isFalse, reason: texte.data);
+        expect(
+          interdit.hasMatch(texte.data ?? ''),
+          isFalse,
+          reason: texte.data,
+        );
       }
       // Aucun lien Payer pour l'enfant.
       expect(find.byKey(BandeauPlace.payerKey), findsNothing);
     });
 
-    test('l adaptateur ne lui rend ni cause ni date, seulement l ouverture', () {
-      final AccesBeneficiaire a = accesBeneficiaireJson(<String, dynamic>{
-        'eleveId': 'e1',
-        'prenom': 'Yasmine',
-        'finAcces': null,
-        'seancesPayantesOuvertes': false,
-        'place': null,
-        'datePlace': null,
-        'gereSonAcces': false,
-      }, maintenantUtc: _maintenant);
-      expect(a.seancesPayantesOuvertes, isFalse);
-      expect(a.place, isNull);
-      expect(a.datePlace, isNull);
-      expect(a.gereSonAcces, isFalse);
-      expect(ouvertureSeances(a), OuvertureSeances.fermees);
-      expect(phrasePlace(a, prenom: 'Yasmine'), isNull);
-      expect(BandeauPlace.pour(a, prenom: 'Yasmine'), isNull);
-    });
+    test(
+      'l adaptateur ne lui rend ni cause ni date, seulement l ouverture',
+      () {
+        final AccesBeneficiaire a = accesBeneficiaireJson(<String, dynamic>{
+          'eleveId': 'e1',
+          'prenom': 'Yasmine',
+          'finAcces': null,
+          'seancesPayantesOuvertes': false,
+          'place': null,
+          'datePlace': null,
+          'gereSonAcces': false,
+        }, maintenantUtc: _maintenant);
+        expect(a.seancesPayantesOuvertes, isFalse);
+        expect(a.place, isNull);
+        expect(a.datePlace, isNull);
+        expect(a.gereSonAcces, isFalse);
+        expect(ouvertureSeances(a), OuvertureSeances.fermees);
+        expect(phrasePlace(a, prenom: 'Yasmine'), isNull);
+        expect(BandeauPlace.pour(a, prenom: 'Yasmine'), isNull);
+      },
+    );
   });
 
   group('le tuteur', () {
@@ -209,40 +219,39 @@ void main() {
     });
 
     for (final Brightness luminosite in Brightness.values) {
-      testWidgets('320 px, texte 200 %, ${luminosite.name} : sans debordement', (
-        WidgetTester tester,
-      ) async {
-        tester.view.physicalSize = const Size(320, 900);
-        tester.view.devicePixelRatio = 1;
-        addTearDown(tester.view.reset);
-        await tester.pumpWidget(
-          MediaQuery(
-            data: const MediaQueryData(textScaler: TextScaler.linear(2)),
-            child: _hote(
-              BandeauPlace.pour(_suspendu(), prenom: 'Yasmine')!,
-              luminosite: luminosite,
+      testWidgets(
+        '320 px, texte 200 %, ${luminosite.name} : sans debordement',
+        (WidgetTester tester) async {
+          tester.view.physicalSize = const Size(320, 900);
+          tester.view.devicePixelRatio = 1;
+          addTearDown(tester.view.reset);
+          await tester.pumpWidget(
+            MediaQuery(
+              data: const MediaQueryData(textScaler: TextScaler.linear(2)),
+              child: _hote(
+                BandeauPlace.pour(_suspendu(), prenom: 'Yasmine')!,
+                luminosite: luminosite,
+              ),
             ),
-          ),
-        );
-        await tester.pumpAndSettle();
-        expect(tester.takeException(), isNull);
-        expect(find.byKey(BandeauPlace.payerKey), findsOneWidget);
-      });
+          );
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          expect(find.byKey(BandeauPlace.payerKey), findsOneWidget);
+        },
+      );
     }
   });
 
   group('les notifications', () {
-    NotificationTuteur depuis(String evenement) => notificationDepuis(
-      <String, dynamic>{
-        'id': 'n1',
-        'evenement': evenement,
-        'params': <String, dynamic>{'jours_avant': 7},
-        'destination': '/tuteur/foyer/recharge',
-        'cree_le': '2026-10-25T05:15:00Z',
-        'lu_le': null,
-      },
-      titrePour: contenuNotificationPour,
-    );
+    NotificationTuteur depuis(String evenement) =>
+        notificationDepuis(<String, dynamic>{
+          'id': 'n1',
+          'evenement': evenement,
+          'params': <String, dynamic>{'jours_avant': 7},
+          'destination': '/tuteur/foyer/recharge',
+          'cree_le': '2026-10-25T05:15:00Z',
+          'lu_le': null,
+        }, titrePour: contenuNotificationPour);
 
     test('la relance, la suspension et le retablissement', () {
       final NotificationTuteur relance = depuis('paiement_relance');

@@ -565,32 +565,30 @@ void main() {
       expect(perdue.toString(), isNot(contains('Motif fictif')));
     });
 
-    test(
-      'L1-05 : « dossier déjà décidé » devient dejaDecide, pas un echec certain',
-      () async {
-        final RevueDossiersDepuisValidation port = RevueDossiersDepuisValidation(
-          () async => <DossierAValider>[_d('p1')],
-          deciderExistant: ({
-            required String documentId,
-            required bool approuve,
-            String? motif,
-          }) async => throw const PostgrestException(
-            message: 'dossier déjà décidé',
-            code: '23514',
-          ),
-        );
-        await expectLater(
-          deciderSur(port),
-          throwsA(
-            isA<ErreurRevueDossier>().having(
-              (ErreurRevueDossier e) => e.code,
-              'code',
-              CodeErreurRevue.dejaDecide,
+    test('L1-05 : « dossier déjà décidé » devient dejaDecide, pas un echec certain', () async {
+      final RevueDossiersDepuisValidation port = RevueDossiersDepuisValidation(
+        () async => <DossierAValider>[_d('p1')],
+        deciderExistant:
+            ({
+              required String documentId,
+              required bool approuve,
+              String? motif,
+            }) async => throw const PostgrestException(
+              message: 'dossier déjà décidé',
+              code: '23514',
             ),
+      );
+      await expectLater(
+        deciderSur(port),
+        throwsA(
+          isA<ErreurRevueDossier>().having(
+            (ErreurRevueDossier e) => e.code,
+            'code',
+            CodeErreurRevue.dejaDecide,
           ),
-        );
-      },
-    );
+        ),
+      );
+    });
 
     test('resultatDecision : cache, puis rechargement existant', () async {
       int recharges = 0;

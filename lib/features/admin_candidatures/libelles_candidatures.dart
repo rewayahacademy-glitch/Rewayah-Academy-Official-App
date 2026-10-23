@@ -96,8 +96,7 @@ EtatAffiche? libelleEtatDansEtape(EtatCandidature? etat) {
 }
 
 /// Le mot d'un etat dans l'etape (menu « Etat »).
-String libelleEtat(EtatCandidature etat) =>
-    libelleEtatDansEtape(etat)!.libelle;
+String libelleEtat(EtatCandidature etat) => libelleEtatDansEtape(etat)!.libelle;
 
 /// Le mot d'une issue (menu « Issue »).
 String libelleIssue(IssueCandidature issue) => switch (issue) {
@@ -184,7 +183,7 @@ String? rappelFiltres(FiltreCandidatures filtre) {
   final List<String> morceaux = <String>[
     if (filtre.rechercheNette.isNotEmpty)
       r.rappel.recherche(texte: filtre.rechercheNette),
-    if (filtre.etape != null) ?_nomEtape(filtre.etape!),
+    if (filtre.etape != null) ?nomEtapeFiltre(filtre.etape!),
     if (filtre.etat != null) libelleEtat(filtre.etat!),
     if (filtre.issue != null) libelleIssue(filtre.issue!),
     if (filtre.enPause != null)
@@ -211,7 +210,7 @@ String? rappelFiltres(FiltreCandidatures filtre) {
       : r.rappel.filtres(filtres: morceaux.join(' · '));
 }
 
-String? _nomEtape(EtapeCandidature etape) => switch (etape) {
+String? nomEtapeFiltre(EtapeCandidature etape) => switch (etape) {
   EtapeCandidature.invitee => t.admin.candidatures.filtres.invitees,
   EtapeCandidature.recue => t.admin.candidatures.filtres.gardees,
   _ => libelleSalle(etape),

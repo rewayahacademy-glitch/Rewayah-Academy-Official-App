@@ -31,9 +31,9 @@ void main() {
     await tester.pumpAndSettle();
 
     final ByteData? donnees = await tester.runAsync<ByteData?>(() async {
-      final RenderRepaintBoundary boite =
-          tester.renderObject(find.byType(RepaintBoundary))
-              as RenderRepaintBoundary;
+      final RenderRepaintBoundary boite = tester.renderObject(
+        find.byType(RepaintBoundary),
+      ) as RenderRepaintBoundary;
       final ui.Image image = await boite.toImage();
       return image.toByteData(format: ui.ImageByteFormat.rawRgba);
     });
@@ -47,10 +47,7 @@ void main() {
         continue;
       }
       final int couleur =
-          0xFF000000 |
-          (octets[i] << 16) |
-          (octets[i + 1] << 8) |
-          octets[i + 2];
+          0xFF000000 | (octets[i] << 16) | (octets[i + 1] << 8) | octets[i + 2];
       comptes[couleur] = (comptes[couleur] ?? 0) + 1;
     }
 
@@ -71,9 +68,7 @@ void main() {
   ) async {
     // Une erreur d interpretation d un trace se voit surtout a ce qu elle
     // deborde. `SizedBox.square` borne la boite ; le tracé doit s y tenir.
-    await tester.pumpWidget(
-      const Center(child: LogoGoogle(taille: 24)),
-    );
+    await tester.pumpWidget(const Center(child: LogoGoogle(taille: 24)));
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);

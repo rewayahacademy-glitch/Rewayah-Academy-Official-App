@@ -287,7 +287,8 @@ class CartesRecapitulatif extends ConsumerWidget {
     }
     final ValueChanged<String>? modifier = onModifier;
     // En lecture seule, la ligne dit la reponse et ne se touche pas.
-    VoidCallback? appui() => modifier == null ? null : () => modifier(champ.code);
+    VoidCallback? appui() =>
+        modifier == null ? null : () => modifier(champ.code);
     return <Widget>[
       SettingRow(
         key: ligneKey(champ.code),
@@ -423,19 +424,11 @@ class CarteConditions extends StatelessWidget {
           // Le moyen de versement (SPEC 4.2, CAND-01) : la case ne porte plus
           // que sur les conditions, qui disent donc aussi par quel moyen la
           // personne est payee.
-          Text(
-            r.moyenValide,
-            key: moyenValideKey,
-            style: textes.bodyMedium,
-          ),
+          Text(r.moyenValide, key: moyenValideKey, style: textes.bodyMedium),
           Ecart.vSm,
           // La continuite (decision du directeur du 22/10/2026) : une clause
           // des conditions que la personne accepte, pas une question.
-          Text(
-            r.continuite,
-            key: continuiteKey,
-            style: textes.bodyMedium,
-          ),
+          Text(r.continuite, key: continuiteKey, style: textes.bodyMedium),
           Ecart.vSm,
           Text(r.coordonneesPlusTard, style: textes.bodyMedium),
           Ecart.vSm,

@@ -1015,61 +1015,64 @@ void main() {
       emplacementVocal: ComposerVocal(onEnvoyer: (_) async {}),
     );
 
-    testWidgets('390 : une icone nommee de 48, a cote du champ (et de l envoi), qui '
-        'ouvre l enregistrement ; plus de lien sous le champ', (
-      WidgetTester tester,
-    ) async {
-      // Contre-preuve : a 27689f94, l'entree etait le lien « Enregistrer un
-      // message vocal » sous le champ, et aucun micro n'existait.
-      final HorlogeManuelle h = HorlogeManuelle();
-      await _monterNu(
-        tester,
-        filVocal(),
-        surcharges: surchargesVocalDemo(horloge: h.horloge),
-      );
-      final Finder micro = find.byKey(FilDiscussion.cleMicro);
-      expect(micro, findsOneWidget);
-      expect(find.byKey(ComposerVocal.cleEnregistrer), findsNothing);
-      final Size taille = tester.getSize(micro);
-      expect(taille.width, greaterThanOrEqualTo(48));
-      expect(taille.height, greaterThanOrEqualTo(48));
-      // SUPERPOS-1 (repris par JONCTION-LIGNES-1) : l'envoi est dans le
-      // champ, a son bord de fin ; le micro suit le champ, sur sa ligne,
-      // apres un palier.
-      final Rect m = tester.getRect(micro);
-      final Rect champ = tester.getRect(find.byKey(FilDiscussion.champKey));
-      final Rect envoyer = tester.getRect(envoiDuFil());
-      expect(m.top, champ.top, reason: 'sur la ligne du champ');
-      expect(envoyer.right, lessThanOrEqualTo(champ.right + 0.5));
-      expect(m.left - champ.right, AppSpacing.sm);
-      final SemanticsHandle semantique = tester.ensureSemantics();
-      expect(
-        find.bySemanticsLabel(t.com.socle.composants.composer.enregistrerVocal),
-        findsOneWidget,
-      );
-      expect(
-        t.com.socle.composants.composer.enregistrerVocal,
-        'Enregistrer un message vocal',
-      );
-      semantique.dispose();
-      await tester.tap(micro);
-      await tester.pump();
-      await tester.pump();
-      // L'enregistrement s'ouvre, sa rangee remplace la rangee texte.
-      expect(find.byKey(ComposerVocal.cleArreter), findsOneWidget);
-      expect(micro, findsNothing);
-      expect(envoiDuFil(), findsNothing);
-      await avancer(tester, h, const Duration(seconds: 3));
-      await tester.tap(find.byKey(ComposerVocal.cleArreter));
-      await _attendre(tester);
-      await tester.tap(find.byKey(ComposerVocal.cleSupprimer));
-      await tester.pump();
-      await tester.tap(find.byKey(ComposerVocal.cleConfirmerSuppression));
-      await _attendre(tester);
-      // Le panneau ferme : le micro revient.
-      expect(micro, findsOneWidget);
-      expect(tester.takeException(), isNull);
-    });
+    testWidgets(
+      '390 : une icone nommee de 48, a cote du champ (et de l envoi), qui '
+      'ouvre l enregistrement ; plus de lien sous le champ',
+      (WidgetTester tester) async {
+        // Contre-preuve : a 27689f94, l'entree etait le lien « Enregistrer un
+        // message vocal » sous le champ, et aucun micro n'existait.
+        final HorlogeManuelle h = HorlogeManuelle();
+        await _monterNu(
+          tester,
+          filVocal(),
+          surcharges: surchargesVocalDemo(horloge: h.horloge),
+        );
+        final Finder micro = find.byKey(FilDiscussion.cleMicro);
+        expect(micro, findsOneWidget);
+        expect(find.byKey(ComposerVocal.cleEnregistrer), findsNothing);
+        final Size taille = tester.getSize(micro);
+        expect(taille.width, greaterThanOrEqualTo(48));
+        expect(taille.height, greaterThanOrEqualTo(48));
+        // SUPERPOS-1 (repris par JONCTION-LIGNES-1) : l'envoi est dans le
+        // champ, a son bord de fin ; le micro suit le champ, sur sa ligne,
+        // apres un palier.
+        final Rect m = tester.getRect(micro);
+        final Rect champ = tester.getRect(find.byKey(FilDiscussion.champKey));
+        final Rect envoyer = tester.getRect(envoiDuFil());
+        expect(m.top, champ.top, reason: 'sur la ligne du champ');
+        expect(envoyer.right, lessThanOrEqualTo(champ.right + 0.5));
+        expect(m.left - champ.right, AppSpacing.sm);
+        final SemanticsHandle semantique = tester.ensureSemantics();
+        expect(
+          find.bySemanticsLabel(
+            t.com.socle.composants.composer.enregistrerVocal,
+          ),
+          findsOneWidget,
+        );
+        expect(
+          t.com.socle.composants.composer.enregistrerVocal,
+          'Enregistrer un message vocal',
+        );
+        semantique.dispose();
+        await tester.tap(micro);
+        await tester.pump();
+        await tester.pump();
+        // L'enregistrement s'ouvre, sa rangee remplace la rangee texte.
+        expect(find.byKey(ComposerVocal.cleArreter), findsOneWidget);
+        expect(micro, findsNothing);
+        expect(envoiDuFil(), findsNothing);
+        await avancer(tester, h, const Duration(seconds: 3));
+        await tester.tap(find.byKey(ComposerVocal.cleArreter));
+        await _attendre(tester);
+        await tester.tap(find.byKey(ComposerVocal.cleSupprimer));
+        await tester.pump();
+        await tester.tap(find.byKey(ComposerVocal.cleConfirmerSuppression));
+        await _attendre(tester);
+        // Le panneau ferme : le micro revient.
+        expect(micro, findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
 
     testWidgets('arabe : le libelle du micro est arabe', (
       WidgetTester tester,

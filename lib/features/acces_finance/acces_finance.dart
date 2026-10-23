@@ -303,9 +303,9 @@ class BandeauPlace extends StatelessWidget {
                 ? null
                 : t.foyer.finances.rechargerPour(prenom: prenom!),
             alignerEnDebut: true,
-            onPress: () => GoRouter.of(
-              context,
-            ).go(Routes.rechargePour(<String>[acces.eleveId])),
+            onPress: () =>
+                GoRouter.of(context)
+                    .go(Routes.rechargePour(<String>[acces.eleveId])),
           )
         : null;
     return BandeauAttention(

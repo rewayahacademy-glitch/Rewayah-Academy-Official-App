@@ -52,9 +52,8 @@ void main() {
   });
 
   test('les appareils du foyer arrivent du plus recent au plus ancien', () {
-    final String service = File(
-      'lib/core/appairage/service_appairage.dart',
-    ).readAsStringSync();
+    final String service = File('lib/core/appairage/service_appairage.dart')
+        .readAsStringSync();
     final List<String> appels = appelsOrder(
       service.substring(service.indexOf("from('mes_appareils_v')")),
     );

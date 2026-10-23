@@ -207,6 +207,24 @@
     "recherche": {
       "effacer": "Effacer la recherche",
       "fermer": "Fermer la recherche"
+    },
+    "listes": {
+      "actions": "Actions",
+      "actionsDe": "Actions\u00a0: {objet}",
+      "cocherPage": "Cocher la page",
+      "cocherLigne": "Cocher {objet}",
+      "trierPar": "Trier par {colonne}",
+      "trierParCroissant": "Trier par {colonne} (actuellement croissant)",
+      "trierParDecroissant": "Trier par {colonne} (actuellement décroissant)",
+      "tranche": "{debut}-{fin} sur {total}",
+      "trancheLue": "Lignes {debut} à {fin} sur {total}",
+      "precedente": "Page précédente",
+      "suivante": "Page suivante",
+      "taillePage": "Lignes par page",
+      "parPage": "{n} par page",
+      "deselectionner": "Désélectionner",
+      "retirerFiltre": "Retirer le filtre\u00a0: {filtre}",
+      "toutEffacer": "Tout effacer"
     }
   },
   "reseau": {
@@ -3513,6 +3531,109 @@
         "rouvrir": "La candidature est rouverte.",
         "responsable": "Le responsable est enregistré.",
         "rejoue": "Ce geste avait déjà été fait : rien n'a été écrit une seconde fois."
+      },
+      "liste": {
+        "salle": "Salle",
+        "toutesSalles": "Toutes les salles",
+        "avecCompteur": "{libelle} ({n} en cours)",
+        "axe": "{axe} : {valeur}",
+        "colonnePays": "Pays",
+        "repereManques": "Informations manquantes : {marques}",
+        "separateurMarques": ", ",
+        "synthese": {
+          "informationsManquantes": {
+            "one": "{n} information manquante",
+            "other": "{n} informations manquantes"
+          },
+          "confirmeesIndisponibles": {
+            "one": "{n} confirmée indisponible",
+            "other": "{n} confirmées indisponibles"
+          }
+        },
+        "ouverture": "Lecture du dossier : {nom}",
+        "retourLigne": "{nom}. {retour}",
+        "gestePlusPossible": "Ce geste n'est plus possible depuis l'état « {etat} ». Rien n'a été fait. La liste est actualisée.",
+        "dossierIllisible": "Le dossier n'a pas pu être lu. Rien n'a été fait. Réessayez.",
+        "ouvrirDossier": "Ouvrir le dossier",
+        "titreGesteNonFait": "Geste non fait"
+      },
+      "lot": {
+        "selectionnees": {
+          "one": "{n} sélectionnée",
+          "other": "{n} sélectionnées"
+        },
+        "dontPage": "dont {n} sur cette page",
+        "avecDont": "{selection}, {dont}",
+        "autresGestes": "Les autres gestes se font un par un, depuis la ligne ou le dossier.",
+        "refuser": "Refuser",
+        "plafond": "Vous pouvez retenir au plus {n} candidatures à la fois.",
+        "selectionRetiree": "La sélection a été retirée, parce que la recherche ou les filtres ont changé.",
+        "feuille": {
+          "sousTitre": {
+            "one": "{n} candidature sélectionnée",
+            "other": "{n} candidatures sélectionnées"
+          },
+          "lecture": "Vérification de la sélection en cours.",
+          "seront": {
+            "one": "{n} candidature sera concernée",
+            "other": "{n} candidatures seront concernées"
+          },
+          "neSeront": {
+            "one": "{n} candidature ne sera pas concernée",
+            "other": "{n} candidatures ne seront pas concernées"
+          },
+          "etAutres": "et {n} autres",
+          "effetPause": "Les candidatures concernées n'avancent plus tant que la pause n'est pas levée.",
+          "effetLever": "Les candidatures concernées reprennent là où elles s'étaient arrêtées.",
+          "effetRefuser": "Les candidatures concernées sont fermées. Vous pourrez les rouvrir une à une.",
+          "motifCommun": "Le même motif et le même message valent pour toutes les candidatures concernées.",
+          "nombre": "Nombre de candidatures concernées",
+          "nombreAide": "Saisissez {n} pour confirmer.",
+          "nombreFaux": "Ce n'est pas le bon nombre. Saisissez {n}.",
+          "actualiserApercu": "Actualiser l'aperçu",
+          "terminer": "Terminer",
+          "raisons": {
+            "absente": "Cette candidature n'existe plus.",
+            "horsPortee": "Vous n'y avez pas accès.",
+            "dejaEnPause": "Elle est déjà en pause.",
+            "pasEnPause": "Elle n'est pas en pause.",
+            "pause": "Sa pause ne permet pas ce geste.",
+            "etat": "Ce geste n'est pas possible depuis l'état « {etat} ».",
+            "conflit": "Elle a changé entre-temps.",
+            "erreurServeur": "Le serveur n'a pas pu la traiter. Réessayez depuis son dossier.",
+            "inconnue": "Le serveur a refusé ce geste."
+          },
+          "rapport": {
+            "titre": "Résultat",
+            "reussies": {
+              "one": "{n} candidature traitée",
+              "other": "{n} candidatures traitées"
+            },
+            "exclues": {
+              "one": "{n} exclue",
+              "other": "{n} exclues"
+            },
+            "refusees": {
+              "one": "{n} refusée par le serveur",
+              "other": "{n} refusées par le serveur"
+            },
+            "rejoue": "Ce traitement avait déjà été fait : rien n'a été écrit une seconde fois.",
+            "ligneEtRaison": "{statut} : {raison}",
+            "ligneReussie": "Fait",
+            "ligneExclue": "Exclue",
+            "ligneRefusee": "Refusée",
+            "sansNom": "Candidature sans nom lisible"
+          }
+        },
+        "erreurs": {
+          "titre": "Traitement refusé",
+          "jetonPerime": "Les candidatures ont changé depuis l'aperçu. Rien n'a été fait. Actualisez l'aperçu.",
+          "aucunEligible": "Aucune candidature de la sélection ne peut recevoir ce geste. Rien n'a été fait.",
+          "nonGroupable": "Ce geste ne se fait pas pour plusieurs candidatures à la fois. Ouvrez le dossier de chacune pour le faire.",
+          "cleReutilisee": "Cette demande a déjà servi à une autre action. Fermez cette fenêtre et recommencez.",
+          "horsPortee": "Une candidature de la sélection est hors de votre accès. Rien n'a été fait. Actualisez l'aperçu.",
+          "lectureApercu": "L'aperçu n'a pas pu être lu. Rien n'a été fait. Réessayez."
+        }
       }
     },
     "importInscriptions": {
@@ -4858,6 +4979,15 @@
       "erreur": "La progression n'a pas pu être lue. Réessayez dans un instant.",
       "aucun": "Aucun élève actif",
       "aucunDetail": "Les élèves apparaîtront ici dès leur premier diagnostic de placement.",
+      "rechercheLibelle": "Rechercher un élève",
+      "rechercheAide": "Nom, identifiant ou classe",
+      "nombreEleves(param=n)": {
+        "one": "{n} élève",
+        "other": "{n} élèves"
+      },
+      "nombreSurTotal": "{n} sur {total} élèves",
+      "aucunAvecCeFiltre": "Aucun élève ne correspond",
+      "aucunAvecCeFiltreDetail": "Changez la recherche ou le filtre pour voir les autres élèves.",
       "colonneEleve": "Élève",
       "colonneGroupe": "Classe",
       "colonneNiveau": "Niveau",
@@ -5130,6 +5260,29 @@
     },
     "comptes": {
       "titre": "Comptes",
+      "recherche": "Rechercher un compte",
+      "rechercheAide": "Nom ou identifiant",
+      "filtreEtat": "État",
+      "filtreTousLesEtats": "Tous les états",
+      "rolesEleves": "Élèves",
+      "rolesTuteurs": "Tuteurs",
+      "rolesEnseignants": "Enseignants",
+      "rolesAdministration": "Administration",
+      "rolesComptables": "Comptables",
+      "rolesControleurs": "Contrôleurs",
+      "compteur(param=n)": {
+        "one": "{n} compte",
+        "other": "{n} comptes"
+      },
+      "filtreActifEtat": "État\u00a0: {valeur}",
+      "filtreActifRecherche": "Recherche\u00a0: {texte}",
+      "colonneEnfants": "Élèves du foyer",
+      "colonneEnseignant": "Enseignant",
+      "enseignantOui": "Oui",
+      "enseignantAucun": "Aucun",
+      "actionOuvrirDossier": "Ouvrir le dossier d'identité",
+      "plafondTitre": "La liste est peut-être incomplète",
+      "plafondMessage": "Le serveur rend au plus {nombre} comptes, et la liste en compte autant\u00a0: les inscriptions les plus récentes peuvent manquer.",
       "intro": "Toutes les personnes inscrites, celles qui attendent une décision en premier. Un enseignant sans pièce d'identité déposée reste visible ici\u00a0: c'est le seul endroit qui le montre.",
       "attenteUneAujourdhui": "Une personne attend une décision, inscrite aujourd'hui.",
       "attenteUneUnJour": "Une personne attend une décision depuis 1 jour.",

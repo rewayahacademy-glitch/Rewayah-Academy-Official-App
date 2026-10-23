@@ -160,34 +160,35 @@ void main() {
   });
 
   group('reconnexion', () {
-    test('un retablissement restaure l etat manque pendant la coupure', () async {
-      final List<SharedContentState> chezLui = await suivre(chezLEleve);
-      await chezLePrpf.publier(etatPartage(revision: 0, page: 3));
-      await pumpEventQueue();
-      expect(chezLui, hasLength(1));
+    test(
+      'un retablissement restaure l etat manque pendant la coupure',
+      () async {
+        final List<SharedContentState> chezLui = await suivre(chezLEleve);
+        await chezLePrpf.publier(etatPartage(revision: 0, page: 3));
+        await pumpEventQueue();
+        expect(chezLui, hasLength(1));
 
-      // L'eleve perd le reseau : les revisions suivantes ne lui parviennent
-      // pas.
-      bus.jeter = (PaquetRealtime p) => true;
-      await chezLePrpf.publier(etatPartage(revision: 1, page: 14));
-      await chezLePrpf.publier(etatPartage(revision: 2, page: 15));
-      await pumpEventQueue();
-      expect(chezLui, hasLength(1), reason: 'toujours coupe');
+        // L'eleve perd le reseau : les revisions suivantes ne lui parviennent
+        // pas.
+        bus.jeter = (PaquetRealtime p) => true;
+        await chezLePrpf.publier(etatPartage(revision: 1, page: 14));
+        await chezLePrpf.publier(etatPartage(revision: 2, page: 15));
+        await pumpEventQueue();
+        expect(chezLui, hasLength(1), reason: 'toujours coupe');
 
-      // Le lien revient. `retabli` est le seul declencheur de restauration --
-      // le socle distingue deja cet etat de `connecte` pour cette raison.
-      coteEleve.poserEtat(EtatTransport.retabli);
-      await pumpEventQueue();
+        // Le lien revient. `retabli` est le seul declencheur de restauration --
+        // le socle distingue deja cet etat de `connecte` pour cette raison.
+        coteEleve.poserEtat(EtatTransport.retabli);
+        await pumpEventQueue();
 
-      expect(chezLui, hasLength(2));
-      expect(chezLui.last.revision, 2);
-      expect(chezLui.last.contentPosition.page, 15);
-    });
+        expect(chezLui, hasLength(2));
+        expect(chezLui.last.revision, 2);
+        expect(chezLui.last.contentPosition.page, 15);
+      },
+    );
 
     test('un lien instable ne declenche AUCUNE restauration', () async {
-      final PersistanceFigee figee = PersistanceFigee(
-        etatPartage(revision: 0),
-      );
+      final PersistanceFigee figee = PersistanceFigee(etatPartage(revision: 0));
       final ServiceEtatPartage service = ServiceEtatPartage(
         realtime: ServiceRealtimePedagogique(coteEleve),
         persistance: figee,
@@ -287,7 +288,10 @@ void main() {
           type: typeRevisionEtatPartage,
           sessionId: seanceF,
           emetteurProfilId: profilEnseignant,
-          charge: const <String, dynamic>{'revision': 2, 'display_mode': 'imax'},
+          charge: const <String, dynamic>{
+            'revision': 2,
+            'display_mode': 'imax',
+          },
           emisLeUtc: DateTime.utc(2026, 9, 20, 10),
         ),
         canal: CanalFiabilite.fiable,
@@ -316,10 +320,7 @@ void main() {
         CauseRevision.mode,
       );
       expect(
-        causeDeRevision(
-          avant,
-          etatPartage(revision: 1, resourceId: 'res-2'),
-        ),
+        causeDeRevision(avant, etatPartage(revision: 1, resourceId: 'res-2')),
         CauseRevision.support,
       );
       expect(
@@ -344,19 +345,22 @@ void main() {
     });
   });
 
-  test('une panne de lecture remonte, elle ne se deguise pas en vide', () async {
-    final ServiceEtatPartage service = ServiceEtatPartage(
-      realtime: ServiceRealtimePedagogique(coteEleve),
-      persistance: PersistanceEnPanne(),
-      etatsTransport: coteEleve.etats(),
-    );
-    addTearDown(service.liberer);
+  test(
+    'une panne de lecture remonte, elle ne se deguise pas en vide',
+    () async {
+      final ServiceEtatPartage service = ServiceEtatPartage(
+        realtime: ServiceRealtimePedagogique(coteEleve),
+        persistance: PersistanceEnPanne(),
+        etatsTransport: coteEleve.etats(),
+      );
+      addTearDown(service.liberer);
 
-    await expectLater(
-      service.etatCourant(seanceF),
-      throwsA(isA<EchecEtatPartage>()),
-    );
-  });
+      await expectLater(
+        service.etatCourant(seanceF),
+        throwsA(isA<EchecEtatPartage>()),
+      );
+    },
+  );
 }
 
 /// Fabrique le message de revision tel que `ServiceEtatPartage` l'emet.
