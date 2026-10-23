@@ -2433,15 +2433,16 @@ li, dd { text-wrap: wrap; }
   .chapitre h2 + p { font-weight: 500; }
 }
 /* Recette 43 : moins de partages image et texte sur l'accueil (trois jures). « Un horaire fixe » devient une phrase
-   centree au-dessus des trois etapes ; les questions des familles passent sous leur titre, sur une large colonne. */
+   centree au-dessus des trois etapes ; les questions des familles passent sous leur titre, sur toute la largeur ; l'introduction et ses liens sur une ligne. */
 @media (min-width: 1100px) {
   .pousse .pousse__entete { display: block; text-align: center; }
   .pousse .pousse__entete h2 { max-width: 20ch; margin-inline: auto; }
   .pousse .pousse__corps { max-width: 56ch; margin: var(--e-6) auto 0; }
   .pousse .pousse__corps p { margin-inline: auto; }
   .pousse .pousse__corps .section-links { justify-content: center; }
-  .faq-ouverte .faq-ouverte__tete { grid-column: 1 / -1; position: static; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: end; }
-  .faq-ouverte .faq-ouverte__tete h2 { grid-column: 1 / span 6; }
-  .faq-ouverte .faq-ouverte__intro { grid-column: 8 / -1; }
-  .faq-ouverte .faq-ouverte__liste { grid-column: 1 / span 8; grid-template-columns: minmax(0, 1fr); row-gap: var(--e-3); }
+  .faq-ouverte .faq-ouverte__tete { grid-column: 1 / -1; position: static; display: block; }
+  .faq-ouverte .faq-ouverte__intro { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--e-8); margin-top: var(--e-4); }
+  .faq-ouverte .faq-ouverte__intro > p { margin-top: 0; }
+  .faq-ouverte .faq-ouverte__intro .liste-liens { display: flex; flex-wrap: wrap; gap: 0 var(--e-6); }
+  .faq-ouverte .faq-ouverte__liste { grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr); row-gap: var(--e-3); }
 }
