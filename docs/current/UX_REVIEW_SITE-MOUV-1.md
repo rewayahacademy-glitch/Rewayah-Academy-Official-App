@@ -233,6 +233,7 @@ Inspection après ces corrections :
 | Recette 30 (jurés Sonnet) | 7,57 | 6,93 | 6,73 | « presque », sans plafond |
 | Recette 31 (jurés Sonnet) | 7,57 | 6,97 | 6,77 | « presque » (un juré applique le plafond « moins de quatre vraies photos ») |
 | Recette 32 (jurés Sonnet) | 7,18 | 7,08 | 6,73 | « presque » (les trois jurés appliquent le plafond « moins de quatre vraies photos ») |
+| Recette 33 (jurés Sonnet) | 7,70 | 6,57 | 6,33 | « presque », sans plafond (les rendus comptés comme images raster, définition du skill rappelée aux jurés) |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -729,6 +730,16 @@ Inspection des six pages : 0 FAIL hors Tarifs (une image, voulu). Aucun texte co
 | PP3 | « Les cours en bref » : deux pastilles hors de la grille | Deux tuiles de même largeur sous les trois (une et demie chacune), même aspect |
 | PP4 | Quatre formes de tuiles | Deux seulement : l'arche pour les chiffres (remises, coût d'une famille), l'angle arrondi pour les notes |
 | PP5 | Accueil, questions des familles : colonne de gauche vide | Elle reste à l'écran le long des questions |
+
+**Après la recette 33.** Les jurés appliquent la définition du skill (photographies et images raster comptent, dessins SVG non) : plus de plafond. Restent, en commun : plusieurs formes de tuiles (arrondis en pourcentage qui changent avec la largeur), la bande des dates avec une colonne vide, et une bavure au pied de l'arche du haut de l'accueil, laissée par le nettoyage du tour 29 (le bas de la face droite de l'arche était estompé).
+
+| # | Relevé | Correction |
+|---|---|---|
+| QQ1 | Formes de tuiles qui changent avec la largeur | Une seule forme pour les tuiles d'information, chiffres compris : l'angle arrondi de 24 px ; l'arche reste aux images. Remises et notes à la hauteur de leur texte |
+| QQ2 | Dates du paiement : colonne vide à droite | Le titre et sa phrase en haut, puis la frise sur toute la largeur, chaque date suivie de sa phrase sur une ligne |
+| QQ3 | Bavure au pied de l'arche | Image refaite depuis la source propre : la face de l'arche est gardée entière, seul le sol qui dépasse est retiré, le long du bord bas de la face et du bord du sol blanc |
+| QQ4 | Téléphone : phrase « Rien n'est facturé… » sous l'image | Elle suit les deux boutons, avant l'image |
+| QQ5 | Pied de page long au téléphone | Les liens sur deux colonnes |
 
 ## Hors de portée de l'agent
 

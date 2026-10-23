@@ -2177,3 +2177,29 @@ li, dd { text-wrap: wrap; }
 
 /* Accueil, questions des familles : la colonne du titre reste a l'ecran le long des questions. */
 @media (min-width: 840px) { .faq-ouverte .faq-ouverte__tete { position: sticky; top: calc(var(--entete) + var(--e-8)); align-self: start; } }
+
+/* --- Recette 33 (23/10/2026) ------------------------------------------------------------------------------------- */
+/* Une seule forme pour les tuiles d'information, chiffres compris : l'angle arrondi de 24 px. L'arche reste aux images.
+   Les tuiles des remises et des notes prennent la hauteur de leur texte. */
+.remises:not(.remises--echeances) .remise, .price-table--famille tbody tr, .price-table--famille tbody tr:nth-child(n) { border-radius: var(--r-lg); }
+.remises:not(.remises--echeances) .remise { padding: var(--e-6) var(--e-6) var(--e-6); }
+.price-table--famille tbody tr, .price-table--famille tbody tr:nth-child(n) { padding: var(--e-6); }
+.remises:not(.remises--echeances), #conditions .points, .deux-champs__communs { align-items: start; }
+@media (max-width: 839px) { .price-table--famille tbody tr td, .price-table--famille tbody tr td:only-of-type { text-align: start; } }
+
+/* Tarifs, les dates du paiement : le titre et sa phrase en haut, puis la frise sur toute la largeur (la date a gauche,
+   sa phrase sur une ligne a droite) : plus de colonne vide a cote de la frise. */
+@media (min-width: 1100px) {
+  .section--large:has(.remises--echeances) .section__corps { display: block; }
+  .section--large:has(.remises--echeances) .section__corps > p { margin-top: 0; max-width: 56ch; }
+  .section--large:has(.remises--echeances) .section__corps > .remises--echeances { margin-top: var(--e-10); }
+  .remises--echeances .remise { grid-template-columns: 200px minmax(0, 1fr); }
+}
+
+/* Telephone et tablette : la phrase « Rien n'est facture… » reste sous les boutons, avant l'image ; le pied de page
+   se resserre (les liens sur deux colonnes). */
+@media (max-width: 839px) {
+  .porte .rassurance { order: 0; }
+  .site-footer nav ul { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--e-4); }
+  .footer-legal ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--e-4); }
+}
