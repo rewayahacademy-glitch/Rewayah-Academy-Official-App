@@ -397,7 +397,10 @@ class ProductionSiteQA(unittest.TestCase):
             self.assertIn(regle["has"][0]["value"], noms, regle)
         par_source = {(r["has"][0]["value"], r["source"]): r for r in self.config["redirects"]}
         self.assertEqual(par_source[("rewayahacademy.com", "/")]["destination"], "/fr/")
-        self.assertTrue(par_source[("www.rewayahacademy.com", "/:path*")]["permanent"])
+        self.assertTrue(par_source[("www.rewayahacademy.com", "/:path(.*)")]["permanent"])
+        # Vercel compile en mode strict : `:path*` ne prendrait pas « / » ni « /fr/ » (revue du 23/10).
+        self.assertFalse([r["source"] for r in self.config["redirects"] if ":path*" in r["source"]])
+        self.assertIn(r"\.well-known/", self.config["rewrites"][-1]["source"])
         vers_app = next(r for r in self.config["redirects"]
                         if r["has"][0]["value"] == "rewayahacademy.com" and r["destination"].startswith("https://app."))
         motif = re.fullmatch(r"/:path\((.*)\)", vers_app["source"]).group(1)

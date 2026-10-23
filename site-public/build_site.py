@@ -1476,8 +1476,9 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
     config_path = output / "vercel.json"
     config = json.loads(config_path.read_text(encoding="utf-8")) if config_path.exists() else {}
     # Vercel's documented negative-lookahead syntax leaves unknown /fr paths
-    # unmatched, so its static 404.html handles them instead of Flutter.
-    fallback = {"source": "/:path((?!fr(?:/|$)).*)", "destination": "/index.html"}
+    # unmatched, so its static 404.html handles them instead of Flutter. Same for
+    # /.well-known/ (kept on the site host): an absent file is a 404, not the app.
+    fallback = {"source": r"/:path((?!fr(?:/|$)|\.well-known/).*)", "destination": "/index.html"}
     config["rewrites"] = [
         {"source": route.rstrip("/") or "/", "destination": "/" + str(output_file(Path(), route)).replace("\\", "/")}
         for route in sorted(pages)
@@ -1501,13 +1502,14 @@ def aiguillage_domaine() -> list[dict]:
     Ces regles ne jouent que sur ces trois noms : un apercu et l'alias vercel.app servent tout comme avant, ce qui
     garde les controles du workflow (racine, reecriture SPA, wasm) inchanges."""
     site, app = _hote(DOMAINE_SITE), _hote(DOMAINE_APP)
+    # Vercel compile ces sources en mode strict : `:path*` ne prend pas un « / » seul apres son prefixe ; `(.*)` si.
     return [
-        {"source": "/:path*", "has": _hote(DOMAINE_WWW), "destination": ORIGINE_SITE + "/:path*", "permanent": True},
+        {"source": "/:path(.*)", "has": _hote(DOMAINE_WWW), "destination": ORIGINE_SITE + "/:path", "permanent": True},
         {"source": "/", "has": site, "destination": "/fr/", "permanent": False},
         {"source": r"/:path((?!fr(?:/|$)|robots\.txt$|sitemap\.xml$|\.well-known/).+)", "has": site,
          "destination": ORIGINE_APP + "/:path", "permanent": False},
         {"source": "/fr", "has": app, "destination": ORIGINE_SITE + "/fr/", "permanent": False},
-        {"source": "/fr/:path*", "has": app, "destination": ORIGINE_SITE + "/fr/:path*", "permanent": False},
+        {"source": "/fr/:path(.*)", "has": app, "destination": ORIGINE_SITE + "/fr/:path", "permanent": False},
     ]
 
 
