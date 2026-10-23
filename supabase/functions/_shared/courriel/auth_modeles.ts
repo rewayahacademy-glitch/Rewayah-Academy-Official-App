@@ -8,6 +8,7 @@
 import { type Contenu, composer } from './gabarit.ts'
 
 const RAISON = 'Vous recevez cet e-mail parce qu’une demande a été faite avec cette adresse sur Rewayah Academy. Si ce n’est pas vous, ignorez-le : rien ne change sans ce lien.'
+const RAISON_CODE = RAISON.replace('ce lien', 'ce code')
 
 function lien(sujet: string, titre: string, phrase: string, bouton: string, note: string): Contenu {
   return {
@@ -40,7 +41,7 @@ export const MODELES_AUTH: Record<string, Contenu> = {
     'Tant que le changement n’est pas confirmé, votre adresse actuelle reste celle du compte.'),
   reauthentication: {
     sujet: 'Votre code de vérification', apercu: 'Le code à saisir pour confirmer votre action.',
-    titre: 'Votre code de vérification', raison: RAISON,
+    titre: 'Votre code de vérification', raison: RAISON_CODE,
     blocs: [
       { type: 'texte', texte: 'Bonjour,' },
       { type: 'texte', texte: 'Saisissez ce code dans l’application pour confirmer votre action :' },
