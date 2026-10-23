@@ -33,7 +33,7 @@ function lien(sujet: string, titre: string, phrase: string, bouton: string, note
       { type: 'texte', texte: phrase },
       { type: 'bouton', libelle: bouton, href: '{{ .ConfirmationURL }}' },
       { type: 'note', texte: note },
-      { type: 'note', texte: 'Le bouton ne fonctionne pas ? Copiez ce lien dans votre navigateur :\n{{ .ConfirmationURL }}' },
+      { type: 'lien', texte: 'Le bouton ne fonctionne pas ?', libelle: 'Ouvrir le lien', href: '{{ .ConfirmationURL }}' },
     ],
   }
 }
@@ -69,7 +69,9 @@ export const MODELES_AUTH: Record<string, Contenu> = {
 /// Les mots d'une langue pour les six messages Auth.
 interface TextesAuth {
   salut: string
+  /// La question avant le lien de secours, et le mot du lien.
   copie: string
+  ouvrir: string
   raison: string
   raisonCode: string
   droiteAGauche?: boolean
@@ -92,7 +94,7 @@ function jeu(langue: LangueAuth, t: TextesAuth): Record<string, Contenu> {
       { type: 'texte', texte: phrase },
       { type: 'bouton', libelle: bouton, href: '{{ .ConfirmationURL }}' },
       { type: 'note', texte: note },
-      { type: 'note', texte: `${t.copie}\n{{ .ConfirmationURL }}` },
+      { type: 'lien', texte: t.copie, libelle: t.ouvrir, href: '{{ .ConfirmationURL }}' },
     ],
   })
   const [rs, ra, rp, rn] = t.reauthentication
@@ -117,7 +119,8 @@ function jeu(langue: LangueAuth, t: TextesAuth): Record<string, Contenu> {
 export const MODELES_AUTH_LANGUES: Record<LangueAuth, Record<string, Contenu>> = {
   en: jeu('en', {
     salut: 'Hello,',
-    copie: 'The button does not work? Copy this link into your browser:',
+    copie: 'The button does not work?',
+    ouvrir: 'Open the link',
     raison: 'You are receiving this e-mail because a request was made with this address on Rewayah Academy. If it was not you, ignore it: nothing changes without this link.',
     raisonCode: 'You are receiving this e-mail because a request was made with this address on Rewayah Academy. If it was not you, ignore it: nothing changes without this code.',
     magic_link: ['Your sign-in link for Rewayah Academy', 'Your sign-in link',
@@ -140,7 +143,8 @@ export const MODELES_AUTH_LANGUES: Record<LangueAuth, Record<string, Contenu>> =
   }),
   ar: jeu('ar', {
     salut: 'مرحبًا،',
-    copie: 'لا يعمل الزر؟ انسخ هذا الرابط في متصفحك:',
+    copie: 'لا يعمل الزر؟',
+    ouvrir: 'افتح الرابط',
     raison: 'وصلتك هذه الرسالة لأن طلبًا قُدّم بهذا العنوان في Rewayah Academy. إن لم تكن أنت، فتجاهلها: لا يتغير شيء دون هذا الرابط.',
     raisonCode: 'وصلتك هذه الرسالة لأن طلبًا قُدّم بهذا العنوان في Rewayah Academy. إن لم تكن أنت، فتجاهلها: لا يتغير شيء دون هذا الرمز.',
     droiteAGauche: true,
@@ -163,7 +167,8 @@ export const MODELES_AUTH_LANGUES: Record<LangueAuth, Record<string, Contenu>> =
   }),
   es: jeu('es', {
     salut: 'Hola,',
-    copie: '¿No funciona el botón? Copie este enlace en su navegador:',
+    copie: '¿No funciona el botón?',
+    ouvrir: 'Abrir el enlace',
     raison: 'Recibe este correo electrónico porque se ha hecho una solicitud con esta dirección en Rewayah Academy. Si no ha sido usted, ignórelo: nada cambia sin este enlace.',
     raisonCode: 'Recibe este correo electrónico porque se ha hecho una solicitud con esta dirección en Rewayah Academy. Si no ha sido usted, ignórelo: nada cambia sin este código.',
     magic_link: ['Su enlace de acceso a Rewayah Academy', 'Su enlace de acceso',
@@ -187,7 +192,8 @@ export const MODELES_AUTH_LANGUES: Record<LangueAuth, Record<string, Contenu>> =
   }),
   pt: jeu('pt', {
     salut: 'Olá,',
-    copie: 'O botão não funciona? Copie esta ligação para o seu navegador:',
+    copie: 'O botão não funciona?',
+    ouvrir: 'Abrir a ligação',
     raison: 'Recebe este e-mail porque foi feito um pedido com este endereço na Rewayah Academy. Se não foi você, ignore-o: nada muda sem esta ligação.',
     raisonCode: 'Recebe este e-mail porque foi feito um pedido com este endereço na Rewayah Academy. Se não foi você, ignore-o: nada muda sem este código.',
     magic_link: ['A sua ligação de acesso à Rewayah Academy', 'A sua ligação de acesso',
