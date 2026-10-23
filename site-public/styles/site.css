@@ -2426,3 +2426,9 @@ li, dd { text-wrap: wrap; }
 @media (min-width: 1100px) { :root { --t-titre: clamp(28px, 4.45vw, 64px); } }
 /* A cote d'une image, la colonne est etroite : ces titres gardent 56 px (deux lignes au plus). */
 @media (min-width: 1100px) { .section--figure .section__texte h2 { font-size: clamp(28px, 3.9vw, 56px); } }
+/* Accueil, chapitres : le texte a la taille du texte courant (21 px) sous des titres de 66 px, soit plus de trois fois,
+   et non 28 px (2,4 fois) ; deux jures, recette 42. */
+@media (min-width: 840px) {
+  .chapitre h2 + p, .chapitre p + p { font-size: var(--t-corps); line-height: 1.5; }
+  .chapitre h2 + p { font-weight: 500; }
+}
