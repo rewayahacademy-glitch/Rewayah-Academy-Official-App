@@ -292,9 +292,29 @@ declare
     'traiter_demande_suppression(uuid)',
     'transferer_eleve(uuid,uuid,uuid,text)',
     'transmettre_student_concern(uuid,text)',
-    'verifier_chaine_audit(integer)'
+    'verifier_chaine_audit(integer)',
+    -- COURRIELS-1 et 2 (23/10) : la direction ecrit, relance et regle les
+    -- adresses d'envoi (garde is_admin_user en tete) ; chacun regle la langue
+    -- de ses propres e-mails (auth.uid()).
+    'admin_courriel_categorie_regler(text,text,text,text,boolean)',
+    'admin_courriel_envoyer(uuid,text,text,text,text,uuid)',
+    'admin_courriel_reessayer(uuid)',
+    'ma_langue_communication_regler(text)',
+    -- COURRIELS-1 : la desinscription par le lien d'un e-mail, sans compte
+    -- (jeton a usage unique, seule son empreinte sha256 est gardee).
+    'courriel_desinscrire(text)',
+    -- AVIS-PUBLICS (19/10) : liens de collecte et moderation par la direction
+    -- (garde positive app_role() = 'admin' et compte valide) ; depot par le
+    -- formulaire, avec ou sans compte (jeton de lien verifie dans la fonction).
+    'avis_lien_creer(text,integer,integer)',
+    'avis_lien_fermer(uuid)',
+    'avis_moderer(uuid,text,text)',
+    'avis_deposer(text,text,text,text,date,integer,text,text,boolean)'
   ];
-  v_anon_ok text[] := array['agent_pre_request()'];
+  -- Ouvertes a anon par choix : la desinscription d'un e-mail et le depot d'un
+  -- avis se font sans compte.
+  v_anon_ok text[] := array['agent_pre_request()', 'courriel_desinscrire(text)',
+    'avis_deposer(text,text,text,text,date,integer,text,text,boolean)'];
   v_hors_liste text;
   v_anon text;
 begin
