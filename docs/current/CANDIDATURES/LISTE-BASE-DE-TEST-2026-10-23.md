@@ -74,7 +74,8 @@ soit exactement celles de la prod :
 Application : les permissions de la session refusent à Claude toute action ou page qui vise la production.
 Le directeur colle donc lui-même le fichier dans l'éditeur SQL du projet « Rewayah PROD (Real Users) ».
 Claude vérifie ensuite en lecture (colonnes, fonctions, droits ; liste au détail du fichier 18).
-La base de test n'a encore ni le 16, ni le 17, ni le 18.
+La base de test n'a ni le 16, ni le 17, ni le 18, et ne les aura pas : décision du directeur du
+24/10/2026, « pas de base test, tout doit aller sur prod ».
 
 **Collé en production par le directeur le 24/10/2026 vers 1 h (Paris), fichier brut.** Vérification en
 lecture : les deux colonnes présentes ; `lire_nom_latin` et `confirmer_nom_latin` exécutables par
