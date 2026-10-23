@@ -6108,6 +6108,27 @@
     "effetsDetail": "Limite les transparences et les ombres",
     "lisibiliteDetail": "La taille du texte suit le réglage de votre appareil.",
     "langueRegion": "Langue et région",
+    "langueCourriels": {
+      "titre": "Langue des e-mails et des messages",
+      "ligneDetail": "Choisir la langue dans laquelle la direction vous écrit",
+      "sousTitre": "Les e-mails de l'académie et les messages de la direction vous arrivent dans cette langue. Un message écrit dans une autre langue est traduit automatiquement.",
+      "choix": "Votre langue",
+      "parDefaut": "Sans choix de votre part, tout vous arrive en français.",
+      "optionDetail": "Vous recevez les e-mails et les messages en {langue}.",
+      "enregistrer": "Enregistrer la langue",
+      "retour": {
+        "enregistre": "C'est enregistré. Les prochains e-mails et messages vous arrivent en {langue}.",
+        "refusee": "Cette langue n'est plus proposée. Choisissez-en une autre dans la liste.",
+        "refus": "Seule une personne connectée avec son profil peut choisir sa langue. Reconnectez-vous, puis réessayez.",
+        "echec": "Le changement n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Réessayez ; votre langue précédente reste en place tant qu'il n'est pas confirmé.",
+        "horsLigne": "Rien n'est enregistré : le réseau est absent. Réessayez dès son retour."
+      },
+      "erreurLangues": "Les langues n'ont pas pu être chargées. Réessayez.",
+      "sansDonnees": "Les langues n'ont pas pu être chargées",
+      "vide": "Aucune langue n'est proposée pour le moment. Vos e-mails et vos messages restent en français.",
+      "indisponibleTitre": "Choix de la langue indisponible",
+      "indisponiblePhrase": "Cette fonction sera disponible au branchement serveur."
+    },
     "francaisDetail": "Langue de l'interface",
     "actif": "Actif",
     "arabe": "Arabe",
@@ -12302,6 +12323,7 @@
         "sujetAide": "120 caractères au plus.",
         "corps": "Message",
         "corpsAide": "Texte simple, 5000 caractères au plus. Une ligne vide fait un nouveau paragraphe.",
+        "traduction": "Chaque destinataire le reçoit dans sa langue : le message est traduit automatiquement à l'envoi.",
         "envoyer": "Envoyer le message",
         "erreurCategories": "Les catégories n'ont pas pu être chargées. Réessayez.",
         "sansDonneesCategories": "Les catégories n'ont pas pu être chargées",
@@ -12349,7 +12371,8 @@
           "creeLe": "Mis en file le",
           "envoyeLe": "Envoyé le",
           "tentatives": "Essais",
-          "motifEchec": "Dernière erreur"
+          "motifEchec": "Dernière erreur",
+          "langue": "Langue"
         },
         "actualiser": "Actualiser",
         "reessayer": "Remettre en file",

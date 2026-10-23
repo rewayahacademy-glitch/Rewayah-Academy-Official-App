@@ -92,6 +92,10 @@ famille et suivre ce qui part est un geste de pilotage quotidien, pas une règle
 - **Écrire** : adresse du destinataire, catégorie (cartes de choix fermées, sans « Autre » ; chaque
   carte dit l'adresse d'où part l'e-mail), sujet (1 à 120), message en texte simple (1 à 5000, une
   ligne vide fait un paragraphe). Une seule action pleine : « Envoyer l'e-mail ».
+- **Langue** (COURRIELS-2, 23/10) : la direction écrit une seule fois, dans sa langue. Une ligne sous
+  l'introduction le dit : « Chaque destinataire le reçoit dans sa langue : le message est traduit
+  automatiquement à l'envoi. » La langue de chaque e-mail est fixée par le serveur à la mise en file
+  (profil du destinataire, sinon français).
 - **Issue** (D5, K-59) : le serveur met l'e-mail en file, la file part dans la minute. L'écran dit
   « Envoi dans la minute » et **jamais « envoyé »** avant que la ligne soit `envoye` dans « Envois ».
   Refus nommés par le serveur (adresse, catégorie, sujet, message, destinataire exclu : compte
@@ -100,7 +104,8 @@ famille et suivre ce qui part est un geste de pilotage quotidien, pas une règle
   e-mails en file ; elle change dès que le contenu change.
 - **Envois** : la file, la plus récente d'abord, filtrée par statut (En file, En cours d'envoi,
   Envoyés, Non envoyés, Annulés), « Actualiser ». Une carte par e-mail (sujet pour un message libre,
-  « Message automatique » sinon ; destinataire, catégorie, origine, dates, essais, dernière erreur).
+  « Message automatique » sinon ; destinataire, catégorie, langue (nom de la langue, ou son code si la
+  liste n'est pas lue), origine, dates, essais, dernière erreur).
   « Remettre en file » seulement sur un e-mail non envoyé ou annulé.
 - **Adresses d'envoi** : les catégories en lecture seule (adresse d'envoi, nom affiché, adresse des
   réponses, type, active ou coupée). Le réglage (`admin_courriel_categorie_regler`) n'a pas

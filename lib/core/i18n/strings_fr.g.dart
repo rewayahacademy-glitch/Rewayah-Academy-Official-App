@@ -2214,6 +2214,8 @@ class Traductions$compte$fr {
 	/// fr: 'Langue et région'
 	String get langueRegion => 'Langue et région';
 
+	late final Traductions$compte$langueCourriels$fr langueCourriels = Traductions$compte$langueCourriels$fr.internal(_root);
+
 	/// fr: 'Langue de l'interface'
 	String get francaisDetail => 'Langue de l\'interface';
 
@@ -11142,6 +11144,53 @@ class Traductions$compte$donnees$fr {
 
 	late final Traductions$compte$donnees$copie$fr copie = Traductions$compte$donnees$copie$fr.internal(_root);
 	late final Traductions$compte$donnees$suppression$fr suppression = Traductions$compte$donnees$suppression$fr.internal(_root);
+}
+
+// Path: compte.langueCourriels
+class Traductions$compte$langueCourriels$fr {
+	Traductions$compte$langueCourriels$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Langue des e-mails et des messages'
+	String get titre => 'Langue des e-mails et des messages';
+
+	/// fr: 'Choisir la langue dans laquelle la direction vous écrit'
+	String get ligneDetail => 'Choisir la langue dans laquelle la direction vous écrit';
+
+	/// fr: 'Les e-mails de l'académie et les messages de la direction vous arrivent dans cette langue. Un message écrit dans une autre langue est traduit automatiquement.'
+	String get sousTitre => 'Les e-mails de l\'académie et les messages de la direction vous arrivent dans cette langue. Un message écrit dans une autre langue est traduit automatiquement.';
+
+	/// fr: 'Votre langue'
+	String get choix => 'Votre langue';
+
+	/// fr: 'Sans choix de votre part, tout vous arrive en français.'
+	String get parDefaut => 'Sans choix de votre part, tout vous arrive en français.';
+
+	/// fr: 'Vous recevez les e-mails et les messages en {langue}.'
+	String optionDetail({required Object langue}) => 'Vous recevez les e-mails et les messages en ${langue}.';
+
+	/// fr: 'Enregistrer la langue'
+	String get enregistrer => 'Enregistrer la langue';
+
+	late final Traductions$compte$langueCourriels$retour$fr retour = Traductions$compte$langueCourriels$retour$fr.internal(_root);
+
+	/// fr: 'Les langues n'ont pas pu être chargées. Réessayez.'
+	String get erreurLangues => 'Les langues n\'ont pas pu être chargées. Réessayez.';
+
+	/// fr: 'Les langues n'ont pas pu être chargées'
+	String get sansDonnees => 'Les langues n\'ont pas pu être chargées';
+
+	/// fr: 'Aucune langue n'est proposée pour le moment. Vos e-mails et vos messages restent en français.'
+	String get vide => 'Aucune langue n\'est proposée pour le moment. Vos e-mails et vos messages restent en français.';
+
+	/// fr: 'Choix de la langue indisponible'
+	String get indisponibleTitre => 'Choix de la langue indisponible';
+
+	/// fr: 'Cette fonction sera disponible au branchement serveur.'
+	String get indisponiblePhrase => 'Cette fonction sera disponible au branchement serveur.';
 }
 
 // Path: compte.roles
@@ -25681,6 +25730,30 @@ class Traductions$compte$donnees$suppression$fr {
 	String get refuse => 'Ce compte ne peut pas demander sa suppression ici.';
 }
 
+// Path: compte.langueCourriels.retour
+class Traductions$compte$langueCourriels$retour$fr {
+	Traductions$compte$langueCourriels$retour$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'C'est enregistré. Les prochains e-mails et messages vous arrivent en {langue}.'
+	String enregistre({required Object langue}) => 'C\'est enregistré. Les prochains e-mails et messages vous arrivent en ${langue}.';
+
+	/// fr: 'Cette langue n'est plus proposée. Choisissez-en une autre dans la liste.'
+	String get refusee => 'Cette langue n\'est plus proposée. Choisissez-en une autre dans la liste.';
+
+	/// fr: 'Seule une personne connectée avec son profil peut choisir sa langue. Reconnectez-vous, puis réessayez.'
+	String get refus => 'Seule une personne connectée avec son profil peut choisir sa langue. Reconnectez-vous, puis réessayez.';
+
+	/// fr: 'Le changement n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Réessayez ; votre langue précédente reste en place tant qu'il n'est pas confirmé.'
+	String get echec => 'Le changement n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Réessayez ; votre langue précédente reste en place tant qu\'il n\'est pas confirmé.';
+
+	/// fr: 'Rien n'est enregistré : le réseau est absent. Réessayez dès son retour.'
+	String get horsLigne => 'Rien n\'est enregistré : le réseau est absent. Réessayez dès son retour.';
+}
+
 // Path: compte.tuteur.identite
 class Traductions$compte$tuteur$identite$fr {
 	Traductions$compte$tuteur$identite$fr.internal(this._root);
@@ -34414,6 +34487,9 @@ class Traductions$courriels$admin$ecrire$fr {
 	/// fr: 'Texte simple, 5000 caractères au plus. Une ligne vide fait un nouveau paragraphe.'
 	String get corpsAide => 'Texte simple, 5000 caractères au plus. Une ligne vide fait un nouveau paragraphe.';
 
+	/// fr: 'Chaque destinataire le reçoit dans sa langue : le message est traduit automatiquement à l'envoi.'
+	String get traduction => 'Chaque destinataire le reçoit dans sa langue : le message est traduit automatiquement à l\'envoi.';
+
 	/// fr: 'Envoyer le message'
 	String get envoyer => 'Envoyer le message';
 
@@ -38950,6 +39026,9 @@ class Traductions$courriels$admin$file$champs$fr {
 
 	/// fr: 'Dernière erreur'
 	String get motifEchec => 'Dernière erreur';
+
+	/// fr: 'Langue'
+	String get langue => 'Langue';
 }
 
 // Path: courriels.admin.file.retour
@@ -45103,6 +45182,23 @@ extension on Traductions {
 			'compte.effetsDetail' => 'Limite les transparences et les ombres',
 			'compte.lisibiliteDetail' => 'La taille du texte suit le réglage de votre appareil.',
 			'compte.langueRegion' => 'Langue et région',
+			'compte.langueCourriels.titre' => 'Langue des e-mails et des messages',
+			'compte.langueCourriels.ligneDetail' => 'Choisir la langue dans laquelle la direction vous écrit',
+			'compte.langueCourriels.sousTitre' => 'Les e-mails de l\'académie et les messages de la direction vous arrivent dans cette langue. Un message écrit dans une autre langue est traduit automatiquement.',
+			'compte.langueCourriels.choix' => 'Votre langue',
+			'compte.langueCourriels.parDefaut' => 'Sans choix de votre part, tout vous arrive en français.',
+			'compte.langueCourriels.optionDetail' => ({required Object langue}) => 'Vous recevez les e-mails et les messages en ${langue}.',
+			'compte.langueCourriels.enregistrer' => 'Enregistrer la langue',
+			'compte.langueCourriels.retour.enregistre' => ({required Object langue}) => 'C\'est enregistré. Les prochains e-mails et messages vous arrivent en ${langue}.',
+			'compte.langueCourriels.retour.refusee' => 'Cette langue n\'est plus proposée. Choisissez-en une autre dans la liste.',
+			'compte.langueCourriels.retour.refus' => 'Seule une personne connectée avec son profil peut choisir sa langue. Reconnectez-vous, puis réessayez.',
+			'compte.langueCourriels.retour.echec' => 'Le changement n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Réessayez ; votre langue précédente reste en place tant qu\'il n\'est pas confirmé.',
+			'compte.langueCourriels.retour.horsLigne' => 'Rien n\'est enregistré : le réseau est absent. Réessayez dès son retour.',
+			'compte.langueCourriels.erreurLangues' => 'Les langues n\'ont pas pu être chargées. Réessayez.',
+			'compte.langueCourriels.sansDonnees' => 'Les langues n\'ont pas pu être chargées',
+			'compte.langueCourriels.vide' => 'Aucune langue n\'est proposée pour le moment. Vos e-mails et vos messages restent en français.',
+			'compte.langueCourriels.indisponibleTitre' => 'Choix de la langue indisponible',
+			'compte.langueCourriels.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
 			'compte.francaisDetail' => 'Langue de l\'interface',
 			'compte.actif' => 'Actif',
 			'compte.arabe' => 'Arabe',
@@ -45338,6 +45434,8 @@ extension on Traductions {
 			'historique.seance.nonTenuPhrase' => 'La séance n\'a pas eu lieu : ce n\'est pas le fait de l\'élève.',
 			'historique.seance.annulePhrase' => 'La séance a été annulée.',
 			'historique.seance.introuvableTitre' => 'Séance introuvable',
+			_ => null,
+		} ?? switch (path) {
 			'historique.seance.introuvablePhrase' => 'Cette séance ne figure pas dans l\'historique de votre foyer.',
 			'historique.observation.titreSansClasse' => ({required Object date}) => 'Observations du ${date}',
 			'historique.observation.blocResume' => 'Résumé',
@@ -45355,8 +45453,6 @@ extension on Traductions {
 			'historique.compteRendu.titre' => 'Compte rendu pédagogique',
 			'historique.compteRendu.travaille' => 'Ce qui a été travaillé',
 			'historique.compteRendu.appreciation' => 'Appréciation de la séance',
-			_ => null,
-		} ?? switch (path) {
 			'historique.compteRendu.aRenforcer' => 'À renforcer',
 			'historique.compteRendu.aPreparer' => 'À préparer pour la prochaine séance',
 			'historique.compteRendu.commentaire' => 'Commentaire partagé',
@@ -45852,6 +45948,8 @@ extension on Traductions {
 			'enseignant.signalement.notice' => 'Les détails internes ne sont pas envoyés automatiquement à la famille.',
 			'enseignant.signalement.choisirCategorie' => 'Choisissez une catégorie pour continuer.',
 			'enseignant.signalement.detailsRequis' => 'Pour « Autre », dites en quelques mots de quoi il s\'agit.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.signalement.envoyer' => 'Envoyer le signalement',
 			'enseignant.signalement.demoSucces' => 'Démonstration : ce signalement est prêt, mais rien n\'a été envoyé.',
 			'enseignant.signalement.demoSuccesDetail' => 'Dans l\'application reliée, il partira vers l\'équipe de l\'académie.',
@@ -45869,8 +45967,6 @@ extension on Traductions {
 			'enseignant.bienvenue.salutationSansNom' => 'Bienvenue.',
 			'enseignant.bienvenue.dossierValide' => 'Votre dossier est validé.',
 			'enseignant.bienvenue.sousTitre' => 'Préparez votre espace avant votre première Classe.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.bienvenue.aCompleter' => 'À compléter',
 			'enseignant.bienvenue.compteur' => ({required Object fait, required Object total}) => '${fait} sur ${total}',
 			'enseignant.bienvenue.prerequisPhoto' => 'Ajouter ma photo professionnelle',
@@ -46366,6 +46462,8 @@ extension on Traductions {
 			'enseignant.revenus.total' => 'Total',
 			'enseignant.revenus.calculSection' => 'Comment l\'estimation se calcule',
 			'enseignant.revenus.base' => '1. Base garantie',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.revenus.baseDetail' => ({required Object base}) => '${base} par heure assurée, quelle que soit l\'occupation de la Classe.',
 			'enseignant.revenus.occupation' => '2. Composante d\'occupation',
 			'enseignant.revenus.occupationDetail' => 'Chaque siège éligible ajoute une part au taux. Un élève financé absent compte : une absence ne vous fait rien perdre.',
@@ -46383,8 +46481,6 @@ extension on Traductions {
 			'enseignant.revenus.releveVide' => 'Aucun mois arrêté pour l\'instant',
 			'enseignant.revenus.releveVideDetail' => 'Chaque mois apparaîtra ici une fois arrêté par l\'académie.',
 			'enseignant.revenus.mention' => 'Ce montant est une estimation, pas une paie définitive. Le relevé arrêté par l\'académie fait foi.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.revenus.vide' => 'Aucune heure assurée ce mois-ci',
 			'enseignant.revenus.videDetail' => 'L\'estimation apparaîtra après votre première séance assurée du mois.',
 			'controleur.mfa.titreEnrolement' => 'Protégez votre compte de contrôleur',
@@ -46880,6 +46976,8 @@ extension on Traductions {
 			'tc.classe.recitation.suivants' => 'Ensuite',
 			'tc.classe.recitation.arreter' => 'Arrêter la récitation',
 			'tc.classe.prevol.titre' => 'Avant d\'ouvrir le cours',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.prevol.microOk' => 'Micro détecté',
 			'tc.classe.prevol.microAbsent' => 'Aucun micro utilisable',
 			'tc.classe.prevol.cameraOk' => 'Caméra détectée',
@@ -46897,8 +46995,6 @@ extension on Traductions {
 			'tc.observation.entree.modeDiscretDetail' => 'Invisible pour les participants. Sans micro ni caméra, sans annonce.',
 			'tc.observation.entree.modeVisible' => 'Rejoindre la classe',
 			'tc.observation.entree.modeVisibleDetail' => 'Visible par tous sous le nom Administration Rewayah. Micro et caméra permis, annonce faite.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.entree.nomInstitutionnel' => 'Administration Rewayah',
 			'tc.observation.entree.visiteJournalisee' => 'Visite journalisée : identité, séance, entrée, sortie et durée.',
 			'tc.observation.entree.roleSansObservation' => 'Votre compte n\'observe pas les séances.',
@@ -47394,6 +47490,8 @@ extension on Traductions {
 			'adulte.reprise.jamais.identifiants' => 'Les identifiants de connexion du titulaire',
 			'adulte.reprise.jamais.messages' => 'Ses messages privés',
 			'adulte.reprise.jamais.conversations' => 'Ses conversations',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.reprise.jamais.historique' => 'Son historique pédagogique personnel',
 			'adulte.reprise.jamais.moyensPaiement' => 'Ses moyens de paiement enregistrés',
 			'adulte.reprise.jamais.pieces' => 'Ses pièces d\'identité',
@@ -47411,8 +47509,6 @@ extension on Traductions {
 			'adulte.reprise.etat' => 'État',
 			'adulte.reprise.etats.deposee' => 'Déposée',
 			'adulte.reprise.etats.refuseeParTitulaire' => 'Refusée par le titulaire',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.reprise.etats.attenteAdministration' => 'En attente de l\'administration',
 			'adulte.reprise.etats.validee' => 'Validée',
 			'adulte.reprise.etats.refusee' => 'Refusée',
@@ -47908,6 +48004,8 @@ extension on Traductions {
 			'com.socle.navigation.provisoire.messagesDetail' => 'Les messages liés à vos Classes arriveront bientôt dans cet espace.',
 			'com.socle.navigation.provisoire.communauteTitre' => _root.com.socle.lexique.communaute,
 			'com.socle.navigation.provisoire.communauteDetail' => 'L\'espace d\'échange entre enseignants arrivera bientôt ici.',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.navigation.provisoire.studioTitre' => _root.com.socle.lexique.studio,
 			'com.socle.navigation.provisoire.studioDetail' => 'L\'espace de travail de l\'équipe arrivera bientôt ici.',
 			'com.socle.navigation.provisoire.administrationTitre' => 'Administration des communications',
@@ -47925,8 +48023,6 @@ extension on Traductions {
 			'com.messages.entree.ecrireA' => ({required Object nom}) => 'Écrire à ${nom}',
 			'com.messages.entree.conversationAvec' => ({required Object nom}) => 'Conversation avec ${nom}',
 			'com.messages.entree.voirTout' => 'Voir toutes les conversations',
-			_ => null,
-		} ?? switch (path) {
 			'com.messages.entree.toutes' => 'Toutes vos conversations',
 			'com.messages.entree.aLireUne' => '1 conversation à lire',
 			'com.messages.entree.aLire' => ({required Object nombre}) => '${nombre} conversations à lire',
@@ -48422,6 +48518,8 @@ extension on Traductions {
 			'com.studio.demo.f.messageRemplacement' => 'Mardi, la Classe An-Nour est assurée par un remplaçant. Le planning est à jour.',
 			'com.studio.demo.f.messageJustificatifs' => 'Les justificatifs de septembre sont rassemblés.',
 			'com.studio.demo.f.messageBudget' => 'Budget confidentiel du trimestre.',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.demo.f.activiteBudget' => 'Budget confidentiel du trimestre',
 			'com.studio.demo.f.partagePlanning' => 'Planning du trimestre',
 			'com.studio.demo.f.partageModeration' => 'Guide de modération',
@@ -48439,8 +48537,6 @@ extension on Traductions {
 			'com.studio.demo.f.activiteRemplacant' => 'Choisir le remplaçant de mardi pour la Classe An-Nour',
 			'com.studio.demo.f.objetRemplacement' => 'Remplacement de mardi',
 			'com.studio.demo.f.activiteOuverture' => 'Valider l\'ouverture d\'une Classe le samedi matin',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.f.objetClasseSamedi' => 'Classe du samedi matin',
 			'com.studio.demo.f.activiteCloture' => 'Clôture du mois de septembre',
 			'com.studio.demo.f.objetCloture' => 'Clôture de septembre',
@@ -48936,6 +49032,8 @@ extension on Traductions {
 			'comptable.paiements.filtres.toutesPeriodes' => 'Toutes les périodes',
 			'comptable.paiements.filtres.effacer' => 'Effacer les filtres',
 			'comptable.paiements.colonnes.beneficiaire' => 'Bénéficiaire',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.colonnes.type' => 'Type',
 			'comptable.paiements.colonnes.periode' => 'Période / objet',
 			'comptable.paiements.colonnes.montant' => 'Montant',
@@ -48953,8 +49051,6 @@ extension on Traductions {
 			'comptable.paiements.actions.signalerEcart' => 'Signaler un écart',
 			'comptable.paiements.actions.selectionner' => ({required Object nom}) => 'Sélectionner le paiement de ${nom}',
 			'comptable.paiements.actions.selectionnerPrets' => 'Sélectionner tous les paiements prêts',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.actions.payerSelection' => 'Payer la sélection',
 			'comptable.paiements.actions.viderSelection' => 'Vider la sélection',
 			'comptable.paiements.actions.voirProfil' => 'Voir le profil de paiement',
@@ -49450,6 +49546,8 @@ extension on Traductions {
 			'comptable.direction.suffixeJours' => 'jours',
 			'comptable.direction.suffixePourcent' => '%',
 			'comptable.direction.erreurNombre' => 'Saisissez un nombre entier supérieur à zéro.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.erreurPourcentage' => 'Saisissez un pourcentage supérieur à zéro et au plus égal à 100, avec une décimale au plus.',
 			'comptable.direction.erreurMontant' => 'Saisissez un montant supérieur à zéro.',
 			'comptable.direction.reservePanneau.intro' => 'Vous fixez la politique ; le Comptable la lit et l\'exécute. Chaque enregistrement crée une nouvelle version, conservée dans l\'historique.',
@@ -49467,8 +49565,6 @@ extension on Traductions {
 			'comptable.direction.reservePanneau.alimentationDetail' => 'Comment la Réserve se remplit sans geste du Comptable.',
 			'comptable.direction.reservePanneau.regle.desactivee' => 'Désactivée',
 			'comptable.direction.reservePanneau.regle.desactiveeDetail' => 'Aucune alimentation automatique.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.reservePanneau.regle.montantFixe' => 'Somme fixe',
 			'comptable.direction.reservePanneau.regle.montantFixeDetail' => 'La même somme à chaque échéance.',
 			'comptable.direction.reservePanneau.regle.pourcentage' => 'Pourcentage',
@@ -49964,6 +50060,8 @@ extension on Traductions {
 			'avis.form.regles.publicite' => 'de la publicité',
 			'avis.form.regles.horsSujet' => 'un propos hors sujet',
 			'avis.form.regles.doublon' => 'un doublon d\'un avis déjà reçu',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.regles.donnees' => 'Ne donnez ni le nom d\'un enfant, ni courriel, ni téléphone.',
 			'avis.form.envoyer' => 'Envoyer mon avis',
 			'avis.form.aCorriger' => 'Quelques champs sont à corriger avant l\'envoi.',
@@ -49981,8 +50079,6 @@ extension on Traductions {
 			'avis.admin.titre' => 'Avis',
 			'avis.admin.sousTitre' => 'Les avis des familles et des élèves. La direction les lit, les publie ou les refuse. Elle ne modifie jamais un texte.',
 			'avis.admin.outil' => 'Avis des familles',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.outilDetail' => 'Créer un lien de collecte, lire les avis, les publier ou les refuser',
 			'avis.admin.sections.libelle' => 'Sections des avis',
 			'avis.admin.sections.avis' => 'Avis',
@@ -50105,6 +50201,7 @@ extension on Traductions {
 			'courriels.admin.ecrire.sujetAide' => '120 caractères au plus.',
 			'courriels.admin.ecrire.corps' => 'Message',
 			'courriels.admin.ecrire.corpsAide' => 'Texte simple, 5000 caractères au plus. Une ligne vide fait un nouveau paragraphe.',
+			'courriels.admin.ecrire.traduction' => 'Chaque destinataire le reçoit dans sa langue : le message est traduit automatiquement à l\'envoi.',
 			'courriels.admin.ecrire.envoyer' => 'Envoyer le message',
 			'courriels.admin.ecrire.erreurCategories' => 'Les catégories n\'ont pas pu être chargées. Réessayez.',
 			'courriels.admin.ecrire.sansDonneesCategories' => 'Les catégories n\'ont pas pu être chargées',
@@ -50140,6 +50237,7 @@ extension on Traductions {
 			'courriels.admin.file.champs.envoyeLe' => 'Envoyé le',
 			'courriels.admin.file.champs.tentatives' => 'Essais',
 			'courriels.admin.file.champs.motifEchec' => 'Dernière erreur',
+			'courriels.admin.file.champs.langue' => 'Langue',
 			'courriels.admin.file.actualiser' => 'Actualiser',
 			'courriels.admin.file.reessayer' => 'Remettre en file',
 			'courriels.admin.file.vide' => 'Aucun e-mail dans cette liste.',

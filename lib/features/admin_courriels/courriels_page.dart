@@ -28,6 +28,7 @@ import 'package:uuid/uuid.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
 import '../../core/capacites/port_courriels.dart';
+import '../../core/capacites/port_langues_communication.dart';
 import '../../core/i18n/dates_appareil.dart';
 import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
@@ -141,6 +142,9 @@ class CourrielsAdminPage extends ConsumerStatefulWidget {
   /// Le choix de la section.
   static const Key sectionsKey = ValueKey<String>('courriels-sections');
 
+  /// La phrase qui dit que chaque destinataire le recoit dans sa langue.
+  static const Key traductionKey = ValueKey<String>('courriel-traduction');
+
   /// Le champ de l'adresse du destinataire.
   static const Key adresseKey = ValueKey<String>('courriel-adresse');
 
@@ -174,6 +178,9 @@ class CourrielsAdminPage extends ConsumerStatefulWidget {
 
   /// La carte de l'e-mail [id].
   static Key carteKey(String id) => ValueKey<String>('courriel-$id');
+
+  /// La ligne « Langue » de l'e-mail [id].
+  static Key langueKey(String id) => ValueKey<String>('courriel-langue-$id');
 
   /// « Remettre en file » l'e-mail [id].
   static Key reessayerKey(String id) =>
@@ -486,6 +493,12 @@ class _CourrielsAdminPageState extends ConsumerState<CourrielsAdminPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Text(e.intro, style: textes.bodyMedium),
+          Ecart.vSm,
+          Text(
+            e.traduction,
+            key: CourrielsAdminPage.traductionKey,
+            style: textes.bodyMedium,
+          ),
           Ecart.vLg,
           ChampEtiquete(
             key: CourrielsAdminPage.adresseKey,
@@ -680,6 +693,14 @@ class _CourrielsAdminPageState extends ConsumerState<CourrielsAdminPage> {
                       const <CategorieCourriel>[])
                 c.code: c.libelle,
             };
+            // Le nom de la langue vient du serveur ; a defaut (liste absente
+            // ou en cours de lecture), le code lui-meme.
+            final Map<String, String> langues = <String, String>{
+              for (final LangueCommunication x
+                  in ref.watch(languesCommunicationProvider).value?.langues ??
+                      const <LangueCommunication>[])
+                x.code: x.libelle,
+            };
             return PileCartes(
               key: const ValueKey<String>('courriels-file-contenu'),
               children: <Widget>[
@@ -687,6 +708,7 @@ class _CourrielsAdminPageState extends ConsumerState<CourrielsAdminPage> {
                   _CarteCourriel(
                     courriel: x,
                     libelleCategorie: libelles[x.categorie] ?? x.categorie,
+                    libelleLangue: langues[x.langue] ?? x.langue,
                     enCours: _relanceEnCours == x.id,
                     occupe: _relanceEnCours != null,
                     onReessayer: () => unawaited(_relancer(x)),
@@ -750,6 +772,7 @@ class _CarteCourriel extends StatelessWidget {
   const _CarteCourriel({
     required this.courriel,
     required this.libelleCategorie,
+    required this.libelleLangue,
     required this.enCours,
     required this.occupe,
     required this.onReessayer,
@@ -757,6 +780,7 @@ class _CarteCourriel extends StatelessWidget {
 
   final CourrielSortant courriel;
   final String libelleCategorie;
+  final String libelleLangue;
   final bool enCours;
   final bool occupe;
   final VoidCallback onReessayer;
@@ -822,6 +846,12 @@ class _CarteCourriel extends StatelessWidget {
           LigneCleValeur(
             cle: f.champs.categorie,
             valeur: isolerSens(libelleCategorie),
+          ),
+          Ecart.vSm,
+          LigneCleValeur(
+            key: CourrielsAdminPage.langueKey(x.id),
+            cle: f.champs.langue,
+            valeur: isolerSens(libelleLangue),
           ),
           Ecart.vSm,
           LigneCleValeur(

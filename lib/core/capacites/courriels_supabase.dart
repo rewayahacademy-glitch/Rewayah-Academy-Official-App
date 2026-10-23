@@ -136,6 +136,7 @@ CourrielSortant courrielDepuis(Map<String, dynamic> j) {
     creeLe: instantJson(j['cree_le'], 'cree_le'),
     envoyeLe: envoye == null ? null : instantJson(envoye, 'envoye_le'),
     sujet: texteNullableJson(j, 'sujet'),
+    langue: texteNullableJson(j, 'langue') ?? 'fr',
   );
 }
 

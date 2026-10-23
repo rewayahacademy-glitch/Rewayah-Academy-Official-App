@@ -423,6 +423,11 @@ abstract final class Routes {
   static const String tuteurCompteApparence =
       '/tuteur/compte/preferences/apparence';
 
+  /// La langue des e-mails et des messages (COURRIELS-2), sous-page des
+  /// preferences du tuteur.
+  static const String tuteurCompteLangueCourriels =
+      '/tuteur/compte/preferences/langue-courriels';
+
   /// Le consentement aux visites d'observation des comptes existants.
   static const String tuteurCompteConsentements =
       '/tuteur/compte/consentements';
@@ -1207,6 +1212,10 @@ abstract final class Routes {
 
   /// Preferences locales de l'application.
   static const String compteReglages = '/compte/reglages';
+
+  /// La langue des e-mails et des messages de la direction (COURRIELS-2),
+  /// ouverte depuis les reglages. Le tuteur la rejoint sous `/tuteur/compte`.
+  static const String compteLangueCourriels = '/compte/langue-courriels';
 
   /// Mes donnees : la copie de ses donnees et la demande de suppression du
   /// compte (CPT-SUPPR-EXPORT). Le tuteur la rejoint sous `/tuteur/compte`.

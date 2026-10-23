@@ -13,8 +13,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/courriels_demonstration.dart';
+import 'package:rewayah_academy/core/capacites/langues_communication_demonstration.dart';
 import 'package:rewayah_academy/core/capacites/permission_insuffisante.dart';
 import 'package:rewayah_academy/core/capacites/port_courriels.dart';
+import 'package:rewayah_academy/core/capacites/port_langues_communication.dart';
 import 'package:rewayah_academy/core/i18n/isolat_bidi.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
@@ -38,6 +40,7 @@ CourrielSortant _courriel({
   OrigineCourriel origine = OrigineCourriel.manuel,
   String? erreur,
   int tentatives = 1,
+  String langue = 'fr',
 }) => CourrielSortant(
   id: id,
   categorie: 'direction',
@@ -52,6 +55,7 @@ CourrielSortant _courriel({
       ? DateTime(2026, 10, 23, 9, 31)
       : null,
   sujet: sujet,
+  langue: langue,
 );
 
 CourrielsDemonstration _port({
@@ -68,6 +72,7 @@ Future<void> _monter(
   double largeur = 390,
   double echelle = 1,
   TextDirection? direction,
+  PortLanguesCommunication? langues,
 }) {
   _compteur = 0;
   return monterRecrutement(
@@ -76,6 +81,8 @@ Future<void> _monter(
     ecran: (_) => CourrielsAdminPage(genererCle: () => 'cle-${++_compteur}'),
     surcharges: <Override>[
       if (port != null) portCourrielsProvider.overrideWithValue(port),
+      if (langues != null)
+        portLanguesCommunicationProvider.overrideWithValue(langues),
     ],
     horsLigne: horsLigne,
     largeur: largeur,
@@ -141,6 +148,8 @@ void main() {
         );
         // Une categorie facultative dit qu'elle porte un lien de desinscription.
         expect(find.text(a.ecrire.desinscription), findsOneWidget);
+        // COURRIELS-2 : la direction ecrit une fois, le serveur traduit.
+        expect(find.text(a.ecrire.traduction), findsOneWidget);
         // Choix fermes : aucune carte « Autre ».
         expect(find.text(t.choix.autre), findsNothing);
         verifierUnSeulBoutonPlein(tester);
@@ -402,6 +411,61 @@ void main() {
       expect(find.byKey(CourrielsAdminPage.reessayerKey('c3')), findsNothing);
       expect(find.byKey(CourrielsAdminPage.reessayerKey('c2')), findsOneWidget);
       expect(find.byKey(CourrielsAdminPage.reessayerKey('c4')), findsOneWidget);
+    });
+
+    testWidgets('la langue de chaque e-mail : son nom, ou son code', (
+      tester,
+    ) async {
+      final List<CourrielSortant> deux = <CourrielSortant>[
+        _courriel(),
+        _courriel(id: 'c2', langue: 'ar'),
+        _courriel(id: 'c3', langue: 'zz'),
+      ];
+      await _monter(
+        tester,
+        _port(courriels: deux),
+        langues: LanguesCommunicationDemonstration(),
+      );
+      await _section(tester, a.sections.file);
+      expect(
+        find.descendant(
+          of: find.byKey(CourrielsAdminPage.langueKey('c1')),
+          matching: find.text(isolerSens('Français')),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(CourrielsAdminPage.langueKey('c2')),
+          matching: find.text(isolerSens('العربية')),
+        ),
+        findsOneWidget,
+      );
+      // Langue absente de la liste : le code, jamais une ligne vide.
+      expect(
+        find.descendant(
+          of: find.byKey(CourrielsAdminPage.langueKey('c3')),
+          matching: find.text(isolerSens('zz')),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('liste des langues absente : le code de la langue', (
+      tester,
+    ) async {
+      await _monter(
+        tester,
+        _port(courriels: <CourrielSortant>[_courriel(langue: 'en')]),
+      );
+      await _section(tester, a.sections.file);
+      expect(
+        find.descendant(
+          of: find.byKey(CourrielsAdminPage.langueKey('c1')),
+          matching: find.text(isolerSens('en')),
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('filtres par statut', (tester) async {

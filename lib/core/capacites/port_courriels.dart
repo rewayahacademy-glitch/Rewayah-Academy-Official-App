@@ -84,6 +84,7 @@ class CourrielSortant {
     this.derniereErreur,
     this.envoyeLe,
     this.sujet,
+    this.langue = 'fr',
   });
 
   /// L'identifiant.
@@ -118,6 +119,10 @@ class CourrielSortant {
 
   /// Le sujet : seulement pour un message libre.
   final String? sujet;
+
+  /// La langue dans laquelle l'e-mail part (COURRIELS-2) : celle de son
+  /// destinataire, fixee par le serveur a la mise en file.
+  final String langue;
 }
 
 /// Une categorie et l'adresse d'ou elle part.

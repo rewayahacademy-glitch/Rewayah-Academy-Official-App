@@ -26,7 +26,12 @@ import 'carte_rubriques.dart';
 /// (« Connexion et securite »), une seule fois.
 class PreferencesComptePage extends ConsumerWidget {
   /// Cree la page.
-  const PreferencesComptePage({super.key, this.onRetour, this.onApparence});
+  const PreferencesComptePage({
+    super.key,
+    this.onRetour,
+    this.onApparence,
+    this.onLangue,
+  });
 
   /// Le retour de l'en-tete ; par defaut, le Compte du tuteur. « Mon
   /// espace » de l'eleve adulte (EA-4) y passe son propre retour.
@@ -34,6 +39,10 @@ class PreferencesComptePage extends ConsumerWidget {
 
   /// Ouvre l'Apparence ; par defaut, la route du tuteur.
   final VoidCallback? onApparence;
+
+  /// Ouvre la langue des e-mails et des messages (COURRIELS-2) ; par defaut,
+  /// la route du tuteur.
+  final VoidCallback? onLangue;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -63,6 +72,11 @@ class PreferencesComptePage extends ConsumerWidget {
               icone: AppIcons.direction,
               libelle: t.compte.tuteur.pagePreferences.langue,
               legende: langue,
+              onPress:
+                  onLangue ??
+                  () =>
+                      GoRouter.of(context)
+                          .go(Routes.tuteurCompteLangueCourriels),
             ),
             LigneRubrique(
               icone: AppIcons.notifications,
