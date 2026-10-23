@@ -875,6 +875,43 @@
     }
   },
   "inscription": {
+    "telephone": {
+      "question": "Votre numéro de téléphone",
+      "explication": "Il sert à éviter les doublons et à relier vos échanges avec l'académie à votre candidature. L'académie vous écrit dans l'application. Il n'est jamais montré aux autres personnes qui postulent.",
+      "indicatif": "Indicatif du pays",
+      "numero": "Numéro, sans l'indicatif",
+      "indicatifManquant": "Choisissez l'indicatif de votre pays.",
+      "numeroManquant": "Saisissez votre numéro de téléphone.",
+      "numeroInvalide": "Ce numéro n'est pas lisible. Écrivez-le en chiffres, sans l'indicatif du pays.",
+      "changerIndicatif": "Changer d'indicatif"
+    },
+    "langue": {
+      "question": "Dans quelle langue voulez-vous lire l'application\u00a0?",
+      "francais": "Français",
+      "arabe": "العربية",
+      "francaisExplication": "L'application et les messages de l'académie sont écrits en français.",
+      "francaisExemple": "les boutons, les explications et les messages s'affichent de gauche à droite.",
+      "arabeExplication": "L'application et les messages de l'académie sont écrits en arabe.",
+      "arabeExemple": "les boutons, les explications et les messages s'affichent de droite à gauche."
+    },
+    "confidentialite": {
+      "case": "J'ai lu et j'accepte la politique de confidentialité.",
+      "lire": "Lire la politique de confidentialité",
+      "requise": "Cochez cette case pour envoyer votre candidature."
+    },
+    "candidat": {
+      "creationEchec": "Votre candidature n'est peut-être pas partie. Réessayez dans un instant.",
+      "envoyer": "Envoyer ma candidature",
+      "accueil": "Vous déposez une candidature pour enseigner à Rewayah. Cela ne vous engage à rien.",
+      "ensuite": "Ensuite, la direction lit votre candidature et vous écrit dans l'application.",
+      "horsLigne": "La candidature pourra être envoyée quand la connexion reviendra.",
+      "courrielAConfirmer": "Confirmez d'abord votre adresse\u00a0: ouvrez le lien reçu par courriel.",
+      "nonOuverte": "Les candidatures sans code ne sont pas encore ouvertes. Si la direction vous a remis un code, saisissez-le.",
+      "nonConfirmee": "Il est possible que votre demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "aCorriger(param=champs)": "Une réponse doit être corrigée\u00a0: {champs}. Appuyez sur «\u00a0Modifier\u00a0» à côté de la réponse.",
+      "confidentialitePerimee": "Le texte de la politique de confidentialité a changé, et la version affichée n'est plus à jour. Rechargez la page ou mettez l'application à jour, puis relisez le texte.",
+      "indisponible": "L'inscription n'est pas disponible pour le moment. Réessayez un peu plus tard."
+    },
     "titre": "Créer votre compte",
     "etapeSur": "Étape {n} sur {total}",
     "tempsRestant": "Environ {minutes} min",
@@ -914,6 +951,8 @@
       "familleDescription": "Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous pourrez créer votre propre profil élève à tout moment.",
       "enseignant": "J'ai un code d'invitation",
       "enseignantInvite": "Vous êtes enseignant\u00a0? L'académie vous invite par courriel.",
+      "enseignantPostuler": "Vous souhaitez enseigner à Rewayah\u00a0?",
+      "deposerCandidature": "Déposer ma candidature",
       "comptable": "J'ai un code de comptable",
       "comptableInvite": "Vous êtes comptable\u00a0? La direction vous invite par courriel.",
       "coursQuestion": "Suivez-vous aussi des cours ?",
@@ -927,6 +966,8 @@
       "coursNonExemple": "vous inscrivez votre fille et suivez ses séances depuis votre compte."
     },
     "recap": {
+      "telephone": "Téléphone",
+      "langue": "Langue",
       "usage": "Type de compte",
       "identite": "Nom",
       "genre": "Genre",
@@ -3588,6 +3629,379 @@
       "indisponiblePhrase": "Cette fonction sera disponible au branchement serveur.",
       "erreur": "Les droits d'import n'ont pas pu être lus. Réessayez.",
       "sansDonnees": "l'import des inscriptions"
+    },
+    "importFormulaires": {
+      "titre": "Importer les formulaires de candidature",
+      "intro": "L'import sert à reconnaître les personnes et à pré-remplir leur candidature. Il ne crée aucun compte.",
+      "lienEntree": "Importer les formulaires",
+      "retourCandidatures": "Revenir aux candidatures",
+      "lectureDroits": "Vos droits d'import n'ont pas pu être lus. Réessayez dans un instant.",
+      "sansDonnees": "vos droits d'import des formulaires",
+      "acces": {
+        "refuseTitre": "Import réservé",
+        "refusePhrase": "Seul le super administrateur peut importer les formulaires de candidature. Demandez-lui de s'en charger.",
+        "doublePhrase": "Cet import demande votre second facteur.",
+        "doubleSuite": "Touchez «\u00a0Me reconnecter\u00a0»\u00a0: votre session se ferme et vous revenez à la connexion pour utiliser votre second facteur. Rien n'a été enregistré.",
+        "doubleAction": "Me reconnecter"
+      },
+      "pas": {
+        "liste": "Les huit pas de l'import",
+        "depot": "Déposer le fichier",
+        "apercu": "Aperçu",
+        "colonnes": "Colonnes",
+        "doublons": "Doublons",
+        "controle": "Erreurs",
+        "comptes": "Comptes",
+        "confirmation": "Confirmation",
+        "rapport": "Rapport",
+        "surTotal": "Pas {n} sur {total}",
+        "surTotalNomme": "Pas {n} sur {total}\u00a0: {nom}",
+        "fait": "Terminé",
+        "enCours": "En cours",
+        "aVenir": "À venir"
+      },
+      "depot": {
+        "question": "Quel fichier voulez-vous importer\u00a0?",
+        "explication": "Choisissez l'export CSV de la feuille des formulaires (dans Google Sheets\u00a0: Fichier, Télécharger, Valeurs séparées par des virgules). Rien n'est envoyé avant «\u00a0Analyser le fichier\u00a0».",
+        "carteTitre": "Choisir un fichier CSV",
+        "carteDescription": "Le fichier est lu sur cet appareil. Il part vers Rewayah seulement quand vous touchez «\u00a0Analyser le fichier\u00a0». Taille maximale\u00a0: 5 Mo.",
+        "carteChoisi": "Fichier choisi\u00a0: {nom}",
+        "lignesLues(param=n)": {
+          "one": "{n} ligne de réponses dans ce fichier",
+          "other": "{n} lignes de réponses dans ce fichier"
+        },
+        "autreFichier": "Choisir un autre fichier",
+        "noms": {
+          "titre": "Ce fichier sera enregistré sous",
+          "ligne": "Classeur «\u00a0{classeur}\u00a0», onglet «\u00a0{onglet}\u00a0»",
+          "aide": "Ces deux noms servent à reconnaître chaque réponse. Si vous rejouez plus tard le même fichier corrigé, gardez exactement les mêmes noms\u00a0: aucune réponse ne sera ajoutée deux fois.",
+          "corriger": "Corriger ces noms",
+          "garder": "Garder ces noms",
+          "classeur": "Nom du classeur",
+          "onglet": "Nom de l'onglet",
+          "ongletManquant": "Le nom du fichier ne dit pas l'onglet. Indiquez-le pour continuer.",
+          "invalide": "Un nom ne peut pas être vide, dépasser 200 signes ni contenir la barre verticale. Corrigez-le pour continuer."
+        },
+        "manqueFichier": "Choisissez d'abord un fichier pour pouvoir l'analyser.",
+        "analyser": "Analyser le fichier",
+        "analyseEnCours": "Rewayah lit votre fichier. Rien n'est encore enregistré.",
+        "horsLigne": "L'analyse pourra se faire quand la connexion reviendra.",
+        "vide": "Ce fichier ne contient aucune ligne à importer.",
+        "videAide": "Vérifiez que vous avez exporté la bonne feuille."
+      },
+      "fichier": {
+        "titre": "Fichier illisible",
+        "illisibleLigne": "Ce fichier n'a pas pu être lu, ligne {ligne}\u00a0: {cause}.",
+        "illisible": "Ce fichier n'a pas pu être lu\u00a0: {cause}.",
+        "cause": {
+          "guillemetNonFerme": "un guillemet ouvert n'est jamais refermé",
+          "tropVolumineux": "le fichier dépasse 5 Mo",
+          "malForme": "la mise en forme n'est pas celle d'un export CSV",
+          "inconnue": "son contenu n'est pas celui d'un export CSV"
+        },
+        "quoiFaire": "Exportez de nouveau la feuille en CSV depuis Google Sheets, puis choisissez le fichier."
+      },
+      "colonnes": {
+        "dejaAssocie": "Actuellement lu dans la colonne {n}. Le choisir ici le retire de cette colonne.",
+        "titreColonne": "Colonne {n}\u00a0: {titre}",
+        "question": "Chaque colonne contient-elle bien ce que Rewayah croit\u00a0?",
+        "explication": "Rewayah repère chaque colonne par son titre. Touchez une colonne pour changer ce qu'elle contient.",
+        "sansTitreNumero": "Colonne {n}, sans titre",
+        "nonLue": "Non lue",
+        "nonLueAide": "Cette colonne n'est pas utilisée par l'import.",
+        "choisir": "Que contient la colonne {n}\u00a0?",
+        "sansTitre": "Colonne sans titre",
+        "choixActuel": "Choix actuel",
+        "nePasLire": "Ne pas lire cette colonne",
+        "nePasLireAide": "Son contenu est ignoré par l'import.",
+        "fermer": "Fermer ce choix",
+        "manquants": "Associez d'abord ces colonnes\u00a0: {champs}.",
+        "ambigu": "Plusieurs colonnes portent le titre de\u00a0: {champs}. Touchez celle qu'il faut lire, puis choisissez ce qu'elle contient.",
+        "libelles": {
+          "titre": "Comment les réponses sont lues",
+          "texte": "Les réponses à choix (genre, langues, niveau de mémorisation, début possible) sont lues avec la table des libellés de Rewayah. Un libellé qui n'y figure pas est signalé ligne par ligne, au pas «\u00a0Erreurs\u00a0»."
+        },
+        "relecture": "Vos corrections demandent une nouvelle lecture du fichier avant de continuer."
+      },
+      "doublons": {
+        "casTitre": "{nature}\u00a0: cas {n} sur {total}",
+        "question": "Ces lignes viennent-elles de la même personne\u00a0?",
+        "explication": "Quand des lignes partagent un courriel ou un téléphone, Rewayah les propose comme une même personne. Sans votre choix, la ligne la plus récente est gardée et les autres restent dans l'historique. Rien n'est effacé.",
+        "aucun": "Aucun doublon probable dans ce fichier.",
+        "aucunAide": "Aucune ligne ne partage un courriel ou un téléphone avec une autre.",
+        "total(param=n)": {
+          "one": "{n} cas à regarder",
+          "other": "{n} cas à regarder"
+        },
+        "tranches": "Choix faits par vous\u00a0: {choisis} sur {total}. Pour les autres, la ligne la plus récente est gardée.",
+        "nature": {
+          "courriel": "Même courriel",
+          "telephone": "Même téléphone",
+          "courrielEtTelephone": "Même courriel et même téléphone"
+        },
+        "lignes": "Lignes {liste}",
+        "dansLaBase(param=n)": {
+          "one": "et {n} ligne déjà enregistrée",
+          "other": "et {n} lignes déjà enregistrées"
+        },
+        "choisirLigne": "Choisissez la ligne à garder, ou indiquez qu'il s'agit de personnes distinctes.",
+        "ouvrir": "Voir les choix pour ce cas",
+        "fermer": "Fermer les choix de ce cas",
+        "plus(param=n)": {
+          "one": "Voir {n} cas de plus",
+          "other": "Voir {n} cas de plus"
+        },
+        "etat": {
+          "recente": "La plus récente est gardée",
+          "base": "La ligne déjà enregistrée est gardée",
+          "ligne": "Ligne {ligne} gardée",
+          "distinctes": "Personnes distinctes",
+          "enregistre": "Choix déjà enregistré"
+        },
+        "option": {
+          "recente": {
+            "titre": "Garder la plus récente (ligne {ligne})",
+            "description": "Les autres lignes restent dans l'historique, rien n'est effacé. C'est ce que Rewayah fait sans votre choix."
+          },
+          "base": {
+            "titre": "Garder la ligne déjà enregistrée",
+            "description": "Un import précédent a déjà retenu une ligne pour cette personne. Les lignes de ce fichier restent dans l'historique."
+          },
+          "enregistre": {
+            "titre": "Garder votre choix précédent",
+            "distinctes": "Vous avez déjà indiqué que ce sont des personnes distinctes.",
+            "ligne": "Vous avez déjà choisi la ligne à garder pour cette personne."
+          },
+          "ligne": {
+            "titre": "Garder plutôt la ligne {ligne}",
+            "description": "Cette ligne devient la réponse de la personne. Les autres passent dans l'historique."
+          },
+          "distinctes": {
+            "titre": "Personnes distinctes",
+            "description": "À choisir si ces lignes viennent de personnes différentes qui partagent un contact. Chacune garde sa réponse.",
+            "exemple": "deux personnes d'une même famille qui ont répondu avec le même numéro"
+          }
+        }
+      },
+      "analyse": {
+        "echec": "L'analyse n'a pas abouti.",
+        "echecPhrase": "Rien n'a été enregistré. Réessayez dans un instant.",
+        "refus": "Le serveur ne peut pas lire ce fichier avec ces noms. Vérifiez le classeur, l'onglet et le fichier, puis réessayez.",
+        "reessayer": "Réessayer l'analyse"
+      },
+      "apercu": {
+        "question": "Est-ce bien le bon fichier\u00a0?",
+        "explication": "Voici ce que Rewayah a lu. Rien n'est encore enregistré.",
+        "contactsMasques": "Les contacts sont masqués dans l'aperçu.",
+        "lignes(param=n)": {
+          "one": "{n} ligne lue",
+          "other": "{n} lignes lues"
+        },
+        "colonnesReconnues": "Colonnes reconnues\u00a0: {reconnues} sur {total}",
+        "premieres": "Les premières lignes",
+        "ligne": "Ligne {ligne}",
+        "autres(param=n)": {
+          "one": "{n} autre ligne n'est pas montrée ici.",
+          "other": "{n} autres lignes ne sont pas montrées ici."
+        },
+        "sansLignes": "Les lignes seront lues dès que les colonnes seront associées.",
+        "colonnesATitre": "Des colonnes restent à associer",
+        "mappageIncomplet": "Associez d'abord ces colonnes\u00a0: {champs}.",
+        "ambiguTitre": "Deux colonnes se ressemblent",
+        "ambigu": "Plusieurs colonnes portent le titre de\u00a0: {champs}. Dites laquelle lire, au pas suivant.",
+        "marque": {
+          "courrielAObtenir": "Courriel à obtenir",
+          "indicatifAConfirmer": "Indicatif à confirmer"
+        },
+        "aideMarques": "« Courriel à obtenir » : pas de courriel valide, la personne ne peut pas être invitée. « Indicatif à confirmer » : le téléphone n'a pas d'indicatif reconnu. « Ignorée » : ligne vide ou répétée."
+      },
+      "issue": {
+        "nouvelle": "Nouvelle",
+        "corrigee": "Corrigée",
+        "dejaConnue": "Déjà connue",
+        "ignoree": "Ignorée",
+        "aCorriger": "À corriger",
+        "historique": "En historique"
+      },
+      "champ": {
+        "horodatage": "Date de la réponse",
+        "horodatageAide": "Sert à reconnaître la réponse si vous rejouez le fichier.",
+        "genre": "Genre",
+        "genreAide": "Sert à ranger la réponse du bon côté. Jamais montré dans l'aperçu.",
+        "nom": "Nom complet",
+        "nomAide": "Sert à reconnaître la personne. Jamais montré ici.",
+        "telephone": "Téléphone WhatsApp",
+        "telephoneAide": "Avec l'indicatif du pays. Jamais complété ni deviné.",
+        "langueMaternelle": "Langue maternelle",
+        "langueMaternelleAide": "Facultatif.",
+        "languesExplication": "Langues d'explication",
+        "languesExplicationAide": "Les langues dans lesquelles la personne peut expliquer et corriger.",
+        "memorisation": "Mémorisation du Coran",
+        "memorisationAide": "Une déclaration, pas un constat\u00a0: le niveau se constate à l'entretien.",
+        "ijaza": "Ijaza ou certificat à présenter",
+        "ijazaAide": "Ce que la personne peut montrer à l'entretien.",
+        "experience": "Expérience avec les débutants",
+        "experienceAide": "Facultatif.",
+        "creneaux": "Créneaux (heure de La Mecque)",
+        "creneauxAide": "Gardés tels quels, sans jour. Jamais lus comme une disponibilité.",
+        "heures": "Heures par semaine",
+        "heuresAide": "Converties en nombre de classes souhaitées.",
+        "debut": "Début possible",
+        "debutAide": "Facultatif.",
+        "whatsapp": "Accord de contact par WhatsApp",
+        "whatsappAide": "Vaut pour ce contact seulement.",
+        "courriel": "Courriel",
+        "courrielAide": "Sert à reconnaître la personne à son inscription. Jamais montré ici.",
+        "contact": "Téléphone ou courriel"
+      },
+      "controle": {
+        "question": "Y a-t-il des lignes à corriger\u00a0?",
+        "explication": "Une ligne à corriger n'est pas importée. Corrigez-la dans le classeur, exportez de nouveau le fichier, puis rejouez l'import\u00a0: les lignes déjà importées ne sont pas ajoutées deux fois.",
+        "aucune": "Aucune erreur ni avertissement dans ce fichier.",
+        "aucuneAide": "Chaque ligne a pu être lue.",
+        "aCorriger": {
+          "titre": "À corriger",
+          "aide": "Ces lignes ne seront pas importées."
+        },
+        "avertissements": {
+          "titre": "À regarder",
+          "aide": "Ces lignes sont importées, avec un point à vérifier."
+        },
+        "ignorees": {
+          "titre": "Ignorées",
+          "aide": "Lignes vides ou répétées à l'identique."
+        },
+        "ligne": "Ligne {ligne}\u00a0: {motif}",
+        "plus(param=n)": {
+          "one": "Voir {n} ligne de plus",
+          "other": "Voir {n} lignes de plus"
+        }
+      },
+      "motif": {
+        "ligneVide": "ligne vide",
+        "horodatageIllisible": "la date de la réponse est illisible",
+        "genreIllisible": "le genre n'est pas reconnu",
+        "nomAbsent": "le nom est absent",
+        "nomTropLong": "le nom est trop long",
+        "memeReferenceMemeContenu": "ligne répétée à l'identique",
+        "memeReferenceContenuDifferent": "même date de réponse qu'une autre ligne, mais un contenu différent",
+        "genreChangeSurLigneSuivie": "le genre a changé alors que la personne est suivie\u00a0: il fixe son côté",
+        "inscription1210": "déjà connue par l'import des inscriptions",
+        "inconnu": "un point est à vérifier dans cette ligne"
+      },
+      "avertissement": {
+        "telephoneIllisible": "le téléphone est illisible",
+        "formatNational": "le téléphone n'a pas l'indicatif du pays",
+        "indicatifInconnu": "l'indicatif du téléphone est inconnu",
+        "longueurImplausible": "la longueur du téléphone est inhabituelle",
+        "indicatifAConfirmer": "l'indicatif du téléphone est à confirmer",
+        "zeroNationalEnTrop": "un zéro en trop après l'indicatif du téléphone",
+        "courrielMalforme": "le courriel est mal écrit\u00a0: il est à obtenir",
+        "langueMaternelleVersAutre": "langue maternelle inconnue, classée en autre langue",
+        "langueInconnueVersAutre": "une langue d'explication inconnue est classée en autre langue",
+        "arabeRetire": "l'arabe est retiré des langues d'explication (ce n'est pas une langue de cours)",
+        "libelleInconnu": "une réponse à choix n'est pas reconnue",
+        "ijazaDeclareeEnG": "ijaza déclarée comme mémorisation\u00a0: la mémorisation est à renseigner par la personne",
+        "experiencePretTest": "«\u00a0prêt à un test\u00a0» n'a pas d'équivalent pour l'expérience\u00a0: à renseigner par la personne",
+        "moinsDe3Heures": "moins de 3 heures par semaine\u00a0: cela ne fait pas une classe, à renseigner par la personne",
+        "creneauxContradictoires": "créneaux contradictoires, gardés tels quels"
+      },
+      "comptes": {
+        "question": "Ces nombres sont-ils ceux que vous attendiez\u00a0?",
+        "explication": "Voici ce que Rewayah a compté dans le fichier. Comparez avec votre décompte avant de confirmer.",
+        "nouvelles": "Nouvelles",
+        "nouvellesAide": "Pas encore connues\u00a0: elles seront enregistrées.",
+        "dejaConnues": "Déjà connues",
+        "dejaConnuesAide": "Déjà enregistrées\u00a0: rien ne change.",
+        "ignorees": "Ignorées",
+        "ignoreesAide": "Lignes vides ou répétées.",
+        "aCorriger": "À corriger",
+        "aCorrigerAide": "Lignes illisibles\u00a0: elles ne sont pas importées.",
+        "corrigees": "Corrigées sur place",
+        "personnes": "Personnes concernées",
+        "lignesLues": "Lignes lues",
+        "attendus": {
+          "question": "Quel décompte attendiez-vous\u00a0?",
+          "fichier2110": {
+            "titre": "Le fichier du 21 octobre",
+            "description": "440 lignes, soit 409 personnes une fois les doublons rapprochés\u00a0: le décompte relevé dans le classeur ce jour-là."
+          },
+          "autres": {
+            "titre": "D'autres nombres",
+            "description": "Vous connaissez le nombre de lignes ou de personnes de votre fichier. Saisissez-le\u00a0: Rewayah signale tout écart."
+          },
+          "aucun": {
+            "titre": "Aucun décompte à comparer",
+            "description": "Vous confirmez en vous fiant à l'aperçu."
+          },
+          "lignes": "Lignes attendues",
+          "personnes": "Personnes attendues",
+          "aide": "Un nombre entier. Laissez vide ce que vous ne comparez pas."
+        },
+        "choisir": "Indiquez le décompte à comparer pour continuer.",
+        "saisirNombre": "Saisissez au moins un nombre pour continuer.",
+        "ecartTitre": "Un écart à vérifier",
+        "ecart": "Écart avec les comptes attendus\u00a0: attendu {attendu}, lu {lu}. Vérifiez avant de confirmer\u00a0: vous pouvez importer quand même.",
+        "accord": "Les nombres correspondent à ce que vous attendiez."
+      },
+      "unite": {
+        "lignes(param=n)": {
+          "one": "{n} ligne",
+          "other": "{n} lignes"
+        },
+        "personnes(param=n)": {
+          "one": "{n} personne",
+          "other": "{n} personnes"
+        }
+      },
+      "confirmation": {
+        "question": "Importer ces réponses maintenant\u00a0?",
+        "explication": "Relisez ce que l'import va faire. Il n'est pas annulable depuis cet écran.",
+        "resume": {
+          "titre": "Ce qui sera enregistré",
+          "fichier": "Fichier",
+          "doublons": "Doublons\u00a0: {choisis} cas tranchés par vous sur {total}. Pour les autres, la ligne la plus récente est gardée.",
+          "aucunDoublon": "Aucun doublon probable à régler."
+        },
+        "garanties": {
+          "titre": "Ce que l'import ne fait pas",
+          "texte": "Il ne crée aucun compte, aucune invitation ni aucune candidature, et n'envoie aucun message. Il enregistre des réponses qui servent à reconnaître les personnes quand elles s'inscrivent. Rejouer le même fichier n'ajoute rien."
+        },
+        "importer": "Importer les réponses",
+        "envoi": "Envoi en cours. L'import n'est confirmé qu'à la réponse de Rewayah.",
+        "horsLigne": "L'import pourra être confirmé quand la connexion reviendra.",
+        "nonConfirme": "L'import n'est pas confirmé\u00a0: il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Touchez de nouveau «\u00a0Importer les réponses\u00a0»\u00a0: la même demande ne s'enregistre qu'une fois.",
+        "jetonPerime": "Le fichier ou ses réglages ont changé depuis l'aperçu. Relancez l'analyse pour continuer.",
+        "choixInvalide": "Un choix de doublon ne correspond plus au fichier. Relancez l'analyse, puis choisissez de nouveau.",
+        "cleReutilisee": "Cette demande ne peut pas être rejouée telle quelle. Relancez l'analyse pour recommencer proprement.",
+        "refus": "Le serveur refuse cet import. Vérifiez que vous êtes connecté avec la double vérification, puis réessayez.",
+        "titreNonConfirme": "Import non confirmé",
+        "titreARefaire": "L'analyse est à refaire",
+        "relancer": "Relancer l'analyse"
+      },
+      "rapport": {
+        "titre": "Import terminé",
+        "question": "Voici ce que l'import a fait.",
+        "rejoue": "Cette demande avait déjà été enregistrée\u00a0: rien n'a été ajouté une seconde fois.",
+        "sansCandidature": "Ces réponses ne créent aucune candidature\u00a0: elles servent à reconnaître les personnes quand elles s'inscrivent.",
+        "compteurs": {
+          "nouvelles": "Enregistrées.",
+          "dejaConnues": "Déjà enregistrées\u00a0: rien n'a changé.",
+          "aCorriger": "Lignes illisibles\u00a0: non importées."
+        },
+        "historique": "Remplacées par une plus récente\u00a0: {n}",
+        "lignes": {
+          "titre": "Ligne par ligne",
+          "aide": "Chaque ligne est reconnue par la date de sa réponse, jamais par le nom de la personne.",
+          "reference": "Réponse du {reference}",
+          "sansReference": "Sans référence"
+        },
+        "plus(param=n)": {
+          "one": "Voir {n} ligne de plus",
+          "other": "Voir {n} lignes de plus"
+        },
+        "autreFichier": "Importer un autre fichier"
+      }
     },
     "tableau": {
       "titre": "Centre de commande",

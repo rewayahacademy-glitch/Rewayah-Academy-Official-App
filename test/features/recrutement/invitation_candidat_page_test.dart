@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/candidature/port_inscription_candidat.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/recrutement/ouvreur_lien.dart';
 import 'package:rewayah_academy/core/recrutement/port_invitations_comptable.dart';
@@ -19,6 +20,7 @@ import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart'
 import 'package:rewayah_academy/features/inscription/code_comptable_retenu.dart';
 import 'package:rewayah_academy/features/recrutement/invitation_candidat_page.dart';
 
+import '../../fixtures/candidature/faux_inscription_candidat.dart';
 import '../../support/aucun_mot_coupe.dart';
 import '../../support/garde_interface.dart';
 import '../../support/monter_recrutement.dart';
@@ -32,6 +34,7 @@ class _Verification implements PortVerificationInvitation {
 
 Future<void> _monter(
   WidgetTester tester, {
+  PortInscriptionCandidat? inscription,
   PortVerificationInvitation? port,
   bool horsLigne = false,
   double largeur = 390,
@@ -52,6 +55,7 @@ Future<void> _monter(
       InvitationCandidatPage(codeInitial: state.uri.queryParameters['code']),
   surcharges: <Override>[
     portVerificationInvitationProvider.overrideWithValue(port),
+    portInscriptionCandidatProvider.overrideWithValue(inscription),
     if (surLien != null)
       ouvreurLienProvider.overrideWithValue((Uri u) async {
         surLien(u);
@@ -227,6 +231,131 @@ void main() {
     });
   }
 
+  // CAND-04 : l'entree sans code, rendue seulement quand le serveur l'ouvre.
+  group('l\'entree sans code', () {
+    final Finder lien = find.byKey(
+      const ValueKey<String>('candidat-deposer-candidature'),
+    );
+
+    testWidgets('fermee : aucune phrase, aucun lien', (tester) async {
+      await _monter(
+        tester,
+        port: InvitationsDemo(),
+        inscription: FauxInscriptionCandidat(cleOuverte: false),
+      );
+      expect(lien, findsNothing);
+      expect(find.text(t.inscription.usage.enseignantPostuler), findsNothing);
+      await _saisir(tester, 'NIMPORTE');
+      expect(lien, findsNothing);
+    });
+
+    testWidgets('sans port ni lecture : comme fermee', (tester) async {
+      await _monter(tester, port: InvitationsDemo());
+      expect(lien, findsNothing);
+      await _monter(
+        tester,
+        port: InvitationsDemo(),
+        inscription: FauxInscriptionCandidat()..panneLecture = panneLotAbsent,
+      );
+      expect(lien, findsNothing);
+    });
+
+    testWidgets('ouverte : la phrase et le lien, sous la saisie', (
+      tester,
+    ) async {
+      await _monter(
+        tester,
+        port: InvitationsDemo(),
+        inscription: FauxInscriptionCandidat(),
+      );
+      expect(find.text(t.inscription.usage.enseignantPostuler), findsOneWidget);
+      expect(find.text(t.inscription.usage.deposerCandidature), findsOneWidget);
+      verifierUnSeulBoutonPlein(tester);
+    });
+
+    testWidgets('code non reconnu ou expire : le lien reste, pas d\'impasse', (
+      tester,
+    ) async {
+      await _monter(
+        tester,
+        port: InvitationsDemo(),
+        inscription: FauxInscriptionCandidat(),
+      );
+      await _saisir(tester, 'NIMPORTE');
+      expect(find.text(r.inconnue), findsOneWidget);
+      expect(lien, findsOneWidget);
+      await tester.tap(find.text(r.ressaisir));
+      await laisser(tester);
+      await _saisir(tester, CodesInvitationDemo.expire);
+      expect(find.text(r.expiree), findsOneWidget);
+      expect(lien, findsOneWidget);
+    });
+
+    testWidgets('code deja utilise ou valide : pas de lien de plus', (
+      tester,
+    ) async {
+      await _monter(
+        tester,
+        port: InvitationsDemo(),
+        inscription: FauxInscriptionCandidat(),
+      );
+      await _saisir(tester, CodesInvitationDemo.utilise);
+      expect(find.text(r.dejaUtilisee), findsOneWidget);
+      expect(lien, findsNothing);
+    });
+
+    testWidgets('« Deposer ma candidature » ouvre l\'identite, sans code', (
+      tester,
+    ) async {
+      await _monter(
+        tester,
+        port: InvitationsDemo(),
+        inscription: FauxInscriptionCandidat(),
+      );
+      final ProviderContainer conteneur = ProviderScope.containerOf(
+        tester.element(find.byKey(const ValueKey<String>('candidat-code'))),
+      );
+      conteneur.read(codeInvitationRetenuProvider.notifier).retenir('ANCIEN');
+      await tester.tap(lien);
+      await laisser(tester);
+      expect(find.text('temoin:${Routes.inscriptionIdentite}'), findsOneWidget);
+      final BrouillonInscription b = conteneur.read(
+        brouillonInscriptionProvider,
+      );
+      expect(b.usage, UsageInscription.enseignant);
+      expect(b.sansCode, isTrue);
+      expect(conteneur.read(codeInvitationRetenuProvider), isNull);
+    });
+
+    testWidgets('320 px, texte x2, de droite a gauche : rien ne deborde', (
+      tester,
+    ) async {
+      await _monter(
+        tester,
+        port: InvitationsDemo(),
+        inscription: FauxInscriptionCandidat(),
+        largeur: 320,
+        echelle: 2,
+        direction: TextDirection.rtl,
+      );
+      expect(lien, findsOneWidget);
+      expect(tester.takeException(), isNull);
+      verifierUnSeulBoutonPlein(tester);
+      // La phrase et le lien de l'entree sans code tiennent en entier. (La
+      // phrase d'introduction de la saisie, anterieure a CAND-04, se coupe a
+      // 320 px en texte x2 : elle n'est pas mesuree ici.)
+      verifierAucunMotCoupe(
+        tester,
+        find.byKey(const ValueKey<String>('candidat-postuler')),
+      );
+      verifierAucunMotCoupe(tester, lien);
+      // Et apres un code non reconnu, tout l'ecran tient.
+      await _saisir(tester, 'NIMPORTE');
+      verifierEcranSansMotCoupe(tester);
+      verifierUnSeulBoutonPlein(tester, maximum: 0);
+    });
+  });
+
   // Lot F2 : le candidat comptable, sur ses propres ports et son code.
   group('comptable', () {
     Future<void> monterComptable(
@@ -250,6 +379,30 @@ void main() {
         portVerificationInvitationComptableProvider.overrideWithValue(port),
       ],
     );
+
+    testWidgets('le candidat comptable n\'a jamais l\'entree sans code', (
+      tester,
+    ) async {
+      await monterRecrutement(
+        tester,
+        chemin: Routes.inscriptionInvitationComptable,
+        autres: <String>[Routes.inscriptionIdentite],
+        ecran: (state) => const InvitationCandidatPage(comptable: true),
+        surcharges: <Override>[
+          portVerificationInvitationComptableProvider.overrideWithValue(
+            InvitationsDemo(),
+          ),
+          portInscriptionCandidatProvider.overrideWithValue(
+            FauxInscriptionCandidat(),
+          ),
+        ],
+      );
+      expect(
+        find.byKey(const ValueKey<String>('candidat-deposer-candidature')),
+        findsNothing,
+      );
+      expect(find.text(t.inscription.usage.deposerCandidature), findsNothing);
+    });
 
     testWidgets('port comptable absent : une phrase, aucun champ', (
       tester,

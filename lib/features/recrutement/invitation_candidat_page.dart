@@ -22,6 +22,14 @@
 /// Etats : saisie (contenu), verification en cours, quatre resultats, hors
 /// ligne, erreur, et port absent (l'inscription garde alors son parcours
 /// d'avant ; voir `UsageEtape`).
+///
+/// **CAND-04 : l'entree sans code.** Quand le serveur ouvre l'inscription sans
+/// code (`ouvertureInscriptionCandidatProvider`), la page propose aussi
+/// « Deposer ma candidature », sous la saisie et sous les issues « code non
+/// reconnu » et « invitation expiree » : la personne qui n'a pas de code, ou
+/// dont le code ne sert plus, n'est jamais dans une impasse. Fermee ou
+/// illisible, rien n'est propose de plus. Le candidat comptable n'a pas cette
+/// entree.
 library;
 
 import 'dart:async';
@@ -30,6 +38,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/candidature/port_inscription_candidat.dart';
 import '../../core/i18n/dates_appareil.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -154,6 +163,14 @@ class _InvitationCandidatPageState
     });
   }
 
+  /// CAND-04 : deposer sa candidature sans code. Tout code deja verifie est
+  /// mis de cote, pour que la porte de l'inscription ne soit jamais ambigue.
+  void _deposerCandidature() {
+    ref.read(brouillonInscriptionProvider.notifier).deposerSansCode();
+    _codeRetenu.oublier();
+    GoRouter.of(context).go(Routes.inscriptionIdentite);
+  }
+
   void _creerProfil() {
     ref
         .read(brouillonInscriptionProvider.notifier)
@@ -206,6 +223,34 @@ class _InvitationCandidatPageState
     );
   }
 
+  /// La phrase et le lien de l'entree sans code, ou rien tant que le serveur ne
+  /// l'ouvre pas (et jamais pour le comptable).
+  List<Widget> _entreeSansCode() {
+    final bool ouverte =
+        !widget.comptable &&
+        (ref.watch(ouvertureInscriptionCandidatProvider).value?.ouverte ??
+            false);
+    if (!ouverte) {
+      return const <Widget>[];
+    }
+    return <Widget>[
+      Ecart.vXl,
+      Text(
+        t.inscription.usage.enseignantPostuler,
+        key: const ValueKey<String>('candidat-postuler'),
+        style: AppPalette.of(context).inkMuted.applyTo(
+          Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+        ),
+      ),
+      LienFleche(
+        key: const ValueKey<String>('candidat-deposer-candidature'),
+        libelle: t.inscription.usage.deposerCandidature,
+        alignerEnDebut: true,
+        onPress: _deposerCandidature,
+      ),
+    ];
+  }
+
   Widget _corps(bool horsLigne) {
     final r = t.recrutement.candidat;
     final AppPalette palette = AppPalette.of(context);
@@ -253,6 +298,7 @@ class _InvitationCandidatPageState
             ],
             Ecart.vMd,
             LienFleche(libelle: r.ressaisir, onPress: _ressaisir),
+            ..._entreeSansCode(),
           ],
         ),
         InvitationDejaUtilisee() => EmptyState(
@@ -274,6 +320,7 @@ class _InvitationCandidatPageState
             ),
             Ecart.vMd,
             LienFleche(libelle: r.ressaisir, onPress: _ressaisir),
+            ..._entreeSansCode(),
           ],
         ),
       };
@@ -325,6 +372,7 @@ class _InvitationCandidatPageState
           // pas rendu, la phrase du bandeau le dit.
           onPress: enCours || horsLigne ? null : () => unawaited(_verifier()),
         ),
+        ..._entreeSansCode(),
       ],
     );
   }

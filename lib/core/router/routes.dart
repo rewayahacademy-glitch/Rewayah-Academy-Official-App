@@ -53,6 +53,12 @@ abstract final class Routes {
   /// Genre.
   static const String inscriptionGenre = '/inscription/genre';
 
+  /// CAND-04 : le telephone du candidat enseignant (indicatif choisi dans la
+  /// liste des pays, numero saisi), entre le genre et le recapitulatif. Cette
+  /// etape n'existe que pour l'usage enseignant, avec ou sans code ; elle est
+  /// sous la porte `inscription` comme les autres.
+  static const String inscriptionTelephone = '/inscription/telephone';
+
   /// RECRUT-ECRANS : le code d'invitation du candidat enseignant, sous la
   /// porte `inscription`. Le parametre `code` d'un lien d'invitation est
   /// verifie des l'ouverture.
@@ -743,6 +749,15 @@ abstract final class Routes {
   /// lien de cette file (CAND-F01).
   static const String adminPersonnesCandidatures =
       '/admin/personnes/candidatures';
+
+  /// ADM-23 : l'import des formulaires de candidature (CSV des formulaires
+  /// Google), sous Personnes. Capacite `candidatures.importer` : le super
+  /// administrateur seul, en double verification. Distincte de
+  /// [adminPersonnesImport] (l'import des inscriptions) ; se declare AVANT
+  /// [adminPersonnesCandidature] dans le routeur (contrainte R5), sinon
+  /// `import` serait lu comme une reference `CAND-...`.
+  static const String adminPersonnesCandidaturesImport =
+      '/admin/personnes/candidatures/import';
 
   /// ADM-21 : une candidature ouverte par la direction, par sa reference
   /// `CAND-…` (jamais l'identifiant du profil ni un nom : elle ne nomme

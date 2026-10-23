@@ -273,6 +273,17 @@ mappage ou le fuseau a changé depuis l'aperçu), `cle_idempotence_reutilisee` (
 auteur), `choix_invalide` (groupes nommés : un groupe inconnu, une retenue qui n'est pas dans le groupe, deux choix
 pour un groupe). Exceptions : `22023` (arguments absents ou hors bornes), `42501`.
 
+**Côté client (`ADM-23`, 23/10, `présent dans le code`, `testé localement`, ni staging ni production).**
+`PortImportCandidatures` (`lib/core/candidature/port_import_candidatures.dart`) a trois méthodes,
+`capacites()`, `apercu(...)` et `confirmer(...)`, servies par `import_candidatures_supabase.dart`. Chaque
+`{erreur}` devient une erreur typée (`DoubleVerificationRequise`, `FichierIllisible`, `FichierVide`,
+`EntetesAmbigus`, `MappageIncomplet`, `JetonPerime`, `CleIdempotenceReutilisee`, `ChoixInvalide`,
+`ImportRefuseInconnu` pour un code que le client ne connaît pas) ; `42501` devient `PermissionInsuffisante`,
+`22023` `ImportInvalide`, `PGRST202` et `42883` `CapaciteIndisponible('CAND-BR-09')`, une coupure réseau
+`ImportHorsLigne`. La confirmation renvoie le mappage à l'identique de l'aperçu (le jeton le contient) :
+`null` sans correction, jamais `{}`. La référence source d'un choix de doublon est rebâtie par le client
+(`classeur|onglet|horodatage` tel qu'écrit, espaces de bord retirés).
+
 **Doublons.** Le groupe se forme de proche en proche sur toutes les lignes que la base garde (historique compris), avec les contacts et le genre qu'elle gardait avant la correction d'une ligne du fichier : rejouer un fichier ne le défait pas, et corriger un contact ou le genre d'une ligne libère ses voisines. Sans choix, la plus récente l'emporte (`CAND-Q16`) ; `choix` d'un groupe l'emporte et est gardé : un
 fichier corrigé qui se rejoue sans choix ne le défait pas (`choisi: true`). Deux genres différents ne forment jamais un
 groupe. Une ligne gardée pour suivi ou rattachée à une candidature n'est jamais mise en historique.
@@ -444,6 +455,18 @@ les réponses importées (spécification consolidée 3.4). Une ligne `recue` gar
 côté, **devient** la candidature de la personne. L'écran ne rend jamais au candidat que `resultat` : rien du
 rapprochement. `inscrire_enseignant_invite` reste en service tant que le client de `CAND-04` n'a pas basculé ; elle ne
 demande ni téléphone ni accord et ne crée pas de candidature.
+
+**Côté client (23/10), `présent dans le code`, `testé localement`, ni staging ni déployé.**
+`lib/core/candidature/port_inscription_candidat.dart` (le port, dix résultats typés :
+`InscriptionAcceptee`, `InscriptionFermee`, `InscriptionCourrielNonConfirme`, `InscriptionCodeInconnu`,
+`InscriptionCodeDejaUtilise`, `InscriptionCodeExpire`, `InscriptionInvalide(champs)`,
+`InscriptionConfidentialiteRequise`, `InscriptionConfidentialitePerimee`,
+`InscriptionConfidentialiteIndisponible`), `inscription_candidat_supabase.dart` (42501 devient
+`PermissionInsuffisante`, `PGRST202` et `42883` deviennent `CapaciteIndisponible('CAND-BR-17')`, une panne
+devient `HorsLigneCandidature`, un `resultat` inconnu est une `FormatException`), double de test
+`test/fixtures/candidature/faux_inscription_candidat.dart` (mêmes règles, même ordre que la RPC). Le port ne
+distingue pas un succès d'un dépassement du plafond, comme le serveur. Le client passe à `inscrire_candidat`
+pour l'enseignant avec ou sans code : à fusionner après l'application de la migration `20261022000600`.
 
 ## 4. `PortReferentielPaiement` (`ADM-24`, et une des sources de `CPT-BR-10` : la compatibilité par corridor, ni l'activation des prestataires ni leur solde)
 

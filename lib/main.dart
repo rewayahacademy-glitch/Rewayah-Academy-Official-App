@@ -25,9 +25,13 @@ import 'core/agent/amorce_agent.dart';
 import 'core/agent/session_agent.dart';
 import 'core/candidature/autres_competences_supabase.dart';
 import 'core/candidature/candidatures_direction_supabase.dart';
+import 'core/candidature/import_candidatures_supabase.dart';
+import 'core/candidature/inscription_candidat_supabase.dart';
 import 'core/candidature/ma_candidature_supabase.dart';
 import 'core/candidature/port_autres_competences.dart';
 import 'core/candidature/port_candidatures_direction.dart';
+import 'core/candidature/port_import_candidatures.dart';
+import 'core/candidature/port_inscription_candidat.dart';
 import 'core/candidature/port_ma_candidature.dart';
 import 'core/capacites/acces_supabase.dart';
 import 'core/capacites/avis_supabase.dart';
@@ -226,6 +230,14 @@ List<Override> _surchargesAppReelle() => <Override>[
   portInscriptionComptableProvider.overrideWithValue(
     InscriptionComptableSupabase(Supabase.instance.client),
   ),
+  // CAND-04 : l'inscription du candidat enseignant, par le lien public du site
+  // (sans code, quand le serveur l'ouvre) ou par un code d'invitation. Tant que
+  // le lot serveur CAND-L3 n'est pas verse, l'ouverture ne se lit pas et rien
+  // n'est propose hors du code ; la creation dit que l'inscription n'est pas
+  // disponible.
+  portInscriptionCandidatProvider.overrideWithValue(
+    InscriptionCandidatSupabase(Supabase.instance.client),
+  ),
   portTirageControleProvider.overrideWithValue(
     PortTirageControleSupabase(Supabase.instance.client),
   ),
@@ -280,6 +292,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // branchement serveur ».
   portCandidaturesDirectionProvider.overrideWithValue(
     CandidaturesDirectionSupabase(Supabase.instance.client),
+  ),
+  // ADM-23 : l'import des formulaires de candidature (super administrateur en
+  // double verification ; le serveur reste la barriere).
+  portImportCandidaturesProvider.overrideWithValue(
+    ImportCandidaturesSupabase(Supabase.instance.client),
   ),
   // Ports a defaut « indisponible » (ou en memoire) dont l'adaptateur
   // serveur existe : compte, tresorerie, observations, controleur, support

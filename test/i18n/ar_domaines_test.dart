@@ -163,6 +163,12 @@ const Set<String> _latins = <String>{
   // Le premier jour du mois s'ecrit en chiffre en arabe (« 1 أكتوبر »),
   // sans le suffixe francais « er » (reunion de la ligne arabe dans ccr).
   'commun.dates.premierJour',
+  // Une langue se nomme dans sa propre langue (CAND-04) : la carte « Français »
+  // reste « Français » dans l'application en arabe, et « العربية » reste
+  // « العربية » en français, pour qu'une personne arrivee dans la mauvaise
+  // langue y retrouve la sienne.
+  'inscription.langue.francais',
+  'inscription.langue.arabe',
 };
 
 final RegExp _parametre = RegExp(r'\{\w+\}');

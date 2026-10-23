@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/candidature/port_inscription_candidat.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/recrutement/port_invitations_comptable.dart';
 import '../../../core/recrutement/port_invitations_enseignant.dart';
+import '../../../core/reseau/service_reseau.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/widgets/action_principale.dart';
@@ -49,6 +51,22 @@ class UsageEtape extends ConsumerWidget {
     // codes (capacite servie, jamais un role).
     final bool comptableInvitable =
         ref.watch(portVerificationInvitationComptableProvider) != null;
+    // CAND-04 : le lien du site mene ici. Quand le serveur ouvre l'inscription
+    // sans code, la personne peut deposer sa candidature ; sinon (fermee,
+    // illisible, lot absent), le bloc reste celui d'aujourd'hui : l'academie
+    // invite par courriel, et le code d'invitation est la seule entree.
+    final bool sansCodeOuvert =
+        ref.watch(ouvertureInscriptionCandidatProvider).value?.ouverte ?? false;
+    // Une lecture ratee par panne de reseau est relue au retour de la
+    // connexion : le lien ne reste pas cache pour toute la session.
+    ref.listen<AsyncValue<bool>>(horsLigneProvider, (
+      AsyncValue<bool>? avant,
+      AsyncValue<bool> apres,
+    ) {
+      if ((avant?.value ?? false) && !(apres.value ?? false)) {
+        ref.invalidate(ouvertureInscriptionCandidatProvider);
+      }
+    });
 
     return CoquilleEtape(
       route: _route,
@@ -60,21 +78,42 @@ class UsageEtape extends ConsumerWidget {
               (retenu == UsageInscription.famille && suitDesCours == null)
           ? null
           : () => avancerDepuis(context, _route),
-      // L1-11 (A-07, option 1) : l'enseignant n'entre que par invitation. Une
-      // phrase dit pourquoi il n'y a pas de carte, et le lien ouvre le champ du
-      // code ; jamais de bouton grise (K-59).
+      // L1-11 (A-07, option 1) : l'enseignant entre par invitation, ou, quand le
+      // serveur l'ouvre (CAND-04), en deposant sa candidature. Une phrase dit
+      // pourquoi il n'y a pas de carte, et les liens menent au dossier ou au
+      // champ du code ; jamais de bouton grise (K-59).
       complement: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Text(
-            t.inscription.usage.enseignantInvite,
-            key: const Key('inscription-enseignant-invite'),
+            sansCodeOuvert
+                ? t.inscription.usage.enseignantPostuler
+                : t.inscription.usage.enseignantInvite,
+            key: sansCodeOuvert
+                ? const Key('inscription-enseignant-postuler')
+                : const Key('inscription-enseignant-invite'),
             textAlign: TextAlign.center,
             style: AppPalette.of(context).inkMuted.applyTo(
               Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
             ),
           ),
+          if (sansCodeOuvert)
+            Center(
+              child: ActionPrincipale(
+                key: const Key('inscription-deposer-candidature'),
+                libelle: t.inscription.usage.deposerCandidature,
+                niveau: NiveauAction.tertiaire,
+                pleineLargeur: false,
+                onPress: () {
+                  controleur.deposerSansCode();
+                  // Sans code : tout code deja verifie est mis de cote, pour
+                  // que la porte de l'inscription ne soit jamais ambigue.
+                  ref.read(codeInvitationRetenuProvider.notifier).oublier();
+                  context.go(Routes.inscriptionIdentite);
+                },
+              ),
+            ),
           Center(
             child: ActionPrincipale(
               key: const Key('inscription-lien-enseignant'),
@@ -89,7 +128,11 @@ class UsageEtape extends ConsumerWidget {
                 if (ref.read(codeInvitationRetenuProvider) == null) {
                   context.go(Routes.inscriptionInvitation);
                 } else {
-                  avancerDepuis(context, _route);
+                  avancerDepuis(
+                    context,
+                    _route,
+                    usage: UsageInscription.enseignant,
+                  );
                 }
               },
             ),

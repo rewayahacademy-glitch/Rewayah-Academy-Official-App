@@ -772,6 +772,10 @@ class Traductions$inscription$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$inscription$telephone$fr telephone = Traductions$inscription$telephone$fr.internal(_root);
+	late final Traductions$inscription$langue$fr langue = Traductions$inscription$langue$fr.internal(_root);
+	late final Traductions$inscription$confidentialite$fr confidentialite = Traductions$inscription$confidentialite$fr.internal(_root);
+	late final Traductions$inscription$candidat$fr candidat = Traductions$inscription$candidat$fr.internal(_root);
 
 	/// fr: 'Créer votre compte'
 	String get titre => 'Créer votre compte';
@@ -1589,6 +1593,7 @@ class Traductions$admin$fr {
 	// Translations
 	late final Traductions$admin$candidatures$fr candidatures = Traductions$admin$candidatures$fr.internal(_root);
 	late final Traductions$admin$importInscriptions$fr importInscriptions = Traductions$admin$importInscriptions$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$fr importFormulaires = Traductions$admin$importFormulaires$fr.internal(_root);
 	late final Traductions$admin$tableau$fr tableau = Traductions$admin$tableau$fr.internal(_root);
 	late final Traductions$admin$traitement$fr traitement = Traductions$admin$traitement$fr.internal(_root);
 	late final Traductions$admin$demandes$fr demandes = Traductions$admin$demandes$fr.internal(_root);
@@ -4284,6 +4289,129 @@ class Traductions$connexion$feuilleAppareil$fr {
 	String get fermer => 'Fermer';
 }
 
+// Path: inscription.telephone
+class Traductions$inscription$telephone$fr {
+	Traductions$inscription$telephone$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre numéro de téléphone'
+	String get question => 'Votre numéro de téléphone';
+
+	/// fr: 'Il sert à éviter les doublons et à relier vos échanges avec l'académie à votre candidature. L'académie vous écrit dans l'application. Il n'est jamais montré aux autres personnes qui postulent.'
+	String get explication => 'Il sert à éviter les doublons et à relier vos échanges avec l\'académie à votre candidature. L\'académie vous écrit dans l\'application. Il n\'est jamais montré aux autres personnes qui postulent.';
+
+	/// fr: 'Indicatif du pays'
+	String get indicatif => 'Indicatif du pays';
+
+	/// fr: 'Numéro, sans l'indicatif'
+	String get numero => 'Numéro, sans l\'indicatif';
+
+	/// fr: 'Choisissez l'indicatif de votre pays.'
+	String get indicatifManquant => 'Choisissez l\'indicatif de votre pays.';
+
+	/// fr: 'Saisissez votre numéro de téléphone.'
+	String get numeroManquant => 'Saisissez votre numéro de téléphone.';
+
+	/// fr: 'Ce numéro n'est pas lisible. Écrivez-le en chiffres, sans l'indicatif du pays.'
+	String get numeroInvalide => 'Ce numéro n\'est pas lisible. Écrivez-le en chiffres, sans l\'indicatif du pays.';
+
+	/// fr: 'Changer d'indicatif'
+	String get changerIndicatif => 'Changer d\'indicatif';
+}
+
+// Path: inscription.langue
+class Traductions$inscription$langue$fr {
+	Traductions$inscription$langue$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Dans quelle langue voulez-vous lire l'application ?'
+	String get question => 'Dans quelle langue voulez-vous lire l\'application ?';
+
+	/// fr: 'Français'
+	String get francais => 'Français';
+
+	/// fr: 'العربية'
+	String get arabe => 'العربية';
+
+	/// fr: 'L'application et les messages de l'académie sont écrits en français.'
+	String get francaisExplication => 'L\'application et les messages de l\'académie sont écrits en français.';
+
+	/// fr: 'les boutons, les explications et les messages s'affichent de gauche à droite.'
+	String get francaisExemple => 'les boutons, les explications et les messages s\'affichent de gauche à droite.';
+
+	/// fr: 'L'application et les messages de l'académie sont écrits en arabe.'
+	String get arabeExplication => 'L\'application et les messages de l\'académie sont écrits en arabe.';
+
+	/// fr: 'les boutons, les explications et les messages s'affichent de droite à gauche.'
+	String get arabeExemple => 'les boutons, les explications et les messages s\'affichent de droite à gauche.';
+}
+
+// Path: inscription.confidentialite
+class Traductions$inscription$confidentialite$fr {
+	Traductions$inscription$confidentialite$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'J'ai lu et j'accepte la politique de confidentialité.'
+	String get kCase => 'J\'ai lu et j\'accepte la politique de confidentialité.';
+
+	/// fr: 'Lire la politique de confidentialité'
+	String get lire => 'Lire la politique de confidentialité';
+
+	/// fr: 'Cochez cette case pour envoyer votre candidature.'
+	String get requise => 'Cochez cette case pour envoyer votre candidature.';
+}
+
+// Path: inscription.candidat
+class Traductions$inscription$candidat$fr {
+	Traductions$inscription$candidat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre candidature n'est peut-être pas partie. Réessayez dans un instant.'
+	String get creationEchec => 'Votre candidature n\'est peut-être pas partie. Réessayez dans un instant.';
+
+	/// fr: 'Envoyer ma candidature'
+	String get envoyer => 'Envoyer ma candidature';
+
+	/// fr: 'Vous déposez une candidature pour enseigner à Rewayah. Cela ne vous engage à rien.'
+	String get accueil => 'Vous déposez une candidature pour enseigner à Rewayah. Cela ne vous engage à rien.';
+
+	/// fr: 'Ensuite, la direction lit votre candidature et vous écrit dans l'application.'
+	String get ensuite => 'Ensuite, la direction lit votre candidature et vous écrit dans l\'application.';
+
+	/// fr: 'La candidature pourra être envoyée quand la connexion reviendra.'
+	String get horsLigne => 'La candidature pourra être envoyée quand la connexion reviendra.';
+
+	/// fr: 'Confirmez d'abord votre adresse : ouvrez le lien reçu par courriel.'
+	String get courrielAConfirmer => 'Confirmez d\'abord votre adresse : ouvrez le lien reçu par courriel.';
+
+	/// fr: 'Les candidatures sans code ne sont pas encore ouvertes. Si la direction vous a remis un code, saisissez-le.'
+	String get nonOuverte => 'Les candidatures sans code ne sont pas encore ouvertes. Si la direction vous a remis un code, saisissez-le.';
+
+	/// fr: 'Il est possible que votre demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get nonConfirmee => 'Il est possible que votre demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: 'Une réponse doit être corrigée : {champs}. Appuyez sur « Modifier » à côté de la réponse.'
+	String aCorriger({required Object champs}) => 'Une réponse doit être corrigée : ${champs}. Appuyez sur « Modifier » à côté de la réponse.';
+
+	/// fr: 'Le texte de la politique de confidentialité a changé, et la version affichée n'est plus à jour. Rechargez la page ou mettez l'application à jour, puis relisez le texte.'
+	String get confidentialitePerimee => 'Le texte de la politique de confidentialité a changé, et la version affichée n\'est plus à jour. Rechargez la page ou mettez l\'application à jour, puis relisez le texte.';
+
+	/// fr: 'L'inscription n'est pas disponible pour le moment. Réessayez un peu plus tard.'
+	String get indisponible => 'L\'inscription n\'est pas disponible pour le moment. Réessayez un peu plus tard.';
+}
+
 // Path: inscription.usage
 class Traductions$inscription$usage$fr {
 	Traductions$inscription$usage$fr.internal(this._root);
@@ -4312,6 +4440,12 @@ class Traductions$inscription$usage$fr {
 
 	/// fr: 'Vous êtes enseignant ? L'académie vous invite par courriel.'
 	String get enseignantInvite => 'Vous êtes enseignant ? L\'académie vous invite par courriel.';
+
+	/// fr: 'Vous souhaitez enseigner à Rewayah ?'
+	String get enseignantPostuler => 'Vous souhaitez enseigner à Rewayah ?';
+
+	/// fr: 'Déposer ma candidature'
+	String get deposerCandidature => 'Déposer ma candidature';
 
 	/// fr: 'J'ai un code de comptable'
 	String get comptable => 'J\'ai un code de comptable';
@@ -4354,6 +4488,12 @@ class Traductions$inscription$recap$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+
+	/// fr: 'Téléphone'
+	String get telephone => 'Téléphone';
+
+	/// fr: 'Langue'
+	String get langue => 'Langue';
 
 	/// fr: 'Type de compte'
 	String get usage => 'Type de compte';
@@ -7388,6 +7528,51 @@ class Traductions$admin$importInscriptions$fr {
 
 	/// fr: 'l'import des inscriptions'
 	String get sansDonnees => 'l\'import des inscriptions';
+}
+
+// Path: admin.importFormulaires
+class Traductions$admin$importFormulaires$fr {
+	Traductions$admin$importFormulaires$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Importer les formulaires de candidature'
+	String get titre => 'Importer les formulaires de candidature';
+
+	/// fr: 'L'import sert à reconnaître les personnes et à pré-remplir leur candidature. Il ne crée aucun compte.'
+	String get intro => 'L\'import sert à reconnaître les personnes et à pré-remplir leur candidature. Il ne crée aucun compte.';
+
+	/// fr: 'Importer les formulaires'
+	String get lienEntree => 'Importer les formulaires';
+
+	/// fr: 'Revenir aux candidatures'
+	String get retourCandidatures => 'Revenir aux candidatures';
+
+	/// fr: 'Vos droits d'import n'ont pas pu être lus. Réessayez dans un instant.'
+	String get lectureDroits => 'Vos droits d\'import n\'ont pas pu être lus. Réessayez dans un instant.';
+
+	/// fr: 'vos droits d'import des formulaires'
+	String get sansDonnees => 'vos droits d\'import des formulaires';
+
+	late final Traductions$admin$importFormulaires$acces$fr acces = Traductions$admin$importFormulaires$acces$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$pas$fr pas = Traductions$admin$importFormulaires$pas$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$depot$fr depot = Traductions$admin$importFormulaires$depot$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$fichier$fr fichier = Traductions$admin$importFormulaires$fichier$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$colonnes$fr colonnes = Traductions$admin$importFormulaires$colonnes$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$doublons$fr doublons = Traductions$admin$importFormulaires$doublons$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$analyse$fr analyse = Traductions$admin$importFormulaires$analyse$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$apercu$fr apercu = Traductions$admin$importFormulaires$apercu$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$issue$fr issue = Traductions$admin$importFormulaires$issue$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$champ$fr champ = Traductions$admin$importFormulaires$champ$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$controle$fr controle = Traductions$admin$importFormulaires$controle$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$motif$fr motif = Traductions$admin$importFormulaires$motif$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$avertissement$fr avertissement = Traductions$admin$importFormulaires$avertissement$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$comptes$fr comptes = Traductions$admin$importFormulaires$comptes$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$unite$fr unite = Traductions$admin$importFormulaires$unite$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$confirmation$fr confirmation = Traductions$admin$importFormulaires$confirmation$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$rapport$fr rapport = Traductions$admin$importFormulaires$rapport$fr.internal(_root);
 }
 
 // Path: admin.tableau
@@ -23137,6 +23322,782 @@ class Traductions$admin$importInscriptions$acces$fr {
 	String get doublePhrase => 'Connectez-vous avec votre second facteur, puis revenez ici pour importer les inscriptions.';
 }
 
+// Path: admin.importFormulaires.acces
+class Traductions$admin$importFormulaires$acces$fr {
+	Traductions$admin$importFormulaires$acces$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Import réservé'
+	String get refuseTitre => 'Import réservé';
+
+	/// fr: 'Seul le super administrateur peut importer les formulaires de candidature. Demandez-lui de s'en charger.'
+	String get refusePhrase => 'Seul le super administrateur peut importer les formulaires de candidature. Demandez-lui de s\'en charger.';
+
+	/// fr: 'Cet import demande votre second facteur.'
+	String get doublePhrase => 'Cet import demande votre second facteur.';
+
+	/// fr: 'Touchez « Me reconnecter » : votre session se ferme et vous revenez à la connexion pour utiliser votre second facteur. Rien n'a été enregistré.'
+	String get doubleSuite => 'Touchez « Me reconnecter » : votre session se ferme et vous revenez à la connexion pour utiliser votre second facteur. Rien n\'a été enregistré.';
+
+	/// fr: 'Me reconnecter'
+	String get doubleAction => 'Me reconnecter';
+}
+
+// Path: admin.importFormulaires.pas
+class Traductions$admin$importFormulaires$pas$fr {
+	Traductions$admin$importFormulaires$pas$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les huit pas de l'import'
+	String get liste => 'Les huit pas de l\'import';
+
+	/// fr: 'Déposer le fichier'
+	String get depot => 'Déposer le fichier';
+
+	/// fr: 'Aperçu'
+	String get apercu => 'Aperçu';
+
+	/// fr: 'Colonnes'
+	String get colonnes => 'Colonnes';
+
+	/// fr: 'Doublons'
+	String get doublons => 'Doublons';
+
+	/// fr: 'Erreurs'
+	String get controle => 'Erreurs';
+
+	/// fr: 'Comptes'
+	String get comptes => 'Comptes';
+
+	/// fr: 'Confirmation'
+	String get confirmation => 'Confirmation';
+
+	/// fr: 'Rapport'
+	String get rapport => 'Rapport';
+
+	/// fr: 'Pas {n} sur {total}'
+	String surTotal({required Object n, required Object total}) => 'Pas ${n} sur ${total}';
+
+	/// fr: 'Pas {n} sur {total} : {nom}'
+	String surTotalNomme({required Object n, required Object total, required Object nom}) => 'Pas ${n} sur ${total} : ${nom}';
+
+	/// fr: 'Terminé'
+	String get fait => 'Terminé';
+
+	/// fr: 'En cours'
+	String get enCours => 'En cours';
+
+	/// fr: 'À venir'
+	String get aVenir => 'À venir';
+}
+
+// Path: admin.importFormulaires.depot
+class Traductions$admin$importFormulaires$depot$fr {
+	Traductions$admin$importFormulaires$depot$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Quel fichier voulez-vous importer ?'
+	String get question => 'Quel fichier voulez-vous importer ?';
+
+	/// fr: 'Choisissez l'export CSV de la feuille des formulaires (dans Google Sheets : Fichier, Télécharger, Valeurs séparées par des virgules). Rien n'est envoyé avant « Analyser le fichier ».'
+	String get explication => 'Choisissez l\'export CSV de la feuille des formulaires (dans Google Sheets : Fichier, Télécharger, Valeurs séparées par des virgules). Rien n\'est envoyé avant « Analyser le fichier ».';
+
+	/// fr: 'Choisir un fichier CSV'
+	String get carteTitre => 'Choisir un fichier CSV';
+
+	/// fr: 'Le fichier est lu sur cet appareil. Il part vers Rewayah seulement quand vous touchez « Analyser le fichier ». Taille maximale : 5 Mo.'
+	String get carteDescription => 'Le fichier est lu sur cet appareil. Il part vers Rewayah seulement quand vous touchez « Analyser le fichier ». Taille maximale : 5 Mo.';
+
+	/// fr: 'Fichier choisi : {nom}'
+	String carteChoisi({required Object nom}) => 'Fichier choisi : ${nom}';
+
+	/// fr: '(one) {{n} ligne de réponses dans ce fichier} (other) {{n} lignes de réponses dans ce fichier}'
+	String lignesLues({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} ligne de réponses dans ce fichier',
+		other: '${n} lignes de réponses dans ce fichier',
+	);
+
+	/// fr: 'Choisir un autre fichier'
+	String get autreFichier => 'Choisir un autre fichier';
+
+	late final Traductions$admin$importFormulaires$depot$noms$fr noms = Traductions$admin$importFormulaires$depot$noms$fr.internal(_root);
+
+	/// fr: 'Choisissez d'abord un fichier pour pouvoir l'analyser.'
+	String get manqueFichier => 'Choisissez d\'abord un fichier pour pouvoir l\'analyser.';
+
+	/// fr: 'Analyser le fichier'
+	String get analyser => 'Analyser le fichier';
+
+	/// fr: 'Rewayah lit votre fichier. Rien n'est encore enregistré.'
+	String get analyseEnCours => 'Rewayah lit votre fichier. Rien n\'est encore enregistré.';
+
+	/// fr: 'L'analyse pourra se faire quand la connexion reviendra.'
+	String get horsLigne => 'L\'analyse pourra se faire quand la connexion reviendra.';
+
+	/// fr: 'Ce fichier ne contient aucune ligne à importer.'
+	String get vide => 'Ce fichier ne contient aucune ligne à importer.';
+
+	/// fr: 'Vérifiez que vous avez exporté la bonne feuille.'
+	String get videAide => 'Vérifiez que vous avez exporté la bonne feuille.';
+}
+
+// Path: admin.importFormulaires.fichier
+class Traductions$admin$importFormulaires$fichier$fr {
+	Traductions$admin$importFormulaires$fichier$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Fichier illisible'
+	String get titre => 'Fichier illisible';
+
+	/// fr: 'Ce fichier n'a pas pu être lu, ligne {ligne} : {cause}.'
+	String illisibleLigne({required Object ligne, required Object cause}) => 'Ce fichier n\'a pas pu être lu, ligne ${ligne} : ${cause}.';
+
+	/// fr: 'Ce fichier n'a pas pu être lu : {cause}.'
+	String illisible({required Object cause}) => 'Ce fichier n\'a pas pu être lu : ${cause}.';
+
+	late final Traductions$admin$importFormulaires$fichier$cause$fr cause = Traductions$admin$importFormulaires$fichier$cause$fr.internal(_root);
+
+	/// fr: 'Exportez de nouveau la feuille en CSV depuis Google Sheets, puis choisissez le fichier.'
+	String get quoiFaire => 'Exportez de nouveau la feuille en CSV depuis Google Sheets, puis choisissez le fichier.';
+}
+
+// Path: admin.importFormulaires.colonnes
+class Traductions$admin$importFormulaires$colonnes$fr {
+	Traductions$admin$importFormulaires$colonnes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Actuellement lu dans la colonne {n}. Le choisir ici le retire de cette colonne.'
+	String dejaAssocie({required Object n}) => 'Actuellement lu dans la colonne ${n}. Le choisir ici le retire de cette colonne.';
+
+	/// fr: 'Colonne {n} : {titre}'
+	String titreColonne({required Object n, required Object titre}) => 'Colonne ${n} : ${titre}';
+
+	/// fr: 'Chaque colonne contient-elle bien ce que Rewayah croit ?'
+	String get question => 'Chaque colonne contient-elle bien ce que Rewayah croit ?';
+
+	/// fr: 'Rewayah repère chaque colonne par son titre. Touchez une colonne pour changer ce qu'elle contient.'
+	String get explication => 'Rewayah repère chaque colonne par son titre. Touchez une colonne pour changer ce qu\'elle contient.';
+
+	/// fr: 'Colonne {n}, sans titre'
+	String sansTitreNumero({required Object n}) => 'Colonne ${n}, sans titre';
+
+	/// fr: 'Non lue'
+	String get nonLue => 'Non lue';
+
+	/// fr: 'Cette colonne n'est pas utilisée par l'import.'
+	String get nonLueAide => 'Cette colonne n\'est pas utilisée par l\'import.';
+
+	/// fr: 'Que contient la colonne {n} ?'
+	String choisir({required Object n}) => 'Que contient la colonne ${n} ?';
+
+	/// fr: 'Colonne sans titre'
+	String get sansTitre => 'Colonne sans titre';
+
+	/// fr: 'Choix actuel'
+	String get choixActuel => 'Choix actuel';
+
+	/// fr: 'Ne pas lire cette colonne'
+	String get nePasLire => 'Ne pas lire cette colonne';
+
+	/// fr: 'Son contenu est ignoré par l'import.'
+	String get nePasLireAide => 'Son contenu est ignoré par l\'import.';
+
+	/// fr: 'Fermer ce choix'
+	String get fermer => 'Fermer ce choix';
+
+	/// fr: 'Associez d'abord ces colonnes : {champs}.'
+	String manquants({required Object champs}) => 'Associez d\'abord ces colonnes : ${champs}.';
+
+	/// fr: 'Plusieurs colonnes portent le titre de : {champs}. Touchez celle qu'il faut lire, puis choisissez ce qu'elle contient.'
+	String ambigu({required Object champs}) => 'Plusieurs colonnes portent le titre de : ${champs}. Touchez celle qu\'il faut lire, puis choisissez ce qu\'elle contient.';
+
+	late final Traductions$admin$importFormulaires$colonnes$libelles$fr libelles = Traductions$admin$importFormulaires$colonnes$libelles$fr.internal(_root);
+
+	/// fr: 'Vos corrections demandent une nouvelle lecture du fichier avant de continuer.'
+	String get relecture => 'Vos corrections demandent une nouvelle lecture du fichier avant de continuer.';
+}
+
+// Path: admin.importFormulaires.doublons
+class Traductions$admin$importFormulaires$doublons$fr {
+	Traductions$admin$importFormulaires$doublons$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{nature} : cas {n} sur {total}'
+	String casTitre({required Object nature, required Object n, required Object total}) => '${nature} : cas ${n} sur ${total}';
+
+	/// fr: 'Ces lignes viennent-elles de la même personne ?'
+	String get question => 'Ces lignes viennent-elles de la même personne ?';
+
+	/// fr: 'Quand des lignes partagent un courriel ou un téléphone, Rewayah les propose comme une même personne. Sans votre choix, la ligne la plus récente est gardée et les autres restent dans l'historique. Rien n'est effacé.'
+	String get explication => 'Quand des lignes partagent un courriel ou un téléphone, Rewayah les propose comme une même personne. Sans votre choix, la ligne la plus récente est gardée et les autres restent dans l\'historique. Rien n\'est effacé.';
+
+	/// fr: 'Aucun doublon probable dans ce fichier.'
+	String get aucun => 'Aucun doublon probable dans ce fichier.';
+
+	/// fr: 'Aucune ligne ne partage un courriel ou un téléphone avec une autre.'
+	String get aucunAide => 'Aucune ligne ne partage un courriel ou un téléphone avec une autre.';
+
+	/// fr: '(one) {{n} cas à regarder} (other) {{n} cas à regarder}'
+	String total({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} cas à regarder',
+		other: '${n} cas à regarder',
+	);
+
+	/// fr: 'Choix faits par vous : {choisis} sur {total}. Pour les autres, la ligne la plus récente est gardée.'
+	String tranches({required Object choisis, required Object total}) => 'Choix faits par vous : ${choisis} sur ${total}. Pour les autres, la ligne la plus récente est gardée.';
+
+	late final Traductions$admin$importFormulaires$doublons$nature$fr nature = Traductions$admin$importFormulaires$doublons$nature$fr.internal(_root);
+
+	/// fr: 'Lignes {liste}'
+	String lignes({required Object liste}) => 'Lignes ${liste}';
+
+	/// fr: '(one) {et {n} ligne déjà enregistrée} (other) {et {n} lignes déjà enregistrées}'
+	String dansLaBase({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'et ${n} ligne déjà enregistrée',
+		other: 'et ${n} lignes déjà enregistrées',
+	);
+
+	/// fr: 'Choisissez la ligne à garder, ou indiquez qu'il s'agit de personnes distinctes.'
+	String get choisirLigne => 'Choisissez la ligne à garder, ou indiquez qu\'il s\'agit de personnes distinctes.';
+
+	/// fr: 'Voir les choix pour ce cas'
+	String get ouvrir => 'Voir les choix pour ce cas';
+
+	/// fr: 'Fermer les choix de ce cas'
+	String get fermer => 'Fermer les choix de ce cas';
+
+	/// fr: '(one) {Voir {n} cas de plus} (other) {Voir {n} cas de plus}'
+	String plus({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Voir ${n} cas de plus',
+		other: 'Voir ${n} cas de plus',
+	);
+
+	late final Traductions$admin$importFormulaires$doublons$etat$fr etat = Traductions$admin$importFormulaires$doublons$etat$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$doublons$option$fr option = Traductions$admin$importFormulaires$doublons$option$fr.internal(_root);
+}
+
+// Path: admin.importFormulaires.analyse
+class Traductions$admin$importFormulaires$analyse$fr {
+	Traductions$admin$importFormulaires$analyse$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'L'analyse n'a pas abouti.'
+	String get echec => 'L\'analyse n\'a pas abouti.';
+
+	/// fr: 'Rien n'a été enregistré. Réessayez dans un instant.'
+	String get echecPhrase => 'Rien n\'a été enregistré. Réessayez dans un instant.';
+
+	/// fr: 'Le serveur ne peut pas lire ce fichier avec ces noms. Vérifiez le classeur, l'onglet et le fichier, puis réessayez.'
+	String get refus => 'Le serveur ne peut pas lire ce fichier avec ces noms. Vérifiez le classeur, l\'onglet et le fichier, puis réessayez.';
+
+	/// fr: 'Réessayer l'analyse'
+	String get reessayer => 'Réessayer l\'analyse';
+}
+
+// Path: admin.importFormulaires.apercu
+class Traductions$admin$importFormulaires$apercu$fr {
+	Traductions$admin$importFormulaires$apercu$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Est-ce bien le bon fichier ?'
+	String get question => 'Est-ce bien le bon fichier ?';
+
+	/// fr: 'Voici ce que Rewayah a lu. Rien n'est encore enregistré.'
+	String get explication => 'Voici ce que Rewayah a lu. Rien n\'est encore enregistré.';
+
+	/// fr: 'Les contacts sont masqués dans l'aperçu.'
+	String get contactsMasques => 'Les contacts sont masqués dans l\'aperçu.';
+
+	/// fr: '(one) {{n} ligne lue} (other) {{n} lignes lues}'
+	String lignes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} ligne lue',
+		other: '${n} lignes lues',
+	);
+
+	/// fr: 'Colonnes reconnues : {reconnues} sur {total}'
+	String colonnesReconnues({required Object reconnues, required Object total}) => 'Colonnes reconnues : ${reconnues} sur ${total}';
+
+	/// fr: 'Les premières lignes'
+	String get premieres => 'Les premières lignes';
+
+	/// fr: 'Ligne {ligne}'
+	String ligne({required Object ligne}) => 'Ligne ${ligne}';
+
+	/// fr: '(one) {{n} autre ligne n'est pas montrée ici.} (other) {{n} autres lignes ne sont pas montrées ici.}'
+	String autres({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} autre ligne n\'est pas montrée ici.',
+		other: '${n} autres lignes ne sont pas montrées ici.',
+	);
+
+	/// fr: 'Les lignes seront lues dès que les colonnes seront associées.'
+	String get sansLignes => 'Les lignes seront lues dès que les colonnes seront associées.';
+
+	/// fr: 'Des colonnes restent à associer'
+	String get colonnesATitre => 'Des colonnes restent à associer';
+
+	/// fr: 'Associez d'abord ces colonnes : {champs}.'
+	String mappageIncomplet({required Object champs}) => 'Associez d\'abord ces colonnes : ${champs}.';
+
+	/// fr: 'Deux colonnes se ressemblent'
+	String get ambiguTitre => 'Deux colonnes se ressemblent';
+
+	/// fr: 'Plusieurs colonnes portent le titre de : {champs}. Dites laquelle lire, au pas suivant.'
+	String ambigu({required Object champs}) => 'Plusieurs colonnes portent le titre de : ${champs}. Dites laquelle lire, au pas suivant.';
+
+	late final Traductions$admin$importFormulaires$apercu$marque$fr marque = Traductions$admin$importFormulaires$apercu$marque$fr.internal(_root);
+
+	/// fr: '« Courriel à obtenir » : pas de courriel valide, la personne ne peut pas être invitée. « Indicatif à confirmer » : le téléphone n'a pas d'indicatif reconnu. « Ignorée » : ligne vide ou répétée.'
+	String get aideMarques => '« Courriel à obtenir » : pas de courriel valide, la personne ne peut pas être invitée. « Indicatif à confirmer » : le téléphone n\'a pas d\'indicatif reconnu. « Ignorée » : ligne vide ou répétée.';
+}
+
+// Path: admin.importFormulaires.issue
+class Traductions$admin$importFormulaires$issue$fr {
+	Traductions$admin$importFormulaires$issue$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nouvelle'
+	String get nouvelle => 'Nouvelle';
+
+	/// fr: 'Corrigée'
+	String get corrigee => 'Corrigée';
+
+	/// fr: 'Déjà connue'
+	String get dejaConnue => 'Déjà connue';
+
+	/// fr: 'Ignorée'
+	String get ignoree => 'Ignorée';
+
+	/// fr: 'À corriger'
+	String get aCorriger => 'À corriger';
+
+	/// fr: 'En historique'
+	String get historique => 'En historique';
+}
+
+// Path: admin.importFormulaires.champ
+class Traductions$admin$importFormulaires$champ$fr {
+	Traductions$admin$importFormulaires$champ$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Date de la réponse'
+	String get horodatage => 'Date de la réponse';
+
+	/// fr: 'Sert à reconnaître la réponse si vous rejouez le fichier.'
+	String get horodatageAide => 'Sert à reconnaître la réponse si vous rejouez le fichier.';
+
+	/// fr: 'Genre'
+	String get genre => 'Genre';
+
+	/// fr: 'Sert à ranger la réponse du bon côté. Jamais montré dans l'aperçu.'
+	String get genreAide => 'Sert à ranger la réponse du bon côté. Jamais montré dans l\'aperçu.';
+
+	/// fr: 'Nom complet'
+	String get nom => 'Nom complet';
+
+	/// fr: 'Sert à reconnaître la personne. Jamais montré ici.'
+	String get nomAide => 'Sert à reconnaître la personne. Jamais montré ici.';
+
+	/// fr: 'Téléphone WhatsApp'
+	String get telephone => 'Téléphone WhatsApp';
+
+	/// fr: 'Avec l'indicatif du pays. Jamais complété ni deviné.'
+	String get telephoneAide => 'Avec l\'indicatif du pays. Jamais complété ni deviné.';
+
+	/// fr: 'Langue maternelle'
+	String get langueMaternelle => 'Langue maternelle';
+
+	/// fr: 'Facultatif.'
+	String get langueMaternelleAide => 'Facultatif.';
+
+	/// fr: 'Langues d'explication'
+	String get languesExplication => 'Langues d\'explication';
+
+	/// fr: 'Les langues dans lesquelles la personne peut expliquer et corriger.'
+	String get languesExplicationAide => 'Les langues dans lesquelles la personne peut expliquer et corriger.';
+
+	/// fr: 'Mémorisation du Coran'
+	String get memorisation => 'Mémorisation du Coran';
+
+	/// fr: 'Une déclaration, pas un constat : le niveau se constate à l'entretien.'
+	String get memorisationAide => 'Une déclaration, pas un constat : le niveau se constate à l\'entretien.';
+
+	/// fr: 'Ijaza ou certificat à présenter'
+	String get ijaza => 'Ijaza ou certificat à présenter';
+
+	/// fr: 'Ce que la personne peut montrer à l'entretien.'
+	String get ijazaAide => 'Ce que la personne peut montrer à l\'entretien.';
+
+	/// fr: 'Expérience avec les débutants'
+	String get experience => 'Expérience avec les débutants';
+
+	/// fr: 'Facultatif.'
+	String get experienceAide => 'Facultatif.';
+
+	/// fr: 'Créneaux (heure de La Mecque)'
+	String get creneaux => 'Créneaux (heure de La Mecque)';
+
+	/// fr: 'Gardés tels quels, sans jour. Jamais lus comme une disponibilité.'
+	String get creneauxAide => 'Gardés tels quels, sans jour. Jamais lus comme une disponibilité.';
+
+	/// fr: 'Heures par semaine'
+	String get heures => 'Heures par semaine';
+
+	/// fr: 'Converties en nombre de classes souhaitées.'
+	String get heuresAide => 'Converties en nombre de classes souhaitées.';
+
+	/// fr: 'Début possible'
+	String get debut => 'Début possible';
+
+	/// fr: 'Facultatif.'
+	String get debutAide => 'Facultatif.';
+
+	/// fr: 'Accord de contact par WhatsApp'
+	String get whatsapp => 'Accord de contact par WhatsApp';
+
+	/// fr: 'Vaut pour ce contact seulement.'
+	String get whatsappAide => 'Vaut pour ce contact seulement.';
+
+	/// fr: 'Courriel'
+	String get courriel => 'Courriel';
+
+	/// fr: 'Sert à reconnaître la personne à son inscription. Jamais montré ici.'
+	String get courrielAide => 'Sert à reconnaître la personne à son inscription. Jamais montré ici.';
+
+	/// fr: 'Téléphone ou courriel'
+	String get contact => 'Téléphone ou courriel';
+}
+
+// Path: admin.importFormulaires.controle
+class Traductions$admin$importFormulaires$controle$fr {
+	Traductions$admin$importFormulaires$controle$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Y a-t-il des lignes à corriger ?'
+	String get question => 'Y a-t-il des lignes à corriger ?';
+
+	/// fr: 'Une ligne à corriger n'est pas importée. Corrigez-la dans le classeur, exportez de nouveau le fichier, puis rejouez l'import : les lignes déjà importées ne sont pas ajoutées deux fois.'
+	String get explication => 'Une ligne à corriger n\'est pas importée. Corrigez-la dans le classeur, exportez de nouveau le fichier, puis rejouez l\'import : les lignes déjà importées ne sont pas ajoutées deux fois.';
+
+	/// fr: 'Aucune erreur ni avertissement dans ce fichier.'
+	String get aucune => 'Aucune erreur ni avertissement dans ce fichier.';
+
+	/// fr: 'Chaque ligne a pu être lue.'
+	String get aucuneAide => 'Chaque ligne a pu être lue.';
+
+	late final Traductions$admin$importFormulaires$controle$aCorriger$fr aCorriger = Traductions$admin$importFormulaires$controle$aCorriger$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$controle$avertissements$fr avertissements = Traductions$admin$importFormulaires$controle$avertissements$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$controle$ignorees$fr ignorees = Traductions$admin$importFormulaires$controle$ignorees$fr.internal(_root);
+
+	/// fr: 'Ligne {ligne} : {motif}'
+	String ligne({required Object ligne, required Object motif}) => 'Ligne ${ligne} : ${motif}';
+
+	/// fr: '(one) {Voir {n} ligne de plus} (other) {Voir {n} lignes de plus}'
+	String plus({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Voir ${n} ligne de plus',
+		other: 'Voir ${n} lignes de plus',
+	);
+}
+
+// Path: admin.importFormulaires.motif
+class Traductions$admin$importFormulaires$motif$fr {
+	Traductions$admin$importFormulaires$motif$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'ligne vide'
+	String get ligneVide => 'ligne vide';
+
+	/// fr: 'la date de la réponse est illisible'
+	String get horodatageIllisible => 'la date de la réponse est illisible';
+
+	/// fr: 'le genre n'est pas reconnu'
+	String get genreIllisible => 'le genre n\'est pas reconnu';
+
+	/// fr: 'le nom est absent'
+	String get nomAbsent => 'le nom est absent';
+
+	/// fr: 'le nom est trop long'
+	String get nomTropLong => 'le nom est trop long';
+
+	/// fr: 'ligne répétée à l'identique'
+	String get memeReferenceMemeContenu => 'ligne répétée à l\'identique';
+
+	/// fr: 'même date de réponse qu'une autre ligne, mais un contenu différent'
+	String get memeReferenceContenuDifferent => 'même date de réponse qu\'une autre ligne, mais un contenu différent';
+
+	/// fr: 'le genre a changé alors que la personne est suivie : il fixe son côté'
+	String get genreChangeSurLigneSuivie => 'le genre a changé alors que la personne est suivie : il fixe son côté';
+
+	/// fr: 'déjà connue par l'import des inscriptions'
+	String get inscription1210 => 'déjà connue par l\'import des inscriptions';
+
+	/// fr: 'un point est à vérifier dans cette ligne'
+	String get inconnu => 'un point est à vérifier dans cette ligne';
+}
+
+// Path: admin.importFormulaires.avertissement
+class Traductions$admin$importFormulaires$avertissement$fr {
+	Traductions$admin$importFormulaires$avertissement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'le téléphone est illisible'
+	String get telephoneIllisible => 'le téléphone est illisible';
+
+	/// fr: 'le téléphone n'a pas l'indicatif du pays'
+	String get formatNational => 'le téléphone n\'a pas l\'indicatif du pays';
+
+	/// fr: 'l'indicatif du téléphone est inconnu'
+	String get indicatifInconnu => 'l\'indicatif du téléphone est inconnu';
+
+	/// fr: 'la longueur du téléphone est inhabituelle'
+	String get longueurImplausible => 'la longueur du téléphone est inhabituelle';
+
+	/// fr: 'l'indicatif du téléphone est à confirmer'
+	String get indicatifAConfirmer => 'l\'indicatif du téléphone est à confirmer';
+
+	/// fr: 'un zéro en trop après l'indicatif du téléphone'
+	String get zeroNationalEnTrop => 'un zéro en trop après l\'indicatif du téléphone';
+
+	/// fr: 'le courriel est mal écrit : il est à obtenir'
+	String get courrielMalforme => 'le courriel est mal écrit : il est à obtenir';
+
+	/// fr: 'langue maternelle inconnue, classée en autre langue'
+	String get langueMaternelleVersAutre => 'langue maternelle inconnue, classée en autre langue';
+
+	/// fr: 'une langue d'explication inconnue est classée en autre langue'
+	String get langueInconnueVersAutre => 'une langue d\'explication inconnue est classée en autre langue';
+
+	/// fr: 'l'arabe est retiré des langues d'explication (ce n'est pas une langue de cours)'
+	String get arabeRetire => 'l\'arabe est retiré des langues d\'explication (ce n\'est pas une langue de cours)';
+
+	/// fr: 'une réponse à choix n'est pas reconnue'
+	String get libelleInconnu => 'une réponse à choix n\'est pas reconnue';
+
+	/// fr: 'ijaza déclarée comme mémorisation : la mémorisation est à renseigner par la personne'
+	String get ijazaDeclareeEnG => 'ijaza déclarée comme mémorisation : la mémorisation est à renseigner par la personne';
+
+	/// fr: '« prêt à un test » n'a pas d'équivalent pour l'expérience : à renseigner par la personne'
+	String get experiencePretTest => '« prêt à un test » n\'a pas d\'équivalent pour l\'expérience : à renseigner par la personne';
+
+	/// fr: 'moins de 3 heures par semaine : cela ne fait pas une classe, à renseigner par la personne'
+	String get moinsDe3Heures => 'moins de 3 heures par semaine : cela ne fait pas une classe, à renseigner par la personne';
+
+	/// fr: 'créneaux contradictoires, gardés tels quels'
+	String get creneauxContradictoires => 'créneaux contradictoires, gardés tels quels';
+}
+
+// Path: admin.importFormulaires.comptes
+class Traductions$admin$importFormulaires$comptes$fr {
+	Traductions$admin$importFormulaires$comptes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ces nombres sont-ils ceux que vous attendiez ?'
+	String get question => 'Ces nombres sont-ils ceux que vous attendiez ?';
+
+	/// fr: 'Voici ce que Rewayah a compté dans le fichier. Comparez avec votre décompte avant de confirmer.'
+	String get explication => 'Voici ce que Rewayah a compté dans le fichier. Comparez avec votre décompte avant de confirmer.';
+
+	/// fr: 'Nouvelles'
+	String get nouvelles => 'Nouvelles';
+
+	/// fr: 'Pas encore connues : elles seront enregistrées.'
+	String get nouvellesAide => 'Pas encore connues : elles seront enregistrées.';
+
+	/// fr: 'Déjà connues'
+	String get dejaConnues => 'Déjà connues';
+
+	/// fr: 'Déjà enregistrées : rien ne change.'
+	String get dejaConnuesAide => 'Déjà enregistrées : rien ne change.';
+
+	/// fr: 'Ignorées'
+	String get ignorees => 'Ignorées';
+
+	/// fr: 'Lignes vides ou répétées.'
+	String get ignoreesAide => 'Lignes vides ou répétées.';
+
+	/// fr: 'À corriger'
+	String get aCorriger => 'À corriger';
+
+	/// fr: 'Lignes illisibles : elles ne sont pas importées.'
+	String get aCorrigerAide => 'Lignes illisibles : elles ne sont pas importées.';
+
+	/// fr: 'Corrigées sur place'
+	String get corrigees => 'Corrigées sur place';
+
+	/// fr: 'Personnes concernées'
+	String get personnes => 'Personnes concernées';
+
+	/// fr: 'Lignes lues'
+	String get lignesLues => 'Lignes lues';
+
+	late final Traductions$admin$importFormulaires$comptes$attendus$fr attendus = Traductions$admin$importFormulaires$comptes$attendus$fr.internal(_root);
+
+	/// fr: 'Indiquez le décompte à comparer pour continuer.'
+	String get choisir => 'Indiquez le décompte à comparer pour continuer.';
+
+	/// fr: 'Saisissez au moins un nombre pour continuer.'
+	String get saisirNombre => 'Saisissez au moins un nombre pour continuer.';
+
+	/// fr: 'Un écart à vérifier'
+	String get ecartTitre => 'Un écart à vérifier';
+
+	/// fr: 'Écart avec les comptes attendus : attendu {attendu}, lu {lu}. Vérifiez avant de confirmer : vous pouvez importer quand même.'
+	String ecart({required Object attendu, required Object lu}) => 'Écart avec les comptes attendus : attendu ${attendu}, lu ${lu}. Vérifiez avant de confirmer : vous pouvez importer quand même.';
+
+	/// fr: 'Les nombres correspondent à ce que vous attendiez.'
+	String get accord => 'Les nombres correspondent à ce que vous attendiez.';
+}
+
+// Path: admin.importFormulaires.unite
+class Traductions$admin$importFormulaires$unite$fr {
+	Traductions$admin$importFormulaires$unite$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '(one) {{n} ligne} (other) {{n} lignes}'
+	String lignes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} ligne',
+		other: '${n} lignes',
+	);
+
+	/// fr: '(one) {{n} personne} (other) {{n} personnes}'
+	String personnes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} personne',
+		other: '${n} personnes',
+	);
+}
+
+// Path: admin.importFormulaires.confirmation
+class Traductions$admin$importFormulaires$confirmation$fr {
+	Traductions$admin$importFormulaires$confirmation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Importer ces réponses maintenant ?'
+	String get question => 'Importer ces réponses maintenant ?';
+
+	/// fr: 'Relisez ce que l'import va faire. Il n'est pas annulable depuis cet écran.'
+	String get explication => 'Relisez ce que l\'import va faire. Il n\'est pas annulable depuis cet écran.';
+
+	late final Traductions$admin$importFormulaires$confirmation$resume$fr resume = Traductions$admin$importFormulaires$confirmation$resume$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$confirmation$garanties$fr garanties = Traductions$admin$importFormulaires$confirmation$garanties$fr.internal(_root);
+
+	/// fr: 'Importer les réponses'
+	String get importer => 'Importer les réponses';
+
+	/// fr: 'Envoi en cours. L'import n'est confirmé qu'à la réponse de Rewayah.'
+	String get envoi => 'Envoi en cours. L\'import n\'est confirmé qu\'à la réponse de Rewayah.';
+
+	/// fr: 'L'import pourra être confirmé quand la connexion reviendra.'
+	String get horsLigne => 'L\'import pourra être confirmé quand la connexion reviendra.';
+
+	/// fr: 'L'import n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Touchez de nouveau « Importer les réponses » : la même demande ne s'enregistre qu'une fois.'
+	String get nonConfirme => 'L\'import n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Touchez de nouveau « Importer les réponses » : la même demande ne s\'enregistre qu\'une fois.';
+
+	/// fr: 'Le fichier ou ses réglages ont changé depuis l'aperçu. Relancez l'analyse pour continuer.'
+	String get jetonPerime => 'Le fichier ou ses réglages ont changé depuis l\'aperçu. Relancez l\'analyse pour continuer.';
+
+	/// fr: 'Un choix de doublon ne correspond plus au fichier. Relancez l'analyse, puis choisissez de nouveau.'
+	String get choixInvalide => 'Un choix de doublon ne correspond plus au fichier. Relancez l\'analyse, puis choisissez de nouveau.';
+
+	/// fr: 'Cette demande ne peut pas être rejouée telle quelle. Relancez l'analyse pour recommencer proprement.'
+	String get cleReutilisee => 'Cette demande ne peut pas être rejouée telle quelle. Relancez l\'analyse pour recommencer proprement.';
+
+	/// fr: 'Le serveur refuse cet import. Vérifiez que vous êtes connecté avec la double vérification, puis réessayez.'
+	String get refus => 'Le serveur refuse cet import. Vérifiez que vous êtes connecté avec la double vérification, puis réessayez.';
+
+	/// fr: 'Import non confirmé'
+	String get titreNonConfirme => 'Import non confirmé';
+
+	/// fr: 'L'analyse est à refaire'
+	String get titreARefaire => 'L\'analyse est à refaire';
+
+	/// fr: 'Relancer l'analyse'
+	String get relancer => 'Relancer l\'analyse';
+}
+
+// Path: admin.importFormulaires.rapport
+class Traductions$admin$importFormulaires$rapport$fr {
+	Traductions$admin$importFormulaires$rapport$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Import terminé'
+	String get titre => 'Import terminé';
+
+	/// fr: 'Voici ce que l'import a fait.'
+	String get question => 'Voici ce que l\'import a fait.';
+
+	/// fr: 'Cette demande avait déjà été enregistrée : rien n'a été ajouté une seconde fois.'
+	String get rejoue => 'Cette demande avait déjà été enregistrée : rien n\'a été ajouté une seconde fois.';
+
+	/// fr: 'Ces réponses ne créent aucune candidature : elles servent à reconnaître les personnes quand elles s'inscrivent.'
+	String get sansCandidature => 'Ces réponses ne créent aucune candidature : elles servent à reconnaître les personnes quand elles s\'inscrivent.';
+
+	late final Traductions$admin$importFormulaires$rapport$compteurs$fr compteurs = Traductions$admin$importFormulaires$rapport$compteurs$fr.internal(_root);
+
+	/// fr: 'Remplacées par une plus récente : {n}'
+	String historique({required Object n}) => 'Remplacées par une plus récente : ${n}';
+
+	late final Traductions$admin$importFormulaires$rapport$lignes$fr lignes = Traductions$admin$importFormulaires$rapport$lignes$fr.internal(_root);
+
+	/// fr: '(one) {Voir {n} ligne de plus} (other) {Voir {n} lignes de plus}'
+	String plus({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Voir ${n} ligne de plus',
+		other: 'Voir ${n} lignes de plus',
+	);
+
+	/// fr: 'Importer un autre fichier'
+	String get autreFichier => 'Importer un autre fichier';
+}
+
 // Path: admin.tableau.activite
 class Traductions$admin$tableau$activite$fr {
 	Traductions$admin$tableau$activite$fr.internal(this._root);
@@ -36021,6 +36982,294 @@ class Traductions$admin$candidatures$retrait$canaux$fr {
 	String get courriel => 'Par courriel';
 }
 
+// Path: admin.importFormulaires.depot.noms
+class Traductions$admin$importFormulaires$depot$noms$fr {
+	Traductions$admin$importFormulaires$depot$noms$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce fichier sera enregistré sous'
+	String get titre => 'Ce fichier sera enregistré sous';
+
+	/// fr: 'Classeur « {classeur} », onglet « {onglet} »'
+	String ligne({required Object classeur, required Object onglet}) => 'Classeur « ${classeur} », onglet « ${onglet} »';
+
+	/// fr: 'Ces deux noms servent à reconnaître chaque réponse. Si vous rejouez plus tard le même fichier corrigé, gardez exactement les mêmes noms : aucune réponse ne sera ajoutée deux fois.'
+	String get aide => 'Ces deux noms servent à reconnaître chaque réponse. Si vous rejouez plus tard le même fichier corrigé, gardez exactement les mêmes noms : aucune réponse ne sera ajoutée deux fois.';
+
+	/// fr: 'Corriger ces noms'
+	String get corriger => 'Corriger ces noms';
+
+	/// fr: 'Garder ces noms'
+	String get garder => 'Garder ces noms';
+
+	/// fr: 'Nom du classeur'
+	String get classeur => 'Nom du classeur';
+
+	/// fr: 'Nom de l'onglet'
+	String get onglet => 'Nom de l\'onglet';
+
+	/// fr: 'Le nom du fichier ne dit pas l'onglet. Indiquez-le pour continuer.'
+	String get ongletManquant => 'Le nom du fichier ne dit pas l\'onglet. Indiquez-le pour continuer.';
+
+	/// fr: 'Un nom ne peut pas être vide, dépasser 200 signes ni contenir la barre verticale. Corrigez-le pour continuer.'
+	String get invalide => 'Un nom ne peut pas être vide, dépasser 200 signes ni contenir la barre verticale. Corrigez-le pour continuer.';
+}
+
+// Path: admin.importFormulaires.fichier.cause
+class Traductions$admin$importFormulaires$fichier$cause$fr {
+	Traductions$admin$importFormulaires$fichier$cause$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'un guillemet ouvert n'est jamais refermé'
+	String get guillemetNonFerme => 'un guillemet ouvert n\'est jamais refermé';
+
+	/// fr: 'le fichier dépasse 5 Mo'
+	String get tropVolumineux => 'le fichier dépasse 5 Mo';
+
+	/// fr: 'la mise en forme n'est pas celle d'un export CSV'
+	String get malForme => 'la mise en forme n\'est pas celle d\'un export CSV';
+
+	/// fr: 'son contenu n'est pas celui d'un export CSV'
+	String get inconnue => 'son contenu n\'est pas celui d\'un export CSV';
+}
+
+// Path: admin.importFormulaires.colonnes.libelles
+class Traductions$admin$importFormulaires$colonnes$libelles$fr {
+	Traductions$admin$importFormulaires$colonnes$libelles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Comment les réponses sont lues'
+	String get titre => 'Comment les réponses sont lues';
+
+	/// fr: 'Les réponses à choix (genre, langues, niveau de mémorisation, début possible) sont lues avec la table des libellés de Rewayah. Un libellé qui n'y figure pas est signalé ligne par ligne, au pas « Erreurs ».'
+	String get texte => 'Les réponses à choix (genre, langues, niveau de mémorisation, début possible) sont lues avec la table des libellés de Rewayah. Un libellé qui n\'y figure pas est signalé ligne par ligne, au pas « Erreurs ».';
+}
+
+// Path: admin.importFormulaires.doublons.nature
+class Traductions$admin$importFormulaires$doublons$nature$fr {
+	Traductions$admin$importFormulaires$doublons$nature$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Même courriel'
+	String get courriel => 'Même courriel';
+
+	/// fr: 'Même téléphone'
+	String get telephone => 'Même téléphone';
+
+	/// fr: 'Même courriel et même téléphone'
+	String get courrielEtTelephone => 'Même courriel et même téléphone';
+}
+
+// Path: admin.importFormulaires.doublons.etat
+class Traductions$admin$importFormulaires$doublons$etat$fr {
+	Traductions$admin$importFormulaires$doublons$etat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La plus récente est gardée'
+	String get recente => 'La plus récente est gardée';
+
+	/// fr: 'La ligne déjà enregistrée est gardée'
+	String get base => 'La ligne déjà enregistrée est gardée';
+
+	/// fr: 'Ligne {ligne} gardée'
+	String ligne({required Object ligne}) => 'Ligne ${ligne} gardée';
+
+	/// fr: 'Personnes distinctes'
+	String get distinctes => 'Personnes distinctes';
+
+	/// fr: 'Choix déjà enregistré'
+	String get enregistre => 'Choix déjà enregistré';
+}
+
+// Path: admin.importFormulaires.doublons.option
+class Traductions$admin$importFormulaires$doublons$option$fr {
+	Traductions$admin$importFormulaires$doublons$option$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$admin$importFormulaires$doublons$option$recente$fr recente = Traductions$admin$importFormulaires$doublons$option$recente$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$doublons$option$base$fr base = Traductions$admin$importFormulaires$doublons$option$base$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$doublons$option$enregistre$fr enregistre = Traductions$admin$importFormulaires$doublons$option$enregistre$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$doublons$option$ligne$fr ligne = Traductions$admin$importFormulaires$doublons$option$ligne$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$doublons$option$distinctes$fr distinctes = Traductions$admin$importFormulaires$doublons$option$distinctes$fr.internal(_root);
+}
+
+// Path: admin.importFormulaires.apercu.marque
+class Traductions$admin$importFormulaires$apercu$marque$fr {
+	Traductions$admin$importFormulaires$apercu$marque$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Courriel à obtenir'
+	String get courrielAObtenir => 'Courriel à obtenir';
+
+	/// fr: 'Indicatif à confirmer'
+	String get indicatifAConfirmer => 'Indicatif à confirmer';
+}
+
+// Path: admin.importFormulaires.controle.aCorriger
+class Traductions$admin$importFormulaires$controle$aCorriger$fr {
+	Traductions$admin$importFormulaires$controle$aCorriger$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À corriger'
+	String get titre => 'À corriger';
+
+	/// fr: 'Ces lignes ne seront pas importées.'
+	String get aide => 'Ces lignes ne seront pas importées.';
+}
+
+// Path: admin.importFormulaires.controle.avertissements
+class Traductions$admin$importFormulaires$controle$avertissements$fr {
+	Traductions$admin$importFormulaires$controle$avertissements$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À regarder'
+	String get titre => 'À regarder';
+
+	/// fr: 'Ces lignes sont importées, avec un point à vérifier.'
+	String get aide => 'Ces lignes sont importées, avec un point à vérifier.';
+}
+
+// Path: admin.importFormulaires.controle.ignorees
+class Traductions$admin$importFormulaires$controle$ignorees$fr {
+	Traductions$admin$importFormulaires$controle$ignorees$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ignorées'
+	String get titre => 'Ignorées';
+
+	/// fr: 'Lignes vides ou répétées à l'identique.'
+	String get aide => 'Lignes vides ou répétées à l\'identique.';
+}
+
+// Path: admin.importFormulaires.comptes.attendus
+class Traductions$admin$importFormulaires$comptes$attendus$fr {
+	Traductions$admin$importFormulaires$comptes$attendus$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Quel décompte attendiez-vous ?'
+	String get question => 'Quel décompte attendiez-vous ?';
+
+	late final Traductions$admin$importFormulaires$comptes$attendus$fichier2110$fr fichier2110 = Traductions$admin$importFormulaires$comptes$attendus$fichier2110$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$comptes$attendus$autres$fr autres = Traductions$admin$importFormulaires$comptes$attendus$autres$fr.internal(_root);
+	late final Traductions$admin$importFormulaires$comptes$attendus$aucun$fr aucun = Traductions$admin$importFormulaires$comptes$attendus$aucun$fr.internal(_root);
+
+	/// fr: 'Lignes attendues'
+	String get lignes => 'Lignes attendues';
+
+	/// fr: 'Personnes attendues'
+	String get personnes => 'Personnes attendues';
+
+	/// fr: 'Un nombre entier. Laissez vide ce que vous ne comparez pas.'
+	String get aide => 'Un nombre entier. Laissez vide ce que vous ne comparez pas.';
+}
+
+// Path: admin.importFormulaires.confirmation.resume
+class Traductions$admin$importFormulaires$confirmation$resume$fr {
+	Traductions$admin$importFormulaires$confirmation$resume$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce qui sera enregistré'
+	String get titre => 'Ce qui sera enregistré';
+
+	/// fr: 'Fichier'
+	String get fichier => 'Fichier';
+
+	/// fr: 'Doublons : {choisis} cas tranchés par vous sur {total}. Pour les autres, la ligne la plus récente est gardée.'
+	String doublons({required Object choisis, required Object total}) => 'Doublons : ${choisis} cas tranchés par vous sur ${total}. Pour les autres, la ligne la plus récente est gardée.';
+
+	/// fr: 'Aucun doublon probable à régler.'
+	String get aucunDoublon => 'Aucun doublon probable à régler.';
+}
+
+// Path: admin.importFormulaires.confirmation.garanties
+class Traductions$admin$importFormulaires$confirmation$garanties$fr {
+	Traductions$admin$importFormulaires$confirmation$garanties$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce que l'import ne fait pas'
+	String get titre => 'Ce que l\'import ne fait pas';
+
+	/// fr: 'Il ne crée aucun compte, aucune invitation ni aucune candidature, et n'envoie aucun message. Il enregistre des réponses qui servent à reconnaître les personnes quand elles s'inscrivent. Rejouer le même fichier n'ajoute rien.'
+	String get texte => 'Il ne crée aucun compte, aucune invitation ni aucune candidature, et n\'envoie aucun message. Il enregistre des réponses qui servent à reconnaître les personnes quand elles s\'inscrivent. Rejouer le même fichier n\'ajoute rien.';
+}
+
+// Path: admin.importFormulaires.rapport.compteurs
+class Traductions$admin$importFormulaires$rapport$compteurs$fr {
+	Traductions$admin$importFormulaires$rapport$compteurs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Enregistrées.'
+	String get nouvelles => 'Enregistrées.';
+
+	/// fr: 'Déjà enregistrées : rien n'a changé.'
+	String get dejaConnues => 'Déjà enregistrées : rien n\'a changé.';
+
+	/// fr: 'Lignes illisibles : non importées.'
+	String get aCorriger => 'Lignes illisibles : non importées.';
+}
+
+// Path: admin.importFormulaires.rapport.lignes
+class Traductions$admin$importFormulaires$rapport$lignes$fr {
+	Traductions$admin$importFormulaires$rapport$lignes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ligne par ligne'
+	String get titre => 'Ligne par ligne';
+
+	/// fr: 'Chaque ligne est reconnue par la date de sa réponse, jamais par le nom de la personne.'
+	String get aide => 'Chaque ligne est reconnue par la date de sa réponse, jamais par le nom de la personne.';
+
+	/// fr: 'Réponse du {reference}'
+	String reference({required Object reference}) => 'Réponse du ${reference}';
+
+	/// fr: 'Sans référence'
+	String get sansReference => 'Sans référence';
+}
+
 // Path: admin.finance.vue.alerte
 class Traductions$admin$finance$vue$alerte$fr {
 	Traductions$admin$finance$vue$alerte$fr.internal(this._root);
@@ -39009,6 +40258,132 @@ class Traductions$admin$candidatures$detail$talents$niveaux$fr {
 	String get metier => 'En fait son métier';
 }
 
+// Path: admin.importFormulaires.doublons.option.recente
+class Traductions$admin$importFormulaires$doublons$option$recente$fr {
+	Traductions$admin$importFormulaires$doublons$option$recente$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Garder la plus récente (ligne {ligne})'
+	String titre({required Object ligne}) => 'Garder la plus récente (ligne ${ligne})';
+
+	/// fr: 'Les autres lignes restent dans l'historique, rien n'est effacé. C'est ce que Rewayah fait sans votre choix.'
+	String get description => 'Les autres lignes restent dans l\'historique, rien n\'est effacé. C\'est ce que Rewayah fait sans votre choix.';
+}
+
+// Path: admin.importFormulaires.doublons.option.base
+class Traductions$admin$importFormulaires$doublons$option$base$fr {
+	Traductions$admin$importFormulaires$doublons$option$base$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Garder la ligne déjà enregistrée'
+	String get titre => 'Garder la ligne déjà enregistrée';
+
+	/// fr: 'Un import précédent a déjà retenu une ligne pour cette personne. Les lignes de ce fichier restent dans l'historique.'
+	String get description => 'Un import précédent a déjà retenu une ligne pour cette personne. Les lignes de ce fichier restent dans l\'historique.';
+}
+
+// Path: admin.importFormulaires.doublons.option.enregistre
+class Traductions$admin$importFormulaires$doublons$option$enregistre$fr {
+	Traductions$admin$importFormulaires$doublons$option$enregistre$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Garder votre choix précédent'
+	String get titre => 'Garder votre choix précédent';
+
+	/// fr: 'Vous avez déjà indiqué que ce sont des personnes distinctes.'
+	String get distinctes => 'Vous avez déjà indiqué que ce sont des personnes distinctes.';
+
+	/// fr: 'Vous avez déjà choisi la ligne à garder pour cette personne.'
+	String get ligne => 'Vous avez déjà choisi la ligne à garder pour cette personne.';
+}
+
+// Path: admin.importFormulaires.doublons.option.ligne
+class Traductions$admin$importFormulaires$doublons$option$ligne$fr {
+	Traductions$admin$importFormulaires$doublons$option$ligne$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Garder plutôt la ligne {ligne}'
+	String titre({required Object ligne}) => 'Garder plutôt la ligne ${ligne}';
+
+	/// fr: 'Cette ligne devient la réponse de la personne. Les autres passent dans l'historique.'
+	String get description => 'Cette ligne devient la réponse de la personne. Les autres passent dans l\'historique.';
+}
+
+// Path: admin.importFormulaires.doublons.option.distinctes
+class Traductions$admin$importFormulaires$doublons$option$distinctes$fr {
+	Traductions$admin$importFormulaires$doublons$option$distinctes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Personnes distinctes'
+	String get titre => 'Personnes distinctes';
+
+	/// fr: 'À choisir si ces lignes viennent de personnes différentes qui partagent un contact. Chacune garde sa réponse.'
+	String get description => 'À choisir si ces lignes viennent de personnes différentes qui partagent un contact. Chacune garde sa réponse.';
+
+	/// fr: 'deux personnes d'une même famille qui ont répondu avec le même numéro'
+	String get exemple => 'deux personnes d\'une même famille qui ont répondu avec le même numéro';
+}
+
+// Path: admin.importFormulaires.comptes.attendus.fichier2110
+class Traductions$admin$importFormulaires$comptes$attendus$fichier2110$fr {
+	Traductions$admin$importFormulaires$comptes$attendus$fichier2110$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le fichier du 21 octobre'
+	String get titre => 'Le fichier du 21 octobre';
+
+	/// fr: '440 lignes, soit 409 personnes une fois les doublons rapprochés : le décompte relevé dans le classeur ce jour-là.'
+	String get description => '440 lignes, soit 409 personnes une fois les doublons rapprochés : le décompte relevé dans le classeur ce jour-là.';
+}
+
+// Path: admin.importFormulaires.comptes.attendus.autres
+class Traductions$admin$importFormulaires$comptes$attendus$autres$fr {
+	Traductions$admin$importFormulaires$comptes$attendus$autres$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'D'autres nombres'
+	String get titre => 'D\'autres nombres';
+
+	/// fr: 'Vous connaissez le nombre de lignes ou de personnes de votre fichier. Saisissez-le : Rewayah signale tout écart.'
+	String get description => 'Vous connaissez le nombre de lignes ou de personnes de votre fichier. Saisissez-le : Rewayah signale tout écart.';
+}
+
+// Path: admin.importFormulaires.comptes.attendus.aucun
+class Traductions$admin$importFormulaires$comptes$attendus$aucun$fr {
+	Traductions$admin$importFormulaires$comptes$attendus$aucun$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucun décompte à comparer'
+	String get titre => 'Aucun décompte à comparer';
+
+	/// fr: 'Vous confirmez en vous fiant à l'aperçu.'
+	String get description => 'Vous confirmez en vous fiant à l\'aperçu.';
+}
+
 // Path: com.annonces.administration.moderation.regleMotif
 class Traductions$com$annonces$administration$moderation$regleMotif$fr {
 	Traductions$com$annonces$administration$moderation$regleMotif$fr.internal(this._root);
@@ -40577,6 +41952,35 @@ extension on Traductions {
 			'connexion.feuilleAppareil.plafond' => 'Le nombre d\'appareils par élève est limité. Si la limite est atteinte, retirez-en un depuis Foyer, Appareils du foyer.',
 			'connexion.feuilleAppareil.saisir' => 'Saisir le code',
 			'connexion.feuilleAppareil.fermer' => 'Fermer',
+			'inscription.telephone.question' => 'Votre numéro de téléphone',
+			'inscription.telephone.explication' => 'Il sert à éviter les doublons et à relier vos échanges avec l\'académie à votre candidature. L\'académie vous écrit dans l\'application. Il n\'est jamais montré aux autres personnes qui postulent.',
+			'inscription.telephone.indicatif' => 'Indicatif du pays',
+			'inscription.telephone.numero' => 'Numéro, sans l\'indicatif',
+			'inscription.telephone.indicatifManquant' => 'Choisissez l\'indicatif de votre pays.',
+			'inscription.telephone.numeroManquant' => 'Saisissez votre numéro de téléphone.',
+			'inscription.telephone.numeroInvalide' => 'Ce numéro n\'est pas lisible. Écrivez-le en chiffres, sans l\'indicatif du pays.',
+			'inscription.telephone.changerIndicatif' => 'Changer d\'indicatif',
+			'inscription.langue.question' => 'Dans quelle langue voulez-vous lire l\'application ?',
+			'inscription.langue.francais' => 'Français',
+			'inscription.langue.arabe' => 'العربية',
+			'inscription.langue.francaisExplication' => 'L\'application et les messages de l\'académie sont écrits en français.',
+			'inscription.langue.francaisExemple' => 'les boutons, les explications et les messages s\'affichent de gauche à droite.',
+			'inscription.langue.arabeExplication' => 'L\'application et les messages de l\'académie sont écrits en arabe.',
+			'inscription.langue.arabeExemple' => 'les boutons, les explications et les messages s\'affichent de droite à gauche.',
+			'inscription.confidentialite.kCase' => 'J\'ai lu et j\'accepte la politique de confidentialité.',
+			'inscription.confidentialite.lire' => 'Lire la politique de confidentialité',
+			'inscription.confidentialite.requise' => 'Cochez cette case pour envoyer votre candidature.',
+			'inscription.candidat.creationEchec' => 'Votre candidature n\'est peut-être pas partie. Réessayez dans un instant.',
+			'inscription.candidat.envoyer' => 'Envoyer ma candidature',
+			'inscription.candidat.accueil' => 'Vous déposez une candidature pour enseigner à Rewayah. Cela ne vous engage à rien.',
+			'inscription.candidat.ensuite' => 'Ensuite, la direction lit votre candidature et vous écrit dans l\'application.',
+			'inscription.candidat.horsLigne' => 'La candidature pourra être envoyée quand la connexion reviendra.',
+			'inscription.candidat.courrielAConfirmer' => 'Confirmez d\'abord votre adresse : ouvrez le lien reçu par courriel.',
+			'inscription.candidat.nonOuverte' => 'Les candidatures sans code ne sont pas encore ouvertes. Si la direction vous a remis un code, saisissez-le.',
+			'inscription.candidat.nonConfirmee' => 'Il est possible que votre demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'inscription.candidat.aCorriger' => ({required Object champs}) => 'Une réponse doit être corrigée : ${champs}. Appuyez sur « Modifier » à côté de la réponse.',
+			'inscription.candidat.confidentialitePerimee' => 'Le texte de la politique de confidentialité a changé, et la version affichée n\'est plus à jour. Rechargez la page ou mettez l\'application à jour, puis relisez le texte.',
+			'inscription.candidat.indisponible' => 'L\'inscription n\'est pas disponible pour le moment. Réessayez un peu plus tard.',
 			'inscription.titre' => 'Créer votre compte',
 			'inscription.etapeSur' => ({required Object n, required Object total}) => 'Étape ${n} sur ${total}',
 			'inscription.tempsRestant' => ({required Object minutes}) => 'Environ ${minutes} min',
@@ -40615,6 +42019,8 @@ extension on Traductions {
 			'inscription.usage.familleDescription' => 'Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous pourrez créer votre propre profil élève à tout moment.',
 			'inscription.usage.enseignant' => 'J\'ai un code d\'invitation',
 			'inscription.usage.enseignantInvite' => 'Vous êtes enseignant ? L\'académie vous invite par courriel.',
+			'inscription.usage.enseignantPostuler' => 'Vous souhaitez enseigner à Rewayah ?',
+			'inscription.usage.deposerCandidature' => 'Déposer ma candidature',
 			'inscription.usage.comptable' => 'J\'ai un code de comptable',
 			'inscription.usage.comptableInvite' => 'Vous êtes comptable ? La direction vous invite par courriel.',
 			'inscription.usage.coursQuestion' => 'Suivez-vous aussi des cours ?',
@@ -40626,6 +42032,8 @@ extension on Traductions {
 			'inscription.usage.coursOuiExemple' => 'vos enfants suivent leur classe et vous suivez la vôtre.',
 			'inscription.usage.coursNonExplication' => 'Vous inscrivez vos proches et suivez leurs progrès, sans cours pour vous. Vous pourrez changer d\'avis plus tard.',
 			'inscription.usage.coursNonExemple' => 'vous inscrivez votre fille et suivez ses séances depuis votre compte.',
+			'inscription.recap.telephone' => 'Téléphone',
+			'inscription.recap.langue' => 'Langue',
 			'inscription.recap.usage' => 'Type de compte',
 			'inscription.recap.identite' => 'Nom',
 			'inscription.recap.genre' => 'Genre',
@@ -40859,6 +42267,8 @@ extension on Traductions {
 			'kyc.erreur' => 'L\'envoi n\'a pas abouti. Réessayez dans un instant.',
 			'kyc.tropVolumineux' => ({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Reprenez-la en qualité plus basse.',
 			'kyc.manqueType' => 'Choisissez d\'abord la pièce que vous déposez.',
+			_ => null,
+		} ?? switch (path) {
 			'kyc.manquePhoto' => 'Choisissez d\'abord la photo de votre pièce.',
 			'appareils.titre' => 'Appareils',
 			'appareils.foyer.titre' => 'Appareils du foyer',
@@ -40892,8 +42302,6 @@ extension on Traductions {
 			'appareils.eleve.retraitTitre' => 'Retirer un appareil',
 			'appareils.eleve.retrait' => 'Un appareil retiré ne peut plus se reconnecter. S\'il est connecté en ce moment, il le reste jusqu\'à sa prochaine déconnexion.',
 			'appareils.plateforme.android' => 'Téléphone ou tablette Android',
-			_ => null,
-		} ?? switch (path) {
 			'appareils.plateforme.ios' => 'iPhone ou iPad',
 			'appareils.plateforme.web' => 'Navigateur web',
 			'appareils.plateforme.windows' => 'Ordinateur',
@@ -41373,6 +42781,8 @@ extension on Traductions {
 			'recrutement.invitations.erreurListe' => 'Les invitations n\'ont pas pu être lues. Réessayez dans un instant.',
 			'recrutement.invitations.sansDonnees' => 'Les invitations ne sont pas lisibles hors connexion.',
 			'recrutement.invitations.indisponibleTitre' => 'Invitations d\'enseignants',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.invitations.indisponiblePhrase' => 'Cette fonction sera disponible au branchement du serveur.',
 			'recrutement.invitations.etat.active' => 'Active',
 			'recrutement.invitations.etat.utilisee' => 'Utilisée',
@@ -41406,8 +42816,6 @@ extension on Traductions {
 			'recrutement.candidat.valide' => ({required Object date}) => 'Invitation valide jusqu\'au ${date}.',
 			'recrutement.candidat.valideDetail' => 'Vous pouvez créer votre profil d\'enseignant.',
 			'recrutement.candidat.creerProfil' => 'Créer mon profil',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.candidat.expiree' => 'Cette invitation a expiré.',
 			'recrutement.candidat.expireeDetail' => 'Demandez une nouvelle invitation à la direction de l\'académie.',
 			'recrutement.candidat.demanderNouvelle' => 'Demander une nouvelle invitation',
@@ -41887,6 +43295,8 @@ extension on Traductions {
 			'recrutement.parcours.q.compteBancaire.options.non.explication' => 'Vous pourrez alors choisir un moyen de paiement sur téléphone, s\'il en existe un dans votre pays.',
 			'recrutement.parcours.q.compteBancaire.options.non.exemple' => 'vous recevez et envoyez de l\'argent seulement avec votre téléphone.',
 			'recrutement.parcours.q.operateurs.titre' => 'Quels moyens de paiement sur téléphone utilisez-vous ?',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.operateurs.explication' => 'Voici les moyens que l\'académie a confirmés dans votre pays. Choisissez ceux que vous utilisez, s\'il y en a.',
 			'recrutement.parcours.q.operateurs.court' => 'Moyens de paiement sur téléphone',
 			'recrutement.parcours.q.moyensAccessibles.titre' => 'Quels moyens de paiement sont courants là où vous vivez ?',
@@ -41920,8 +43330,6 @@ extension on Traductions {
 			'recrutement.talents.intro.liberte.titre' => 'Vous gardez la main',
 			'recrutement.talents.intro.liberte.texte' => 'Vous pouvez modifier vos réponses ou les retirer quand vous le voulez, et retirer l\'accord qui permet de vous contacter.',
 			'recrutement.talents.intro.missions.titre' => 'Chaque mission a ses conditions',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.intro.missions.texte' => 'L\'académie vous les présente quand elle vous contacte. Cette page ne promet aucune mission.',
 			'recrutement.talents.competences.titre' => 'Que savez-vous faire d\'autre ?',
 			'recrutement.talents.competences.explication' => 'Touchez toutes les compétences que vous avez. Chaque carte donne un exemple. Si la vôtre n\'y est pas, choisissez « Autre domaine » en bas de la liste.',
@@ -42401,6 +43809,8 @@ extension on Traductions {
 			'admin.candidatures.gestes.demanderComplement' => 'Demander un complément',
 			'admin.candidatures.gestes.cloreComplement' => 'Clore le complément',
 			'admin.candidatures.gestes.mettreEnPause' => 'Mettre en pause',
+			_ => null,
+		} ?? switch (path) {
 			'admin.candidatures.gestes.leverPause' => 'Lever la pause',
 			'admin.candidatures.gestes.refuser' => 'Refuser la candidature',
 			'admin.candidatures.gestes.retrait' => 'Enregistrer un retrait demandé',
@@ -42434,8 +43844,6 @@ extension on Traductions {
 			'admin.candidatures.retrait.canaux.courriel' => 'Par courriel',
 			'admin.candidatures.retrait.date' => 'Jour de la demande',
 			'admin.candidatures.retrait.canalManquant' => 'Choisissez comment la demande est arrivée.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.candidatures.retrait.dateManquante' => 'Choisissez le jour de la demande.',
 			'admin.candidatures.retrait.aide' => 'Entre la réception de la candidature et aujourd\'hui.',
 			'admin.candidatures.pause.reprise' => 'Reprise prévue',
@@ -42587,6 +43995,267 @@ extension on Traductions {
 			'admin.importInscriptions.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
 			'admin.importInscriptions.erreur' => 'Les droits d\'import n\'ont pas pu être lus. Réessayez.',
 			'admin.importInscriptions.sansDonnees' => 'l\'import des inscriptions',
+			'admin.importFormulaires.titre' => 'Importer les formulaires de candidature',
+			'admin.importFormulaires.intro' => 'L\'import sert à reconnaître les personnes et à pré-remplir leur candidature. Il ne crée aucun compte.',
+			'admin.importFormulaires.lienEntree' => 'Importer les formulaires',
+			'admin.importFormulaires.retourCandidatures' => 'Revenir aux candidatures',
+			'admin.importFormulaires.lectureDroits' => 'Vos droits d\'import n\'ont pas pu être lus. Réessayez dans un instant.',
+			'admin.importFormulaires.sansDonnees' => 'vos droits d\'import des formulaires',
+			'admin.importFormulaires.acces.refuseTitre' => 'Import réservé',
+			'admin.importFormulaires.acces.refusePhrase' => 'Seul le super administrateur peut importer les formulaires de candidature. Demandez-lui de s\'en charger.',
+			'admin.importFormulaires.acces.doublePhrase' => 'Cet import demande votre second facteur.',
+			'admin.importFormulaires.acces.doubleSuite' => 'Touchez « Me reconnecter » : votre session se ferme et vous revenez à la connexion pour utiliser votre second facteur. Rien n\'a été enregistré.',
+			'admin.importFormulaires.acces.doubleAction' => 'Me reconnecter',
+			'admin.importFormulaires.pas.liste' => 'Les huit pas de l\'import',
+			'admin.importFormulaires.pas.depot' => 'Déposer le fichier',
+			'admin.importFormulaires.pas.apercu' => 'Aperçu',
+			'admin.importFormulaires.pas.colonnes' => 'Colonnes',
+			'admin.importFormulaires.pas.doublons' => 'Doublons',
+			'admin.importFormulaires.pas.controle' => 'Erreurs',
+			'admin.importFormulaires.pas.comptes' => 'Comptes',
+			'admin.importFormulaires.pas.confirmation' => 'Confirmation',
+			'admin.importFormulaires.pas.rapport' => 'Rapport',
+			'admin.importFormulaires.pas.surTotal' => ({required Object n, required Object total}) => 'Pas ${n} sur ${total}',
+			'admin.importFormulaires.pas.surTotalNomme' => ({required Object n, required Object total, required Object nom}) => 'Pas ${n} sur ${total} : ${nom}',
+			'admin.importFormulaires.pas.fait' => 'Terminé',
+			'admin.importFormulaires.pas.enCours' => 'En cours',
+			'admin.importFormulaires.pas.aVenir' => 'À venir',
+			'admin.importFormulaires.depot.question' => 'Quel fichier voulez-vous importer ?',
+			'admin.importFormulaires.depot.explication' => 'Choisissez l\'export CSV de la feuille des formulaires (dans Google Sheets : Fichier, Télécharger, Valeurs séparées par des virgules). Rien n\'est envoyé avant « Analyser le fichier ».',
+			'admin.importFormulaires.depot.carteTitre' => 'Choisir un fichier CSV',
+			'admin.importFormulaires.depot.carteDescription' => 'Le fichier est lu sur cet appareil. Il part vers Rewayah seulement quand vous touchez « Analyser le fichier ». Taille maximale : 5 Mo.',
+			'admin.importFormulaires.depot.carteChoisi' => ({required Object nom}) => 'Fichier choisi : ${nom}',
+			'admin.importFormulaires.depot.lignesLues' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} ligne de réponses dans ce fichier', other: '${n} lignes de réponses dans ce fichier', ), 
+			'admin.importFormulaires.depot.autreFichier' => 'Choisir un autre fichier',
+			'admin.importFormulaires.depot.noms.titre' => 'Ce fichier sera enregistré sous',
+			'admin.importFormulaires.depot.noms.ligne' => ({required Object classeur, required Object onglet}) => 'Classeur « ${classeur} », onglet « ${onglet} »',
+			'admin.importFormulaires.depot.noms.aide' => 'Ces deux noms servent à reconnaître chaque réponse. Si vous rejouez plus tard le même fichier corrigé, gardez exactement les mêmes noms : aucune réponse ne sera ajoutée deux fois.',
+			'admin.importFormulaires.depot.noms.corriger' => 'Corriger ces noms',
+			'admin.importFormulaires.depot.noms.garder' => 'Garder ces noms',
+			'admin.importFormulaires.depot.noms.classeur' => 'Nom du classeur',
+			'admin.importFormulaires.depot.noms.onglet' => 'Nom de l\'onglet',
+			'admin.importFormulaires.depot.noms.ongletManquant' => 'Le nom du fichier ne dit pas l\'onglet. Indiquez-le pour continuer.',
+			'admin.importFormulaires.depot.noms.invalide' => 'Un nom ne peut pas être vide, dépasser 200 signes ni contenir la barre verticale. Corrigez-le pour continuer.',
+			'admin.importFormulaires.depot.manqueFichier' => 'Choisissez d\'abord un fichier pour pouvoir l\'analyser.',
+			'admin.importFormulaires.depot.analyser' => 'Analyser le fichier',
+			'admin.importFormulaires.depot.analyseEnCours' => 'Rewayah lit votre fichier. Rien n\'est encore enregistré.',
+			'admin.importFormulaires.depot.horsLigne' => 'L\'analyse pourra se faire quand la connexion reviendra.',
+			'admin.importFormulaires.depot.vide' => 'Ce fichier ne contient aucune ligne à importer.',
+			'admin.importFormulaires.depot.videAide' => 'Vérifiez que vous avez exporté la bonne feuille.',
+			'admin.importFormulaires.fichier.titre' => 'Fichier illisible',
+			'admin.importFormulaires.fichier.illisibleLigne' => ({required Object ligne, required Object cause}) => 'Ce fichier n\'a pas pu être lu, ligne ${ligne} : ${cause}.',
+			'admin.importFormulaires.fichier.illisible' => ({required Object cause}) => 'Ce fichier n\'a pas pu être lu : ${cause}.',
+			'admin.importFormulaires.fichier.cause.guillemetNonFerme' => 'un guillemet ouvert n\'est jamais refermé',
+			'admin.importFormulaires.fichier.cause.tropVolumineux' => 'le fichier dépasse 5 Mo',
+			'admin.importFormulaires.fichier.cause.malForme' => 'la mise en forme n\'est pas celle d\'un export CSV',
+			'admin.importFormulaires.fichier.cause.inconnue' => 'son contenu n\'est pas celui d\'un export CSV',
+			'admin.importFormulaires.fichier.quoiFaire' => 'Exportez de nouveau la feuille en CSV depuis Google Sheets, puis choisissez le fichier.',
+			'admin.importFormulaires.colonnes.dejaAssocie' => ({required Object n}) => 'Actuellement lu dans la colonne ${n}. Le choisir ici le retire de cette colonne.',
+			'admin.importFormulaires.colonnes.titreColonne' => ({required Object n, required Object titre}) => 'Colonne ${n} : ${titre}',
+			'admin.importFormulaires.colonnes.question' => 'Chaque colonne contient-elle bien ce que Rewayah croit ?',
+			'admin.importFormulaires.colonnes.explication' => 'Rewayah repère chaque colonne par son titre. Touchez une colonne pour changer ce qu\'elle contient.',
+			'admin.importFormulaires.colonnes.sansTitreNumero' => ({required Object n}) => 'Colonne ${n}, sans titre',
+			'admin.importFormulaires.colonnes.nonLue' => 'Non lue',
+			'admin.importFormulaires.colonnes.nonLueAide' => 'Cette colonne n\'est pas utilisée par l\'import.',
+			'admin.importFormulaires.colonnes.choisir' => ({required Object n}) => 'Que contient la colonne ${n} ?',
+			'admin.importFormulaires.colonnes.sansTitre' => 'Colonne sans titre',
+			'admin.importFormulaires.colonnes.choixActuel' => 'Choix actuel',
+			'admin.importFormulaires.colonnes.nePasLire' => 'Ne pas lire cette colonne',
+			'admin.importFormulaires.colonnes.nePasLireAide' => 'Son contenu est ignoré par l\'import.',
+			'admin.importFormulaires.colonnes.fermer' => 'Fermer ce choix',
+			'admin.importFormulaires.colonnes.manquants' => ({required Object champs}) => 'Associez d\'abord ces colonnes : ${champs}.',
+			'admin.importFormulaires.colonnes.ambigu' => ({required Object champs}) => 'Plusieurs colonnes portent le titre de : ${champs}. Touchez celle qu\'il faut lire, puis choisissez ce qu\'elle contient.',
+			'admin.importFormulaires.colonnes.libelles.titre' => 'Comment les réponses sont lues',
+			'admin.importFormulaires.colonnes.libelles.texte' => 'Les réponses à choix (genre, langues, niveau de mémorisation, début possible) sont lues avec la table des libellés de Rewayah. Un libellé qui n\'y figure pas est signalé ligne par ligne, au pas « Erreurs ».',
+			'admin.importFormulaires.colonnes.relecture' => 'Vos corrections demandent une nouvelle lecture du fichier avant de continuer.',
+			'admin.importFormulaires.doublons.casTitre' => ({required Object nature, required Object n, required Object total}) => '${nature} : cas ${n} sur ${total}',
+			'admin.importFormulaires.doublons.question' => 'Ces lignes viennent-elles de la même personne ?',
+			'admin.importFormulaires.doublons.explication' => 'Quand des lignes partagent un courriel ou un téléphone, Rewayah les propose comme une même personne. Sans votre choix, la ligne la plus récente est gardée et les autres restent dans l\'historique. Rien n\'est effacé.',
+			'admin.importFormulaires.doublons.aucun' => 'Aucun doublon probable dans ce fichier.',
+			'admin.importFormulaires.doublons.aucunAide' => 'Aucune ligne ne partage un courriel ou un téléphone avec une autre.',
+			'admin.importFormulaires.doublons.total' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} cas à regarder', other: '${n} cas à regarder', ), 
+			'admin.importFormulaires.doublons.tranches' => ({required Object choisis, required Object total}) => 'Choix faits par vous : ${choisis} sur ${total}. Pour les autres, la ligne la plus récente est gardée.',
+			'admin.importFormulaires.doublons.nature.courriel' => 'Même courriel',
+			'admin.importFormulaires.doublons.nature.telephone' => 'Même téléphone',
+			'admin.importFormulaires.doublons.nature.courrielEtTelephone' => 'Même courriel et même téléphone',
+			'admin.importFormulaires.doublons.lignes' => ({required Object liste}) => 'Lignes ${liste}',
+			'admin.importFormulaires.doublons.dansLaBase' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'et ${n} ligne déjà enregistrée', other: 'et ${n} lignes déjà enregistrées', ), 
+			'admin.importFormulaires.doublons.choisirLigne' => 'Choisissez la ligne à garder, ou indiquez qu\'il s\'agit de personnes distinctes.',
+			'admin.importFormulaires.doublons.ouvrir' => 'Voir les choix pour ce cas',
+			'admin.importFormulaires.doublons.fermer' => 'Fermer les choix de ce cas',
+			'admin.importFormulaires.doublons.plus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Voir ${n} cas de plus', other: 'Voir ${n} cas de plus', ), 
+			'admin.importFormulaires.doublons.etat.recente' => 'La plus récente est gardée',
+			'admin.importFormulaires.doublons.etat.base' => 'La ligne déjà enregistrée est gardée',
+			'admin.importFormulaires.doublons.etat.ligne' => ({required Object ligne}) => 'Ligne ${ligne} gardée',
+			'admin.importFormulaires.doublons.etat.distinctes' => 'Personnes distinctes',
+			'admin.importFormulaires.doublons.etat.enregistre' => 'Choix déjà enregistré',
+			'admin.importFormulaires.doublons.option.recente.titre' => ({required Object ligne}) => 'Garder la plus récente (ligne ${ligne})',
+			'admin.importFormulaires.doublons.option.recente.description' => 'Les autres lignes restent dans l\'historique, rien n\'est effacé. C\'est ce que Rewayah fait sans votre choix.',
+			'admin.importFormulaires.doublons.option.base.titre' => 'Garder la ligne déjà enregistrée',
+			'admin.importFormulaires.doublons.option.base.description' => 'Un import précédent a déjà retenu une ligne pour cette personne. Les lignes de ce fichier restent dans l\'historique.',
+			'admin.importFormulaires.doublons.option.enregistre.titre' => 'Garder votre choix précédent',
+			'admin.importFormulaires.doublons.option.enregistre.distinctes' => 'Vous avez déjà indiqué que ce sont des personnes distinctes.',
+			'admin.importFormulaires.doublons.option.enregistre.ligne' => 'Vous avez déjà choisi la ligne à garder pour cette personne.',
+			'admin.importFormulaires.doublons.option.ligne.titre' => ({required Object ligne}) => 'Garder plutôt la ligne ${ligne}',
+			'admin.importFormulaires.doublons.option.ligne.description' => 'Cette ligne devient la réponse de la personne. Les autres passent dans l\'historique.',
+			'admin.importFormulaires.doublons.option.distinctes.titre' => 'Personnes distinctes',
+			'admin.importFormulaires.doublons.option.distinctes.description' => 'À choisir si ces lignes viennent de personnes différentes qui partagent un contact. Chacune garde sa réponse.',
+			'admin.importFormulaires.doublons.option.distinctes.exemple' => 'deux personnes d\'une même famille qui ont répondu avec le même numéro',
+			'admin.importFormulaires.analyse.echec' => 'L\'analyse n\'a pas abouti.',
+			'admin.importFormulaires.analyse.echecPhrase' => 'Rien n\'a été enregistré. Réessayez dans un instant.',
+			'admin.importFormulaires.analyse.refus' => 'Le serveur ne peut pas lire ce fichier avec ces noms. Vérifiez le classeur, l\'onglet et le fichier, puis réessayez.',
+			'admin.importFormulaires.analyse.reessayer' => 'Réessayer l\'analyse',
+			'admin.importFormulaires.apercu.question' => 'Est-ce bien le bon fichier ?',
+			'admin.importFormulaires.apercu.explication' => 'Voici ce que Rewayah a lu. Rien n\'est encore enregistré.',
+			'admin.importFormulaires.apercu.contactsMasques' => 'Les contacts sont masqués dans l\'aperçu.',
+			'admin.importFormulaires.apercu.lignes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} ligne lue', other: '${n} lignes lues', ), 
+			'admin.importFormulaires.apercu.colonnesReconnues' => ({required Object reconnues, required Object total}) => 'Colonnes reconnues : ${reconnues} sur ${total}',
+			'admin.importFormulaires.apercu.premieres' => 'Les premières lignes',
+			'admin.importFormulaires.apercu.ligne' => ({required Object ligne}) => 'Ligne ${ligne}',
+			'admin.importFormulaires.apercu.autres' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} autre ligne n\'est pas montrée ici.', other: '${n} autres lignes ne sont pas montrées ici.', ), 
+			'admin.importFormulaires.apercu.sansLignes' => 'Les lignes seront lues dès que les colonnes seront associées.',
+			'admin.importFormulaires.apercu.colonnesATitre' => 'Des colonnes restent à associer',
+			'admin.importFormulaires.apercu.mappageIncomplet' => ({required Object champs}) => 'Associez d\'abord ces colonnes : ${champs}.',
+			'admin.importFormulaires.apercu.ambiguTitre' => 'Deux colonnes se ressemblent',
+			'admin.importFormulaires.apercu.ambigu' => ({required Object champs}) => 'Plusieurs colonnes portent le titre de : ${champs}. Dites laquelle lire, au pas suivant.',
+			'admin.importFormulaires.apercu.marque.courrielAObtenir' => 'Courriel à obtenir',
+			'admin.importFormulaires.apercu.marque.indicatifAConfirmer' => 'Indicatif à confirmer',
+			'admin.importFormulaires.apercu.aideMarques' => '« Courriel à obtenir » : pas de courriel valide, la personne ne peut pas être invitée. « Indicatif à confirmer » : le téléphone n\'a pas d\'indicatif reconnu. « Ignorée » : ligne vide ou répétée.',
+			'admin.importFormulaires.issue.nouvelle' => 'Nouvelle',
+			'admin.importFormulaires.issue.corrigee' => 'Corrigée',
+			'admin.importFormulaires.issue.dejaConnue' => 'Déjà connue',
+			'admin.importFormulaires.issue.ignoree' => 'Ignorée',
+			'admin.importFormulaires.issue.aCorriger' => 'À corriger',
+			'admin.importFormulaires.issue.historique' => 'En historique',
+			'admin.importFormulaires.champ.horodatage' => 'Date de la réponse',
+			'admin.importFormulaires.champ.horodatageAide' => 'Sert à reconnaître la réponse si vous rejouez le fichier.',
+			'admin.importFormulaires.champ.genre' => 'Genre',
+			'admin.importFormulaires.champ.genreAide' => 'Sert à ranger la réponse du bon côté. Jamais montré dans l\'aperçu.',
+			'admin.importFormulaires.champ.nom' => 'Nom complet',
+			'admin.importFormulaires.champ.nomAide' => 'Sert à reconnaître la personne. Jamais montré ici.',
+			'admin.importFormulaires.champ.telephone' => 'Téléphone WhatsApp',
+			'admin.importFormulaires.champ.telephoneAide' => 'Avec l\'indicatif du pays. Jamais complété ni deviné.',
+			'admin.importFormulaires.champ.langueMaternelle' => 'Langue maternelle',
+			'admin.importFormulaires.champ.langueMaternelleAide' => 'Facultatif.',
+			'admin.importFormulaires.champ.languesExplication' => 'Langues d\'explication',
+			'admin.importFormulaires.champ.languesExplicationAide' => 'Les langues dans lesquelles la personne peut expliquer et corriger.',
+			'admin.importFormulaires.champ.memorisation' => 'Mémorisation du Coran',
+			'admin.importFormulaires.champ.memorisationAide' => 'Une déclaration, pas un constat : le niveau se constate à l\'entretien.',
+			'admin.importFormulaires.champ.ijaza' => 'Ijaza ou certificat à présenter',
+			'admin.importFormulaires.champ.ijazaAide' => 'Ce que la personne peut montrer à l\'entretien.',
+			'admin.importFormulaires.champ.experience' => 'Expérience avec les débutants',
+			'admin.importFormulaires.champ.experienceAide' => 'Facultatif.',
+			'admin.importFormulaires.champ.creneaux' => 'Créneaux (heure de La Mecque)',
+			'admin.importFormulaires.champ.creneauxAide' => 'Gardés tels quels, sans jour. Jamais lus comme une disponibilité.',
+			'admin.importFormulaires.champ.heures' => 'Heures par semaine',
+			'admin.importFormulaires.champ.heuresAide' => 'Converties en nombre de classes souhaitées.',
+			'admin.importFormulaires.champ.debut' => 'Début possible',
+			'admin.importFormulaires.champ.debutAide' => 'Facultatif.',
+			'admin.importFormulaires.champ.whatsapp' => 'Accord de contact par WhatsApp',
+			'admin.importFormulaires.champ.whatsappAide' => 'Vaut pour ce contact seulement.',
+			'admin.importFormulaires.champ.courriel' => 'Courriel',
+			'admin.importFormulaires.champ.courrielAide' => 'Sert à reconnaître la personne à son inscription. Jamais montré ici.',
+			'admin.importFormulaires.champ.contact' => 'Téléphone ou courriel',
+			'admin.importFormulaires.controle.question' => 'Y a-t-il des lignes à corriger ?',
+			'admin.importFormulaires.controle.explication' => 'Une ligne à corriger n\'est pas importée. Corrigez-la dans le classeur, exportez de nouveau le fichier, puis rejouez l\'import : les lignes déjà importées ne sont pas ajoutées deux fois.',
+			'admin.importFormulaires.controle.aucune' => 'Aucune erreur ni avertissement dans ce fichier.',
+			'admin.importFormulaires.controle.aucuneAide' => 'Chaque ligne a pu être lue.',
+			'admin.importFormulaires.controle.aCorriger.titre' => 'À corriger',
+			'admin.importFormulaires.controle.aCorriger.aide' => 'Ces lignes ne seront pas importées.',
+			'admin.importFormulaires.controle.avertissements.titre' => 'À regarder',
+			'admin.importFormulaires.controle.avertissements.aide' => 'Ces lignes sont importées, avec un point à vérifier.',
+			'admin.importFormulaires.controle.ignorees.titre' => 'Ignorées',
+			'admin.importFormulaires.controle.ignorees.aide' => 'Lignes vides ou répétées à l\'identique.',
+			'admin.importFormulaires.controle.ligne' => ({required Object ligne, required Object motif}) => 'Ligne ${ligne} : ${motif}',
+			'admin.importFormulaires.controle.plus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Voir ${n} ligne de plus', other: 'Voir ${n} lignes de plus', ), 
+			'admin.importFormulaires.motif.ligneVide' => 'ligne vide',
+			'admin.importFormulaires.motif.horodatageIllisible' => 'la date de la réponse est illisible',
+			'admin.importFormulaires.motif.genreIllisible' => 'le genre n\'est pas reconnu',
+			'admin.importFormulaires.motif.nomAbsent' => 'le nom est absent',
+			'admin.importFormulaires.motif.nomTropLong' => 'le nom est trop long',
+			'admin.importFormulaires.motif.memeReferenceMemeContenu' => 'ligne répétée à l\'identique',
+			'admin.importFormulaires.motif.memeReferenceContenuDifferent' => 'même date de réponse qu\'une autre ligne, mais un contenu différent',
+			'admin.importFormulaires.motif.genreChangeSurLigneSuivie' => 'le genre a changé alors que la personne est suivie : il fixe son côté',
+			'admin.importFormulaires.motif.inscription1210' => 'déjà connue par l\'import des inscriptions',
+			'admin.importFormulaires.motif.inconnu' => 'un point est à vérifier dans cette ligne',
+			'admin.importFormulaires.avertissement.telephoneIllisible' => 'le téléphone est illisible',
+			'admin.importFormulaires.avertissement.formatNational' => 'le téléphone n\'a pas l\'indicatif du pays',
+			'admin.importFormulaires.avertissement.indicatifInconnu' => 'l\'indicatif du téléphone est inconnu',
+			'admin.importFormulaires.avertissement.longueurImplausible' => 'la longueur du téléphone est inhabituelle',
+			'admin.importFormulaires.avertissement.indicatifAConfirmer' => 'l\'indicatif du téléphone est à confirmer',
+			'admin.importFormulaires.avertissement.zeroNationalEnTrop' => 'un zéro en trop après l\'indicatif du téléphone',
+			'admin.importFormulaires.avertissement.courrielMalforme' => 'le courriel est mal écrit : il est à obtenir',
+			'admin.importFormulaires.avertissement.langueMaternelleVersAutre' => 'langue maternelle inconnue, classée en autre langue',
+			'admin.importFormulaires.avertissement.langueInconnueVersAutre' => 'une langue d\'explication inconnue est classée en autre langue',
+			'admin.importFormulaires.avertissement.arabeRetire' => 'l\'arabe est retiré des langues d\'explication (ce n\'est pas une langue de cours)',
+			'admin.importFormulaires.avertissement.libelleInconnu' => 'une réponse à choix n\'est pas reconnue',
+			'admin.importFormulaires.avertissement.ijazaDeclareeEnG' => 'ijaza déclarée comme mémorisation : la mémorisation est à renseigner par la personne',
+			'admin.importFormulaires.avertissement.experiencePretTest' => '« prêt à un test » n\'a pas d\'équivalent pour l\'expérience : à renseigner par la personne',
+			'admin.importFormulaires.avertissement.moinsDe3Heures' => 'moins de 3 heures par semaine : cela ne fait pas une classe, à renseigner par la personne',
+			'admin.importFormulaires.avertissement.creneauxContradictoires' => 'créneaux contradictoires, gardés tels quels',
+			'admin.importFormulaires.comptes.question' => 'Ces nombres sont-ils ceux que vous attendiez ?',
+			'admin.importFormulaires.comptes.explication' => 'Voici ce que Rewayah a compté dans le fichier. Comparez avec votre décompte avant de confirmer.',
+			'admin.importFormulaires.comptes.nouvelles' => 'Nouvelles',
+			'admin.importFormulaires.comptes.nouvellesAide' => 'Pas encore connues : elles seront enregistrées.',
+			'admin.importFormulaires.comptes.dejaConnues' => 'Déjà connues',
+			'admin.importFormulaires.comptes.dejaConnuesAide' => 'Déjà enregistrées : rien ne change.',
+			'admin.importFormulaires.comptes.ignorees' => 'Ignorées',
+			'admin.importFormulaires.comptes.ignoreesAide' => 'Lignes vides ou répétées.',
+			'admin.importFormulaires.comptes.aCorriger' => 'À corriger',
+			'admin.importFormulaires.comptes.aCorrigerAide' => 'Lignes illisibles : elles ne sont pas importées.',
+			'admin.importFormulaires.comptes.corrigees' => 'Corrigées sur place',
+			'admin.importFormulaires.comptes.personnes' => 'Personnes concernées',
+			'admin.importFormulaires.comptes.lignesLues' => 'Lignes lues',
+			'admin.importFormulaires.comptes.attendus.question' => 'Quel décompte attendiez-vous ?',
+			'admin.importFormulaires.comptes.attendus.fichier2110.titre' => 'Le fichier du 21 octobre',
+			'admin.importFormulaires.comptes.attendus.fichier2110.description' => '440 lignes, soit 409 personnes une fois les doublons rapprochés : le décompte relevé dans le classeur ce jour-là.',
+			'admin.importFormulaires.comptes.attendus.autres.titre' => 'D\'autres nombres',
+			'admin.importFormulaires.comptes.attendus.autres.description' => 'Vous connaissez le nombre de lignes ou de personnes de votre fichier. Saisissez-le : Rewayah signale tout écart.',
+			'admin.importFormulaires.comptes.attendus.aucun.titre' => 'Aucun décompte à comparer',
+			'admin.importFormulaires.comptes.attendus.aucun.description' => 'Vous confirmez en vous fiant à l\'aperçu.',
+			'admin.importFormulaires.comptes.attendus.lignes' => 'Lignes attendues',
+			'admin.importFormulaires.comptes.attendus.personnes' => 'Personnes attendues',
+			'admin.importFormulaires.comptes.attendus.aide' => 'Un nombre entier. Laissez vide ce que vous ne comparez pas.',
+			'admin.importFormulaires.comptes.choisir' => 'Indiquez le décompte à comparer pour continuer.',
+			'admin.importFormulaires.comptes.saisirNombre' => 'Saisissez au moins un nombre pour continuer.',
+			'admin.importFormulaires.comptes.ecartTitre' => 'Un écart à vérifier',
+			'admin.importFormulaires.comptes.ecart' => ({required Object attendu, required Object lu}) => 'Écart avec les comptes attendus : attendu ${attendu}, lu ${lu}. Vérifiez avant de confirmer : vous pouvez importer quand même.',
+			'admin.importFormulaires.comptes.accord' => 'Les nombres correspondent à ce que vous attendiez.',
+			'admin.importFormulaires.unite.lignes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} ligne', other: '${n} lignes', ), 
+			'admin.importFormulaires.unite.personnes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} personne', other: '${n} personnes', ), 
+			'admin.importFormulaires.confirmation.question' => 'Importer ces réponses maintenant ?',
+			'admin.importFormulaires.confirmation.explication' => 'Relisez ce que l\'import va faire. Il n\'est pas annulable depuis cet écran.',
+			'admin.importFormulaires.confirmation.resume.titre' => 'Ce qui sera enregistré',
+			'admin.importFormulaires.confirmation.resume.fichier' => 'Fichier',
+			'admin.importFormulaires.confirmation.resume.doublons' => ({required Object choisis, required Object total}) => 'Doublons : ${choisis} cas tranchés par vous sur ${total}. Pour les autres, la ligne la plus récente est gardée.',
+			'admin.importFormulaires.confirmation.resume.aucunDoublon' => 'Aucun doublon probable à régler.',
+			'admin.importFormulaires.confirmation.garanties.titre' => 'Ce que l\'import ne fait pas',
+			'admin.importFormulaires.confirmation.garanties.texte' => 'Il ne crée aucun compte, aucune invitation ni aucune candidature, et n\'envoie aucun message. Il enregistre des réponses qui servent à reconnaître les personnes quand elles s\'inscrivent. Rejouer le même fichier n\'ajoute rien.',
+			'admin.importFormulaires.confirmation.importer' => 'Importer les réponses',
+			'admin.importFormulaires.confirmation.envoi' => 'Envoi en cours. L\'import n\'est confirmé qu\'à la réponse de Rewayah.',
+			'admin.importFormulaires.confirmation.horsLigne' => 'L\'import pourra être confirmé quand la connexion reviendra.',
+			'admin.importFormulaires.confirmation.nonConfirme' => 'L\'import n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Touchez de nouveau « Importer les réponses » : la même demande ne s\'enregistre qu\'une fois.',
+			'admin.importFormulaires.confirmation.jetonPerime' => 'Le fichier ou ses réglages ont changé depuis l\'aperçu. Relancez l\'analyse pour continuer.',
+			'admin.importFormulaires.confirmation.choixInvalide' => 'Un choix de doublon ne correspond plus au fichier. Relancez l\'analyse, puis choisissez de nouveau.',
+			'admin.importFormulaires.confirmation.cleReutilisee' => 'Cette demande ne peut pas être rejouée telle quelle. Relancez l\'analyse pour recommencer proprement.',
+			'admin.importFormulaires.confirmation.refus' => 'Le serveur refuse cet import. Vérifiez que vous êtes connecté avec la double vérification, puis réessayez.',
+			'admin.importFormulaires.confirmation.titreNonConfirme' => 'Import non confirmé',
+			'admin.importFormulaires.confirmation.titreARefaire' => 'L\'analyse est à refaire',
+			'admin.importFormulaires.confirmation.relancer' => 'Relancer l\'analyse',
+			'admin.importFormulaires.rapport.titre' => 'Import terminé',
+			'admin.importFormulaires.rapport.question' => 'Voici ce que l\'import a fait.',
+			'admin.importFormulaires.rapport.rejoue' => 'Cette demande avait déjà été enregistrée : rien n\'a été ajouté une seconde fois.',
+			'admin.importFormulaires.rapport.sansCandidature' => 'Ces réponses ne créent aucune candidature : elles servent à reconnaître les personnes quand elles s\'inscrivent.',
+			'admin.importFormulaires.rapport.compteurs.nouvelles' => 'Enregistrées.',
+			'admin.importFormulaires.rapport.compteurs.dejaConnues' => 'Déjà enregistrées : rien n\'a changé.',
+			'admin.importFormulaires.rapport.compteurs.aCorriger' => 'Lignes illisibles : non importées.',
+			'admin.importFormulaires.rapport.historique' => ({required Object n}) => 'Remplacées par une plus récente : ${n}',
+			'admin.importFormulaires.rapport.lignes.titre' => 'Ligne par ligne',
+			'admin.importFormulaires.rapport.lignes.aide' => 'Chaque ligne est reconnue par la date de sa réponse, jamais par le nom de la personne.',
+			'admin.importFormulaires.rapport.lignes.reference' => ({required Object reference}) => 'Réponse du ${reference}',
+			'admin.importFormulaires.rapport.lignes.sansReference' => 'Sans référence',
+			'admin.importFormulaires.rapport.plus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Voir ${n} ligne de plus', other: 'Voir ${n} lignes de plus', ), 
+			'admin.importFormulaires.rapport.autreFichier' => 'Importer un autre fichier',
 			'admin.tableau.titre' => 'Centre de commande',
 			'admin.tableau.dossiers' => 'Dossiers à valider',
 			'admin.tableau.dossiersDetail' => 'Ouvrir la file, le plus ancien en premier.',
@@ -42654,6 +44323,8 @@ extension on Traductions {
 			'admin.traitement.cleNom' => 'Nom',
 			'admin.traitement.clePrenom' => 'Prénom',
 			'admin.traitement.cleType' => 'Type de dossier',
+			_ => null,
+		} ?? switch (path) {
 			'admin.traitement.cleDepot' => 'Date de dépôt',
 			'admin.traitement.clePiece' => 'Pièce d\'identité',
 			'admin.traitement.pieceAVerifier' => 'Déposée, à vérifier',
@@ -42948,8 +44619,6 @@ extension on Traductions {
 			'admin.groupes.formulaire.genreFilles' => 'Filles',
 			'admin.groupes.formulaire.genreIndetermine' => 'Non déterminé',
 			'admin.groupes.formulaire.genreHommesDetail' => 'À choisir pour une classe d\'hommes : seuls les enseignants hommes pourront la prendre.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.formulaire.genreFemmesDetail' => 'À choisir pour une classe de femmes : seules les enseignantes pourront la prendre.',
 			'admin.groupes.formulaire.genreGarconsDetail' => 'À choisir pour une classe de garçons : seuls les enseignants hommes pourront la prendre.',
 			'admin.groupes.formulaire.genreFillesDetail' => 'À choisir pour une classe de filles : seules les enseignantes pourront la prendre.',
@@ -43168,6 +44837,8 @@ extension on Traductions {
 			'admin.diagnostics.inscritDepuis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Inscrit depuis ${jours} jour', other: 'Inscrit depuis ${jours} jours', ), 
 			'admin.qualite.titre' => 'Qualité',
 			'admin.qualite.intro' => 'Les anomalies pédagogiques détectées : rapports manquants, blocages sans suivi, évaluations en retard.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.qualite.erreur' => 'Les anomalies n\'ont pas pu être lues. Réessayez dans un instant.',
 			'admin.qualite.aucune' => 'Aucune anomalie détectée',
 			'admin.qualite.aucuneDetail' => 'Tout est à jour : rapports rédigés, blocages suivis, évaluations à l\'heure.',
@@ -43462,8 +45133,6 @@ extension on Traductions {
 			'admin.journal.filtreEvenement' => 'Événement',
 			'admin.journal.filtreActeur' => 'Acteur',
 			'admin.journal.evtAgentJetonEmis' => 'Accès d\'agent IA émis',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.evtAgentJetonRevoque' => 'Accès d\'agent IA révoqué',
 			'admin.journal.evtAgentSessionOuverte' => 'Session d\'agent IA ouverte',
 			'admin.journal.evtObservationControleur' => 'Visite de contrôle commencée',
@@ -43682,6 +45351,8 @@ extension on Traductions {
 			'admin.finance.vue.encaisseDetail' => 'Paiements reçus ce mois. Un encaissement n\'est pas encore un revenu.',
 			'admin.finance.vue.revenu' => 'Revenu académique',
 			'admin.finance.vue.revenuDetail' => 'Revenu reconnu ce mois, hors taxes collectées.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.vue.paie' => 'Paie enseignants',
 			'admin.finance.vue.paieDetail' => 'Estimée pour le mois : une charge à venir, pas un paiement fait.',
 			'admin.finance.vue.marge' => 'Marge projetée',
@@ -43976,8 +45647,6 @@ extension on Traductions {
 			'admin.finance.pai.videTitre' => 'Aucun élève pour l\'instant',
 			'admin.finance.pai.videPhrase' => 'Les élèves inscrits apparaîtront ici avec ce qu\'il leur reste à payer.',
 			'admin.finance.pai.feuilleTitre' => ({required Object prenom}) => 'Paiement reçu pour ${prenom}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pai.eleve' => 'Élève',
 			'admin.finance.pai.resteAPayer' => 'Reste à payer',
 			'admin.finance.pai.montantRecu' => ({required Object devise}) => 'Montant reçu, en ${devise}',
@@ -44196,6 +45865,8 @@ extension on Traductions {
 			'admin.tirage.critereHeuresDePointe' => 'Heures de pointe',
 			'admin.tirage.niveauAucun' => 'Aucun poids',
 			'admin.tirage.niveauNormal' => 'Poids normal',
+			_ => null,
+		} ?? switch (path) {
 			'admin.tirage.niveauFort' => 'Poids fort',
 			'admin.tirage.ciblesTitre' => 'Classes ou enseignants à cibler',
 			'admin.tirage.ciblesDetail' => 'Une cible est tirée en priorité quand sa séance est en direct. Elle n\'est jamais annoncée au contrôleur ni à l\'enseignant.',
@@ -44490,8 +46161,6 @@ extension on Traductions {
 			'admin.bibliotheque.attribution.titre' => 'Attribuer à des classes',
 			'admin.bibliotheque.attribution.intro' => 'Choisissez les classes qui verront cette version publiée. Ce que vous attribuez ici est visible de leurs élèves et de leur enseignant.',
 			'admin.bibliotheque.attribution.classesTitre' => 'Classes',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.attribution.classeServie' => 'Déjà attribuée',
 			'admin.bibliotheque.attribution.classeEpinglee' => 'Épinglée',
 			'admin.bibliotheque.attribution.epingler' => 'Épingler en tête de la bibliothèque de ces classes',
@@ -44710,6 +46379,8 @@ extension on Traductions {
 			'compte.donnees.suppression.enCoursDetail' => ({required Object demandee, required Object echeance}) => 'Demandée le ${demandee}. La direction pourra la traiter à partir du ${echeance}.',
 			'compte.donnees.suppression.annuler' => 'Annuler ma demande',
 			'compte.donnees.suppression.demandeEnvoyee' => 'Votre demande est enregistrée. Vous pouvez l\'annuler jusqu\'à son traitement.',
+			_ => null,
+		} ?? switch (path) {
 			'compte.donnees.suppression.demandeAnnulee' => 'Votre demande est annulée. Votre compte reste ouvert.',
 			'compte.donnees.suppression.echec' => 'Votre demande n\'a pas abouti. Votre compte n\'a pas changé. Réessayez dans un instant.',
 			'compte.donnees.suppression.horsLigne' => 'Votre demande n\'est pas partie. Refaites-la dès le retour du réseau.',
@@ -45004,8 +46675,6 @@ extension on Traductions {
 			'historique.observation.eleve' => 'Élève',
 			'historique.observation.enseignant' => 'Enseignant',
 			'historique.observation.dureeTotale' => 'Durée totale',
-			_ => null,
-		} ?? switch (path) {
 			'historique.observation.visite' => ({required Object n}) => 'Visite ${n}',
 			'historique.observation.plageOuverte' => ({required Object debut}) => 'Entrée à ${debut}',
 			'historique.observation.terminee' => 'Visite terminée',
@@ -45224,6 +46893,8 @@ extension on Traductions {
 			'tuteur.accueil.sansCreneau' => ({required Object prenom}) => 'Aucune heure proposée pour ${prenom}',
 			'tuteur.accueil.sansCreneauDetail' => ({required Object prenom}) => 'Sans créneau, aucun enseignant ne peut prendre ${prenom} en charge.',
 			'tuteur.accueil.poserDesHeures' => 'Proposer des heures',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.annulee' => ({required Object heure}) => 'Le cours de ${heure} n\'aura pas lieu',
 			'tuteur.accueil.motifAnnulee' => 'Séance annulée',
 			'tuteur.accueil.motifAnnuleeTard' => 'Séance annulée peu avant l\'heure',
@@ -45518,8 +47189,6 @@ extension on Traductions {
 			'enseignant.demo.intro' => 'Choisissez un écran de Sayyid Ibrahim.',
 			'enseignant.demo.ecrans' => 'Écrans',
 			'enseignant.demo.etats' => 'Situations',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.demo.etatNominal' => 'Journée ordinaire',
 			'enseignant.demo.etatVide' => 'Aucune séance',
 			'enseignant.demo.etatHorsLigne' => 'Hors ligne',
@@ -45738,6 +47407,8 @@ extension on Traductions {
 			'enseignant.cahier.suiteContinuer' => 'Continuer',
 			'enseignant.cahier.suiteRenforcer' => 'Renforcer',
 			'enseignant.cahier.suspendreNouveau' => 'Suspendre le nouveau',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.devoirPrecedent' => ({required Object devoir}) => 'Devoir précédent : ${devoir}',
 			'enseignant.cahier.devoirPlage' => ({required Object sourate, required Object debut, required Object fin}) => 'Réviser la sourate ${sourate}, versets ${debut} à ${fin}.',
 			'enseignant.cahier.suspendreNouveauDetail' => 'La révision continue, rien de nouveau n\'est ajouté pour cet élève.',
@@ -46032,8 +47703,6 @@ extension on Traductions {
 			'enseignant.revenus.internet' => 'Aide Internet du mois',
 			'enseignant.revenus.internetDetail' => 'Une seule aide par mois, versée à part de la rémunération pédagogique.',
 			'enseignant.revenus.internetAucune' => 'Aucune aide Internet n\'est prévue ce mois-ci.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.revenus.releveSection' => 'Relevé',
 			'enseignant.revenus.releveIndisponibleTitre' => 'Le relevé n\'est pas encore disponible',
 			'enseignant.revenus.releveIndisponiblePhrase' => 'Les mois arrêtés par l\'académie s\'afficheront ici dès que le relevé sera en service. D\'ici là, seule l\'estimation du mois en cours est montrée.',
@@ -46252,6 +47921,8 @@ extension on Traductions {
 			'controleur.demo.sansCapacite' => 'Enseignant sans capacité Contrôle',
 			'controleur.demo.compteRenduIndisponible' => 'Compte rendu, visite plus proposée',
 			'controleur.acces.revoque' => 'Votre accès au contrôle n\'est plus actif.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.acces.revenir' => 'Revenir à mon espace',
 			'controleur.controle.titre' => 'Contrôle',
 			'controleur.controle.mission' => 'Votre prochaine Classe à observer',
@@ -46546,8 +48217,6 @@ extension on Traductions {
 			'tc.realtime.transport.partage_indisponible' => 'Le partage du support n’est pas disponible sur ce serveur. Le cours continue, mais les autres appareils ne suivront pas la page.',
 			'tc.realtime.etat.restauration_impossible' => 'Impossible de retrouver le support en cours. Demandez à l’enseignant de le présenter à nouveau.',
 			'tc.observation.entree.titre' => 'Observer la séance',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.entree.tuteurIntro' => 'Vous pouvez regarder un court moment le cours de votre enfant. Votre micro et votre caméra restent fermés.',
 			'tc.observation.entree.adminIntro' => 'Choisissez votre mode avant d\'entrer. Il ne change plus ensuite.',
 			'tc.observation.entree.controleurIntro' => 'Vous entrez en observation invisible. Aucun micro, aucune caméra.',
@@ -46766,6 +48435,8 @@ extension on Traductions {
 			'tc.indisponible' => 'Cette fonction n\'est pas encore disponible. Rien n\'est perdu, le cours continue et elle arrivera bientôt.',
 			'adulte.nav.accueil' => 'Accueil',
 			'adulte.nav.maClasse' => 'Ma classe',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.nav.coran' => 'Coran',
 			'adulte.nav.monEspace' => 'Mon espace',
 			'adulte.accueil.salutation' => ({required Object prenom}) => 'Bonjour ${prenom}',
@@ -47060,8 +48731,6 @@ extension on Traductions {
 			'adulte.reprise.deposerQuestion' => 'Déposer cette demande ?',
 			'adulte.reprise.deposerConsequence' => 'Le titulaire du foyer en sera informé et pourra la refuser. L\'administration examinera ensuite la demande et décidera.',
 			'adulte.reprise.horsLigne' => 'Rien n\'est envoyé. Vous pourrez déposer la demande vous-même quand la connexion sera revenue.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.reprise.depotEchecTitre' => 'La demande n\'a pas été confirmée.',
 			'adulte.reprise.echecPhrase' => 'Vérifiez avant de réessayer.',
 			'adulte.reprise.motif' => 'Motif',
@@ -47280,6 +48949,8 @@ extension on Traductions {
 			'suiviFamille.intervalle.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} jour plus tard', other: '${n} jours plus tard', ), 
 			'suiviFamille.notification.enAttente' => ({required Object dePrenom}) => 'Demande ${dePrenom} : en liste d\'attente',
 			'suiviFamille.notification.eleveIntegre' => ({required Object dePrenom}) => 'Demande ${dePrenom} : élève intégré à la classe',
+			_ => null,
+		} ?? switch (path) {
 			'suiviFamille.notification.premiereSeance' => ({required Object dePrenom}) => 'Demande ${dePrenom} : première séance effectuée',
 			'suiviFamille.notification.close' => ({required Object dePrenom, required Object motif}) => 'Demande ${dePrenom} : ${motif}',
 			'suiviFamille.notification.dejaEnClasse' => ({required Object dePrenom}) => 'Demande ${dePrenom} : élève déjà en classe, demande classée',
@@ -47574,8 +49245,6 @@ extension on Traductions {
 			'com.socle.navigation.demo.titre' => 'Démonstration des communications',
 			'com.socle.navigation.demo.detail' => 'Données fictives, absentes des versions de production.',
 			'com.socle.navigation.demo.choisir' => 'Choisissez un espace à essayer.',
-			_ => null,
-		} ?? switch (path) {
 			'com.messages.entree.titreClasse' => 'Échanger sur cette Classe',
 			'com.messages.entree.titreDossier' => 'Échanger sur ce dossier',
 			'com.messages.entree.titreObjet' => 'Échanger à ce sujet',
@@ -47794,6 +49463,8 @@ extension on Traductions {
 			'com.communaute.reponses.erreurTitre' => 'Impossible de charger les réponses.',
 			'com.communaute.reponses.champ' => 'Votre réponse',
 			'com.communaute.reponses.aide' => 'Écrire une réponse',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.reponses.envoyer' => 'Envoyer la réponse',
 			'com.communaute.reponses.champVide' => 'Écrivez une réponse pour l\'envoyer.',
 			'com.communaute.reponses.enCours' => 'Envoi en cours',
@@ -48088,8 +49759,6 @@ extension on Traductions {
 			'com.studio.demo.f.lienCharte' => 'Charte de l\'équipe',
 			'com.studio.demo.f.brouillon' => 'Samira, je regarde le dossier de la famille Karim ce soir et je te dis demain matin',
 			'com.studio.demo.f.activitePaiement' => 'Paiement de septembre non confirmé pour la famille Haddad',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.f.objetEcheancier' => 'Échéancier de la famille Haddad',
 			'com.studio.demo.f.activiteDossierKarim' => 'Dossier de la famille Karim prêt pour une décision',
 			'com.studio.demo.f.objetDossierKarim' => 'Dossier de la famille Karim',
@@ -48308,6 +49977,8 @@ extension on Traductions {
 			'comptable.nav.aujourdhui' => 'Aujourd\'hui',
 			'comptable.nav.paiements' => 'Paiements',
 			'comptable.nav.tresorerie' => 'Trésorerie',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.nav.compte' => 'Compte',
 			'comptable.graphiques.masque' => 'Les montants sont masqués : le graphique ne se dessine pas. Affichez les montants pour le voir.',
 			'comptable.graphiques.voirValeurs' => 'Voir les valeurs',
@@ -48602,8 +50273,6 @@ extension on Traductions {
 			'comptable.paiements.colonnes.action' => 'Action',
 			'comptable.paiements.types.enseignant' => 'Enseignant',
 			'comptable.paiements.types.contractuel' => 'Contractuel',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.compteur' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Un paiement', other: '${n} paiements', ), 
 			'comptable.paiements.actions.voir' => 'Voir',
 			'comptable.paiements.actions.payer' => 'Payer',
@@ -48822,6 +50491,8 @@ extension on Traductions {
 			'comptable.encaissements.rap.doublonPhrase' => 'Cette transaction ressemble à une autre déjà reçue. Vérifiez avant de rapprocher : un doublon n\'est jamais validé en silence.',
 			'comptable.encaissements.rap.marquerDoublon' => 'Marquer comme doublon',
 			'comptable.encaissements.rap.resultat' => ({required Object etat}) => 'État rendu par la source : ${etat}',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.rap.erreurEnvoi' => 'Nous ne savons pas si l\'opération a été prise en compte. Actualisez la liste avant de réessayer.',
 			'comptable.encaissements.rap.actualiser' => 'Actualiser',
 			'comptable.encaissements.rap.journal' => 'Journal de la transaction',
@@ -49116,8 +50787,6 @@ extension on Traductions {
 			'comptable.direction.reservePanneau.modeFixeDetail' => 'Une somme précise que vous choisissez.',
 			'comptable.direction.reservePanneau.modeMois' => 'Couverture en mois',
 			'comptable.direction.reservePanneau.modeMoisDetail' => 'Un nombre de mois de charges essentielles.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.reservePanneau.montantCible' => 'Montant cible',
 			'comptable.direction.reservePanneau.montantCibleDetail' => 'La somme que la Réserve stratégique doit atteindre.',
 			'comptable.direction.reservePanneau.nombreMois' => 'Nombre de mois de couverture',
@@ -49336,6 +51005,8 @@ extension on Traductions {
 			'recherche.espace.comptable' => 'Dans votre espace Comptabilité',
 			'recherche.espace.administration' => 'Dans votre espace Administration',
 			'recherche.initial.titre' => 'Rechercher dans votre espace',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.initial.phrase' => 'Saisissez un nom, une classe ou un support. Rien n\'est cherché avant que vous écriviez.',
 			'recherche.courte' => 'Saisissez au moins 3 caractères.',
 			'recherche.chargement' => 'Recherche en cours…',
@@ -49630,8 +51301,6 @@ extension on Traductions {
 			'avis.form.ferme.titre' => 'Ce lien n\'accepte plus d\'avis',
 			'avis.form.ferme.phrase' => ({required Object courriel}) => 'Il est fermé, arrivé à échéance, ou le nombre d\'avis prévu est atteint. Pour donner votre avis, demandez un nouveau lien à la direction : ${courriel}.',
 			'avis.form.envoye.titre' => 'Merci pour votre avis',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.envoye.phrase' => ({required Object courriel}) => 'La direction va le lire avant de le publier. S\'il est accepté, il paraîtra sur le site de Rewayah Academy avec votre nom affiché, votre pays et la date. Pour le faire retirer, écrivez à ${courriel}.',
 			'avis.form.erreurChargement' => 'Le formulaire n\'a pas pu s\'ouvrir. Réessayez dans un moment.',
 			'avis.form.sansDonnees' => 'Le formulaire n\'a pas pu s\'ouvrir',

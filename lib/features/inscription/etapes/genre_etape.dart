@@ -41,8 +41,10 @@ class GenreEtape extends ConsumerWidget {
       // concerne que l'enseignant ; aucune explication pour le tuteur.
       explication: enseignant ? t.inscription.genreRaison : null,
       libelleAction: t.commun.continuer,
-      onAction: genre == null ? null : () => avancerDepuis(context, _route),
-      onRetour: () => reculerDepuis(context, _route),
+      onAction: genre == null
+          ? null
+          : () => avancerDepuis(context, _route, usage: brouillon.usage),
+      onRetour: () => reculerDepuis(context, _route, usage: brouillon.usage),
       // Le groupe partage, sans carte « Autre », en disposition cote a cote
       // (demande A-5.2, maquette « onboarding Mble d »).
       enfant: ChoiceCardGroup(

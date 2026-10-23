@@ -23,6 +23,7 @@ import '../../features/admin_demandes/demandes_page.dart';
 import '../../features/admin_dossiers/dossiers_page.dart';
 import '../../features/admin_finance/finance_page.dart';
 import '../../features/admin_groupes/groupes_page.dart';
+import '../../features/admin_import_formulaires/import_formulaires_page.dart';
 import '../../features/admin_import_inscriptions/import_inscriptions_page.dart';
 import '../../features/admin_invitations/invitations_page.dart';
 import '../../features/admin_journal/incidents_page.dart';
@@ -143,6 +144,7 @@ import '../../features/foyer/invitation_conjoint.dart';
 import '../../features/inscription/etapes/genre_etape.dart';
 import '../../features/inscription/etapes/identite_etape.dart';
 import '../../features/inscription/etapes/recapitulatif_etape.dart';
+import '../../features/inscription/etapes/telephone_etape.dart';
 import '../../features/inscription/etapes/usage_etape.dart';
 import '../../features/inscription/inscription_page.dart';
 import '../../features/journee/journee_page.dart';
@@ -345,6 +347,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRoute(
         path: Routes.inscriptionGenre,
         builder: (BuildContext _, GoRouterState _) => const GenreEtape(),
+      ),
+      // CAND-04 : le telephone du candidat enseignant.
+      GoRoute(
+        path: Routes.inscriptionTelephone,
+        builder: (BuildContext _, GoRouterState _) => const TelephoneEtape(),
       ),
       GoRoute(
         path: Routes.inscriptionRecapitulatif,
@@ -1596,9 +1603,18 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
-      // ADM-21 : une candidature ouverte par sa reference `CAND-…`. Les
-      // chemins statiques d'ADM-22 et d'ADM-23 (`action-groupee`, `import`)
-      // se declareront AVANT celui-ci (contrainte R5).
+      // ADM-23 : l'import des formulaires de candidature. Chemin statique,
+      // declare AVANT `:reference` (contrainte R5).
+      GoRoute(
+        path: Routes.adminPersonnesCandidaturesImport,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: ImportFormulairesPage(),
+        ),
+      ),
+      // ADM-21 : une candidature ouverte par sa reference `CAND-…`. Le chemin
+      // statique d'ADM-22 (`action-groupee`) se declarera AVANT celui-ci
+      // (contrainte R5).
       GoRoute(
         path: Routes.adminPersonnesCandidature,
         builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
