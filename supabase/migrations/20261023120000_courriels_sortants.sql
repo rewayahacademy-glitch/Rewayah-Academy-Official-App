@@ -9,9 +9,9 @@
 -- remplacements, controle, paiements) et chaque invitation au foyer ; la
 -- direction, a la main. Ce qui envoie : la fonction Edge `courriels-envoi` reserve un lot
 -- (`courriels_reserver`), compose le message, l'envoie, puis consigne le
--- resultat (`courriel_consigner`). Les e-mails d'authentification (lien ou
--- code de connexion) ne passent pas par la file : le hook « Send Email » de
--- Supabase Auth appelle `courriel-auth`, qui envoie tout de suite.
+-- resultat (`courriel_consigner`). Les e-mails d'authentification (lien de
+-- connexion, confirmation) ne passent pas par la file : Supabase Auth les
+-- envoie lui-meme par le meme SMTP, avec les modeles de `supabase/templates/`.
 --
 -- Ce que la file ne fait jamais : envoyer a un compte enfant (adresse
 -- technique), ni une categorie non essentielle a une adresse desinscrite.
