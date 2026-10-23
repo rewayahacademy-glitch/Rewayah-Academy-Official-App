@@ -32,6 +32,7 @@ import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/recrutement/port_invitations_enseignant.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
@@ -231,6 +232,12 @@ Future<void> _taper(WidgetTester tester, Finder cible) async {
   await tester.pumpAndSettle();
   await tester.tap(cible);
   await tester.pumpAndSettle();
+}
+
+/// Ouvre la feuille des pays par le drapeau du champ, puis touche [code].
+Future<void> _choisirPays(WidgetTester tester, String code) async {
+  await _taper(tester, find.byKey(TelephoneEtape.paysChoisiKey));
+  await _taper(tester, find.byKey(TelephoneEtape.paysKey(code)));
 }
 
 Future<void> _continuer(WidgetTester tester) =>
@@ -492,7 +499,7 @@ void main() {
       await _continuer(tester);
       expect(hote.chemin, Routes.inscriptionTelephone);
       expect(find.text('4 sur 5'), findsOneWidget);
-      await _taper(tester, find.byKey(TelephoneEtape.paysKey('FR')));
+      await _choisirPays(tester, 'FR');
       await tester.enterText(
         find.byKey(TelephoneEtape.numeroKey),
         '0612345678',
@@ -525,7 +532,7 @@ void main() {
     }
 
     testWidgets(
-      'la question, l\'explication de la fiche, et les cartes d\'abord',
+      'la question, l\'explication de la fiche, un seul champ avec le drapeau',
       (WidgetTester tester) async {
         await monterTelephone(tester);
         expect(find.text('Votre numéro de téléphone'), findsOneWidget);
@@ -537,14 +544,19 @@ void main() {
           ),
           findsOneWidget,
         );
-        expect(find.text(t.inscription.telephone.indicatif), findsOneWidget);
-        // L'indicatif se choisit : des cartes, pas de clavier.
+        // Un seul champ, le bouton du pays toujours present, sans pays choisi.
+        expect(find.byKey(TelephoneEtape.numeroKey), findsOneWidget);
+        expect(find.byKey(TelephoneEtape.paysChoisiKey), findsOneWidget);
+        expect(find.byType(TextField), findsOneWidget);
+        expect(find.byKey(TelephoneEtape.paysKey('FR')), findsNothing);
+        verifierUnSeulBoutonPlein(tester);
+        // Le toucher ouvre la feuille : titre, recherche, pays, aucun coche.
+        await _taper(tester, find.byKey(TelephoneEtape.paysChoisiKey));
+        expect(find.text(t.inscription.telephone.choisirPays), findsWidgets);
+        expect(find.byKey(TelephoneEtape.rechercheKey), findsOneWidget);
         expect(find.byKey(TelephoneEtape.paysKey('FR')), findsOneWidget);
         expect(find.byKey(TelephoneEtape.paysKey('MA')), findsOneWidget);
-        expect(find.text('France'), findsOneWidget);
-        expect(find.text('\u2066+33\u2069'), findsOneWidget);
-        expect(find.byKey(TelephoneEtape.numeroKey), findsNothing);
-        verifierUnSeulBoutonPlein(tester);
+        expect(find.text('France (\u2066+33\u2069)'), findsOneWidget);
       },
     );
 
@@ -565,24 +577,44 @@ void main() {
       },
     );
 
-    testWidgets('l\'indicatif choisi se replie, le numero prend la place', (
-      WidgetTester tester,
-    ) async {
-      await monterTelephone(tester);
-      await _taper(tester, find.byKey(TelephoneEtape.paysKey('FR')));
-      expect(find.byKey(TelephoneEtape.paysChoisiKey), findsOneWidget);
-      expect(find.byKey(TelephoneEtape.paysKey('MA')), findsNothing);
-      expect(find.byKey(TelephoneEtape.numeroKey), findsOneWidget);
-      expect(find.text('Numéro, sans l\'indicatif'), findsOneWidget);
-      // L'indicatif est en tete du champ.
-      expect(find.textContaining('+33'), findsWidgets);
-    });
+    testWidgets(
+      'le pays choisi ferme la feuille, le drapeau et l\'indicatif sont dans le champ',
+      (WidgetTester tester) async {
+        await monterTelephone(tester);
+        await _choisirPays(tester, 'FR');
+        // La feuille est fermee, le champ est la.
+        expect(find.byKey(TelephoneEtape.rechercheKey), findsNothing);
+        expect(find.byKey(TelephoneEtape.paysKey('MA')), findsNothing);
+        expect(find.byKey(TelephoneEtape.paysChoisiKey), findsOneWidget);
+        expect(find.byKey(TelephoneEtape.numeroKey), findsOneWidget);
+        expect(find.byType(Drapeau), findsOneWidget);
+        expect(find.text(t.inscription.telephone.numeroCourt), findsOneWidget);
+        // L'indicatif est en tete du champ.
+        expect(find.textContaining('+33'), findsWidgets);
+        // Rouverte, la feuille coche le pays choisi.
+        await _taper(tester, find.byKey(TelephoneEtape.paysChoisiKey));
+        expect(
+          find.descendant(
+            of: find.byKey(TelephoneEtape.paysKey('FR')),
+            matching: find.byIcon(AppIcons.succes.repos),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: find.byKey(TelephoneEtape.paysKey('MA')),
+            matching: find.byIcon(AppIcons.succes.repos),
+          ),
+          findsNothing,
+        );
+      },
+    );
 
     testWidgets('numero absent, illisible ou trop court : le champ est nomme', (
       WidgetTester tester,
     ) async {
       final _Hote hote = await monterTelephone(tester);
-      await _taper(tester, find.byKey(TelephoneEtape.paysKey('FR')));
+      await _choisirPays(tester, 'FR');
       await _continuer(tester);
       expect(find.text('Saisissez votre numéro de téléphone.'), findsOneWidget);
       await tester.enterText(find.byKey(TelephoneEtape.numeroKey), '06 12 ab');
@@ -605,7 +637,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final _Hote hote = await monterTelephone(tester);
-      await _taper(tester, find.byKey(TelephoneEtape.paysKey('MA')));
+      await _choisirPays(tester, 'MA');
       await tester.enterText(
         find.byKey(TelephoneEtape.numeroKey),
         '0661 23 45 67',
@@ -618,41 +650,24 @@ void main() {
     });
 
     testWidgets(
-      '« Un autre pays » : recherche par nom, en francais et en arabe, ou par indicatif',
+      'la feuille des pays : recherche par nom, en francais et en arabe, ou par indicatif',
       (WidgetTester tester) async {
         await monterTelephone(tester);
-        await _taper(
-          tester,
-          find.byKey(const ValueKey<String>('choix-recherche-autre')),
-        );
-        final Finder champ = find.byKey(
-          const ValueKey<String>('choix-recherche-champ'),
-        );
+        await _taper(tester, find.byKey(TelephoneEtape.paysChoisiKey));
+        final Finder champ = find.byKey(TelephoneEtape.rechercheKey);
         // Le nom, en francais.
         await tester.enterText(champ, 'maur');
         await tester.pumpAndSettle();
-        expect(
-          find.byKey(const ValueKey<String>('choix-recherche-MR')),
-          findsOneWidget,
-        );
-        expect(
-          find.byKey(const ValueKey<String>('choix-recherche-FR')),
-          findsNothing,
-        );
+        expect(find.byKey(TelephoneEtape.paysKey('MR')), findsOneWidget);
+        expect(find.byKey(TelephoneEtape.paysKey('FR')), findsNothing);
         // Le nom, en arabe, alors que l'application est en francais.
         await tester.enterText(champ, 'الجزائر');
         await tester.pumpAndSettle();
-        expect(
-          find.byKey(const ValueKey<String>('choix-recherche-DZ')),
-          findsOneWidget,
-        );
+        expect(find.byKey(TelephoneEtape.paysKey('DZ')), findsOneWidget);
         // L'indicatif.
         await tester.enterText(champ, '+212');
         await tester.pumpAndSettle();
-        expect(
-          find.byKey(const ValueKey<String>('choix-recherche-MA')),
-          findsOneWidget,
-        );
+        expect(find.byKey(TelephoneEtape.paysKey('MA')), findsOneWidget);
         // Aucun resultat : une phrase.
         await tester.enterText(champ, 'zzzz');
         await tester.pumpAndSettle();
@@ -660,27 +675,25 @@ void main() {
         // Choisir un pays de la recherche.
         await tester.enterText(champ, 'japon');
         await tester.pumpAndSettle();
-        await _taper(
-          tester,
-          find.byKey(const ValueKey<String>('choix-recherche-JP')),
-        );
+        await _taper(tester, find.byKey(TelephoneEtape.paysKey('JP')));
+        expect(find.byKey(TelephoneEtape.rechercheKey), findsNothing);
         expect(find.byKey(TelephoneEtape.paysChoisiKey), findsOneWidget);
-        expect(find.text('Japon'), findsOneWidget);
         expect(find.textContaining('+81'), findsWidgets);
+        expect(find.bySemanticsLabel(RegExp('Japon')), findsWidgets);
       },
     );
 
-    testWidgets('changer d\'indicatif rouvre la liste, le numero est garde', (
+    testWidgets('changer de pays par la feuille, le numero est garde', (
       WidgetTester tester,
     ) async {
       await monterTelephone(tester);
-      await _taper(tester, find.byKey(TelephoneEtape.paysKey('FR')));
+      await _choisirPays(tester, 'FR');
       await tester.enterText(
         find.byKey(TelephoneEtape.numeroKey),
         '0612345678',
       );
       await _taper(tester, find.byKey(TelephoneEtape.paysChoisiKey));
-      expect(find.byKey(TelephoneEtape.numeroKey), findsNothing);
+      expect(find.byKey(TelephoneEtape.rechercheKey), findsOneWidget);
       expect(find.byKey(TelephoneEtape.paysKey('BE')), findsOneWidget);
       await _taper(tester, find.byKey(TelephoneEtape.paysKey('BE')));
       final TextField champ = tester.widget<TextField>(
@@ -710,47 +723,34 @@ void main() {
       expect(_brouillon(tester).telephone, '+33711223344');
     });
 
-    testWidgets(
-      'la phrase d\'indicatif est au-dessus de la liste, jamais sous le pli',
-      (WidgetTester tester) async {
-        await monterTelephone(tester);
-        // La personne a fait defiler la longue liste des pays.
-        await tester.ensureVisible(find.byKey(TelephoneEtape.paysKey('US')));
-        await tester.pumpAndSettle();
-        await tester.tap(find.text(t.commun.continuer));
-        await tester.pumpAndSettle();
-        final Finder phrase = find.text(
-          t.inscription.telephone.indicatifManquant,
-        );
-        expect(phrase, findsOneWidget);
-        // Ramenee a l'ecran, et au-dessus des cartes.
-        final Rect fenetre = tester.getRect(find.byType(Scaffold).first);
-        expect(
-          fenetre.contains(tester.getCenter(phrase)),
-          isTrue,
-          reason: 'la phrase doit etre visible',
-        );
-        expect(
-          tester.getTopLeft(phrase).dy,
-          lessThan(
-            tester.getTopLeft(find.byKey(TelephoneEtape.paysKey('FR'))).dy,
-          ),
-        );
-      },
-    );
+    testWidgets('continuer sans pays : la phrase est visible, sous le champ', (
+      WidgetTester tester,
+    ) async {
+      await monterTelephone(tester);
+      await tester.tap(find.text(t.commun.continuer));
+      await tester.pumpAndSettle();
+      final Finder phrase = find.text(
+        t.inscription.telephone.indicatifManquant,
+      );
+      expect(phrase, findsOneWidget);
+      final Rect fenetre = tester.getRect(find.byType(Scaffold).first);
+      expect(
+        fenetre.contains(tester.getCenter(phrase)),
+        isTrue,
+        reason: 'la phrase doit etre visible',
+      );
+      expect(
+        tester.getTopLeft(phrase).dy,
+        greaterThan(tester.getTopLeft(find.byKey(TelephoneEtape.numeroKey)).dy),
+      );
+    });
 
     testWidgets(
       'la recherche met d\'abord les noms qui commencent par ce qui est tape',
       (WidgetTester tester) async {
         await monterTelephone(tester);
-        await _taper(
-          tester,
-          find.byKey(const ValueKey<String>('choix-recherche-autre')),
-        );
-        await tester.enterText(
-          find.byKey(const ValueKey<String>('choix-recherche-champ')),
-          'ma',
-        );
+        await _taper(tester, find.byKey(TelephoneEtape.paysChoisiKey));
+        await tester.enterText(find.byKey(TelephoneEtape.rechercheKey), 'ma');
         await tester.pumpAndSettle();
         // Maroc commence par « ma » ; Allemagne le contient seulement.
         final List<String> codes = <String>[
@@ -759,15 +759,18 @@ void main() {
                   .byWidgetPredicate(
                     (Widget w) =>
                         w.key is ValueKey<String> &&
-                        RegExp(r'^choix-recherche-[A-Z]{2}$')
+                        RegExp(r'^inscription-telephone-pays-[A-Z]{2}$')
                             .hasMatch((w.key! as ValueKey<String>).value),
                   )
                   .evaluate())
-            (e.widget.key! as ValueKey<String>).value.substring(16),
+            (e.widget.key! as ValueKey<String>).value.substring(27),
         ];
         expect(codes, contains('MA'));
-        expect(codes, contains('DE'));
-        expect(codes.indexOf('MA'), lessThan(codes.indexOf('DE')));
+        // Le filtre est un debut de nom : Allemagne (« ma » au milieu) sort.
+        expect(codes, isNot(contains('DE')));
+        // Et ce qui commence par la saisie passe avant un mot interieur.
+        expect(codes, contains('SM'));
+        expect(codes.indexOf('MA'), lessThan(codes.indexOf('SM')));
       },
     );
 
@@ -776,7 +779,7 @@ void main() {
       (WidgetTester tester) async {
         await _precharger(tester, garderArabe: true);
         await monterTelephone(tester);
-        await _taper(tester, find.byKey(TelephoneEtape.paysKey('FR')));
+        await _choisirPays(tester, 'FR');
         await tester.enterText(
           find.byKey(TelephoneEtape.numeroKey),
           '06 12 ab',
@@ -1482,7 +1485,7 @@ void main() {
       hote.routeur.go(Routes.inscriptionTelephone);
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
-      await _taper(tester, find.byKey(TelephoneEtape.paysKey('FR')));
+      await _choisirPays(tester, 'FR');
       expect(tester.takeException(), isNull);
     });
 

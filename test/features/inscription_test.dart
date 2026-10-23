@@ -224,6 +224,7 @@ Future<void> _enseignantJusquAuRecap(WidgetTester tester) async {
   await _continuer(tester);
   await _taper(tester, find.text(t.inscription.genreHomme));
   await _continuer(tester);
+  await _taper(tester, find.byKey(TelephoneEtape.paysChoisiKey));
   await _taper(tester, find.byKey(TelephoneEtape.paysKey('FR')));
   await tester.enterText(
     find.byKey(TelephoneEtape.numeroKey),
