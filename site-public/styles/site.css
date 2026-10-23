@@ -2356,3 +2356,18 @@ li, dd { text-wrap: wrap; }
 .porte__texte .pause-anim { display: inline-grid; place-items: center; justify-content: center; align-content: center; width: 44px; height: 44px; padding: 0; border: 1.5px solid rgb(255 255 255 / .7); border-radius: 50%; background: rgb(255 255 255 / .14); opacity: 1; }
 .porte__texte .pause-anim:hover { background: rgb(255 255 255 / .24); text-decoration: none; }
 .porte__texte .pause-anim .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* --- Recette 39 (23/10/2026) ------------------------------------------------------------------------------------- */
+/* Accueil, chapitres : chaque chapitre se colle sous l'en-tete, a la hauteur de l'ecran, son texte au milieu de
+   l'arche epinglee. Le suivant monte par-dessus et son texte se fond dans le precedent au meme endroit (valeurs
+   posees par motion.js) ; l'arche change d'image a mi-fondu. Ecran, mouvement accepte et script charge seulement :
+   sinon les chapitres se suivent comme avant. */
+@media screen and (min-width: 840px) and (prefers-reduced-motion: no-preference) {
+  html.js .chapitres .chapitre { position: sticky; top: var(--entete); display: flex; flex-direction: column; justify-content: center; height: calc(100svh - var(--entete)); min-height: 0; padding: 0; pointer-events: none; }
+  html.js .chapitres .chapitre:first-child { margin-top: 0; }
+  html.js .chapitres .chapitres__textes::after { content: ''; display: block; height: 45svh; }
+  html.js .chapitres .chapitre__texte { position: static; top: auto; translate: none; pointer-events: auto; }
+  html.js .chapitres .chapitre__texte[data-efface]:not(:focus-within) { pointer-events: none; }
+}
+/* Tarifs, a savoir : les regles et les deux paragraphes a la taille du texte courant (ils etaient en petit). */
+@media (min-width: 840px) { #conditions .points li:not(:first-child), #conditions .section__corps > p { font-size: var(--t-corps); } }

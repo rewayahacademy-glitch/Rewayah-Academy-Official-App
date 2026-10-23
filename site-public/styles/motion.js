@@ -118,7 +118,7 @@
   var bandes = document.querySelectorAll('.bande-image--large');
   var appels = document.querySelectorAll('.appel__lien');
   var mains = document.querySelectorAll('.scene[data-anime="mains"]');
-  var SEUIL_CHAPITRE = 0.43;
+  var entreesChapitres = [];
   var demande = false;
 
   function scenePorte(h) {
@@ -140,26 +140,27 @@
 
   function sceneChapitres(h) {
     if (!chapitres || !large.matches || !textesChapitres.length) return;
-    // Une seule illustration a la fois : elle change quand le titre du chapitre suivant passe 43 % de la hauteur de
-    // l'ecran, son texte presque en place a cote de l'arche ; le fondu est porte par le CSS.
-    var courante = 0;
-    Array.prototype.forEach.call(textesChapitres, function (t, i) {
-      var titre = t.querySelector('h2') || t;
-      if (titre.getBoundingClientRect().top < h * SEUIL_CHAPITRE) courante = i;
+    // Les chapitres se collent sous l'en-tete, leur texte au milieu de l'arche epinglee, et le suivant monte par-dessus.
+    // Pendant ses derniers 24 % d'ecran de montee : le texte en place s'efface (premiere moitie), l'arche change
+    // d'image, puis le nouveau texte apparait sur les 30 derniers % de la course, presque a sa place. Jamais deux
+    // textes lisibles a la fois, toujours a cote de leur image.
+    var entete = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--entete')) || 0;
+    var course = h * 0.24;
+    var restes = Array.prototype.map.call(textesChapitres, function (t, i) {
+      return i === 0 ? 0 : Math.max(0, t.getBoundingClientRect().top - entete);
     });
+    entreesChapitres = restes.map(function (r, i) { return i === 0 ? 1 : 1 - borne(r / (course * 0.3)); });
+    var courante = 0;
+    restes.forEach(function (r, i) { if (i > 0 && r <= course * 0.4) courante = i; });
     imagesChapitres.forEach(function (img, j) {
       img.style.setProperty('--o', j === courante ? '1' : '0');
     });
-    // Le texte qui sort s'efface pendant que le titre suivant monte de 58 % a 45 % de l'ecran ; le texte qui entre
-    // apparait de 43 % a 35 %, presque a sa place : l'arche ne montre jamais une image a cote d'un autre texte.
     Array.prototype.forEach.call(textesChapitres, function (t, i) {
       var bloc = t.querySelector('.chapitre__texte') || t;
-      var suivant = textesChapitres[i + 1];
-      var sortie = 1;
-      if (suivant) sortie = borne(((suivant.querySelector('h2') || suivant).getBoundingClientRect().top - h * 0.45) / (h * 0.13));
-      if (i > 0) sortie = Math.min(sortie, borne((h * SEUIL_CHAPITRE - (t.querySelector('h2') || t).getBoundingClientRect().top) / (h * 0.08)));
-      bloc.style.setProperty('--sortie', sortie.toFixed(3));
-      bloc.toggleAttribute('data-efface', sortie < 0.05);
+      var sortie = i + 1 < restes.length ? borne((restes[i + 1] - course * 0.5) / (course * 0.5)) : 1;
+      var visible = Math.min(entreesChapitres[i], sortie);
+      bloc.style.setProperty('--sortie', visible.toFixed(3));
+      bloc.toggleAttribute('data-efface', visible < 0.05);
     });
   }
 
@@ -201,15 +202,13 @@
     mains.forEach(function (fig) {
       // En haut de page, l'illustration se montre telle qu'elle est faite : les mains tiennent deja le livre.
       if (fig.closest('.entete-page')) { fig.style.setProperty('--m', '0'); return; }
-      // Dans la fenetre epinglee des chapitres, l'image ne bouge pas : les mains montent pendant le tiers d'ecran
-      // defile apres l'entree de l'image (le haut de son chapitre passe alors le seuil de changement).
+      // Dans la fenetre epinglee des chapitres, l'image ne bouge pas : les mains montent pendant que le texte de leur
+      // chapitre apparait, une fois l'image entree.
       var fenetre = fig.closest('[data-chapitre-image]');
       if (fenetre && large.matches) {
         var rang = Array.prototype.indexOf.call(imagesChapitres, fenetre);
-        var texte = textesChapitres[rang];
-        if (texte) {
-          var montee = (h * SEUIL_CHAPITRE - texte.getBoundingClientRect().top) / (h * 0.3);
-          fig.style.setProperty('--m', (1 - adoucie(borne(montee))).toFixed(4));
+        if (rang >= 0 && entreesChapitres.length > rang) {
+          fig.style.setProperty('--m', (1 - adoucie(entreesChapitres[rang])).toFixed(4));
           return;
         }
       }
