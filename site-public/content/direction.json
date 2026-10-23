@@ -1,0 +1,308 @@
+{
+  "description": "Direction artistique par page. Un seul motif : l'arche du symbole (arche en forme de livre, porte ouverte ; décision M-21). image = illustration du haut de page, cote = côté de l'image (on alterne pour ne pas tout poser à droite), champ = couleur du fond du haut de page, cadre = libre pour une image panoramique qui sort par le bord de l'écran au lieu d'une fenêtre en arche, gabarit = composition du corps, figures = une illustration sous le titre d'une section (clé = id de la section), bande = grande image posée entre deux sections, fin = fin de page ; avec « seuil », la page se referme sur un titre de la taille de son titre d'ouverture, posé sur le fond, et ce titre est le lien (pages principales, recette 18 : seul l'accueil garde la bande blanche et son grand mot), avec « forme » (centre : bandeau lavande centré et son bouton ; sombre : sur une bande sombre), pour que les pages ne finissent pas toutes pareil (recette 21), sinon une bande sobre et son bouton. Les textes de fin ne disent que des faits publiés (liste d'attente non facturée, première semaine remboursée : content/tarifs.json et page Annulation). haut = le haut de page ouvre sur le sujet de la page (texte : les étapes suivent tout de suite ; parcours : les arches du parcours ; prix : les deux prix en grand, avec un détail). duos = deux sections côte à côte, chacune avec son détail. ambiance = clair (fond blanc et lavande) ou violet (fond violet en dégradé léger, demande du directeur du 21/10/2026). pleine = sections posées en bande pleine (titre, grande illustration au centre, texte en deux colonnes dessous), une par page pour casser l'alternance image et texte. parcours = la liste des étapes posée en arches qui montent. fonds = sections posées sur un autre champ, sur toute la largeur (lavande ou prune), une ou deux par page, pour que la page ne soit pas un seul violet. Une bande sans image est une phrase seule, en grand, sur son fond. Chaque illustration entière n'appartient qu'à une page ; ailleurs, un détail serré, chaque fichier une seule fois : l'arche pour les personnes, le cercle pour la seule classe vue d'en haut (la halqa), jamais une porte ou un tapis sans personne (recette 15). dessins = schémas dessinés en code (planche de style du 21/10, des points et des formes, jamais des personnes) : false tant que le directeur ne les a pas validés ; à false, aucun schéma n'est posé et la bande garde sa phrase seule. portraits = vraies photos de personnes (section id -> image de images.json marquée photo ; pour les fondateurs, nom -> image, traités avec la photo du directeur : même fond, même cadrage tête et épaules, même étalonnage ; le directeur n'a pas de second portrait, son parcours est sous son mot) : jamais légendées « Illustration », désaturées vers le noir et blanc dans les teintes de l'ambiance, calées au bord gauche de l'écran quand la photo y est coupée (directeur, 21/10/2026).",
+  "ambiance": "violet",
+  "dessins": false,
+  "pages": {
+    "/fr/familles": {
+      "image": "plan-pere-fils",
+      "cote": "droite",
+      "champ": "lavande",
+      "fin": {
+        "titre": "Inscrivez votre enfant.",
+        "phrase": "L’inscription se fait dans l’application Rewayah. Rien n’est facturé avant l’ouverture de la classe.",
+        "label": "Commencer mon inscription",
+        "href": "/connexion",
+        "seuil": true,
+        "forme": "image",
+        "image": "detail-entree"
+      },
+      "figures": {
+        "profils": "detail-pupitre-coran",
+        "suivi": "detail-pupitre"
+      },
+      "pleine": [],
+      "fonds": {
+        "en-bref": "prune"
+      },
+      "duos": [
+        [
+          "profils",
+          "suivi"
+        ]
+      ],
+      "haut": "gros-plan",
+      "tuiles": {
+        "organisation": {
+          "grand": "3",
+          "petit": "séances par semaine"
+        }
+      }
+    },
+    "/fr/cours": {
+      "image": "eleve-enseignante",
+      "cote": "gauche",
+      "champ": "lavande",
+      "fin": {
+        "titre": "Commencez par les bases.",
+        "phrase": "L’inscription se fait dans l’application Rewayah. La première semaine est remboursée si le cours ne convient pas.",
+        "label": "Commencer mon inscription",
+        "href": "/connexion",
+        "seuil": true
+      },
+      "figures": {
+        "objectifs": "detail-livre-femme",
+        "adultes-enfants": "detail-livre-homme",
+        "methode": "eleve-enseignante",
+        "groupes": "place"
+      },
+      "pleine": [
+        "groupes",
+        "methode"
+      ],
+      "parcours": [
+        "objectifs"
+      ],
+      "fonds": {
+        "methode": "lavande",
+        "en-bref": "prune"
+      },
+      "haut": "parcours",
+      "duos": [
+        [
+          "objectifs",
+          "adultes-enfants"
+        ]
+      ],
+      "parcours_arabe": [
+        "ا ب ت ث",
+        "بَ بِ بُ",
+        "القُرْآن",
+        "الفَاتِحَة"
+      ]
+    },
+    "/fr/comment-ca-marche": {
+      "image": "adulte-homme-livre",
+      "cote": "droite",
+      "champ": "blanc",
+      "gabarit": "etapes",
+      "bande": {
+        "phrase": "Des classes de 3 à 5 enfants, ou de 3 à 6 adultes.",
+        "sous": "Une classe ouvre dès trois inscrits. Avant cela, vous êtes en liste d’attente et rien n’est facturé.",
+        "fond": "lavande",
+        "schema": {
+          "description": "Schéma : des élèves inscrits au même horaire se regroupent autour d’un enseignant ; la direction crée la classe dès le nombre d’inscrits requis, jusqu’à la taille de la classe.",
+          "centre": "L’enseignant",
+          "choix": "Taille de classe à montrer",
+          "etapes": [
+            {
+              "titre": "Vous choisissez un horaire publié",
+              "texte": "Votre demande attend sur cet horaire."
+            },
+            {
+              "titre": "Les demandes se regroupent",
+              "texte": "Mêmes jours, même heure, même public, même langue."
+            },
+            {
+              "titre": "La direction crée la classe",
+              "texte": "Dès {ouverture} inscrits. Avant cela, rien n’est facturé."
+            },
+            {
+              "titre": "La classe est complète",
+              "texte": "Chaque élève retrouve le même enseignant à chaque séance."
+            }
+          ]
+        }
+      },
+      "fin": {
+        "titre": "Votre inscription commence ici.",
+        "phrase": "Vous suivez chaque étape dans l’application Rewayah. Rien n’est facturé avant l’ouverture de la classe.",
+        "label": "Continuer dans Rewayah",
+        "href": "/connexion",
+        "seuil": true,
+        "forme": "note",
+        "note": "mineur"
+      },
+      "figures": {
+        "connexion": "detail-fille-lecture",
+        "propositions": "detail-femme-tabouret",
+        "traitement": "detail-enseignant-place",
+        "classe": "detail-fille-enseignante"
+      },
+      "haut": "chiffres"
+    },
+    "/fr/tarifs": {
+      "image": "place",
+      "cote": "droite",
+      "champ": "lavande",
+      "fin": {
+        "titre": "Commencez votre inscription.",
+        "phrase": "Une classe ouvre dès trois inscrits. Avant cela, vous êtes en liste d’attente et rien n’est facturé.",
+        "label": "Commencer mon inscription",
+        "href": "/connexion",
+        "seuil": true,
+        "forme": "centre"
+      },
+      "figures": {},
+      "pleine": [],
+      "fonds": {
+        "famille": "lavande",
+        "echeances": "prune"
+      },
+      "haut": "prix"
+    },
+    "/fr/academie": {
+      "image": "boucle",
+      "cote": "gauche",
+      "champ": "lavande",
+      "bande": {
+        "apres": "projet",
+        "phrase": "Transmettre le savoir tel qu’il a été reçu.",
+        "sous": "« Rewayah » veut dire transmission : nous enseignons le Coran tel qu’il nous a été transmis, sans rien y changer.",
+        "fond": "prune"
+      },
+      "fin": {
+        "titre": "Découvrez les cours.",
+        "phrase": "Enfants dès 6 ans et adultes, trois séances par semaine avec le même enseignant.",
+        "label": "Découvrir les cours",
+        "href": "/fr/cours",
+        "seuil": true,
+        "forme": "centre"
+      },
+      "figures": {
+        "projet": "detail-tabouret",
+        "famille": "detail-mere-fille"
+      },
+      "pleine": [
+        "projet",
+        "famille"
+      ],
+      "fonds": {
+        "famille": "lavande"
+      },
+      "cadre": "libre",
+      "portraits": {
+        "mot": "portrait-directeur",
+        "fondateurs": {
+          "Mamadou Alimou Diallo": "portrait-fondateur-alimou",
+          "Ahmad Diallo": "portrait-fondateur-ahmad"
+        }
+      }
+    },
+    "/fr/articles": {
+      "image": "adulte-femme-livre",
+      "cote": "droite",
+      "champ": "blanc",
+      "figures": {
+        "catalogue": "detail-livre-homme",
+        "orientation": "detail-place"
+      },
+      "bande": {
+        "image": "boucle",
+        "apres": "catalogue",
+        "forme": "large"
+      }
+    },
+    "/fr/aide": {
+      "image": "adulte-homme",
+      "cote": "gauche",
+      "champ": "blanc",
+      "gabarit": "question",
+      "fin": {
+        "titre": "Une autre question ?",
+        "phrase": "L’assistance vous répond par écrit, à support@rewayahacademy.com.",
+        "label": "Écrire à l’assistance",
+        "href": "mailto:support@rewayahacademy.com"
+      }
+    },
+    "/fr/avis": {
+      "image": "mere-porte",
+      "cote": "droite",
+      "champ": "lavande",
+      "fin": {
+        "titre": "Découvrez les cours.",
+        "phrase": "Enfants dès 6 ans et adultes, trois séances par semaine avec le même enseignant.",
+        "label": "Découvrir les cours",
+        "href": "/fr/cours",
+        "seuil": true
+      },
+      "figures": {
+        "avis": "adulte-femme-livre",
+        "transparence": "gros-plan-lecture"
+      },
+      "bande": {
+        "image": "halqa",
+        "apres": "avis",
+        "forme": "cercle",
+        "phrase": "Chaque avis est lu par la direction avant d’être publié.",
+        "sous": "Le texte n’est jamais modifié : il est publié tel quel, ou il ne l’est pas."
+      }
+    },
+    "/fr/recrutement": {
+      "image": "adulte-homme-livre",
+      "cote": "gauche",
+      "champ": "blanc",
+      "fin": {
+        "titre": "Enseigner avec nous.",
+        "phrase": "Écrivez à recrutement@rewayahacademy.com pour une demande d’information ou une candidature spontanée.",
+        "label": "Écrire au recrutement",
+        "href": "mailto:recrutement@rewayahacademy.com"
+      },
+      "figures": {
+        "postes": "gros-plan-enseignant",
+        "enseignants": "boucle",
+        "candidature": "detail-pupitre"
+      },
+      "pleine": [
+        "enseignants"
+      ]
+    },
+    "/fr/contact": {
+      "image": "adulte-femme",
+      "cote": "droite",
+      "champ": "lavande",
+      "gabarit": "contact"
+    },
+    "/fr/protection-des-enfants": {
+      "image": "eleve-enseignante-b",
+      "cote": "droite",
+      "champ": "blanc",
+      "gabarit": "lecture"
+    },
+    "/fr/legal/mentions": {
+      "gabarit": "lecture",
+      "image": "adulte-homme-livre",
+      "cote": "droite",
+      "champ": "blanc"
+    },
+    "/fr/legal/conditions": {
+      "gabarit": "lecture",
+      "image": "pere-fils",
+      "cote": "droite",
+      "champ": "blanc"
+    },
+    "/fr/legal/annulation-remboursement": {
+      "gabarit": "lecture",
+      "image": "place",
+      "cote": "droite",
+      "champ": "blanc"
+    },
+    "/fr/legal/confidentialite": {
+      "gabarit": "lecture",
+      "image": "mere-porte",
+      "cote": "droite",
+      "champ": "blanc"
+    },
+    "/fr/legal/cookies": {
+      "gabarit": "lecture",
+      "image": "adulte-femme-livre",
+      "cote": "droite",
+      "champ": "blanc"
+    },
+    "/fr/accessibilite": {
+      "gabarit": "lecture",
+      "image": "adulte-homme",
+      "cote": "droite",
+      "champ": "blanc"
+    }
+  }
+}
