@@ -123,9 +123,9 @@ if (typeof document !== 'undefined') {
     donnees = null;
   }
   if (simulator) initialiserSimulateur(simulator, donnees);
-  // Pied de page : au telephone, « Decouvrir » et « Nous contacter » se replient ; ouverts au-dela, et sans script.
+  // Pied de page : sous 1100 px, « Decouvrir » et « Nous contacter » se replient ; ouverts au-dela, et sans script.
   const volets = document.querySelectorAll('.pied-volet');
-  const telephone = window.matchMedia('(max-width: 599px)');
+  const telephone = window.matchMedia('(max-width: 1099px)');
   const plier = () => volets.forEach((volet) => {
     volet.open = !telephone.matches;
     volet.querySelector('summary').tabIndex = telephone.matches ? 0 : -1;

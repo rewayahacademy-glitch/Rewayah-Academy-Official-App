@@ -237,6 +237,7 @@ Inspection après ces corrections :
 | Recette 34 (jurés Sonnet) | 7,77 | 6,67 | 6,80 | « presque », sans plafond |
 | Recette 35 (jurés Sonnet) | 7,77 | 6,57 | 6,33 | « presque », sans plafond |
 | Recette 36 (jurés Sonnet) | 7,77 | 6,80 | 6,50 | « presque », sans plafond |
+| Recette 37 (jurés Sonnet) | 7,77 | 6,75 | 6,50 | « presque », sans plafond |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -776,6 +777,19 @@ Inspection des six pages : 0 FAIL hors Tarifs (une image, voulu). Aucun texte co
 | TT5 | Chapitres : un tiers d'écran vide sous le texte | Le texte se tient au milieu de l'arche épinglée ; le premier chapitre descend un peu (son texte ne couvre plus la phrase qui le précède) ; le dernier se centre sans épinglage et part avec l'image |
 | TT7 | Trouvé en refaisant les captures : dans la fenêtre épinglée, les mains ne montaient plus vers le Coran (l'image ne bouge pas, le calcul suivait sa position) | Les mains montent pendant que le titre de leur chapitre passe de 60 % à 30 % de la hauteur de l'écran |
 | TT6 | Point-virgule en début de ligne, apostrophes droites | Espace insécable avant « : ; ? ! » dans les textes des tarifs ; apostrophes typographiques dans « À savoir » |
+
+**Après la recette 37.** Les trois jurés s'accordent : le pied de page reste lourd sur tablette (ouvert, 0,77 écran) ; sous le simulateur de Tarifs, les dates du paiement et « À savoir » gardent la même ossature (titre, puis petites colonnes). Deux jurés relèvent le passage d'un chapitre à l'autre (l'arche change d'image alors que l'ancien texte se lit encore) et, sur Cours, la bande « Trois séances par semaine » (titre à gauche, image centrée, texte dessous, vide de part et d'autre). Deux jurés, sur deux tours, trouvent que la ligne « Arrêter l'animation du tapis » fait outil de développeur. Un juré a vu trois captures périmées : le script de capture ne vidait pas le dossier ; il le vide désormais.
+
+| # | Relevé | Correction |
+|---|---|---|
+| UU1 | Tablette : pied de page ouvert, 0,77 écran | Volets jusqu'à 1099 px : identité à gauche, « Découvrir » et « Nous contacter » à droite, fermés (0,51 écran à 768 px) |
+| UU2 | Bureau : pied de page de 0,77 écran | « Découvrir » sur deux colonnes ; la langue, la page Facebook et l'auteur sur une ligne qui se replie (0,67 écran) |
+| UU3 | Tarifs : les remises en petits chiffres | Six grands chiffres sur deux rangées de trois, leur phrase dessous |
+| UU4 | Tarifs : les dates en petites colonnes | Cinq arches qui montent, comme les étapes de Cours, chacune portant sa date en grand, la phrase dessous |
+| UU5 | Tarifs : « À savoir » en liste à puces | La règle « pas d'essai » d'abord, en grande phrase ; les autres points sur deux colonnes, sans puces ; les deux paragraphes ensuite |
+| UU6 | Chapitres : deux textes à la fois au passage | Le texte qui sort s'efface pendant que le titre suivant monte de 75 % à 60 % de l'écran ; l'arche change quand il n'est plus lisible ; un lien qui reçoit le focus reste visible |
+| UU7 | Cours : « Trois séances par semaine » éparpillée | L'arche à gauche, le titre, le texte et les deux liens à droite |
+| UU8 | Accueil : la ligne « Arrêter l'animation du tapis » | Un rond de 44 px avec son seul signe ; son nom reste lu par les lecteurs d'écran et s'affiche au survol |
 
 ## Hors de portée de l'agent
 

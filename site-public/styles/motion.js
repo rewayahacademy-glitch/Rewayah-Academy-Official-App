@@ -149,6 +149,15 @@
     imagesChapitres.forEach(function (img, j) {
       img.style.setProperty('--o', j === courante ? '1' : '0');
     });
+    // Le texte qui sort s'efface pendant que le titre suivant monte de 75 % a 60 % de l'ecran : quand l'arche change
+    // d'image, un seul texte se lit a cote d'elle.
+    Array.prototype.forEach.call(textesChapitres, function (t, i) {
+      var bloc = t.querySelector('.chapitre__texte') || t;
+      var suivant = textesChapitres[i + 1];
+      if (!suivant) return;
+      var haut = (suivant.querySelector('h2') || suivant).getBoundingClientRect().top;
+      bloc.style.setProperty('--sortie', borne((haut - h * 0.6) / (h * 0.15)).toFixed(3));
+    });
   }
 
   function sceneParallaxes(h) {
