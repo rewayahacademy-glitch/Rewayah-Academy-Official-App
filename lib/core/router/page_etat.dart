@@ -33,6 +33,7 @@ class PageEtat extends StatelessWidget {
     this.onSecondaire,
     this.dependance,
     this.icone,
+    this.illustration,
   });
 
   /// La nature de l'etat.
@@ -67,6 +68,9 @@ class PageEtat extends StatelessWidget {
   /// hors ligne, le « wifi barre » est celui du bandeau de [PageShell]).
   final AppIcon? icone;
 
+  /// Une illustration a la place du cercle d'icone.
+  final Widget? illustration;
+
   @override
   Widget build(BuildContext context) {
     return PageShell(
@@ -84,6 +88,7 @@ class PageEtat extends StatelessWidget {
           onSecondaire: onSecondaire,
           dependance: dependance,
           icone: icone,
+          illustration: illustration,
         ),
       ),
     );

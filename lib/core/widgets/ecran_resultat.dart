@@ -45,6 +45,7 @@ class EcranResultat extends StatelessWidget {
     this.onSecondaire,
     this.focusAction = false,
     this.cleAction,
+    this.illustration,
   });
 
   /// La cle de l'action dominante, pour qu'un ecran metier garde la cle
@@ -54,6 +55,10 @@ class EcranResultat extends StatelessWidget {
   /// Vrai pour poser le focus clavier sur l'action dominante a l'ouverture
   /// (ecran qui remplace la page sans geste, ex. acces retire en salle).
   final bool focusAction;
+
+  /// Une illustration qui prend la place du cercle heros (la porte et la
+  /// lumiere de la page introuvable). Decorative.
+  final Widget? illustration;
 
   /// L'icone du cercle heros, rendue dans sa graisse pleine (medaillon).
   final AppIcon icone;
@@ -109,7 +114,7 @@ class EcranResultat extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Center(
-              child: ExcludeSemantics(
+              child: illustration ?? ExcludeSemantics(
                 child: SizedBox.square(
                   dimension: diametreHeros,
                   child: DecoratedBox(

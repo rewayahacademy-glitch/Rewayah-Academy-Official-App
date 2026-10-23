@@ -17,6 +17,7 @@ import '../widgets/etat_systeme.dart';
 import '../widgets/marque_page.dart';
 import '../widgets/ornement_marque.dart';
 import '../widgets/page_shell.dart';
+import '../widgets/porte_lumiere.dart';
 import 'page_etat.dart';
 import 'routes.dart';
 
@@ -51,6 +52,7 @@ class PageIntrouvable extends ConsumerWidget {
     final bool visiteur = session.porte == PorteAcces.deconnecte;
     return PageEtat(
       nature: NatureEtat.introuvable,
+      illustration: const PorteLumiere(),
       libelleAction: visiteur
           ? t.commun.etats.actions.seConnecter
           : t.commun.etats.actions.retourAccueil,
