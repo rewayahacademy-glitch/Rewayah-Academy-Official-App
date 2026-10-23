@@ -118,6 +118,7 @@
   var bandes = document.querySelectorAll('.bande-image--large');
   var appels = document.querySelectorAll('.appel__lien');
   var mains = document.querySelectorAll('.scene[data-anime="mains"]');
+  var SEUIL_CHAPITRE = 0.43;
   var demande = false;
 
   function scenePorte(h) {
@@ -139,24 +140,24 @@
 
   function sceneChapitres(h) {
     if (!chapitres || !large.matches || !textesChapitres.length) return;
-    // Une seule illustration a la fois : elle change des que le titre du chapitre suivant passe 60 % de la hauteur
-    // de l'ecran, pour que le texte et son image arrivent ensemble ; le fondu est porte par le CSS.
+    // Une seule illustration a la fois : elle change quand le titre du chapitre suivant passe 43 % de la hauteur de
+    // l'ecran, son texte presque en place a cote de l'arche ; le fondu est porte par le CSS.
     var courante = 0;
     Array.prototype.forEach.call(textesChapitres, function (t, i) {
       var titre = t.querySelector('h2') || t;
-      if (titre.getBoundingClientRect().top < h * 0.6) courante = i;
+      if (titre.getBoundingClientRect().top < h * SEUIL_CHAPITRE) courante = i;
     });
     imagesChapitres.forEach(function (img, j) {
       img.style.setProperty('--o', j === courante ? '1' : '0');
     });
-    // Le texte qui sort s'efface pendant que le titre suivant monte de 75 % a 60 % de l'ecran : quand l'arche change
-    // d'image, un seul texte se lit a cote d'elle.
+    // Le texte qui sort s'efface pendant que le titre suivant monte de 58 % a 45 % de l'ecran ; le texte qui entre
+    // apparait de 43 % a 35 %, presque a sa place : l'arche ne montre jamais une image a cote d'un autre texte.
     Array.prototype.forEach.call(textesChapitres, function (t, i) {
       var bloc = t.querySelector('.chapitre__texte') || t;
       var suivant = textesChapitres[i + 1];
-      if (!suivant) return;
-      var haut = (suivant.querySelector('h2') || suivant).getBoundingClientRect().top;
-      var sortie = borne((haut - h * 0.6) / (h * 0.15));
+      var sortie = 1;
+      if (suivant) sortie = borne(((suivant.querySelector('h2') || suivant).getBoundingClientRect().top - h * 0.45) / (h * 0.13));
+      if (i > 0) sortie = Math.min(sortie, borne((h * SEUIL_CHAPITRE - (t.querySelector('h2') || t).getBoundingClientRect().top) / (h * 0.08)));
       bloc.style.setProperty('--sortie', sortie.toFixed(3));
       bloc.toggleAttribute('data-efface', sortie < 0.05);
     });
@@ -200,15 +201,14 @@
     mains.forEach(function (fig) {
       // En haut de page, l'illustration se montre telle qu'elle est faite : les mains tiennent deja le livre.
       if (fig.closest('.entete-page')) { fig.style.setProperty('--m', '0'); return; }
-      // Dans la fenetre epinglee des chapitres, l'image ne bouge pas : les mains montent pendant que le titre de son
-      // chapitre passe de 60 % a 30 % de la hauteur de l'ecran (l'image entre a 60 %).
+      // Dans la fenetre epinglee des chapitres, l'image ne bouge pas : les mains montent pendant le tiers d'ecran
+      // defile apres l'entree de l'image (le haut de son chapitre passe alors le seuil de changement).
       var fenetre = fig.closest('[data-chapitre-image]');
       if (fenetre && large.matches) {
         var rang = Array.prototype.indexOf.call(imagesChapitres, fenetre);
         var texte = textesChapitres[rang];
-        var titre = texte && (texte.querySelector('h2') || texte);
-        if (titre) {
-          var montee = (h * 0.6 - titre.getBoundingClientRect().top) / (h * 0.3);
+        if (texte) {
+          var montee = (h * SEUIL_CHAPITRE - texte.getBoundingClientRect().top) / (h * 0.3);
           fig.style.setProperty('--m', (1 - adoucie(borne(montee))).toFixed(4));
           return;
         }

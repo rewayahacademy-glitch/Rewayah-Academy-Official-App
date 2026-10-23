@@ -238,6 +238,7 @@ Inspection après ces corrections :
 | Recette 35 (jurés Sonnet) | 7,77 | 6,57 | 6,33 | « presque », sans plafond |
 | Recette 36 (jurés Sonnet) | 7,77 | 6,80 | 6,50 | « presque », sans plafond |
 | Recette 37 (jurés Sonnet) | 7,77 | 6,75 | 6,50 | « presque », sans plafond |
+| Recette 38 (jurés Sonnet) | 7,90 | 6,92 | 6,90 | « presque », sans plafond |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -800,6 +801,17 @@ Relecture adverse de ce tour (trois relecteurs, chaque relevé vérifié par un 
 | UU11 | Impression en paysage : le texte des chapitres déjà passés manquait | Même règle : rien n'est effacé à l'impression |
 | UU12 | Impression en portrait depuis un ordinateur : les volets du pied de page se fermaient (adresses perdues) | À l'impression, les volets restent ouverts ; ils retrouvent leur état ensuite |
 | UU13 | Tarifs : la phrase « pas d'essai » sur trois lignes ; onze tailles de texte sur la page | Deux lignes ; tailles réunies (les dates, la phrase et les totaux d'une famille ensemble, les remises à la taille des titres de section) |
+
+**Après la recette 38.** Rewayah monte à 7,90. Les trois jurés s'accordent : le pied de page reste lourd au bureau (0,67 écran) et au téléphone (0,7) ; sur tablette, « Trois séances par semaine » est encore empilée ; au changement de chapitre, l'arche montre un instant la nouvelle image seule, le nouveau texte encore bas. Un juré demande les arches des dates aussi sous 1100 px, un autre un bouton pause plus visible.
+
+| # | Relevé | Correction |
+|---|---|---|
+| VV1 | Bureau : pied de page de 0,67 écran | Des rangées : le logo et l'adresse sur une ligne, les pages, les quatre adresses, les liens légaux, la langue et les crédits (0,47 écran) |
+| VV2 | Téléphone et tablette : liens légaux toujours ouverts | Troisième volet « Informations légales », fermé sous 1100 px (ouvert sans script et à l'impression) : 0,62 écran au téléphone, 0,40 sur tablette |
+| VV3 | Tablette : « Trois séances par semaine » empilée | Deux colonnes dès 700 px, l'arche à gauche |
+| VV4 | Chapitres : l'image nouvelle seule, le texte encore bas | L'arche change quand le titre suivant passe 43 % de la hauteur de l'écran ; le texte qui sort s'efface avant (58 % à 45 %), celui qui entre apparaît presque à sa place (43 % à 35 %) ; les mains montent à partir du changement |
+| VV5 | Tarifs sous 1100 px : les dates sans arches | Les cinq arches, de plus en plus hautes, l'une sous l'autre, la phrase à côté |
+| VV6 | Bouton pause peu visible | Contour blanc |
 
 ## Hors de portée de l'agent
 

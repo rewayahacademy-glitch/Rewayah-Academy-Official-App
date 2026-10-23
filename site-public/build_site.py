@@ -1338,7 +1338,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
     </div>
     <details class="pied-volet pied-volet--liens" open><summary class="footer-title">Découvrir</summary><nav aria-label="Découvrir Rewayah"><ul>{discovery_links}</ul></nav></details>
     <details class="pied-volet pied-volet--contacts" open><summary class="footer-title">Nous contacter</summary><ul class="footer-contacts">{contact_links}</ul></details>
-    <nav class="footer-legal" aria-label="Navigation légale"><ul>{footer_links}</ul></nav>
+    <details class="pied-volet pied-volet--legal" open><summary class="footer-title">Informations légales</summary><nav class="footer-legal" aria-label="Navigation légale"><ul>{footer_links}</ul></nav></details>
     <div class="footer-bottom"><span>Français</span><div>{anchor(academy_facebook['label'], academy_facebook['href'])}<span>{esc(site['author_credit'])} {anchor(author_facebook['label'], author_facebook['href'])}</span></div></div>
   </div></footer>
 </body>

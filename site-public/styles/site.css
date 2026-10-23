@@ -934,22 +934,31 @@ li, dd { text-wrap: wrap; }
 .footer-bottom { display: grid; gap: var(--e-3); color: var(--sur-pied-doux); }
 .footer-bottom > div { display: grid; gap: var(--e-2); }
 .footer-bottom a { text-decoration: underline; min-height: 32px; }
-/* Au-dela du telephone, les deux volets restent ouverts : leur titre n'est qu'un titre. */
-/* Bureau : identite, « Decouvrir » sur deux colonnes, adresses ; puis les liens legaux et, sur une ligne, la langue,
-   la page Facebook et l'auteur du site. Les volets restent ouverts : leur titre n'est qu'un titre. */
+/* Bureau : des rangees. Le logo et l'adresse ; les pages ; les quatre adresses ; les liens legaux ; la langue, la page
+   Facebook et l'auteur du site. Les volets restent ouverts et leur titre s'efface (la navigation garde son nom). */
 @media (min-width: 1100px) {
-  .pied-volet > summary { pointer-events: none; }
-  .site-footer__inner { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); }
-  .footer-identity { grid-column: 1 / span 4; }
-  .pied-volet--liens { grid-column: 5 / span 4; }
-  .pied-volet--liens ul { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--e-6); }
-  .pied-volet--contacts { grid-column: 9 / -1; }
-  .footer-legal, .footer-bottom { grid-column: 1 / -1; }
+  .site-footer { padding-top: var(--e-12); }
+  .site-footer__inner { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); row-gap: var(--e-6); }
+  .pied-volet > summary { display: none; }
+  .footer-identity, .pied-volet, .footer-bottom { grid-column: 1 / -1; }
+  .footer-identity { display: flex; flex-wrap: wrap; align-items: center; gap: var(--e-2) var(--e-6); }
+  .site-footer .footer-identity .brand img { width: 150px; margin-bottom: 0; }
+  .footer-identity p span, .footer-identity address span { display: inline; }
+  .footer-identity p span:not(:last-child)::after { content: ' ·'; }
+  .footer-identity address span:not(:last-child)::after { content: ','; }
+  .footer-identity address { margin-top: 0; }
+  .pied-volet--liens ul { display: flex; flex-wrap: wrap; gap: 0 var(--e-8); font-size: var(--t-corps); }
+  .pied-volet--liens a { min-height: 44px; color: var(--sur-pied); }
+  .site-footer .site-footer__inner .footer-identity p, .site-footer .site-footer__inner .footer-identity address { font-size: 15px; }
+  .site-footer .footer-contacts { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--e-4) var(--e-10); }
+  .footer-contacts a { min-height: 0; font-size: 16px; }
+  .footer-contacts__adresse { white-space: nowrap; }
+  .footer-legal ul { gap: 0 var(--e-6); }
   .footer-bottom { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: var(--e-6); font-size: 16px; }
   .footer-bottom > div { display: flex; flex-wrap: wrap; justify-content: end; gap: var(--e-1) var(--e-6); }
 }
-/* Sous 1100 px : l'identite en phrases ; « Decouvrir » et « Nous contacter » en volets fermes (ouverts sans script) ;
-   les liens en lignes qui se suivent. */
+/* Sous 1100 px : l'identite en phrases ; « Decouvrir », « Nous contacter » et « Informations legales » en volets fermes
+   (ouverts sans script) ; les liens en lignes qui se suivent. */
 @media (max-width: 1099px) {
   .footer-identity address span { display: inline; }
   .footer-identity address span:not(:last-child)::after { content: ','; }
@@ -967,14 +976,14 @@ li, dd { text-wrap: wrap; }
   .footer-bottom > div { display: contents; }
   .footer-bottom a { text-decoration: none; min-height: 28px; }
 }
-/* Tablette : l'identite a gauche, les deux volets a droite, l'un sous l'autre. */
+/* Tablette : l'identite a gauche, les trois volets a droite, l'un sous l'autre. */
 @media (min-width: 600px) and (max-width: 1099px) {
   .site-footer { padding-top: var(--e-12); }
-  .site-footer__inner { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto auto 1fr; gap: var(--e-8); }
-  .footer-identity { grid-column: 1; grid-row: 1 / span 3; }
+  .site-footer__inner { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto auto auto 1fr; gap: var(--e-8); }
+  .footer-identity { grid-column: 1; grid-row: 1 / span 4; }
   .pied-volet { grid-column: 2; }
-  .pied-volet--contacts { margin-top: calc(-1 * var(--e-8)); }
-  .footer-legal, .footer-bottom { grid-column: 1 / -1; }
+  .pied-volet + .pied-volet { margin-top: calc(-1 * var(--e-8)); }
+  .footer-bottom { grid-column: 1 / -1; }
 }
 /* Telephone : plus serre. */
 @media (max-width: 599px) {
@@ -2287,6 +2296,20 @@ li, dd { text-wrap: wrap; }
   #echeances .remises--echeances .remise:nth-child(5) .remise__valeur { min-height: 380px; background: #FFFFFF; color: #25113F; }
   #echeances .remises--echeances .remise__objet { align-self: start; }
 }
+/* Tarifs, les dates du paiement sous 1100 px : les memes arches, l'une sous l'autre, de plus en plus hautes ; la phrase a
+   cote de son arche. */
+@media (max-width: 1099px) {
+  #echeances .remises--echeances { grid-template-columns: minmax(0, 1fr); row-gap: var(--e-4); }
+  #echeances .remises--echeances .remise { position: static; display: grid; grid-template-columns: clamp(124px, 24vw, 184px) minmax(0, 1fr); align-items: end; column-gap: var(--e-5); padding: 0; }
+  #echeances .remises--echeances .remise::before { content: none; }
+  #echeances .remises--echeances .remise__valeur { display: flex; align-items: flex-end; padding: 0 var(--e-3) var(--e-4); border-radius: var(--arche); background: #4E2983; font-size: clamp(20px, 4.2vw, 32px); line-height: 1.05; text-wrap: balance; }
+  #echeances .remises--echeances .remise:nth-child(1) .remise__valeur { min-height: 120px; }
+  #echeances .remises--echeances .remise:nth-child(2) .remise__valeur { min-height: 140px; background: #8652E6; }
+  #echeances .remises--echeances .remise:nth-child(3) .remise__valeur { min-height: 160px; background: #BA98FB; color: #25113F; }
+  #echeances .remises--echeances .remise:nth-child(4) .remise__valeur { min-height: 180px; background: #DCCAFD; color: #25113F; }
+  #echeances .remises--echeances .remise:nth-child(5) .remise__valeur { min-height: 200px; background: #FFFFFF; color: #25113F; }
+  #echeances .remises--echeances .remise__objet { align-self: end; padding-bottom: var(--e-3); }
+}
 /* Tarifs, ce que coute une famille : le titre en haut, puis les quatre totaux sur une rangee, en grands chiffres. */
 @media (min-width: 1100px) {
   #famille .section__titre { position: static; }
@@ -2336,16 +2359,17 @@ li, dd { text-wrap: wrap; }
 
 /* Cours, « Trois seances par semaine » : l'arche a gauche, le titre et le texte a droite (la bande d'avant a son image
    a droite). */
-@media (min-width: 840px) {
-  .page-cours #groupes { align-items: center; row-gap: var(--e-6); }
+@media (min-width: 700px) {
+  .page-cours #groupes { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); align-items: center; row-gap: var(--e-6); }
   .page-cours #groupes .pleine__image { grid-column: 1 / span 6; grid-row: 1 / span 2; }
   .page-cours #groupes .pleine__tete { grid-column: 8 / -1; grid-row: 1; align-self: end; }
   .page-cours #groupes .pleine__corps { grid-column: 8 / -1; grid-row: 2; align-self: start; grid-template-columns: minmax(0, 1fr); }
+  .page-cours #groupes .pleine__tete h2 { max-width: none; }
   .page-cours #groupes .pleine__texte { grid-column: 1 / -1; columns: auto; }
   .page-cours #groupes .section-links { display: grid; justify-items: start; gap: var(--e-2); }
 }
 
 /* Accueil : le bouton d'arret du tapis devient un rond avec son seul signe ; son nom reste lu et s'affiche au survol. */
-.porte__texte .pause-anim { display: inline-grid; place-items: center; justify-content: center; align-content: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: rgb(255 255 255 / .14); opacity: 1; }
+.porte__texte .pause-anim { display: inline-grid; place-items: center; justify-content: center; align-content: center; width: 44px; height: 44px; padding: 0; border: 1.5px solid rgb(255 255 255 / .7); border-radius: 50%; background: rgb(255 255 255 / .14); opacity: 1; }
 .porte__texte .pause-anim:hover { background: rgb(255 255 255 / .24); text-decoration: none; }
 .porte__texte .pause-anim .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
