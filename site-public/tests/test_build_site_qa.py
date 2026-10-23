@@ -148,6 +148,9 @@ class GeneratedSiteQA(unittest.TestCase):
                 "dm-sans-OFL.txt",
                 "plus-jakarta-sans-OFL.txt",
                 "reem-kufi-OFL.txt",
+                # COURRIELS-1 : logo et ornement des e-mails (PNG, les messageries ne rendent pas le SVG).
+                "courriel-logo-violet.png",
+                "courriel-ornement-violet.png",
             } | scenes,
         )
         self.assertFalse((self.output / "fr" / "assets" / "prototype.html").exists())
