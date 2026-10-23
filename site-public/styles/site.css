@@ -945,8 +945,8 @@ li, dd { text-wrap: wrap; }
   .pied-volet--liens ul { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--e-6); }
   .pied-volet--contacts { grid-column: 9 / -1; }
   .footer-legal, .footer-bottom { grid-column: 1 / -1; }
-  .footer-bottom { display: flex; flex-wrap: wrap; align-items: center; gap: var(--e-1) var(--e-6); font-size: 16px; }
-  .footer-bottom > div { display: contents; }
+  .footer-bottom { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: var(--e-6); font-size: 16px; }
+  .footer-bottom > div { display: flex; flex-wrap: wrap; justify-content: end; gap: var(--e-1) var(--e-6); }
 }
 /* Sous 1100 px : l'identite en phrases ; « Decouvrir » et « Nous contacter » en volets fermes (ouverts sans script) ;
    les liens en lignes qui se suivent. */
@@ -2279,7 +2279,7 @@ li, dd { text-wrap: wrap; }
   #echeances .remises--echeances { grid-template-columns: repeat(5, minmax(0, 1fr)); grid-template-rows: auto auto; column-gap: var(--e-4); row-gap: 0; margin-top: var(--e-12); }
   #echeances .remises--echeances .remise { grid-row: span 2; display: grid; grid-template-rows: subgrid; grid-template-columns: minmax(0, 1fr); row-gap: var(--e-5); padding: 0; }
   #echeances .remises--echeances .remise::before { content: none; }
-  #echeances .remises--echeances .remise__valeur { align-self: end; display: flex; align-items: flex-end; padding: 0 var(--e-5) var(--e-6); border-radius: var(--arche); background: #4E2983; font-size: clamp(30px, 2.6vw, 40px); line-height: 1.05; text-wrap: balance; }
+  #echeances .remises--echeances .remise__valeur { align-self: end; display: flex; align-items: flex-end; padding: 0 var(--e-5) var(--e-6); border-radius: var(--arche); background: #4E2983; font-size: clamp(34px, 3.2vw, 46px); line-height: 1.05; text-wrap: balance; }
   #echeances .remises--echeances .remise:nth-child(1) .remise__valeur { min-height: 200px; }
   #echeances .remises--echeances .remise:nth-child(2) .remise__valeur { min-height: 245px; background: #8652E6; }
   #echeances .remises--echeances .remise:nth-child(3) .remise__valeur { min-height: 290px; background: #BA98FB; color: #25113F; }
@@ -2306,13 +2306,13 @@ li, dd { text-wrap: wrap; }
   #conditions .section__corps > .points { order: -1; margin-top: 0; margin-bottom: var(--e-10); row-gap: var(--e-5); }
   #conditions .section__corps > p { max-width: 62ch; }
   #conditions .points .puce { display: none; }
-  #conditions .points li:first-child { grid-column: 1 / -1; max-width: 26ch; margin-bottom: var(--e-6); font-family: var(--police-titre); font-size: clamp(30px, 2.8vw, 42px); font-weight: 600; line-height: 1.15; letter-spacing: -0.02em; }
+  #conditions .points li:first-child { grid-column: 1 / -1; margin-bottom: var(--e-6); font-family: var(--police-titre); font-size: clamp(34px, 3.2vw, 46px); font-weight: 600; line-height: 1.15; letter-spacing: -0.02em; text-wrap: balance; }
 }
 /* Tarifs, les remises : au bureau, six grands chiffres sur deux rangees de trois, leur phrase dessous. */
 @media (min-width: 840px) {
   .remises:not(.remises--echeances) { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--e-12) var(--e-10); }
   .remises:not(.remises--echeances) .remise { grid-template-columns: minmax(0, 1fr); row-gap: var(--e-3); align-content: start; }
-  .remises:not(.remises--echeances) .remise__valeur { font-size: clamp(56px, 6vw, 88px); }
+  .remises:not(.remises--echeances) .remise__valeur { font-size: var(--t-entete); }
   .remises:not(.remises--echeances) .remise__objet { max-width: 30ch; }
 }
 /* Accueil, chapitres : le texte se tient au milieu de l'arche epinglee (meme axe horizontal), le vide se partage
