@@ -2,7 +2,8 @@
 import { assert, assertEquals, assertThrows } from 'jsr:@std/assert@1'
 import { composer } from './gabarit.ts'
 import { contenuPour, modelesConnus } from './modeles.ts'
-import { htmlAuth, MODELES_AUTH } from './auth_modeles.ts'
+import { htmlAuth, LANGUES_AUTH, MODELES_AUTH, MODELES_AUTH_LANGUES } from './auth_modeles.ts'
+import { FRANCAIS, LANGUES } from './modeles.ts'
 
 // Les evenements de la contrainte notifications_evenement_check (etat au
 // 23/10/2026) et les deux modeles propres a la file.
@@ -64,6 +65,25 @@ Deno.test('modeles Auth : a jour et porteurs des variables Supabase', () => {
     const fichier = Deno.readTextFileSync(new URL(`../../../templates/${nom}.html`, import.meta.url))
     assertEquals(fichier, htmlAuth(nom) + '\n', `${nom} : relancer supabase/templates/generer.ts`)
     assert(fichier.includes(nom === 'reauthentication' ? '{{ .Token }}' : '{{ .ConfirmationURL }}'), nom)
+    // Une branche par langue ecrite, le francais en repli, fichier raisonnable.
+    for (const l of LANGUES_AUTH) assert(fichier.includes(`eq $l "${l}"`) && fichier.includes(`lang="${l}"`), `${nom} ${l}`)
+    assert(fichier.includes('{{ else }}<!doctype html><html lang="fr"') && fichier.endsWith('{{ end }}\n'), nom)
+    assert(fichier.includes('<html lang="ar" dir="rtl">'), `${nom} : arabe de droite a gauche`)
+    assert(new TextEncoder().encode(fichier).length < 25 * 1024, `${nom} : trop gros`)
+    // Les balises Go sont equilibrees : autant de if que de end.
+    assertEquals((fichier.match(/\{\{ if /g) ?? []).length, (fichier.match(/\{\{ end \}\}/g) ?? []).length, nom)
+  }
+})
+
+Deno.test('modeles Auth : chaque langue a les six messages, sans francais restant', () => {
+  for (const l of LANGUES_AUTH) {
+    assertEquals(Object.keys(MODELES_AUTH_LANGUES[l]).sort(), Object.keys(MODELES_AUTH).sort(), l)
+    for (const [nom, c] of Object.entries(MODELES_AUTH_LANGUES[l])) {
+      const { html, texte } = composer(c)
+      assert(html.includes(`lang="${l}"`) && html.includes(l === 'ar' ? 'dir="rtl"' : 'dir="ltr"'), `${nom} ${l}`)
+      assert(texte.includes(nom === 'reauthentication' ? '{{ .Token }}' : '{{ .ConfirmationURL }}'), `${nom} ${l}`)
+      if (l !== 'ar') assert(!/Bonjour|Vous recevez|Copiez|valable/.test(texte), `${nom} ${l} : du francais reste`)
+    }
   }
 })
 
@@ -116,4 +136,69 @@ Deno.test('un passage arabe (verset, invocation) est marque pour ne jamais etre 
   assert(h.includes('&lt;b&gt;') && h.includes('<br>'))
   assertEquals(depuisHtml(h), 'Récitez بِسْمِ اللَّهِ chaque jour.\n<b>')
   assert(!versHtml('نص عربي', false).includes('notranslate'), 'vers l arabe : rien a proteger')
+})
+
+// Langues ecrites a la main (en, ar, es, pt).
+const ECRITES = ['fr', 'en', 'ar', 'es', 'pt']
+const CATEGORIES = Object.keys(FRANCAIS.raisons)
+const DONNEES = { prenom: 'Khadija', sujet: 'S', corps: 'Corps', jours_avant: 3, invite_par: 'Amine',
+  expire_le: '2026-10-30T10:00:00Z', date_reponse: '2026-10-14T09:12:00Z', formulaire: 'Enseignants 2026' }
+
+Deno.test('chaque langue ecrite a tous les modeles et toutes les raisons', () => {
+  for (const l of ECRITES) {
+    const L = LANGUES[l]
+    assert(L, l)
+    for (const m of modelesConnus) assert(typeof L.modeles[m] === 'function', `${l} : modele ${m}`)
+    for (const c of CATEGORIES) assert(L.raisons[c] && L.raisons[c].length > 20, `${l} : raison ${c}`)
+    assert(L.desinscription.length > 5, l)
+    assertEquals(L.droiteAGauche === true, l === 'ar', l)
+  }
+})
+
+Deno.test('chaque modele dans chaque langue : leger, bonne langue, bonne direction, memes liens', () => {
+  for (const l of ECRITES) {
+    for (const m of modelesConnus) {
+      const base = { modele: m, categorie: 'classes', essentielle: false, donnees: { ...DONNEES, jeton_desinscription: 'abc', langue_source: l } }
+      const r = rendre(base, l)
+      assertEquals(r.traduireDepuis, undefined, `${l} ${m}`)
+      const { html, texte } = composer(r.contenu)
+      assert(new TextEncoder().encode(html).length / 1024 < 15, `${l} ${m} : trop gros`)
+      assert(html.includes(`<html lang="${l}" dir="${l === 'ar' ? 'rtl' : 'ltr'}">`), `${l} ${m}`)
+      assert(html.includes(l === 'ar' ? 'text-align:right' : 'text-align:left'), `${l} ${m}`)
+      assert(html.includes(LANGUES[l].desinscription), `${l} ${m} : desinscription`)
+      // Les liens sont ceux du francais.
+      const liens = (h: string) => [...h.matchAll(/href="([^"]+)"/g)].map((x) => x[1]).sort()
+      assertEquals(liens(html), liens(composer(rendre(base, 'fr').contenu).html), `${l} ${m} : liens`)
+      if (l === 'en' || l === 'es' || l === 'pt') {
+        assert(!/Bonjour|Vous recevez|Ne plus recevoir|l’application|votre /.test(texte + html), `${l} ${m} : du francais reste`)
+      }
+    }
+  }
+})
+
+Deno.test('jours_avant, dates et message libre suivent la langue', () => {
+  const j = (l: string, n: number) => composer(rendre({ modele: 'paiement_relance', categorie: 'facturation',
+    essentielle: true, donnees: { jours_avant: n } }, l).contenu).texte
+  assert(j('en', 3).includes('in 3 days') && j('en', 1).includes('tomorrow'))
+  assert(j('es', 0).includes('hoy') && j('pt', 3).includes('dentro de 3 dias') && j('ar', 0).includes('اليوم'))
+  const ins = (l: string) => composer(rendre({ modele: 'lien_inscription', categorie: 'recrutement', essentielle: true,
+    donnees: DONNEES }, l).contenu).texte
+  assert(ins('en').includes('14 October 2026') && ins('es').includes('14 de octubre de 2026')
+    && ins('pt').includes('14 de outubro de 2026') && ins('ar').includes('14') && !/[٠-٩]/.test(ins('ar')))
+  const libre = rendre({ modele: 'nouvelles', categorie: 'nouvelles', essentielle: true,
+    donnees: { sujet: 'Hi', corps: 'A\n\nB', langue_source: 'en' } }, 'en')
+  assertEquals(libre.traduireDepuis, undefined)
+  assertEquals(libre.contenu.langue, 'en')
+  assertEquals(libre.contenu.blocs.length, 2)
+})
+
+Deno.test('langue non ecrite : traduite du francais ; francais inchange', () => {
+  const l = { modele: 'classe_validee', categorie: 'inscription', essentielle: true, donnees: { prenom: 'Awa' } }
+  assertEquals(rendre(l, 'ff').traduireDepuis, 'fr')
+  assertEquals(rendre(l, 'en').traduireDepuis, undefined)
+  const fr = rendre(l, 'fr').contenu
+  assertEquals(fr.sujet, 'Votre classe est prête')
+  assertEquals(fr.blocs[0], { type: 'texte', texte: 'Bonjour Awa,' })
+  assertEquals(fr.blocs[3], { type: 'note', texte: 'Le détail se trouve dans l’application, une fois connecté.' })
+  assertEquals(fr.raison, 'Vous recevez cet e-mail parce qu’il concerne une demande faite sur Rewayah Academy.')
 })
