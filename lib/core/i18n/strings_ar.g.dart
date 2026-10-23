@@ -11981,7 +11981,7 @@ class _Traductions$admin$candidatures$erreurs$ar extends Traductions$admin$candi
 	@override String get conflit => 'تغيّر طلب الترشح هذا منذ فتحه. حدّثوه قبل أي إجراء.';
 	@override String get horsPortee => 'ليست لديكم صلاحية الاطلاع على طلب الترشح هذا. عودوا إلى قائمة طلبات الترشح.';
 	@override String get absente => 'طلب الترشح هذا غير موجود، أو لم يعد موجودًا. عودوا إلى قائمة طلبات الترشح.';
-	@override String get horsLigne => 'تعود الإجراءات فور عودة الشبكة.';
+	@override String get horsLigne => 'أنت غير متصل. تحقّق من شبكتك: تعود الإجراءات فور عودتها.';
 	@override String get motifRequis => 'لم يُنجَز شيء. اذكروا السبب.';
 	@override String get modeleRequis => 'لم يُنجَز شيء. اختاروا الرسالة التي سيقرؤها الشخص.';
 	@override String get modeleInconnu => 'لم تعد هذه الرسالة مقترحة. اختاروا رسالة أخرى.';
@@ -22599,7 +22599,7 @@ extension on TraductionsAr {
 			'admin.candidatures.erreurs.conflit' => 'تغيّر طلب الترشح هذا منذ فتحه. حدّثوه قبل أي إجراء.',
 			'admin.candidatures.erreurs.horsPortee' => 'ليست لديكم صلاحية الاطلاع على طلب الترشح هذا. عودوا إلى قائمة طلبات الترشح.',
 			'admin.candidatures.erreurs.absente' => 'طلب الترشح هذا غير موجود، أو لم يعد موجودًا. عودوا إلى قائمة طلبات الترشح.',
-			'admin.candidatures.erreurs.horsLigne' => 'تعود الإجراءات فور عودة الشبكة.',
+			'admin.candidatures.erreurs.horsLigne' => 'أنت غير متصل. تحقّق من شبكتك: تعود الإجراءات فور عودتها.',
 			'admin.candidatures.erreurs.motifRequis' => 'لم يُنجَز شيء. اذكروا السبب.',
 			'admin.candidatures.erreurs.modeleRequis' => 'لم يُنجَز شيء. اختاروا الرسالة التي سيقرؤها الشخص.',
 			'admin.candidatures.erreurs.modeleInconnu' => 'لم تعد هذه الرسالة مقترحة. اختاروا رسالة أخرى.',
