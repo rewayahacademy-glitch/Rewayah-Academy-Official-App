@@ -243,7 +243,8 @@ Inspection après ces corrections :
 | Recette 40 (jurés Sonnet) | 7,78 | 6,78 | 6,50 | « presque », sans plafond ; le directeur demande d'en finir (23/10) |
 | Recette 41 (jurés Sonnet) | 7,80 | 6,90 | 6,50 | « presque », sans plafond, après WW1, WW2 et WW6 |
 | Recette 42 (jurés Sonnet) | 7,67 | 6,80 | 6,67 | « presque », sans plafond |
-| Recette 43 (jurés Sonnet) | 7,77 | 6,40 | 6,33 | « presque », sans plafond ; hiérarchie des titres jugée réglée ; dernière recette |
+| Recette 43 (jurés Sonnet) | 7,77 | 6,40 | 6,33 | « presque », sans plafond ; hiérarchie des titres jugée réglée |
+| Recette 44 (jurés Sonnet) | 7,80 | 6,33 | 6,33 | « presque », sans plafond ; sans les plafonds, les trois sites à 0,2 point près (Rewayah 7,8, Waking Up 7,6, Hallow 7,65) ; dernière recette |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -860,7 +861,16 @@ de 66 px. Les trois jurés donnent la hiérarchie des titres réglée (3,1 à 3,
 Hallow (6,40) et Waking Up (6,33), toujours « presque ». Ce qui les retient encore : le partage image et texte qui
 revient sur la plupart des sections, le pied de page au bureau (ils demandent de sortir les quatre adresses et les
 pages Facebook, décision de contenu), les écrans les plus denses (prix de l'accueil, « À savoir » de Tarifs), et des
-images toutes tirées du même ensemble de rendus (gardé par décision du directeur). Fin des recettes.
+images toutes tirées du même ensemble de rendus (gardé par décision du directeur).
+
+**Recette 44, la dernière.** Avant elle : sur l'accueil, « Un horaire fixe, une classe stable » devient une phrase
+centrée au-dessus des trois arches en escalier, et « Questions des familles » passe à un titre en tête et une large
+colonne de questions dessous (deux partages de moins). Rewayah à 7,80, devant Hallow et Waking Up (6,33 chacun),
+toujours « presque ». Un juré donne les notes sans les plafonds de la grille : les trois sites se tiennent à 0,2 point
+près (Rewayah 7,8, Waking Up environ 7,6, Hallow environ 7,65). Restent, selon eux : les pages intérieures qui
+répètent le même partage image et texte, le pied de page à re-quadriller en trois colonnes (contenu inchangé),
+la colonne des questions à porter à toute la largeur, deux familles d'actions au lieu de quatre, et un réglage commun
+de la lumière des trois portraits.
 
 ## Hors de portée de l'agent
 
