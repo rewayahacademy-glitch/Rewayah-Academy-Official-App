@@ -244,7 +244,8 @@ Inspection après ces corrections :
 | Recette 41 (jurés Sonnet) | 7,80 | 6,90 | 6,50 | « presque », sans plafond, après WW1, WW2 et WW6 |
 | Recette 42 (jurés Sonnet) | 7,67 | 6,80 | 6,67 | « presque », sans plafond |
 | Recette 43 (jurés Sonnet) | 7,77 | 6,40 | 6,33 | « presque », sans plafond ; hiérarchie des titres jugée réglée |
-| Recette 44 (jurés Sonnet) | 7,80 | 6,33 | 6,33 | « presque », sans plafond ; sans les plafonds, les trois sites à 0,2 point près (Rewayah 7,8, Waking Up 7,6, Hallow 7,65) ; dernière recette |
+| Recette 44 (jurés Sonnet) | 7,80 | 6,33 | 6,33 | « presque », sans plafond ; sans les plafonds, les trois sites à 0,2 point près (Rewayah 7,8, Waking Up 7,6, Hallow 7,65) |
+| Recette 45 (jurés Sonnet) | 7,70 | 7,90 | 7,40 | « presque » ; pied de page et questions de l'accueil jugés réglés ; tour bref (2 min), un juré sans aucun plafond pour les références |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -876,3 +877,11 @@ de la lumière des trois portraits.
 
 - `.github/workflows/flutter-deploy.yml` vérifie la présence de 8 fichiers du site, mais pas de `motion.js`. Le garde du dépôt interdit à l'agent d'écrire dans `.github/`. Le test `test_only_approved_public_assets_are_copied` couvre ce fichier côté tests.
 - L'outil REA (Reverse Engineer Anything) n'est installé qu'en ligne de commande, dans l'espace de travail de la session. Son inscription comme serveur MCP et comme skill demande une règle de permission du directeur.
+
+**Recette 45.** Avant elle, sur décision du directeur (23/10) : les quatre adresses quittent le pied de page (elles
+restent sur Contact, Mentions légales et Aide), un lien « Nous contacter » sur chaque page, le lien Facebook de
+l'auteur sans son nom ; le pied de page passe à 0,23 écran. Sur Cours et Académie, « Trois séances par semaine » et
+« Ce que nous enseignons » deviennent des phrases centrées, l'image dessous ; les questions de l'accueil prennent toute
+la largeur. Les jurés donnent le pied de page et les questions réglés, les pages intérieures en partie. Ce tour a été
+très court (2 minutes) et un juré n'a appliqué aucun plafond aux références, ce qui les remonte (Hallow 7,90, Waking Up
+7,40) ; Rewayah à 7,70, toujours « presque ».
