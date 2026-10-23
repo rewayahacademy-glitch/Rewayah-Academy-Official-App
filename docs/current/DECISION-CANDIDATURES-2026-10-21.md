@@ -167,6 +167,8 @@ l'enverra :
    rapprochement ne se fait pas tout seul), puis le bouton du lien.
 6. **Confiance** : « Nous ne vous demanderons jamais de mot de passe ni de paiement par message. Le lien mène à
    notre adresse officielle. Si vous n'avez pas rempli ce formulaire, ignorez ce message. »
+6 bis. **Rien à payer** (directeur, 23/10) : dire clairement que postuler et créer son compte sont gratuits,
+   qu'aucun candidat ne paie rien, à aucune étape, et que l'académie ne demandera jamais d'argent.
 7. **Jamais** : aucune réponse du formulaire, ni téléphone, ni contenu libre ; le prénom seulement s'il est
    présent, sinon « Bonjour ».
 8. **Jamais deux fois** : une personne déjà prévenue ou qui a déjà son compte ne reçoit pas le message de
@@ -174,3 +176,27 @@ l'enverra :
 
 Statut : `spécifié`. Le texte final passe par le vocabulaire de `.claude/skills/mots-rewayah` et suit le
 gabarit des courriels de l'autre session ; le branchement de « Prévenir » sur la file des courriels le lit.
+
+## Les noms dans une seule écriture sur les listes (directeur, 23/10/2026)
+
+Constat du directeur : dans les formulaires, certains ont écrit leur nom en arabe, d'autres en lettres latines.
+Les listes de l'application doivent montrer les noms dans une écriture unique.
+
+Décision (proposée par Claude, à la demande du directeur, « à toi de voir ») :
+
+1. **Le nom de référence est en lettres latines** (prénom et nom). C'est lui que montrent les listes, la recherche
+   et le tri, quelle que soit la langue de l'interface.
+2. **Le nom d'origine est gardé tel quel** (en arabe s'il a été écrit en arabe) et s'affiche en second, sous le
+   nom latin, sur la fiche et en petit dans les listes ; il n'est jamais remplacé.
+3. **À l'inscription** (CAND-04 et invitation) : si le nom saisi contient une autre écriture que l'alphabet latin,
+   une question de plus : « Votre nom en lettres latines », avec une proposition de translittération que la
+   personne corrige ou confirme (jamais enregistrée sans sa confirmation), et l'explication : « pour les listes,
+   les attestations et les échanges avec l'académie ».
+4. **Pour les réponses importées des formulaires** : la personne confirme son nom latin dans la Salle d'examen,
+   pré-rempli par la même proposition. Tant qu'il n'est pas confirmé, la liste de la direction montre la
+   proposition, marquée « à confirmer ».
+5. Aucun nom n'est translittéré en silence côté serveur ; la recherche trouve une personne par l'une ou l'autre
+   écriture.
+
+Statut : `spécifié`. Lot à suivre : colonne du nom latin et sa confirmation (serveur), question à l'inscription et
+dans la Salle d'examen, colonne des listes (après la réunion des écrans CAND-04 et des listes en cours).
