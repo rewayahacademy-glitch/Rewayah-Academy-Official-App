@@ -124,7 +124,11 @@ class FauxServiceOffres implements ServiceOffres {
   Future<ReglesAcademie> regles() async => reglesRendues;
 
   @override
-  Future<List<LangueCours>> langues() async => languesRendues;
+  Future<List<LangueCours>> langues() async =>
+      languesRendues.where((LangueCours l) => l.actif).toList(growable: false);
+
+  @override
+  Future<List<LangueCours>> referentielLangues() async => languesRendues;
 
   @override
   Future<List<CohorteAge>> cohortes() async => cohortesRendues;

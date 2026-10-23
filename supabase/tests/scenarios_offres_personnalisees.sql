@@ -67,12 +67,18 @@ INSERT INTO public.teacher_profiles
 VALUES
   ('f1490000-0000-0000-0000-000000000997', ARRAY['francais'], 10, 'approved', 'Europe/Paris');
 
+-- Les Classes de ce scenario sont des Classes d'adultes, qui durent 90
+-- minutes : chaque jour demande les heures 18 ET 19 (CLASSES-DUREE, 22/10 ;
+-- avant, l'heure 18 seule suffisait, la seance etant comptee 60 minutes).
 INSERT INTO public.weekly_availability
   (profile_id, weekday, hour_local, timezone_iana)
 VALUES
   ('f1490000-0000-0000-0000-000000000997', 2, 18, 'Europe/Paris'),
+  ('f1490000-0000-0000-0000-000000000997', 2, 19, 'Europe/Paris'),
   ('f1490000-0000-0000-0000-000000000997', 4, 18, 'Europe/Paris'),
-  ('f1490000-0000-0000-0000-000000000997', 6, 18, 'Europe/Paris');
+  ('f1490000-0000-0000-0000-000000000997', 4, 19, 'Europe/Paris'),
+  ('f1490000-0000-0000-0000-000000000997', 6, 18, 'Europe/Paris'),
+  ('f1490000-0000-0000-0000-000000000997', 6, 19, 'Europe/Paris');
 
 UPDATE public.households
    SET primary_guardian_id = 'f1490000-0000-0000-0000-000000000998'

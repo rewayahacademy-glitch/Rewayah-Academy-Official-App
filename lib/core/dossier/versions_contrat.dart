@@ -6,10 +6,19 @@ import '../domain/enums.dart';
 /// sur le triplet profil, sorte, version. Une nouvelle version est donc une
 /// nouvelle ligne a signer ; une version deja signee n'est jamais reecrite.
 ///
-/// **Attention** : `etat_dossier()` ne filtre pas la version (C03 section 5,
-/// DB-ADM-03). Changer une version ne redemande donc la signature qu'aux
-/// dossiers qui passent par `/attente` ; les comptes deja actifs sont invites
-/// par `/tuteur/compte/consentements`, qui lit leurs acceptations.
+/// **Attention** : `etat_dossier()` ne filtre pas la version du contrat ni
+/// celle de l'accuse (C03 section 5, DB-ADM-03). Changer l'une de ces
+/// versions ne redemande donc la signature qu'aux dossiers qui passent par
+/// `/attente` ; les comptes deja actifs sont invites par
+/// `/tuteur/compte/consentements`, qui lit leurs acceptations.
+///
+/// **Exception, le code de conduite** : depuis la migration
+/// `20261021210400_pe_code_conduite_avant_activation.sql`, `etat_dossier()`
+/// filtre sa version, et seulement la sienne. Sa cle `code_conduite_signe`
+/// n'est vraie pour un enseignant que si son acceptation porte la version
+/// posee dans `contract_required_versions` (`teacher_conduct_code`), celle
+/// que la garde d'activation exige aussi. Lire [codeConduite] avant de
+/// changer cette version.
 ///
 /// Ne faire bouger une version qu'en meme temps que le contenu de `t.contrat`,
 /// `t.accuse` ou `t.consentement.texte`, jamais separement.
@@ -45,6 +54,21 @@ abstract final class VersionsContrat {
   /// posee en base (`contract_required_versions`, migration
   /// `20261019100000_pe_code_conduite_v2.sql`) ; la changer ici sans la
   /// changer la-bas fait refuser l'acceptation par le serveur.
+  ///
+  /// L'autre sens bloque davantage. Depuis
+  /// `20261021210400_pe_code_conduite_avant_activation.sql`, la garde
+  /// d'activation et `etat_dossier()` lisent la version de
+  /// `contract_required_versions`. Monter cette version en base rouvre donc
+  /// la section du code (`code_conduite_signe` faux) pour **chaque enseignant
+  /// en attente** et bloque son activation
+  /// (`contract_not_signed_current:teacher_conduct_code`). Et le client
+  /// envoie toujours cette constante, que la policy refuse des qu'elle
+  /// differe de la version requise : aucun enseignant en attente ne peut
+  /// plus accepter, donc plus etre active, tant qu'une version de
+  /// l'application portant la nouvelle constante n'est pas publiee. Les
+  /// comptes deja actifs ne sont pas re-controles par la garde. Le test
+  /// `test/core/dossier/versions_contrat_test.dart` compare cette constante
+  /// a la derniere version posee par les migrations.
   static const String codeConduite = '2026-10-19';
 
   /// La duree de conservation des enregistrements dite par le texte signe

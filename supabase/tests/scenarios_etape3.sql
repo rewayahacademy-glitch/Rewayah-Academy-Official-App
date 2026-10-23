@@ -633,6 +633,11 @@ begin
   perform set_config('request.jwt.claim.sub', '22222222-2222-2222-2222-222222222222', true);
   perform set_config('request.jwt.claims', '{"sub":"22222222-2222-2222-2222-222222222222","app_metadata":{"role":"teacher"}}', true);
   perform public.signer_contrat('2026-10-jur', 'Yasmine Test');
+  -- CAND-Q15 conduite : le code de conduite s'accepte des pending_kyc, sur son
+  -- propre profil, a la version requise ; la garde d'activation l'exige.
+  insert into public.contract_acceptances (profile_id, contract_kind, version)
+  values ('22222222-2222-2222-2222-222222222222', 'teacher_conduct_code',
+          public.code_conduite_version_requise());
 end $$;
 
 reset role;

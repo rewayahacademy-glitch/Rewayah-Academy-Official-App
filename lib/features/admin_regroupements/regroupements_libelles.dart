@@ -15,6 +15,7 @@ import '../../core/classes/nom_classe_distinct.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/i18n/villes_fuseau.dart';
+import '../../core/offres/affectation_refusee.dart';
 import '../../core/offres/offre_horaire.dart' show PublicOffre;
 import '../../core/offres/page_regroupements.dart' show trierParPret;
 import '../../core/offres/port_regroupements_admin.dart';
@@ -216,4 +217,22 @@ String libelleDecoupage(DecoupageClasses d) {
     if (d.enAttente > 0) r.decoupageAttente(n: d.enAttente),
   ];
   return parties.join(', ');
+}
+
+/// C11BIS-AFFECTATION : la phrase d'un refus du serveur a la confirmation de
+/// l'enseignant, une par motif. Le texte SQL n'est jamais montre ; un motif
+/// inconnu donne la phrase generique.
+String libelleRefusAffectation(MotifRefusAffectation motif) {
+  final r = t.admin.regroupements.refusAffectation;
+  return switch (motif) {
+    MotifRefusAffectation.reservee => r.reservee,
+    MotifRefusAffectation.classeIndisponible => r.classeIndisponible,
+    MotifRefusAffectation.enseignantIndisponible => r.enseignantIndisponible,
+    MotifRefusAffectation.genreIncompatible => r.genreIncompatible,
+    MotifRefusAffectation.plafond => r.plafond,
+    MotifRefusAffectation.nonDisponible => r.nonDisponible,
+    MotifRefusAffectation.chevauchementClasse => r.chevauchementClasse,
+    MotifRefusAffectation.chevauchementSeance => r.chevauchementSeance,
+    MotifRefusAffectation.inconnu => r.inconnu,
+  };
 }

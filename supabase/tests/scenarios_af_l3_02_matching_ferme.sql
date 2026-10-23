@@ -6,9 +6,14 @@ begin;
 insert into auth.users (id, email, email_confirmed_at) values
   ('13020000-0000-4000-8000-0000000000a1', 'l302-admin@test.invalid', now()),
   ('13020000-0000-4000-8000-0000000000b1', 'l302-teacher@test.invalid', now());
-insert into public.profiles (id, immutable_id, role, first_name, last_name, account_status) values
-  ('13020000-0000-4000-8000-0000000000a1', 'L302ADMIN0000001', 'admin', 'L302', 'Admin', 'active'),
-  ('13020000-0000-4000-8000-0000000000b1', 'L302TEACHER00001', 'teacher', 'L302', 'Teacher', 'provisional_active');
+insert into public.profiles (id, immutable_id, role, first_name, last_name, account_status, gender) values
+  ('13020000-0000-4000-8000-0000000000a1', 'L302ADMIN0000001', 'admin', 'L302', 'Admin', 'active', null),
+  ('13020000-0000-4000-8000-0000000000b1', 'L302TEACHER00001', 'teacher', 'L302', 'Teacher', 'provisional_active', 'male');
+-- CAND-Q15 (lot creer_groupe, 21/10) : creer_groupe passe par le predicat
+-- d'affectation ; l'enseignant du cours particulier a un genre connu, un
+-- profil enseignant et sa piece d'identite validee.
+insert into public.teacher_profiles (profile_id, kyc_status) values
+  ('13020000-0000-4000-8000-0000000000b1', 'approved');
 
 -- Enseignant : prendre_eleve refuse en 42501.
 select set_config('request.jwt.claim.sub', '13020000-0000-4000-8000-0000000000b1', true);

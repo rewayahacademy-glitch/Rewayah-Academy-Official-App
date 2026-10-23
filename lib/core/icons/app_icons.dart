@@ -1040,4 +1040,12 @@ abstract final class AppIcons {
     IconData(0xe1ca, fontFamily: _repos),
     IconData(0xe1ca, fontFamily: _actif),
   );
+
+  /// Envoyer l'offre a un proche par une carte a partager (CAND-06, la tuile
+  /// « Aidez une personne a apprendre la parole d'Allah. » du portail) : Phosphor
+  /// `share-network` (0xe408), present dans les deux graisses embarquees.
+  static const AppIcon partager = AppIcon._(
+    IconData(0xe408, fontFamily: _repos),
+    IconData(0xe408, fontFamily: _actif),
+  );
 }

@@ -34,6 +34,9 @@ begin
   values ('c2910000-0000-0000-0000-000000000002',
           'recording_and_control_notice',v_notice_version)
   on conflict do nothing;
+  insert into public.contract_acceptances (profile_id, contract_kind, version)
+  values ('c2910000-0000-0000-0000-000000000002', 'teacher_conduct_code', public.code_conduite_version_requise())
+  on conflict (profile_id, contract_kind, version) do nothing;
   update public.profiles set account_status='active'
    where id='c2910000-0000-0000-0000-000000000002';
   perform set_config('request.jwt.claim.sub','',true);

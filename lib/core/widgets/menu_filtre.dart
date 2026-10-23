@@ -247,20 +247,20 @@ class MenuFiltre<T> extends StatelessWidget {
                   // mot : il passe a la ligne entre les mots, un mot trop
                   // long se reduit (COUPE-MOTS-1 ; « Rapprochement » a
                   // 320 px, texte x2, CPT-FUS).
-                  child: selecteurDeSection
-                      ? TexteSansCoupure(
-                          texte,
-                          textAlign: TextAlign.start,
-                          style: (actif ? palette.inkAccent : palette.inkStrong)
-                              .applyTo(textes.labelLarge ?? const TextStyle()),
-                        )
-                      : Text(
-                          texte,
-                          textAlign: TextAlign.center,
-                          overflow: TextOverflow.ellipsis,
-                          style: (actif ? palette.inkAccent : palette.inkStrong)
-                              .applyTo(textes.labelLarge ?? const TextStyle()),
-                        ),
+                  //
+                  // Un filtre non plus (CAND-07, la feuille « Plus » a 320 px,
+                  // texte x2) : « Pays de residence » finissait en ellipse. Le
+                  // libelle passe a la ligne entre ses mots, un mot trop long
+                  // se reduit ; la puce garde sa largeur propre dans une
+                  // rangee.
+                  child: TexteSansCoupure(
+                    texte,
+                    textAlign: selecteurDeSection
+                        ? TextAlign.start
+                        : TextAlign.center,
+                    style: (actif ? palette.inkAccent : palette.inkStrong)
+                        .applyTo(textes.labelLarge ?? const TextStyle()),
+                  ),
                 ),
                 Ecart.hXs,
                 Icon(

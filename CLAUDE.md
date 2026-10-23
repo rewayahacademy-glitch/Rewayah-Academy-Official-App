@@ -81,7 +81,11 @@ numérotation `00xx` du dépôt.
 accepté** : le serveur Supabase demande une seconde confirmation pour tout `DELETE`, `DROP`
 ou `TRUNCATE`, et l'app ne l'affiche pas. Compter ces mots avant d'appeler `apply_migration` ;
 au-dessus de 0, le directeur colle le fichier dans l'éditeur SQL de staging, puis Claude
-vérifie. Détail : `docs/orchestration/LECONS-MIGRATIONS-STAGING.md`.
+vérifie. **Règle du directeur (23/10/2026)** : ce qu'il doit coller lui est toujours donné par une
+page privée (outil Artifact) fabriquée par `tool/page_migrations/generer.py` (ordre, un bouton
+Copier par fichier enveloppé contre les fins de ligne de Windows, coches, consignes en mots
+simples), avec l'ordre et les consignes rappelés dans la conversation. Détail :
+`docs/orchestration/LECONS-MIGRATIONS-STAGING.md`.
 
 ## État du code à connaître
 

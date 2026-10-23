@@ -86,6 +86,26 @@ abstract final class Routes {
   /// Depot de la piece d'identite.
   static const String attentePiece = '/attente/piece';
 
+  /// CAND-01 : le questionnaire de la Salle d'examen, en parcours d'accueil
+  /// (presentation, une question par ecran, recapitulatif, envoi). Sous
+  /// `/attente`, ouvert au compte en attente ; sans candidature pour le
+  /// compte, la page revient au portail.
+  static const String attenteCandidature = '/attente/candidature';
+
+  /// CAND-06 : la carte a partager, « Aidez une personne a apprendre la parole d'Allah. »
+  /// (envoyer l'offre a un proche, facultatif et sans effet sur la
+  /// candidature). Sous `/attente`,
+  /// ouvert au compte en attente ; sans candidature en cours pour le compte, la
+  /// page revient au portail.
+  static const String attentePartage = '/attente/partage';
+
+  /// CAND-07 : « Vos autres talents », le parcours facultatif de la salle
+  /// d'attente, apres l'envoi de la candidature (competences precises, niveau,
+  /// disponibilite, accord d'etre contacte pour une mission). Sous `/attente`,
+  /// ouvert au compte en attente ; sans candidature pour le compte, la page
+  /// revient au portail.
+  static const String attenteTalents = '/attente/talents';
+
   // --- Eleve, meme arborescence en mode enfant et en mode standard --------
 
   /// Accueil eleve.
@@ -722,6 +742,26 @@ abstract final class Routes {
   static const String adminPersonnesInvitations =
       '/admin/personnes/invitations';
 
+  /// ADM-20 : la file des candidatures d'enseignement, sous Personnes. Elle
+  /// prend le rang de l'onglet Invitations (pas de septieme onglet) ; la page
+  /// des invitations ([adminPersonnesInvitations]) reste atteignable par un
+  /// lien de cette file (CAND-F01).
+  static const String adminPersonnesCandidatures =
+      '/admin/personnes/candidatures';
+
+  /// ADM-21 : une candidature ouverte par la direction, par sa reference
+  /// `CAND-…` (jamais l'identifiant du profil ni un nom : elle ne nomme
+  /// personne et survit au rechargement, `CAND-F02`). Les chemins statiques
+  /// qui viendront sous [adminPersonnesCandidatures] (`action-groupee`,
+  /// `import`, ADM-22 et ADM-23) se declarent AVANT ce chemin dans le routeur
+  /// (contrainte R5).
+  static const String adminPersonnesCandidature =
+      '/admin/personnes/candidatures/:reference';
+
+  /// Le chemin de la candidature de reference [reference].
+  static String adminPersonnesCandidaturePour(String reference) =>
+      '$adminPersonnesCandidatures/${Uri.encodeComponent(reference)}';
+
   /// BACK-FRONT-REPRISE-1 : la file des reprises de foyer, sous Personnes.
   static const String adminPersonnesReprises = '/admin/personnes/reprises';
 
@@ -1244,8 +1284,7 @@ abstract final class Routes {
   static const String avis = '/avis';
 
   /// L'adresse du formulaire d'avis pour [jeton].
-  static String avisPour(String jeton) =>
-      '$avis/${Uri.encodeComponent(jeton)}';
+  static String avisPour(String jeton) => '$avis/${Uri.encodeComponent(jeton)}';
 
   /// Ou mene la cloche des notifications de la coquille d'un role : la
   /// `NotificationsPage` existante, sous le prefixe du role. Nul pour un

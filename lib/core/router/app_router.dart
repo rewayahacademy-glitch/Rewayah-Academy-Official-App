@@ -11,6 +11,8 @@ import '../../features/accueil_eleve/accueil_eleve_selon_presentation.dart';
 import '../../features/accueil_famille/accueil_famille_page.dart';
 import '../../features/admin_acces_agents/acces_agents_page.dart';
 import '../../features/admin_avis/avis_page.dart';
+import '../../features/admin_candidature/candidature_page.dart';
+import '../../features/admin_candidatures/candidatures_page.dart';
 import '../../features/admin_comptes/comptes_page.dart';
 import '../../features/admin_configuration_conservation_donnees/conservation_donnees_page.dart';
 import '../../features/admin_configuration_fonctionnalites/fonctionnalites_page.dart';
@@ -56,6 +58,7 @@ import '../../features/appareils/appareils_page.dart';
 import '../../features/avis_public/avis_public_page.dart';
 import '../../features/bienvenue_enseignant/bienvenue_page.dart';
 import '../../features/cahier/cahier_page.dart';
+import '../../features/candidature/candidature_page.dart';
 import '../../features/classe_tuteur/catalogue_classes_page.dart';
 import '../../features/classe_tuteur/classe_tuteur_page.dart';
 import '../../features/classe_tuteur/planning_classe_page.dart';
@@ -150,6 +153,7 @@ import '../../features/mfa_controleur/mfa_controleur_page.dart';
 import '../../features/notifications/notifications_page.dart';
 import '../../features/paiements_recus/recevoir_paiements_page.dart';
 import '../../features/parcours_offres/parcours_offres_page.dart';
+import '../../features/partage_offre/partage_offre_page.dart';
 import '../../features/presentation_tuteur/demandes_presentation_page.dart';
 import '../../features/profil_enseignant/profil_enseignant_page.dart';
 import '../../features/recherche/entree_recherche.dart';
@@ -166,6 +170,7 @@ import '../../features/suivi_foyer/detail_observations_page.dart';
 import '../../features/suivi_foyer/detail_seance_page.dart';
 import '../../features/suivi_foyer/observations_page.dart';
 import '../../features/suivi_foyer/suivi_foyer_page.dart';
+import '../../features/talents/talents_page.dart';
 import '../../features/tc_catalogue/routes_tc_b.dart';
 import '../../features/tc_mes_groupes/routes_tc_a.dart';
 import '../../features/tc_mushaf/mushaf_page.dart';
@@ -173,6 +178,7 @@ import '../../features/tc_mushaf/routes_tc_c.dart';
 import '../../features/tc_observation_ui/routes_tc_g.dart';
 import '../admin/admin_domaine.dart';
 import '../alertes/port_alertes.dart';
+import '../candidature/modeles_candidatures_direction.dart' show LigneCandidature;
 import '../config/env.dart';
 import '../domain/enums.dart';
 import '../dossier/resignature_contrat.dart';
@@ -408,6 +414,26 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRoute(
         path: Routes.attentePiece,
         builder: (BuildContext _, GoRouterState _) => const DepotPiecePage(),
+      ),
+      // CAND-01 : le questionnaire de la Salle d'examen. Declaree meme sans
+      // le lot serveur : une adresse tapee montre la phrase de capacite
+      // indisponible, jamais une page vide.
+      GoRoute(
+        path: Routes.attenteCandidature,
+        builder: (BuildContext _, GoRouterState _) => const CandidaturePage(),
+      ),
+      // CAND-06 : la carte a partager. Declaree meme sans lien d'offre : une
+      // adresse tapee montre la phrase de capacite indisponible.
+      GoRoute(
+        path: Routes.attentePartage,
+        builder: (BuildContext _, GoRouterState _) =>
+            const PartageOffrePage(),
+      ),
+      // CAND-07 : « Vos autres talents ». Declaree meme sans le lot serveur : une
+      // adresse tapee montre la phrase de capacite indisponible.
+      GoRoute(
+        path: Routes.attenteTalents,
+        builder: (BuildContext _, GoRouterState _) => const TalentsPage(),
       ),
 
       // Compte. Cet espace est partage par les roles actifs, mais ses
@@ -1560,6 +1586,37 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
           child: ImportInscriptionsPage(),
+        ),
+      ),
+      // ADM-20 : la file des candidatures, au rang de l'ancien onglet
+      // Invitations. Une ligne ouvre ADM-21 (la reference dans l'adresse,
+      // l'identifiant en `extra` : il evite une recherche, et l'adresse
+      // survit au rechargement). L'action groupee (ADM-22) n'est pas encore
+      // construite : aucune destination n'est donnee, la page le dit.
+      GoRoute(
+        path: Routes.adminPersonnesCandidatures,
+        builder: (BuildContext contexte, GoRouterState _) => _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: CandidaturesPage(
+            ouvrirCandidature: (LigneCandidature ligne) =>
+                GoRouter.of(contexte).push<void>(
+                  Routes.adminPersonnesCandidaturePour(ligne.reference),
+                  extra: ligne.id,
+                ),
+          ),
+        ),
+      ),
+      // ADM-21 : une candidature ouverte par sa reference `CAND-…`. Les
+      // chemins statiques d'ADM-22 et d'ADM-23 (`action-groupee`, `import`)
+      // se declareront AVANT celui-ci (contrainte R5).
+      GoRoute(
+        path: Routes.adminPersonnesCandidature,
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: CandidatureDirectionPage(
+            reference: etat.pathParameters['reference'] ?? '',
+            identifiant: etat.extra is String ? etat.extra as String : null,
+          ),
         ),
       ),
       GoRoute(

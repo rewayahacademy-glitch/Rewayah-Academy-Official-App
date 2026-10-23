@@ -70,6 +70,7 @@ class ActionPrincipale extends StatelessWidget {
     this.encre,
     this.libelleSemantique,
     this.affleurant = false,
+    this.affirmee = false,
   });
 
   /// La paire de la surface sur laquelle une action [NiveauAction.tertiaire]
@@ -80,6 +81,16 @@ class ActionPrincipale extends StatelessWidget {
   /// Ignore pour les autres niveaux, qui portent leur fond. `null` :
   /// `inkAccent`.
   final AppColorPair? encre;
+
+  /// Vrai pour peindre le niveau [NiveauAction.principale] en aplat
+  /// `surfacePrimary` (violet plein et encre claire en clair, accent plein en
+  /// sombre) au lieu de la lavande douce, comme en Interface guidee. Reserve a
+  /// l'action qui fait avancer un parcours (« Continuer », « Envoyer ma
+  /// candidature ») et a l'unique invitation d'un ecran de la Salle d'examen
+  /// (« Partager », CAND-06) : demande du directeur du 22/10/2026, la lavande
+  /// douce y paraissait desactivee meme apres un choix. Un bouton inerte garde
+  /// son propre aspect. Ignore pour les autres niveaux.
+  final bool affirmee;
 
   /// Vrai pour poser le LIBELLE au bord de debut du contenu (lot K, point
   /// 3) : un bouton texte ([NiveauAction.tertiaire]) seul en debut de ligne
@@ -221,7 +232,7 @@ class ActionPrincipale extends StatelessWidget {
       palette,
       actif: actif,
       etat: etat,
-      guidee: metriques.estEnfant,
+      guidee: metriques.estEnfant || affirmee,
     );
 
     // K-54 : le contenu est centre en largeur ET en hauteur. Un `Container`

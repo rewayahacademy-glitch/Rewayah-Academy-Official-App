@@ -48,7 +48,8 @@ abstract interface class PortConsentements {
 ///   A** (`00_OWNERSHIP.md` section 3), qui remplace alors l'implementation du
 ///   provider ci-dessous.
 /// - [aRenouveler] attend une source serveur (DB-ADM-03) : `etat_dossier()`
-///   ignore la version.
+///   ignore la version, sauf celle du code de conduite de l'enseignant
+///   (`code_conduite_signe`, voir l'en-tete de `VersionsContrat`).
 /// - [accepter] est possible par insertion de soi (`contract_acceptances`),
 ///   mais **seulement apres validation par le directeur du texte de la
 ///   nouvelle version** (point P2, DB-ADM-02) : d'ici la, rien n'est

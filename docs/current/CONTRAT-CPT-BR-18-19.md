@@ -165,12 +165,29 @@ public.exports_comptables
   RFC 4180. Toute cellule qui commence par `=`, `+`, `-`, `@`, une tabulation ou un retour chariot
   est préfixée d'une apostrophe (protection contre l'injection de formules). Les montants sont
   donnés deux fois : en unités mineures et sous forme décimale, avec un point et le nombre de
-  décimales de la devise (table interne : 2 par défaut, 0 pour JPY, XOF, XAF, KMF ; 3 pour KWD,
-  BHD, TND, OMR).
+  décimales de la devise selon `private.devise_decimales` (ISO 4217, migration
+  `20261021210300_fi_devises_decimales_iso4217.sql`). L'export appelle cette fonction, depuis une
+  fonction `SECURITY DEFINER` (voir « Qui appelle » ci-dessous) ; il ne recopie aucune liste de
+  devises (FI-DEV-1, 21/10/2026 : une liste recopiée ici donnait 2 décimales au GNF).
   - En-tête du rapport : `date;coffre;sens;montant;montant_mineur;devise;montant_ref;montant_ref_mineur;devise_ref;transfert;source_type;source_id;note`
   - En-tête de la sélection : `paiement_id;cree_le;statut;montant;montant_mineur;devise;methode_type;beneficiaire_profil_id`
   - Dates en ISO 8601 dans `fuseau_comptable`. Aucune donnée de `payout_methods.details` n'est
     exportée : uniquement `kind`.
+- **Qui appelle `private.devise_decimales`.** Aucun rôle client ne l'atteint : ni `USAGE` sur le
+  schéma `private`, ni `EXECUTE` pour `anon`, `authenticated`, `service_role` ou `agent_ro`.
+  L'appel part donc d'une fonction `SECURITY DEFINER`, propriétaire `postgres`, avec
+  `search_path = ''`, sous la procédure F86 (garde `admin` ou `accountant` avec
+  `app_account_valid()`, empreinte md5) : soit les RPC d'export elles-mêmes, soit la fonction de
+  formatage décimal passée en `DEFINER`. Une fonction `SECURITY INVOKER` appelée par un compte
+  connecté échoue en `42501` (« permission denied for schema private »). On n'accorde jamais
+  `USAGE` sur `private` ni `EXECUTE` sur `private.devise_decimales` à un rôle client pour
+  contourner ce refus.
+- **Reprise de la branche `codex2/x2-18` (`bf78725d`).** Elle n'est pas dans la pile. Telle
+  quelle, elle aurait deux défauts. D'abord, `public.montant_comptable_decimal` recopie l'ancienne
+  table (GNF et KRW à 2 décimales). Ensuite, cette fonction et `public.exporter_rapport_comptable`
+  sont `SECURITY INVOKER` avec `EXECUTE` pour `authenticated` : un simple appel à
+  `private.devise_decimales` y échouerait en `42501`. Avant toute reprise, il faut retirer la table
+  recopiée et faire passer l'appel par une fonction `DEFINER` comme ci-dessus.
 - `telecharger_export_comptable(p_reference text)` renvoie le texte CSV, sous les mêmes droits que
   le journal. Il servira au téléchargement quand l'écran l'ajoutera ; le port actuel ne l'appelle
   pas encore.

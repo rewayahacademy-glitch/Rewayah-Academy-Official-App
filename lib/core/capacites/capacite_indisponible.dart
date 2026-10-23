@@ -8,7 +8,7 @@
 /// production, jamais une fixture.
 ///
 /// [dependance] nomme ce qui manque, pour la trace et les tests, **jamais pour
-/// l'affichage** (aucun code technique a l'ecran, mandat section 8). Quatre
+/// l'affichage** (aucun code technique a l'ecran, mandat section 8). Cinq
 /// familles d'identifiants seulement :
 ///
 /// - `DB-xxx` : une dependance du registre des dependances backend du chantier
@@ -21,7 +21,10 @@
 ///   `11_admin/AD-BR.md` (K-28) ;
 /// - `COM-BR-nn` : un contrat serveur du chantier Communications V1, une
 ///   ligne de `19_communications/COM-BR.md` (K-28), par exemple `COM-BR-06`
-///   pour la moderation ou `COM-BR-16` pour les capacites Communications.
+///   pour la moderation ou `COM-BR-16` pour les capacites Communications ;
+/// - `CAND-BR-nn` : un besoin serveur du module des candidatures
+///   (`docs/current/CANDIDATURES/DEPENDANCES_BACKEND.md`), par exemple
+///   `CAND-BR-10` pour le questionnaire de la Salle d'examen.
 class CapaciteIndisponible implements Exception {
   /// Cree l'exception pour une dependance donnee.
   const CapaciteIndisponible(this.dependance);

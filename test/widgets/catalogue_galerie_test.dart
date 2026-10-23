@@ -97,6 +97,9 @@ const List<String> composantsDuCatalogue = <String>[
   // produisent : la commande ronde de la salle et la barre precedent / suivant.
   'CommandeSalle',
   'BarrePrecedentSuivant',
+  // ADM-20 : la barre de selection d'une liste, promue du Comptable vers le
+  // core (une seule barre pour le Comptable et les Candidatures).
+  'BarreSelection',
   // Section 2 : le composant d'etat que le lot N4 produit. Il porte a lui seul
   // deux invariants de l'etape 5 -- J3, un etat indisponible se dit « inconnu »
   // et jamais « absent », et J7, une couleur seule ne represente jamais un etat

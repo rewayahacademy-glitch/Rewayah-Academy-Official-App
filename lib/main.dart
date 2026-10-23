@@ -23,6 +23,12 @@ import 'core/admin/port_pilotage.dart';
 import 'core/admin/port_planning_direction.dart';
 import 'core/agent/amorce_agent.dart';
 import 'core/agent/session_agent.dart';
+import 'core/candidature/autres_competences_supabase.dart';
+import 'core/candidature/candidatures_direction_supabase.dart';
+import 'core/candidature/ma_candidature_supabase.dart';
+import 'core/candidature/port_autres_competences.dart';
+import 'core/candidature/port_candidatures_direction.dart';
+import 'core/candidature/port_ma_candidature.dart';
 import 'core/capacites/acces_supabase.dart';
 import 'core/capacites/avis_supabase.dart';
 import 'core/capacites/classes_foyer_supabase.dart';
@@ -96,6 +102,8 @@ import 'core/offres/port_regroupements_admin.dart';
 import 'core/offres/port_suivi_demandes.dart';
 import 'core/offres/regroupements_c11bis_supabase.dart';
 import 'core/offres/regroupements_pages_supabase.dart';
+import 'core/partage_offre/genre_partageur_supabase.dart';
+import 'core/partage_offre/port_genre_partageur.dart';
 import 'core/recrutement/invitations_comptable_supabase.dart';
 import 'core/recrutement/invitations_enseignant_supabase.dart';
 import 'core/recrutement/port_invitations_comptable.dart';
@@ -253,6 +261,28 @@ List<Override> _surchargesAppReelle() => <Override>[
   portSignatureContratProvider.overrideWithValue(
     SignatureContratSupabase(Supabase.instance.client),
   ),
+  // CAND-01 : le questionnaire de la Salle d'examen, son brouillon, l'envoi et
+  // le retrait de la candidature. Tant que le lot serveur n'est pas verse, les
+  // lectures rendent « capacite indisponible » et l'ecran le dit.
+  portMaCandidatureProvider.overrideWithValue(
+    MaCandidatureSupabase(Supabase.instance.client),
+  ),
+  // CAND-07 : « Vos autres talents » (autres competences du candidat, apres
+  // l'envoi de sa candidature) et le catalogue des competences que lit la
+  // direction. Tant que le lot serveur n'est pas verse, la tuile du portail
+  // n'est pas rendue et la page dit que l'etape n'est pas encore ouverte.
+  portAutresCompetencesProvider.overrideWithValue(
+    AutresCompetencesSupabase(Supabase.instance.client),
+  ),
+  portCatalogueCompetencesProvider.overrideWithValue(
+    CatalogueCompetencesSupabase(Supabase.instance.client),
+  ),
+  // ADM-20 : la file des candidatures de la direction (capacites et liste
+  // paginee au serveur). Sans lot serveur, l'ecran dit « Disponible au
+  // branchement serveur ».
+  portCandidaturesDirectionProvider.overrideWithValue(
+    CandidaturesDirectionSupabase(Supabase.instance.client),
+  ),
   // Ports a defaut « indisponible » (ou en memoire) dont l'adaptateur
   // serveur existe : compte, tresorerie, observations, controleur, support
   // et etat partage de la classe.
@@ -264,6 +294,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portMatriculeProvider.overrideWithValue(
     MatriculeSupabase(Supabase.instance.client),
+  ),
+  // CAND-06 : le genre du titulaire, lu sur son profil pour choisir la variante
+  // de la carte a partager (directeur, 22/10/2026). Jamais devine.
+  portGenrePartageurProvider.overrideWithValue(
+    GenrePartageurSupabase(Supabase.instance.client),
   ),
   // Mes donnees : copie JSON et demande de suppression du compte
   // (CPT-SUPPR-EXPORT, migration 20261018150000).

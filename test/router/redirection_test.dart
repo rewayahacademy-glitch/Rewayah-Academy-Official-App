@@ -123,6 +123,22 @@ void main() {
       );
     });
 
+    // CAND-06 : la carte a partager vit dans le sous-arbre du portail, ouvert
+    // au compte en attente (le candidat), sans rien d'autre a ouvrir.
+    test('la carte a partager (/attente/partage) reste atteignable', () {
+      for (final AppRole role in <AppRole>[AppRole.teacher, AppRole.guardian]) {
+        expect(
+          deciderRedirection(
+            session: _session(role: role, statut: AccountStatus.pendingKyc),
+            cheminDemande: Routes.attentePartage,
+            maintenant: maintenant,
+          ),
+          isNull,
+          reason: '$role',
+        );
+      }
+    });
+
     // K-47 (HL-A-6) : la piece d'identite ne concerne que l'enseignant.
     test('le depot de piece : ouvert a l enseignant, ferme au tuteur', () {
       String? pour(AppRole role) => deciderRedirection(

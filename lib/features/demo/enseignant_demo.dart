@@ -540,14 +540,18 @@ abstract final class DonneesEnseignantDemo {
     // EN-12 (E20) : un compte actif a un dossier valide et un pays, coherent
     // avec son fuseau.
     pays: 'France',
-    langues: <String>['Arabe', 'Français'],
+    // Comme `teacher_profiles.languages` : le code du referentiel
+    // (`francais`), et une saisie libre hors referentiel (« Arabe »). L'ecran
+    // les nomme par `languesCours` (CAND-Q15, lot langue).
+    langues: <String>['Arabe', 'francais'],
     plafondHeures: 12,
     statutCompte: AccountStatus.active,
     verification: VerificationEnseignant.validee,
   );
 
   /// Les langues d'enseignement que la base publie a sa creation (migration
-  /// `0043`, table `langues_cours`), pour la feuille des langues (FORM-L8).
+  /// `0043`, table `langues_cours`), pour la feuille des langues (FORM-L8) et
+  /// le nom des langues du profil.
   static const List<LangueCours> languesCours = <LangueCours>[
     LangueCours(code: 'poular', nom: 'Poular'),
     LangueCours(code: 'francais', nom: 'Français'),

@@ -159,12 +159,14 @@ enum EtatIntention {
 @immutable
 class LangueCours {
   /// Cree une langue.
-  const LangueCours({required this.code, required this.nom});
+  const LangueCours({required this.code, required this.nom, this.actif = true});
 
-  /// Lit une ligne de `langues_cours`.
+  /// Lit une ligne de `langues_cours`. Une lecture qui ne demande pas la
+  /// colonne `actif` ne lit que des langues actives.
   factory LangueCours.depuisJson(Map<String, dynamic> json) => LangueCours(
     code: json['code'] as String,
     nom: json['nom_humain'] as String? ?? '',
+    actif: json['actif'] as bool? ?? true,
   );
 
   /// Le code serveur.
@@ -173,6 +175,10 @@ class LangueCours {
   /// Le nom tel qu'il s'affiche. Rendu par le serveur, jamais traduit : le nom
   /// d'une langue s'ecrit dans cette langue.
   final String nom;
+
+  /// Faux pour une langue retiree de l'onboarding (`langues_cours.actif`) :
+  /// elle ne se propose plus, mais reste lisible la ou elle est deja portee.
+  final bool actif;
 }
 
 /// Une tranche d'age, et ce qu'elle deduit.

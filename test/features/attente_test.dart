@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
+import 'package:rewayah_academy/core/dossier/resignature_contrat.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
@@ -36,6 +37,7 @@ EtatDossier _etat({
   AccountStatus statut = AccountStatus.pendingKyc,
   bool accuse = false,
   bool contrat = false,
+  bool code = true,
   bool piece = false,
   StatutPiece? statutPiece,
   String? motif,
@@ -48,6 +50,7 @@ EtatDossier _etat({
   statutCompte: statut,
   accuseSigne: accuse,
   contratSigne: contrat,
+  codeConduiteSigne: code,
   pieceDeposee: piece,
   statutPiece: statutPiece,
   motifRefus: motif,
@@ -692,6 +695,89 @@ void main() {
       expect(sans.correctionAutorisee, isNull);
       expect(interdite.correctionAutorisee, isFalse);
       expect(sans == interdite, isFalse);
+    });
+  });
+
+  // CAND-Q15 conduite : le code de conduite manquant mene a la page unique des
+  // accords, comme l'accuse et le contrat ; il ne fait pas une ligne a part.
+  group('Le code de conduite manquant mene aux accords', () {
+    testWidgets('seul le code manque : dossier incomplet, une ligne « Nos '
+        'conditions », Lire et accepter ouvre sa section', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceDossier dossier = FauxServiceDossier()
+        ..etatRendu = _etat(
+          accuse: true,
+          contrat: true,
+          code: false,
+          piece: true,
+          statutPiece: StatutPiece.enAttente,
+        );
+      await tester.pumpWidget(
+        hoteRoutant(
+          depart: Routes.attente,
+          routes: <RouteBase>[
+            GoRoute(
+              path: Routes.attente,
+              builder: (BuildContext _, GoRouterState _) => const AttentePage(),
+            ),
+            GoRoute(
+              path: Routes.attenteAccords,
+              builder: (BuildContext _, GoRouterState _) => const AccordsPage(),
+            ),
+          ],
+          surcharges: <Override>[
+            serviceDossierProvider.overrideWithValue(dossier),
+            // Les accords de l'enseignant lisent la resignature du contrat,
+            // hors sujet ici : aucune.
+            resignatureContratEnseignantProvider.overrideWithValue(false),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.attente.dossierIncomplet), findsOneWidget);
+      expect(find.text(t.attente.nosConditions), findsOneWidget);
+      expect(find.text(t.attente.pieceIdentite), findsNothing);
+      expect(find.text(t.attente.enVerification), findsNothing);
+
+      await tester.ensureVisible(find.text(t.attente.lireEtAccepter));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.attente.lireEtAccepter));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AccordsPage), findsOneWidget);
+      expect(find.text(t.codeConduite.titre), findsOneWidget);
+      expect(find.text(t.codeConduite.caseAccord), findsOneWidget);
+    });
+
+    testWidgets('code accepte et piece deposee : en verification', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceDossier dossier = FauxServiceDossier()
+        ..etatRendu = _etat(
+          accuse: true,
+          contrat: true,
+          piece: true,
+          statutPiece: StatutPiece.enAttente,
+        );
+      await _monter(tester, dossier);
+
+      expect(find.text(t.attente.dossierIncomplet), findsNothing);
+      expect(find.text(t.attente.lireEtAccepter), findsNothing);
+    });
+
+    test('un tuteur : le serveur rend vrai, rien ne lui est demande', () {
+      final EtatDossier lu = EtatDossier.depuisJson(const <String, dynamic>{
+        'profil': true,
+        'role': 'guardian',
+        'statut': 'pending_kyc',
+        'contrat_signe': true,
+        'accuse_signe': true,
+        'code_conduite_signe': true,
+      });
+      expect(lu.manquants, isEmpty);
+      expect(lu.etape, EtapeDossier.accesEnPreparation);
     });
   });
 }

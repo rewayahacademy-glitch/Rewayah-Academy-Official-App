@@ -21,6 +21,9 @@ BEGIN
  PERFORM set_config('test.jwt','{"app_metadata":{"role":"teacher"}}',true);
  PERFORM public.signer_contrat(v_teacher_version,'Fixture enseignant');
  INSERT INTO public.contract_acceptances(profile_id,contract_kind,version) VALUES ('c2900000-0000-0000-0000-000000000002','recording_and_control_notice',v_notice_version) ON CONFLICT DO NOTHING;
+ INSERT INTO public.contract_acceptances(profile_id,contract_kind,version)
+ VALUES ('c2900000-0000-0000-0000-000000000002','teacher_conduct_code',public.code_conduite_version_requise())
+ ON CONFLICT(profile_id,contract_kind,version) DO NOTHING;
  UPDATE public.profiles SET account_status='active' WHERE id='c2900000-0000-0000-0000-000000000002';
  PERFORM set_config('request.jwt.claim.sub','',true); PERFORM set_config('request.jwt.claims','',true);
  PERFORM set_config('test.uid','',true); PERFORM set_config('test.jwt','',true);

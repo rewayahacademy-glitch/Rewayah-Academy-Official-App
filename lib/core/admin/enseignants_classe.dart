@@ -19,8 +19,9 @@ import 'service_groupes.dart';
 ///
 /// Classe d'hommes : un enseignant ; classe de femmes : une enseignante ;
 /// genre non determine : tous. Nul quand le genre de l'enseignant n'est pas
-/// connu (D3) ou que celui de la classe n'est pas encore choisi : l'ecran ne
-/// dit alors rien du genre, et l'enseignant reste proposable.
+/// connu ou que celui de la classe n'est pas encore choisi : cette fonction
+/// ne conclut rien. Un genre d'enseignant non renseigne se traite a part
+/// ([EnseignantClasse.genreInconnu], D3 revue le 21/10).
 bool? genreCompatible(GenreClasse? classe, GenreEnseignant? enseignant) {
   if (classe == GenreClasse.indetermine) return true;
   if (classe == null || enseignant == null) return null;
@@ -48,6 +49,7 @@ class EnseignantClasse {
     required this.libre,
     required this.pris,
     required this.plusAdapte,
+    this.genreInconnu = false,
   });
 
   /// L'enseignant.
@@ -66,15 +68,25 @@ class EnseignantClasse {
   /// Vrai pour le seul enseignant mentionne « le plus adapte ».
   final bool plusAdapte;
 
+  /// Vrai quand la source dit le genre des enseignants mais pas le sien :
+  /// son genre n'est pas renseigne. Le serveur ne lui confie alors aucune
+  /// classe, quel que soit son public (decision du directeur sur CAND-Q15,
+  /// 21/10 : controle strict sauf les disponibilites ; D3 revue).
+  ///
+  /// Faux quand la source ne dit le genre de personne (repli sur les
+  /// comptes) : l'ecran ne sait pas, il ne conclut rien, et le serveur
+  /// tranche a l'envoi.
+  final bool genreInconnu;
+
   /// Faux quand le choisir menerait a une classe que la regle refuse (genre
-  /// incompatible) ou a une collision : il reste visible, avec sa raison
-  /// (D4), mais ne se choisit pas.
-  bool get choisissable => genreCompatible != false && !pris;
+  /// incompatible ou non renseigne) ou a une collision : il reste visible,
+  /// avec sa raison (D3, D4), mais ne se choisit pas.
+  bool get choisissable => genreCompatible != false && !pris && !genreInconnu;
 }
 
-/// Le classement des enseignants pour une classe (D2, D4, D5).
+/// Le classement des enseignants pour une classe (D2, D3, D4, D5).
 ///
-/// Ordre : les choisissables d'abord (genre compatible ou inconnu, pas de
+/// Ordre : les choisissables d'abord (genre compatible et renseigne, pas de
 /// collision), puis libres au creneau, puis inconnus, puis non libres ; a
 /// egalite, le moins charge (classes actives), puis le nom. Le premier
 /// choisissable **libre** est « le plus adapte » ; si aucun n'est libre, ou
@@ -85,6 +97,10 @@ class EnseignantClasse {
 /// regroupement de demandes) passe [creneaux] a la place de [creneau] : libre
 /// veut alors dire libre a **chacun** d'eux, et une seule collision suffit a
 /// rendre l'enseignant non choisissable.
+///
+/// Un genre d'enseignant nul ne veut dire « non renseigne » que si la source
+/// dit le genre d'au moins un enseignant (meme lecture que l'ecran) : il est
+/// alors visible, non choisissable, avec sa raison (D3 revue le 21/10).
 List<EnseignantClasse> classerEnseignants(
   List<EnseignantPropose> enseignants, {
   GenreClasse? genre,
@@ -93,11 +109,15 @@ List<EnseignantClasse> classerEnseignants(
 }) {
   final List<Creneau>? vises =
       creneaux ?? (creneau == null ? null : <Creneau>[creneau]);
+  final bool genresRendus = enseignants.any(
+    (EnseignantPropose e) => e.genre != null,
+  );
   EnseignantClasse ligne(EnseignantPropose e) {
     final List<Creneau>? libres = e.creneauxLibres;
     return EnseignantClasse(
       enseignant: e,
       genreCompatible: genreCompatible(genre, e.genre),
+      genreInconnu: genresRendus && e.genre == null,
       libre: libres == null
           ? null
           : vises == null || vises.isEmpty
@@ -147,6 +167,7 @@ List<EnseignantClasse> classerEnseignants(
     libre: l.libre,
     pris: l.pris,
     plusAdapte: true,
+    genreInconnu: l.genreInconnu,
   );
   return lignes;
 }

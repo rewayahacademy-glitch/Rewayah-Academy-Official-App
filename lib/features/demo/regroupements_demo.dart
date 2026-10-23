@@ -316,7 +316,15 @@ class RegroupementsDemo
   }) async {
     affectationsRecues++;
     await _attendre();
-    if (_affectees.contains(classeId)) return ResultatAffectation.dejaAffecte;
+    // Comme le serveur (C11BIS-AFFECTATION) : le meme enseignant rejoue
+    // (reponse perdue, puis nouvel appui) est deja en place, rien ne change
+    // et la reponse est `affecte` ; un autre enseignant deja confirme rend
+    // `dejaAffecte`.
+    if (_affectees.contains(classeId)) {
+      return enseignantDe[classeId] == enseignantId
+          ? ResultatAffectation.affecte
+          : ResultatAffectation.dejaAffecte;
+    }
     _affectees.add(classeId);
     enseignantDe[classeId] = enseignantId;
     return ResultatAffectation.affecte;

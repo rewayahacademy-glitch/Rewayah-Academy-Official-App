@@ -12,6 +12,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/admin/creation_classe_refusee.dart';
 import 'package:rewayah_academy/core/admin/enseignants_classe.dart';
 import 'package:rewayah_academy/core/admin/service_comptes.dart';
 import 'package:rewayah_academy/core/admin/service_groupes.dart';
@@ -43,8 +44,9 @@ const String _casablanca = 'Africa/Casablanca';
 Creneau _c(int jour, int heure, [String fuseau = _paris]) =>
     Creneau(jour: jour, heure: heure, fuseau: fuseau);
 
-/// Deux enseignants, une enseignante, et un enseignant dont la source ne dit
-/// ni le genre ni les disponibilites (D3).
+/// Deux enseignants, une enseignante, et une personne dont la source ne dit
+/// ni le genre ni les disponibilites : la source dit le genre des autres,
+/// donc le sien n'est pas renseigne (D3 revue, CAND-Q15).
 final List<EnseignantPropose> _enseignants = <EnseignantPropose>[
   EnseignantPropose(
     id: 'h1',
@@ -102,6 +104,38 @@ class _PortEnEchec implements PortEnseignantsClasse {
   Future<List<EnseignantPropose>> pourClasse({
     required TypePublicGroupe public,
   }) => Future<List<EnseignantPropose>>.error(Exception('reseau coupe'));
+}
+
+/// Une creation que le serveur refuse une fois, avec [motif], puis qui
+/// aboutit (CAND-Q15 : `creer_groupe` passe par le predicat d'affectation).
+class _CreationRefusee extends FauxCreationClasse {
+  _CreationRefusee(this.motif);
+
+  final MotifRefusCreationClasse motif;
+  int refus = 1;
+
+  @override
+  Future<String> creer({
+    required String teacherId,
+    required TypePublicGroupe type,
+    required GenreClasse genre,
+    required String libelle,
+    required Creneau creneau,
+    required int seuilMax,
+  }) async {
+    if (refus > 0) {
+      refus--;
+      throw CreationClasseRefusee(motif);
+    }
+    return super.creer(
+      teacherId: teacherId,
+      type: type,
+      genre: genre,
+      libelle: libelle,
+      creneau: creneau,
+      seuilMax: seuilMax,
+    );
+  }
 }
 
 List<String> _ids(List<EnseignantClasse> l) => <String>[
@@ -232,15 +266,18 @@ void main() {
         genre: GenreClasse.femmes,
         creneau: _c(2, 17),
       );
-      expect(_ids(l), <String>['f1', 'x1', 'h2', 'h1']);
+      expect(_ids(l), <String>['f1', 'h2', 'h1', 'x1']);
       expect(_de(l, 'f1').plusAdapte, isTrue);
       expect(l.where((EnseignantClasse e) => e.plusAdapte), hasLength(1));
       expect(_de(l, 'h1').choisissable, isFalse);
       expect(_de(l, 'h1').genreCompatible, isFalse);
-      // Genre inconnu : proposable, sans mention de genre.
+      // D3 revue (CAND-Q15) : genre non renseigne, visible mais non
+      // choisissable ; la regle de genre elle-meme ne conclut rien.
       expect(_de(l, 'x1').genreCompatible, isNull);
-      expect(_de(l, 'x1').choisissable, isTrue);
+      expect(_de(l, 'x1').genreInconnu, isTrue);
+      expect(_de(l, 'x1').choisissable, isFalse);
       expect(_de(l, 'x1').libre, isNull);
+      expect(_de(l, 'f1').genreInconnu, isFalse);
     });
 
     test('classe d\'hommes, mardi 17 h : a creneau libre egal, le moins '
@@ -250,9 +287,10 @@ void main() {
         genre: GenreClasse.hommes,
         creneau: _c(2, 17),
       );
-      expect(_ids(l), <String>['h2', 'h1', 'x1', 'f1']);
+      expect(_ids(l), <String>['h2', 'h1', 'f1', 'x1']);
       expect(_de(l, 'h2').plusAdapte, isTrue);
       expect(_de(l, 'f1').choisissable, isFalse);
+      expect(_de(l, 'x1').choisissable, isFalse);
     });
 
     test('collision : deja en classe a ce creneau, non choisissable ; '
@@ -265,7 +303,7 @@ void main() {
       expect(_de(l, 'h2').pris, isTrue);
       expect(_de(l, 'h2').choisissable, isFalse);
       expect(_de(l, 'h1').libre, isFalse);
-      expect(_ids(l), <String>['x1', 'h1', 'h2', 'f1']);
+      expect(_ids(l), <String>['h1', 'x1', 'h2', 'f1']);
       expect(l.any((EnseignantClasse e) => e.plusAdapte), isFalse);
     });
 
@@ -282,6 +320,34 @@ void main() {
         l.every((EnseignantClasse e) => e.genreCompatible ?? false),
         isTrue,
       );
+      // Meme une classe sans genre ne va pas a une personne au genre non
+      // renseigne : le serveur la refuse (CAND-Q15).
+      expect(_de(l, 'x1').choisissable, isFalse);
+    });
+
+    test('genre de classe pas encore choisi : un genre non renseigne ferme '
+        'deja le choix', () {
+      final List<EnseignantClasse> l = classerEnseignants(_enseignants);
+      expect(_de(l, 'x1').genreInconnu, isTrue);
+      expect(_de(l, 'x1').choisissable, isFalse);
+      expect(
+        l.where((EnseignantClasse e) => e.choisissable).map(
+          (EnseignantClasse e) => e.enseignant.id,
+        ),
+        unorderedEquals(<String>['h1', 'h2', 'f1']),
+      );
+    });
+
+    test('repli : la source ne dit le genre de personne, rien n\'est conclu '
+        'et tous restent choisissables (le serveur tranche)', () {
+      final List<EnseignantClasse> l = classerEnseignants(
+        enseignantsDepuisComptes(comptesFormL2, <GroupeAdmin>[]),
+        genre: GenreClasse.femmes,
+        creneau: _c(2, 17),
+      );
+      expect(l, isNotEmpty);
+      expect(l.every((EnseignantClasse e) => !e.genreInconnu), isTrue);
+      expect(l.every((EnseignantClasse e) => e.choisissable), isTrue);
     });
 
     test('repli sur les comptes : charge et creneaux pris lus dans les '
@@ -680,6 +746,74 @@ void main() {
         avant + 1,
       );
     });
+  });
+
+  group('CAND-Q15 : genre non renseigne et refus du serveur', () {
+    testWidgets('genre non renseigne : visible, avec sa raison, et ne se '
+        'choisit pas, meme pour une classe sans genre', (
+      WidgetTester tester,
+    ) async {
+      final FauxCreationClasse creation = FauxCreationClasse();
+      final f = t.admin.groupes.formulaire;
+      await _ouvrir(tester, _surcharges(creation: creation));
+      await _presser(tester, _cle('classe-genre-indetermine'));
+      await _presser(tester, _cle('classe-jour-2'));
+      await _heure(tester, 17);
+      expect(
+        find.descendant(
+          of: _cle('personne-x1'),
+          matching: find.text(f.raisonGenreInconnu),
+        ),
+        findsOneWidget,
+      );
+      // Toucher la personne ne la retient pas : rien ne part.
+      await _presser(tester, _cle('personne-x1'));
+      await _presser(tester, _envoyer);
+      expect(find.text(t.admin.groupes.manqueEnseignant), findsOneWidget);
+      expect(creation.creations, isEmpty);
+    });
+
+    for (final MotifRefusCreationClasse motif in <MotifRefusCreationClasse>[
+      MotifRefusCreationClasse.plafond,
+      MotifRefusCreationClasse.chevauchementSeance,
+      MotifRefusCreationClasse.inconnu,
+    ]) {
+      testWidgets('refus du serveur (${motif.name}) : sa phrase, jamais le '
+          'texte SQL ; la feuille garde les choix et presser de nouveau '
+          'renvoie', (WidgetTester tester) async {
+        final _CreationRefusee creation = _CreationRefusee(motif);
+        await _ouvrir(tester, _surcharges(creation: creation));
+        await _presser(tester, _cle('classe-genre-femmes'));
+        await _presser(tester, _cle('personne-f1'));
+        await _presser(tester, _cle('classe-libre-2-17'));
+        final String nom = _nom(tester);
+        await _presser(tester, _envoyer);
+
+        final String attendu = switch (motif) {
+          MotifRefusCreationClasse.plafond =>
+            t.admin.groupes.refusCreation.plafond,
+          MotifRefusCreationClasse.chevauchementSeance =>
+            t.admin.groupes.refusCreation.chevauchementSeance,
+          _ => t.admin.groupes.refusCreation.inconnu,
+        };
+        expect(find.text(attendu), findsOneWidget);
+        for (final String sql in <String>[
+          'plafond horaire',
+          'chevauchement avec',
+          'CreationClasseRefusee',
+          'MotifRefusCreationClasse',
+        ]) {
+          expect(find.textContaining(sql), findsNothing);
+        }
+        expect(creation.creations, isEmpty);
+        expect(_envoyer, findsOneWidget);
+        expect(_nom(tester), nom);
+
+        await _presser(tester, _envoyer);
+        expect(creation.creations, hasLength(1));
+        expect(creation.creations.single.teacherId, 'f1');
+      });
+    }
   });
 
   group(

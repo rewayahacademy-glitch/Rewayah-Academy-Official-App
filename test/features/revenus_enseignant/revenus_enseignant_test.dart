@@ -23,6 +23,7 @@ import 'package:rewayah_academy/core/finance/montant.dart';
 import 'package:rewayah_academy/core/finance/politique_commerciale.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
+import 'package:rewayah_academy/core/offres/service_offres.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/profil/service_profil_enseignant.dart';
@@ -103,6 +104,10 @@ void main() {
       serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
       serviceEnseignantProvider.overrideWithValue(FauxServiceEnseignant()),
       servicePlanningProvider.overrideWithValue(FauxServicePlanning()),
+      // Le profil (ENS-05) nomme les langues par le referentiel.
+      referentielLanguesProvider.overrideWith(
+        (Ref _) async => DonneesEnseignantDemo.languesCours,
+      ),
       serviceMatchingProvider.overrideWithValue(FauxServiceMatching()),
       serviceReglesProvider.overrideWithValue(FauxServiceRegles()),
       servicePriereProvider.overrideWithValue(FauxServicePriere()),

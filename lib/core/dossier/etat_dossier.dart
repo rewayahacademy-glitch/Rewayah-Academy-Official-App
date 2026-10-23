@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../candidature/modeles_candidature.dart';
 import '../domain/enums.dart';
 
 /// Ce que le titulaire d'un foyer a choisi a l'inscription (L5-01).
@@ -47,10 +48,12 @@ class EtatDossier {
     this.deposeLe,
     this.contratSigne = false,
     this.accuseSigne = false,
+    this.codeConduiteSigne = true,
     this.correctionAutorisee,
     this.pieceRequise = true,
     this.usage,
     this.suitDesCours = false,
+    this.candidature = CandidatureDossier.aucune,
   });
 
   /// L'etat d'un compte dont le profil reste a creer.
@@ -72,10 +75,12 @@ class EtatDossier {
       deposeLe: depose is String ? DateTime.tryParse(depose)?.toLocal() : null,
       contratSigne: json['contrat_signe'] == true,
       accuseSigne: json['accuse_signe'] == true,
+      codeConduiteSigne: json['code_conduite_signe'] as bool? ?? true,
       correctionAutorisee: json['correction_autorisee'] as bool?,
       pieceRequise: json['piece_requise'] as bool? ?? true,
       usage: UsageTitulaire.depuisSql(json['usage']),
       suitDesCours: json['suit_des_cours'] == true,
+      candidature: CandidatureDossier.depuisJson(json['candidature']),
     );
   }
 
@@ -107,6 +112,12 @@ class EtatDossier {
   /// Vrai quand la carte d'accuse de l'ADR-011 a ete accusee.
   final bool accuseSigne;
 
+  /// CAND-Q15 conduite : faux quand le code de conduite reste a accepter a sa
+  /// version requise. Le serveur rend vrai pour tout compte qui n'est pas
+  /// enseignant : l'ecran ne lit aucun role pour le savoir. Absent d'un
+  /// serveur d'avant ce lot, qui ne l'exigeait pas : vrai.
+  final bool codeConduiteSigne;
+
   /// Faux quand l'administration interdit la correction d'un dossier refuse.
   /// Absent de la reponse actuelle d'`etat_dossier()` (AD-BR-28) : nul, et la
   /// correction reste permise comme avant.
@@ -124,6 +135,12 @@ class EtatDossier {
 
   /// L5-01 : vrai quand le titulaire a sa propre fiche d'eleve.
   final bool suitDesCours;
+
+  /// CAND-L2A1 (C12) : la candidature du compte, telle que le serveur la rend
+  /// (`etat_dossier().candidature`). [CandidatureDossier.aucune] pour un
+  /// compte sans candidature, et pour un serveur d'avant ce lot, qui ne rend
+  /// pas la cle : le portail garde alors ses cinq etats d'aujourd'hui.
+  final CandidatureDossier candidature;
 
   /// Ce que le portail d'attente doit afficher.
   ///
@@ -170,10 +187,12 @@ class EtatDossier {
   /// L'accuse vient **avant** le contrat, et non l'inverse : il dit en langage
   /// clair ce que le contrat formalisera ensuite. Une clause signee au milieu
   /// d'un texte long n'informe personne, et c'est exactement le litige que
-  /// l'ADR-011 cherche a eviter.
+  /// l'ADR-011 cherche a eviter. Le code de conduite suit le contrat, sur la
+  /// meme page des accords, et precede la piece.
   List<PieceManquante> get manquants => <PieceManquante>[
     if (!accuseSigne) PieceManquante.accuse,
     if (!contratSigne) PieceManquante.contrat,
+    if (!codeConduiteSigne) PieceManquante.codeConduite,
     if (pieceExigee && (!pieceDeposee || statutPiece == StatutPiece.refusee))
       PieceManquante.pieceIdentite,
   ];
@@ -190,10 +209,12 @@ class EtatDossier {
       other.deposeLe == deposeLe &&
       other.contratSigne == contratSigne &&
       other.accuseSigne == accuseSigne &&
+      other.codeConduiteSigne == codeConduiteSigne &&
       other.correctionAutorisee == correctionAutorisee &&
       other.pieceRequise == pieceRequise &&
       other.usage == usage &&
-      other.suitDesCours == suitDesCours;
+      other.suitDesCours == suitDesCours &&
+      other.candidature == candidature;
 
   @override
   int get hashCode => Object.hash(
@@ -206,10 +227,12 @@ class EtatDossier {
     deposeLe,
     contratSigne,
     accuseSigne,
+    codeConduiteSigne,
     correctionAutorisee,
     pieceRequise,
     usage,
     suitDesCours,
+    candidature,
   );
 }
 
@@ -239,6 +262,10 @@ enum PieceManquante {
 
   /// La signature du contrat ou des conditions.
   contrat,
+
+  /// Le code de conduite de l'enseignant, a accepter avant l'activation
+  /// (CAND-Q15 conduite). Il se lit et s'accepte sur la page des accords.
+  codeConduite,
 
   /// La piece d'identite.
   pieceIdentite,
