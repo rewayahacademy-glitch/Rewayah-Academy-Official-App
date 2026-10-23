@@ -4,14 +4,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/i18n/indicatifs_telephoniques.dart';
 import '../../../core/i18n/pays_iso.dart';
 import '../../../core/i18n/strings.g.dart';
+import '../../../core/icons/app_icons.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/theme/app_palette.dart';
+import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/widgets/carte_lignes.dart';
-import '../../../core/widgets/champ_etiquete.dart' show TitreChamp;
-import '../../../core/widgets/setting_row.dart';
-import '../../candidature/choix_avec_recherche.dart';
-import '../../candidature/question_etape.dart' show paysCourants;
+import '../../../core/widgets/app_bottom_sheet.dart';
+import '../../../core/widgets/pays_enseignant.dart'
+    show cheminDrapeau, rapportDrapeau;
+import '../../../core/widgets/pressable.dart';
 import '../brouillon_inscription.dart';
 import '../inscription_page.dart';
 
@@ -40,7 +41,12 @@ class TelephoneEtape extends ConsumerStatefulWidget {
     'inscription-telephone-pays',
   );
 
-  /// La cle de la carte (ou de la ligne de recherche) d'un pays.
+  /// La cle du champ de recherche des pays (tests).
+  static const Key rechercheKey = ValueKey<String>(
+    'inscription-telephone-recherche',
+  );
+
+  /// La cle de la ligne d'un pays dans la liste.
   static Key paysKey(String code) =>
       ValueKey<String>('inscription-telephone-pays-$code');
 
@@ -56,9 +62,6 @@ class _TelephoneEtapeState extends ConsumerState<TelephoneEtape> {
 
   /// Le pays retenu (code ISO), ou `null`.
   String? _pays;
-
-  /// Vrai quand la personne revient changer de pays.
-  bool _enChangement = false;
 
   /// Les erreurs ne s'affichent qu'apres une premiere tentative.
   bool _tente = false;
@@ -100,7 +103,6 @@ class _TelephoneEtapeState extends ConsumerState<TelephoneEtape> {
     }
     setState(() {
       _pays = codes.first;
-      _enChangement = false;
     });
     // Le pays choisi, la suite naturelle est le numero.
     WidgetsBinding.instance.addPostFrameCallback((Duration _) {
@@ -153,7 +155,6 @@ class _TelephoneEtapeState extends ConsumerState<TelephoneEtape> {
     );
     exigerEtapesPrecedentes(context, brouillon, _route);
     final r = t.inscription.telephone;
-    final bool paysRetenu = _pays != null && !_enChangement;
 
     return CoquilleEtape(
       route: _route,
@@ -165,9 +166,27 @@ class _TelephoneEtapeState extends ConsumerState<TelephoneEtape> {
       enfant: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          TitreChamp(
-            r.indicatif,
-            style: Theme.of(context).textTheme.titleMedium,
+          // Un seul champ, demande du directeur (23/10) : le drapeau du pays
+          // a gauche ouvre la liste des pays (avec une recherche), le numero
+          // se saisit a droite. Un numero s'ecrit de gauche a droite, meme en
+          // arabe.
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: _ChampNumero(
+              controleur: _numero,
+              focus: _focusNumero,
+              pays: _pays,
+              indicatif: _indicatif,
+              erreur: _erreurNumero,
+              onChanged: () => setState(() {}),
+              onValider: _continuer,
+              onChoisirPays: () async {
+                final String? code = await choisirPays(context, _pays);
+                if (code != null) {
+                  _choisirPays(<String>{code});
+                }
+              },
+            ),
           ),
           if (_tente && _pays == null) ...<Widget>[
             Ecart.vSm,
@@ -176,24 +195,9 @@ class _TelephoneEtapeState extends ConsumerState<TelephoneEtape> {
               child: _ErreurChamp(message: r.indicatifManquant),
             ),
           ],
-          Ecart.vMd,
-          if (paysRetenu)
-            _PaysChoisi(
-              code: _pays!,
-              onChanger: () => setState(() => _enChangement = true),
-            )
-          else
-            _ListeDesPays(choisi: _pays, onChange: _choisirPays),
-          if (paysRetenu) ...<Widget>[
-            Ecart.vXl,
-            _ChampNumero(
-              controleur: _numero,
-              focus: _focusNumero,
-              indicatif: _indicatif!,
-              erreur: _erreurNumero,
-              onChanged: () => setState(() {}),
-              onValider: _continuer,
-            ),
+          if (_erreurNumero case final String erreur) ...<Widget>[
+            Ecart.vSm,
+            _ErreurChamp(message: erreur),
           ],
         ],
       ),
@@ -201,146 +205,228 @@ class _TelephoneEtapeState extends ConsumerState<TelephoneEtape> {
   }
 }
 
-/// Les pays courants en cartes, puis la recherche. Les noms se cherchent en
-/// francais comme en arabe, et par l'indicatif.
-class _ListeDesPays extends StatelessWidget {
-  const _ListeDesPays({required this.choisi, required this.onChange});
+/// Ouvre la liste des pays, avec une recherche en tete ; rend le code choisi.
+Future<String?> choisirPays(BuildContext context, String? choisi) =>
+    AppBottomSheet.ouvrir<String>(
+      context,
+      titre: t.inscription.telephone.choisirPays,
+      constructeur: (BuildContext contexte) => _ListePays(choisi: choisi),
+    );
+
+/// La recherche (nom en francais ou en arabe, ou indicatif) puis les pays :
+/// drapeau, nom, indicatif, et une coche sur le pays choisi.
+class _ListePays extends StatefulWidget {
+  const _ListePays({required this.choisi});
 
   final String? choisi;
-  final ValueChanged<Set<String>> onChange;
+
+  @override
+  State<_ListePays> createState() => _ListePaysState();
+}
+
+class _ListePaysState extends State<_ListePays> {
+  String _saisie = '';
 
   @override
   Widget build(BuildContext context) {
-    final r = t.recrutement.parcours.pays;
-    final List<ElementChoix> tous =
-        <ElementChoix>[
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final String cle = formeDeRecherche(_saisie.replaceAll('+', ''));
+    final List<PaysIso> pays =
+        <PaysIso>[
           for (final PaysIso p in paysAvecIndicatif)
-            ElementChoix(
-              code: p.code,
-              libelle: p.nom,
-              description: indicatifAffiche(indicatifDuPays(p.code)!),
-              cle: TelephoneEtape.paysKey(p.code),
-              motsCles:
-                  '${p.fr} ${p.ar} +${indicatifDuPays(p.code)} '
-                  '${indicatifDuPays(p.code)}',
-            ),
-        ]..sort(
-          (ElementChoix a, ElementChoix b) =>
-              formeDeRecherche(a.libelle)
-                  .compareTo(formeDeRecherche(b.libelle)),
-        );
-    final Map<String, ElementChoix> parCode = <String, ElementChoix>{
-      for (final ElementChoix e in tous) e.code: e,
-    };
-    return ChoixAvecRecherche(
-      cle: 'telephone-indicatif',
-      courants: <ElementChoix>[
-        for (final String c in paysCourants)
-          if (parCode[c] case final ElementChoix e) e,
+            if (cle.isEmpty ||
+                formeDeRecherche(p.fr).startsWith(cle) ||
+                formeDeRecherche(p.ar).startsWith(cle) ||
+                formeDeRecherche(p.nom).contains(' $cle') ||
+                (indicatifDuPays(p.code) ?? '').startsWith(cle))
+              p,
+        ]..sort((PaysIso a, PaysIso b) {
+          // Ce qui commence par la saisie d'abord (« ma » : Mali, Maroc).
+          final int debutA = formeDeRecherche(a.nom).startsWith(cle) ? 0 : 1;
+          final int debutB = formeDeRecherche(b.nom).startsWith(cle) ? 0 : 1;
+          return debutA != debutB
+              ? debutA - debutB
+              : formeDeRecherche(a.nom).compareTo(formeDeRecherche(b.nom));
+        });
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        TextField(
+          key: TelephoneEtape.rechercheKey,
+          autofocus: true,
+          onChanged: (String v) => setState(() => _saisie = v),
+          decoration: InputDecoration(
+            prefixIcon: Icon(AppIcons.recherche.repos),
+            hintText: t.inscription.telephone.rechercherPays,
+          ),
+        ),
+        Ecart.vSm,
+        Flexible(
+          child: ListView(
+            shrinkWrap: true,
+            children: <Widget>[
+              for (final PaysIso p in pays)
+                Pressable(
+                  key: TelephoneEtape.paysKey(p.code),
+                  selectionne: p.code == widget.choisi,
+                  libelleSemantique: '${p.nom}, +${indicatifDuPays(p.code)}',
+                  onPress: () => Navigator.of(context).pop(p.code),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.sm,
+                      vertical: AppSpacing.sm,
+                    ),
+                    child: Row(
+                      children: <Widget>[
+                        Drapeau(code: p.code),
+                        Ecart.hMd,
+                        Expanded(
+                          child: Text(
+                            '${p.nom} (${indicatifAffiche(indicatifDuPays(p.code)!)})',
+                            style: p.code == widget.choisi
+                                ? textes.titleSmall
+                                : textes.bodyLarge,
+                          ),
+                        ),
+                        if (p.code == widget.choisi)
+                          IconTheme(
+                            data: palette.inkAccent.asIconTheme(),
+                            child: Icon(AppIcons.succes.repos),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              if (pays.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  child: Text(
+                    t.recrutement.parcours.pays.aucun,
+                    style: palette.inkMuted.applyTo(
+                      textes.bodyMedium ?? const TextStyle(),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
       ],
-      tous: tous,
-      selection: <String>{?choisi},
-      textes: TextesRecherche(
-        autre: r.autre,
-        recherche: r.recherche,
-        aide: r.rechercheAide,
-        aucun: r.aucun,
-        retour: r.retour,
-      ),
-      onChange: onChange,
     );
   }
 }
 
-/// Le pays retenu, en une ligne qui se touche pour le changer.
-class _PaysChoisi extends StatelessWidget {
-  const _PaysChoisi({required this.code, required this.onChanger});
-
-  final String code;
-  final VoidCallback onChanger;
-
-  @override
-  Widget build(BuildContext context) => CarteLignes(
-    lignes: <Widget>[
-      SettingRow(
-        key: TelephoneEtape.paysChoisiKey,
-        title: nomDuPays(code),
-        description: t.inscription.telephone.changerIndicatif,
-        value: indicatifAffiche(indicatifDuPays(code) ?? ''),
-        onPress: onChanger,
-      ),
-    ],
-  );
-}
-
-/// Le numero, sans l'indicatif, avec l'indicatif en tete du champ.
+/// Un seul champ : le drapeau du pays et sa fleche a gauche (toucher ouvre la
+/// liste des pays), puis le numero, l'indicatif en tete.
 class _ChampNumero extends StatelessWidget {
   const _ChampNumero({
     required this.controleur,
     required this.focus,
+    required this.pays,
     required this.indicatif,
     required this.erreur,
     required this.onChanged,
     required this.onValider,
+    required this.onChoisirPays,
   });
 
   final TextEditingController controleur;
   final FocusNode focus;
-  final String indicatif;
+  final String? pays;
+  final String? indicatif;
   final String? erreur;
   final VoidCallback onChanged;
   final VoidCallback onValider;
+  final VoidCallback onChoisirPays;
 
   @override
   Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        ExcludeSemantics(
-          child: TitreChamp(
-            t.inscription.telephone.numero,
-            style: textes.titleMedium,
-          ),
-        ),
-        Ecart.vSm,
-        // Un numero s'ecrit de gauche a droite, meme dans une page en arabe :
-        // le champ entier (indicatif en tete, chiffres, curseur) est pose de
-        // gauche a droite, et le titre et la phrase d'erreur gardent le sens de
-        // la page. Les groupes de chiffres separes par des espaces ne se
-        // lisent jamais a l'envers.
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: Semantics(
-            label: t.inscription.telephone.numero,
-            textField: true,
-            child: TextField(
-              key: TelephoneEtape.numeroKey,
-              controller: controleur,
-              focusNode: focus,
-              onChanged: (String _) => onChanged(),
-              onSubmitted: (String _) => onValider(),
-              keyboardType: TextInputType.phone,
-              textInputAction: TextInputAction.done,
-              autofillHints: const <String>[
-                AutofillHints.telephoneNumberNational,
-              ],
-              decoration: InputDecoration(
-                prefixText: '${indicatifAffiche(indicatif)}  ',
-                // Le champ prend le style d'erreur ; la phrase est posee
-                // dessous, dans le sens de la page.
-                error: erreur == null ? null : const SizedBox.shrink(),
+    final AppPalette palette = AppPalette.of(context);
+    final String? code = pays;
+    return TextField(
+      key: TelephoneEtape.numeroKey,
+      controller: controleur,
+      focusNode: focus,
+      onChanged: (String _) => onChanged(),
+      onSubmitted: (String _) => onValider(),
+      keyboardType: TextInputType.phone,
+      textInputAction: TextInputAction.done,
+      autofillHints: const <String>[AutofillHints.telephoneNumberNational],
+      decoration: InputDecoration(
+        hintText: t.inscription.telephone.numeroCourt,
+        prefixText: indicatif == null
+            ? null
+            : '${indicatifAffiche(indicatif!)} ',
+        error: erreur == null ? null : const SizedBox.shrink(),
+        prefixIcon: Padding(
+          padding: const EdgeInsetsDirectional.only(end: AppSpacing.sm),
+          child: Pressable(
+            key: TelephoneEtape.paysChoisiKey,
+            libelleSemantique: code == null
+                ? t.inscription.telephone.choisirPays
+                : '${t.inscription.telephone.pays} : ${nomDuPays(code)}',
+            onPress: onChoisirPays,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                border: Border(right: palette.borderResting.asBorderSide()),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                  vertical: AppSpacing.md,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    if (code != null)
+                      Drapeau(code: code)
+                    else
+                      Text(
+                        t.inscription.telephone.pays,
+                        style: palette.surfaceSunken.applyTo(
+                          Theme.of(context).textTheme.bodyLarge ??
+                              const TextStyle(),
+                        ),
+                      ),
+                    Ecart.hXs,
+                    IconTheme(
+                      data: palette.inkMuted.asIconTheme(),
+                      child: Icon(AppIcons.menuDeroulant.repos),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
         ),
-        if (erreur != null) ...<Widget>[
-          Ecart.vSm,
-          _ErreurChamp(message: erreur!),
-        ],
-      ],
+      ),
     );
   }
+}
+
+/// Le drapeau d'un pays, image embarquee 4:3 (flag-icons, MIT), decoratif.
+class Drapeau extends StatelessWidget {
+  /// Cree le drapeau du pays [code] (ISO, deux lettres).
+  const Drapeau({required this.code, super.key});
+
+  /// Le code ISO du pays.
+  final String code;
+
+  @override
+  Widget build(BuildContext context) => ClipRRect(
+    borderRadius: BorderRadius.circular(AppRadius.xs / 2),
+    child: Image.asset(
+      cheminDrapeau(code),
+      width: AppSpacing.lg * rapportDrapeau,
+      height: AppSpacing.lg,
+      fit: BoxFit.fill,
+      filterQuality: FilterQuality.medium,
+      excludeFromSemantics: true,
+      errorBuilder: (_, _, _) =>
+          const SizedBox(width: AppSpacing.lg * rapportDrapeau),
+    ),
+  );
 }
 
 /// Une erreur sous un champ : une phrase, annoncee, qui dit quoi faire.

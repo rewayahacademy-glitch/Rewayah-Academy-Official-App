@@ -7,7 +7,12 @@ profil enseignant (FORM-L8, `paysProposes`) :
 fr be es gb ie gn sn ml mr ma ci bf tg ng ne td cm ca us.
 
 Transformation : chaque SVG est rasterise en PNG 64 x 48 (4:3), palette
-indexee, sans autre modification du dessin. Aucun autre pays n'est embarque.
+indexee, sans autre modification du dessin.
+
+Ajout du 23/10/2026 (CAND-04, demande du directeur : un drapeau pour chaque pays
+de la liste des indicatifs, lib/core/i18n/indicatifs_telephoniques.dart) : 229
+autres pays, meme source, meme version (flag-icons 7.5.0, flags/4x3), meme
+format 64 x 48, rendus par Chromium sans autre modification du dessin.
 
 Licence d'origine (MIT), reproduite integralement :
 

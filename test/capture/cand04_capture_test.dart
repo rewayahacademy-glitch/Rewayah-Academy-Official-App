@@ -215,6 +215,22 @@ void _brouillon(
   }
 }
 
+/// Les drapeaux sont des images : elles se chargent hors du temps du test.
+Future<void> _chargerImages(WidgetTester tester) async {
+  await tester.runAsync(() async {
+    for (final Element e in find.byType(Image).evaluate()) {
+      await precacheImage((e.widget as Image).image, e);
+    }
+  });
+  await tester.pumpAndSettle();
+}
+
+Future<void> _choisirFrance(WidgetTester tester) async {
+  await _taper(tester, find.byKey(TelephoneEtape.paysChoisiKey));
+  await _taper(tester, find.byKey(TelephoneEtape.paysKey('FR')));
+  await _chargerImages(tester);
+}
+
 Future<void> _aller(WidgetTester tester, _Hote hote, String route) async {
   hote.routeur.go(route);
   await tester.pumpAndSettle();
@@ -330,25 +346,20 @@ final List<_Scenario> _pas = <_Scenario>[
   _Scenario('09_telephone_recherche', (WidgetTester tester, _Hote hote) async {
     _brouillon(tester, telephone: false);
     await _aller(tester, hote, Routes.inscriptionTelephone);
-    await _taper(
-      tester,
-      find.byKey(const ValueKey<String>('choix-recherche-autre')),
-    );
-    await tester.enterText(
-      find.byKey(const ValueKey<String>('choix-recherche-champ')),
-      'ma',
-    );
+    await _taper(tester, find.byKey(TelephoneEtape.paysChoisiKey));
+    await tester.enterText(find.byKey(TelephoneEtape.rechercheKey), 'ma');
     await tester.pumpAndSettle();
+    await _chargerImages(tester);
   }),
   _Scenario('10_telephone_numero', (WidgetTester tester, _Hote hote) async {
     _brouillon(tester, telephone: false);
     await _aller(tester, hote, Routes.inscriptionTelephone);
-    await _taper(tester, find.byKey(TelephoneEtape.paysKey('FR')));
+    await _choisirFrance(tester);
   }),
   _Scenario('12_telephone_rempli', (WidgetTester tester, _Hote hote) async {
     _brouillon(tester, telephone: false);
     await _aller(tester, hote, Routes.inscriptionTelephone);
-    await _taper(tester, find.byKey(TelephoneEtape.paysKey('FR')));
+    await _choisirFrance(tester);
     await tester.enterText(
       find.byKey(TelephoneEtape.numeroKey),
       '06 12 34 56 78',
@@ -378,7 +389,7 @@ final List<_Scenario> _etats = <_Scenario>[
   ) async {
     _brouillon(tester, telephone: false);
     await _aller(tester, hote, Routes.inscriptionTelephone);
-    await _taper(tester, find.byKey(TelephoneEtape.paysKey('FR')));
+    await _choisirFrance(tester);
     await tester.enterText(find.byKey(TelephoneEtape.numeroKey), '06 12 ab');
     await _continuer(tester);
   }),

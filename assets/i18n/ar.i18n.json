@@ -8704,7 +8704,11 @@
       "indicatifManquant": "اختر رمز دولتك.",
       "numeroManquant": "اكتب رقم هاتفك.",
       "numeroInvalide": "تعذّرت قراءة هذا الرقم. اكتبه بالأرقام فقط ودون رمز الدولة.",
-      "changerIndicatif": "تغيير رمز الدولة"
+      "changerIndicatif": "تغيير رمز الدولة",
+      "pays": "البلد",
+      "numeroCourt": "الرقم",
+      "choisirPays": "اختيار بلدك",
+      "rechercherPays": "ابحث عن بلد أو رمز اتصال"
     },
     "langue": {
       "question": "بأي لغة تريد قراءة التطبيق؟",

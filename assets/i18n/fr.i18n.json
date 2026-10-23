@@ -883,7 +883,11 @@
       "indicatifManquant": "Choisissez l'indicatif de votre pays.",
       "numeroManquant": "Saisissez votre numéro de téléphone.",
       "numeroInvalide": "Ce numéro n'est pas lisible. Écrivez-le en chiffres, sans l'indicatif du pays.",
-      "changerIndicatif": "Changer d'indicatif"
+      "changerIndicatif": "Changer d'indicatif",
+      "pays": "Pays",
+      "numeroCourt": "Numéro",
+      "choisirPays": "Choisir votre pays",
+      "rechercherPays": "Chercher un pays ou un indicatif"
     },
     "langue": {
       "question": "Dans quelle langue voulez-vous lire l'application\u00a0?",
