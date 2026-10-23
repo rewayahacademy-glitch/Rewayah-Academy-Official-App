@@ -1,5 +1,15 @@
 # Migrations à appliquer sur la base de test (staging), liste du 23/10/2026
 
+> **Fait le 23/10/2026, testé sur staging.** Feu vert du directeur dans la conversation. Les 15
+> fichiers ont été collés par le directeur dans l'éditeur SQL de staging : 1 à 3 tels quels, puis,
+> après l'échec du fichier 4 (fins de ligne de Windows, sans écriture) et la normalisation
+> `normalisation_fins_de_ligne_editeur_sql` appliquée par Claude, 4 à 15 enveloppés
+> (`tool/envelopper_pour_editeur_sql.py`). Vérification de Claude : 143 fonctions identiques au
+> dépôt (texte, commentaire F86, droits), 25 tables nouvelles toutes sous RLS, catalogue de 25
+> compétences, aucun retour chariot restant ; versions inscrites par
+> `historique_15_migrations_editeur_sql`. Sauvegarde : le directeur a poursuivi sans la signaler.
+> Leçon : `docs/orchestration/LECONS-MIGRATIONS-STAGING.md`, deuxième partie. Production : rien.
+
 Inventaire pour le feu vert du directeur (`CLAUDE.md` : aucune migration distante sans
 inventaire, sauvegarde et feu vert explicite sur la liste précise ; `CAND-Q02` : le module
 des candidatures est autorisé sur la base de test seulement, jamais en production sans un
