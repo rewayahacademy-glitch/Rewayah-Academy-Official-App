@@ -3481,7 +3481,7 @@
         "conflit": "Cette candidature a changé depuis son ouverture. Actualisez-la avant d'agir.",
         "horsPortee": "Vous n'avez pas accès à cette candidature. Revenez à la liste des candidatures.",
         "absente": "Cette candidature n'existe pas, ou plus. Revenez à la liste des candidatures.",
-        "horsLigne": "Les gestes reviennent dès le retour du réseau.",
+        "horsLigne": "Les gestes reviennent dès le retour du réseau : réessayez à ce moment-là.",
         "motifRequis": "Rien n'a été fait. Indiquez le motif.",
         "modeleRequis": "Rien n'a été fait. Choisissez le message que la personne lira.",
         "modeleInconnu": "Ce message n'est plus proposé. Choisissez-en un autre.",
