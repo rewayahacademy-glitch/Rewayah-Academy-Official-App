@@ -242,7 +242,8 @@ Inspection après ces corrections :
 | Recette 39 (jurés Sonnet) | 7,90 | 6,57 | 6,33 | « presque », sans plafond |
 | Recette 40 (jurés Sonnet) | 7,78 | 6,78 | 6,50 | « presque », sans plafond ; le directeur demande d'en finir (23/10) |
 | Recette 41 (jurés Sonnet) | 7,80 | 6,90 | 6,50 | « presque », sans plafond, après WW1, WW2 et WW6 |
-| Recette 42 (jurés Sonnet) | 7,67 | 6,80 | 6,67 | « presque », sans plafond ; dernière recette |
+| Recette 42 (jurés Sonnet) | 7,67 | 6,80 | 6,67 | « presque », sans plafond |
+| Recette 43 (jurés Sonnet) | 7,77 | 6,40 | 6,33 | « presque », sans plafond ; hiérarchie des titres jugée réglée ; dernière recette |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -853,6 +854,13 @@ Les jurés donnent les engagements réglés, la hiérarchie en partie ; Rewayah 
 (décision de contenu du directeur). Un juré relève un contraste de 4,48:1 sur les tuiles violettes : mesuré dans la
 page, le texte est blanc pur sur #8652E6, soit 4,81:1 (conforme AA) ; l'écart vient de la compression des captures.
 Un contrôle de contraste sur chaque texte des 18 pages, à 1440 et 390 px, ne trouve aucun texte sous le seuil.
+
+**Recette 43.** Avant elle : le texte des chapitres de l'accueil à la taille du texte courant (21 px) sous des titres
+de 66 px. Les trois jurés donnent la hiérarchie des titres réglée (3,1 à 3,2 fois le texte) ; Rewayah à 7,77, devant
+Hallow (6,40) et Waking Up (6,33), toujours « presque ». Ce qui les retient encore : le partage image et texte qui
+revient sur la plupart des sections, le pied de page au bureau (ils demandent de sortir les quatre adresses et les
+pages Facebook, décision de contenu), les écrans les plus denses (prix de l'accueil, « À savoir » de Tarifs), et des
+images toutes tirées du même ensemble de rendus (gardé par décision du directeur). Fin des recettes.
 
 ## Hors de portée de l'agent
 
