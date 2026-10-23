@@ -31,6 +31,9 @@ export type Bloc =
   | { type: 'bouton'; libelle: string; href: string }
   | { type: 'code'; code: string }
   | { type: 'note'; texte: string }
+  /// Une phrase discrete suivie d'un lien court : le lien de secours d'un
+  /// bouton, sans afficher l'adresse technique en clair.
+  | { type: 'lien'; texte: string; libelle: string; href: string }
 
 export interface Contenu {
   sujet: string
@@ -81,10 +84,16 @@ function blocHtml(b: Bloc, typo: (h: string) => string, cote: string): string {
       return `<p style="margin:0 0 20px;font:600 28px/1.2 ${POLICE};letter-spacing:6px;color:${C.encre}">${
         echapper(b.code)}</p>`
     case 'bouton':
-      return `<table role="presentation" align="${cote}" cellpadding="0" cellspacing="0" border="0" style="margin:4px 0 24px"><tr>` +
-        `<td style="border-radius:12px;background:${C.violet}">` +
-        `<a href="${echapper(b.href)}" style="display:inline-block;padding:13px 24px;font:600 15px/1 ${POLICE};` +
-        `color:#FFFFFF;text-decoration:none;border-radius:12px">${echapper(b.libelle)}</a></td></tr></table>`
+      // Le bouton prend toute la largeur de la carte (facile a toucher sur
+      // mobile, demande du directeur 23/10) ; jamais une table `align`, qui
+      // flotte et faisait remonter le texte suivant a cote du bouton.
+      return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:4px 0 24px"><tr>` +
+        `<td align="center" style="border-radius:12px;background:${C.violet}">` +
+        `<a href="${echapper(b.href)}" style="display:block;padding:15px 24px;font:600 16px/1.2 ${POLICE};` +
+        `color:#FFFFFF;text-decoration:none;text-align:center;border-radius:12px">${echapper(b.libelle)}</a></td></tr></table>`
+    case 'lien':
+      return `<p style="margin:0 0 16px;font:400 13px/1.5 ${POLICE};color:${C.attenue}">${typo(echapper(b.texte))} ` +
+        `<a href="${echapper(b.href)}" style="color:${C.lien}">${typo(echapper(b.libelle))}</a></p>`
   }
 }
 
@@ -97,6 +106,8 @@ function blocTexte(b: Bloc): string {
       return b.code
     case 'bouton':
       return `${b.libelle} : ${b.href}`
+    case 'lien':
+      return `${b.texte} ${b.libelle} : ${b.href}`
   }
 }
 
