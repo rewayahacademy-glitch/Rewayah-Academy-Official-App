@@ -2376,3 +2376,45 @@ li, dd { text-wrap: wrap; }
 }
 /* Tarifs, a savoir : les regles et les deux paragraphes a la taille du texte courant (ils etaient en petit). */
 @media (min-width: 840px) { #conditions .points li:not(:first-child), #conditions .section__corps > p { font-size: var(--t-corps); } }
+
+/* --- Recette 41 (23/10/2026) ------------------------------------------------------------------------------------- */
+/* Les cours en bref (Familles, Cours) : plus de pastilles qui ressemblent a des boutons (trois jures). La premiere
+   ligne du cours se lit en phrase, les autres en liste a puces d'arche, alignees en haut, sur deux colonnes au bureau ;
+   les mots ne changent pas. */
+.fiches-bloc .fiche__lignes li:nth-child(n+3),
+.fiches-bloc .fiche__lignes li:nth-child(n+3):not(.fiche__court),
+.fiches-bloc .fiche__lignes li.fiche__court { justify-self: stretch; padding: 0 0 0 1.4em; border-radius: 0; background: none; font-weight: 500; }
+.fiches-bloc .fiche__lignes li:nth-child(n+3)::before,
+.fiches-bloc .fiche__lignes li:nth-child(n+3):not(.fiche__court)::before,
+.fiches-bloc .fiche__lignes li.fiche__court::before { content: ''; inset-inline-start: 0; top: .5em; opacity: .55; }
+.fiches-bloc .fiche__lignes li:nth-child(3):not(.fiche__court) { padding-inline-start: 0; font-family: var(--police-titre); font-size: var(--t-moyen); font-weight: 600; line-height: 1.25; max-width: 34ch; }
+.fiches-bloc .fiche__lignes li:nth-child(3):not(.fiche__court)::before { content: none; }
+@media (min-width: 840px) {
+  .fiches-bloc .fiche__lignes { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--e-10); row-gap: var(--e-5); align-items: start; }
+  .fiches-bloc .fiche__lignes li:nth-child(n+3) { grid-column: auto; grid-row: auto; max-width: 52ch; }
+  .fiches-bloc .fiche__lignes li:nth-child(3):not(.fiche__court) { grid-column: 1 / -1; margin-bottom: var(--e-3); }
+}
+
+/* Pied de page au bureau : moins haut (trois jures). Les memes rangees, serrees ; la societe, ses deux pages Facebook
+   et le credit sur une seule ligne qui peut passer a la suivante. */
+@media (min-width: 1100px) {
+  .site-footer { padding-top: var(--e-10); padding-bottom: var(--e-6); }
+  .site-footer__inner { row-gap: var(--e-4); }
+  .site-footer .site-footer__inner a { min-height: 32px; }
+  .pied-legal { gap: var(--e-1); }
+  .site-footer .pied-societe { column-gap: var(--e-5); }
+  .site-footer .pied-societe a { min-height: 28px; }
+}
+/* Au bureau, la langue et le credit rejoignent la ligne des deux pages Facebook (une rangee de moins) ; ailleurs, le
+   credit reste sous les volets, toujours visible. Un seul des deux est affiche, et donc lu. */
+.pied-credit { display: none; }
+@media (min-width: 1100px) {
+  .site-footer .pied-societe .pied-credit { display: flex; flex-wrap: wrap; gap: 0 var(--e-5); }
+  .site-footer .pied-societe .pied-credit span { white-space: nowrap; }
+  .site-footer .pied-societe .pied-credit span::after { content: none; }
+  .site-footer .site-footer__inner .footer-bottom { display: none; }
+}
+/* Liens fleches : un trait discret, toujours visible, pour qu'ils se lisent comme des liens ; il se renforce au survol. */
+.lien-fleche > span::after { transform: scaleX(1); opacity: .35; transition: opacity var(--mv-micro) var(--mv-entree); }
+.lien-fleche:hover > span::after, .lien-fleche:focus-visible > span::after { opacity: 1; }
+.contact-ligne .lien-fleche > span::after { bottom: -4px; }
