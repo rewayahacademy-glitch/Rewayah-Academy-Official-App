@@ -25,7 +25,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/admin/admin_domaine.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/dates_appareil.dart';
 import '../../core/i18n/strings.g.dart';
@@ -45,7 +44,6 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
-import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/zone_saisie.dart';
 import '../salle_seance/information_controle.dart' show coupuresAdresse;
@@ -213,7 +211,10 @@ class _InvitationsPageState extends ConsumerState<InvitationsPage> {
     return PageShell(
       titre: avecComptable ? r.comptable.titrePage : r.titre,
       sousTitre: avecComptable ? r.comptable.sousTitrePage : r.sousTitre,
-      entete: SousNavigationDomaine(onglets: ongletsPersonnes(), indexActif: 2),
+      // ADM-20 : l'onglet Invitations a cede son rang aux Candidatures. Cette
+      // page reste atteignable par un lien de la file (CAND-F01) ; elle n'a
+      // plus d'onglet. Le retour de la coquille d'administration (vers
+      // l'Accueil) reste celui de toutes les pages de Personnes.
       child: Align(
         alignment: AlignmentDirectional.topStart,
         child: ConstrainedBox(

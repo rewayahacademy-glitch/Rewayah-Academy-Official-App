@@ -1586,6 +1586,7 @@ class Traductions$admin$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$admin$candidatures$fr candidatures = Traductions$admin$candidatures$fr.internal(_root);
 	late final Traductions$admin$importInscriptions$fr importInscriptions = Traductions$admin$importInscriptions$fr.internal(_root);
 	late final Traductions$admin$tableau$fr tableau = Traductions$admin$tableau$fr.internal(_root);
 	late final Traductions$admin$traitement$fr traitement = Traductions$admin$traitement$fr.internal(_root);
@@ -6772,6 +6773,15 @@ class Traductions$recrutement$questionnaire$fr {
 
 	/// fr: 'L'académie vous demande de compléter cette partie.'
 	String get complementCarte => 'L\'académie vous demande de compléter cette partie.';
+
+	/// fr: 'Vous recevez votre rémunération par un moyen validé par Rewayah.'
+	String get moyenValide => 'Vous recevez votre rémunération par un moyen validé par Rewayah.';
+
+	/// fr: 'En acceptant ces conditions, vous vous engagez à tenir votre Classe aux mêmes jours et aux mêmes heures, chaque semaine.'
+	String get continuite => 'En acceptant ces conditions, vous vous engagez à tenir votre Classe aux mêmes jours et aux mêmes heures, chaque semaine.';
+
+	/// fr: 'Vos disponibilités se chevauchent un même jour. Revoyez-les, puis envoyez de nouveau votre candidature.'
+	String get plagesChevauchent => 'Vos disponibilités se chevauchent un même jour. Revoyez-les, puis envoyez de nouveau votre candidature.';
 }
 
 // Path: recrutement.parcours
@@ -6787,9 +6797,6 @@ class Traductions$recrutement$parcours$fr {
 
 	/// fr: 'Choisissez au moins une réponse pour continuer.'
 	String get choisirPlusieurs => 'Choisissez au moins une réponse pour continuer.';
-
-	/// fr: 'Choisissez au moins une plage pour continuer.'
-	String get choisirPlage => 'Choisissez au moins une plage pour continuer.';
 
 	/// fr: '(one) {Choisissez une seule réponse.} (other) {Choisissez {max} réponses au plus.}'
 	String trop({required num max}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(max,
@@ -6821,6 +6828,17 @@ class Traductions$recrutement$parcours$fr {
 	late final Traductions$recrutement$parcours$versement$fr versement = Traductions$recrutement$parcours$versement$fr.internal(_root);
 	late final Traductions$recrutement$parcours$recap$fr recap = Traductions$recrutement$parcours$recap$fr.internal(_root);
 	late final Traductions$recrutement$parcours$q$fr q = Traductions$recrutement$parcours$q$fr.internal(_root);
+	late final Traductions$recrutement$parcours$classes$fr classes = Traductions$recrutement$parcours$classes$fr.internal(_root);
+	late final Traductions$recrutement$parcours$moyens$fr moyens = Traductions$recrutement$parcours$moyens$fr.internal(_root);
+
+	/// fr: 'Choisissez au moins un jour pour continuer.'
+	String get choisirJour => 'Choisissez au moins un jour pour continuer.';
+
+	/// fr: 'Choisissez au moins une heure de début pour continuer.'
+	String get choisirHeure => 'Choisissez au moins une heure de début pour continuer.';
+
+	/// fr: 'Choisissez au moins une heure de début pour le {jour}.'
+	String choisirHeureJour({required Object jour}) => 'Choisissez au moins une heure de début pour le ${jour}.';
 }
 
 // Path: dossiers.file
@@ -7182,6 +7200,93 @@ class Traductions$dossiers$accesKyc$fr {
 	String get reessayer => 'Réessayer';
 
 	late final Traductions$dossiers$accesKyc$refus$fr refus = Traductions$dossiers$accesKyc$refus$fr.internal(_root);
+}
+
+// Path: admin.candidatures
+class Traductions$admin$candidatures$fr {
+	Traductions$admin$candidatures$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Candidatures'
+	String get titre => 'Candidatures';
+
+	/// fr: 'Les candidatures d'enseignement, de l'invitation à la Salle des prêts à enseigner.'
+	String get sousTitre => 'Les candidatures d\'enseignement, de l\'invitation à la Salle des prêts à enseigner.';
+
+	late final Traductions$admin$candidatures$exception$fr exception = Traductions$admin$candidatures$exception$fr.internal(_root);
+
+	/// fr: 'À traiter'
+	String get aTraiter => 'À traiter';
+
+	late final Traductions$admin$candidatures$alertes$fr alertes = Traductions$admin$candidatures$alertes$fr.internal(_root);
+
+	/// fr: 'Rechercher un nom, une référence ou un courriel'
+	String get recherche => 'Rechercher un nom, une référence ou un courriel';
+
+	/// fr: 'Nom, référence ou courriel'
+	String get rechercheAide => 'Nom, référence ou courriel';
+
+	late final Traductions$admin$candidatures$filtres$fr filtres = Traductions$admin$candidatures$filtres$fr.internal(_root);
+	late final Traductions$admin$candidatures$tri$fr tri = Traductions$admin$candidatures$tri$fr.internal(_root);
+
+	/// fr: '(one) {{n} candidature} (other) {{n} candidatures}'
+	String total({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} candidature',
+		other: '${n} candidatures',
+	);
+
+	/// fr: 'Candidatures {debut} à {fin} sur {total}'
+	String resume({required Object debut, required Object fin, required Object total}) => 'Candidatures ${debut} à ${fin} sur ${total}';
+
+	late final Traductions$admin$candidatures$pagination$fr pagination = Traductions$admin$candidatures$pagination$fr.internal(_root);
+	late final Traductions$admin$candidatures$colonnes$fr colonnes = Traductions$admin$candidatures$colonnes$fr.internal(_root);
+	late final Traductions$admin$candidatures$ligne$fr ligne = Traductions$admin$candidatures$ligne$fr.internal(_root);
+	late final Traductions$admin$candidatures$selection$fr selection = Traductions$admin$candidatures$selection$fr.internal(_root);
+
+	/// fr: 'Aucune candidature pour le moment'
+	String get vide => 'Aucune candidature pour le moment';
+
+	/// fr: 'Une candidature apparaît ici dès que la personne s'inscrit par le lien du site ou avec une invitation.'
+	String get videDetail => 'Une candidature apparaît ici dès que la personne s\'inscrit par le lien du site ou avec une invitation.';
+
+	/// fr: 'Aucune candidature ne correspond à ces filtres.'
+	String get aucunResultat => 'Aucune candidature ne correspond à ces filtres.';
+
+	late final Traductions$admin$candidatures$rappel$fr rappel = Traductions$admin$candidatures$rappel$fr.internal(_root);
+
+	/// fr: 'Les candidatures n'ont pas pu être lues.'
+	String get lectureEchec => 'Les candidatures n\'ont pas pu être lues.';
+
+	/// fr: 'La liste des candidatures n'a pas pu être chargée'
+	String get sansDonnees => 'La liste des candidatures n\'a pas pu être chargée';
+
+	/// fr: 'Vous n'avez pas accès aux candidatures.'
+	String get accesRefuse => 'Vous n\'avez pas accès aux candidatures.';
+
+	/// fr: 'Les candidatures ne s'affichent pas'
+	String get genreInconnuTitre => 'Les candidatures ne s\'affichent pas';
+
+	/// fr: 'Votre fiche ne dit pas de quel côté vous travaillez. Demandez à la direction de la compléter.'
+	String get genreInconnu => 'Votre fiche ne dit pas de quel côté vous travaillez. Demandez à la direction de la compléter.';
+
+	late final Traductions$admin$candidatures$etats$fr etats = Traductions$admin$candidatures$etats$fr.internal(_root);
+	late final Traductions$admin$candidatures$detail$fr detail = Traductions$admin$candidatures$detail$fr.internal(_root);
+	late final Traductions$admin$candidatures$controles$fr controles = Traductions$admin$candidatures$controles$fr.internal(_root);
+	late final Traductions$admin$candidatures$historique$fr historique = Traductions$admin$candidatures$historique$fr.internal(_root);
+	late final Traductions$admin$candidatures$gestes$fr gestes = Traductions$admin$candidatures$gestes$fr.internal(_root);
+	late final Traductions$admin$candidatures$consequences$fr consequences = Traductions$admin$candidatures$consequences$fr.internal(_root);
+	late final Traductions$admin$candidatures$feuille$fr feuille = Traductions$admin$candidatures$feuille$fr.internal(_root);
+	late final Traductions$admin$candidatures$complement$fr complement = Traductions$admin$candidatures$complement$fr.internal(_root);
+	late final Traductions$admin$candidatures$retrait$fr retrait = Traductions$admin$candidatures$retrait$fr.internal(_root);
+	late final Traductions$admin$candidatures$pause$fr pause = Traductions$admin$candidatures$pause$fr.internal(_root);
+	late final Traductions$admin$candidatures$moyens$fr moyens = Traductions$admin$candidatures$moyens$fr.internal(_root);
+	late final Traductions$admin$candidatures$responsables$fr responsables = Traductions$admin$candidatures$responsables$fr.internal(_root);
+	late final Traductions$admin$candidatures$modeles$fr modeles = Traductions$admin$candidatures$modeles$fr.internal(_root);
+	late final Traductions$admin$candidatures$erreurs$fr erreurs = Traductions$admin$candidatures$erreurs$fr.internal(_root);
+	late final Traductions$admin$candidatures$retours$fr retours = Traductions$admin$candidatures$retours$fr.internal(_root);
 }
 
 // Path: admin.importInscriptions
@@ -8497,6 +8602,12 @@ class Traductions$admin$regles$fr {
 
 	/// fr: '{n}'
 	String uniteNombre({required Object n}) => '${n}';
+
+	/// fr: 'Classes au plus par enseignant'
+	String get classesParEnseignant => 'Classes au plus par enseignant';
+
+	/// fr: 'Le nombre de Classes qu'un enseignant peut tenir en même temps. Une Classe close et un remplacement ponctuel ne comptent pas. Une baisse ne retire aucune Classe déjà tenue. Dans leur questionnaire, les candidats choisissent de 1 jusqu'à ce nombre.'
+	String get classesParEnseignantDetail => 'Le nombre de Classes qu\'un enseignant peut tenir en même temps. Une Classe close et un remplacement ponctuel ne comptent pas. Une baisse ne retire aucune Classe déjà tenue. Dans leur questionnaire, les candidats choisissent de 1 jusqu\'à ce nombre.';
 }
 
 // Path: admin.fonctionnalites
@@ -21060,8 +21171,32 @@ class Traductions$recrutement$parcours$langues$fr {
 
 	// Translations
 
-	/// fr: 'Poular'
-	String get poular => 'Poular';
+	/// fr: 'Poular (peul, fulfulde)'
+	String get poular => 'Poular (peul, fulfulde)';
+
+	/// fr: 'Malinké'
+	String get man => 'Malinké';
+
+	/// fr: 'Soussou'
+	String get sus => 'Soussou';
+
+	/// fr: 'Swahili'
+	String get sw => 'Swahili';
+
+	/// fr: 'Haoussa'
+	String get ha => 'Haoussa';
+
+	/// fr: 'Wolof'
+	String get wo => 'Wolof';
+
+	/// fr: 'Bambara'
+	String get bm => 'Bambara';
+
+	/// fr: 'Soninké'
+	String get snk => 'Soninké';
+
+	/// fr: 'Mandinka'
+	String get mnk => 'Mandinka';
 
 	/// fr: 'Français'
 	String get francais => 'Français';
@@ -21072,32 +21207,11 @@ class Traductions$recrutement$parcours$langues$fr {
 	/// fr: 'Arabe'
 	String get ar => 'Arabe';
 
-	/// fr: 'Peul (fulfulde)'
-	String get ff => 'Peul (fulfulde)';
-
-	/// fr: 'Haoussa'
-	String get ha => 'Haoussa';
-
-	/// fr: 'Wolof'
-	String get wo => 'Wolof';
-
 	/// fr: 'Pachto'
 	String get ps => 'Pachto';
 
 	/// fr: 'Ourdou'
 	String get ur => 'Ourdou';
-
-	/// fr: 'Soninké'
-	String get snk => 'Soninké';
-
-	/// fr: 'Bambara'
-	String get bm => 'Bambara';
-
-	/// fr: 'Swahili'
-	String get sw => 'Swahili';
-
-	/// fr: 'Mandinka'
-	String get mnk => 'Mandinka';
 
 	/// fr: 'Oromo'
 	String get om => 'Oromo';
@@ -21138,14 +21252,20 @@ class Traductions$recrutement$parcours$langues$fr {
 	/// fr: 'Russe'
 	String get ru => 'Russe';
 
-	/// fr: 'Une langue dans laquelle Rewayah donne des cours.'
-	String get dansReferentiel => 'Une langue dans laquelle Rewayah donne des cours.';
-
-	/// fr: 'Langue pas encore proposée par Rewayah'
-	String get horsReferentiel => 'Langue pas encore proposée par Rewayah';
-
 	/// fr: 'Une autre langue'
 	String get autre => 'Une autre langue';
+
+	/// fr: 'Une langue qui n'est pas dans la liste. La direction la verra.'
+	String get autreDescription => 'Une langue qui n\'est pas dans la liste. La direction la verra.';
+
+	/// fr: 'Rewayah donne déjà des cours dans cette langue.'
+	String get dansReferentiel => 'Rewayah donne déjà des cours dans cette langue.';
+
+	/// fr: 'Rewayah ne donne pas encore de cours dans cette langue. Vous pouvez la choisir : la direction le voit.'
+	String get horsReferentiel => 'Rewayah ne donne pas encore de cours dans cette langue. Vous pouvez la choisir : la direction le voit.';
+
+	/// fr: 'Chercher une autre langue'
+	String get chercher => 'Chercher une autre langue';
 
 	/// fr: 'Rechercher une langue'
 	String get recherche => 'Rechercher une langue';
@@ -21275,42 +21395,68 @@ class Traductions$recrutement$parcours$creneaux$fr {
 
 	// Translations
 
-	/// fr: 'Nuit'
-	String get plage0 => 'Nuit';
+	/// fr: '{h} h'
+	String heure({required Object h}) => '${h} h';
 
-	/// fr: 'Aube'
-	String get plage1 => 'Aube';
+	/// fr: '{h} h {m}'
+	String heureMinutes({required Object h, required Object m}) => '${h} h ${m}';
 
-	/// fr: 'Matin'
-	String get plage2 => 'Matin';
-
-	/// fr: 'Midi'
-	String get plage3 => 'Midi';
-
-	/// fr: 'Après-midi'
-	String get plage4 => 'Après-midi';
-
-	/// fr: 'Soir'
-	String get plage5 => 'Soir';
-
-	/// fr: '{jour}, {plage}'
-	String jourCellule({required Object jour, required Object plage}) => '${jour}, ${plage}';
-
-	/// fr: '(zero) {Aucune plage choisie} (one) {Une plage choisie} (other) {{n} plages choisies}'
-	String choisies({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
-		zero: 'Aucune plage choisie',
-		one: 'Une plage choisie',
-		other: '${n} plages choisies',
-	);
+	/// fr: 'de {debut} à {fin}'
+	String intervalle({required Object debut, required Object fin}) => 'de ${debut} à ${fin}';
 
 	/// fr: 'Heures de {lieu}.'
 	String fuseauRappel({required Object lieu}) => 'Heures de ${lieu}.';
 
-	/// fr: 'En partie'
-	String get partielle => 'En partie';
+	late final Traductions$recrutement$parcours$creneaux$moments$fr moments = Traductions$recrutement$parcours$creneaux$moments$fr.internal(_root);
 
-	/// fr: 'Choisie'
-	String get choisie => 'Choisie';
+	/// fr: 'Raccourcis'
+	String get raccourcis => 'Raccourcis';
+
+	/// fr: 'Lundi, mercredi, vendredi'
+	String get raccourciLmv => 'Lundi, mercredi, vendredi';
+
+	/// fr: 'Mardi, jeudi, samedi'
+	String get raccourciMjs => 'Mardi, jeudi, samedi';
+
+	/// fr: 'Fin de semaine'
+	String get raccourciFinDeSemaine => 'Fin de semaine';
+
+	/// fr: 'Un raccourci choisit plusieurs jours d'un coup. Vous pouvez ensuite en ajouter ou en retirer.'
+	String get raccourcisAide => 'Un raccourci choisit plusieurs jours d\'un coup. Vous pouvez ensuite en ajouter ou en retirer.';
+
+	/// fr: '(one) {Vous avez choisi un seul jour. Une Classe se tient trois fois par semaine, aux mêmes jours : pensez à en choisir au moins trois.} (other) {Vous avez choisi {n} jours. Une Classe se tient trois fois par semaine, aux mêmes jours : pensez à en choisir au moins trois.}'
+	String moinsDeTrois({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Vous avez choisi un seul jour. Une Classe se tient trois fois par semaine, aux mêmes jours : pensez à en choisir au moins trois.',
+		other: 'Vous avez choisi ${n} jours. Une Classe se tient trois fois par semaine, aux mêmes jours : pensez à en choisir au moins trois.',
+	);
+
+	/// fr: 'Une Classe se tient trois fois par semaine, aux mêmes jours et à la même heure.'
+	String get troisSeances => 'Une Classe se tient trois fois par semaine, aux mêmes jours et à la même heure.';
+
+	/// fr: 'Un cours d'enfants dure {enfants}, un cours d'adultes dure {adultes}.'
+	String durees({required Object enfants, required Object adultes}) => 'Un cours d\'enfants dure ${enfants}, un cours d\'adultes dure ${adultes}.';
+
+	/// fr: 'Cours d'enfants ({duree}) : vous enseignez {intervalles}.'
+	String enseigneEnfants({required Object duree, required Object intervalles}) => 'Cours d\'enfants (${duree}) : vous enseignez ${intervalles}.';
+
+	/// fr: 'Cours d'adultes ({duree}) : vous enseignez {intervalles}.'
+	String enseigneAdultes({required Object duree, required Object intervalles}) => 'Cours d\'adultes (${duree}) : vous enseignez ${intervalles}.';
+
+	/// fr: '(zero) {Aucune heure de début choisie} (one) {Une heure de début choisie} (other) {{n} heures de début choisies}'
+	String heuresChoisies({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		zero: 'Aucune heure de début choisie',
+		one: 'Une heure de début choisie',
+		other: '${n} heures de début choisies',
+	);
+
+	/// fr: 'Débuts possibles : {heures}.'
+	String debutsDuJour({required Object heures}) => 'Débuts possibles : ${heures}.';
+
+	/// fr: ', '
+	String get separateurListe => ', ';
+
+	/// fr: '{debut} et {dernier}'
+	String etListe({required Object debut, required Object dernier}) => '${debut} et ${dernier}';
 }
 
 // Path: recrutement.parcours.versement
@@ -21354,10 +21500,10 @@ class Traductions$recrutement$parcours$recap$fr {
 	/// fr: 'Touchez une réponse pour la changer. Rien n'est envoyé avant le bouton « Envoyer ma candidature ».'
 	String get explication => 'Touchez une réponse pour la changer. Rien n\'est envoyé avant le bouton « Envoyer ma candidature ».';
 
-	/// fr: '(one) {Une plage par semaine} (other) {{n} plages par semaine}'
-	String plages({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
-		one: 'Une plage par semaine',
-		other: '${n} plages par semaine',
+	/// fr: '(one) {Un jour par semaine} (other) {{n} jours par semaine}'
+	String jours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Un jour par semaine',
+		other: '${n} jours par semaine',
 	);
 }
 
@@ -21377,13 +21523,80 @@ class Traductions$recrutement$parcours$q$fr {
 	late final Traductions$recrutement$parcours$q$experienceDebutants$fr experienceDebutants = Traductions$recrutement$parcours$q$experienceDebutants$fr.internal(_root);
 	late final Traductions$recrutement$parcours$q$fuseauIana$fr fuseauIana = Traductions$recrutement$parcours$q$fuseauIana$fr.internal(_root);
 	late final Traductions$recrutement$parcours$q$disponibilitesDeclarees$fr disponibilitesDeclarees = Traductions$recrutement$parcours$q$disponibilitesDeclarees$fr.internal(_root);
-	late final Traductions$recrutement$parcours$q$heuresParSemaine$fr heuresParSemaine = Traductions$recrutement$parcours$q$heuresParSemaine$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$classesSouhaitees$fr classesSouhaitees = Traductions$recrutement$parcours$q$classesSouhaitees$fr.internal(_root);
 	late final Traductions$recrutement$parcours$q$debutPossible$fr debutPossible = Traductions$recrutement$parcours$q$debutPossible$fr.internal(_root);
 	late final Traductions$recrutement$parcours$q$publics$fr publics = Traductions$recrutement$parcours$q$publics$fr.internal(_root);
 	late final Traductions$recrutement$parcours$q$paysResidence$fr paysResidence = Traductions$recrutement$parcours$q$paysResidence$fr.internal(_root);
 	late final Traductions$recrutement$parcours$q$paysVersement$fr paysVersement = Traductions$recrutement$parcours$q$paysVersement$fr.internal(_root);
 	late final Traductions$recrutement$parcours$q$compteBancaire$fr compteBancaire = Traductions$recrutement$parcours$q$compteBancaire$fr.internal(_root);
 	late final Traductions$recrutement$parcours$q$operateurs$fr operateurs = Traductions$recrutement$parcours$q$operateurs$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$moyensAccessibles$fr moyensAccessibles = Traductions$recrutement$parcours$q$moyensAccessibles$fr.internal(_root);
+}
+
+// Path: recrutement.parcours.classes
+class Traductions$recrutement$parcours$classes$fr {
+	Traductions$recrutement$parcours$classes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '(one) {{n} Classe} (other) {{n} Classes}'
+	String libelle({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} Classe',
+		other: '${n} Classes',
+	);
+
+	/// fr: '(one) {{n} séance par semaine.} (other) {{n} séances par semaine.}'
+	String seances({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} séance par semaine.',
+		other: '${n} séances par semaine.',
+	);
+
+	/// fr: 'Soit {heures} par semaine avec des enfants.'
+	String heuresEnfants({required Object heures}) => 'Soit ${heures} par semaine avec des enfants.';
+
+	/// fr: 'Soit {heures} par semaine avec des adultes.'
+	String heuresAdultes({required Object heures}) => 'Soit ${heures} par semaine avec des adultes.';
+
+	/// fr: 'Soit {enfants} par semaine avec des enfants, ou {adultes} avec des adultes.'
+	String heuresLesDeux({required Object enfants, required Object adultes}) => 'Soit ${enfants} par semaine avec des enfants, ou ${adultes} avec des adultes.';
+
+	/// fr: 'Chaque Classe a son propre horaire, qu'elle garde chaque semaine.'
+	String get explication => 'Chaque Classe a son propre horaire, qu\'elle garde chaque semaine.';
+
+	/// fr: 'le lundi, le mercredi et le vendredi à 18 h.'
+	String get exemple1 => 'le lundi, le mercredi et le vendredi à 18 h.';
+
+	/// fr: 'le lundi, le mercredi et le vendredi à 18 h, puis le mardi, le jeudi et le samedi à 19 h.'
+	String get exemple2 => 'le lundi, le mercredi et le vendredi à 18 h, puis le mardi, le jeudi et le samedi à 19 h.';
+
+	/// fr: '(one) {{n} Classe, avec ses jours et son heure.} (other) {{n} Classes, chacune avec ses jours et son heure.}'
+	String exemplePlusieurs({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} Classe, avec ses jours et son heure.',
+		other: '${n} Classes, chacune avec ses jours et son heure.',
+	);
+}
+
+// Path: recrutement.parcours.moyens
+class Traductions$recrutement$parcours$moyens$fr {
+	Traductions$recrutement$parcours$moyens$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Paiement sur téléphone'
+	String get mobile => 'Paiement sur téléphone';
+
+	/// fr: 'Virement bancaire'
+	String get virement => 'Virement bancaire';
+
+	/// fr: 'Choisissez-le s'il est courant là où vous vivez.'
+	String get explication => 'Choisissez-le s\'il est courant là où vous vivez.';
+
+	/// fr: 'Cette question est facultative et n'élimine personne : votre candidature ne dépend pas de votre réponse. Elle aide l'académie à connaître les moyens utilisés là où vous vivez.'
+	String get nonElimine => 'Cette question est facultative et n\'élimine personne : votre candidature ne dépend pas de votre réponse. Elle aide l\'académie à connaître les moyens utilisés là où vous vivez.';
 }
 
 // Path: dossiers.revue.etats
@@ -21438,6 +21651,840 @@ class Traductions$dossiers$accesKyc$refus$fr {
 
 	/// fr: 'Votre profil ne peut pas consulter les pièces d'identité.'
 	String get profilNonAutorise => 'Votre profil ne peut pas consulter les pièces d\'identité.';
+}
+
+// Path: admin.candidatures.exception
+class Traductions$admin$candidatures$exception$fr {
+	Traductions$admin$candidatures$exception$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Lecture des deux côtés'
+	String get titre => 'Lecture des deux côtés';
+
+	/// fr: 'Vous lisez les candidatures des femmes et des hommes. Chaque lecture est inscrite au journal.'
+	String get message => 'Vous lisez les candidatures des femmes et des hommes. Chaque lecture est inscrite au journal.';
+
+	/// fr: 'Cette candidature est de l'autre côté : sa lecture est inscrite au journal.'
+	String get candidature => 'Cette candidature est de l\'autre côté : sa lecture est inscrite au journal.';
+}
+
+// Path: admin.candidatures.alertes
+class Traductions$admin$candidatures$alertes$fr {
+	Traductions$admin$candidatures$alertes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Bloquées'
+	String get bloquees => 'Bloquées';
+
+	/// fr: 'Entretiens en retard'
+	String get entretiensEnRetard => 'Entretiens en retard';
+
+	/// fr: 'Informations manquantes'
+	String get informationsManquantes => 'Informations manquantes';
+
+	/// fr: 'Confirmées indisponibles'
+	String get confirmeesIndisponibles => 'Confirmées indisponibles';
+
+	/// fr: 'Rien à traiter'
+	String get rien => 'Rien à traiter';
+}
+
+// Path: admin.candidatures.filtres
+class Traductions$admin$candidatures$filtres$fr {
+	Traductions$admin$candidatures$filtres$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Toutes'
+	String get toutes => 'Toutes';
+
+	/// fr: 'Gardées pour suivi'
+	String get gardees => 'Gardées pour suivi';
+
+	/// fr: 'Invitées'
+	String get invitees => 'Invitées';
+
+	/// fr: 'Tous'
+	String get tous => 'Tous';
+
+	/// fr: 'État'
+	String get etat => 'État';
+
+	/// fr: 'Issue'
+	String get issue => 'Issue';
+
+	/// fr: 'En cours'
+	String get enCours => 'En cours';
+
+	/// fr: 'Pause'
+	String get pause => 'Pause';
+
+	/// fr: 'Pas en pause'
+	String get sansPause => 'Pas en pause';
+
+	/// fr: 'Versement'
+	String get versement => 'Versement';
+
+	/// fr: 'Pays de résidence'
+	String get pays => 'Pays de résidence';
+}
+
+// Path: admin.candidatures.tri
+class Traductions$admin$candidatures$tri$fr {
+	Traductions$admin$candidatures$tri$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Trier par'
+	String get titre => 'Trier par';
+
+	/// fr: 'Dernière activité'
+	String get activite => 'Dernière activité';
+
+	/// fr: 'Date de réception'
+	String get reception => 'Date de réception';
+}
+
+// Path: admin.candidatures.pagination
+class Traductions$admin$candidatures$pagination$fr {
+	Traductions$admin$candidatures$pagination$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Page précédente des candidatures'
+	String get precedente => 'Page précédente des candidatures';
+
+	/// fr: 'Page suivante des candidatures'
+	String get suivante => 'Page suivante des candidatures';
+
+	/// fr: 'Page {page} sur {total} de la liste des candidatures'
+	String positionSemantique({required Object page, required Object total}) => 'Page ${page} sur ${total} de la liste des candidatures';
+}
+
+// Path: admin.candidatures.colonnes
+class Traductions$admin$candidatures$colonnes$fr {
+	Traductions$admin$candidatures$colonnes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nom'
+	String get nom => 'Nom';
+
+	/// fr: 'Salle'
+	String get salle => 'Salle';
+
+	/// fr: 'État'
+	String get etat => 'État';
+
+	/// fr: 'Pays de résidence'
+	String get pays => 'Pays de résidence';
+
+	/// fr: 'Versement'
+	String get versement => 'Versement';
+
+	/// fr: 'Dernière activité'
+	String get activite => 'Dernière activité';
+}
+
+// Path: admin.candidatures.ligne
+class Traductions$admin$candidatures$ligne$fr {
+	Traductions$admin$candidatures$ligne$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Versement : {etat}'
+	String versement({required Object etat}) => 'Versement : ${etat}';
+
+	/// fr: 'Dernière activité le {date}'
+	String activite({required Object date}) => 'Dernière activité le ${date}';
+
+	/// fr: 'Résidence : {pays}'
+	String pays({required Object pays}) => 'Résidence : ${pays}';
+
+	/// fr: 'Courriel à obtenir'
+	String get courrielAObtenir => 'Courriel à obtenir';
+
+	/// fr: 'Indicatif à confirmer'
+	String get indicatifAConfirmer => 'Indicatif à confirmer';
+
+	/// fr: 'Reprise prévue le {date}'
+	String reprise({required Object date}) => 'Reprise prévue le ${date}';
+
+	/// fr: 'Indisponible jusqu'au {date}'
+	String indisponibleJusquAu({required Object date}) => 'Indisponible jusqu\'au ${date}';
+}
+
+// Path: admin.candidatures.selection
+class Traductions$admin$candidatures$selection$fr {
+	Traductions$admin$candidatures$selection$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Sélectionner'
+	String get selectionner => 'Sélectionner';
+
+	/// fr: 'Quitter la sélection'
+	String get quitter => 'Quitter la sélection';
+
+	/// fr: '(one) {{n} candidature retenue} (other) {{n} candidatures retenues}'
+	String retenues({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} candidature retenue',
+		other: '${n} candidatures retenues',
+	);
+
+	/// fr: 'Choisissez l'action à lancer sur ces candidatures.'
+	String get phrase => 'Choisissez l\'action à lancer sur ces candidatures.';
+
+	/// fr: 'Agir sur la sélection'
+	String get agir => 'Agir sur la sélection';
+
+	/// fr: 'Tout relâcher'
+	String get relacher => 'Tout relâcher';
+
+	/// fr: 'Les actions pourront être lancées quand la connexion reviendra.'
+	String get horsLigne => 'Les actions pourront être lancées quand la connexion reviendra.';
+}
+
+// Path: admin.candidatures.rappel
+class Traductions$admin$candidatures$rappel$fr {
+	Traductions$admin$candidatures$rappel$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Filtres posés : {filtres}'
+	String filtres({required Object filtres}) => 'Filtres posés : ${filtres}';
+
+	/// fr: 'Recherche : « {texte} »'
+	String recherche({required Object texte}) => 'Recherche : « ${texte} »';
+}
+
+// Path: admin.candidatures.etats
+class Traductions$admin$candidatures$etats$fr {
+	Traductions$admin$candidatures$etats$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Gardée pour suivi'
+	String get gardee => 'Gardée pour suivi';
+
+	/// fr: 'Invitée'
+	String get invitee => 'Invitée';
+
+	/// fr: 'À compléter'
+	String get aCompleter => 'À compléter';
+
+	/// fr: 'En examen'
+	String get enExamen => 'En examen';
+
+	/// fr: 'Versement pas encore possible'
+	String get versementImpossible => 'Versement pas encore possible';
+
+	/// fr: 'Entretien à planifier'
+	String get entretienAPlanifier => 'Entretien à planifier';
+
+	/// fr: 'Entretien planifié'
+	String get entretienPlanifie => 'Entretien planifié';
+
+	/// fr: 'Décision en attente'
+	String get decisionEnAttente => 'Décision en attente';
+
+	/// fr: 'Refusée'
+	String get refusee => 'Refusée';
+
+	/// fr: 'Retirée'
+	String get retiree => 'Retirée';
+
+	/// fr: 'En pause'
+	String get enPause => 'En pause';
+
+	/// fr: 'Restreinte'
+	String get restreinte => 'Restreinte';
+
+	/// fr: 'Restreinte : pièce'
+	String get restreintePiece => 'Restreinte : pièce';
+
+	/// fr: 'Restreinte : versement'
+	String get restreinteVersement => 'Restreinte : versement';
+
+	/// fr: 'Restreinte : décision de la direction'
+	String get restreinteDirection => 'Restreinte : décision de la direction';
+
+	/// fr: 'Indisponible'
+	String get indisponible => 'Indisponible';
+
+	late final Traductions$admin$candidatures$etats$provenance$fr provenance = Traductions$admin$candidatures$etats$provenance$fr.internal(_root);
+	late final Traductions$admin$candidatures$etats$versement$fr versement = Traductions$admin$candidatures$etats$versement$fr.internal(_root);
+}
+
+// Path: admin.candidatures.detail
+class Traductions$admin$candidatures$detail$fr {
+	Traductions$admin$candidatures$detail$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Retour aux candidatures'
+	String get retour => 'Retour aux candidatures';
+
+	/// fr: 'Reçue le {date}'
+	String recue({required Object date}) => 'Reçue le ${date}';
+
+	/// fr: 'Provenance : {provenance}'
+	String provenance({required Object provenance}) => 'Provenance : ${provenance}';
+
+	/// fr: 'Message choisi pour la pause : {nom}'
+	String messagePause({required Object nom}) => 'Message choisi pour la pause : ${nom}';
+
+	/// fr: 'Message choisi pour le refus : {nom}'
+	String messageRefus({required Object nom}) => 'Message choisi pour le refus : ${nom}';
+
+	/// fr: 'Un responsable est désigné'
+	String get responsableDesigne => 'Un responsable est désigné';
+
+	/// fr: 'Aucun responsable'
+	String get aucunResponsable => 'Aucun responsable';
+
+	/// fr: 'Ce qui bloque'
+	String get blocages => 'Ce qui bloque';
+
+	/// fr: 'Rien ne bloque pour le moment.'
+	String get aucunBlocage => 'Rien ne bloque pour le moment.';
+
+	/// fr: 'Prochaine action'
+	String get prochaineAction => 'Prochaine action';
+
+	/// fr: 'En attente de la personne'
+	String get enAttentePersonne => 'En attente de la personne';
+
+	/// fr: 'Aucune action n'est disponible pour le moment.'
+	String get aucuneAction => 'Aucune action n\'est disponible pour le moment.';
+
+	/// fr: 'Cette candidature est fermée. Vous pouvez la rouvrir.'
+	String get fermee => 'Cette candidature est fermée. Vous pouvez la rouvrir.';
+
+	/// fr: 'Autres gestes'
+	String get autresGestes => 'Autres gestes';
+
+	/// fr: 'Réponses'
+	String get reponses => 'Réponses';
+
+	/// fr: 'Version du questionnaire : {version}'
+	String reponsesVersion({required Object version}) => 'Version du questionnaire : ${version}';
+
+	/// fr: 'Venu de l'ancien formulaire'
+	String get preRempli => 'Venu de l\'ancien formulaire';
+
+	/// fr: 'Aucune réponse n'a été envoyée pour le moment.'
+	String get aucuneReponse => 'Aucune réponse n\'a été envoyée pour le moment.';
+
+	/// fr: 'Moyens indiqués : {n}'
+	String moyensIndiques({required Object n}) => 'Moyens indiqués : ${n}';
+
+	late final Traductions$admin$candidatures$detail$cartes$fr cartes = Traductions$admin$candidatures$detail$cartes$fr.internal(_root);
+
+	/// fr: 'Contrôles'
+	String get controles => 'Contrôles';
+
+	/// fr: 'Entretien'
+	String get entretien => 'Entretien';
+
+	/// fr: 'Affectation'
+	String get affectation => 'Affectation';
+
+	/// fr: 'Courriels'
+	String get courriels => 'Courriels';
+
+	/// fr: 'Ouvrir dans Dossiers à valider'
+	String get ouvrirDossier => 'Ouvrir dans Dossiers à valider';
+
+	/// fr: 'Responsable'
+	String get responsable => 'Responsable';
+
+	late final Traductions$admin$candidatures$detail$contact$fr contact = Traductions$admin$candidatures$detail$contact$fr.internal(_root);
+
+	/// fr: 'Aucun événement pour le moment'
+	String get historiqueVide => 'Aucun événement pour le moment';
+
+	/// fr: 'Voir les événements plus anciens'
+	String get plusAnciens => 'Voir les événements plus anciens';
+
+	/// fr: 'L'historique n'a pas pu être lu.'
+	String get historiqueEchec => 'L\'historique n\'a pas pu être lu.';
+
+	/// fr: 'La candidature n'a pas pu être chargée'
+	String get sansDonnees => 'La candidature n\'a pas pu être chargée';
+
+	/// fr: 'Vous n'avez pas accès à cette candidature.'
+	String get titreHorsPortee => 'Vous n\'avez pas accès à cette candidature.';
+
+	/// fr: 'Cette candidature n'existe pas, ou plus.'
+	String get titreAbsente => 'Cette candidature n\'existe pas, ou plus.';
+
+	/// fr: 'La candidature n'a pas pu être lue.'
+	String get titreLecture => 'La candidature n\'a pas pu être lue.';
+
+	/// fr: 'Revenez à la liste des candidatures.'
+	String get revenirALaFile => 'Revenez à la liste des candidatures.';
+
+	/// fr: '{nom} ({cause})'
+	String controleLigne({required Object nom, required Object cause}) => '${nom} (${cause})';
+
+	/// fr: ', '
+	String get separateurControles => ', ';
+
+	/// fr: '{jours} : {heures}'
+	String groupeJours({required Object jours, required Object heures}) => '${jours} : ${heures}';
+
+	late final Traductions$admin$candidatures$detail$etatsPiece$fr etatsPiece = Traductions$admin$candidatures$detail$etatsPiece$fr.internal(_root);
+
+	/// fr: 'Satisfait'
+	String get controlesVrai => 'Satisfait';
+
+	/// fr: 'Non satisfait'
+	String get controlesFaux => 'Non satisfait';
+}
+
+// Path: admin.candidatures.controles
+class Traductions$admin$candidatures$controles$fr {
+	Traductions$admin$candidatures$controles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$admin$candidatures$controles$noms$fr noms = Traductions$admin$candidatures$controles$noms$fr.internal(_root);
+	late final Traductions$admin$candidatures$controles$causes$fr causes = Traductions$admin$candidatures$controles$causes$fr.internal(_root);
+}
+
+// Path: admin.candidatures.historique
+class Traductions$admin$candidatures$historique$fr {
+	Traductions$admin$candidatures$historique$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$admin$candidatures$historique$auteur$fr auteur = Traductions$admin$candidatures$historique$auteur$fr.internal(_root);
+	late final Traductions$admin$candidatures$historique$types$fr types = Traductions$admin$candidatures$historique$types$fr.internal(_root);
+
+	/// fr: 'De « {avant} » à « {apres} »'
+	String deA({required Object avant, required Object apres}) => 'De « ${avant} » à « ${apres} »';
+
+	/// fr: 'Motif : {motif}'
+	String motif({required Object motif}) => 'Motif : ${motif}';
+
+	/// fr: 'Le {date} à {heure}'
+	String le({required Object date, required Object heure}) => 'Le ${date} à ${heure}';
+
+	/// fr: ' · '
+	String get separateur => ' · ';
+}
+
+// Path: admin.candidatures.gestes
+class Traductions$admin$candidatures$gestes$fr {
+	Traductions$admin$candidatures$gestes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Admettre en Salle de vérification et d'entretien'
+	String get admettre => 'Admettre en Salle de vérification et d\'entretien';
+
+	/// fr: 'Confirmer le moyen de versement'
+	String get confirmerMoyen => 'Confirmer le moyen de versement';
+
+	/// fr: 'Écarter ce moyen de versement'
+	String get ecarterMoyen => 'Écarter ce moyen de versement';
+
+	/// fr: 'Demander un complément'
+	String get demanderComplement => 'Demander un complément';
+
+	/// fr: 'Clore le complément'
+	String get cloreComplement => 'Clore le complément';
+
+	/// fr: 'Mettre en pause'
+	String get mettreEnPause => 'Mettre en pause';
+
+	/// fr: 'Lever la pause'
+	String get leverPause => 'Lever la pause';
+
+	/// fr: 'Refuser la candidature'
+	String get refuser => 'Refuser la candidature';
+
+	/// fr: 'Enregistrer un retrait demandé'
+	String get retrait => 'Enregistrer un retrait demandé';
+
+	/// fr: 'Rouvrir la candidature'
+	String get rouvrir => 'Rouvrir la candidature';
+
+	/// fr: 'Choisir le responsable'
+	String get responsable => 'Choisir le responsable';
+}
+
+// Path: admin.candidatures.consequences
+class Traductions$admin$candidatures$consequences$fr {
+	Traductions$admin$candidatures$consequences$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La candidature passe en Salle de vérification et d'entretien.'
+	String get admettre => 'La candidature passe en Salle de vérification et d\'entretien.';
+
+	/// fr: 'Ce moyen permet à Rewayah de verser la rémunération dans le pays de la personne.'
+	String get confirmerMoyen => 'Ce moyen permet à Rewayah de verser la rémunération dans le pays de la personne.';
+
+	/// fr: 'Ce moyen n'est plus retenu. Sans autre moyen possible, la candidature attend qu'un moyen devienne possible.'
+	String get ecarterMoyen => 'Ce moyen n\'est plus retenu. Sans autre moyen possible, la candidature attend qu\'un moyen devienne possible.';
+
+	/// fr: 'La candidature repasse à compléter. La personne lira la liste des éléments choisis.'
+	String get demanderComplement => 'La candidature repasse à compléter. La personne lira la liste des éléments choisis.';
+
+	/// fr: 'Le complément demandé est clos. La candidature reste dans sa salle.'
+	String get cloreComplement => 'Le complément demandé est clos. La candidature reste dans sa salle.';
+
+	/// fr: 'La candidature n'avance plus tant que la pause n'est pas levée.'
+	String get mettreEnPause => 'La candidature n\'avance plus tant que la pause n\'est pas levée.';
+
+	/// fr: 'La candidature reprend là où elle s'était arrêtée.'
+	String get leverPause => 'La candidature reprend là où elle s\'était arrêtée.';
+
+	/// fr: 'La candidature est fermée. Vous pourrez la rouvrir.'
+	String get refuser => 'La candidature est fermée. Vous pourrez la rouvrir.';
+
+	/// fr: 'La candidature est fermée à la demande de la personne. Vous pourrez la rouvrir.'
+	String get retrait => 'La candidature est fermée à la demande de la personne. Vous pourrez la rouvrir.';
+
+	/// fr: 'La candidature reprend son étape d'origine, si les contrôles du serveur le permettent.'
+	String get rouvrir => 'La candidature reprend son étape d\'origine, si les contrôles du serveur le permettent.';
+
+	/// fr: 'Le responsable suit cette candidature.'
+	String get responsable => 'Le responsable suit cette candidature.';
+}
+
+// Path: admin.candidatures.feuille
+class Traductions$admin$candidatures$feuille$fr {
+	Traductions$admin$candidatures$feuille$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Motif interne'
+	String get motif => 'Motif interne';
+
+	/// fr: 'La personne ne le lira pas.'
+	String get motifSeul => 'La personne ne le lira pas.';
+
+	/// fr: 'La personne ne le lira pas. Elle lira seulement le message choisi.'
+	String get motifAide => 'La personne ne le lira pas. Elle lira seulement le message choisi.';
+
+	/// fr: 'Message pour la personne'
+	String get modele => 'Message pour la personne';
+
+	/// fr: 'La personne lira le message de ce modèle.'
+	String get modeleLu => 'La personne lira le message de ce modèle.';
+
+	/// fr: 'Indiquez le motif.'
+	String get motifManquant => 'Indiquez le motif.';
+
+	/// fr: 'Choisissez le message que la personne lira.'
+	String get modeleManquant => 'Choisissez le message que la personne lira.';
+
+	/// fr: 'Envoi au serveur en cours'
+	String get enCours => 'Envoi au serveur en cours';
+
+	/// fr: 'Actualiser la candidature'
+	String get actualiser => 'Actualiser la candidature';
+}
+
+// Path: admin.candidatures.complement
+class Traductions$admin$candidatures$complement$fr {
+	Traductions$admin$candidatures$complement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce qui manque'
+	String get elements => 'Ce qui manque';
+
+	/// fr: 'La personne lira cette liste.'
+	String get aide => 'La personne lira cette liste.';
+
+	/// fr: 'Choisissez au moins un élément.'
+	String get manquant => 'Choisissez au moins un élément.';
+}
+
+// Path: admin.candidatures.retrait
+class Traductions$admin$candidatures$retrait$fr {
+	Traductions$admin$candidatures$retrait$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Comment la demande est arrivée'
+	String get canal => 'Comment la demande est arrivée';
+
+	late final Traductions$admin$candidatures$retrait$canaux$fr canaux = Traductions$admin$candidatures$retrait$canaux$fr.internal(_root);
+
+	/// fr: 'Jour de la demande'
+	String get date => 'Jour de la demande';
+
+	/// fr: 'Choisissez comment la demande est arrivée.'
+	String get canalManquant => 'Choisissez comment la demande est arrivée.';
+
+	/// fr: 'Choisissez le jour de la demande.'
+	String get dateManquante => 'Choisissez le jour de la demande.';
+
+	/// fr: 'Entre la réception de la candidature et aujourd'hui.'
+	String get aide => 'Entre la réception de la candidature et aujourd\'hui.';
+}
+
+// Path: admin.candidatures.pause
+class Traductions$admin$candidatures$pause$fr {
+	Traductions$admin$candidatures$pause$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Reprise prévue'
+	String get reprise => 'Reprise prévue';
+
+	/// fr: 'Facultatif. Sans date, la pause dure jusqu'à ce que vous la leviez.'
+	String get repriseAide => 'Facultatif. Sans date, la pause dure jusqu\'à ce que vous la leviez.';
+
+	/// fr: 'Ne pas fixer de date'
+	String get effacerReprise => 'Ne pas fixer de date';
+}
+
+// Path: admin.candidatures.moyens
+class Traductions$admin$candidatures$moyens$fr {
+	Traductions$admin$candidatures$moyens$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Moyen de versement'
+	String get titre => 'Moyen de versement';
+
+	/// fr: 'Choisissez le moyen.'
+	String get manquant => 'Choisissez le moyen.';
+
+	/// fr: 'Virement bancaire'
+	String get virement => 'Virement bancaire';
+
+	/// fr: 'Monnaie mobile : {nom}'
+	String mobile({required Object nom}) => 'Monnaie mobile : ${nom}';
+
+	/// fr: 'Monnaie mobile'
+	String get mobileSansNom => 'Monnaie mobile';
+
+	/// fr: 'La personne n'a déclaré aucun moyen de versement.'
+	String get aucunDeclare => 'La personne n\'a déclaré aucun moyen de versement.';
+}
+
+// Path: admin.candidatures.responsables
+class Traductions$admin$candidatures$responsables$fr {
+	Traductions$admin$candidatures$responsables$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Choisissez le responsable de cette candidature.'
+	String get choisir => 'Choisissez le responsable de cette candidature.';
+
+	/// fr: 'Aucun responsable'
+	String get aucun => 'Aucun responsable';
+
+	/// fr: 'La liste des responsables n'a pas pu être lue.'
+	String get lectureEchec => 'La liste des responsables n\'a pas pu être lue.';
+}
+
+// Path: admin.candidatures.modeles
+class Traductions$admin$candidatures$modeles$fr {
+	Traductions$admin$candidatures$modeles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Refus général'
+	String get refusGeneral => 'Refus général';
+
+	/// fr: 'Niveau pas encore suffisant'
+	String get refusNiveau => 'Niveau pas encore suffisant';
+
+	/// fr: 'Pas de besoin pour ce profil'
+	String get refusBesoins => 'Pas de besoin pour ce profil';
+
+	/// fr: 'Sans réponse de la personne'
+	String get refusSansReponse => 'Sans réponse de la personne';
+
+	/// fr: 'En attente d'un besoin'
+	String get pauseAttenteBesoin => 'En attente d\'un besoin';
+
+	/// fr: 'En attente d'informations'
+	String get pauseAttenteInformations => 'En attente d\'informations';
+
+	/// fr: 'À la demande de la personne'
+	String get pauseDemandeCandidat => 'À la demande de la personne';
+
+	/// fr: 'Pause générale'
+	String get pauseGeneral => 'Pause générale';
+
+	/// fr: 'Autre message'
+	String get autre => 'Autre message';
+}
+
+// Path: admin.candidatures.erreurs
+class Traductions$admin$candidatures$erreurs$fr {
+	Traductions$admin$candidatures$erreurs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Rien n'a été fait. Il manque : {controles}. Vérifiez ces points, puis réessayez.'
+	String controles({required Object controles}) => 'Rien n\'a été fait. Il manque : ${controles}. Vérifiez ces points, puis réessayez.';
+
+	/// fr: 'Ce geste n'est pas possible depuis l'état « {etat} ». Rien n'a été fait. Actualisez la candidature.'
+	String transition({required Object etat}) => 'Ce geste n\'est pas possible depuis l\'état « ${etat} ». Rien n\'a été fait. Actualisez la candidature.';
+
+	/// fr: 'Cette candidature a changé depuis son ouverture. Actualisez-la avant d'agir.'
+	String get conflit => 'Cette candidature a changé depuis son ouverture. Actualisez-la avant d\'agir.';
+
+	/// fr: 'Vous n'avez pas accès à cette candidature. Revenez à la liste des candidatures.'
+	String get horsPortee => 'Vous n\'avez pas accès à cette candidature. Revenez à la liste des candidatures.';
+
+	/// fr: 'Cette candidature n'existe pas, ou plus. Revenez à la liste des candidatures.'
+	String get absente => 'Cette candidature n\'existe pas, ou plus. Revenez à la liste des candidatures.';
+
+	/// fr: 'Aucun geste n'est possible sans connexion. Reconnectez-vous pour agir.'
+	String get horsLigne => 'Aucun geste n\'est possible sans connexion. Reconnectez-vous pour agir.';
+
+	/// fr: 'Rien n'a été fait. Indiquez le motif.'
+	String get motifRequis => 'Rien n\'a été fait. Indiquez le motif.';
+
+	/// fr: 'Rien n'a été fait. Choisissez le message que la personne lira.'
+	String get modeleRequis => 'Rien n\'a été fait. Choisissez le message que la personne lira.';
+
+	/// fr: 'Ce message n'est plus proposé. Choisissez-en un autre.'
+	String get modeleInconnu => 'Ce message n\'est plus proposé. Choisissez-en un autre.';
+
+	/// fr: 'Rien n'a été fait. Choisissez au moins un élément.'
+	String get elementsRequis => 'Rien n\'a été fait. Choisissez au moins un élément.';
+
+	/// fr: 'Un des éléments choisis n'est pas possible dans cette salle. Rien n'a été fait.'
+	String get elementsInvalides => 'Un des éléments choisis n\'est pas possible dans cette salle. Rien n\'a été fait.';
+
+	/// fr: 'Aucun complément n'est en cours : rien à clore. Actualisez la candidature.'
+	String get aucunComplement => 'Aucun complément n\'est en cours : rien à clore. Actualisez la candidature.';
+
+	/// fr: 'La reprise doit être un jour à venir. Rien n'a été fait. Choisissez un autre jour.'
+	String get repriseInvalide => 'La reprise doit être un jour à venir. Rien n\'a été fait. Choisissez un autre jour.';
+
+	/// fr: 'Le jour de la demande ne peut être ni à venir ni avant la réception de la candidature. Rien n'a été fait. Choisissez un autre jour.'
+	String get dateDemande => 'Le jour de la demande ne peut être ni à venir ni avant la réception de la candidature. Rien n\'a été fait. Choisissez un autre jour.';
+
+	/// fr: 'La personne n'a pas déclaré ce moyen. Rien n'a été fait. Choisissez un autre moyen.'
+	String get moyenNonDeclare => 'La personne n\'a pas déclaré ce moyen. Rien n\'a été fait. Choisissez un autre moyen.';
+
+	/// fr: 'Ce moyen ne peut pas être confirmé : aucune ligne confirmée du pays de versement ne le couvre. Rien n'a été fait. Choisissez un autre moyen.'
+	String get moyenNonConfirmable => 'Ce moyen ne peut pas être confirmé : aucune ligne confirmée du pays de versement ne le couvre. Rien n\'a été fait. Choisissez un autre moyen.';
+
+	/// fr: 'Cette personne ne peut pas être responsable de cette candidature. Rien n'a été fait. Choisissez une autre personne.'
+	String get responsableInvalide => 'Cette personne ne peut pas être responsable de cette candidature. Rien n\'a été fait. Choisissez une autre personne.';
+
+	/// fr: 'Ce geste a déjà servi à une autre action. Fermez cette fenêtre et recommencez.'
+	String get cleReutilisee => 'Ce geste a déjà servi à une autre action. Fermez cette fenêtre et recommencez.';
+
+	/// fr: 'Il est possible que ce geste ne soit pas parvenu jusqu'à Rewayah. Réessayez : il ne sera pas fait deux fois.'
+	String get nonConfirme => 'Il est possible que ce geste ne soit pas parvenu jusqu\'à Rewayah. Réessayez : il ne sera pas fait deux fois.';
+
+	/// fr: 'Le geste n'a pas abouti. Rien n'est confirmé. Réessayez dans un instant.'
+	String get generique => 'Le geste n\'a pas abouti. Rien n\'est confirmé. Réessayez dans un instant.';
+
+	/// fr: 'Vous n'avez pas le droit de faire ce geste. Signalez-le si cela vous semble anormal.'
+	String get permission => 'Vous n\'avez pas le droit de faire ce geste. Signalez-le si cela vous semble anormal.';
+
+	/// fr: 'Geste refusé'
+	String get titre => 'Geste refusé';
+
+	/// fr: 'Geste non confirmé'
+	String get nonConfirmeTitre => 'Geste non confirmé';
+}
+
+// Path: admin.candidatures.retours
+class Traductions$admin$candidatures$retours$fr {
+	Traductions$admin$candidatures$retours$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La candidature est en Salle de vérification et d'entretien.'
+	String get admettre => 'La candidature est en Salle de vérification et d\'entretien.';
+
+	/// fr: 'Le moyen de versement est confirmé.'
+	String get confirmerMoyen => 'Le moyen de versement est confirmé.';
+
+	/// fr: 'Le moyen de versement est écarté.'
+	String get ecarterMoyen => 'Le moyen de versement est écarté.';
+
+	/// fr: 'Le complément est demandé.'
+	String get demanderComplement => 'Le complément est demandé.';
+
+	/// fr: 'Le complément est clos.'
+	String get cloreComplement => 'Le complément est clos.';
+
+	/// fr: 'La candidature est en pause.'
+	String get mettreEnPause => 'La candidature est en pause.';
+
+	/// fr: 'La pause est levée.'
+	String get leverPause => 'La pause est levée.';
+
+	/// fr: 'La candidature est refusée.'
+	String get refuser => 'La candidature est refusée.';
+
+	/// fr: 'Le retrait est enregistré.'
+	String get retrait => 'Le retrait est enregistré.';
+
+	/// fr: 'La candidature est rouverte.'
+	String get rouvrir => 'La candidature est rouverte.';
+
+	/// fr: 'Le responsable est enregistré.'
+	String get responsable => 'Le responsable est enregistré.';
+
+	/// fr: 'Ce geste avait déjà été fait : rien n'a été écrit une seconde fois.'
+	String get rejoue => 'Ce geste avait déjà été fait : rien n\'a été écrit une seconde fois.';
 }
 
 // Path: admin.importInscriptions.eleves
@@ -33223,8 +34270,8 @@ class Traductions$recrutement$parcours$presentation$p2$fr {
 	/// fr: 'Ce que fait un enseignant'
 	String get titre => 'Ce que fait un enseignant';
 
-	/// fr: 'Vous enseignez en visio, dans une classe qui reste la même.'
-	String get intro => 'Vous enseignez en visio, dans une classe qui reste la même.';
+	/// fr: 'Vous enseignez en visio, dans une Classe qui reste la même.'
+	String get intro => 'Vous enseignez en visio, dans une Classe qui reste la même.';
 
 	late final Traductions$recrutement$parcours$presentation$p2$classe$fr classe = Traductions$recrutement$parcours$presentation$p2$classe$fr.internal(_root);
 	late final Traductions$recrutement$parcours$presentation$p2$horaires$fr horaires = Traductions$recrutement$parcours$presentation$p2$horaires$fr.internal(_root);
@@ -33290,6 +34337,27 @@ class Traductions$recrutement$parcours$fuseau$regions$fr {
 	String get Pacific => 'Pacifique';
 }
 
+// Path: recrutement.parcours.creneaux.moments
+class Traductions$recrutement$parcours$creneaux$moments$fr {
+	Traductions$recrutement$parcours$creneaux$moments$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La nuit, de 0 h à 5 h'
+	String get nuit => 'La nuit, de 0 h à 5 h';
+
+	/// fr: 'Le matin, de 6 h à 11 h'
+	String get matin => 'Le matin, de 6 h à 11 h';
+
+	/// fr: 'L'après-midi, de 12 h à 17 h'
+	String get apresMidi => 'L\'après-midi, de 12 h à 17 h';
+
+	/// fr: 'Le soir, de 18 h à 23 h'
+	String get soir => 'Le soir, de 18 h à 23 h';
+}
+
 // Path: recrutement.parcours.q.langueMaternelle
 class Traductions$recrutement$parcours$q$langueMaternelle$fr {
 	Traductions$recrutement$parcours$q$langueMaternelle$fr.internal(this._root);
@@ -33301,8 +34369,8 @@ class Traductions$recrutement$parcours$q$langueMaternelle$fr {
 	/// fr: 'Quelle est votre langue maternelle ?'
 	String get titre => 'Quelle est votre langue maternelle ?';
 
-	/// fr: 'C'est la langue que vous parlez depuis l'enfance.'
-	String get explication => 'C\'est la langue que vous parlez depuis l\'enfance.';
+	/// fr: 'C'est la langue que vous parlez depuis l'enfance. Cette question est facultative : vous pouvez continuer sans répondre.'
+	String get explication => 'C\'est la langue que vous parlez depuis l\'enfance. Cette question est facultative : vous pouvez continuer sans répondre.';
 
 	/// fr: 'Langue maternelle'
 	String get court => 'Langue maternelle';
@@ -33319,8 +34387,8 @@ class Traductions$recrutement$parcours$q$languesExplication$fr {
 	/// fr: 'Dans quelles langues pouvez-vous expliquer et corriger ?'
 	String get titre => 'Dans quelles langues pouvez-vous expliquer et corriger ?';
 
-	/// fr: 'Choisissez toutes les langues dans lesquelles vous savez expliquer une règle à un élève et corriger ses erreurs. Un élève suit sa classe dans la langue choisie à l'inscription : ces langues aident la direction à voir dans quelles classes vous pourriez enseigner.'
-	String get explication => 'Choisissez toutes les langues dans lesquelles vous savez expliquer une règle à un élève et corriger ses erreurs. Un élève suit sa classe dans la langue choisie à l\'inscription : ces langues aident la direction à voir dans quelles classes vous pourriez enseigner.';
+	/// fr: 'Choisissez toutes les langues dans lesquelles vous savez expliquer une règle à un élève et corriger ses erreurs, sans limite de nombre. L'élève ou son parent choisit sa langue à l'inscription, et l'académie lui confie un enseignant qui la parle : plus vous en parlez, plus vous pouvez enseigner. L'arabe n'est pas une langue de cours : il n'est pas dans cette liste.'
+	String get explication => 'Choisissez toutes les langues dans lesquelles vous savez expliquer une règle à un élève et corriger ses erreurs, sans limite de nombre. L\'élève ou son parent choisit sa langue à l\'inscription, et l\'académie lui confie un enseignant qui la parle : plus vous en parlez, plus vous pouvez enseigner. L\'arabe n\'est pas une langue de cours : il n\'est pas dans cette liste.';
 
 	/// fr: 'Langues d'explication'
 	String get court => 'Langues d\'explication';
@@ -33334,11 +34402,11 @@ class Traductions$recrutement$parcours$q$niveauMemorisationDeclare$fr {
 
 	// Translations
 
-	/// fr: 'Quel est votre niveau de mémorisation ?'
-	String get titre => 'Quel est votre niveau de mémorisation ?';
+	/// fr: 'Combien du Coran avez-vous mémorisé ?'
+	String get titre => 'Combien du Coran avez-vous mémorisé ?';
 
-	/// fr: 'Vous le déclarez ici.'
-	String get explication => 'Vous le déclarez ici.';
+	/// fr: 'Vous le déclarez ici. Avoir mémorisé et avoir une ijaza sont deux choses différentes : l'ijaza vous est demandée un peu plus loin.'
+	String get explication => 'Vous le déclarez ici. Avoir mémorisé et avoir une ijaza sont deux choses différentes : l\'ijaza vous est demandée un peu plus loin.';
 
 	/// fr: 'Niveau de mémorisation'
 	String get court => 'Niveau de mémorisation';
@@ -33394,11 +34462,11 @@ class Traductions$recrutement$parcours$q$ijazaPresentable$fr {
 
 	// Translations
 
-	/// fr: 'Avez-vous une ijaza à présenter ?'
-	String get titre => 'Avez-vous une ijaza à présenter ?';
+	/// fr: 'Avez-vous une ijaza ?'
+	String get titre => 'Avez-vous une ijaza ?';
 
-	/// fr: 'Une ijaza est une autorisation écrite, donnée par un maître, de transmettre le Coran.'
-	String get explication => 'Une ijaza est une autorisation écrite, donnée par un maître, de transmettre le Coran.';
+	/// fr: 'Une ijaza est une autorisation écrite, donnée par un maître, de transmettre le Coran. Qui a une ijaza a mémorisé, mais qui a mémorisé n'a pas forcément une ijaza : c'est une question à part.'
+	String get explication => 'Une ijaza est une autorisation écrite, donnée par un maître, de transmettre le Coran. Qui a une ijaza a mémorisé, mais qui a mémorisé n\'a pas forcément une ijaza : c\'est une question à part.';
 
 	/// fr: 'Ijaza'
 	String get court => 'Ijaza';
@@ -33452,34 +34520,37 @@ class Traductions$recrutement$parcours$q$disponibilitesDeclarees$fr {
 
 	// Translations
 
-	/// fr: 'Quand êtes-vous disponible ?'
-	String get titre => 'Quand êtes-vous disponible ?';
+	/// fr: 'Quels jours pouvez-vous enseigner ?'
+	String get titre => 'Quels jours pouvez-vous enseigner ?';
 
-	/// fr: 'Touchez les plages où vous pouvez enseigner, chaque semaine. Une plage dure quatre heures.'
-	String get explication => 'Touchez les plages où vous pouvez enseigner, chaque semaine. Une plage dure quatre heures.';
+	/// fr: 'Une Classe se tient trois fois par semaine, aux mêmes jours et à la même heure. Touchez les jours où vous pouvez enseigner, ou prenez un raccourci.'
+	String get explication => 'Une Classe se tient trois fois par semaine, aux mêmes jours et à la même heure. Touchez les jours où vous pouvez enseigner, ou prenez un raccourci.';
 
 	/// fr: 'Disponibilités'
 	String get court => 'Disponibilités';
+
+	late final Traductions$recrutement$parcours$q$disponibilitesDeclarees$heures$fr heures = Traductions$recrutement$parcours$q$disponibilitesDeclarees$heures$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$disponibilitesDeclarees$memes$fr memes = Traductions$recrutement$parcours$q$disponibilitesDeclarees$memes$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$disponibilitesDeclarees$parJour$fr parJour = Traductions$recrutement$parcours$q$disponibilitesDeclarees$parJour$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$disponibilitesDeclarees$semaine$fr semaine = Traductions$recrutement$parcours$q$disponibilitesDeclarees$semaine$fr.internal(_root);
 }
 
-// Path: recrutement.parcours.q.heuresParSemaine
-class Traductions$recrutement$parcours$q$heuresParSemaine$fr {
-	Traductions$recrutement$parcours$q$heuresParSemaine$fr.internal(this._root);
+// Path: recrutement.parcours.q.classesSouhaitees
+class Traductions$recrutement$parcours$q$classesSouhaitees$fr {
+	Traductions$recrutement$parcours$q$classesSouhaitees$fr.internal(this._root);
 
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
 
-	/// fr: 'Combien d'heures par semaine pouvez-vous enseigner ?'
-	String get titre => 'Combien d\'heures par semaine pouvez-vous enseigner ?';
+	/// fr: 'Combien de Classes voulez-vous tenir ?'
+	String get titre => 'Combien de Classes voulez-vous tenir ?';
 
-	/// fr: 'Une classe d'enfants compte trois séances d'une heure par semaine, soit 3 heures. Une classe d'adultes compte trois séances d'une heure et demie, soit 4 heures et demie.'
-	String get explication => 'Une classe d\'enfants compte trois séances d\'une heure par semaine, soit 3 heures. Une classe d\'adultes compte trois séances d\'une heure et demie, soit 4 heures et demie.';
+	/// fr: 'Une Classe, ce sont des élèves qui se retrouvent trois fois par semaine, aux mêmes jours et à la même heure, avec le même enseignant. C'est un souhait : l'académie décide des Classes qu'elle vous confie.'
+	String get explication => 'Une Classe, ce sont des élèves qui se retrouvent trois fois par semaine, aux mêmes jours et à la même heure, avec le même enseignant. C\'est un souhait : l\'académie décide des Classes qu\'elle vous confie.';
 
-	/// fr: 'Heures par semaine'
-	String get court => 'Heures par semaine';
-
-	late final Traductions$recrutement$parcours$q$heuresParSemaine$options$fr options = Traductions$recrutement$parcours$q$heuresParSemaine$options$fr.internal(_root);
+	/// fr: 'Classes souhaitées'
+	String get court => 'Classes souhaitées';
 }
 
 // Path: recrutement.parcours.q.debutPossible
@@ -33493,8 +34564,8 @@ class Traductions$recrutement$parcours$q$debutPossible$fr {
 	/// fr: 'Quand pouvez-vous commencer ?'
 	String get titre => 'Quand pouvez-vous commencer ?';
 
-	/// fr: 'Cette date aide la direction à savoir quand vous proposer une classe.'
-	String get explication => 'Cette date aide la direction à savoir quand vous proposer une classe.';
+	/// fr: 'Cette date aide la direction à savoir quand vous proposer une Classe.'
+	String get explication => 'Cette date aide la direction à savoir quand vous proposer une Classe.';
 
 	/// fr: 'Date de début'
 	String get court => 'Date de début';
@@ -33513,8 +34584,8 @@ class Traductions$recrutement$parcours$q$publics$fr {
 	/// fr: 'Quels élèves pouvez-vous enseigner ?'
 	String get titre => 'Quels élèves pouvez-vous enseigner ?';
 
-	/// fr: 'Choisissez les élèves auxquels vous pouvez enseigner. Vous pouvez choisir les deux.'
-	String get explication => 'Choisissez les élèves auxquels vous pouvez enseigner. Vous pouvez choisir les deux.';
+	/// fr: 'Choisissez les tranches d'âge auxquelles vous êtes à l'aise d'enseigner. Il n'y a pas de mauvaise réponse : vous pouvez en choisir une seule, ou plusieurs.'
+	String get explication => 'Choisissez les tranches d\'âge auxquelles vous êtes à l\'aise d\'enseigner. Il n\'y a pas de mauvaise réponse : vous pouvez en choisir une seule, ou plusieurs.';
 
 	/// fr: 'Publics'
 	String get court => 'Publics';
@@ -33594,6 +34665,300 @@ class Traductions$recrutement$parcours$q$operateurs$fr {
 
 	/// fr: 'Moyens de paiement sur téléphone'
 	String get court => 'Moyens de paiement sur téléphone';
+}
+
+// Path: recrutement.parcours.q.moyensAccessibles
+class Traductions$recrutement$parcours$q$moyensAccessibles$fr {
+	Traductions$recrutement$parcours$q$moyensAccessibles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Quels moyens de paiement sont courants là où vous vivez ?'
+	String get titre => 'Quels moyens de paiement sont courants là où vous vivez ?';
+
+	/// fr: 'Voici les moyens que l'académie connaît. Choisissez ceux qui sont courants dans votre pays, s'il y en a.'
+	String get explication => 'Voici les moyens que l\'académie connaît. Choisissez ceux qui sont courants dans votre pays, s\'il y en a.';
+
+	/// fr: 'Moyens de paiement du pays'
+	String get court => 'Moyens de paiement du pays';
+}
+
+// Path: admin.candidatures.etats.provenance
+class Traductions$admin$candidatures$etats$provenance$fr {
+	Traductions$admin$candidatures$etats$provenance$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Lien du site'
+	String get lienPublic => 'Lien du site';
+
+	/// fr: 'Invitation'
+	String get invitation => 'Invitation';
+
+	/// fr: 'Formulaires importés'
+	String get formulairesImportes => 'Formulaires importés';
+}
+
+// Path: admin.candidatures.etats.versement
+class Traductions$admin$candidatures$etats$versement$fr {
+	Traductions$admin$candidatures$etats$versement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucun moyen déclaré'
+	String get inconnu => 'Aucun moyen déclaré';
+
+	/// fr: 'À vérifier'
+	String get aVerifier => 'À vérifier';
+
+	/// fr: 'Confirmé'
+	String get compatible => 'Confirmé';
+
+	/// fr: 'Aucun moyen possible'
+	String get incompatible => 'Aucun moyen possible';
+}
+
+// Path: admin.candidatures.detail.cartes
+class Traductions$admin$candidatures$detail$cartes$fr {
+	Traductions$admin$candidatures$detail$cartes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Langues'
+	String get langues => 'Langues';
+
+	/// fr: 'Récitation'
+	String get recitation => 'Récitation';
+
+	/// fr: 'Disponibilités'
+	String get disponibilites => 'Disponibilités';
+
+	/// fr: 'Publics'
+	String get publics => 'Publics';
+
+	/// fr: 'Pays et versement'
+	String get versement => 'Pays et versement';
+}
+
+// Path: admin.candidatures.detail.contact
+class Traductions$admin$candidatures$detail$contact$fr {
+	Traductions$admin$candidatures$detail$contact$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Contact'
+	String get titre => 'Contact';
+
+	/// fr: 'Contact masqué'
+	String get masque => 'Contact masqué';
+
+	/// fr: 'Voir le contact'
+	String get voir => 'Voir le contact';
+
+	/// fr: 'Cette ouverture est inscrite au journal.'
+	String get journal => 'Cette ouverture est inscrite au journal.';
+
+	/// fr: 'Courriel'
+	String get courriel => 'Courriel';
+
+	/// fr: 'Téléphone'
+	String get telephone => 'Téléphone';
+
+	/// fr: 'Aucune coordonnée n'est connue.'
+	String get aucun => 'Aucune coordonnée n\'est connue.';
+
+	/// fr: 'À confirmer'
+	String get aConfirmer => 'À confirmer';
+
+	/// fr: 'Le contact n'a pas pu être lu.'
+	String get lectureEchec => 'Le contact n\'a pas pu être lu.';
+}
+
+// Path: admin.candidatures.detail.etatsPiece
+class Traductions$admin$candidatures$detail$etatsPiece$fr {
+	Traductions$admin$candidatures$detail$etatsPiece$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À déposer'
+	String get aDeposer => 'À déposer';
+
+	/// fr: 'Déposée'
+	String get deposee => 'Déposée';
+
+	/// fr: 'À corriger'
+	String get aCorriger => 'À corriger';
+
+	/// fr: 'Validée'
+	String get validee => 'Validée';
+}
+
+// Path: admin.candidatures.controles.noms
+class Traductions$admin$candidatures$controles$noms$fr {
+	Traductions$admin$candidatures$controles$noms$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Compte conforme'
+	String get compteConforme => 'Compte conforme';
+
+	/// fr: 'Cadre religieux et pédagogique accepté'
+	String get cadreReligieux => 'Cadre religieux et pédagogique accepté';
+
+	/// fr: 'Questionnaire complet à la version courante'
+	String get questionnaireComplet => 'Questionnaire complet à la version courante';
+
+	/// fr: 'Contrôle du serveur'
+	String get inconnu => 'Contrôle du serveur';
+}
+
+// Path: admin.candidatures.controles.causes
+class Traductions$admin$candidatures$controles$causes$fr {
+	Traductions$admin$candidatures$controles$causes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Compte supprimé'
+	String get supprime => 'Compte supprimé';
+
+	/// fr: 'Compte d'un autre type'
+	String get role => 'Compte d\'un autre type';
+
+	/// fr: 'Le statut du compte ne le permet pas'
+	String get statut => 'Le statut du compte ne le permet pas';
+
+	/// fr: 'Accès du compte expiré'
+	String get expire => 'Accès du compte expiré';
+
+	/// fr: 'Un engagement d'enseignant est déjà en cours'
+	String get engagement => 'Un engagement d\'enseignant est déjà en cours';
+
+	/// fr: 'Le cadre n'est pas encore publié'
+	String get nonPublie => 'Le cadre n\'est pas encore publié';
+
+	/// fr: 'La personne ne l'a pas encore accepté'
+	String get nonAccepte => 'La personne ne l\'a pas encore accepté';
+
+	/// fr: 'Aucun questionnaire n'est publié'
+	String get questionnaireAbsent => 'Aucun questionnaire n\'est publié';
+
+	/// fr: 'Aucune réponse envoyée'
+	String get absent => 'Aucune réponse envoyée';
+
+	/// fr: 'Réponses données à une ancienne version'
+	String get perime => 'Réponses données à une ancienne version';
+
+	/// fr: 'Des réponses manquent'
+	String get incomplet => 'Des réponses manquent';
+
+	/// fr: 'Cause non précisée'
+	String get inconnue => 'Cause non précisée';
+}
+
+// Path: admin.candidatures.historique.auteur
+class Traductions$admin$candidatures$historique$auteur$fr {
+	Traductions$admin$candidatures$historique$auteur$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La direction'
+	String get direction => 'La direction';
+
+	/// fr: 'La personne'
+	String get personne => 'La personne';
+
+	/// fr: 'Automatique'
+	String get automatique => 'Automatique';
+}
+
+// Path: admin.candidatures.historique.types
+class Traductions$admin$candidatures$historique$types$fr {
+	Traductions$admin$candidatures$historique$types$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Candidature créée'
+	String get creee => 'Candidature créée';
+
+	/// fr: 'Changement de situation'
+	String get transition => 'Changement de situation';
+
+	/// fr: 'Mise en pause'
+	String get pause => 'Mise en pause';
+
+	/// fr: 'Reprise'
+	String get reprise => 'Reprise';
+
+	/// fr: 'Restriction posée'
+	String get restriction => 'Restriction posée';
+
+	/// fr: 'Restriction levée'
+	String get leveeRestriction => 'Restriction levée';
+
+	/// fr: 'Responsable modifié'
+	String get responsable => 'Responsable modifié';
+
+	/// fr: 'Contrôle modifié'
+	String get controle => 'Contrôle modifié';
+
+	/// fr: 'Réponses importées'
+	String get importation => 'Réponses importées';
+
+	/// fr: 'Réponses corrigées'
+	String get correctionImport => 'Réponses corrigées';
+
+	/// fr: 'Contact consulté'
+	String get lectureContact => 'Contact consulté';
+
+	/// fr: 'Lecture refusée : autre côté'
+	String get lectureHorsPortee => 'Lecture refusée : autre côté';
+
+	/// fr: 'Entretien'
+	String get entretien => 'Entretien';
+
+	/// fr: 'Accord donné'
+	String get engagement => 'Accord donné';
+
+	/// fr: 'Personne prévenue'
+	String get prevenu => 'Personne prévenue';
+
+	/// fr: 'Événement'
+	String get inconnu => 'Événement';
+}
+
+// Path: admin.candidatures.retrait.canaux
+class Traductions$admin$candidatures$retrait$canaux$fr {
+	Traductions$admin$candidatures$retrait$canaux$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Dans la conversation'
+	String get conversation => 'Dans la conversation';
+
+	/// fr: 'Par courriel'
+	String get courriel => 'Par courriel';
 }
 
 // Path: admin.finance.vue.alerte
@@ -36232,8 +37597,8 @@ class Traductions$recrutement$parcours$presentation$p1$academie$fr {
 	/// fr: 'Une académie du Coran en ligne'
 	String get titre => 'Une académie du Coran en ligne';
 
-	/// fr: 'Rewayah Academy enseigne le Coran à distance, en classes stables, avec un enseignant attitré. Elle enseigne depuis le 1er mai 2024.'
-	String get texte => 'Rewayah Academy enseigne le Coran à distance, en classes stables, avec un enseignant attitré. Elle enseigne depuis le 1er mai 2024.';
+	/// fr: 'Rewayah Academy enseigne le Coran à distance, en Classes stables, avec un enseignant attitré. Elle enseigne depuis le 1er mai 2024.'
+	String get texte => 'Rewayah Academy enseigne le Coran à distance, en Classes stables, avec un enseignant attitré. Elle enseigne depuis le 1er mai 2024.';
 }
 
 // Path: recrutement.parcours.presentation.p1.liberte
@@ -36289,11 +37654,11 @@ class Traductions$recrutement$parcours$presentation$p2$classe$fr {
 
 	// Translations
 
-	/// fr: 'Une classe stable'
-	String get titre => 'Une classe stable';
+	/// fr: 'Une Classe stable'
+	String get titre => 'Une Classe stable';
 
-	/// fr: 'Vous gardez la même classe dans la durée, avec les mêmes élèves.'
-	String get texte => 'Vous gardez la même classe dans la durée, avec les mêmes élèves.';
+	/// fr: 'Vous gardez la même Classe dans la durée, avec les mêmes élèves.'
+	String get texte => 'Vous gardez la même Classe dans la durée, avec les mêmes élèves.';
 }
 
 // Path: recrutement.parcours.presentation.p2.horaires
@@ -36307,8 +37672,8 @@ class Traductions$recrutement$parcours$presentation$p2$horaires$fr {
 	/// fr: 'Les mêmes horaires chaque semaine'
 	String get titre => 'Les mêmes horaires chaque semaine';
 
-	/// fr: 'Votre classe se réunit aux mêmes jours et aux mêmes heures, trois fois par semaine.'
-	String get texte => 'Votre classe se réunit aux mêmes jours et aux mêmes heures, trois fois par semaine.';
+	/// fr: 'Votre Classe se réunit aux mêmes jours et aux mêmes heures, trois fois par semaine.'
+	String get texte => 'Votre Classe se réunit aux mêmes jours et aux mêmes heures, trois fois par semaine.';
 }
 
 // Path: recrutement.parcours.presentation.p2.visio
@@ -36393,11 +37758,10 @@ class Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$aucune$fr aucune = Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$aucune$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$moins_10_juz$fr moins_10_juz = Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$moins_10_juz$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$de_10_a_29_juz$fr de_10_a_29_juz = Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$de_10_a_29_juz$fr.internal(_root);
 	late final Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$coran_entier$fr coran_entier = Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$coran_entier$fr.internal(_root);
-	late final Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$ijaza_lecture_enseignement$fr ijaza_lecture_enseignement = Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$ijaza_lecture_enseignement$fr.internal(_root);
-	late final Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$plus_de_10_juz$fr plus_de_10_juz = Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$plus_de_10_juz$fr.internal(_root);
-	late final Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$moins_de_10_juz$fr moins_de_10_juz = Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$moins_de_10_juz$fr.internal(_root);
-	late final Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$bonne_lecture_sans_memorisation$fr bonne_lecture_sans_memorisation = Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$bonne_lecture_sans_memorisation$fr.internal(_root);
 }
 
 // Path: recrutement.parcours.q.niveauLectureTajwid.options
@@ -36449,6 +37813,7 @@ class Traductions$recrutement$parcours$q$ijazaPresentable$options$fr {
 
 	// Translations
 	late final Traductions$recrutement$parcours$q$ijazaPresentable$options$oui$fr oui = Traductions$recrutement$parcours$q$ijazaPresentable$options$oui$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$ijazaPresentable$options$pret_test$fr pret_test = Traductions$recrutement$parcours$q$ijazaPresentable$options$pret_test$fr.internal(_root);
 	late final Traductions$recrutement$parcours$q$ijazaPresentable$options$non$fr non = Traductions$recrutement$parcours$q$ijazaPresentable$options$non$fr.internal(_root);
 }
 
@@ -36463,17 +37828,70 @@ class Traductions$recrutement$parcours$q$experienceDebutants$options$fr {
 	late final Traductions$recrutement$parcours$q$experienceDebutants$options$non$fr non = Traductions$recrutement$parcours$q$experienceDebutants$options$non$fr.internal(_root);
 }
 
-// Path: recrutement.parcours.q.heuresParSemaine.options
-class Traductions$recrutement$parcours$q$heuresParSemaine$options$fr {
-	Traductions$recrutement$parcours$q$heuresParSemaine$options$fr.internal(this._root);
+// Path: recrutement.parcours.q.disponibilitesDeclarees.heures
+class Traductions$recrutement$parcours$q$disponibilitesDeclarees$heures$fr {
+	Traductions$recrutement$parcours$q$disponibilitesDeclarees$heures$fr.internal(this._root);
 
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
-	late final Traductions$recrutement$parcours$q$heuresParSemaine$options$moins_de_3$fr moins_de_3 = Traductions$recrutement$parcours$q$heuresParSemaine$options$moins_de_3$fr.internal(_root);
-	late final Traductions$recrutement$parcours$q$heuresParSemaine$options$de_3_a_5$fr de_3_a_5 = Traductions$recrutement$parcours$q$heuresParSemaine$options$de_3_a_5$fr.internal(_root);
-	late final Traductions$recrutement$parcours$q$heuresParSemaine$options$de_6_a_10$fr de_6_a_10 = Traductions$recrutement$parcours$q$heuresParSemaine$options$de_6_a_10$fr.internal(_root);
-	late final Traductions$recrutement$parcours$q$heuresParSemaine$options$plus_de_10$fr plus_de_10 = Traductions$recrutement$parcours$q$heuresParSemaine$options$plus_de_10$fr.internal(_root);
+
+	/// fr: 'À quelle heure pouvez-vous commencer, le {jour} ?'
+	String titre({required Object jour}) => 'À quelle heure pouvez-vous commencer, le ${jour} ?';
+
+	/// fr: 'Choisissez toutes les heures auxquelles vous pouvez commencer un cours. La fin du cours se calcule pour vous.'
+	String get explication => 'Choisissez toutes les heures auxquelles vous pouvez commencer un cours. La fin du cours se calcule pour vous.';
+
+	/// fr: 'Vous direz ensuite si c'est pareil les autres jours.'
+	String get suite => 'Vous direz ensuite si c\'est pareil les autres jours.';
+}
+
+// Path: recrutement.parcours.q.disponibilitesDeclarees.memes
+class Traductions$recrutement$parcours$q$disponibilitesDeclarees$memes$fr {
+	Traductions$recrutement$parcours$q$disponibilitesDeclarees$memes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce sont les mêmes heures pour tous ces jours ?'
+	String get titre => 'Ce sont les mêmes heures pour tous ces jours ?';
+
+	/// fr: 'Vous avez choisi {jours}. Le {premier}, vous commencez à {heures}.'
+	String explication({required Object jours, required Object premier, required Object heures}) => 'Vous avez choisi ${jours}. Le ${premier}, vous commencez à ${heures}.';
+
+	late final Traductions$recrutement$parcours$q$disponibilitesDeclarees$memes$oui$fr oui = Traductions$recrutement$parcours$q$disponibilitesDeclarees$memes$oui$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$disponibilitesDeclarees$memes$non$fr non = Traductions$recrutement$parcours$q$disponibilitesDeclarees$memes$non$fr.internal(_root);
+}
+
+// Path: recrutement.parcours.q.disponibilitesDeclarees.parJour
+class Traductions$recrutement$parcours$q$disponibilitesDeclarees$parJour$fr {
+	Traductions$recrutement$parcours$q$disponibilitesDeclarees$parJour$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Réglez les heures, jour par jour'
+	String get titre => 'Réglez les heures, jour par jour';
+
+	/// fr: 'Chaque jour reprend les heures déjà choisies. Ajoutez ou retirez des heures là où ce n'est pas pareil.'
+	String get explication => 'Chaque jour reprend les heures déjà choisies. Ajoutez ou retirez des heures là où ce n\'est pas pareil.';
+}
+
+// Path: recrutement.parcours.q.disponibilitesDeclarees.semaine
+class Traductions$recrutement$parcours$q$disponibilitesDeclarees$semaine$fr {
+	Traductions$recrutement$parcours$q$disponibilitesDeclarees$semaine$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre semaine'
+	String get titre => 'Votre semaine';
+
+	/// fr: 'Voici quand vous pouvez enseigner, à l'heure de chez vous. Relisez-la, puis continuez.'
+	String get explication => 'Voici quand vous pouvez enseigner, à l\'heure de chez vous. Relisez-la, puis continuez.';
 }
 
 // Path: recrutement.parcours.q.debutPossible.options
@@ -36496,8 +37914,10 @@ class Traductions$recrutement$parcours$q$publics$options$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
-	late final Traductions$recrutement$parcours$q$publics$options$enfant$fr enfant = Traductions$recrutement$parcours$q$publics$options$enfant$fr.internal(_root);
-	late final Traductions$recrutement$parcours$q$publics$options$adulte$fr adulte = Traductions$recrutement$parcours$q$publics$options$adulte$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$publics$options$o_6_9$fr o_6_9 = Traductions$recrutement$parcours$q$publics$options$o_6_9$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$publics$options$o_10_13$fr o_10_13 = Traductions$recrutement$parcours$q$publics$options$o_10_13$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$publics$options$o_14_17$fr o_14_17 = Traductions$recrutement$parcours$q$publics$options$o_14_17$fr.internal(_root);
+	late final Traductions$recrutement$parcours$q$publics$options$adultes$fr adultes = Traductions$recrutement$parcours$q$publics$options$adultes$fr.internal(_root);
 }
 
 // Path: recrutement.parcours.q.compteBancaire.options
@@ -36565,6 +37985,69 @@ class Traductions$com$annonces$administration$moderation$regles$fr {
 	String get pasDonnees => 'Aucune donnée personnelle d\'un élève ou d\'une famille';
 }
 
+// Path: recrutement.parcours.q.niveauMemorisationDeclare.options.aucune
+class Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$aucune$fr {
+	Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$aucune$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Je n'ai mémorisé aucun juz entier'
+	String get libelle => 'Je n\'ai mémorisé aucun juz entier';
+
+	/// fr: 'Vous connaissez peut-être quelques sourates, mais pas un juz entier.'
+	String get description => 'Vous connaissez peut-être quelques sourates, mais pas un juz entier.';
+
+	/// fr: 'Ce niveau est constaté pendant l'entretien.'
+	String get explication => 'Ce niveau est constaté pendant l\'entretien.';
+
+	/// fr: 'vous récitez de mémoire quelques sourates courtes, mais pas un juz entier.'
+	String get exemple => 'vous récitez de mémoire quelques sourates courtes, mais pas un juz entier.';
+}
+
+// Path: recrutement.parcours.q.niveauMemorisationDeclare.options.moins_10_juz
+class Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$moins_10_juz$fr {
+	Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$moins_10_juz$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'J'ai mémorisé moins de 10 juz'
+	String get libelle => 'J\'ai mémorisé moins de 10 juz';
+
+	/// fr: 'De un juz entier à neuf juz, sur les trente du Coran.'
+	String get description => 'De un juz entier à neuf juz, sur les trente du Coran.';
+
+	/// fr: 'Ce niveau est constaté pendant l'entretien.'
+	String get explication => 'Ce niveau est constaté pendant l\'entretien.';
+
+	/// fr: 'vous avez mémorisé cinq juz sur trente.'
+	String get exemple => 'vous avez mémorisé cinq juz sur trente.';
+}
+
+// Path: recrutement.parcours.q.niveauMemorisationDeclare.options.de_10_a_29_juz
+class Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$de_10_a_29_juz$fr {
+	Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$de_10_a_29_juz$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'J'ai mémorisé de 10 à 29 juz'
+	String get libelle => 'J\'ai mémorisé de 10 à 29 juz';
+
+	/// fr: 'Du tiers du Coran jusqu'à presque tout le Coran.'
+	String get description => 'Du tiers du Coran jusqu\'à presque tout le Coran.';
+
+	/// fr: 'Ce niveau est constaté pendant l'entretien.'
+	String get explication => 'Ce niveau est constaté pendant l\'entretien.';
+
+	/// fr: 'vous avez mémorisé vingt juz sur trente.'
+	String get exemple => 'vous avez mémorisé vingt juz sur trente.';
+}
+
 // Path: recrutement.parcours.q.niveauMemorisationDeclare.options.coran_entier
 class Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$coran_entier$fr {
 	Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$coran_entier$fr.internal(this._root);
@@ -36584,90 +38067,6 @@ class Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$coran
 
 	/// fr: 'vous récitez Al-Baqara, puis An-Nâs, sans ouvrir le livre.'
 	String get exemple => 'vous récitez Al-Baqara, puis An-Nâs, sans ouvrir le livre.';
-}
-
-// Path: recrutement.parcours.q.niveauMemorisationDeclare.options.ijaza_lecture_enseignement
-class Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$ijaza_lecture_enseignement$fr {
-	Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$ijaza_lecture_enseignement$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'J'ai une ijaza de lecture et d'enseignement'
-	String get libelle => 'J\'ai une ijaza de lecture et d\'enseignement';
-
-	/// fr: 'Une autorisation écrite, donnée par un maître, de lire et d'enseigner le Coran.'
-	String get description => 'Une autorisation écrite, donnée par un maître, de lire et d\'enseigner le Coran.';
-
-	/// fr: 'Elle se montre pendant l'entretien : vous n'avez rien à envoyer maintenant.'
-	String get explication => 'Elle se montre pendant l\'entretien : vous n\'avez rien à envoyer maintenant.';
-
-	/// fr: 'un document écrit, remis par votre maître, à votre nom.'
-	String get exemple => 'un document écrit, remis par votre maître, à votre nom.';
-}
-
-// Path: recrutement.parcours.q.niveauMemorisationDeclare.options.plus_de_10_juz
-class Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$plus_de_10_juz$fr {
-	Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$plus_de_10_juz$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'J'ai mémorisé plus de dix juz'
-	String get libelle => 'J\'ai mémorisé plus de dix juz';
-
-	/// fr: 'Plus du tiers du Coran, qui compte trente juz.'
-	String get description => 'Plus du tiers du Coran, qui compte trente juz.';
-
-	/// fr: 'Ce niveau est constaté pendant l'entretien.'
-	String get explication => 'Ce niveau est constaté pendant l\'entretien.';
-
-	/// fr: 'vous avez mémorisé douze juz sur trente.'
-	String get exemple => 'vous avez mémorisé douze juz sur trente.';
-}
-
-// Path: recrutement.parcours.q.niveauMemorisationDeclare.options.moins_de_10_juz
-class Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$moins_de_10_juz$fr {
-	Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$moins_de_10_juz$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'J'ai mémorisé moins de dix juz'
-	String get libelle => 'J\'ai mémorisé moins de dix juz';
-
-	/// fr: 'Moins du tiers du Coran, qui compte trente juz.'
-	String get description => 'Moins du tiers du Coran, qui compte trente juz.';
-
-	/// fr: 'Ce niveau est constaté pendant l'entretien.'
-	String get explication => 'Ce niveau est constaté pendant l\'entretien.';
-
-	/// fr: 'vous avez mémorisé cinq juz sur trente.'
-	String get exemple => 'vous avez mémorisé cinq juz sur trente.';
-}
-
-// Path: recrutement.parcours.q.niveauMemorisationDeclare.options.bonne_lecture_sans_memorisation
-class Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$bonne_lecture_sans_memorisation$fr {
-	Traductions$recrutement$parcours$q$niveauMemorisationDeclare$options$bonne_lecture_sans_memorisation$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'Je n'ai pas mémorisé, mais je lis bien avec le tajwid'
-	String get libelle => 'Je n\'ai pas mémorisé, mais je lis bien avec le tajwid';
-
-	/// fr: 'Vous lisez le Coran correctement, en appliquant les règles du tajwid, sans le réciter de mémoire.'
-	String get description => 'Vous lisez le Coran correctement, en appliquant les règles du tajwid, sans le réciter de mémoire.';
-
-	/// fr: 'Votre lecture est constatée pendant l'entretien.'
-	String get explication => 'Votre lecture est constatée pendant l\'entretien.';
-
-	/// fr: 'vous lisez une page du Coran sans erreur, mais vous ne la récitez pas de mémoire.'
-	String get exemple => 'vous lisez une page du Coran sans erreur, mais vous ne la récitez pas de mémoire.';
 }
 
 // Path: recrutement.parcours.q.niveauLectureTajwid.options.lecture_sans_regles_tajwid
@@ -37054,6 +38453,27 @@ class Traductions$recrutement$parcours$q$ijazaPresentable$options$oui$fr {
 	String get exemple => 'un document signé par votre maître, que vous gardez chez vous.';
 }
 
+// Path: recrutement.parcours.q.ijazaPresentable.options.pret_test
+class Traductions$recrutement$parcours$q$ijazaPresentable$options$pret_test$fr {
+	Traductions$recrutement$parcours$q$ijazaPresentable$options$pret_test$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pas d'ijaza, mais je peux passer un test'
+	String get libelle => 'Pas d\'ijaza, mais je peux passer un test';
+
+	/// fr: 'Vous n'avez pas d'ijaza à présenter, mais vous acceptez de passer un test.'
+	String get description => 'Vous n\'avez pas d\'ijaza à présenter, mais vous acceptez de passer un test.';
+
+	/// fr: 'L'académie en reparlera avec vous pendant l'entretien.'
+	String get explication => 'L\'académie en reparlera avec vous pendant l\'entretien.';
+
+	/// fr: 'vous avez appris auprès d'un maître sans document écrit, et vous acceptez d'être testé.'
+	String get exemple => 'vous avez appris auprès d\'un maître sans document écrit, et vous acceptez d\'être testé.';
+}
+
 // Path: recrutement.parcours.q.ijazaPresentable.options.non
 class Traductions$recrutement$parcours$q$ijazaPresentable$options$non$fr {
 	Traductions$recrutement$parcours$q$ijazaPresentable$options$non$fr.internal(this._root);
@@ -37062,11 +38482,11 @@ class Traductions$recrutement$parcours$q$ijazaPresentable$options$non$fr {
 
 	// Translations
 
-	/// fr: 'Non, je n'en ai pas à présenter'
-	String get libelle => 'Non, je n\'en ai pas à présenter';
+	/// fr: 'Non, je n'ai pas d'ijaza'
+	String get libelle => 'Non, je n\'ai pas d\'ijaza';
 
-	/// fr: 'Vous n'avez pas d'ijaza, ou pas de quoi la présenter.'
-	String get description => 'Vous n\'avez pas d\'ijaza, ou pas de quoi la présenter.';
+	/// fr: 'Vous n'avez pas d'ijaza, et vous ne comptez pas passer de test pour l'instant.'
+	String get description => 'Vous n\'avez pas d\'ijaza, et vous ne comptez pas passer de test pour l\'instant.';
 
 	/// fr: 'Votre niveau est alors constaté pendant l'entretien.'
 	String get explication => 'Votre niveau est alors constaté pendant l\'entretien.';
@@ -37117,76 +38537,46 @@ class Traductions$recrutement$parcours$q$experienceDebutants$options$non$fr {
 	String get exemple => 'vous avez enseigné seulement à des élèves qui savaient déjà lire.';
 }
 
-// Path: recrutement.parcours.q.heuresParSemaine.options.moins_de_3
-class Traductions$recrutement$parcours$q$heuresParSemaine$options$moins_de_3$fr {
-	Traductions$recrutement$parcours$q$heuresParSemaine$options$moins_de_3$fr.internal(this._root);
+// Path: recrutement.parcours.q.disponibilitesDeclarees.memes.oui
+class Traductions$recrutement$parcours$q$disponibilitesDeclarees$memes$oui$fr {
+	Traductions$recrutement$parcours$q$disponibilitesDeclarees$memes$oui$fr.internal(this._root);
 
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
 
-	/// fr: 'Moins de 3 heures'
-	String get libelle => 'Moins de 3 heures';
+	/// fr: 'Oui, les mêmes heures'
+	String get libelle => 'Oui, les mêmes heures';
 
-	/// fr: 'Moins que le temps d'une classe entière.'
-	String get description => 'Moins que le temps d\'une classe entière.';
+	/// fr: 'Les heures du {premier} valent aussi pour {autres}.'
+	String description({required Object premier, required Object autres}) => 'Les heures du ${premier} valent aussi pour ${autres}.';
 
-	/// fr: 'deux séances d'une heure par semaine.'
-	String get exemple => 'deux séances d\'une heure par semaine.';
+	/// fr: 'Vous pourrez changer un jour avant d'envoyer votre candidature.'
+	String get explication => 'Vous pourrez changer un jour avant d\'envoyer votre candidature.';
+
+	/// fr: 'vous pouvez commencer à 18 h le lundi, le mercredi et le vendredi.'
+	String get exemple => 'vous pouvez commencer à 18 h le lundi, le mercredi et le vendredi.';
 }
 
-// Path: recrutement.parcours.q.heuresParSemaine.options.de_3_a_5
-class Traductions$recrutement$parcours$q$heuresParSemaine$options$de_3_a_5$fr {
-	Traductions$recrutement$parcours$q$heuresParSemaine$options$de_3_a_5$fr.internal(this._root);
+// Path: recrutement.parcours.q.disponibilitesDeclarees.memes.non
+class Traductions$recrutement$parcours$q$disponibilitesDeclarees$memes$non$fr {
+	Traductions$recrutement$parcours$q$disponibilitesDeclarees$memes$non$fr.internal(this._root);
 
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
 
-	/// fr: 'De 3 à 5 heures'
-	String get libelle => 'De 3 à 5 heures';
+	/// fr: 'Non, jour par jour'
+	String get libelle => 'Non, jour par jour';
 
-	/// fr: 'Le temps d'une classe.'
-	String get description => 'Le temps d\'une classe.';
+	/// fr: 'Vous réglez les heures de chaque jour, l'un après l'autre.'
+	String get description => 'Vous réglez les heures de chaque jour, l\'un après l\'autre.';
 
-	/// fr: 'une classe d'enfants, trois séances d'une heure, soit 3 heures par semaine.'
-	String get exemple => 'une classe d\'enfants, trois séances d\'une heure, soit 3 heures par semaine.';
-}
+	/// fr: 'Les heures déjà choisies restent : vous les ajustez.'
+	String get explication => 'Les heures déjà choisies restent : vous les ajustez.';
 
-// Path: recrutement.parcours.q.heuresParSemaine.options.de_6_a_10
-class Traductions$recrutement$parcours$q$heuresParSemaine$options$de_6_a_10$fr {
-	Traductions$recrutement$parcours$q$heuresParSemaine$options$de_6_a_10$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'De 6 à 10 heures'
-	String get libelle => 'De 6 à 10 heures';
-
-	/// fr: 'Le temps de deux classes.'
-	String get description => 'Le temps de deux classes.';
-
-	/// fr: 'deux classes d'adultes, six séances d'une heure et demie, soit 9 heures par semaine.'
-	String get exemple => 'deux classes d\'adultes, six séances d\'une heure et demie, soit 9 heures par semaine.';
-}
-
-// Path: recrutement.parcours.q.heuresParSemaine.options.plus_de_10
-class Traductions$recrutement$parcours$q$heuresParSemaine$options$plus_de_10$fr {
-	Traductions$recrutement$parcours$q$heuresParSemaine$options$plus_de_10$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'Plus de 10 heures'
-	String get libelle => 'Plus de 10 heures';
-
-	/// fr: 'Le temps de plusieurs classes.'
-	String get description => 'Le temps de plusieurs classes.';
-
-	/// fr: 'trois classes d'adultes, neuf séances d'une heure et demie, soit 13 heures et demie par semaine.'
-	String get exemple => 'trois classes d\'adultes, neuf séances d\'une heure et demie, soit 13 heures et demie par semaine.';
+	/// fr: 'vous commencez à 18 h le lundi, mais à 20 h le mercredi.'
+	String get exemple => 'vous commencez à 18 h le lundi, mais à 20 h le mercredi.';
 }
 
 // Path: recrutement.parcours.q.debutPossible.options.immediat
@@ -37200,8 +38590,8 @@ class Traductions$recrutement$parcours$q$debutPossible$options$immediat$fr {
 	/// fr: 'Dès maintenant'
 	String get libelle => 'Dès maintenant';
 
-	/// fr: 'Vous pouvez commencer dès qu'une classe vous est confiée.'
-	String get description => 'Vous pouvez commencer dès qu\'une classe vous est confiée.';
+	/// fr: 'Vous pouvez commencer dès qu'une Classe vous est confiée.'
+	String get description => 'Vous pouvez commencer dès qu\'une Classe vous est confiée.';
 
 	/// fr: 'aucun engagement ne vous retient ce mois-ci.'
 	String get exemple => 'aucun engagement ne vous retient ce mois-ci.';
@@ -37264,30 +38654,72 @@ class Traductions$recrutement$parcours$q$debutPossible$options$inconnu$fr {
 	String get exemple => 'votre emploi du temps dépend d\'une réponse que vous attendez encore.';
 }
 
-// Path: recrutement.parcours.q.publics.options.enfant
-class Traductions$recrutement$parcours$q$publics$options$enfant$fr {
-	Traductions$recrutement$parcours$q$publics$options$enfant$fr.internal(this._root);
+// Path: recrutement.parcours.q.publics.options.o_6_9
+class Traductions$recrutement$parcours$q$publics$options$o_6_9$fr {
+	Traductions$recrutement$parcours$q$publics$options$o_6_9$fr.internal(this._root);
 
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
 
-	/// fr: 'Des enfants (6 à 17 ans)'
-	String get libelle => 'Des enfants (6 à 17 ans)';
+	/// fr: 'Des enfants de 6 à 9 ans'
+	String get libelle => 'Des enfants de 6 à 9 ans';
 
-	/// fr: 'Des classes de 3 à 5 enfants.'
-	String get description => 'Des classes de 3 à 5 enfants.';
+	/// fr: 'Ils commencent par le livre de lecture de Rewayah, lettre par lettre, jusqu'à la chadda. Viennent ensuite les premières sourates courtes, les paroles de la prière et les ablutions.'
+	String get description => 'Ils commencent par le livre de lecture de Rewayah, lettre par lettre, jusqu\'à la chadda. Viennent ensuite les premières sourates courtes, les paroles de la prière et les ablutions.';
 
-	/// fr: 'Trois séances d'une heure par semaine.'
-	String get explication => 'Trois séances d\'une heure par semaine.';
+	/// fr: 'Des Classes de 5 enfants au plus (4 pour des débutants), trois séances d'une heure par semaine. Les ablutions et la prière se montrent en pratique, avec des illustrations.'
+	String get explication => 'Des Classes de 5 enfants au plus (4 pour des débutants), trois séances d\'une heure par semaine. Les ablutions et la prière se montrent en pratique, avec des illustrations.';
 
-	/// fr: 'une classe de quatre enfants de huit ans, trois fois par semaine.'
-	String get exemple => 'une classe de quatre enfants de huit ans, trois fois par semaine.';
+	/// fr: 'une Classe d'enfants de huit ans, le lundi, le mercredi et le vendredi.'
+	String get exemple => 'une Classe d\'enfants de huit ans, le lundi, le mercredi et le vendredi.';
 }
 
-// Path: recrutement.parcours.q.publics.options.adulte
-class Traductions$recrutement$parcours$q$publics$options$adulte$fr {
-	Traductions$recrutement$parcours$q$publics$options$adulte$fr.internal(this._root);
+// Path: recrutement.parcours.q.publics.options.o_10_13
+class Traductions$recrutement$parcours$q$publics$options$o_10_13$fr {
+	Traductions$recrutement$parcours$q$publics$options$o_10_13$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Des enfants de 10 à 13 ans'
+	String get libelle => 'Des enfants de 10 à 13 ans';
+
+	/// fr: 'Même départ avec le livre de lecture, et Al-Fatiha dès la première semaine, parce qu'à cet âge l'enfant doit prier.'
+	String get description => 'Même départ avec le livre de lecture, et Al-Fatiha dès la première semaine, parce qu\'à cet âge l\'enfant doit prier.';
+
+	/// fr: 'Des Classes de 5 enfants au plus (4 pour des débutants), trois séances d'une heure par semaine.'
+	String get explication => 'Des Classes de 5 enfants au plus (4 pour des débutants), trois séances d\'une heure par semaine.';
+
+	/// fr: 'une Classe d'élèves de douze ans, trois fois par semaine.'
+	String get exemple => 'une Classe d\'élèves de douze ans, trois fois par semaine.';
+}
+
+// Path: recrutement.parcours.q.publics.options.o_14_17
+class Traductions$recrutement$parcours$q$publics$options$o_14_17$fr {
+	Traductions$recrutement$parcours$q$publics$options$o_14_17$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Des adolescents de 14 à 17 ans'
+	String get libelle => 'Des adolescents de 14 à 17 ans';
+
+	/// fr: 'Le même contenu que pour les 10 à 13 ans : le livre de lecture, et Al-Fatiha dès la première semaine.'
+	String get description => 'Le même contenu que pour les 10 à 13 ans : le livre de lecture, et Al-Fatiha dès la première semaine.';
+
+	/// fr: 'Des Classes de 5 adolescents au plus (4 pour des débutants), trois séances d'une heure par semaine.'
+	String get explication => 'Des Classes de 5 adolescents au plus (4 pour des débutants), trois séances d\'une heure par semaine.';
+
+	/// fr: 'une Classe d'élèves de seize ans, trois fois par semaine.'
+	String get exemple => 'une Classe d\'élèves de seize ans, trois fois par semaine.';
+}
+
+// Path: recrutement.parcours.q.publics.options.adultes
+class Traductions$recrutement$parcours$q$publics$options$adultes$fr {
+	Traductions$recrutement$parcours$q$publics$options$adultes$fr.internal(this._root);
 
 	final Traductions _root; // ignore: unused_field
 
@@ -37296,14 +38728,14 @@ class Traductions$recrutement$parcours$q$publics$options$adulte$fr {
 	/// fr: 'Des adultes (18 ans et plus)'
 	String get libelle => 'Des adultes (18 ans et plus)';
 
-	/// fr: 'Des classes de 3 à 6 adultes.'
-	String get description => 'Des classes de 3 à 6 adultes.';
+	/// fr: 'Les adultes apprennent d'abord à lire avec le livre de Rewayah. Après les bases, l'élève choisit de lire tout le Coran ou de le mémoriser, sur le conseil de l'enseignant.'
+	String get description => 'Les adultes apprennent d\'abord à lire avec le livre de Rewayah. Après les bases, l\'élève choisit de lire tout le Coran ou de le mémoriser, sur le conseil de l\'enseignant.';
 
-	/// fr: 'Trois séances d'une heure et demie par semaine. Les classes d'adultes sont séparées : des femmes avec des femmes, des hommes avec des hommes.'
-	String get explication => 'Trois séances d\'une heure et demie par semaine. Les classes d\'adultes sont séparées : des femmes avec des femmes, des hommes avec des hommes.';
+	/// fr: 'Des Classes de 6 adultes au plus (4 pour des débutants), trois séances d'une heure et demie par semaine. Les Classes d'adultes sont séparées : des femmes avec des femmes, des hommes avec des hommes.'
+	String get explication => 'Des Classes de 6 adultes au plus (4 pour des débutants), trois séances d\'une heure et demie par semaine. Les Classes d\'adultes sont séparées : des femmes avec des femmes, des hommes avec des hommes.';
 
-	/// fr: 'une classe de cinq femmes, ou de cinq hommes, trois fois par semaine.'
-	String get exemple => 'une classe de cinq femmes, ou de cinq hommes, trois fois par semaine.';
+	/// fr: 'une Classe de femmes, ou une Classe d'hommes, trois fois par semaine.'
+	String get exemple => 'une Classe de femmes, ou une Classe d\'hommes, trois fois par semaine.';
 }
 
 // Path: recrutement.parcours.q.compteBancaire.options.oui
@@ -39047,9 +40479,11 @@ extension on Traductions {
 			'recrutement.questionnaire.etatVersement' => ({required Object etat}) => 'Moyen de versement : ${etat}',
 			'recrutement.questionnaire.retourDossier' => 'Retour à mon dossier',
 			'recrutement.questionnaire.complementCarte' => 'L\'académie vous demande de compléter cette partie.',
+			'recrutement.questionnaire.moyenValide' => 'Vous recevez votre rémunération par un moyen validé par Rewayah.',
+			'recrutement.questionnaire.continuite' => 'En acceptant ces conditions, vous vous engagez à tenir votre Classe aux mêmes jours et aux mêmes heures, chaque semaine.',
+			'recrutement.questionnaire.plagesChevauchent' => 'Vos disponibilités se chevauchent un même jour. Revoyez-les, puis envoyez de nouveau votre candidature.',
 			'recrutement.parcours.choisir' => 'Choisissez une réponse pour continuer.',
 			'recrutement.parcours.choisirPlusieurs' => 'Choisissez au moins une réponse pour continuer.',
-			'recrutement.parcours.choisirPlage' => 'Choisissez au moins une plage pour continuer.',
 			'recrutement.parcours.trop' => ({required num max}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(max, one: 'Choisissez une seule réponse.', other: 'Choisissez ${max} réponses au plus.', ), 
 			'recrutement.parcours.aucune' => 'Aucune',
 			'recrutement.parcours.oui' => 'Oui',
@@ -39059,7 +40493,7 @@ extension on Traductions {
 			'recrutement.parcours.presentation.p1.titre' => 'Qui est Rewayah Academy ?',
 			'recrutement.parcours.presentation.p1.intro' => 'Avant les questions, voici ce que vous devez savoir de nous.',
 			'recrutement.parcours.presentation.p1.academie.titre' => 'Une académie du Coran en ligne',
-			'recrutement.parcours.presentation.p1.academie.texte' => 'Rewayah Academy enseigne le Coran à distance, en classes stables, avec un enseignant attitré. Elle enseigne depuis le 1er mai 2024.',
+			'recrutement.parcours.presentation.p1.academie.texte' => 'Rewayah Academy enseigne le Coran à distance, en Classes stables, avec un enseignant attitré. Elle enseigne depuis le 1er mai 2024.',
 			'recrutement.parcours.presentation.p1.liberte.titre' => 'Vous restez libre',
 			'recrutement.parcours.presentation.p1.liberte.texte' => 'Tant que vous n\'êtes pas enseignant, vous pouvez retirer votre candidature depuis votre dossier.',
 			'recrutement.parcours.presentation.p1.donnees.titre' => 'Vos données sont protégées',
@@ -39067,11 +40501,11 @@ extension on Traductions {
 			'recrutement.parcours.presentation.p1.separation.titre' => 'Femmes et hommes séparés',
 			'recrutement.parcours.presentation.p1.separation.texte' => 'Une candidature de femme est suivie par la direction du côté des femmes, une candidature d\'homme du côté des hommes.',
 			'recrutement.parcours.presentation.p2.titre' => 'Ce que fait un enseignant',
-			'recrutement.parcours.presentation.p2.intro' => 'Vous enseignez en visio, dans une classe qui reste la même.',
-			'recrutement.parcours.presentation.p2.classe.titre' => 'Une classe stable',
-			'recrutement.parcours.presentation.p2.classe.texte' => 'Vous gardez la même classe dans la durée, avec les mêmes élèves.',
+			'recrutement.parcours.presentation.p2.intro' => 'Vous enseignez en visio, dans une Classe qui reste la même.',
+			'recrutement.parcours.presentation.p2.classe.titre' => 'Une Classe stable',
+			'recrutement.parcours.presentation.p2.classe.texte' => 'Vous gardez la même Classe dans la durée, avec les mêmes élèves.',
 			'recrutement.parcours.presentation.p2.horaires.titre' => 'Les mêmes horaires chaque semaine',
-			'recrutement.parcours.presentation.p2.horaires.texte' => 'Votre classe se réunit aux mêmes jours et aux mêmes heures, trois fois par semaine.',
+			'recrutement.parcours.presentation.p2.horaires.texte' => 'Votre Classe se réunit aux mêmes jours et aux mêmes heures, trois fois par semaine.',
 			'recrutement.parcours.presentation.p2.visio.titre' => 'En visio, dans l\'application',
 			'recrutement.parcours.presentation.p2.visio.texte' => 'Les cours se donnent en visioconférence, dans l\'application de Rewayah.',
 			'recrutement.parcours.presentation.p2.remuneration.titre' => 'Une rémunération expliquée',
@@ -39084,19 +40518,20 @@ extension on Traductions {
 			'recrutement.parcours.presentation.p3.entretien.texte' => 'Si votre candidature est retenue pour la suite, la direction vous reçoit en visio, dans l\'application.',
 			'recrutement.parcours.presentation.p3.verification.titre' => 'La vérification',
 			'recrutement.parcours.presentation.p3.verification.texte' => 'Vous déposez votre pièce d\'identité et vous lisez nos accords. Quand tout est en ordre, vous entrez dans la Salle des prêts à enseigner.',
-			'recrutement.parcours.langues.poular' => 'Poular',
+			'recrutement.parcours.langues.poular' => 'Poular (peul, fulfulde)',
+			'recrutement.parcours.langues.man' => 'Malinké',
+			'recrutement.parcours.langues.sus' => 'Soussou',
+			'recrutement.parcours.langues.sw' => 'Swahili',
+			'recrutement.parcours.langues.ha' => 'Haoussa',
+			'recrutement.parcours.langues.wo' => 'Wolof',
+			'recrutement.parcours.langues.bm' => 'Bambara',
+			'recrutement.parcours.langues.snk' => 'Soninké',
+			'recrutement.parcours.langues.mnk' => 'Mandinka',
 			'recrutement.parcours.langues.francais' => 'Français',
 			'recrutement.parcours.langues.english' => 'Anglais',
 			'recrutement.parcours.langues.ar' => 'Arabe',
-			'recrutement.parcours.langues.ff' => 'Peul (fulfulde)',
-			'recrutement.parcours.langues.ha' => 'Haoussa',
-			'recrutement.parcours.langues.wo' => 'Wolof',
 			'recrutement.parcours.langues.ps' => 'Pachto',
 			'recrutement.parcours.langues.ur' => 'Ourdou',
-			'recrutement.parcours.langues.snk' => 'Soninké',
-			'recrutement.parcours.langues.bm' => 'Bambara',
-			'recrutement.parcours.langues.sw' => 'Swahili',
-			'recrutement.parcours.langues.mnk' => 'Mandinka',
 			'recrutement.parcours.langues.om' => 'Oromo',
 			'recrutement.parcours.langues.am' => 'Amharique',
 			'recrutement.parcours.langues.yo' => 'Yoruba',
@@ -39110,9 +40545,11 @@ extension on Traductions {
 			'recrutement.parcours.langues.de' => 'Allemand',
 			'recrutement.parcours.langues.pt' => 'Portugais',
 			'recrutement.parcours.langues.ru' => 'Russe',
-			'recrutement.parcours.langues.dansReferentiel' => 'Une langue dans laquelle Rewayah donne des cours.',
-			'recrutement.parcours.langues.horsReferentiel' => 'Langue pas encore proposée par Rewayah',
 			'recrutement.parcours.langues.autre' => 'Une autre langue',
+			'recrutement.parcours.langues.autreDescription' => 'Une langue qui n\'est pas dans la liste. La direction la verra.',
+			'recrutement.parcours.langues.dansReferentiel' => 'Rewayah donne déjà des cours dans cette langue.',
+			'recrutement.parcours.langues.horsReferentiel' => 'Rewayah ne donne pas encore de cours dans cette langue. Vous pouvez la choisir : la direction le voit.',
+			'recrutement.parcours.langues.chercher' => 'Chercher une autre langue',
 			'recrutement.parcours.langues.recherche' => 'Rechercher une langue',
 			'recrutement.parcours.langues.rechercheAide' => 'Nom de la langue',
 			'recrutement.parcours.langues.aucune' => 'Aucune langue ne correspond.',
@@ -39153,17 +40590,28 @@ extension on Traductions {
 			'recrutement.parcours.fuseau.regions.Pacific' => 'Pacifique',
 			'recrutement.parcours.fuseau.ouiExplication' => 'Vos disponibilités et votre entretien seront à l\'heure de chez vous.',
 			'recrutement.parcours.fuseau.changerExplication' => 'Utile si vous voyagez ou si l\'heure de votre appareil n\'est pas la bonne.',
-			'recrutement.parcours.creneaux.plage0' => 'Nuit',
-			'recrutement.parcours.creneaux.plage1' => 'Aube',
-			'recrutement.parcours.creneaux.plage2' => 'Matin',
-			'recrutement.parcours.creneaux.plage3' => 'Midi',
-			'recrutement.parcours.creneaux.plage4' => 'Après-midi',
-			'recrutement.parcours.creneaux.plage5' => 'Soir',
-			'recrutement.parcours.creneaux.jourCellule' => ({required Object jour, required Object plage}) => '${jour}, ${plage}',
-			'recrutement.parcours.creneaux.choisies' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, zero: 'Aucune plage choisie', one: 'Une plage choisie', other: '${n} plages choisies', ), 
+			'recrutement.parcours.creneaux.heure' => ({required Object h}) => '${h} h',
+			'recrutement.parcours.creneaux.heureMinutes' => ({required Object h, required Object m}) => '${h} h ${m}',
+			'recrutement.parcours.creneaux.intervalle' => ({required Object debut, required Object fin}) => 'de ${debut} à ${fin}',
 			'recrutement.parcours.creneaux.fuseauRappel' => ({required Object lieu}) => 'Heures de ${lieu}.',
-			'recrutement.parcours.creneaux.partielle' => 'En partie',
-			'recrutement.parcours.creneaux.choisie' => 'Choisie',
+			'recrutement.parcours.creneaux.moments.nuit' => 'La nuit, de 0 h à 5 h',
+			'recrutement.parcours.creneaux.moments.matin' => 'Le matin, de 6 h à 11 h',
+			'recrutement.parcours.creneaux.moments.apresMidi' => 'L\'après-midi, de 12 h à 17 h',
+			'recrutement.parcours.creneaux.moments.soir' => 'Le soir, de 18 h à 23 h',
+			'recrutement.parcours.creneaux.raccourcis' => 'Raccourcis',
+			'recrutement.parcours.creneaux.raccourciLmv' => 'Lundi, mercredi, vendredi',
+			'recrutement.parcours.creneaux.raccourciMjs' => 'Mardi, jeudi, samedi',
+			'recrutement.parcours.creneaux.raccourciFinDeSemaine' => 'Fin de semaine',
+			'recrutement.parcours.creneaux.raccourcisAide' => 'Un raccourci choisit plusieurs jours d\'un coup. Vous pouvez ensuite en ajouter ou en retirer.',
+			'recrutement.parcours.creneaux.moinsDeTrois' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Vous avez choisi un seul jour. Une Classe se tient trois fois par semaine, aux mêmes jours : pensez à en choisir au moins trois.', other: 'Vous avez choisi ${n} jours. Une Classe se tient trois fois par semaine, aux mêmes jours : pensez à en choisir au moins trois.', ), 
+			'recrutement.parcours.creneaux.troisSeances' => 'Une Classe se tient trois fois par semaine, aux mêmes jours et à la même heure.',
+			'recrutement.parcours.creneaux.durees' => ({required Object enfants, required Object adultes}) => 'Un cours d\'enfants dure ${enfants}, un cours d\'adultes dure ${adultes}.',
+			'recrutement.parcours.creneaux.enseigneEnfants' => ({required Object duree, required Object intervalles}) => 'Cours d\'enfants (${duree}) : vous enseignez ${intervalles}.',
+			'recrutement.parcours.creneaux.enseigneAdultes' => ({required Object duree, required Object intervalles}) => 'Cours d\'adultes (${duree}) : vous enseignez ${intervalles}.',
+			'recrutement.parcours.creneaux.heuresChoisies' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, zero: 'Aucune heure de début choisie', one: 'Une heure de début choisie', other: '${n} heures de début choisies', ), 
+			'recrutement.parcours.creneaux.debutsDuJour' => ({required Object heures}) => 'Débuts possibles : ${heures}.',
+			'recrutement.parcours.creneaux.separateurListe' => ', ',
+			'recrutement.parcours.creneaux.etListe' => ({required Object debut, required Object dernier}) => '${debut} et ${dernier}',
 			'recrutement.parcours.versement.virementSeul' => 'Dans votre pays, l\'académie a confirmé le virement bancaire. Aucun moyen de paiement sur téléphone n\'est proposé pour l\'instant.',
 			'recrutement.parcours.versement.aucunMoyen' => 'Rewayah ne verse pas encore de rémunération dans ce pays. Vous pouvez envoyer votre candidature : elle restera en Salle d\'examen jusqu\'à ce qu\'un moyen soit possible.',
 			'recrutement.parcours.versement.operateurDescription' => 'Paiement sur téléphone',
@@ -39172,36 +40620,32 @@ extension on Traductions {
 			'recrutement.parcours.versement.operateurExplication' => 'Vous le déclarez maintenant. Vos coordonnées ne sont demandées qu\'avant votre premier versement.',
 			'recrutement.parcours.recap.titre' => 'Relisez votre candidature',
 			'recrutement.parcours.recap.explication' => 'Touchez une réponse pour la changer. Rien n\'est envoyé avant le bouton « Envoyer ma candidature ».',
-			'recrutement.parcours.recap.plages' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Une plage par semaine', other: '${n} plages par semaine', ), 
+			'recrutement.parcours.recap.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Un jour par semaine', other: '${n} jours par semaine', ), 
 			'recrutement.parcours.q.langueMaternelle.titre' => 'Quelle est votre langue maternelle ?',
-			'recrutement.parcours.q.langueMaternelle.explication' => 'C\'est la langue que vous parlez depuis l\'enfance.',
+			'recrutement.parcours.q.langueMaternelle.explication' => 'C\'est la langue que vous parlez depuis l\'enfance. Cette question est facultative : vous pouvez continuer sans répondre.',
 			'recrutement.parcours.q.langueMaternelle.court' => 'Langue maternelle',
 			'recrutement.parcours.q.languesExplication.titre' => 'Dans quelles langues pouvez-vous expliquer et corriger ?',
-			'recrutement.parcours.q.languesExplication.explication' => 'Choisissez toutes les langues dans lesquelles vous savez expliquer une règle à un élève et corriger ses erreurs. Un élève suit sa classe dans la langue choisie à l\'inscription : ces langues aident la direction à voir dans quelles classes vous pourriez enseigner.',
+			'recrutement.parcours.q.languesExplication.explication' => 'Choisissez toutes les langues dans lesquelles vous savez expliquer une règle à un élève et corriger ses erreurs, sans limite de nombre. L\'élève ou son parent choisit sa langue à l\'inscription, et l\'académie lui confie un enseignant qui la parle : plus vous en parlez, plus vous pouvez enseigner. L\'arabe n\'est pas une langue de cours : il n\'est pas dans cette liste.',
 			'recrutement.parcours.q.languesExplication.court' => 'Langues d\'explication',
-			'recrutement.parcours.q.niveauMemorisationDeclare.titre' => 'Quel est votre niveau de mémorisation ?',
-			'recrutement.parcours.q.niveauMemorisationDeclare.explication' => 'Vous le déclarez ici.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.titre' => 'Combien du Coran avez-vous mémorisé ?',
+			'recrutement.parcours.q.niveauMemorisationDeclare.explication' => 'Vous le déclarez ici. Avoir mémorisé et avoir une ijaza sont deux choses différentes : l\'ijaza vous est demandée un peu plus loin.',
 			'recrutement.parcours.q.niveauMemorisationDeclare.court' => 'Niveau de mémorisation',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.aucune.libelle' => 'Je n\'ai mémorisé aucun juz entier',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.aucune.description' => 'Vous connaissez peut-être quelques sourates, mais pas un juz entier.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.aucune.explication' => 'Ce niveau est constaté pendant l\'entretien.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.aucune.exemple' => 'vous récitez de mémoire quelques sourates courtes, mais pas un juz entier.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_10_juz.libelle' => 'J\'ai mémorisé moins de 10 juz',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_10_juz.description' => 'De un juz entier à neuf juz, sur les trente du Coran.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_10_juz.explication' => 'Ce niveau est constaté pendant l\'entretien.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_10_juz.exemple' => 'vous avez mémorisé cinq juz sur trente.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.de_10_a_29_juz.libelle' => 'J\'ai mémorisé de 10 à 29 juz',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.de_10_a_29_juz.description' => 'Du tiers du Coran jusqu\'à presque tout le Coran.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.de_10_a_29_juz.explication' => 'Ce niveau est constaté pendant l\'entretien.',
+			'recrutement.parcours.q.niveauMemorisationDeclare.options.de_10_a_29_juz.exemple' => 'vous avez mémorisé vingt juz sur trente.',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.coran_entier.libelle' => 'J\'ai mémorisé tout le Coran',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.coran_entier.description' => 'Les 114 sourates, de la première à la dernière, par cœur.',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.coran_entier.explication' => 'Ce niveau est constaté pendant l\'entretien.',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.coran_entier.exemple' => 'vous récitez Al-Baqara, puis An-Nâs, sans ouvrir le livre.',
-			'recrutement.parcours.q.niveauMemorisationDeclare.options.ijaza_lecture_enseignement.libelle' => 'J\'ai une ijaza de lecture et d\'enseignement',
-			'recrutement.parcours.q.niveauMemorisationDeclare.options.ijaza_lecture_enseignement.description' => 'Une autorisation écrite, donnée par un maître, de lire et d\'enseigner le Coran.',
-			'recrutement.parcours.q.niveauMemorisationDeclare.options.ijaza_lecture_enseignement.explication' => 'Elle se montre pendant l\'entretien : vous n\'avez rien à envoyer maintenant.',
-			'recrutement.parcours.q.niveauMemorisationDeclare.options.ijaza_lecture_enseignement.exemple' => 'un document écrit, remis par votre maître, à votre nom.',
-			'recrutement.parcours.q.niveauMemorisationDeclare.options.plus_de_10_juz.libelle' => 'J\'ai mémorisé plus de dix juz',
-			'recrutement.parcours.q.niveauMemorisationDeclare.options.plus_de_10_juz.description' => 'Plus du tiers du Coran, qui compte trente juz.',
-			'recrutement.parcours.q.niveauMemorisationDeclare.options.plus_de_10_juz.explication' => 'Ce niveau est constaté pendant l\'entretien.',
-			'recrutement.parcours.q.niveauMemorisationDeclare.options.plus_de_10_juz.exemple' => 'vous avez mémorisé douze juz sur trente.',
-			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_de_10_juz.libelle' => 'J\'ai mémorisé moins de dix juz',
-			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_de_10_juz.description' => 'Moins du tiers du Coran, qui compte trente juz.',
-			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_de_10_juz.explication' => 'Ce niveau est constaté pendant l\'entretien.',
-			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_de_10_juz.exemple' => 'vous avez mémorisé cinq juz sur trente.',
-			'recrutement.parcours.q.niveauMemorisationDeclare.options.bonne_lecture_sans_memorisation.libelle' => 'Je n\'ai pas mémorisé, mais je lis bien avec le tajwid',
-			'recrutement.parcours.q.niveauMemorisationDeclare.options.bonne_lecture_sans_memorisation.description' => 'Vous lisez le Coran correctement, en appliquant les règles du tajwid, sans le réciter de mémoire.',
-			'recrutement.parcours.q.niveauMemorisationDeclare.options.bonne_lecture_sans_memorisation.explication' => 'Votre lecture est constatée pendant l\'entretien.',
-			'recrutement.parcours.q.niveauMemorisationDeclare.options.bonne_lecture_sans_memorisation.exemple' => 'vous lisez une page du Coran sans erreur, mais vous ne la récitez pas de mémoire.',
 			'recrutement.parcours.q.niveauLectureTajwid.titre' => 'Comment lisez-vous le Coran ?',
 			'recrutement.parcours.q.niveauLectureTajwid.explication' => 'Le tajwid est l\'ensemble des règles qui disent comment prononcer chaque lettre du Coran.',
 			'recrutement.parcours.q.niveauLectureTajwid.court' => 'Lecture et tajwid',
@@ -39260,15 +40704,19 @@ extension on Traductions {
 			'recrutement.parcours.q.riwayat.options.ishaq.description' => 'Transmise d\'après Khalaf, le dixième lecteur',
 			'recrutement.parcours.q.riwayat.options.idris.libelle' => 'Idris',
 			'recrutement.parcours.q.riwayat.options.idris.description' => 'Transmise d\'après Khalaf, le dixième lecteur',
-			'recrutement.parcours.q.ijazaPresentable.titre' => 'Avez-vous une ijaza à présenter ?',
-			'recrutement.parcours.q.ijazaPresentable.explication' => 'Une ijaza est une autorisation écrite, donnée par un maître, de transmettre le Coran.',
+			'recrutement.parcours.q.ijazaPresentable.titre' => 'Avez-vous une ijaza ?',
+			'recrutement.parcours.q.ijazaPresentable.explication' => 'Une ijaza est une autorisation écrite, donnée par un maître, de transmettre le Coran. Qui a une ijaza a mémorisé, mais qui a mémorisé n\'a pas forcément une ijaza : c\'est une question à part.',
 			'recrutement.parcours.q.ijazaPresentable.court' => 'Ijaza',
 			'recrutement.parcours.q.ijazaPresentable.options.oui.libelle' => 'Oui, j\'ai une ijaza à présenter',
 			'recrutement.parcours.q.ijazaPresentable.options.oui.description' => 'Vous pouvez la montrer en visio.',
 			'recrutement.parcours.q.ijazaPresentable.options.oui.explication' => 'Elle se montre pendant l\'entretien : vous n\'avez rien à envoyer maintenant.',
 			'recrutement.parcours.q.ijazaPresentable.options.oui.exemple' => 'un document signé par votre maître, que vous gardez chez vous.',
-			'recrutement.parcours.q.ijazaPresentable.options.non.libelle' => 'Non, je n\'en ai pas à présenter',
-			'recrutement.parcours.q.ijazaPresentable.options.non.description' => 'Vous n\'avez pas d\'ijaza, ou pas de quoi la présenter.',
+			'recrutement.parcours.q.ijazaPresentable.options.pret_test.libelle' => 'Pas d\'ijaza, mais je peux passer un test',
+			'recrutement.parcours.q.ijazaPresentable.options.pret_test.description' => 'Vous n\'avez pas d\'ijaza à présenter, mais vous acceptez de passer un test.',
+			'recrutement.parcours.q.ijazaPresentable.options.pret_test.explication' => 'L\'académie en reparlera avec vous pendant l\'entretien.',
+			'recrutement.parcours.q.ijazaPresentable.options.pret_test.exemple' => 'vous avez appris auprès d\'un maître sans document écrit, et vous acceptez d\'être testé.',
+			'recrutement.parcours.q.ijazaPresentable.options.non.libelle' => 'Non, je n\'ai pas d\'ijaza',
+			'recrutement.parcours.q.ijazaPresentable.options.non.description' => 'Vous n\'avez pas d\'ijaza, et vous ne comptez pas passer de test pour l\'instant.',
 			'recrutement.parcours.q.ijazaPresentable.options.non.explication' => 'Votre niveau est alors constaté pendant l\'entretien.',
 			'recrutement.parcours.q.ijazaPresentable.options.non.exemple' => 'vous avez appris auprès d\'un maître, sans recevoir de document écrit.',
 			'recrutement.parcours.q.experienceDebutants.titre' => 'Avez-vous déjà enseigné à des débutants ?',
@@ -39285,29 +40733,34 @@ extension on Traductions {
 			'recrutement.parcours.q.fuseauIana.titre' => 'Votre fuseau horaire',
 			'recrutement.parcours.q.fuseauIana.explication' => 'Vos disponibilités sont à l\'heure de chez vous. Il faut donc que l\'heure soit la bonne.',
 			'recrutement.parcours.q.fuseauIana.court' => 'Fuseau horaire',
-			'recrutement.parcours.q.disponibilitesDeclarees.titre' => 'Quand êtes-vous disponible ?',
-			'recrutement.parcours.q.disponibilitesDeclarees.explication' => 'Touchez les plages où vous pouvez enseigner, chaque semaine. Une plage dure quatre heures.',
+			'recrutement.parcours.q.disponibilitesDeclarees.titre' => 'Quels jours pouvez-vous enseigner ?',
+			'recrutement.parcours.q.disponibilitesDeclarees.explication' => 'Une Classe se tient trois fois par semaine, aux mêmes jours et à la même heure. Touchez les jours où vous pouvez enseigner, ou prenez un raccourci.',
 			'recrutement.parcours.q.disponibilitesDeclarees.court' => 'Disponibilités',
-			'recrutement.parcours.q.heuresParSemaine.titre' => 'Combien d\'heures par semaine pouvez-vous enseigner ?',
-			'recrutement.parcours.q.heuresParSemaine.explication' => 'Une classe d\'enfants compte trois séances d\'une heure par semaine, soit 3 heures. Une classe d\'adultes compte trois séances d\'une heure et demie, soit 4 heures et demie.',
-			'recrutement.parcours.q.heuresParSemaine.court' => 'Heures par semaine',
-			'recrutement.parcours.q.heuresParSemaine.options.moins_de_3.libelle' => 'Moins de 3 heures',
-			'recrutement.parcours.q.heuresParSemaine.options.moins_de_3.description' => 'Moins que le temps d\'une classe entière.',
-			'recrutement.parcours.q.heuresParSemaine.options.moins_de_3.exemple' => 'deux séances d\'une heure par semaine.',
-			'recrutement.parcours.q.heuresParSemaine.options.de_3_a_5.libelle' => 'De 3 à 5 heures',
-			'recrutement.parcours.q.heuresParSemaine.options.de_3_a_5.description' => 'Le temps d\'une classe.',
-			'recrutement.parcours.q.heuresParSemaine.options.de_3_a_5.exemple' => 'une classe d\'enfants, trois séances d\'une heure, soit 3 heures par semaine.',
-			'recrutement.parcours.q.heuresParSemaine.options.de_6_a_10.libelle' => 'De 6 à 10 heures',
-			'recrutement.parcours.q.heuresParSemaine.options.de_6_a_10.description' => 'Le temps de deux classes.',
-			'recrutement.parcours.q.heuresParSemaine.options.de_6_a_10.exemple' => 'deux classes d\'adultes, six séances d\'une heure et demie, soit 9 heures par semaine.',
-			'recrutement.parcours.q.heuresParSemaine.options.plus_de_10.libelle' => 'Plus de 10 heures',
-			'recrutement.parcours.q.heuresParSemaine.options.plus_de_10.description' => 'Le temps de plusieurs classes.',
-			'recrutement.parcours.q.heuresParSemaine.options.plus_de_10.exemple' => 'trois classes d\'adultes, neuf séances d\'une heure et demie, soit 13 heures et demie par semaine.',
+			'recrutement.parcours.q.disponibilitesDeclarees.heures.titre' => ({required Object jour}) => 'À quelle heure pouvez-vous commencer, le ${jour} ?',
+			'recrutement.parcours.q.disponibilitesDeclarees.heures.explication' => 'Choisissez toutes les heures auxquelles vous pouvez commencer un cours. La fin du cours se calcule pour vous.',
+			'recrutement.parcours.q.disponibilitesDeclarees.heures.suite' => 'Vous direz ensuite si c\'est pareil les autres jours.',
+			'recrutement.parcours.q.disponibilitesDeclarees.memes.titre' => 'Ce sont les mêmes heures pour tous ces jours ?',
+			'recrutement.parcours.q.disponibilitesDeclarees.memes.explication' => ({required Object jours, required Object premier, required Object heures}) => 'Vous avez choisi ${jours}. Le ${premier}, vous commencez à ${heures}.',
+			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.libelle' => 'Oui, les mêmes heures',
+			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.description' => ({required Object premier, required Object autres}) => 'Les heures du ${premier} valent aussi pour ${autres}.',
+			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.explication' => 'Vous pourrez changer un jour avant d\'envoyer votre candidature.',
+			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.exemple' => 'vous pouvez commencer à 18 h le lundi, le mercredi et le vendredi.',
+			'recrutement.parcours.q.disponibilitesDeclarees.memes.non.libelle' => 'Non, jour par jour',
+			'recrutement.parcours.q.disponibilitesDeclarees.memes.non.description' => 'Vous réglez les heures de chaque jour, l\'un après l\'autre.',
+			'recrutement.parcours.q.disponibilitesDeclarees.memes.non.explication' => 'Les heures déjà choisies restent : vous les ajustez.',
+			'recrutement.parcours.q.disponibilitesDeclarees.memes.non.exemple' => 'vous commencez à 18 h le lundi, mais à 20 h le mercredi.',
+			'recrutement.parcours.q.disponibilitesDeclarees.parJour.titre' => 'Réglez les heures, jour par jour',
+			'recrutement.parcours.q.disponibilitesDeclarees.parJour.explication' => 'Chaque jour reprend les heures déjà choisies. Ajoutez ou retirez des heures là où ce n\'est pas pareil.',
+			'recrutement.parcours.q.disponibilitesDeclarees.semaine.titre' => 'Votre semaine',
+			'recrutement.parcours.q.disponibilitesDeclarees.semaine.explication' => 'Voici quand vous pouvez enseigner, à l\'heure de chez vous. Relisez-la, puis continuez.',
+			'recrutement.parcours.q.classesSouhaitees.titre' => 'Combien de Classes voulez-vous tenir ?',
+			'recrutement.parcours.q.classesSouhaitees.explication' => 'Une Classe, ce sont des élèves qui se retrouvent trois fois par semaine, aux mêmes jours et à la même heure, avec le même enseignant. C\'est un souhait : l\'académie décide des Classes qu\'elle vous confie.',
+			'recrutement.parcours.q.classesSouhaitees.court' => 'Classes souhaitées',
 			'recrutement.parcours.q.debutPossible.titre' => 'Quand pouvez-vous commencer ?',
-			'recrutement.parcours.q.debutPossible.explication' => 'Cette date aide la direction à savoir quand vous proposer une classe.',
+			'recrutement.parcours.q.debutPossible.explication' => 'Cette date aide la direction à savoir quand vous proposer une Classe.',
 			'recrutement.parcours.q.debutPossible.court' => 'Date de début',
 			'recrutement.parcours.q.debutPossible.options.immediat.libelle' => 'Dès maintenant',
-			'recrutement.parcours.q.debutPossible.options.immediat.description' => 'Vous pouvez commencer dès qu\'une classe vous est confiée.',
+			'recrutement.parcours.q.debutPossible.options.immediat.description' => 'Vous pouvez commencer dès qu\'une Classe vous est confiée.',
 			'recrutement.parcours.q.debutPossible.options.immediat.exemple' => 'aucun engagement ne vous retient ce mois-ci.',
 			'recrutement.parcours.q.debutPossible.options.mois_prochain.libelle' => 'Le mois prochain',
 			'recrutement.parcours.q.debutPossible.options.mois_prochain.description' => 'Vous serez disponible à partir du mois prochain.',
@@ -39320,16 +40773,24 @@ extension on Traductions {
 			'recrutement.parcours.q.debutPossible.options.inconnu.explication' => 'Vous pourrez le préciser à la direction pendant l\'entretien.',
 			'recrutement.parcours.q.debutPossible.options.inconnu.exemple' => 'votre emploi du temps dépend d\'une réponse que vous attendez encore.',
 			'recrutement.parcours.q.publics.titre' => 'Quels élèves pouvez-vous enseigner ?',
-			'recrutement.parcours.q.publics.explication' => 'Choisissez les élèves auxquels vous pouvez enseigner. Vous pouvez choisir les deux.',
+			'recrutement.parcours.q.publics.explication' => 'Choisissez les tranches d\'âge auxquelles vous êtes à l\'aise d\'enseigner. Il n\'y a pas de mauvaise réponse : vous pouvez en choisir une seule, ou plusieurs.',
 			'recrutement.parcours.q.publics.court' => 'Publics',
-			'recrutement.parcours.q.publics.options.enfant.libelle' => 'Des enfants (6 à 17 ans)',
-			'recrutement.parcours.q.publics.options.enfant.description' => 'Des classes de 3 à 5 enfants.',
-			'recrutement.parcours.q.publics.options.enfant.explication' => 'Trois séances d\'une heure par semaine.',
-			'recrutement.parcours.q.publics.options.enfant.exemple' => 'une classe de quatre enfants de huit ans, trois fois par semaine.',
-			'recrutement.parcours.q.publics.options.adulte.libelle' => 'Des adultes (18 ans et plus)',
-			'recrutement.parcours.q.publics.options.adulte.description' => 'Des classes de 3 à 6 adultes.',
-			'recrutement.parcours.q.publics.options.adulte.explication' => 'Trois séances d\'une heure et demie par semaine. Les classes d\'adultes sont séparées : des femmes avec des femmes, des hommes avec des hommes.',
-			'recrutement.parcours.q.publics.options.adulte.exemple' => 'une classe de cinq femmes, ou de cinq hommes, trois fois par semaine.',
+			'recrutement.parcours.q.publics.options.o_6_9.libelle' => 'Des enfants de 6 à 9 ans',
+			'recrutement.parcours.q.publics.options.o_6_9.description' => 'Ils commencent par le livre de lecture de Rewayah, lettre par lettre, jusqu\'à la chadda. Viennent ensuite les premières sourates courtes, les paroles de la prière et les ablutions.',
+			'recrutement.parcours.q.publics.options.o_6_9.explication' => 'Des Classes de 5 enfants au plus (4 pour des débutants), trois séances d\'une heure par semaine. Les ablutions et la prière se montrent en pratique, avec des illustrations.',
+			'recrutement.parcours.q.publics.options.o_6_9.exemple' => 'une Classe d\'enfants de huit ans, le lundi, le mercredi et le vendredi.',
+			'recrutement.parcours.q.publics.options.o_10_13.libelle' => 'Des enfants de 10 à 13 ans',
+			'recrutement.parcours.q.publics.options.o_10_13.description' => 'Même départ avec le livre de lecture, et Al-Fatiha dès la première semaine, parce qu\'à cet âge l\'enfant doit prier.',
+			'recrutement.parcours.q.publics.options.o_10_13.explication' => 'Des Classes de 5 enfants au plus (4 pour des débutants), trois séances d\'une heure par semaine.',
+			'recrutement.parcours.q.publics.options.o_10_13.exemple' => 'une Classe d\'élèves de douze ans, trois fois par semaine.',
+			'recrutement.parcours.q.publics.options.o_14_17.libelle' => 'Des adolescents de 14 à 17 ans',
+			'recrutement.parcours.q.publics.options.o_14_17.description' => 'Le même contenu que pour les 10 à 13 ans : le livre de lecture, et Al-Fatiha dès la première semaine.',
+			'recrutement.parcours.q.publics.options.o_14_17.explication' => 'Des Classes de 5 adolescents au plus (4 pour des débutants), trois séances d\'une heure par semaine.',
+			'recrutement.parcours.q.publics.options.o_14_17.exemple' => 'une Classe d\'élèves de seize ans, trois fois par semaine.',
+			'recrutement.parcours.q.publics.options.adultes.libelle' => 'Des adultes (18 ans et plus)',
+			'recrutement.parcours.q.publics.options.adultes.description' => 'Les adultes apprennent d\'abord à lire avec le livre de Rewayah. Après les bases, l\'élève choisit de lire tout le Coran ou de le mémoriser, sur le conseil de l\'enseignant.',
+			'recrutement.parcours.q.publics.options.adultes.explication' => 'Des Classes de 6 adultes au plus (4 pour des débutants), trois séances d\'une heure et demie par semaine. Les Classes d\'adultes sont séparées : des femmes avec des femmes, des hommes avec des hommes.',
+			'recrutement.parcours.q.publics.options.adultes.exemple' => 'une Classe de femmes, ou une Classe d\'hommes, trois fois par semaine.',
 			'recrutement.parcours.q.paysResidence.titre' => 'Dans quel pays vivez-vous ?',
 			'recrutement.parcours.q.paysResidence.explication' => 'Choisissez le pays où vous vivez aujourd\'hui.',
 			'recrutement.parcours.q.paysResidence.court' => 'Pays de résidence',
@@ -39350,6 +40811,25 @@ extension on Traductions {
 			'recrutement.parcours.q.operateurs.titre' => 'Quels moyens de paiement sur téléphone utilisez-vous ?',
 			'recrutement.parcours.q.operateurs.explication' => 'Voici les moyens que l\'académie a confirmés dans votre pays. Choisissez ceux que vous utilisez, s\'il y en a.',
 			'recrutement.parcours.q.operateurs.court' => 'Moyens de paiement sur téléphone',
+			'recrutement.parcours.q.moyensAccessibles.titre' => 'Quels moyens de paiement sont courants là où vous vivez ?',
+			'recrutement.parcours.q.moyensAccessibles.explication' => 'Voici les moyens que l\'académie connaît. Choisissez ceux qui sont courants dans votre pays, s\'il y en a.',
+			'recrutement.parcours.q.moyensAccessibles.court' => 'Moyens de paiement du pays',
+			'recrutement.parcours.classes.libelle' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} Classe', other: '${n} Classes', ), 
+			'recrutement.parcours.classes.seances' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} séance par semaine.', other: '${n} séances par semaine.', ), 
+			'recrutement.parcours.classes.heuresEnfants' => ({required Object heures}) => 'Soit ${heures} par semaine avec des enfants.',
+			'recrutement.parcours.classes.heuresAdultes' => ({required Object heures}) => 'Soit ${heures} par semaine avec des adultes.',
+			'recrutement.parcours.classes.heuresLesDeux' => ({required Object enfants, required Object adultes}) => 'Soit ${enfants} par semaine avec des enfants, ou ${adultes} avec des adultes.',
+			'recrutement.parcours.classes.explication' => 'Chaque Classe a son propre horaire, qu\'elle garde chaque semaine.',
+			'recrutement.parcours.classes.exemple1' => 'le lundi, le mercredi et le vendredi à 18 h.',
+			'recrutement.parcours.classes.exemple2' => 'le lundi, le mercredi et le vendredi à 18 h, puis le mardi, le jeudi et le samedi à 19 h.',
+			'recrutement.parcours.classes.exemplePlusieurs' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} Classe, avec ses jours et son heure.', other: '${n} Classes, chacune avec ses jours et son heure.', ), 
+			'recrutement.parcours.moyens.mobile' => 'Paiement sur téléphone',
+			'recrutement.parcours.moyens.virement' => 'Virement bancaire',
+			'recrutement.parcours.moyens.explication' => 'Choisissez-le s\'il est courant là où vous vivez.',
+			'recrutement.parcours.moyens.nonElimine' => 'Cette question est facultative et n\'élimine personne : votre candidature ne dépend pas de votre réponse. Elle aide l\'académie à connaître les moyens utilisés là où vous vivez.',
+			'recrutement.parcours.choisirJour' => 'Choisissez au moins un jour pour continuer.',
+			'recrutement.parcours.choisirHeure' => 'Choisissez au moins une heure de début pour continuer.',
+			'recrutement.parcours.choisirHeureJour' => ({required Object jour}) => 'Choisissez au moins une heure de début pour le ${jour}.',
 			'dossiers.titre' => 'Dossiers à valider',
 			'dossiers.sousTitre' => 'Examinez les dossiers prêts pour une décision.',
 			'dossiers.aucun' => 'Aucun dossier n\'attend de validation.',
@@ -39362,6 +40842,8 @@ extension on Traductions {
 			'dossiers.file.chargementProlonge' => 'Le chargement prend plus de temps que prévu.',
 			'dossiers.file.suivantsErreur' => 'Impossible de charger les dossiers suivants.',
 			'dossiers.file.indisponible' => 'La consultation des dossiers est indisponible pour le moment.',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.file.selectionRetiree' => 'Ce dossier n’est plus disponible dans la file.',
 			'dossiers.file.actualiser' => 'Actualiser les dossiers',
 			'dossiers.file.aucuneSelection' => 'Sélectionnez un dossier à examiner.',
@@ -39410,8 +40892,6 @@ extension on Traductions {
 			'dossiers.revue.etats.retourDossiers' => 'Retour aux dossiers',
 			'dossiers.revue.etats.verificationsIncompletes' => 'Terminez les vérifications requises.',
 			'dossiers.revue.etats.accordManquant' => 'Un accord requis manque à ce dossier.',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.revue.etats.decisionIndisponible' => 'La décision est indisponible pour le moment.',
 			'dossiers.revue.etats.actualiserDossier' => 'Actualiser le dossier',
 			'dossiers.revue.etats.refusNonAutorise' => 'Ce dossier ne peut pas être refusé dans son état actuel.',
@@ -39480,6 +40960,283 @@ extension on Traductions {
 			'dossiers.accesKyc.refus.genreDifferent' => 'Cette pièce est réservée à un administrateur du même genre que le candidat.',
 			'dossiers.accesKyc.refus.adminSansGenre' => 'Votre genre n\'est pas renseigné : aucune pièce ne peut s\'ouvrir. Demandez à la direction de le renseigner.',
 			'dossiers.accesKyc.refus.profilNonAutorise' => 'Votre profil ne peut pas consulter les pièces d\'identité.',
+			'admin.candidatures.titre' => 'Candidatures',
+			'admin.candidatures.sousTitre' => 'Les candidatures d\'enseignement, de l\'invitation à la Salle des prêts à enseigner.',
+			'admin.candidatures.exception.titre' => 'Lecture des deux côtés',
+			'admin.candidatures.exception.message' => 'Vous lisez les candidatures des femmes et des hommes. Chaque lecture est inscrite au journal.',
+			'admin.candidatures.exception.candidature' => 'Cette candidature est de l\'autre côté : sa lecture est inscrite au journal.',
+			'admin.candidatures.aTraiter' => 'À traiter',
+			'admin.candidatures.alertes.bloquees' => 'Bloquées',
+			'admin.candidatures.alertes.entretiensEnRetard' => 'Entretiens en retard',
+			'admin.candidatures.alertes.informationsManquantes' => 'Informations manquantes',
+			'admin.candidatures.alertes.confirmeesIndisponibles' => 'Confirmées indisponibles',
+			'admin.candidatures.alertes.rien' => 'Rien à traiter',
+			'admin.candidatures.recherche' => 'Rechercher un nom, une référence ou un courriel',
+			'admin.candidatures.rechercheAide' => 'Nom, référence ou courriel',
+			'admin.candidatures.filtres.toutes' => 'Toutes',
+			'admin.candidatures.filtres.gardees' => 'Gardées pour suivi',
+			'admin.candidatures.filtres.invitees' => 'Invitées',
+			'admin.candidatures.filtres.tous' => 'Tous',
+			'admin.candidatures.filtres.etat' => 'État',
+			'admin.candidatures.filtres.issue' => 'Issue',
+			'admin.candidatures.filtres.enCours' => 'En cours',
+			'admin.candidatures.filtres.pause' => 'Pause',
+			'admin.candidatures.filtres.sansPause' => 'Pas en pause',
+			'admin.candidatures.filtres.versement' => 'Versement',
+			'admin.candidatures.filtres.pays' => 'Pays de résidence',
+			'admin.candidatures.tri.titre' => 'Trier par',
+			'admin.candidatures.tri.activite' => 'Dernière activité',
+			'admin.candidatures.tri.reception' => 'Date de réception',
+			'admin.candidatures.total' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} candidature', other: '${n} candidatures', ), 
+			'admin.candidatures.resume' => ({required Object debut, required Object fin, required Object total}) => 'Candidatures ${debut} à ${fin} sur ${total}',
+			'admin.candidatures.pagination.precedente' => 'Page précédente des candidatures',
+			'admin.candidatures.pagination.suivante' => 'Page suivante des candidatures',
+			'admin.candidatures.pagination.positionSemantique' => ({required Object page, required Object total}) => 'Page ${page} sur ${total} de la liste des candidatures',
+			'admin.candidatures.colonnes.nom' => 'Nom',
+			'admin.candidatures.colonnes.salle' => 'Salle',
+			'admin.candidatures.colonnes.etat' => 'État',
+			'admin.candidatures.colonnes.pays' => 'Pays de résidence',
+			'admin.candidatures.colonnes.versement' => 'Versement',
+			'admin.candidatures.colonnes.activite' => 'Dernière activité',
+			'admin.candidatures.ligne.versement' => ({required Object etat}) => 'Versement : ${etat}',
+			'admin.candidatures.ligne.activite' => ({required Object date}) => 'Dernière activité le ${date}',
+			'admin.candidatures.ligne.pays' => ({required Object pays}) => 'Résidence : ${pays}',
+			'admin.candidatures.ligne.courrielAObtenir' => 'Courriel à obtenir',
+			'admin.candidatures.ligne.indicatifAConfirmer' => 'Indicatif à confirmer',
+			'admin.candidatures.ligne.reprise' => ({required Object date}) => 'Reprise prévue le ${date}',
+			'admin.candidatures.ligne.indisponibleJusquAu' => ({required Object date}) => 'Indisponible jusqu\'au ${date}',
+			'admin.candidatures.selection.selectionner' => 'Sélectionner',
+			'admin.candidatures.selection.quitter' => 'Quitter la sélection',
+			'admin.candidatures.selection.retenues' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} candidature retenue', other: '${n} candidatures retenues', ), 
+			'admin.candidatures.selection.phrase' => 'Choisissez l\'action à lancer sur ces candidatures.',
+			'admin.candidatures.selection.agir' => 'Agir sur la sélection',
+			'admin.candidatures.selection.relacher' => 'Tout relâcher',
+			'admin.candidatures.selection.horsLigne' => 'Les actions pourront être lancées quand la connexion reviendra.',
+			'admin.candidatures.vide' => 'Aucune candidature pour le moment',
+			'admin.candidatures.videDetail' => 'Une candidature apparaît ici dès que la personne s\'inscrit par le lien du site ou avec une invitation.',
+			'admin.candidatures.aucunResultat' => 'Aucune candidature ne correspond à ces filtres.',
+			'admin.candidatures.rappel.filtres' => ({required Object filtres}) => 'Filtres posés : ${filtres}',
+			'admin.candidatures.rappel.recherche' => ({required Object texte}) => 'Recherche : « ${texte} »',
+			'admin.candidatures.lectureEchec' => 'Les candidatures n\'ont pas pu être lues.',
+			'admin.candidatures.sansDonnees' => 'La liste des candidatures n\'a pas pu être chargée',
+			'admin.candidatures.accesRefuse' => 'Vous n\'avez pas accès aux candidatures.',
+			'admin.candidatures.genreInconnuTitre' => 'Les candidatures ne s\'affichent pas',
+			'admin.candidatures.genreInconnu' => 'Votre fiche ne dit pas de quel côté vous travaillez. Demandez à la direction de la compléter.',
+			'admin.candidatures.etats.gardee' => 'Gardée pour suivi',
+			'admin.candidatures.etats.invitee' => 'Invitée',
+			'admin.candidatures.etats.aCompleter' => 'À compléter',
+			'admin.candidatures.etats.enExamen' => 'En examen',
+			'admin.candidatures.etats.versementImpossible' => 'Versement pas encore possible',
+			'admin.candidatures.etats.entretienAPlanifier' => 'Entretien à planifier',
+			'admin.candidatures.etats.entretienPlanifie' => 'Entretien planifié',
+			'admin.candidatures.etats.decisionEnAttente' => 'Décision en attente',
+			'admin.candidatures.etats.refusee' => 'Refusée',
+			'admin.candidatures.etats.retiree' => 'Retirée',
+			'admin.candidatures.etats.enPause' => 'En pause',
+			'admin.candidatures.etats.restreinte' => 'Restreinte',
+			'admin.candidatures.etats.restreintePiece' => 'Restreinte : pièce',
+			'admin.candidatures.etats.restreinteVersement' => 'Restreinte : versement',
+			'admin.candidatures.etats.restreinteDirection' => 'Restreinte : décision de la direction',
+			'admin.candidatures.etats.indisponible' => 'Indisponible',
+			'admin.candidatures.etats.provenance.lienPublic' => 'Lien du site',
+			'admin.candidatures.etats.provenance.invitation' => 'Invitation',
+			'admin.candidatures.etats.provenance.formulairesImportes' => 'Formulaires importés',
+			'admin.candidatures.etats.versement.inconnu' => 'Aucun moyen déclaré',
+			'admin.candidatures.etats.versement.aVerifier' => 'À vérifier',
+			'admin.candidatures.etats.versement.compatible' => 'Confirmé',
+			'admin.candidatures.etats.versement.incompatible' => 'Aucun moyen possible',
+			'admin.candidatures.detail.retour' => 'Retour aux candidatures',
+			'admin.candidatures.detail.recue' => ({required Object date}) => 'Reçue le ${date}',
+			'admin.candidatures.detail.provenance' => ({required Object provenance}) => 'Provenance : ${provenance}',
+			'admin.candidatures.detail.messagePause' => ({required Object nom}) => 'Message choisi pour la pause : ${nom}',
+			'admin.candidatures.detail.messageRefus' => ({required Object nom}) => 'Message choisi pour le refus : ${nom}',
+			'admin.candidatures.detail.responsableDesigne' => 'Un responsable est désigné',
+			'admin.candidatures.detail.aucunResponsable' => 'Aucun responsable',
+			'admin.candidatures.detail.blocages' => 'Ce qui bloque',
+			'admin.candidatures.detail.aucunBlocage' => 'Rien ne bloque pour le moment.',
+			'admin.candidatures.detail.prochaineAction' => 'Prochaine action',
+			'admin.candidatures.detail.enAttentePersonne' => 'En attente de la personne',
+			'admin.candidatures.detail.aucuneAction' => 'Aucune action n\'est disponible pour le moment.',
+			'admin.candidatures.detail.fermee' => 'Cette candidature est fermée. Vous pouvez la rouvrir.',
+			'admin.candidatures.detail.autresGestes' => 'Autres gestes',
+			'admin.candidatures.detail.reponses' => 'Réponses',
+			'admin.candidatures.detail.reponsesVersion' => ({required Object version}) => 'Version du questionnaire : ${version}',
+			'admin.candidatures.detail.preRempli' => 'Venu de l\'ancien formulaire',
+			'admin.candidatures.detail.aucuneReponse' => 'Aucune réponse n\'a été envoyée pour le moment.',
+			'admin.candidatures.detail.moyensIndiques' => ({required Object n}) => 'Moyens indiqués : ${n}',
+			'admin.candidatures.detail.cartes.langues' => 'Langues',
+			'admin.candidatures.detail.cartes.recitation' => 'Récitation',
+			'admin.candidatures.detail.cartes.disponibilites' => 'Disponibilités',
+			'admin.candidatures.detail.cartes.publics' => 'Publics',
+			'admin.candidatures.detail.cartes.versement' => 'Pays et versement',
+			'admin.candidatures.detail.controles' => 'Contrôles',
+			'admin.candidatures.detail.entretien' => 'Entretien',
+			'admin.candidatures.detail.affectation' => 'Affectation',
+			'admin.candidatures.detail.courriels' => 'Courriels',
+			'admin.candidatures.detail.ouvrirDossier' => 'Ouvrir dans Dossiers à valider',
+			'admin.candidatures.detail.responsable' => 'Responsable',
+			'admin.candidatures.detail.contact.titre' => 'Contact',
+			'admin.candidatures.detail.contact.masque' => 'Contact masqué',
+			'admin.candidatures.detail.contact.voir' => 'Voir le contact',
+			'admin.candidatures.detail.contact.journal' => 'Cette ouverture est inscrite au journal.',
+			'admin.candidatures.detail.contact.courriel' => 'Courriel',
+			'admin.candidatures.detail.contact.telephone' => 'Téléphone',
+			'admin.candidatures.detail.contact.aucun' => 'Aucune coordonnée n\'est connue.',
+			'admin.candidatures.detail.contact.aConfirmer' => 'À confirmer',
+			'admin.candidatures.detail.contact.lectureEchec' => 'Le contact n\'a pas pu être lu.',
+			'admin.candidatures.detail.historiqueVide' => 'Aucun événement pour le moment',
+			'admin.candidatures.detail.plusAnciens' => 'Voir les événements plus anciens',
+			'admin.candidatures.detail.historiqueEchec' => 'L\'historique n\'a pas pu être lu.',
+			'admin.candidatures.detail.sansDonnees' => 'La candidature n\'a pas pu être chargée',
+			'admin.candidatures.detail.titreHorsPortee' => 'Vous n\'avez pas accès à cette candidature.',
+			'admin.candidatures.detail.titreAbsente' => 'Cette candidature n\'existe pas, ou plus.',
+			'admin.candidatures.detail.titreLecture' => 'La candidature n\'a pas pu être lue.',
+			'admin.candidatures.detail.revenirALaFile' => 'Revenez à la liste des candidatures.',
+			'admin.candidatures.detail.controleLigne' => ({required Object nom, required Object cause}) => '${nom} (${cause})',
+			'admin.candidatures.detail.separateurControles' => ', ',
+			'admin.candidatures.detail.groupeJours' => ({required Object jours, required Object heures}) => '${jours} : ${heures}',
+			'admin.candidatures.detail.etatsPiece.aDeposer' => 'À déposer',
+			'admin.candidatures.detail.etatsPiece.deposee' => 'Déposée',
+			'admin.candidatures.detail.etatsPiece.aCorriger' => 'À corriger',
+			'admin.candidatures.detail.etatsPiece.validee' => 'Validée',
+			'admin.candidatures.detail.controlesVrai' => 'Satisfait',
+			'admin.candidatures.detail.controlesFaux' => 'Non satisfait',
+			'admin.candidatures.controles.noms.compteConforme' => 'Compte conforme',
+			'admin.candidatures.controles.noms.cadreReligieux' => 'Cadre religieux et pédagogique accepté',
+			'admin.candidatures.controles.noms.questionnaireComplet' => 'Questionnaire complet à la version courante',
+			'admin.candidatures.controles.noms.inconnu' => 'Contrôle du serveur',
+			'admin.candidatures.controles.causes.supprime' => 'Compte supprimé',
+			'admin.candidatures.controles.causes.role' => 'Compte d\'un autre type',
+			'admin.candidatures.controles.causes.statut' => 'Le statut du compte ne le permet pas',
+			'admin.candidatures.controles.causes.expire' => 'Accès du compte expiré',
+			'admin.candidatures.controles.causes.engagement' => 'Un engagement d\'enseignant est déjà en cours',
+			'admin.candidatures.controles.causes.nonPublie' => 'Le cadre n\'est pas encore publié',
+			'admin.candidatures.controles.causes.nonAccepte' => 'La personne ne l\'a pas encore accepté',
+			'admin.candidatures.controles.causes.questionnaireAbsent' => 'Aucun questionnaire n\'est publié',
+			'admin.candidatures.controles.causes.absent' => 'Aucune réponse envoyée',
+			'admin.candidatures.controles.causes.perime' => 'Réponses données à une ancienne version',
+			'admin.candidatures.controles.causes.incomplet' => 'Des réponses manquent',
+			'admin.candidatures.controles.causes.inconnue' => 'Cause non précisée',
+			'admin.candidatures.historique.auteur.direction' => 'La direction',
+			'admin.candidatures.historique.auteur.personne' => 'La personne',
+			'admin.candidatures.historique.auteur.automatique' => 'Automatique',
+			'admin.candidatures.historique.types.creee' => 'Candidature créée',
+			'admin.candidatures.historique.types.transition' => 'Changement de situation',
+			'admin.candidatures.historique.types.pause' => 'Mise en pause',
+			'admin.candidatures.historique.types.reprise' => 'Reprise',
+			'admin.candidatures.historique.types.restriction' => 'Restriction posée',
+			'admin.candidatures.historique.types.leveeRestriction' => 'Restriction levée',
+			'admin.candidatures.historique.types.responsable' => 'Responsable modifié',
+			'admin.candidatures.historique.types.controle' => 'Contrôle modifié',
+			'admin.candidatures.historique.types.importation' => 'Réponses importées',
+			'admin.candidatures.historique.types.correctionImport' => 'Réponses corrigées',
+			'admin.candidatures.historique.types.lectureContact' => 'Contact consulté',
+			'admin.candidatures.historique.types.lectureHorsPortee' => 'Lecture refusée : autre côté',
+			'admin.candidatures.historique.types.entretien' => 'Entretien',
+			'admin.candidatures.historique.types.engagement' => 'Accord donné',
+			'admin.candidatures.historique.types.prevenu' => 'Personne prévenue',
+			'admin.candidatures.historique.types.inconnu' => 'Événement',
+			'admin.candidatures.historique.deA' => ({required Object avant, required Object apres}) => 'De « ${avant} » à « ${apres} »',
+			'admin.candidatures.historique.motif' => ({required Object motif}) => 'Motif : ${motif}',
+			'admin.candidatures.historique.le' => ({required Object date, required Object heure}) => 'Le ${date} à ${heure}',
+			'admin.candidatures.historique.separateur' => ' · ',
+			'admin.candidatures.gestes.admettre' => 'Admettre en Salle de vérification et d\'entretien',
+			'admin.candidatures.gestes.confirmerMoyen' => 'Confirmer le moyen de versement',
+			'admin.candidatures.gestes.ecarterMoyen' => 'Écarter ce moyen de versement',
+			'admin.candidatures.gestes.demanderComplement' => 'Demander un complément',
+			'admin.candidatures.gestes.cloreComplement' => 'Clore le complément',
+			'admin.candidatures.gestes.mettreEnPause' => 'Mettre en pause',
+			'admin.candidatures.gestes.leverPause' => 'Lever la pause',
+			'admin.candidatures.gestes.refuser' => 'Refuser la candidature',
+			'admin.candidatures.gestes.retrait' => 'Enregistrer un retrait demandé',
+			'admin.candidatures.gestes.rouvrir' => 'Rouvrir la candidature',
+			'admin.candidatures.gestes.responsable' => 'Choisir le responsable',
+			'admin.candidatures.consequences.admettre' => 'La candidature passe en Salle de vérification et d\'entretien.',
+			'admin.candidatures.consequences.confirmerMoyen' => 'Ce moyen permet à Rewayah de verser la rémunération dans le pays de la personne.',
+			'admin.candidatures.consequences.ecarterMoyen' => 'Ce moyen n\'est plus retenu. Sans autre moyen possible, la candidature attend qu\'un moyen devienne possible.',
+			'admin.candidatures.consequences.demanderComplement' => 'La candidature repasse à compléter. La personne lira la liste des éléments choisis.',
+			'admin.candidatures.consequences.cloreComplement' => 'Le complément demandé est clos. La candidature reste dans sa salle.',
+			'admin.candidatures.consequences.mettreEnPause' => 'La candidature n\'avance plus tant que la pause n\'est pas levée.',
+			'admin.candidatures.consequences.leverPause' => 'La candidature reprend là où elle s\'était arrêtée.',
+			'admin.candidatures.consequences.refuser' => 'La candidature est fermée. Vous pourrez la rouvrir.',
+			'admin.candidatures.consequences.retrait' => 'La candidature est fermée à la demande de la personne. Vous pourrez la rouvrir.',
+			'admin.candidatures.consequences.rouvrir' => 'La candidature reprend son étape d\'origine, si les contrôles du serveur le permettent.',
+			'admin.candidatures.consequences.responsable' => 'Le responsable suit cette candidature.',
+			'admin.candidatures.feuille.motif' => 'Motif interne',
+			'admin.candidatures.feuille.motifSeul' => 'La personne ne le lira pas.',
+			'admin.candidatures.feuille.motifAide' => 'La personne ne le lira pas. Elle lira seulement le message choisi.',
+			'admin.candidatures.feuille.modele' => 'Message pour la personne',
+			'admin.candidatures.feuille.modeleLu' => 'La personne lira le message de ce modèle.',
+			'admin.candidatures.feuille.motifManquant' => 'Indiquez le motif.',
+			'admin.candidatures.feuille.modeleManquant' => 'Choisissez le message que la personne lira.',
+			'admin.candidatures.feuille.enCours' => 'Envoi au serveur en cours',
+			'admin.candidatures.feuille.actualiser' => 'Actualiser la candidature',
+			'admin.candidatures.complement.elements' => 'Ce qui manque',
+			'admin.candidatures.complement.aide' => 'La personne lira cette liste.',
+			'admin.candidatures.complement.manquant' => 'Choisissez au moins un élément.',
+			'admin.candidatures.retrait.canal' => 'Comment la demande est arrivée',
+			'admin.candidatures.retrait.canaux.conversation' => 'Dans la conversation',
+			'admin.candidatures.retrait.canaux.courriel' => 'Par courriel',
+			'admin.candidatures.retrait.date' => 'Jour de la demande',
+			'admin.candidatures.retrait.canalManquant' => 'Choisissez comment la demande est arrivée.',
+			'admin.candidatures.retrait.dateManquante' => 'Choisissez le jour de la demande.',
+			'admin.candidatures.retrait.aide' => 'Entre la réception de la candidature et aujourd\'hui.',
+			'admin.candidatures.pause.reprise' => 'Reprise prévue',
+			'admin.candidatures.pause.repriseAide' => 'Facultatif. Sans date, la pause dure jusqu\'à ce que vous la leviez.',
+			'admin.candidatures.pause.effacerReprise' => 'Ne pas fixer de date',
+			'admin.candidatures.moyens.titre' => 'Moyen de versement',
+			'admin.candidatures.moyens.manquant' => 'Choisissez le moyen.',
+			'admin.candidatures.moyens.virement' => 'Virement bancaire',
+			'admin.candidatures.moyens.mobile' => ({required Object nom}) => 'Monnaie mobile : ${nom}',
+			'admin.candidatures.moyens.mobileSansNom' => 'Monnaie mobile',
+			'admin.candidatures.moyens.aucunDeclare' => 'La personne n\'a déclaré aucun moyen de versement.',
+			'admin.candidatures.responsables.choisir' => 'Choisissez le responsable de cette candidature.',
+			'admin.candidatures.responsables.aucun' => 'Aucun responsable',
+			'admin.candidatures.responsables.lectureEchec' => 'La liste des responsables n\'a pas pu être lue.',
+			'admin.candidatures.modeles.refusGeneral' => 'Refus général',
+			'admin.candidatures.modeles.refusNiveau' => 'Niveau pas encore suffisant',
+			'admin.candidatures.modeles.refusBesoins' => 'Pas de besoin pour ce profil',
+			'admin.candidatures.modeles.refusSansReponse' => 'Sans réponse de la personne',
+			'admin.candidatures.modeles.pauseAttenteBesoin' => 'En attente d\'un besoin',
+			'admin.candidatures.modeles.pauseAttenteInformations' => 'En attente d\'informations',
+			'admin.candidatures.modeles.pauseDemandeCandidat' => 'À la demande de la personne',
+			'admin.candidatures.modeles.pauseGeneral' => 'Pause générale',
+			'admin.candidatures.modeles.autre' => 'Autre message',
+			'admin.candidatures.erreurs.controles' => ({required Object controles}) => 'Rien n\'a été fait. Il manque : ${controles}. Vérifiez ces points, puis réessayez.',
+			'admin.candidatures.erreurs.transition' => ({required Object etat}) => 'Ce geste n\'est pas possible depuis l\'état « ${etat} ». Rien n\'a été fait. Actualisez la candidature.',
+			'admin.candidatures.erreurs.conflit' => 'Cette candidature a changé depuis son ouverture. Actualisez-la avant d\'agir.',
+			'admin.candidatures.erreurs.horsPortee' => 'Vous n\'avez pas accès à cette candidature. Revenez à la liste des candidatures.',
+			'admin.candidatures.erreurs.absente' => 'Cette candidature n\'existe pas, ou plus. Revenez à la liste des candidatures.',
+			'admin.candidatures.erreurs.horsLigne' => 'Aucun geste n\'est possible sans connexion. Reconnectez-vous pour agir.',
+			'admin.candidatures.erreurs.motifRequis' => 'Rien n\'a été fait. Indiquez le motif.',
+			'admin.candidatures.erreurs.modeleRequis' => 'Rien n\'a été fait. Choisissez le message que la personne lira.',
+			'admin.candidatures.erreurs.modeleInconnu' => 'Ce message n\'est plus proposé. Choisissez-en un autre.',
+			'admin.candidatures.erreurs.elementsRequis' => 'Rien n\'a été fait. Choisissez au moins un élément.',
+			'admin.candidatures.erreurs.elementsInvalides' => 'Un des éléments choisis n\'est pas possible dans cette salle. Rien n\'a été fait.',
+			'admin.candidatures.erreurs.aucunComplement' => 'Aucun complément n\'est en cours : rien à clore. Actualisez la candidature.',
+			'admin.candidatures.erreurs.repriseInvalide' => 'La reprise doit être un jour à venir. Rien n\'a été fait. Choisissez un autre jour.',
+			'admin.candidatures.erreurs.dateDemande' => 'Le jour de la demande ne peut être ni à venir ni avant la réception de la candidature. Rien n\'a été fait. Choisissez un autre jour.',
+			'admin.candidatures.erreurs.moyenNonDeclare' => 'La personne n\'a pas déclaré ce moyen. Rien n\'a été fait. Choisissez un autre moyen.',
+			'admin.candidatures.erreurs.moyenNonConfirmable' => 'Ce moyen ne peut pas être confirmé : aucune ligne confirmée du pays de versement ne le couvre. Rien n\'a été fait. Choisissez un autre moyen.',
+			'admin.candidatures.erreurs.responsableInvalide' => 'Cette personne ne peut pas être responsable de cette candidature. Rien n\'a été fait. Choisissez une autre personne.',
+			'admin.candidatures.erreurs.cleReutilisee' => 'Ce geste a déjà servi à une autre action. Fermez cette fenêtre et recommencez.',
+			'admin.candidatures.erreurs.nonConfirme' => 'Il est possible que ce geste ne soit pas parvenu jusqu\'à Rewayah. Réessayez : il ne sera pas fait deux fois.',
+			'admin.candidatures.erreurs.generique' => 'Le geste n\'a pas abouti. Rien n\'est confirmé. Réessayez dans un instant.',
+			'admin.candidatures.erreurs.permission' => 'Vous n\'avez pas le droit de faire ce geste. Signalez-le si cela vous semble anormal.',
+			'admin.candidatures.erreurs.titre' => 'Geste refusé',
+			'admin.candidatures.erreurs.nonConfirmeTitre' => 'Geste non confirmé',
+			'admin.candidatures.retours.admettre' => 'La candidature est en Salle de vérification et d\'entretien.',
+			'admin.candidatures.retours.confirmerMoyen' => 'Le moyen de versement est confirmé.',
+			'admin.candidatures.retours.ecarterMoyen' => 'Le moyen de versement est écarté.',
+			'admin.candidatures.retours.demanderComplement' => 'Le complément est demandé.',
+			'admin.candidatures.retours.cloreComplement' => 'Le complément est clos.',
+			'admin.candidatures.retours.mettreEnPause' => 'La candidature est en pause.',
+			'admin.candidatures.retours.leverPause' => 'La pause est levée.',
+			'admin.candidatures.retours.refuser' => 'La candidature est refusée.',
+			'admin.candidatures.retours.retrait' => 'Le retrait est enregistré.',
+			'admin.candidatures.retours.rouvrir' => 'La candidature est rouverte.',
+			'admin.candidatures.retours.responsable' => 'Le responsable est enregistré.',
+			'admin.candidatures.retours.rejoue' => 'Ce geste avait déjà été fait : rien n\'a été écrit une seconde fois.',
 			'admin.importInscriptions.onglet' => 'Importer',
 			'admin.importInscriptions.titre' => 'Importer les inscriptions',
 			'admin.importInscriptions.sousTitre' => 'Les familles et les enseignants déjà inscrits sont accueillis sans tout ressaisir.',
@@ -39599,6 +41356,8 @@ extension on Traductions {
 			'admin.tableau.attenteAujourdhui' => 'Déposé aujourd\'hui',
 			'admin.tableau.attenteUnJour' => 'En attente depuis 1 jour',
 			'admin.tableau.sousTitre' => 'Vue d\'ensemble de l\'activité et des éléments à traiter.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.tableau.activite.titre' => 'Activité récente',
 			'admin.tableau.activite.voirTout' => 'Voir tout le journal',
 			'admin.tableau.activite.vide' => 'Aucune activité récente.',
@@ -39924,8 +41683,6 @@ extension on Traductions {
 			'admin.groupes.formulaire.genreFemmes' => 'Femmes',
 			'admin.groupes.formulaire.genreGarcons' => 'Garçons',
 			'admin.groupes.formulaire.genreFilles' => 'Filles',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.formulaire.genreIndetermine' => 'Non déterminé',
 			'admin.groupes.formulaire.genreHommesDetail' => 'À choisir pour une classe d\'hommes : seuls les enseignants hommes pourront la prendre.',
 			'admin.groupes.formulaire.genreFemmesDetail' => 'À choisir pour une classe de femmes : seules les enseignantes pourront la prendre.',
@@ -40113,6 +41870,8 @@ extension on Traductions {
 			'admin.regroupements.classesExistantes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} classe est déjà ouverte sur ce créneau : la nouvelle s\'ajoute, aucune n\'est modifiée.', other: '${n} classes sont déjà ouvertes sur ce créneau : la nouvelle s\'ajoute, aucune n\'est modifiée.', ), 
 			'admin.regroupements.liste.rechercheLibelle' => 'Rechercher une demande',
 			'admin.regroupements.liste.rechercheAide' => 'Langue, fuseau ou nom de la classe créée',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regroupements.liste.filtreToutes' => 'Toutes',
 			'admin.regroupements.liste.filtreAFinir' => 'Enseignant à confirmer',
 			'admin.regroupements.liste.filtrePrets' => 'Prêtes',
@@ -40198,6 +41957,8 @@ extension on Traductions {
 			'admin.regles.uniteMinutes' => ({required Object n}) => '${n} min',
 			'admin.regles.uniteSemaines' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} sem.', other: '${n} sem.', ), 
 			'admin.regles.uniteNombre' => ({required Object n}) => '${n}',
+			'admin.regles.classesParEnseignant' => 'Classes au plus par enseignant',
+			'admin.regles.classesParEnseignantDetail' => 'Le nombre de Classes qu\'un enseignant peut tenir en même temps. Une Classe close et un remplacement ponctuel ne comptent pas. Une baisse ne retire aucune Classe déjà tenue. Dans leur questionnaire, les candidats choisissent de 1 jusqu\'à ce nombre.',
 			'admin.fonctionnalites.titre' => 'Fonctionnalités',
 			'admin.fonctionnalites.intro' => 'Les fonctionnalités qui changent le comportement de toute la plateforme.',
 			'admin.fonctionnalites.erreur' => 'Les fonctionnalités n\'ont pas pu être lues. Réessayez dans un instant.',
@@ -40438,8 +42199,6 @@ extension on Traductions {
 			'admin.journal.filtreEvenement' => 'Événement',
 			'admin.journal.filtreActeur' => 'Acteur',
 			'admin.journal.evtAgentJetonEmis' => 'Accès d\'agent IA émis',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.evtAgentJetonRevoque' => 'Accès d\'agent IA révoqué',
 			'admin.journal.evtAgentSessionOuverte' => 'Session d\'agent IA ouverte',
 			'admin.journal.evtObservationControleur' => 'Visite de contrôle commencée',
@@ -40625,6 +42384,8 @@ extension on Traductions {
 			'admin.agents.colonneUsage' => 'Ouvertures',
 			'admin.agents.colonneEtat' => 'État',
 			'admin.agents.parcoursEleve' => 'Élève',
+			_ => null,
+		} ?? switch (path) {
 			'admin.agents.parcoursTuteur' => 'Tuteur',
 			'admin.agents.parcoursEnseignant' => 'Enseignant',
 			'admin.agents.parcoursControleur' => 'Contrôle qualité',
@@ -40952,8 +42713,6 @@ extension on Traductions {
 			'admin.finance.pai.videTitre' => 'Aucun élève pour l\'instant',
 			'admin.finance.pai.videPhrase' => 'Les élèves inscrits apparaîtront ici avec ce qu\'il leur reste à payer.',
 			'admin.finance.pai.feuilleTitre' => ({required Object prenom}) => 'Paiement reçu pour ${prenom}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pai.eleve' => 'Élève',
 			'admin.finance.pai.resteAPayer' => 'Reste à payer',
 			'admin.finance.pai.montantRecu' => ({required Object devise}) => 'Montant reçu, en ${devise}',
@@ -41139,6 +42898,8 @@ extension on Traductions {
 			'admin.fusion.refusAutre' => ({required Object motif}) => 'Le transfert n\'a pas eu lieu : ${motif}. Vérifiez la classe, puis recommencez.',
 			'admin.fusion.transfertNonConfirme' => 'Le transfert n\'est pas confirmé : la réponse du serveur n\'est pas arrivée. Pressez de nouveau : la même demande sera reprise, sans transfert en double.',
 			'admin.fusion.historiqueTitre' => ({required Object deLibelle}) => 'Historique ${deLibelle}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.fusion.historiqueVide' => 'Aucun mouvement',
 			'admin.fusion.historiqueVideDetail' => 'Les fusions et les transferts de cette classe apparaîtront ici.',
 			'admin.fusion.historiqueErreur' => 'L\'historique n\'a pas pu être lu. Réessayez dans un instant.',
@@ -41466,8 +43227,6 @@ extension on Traductions {
 			'admin.bibliotheque.attribution.titre' => 'Attribuer à des classes',
 			'admin.bibliotheque.attribution.intro' => 'Choisissez les classes qui verront cette version publiée. Ce que vous attribuez ici est visible de leurs élèves et de leur enseignant.',
 			'admin.bibliotheque.attribution.classesTitre' => 'Classes',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.attribution.classeServie' => 'Déjà attribuée',
 			'admin.bibliotheque.attribution.classeEpinglee' => 'Épinglée',
 			'admin.bibliotheque.attribution.epingler' => 'Épingler en tête de la bibliothèque de ces classes',
@@ -41653,6 +43412,8 @@ extension on Traductions {
 			'nav.motSymbole' => 'Rewayah',
 			'nav.logoAccueil' => 'Rewayah Academy, accueil',
 			'nav.replier' => 'Replier la navigation',
+			_ => null,
+		} ?? switch (path) {
 			'nav.deplier' => 'Déplier la navigation',
 			'compte.donnees.titre' => 'Mes données',
 			'compte.donnees.sousTitre' => 'Une copie de vos données, ou la suppression de votre compte.',
@@ -41980,8 +43741,6 @@ extension on Traductions {
 			'historique.observation.eleve' => 'Élève',
 			'historique.observation.enseignant' => 'Enseignant',
 			'historique.observation.dureeTotale' => 'Durée totale',
-			_ => null,
-		} ?? switch (path) {
 			'historique.observation.visite' => ({required Object n}) => 'Visite ${n}',
 			'historique.observation.plageOuverte' => ({required Object debut}) => 'Entrée à ${debut}',
 			'historique.observation.terminee' => 'Visite terminée',
@@ -42167,6 +43926,8 @@ extension on Traductions {
 			'tuteur.accueil.travailIndisponible' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
 			'tuteur.accueil.travailIllisible' => 'Le travail à préparer n\'a pas pu être lu.',
 			'tuteur.accueil.rienAPreparer' => 'Rien à préparer pour l\'instant',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.derniereSeance' => 'Dernière séance',
 			'tuteur.accueil.voirHistorique' => 'Voir l\'historique',
 			'tuteur.accueil.detailsSeance' => 'Détails de la séance',
@@ -42494,8 +44255,6 @@ extension on Traductions {
 			'enseignant.demo.intro' => 'Choisissez un écran de Sayyid Ibrahim.',
 			'enseignant.demo.ecrans' => 'Écrans',
 			'enseignant.demo.etats' => 'Situations',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.demo.etatNominal' => 'Journée ordinaire',
 			'enseignant.demo.etatVide' => 'Aucune séance',
 			'enseignant.demo.etatHorsLigne' => 'Hors ligne',
@@ -42681,6 +44440,8 @@ extension on Traductions {
 			'enseignant.cahier.nominaux' => 'Rien à signaler',
 			'enseignant.cahier.curriculumFige' => 'Le niveau et le programme sont ceux de l\'académie : ils ne se modifient pas depuis le cahier de transmission.',
 			'enseignant.cahier.valider' => 'Valider le cahier de transmission',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.validerTout' => 'Tout est conforme, valider',
 			'enseignant.cahier.validerSansConstat' => 'Déposer sans le constat',
 			'enseignant.cahier.retourJournee' => 'Retour à ma journée',
@@ -43008,8 +44769,6 @@ extension on Traductions {
 			'enseignant.revenus.internet' => 'Aide Internet du mois',
 			'enseignant.revenus.internetDetail' => 'Une seule aide par mois, versée à part de la rémunération pédagogique.',
 			'enseignant.revenus.internetAucune' => 'Aucune aide Internet n\'est prévue ce mois-ci.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.revenus.releveSection' => 'Relevé',
 			'enseignant.revenus.releveIndisponibleTitre' => 'Le relevé n\'est pas encore disponible',
 			'enseignant.revenus.releveIndisponiblePhrase' => 'Les mois arrêtés par l\'académie s\'afficheront ici dès que le relevé sera en service. D\'ici là, seule l\'estimation du mois en cours est montrée.',
@@ -43195,6 +44954,8 @@ extension on Traductions {
 			'controleur.echanges.vide' => 'Aucun échange avec l\'administration pour le moment.',
 			'controleur.echanges.contexte' => 'Contexte de la visite, joint automatiquement',
 			'controleur.echanges.cleClasse' => 'Classe',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.echanges.cleDate' => 'Date',
 			'controleur.echanges.cleHeure' => 'Heure',
 			'controleur.echanges.auteurVous' => 'Vous',
@@ -43522,8 +45283,6 @@ extension on Traductions {
 			'tc.realtime.transport.partage_indisponible' => 'Le partage du support n’est pas disponible sur ce serveur. Le cours continue, mais les autres appareils ne suivront pas la page.',
 			'tc.realtime.etat.restauration_impossible' => 'Impossible de retrouver le support en cours. Demandez à l’enseignant de le présenter à nouveau.',
 			'tc.observation.entree.titre' => 'Observer la séance',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.entree.tuteurIntro' => 'Vous pouvez regarder un court moment le cours de votre enfant. Votre micro et votre caméra restent fermés.',
 			'tc.observation.entree.adminIntro' => 'Choisissez votre mode avant d\'entrer. Il ne change plus ensuite.',
 			'tc.observation.entree.controleurIntro' => 'Vous entrez en observation invisible. Aucun micro, aucune caméra.',
@@ -43709,6 +45468,8 @@ extension on Traductions {
 			'tc.parcours.feedback.confiance.tresBien' => 'Tout à fait',
 			'tc.parcours.feedback.merci' => 'Merci.',
 			'tc.parcours.feedback.tendance.titre' => 'Retour des élèves',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.feedback.tendance.sousSeuil' => 'Pas encore assez de retours pour dégager une tendance.',
 			'tc.parcours.feedback.tendance.anonyme' => 'Les retours sont anonymes et agrégés. Ils ne suffisent jamais, seuls, à une décision.',
 			'tc.parcours.signalement.titre' => 'Signaler un besoin',
@@ -44036,8 +45797,6 @@ extension on Traductions {
 			'adulte.reprise.deposerQuestion' => 'Déposer cette demande ?',
 			'adulte.reprise.deposerConsequence' => 'Le titulaire du foyer en sera informé et pourra la refuser. L\'administration examinera ensuite la demande et décidera.',
 			'adulte.reprise.horsLigne' => 'Rien n\'est envoyé. Vous pourrez déposer la demande vous-même quand la connexion sera revenue.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.reprise.depotEchecTitre' => 'La demande n\'a pas été confirmée.',
 			'adulte.reprise.echecPhrase' => 'Vérifiez avant de réessayer.',
 			'adulte.reprise.motif' => 'Motif',
@@ -44223,6 +45982,8 @@ extension on Traductions {
 			'motifs.signalement.technique.camera' => 'La caméra ou le micro n\'a pas fonctionné.',
 			'motifs.signalement.changement.classe' => 'Un changement de classe est à l\'étude.',
 			'motifs.signalement.changement.niveau' => 'Le niveau de la classe ne semble plus adapté.',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.signalement.changement.suite' => 'L\'académie reviendra vers vous pour en parler.',
 			'suiviFamille.titre' => 'Suivi des demandes',
 			'suiviFamille.contexte' => 'Chaque demande avance étape par étape. Vous êtes prévenu à chaque passage.',
@@ -44550,8 +46311,6 @@ extension on Traductions {
 			'com.socle.navigation.demo.titre' => 'Démonstration des communications',
 			'com.socle.navigation.demo.detail' => 'Données fictives, absentes des versions de production.',
 			'com.socle.navigation.demo.choisir' => 'Choisissez un espace à essayer.',
-			_ => null,
-		} ?? switch (path) {
 			'com.messages.entree.titreClasse' => 'Échanger sur cette Classe',
 			'com.messages.entree.titreDossier' => 'Échanger sur ce dossier',
 			'com.messages.entree.titreObjet' => 'Échanger à ce sujet',
@@ -44737,6 +46496,8 @@ extension on Traductions {
 			'com.communaute.sections' => 'Catégories de la Communauté enseignants',
 			'com.communaute.toutes' => 'Toutes',
 			'com.communaute.videTitre' => 'Aucune publication',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.rechercheVideTitre' => 'Aucun résultat',
 			'com.communaute.rechercheVide' => 'Aucune publication ne correspond à votre recherche. Essayez un autre mot.',
 			'com.communaute.videToutes' => 'Aucune publication pour le moment.',
@@ -45064,8 +46825,6 @@ extension on Traductions {
 			'com.studio.demo.f.lienCharte' => 'Charte de l\'équipe',
 			'com.studio.demo.f.brouillon' => 'Samira, je regarde le dossier de la famille Karim ce soir et je te dis demain matin',
 			'com.studio.demo.f.activitePaiement' => 'Paiement de septembre non confirmé pour la famille Haddad',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.f.objetEcheancier' => 'Échéancier de la famille Haddad',
 			'com.studio.demo.f.activiteDossierKarim' => 'Dossier de la famille Karim prêt pour une décision',
 			'com.studio.demo.f.objetDossierKarim' => 'Dossier de la famille Karim',
@@ -45251,6 +47010,8 @@ extension on Traductions {
 			'com.annonces.demo.f.adminStudioReponse' => 'Studio : nouvelle réponse à votre message sur le programme de printemps',
 			'com.annonces.demo.f.adminStudioDecision' => 'Studio : une décision est demandée sur le support de la leçon 4',
 			'com.annonces.demo.f.adminStudioAssigne' => 'Studio : la relecture du support de Tajwid vous est assignée',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demo.f.adminStudioInterne' => 'Annonce interne de l\'équipe Studio : réunion d\'équipe jeudi à 18 h',
 			'com.annonces.demo.f.adminStudioContexte' => 'Studio : un support est prêt pour la Classe An-Nour',
 			'com.annonces.demo.f.annonceNourTitre' => 'Récitation de fin de trimestre devant les familles',
@@ -45578,8 +47339,6 @@ extension on Traductions {
 			'comptable.paiements.colonnes.action' => 'Action',
 			'comptable.paiements.types.enseignant' => 'Enseignant',
 			'comptable.paiements.types.contractuel' => 'Contractuel',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.compteur' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Un paiement', other: '${n} paiements', ), 
 			'comptable.paiements.actions.voir' => 'Voir',
 			'comptable.paiements.actions.payer' => 'Payer',
@@ -45765,6 +47524,8 @@ extension on Traductions {
 			'comptable.encaissements.affectation' => 'Affectation par profil',
 			'comptable.encaissements.affectationAucune' => 'La source n\'a rendu aucune affectation pour cet encaissement.',
 			'comptable.encaissements.rapprochement' => 'Rapprochement',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.rapprochementAucun' => 'Pas encore rapproché',
 			'comptable.encaissements.ouvrirRapprochement' => 'Ouvrir le rapprochement',
 			'comptable.encaissements.confirmeNote' => '« Confirmé » s\'affiche seulement après la confirmation du prestataire.',
@@ -46092,8 +47853,6 @@ extension on Traductions {
 			'comptable.direction.reservePanneau.modeFixeDetail' => 'Une somme précise que vous choisissez.',
 			'comptable.direction.reservePanneau.modeMois' => 'Couverture en mois',
 			'comptable.direction.reservePanneau.modeMoisDetail' => 'Un nombre de mois de charges essentielles.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.reservePanneau.montantCible' => 'Montant cible',
 			'comptable.direction.reservePanneau.montantCibleDetail' => 'La somme que la Réserve stratégique doit atteindre.',
 			'comptable.direction.reservePanneau.nombreMois' => 'Nombre de mois de couverture',
@@ -46279,6 +48038,8 @@ extension on Traductions {
 			'reprisesAdmin.titre' => 'Reprises de foyer',
 			'reprisesAdmin.sousTitre' => 'Demandes d\'un second adulte pour devenir titulaire du foyer. L\'administration décide.',
 			'reprisesAdmin.demandeur' => 'Demandeur',
+			_ => null,
+		} ?? switch (path) {
 			'reprisesAdmin.foyer' => 'Foyer',
 			'reprisesAdmin.deposeeLe' => 'Déposée le',
 			'reprisesAdmin.etat.aExaminer' => 'À examiner',
@@ -46606,8 +48367,6 @@ extension on Traductions {
 			'avis.form.ferme.titre' => 'Ce lien n\'accepte plus d\'avis',
 			'avis.form.ferme.phrase' => ({required Object courriel}) => 'Il est fermé, arrivé à échéance, ou le nombre d\'avis prévu est atteint. Pour donner votre avis, demandez un nouveau lien à la direction : ${courriel}.',
 			'avis.form.envoye.titre' => 'Merci pour votre avis',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.envoye.phrase' => ({required Object courriel}) => 'La direction va le lire avant de le publier. S\'il est accepté, il paraîtra sur le site de Rewayah Academy avec votre nom affiché, votre pays et la date. Pour le faire retirer, écrivez à ${courriel}.',
 			'avis.form.erreurChargement' => 'Le formulaire n\'a pas pu s\'ouvrir. Réessayez dans un moment.',
 			'avis.form.sansDonnees' => 'Le formulaire n\'a pas pu s\'ouvrir',

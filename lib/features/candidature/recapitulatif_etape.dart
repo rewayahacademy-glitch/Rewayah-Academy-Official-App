@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/candidature/creneaux_declares.dart';
+import '../../core/candidature/disponibilites_declarees.dart';
 import '../../core/candidature/modeles_candidature.dart';
 import '../../core/candidature/port_ma_candidature.dart';
 import '../../core/capacites/capacite_indisponible.dart';
@@ -43,6 +43,7 @@ import '../../core/widgets/skeleton.dart';
 import '../consentements/texte_observation.dart' show CaseAccordTexte;
 import 'controleur_parcours.dart';
 import 'coquille_parcours.dart';
+import 'disponibilites_etape.dart' show listeDeJours;
 import 'libelles_parcours.dart';
 import 'modele_questions.dart';
 
@@ -75,6 +76,7 @@ String? resumeReponse(
   ChampQuestionnaire champ,
   Object? reponse, {
   Map<String, String> nomsOperateurs = const <String, String>{},
+  int dureeMinutes = dureeSeanceEnfantMinutes,
 }) {
   final ModeleQuestion? modele = modelesQuestions[champ.code];
   if (modele == null || reponse == null) {
@@ -113,8 +115,11 @@ String? resumeReponse(
       ];
       return noms.isEmpty ? null : noms.join(', ');
     case FormeQuestion.creneaux:
-      final int n = CreneauxDeclares.depuisReponse(reponse).nombrePleines;
-      return n == 0 ? null : t.recrutement.parcours.recap.plages(n: n);
+      final int n = DisponibilitesDeclarees.depuisPlages(
+        reponse,
+        dureeMinutes: dureeMinutes,
+      ).jours.length;
+      return n == 0 ? null : t.recrutement.parcours.recap.jours(n: n);
     case FormeQuestion.fuseau:
       return codes().isEmpty ? null : nomDeLieu(codes().first);
     case FormeQuestion.operateurs:
@@ -123,7 +128,50 @@ String? resumeReponse(
           if (nomsOperateurs[c] case final String nom) nom,
       ];
       return noms.isEmpty ? null : noms.join(', ');
+    case FormeQuestion.classes:
+      final int? n = codes().isEmpty ? null : int.tryParse(codes().first);
+      return n == null ? null : t.recrutement.parcours.classes.libelle(n: n);
+    case FormeQuestion.moyensAccessibles:
+      final List<String> noms = <String>[
+        for (final String c in codes())
+          for (final OptionQuestionnaire o in champ.options)
+            if (o.code == c && o.nom != null) o.nom!,
+      ];
+      return noms.isEmpty ? null : noms.join(', ');
   }
+}
+
+/// Les jours des disponibilites, reunis quand ils ont les memes heures de debut :
+/// « Lundi, mercredi et vendredi » avec « 18 h, 19 h ». Vide pour toute autre
+/// reponse. Chaque groupe est une ligne du recapitulatif, jamais un long texte
+/// a retour a la ligne.
+List<({String jours, String heures})> groupesDeJours(
+  ChampQuestionnaire champ,
+  Object? reponse, {
+  int dureeMinutes = dureeSeanceEnfantMinutes,
+}) {
+  if (modelesQuestions[champ.code]?.forme != FormeQuestion.creneaux) {
+    return const <({String jours, String heures})>[];
+  }
+  final DisponibilitesDeclarees dispo = DisponibilitesDeclarees.depuisPlages(
+    reponse,
+    dureeMinutes: dureeMinutes,
+  );
+  final Map<String, List<int>> parHeures = <String, List<int>>{};
+  for (final int jour in dispo.jours) {
+    (parHeures[libelleHeures(dispo.debuts(jour))] ??= <int>[]).add(jour);
+  }
+  return <({String jours, String heures})>[
+    for (final MapEntry<String, List<int>> e in parHeures.entries)
+      (jours: _nomsDeJours(e.value), heures: e.key),
+  ];
+}
+
+/// « Lundi, mercredi et vendredi » : les noms des jours, le premier avec sa
+/// majuscule.
+String _nomsDeJours(List<int> jours) {
+  final String liste = listeDeJours(jours);
+  return liste.isEmpty ? liste : liste[0].toUpperCase() + liste.substring(1);
 }
 
 /// Les cartes du recapitulatif : un groupe de lignes par theme du
@@ -166,9 +214,8 @@ class CartesRecapitulatif extends ConsumerWidget {
       final String? titre = titreCarte(carte);
       final List<Widget> lignes = <Widget>[];
       for (final ChampQuestionnaire c in questionnaire.champs) {
-        final Widget? ligne = c.carte == carte ? _ligne(c, noms) : null;
-        if (ligne != null) {
-          lignes.add(ligne);
+        if (c.carte == carte) {
+          lignes.addAll(_lignes(c, noms));
         }
       }
       if (titre == null || lignes.isEmpty) {
@@ -214,35 +261,53 @@ class CartesRecapitulatif extends ConsumerWidget {
     );
   }
 
-  Widget? _ligne(ChampQuestionnaire champ, Map<String, String> noms) {
+  List<Widget> _lignes(ChampQuestionnaire champ, Map<String, String> noms) {
     final String? nom = nomCourtQuestion(champ.code);
+    final int duree = dureeDeclareeDe(reponses['publics']);
     final String? valeur = resumeReponse(
       champ,
       reponses[champ.code],
       nomsOperateurs: noms,
+      dureeMinutes: duree,
+    );
+    final List<({String jours, String heures})> groupes = groupesDeJours(
+      champ,
+      reponses[champ.code],
+      dureeMinutes: duree,
     );
     if (nom == null) {
-      return null;
+      return const <Widget>[];
     }
     // Un champ facultatif sans reponse se dit « Aucune » ; un champ requis
     // sans reponse ne s'affiche pas ici (le parcours ne le laisse pas passer).
     final String? affiche =
         valeur ?? (champ.requis ? null : t.recrutement.parcours.aucune);
     if (affiche == null) {
-      return null;
+      return const <Widget>[];
     }
     final ValueChanged<String>? modifier = onModifier;
     // En lecture seule, la ligne dit la reponse et ne se touche pas.
-    if (modifier == null) {
-      return SettingRow(key: ligneKey(champ.code), title: nom, value: affiche);
-    }
-    return SettingRow(
-      key: ligneKey(champ.code),
-      title: nom,
-      value: affiche,
-      lien: true,
-      onPress: () => modifier(champ.code),
-    );
+    VoidCallback? appui() => modifier == null ? null : () => modifier(champ.code);
+    return <Widget>[
+      SettingRow(
+        key: ligneKey(champ.code),
+        title: nom,
+        value: affiche,
+        lien: modifier != null,
+        onPress: appui(),
+      ),
+      // Les disponibilites : une ligne par groupe de jours, ses heures dessous.
+      for (final (int i, ({String jours, String heures}) g) in groupes.indexed)
+        SettingRow(
+          key: ValueKey<String>('recap-${champ.code}-$i'),
+          title: g.jours,
+          description: t.recrutement.parcours.creneaux.debutsDuJour(
+            heures: g.heures,
+          ),
+          lien: modifier != null,
+          onPress: appui(),
+        ),
+    ];
   }
 }
 
@@ -301,6 +366,12 @@ class CarteConditions extends StatelessWidget {
   static Key ligneKey(String public) =>
       ValueKey<String>('conditions-part-$public');
 
+  /// La cle de la clause de continuite.
+  static const Key continuiteKey = ValueKey<String>('conditions-continuite');
+
+  /// La cle de la phrase du moyen de versement valide par Rewayah.
+  static const Key moyenValideKey = ValueKey<String>('conditions-moyen-valide');
+
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
@@ -349,6 +420,23 @@ class CarteConditions extends StatelessWidget {
             ),
           ],
           Ecart.vMd,
+          // Le moyen de versement (SPEC 4.2, CAND-01) : la case ne porte plus
+          // que sur les conditions, qui disent donc aussi par quel moyen la
+          // personne est payee.
+          Text(
+            r.moyenValide,
+            key: moyenValideKey,
+            style: textes.bodyMedium,
+          ),
+          Ecart.vSm,
+          // La continuite (decision du directeur du 22/10/2026) : une clause
+          // des conditions que la personne accepte, pas une question.
+          Text(
+            r.continuite,
+            key: continuiteKey,
+            style: textes.bodyMedium,
+          ),
+          Ecart.vSm,
           Text(r.coordonneesPlusTard, style: textes.bodyMedium),
           Ecart.vSm,
           Text(r.montantsSurDemande, style: textes.bodyMedium),
@@ -428,7 +516,13 @@ class RecapitulatifEtape extends ConsumerStatefulWidget {
     required this.numero,
     required this.total,
     super.key,
+    this.onRenvoi,
   });
+
+  /// Dit a la page la phrase a montrer sur la question que le recapitulatif
+  /// rouvre apres un refus du serveur : ce qui n'allait pas, sans qu'elle
+  /// disparaisse avec le recapitulatif.
+  final ValueChanged<String>? onRenvoi;
 
   /// Le parcours.
   final ParcoursControleur controleur;
@@ -508,7 +602,15 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
       _versLaReponse(e.champs, r.incomplet);
     } on ReponsesInvalides catch (e) {
       _cle = null;
-      _versLaReponse(e.champs, r.reponseInvalide);
+      if (e.plagesQuiSeChevauchent) {
+        // La cause est nommee par le serveur : on le dit, et on rouvre les
+        // disponibilites.
+        _refus(r.plagesChevauchent);
+        _c.modifier('disponibilitesDeclarees');
+        widget.onRenvoi?.call(r.plagesChevauchent);
+      } else {
+        _versLaReponse(e.champs, r.reponseInvalide);
+      }
     } on AccordRemunerationRequis {
       _cle = null;
       _refus(r.accordManquant);
@@ -563,8 +665,10 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
     for (final String code in champs) {
       final String? nom = nomCourtQuestion(code);
       if (nom != null) {
-        _refus(texte(question: nom));
+        final String phrase = texte(question: nom);
+        _refus(phrase);
         _c.modifier(code);
+        widget.onRenvoi?.call(phrase);
         return;
       }
     }

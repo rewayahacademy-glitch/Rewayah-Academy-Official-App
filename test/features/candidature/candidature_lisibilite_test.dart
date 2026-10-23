@@ -8,6 +8,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
+import 'package:rewayah_academy/features/candidature/choix_avec_recherche.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../fixtures/candidature/faux_ma_candidature.dart';
@@ -59,6 +61,71 @@ Future<void> _parcourir(
   await _verifier(tester, 'recapitulatif, conditions');
 }
 
+/// Le parcours par les chemins les moins directs : la recherche de langues en
+/// cartes, deux publics (les deux durees de cours), « memes heures ? » repondu
+/// « non » (les heures jour par jour), puis le recapitulatif.
+Future<void> _parcoursAlternatif(
+  WidgetTester tester, {
+  required Size taille,
+  double echelle = 1,
+  TextDirection? direction,
+}) async {
+  await monterQuestionnaire(
+    tester,
+    port: FauxMaCandidature(),
+    taille: taille,
+    echelle: echelle,
+    direction: direction,
+  );
+  await passerLaPresentation(tester);
+  for (final (String champ, List<String> touches) in parcoursComplet) {
+    await _verifier(tester, 'question $champ');
+    if (champ == 'languesExplication') {
+      // La recherche propose ses resultats en cartes.
+      await toucherCle(tester, 'choix-recherche-autre');
+      await tester.enterText(
+        find.byKey(ChoixAvecRecherche.champKey),
+        direction == TextDirection.rtl ? 'ال' : 'a',
+      );
+      await tester.pumpAndSettle();
+      await _verifier(tester, 'recherche de langues');
+      await toucherCle(tester, 'option-languesExplication-ha');
+      await tester.enterText(find.byKey(ChoixAvecRecherche.champKey), '');
+      await tester.pumpAndSettle();
+      await _verifier(tester, 'recherche de langues, tout le catalogue');
+      // « Revenir aux langues proposees » : a 320 x2 il est hors de la fenetre,
+      // un tap sans defilement le manquait en silence.
+      await tester.ensureVisible(find.byType(LienFleche).first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(LienFleche).first);
+      await tester.pumpAndSettle();
+    }
+    for (final String cle in touches) {
+      await toucherCle(tester, cle);
+    }
+    if (champ == 'publics') {
+      await toucherCle(tester, 'option-publics-adultes');
+    }
+    if (champ == 'jours') {
+      await toucherCle(tester, 'option-jour-6');
+    }
+    if (champ == 'memes') {
+      await toucherCle(tester, 'option-memes-non');
+      await _verifier(tester, 'memes heures, non');
+      await continuer(tester);
+      await _verifier(tester, 'heures jour par jour');
+      await toucherCle(tester, 'heure-3-20');
+      await toucherCle(tester, 'heure-6-9');
+      await _verifier(tester, 'heures jour par jour, choisies');
+      await continuer(tester);
+      continue;
+    }
+    await _verifier(tester, 'question $champ, une reponse donnee');
+    await continuer(tester);
+  }
+  await _verifier(tester, 'recapitulatif');
+}
+
 void main() {
   setUpAll(() async {
     await chargerPolicesDuDepot();
@@ -99,6 +166,31 @@ void main() {
       );
     });
   }
+
+  for (final (String nom, Size taille, double echelle)
+      in <(String, Size, double)>[
+        ('390 x1', const Size(390, 844), 1),
+        ('320 x2', const Size(320, 568), 2),
+        ('1440 x1', const Size(1440, 900), 1),
+      ]) {
+    testWidgets('francais, $nom : le parcours alternatif se lit', (
+      WidgetTester tester,
+    ) async {
+      await _parcoursAlternatif(tester, taille: taille, echelle: echelle);
+    });
+  }
+
+  testWidgets('arabe de droite a gauche, 320 x2 : le parcours alternatif se lit', (
+    WidgetTester tester,
+  ) async {
+    await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
+    await _parcoursAlternatif(
+      tester,
+      taille: const Size(320, 568),
+      echelle: 2,
+      direction: TextDirection.rtl,
+    );
+  });
 
   // Le portail et les etats de la page, aux gabarits les plus durs.
   List<(String, CandidatureDossier)> etatsPortail(AppLocale langue) =>

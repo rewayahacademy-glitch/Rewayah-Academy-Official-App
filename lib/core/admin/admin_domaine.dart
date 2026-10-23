@@ -270,10 +270,12 @@ List<({String libelle, String chemin})> ongletsPersonnes() =>
     <({String libelle, String chemin})>[
       (libelle: t.dossiers.titre, chemin: Routes.adminPersonnesDossiers),
       (libelle: t.admin.comptes.titre, chemin: Routes.adminPersonnesComptes),
-      // RECRUT-ECRANS : l'invitation des enseignants, avant leur dossier.
+      // ADM-20 : la file des candidatures prend le rang de l'onglet Invitations
+      // (DEC:27, pas de septieme onglet). La page des invitations reste
+      // atteignable par un lien de la file (CAND-F01).
       (
-        libelle: t.recrutement.invitations.onglet,
-        chemin: Routes.adminPersonnesInvitations,
+        libelle: t.admin.candidatures.titre,
+        chemin: Routes.adminPersonnesCandidatures,
       ),
       // BACK-FRONT-REPRISE-1 : la file des reprises de foyer.
       (

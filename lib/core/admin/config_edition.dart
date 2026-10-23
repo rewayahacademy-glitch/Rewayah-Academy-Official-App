@@ -80,6 +80,13 @@ reglagesEntiersProposes = <String, ReglageEntierPropose>{
   'max_concurrent_sessions_per_profile': ReglageEntierPropose(
     proposees: <int>[1, 2],
   ),
+  // Defaut 3 (decision du directeur du 22/10/2026). Plafond 80 : source
+  // ecrite, le declencheur `app_config_classes_max` refuse au-dela
+  // (`20261022000200_classes_plafond_par_enseignant.sql`).
+  'enseignant.classes_max': ReglageEntierPropose(
+    proposees: <int>[1, 2, 3, 4, 5, 6],
+    max: 80,
+  ),
   // Defaut 2 (0001), 7 (0017) ; 5 et 6 : doc 07 (capacites + enseignant).
   'max_participants_per_session': ReglageEntierPropose(
     proposees: <int>[2, 5, 6, 7],

@@ -23,6 +23,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/capacites/capacite_indisponible.dart';
+import '../../../core/capacites/port_export_rapports.dart';
 import '../../../core/capacites/port_obligations_payables.dart';
 import '../../../core/comptable/navigation_comptable.dart';
 import '../../../core/comptable/statuts_comptable.dart';
@@ -32,6 +33,7 @@ import '../../../core/router/routes.dart';
 import '../../../core/theme/app_gabarit.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/widgets/barre_selection.dart';
 import '../../../core/widgets/bascule_montants.dart';
 import '../../../core/widgets/bloc_asynchrone.dart';
 import '../../../core/widgets/data_collection.dart';
@@ -45,7 +47,7 @@ import '../../../core/widgets/pile_cartes.dart';
 import '../../../core/widgets/rangee_filtres.dart';
 import '../../../core/widgets/skeleton.dart';
 import '../../../core/widgets/sous_navigation_domaine.dart';
-import 'barre_selection.dart';
+import '../graphiques/action_export.dart';
 import 'confirmation/confirmation_payout.dart';
 import 'ligne_obligation.dart';
 import 'paiements_donnees.dart';
@@ -270,11 +272,22 @@ class _PaiementsAEffectuerPageState
       actions: _selection.isEmpty
           ? null
           : BarreSelection(
-              nombre: _selection.length,
-              identifiants: _selection.toList(),
-              horsLigne: horsLigne,
-              onPayer: retenues.isEmpty ? null : () => _payer(retenues),
-              onVider: () => setState(_selection.clear),
+              titre: p.selection(n: _selection.length),
+              phrase: horsLigne ? p.horsLigne : p.selectionPhrase,
+              libelleRelacher: p.actions.viderSelection,
+              onRelacher: () => setState(_selection.clear),
+              // COMPTA-GRAPH-1 : l'export de la selection, par un port ; sans
+              // capacite, une phrase le dit a la place de l'action.
+              avantActions: ActionExport(
+                perimetre: PerimetreExport.selection,
+                identifiants: _selection.toList(),
+              ),
+              // Hors ligne, ou sans obligation retenue : l'action n'est pas
+              // rendue, la phrase dit pourquoi.
+              libelleAction: p.actions.payerSelection,
+              onAction: retenues.isEmpty || horsLigne
+                  ? null
+                  : () => _payer(retenues),
             ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

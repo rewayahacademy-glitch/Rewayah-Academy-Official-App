@@ -75,6 +75,57 @@ catalogue, et aucun ne s'implémente avant sa fiche.
 | `mesEntretiens` | `page` (≥ 1) | les seuls entretiens où l'appelant est désigné | - | `CAND-Q07`, `CAND-Q19` |
 | `lireEntretien` | `entretienId` | réponses utiles à l'entretien, date, fuseaux ; jamais le téléphone, la pièce ni son état, ni une autre candidature | `HorsPortee` | `CAND-Q07`, `CAND-Q19` |
 
+**Écrit le 22/10/2026 pour `ADM-20` : `capacites` et `lister` seulement**
+(`lib/core/candidature/port_candidatures_direction.dart`, adaptateur
+`candidatures_direction_supabase.dart` sur les RPC `capacites_candidatures` et
+`lister_candidatures`, double `test/fixtures/candidature/faux_candidatures_direction.dart`). Les
+autres méthodes (`lire`, `lireContact`, `historique`, `geste`, lots, entretiens) s'ajoutent avec
+l'écran qui les emploie.
+
+- `FiltreCandidatures` n'a que les axes que le serveur filtre : recherche, étape, état, issue,
+  pause, versement, pays de résidence (une clé inconnue est refusée, `22023`). `TriCandidatures` :
+  activité, réception, nom. Pages de 50, fixées par le serveur.
+- `CapacitesCandidatures` porte aussi `genreLecteurConnu` et les gestes rendus par CAND-L2A2
+  (`gestes`, une clé absente vaut faux). `PageCandidatures.compteursAlertes` : un compteur que le
+  serveur ne sert pas encore reste `null` (« Disponible au branchement serveur »).
+- La recherche part normalisée (`FiltreCandidatures.rechercheEnvoyee`) : les traits d'union
+  insécables et les tirets reviennent au trait d'union de la donnée, 200 caractères au plus (le
+  serveur refuse davantage, `22023`).
+- Refus : `42501` « genre du lecteur inconnu » devient `GenreLecteurInconnu`, tout autre `42501`
+  `PermissionInsuffisante` ; fonction absente (`PGRST202`, `42883`) :
+  `CapaciteIndisponible('CAND-BR-02')`. Un port absent rend la même capacité indisponible.
+
+**Écrit le 23/10/2026 pour `ADM-21` : `lire`, `lireContact`, `historique`, `geste`,
+`responsablesPossibles`, `moyensConfirmes`**
+(mêmes fichiers ; modèles `lib/core/candidature/modeles_candidature_detail.dart`, gestes et refus
+`lib/core/candidature/gestes_candidature.dart`). `lire` rend un `DetailCandidature` (la ligne, sa
+`version`, la provenance, les messages choisis, la cause d'une restriction, les réponses ;
+`controles` et `piece` restent `null` tant que le serveur ne les sert pas) ; `lireContact` est
+journalisé côté serveur ; `historique` pagine par curseur et rend l'auteur par sa catégorie.
+
+- `geste` prend une `DemandeGeste` (un constructeur nommé par geste, avec `versionAttendue` et
+  `cleIdempotence`) et rend un `ResultatGeste` (l'état relu, `rejoue`). Une RPC par geste
+  (`parametresDuGeste`). **Les refus métier sont rendus dans le JSON** (`{"erreur": …}`), jamais
+  levés : le port les lève en `RefusGeste` typés (`ConflitGeste`, `GesteInterdit`,
+  `ControlesNonSatisfaits`, `MotifRequis`, `ModeleRequis`, `ModeleInconnu`, `ElementsRequis`,
+  `ElementsInvalides`, `AucunComplement`, `RepriseInvalide`, `DateDemandeInvalide`,
+  `MoyenNonConfirmable`, `MoyenNonDeclare`, `ResponsableInvalide`, `CleReutilisee`) ; sans réponse :
+  `GesteNonConfirme`, qui garde la clé pour être rejouée. `CandidatureIntrouvable` et
+  `CandidatureHorsPortee` restent deux refus distincts, en lecture comme en geste.
+- `demanderComplement` : le serveur exige un `motif` non vide (`motif_requis`, transitions 7 et 23) ;
+  l'écran ne le fait pas saisir (« aucun texte libre ») et l'envoie déduit de la liste choisie (les
+  noms des éléments). La clé reste celle du geste ; `cloreComplement` garde un motif saisi.
+- Les jours d'un geste (`repriseLe`, `demandeRecueLe`) sont des jours UTC : le serveur les compare au
+  jour UTC courant (`date_reprise_invalide`, `date_demande_invalide`).
+- Fonction absente : `CapaciteIndisponible('CAND-BR-03')` en lecture, `'CAND-BR-04'` pour les gestes
+  et `'CAND-BR-07'` pour l'historique.
+- `responsablesPossibles` répond toujours `CapaciteIndisponible('CAND-BR-04')` : le serveur n'a pas
+  de RPC pour la liste. `moyensConfirmes(pays)` lit `options_paiement_confirmees`.
+- La référence `CAND-…` d'une adresse est résolue en identifiant par la recherche exacte de la file
+  (`identifiantDeReference`) ; la file passe l'identifiant à l'ouverture pour s'en dispenser.
+- Le serveur ne sert ni le côté (femmes, hommes) d'une candidature, ni le texte des modèles de message
+  (L5) : l'écran ne les devine pas.
+
 **`Geste`** : `inviter`, `demanderComplement`, `admettreVerifications`,
 `confirmerMoyenPaiement`, `infirmerMoyenPaiement`, `consignerPrevenu`,
 `mettreEnPause` (`repriseLe?`), `leverPause`, `noterIndisponibilite` (`jusquAu?`),

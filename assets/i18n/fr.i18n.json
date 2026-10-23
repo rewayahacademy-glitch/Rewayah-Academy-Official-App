@@ -2099,12 +2099,14 @@
       "envoyeeLe": "Envoyée le {date}.",
       "etatVersement": "Moyen de versement\u00a0: {etat}",
       "retourDossier": "Retour à mon dossier",
-      "complementCarte": "L'académie vous demande de compléter cette partie."
+      "complementCarte": "L'académie vous demande de compléter cette partie.",
+      "moyenValide": "Vous recevez votre rémunération par un moyen validé par Rewayah.",
+      "continuite": "En acceptant ces conditions, vous vous engagez à tenir votre Classe aux mêmes jours et aux mêmes heures, chaque semaine.",
+      "plagesChevauchent": "Vos disponibilités se chevauchent un même jour. Revoyez-les, puis envoyez de nouveau votre candidature."
     },
     "parcours": {
       "choisir": "Choisissez une réponse pour continuer.",
       "choisirPlusieurs": "Choisissez au moins une réponse pour continuer.",
-      "choisirPlage": "Choisissez au moins une plage pour continuer.",
       "trop(param=max)": {
         "one": "Choisissez une seule réponse.",
         "other": "Choisissez {max} réponses au plus."
@@ -2120,7 +2122,7 @@
           "intro": "Avant les questions, voici ce que vous devez savoir de nous.",
           "academie": {
             "titre": "Une académie du Coran en ligne",
-            "texte": "Rewayah Academy enseigne le Coran à distance, en classes stables, avec un enseignant attitré. Elle enseigne depuis le 1er mai 2024."
+            "texte": "Rewayah Academy enseigne le Coran à distance, en Classes stables, avec un enseignant attitré. Elle enseigne depuis le 1er mai 2024."
           },
           "liberte": {
             "titre": "Vous restez libre",
@@ -2137,14 +2139,14 @@
         },
         "p2": {
           "titre": "Ce que fait un enseignant",
-          "intro": "Vous enseignez en visio, dans une classe qui reste la même.",
+          "intro": "Vous enseignez en visio, dans une Classe qui reste la même.",
           "classe": {
-            "titre": "Une classe stable",
-            "texte": "Vous gardez la même classe dans la durée, avec les mêmes élèves."
+            "titre": "Une Classe stable",
+            "texte": "Vous gardez la même Classe dans la durée, avec les mêmes élèves."
           },
           "horaires": {
             "titre": "Les mêmes horaires chaque semaine",
-            "texte": "Votre classe se réunit aux mêmes jours et aux mêmes heures, trois fois par semaine."
+            "texte": "Votre Classe se réunit aux mêmes jours et aux mêmes heures, trois fois par semaine."
           },
           "visio": {
             "titre": "En visio, dans l'application",
@@ -2173,19 +2175,20 @@
         }
       },
       "langues": {
-        "poular": "Poular",
+        "poular": "Poular (peul, fulfulde)",
+        "man": "Malinké",
+        "sus": "Soussou",
+        "sw": "Swahili",
+        "ha": "Haoussa",
+        "wo": "Wolof",
+        "bm": "Bambara",
+        "snk": "Soninké",
+        "mnk": "Mandinka",
         "francais": "Français",
         "english": "Anglais",
         "ar": "Arabe",
-        "ff": "Peul (fulfulde)",
-        "ha": "Haoussa",
-        "wo": "Wolof",
         "ps": "Pachto",
         "ur": "Ourdou",
-        "snk": "Soninké",
-        "bm": "Bambara",
-        "sw": "Swahili",
-        "mnk": "Mandinka",
         "om": "Oromo",
         "am": "Amharique",
         "yo": "Yoruba",
@@ -2199,9 +2202,11 @@
         "de": "Allemand",
         "pt": "Portugais",
         "ru": "Russe",
-        "dansReferentiel": "Une langue dans laquelle Rewayah donne des cours.",
-        "horsReferentiel": "Langue pas encore proposée par Rewayah",
         "autre": "Une autre langue",
+        "autreDescription": "Une langue qui n'est pas dans la liste. La direction la verra.",
+        "dansReferentiel": "Rewayah donne déjà des cours dans cette langue.",
+        "horsReferentiel": "Rewayah ne donne pas encore de cours dans cette langue. Vous pouvez la choisir\u00a0: la direction le voit.",
+        "chercher": "Chercher une autre langue",
         "recherche": "Rechercher une langue",
         "rechercheAide": "Nom de la langue",
         "aucune": "Aucune langue ne correspond.",
@@ -2252,21 +2257,37 @@
         "changerExplication": "Utile si vous voyagez ou si l'heure de votre appareil n'est pas la bonne."
       },
       "creneaux": {
-        "plage0": "Nuit",
-        "plage1": "Aube",
-        "plage2": "Matin",
-        "plage3": "Midi",
-        "plage4": "Après-midi",
-        "plage5": "Soir",
-        "jourCellule": "{jour}, {plage}",
-        "choisies(param=n)": {
-          "zero": "Aucune plage choisie",
-          "one": "Une plage choisie",
-          "other": "{n} plages choisies"
-        },
+        "heure": "{h} h",
+        "heureMinutes": "{h} h {m}",
+        "intervalle": "de {debut} à {fin}",
         "fuseauRappel": "Heures de {lieu}.",
-        "partielle": "En partie",
-        "choisie": "Choisie"
+        "moments": {
+          "nuit": "La nuit, de 0\u00a0h à 5\u00a0h",
+          "matin": "Le matin, de 6\u00a0h à 11\u00a0h",
+          "apresMidi": "L'après-midi, de 12\u00a0h à 17\u00a0h",
+          "soir": "Le soir, de 18\u00a0h à 23\u00a0h"
+        },
+        "raccourcis": "Raccourcis",
+        "raccourciLmv": "Lundi, mercredi, vendredi",
+        "raccourciMjs": "Mardi, jeudi, samedi",
+        "raccourciFinDeSemaine": "Fin de semaine",
+        "raccourcisAide": "Un raccourci choisit plusieurs jours d'un coup. Vous pouvez ensuite en ajouter ou en retirer.",
+        "moinsDeTrois(param=n)": {
+          "one": "Vous avez choisi un seul jour. Une Classe se tient trois fois par semaine, aux mêmes jours\u00a0: pensez à en choisir au moins trois.",
+          "other": "Vous avez choisi {n} jours. Une Classe se tient trois fois par semaine, aux mêmes jours\u00a0: pensez à en choisir au moins trois."
+        },
+        "troisSeances": "Une Classe se tient trois fois par semaine, aux mêmes jours et à la même heure.",
+        "durees": "Un cours d'enfants dure {enfants}, un cours d'adultes dure {adultes}.",
+        "enseigneEnfants": "Cours d'enfants ({duree})\u00a0: vous enseignez {intervalles}.",
+        "enseigneAdultes": "Cours d'adultes ({duree})\u00a0: vous enseignez {intervalles}.",
+        "heuresChoisies(param=n)": {
+          "zero": "Aucune heure de début choisie",
+          "one": "Une heure de début choisie",
+          "other": "{n} heures de début choisies"
+        },
+        "debutsDuJour": "Débuts possibles\u00a0: {heures}.",
+        "separateurListe": ", ",
+        "etListe": "{debut} et {dernier}"
       },
       "versement": {
         "virementSeul": "Dans votre pays, l'académie a confirmé le virement bancaire. Aucun moyen de paiement sur téléphone n'est proposé pour l'instant.",
@@ -2279,56 +2300,50 @@
       "recap": {
         "titre": "Relisez votre candidature",
         "explication": "Touchez une réponse pour la changer. Rien n'est envoyé avant le bouton «\u00a0Envoyer ma candidature\u00a0».",
-        "plages(param=n)": {
-          "one": "Une plage par semaine",
-          "other": "{n} plages par semaine"
+        "jours(param=n)": {
+          "one": "Un jour par semaine",
+          "other": "{n} jours par semaine"
         }
       },
       "q": {
         "langueMaternelle": {
           "titre": "Quelle est votre langue maternelle\u00a0?",
-          "explication": "C'est la langue que vous parlez depuis l'enfance.",
+          "explication": "C'est la langue que vous parlez depuis l'enfance. Cette question est facultative\u00a0: vous pouvez continuer sans répondre.",
           "court": "Langue maternelle"
         },
         "languesExplication": {
           "titre": "Dans quelles langues pouvez-vous expliquer et corriger\u00a0?",
-          "explication": "Choisissez toutes les langues dans lesquelles vous savez expliquer une règle à un élève et corriger ses erreurs. Un élève suit sa classe dans la langue choisie à l'inscription\u00a0: ces langues aident la direction à voir dans quelles classes vous pourriez enseigner.",
+          "explication": "Choisissez toutes les langues dans lesquelles vous savez expliquer une règle à un élève et corriger ses erreurs, sans limite de nombre. L'élève ou son parent choisit sa langue à l'inscription, et l'académie lui confie un enseignant qui la parle\u00a0: plus vous en parlez, plus vous pouvez enseigner. L'arabe n'est pas une langue de cours\u00a0: il n'est pas dans cette liste.",
           "court": "Langues d'explication"
         },
         "niveauMemorisationDeclare": {
-          "titre": "Quel est votre niveau de mémorisation\u00a0?",
-          "explication": "Vous le déclarez ici.",
+          "titre": "Combien du Coran avez-vous mémorisé\u00a0?",
+          "explication": "Vous le déclarez ici. Avoir mémorisé et avoir une ijaza sont deux choses différentes\u00a0: l'ijaza vous est demandée un peu plus loin.",
           "court": "Niveau de mémorisation",
           "options": {
+            "aucune": {
+              "libelle": "Je n'ai mémorisé aucun juz entier",
+              "description": "Vous connaissez peut-être quelques sourates, mais pas un juz entier.",
+              "explication": "Ce niveau est constaté pendant l'entretien.",
+              "exemple": "vous récitez de mémoire quelques sourates courtes, mais pas un juz entier."
+            },
+            "moins_10_juz": {
+              "libelle": "J'ai mémorisé moins de 10 juz",
+              "description": "De un juz entier à neuf juz, sur les trente du Coran.",
+              "explication": "Ce niveau est constaté pendant l'entretien.",
+              "exemple": "vous avez mémorisé cinq juz sur trente."
+            },
+            "de_10_a_29_juz": {
+              "libelle": "J'ai mémorisé de 10 à 29 juz",
+              "description": "Du tiers du Coran jusqu'à presque tout le Coran.",
+              "explication": "Ce niveau est constaté pendant l'entretien.",
+              "exemple": "vous avez mémorisé vingt juz sur trente."
+            },
             "coran_entier": {
               "libelle": "J'ai mémorisé tout le Coran",
               "description": "Les 114 sourates, de la première à la dernière, par cœur.",
               "explication": "Ce niveau est constaté pendant l'entretien.",
               "exemple": "vous récitez Al-Baqara, puis An-Nâs, sans ouvrir le livre."
-            },
-            "ijaza_lecture_enseignement": {
-              "libelle": "J'ai une ijaza de lecture et d'enseignement",
-              "description": "Une autorisation écrite, donnée par un maître, de lire et d'enseigner le Coran.",
-              "explication": "Elle se montre pendant l'entretien\u00a0: vous n'avez rien à envoyer maintenant.",
-              "exemple": "un document écrit, remis par votre maître, à votre nom."
-            },
-            "plus_de_10_juz": {
-              "libelle": "J'ai mémorisé plus de dix juz",
-              "description": "Plus du tiers du Coran, qui compte trente juz.",
-              "explication": "Ce niveau est constaté pendant l'entretien.",
-              "exemple": "vous avez mémorisé douze juz sur trente."
-            },
-            "moins_de_10_juz": {
-              "libelle": "J'ai mémorisé moins de dix juz",
-              "description": "Moins du tiers du Coran, qui compte trente juz.",
-              "explication": "Ce niveau est constaté pendant l'entretien.",
-              "exemple": "vous avez mémorisé cinq juz sur trente."
-            },
-            "bonne_lecture_sans_memorisation": {
-              "libelle": "Je n'ai pas mémorisé, mais je lis bien avec le tajwid",
-              "description": "Vous lisez le Coran correctement, en appliquant les règles du tajwid, sans le réciter de mémoire.",
-              "explication": "Votre lecture est constatée pendant l'entretien.",
-              "exemple": "vous lisez une page du Coran sans erreur, mais vous ne la récitez pas de mémoire."
             }
           }
         },
@@ -2445,8 +2460,8 @@
           }
         },
         "ijazaPresentable": {
-          "titre": "Avez-vous une ijaza à présenter\u00a0?",
-          "explication": "Une ijaza est une autorisation écrite, donnée par un maître, de transmettre le Coran.",
+          "titre": "Avez-vous une ijaza\u00a0?",
+          "explication": "Une ijaza est une autorisation écrite, donnée par un maître, de transmettre le Coran. Qui a une ijaza a mémorisé, mais qui a mémorisé n'a pas forcément une ijaza\u00a0: c'est une question à part.",
           "court": "Ijaza",
           "options": {
             "oui": {
@@ -2455,9 +2470,15 @@
               "explication": "Elle se montre pendant l'entretien\u00a0: vous n'avez rien à envoyer maintenant.",
               "exemple": "un document signé par votre maître, que vous gardez chez vous."
             },
+            "pret_test": {
+              "libelle": "Pas d'ijaza, mais je peux passer un test",
+              "description": "Vous n'avez pas d'ijaza à présenter, mais vous acceptez de passer un test.",
+              "explication": "L'académie en reparlera avec vous pendant l'entretien.",
+              "exemple": "vous avez appris auprès d'un maître sans document écrit, et vous acceptez d'être testé."
+            },
             "non": {
-              "libelle": "Non, je n'en ai pas à présenter",
-              "description": "Vous n'avez pas d'ijaza, ou pas de quoi la présenter.",
+              "libelle": "Non, je n'ai pas d'ijaza",
+              "description": "Vous n'avez pas d'ijaza, et vous ne comptez pas passer de test pour l'instant.",
               "explication": "Votre niveau est alors constaté pendant l'entretien.",
               "exemple": "vous avez appris auprès d'un maître, sans recevoir de document écrit."
             }
@@ -2488,45 +2509,52 @@
           "court": "Fuseau horaire"
         },
         "disponibilitesDeclarees": {
-          "titre": "Quand êtes-vous disponible\u00a0?",
-          "explication": "Touchez les plages où vous pouvez enseigner, chaque semaine. Une plage dure quatre heures.",
-          "court": "Disponibilités"
-        },
-        "heuresParSemaine": {
-          "titre": "Combien d'heures par semaine pouvez-vous enseigner\u00a0?",
-          "explication": "Une classe d'enfants compte trois séances d'une heure par semaine, soit 3 heures. Une classe d'adultes compte trois séances d'une heure et demie, soit 4 heures et demie.",
-          "court": "Heures par semaine",
-          "options": {
-            "moins_de_3": {
-              "libelle": "Moins de 3 heures",
-              "description": "Moins que le temps d'une classe entière.",
-              "exemple": "deux séances d'une heure par semaine."
+          "titre": "Quels jours pouvez-vous enseigner\u00a0?",
+          "explication": "Une Classe se tient trois fois par semaine, aux mêmes jours et à la même heure. Touchez les jours où vous pouvez enseigner, ou prenez un raccourci.",
+          "court": "Disponibilités",
+          "heures": {
+            "titre": "À quelle heure pouvez-vous commencer, le {jour}\u00a0?",
+            "explication": "Choisissez toutes les heures auxquelles vous pouvez commencer un cours. La fin du cours se calcule pour vous.",
+            "suite": "Vous direz ensuite si c'est pareil les autres jours."
+          },
+          "memes": {
+            "titre": "Ce sont les mêmes heures pour tous ces jours\u00a0?",
+            "explication": "Vous avez choisi {jours}. Le {premier}, vous commencez à {heures}.",
+            "oui": {
+              "libelle": "Oui, les mêmes heures",
+              "description": "Les heures du {premier} valent aussi pour {autres}.",
+              "explication": "Vous pourrez changer un jour avant d'envoyer votre candidature.",
+              "exemple": "vous pouvez commencer à 18\u00a0h le lundi, le mercredi et le vendredi."
             },
-            "de_3_a_5": {
-              "libelle": "De 3 à 5 heures",
-              "description": "Le temps d'une classe.",
-              "exemple": "une classe d'enfants, trois séances d'une heure, soit 3 heures par semaine."
-            },
-            "de_6_a_10": {
-              "libelle": "De 6 à 10 heures",
-              "description": "Le temps de deux classes.",
-              "exemple": "deux classes d'adultes, six séances d'une heure et demie, soit 9 heures par semaine."
-            },
-            "plus_de_10": {
-              "libelle": "Plus de 10 heures",
-              "description": "Le temps de plusieurs classes.",
-              "exemple": "trois classes d'adultes, neuf séances d'une heure et demie, soit 13 heures et demie par semaine."
+            "non": {
+              "libelle": "Non, jour par jour",
+              "description": "Vous réglez les heures de chaque jour, l'un après l'autre.",
+              "explication": "Les heures déjà choisies restent\u00a0: vous les ajustez.",
+              "exemple": "vous commencez à 18\u00a0h le lundi, mais à 20\u00a0h le mercredi."
             }
+          },
+          "parJour": {
+            "titre": "Réglez les heures, jour par jour",
+            "explication": "Chaque jour reprend les heures déjà choisies. Ajoutez ou retirez des heures là où ce n'est pas pareil."
+          },
+          "semaine": {
+            "titre": "Votre semaine",
+            "explication": "Voici quand vous pouvez enseigner, à l'heure de chez vous. Relisez-la, puis continuez."
           }
+        },
+        "classesSouhaitees": {
+          "titre": "Combien de Classes voulez-vous tenir\u00a0?",
+          "explication": "Une Classe, ce sont des élèves qui se retrouvent trois fois par semaine, aux mêmes jours et à la même heure, avec le même enseignant. C'est un souhait\u00a0: l'académie décide des Classes qu'elle vous confie.",
+          "court": "Classes souhaitées"
         },
         "debutPossible": {
           "titre": "Quand pouvez-vous commencer\u00a0?",
-          "explication": "Cette date aide la direction à savoir quand vous proposer une classe.",
+          "explication": "Cette date aide la direction à savoir quand vous proposer une Classe.",
           "court": "Date de début",
           "options": {
             "immediat": {
               "libelle": "Dès maintenant",
-              "description": "Vous pouvez commencer dès qu'une classe vous est confiée.",
+              "description": "Vous pouvez commencer dès qu'une Classe vous est confiée.",
               "exemple": "aucun engagement ne vous retient ce mois-ci."
             },
             "mois_prochain": {
@@ -2549,20 +2577,32 @@
         },
         "publics": {
           "titre": "Quels élèves pouvez-vous enseigner\u00a0?",
-          "explication": "Choisissez les élèves auxquels vous pouvez enseigner. Vous pouvez choisir les deux.",
+          "explication": "Choisissez les tranches d'âge auxquelles vous êtes à l'aise d'enseigner. Il n'y a pas de mauvaise réponse\u00a0: vous pouvez en choisir une seule, ou plusieurs.",
           "court": "Publics",
           "options": {
-            "enfant": {
-              "libelle": "Des enfants (6 à 17 ans)",
-              "description": "Des classes de 3 à 5 enfants.",
-              "explication": "Trois séances d'une heure par semaine.",
-              "exemple": "une classe de quatre enfants de huit ans, trois fois par semaine."
+            "o_6_9": {
+              "libelle": "Des enfants de 6 à 9 ans",
+              "description": "Ils commencent par le livre de lecture de Rewayah, lettre par lettre, jusqu'à la chadda. Viennent ensuite les premières sourates courtes, les paroles de la prière et les ablutions.",
+              "explication": "Des Classes de 5 enfants au plus (4 pour des débutants), trois séances d'une heure par semaine. Les ablutions et la prière se montrent en pratique, avec des illustrations.",
+              "exemple": "une Classe d'enfants de huit ans, le lundi, le mercredi et le vendredi."
             },
-            "adulte": {
+            "o_10_13": {
+              "libelle": "Des enfants de 10 à 13 ans",
+              "description": "Même départ avec le livre de lecture, et Al-Fatiha dès la première semaine, parce qu'à cet âge l'enfant doit prier.",
+              "explication": "Des Classes de 5 enfants au plus (4 pour des débutants), trois séances d'une heure par semaine.",
+              "exemple": "une Classe d'élèves de douze ans, trois fois par semaine."
+            },
+            "o_14_17": {
+              "libelle": "Des adolescents de 14 à 17 ans",
+              "description": "Le même contenu que pour les 10 à 13 ans\u00a0: le livre de lecture, et Al-Fatiha dès la première semaine.",
+              "explication": "Des Classes de 5 adolescents au plus (4 pour des débutants), trois séances d'une heure par semaine.",
+              "exemple": "une Classe d'élèves de seize ans, trois fois par semaine."
+            },
+            "adultes": {
               "libelle": "Des adultes (18 ans et plus)",
-              "description": "Des classes de 3 à 6 adultes.",
-              "explication": "Trois séances d'une heure et demie par semaine. Les classes d'adultes sont séparées\u00a0: des femmes avec des femmes, des hommes avec des hommes.",
-              "exemple": "une classe de cinq femmes, ou de cinq hommes, trois fois par semaine."
+              "description": "Les adultes apprennent d'abord à lire avec le livre de Rewayah. Après les bases, l'élève choisit de lire tout le Coran ou de le mémoriser, sur le conseil de l'enseignant.",
+              "explication": "Des Classes de 6 adultes au plus (4 pour des débutants), trois séances d'une heure et demie par semaine. Les Classes d'adultes sont séparées\u00a0: des femmes avec des femmes, des hommes avec des hommes.",
+              "exemple": "une Classe de femmes, ou une Classe d'hommes, trois fois par semaine."
             }
           }
         },
@@ -2599,8 +2639,42 @@
           "titre": "Quels moyens de paiement sur téléphone utilisez-vous\u00a0?",
           "explication": "Voici les moyens que l'académie a confirmés dans votre pays. Choisissez ceux que vous utilisez, s'il y en a.",
           "court": "Moyens de paiement sur téléphone"
+        },
+        "moyensAccessibles": {
+          "titre": "Quels moyens de paiement sont courants là où vous vivez\u00a0?",
+          "explication": "Voici les moyens que l'académie connaît. Choisissez ceux qui sont courants dans votre pays, s'il y en a.",
+          "court": "Moyens de paiement du pays"
         }
-      }
+      },
+      "classes": {
+        "libelle(param=n)": {
+          "one": "{n} Classe",
+          "other": "{n} Classes"
+        },
+        "seances(param=n)": {
+          "one": "{n} séance par semaine.",
+          "other": "{n} séances par semaine."
+        },
+        "heuresEnfants": "Soit {heures} par semaine avec des enfants.",
+        "heuresAdultes": "Soit {heures} par semaine avec des adultes.",
+        "heuresLesDeux": "Soit {enfants} par semaine avec des enfants, ou {adultes} avec des adultes.",
+        "explication": "Chaque Classe a son propre horaire, qu'elle garde chaque semaine.",
+        "exemple1": "le lundi, le mercredi et le vendredi à 18\u00a0h.",
+        "exemple2": "le lundi, le mercredi et le vendredi à 18\u00a0h, puis le mardi, le jeudi et le samedi à 19\u00a0h.",
+        "exemplePlusieurs(param=n)": {
+          "one": "{n} Classe, avec ses jours et son heure.",
+          "other": "{n} Classes, chacune avec ses jours et son heure."
+        }
+      },
+      "moyens": {
+        "mobile": "Paiement sur téléphone",
+        "virement": "Virement bancaire",
+        "explication": "Choisissez-le s'il est courant là où vous vivez.",
+        "nonElimine": "Cette question est facultative et n'élimine personne\u00a0: votre candidature ne dépend pas de votre réponse. Elle aide l'académie à connaître les moyens utilisés là où vous vivez."
+      },
+      "choisirJour": "Choisissez au moins un jour pour continuer.",
+      "choisirHeure": "Choisissez au moins une heure de début pour continuer.",
+      "choisirHeureJour": "Choisissez au moins une heure de début pour le {jour}."
     }
   },
   "dossiers": {
@@ -2762,6 +2836,359 @@
     }
   },
   "admin": {
+    "candidatures": {
+      "titre": "Candidatures",
+      "sousTitre": "Les candidatures d'enseignement, de l'invitation à la Salle des prêts à enseigner.",
+      "exception": {
+        "titre": "Lecture des deux côtés",
+        "message": "Vous lisez les candidatures des femmes et des hommes. Chaque lecture est inscrite au journal.",
+        "candidature": "Cette candidature est de l'autre côté : sa lecture est inscrite au journal."
+      },
+      "aTraiter": "À traiter",
+      "alertes": {
+        "bloquees": "Bloquées",
+        "entretiensEnRetard": "Entretiens en retard",
+        "informationsManquantes": "Informations manquantes",
+        "confirmeesIndisponibles": "Confirmées indisponibles",
+        "rien": "Rien à traiter"
+      },
+      "recherche": "Rechercher un nom, une référence ou un courriel",
+      "rechercheAide": "Nom, référence ou courriel",
+      "filtres": {
+        "toutes": "Toutes",
+        "gardees": "Gardées pour suivi",
+        "invitees": "Invitées",
+        "tous": "Tous",
+        "etat": "État",
+        "issue": "Issue",
+        "enCours": "En cours",
+        "pause": "Pause",
+        "sansPause": "Pas en pause",
+        "versement": "Versement",
+        "pays": "Pays de résidence"
+      },
+      "tri": {
+        "titre": "Trier par",
+        "activite": "Dernière activité",
+        "reception": "Date de réception"
+      },
+      "total": {
+        "one": "{n} candidature",
+        "other": "{n} candidatures"
+      },
+      "resume": "Candidatures {debut} à {fin} sur {total}",
+      "pagination": {
+        "precedente": "Page précédente des candidatures",
+        "suivante": "Page suivante des candidatures",
+        "positionSemantique": "Page {page} sur {total} de la liste des candidatures"
+      },
+      "colonnes": {
+        "nom": "Nom",
+        "salle": "Salle",
+        "etat": "État",
+        "pays": "Pays de résidence",
+        "versement": "Versement",
+        "activite": "Dernière activité"
+      },
+      "ligne": {
+        "versement": "Versement : {etat}",
+        "activite": "Dernière activité le {date}",
+        "pays": "Résidence : {pays}",
+        "courrielAObtenir": "Courriel à obtenir",
+        "indicatifAConfirmer": "Indicatif à confirmer",
+        "reprise": "Reprise prévue le {date}",
+        "indisponibleJusquAu": "Indisponible jusqu'au {date}"
+      },
+      "selection": {
+        "selectionner": "Sélectionner",
+        "quitter": "Quitter la sélection",
+        "retenues": {
+          "one": "{n} candidature retenue",
+          "other": "{n} candidatures retenues"
+        },
+        "phrase": "Choisissez l'action à lancer sur ces candidatures.",
+        "agir": "Agir sur la sélection",
+        "relacher": "Tout relâcher",
+        "horsLigne": "Les actions pourront être lancées quand la connexion reviendra."
+      },
+      "vide": "Aucune candidature pour le moment",
+      "videDetail": "Une candidature apparaît ici dès que la personne s'inscrit par le lien du site ou avec une invitation.",
+      "aucunResultat": "Aucune candidature ne correspond à ces filtres.",
+      "rappel": {
+        "filtres": "Filtres posés : {filtres}",
+        "recherche": "Recherche : « {texte} »"
+      },
+      "lectureEchec": "Les candidatures n'ont pas pu être lues.",
+      "sansDonnees": "La liste des candidatures n'a pas pu être chargée",
+      "accesRefuse": "Vous n'avez pas accès aux candidatures.",
+      "genreInconnuTitre": "Les candidatures ne s'affichent pas",
+      "genreInconnu": "Votre fiche ne dit pas de quel côté vous travaillez. Demandez à la direction de la compléter.",
+      "etats": {
+        "gardee": "Gardée pour suivi",
+        "invitee": "Invitée",
+        "aCompleter": "À compléter",
+        "enExamen": "En examen",
+        "versementImpossible": "Versement pas encore possible",
+        "entretienAPlanifier": "Entretien à planifier",
+        "entretienPlanifie": "Entretien planifié",
+        "decisionEnAttente": "Décision en attente",
+        "refusee": "Refusée",
+        "retiree": "Retirée",
+        "enPause": "En pause",
+        "restreinte": "Restreinte",
+        "restreintePiece": "Restreinte : pièce",
+        "restreinteVersement": "Restreinte : versement",
+        "restreinteDirection": "Restreinte : décision de la direction",
+        "indisponible": "Indisponible",
+        "provenance": {
+          "lienPublic": "Lien du site",
+          "invitation": "Invitation",
+          "formulairesImportes": "Formulaires importés"
+        },
+        "versement": {
+          "inconnu": "Aucun moyen déclaré",
+          "aVerifier": "À vérifier",
+          "compatible": "Confirmé",
+          "incompatible": "Aucun moyen possible"
+        }
+      },
+      "detail": {
+        "retour": "Retour aux candidatures",
+        "recue": "Reçue le {date}",
+        "provenance": "Provenance : {provenance}",
+        "messagePause": "Message choisi pour la pause : {nom}",
+        "messageRefus": "Message choisi pour le refus : {nom}",
+        "responsableDesigne": "Un responsable est désigné",
+        "aucunResponsable": "Aucun responsable",
+        "blocages": "Ce qui bloque",
+        "aucunBlocage": "Rien ne bloque pour le moment.",
+        "prochaineAction": "Prochaine action",
+        "enAttentePersonne": "En attente de la personne",
+        "aucuneAction": "Aucune action n'est disponible pour le moment.",
+        "fermee": "Cette candidature est fermée. Vous pouvez la rouvrir.",
+        "autresGestes": "Autres gestes",
+        "reponses": "Réponses",
+        "reponsesVersion": "Version du questionnaire : {version}",
+        "preRempli": "Venu de l'ancien formulaire",
+        "aucuneReponse": "Aucune réponse n'a été envoyée pour le moment.",
+        "moyensIndiques": "Moyens indiqués : {n}",
+        "cartes": {
+          "langues": "Langues",
+          "recitation": "Récitation",
+          "disponibilites": "Disponibilités",
+          "publics": "Publics",
+          "versement": "Pays et versement"
+        },
+        "controles": "Contrôles",
+        "entretien": "Entretien",
+        "affectation": "Affectation",
+        "courriels": "Courriels",
+        "ouvrirDossier": "Ouvrir dans Dossiers à valider",
+        "responsable": "Responsable",
+        "contact": {
+          "titre": "Contact",
+          "masque": "Contact masqué",
+          "voir": "Voir le contact",
+          "journal": "Cette ouverture est inscrite au journal.",
+          "courriel": "Courriel",
+          "telephone": "Téléphone",
+          "aucun": "Aucune coordonnée n'est connue.",
+          "aConfirmer": "À confirmer",
+          "lectureEchec": "Le contact n'a pas pu être lu."
+        },
+        "historiqueVide": "Aucun événement pour le moment",
+        "plusAnciens": "Voir les événements plus anciens",
+        "historiqueEchec": "L'historique n'a pas pu être lu.",
+        "sansDonnees": "La candidature n'a pas pu être chargée",
+        "titreHorsPortee": "Vous n'avez pas accès à cette candidature.",
+        "titreAbsente": "Cette candidature n'existe pas, ou plus.",
+        "titreLecture": "La candidature n'a pas pu être lue.",
+        "revenirALaFile": "Revenez à la liste des candidatures.",
+        "controleLigne": "{nom} ({cause})",
+        "separateurControles": ", ",
+        "groupeJours": "{jours} : {heures}",
+        "etatsPiece": {
+          "aDeposer": "À déposer",
+          "deposee": "Déposée",
+          "aCorriger": "À corriger",
+          "validee": "Validée"
+        },
+        "controlesVrai": "Satisfait",
+        "controlesFaux": "Non satisfait"
+      },
+      "controles": {
+        "noms": {
+          "compteConforme": "Compte conforme",
+          "cadreReligieux": "Cadre religieux et pédagogique accepté",
+          "questionnaireComplet": "Questionnaire complet à la version courante",
+          "inconnu": "Contrôle du serveur"
+        },
+        "causes": {
+          "supprime": "Compte supprimé",
+          "role": "Compte d'un autre type",
+          "statut": "Le statut du compte ne le permet pas",
+          "expire": "Accès du compte expiré",
+          "engagement": "Un engagement d'enseignant est déjà en cours",
+          "nonPublie": "Le cadre n'est pas encore publié",
+          "nonAccepte": "La personne ne l'a pas encore accepté",
+          "questionnaireAbsent": "Aucun questionnaire n'est publié",
+          "absent": "Aucune réponse envoyée",
+          "perime": "Réponses données à une ancienne version",
+          "incomplet": "Des réponses manquent",
+          "inconnue": "Cause non précisée"
+        }
+      },
+      "historique": {
+        "auteur": {
+          "direction": "La direction",
+          "personne": "La personne",
+          "automatique": "Automatique"
+        },
+        "types": {
+          "creee": "Candidature créée",
+          "transition": "Changement de situation",
+          "pause": "Mise en pause",
+          "reprise": "Reprise",
+          "restriction": "Restriction posée",
+          "leveeRestriction": "Restriction levée",
+          "responsable": "Responsable modifié",
+          "controle": "Contrôle modifié",
+          "importation": "Réponses importées",
+          "correctionImport": "Réponses corrigées",
+          "lectureContact": "Contact consulté",
+          "lectureHorsPortee": "Lecture refusée : autre côté",
+          "entretien": "Entretien",
+          "engagement": "Accord donné",
+          "prevenu": "Personne prévenue",
+          "inconnu": "Événement"
+        },
+        "deA": "De « {avant} » à « {apres} »",
+        "motif": "Motif : {motif}",
+        "le": "Le {date} à {heure}",
+        "separateur": " · "
+      },
+      "gestes": {
+        "admettre": "Admettre en Salle de vérification et d'entretien",
+        "confirmerMoyen": "Confirmer le moyen de versement",
+        "ecarterMoyen": "Écarter ce moyen de versement",
+        "demanderComplement": "Demander un complément",
+        "cloreComplement": "Clore le complément",
+        "mettreEnPause": "Mettre en pause",
+        "leverPause": "Lever la pause",
+        "refuser": "Refuser la candidature",
+        "retrait": "Enregistrer un retrait demandé",
+        "rouvrir": "Rouvrir la candidature",
+        "responsable": "Choisir le responsable"
+      },
+      "consequences": {
+        "admettre": "La candidature passe en Salle de vérification et d'entretien.",
+        "confirmerMoyen": "Ce moyen permet à Rewayah de verser la rémunération dans le pays de la personne.",
+        "ecarterMoyen": "Ce moyen n'est plus retenu. Sans autre moyen possible, la candidature attend qu'un moyen devienne possible.",
+        "demanderComplement": "La candidature repasse à compléter. La personne lira la liste des éléments choisis.",
+        "cloreComplement": "Le complément demandé est clos. La candidature reste dans sa salle.",
+        "mettreEnPause": "La candidature n'avance plus tant que la pause n'est pas levée.",
+        "leverPause": "La candidature reprend là où elle s'était arrêtée.",
+        "refuser": "La candidature est fermée. Vous pourrez la rouvrir.",
+        "retrait": "La candidature est fermée à la demande de la personne. Vous pourrez la rouvrir.",
+        "rouvrir": "La candidature reprend son étape d'origine, si les contrôles du serveur le permettent.",
+        "responsable": "Le responsable suit cette candidature."
+      },
+      "feuille": {
+        "motif": "Motif interne",
+        "motifSeul": "La personne ne le lira pas.",
+        "motifAide": "La personne ne le lira pas. Elle lira seulement le message choisi.",
+        "modele": "Message pour la personne",
+        "modeleLu": "La personne lira le message de ce modèle.",
+        "motifManquant": "Indiquez le motif.",
+        "modeleManquant": "Choisissez le message que la personne lira.",
+        "enCours": "Envoi au serveur en cours",
+        "actualiser": "Actualiser la candidature"
+      },
+      "complement": {
+        "elements": "Ce qui manque",
+        "aide": "La personne lira cette liste.",
+        "manquant": "Choisissez au moins un élément."
+      },
+      "retrait": {
+        "canal": "Comment la demande est arrivée",
+        "canaux": {
+          "conversation": "Dans la conversation",
+          "courriel": "Par courriel"
+        },
+        "date": "Jour de la demande",
+        "canalManquant": "Choisissez comment la demande est arrivée.",
+        "dateManquante": "Choisissez le jour de la demande.",
+        "aide": "Entre la réception de la candidature et aujourd'hui."
+      },
+      "pause": {
+        "reprise": "Reprise prévue",
+        "repriseAide": "Facultatif. Sans date, la pause dure jusqu'à ce que vous la leviez.",
+        "effacerReprise": "Ne pas fixer de date"
+      },
+      "moyens": {
+        "titre": "Moyen de versement",
+        "manquant": "Choisissez le moyen.",
+        "virement": "Virement bancaire",
+        "mobile": "Monnaie mobile : {nom}",
+        "mobileSansNom": "Monnaie mobile",
+        "aucunDeclare": "La personne n'a déclaré aucun moyen de versement."
+      },
+      "responsables": {
+        "choisir": "Choisissez le responsable de cette candidature.",
+        "aucun": "Aucun responsable",
+        "lectureEchec": "La liste des responsables n'a pas pu être lue."
+      },
+      "modeles": {
+        "refusGeneral": "Refus général",
+        "refusNiveau": "Niveau pas encore suffisant",
+        "refusBesoins": "Pas de besoin pour ce profil",
+        "refusSansReponse": "Sans réponse de la personne",
+        "pauseAttenteBesoin": "En attente d'un besoin",
+        "pauseAttenteInformations": "En attente d'informations",
+        "pauseDemandeCandidat": "À la demande de la personne",
+        "pauseGeneral": "Pause générale",
+        "autre": "Autre message"
+      },
+      "erreurs": {
+        "controles": "Rien n'a été fait. Il manque : {controles}. Vérifiez ces points, puis réessayez.",
+        "transition": "Ce geste n'est pas possible depuis l'état « {etat} ». Rien n'a été fait. Actualisez la candidature.",
+        "conflit": "Cette candidature a changé depuis son ouverture. Actualisez-la avant d'agir.",
+        "horsPortee": "Vous n'avez pas accès à cette candidature. Revenez à la liste des candidatures.",
+        "absente": "Cette candidature n'existe pas, ou plus. Revenez à la liste des candidatures.",
+        "horsLigne": "Aucun geste n'est possible sans connexion. Reconnectez-vous pour agir.",
+        "motifRequis": "Rien n'a été fait. Indiquez le motif.",
+        "modeleRequis": "Rien n'a été fait. Choisissez le message que la personne lira.",
+        "modeleInconnu": "Ce message n'est plus proposé. Choisissez-en un autre.",
+        "elementsRequis": "Rien n'a été fait. Choisissez au moins un élément.",
+        "elementsInvalides": "Un des éléments choisis n'est pas possible dans cette salle. Rien n'a été fait.",
+        "aucunComplement": "Aucun complément n'est en cours : rien à clore. Actualisez la candidature.",
+        "repriseInvalide": "La reprise doit être un jour à venir. Rien n'a été fait. Choisissez un autre jour.",
+        "dateDemande": "Le jour de la demande ne peut être ni à venir ni avant la réception de la candidature. Rien n'a été fait. Choisissez un autre jour.",
+        "moyenNonDeclare": "La personne n'a pas déclaré ce moyen. Rien n'a été fait. Choisissez un autre moyen.",
+        "moyenNonConfirmable": "Ce moyen ne peut pas être confirmé : aucune ligne confirmée du pays de versement ne le couvre. Rien n'a été fait. Choisissez un autre moyen.",
+        "responsableInvalide": "Cette personne ne peut pas être responsable de cette candidature. Rien n'a été fait. Choisissez une autre personne.",
+        "cleReutilisee": "Ce geste a déjà servi à une autre action. Fermez cette fenêtre et recommencez.",
+        "nonConfirme": "Il est possible que ce geste ne soit pas parvenu jusqu'à Rewayah. Réessayez : il ne sera pas fait deux fois.",
+        "generique": "Le geste n'a pas abouti. Rien n'est confirmé. Réessayez dans un instant.",
+        "permission": "Vous n'avez pas le droit de faire ce geste. Signalez-le si cela vous semble anormal.",
+        "titre": "Geste refusé",
+        "nonConfirmeTitre": "Geste non confirmé"
+      },
+      "retours": {
+        "admettre": "La candidature est en Salle de vérification et d'entretien.",
+        "confirmerMoyen": "Le moyen de versement est confirmé.",
+        "ecarterMoyen": "Le moyen de versement est écarté.",
+        "demanderComplement": "Le complément est demandé.",
+        "cloreComplement": "Le complément est clos.",
+        "mettreEnPause": "La candidature est en pause.",
+        "leverPause": "La pause est levée.",
+        "refuser": "La candidature est refusée.",
+        "retrait": "Le retrait est enregistré.",
+        "rouvrir": "La candidature est rouverte.",
+        "responsable": "Le responsable est enregistré.",
+        "rejoue": "Ce geste avait déjà été fait : rien n'a été écrit une seconde fois."
+      }
+    },
     "importInscriptions": {
       "onglet": "Importer",
       "titre": "Importer les inscriptions",
@@ -3598,7 +4025,9 @@
         "one": "{n} sem.",
         "other": "{n} sem."
       },
-      "uniteNombre": "{n}"
+      "uniteNombre": "{n}",
+      "classesParEnseignant": "Classes au plus par enseignant",
+      "classesParEnseignantDetail": "Le nombre de Classes qu'un enseignant peut tenir en même temps. Une Classe close et un remplacement ponctuel ne comptent pas. Une baisse ne retire aucune Classe déjà tenue. Dans leur questionnaire, les candidats choisissent de 1 jusqu'à ce nombre."
     },
     "fonctionnalites": {
       "titre": "Fonctionnalités",

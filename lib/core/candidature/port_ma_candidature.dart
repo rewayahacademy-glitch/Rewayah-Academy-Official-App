@@ -47,10 +47,22 @@ final class ReponsesIncompletes extends ErreurCandidature {
 /// Des reponses ne sont pas dans la liste du champ : [champs] les nomme.
 final class ReponsesInvalides extends ErreurCandidature {
   /// Cree l'erreur.
-  const ReponsesInvalides(this.champs);
+  const ReponsesInvalides(
+    this.champs, {
+    this.motifs = const <String, String>{},
+  });
 
   /// Les codes des champs refuses.
   final List<String> champs;
+
+  /// La cause nommee d'un refus, par champ, quand le serveur en donne une.
+  /// Aujourd'hui une seule : `plages_qui_se_chevauchent` pour
+  /// `disponibilitesDeclarees` (deux plages d'un meme jour se recouvrent).
+  final Map<String, String> motifs;
+
+  /// Vrai quand deux plages de disponibilite se recouvrent.
+  bool get plagesQuiSeChevauchent =>
+      motifs['disponibilitesDeclarees'] == 'plages_qui_se_chevauchent';
 }
 
 /// La case de remuneration n'est pas cochee.

@@ -730,6 +730,26 @@ abstract final class Routes {
   static const String adminPersonnesInvitations =
       '/admin/personnes/invitations';
 
+  /// ADM-20 : la file des candidatures d'enseignement, sous Personnes. Elle
+  /// prend le rang de l'onglet Invitations (pas de septieme onglet) ; la page
+  /// des invitations ([adminPersonnesInvitations]) reste atteignable par un
+  /// lien de cette file (CAND-F01).
+  static const String adminPersonnesCandidatures =
+      '/admin/personnes/candidatures';
+
+  /// ADM-21 : une candidature ouverte par la direction, par sa reference
+  /// `CAND-…` (jamais l'identifiant du profil ni un nom : elle ne nomme
+  /// personne et survit au rechargement, `CAND-F02`). Les chemins statiques
+  /// qui viendront sous [adminPersonnesCandidatures] (`action-groupee`,
+  /// `import`, ADM-22 et ADM-23) se declarent AVANT ce chemin dans le routeur
+  /// (contrainte R5).
+  static const String adminPersonnesCandidature =
+      '/admin/personnes/candidatures/:reference';
+
+  /// Le chemin de la candidature de reference [reference].
+  static String adminPersonnesCandidaturePour(String reference) =>
+      '$adminPersonnesCandidatures/${Uri.encodeComponent(reference)}';
+
   /// BACK-FRONT-REPRISE-1 : la file des reprises de foyer, sous Personnes.
   static const String adminPersonnesReprises = '/admin/personnes/reprises';
 

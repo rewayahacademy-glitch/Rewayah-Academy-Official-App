@@ -81,6 +81,7 @@ class ChoixAvecRecherche extends StatefulWidget {
     super.key,
     this.multiple = false,
     this.icone,
+    this.resultatsEnCartes = false,
   });
 
   /// Le prefixe des cles des widgets (tests).
@@ -106,6 +107,11 @@ class ChoixAvecRecherche extends StatefulWidget {
 
   /// L'icone des cartes, s'il y en a une.
   final AppIcon? icone;
+
+  /// Vrai : la recherche propose ses resultats en cartes (decrites, a
+  /// toucher), comme les choix courants ; faux : en lignes. Les langues
+  /// montrent des cartes, les pays et les riwayat des lignes.
+  final bool resultatsEnCartes;
 
   /// La cle du lien « Autre ... ».
   static const Key autreKey = ValueKey<String>('choix-recherche-autre');
@@ -237,6 +243,8 @@ class _ChoixAvecRechercheState extends State<ChoixAvecRecherche> {
             widget.textes.aucun,
             style: Theme.of(context).textTheme.bodyMedium,
           )
+        else if (widget.resultatsEnCartes)
+          _resultatsEnCartes(trouves, q)
         else
           CarteLignes(
             lignes: <Widget>[
@@ -250,6 +258,40 @@ class _ChoixAvecRechercheState extends State<ChoixAvecRecherche> {
             ],
           ),
       ],
+    );
+  }
+
+  /// Les resultats d'une recherche en cartes : ce qui est deja retenu y est
+  /// coche, et un geste ajoute ou retire la langue sans quitter la recherche.
+  Widget _resultatsEnCartes(List<ElementChoix> trouves, String requete) {
+    final Set<String> affiches = <String>{
+      for (final ElementChoix e in trouves) e.code,
+    };
+    return ChoiceCardGroup(
+      key: ValueKey<String>('${widget.cle}-resultats-$requete'),
+      autoriserSaisieLibre: false,
+      selectionMultiple: widget.multiple,
+      valeurInitiale: ReponseChoix(
+        valeurs: <String>{
+          for (final String c in widget.selection)
+            if (affiches.contains(c)) c,
+        },
+      ),
+      options: <OptionChoix>[
+        for (final ElementChoix e in trouves)
+          OptionChoix(
+            cle: e.cle,
+            valeur: e.code,
+            libelle: e.libelle,
+            description: e.description,
+            icone: widget.icone,
+          ),
+      ],
+      onChange: (ReponseChoix r) => widget.onChange(
+        widget.multiple
+            ? <String>{...widget.selection.difference(affiches), ...r.valeurs}
+            : r.valeurs,
+      ),
     );
   }
 }

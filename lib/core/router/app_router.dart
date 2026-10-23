@@ -11,6 +11,8 @@ import '../../features/accueil_eleve/accueil_eleve_selon_presentation.dart';
 import '../../features/accueil_famille/accueil_famille_page.dart';
 import '../../features/admin_acces_agents/acces_agents_page.dart';
 import '../../features/admin_avis/avis_page.dart';
+import '../../features/admin_candidature/candidature_page.dart';
+import '../../features/admin_candidatures/candidatures_page.dart';
 import '../../features/admin_comptes/comptes_page.dart';
 import '../../features/admin_configuration_conservation_donnees/conservation_donnees_page.dart';
 import '../../features/admin_configuration_fonctionnalites/fonctionnalites_page.dart';
@@ -174,6 +176,7 @@ import '../../features/tc_mushaf/routes_tc_c.dart';
 import '../../features/tc_observation_ui/routes_tc_g.dart';
 import '../admin/admin_domaine.dart';
 import '../alertes/port_alertes.dart';
+import '../candidature/modeles_candidatures_direction.dart' show LigneCandidature;
 import '../config/env.dart';
 import '../domain/enums.dart';
 import '../dossier/resignature_contrat.dart';
@@ -1566,6 +1569,37 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
           child: ImportInscriptionsPage(),
+        ),
+      ),
+      // ADM-20 : la file des candidatures, au rang de l'ancien onglet
+      // Invitations. Une ligne ouvre ADM-21 (la reference dans l'adresse,
+      // l'identifiant en `extra` : il evite une recherche, et l'adresse
+      // survit au rechargement). L'action groupee (ADM-22) n'est pas encore
+      // construite : aucune destination n'est donnee, la page le dit.
+      GoRoute(
+        path: Routes.adminPersonnesCandidatures,
+        builder: (BuildContext contexte, GoRouterState _) => _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: CandidaturesPage(
+            ouvrirCandidature: (LigneCandidature ligne) =>
+                GoRouter.of(contexte).push<void>(
+                  Routes.adminPersonnesCandidaturePour(ligne.reference),
+                  extra: ligne.id,
+                ),
+          ),
+        ),
+      ),
+      // ADM-21 : une candidature ouverte par sa reference `CAND-…`. Les
+      // chemins statiques d'ADM-22 et d'ADM-23 (`action-groupee`, `import`)
+      // se declareront AVANT celui-ci (contrainte R5).
+      GoRoute(
+        path: Routes.adminPersonnesCandidature,
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: CandidatureDirectionPage(
+            reference: etat.pathParameters['reference'] ?? '',
+            identifiant: etat.extra is String ? etat.extra as String : null,
+          ),
         ),
       ),
       GoRoute(

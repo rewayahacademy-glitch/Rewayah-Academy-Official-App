@@ -176,8 +176,12 @@ Future<void> continuer(WidgetTester tester) async {
 /// Les cles des cartes de reponse d'un champ.
 String optionCle(String champ, String code) => 'option-$champ-$code';
 
-/// Les reponses d'un parcours complet, dans l'ordre des questions : chacune est
-/// une suite de touches (cles) puis « Continuer ».
+/// Les reponses d'un parcours complet, dans l'ordre ou le parcours pose les
+/// questions : chacune est une suite de touches (cles) puis « Continuer ».
+/// Le public est pose avant les disponibilites (la duree d'un cours en depend),
+/// le fuseau juste avant elles ; elles tiennent en quatre ecrans quand les
+/// heures sont les memes tous les jours (jours, heures, « memes heures ? »,
+/// semaine).
 const List<(String, List<String>)> parcoursComplet = <(String, List<String>)>[
   ('langueMaternelle', <String>['option-langueMaternelle-poular']),
   (
@@ -189,7 +193,7 @@ const List<(String, List<String>)> parcoursComplet = <(String, List<String>)>[
   ),
   (
     'niveauMemorisationDeclare',
-    <String>['option-niveauMemorisationDeclare-plus_de_10_juz'],
+    <String>['option-niveauMemorisationDeclare-de_10_a_29_juz'],
   ),
   (
     'niveauLectureTajwid',
@@ -198,18 +202,22 @@ const List<(String, List<String>)> parcoursComplet = <(String, List<String>)>[
   ('riwayat', <String>['option-riwayat-hafs']),
   ('ijazaPresentable', <String>['option-ijazaPresentable-non']),
   ('experienceDebutants', <String>['option-experienceDebutants-oui']),
+  ('publics', <String>['option-publics-6_9']),
   ('fuseauIana', <String>['fuseau-oui']),
   (
-    'disponibilitesDeclarees',
-    <String>['creneau-1-4', 'creneau-1-5', 'creneau-3-4'],
+    'jours',
+    <String>['option-jour-1', 'option-jour-3', 'option-jour-5'],
   ),
-  ('heuresParSemaine', <String>['option-heuresParSemaine-de_3_a_5']),
+  ('heures', <String>['heure-1-18', 'heure-1-19']),
+  ('memes', <String>['option-memes-oui']),
+  ('semaine', <String>[]),
+  ('classesSouhaitees', <String>['option-classesSouhaitees-1']),
   ('debutPossible', <String>['option-debutPossible-mois_prochain']),
-  ('publics', <String>['option-publics-enfant']),
   ('paysResidence', <String>['option-paysResidence-GN']),
   ('paysVersement', <String>[]),
   ('compteBancaire', <String>['option-compteBancaire-non']),
   ('operateurs', <String>['option-operateurs-orange_money']),
+  ('moyensAccessibles', <String>['option-moyensAccessibles-wave']),
 ];
 
 /// Passe la presentation (trois ecrans).
@@ -229,4 +237,21 @@ Future<void> repondreJusqua(WidgetTester tester, int n) async {
     }
     await continuer(tester);
   }
+}
+
+/// Passe la presentation, puis repond aux questions de [parcoursComplet] qui
+/// precedent celle nommee [champ] (un des noms du tableau) : l'ecran suivant est
+/// celui de [champ].
+Future<void> repondreAvant(WidgetTester tester, String champ) async {
+  await passerLaPresentation(tester);
+  for (final (String nom, List<String> touches) in parcoursComplet) {
+    if (nom == champ) {
+      return;
+    }
+    for (final String cle in touches) {
+      await toucherCle(tester, cle);
+    }
+    await continuer(tester);
+  }
+  fail('aucune question nommee $champ dans parcoursComplet');
 }

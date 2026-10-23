@@ -17,7 +17,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
-import '../../core/candidature/creneaux_declares.dart';
+import '../../core/candidature/disponibilites_declarees.dart';
 import '../../core/candidature/modeles_candidature.dart';
 import '../../core/candidature/port_ma_candidature.dart';
 import 'modele_questions.dart';
@@ -48,6 +48,37 @@ final class EtapeChamp extends EtapeParcours {
   FormeQuestion get forme => modelesQuestions[champ.code]!.forme;
 }
 
+/// Les ecrans de la question des disponibilites : ce sont plusieurs ecrans, un
+/// par decision, et non une grille a remplir d'un coup.
+enum SousEtapeDisponibilites {
+  /// Les jours de la semaine ou la personne peut enseigner.
+  jours,
+
+  /// Les heures de debut possibles, pour le premier jour choisi.
+  heures,
+
+  /// « Memes heures pour tous ces jours ? » : oui, ou ajuster jour par jour.
+  memes,
+
+  /// Les heures de debut de chaque jour, quand elles different.
+  parJour,
+
+  /// Le recapitulatif de la semaine.
+  semaine,
+}
+
+/// Un des ecrans de la question `disponibilitesDeclarees`.
+final class EtapeDisponibilites extends EtapeParcours {
+  /// Cree l'etape.
+  const EtapeDisponibilites(this.champ, this.sous);
+
+  /// Le champ pose (`disponibilitesDeclarees`).
+  final ChampQuestionnaire champ;
+
+  /// L'ecran de la question.
+  final SousEtapeDisponibilites sous;
+}
+
 /// Le recapitulatif, les conditions de remuneration et l'envoi.
 final class EtapeRecapitulatif extends EtapeParcours {
   /// Cree l'etape.
@@ -60,22 +91,46 @@ const int nombrePresentations = 3;
 /// Les etapes du parcours : la presentation (sauf [avecPresentation] faux),
 /// une etape par champ dans l'ordre du serveur, puis le recapitulatif.
 ///
-/// Le fuseau se confirme **avant** la grille des plages : les plages sont a
-/// l'heure de chez la personne. Le champ du fuseau est donc pose juste avant
-/// celui des plages, quelle que soit sa place dans la definition.
+/// Deux champs sont poses **avant** les disponibilites, quelle que soit leur
+/// place dans la definition : le public (la duree d'un cours en depend :
+/// 60 minutes pour des enfants, 90 pour des adultes) et le fuseau (les heures
+/// sont celles de chez la personne). Les disponibilites tiennent en cinq
+/// ecrans au plus : [nombreJours] jours choisis et [memesHeures] decident de
+/// ceux qui sont poses (« memes heures ? » demande deux jours au moins ; le
+/// reglage jour par jour, un « non »). Un champ facultatif dont le serveur ne
+/// rend aucune option (les moyens de paiement connus) n'est pas pose.
 List<EtapeParcours> planifierParcours(
   Questionnaire questionnaire, {
   bool avecPresentation = true,
+  int nombreJours = 0,
+  bool? memesHeures,
 }) {
   final ChampQuestionnaire? fuseau = questionnaire.champ('fuseauIana');
+  final ChampQuestionnaire? publics = questionnaire.champ('publics');
+  final ChampQuestionnaire? dispo = questionnaire.champ(
+    'disponibilitesDeclarees',
+  );
+  final bool groupe = dispo != null;
   return <EtapeParcours>[
     if (avecPresentation)
       for (int rang = 1; rang <= nombrePresentations; rang++)
         EtapePresentation(rang),
     for (final ChampQuestionnaire c in questionnaire.champs) ...<EtapeParcours>[
-      if (c.code == 'disponibilitesDeclarees' && fuseau != null)
-        EtapeChamp(fuseau),
-      if (c.code != 'fuseauIana') EtapeChamp(c),
+      if (c.code == 'disponibilitesDeclarees') ...<EtapeParcours>[
+        ?(publics == null ? null : EtapeChamp(publics)),
+        ?(fuseau == null ? null : EtapeChamp(fuseau)),
+        EtapeDisponibilites(c, SousEtapeDisponibilites.jours),
+        EtapeDisponibilites(c, SousEtapeDisponibilites.heures),
+        if (nombreJours >= 2) EtapeDisponibilites(c, SousEtapeDisponibilites.memes),
+        if (nombreJours >= 2 && memesHeures == false)
+          EtapeDisponibilites(c, SousEtapeDisponibilites.parJour),
+        EtapeDisponibilites(c, SousEtapeDisponibilites.semaine),
+      ] else if (groupe && (c.code == 'fuseauIana' || c.code == 'publics'))
+        ...const <EtapeParcours>[]
+      else if (c.code == 'moyensAccessibles' && c.options.isEmpty)
+        ...const <EtapeParcours>[]
+      else
+        EtapeChamp(c),
     ],
     const EtapeRecapitulatif(),
   ];
@@ -86,8 +141,15 @@ enum ManqueReponse {
   /// Aucune reponse.
   aucune,
 
-  /// Aucune plage choisie.
-  aucunePlage,
+  /// Aucun jour choisi.
+  aucunJour,
+
+  /// Aucune heure de debut choisie.
+  aucuneHeure,
+
+  /// Un jour choisi n'a aucune heure de debut ([ParcoursControleur.jourSansHeure]
+  /// le nomme).
+  jourSansHeure,
 
   /// Trop de reponses.
   trop,
@@ -130,9 +192,10 @@ Map<String, Object?> reponsesValables(
           }
         }
       case TypeChamp.creneaux:
-        final CreneauxDeclares creneaux = CreneauxDeclares.depuisReponse(v);
-        final Object? fuseau = v is Map ? v['fuseau'] : null;
-        if (!creneaux.estVide && fuseau is String) {
+        // La forme du lot C18 : une liste de plages `{jour, debut, fin}`. Une
+        // ancienne forme (`{fuseau, creneaux}`, des demi-heures) n'est jamais
+        // renvoyee : le serveur la refuserait.
+        if (DisponibilitesDeclarees.plagesBienFormees(v)) {
           gardees[c.code] = v;
         }
     }
@@ -150,11 +213,10 @@ class ParcoursControleur extends ChangeNotifier {
     required Map<String, Object?> reponses,
     this.cartesADemander = const <String>{},
   }) : _reponses = Map<String, Object?>.of(reponses),
-       _versionBrouillon = questionnaire.versionBrouillon {
-    etapes = planifierParcours(
-      questionnaire,
-      avecPresentation: reponses.isEmpty,
-    );
+       _versionBrouillon = questionnaire.versionBrouillon,
+       _avecPresentation = reponses.isEmpty {
+    _lireDisponibilites();
+    _replanifier();
     _index = _premiereEtapeAFaire();
   }
 
@@ -167,9 +229,12 @@ class ParcoursControleur extends ChangeNotifier {
   /// Les cartes que la direction a demande de completer (codes de carte).
   final Set<String> cartesADemander;
 
-  /// Les etapes, dans l'ordre.
-  late final List<EtapeParcours> etapes;
+  /// Les etapes, dans l'ordre. Elles se replanifient quand les disponibilites
+  /// changent de forme (deux jours ou plus, « memes heures ? »), toujours
+  /// apres l'etape courante.
+  List<EtapeParcours> etapes = const <EtapeParcours>[];
 
+  final bool _avecPresentation;
   final Map<String, Object?> _reponses;
   int _index = 0;
   int _versionBrouillon;
@@ -177,6 +242,14 @@ class ParcoursControleur extends ChangeNotifier {
   bool _brouillonNonGarde = false;
   Future<void> _file = Future<void>.value();
   bool _ferme = false;
+
+  // Les disponibilites en cours de saisie : les jours choisis (un jour sans
+  // heure y est le temps de la saisie), les heures de debut de chacun, et
+  // « memes heures pour tous ces jours ? » (nul tant que la personne n'a pas
+  // repondu).
+  final Set<int> _jours = <int>{};
+  final Map<int, Set<int>> _debuts = <int, Set<int>>{};
+  bool? _memesHeures;
 
   /// Les reponses, par code de champ.
   Map<String, Object?> get reponses =>
@@ -219,65 +292,230 @@ class ParcoursControleur extends ChangeNotifier {
     return const <String>{};
   }
 
-  /// Les plages declarees.
-  CreneauxDeclares get creneaux =>
-      CreneauxDeclares.depuisReponse(_reponses['disponibilitesDeclarees']);
+  /// Vrai quand la personne enseigne des enfants (au moins une tranche).
+  bool get avecEnfants => valeurs('publics').any(tranchesEnfants.contains);
+
+  /// Vrai quand la personne enseigne des adultes.
+  bool get avecAdultes => valeurs('publics').contains(trancheAdultes);
+
+  /// La duree des cours dont les heures se declarent : 90 minutes des qu'une
+  /// classe d'adultes est possible (l'heure suivante est alors declaree aussi),
+  /// 60 minutes sinon.
+  int get dureeDeclaree => dureeDeclareeDe(_reponses['publics']);
 
   /// Le fuseau retenu.
   String? get fuseau => _reponses['fuseauIana'] as String?;
 
+  /// Les jours choisis (1 pour lundi), tries.
+  List<int> get jours => _jours.toList()..sort();
+
+  /// Le premier jour choisi, ou `null`.
+  int? get premierJour => _jours.isEmpty ? null : jours.first;
+
+  /// Les heures de debut possibles du jour [jour], triees.
+  List<int> debutsDuJour(int jour) =>
+      (_debuts[jour] ?? const <int>{}).toList()..sort();
+
+  /// « Memes heures pour tous ces jours ? » : `null` tant que la personne n'a
+  /// pas repondu.
+  bool? get memesHeures => _memesHeures;
+
+  /// Les disponibilites telles que le serveur les recevra (les jours qui ont
+  /// au moins une heure).
+  DisponibilitesDeclarees get disponibilites => DisponibilitesDeclarees(
+    <int, Set<int>>{
+      for (final int j in _jours)
+        if ((_debuts[j] ?? const <int>{}).isNotEmpty) j: _debuts[j]!,
+    },
+  );
+
+  /// Le premier jour choisi qui n'a aucune heure de debut, ou `null`.
+  int? get jourSansHeure {
+    for (final int j in jours) {
+      if ((_debuts[j] ?? const <int>{}).isEmpty) {
+        return j;
+      }
+    }
+    return null;
+  }
+
   /// Retient la reponse du champ [code]. Une reponse change ce qui en depend :
-  /// le fuseau suit les plages, le pays de versement vide les operateurs.
+  /// le public change la duree des cours (donc les heures declarees), le pays
+  /// de versement vide les operateurs.
   void repondre(String code, Object? valeur) {
     if (valeur == null || (valeur is Iterable && valeur.isEmpty)) {
       _reponses.remove(code);
     } else {
       _reponses[code] = valeur;
     }
-    if (code == 'fuseauIana' && valeur is String) {
-      final Object? plages = _reponses['disponibilitesDeclarees'];
-      if (plages is Map) {
-        _reponses['disponibilitesDeclarees'] = <String, Object?>{
-          ...Map<String, Object?>.from(plages),
-          'fuseau': valeur,
-        };
-      }
-    }
     if (code == 'paysVersement') {
       _reponses.remove('operateurs');
+    }
+    if (code == 'publics') {
+      _ecrireDisponibilites();
     }
     notifyListeners();
   }
 
-  /// Retient les plages de la grille, dans le fuseau retenu.
-  void declarerPlages(CreneauxDeclares plages) {
-    final String? zone = fuseau;
-    if (zone == null) {
+  /// Choisit ou retire le jour [jour] (1 a 7). Un jour neuf reprend les heures
+  /// du premier jour choisi : la plupart des semaines se ressemblent.
+  void basculerJour(int jour) {
+    if (_jours.contains(jour)) {
+      _jours.remove(jour);
+      _debuts.remove(jour);
+    } else {
+      final int? modele = premierJour;
+      _jours.add(jour);
+      _debuts[jour] = <int>{if (modele != null) ...?_debuts[modele]};
+    }
+    _apresChangementDeJours();
+  }
+
+  /// Remplace les jours choisis par [choisis] (un raccourci : lundi, mercredi,
+  /// vendredi...). Un jour deja choisi garde ses heures.
+  void choisirJours(Set<int> choisis) {
+    // Les heures du premier jour, lues avant qu'un raccourci ne le retire.
+    final int? modele = premierJour;
+    final Set<int> heuresModele = <int>{
+      if (modele != null) ...?_debuts[modele],
+    };
+    for (final int j in _jours.difference(choisis).toList()) {
+      _jours.remove(j);
+      _debuts.remove(j);
+    }
+    for (final int j in choisis.difference(_jours)) {
+      _jours.add(j);
+      _debuts[j] = <int>{...heuresModele};
+    }
+    _apresChangementDeJours();
+  }
+
+  void _apresChangementDeJours() {
+    if (_jours.length < 2) {
+      _memesHeures = null;
+    }
+    // Les jours changent la liste des ecrans (« memes heures ? »).
+    _ecrireDisponibilites();
+    _replanifier();
+    notifyListeners();
+  }
+
+  /// Choisit ou retire l'heure de debut [heure] (0 a 23) le jour [jour]. Tant
+  /// que les heures sont les memes tous les jours (pas de « non » a « memes
+  /// heures ? »), un changement du premier jour vaut pour tous.
+  void basculerHeure(int jour, int heure) {
+    final Set<int> heures = _debuts.putIfAbsent(jour, () => <int>{});
+    if (!heures.remove(heure)) {
+      heures.add(heure);
+    }
+    if (_memesHeures != false && jour == premierJour) {
+      _copierPremierJour();
+    }
+    _ecrireDisponibilites();
+    notifyListeners();
+  }
+
+  /// Repond a « Memes heures pour tous ces jours ? ». Oui : tous les jours
+  /// prennent les heures du premier. Non : chaque jour garde les siennes et se
+  /// regle ensuite.
+  void repondreMemes({required bool oui}) {
+    _memesHeures = oui;
+    if (oui) {
+      _copierPremierJour();
+    }
+    _ecrireDisponibilites();
+    _replanifier();
+    notifyListeners();
+  }
+
+  void _copierPremierJour() {
+    final int? modele = premierJour;
+    if (modele == null) {
       return;
     }
-    if (plages.estVide) {
+    final Set<int> heures = _debuts[modele] ?? const <int>{};
+    for (final int j in _jours) {
+      if (j != modele) {
+        _debuts[j] = <int>{...heures};
+      }
+    }
+  }
+
+  /// Ecrit la reponse `disponibilitesDeclarees` dans la forme du serveur : les
+  /// plages d'heures entieres que touchent les cours possibles.
+  void _ecrireDisponibilites() {
+    final DisponibilitesDeclarees dispo = disponibilites;
+    if (dispo.estVide) {
       _reponses.remove('disponibilitesDeclarees');
     } else {
-      _reponses['disponibilitesDeclarees'] = plages.versReponse(zone);
+      _reponses['disponibilitesDeclarees'] = dispo.versPlages(dureeDeclaree);
     }
-    notifyListeners();
+  }
+
+  /// Relit les disponibilites d'un brouillon ou d'un envoi : les plages du
+  /// serveur redonnent les heures de debut possibles d'un cours.
+  void _lireDisponibilites() {
+    final DisponibilitesDeclarees dispo = DisponibilitesDeclarees.depuisPlages(
+      _reponses['disponibilitesDeclarees'],
+      dureeMinutes: dureeDeclaree,
+    );
+    for (final int j in dispo.jours) {
+      _jours.add(j);
+      _debuts[j] = <int>{...dispo.debuts(j)};
+    }
+    if (_jours.length >= 2) {
+      final Set<int> premier = _debuts[premierJour]!;
+      _memesHeures = _jours.every(
+        (int j) => _debuts[j]!.length == premier.length && _debuts[j]!.containsAll(premier),
+      );
+    }
+    if (dispo.estVide) {
+      _reponses.remove('disponibilitesDeclarees');
+    } else {
+      _reponses['disponibilitesDeclarees'] = dispo.versPlages(dureeDeclaree);
+    }
+  }
+
+  void _replanifier() {
+    etapes = planifierParcours(
+      questionnaire,
+      avecPresentation: _avecPresentation,
+      nombreJours: _jours.length,
+      memesHeures: _memesHeures,
+    );
   }
 
   /// Pourquoi on ne peut pas quitter [etape], ou `null` si on le peut.
   ManqueReponse? manque(EtapeParcours etape) {
+    if (etape is EtapeDisponibilites) {
+      return switch (etape.sous) {
+        SousEtapeDisponibilites.jours =>
+          _jours.isEmpty ? ManqueReponse.aucunJour : null,
+        SousEtapeDisponibilites.heures =>
+          (_debuts[premierJour] ?? const <int>{}).isEmpty
+              ? ManqueReponse.aucuneHeure
+              : null,
+        SousEtapeDisponibilites.memes =>
+          _memesHeures == null ? ManqueReponse.aucune : null,
+        SousEtapeDisponibilites.parJour =>
+          jourSansHeure == null ? null : ManqueReponse.jourSansHeure,
+        SousEtapeDisponibilites.semaine => null,
+      };
+    }
     if (etape is! EtapeChamp) {
       return null;
     }
     final ChampQuestionnaire c = etape.champ;
     switch (etape.forme) {
       case FormeQuestion.creneaux:
-        return creneaux.estVide ? ManqueReponse.aucunePlage : null;
-      case FormeQuestion.operateurs:
+        return disponibilites.estVide ? ManqueReponse.aucunJour : null;
+      case FormeQuestion.operateurs || FormeQuestion.moyensAccessibles:
         return _trop(c, valeurs(c.code).length);
       case FormeQuestion.choix ||
           FormeQuestion.langue ||
           FormeQuestion.pays ||
-          FormeQuestion.fuseau:
+          FormeQuestion.fuseau ||
+          FormeQuestion.classes:
         return _reponses[c.code] == null && c.requis
             ? ManqueReponse.aucune
             : null;
@@ -305,7 +543,7 @@ class ParcoursControleur extends ChangeNotifier {
     if (cartesADemander.isNotEmpty) {
       for (int i = 0; i < etapes.length; i++) {
         final EtapeParcours e = etapes[i];
-        if (e is EtapeChamp && cartesADemander.contains(e.champ.carte)) {
+        if (aCompleter(e)) {
           return i;
         }
       }
@@ -315,8 +553,7 @@ class ParcoursControleur extends ChangeNotifier {
       return 0;
     }
     for (int i = 0; i < etapes.length; i++) {
-      final EtapeParcours e = etapes[i];
-      if (e is EtapeChamp && manque(e) != null) {
+      if (manque(etapes[i]) != null) {
         return i;
       }
     }
@@ -325,8 +562,17 @@ class ParcoursControleur extends ChangeNotifier {
 
   /// Vrai quand l'etape [etape] est une de celles que la direction demande de
   /// completer.
-  bool aCompleter(EtapeParcours etape) =>
-      etape is EtapeChamp && cartesADemander.contains(etape.champ.carte);
+  bool aCompleter(EtapeParcours etape) => switch (etape) {
+    EtapeChamp(:final ChampQuestionnaire champ) => cartesADemander.contains(
+      champ.carte,
+    ),
+    EtapeDisponibilites(:final ChampQuestionnaire champ) =>
+      cartesADemander.contains(champ.carte),
+    _ => false,
+  };
+
+  bool _dansLesDisponibilites(int index) =>
+      index >= 0 && index < etapes.length && etapes[index] is EtapeDisponibilites;
 
   /// Passe a l'etape suivante, ou revient au recapitulatif apres une
   /// modification. Rend `false` quand la reponse manque (rien ne bouge).
@@ -343,11 +589,19 @@ class ParcoursControleur extends ChangeNotifier {
         _reponses['paysResidence'] is String) {
       _reponses['paysVersement'] = _reponses['paysResidence'];
     }
-    if (courante is EtapeChamp) {
+    if (courante is EtapeChamp || courante is EtapeDisponibilites) {
       _enregistrerSansBloquer();
     }
-    _index = _depuisRecap ? indexRecapitulatif : _index + 1;
-    _depuisRecap = false;
+    // Modifier les disponibilites depuis le recapitulatif parcourt leurs
+    // ecrans jusqu'au dernier, puis revient au recapitulatif.
+    final bool resteDansLesDisponibilites =
+        _depuisRecap &&
+        courante is EtapeDisponibilites &&
+        _dansLesDisponibilites(_index + 1);
+    _index = _depuisRecap && !resteDansLesDisponibilites
+        ? indexRecapitulatif
+        : _index + 1;
+    _depuisRecap = resteDansLesDisponibilites;
     notifyListeners();
     return true;
   }
@@ -357,7 +611,7 @@ class ParcoursControleur extends ChangeNotifier {
     if (_index == 0) {
       return;
     }
-    if (_depuisRecap) {
+    if (_depuisRecap && !(courante is EtapeDisponibilites && _dansLesDisponibilites(_index - 1))) {
       _index = indexRecapitulatif;
       _depuisRecap = false;
     } else {
@@ -370,7 +624,13 @@ class ParcoursControleur extends ChangeNotifier {
   void modifier(String code) {
     for (int i = 0; i < etapes.length; i++) {
       final EtapeParcours e = etapes[i];
-      if (e is EtapeChamp && e.champ.code == code) {
+      final bool visee = switch (e) {
+        EtapeChamp(:final ChampQuestionnaire champ) => champ.code == code,
+        EtapeDisponibilites(:final ChampQuestionnaire champ, :final sous) =>
+          champ.code == code && sous == SousEtapeDisponibilites.jours,
+        _ => false,
+      };
+      if (visee) {
         _index = i;
         _depuisRecap = true;
         notifyListeners();
@@ -433,8 +693,8 @@ class ParcoursControleur extends ChangeNotifier {
     }
   }
 
-  /// Les reponses telles que l'envoi les porte : le fuseau des plages est celui
-  /// qui est retenu, et rien d'autre que des champs du questionnaire.
+  /// Les reponses telles que l'envoi les porte : rien d'autre que des champs
+  /// du questionnaire, dans la forme que le serveur attend.
   Map<String, Object?> reponsesPourEnvoi() {
     final Map<String, Object?> envoi = <String, Object?>{};
     for (final ChampQuestionnaire c in questionnaire.champs) {

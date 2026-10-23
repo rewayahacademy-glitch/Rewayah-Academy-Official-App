@@ -1116,7 +1116,6 @@ recrutement.invitations.indisponibleTitre
 recrutement.invitations.inviter
 recrutement.invitations.liste
 recrutement.invitations.nonAutorise
-recrutement.invitations.onglet
 recrutement.invitations.revoquer
 recrutement.invitations.revoquerConsequence
 recrutement.invitations.revoquerEchec

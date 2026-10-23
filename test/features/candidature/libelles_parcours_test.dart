@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/candidature/disponibilites_declarees.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
 import 'package:rewayah_academy/core/i18n/pays_iso.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -157,8 +158,9 @@ void main() {
               );
             }
           }
-          // 5 + 3 + 2 + 2 + 4 + 4 + 2 + 2 cartes dans salle-examen-1.
-          expect(verifiees, 24);
+          // 4 + 3 + 3 + 2 + 4 + 4 + 2 cartes dans salle-examen-1 : memorisation,
+          // tajwid, ijaza, debutants, debut, tranches d'age, compte bancaire.
+          expect(verifiees, 22);
         },
       );
 
@@ -193,9 +195,58 @@ void main() {
         expect(paysIso.length, q.champ('paysResidence')!.options.length);
       });
 
-      test('chaque plage de la journee a son nom', () {
-        for (int p = 0; p < 6; p++) {
-          expect(nomDePlage(p), isNotEmpty);
+      test('chaque moment de la journee et chaque jour a son nom', () {
+        for (final ({String code, int de, int a}) m in momentsDeLaJournee) {
+          expect(titreMoment(m.code), isNotEmpty, reason: m.code);
+        }
+        // Les moments couvrent les 24 heures, sans trou ni doublon.
+        final List<int> heures = <int>[
+          for (final ({String code, int de, int a}) m in momentsDeLaJournee)
+            for (int h = m.de; h <= m.a; h++) h,
+        ];
+        expect(heures, <int>[for (int h = 0; h < 24; h++) h]);
+        for (int j = 1; j <= 7; j++) {
+          expect(nomDeJour(j), isNotEmpty);
+          expect(nomDeJour(j)[0], nomDeJour(j)[0].toUpperCase());
+        }
+      });
+
+      test('les heures et les durees se disent dans la langue lue', () {
+        expect(libelleHeure(18), isNot('18'));
+        expect(libelleDuree(90), isNot(libelleDuree(60)));
+        expect(
+          libelleIntervalle(const IntervalleCours(1080, 1170)),
+          allOf(contains('18'), contains('19')),
+        );
+        // Un cours qui passe minuit finit le lendemain.
+        expect(libelleInstant(1470), libelleInstant(30));
+      });
+
+      test('le nombre de Classes, le public et les moyens ont leurs textes', () {
+        final r = t.recrutement.parcours;
+        for (final int n in <int>[1, 2, 3, 5, 11, 20]) {
+          expect(r.classes.libelle(n: n), isNotEmpty, reason: '$n');
+          expect(r.classes.seances(n: 3 * n), isNotEmpty, reason: '$n');
+          expect(r.classes.exemplePlusieurs(n: n), isNotEmpty, reason: '$n');
+          expect(r.recap.jours(n: n % 8), isNotEmpty, reason: '$n');
+          expect(r.creneaux.heuresChoisies(n: n), isNotEmpty, reason: '$n');
+        }
+        for (final String texte in <String>[
+          r.classes.explication,
+          r.classes.exemple1,
+          r.classes.exemple2,
+          r.moyens.mobile,
+          r.moyens.virement,
+          r.moyens.explication,
+          r.moyens.nonElimine,
+          r.choisirJour,
+          r.choisirHeure,
+          r.langues.chercher,
+          r.langues.autreDescription,
+          t.recrutement.questionnaire.continuite,
+          t.recrutement.questionnaire.plagesChevauchent,
+        ]) {
+          expect(texte, isNotEmpty);
         }
       });
 
@@ -207,6 +258,115 @@ void main() {
       });
     });
   }
+
+  test('en arabe, la paie se dit « الراتب », jamais « أجر »', () {
+    // Decision du directeur du 22/10/2026 : « أجر » evoque la recompense
+    // d'Allah. Le seul texte qui contient ces lettres est un autre mot
+    // (« سأجربه », « je l'essaierai »), dans un message d'exemple.
+    final List<String> fautes = <String>[];
+    void parcourir(Object? noeud, String chemin) {
+      if (noeud is Map<String, dynamic>) {
+        noeud.forEach((String k, dynamic v) => parcourir(v, '$chemin.$k'));
+      } else if (noeud is String && noeud.contains('أجر')) {
+        if (!noeud.contains('سأجربه')) {
+          fautes.add('$chemin : $noeud');
+        }
+      }
+    }
+
+    parcourir(ar, '');
+    expect(fautes, isEmpty);
+    // Et les textes de la paie du parcours disent bien « الراتب ».
+    final String conditions = jsonEncode(
+      _sousArbre(ar, <String>['recrutement', 'questionnaire']),
+    );
+    expect(conditions, contains('شروط الراتب'));
+    expect(conditions, contains('الراتب'));
+  });
+
+  test('aucun mot interdit par mots-rewayah dans le questionnaire', () {
+    // `.claude/skills/mots-rewayah`, section 6 : les mots qu'on n'ecrit jamais.
+    final RegExp interdits = RegExp(
+      r'mode enfant|cours en cours|ajouter un enfant|essentiel|palier|'
+      r'fondations|majlis|tilawah|hifz|échec|maîtrisé|gratuit|garanti|'
+      r'certifié|\badmin\b|\bgroupe\b|—',
+      caseSensitive: false,
+    );
+    final List<String> fautes = <String>[];
+    void parcourir(Object? noeud, String chemin) {
+      if (noeud is Map<String, dynamic>) {
+        noeud.forEach((String k, dynamic v) => parcourir(v, '$chemin.$k'));
+      } else if (noeud is String && interdits.hasMatch(noeud)) {
+        fautes.add('$chemin : $noeud');
+      }
+    }
+
+    parcourir(
+      _sousArbre(fr, <String>['recrutement', 'parcours']),
+      'recrutement.parcours',
+    );
+    parcourir(
+      _sousArbre(fr, <String>['recrutement', 'questionnaire']),
+      'recrutement.questionnaire',
+    );
+    parcourir(_sousArbre(fr, <String>['admin', 'regles']), 'admin.regles');
+    expect(fautes, isEmpty);
+  });
+
+  test('« Classe » prend sa majuscule partout dans le parcours du candidat', () {
+    // Les reponses du directeur du 22/10/2026 l'ecrivent ainsi (« Combien de
+    // Classes voulez-vous tenir ? ») : une meme question ne dit pas « classe »
+    // sur un ecran et « Classe » sur le suivant.
+    final RegExp minuscule = RegExp(r'\bclasses?\b');
+    final List<String> fautes = <String>[];
+    void parcourir(Object? noeud, String chemin) {
+      if (noeud is Map<String, dynamic>) {
+        noeud.forEach((String k, dynamic v) => parcourir(v, '$chemin.$k'));
+      } else if (noeud is String && minuscule.hasMatch(noeud)) {
+        fautes.add('$chemin : $noeud');
+      }
+    }
+
+    parcourir(
+      _sousArbre(fr, <String>['recrutement', 'parcours']),
+      'recrutement.parcours',
+    );
+    parcourir(
+      _sousArbre(fr, <String>['recrutement', 'questionnaire']),
+      'recrutement.questionnaire',
+    );
+    expect(fautes, isEmpty);
+  });
+
+  test('les tailles de Classe disent aussi le plafond des debutants', () {
+    // 5 enfants, 6 adultes, 4 debutants au plus (programme-rewayah, section 9).
+    for (final String tranche in <String>[
+      'o_6_9',
+      'o_10_13',
+      'o_14_17',
+      'adultes',
+    ]) {
+      for (final (String nom, Map<String, dynamic> arbre) in <(String, Map<String, dynamic>)>[
+        ('fr', fr),
+        ('ar', ar),
+      ]) {
+        final Object? explication = _sousArbre(arbre, <String>[
+          'recrutement',
+          'parcours',
+          'q',
+          'publics',
+          'options',
+          tranche,
+          'explication',
+        ]);
+        expect(
+          explication,
+          contains('4'),
+          reason: 'le plafond des debutants manque en $nom pour $tranche',
+        );
+      }
+    }
+  });
 
   test('aucun texte du parcours ne contient un montant ni un code interne', () {
     final String brut = jsonEncode(

@@ -73,9 +73,9 @@ opérateur ; `docs/archive/2026-09-pre-remise-a-plat/design/03-architecture-info
 | `CAND-05` | Écrire à l'académie | titulaire ; fil `candidature` | C | 1 | `/attente/messages` (neuve) | Fil seul | Fil seul, borné | **proposée** |
 | `CAND-06` | Aidez une personne à apprendre la parole d'Allah. (carte à partager) | titulaire d'une candidature en cours ; lit son propre profil (genre) et ses langues d'enseignement, sans rien écrire | C | 1 | `/attente/partage` (neuve) ; tuile du portail, sans bouton plein | Page : langue de la carte, aperçu, trois gestes | Deux colonnes : langue, mention et gestes au début, carte à la fin | **construit (22/10/2026), redessiné le 22/10 (soir) sur la direction du directeur : symbole contour tamisé, portail, deux variantes (hommes, femmes), quatre langues** |
 | `ENS-03` et `ELV-03`, mode entretien | Salle de l'entretien | candidat convoqué ; `entretiens.mener`, intervieweur désigné | C, E | 2 | `/salle` (billet en `extra`) | Salle existante | Salle existante | **proposée** |
-| `ADM-20` | Candidatures | `candidatures.lire` | E | 1 | `/admin/personnes/candidatures` (neuve) | Cartes, barre de sélection basse | Tableau dense ; file et détail quand un dossier est ouvert, file seule en mode sélection | **proposée** |
+| `ADM-20` | Candidatures | `candidatures.lire` | E | 1 | `/admin/personnes/candidatures` (neuve) | Cartes, barre de sélection basse | Tableau dense ; file et détail quand un dossier est ouvert, file seule en mode sélection | **construit (22/10/2026), sur ce que le serveur sert aujourd'hui** : liste, alertes, recherche, puces, tri, pages, sélection ; le reste attend `ADM-21`, `ADM-22`, `ADM-20E`, `ADM-23` et les lots serveur L2 à L4 (voir « Construit le 22/10/2026 » dans la fiche) |
 | `ADM-20E` | Entretiens | `candidatures.lire` ; rejoindre : intervieweur désigné | E | 1 | `/admin/personnes/candidatures?vue=entretiens` | Cartes par date | Tableau par date | **proposée** (code ajouté ici) |
-| `ADM-21` | Candidature | `candidatures.lire` ; gestes `candidatures.decider` | E | 2 | `/admin/personnes/candidatures/<référence>` | Page, sections empilées | Détail 728 à côté de la file ; deux colonnes seul | **proposée** |
+| `ADM-21` | Candidature | `candidatures.lire` ; gestes `candidatures.decider` | E | 2 | `/admin/personnes/candidatures/<référence>` | Page, sections empilées | Détail 728 à côté de la file ; deux colonnes seul | **construit (23/10/2026), sur ce que le serveur sert aujourd'hui** : page entière, onze gestes avec confirmation ; le détail 728 à côté de la file n'est pas construit (voir « Construit le 23/10/2026 » dans la fiche) |
 | `ADM-21F` | Fil « Candidature » | `candidatures.messages` | E | 3 | `/admin/personnes/candidatures/<référence>/fil` | Fil seul | Fil seul | **proposée** |
 | `ADM-21R` | Compte rendu d'entretien | `entretiens.mener`, intervieweur désigné | E | 3 | `/admin/personnes/candidatures/<référence>/compte-rendu` | Tâche focalisée | Formulaire borné | **proposée** (écran ajouté ici) |
 | `ADM-22` | Action groupée | `candidatures.decider` | E | 2 | `/admin/personnes/candidatures/action-groupee` | Page | Page, liste et effet côte à côte | **proposée** |
@@ -647,6 +647,16 @@ avant l'état `envoye`.
 ### CAND-01 : Questionnaire de la Salle d'examen
 
 - **Statut** : proposée, à valider par le directeur.
+- **Reprise du 22/10/2026** (réponses du directeur, `DECISION-CANDIDATURES-2026-10-21.md`
+  §1 ter) : langues d'explication sans plafond et sans l'arabe, poular = peul =
+  fulfulde sur une seule carte ; mémorisation et ijaza en deux questions ; publics en
+  tranches d'âge ; « Combien de Classes voulez-vous tenir ? » à la place des heures ;
+  moyens de paiement du pays en question informative ; clause de continuité dans la
+  carte des conditions ; disponibilités saisies **heure par heure**, dans l'heure
+  locale du fuseau confirmé, jamais dans celle de Paris par défaut. Le questionnaire
+  rendu par le serveur est celui de `salle-examen-1` (lot L2A1) ; tant que ce lot
+  n'est pas versé sur staging, ces écrans ne sont éprouvés que sur le double de
+  test. Les captures sont dans `captures-ecrans/QUESTIONNAIRE/`.
 - **Tâche** : lire les conditions de rémunération, puis répondre et envoyer sa
   candidature.
 - **Route** : `/attente/candidature` (neuve), dans le sous-arbre ouvert au compte en
@@ -662,27 +672,71 @@ avant l'état `envoye`.
   viennent de `pays_iso.dart`, les langues de la table des libellés ISO 639 du
   mappage (`CONS` §9). Aucun libellé de question ni d'option en dur ; un libellé
   absent dans la langue lue se signale, jamais un code brut.
+- **Parcours d'accueil** (directive du directeur, 22/10/2026) : un parcours, pas un
+  formulaire. Trois écrans de présentation qui rassurent (qui est Rewayah, ce que
+  fait un enseignant, comment se passe la candidature ; seulement ce qui est décidé),
+  puis **une question par écran**, des cartes à toucher décrites par ce qu'elles
+  sont, ce que le choix entraîne et un exemple, presque aucun clavier (une
+  recherche ne s'ouvre qu'à la demande : autres langues, autres pays, autres
+  riwayat, ville du fuseau), une barre de progression « n sur N » en haut, « Retour »
+  et « Continuer » en bas, puis le récapitulatif (chaque réponse se touche pour la
+  changer), les conditions en pourcentage et « Envoyer ma candidature ». « Continuer »
+  est toujours actif et se peint en aplat plein (`ActionPrincipale.affirmee`) : il ne
+  doit jamais paraître désactivé ; sans réponse, une phrase dit quoi faire. Le nombre
+  d'écrans dépend des réponses (jours choisis, « mêmes heures ? »).
 - **Contenu, une carte par thème** :
   1. **Conditions de rémunération**, lues au serveur, jamais écrites en dur
-     (`CAND-BR-12`) : la part de l'enseignant, « {part} du prix public, pour chaque
-     élève présent » (47 % au 19/10, `TARIFS:13`) ; puis une ligne par public,
-     rendue par le serveur, avec son montant par élève présent et par heure (deux
-     publics au 19/10, enfant et adulte, `TARIFS:14`). Aucun public ni montant en
-     dur. La règle de l'élève absent, la période de versement et les frais ne
-     s'affichent qu'une fois posés en base. Une phrase dit que les coordonnées
-     financières ne seront demandées qu'au premier versement (`CONS` 2.1) ;
-  2. **Langues** : langue maternelle, langues d'explication (noms lus dans le
-     référentiel ; une langue hors référentiel est marquée comme telle, jamais un
-     code brut, `CONS` §9) ;
-  3. **Récitation** : niveau de mémorisation, niveau de lecture et de tajwid,
-     riwaya, ijaza présentable (oui, non), expérience avec les débutants ;
-  4. **Disponibilités** : plages par jour en heures entières (une grille jour par heure, jamais de demi-heure), fuseau (le seul de la grille), classes souhaitées, date de début ; deux plages d'un même jour ne se recouvrent pas (cause nommée `plages_qui_se_chevauchent`) ;
-  5. **Publics** que vous pouvez enseigner ;
+     (`CAND-BR-12`), **à la fin, juste avant l'envoi** : la part de l'enseignant,
+     « {part} du prix public, pour chaque élève présent » (47 % au 19/10, `TARIFS:13`),
+     en pourcentage ; une ligne par public seulement quand les parts diffèrent
+     (`conditionsRemuneration` rend `partPourMille` par public). **Aucun montant, aucun
+     taux par élève et par heure, aucune devise** (décision du directeur du 22/10/2026,
+     `TARIFS`) : le serveur ne les rend plus et l'écran ne les lit pas ; une phrase dit
+     que les montants se demandent à l'administration. La règle de l'élève absent, la
+     période de versement et les frais ne s'affichent qu'une fois posés en base. La
+     carte dit aussi que la personne reçoit sa rémunération par un moyen validé par
+     Rewayah (`SPEC` 4.2 : la case d'accord ne porte plus que sur les conditions, que
+     le serveur écrit comme acceptation `teacher_pay_conditions` à la version lue),
+     la clause de continuité, et que les coordonnées financières ne seront demandées
+     qu'au premier versement (`CONS` 2.1) ;
+  2. **Langues** : langue maternelle ; langues d'explication, **sans plafond** et
+     **sans l'arabe** (ce n'est pas une langue de cours). Les langues du public sont
+     d'abord des cartes (poular, malinké, soussou, swahili, haoussa, wolof, bambara,
+     soninké, mandinka, français, anglais, autre) ; « poular », « peul » et
+     « fulfulde » sont une seule carte. Une recherche propose, elle aussi, des cartes.
+     Chaque carte dit si Rewayah donne déjà des cours dans cette langue. Une langue
+     hors référentiel est marquée comme telle, jamais un code brut (`CONS` §9) ;
+  3. **Récitation**, en questions séparées : niveau de mémorisation ; niveau de
+     lecture et de tajwid ; riwaya ; **ijaza** (oui, j'en ai une à présenter ; non, mais
+     prêt à passer un test ; non) ; expérience avec les débutants. Avoir mémorisé
+     n'est pas avoir une ijaza ;
+  4. **Publics** que vous pouvez enseigner, en tranches d'âge (6 à 9 ans, 10 à 13 ans,
+     14 à 17 ans, adultes), chacune décrite : ce qu'on y enseigne, ce qu'elle demande
+     (taille de la classe, séances), un exemple. Posée **avant** les disponibilités :
+     la durée d'un cours (une heure pour les enfants, une heure et demie pour les
+     adultes) en dépend ;
+  5. **Disponibilités**, heure par heure, après la confirmation du fuseau :
+     1. les **jours** (une carte par jour, et trois raccourcis : lundi, mercredi,
+        vendredi ; mardi, jeudi, samedi ; fin de semaine) ;
+     2. les **heures de début**, en puces groupées par moment de la journée (nuit,
+        matin, après-midi, soir). La fin du cours est calculée : « vous enseignez de
+        18 h à 19 h 30 » pour un cours d'adultes ;
+     3. « Ce sont les mêmes heures pour tous ces jours ? » : oui, ou jour par jour
+        (chaque jour reprend les heures déjà choisies) ;
+     4. « Votre semaine » : relecture claire, une ligne par jour ;
+     puis **« Combien de Classes voulez-vous tenir ? »** (1, 2, 3 ; la borne vient du
+     réglage « Classes au plus par enseignant » de la direction), avec les séances et
+     les heures que cela représente ; puis la date de début. Aucune heure n'est
+     convertie : ce sont celles du fuseau confirmé. Le client envoie au serveur des
+     plages à heures entières (voir « Contrat serveur ») ;
   6. **Pays et versement** : pays de résidence, pays de versement, compte bancaire
      (oui, non), opérateurs parmi les seules lignes confirmées du pays de versement ;
      sans ligne confirmée, une phrase à la place, jamais une liste vide ; la case
      « J'accepte de recevoir ma rémunération par au moins un moyen validé par
-     Rewayah. » (`SPEC §4.2`).
+     Rewayah. » (`SPEC §4.2`) ;
+  7. **Moyens de paiement courants là où vous vivez** : question **facultative et
+     informative**, qui le dit et dit qu'elle n'élimine personne ; sans moyen connu
+     pour le pays, la question n'est pas posée.
 - **Complément demandé** (transitions 7 et 23) : en tête, `complementDemande` et
   `complementListe` (voir `TUT-00b`) ; les questions nommées sont signalées dans
   leur carte et seules modifiables en Salle de vérification et d'entretien (envoi à
@@ -697,6 +751,15 @@ avant l'état `envoye`.
   et il commande la planification de l'entretien (transition 11). Le pays de
   versement proposé égal au pays de résidence reste une proposition, modifiable
   (`CAND-F16`). Saisi : rien.
+- **Continuité** : la carte des conditions de rémunération porte la clause « En
+  acceptant ces conditions, vous vous engagez à tenir votre Classe aux mêmes jours et
+  aux mêmes heures, chaque semaine. » (décision du 22/10/2026, §1 ter). Un envoi
+  refusé par le serveur pour des plages qui se chevauchent rouvre la question des
+  disponibilités avec une phrase qui dit pourquoi.
+- **Réglage de la direction** : « Classes au plus par enseignant » (`enseignant.classes_max`,
+  1 à 80, 3 par défaut) se règle dans l'écran Réglages
+  (`lib/features/admin_configuration_regles`) ; la ligne n'apparaît que si le serveur
+  expose le réglage.
 - **Jamais demandé** : numéro de compte, IBAN, numéro de portefeuille, identifiant,
   code ; pays d'origine (`CONS` 0.2) ; contrat ; pièce (`CONS` 12.2 : 0 case de
   contrat, 0 dépôt de pièce). Le numéro de contact n'est jamais proposé comme numéro
@@ -705,22 +768,24 @@ avant l'état `envoye`.
   l'état du versement (inconnu, à vérifier, confirmé, aucun moyen possible, clés de
   5.6). Le portail n'en montre que `versementImpossible`. Un complément demandé
   rouvre les seules questions nommées.
-- **Brouillon** : L2A1 (22/10) a posé un brouillon au serveur
-  (`enregistrerBrouillon` dans `PORTS`, `enregistrer_reponses_salle_examen`),
-  proposé et non décidé (`CAND-F15`, `CONS` 0.2 bis). Tant que le directeur n'a
-  pas répondu, l'écran n'en dépend pas : quitter la page sans envoyer l'annonce
-  avant (`ConfirmDestructive`).
+- **Brouillon** : `enregistrerBrouillon` (lot L2A1, `enregistrer_reponses_salle_examen`,
+  à confirmer avec `CAND-F15`) garde les réponses à chaque écran franchi, sous une clé
+  d'idempotence neuve et la version du brouillon ouvert. Il ne bloque jamais : hors
+  ligne, rien ne s'annonce ; refusé pour une autre raison, une phrase dit que les
+  dernières réponses restent à l'écran et partent avec l'envoi. Quitter le parcours ne
+  perd donc que l'écran en cours : aucune confirmation de départ.
 - **Bouton plein** : « Envoyer ma candidature », en bas, après la case de
   rémunération (16). **Rendu seulement quand le cadre religieux et pédagogique est
   publié et accepté.** Sans `CAND-BR-11`, ou tant que la version requise du cadre
   n'est pas publiée, il n'est pas rendu : la phrase `accords.cadreNonPublie` le
   remplace, les réponses restent à l'écran. Publié mais pas encore accepté : la
   phrase `cadreManquant` et le lien « Lire et accepter nos conditions ».
-- **Disposition** : mobile : cartes empilées (`PileCartes`, 16). Tablette (768) :
-  colonne bornée ; les cartes de choix en deux colonnes. Bureau : colonne de
-  formulaire bornée (`PageParcours`) ; à l'intérieur d'une question, les cartes de
-  choix passent en bento, de tailles variées ; la carte des conditions est la plus
-  large. Jamais une carte de téléphone étirée.
+- **Disposition** : posée sur `PageEtape` (via `CoquilleParcours`), comme
+  l'inscription. Mobile : cartes empilées (`PileCartes`, 16). Tablette (768) :
+  colonne bornée ; les cartes de choix en deux colonnes. Bureau : colonne bornée ;
+  à l'intérieur d'une question, les cartes de choix passent en bento, de tailles
+  variées. Le récapitulatif et la carte des conditions restent dans la colonne de
+  lecture. Jamais une carte de téléphone étirée.
 - **États** :
   - `loading` (`Skeleton` des cartes) ; `content` ;
   - `empty` : sans objet ;
@@ -741,16 +806,22 @@ avant l'état `envoye`.
     lien vers la page d'accords) ; **conflit** (`ConflitCandidature`) ;
   - **complément demandé** : la liste en tête, les questions nommées ;
   - **lecture seule après l'envoi**, avec l'état du versement ;
-  - **départ sans envoi** : « Quitter sans envoyer votre candidature ? » ;
+  - **départ sans envoi** : sans objet depuis le brouillon (voir Brouillon) ;
   - succès seulement après la réponse : retour au portail, « en examen ».
-- **Textes** :
+- **Textes** : les textes des questions de la reprise du 22/10/2026 (langues, ijaza,
+  tranches d'âge, heures, semaine, Classes, moyens de paiement) sont dans
+  `assets/i18n/{fr,ar}.i18n.json` sous `recrutement.parcours.q.*` et
+  `recrutement.parcours.creneaux.*`, `fr` et `ar` ; la table ci-dessous garde les
+  clés de l'écran de relecture.
 
 | Clé proposée | Français | Arabe |
 | :--- | :--- | :--- |
 | `recrutement.questionnaire.titre` | Votre candidature | à traduire |
 | `recrutement.questionnaire.conditionsTitre` | Conditions de rémunération | à traduire |
 | `recrutement.questionnaire.part` | Votre part : {part} du prix public, pour chaque élève présent. | à traduire |
-| `recrutement.questionnaire.montantPublic` | {public} : {montant} par élève présent et par heure. | à traduire ; une ligne par public rendu par le serveur |
+| `recrutement.questionnaire.partPublic` | {public} : {part} du prix public, pour chaque élève présent. | traduit ; rendu seulement quand les parts diffèrent d'un public à l'autre (aucun montant) |
+| `recrutement.questionnaire.moyenValide` | Vous recevez votre rémunération par un moyen validé par Rewayah. | traduit |
+| `recrutement.questionnaire.montantsSurDemande` | Pour connaître les montants, demandez-les à l'administration. | traduit ; `TARIFS`, décision du 22/10 |
 | `recrutement.questionnaire.coordonneesPlusTard` | Vos coordonnées financières ne vous seront demandées qu'avant votre premier versement. | à traduire |
 | `recrutement.questionnaire.langues` | Vos langues | à traduire |
 | `recrutement.questionnaire.recitation` | Votre récitation | à traduire |
@@ -762,12 +833,12 @@ avant l'état `envoye`.
 | `recrutement.questionnaire.versement` | Votre pays et votre versement | à traduire |
 | `recrutement.questionnaire.horsReferentiel` | Langue pas encore proposée par Rewayah | à traduire |
 | `recrutement.questionnaire.aucunMoyen` | Rewayah ne verse pas encore de rémunération dans ce pays. Vous pouvez envoyer votre candidature : elle restera en Salle d'examen jusqu'à ce qu'un moyen soit possible. | à traduire |
-| `recrutement.questionnaire.accordRemuneration` | J'accepte de recevoir ma rémunération par au moins un moyen validé par Rewayah. | à traduire |
+| `recrutement.questionnaire.accordRemuneration` | J'ai lu ces conditions et je les accepte. | traduit ; la case des conditions remplace celle du moyen de versement (`PROPOSITION_REPARTITION_PAIEMENT.md` 2.2, point 3), non validée par le directeur |
 | `recrutement.questionnaire.envoyer` | Envoyer ma candidature | à traduire |
 | `recrutement.questionnaire.preRempli` | Certaines réponses viennent de votre ancien formulaire. Relisez-les avant d'envoyer. | à traduire |
 | `recrutement.questionnaire.perime` | Le questionnaire a changé depuis votre dernière visite. Relisez les questions signalées. | à traduire |
 | `recrutement.questionnaire.incomplet` | Il manque une réponse : {question}. | à traduire |
-| `recrutement.questionnaire.accordManquant` | Cochez la case de rémunération pour envoyer votre candidature. | à traduire |
+| `recrutement.questionnaire.accordManquant` | Cochez la case pour accepter ces conditions et envoyer votre candidature. | traduit |
 | `recrutement.questionnaire.cadreManquant` | Acceptez d'abord le cadre religieux et pédagogique. | à traduire |
 | `accords.cadreNonPublie` | L'envoi de votre candidature sera possible quand le cadre religieux et pédagogique sera publié. | voir `TUT-00c/a+b` |
 | `attente.lireEtAccepter` | Lire et accepter nos conditions | existante |
@@ -775,25 +846,41 @@ avant l'état `envoye`.
 | `recrutement.questionnaire.horsLigne` | Votre candidature pourra être envoyée quand la connexion reviendra. | à traduire |
 | `recrutement.questionnaire.nonOuverte` | Cette étape n'est pas encore ouverte. Votre compte est gardé. | à traduire |
 | `recrutement.questionnaire.envoyee` | Votre candidature est envoyée. L'académie vous préviendra ici s'il faut la compléter. | à traduire |
-| `recrutement.questionnaire.quitterQuestion` | Quitter sans envoyer votre candidature ? | à traduire |
-| `recrutement.questionnaire.quitterConsequence` | Vos réponses ne sont pas gardées. | à traduire |
-| `recrutement.questionnaire.quitter` | Quitter sans envoyer | à traduire |
 | `recrutement.portail.complementDemande` | L'académie vous demande un complément. | voir `TUT-00b` |
 | `recrutement.portail.complementListe` | À compléter : {elements}. | voir `TUT-00b` |
 | `recrutement.paiement.*` | les quatre états du versement | voir 5.6 |
 
-- **Contrat serveur** : L2 (`CAND-BR-10`, `CAND-BR-12`) ; libellés `fr` et `ar` dans
-  `Questionnaire` et envoi d'un complément en salle 2, à préciser dans `PORTS`
-  (L2) ; publics et montants rendus par `conditionsRemuneration` ; opérateurs L6
+- **Contrat serveur** : disponibilités envoyées en liste de
+  `{jour (1 lundi à 7 dimanche), debut "HH:00", fin "HH:00" ou "24:00"}`, sans fuseau
+  (le fuseau est le champ `fuseauIana`), 168 plages au plus, sans chevauchement, sans
+  plage qui passe minuit (deux plages) ; une Classe d'adultes de 90 minutes déclare
+  les deux heures entières qu'elle touche ; l'écran garde l'heure de début choisie
+  et ne fait que la convertir (`lib/core/candidature/disponibilites_declarees.dart`).
+  Limite de la maille d'une heure : un cours d'adultes qui finit à 19 h 30 déclare
+  toute l'heure 19, soit 30 minutes de plus que ce que la personne enseigne ;
+  l'affectation reste l'autorité. Lot L2A1 (écrit le 22/10, ni staging ni production) :
+  `conditions_remuneration_candidat`, `questionnaire_salle_examen`,
+  `enregistrer_reponses_salle_examen` (brouillon), `envoyer_reponses_salle_examen`
+  (porte `p_version_conditions`, la version des conditions lues ; refus rendus
+  `conditions_perimees`, `conditions_indisponibles`, `reponses_invalides` avec la cause
+  `plages_qui_se_chevauchent` sous `motifs`). `conditionsRemuneration` rend la part par
+  public en pour mille et **jamais un montant ni la devise**. L2 (`CAND-BR-10`,
+  `CAND-BR-12`) ; libellés `fr` et `ar` dans `Questionnaire` et envoi d'un complément
+  en salle 2, à préciser dans `PORTS` (L2) ; opérateurs L6
   (`CAND-BR-13`, `PortReferentielPaiement.optionsConfirmees`) ; pré-remplissage L3
   (`CAND-BR-17`). **Chemin critique** : aucun envoi avant le lot `conduite`, le texte
   du cadre validé, puis `CAND-BR-11` (`CONS` §11).
 - **Contrôles d'acceptation** : 0 case de contrat, 0 dépôt de pièce (`CONS` 12.2) ;
   0 champ de compte ou de portefeuille ; 0 liste d'opérateurs vide ; 0 code de langue
-  rendu tel quel ; 0 libellé de question ou d'option en dur ; une ligne de montant
-  par public rendu, montants identiques à ceux du serveur de démonstration ; 0
+  rendu tel quel ; 0 libellé de question ou d'option en dur ; 0 montant, 0 devise,
+  0 taux par élève et par heure ; la part en pourcentage identique à celle du serveur, une
+  ligne par public seulement quand les parts diffèrent ; 0
   « Envoyer ma candidature » quand le cadre n'est pas publié ou pas accepté ; 0
-  envoi sans fuseau confirmé ; après l'envoi, 0 champ modifiable hors complément ;
+  envoi sans fuseau confirmé ; 0 grille de blocs de quatre heures ; 0 heure rendue
+  sans son fuseau (jamais « Paris » par défaut) ; 0 plage envoyée hors du format
+  entier du serveur ; 0 langue d'explication « arabe » ; 0 « groupe », 0 « échec » ;
+  en arabe, la rémunération se dit « الراتب » ; après l'envoi, 0 champ modifiable hors
+  complément ;
   L6-1 à L6-3 côté widget ; 5.7.
 
 ### TUT-00c/a+b étendu : Page d'accords (`/attente/accords`)
@@ -1365,7 +1452,10 @@ avant l'état `envoye`.
 
 ### ADM-20 : Candidatures
 
-- **Statut** : proposée, à valider par le directeur.
+- **Statut** : **construit le 22/10/2026**, sur ordre explicite du directeur (ordre du 22/10),
+  **sur ce que `lister_candidatures` et `capacites_candidatures` servent aujourd'hui**. Pas encore
+  validé par lui ; la fiche ci-dessous reste la cible, le bloc « Construit le 22/10/2026 » dit
+  ce qui est rendu et ce qui attend.
 - **Tâche** : trouver une candidature, voir ce qui bloque, agir seul ou en lot.
 - **Route** : `/admin/personnes/candidatures` (neuve). L'onglet « Candidatures »
   remplace « Invitations » à son rang (`admin_domaine.dart:273-277`) : pas de
@@ -1534,6 +1624,67 @@ avant l'état `envoye`.
   (`test/widgets/catalogue_galerie_test.dart`) ; confirmée indisponible distincte de
   prête à affecter (L2-14) ; 5.7.
 
+**Construit le 22/10/2026.** Fichiers : `lib/core/candidature/modeles_candidatures_direction.dart`,
+`port_candidatures_direction.dart` (`capacites`, `lister`), `candidatures_direction_supabase.dart` ;
+`lib/features/admin_candidatures/` (page, alertes, ligne et carte, mots) ; `BarreSelection`
+**promue** de `lib/features/comptable/paiements/` vers `lib/core/widgets/` (le Comptable la lit
+désormais depuis le core), entrée de galerie ajoutée ; route `/admin/personnes/candidatures`,
+onglet « Candidatures » au rang de « Invitations » ; double `test/fixtures/candidature/faux_candidatures_direction.dart`.
+
+- **Rendu et lu au serveur** : les quatre alertes dans **une** carte ; la recherche (nom,
+  référence, courriel entier) avec son délai de 300 ms, envoyée comme le serveur la compare (une
+  référence copiée à l'écran, aux traits d'union insécables U+2011, retrouve sa candidature ; 200
+  caractères au plus, au-delà le serveur refuse tout le filtre, `22023`) ; les puces des salles avec les compteurs
+  du serveur (« Gardées pour suivi » seulement si `gestes.garderPourSuivi` est vrai : le
+  serveur le rend faux, ni puce ni mot) ; sous « Plus », état, issue, pause, versement, pays de
+  résidence ; le tri par dernière activité et par date de réception (choix segmenté, menu au
+  texte agrandi) ; la liste paginée par 50, total réel du filtre, « Page n sur N » ; tableau dense
+  au bureau, cartes ailleurs (et au bureau à texte agrandi) ; sélection multiple gardée d'une
+  page à l'autre ; bandeau de l'exception du super-admin (`peutLireHorsGenre`) ; états :
+  chargement, contenu, vide, aucun résultat (filtres rappelés, « Effacer les filtres »), erreur
+  (« Réessayer »), hors ligne (la lecture reste, `EtatSansDonnees` sinon), capacité
+  indisponible, accès refusé, genre du lecteur inconnu (deux refus du serveur distingués par
+  leur message, `42501`), alertes à zéro, compteur non servi dit seul.
+- **Ce que la fiche prévoit et que la file ne rend pas encore, et pourquoi** :
+
+| Point de la fiche | Pourquoi il n'est pas rendu | Dépend de |
+| :--- | :--- | :--- |
+| Ouverture d'une ligne (`ADM-21`), file et détail 336, 24, 728 | **Rendu depuis le 23/10/2026** pour l'ouverture : la ligne ouvre `ADM-21` en page entière (route `/admin/personnes/candidatures/<référence>`, l'identifiant de la ligne passé en paramètre d'ouverture pour ne pas relire la file). Le maître-détail 336, 24, 728 n'est pas construit | maître-détail |
+| Mode sélection : « Sélectionner », « Agir sur la sélection » | `ADM-22` n'est pas construit : **le mode n'est pas offert** (paramètre `agirSurSelection` absent : ni le lien « Sélectionner », ni la barre), parce qu'une sélection sur laquelle on ne peut rien faire n'a pas de sens (5.2 : un contrôle qui ne peut pas aboutir n'est pas rendu). Dès que la destination est donnée et que le serveur ouvre `gestes.agirEnLot`, le lien et la barre sont rendus ; hors ligne, la phrase de `admin.candidatures.selection.horsLigne` remplace l'action. Prouvé par les tests de widget de la page, pas par une capture : sur le vrai routeur le mode n'existe pas encore | `ADM-22`, `gestes.agirEnLot` |
+| Sections « Candidatures » et « Entretiens » | `ADM-20E` n'est pas construit : un sélecteur d'une section ne sert à rien | `ADM-20E`, L4 |
+| Toucher une alerte pose le filtre | `lister_candidatures` n'a pas de clé de filtre `alerte` (22023) ; un filtre approchant ne compterait pas ce que le compteur annonce | clé `alerte` côté serveur |
+| Alertes « Bloquées » et « Entretiens en retard » | rendues `NULL` par le serveur (L2 : contrôles, L4 : entretiens) : « Disponible au branchement serveur » | L2, L4 |
+| Tri « Besoin, niveau, disponibilité » (défaut de la fiche) et « Date d'entretien » | le serveur ne trie que par activité, réception et nom ; le défaut est donc « Dernière activité » | L2, L4 |
+| Filtres responsable, affectée ou non, sans activité depuis N jours, langues, niveau, heures, date de début, besoin ouvert, provenance, dates | clés absentes de `lister_candidatures` | L2, L3 |
+| Recherche par téléphone | le serveur cherche le nom, la référence et le courriel entier, pas le téléphone ; la phrase « inscrite au journal » n'est donc pas rendue | L3 |
+| Clés de tri sur la ligne (niveau, heures, début, compte bancaire), état du courriel, lien WhatsApp, entretien et son lien, nom du responsable | non rendues par `cand_ligne_json` ; la ligne montre l'état, la salle, le pays, le versement, la dernière activité, les deux marques | L2 à L5 |
+| Filtre d'état « Versement pas encore possible » (`paiement_non_disponible`) | rendu dans « Plus », mais `lister_candidatures` ne l'accepte qu'à partir de `CAND-L2A2` (D15, migration `20261022000100`, pas encore versée) ; avant, le serveur le refuse (`22023`) et l'écran dit « n'ont pas pu être lues » avec « Réessayer ». Les gestes que `CAND-L2A2` ouvre (`gestes.agirEnLot` vrai) ne s'emploient pas avant `ADM-22` : le lien « Sélectionner » attend aussi sa destination (ligne ci-dessus) | `CAND-L2A2` à verser |
+| Cause d'une restriction (pièce, versement, direction) | la ligne ne rend que le drapeau `restreinte` : le mot est « Restreinte » (libellé ajouté) ; la cause se lit dans `ADM-21` (construit le 23/10/2026) | rien |
+| « Importer les formulaires » | `ADM-23` n'est pas construit, `peutImporter` est faux | `ADM-23`, L3 |
+| « Inviter un comptable » | un lien « Invitations » mène à l'ancienne page, rendu si l'un des deux ports d'invitation est servi : c'est encore le seul endroit où l'on invite un enseignant (`CAND-F01` non tranché). Cette page n'a plus d'onglet. **Le lien est en tête de la file, dans tous les états** (file vide, lecture en erreur, accès refusé, serveur pas encore branché), pas au pied de la liste ni seulement quand la file est lue : tant que `lister_candidatures` n'est pas servi en production, c'est lui, et lui seul, qui garde l'invitation d'un enseignant atteignable | `CAND-F01`, geste `inviter` |
+
+- **Relu et repris le 22/10/2026** (relecture par un second agent, avant validation du
+  directeur) : le lien des invitations remonte en tête et reste dans tous les états ; le mode
+  sélection n'est plus offert sans destination (ni lien, ni barre) ; la recherche normalise les
+  traits d'union et se borne à 200 caractères ; une clé de texte inutilisée
+  (`admin.candidatures.selection.retenir`) est retirée. Écarté : l'action « Effacer les filtres »
+  de l'état vide garde la teinte douce des états vides (composant partagé `EmptyState`, passe
+  d'harmonisation HU-1) ; le libellé « Invitations » est gardé (clé existante, traduite) en
+  attendant `CAND-F01`.
+- **Deux libellés d'écart avec la fiche** : « Restreinte » (état d'une ligne, ci-dessus) et
+  « Issue » (axe du menu « Plus » : en cours, refusée, retirée), qui n'étaient pas dans 5.6 ; ils
+  sont déclarés dans `tool/libelles_sources.json`. Les mots du module n'entrent pas dans
+  `.claude/skills/mots-rewayah/SKILL.md` dans ce commit : le dossier `.claude/` est hors de la
+  zone de cet ordre, à faire par le directeur (`DEC:35`).
+- **Un choix de composant à valider** : le tri est rendu par `SelecteurSection`, composant
+  des choix segmentés qui devient un menu quand le texte ne tient plus ; un `MenuFiltre` à
+  libellé « Tri : … » tronquait à 320 px et texte ×2 (mesuré avec les vraies polices).
+- **Mesuré** (vraies polices, 320 × 568 texte ×2, 390, 1440 texte ×1 et ×2 ; français et arabe de
+  droite à gauche) : 0 mot coupé ni tronqué, 0 ponctuation seule, 0 débordement, au plus 1 bouton
+  plein, sur onze états de la file ; 0 courriel, téléphone, code d'état ni code de dépendance dans
+  le rendu ; une page de 50 lignes demandée à la fois sur 1 000 lignes (20 pages) ; la date en
+  arabe garde l'ordre de sa langue. Chiffres des tests et captures : voir le commit.
+
 ### ADM-20E : Entretiens
 
 - **Statut** : proposée, à valider par le directeur. Code ajouté par ce catalogue
@@ -1602,7 +1753,7 @@ avant l'état `envoye`.
 
 ### ADM-21 : Candidature
 
-- **Statut** : proposée, à valider par le directeur.
+- **Statut** : construit le 23/10/2026 sur ordre explicite du directeur du 22/10/2026 (un écran à la fois), sur ce que le serveur sert aujourd'hui ; à valider par le directeur. Voir « Construit le 23/10/2026 », en fin de fiche.
 - **Tâche** : comprendre une candidature d'un coup d'oeil et faire la prochaine
   action.
 - **Route** : `/admin/personnes/candidatures/<référence>`. La référence est `CAND-…`,
@@ -1782,13 +1933,13 @@ avant l'état `envoye`.
 | `admin.candidatures.planifier.fuseauInconnu` | Le fuseau de la personne n'est pas connu. Rien n'a été planifié. Demandez un complément sur son fuseau. | à traduire ; suivi du lien « Demander un complément » |
 | `admin.candidatures.planifier.intervieweurRefuse` | Cette personne ne peut pas mener cet entretien. Choisissez-en une autre. | à traduire |
 | `com.socle.lexique.enregistrer` | Enregistrer | existante |
-| `admin.candidatures.erreurs.controles` | Rien n'a été fait. Il manque : {controles}. | à traduire |
-| `admin.candidatures.erreurs.transition` | Ce geste n'est pas possible depuis l'état « {etat} ». Rien n'a été fait. | à traduire ; `{etat}` : libellé de 5.6 |
-| `admin.candidatures.erreurs.conflit` | Cette candidature a changé depuis son ouverture. Relisez-la avant d'agir. | à traduire |
-| `admin.candidatures.erreurs.horsPortee` | Vous n'avez pas accès à cette candidature. | à traduire |
-| `admin.candidatures.erreurs.absente` | Cette candidature n'existe pas, ou plus. | à traduire |
-| `admin.candidatures.erreurs.lecture` | La candidature n'a pas pu être lue. | à traduire |
-| `admin.candidatures.erreurs.horsLigne` | Les gestes pourront être faits quand la connexion reviendra. | à traduire |
+| `admin.candidatures.erreurs.controles` | Rien n'a été fait. Il manque : {controles}. Vérifiez ces points, puis réessayez. | construit ; l'action est ajoutée (K-59) |
+| `admin.candidatures.erreurs.transition` | Ce geste n'est pas possible depuis l'état « {etat} ». Rien n'a été fait. Actualisez la candidature. | construit ; `{etat}` : libellé de 5.6 |
+| `admin.candidatures.erreurs.conflit` | Cette candidature a changé depuis son ouverture. Actualisez-la avant d'agir. | construit ; le bouton de la feuille est « Actualiser la candidature » (`feuille.actualiser`), mot déjà employé ailleurs dans l'application |
+| `admin.candidatures.erreurs.horsPortee` | Vous n'avez pas accès à cette candidature. Revenez à la liste des candidatures. | construit ; message de la feuille. Sur la page : titre `detail.titreHorsPortee` et phrase `detail.revenirALaFile` |
+| `admin.candidatures.erreurs.absente` | Cette candidature n'existe pas, ou plus. Revenez à la liste des candidatures. | construit ; message de la feuille. Sur la page : titre `detail.titreAbsente` et phrase `detail.revenirALaFile` |
+| `detail.titreLecture` (ex `erreurs.lecture`) | La candidature n'a pas pu être lue. | construit ; sorti du groupe `erreurs`, dont chaque phrase doit dire quoi faire : l'action de la page est le bouton « Réessayer » |
+| `admin.candidatures.erreurs.horsLigne` | Aucun geste n'est possible sans connexion. Reconnectez-vous pour agir. | construit |
 
 - **Contrat serveur** : L1 (`CAND-BR-03`, `CAND-BR-07`) : `.lire`, `.lireContact`,
   `.historique` (auteur rendu par sa qualité, jamais par son nom ; forme à préciser
@@ -1807,6 +1958,76 @@ avant l'état `envoye`.
   compris ; courriel `a_envoyer` : 0 « envoyé le » ; production sans réponse de
   `CONS` 0.3 : 0 « Inviter » ni « Consigner le lien » sur une ligne gardée ;
   phrase d'exception rendue seulement sur une candidature de l'autre côté ; 5.7.
+
+#### Construit le 23/10/2026
+
+Sur ordre explicite du directeur du 22/10/2026 (un écran à la fois), sur ce que le serveur sert
+aujourd'hui (L1, L1B, L6) et ce que `CAND-L2A2` ouvre (migration `20261022000100`, **pas encore
+versée en production** : tant qu'elle ne l'est pas, `capacites_candidatures()` n'ouvre aucun
+geste et l'écran n'en propose aucun). Chaque point distingue ce qui est spécifié, présent dans
+le code et testé en local ; rien n'est testé sur staging ni déployé.
+
+- **Rendu et lu au serveur** : l'en-tête (nom, sinon la référence insécable ; la référence en
+  sous-titre) ; la carte de situation (état, salle, versement, pays, dates, provenance, cause d'une
+  restriction, message choisi pour la pause ou le refus) ; les blocages ; la prochaine action (le
+  seul bouton plein) et le menu des autres gestes, montrés seulement s'ils sont permis depuis
+  l'état et ouverts par `capacites_candidatures().gestes` (une clé absente vaut faux ; un widget lit
+  la capacité, jamais le rôle) ; les réponses par groupes, avec la version du questionnaire ; les
+  contrôles, quand le serveur les rend ; le responsable ; le contact (masqué, la lecture est journalisée et se fait dans
+  une feuille) ; l'historique par pages de curseur, l'auteur dit par sa qualité, jamais par son nom.
+  Deux colonnes dès `AppGabarit.seuilEtendu` si le texte n'est pas agrandi, une colonne sinon.
+- **Onze gestes, chacun avec sa feuille de confirmation** : demander un complément, clore le
+  complément, confirmer le moyen de versement, écarter le moyen de versement, admettre en Salle de
+  vérification et d'entretien, mettre en pause, lever la pause, refuser, enregistrer un retrait
+  demandé, rouvrir, choisir le responsable. Chaque feuille dit la conséquence avant le choix (K-58),
+  recueille ce que le geste exige (motif interne, modèle de message, éléments, moyen, canal, jour
+  de la demande, reprise facultative), puis part avec la **version attendue** lue avec le dossier
+  et une **clé d'idempotence**. Le succès ne se dit qu'après la réponse du serveur, puis la page
+  relit la candidature. Un geste sans réponse est dit **non confirmé** : « Réessayer » rejoue la
+  même clé (le serveur ne le fait pas deux fois), changer un champ prend une clé neuve ; un rejeu
+  reconnu par le serveur se dit (`retours.rejoue`).
+- **Refus nommés du serveur, affichés en mots dans la feuille** (le serveur les rend dans le JSON,
+  il ne les lève pas) : conflit de version, geste interdit depuis l'état, contrôles non satisfaits
+  (chacun nommé avec sa cause), motif requis, modèle requis ou inconnu, éléments requis ou
+  invalides, aucun complément, reprise invalide, jour de la demande invalide, moyen non confirmable
+  ou non déclaré, responsable invalide, clé réutilisée, hors portée, absente, permission. Conflit,
+  geste interdit et complément déjà clos n'offrent plus que « Actualiser la candidature ».
+- **Demander un complément : aucun champ libre** (la fiche : « aucun motif interne, aucun texte
+  libre »). Le serveur exige pourtant un motif non vide pour les transitions 7 et 23
+  (`motif_requis`) : il part, déduit de la liste choisie (le nom de chaque élément, dans l'ordre
+  du serveur). « Clore le complément » garde un motif saisi : aucune liste ne le dit.
+- **Jours en UTC** : la reprise d'une pause (postérieure au jour UTC courant) et le jour d'une
+  demande de retrait (entre la réception et le jour UTC courant) se bornent en jour UTC, comme le
+  serveur, jamais en jour de l'appareil.
+- **Un geste sans réponse claire garde sa clé** : pas seulement le « non confirmé » du réseau,
+  aussi une panne que l'adaptateur ne sait pas dire (5xx, délai) ; l'essai suivant rejoue, le
+  serveur dit `rejoue` si le premier est passé.
+- **Ordre des blocs de `CONS` §10** : pièce et entretien (une carte), responsable, affectation,
+  contact, courriels, historique. L'affectation et les courriels ont chacun leur bloc.
+- **Un seul bouton plein par feuille** : valider ou actualiser, jamais les deux ; « Annuler » est
+  secondaire. Une liste fermée que le serveur ne sert pas (éléments, modèles, canaux, moyens) se dit
+  « Disponible au branchement serveur » à la place du choix, sans bouton qui ne puisse pas aboutir.
+- **États** : chargement, contenu, erreur (« Réessayer »), hors ligne (la lecture reste,
+  `EtatSansDonnees` sinon), capacité indisponible, accès refusé, genre du lecteur inconnu, hors
+  portée et absente (deux textes, jamais l'un pour l'autre), blocs non servis dits seuls.
+- **Mesuré** (vraies polices, 320 texte ×2, 390, 1440 texte ×1 et ×2 ; français et arabe de
+  droite à gauche) : 0 mot coupé ni tronqué, 0 débordement, au plus 1 bouton plein ; 0 courriel,
+  téléphone, genre, code d'état ni code de dépendance dans le rendu avant « Voir le contact ».
+- **Ce que la fiche prévoit et que l'écran ne rend pas encore, et pourquoi** :
+
+| Point de la fiche | Pourquoi il n'est pas rendu | Dépend de |
+| :--- | :--- | :--- |
+| Phrase d'exception du super-admin sur une candidature de l'autre côté | le serveur ne sert pas le côté (femmes ou hommes) d'une candidature : l'écran ne le devine pas | côté de la candidature, serveur |
+| Liste des responsables possibles | pas de RPC (`responsablesPossibles` répond `CapaciteIndisponible('CAND-BR-04')`) : la feuille « Choisir le responsable » le dit et n'offre aucun bouton | L2 |
+| Contrôles, pièce, entretien, affectation, courriels | `lire_candidature` rend `controles` et `piece` nuls ; entretien, affectation et courriels ne sont pas servis : chaque bloc dit « Disponible au branchement serveur » ; le lien « Ouvrir dans Dossiers à valider » est rendu | L2, L3, L4 |
+| Texte intégral des modèles de message (pause, refus) | les textes viennent de L5 et ne sont pas servis : la feuille nomme le modèle et dit que la personne lira le message de ce modèle | L5 |
+| « Garder pour suivi », inviter, restreindre, noter une indisponibilité, planifier, revoir la pièce, rattacher | gestes que le serveur n'ouvre pas aujourd'hui : ni bouton ni entrée de menu | L2 à L4 |
+| Fil « Écrire à {nom} » | `ADM-21F` n'est pas construit | `ADM-21F`, `CAND-05` |
+| Détail 728 à côté de la file (336, 24, 728) | non construit : la page s'ouvre en entier | maître-détail |
+| Les noms des modèles de message et le texte arabe de l'écran | à relire par une personne qui lit l'arabe | directeur |
+
+- **Pas d'`UX_REVIEW`** : l'écran est livré sans revue de second agent ; la relecture du directeur
+  tient lieu de validation.
 
 ### ADM-21F : Fil « Candidature »
 

@@ -32,18 +32,22 @@ const List<String> fuseauxDeTest = <String>[
   'Europe/Paris',
 ];
 
-/// Les langues hors referentiel de la definition `salle-examen-1`.
+/// Les langues hors referentiel de la definition `salle-examen-1` (22/10) :
+/// celles du public de l'academie, puis les autres, et « autre » qui ferme la
+/// liste. L'arabe y est : il reste une langue maternelle possible, mais le
+/// champ des langues d'explication l'exclut.
 const List<String> languesHorsReferentielDeTest = <String>[
-  'ar',
-  'ff',
+  'man',
+  'sus',
+  'sw',
   'ha',
   'wo',
+  'bm',
+  'snk',
+  'mnk',
+  'ar',
   'ps',
   'ur',
-  'snk',
-  'bm',
-  'sw',
-  'mnk',
   'om',
   'am',
   'yo',
@@ -57,6 +61,7 @@ const List<String> languesHorsReferentielDeTest = <String>[
   'de',
   'pt',
   'ru',
+  'autre',
 ];
 
 /// Les vingt riwayat de la definition `salle-examen-1`.
@@ -93,6 +98,8 @@ Map<String, dynamic> questionnaireJsonDeTest({
   Map<String, Object?>? dernieresReponses,
   bool brouillon = true,
   bool perime = false,
+  int classesMax = 3,
+  bool moyensConnus = true,
 }) => <String, dynamic>{
   'disponible': true,
   'version': version,
@@ -103,7 +110,7 @@ Map<String, dynamic> questionnaireJsonDeTest({
       'code': 'langueMaternelle',
       'carte': 'langues',
       'type': 'choix',
-      'requis': true,
+      'requis': false,
       'options': <Object>[
         <String, Object>{'code': 'poular', 'referentiel': true},
         <String, Object>{'code': 'francais', 'referentiel': true},
@@ -118,13 +125,13 @@ Map<String, dynamic> questionnaireJsonDeTest({
       'type': 'choix_multiple',
       'requis': true,
       'min': 1,
-      'max': 10,
       'options': <Object>[
         <String, Object>{'code': 'poular', 'referentiel': true},
         <String, Object>{'code': 'francais', 'referentiel': true},
         <String, Object>{'code': 'english', 'referentiel': true},
+        // L'arabe n'est pas une langue de cours : le serveur ne le rend pas.
         for (final String c in languesHorsReferentielDeTest)
-          <String, Object>{'code': c, 'referentiel': false},
+          if (c != 'ar') <String, Object>{'code': c, 'referentiel': false},
       ],
     },
     <String, dynamic>{
@@ -133,11 +140,10 @@ Map<String, dynamic> questionnaireJsonDeTest({
       'type': 'choix',
       'requis': true,
       'options': <String>[
+        'aucune',
+        'moins_10_juz',
+        'de_10_a_29_juz',
         'coran_entier',
-        'ijaza_lecture_enseignement',
-        'plus_de_10_juz',
-        'moins_de_10_juz',
-        'bonne_lecture_sans_memorisation',
       ],
     },
     <String, dynamic>{
@@ -165,7 +171,7 @@ Map<String, dynamic> questionnaireJsonDeTest({
       'carte': 'recitation',
       'type': 'choix',
       'requis': true,
-      'options': <String>['oui', 'non'],
+      'options': <String>['oui', 'pret_test', 'non'],
     },
     <String, dynamic>{
       'code': 'experienceDebutants',
@@ -180,7 +186,7 @@ Map<String, dynamic> questionnaireJsonDeTest({
       'type': 'creneaux',
       'requis': true,
       'min': 1,
-      'max': 42,
+      'max': 168,
       'options': <Object>[],
     },
     <String, dynamic>{
@@ -191,11 +197,12 @@ Map<String, dynamic> questionnaireJsonDeTest({
       'options': fuseauxDeTest,
     },
     <String, dynamic>{
-      'code': 'heuresParSemaine',
+      'code': 'classesSouhaitees',
       'carte': 'disponibilites',
       'type': 'choix',
       'requis': true,
-      'options': <String>['moins_de_3', 'de_3_a_5', 'de_6_a_10', 'plus_de_10'],
+      // De 1 au maximum de Classes par enseignant que regle la direction.
+      'options': <String>[for (int n = 1; n <= classesMax; n++) '$n'],
     },
     <String, dynamic>{
       'code': 'debutPossible',
@@ -215,8 +222,8 @@ Map<String, dynamic> questionnaireJsonDeTest({
       'type': 'choix_multiple',
       'requis': true,
       'min': 1,
-      'max': 2,
-      'options': <String>['enfant', 'adulte'],
+      'max': 4,
+      'options': <String>['6_9', '10_13', '14_17', 'adultes'],
     },
     <String, dynamic>{
       'code': 'paysResidence',
@@ -249,6 +256,34 @@ Map<String, dynamic> questionnaireJsonDeTest({
       'dependDe': 'paysVersement',
       'options': <Object>[],
     },
+    // Facultatif et informatif : tous les moyens connus du catalogue, confirmes
+    // ou non, sans pays ni etat (le serveur ne les lit jamais pour le versement).
+    <String, dynamic>{
+      'code': 'moyensAccessibles',
+      'carte': 'versement',
+      'type': 'choix_multiple',
+      'requis': false,
+      'min': 0,
+      'options': <Object>[
+        if (moyensConnus) ...<Map<String, Object>>[
+          <String, Object>{
+            'code': 'wave',
+            'methode': 'mobile_money',
+            'nom': 'Wave',
+          },
+          <String, Object>{
+            'code': 'orange_money',
+            'methode': 'mobile_money',
+            'nom': 'Orange Money',
+          },
+          <String, Object>{
+            'code': 'moov_money',
+            'methode': 'mobile_money',
+            'nom': 'Moov Money',
+          },
+        ],
+      ],
+    },
   ],
   'dernieresReponses': dernieresReponses == null
       ? null
@@ -262,26 +297,26 @@ Map<String, dynamic> questionnaireJsonDeTest({
         },
 };
 
-/// Des reponses completes et valides pour `salle-examen-1`.
+/// Des reponses completes et valides pour `salle-examen-1`. Les disponibilites
+/// sont les plages que le serveur recoit pour des cours d'enfants (60 minutes) :
+/// les heures de debut 18 h et 19 h du lundi, du mercredi et du vendredi.
 Map<String, Object?> reponsesCompletesDeTest() => <String, Object?>{
   'langueMaternelle': 'poular',
   'languesExplication': <String>['poular', 'francais'],
-  'niveauMemorisationDeclare': 'plus_de_10_juz',
+  'niveauMemorisationDeclare': 'de_10_a_29_juz',
   'niveauLectureTajwid': 'tajwid_applique',
   'riwayat': <String>['hafs'],
   'ijazaPresentable': 'non',
   'experienceDebutants': 'oui',
-  'disponibilitesDeclarees': <String, Object?>{
-    'fuseau': 'Africa/Conakry',
-    'creneaux': <Map<String, Object?>>[
-      <String, Object?>{'jour': 1, 'debut': '16:00', 'fin': '24:00'},
-      <String, Object?>{'jour': 3, 'debut': '16:00', 'fin': '20:00'},
-    ],
-  },
+  'disponibilitesDeclarees': <Map<String, Object?>>[
+    <String, Object?>{'jour': 1, 'debut': '18:00', 'fin': '20:00'},
+    <String, Object?>{'jour': 3, 'debut': '18:00', 'fin': '20:00'},
+    <String, Object?>{'jour': 5, 'debut': '18:00', 'fin': '20:00'},
+  ],
   'fuseauIana': 'Africa/Conakry',
-  'heuresParSemaine': 'de_3_a_5',
+  'classesSouhaitees': '1',
   'debutPossible': 'mois_prochain',
-  'publics': <String>['enfant'],
+  'publics': <String>['6_9'],
   'paysResidence': 'GN',
   'paysVersement': 'GN',
   'compteBancaire': false,

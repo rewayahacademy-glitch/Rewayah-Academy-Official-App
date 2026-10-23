@@ -136,7 +136,7 @@ void main() {
       final Questionnaire q = await port.questionnaire();
       expect(q.version, 'salle-examen-1');
       expect(q.versionBrouillon, 5);
-      expect(q.champs.length, 16);
+      expect(q.champs.length, 17);
     });
 
     test(
@@ -445,6 +445,67 @@ void main() {
         );
       });
     }
+
+    test('des plages qui se chevauchent : la cause nommee est lue', () async {
+      final MaCandidatureSupabase port = _port(
+        (_Appel a) => _ok(<String, Object?>{
+          'erreur': 'reponses_invalides',
+          'champs': <String>['disponibilitesDeclarees'],
+          'motifs': <String, Object?>{
+            'disponibilitesDeclarees': 'plages_qui_se_chevauchent',
+          },
+        }),
+        <_Appel>[],
+      );
+      await expectLater(
+        port.enregistrerBrouillon(
+          versionQuestionnaire: 'v',
+          reponses: <String, Object?>{},
+          versionBrouillon: 0,
+          cleIdempotence: 'cand-k',
+        ),
+        throwsA(
+          isA<ReponsesInvalides>()
+              .having(
+                (ReponsesInvalides e) => e.champs,
+                'champs',
+                <String>['disponibilitesDeclarees'],
+              )
+              .having(
+                (ReponsesInvalides e) => e.plagesQuiSeChevauchent,
+                'chevauchement',
+                isTrue,
+              ),
+        ),
+      );
+    });
+
+    test('sans cause nommee, aucun motif n est invente', () async {
+      final MaCandidatureSupabase port = _port(
+        (_Appel a) => _ok(<String, Object?>{
+          'erreur': 'reponses_invalides',
+          'champs': <String>['riwayat'],
+        }),
+        <_Appel>[],
+      );
+      await expectLater(
+        port.enregistrerBrouillon(
+          versionQuestionnaire: 'v',
+          reponses: <String, Object?>{},
+          versionBrouillon: 0,
+          cleIdempotence: 'cand-k',
+        ),
+        throwsA(
+          isA<ReponsesInvalides>()
+              .having((ReponsesInvalides e) => e.motifs, 'motifs', isEmpty)
+              .having(
+                (ReponsesInvalides e) => e.plagesQuiSeChevauchent,
+                'chevauchement',
+                isFalse,
+              ),
+        ),
+      );
+    });
 
     test(
       'un refus inconnu n est jamais un succes ni un texte affiche',

@@ -37,6 +37,7 @@ import '../../../core/widgets/badge_periode_financee.dart';
 import '../../../core/widgets/bandeau_attention.dart';
 import '../../../core/widgets/bandeau_observation.dart';
 import '../../../core/widgets/barre_precedent_suivant.dart';
+import '../../../core/widgets/barre_selection.dart';
 import '../../../core/widgets/bento_tile.dart';
 import '../../../core/widgets/bouton_icone.dart';
 import '../../../core/widgets/bouton_outil.dart';
@@ -3501,6 +3502,47 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           libellePrecedent: 'Page précédente',
           libelleSuivant: 'Page suivante',
           onPrecedent: _rien,
+        ),
+      ),
+    ],
+  ),
+  // ADM-20 : la barre de selection d'une liste, promue du Comptable vers le
+  // core (CATALOGUE_ECRANS_RECRUTEMENT.md, section 4 : « jamais recopiee »).
+  EntreeGalerie(
+    nom: 'BarreSelection',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'avec action',
+        (BuildContext _) => const BarreSelection(
+          titre: '3 candidatures retenues',
+          phrase: 'Choisissez l\'action à lancer sur ces candidatures.',
+          libelleRelacher: 'Tout relâcher',
+          onRelacher: _rien,
+          libelleAction: 'Agir sur la sélection',
+          onAction: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'sans action : la phrase dit pourquoi',
+        (BuildContext _) => const BarreSelection(
+          titre: '1 candidature retenue',
+          phrase: 'Les actions pourront être lancées quand la connexion revient.',
+          libelleRelacher: 'Tout relâcher',
+          onRelacher: _rien,
+          libelleAction: 'Agir sur la sélection',
+        ),
+      ),
+      EtatGalerie(
+        'avec un complement avant les boutons',
+        (BuildContext _) => const BarreSelection(
+          titre: '2 paiements sélectionnés',
+          phrase: 'Le total et les exclusions sont rendus par le contrôle.',
+          libelleRelacher: 'Tout relâcher',
+          onRelacher: _rien,
+          avantActions: Text('Exporter la sélection'),
+          libelleAction: 'Payer la sélection',
+          onAction: _rien,
         ),
       ),
     ],

@@ -17,7 +17,8 @@ dans `docs/archive/2026-09-pre-remise-a-plat/design/` (référence, pas une règ
 Les composants partagés (`Pressable`, `BentoTile`, `AvatarTile`, `AvatarNom`, `AudioLabel`,
 `PermanentNotice`, `PinPad`, `EmptyState`, `OfflineBanner`, `ChoiceCardGroup`,
 `ActionPrincipale`, `LienFleche`, `FilterPill`, `BoutonOutil`, `BoutonIcone`, `CommandeSalle`,
-`RaccourciTactile`, `PileCartes`, `CarteGroupee`, `CarteLignes`, `PastilleEtatSeance`) sont les
+`RaccourciTactile`, `PileCartes`, `CarteGroupee`, `CarteLignes`, `PastilleEtatSeance`,
+`BarreSelection`) sont les
 seuls points d'entrée de leur fonction : on les améliore, on n'en recrée pas un qui ferait la
 même chose.
 

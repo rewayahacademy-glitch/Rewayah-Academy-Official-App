@@ -36,6 +36,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import 'controleur_parcours.dart';
 import 'coquille_parcours.dart';
+import 'disponibilites_etape.dart';
 import 'lecture_page.dart';
 import 'libelles_parcours.dart';
 import 'modele_questions.dart';
@@ -153,6 +154,10 @@ class _ParcoursState extends ConsumerState<_Parcours> {
   late final ParcoursControleur _c;
   ManqueReponse? _manque;
 
+  /// Ce que le serveur a refuse a l'envoi, dit sur la question qu'il rouvre :
+  /// il s'efface au premier geste de la personne.
+  String? _renvoi;
+
   @override
   void initState() {
     super.initState();
@@ -197,12 +202,18 @@ class _ParcoursState extends ConsumerState<_Parcours> {
       setState(() => _manque = manque);
       return;
     }
-    setState(() => _manque = null);
+    setState(() {
+      _manque = null;
+      _renvoi = null;
+    });
     _c.avancer();
   }
 
   void _reculer() {
-    setState(() => _manque = null);
+    setState(() {
+      _manque = null;
+      _renvoi = null;
+    });
     if (_c.estPremiere) {
       _sortir();
     } else {
@@ -243,13 +254,23 @@ class _ParcoursState extends ConsumerState<_Parcours> {
             onAction: _continuer,
             onRetour: _reculer,
             choix: true,
-            souscription: _manque == null
-                ? (_c.brouillonNonGarde
-                      ? IndicationParcours(
-                          message: t.recrutement.parcours.sauvegardeEchec,
-                        )
-                      : null)
-                : IndicationParcours(message: _messageManque(etape)),
+            souscription: _souscription(etape),
+          );
+        case EtapeDisponibilites():
+          final ({String titre, String? explication}) textes =
+              textesDisponibilites(etape, _c);
+          return CoquilleParcours(
+            numero: numero,
+            total: total,
+            titre: textes.titre,
+            explication: textes.explication,
+            entete: _entete(etape),
+            enfant: DisponibilitesEtape(etape: etape, controleur: _c),
+            libelleAction: t.commun.continuer,
+            onAction: _continuer,
+            onRetour: _reculer,
+            choix: true,
+            souscription: _souscription(etape),
           );
         case EtapeRecapitulatif():
           return RecapitulatifEtape(
@@ -258,14 +279,31 @@ class _ParcoursState extends ConsumerState<_Parcours> {
             versionCandidature: widget.questionnaire.candidatureVersion,
             numero: numero,
             total: total,
+            onRenvoi: (String phrase) => setState(() => _renvoi = phrase),
           );
       }
     },
   );
 
+  /// La ligne sous le bouton : ce qui manque pour continuer, sinon ce que le
+  /// serveur a refuse, sinon l'echec du brouillon.
+  Widget? _souscription(EtapeParcours etape) {
+    if (_manque != null) {
+      return IndicationParcours(message: _messageManque(etape));
+    }
+    final String? renvoi = _renvoi;
+    if (renvoi != null) {
+      return IndicationParcours(message: renvoi);
+    }
+    if (_c.brouillonNonGarde) {
+      return IndicationParcours(message: t.recrutement.parcours.sauvegardeEchec);
+    }
+    return null;
+  }
+
   /// Le bloc au-dessus d'une question : ce que la direction demande de
   /// completer, ou le questionnaire qui a change.
-  Widget? _entete(EtapeChamp etape) {
+  Widget? _entete(EtapeParcours etape) {
     final DernieresReponses? derniere = widget.questionnaire.dernieresReponses;
     final String? message = _c.aCompleter(etape)
         ? t.recrutement.questionnaire.complementCarte
@@ -296,15 +334,24 @@ class _ParcoursState extends ConsumerState<_Parcours> {
     );
   }
 
-  String _messageManque(EtapeChamp etape) {
+  String _messageManque(EtapeParcours etape) {
     final r = t.recrutement.parcours;
     return switch (_manque!) {
-      ManqueReponse.aucunePlage => r.choisirPlage,
-      ManqueReponse.trop => r.trop(max: etape.champ.max ?? 1),
+      ManqueReponse.aucunJour => r.choisirJour,
+      ManqueReponse.aucuneHeure => r.choisirHeure,
+      ManqueReponse.jourSansHeure => r.choisirHeureJour(
+        jour: _c.jourSansHeure == null
+            ? ''
+            : t.disponibilites.joursLongs[_c.jourSansHeure! - 1],
+      ),
+      ManqueReponse.trop => r.trop(
+        max: etape is EtapeChamp ? etape.champ.max ?? 1 : 1,
+      ),
       ManqueReponse.aucune =>
-        etape.forme == FormeQuestion.choixMultiple ||
-                etape.forme == FormeQuestion.langues ||
-                etape.forme == FormeQuestion.riwayat
+        etape is EtapeChamp &&
+                (etape.forme == FormeQuestion.choixMultiple ||
+                    etape.forme == FormeQuestion.langues ||
+                    etape.forme == FormeQuestion.riwayat)
             ? r.choisirPlusieurs
             : r.choisir,
     };

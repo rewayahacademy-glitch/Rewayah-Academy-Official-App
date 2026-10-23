@@ -232,9 +232,13 @@ void main() {
       expect(q.version, 'salle-examen-1');
       expect(q.candidatureVersion, 3);
       expect(q.versionBrouillon, 2);
-      expect(q.champs.length, 16);
+      expect(q.champs.length, 17);
       expect(q.champ('languesExplication')!.type, TypeChamp.choixMultiple);
-      expect(q.champ('languesExplication')!.max, 10);
+      // Aucun plafond de langues d'explication (decision du directeur, 22/10).
+      expect(q.champ('languesExplication')!.max, isNull);
+      expect(q.champ('langueMaternelle')!.requis, isFalse);
+      expect(q.champ('publics')!.max, 4);
+      expect(q.champ('moyensAccessibles')!.requis, isFalse);
       expect(q.champ('operateurs')!.dependDe, 'paysVersement');
       expect(q.champ('operateurs')!.requis, isFalse);
       expect(q.champ('compteBancaire')!.type, TypeChamp.booleen);
@@ -269,6 +273,41 @@ void main() {
             .horsReferentiel,
         isTrue,
       );
+    });
+
+    test('les moyens de paiement connus portent leur nom propre et leur methode',
+        () {
+      final Questionnaire q = Questionnaire.depuisJson(
+        questionnaireJsonDeTest(),
+      );
+      final List<OptionQuestionnaire> moyens = q
+          .champ('moyensAccessibles')!
+          .options;
+      expect(moyens.map((OptionQuestionnaire o) => o.code), <String>[
+        'wave',
+        'orange_money',
+        'moov_money',
+      ]);
+      expect(moyens.first.nom, 'Wave');
+      expect(moyens.first.methode, 'mobile_money');
+      // Une option de langue n'a ni nom ni methode : son texte vient de i18n.
+      expect(q.champ('languesExplication')!.options.first.nom, isNull);
+    });
+
+    test('le nombre de Classes propose va de 1 au maximum de la direction', () {
+      for (final int max in <int>[1, 3, 5]) {
+        final Questionnaire q = Questionnaire.depuisJson(
+          questionnaireJsonDeTest(classesMax: max),
+        );
+        expect(
+          q
+              .champ('classesSouhaitees')!
+              .options
+              .map((OptionQuestionnaire o) => o.code)
+              .toList(),
+          <String>[for (int n = 1; n <= max; n++) '$n'],
+        );
+      }
     });
 
     test('un champ de type inconnu est ecarte, jamais devine', () {

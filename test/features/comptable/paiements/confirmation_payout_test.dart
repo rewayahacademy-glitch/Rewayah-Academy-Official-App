@@ -14,9 +14,9 @@ import 'package:rewayah_academy/core/capacites/port_payout.dart';
 import 'package:rewayah_academy/core/comptable/statuts_comptable.dart';
 import 'package:rewayah_academy/core/finance/format_montant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/widgets/barre_selection.dart';
 import 'package:rewayah_academy/core/widgets/montant_sensible.dart';
 import 'package:rewayah_academy/core/widgets/pastilles_comptable.dart';
-import 'package:rewayah_academy/features/comptable/paiements/barre_selection.dart';
 import 'package:rewayah_academy/features/comptable/paiements/confirmation/confirmation_payout.dart';
 import 'package:rewayah_academy/features/comptable/paiements/detail_paiement_page.dart';
 import 'package:rewayah_academy/features/comptable/paiements/ligne_obligation.dart';
@@ -292,7 +292,7 @@ void main() {
         );
         await appuyer(tester, caseInfos);
         expect(find.text(p.selection(n: 13)), findsOneWidget);
-        await appuyer(tester, find.byKey(BarreSelection.clePayer));
+        await appuyer(tester, find.byKey(BarreSelection.cleAction));
         final Finder feuille = find.byType(PayoutConfirmationSheet);
         expect(feuille, findsOneWidget);
         expect(

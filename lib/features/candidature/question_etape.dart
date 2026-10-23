@@ -6,13 +6,15 @@
 // s'affiche pas.
 //
 // Les listes longues (langues, pays, riwayat) montrent d'abord leurs choix
-// courants en cartes ; « Autre ... » ouvre une recherche (`ChoixAvecRecherche`).
+// courants en cartes ; « Autre ... » ouvre une recherche (`ChoixAvecRecherche`),
+// qui propose les langues en cartes. Les disponibilites ont leurs propres
+// ecrans (`disponibilites_etape.dart`).
 library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/candidature/creneaux_declares.dart';
+import '../../core/candidature/disponibilites_declarees.dart';
 import '../../core/candidature/modeles_candidature.dart';
 import '../../core/candidature/port_ma_candidature.dart';
 import '../../core/i18n/pays_iso.dart';
@@ -28,7 +30,6 @@ import '../../core/widgets/skeleton.dart';
 import 'choix_avec_recherche.dart';
 import 'controleur_parcours.dart';
 import 'fuseau_etape.dart';
-import 'grille_creneaux.dart';
 import 'libelles_parcours.dart';
 import 'modele_questions.dart';
 
@@ -102,13 +103,19 @@ class QuestionEtape extends ConsumerWidget {
       case FormeQuestion.riwayat:
         return _Riwayat(champ: champ, controleur: controleur);
       case FormeQuestion.creneaux:
-        return _Plages(controleur: controleur);
+        // Les disponibilites ont leurs ecrans (`EtapeDisponibilites`) : le plan
+        // du parcours ne pose jamais ce champ comme une simple question.
+        return const SizedBox.shrink();
       case FormeQuestion.fuseau:
         return FuseauEtape(
           options: <String>[for (final o in champ.options) o.code],
           choisi: controleur.fuseau,
           onChange: (String zone) => controleur.repondre(champ.code, zone),
         );
+      case FormeQuestion.classes:
+        return _Classes(champ: champ, controleur: controleur);
+      case FormeQuestion.moyensAccessibles:
+        return _MoyensAccessibles(champ: champ, controleur: controleur);
       case FormeQuestion.operateurs:
         return _Operateurs(champ: champ, controleur: controleur);
     }
@@ -241,7 +248,9 @@ class _Langues extends StatelessWidget {
             // Dire quelles langues Rewayah enseigne n'a de sens que pour les
             // langues d'explication ; la langue maternelle peut etre toute
             // autre langue, sans commentaire.
-            description: !multiple
+            description: o.code == 'autre'
+                ? r.autreDescription
+                : !multiple
                 ? null
                 : o.horsReferentiel
                 ? r.horsReferentiel
@@ -249,21 +258,32 @@ class _Langues extends StatelessWidget {
             cle: ValueKey<String>('option-${champ.code}-${o.code}'),
           ),
     ];
-    final Set<String> referentiel = <String>{
-      for (final OptionQuestionnaire o in champ.options)
-        if (!o.horsReferentiel) o.code,
+    final Map<String, ElementChoix> parCode = <String, ElementChoix>{
+      for (final ElementChoix e in tous) e.code: e,
     };
+    // Les langues du public de l'academie, en cartes ; la langue maternelle
+    // propose aussi l'arabe (qui n'est pas une langue de cours). Les autres se
+    // trouvent par la recherche.
+    final List<String> courants = multiple
+        ? languesDuPublic
+        : <String>[
+            for (final String c in languesDuPublic)
+              if (c != 'autre') c,
+            'ar',
+            'autre',
+          ];
     return ChoixAvecRecherche(
       cle: 'langues-${champ.code}',
       multiple: multiple,
+      resultatsEnCartes: true,
       courants: <ElementChoix>[
-        for (final ElementChoix e in tous)
-          if (referentiel.contains(e.code)) e,
+        for (final String c in courants)
+          if (parCode[c] case final ElementChoix e) e,
       ],
       tous: tous,
       selection: controleur.valeurs(champ.code),
       textes: TextesRecherche(
-        autre: r.autre,
+        autre: r.chercher,
         recherche: r.recherche,
         aide: r.rechercheAide,
         aucun: r.aucune,
@@ -280,6 +300,125 @@ class _Langues extends StatelessWidget {
           multiple ? codes : (codes.isEmpty ? null : codes.first),
         );
       },
+    );
+  }
+}
+
+/// Le nombre de Classes que la personne veut tenir : de 1 au maximum que la
+/// direction fixe (les options viennent du serveur), avec ce que cela
+/// represente en heures par semaine.
+class _Classes extends StatelessWidget {
+  const _Classes({required this.champ, required this.controleur});
+
+  final ChampQuestionnaire champ;
+  final ParcoursControleur controleur;
+
+  @override
+  Widget build(BuildContext context) {
+    final r = t.recrutement.parcours.classes;
+    final bool enfants = controleur.avecEnfants || !controleur.avecAdultes;
+    final bool adultes = controleur.avecAdultes;
+    final Set<String> choisies = controleur.valeurs(champ.code);
+    return ChoiceCardGroup(
+      key: ValueKey<String>('q-${champ.code}'),
+      autoriserSaisieLibre: false,
+      valeurInitiale: choisies.isEmpty ? null : ReponseChoix(valeurs: choisies),
+      options: <OptionChoix>[
+        for (final OptionQuestionnaire o in champ.options)
+          if (int.tryParse(o.code) case final int n when n >= 1)
+            () {
+              final int seances = n * seancesParClasse;
+              final String heuresEnfants = libelleDuree(
+                seances * dureeSeanceEnfantMinutes,
+              );
+              final String heuresAdultes = libelleDuree(
+                seances * dureeSeanceAdulteMinutes,
+              );
+              return OptionChoix(
+                cle: ValueKey<String>('option-${champ.code}-${o.code}'),
+                valeur: o.code,
+                libelle: r.libelle(n: n),
+                description: <String>[
+                  r.seances(n: seances),
+                  if (enfants && adultes)
+                    r.heuresLesDeux(
+                      enfants: heuresEnfants,
+                      adultes: heuresAdultes,
+                    )
+                  else if (adultes)
+                    r.heuresAdultes(heures: heuresAdultes)
+                  else
+                    r.heuresEnfants(heures: heuresEnfants),
+                ].join(' '),
+                explication: r.explication,
+                exemple: switch (n) {
+                  1 => r.exemple1,
+                  2 => r.exemple2,
+                  _ => r.exemplePlusieurs(n: n),
+                },
+                icone: AppIcons.classes,
+                illustration: const IllustrationChoix(
+                  AppIcons.classes,
+                  autour: <AppIcon>[AppIcons.horloge],
+                ),
+              );
+            }(),
+      ],
+      onChange: (ReponseChoix reponse) {
+        if (reponse.valeurs.isNotEmpty) {
+          controleur.repondre(champ.code, reponse.valeurs.first);
+        }
+      },
+    );
+  }
+}
+
+/// Les moyens de paiement que l'academie connait, au choix : une question
+/// facultative et informative, qui n'ecarte personne.
+class _MoyensAccessibles extends StatelessWidget {
+  const _MoyensAccessibles({required this.champ, required this.controleur});
+
+  final ChampQuestionnaire champ;
+  final ParcoursControleur controleur;
+
+  @override
+  Widget build(BuildContext context) {
+    final r = t.recrutement.parcours.moyens;
+    final Set<String> choisis = controleur.valeurs(champ.code);
+    final List<OptionQuestionnaire> moyens = <OptionQuestionnaire>[
+      for (final OptionQuestionnaire o in champ.options)
+        if (o.nom != null) o,
+    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        _Info(texte: r.nonElimine, cle: const ValueKey<String>('moyens-info')),
+        Ecart.vLg,
+        ChoiceCardGroup(
+          key: ValueKey<String>('q-${champ.code}'),
+          autoriserSaisieLibre: false,
+          selectionMultiple: true,
+          valeurInitiale: choisis.isEmpty ? null : ReponseChoix(valeurs: choisis),
+          options: <OptionChoix>[
+            for (final OptionQuestionnaire o in moyens)
+              OptionChoix(
+                cle: ValueKey<String>('option-${champ.code}-${o.code}'),
+                valeur: o.code,
+                libelle: o.nom!,
+                description: o.methode == 'virement_bancaire'
+                    ? r.virement
+                    : r.mobile,
+                explication: r.explication,
+                icone: AppIcons.appareil,
+              ),
+          ],
+          onChange: (ReponseChoix reponse) =>
+              controleur.repondre(champ.code, <String>[
+                for (final OptionQuestionnaire o in moyens)
+                  if (reponse.valeurs.contains(o.code)) o.code,
+              ]),
+        ),
+      ],
     );
   }
 }
@@ -383,50 +522,6 @@ class _Riwayat extends StatelessWidget {
   }
 }
 
-class _Plages extends StatelessWidget {
-  const _Plages({required this.controleur});
-
-  final ParcoursControleur controleur;
-
-  @override
-  Widget build(BuildContext context) {
-    final CreneauxDeclares creneaux = controleur.creneaux;
-    final TextTheme textes = Theme.of(context).textTheme;
-    final AppPalette palette = AppPalette.of(context);
-    final r = t.recrutement.parcours.creneaux;
-    final String? zone = controleur.fuseau;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        if (zone != null) ...<Widget>[
-          Text(
-            r.fuseauRappel(lieu: nomDeLieu(zone)),
-            style: palette.inkMuted.applyTo(
-              textes.bodyMedium ?? const TextStyle(),
-            ),
-          ),
-          Ecart.vLg,
-        ],
-        GrilleCreneaux(
-          creneaux: creneaux,
-          onBascule: (int jour, int plage) => controleur.declarerPlages(
-            creneaux.bascule(jour: jour, plage: plage),
-          ),
-        ),
-        Ecart.vLg,
-        Semantics(
-          liveRegion: true,
-          child: Text(
-            r.choisies(n: creneaux.nombrePleines),
-            key: const ValueKey<String>('plages-resume'),
-            style: textes.titleSmall,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class _Operateurs extends ConsumerWidget {
   const _Operateurs({required this.champ, required this.controleur});
 
@@ -491,13 +586,17 @@ class _Operateurs extends ConsumerWidget {
 
 /// Une phrase d'information dans une carte, sans choix a faire.
 class _Info extends StatelessWidget {
-  const _Info({required this.texte});
+  const _Info({
+    required this.texte,
+    this.cle = const ValueKey<String>('versement-info'),
+  });
 
   final String texte;
+  final Key cle;
 
   @override
   Widget build(BuildContext context) => AppCard(
-    key: const ValueKey<String>('versement-info'),
+    key: cle,
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[

@@ -91,13 +91,15 @@ void main() {
         'languesExplication',
         'niveauMemorisationDeclare',
         'riwayat',
+        'ijazaPresentable',
         'disponibilitesDeclarees',
-        'heuresParSemaine',
+        'classesSouhaitees',
         'publics',
         'paysResidence',
         'paysVersement',
         'compteBancaire',
         'operateurs',
+        'moyensAccessibles',
       ]) {
         expect(
           find.byKey(CartesRecapitulatif.ligneKey(code)),
@@ -108,7 +110,9 @@ void main() {
       expect(_texte(t.recrutement.questionnaire.langues), findsOneWidget);
       expect(_texte(t.recrutement.questionnaire.versement), findsOneWidget);
       // Aucun code brut n'est lu a l'ecran.
-      expect(find.text('plus_de_10_juz'), findsNothing);
+      expect(find.text('de_10_a_29_juz'), findsNothing);
+      expect(find.text('6_9'), findsNothing);
+      expect(find.text('wave'), findsNothing);
       expect(find.text('orange_money'), findsNothing);
       expect(find.text('GN'), findsNothing);
     });
@@ -120,9 +124,53 @@ void main() {
         await toucherCle(tester, 'recap-publics');
         expect(_texte(t.recrutement.parcours.q.publics.titre), findsOneWidget);
         // La reponse deja donnee est retenue.
-        await toucherCle(tester, 'option-publics-adulte');
+        await toucherCle(tester, 'option-publics-adultes');
         await continuer(tester);
         expect(_texte(t.recrutement.parcours.recap.titre), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'les disponibilites se relisent par jour, en heures de debut',
+      (WidgetTester tester) async {
+        await _auRecapitulatif(tester, FauxMaCandidature());
+        final Finder ligne = _cle('recap-disponibilitesDeclarees');
+        expect(ligne, findsOneWidget);
+        expect(
+          find.descendant(
+            of: ligne,
+            matching: find.text(t.recrutement.parcours.recap.jours(n: 3)),
+          ),
+          findsOneWidget,
+        );
+        // Trois jours, les memes heures de debut : un seul groupe, une ligne.
+        final Finder groupe = _cle('recap-disponibilitesDeclarees-0');
+        expect(groupe, findsOneWidget);
+        expect(_cle('recap-disponibilitesDeclarees-1'), findsNothing);
+        expect(
+          find.descendant(
+            of: groupe,
+            matching: find.text('Lundi, mercredi et vendredi'),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: groupe,
+            matching: find.text(
+              t.recrutement.parcours.creneaux.debutsDuJour(
+                heures: '18\u00a0h, 19\u00a0h',
+              ),
+            ),
+          ),
+          findsOneWidget,
+        );
+        // Toucher la ligne mene aux ecrans des disponibilites.
+        await toucherCle(tester, 'recap-disponibilitesDeclarees-0');
+        expect(
+          _texte(t.recrutement.parcours.q.disponibilitesDeclarees.titre),
+          findsOneWidget,
+        );
       },
     );
 
@@ -131,7 +179,10 @@ void main() {
     ) async {
       await _auRecapitulatif(tester, FauxMaCandidature());
       await toucherCle(tester, 'parcours-retour');
-      expect(_texte(t.recrutement.parcours.q.operateurs.titre), findsOneWidget);
+      expect(
+        _texte(t.recrutement.parcours.q.moyensAccessibles.titre),
+        findsOneWidget,
+      );
     });
 
     testWidgets('un seul bouton plein, a 390 comme a 1440', (
@@ -212,6 +263,58 @@ void main() {
         findsOneWidget,
       );
     });
+
+    testWidgets(
+      'la clause de continuite est dans la carte des conditions acceptees',
+      (WidgetTester tester) async {
+        await _auRecapitulatif(tester, FauxMaCandidature());
+        await tester.ensureVisible(_cle('conditions-carte'));
+        await tester.pump();
+        final Finder clause = find.descendant(
+          of: _cle('conditions-carte'),
+          matching: _cle('conditions-continuite'),
+        );
+        expect(clause, findsOneWidget);
+        expect(
+          _texte(t.recrutement.questionnaire.continuite),
+          findsOneWidget,
+        );
+        // Les jours et les heures de la Classe, chaque semaine : l'engagement
+        // decide par le directeur le 22/10, dit avant la case a cocher.
+        expect(
+          t.recrutement.questionnaire.continuite,
+          allOf(contains('mêmes jours'), contains('mêmes heures')),
+        );
+        expect(
+          tester.getTopLeft(clause).dy,
+          lessThan(tester.getTopLeft(_cle('recap-accord')).dy),
+        );
+      },
+    );
+
+    testWidgets(
+      'la carte dit par quel moyen la personne est payee, avant la case',
+      (WidgetTester tester) async {
+        await _auRecapitulatif(tester, FauxMaCandidature());
+        await tester.ensureVisible(_cle('conditions-carte'));
+        await tester.pump();
+        // SPEC 4.2 : la case ne porte plus que sur les conditions ; le moyen
+        // de versement valide par Rewayah s'y lit donc.
+        final Finder phrase = find.descendant(
+          of: _cle('conditions-carte'),
+          matching: _cle('conditions-moyen-valide'),
+        );
+        expect(phrase, findsOneWidget);
+        expect(
+          _texte(t.recrutement.questionnaire.moyenValide),
+          findsOneWidget,
+        );
+        expect(
+          tester.getTopLeft(phrase).dy,
+          lessThan(tester.getTopLeft(_cle('recap-accord')).dy),
+        );
+      },
+    );
 
     testWidgets('une seule part pour tous : une seule phrase', (
       WidgetTester tester,
@@ -352,12 +455,21 @@ void main() {
         expect(envoi.reponses['paysVersement'], 'GN');
         expect(envoi.reponses['compteBancaire'], false);
         expect(envoi.reponses['operateurs'], <String>['orange_money']);
-        final Object? dispo = envoi.reponses['disponibilitesDeclarees'];
-        expect(dispo, isA<Map<String, Object?>>());
+        // Les disponibilites partent dans la forme du serveur : des plages
+        // d'heures entieres, sans fuseau (le fuseau est celui de fuseauIana).
+        expect(envoi.reponses['fuseauIana'], isNotNull);
         expect(
-          (dispo! as Map<String, Object?>)['fuseau'],
-          envoi.reponses['fuseauIana'],
+          envoi.reponses['disponibilitesDeclarees'],
+          <Map<String, Object?>>[
+            <String, Object?>{'jour': 1, 'debut': '18:00', 'fin': '20:00'},
+            <String, Object?>{'jour': 3, 'debut': '18:00', 'fin': '20:00'},
+            <String, Object?>{'jour': 5, 'debut': '18:00', 'fin': '20:00'},
+          ],
         );
+        expect(envoi.reponses['classesSouhaitees'], '1');
+        expect(envoi.reponses['publics'], <String>['6_9']);
+        expect(envoi.reponses['ijazaPresentable'], 'non');
+        expect(envoi.reponses['moyensAccessibles'], <String>['wave']);
         // Le portail dit la suite, apres la reponse du serveur.
         expect(_texte(t.recrutement.portail.enExamenTitre), findsOneWidget);
       },
@@ -480,20 +592,59 @@ void main() {
       await _auRecapitulatif(tester, port);
       await _cocherEtEnvoyer(tester);
       expect(_texte(t.recrutement.parcours.q.publics.titre), findsOneWidget);
+      // Ce que le serveur reclame se lit sur la question rouverte.
+      expect(
+        _texte(
+          t.recrutement.questionnaire.incomplet(
+            question: t.recrutement.parcours.q.publics.court,
+          ),
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('une reponse invalide ramene a la question nommee', (
       WidgetTester tester,
     ) async {
       final FauxMaCandidature port = FauxMaCandidature()
-        ..erreurEnvoi = const ReponsesInvalides(<String>['heuresParSemaine']);
+        ..erreurEnvoi = const ReponsesInvalides(<String>['classesSouhaitees']);
       await _auRecapitulatif(tester, port);
       await _cocherEtEnvoyer(tester);
       expect(
-        _texte(t.recrutement.parcours.q.heuresParSemaine.titre),
+        _texte(t.recrutement.parcours.q.classesSouhaitees.titre),
         findsOneWidget,
       );
     });
+
+    testWidgets(
+      'des plages qui se chevauchent : la cause est dite sur les '
+      'disponibilites rouvertes',
+      (WidgetTester tester) async {
+        final FauxMaCandidature port = FauxMaCandidature()
+          ..erreurEnvoi = const ReponsesInvalides(
+            <String>['disponibilitesDeclarees'],
+            motifs: <String, String>{
+              'disponibilitesDeclarees': 'plages_qui_se_chevauchent',
+            },
+          );
+        await _auRecapitulatif(tester, port);
+        await _cocherEtEnvoyer(tester);
+        expect(
+          _texte(t.recrutement.parcours.q.disponibilitesDeclarees.titre),
+          findsOneWidget,
+        );
+        expect(
+          _texte(t.recrutement.questionnaire.plagesChevauchent),
+          findsOneWidget,
+        );
+        // Un geste de la personne efface la phrase.
+        await continuer(tester);
+        expect(
+          _texte(t.recrutement.questionnaire.plagesChevauchent),
+          findsNothing,
+        );
+      },
+    );
 
     testWidgets('hors ligne au moment d envoyer : meme cle au second essai', (
       WidgetTester tester,

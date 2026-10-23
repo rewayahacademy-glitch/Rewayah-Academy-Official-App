@@ -144,7 +144,19 @@ List<_ChampRegle> _champs() => <_ChampRegle>[
     cle: 'max_concurrent_sessions_per_profile',
     affichage: (int n) => t.admin.regles.uniteNombre(n: '$n'),
   ),
+  (
+    titre: t.admin.regles.classesParEnseignant,
+    description: t.admin.regles.classesParEnseignantDetail,
+    cle: cleClassesParEnseignant,
+    affichage: (int n) => t.admin.regles.uniteNombre(n: '$n'),
+  ),
 ];
+
+/// Les reglages que seul un serveur a jour porte : sans eux dans la reponse
+/// (valeur nulle), la ligne n'est pas montree, plutot qu'un « 0 » que rien
+/// n'ecrirait. Aujourd'hui, le nombre maximal de Classes par enseignant (lot
+/// CLASSES-PLAFOND, `20261022000200_classes_plafond_par_enseignant.sql`).
+const Set<String> _reglagesDuServeurAJour = <String>{cleClassesParEnseignant};
 
 class _Corps extends StatelessWidget {
   const _Corps({required this.valeurs, required this.onEcrit});
@@ -160,21 +172,28 @@ class _Corps extends StatelessWidget {
     String erreurEcriture(String message) =>
         t.admin.regles.erreurEcriture(message: message);
 
+    // Les cles que le serveur ne rend pas (valeur nulle).
+    final Set<String> absentes = <String>{
+      for (final ValeurConfig c in valeurs)
+        if (c.valeur == null) c.cle,
+    };
     return CarteLignes(
       lignes: <Widget>[
         for (final _ChampRegle champ in _champs())
-          ConfigLigneEntiere(
-            titre: champ.titre,
-            description: champ.description,
-            cle: champ.cle,
-            valeur: v[champ.cle] ?? 0,
-            affichage: champ.affichage,
-            champValeur: t.admin.regles.champValeur,
-            envoyer: t.admin.regles.envoyer,
-            valeurInvalide: t.admin.regles.valeurInvalide,
-            erreurEcriture: erreurEcriture,
-            onEcrit: onEcrit,
-          ),
+          if (!(_reglagesDuServeurAJour.contains(champ.cle) &&
+              absentes.contains(champ.cle)))
+            ConfigLigneEntiere(
+              titre: champ.titre,
+              description: champ.description,
+              cle: champ.cle,
+              valeur: v[champ.cle] ?? 0,
+              affichage: champ.affichage,
+              champValeur: t.admin.regles.champValeur,
+              envoyer: t.admin.regles.envoyer,
+              valeurInvalide: t.admin.regles.valeurInvalide,
+              erreurEcriture: erreurEcriture,
+              onEcrit: onEcrit,
+            ),
       ],
     );
   }

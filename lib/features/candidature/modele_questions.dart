@@ -8,6 +8,7 @@
 // ouverte (`reconnu`), au lieu d'un code brut ou d'un champ sans texte.
 library;
 
+import '../../core/candidature/disponibilites_declarees.dart';
 import '../../core/candidature/modeles_candidature.dart';
 import '../../core/icons/app_icons.dart';
 
@@ -34,7 +35,8 @@ enum FormeQuestion {
   /// Plusieurs riwayat : cartes, puis recherche.
   riwayat,
 
-  /// La grille des plages de la semaine.
+  /// Les disponibilites de la semaine : les jours, puis les heures de debut
+  /// (plusieurs ecrans, `EtapeDisponibilites`).
   creneaux,
 
   /// Le fuseau horaire : confirmation, puis recherche d'une ville.
@@ -42,6 +44,14 @@ enum FormeQuestion {
 
   /// Les moyens de paiement sur telephone confirmes dans le pays.
   operateurs,
+
+  /// Le nombre de Classes que la personne veut tenir (de 1 au maximum fixe par
+  /// la direction), avec les heures par semaine que cela represente.
+  classes,
+
+  /// Les moyens de paiement connus de l'academie, au choix, a titre
+  /// d'information : facultatif, jamais lu par le versement.
+  moyensAccessibles,
 }
 
 /// Ce que l'application sait d'un champ.
@@ -67,6 +77,40 @@ class ModeleQuestion {
   final Map<String, AppIcon> icones;
 }
 
+/// Les tranches d'age d'enfants du champ `publics` (6 a 17 ans).
+const Set<String> tranchesEnfants = <String>{'6_9', '10_13', '14_17'};
+
+/// La tranche des adultes du champ `publics` (18 ans et plus).
+const String trancheAdultes = 'adultes';
+
+/// La duree des cours dont les heures se declarent, d'apres les tranches d'age
+/// que la personne enseigne ([publics], la reponse brute du champ `publics`) :
+/// 90 minutes des qu'une classe d'adultes est possible (chaque heure touchee
+/// par la seance se declare : l'heure suivante aussi), 60 minutes sinon.
+int dureeDeclareeDe(Object? publics) =>
+    publics is List && publics.contains(trancheAdultes)
+    ? dureeSeanceAdulteMinutes
+    : dureeSeanceEnfantMinutes;
+
+/// Les langues proposees d'emblee en cartes, dans l'ordre : celles du public
+/// de l'academie (decision du directeur du 22/10/2026) ; les autres se
+/// trouvent par la recherche. Poular, peul et fulfulde sont une seule langue
+/// (`poular`).
+const List<String> languesDuPublic = <String>[
+  'poular',
+  'man',
+  'sus',
+  'sw',
+  'ha',
+  'wo',
+  'bm',
+  'snk',
+  'mnk',
+  'francais',
+  'english',
+  'autre',
+];
+
 /// Les champs connus de `salle-examen-1`, par code.
 const Map<String, ModeleQuestion> modelesQuestions = <String, ModeleQuestion>{
   'langueMaternelle': ModeleQuestion(
@@ -81,11 +125,10 @@ const Map<String, ModeleQuestion> modelesQuestions = <String, ModeleQuestion>{
     FormeQuestion.choix,
     icone: AppIcons.coran,
     icones: <String, AppIcon>{
+      'aucune': AppIcons.lecon,
+      'moins_10_juz': AppIcons.livreOuvert,
+      'de_10_a_29_juz': AppIcons.reciter,
       'coran_entier': AppIcons.coran,
-      'ijaza_lecture_enseignement': AppIcons.etoile,
-      'plus_de_10_juz': AppIcons.livreOuvert,
-      'moins_de_10_juz': AppIcons.lecon,
-      'bonne_lecture_sans_memorisation': AppIcons.reciter,
     },
   ),
   'niveauLectureTajwid': ModeleQuestion(
@@ -101,7 +144,11 @@ const Map<String, ModeleQuestion> modelesQuestions = <String, ModeleQuestion>{
   'ijazaPresentable': ModeleQuestion(
     FormeQuestion.choix,
     icone: AppIcons.etoile,
-    icones: <String, AppIcon>{'oui': AppIcons.etoile, 'non': AppIcons.lecon},
+    icones: <String, AppIcon>{
+      'oui': AppIcons.etoile,
+      'pret_test': AppIcons.reciter,
+      'non': AppIcons.lecon,
+    },
   ),
   'experienceDebutants': ModeleQuestion(
     FormeQuestion.choix,
@@ -113,16 +160,9 @@ const Map<String, ModeleQuestion> modelesQuestions = <String, ModeleQuestion>{
     icone: AppIcons.disponibilites,
   ),
   'fuseauIana': ModeleQuestion(FormeQuestion.fuseau, icone: AppIcons.horloge),
-  'heuresParSemaine': ModeleQuestion(
-    FormeQuestion.choix,
-    icone: AppIcons.horloge,
-    icones: <String, AppIcon>{
-      'moins_de_3': AppIcons.horloge,
-      'de_3_a_5': AppIcons.classes,
-      'de_6_a_10': AppIcons.classes,
-      'plus_de_10': AppIcons.classes,
-    },
-    autour: <AppIcon>[AppIcons.horloge],
+  'classesSouhaitees': ModeleQuestion(
+    FormeQuestion.classes,
+    icone: AppIcons.classes,
   ),
   'debutPossible': ModeleQuestion(
     FormeQuestion.choix,
@@ -138,8 +178,10 @@ const Map<String, ModeleQuestion> modelesQuestions = <String, ModeleQuestion>{
     FormeQuestion.choixMultiple,
     icone: AppIcons.eleves,
     icones: <String, AppIcon>{
-      'enfant': AppIcons.eleves,
-      'adulte': AppIcons.profil,
+      '6_9': AppIcons.eleves,
+      '10_13': AppIcons.lecon,
+      '14_17': AppIcons.livreOuvert,
+      'adultes': AppIcons.profil,
     },
   ),
   'paysResidence': ModeleQuestion(FormeQuestion.pays, icone: AppIcons.maison),
@@ -157,6 +199,10 @@ const Map<String, ModeleQuestion> modelesQuestions = <String, ModeleQuestion>{
   ),
   'operateurs': ModeleQuestion(
     FormeQuestion.operateurs,
+    icone: AppIcons.appareil,
+  ),
+  'moyensAccessibles': ModeleQuestion(
+    FormeQuestion.moyensAccessibles,
     icone: AppIcons.appareil,
   ),
 };
@@ -177,11 +223,13 @@ bool _formeCompatible(FormeQuestion forme, TypeChamp type) => switch (forme) {
   FormeQuestion.choix ||
   FormeQuestion.langue ||
   FormeQuestion.pays ||
-  FormeQuestion.fuseau => type == TypeChamp.choix,
+  FormeQuestion.fuseau ||
+  FormeQuestion.classes => type == TypeChamp.choix,
   FormeQuestion.choixMultiple ||
   FormeQuestion.langues ||
   FormeQuestion.riwayat ||
-  FormeQuestion.operateurs => type == TypeChamp.choixMultiple,
+  FormeQuestion.operateurs ||
+  FormeQuestion.moyensAccessibles => type == TypeChamp.choixMultiple,
   FormeQuestion.ouiNon => type == TypeChamp.booleen,
   FormeQuestion.creneaux => type == TypeChamp.creneaux,
 };

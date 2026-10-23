@@ -228,6 +228,15 @@ void _refus(Map<String, dynamic> brut) {
       for (final Object? c in brut['champs'] as List)
         if (c is String) c,
   ];
+  // La cause nommee d'un champ refuse (`motifs`), quand le serveur en donne
+  // une ; la cle n'est rendue que si une cause est nommee.
+  Map<String, String> motifs() => <String, String>{
+    if (brut['motifs'] is Map)
+      for (final MapEntry<Object?, Object?> e
+          in (brut['motifs'] as Map<Object?, Object?>).entries)
+        if (e.key is String && e.value is String)
+          e.key as String: e.value as String,
+  };
   switch (erreur) {
     case 'conflit_candidature':
       throw ConflitCandidature(_entier(brut['versionCourante']));
@@ -240,7 +249,7 @@ void _refus(Map<String, dynamic> brut) {
     case 'questionnaire_perime':
       throw QuestionnairePerime(brut['versionCourante'] as String?);
     case 'reponses_invalides':
-      throw ReponsesInvalides(champs());
+      throw ReponsesInvalides(champs(), motifs: motifs());
     case 'reponses_incompletes':
       throw ReponsesIncompletes(champs());
     case 'accord_remuneration_requis':

@@ -582,7 +582,12 @@ enum TypeChamp {
 @immutable
 class OptionQuestionnaire {
   /// Cree une option.
-  const OptionQuestionnaire(this.code, {this.horsReferentiel = false});
+  const OptionQuestionnaire(
+    this.code, {
+    this.horsReferentiel = false,
+    this.nom,
+    this.methode,
+  });
 
   /// Le code de la valeur.
   final String code;
@@ -591,14 +596,26 @@ class OptionQuestionnaire {
   /// cours (hors du referentiel) : elle est marquee comme telle.
   final bool horsReferentiel;
 
+  /// Le nom propre que le serveur donne a l'option quand elle n'a pas de
+  /// traduction (le nom de marque d'un moyen de paiement, comme « Orange
+  /// Money ») ; rendu tel quel. Nul pour toute autre option : son texte vient
+  /// de `assets/i18n`, par son code.
+  final String? nom;
+
+  /// La methode de versement d'un moyen de paiement (`mobile_money` ou
+  /// `virement_bancaire`), quand le serveur la donne.
+  final String? methode;
+
   @override
   bool operator ==(Object other) =>
       other is OptionQuestionnaire &&
       other.code == code &&
-      other.horsReferentiel == horsReferentiel;
+      other.horsReferentiel == horsReferentiel &&
+      other.nom == nom &&
+      other.methode == methode;
 
   @override
-  int get hashCode => Object.hash(code, horsReferentiel);
+  int get hashCode => Object.hash(code, horsReferentiel, nom, methode);
 }
 
 /// Un champ du questionnaire versionne.
@@ -645,6 +662,10 @@ class ChampQuestionnaire {
               OptionQuestionnaire(
                 o['code'] as String,
                 horsReferentiel: o['referentiel'] == false,
+                nom: o['nom'] is String && (o['nom'] as String).trim().isNotEmpty
+                    ? (o['nom'] as String).trim()
+                    : null,
+                methode: o['methode'] is String ? o['methode'] as String : null,
               ),
       ],
     );
