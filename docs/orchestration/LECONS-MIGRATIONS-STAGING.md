@@ -65,3 +65,38 @@ locale.
 
 Preuve du 23/10 : normalisation, puis fichiers 4 à 15 enveloppés ; 143 fonctions
 identiques au dépôt, 25 tables nouvelles avec RLS, plus aucun `\r`.
+
+## La page de collage : règle du directeur (23/10/2026)
+
+> « J'aime bien la façon dont tu as préparé les migrations à coller sur l'artefact, il faut
+> rendre cela une règle pour les prochaines fois. » (directeur, 23/10/2026)
+>
+> Et avant : « tu me les donnes ici par ordre avec les instructions (je ne suis pas une IA,
+> ni dev). »
+
+Chaque fois que le directeur doit coller des migrations dans l'éditeur SQL de la base de test :
+
+1. **Une page, pas des fichiers ni du SQL dans la conversation.** Claude la fabrique avec
+   `python3 -I tool/page_migrations/generer.py --sortie <page.html> <fichier.sql>::"<ce que fait
+   le fichier, en mots de tous les jours>" …` (dans l'ordre d'application), puis la publie avec
+   l'outil Artifact (page privée) et donne le lien. Chaque fichier y est déjà enveloppé contre les
+   fins de ligne de Windows ; la page dit le nom du projet à vérifier (« Rewayah STAGING (test) »,
+   jamais « Rewayah PROD (Real Users) »), la sauvegarde à regarder, les gestes un par un (Copier,
+   Ctrl+A puis Ctrl+V, Run, « Run this query » si l'avertissement apparaît, attendre « Success »,
+   cocher « Fait »), quoi faire sur un message rouge (s'arrêter, capture d'écran), et la phrase à
+   écrire à la fin (« migrations faites »).
+2. **Dans la conversation**, en plus du lien : l'ordre des fichiers avec une phrase simple chacun,
+   et les mêmes consignes en cinq lignes. Aucun jargon (pas de « transaction », « RLS », « RPC »)
+   sans l'expliquer.
+3. **Avant de donner la page** : Claude vérifie, en lecture, qu'aucune fonction de la base de test ne
+   garde de retour chariot (sinon normalisation, section précédente) et rejoue localement la même
+   suite de fichiers enveloppés.
+4. **Pendant** : si une étape échoue, Claude reproduit l'erreur en local avant de proposer une
+   correction, republie la page au même lien avec ce qui reste à faire, et dit clairement où on en
+   est (« Où on en est » : fait, à faire par Claude, à faire par le directeur).
+5. **Après** « migrations faites » : vérification des empreintes contre une base locale du dépôt,
+   inscription à l'historique, mise à jour de la liste et du journal `08`.
+
+Les fichiers sans mot d'effacement peuvent toujours être appliqués par Claude avec
+`apply_migration` quand le texte exact peut lui être transmis sans recopie à la main ; sinon, ils
+vont sur la page avec les autres (une recopie de 100 Ko par Claude est un risque d'erreur).
