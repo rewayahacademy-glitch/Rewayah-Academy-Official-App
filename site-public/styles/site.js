@@ -123,6 +123,15 @@ if (typeof document !== 'undefined') {
     donnees = null;
   }
   if (simulator) initialiserSimulateur(simulator, donnees);
+  // Pied de page : au telephone, « Decouvrir » et « Nous contacter » se replient ; ouverts au-dela, et sans script.
+  const volets = document.querySelectorAll('.pied-volet');
+  const telephone = window.matchMedia('(max-width: 599px)');
+  const plier = () => volets.forEach((volet) => {
+    volet.open = !telephone.matches;
+    volet.querySelector('summary').tabIndex = telephone.matches ? 0 : -1;
+  });
+  plier();
+  telephone.addEventListener('change', plier);
 }
 
 function initialiserSimulateur(simulator, d) {

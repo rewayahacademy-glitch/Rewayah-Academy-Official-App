@@ -919,26 +919,67 @@ li, dd { text-wrap: wrap; }
 .site-footer .brand img { width: 220px; margin-bottom: var(--e-6); }
 .footer-identity p, .footer-identity address { font-style: normal; color: var(--sur-pied-doux); }
 .footer-identity address { margin-top: var(--e-3); }
+.footer-identity address span { display: block; }
 .footer-title { font-weight: 700; margin-bottom: var(--e-3); font-size: var(--t-corps); }
+.pied-volet > summary { list-style: none; }
+.pied-volet > summary::-webkit-details-marker { display: none; }
 .site-footer ul { display: grid; }
 .site-footer a { display: inline-flex; align-items: center; min-height: 40px; text-decoration: none; }
 .site-footer a:hover { text-decoration: underline; }
 .footer-contacts { gap: var(--e-3); }
 .footer-contacts strong { display: block; }
-.footer-contacts a { display: grid; gap: 2px; align-content: center; color: var(--sur-pied-doux); overflow-wrap: anywhere; min-height: 32px; }
+.footer-contacts a { display: grid; gap: 2px; align-content: center; color: var(--sur-pied-doux); min-height: 32px; }
 .footer-contacts a strong { color: var(--sur-pied); }
 .footer-legal ul { display: flex; flex-wrap: wrap; gap: 0 var(--e-6); }
 .footer-bottom { display: grid; gap: var(--e-3); color: var(--sur-pied-doux); }
 .footer-bottom > div { display: grid; gap: var(--e-2); }
 .footer-bottom a { text-decoration: underline; min-height: 32px; }
-@media (min-width: 840px) {
+/* Au-dela du telephone, les deux volets restent ouverts : leur titre n'est qu'un titre. */
+@media (min-width: 600px) { .pied-volet > summary { pointer-events: none; } }
+@media (min-width: 1100px) {
+  .footer-bottom { grid-template-columns: auto 1fr; }
+  .footer-bottom > div { display: flex; flex-wrap: wrap; justify-content: end; gap: var(--e-2) var(--e-6); }
+}
+/* Tablette : l'identite et les adresses cote a cote, puis les liens de « Decouvrir » en lignes qui se suivent. */
+@media (min-width: 600px) and (max-width: 1099px) {
+  .site-footer { padding-top: var(--e-12); }
+  .site-footer__inner { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--e-8); }
+  .pied-volet--liens { grid-column: 1 / -1; grid-row: 2; }
+  .footer-bottom { display: flex; flex-wrap: wrap; gap: var(--e-1) var(--e-6); }
+  .footer-bottom > div { display: contents; }
+  .pied-volet--liens ul { display: flex; flex-wrap: wrap; gap: 0 var(--e-6); }
+  .footer-legal, .footer-bottom { grid-column: 1 / -1; }
+}
+@media (min-width: 1100px) {
   .site-footer__inner { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); }
   .footer-identity { grid-column: 1 / span 4; }
-  .site-footer__inner > nav:not(.footer-legal) { grid-column: 5 / span 3; }
-  .site-footer__inner > div:nth-of-type(2) { grid-column: 8 / span 3; }
-  .footer-legal { grid-column: 1 / -1; }
-  .footer-bottom { grid-column: 1 / -1; grid-template-columns: auto 1fr; }
-  .footer-bottom > div { justify-content: end; display: flex; gap: var(--e-6); }
+  .pied-volet--liens { grid-column: 5 / span 3; }
+  .pied-volet--contacts { grid-column: 8 / -1; }
+  .footer-legal, .footer-bottom { grid-column: 1 / -1; }
+}
+/* Telephone : l'adresse en une phrase ; « Decouvrir » et « Nous contacter » en volets fermes (ouverts sans script) ;
+   les liens legaux en lignes qui se suivent. Le pied tient en moins d'un ecran. */
+@media (max-width: 599px) {
+  .site-footer { padding: var(--e-10) var(--marge) var(--e-6); }
+  .site-footer__inner { gap: var(--e-6); font-size: 16px; }
+  .site-footer .brand img { width: 150px; margin-bottom: var(--e-3); }
+  .footer-identity p, .footer-identity address { font-size: 16px; }
+  .footer-identity address { margin-top: var(--e-1); }
+  .footer-identity address span { display: inline; }
+  .footer-identity address span:not(:last-child)::after { content: ','; }
+  .site-footer__inner > .pied-volet + .pied-volet { margin-top: calc(-1 * var(--e-6)); }
+  .pied-volet > summary { display: flex; align-items: center; justify-content: space-between; min-height: 52px; margin: 0; cursor: pointer; font-size: 18px; }
+  .pied-volet > summary::after { content: ''; flex: none; width: 14px; height: 14px; background: linear-gradient(currentColor, currentColor) center / 100% 2px no-repeat, linear-gradient(currentColor, currentColor) center / 2px 100% no-repeat; transition: transform .2s var(--courbe-sortie, ease-out); }
+  .pied-volet[open] > summary::after { transform: rotate(45deg); }
+  .pied-volet[open] > :last-child { padding-bottom: var(--e-4); }
+  .pied-volet--liens ul, .footer-legal ul { display: flex; flex-wrap: wrap; gap: 0 var(--e-5); }
+  .pied-volet--liens a, .footer-legal a { white-space: nowrap; min-height: 36px; }
+  .footer-contacts { gap: var(--e-2); }
+  .footer-contacts a { font-size: 16px; min-height: 0; }
+  .footer-contacts__adresse { white-space: nowrap; }
+  .footer-bottom { display: flex; flex-wrap: wrap; gap: var(--e-1) var(--e-5); font-size: 15px; }
+  .footer-bottom > div { display: contents; }
+  .footer-bottom a { font-size: 15px; text-decoration: none; min-height: 28px; }
 }
 
 /* --- Page introuvable --------------------------------------------------------- */
@@ -1167,19 +1208,6 @@ li, dd { text-wrap: wrap; }
   .entete-page:not(.entete-page--document) h1 { font-size: clamp(36px, 11.6vw, 48px); }
   .entete-page:not(.entete-page--document) .entete-page__texte--long h1 { font-size: clamp(32px, 10.6vw, 44px); }
   .entete-page:not(.entete-page--document) .entete-page__texte--tres-long h1 { font-size: clamp(28px, 8.6vw, 34px); }
-  .site-footer__inner > nav:not(.footer-legal) ul { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--e-4); }
-  /* Pied de page au telephone : le meme contenu, plus serre (il prenait un ecran et demi). */
-  .site-footer { padding-top: var(--e-12); }
-  .site-footer__inner { gap: var(--e-8); font-size: var(--t-petit); }
-  .site-footer .brand img { width: 176px; margin-bottom: var(--e-4); }
-  .site-footer a { min-height: 34px; }
-  .footer-title { margin-bottom: var(--e-2); }
-  .footer-contacts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--e-4); }
-  .footer-contacts a { min-height: 34px; }
-  .footer-contacts__adresse { display: none; }
-  .footer-identity p, .footer-identity address, .footer-legal, .footer-bottom { font-size: var(--t-petit); }
-  .footer-legal ul { gap: 0 var(--e-4); }
-  .footer-bottom a { min-height: 28px; }
 }
 
 /* --- Academie : la boucle file hors du bord droit, au lieu d'y etre coupee net ---------- */
@@ -1291,7 +1319,6 @@ li, dd { text-wrap: wrap; }
   .chapitre__image-mobile { grid-column: 1; grid-row: 1 / span 8; margin: 0; }
   .chapitre > :not(.chapitre__image-mobile) { grid-column: 2; }
   .chapitre__image-mobile .scene { width: 100%; }
-  .site-footer__inner { grid-template-columns: minmax(0, 1fr) minmax(0, .8fr) minmax(0, 1.5fr); column-gap: var(--e-6); }
   /* Les trois etapes de l'accueil cote a cote, comme au bureau, en tuiles plus basses. */
   .pousse__liste { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: auto auto auto; column-gap: var(--e-4); row-gap: 0; }
   .pousse__etape { grid-row: span 3; display: grid; grid-template-rows: subgrid; }
@@ -1302,8 +1329,6 @@ li, dd { text-wrap: wrap; }
   .pousse__etape--0 .pousse__image { width: min(100%, 21vw); }
   .pousse__etape--1 .pousse__image, .pousse__etape--2 .pousse__image { width: min(100%, 26vw); }
   .pousse__etape h3 { font-size: var(--t-moyen); }
-  .footer-identity { grid-column: 1; }
-  .footer-legal, .footer-bottom { grid-column: 1 / -1; }
 }
 
 /* --- Cours : dans chaque arche du parcours, ce que l'eleve lit a cette etape --------------------- */
@@ -1575,15 +1600,6 @@ li, dd { text-wrap: wrap; }
   .entete-prix { grid-column: 1 / span 6; grid-row: 2; align-self: end; }
   .entete-prix__note { grid-column: 1 / -1; }
 }
-
-/* Pied de page : plus d'ornement ; la colonne des contacts prend sa place, et une adresse ne se coupe qu'apres @. */
-.footer-contacts a { overflow-wrap: normal; }
-@media (min-width: 840px) { .site-footer__inner > div:nth-of-type(2) { grid-column: 8 / -1; } }
-@media (max-width: 599px) {
-  .footer-contacts { grid-template-columns: minmax(0, 1fr); gap: var(--e-2); }
-  .footer-contacts__adresse { display: block; }
-}
-@media (max-width: 379px) { .site-footer__inner > nav:not(.footer-legal) ul { grid-template-columns: minmax(0, 1fr); } }
 
 /* --- Recette 19 ------------------------------------------------------------------------------------------- */
 /* Accueil : la bande sombre, le titre avant la photo dans le document, la photo a gauche par la grille. */
@@ -2196,16 +2212,8 @@ li, dd { text-wrap: wrap; }
   .remises--echeances .remise { grid-template-columns: 200px minmax(0, 1fr); }
 }
 
-/* Telephone et tablette : la phrase « Rien n'est facture… » reste sous les boutons, avant l'image. */
-@media (max-width: 839px) { .porte .rassurance { order: 0; } }
 
 /* --- Recette 34 (23/10/2026) ------------------------------------------------------------------------------------- */
-/* Telephone : le pied de page plus court ; les liens « Decouvrir » et les liens legaux en lignes qui se suivent. */
-@media (max-width: 599px) {
-  .site-footer__inner > nav:not(.footer-legal) ul, .footer-legal ul { display: flex; flex-wrap: wrap; gap: 0 var(--e-5); }
-  .site-footer__inner > nav a, .footer-legal a { white-space: nowrap; }
-}
-
 /* Tuiles : dans une rangee, la meme hauteur ; le chiffre en haut, la phrase en bas (remises) ; le texte au milieu
    quand il n'y a pas de chiffre (notes, cours en bref). */
 .remises:not(.remises--echeances), #conditions .points, .deux-champs__communs { align-items: stretch; }
@@ -2240,19 +2248,6 @@ li, dd { text-wrap: wrap; }
 @media (min-width: 1100px) { .site-header__long { display: inline; } .site-header__court { display: none; } }
 @media (max-width: 839px) { .site-header__inscription { margin-inline-start: auto; } .site-header__inscription + .mobile-menu { margin-inline-start: 0; } .site-header__inner { gap: var(--e-3); } }
 
-/* Pied de page : sur tablette, l'identite sur toute la largeur, puis les liens et les adresses cote a cote ; au
-   telephone, les adresses sur deux colonnes et les deux liens Facebook en petit, sans soulignement. */
-@media (min-width: 600px) and (max-width: 1099px) {
-  .site-footer__inner { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .site-footer__inner > .footer-identity, .site-footer__inner > .footer-legal, .site-footer__inner > .footer-bottom { grid-column: 1 / -1; }
-}
-@media (max-width: 599px) {
-  .footer-contacts { grid-template-columns: minmax(0, 1fr); gap: var(--e-2); }
-  .footer-contacts a { font-size: 16px; min-height: 0; }
-  .footer-contacts__adresse { white-space: nowrap; }
-  .footer-bottom a { font-size: 16px; text-decoration: none; }
-}
-
 /* Tarifs, les remises : une liste sans boites, le chiffre en grand a gauche, sa phrase a droite, sur deux colonnes. */
 .remises:not(.remises--echeances) .remise { display: grid; grid-template-columns: minmax(96px, auto) minmax(0, 1fr); align-items: baseline; column-gap: var(--e-5); padding: 0; border-radius: 0; background: none; text-align: start; }
 .remises:not(.remises--echeances) .remise__objet { margin-top: 0; }
@@ -2267,3 +2262,41 @@ li, dd { text-wrap: wrap; }
 
 /* Tarifs, dates du paiement : les petites arches sans le fil qui les reliait. */
 .remises--echeances::before { content: none; }
+
+/* --- Recette 37 (23/10/2026) ------------------------------------------------------------------------------------- */
+/* Tarifs, les dates du paiement : au bureau, une frise de cinq dates en grand, cote a cote, chacune sous sa petite
+   arche, sa phrase dessous ; empilees sur tablette et au telephone. */
+@media (min-width: 1100px) {
+  #echeances .remises--echeances { grid-template-columns: repeat(5, minmax(0, 1fr)); grid-template-rows: auto auto auto; column-gap: var(--e-6); row-gap: 0; margin-top: var(--e-12); }
+  #echeances .remises--echeances .remise { grid-row: span 3; display: grid; grid-template-rows: subgrid; grid-template-columns: minmax(0, 1fr); row-gap: var(--e-4); padding: 0; }
+  #echeances .remises--echeances .remise::before { position: static; width: 22px; height: 28px; }
+  #echeances .remises--echeances .remise__valeur { align-self: start; font-size: clamp(34px, 2.9vw, 42px); line-height: 1.05; text-wrap: balance; }
+  #echeances .remises--echeances .remise__objet { align-self: start; }
+}
+/* Tarifs, ce que coute une famille : le titre en haut, puis les quatre totaux sur une rangee, en grands chiffres. */
+@media (min-width: 1100px) {
+  #famille .section__titre { position: static; }
+  #famille .section__corps { grid-column: 1 / -1; max-width: none; }
+  #famille .price-table--famille, #famille .price-table--famille caption { display: block; width: 100%; }
+  #famille .price-table--famille tbody { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--e-5); }
+  #famille .price-table--famille tbody tr, #famille .price-table--famille tbody tr:nth-child(n) { padding: var(--e-8) var(--e-6) var(--e-6); }
+  #famille .price-table--famille tbody td { font-size: clamp(34px, 3.2vw, 46px); line-height: 1; white-space: nowrap; }
+  #famille .price-table caption { padding-bottom: var(--e-5); }
+}
+@media (max-width: 1099px) { #famille .price-table--famille tbody td { font-size: clamp(28px, 4.6vw, 40px); line-height: 1.1; } }
+/* Tarifs, a savoir : la regle la plus forte (pas d'essai, la premiere semaine remboursee) en phrase de titre. */
+@media (min-width: 840px) {
+  #conditions .points li:first-child { grid-column: 1 / -1; font-family: var(--police-titre); font-size: var(--t-moyen); font-weight: 600; line-height: 1.25; margin-bottom: var(--e-4); }
+  #conditions .points li:first-child .puce { margin-top: .35em; }
+}
+/* Accueil, chapitres : le texte se tient au milieu de l'arche epinglee (meme axe horizontal), le vide se partage
+   au-dessus et au-dessous au lieu de tomber tout en bas. */
+@media (min-width: 840px) {
+  .chapitre { padding-block: 20svh 0; }
+  /* Le premier descend plus bas : remonte de sa demi-hauteur, son texte ne couvre pas la phrase qui le precede. */
+  .chapitre:first-child { min-height: 112svh; padding-top: 36svh; }
+  .chapitre__texte { top: calc(50svh + var(--entete) / 2); translate: 0 -50%; }
+  /* Le dernier a la hauteur de la fenetre : son texte se centre dans le chapitre, sans epinglage, et part avec l'image. */
+  .chapitre:last-child { display: flex; flex-direction: column; justify-content: center; }
+  .chapitre:last-child .chapitre__texte { position: static; translate: none; }
+}

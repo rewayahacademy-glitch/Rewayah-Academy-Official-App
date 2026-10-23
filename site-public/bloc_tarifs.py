@@ -418,8 +418,10 @@ def note_date_effet(tarifs: dict, aujourdhui: date) -> str:
 
 def lie(phrase: str) -> str:
     """Fourchettes, durees, pourcentages et nombres restent avec leur unite (« 6 à 17 ans », « 5 min », « 5 % de remise ») ;
-    une preposition reste avec le nombre qui la suit (« de 3 à 5 élèves ») et le dernier mot ne reste pas seul."""
+    une preposition reste avec le nombre qui la suit (« de 3 à 5 élèves ») ; espace insecable avant « : ; ? ! » ; le dernier
+    mot ne reste pas seul."""
     e = "[ \u00a0]"
+    phrase = re.sub(r" ([:;?!])", "\u00a0\\1", phrase)
     phrase = re.sub(rf"(\d+){e}à{e}(\d+)", "\\1\u00a0à\u00a0\\2", phrase)
     phrase = re.sub(rf"(\d+){e}h{e}(\d+)", "\\1\u00a0h\u00a0\\2", phrase)
     phrase = re.sub(rf"(\d+(?:,\d+)?){e}(%|\$){e}(de|d’)(?:{e})?", lambda m: f"{m[1]}\u00a0{m[2]}\u00a0{m[3]}" + ("\u00a0" if m[3] == "de" else ""), phrase)

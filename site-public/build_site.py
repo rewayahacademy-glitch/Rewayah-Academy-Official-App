@@ -1334,11 +1334,10 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
   {simulator}
   <footer class="site-footer"><div class="site-footer__inner">
      <div class="footer-identity"><a class="brand" href="/fr/" aria-label="Rewayah Academy, accueil"><img src="{ASSETS}/logo-horizontal-white.svg" width="1027" height="287" alt=""></a><p>REWAYAH ACADEMY LTD<br>Société n° 16624644</p>
-      <address>71-75 Shelton Street<br>Covent Garden, London<br>WC2H 9JQ, Royaume-Uni</address>
+      <address><span>71-75 Shelton Street</span> <span>Covent Garden, London</span> <span>WC2H 9JQ, Royaume-Uni</span></address>
     </div>
-    <nav aria-label="Découvrir Rewayah"><p class="footer-title">Découvrir</p><ul>{discovery_links}</ul></nav>
-    <div><p class="footer-title">Nous contacter</p><ul class="footer-contacts">{contact_links}</ul>
-    </div>
+    <details class="pied-volet pied-volet--liens" open><summary class="footer-title">Découvrir</summary><nav aria-label="Découvrir Rewayah"><ul>{discovery_links}</ul></nav></details>
+    <details class="pied-volet pied-volet--contacts" open><summary class="footer-title">Nous contacter</summary><ul class="footer-contacts">{contact_links}</ul></details>
     <nav class="footer-legal" aria-label="Navigation légale"><ul>{footer_links}</ul></nav>
     <div class="footer-bottom"><span>Français</span><div>{anchor(academy_facebook['label'], academy_facebook['href'])}<span>{esc(site['author_credit'])} {anchor(author_facebook['label'], author_facebook['href'])}</span></div></div>
   </div></footer>

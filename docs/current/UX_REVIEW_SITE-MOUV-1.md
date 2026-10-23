@@ -236,6 +236,7 @@ Inspection après ces corrections :
 | Recette 33 (jurés Sonnet) | 7,70 | 6,57 | 6,33 | « presque », sans plafond (les rendus comptés comme images raster, définition du skill rappelée aux jurés) |
 | Recette 34 (jurés Sonnet) | 7,77 | 6,67 | 6,80 | « presque », sans plafond |
 | Recette 35 (jurés Sonnet) | 7,77 | 6,57 | 6,33 | « presque », sans plafond |
+| Recette 36 (jurés Sonnet) | 7,77 | 6,80 | 6,50 | « presque », sans plafond |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -763,6 +764,18 @@ Inspection des six pages : 0 FAIL hors Tarifs (une image, voulu). Aucun texte co
 | SS4 | Tarifs, « À savoir » en tuiles | Une liste à puces sur deux colonnes |
 | SS5 | Dates du paiement : un fil vertical | Les petites arches seules, sans fil |
 | SS6 | Pied de page : identité serrée sur tablette, long au téléphone | Tablette : l'identité sur toute la largeur, liens et adresses côte à côte ; téléphone : adresses sur une ligne chacune, liens Facebook en petit et sans soulignement |
+
+**Après la recette 36.** Les trois jurés s'accordent sur deux points : le pied de page encore long au téléphone (1,38 écran) et presque un écran sur tablette, et, sous le simulateur de Tarifs, quatre sections bâties de la même façon. Deux jurés ajoutent : au téléphone, la famille du haut de l'accueil sous le premier écran, et sous chaque texte de chapitre un vide d'un tiers d'écran. En cherchant, un défaut de notre fait : entre 840 et 1099 px, le pied de page plaçait « Découvrir » hors de sa colonne.
+
+| # | Relevé | Correction |
+|---|---|---|
+| TT1 | Téléphone : pied de page de 1,38 écran | 0,76 écran : l'adresse en une phrase ; « Découvrir » et « Nous contacter » en volets qui se replient au téléphone (ouverts sans script et au-delà de 599 px) ; liens légaux en lignes qui se suivent |
+| TT2 | Tablette : pied de page d'un écran ; 840-1099 px : colonnes décalées | Identité et adresses côte à côte, « Découvrir » en lignes qui se suivent dessous (0,77 écran à 768 px) ; les règles éparses des tours précédents réunies en un seul bloc |
+| TT3 | Tarifs : quatre sections pareilles | Dates du paiement : une frise de cinq dates en grand, côte à côte, chacune sous sa petite arche ; coût d'une famille : les quatre totaux sur une rangée, en grands chiffres ; « À savoir » : la règle « pas d'essai » en phrase de titre |
+| TT4 | Téléphone : la famille sous le premier écran | La phrase « Rien n'est facturé… » passe sous l'image (comme avant QQ4) : la mère, sa fille et la classe entrent dans le premier écran |
+| TT5 | Chapitres : un tiers d'écran vide sous le texte | Le texte se tient au milieu de l'arche épinglée ; le premier chapitre descend un peu (son texte ne couvre plus la phrase qui le précède) ; le dernier se centre sans épinglage et part avec l'image |
+| TT7 | Trouvé en refaisant les captures : dans la fenêtre épinglée, les mains ne montaient plus vers le Coran (l'image ne bouge pas, le calcul suivait sa position) | Les mains montent pendant que le titre de leur chapitre passe de 60 % à 30 % de la hauteur de l'écran |
+| TT6 | Point-virgule en début de ligne, apostrophes droites | Espace insécable avant « : ; ? ! » dans les textes des tarifs ; apostrophes typographiques dans « À savoir » |
 
 ## Hors de portée de l'agent
 
