@@ -703,6 +703,11 @@ abstract final class Routes {
   /// refuser, retirer), sous Operations. Atteint depuis l'Accueil.
   static const String adminOperationsAvis = '/admin/operations/avis';
 
+  /// COURRIELS-1 : les e-mails sortants (ecrire a la main, suivre la file
+  /// d'envoi, voir les adresses d'envoi), sous Operations. Atteint depuis
+  /// l'Accueil.
+  static const String adminOperationsCourriels = '/admin/operations/courriels';
+
   /// ECHELLE-ADM-PILOTAGE-1 : le tableau de pilotage par horaire (classes,
   /// remplissage, demandes, enseignants libres et manquants), sous
   /// Operations.

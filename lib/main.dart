@@ -26,6 +26,7 @@ import 'core/agent/session_agent.dart';
 import 'core/capacites/acces_supabase.dart';
 import 'core/capacites/avis_supabase.dart';
 import 'core/capacites/classes_foyer_supabase.dart';
+import 'core/capacites/courriels_supabase.dart';
 import 'core/capacites/enseignants_classe_supabase.dart';
 import 'core/capacites/identite_titulaire_supabase.dart';
 import 'core/capacites/mes_donnees_supabase.dart';
@@ -37,6 +38,7 @@ import 'core/capacites/politiques_commerciales_supabase.dart';
 import 'core/capacites/port_acces_foyer.dart';
 import 'core/capacites/port_avis.dart';
 import 'core/capacites/port_classes_foyer.dart';
+import 'core/capacites/port_courriels.dart';
 import 'core/capacites/port_enseignants_classe.dart';
 import 'core/capacites/port_identite_titulaire.dart';
 import 'core/capacites/port_mes_donnees.dart';
@@ -274,6 +276,10 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   // Les avis des familles : formulaire public et moderation de la direction.
   portAvisProvider.overrideWithValue(AvisSupabase(Supabase.instance.client)),
+  // Les e-mails sortants : envoi manuel et suivi de la file (direction).
+  portCourrielsProvider.overrideWithValue(
+    CourrielsSupabase(Supabase.instance.client),
+  ),
   portSeriesTresorerieProvider.overrideWithValue(
     SeriesTresorerieSupabase(Supabase.instance.client),
   ),

@@ -16,6 +16,7 @@ la démonstration (hors production) porte les données.
 | `ADM-PLAN` | Planning de la semaine | Direction | E | 1 | `/admin/operations/planning` | Barre semaine précédente / suivante, un jour par section, lignes fines | Idem, colonne bornée | **construit (11/10)**, port `PortPlanningDirection` (`lib/core/admin/port_planning_direction.dart`), démo `planning_incidents_demo.dart` |
 | `ADM-INC` | Incidents des 24 dernières heures | Direction | E | 1 | `/admin/securite-audit/incidents` | Une carte à lignes fines | Idem, colonne bornée | **construit (11/10)**, port `PortIncidentsSeances`, lecture serveur au BR-1 |
 | `ADM-PAI` | Paiements reçus | Direction | E | 1 | `/admin/finance/paiements` | Deux sections à lignes fines, fiche en feuille | Idem, fiche en boîte de dialogue | **construit (17/10)**, port `PortPaiementsSaisis`, adaptateur `PaiementsSaisisSupabase` (RPC de FAC-C-01, testées sur la base de test) |
+| `ADM-COUR` | E-mails | Direction | E | 1 | `/admin/operations/courriels` | Trois sections (Écrire, Envois, Adresses d'envoi), cartes détachées | Idem, colonne bornée | **construit (23/10)**, port `PortCourriels`, adaptateur `CourrielsSupabase` (RPC de la migration `20261023120000`), démo `CourrielsDemonstration` |
 
 ## ADM-PLAN : Planning
 
@@ -79,3 +80,32 @@ migration `20261017172000`). Revue d'ergonomie : `UX_REVIEW_ADM-PAI.md`.
 - **Hors fiche** : l'émission des factures du mois (`emettre_factures_mois`) n'a pas encore
   d'écran ; un paiement saisi facture déjà le mois de l'élève concerné.
 
+## ADM-COUR : E-mails
+
+Inscrite le 23 octobre 2026 avant le code (COURRIELS-1, migration `20261023120000`).
+**Placement** : domaine Opérations, atteint depuis l'Accueil comme Avis et Offres ; écrire à une
+famille et suivre ce qui part est un geste de pilotage quotidien, pas une règle globale du système
+(Configuration ne le porterait que pour le réglage des alias, qui reste en lecture seule ici).
+
+- **Tâche** : écrire un e-mail à une personne, puis vérifier qu'il est bien parti.
+- **Entrée** : « E-mails » dans les outils de l'Accueil de la direction.
+- **Écrire** : adresse du destinataire, catégorie (cartes de choix fermées, sans « Autre » ; chaque
+  carte dit l'adresse d'où part l'e-mail), sujet (1 à 120), message en texte simple (1 à 5000, une
+  ligne vide fait un paragraphe). Une seule action pleine : « Envoyer l'e-mail ».
+- **Issue** (D5, K-59) : le serveur met l'e-mail en file, la file part dans la minute. L'écran dit
+  « Envoi dans la minute » et **jamais « envoyé »** avant que la ligne soit `envoye` dans « Envois ».
+  Refus nommés par le serveur (adresse, catégorie, sujet, message, destinataire exclu : compte
+  d'enfant ou désinscription), droits, réseau absent (rien ne part), mise en file non confirmée.
+  Une clé d'idempotence est tirée par contenu : un double appui ou un nouvel essai ne met jamais deux
+  e-mails en file ; elle change dès que le contenu change.
+- **Envois** : la file, la plus récente d'abord, filtrée par statut (En file, En cours d'envoi,
+  Envoyés, Non envoyés, Annulés), « Actualiser ». Une carte par e-mail (sujet pour un message libre,
+  « Message automatique » sinon ; destinataire, catégorie, origine, dates, essais, dernière erreur).
+  « Remettre en file » seulement sur un e-mail non envoyé ou annulé.
+- **Adresses d'envoi** : les catégories en lecture seule (adresse d'envoi, nom affiché, adresse des
+  réponses, type, active ou coupée). Le réglage (`admin_courriel_categorie_regler`) n'a pas
+  d'écran : un alias mal saisi coupe les réponses des familles, il passe par la migration.
+- **États** : chargement (`Skeleton`), contenu, vide, erreur (« Réessayer »), hors ligne
+  (`EtatSansDonnees`, aucun envoi ne part), source absente (« E-mails indisponibles »).
+- **Droits** (serveur) : direction, compte valide. Le destinataire est une adresse libre ; l'envoi à
+  un compte par identifiant (`p_profil`) existe côté serveur, sans sélecteur de personne ici.
