@@ -145,3 +145,32 @@ correction.
 La ligne correspondante est portée au journal
 `08_DECISIONS_ET_FEUILLE_DE_ROUTE_2026-09-23.md`, section 5 bis, à la date du
 21/10/2026.
+
+## Le message qui prévient les inscrits des formulaires Google rappelle le contexte et la date (directeur, 23/10/2026)
+
+Demande du directeur, en substance : les personnes inscrites depuis quelques jours peuvent avoir perdu le
+contexte (beaucoup de liens et de codes QR circulent) ; le message qui les prévient doit leur rappeler
+qu'elles se sont inscrites, sur quel formulaire, pour quoi faire, et **la date**, pour qu'elles se
+souviennent et ne le prennent pas pour un message d'arnaqueur.
+
+Règles pour le modèle `lien_inscription` du geste « consigner prévenu » (`lister_a_prevenir_candidats`,
+`M/20261022000600_cand_l3_inscription_import_rapprochement.sql`) et pour la file des courriels qui
+l'enverra :
+
+1. **Expéditeur** : Rewayah Academy, adresse officielle de l'académie.
+2. **Pourquoi ce message** : « Le {date de la réponse}, vous avez répondu à notre formulaire « {nom du
+   formulaire} ». » La date est l'horodatage importé (colonne « Horodateur »), écrite en toutes lettres dans la
+   langue du message (« 14 octobre 2026 »).
+3. **Ce qu'était le formulaire** : enseigner le Coran en petite classe, en visio, à Rewayah Academy.
+4. **Ce qui change** : les candidatures se font désormais dans l'application, les réponses y sont déjà.
+5. **Ce qu'il faut faire** : créer son compte avec **la même adresse** que dans le formulaire (sinon le
+   rapprochement ne se fait pas tout seul), puis le bouton du lien.
+6. **Confiance** : « Nous ne vous demanderons jamais de mot de passe ni de paiement par message. Le lien mène à
+   notre adresse officielle. Si vous n'avez pas rempli ce formulaire, ignorez ce message. »
+7. **Jamais** : aucune réponse du formulaire, ni téléphone, ni contenu libre ; le prénom seulement s'il est
+   présent, sinon « Bonjour ».
+8. **Jamais deux fois** : une personne déjà prévenue ou qui a déjà son compte ne reçoit pas le message de
+   nouveau (liste « à prévenir », clé d'idempotence de l'envoi).
+
+Statut : `spécifié`. Le texte final passe par le vocabulaire de `.claude/skills/mots-rewayah` et suit le
+gabarit des courriels de l'autre session ; le branchement de « Prévenir » sur la file des courriels le lit.
