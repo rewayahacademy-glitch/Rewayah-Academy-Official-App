@@ -335,6 +335,49 @@ class GeneratedSiteQA(unittest.TestCase):
         self.assertEqual(parser.headings, ["Cette page est introuvable."])
         self.assertEqual(parser.robots, ["noindex,nofollow"])
         self.assertIn("/fr/", parser.links)
+        self.assertIn("/fr/aide", parser.links)
+
+    def test_404_porte_et_lumiere_en_ligne_sans_nouvelle_image(self) -> None:
+        source = (self.output / "404.html").read_text(encoding="utf-8")
+        svg = re.search(r"<svg.*?</svg>", source, re.S)
+        self.assertIsNotNone(svg)
+        self.assertLess(len(svg.group(0).encode("utf-8")), 6000)
+        self.assertNotIn('<img src="/fr/assets/scene-', source)
+        # Le symbole du logo, tel quel : les deux chemins de assets/symbole.svg.
+        logo = (SITE / "assets" / "symbole.svg").read_text(encoding="utf-8")
+        chemins = re.findall(r' d="([^"]+)"', logo)
+        self.assertEqual(len(chemins), 2)
+        for chemin in chemins:
+            self.assertIn(chemin, svg.group(0))
+        self.assertIn('aria-hidden="true"', svg.group(0))
+        # Seules les teintes des jetons.
+        jetons = {"#FFFFFF", "#E8D8FF", "#BA98FB", "#8652E6", "#6538E4", "#4E2983", "#25113F"}
+        self.assertTrue(set(re.findall(r"#[0-9A-Fa-f]{6}", svg.group(0))) <= jetons)
+        css = (SITE / "styles" / "site.css").read_text(encoding="utf-8")
+        self.assertRegex(css, r"@media \(prefers-reduced-motion: no-preference\) \{\s*\.pl__faisceau \{ animation")
+
+    def test_desinscription_hors_index_hors_plan_et_sans_action_au_simple_get(self) -> None:
+        fichier = self.output / "fr" / "courriels" / "desinscription.html"
+        source = fichier.read_text(encoding="utf-8")
+        parser = PageParser()
+        parser.feed(source)
+        self.assertEqual(parser.robots, ["noindex,nofollow"])
+        self.assertEqual(parser.canonicals, [])
+        self.assertNotIn("/fr/courriels/desinscription", self.pages)
+        plan = (self.output / "sitemap.xml").read_text(encoding="utf-8")
+        self.assertNotIn("desinscription", plan)
+        for route in self.pages:
+            self.assertNotIn("/fr/courriels/desinscription", self.page_file(route).read_text(encoding="utf-8"))
+        self.assertIn('method="post" action="' + BUILDER_MODULE.FONCTION_DESINSCRIPTION + '"', source)
+        self.assertIn('name="jeton"', source)
+        for etat in ("confirmer", "ok", "invalide", "neutre"):
+            self.assertIn(f'data-etat="{etat}"', source)
+        self.assertIn("/fr/contact", parser.links)
+        self.assertIn("textContent", source)
+        self.assertIn("Les messages liés à votre compte, vos classes et vos factures continuent d’arriver.", source)
+        config = json.loads((self.output / "vercel.json").read_text(encoding="utf-8"))
+        regles = {r["source"]: r["destination"] for r in config["rewrites"]}
+        self.assertEqual(regles["/fr/courriels/desinscription"], "/fr/courriels/desinscription.html")
 
     def test_preview_robots_txt_closes_everything(self) -> None:
         self.assertEqual((self.output / "robots.txt").read_text(encoding="utf-8"), "User-agent: *\nDisallow: /\n")

@@ -265,7 +265,7 @@ class PageProduite(unittest.TestCase):
         self.assertIn("4,8 sur 5, 37 avis", page)
         for interdit in (faux.url, "127.0.0.1", "cle-secrete-de-test", "apikey", "rpc/avis_publics", "SUPABASE_"):
             self.assertNotIn(interdit, rendu)
-        self.assertIsNone(re.search(r"supabase\.co(?!m)", rendu))
+        self.assertIsNone(re.search(r"supabase\.co(?!m)", rendu.replace(BUILDER.FONCTION_DESINSCRIPTION, "")))
 
     def test_texte_injecte_echappe_dans_la_page(self) -> None:
         page = self.construire(avis=reponse(nom="<b>Nom</b>", texte="<script>x()</script> et plus de vingt caractères"))

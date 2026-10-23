@@ -173,7 +173,7 @@ class LectureDeLaBase(unittest.TestCase):
         self.assertIn(f"141{NBSP}$ par mois pour une classe d", recrutement)
         for interdit in (faux.url, "127.0.0.1", "cle-secrete-de-test", "apikey", "rpc/tarifs_publics"):
             self.assertNotIn(interdit, rendu)
-        self.assertIsNone(re.search(r"supabase\.co(?!m)", rendu))
+        self.assertIsNone(re.search(r"supabase\.co(?!m)", rendu.replace(BUILDER.FONCTION_DESINSCRIPTION, "")))
         shutil.rmtree(sortie, ignore_errors=True)
 
     def test_repli_sur_erreur_http_json_invalide_redirection_et_variables_absentes(self) -> None:
@@ -299,7 +299,7 @@ class PageGeneree(unittest.TestCase):
 
     def test_aucune_adresse_ni_cle_dans_le_html(self) -> None:
         rendu = "\n".join(p.read_text(encoding="utf-8") for p in OUTPUT.rglob("*") if p.suffix in {".html", ".js", ".css", ".json", ".xml", ".txt"})
-        self.assertIsNone(re.search(r"supabase\.co(?!m)", rendu))
+        self.assertIsNone(re.search(r"supabase\.co(?!m)", rendu.replace(BUILDER.FONCTION_DESINSCRIPTION, "")))
         for interdit in ("apikey", "service_role", "sb_publishable", "sb_secret", "SUPABASE_"):
             self.assertNotIn(interdit, rendu)
         self.assertIsNone(re.search(r"eyJ[A-Za-z0-9_-]{20,}", rendu))

@@ -985,12 +985,30 @@ li, dd { text-wrap: wrap; }
   .footer-contacts a { font-size: 16px; }
 }
 
-/* --- Page introuvable --------------------------------------------------------- */
-.introuvable { min-height: 100svh; display: grid; gap: var(--e-10); align-items: center; padding: var(--e-16) var(--marge); background: var(--champ); }
-.introuvable h1 { font-size: var(--t-titre); }
-.introuvable p { margin-top: var(--e-4); }
-.introuvable__scene { max-width: 560px; border-radius: var(--arche); background: var(--champ-fort); padding: 16% 5% 0; }
-@media (min-width: 840px) { .introuvable { grid-template-columns: 1fr 1fr; padding-inline: max(var(--marge), calc((100vw - var(--contenu)) / 2)); } }
+/* --- Pages d'etat : introuvable, desinscription (la porte et sa lumiere, scene_porte.py) ------------------- */
+.etat { position: relative; min-height: 100svh; display: grid; align-content: center; gap: var(--e-8); padding: var(--e-6) var(--marge) var(--e-12); max-width: var(--contenu); margin-inline: auto; }
+.etat__marque { order: -2; display: block; width: 168px; justify-self: start; }
+.etat__marque img { display: block; width: 100%; height: auto; }
+.etat h1 { font-size: var(--t-titre); line-height: 1.08; text-wrap: balance; }
+.etat p { margin-top: var(--e-4); max-width: 46ch; }
+.etat__scene { display: grid; justify-items: center; }
+.etat__scene > .pl { grid-area: 1 / 1; }
+.pl { display: block; width: 100%; max-width: 560px; height: auto; overflow: visible; }
+/* Desinscription : la porte reste fermee tant qu'on n'a rien confirme ; elle s'ouvre quand c'est fait. */
+.pl:nth-of-type(2) { display: none; }
+[data-etat="ok"] .pl:nth-of-type(1) { display: none; }
+[data-etat="ok"] .pl:nth-of-type(2) { display: block; }
+.etat [hidden] { display: none; }
+.etat form.action-row { margin-top: var(--e-8); }
+.etat button.cta { cursor: pointer; font: inherit; font-weight: 600; line-height: 1.2; min-height: 52px; }
+@media (max-width: 839px) { .etat__scene { order: -1; } .etat__scene .pl { max-width: 340px; } .etat { gap: var(--e-4); align-content: start; } }
+@media (min-width: 840px) { .etat { grid-template-columns: 1fr 1fr; align-items: center; column-gap: var(--e-16); } .etat__marque { grid-column: 1 / -1; position: absolute; top: var(--e-8); } .etat__texte { grid-column: 1; grid-row: 1; } .etat__scene { grid-column: 2; grid-row: 1; } }
+/* La lumiere respire, tres lentement (7 s) ; sans mouvement accepte, elle reste fixe. */
+@media (prefers-reduced-motion: no-preference) {
+  .pl__faisceau { animation: pl-respire 7s ease-in-out infinite; }
+  .pl__halo { animation: pl-respire 5s ease-in-out infinite; }
+}
+@keyframes pl-respire { 0%, 100% { opacity: 1; } 50% { opacity: .62; } }
 
 /* --- Responsive : en-tete ------------------------------------------------------- */
 @media (max-width: 839px) {
@@ -1104,7 +1122,7 @@ li, dd { text-wrap: wrap; }
 [data-ambiance="violet"] .entete-page--blanc,
 [data-ambiance="violet"] .entete-page--sobre,
 [data-ambiance="violet"] .bande-image--large,
-[data-ambiance="violet"] .introuvable { background: transparent; }
+
 [data-ambiance="violet"] .porte .rassurance,
 [data-ambiance="violet"] .porte .cta--secondary { background: transparent; }
 [data-ambiance="violet"] .porte .cta--secondary:hover { background: #8652E6; }
@@ -1118,7 +1136,6 @@ li, dd { text-wrap: wrap; }
 [data-ambiance="violet"] .chapitres__pile,
 [data-ambiance="violet"] .chapitre__image-mobile .scene,
 [data-ambiance="violet"] .bande-image--arche .scene,
-[data-ambiance="violet"] .introuvable__scene,
 [data-ambiance="violet"] .bande-image--cercle .scene,
 [data-ambiance="violet"].js .porte__halqa::before { background: none; }
 [data-ambiance="violet"] .section__figure { background: none; padding: 6% 0 0; }
