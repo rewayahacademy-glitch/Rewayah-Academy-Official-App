@@ -51,6 +51,31 @@ nouveau feu vert).
 Le décompte des mots compte aussi les commentaires et les droits (`REVOKE ... DELETE`,
 `ON DELETE CASCADE`) : il dit seulement quel chemin passe sans seconde confirmation.
 
+## État de la production (constaté le 23/10/2026 au soir, en lecture)
+
+Le directeur a dit le 23/10 : « si tu es sûr que ç'a été testé, alors on fait la migration sur prod
+directement ». Constat par `list_migrations` (lecture seule) :
+
+- les fichiers 16 et 17 ci-dessous sont **déjà en production** : la session des e-mails les y a posés
+  avec ses migrations `courriels_*` ;
+- seul le fichier 18 (`20261024000000_cand_nom_latin.sql`) manque, et la prod compte 0 candidature.
+
+Preuve pour le 18, sur une base locale neuve montée avec les migrations de `origin/main` (56be9240),
+soit exactement celles de la prod :
+
+- les trois fonctions que le 18 remplace (`private.cand_ligne_json`, `private.candidature_du_titulaire`,
+  `public.lister_candidatures`) ont la même empreinte `md5(pg_get_functiondef)` en prod et en local ;
+  le 18 n'écrase donc rien de la session des e-mails ;
+- le 18 s'applique sans erreur ;
+- rejeu complet ensuite : 127 scénarios verts, 2 rouges, tous deux déjà rouges sur `main` sans le 18 :
+  `scenarios_etape4` (A793, créneau commun suivant) et `scenarios_af_liste_blanche_volatiles` (`avis_*` et
+  cinq fonctions `courriel_*` non déclarées ; session des e-mails prévenue).
+
+Application : les permissions de la session refusent à Claude toute action ou page qui vise la production.
+Le directeur colle donc lui-même le fichier dans l'éditeur SQL du projet « Rewayah PROD (Real Users) ».
+Claude vérifie ensuite en lecture (colonnes, fonctions, droits ; liste au détail du fichier 18).
+La base de test n'a encore ni le 16, ni le 17, ni le 18.
+
 ## Prochaine livraison sur la base de test (pas encore appliquée)
 
 Ajoutée le 23/10/2026, après l'installation des quinze ci-dessus. Rien n'est appliqué sans un
