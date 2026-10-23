@@ -149,3 +149,18 @@ Ce sont des réglages de tableau de bord, hors migrations ; s'ils passent par un
   `/connexion` 307 → `app.` ; `app.` 200 `noindex` ; `app./fr/` 307 → nu).
 - Reste au directeur : §6 (Supabase, adresses de retour, puis Site URL), §7 (Search Console), §8 (DKIM,
   DMARC), révocation du jeton Cloudflare. Phase 2 : `docs/current/PHASE-2-MISE-EN-PRODUCTION.md`.
+
+## 11. Phase 2 en production (23/10/2026, soir)
+
+- Fusion de la PR 48 dans `main` (17 h 30 UTC) : 260 migrations en production, 18 fonctions déployées
+  (dont `courriels-envoi` et `courriel-desinscription`, après ajout du secret Actions
+  `SUPABASE_ACCESS_TOKEN`), application en ligne. E-mail de connexion reçu depuis support@.
+- Après la fusion, sur la branche (à fusionner plus tard) : bouton pleine largeur et lien de secours
+  « Ouvrir le lien » dans les e-mails (modèles Auth à recoller, page privée envoyée), facturation
+  depuis invoices@, inscriptions depuis inscriptions@ (déjà en production par collage).
+- **À rappeler au directeur après le réglage Google Auth (Branding)** : refondre la navigation de la
+  console d'administration. Trop d'outils sont rangés dans des liens de l'Accueil (E-mails, Avis,
+  Offres, Pilotage...) et ne se classent plus. Point de départ : l'écran E-mails n'est atteint que depuis
+  l'Accueil, pas depuis Opérations.
+- Page de connexion Google : l'adresse `*.supabase.co` reste affichée tant qu'il n'y a ni domaine
+  personnalisé Supabase (offre Pro, au lancement) ni connexion Google intégrée à l'application.
