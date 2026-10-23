@@ -42,6 +42,14 @@ export interface Contenu {
   desinscription?: string
   /// Pourquoi la personne recoit ce message (une ligne au pied).
   raison: string
+  /// Langue du message (code ISO) ; francais par defaut (COURRIELS-2).
+  langue?: string
+  /// Ecriture de droite a gauche (arabe) : tout le message se miroite.
+  droiteAGauche?: boolean
+  /// Libelle du lien de desinscription, dans la langue du message.
+  libelleDesinscription?: string
+  /// Ligne ajoutee quand le message a ete traduit a l'envoi.
+  noteTraduction?: string
 }
 
 /// Typographie francaise : espace insecable avant « : ; ? ! » et apres « ».
@@ -61,19 +69,19 @@ export function paragraphes(texte: string): string[] {
   return texte.replace(/\r\n?/g, '\n').split(/\n{2,}/).map((p) => p.trim()).filter(Boolean)
 }
 
-function blocHtml(b: Bloc): string {
+function blocHtml(b: Bloc, typo: (h: string) => string, cote: string): string {
   switch (b.type) {
     case 'texte':
       return `<p style="margin:0 0 16px;font:400 15px/1.6 ${POLICE};color:${C.encre}">${
-        insecables(echapper(b.texte)).replace(/\n/g, '<br>')}</p>`
+        typo(echapper(b.texte)).replace(/\n/g, '<br>')}</p>`
     case 'note':
       return `<p style="margin:0 0 16px;font:400 13px/1.5 ${POLICE};color:${C.attenue}">${
-        insecables(echapper(b.texte)).replace(/\n/g, '<br>')}</p>`
+        typo(echapper(b.texte)).replace(/\n/g, '<br>')}</p>`
     case 'code':
       return `<p style="margin:0 0 20px;font:600 28px/1.2 ${POLICE};letter-spacing:6px;color:${C.encre}">${
         echapper(b.code)}</p>`
     case 'bouton':
-      return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:4px 0 24px"><tr>` +
+      return `<table role="presentation" align="${cote}" cellpadding="0" cellspacing="0" border="0" style="margin:4px 0 24px"><tr>` +
         `<td style="border-radius:12px;background:${C.violet}">` +
         `<a href="${echapper(b.href)}" style="display:inline-block;padding:13px 24px;font:600 15px/1 ${POLICE};` +
         `color:#FFFFFF;text-decoration:none;border-radius:12px">${echapper(b.libelle)}</a></td></tr></table>`
@@ -93,14 +101,21 @@ function blocTexte(b: Bloc): string {
 }
 
 export function composer(c: Contenu): { html: string; texte: string } {
+  const langue = c.langue ?? 'fr'
+  const rtl = c.droiteAGauche === true
+  const dir = rtl ? 'rtl' : 'ltr'
+  const cote = rtl ? 'right' : 'left'
+  const typo = langue === 'fr' ? insecables : (h: string) => h
+  const desinscrire = c.libelleDesinscription ?? 'Ne plus recevoir ces e-mails'
   const pied = [
+    c.noteTraduction ? echapper(c.noteTraduction) : '',
     echapper(c.raison),
     c.desinscription
-      ? `<a href="${echapper(c.desinscription)}" style="color:${C.attenue}">Ne plus recevoir ces e-mails</a>`
+      ? `<a href="${echapper(c.desinscription)}" style="color:${C.attenue}">${echapper(desinscrire)}</a>`
       : '',
   ].filter(Boolean).join('<br>')
 
-  const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8">` +
+  const html = `<!doctype html><html lang="${echapper(langue)}" dir="${dir}"><head><meta charset="utf-8">` +
     `<meta name="viewport" content="width=device-width,initial-scale=1">` +
     `<meta name="color-scheme" content="light"><meta name="supported-color-schemes" content="light">` +
     `<title>${echapper(c.sujet)}</title></head>` +
@@ -108,12 +123,12 @@ export function composer(c: Contenu): { html: string; texte: string } {
     `<div style="display:none;max-height:0;overflow:hidden;opacity:0">${echapper(c.apercu)}</div>` +
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${C.fond}"><tr>` +
     `<td align="center" style="padding:24px 12px">` +
-    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px">` +
-    `<tr><td style="padding:0 8px 16px"><a href="${SITE}/fr/"><img src="${IMAGES}/courriel-logo-violet.png" width="150" height="43" ` +
+    `<table role="presentation" dir="${dir}" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px">` +
+    `<tr><td align="${cote}" style="padding:0 8px 16px"><a href="${SITE}/fr/"><img src="${IMAGES}/courriel-logo-violet.png" width="150" height="43" ` +
     `alt="Rewayah Academy" style="display:block;border:0;width:150px;height:auto;font:600 18px ${POLICE_TITRE};color:${C.violet}"></a></td></tr>` +
-    `<tr><td style="background:${C.carte};border:1px solid ${C.filet};border-radius:16px;padding:32px 28px">` +
+    `<tr><td dir="${dir}" align="${cote}" style="background:${C.carte};border:1px solid ${C.filet};border-radius:16px;padding:32px 28px;text-align:${cote}">` +
     `<h1 style="margin:0 0 16px;font:600 22px/1.3 ${POLICE_TITRE};color:${C.encre}">${echapper(c.titre)}</h1>` +
-    c.blocs.map(blocHtml).join('') +
+    c.blocs.map((b) => blocHtml(b, typo, cote)).join('') +
     `</td></tr>` +
     `<tr><td align="center" style="padding:24px 16px 8px">` +
     `<img src="${IMAGES}/courriel-ornement-violet.png" width="24" height="40" alt="" style="display:block;border:0;width:24px;height:auto"></td></tr>` +
@@ -127,8 +142,9 @@ export function composer(c: Contenu): { html: string; texte: string } {
     ...c.blocs.map(blocTexte).flatMap((t) => [t, '']),
     '--',
     'Rewayah Academy · rewayahacademy.com',
+    c.noteTraduction ?? '',
     c.raison,
-    c.desinscription ? `Ne plus recevoir ces e-mails : ${c.desinscription}` : '',
+    c.desinscription ? `${desinscrire} : ${c.desinscription}` : '',
   ].filter((l, i, t) => !(l === '' && t[i - 1] === '')).join('\n').trim()
 
   return { html, texte }

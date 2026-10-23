@@ -153,18 +153,64 @@ function libre(d: Donnees): Omit<Contenu, 'raison'> {
   return { sujet, apercu: blocs[0]?.type === 'texte' ? blocs[0].texte.slice(0, 120) : sujet, titre: sujet, blocs }
 }
 
-export function contenuPour(l: Ligne): Contenu {
-  const m = MODELES[l.modele]
+/// Une langue ecrite a la main : ses modeles, ses raisons, son libelle de
+/// desinscription. Le francais est la reference ; les autres langues
+/// s'enregistrent dans `LANGUES` (fichiers `modeles_<code>.ts`). Une langue
+/// absente, ou un modele absent d'une langue, est traduit du francais a
+/// l'envoi (COURRIELS-2).
+export interface LangueEcrite {
+  modeles: Record<string, (d: Donnees) => Omit<Contenu, 'raison'>>
+  raisons: Record<string, string>
+  desinscription: string
+  droiteAGauche?: boolean
+}
+
+export const FRANCAIS: LangueEcrite = {
+  modeles: MODELES,
+  raisons: RAISON,
+  desinscription: 'Ne plus recevoir ces e-mails',
+}
+
+export const LANGUES: Record<string, LangueEcrite> = { fr: FRANCAIS }
+
+/// Ce que le travailleur doit faire pour une ligne de la file : le contenu,
+/// et la langue d'ou le traduire si la langue demandee n'est pas ecrite.
+export interface Rendu {
+  contenu: Contenu
+  /// Langue source a traduire vers `langue` ; absente quand rien n'est a traduire.
+  traduireDepuis?: string
+}
+
+export function contenuPour(l: Ligne, langue = 'fr'): Contenu {
+  return rendre(l, langue).contenu
+}
+
+export function rendre(l: Ligne, langue = 'fr'): Rendu {
+  const d = l.donnees ?? {}
+  // Un message ecrit par la direction est dans sa langue d'ecriture.
+  const libre = l.modele === 'message_libre' || l.modele === 'nouvelles'
+  const source = libre && typeof d.langue_source === 'string' ? d.langue_source : 'fr'
+  const ecrite: LangueEcrite | undefined = libre ? LANGUES[source] ?? FRANCAIS : LANGUES[langue]
+  const fabrique: ((d: Donnees) => Omit<Contenu, 'raison'>) | undefined = ecrite?.modeles[l.modele]
+  const base: LangueEcrite = fabrique !== undefined && ecrite !== undefined ? ecrite : FRANCAIS
+  const m = fabrique ?? FRANCAIS.modeles[l.modele]
   if (!m) throw new Error(`modele inconnu : ${l.modele}`)
-  const c = m(l.donnees ?? {})
-  const jeton = typeof l.donnees?.jeton_desinscription === 'string' ? l.donnees.jeton_desinscription : null
-  return {
+  const langueDuTexte = libre ? source : (fabrique !== undefined ? langue : 'fr')
+  const c = m(d)
+  const jeton = typeof d.jeton_desinscription === 'string' ? d.jeton_desinscription : null
+  // Les chrome (raison, desinscription) suivent la langue du texte rendu.
+  const chrome = libre ? (LANGUES[source] ?? FRANCAIS) : base
+  const contenu: Contenu = {
     ...c,
-    raison: RAISON[l.categorie] ?? RAISON.direction,
+    raison: chrome.raisons[l.categorie] ?? chrome.raisons.direction ?? RAISON.direction,
+    libelleDesinscription: chrome.desinscription,
+    langue: langueDuTexte,
+    droiteAGauche: (LANGUES[langueDuTexte]?.droiteAGauche) ?? false,
     desinscription: !l.essentielle && jeton
       ? `${SITE}/fr/courriels/desinscription?jeton=${encodeURIComponent(jeton)}`
       : undefined,
   }
+  return langueDuTexte === langue ? { contenu } : { contenu, traduireDepuis: langueDuTexte }
 }
 
 export const modelesConnus = Object.keys(MODELES)

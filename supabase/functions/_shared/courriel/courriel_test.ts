@@ -79,3 +79,41 @@ Deno.test('lien_inscription : date en toutes lettres, meme adresse, rien a payer
     donnees: { prenom: 'Aïcha' } })).texte
   assert(sansDate.includes('Bonjour Aïcha,') && sansDate.includes('Vous avez répondu à notre formulaire.'))
 })
+
+// COURRIELS-2 : la langue du destinataire.
+import { rendre } from './modeles.ts'
+import { traduireContenu, type Traducteur } from './traduction.ts'
+
+const fauxTraducteur: Traducteur = (textes, _source, cible) => Promise.resolve(textes.map((t) => `[${cible}] ${t}`))
+
+Deno.test('une langue non ecrite part traduite du francais, liens intacts, note de traduction', async () => {
+  const r = rendre({ modele: 'classe_validee', categorie: 'inscription', essentielle: true, donnees: { prenom: 'Awa' } }, 'ff')
+  assertEquals(r.traduireDepuis, 'fr')
+  const c = await traduireContenu(r.contenu, 'fr', 'ff', fauxTraducteur)
+  const { html } = composer(c)
+  assert(c.sujet.startsWith('[ff] ') && c.noteTraduction === '[ff] Ce message a été traduit automatiquement.')
+  assert(html.includes('lang="ff"') && html.includes('https://app.rewayahacademy.com/tuteur/demandes'))
+})
+
+Deno.test('le francais ne se traduit pas ; un message de la direction part de sa langue d ecriture', () => {
+  assertEquals(rendre({ modele: 'demande_recue', categorie: 'inscription', essentielle: true, donnees: {} }, 'fr').traduireDepuis, undefined)
+  const r = rendre({ modele: 'message_libre', categorie: 'direction', essentielle: true,
+    donnees: { sujet: 'S', corps: 'C', langue_source: 'fr' } }, 'pt')
+  assertEquals(r.traduireDepuis, 'fr')
+})
+
+Deno.test('l arabe s ecrit de droite a gauche dans tout le gabarit', () => {
+  const { html } = composer({ sujet: 'س', apercu: 'س', titre: 'عنوان', raison: 'سبب', langue: 'ar', droiteAGauche: true,
+    blocs: [{ type: 'texte', texte: 'نص' }, { type: 'bouton', libelle: 'افتح', href: 'https://app.rewayahacademy.com/' }] })
+  assert(html.includes('lang="ar" dir="rtl"') && html.includes('align="right"') && html.includes('text-align:right'))
+  assert(!html.includes('&nbsp;'), 'la typographie francaise ne s applique pas a l arabe')
+})
+
+Deno.test('un passage arabe (verset, invocation) est marque pour ne jamais etre traduit', async () => {
+  const { versHtml, depuisHtml } = await import('./traduction.ts')
+  const h = versHtml('Récitez بِسْمِ اللَّهِ chaque jour.\n<b>', true)
+  assert(h.includes('<span translate="no" class="notranslate">بِسْمِ اللَّهِ </span>'))
+  assert(h.includes('&lt;b&gt;') && h.includes('<br>'))
+  assertEquals(depuisHtml(h), 'Récitez بِسْمِ اللَّهِ chaque jour.\n<b>')
+  assert(!versHtml('نص عربي', false).includes('notranslate'), 'vers l arabe : rien a proteger')
+})

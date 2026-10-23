@@ -6,7 +6,8 @@
 
 import { clientService, json, refus } from '../_shared/clients.ts'
 import { composer } from '../_shared/courriel/gabarit.ts'
-import { contenuPour } from '../_shared/courriel/modeles.ts'
+import { rendre } from '../_shared/courriel/modeles.ts'
+import { traduireContenu } from '../_shared/courriel/traduction.ts'
 import { envoyer } from '../_shared/courriel/transport.ts'
 
 function egal(a: string, b: string): boolean {
@@ -27,6 +28,8 @@ interface Ligne {
   de_nom: string
   repondre_a: string
   essentielle: boolean
+  langue?: string
+  droite_a_gauche?: boolean
 }
 
 Deno.serve(async (req) => {
@@ -52,16 +55,22 @@ Deno.serve(async (req) => {
       let id: string | undefined
       let erreur: string | undefined
       try {
-        const c = contenuPour({ modele: l.modele, categorie: l.categorie, donnees: l.donnees, essentielle: l.essentielle })
+        // COURRIELS-2 : dans la langue du destinataire ; traduit du francais (ou de
+        // la langue d'ecriture de la direction) quand elle n'est pas ecrite.
+        const langue = l.langue ?? 'fr'
+        const r = rendre({ modele: l.modele, categorie: l.categorie, donnees: l.donnees, essentielle: l.essentielle }, langue)
+        const c = r.traduireDepuis
+          ? { ...(await traduireContenu(r.contenu, r.traduireDepuis, langue)), droiteAGauche: l.droite_a_gauche === true }
+          : r.contenu
         const { html, texte } = composer(c)
         const jeton = typeof l.donnees.jeton_desinscription === 'string' ? l.donnees.jeton_desinscription : null
-        const r = await envoyer({
+        const envoi = await envoyer({
           de: l.de, deNom: l.de_nom, repondreA: l.repondre_a, a: l.a,
           sujet: c.sujet, html, texte, idMessage: l.id,
           desinscriptionUnClic: !l.essentielle && jeton
             ? `${urlDesinscription}?jeton=${encodeURIComponent(jeton)}` : undefined,
         })
-        ;({ ok, id, erreur } = r)
+        ;({ ok, id, erreur } = envoi)
       } catch (e) {
         erreur = String((e as Error).message ?? e)
       }
