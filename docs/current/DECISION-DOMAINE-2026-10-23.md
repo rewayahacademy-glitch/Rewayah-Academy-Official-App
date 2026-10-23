@@ -171,5 +171,7 @@ Le directeur peut poser les quatre enregistrements lui-même (cinq minutes). S'i
 
 - `lib/features/admin_avis/lien_avis.dart` : l'origine par défaut (hors Web) est encore
   `https://rewayah-academy.vercel.app` ; à passer sur `app.rewayahacademy.com` quand le domaine répond.
+- Paiement : quand `recharge-payer` sera déployée, son secret `APP_ORIGINES` devra contenir
+  `https://app.rewayahacademy.com` (elle refuse tout retour de paiement vers une origine absente de la liste).
 - `.github/workflows/flutter-deploy.yml` contrôle `SITE=https://rewayah-academy.vercel.app` : à garder tant que
   l'alias sert l'application ; changer `SITE` est une modification de `.github/` (directeur).
