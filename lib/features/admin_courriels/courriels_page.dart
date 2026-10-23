@@ -55,6 +55,7 @@ import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/selecteur_section.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../salle_seance/information_controle.dart' show coupuresAdresse;
 
 /// Les categories et leurs alias, lus au serveur. Relus a chaque ouverture.
 final courrielsCategoriesProvider =
@@ -545,7 +546,9 @@ class _CourrielsAdminPageState extends ConsumerState<CourrielsAdminPage> {
                       cle: CourrielsAdminPage.categorieCarteKey(c.code),
                       valeur: c.code,
                       libelle: c.libelle,
-                      description: e.partDe(adresse: c.expediteurAdresse),
+                      description: e.partDe(
+                        adresse: coupuresAdresse(c.expediteurAdresse),
+                      ),
                       explication: c.essentielle ? null : e.desinscription,
                     ),
               ],

@@ -153,7 +153,7 @@ def load_content() -> tuple[dict[str, dict], dict]:
         raise ValueError("pages.json needs a site.contacts object")
     expected_contacts = {
         "contact@rewayahacademy.com", "support@rewayahacademy.com",
-        "recrutement@rewayahacademy.com", "invoice@rewayahacademy.com",
+        "recrutement@rewayahacademy.com", "invoices@rewayahacademy.com",
     }
     if set(site["contacts"].values()) != expected_contacts:
         raise ValueError("Public contacts differ from the four approved aliases")

@@ -23,6 +23,8 @@ import 'package:rewayah_academy/core/widgets/empty_state.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_courriels/courriels_page.dart';
+import 'package:rewayah_academy/features/salle_seance/information_controle.dart'
+    show coupuresAdresse;
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
@@ -143,7 +145,11 @@ void main() {
         expect(find.byKey(CourrielsAdminPage.corpsKey), findsOneWidget);
         expect(find.text('Message de la direction'), findsOneWidget);
         expect(
-          find.text(a.ecrire.partDe(adresse: 'invoice@rewayahacademy.com')),
+          find.text(
+            a.ecrire.partDe(
+              adresse: coupuresAdresse('invoices@rewayahacademy.com'),
+            ),
+          ),
           findsOneWidget,
         );
         // Une categorie facultative dit qu'elle porte un lien de desinscription.
@@ -595,7 +601,10 @@ void main() {
         find.byKey(CourrielsAdminPage.categorieCarteKey('direction')),
         findsOneWidget,
       );
-      expect(find.text(isolerSens('invoice@rewayahacademy.com')), findsWidgets);
+      expect(
+        find.text(isolerSens('invoices@rewayahacademy.com')),
+        findsWidgets,
+      );
       expect(
         find.text(isolerSens('Rewayah Academy · Facturation')),
         findsOneWidget,
@@ -680,7 +689,7 @@ void main() {
             tester,
             exceptions: <String>{
               'contact@rewayahacademy.com',
-              'invoice@rewayahacademy.com',
+              'invoices@rewayahacademy.com',
             },
           );
         });

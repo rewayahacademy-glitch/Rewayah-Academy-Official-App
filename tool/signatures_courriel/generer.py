@@ -27,7 +27,8 @@ SOCIETE = ("Rewayah Academy Ltd · société n° 16624644 (Angleterre et pays de
 SIGNATURES = {
     "contact": ("Rewayah Academy", "Questions générales, familles, partenaires"),
     "support": ("Assistance", "Accès, compte, classes"),
-    "invoice": ("Facturation", "Factures et paiements"),
+    "inscriptions": ("Inscriptions", "Demandes et inscriptions des élèves"),
+    "invoices": ("Facturation", "Factures et paiements"),
     "recrutement": ("Recrutement", "Candidatures des enseignants"),
 }
 

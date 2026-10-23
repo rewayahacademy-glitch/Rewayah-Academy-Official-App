@@ -34,9 +34,9 @@ class CourrielsDemonstration implements PortCourriels {
     CategorieCourriel(
       code: 'facturation',
       libelle: 'Facturation',
-      expediteurAdresse: 'invoice@rewayahacademy.com',
+      expediteurAdresse: 'invoices@rewayahacademy.com',
       expediteurNom: 'Rewayah Academy · Facturation',
-      repondreA: 'invoice@rewayahacademy.com',
+      repondreA: 'invoices@rewayahacademy.com',
       essentielle: true,
       active: true,
     ),

@@ -13,9 +13,9 @@ planifiée) ; fonctions Edge **non déployées** ; **rien en production**.
 | Catégorie | Part de | Réponses vers | Quand | Désinscription |
 | :--- | :--- | :--- | :--- | :--- |
 | `compte` | support@ | support@ | lien de connexion, confirmation, invitation au foyer, changement d'adresse | non (essentielle) |
-| `inscription` | contact@ | contact@ | demande reçue, présentation, classe prête, demande clôturée | non |
+| `inscription` | inscriptions@ | inscriptions@ | demande reçue, présentation, classe prête, demande clôturée | non |
 | `classes` | support@ | support@ | enseignant affecté, remplacements, changement de classe, missions de contrôle | non |
-| `facturation` | invoice@ | invoice@ | relance avant échéance, accès suspendu, accès rétabli | non |
+| `facturation` | invoices@ | invoices@ | relance avant échéance, accès suspendu, accès rétabli | non |
 | `recrutement` | recrutement@ | recrutement@ | messages manuels aux candidats | non |
 | `direction` | contact@ | contact@ | message libre écrit par la direction | non |
 | `nouvelles` | contact@ | contact@ | annonces de l'académie | **oui**, lien + en-tête un clic |
@@ -44,7 +44,7 @@ site : `/fr/assets/courriel-*.png`). Environ 3 Ko par message (Gmail coupe à 10
 ## 3. À faire une fois, par le directeur (dans cet ordre)
 
 1. **Google Workspace** (admin.google.com) : choisir le compte d'envoi (celui qui porte les alias
-   support@, contact@, invoice@, recrutement@). Gmail de ce compte, Paramètres, Comptes, « Envoyer
+   staff@rewayahacademy.com, qui porte support@, contact@, inscriptions@, invoices@, recrutement@). Gmail de ce compte, Paramètres, Comptes, « Envoyer
    des e-mails en tant que » : chaque alias doit y figurer. Sécurité du compte : validation en deux
    étapes, puis un **mot de passe d'application** (« Rewayah app »).
 2. **Créer l'alias `dmarc@`** (rapports DMARC, voir §4).

@@ -23,7 +23,7 @@ PUBLIC_EMAILS = {
     "contact@rewayahacademy.com",
     "support@rewayahacademy.com",
     "recrutement@rewayahacademy.com",
-    "invoice@rewayahacademy.com",
+    "invoices@rewayahacademy.com",
 }
 
 

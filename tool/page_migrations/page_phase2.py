@@ -51,8 +51,8 @@ def etapes(lots: pathlib.Path) -> list[dict]:
 
     s = '3. Les e-mails : les clés et les secrets'
     ajoute(s, 'Le mot de passe d’application Gmail',
-           '<p>Connectez-vous au compte Google Workspace qui porte les adresses support@, contact@, invoice@ et '
-           'recrutement@. Ouvrez <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener">'
+           '<p>Connectez-vous au compte <code>staff@rewayahacademy.com</code>, qui porte les adresses support@, contact@, '
+           'inscriptions@, invoices@ et recrutement@. Ouvrez <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener">'
            'les mots de passe des applications</a> (la validation en deux étapes doit être active), créez « Rewayah app » '
            'et gardez les 16 lettres affichées pour l’étape suivante. Ne les écrivez pas dans la conversation.</p>')
     ajoute(s, 'La clé Google Traduction',
@@ -67,7 +67,7 @@ def etapes(lots: pathlib.Path) -> list[dict]:
     ajoute(s, 'Poser les quatre secrets des fonctions',
            f'<p>Ouvrez <a href="{TABLEAU}/functions/secrets" target="_blank" rel="noopener">les secrets des fonctions</a>, '
            'puis « Add new secret », une ligne par secret :</p><ul>'
-           '<li><code>SMTP_UTILISATEUR</code> : l’adresse du compte Workspace de l’étape précédente</li>'
+           '<li><code>SMTP_UTILISATEUR</code> : <code>staff@rewayahacademy.com</code></li>'
            '<li><code>SMTP_MOT_DE_PASSE</code> : les 16 lettres du mot de passe d’application</li>'
            '<li><code>GOOGLE_TRADUCTION_CLE</code> : la clé Google Traduction</li>'
            '<li><code>COURRIELS_ENVOI_SECRET</code> : le secret d’envoi tiré ci-dessus</li></ul>'
@@ -80,8 +80,8 @@ def etapes(lots: pathlib.Path) -> list[dict]:
            "select vault.create_secret('@SECRET@', 'courriels_envoi_secret');\n", 'sql')
     ajoute(s, 'Écrire au nom des quatre adresses',
            '<p>Dans Gmail, avec ce même compte : roue, « Voir tous les paramètres », onglet « Comptes », « Envoyer des '
-           'e-mails en tant que », « Ajouter une autre adresse e-mail ». Ajoutez support@, contact@, invoice@ et '
-           'recrutement@rewayahacademy.com (nom affiché : Rewayah Academy, case « Traiter comme un alias » cochée).</p>')
+           'e-mails en tant que », « Ajouter une autre adresse e-mail ». Il faut support@, contact@, inscriptions@, invoices@ et '
+           'recrutement@rewayahacademy.com (case « Traiter comme un alias » cochée). Elles y sont déjà : rien à faire.</p>')
 
     s = '4. Les e-mails de connexion (Supabase Auth)'
     ajoute(s, 'Le serveur d’envoi',

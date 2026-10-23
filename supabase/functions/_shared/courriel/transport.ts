@@ -2,7 +2,7 @@
 // `COURRIEL_TRANSPORT` :
 //
 // - `smtp` (par defaut) : Google Workspace, ou vivent deja les alias
-//   (support@, contact@, invoice@, recrutement@). `smtp.gmail.com`, port 465
+//   (support@, contact@, invoices@, recrutement@). `smtp.gmail.com`, port 465
 //   (les fonctions Edge refusent 25 et 587). Secrets : `SMTP_UTILISATEUR`
 //   (le compte Workspace), `SMTP_MOT_DE_PASSE` (mot de passe d'application).
 //   Chaque alias doit figurer dans « Envoyer des e-mails en tant que » de ce
