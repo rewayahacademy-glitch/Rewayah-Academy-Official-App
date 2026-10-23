@@ -937,7 +937,7 @@ li, dd { text-wrap: wrap; }
 .pied-societe p > span:not(:last-child)::after { content: ' ·'; }
 .pied-societe address span:not(:last-child)::after { content: ','; }
 .pied-societe a { min-height: 32px; color: var(--sur-pied-doux); text-decoration: underline; }
-.site-footer .site-footer__inner .footer-bottom { display: flex; flex-wrap: wrap; gap: 0 var(--e-5); margin: 0; color: var(--sur-pied-doux); font-size: 15px; }
+.site-footer .site-footer__inner .footer-bottom { display: flex; flex-wrap: wrap; gap: 0 var(--e-5); margin: 0; color: var(--sur-pied-doux); font-size: 16px; }
 .footer-bottom span { white-space: nowrap; }
 /* Bureau : le logo et les pages ; les quatre adresses ; les pages legales, la societe et Facebook ; la langue et
    l'auteur du site. Les volets restent ouverts et leur titre s'efface (chaque navigation garde son nom). */
@@ -952,7 +952,7 @@ li, dd { text-wrap: wrap; }
   .pied-volet--contacts, .pied-volet--legal, .footer-bottom { grid-column: 1 / -1; }
   .site-footer .footer-contacts { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--e-4) var(--e-10); }
   .site-footer .footer-contacts a { font-size: 16px; }
-  .site-footer .pied-societe { font-size: 15px; }
+  .site-footer .pied-societe { font-size: 16px; }
 }
 /* Sous 1100 px : le logo, trois volets fermes (ouverts sans script et a l'impression), une ligne pour l'auteur. */
 @media (max-width: 1099px) {
@@ -964,7 +964,7 @@ li, dd { text-wrap: wrap; }
   .pied-volet--liens ul, .footer-legal ul { display: flex; flex-wrap: wrap; gap: 0 var(--e-5); }
   .pied-volet--liens a, .footer-legal a { white-space: nowrap; }
   .footer-contacts { gap: var(--e-2); }
-  .site-footer .pied-societe { display: grid; gap: var(--e-1); font-size: 15px; }
+  .site-footer .pied-societe { display: grid; gap: var(--e-1); font-size: 16px; }
 }
 /* Tablette : le logo a gauche, les trois volets a droite. */
 @media (min-width: 600px) and (max-width: 1099px) {
@@ -2335,9 +2335,9 @@ li, dd { text-wrap: wrap; }
 /* Le texte qui sort s'efface avant que l'arche change d'image (valeur posee par motion.js) ; efface, il ne prend plus
    les clics. Ecran seulement, et pas en mouvement reduit : rien ne manque a l'impression ni a qui coupe le mouvement. */
 @media screen and (min-width: 840px) and (prefers-reduced-motion: no-preference) {
-  .chapitre__texte { opacity: var(--sortie, 1); }
+  .chapitre__texte > *, .chapitre__texte .insecable { opacity: var(--sortie, 1); }
   .chapitre__texte[data-efface]:not(:focus-within) { pointer-events: none; }
-  .chapitre__texte:focus-within { opacity: 1; }
+  .chapitre__texte:focus-within > *, .chapitre__texte:focus-within .insecable { opacity: 1; }
 }
 
 /* Cours, « Trois seances par semaine » : l'arche a gauche, le titre et le texte a droite (la bande d'avant a son image
@@ -2368,6 +2368,9 @@ li, dd { text-wrap: wrap; }
   html.js .chapitres .chapitres__textes::after { content: ''; display: block; height: 45svh; }
   html.js .chapitres .chapitre__texte { position: static; top: auto; translate: none; pointer-events: auto; }
   html.js .chapitres .chapitre__texte[data-efface]:not(:focus-within) { pointer-events: none; }
+  /* Le chapitre dont le texte se lit passe au-dessus de celui qui monte, encore invisible. */
+  html.js .chapitres .chapitre { z-index: 1; }
+  html.js .chapitres .chapitre:has(> .chapitre__texte[data-efface]:not(:focus-within)) { z-index: 0; }
 }
 /* Tarifs, a savoir : les regles et les deux paragraphes a la taille du texte courant (ils etaient en petit). */
 @media (min-width: 840px) { #conditions .points li:not(:first-child), #conditions .section__corps > p { font-size: var(--t-corps); } }
