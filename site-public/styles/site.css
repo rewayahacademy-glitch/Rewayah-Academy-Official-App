@@ -2459,12 +2459,12 @@ li, dd { text-wrap: wrap; }
    semaine » (Cours) et « Ce que nous enseignons » (Academie) deviennent une phrase centree, l'image dessous, comme
    « Un horaire fixe » sur l'accueil. Les mots et les images ne changent pas. */
 @media (min-width: 840px) {
-  .page-cours #groupes.section--pleine, .page-academie #projet.section--pleine { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; row-gap: var(--e-8); }
-  .page-cours #groupes.section--pleine > *, .page-academie #projet.section--pleine > * { grid-column: 1; grid-row: auto; align-self: auto; }
-  .page-cours #groupes.section--pleine .pleine__tete h2, .page-academie #projet.section--pleine .pleine__tete h2 { max-width: 20ch; margin-inline: auto; }
-  .page-cours #groupes.section--pleine .pleine__corps, .page-academie #projet.section--pleine .pleine__corps { display: block; max-width: 60ch; margin-inline: auto; }
-  .page-cours #groupes.section--pleine .pleine__texte, .page-academie #projet.section--pleine .pleine__texte { columns: auto; }
-  .page-cours #groupes.section--pleine .pleine__texte p, .page-academie #projet.section--pleine .pleine__texte p { margin-inline: auto; }
-  .page-cours #groupes.section--pleine .section-links, .page-academie #projet.section--pleine .section-links { justify-content: center; }
-  .page-cours #groupes.section--pleine .pleine__image, .page-academie #projet.section--pleine .pleine__image { order: 3; width: 100%; }
+  .page-cours :is(#groupes, #methode).section--pleine, .page-academie :is(#projet, #famille).section--pleine { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; row-gap: var(--e-8); }
+  .page-cours :is(#groupes, #methode).section--pleine > *, .page-academie :is(#projet, #famille).section--pleine > * { grid-column: 1; grid-row: auto; align-self: auto; }
+  .page-cours :is(#groupes, #methode).section--pleine .pleine__tete h2, .page-academie :is(#projet, #famille).section--pleine .pleine__tete h2 { max-width: 20ch; margin-inline: auto; }
+  .page-cours :is(#groupes, #methode).section--pleine .pleine__corps, .page-academie :is(#projet, #famille).section--pleine .pleine__corps { display: block; max-width: 60ch; margin-inline: auto; }
+  .page-cours :is(#groupes, #methode).section--pleine .pleine__texte, .page-academie :is(#projet, #famille).section--pleine .pleine__texte { columns: auto; }
+  .page-cours :is(#groupes, #methode).section--pleine .pleine__texte p, .page-academie :is(#projet, #famille).section--pleine .pleine__texte p { margin-inline: auto; }
+  .page-cours :is(#groupes, #methode).section--pleine .section-links, .page-academie :is(#projet, #famille).section--pleine .section-links { justify-content: center; }
+  .page-cours :is(#groupes, #methode).section--pleine .pleine__image, .page-academie :is(#projet, #famille).section--pleine .pleine__image { order: 3; width: 100%; }
 }

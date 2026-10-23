@@ -56,7 +56,8 @@
         "groupes": "place"
       },
       "pleine": [
-        "groupes"
+        "groupes",
+        "methode"
       ],
       "parcours": [
         "objectifs"
@@ -165,16 +166,15 @@
         "label": "Découvrir les cours",
         "href": "/fr/cours",
         "seuil": true,
-        "forme": "image",
-        "image": "adulte-homme-livre",
-        "cote": "gauche"
+        "forme": "centre"
       },
       "figures": {
         "projet": "detail-tabouret",
         "famille": "detail-mere-fille"
       },
       "pleine": [
-        "projet"
+        "projet",
+        "famille"
       ],
       "fonds": {
         "famille": "lavande"
