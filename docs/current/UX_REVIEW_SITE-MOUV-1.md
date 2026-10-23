@@ -234,6 +234,7 @@ Inspection après ces corrections :
 | Recette 31 (jurés Sonnet) | 7,57 | 6,97 | 6,77 | « presque » (un juré applique le plafond « moins de quatre vraies photos ») |
 | Recette 32 (jurés Sonnet) | 7,18 | 7,08 | 6,73 | « presque » (les trois jurés appliquent le plafond « moins de quatre vraies photos ») |
 | Recette 33 (jurés Sonnet) | 7,70 | 6,57 | 6,33 | « presque », sans plafond (les rendus comptés comme images raster, définition du skill rappelée aux jurés) |
+| Recette 34 (jurés Sonnet) | 7,77 | 6,67 | 6,80 | « presque », sans plafond |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -740,6 +741,16 @@ Inspection des six pages : 0 FAIL hors Tarifs (une image, voulu). Aucun texte co
 | QQ3 | Bavure au pied de l'arche | Image refaite depuis la source propre : la face de l'arche est gardée entière, seul le sol qui dépasse est retiré, le long du bord bas de la face et du bord du sol blanc |
 | QQ4 | Téléphone : phrase « Rien n'est facturé… » sous l'image | Elle suit les deux boutons, avant l'image |
 | QQ5 | Pied de page long au téléphone | Les liens sur deux colonnes |
+
+**Après la recette 34.** Restent, en commun : le pied de page sur tablette (deux colonnes qui se touchaient, défaut introduit au tour précédent), le pied de page encore long au téléphone, des tuiles de hauteurs inégales ou au bas vide, et l'action principale absente de l'en-tête.
+
+| # | Relevé | Correction |
+|---|---|---|
+| RR1 | Tablette : « L'académie » contre « Assistance » | La règle à deux colonnes du tour précédent est retirée ; la liste « Découvrir » reste en une colonne sur tablette |
+| RR2 | Téléphone : pied de page long | Les liens « Découvrir » et les liens légaux en lignes qui se suivent, sans coupure dans un lien |
+| RR3 | Tuiles de hauteurs inégales | Dans une rangée, une même hauteur ; remises : le chiffre en haut, la phrase en bas ; notes et cours en bref : le texte au milieu |
+| RR4 | Familles, téléphone : la tuile du « 3 » en dôme aplati | Une tuile carrée au sommet en demi-cercle |
+| RR5 | En-tête : l'action principale absente | Dès 1100 px, « Commencer mon inscription » en bouton plein (vers la connexion à l'application, comme les autres boutons d'inscription) ; « Se connecter » devient un lien |
 
 ## Hors de portée de l'agent
 

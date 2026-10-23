@@ -1324,7 +1324,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
     <div class="site-header__inner">
       <a class="brand site-header__brand" href="/fr/" aria-label="Rewayah Academy, accueil">{logo_entete(ambiance)}</a>
       <nav class="site-nav" aria-label="Navigation principale">{nav_items}</nav>
-      {connexion}
+      {connexion}{anchor("Commencer mon inscription", "/connexion", "site-header__inscription")}
       <details class="mobile-menu"><summary><span class="mobile-menu__libelle">Menu</span><span class="mobile-menu__icone" aria-hidden="true"></span></summary><nav aria-label="Navigation mobile">{nav_items}{anchor(NAV[-1][0], NAV[-1][1])}</nav></details>
     </div>
   </header>

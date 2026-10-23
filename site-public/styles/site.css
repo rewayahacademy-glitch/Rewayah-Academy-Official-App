@@ -2196,10 +2196,32 @@ li, dd { text-wrap: wrap; }
   .remises--echeances .remise { grid-template-columns: 200px minmax(0, 1fr); }
 }
 
-/* Telephone et tablette : la phrase « Rien n'est facture… » reste sous les boutons, avant l'image ; le pied de page
-   se resserre (les liens sur deux colonnes). */
-@media (max-width: 839px) {
-  .porte .rassurance { order: 0; }
-  .site-footer nav ul { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--e-4); }
-  .footer-legal ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--e-4); }
+/* Telephone et tablette : la phrase « Rien n'est facture… » reste sous les boutons, avant l'image. */
+@media (max-width: 839px) { .porte .rassurance { order: 0; } }
+
+/* --- Recette 34 (23/10/2026) ------------------------------------------------------------------------------------- */
+/* Telephone : le pied de page plus court ; les liens « Decouvrir » et les liens legaux en lignes qui se suivent. */
+@media (max-width: 599px) {
+  .site-footer__inner > nav:not(.footer-legal) ul, .footer-legal ul { display: flex; flex-wrap: wrap; gap: 0 var(--e-5); }
+  .site-footer__inner > nav a, .footer-legal a { white-space: nowrap; }
+}
+
+/* Tuiles : dans une rangee, la meme hauteur ; le chiffre en haut, la phrase en bas (remises) ; le texte au milieu
+   quand il n'y a pas de chiffre (notes, cours en bref). */
+.remises:not(.remises--echeances), #conditions .points, .deux-champs__communs { align-items: stretch; }
+.remises:not(.remises--echeances) .remise { display: flex; flex-direction: column; gap: var(--e-3); }
+.remises:not(.remises--echeances) .remise__objet { margin-top: auto; }
+#conditions .points li, .deux-champs__communs li { display: flex; align-items: center; }
+.fiches-bloc .fiche__lignes li:nth-child(n+3) { display: flex; flex-direction: column; justify-content: center; }
+
+/* Familles, telephone : la tuile du « 3 » garde une vraie arche (carree, sommet en demi-cercle). */
+@media (max-width: 839px) { .tuile-chiffre { aspect-ratio: 1 / 1; border-radius: 9999px 9999px 0 0; padding-top: var(--e-16); } }
+
+/* En-tete, des 1100 px : l'action principale, « Commencer mon inscription », en bouton plein ; « Se connecter » en lien. */
+.site-header__inscription { display: none; }
+@media (min-width: 1100px) {
+  .site-header__inscription { display: inline-flex; align-items: center; min-height: 48px; padding-inline: var(--e-6); border-radius: var(--r-full); background: #FFFFFF; color: #25113F; font-weight: 600; text-decoration: none; white-space: nowrap; }
+  .site-header__inscription:hover { background: #EEE6FA; }
+  .site-header__connexion { border: 0; padding-inline: 0; font-weight: 500; }
+  .site-header__connexion:hover { background: none; text-decoration: underline; }
 }
