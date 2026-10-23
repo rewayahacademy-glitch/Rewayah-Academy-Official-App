@@ -239,6 +239,8 @@ Inspection après ces corrections :
 | Recette 36 (jurés Sonnet) | 7,77 | 6,80 | 6,50 | « presque », sans plafond |
 | Recette 37 (jurés Sonnet) | 7,77 | 6,75 | 6,50 | « presque », sans plafond |
 | Recette 38 (jurés Sonnet) | 7,90 | 6,92 | 6,90 | « presque », sans plafond |
+| Recette 39 (jurés Sonnet) | 7,90 | 6,57 | 6,33 | « presque », sans plafond |
+| Recette 40 (jurés Sonnet) | 7,78 | 6,78 | 6,50 | « presque », sans plafond ; dernière recette (directeur, 23/10 : « il faut en finir ») |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -812,6 +814,23 @@ Relecture adverse de ce tour (trois relecteurs, chaque relevé vérifié par un 
 | VV4 | Chapitres : l'image nouvelle seule, le texte encore bas | L'arche change quand le titre suivant passe 43 % de la hauteur de l'écran ; le texte qui sort s'efface avant (58 % à 45 %), celui qui entre apparaît presque à sa place (43 % à 35 %) ; les mains montent à partir du changement |
 | VV5 | Tarifs sous 1100 px : les dates sans arches | Les cinq arches, de plus en plus hautes, l'une sous l'autre, la phrase à côté |
 | VV6 | Bouton pause peu visible | Contour blanc |
+
+**Après la recette 40, la dernière.** Rewayah à 7,78, devant Hallow (6,78) et Waking Up (6,50) ; les trois jurés
+répondent encore « presque ». Ils confirment réglés le passage d'un chapitre à l'autre (un seul texte à la fois)
+et « À savoir » à la taille du texte ; le pied de page a baissé (0,43 écran au téléphone, 0,30 sur tablette) mais
+reste à 0,41 au bureau. Le directeur arrête les recettes le 23/10/2026 (« il faut en finir, il reste beaucoup
+d'autres choses à faire ») et garde les rendus actuels. Points communs non traités, à reprendre seulement sur sa
+demande :
+
+| # | Relevé (jurés) | Piste |
+|---|---|---|
+| WW1 | Pied de page au bureau : cinq rangées de texte de 16 px, 0,41 écran (3 jurés) | Trois colonnes (pages, adresses, informations légales), le crédit dessous : 0,25 écran |
+| WW2 | « Les cours en bref » : cinq pastilles qui ressemblent à des boutons (3 jurés) | La première phrase en grand, les quatre autres en lignes simples sur deux colonnes, texte inchangé |
+| WW3 | Même module de section répété (arche, titre, paragraphe, petit lien) (2 jurés) | Une section par page en grande arche plein écran, une autre en bande de phrase |
+| WW4 | Chapitres de l'accueil : arche modeste (62 % de la hauteur) (2 jurés) | Arche à 80 % de la hauteur de l'écran |
+| WW5 | Titres de section à 2,4 fois le texte, hiérarchie plate sous le premier écran (2 jurés) | Titres de section plus grands |
+| WW6 | Liens fléchés secondaires de 16 px, faibles à côté des titres (2 jurés) | 18 à 20 px, soulignés, 44 px de hauteur touchable |
+| WW7 | Tarifs : une seule image sur la page (inspecteur) | Un détail sans personne à côté d'« À savoir » et en fin de page, sans casser les mises en page des dates et des règles |
 
 ## Hors de portée de l'agent
 
