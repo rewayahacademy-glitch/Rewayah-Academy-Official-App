@@ -87,12 +87,6 @@ FOOTER = (
     ("Cookies", "/fr/legal/cookies"),
     ("Accessibilité", "/fr/accessibilite"),
 )
-CONTACTS = (
-    ("Questions générales", "general"),
-    ("Assistance", "support"),
-    ("Recrutement", "recruitment"),
-    ("Facturation", "billing"),
-)
 ASSETS = "/fr/assets"
 # Domaine (directeur, 23/10/2026) : le site public a la racine du domaine, l'application et sa PWA sur app.
 # Un seul projet Vercel sert les deux noms ; build/web/vercel.json aiguille selon le nom demande.
@@ -1262,14 +1256,13 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
     robots = "index,follow" if indexed else "noindex,follow" if allow_indexing else "noindex,nofollow"
     nav_items = "".join(anchor(label, href, current=href == route) for label, href in NAV[:-1])
     connexion = anchor(NAV[-1][0], NAV[-1][1], "site-header__connexion")
-    footer_links = "".join(f"<li>{anchor(label, href, current=href == route)}</li>" for label, href in FOOTER if href.startswith('/fr/legal/') or href in ('/fr/protection-des-enfants', '/fr/accessibilite'))
+    contact = anchor("Nous contacter", "/fr/contact", current=route == "/fr/contact")
+    footer_links = f'<li class="pied-contact pied-contact--bureau">{contact}</li>' + "".join(f"<li>{anchor(label, href, current=href == route)}</li>" for label, href in FOOTER if href.startswith('/fr/legal/') or href in ('/fr/protection-des-enfants', '/fr/accessibilite'))
     discovery_links = "".join(f"<li>{anchor(label, href, current=href == route)}</li>" for label, href in (*NAV[:4], ('Comment ça marche', '/fr/comment-ca-marche'), ('L’académie', '/fr/academie'), ('Avis', '/fr/avis'), ('Aide', '/fr/aide'), ('Recrutement', '/fr/recrutement')))
-    # Le libelle fait partie du lien, l'adresse dessous ; une adresse ne se coupe qu'apres son arobase.
-    contact_links = "".join(
-        f'<li><a href="mailto:{esc(site["contacts"][key])}"><strong>{esc(label)}</strong>'
-        f'<span class="footer-contacts__adresse">{esc(site["contacts"][key]).replace("@", "@<wbr>")}</span></a></li>'
-        for label, key in CONTACTS
-    )
+    # Directeur, 23/10/2026 : les quatre adresses quittent le pied de page ; elles restent sur la page Contact (et les
+    # mentions legales), que ce lien rend accessible depuis chaque page : dans « Decouvrir » sous 1100 px, en tete des
+    # liens legaux au-dessus. Un seul des deux est affiche, et donc lu.
+    discovery_links += f'<li class="pied-contact pied-contact--telephone">{contact}</li>'
     social_by_href = {item["href"]: item for item in site["social_links"]}
     academy_facebook = social_by_href["https://www.facebook.com/share/1CVee2teiN/"]
     author_facebook = social_by_href["https://www.facebook.com/share/1D6H2EYhci/"]
@@ -1383,7 +1376,6 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
   <footer class="site-footer"><div class="site-footer__inner">
      <div class="footer-identity"><a class="brand" href="/fr/" aria-label="Rewayah Academy, accueil"><img src="{ASSETS}/logo-horizontal-white.svg" width="1027" height="287" alt=""></a></div>
     <details class="pied-volet pied-volet--liens" open><summary class="footer-title">Découvrir</summary><nav aria-label="Découvrir Rewayah"><ul>{discovery_links}</ul></nav></details>
-    <details class="pied-volet pied-volet--contacts" open><summary class="footer-title">Nous contacter</summary><ul class="footer-contacts">{contact_links}</ul></details>
     <details class="pied-volet pied-volet--legal" open><summary class="footer-title">Informations légales</summary><div class="pied-legal"><nav class="footer-legal" aria-label="Navigation légale"><ul>{footer_links}</ul></nav>
       <div class="pied-societe"><p><span>REWAYAH ACADEMY LTD</span> <span>Société\u00a0n°\u00a016624644</span></p><address><span>71-75 Shelton Street</span> <span>Covent Garden, London</span> <span>WC2H 9JQ, Royaume-Uni</span></address><p>{anchor(academy_facebook['label'], academy_facebook['href'])}</p><p>{anchor(author_facebook['label'], author_facebook['href'])}</p><p class="pied-credit"><span>Français</span> <span>{esc(site['author_credit'])}</span></p></div></div></details>
     <p class="footer-bottom"><span>Français</span> <span>{esc(site['author_credit'])}</span></p>

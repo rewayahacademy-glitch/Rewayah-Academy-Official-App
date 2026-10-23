@@ -2446,3 +2446,12 @@ li, dd { text-wrap: wrap; }
   .faq-ouverte .faq-ouverte__intro .liste-liens { display: flex; flex-wrap: wrap; gap: 0 var(--e-6); }
   .faq-ouverte .faq-ouverte__liste { grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr); row-gap: var(--e-3); }
 }
+/* Pied de page : les quatre adresses vivent sur la page Contact ; un lien « Nous contacter » sur chaque page
+   (directeur, 23/10/2026). Au bureau, en tete des liens legaux, a 16 px pour tenir sur une ligne. */
+.pied-contact--bureau { display: none; }
+@media (min-width: 1100px) {
+  .pied-contact--telephone { display: none; }
+  .pied-contact--bureau { display: list-item; }
+  .site-footer .footer-legal a { font-size: 16px; }
+  .pied-contact--bureau a { font-weight: 600; }
+}
