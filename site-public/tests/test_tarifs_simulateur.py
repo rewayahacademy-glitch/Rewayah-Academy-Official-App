@@ -246,11 +246,11 @@ class PageGeneree(unittest.TestCase):
     def test_les_dates_du_paiement_sont_celles_de_la_decision(self) -> None:
         # La page Annulation renvoie à la page Tarifs pour les dates exactes : elles doivent y être, et ce sont
         # celles de la décision du 18/10 (renouvellement le 1er, rappels J-7, J-3, J-1, délai de grâce du 1er au 3,
-        # suspension le 4, place gardée 14 jours, libérée le 18 ; première semaine : 7 jours).
+        # suspension le 4 ; première semaine : 7 jours), avec la place gardée jusqu'au 15 et libérée le 16 (23/10).
         plat = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", self.tarifs_html).replace(NBSP, " "))
         for attendu in ("Les dates du paiement", "7 jours Après la première séance", "Le 1er Le renouvellement du mois",
                         "des rappels 7 jours, 3 jours et 1 jour avant", "Du 1er au 3", "À partir du 4 Sans paiement",
-                        "La place est gardée 14 jours", "Le 18 La place est libérée"):
+                        "La place est gardée jusqu’au 15", "Le 16 La place est libérée"):
             self.assertIn(attendu, plat)
         # Un nombre ne se separe pas de son unite en fin de ligne.
         self.assertIn(f"1{NBSP}jour", self.tarifs_html)
@@ -259,7 +259,7 @@ class PageGeneree(unittest.TestCase):
         self.assertIn("politique tarifaire en vigueur (page Tarifs)", annulation.replace(NBSP, " "))
         c = json.loads(TARIFS_DECISION.read_text(encoding="utf-8"))["calendrier_paiement"]
         mauvais = copy.deepcopy(json.loads(TARIFS_DECISION.read_text(encoding="utf-8")))
-        mauvais["calendrier_paiement"]["place_liberee_jour"] = c["suspension_jour"] + c["place_gardee_jours"] + 1
+        mauvais["calendrier_paiement"]["place_liberee_jour"] = c["suspension_jour"] + c["place_gardee_jours"]
         chemin = OUTPUT.parent / ".qa-calendrier.json"
         chemin.write_text(json.dumps(mauvais), encoding="utf-8")
         try:

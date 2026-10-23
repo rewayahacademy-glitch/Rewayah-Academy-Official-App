@@ -245,11 +245,14 @@ def places_fiche(phrases: list[str]) -> dict[int, str]:
 
 def calendrier_paiement(chemin: Path = TARIFS_FALLBACK) -> dict:
     """Le calendrier du paiement de la décision du 18/10 (renouvellement, rappels, délai de grâce, suspension, place
-    gardée puis libérée) et la durée de la première semaine remboursée. La base les garde hors de tarifs_publics()."""
+    gardée puis libérée) et la durée de la première semaine remboursée. La base les garde hors de tarifs_publics().
+    La place est gardée `place_gardee_jours` jours comptés depuis le renouvellement, comme la base les compte
+    (jusqu'au 15 inclus), et libérée le lendemain (décision du 23/10/2026)."""
     f = json.loads(chemin.read_text(encoding="utf-8"), object_pairs_hook=_unique_object)
     c = dict(f["calendrier_paiement"], premiere_semaine_jours=f["premiere_semaine_remboursee_jours"])
     if c["grace_jours"] != list(range(c["renouvellement_jour"], c["suspension_jour"])) \
-            or c["place_liberee_jour"] != c["suspension_jour"] + c["place_gardee_jours"]:
+            or c["place_liberee_jour"] != c["renouvellement_jour"] + c["place_gardee_jours"] + 1 \
+            or c["place_liberee_jour"] <= c["suspension_jour"]:
         raise ValueError("Calendrier du paiement incohérent dans la décision des tarifs")
     return c
 
@@ -502,7 +505,7 @@ def rendre_tarifs_section(nom: str, tarifs: dict, aujourdhui: date) -> str:
             (f"Du {jour(grace[0])} au {jour(grace[-1])}",
              "Sans paiement, l’élève suit ses cours ; l’impayé s’affiche dans le compte."),
             (f"À partir du {jour(c['suspension_jour'])}",
-             f"Sans paiement, l’accès aux séances est suspendu. La place est gardée {c['place_gardee_jours']} jours."),
+             f"Sans paiement, l’accès aux séances est suspendu. La place est gardée jusqu’au {jour(c['place_liberee_jour'] - 1)}."),
             (f"Le {jour(c['place_liberee_jour'])}",
              "La place est libérée pour la liste d’attente. Le retour reste possible, sans frais."),
         ]
