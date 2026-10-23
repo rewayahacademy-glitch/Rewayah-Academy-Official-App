@@ -3,7 +3,7 @@
     "name": "RewayahPublicPages",
     "version": 1,
     "locale": "fr-FR",
-    "description": "Données éditoriales françaises pour le générateur HTML public. Les clés de pages sont les URL canoniques. Ce statut décrit la préparation du contenu, jamais une autorisation de publier la branche. En aperçu, les pages peuvent être servies avec un indicateur de préparation et doivent toutes porter noindex. Les entrées blocked restent visibles seulement dans l'aperçu de préparation; elles sont exclues de tout artefact de production. Les pages conditionnelles (articles, parcours et postes individuels) ne sont pas des entrées ici.",
+    "description": "Données éditoriales françaises pour le générateur HTML public. Les clés de pages sont les URL canoniques. Ce statut décrit la préparation du contenu. Seule la construction de production (branche main) ouvre l'indexation ; un aperçu porte toujours noindex. Les entrées blocked restent visibles seulement dans l'aperçu de préparation ; elles sont exclues de tout artefact de production. Les pages conditionnelles (articles, parcours et postes individuels) ne sont pas des entrées ici.",
     "page_fields": {
       "title": "Titre HTML unique, idéalement inférieur à 60 caractères.",
       "description": "Description HTML unique, rédigée pour décrire la page sans promesse non prouvée.",
@@ -11,8 +11,8 @@
       "intro": "Texte d'introduction facultatif, avant les sections.",
       "sections": "Liste ordonnée d'objets {id,title,paragraphs,points,links}; points et links peuvent être omis.",
       "cta": "Action principale {label,href}; liens internes absolus depuis la racine du site.",
-      "indexable": "Booléen d'éligibilité SEO cible après validation. En aperçu, le générateur impose noindex quelle que soit cette valeur. Cette valeur n'autorise pas une publication ni une indexation en production.",
-      "status": "ready signifie texte préparé pour revue/intégration, sans feu vert de production; blocked signifie dépendances non fermées. Les deux statuts peuvent être servis uniquement en aperçu marqué comme préparation et noindex. blocked doit être exclu de tout artefact de production."
+      "indexable": "Booléen d'éligibilité au référencement. Seule la construction de production (branche main, rewayahacademy.com) indexe une page ready et indexable ; un aperçu impose noindex quelle que soit cette valeur.",
+      "status": "ready : texte prêt, publié en production. blocked : dépendances non fermées ; servi seulement en aperçu, marqué comme préparation et noindex, exclu de tout artefact de production."
     }
   },
   "site": {
@@ -456,7 +456,7 @@
         "label": "Commencer mon inscription",
         "href": "/connexion"
       },
-      "indexable": false,
+      "indexable": true,
       "status": "ready"
     },
     "/fr/academie": {
@@ -605,7 +605,7 @@
         "label": "Consulter l'aide",
         "href": "/fr/aide"
       },
-      "indexable": true,
+      "indexable": false,
       "status": "ready"
     },
     "/fr/aide": {

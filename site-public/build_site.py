@@ -1,7 +1,8 @@
-"""Build the public HTML preview beside the existing Flutter Web bundle.
+"""Build the public site beside the Flutter Web bundle (build/web).
 
-The published commercial projection is intentionally absent. This builder only
-renders editorial content that the content contract marks as safe for preview.
+Production (the `main` build, served on rewayahacademy.com) is indexed: robots,
+sitemap and canonical URLs on the domain. Any other build is a preview and stays
+noindex. Host rules in build/web/vercel.json send the app to app.rewayahacademy.com.
 
 Art direction: one motif, the arch of the brand symbol (an arch shaped like a
 book, an open door; decision M-21). It masks every picture, shapes the hero and
@@ -15,6 +16,7 @@ import argparse
 import html
 import importlib.util
 import json
+import os
 import re
 import shutil
 import sys
@@ -92,6 +94,15 @@ CONTACTS = (
     ("Facturation", "billing"),
 )
 ASSETS = "/fr/assets"
+# Domaine (directeur, 23/10/2026) : le site public a la racine du domaine, l'application et sa PWA sur app.
+# Un seul projet Vercel sert les deux noms ; build/web/vercel.json aiguille selon le nom demande.
+DOMAINE_SITE = "rewayahacademy.com"
+DOMAINE_APP = "app." + DOMAINE_SITE
+DOMAINE_WWW = "www." + DOMAINE_SITE
+ORIGINE_SITE = "https://" + DOMAINE_SITE
+ORIGINE_APP = "https://" + DOMAINE_APP
+# L'alias de production d'avant le domaine : il reste servi (le workflow le controle), jamais indexe.
+ALIAS_VERCEL = "rewayah-academy.vercel.app"
 # Les quatre fichiers officiels du logo (assets/brand/logo/), copies telles quelles.
 LOGO = {
     "horizontal": ("logo-horizontal.svg", 1027, 287),
@@ -392,6 +403,19 @@ def texte_html(value: str) -> str:
     fin = NOMS_A_TRAIT.sub(r'<span class="insecable">\1</span>', esc(fin))
     # « vous-même » ne se coupe pas a son trait d'union.
     return MEME.sub(r'<span class="insecable">\1</span>', fin)
+
+
+# Anti-spam (directeur, 23/10/2026) : aucune adresse n'est ecrite telle quelle dans une page, ou un robot
+# collecteur la lirait. site.js recompose le lien et l'arobase ; sans script, la feuille dessine l'arobase et
+# l'adresse reste lisible a l'ecran.
+COURRIEL = re.compile(r"([A-Za-z0-9._%+-]+)@((?:<wbr>)?)([A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+)")
+MAILTO = re.compile(r' href="mailto:([^"@]+)@([^"?]+)((?:\?[^"]*)?)"')
+
+
+def masquer_courriels(page: str) -> str:
+    def lien(m: re.Match) -> str:
+        return f' data-u="{m.group(1)}" data-d="{m.group(2)}"' + (f' data-q="{m.group(3)}"' if m.group(3) else "")
+    return COURRIEL.sub(r'\1<span class="arobase"></span>\2\3', MAILTO.sub(lien, page))
 
 
 def paragraphes(section: dict) -> str:
@@ -1184,18 +1208,41 @@ def output_file(output: Path, route: str) -> Path:
 
 
 def donnees_structurees(origin: str) -> str:
-    """Organisation educative : seulement des faits publies (M-19, M-27). Aucun avis, aucune note."""
+    """Organisation educative et site : seulement des faits publies (M-19, M-27). Aucun avis, aucune note, aucune
+    adresse e-mail (anti-spam : un robot lit ces donnees comme la page)."""
+    base = origin.rstrip("/")
     donnees = {
         "@context": "https://schema.org",
-        "@type": "EducationalOrganization",
-        "name": "Rewayah Academy",
-        "alternateName": "أكاديمية الرواية",
-        "url": origin.rstrip("/") + "/fr/",
-        "logo": origin.rstrip("/") + f"{ASSETS}/logo-horizontal.svg",
-        "email": "contact@rewayahacademy.com",
+        "@graph": [
+            {
+                "@type": "EducationalOrganization",
+                "@id": base + "/#organisation",
+                "name": "Rewayah Academy",
+                "alternateName": "أكاديمية الرواية",
+                "legalName": "REWAYAH ACADEMY LTD",
+                "url": base + "/fr/",
+                "logo": base + f"{ASSETS}/logo-horizontal.svg",
+            },
+            {
+                "@type": "WebSite",
+                "@id": base + "/#site",
+                "name": "Rewayah Academy",
+                "url": base + "/fr/",
+                "inLanguage": "fr",
+                "publisher": {"@id": base + "/#organisation"},
+            },
+        ],
     }
     return ('<script type="application/ld+json">'
             + json.dumps(donnees, ensure_ascii=False).replace("</", "<\\/") + "</script>")
+
+
+def page_indexee(route: str, page: dict, allow_indexing: bool, avis: dict | None) -> bool:
+    """Production seulement, page prete et indexable ; une page vide ne s'offre pas aux moteurs (les avis tant
+    qu'aucun n'est publie)."""
+    if not (allow_indexing and page.get("status") == "ready" and page.get("indexable", True)):
+        return False
+    return route != "/fr/avis" or bool(avis and avis.get("nombre"))
 
 
 def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing: bool,
@@ -1210,8 +1257,9 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
         direction, images = load_direction(load_content()[0])
     reglage = sans_dessins(direction["pages"].get(route, {}), direction)
     canonical = origin.rstrip("/") + route
-    indexed = allow_indexing and page.get("status") == "ready" and page.get("indexable", True)
-    robots = "index,follow" if indexed else "noindex,nofollow"
+    indexed = page_indexee(route, page, allow_indexing, avis)
+    # En production, une page vide se tient hors de l'index mais laisse suivre ses liens vers les autres pages.
+    robots = "index,follow" if indexed else "noindex,follow" if allow_indexing else "noindex,nofollow"
     nav_items = "".join(anchor(label, href, current=href == route) for label, href in NAV[:-1])
     connexion = anchor(NAV[-1][0], NAV[-1][1], "site-header__connexion")
     footer_links = "".join(f"<li>{anchor(label, href, current=href == route)}</li>" for label, href in FOOTER if href.startswith('/fr/legal/') or href in ('/fr/protection-des-enfants', '/fr/accessibilite'))
@@ -1298,7 +1346,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
                          '  <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">\n'
                          '  <meta name="theme-color" content="#16161E" media="(prefers-color-scheme: dark)">')
         halo = ""
-    return f'''<!doctype html>
+    return masquer_courriels(f'''<!doctype html>
 <html lang="fr" data-ambiance="{esc(ambiance)}">
 <head>
   <meta charset="utf-8">
@@ -1342,7 +1390,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
   </div></footer>
 </body>
 </html>
-'''
+''')
 
 
 COPIED_ASSETS = {".svg", ".png", ".webp", ".woff2", ".txt"}
@@ -1350,8 +1398,7 @@ COPIED_ASSETS = {".svg", ".png", ".webp", ".woff2", ".txt"}
 
 def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None = None,
           env: dict[str, str] | None = None, today: date | None = None, avis: dict | None = None) -> None:
-    if allow_indexing:
-        raise ValueError("This branch is preview-only; publication needs verified commercial and legal data")
+    """allow_indexing : la construction de production seulement (voir main) ; un apercu reste noindex."""
     if tarifs is None:
         # Lecture a la construction seulement : le HTML produit ne contient ni adresse ni cle.
         tarifs, _origine = tarifs_mod.charger_tarifs(env=env)
@@ -1398,7 +1445,7 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
         if not output_file(output, route).exists():
             raise AssertionError(f"Route was not built: {route}")
     sitemap_urls = [origin.rstrip("/") + route for route, page in pages.items()
-                    if allow_indexing and page.get("status") == "ready" and page.get("indexable", True)]
+                    if page_indexee(route, page, allow_indexing, avis)]
     sitemap = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + ''.join(
         f'<url><loc>{esc(url)}</loc></url>' for url in sitemap_urls) + '</urlset>'
     (output / "sitemap.xml").write_text(sitemap, encoding="utf-8")
@@ -1435,17 +1482,68 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
         {"source": route.rstrip("/") or "/", "destination": "/" + str(output_file(Path(), route)).replace("\\", "/")}
         for route in sorted(pages)
     ] + [{"source": "/fr/", "destination": "/fr/index.html"}, fallback]
+    config["redirects"] = aiguillage_domaine()
+    config["headers"] = [*config.get("headers", []), *entetes_domaine()]
     config_path.write_text(json.dumps(config, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Built {len(pages)} public routes in {output}")
+
+
+def _hote(nom: str) -> list[dict]:
+    return [{"type": "host", "value": nom}]
+
+
+def aiguillage_domaine() -> list[dict]:
+    """Qui va ou (directeur, 23/10/2026, usage courant des sites et de leurs applications) :
+    - rewayahacademy.com : le site public ; sa racine mene a l'accueil /fr/ (redirection temporaire : une autre
+      langue pourra s'y ajouter) ; tout autre chemin (/connexion, un ancien lien de l'application) part sur app. ;
+    - app.rewayahacademy.com : l'application et sa PWA ; une page du site demandee la renvoie au site ;
+    - www. renvoie au domaine nu.
+    Ces regles ne jouent que sur ces trois noms : un apercu et l'alias vercel.app servent tout comme avant, ce qui
+    garde les controles du workflow (racine, reecriture SPA, wasm) inchanges."""
+    site, app = _hote(DOMAINE_SITE), _hote(DOMAINE_APP)
+    return [
+        {"source": "/:path*", "has": _hote(DOMAINE_WWW), "destination": ORIGINE_SITE + "/:path*", "permanent": True},
+        {"source": "/", "has": site, "destination": "/fr/", "permanent": False},
+        {"source": r"/:path((?!fr(?:/|$)|robots\.txt$|sitemap\.xml$|\.well-known/).+)", "has": site,
+         "destination": ORIGINE_APP + "/:path", "permanent": False},
+        {"source": "/fr", "has": app, "destination": ORIGINE_SITE + "/fr/", "permanent": False},
+        {"source": "/fr/:path*", "has": app, "destination": ORIGINE_SITE + "/fr/:path*", "permanent": False},
+    ]
+
+
+def entetes_domaine() -> list[dict]:
+    """L'application et l'ancien alias ne s'indexent pas ; les pages du site portent les en-tetes de securite
+    courants (rien qui touche la camera ou le micro de l'application : ils ne visent que /fr)."""
+    noindex = [{"key": "X-Robots-Tag", "value": "noindex"}]
+    securite = [
+        {"key": "X-Content-Type-Options", "value": "nosniff"},
+        {"key": "Referrer-Policy", "value": "strict-origin-when-cross-origin"},
+        {"key": "X-Frame-Options", "value": "DENY"},
+        {"key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()"},
+    ]
+    return [
+        {"source": "/(.*)", "has": _hote(DOMAINE_APP), "headers": noindex},
+        {"source": "/(.*)", "has": _hote(ALIAS_VERCEL), "headers": noindex},
+        {"source": "/fr", "headers": securite},
+        {"source": "/fr/(.*)", "headers": securite},
+    ]
+
+
+def production_github(env) -> bool:
+    """Meme regle que l'etape « cible » de .github/workflows/flutter-deploy.yml : `main`, hors pull request."""
+    return env.get("GITHUB_EVENT_NAME") != "pull_request" and env.get("GITHUB_REF") == "refs/heads/main"
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--canonical-origin", default="https://rewayah-academy.vercel.app")
+    parser.add_argument("--canonical-origin", default=ORIGINE_SITE)
+    # Le workflow appelle ce script sans option : la production s'y reconnait d'elle-meme ; ailleurs, noindex.
     parser.add_argument("--allow-indexing", action="store_true")
     args = parser.parse_args()
-    build(args.output, args.canonical_origin, args.allow_indexing)
+    indexer = args.allow_indexing or production_github(os.environ)
+    print("Indexation : ouverte (production)" if indexer else "Indexation : fermee (apercu)")
+    build(args.output, args.canonical_origin, indexer)
 
 
 if __name__ == "__main__":

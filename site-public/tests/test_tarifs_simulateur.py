@@ -320,9 +320,8 @@ class PageGeneree(unittest.TestCase):
         for nombre in ("5500", "6500", "2000", "250", "170", "80", "55", "65", "18", "20", "30", "12", "1000", "100"):
             self.assertIsNone(re.search(rf"(?<![\w.]){nombre}(?![\w.])", source), nombre)
 
-    def test_indexation_toujours_fermee(self) -> None:
-        with self.assertRaisesRegex(ValueError, "preview-only"):
-            BUILDER.build(OUTPUT, "https://rewayah-academy.vercel.app", True, env={})
+    def test_apercu_jamais_indexe(self) -> None:
+        # L'indexation n'est ouverte que par la construction de production (test_build_site_qa.ProductionSiteQA).
         self.assertIn('content="noindex,nofollow"', self.tarifs_html)
 
     def test_pages_juridiques_sans_repere_a_completer(self) -> None:

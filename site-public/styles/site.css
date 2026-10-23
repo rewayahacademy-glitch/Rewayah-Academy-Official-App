@@ -173,6 +173,8 @@ img, svg { display: block; max-width: 100%; height: auto; }
 figure, p, h1, h2, h3, ul, ol { margin: 0; }
 ul, ol { padding: 0; list-style: none; }
 a { color: inherit; text-underline-offset: .22em; text-decoration-thickness: 1px; }
+/* Anti-spam : l'arobase d'une adresse n'est pas dans la page ; sans script, la feuille la dessine (site.js la remet). */
+.arobase::before { content: "@"; }
 button, input, select { font: inherit; color: inherit; }
 button { cursor: pointer; }
 h1, h2, h3 {

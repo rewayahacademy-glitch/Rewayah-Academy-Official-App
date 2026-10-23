@@ -6,6 +6,7 @@ import html.parser
 import importlib.util
 import json
 import re
+import shutil
 import unittest
 from pathlib import Path
 
@@ -102,8 +103,13 @@ class GeneratedSiteQA(unittest.TestCase):
         for parser in self.parsed_pages().values():
             self.assertEqual(parser.robots, ["noindex,nofollow"])
         self.assertNotIn("https://rewayah-academy.vercel.app/", (self.output / "sitemap.xml").read_text())
-        emails = set(re.findall(r"[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}", rendered))
-        self.assertLessEqual(emails, PUBLIC_EMAILS)
+        # Anti-spam : aucune adresse ni mailto lisible par un robot ; les quatre alias restent dans la page, en morceaux.
+        self.assertEqual(set(re.findall(r"[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}", rendered)), set())
+        self.assertNotIn("mailto:", rendered)
+        for adresse in PUBLIC_EMAILS:
+            local, domaine = adresse.split("@")
+            self.assertIn(f'data-u="{local}" data-d="{domaine}"', rendered)
+            self.assertIn(f'{local}<span class="arobase"></span>', rendered)
         self.assertNotIn("\u2014", " ".join(parser_text for parser in self.parsed_pages().values() for parser_text in parser.text))
         for marker in ("sb_secret_", "service_role", "SUPABASE_SERVICE_ROLE_KEY", "VERCEL_TOKEN"):
             self.assertNotIn(marker, rendered)
@@ -330,9 +336,91 @@ class GeneratedSiteQA(unittest.TestCase):
         self.assertEqual(parser.robots, ["noindex,nofollow"])
         self.assertIn("/fr/", parser.links)
 
-    def test_indexing_flag_stays_closed_until_publication_data_is_verified(self) -> None:
-        with self.assertRaisesRegex(ValueError, "preview-only"):
-            BUILDER_MODULE.build(self.output, "https://rewayah-academy.vercel.app", True)
+    def test_preview_robots_txt_closes_everything(self) -> None:
+        self.assertEqual((self.output / "robots.txt").read_text(encoding="utf-8"), "User-agent: *\nDisallow: /\n")
+
+
+class ProductionSiteQA(unittest.TestCase):
+    """La construction de `main` (directeur, 23/10/2026) : indexee sur rewayahacademy.com."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.output = SITE / "tests" / ".qa-build-production"
+        cls.origine = BUILDER_MODULE.ORIGINE_SITE
+        # Comme en CI : flutter build web a deja copie la configuration de web/ dans la sortie.
+        shutil.rmtree(cls.output, ignore_errors=True)
+        cls.output.mkdir(parents=True)
+        shutil.copy(SITE.parent / "web" / "vercel.json", cls.output / "vercel.json")
+        BUILDER_MODULE.build(cls.output, cls.origine, True, env={})
+        cls.pages = json.loads(CONTENT.read_text(encoding="utf-8"))["pages"]
+        cls.config = json.loads((cls.output / "vercel.json").read_text(encoding="utf-8"))
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        shutil.rmtree(cls.output, ignore_errors=True)
+
+    def lire(self, route: str) -> str:
+        return (self.output / "fr" / ("index.html" if route == "/fr/" else route[4:] + ".html")).read_text(encoding="utf-8")
+
+    def test_le_domaine_est_rewayahacademy_com(self) -> None:
+        self.assertEqual(self.origine, "https://rewayahacademy.com")
+
+    def test_pages_pretes_indexees_pages_vides_non(self) -> None:
+        attendues = {r for r, p in self.pages.items() if p["status"] == "ready" and p.get("indexable", True)} - {"/fr/avis"}
+        self.assertIn("/fr/tarifs", attendues)
+        self.assertNotIn("/fr/articles", attendues)
+        for route in self.pages:
+            with self.subTest(route=route):
+                parser = PageParser()
+                parser.feed(self.lire(route))
+                self.assertEqual(parser.robots, ["index,follow" if route in attendues else "noindex,follow"])
+                self.assertEqual(parser.canonicals, [self.origine + route])
+        plan = (self.output / "sitemap.xml").read_text(encoding="utf-8")
+        self.assertEqual(set(re.findall(r"<loc>([^<]+)</loc>", plan)), {self.origine + r for r in attendues})
+
+    def test_robots_txt_ouvre_et_donne_le_plan(self) -> None:
+        self.assertEqual((self.output / "robots.txt").read_text(encoding="utf-8"),
+                         "User-agent: *\nAllow: /\nSitemap: https://rewayahacademy.com/sitemap.xml\n")
+
+    def test_donnees_structurees_sans_adresse_e_mail(self) -> None:
+        brut = re.search(r'<script type="application/ld\+json">(.*?)</script>', self.lire("/fr/"), re.S).group(1)
+        donnees = json.loads(brut)
+        self.assertEqual({n["@type"] for n in donnees["@graph"]}, {"EducationalOrganization", "WebSite"})
+        self.assertNotIn("email", brut)
+        self.assertNotIn("@rewayahacademy", brut)
+
+    def test_aiguillage_ne_joue_que_sur_les_trois_noms_du_domaine(self) -> None:
+        # Un apercu et l'alias vercel.app servent tout comme avant : le workflow y controle racine, SPA et wasm.
+        noms = {"rewayahacademy.com", "app.rewayahacademy.com", "www.rewayahacademy.com"}
+        for regle in self.config["redirects"]:
+            self.assertEqual(len(regle["has"]), 1, regle)
+            self.assertIn(regle["has"][0]["value"], noms, regle)
+        par_source = {(r["has"][0]["value"], r["source"]): r for r in self.config["redirects"]}
+        self.assertEqual(par_source[("rewayahacademy.com", "/")]["destination"], "/fr/")
+        self.assertTrue(par_source[("www.rewayahacademy.com", "/:path*")]["permanent"])
+        vers_app = next(r for r in self.config["redirects"]
+                        if r["has"][0]["value"] == "rewayahacademy.com" and r["destination"].startswith("https://app."))
+        motif = re.fullmatch(r"/:path\((.*)\)", vers_app["source"]).group(1)
+        for chemin in ("connexion", "tuteur/accueil", "main.dart.js", "francais"):
+            self.assertRegex(chemin, rf"^(?:{motif})$")
+        for chemin in ("fr", "fr/", "fr/tarifs", "fr/assets/site.css", "robots.txt", "sitemap.xml", ".well-known/x"):
+            self.assertNotRegex(chemin, rf"^(?:{motif})$")
+        self.assertIn("(?!fr", self.config["rewrites"][-1]["source"])
+
+    def test_application_et_ancien_alias_jamais_indexes(self) -> None:
+        noindex = {r["has"][0]["value"] for r in self.config["headers"]
+                   if r.get("has") and {"key": "X-Robots-Tag", "value": "noindex"} in r["headers"]}
+        self.assertEqual(noindex, {"app.rewayahacademy.com", "rewayah-academy.vercel.app"})
+        # Les en-tetes de web/vercel.json (cache de index.html, du service worker) restent.
+        self.assertTrue(any(r["source"] == "/index.html" for r in self.config["headers"]))
+
+    def test_production_reconnue_comme_dans_le_workflow(self) -> None:
+        prod = BUILDER_MODULE.production_github
+        self.assertTrue(prod({"GITHUB_EVENT_NAME": "push", "GITHUB_REF": "refs/heads/main"}))
+        self.assertTrue(prod({"GITHUB_EVENT_NAME": "workflow_dispatch", "GITHUB_REF": "refs/heads/main"}))
+        self.assertFalse(prod({"GITHUB_EVENT_NAME": "pull_request", "GITHUB_REF": "refs/heads/main"}))
+        self.assertFalse(prod({"GITHUB_EVENT_NAME": "push", "GITHUB_REF": "refs/heads/claude/x"}))
+        self.assertFalse(prod({}))
 
 
 if __name__ == "__main__":

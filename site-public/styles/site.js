@@ -114,6 +114,12 @@ if (typeof module !== 'undefined' && module.exports) {
 }
 
 if (typeof document !== 'undefined') {
+  // Anti-spam : la page n'ecrit aucune adresse (build_site.masquer_courriels). On remet ici la vraie arobase, a
+  // copier, et le lien mailto ; sans script, la feuille dessine l'arobase et l'adresse reste lisible.
+  document.querySelectorAll('.arobase').forEach((a) => a.replaceWith('@'));
+  document.querySelectorAll('a[data-u][data-d]').forEach((lien) => {
+    lien.href = 'mailto:' + lien.dataset.u + '@' + lien.dataset.d + (lien.dataset.q || '');
+  });
   const simulator = document.getElementById('tarif-simulator');
   const dataNode = document.getElementById('tarifs-data');
   let donnees = null;

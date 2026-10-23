@@ -238,7 +238,7 @@ class PageProduite(unittest.TestCase):
         page = self.construire()
         self.assertIn("<h1>Avis des familles et des élèves</h1>", page.replace("\u00a0", " "))
         self.assertIn("Les premiers avis seront publiés ici bientôt", page)
-        for mot in ("support@rewayahacademy.com", "insulte", "données personnelles d’un tiers", "publicité",
+        for mot in ('support<span class="arobase"></span>rewayahacademy.com', "insulte", "données personnelles d’un tiers", "publicité",
                     "hors sujet", "doublon", "jamais modifié", "avis négatifs"):
             self.assertIn(mot, page)
         self.assertIn('content="noindex,nofollow"', page)
