@@ -1258,13 +1258,15 @@ avant l'état `envoye`.
 - **Variante de la carte** : lue sur le profil, **jamais devinée**. **Hommes**, et **genre
   inconnu** (profil illisible, hors ligne, aucun port) : la composition sans personnage, aux mots
   neutres (« une personne ») ; c'est le choix fait pour l'inconnu. **Femmes** : mêmes règles de
-  marque, une teinte mauve prune plus douce (`#6B3A87`, porte rose lavande `#FCEFF6`) et, **depuis
+  marque, une teinte mauve prune plus douce (fond `#542C62`, porte rose lavande `#FCEFF6`, **de même luminosité que les hommes** depuis le 23/10 : la même lumière, seule la teinte change) et, **depuis
   le 23/10/2026, aucun personnage** (le dessin d'une femme voilée, rejeté par le directeur :
   « il faut le supprimer, n'utilise pas de personnage ») : seulement une **fine branche fleurie
-  en trait**, ton sur ton, au bas du chemin de lumière (`branche_fleurie.dart` : une tige
-  courbe qui entre par le bord de la carte, deux brins, des feuilles en amande, trois petites
-  fleurs à cinq pétales et deux boutons, dans la couleur du cœur de la lumière sur le chemin,
-  faible contraste, jamais au-dessus du texte, du QR ni du logo, aucun dégradé). **Les couleurs
+  en trait**, dans la pénombre au bord du faisceau de lumière, sans jamais le couper
+  (`branche_fleurie.dart` : une tige presque droite qui entre par le bord de la carte et longe le
+  bord haut du faisceau, deux brins, des feuilles en amande, trois petites fleurs à cinq pétales
+  et deux boutons, dans la couleur de la lumière qui s'atténue, faible contraste, jamais sous le
+  texte, le QR ni le logo, aucun dégradé ; la scène de lumière est la même pour les deux
+  variantes, `DECISION-CANDIDATURES-2026-10-21.md`, ligne du 23/10). **Les couleurs
   des femmes sont proposées, hors charte** (comme les teintes d'identité, `M-23`) : le
   directeur les valide sur les captures.
 - **Contenu de la page, dans l'ordre** : le titre (l'invitation, au masculin ou au féminin) ;
@@ -1275,20 +1277,26 @@ avant l'état `envoye`.
 - **La carte** : image 9:16 (360 x 640 points, 1080 x 1920 pixels à l'export), rendue par
   Flutter, **identique pour tous à variante et langue égales** (palette claire, échelle
   standard : ni le thème, ni la taille de texte, ni l'Interface guidée ne la changent, mesuré
-  octet pour octet). **Fond violet profond uni** (`#4E2983` pour les hommes, un aplat de la
-  palette ; aucun dégradé). **Le symbole contour officiel** (`symbole-contour.svg`, tracé à
+  octet pour octet). **Fond violet profond** (`#4E2983` pour les hommes, un aplat de la
+  palette, sous la scène de lumière). **Le symbole contour officiel** (`symbole-contour.svg`, tracé à
   partir du fichier, jamais redessiné ; trait à l'épaisseur du fichier), à 1,85 fois la largeur
   de la carte, **coupé par les bords**, en blanc à **7 %** : un décor tamisé (M-28), jamais
-  retourné, ni en arabe. **Le portail** : une petite porte en arche claire avec son cadre en
-  arche d'un trait fin (illustration dessinée, avec du vide autour, son cadre sur la marge du
-  texte), d'où sort un **chemin de lumière en deux aplats** qui s'élargit vers le bas et vers le
-  lecteur, en courbe, coupé par le bord (le second aplat, plus clair, est le chemin dans un
-  cercle centré sur le seuil : la lumière s'éteint en s'éloignant) ; en arabe la scène est en
-  miroir. **Le symbole et la porte sont sur le même axe** (l'arche intérieure du symbole est
-  centrée sur la porte : une porte dans la porte) ; en arabe le symbole suit la porte, qui passe
-  à gauche, **il se déplace sans jamais se retourner** (même dessin, décalé, pixel pour pixel).
-  La **zone de protection du logo** (25 % de sa hauteur) est un aplat du fond : le filigrane ne
-  la traverse jamais, dans les deux sens de lecture (mesuré dans les pixels). **Typographie suisse**, tout au début de la ligne : le logo blanc
+  retourné, ni en arabe. **Le portail, la lumière et les ténèbres** (directeur, 23/10/2026,
+  exception datée au « aucun dégradé » : M-29) : une petite porte en arche, debout sur une ligne
+  de sol (le seuil), avec son cadre en arche d'un trait fin (aplat) et du vide autour, son cadre
+  sur la marge du texte. L'ouverture est la zone la plus claire de la scène (un blanc pur au cœur, qui
+  retombe vers la teinte de la variante) avec un halo qui déborde sur son cadre et sur le mur. Le **faisceau** qu'elle pose au sol **part exactement
+  du seuil** et ses deux bords sont des **droites** qui s'écartent vers le lecteur (vers le bas et
+  vers le côté opposé à la porte) : un dégradé le long du faisceau, très vif au seuil, qui
+  s'éteint jusqu'à disparaître. **Tout le reste est dans les ténèbres** : un violet presque noir
+  de la teinte de la variante, de plus en plus dense vers les bords et les coins. Les deux
+  variantes ont **exactement la même scène**, seule la teinte change ; en arabe la scène est en
+  miroir (les textes et le logo ne se retournent jamais). **Le symbole et la porte sont sur le
+  même axe** (l'arche intérieure du symbole est centrée sur la porte : une porte dans la porte) ;
+  en arabe le symbole suit la porte, qui passe à gauche, **il se déplace sans jamais se
+  retourner** (même dessin, décalé, pixel pour pixel). La **zone de protection du logo** (25 %
+  de sa hauteur) est libre de filigrane, dans les deux sens de lecture (mesuré dans les pixels).
+  **Typographie suisse**, tout au début de la ligne : le logo blanc
   (`BrandLogo`, `FondLogo.violet`, taille minimale, zone de protection) ; un titre court en DM
   Sans 28 ; sa ligne ; la signature arabe près de la porte, à la hauteur de son milieu ;
   l'appel « Découvrir l'offre » avec le QR sur sa **plaque blanche unie** (zone de silence de 12

@@ -2,11 +2,13 @@
 // personne qui voudrait apprendre le Coran, pas par celle qui la partage.
 //
 // **Redessinee le 22/10/2026** sur la direction du directeur (la carte d'avant
-// etait « trop nulle et moche ») : un fond violet profond uni ; le symbole
-// contour officiel tres agrandi, coupe par les bords, en filigrane tamise ; et,
+// etait « trop nulle et moche ») : un fond violet profond ; le symbole contour
+// officiel tres agrandi, coupe par les bords, en filigrane tamise ; et,
 // subtilement, le portail, pour dire l'eleve qui entre dans la lumiere du Coran
 // et du savoir. Typographie suisse : peu d'elements, beaucoup de vide, tout
-// aligne au debut de la ligne.
+// aligne au debut de la ligne. **Le 23/10/2026**, la lumiere et les tenebres : le
+// faisceau de la porte part du seuil en droites et s'eteint dans l'obscurite des
+// bords (`decor_carte.dart`).
 //
 // Dans l'ordre de lecture : le logo blanc ; un titre court sur ce que l'eleve y
 // gagne et sa ligne ; la scene du portail avec la signature arabe de la marque
@@ -17,7 +19,8 @@
 // **Deux variantes** (`VarianteCarte`, lue sur le profil de la personne qui
 // partage, jamais devinee) : les hommes (et le genre inconnu), sans personnage ;
 // les femmes, une teinte plus douce et, tres discrete, une fine branche fleurie
-// ton sur ton au bas du chemin, sans aucun personnage (directeur, 23/10/2026).
+// dans la penombre au bord du faisceau, sans aucun personnage (directeur,
+// 23/10/2026). Les deux variantes ont la meme scene : seule la teinte change.
 // **Quatre langues** (`LangueCarte`) : francais, anglais, portugais, arabe ; en
 // arabe le texte se met en miroir, jamais le logo ni le symbole.
 //
@@ -84,8 +87,8 @@ class CartePartage extends StatelessWidget {
   /// La hauteur de la ligne de la signature arabe (24 points d'interligne).
   static const double hauteurLigneSignature = 24;
 
-  /// Le milieu de la porte dans la bande du portail : la signature s'y aligne.
-  static final double yPorte = GeometrieScene(const Size(largeur, hauteurScene))
+  /// Le milieu de la porte, sur la carte : la signature s'y aligne.
+  static final double yPorte = GeometrieScene(const Size(largeur, hauteur))
       .porte
       .center
       .dy;
@@ -148,7 +151,8 @@ class CartePartage extends StatelessWidget {
   /// La cle du logo.
   static const Key logoKey = ValueKey<String>('carte-logo');
 
-  /// La cle de la zone de protection du logo : un aplat du fond.
+  /// La cle de la zone de protection du logo : une zone libre, dans les
+  /// tenebres.
   static const Key zoneLogoKey = ValueKey<String>('carte-zone-logo');
 
   @override
@@ -262,11 +266,11 @@ class CartePartage extends StatelessWidget {
                             couleurs: couleurs,
                           ),
                         ),
-                        PositionedDirectional(
-                          top: hautScene,
-                          start: 0,
-                          end: 0,
-                          height: hauteurScene,
+                        // La scene du portail : les tenebres, la porte, son halo et
+                        // son faisceau, sur toute la carte, sous le texte. Les
+                        // textes ne sont jamais retournes : seule la scene se met
+                        // en miroir en arabe.
+                        Positioned.fill(
                           child: ScenePortail(
                             key: sceneKey,
                             couleurs: couleurs,
@@ -276,7 +280,7 @@ class CartePartage extends StatelessWidget {
                         // La signature arabe de la marque, pres de la porte : a la
                         // hauteur de son milieu, au debut de la ligne.
                         PositionedDirectional(
-                          top: hautScene + yPorte - hauteurLigneSignature / 2,
+                          top: yPorte - hauteurLigneSignature / 2,
                           start: AppSpacing.xxl,
                           child: Text(
                             signatureArabe,
@@ -285,18 +289,17 @@ class CartePartage extends StatelessWidget {
                             style: styleSignature,
                           ),
                         ),
-                        // Le logo blanc sur le fond violet, au debut de la ligne
+                        // Le logo blanc dans les tenebres, au debut de la ligne
                         // (a droite en arabe, sans se retourner). Sa zone de
                         // protection (25 pour cent de sa hauteur, comprise dans le
-                        // composant) est un aplat du fond : le filigrane ne la
-                        // traverse jamais.
-                        PositionedDirectional(
+                        // composant) est libre : le filigrane ne la traverse
+                        // jamais, et c'est le coin le plus sombre de la carte.
+                        const PositionedDirectional(
                           top: margeLogo,
                           start: margeLogo,
-                          child: ColoredBox(
+                          child: SizedBox(
                             key: zoneLogoKey,
-                            color: couleurs.fond.background,
-                            child: const BrandLogo(
+                            child: BrandLogo(
                               key: logoKey,
                               variante: VarianteLogo.horizontal,
                               hauteur: BrandLogo.minimumHorizontal,
@@ -326,7 +329,8 @@ class CartePartage extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              // La bande du portail : vide, la scene la peint.
+                              // La bande du portail : vide, entre le titre et l'appel ;
+                              // la scene, sur toute la carte, y pose la porte.
                               const SizedBox(
                                 height: hauteurScene,
                                 width: double.infinity,

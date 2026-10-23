@@ -1,6 +1,6 @@
 // CAND-06 : le rendu reel de la carte en image. Le vrai `toImage` de Flutter,
-// sans double : la taille de l'export (1080 x 1920), le fond violet uni et la
-// porte, la lisibilite du QR (chaque module relu dans les pixels), l'independance
+// sans double : la taille de l'export (1080 x 1920), les tenebres violettes des
+// coins et la porte claire, la lisibilite du QR (chaque module relu dans les pixels), l'independance
 // du theme et de la taille de texte (memes octets), les quatre langues et les
 // deux variantes, et le rendu a travers l'apercu reduit de la page.
 
@@ -31,7 +31,7 @@ void main() {
   group('le PNG exporte', () {
     for (final VarianteCarte v in VarianteCarte.values) {
       testWidgets(
-        '${v.name} : 1080 x 1920 pixels, le fond violet uni, la porte claire',
+        '${v.name} : 1080 x 1920 pixels, les tenebres violettes des coins, la porte claire',
         (WidgetTester tester) async {
           final Uint8List png = await rendreCarte(tester, variante: v);
           // La signature d'un PNG.
@@ -45,13 +45,8 @@ void main() {
               ? AppPaletteCarte.femmes
               : AppPaletteCarte.hommes;
           final Color fond = c.fond.background;
-          final Color trait = Color.alphaBlend(
-            Colors.white.withValues(alpha: AppPaletteCarte.opaciteFiligrane),
-            fond,
-          );
-          // Les quatre coins de l'image sont le fond (ou le trait tamise du
-          // symbole qui les traverse) : une image pleine, sans bord ni angle
-          // arrondi.
+          // Les quatre coins de l'image sont les tenebres : le violet presque noir
+          // de la variante, une image pleine, sans bord ni angle arrondi.
           for (final (int, int) coin in <(int, int)>[
             (2, 2),
             (1077, 2),
@@ -60,18 +55,30 @@ void main() {
           ]) {
             final Color p = image.pixel(coin.$1, coin.$2);
             expect(
-              proches(p, fond) || proches(p, trait),
+              proches(p, c.tenebres.background, 30),
               isTrue,
               reason: '$coin : $p',
             );
+            expect(
+              p.computeLuminance(),
+              lessThan(0.25 * fond.computeLuminance()),
+              reason: '$coin : plus sombre que le fond',
+            );
           }
-          // Le fond, hors de tout ornement : un aplat de la palette.
-          expect(proches(image.pixel(3 * 20, 3 * 300), fond), isTrue);
-          // La porte : un aplat clair, au milieu de son arche.
+          // Plus on s'approche du milieu, moins il y a de tenebres : le bord est
+          // plus sombre que le fond uni de la variante, jamais l'inverse.
+          expect(
+            image.pixel(3 * 20, 3 * 300).computeLuminance(),
+            lessThan(fond.computeLuminance()),
+          );
+          // La porte : l'eclat, au milieu de son arche.
           final Rect porte = GeometrieScene(
-            const Size(CartePartage.largeur, CartePartage.hauteurScene),
-          ).porte.shift(const Offset(0, CartePartage.hautScene));
-          expect(image.enPoints(porte.center), c.porte.background);
+            const Size(CartePartage.largeur, CartePartage.hauteur),
+          ).porte;
+          expect(
+            proches(image.enPoints(porte.center), c.eclat.background, 3),
+            isTrue,
+          );
         },
       );
     }
@@ -244,15 +251,22 @@ void main() {
           find.byKey(const ValueKey<String>('partage-apercu')),
         );
         expect(apercu.width, lessThan(CartePartage.largeur));
-        // ... mais « Partager » transmet le PNG de 1080 x 1920.
-        await tester.ensureVisible(
-          find.byKey(const ValueKey<String>('partage-partager')),
+        // ... mais « Partager » transmet le PNG de 1080 x 1920. Le rendu reel
+        // (les tenebres, le halo) est lent sous le test : on laisse l'horloge
+        // reelle tourner jusqu'a ce que l'image soit prete, 20 secondes au plus.
+        final Finder partager = find.byKey(
+          const ValueKey<String>('partage-partager'),
         );
+        await tester.ensureVisible(partager);
         await tester.pump();
-        await tester.tap(
-          find.byKey(const ValueKey<String>('partage-partager')),
-        );
-        await tester.pump();
+        for (int i = 0; i < 80 && m.partage.appels.isEmpty; i++) {
+          await tester.runAsync(
+            () => Future<void>.delayed(const Duration(milliseconds: 250)),
+          );
+          await tester.pump();
+          await tester.tap(partager);
+          await tester.pump();
+        }
         expect(m.partage.appels, hasLength(1));
         final AppelPartage appel = m.partage.appels.single;
         final ImageCarte image = (await tester.runAsync(
@@ -261,7 +275,11 @@ void main() {
         expect(image.largeur, 1080);
         expect(image.hauteur, 1920);
         expect(
-          proches(image.pixel(2, 2), AppPaletteCarte.hommes.fond.background),
+          proches(
+            image.pixel(2, 2),
+            AppPaletteCarte.hommes.tenebres.background,
+            12,
+          ),
           isTrue,
         );
         // Et il est identique a l'image de la carte rendue seule.

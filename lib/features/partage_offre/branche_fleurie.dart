@@ -4,17 +4,24 @@
 // **Direction du directeur (23/10/2026)** : la carte des femmes ne porte aucune
 // figure humaine ; « juste des elements feminins comme des fleurs discretes ou un
 // ornement feminin (tout discret) ». C'est donc une fine branche, tracee en
-// trait : une tige courbe qui entre par le bord de la carte et accompagne le bas
-// du chemin de lumiere, deux brins plus courts, des feuilles en amande et trois
-// petites fleurs a cinq petales, avec deux boutons.
+// trait : une tige courbe, deux brins plus courts, des feuilles en amande et
+// trois petites fleurs a cinq petales, avec deux boutons.
 //
-// **Ton sur ton, en second regard** : tout est dans la couleur du coeur de la
-// lumiere (`AppPaletteCarte.coeur`), posee sur le chemin (un peu plus sombre),
-// donc a faible contraste ; le centre des fleurs est un trou du chemin. La
-// branche reste sur le chemin et en dehors de la lumiere vive : jamais au-dessus
-// du texte, du QR ni du logo. **Aucun degrade** : des traits et des aplats. Une
-// illustration, comme la porte : le symbole officiel n'est pas touche (`M-28`,
-// les ornements servent de decor sur les supports de reseaux sociaux).
+// **Dans la penombre, au bord du faisceau (directeur, 23/10/2026, la lumiere et
+// les tenebres)** : la branche longe le bord haut du faisceau de lumiere, du cote
+// des tenebres, a quelques points de lui, et entre par le bord de la carte
+// oppose a la porte. Elle ne coupe jamais la lumiere : chaque point de son
+// dessin est hors du faisceau, et jamais sous un texte, le QR ou le logo. Elle
+// est tracee dans son propre repere (la tige le long de l'axe x, les brins vers
+// les y negatifs) puis posee par [BrancheFleurie.new] sur une ligne, avec un
+// angle : la geometrie de la scene la pose parallele au bord du faisceau.
+//
+// **Ton sur ton, en second regard** : tout est de la couleur de la lumiere qui
+// s'attenue (`AppPaletteCarte.coeur`) a faible opacite ([opacite]), donc a faible
+// contraste dans la penombre ; le centre des fleurs est troue. **Aucun degrade**
+// : des traits et des aplats. Une illustration, comme la porte : le symbole
+// officiel n'est pas touche (`M-28`, les ornements servent de decor sur les
+// supports de reseaux sociaux).
 library;
 
 import 'dart:math' as math;
@@ -145,32 +152,36 @@ class Bouton {
   }
 }
 
-/// La branche fleurie, dans le repere de la bande de la scene : le trait des
-/// tiges, les feuilles, les fleurs et les boutons.
+/// La branche fleurie, dans le repere de la carte : le trait des tiges, les
+/// feuilles, les fleurs et les boutons.
 class BrancheFleurie {
-  /// Dessine la branche pour une bande de [taille] (la bande de la scene, 360 x
-  /// 228 points a l'export) : le dessin est pense dans ce repere et suit la
-  /// bande si elle change.
-  factory BrancheFleurie(Size taille) {
-    final double sx = taille.width / _largeurDessin;
-    final double sy = taille.height / _hauteurDessin;
-    final double s = math.min(sx, sy);
-    Offset p(double x, double y) => Offset(x * sx, y * sy);
-    Offset d(double x, double y) => Offset(x * s, y * s);
+  /// Dessine la branche, posee sur la ligne qui part de [depart] avec l'angle
+  /// [angle] (radians, dans le repere de la carte : 0 pour une ligne qui va vers
+  /// la droite, negatif pour une ligne qui monte), a l'echelle [echelle].
+  ///
+  /// Le dessin est pense dans son propre repere (x le long de la tige, 130
+  /// points de long a l'echelle 1 ; y negatif vers les fleurs) puis tourne et
+  /// pose : il suit la ligne, quelle que soit sa pente.
+  factory BrancheFleurie({
+    required Offset depart,
+    required double angle,
+    double echelle = 1,
+  }) {
+    final double s = echelle;
+    final double cosA = math.cos(angle);
+    final double sinA = math.sin(angle);
+    Offset d(double x, double y) =>
+        Offset((x * cosA - y * sinA) * s, (x * sinA + y * cosA) * s);
+    Offset p(double x, double y) => depart + d(x, y);
 
-    // La tige : elle entre par le bord de la carte, tout pres du bas du chemin,
-    // et monte doucement vers la lumiere en deux courbes.
-    final _Cubique tige1 = _Cubique(
-      p(-10, 198),
-      p(20, 189),
-      p(44, 197),
-      p(70, 191),
-    );
+    // La tige : elle entre par le bord de la carte et se poursuit en deux
+    // courbes tres douces, presque droites, le long de la ligne.
+    final _Cubique tige1 = _Cubique(p(0, 0), p(26, -3), p(52, 3), p(78, -1));
     final _Cubique tige2 = _Cubique(
       tige1.p3,
       tige1.p3 + (tige1.p3 - tige1.p2),
-      p(104, 184),
-      p(118, 177),
+      p(110, -5),
+      p(130, -3),
     );
     // Deux brins qui montent, un peu a droite, comme une branche en fleurs.
     final Offset depart1 = tige1.en(0.4);
@@ -249,9 +260,9 @@ class BrancheFleurie {
       tiges: tiges,
       feuilles: feuilles,
       fleurs: <FleurDeBranche>[
-        FleurDeBranche(brin1.p3, 5.6 * s, -1.9),
-        FleurDeBranche(brin2.p3, 4.7 * s, -1.2),
-        FleurDeBranche(tige2.p3, 5.2 * s, -2.4),
+        FleurDeBranche(brin1.p3, 5.6 * s, -1.9 + angle),
+        FleurDeBranche(brin2.p3, 4.7 * s, -1.2 + angle),
+        FleurDeBranche(tige2.p3, 5.2 * s, -2.4 + angle),
       ],
       boutons: <Bouton>[
         Bouton(pedoncule1.p3, 2.6 * s, pedoncule1.angleEn(1)),
@@ -267,11 +278,9 @@ class BrancheFleurie {
     required this.boutons,
   });
 
-  /// Le dessin est pense dans une bande de cette largeur, en points.
-  static const double _largeurDessin = 360;
-
-  /// Le dessin est pense dans une bande de cette hauteur, en points.
-  static const double _hauteurDessin = 228;
+  /// L'opacite de la branche : celle d'un ton sur ton dans la penombre, au
+  /// second regard.
+  static const double opacite = 0.46;
 
   /// Le trait des tiges et des brins (a tracer, jamais a remplir).
   final Path tiges;

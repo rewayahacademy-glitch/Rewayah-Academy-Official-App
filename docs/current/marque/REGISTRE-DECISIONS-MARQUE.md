@@ -1,6 +1,6 @@
 # Registre des décisions de marque
 
-Dernière mise à jour : 20/10/2026. Ce registre distingue trois statuts, et seulement trois :
+Dernière mise à jour : 23/10/2026. Ce registre distingue trois statuts, et seulement trois :
 
 - **DÉCIDÉ** : décision explicite et datée du directeur, avec sa source. Un agent l'applique.
 - **PROPOSITION** : formulation ou règle recommandée par un agent, cohérente avec les sources, **non validée**. Un agent peut l'utiliser dans un brouillon interne, jamais dans un texte publié comme position officielle.
@@ -40,6 +40,7 @@ Règle de mise à jour : on ne réécrit pas une ligne. Quand le directeur tranc
 | M-26 | Signature arabe | « بوّابتك نحو القرآن » est adoptée comme signature arabe : elle prolonge le sens du logo, la porte ouverte. La signature française et l'articulation des deux restent ouvertes (O-02) ; la relecture arabe (O-03) reste conseillée | DÉCIDÉ | 20/10/2026 | Projet claude.ai Rewayah, conversation du 20/10 |
 | M-27 | Nom en arabe | Le nom s'écrit « أكاديمية الرواية » en arabe. Tranche O-08 | DÉCIDÉ | 20/10/2026 | Projet claude.ai Rewayah, conversation du 20/10 |
 | M-28 | App et autres supports | L'identité de l'app est confirmée ; la plupart des interdits du cahier visuel la concernent (sobriété des écrans de travail, ornement à 16 px et opacité 0,4, une signature par écran, ni cadre ni séparateur). Ils ne s'appliquent pas tels quels aux autres supports (imprimés, documents, attestations, réseaux sociaux, site). Pour ces supports, les ornements officiels (arche, ornement plein et contour, symbole contour) servent d'éléments décoratifs : cadre en arche, séparateur, filigrane, fond. Restent valables partout : logo jamais redessiné, fichiers officiels seulement, logo blanc sur fond sombre (M-25), jamais le logo dans une page du Coran. Précise M-14 et le cahier (parties A.2, B, C) | DÉCIDÉ | 20/10/2026 | Projet claude.ai Rewayah, conversation du 20/10 |
+| M-29 | Lumière et ténèbres de la carte de partage | Exception datée au « aucun dégradé (logo, ornement, fonds) » du cahier visuel (A.4) : **seules la lumière et l'obscurité de la scène de la carte de partage** (la porte, son halo, son faisceau au sol, les ténèbres des bords, et le fondu du symbole contour dans l'ombre quand il arrive au seuil de la porte) sont des dégradés. Le logo (blanc, plat, jamais redessiné), le symbole contour (un trait blanc à 7 % partout où il se voit), le cadre en arche (un trait d'une couleur et d'une opacité fixes, que la lumière baigne), la branche fleurie, la plaque du QR et le fond de la carte restent des aplats ; les deux variantes (hommes, femmes) ont la même lumière, seule la teinte change ; les couleurs restent des jetons de `app_palette.dart` (`AppPaletteCarte`). Ne s'étend à aucun autre support ni écran sans nouvelle décision | DÉCIDÉ | 23/10/2026 | Message du directeur, session du 23/10 (« une sorte de dégradé qui montre la dissipation de la lumière de l'immensité des ténèbres ») ; `docs/current/DECISION-CANDIDATURES-2026-10-21.md`, section 1 bis |
 
 ## 2. Propositions (à valider)
 

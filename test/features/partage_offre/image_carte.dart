@@ -148,6 +148,53 @@ Future<ImageCarte> imageFiligrane(
   return (await tester.runAsync(() => decoderCarte(png)))!;
 }
 
+/// La scene seule, a l'echelle de l'export, dans le sens de lecture [sens] : les
+/// tenebres, la porte, son halo et son faisceau, plus la branche fleurie si
+/// [variante] est celle des femmes, sur le fond uni de [couleurs]. Sans texte, sans
+/// logo ni QR ; le filigrane n'y est que si [avecFiligrane]. Les couleurs et la
+/// variante sont independantes, pour mesurer ce que la branche ajoute.
+Future<ImageCarte> imageScene(
+  WidgetTester tester, {
+  AppPaletteCarte couleurs = AppPaletteCarte.hommes,
+  VarianteCarte variante = VarianteCarte.hommes,
+  TextDirection sens = TextDirection.ltr,
+  bool avecFiligrane = false,
+}) async {
+  tester.view.physicalSize = const Size(800, 900);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
+  final GlobalKey cle = GlobalKey();
+  await tester.pumpWidget(
+    Directionality(
+      textDirection: sens,
+      child: Center(
+        child: RepaintBoundary(
+          key: cle,
+          child: SizedBox(
+            width: CartePartage.largeur,
+            height: CartePartage.hauteur,
+            child: ColoredBox(
+              color: couleurs.fond.background,
+              child: Stack(
+                children: <Widget>[
+                  if (avecFiligrane)
+                    Positioned.fill(child: FiligraneCarte(couleurs: couleurs)),
+                  Positioned.fill(
+                    child: ScenePortail(couleurs: couleurs, variante: variante),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+  await tester.pump();
+  final Uint8List png = (await tester.runAsync(() => rendreCarteEnPng(cle)))!;
+  return (await tester.runAsync(() => decoderCarte(png)))!;
+}
+
 /// Vrai quand [a] et [b] portent les memes octets.
 bool memesOctets(Uint8List a, Uint8List b) {
   if (a.length != b.length) {

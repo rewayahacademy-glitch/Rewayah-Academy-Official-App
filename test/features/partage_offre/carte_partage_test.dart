@@ -1,15 +1,22 @@
 // CAND-06 : la carte a partager, redessinee le 22/10/2026 sur la direction du
-// directeur : un fond violet profond uni, le symbole contour officiel tres
-// agrandi et tamise, le portail (une porte en arche, un chemin de lumiere) qui
-// dit l'eleve entrant dans la lumiere du Coran, une typographie suisse.
+// directeur : un fond violet profond, le symbole contour officiel tres agrandi et
+// tamise, le portail (une porte en arche, un faisceau de lumiere) qui dit l'eleve
+// entrant dans la lumiere du Coran, une typographie suisse ; puis, le 23/10/2026,
+// la lumiere et les tenebres : « une sorte de degrade qui montre la dissipation de
+// la lumiere de l'immensite des tenebres ».
 //
 // Ce que la carte porte (un titre sur ce que l'eleve y gagne, la signature de la
 // marque pres de la porte, l'appel « Decouvrir l'offre » avec le QR et le lien,
 // le logo, le hadith tout en bas, tres discret), ce qu'elle ne porte pas (aucun
-// prix, aucune promesse, jamais l'academie comme motif), ses deux variantes (les
-// hommes et le genre inconnu, les femmes), ses quatre langues, sa lisibilite
-// (contraste mesure) et son independance du theme, de la taille de texte et de
-// l'interface guidee.
+// prix, aucune promesse, jamais l'academie comme motif, aucun personnage), ses
+// deux variantes (les hommes et le genre inconnu, les femmes), ses quatre langues,
+// la scene de lumiere (la geometrie droite du faisceau, la lumiere qui decroit
+// du seuil, les tenebres des bords, mesurees sur les pixels du rendu), sa
+// lisibilite (contraste mesure sur le pixel le plus clair sous chaque texte) et
+// son independance du theme, de la taille de texte et de l'interface guidee.
+
+import 'dart:math' as math;
+import 'dart:ui' show PathMetric;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
@@ -18,6 +25,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/marque/contour_traces.g.dart';
 import 'package:rewayah_academy/core/partage_offre/personnalisation_carte.dart';
+import 'package:rewayah_academy/core/theme/app_color_pair.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
@@ -92,9 +100,9 @@ List<String> _textes(WidgetTester tester) => <String>[
 /// scene est en miroir.
 Rect _porteDansLaCarte({bool rtl = false}) {
   final GeometrieScene g = GeometrieScene(
-    const Size(CartePartage.largeur, CartePartage.hauteurScene),
+    const Size(CartePartage.largeur, CartePartage.hauteur),
   );
-  final Rect p = g.porte.shift(const Offset(0, CartePartage.hautScene));
+  final Rect p = g.porte;
   return rtl
       ? Rect.fromLTRB(
           CartePartage.largeur - p.right,
@@ -105,16 +113,91 @@ Rect _porteDansLaCarte({bool rtl = false}) {
       : p;
 }
 
-/// Un point de la scene dans le repere de la carte.
-Offset _surLaCarte(Offset p, {bool rtl = false}) {
-  final Offset d = p.translate(0, CartePartage.hautScene);
-  return rtl ? Offset(CartePartage.largeur - d.dx, d.dy) : d;
+/// Le miroir d'un point de la carte : la scene se retourne en arabe.
+Offset _miroir(Offset p) => Offset(CartePartage.largeur - p.dx, p.dy);
+
+/// Le point du faisceau a la part [t] de sa longueur, le long de son axe : 0 au
+/// centre du seuil, 1 au bout de la lumiere.
+Offset _surAxe(GeometrieScene g, double t) =>
+    g.centreSeuil + g.axe * (g.longueur * t);
+
+/// La distance du point [p] au segment [a]-[b].
+double _distanceAuSegment(Offset p, Offset a, Offset b) {
+  final Offset ab = b - a;
+  final Offset ap = p - a;
+  final double t =
+      ((ap.dx * ab.dx + ap.dy * ab.dy) / (ab.dx * ab.dx + ab.dy * ab.dy)).clamp(
+        0.0,
+        1.0,
+      );
+  return (p - (a + ab * t)).distance;
 }
 
-/// La ligne de pixels, entre le QR et le hadith, ou seul le filigrane passe :
-/// libre de tout texte et de toute la scene, dans toutes les langues (la plaque
-/// du QR finit a 519 points, le hadith commence apres 540).
-int get _ligneDuFiligrane => (530 * CartePartage.echelleExport).round();
+/// La distance du point [p] au faisceau : 0 dedans ou sur un bord.
+double _distanceAuFaisceau(GeometrieScene g, Offset p) {
+  if (g.faisceauPath.contains(p)) {
+    return 0;
+  }
+  final List<Offset> s = g.sommetsFaisceau;
+  double d = double.infinity;
+  for (int i = 0; i < s.length; i++) {
+    d = math.min(d, _distanceAuSegment(p, s[i], s[(i + 1) % s.length]));
+  }
+  return d;
+}
+
+/// Les zones de la carte (en points, dans son repere) ou se posent un texte, le
+/// logo ou le QR : la ou la lumiere ne doit rien noyer.
+Map<String, Rect> _zones(WidgetTester tester) {
+  final Rect carte = tester.getRect(find.byType(CartePartage));
+  Rect zone(Finder f) => tester.getRect(f).shift(-carte.topLeft);
+  return <String, Rect>{
+    'titre': zone(_cle('carte-titre')),
+    'sous-titre': zone(_cle('carte-sous-titre')),
+    'signature': zone(_cle('carte-signature')),
+    'decouvrir': zone(_cle('carte-decouvrir')),
+    'lien': zone(_cle('carte-lien')),
+    'hadith': zone(_cle('carte-hadith')),
+    if (_cle('carte-traduction').evaluate().isNotEmpty)
+      'traduction': zone(_cle('carte-traduction')),
+    'reference': zone(_cle('carte-reference')),
+    'qr': zone(_cle('carte-qr')),
+    'logo': zone(find.byKey(CartePartage.logoKey)),
+  };
+}
+
+/// Le pixel le plus clair de l'image dans [zone] (en points, dans le repere de
+/// la carte), releve un pixel sur deux.
+Color _pixelLePlusClair(ImageCarte image, Rect zone) {
+  const double e = CartePartage.echelleExport;
+  Color meilleur = Colors.black;
+  double lumMax = -1;
+  final int x0 = (zone.left * e).floor().clamp(0, image.largeur - 1);
+  final int x1 = (zone.right * e).ceil().clamp(0, image.largeur - 1);
+  final int y0 = (zone.top * e).floor().clamp(0, image.hauteur - 1);
+  final int y1 = (zone.bottom * e).ceil().clamp(0, image.hauteur - 1);
+  for (int y = y0; y <= y1; y += 2) {
+    for (int x = x0; x <= x1; x += 2) {
+      final Color p = image.pixel(x, y);
+      final double l = p.computeLuminance();
+      if (l > lumMax) {
+        lumMax = l;
+        meilleur = p;
+      }
+    }
+  }
+  return meilleur;
+}
+
+/// La ligne de pixels, au-dessus du fondu du symbole (il commence 80 points au-
+/// dessus du seuil de la porte), ou le filigrane est entier : le fond uni et le
+/// trait tamise s'y lisent sans lumiere ni texte.
+int get _ligneDuFiligrane => (150 * CartePartage.echelleExport).round();
+
+/// La luminosite d'un pixel telle qu'on la voit : la luminance de ses canaux
+/// encodes (ceux de l'ecran), pas la luminance lineaire. C'est elle qui compare
+/// deux teintes a l'oeil.
+double _clarte(Color c) => 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b;
 
 void main() {
   setUpAll(chargerPolicesDuDepot);
@@ -597,197 +680,302 @@ void main() {
     });
 
     testWidgets(
-      'aucun degrade : chaque pixel du fond est le fond uni ou le trait tamise',
+      'le filigrane seul reste un decor sans degrade : chaque pixel est le fond '
+      'uni ou le trait tamise (le degrade n\'est que la lumiere de la scene)',
       (WidgetTester tester) async {
-        for (final VarianteCarte v in VarianteCarte.values) {
-          final ImageCarte image = await imageCarte(tester, variante: v);
-          final AppPaletteCarte c = _couleurs(v);
-          final Color fond = c.fond.background;
-          final Color trait = Color.alphaBlend(
-            Colors.white.withValues(alpha: AppPaletteCarte.opaciteFiligrane),
-            fond,
-          );
-          int fonds = 0;
-          int traits = 0;
-          int autres = 0;
-          for (int x = 0; x < 1080; x++) {
-            final Color p = image.pixel(x, _ligneDuFiligrane);
-            if (proches(p, fond)) {
-              fonds++;
-            } else if (proches(p, trait)) {
-              traits++;
-            } else {
-              autres++;
-            }
+        const AppPaletteCarte c = AppPaletteCarte.hommes;
+        final ImageCarte image = await imageFiligrane(tester);
+        final Color fond = c.fond.background;
+        final Color trait = Color.alphaBlend(
+          Colors.white.withValues(alpha: AppPaletteCarte.opaciteFiligrane),
+          fond,
+        );
+        int fonds = 0;
+        int traits = 0;
+        int autres = 0;
+        for (int x = 0; x < 1080; x++) {
+          final Color p = image.pixel(x, _ligneDuFiligrane);
+          if (proches(p, fond)) {
+            fonds++;
+          } else if (proches(p, trait)) {
+            traits++;
+          } else {
+            autres++;
           }
-          // Hors des bords anti-aliases du trait : deux valeurs, pas de degrade.
-          expect(fonds, greaterThan(500), reason: v.name);
-          expect(traits, greaterThan(20), reason: v.name);
-          expect(autres, lessThan(40), reason: '${v.name} : que des aplats');
         }
+        // Hors des bords anti-aliases du trait : deux valeurs, pas de degrade.
+        expect(fonds, greaterThan(500));
+        expect(traits, greaterThan(20));
+        expect(
+          autres,
+          lessThan(40),
+          reason: 'le symbole n\'est que des aplats',
+        );
       },
     );
 
-    testWidgets('le fond est un aplat : aucune decoration en degrade', (
-      WidgetTester tester,
-    ) async {
-      for (final VarianteCarte v in VarianteCarte.values) {
-        await _monter(tester, variante: v);
-        final Iterable<BoxDecoration> decorations = tester
-            .widgetList<DecoratedBox>(
-              find.descendant(
-                of: find.byType(CartePartage),
-                matching: find.byType(DecoratedBox),
-              ),
-            )
-            .map((DecoratedBox d) => d.decoration)
-            .whereType<BoxDecoration>();
-        expect(
-          decorations.where((BoxDecoration d) => d.gradient != null),
-          isEmpty,
-          reason: 'aucun degrade (cahier des charges visuel, A.4)',
-        );
-        expect(
-          decorations.where(
-            (BoxDecoration d) => d.color == _couleurs(v).fond.background,
-          ),
-          hasLength(1),
-          reason: 'un seul fond uni',
-        );
+    testWidgets('le symbole est un decor du mur : il s\'eteint en arrivant au seuil de la '
+        'porte, et le sol n\'en porte aucun trait', (WidgetTester tester) async {
+      final ImageCarte image = await imageFiligrane(tester);
+      final Color fond = AppPaletteCarte.hommes.fond.background;
+      final GeometrieScene g = GeometrieScene(
+        const Size(CartePartage.largeur, CartePartage.hauteur),
+      );
+      // L'ecart au fond le plus fort de chaque bande de 20 points, de 80 points
+      // au-dessus du seuil jusqu'au seuil : le trait s'eteint, de plus en plus.
+      double ecartMax(double haut, double bas) {
+        double m = 0;
+        for (
+          int y = (haut * CartePartage.echelleExport).round();
+          y < (bas * CartePartage.echelleExport).round();
+          y++
+        ) {
+          for (int x = 0; x < image.largeur; x++) {
+            m = math.max(m, (_clarte(image.pixel(x, y)) - _clarte(fond)).abs());
+          }
+        }
+        return m;
       }
-    });
-  });
 
-  group('le portail : une porte en arche, un chemin de lumiere', () {
-    const Size bande = Size(CartePartage.largeur, CartePartage.hauteurScene);
-    final GeometrieScene g = GeometrieScene(bande);
-
-    /// L'etendue verticale du chemin sur la verticale d'abscisse [x] : de son
-    /// bord haut a son bord bas, relevee par pas d'un demi-point.
-    double epaisseurEn(Path chemin, double x) {
-      double? haut;
-      double? bas;
-      for (double y = 0; y < bande.height; y += 0.5) {
-        if (chemin.contains(Offset(x, y))) {
-          haut ??= y;
-          bas = y;
+      final List<double> bandes = <double>[
+        for (int i = 0; i < 4; i++)
+          ecartMax(
+            g.seuil - FiligraneCarte.hauteurFondu + 20.0 * i,
+            g.seuil - FiligraneCarte.hauteurFondu + 20.0 * (i + 1),
+          ),
+      ];
+      final double entier = ecartMax(0, g.seuil - FiligraneCarte.hauteurFondu);
+      expect(entier, greaterThan(0.02), reason: 'le symbole se voit au mur');
+      for (int i = 1; i < bandes.length; i++) {
+        expect(bandes[i], lessThan(bandes[i - 1]), reason: '$bandes');
+      }
+      expect(bandes.first, lessThan(entier + 1e-9));
+      expect(bandes.last, lessThan(0.4 * entier), reason: '$bandes');
+      // Du seuil au bas de la carte : le fond uni, pas un trait.
+      for (
+        int y = (g.seuil * CartePartage.echelleExport).ceil() + 2;
+        y < image.hauteur;
+        y += 2
+      ) {
+        for (int x = 0; x < image.largeur; x += 2) {
+          expect(
+            proches(image.pixel(x, y), fond, 0),
+            isTrue,
+            reason: '($x, $y) : le sol n\'a aucun motif',
+          );
         }
       }
-      return haut == null ? 0 : bas! - haut;
-    }
+    });
 
-    test('la porte est petite, avec du vide autour', () {
-      expect(g.porte.width, lessThan(0.16 * bande.width));
-      expect(g.porte.height, lessThan(0.5 * bande.height));
+    testWidgets(
+      'le fond de la carte est un aplat de la palette : le degrade de '
+      'la lumiere est peint par la scene, jamais par une decoration',
+      (WidgetTester tester) async {
+        for (final VarianteCarte v in VarianteCarte.values) {
+          await _monter(tester, variante: v);
+          final Iterable<BoxDecoration> decorations = tester
+              .widgetList<DecoratedBox>(
+                find.descendant(
+                  of: find.byType(CartePartage),
+                  matching: find.byType(DecoratedBox),
+                ),
+              )
+              .map((DecoratedBox d) => d.decoration)
+              .whereType<BoxDecoration>();
+          expect(
+            decorations.where((BoxDecoration d) => d.gradient != null),
+            isEmpty,
+            reason: 'le logo, le QR et le fond sont des aplats',
+          );
+          expect(
+            decorations.where(
+              (BoxDecoration d) => d.color == _couleurs(v).fond.background,
+            ),
+            hasLength(1),
+            reason: 'un seul fond uni',
+          );
+        }
+      },
+    );
+  });
+
+  group('le portail : une porte debout, un faisceau de lumiere droit', () {
+    const Size carte = Size(CartePartage.largeur, CartePartage.hauteur);
+    final GeometrieScene g = GeometrieScene(carte);
+
+    test('la porte est petite, debout sur son seuil, avec du vide autour', () {
+      expect(g.porte.width, lessThan(0.16 * carte.width));
+      expect(g.porte.height, lessThan(0.23 * carte.height));
       // Plus haute que large : une arche.
       expect(g.porte.height, greaterThan(g.porte.width * 1.8));
-      // Du vide a droite, au-dessus, et a sa gauche : la bande est a elle.
-      expect(bande.width - g.porte.right, greaterThanOrEqualTo(24));
-      expect(g.porte.top, greaterThanOrEqualTo(12));
-      expect(g.porte.left, greaterThan(bande.width * 0.6));
+      expect(carte.width - g.porte.right, greaterThanOrEqualTo(24));
+      expect(g.porte.left, greaterThan(carte.width * 0.6));
+      // Au-dessus de l'appel : le seuil est dans la bande du portail. Le haut de
+      // la porte, lui, remonte pres du titre, sans jamais toucher un texte (mesure
+      // sur les widgets, dans chaque langue : « la porte ne touche ni le titre... »).
+      expect(
+        g.seuil,
+        lessThan(CartePartage.hautScene + CartePartage.hauteurScene),
+      );
+      expect(g.cadrePath.getBounds().top, greaterThan(0.25 * carte.height));
+      // Debout sur une ligne de sol : le seuil est le bas de l'ouverture.
+      expect(g.seuil, g.porte.bottom);
+      expect(g.cadrePath.getBounds().bottom, closeTo(g.seuil, 1e-3));
     });
 
     test(
       'le cadre de la porte tombe sur la marge du texte : tout s\'aligne',
       () {
         final Rect cadre = g.cadrePath.getBounds();
-        expect(bande.width - cadre.right, closeTo(AppSpacing.xxl, 0.01));
-        // Le meme arrondi que la marge du titre, de la signature et du QR.
-        expect(cadre.right, closeTo(bande.width - AppSpacing.xxl, 0.01));
+        expect(carte.width - cadre.right, closeTo(AppSpacing.xxl, 0.01));
+        expect(cadre.right, closeTo(carte.width - AppSpacing.xxl, 0.01));
       },
     );
 
-    test('le chemin sort du seuil de la porte et s\'elargit vers le bas et '
-        'vers le lecteur : un trapeze courbe', () {
-      final Rect b = g.cheminPath.getBounds();
-      // Il part du seuil de la porte : son sommet est le seuil, sous la porte.
-      expect(b.top, closeTo(g.seuil, 0.01));
-      expect(
-        g.cheminPath.contains(Offset(g.porte.center.dx, g.seuil + 2)),
-        isTrue,
-      );
-      expect(
-        g.cheminPath.contains(Offset(g.porte.center.dx, g.seuil - 2)),
-        isFalse,
-      );
-      // Il s'elargit : mince au pied de la porte, bien plus epais vers le
-      // lecteur (de plus en plus, de la porte au bord de la carte).
-      final double auSeuil = epaisseurEn(g.cheminPath, g.porte.center.dx);
-      final double aMiChemin = epaisseurEn(g.cheminPath, 0.5 * bande.width);
-      final double auBord = epaisseurEn(g.cheminPath, 0.05 * bande.width);
-      expect(auSeuil, lessThan(0.2 * bande.height));
-      expect(aMiChemin, greaterThan(auSeuil + 0.15 * bande.height));
-      expect(auBord, greaterThan(aMiChemin));
-      expect(auBord, greaterThan(0.3 * bande.height));
-      // Il sort de la carte, sur le bord oppose a la porte.
-      expect(b.left, lessThan(0));
-      // Et il tient dans sa bande, avec de l'air avant le QR : il ne mord ni le
-      // QR ni le hadith.
-      expect(b.bottom, lessThanOrEqualTo(0.92 * bande.height));
-      expect(b.right, lessThanOrEqualTo(g.porte.right));
+    test(
+      'le faisceau part exactement du seuil : sa largeur au depart est celle '
+      'de l\'ouverture de la porte',
+      () {
+        final List<Offset> s = g.sommetsFaisceau;
+        expect(s, hasLength(4));
+        // Les deux coins du faisceau sont les deux coins du bas de l'ouverture.
+        expect(s[0], Offset(g.porte.left, g.seuil));
+        expect(s[1], Offset(g.porte.right, g.seuil));
+        expect((s[1] - s[0]).distance, closeTo(g.porte.width, 1e-9));
+        expect(g.coinHaut, s[0]);
+        expect(g.coinBas, s[1]);
+        // Le faisceau commence au seuil, ni plus haut ni plus bas.
+        expect(g.faisceauPath.getBounds().top, closeTo(g.seuil, 1e-3));
+        expect(
+          g.faisceauPath.contains(Offset(g.porte.center.dx, g.seuil + 1)),
+          isTrue,
+        );
+        expect(
+          g.faisceauPath.contains(Offset(g.porte.center.dx, g.seuil - 1)),
+          isFalse,
+        );
+        // Du cote de la porte, il ne depasse jamais son bord droit.
+        expect(
+          g.faisceauPath.contains(Offset(g.porte.right + 1, g.seuil + 1)),
+          isFalse,
+        );
+        expect(g.faisceauPath.getBounds().right, closeTo(g.porte.right, 1e-3));
+      },
+    );
+
+    test('ses bords sont des droites : un quadrilatere, aucune courbe', () {
+      final List<PathMetric> contours = g.faisceauPath
+          .computeMetrics()
+          .toList();
+      expect(contours, hasLength(1));
+      expect(contours.single.isClosed, isTrue);
+      final List<Offset> s = g.sommetsFaisceau;
+      double perimetre = 0;
+      for (int i = 0; i < s.length; i++) {
+        perimetre += (s[(i + 1) % s.length] - s[i]).distance;
+      }
+      // Un trace qui n'a que des segments mesure exactement son perimetre : la
+      // moindre courbe le rallongerait (a la precision du moteur, sur 4 points).
+      expect(contours.single.length, closeTo(perimetre, 0.01));
+      // Chaque point du trace reel est sur l'un des quatre segments.
+      for (double d = 0; d <= contours.single.length; d += 1.5) {
+        final Offset p = contours.single.getTangentForOffset(d)!.position;
+        double ecart = double.infinity;
+        for (int i = 0; i < s.length; i++) {
+          ecart = math.min(
+            ecart,
+            _distanceAuSegment(p, s[i], s[(i + 1) % s.length]),
+          );
+        }
+        expect(ecart, lessThan(0.01), reason: '$p');
+      }
     });
 
-    test('le chemin n\'est qu\'un trait de lumiere : il ne passe jamais sur le '
-        'texte', () {
-      // La signature est au-dessus du seuil, a la hauteur de la porte : le
-      // chemin est dessous.
-      final Rect b = g.cheminPath.getBounds();
+    test('les deux bords s\'ecartent vers le lecteur : vers le bas et vers le '
+        'cote oppose a la porte', () {
+      final List<Offset> s = g.sommetsFaisceau;
+      final Offset haut = s[3] - s[0];
+      final Offset bas = s[2] - s[1];
+      for (final Offset bord in <Offset>[haut, bas]) {
+        expect(bord.dx, lessThan(0), reason: 'vers le cote oppose a la porte');
+        expect(bord.dy, greaterThan(0), reason: 'vers le bas, vers le lecteur');
+      }
+      // Sous l'horizontale : le bord haut est le plus plat, le bord bas le plus
+      // raide ; ils s'ecartent d'au moins 20 degres.
+      final double angleHaut = math.atan2(haut.dy, -haut.dx);
+      final double angleBas = math.atan2(bas.dy, -bas.dx);
+      expect(angleHaut, closeTo(GeometrieScene.angleBordHaut, 1e-9));
+      expect(angleBas, closeTo(GeometrieScene.angleBordBas, 1e-9));
+      expect(angleBas - angleHaut, greaterThan(20 * math.pi / 180));
+      // Aucune bande plate : aucun bord n'est (presque) horizontal.
+      expect(angleHaut, greaterThan(8 * math.pi / 180));
+      // L'axe est la direction de la lumiere : vers le bas et vers la gauche.
+      expect(g.axe.distance, closeTo(1, 1e-9));
+      expect(g.axe.dx, lessThan(0));
+      expect(g.axe.dy, greaterThan(0));
+      // Le bout est plus large que le seuil : le faisceau s'elargit, sans
+      // jamais se refermer.
+      expect((s[2] - s[3]).distance, greaterThan(2 * g.porte.width));
+    });
+
+    test('le faisceau s\'elargit de plus en plus, du seuil a son bout', () {
+      double largeurA(double t) {
+        final Offset c = _surAxe(g, t);
+        double bas = 0;
+        while (g.faisceauPath.contains(c + g.normale * (bas + 0.25))) {
+          bas += 0.25;
+        }
+        double haut = 0;
+        while (g.faisceauPath.contains(c - g.normale * (haut + 0.25))) {
+          haut += 0.25;
+        }
+        return bas + haut;
+      }
+
+      final List<double> largeurs = <double>[
+        for (final double t in <double>[0.1, 0.3, 0.5, 0.7, 0.9]) largeurA(t),
+      ];
+      for (int i = 1; i < largeurs.length; i++) {
+        expect(largeurs[i], greaterThan(largeurs[i - 1]), reason: '$largeurs');
+      }
+      expect(largeurs.first, greaterThan(g.porte.width * 0.5));
+    });
+
+    test('la lumiere tient dans la carte : elle s\'eteint avant le bord oppose '
+        'a la porte et ne passe ni sur le titre, ni sur la signature, ni sur '
+        'le logo', () {
+      expect(g.finFaisceau.dx, greaterThan(0));
+      expect(g.finFaisceau.dy, lessThan(carte.height));
+      expect(g.longueur, lessThan(carte.width));
+      // Tout le faisceau est sous le seuil : sous la signature et le titre.
       expect(
-        b.top,
+        g.faisceauPath.getBounds().top,
         greaterThan(
           CartePartage.yPorte + CartePartage.hauteurLigneSignature / 2,
         ),
       );
+      expect(g.faisceauPath.getBounds().bottom, lessThan(carte.height));
     });
 
-    test('au plus deux aplats superposes : le chemin et son coeur, plus clair, '
-        'pris dans le chemin autour du seuil', () {
-      for (final VarianteCarte v in VarianteCarte.values) {
-        final AppPaletteCarte c = _couleurs(v);
-        expect(
-          c.coeur.background.computeLuminance(),
-          greaterThan(c.chemin.background.computeLuminance()),
-          reason: '${v.name} : le coeur est plus clair que le chemin',
-        );
-        expect(
-          c.chemin.background.computeLuminance(),
-          greaterThan(c.fond.background.computeLuminance()),
-          reason: '${v.name} : le chemin est plus clair que le fond',
-        );
+    test('la lumiere decroit en table : tres vive au seuil, nulle au bout', () {
+      expect(GeometrieScene.arretsFaisceau.first, 0);
+      expect(GeometrieScene.arretsFaisceau.last, 1);
+      expect(
+        GeometrieScene.arretsFaisceau.length,
+        GeometrieScene.opacitesFaisceau.length,
+      );
+      expect(GeometrieScene.eclairement(0), greaterThanOrEqualTo(0.9));
+      expect(GeometrieScene.eclairement(1), 0);
+      double precedent = 2;
+      for (double t = 0; t <= 1.0001; t += 0.02) {
+        final double e = GeometrieScene.eclairement(t);
+        expect(e, lessThanOrEqualTo(precedent), reason: 't = $t');
+        precedent = e;
       }
-      // Le coeur est pris dans le chemin, jamais ailleurs, et il en laisse
-      // une part : la lumiere s'eteint en s'eloignant de la porte.
-      final Rect chemin = g.cheminPath.getBounds();
-      final Rect coeur = g.coeurPath.getBounds();
-      expect(coeur.top, closeTo(chemin.top, 0.01));
-      expect(coeur.right, closeTo(chemin.right, 0.01));
-      expect(coeur.left, greaterThan(chemin.left + 0.2 * bande.width));
-      for (double x = 0; x < bande.width; x += 6) {
-        for (double y = 0; y < bande.height; y += 6) {
-          if (g.coeurPath.contains(Offset(x, y))) {
-            expect(g.cheminPath.contains(Offset(x, y)), isTrue);
-          }
-        }
-      }
-      // La lumiere est la plus vive pres de la porte : le pied de la porte
-      // est dans le coeur, le bord de la carte n'y est pas.
-      expect(
-        g.coeurPath.contains(Offset(g.porte.center.dx, g.seuil + 2)),
-        isTrue,
-      );
-      expect(
-        g.coeurPath.contains(Offset(2, g.seuil + 0.2 * bande.height)),
-        isFalse,
-      );
-      expect(
-        g.cheminPath.contains(Offset(2, g.seuil + 0.2 * bande.height)),
-        isTrue,
-      );
     });
 
     test('le symbole et la porte sont sur le meme axe : une porte dans la '
         'porte', () {
-      const Size carte = Size(CartePartage.largeur, CartePartage.hauteur);
       // L'axe du symbole : le milieu de son dessin. L'arche interieure du
       // fichier officiel (187 a 556 de 743) est symetrique autour du meme axe.
       final (Offset origine, double largeur) = FiligraneCarte.geometrie(carte);
@@ -806,237 +994,660 @@ void main() {
       expect(origineAr.dy, origine.dy);
     });
 
-    test('l\'arche du symbole passe au-dessus de la porte, avec du jeu', () {
-      const Size carte = Size(CartePartage.largeur, CartePartage.hauteur);
+    test('le sommet de l\'arche du symbole reste sous le haut du cadre : il se '
+        'perd derriere la porte et son halo, sans filet au-dessus d\'elle', () {
       final (Offset origine, double largeur) = FiligraneCarte.geometrie(carte);
       // L'arche interieure du fichier : son sommet est a 197,566 de 743, son
-      // trait a 17 : le bas de son trait, a l'echelle de la carte.
+      // trait a 17 : le haut de son trait, a l'echelle de la carte.
       final double echelle = largeur / symboleContour.largeur;
-      final double basDuTrait = origine.dy + (197.566 + 8.5) * echelle;
-      final Rect cadre = g.cadrePath.getBounds().shift(
-        const Offset(0, CartePartage.hautScene),
-      );
-      expect(cadre.top - basDuTrait, greaterThanOrEqualTo(8));
-    });
-
-    test('la branche fleurie des femmes reste sur le chemin, hors de la '
-        'lumiere vive, loin du texte : petite, en un coin', () {
-      final BrancheFleurie b = g.branche;
-      final Rect zone = b.bornes;
-      // Elle entre par le bord de la carte, au bas du chemin, et reste a
-      // gauche : loin de la porte, au plus pres du bord oppose.
-      expect(zone.left, lessThanOrEqualTo(0));
-      expect(zone.width, lessThan(0.4 * bande.width));
-      expect(zone.right, lessThan(g.porte.left - 120));
-      // Sous la signature et le seuil, avant le QR : jamais au-dessus du texte,
-      // du logo ni de l'appel.
-      expect(zone.top, greaterThan(g.seuil + 0.1 * bande.height));
-      expect(zone.bottom, lessThanOrEqualTo(0.92 * bande.height));
-      // Chaque point du trait et de chaque feuille est dans le chemin, et
-      // aucun dans la lumiere vive : ton sur ton, rien ne depasse.
-      for (final Offset p in <Offset>[
-        ...b.pointsDesTiges(),
-        ...b.pointsDesFeuilles(),
-      ]) {
-        expect(g.cheminPath.contains(p), isTrue, reason: 'chemin : $p');
-        expect(g.coeurPath.contains(p), isFalse, reason: 'coeur : $p');
-      }
-      // Trois fleurs a cinq petales, petites (moins de 3 pour cent de la
-      // bande en rayon) ; chaque pointe de petale est dans le chemin.
-      expect(b.fleurs, hasLength(3));
-      for (final FleurDeBranche f in b.fleurs) {
-        expect(f.rayon, lessThan(0.03 * bande.height));
-        expect(f.rayon, greaterThan(0.015 * bande.height));
-        for (int i = 0; i < 5; i++) {
-          final Offset pointe =
-              f.centre +
-              Offset.fromDirection(
-                f.angle + i * 2 * 3.141592653589793 / 5,
-                f.rayon,
-              );
-          expect(g.cheminPath.contains(pointe), isTrue, reason: '$pointe');
-          expect(g.coeurPath.contains(pointe), isFalse, reason: '$pointe');
-          expect(g.cheminPath.contains(f.pointDePetale(i)), isTrue);
-        }
-      }
-      // Un fil : le trait est mince (au plus 2 points).
-      expect(BrancheFleurie.epaisseurTige, lessThanOrEqualTo(2));
+      final double hautDuTrait = origine.dy + (197.566 - 8.5) * echelle;
+      expect(hautDuTrait, greaterThanOrEqualTo(g.cadrePath.getBounds().top));
     });
 
     for (final VarianteCarte v in VarianteCarte.values) {
-      testWidgets(
-        '${v.name} : les pixels de la scene sont des aplats de la palette',
-        (WidgetTester tester) async {
-          final ImageCarte image = await imageCarte(tester, variante: v);
-          final AppPaletteCarte c = _couleurs(v);
-          // Le coeur de la porte.
-          expect(
-            image.enPoints(_surLaCarte(g.porte.center)),
-            c.porte.background,
-            reason: 'la porte',
-          );
-          // Deux points du second aplat, loin l'un de l'autre : meme couleur,
-          // aucun degrade.
-          final Offset p1 = Offset(
-            0.7 * bande.width,
-            g.seuil + 0.06 * bande.height,
-          );
-          final Offset p2 = Offset(
-            0.5 * bande.width,
-            g.seuil + 0.1 * bande.height,
-          );
-          for (final Offset p in <Offset>[p1, p2]) {
-            expect(g.coeurPath.contains(p), isTrue, reason: '$p');
-            expect(image.enPoints(_surLaCarte(p)), c.coeur.background);
+      final AppPaletteCarte c = _couleurs(v);
+
+      testWidgets('${v.name} : la porte est la zone la plus claire, de la '
+          'teinte de la variante, presque blanche', (
+        WidgetTester tester,
+      ) async {
+        final ImageCarte image = await imageScene(
+          tester,
+          couleurs: c,
+          variante: v,
+        );
+        final Color coeur = image.enPoints(g.porte.center);
+        expect(proches(coeur, c.eclat.background, 3), isTrue, reason: '$coeur');
+        expect(coeur.computeLuminance(), greaterThan(0.9));
+        // Aucun pixel de la carte, hors de la porte, n'est aussi clair.
+        double plusClair = 0;
+        for (int y = 0; y < image.hauteur; y += 3) {
+          for (int x = 0; x < image.largeur; x += 3) {
+            final Offset p = Offset(
+              x / CartePartage.echelleExport,
+              y / CartePartage.echelleExport,
+            );
+            // Le liseré du halo, tout contre l'ouverture, en est le prolongement.
+            if (g.porte.inflate(8).contains(p)) {
+              continue;
+            }
+            plusClair = math.max(
+              plusClair,
+              image.pixel(x, y).computeLuminance(),
+            );
           }
-          // Deux points du premier aplat, loin l'un de l'autre : dans le
-          // chemin, hors du coeur, tous deux de la couleur du chemin.
-          final Offset q1 = Offset(
-            0.2 * bande.width,
-            g.seuil + 0.25 * bande.height,
+        }
+        expect(plusClair, lessThan(0.9 * coeur.computeLuminance()));
+        // Son pied et son sommet prennent la teinte de la porte, pas un blanc
+        // neutre : l'eclat est au coeur, la teinte au bord.
+        for (final double y in <double>[g.seuil - 3, g.porte.top + 3]) {
+          final Color bord = image.enPoints(Offset(g.porte.center.dx, y));
+          expect(
+            proches(bord, c.porte.background, 14),
+            isTrue,
+            reason: '$bord',
           );
-          final Offset q2 = Offset(
-            0.08 * bande.width,
-            g.seuil + 0.2 * bande.height,
+        }
+      });
+
+      testWidgets('${v.name} : le halo de la porte deborde sur le mur et se '
+          'dissipe', (WidgetTester tester) async {
+        final ImageCarte image = await imageScene(
+          tester,
+          couleurs: c,
+          variante: v,
+        );
+        // Au-dessus de la porte, la ou rien ne passe : de plus en plus loin du
+        // cadre, de moins en moins clair.
+        final double haut = g.cadrePath.getBounds().top;
+        final List<double> lum = <double>[
+          for (final double ecart in <double>[4, 12, 28, 55, 95])
+            image
+                .enPoints(Offset(g.porte.center.dx, haut - ecart))
+                .computeLuminance(),
+        ];
+        for (int i = 1; i < lum.length; i++) {
+          expect(lum[i], lessThan(lum[i - 1]), reason: '$lum');
+        }
+        // Le halo se voit : tout contre le cadre, le mur est plus clair que le
+        // fond uni de la variante, de loin ; il s'eteint, plus loin.
+        final double fond = c.fond.background.computeLuminance();
+        expect(lum.first, greaterThan(1.8 * fond), reason: '$lum');
+        expect(lum.last, lessThan(0.5 * lum.first), reason: '$lum');
+        // Et la porte se detache de son halo : 3:1 sur le mur le plus clair a
+        // cote d'elle.
+        expect(
+          contraste(
+            c.eclat.background,
+            image.enPoints(Offset(g.porte.center.dx, haut - 4)),
+          ),
+          greaterThanOrEqualTo(seuilComposant),
+          reason: 'la porte sur son halo',
+        );
+      });
+
+      testWidgets(
+        '${v.name} : la lumiere deborde sur le cadre : de l\'ouverture '
+        'vers le mur, aucun creux entre elle et lui, puis la lumiere ne fait '
+        'que baisser',
+        (WidgetTester tester) async {
+          final ImageCarte image = await imageScene(
+            tester,
+            couleurs: c,
+            variante: v,
           );
-          for (final Offset q in <Offset>[q1, q2]) {
-            expect(g.cheminPath.contains(q), isTrue, reason: '$q');
-            expect(g.coeurPath.contains(q), isFalse, reason: '$q');
-            expect(image.enPoints(_surLaCarte(q)), c.chemin.background);
+          // Deux profils, du bord de l'ouverture vers l'exterieur : de profil, au
+          // milieu de la porte (a gauche), et de face, au-dessus de son sommet.
+          for (final (String, Offset Function(double)) profil
+              in <(String, Offset Function(double))>[
+                (
+                  'a gauche',
+                  (double d) => Offset(g.porte.left - d, g.porte.center.dy),
+                ),
+                (
+                  'au-dessus',
+                  (double d) => Offset(g.porte.center.dx, g.porte.top - d),
+                ),
+              ]) {
+            double lum(double d) => _clarte(image.enPoints(profil.$2(d)));
+            const double e = GeometrieScene.ecartCadre;
+            // Le cadre : le trait de 2 points, a [e] points de l'ouverture.
+            double cadre = 0;
+            for (double d = e - 1; d <= e + 1; d += 1 / 3) {
+              cadre = math.max(cadre, lum(d));
+            }
+            // Entre l'ouverture et le cadre : le halo l'eclaire, aucun creux.
+            double creux = double.infinity;
+            for (double d = 0.5; d <= e - 1.5; d += 1 / 3) {
+              creux = math.min(creux, lum(d));
+            }
+            expect(
+              creux,
+              greaterThanOrEqualTo(0.88 * cadre),
+              reason: '${profil.$1} : un creux entre l\'ouverture et le cadre',
+            );
+            // Le cadre se voit : plus clair que le mur juste derriere lui.
+            expect(
+              cadre,
+              greaterThan(1.15 * lum(e + 3)),
+              reason: '${profil.$1} : le cadre se detache',
+            );
+            // Au-dela du cadre, la lumiere ne fait que baisser.
+            double precedent = lum(e + 1.5);
+            for (double d = e + 2.5; d <= 40; d += 1) {
+              final double l = lum(d);
+              expect(
+                l,
+                lessThanOrEqualTo(precedent + 0.01),
+                reason: '${profil.$1} a $d points : la lumiere ne remonte pas',
+              );
+              precedent = math.min(precedent, l);
+            }
           }
         },
       );
+
+      testWidgets('${v.name} : le cadre de la porte reste un aplat : un trait '
+          'd\'une seule couleur de la palette, a opacite fixe, peint tel quel '
+          '(la lumiere vient ensuite par-dessus)', (WidgetTester tester) async {
+        await _monter(tester, variante: v);
+        final RenderObject scene = tester.renderObject(
+          find
+              .descendant(
+                of: find.byKey(CartePartage.sceneKey),
+                matching: find.byType(CustomPaint),
+              )
+              .first,
+        );
+        expect(
+          scene,
+          paints..path(
+            color: c.coeur.background.withValues(
+              alpha: GeometrieScene.opaciteCadre,
+            ),
+            style: PaintingStyle.stroke,
+            strokeWidth: GeometrieScene.epaisseurCadre,
+            hasMaskFilter: false,
+          ),
+        );
+        expect(GeometrieScene.opaciteCadre, inInclusiveRange(0.3, 1));
+      });
+
+      testWidgets('${v.name} : la lumiere du faisceau est tres vive au seuil '
+          'et s\'eteint, de plus en plus, dans l\'obscurite', (
+        WidgetTester tester,
+      ) async {
+        final ImageCarte image = await imageScene(
+          tester,
+          couleurs: c,
+          variante: v,
+        );
+        final List<double> lum = <double>[
+          for (final double t in <double>[0.03, 0.1, 0.2, 0.35, 0.5, 0.7, 0.9])
+            image.enPoints(_surAxe(g, t)).computeLuminance(),
+        ];
+        for (int i = 1; i < lum.length; i++) {
+          expect(lum[i], lessThan(lum[i - 1]), reason: '$lum');
+        }
+        expect(lum.first, greaterThan(0.5), reason: 'tres vive au seuil');
+        expect(lum.last, lessThan(0.1 * lum.first), reason: 'presque eteinte');
+        // Au bout, plus rien : de part et d'autre de la fin, le meme mur.
+        final double avant = image
+            .enPoints(_surAxe(g, 0.995))
+            .computeLuminance();
+        final double apres = image
+            .enPoints(_surAxe(g, 1.06))
+            .computeLuminance();
+        expect((avant - apres).abs(), lessThan(0.012));
+        // Le faisceau se detache du mur qu'il eclaire : a mi-longueur, dans la
+        // lumiere, bien plus clair que le mur voisin, au-dessus de son bord.
+        final Offset dedans = _surAxe(g, 0.3);
+        final Offset dehors = dedans - g.normale * 90;
+        expect(g.faisceauPath.contains(dedans), isTrue);
+        expect(g.faisceauPath.contains(dehors), isFalse);
+        expect(
+          image.enPoints(dedans).computeLuminance(),
+          greaterThan(2 * image.enPoints(dehors).computeLuminance()),
+        );
+      });
+
+      testWidgets('${v.name} : le faisceau est un peu plus clair au centre '
+          'qu\'aux bords', (WidgetTester tester) async {
+        final ImageCarte image = await imageScene(
+          tester,
+          couleurs: c,
+          variante: v,
+        );
+        for (final double t in <double>[0.3, 0.45]) {
+          final Offset axe = _surAxe(g, t);
+          double bas = 0;
+          while (g.faisceauPath.contains(axe + g.normale * (bas + 0.25))) {
+            bas += 0.25;
+          }
+          double haut = 0;
+          while (g.faisceauPath.contains(axe - g.normale * (haut + 0.25))) {
+            haut += 0.25;
+          }
+          // Le milieu du faisceau, en travers, et chacun de ses deux bords, a
+          // quatre points a l'interieur.
+          final Offset milieu = axe + g.normale * ((bas - haut) / 2);
+          final double auMilieu = image.enPoints(milieu).computeLuminance();
+          for (final Offset bord in <Offset>[
+            axe + g.normale * (bas - 4),
+            axe - g.normale * (haut - 4),
+          ]) {
+            expect(g.faisceauPath.contains(bord), isTrue);
+            expect(
+              image.enPoints(bord).computeLuminance(),
+              lessThan(auMilieu),
+              reason: 't = $t, $bord',
+            );
+          }
+        }
+      });
+
+      testWidgets('${v.name} : les tenebres montent des bords et des coins : '
+          'les quatre coins sont plus sombres que le pourtour de la porte', (
+        WidgetTester tester,
+      ) async {
+        final ImageCarte image = await imageScene(
+          tester,
+          couleurs: c,
+          variante: v,
+        );
+        final double pourtour = image
+            .enPoints(
+              Offset(g.porte.center.dx, g.cadrePath.getBounds().top - 28),
+            )
+            .computeLuminance();
+        final double fond = c.fond.background.computeLuminance();
+        for (final Offset coin in const <Offset>[
+          Offset(3, 3),
+          Offset(CartePartage.largeur - 3, 3),
+          Offset(3, CartePartage.hauteur - 3),
+          Offset(CartePartage.largeur - 3, CartePartage.hauteur - 3),
+        ]) {
+          final double l = image.enPoints(coin).computeLuminance();
+          expect(l, lessThan(0.3 * pourtour), reason: '$coin');
+          expect(
+            l,
+            lessThan(0.4 * fond),
+            reason: '$coin : plus sombre que le fond',
+          );
+        }
+        // Les tenebres s'epaississent, de plus en plus, en s'eloignant de la
+        // lumiere : du milieu vers le coin du haut, le long du bord haut, et de la
+        // porte vers le coin du bas, loin du faisceau.
+        for (final (Offset, Offset) trajet in const <(Offset, Offset)>[
+          (Offset(190, 270), Offset(4, 4)),
+          (Offset(190, 8), Offset(4, 4)),
+          (Offset(250, 450), Offset(356, 636)),
+        ]) {
+          final List<double> lum = <double>[
+            for (double u = 0; u <= 1.0001; u += 0.2)
+              image
+                  .enPoints(Offset.lerp(trajet.$1, trajet.$2, u)!)
+                  .computeLuminance(),
+          ];
+          for (int i = 1; i < lum.length; i++) {
+            expect(
+              lum[i],
+              lessThanOrEqualTo(lum[i - 1] + 1e-4),
+              reason: '$trajet $lum',
+            );
+          }
+          expect(lum.last, lessThan(0.6 * lum.first), reason: '$trajet');
+        }
+      });
     }
 
-    testWidgets('la branche fleurie n\'existe que pour les femmes : fleurs et '
-        'tige ton sur ton, le centre de la fleur est le chemin, aucun '
-        'personnage', (WidgetTester tester) async {
-      final BrancheFleurie b = g.branche;
-      final FleurDeBranche fleur = b.fleurs.first;
-      final Offset petale = _surLaCarte(fleur.pointDePetale(0));
-      final Offset centre = _surLaCarte(fleur.centre);
-      final List<Offset> tige = b.pointsDesTiges();
-      final Offset surLaTige = _surLaCarte(tige[tige.length ~/ 4]);
-      final ImageCarte femmes = await imageCarte(
+    testWidgets('les deux variantes ont exactement la meme geometrie de lumiere : '
+        'les memes zones eclairees, branche comprise', (WidgetTester tester) async {
+      final ImageCarte h = await imageScene(tester);
+      final ImageCarte f = await imageScene(
         tester,
+        couleurs: AppPaletteCarte.femmes,
         variante: VarianteCarte.femmes,
       );
-      final ImageCarte hommes = await imageCarte(tester);
-      const AppPaletteCarte f = AppPaletteCarte.femmes;
-      expect(femmes.enPoints(petale), f.coeur.background, reason: 'un petale');
-      expect(femmes.enPoints(surLaTige), f.coeur.background, reason: 'la tige');
-      expect(
-        femmes.enPoints(centre),
-        f.chemin.background,
-        reason: 'le centre de la fleur est le chemin',
-      );
-      for (final Offset p in <Offset>[petale, centre, surLaTige]) {
-        expect(
-          hommes.enPoints(p),
-          AppPaletteCarte.hommes.chemin.background,
-          reason: 'sans fleur ni branche chez les hommes : le chemin seul, $p',
+      // Les memes zones de lumiere : un pixel est « eclaire » quand il atteint
+      // le tiers de l'eclat de la porte, dans l'une comme dans l'autre.
+      final double seuilH = h.enPoints(g.porte.center).computeLuminance() / 3;
+      final double seuilF = f.enPoints(g.porte.center).computeLuminance() / 3;
+      int eclaires = 0;
+      int differents = 0;
+      for (int y = 0; y < h.hauteur; y += 3) {
+        for (int x = 0; x < h.largeur; x += 3) {
+          final bool a = h.pixel(x, y).computeLuminance() >= seuilH;
+          final bool b = f.pixel(x, y).computeLuminance() >= seuilF;
+          if (a || b) {
+            eclaires++;
+          }
+          if (a != b) {
+            differents++;
+          }
+        }
+      }
+      expect(eclaires, greaterThan(3000), reason: 'la lumiere se voit');
+      // Moins d'un pixel sur dix d'ecart, au bord de la zone : la geometrie est
+      // la meme (la branche des femmes ne change rien a la lumiere).
+      expect(differents / eclaires, lessThan(0.1));
+    });
+
+    testWidgets(
+      'les deux variantes ont la meme lumiere : a chaque endroit de la '
+      'scene, la meme luminosite a 5 pour cent pres, seule la teinte change',
+      (WidgetTester tester) async {
+        // La scene seule, sans la branche des femmes (elle n'est pas de la
+        // lumiere) : les hommes, puis les femmes.
+        final ImageCarte h = await imageScene(tester);
+        final ImageCarte f = await imageScene(
+          tester,
+          couleurs: AppPaletteCarte.femmes,
         );
+        final List<(String, Offset)> points = <(String, Offset)>[
+          ('haut du milieu', const Offset(180, 60)),
+          ('haut a gauche', const Offset(40, 40)),
+          ('bord gauche', const Offset(15, 230)),
+          ('coin du bas', const Offset(20, 620)),
+          ('bas du milieu', const Offset(180, 610)),
+          ('le mur sous le sous-titre', const Offset(200, 175)),
+          ('le mur a gauche de la porte', const Offset(150, 250)),
+          ('a cote de la porte', Offset(g.porte.left - 20, g.porte.center.dy)),
+          ('sous la porte, a droite', const Offset(345, 400)),
+          ('coin du bas a droite', const Offset(340, 600)),
+          for (final double t in <double>[0.05, 0.15, 0.3, 0.6, 0.8, 0.95])
+            ('le faisceau a ${(t * 100).round()} %', _surAxe(g, t)),
+        ];
+        for (final (String, Offset) p in points) {
+          final double a = _clarte(h.enPoints(p.$2));
+          final double b = _clarte(f.enPoints(p.$2));
+          expect(
+            b / a,
+            closeTo(1, 0.05),
+            reason: '${p.$1} : hommes $a, femmes $b',
+          );
+        }
+        // Et la teinte, elle, differe : le meme point n'a pas la meme couleur.
+        const Offset mur = Offset(150, 250);
+        expect(proches(h.enPoints(mur), f.enPoints(mur), 12), isFalse);
+      },
+    );
+
+    testWidgets('en arabe la scene est en miroir : la porte et son faisceau '
+        'passent du cote du debut de ligne, la lumiere y garde son modele', (
+      WidgetTester tester,
+    ) async {
+      for (final VarianteCarte v in VarianteCarte.values) {
+        final AppPaletteCarte c = _couleurs(v);
+        final ImageCarte fr = await imageScene(
+          tester,
+          couleurs: c,
+          variante: v,
+        );
+        final ImageCarte ar = await imageScene(
+          tester,
+          couleurs: c,
+          variante: v,
+          sens: TextDirection.rtl,
+        );
+        final Offset porteFr = g.porte.center;
+        final Offset porteAr = _miroir(porteFr);
+        expect(proches(fr.enPoints(porteFr), c.eclat.background, 3), isTrue);
+        expect(proches(ar.enPoints(porteAr), c.eclat.background, 3), isTrue);
+        expect(porteFr.dx, greaterThan(180));
+        expect(porteAr.dx, lessThan(180));
+        // Le meme point, de l'autre cote, n'est plus la porte.
+        expect(proches(fr.enPoints(porteAr), c.eclat.background, 6), isFalse);
+        expect(proches(ar.enPoints(porteFr), c.eclat.background, 6), isFalse);
+        // Le faisceau est le meme, retourne : pixel pour pixel, au miroir pres.
+        int ecarts = 0;
+        for (int y = 0; y < fr.hauteur; y += 3) {
+          for (int x = 0; x < fr.largeur; x += 3) {
+            if (!proches(fr.pixel(x, y), ar.pixel(fr.largeur - 1 - x, y), 6)) {
+              ecarts++;
+            }
+          }
+        }
+        expect(ecarts, lessThan(40), reason: '${v.name} : une scene en miroir');
+        // La lumiere decroit dans le meme ordre, du seuil vers le bout.
+        final List<double> lum = <double>[
+          for (final double t in <double>[0.05, 0.3, 0.6, 0.9])
+            ar.enPoints(_miroir(_surAxe(g, t))).computeLuminance(),
+        ];
+        for (int i = 1; i < lum.length; i++) {
+          expect(lum[i], lessThan(lum[i - 1]), reason: '${v.name} $lum');
+        }
       }
     });
 
     for (final VarianteCarte v in VarianteCarte.values) {
-      testWidgets('${v.name} : aucune figure sur le chemin, que ses deux aplats '
-          '(le chemin et sa lumiere)', (WidgetTester tester) async {
-        final ImageCarte image = await imageCarte(tester, variante: v);
-        final AppPaletteCarte c = _couleurs(v);
-        final Color bas = c.chemin.background;
-        final Color haut = c.coeur.background;
-        int controles = 0;
-        // Tout l'interieur du chemin (a 3 points de ses bords), au demi-point :
-        // chaque pixel est entre le chemin et sa lumiere, canal par canal
-        // (la couleur d'un bord adouci est un melange des deux). Une forme
-        // plus sombre, un personnage par exemple, sortirait de la boite.
-        for (double x = 0; x < bande.width; x += 1) {
-          for (double y = g.seuil; y < bande.height; y += 1) {
-            final Offset p = Offset(x, y);
-            if (<Offset>[
-              p,
-              p.translate(3, 0),
-              p.translate(-3, 0),
-              p.translate(0, 3),
-              p.translate(0, -3),
-            ].any((Offset q) => !g.cheminPath.contains(q))) {
-              continue;
-            }
-            final Color px = image.enPoints(_surLaCarte(p));
-            controles++;
-            for (final (double, double, double) canal
-                in <(double, double, double)>[
-                  (px.r, bas.r, haut.r),
-                  (px.g, bas.g, haut.g),
-                  (px.b, bas.b, haut.b),
-                ]) {
+      for (final LangueCarte langue in LangueCarte.values) {
+        testWidgets(
+          '${v.name} ${langue.code} : la porte et son cadre ne touchent '
+          'ni le titre, ni le sous-titre, ni la signature',
+          (WidgetTester tester) async {
+            await _monter(
+              tester,
+              langue: langue,
+              variante: v,
+              direction: langue.sens,
+            );
+            final Rect cadre = langue.droiteAGauche
+                ? Rect.fromLTRB(
+                    carte.width - g.cadrePath.getBounds().right,
+                    g.cadrePath.getBounds().top,
+                    carte.width - g.cadrePath.getBounds().left,
+                    g.cadrePath.getBounds().bottom,
+                  )
+                : g.cadrePath.getBounds();
+            // La lumiere du halo tient aussi hors du texte : 6 points de marge.
+            final Rect cadreEtMarge = cadre.inflate(6);
+            final Map<String, Rect> zones = _zones(tester);
+            for (final String nom in <String>[
+              'titre',
+              'sous-titre',
+              'signature',
+            ]) {
               expect(
-                canal.$1 * 255,
-                inInclusiveRange(canal.$2 * 255 - 1.5, canal.$3 * 255 + 1.5),
-                reason: '${v.name} : $p',
+                zones[nom]!.overlaps(cadreEtMarge),
+                isFalse,
+                reason: '$nom ${zones[nom]} contre le cadre $cadre',
+              );
+            }
+          },
+        );
+      }
+    }
+
+    group('la branche fleurie des femmes : discrete, dans la penombre au bord '
+        'du faisceau', () {
+      final BrancheFleurie b = g.branche;
+
+      /// Les points a verifier : les tiges, les feuilles et les pointes de
+      /// petales, dans le repere de la carte (en francais).
+      final List<Offset> points = <Offset>[
+        ...b.pointsDesTiges(),
+        ...b.pointsDesFeuilles(),
+        for (final FleurDeBranche f in b.fleurs)
+          for (int i = 0; i < 5; i++)
+            f.centre +
+                Offset.fromDirection(f.angle + i * 2 * math.pi / 5, f.rayon),
+      ];
+
+      test('elle longe le bord haut du faisceau, du cote des tenebres, sans '
+          'jamais couper la lumiere', () {
+        for (final Offset p in points) {
+          expect(g.faisceauPath.contains(p), isFalse, reason: '$p');
+          expect(
+            _distanceAuFaisceau(g, p),
+            greaterThanOrEqualTo(5),
+            reason: '$p',
+          );
+        }
+        // Elle est au-dessus du bord haut : du cote des tenebres, jamais entre le
+        // faisceau et la porte, ni plus bas que le faisceau.
+        final Offset coin = g.coinHaut;
+        for (final Offset p in points) {
+          final double bordEnX =
+              coin.dy +
+              (coin.dx - p.dx) * math.tan(GeometrieScene.angleBordHaut);
+          expect(p.dy, lessThan(bordEnX), reason: 'au-dessus du bord : $p');
+        }
+        // Et pres de lui : la branche n'est pas un ornement lointain.
+        final double plusPres = points
+            .map((Offset p) => _distanceAuFaisceau(g, p))
+            .reduce(math.min);
+        expect(plusPres, lessThan(14));
+      });
+
+      test('elle entre par le bord oppose a la porte, petite, en un coin', () {
+        final Rect zone = b.bornes;
+        expect(zone.left, lessThanOrEqualTo(0));
+        expect(zone.width, lessThan(0.4 * carte.width));
+        expect(zone.right, lessThan(g.porte.left - 120));
+        // Sous la signature, avant le QR : jamais sur le titre, le logo ni la
+        // signature (chaque texte est verifie un a un, plus bas).
+        expect(
+          zone.top,
+          greaterThan(
+            CartePartage.yPorte + CartePartage.hauteurLigneSignature / 2 + 8,
+          ),
+        );
+        expect(
+          zone.bottom,
+          lessThan(CartePartage.hautScene + CartePartage.hauteurScene),
+        );
+        // Trois fleurs a cinq petales, petites ; un fil mince ; deux boutons.
+        expect(b.fleurs, hasLength(3));
+        for (final FleurDeBranche f in b.fleurs) {
+          expect(f.rayon, inInclusiveRange(3, 8));
+        }
+        expect(b.boutons, hasLength(2));
+        expect(BrancheFleurie.epaisseurTige, lessThanOrEqualTo(2));
+        expect(BrancheFleurie.opacite, inInclusiveRange(0.3, 0.7));
+      });
+
+      for (final LangueCarte langue in LangueCarte.values) {
+        testWidgets('${langue.code} : jamais sous un texte, le QR ni le logo', (
+          WidgetTester tester,
+        ) async {
+          await _monter(
+            tester,
+            langue: langue,
+            variante: VarianteCarte.femmes,
+            direction: langue.sens,
+          );
+          for (final MapEntry<String, Rect> z in _zones(tester).entries) {
+            for (final Offset p in points) {
+              final Offset q = langue.droiteAGauche ? _miroir(p) : p;
+              expect(
+                z.value.inflate(2).contains(q),
+                isFalse,
+                reason: '${z.key} $q',
               );
             }
           }
-        }
-        expect(controles, greaterThan(5000));
-      });
-    }
+        });
+      }
 
-    testWidgets(
-      'en arabe, la scene est en miroir : la porte passe du cote du debut de '
-      'ligne, la branche fleurie le suit',
-      (WidgetTester tester) async {
-        final ImageCarte fr = await imageCarte(
-          tester,
-          variante: VarianteCarte.femmes,
-        );
-        final ImageCarte ar = await imageCarte(
-          tester,
-          variante: VarianteCarte.femmes,
-          langue: LangueCarte.arabe,
-        );
+      testWidgets('elle n\'existe que pour les femmes, et ne change que son '
+          'propre dessin : ton sur ton, a faible contraste', (
+        WidgetTester tester,
+      ) async {
         const AppPaletteCarte c = AppPaletteCarte.femmes;
-        final Offset porteFr = _surLaCarte(g.porte.center);
-        final Offset porteAr = _surLaCarte(g.porte.center, rtl: true);
-        expect(fr.enPoints(porteFr), c.porte.background);
-        expect(ar.enPoints(porteAr), c.porte.background);
-        expect(porteFr.dx, greaterThan(180));
-        expect(porteAr.dx, lessThan(180));
-        // Le meme point, de l'autre cote, n'est plus la porte.
-        expect(fr.enPoints(porteAr), isNot(c.porte.background));
-        expect(ar.enPoints(porteFr), isNot(c.porte.background));
-        // La branche est en miroir elle aussi, avec la scene.
-        final Offset petale = g.branche.fleurs.first.pointDePetale(0);
-        expect(fr.enPoints(_surLaCarte(petale)), c.coeur.background);
-        expect(ar.enPoints(_surLaCarte(petale, rtl: true)), c.coeur.background);
-        expect(
-          fr.enPoints(_surLaCarte(petale, rtl: true)),
-          isNot(c.coeur.background),
+        final ImageCarte avec = await imageScene(
+          tester,
+          couleurs: c,
+          variante: VarianteCarte.femmes,
         );
-      },
-    );
+        final ImageCarte sans = await imageScene(tester, couleurs: c);
+        final FleurDeBranche fleur = b.fleurs.first;
+        final Offset petale = fleur.pointDePetale(0);
+        final Color surLaBranche = avec.enPoints(petale);
+        final Color surLeMur = sans.enPoints(petale);
+        // Un petale : la couleur de la lumiere qui s'attenue, posee a l'opacite
+        // de la branche sur le mur.
+        expect(
+          proches(
+            surLaBranche,
+            Color.alphaBlend(
+              c.coeur.background.withValues(alpha: BrancheFleurie.opacite),
+              surLeMur,
+            ),
+            4,
+          ),
+          isTrue,
+          reason: '$surLaBranche sur $surLeMur',
+        );
+        // A faible contraste : on la voit au second regard, sans la crier (sous
+        // les 3:1 d'une forme qui porte un sens).
+        final double ecart = contraste(surLaBranche, surLeMur);
+        expect(ecart, greaterThan(1.3), reason: 'on la voit');
+        expect(ecart, lessThan(seuilComposant), reason: 'sans la crier');
+        // Le centre de la fleur est troue : le mur reparait.
+        expect(
+          proches(avec.enPoints(fleur.centre), sans.enPoints(fleur.centre), 3),
+          isTrue,
+        );
+        // Loin de la branche, la scene est la meme : la branche n'est qu'elle.
+        final Rect zone = b.bornes.inflate(14);
+        int hors = 0;
+        int differents = 0;
+        for (int y = 0; y < avec.hauteur; y += 3) {
+          for (int x = 0; x < avec.largeur; x += 3) {
+            final Offset p = Offset(
+              x / CartePartage.echelleExport,
+              y / CartePartage.echelleExport,
+            );
+            if (zone.contains(p)) {
+              continue;
+            }
+            hors++;
+            if (!proches(avec.pixel(x, y), sans.pixel(x, y), 1)) {
+              differents++;
+            }
+          }
+        }
+        expect(hors, greaterThan(50000));
+        expect(differents, 0, reason: 'rien d\'autre ne change');
+      });
+    });
   });
 
   group('les deux variantes', () {
     test('une teinte plus douce et feminine pour les femmes, voisine de la '
-        'marque : mauve, prune, jamais un rose vif', () {
+        'marque : mauve, prune, jamais un rose vif ; aussi profonde que celle '
+        'des hommes', () {
       final Color h = AppPaletteCarte.hommes.fond.background;
       final Color f = AppPaletteCarte.femmes.fond.background;
       expect(f, isNot(h));
-      // Plus clair que le violet profond des hommes : plus doux.
-      expect(f.computeLuminance(), greaterThan(h.computeLuminance()));
+      // La meme profondeur : la meme lumiere sur les deux cartes (le mur des
+      // femmes n'est pas plus clair, donc pas plus embrume, que celui des hommes).
+      expect(
+        f.computeLuminance() / h.computeLuminance(),
+        closeTo(1, 0.1),
+        reason: 'seule la teinte change',
+      );
       // La saturation reste moderee et la teinte mauve a prune : pas un rose
-      // criard, pas un rouge.
+      // criard, pas un rouge ; une autre teinte que le violet bleute des hommes.
       final HSLColor hsl = HSLColor.fromColor(f);
       expect(hsl.hue, inInclusiveRange(270, 300), reason: 'mauve a prune');
       expect(hsl.saturation, lessThan(0.5));
+      expect(
+        (hsl.hue - HSLColor.fromColor(h).hue).abs(),
+        greaterThan(12),
+        reason: 'une autre teinte que celle des hommes',
+      );
       // La porte des femmes tire vers la lavande rosee, tres claire.
       final HSLColor porte = HSLColor.fromColor(
         AppPaletteCarte.femmes.porte.background,
       );
       expect(porte.hue, inInclusiveRange(300, 340));
       expect(porte.lightness, greaterThan(0.9));
+      // L'ouverture de la porte a le meme blanc pur dans les deux variantes.
+      for (final AppPaletteCarte c in AppPaletteCarte.values) {
+        expect(c.eclat.background, const Color(0xFFFFFFFF), reason: c.name);
+      }
     });
 
     test('les hommes gardent le violet profond de la palette de l\'app', () {
@@ -1097,12 +1708,14 @@ void main() {
       test('${v.name} : les formes porteuses de sens se detachent (3:1)', () {
         final AppPaletteCarte c = _couleurs(v);
         final Color fond = c.fond.background;
-        // La porte sur le fond.
-        expect(
-          contraste(c.porte.background, fond),
-          greaterThanOrEqualTo(seuilComposant),
-          reason: 'la porte',
-        );
+        // La porte (son eclat comme son bord) sur le fond.
+        for (final AppColorPair porte in <AppColorPair>[c.eclat, c.porte]) {
+          expect(
+            contraste(porte.background, fond),
+            greaterThanOrEqualTo(seuilComposant),
+            reason: 'la porte',
+          );
+        }
         // La plaque blanche du QR sur le fond.
         final AppPalette p = AppPalette.claire();
         expect(
@@ -1118,22 +1731,104 @@ void main() {
         );
       });
 
-      test(
-        '${v.name} : le chemin et sa lumiere sont un decor, lisible en second '
-        'regard seulement : faible contraste',
-        () {
-          final AppPaletteCarte c = _couleurs(v);
-          final double ecart = contraste(
-            c.coeur.background,
-            c.chemin.background,
-          );
-          // La branche fleurie est ton sur ton, dans la couleur de la lumiere
-          // posee sur le chemin : visible, mais sous les 3:1 d'une forme qui porte
-          // un sens.
-          expect(ecart, greaterThan(1.3), reason: 'on la voit');
-          expect(ecart, lessThan(seuilComposant), reason: 'sans la crier');
-        },
-      );
+      test('${v.name} : la lumiere s\'eteint, teinte par teinte : l\'eclat, la '
+          'porte, la lumiere qui s\'attenue, celle qui s\'eteint, le fond, '
+          'puis les tenebres', () {
+        final AppPaletteCarte c = _couleurs(v);
+        final List<double> lum = <double>[
+          c.eclat.background.computeLuminance(),
+          c.porte.background.computeLuminance(),
+          c.coeur.background.computeLuminance(),
+          c.chemin.background.computeLuminance(),
+          c.fond.background.computeLuminance(),
+          c.tenebres.background.computeLuminance(),
+        ];
+        for (int i = 1; i < lum.length; i++) {
+          expect(lum[i], lessThan(lum[i - 1]), reason: '${v.name} $lum');
+        }
+        // Des tenebres presque noires, de la teinte de la variante : un violet,
+        // jamais un noir neutre.
+        expect(lum.last, lessThan(0.01));
+        final HSLColor t = HSLColor.fromColor(c.tenebres.background);
+        expect(t.saturation, greaterThan(0.3));
+        // Un eclat presque blanc.
+        expect(lum.first, greaterThan(0.9));
+      });
+    }
+
+    for (final VarianteCarte v in VarianteCarte.values) {
+      for (final LangueCarte l in LangueCarte.values) {
+        testWidgets(
+          '${v.name} ${l.code} : chaque texte, le logo et le QR, mesures sur le '
+          'pixel le plus clair que la lumiere leur laisse',
+          (WidgetTester tester) async {
+            final AppPaletteCarte c = _couleurs(v);
+            await _monter(tester, langue: l, variante: v, direction: l.sens);
+            final Map<String, Rect> zones = _zones(tester);
+            // Les couleurs des textes, lues sur la carte.
+            final Color blanc = c.fond.onBackground;
+            final Color encre = c.encreDouce.asBorderSide().color;
+            final Map<String, Color> encres = <String, Color>{
+              'titre': blanc,
+              'signature': blanc,
+              'decouvrir': blanc,
+              'logo': blanc,
+              'sous-titre': encre,
+              'lien': encre,
+              'hadith': encre,
+              'traduction': encre,
+              'reference': encre,
+            };
+            final ImageCarte decor = await imageScene(
+              tester,
+              couleurs: c,
+              variante: v,
+              sens: l.sens,
+              avecFiligrane: true,
+            );
+            for (final MapEntry<String, Color> e in encres.entries) {
+              final Rect? zone = zones[e.key];
+              if (zone == null) {
+                continue;
+              }
+              final Color fond = _pixelLePlusClair(decor, zone.inflate(1));
+              expect(
+                contraste(e.value, fond),
+                greaterThanOrEqualTo(seuilTexte),
+                reason:
+                    '${e.key} : ${e.value} sur le plus clair, $fond '
+                    '(luminance ${fond.computeLuminance()})',
+              );
+            }
+            // La plaque blanche du QR se detache du plus clair qui l'entoure :
+            // 3:1, sans que le faisceau la noie.
+            final Rect qr = zones['qr']!;
+            final AppPalette p = AppPalette.claire();
+            Color autour = Colors.black;
+            for (final Rect bande in <Rect>[
+              Rect.fromLTRB(qr.left - 6, qr.top - 6, qr.right + 6, qr.top),
+              Rect.fromLTRB(
+                qr.left - 6,
+                qr.bottom,
+                qr.right + 6,
+                qr.bottom + 6,
+              ),
+              Rect.fromLTRB(qr.left - 6, qr.top, qr.left, qr.bottom),
+              Rect.fromLTRB(qr.right, qr.top, qr.right + 6, qr.bottom),
+            ]) {
+              final Color m = _pixelLePlusClair(decor, bande);
+              if (m.computeLuminance() > autour.computeLuminance()) {
+                autour = m;
+              }
+            }
+            expect(
+              contraste(p.contenuQr.background, autour),
+              greaterThanOrEqualTo(seuilComposant),
+              reason: 'la plaque du QR sur $autour',
+            );
+          },
+        );
+      }
     }
 
     for (final LangueCarte l in LangueCarte.values) {
