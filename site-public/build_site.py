@@ -536,7 +536,7 @@ def accueil_chapitres(page: dict, images: dict) -> str:
         sec = s[sid]
         textes.append(
             f'<article class="chapitre" id="{esc(sid)}" aria-labelledby="chapitre-{sid}" data-chapitre="{i}">'
-            f'<h2 id="chapitre-{sid}">{titre_html(sec["title"])}</h2>{paragraphes(sec)}{liens_section(sec)}'
+            f'<div class="chapitre__texte"><h2 id="chapitre-{sid}">{titre_html(sec["title"])}</h2>{paragraphes(sec)}{liens_section(sec)}</div>'
             f'<div class="chapitre__image-mobile">{scene(images, chapitres[i][1], "860px" if (images["images"][chapitres[i][1]].get("calques") or {}).get("anime") == "mains" else "92vw", "chapitres__image-mobile")}</div>'
             '</article>')
     return f'''<section class="chapitres" aria-label="Pour vos enfants et pour vous">
@@ -1324,7 +1324,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
     <div class="site-header__inner">
       <a class="brand site-header__brand" href="/fr/" aria-label="Rewayah Academy, accueil">{logo_entete(ambiance)}</a>
       <nav class="site-nav" aria-label="Navigation principale">{nav_items}</nav>
-      {connexion}{anchor("Commencer mon inscription", "/connexion", "site-header__inscription")}
+      {connexion}<a class="site-header__inscription" href="/connexion"><span class="site-header__long">Commencer mon inscription</span><span class="site-header__court">S’inscrire</span></a>
       <details class="mobile-menu"><summary><span class="mobile-menu__libelle">Menu</span><span class="mobile-menu__icone" aria-hidden="true"></span></summary><nav aria-label="Navigation mobile">{nav_items}{anchor(NAV[-1][0], NAV[-1][1])}</nav></details>
     </div>
   </header>

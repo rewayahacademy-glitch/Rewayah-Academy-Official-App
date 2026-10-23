@@ -235,6 +235,7 @@ Inspection après ces corrections :
 | Recette 32 (jurés Sonnet) | 7,18 | 7,08 | 6,73 | « presque » (les trois jurés appliquent le plafond « moins de quatre vraies photos ») |
 | Recette 33 (jurés Sonnet) | 7,70 | 6,57 | 6,33 | « presque », sans plafond (les rendus comptés comme images raster, définition du skill rappelée aux jurés) |
 | Recette 34 (jurés Sonnet) | 7,77 | 6,67 | 6,80 | « presque », sans plafond |
+| Recette 35 (jurés Sonnet) | 7,77 | 6,57 | 6,33 | « presque », sans plafond |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -751,6 +752,17 @@ Inspection des six pages : 0 FAIL hors Tarifs (une image, voulu). Aucun texte co
 | RR3 | Tuiles de hauteurs inégales | Dans une rangée, une même hauteur ; remises : le chiffre en haut, la phrase en bas ; notes et cours en bref : le texte au milieu |
 | RR4 | Familles, téléphone : la tuile du « 3 » en dôme aplati | Une tuile carrée au sommet en demi-cercle |
 | RR5 | En-tête : l'action principale absente | Dès 1100 px, « Commencer mon inscription » en bouton plein (vers la connexion à l'application, comme les autres boutons d'inscription) ; « Se connecter » devient un lien |
+
+**Après la recette 35.** Les trois jurés s'accordent sur quatre points : pas d'action d'inscription dans l'en-tête sur tablette et téléphone, un pied de page encore long au téléphone, Tarifs en murs de tuiles, et un vide à droite de l'arche épinglée entre deux chapitres de l'accueil.
+
+| # | Relevé | Correction |
+|---|---|---|
+| SS1 | En-tête sans action sous 1100 px | « S'inscrire » en bouton plein à côté du menu (mot ajouté au vocabulaire) ; « Commencer mon inscription » au-delà |
+| SS2 | Chapitres : colonne vide pendant le passage d'un chapitre à l'autre | Le texte de chaque chapitre reste à l'écran à côté de l'arche jusqu'à ce que le suivant le pousse |
+| SS3 | Tarifs, remises en tuiles | Une liste sans boîtes sur deux colonnes : le chiffre en grand, sa phrase à côté |
+| SS4 | Tarifs, « À savoir » en tuiles | Une liste à puces sur deux colonnes |
+| SS5 | Dates du paiement : un fil vertical | Les petites arches seules, sans fil |
+| SS6 | Pied de page : identité serrée sur tablette, long au téléphone | Tablette : l'identité sur toute la largeur, liens et adresses côte à côte ; téléphone : adresses sur une ligne chacune, liens Facebook en petit et sans soulignement |
 
 ## Hors de portée de l'agent
 

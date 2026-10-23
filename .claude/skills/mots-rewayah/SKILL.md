@@ -27,6 +27,7 @@ Sources : les décisions du directeur (annexe 10 du dossier maître, spécificat
 | Ajouter un profil élève | ajouter un enfant |
 | Séance toujours en direct | cours en cours, temps négatif |
 | Rejoindre | entrer, se connecter au cours |
+| S’inscrire (bouton court de l’en-tête du site public, sous 1100 px ; « Commencer mon inscription » au-delà) | s’enregistrer, créer un compte |
 | Sayyid, Sayyida (en salle) | Ustaz, Monsieur, Madame |
 | Travail à préparer, Avant le prochain cours | devoirs, homework |
 | la direction, l'administration | admin |

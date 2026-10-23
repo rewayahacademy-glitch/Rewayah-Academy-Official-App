@@ -2225,3 +2225,45 @@ li, dd { text-wrap: wrap; }
   .site-header__connexion { border: 0; padding-inline: 0; font-weight: 500; }
   .site-header__connexion:hover { background: none; text-decoration: underline; }
 }
+
+/* --- Recette 35 (23/10/2026) ------------------------------------------------------------------------------------- */
+/* Accueil, chapitres : le texte de chaque chapitre reste a l'ecran a cote de l'arche jusqu'a ce que le suivant le
+   pousse ; plus de colonne vide entre deux chapitres. */
+@media (min-width: 840px) {
+  .chapitre { display: block; min-height: 100svh; padding-block: 18svh 0; }
+  .chapitre__texte { position: sticky; top: calc(var(--entete) + 14svh); }
+}
+
+/* En-tete : le bouton d'inscription a toutes les largeurs (« S'inscrire » sous 1100 px, a cote du menu). */
+.site-header__inscription { display: inline-flex; align-items: center; min-height: 44px; padding-inline: var(--e-5); border-radius: var(--r-full); background: #FFFFFF; color: #25113F; font-weight: 600; text-decoration: none; white-space: nowrap; }
+.site-header__long { display: none; }
+@media (min-width: 1100px) { .site-header__long { display: inline; } .site-header__court { display: none; } }
+@media (max-width: 839px) { .site-header__inscription { margin-inline-start: auto; } .site-header__inscription + .mobile-menu { margin-inline-start: 0; } .site-header__inner { gap: var(--e-3); } }
+
+/* Pied de page : sur tablette, l'identite sur toute la largeur, puis les liens et les adresses cote a cote ; au
+   telephone, les adresses sur deux colonnes et les deux liens Facebook en petit, sans soulignement. */
+@media (min-width: 600px) and (max-width: 1099px) {
+  .site-footer__inner { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .site-footer__inner > .footer-identity, .site-footer__inner > .footer-legal, .site-footer__inner > .footer-bottom { grid-column: 1 / -1; }
+}
+@media (max-width: 599px) {
+  .footer-contacts { grid-template-columns: minmax(0, 1fr); gap: var(--e-2); }
+  .footer-contacts a { font-size: 16px; min-height: 0; }
+  .footer-contacts__adresse { white-space: nowrap; }
+  .footer-bottom a { font-size: 16px; text-decoration: none; }
+}
+
+/* Tarifs, les remises : une liste sans boites, le chiffre en grand a gauche, sa phrase a droite, sur deux colonnes. */
+.remises:not(.remises--echeances) .remise { display: grid; grid-template-columns: minmax(96px, auto) minmax(0, 1fr); align-items: baseline; column-gap: var(--e-5); padding: 0; border-radius: 0; background: none; text-align: start; }
+.remises:not(.remises--echeances) .remise__objet { margin-top: 0; }
+.remises:not(.remises--echeances) { grid-template-columns: minmax(0, 1fr); gap: var(--e-8) var(--e-16); }
+.remises:not(.remises--echeances):has(> li:nth-child(6):last-child) > li:nth-child(n+5) { grid-column: auto; }
+@media (min-width: 840px) { .remises:not(.remises--echeances) { grid-template-columns: repeat(2, minmax(0, 1fr)); } .remises:not(.remises--echeances) .remise { grid-template-columns: 150px minmax(0, 1fr); } }
+
+/* Tarifs, a savoir : une liste sur deux colonnes, chaque point avec sa puce, sans boites. */
+#conditions .points li { display: flex; padding: 0; border-radius: 0; background: none; }
+#conditions .points .puce { display: inline-block; }
+@media (min-width: 600px) { #conditions .points { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--e-6) var(--e-10); } #conditions .points li, #conditions .points li:nth-child(n+4), #conditions .points li:last-child:nth-child(odd) { grid-column: auto; } }
+
+/* Tarifs, dates du paiement : les petites arches sans le fil qui les reliait. */
+.remises--echeances::before { content: none; }
