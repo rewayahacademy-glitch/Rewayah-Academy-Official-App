@@ -374,34 +374,166 @@ la seconde heure (`scenarios_classes_plafond_par_enseignant.sql`,
 éprouvaient le plafond, la création et le suivi, pas la durée, et la durée d'un cours
 d'adultes est maintenant celle de l'offre.
 
-**Reste ouvert, hors de ce lot** (le point 4 du constat du 22/10, et un constat neuf) :
+**Fermé le 23/10 : les trois défauts qui restaient ouverts** (lot CLASSES-DUREE, suite ; `présent dans le
+code`, `testé localement`, ni staging ni production ; `M/20261023000000_classes_duree_bout_en_bout.sql`,
+`supabase/tests/scenarios_classes_duree_bout_en_bout.sql`). Demande du directeur : « il faut en finir ».
+Les choix qui suivent sont des **choix par défaut du 23/10, à confirmer par le directeur** ; chacun se
+renverse en une ligne de la migration.
+
+1. **(A) La durée des séances matérialisées.** `materialiser_seances_groupe` (dernière définition :
+   `M/0055_classes_en_attente_enseignant.sql:44`) fixait la fin de chaque séance par
+   `session_duration_minutes` (60) : le calendrier réel d'une Classe d'adultes durait 60 minutes alors que
+   l'affectation la comparait déjà à 90. Elle lit maintenant `app_private.duree_seance_minutes` (l'offre de
+   la Classe, sinon le réglage de son public), la même fonction que le prédicat. Les séances **à venir non
+   commencées** (statut `planned`, début après maintenant, non supprimées, Classe non close) sont alignées
+   **une fois** par `app_private.aligner_seances_a_venir_sur_la_classe()` (lancée à l'application de la
+   migration ; rejouable, une Classe ou toutes). Les séances passées, commencées (`preflight`,
+   `in_progress`), terminées, annulées, supprimées, ou d'une Classe close **ne changent jamais**. Avant
+   de rallonger, la fonction cherche ce que le rallongement chevaucherait, en comptant la **nouvelle** fin des
+   séances qui changent aussi : une autre séance du même enseignant (la contrainte
+   `sessions_no_teacher_overlap`), de l'enseignant effectif (un remplaçant désigné), ou d'un même participant
+   (`guard_session_overlap`). S'il y en a, **la migration s'arrête** et annule tout, avec le nombre de séances
+   et les identifiants des vingt premières paires (garde positive, aucune omission silencieuse). *Choix par
+   défaut* : `materialiser_seances_groupe` **ne réécrit pas** les séances déjà matérialisées quand elle
+   tourne (elle tourne à chaque adhésion : un rallongement qui chevauche y ferait échouer l'adhésion) ; un
+   changement ultérieur du réglage `seance.duree_minutes_*` touche donc les séances créées après, et la
+   direction rejoue l'alignement pour les autres (SQL seulement, aucun écran).
+2. **(B) Changer l'horaire d'une Classe qui a son enseignant.** `modifier_groupe` (sept arguments) changeait
+   `weekday`, `hour_local`, `timezone_iana` sans repasser par le prédicat, et la direction écrit aussi
+   `groupe_creneaux` (policy `groupe_creneaux_admin` ; le client n'y écrit jamais, il appelle la RPC). Le
+   contrôle est posé **sur les tables** (donc pour toute écriture, aucune policy retirée, aucune signature
+   changée) : `groupes_horaire_verifie_enseignant` (après un changement de jour, d'heure ou de fuseau d'une
+   Classe active, non close, qui a son enseignant) et `groupe_creneaux_verifie_enseignant` (après
+   l'insertion ou la modification d'un créneau d'une telle Classe) repassent
+   `app_private.verifier_affectation_enseignant_base` avec le nouvel horaire : compte, pièce, accès, langue,
+   genre, plafond horaire, **couverture par les disponibilités**, collisions de Classes, d'affectations
+   individuelles et de séances ponctuelles. La Classe est écartée de ses propres collisions. Un refus arrête
+   l'écriture avec **les mêmes messages et le même SQLSTATE (`P0001`) que l'affectation**, aucun code nouveau, et
+   avant la matérialisation (le nom du déclencheur se range entre `groupes_creneau_ancre` et
+   `tc_materialiser_apres_creation_groupe`, vérifié au contrôle final). Une Classe **sans enseignant** se
+   déplace comme avant. Les déclencheurs sont des `AFTER` et non des `BEFORE` : le prédicat lit les tables,
+   la ligne doit y être ; le refus annule l'écriture de la même façon. *Choix par défaut* : la couverture par
+   les disponibilités est **exigée** (comme `affecter_enseignant_classe_c11bis`, mais pas comme `creer_groupe`,
+   D4 : une Classe créée sans disponibilités déclarées ne peut plus être déplacée tant que l'enseignant n'a rien
+   déclaré) ; le maximum de Classes par enseignant (`plafond_classes_atteint`) **n'est pas rejoué** (un
+   déplacement n'ajoute aucune Classe ; pour l'ajouter, appeler `app_private.verifier_affectation_enseignant`
+   au lieu de `_base`). **Ce que le déplacement fait aux séances à venir : rien de plus qu'avant.** Le
+   déclencheur de matérialisation crée les séances du nouvel horaire ; celles de l'ancien horaire **restent
+   planifiées** (vérifié par le scénario, B1) : non inventé ici. Conséquence, avec des séances de 90 minutes :
+   un déplacement dont le nouvel horaire chevauche les séances restantes de l'ancien (un cours d'adultes
+   déplacé de moins de 90 minutes), ou deux créneaux d'une même Classe qui se chevauchent, heurtait la
+   contrainte d'exclusion à la matérialisation (`23P01`, message technique) ; la migration le refuse avant,
+   par le message existant « chevauchement avec une séance existante »
+   (`app_private.verifier_horaire_contre_seances_planifiees`). Le résultat est le même (rien d'écrit), le refus est
+   lisible. **Relecture du 23/10** : ce refus compte **toutes** les séances à venir déjà matérialisées de
+   l'enseignant (`planned`, `preflight`, `in_progress`, titulaire ou remplaçant désigné), de cette Classe à un autre
+   instant **et de n'importe quelle autre Classe** ; sans cela, les séances que laisse un premier déplacement (la
+   Classe B passée du jeudi au vendredi garde ses séances du jeudi) faisaient échouer un second déplacement, ou
+   l'inscription d'un élève, en `23P01` brut. Les séances annulées ou supprimées ne comptent pas.
+3. **(C) Les créneaux libres comptent la durée.** `enseignants_pour_classe` et `enseignants_pour_public`
+   comptaient 60 minutes pour la Classe et pour chaque créneau pris. Une heure déclarée `H` est maintenant libre
+   si `[H, H + durée de la Classe)` est couvert par les heures déclarées **consécutives** (`H` et `H + 1` pour
+   90 minutes ; minuit et dimanche soir compris, dans le fuseau de la ligne) et ne chevauche ni les Classes de
+   l'enseignant (**chacune avec sa propre durée**), ni ses affectations individuelles (60 minutes), ni ses
+   séances ponctuelles. La durée est celle de la Classe (`enseignants_pour_classe`) ou du public demandé
+   (`enseignants_pour_public`). Pour 60 minutes, rien ne change. `free_teacher_slots` n'existe plus (aucune
+   définition depuis `M/0083`) : rien à faire.
+
+4. **Corrections de relecture du 23/10** (deux relectures adverses du lot ; chacune a un contrôle dans le scénario,
+   section G, et une mutation) :
+   - *alignement quadratique* : la recherche de chevauchements évaluait `c29_enseignant_effectif_session` sur chaque
+     séance antérieure avant de tester le recouvrement ; le recouvrement (avec la nouvelle fin des séances qui
+     changent aussi) est maintenant testé d'abord. Mesure locale : 200 Classes d'adultes, 800 séances à venir,
+     4 000 séances passées jamais closes, **1,3 s** (la relecture mesurait 103 s) ;
+   - *message d'arrêt* : chaque paire donne la séance, sa Classe, son début (UTC) et l'autre séance ; l'indice dit
+     de rejouer **la migration** quand c'est elle qui s'est arrêtée (elle a tout annulé : les fonctions
+     n'existent pas encore) ou la fonction quand elle a été lancée à la main. Un contrôle **en lecture seule**,
+     `tool/controle_avant_migration_duree.sql`, à lancer **avant** la migration, rend les paires qui l'arrêteraient
+     (aucune ligne = elle passera) ; il est éprouvé par `tool/essai_migration_duree_donnees_anterieures.sh` ;
+   - *`sessions.updated_at`* : l'alignement le remet à jour ;
+   - *interblocage (`40P01`)* : le contrôle de clé étrangère d'un créneau prend `FOR KEY SHARE` sur la ligne de la
+     Classe, puis le prédicat y prend `FOR UPDATE` : deux écritures concurrentes sur la même Classe s'attendaient
+     l'une l'autre. Un déclencheur `BEFORE` (`groupe_creneaux_a_verrou_classe`) prend `FOR UPDATE` sur la Classe
+     avant ce contrôle : l'ordre des verrous est toujours la Classe, puis l'enseignant ;
+   - *réglage de durée* : `seance.duree_minutes_adulte` et `_enfant` hors de 15 à 240 minutes (ou non entiers) faisaient
+     échouer chaque adhésion à une Classe (la matérialisation lève) ; ils sont refusés à l'écriture
+     (`app_config_duree_seance`, `22023`, comme `enseignant.classes_max`) ;
+   - *créneau d'ancrage* : le déclencheur de `groupe_creneaux` ne saute plus « tout ce qui est écrit depuis un autre
+     déclencheur » (`pg_trigger_depth() > 1`) mais le seul créneau d'ancrage de la Classe (son jour et son heure) ;
+   - *client* : un `23P01` résiduel (par exemple deux élèves communs) est dit comme un chevauchement de séance, jamais
+     en texte SQL ; la feuille « Seuil maximal » a sa propre phrase (« Le seuil n'est pas changé : l'horaire affiché ici
+     n'est plus valable pour son enseignant… ») ; les phrases de refus ne citent plus « 90 minutes pour les adultes,
+     60 pour les enfants » (la durée vient de l'offre ou des réglages, jusqu'à 240 minutes) ; « لغة الحصة » devient
+     « لغة الدرس » ; la description de la règle « Durée de séance » de l'écran Règles dit qu'elle ne vaut plus que
+     pour les cours particuliers (une Classe a la durée de son offre, ou celle de son public).
+   *Écartés ou laissés à décision* (raison) : **annuler les séances de l'ancien horaire au déplacement** (voir « Reste
+   ouvert » : décision du directeur, non inventée) ; **le plafond d'heures par semaine rejoué à chaque déplacement**
+   (choix par défaut : comme à l'affectation, un déplacement ne change pas la charge mais le prédicat la recompte ; un
+   enseignant que la durée de 90 minutes met au-dessus de son plafond ne peut plus déplacer de Classe tant que son
+   plafond n'est pas relevé, et le refus est dit en mots ; le maximum de Classes, lui, n'est pas rejoué) ; **la feuille
+   « Seuil maximal » renvoie l'horaire qu'elle a lu** (antérieur au lot : `modifier_groupe` écrit `weekday` et
+   `hour_local` tels quels ; l'accepter ramène la Classe à l'ancien horaire si celui-ci est encore valide, et le
+   corriger demande de changer la signature de la RPC) ; **la règle de l'écran Règles qui ne gouverne plus les
+   Classes** (description corrigée ; aucun écran ne règle encore `seance.duree_minutes_*`).
+
+**Inventaire des lecteurs de la fin ou de la durée d'une séance** (lus dans les définitions vivantes de la base
+du rejeu et dans `lib/` ; verdict après correction de la source) :
+
+| Lecteur | Ce qu'il lit | Verdict |
+| :--- | :--- | :--- |
+| `private.ses_cloturer_seances_echues` (`M/20261018180000_ses_cloture_auto.sql:72`) | fin + marge | **juste tout seul** ; avant, fermait une séance d'adultes à 60 minutes + marge, en plein cours |
+| `autoriser_jeton_video` (`M/20261017110100_af_l2_01_jeton_enseignant_effectif_et_retrait.sql:90`), `entrer_observation` (`M/0037…:90`), `rejoindre_observation` (`M/20261017150100_af_l1_10_mfa_controleur.sql:60`), `assister_seance` | fin + 15 minutes de grâce | **juste tout seul** ; avant, « salle fermée » dès la 76e minute d'un cours de 90. La durée de validité du jeton (`video_config.token_ttl_seconds`, 300 s) ne dépend pas de la séance ; les fonctions Edge (`create-room-token`, `livekit-webhook`) n'ont aucune durée en dur |
+| `etat_presence`, `session_participants`, `session_events`, `session_presence_override` | le début, ou des horodatages réels | indépendants de la fin prévue ; rien |
+| `mes_rapports_en_attente` (`M/0025…:411`), `brouillon_cahier` (`M/0026…:197`), `lister_planning_direction` (`M/20261011201001_x2_16_planning_rpc.sql:12`), `prochaine_seance_groupe` (`M/20261016102000…:60`), `horloge_seance`, `mes_donnees_export`, `offres_remplacement`, vues `mes_seances_v`, `mes_seances_enseignant_v`, `presence_seance_v` | la fin, ou fin − début | **juste tout seul** (le rapport d'un cours d'adultes n'est plus réclamé 30 minutes trop tôt) |
+| `apercu_familial`, `compte_rendu_famille`, `lire_cahier_admin`, `partage_cahiers_classe`, `enregistrer_resume_seance` | « entré avant la fin » (`joined_at <= ended_at`) | juste tout seul |
+| `b12_creer_rapport_fin_mission`, `ses_cloturer_seances_echues` (clé `fin_prevue`) | copie de la fin à l'instant de l'événement | juste pour les séances à venir ; les copies déjà écrites ne changent pas |
+| `sessions_no_teacher_overlap`, `guard_session_overlap` | la fin | **justes** ; elles voient maintenant les vrais chevauchements des Classes de 90 minutes |
+| `transferer_eleve` (R5, `M/20261016100100_contrats_fusion_classes.sql:524`) | le **réglage** du public de la Classe cible, pas sa durée | **corrigé dans ce lot** (une ligne, texte repris de la base par la migration) : la durée de la Classe cible, son offre sinon son public ; un cours de 90 minutes né d'une offre d'enfants n'était pas vu |
+| Flutter (`ChronoSeance.duree`, `service_planning.dart`, `cta_seance.dart`, `fenetre_seance.dart`) | `fin − début` des bornes que rend le serveur | **aucune durée en dur** hors démonstrations ; juste tout seul |
+| `private.pai_due_seance` (`M/20261018130000_fac_e_02_paie_par_eleve_present.sql:116-121`) | `fin − début` de la séance, **en minutes** | **touche l'argent** : voir ci-dessous. Calcul NON modifié |
+| `private.x217_remuneration_horaire`, `private.bf1_prestations`, `fac_mensualite` | les temps réels (`finance_started_at`, `finance_ended_at`) ; la mensualité ne lit aucune durée | non concernés |
+
+**L'argent : conforme à la décision du 19/10, sur laquelle le directeur ne revient pas (23/10) ; calcul inchangé.** Le code ne compte pas « une séance = une
+heure » : `pai_due_seance` calcule `arrondi(taux × élèves présents × minutes payées / 60)`, où les minutes payées sont la
+durée **prévue** de la séance (`ended_at − started_at`, ligne 116) quand la durée tenue atteint la durée due
+(70 minutes pour les adultes, 45 pour les enfants), sinon la durée tenue plafonnée à la prévue (lignes 117-119).
+La paie par heure (47 % du prix, `C/DECISION-TARIFS-2026-10-18.md` : 65 $ pour 19,5 h, soit 3 séances de 90 minutes
+par semaine) **suppose donc des séances de 90 minutes pour les adultes**, que `materialiser_seances_groupe`
+ne produisait pas. Effets, mesurés par le scénario (E) : (1) à partir de cette migration, la paie d'une séance d'une
+Classe d'adultes de 90 minutes compte **1,5 heure au lieu d'1** : **+50 %** par séance et par élève présent, pour
+les séances à venir et celles créées ensuite (l'enseignant d'enfants : **0 %**) ; vu du mois, un élève présent à
+toutes les séances passe de 20,41 $ à 30,62 $ pour l'enseignant, c'est-à-dire **ce que la décision du 19/10
+annonçait** (avant : −33 % sur l'annoncé) ; (2) les séances d'adultes **déjà passées, commencées ou
+clôturées gardent leurs 60 minutes** (règle du directeur : jamais réécrites) : leur paie, déjà écrite ou à
+écrire, reste à 60 minutes, soit **−33 % de l'annoncé** ; le rattrapage de 30 minutes par élève présent et par
+séance passée découle de la règle déjà décidée (paie à l'heure, 19/10 ; « durée due ») : il se fera par une
+correction de données à part, seulement si de vraies séances d'adultes ont déjà eu lieu ; ce lot ne l'écrit pas ; (3) une séance d'adultes en
+cours au moment de la migration garde sa fin de 60 minutes et sera fermée par `ses_cloturer_seances_echues`
+à 60 minutes + marge. Aucune ligne de `tresorerie_mouvements` n'est écrite ni modifiée par ce lot.
+
+**Reste ouvert après ce lot** :
 - le **côté élève** (son motif est aussi heure par heure) ;
-- les **créneaux libres** de `enseignants_pour_classe` et `enseignants_pour_public`, qui
-  comptent encore `session_duration_minutes` (60) : pour une Classe de 90 minutes, l'heure
-  `H` n'est utilisable que si `H` et `H + 1` sont libres ; la proposition d'enseignants,
-  elle, passe par le prédicat et est exacte ;
-- **la durée des séances matérialisées** : `materialiser_seances_groupe`
-  (`M/0055_classes_en_attente_enseignant.sql:67`) fixe la fin de chaque séance par
-  `session_duration_minutes` (60) pour toutes les Classes, adultes comprises. Le calendrier
-  réel d'une Classe d'adultes est donc de 60 minutes alors que l'affectation la compare
-  désormais à 90 : à corriger dans un lot à part, qui change les séances créées (et
-  `session_participants`, jetons, présence), à décider avec le directeur ;
-- une Classe née d'une offre dont la durée diffère du réglage de son public : à la création
-  par `creer_groupe` (appelée par `publier_groupe_depuis_offre` avant de poser `offre_id`),
-  le prédicat compte encore la durée du public pour les collisions ; l'affectation
-  suivante lit l'offre. `publier_groupe_depuis_offre` n'est exécutable par aucun rôle
-  connecté (`proacl = {postgres=X/postgres}`) : aucun client n'y passe aujourd'hui ;
-- **changer l'horaire d'une Classe déjà affectée** (constat de la relecture du 22/10,
-  vérifié) : `modifier_groupe` (sept arguments, exécutable par `authenticated`, garde
-  direction) change `weekday`, `hour_local` et `timezone_iana` d'une Classe qui a son
-  enseignant **sans repasser par le prédicat** (ni couverture, ni collisions, ni plafond
-  horaire) ; la direction écrit aussi `groupe_creneaux` directement (policy
-  `groupe_creneaux_admin`). Seule la contrainte d'exclusion `sessions_no_teacher_overlap`
-  retient un déplacement sur le même instant ; comme les séances matérialisées durent 60
-  minutes (point précédent), elle ne voit pas le chevauchement d'une Classe d'adultes de 90
-  minutes. À décider avec le directeur : repasser le prédicat (avec ou sans exigence de
-  disponibilités) quand on déplace une Classe qui a un enseignant. Non corrigé, hors de ce
-  lot (fonction `SECURITY DEFINER` sous F86).
+- une Classe née d'une offre dont la durée diffère du réglage de son public : à la création par `creer_groupe`
+  (appelée par `publier_groupe_depuis_offre` avant de poser `offre_id`), le prédicat compte encore la durée
+  du public pour les collisions ; l'affectation suivante lit l'offre. `publier_groupe_depuis_offre` n'est
+  exécutable par aucun rôle connecté (`proacl = {postgres=X/postgres}`) : aucun client n'y passe aujourd'hui ; les
+  créneaux qu'elle ajoute après `creer_groupe` passent maintenant par le déclencheur de `groupe_creneaux` (couverture
+  exigée, ce qu'elle n'avait jamais eu) ;
+- **déplacer une Classe ne déplace pas ses séances à venir** (comportement d'avant, vérifié) : celles de l'ancien
+  horaire restent planifiées, y compris leurs inscriptions. À décider avec le directeur : les annuler au moment du
+  déplacement (statut `canceled`) avant de matérialiser le nouvel horaire. Tant que ce n'est pas décidé, un
+  adulte déplacé de moins de 90 minutes (enfant : moins de 60) est refusé (« chevauchement avec une séance
+  existante »), de même qu'un déplacement vers un horaire que les séances laissées par une autre Classe du même
+  enseignant occupent encore, et **aucun écran ni aucune RPC n'annule les séances d'une Classe** : le seul recours est
+  une écriture directe de la direction sur `sessions` (policy `sessions_admin_all`) ou SQL, après quoi le
+  déplacement passe (scénario, G1 bis). Deux Classes d'adultes consécutives d'un même enseignant ne peuvent donc pas
+  être permutées sans annuler d'abord les séances de l'ancien horaire. **Décision demandée au directeur** ;
+- le réglage de durée n'est pas répercuté tout seul sur les séances déjà matérialisées (choix par défaut du 23/10,
+  plus haut) ; l'alignement se rejoue en SQL, sans écran ni droit client ;
+- le client : le refus d'un déplacement est dit en mots (fr, ar : `admin.groupes.refusDeplacement`) par la feuille
+  « Seuil maximal » (qui renvoie l'horaire qu'elle a lu, donc un horaire périmé peut être refusé) ; **aucun écran ne
+  déplace encore une Classe** ; les phrases de refus de `creer_groupe` (`CreationClasseRefusee`) ne connaissent toujours pas
+  `plafond_classes_atteint` ni la couverture.
 
 ### 2.2 Les trois salles
 
@@ -1921,6 +2053,45 @@ réouverture) : chacun fait tomber le scénario. Ce qu'il mesure :
   À noter, hors de ce lot et non corrigé : `scenarios_cpt_suppression_export.sql` est instable sur
   la base du rejeu **sans** ce lot (4 rouges sur 80 rejeux) ; cause probable, non vérifiée : ses
   filtres courts (`f02`, `-7.6`) rencontrent parfois des identifiants aléatoires de l'export.
+- DUREE, suite (23/10, lot CLASSES-DUREE, `testé localement`, ni staging ni production ;
+  `M/20261023000000_classes_duree_bout_en_bout.sql`,
+  `supabase/tests/scenarios_classes_duree_bout_en_bout.sql`, **126 contrôles verts** sur base neuve ; 2.1 bis) :
+  durée des séances matérialisées (90, 60, offre de 90 pour des enfants, offre de 60 pour des adultes ;
+  la matérialisation ne réécrit pas) ; alignement des séances à venir (la planifiée passe, la
+  préparée, la supprimée, l'annulée, la passée, la commencée, la terminée et celles d'une Classe close
+  non ; un raccourcissement passe ; les quatre chevauchements : séance ponctuelle du même
+  enseignant, élève commun, remplaçant désigné, deux Classes qui changent toutes les deux ; deux séances
+  qui se touchent ne se chevauchent pas ; rien n'est écrit quand il s'arrête) ; déplacement refusé pour
+  chaque raison (heure non déclarée, cours de 90 minutes dont la seconde heure manque, Classe et séance
+  ponctuelle qui chevauchent, fuseau, plafond horaire, pièce, genre, séance de l'ancien horaire, deux
+  créneaux de la même Classe), mêmes messages et même SQLSTATE que l'affectation, rien
+  d'écrit ni de matérialisé ; une Classe sans enseignant ou close se déplace sans contrôle ; le maximum de
+  Classes non rejoué ; `groupe_creneaux` écrit sous le rôle connecté, policy intacte ; créneaux libres de
+  90 et de 60 minutes (minuit, dimanche, durées propres à chaque Classe, élève en cours particulier,
+  séance ponctuelle) ; `transferer_eleve` ; la paie (constat) ; droits, propriétaires, empreintes F86 et
+  ordre des déclencheurs. **Contre-épreuve** : le scénario est rouge sans la migration, dès la première durée
+  d'une Classe d'adultes. **Mutations** : 50 altérations de la migration (34 de la première série, 16 de la relecture
+  du 23/10), **toutes détectées** ; 49 le sont par le scénario seul (le contrôle final de la migration retiré), 24
+  sont aussi refusées par le contrôle final ; la 34e (l'alignement n'est plus lancé à l'application) n'est visible
+  que sur des données antérieures :
+  `tool/essai_migration_duree_donnees_anterieures.sh` monte la base avant la migration, y pose des séances
+  d'adultes de 60 minutes, applique la migration et vérifie les deux cas (alignement ; arrêt sur
+  chevauchement sans rien écrire), verts. Les altérations survivantes de la première série (le contrôle des
+  créneaux d'une Classe entre eux, redondant tant que des séances existent ; l'alignement non lancé) ont
+  reçu chacune un contrôle. **Rejeu complet** : 123 scénarios verts sur 124, le rouge est `af_liste_blanche_volatiles`
+  (les quatre fonctions `avis_*`), antérieur à ce lot (`scenarios_cpt_suppression_export.sql`, instable, était rouge
+  au premier passage et vert au rejeu) ; aucune fonction nouvelle de `public`, donc rien à
+  ajouter à la liste blanche. Deux scénarios existants suivent le nouveau contrôle, et c'est voulu :
+  `scenarios_af_l3_06_rpc_uniques.sql` (le déplacement du succès demande l'heure 19 déclarée) et
+  `scenarios_classes_duree_affectation.sql` (la fixture de « données antérieures » sans disponibilités pose
+  ses seconds créneaux le déclencheur retiré le temps de l'insertion ; ses réglages de durée absurdes, qui
+  éprouvent la garde de lecture de `duree_seance_minutes`, s'écrivent le déclencheur de validation
+  `app_config_duree_seance` désactivé). **Dart** : `AffectationRefusee`
+  réutilisé (`motifRefusDeplacementClasse`, `ServiceGroupesSupabase.modifier`), phrases fr et ar
+  `admin.groupes.refusDeplacement.*` dites par la feuille « Seuil maximal » ; des tests de la frontière
+  Supabase (acceptation, six refus, six autres erreurs) et six du rendu de la feuille ; `creation_classe_refusee_test.dart`,
+  rouge depuis le lot du 22/10 (il lisait les refus dans l'enveloppe du prédicat, qui n'en lève plus), lit
+  maintenant `verifier_affectation_enseignant_base`.
 - L6-10, second temps, par le geste réel : le seul moyen infirmé mène à
   `paiement_non_disponible`, décision et motif tracés, jamais dans `audit_logs`
   ni dans `etat_dossier()` ; le filtre `etat` le liste.

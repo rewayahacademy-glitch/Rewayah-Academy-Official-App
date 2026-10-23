@@ -26,6 +26,7 @@ import 'package:rewayah_academy/core/admin/service_groupes.dart';
 import 'package:rewayah_academy/core/capacites/port_creation_classe.dart';
 import 'package:rewayah_academy/core/capacites/port_enseignants_classe.dart'
     show GenreClasse;
+import 'package:rewayah_academy/core/offres/affectation_refusee.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart'
     show Creneau;
 import 'package:supabase_flutter/supabase_flutter.dart'
@@ -233,6 +234,145 @@ void main() {
       expect(texte, isNot(contains(refus.message)));
       expect(texte, isNot(contains(refus.code)));
       expect(serveur.requetes.single.chemin, 'rpc/creer_groupe');
+    });
+  }
+
+  // CLASSES-DUREE (23/10/2026) : deplacer une classe qui a son enseignant
+  // repasse le predicat d'affectation ; son refus arrive en AffectationRefusee.
+  Future<void> modifier() => conteneur
+      .read(serviceGroupesProvider)
+      .modifier(
+        groupeId: 'classe-1',
+        libelle: 'Tajwid du mardi',
+        seuilMax: 6,
+        creneau: _mardi17,
+      );
+
+  test(
+    'modification acceptee : la RPC part avec ses sept parametres',
+    () async {
+      serveur.corps = null;
+
+      await modifier();
+
+      final _Requete r = serveur.requetes.single;
+      expect(r.chemin, 'rpc/modifier_groupe');
+      expect(r.corps, <String, Object?>{
+        'p_groupe_id': 'classe-1',
+        'p_libelle': 'Tajwid du mardi',
+        'p_seuil_max': 6,
+        'p_weekday': 2,
+        'p_hour_local': 17,
+        'p_timezone_iana': null,
+        'p_couleur_jeton': null,
+      });
+    },
+  );
+
+  for (final (String message, MotifRefusAffectation motif)
+      in <(String, MotifRefusAffectation)>[
+        (
+          'enseignant non disponible: jour 3, heure 22, fuseau Europe/Paris, semaine 0, instant 2026-10-28 21:00:00+00',
+          MotifRefusAffectation.nonDisponible,
+        ),
+        (
+          'chevauchement avec une classe ou affectation active',
+          MotifRefusAffectation.chevauchementClasse,
+        ),
+        (
+          'chevauchement avec une séance existante',
+          MotifRefusAffectation.chevauchementSeance,
+        ),
+        ('plafond horaire enseignant dépassé', MotifRefusAffectation.plafond),
+        (
+          'enseignant incompatible avec le public de la classe',
+          MotifRefusAffectation.genreIncompatible,
+        ),
+        (
+          'enseignant indisponible ou genre inconnu',
+          MotifRefusAffectation.enseignantIndisponible,
+        ),
+      ]) {
+    test('deplacement refuse « $message » : AffectationRefusee '
+        '(${motif.name}), sans texte SQL', () async {
+      serveur.refuser(
+        statut: HttpStatus.badRequest,
+        code: 'P0001',
+        message: message,
+      );
+
+      Object? leve;
+      try {
+        await modifier();
+      } on Object catch (e) {
+        leve = e;
+      }
+
+      expect(leve, isA<AffectationRefusee>());
+      expect((leve! as AffectationRefusee).motif, motif);
+      expect(leve.toString(), isNot(contains(message)));
+      expect(serveur.requetes.single.chemin, 'rpc/modifier_groupe');
+    });
+  }
+
+  test('23P01 (la contrainte d\'exclusion des seances d\'un enseignant) : '
+      'AffectationRefusee (chevauchementSeance), sans texte technique', () async {
+    const String message =
+        'conflicting key value violates exclusion constraint "sessions_no_teacher_overlap"';
+    serveur.refuser(
+      statut: HttpStatus.conflict,
+      code: '23P01',
+      message: message,
+    );
+
+    Object? leve;
+    try {
+      await modifier();
+    } on Object catch (e) {
+      leve = e;
+    }
+
+    expect(leve, isA<AffectationRefusee>());
+    expect(
+      (leve! as AffectationRefusee).motif,
+      MotifRefusAffectation.chevauchementSeance,
+    );
+    expect(leve.toString(), isNot(contains(message)));
+  });
+
+  for (final (int statut, String code, String message)
+      in <(int, String, String)>[
+        (
+          HttpStatus.badRequest,
+          'P0001',
+          'ce groupe compte deja 5 membres actifs, seuil demande trop bas (3)',
+        ),
+        (
+          HttpStatus.badRequest,
+          'P0001',
+          "modification de groupe reservee a l'administration",
+        ),
+        (HttpStatus.badRequest, 'P0001', 'groupe introuvable ou deja cloture'),
+        (HttpStatus.badRequest, 'P0001', 'fuseau IANA inconnu : Mars/Olympus'),
+        (
+          HttpStatus.forbidden,
+          '42501',
+          'permission denied for function modifier_groupe',
+        ),
+      ]) {
+    test('autre erreur de modifier_groupe ($code « $message ») : '
+        'PostgrestException, pas un refus d\'horaire', () async {
+      serveur.refuser(statut: statut, code: code, message: message);
+
+      Object? leve;
+      try {
+        await modifier();
+      } on Object catch (e) {
+        leve = e;
+      }
+
+      expect(leve, isA<PostgrestException>());
+      expect(leve, isNot(isA<AffectationRefusee>()));
     });
   }
 

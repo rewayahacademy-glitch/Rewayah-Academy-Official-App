@@ -29,6 +29,13 @@ VALUES
 INSERT INTO public.teacher_profiles (profile_id, kyc_status)
 VALUES ('a3060000-0000-0000-0000-000000000002', 'approved');
 
+-- CLASSES-DUREE (23/10) : deplacer une Classe qui a son enseignant repasse le
+-- predicat d'affectation, couverture comprise. Le deplacement du succes
+-- (mercredi 19 h, un cours d'enfants de 60 minutes) demande donc l'heure 19 du
+-- mercredi dans les disponibilites declarees de l'enseignant.
+INSERT INTO public.weekly_availability (profile_id, weekday, hour_local, timezone_iana)
+VALUES ('a3060000-0000-0000-0000-000000000002', 3, 19, 'Europe/Paris');
+
 -- Controle catalogue (postgres) : privileges effectifs des quatre fonctions
 -- retirees et des quatre signatures gardees.
 DO $catalogue$

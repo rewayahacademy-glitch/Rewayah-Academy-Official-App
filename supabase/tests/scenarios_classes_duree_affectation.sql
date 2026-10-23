@@ -314,9 +314,16 @@ SELECT gen_random_uuid(), pg_temp.t(k.code), 'active', k.pub, 6, 'Active ' || k.
     ('tp2', 'enfant', 1, 8), ('tp2', 'enfant', 2, 8),
     ('tp0', 'enfant', 1, 8), ('tp0', 'enfant', 2, 8), ('tp0', 'enfant', 4, 8)
   ) k(code, pub, jour, heure);
+-- CLASSES-DUREE (23/10) : ces Classes sont des « donnees anterieures » sans
+-- disponibilites declarees ; ecrire leur second creneau rejouerait le predicat
+-- (groupe_creneaux_verifie_enseignant), qui exige la couverture. Le declencheur
+-- est retire le temps de poser la fixture ; il est teste par
+-- scenarios_classes_duree_bout_en_bout.sql.
+ALTER TABLE public.groupe_creneaux DISABLE TRIGGER groupe_creneaux_verifie_enseignant;
 INSERT INTO public.groupe_creneaux (groupe_id, weekday, hour_local)
 SELECT g.id, 2, 10 FROM public.groupes g
  WHERE g.teacher_id IN (pg_temp.t('th2'), pg_temp.t('th3'), pg_temp.t('th4'));
+ALTER TABLE public.groupe_creneaux ENABLE TRIGGER groupe_creneaux_verifie_enseignant;
 
 -- tses : une seance ponctuelle (sans Classe) qui commence 70 minutes apres le
 -- debut du mercredi 18 h de la semaine 1, et dure une heure.
@@ -462,7 +469,12 @@ RESET ROLE;
 SELECT pg_temp.refuse('A18', 'ta2', 'enseignant non disponible: jour 3, heure 18',
   '(f) 150 minutes : les heures 18 et 19 ne suffisent plus (18 h a 20 h 30)');
 SELECT pg_temp.accepte('A18', 'tu3', '(f) 150 minutes : les heures 18, 19 et 20 couvrent 18 h a 20 h 30');
--- Une duree absurde refuse : jamais de repli silencieux.
+-- Une duree absurde refuse : jamais de repli silencieux. Depuis le lot de bout en bout
+-- (23/10), app_config_duree_seance refuse deja l'ECRITURE d'une telle valeur
+-- (scenarios_classes_duree_bout_en_bout.sql, G6) ; le temps de ce bloc, il est
+-- desactive pour eprouver la garde de LECTURE de app_private.duree_seance_minutes
+-- (une valeur ancienne ou ecrite autrement), qui reste la seconde ligne de defense.
+ALTER TABLE public.app_config DISABLE TRIGGER app_config_duree_seance;
 SELECT pg_temp.qui(pg_temp.t('admin'), 'admin');
 SET LOCAL ROLE authenticated;
 UPDATE public.app_config SET value = pg_catalog.to_jsonb(0), updated_by = auth.uid()
@@ -483,6 +495,7 @@ UPDATE public.app_config SET value = pg_catalog.to_jsonb(15) WHERE key = 'seance
 SELECT pg_temp.vrai(app_private.duree_seance_minutes(NULL, 'adulte') = 15, '(f) 15 minutes : la borne basse passe');
 UPDATE public.app_config SET value = pg_catalog.to_jsonb(0) WHERE key = 'seance.duree_minutes_adulte';
 SELECT pg_temp.accepte('E18', 'te1', '(f) ... mais pas celle d''une Classe d''enfants, qui lit son propre reglage');
+ALTER TABLE public.app_config ENABLE TRIGGER app_config_duree_seance;
 SELECT pg_temp.qui(pg_temp.t('admin'), 'admin');
 SET LOCAL ROLE authenticated;
 UPDATE public.app_config SET value = pg_catalog.to_jsonb(90), updated_by = auth.uid()
@@ -563,7 +576,9 @@ SELECT pg_temp.refus($$SELECT app_private.verifier_affectation_enseignant_base(
   'P0001', 'classe indisponible', '(i) une Classe absente : classe indisponible');
 SELECT pg_temp.refus($$SELECT app_private.verifier_affectation_enseignant_base(NULL, NULL, true)$$,
   'P0001', 'classe ou enseignant absent', '(i) sans classe ni enseignant : classe ou enseignant absent');
--- Le refus de genre garde la priorite sur la duree : meme avec un reglage absurde.
+-- Le refus de genre garde la priorite sur la duree : meme avec un reglage absurde
+-- (ecrit ici le declencheur de validation desactive : voir (f)).
+ALTER TABLE public.app_config DISABLE TRIGGER app_config_duree_seance;
 SELECT pg_temp.qui(pg_temp.t('admin'), 'admin');
 SET LOCAL ROLE authenticated;
 UPDATE public.app_config SET value = pg_catalog.to_jsonb(0), updated_by = auth.uid()
@@ -571,6 +586,7 @@ UPDATE public.app_config SET value = pg_catalog.to_jsonb(0), updated_by = auth.u
 RESET ROLE;
 SELECT pg_temp.refuse('F18', 'tx', 'enseignant incompatible avec le public de la classe',
   '(i) les refus de compte, de langue et de genre gardent la parole avant la duree (reglage a 0 minute)');
+ALTER TABLE public.app_config ENABLE TRIGGER app_config_duree_seance;
 SELECT pg_temp.qui(pg_temp.t('admin'), 'admin');
 SET LOCAL ROLE authenticated;
 UPDATE public.app_config SET value = pg_catalog.to_jsonb(90), updated_by = auth.uid()

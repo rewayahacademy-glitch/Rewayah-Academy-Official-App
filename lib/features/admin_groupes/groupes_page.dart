@@ -19,6 +19,7 @@ import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/i18n/villes_fuseau.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/offres/affectation_refusee.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart' show horsLigneProvider;
@@ -54,6 +55,7 @@ import 'cahiers_classe.dart';
 import 'feuille_observation_groupe.dart';
 import 'genre_classe_libelles.dart';
 import 'refus_creation_classe_libelles.dart';
+import 'refus_deplacement_libelles.dart';
 import 'reglage_partage.dart';
 
 /// Operations > Groupes : le noyau du produit depuis le pivot du 19
@@ -1763,6 +1765,12 @@ class _FeuilleSeuilEtat extends ConsumerState<_FeuilleSeuil> {
           );
       widget.onModifie();
       if (mounted) Navigator.of(context).pop();
+    } on AffectationRefusee {
+      // Le serveur a repondu non (CLASSES-DUREE) : l'horaire envoye par cette
+      // feuille n'est plus celui de la classe (liste perimee) et le predicat
+      // d'affectation le refuse. Cette feuille ne change que le seuil : sa
+      // phrase le dit (jamais « l'horaire n'est pas change », ni le texte SQL).
+      if (mounted) setState(() => _erreur = phraseRefusSeuil());
     } catch (erreur) {
       if (mounted) {
         setState(

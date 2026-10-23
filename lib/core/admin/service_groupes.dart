@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../offres/affectation_refusee.dart';
 import '../planning/service_planning.dart';
 import 'creation_classe_refusee.dart';
 
@@ -189,7 +190,8 @@ abstract interface class ServiceGroupes {
     int? seuilMax,
   });
 
-  /// Modifie le libelle, le seuil et le creneau d'un groupe.
+  /// Modifie le libelle, le seuil et le creneau d'un groupe. Deplacer une
+  /// classe qui a son enseignant peut etre refuse : [AffectationRefusee].
   Future<void> modifier({
     required String groupeId,
     required String libelle,
@@ -279,26 +281,43 @@ class ServiceGroupesSupabase implements ServiceGroupes {
     ),
   );
 
+  /// CLASSES-DUREE (23/10/2026) : changer le jour ou l'heure d'une classe qui a
+  /// son enseignant repasse le predicat d'affectation cote serveur. Son refus
+  /// (couverture par les disponibilites, collisions, plafond d'heures, compte,
+  /// genre) arrive en [AffectationRefusee], le meme type que la confirmation
+  /// d'un enseignant, jamais avec le texte SQL. Les autres erreurs (droit,
+  /// seuil trop bas, reseau) passent telles quelles.
   @override
   Future<void> modifier({
     required String groupeId,
     required String libelle,
     required int seuilMax,
     required Creneau creneau,
-  }) => _client.rpc<void>(
-    'modifier_groupe',
-    params: <String, dynamic>{
-      'p_groupe_id': groupeId,
-      'p_libelle': libelle,
-      'p_seuil_max': seuilMax,
-      'p_weekday': creneau.jour,
-      'p_hour_local': creneau.heure,
-      // L3-06 : signature gardee (7 arguments). null laisse fuseau et couleur
-      // inchanges cote serveur.
-      'p_timezone_iana': null,
-      'p_couleur_jeton': null,
-    },
-  );
+  }) async {
+    try {
+      await _client.rpc<void>(
+        'modifier_groupe',
+        params: <String, dynamic>{
+          'p_groupe_id': groupeId,
+          'p_libelle': libelle,
+          'p_seuil_max': seuilMax,
+          'p_weekday': creneau.jour,
+          'p_hour_local': creneau.heure,
+          // L3-06 : signature gardee (7 arguments). null laisse fuseau et
+          // couleur inchanges cote serveur.
+          'p_timezone_iana': null,
+          'p_couleur_jeton': null,
+        },
+      );
+    } on PostgrestException catch (e) {
+      final MotifRefusAffectation? motif = motifRefusDeplacementClasse(
+        code: e.code,
+        message: e.message,
+      );
+      if (motif == null) rethrow;
+      throw AffectationRefusee(motif);
+    }
+  }
 
   @override
   Future<void> ajouterEleve({

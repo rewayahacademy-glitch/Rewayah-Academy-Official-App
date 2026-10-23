@@ -31,6 +31,13 @@ const String _migrationDuLot =
 const String _creerGroupe = 'public.creer_groupe';
 const String _predicat = 'app_private.verifier_affectation_enseignant';
 
+/// Depuis `20261022000200` (CLASSES-PLAFOND), `_predicat` n'est qu'une
+/// enveloppe qui appelle la base puis le plafond de Classes : les refus du
+/// predicat (compte, genre, plafond horaire, collisions, disponibilites) sont
+/// leves par `_predicatBase`. Le test le lisait encore dans l'enveloppe et
+/// rouge depuis ce lot (corrige le 23/10/2026).
+const String _predicatBase = 'app_private.verifier_affectation_enseignant_base';
+
 /// Les messages que la feuille peut recevoir, tels que le serveur les leve
 /// (`%` pour un parametre de format), avec leur motif. Aucun n'est inconnu.
 const Map<String, MotifRefusCreationClasse> _joignables =
@@ -131,7 +138,7 @@ void main() {
 
     setUpAll(() {
       creer = _derniereDefinition(_creerGroupe);
-      predicat = _derniereDefinition(_predicat);
+      predicat = _derniereDefinition(_predicatBase);
       leves = <String>[
         ..._messagesLeves(creer.corps),
         ..._messagesLeves(predicat.corps),
@@ -165,7 +172,7 @@ void main() {
         leves.toSet(),
         <String>{..._joignables.keys, ..._horsEcran.keys},
         reason:
-            'un message de $_creerGroupe ou de $_predicat a change : '
+            'un message de $_creerGroupe ou de $_predicatBase a change : '
             'le classer dans _joignables ou _horsEcran',
       );
     });
