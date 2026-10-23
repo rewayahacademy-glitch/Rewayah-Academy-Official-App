@@ -1,0 +1,77 @@
+<title>Signatures Gmail Rewayah</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+  /* Une colonne de travail : les consignes, puis une carte par alias avec son bouton. */
+  :root {
+    --fond: #F1EFF4; --carte: #FFFFFF; --encre: #110E20; --attenue: #655E70;
+    --filet: #E3DEE9; --violet: #8652E6; --violet-texte: #FFFFFF; --ok: #175D3A;
+    --titre: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --texte: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --fond: #17141F; --carte: #211E28; --encre: #F5F2FA; --attenue: #B9B2C6; --filet: #3A3545; --ok: #7FD9A6; color-scheme: dark } }
+  :root[data-theme="dark"] {
+    --fond: #17141F; --carte: #211E28; --encre: #F5F2FA; --attenue: #B9B2C6; --filet: #3A3545; --ok: #7FD9A6; color-scheme: dark }
+  body { background: var(--fond); color: var(--encre); font: 15px/1.6 var(--texte); }
+  main { max-width: 760px; margin: 0 auto; padding-block: 32px 48px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+    display: grid; gap: 20px; }
+  h1 { font: 600 26px/1.25 var(--titre); margin: 0; text-wrap: balance; }
+  .chapo { margin: 0; color: var(--attenue); max-width: 62ch; }
+  ol { margin: 0; padding-left: 1.3em; display: grid; gap: 6px; }
+  .consignes { background: var(--carte); border: 1px solid var(--filet); border-radius: 16px; padding: 20px 22px; }
+  .consignes h2 { font: 600 16px/1.3 var(--titre); margin: 0 0 10px; }
+  .note { margin: 12px 0 0; font-size: 13px; color: var(--attenue); }
+  .carte { background: var(--carte); border: 1px solid var(--filet); border-radius: 16px; padding: 20px 22px;
+    display: grid; gap: 14px; min-width: 0; }
+  .carte header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+  .carte h2 { font: 600 16px/1.3 var(--titre); margin: 0; overflow-wrap: anywhere; }
+  .carte header p { margin: 0; color: var(--attenue); font-size: 13px; }
+  /* L'apercu reste sur blanc : c'est le fond d'un e-mail, quel que soit le theme de cette page. */
+  .apercu { background: #FFFFFF; border-radius: 12px; padding: 18px; overflow-x: auto; border: 1px dashed var(--filet); }
+  .copier { justify-self: start; font: 600 15px/1 var(--texte); color: var(--violet-texte); background: var(--violet);
+    border: 0; border-radius: 12px; padding: 13px 20px; cursor: pointer; }
+  .copier:focus-visible { outline: 3px solid var(--encre); outline-offset: 2px; }
+  .etat { font-size: 13px; color: var(--ok); min-height: 1.2em; }
+</style>
+<main>
+  <h1>Signatures Gmail</h1>
+  <p class="chapo">Une signature par adresse de l’académie. Elle pèse moins de 2 Ko de texte et une image de 3 Ko : elle s’affiche tout de suite, dans Gmail comme ailleurs.</p>
+  <section class="consignes" aria-labelledby="t-consignes">
+    <h2 id="t-consignes">Poser une signature, en six gestes</h2>
+    <ol>
+      <li>Cliquez sur « Copier la signature » sous l’adresse voulue.</li>
+      <li>Dans Gmail : la roue en haut à droite, puis « Voir tous les paramètres ».</li>
+      <li>Onglet « Général », rubrique « Signature » : « Créer », donnez-lui le nom de l’adresse (par exemple « invoice »).</li>
+      <li>Cliquez dans la grande case vide, puis Ctrl+V (Cmd+V sur Mac).</li>
+      <li>Juste dessous, « Paramètres par défaut des signatures » : choisissez l’adresse, puis cette signature pour les nouveaux e-mails et pour les réponses.</li>
+      <li>Tout en bas de la page : « Enregistrer les modifications ». Recommencez pour chaque adresse.</li>
+    </ol>
+    <p class="note">Le logo est servi par le site, rewayahacademy.com. Tant que le site n’est pas en ligne sur ce nom, il apparaît sur cette page mais pas encore dans Gmail : posez les signatures après la mise en ligne. Si vous écrivez en votre nom, ajoutez votre prénom et votre nom au-dessus du logo, dans Gmail.</p>
+  </section>
+  <!--CARTES-->
+</main>
+<script>
+  document.querySelectorAll('.copier').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var a = b.dataset.alias;
+      var html = document.getElementById('html-' + a).innerHTML;
+      var txt = document.getElementById('txt-' + a).value;
+      var etat = document.getElementById('e-' + a);
+      function repli() {
+        var r = document.createRange();
+        r.selectNodeContents(document.getElementById('sig-' + a));
+        var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+        etat.textContent = 'Signature sélectionnée : appuyez sur Ctrl+C (Cmd+C sur Mac).';
+      }
+      try {
+        if (window.ClipboardItem && navigator.clipboard && navigator.clipboard.write) {
+          navigator.clipboard.write([new ClipboardItem({
+            'text/html': new Blob([html], { type: 'text/html' }),
+            'text/plain': new Blob([txt], { type: 'text/plain' })
+          })]).then(function () { etat.textContent = 'Copiée. Collez-la dans Gmail.'; }, repli);
+        } else { repli(); }
+      } catch (e) { repli(); }
+    });
+  });
+</script>
