@@ -12349,7 +12349,7 @@
           "creeLe": "Mis en file le",
           "envoyeLe": "Envoyé le",
           "tentatives": "Essais",
-          "erreur": "Dernière erreur"
+          "motifEchec": "Dernière erreur"
         },
         "actualiser": "Actualiser",
         "reessayer": "Remettre en file",

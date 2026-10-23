@@ -18098,7 +18098,7 @@ class _Traductions$courriels$admin$file$champs$ar extends Traductions$courriels$
 	@override String get creeLe => 'وُضعت في الطابور يوم';
 	@override String get envoyeLe => 'أُرسلت يوم';
 	@override String get tentatives => 'المحاولات';
-	@override String get erreur => 'آخر خطأ';
+	@override String get motifEchec => 'آخر خطأ';
 }
 
 // Path: courriels.admin.file.retour
@@ -27731,7 +27731,7 @@ extension on TraductionsAr {
 			'courriels.admin.file.champs.creeLe' => 'وُضعت في الطابور يوم',
 			'courriels.admin.file.champs.envoyeLe' => 'أُرسلت يوم',
 			'courriels.admin.file.champs.tentatives' => 'المحاولات',
-			'courriels.admin.file.champs.erreur' => 'آخر خطأ',
+			'courriels.admin.file.champs.motifEchec' => 'آخر خطأ',
 			'courriels.admin.file.actualiser' => 'تحديث',
 			'courriels.admin.file.reessayer' => 'إعادتها إلى الطابور',
 			'courriels.admin.file.vide' => 'لا توجد رسائل في هذه القائمة.',

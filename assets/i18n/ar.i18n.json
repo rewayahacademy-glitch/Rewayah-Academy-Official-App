@@ -11394,7 +11394,7 @@
           "creeLe": "وُضعت في الطابور يوم",
           "envoyeLe": "أُرسلت يوم",
           "tentatives": "المحاولات",
-          "erreur": "آخر خطأ"
+          "motifEchec": "آخر خطأ"
         },
         "actualiser": "تحديث",
         "reessayer": "إعادتها إلى الطابور",

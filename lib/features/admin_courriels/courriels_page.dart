@@ -848,7 +848,7 @@ class _CarteCourriel extends StatelessWidget {
           if (erreur != null && erreur.trim().isNotEmpty) ...<Widget>[
             Ecart.vSm,
             LigneCleValeur(
-              cle: f.champs.erreur,
+              cle: f.champs.motifEchec,
               valeur: isolerSens(erreur.trim()),
             ),
           ],

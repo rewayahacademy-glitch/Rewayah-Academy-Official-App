@@ -38949,7 +38949,7 @@ class Traductions$courriels$admin$file$champs$fr {
 	String get tentatives => 'Essais';
 
 	/// fr: 'Dernière erreur'
-	String get erreur => 'Dernière erreur';
+	String get motifEchec => 'Dernière erreur';
 }
 
 // Path: courriels.admin.file.retour
@@ -50139,7 +50139,7 @@ extension on Traductions {
 			'courriels.admin.file.champs.creeLe' => 'Mis en file le',
 			'courriels.admin.file.champs.envoyeLe' => 'Envoyé le',
 			'courriels.admin.file.champs.tentatives' => 'Essais',
-			'courriels.admin.file.champs.erreur' => 'Dernière erreur',
+			'courriels.admin.file.champs.motifEchec' => 'Dernière erreur',
 			'courriels.admin.file.actualiser' => 'Actualiser',
 			'courriels.admin.file.reessayer' => 'Remettre en file',
 			'courriels.admin.file.vide' => 'Aucun e-mail dans cette liste.',

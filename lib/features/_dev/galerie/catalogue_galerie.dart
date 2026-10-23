@@ -91,6 +91,7 @@ import '../../../core/widgets/permanent_notice.dart';
 import '../../../core/widgets/pile_cartes.dart';
 import '../../../core/widgets/pin_pad.dart';
 import '../../../core/widgets/point_rappel.dart';
+import '../../../core/widgets/porte_lumiere.dart';
 import '../../../core/widgets/pressable.dart';
 import '../../../core/widgets/raccourci_tactile.dart';
 import '../../../core/widgets/rangee_filtres.dart';
@@ -2212,6 +2213,26 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
     ],
   ),
 
+  // Page introuvable (directeur, 23/10/2026) : la porte du logo et sa lumiere,
+  // une scene d'attente ; meme famille que la 404 du site public.
+  EntreeGalerie(
+    nom: 'PorteLumiere',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'porte et faisceau',
+        (BuildContext _) => const PorteLumiere(),
+      ),
+      EtatGalerie(
+        'en arabe : meme dessin, jamais retourne',
+        (BuildContext _) => const Directionality(
+          textDirection: TextDirection.rtl,
+          child: PorteLumiere(),
+        ),
+      ),
+    ],
+  ),
+
   // BRAND-ORN-1 (directeur, 11/10/2026) : la signature discrete de la marque.
   // Regle d'usage : `docs/current/BRAND-ORN-1.md`.
   EntreeGalerie(
@@ -3527,7 +3548,8 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         'sans action : la phrase dit pourquoi',
         (BuildContext _) => const BarreSelection(
           titre: '1 candidature retenue',
-          phrase: 'Les actions pourront être lancées quand la connexion revient.',
+          phrase:
+              'Les actions pourront être lancées quand la connexion revient.',
           libelleRelacher: 'Tout relâcher',
           onRelacher: _rien,
           libelleAction: 'Agir sur la sélection',
