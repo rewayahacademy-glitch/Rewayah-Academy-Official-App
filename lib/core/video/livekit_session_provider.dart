@@ -540,6 +540,11 @@ class LiveKitSessionProvider implements VideoSessionProvider {
   @override
   String? get erreurCameraEntree => _erreurCameraEntree;
 
+  /// Pose un refus de camera sans navigateur (tests).
+  @visibleForTesting
+  set erreurCameraEntreePourTest(String? erreur) =>
+      _erreurCameraEntree = erreur;
+
   @override
   Future<void> reglerCamera({required bool actif}) async {
     final lk.LocalParticipant? local = _salle?.localParticipant;
@@ -655,6 +660,10 @@ class LiveKitSessionProvider implements VideoSessionProvider {
     _acces = null;
     _degradee = false;
     _cameraAvantDegradation = false;
+    // Le refus de camera ne vaut que pour la seance ou il a eu lieu (revue de
+    // la PR 54) : le moteur vit toute l'application, et `rejoindre` passe par
+    // ici avant chaque entree.
+    _erreurCameraEntree = null;
     // **Ici, et seulement ici.** Quitter est un acte volontaire : la seance est
     // finie pour soi. Une deconnexion, elle, laisse le contenu en place --
     // c'est toute la difference entre « la seance est terminee » et « le

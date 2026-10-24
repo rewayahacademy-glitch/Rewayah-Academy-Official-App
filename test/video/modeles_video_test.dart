@@ -63,7 +63,10 @@ void main() {
       // Le jour ou un troisieme fournisseur apparaitra cote serveur, une
       // application non mise a jour doit continuer de fonctionner plutot que
       // de lever. Le Cloud est le repli sur, c'est lui qui fournit TURN.
-      expect(FournisseurVideo.depuis('quelque_chose_de_neuf'), FournisseurVideo.cloud);
+      expect(
+        FournisseurVideo.depuis('quelque_chose_de_neuf'),
+        FournisseurVideo.cloud,
+      );
       expect(FournisseurVideo.depuis(null), FournisseurVideo.cloud);
     });
   });
@@ -232,6 +235,15 @@ void main() {
       expect(vide.reference, '1:1');
       expect(vide.presentePar, isEmpty);
     });
+  });
+
+  test('revue PR 54 : le refus de camera d une seance est oublie a la '
+      'sortie, donc avant l entree suivante', () async {
+    final LiveKitSessionProvider moteur = LiveKitSessionProvider()
+      ..erreurCameraEntreePourTest = 'NotAllowedError: Permission denied';
+    expect(moteur.erreurCameraEntree, isNotNull);
+    await moteur.quitter();
+    expect(moteur.erreurCameraEntree, isNull);
   });
 
   group('Le moteur refuse de presenter sans jeton qui l autorise', () {
