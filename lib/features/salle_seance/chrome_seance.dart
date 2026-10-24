@@ -95,7 +95,19 @@ class ChromeSeance extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
-      children: <Widget>[tete, Ecart.vSm, suite],
+      children: <Widget>[
+        tete,
+        Ecart.vSm,
+        // La meme gouttiere que la tete : rien ne touche le bord de l'ecran.
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: AppGabarit.de(context) == Gabarit.desktop
+                ? AppPage.gouttiereDesktop
+                : AppPage.gouttiereMobile,
+          ),
+          child: suite,
+        ),
+      ],
     );
   }
 }
