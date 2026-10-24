@@ -113,6 +113,10 @@ Feu vert du directeur : « oui Prévenir » (24/10/2026) ; « tout doit aller su
   l'installation.
 - **Après collage, Claude vérifie** : version dans `list_migrations`, 0 retour chariot, empreintes des deux
   fonctions identiques à la base locale, exécutables par `authenticated` seulement.
+- **Collé par le directeur le 24/10/2026, vérifié en lecture** : version `20261024010000 cand_prevenir_par_courriel`
+  inscrite ; 0 retour chariot ; empreintes identiques à la base locale (`apercu_prevenir_par_courriel` 97c7d1f7…,
+  `prevenir_par_courriel` e0da739f…) ; exécutables par `authenticated`, ni `anon` ni `service_role`.
+  **Le fichier 19 est en production.**
 
 ## Prochaine livraison sur la base de test (pas encore appliquée)
 
