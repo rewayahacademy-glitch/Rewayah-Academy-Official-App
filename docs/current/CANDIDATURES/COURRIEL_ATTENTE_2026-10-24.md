@@ -2,7 +2,11 @@
 
 Décidé par le pilotage le 24/10/2026 (`docs/orchestration/PILOTAGE-BOUCLES-2026-10-24.md`,
 Boucle 3). Texte validé par le directeur le 24/10 (soir) avec deux ajouts : **il n'y a rien à payer**, et
-**le message part en trois langues** (la plupart des candidats ne lisent pas le français).
+**chaque candidat le reçoit dans sa langue** (la plupart ne lisent pas le français) : texte écrit
+une fois en français, traduit à l'envoi par Google Traduction, déjà branché dans le système de
+courriels (`supabase/functions/_shared/courriel/traduction.ts`, clé `GOOGLE_TRADUCTION_CLE`),
+une langue par destinataire, jamais trois textes dans un même message (décision du directeur,
+24/10, 01:00).
 
 ## Envoi
 
@@ -17,16 +21,21 @@ Boucle 3). Texte validé par le directeur le 24/10 (soir) avec deux ajouts : **i
   (déployé par la fusion dans `main`), puis une page de collage pour la mise en file (SQL
   fabriqué depuis la feuille, collé par le directeur dans la base de production).
 
-## Langues (décision du directeur, 24/10)
+## Langue de chaque envoi (décision du directeur, 24/10)
 
-Un seul courriel, trois parties l'une sous l'autre : arabe, français, anglais. Chaque partie est
-courte et dit la même chose. Aucune donnée de langue n'est nécessaire dans la feuille.
+Un courriel = une langue, celle du candidat. La langue vient de la feuille des candidats (colonne
+de langue du formulaire), traduite en code (`fr`, `en`, `ar`, `poular`, `sw`, `ha`, `wo`…) par le
+même mappage que l'import. Sans langue connue : français. Le texte source est le français ; la
+mise en file porte la langue ; l'envoi traduit par Google Traduction (protection des passages en
+écriture arabe, note « Ce message a été traduit automatiquement »). Les versions arabe et anglaise
+ci-dessous ne servent qu'à vérifier la traduction automatique sur deux langues lues par la
+direction ; elles ne sont pas envoyées telles quelles.
 
 ## Objet
 
-طلبكم للتدريس في أكاديمية رواية · Votre candidature à Rewayah Academy · Your application to Rewayah Academy
+Votre candidature pour enseigner à Rewayah Academy : où nous en sommes
 
-## Corps, partie française
+## Corps (texte source, français)
 
 Assalamou alaykoum wa rahmatoullah,
 
@@ -59,7 +68,7 @@ Qu'Allah vous récompense pour votre démarche.
 La direction
 Rewayah Academy
 
-## Corps, partie arabe (en premier dans le courriel)
+## Référence arabe (contrôle de la traduction, non envoyée telle quelle)
 
 السلام عليكم ورحمة الله وبركاته،
 
@@ -87,7 +96,7 @@ Rewayah Academy
 الإدارة
 أكاديمية رواية
 
-## Corps, partie anglaise (en dernier)
+## Référence anglaise (contrôle de la traduction, non envoyée telle quelle)
 
 Assalamu alaykum wa rahmatullah,
 
