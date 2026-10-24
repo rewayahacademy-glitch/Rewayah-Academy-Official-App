@@ -3845,6 +3845,17 @@
       "actionModifierSeuil": "Modifier le seuil",
       "actionObservation": "Réglages d'observation",
       "actionCloturer": "Clôturer la classe",
+      "actionAjouterCreneau": "Ajouter un créneau",
+      "creneau": {
+        "titre": "Nouveau créneau {deLibelle}",
+        "contexte": "Un jour et une heure de plus, chaque semaine, pour la même Classe. Les séances des quatre prochaines semaines sont créées tout de suite.",
+        "fuseau": "L'heure est celle du fuseau horaire de la Classe.",
+        "envoyer": "Ajouter ce créneau",
+        "dejaLa": "Cette Classe a déjà ce créneau\u00a0: rien n'a changé. Choisissez un autre jour ou une autre heure.",
+        "erreur": "Le créneau n'a pas été ajouté\u00a0: le serveur n'a pas répondu. Vérifiez la connexion, puis pressez de nouveau.",
+        "horsLigne": "Le créneau pourra être ajouté quand la connexion sera revenue. Vos choix restent affichés.",
+        "journalisation": "Chaque créneau ajouté est inscrit au journal d'audit."
+      },
       "ajouterTitre": "Ajouter un élève à {libelle}",
       "manqueEleve": "Il manque l'élève\u00a0: choisissez-le dans la liste.",
       "champMotif": "Motif",

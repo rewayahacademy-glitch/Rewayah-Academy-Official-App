@@ -52,6 +52,7 @@ import '../admin_fusion/feuilles_fusion.dart';
 import '../creneaux/plages.dart' show jourCapitalise, nommerHeure;
 import 'bas_de_feuille.dart';
 import 'cahiers_classe.dart';
+import 'feuille_creneau.dart';
 import 'feuille_observation_groupe.dart';
 import 'genre_classe_libelles.dart';
 import 'refus_creation_classe_libelles.dart';
@@ -398,6 +399,8 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
                       c.groupe,
                       nom: c.nom,
                     ),
+                    onAjouterCreneau: (ClasseListee c) =>
+                        ouvrirAjoutCreneau(context, ref, c.groupe, nom: c.nom),
                     onObservation: (ClasseListee c) =>
                         _ouvrirObservation(context, ref, c.groupe, nom: c.nom),
                     onCloturer: (ClasseListee c) =>
@@ -433,6 +436,12 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
                             onAjouter: () =>
                                 _ouvrirAjout(context, ref, groupe, nom: nom),
                             onModifierSeuil: () => _ouvrirModifierSeuil(
+                              context,
+                              ref,
+                              groupe,
+                              nom: nom,
+                            ),
+                            onAjouterCreneau: () => ouvrirAjoutCreneau(
                               context,
                               ref,
                               groupe,
@@ -486,6 +495,7 @@ class _Inspecteur extends StatelessWidget {
     required this.onRetirer,
     required this.onAjouter,
     required this.onModifierSeuil,
+    required this.onAjouterCreneau,
     required this.onObservation,
     required this.onCloturer,
     super.key,
@@ -496,6 +506,7 @@ class _Inspecteur extends StatelessWidget {
   final void Function(String studentId, String prenom) onRetirer;
   final VoidCallback onAjouter;
   final VoidCallback onModifierSeuil;
+  final VoidCallback onAjouterCreneau;
   final VoidCallback onObservation;
   final VoidCallback onCloturer;
 
@@ -573,6 +584,10 @@ class _Inspecteur extends StatelessWidget {
                       onChoix: onModifierSeuil,
                     ),
                     EntreeAction(
+                      libelle: t.admin.groupes.actionAjouterCreneau,
+                      onChoix: onAjouterCreneau,
+                    ),
+                    EntreeAction(
                       libelle: t.admin.groupes.actionObservation,
                       onChoix: onObservation,
                     ),
@@ -612,6 +627,7 @@ class _Corps extends StatelessWidget {
     required this.onSelectionner,
     required this.onAjouter,
     required this.onModifierSeuil,
+    required this.onAjouterCreneau,
     required this.onObservation,
     required this.onCloturer,
   });
@@ -622,6 +638,7 @@ class _Corps extends StatelessWidget {
   final void Function(ClasseListee classe) onSelectionner;
   final void Function(ClasseListee classe) onAjouter;
   final void Function(ClasseListee classe) onModifierSeuil;
+  final void Function(ClasseListee classe) onAjouterCreneau;
   final void Function(ClasseListee classe) onObservation;
   final void Function(ClasseListee classe) onCloturer;
 
@@ -770,6 +787,10 @@ class _Corps extends StatelessWidget {
                     EntreeAction(
                       libelle: t.admin.groupes.actionModifierSeuil,
                       onChoix: () => onModifierSeuil(c),
+                    ),
+                    EntreeAction(
+                      libelle: t.admin.groupes.actionAjouterCreneau,
+                      onChoix: () => onAjouterCreneau(c),
                     ),
                     EntreeAction(
                       libelle: t.admin.groupes.actionObservation,
