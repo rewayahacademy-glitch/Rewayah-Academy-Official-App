@@ -172,3 +172,5 @@ ne peut être comptée.
 |---|---|---|---|
 | 2026-10-24 | Plan | écrit | ce fichier |
 | 2026-10-24 | Plan §5 | ordre des besoins fixé par le directeur : tableau de la direction, tri des 568 candidats, espace admin, paiement en dernier ; K3 par l'import des élèves actuels | ce fichier |
+| 2026-10-24 | Plan §5 | précisé : ordre des boucles 2 à 5 selon les peines du directeur ; le paiement passe en Boucle 2 | ce fichier |
+| 2026-10-24 | Étape 1 (K1) | codé, test local vert (276 tests ciblés, analyse et vérificateurs CI sans défaut) ; non fusionné | branche `claude/admiring-brown-r6ai72` |
