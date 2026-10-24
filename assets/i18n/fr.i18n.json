@@ -2137,7 +2137,7 @@
       "explication": "Votre nom est écrit dans une autre écriture. Pour les listes, les attestations et les échanges avec l'académie, nous avons besoin de son écriture en lettres latines.",
       "libelle": "Votre nom en lettres latines",
       "aide": "Voici notre proposition. Corrigez-la si votre nom ne s'écrit pas ainsi, puis confirmez.",
-      "origine": "Votre nom tel que vous l'avez écrit : {nom}",
+      "origine": "Votre nom tel que vous l'avez écrit\u00a0: {nom}",
       "confirmer": "Confirmer mon nom",
       "plusTard": "Plus tard",
       "erreur": "Écrivez votre nom avec les lettres de l'alphabet latin (a, b, c) pour continuer.",
@@ -3598,7 +3598,7 @@
         "message": "Le message rappelle la date de la réponse et le nom du formulaire, demande de créer son compte avec la même adresse, et dit que rien n'est à payer.",
         "delai": "Les messages partent dans les minutes qui suivent l'envoi, pas à l'instant.",
         "groupes": "L'envoi part par tranches de {n} personnes au plus.",
-        "fermee": "L'inscription en ligne doit d'abord être ouverte : tant qu'elle est fermée, le lien mènerait à une page fermée et aucun message ne part.",
+        "fermee": "L'inscription en ligne doit d'abord être ouverte\u00a0: tant qu'elle est fermée, le lien mènerait à une page fermée et aucun message ne part.",
         "videTitre": "Tout le monde est déjà prévenu",
         "vide": "Toutes les personnes qui ont laissé une adresse sont déjà prévenues ou déjà inscrites. Il n'y a rien à envoyer.",
         "envoyer": {
@@ -3621,13 +3621,13 @@
             "one": "Il reste {n} personne à prévenir.",
             "other": "Il reste {n} personnes à prévenir."
           },
-          "tout": "Plus personne n'attend le lien : tout le monde est prévenu.",
+          "tout": "Plus personne n'attend le lien\u00a0: tout le monde est prévenu.",
           "pasDeuxFois": "Une même adresse ne reçoit jamais le message deux fois, même si vous envoyez à nouveau."
         },
         "erreurs": {
           "titre": "Envoi non confirmé",
-          "nonConfirme": "Il est possible que l'envoi ne soit pas parvenu jusqu'à Rewayah. Réessayez : aucune adresse ne recevra le message en double.",
-          "generique": "L'envoi n'a pas abouti et rien n'est confirmé. Réessayez : aucune adresse ne recevra le message en double."
+          "nonConfirme": "Il est possible que l'envoi ne soit pas parvenu jusqu'à Rewayah. Réessayez\u00a0: aucune adresse ne recevra le message en double.",
+          "generique": "L'envoi n'a pas abouti et rien n'est confirmé. Réessayez\u00a0: aucune adresse ne recevra le message en double."
         }
       },
       "lot": {

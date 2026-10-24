@@ -361,16 +361,21 @@ class _ChampNumero extends StatelessWidget {
         error: erreur == null ? null : const SizedBox.shrink(),
         prefixIcon: Padding(
           padding: const EdgeInsetsDirectional.only(end: AppSpacing.sm),
-          child: Pressable(
-            key: TelephoneEtape.paysChoisiKey,
-            libelleSemantique: code == null
-                ? t.inscription.telephone.choisirPays
-                : '${t.inscription.telephone.pays} : ${nomDuPays(code)}',
-            onPress: onChoisirPays,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                border: Border(right: palette.borderResting.asBorderSide()),
+          // Le filet qui separe le pays du numero est pose autour du
+          // Pressable, jamais peint par lui (bouton-recompose), du cote de
+          // fin pour suivre l'arabe.
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              border: BorderDirectional(
+                end: palette.borderResting.asBorderSide(),
               ),
+            ),
+            child: Pressable(
+              key: TelephoneEtape.paysChoisiKey,
+              libelleSemantique: code == null
+                  ? t.inscription.telephone.choisirPays
+                  : '${t.inscription.telephone.pays} : ${nomDuPays(code)}',
+              onPress: onChoisirPays,
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.md,

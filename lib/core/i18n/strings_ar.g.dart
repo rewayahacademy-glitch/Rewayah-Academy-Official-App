@@ -15051,7 +15051,7 @@ class _Traductions$recrutement$partage$fait$ar extends Traductions$recrutement$p
 
 	// Translations
 	@override String get partage => 'تمت مشاركة البطاقة.';
-	@override String get enregistre => 'تم حفظ الصورة.';
+	@override String get enregistre => 'الصورة في جهازكم الآن.';
 	@override String get copie => 'تم نسخ الرابط.';
 }
 
@@ -28552,7 +28552,7 @@ extension on TraductionsAr {
 			'recrutement.partage.sansMenu' => 'لا يتيح هذا الجهاز المشاركة المباشرة. احفظ الصورة لترسلها بنفسك، أو انسخ الرابط.',
 			'recrutement.partage.lienSeul' => 'يشارك هذا الجهاز الرابط دون الصورة. احفظ الصورة إن أردت إرسالها أيضًا.',
 			'recrutement.partage.fait.partage' => 'تمت مشاركة البطاقة.',
-			'recrutement.partage.fait.enregistre' => 'تم حفظ الصورة.',
+			'recrutement.partage.fait.enregistre' => 'الصورة في جهازكم الآن.',
 			'recrutement.partage.fait.copie' => 'تم نسخ الرابط.',
 			'recrutement.partage.echec.partage' => 'لم تُفتح قائمة المشاركة: رفضها جهازك هذه المرة. يمكنك حفظ الصورة أو نسخ الرابط.',
 			'recrutement.partage.echec.enregistrement' => 'لم يتأكد حفظ الصورة. حاول مرة أخرى، أو انسخ الرابط.',

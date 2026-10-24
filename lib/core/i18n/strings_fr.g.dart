@@ -6927,7 +6927,7 @@ class Traductions$recrutement$nomLatin$fr {
 	String get aide => 'Voici notre proposition. Corrigez-la si votre nom ne s\'écrit pas ainsi, puis confirmez.';
 
 	/// fr: 'Votre nom tel que vous l'avez écrit : {nom}'
-	String origine({required Object nom}) => 'Votre nom tel que vous l\'avez écrit : ${nom}';
+	String origine({required Object nom}) => 'Votre nom tel que vous l\'avez écrit : ${nom}';
 
 	/// fr: 'Confirmer mon nom'
 	String get confirmer => 'Confirmer mon nom';
@@ -23387,7 +23387,7 @@ class Traductions$admin$candidatures$prevenir$fr {
 	String groupes({required Object n}) => 'L\'envoi part par tranches de ${n} personnes au plus.';
 
 	/// fr: 'L'inscription en ligne doit d'abord être ouverte : tant qu'elle est fermée, le lien mènerait à une page fermée et aucun message ne part.'
-	String get fermee => 'L\'inscription en ligne doit d\'abord être ouverte : tant qu\'elle est fermée, le lien mènerait à une page fermée et aucun message ne part.';
+	String get fermee => 'L\'inscription en ligne doit d\'abord être ouverte : tant qu\'elle est fermée, le lien mènerait à une page fermée et aucun message ne part.';
 
 	/// fr: 'Tout le monde est déjà prévenu'
 	String get videTitre => 'Tout le monde est déjà prévenu';
@@ -37698,7 +37698,7 @@ class Traductions$admin$candidatures$prevenir$resultat$fr {
 	);
 
 	/// fr: 'Plus personne n'attend le lien : tout le monde est prévenu.'
-	String get tout => 'Plus personne n\'attend le lien : tout le monde est prévenu.';
+	String get tout => 'Plus personne n\'attend le lien : tout le monde est prévenu.';
 
 	/// fr: 'Une même adresse ne reçoit jamais le message deux fois, même si vous envoyez à nouveau.'
 	String get pasDeuxFois => 'Une même adresse ne reçoit jamais le message deux fois, même si vous envoyez à nouveau.';
@@ -37716,10 +37716,10 @@ class Traductions$admin$candidatures$prevenir$erreurs$fr {
 	String get titre => 'Envoi non confirmé';
 
 	/// fr: 'Il est possible que l'envoi ne soit pas parvenu jusqu'à Rewayah. Réessayez : aucune adresse ne recevra le message en double.'
-	String get nonConfirme => 'Il est possible que l\'envoi ne soit pas parvenu jusqu\'à Rewayah. Réessayez : aucune adresse ne recevra le message en double.';
+	String get nonConfirme => 'Il est possible que l\'envoi ne soit pas parvenu jusqu\'à Rewayah. Réessayez : aucune adresse ne recevra le message en double.';
 
 	/// fr: 'L'envoi n'a pas abouti et rien n'est confirmé. Réessayez : aucune adresse ne recevra le message en double.'
-	String get generique => 'L\'envoi n\'a pas abouti et rien n\'est confirmé. Réessayez : aucune adresse ne recevra le message en double.';
+	String get generique => 'L\'envoi n\'a pas abouti et rien n\'est confirmé. Réessayez : aucune adresse ne recevra le message en double.';
 }
 
 // Path: admin.candidatures.lot.feuille
@@ -44066,7 +44066,7 @@ extension on Traductions {
 			'recrutement.nomLatin.explication' => 'Votre nom est écrit dans une autre écriture. Pour les listes, les attestations et les échanges avec l\'académie, nous avons besoin de son écriture en lettres latines.',
 			'recrutement.nomLatin.libelle' => 'Votre nom en lettres latines',
 			'recrutement.nomLatin.aide' => 'Voici notre proposition. Corrigez-la si votre nom ne s\'écrit pas ainsi, puis confirmez.',
-			'recrutement.nomLatin.origine' => ({required Object nom}) => 'Votre nom tel que vous l\'avez écrit : ${nom}',
+			'recrutement.nomLatin.origine' => ({required Object nom}) => 'Votre nom tel que vous l\'avez écrit : ${nom}',
 			'recrutement.nomLatin.confirmer' => 'Confirmer mon nom',
 			'recrutement.nomLatin.plusTard' => 'Plus tard',
 			'recrutement.nomLatin.erreur' => 'Écrivez votre nom avec les lettres de l\'alphabet latin (a, b, c) pour continuer.',
@@ -45071,7 +45071,7 @@ extension on Traductions {
 			'admin.candidatures.prevenir.message' => 'Le message rappelle la date de la réponse et le nom du formulaire, demande de créer son compte avec la même adresse, et dit que rien n\'est à payer.',
 			'admin.candidatures.prevenir.delai' => 'Les messages partent dans les minutes qui suivent l\'envoi, pas à l\'instant.',
 			'admin.candidatures.prevenir.groupes' => ({required Object n}) => 'L\'envoi part par tranches de ${n} personnes au plus.',
-			'admin.candidatures.prevenir.fermee' => 'L\'inscription en ligne doit d\'abord être ouverte : tant qu\'elle est fermée, le lien mènerait à une page fermée et aucun message ne part.',
+			'admin.candidatures.prevenir.fermee' => 'L\'inscription en ligne doit d\'abord être ouverte : tant qu\'elle est fermée, le lien mènerait à une page fermée et aucun message ne part.',
 			'admin.candidatures.prevenir.videTitre' => 'Tout le monde est déjà prévenu',
 			'admin.candidatures.prevenir.vide' => 'Toutes les personnes qui ont laissé une adresse sont déjà prévenues ou déjà inscrites. Il n\'y a rien à envoyer.',
 			'admin.candidatures.prevenir.envoyer' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Envoyer le lien à ${n} personne', other: 'Envoyer le lien à ${n} personnes', ), 
@@ -45081,11 +45081,11 @@ extension on Traductions {
 			'admin.candidatures.prevenir.resultat.titre' => 'Envoi lancé',
 			'admin.candidatures.prevenir.resultat.mis' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} message part dans les prochaines minutes', other: '${n} messages partent dans les prochaines minutes', ), 
 			'admin.candidatures.prevenir.resultat.restants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il reste ${n} personne à prévenir.', other: 'Il reste ${n} personnes à prévenir.', ), 
-			'admin.candidatures.prevenir.resultat.tout' => 'Plus personne n\'attend le lien : tout le monde est prévenu.',
+			'admin.candidatures.prevenir.resultat.tout' => 'Plus personne n\'attend le lien : tout le monde est prévenu.',
 			'admin.candidatures.prevenir.resultat.pasDeuxFois' => 'Une même adresse ne reçoit jamais le message deux fois, même si vous envoyez à nouveau.',
 			'admin.candidatures.prevenir.erreurs.titre' => 'Envoi non confirmé',
-			'admin.candidatures.prevenir.erreurs.nonConfirme' => 'Il est possible que l\'envoi ne soit pas parvenu jusqu\'à Rewayah. Réessayez : aucune adresse ne recevra le message en double.',
-			'admin.candidatures.prevenir.erreurs.generique' => 'L\'envoi n\'a pas abouti et rien n\'est confirmé. Réessayez : aucune adresse ne recevra le message en double.',
+			'admin.candidatures.prevenir.erreurs.nonConfirme' => 'Il est possible que l\'envoi ne soit pas parvenu jusqu\'à Rewayah. Réessayez : aucune adresse ne recevra le message en double.',
+			'admin.candidatures.prevenir.erreurs.generique' => 'L\'envoi n\'a pas abouti et rien n\'est confirmé. Réessayez : aucune adresse ne recevra le message en double.',
 			'admin.candidatures.lot.selectionnees' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} sélectionnée', other: '${n} sélectionnées', ), 
 			'admin.candidatures.lot.dontPage' => ({required Object n}) => 'dont ${n} sur cette page',
 			'admin.candidatures.lot.avecDont' => ({required Object selection, required Object dont}) => '${selection}, ${dont}',
