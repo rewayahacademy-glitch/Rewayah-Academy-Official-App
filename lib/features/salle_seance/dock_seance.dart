@@ -311,7 +311,9 @@ class DockSeance extends StatelessWidget {
         borderRadius: AppRadius.arrondiFull,
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.sm),
+        // Au telephone, 4 : les cinq boutons de l'enseignant (4 x 56, Quitter
+        // 72, ecarts 12) tiennent en une rangee a 390 avec la marge de 16.
+        padding: EdgeInsets.all(telephone ? AppSpacing.xs : AppSpacing.sm),
         // Les boutons gardent leur taille a toute echelle de texte ; si la
         // rangee ne tient plus en largeur, la pilule passe sur deux rangees,
         // toujours sans mot (directeur, 24/10/2026).

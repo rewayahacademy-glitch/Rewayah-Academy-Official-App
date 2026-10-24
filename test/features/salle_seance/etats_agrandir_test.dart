@@ -1,7 +1,8 @@
 // ETATS-BTN-1 (revue de la relecture, 02/10/2026) : la bascule Agrandir /
 // Reduire se lit par les trois signaux cumules (disque plein ou contour seul,
-// icone, mot d'etat) PARTOUT : dans le dock de la seance et dans la barre du
-// support (ZoomLocal), comme micro et camera.
+// icone, mot d'etat) dans la barre du support (ZoomLocal). Dans le dock de la
+// seance, le standard des commandes d'appel (24/10/2026) le remplace : disque
+// rempli, icone seule, mot d'etat en infobulle.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -29,6 +30,12 @@ BoxDecoration _decoration(WidgetTester tester, Key cle) {
 }
 
 IconData _icone(WidgetTester tester, Key cle) => tester
+    .widget<Icon>(
+      find.descendant(of: find.byKey(cle), matching: find.byType(Icon)),
+    )
+    .icon!;
+
+IconData _iconeAppel(WidgetTester tester, Key cle) => tester
     .widget<Icon>(
       find.descendant(of: find.byKey(cle), matching: find.byType(Icon)),
     )
@@ -138,19 +145,30 @@ void main() {
         tester.element(find.byKey(_dockCle)),
       );
       final BoxDecoration plein = _decoration(tester, _dockCle);
-      expect(plein.color, palette.surfaceInverse.background);
+      // Standard des commandes d'appel : rempli sombre, icone reduire, le mot
+      // d'etat « Focus » dans l'infobulle et jamais en texte visible.
+      expect(plein.color, palette.boutonAppelActif.background);
       expect(plein.border, isNull);
-      expect(_icone(tester, _dockCle), AppIcons.reduire.repos);
+      expect(_iconeAppel(tester, _dockCle), AppIcons.reduire.actif);
+      expect(
+        find.descendant(of: find.byKey(_dockCle), matching: find.byType(Text)),
+        findsNothing,
+      );
       expect(
         find.descendant(
           of: find.byKey(_dockCle),
-          matching: find.text(t.salle.seance.commandes.focus),
+          matching: find.byTooltip(t.salle.seance.commandes.focus),
         ),
         findsOneWidget,
       );
       expect(
-        tester.getSemantics(find.byKey(_dockCle)).label,
-        contains(t.salle.seance.commandes.quitterFocus),
+        find.descendant(
+          of: find.byKey(_dockCle),
+          matching: find.bySemanticsLabel(
+            RegExp(t.salle.seance.commandes.quitterFocus),
+          ),
+        ),
+        findsOneWidget,
       );
       lecteur.dispose();
     });

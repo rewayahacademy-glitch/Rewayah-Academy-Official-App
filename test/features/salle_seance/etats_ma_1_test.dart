@@ -1,14 +1,16 @@
-// ETATS-MA-1 (decision du 05/10/2026, par delegation du directeur ; regle du
-// 02/10, DECISIONS_DELEGUEES_2026-10-02.md : « le mot d'etat reste »,
-// WCAG 1.4.1). Salle en Mode Accessibilite, texte au-dela de 130 % : les
-// commandes passent sur deux rangees (micro et camera, puis quitter ;
-// Agrandir a quitte la barre de l'appel avec TB-2) et les bascules gardent leur mot d'etat sous le disque.
+// ETATS-MA-1, remplace dans la salle par le standard des commandes d'appel
+// (directeur, 24/10/2026, SALLE-PLAN-2026-10-24.md). Ancienne regle (decision
+// du 05/10/2026) : « le mot d'etat reste » sous le disque, deux rangees de
+// mots au-dela de 130 %. Nouvelle regle : la pilule d'appel est faite de
+// boutons ronds en ICONES SEULES, a toute echelle de texte ; l'etat se lit
+// par l'icone barree, le remplissage et l'infobulle / la semantique.
 //
-// - A 320 et 390 px, texte x1,5 et x2, clair et sombre, LTR et RTL : le mot
-//   de chaque bascule est a l'ecran, entier (aucun mot coupe ni tronque),
+// - A 320 et 390 px, texte x1,5 et x2, clair et sombre, LTR et RTL : aucun
+//   texte dans le dock, l'infobulle de chaque bascule dit son etat, les
+//   boutons gardent leur taille (56), la pilule peut passer sur deux rangees,
 //   rien ne deborde, Quitter reste a l'ecran.
 // - Jusqu'a 130 % en Mode Accessibilite, et hors Mode Accessibilite a toute
-//   taille : rien ne change (une seule rangee).
+//   taille : la meme pilule, sans mot.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -18,17 +20,17 @@ import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
-import 'package:rewayah_academy/features/salle_seance/dock_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
 import '../../capture/outil_capture.dart';
-import '../../support/aucun_mot_coupe.dart';
 
-const Key _grille = ValueKey<String>('commandes-deux-rangees');
-const Key _mot = ValueKey<String>('mot-commande');
 final Finder _dock = find.byKey(const ValueKey<String>('dock-seance'));
+final Finder _disques = find.descendant(
+  of: _dock,
+  matching: find.byKey(const ValueKey<String>('disque-appel')),
+);
 
-/// Les mots d'etat possibles des bascules de l'eleve.
+/// Les infobulles d'etat possibles des bascules de l'eleve.
 final Set<String> _motsMicro = <String>{
   t.salle.microOuvert,
   t.salle.microCoupe,
@@ -67,24 +69,56 @@ Future<void> _monter(
   await stabiliser(tester);
 }
 
-/// Le bouton du dock dont le mot visible est l'un de [mots].
+/// Le bouton du dock dont l'infobulle (son etat) est l'un de [mots].
 Finder _bouton(Set<String> mots) => find.descendant(
   of: _dock,
   matching: find.byWidgetPredicate(
-    (Widget w) => w is BoutonAppel && mots.contains(w.libelle),
+    (Widget w) => w is Tooltip && mots.contains(w.message),
   ),
 );
 
-/// Les mots affiches sous les disques du dock.
+/// Le bouton Quitter du dock.
+Finder _quitter() => _bouton(<String>{t.salle.quitter});
+
+/// Les textes affiches dans le dock : il n'y en a aucun (standard).
 List<String> _motsAffiches(WidgetTester tester) => tester
-    .widgetList<Text>(find.descendant(of: _dock, matching: find.byKey(_mot)))
-    .map((Text t) => t.data!)
+    .widgetList<Text>(find.descendant(of: _dock, matching: find.byType(Text)))
+    .map((Text t) => t.data ?? t.textSpan?.toPlainText() ?? '')
     .toList();
+
+/// Le standard : aucun mot, une infobulle d'etat par bascule, des boutons
+/// de 56 (telephone), 48 (bureau) ou 72 (Interface guidee) qui gardent leur
+/// taille, rien qui deborde de l'ecran.
+void _verifierPilule(WidgetTester tester, Size taille, {bool guidee = false}) {
+  expect(_motsAffiches(tester), isEmpty, reason: 'mot dans le dock');
+  expect(_bouton(_motsMicro), findsOneWidget);
+  expect(_bouton(_motsCamera), findsOneWidget);
+  expect(_quitter(), findsOneWidget);
+  // Interface guidee (Mode Accessibilite) : la cible du mode, 72, l'emporte.
+  final double cote = guidee ? 72 : (taille.width < 600 ? 56 : 48);
+  for (final Element e in _disques.evaluate()) {
+    final Size s = tester.getSize(
+      find.byElementPredicate((Element x) => x == e),
+    );
+    expect(s.height, moreOrLessEquals(cote, epsilon: 0.5));
+  }
+  final Rect dock = tester.getRect(_dock);
+  for (final Rect r in <Rect>[
+    dock,
+    tester.getRect(_bouton(_motsMicro)),
+    tester.getRect(_bouton(_motsCamera)),
+    tester.getRect(_quitter()),
+  ]) {
+    expect(r.left, greaterThanOrEqualTo(-0.5));
+    expect(r.right, lessThanOrEqualTo(taille.width + 0.5));
+    expect(r.bottom, lessThanOrEqualTo(taille.height + 0.5));
+  }
+}
 
 void main() {
   setUpAll(chargerPolicesDuDepot);
 
-  group('ETATS-MA-1 : le mot d etat reste, texte au-dela de 130 %', () {
+  group('ETATS-MA-1 : standard des commandes d appel, texte > 130 %', () {
     for (final (String l, Size taille) in <(String, Size)>[
       ('320', const Size(320, 568)),
       ('390', const Size(390, 844)),
@@ -96,159 +130,119 @@ void main() {
         ]) {
           for (final bool rtl in <bool>[false, true]) {
             final String sens = rtl ? 'rtl' : 'ltr';
-            testWidgets('$l px, texte x$echelle, ${mode.name}, $sens', (
-              WidgetTester tester,
-            ) async {
-              await _monter(
-                tester,
-                taille: taille,
-                echelle: echelle,
-                mode: mode,
-                rtl: rtl,
-              );
-              expect(tester.takeException(), isNull);
+            testWidgets(
+              'standard des commandes d appel : $l px, texte x$echelle, '
+              '${mode.name}, $sens',
+              (WidgetTester tester) async {
+                await _monter(
+                  tester,
+                  taille: taille,
+                  echelle: echelle,
+                  mode: mode,
+                  rtl: rtl,
+                );
+                expect(tester.takeException(), isNull);
 
-              // Le mot d'etat de chaque bascule est a l'ecran.
-              final List<String> mots = _motsAffiches(tester);
-              expect(
-                mots.where(_motsMicro.contains),
-                hasLength(1),
-                reason: 'mot du micro absent : $mots',
-              );
-              expect(
-                mots.where(_motsCamera.contains),
-                hasLength(1),
-                reason: 'mot de la camera absent : $mots',
-              );
-              // TB-2 (ui/supports-tableau-v1, repris par JONCTION-LIGNES-1) :
-              // Agrandir a quitte la barre de l'appel (il n'y revient, en
-              // « Reduire », que pendant le focus local) ; Quitter garde
-              // son mot.
-              expect(mots, isNot(contains(t.salle.seance.agrandir)));
-              expect(mots, contains(t.salle.quitter));
+                // Aucun mot sous un bouton ; l'etat vit dans l'infobulle.
+                // TB-2 : Agrandir a quitte la pilule hors focus local.
+                _verifierPilule(tester, taille, guidee: true);
+                expect(
+                  _bouton(<String>{t.salle.seance.agrandir}),
+                  findsNothing,
+                );
 
-              // Entier : aucun mot coupe ni tronque dans le dock.
-              verifierAucunMotCoupe(tester, _dock);
-
-              // Deux rangees : micro et camera sur la premiere, le reste
-              // dessous.
-              expect(find.byKey(_grille), findsOneWidget);
-              final Rect micro = tester.getRect(_bouton(_motsMicro));
-              final Rect camera = tester.getRect(_bouton(_motsCamera));
-              final Finder quitter = find.descendant(
-                of: _dock,
-                matching: find.byWidgetPredicate(
-                  (Widget w) =>
-                      w is BoutonAppel && w.libelle == t.salle.quitter,
-                ),
-              );
-              final Rect sortie = tester.getRect(quitter);
-              expect(micro.top, moreOrLessEquals(camera.top, epsilon: 0.5));
-              expect(sortie.top, greaterThan(micro.bottom));
-              // L'ordre suit le sens de lecture.
-              expect(
-                rtl ? micro.left > camera.left : micro.left < camera.left,
-                isTrue,
-              );
-
-              // Rien ne deborde : le dock et chaque commande dans l'ecran.
-              final Rect dock = tester.getRect(_dock);
-              for (final Rect r in <Rect>[dock, micro, camera, sortie]) {
-                expect(r.left, greaterThanOrEqualTo(-0.5));
-                expect(r.right, lessThanOrEqualTo(taille.width + 0.5));
-                expect(r.bottom, lessThanOrEqualTo(taille.height + 0.5));
-              }
-            });
+                // La pilule peut passer sur deux rangees : micro et camera
+                // restent sur la meme, l'ordre suit le sens de lecture.
+                final Rect micro = tester.getRect(_bouton(_motsMicro));
+                final Rect camera = tester.getRect(_bouton(_motsCamera));
+                expect(micro.top, moreOrLessEquals(camera.top, epsilon: 0.5));
+                expect(
+                  rtl ? micro.left > camera.left : micro.left < camera.left,
+                  isTrue,
+                );
+              },
+            );
           }
         }
       }
     }
 
-    // Bureau : la rangee unique reste ; le mot d'etat y passe sur deux
-    // lignes dans une case de deux cibles, sans se couper.
+    // Bureau : meme pilule, sans mot, boutons de 48.
     for (final ThemeMode mode in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
-      testWidgets('1440 px, texte x2, ${mode.name} : mot entier', (
-        WidgetTester tester,
-      ) async {
-        await _monter(tester, taille: const Size(1440, 900), mode: mode);
-        expect(tester.takeException(), isNull);
-        final List<String> mots = _motsAffiches(tester);
-        expect(mots.where(_motsMicro.contains), hasLength(1));
-        expect(mots.where(_motsCamera.contains), hasLength(1));
-        verifierAucunMotCoupe(tester, _dock);
-      });
-    }
-
-    testWidgets('Mariam (mineure), 320 px, texte x2 : meme regle', (
-      WidgetTester tester,
-    ) async {
-      await _monter(
-        tester,
-        taille: const Size(320, 568),
-        eleve: EleveDemoAccessibilite.mariam,
-      );
-      expect(tester.takeException(), isNull);
-      expect(_motsAffiches(tester).where(_motsMicro.contains), hasLength(1));
-      verifierAucunMotCoupe(tester, _dock);
-    });
-  });
-
-  group('ETATS-MA-1 : rien ne change ailleurs', () {
-    testWidgets('Mode Accessibilite, texte a 130 % : une seule rangee', (
-      WidgetTester tester,
-    ) async {
-      await _monter(tester, taille: const Size(390, 844), echelle: 1.3);
-      expect(tester.takeException(), isNull);
-      expect(find.byKey(_grille), findsNothing);
-      final Rect micro = tester.getRect(_bouton(_motsMicro));
-      final Rect camera = tester.getRect(_bouton(_motsCamera));
-      // Meme rangee : centres a la meme hauteur (depuis TB-2, Quitter garde
-      // sa largeur et un mot peut passer sur deux lignes dans sa part).
-      expect(
-        micro.center.dy,
-        moreOrLessEquals(camera.center.dy, epsilon: 0.5),
-      );
-      // Jusqu'a 130 %, le mot se montrait deja : il reste.
-      expect(_motsAffiches(tester).where(_motsMicro.contains), hasLength(1));
-    });
-
-    for (final double echelle in <double>[1, 2]) {
       testWidgets(
-        'hors Mode Accessibilite (eleve), texte x$echelle : inchange',
+        'standard des commandes d appel : 1440 px, texte x2, ${mode.name}',
         (WidgetTester tester) async {
-          fixerVueCapture(tester, const Size(390, 844), 1);
-          await tester.pumpWidget(
-            hoteCapture(
-              const DemoSallePage(
-                role: RoleSeance.eleve,
-                etat: EtatDemoSalle.repos,
-              ),
-              echelleTexte: echelle,
-            ),
-          );
-          await stabiliser(tester);
+          const Size taille = Size(1440, 900);
+          await _monter(tester, taille: taille, mode: mode);
           expect(tester.takeException(), isNull);
-          expect(find.byKey(_grille), findsNothing);
-          // Le comportement d'avant : une seule rangee ; au-dela de 130 %,
-          // les bascules en icone seule (EN-12), a x1 leur mot affiche.
-          final Rect micro = tester.getRect(_bouton(_motsMicro));
-          final Rect quitter = tester.getRect(
-            find.descendant(
-              of: _dock,
-              matching: find.byWidgetPredicate(
-                (Widget w) => w is BoutonAppel && w.libelle == t.salle.quitter,
-              ),
-            ),
-          );
-          expect(micro.top, moreOrLessEquals(quitter.top, epsilon: 0.5));
-          expect(
-            _motsAffiches(tester).where(_motsMicro.contains),
-            hasLength(echelle > 1.3 ? 0 : 1),
-          );
+          _verifierPilule(tester, taille, guidee: true);
         },
       );
     }
+
+    testWidgets(
+      'standard des commandes d appel : Mariam (mineure), 320 px, texte x2',
+      (WidgetTester tester) async {
+        const Size taille = Size(320, 568);
+        await _monter(
+          tester,
+          taille: taille,
+          eleve: EleveDemoAccessibilite.mariam,
+        );
+        expect(tester.takeException(), isNull);
+        _verifierPilule(tester, taille, guidee: true);
+      },
+    );
   });
+
+  group(
+    'ETATS-MA-1 : standard des commandes d appel, meme pilule ailleurs',
+    () {
+      testWidgets(
+        'standard des commandes d appel : Mode Accessibilite, texte a 130 %',
+        (WidgetTester tester) async {
+          const Size taille = Size(390, 844);
+          await _monter(tester, taille: taille, echelle: 1.3);
+          expect(tester.takeException(), isNull);
+          _verifierPilule(tester, taille, guidee: true);
+          final Rect micro = tester.getRect(_bouton(_motsMicro));
+          final Rect camera = tester.getRect(_bouton(_motsCamera));
+          // Meme rangee : centres a la meme hauteur.
+          expect(
+            micro.center.dy,
+            moreOrLessEquals(camera.center.dy, epsilon: 0.5),
+          );
+        },
+      );
+
+      for (final double echelle in <double>[1, 2]) {
+        testWidgets(
+          'standard des commandes d appel : hors Mode Accessibilite (eleve), '
+          'texte x$echelle',
+          (WidgetTester tester) async {
+            const Size taille = Size(390, 844);
+            fixerVueCapture(tester, taille, 1);
+            await tester.pumpWidget(
+              hoteCapture(
+                const DemoSallePage(
+                  role: RoleSeance.eleve,
+                  etat: EtatDemoSalle.repos,
+                ),
+                echelleTexte: echelle,
+              ),
+            );
+            await stabiliser(tester);
+            expect(tester.takeException(), isNull);
+            // Le meme standard a toute echelle : aucun mot, boutons de 56.
+            _verifierPilule(tester, taille);
+            final Rect micro = tester.getRect(_bouton(_motsMicro));
+            final Rect camera = tester.getRect(_bouton(_motsCamera));
+            expect(micro.top, moreOrLessEquals(camera.top, epsilon: 0.5));
+          },
+        );
+      }
+    },
+  );
 
   // Captures K-61 (seulement avec CAPTURE_DIR) : la salle MA d'Idriss, a
   // 390 et 320 px texte x2, a 1440, clair et sombre, et en RTL.

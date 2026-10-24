@@ -283,7 +283,16 @@ class _Haut extends StatelessWidget {
                   ),
                   child: Text('\u00b7', style: style),
                 ),
-                Flexible(child: MentionSeance(vue: vue)),
+                // Une seule ligne : coupee, la notice finit en points de
+                // suspension ; le lecteur d'ecran lit la phrase entiere.
+                Flexible(
+                  child: DefaultTextStyle.merge(
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: false,
+                    child: MentionSeance(vue: vue, lienSousLaLigne: false),
+                  ),
+                ),
               ],
             ],
           ),

@@ -1,24 +1,21 @@
-// DOCK-X2-1 (decision du 05/10/2026, ETATS-MA-1 : « le mot d'etat des
-// bascules reste visible, sans coupure, quitte a passer sur deux rangees »).
-//
-// Defaut releve : dans la salle de demonstration (/demo/salle), HORS Mode
-// Accessibilite, sur ordinateur, texte au-dela de 130 % (x1,5 et x2), le mot
-// sous les bascules du dock se coupait dans le mot (« Camér / a allu… ») :
-// la case d'une bascule retombait a une cible et un ecart (56) des que le
-// mot d'etat ne devait plus se montrer, alors que la rangee de bureau le
-// montre encore.
+// DOCK-X2-1, remplace dans la salle par le standard des commandes d'appel
+// (directeur, 24/10/2026, SALLE-PLAN-2026-10-24.md). Ancienne regle : « le mot
+// d'etat des bascules reste entier, quitte a passer sur deux rangees ».
+// Nouvelle regle : la pilule d'appel ne porte AUCUN mot, a aucune echelle de
+// texte ; les boutons ronds gardent leur taille (56 telephone, 48 bureau) ;
+// l'etat vit dans l'infobulle et la semantique ; la pilule peut passer sur
+// deux rangees.
 //
 // Ici : a 1440 et 1024 px, texte x1,5 et x2, pour les trois roles, clair et
-// sombre : aucun mot coupe ni tronque dans le dock, ni sous la bascule
-// Agrandir de la barre du support. A 1440, le mot d'etat de chaque bascule
-// est a l'ecran.
+// sombre : aucun texte dans le dock, boutons de meme taille qu'a x1, dock
+// dans l'ecran, rien ne deborde. A 1440, l'infobulle de chaque bascule dit
+// son etat.
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/sens_texte.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/core/widgets/commande_salle.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
@@ -50,21 +47,28 @@ Future<void> _monter(
   await stabiliser(tester);
 }
 
-/// Les mots affiches sous les disques du dock.
+/// Les textes affiches dans le dock : il n'y en a aucun (standard).
 List<String> _motsDock(WidgetTester tester) => tester
-    .widgetList<Text>(
-      find.descendant(
-        of: _dock,
-        matching: find.byKey(const ValueKey<String>('mot-commande')),
-      ),
-    )
-    .map((Text t) => t.data!)
+    .widgetList<Text>(find.descendant(of: _dock, matching: find.byType(Text)))
+    .map((Text t) => t.data ?? t.textSpan?.toPlainText() ?? '')
     .toList();
+
+/// La hauteur des boutons ronds du dock.
+List<double> _hauteurs(WidgetTester tester) => <double>[
+  for (final Element e
+      in find
+          .descendant(
+            of: _dock,
+            matching: find.byKey(const ValueKey<String>('disque-appel')),
+          )
+          .evaluate())
+    e.size!.height,
+];
 
 void main() {
   setUpAll(chargerPolicesDuDepot);
 
-  group('DOCK-X2-1 : bureau, texte agrandi, mot des bascules entier', () {
+  group('DOCK-X2-1 : standard des commandes d appel, texte agrandi', () {
     for (final (String l, Size taille) in <(String, Size)>[
       ('1440', const Size(1440, 900)),
       ('1024', const Size(1024, 768)),
@@ -79,69 +83,75 @@ void main() {
             ThemeMode.light,
             ThemeMode.dark,
           ]) {
-            testWidgets('$l px, texte x$echelle, ${role.name}, ${mode.name}', (
-              WidgetTester tester,
-            ) async {
-              await _monter(
-                tester,
-                taille: taille,
-                echelle: echelle,
-                role: role,
-                mode: mode,
-              );
-              expect(tester.takeException(), isNull);
-              expect(_dock, findsOneWidget);
-              verifierAucunMotCoupe(tester, _dock);
-              if (_agrandirBarre.evaluate().isNotEmpty) {
-                verifierAucunMotCoupe(tester, _agrandirBarre);
-              }
-              // ZOOM-LIB-1 (n2) : toute la rangee du zoom, libelle compris.
-              final Finder zoom = find.byKey(
-                const ValueKey<String>('zoom-local'),
-              );
-              if (zoom.evaluate().isNotEmpty) {
-                verifierAucunMotCoupe(tester, zoom);
-              }
-              // Sur la rangee de bureau, le mot d'etat de chaque bascule
-              // reste a l'ecran (decision du 05/10).
-              if (l == '1440') {
-                final List<String> mots = _motsDock(tester);
-                expect(
-                  mots,
-                  contains(anyOf(t.salle.microOuvert, t.salle.microCoupe)),
+            testWidgets(
+              'standard des commandes d appel : $l px, texte x$echelle, '
+              '${role.name}, ${mode.name}',
+              (WidgetTester tester) async {
+                await _monter(
+                  tester,
+                  taille: taille,
+                  echelle: echelle,
+                  role: role,
+                  mode: mode,
                 );
-                if (role != RoleSeance.guidee || mots.length > 2) {
+                expect(tester.takeException(), isNull);
+                expect(_dock, findsOneWidget);
+                // Aucun mot dans la pilule, a aucune echelle.
+                expect(_motsDock(tester), isEmpty);
+                if (_agrandirBarre.evaluate().isNotEmpty) {
+                  verifierAucunMotCoupe(tester, _agrandirBarre);
+                }
+                // ZOOM-LIB-1 (n2) : toute la rangee du zoom, libelle compris.
+                final Finder zoom = find.byKey(
+                  const ValueKey<String>('zoom-local'),
+                );
+                if (zoom.evaluate().isNotEmpty) {
+                  verifierAucunMotCoupe(tester, zoom);
+                }
+                // Les boutons gardent leur taille (48 au bureau ; 72 en
+                // interface guidee, cible du mode).
+                final double cote = role == RoleSeance.guidee ? 72 : 48;
+                final List<double> hauteurs = _hauteurs(tester);
+                expect(hauteurs, isNotEmpty);
+                for (final double h in hauteurs) {
+                  expect(h, moreOrLessEquals(cote, epsilon: 0.5));
+                }
+                // L'etat de chaque bascule est dit par l'infobulle.
+                if (l == '1440') {
                   expect(
-                    mots,
-                    contains(
-                      anyOf(t.salle.cameraAllumee, t.salle.cameraCoupee),
+                    find.descendant(
+                      of: _dock,
+                      matching: find.byWidgetPredicate(
+                        (Widget w) =>
+                            w is Tooltip &&
+                            (w.message == t.salle.microOuvert ||
+                                w.message == t.salle.microCoupe),
+                      ),
                     ),
+                    findsOneWidget,
                   );
                 }
-              }
-              // Le dock reste dans l'ecran.
-              final Rect r = tester.getRect(_dock);
-              expect(r.left, greaterThanOrEqualTo(-0.5));
-              expect(r.right, lessThanOrEqualTo(taille.width + 0.5));
-            });
+                // Le dock reste dans l'ecran.
+                final Rect r = tester.getRect(_dock);
+                expect(r.left, greaterThanOrEqualTo(-0.5));
+                expect(r.right, lessThanOrEqualTo(taille.width + 0.5));
+              },
+            );
           }
         }
       }
     }
   });
 
-  group('DOCK-X2-1 : rien ne change jusqu a 130 %', () {
+  group('DOCK-X2-1 : standard des commandes d appel, jusqu a 130 %', () {
     for (final double echelle in <double>[1, 1.3]) {
-      testWidgets('1440 px, texte x$echelle : case de bascule de deux cibles', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('standard des commandes d appel : 1440 px, texte x$echelle : '
+          'icones seules de 48', (WidgetTester tester) async {
         await _monter(tester, taille: const Size(1440, 900), echelle: echelle);
-        final BuildContext contexte = tester.element(_dock);
-        expect(
-          largeurCaseBasculeAvecMot(contexte),
-          largeurCaseCommande(contexte, bascule: true),
-        );
-        verifierAucunMotCoupe(tester, _dock);
+        expect(_motsDock(tester), isEmpty);
+        for (final double h in _hauteurs(tester)) {
+          expect(h, moreOrLessEquals(48, epsilon: 0.5));
+        }
       });
     }
   });

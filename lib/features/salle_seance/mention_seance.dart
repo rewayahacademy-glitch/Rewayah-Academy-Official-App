@@ -46,6 +46,7 @@ class MentionSeance extends StatelessWidget {
     super.key,
     this.lienAccepte = InformationControle.lienAccepte,
     this.contact = InformationControle.contactConfidentialite,
+    this.lienSousLaLigne = true,
   });
 
   final VueSeance vue;
@@ -55,6 +56,11 @@ class MentionSeance extends StatelessWidget {
 
   /// Le contact confidentialite du texte E-2.
   final String? contact;
+
+  /// Faux : jamais de lien « En savoir plus » sous la mention, la mention
+  /// elle-meme ouvre la lecture (ligne d'etat du telephone, une seule ligne,
+  /// standard des commandes d'appel du 24/10/2026).
+  final bool lienSousLaLigne;
 
   @override
   Widget build(BuildContext context) {
@@ -70,8 +76,9 @@ class MentionSeance extends StatelessWidget {
     );
     // Q-3 = b (05/10/2026) : sous le seuil, pas de lien (il passerait sous la
     // mention et pousserait le cours) ; la mention ouvre la meme lecture.
-    if (MediaQuery.sizeOf(context).width <
-        InformationControle.largeurMinimaleLien) {
+    if (!lienSousLaLigne ||
+        MediaQuery.sizeOf(context).width <
+            InformationControle.largeurMinimaleLien) {
       return _MentionQuiOuvre(ligne: ligne, onPress: ouvrir);
     }
     return _LigneEtLien(

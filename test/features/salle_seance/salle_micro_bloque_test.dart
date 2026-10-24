@@ -124,14 +124,12 @@ final Finder _reglages = find.byKey(
   const ValueKey<String>('micro-bloque-reglages'),
 );
 
-/// Le micro est montre coupe : l'icone coupee est dans le bouton.
+/// Le micro est montre coupe : l'icone barree est dans le bouton. Standard
+/// des commandes d'appel (24/10/2026) : le bouton d'appel dessine toujours la
+/// graisse pleine, quel que soit le role.
 Finder _iconeCoupee(RoleSeance role) => find.descendant(
   of: _micro,
-  matching: find.byIcon(
-    role == RoleSeance.guidee
-        ? AppIcons.microCoupe.actif
-        : AppIcons.microCoupe.repos,
-  ),
+  matching: find.byIcon(AppIcons.microCoupe.actif),
 );
 
 Future<void> _ouvrir(WidgetTester tester) async {

@@ -80,7 +80,7 @@ class PaletteTableau extends ConsumerWidget {
           icone: switch (outil) {
             OutilTrait.stylet => AppIcons.stylet,
             OutilTrait.surligneur => AppIcons.surligneur,
-            OutilTrait.gomme => AppIcons.effacer,
+            OutilTrait.gomme => AppIcons.gomme,
           },
           libelle: libelleOutilTrait(outil),
           retenu: ecrit && etat.outilTrait == outil,

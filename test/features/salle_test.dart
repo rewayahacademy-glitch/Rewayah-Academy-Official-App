@@ -1151,7 +1151,7 @@ void main() {
         find.byKey(const ValueKey<String>('surface-feuille')),
         findsOneWidget,
       );
-      expect(find.text(t.salle.seance.tableauOuvert), findsOneWidget);
+      expect(find.byTooltip(t.salle.seance.tableauOuvert), findsOneWidget);
       // L'ouverture part a la classe, sur le canal fiable.
       expect(moteur.donneesPubliees.last.fiable, isTrue);
 

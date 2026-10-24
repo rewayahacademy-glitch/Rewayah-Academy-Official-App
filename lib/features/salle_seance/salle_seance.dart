@@ -1520,7 +1520,10 @@ class _SalleEnseignant extends StatelessWidget {
                 end: AppSpacing.lg,
                 top: AppSpacing.lg,
                 bottom: AppSpacing.lg,
-                child: Center(
+                // En bas du bord, a hauteur de la barre d'appel : jamais sur la
+                // vignette du coin haut.
+                child: Align(
+                  alignment: Alignment.bottomCenter,
                   child: PaletteTableau(
                     vue: vue,
                     actions: actions,

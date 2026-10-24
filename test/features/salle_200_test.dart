@@ -27,7 +27,6 @@ import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
-import 'package:rewayah_academy/core/widgets/commande_salle.dart';
 import 'package:rewayah_academy/core/widgets/page_immersive.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
@@ -37,7 +36,6 @@ import 'package:rewayah_academy/features/salle_seance/composition_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/zone_support.dart';
 
 import '../capture/outil_capture.dart';
-import '../support/aucun_mot_coupe.dart';
 import '../support/harnais.dart';
 import '../teaching_core/e/faux/faux_classe.dart';
 import '../theme/support/contraste.dart';
@@ -332,24 +330,24 @@ void main() {
         ThemeMode.light,
         ThemeMode.dark,
       ]) {
-        testWidgets('$role, ${mode.name} : mot et icone lisibles', (
+        testWidgets('$role, ${mode.name} : icone lisible sur son disque', (
           WidgetTester tester,
         ) async {
-          // S0 : la salle de seance suit le theme de l'application (plus de
-          // fond sombre impose) ; le mot de chaque commande se lit sur ce qui
-          // est dessous, et l'icone d'une bascule inactive (contour seul)
-          // aussi (3:1, composant).
+          // Standard des commandes d'appel (24/10/2026) : la salle suit le
+          // theme de l'application ; aucun mot de commande (le libelle vit
+          // dans l'infobulle), chaque bouton est un disque REMPLI dont
+          // l'icone se lit (3:1, composant), jamais un contour seul.
           await _monter(tester, role, 390, 1, themeMode: mode);
           expect(tester.takeException(), isNull);
-          final Finder mots = find.byKey(
-            const ValueKey<String>('mot-commande'),
+          expect(
+            find.byKey(const ValueKey<String>('mot-commande')),
+            findsNothing,
           );
-          _lisible(tester, mots, 'mot de commande ($role)');
-          int transparents = 0;
-          for (final Element disque
-              in find
-                  .byKey(const ValueKey<String>('disque-appel'))
-                  .evaluate()) {
+          final Finder disques = find.byKey(
+            const ValueKey<String>('disque-appel'),
+          );
+          expect(disques, findsWidgets);
+          for (final Element disque in disques.evaluate()) {
             final DecoratedBox boite = tester.widget<DecoratedBox>(
               find
                   .descendant(
@@ -359,27 +357,22 @@ void main() {
                   .first,
             );
             final Decoration deco = boite.decoration;
-            if (deco is BoxDecoration && deco.color == null) {
-              transparents++;
-              final Element icone = find
-                  .descendant(
-                    of: find.byWidget(disque.widget),
-                    matching: find.byType(Icon),
-                  )
-                  .evaluate()
-                  .first;
-              final Color? couleur = IconTheme.of(icone).color;
-              final Color fond = _fondSous(
-                tester,
-                find.byWidget(disque.widget).first,
-              );
-              expect(
-                contraste(couleur!, fond),
-                greaterThanOrEqualTo(seuilComposant),
-              );
-            }
+            expect(deco, isA<BoxDecoration>());
+            final Color? fond = (deco as BoxDecoration).color;
+            expect(fond, isNotNull, reason: 'disque rempli, sans contour seul');
+            final Element icone = find
+                .descendant(
+                  of: find.byWidget(disque.widget),
+                  matching: find.byType(Icon),
+                )
+                .evaluate()
+                .first;
+            final Color? couleur = IconTheme.of(icone).color;
+            expect(
+              contraste(couleur!, fond!),
+              greaterThanOrEqualTo(seuilComposant),
+            );
           }
-          expect(transparents, greaterThan(0));
         });
       }
     }
@@ -472,39 +465,41 @@ void main() {
               hauteur: largeur > 1000 ? 900 : 844,
             );
             expect(tester.takeException(), isNull);
-            // S0 : l'eleve lit SA ligne sous l'en-tete ; l'enseignant ouvre
-            // la liste par le lien « Presence ».
+            // Standard des commandes d'appel : au telephone, la presence se
+            // lit dans la pilule translucide « ● En ligne · … » (une seule
+            // ligne d'etat) ; ailleurs, dans la pastille de l'en-tete.
+            final Finder ligne = find.byKey(
+              const ValueKey<String>('ligne-etat-telephone'),
+            );
+            if (ligne.evaluate().isNotEmpty) {
+              _lisible(
+                tester,
+                find.descendant(of: ligne, matching: find.byType(Text)),
+                'ligne d etat ($role)',
+              );
+            }
             if (role == 'teacher') {
               // S0.2c : la presence de l'enseignant vit dans sa colonne
-              // Eleves (une ligne par personne) ; au telephone, « Eleves »
-              // l'ouvre en feuille.
+              // Eleves (une ligne par personne) ; au telephone, le bouton
+              // rond « Eleves » (icone, pastille de nombre) l'ouvre en
+              // feuille.
               final Finder ouvrir = find.byKey(
                 const ValueKey<String>('salle-eleves'),
               );
               if (ouvrir.evaluate().isNotEmpty) {
-                _lisible(tester, find.text(t.salle.seance.eleves), 'Eleves');
                 await tester.tap(ouvrir.first);
                 await tester.pumpAndSettle();
               }
-              _lisible(
-                tester,
-                find.descendant(
-                  of: find.byType(StatusPill),
-                  matching: find.byType(Text),
-                ),
-                'presence ($role)',
-              );
-              return;
             }
-            // S0.2 : la pastille de presence de l'eleve, dans l'en-tete.
-            _lisible(
-              tester,
-              find.descendant(
-                of: find.byType(StatusPill),
-                matching: find.byType(Text),
-              ),
-              'pastille de presence ($role)',
+            final Finder pastilles = find.descendant(
+              of: find.byType(StatusPill),
+              matching: find.byType(Text),
             );
+            if (pastilles.evaluate().isNotEmpty) {
+              _lisible(tester, pastilles, 'presence ($role)');
+            } else {
+              expect(ligne, findsOneWidget, reason: 'aucune presence lisible');
+            }
           });
         }
       }
@@ -996,19 +991,76 @@ void main() {
     }
   });
 
-  // ETATS-MA-1 (decision du 05/10/2026, WCAG 1.4.1) : la salle `/salle`
-  // atteinte en Mode Accessibilite, texte au-dela de 130 % : les bascules
-  // gardent leur mot d'etat, les commandes passent sur deux rangees (deux
-  // par deux). Polices du depot chargees : la coupure des mots se mesure sur
-  // la vraie police. Groupe pose en dernier : le chargement ne touche pas
-  // les autres groupes.
-  group('ETATS-MA-1 : /salle en Mode Accessibilite, texte agrandi', () {
+  // Standard des commandes d'appel (decision du directeur, 24/10/2026) : il
+  // remplace dans la salle ETATS-MA-1 (mot d'etat et deux rangees de mots a
+  // plus de 130 %) et DOCK-X2-1 (mot entier du dock a x2). La pilule garde ses
+  // boutons ronds a leur taille a toute echelle de texte, SANS aucun mot ; si
+  // elle ne tient plus en largeur, elle passe sur deux rangees. L'etat se lit
+  // par l'icone barree, la couleur, l'infobulle et le libelle de semantique.
+  // Polices du depot chargees ; groupe pose en dernier.
+  Future<void> verifierPiluleSansMot(
+    WidgetTester tester, {
+    required double largeur,
+    required double hauteurEcran,
+    required double diametre,
+  }) async {
+    expect(tester.takeException(), isNull);
+    final Finder dock = find.byKey(const ValueKey<String>('dock-seance'));
+    expect(dock, findsOneWidget);
+    // Aucun mot, a aucune echelle de texte.
+    expect(
+      find.descendant(of: dock, matching: find.byType(Text)),
+      findsNothing,
+    );
+    expect(
+      find.byKey(const ValueKey<String>('commandes-deux-rangees')),
+      findsNothing,
+    );
+    expect(find.byKey(const ValueKey<String>('mot-commande')), findsNothing);
+    // Tous les boutons gardent leur taille (Quitter est plus large).
+    final Finder disques = find.descendant(
+      of: dock,
+      matching: find.byKey(const ValueKey<String>('disque-appel')),
+    );
+    expect(disques, findsWidgets);
+    for (final Element e in disques.evaluate()) {
+      final Size taille = tester.getSize(find.byWidget(e.widget));
+      expect(taille.height, closeTo(diametre, 0.5));
+      expect(taille.width, greaterThanOrEqualTo(diametre - 0.5));
+    }
+    // La pilule tient dans l'ecran, deux rangees au plus.
+    final Rect zone = tester.getRect(dock);
+    expect(zone.left, greaterThanOrEqualTo(-0.5));
+    expect(zone.right, lessThanOrEqualTo(largeur + 0.5));
+    expect(zone.bottom, lessThanOrEqualTo(hauteurEcran + 0.5));
+    // L'etat de la bascule micro est dit par l'infobulle et la semantique.
+    expect(
+      find.descendant(
+        of: dock,
+        matching: find.byTooltip(
+          RegExp('${t.salle.microOuvert}|${t.salle.microCoupe}'),
+        ),
+      ),
+      findsOneWidget,
+    );
+    // Quitter reste atteignable, a l'ecran.
+    final Finder quitter = find.bySemanticsLabel(RegExp(t.salle.seance.sortir));
+    expect(quitter, findsWidgets);
+    expect(
+      tester.getRect(quitter.first).bottom,
+      lessThanOrEqualTo(hauteurEcran + 0.5),
+    );
+  }
+
+  group('Standard des commandes d\'appel : /salle en Mode Accessibilite, '
+      'texte agrandi', () {
     setUpAll(chargerPolicesDuDepot);
     for (final String role in <String>['student', 'teacher']) {
       for (final double largeur in <double>[320, 390]) {
         for (final double texte in <double>[1.5, 2]) {
           testWidgets(
-            '$role, $largeur px, texte x$texte : mot d etat visible',
+            '$role, $largeur px, texte x$texte : pilule sans mot, boutons '
+            'a leur taille',
             (WidgetTester tester) async {
               await _monter(
                 tester,
@@ -1017,37 +1069,20 @@ void main() {
                 texte,
                 interfaceMode: InterfaceMode.enfant,
               );
-              expect(tester.takeException(), isNull);
-              final Finder grille = find.byKey(
-                const ValueKey<String>('commandes-deux-rangees'),
-              );
-              expect(grille, findsOneWidget);
-              final List<String> mots = tester
-                  .widgetList<Text>(
-                    find.descendant(
-                      of: grille,
-                      matching: find.byKey(
-                        const ValueKey<String>('mot-commande'),
-                      ),
-                    ),
-                  )
-                  .map((Text t) => t.data!)
-                  .toList();
-              expect(
-                mots,
-                contains(anyOf(t.salle.microOuvert, t.salle.microCoupe)),
+              await verifierPiluleSansMot(
+                tester,
+                largeur: largeur,
+                hauteurEcran: 844,
+                diametre: 72,
               );
               if (role == 'teacher') {
                 expect(
-                  mots,
-                  contains(anyOf(t.salle.cameraAllumee, t.salle.cameraCoupee)),
+                  find.byTooltip(
+                    RegExp('${t.salle.cameraAllumee}|${t.salle.cameraCoupee}'),
+                  ),
+                  findsOneWidget,
                 );
               }
-              verifierAucunMotCoupe(tester, grille);
-              final Rect zone = tester.getRect(grille);
-              expect(zone.left, greaterThanOrEqualTo(-0.5));
-              expect(zone.right, lessThanOrEqualTo(largeur + 0.5));
-              expect(zone.bottom, lessThanOrEqualTo(844.5));
             },
           );
         }
@@ -1065,13 +1100,11 @@ void main() {
     );
   });
 
-  // DOCK-X2-1 : /salle sur ordinateur, hors Mode Accessibilite, texte x1,5
-  // et x2 : aucun mot coupe ni tronque sous les commandes. Et m5 (verification
-  // d'ETATS-MA-1) : /salle en Mode Accessibilite a 320 x 568, texte x1,5 et
-  // x2 : deux rangees, mot d'etat entier, rien hors de l'ecran.
-  group('DOCK-X2-1 : /salle, bureau et 320 x 568', () {
+  // Standard des commandes d'appel, ordinateur (48) et 320 x 568 en Mode
+  // Accessibilite (56), texte x1,5 et x2 : jamais un mot, boutons a leur
+  // taille, rien hors de l'ecran.
+  group('Standard des commandes d\'appel : /salle, bureau et 320 x 568', () {
     setUpAll(chargerPolicesDuDepot);
-    final Finder commandes = find.byType(CommandeSalle);
     for (final String role in <String>['student', 'teacher']) {
       for (final (double l, double h) in <(double, double)>[
         (1440, 900),
@@ -1079,19 +1112,23 @@ void main() {
       ]) {
         for (final double texte in <double>[1.5, 2]) {
           testWidgets(
-            '$role, ${l.toInt()} px, texte x$texte : aucun mot coupe',
+            '$role, ${l.toInt()} px, texte x$texte : pilule sans mot',
             (WidgetTester tester) async {
               await _monter(tester, role, l, texte, hauteur: h);
-              expect(tester.takeException(), isNull);
-              expect(commandes, findsWidgets);
-              verifierAucunMotCoupe(tester, commandes);
+              await verifierPiluleSansMot(
+                tester,
+                largeur: l,
+                hauteurEcran: h,
+                diametre: 48,
+              );
             },
           );
         }
       }
       for (final double texte in <double>[1.5, 2]) {
         testWidgets(
-          '$role, 320 x 568, Mode Accessibilite, texte x$texte (m5)',
+          '$role, 320 x 568, Mode Accessibilite, texte x$texte : pilule '
+          'sans mot (m5)',
           (WidgetTester tester) async {
             await _monter(
               tester,
@@ -1101,40 +1138,11 @@ void main() {
               hauteur: 568,
               interfaceMode: InterfaceMode.enfant,
             );
-            expect(tester.takeException(), isNull);
-            final Finder grille = find.byKey(
-              const ValueKey<String>('commandes-deux-rangees'),
-            );
-            expect(grille, findsOneWidget);
-            final List<String> mots = tester
-                .widgetList<Text>(
-                  find.descendant(
-                    of: grille,
-                    matching: find.byKey(
-                      const ValueKey<String>('mot-commande'),
-                    ),
-                  ),
-                )
-                .map((Text t) => t.data!)
-                .toList();
-            expect(
-              mots,
-              contains(anyOf(t.salle.microOuvert, t.salle.microCoupe)),
-            );
-            verifierAucunMotCoupe(tester, grille);
-            final Rect zone = tester.getRect(grille);
-            expect(zone.left, greaterThanOrEqualTo(-0.5));
-            expect(zone.right, lessThanOrEqualTo(320.5));
-            expect(zone.bottom, lessThanOrEqualTo(568.5));
-            // Quitter reste atteignable, a l'ecran (S0 : le dock de la salle
-            // de seance, « Sortir de la seance »).
-            final Finder quitter = find.bySemanticsLabel(
-              RegExp(t.salle.seance.sortir),
-            );
-            expect(quitter, findsWidgets);
-            expect(
-              tester.getRect(quitter.first).bottom,
-              lessThanOrEqualTo(568.5),
+            await verifierPiluleSansMot(
+              tester,
+              largeur: 320,
+              hauteurEcran: 568,
+              diametre: 72,
             );
           },
         );

@@ -629,6 +629,13 @@ abstract final class AppIcons {
     IconData(0xe4a6, fontFamily: _actif),
   );
 
+  /// Standard des commandes d'appel (24/10/2026) : la gomme de la palette du
+  /// tableau, distincte de « Fermer ». Phosphor `eraser` (0xe21e).
+  static const AppIcon gomme = AppIcon._(
+    IconData(0xe21e, fontFamily: _repos),
+    IconData(0xe21e, fontFamily: _actif),
+  );
+
   /// Standard des commandes d'appel (24/10/2026) : « Plus » de la pilule
   /// d'appel, qui ouvre les Commandes. Phosphor `dots-three` (0xe1fe).
   static const AppIcon plusCommandes = AppIcon._(

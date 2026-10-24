@@ -117,22 +117,17 @@ void main() {
             const ValueKey<String>('vignette-support-pile'),
           );
           if (echelle >= 2) {
-            // MA-CMD-1 (directeur, 02/10/2026), amende par ETATS-MA-1
-            // (decision du 05/10/2026, WCAG 1.4.1) : au-dela de 130 %, les
-            // commandes passent sur deux rangees ; les bascules gardent leur
-            // mot d'etat sous le disque ; Quitter garde son nom sous le
-            // disque depuis TB-2 (ui/supports-tableau-v1).
+            // Standard des commandes d'appel (directeur, 24/10/2026) : cette
+            // regle remplace MA-CMD-1 et ETATS-MA-1 dans la salle. Au-dela de
+            // 130 %, la pilule peut passer sur deux rangees, les boutons
+            // gardent leur taille et ne portent AUCUN mot ; le nom (et l'etat
+            // d'une bascule) est dans la semantique et l'infobulle.
             final Finder dock = find.byKey(
               const ValueKey<String>('dock-seance'),
             );
             expect(
-              find.descendant(
-                of: dock,
-                matching: find.byKey(
-                  const ValueKey<String>('commandes-deux-rangees'),
-                ),
-              ),
-              findsOneWidget,
+              find.descendant(of: dock, matching: find.byType(Text)),
+              findsNothing,
             );
             final Finder boutonsDock = find.descendant(
               of: dock,
@@ -143,31 +138,24 @@ void main() {
               boutonsDock,
             )) {
               final Finder bouton = find.byWidget(b);
-              final Finder mot = find.descendant(
-                of: bouton,
-                matching: find.byType(Text),
-              );
-              // Une bascule montre son mot d'etat, Quitter son nom (TB-2,
-              // motGarde) ; une autre commande, rien.
-              final bool motVisible = b.bascule != null || b.motGarde;
+              expect(tester.getSize(bouton).height, greaterThanOrEqualTo(48));
+              // L'infobulle dit le libelle (l'etat d'une bascule).
               expect(
-                mot,
-                motVisible ? findsOneWidget : findsNothing,
+                find.descendant(
+                  of: bouton,
+                  matching: find.byTooltip(b.libelle),
+                ),
+                findsOneWidget,
                 reason: b.libelle,
               );
-              if (motVisible) {
-                expect(tester.widget<Text>(mot).data, b.libelle);
-              }
-              expect(tester.getSize(bouton).height, greaterThanOrEqualTo(48));
               final String lu = b.libelleSemantique ?? b.libelle;
-              // Le nom lu est l'acte ; le mot d'etat visible s'y ajoute.
+              // Le nom lu est l'acte ; l'etat d'une bascule s'y ajoute.
               expect(
                 find.bySemanticsLabel(RegExp('^${RegExp.escape(lu)}')),
                 findsWidgets,
                 reason: lu,
               );
             }
-            // Quitter garde son mot (TB-2), verifie dans la boucle.
             expect(pile, findsOneWidget);
             final Finder chapitre = find.textContaining('Chapitre');
             expect(chapitre, findsWidgets);
@@ -275,7 +263,7 @@ void main() {
       await tester.tapAt(const Offset(195, 400));
       await tester.pump(const Duration(milliseconds: 500));
       expect(opacite(), 1);
-      // Quitter garde son mot (TB-2) : plus d'infobulle, le bouton est la.
+      // Quitter est la, en icone seule (infobulle et semantique).
       expect(
         find.byWidgetPredicate(
           (Widget w) => w is BoutonAppel && w.libelle == t.salle.quitter,
@@ -298,43 +286,48 @@ void main() {
       (const Size(320, 690), 1.5),
       (const Size(360, 779), 2),
     ]) {
-      testWidgets('MA-CMD-1 : ${taille.width.toInt()} x '
-          '${taille.height.toInt()}, texte x$echelle, en-tete et commandes '
-          '(deux rangees, ETATS-MA-1) dans 50 %, sans le lien', (
-        WidgetTester tester,
-      ) async {
-        await _monter(tester, echelle: echelle, taille: taille);
-        final Finder rejoindre = find.text(LibellesGroupe.rejoindre);
-        await tester.ensureVisible(rejoindre);
-        await tester.tap(rejoindre);
-        await stabiliser(tester);
-        final Finder entrer = find.byKey(
-          const ValueKey<String>('preparation-entrer'),
-        );
-        await tester.ensureVisible(entrer);
-        await tester.tap(entrer);
-        await tester.pump(const Duration(milliseconds: 500));
+      testWidgets(
+        'MA-CMD-1 : ${taille.width.toInt()} x '
+        '${taille.height.toInt()}, texte x$echelle, en-tete et commandes '
+        '(standard des commandes d appel, icones seules) dans 50 %, sans le lien',
+        (WidgetTester tester) async {
+          await _monter(tester, echelle: echelle, taille: taille);
+          final Finder rejoindre = find.text(LibellesGroupe.rejoindre);
+          await tester.ensureVisible(rejoindre);
+          await tester.tap(rejoindre);
+          await stabiliser(tester);
+          final Finder entrer = find.byKey(
+            const ValueKey<String>('preparation-entrer'),
+          );
+          await tester.ensureVisible(entrer);
+          await tester.tap(entrer);
+          await tester.pump(const Duration(milliseconds: 500));
 
-        expect(find.text(t.salle.informationControle.lien), findsNothing);
-        expect(
-          find.byKey(const ValueKey<String>('commandes-deux-rangees')),
-          findsOneWidget,
-        );
-        final double hauteurEntete = tester
-            .getSize(
-              find.byKey(const ValueKey<String>('entete-seance-compacte')),
-            )
-            .height;
-        final double hauteurCommandes = tester
-            .getSize(find.byKey(CommandesMasquables.commandesKey))
-            .height;
-        expect(
-          hauteurEntete + hauteurCommandes,
-          lessThanOrEqualTo(taille.height * 0.50),
-          reason: 'en-tete $hauteurEntete + commandes $hauteurCommandes',
-        );
-        expect(tester.takeException(), isNull);
-      });
+          expect(find.text(t.salle.informationControle.lien), findsNothing);
+          // Standard des commandes d'appel : la pilule ne porte aucun mot.
+          expect(
+            find.descendant(
+              of: find.byKey(const ValueKey<String>('dock-seance')),
+              matching: find.byType(Text),
+            ),
+            findsNothing,
+          );
+          final double hauteurEntete = tester
+              .getSize(
+                find.byKey(const ValueKey<String>('entete-seance-compacte')),
+              )
+              .height;
+          final double hauteurCommandes = tester
+              .getSize(find.byKey(CommandesMasquables.commandesKey))
+              .height;
+          expect(
+            hauteurEntete + hauteurCommandes,
+            lessThanOrEqualTo(taille.height * 0.50),
+            reason: 'en-tete $hauteurEntete + commandes $hauteurCommandes',
+          );
+          expect(tester.takeException(), isNull);
+        },
+      );
     }
 
     // m1 (verification d'ETATS-MA-1) : la meme borne, mesuree aussi au plus

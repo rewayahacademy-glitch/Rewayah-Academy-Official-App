@@ -114,6 +114,11 @@ Finder _dans(Finder parent, String texte) =>
 /// donc le bouton, pas un texte. Une bascule porte son mot d'etat en
 /// libelle (ETATS-BTN-1) : son nom est alors celui que la reconnexion dit
 /// indisponible (« Micro. Indisponible... »).
+Finder _infobulleDock(String etat) =>
+    find.descendant(of: _dock, matching: find.byTooltip(etat));
+
+/// Le bouton du dock nomme [libelle]. Standard des commandes d'appel
+/// (24/10/2026) : icones seules, l'etat vit dans l'infobulle.
 Finder _boutonDock(String libelle) => find.descendant(
   of: _dock,
   matching: find.byWidgetPredicate(
@@ -223,10 +228,15 @@ void main() {
           EtatDemoSalle.reconnexion,
           journal: journal,
         );
-        // Le nom lu de la commande, et le mot d'etat affiche (ETATS-BTN-1).
+        // Le nom lu de la commande, et l'etat en infobulle (standard des
+        // commandes d'appel : aucun mot affiche).
         final String micro = role == RoleSeance.guidee ? 'Parler' : 'Micro';
         expect(_boutonDock(micro), findsOneWidget);
-        expect(_dans(_dock, 'Micro ouvert'), findsOneWidget);
+        expect(_infobulleDock('Micro ouvert'), findsOneWidget);
+        expect(
+          find.descendant(of: _dock, matching: find.byType(Text)),
+          findsNothing,
+        );
         await tester.tap(_boutonDock(micro), warnIfMissed: false);
         await tester.pump();
         expect(journal.micro, 0);
@@ -238,7 +248,7 @@ void main() {
         );
         if (vue.cameraAutorisee) {
           expect(_boutonDock('Caméra'), findsOneWidget);
-          expect(_dans(_dock, 'Caméra allumée'), findsOneWidget);
+          expect(_infobulleDock('Caméra allumée'), findsOneWidget);
           await tester.tap(_boutonDock('Caméra'), warnIfMissed: false);
           await tester.pump();
           expect(journal.camera, 0);
@@ -265,8 +275,8 @@ void main() {
         EtatDemoSalle.reseauFaible,
         journal: journal,
       );
-      await tester.tap(_dans(_dock, 'Micro ouvert'));
-      await tester.tap(_dans(_dock, 'Caméra allumée'));
+      await tester.tap(_infobulleDock('Micro ouvert'));
+      await tester.tap(_infobulleDock('Caméra allumée'));
       await tester.pump();
       expect(journal.micro, 1);
       expect(journal.camera, 1);
@@ -289,8 +299,9 @@ void main() {
         ),
       );
       await tester.pump(const Duration(milliseconds: 300));
-      // Revue TB-R m1 : la sortie du focus garde le mot « Focus ».
-      expect(find.text('Focus'), findsOneWidget);
+      // Revue TB-R m1 : la sortie du focus garde le nom « Focus », en
+      // infobulle (standard des commandes d'appel : icone seule).
+      expect(find.byTooltip('Focus'), findsOneWidget);
       expect(_bandeau, findsOneWidget);
     });
   });

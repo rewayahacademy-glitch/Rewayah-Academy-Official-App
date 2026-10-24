@@ -125,7 +125,6 @@ void main() {
         ]) {
           expect(find.text(outil), findsNothing);
         }
-        final bool desktop = taille.key == 'desktop';
         expect(_cle('pagination-support'), findsNothing);
         expect(_cle('zoom-local'), findsNothing);
         expect(
@@ -134,10 +133,9 @@ void main() {
         );
         // EN-9 : sans barre de navigation, meme sur bureau.
         expect(_cle('rail-seance'), findsNothing);
-        expect(
-          _cle('separateur-dock'),
-          desktop ? findsOneWidget : findsNothing,
-        );
+        // Standard des commandes d'appel (24/10/2026) : une seule pilule,
+        // sans separateur.
+        expect(_cle('separateur-dock'), findsNothing);
         expect(_cle('signal-video'), findsOneWidget);
       });
     }
@@ -257,11 +255,11 @@ void main() {
     expect(route, isNull);
   });
 
-  testWidgets('Quitter (dock) : « Quitter et ouvrir le cahier »', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('Quitter (dock, standard des commandes d\'appel) : « Quitter et '
+      'ouvrir le cahier »', (WidgetTester tester) async {
     await _monter(tester, _tailles['mobile']!);
-    await tester.tap(find.text('Quitter'));
+    // Icone seule : le mot « Quitter » vit dans l'infobulle.
+    await tester.tap(find.byTooltip('Quitter'));
     await _attendre(tester);
     expect(
       find.text('Quitter et ouvrir le cahier de transmission'),
