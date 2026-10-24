@@ -3,6 +3,8 @@
 // avec la meme condition et le meme billet. La porte est celle du serveur
 // (`join_opens_at`), jamais une constante plus courte.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -57,21 +59,42 @@ class BoutonRejoindreAvecEleve extends StatelessWidget {
   static const Key cle = ValueKey<String>('rejoindre-avec-eleve');
 
   @override
-  Widget build(BuildContext context) => ActionPrincipale(
-    key: cle,
-    libelle: t.classe.seance.rejoindreAvec(prenom: eleve.prenom),
-    onPress: () => GoRouter.of(context).push(
-      Routes.salle,
-      extra: BilletSalle(
-        sessionId: seance.seanceId,
-        emisA: DateTime.now(),
-        groupeId: seance.groupeId,
-        eleveId: eleve.eleveId,
-        interfaceGuidee: eleve.mode == InterfaceMode.enfant,
-      ),
-    ),
+  Widget build(BuildContext context) => _boutonRejoindre(
+    cle: cle,
+    eleve: eleve,
+    onPress: () => _entrer(context, seance.seanceId, seance.groupeId, eleve),
   );
 }
+
+/// Le seul bouton « Rejoindre la salle avec {prenom} » (un bouton plein).
+Widget _boutonRejoindre({
+  required Key cle,
+  required ProfilEleveFoyer eleve,
+  required VoidCallback onPress,
+}) => ActionPrincipale(
+  key: cle,
+  libelle: t.classe.seance.rejoindreAvec(prenom: eleve.prenom),
+  onPress: onPress,
+);
+
+/// Ouvre la salle [sessionId] avec le billet de l'eleve.
+void _entrer(
+  BuildContext context,
+  String sessionId,
+  String? groupeId,
+  ProfilEleveFoyer eleve,
+) => unawaited(
+  GoRouter.of(context).push(
+    Routes.salle,
+    extra: BilletSalle(
+      sessionId: sessionId,
+      emisA: DateTime.now(),
+      groupeId: groupeId,
+      eleveId: eleve.eleveId,
+      interfaceGuidee: eleve.mode == InterfaceMode.enfant,
+    ),
+  ),
+);
 
 /// Concierge (a), tuteur (decision du pilote, 24/10/2026) : la Classe est
 /// ouverte par son horloge (`horloge_classe`, tiree des creneaux meme sans
@@ -110,23 +133,14 @@ class BoutonRejoindreClasseAvecEleve extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final String? refus = ref.watch(refusEntreeProvider)[groupeId];
-    final ActionPrincipale bouton = ActionPrincipale(
-      key: cle,
-      libelle: t.classe.seance.rejoindreAvec(prenom: eleve.prenom),
+    final Widget bouton = _boutonRejoindre(
+      cle: cle,
+      eleve: eleve,
       onPress: () => rejoindreClasse(
         context,
         groupeId: groupeId,
         sessionId: sessionId,
-        entrer: (String id) => GoRouter.of(context).push(
-          Routes.salle,
-          extra: BilletSalle(
-            sessionId: id,
-            emisA: DateTime.now(),
-            groupeId: groupeId,
-            eleveId: eleve.eleveId,
-            interfaceGuidee: eleve.mode == InterfaceMode.enfant,
-          ),
-        ),
+        entrer: (String id) => _entrer(context, id, groupeId, eleve),
       ),
     );
     if (refus == null) return bouton;
