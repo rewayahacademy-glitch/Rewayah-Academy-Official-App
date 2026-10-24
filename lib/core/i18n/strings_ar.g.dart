@@ -335,6 +335,7 @@ class _Traductions$salle$ar extends Traductions$salle$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get retourner => 'العودة إلى القاعة';
 	@override String get microOuvert => 'الميكروفون مفتوح';
 	@override String get microCoupe => 'الميكروفون مغلق';
 	@override String get cameraAllumee => 'الكاميرا مشغّلة';
@@ -19650,6 +19651,7 @@ extension on TraductionsAr {
 			'classe.cartes.feuille.defauts.texteLong' => ({required Object max}) => 'النص يتجاوز ⁨${max}⁩ حرفًا. اختصره أو شارك رابطًا.',
 			'classe.cartes.feuille.defauts.lienInvalide' => 'هذا الرابط ليس عنوانًا كاملًا. انسخ العنوان كما يظهر في شريط المتصفح والصقه هنا.',
 			'classe.cartes.feuille.defauts.echeanceManquante' => 'يحتاج الواجب إلى موعد نهائي. اختر الموعد النهائي.',
+			'salle.retourner' => 'العودة إلى القاعة',
 			'salle.microOuvert' => 'الميكروفون مفتوح',
 			'salle.microCoupe' => 'الميكروفون مغلق',
 			'salle.cameraAllumee' => 'الكاميرا مشغّلة',
@@ -20075,9 +20077,9 @@ extension on TraductionsAr {
 			'salle.informationControle.e2.p4' => ({required Object contact}) => 'يذكّرك الشريط في أعلى شاشة الحصة بأن الزيارة ممكنة. إذا كان لديك سؤال، أو أزعجك شيء، فتحدّث إلى والديك أو اكتب إلى ⁨${contact}⁩.',
 			'eleve.suivi.titre' => 'متابعة دروسي',
 			'eleve.suivi.colonneDate' => 'التاريخ',
-			'eleve.suivi.colonneCours' => 'الدرس',
 			_ => null,
 		} ?? switch (path) {
+			'eleve.suivi.colonneCours' => 'الدرس',
 			'eleve.suivi.colonneEnseignant' => 'المعلم',
 			'eleve.suivi.colonneEtat' => 'الحضور',
 			'eleve.suivi.cours' => 'درس القرآن',
@@ -20589,9 +20591,9 @@ extension on TraductionsAr {
 			'enseignant.revue.typeReorientation' => 'اقتراح إعادة توجيه',
 			'compte.donnees.titre' => 'بياناتي',
 			'compte.donnees.sousTitre' => 'نسخة من بياناتك، أو حذف حسابك.',
-			'compte.donnees.ligne' => 'نسخة من بياناتي وحذف الحساب',
 			_ => null,
 		} ?? switch (path) {
+			'compte.donnees.ligne' => 'نسخة من بياناتي وحذف الحساب',
 			'compte.donnees.ligneDetail' => 'نزّل بياناتك أو اطلب حذف حسابك.',
 			'compte.donnees.copie.titre' => 'تنزيل نسخة',
 			'compte.donnees.copie.intro' => 'ملف JSON يضم معلوماتك وفصولك وحصصك وفواتيرك. إذا كنت وليّ أمر، فهو يضم أيضًا بيانات الطلاب في أسرتك.',
@@ -21103,9 +21105,9 @@ extension on TraductionsAr {
 			'tc.bibliotheque.rendu.imageIllisible' => 'لا يمكن عرض ملف الصورة هذا.',
 			'tc.bibliotheque.rendu.reessayer' => 'إعادة المحاولة',
 			'tc.bibliotheque.rendu.ouvrir' => 'فتح',
-			'tc.bibliotheque.rendu.ouvrirMushaf' => 'فتح المصحف',
 			_ => null,
 		} ?? switch (path) {
+			'tc.bibliotheque.rendu.ouvrirMushaf' => 'فتح المصحف',
 			'tc.bibliotheque.rendu.lienEchec' => 'تعذّر الحصول على رابط القراءة حاليًا.',
 			'tc.bibliotheque.rendu.lienIndisponible' => 'الفتح غير متاح لهذه المادة.',
 			'tc.bibliotheque.rendu.lienHorsLigne' => 'سيمكن الفتح عند عودة الاتصال.',
@@ -21617,9 +21619,9 @@ extension on TraductionsAr {
 			'com.messages.entree.erreurOuvertureTitre' => 'تعذّر فتح هذه المحادثة.',
 			'com.messages.entree.ouvertureEchouee' => 'تحقّق من اتصالك ثم أعد المحاولة.',
 			'com.messages.videDetail' => 'تُفتح المحادثة من فصل أو طالب أو ملف.',
-			'com.messages.choisirTitre' => 'اختر محادثة',
 			_ => null,
 		} ?? switch (path) {
+			'com.messages.choisirTitre' => 'اختر محادثة',
 			'com.messages.choisir' => 'اختر محادثة من القائمة لقراءتها والرد عليها.',
 			'com.messages.recherche.champ' => 'البحث عن محادثة',
 			'com.messages.recherche.aide' => 'الاسم أو الفصل أو الملف',
@@ -22131,9 +22133,9 @@ extension on TraductionsAr {
 			'com.studio.demo.f.activiteAnnonce' => 'نُشر إعلان: الأكاديمية مغلقة يوم 1 نوفمبر',
 			'com.studio.demo.f.objetFermeture' => 'الإغلاق يوم 1 نوفمبر',
 			'com.studio.demo.f.activiteFichier' => ({required Object nom, required Object fichier}) => '${nom} شاركت ${fichier}',
-			'com.studio.demo.f.activiteInscription' => 'وصل طلب تسجيل جديد',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.demo.f.activiteInscription' => 'وصل طلب تسجيل جديد',
 			'com.studio.demo.f.objetDossierBenali' => 'ملف أسرة بن علي',
 			'com.studio.titre' => _root.com.socle.lexique.studio,
 			'com.studio.vide' => 'لا يوجد نشاط للمعالجة هنا.',
@@ -22645,9 +22647,9 @@ extension on TraductionsAr {
 			'admin.importInscriptions.enseignants.titre' => 'ملف المعلّمين',
 			'admin.importInscriptions.enseignants.aide' => 'ورقة «المعلّمون (الردود)» من المصنّف: الصق محتواها أو اختر الملف.',
 			'admin.importInscriptions.enseignants.champ' => 'محتوى ملف المعلّمين',
-			'admin.importInscriptions.choisir' => 'اختيار ملف CSV',
 			_ => null,
 		} ?? switch (path) {
+			'admin.importInscriptions.choisir' => 'اختيار ملف CSV',
 			'admin.importInscriptions.fichierCharge' => ({required Object nom}) => 'الملف المحمَّل: ⁨${nom}⁩',
 			'admin.importInscriptions.fichierIllisible' => 'تعذّرت قراءة هذا الملف. احفظه بصيغة CSV بترميز يونيكود أو الصق محتواه في الحقل.',
 			'admin.importInscriptions.voirApercu' => 'عرض المعاينة',
@@ -23159,9 +23161,9 @@ extension on TraductionsAr {
 			'admin.qualite.depuisUnJour' => 'يوم واحد',
 			'admin.qualite.depuisJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'اليوم', one: 'يوم واحد', two: 'يومان', few: '⁨${jours}⁩ أيام', many: '⁨${jours}⁩ يومًا', other: '⁨${jours}⁩ يوم', ), 
 			'admin.qualite.actionTraiter' => 'تعليم كمعالَج',
-			'admin.qualite.traiterTitre' => ({required Object personne}) => 'تعليم كمعالَج: ⁨${personne}⁩',
 			_ => null,
 		} ?? switch (path) {
+			'admin.qualite.traiterTitre' => ({required Object personne}) => 'تعليم كمعالَج: ⁨${personne}⁩',
 			'admin.qualite.champNote' => 'ملاحظة (اختيارية)',
 			'admin.qualite.traiterEnvoyer' => 'تعليم كمعالَج',
 			'admin.qualite.traiterErreur' => ({required Object message}) => 'لم تكتمل المعالجة: ⁨${message}⁩',
@@ -23673,9 +23675,9 @@ extension on TraductionsAr {
 			'admin.offres.formulaire.public' => 'الفئة',
 			'admin.offres.formulaire.langue' => 'لغة الدرس',
 			'admin.offres.formulaire.fuseau' => 'المنطقة الزمنية',
-			'admin.offres.formulaire.jours' => 'الأيام',
 			_ => null,
 		} ?? switch (path) {
+			'admin.offres.formulaire.jours' => 'الأيام',
 			'admin.offres.formulaire.joursAide' => ({required Object n}) => 'عدد الأيام المطلوبة في الأسبوع: ⁨${n}⁩.',
 			'admin.offres.formulaire.heure' => 'الساعة المحلية',
 			'admin.offres.formulaire.duree' => 'مدة الحصة',
@@ -24187,9 +24189,9 @@ extension on TraductionsAr {
 			'admin.bibliotheque.attribution.classeEpinglee' => 'مثبّتة',
 			'admin.bibliotheque.attribution.epingler' => 'تثبيتها في أعلى مكتبة هذه الفصول',
 			'admin.bibliotheque.attribution.aucune' => 'لا يوجد فصل مفتوح للإسناد حاليًا.',
-			'admin.bibliotheque.attribution.plusDeClasses' => 'عرض المزيد من الفصول',
 			_ => null,
 		} ?? switch (path) {
+			'admin.bibliotheque.attribution.plusDeClasses' => 'عرض المزيد من الفصول',
 			'admin.bibliotheque.attribution.chargementPlus' => 'جارٍ التحميل…',
 			'admin.bibliotheque.attribution.nonPublie' => 'هذه المادة غير منشورة. انشر إصدارًا قبل إسنادها إلى الفصول.',
 			'admin.bibliotheque.attribution.erreur' => 'تعذّر تحميل الفصول. أعد المحاولة.',
@@ -24701,9 +24703,9 @@ extension on TraductionsAr {
 			'comptable.encaissements.rap.natPaiementAttendu' => 'دفعة متوقعة',
 			'comptable.encaissements.rap.natTransaction' => 'معاملة مزوّد الدفع',
 			'comptable.encaissements.rap.natMensualite' => 'رصيد أو قسط شهري',
-			'comptable.encaissements.rap.natFrais' => 'رسوم',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.encaissements.rap.natFrais' => 'رسوم',
 			'comptable.encaissements.rap.natRemboursement' => 'استرداد',
 			'comptable.encaissements.rap.natPayout' => 'صرف دفعة',
 			'comptable.encaissements.rap.natPreuve' => 'إثبات',
@@ -25215,9 +25217,9 @@ extension on TraductionsAr {
 			'ficheEleve.mouvements.nature.remboursement' => 'استرداد',
 			'ficheEleve.mouvements.sansDonnees' => 'تعذّر تحميل حركات هذا الملف',
 			'ficheEleve.titreRepli' => 'ملف الطالب',
-			'ficheEleve.parametres' => 'إعدادات الطالب',
 			_ => null,
 		} ?? switch (path) {
+			'ficheEleve.parametres' => 'إعدادات الطالب',
 			'ficheEleve.appareilsGroupe' => 'الأجهزة',
 			'ficheEleve.introuvable.titre' => 'لم يُعثر على ملف الطالب هذا',
 			'ficheEleve.introuvable.phrase' => 'ليس من أسرتك، أو الرابط ناقص.',
@@ -25729,9 +25731,9 @@ extension on TraductionsAr {
 			'consentement.texte.pourquoi' => 'لمتابعة التعلم دون مقاطعة الفصل.',
 			'consentement.texte.pourquoiDetail' => 'يأتي وليّ الأمر ليرى إن كان طفله يشارك، ثم ينصرف. تذكّر القاعة باستمرار بأن الزيارة ممكنة.',
 			'consentement.texte.limites' => 'زيارات قصيرة، بعدد محدود.',
-			'consentement.texte.limitesDetail' => 'لكل وليّ أمر عدد قليل من الزيارات في كل حصة، تحدده الأكاديمية ويُذكَّر به في «كيف يعمل ذلك؟». الزيارة التي تُغادَر قبل نهايتها تُحتسب زيارة.',
 			_ => null,
 		} ?? switch (path) {
+			'consentement.texte.limitesDetail' => 'لكل وليّ أمر عدد قليل من الزيارات في كل حصة، تحدده الأكاديمية ويُذكَّر به في «كيف يعمل ذلك؟». الزيارة التي تُغادَر قبل نهايتها تُحتسب زيارة.',
 			'consentement.texte.caseResponsable' => 'أوافق على هذه الشروط لطفلي',
 			'consentement.texte.caseAdulte' => 'أوافق على هذه الشروط',
 			'consentement.texte.continuer' => 'متابعة',
@@ -26243,9 +26245,9 @@ extension on TraductionsAr {
 			'dossiers.validation.interdit' => 'لم يعد بإمكانك اعتماد هذا الملف.',
 			'dossiers.validation.succes' => 'اعتُمد الملف.',
 			'dossiers.decision.verifierResultat' => 'التحقق من النتيجة',
-			'dossiers.decision.dejaTraite' => 'عولج هذا الملف من قبل.',
 			_ => null,
 		} ?? switch (path) {
+			'dossiers.decision.dejaTraite' => 'عولج هذا الملف من قبل.',
 			'dossiers.decision.conflit' => 'عالج هذا الملف عضو آخر في الفريق.',
 			'dossiers.decision.nomComplet' => ({required Object prenom, required Object nom}) => '⁨${prenom}⁩ ⁨${nom}⁩',
 			'kyc.titre' => 'وثيقة هويتك',
@@ -26757,9 +26759,9 @@ extension on TraductionsAr {
 			'recherche.etats.domaineIndisponible.titre' => 'البحث في هذا المجال غير متاح.',
 			'recherche.etats.domaineIndisponible.phrase' => 'تبقى الفئات الأخرى قابلة للاطلاع.',
 			'recherche.etats.domaineIndisponible.action' => 'إعادة المحاولة لهذا المجال',
-			'recherche.etats.erreur.titre' => 'تعذّر إجراء البحث.',
 			_ => null,
 		} ?? switch (path) {
+			'recherche.etats.erreur.titre' => 'تعذّر إجراء البحث.',
 			'recherche.etats.erreur.phrase' => 'أُعيد التحقق من صلاحياتك. أعد المحاولة بعد قليل.',
 			'recherche.etats.delai.titre' => 'البحث يستغرق وقتًا طويلًا.',
 			'recherche.etats.delai.phrase' => 'حدّد المجال أو أعد المحاولة.',
@@ -27271,9 +27273,9 @@ extension on TraductionsAr {
 			'recrutement.talents.intro.missions.titre' => 'لكل مهمة شروطها',
 			'recrutement.talents.intro.missions.texte' => 'تعرضها عليك الأكاديمية عندما تتواصل معك. هذه الصفحة لا تَعِد بأي مهمة.',
 			'recrutement.talents.competences.titre' => 'ما الذي تُتقنه أيضًا؟',
-			'recrutement.talents.competences.explication' => 'المس كل مهارة لديك. تعرض كل بطاقة مثالًا. وإن لم تجد مهارتك فاختر «مجال آخر» في آخر القائمة.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.talents.competences.explication' => 'المس كل مهارة لديك. تعرض كل بطاقة مثالًا. وإن لم تجد مهارتك فاختر «مجال آخر» في آخر القائمة.',
 			'recrutement.talents.competences.familles.communication' => 'التواصل والصورة',
 			'recrutement.talents.competences.familles.administration' => 'الإدارة والتنظيم',
 			'recrutement.talents.competences.familles.financesDroit' => 'المالية والقانون',
@@ -27785,9 +27787,9 @@ extension on TraductionsAr {
 			'courriels.admin.ecrire.sujetAide' => '120 حرفًا على الأكثر.',
 			'courriels.admin.ecrire.corps' => 'الرسالة',
 			'courriels.admin.ecrire.corpsAide' => 'نص عادي، 5000 حرف على الأكثر. السطر الفارغ يبدأ فقرة جديدة.',
-			'courriels.admin.ecrire.traduction' => 'يتلقاه كل مستلم بلغته: تُترجم الرسالة تلقائيًا عند الإرسال.',
 			_ => null,
 		} ?? switch (path) {
+			'courriels.admin.ecrire.traduction' => 'يتلقاه كل مستلم بلغته: تُترجم الرسالة تلقائيًا عند الإرسال.',
 			'courriels.admin.ecrire.envoyer' => 'إرسال الرسالة',
 			'courriels.admin.ecrire.erreurCategories' => 'تعذّر تحميل الفئات. أعد المحاولة.',
 			'courriels.admin.ecrire.sansDonneesCategories' => 'تعذّر تحميل الفئات',

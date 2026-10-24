@@ -233,6 +233,7 @@
     "irreversible": "Cette action ne peut pas être annulée."
   },
   "salle": {
+    "retourner": "Retourner dans la salle",
     "preparation": {
       "titre": "Préparer l'entrée dans la classe",
       "retour": "Retour à la Classe",

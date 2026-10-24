@@ -21,6 +21,7 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/ecran_resultat.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/status_pill.dart';
 import 'actions_seance.dart';
 import 'chrome_seance.dart';
@@ -140,11 +141,19 @@ class FinSeanceEnseignant extends StatelessWidget {
     required this.actions,
     this.onOuvrirCahier,
     this.onRevenirJournee,
+    this.onRetournerSalle,
     this.cahierIndisponible = false,
     super.key,
   });
 
   final VueSeance vue;
+
+  /// D10 : retourner dans la salle (prière, coupure) tant que la seance n'est
+  /// pas close ; le serveur seul dit si elle l'est.
+  final VoidCallback? onRetournerSalle;
+
+  /// Le lien « Retourner dans la salle ».
+  static const Key retourSalleKey = ValueKey<String>('fin-retour-salle');
 
   /// Chevron, cloche, reglages, compte et rail (`onNaviguer`).
   final ActionsSeance actions;
@@ -205,6 +214,7 @@ class FinSeanceEnseignant extends StatelessWidget {
                                 ),
                                 child: _CorpsFin(
                                   vue: vue,
+                                  onRetournerSalle: onRetournerSalle,
                                   onOuvrirCahier: onOuvrirCahier,
                                   onRevenirJournee: onRevenirJournee,
                                   cahierIndisponible: cahierIndisponible,
@@ -229,12 +239,14 @@ class FinSeanceEnseignant extends StatelessWidget {
 class _CorpsFin extends StatelessWidget {
   const _CorpsFin({
     required this.vue,
+    required this.onRetournerSalle,
     required this.onOuvrirCahier,
     required this.onRevenirJournee,
     required this.cahierIndisponible,
   });
 
   final VueSeance vue;
+  final VoidCallback? onRetournerSalle;
   final VoidCallback? onOuvrirCahier;
   final VoidCallback? onRevenirJournee;
   final bool cahierIndisponible;
@@ -253,6 +265,17 @@ class _CorpsFin extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        // D10 : en haut, avant tout le reste ; une sortie involontaire ou une
+        // pause (priere, coupure) ne ferme pas la salle.
+        if (onRetournerSalle case final VoidCallback retourner) ...<Widget>[
+          LienFleche(
+            key: FinSeanceEnseignant.retourSalleKey,
+            libelle: t.salle.retourner,
+            onPress: retourner,
+            alignerEnDebut: true,
+          ),
+          Ecart.vLg,
+        ],
         const _HerosValide(),
         Ecart.vLg,
         Semantics(

@@ -466,6 +466,17 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     GoRouter.of(context).go(Routes.tcGroupes);
   }
 
+  /// D10 : l'enseignant sorti retourne dans la meme salle, par le meme
+  /// chemin que l'entree (pre-vol, jeton, salle). Le serveur seul dit si la
+  /// seance est close (« salle fermee » : l'impasse le dit).
+  void _retournerDansLaSalle() {
+    setState(() {
+      _finEnseignant = null;
+      _cahierIndisponible = false;
+    });
+    unawaited(_entrer());
+  }
+
   /// Retour a la racine de son role.
   ///
   /// C'est la sortie de qui n'a rien a transmettre : les trois autres roles, et
@@ -609,6 +620,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           onNaviguer: (String route) => GoRouter.of(context).go(route),
         ),
         onOuvrirCahier: _ouvrirCahier,
+        onRetournerSalle: _retournerDansLaSalle,
         onRevenirJournee: () =>
             GoRouter.of(context).go(Routes.enseignantJournee),
         cahierIndisponible: _cahierIndisponible,

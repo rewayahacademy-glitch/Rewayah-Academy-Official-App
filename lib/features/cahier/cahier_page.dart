@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/controle/service_controle.dart' show graceApresFin;
 import '../../core/coran/service_coran.dart' show PositionLecture;
+import '../../core/enseignant/cta_seance.dart';
 import '../../core/enseignant/depot_cahiers.dart';
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/service_enseignant.dart';
@@ -13,6 +15,7 @@ import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/presence/vue_presence.dart';
+import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_coran/moteur_mushaf.dart' show souratesCoranProvider;
 import '../../core/tc_coran/port_corpus_coran.dart' show SourateVM;
@@ -21,12 +24,14 @@ import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/video/pre_vol.dart' show seuilOuvertureSalle;
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_presence.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_shell.dart';
@@ -69,6 +74,9 @@ class CahierPage extends ConsumerWidget {
   /// La seance dont on rend le cahier.
   final String seanceId;
 
+  /// Le lien « Retourner dans la salle » (D10).
+  static const Key retourSalleKey = ValueKey<String>('cahier-retour-salle');
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final AsyncValue<BrouillonCahier?> lecture = ref.watch(
@@ -98,7 +106,31 @@ class CahierPage extends ConsumerWidget {
     }
     final String? classe = seance?.groupeLibelle ?? enRetard?.groupeLibelle;
 
+    // D10 : tant que la salle de cette seance est ouverte (meme calcul que la
+    // carte de la Journee, sans la base locale), l'enseignant sorti y
+    // retourne d'ici.
+    final SeanceEnseignant? ouverte = seance;
+    final bool salleOuverte =
+        ouverte != null &&
+        ctaDeSeance(
+              ouverte,
+              DateTime.now(),
+              fenetreAcces: seuilOuvertureSalle,
+              graceApresFin: graceApresFin,
+            ).etat ==
+            EtatCtaSeance.rejoindre;
+
     return _Cahier(
+      retourSalle: salleOuverte
+          ? () => GoRouter.of(context).go(
+              Routes.salle,
+              extra: BilletSalle(
+                sessionId: seanceId,
+                emisA: DateTime.now(),
+                groupeId: ouverte.groupeId,
+              ),
+            )
+          : null,
       seanceId: seanceId,
       vue: VueCahier.depuis(
         lecture: lecture,
@@ -122,9 +154,13 @@ class _Cahier extends ConsumerStatefulWidget {
     this.enFile = false,
     this.classe,
     this.debut,
+    this.retourSalle,
   });
 
   final String seanceId;
+
+  /// D10 : retourner dans la salle, tant qu'elle est ouverte ; `null` sinon.
+  final VoidCallback? retourSalle;
   final VueCahier vue;
 
   /// Le nom de la Classe de la seance, s'il est connu.
@@ -222,12 +258,22 @@ class _CahierState extends ConsumerState<_Cahier> {
         : t.enseignant.journee.cahierLigne(classe: deDevant(classe));
     final DateTime? debut = vue.brouillon?.debut ?? widget.debut;
     final String? sousTitre = debut == null ? null : _seanceDu(debut);
+    final VoidCallback? retourSalle = widget.retourSalle;
+    final Widget? lienSalle = retourSalle == null
+        ? null
+        : LienFleche(
+            key: CahierPage.retourSalleKey,
+            libelle: t.salle.retourner,
+            onPress: retourSalle,
+            alignerEnDebut: true,
+          );
 
     if (sort != null) {
       return PageShell(
         titre: titre,
         sousTitre: sousTitre,
         onRetour: _retourJournee,
+        entete: lienSalle,
         child: _ApresDepot(
           sort: sort,
           corrigeLe: _corrigeLe,
@@ -241,6 +287,7 @@ class _CahierState extends ConsumerState<_Cahier> {
       return PageShell(
         titre: titre,
         onRetour: _retourJournee,
+        entete: lienSalle,
         child: EmptyState(
           message: t.enseignant.cahier.introuvable,
           invitation: t.enseignant.cahier.introuvableDetail,
@@ -258,6 +305,7 @@ class _CahierState extends ConsumerState<_Cahier> {
       titre: titre,
       sousTitre: sousTitre,
       onRetour: _retourJournee,
+      entete: lienSalle,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[

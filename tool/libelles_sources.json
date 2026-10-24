@@ -1,4 +1,5 @@
 {
+  "salle.retourner": "D10 (24/10/2026), decision du pilote deleguee par le directeur : apres « Quitter la reunion », tant que la seance n est pas close, l enseignant retourne dans la salle depuis la fin de seance (CLV-10) et le cahier",
   "inscription.erreurInvitation": "demande du directeur du 16/10/2026 (raccordement STAGING, point D : consommation du code d'invitation enseignant) ; message K-59 quand le serveur refuse le code a la creation du profil",
   "inscription.usage.coursQuestion": "etape EA-ECRANS (contrat C-24, eleve adulte autonome) : question posee a l'inscription, demandee par l'orchestrateur ; source consignee a l'integration INTEG-NUIT",
   "inscription.usage.coursOui": "etape EA-ECRANS (contrat C-24, eleve adulte autonome) : question posee a l'inscription, demandee par l'orchestrateur ; source consignee a l'integration INTEG-NUIT",

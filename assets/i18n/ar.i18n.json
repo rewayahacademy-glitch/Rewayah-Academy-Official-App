@@ -801,6 +801,7 @@
     }
   },
   "salle": {
+    "retourner": "العودة إلى القاعة",
     "microOuvert": "الميكروفون مفتوح",
     "microCoupe": "الميكروفون مغلق",
     "cameraAllumee": "الكاميرا مشغّلة",
