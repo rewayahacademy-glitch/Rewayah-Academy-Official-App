@@ -33,6 +33,7 @@
 
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/gestures.dart'
     show PointerDeviceKind, kDoubleTapSlop, kDoubleTapTimeout;
 import 'package:flutter/material.dart';
@@ -60,7 +61,12 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/action_principale.dart';
 import '../tc_dock/couche_annotation.dart';
-import 'ecriture_seance.dart' show emettreEcriture, traitsDeLaSurface;
+import 'ecriture_seance.dart'
+    show
+        diffusionPointeurProvider,
+        emettreEcriture,
+        pointeurDistantProvider,
+        traitsDeLaSurface;
 import 'media_salle.dart';
 import 'notes_deposees.dart';
 import 'rangement_support.dart';
@@ -131,6 +137,11 @@ class SurfacePageFixe extends ConsumerStatefulWidget {
 
   /// TB-7b : la cle du calque du Pointeur (monte quand il est retenu).
   static const Key clePointage = ValueKey<String>('surface-pointage');
+
+  /// S1 : la cle du pointeur de l'enseignant chez l'eleve.
+  static const Key clePointeurDistant = ValueKey<String>(
+    'surface-pointeur-distant',
+  );
 
   /// TB-7b : la cle de l'indication du Pointeur, tant que le doigt est pose.
   static const Key clePointeur = ValueKey<String>('surface-pointeur');
@@ -460,6 +471,8 @@ class _SurfacePageFixeState extends ConsumerState<SurfacePageFixe> {
               // TB-7b : le Pointeur, dans tous les affichages (il ne pose
               // rien sur le calque des notes).
               if (pointe) const _Pointage(key: SurfacePageFixe.clePointage),
+              // S1 : le pointeur de l'enseignant, chez qui le recoit.
+              const _PointeurDistant(),
             ],
           ),
         );
@@ -553,23 +566,49 @@ class _SurfacePageFixeState extends ConsumerState<SurfacePageFixe> {
 /// TB-7b (plan V2 §4.2) : le Pointeur. Tant qu'un seul doigt (ou la
 /// souris, ou le stylet) est pose sur la page, une indication le suit ;
 /// levee, elle disparait. Rien n'est ecrit, rien n'est garde.
-class _Pointage extends StatefulWidget {
+class _Pointage extends ConsumerStatefulWidget {
   const _Pointage({super.key});
 
   @override
-  State<_Pointage> createState() => _PointageState();
+  ConsumerState<_Pointage> createState() => _PointageState();
 }
 
-class _PointageState extends State<_Pointage> {
+class _PointageState extends ConsumerState<_Pointage> {
   final Map<int, Offset> _poses = <int, Offset>{};
 
   /// Le point montre : un seul pointeur pose. Deux doigts deplacent.
   Offset? get _montre => _poses.length == 1 ? _poses.values.single : null;
 
-  void _suivre(PointerEvent e) =>
-      setState(() => _poses[e.pointer] = e.localPosition);
+  /// S1 : le dernier envoi du pointeur a la classe (au plus un par
+  /// [_intervalleEnvoi] millisecondes : un canal ephemere, pas un flot).
+  int _dernierEnvoi = 0;
 
-  void _lever(PointerEvent e) => setState(() => _poses.remove(e.pointer));
+  void _suivre(PointerEvent e) {
+    setState(() => _poses[e.pointer] = e.localPosition);
+    _diffuser(e.timeStamp.inMilliseconds, force: e is PointerDownEvent);
+  }
+
+  void _lever(PointerEvent e) {
+    setState(() => _poses.remove(e.pointer));
+    if (_poses.isEmpty) ref.read(diffusionPointeurProvider)?.call(null);
+  }
+
+  void _diffuser(int maintenant, {bool force = false}) {
+    final void Function(Offset?)? envoyer = ref.read(diffusionPointeurProvider);
+    final Offset? point = _montre;
+    final Size? taille = context.size;
+    if (envoyer == null || point == null || taille == null || taille.isEmpty) {
+      return;
+    }
+    if (!force && maintenant - _dernierEnvoi < _intervalleEnvoi) return;
+    _dernierEnvoi = maintenant;
+    envoyer(
+      Offset(
+        (point.dx / taille.width).clamp(0, 1),
+        (point.dy / taille.height).clamp(0, 1),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -611,6 +650,44 @@ class _PointageState extends State<_Pointage> {
     );
   }
 }
+
+/// S1 : le pointeur de l'enseignant, chez l'eleve : le meme point que celui
+/// de l'enseignant, place en proportion de la page. Rien sans transport.
+class _PointeurDistant extends ConsumerWidget {
+  const _PointeurDistant();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ValueListenable<Offset?>? source = ref.watch(pointeurDistantProvider);
+    if (source == null) return const SizedBox.shrink();
+    final AppPalette palette = AppPalette.of(context);
+    return IgnorePointer(
+      child: ValueListenableBuilder<Offset?>(
+        valueListenable: source,
+        builder: (BuildContext _, Offset? point, Widget? _) => point == null
+            ? const SizedBox.shrink()
+            : Align(
+                alignment: FractionalOffset(point.dx, point.dy),
+                child: SizedBox.square(
+                  key: SurfacePageFixe.clePointeurDistant,
+                  dimension: AppSpacing.xl,
+                  child: DecoratedBox(
+                    decoration: palette.washAccent.decoration(
+                      borderRadius: AppRadius.arrondiFull,
+                      side: palette.inkAccent.asBorderSide(
+                        width: AppContour.fort,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+      ),
+    );
+  }
+}
+
+/// S1 : l'intervalle minimal entre deux envois du pointeur (ms).
+const int _intervalleEnvoi = 50;
 
 /// TB-7a : le calque des notes, au repere de la page. `CoucheAnnotation`
 /// (tc_dock) y est montee sur un seul bloc qui couvre la page : son cadre

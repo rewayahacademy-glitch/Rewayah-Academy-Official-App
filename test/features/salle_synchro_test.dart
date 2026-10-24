@@ -196,4 +196,52 @@ void main() {
     final List<TraitVectoriel> recus = await _traitsDe(eleve.depot);
     expect(recus.map((TraitVectoriel t) => t.id), <String>['trait-2']);
   });
+
+  test('le pointeur de l enseignant part sur le canal ephemere et se montre '
+      'chez l eleve, puis s efface', () async {
+    final FauxMoteurSalle moteurEnseignant = FauxMoteurSalle();
+    final FauxMoteurSalle moteurEleve = FauxMoteurSalle();
+    await moteurEnseignant.rejoindre(accesSalle('teacher'));
+    await moteurEleve.rejoindre(accesSalle('student'));
+    final SynchroSalle enseignant = SynchroSalle(
+      moteur: moteurEnseignant,
+      acces: accesSalle('teacher'),
+      sessionId: _seance,
+      profilLocalId: 't1',
+    );
+    final SynchroSalle eleve = SynchroSalle(
+      moteur: moteurEleve,
+      acces: accesSalle('student'),
+      sessionId: _seance,
+      profilLocalId: 'e1',
+    );
+    addTearDown(enseignant.liberer);
+    addTearDown(eleve.liberer);
+    expect(eleve.diffuserPointeur, isNull);
+
+    void relayer() {
+      final PaquetDonnees paquet = moteurEnseignant.donneesPubliees.last;
+      expect(paquet.fiable, isFalse);
+      moteurEleve.recevoirDonnees(
+        PaquetDonnees(
+          sujet: paquet.sujet,
+          charge: paquet.charge,
+          fiable: paquet.fiable,
+          emetteurIdentite: 't1',
+        ),
+      );
+    }
+
+    enseignant.diffuserPointeur!(const Offset(0.3, 0.4));
+    await pumpEventQueue();
+    relayer();
+    await pumpEventQueue();
+    expect(eleve.pointeurDistant.value, const Offset(0.3, 0.4));
+
+    enseignant.diffuserPointeur!(null);
+    await pumpEventQueue();
+    relayer();
+    await pumpEventQueue();
+    expect(eleve.pointeurDistant.value, isNull);
+  });
 }

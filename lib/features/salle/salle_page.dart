@@ -63,7 +63,11 @@ import '../salle_enseignant/presentation_coran.dart'
     show contenuPresenteProvider, presentateurCoranProvider;
 import '../salle_seance/actions_seance.dart';
 import '../salle_seance/depuis_salle.dart';
-import '../salle_seance/ecriture_seance.dart' show diffusionEcritureProvider;
+import '../salle_seance/ecriture_seance.dart'
+    show
+        diffusionEcritureProvider,
+        diffusionPointeurProvider,
+        pointeurDistantProvider;
 import '../salle_seance/media_salle.dart';
 import '../salle_seance/notes_deposees.dart';
 import '../salle_seance/presentation_observee.dart';
@@ -1321,6 +1325,8 @@ class _AvecSynchro extends StatelessWidget {
         etatOutilsProvider.overrideWith(ControleurOutils.new),
         historiquePersonnelProvider.overrideWith(ControleurHistorique.new),
         diffusionEcritureProvider.overrideWithValue(s.diffuser),
+        diffusionPointeurProvider.overrideWithValue(s.diffuserPointeur),
+        pointeurDistantProvider.overrideWithValue(s.pointeurDistant),
       ],
       child: child,
     );

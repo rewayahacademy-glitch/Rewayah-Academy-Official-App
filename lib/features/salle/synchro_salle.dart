@@ -11,14 +11,21 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/painting.dart' show Offset;
 
 import '../../core/observabilite/journal_dev.dart';
 import '../../core/tc_outils/evenements_outils.dart';
 import '../../core/tc_outils/port_annotations.dart';
 import '../../core/tc_outils/reception_outils.dart';
 import '../../core/tc_realtime/adaptateur_transport_livekit.dart';
+import '../../core/tc_realtime/port_realtime_pedagogique.dart';
 import '../../core/tc_realtime/service_realtime_pedagogique.dart';
 import '../../core/video/video_session_provider.dart';
+
+/// S1 : le type du message du pointeur de l'enseignant (point normalise de
+/// la page, canal ephemere). `EvenementPointeur` porte une position dans le
+/// texte, pas un point de la page : il reste tel quel.
+const String typePointeurSalle = 'tc.salle.pointeur';
 
 /// Les pieces de la synchronisation d'une seance, creees a l'entree dans la
 /// salle et liberees a la sortie.
@@ -54,6 +61,8 @@ class SynchroSalle {
         profilLocalId: profilLocalId,
         depot: depot,
       ),
+      realtime: realtime,
+      profilLocalId: profilLocalId,
       peutDiffuser: acces.capacites.peutPublierDonnees,
     );
   }
@@ -64,8 +73,59 @@ class SynchroSalle {
     required this._transport,
     required this._diffusion,
     required this._reception,
+    required this._realtime,
+    required this.profilLocalId,
     required this._peutDiffuser,
-  });
+  }) {
+    _abonnementPointeur = _realtime
+        .messagesEphemeres(sessionId)
+        .listen(_recevoirPointeur, onError: (Object _) {});
+  }
+
+  /// Le profil de cet appareil.
+  final String profilLocalId;
+
+  final ServiceRealtimePedagogique _realtime;
+  late final StreamSubscription<MessagePedagogique> _abonnementPointeur;
+
+  /// Le pointeur de l'enseignant tel que la classe le recoit (point
+  /// normalise de la page), `null` quand il se leve.
+  final ValueNotifier<Offset?> pointeurDistant = ValueNotifier<Offset?>(null);
+
+  void _recevoirPointeur(MessagePedagogique message) {
+    if (message.type != typePointeurSalle ||
+        message.emetteurProfilId == profilLocalId) {
+      return;
+    }
+    final num? x = message.charge['x'] as num?;
+    final num? y = message.charge['y'] as num?;
+    pointeurDistant.value = x == null || y == null
+        ? null
+        : Offset(x.toDouble().clamp(0, 1), y.toDouble().clamp(0, 1));
+  }
+
+  /// Le rappel de `diffusionPointeurProvider` : le point part a la classe
+  /// sur le canal ephemere (perte acceptee, jamais conserve).
+  void Function(Offset?)? get diffuserPointeur => _peutDiffuser
+      ? (Offset? point) => unawaited(
+          _realtime
+              .emettre(
+                MessagePedagogique(
+                  type: typePointeurSalle,
+                  sessionId: sessionId,
+                  emetteurProfilId: profilLocalId,
+                  charge: point == null
+                      ? const <String, dynamic>{}
+                      : <String, dynamic>{'x': point.dx, 'y': point.dy},
+                  emisLeUtc: DateTime.now().toUtc(),
+                ),
+                canal: CanalFiabilite.ephemere,
+              )
+              .catchError(
+                (Object e) => journalDev('pointeur non diffuse : $e'),
+              ),
+        )
+      : null;
 
   /// La seance synchronisee.
   final String sessionId;
@@ -94,6 +154,8 @@ class SynchroSalle {
   /// Libere la reception et le transport.
   @mustCallSuper
   Future<void> liberer() async {
+    await _abonnementPointeur.cancel();
+    pointeurDistant.dispose();
     await _reception.liberer();
     await _transport.liberer();
   }

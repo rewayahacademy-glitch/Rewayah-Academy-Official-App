@@ -25,6 +25,7 @@
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -65,6 +66,17 @@ final Provider<void Function(EvenementOutil evenement)?>
 diffusionEcritureProvider = Provider<void Function(EvenementOutil)?>(
   (Ref _) => null,
 );
+
+/// S1 (24/10/2026) : le pointeur de l'enseignant vers la classe, en point
+/// normalise de la page (0 a 1), `null` quand il se leve ; ou `null` sans
+/// transport.
+final Provider<void Function(Offset? point)?> diffusionPointeurProvider =
+    Provider<void Function(Offset?)?>((Ref _) => null);
+
+/// S1 : le pointeur recu de l'enseignant (point normalise de la page), ou
+/// `null` sans transport.
+final Provider<ValueListenable<Offset?>?> pointeurDistantProvider =
+    Provider<ValueListenable<Offset?>?>((Ref _) => null);
 
 /// TB-RC (M6) : le seul rappel des evenements d'ecriture de la salle,
 /// celui de la couche de la surface ET des boutons Annuler. Il tient la
