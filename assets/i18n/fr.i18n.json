@@ -6708,6 +6708,27 @@
     "effetsDetail": "Limite les transparences et les ombres",
     "lisibiliteDetail": "La taille du texte suit le réglage de votre appareil.",
     "langueRegion": "Langue et région",
+    "langueCourriels": {
+      "titre": "Langue des e-mails et des messages",
+      "ligneDetail": "Choisir la langue dans laquelle la direction vous écrit",
+      "sousTitre": "Les e-mails de l'académie et les messages de la direction vous arrivent dans cette langue. Un message écrit dans une autre langue est traduit automatiquement.",
+      "choix": "Votre langue",
+      "parDefaut": "Sans choix de votre part, tout vous arrive en français.",
+      "optionDetail": "Vous recevez les e-mails et les messages en {langue}.",
+      "enregistrer": "Enregistrer la langue",
+      "retour": {
+        "enregistre": "C'est enregistré. Les prochains e-mails et messages vous arrivent en {langue}.",
+        "refusee": "Cette langue n'est plus proposée. Choisissez-en une autre dans la liste.",
+        "refus": "Seule une personne connectée avec son profil peut choisir sa langue. Reconnectez-vous, puis réessayez.",
+        "echec": "Le changement n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Réessayez ; votre langue précédente reste en place tant qu'il n'est pas confirmé.",
+        "horsLigne": "Rien n'est enregistré : le réseau est absent. Réessayez dès son retour."
+      },
+      "erreurLangues": "Les langues n'ont pas pu être chargées. Réessayez.",
+      "sansDonnees": "Les langues n'ont pas pu être chargées",
+      "vide": "Aucune langue n'est proposée pour le moment. Vos e-mails et vos messages restent en français.",
+      "indisponibleTitre": "Choix de la langue indisponible",
+      "indisponiblePhrase": "Cette fonction sera disponible au branchement serveur."
+    },
     "francaisDetail": "Langue de l'interface",
     "actif": "Actif",
     "arabe": "Arabe",
@@ -12871,6 +12892,116 @@
         "vide": "Aucun lien pour le moment. Créez-en un pour recueillir des avis.",
         "erreur": "Les liens n'ont pas pu être chargés. Réessayez.",
         "sansDonnees": "Les liens n'ont pas pu être chargés"
+      }
+    }
+  },
+  "courriels": {
+    "admin": {
+      "titre": "E-mails",
+      "sousTitre": "Écrivez à une personne et suivez les e-mails qui partent de l'académie.",
+      "outil": "E-mails",
+      "outilDetail": "Écrire un e-mail, suivre les envois, voir les adresses d'envoi",
+      "sections": {
+        "libelle": "Sections des e-mails",
+        "ecrire": "Écrire",
+        "file": "Envois",
+        "adresses": "Adresses d'envoi"
+      },
+      "refuse": "Seule la direction connectée écrit et suit les e-mails. Reconnectez-vous avec le bon compte, puis réessayez.",
+      "indisponibleTitre": "E-mails indisponibles",
+      "indisponiblePhrase": "Cette fonction sera disponible au branchement serveur.",
+      "ecrire": {
+        "titre": "Nouvel e-mail",
+        "intro": "L'e-mail est mis en file, puis part de l'adresse de sa catégorie, dans la minute. Il n'est envoyé que lorsque la liste des envois affiche Envoyé.",
+        "adresse": "Adresse du destinataire",
+        "adresseAide": "Une seule adresse. Un compte d'enfant ne reçoit jamais d'e-mail.",
+        "categorie": "Catégorie",
+        "categorieAide": "Elle décide de l'adresse d'envoi et de la boîte qui reçoit les réponses.",
+        "partDe": "Part de {adresse}",
+        "desinscription": "Chaque message porte un lien de désinscription.",
+        "sujet": "Sujet",
+        "sujetAide": "120 caractères au plus.",
+        "corps": "Message",
+        "corpsAide": "Texte simple, 5000 caractères au plus. Une ligne vide fait un nouveau paragraphe.",
+        "traduction": "Chaque destinataire le reçoit dans sa langue : le message est traduit automatiquement à l'envoi.",
+        "envoyer": "Envoyer le message",
+        "erreurCategories": "Les catégories n'ont pas pu être chargées. Réessayez.",
+        "sansDonneesCategories": "Les catégories n'ont pas pu être chargées",
+        "pasDeCategorie": "Aucune catégorie n'est active : impossible d'écrire pour le moment.",
+        "champ": {
+          "adresse": "Entrez une adresse e-mail valide.",
+          "categorie": "Choisissez une catégorie.",
+          "sujet": "Donnez un sujet de 1 à 120 caractères.",
+          "corps": "Écrivez un message de 1 à 5000 caractères.",
+          "destinataireExclu": "Cette personne ne peut pas recevoir cet e-mail : compte d'enfant ou désinscription."
+        },
+        "retour": {
+          "misEnFile": "Envoi dans la minute. Suivez-le dans la liste des envois.",
+          "voir": "Voir les envois",
+          "refus": "Seule la direction connectée peut écrire un e-mail.",
+          "echec": "L'envoi n'est pas confirmé. Regardez la liste des envois avant de recommencer : le même e-mail ne sera pas mis en file deux fois.",
+          "horsLigne": "Rien n'est parti : le réseau est absent. Réessayez dès son retour."
+        }
+      },
+      "file": {
+        "filtre": {
+          "tous": "Tous",
+          "enAttente": "En file",
+          "envoi": "En cours d'envoi",
+          "envoye": "Envoyés",
+          "echec": "Non envoyés",
+          "annule": "Annulés"
+        },
+        "statut": {
+          "enAttente": "En file",
+          "envoi": "En cours d'envoi",
+          "envoye": "Envoyé",
+          "echec": "Non envoyé",
+          "annule": "Annulé"
+        },
+        "origine": {
+          "auto": "Automatique",
+          "manuel": "Manuel"
+        },
+        "messageAuto": "Message automatique",
+        "champs": {
+          "destinataire": "À",
+          "categorie": "Catégorie",
+          "origine": "Origine",
+          "creeLe": "Mis en file le",
+          "envoyeLe": "Envoyé le",
+          "tentatives": "Essais",
+          "motifEchec": "Dernière erreur",
+          "langue": "Langue"
+        },
+        "actualiser": "Actualiser",
+        "reessayer": "Remettre en file",
+        "vide": "Aucun e-mail dans cette liste.",
+        "erreur": "Les envois n'ont pas pu être chargés. Réessayez.",
+        "sansDonnees": "Les envois n'ont pas pu être chargés",
+        "retour": {
+          "relance": "Remis en file. Envoi dans la minute.",
+          "introuvable": "Cet e-mail n'est plus à relancer. La liste est mise à jour.",
+          "echec": "La remise en file n'est pas confirmée. La liste est relue : vérifiez l'état de l'e-mail avant de recommencer.",
+          "refus": "Seule la direction connectée peut relancer un e-mail.",
+          "horsLigne": "Rien n'est parti : le réseau est absent. Réessayez dès son retour."
+        }
+      },
+      "adresses": {
+        "intro": "Chaque catégorie part de son adresse, et les réponses arrivent dans la boîte indiquée. Cette liste se lit ici ; elle ne se modifie pas dans l'application.",
+        "champs": {
+          "expediteur": "Part de",
+          "nom": "Nom affiché",
+          "reponses": "Réponses à",
+          "type": "Type"
+        },
+        "essentielle": "Lié au service, sans désinscription",
+        "facultative": "Avec lien de désinscription",
+        "active": "Active",
+        "coupee": "Coupée",
+        "vide": "Aucune catégorie pour le moment.",
+        "erreur": "Les adresses d'envoi n'ont pas pu être chargées. Réessayez.",
+        "sansDonnees": "Les adresses d'envoi n'ont pas pu être chargées"
       }
     }
   }

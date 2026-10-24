@@ -186,42 +186,42 @@
     },
     "detail-livre-homme": {
       "source": "13",
-      "largeur": 420,
-      "hauteur": 420,
-      "alt": "Gros plan : un homme, un livre à la main, regarde par la porte ouverte sur des dunes.",
+      "largeur": 480,
+      "hauteur": 600,
+      "alt": "Un homme en longue tunique, un livre à la main, se tient près d’une porte ouverte et regarde des dunes de sable pâle.",
       "recadrage": [
-        280,
-        400,
+        220,
+        430,
         700,
-        820
+        1030
       ],
-      "forme": "cercle"
+      "forme": "arche"
     },
     "detail-livre-femme": {
       "source": "10",
-      "largeur": 430,
-      "hauteur": 430,
-      "alt": "Gros plan : une femme tient un livre contre elle, devant une porte ouverte.",
+      "largeur": 540,
+      "hauteur": 675,
+      "alt": "Une femme en hijab violet, un livre à la main, se tient devant une porte ouverte sur des dunes.",
       "recadrage": [
-        0,
-        330,
-        430,
-        760
+        10,
+        470,
+        550,
+        1145
       ],
-      "forme": "cercle"
+      "forme": "arche"
     },
     "detail-pupitre": {
       "source": "15",
-      "largeur": 404,
-      "hauteur": 404,
-      "alt": "Gros plan : une enseignante lit, le livre posé sur son pupitre de lecture.",
+      "largeur": 480,
+      "hauteur": 600,
+      "alt": "Une enseignante en hijab sombre, assise en tailleur, regarde devant elle, un livre ouvert sur son pupitre de lecture.",
       "recadrage": [
-        290,
-        600,
-        694,
-        1004
+        360,
+        500,
+        840,
+        1100
       ],
-      "forme": "cercle"
+      "forme": "arche"
     },
     "detail-place": {
       "source": "14",
@@ -233,19 +233,6 @@
         615,
         410,
         1025
-      ],
-      "forme": "cercle"
-    },
-    "detail-coran": {
-      "source": "08 (scène publiée, 1600 px)",
-      "largeur": 808,
-      "hauteur": 808,
-      "alt": "Deux mains aux manches noires tendent un Coran à la couverture violette ornée vers deux mains aux manches blanches qui le reçoivent.",
-      "recadrage": [
-        328,
-        310,
-        1136,
-        1118
       ],
       "forme": "cercle"
     },
@@ -355,42 +342,42 @@
     },
     "detail-pupitre-coran": {
       "source": "05",
-      "largeur": 450,
-      "hauteur": 450,
-      "alt": "Vue de dos : une élève en hijab blanc est à genoux devant un Coran ouvert, posé sur un pupitre de lecture en bois.",
+      "largeur": 480,
+      "hauteur": 600,
+      "alt": "Vue de dos, une élève en hijab blanc est à genoux devant un Coran ouvert sur son pupitre de lecture.",
       "recadrage": [
-        20,
-        700,
-        470,
-        1150
+        0,
+        540,
+        480,
+        1140
       ],
-      "forme": "cercle"
+      "forme": "arche"
     },
     "detail-main-epaule": {
       "source": "12",
-      "largeur": 380,
-      "hauteur": 380,
-      "alt": "Un père pose la main sur l’épaule de son fils, qui porte une calotte violette et tient un livre.",
+      "largeur": 540,
+      "hauteur": 675,
+      "alt": "Devant une porte ouverte, un père pose la main sur l’épaule de son fils, qui porte une calotte violette et tient un livre.",
       "recadrage": [
-        106,
-        580,
-        486,
-        960
+        20,
+        430,
+        560,
+        1105
       ],
-      "forme": "cercle"
+      "forme": "arche"
     },
     "detail-famille-chemin": {
       "source": "02",
-      "largeur": 380,
-      "hauteur": 380,
-      "alt": "Un parent et son enfant marchent main dans la main sur le chemin violet.",
+      "largeur": 360,
+      "hauteur": 450,
+      "alt": "Deux enfants, un grand et un plus jeune, marchent main dans la main sur le chemin violet.",
       "recadrage": [
-        576,
-        812,
-        956,
-        1192
+        590,
+        760,
+        950,
+        1210
       ],
-      "forme": "cercle"
+      "forme": "arche"
     },
     "detail-desert": {
       "source": "10",
@@ -433,16 +420,16 @@
     },
     "detail-fille-enseignante": {
       "source": "01",
-      "largeur": 380,
-      "hauteur": 380,
-      "alt": "Dans une pièce claire, une fillette au voile blanc, assise au sol près de son enseignante, la regarde poser la main sur un Coran ouvert sur un pupitre en bois.",
+      "largeur": 480,
+      "hauteur": 600,
+      "alt": "Derrière la porte ouverte, une fillette au voile blanc regarde son enseignante, qui pose la main sur le livre ouvert de leur pupitre de lecture.",
       "recadrage": [
-        483,
-        644,
-        863,
-        1024
+        420,
+        470,
+        900,
+        1070
       ],
-      "forme": "cercle"
+      "forme": "arche"
     },
     "plan-pere-fils": {
       "source": "12 (rendu d’origine avec son fond, arche harmonisée)",
@@ -636,6 +623,81 @@
         1536
       ],
       "forme": "cercle"
+    },
+    "detail-croisee": {
+      "source": "02",
+      "largeur": 400,
+      "hauteur": 500,
+      "alt": "Au croisement de deux chemins violets, un enseignant assis lit avec un jeune élève, le pupitre de lecture entre eux.",
+      "recadrage": [
+        990,
+        550,
+        1390,
+        1050
+      ],
+      "forme": "arche"
+    },
+    "detail-entree": {
+      "source": "02, l’arche entière avec sa marge (le haut de l’arche n’est plus coupé par le cadre)",
+      "largeur": 680,
+      "hauteur": 850,
+      "alt": "Un jeune garçon en tunique blanche suit le chemin violet et passe la porte d’une arche en forme de livre.",
+      "recadrage": [
+        1478,
+        -56,
+        2158,
+        794
+      ],
+      "forme": "arche"
+    },
+    "detail-femme-tabouret": {
+      "source": "15",
+      "largeur": 480,
+      "hauteur": 600,
+      "alt": "Vue de dos, une femme en hijab violet, assise sur un tabouret en bois, un livre sur les genoux, regarde vers une porte ouverte.",
+      "recadrage": [
+        0,
+        540,
+        480,
+        1140
+      ],
+      "forme": "arche"
+    },
+    "portrait-directeur": {
+      "source": "photo fournie par le directeur le 21/10/2026, recadrée en 4:5 (buste), désaturée vers le noir et blanc : ombres à l’encre de l’app (#110E20), clairs au lavande des cadres (#EEE6FA), 8 % de gris neutre ; une marque du mur (un clou) retirée, le visage n’est pas retouché ; sans métadonnées",
+      "largeur": 1792,
+      "hauteur": 2240,
+      "alt": "Abdoulaye Mouhidine Sow, directeur et fondateur de Rewayah Academy, en calotte brodée et chemise sombre, le regard tourné vers la droite.",
+      "photo": {
+        "legende": "Abdoulaye Mouhidine Sow, directeur et fondateur"
+      }
+    },
+    "portrait-directeur-visage": {
+      "source": "même photo que portrait-directeur, cadrée en largeur (5:4) sur le visage, de la calotte au col, pour l’accueil ; désaturée vers le noir et blanc : ombres à l’encre de l’app (#110E20), clairs au lavande des cadres (#EEE6FA), 8 % de gris neutre ; une marque du mur (un clou) retirée, le visage n’est pas retouché ; sans métadonnées",
+      "largeur": 1792,
+      "hauteur": 1434,
+      "alt": "Abdoulaye Mouhidine Sow, directeur et fondateur de Rewayah Academy, en calotte brodée, le regard tourné vers la droite.",
+      "photo": {
+        "legende": "Abdoulaye Mouhidine Sow, directeur et fondateur"
+      }
+    },
+    "portrait-fondateur-alimou": {
+      "source": "photo fournie par le directeur le 22/10/2026 (Drive, dossier « Alim & Ahmad », fond blanc), détouré (BiRefNet), posé sur le mur clair de la photo du directeur, cadré tête et épaules en 4:5 (la tête fait 60 % de la hauteur), netteté légèrement relevée, peau éclaircie à la luminosité de celle du directeur, étalonnage A3 de sa photo (ombres #110E20, clairs #EEE6FA, 8 % de gris) ; visage non retouché ; sans métadonnées",
+      "largeur": 554,
+      "hauteur": 693,
+      "alt": "Mamadou Alimou Diallo, fondateur de Rewayah Academy, en calotte brodée et tunique claire, de face.",
+      "photo": {
+        "legende": "Mamadou Alimou Diallo, fondateur"
+      }
+    },
+    "portrait-fondateur-ahmad": {
+      "source": "photo choisie par Ahmad Diallo et transmise par le directeur le 22/10/2026 (assis devant une tenture brodée), détouré (BiRefNet), posé sur le mur clair de la photo du directeur, cadré tête et épaules en 4:5 (la tête fait 60 % de la hauteur), netteté légèrement relevée, peau éclaircie à la luminosité de celle du directeur, étalonnage A3 de sa photo (ombres #110E20, clairs #EEE6FA, 8 % de gris) ; visage non retouché ; sans métadonnées",
+      "largeur": 426,
+      "hauteur": 534,
+      "alt": "Ahmad Diallo, fondateur de Rewayah Academy, en calotte brodée et grand boubou, souriant, de face.",
+      "photo": {
+        "legende": "Ahmad Diallo, fondateur"
+      }
     }
   }
 }

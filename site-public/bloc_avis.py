@@ -264,7 +264,6 @@ def rendre_avis_section(nom: str, avis: dict) -> str:
     if nom != "liste":
         raise ValueError(f"Section générée inconnue : {nom}")
     if not avis["nombre"]:
-        return ('<p>Les premiers avis seront publiés ici bientôt, après lecture par la direction.'
-                ' Aucun avis n’est affiché tant qu’aucun n’a été reçu et lu.</p>')
+        return '<p>Les premiers avis seront publiés ici bientôt, après lecture par la direction.</p>'
     resume = f'<p><strong>{esc(fmt_resume(avis))}</strong></p>'
     return resume + "".join(_un_avis(a) for a in avis["avis"])

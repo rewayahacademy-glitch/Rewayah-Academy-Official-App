@@ -96,6 +96,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$argent$ar argent = _Traductions$argent$ar._(_root);
 	@override late final _Traductions$juridique$ar juridique = _Traductions$juridique$ar._(_root);
 	@override late final _Traductions$avis$ar avis = _Traductions$avis$ar._(_root);
+	@override late final _Traductions$courriels$ar courriels = _Traductions$courriels$ar._(_root);
 }
 
 // Path: notifications
@@ -482,6 +483,7 @@ class _Traductions$compte$ar extends Traductions$compte$fr {
 	@override String get effetsDetail => 'يحدّ من الشفافية والظلال';
 	@override String get lisibiliteDetail => 'حجم النص يتبع إعداد جهازك.';
 	@override String get langueRegion => 'اللغة والمنطقة';
+	@override late final _Traductions$compte$langueCourriels$ar langueCourriels = _Traductions$compte$langueCourriels$ar._(_root);
 	@override String get francaisDetail => 'لغة الواجهة';
 	@override String get actif => 'مفعَّل';
 	@override String get arabe => 'العربية';
@@ -1673,6 +1675,16 @@ class _Traductions$avis$ar extends Traductions$avis$fr {
 	// Translations
 	@override late final _Traductions$avis$form$ar form = _Traductions$avis$form$ar._(_root);
 	@override late final _Traductions$avis$admin$ar admin = _Traductions$avis$admin$ar._(_root);
+}
+
+// Path: courriels
+class _Traductions$courriels$ar extends Traductions$courriels$fr {
+	_Traductions$courriels$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$courriels$admin$ar admin = _Traductions$courriels$admin$ar._(_root);
 }
 
 // Path: notifications.evenements
@@ -3436,6 +3448,28 @@ class _Traductions$compte$donnees$ar extends Traductions$compte$donnees$fr {
 	@override String get ligneDetail => 'نزّل بياناتك أو اطلب حذف حسابك.';
 	@override late final _Traductions$compte$donnees$copie$ar copie = _Traductions$compte$donnees$copie$ar._(_root);
 	@override late final _Traductions$compte$donnees$suppression$ar suppression = _Traductions$compte$donnees$suppression$ar._(_root);
+}
+
+// Path: compte.langueCourriels
+class _Traductions$compte$langueCourriels$ar extends Traductions$compte$langueCourriels$fr {
+	_Traductions$compte$langueCourriels$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'لغة البريد الإلكتروني والرسائل';
+	@override String get ligneDetail => 'اختر اللغة التي تكتب بها الإدارة إليك';
+	@override String get sousTitre => 'تصلك رسائل البريد الإلكتروني من الأكاديمية ورسائل الإدارة بهذه اللغة. الرسالة المكتوبة بلغة أخرى تُترجم تلقائيًا.';
+	@override String get choix => 'لغتك';
+	@override String get parDefaut => 'إن لم تختر لغة، يصلك كل شيء بالفرنسية.';
+	@override String optionDetail({required Object langue}) => 'تصلك رسائل البريد الإلكتروني والرسائل بلغة ⁨${langue}⁩.';
+	@override String get enregistrer => 'حفظ اللغة';
+	@override late final _Traductions$compte$langueCourriels$retour$ar retour = _Traductions$compte$langueCourriels$retour$ar._(_root);
+	@override String get erreurLangues => 'تعذّر تحميل اللغات. أعد المحاولة.';
+	@override String get sansDonnees => 'تعذّر تحميل اللغات';
+	@override String get vide => 'لا توجد لغة متاحة حاليًا. تبقى رسائلك الإلكترونية ورسائلك بالفرنسية.';
+	@override String get indisponibleTitre => 'اختيار اللغة غير متاح';
+	@override String get indisponiblePhrase => 'ستتوفر هذه الخاصية عند ربط الخادم.';
 }
 
 // Path: compte.roles
@@ -8630,6 +8664,26 @@ class _Traductions$avis$admin$ar extends Traductions$avis$admin$fr {
 	@override late final _Traductions$avis$admin$liens$ar liens = _Traductions$avis$admin$liens$ar._(_root);
 }
 
+// Path: courriels.admin
+class _Traductions$courriels$admin$ar extends Traductions$courriels$admin$fr {
+	_Traductions$courriels$admin$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'البريد الإلكتروني';
+	@override String get sousTitre => 'اكتب إلى شخص وتابع الرسائل التي تخرج من الأكاديمية.';
+	@override String get outil => 'البريد الإلكتروني';
+	@override String get outilDetail => 'كتابة رسالة، ومتابعة الإرسال، وعرض عناوين الإرسال';
+	@override late final _Traductions$courriels$admin$sections$ar sections = _Traductions$courriels$admin$sections$ar._(_root);
+	@override String get refuse => 'الإدارة المتصلة وحدها تكتب الرسائل وتتابعها. أعد الاتصال بالحساب المناسب ثم أعد المحاولة.';
+	@override String get indisponibleTitre => 'البريد الإلكتروني غير متاح';
+	@override String get indisponiblePhrase => 'ستتوفر هذه الخاصية عند ربط الخادم.';
+	@override late final _Traductions$courriels$admin$ecrire$ar ecrire = _Traductions$courriels$admin$ecrire$ar._(_root);
+	@override late final _Traductions$courriels$admin$file$ar file = _Traductions$courriels$admin$file$ar._(_root);
+	@override late final _Traductions$courriels$admin$adresses$ar adresses = _Traductions$courriels$admin$adresses$ar._(_root);
+}
+
 // Path: commun.etats.chargementProlonge
 class _Traductions$commun$etats$chargementProlonge$ar extends Traductions$commun$etats$chargementProlonge$fr {
 	_Traductions$commun$etats$chargementProlonge$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -9480,6 +9534,20 @@ class _Traductions$compte$donnees$suppression$ar extends Traductions$compte$donn
 	@override String get echec => 'لم يكتمل طلبك. لم يتغير حسابك. أعد المحاولة بعد لحظة.';
 	@override String get horsLigne => 'لم يُرسَل طلبك. أعد إرساله عند عودة الشبكة.';
 	@override String get refuse => 'لا يمكن لهذا الحساب طلب حذفه من هنا.';
+}
+
+// Path: compte.langueCourriels.retour
+class _Traductions$compte$langueCourriels$retour$ar extends Traductions$compte$langueCourriels$retour$fr {
+	_Traductions$compte$langueCourriels$retour$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String enregistre({required Object langue}) => 'تم الحفظ. ستصلك رسائل البريد الإلكتروني والرسائل القادمة بلغة ⁨${langue}⁩.';
+	@override String get refusee => 'لم تعد هذه اللغة متاحة. اختر لغة أخرى من القائمة.';
+	@override String get refus => 'يمكن لمن سجّل الدخول بملفه الشخصي فقط أن يختار لغته. أعد تسجيل الدخول ثم أعد المحاولة.';
+	@override String get echec => 'لم يتأكد التغيير: قد لا يكون وصل إلى رواية. أعد المحاولة؛ تبقى لغتك السابقة قائمة ما دام التغيير غير مؤكد.';
+	@override String get horsLigne => 'لم يُحفظ شيء: الشبكة غير متاحة. أعد المحاولة عند عودتها.';
 }
 
 // Path: compte.tuteur.identite
@@ -16278,6 +16346,85 @@ class _Traductions$avis$admin$liens$ar extends Traductions$avis$admin$liens$fr {
 	@override String get sansDonnees => 'تعذّر تحميل الروابط';
 }
 
+// Path: courriels.admin.sections
+class _Traductions$courriels$admin$sections$ar extends Traductions$courriels$admin$sections$fr {
+	_Traductions$courriels$admin$sections$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'أقسام البريد الإلكتروني';
+	@override String get ecrire => 'كتابة';
+	@override String get file => 'الإرسال';
+	@override String get adresses => 'عناوين الإرسال';
+}
+
+// Path: courriels.admin.ecrire
+class _Traductions$courriels$admin$ecrire$ar extends Traductions$courriels$admin$ecrire$fr {
+	_Traductions$courriels$admin$ecrire$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'رسالة جديدة';
+	@override String get intro => 'توضع الرسالة في الطابور ثم تخرج من عنوان فئتها خلال دقيقة. لا تُعدّ مرسلة إلا حين تعرض قائمة الإرسال «أُرسلت».';
+	@override String get adresse => 'عنوان المستلم';
+	@override String get adresseAide => 'عنوان واحد فقط. حساب الطفل لا يتلقى أي رسالة أبدًا.';
+	@override String get categorie => 'الفئة';
+	@override String get categorieAide => 'هي التي تحدد عنوان الإرسال والصندوق الذي يتلقى الردود.';
+	@override String partDe({required Object adresse}) => 'تخرج من ⁨${adresse}⁩';
+	@override String get desinscription => 'تحمل كل رسالة رابطًا لإلغاء الاشتراك.';
+	@override String get sujet => 'الموضوع';
+	@override String get sujetAide => '120 حرفًا على الأكثر.';
+	@override String get corps => 'الرسالة';
+	@override String get corpsAide => 'نص عادي، 5000 حرف على الأكثر. السطر الفارغ يبدأ فقرة جديدة.';
+	@override String get traduction => 'يتلقاه كل مستلم بلغته: تُترجم الرسالة تلقائيًا عند الإرسال.';
+	@override String get envoyer => 'إرسال الرسالة';
+	@override String get erreurCategories => 'تعذّر تحميل الفئات. أعد المحاولة.';
+	@override String get sansDonneesCategories => 'تعذّر تحميل الفئات';
+	@override String get pasDeCategorie => 'لا توجد فئة مفعّلة: لا يمكن الكتابة حاليًا.';
+	@override late final _Traductions$courriels$admin$ecrire$champ$ar champ = _Traductions$courriels$admin$ecrire$champ$ar._(_root);
+	@override late final _Traductions$courriels$admin$ecrire$retour$ar retour = _Traductions$courriels$admin$ecrire$retour$ar._(_root);
+}
+
+// Path: courriels.admin.file
+class _Traductions$courriels$admin$file$ar extends Traductions$courriels$admin$file$fr {
+	_Traductions$courriels$admin$file$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$courriels$admin$file$filtre$ar filtre = _Traductions$courriels$admin$file$filtre$ar._(_root);
+	@override late final _Traductions$courriels$admin$file$statut$ar statut = _Traductions$courriels$admin$file$statut$ar._(_root);
+	@override late final _Traductions$courriels$admin$file$origine$ar origine = _Traductions$courriels$admin$file$origine$ar._(_root);
+	@override String get messageAuto => 'رسالة تلقائية';
+	@override late final _Traductions$courriels$admin$file$champs$ar champs = _Traductions$courriels$admin$file$champs$ar._(_root);
+	@override String get actualiser => 'تحديث';
+	@override String get reessayer => 'إعادتها إلى الطابور';
+	@override String get vide => 'لا توجد رسائل في هذه القائمة.';
+	@override String get erreur => 'تعذّر تحميل الإرسال. أعد المحاولة.';
+	@override String get sansDonnees => 'تعذّر تحميل الإرسال';
+	@override late final _Traductions$courriels$admin$file$retour$ar retour = _Traductions$courriels$admin$file$retour$ar._(_root);
+}
+
+// Path: courriels.admin.adresses
+class _Traductions$courriels$admin$adresses$ar extends Traductions$courriels$admin$adresses$fr {
+	_Traductions$courriels$admin$adresses$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get intro => 'تخرج كل فئة من عنوانها، وتصل الردود إلى الصندوق المذكور. تُقرأ هذه القائمة هنا ولا تُعدَّل داخل التطبيق.';
+	@override late final _Traductions$courriels$admin$adresses$champs$ar champs = _Traductions$courriels$admin$adresses$champs$ar._(_root);
+	@override String get essentielle => 'مرتبطة بالخدمة، دون إلغاء اشتراك';
+	@override String get facultative => 'مع رابط لإلغاء الاشتراك';
+	@override String get active => 'مفعّلة';
+	@override String get coupee => 'معطّلة';
+	@override String get vide => 'لا توجد فئات حاليًا.';
+	@override String get erreur => 'تعذّر تحميل عناوين الإرسال. أعد المحاولة.';
+	@override String get sansDonnees => 'تعذّر تحميل عناوين الإرسال';
+}
+
 // Path: classe.entree.demo.roles
 class _Traductions$classe$entree$demo$roles$ar extends Traductions$classe$entree$demo$roles$fr {
 	_Traductions$classe$entree$demo$roles$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -18911,6 +19058,118 @@ class _Traductions$avis$admin$liens$etat$ar extends Traductions$avis$admin$liens
 	@override String get ferme => 'مغلق';
 	@override String get expire => 'منتهي';
 	@override String get plein => 'مكتمل';
+}
+
+// Path: courriels.admin.ecrire.champ
+class _Traductions$courriels$admin$ecrire$champ$ar extends Traductions$courriels$admin$ecrire$champ$fr {
+	_Traductions$courriels$admin$ecrire$champ$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get adresse => 'اكتب عنوان بريد إلكتروني صالحًا.';
+	@override String get categorie => 'اختر فئة.';
+	@override String get sujet => 'اكتب موضوعًا من 1 إلى 120 حرفًا.';
+	@override String get corps => 'اكتب رسالة من 1 إلى 5000 حرف.';
+	@override String get destinataireExclu => 'لا يستطيع هذا الشخص تلقي هذه الرسالة: حساب طفل أو إلغاء اشتراك.';
+}
+
+// Path: courriels.admin.ecrire.retour
+class _Traductions$courriels$admin$ecrire$retour$ar extends Traductions$courriels$admin$ecrire$retour$fr {
+	_Traductions$courriels$admin$ecrire$retour$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get misEnFile => 'الإرسال خلال دقيقة. تابعه في قائمة الإرسال.';
+	@override String get voir => 'عرض الإرسال';
+	@override String get refus => 'الإدارة المتصلة وحدها تستطيع كتابة رسالة.';
+	@override String get echec => 'لم يتأكد الإرسال. انظر قائمة الإرسال قبل أن تحاول من جديد: لن توضع الرسالة نفسها في الطابور مرتين.';
+	@override String get horsLigne => 'لم يُرسل شيء: الشبكة غير متوفرة. أعد المحاولة عند عودتها.';
+}
+
+// Path: courriels.admin.file.filtre
+class _Traductions$courriels$admin$file$filtre$ar extends Traductions$courriels$admin$file$filtre$fr {
+	_Traductions$courriels$admin$file$filtre$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get tous => 'الكل';
+	@override String get enAttente => 'في الطابور';
+	@override String get envoi => 'قيد الإرسال';
+	@override String get envoye => 'المرسلة';
+	@override String get echec => 'غير المرسلة';
+	@override String get annule => 'الملغاة';
+}
+
+// Path: courriels.admin.file.statut
+class _Traductions$courriels$admin$file$statut$ar extends Traductions$courriels$admin$file$statut$fr {
+	_Traductions$courriels$admin$file$statut$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get enAttente => 'في الطابور';
+	@override String get envoi => 'قيد الإرسال';
+	@override String get envoye => 'أُرسلت';
+	@override String get echec => 'لم تُرسل';
+	@override String get annule => 'أُلغيت';
+}
+
+// Path: courriels.admin.file.origine
+class _Traductions$courriels$admin$file$origine$ar extends Traductions$courriels$admin$file$origine$fr {
+	_Traductions$courriels$admin$file$origine$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get auto => 'تلقائي';
+	@override String get manuel => 'يدوي';
+}
+
+// Path: courriels.admin.file.champs
+class _Traductions$courriels$admin$file$champs$ar extends Traductions$courriels$admin$file$champs$fr {
+	_Traductions$courriels$admin$file$champs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get destinataire => 'إلى';
+	@override String get categorie => 'الفئة';
+	@override String get origine => 'المصدر';
+	@override String get creeLe => 'وُضعت في الطابور يوم';
+	@override String get envoyeLe => 'أُرسلت يوم';
+	@override String get tentatives => 'المحاولات';
+	@override String get motifEchec => 'آخر خطأ';
+	@override String get langue => 'اللغة';
+}
+
+// Path: courriels.admin.file.retour
+class _Traductions$courriels$admin$file$retour$ar extends Traductions$courriels$admin$file$retour$fr {
+	_Traductions$courriels$admin$file$retour$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get relance => 'أُعيدت إلى الطابور. الإرسال خلال دقيقة.';
+	@override String get introuvable => 'لم تعد هذه الرسالة قابلة لإعادة المحاولة. تم تحديث القائمة.';
+	@override String get echec => 'لم تتأكد إعادتها إلى الطابور. أُعيدت قراءة القائمة: تحقق من حالة الرسالة قبل أن تحاول من جديد.';
+	@override String get refus => 'الإدارة المتصلة وحدها تستطيع إعادة إرسال رسالة.';
+	@override String get horsLigne => 'لم يُرسل شيء: الشبكة غير متوفرة. أعد المحاولة عند عودتها.';
+}
+
+// Path: courriels.admin.adresses.champs
+class _Traductions$courriels$admin$adresses$champs$ar extends Traductions$courriels$admin$adresses$champs$fr {
+	_Traductions$courriels$admin$adresses$champs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get expediteur => 'تخرج من';
+	@override String get nom => 'الاسم المعروض';
+	@override String get reponses => 'الردود إلى';
+	@override String get type => 'النوع';
 }
 
 // Path: com.annonces.administration.moderation.regleMotif
@@ -21557,6 +21816,23 @@ extension on TraductionsAr {
 			'compte.effetsDetail' => 'يحدّ من الشفافية والظلال',
 			'compte.lisibiliteDetail' => 'حجم النص يتبع إعداد جهازك.',
 			'compte.langueRegion' => 'اللغة والمنطقة',
+			'compte.langueCourriels.titre' => 'لغة البريد الإلكتروني والرسائل',
+			'compte.langueCourriels.ligneDetail' => 'اختر اللغة التي تكتب بها الإدارة إليك',
+			'compte.langueCourriels.sousTitre' => 'تصلك رسائل البريد الإلكتروني من الأكاديمية ورسائل الإدارة بهذه اللغة. الرسالة المكتوبة بلغة أخرى تُترجم تلقائيًا.',
+			'compte.langueCourriels.choix' => 'لغتك',
+			'compte.langueCourriels.parDefaut' => 'إن لم تختر لغة، يصلك كل شيء بالفرنسية.',
+			'compte.langueCourriels.optionDetail' => ({required Object langue}) => 'تصلك رسائل البريد الإلكتروني والرسائل بلغة ⁨${langue}⁩.',
+			'compte.langueCourriels.enregistrer' => 'حفظ اللغة',
+			'compte.langueCourriels.retour.enregistre' => ({required Object langue}) => 'تم الحفظ. ستصلك رسائل البريد الإلكتروني والرسائل القادمة بلغة ⁨${langue}⁩.',
+			'compte.langueCourriels.retour.refusee' => 'لم تعد هذه اللغة متاحة. اختر لغة أخرى من القائمة.',
+			'compte.langueCourriels.retour.refus' => 'يمكن لمن سجّل الدخول بملفه الشخصي فقط أن يختار لغته. أعد تسجيل الدخول ثم أعد المحاولة.',
+			'compte.langueCourriels.retour.echec' => 'لم يتأكد التغيير: قد لا يكون وصل إلى رواية. أعد المحاولة؛ تبقى لغتك السابقة قائمة ما دام التغيير غير مؤكد.',
+			'compte.langueCourriels.retour.horsLigne' => 'لم يُحفظ شيء: الشبكة غير متاحة. أعد المحاولة عند عودتها.',
+			'compte.langueCourriels.erreurLangues' => 'تعذّر تحميل اللغات. أعد المحاولة.',
+			'compte.langueCourriels.sansDonnees' => 'تعذّر تحميل اللغات',
+			'compte.langueCourriels.vide' => 'لا توجد لغة متاحة حاليًا. تبقى رسائلك الإلكترونية ورسائلك بالفرنسية.',
+			'compte.langueCourriels.indisponibleTitre' => 'اختيار اللغة غير متاح',
+			'compte.langueCourriels.indisponiblePhrase' => 'ستتوفر هذه الخاصية عند ربط الخادم.',
 			'compte.francaisDetail' => 'لغة الواجهة',
 			'compte.actif' => 'مفعَّل',
 			'compte.arabe' => 'العربية',
@@ -21975,6 +22251,8 @@ extension on TraductionsAr {
 			'tc.bibliotheque.rendu.ouvrirMushaf' => 'فتح المصحف',
 			'tc.bibliotheque.rendu.lienEchec' => 'تعذّر الحصول على رابط القراءة حاليًا.',
 			'tc.bibliotheque.rendu.lienIndisponible' => 'الفتح غير متاح لهذه المادة.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.rendu.lienHorsLigne' => 'سيمكن الفتح عند عودة الاتصال.',
 			_ => null,
 		} ?? switch (path) {
@@ -22489,6 +22767,8 @@ extension on TraductionsAr {
 			'com.messages.choisirTitre' => 'اختر محادثة',
 			'com.messages.choisir' => 'اختر محادثة من القائمة لقراءتها والرد عليها.',
 			'com.messages.recherche.champ' => 'البحث عن محادثة',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.recherche.aide' => 'الاسم أو الفصل أو الملف',
 			_ => null,
 		} ?? switch (path) {
@@ -23003,6 +23283,8 @@ extension on TraductionsAr {
 			'com.studio.demo.f.activiteInscription' => 'وصل طلب تسجيل جديد',
 			'com.studio.demo.f.objetDossierBenali' => 'ملف أسرة بن علي',
 			'com.studio.titre' => _root.com.socle.lexique.studio,
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.vide' => 'لا يوجد نشاط للمعالجة هنا.',
 			_ => null,
 		} ?? switch (path) {
@@ -23583,6 +23865,8 @@ extension on TraductionsAr {
 			'admin.importInscriptions.choisir' => 'اختيار ملف CSV',
 			'admin.importInscriptions.fichierCharge' => ({required Object nom}) => 'الملف المحمَّل: ⁨${nom}⁩',
 			'admin.importInscriptions.fichierIllisible' => 'تعذّرت قراءة هذا الملف. احفظه بصيغة CSV بترميز يونيكود أو الصق محتواه في الحقل.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.importInscriptions.voirApercu' => 'عرض المعاينة',
 			'admin.importInscriptions.manqueFichier' => 'الصق أو اختر ملفًا واحدًا على الأقل للمتابعة.',
 			'admin.importInscriptions.apercu.titre' => 'معاينة قبل الاستيراد',
@@ -24358,6 +24642,8 @@ extension on TraductionsAr {
 			'admin.qualite.traiterTitre' => ({required Object personne}) => 'تعليم كمعالَج: ⁨${personne}⁩',
 			'admin.qualite.champNote' => 'ملاحظة (اختيارية)',
 			'admin.qualite.traiterEnvoyer' => 'تعليم كمعالَج',
+			_ => null,
+		} ?? switch (path) {
 			'admin.qualite.traiterErreur' => ({required Object message}) => 'لم تكتمل المعالجة: ⁨${message}⁩',
 			'admin.regles.titre' => 'القواعد',
 			'admin.regles.intro' => 'القيم الافتراضية للمنصة كلها. يُوضع الاستثناء لملف محدد من «العمليات» > «القواعد الفردية»، وأبدًا من هنا.',
@@ -24898,6 +25184,8 @@ extension on TraductionsAr {
 			'admin.offres.formulaire.jours' => 'الأيام',
 			'admin.offres.formulaire.joursAide' => ({required Object n}) => 'عدد الأيام المطلوبة في الأسبوع: ⁨${n}⁩.',
 			'admin.offres.formulaire.heure' => 'الساعة المحلية',
+			_ => null,
+		} ?? switch (path) {
 			'admin.offres.formulaire.duree' => 'مدة الحصة',
 			'admin.offres.formulaire.creer' => 'إنشاء العرض',
 			'admin.offres.formulaire.manqueJour' => 'اختر يومًا واحدًا على الأقل',
@@ -25412,6 +25700,8 @@ extension on TraductionsAr {
 			'admin.bibliotheque.attribution.plusDeClasses' => 'عرض المزيد من الفصول',
 			'admin.bibliotheque.attribution.chargementPlus' => 'جارٍ التحميل…',
 			'admin.bibliotheque.attribution.nonPublie' => 'هذه المادة غير منشورة. انشر إصدارًا قبل إسنادها إلى الفصول.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.attribution.erreur' => 'تعذّر تحميل الفصول. أعد المحاولة.',
 			'admin.bibliotheque.attribution.attribuer' => ({required Object nombre}) => 'الإسناد إلى ⁨${nombre}⁩ من الفصول',
 			'admin.bibliotheque.attribution.attribuerAucune' => 'اختر فصلًا واحدًا على الأقل قبل الإسناد.',
@@ -25926,6 +26216,8 @@ extension on TraductionsAr {
 			'comptable.encaissements.rap.natFrais' => 'رسوم',
 			'comptable.encaissements.rap.natRemboursement' => 'استرداد',
 			'comptable.encaissements.rap.natPayout' => 'صرف دفعة',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.rap.natPreuve' => 'إثبات',
 			'comptable.encaissements.rap.natureDate' => ({required Object nature, required Object date}) => '${nature} · ${date}',
 			'comptable.encaissements.rap.choisirTitre' => 'اختر معاملة.',
@@ -26440,6 +26732,8 @@ extension on TraductionsAr {
 			'ficheEleve.parametres' => 'إعدادات الطالب',
 			'ficheEleve.appareilsGroupe' => 'الأجهزة',
 			'ficheEleve.introuvable.titre' => 'لم يُعثر على ملف الطالب هذا',
+			_ => null,
+		} ?? switch (path) {
 			'ficheEleve.introuvable.phrase' => 'ليس من أسرتك، أو الرابط ناقص.',
 			'ficheEleve.introuvable.retour' => 'العودة إلى الأسرة',
 			'ficheEleve.lignes.informations' => 'المعلومات',
@@ -26995,6 +27289,8 @@ extension on TraductionsAr {
 			'consentement.texte.limitesDetail' => 'لكل وليّ أمر عدد قليل من الزيارات في كل حصة، تحدده الأكاديمية ويُذكَّر به في «كيف يعمل ذلك؟». الزيارة التي تُغادَر قبل نهايتها تُحتسب زيارة.',
 			'consentement.texte.caseResponsable' => 'أوافق على هذه الشروط لطفلي',
 			'consentement.texte.caseAdulte' => 'أوافق على هذه الشروط',
+			_ => null,
+		} ?? switch (path) {
 			'consentement.texte.continuer' => 'متابعة',
 			'consentement.texte.retour' => 'رجوع',
 			'consentement.comment.titre' => 'كيف يعمل ذلك؟',
@@ -27509,6 +27805,8 @@ extension on TraductionsAr {
 			'dossiers.decision.dejaTraite' => 'عولج هذا الملف من قبل.',
 			'dossiers.decision.conflit' => 'عالج هذا الملف عضو آخر في الفريق.',
 			'dossiers.decision.nomComplet' => ({required Object prenom, required Object nom}) => '⁨${prenom}⁩ ⁨${nom}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'kyc.titre' => 'وثيقة هويتك',
 			'kyc.intro' => 'تكفي صورة مقروءة. تُحفظ مدة التحقق، ثم تُحذف.',
 			'kyc.confidentialite' => 'تُودَع وثيقة هويتك كما هي: ليست عامة أبدًا، ولا يطلع عليها إلا الإدارة، وتشترطها قوانين حماية الطفولة.',
@@ -28023,6 +28321,8 @@ extension on TraductionsAr {
 			'recherche.etats.erreur.titre' => 'تعذّر إجراء البحث.',
 			'recherche.etats.erreur.phrase' => 'أُعيد التحقق من صلاحياتك. أعد المحاولة بعد قليل.',
 			'recherche.etats.delai.titre' => 'البحث يستغرق وقتًا طويلًا.',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.etats.delai.phrase' => 'حدّد المجال أو أعد المحاولة.',
 			'recherche.etats.horsLigne.titre' => 'البحث عبر الإنترنت غير متاح.',
 			'recherche.etats.horsLigne.phrase' => 'سيستأنف عند عودة الاتصال. لا تُحفظ أي نتيجة خاصة في الانتظار.',
@@ -28567,6 +28867,8 @@ extension on TraductionsAr {
 			'recrutement.talents.competences.explication' => 'المس كل مهارة لديك. تعرض كل بطاقة مثالًا. وإن لم تجد مهارتك فاختر «مجال آخر» في آخر القائمة.',
 			'recrutement.talents.competences.familles.communication' => 'التواصل والصورة',
 			'recrutement.talents.competences.familles.administration' => 'الإدارة والتنظيم',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.talents.competences.familles.financesDroit' => 'المالية والقانون',
 			'recrutement.talents.competences.familles.pedagogie' => 'التربية والتعليم',
 			'recrutement.talents.competences.familles.technique' => 'التقنية',
@@ -29053,6 +29355,90 @@ extension on TraductionsAr {
 			'avis.admin.liens.vide' => 'لا توجد روابط حتى الآن. أنشئ رابطًا لجمع الآراء.',
 			'avis.admin.liens.erreur' => 'تعذّر تحميل الروابط. أعد المحاولة.',
 			'avis.admin.liens.sansDonnees' => 'تعذّر تحميل الروابط',
+			'courriels.admin.titre' => 'البريد الإلكتروني',
+			'courriels.admin.sousTitre' => 'اكتب إلى شخص وتابع الرسائل التي تخرج من الأكاديمية.',
+			'courriels.admin.outil' => 'البريد الإلكتروني',
+			'courriels.admin.outilDetail' => 'كتابة رسالة، ومتابعة الإرسال، وعرض عناوين الإرسال',
+			'courriels.admin.sections.libelle' => 'أقسام البريد الإلكتروني',
+			'courriels.admin.sections.ecrire' => 'كتابة',
+			'courriels.admin.sections.file' => 'الإرسال',
+			'courriels.admin.sections.adresses' => 'عناوين الإرسال',
+			'courriels.admin.refuse' => 'الإدارة المتصلة وحدها تكتب الرسائل وتتابعها. أعد الاتصال بالحساب المناسب ثم أعد المحاولة.',
+			'courriels.admin.indisponibleTitre' => 'البريد الإلكتروني غير متاح',
+			'courriels.admin.indisponiblePhrase' => 'ستتوفر هذه الخاصية عند ربط الخادم.',
+			'courriels.admin.ecrire.titre' => 'رسالة جديدة',
+			'courriels.admin.ecrire.intro' => 'توضع الرسالة في الطابور ثم تخرج من عنوان فئتها خلال دقيقة. لا تُعدّ مرسلة إلا حين تعرض قائمة الإرسال «أُرسلت».',
+			'courriels.admin.ecrire.adresse' => 'عنوان المستلم',
+			'courriels.admin.ecrire.adresseAide' => 'عنوان واحد فقط. حساب الطفل لا يتلقى أي رسالة أبدًا.',
+			'courriels.admin.ecrire.categorie' => 'الفئة',
+			'courriels.admin.ecrire.categorieAide' => 'هي التي تحدد عنوان الإرسال والصندوق الذي يتلقى الردود.',
+			'courriels.admin.ecrire.partDe' => ({required Object adresse}) => 'تخرج من ⁨${adresse}⁩',
+			'courriels.admin.ecrire.desinscription' => 'تحمل كل رسالة رابطًا لإلغاء الاشتراك.',
+			'courriels.admin.ecrire.sujet' => 'الموضوع',
+			'courriels.admin.ecrire.sujetAide' => '120 حرفًا على الأكثر.',
+			'courriels.admin.ecrire.corps' => 'الرسالة',
+			'courriels.admin.ecrire.corpsAide' => 'نص عادي، 5000 حرف على الأكثر. السطر الفارغ يبدأ فقرة جديدة.',
+			'courriels.admin.ecrire.traduction' => 'يتلقاه كل مستلم بلغته: تُترجم الرسالة تلقائيًا عند الإرسال.',
+			'courriels.admin.ecrire.envoyer' => 'إرسال الرسالة',
+			'courriels.admin.ecrire.erreurCategories' => 'تعذّر تحميل الفئات. أعد المحاولة.',
+			'courriels.admin.ecrire.sansDonneesCategories' => 'تعذّر تحميل الفئات',
+			'courriels.admin.ecrire.pasDeCategorie' => 'لا توجد فئة مفعّلة: لا يمكن الكتابة حاليًا.',
+			_ => null,
+		} ?? switch (path) {
+			'courriels.admin.ecrire.champ.adresse' => 'اكتب عنوان بريد إلكتروني صالحًا.',
+			'courriels.admin.ecrire.champ.categorie' => 'اختر فئة.',
+			'courriels.admin.ecrire.champ.sujet' => 'اكتب موضوعًا من 1 إلى 120 حرفًا.',
+			'courriels.admin.ecrire.champ.corps' => 'اكتب رسالة من 1 إلى 5000 حرف.',
+			'courriels.admin.ecrire.champ.destinataireExclu' => 'لا يستطيع هذا الشخص تلقي هذه الرسالة: حساب طفل أو إلغاء اشتراك.',
+			'courriels.admin.ecrire.retour.misEnFile' => 'الإرسال خلال دقيقة. تابعه في قائمة الإرسال.',
+			'courriels.admin.ecrire.retour.voir' => 'عرض الإرسال',
+			'courriels.admin.ecrire.retour.refus' => 'الإدارة المتصلة وحدها تستطيع كتابة رسالة.',
+			'courriels.admin.ecrire.retour.echec' => 'لم يتأكد الإرسال. انظر قائمة الإرسال قبل أن تحاول من جديد: لن توضع الرسالة نفسها في الطابور مرتين.',
+			'courriels.admin.ecrire.retour.horsLigne' => 'لم يُرسل شيء: الشبكة غير متوفرة. أعد المحاولة عند عودتها.',
+			'courriels.admin.file.filtre.tous' => 'الكل',
+			'courriels.admin.file.filtre.enAttente' => 'في الطابور',
+			'courriels.admin.file.filtre.envoi' => 'قيد الإرسال',
+			'courriels.admin.file.filtre.envoye' => 'المرسلة',
+			'courriels.admin.file.filtre.echec' => 'غير المرسلة',
+			'courriels.admin.file.filtre.annule' => 'الملغاة',
+			'courriels.admin.file.statut.enAttente' => 'في الطابور',
+			'courriels.admin.file.statut.envoi' => 'قيد الإرسال',
+			'courriels.admin.file.statut.envoye' => 'أُرسلت',
+			'courriels.admin.file.statut.echec' => 'لم تُرسل',
+			'courriels.admin.file.statut.annule' => 'أُلغيت',
+			'courriels.admin.file.origine.auto' => 'تلقائي',
+			'courriels.admin.file.origine.manuel' => 'يدوي',
+			'courriels.admin.file.messageAuto' => 'رسالة تلقائية',
+			'courriels.admin.file.champs.destinataire' => 'إلى',
+			'courriels.admin.file.champs.categorie' => 'الفئة',
+			'courriels.admin.file.champs.origine' => 'المصدر',
+			'courriels.admin.file.champs.creeLe' => 'وُضعت في الطابور يوم',
+			'courriels.admin.file.champs.envoyeLe' => 'أُرسلت يوم',
+			'courriels.admin.file.champs.tentatives' => 'المحاولات',
+			'courriels.admin.file.champs.motifEchec' => 'آخر خطأ',
+			'courriels.admin.file.champs.langue' => 'اللغة',
+			'courriels.admin.file.actualiser' => 'تحديث',
+			'courriels.admin.file.reessayer' => 'إعادتها إلى الطابور',
+			'courriels.admin.file.vide' => 'لا توجد رسائل في هذه القائمة.',
+			'courriels.admin.file.erreur' => 'تعذّر تحميل الإرسال. أعد المحاولة.',
+			'courriels.admin.file.sansDonnees' => 'تعذّر تحميل الإرسال',
+			'courriels.admin.file.retour.relance' => 'أُعيدت إلى الطابور. الإرسال خلال دقيقة.',
+			'courriels.admin.file.retour.introuvable' => 'لم تعد هذه الرسالة قابلة لإعادة المحاولة. تم تحديث القائمة.',
+			'courriels.admin.file.retour.echec' => 'لم تتأكد إعادتها إلى الطابور. أُعيدت قراءة القائمة: تحقق من حالة الرسالة قبل أن تحاول من جديد.',
+			'courriels.admin.file.retour.refus' => 'الإدارة المتصلة وحدها تستطيع إعادة إرسال رسالة.',
+			'courriels.admin.file.retour.horsLigne' => 'لم يُرسل شيء: الشبكة غير متوفرة. أعد المحاولة عند عودتها.',
+			'courriels.admin.adresses.intro' => 'تخرج كل فئة من عنوانها، وتصل الردود إلى الصندوق المذكور. تُقرأ هذه القائمة هنا ولا تُعدَّل داخل التطبيق.',
+			'courriels.admin.adresses.champs.expediteur' => 'تخرج من',
+			'courriels.admin.adresses.champs.nom' => 'الاسم المعروض',
+			'courriels.admin.adresses.champs.reponses' => 'الردود إلى',
+			'courriels.admin.adresses.champs.type' => 'النوع',
+			'courriels.admin.adresses.essentielle' => 'مرتبطة بالخدمة، دون إلغاء اشتراك',
+			'courriels.admin.adresses.facultative' => 'مع رابط لإلغاء الاشتراك',
+			'courriels.admin.adresses.active' => 'مفعّلة',
+			'courriels.admin.adresses.coupee' => 'معطّلة',
+			'courriels.admin.adresses.vide' => 'لا توجد فئات حاليًا.',
+			'courriels.admin.adresses.erreur' => 'تعذّر تحميل عناوين الإرسال. أعد المحاولة.',
+			'courriels.admin.adresses.sansDonnees' => 'تعذّر تحميل عناوين الإرسال',
 			_ => null,
 		};
 	}

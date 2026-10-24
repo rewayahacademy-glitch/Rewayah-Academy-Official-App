@@ -114,6 +114,12 @@ if (typeof module !== 'undefined' && module.exports) {
 }
 
 if (typeof document !== 'undefined') {
+  // Anti-spam : la page n'ecrit aucune adresse (build_site.masquer_courriels). On remet ici la vraie arobase, a
+  // copier, et le lien mailto ; sans script, la feuille dessine l'arobase et l'adresse reste lisible.
+  document.querySelectorAll('.arobase').forEach((a) => a.replaceWith('@'));
+  document.querySelectorAll('a[data-u][data-d]').forEach((lien) => {
+    lien.href = 'mailto:' + lien.dataset.u + '@' + lien.dataset.d + (lien.dataset.q || '');
+  });
   const simulator = document.getElementById('tarif-simulator');
   const dataNode = document.getElementById('tarifs-data');
   let donnees = null;
@@ -123,6 +129,20 @@ if (typeof document !== 'undefined') {
     donnees = null;
   }
   if (simulator) initialiserSimulateur(simulator, donnees);
+  // Pied de page : sous 1100 px, « Decouvrir » et « Nous contacter » se replient ; ouverts au-dela, et sans script.
+  const volets = document.querySelectorAll('.pied-volet');
+  const telephone = window.matchMedia('(max-width: 1099px)');
+  const impression = window.matchMedia('print');
+  const plier = () => volets.forEach((volet) => {
+    // A l'impression, tout s'imprime : les volets restent ouverts, meme en portrait.
+    if (impression.matches) { volet.open = true; return; }
+    volet.open = !telephone.matches;
+    volet.querySelector('summary').tabIndex = telephone.matches ? 0 : -1;
+  });
+  plier();
+  telephone.addEventListener('change', plier);
+  window.addEventListener('beforeprint', () => volets.forEach((volet) => { volet.open = true; }));
+  window.addEventListener('afterprint', plier);
 }
 
 function initialiserSimulateur(simulator, d) {
@@ -178,8 +198,9 @@ function initialiserSimulateur(simulator, d) {
     const voulu = Math.min(Math.max(parseInt(total.value, 10) || 0, 0), d.elevesMax);
     while (students.children.length > voulu * (d.bourse ? 2 : 1)) students.removeChild(students.lastChild);
     for (let i = students.children.length / (d.bourse ? 2 : 1); i < voulu; i += 1) {
-      // Le libelle vise le champ par son id : il le nomme, et un clic sur le texte n'actionne pas le bouton moins.
-      const age = el('label', 'Âge de l’élève ' + (i + 1) + ' ', { for: 'sim-age-' + (i + 1) });
+      // Le libelle nomme le champ par son id ; les boutons moins et plus sont a cote de lui, hors du libelle.
+      const age = el('div', undefined, { class: 'simulator__champ' });
+      age.appendChild(el('label', 'Âge de l’élève ' + (i + 1), { for: 'sim-age-' + (i + 1) }));
       const champ = el('input', undefined, { type: 'number', inputmode: 'numeric', min: String(d.ageEnfantMin), step: '1', placeholder: 'Par exemple ' + (d.ageEnfantMin + 2), 'data-age': '', id: 'sim-age-' + (i + 1) });
       // Le premier eleve part d'un exemple, pour que le calcul se lise tout de suite ; on le change en un geste.
       if (i === 0) champ.value = String(d.ageEnfantMin + 2);
@@ -267,7 +288,7 @@ function initialiserSimulateur(simulator, d) {
     const prix = new Set(eleves.map((e) => tarifDe(d, e.age)));
     if (eleves.length > 1 && prix.size > 1) {
       const f = fourchette(d, eleves, options);
-      if (f.min !== f.max) ligneTexte(result, 'Le rang suit l’ordre d’inscription. Selon cet ordre, le premier paiement est compris entre ' + m(f.min) + ' et ' + m(f.max) + '.');
+      if (f.min !== f.max) ligneTexte(result, 'Les remises suivent l’ordre d’inscription dans le foyer. Selon cet ordre, le premier paiement est compris entre ' + m(f.min) + ' et ' + m(f.max) + '.');
     }
     if (d.bourse) ligneTexte(result, 'La bourse est accordée par la direction, sur demande écrite, et ne se cumule avec aucune autre remise.');
     if (!d.essaiActif) ligneTexte(result, 'Il n’y a pas d’essai\u00a0: la première semaine est remboursée si le cours ne\u00a0convient\u00a0pas.');

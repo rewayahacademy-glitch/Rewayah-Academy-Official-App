@@ -79,7 +79,7 @@
     ],
     "suspension_jour": 4,
     "place_gardee_jours": 14,
-    "place_liberee_jour": 18
+    "place_liberee_jour": 16
   },
   "enseignant": {
     "taux_par_eleve_present_heure_mineur": {
@@ -126,7 +126,6 @@
       "poular",
       "francais",
       "anglais",
-      "arabe",
       "autre selon les enseignants"
     ]
   },
@@ -144,10 +143,10 @@
     "autres_charges_mineur": 199600
   },
   "site_public": {
-    "encart_enfant": "Cours de Coran pour enfants et adolescents, 6 à 17 ans. 55 $ par mois, hors taxes. Trois séances d'une heure par semaine, à heure fixe, dans un groupe de 3 à 5 élèves avec le même enseignant. Cours en poular, français, anglais, arabe ou autre langue selon la disponibilité des enseignants. Le parent peut entrer dans la séance en observateur silencieux, 2 minutes par séance, et reçoit chaque fin de semaine le compte rendu de l'enseignant dans l'application. Première semaine remboursée si le cours ne convient pas. Résiliable chaque mois.",
-    "encart_adulte": "Cours de Coran pour adultes, à partir de 18 ans. 65 $ par mois, hors taxes. Trois séances de 90 minutes par semaine, pause comprise, à heure fixe, dans un groupe de 3 à 6 personnes avec le même enseignant. Cours en poular, français, anglais, arabe ou autre langue selon la disponibilité des enseignants. Compte rendu de l'enseignant chaque fin de semaine. Première semaine remboursée si le cours ne convient pas. Résiliable chaque mois.",
+    "encart_enfant": "Cours de Coran pour enfants et adolescents, 6 à 17 ans. 55 $ par mois, hors taxes. Trois séances d'une heure par semaine, à heure fixe, dans un groupe de 3 à 5 élèves avec le même enseignant. Cours en poular (peul), français, anglais ou autre langue selon la disponibilité des enseignants. Le parent peut entrer dans la séance en observateur silencieux, 2 minutes par séance, et reçoit chaque fin de semaine le compte rendu de l'enseignant dans l'application. Première semaine remboursée si le cours ne convient pas. Résiliable chaque mois.",
+    "encart_adulte": "Cours de Coran pour adultes, à partir de 18 ans. 65 $ par mois, hors taxes. Trois séances de 90 minutes par semaine, pause comprise, à heure fixe, dans un groupe de 3 à 6 personnes avec le même enseignant. Cours en poular (peul), français, anglais ou autre langue selon la disponibilité des enseignants. Compte rendu de l'enseignant chaque fin de semaine. Première semaine remboursée si le cours ne convient pas. Résiliable chaque mois.",
     "encart_remises": "Deuxième inscrit du foyer : 8 % de remise sur sa place. Troisième et suivants : 17 %. Paiement au trimestre : 5 % de remise. Paiement à l'année : 10 %. Parrainez une famille : 20 $ de crédit pour vous et pour elle après son premier mois. Une bourse de 30 % existe pour les familles en difficulté et pour les personnes récemment converties, sur simple demande écrite (places limitées).",
     "mentions_sous_la_grille": "Prix en dollars américains, hors taxes ; la taxe de votre pays et le montant en euros, livres ou dollars canadiens s'affichent au paiement. Un groupe ouvre dès 3 inscrits ; avant, vous êtes en liste d'attente et rien n'est facturé. Une inscription en cours de mois paie seulement les séances restantes. Une place manquée n'est pas remboursée : elle est réservée dans un groupe fixe. Une séance annulée par l'académie est remplacée. Un contrôleur qualité peut assister aux séances sans être vu.",
-    "encart_enseignant": "Rewayah Academy recrute des enseignants de Coran pour des classes de 3 à 6 élèves en visioconférence, trois fois par semaine, en poular, français, anglais, arabe ou autre langue. Vous recevez 47 % de ce que paie chaque élève présent : jusqu'à 129 $ par mois pour une classe d'enfants pleine et 183 $ pour une classe d'adultes pleine, versés avant le 5 de chaque mois, frais de transfert à notre charge. Un enseignant à trois classes d'adultes peut gagner jusqu'à 550 $ par mois pour 13 h 30 par semaine. Vous choisissez vos créneaux ; l'académie compose les classes."
+    "encart_enseignant": "Rewayah Academy recrute des enseignants de Coran pour des classes de 3 à 6 élèves en visioconférence, trois fois par semaine, en poular (peul), français, anglais ou autre langue. Vous recevez 47 % de ce que paie chaque élève présent : jusqu'à 129 $ par mois pour une classe d'enfants pleine et 183 $ pour une classe d'adultes pleine, versés avant le 5 de chaque mois, frais de transfert à notre charge. Un enseignant à trois classes d'adultes peut gagner jusqu'à 550 $ par mois pour 13 h 30 par semaine. Vous choisissez vos créneaux ; l'académie compose les classes."
   }
 }

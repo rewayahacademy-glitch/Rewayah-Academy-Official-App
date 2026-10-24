@@ -215,6 +215,38 @@ Inspection après ces corrections :
 | Recette 12 | 6,8 (7,35 à 7,5 sans plafond) | 6,07 | 6,17 | « presque » |
 | Recette 13 | 7,77 | 6,2 | 6,3 | « presque » |
 | Recette 14 | 7,72 | 6,2 | 6,17 | « presque » |
+| Recette 15 | 7,42 | 6,07 | 6,17 | « presque » |
+| Recette 16 | 7,7 | 6,33 | 6,33 | « presque » |
+| Recette 17 | 7,4 | 6,5 | 6,5 | « presque » |
+| Recette 18 | 7,43 | 6,37 | 6,33 | « presque » |
+| Recette 19 (jurés Sonnet) | 7,72 | 6,95 | 6,93 | « presque » |
+| Recette 20 (jurés Sonnet) | 7,53 | 7,07 | 7,23 | « presque » |
+| Recette 21 (jurés Sonnet) | 7,70 | 6,33 | 6,17 | « presque » |
+| Recette 22 (jurés Sonnet) | 7,67 | 6,73 | 6,33 | « presque » |
+| Recette 23 (jurés Sonnet) | 7,57 | 7,18 | 6,50 | « presque » |
+| Recette 24 (jurés Sonnet) | 7,63 | 6,87 | 6,50 | « presque » |
+| Recette 25 (jurés Sonnet) | 7,53 | 6,63 | 6,57 | « presque » |
+| Recette 26 (jurés Sonnet) | 7,59 | 7,22 | 7,22 | « presque » |
+| Recette 27 (jurés Sonnet) | 6,50 | 6,87 | 6,50 | « presque » (plafond : titres des chapitres sur trois lignes) |
+| Recette 28 (jurés Sonnet) | 7,73 | 7,00 | 6,50 | « presque », sans plafond |
+| Recette 29 (jurés Sonnet) | 7,70 | 7,00 | 7,20 | « presque », sans plafond |
+| Recette 30 (jurés Sonnet) | 7,57 | 6,93 | 6,73 | « presque », sans plafond |
+| Recette 31 (jurés Sonnet) | 7,57 | 6,97 | 6,77 | « presque » (un juré applique le plafond « moins de quatre vraies photos ») |
+| Recette 32 (jurés Sonnet) | 7,18 | 7,08 | 6,73 | « presque » (les trois jurés appliquent le plafond « moins de quatre vraies photos ») |
+| Recette 33 (jurés Sonnet) | 7,70 | 6,57 | 6,33 | « presque », sans plafond (les rendus comptés comme images raster, définition du skill rappelée aux jurés) |
+| Recette 34 (jurés Sonnet) | 7,77 | 6,67 | 6,80 | « presque », sans plafond |
+| Recette 35 (jurés Sonnet) | 7,77 | 6,57 | 6,33 | « presque », sans plafond |
+| Recette 36 (jurés Sonnet) | 7,77 | 6,80 | 6,50 | « presque », sans plafond |
+| Recette 37 (jurés Sonnet) | 7,77 | 6,75 | 6,50 | « presque », sans plafond |
+| Recette 38 (jurés Sonnet) | 7,90 | 6,92 | 6,90 | « presque », sans plafond |
+| Recette 39 (jurés Sonnet) | 7,90 | 6,57 | 6,33 | « presque », sans plafond |
+| Recette 40 (jurés Sonnet) | 7,78 | 6,78 | 6,50 | « presque », sans plafond ; le directeur demande d'en finir (23/10) |
+| Recette 41 (jurés Sonnet) | 7,80 | 6,90 | 6,50 | « presque », sans plafond, après WW1, WW2 et WW6 |
+| Recette 42 (jurés Sonnet) | 7,67 | 6,80 | 6,67 | « presque », sans plafond |
+| Recette 43 (jurés Sonnet) | 7,77 | 6,40 | 6,33 | « presque », sans plafond ; hiérarchie des titres jugée réglée |
+| Recette 44 (jurés Sonnet) | 7,80 | 6,33 | 6,33 | « presque », sans plafond ; sans les plafonds, les trois sites à 0,2 point près (Rewayah 7,8, Waking Up 7,6, Hallow 7,65) |
+| Recette 45 (jurés Sonnet) | 7,70 | 7,90 | 7,40 | « presque » ; pied de page et questions de l'accueil jugés réglés ; tour bref (2 min), un juré sans aucun plafond pour les références |
+| Recette 46 (jurés Sonnet) | 7,63 | 7,60 | 7,23 | « presque » ; Cours et Académie sans partage image et texte (réglé selon les jurés) |
 
 Les références sont plafonnées par leur capture : un mur d'inscription pour Hallow, un bandeau de cookies qui ne se ferme pas pour Waking Up. Les jurés le disent eux-mêmes : à note égale, le système de ces deux sites reste plus fini que nos pages intérieures.
 
@@ -406,11 +438,457 @@ Le texte courant est déjà en blanc plein sur le violet (contraste 6,5:1, le pl
 
 **Après la recette 14.** Les cinq groupes de personnages visés ne paraissent plus que sur deux pages au plus. Les jurés relèvent alors deux autres groupes sur quatre pages (le père et le garçon, l'enseignant barbu), et lisent les recadrages sans personne comme du remplissage. Le jeu de rendus ne permet pas mieux : chaque personnage retiré d'une page doit être remplacé par un décor, et les décors disponibles sont presque tous des arches et des portes. Seules de nouvelles scènes lèvent cette réserve (O-20). La génération à partir des rendus, acceptée par le directeur le 21/10, est bloquée par la sécurité de l'environnement : elle demande que la session passe en mode « Accept edits », ou que le modèle soit autorisé dans le connecteur Hugging Face.
 
+Le directeur a changé le mode de la session le 21/10. Le rendu part bien vers le modèle (FLUX.1 Kontext, Space Hugging Face), mais le calcul est refusé : le Space tourne sur des cartes graphiques partagées (ZeroGPU) qui demandent un compte, et la session n'a pas de jeton Hugging Face. Le connecteur Hugging Face consulte les modèles mais ne peut pas les lancer (`gradio=none`). Aucun Space d'édition d'images en service ne tourne sur une carte dédiée. Deux voies : un jeton Hugging Face en lecture ajouté aux réglages de l'environnement (variable `HF_TOKEN`, lue par une nouvelle session ; un compte gratuit donne 5 minutes de calcul par jour), ou des scènes générées par le directeur avec le fichier `marque/PROMPTS-ILLUSTRATIONS-2026-10-21.md`.
+
+**Corrections après la recette 14, sans nouveau rendu.**
+
+| # | Relevé | Correction |
+|---|---|---|
+| Z1 | Accueil : l'énoncé « Votre classe commence à l'heure… » petit, aligné à gauche, second vers en retrait, un tiers d'écran vide ensuite | Centré, sans retrait, à la taille qui remplit la mesure (64 px à 1440, 48 px à 840) ; la fenêtre des chapitres suit 160 px plus bas au lieu de 280 |
+| Z2 | Accueil : « Une petite classe. Un enseignant attitré. » trop petit à l'arrivée du zoom | 62 px au lieu de 49 ; la classe vue du dessus se décale (54vw) et passe de 46 à 41vw de large pour garder l'écart |
+| Z3 | Accueil : la dernière image des chapitres part pendant qu'on lit son texte | Le dernier chapitre a la hauteur de la fenêtre et se centre sur elle : texte et image quittent l'écran ensemble. L'image change quand le titre du chapitre suivant passe 60 % de l'écran (le titre, et non plus le haut de l'article) |
+| Z4 | Accueil : la fenêtre des chapitres change de cadre à chaque chapitre ; texte des chapitres sur une autre colonne que les autres paires | Une seule forme, l'arche : le père et le fils sont recadrés en arche dans le même rendu (380 × 475, taille réelle) ; seules les mains restent détourées. Le texte part de la colonne 7, comme les autres paires (732 px à 1440) |
+| Z5 | Accueil : la moitié basse en pièces de kit, dont deux cartes de prix à puces | Les deux prix se lisent en grand, sans carte (150 px à 1440, 64 px au téléphone) ; le public et ce que le prix comprend se posent dessous |
+| Z6 | Tarifs : les deux prix dits trois fois ; cinq écrans de tableaux et de cartes | La grille « Le prix de chaque formule » est retirée. Ses mentions (date d'effet, monnaies, taxes) passent sous les deux prix du haut, présentés sans boîte, et le simulateur les suit. Le libellé adulte reprend la décision : « 18 ans et plus » |
+| Z7 | Tarifs : un cercle de tapis en haut de page qui se lit comme un échantillon de tissu | L'arche sombre vue d'en haut passe en haut de page ; le tapis va aux remises. Quatre images, chacune une seule fois |
+| Z8 | Comment ça marche : petites images dans de grandes cartes, cartes décalées en escalier | Deux cartes par rangée, de même hauteur et alignées en haut ; l'image prend la moitié de la carte |
+| Z9 | « Les cours en bref » : des encarts en petits caractères, sans ligne qui mène | Mot pour mot. La ligne du prix se lit en grand, sans puce (46 px à 1440), et s'aligne d'un encart à l'autre ; les autres lignes respirent davantage |
+
+Non repris : la taille du texte courant. Il est à 19,6 px sur un écran de 1 440 px ; les captures des jurés réduisent quatre écrans à 800 px de large, ce qui le fait paraître à 11 px. Le voile au bout du disque blanc de la scène du haut est dans le rendu lui-même.
+
+Inspection des six pages après ces corrections : 0 FAIL (un recouvrement introduit par les grands prix, l'interligne de 0,9 du chiffre empiétant sur le titre au-dessus, a été corrigé avant l'envoi). Aucune image agrandie, aucun texte coupé au bord de l'écran, aucun mot seul en fin de puce. Tests : 64, OK.
+
 Contraintes que la recette ne pouvait pas lever : le directeur a fourni treize illustrations, presque toutes des portes (question O-20) ; les encarts du 18/10 se publient tels quels.
 
 Inspection des six pages de la recette après ces corrections : 0 FAIL. Tous les titres de page tiennent en deux lignes de 840 à 1440 px et à 390 px ; à 360 et 320 px, le titre de l'accueil prend quatre lignes, ceux de l'académie et des conditions trois (déjà le cas avant ce lot). Tests : 64, OK.
+
+**Corrections après la recette 15, sans nouveau rendu.** Les trois jurés placent l'accueil au-dessus des deux références. Ils retiennent leur « oui » à cause des pages intérieures : blocs de kit (cartes, tableaux, pastilles, accordéon), recadrages sans personne lus comme du remplissage, cadres mêlés dans une même rangée, huit à dix tailles de texte.
+
+| # | Relevé | Correction |
+|---|---|---|
+| AA1 | Tarifs : sept écrans de blocs (simulateur, pastilles de remises, trois tableaux, bande des conditions) et trois recadrages sans personne | Une seule image : la scène entière de la place qui attend, à droite des deux prix. Les remises en grands chiffres, chacune avec ce à quoi elle s'applique, sans tableau ni cartes. Le tableau de la famille (décision du 18/10) sans cases ni bandes. Le tableau d'organisation, qui redisait « Les cours en bref », est retiré |
+| AA2 | Portes, coins d'arche et tapis sans personne lus comme du remplissage (accueil, Comment ça marche, Cours, Académie) | Recadrages avec des personnes, taillés dans les rendus du directeur à leur taille réelle. Tuiles de l'accueil : trois moments du chemin de la boucle (on avance, les chemins se croisent autour d'un enseignant, on passe la porte). Comment ça marche : la femme au tabouret, l'enseignant assis, la fillette et son enseignante. Cours : la femme et l'homme au livre, côte à côte, puis deux élèves vus d'en haut. Familles : l'élève à son pupitre, l'enseignante. Académie : les mains qui tendent le Coran, la mère et sa fille. Plus aucune porte ni aucun tapis seul |
+| AA3 | Cadres mêlés dans une même rangée | Un cadre par rôle : l'arche pour les personnes, le cercle pour la seule classe vue d'en haut (la halqa), la scène entière détourée sans cadre. Deux arches côte à côte ont la même taille |
+| AA4 | Accueil : la phrase du zoom plus petite que le titre, à gauche | À la taille du titre (78 px à 1440), centrée au-dessus de la classe vue d'en haut |
+| AA5 | Accueil : la fenêtre des chapitres change de cadre (arche de 380 px, mains détourées dans le coin, arche de 540 px) | Une seule arche pour les trois chapitres, de même taille (540 px à 1440 × 900, 435 px à 1280 × 720) ; le père et le fils sont recadrés plus large dans le même rendu, sans agrandissement ; les mains entrent dans la même arche, sur le sol lavande de leur rendu, et montent toujours vers le Coran |
+| AA6 | Accueil : la moitié basse en kit (carte sombre arrondie avec une image, accordéon en boîtes) | « Accompagné à chaque étape » devient une bande sombre sur toute la largeur, sans image : la date en grand, les trois engagements côte à côte. Les six questions sont ouvertes, sur deux colonnes, sans boîte ni signe plus |
+| AA7 | « Les cours en bref » : une carte violette à côté d'une carte blanche, puces à 15-16 px | Mot pour mot. Deux colonnes égales sur le même fond, sans carte ; les lignes de même rang se font face ; texte à 20 px, ligne du prix à 56 px |
+| AA8 | Huit à dix tailles de texte | Cinq tailles : affiche (96 px), section (56), sous-titre (28), texte (20), petit (15), plus les chiffres des prix. Puces, encarts, étapes, légendes et notes y sont ramenés ; au téléphone, six à huit tailles par page au lieu de dix ou onze |
+
+Chaque rendu ne paraît plus que sur deux des six pages, sauf la classe vue d'en haut (accueil, Familles, Cours), chaque fois sous un autre angle. L'enseignant barbu et l'enseignante aux lunettes violettes figurent dans presque tous les rendus : leur répétition ne se lèvera qu'avec de nouvelles scènes (O-20).
+
+Non repris :
+- Tarifs n'a qu'une image, comme le demandaient les trois jurés. L'inspecteur, qui veut quatre images par page, la signale (FAIL « few-pictures ») : c'est voulu.
+- Les six questions de l'accueil restent six (un juré en proposait trois) : chacune répond à une question des familles.
+- Le simulateur garde son panneau sombre : c'est l'outil de la page.
+- La phrase seule proposée pour « Transmettre le savoir » (Académie) : la page tomberait à trois images ; les mains qui tendent le Coran disent cette phrase.
+
+Inspection des six pages après ces corrections : 0 FAIL hors Tarifs (ci-dessus). Avertissements déjà présents avant ce lot : texte blanc sur le violet à 6,5:1, aucune vidéo, marges inégales à 768 px sur Comment ça marche, et la phrase du zoom comptée « sur une image » (la classe vue d'en haut est détourée : son cadre est transparent autour des personnes). Aucune image agrandie, aucun texte coupé au bord de l'écran, aucun mot seul en fin de puce, de 390 à 1440 px. Tests : 64, OK.
+
+**Relecture du code et des textes, puis recette 16.** La relecture du lot de la recette 15 n'a trouvé aucun défaut bloquant (64 tests, 18 pages, toutes les images et tous les liens). Elle a confirmé six défauts, corrigés :
+- les deux prix du haut de Tarifs décalés de 10 à 20 px entre 840 et 1 060 px ;
+- les mains de l'accueil servies dans un fichier deux fois trop petit pour leur cadrage dans l'arche, donc floues ;
+- « 6 mois » coupé en fin de ligne ;
+- la ligne de la bourse, qui allait au-delà de l'encart des remises et redisait le non-cumul ;
+- la phrase « Les remises sont calculées par élève », fausse pour le parrainage (un crédit par famille) ;
+- cinq descriptions d'images qui disaient autre chose que l'image.
+
+Les trois jurés de la recette 16 jugent réglés : les recadrages sans personne, les cadres mêlés dans une rangée, la fenêtre des chapitres, « Les cours en bref ». Leurs relevés communs :
+
+| # | Relevé | Correction |
+|---|---|---|
+| BB1 | Comment ça marche : à côté de l'image, le texte des cartes n'a que 250 px (quatre mots par ligne) | L'image au-dessus du texte à toutes les largeurs ; le texte prend toute la carte (45 à 55 signes) |
+| BB2 | Accueil, tablette et téléphone : la phrase du zoom reste à gauche, en sous-titre | Centrée, à la taille du titre quand chaque vers tient sur une ligne (57 px à 768, 33 px à 390 au lieu de 24) |
+| BB3 | Académie : quatre sections sur le même gabarit ; les mains reprises de l'accueil ; deux cartes empilées en bas | « Transmettre le savoir tel qu'il a été reçu » devient une phrase seule sur la bande sombre ; la société et le contact sont posés sur le fond, sans carte ; le mot du directeur et les profils des fondateurs changent le rythme de la page |
+| BB4 | Tarifs : le simulateur dans une carte sombre, libellés à 15 px | Posé sur le violet, sans carte ; libellés et texte à 20 px |
+| BB5 | Encore huit à dix tailles de texte | L'énoncé de l'accueil passe à la taille du titre (une taille de moins) |
+
+Non repris : une fin de page à grand mot sur chaque page intérieure (le grand mot reste la signature de l'accueil). La répétition des personnages (O-20) demeure.
+
+**Le mot du directeur et les fondateurs (directeur, 21/10/2026).** Sur la page Académie :
+- **Mot de bienvenue.** Il est reformulé à la demande du directeur (doux, sérieux, simple, court) et relu par trois jurés. Il garde ses idées : l'apprentissage ouvert à chacun, le présentiel encouragé quand il est possible, l'académie en ligne comme une solution parmi d'autres.
+- **Photo du directeur.** Elle est calée au bord gauche de l'écran, où elle est coupée, et arrondie en demi-arche en haut à droite. Elle est désaturée vers le noir et blanc : ombres à l'encre de l'app (#110E20), clairs lavande (#F4EEFF), 15 % de gris neutre. Les trois jurés ont classé ce traitement premier parmi quatre. Ses métadonnées sont retirées.
+- **Profils.** Les trois fondateurs ont chacun leur profil, avec leur rôle et leurs diplômes. Le nom du troisième fondateur s'écrit Ahmad Diallo, et non plus Ahmadou.
+- **Arabe.** Les noms et diplômes en arabe sont inscrits au registre de marque (M-29) pour le futur site en arabe, sans être mêlés au français.
+- **Photos des deux autres fondateurs.** Elles sont annoncées mais ne sont pas encore arrivées dans la session.
+
+`site-public/police_arabe.py` refait la police arabe inscrite dans la feuille de style après tout ajout de texte arabe.
+
+Inspection des six pages après ces corrections : 0 FAIL hors Tarifs (une image, voulu). Aucun texte coupé, aucune image agrandie, aucun mot seul. Tests : 64, OK.
+
+**Après la recette 17.** La relecture du code et les trois jurés relèvent la même faute : sur l'Académie, les blocs « La société exploitante » et « Écrire à Rewayah Academy » avaient perdu leur marge intérieure mais gardé leur fond (une règle de l'ambiance violette l'emportait). C'est la cause de la baisse de la note. Corrections :
+
+| # | Relevé | Correction |
+|---|---|---|
+| CC1 | Académie : deux rectangles de couleur, texte collé aux bords | Plus de fond, même dans l'ambiance violette : deux rangées titre à gauche, texte à droite |
+| CC2 | Les cinq pages intérieures finissent sur la même petite bande | Chaque page principale finit sur un grand mot qui est le lien, comme l'accueil : « S'inscrire », « Continuer », « Découvrir » |
+| CC3 | Comment ça marche : un vide à côté de l'image de chaque carte ; sur tablette, le texte de nouveau étroit | L'arche au centre de la carte, à 380 px ; l'image au-dessus du texte dès 600 px |
+| CC4 | Accueil : la photo du directeur sans nom ; la même photo que sur l'Académie | Une phrase de son mot, signée de son nom et de son rôle ; un cadrage plus serré que sur l'Académie |
+| CC5 | Accueil, tablette : le texte de la bande « Accompagné » décalé de 54 à 174 px | Aligné sur la marge de la page |
+| CC6 | Accueil, tablette : les mains débordent d'une petite arche jusqu'au bord de l'écran | Les mains dans une arche, comme au bureau, et servies dans le grand fichier |
+| CC7 | Accueil, tablette et téléphone : l'énoncé à gauche, en sous-titre | Centré, une phrase par ligne, à la plus grande taille qui tient (44 px à 768) |
+| CC8 | Notes, légendes et pied de page à 13-16 px | Tous au petit pas de l'échelle : 17 px |
+| CC9 | Tarifs : focus du clavier invisible dans les champs du simulateur | Contour de 3 px |
+| CC10 | Tarifs : la scène du haut petite, entourée de vide | Agrandie (560 px au plus), sur la hauteur du haut de page |
+
+La relecture note aussi : un doublon pour les lecteurs d'écran (la légende cachée de la photo redisait son texte alternatif ; retirée), une image sans usage (les mains de l'Académie ; retirée), aucun test des nouveaux chemins (trois tests ajoutés : la photo n'est jamais légendée « Illustration » et a son texte alternatif ; les profils sont les trois fondateurs et aucune ligne arabe n'est sur une page française ; un mot sans photo ou un extrait qui n'en vient pas est refusé).
+
+Inspection des six pages : 0 FAIL hors Tarifs (une image, voulu). Aucun texte coupé, aucune image agrandie, aucun mot seul. Tests : 67, OK.
+
+**Après la recette 18.** Les trois jurés placent Rewayah au-dessus des deux références (7,43 contre 6,37 et 6,33) et répondent encore « presque ». Ils relèvent tous trois la même fin de page partout, la bande du directeur sur l'accueil, l'adresse coupée dans le pied de page, l'énoncé trop petit au téléphone et le nombre de tailles de texte. La relecture du code ajoute un défaut d'accessibilité : le grand mot « S'inscrire » était caché aux lecteurs d'écran et absent du nom du lien (WCAG 2.5.3). Corrections :
+
+| # | Relevé | Correction |
+|---|---|---|
+| DD1 | Six pages finissent sur la même ellipse blanche et un grand verbe ; au téléphone, 150 à 230 px de blanc vide ; « Continuer » ne dit pas la suite | Seul l'accueil garde la bande blanche et son grand mot. Les pages principales (et Avis) se referment sur leur propre titre, à la taille de leur titre d'ouverture, posé sur le fond. Ce titre est le lien : « Inscrivez votre enfant. », « Commencez par les bases. », « Votre inscription commence ici. », « Commencez votre inscription. », « Découvrez les cours. ». Au bureau, le titre est à gauche et sa phrase à droite. Au téléphone, le vide de la bande de l'accueil est retiré |
+| DD2 | Le grand mot hors du nom du lien (relecture) | Le mot visible ouvre le libellé du lien (« Commencer » + « mon inscription » pour les lecteurs d'écran) ; le build refuse un mot qui n'ouvre pas le libellé ; test ajouté |
+| DD3 | Accueil, bande « Accompagné » : la photo commence bas, le coin haut gauche est vide, une douzaine d'éléments dans la colonne de droite ; même cadrage qu'à l'Académie ; au téléphone, la photo tout en bas sous la ligne de la société | Le visage, cadré en largeur (5:4, de la calotte au col), en haut, à la hauteur du titre, calé au bord gauche. À côté : la date, la phrase signée, « Lire le mot du directeur ». Dessous, les trois engagements côte à côte. La ligne de la société est retirée (elle est au pied de page). Au téléphone : le titre, le visage, puis la phrase signée juste dessous. La signature est hors de la citation (`figure` et `figcaption`) |
+| DD4 | La photo, un mur gris à côté des rendus lavande | Un pas de plus vers le violet, sur les deux cadrages : clairs au lavande des cadres (#EEE6FA), 8 % de gris au lieu de 15. Une marque du mur (un clou et son ombre) est retirée de la photo d'origine ; le visage n'est pas retouché |
+| DD5 | Pied de page : « recrutement@rewayahacademy.c / om » coupé au milieu du mot à 1280 px et plus ; l'ornement en contour lu comme un reste ; au téléphone, les libellés sans leur adresse | L'ornement est retiré, la colonne des contacts prend sa place ; une adresse ne se coupe qu'après « @ » ; au téléphone, chaque adresse sous son libellé, sur une colonne ; sous 380 px, la navigation du pied sur une colonne |
+| DD6 | Accueil, téléphone : l'énoncé à 21 px, plus petit que les titres qui l'entourent | La première phrase en grand sur deux lignes (35 px à 390, la taille de la phrase du zoom), la seconde dessous à la taille des intertitres ; moins de vide dessous |
+| DD7 | Neuf ou dix tailles de texte par page | Une échelle courte : affiche géante (prix de l'accueil et grand mot, 150 px), affiche (titres d'ouverture et de fin, prix de Tarifs, 66 px), titre de section, intertitre, texte, notes. Mesuré à 1440 px : accueil 6 tailles ; Familles, Cours, Comment ça marche, Tarifs et Académie 5 tailles. Les phrases d'ouverture passent à la taille du texte (500) ; les notes des arches de Cours à 17 px |
+| DD8 | Tarifs : la colonne de gauche encombrée, la scène flottante | Une seule action et un lien « Simuler mon tarif » ; la scène plus grande (600 px au plus) sur la droite ; les deux prix à 66 px sous le texte, au niveau du bas de la scène ; leurs mentions sur toute la largeur |
+| DD9 | Accueil, sous 840 px : l'arche des mains plus large et collée à la marge, à la différence des deux autres arches (relecture) | Même marge intérieure que les autres arches |
+| DD10 | Erreurs HTML anciennes : un titre dans un `span`, un identifiant en double sur l'Aide, des libellés qui contenaient plusieurs boutons dans le simulateur (relecture) | Corrigées : 0 erreur sur les 18 pages (validateur Nu 26.10.12). Les boutons moins et plus sont hors du libellé, qui nomme son champ par son identifiant |
+| DD11 | Règles CSS sans effet (cartes de l'Académie, ancienne grille des étapes sur tablette) ; test de l'arabe incomplet (relecture) | Règles retirées, sans changement de position mesuré ; le test cherche aussi dans les textes alternatifs et sur toutes les plages de l'arabe |
+
+**Photos des deux autres fondateurs (22/10/2026).** Le directeur les a déposées sur le Drive (« Alim & Ahmad ») : Mamadou Alimou Diallo sur fond blanc, Ahmad Diallo de nuit sous des arches éclairées, en pied. Les trois profils de la page Académie ont maintenant chacun leur portrait, traités ensemble pour aller ensemble :
+- détourage (BiRefNet), puis pose sur le mur clair de la photo du directeur ;
+- cadrage tête et épaules en 4:5, la tête faisant 60 % de la hauteur ; le directeur, coupé à gauche par sa photo d'origine, regarde vers les deux autres ;
+- peau éclaircie à la luminosité de celle du directeur, les tons clairs (une tunique claire) protégés ;
+- même étalonnage A3, même demi-arche que la photo du directeur, 300 px au plus.
+
+Aucun visage n'est retouché. La photo d'Ahmad Diallo, en pied, ne donne que 338 px de large pour le portrait : il n'est jamais affiché plus grand que son fichier. Un test vérifie que chaque profil porte le portrait de la personne qu'il nomme.
+
+Non repris : la répétition des personnages d'une page à l'autre (O-20). Les jurés proposent des recadrages sans personne, mais la recette 15 les avait refusés (« jamais une porte ou un tapis sans personne »). La réponse reste les nouvelles scènes demandées au directeur.
+
+Inspection des six pages : 0 FAIL hors Tarifs (une image, voulu). Comment ça marche garde un avertissement de marges (120 et 142 px) : l'inspecteur ne compte que l'étendue du texte, et l'ornement retiré du pied de page touchait la marge droite. Les cartes et la grille vont bien de 120 à 1320 px. Aucun texte coupé. Aucune image agrandie à 390, 1024 et 1440 px. À 1920 px, l'image du haut de Familles est agrandie de 10 %, comme avant ce lot. Aucun mot seul. Simulateur vérifié : 3 élèves de 8, 12 et 30 ans donnent 159,55 $, sans erreur dans la console. Tests : 68, OK.
+
+**Après la recette 19.** Pour ménager le quota hebdomadaire (demande du directeur, 22/10), les jurés et le relecteur tournent désormais sur Sonnet ; leurs notes ne se comparent pas point par point avec celles des recettes précédentes. Les trois jurés relèvent la fin blanche restée seule sur l'accueil, la photo du directeur montrée deux fois sur l'Académie, le premier écran de Tarifs encore chargé, le titre de l'Académie isolé à gauche et, à l'œil, trop de tailles de texte. Corrections :
+
+| # | Relevé | Correction |
+|---|---|---|
+| EE1 | L'accueil seul finit encore sur la bande blanche et son grand mot | L'accueil se referme comme les autres pages, sur une phrase qui est le lien : « Pour votre enfant ou pour vous-même. », à la taille de son titre. Le grand mot disparaît du site, et avec lui l'écart entre le nom du lien et le mot montré (relecture) |
+| EE2 | Le directeur montré deux fois sur l'Académie (grande photo et petit portrait) | Son parcours passe sous sa signature, à côté de sa photo ; la section des fondateurs présente les deux autres, portrait à gauche et texte à droite. Le portrait du directeur recadré pour la carte est retiré |
+| EE3 | Académie : le titre isolé en bas à gauche, la phrase et le bouton en haut à droite | Titre, phrase et bouton dans une seule colonne à gauche, la boucle dessous |
+| EE4 | Tarifs : la colonne de gauche encore chargée | La mention des monnaies et des taxes passe sous le simulateur ; seule une date d'effet, s'il y en a une, resterait sous les prix |
+| EE5 | Trop de tailles à l'œil ; prix de l'accueil à 150 px | Prix de l'accueil à la taille de son titre : 5 tailles mesurées sur l'accueil au bureau, 6 au téléphone (la phrase du zoom, l'énoncé et la fin partagent la même) |
+| EE6 | Titre d'ouverture et de fin : 64 px à 839 px, 40 px à 840 px (relecture) | L'affiche des pages part de 52 px dès 840 px |
+| EE7 | Simulateur de l'accueil (feuille) : champs de 37 px, chiffres invisibles (relecture, défaut ancien) | Champs d'au moins 220 px par colonne : 118 px pour le nombre d'élèves, 238 px pour le paiement |
+| EE8 | Accueil, bande « Accompagné » : la photo avant le titre pour un lecteur d'écran (relecture) | Le titre vient d'abord dans le document ; la grille place la photo à gauche |
+| EE9 | Le libellé de l'action absent du lien de fin (relecture) | Quand il diffère du titre, il suit pour les lecteurs d'écran ; test étendu à l'accueil |
+
+**Transitions entre les pages (demande du directeur, 22/10).** D'une page à l'autre, le contenu s'efface vers le haut et le suivant monte en place (transitions de vue entre documents) ; l'en-tête et le logo ne bougent pas. Rien ne bouge en mouvement réduit ; un navigateur qui ne connaît pas ces transitions change de page comme avant.
+
+**Textes internes retirés du site (directeur, 22/10).** Le paragraphe « Le nom dit le projet… Le symbole le montre aussi… » de l'Académie, la phrase « Le nom Rewayah dit ce projet » et la mention « Les illustrations du site sont présentées comme telles » du pied de page recopiaient le registre de marque. Ils sont réécrits pour les familles : « C'est le sens de notre nom : « Rewayah » veut dire transmission. Nous enseignons le Coran tel qu'il nous a été transmis, sans rien y changer. » et « Notre logo raconte la même chose : un cercle, comme celui que forment les élèves autour de leur enseignant ; un livre, le Coran, dessiné en arche ; et dans ce livre, une porte ouverte, parce que cet enseignement est ouvert à chacun. » La mention du pied de page est retirée (chaque illustration porte déjà sa légende).
+
+Une relecture de tout le texte visible des 18 pages a suivi. Ont été réécrites pour les familles : la réponse de l'aide sur le choix d'un horaire (« proposition horaire », « intentions » remplacés par « Choisir un horaire indique votre préférence, sans réserver de place… »), « Ouvrez la connexion Rewayah » (« l'application »), les phrases contradictoires sur l'enregistrement (Conditions, Protection des enfants : « Les cours ne sont pas enregistrés aujourd'hui ; si cela change, nous vous le dirons avant »), la page Accessibilité écrite comme un cahier des charges (« doivent ») devenue une suite d'engagements vérifiés, « Canaux de contact » (« Comment nous joindre »), la note de rédaction « Cette partie précise la loi… » (retirée), une ligne de contact en double (retirée), « Le rang suit l'ordre d'inscription » dans le simulateur, la note d'affichage des avis et une répétition sur les remises à l'accueil. Gardés volontairement : la légende « Illustration » (règle de marque), « matière secondaire » (vocabulaire décidé), le message sans JavaScript du simulateur (testé). À trancher par le directeur : le numéro de version des textes juridiques (« Version 2026-10-v1 ») affiché en tête de chaque texte ; « Représentant dans l'Union européenne : Rewayah Academy » (Confidentialité) ; la page Annulation renvoie à des dates « de la politique tarifaire en vigueur (page Tarifs) » que la page Tarifs ne donne pas.
+
+**Structure (après la recette 19, suite).** Les colonnes de droite partaient de cinq bords différents (732, 744, 834, 1038 et 630 px à 1440). Elles partent toutes de la 7e colonne de la grille : texte des sections, seconde carte des duos, tableau de Tarifs, phrase des fins de page et des hauts de page en texte (ces deux derniers dès 1100 px, pour que les titres d'affiche tiennent en deux lignes plus bas). L'Académie pose « La société exploitante » et « Écrire à Rewayah Academy » côte à côte ; Familles donne à son aide, juste avant la fin, la forme d'un aparté (un intertitre, une phrase, deux liens) ; les champs du simulateur de Tarifs prennent les formes du site (pilules, boutons ronds).
+
+**Après la recette 20.** Les trois jurés relèvent encore la coupe titre-texte trop fréquente, deux colonnes de prix décalées (752 px), le haut de l'Académie (un quart vide en haut à droite, la scène coupée par le bas de l'écran) et le haut de Cours et de Comment ça marche (la phrase sous la ligne du titre). Corrections : sur l'accueil, « Un horaire fixe » et les questions des familles posent leur titre au-dessus de leur texte, et les liens de la FAQ tiennent sur une ligne ; les deux prix de l'accueil et les deux fiches « Les cours en bref » partent de la 7e colonne ; Tarifs pose « À savoir avant de commander » sur toute la largeur, son texte en deux colonnes ; l'Académie remonte la boucle dans le premier écran, à côté du titre, entière ; la phrase des hauts de page en texte part de la ligne du titre. La mention des monnaies placée sous le simulateur est retirée : « À savoir avant de commander » la donne déjà. Les jurés demandaient aussi de retirer la phrase de fondation du haut de l'accueil : elle reste, car le nom de l'académie doit être dit dans le premier écran (l'en-tête du téléphone ne montre que le symbole ; un test le garde).
+
+Ensuite : la porte du haut de l'accueil, un peu plus petite au bureau, ne touche plus l'en-tête ; au téléphone, la porte et la famille sont cadrées en grand. L'accueil se referme sous le haut d'une arche (« arche-haut », jusqu'ici sans usage), centré, comme il s'ouvre sur une porte : sa fin ne ressemble plus à celle des autres pages.
+
+**Légende des illustrations (décision du directeur, 22/10/2026, registre M-30).** La légende « Illustration » sous chaque image est retirée de tout le site. Une seule mention la remplace, dans les mentions légales, section « Les images du site » : « Les images de ce site sont des illustrations, sauf les photos des fondateurs. » Chaque image garde son texte alternatif. Les règles de mise en page qui ne servaient qu'aux légendes sont retirées. Le test qui exigeait la légende vérifie maintenant son absence et la présence de la mention.
+
+**Après la recette 21.** Les trois jurés relèvent cinq pages qui finissent pareil, la fin de l'accueil posée sur le bas de son arche, et le haut de Cours et de Comment ça marche encore coupé en deux. Corrections : chaque page finit à sa façon (direction.json, fin.forme) — l'accueil sous son arche, l'arche dégagée au-dessus du titre ; Familles, Comment ça marche et Tarifs sur un bandeau lavande centré, le titre, la phrase et un bouton ; l'Académie sur une bande sombre de bord à bord ; Cours sur le violet, le titre étant le lien. Les hauts de Cours et de Comment ça marche posent titre, phrase et bouton dans une colonne. Sur Cours, « Apprendre avec un enseignant » n'est plus en bande pleine (le titre et son texte étaient séparés d'un écran). Tarifs : le résultat du simulateur part de la 7e colonne. Académie : portraits des deux fondateurs à 300 px, noms sur deux lignes réservées, rôles et parcours alignés. Accueil : le bout gauche du tapis s'efface au lieu de s'arrêter net ; le bouton pause passe en bas à droite du premier écran.
+
+**Après la recette 22.** Les trois jurés relèvent encore des fins de page de la même famille (trois bandeaux lavande centrés, et deux fins à la suite sur Comment ça marche), un quart vide en haut à droite de Cours et de Comment ça marche, la même vue du dessus sur trois pages, un haut d'accueil chargé (deux petites phrases, « 2024 » dit deux fois, le bouton pause hors de la marge) et l'encart « Les cours en bref » lu comme un mur de puces.
+
+| # | Relevé | Correction |
+|---|---|---|
+| FF1 | Trois pages finissent sur le même bandeau lavande centré | Tarifs se referme sur ses deux prix, en grand, à côté du titre et de son bouton ; Familles sur une porte ouverte (recadrage sans personne) ; Comment ça marche garde seule le bandeau centré |
+| FF2 | Comment ça marche : deux fins à la suite, et un haut de page vide à droite | « Des classes de 3 à 5 enfants, ou de 3 à 6 adultes » monte dans le haut de page, en grands chiffres tirés de la grille tarifaire, à côté du titre ; la bande plus bas disparaît |
+| FF3 | Cours : un quart vide au-dessus de l'escalier | Au bureau, l'escalier monte dans le haut de page : les deux premières arches sous le texte, les deux dernières à sa hauteur, à droite, le mot arabe au milieu de l'arche |
+| FF4 | La vue du dessus de la classe sur l'accueil, Familles et Cours | Elle ne reste qu'à l'accueil. Familles montre un « 3 » dans une arche (les trois séances de la semaine) ; Cours, l'arche vue d'en haut, sans personne |
+| FF5 | Haut de l'accueil : deux petites phrases, « 2024 » deux fois, bouton pause à 44 px du bord | Le nom de l'académie passe dans la phrase sous le titre (« Chez Rewayah Academy, chaque élève suit… ») ; la date et les fondateurs ne sont dits qu'une fois, dans le bandeau « Accompagné » ; le bouton pause se pose sous le texte, sur sa marge (120 px) |
+| FF6 | « Les cours en bref » : deux colonnes de puces, prix dans une phrase | Une fiche à la fois à toutes les largeurs (choix Enfants / Adultes) ; le montant en grand chiffre à gauche, les autres lignes à droite sur la 7e colonne. Les mots de l'encart du 18/10 ne changent pas |
+| FF7 | Portraits des fondateurs à une autre échelle que le directeur ; un nom sur deux lignes | Recadrés plus serré (la tête fait 68 % de la hauteur), mur légèrement dégradé comme le sien ; chaque nom sous son portrait, sur une ligne |
+| FF8 | La fin de l'accueil lue comme un tube | Le haut d'arche fondu est remplacé par une vraie porte sous son arche, dans un cercle |
+| FF9 | Zoom de la porte jusqu'aux visages | La scène grandit deux fois au plus (au lieu de 2,7) et la classe apparaît plus tôt |
+| FF10 | Académie : le bout du chemin coupé net (tablette, téléphone) | Il s'efface vers la droite |
+| FF11 | Accueil, « Un horaire fixe » : le titre et son texte à gauche, la moitié droite vide | À partir de 1 100 px, le texte et les liens passent dans la colonne de droite |
+
+**Lettres arabes des arches (directeur, 22/10/2026, registre M-31).** Le directeur trouve les inscriptions arabes de Cours peu jolies et demande une police d'ornement, koufi ou diwani, avec les voyelles. Comparaison faite sur les arches elles-mêmes : la seule diwani libre trouvée (Layla Diwani, OFL) est trop fine et place mal ses voyelles ; Reem Kufi (koufi, OFL) et Aref Ruqaa (roqaa, OFL) les placent bien. Reem Kufi est posée, réduite aux seize lettres du contenu et inscrite dans la feuille de style comme l'ancienne police (aucun fichier de plus à déployer) ; le directeur a laissé le choix le 22/10 : Reem Kufi reste (M-31).
+
+**Demandes du directeur du 22/10 (suite).**
+- *Tuile « La classe commence » (accueil).* L'arche du livre de l'image était coupée par l'arche de la fenêtre. Le rendu 02 est recadré plus large (680 × 850, marge transparente au-dessus) : l'arche du livre tient entière dans la fenêtre, et les deux courbes s'emboîtent.
+- *Lettres arabes des arches (Cours).* Elles s'écrivent, arche après arche, en 3 s environ, une seule fois : les lettres séparées paraissent une à une de droite à gauche ; un mot lié s'écrit d'un trait de droite à gauche, sans être découpé (ses lettres restent liées). Au survol, l'arche s'écrit de nouveau. En mouvement réduit ou sans JavaScript, les lettres sont là, immobiles.
+- *Changer une police.* Le site ne nomme plus ses polices qu'une fois, dans `:root` (`--police-titre`, `--police-corps`, `--police-arabe-ornement`) ; un test refuse tout autre nom de police dans la feuille. Rendu vérifié identique, élément par élément, sur huit pages. L'application avait déjà ce principe : `lib/core/theme/app_typography.dart` porte les cinq familles.
+
+**Après la recette 23.** Les trois jurés tiennent pour corrigés les fins identiques, le haut vide de Cours et de Comment ça marche, la vue du dessus sur trois pages et le haut de l'accueil. Restent, en commun : le zoom de la porte (leur capture datait de la veille, refaite), l'arabe trop petit dans ses arches, la double fin de Comment ça marche, les disques de porte qui se lisent comme des tubes, les portraits des fondateurs petits à côté du directeur, et les puces de « Les cours en bref ».
+
+| # | Relevé | Correction |
+|---|---|---|
+| GG1 | Comment ça marche finit encore sur deux bandes à la suite | Une seule fin : le titre et son bouton à gauche, l'inscription d'un enfant à droite, dans un encart (`fin.forme` « note ») ; la section n'est plus posée plus haut |
+| GG2 | Disques de porte lus comme des tubes (fins de l'accueil et de Familles, Cours) | Des arches entières : la jeune élève au pupitre (fin de l'accueil), l'élève qui passe la porte (fin de Familles), la place qui attend, coussin et pupitre (Cours, « Trois séances par semaine ») |
+| GG3 | Académie : la fin sombre se confond avec le pied de page | Elle finit sur l'homme au seuil de l'arche ouverte sur les dunes, l'arche à gauche du titre |
+| GG4 | L'arabe des arches petit et ses voyelles trop fines | Mots liés à la taille des grands chiffres du site (environ 70 % de l'arche) ; police d'ornement en graisse 600 |
+| GG5 | Zoom de la porte sur des visages agrandis | La scène grandit d'une fois et demie au plus, la classe s'ouvre plus tôt ; captures du mouvement refaites |
+| GG6 | « Les cours en bref » : puces petites | La première ligne sert de sous-titre, le montant en très grand, les autres lignes sans puce ; sur l'accueil, ce qui vaut pour les enfants et les adultes n'est dit qu'une fois, sous les deux prix |
+| GG7 | Portraits des fondateurs à la moitié de celui du directeur | Affichés à 336 px, sans agrandir leurs fichiers (cadrage plus large, la tête à 60 %), netteté légèrement relevée. Une photo plus nette d'Ahmad Diallo permettrait d'aller plus loin |
+
+**Photos et parcours des fondateurs (22/10, suite).** Ahmad Diallo a choisi une autre photo de lui, plus nette : elle remplace la première, traitée comme les deux autres (détourée, mur du directeur, tête et épaules, même étalonnage, visage non retouché). Les deux fondateurs s'affichent à 400 px sans agrandir leurs fichiers. Leurs parcours suivent leurs propres textes : « Institut des qiraat (lectures du Coran) » en République de Guinée pour les deux ; Université du roi Abdelaziz à Djeddah pour Ahmad Diallo ; Mamadou Alimou Diallo est étudiant à l'Université islamique de Médine (la « licence » publiée jusque-là est retirée). L'arabe est gardé au registre (M-29).
+
+**Après la recette 24.** Les trois jurés relèvent les arches de Cours vides sur les captures (prises pendant l'écriture), le bloc de prix de l'accueil encore en petites puces, les chapitres de l'accueil (texte petit et vide autour) et la fin de Tarifs qui redit les prix une troisième fois.
+
+| # | Relevé | Correction |
+|---|---|---|
+| HH1 | Arches 3 et 4 vides sur les captures | Chaque mot est là en filigrane (18 %) dès le premier affichage, l'écriture le remplit ; elle dure 2 s ; police en graisse 700 (voyelles plus épaisses) ; la dernière arche en lavande |
+| HH2 | Bloc de prix de l'accueil en petites puces | Ce qui vaut pour tous en quatre tuiles, sans puce ; l'observation d'une séance en phrase sous le prix des enfants |
+| HH3 | Questions des familles : six réponses en deux colonnes | Un accordéon sur une colonne (details et summary), la première question ouverte, le titre et ses liens à gauche |
+| HH4 | Chapitres de l'accueil : texte petit, beaucoup de vide | La première phrase de chaque chapitre plus grande ; chapitres moins hauts |
+| HH5 | Tarifs finit sur ses prix une troisième fois | Le bandeau centré, sans prix (le seul de ce type sur le site) |
+| HH6 | Académie redit le titre « Apprendre avec un enseignant » de Cours | « Ce que nous enseignons », comme le dit son texte |
+| HH7 | Fin du zoom de la porte décentrée | La scène grandit d'un quart au plus |
+
+**Après la recette 25.** Arches, tuiles de prix et accordéon tenus pour corrigés. Restent, en commun : les chapitres de l'accueil (petites puces à côté d'une grande arche), le rythme des pages (une image à côté d'un texte, six fois de suite), la fin de l'accueil sans bouton, l'arabe petit sur tablette et téléphone, « Trois spécialistes » au-dessus de deux portraits, et une tache au pied du socle du haut de l'accueil.
+
+| # | Relevé | Correction |
+|---|---|---|
+| II1 | Chapitres : petites puces | Les points en pastilles sur une ligne |
+| II2 | Une image à côté d'un texte, six fois de suite | Une bande pleine par page : Cours, « Trois séances par semaine » (la place qui attend, en grand) ; Académie, « Ce que nous enseignons » |
+| II3 | Fin de l'accueil sans bouton | Titre, phrase et bouton « Commencer mon inscription » sous une arche plus grande |
+| II4 | Arabe petit sur tablette et téléphone | À la mesure de l'arche (unités de conteneur) sur tablette ; 36 et 44 px au téléphone |
+| II5 | « Trois spécialistes » au-dessus de deux portraits | Une ligne au-dessus d'eux : « Aux côtés du directeur, Abdoulaye Mouhidine Sow : » |
+| II6 | Tache au pied du socle (haut de l'accueil) | Le bout droit du sol s'efface, comme le bout gauche du tapis |
+| II7 | « Les cours en bref » : bande calme | Les lignes de l'encart en tuiles, deux par rangée, de même hauteur (mots inchangés) |
+| II8 | « Un horaire fixe » : titre et texte décalés | Alignés par le haut |
+| II9 | L'accueil ne montre qu'une photo ; « trois spécialistes » pour un seul visage | Les deux autres fondateurs, en petit, dans la bande « Accompagné à chaque étape », sous le lien vers le mot du directeur |
+| II10 | « Une petite classe » : l'écran le plus vide | La classe vue du dessus un peu plus grande |
+
+**Après la recette 26 (dernier lot, 22/10/2026).** Les jurés tiennent pour corrigés les arches, la fin de l'accueil et le rythme des pages. Restent, en commun : un reste de socle au pied du haut de l'accueil, les chapitres (titre petit, pastilles qui redisent le texte), « Les cours en bref » (une tuile seule, le prix loin de sa phrase), les deux fondateurs trop petits sur l'accueil, le texte secondaire à 17 px. Le directeur demande de finir sans nouvelle image (« ne me demande plus de générer encore des images ») : la variété des rendus, que les trois jurés citent encore, ne bougera plus dans ce lot.
+
+| # | Relevé | Correction |
+|---|---|---|
+| JJ1 | Reste de socle à droite du haut de l'accueil | Nettoyé dans l'image elle-même (le bout du sol s'efface, les points isolés sont retirés) ; le masque CSS ne garde que le fondu de gauche |
+| JJ2 | Chapitres : titre petit, pastilles qui redisent le texte | Titre à la taille des en-têtes de section dès 840 px ; les pastilles ne sont plus posées (le texte reste) |
+| JJ3 | « Les cours en bref » : une tuile seule, le prix loin de sa phrase | La phrase sur toute la largeur, le prix juste dessous ; une dernière tuile seule prend la rangée entière (mots inchangés) |
+| JJ4 | Fondateurs trop petits sur l'accueil | Sous la photo du directeur, 200 px chacun, nom et rôle dessous ; au téléphone, après le lien |
+| JJ5 | Texte secondaire à 17 px | 18 px partout (`--t-petit`) |
+
+Inspection des six pages : 0 FAIL hors Tarifs (une image, voulu). Aucun texte coupé au bord, de 390 à 1440 px. Aucune image agrandie à 390, 1024 et 1440 px. Tests : 69, OK.
+
+**Représentant dans l'Union européenne.** Le réglage existe dans l'application (console d'administration, Protection des enfants, clé `conformite.representant_ue`), avec « Rewayah Academy » par défaut. Le site public, construit sans compte, ne peut pas le lire : le scénario `scenarios_pe_code_conduite_v2.sql` interdit la lecture anonyme. Il affiche donc la valeur par défaut. Quand l'administration aura saisi un autre nom, une ligne du contenu du site suffira à le reprendre.
+
+**Version des textes juridiques et dates du paiement (le directeur laisse la décision à Claude, 22/10/2026).** « Version 2026-10-v1, texte du 18 octobre 2026 » reste en tête de chaque texte : c'est la ligne que l'application affiche (`VersionsJuridiques`, `juridique.version`) et la version qu'elle enregistre à chaque accord ; le site ne s'en écarte pas. La page Annulation renvoie à la page Tarifs pour les dates exactes, que Tarifs ne donnait pas : Tarifs a maintenant « Les dates du paiement », lues dans la décision du 18/10 (`calendrier_paiement` et `premiere_semaine_remboursee_jours` de `tarifs-2026-10-18.json`) : 7 jours après la première séance, renouvellement le 1er, rappels 7, 3 et 1 jour avant, délai de grâce du 1er au 3, suspension le 4, place gardée jusqu'au 15, libérée le 16 (décision du 23/10/2026, voir ci-dessous). Le build refuse un calendrier incohérent. Le texte juridique n'est pas modifié, sa version non plus. La base garde ces jours hors de `tarifs_publics()` : si la direction les change dans la base, la décision publiée doit changer avec eux. Deux relectures indépendantes ont confirmé les valeurs et resserré les mots : « des rappels », envoyés seulement si le paiement n'est pas passé ; « à partir du 4 » (la décision dit « le 4 au plus tôt ») ; l'impayé s'affiche chez le tuteur ou chez l'élève adulte ; la première semaine vaut pour toutes les formules, les dates du mois pour l'abonnement mensuel ; le droit de rétractation de 14 jours est rappelé ; si la politique affichée n'est pas encore en vigueur, la page dit à partir de quand.
+
+**Date de libération de la place : écart levé (directeur, 23/10/2026).** La décision du 18/10 disait « gardée 14 jours après la suspension du 4, libérée le 18 » ; la base garde la place jusqu'au 15 inclus (`supabase/migrations/20261017171000_fac_b_01_factures_mensuelles.sql`, `v_conservation := v_mois + jours_conservation_place`). Le directeur a confié le choix à Claude, dans l'intérêt de l'académie : la règle de la base, la plus stricte, est retenue (gardée jusqu'au 15, libérée le 16). La décision des tarifs, ses valeurs et le site sont alignés ; la base ne change pas. **Reste à faire dans le lot FAC (spécifié, pas encore dans le code)** : aucune tâche ne libère encore la place le 16, et les relances et la suspension (FAC-F) attendent l'accord du directeur ; la politique 2.0.0 prend effet le 1er novembre 2026.
+
+**Après la recette 27.** Les trois jurés plafonnent Rewayah à 6,5 pour une seule raison commune : les titres des chapitres de l'accueil, agrandis au tour précédent, tenaient sur trois lignes. Ils relèvent aussi un vide sous le prix de « Les cours en bref », les deux fondateurs encore petits avec un vide à leur droite, le reste du socle au pied de l'arche, le texte secondaire à 18 px et le bouton d'arrêt du tapis sans mot.
+
+| # | Relevé | Correction |
+|---|---|---|
+| KK1 | Titres des chapitres sur trois lignes | La fenêtre de l'arche cède une colonne au texte (5 colonnes sur 12) ; les titres gardent leur taille et tiennent sur deux lignes de 1024 à 1920 px |
+| KK2 | « Les cours en bref » : vide sous le prix, tuile étirée, dernière tuile seule | Le prix et sa phrase sur une rangée, puis les cinq tuiles sur toute la largeur : trois, puis deux, de même hauteur par rangée (mots inchangés) |
+| KK3 | Fondateurs petits, vide à leur droite | À droite, sous le lien vers le mot du directeur, 300 px chacun ; à gauche, sous la photo, les trois engagements les uns sous les autres : les deux colonnes finissent ensemble ; au téléphone, les noms sur deux lignes alignés |
+| KK4 | Reste du socle au pied de l'arche | Le bout du disque s'arrondit et s'efface dans l'image avant le bord de l'écran |
+| KK5 | Texte secondaire à 18 px | 20 px au bureau, 18 px en dessous ; pied de page à 18 px |
+| KK6 | Bouton d'arrêt du tapis sans mot | Il dit « Arrêter l'animation du tapis » en toutes lettres |
+| KK7 | (relevé en vérifiant) Fin de Comment ça marche plus large que l'écran à 360 px | La colonne ne s'élargit plus à la mesure de l'adresse e-mail |
+
+**Après la recette 28.** Plus aucun plafond : titres sur deux lignes, bande des fondateurs et bouton du tapis tenus pour corrigés. Restent, en commun : le reste de sol au pied de l'arche du haut de l'accueil, le texte secondaire encore petit, le bas de Tarifs qui se lit comme un document, les tuiles inégales de « Les cours en bref », et (deux jurés) l'image seule entre deux vides de « Ce que nous enseignons » sur Académie.
+
+| # | Relevé | Correction |
+|---|---|---|
+| LL1 | Reste de sol à droite du pied de l'arche | Dans l'image, le sol s'arrête au ras de la face droite de l'arche, et sous l'arche son bord recule en biais et s'efface dans le violet |
+| LL2 | Texte secondaire petit | Texte courant à 21 px à 1440 (`--t-corps`), petit texte à 20 px |
+| LL3 | Tarifs : trois blocs de chiffres et de petites lignes à la suite | Les dates du paiement sur une rangée de cinq étapes, chacune marquée d'une petite arche, sur fond prune ; « À savoir avant de commander » repasse sur le violet de la page |
+| LL4 | « Les cours en bref » : tuiles à moitié vides | Chaque tuile est large à la mesure de son texte (douze colonnes réparties au build au prorata du nombre de lettres) : les longues sur une rangée, les courtes sur la suivante ; un test vérifie que chaque rangée remplit ses douze colonnes |
+| LL5 | Académie, « Ce que nous enseignons » : une image seule entre deux vides | Le titre centré, l'arche au milieu, un paragraphe de chaque côté (dès 1100 px) |
+| LL6 | Bouton d'arrêt du tapis aussi visible qu'un bouton d'action | Un texte avec son signe, sans bord, en 16 px |
+
+**Après la recette 29.** Toujours sans plafond. Restent, en commun : le bas de Tarifs qui se lit comme un document, « Les cours en bref » (bords de tuiles qui ne tombent pas sur une même grille, phrase loin du prix), « Ce que nous enseignons » (deux paragraphes dans des coins opposés), le dernier reste de sol sous la face droite de l'arche, le bouton du tapis disjoint au téléphone, et, pour deux jurés, le titre du chapitre suivant qui entre dans l'image épinglée.
+
+| # | Relevé | Correction |
+|---|---|---|
+| MM1 | Tarifs, remises : six chiffres sur des légendes | Chaque remise dans une tuile coiffée d'une arche, le chiffre au centre |
+| MM2 | Tarifs, dates du paiement : cinq colonnes de texte | Les cinq étapes sur un même rail, chacune posée sur sa petite arche ; légendes raccourcies (les mots de la décision gardés : rappels 7, 3 et 1 jour avant, place gardée 14 jours) |
+| MM3 | « Les cours en bref » | Le prix, puis sa phrase juste dessous ; les tuiles sur six colonnes, de même largeur dans une rangée (trois puis deux) ; le choix Enfants / Adultes en haut à droite |
+| MM4 | « Ce que nous enseignons » | L'arche à gauche ; à droite, le titre et les deux paragraphes l'un sous l'autre, à 23 px |
+| MM5 | Reste de sol sous la face droite de l'arche | Le flanc du disque s'efface vers le bas et vers la droite dans l'image ; il ne reste que le sol devant la porte |
+| MM6 | Bouton du tapis disjoint (tablette, téléphone) | Le signe et le mot ensemble, au bord du texte |
+| MM7 | Le titre du chapitre suivant entre dans l'image | Chaque chapitre a la hauteur de la fenêtre de l'arche ; le second paragraphe passe à 22 px |
+| MM8 | Familles, téléphone : la tuile du « 3 » à moitié vide | À la hauteur de son contenu |
+
+**Après la recette 30.** Restent, en commun : le bas de Tarifs (tuiles de remises de hauteurs inégales, dates en colonnes étroites, tableau et puces), « Les cours en bref » (bords de tuiles sur deux grilles), le second paragraphe des chapitres plus petit que le premier et le titre suivant visible à 1280 × 720, un dernier voile sous le sol à droite de l'arche (vu en double résolution).
+
+| # | Relevé | Correction |
+|---|---|---|
+| NN1 | Remises : rangées de hauteurs inégales, tuile du 10 % vide | Quatre colonnes ; les deux remises aux longues légendes prennent deux colonnes chacune ; chiffre et légende alignés à gauche |
+| NN2 | Dates du paiement en colonnes étroites | Au bureau, une frise verticale : la date à gauche, le texte à droite, les petites arches sur un même fil, la phrase d'introduction à côté |
+| NN3 | Ce que coûte une famille : des lignes de tableau | Les quatre totaux en tuiles blanches coiffées d'une arche, deux par rangée (rôles ARIA ajoutés pour garder la lecture en tableau) |
+| NN4 | À savoir avant de commander : une liste à puces | Les cinq points sur deux colonnes, chacun avec sa puce |
+| NN5 | « Les cours en bref » : bords de tuiles sur deux grilles | Les phrases courtes ne sont plus des tuiles mais des lignes marquées de la petite arche ; la grille occupe toute la largeur |
+| NN6 | Chapitres : second paragraphe plus petit, titre suivant visible | Les deux paragraphes à la même taille ; chaque chapitre occupe un écran entier |
+| NN7 | Voile sous le sol à droite de l'arche | Dans l'image, sous le bord du sol blanc, le flanc du disque s'efface vers la droite (bord du sol trouvé colonne par colonne) |
+
+**Après la recette 31.** Un juré compte les rendus comme des dessins et applique le plafond « moins de quatre vraies photos » : c'est la limite des images, que le directeur a close le 22/10. Restent, en commun : les deux phrases courtes de « Les cours en bref » sur une autre grille que les tuiles, le bas de Tarifs (« À savoir » en puces, le coût d'une famille en tableau au téléphone, les remises en colonne au téléphone), le bloc des prix de l'accueil.
+
+| # | Relevé | Correction |
+|---|---|---|
+| OO1 | « Les cours en bref » : deux phrases courtes sur une autre grille | Chacune en pastille calée sur le bord gauche des tuiles, une par rangée ; au téléphone, tuiles et pastilles aussi |
+| OO2 | Tarifs, « À savoir » en puces | Le titre, les deux paragraphes côte à côte, puis les cinq points en tuiles coiffées d'une arche, trois puis deux |
+| OO3 | Tarifs au téléphone : remises en colonne, famille en tableau | Les quatre remises courtes deux par rangée, les deux longues pleine largeur ; le coût d'une famille en tuiles à toutes les largeurs |
+| OO4 | Accueil, le prix : un bloc de fiche technique | Les deux montants plus grands ; les quatre points communs en tuiles coiffées d'une arche |
+| OO5 | Académie : trois bandes « image à gauche » de suite | « Ce que nous enseignons » passe l'arche à droite |
+| OO6 | (relevé par l'inspecteur) Dix tailles de texte sur l'accueil | Les paragraphes des chapitres à la taille des sous-titres, le mot du bouton du tapis à 18 px : huit tailles |
+
+**Après la recette 32.** Les trois jurés comptent désormais les rendus comme des illustrations et plafonnent le dessin à 6,5 : le site n'a que trois vraies photographies (les fondateurs). C'est la limite des images, close par le directeur le 22/10 ; seule une vraie photographie de plus (une séance, une famille, un écran réel de l'application) la lèverait. Ils relèvent aussi un vrai défaut, introduit au tour précédent : au téléphone, dans « Ce que coûte une famille », le nombre d'enfants et le montant se superposaient.
+
+| # | Relevé | Correction |
+|---|---|---|
+| PP1 | Téléphone : « 2 enfa105,60 $ » | Dans chaque tuile, le nombre d'enfants au-dessus du montant ; un contrôle de chevauchement des textes est ajouté à la vérification (360 à 1440 px) |
+| PP2 | « À savoir » en puces sur tablette et téléphone | Des tuiles à toutes les largeurs : une colonne au téléphone, deux sur tablette, trois puis deux au bureau |
+| PP3 | « Les cours en bref » : deux pastilles hors de la grille | Deux tuiles de même largeur sous les trois (une et demie chacune), même aspect |
+| PP4 | Quatre formes de tuiles | Deux seulement : l'arche pour les chiffres (remises, coût d'une famille), l'angle arrondi pour les notes |
+| PP5 | Accueil, questions des familles : colonne de gauche vide | Elle reste à l'écran le long des questions |
+
+**Après la recette 33.** Les jurés appliquent la définition du skill (photographies et images raster comptent, dessins SVG non) : plus de plafond. Restent, en commun : plusieurs formes de tuiles (arrondis en pourcentage qui changent avec la largeur), la bande des dates avec une colonne vide, et une bavure au pied de l'arche du haut de l'accueil, laissée par le nettoyage du tour 29 (le bas de la face droite de l'arche était estompé).
+
+| # | Relevé | Correction |
+|---|---|---|
+| QQ1 | Formes de tuiles qui changent avec la largeur | Une seule forme pour les tuiles d'information, chiffres compris : l'angle arrondi de 24 px ; l'arche reste aux images. Remises et notes à la hauteur de leur texte |
+| QQ2 | Dates du paiement : colonne vide à droite | Le titre et sa phrase en haut, puis la frise sur toute la largeur, chaque date suivie de sa phrase sur une ligne |
+| QQ3 | Bavure au pied de l'arche | Image refaite depuis la source propre : la face de l'arche est gardée entière, seul le sol qui dépasse est retiré, le long du bord bas de la face et du bord du sol blanc |
+| QQ4 | Téléphone : phrase « Rien n'est facturé… » sous l'image | Elle suit les deux boutons, avant l'image |
+| QQ5 | Pied de page long au téléphone | Les liens sur deux colonnes |
+
+**Après la recette 34.** Restent, en commun : le pied de page sur tablette (deux colonnes qui se touchaient, défaut introduit au tour précédent), le pied de page encore long au téléphone, des tuiles de hauteurs inégales ou au bas vide, et l'action principale absente de l'en-tête.
+
+| # | Relevé | Correction |
+|---|---|---|
+| RR1 | Tablette : « L'académie » contre « Assistance » | La règle à deux colonnes du tour précédent est retirée ; la liste « Découvrir » reste en une colonne sur tablette |
+| RR2 | Téléphone : pied de page long | Les liens « Découvrir » et les liens légaux en lignes qui se suivent, sans coupure dans un lien |
+| RR3 | Tuiles de hauteurs inégales | Dans une rangée, une même hauteur ; remises : le chiffre en haut, la phrase en bas ; notes et cours en bref : le texte au milieu |
+| RR4 | Familles, téléphone : la tuile du « 3 » en dôme aplati | Une tuile carrée au sommet en demi-cercle |
+| RR5 | En-tête : l'action principale absente | Dès 1100 px, « Commencer mon inscription » en bouton plein (vers la connexion à l'application, comme les autres boutons d'inscription) ; « Se connecter » devient un lien |
+
+**Après la recette 35.** Les trois jurés s'accordent sur quatre points : pas d'action d'inscription dans l'en-tête sur tablette et téléphone, un pied de page encore long au téléphone, Tarifs en murs de tuiles, et un vide à droite de l'arche épinglée entre deux chapitres de l'accueil.
+
+| # | Relevé | Correction |
+|---|---|---|
+| SS1 | En-tête sans action sous 1100 px | « S'inscrire » en bouton plein à côté du menu (mot ajouté au vocabulaire) ; « Commencer mon inscription » au-delà |
+| SS2 | Chapitres : colonne vide pendant le passage d'un chapitre à l'autre | Le texte de chaque chapitre reste à l'écran à côté de l'arche jusqu'à ce que le suivant le pousse |
+| SS3 | Tarifs, remises en tuiles | Une liste sans boîtes sur deux colonnes : le chiffre en grand, sa phrase à côté |
+| SS4 | Tarifs, « À savoir » en tuiles | Une liste à puces sur deux colonnes |
+| SS5 | Dates du paiement : un fil vertical | Les petites arches seules, sans fil |
+| SS6 | Pied de page : identité serrée sur tablette, long au téléphone | Tablette : l'identité sur toute la largeur, liens et adresses côte à côte ; téléphone : adresses sur une ligne chacune, liens Facebook en petit et sans soulignement |
+
+**Après la recette 36.** Les trois jurés s'accordent sur deux points : le pied de page encore long au téléphone (1,38 écran) et presque un écran sur tablette, et, sous le simulateur de Tarifs, quatre sections bâties de la même façon. Deux jurés ajoutent : au téléphone, la famille du haut de l'accueil sous le premier écran, et sous chaque texte de chapitre un vide d'un tiers d'écran. En cherchant, un défaut de notre fait : entre 840 et 1099 px, le pied de page plaçait « Découvrir » hors de sa colonne.
+
+| # | Relevé | Correction |
+|---|---|---|
+| TT1 | Téléphone : pied de page de 1,38 écran | 0,76 écran : l'adresse en une phrase ; « Découvrir » et « Nous contacter » en volets qui se replient au téléphone (ouverts sans script et au-delà de 599 px) ; liens légaux en lignes qui se suivent |
+| TT2 | Tablette : pied de page d'un écran ; 840-1099 px : colonnes décalées | Identité et adresses côte à côte, « Découvrir » en lignes qui se suivent dessous (0,77 écran à 768 px) ; les règles éparses des tours précédents réunies en un seul bloc |
+| TT3 | Tarifs : quatre sections pareilles | Dates du paiement : une frise de cinq dates en grand, côte à côte, chacune sous sa petite arche ; coût d'une famille : les quatre totaux sur une rangée, en grands chiffres ; « À savoir » : la règle « pas d'essai » en phrase de titre |
+| TT4 | Téléphone : la famille sous le premier écran | La phrase « Rien n'est facturé… » passe sous l'image (comme avant QQ4) : la mère, sa fille et la classe entrent dans le premier écran |
+| TT5 | Chapitres : un tiers d'écran vide sous le texte | Le texte se tient au milieu de l'arche épinglée ; le premier chapitre descend un peu (son texte ne couvre plus la phrase qui le précède) ; le dernier se centre sans épinglage et part avec l'image |
+| TT7 | Trouvé en refaisant les captures : dans la fenêtre épinglée, les mains ne montaient plus vers le Coran (l'image ne bouge pas, le calcul suivait sa position) | Les mains montent pendant que le titre de leur chapitre passe de 60 % à 30 % de la hauteur de l'écran |
+| TT6 | Point-virgule en début de ligne, apostrophes droites | Espace insécable avant « : ; ? ! » dans les textes des tarifs ; apostrophes typographiques dans « À savoir » |
+
+**Après la recette 37.** Les trois jurés s'accordent : le pied de page reste lourd sur tablette (ouvert, 0,77 écran) ; sous le simulateur de Tarifs, les dates du paiement et « À savoir » gardent la même ossature (titre, puis petites colonnes). Deux jurés relèvent le passage d'un chapitre à l'autre (l'arche change d'image alors que l'ancien texte se lit encore) et, sur Cours, la bande « Trois séances par semaine » (titre à gauche, image centrée, texte dessous, vide de part et d'autre). Deux jurés, sur deux tours, trouvent que la ligne « Arrêter l'animation du tapis » fait outil de développeur. Un juré a vu trois captures périmées : le script de capture ne vidait pas le dossier ; il le vide désormais.
+
+| # | Relevé | Correction |
+|---|---|---|
+| UU1 | Tablette : pied de page ouvert, 0,77 écran | Volets jusqu'à 1099 px : identité à gauche, « Découvrir » et « Nous contacter » à droite, fermés (0,51 écran à 768 px) |
+| UU2 | Bureau : pied de page de 0,77 écran | « Découvrir » sur deux colonnes ; la langue, la page Facebook et l'auteur sur une ligne qui se replie (0,67 écran) |
+| UU3 | Tarifs : les remises en petits chiffres | Six grands chiffres sur deux rangées de trois, leur phrase dessous |
+| UU4 | Tarifs : les dates en petites colonnes | Cinq arches qui montent, comme les étapes de Cours, chacune portant sa date en grand, la phrase dessous |
+| UU5 | Tarifs : « À savoir » en liste à puces | La règle « pas d'essai » d'abord, en grande phrase ; les autres points sur deux colonnes, sans puces ; les deux paragraphes ensuite |
+| UU6 | Chapitres : deux textes à la fois au passage | Le texte qui sort s'efface pendant que le titre suivant monte de 75 % à 60 % de l'écran ; l'arche change quand il n'est plus lisible ; un lien qui reçoit le focus reste visible |
+| UU7 | Cours : « Trois séances par semaine » éparpillée | L'arche à gauche, le titre, le texte et les deux liens à droite |
+| UU8 | Accueil : la ligne « Arrêter l'animation du tapis » | Un rond de 44 px avec son seul signe ; son nom reste lu par les lecteurs d'écran et s'affiche au survol |
+
+Relecture adverse de ce tour (trois relecteurs, chaque relevé vérifié par un second agent chargé de le réfuter) : six défauts confirmés, tous corrigés et vérifiés en rejouant les scripts des relecteurs.
+
+| # | Relevé confirmé | Correction |
+|---|---|---|
+| UU9 | Chapitres : un texte effacé restait cliquable (un lien invisible ouvrait une page) | Effacé, le texte ne prend plus les clics ; il les reprend s'il reçoit le focus |
+| UU10 | Chapitres : en passant au mouvement réduit page ouverte, un texte effacé restait invisible | L'effacement ne joue qu'à l'écran et sans mouvement réduit |
+| UU11 | Impression en paysage : le texte des chapitres déjà passés manquait | Même règle : rien n'est effacé à l'impression |
+| UU12 | Impression en portrait depuis un ordinateur : les volets du pied de page se fermaient (adresses perdues) | À l'impression, les volets restent ouverts ; ils retrouvent leur état ensuite |
+| UU13 | Tarifs : la phrase « pas d'essai » sur trois lignes ; onze tailles de texte sur la page | Deux lignes ; tailles réunies (les dates, la phrase et les totaux d'une famille ensemble, les remises à la taille des titres de section) |
+
+**Après la recette 38.** Rewayah monte à 7,90. Les trois jurés s'accordent : le pied de page reste lourd au bureau (0,67 écran) et au téléphone (0,7) ; sur tablette, « Trois séances par semaine » est encore empilée ; au changement de chapitre, l'arche montre un instant la nouvelle image seule, le nouveau texte encore bas. Un juré demande les arches des dates aussi sous 1100 px, un autre un bouton pause plus visible.
+
+| # | Relevé | Correction |
+|---|---|---|
+| VV1 | Bureau : pied de page de 0,67 écran | Des rangées : le logo et l'adresse sur une ligne, les pages, les quatre adresses, les liens légaux, la langue et les crédits (0,47 écran) |
+| VV2 | Téléphone et tablette : liens légaux toujours ouverts | Troisième volet « Informations légales », fermé sous 1100 px (ouvert sans script et à l'impression) : 0,62 écran au téléphone, 0,40 sur tablette |
+| VV3 | Tablette : « Trois séances par semaine » empilée | Deux colonnes dès 700 px, l'arche à gauche |
+| VV4 | Chapitres : l'image nouvelle seule, le texte encore bas | L'arche change quand le titre suivant passe 43 % de la hauteur de l'écran ; le texte qui sort s'efface avant (58 % à 45 %), celui qui entre apparaît presque à sa place (43 % à 35 %) ; les mains montent à partir du changement |
+| VV5 | Tarifs sous 1100 px : les dates sans arches | Les cinq arches, de plus en plus hautes, l'une sous l'autre, la phrase à côté |
+| VV6 | Bouton pause peu visible | Contour blanc |
+
+**Après la recette 40, la dernière.** Rewayah à 7,78, devant Hallow (6,78) et Waking Up (6,50) ; les trois jurés
+répondent encore « presque ». Ils confirment réglés le passage d'un chapitre à l'autre (un seul texte à la fois)
+et « À savoir » à la taille du texte ; le pied de page a baissé (0,43 écran au téléphone, 0,30 sur tablette) mais
+reste à 0,41 au bureau. Le directeur arrête les recettes le 23/10/2026 (« il faut en finir, il reste beaucoup
+d'autres choses à faire ») et garde les rendus actuels. Points communs non traités, à reprendre seulement sur sa
+demande :
+
+| # | Relevé (jurés) | Piste |
+|---|---|---|
+| WW1 | Pied de page au bureau : cinq rangées de texte de 16 px, 0,41 écran (3 jurés) | Trois colonnes (pages, adresses, informations légales), le crédit dessous : 0,25 écran |
+| WW2 | « Les cours en bref » : cinq pastilles qui ressemblent à des boutons (3 jurés) | La première phrase en grand, les quatre autres en lignes simples sur deux colonnes, texte inchangé |
+| WW3 | Même module de section répété (arche, titre, paragraphe, petit lien) (2 jurés) | Une section par page en grande arche plein écran, une autre en bande de phrase |
+| WW4 | Chapitres de l'accueil : arche modeste (62 % de la hauteur) (2 jurés) | Arche à 80 % de la hauteur de l'écran |
+| WW5 | Titres de section à 2,4 fois le texte, hiérarchie plate sous le premier écran (2 jurés) | Titres de section plus grands |
+| WW6 | Liens fléchés secondaires de 16 px, faibles à côté des titres (2 jurés) | 18 à 20 px, soulignés, 44 px de hauteur touchable |
+| WW7 | Tarifs : une seule image sur la page (inspecteur) | Un détail sans personne à côté d'« À savoir » et en fin de page, sans casser les mises en page des dates et des règles |
+
+**Recette 41, la dernière.** Faits avant elle, pendant la nuit du 23/10 : WW1 (pied de page au bureau sur quatre
+rangées, 0,31 écran ; la langue et le crédit sur la ligne des pages Facebook), WW2 (« Les cours en bref » sans
+pastilles : la première ligne en phrase, les autres en liste à puces d'arche sur deux colonnes, mots inchangés),
+WW6 (liens fléchés : ils étaient déjà à 21 px ; un trait discret au repos, plein au survol). Les trois jurés
+donnent WW2 réglé, WW1 et WW6 en partie ; Rewayah à 7,80, devant Hallow (6,90) et Waking Up (6,50), et toujours
+« presque ». Ils relèvent encore : sous les deux prix de l'accueil, quatre tuiles pleines ; le même partage arche
+et texte de page en page ; une hiérarchie de titres trop douce sous le premier écran ; aucune preuve vivante hors
+du simulateur (piste : les prochaines classes ouvertes, lues dans les horaires publiés). Rien de cela n'est repris
+sans demande du directeur.
+
+**Recette 42.** Avant elle : les quatre engagements sous les prix de l'accueil en liste à puces d'arche (et non en
+tuiles pleines) ; les titres de section pleine largeur à 64 px au bureau (3,2 fois le texte), ceux posés à côté
+d'une image restent à 56 px pour ne jamais dépasser deux lignes (vérifié sur les 18 pages à 1100, 1280 et 1440 px).
+Les jurés donnent les engagements réglés, la hiérarchie en partie ; Rewayah à 7,67, devant Hallow (6,80) et Waking Up
+(6,67), toujours « presque ». Leurs demandes changent d'un tour à l'autre : le pied de page, jugé « en partie réglé »
+à 0,31 écran au tour 41, est « non réglé » au tour 42, qui demande 0,18 écran et le retrait des quatre adresses
+(décision de contenu du directeur). Un juré relève un contraste de 4,48:1 sur les tuiles violettes : mesuré dans la
+page, le texte est blanc pur sur #8652E6, soit 4,81:1 (conforme AA) ; l'écart vient de la compression des captures.
+Un contrôle de contraste sur chaque texte des 18 pages, à 1440 et 390 px, ne trouve aucun texte sous le seuil.
+
+**Recette 43.** Avant elle : le texte des chapitres de l'accueil à la taille du texte courant (21 px) sous des titres
+de 66 px. Les trois jurés donnent la hiérarchie des titres réglée (3,1 à 3,2 fois le texte) ; Rewayah à 7,77, devant
+Hallow (6,40) et Waking Up (6,33), toujours « presque ». Ce qui les retient encore : le partage image et texte qui
+revient sur la plupart des sections, le pied de page au bureau (ils demandent de sortir les quatre adresses et les
+pages Facebook, décision de contenu), les écrans les plus denses (prix de l'accueil, « À savoir » de Tarifs), et des
+images toutes tirées du même ensemble de rendus (gardé par décision du directeur).
+
+**Recette 44, la dernière.** Avant elle : sur l'accueil, « Un horaire fixe, une classe stable » devient une phrase
+centrée au-dessus des trois arches en escalier, et « Questions des familles » passe à un titre en tête et une large
+colonne de questions dessous (deux partages de moins). Rewayah à 7,80, devant Hallow et Waking Up (6,33 chacun),
+toujours « presque ». Un juré donne les notes sans les plafonds de la grille : les trois sites se tiennent à 0,2 point
+près (Rewayah 7,8, Waking Up environ 7,6, Hallow environ 7,65). Restent, selon eux : les pages intérieures qui
+répètent le même partage image et texte, le pied de page à re-quadriller en trois colonnes (contenu inchangé),
+la colonne des questions à porter à toute la largeur, deux familles d'actions au lieu de quatre, et un réglage commun
+de la lumière des trois portraits.
 
 ## Hors de portée de l'agent
 
 - `.github/workflows/flutter-deploy.yml` vérifie la présence de 8 fichiers du site, mais pas de `motion.js`. Le garde du dépôt interdit à l'agent d'écrire dans `.github/`. Le test `test_only_approved_public_assets_are_copied` couvre ce fichier côté tests.
 - L'outil REA (Reverse Engineer Anything) n'est installé qu'en ligne de commande, dans l'espace de travail de la session. Son inscription comme serveur MCP et comme skill demande une règle de permission du directeur.
+
+**Recette 45.** Avant elle, sur décision du directeur (23/10) : les quatre adresses quittent le pied de page (elles
+restent sur Contact, Mentions légales et Aide), un lien « Nous contacter » sur chaque page, le lien Facebook de
+l'auteur sans son nom ; le pied de page passe à 0,23 écran. Sur Cours et Académie, « Trois séances par semaine » et
+« Ce que nous enseignons » deviennent des phrases centrées, l'image dessous ; les questions de l'accueil prennent toute
+la largeur. Les jurés donnent le pied de page et les questions réglés, les pages intérieures en partie. Ce tour a été
+très court (2 minutes) et un juré n'a appliqué aucun plafond aux références, ce qui les remonte (Hallow 7,90, Waking Up
+7,40) ; Rewayah à 7,70, toujours « presque ».
+
+**Recette 46.** Avant elle : « Apprendre avec un enseignant » (Cours) et « La famille fait partie du parcours »
+(Académie) en phrase centrée, l'image dessous ; Académie finit sur une bande centrée. Les jurés donnent ces deux
+points réglés. Toujours « presque » : ils demandent maintenant de varier aussi la phrase centrée (qui se répète à son
+tour), les trois chapitres de l'accueil, et les reprises des mêmes rendus d'une page à l'autre (limite fixée par le
+directeur).

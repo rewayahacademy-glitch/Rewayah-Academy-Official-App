@@ -238,7 +238,7 @@ class PageProduite(unittest.TestCase):
         page = self.construire()
         self.assertIn("<h1>Avis des familles et des élèves</h1>", page.replace("\u00a0", " "))
         self.assertIn("Les premiers avis seront publiés ici bientôt", page)
-        for mot in ("support@rewayahacademy.com", "insulte", "données personnelles d’un tiers", "publicité",
+        for mot in ('support<span class="arobase"></span>rewayahacademy.com', "insulte", "données personnelles d’un tiers", "publicité",
                     "hors sujet", "doublon", "jamais modifié", "avis négatifs"):
             self.assertIn(mot, page)
         self.assertIn('content="noindex,nofollow"', page)
@@ -265,7 +265,7 @@ class PageProduite(unittest.TestCase):
         self.assertIn("4,8 sur 5, 37 avis", page)
         for interdit in (faux.url, "127.0.0.1", "cle-secrete-de-test", "apikey", "rpc/avis_publics", "SUPABASE_"):
             self.assertNotIn(interdit, rendu)
-        self.assertIsNone(re.search(r"supabase\.co(?!m)", rendu))
+        self.assertIsNone(re.search(r"supabase\.co(?!m)", rendu.replace(BUILDER.FONCTION_DESINSCRIPTION, "")))
 
     def test_texte_injecte_echappe_dans_la_page(self) -> None:
         page = self.construire(avis=reponse(nom="<b>Nom</b>", texte="<script>x()</script> et plus de vingt caractères"))

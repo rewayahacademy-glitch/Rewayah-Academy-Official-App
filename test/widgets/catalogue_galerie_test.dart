@@ -71,6 +71,8 @@ const List<String> composantsDuCatalogue = <String>[
   // BRAND-ORN-1 (directeur, 11/10/2026) : l'ornement, signature discrete ; le
   // separateur vit dans le meme fichier et se montre dans la meme entree.
   'OrnementMarque',
+  // Page introuvable (directeur, 23/10/2026) : la porte du logo et sa lumiere.
+  'PorteLumiere',
   // K-55 (revue du directeur du 01/10) : jamais de cartes collees.
   'PileCartes',
   'CarteGroupee',

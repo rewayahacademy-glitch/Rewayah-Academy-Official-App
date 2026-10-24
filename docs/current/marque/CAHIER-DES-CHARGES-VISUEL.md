@@ -103,7 +103,7 @@ Principes décidés : thème chrome / violet (K-37), palette calme et presque mo
 pour la marque et l'action, pas pour remplir des surfaces. Contrastes mesurés par tests : 4,5:1 pour le
 texte, 3:1 pour les composants, dans les deux thèmes. Aucun dégradé (logo, ornement, fonds), **à une seule exception
 datée** : la lumière et l'obscurité de la scène de la carte de partage (décision du directeur du 23/10/2026,
-`M-29` du registre des décisions). Elle ne s'étend ni au logo, ni à l'ornement, ni à aucun autre support ou écran.
+`M-33` du registre des décisions). Elle ne s'étend ni au logo, ni à l'ornement, ni à aucun autre support ou écran.
 
 ### A.5 Formes, espacement, icônes
 
@@ -230,7 +230,7 @@ et icônes PWA viennent du symbole, jamais du logo horizontal.
 
 ## E. Contrôle de cohérence avant livraison
 
-- [ ] Chaque couleur vient de A.4 et de `app_palette.dart` ; aucun dégradé (sauf l'exception datée `M-29` : la
+- [ ] Chaque couleur vient de A.4 et de `app_palette.dart` ; aucun dégradé (sauf l'exception datée `M-33` : la
   lumière et l'obscurité de la scène de la carte de partage, et nulle part ailleurs ; on ne la retire pas sans
   décision du directeur).
 - [ ] Polices : DM Sans, Plus Jakarta Sans, Noto Sans Arabic, Uthman Taha Naskh, UthmanicHafs, et rien d'autre.

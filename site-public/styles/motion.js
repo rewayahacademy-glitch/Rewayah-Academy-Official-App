@@ -118,6 +118,7 @@
   var bandes = document.querySelectorAll('.bande-image--large');
   var appels = document.querySelectorAll('.appel__lien');
   var mains = document.querySelectorAll('.scene[data-anime="mains"]');
+  var entreesChapitres = [];
   var demande = false;
 
   function scenePorte(h) {
@@ -127,7 +128,8 @@
     if (course <= 0) return;
     var p = borne(-r.top / course);
     var z = borne(p / 0.62);
-    var c = adoucie(borne((p - 0.46) / 0.42));
+    /* La classe apparait avant que la porte ne soit tres agrandie : les visages restent petits. */
+    var c = adoucie(borne((p - 0.42) / 0.42));
     porte.style.setProperty('--z', z.toFixed(4));
     porte.style.setProperty('--z2', (z * z).toFixed(4));
     porte.style.setProperty('--c', c.toFixed(4));
@@ -138,14 +140,27 @@
 
   function sceneChapitres(h) {
     if (!chapitres || !large.matches || !textesChapitres.length) return;
-    // Une seule illustration a la fois : elle change des que le titre du chapitre suivant passe 60 % de la hauteur
-    // de l'ecran, pour que le texte et son image arrivent ensemble ; le fondu est porte par le CSS.
-    var courante = 0;
-    Array.prototype.forEach.call(textesChapitres, function (t, i) {
-      if (t.getBoundingClientRect().top < h * 0.6) courante = i;
+    // Les chapitres se collent sous l'en-tete, leur texte au milieu de l'arche epinglee, et le suivant monte par-dessus.
+    // Pendant ses derniers 24 % d'ecran de montee : le texte en place s'efface (premiere moitie), l'arche change
+    // d'image, puis le nouveau texte apparait sur les 30 derniers % de la course, presque a sa place. Jamais deux
+    // textes lisibles a la fois, toujours a cote de leur image.
+    var entete = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--entete')) || 0;
+    var course = h * 0.24;
+    var restes = Array.prototype.map.call(textesChapitres, function (t, i) {
+      return i === 0 ? 0 : Math.max(0, t.getBoundingClientRect().top - entete);
     });
+    entreesChapitres = restes.map(function (r, i) { return i === 0 ? 1 : 1 - borne(r / (course * 0.3)); });
+    var courante = 0;
+    restes.forEach(function (r, i) { if (i > 0 && r <= course * 0.4) courante = i; });
     imagesChapitres.forEach(function (img, j) {
       img.style.setProperty('--o', j === courante ? '1' : '0');
+    });
+    Array.prototype.forEach.call(textesChapitres, function (t, i) {
+      var bloc = t.querySelector('.chapitre__texte') || t;
+      var sortie = i + 1 < restes.length ? borne((restes[i + 1] - course * 0.5) / (course * 0.5)) : 1;
+      var visible = Math.min(entreesChapitres[i], sortie);
+      bloc.style.setProperty('--sortie', visible.toFixed(3));
+      bloc.toggleAttribute('data-efface', visible < 0.05);
     });
   }
 
@@ -187,6 +202,16 @@
     mains.forEach(function (fig) {
       // En haut de page, l'illustration se montre telle qu'elle est faite : les mains tiennent deja le livre.
       if (fig.closest('.entete-page')) { fig.style.setProperty('--m', '0'); return; }
+      // Dans la fenetre epinglee des chapitres, l'image ne bouge pas : les mains montent pendant que le texte de leur
+      // chapitre apparait, une fois l'image entree.
+      var fenetre = fig.closest('[data-chapitre-image]');
+      if (fenetre && large.matches) {
+        var rang = Array.prototype.indexOf.call(imagesChapitres, fenetre);
+        if (rang >= 0 && entreesChapitres.length > rang) {
+          fig.style.setProperty('--m', (1 - adoucie(entreesChapitres[rang])).toFixed(4));
+          return;
+        }
+      }
       var haut = fig.getBoundingClientRect().top + y;
       var debut = haut < h ? 0 : haut - h;
       var fin = debut + (haut < h ? h * 0.35 : h * 0.5);
@@ -443,7 +468,24 @@
     });
   }
 
+  /* Cours : au survol d'une arche, ses lettres arabes s'ecrivent de nouveau (styles/site.css). Changer le nom de
+     l'animation la relance : on alterne entre deux noms au dessin identique. */
+  function preparerArches() {
+    if (reduit.matches || !window.matchMedia('(hover: hover)').matches) return;
+    document.querySelectorAll('.parcours__etape').forEach(function (arche) {
+      if (!arche.querySelector('.parcours__lettre, .parcours__mot')) return;
+      var tour = 0;
+      arche.addEventListener('pointerenter', function () {
+        if (!arche.parentElement.classList.contains('est-visible')) return;
+        tour += 1;
+        arche.classList.toggle('rejoue-a', tour % 2 === 1);
+        arche.classList.toggle('rejoue-b', tour % 2 === 0);
+      });
+    });
+  }
+
   preparerEntrees();
+  preparerArches();
   preparerTapis();
   preparerHalo();
   preparerTitres();

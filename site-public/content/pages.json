@@ -3,7 +3,7 @@
     "name": "RewayahPublicPages",
     "version": 1,
     "locale": "fr-FR",
-    "description": "Données éditoriales françaises pour le générateur HTML public. Les clés de pages sont les URL canoniques. Ce statut décrit la préparation du contenu, jamais une autorisation de publier la branche. En aperçu, les pages peuvent être servies avec un indicateur de préparation et doivent toutes porter noindex. Les entrées blocked restent visibles seulement dans l'aperçu de préparation; elles sont exclues de tout artefact de production. Les pages conditionnelles (articles, parcours et postes individuels) ne sont pas des entrées ici.",
+    "description": "Données éditoriales françaises pour le générateur HTML public. Les clés de pages sont les URL canoniques. Ce statut décrit la préparation du contenu. Seule la construction de production (branche main) ouvre l'indexation ; un aperçu porte toujours noindex. Les entrées blocked restent visibles seulement dans l'aperçu de préparation ; elles sont exclues de tout artefact de production. Les pages conditionnelles (articles, parcours et postes individuels) ne sont pas des entrées ici.",
     "page_fields": {
       "title": "Titre HTML unique, idéalement inférieur à 60 caractères.",
       "description": "Description HTML unique, rédigée pour décrire la page sans promesse non prouvée.",
@@ -11,8 +11,8 @@
       "intro": "Texte d'introduction facultatif, avant les sections.",
       "sections": "Liste ordonnée d'objets {id,title,paragraphs,points,links}; points et links peuvent être omis.",
       "cta": "Action principale {label,href}; liens internes absolus depuis la racine du site.",
-      "indexable": "Booléen d'éligibilité SEO cible après validation. En aperçu, le générateur impose noindex quelle que soit cette valeur. Cette valeur n'autorise pas une publication ni une indexation en production.",
-      "status": "ready signifie texte préparé pour revue/intégration, sans feu vert de production; blocked signifie dépendances non fermées. Les deux statuts peuvent être servis uniquement en aperçu marqué comme préparation et noindex. blocked doit être exclu de tout artefact de production."
+      "indexable": "Booléen d'éligibilité au référencement. Seule la construction de production (branche main, rewayahacademy.com) indexe une page ready et indexable ; un aperçu impose noindex quelle que soit cette valeur.",
+      "status": "ready : texte prêt, publié en production. blocked : dépendances non fermées ; servi seulement en aperçu, marqué comme préparation et noindex, exclu de tout artefact de production."
     }
   },
   "site": {
@@ -24,7 +24,7 @@
         "href": "https://www.facebook.com/share/1CVee2teiN/"
       },
       {
-        "label": "Facebook de l'auteur du site, Abdoulaye Mouhidine Sow",
+        "label": "Facebook de l'auteur du site",
         "href": "https://www.facebook.com/share/1D6H2EYhci/"
       }
     ],
@@ -32,7 +32,7 @@
       "general": "contact@rewayahacademy.com",
       "support": "support@rewayahacademy.com",
       "recruitment": "recrutement@rewayahacademy.com",
-      "billing": "invoice@rewayahacademy.com"
+      "billing": "invoices@rewayahacademy.com"
     }
   },
   "pages": {
@@ -40,7 +40,7 @@
       "title": "Cours de Coran en ligne en petite classe | Rewayah Academy",
       "description": "Trois séances de Coran par semaine en visio, toujours avec le même enseignant, dans une petite classe. Pour les enfants dès 6 ans et pour les adultes.",
       "h1": "Le Coran en ligne, en petite classe.",
-      "intro": "Trois séances par semaine, avec le même enseignant. Pour les enfants dès 6 ans et pour les adultes.",
+      "intro": "Chez Rewayah Academy, chaque élève suit trois séances par semaine avec le même enseignant. Pour les enfants dès 6 ans et pour les adultes.",
       "sections": [
         {
           "id": "foyer",
@@ -118,7 +118,7 @@
           "id": "tarifs",
           "title": "Le prix, par élève et par mois.",
           "paragraphs": [
-            "Le prix dépend de l'âge de l'élève. Les remises du foyer, du paiement d'avance, du parrainage et de la bourse sont détaillées sur la page des tarifs. Le montant final et les taxes éventuelles sont indiqués avant paiement."
+            "Le prix dépend de l'âge de l'élève. Le paiement d'avance, le parrainage et la bourse sont détaillés sur la page des tarifs. Le montant final et les taxes éventuelles sont indiqués avant paiement."
           ],
           "links": [
             {
@@ -406,19 +406,11 @@
       "intro": "Le prix par élève et par mois, hors taxes, et toutes les remises. Le montant final et les taxes vous sont indiqués avant le paiement.",
       "sections": [
         {
-          "id": "grille",
-          "title": "Le prix de chaque formule",
-          "generated": "grille",
-          "paragraphs": [
-            "Le prix dépend de l'âge de l'élève. La formule adulte commence à l'âge indiqué dans le tableau."
-          ]
-        },
-        {
           "id": "remises",
           "title": "Les remises",
           "generated": "remises",
           "paragraphs": [
-            "Les remises sont calculées par élève. La bourse ne se cumule avec aucune autre remise."
+            "La bourse ne se cumule avec aucune autre remise."
           ]
         },
         {
@@ -427,23 +419,26 @@
           "generated": "famille"
         },
         {
-          "id": "classes",
-          "title": "Une classe, un enseignant attitré",
-          "generated": "classes"
+          "id": "echeances",
+          "title": "Les dates du paiement",
+          "generated": "echeances",
+          "paragraphs": [
+            "La première semaine vaut pour toutes les formules ; les dates du mois, pour l’abonnement mensuel. Les règles complètes, dont le droit de rétractation de 14 jours, sont dans la page Annulation et remboursement."
+          ]
         },
         {
           "id": "conditions",
           "title": "À savoir avant de commander",
           "points": [
-            "Il n'y a pas d'essai : la première semaine est remboursée si le cours ne convient pas.",
-            "L'abonnement se renouvelle chaque mois et se résilie chaque mois.",
+            "Il n’y a pas d’essai : la première semaine est remboursée si le cours ne convient pas.",
+            "L’abonnement se renouvelle chaque mois et se résilie chaque mois.",
             "Une inscription en cours de mois paie seulement les séances restantes.",
-            "Une place manquée n'est pas remboursée : elle est réservée dans une classe fixe.",
-            "Une séance annulée par l'académie est remplacée."
+            "Une place manquée n’est pas remboursée : elle est réservée dans une classe fixe.",
+            "Une séance annulée par l’académie est remplacée."
           ],
           "paragraphs": [
             "La taxe de votre pays et le montant en euros, livres ou dollars canadiens s’affichent au paiement. Les conditions de vente complètes sont dans la page Conditions.",
-            "Pour une question liée à une facture ou à la facturation, écrivez à invoice@rewayahacademy.com."
+            "Pour une question liée à une facture ou à la facturation, écrivez à invoices@rewayahacademy.com."
           ],
           "links": [
             {
@@ -452,7 +447,7 @@
             },
             {
               "label": "Écrire au service de facturation",
-              "href": "mailto:invoice@rewayahacademy.com"
+              "href": "mailto:invoices@rewayahacademy.com"
             }
           ]
         }
@@ -461,7 +456,7 @@
         "label": "Commencer mon inscription",
         "href": "/connexion"
       },
-      "indexable": false,
+      "indexable": true,
       "status": "ready"
     },
     "/fr/academie": {
@@ -471,8 +466,22 @@
       "intro": "Rewayah Academy enseigne le Coran en ligne depuis le 1er mai 2024. Chaque élève y apprend en petite classe, avec un enseignant attitré.",
       "sections": [
         {
+          "id": "mot",
+          "title": "Le mot du directeur",
+          "citation": [
+            "Bienvenue chez Rewayah Academy. Je suis Abdoulaye Mouhidine Sow, directeur et fondateur de l’académie.",
+            "Notre objectif est que chacun puisse apprendre le Coran, où qu’il vive et quel que soit son niveau.",
+            "Si vous pouvez apprendre en présentiel, aux côtés d’un enseignant, nous vous y encourageons. Si ce n’est pas possible, des académies en ligne peuvent vous accompagner. La nôtre est l’une d’elles, et nous serions honorés de vous accueillir."
+          ],
+          "signature": {
+            "nom": "Abdoulaye Mouhidine Sow",
+            "role": "Directeur et fondateur"
+          },
+          "extrait": "Notre objectif est que chacun puisse apprendre le Coran, où qu’il vive et quel que soit son niveau."
+        },
+        {
           "id": "projet",
-          "title": "Apprendre avec un enseignant",
+          "title": "Ce que nous enseignons",
           "paragraphs": [
             "Nous enseignons en ligne la lecture de l’arabe, la lecture et la récitation du Coran, la mémorisation et les bases utiles à la prière.",
             "Chaque étape a son objectif et sa date limite : le programme avance, il ne s’étire pas sans fin."
@@ -482,9 +491,35 @@
           "id": "fondateurs",
           "title": "Trois spécialistes du Coran",
           "paragraphs": [
-            "Rewayah Academy a été fondée le 1er mai 2024 par trois spécialistes du Coran et des sciences islamiques : Abdoulaye Mouhidine Sow, son directeur, Mamadou Alimou Diallo et Ahmadou Diallo.",
+            "Rewayah Academy a été fondée le 1er mai 2024 par trois spécialistes du Coran et des sciences islamiques : Abdoulaye Mouhidine Sow, son directeur, Mamadou Alimou Diallo et Ahmad Diallo.",
             "L’idée a été discutée pour la première fois à La Mecque, à la Mosquée sacrée.",
-            "Le nom dit le projet : transmettre le savoir tel qu’il a été reçu des anciens, sans l’altérer. Le symbole le montre aussi : le cercle est la halqa, où l’on apprend le Coran ensemble ; l’arche est le livre ; la porte ouverte donne accès à l’enseignement."
+            "Notre logo raconte cette transmission : un cercle, comme celui que forment les élèves autour de leur enseignant ; un livre, le Coran, dessiné en arche ; et dans ce livre, une porte ouverte, parce que cet enseignement est ouvert à chacun."
+          ],
+          "profils": [
+            {
+              "nom": "Abdoulaye Mouhidine Sow",
+              "role": "Directeur et fondateur",
+              "parcours": [
+                "Master en information et communication.",
+                "Licence en sciences coraniques et islamiques, Université islamique de Médine."
+              ]
+            },
+            {
+              "nom": "Mamadou Alimou Diallo",
+              "role": "Fondateur",
+              "parcours": [
+                "Diplômé de l’Institut des qiraat (lectures du Coran), en République de Guinée.",
+                "Étudiant à l’Université islamique de Médine, faculté de droit et d’études islamiques."
+              ]
+            },
+            {
+              "nom": "Ahmad Diallo",
+              "role": "Fondateur",
+              "parcours": [
+                "Diplômé de l’Institut des qiraat (lectures du Coran), en République de Guinée.",
+                "Diplômé de l’Université du roi Abdelaziz, à Djeddah : faculté des lettres et des sciences humaines, département de droit islamique."
+              ]
+            }
           ]
         },
         {
@@ -541,7 +576,7 @@
           "title": "Les articles à venir",
           "paragraphs": [
             "Aucun article n’est encore publié.",
-            "Un article publié ici cite ses références."
+            "Chaque article indique ses sources."
           ]
         },
         {
@@ -570,7 +605,7 @@
         "label": "Consulter l'aide",
         "href": "/fr/aide"
       },
-      "indexable": true,
+      "indexable": false,
       "status": "ready"
     },
     "/fr/aide": {
@@ -583,7 +618,7 @@
           "id": "inscription",
           "title": "Comment commencer une inscription ?",
           "paragraphs": [
-            "Ouvrez la connexion Rewayah. Si vous n'avez pas encore de compte, l'application vous guidera vers l'inscription.",
+            "Ouvrez l'application Rewayah. Si vous n'avez pas encore de compte, l'application vous guidera vers l'inscription.",
             "Voir les étapes détaillées dans la page Comment ça marche."
           ],
           "links": [
@@ -597,7 +632,7 @@
           "id": "horaire",
           "title": "Le choix d'un horaire confirme-t-il une place ?",
           "paragraphs": [
-            "Non. Une proposition horaire publiée exprime une préférence. L'administration traite les intentions et propose ensuite une classe. Aucun enseignant ni nombre de places restantes n'est affiché au choix des propositions."
+            "Non. Choisir un horaire indique votre préférence, sans réserver de place. La direction compose ensuite la classe, nomme son enseignant et vous écrit à chaque étape."
           ]
         },
         {
@@ -643,12 +678,12 @@
           "id": "facturation",
           "title": "À qui adresser une question de facture ?",
           "paragraphs": [
-            "Pour une question de facturation, écrivez à invoice@rewayahacademy.com."
+            "Pour une question de facturation, écrivez à invoices@rewayahacademy.com."
           ],
           "links": [
             {
               "label": "Contacter la facturation",
-              "href": "mailto:invoice@rewayahacademy.com"
+              "href": "mailto:invoices@rewayahacademy.com"
             }
           ]
         }
@@ -784,18 +819,18 @@
           "id": "facturation",
           "title": "Facturation",
           "paragraphs": [
-            "Pour les factures et questions de facturation : invoice@rewayahacademy.com."
+            "Pour les factures et questions de facturation : invoices@rewayahacademy.com."
           ],
           "links": [
             {
-              "label": "Écrire à invoice@rewayahacademy.com",
-              "href": "mailto:invoice@rewayahacademy.com"
+              "label": "Écrire à invoices@rewayahacademy.com",
+              "href": "mailto:invoices@rewayahacademy.com"
             }
           ]
         },
         {
           "id": "limites",
-          "title": "Canaux de contact",
+          "title": "Comment nous joindre",
           "paragraphs": [
             "Nous répondons par e-mail. Il n'y a pas de numéro de téléphone ni de WhatsApp."
           ]
@@ -831,7 +866,7 @@
             "Il n'y a pas de lien public vers une salle. On y entre par son compte, avec un accès donné par le serveur.",
             "Le parent peut observer en silence le cours de son enfant. L'enfant concerné en est informé.",
             "Un contrôleur qualité peut assister aux séances. Une mention le rappelle dans la salle.",
-            "Un cours peut être enregistré. Aujourd'hui, ce n'est pas le cas, et le tuteur en serait informé avant."
+            "Les cours ne sont pas enregistrés aujourd'hui. Si cela change, le tuteur en sera informé avant."
           ]
         },
         {
@@ -856,8 +891,7 @@
           "paragraphs": [
             "Si une chose vous inquiète, écrivez-nous. Dites ce que vous avez vu, quand, et dans quelle Classe.",
             "En cas de danger immédiat, contactez d'abord les services d'urgence de votre pays.",
-            "Pour toute question, écrivez à support@rewayahacademy.com.",
-            "Rewayah Academy, joignable à support@rewayahacademy.com."
+            "Pour toute question, écrivez à support@rewayahacademy.com."
           ],
           "links": [
             {
@@ -905,6 +939,13 @@
             "Le service s'appuie sur des prestataires techniques : l'hébergement des pages web, la base de données et la connexion des comptes, la visio des séances, le stockage privé des fichiers et un prestataire de paiement.",
             "Base de données et connexion des comptes : Supabase Inc. (supabase.com). Application et pages web : Vercel Inc. (vercel.com). Nom de domaine : Cloudflare, Inc. (cloudflare.com).",
             "La base de données est hébergée en Irlande, dans l'Union européenne. D'autres prestataires peuvent traiter certaines informations hors du Royaume-Uni : ces transferts suivent les garanties prévues par la loi."
+          ]
+        },
+        {
+          "id": "images",
+          "title": "Les images du site",
+          "paragraphs": [
+            "Les images de ce site sont des illustrations, sauf les photos des fondateurs."
           ]
         },
         {
@@ -957,7 +998,7 @@
           "paragraphs": [
             "Les séances ont lieu à heure fixe, avec le même enseignant. Être présent et à l'heure fait partie de l'engagement.",
             "Une séance écourtée reste due si l'élève a été présent assez longtemps. Une séance annulée par l'académie ou par l'enseignant est remplacée.",
-            "Un contrôleur qualité peut assister aux séances sans être vu, et un cours peut être enregistré. Si l'enregistrement devient réel, nous vous le disons avant.",
+            "Un contrôleur qualité peut assister aux séances sans être vu. Les cours ne sont pas enregistrés aujourd'hui ; si cela change, nous vous le dirons avant.",
             "Le parent peut observer en silence la séance de son enfant."
           ]
         },
@@ -1006,7 +1047,6 @@
           "id": "s7",
           "title": "Droit applicable",
           "paragraphs": [
-            "Cette partie précise la loi qui s'applique et le tribunal compétent.",
             "Droit d'Angleterre et du pays de Galles, tribunaux d'Angleterre et du pays de Galles. Si vous êtes un consommateur, vous gardez la protection des règles impératives de votre pays de résidence.",
             "Droit de rétractation : vous pouvez annuler dans les 14 jours qui suivent votre inscription, sans donner de raison. Si les cours ont commencé à votre demande pendant ce délai, la part déjà suivie reste due."
           ]
@@ -1276,14 +1316,14 @@
       "title": "Accessibilité | Rewayah Academy",
       "description": "État des vérifications d'accessibilité du site Rewayah Academy et moyen de signaler une difficulté.",
       "h1": "Accessibilité du site Rewayah Academy",
-      "intro": "Les contenus doivent rester lisibles et utilisables au clavier, au zoom et avec les technologies d'assistance.",
+      "intro": "Nous voulons que chacun puisse lire et utiliser ce site : au clavier, avec un zoom ou avec une technologie d'assistance.",
       "sections": [
         {
           "id": "engagement",
           "title": "Un site utilisable par davantage de personnes",
           "paragraphs": [
-            "Le contenu textuel ne doit pas dépendre d'une animation ou d'une image. Les pages doivent proposer une structure de titres claire, des liens explicites et des commandes utilisables au clavier.",
-            "Les mouvements doivent pouvoir être réduits et le texte doit se réorganiser sur les petits écrans et lors du zoom."
+            "Le texte se lit sans animation ni image. Les titres se suivent dans l'ordre, chaque lien dit où il mène, et les pages se commandent au clavier.",
+            "Si votre appareil demande de réduire les animations, le site les arrête. Sur un petit écran ou avec un zoom, le texte se réorganise."
           ]
         },
         {

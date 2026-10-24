@@ -87,6 +87,8 @@ const Map<String, int> _domaines = <String, int>{
   'codeConduite': 8,
   // AVIS-PUBLICS (19/10/2026) : formulaire public d'avis et moderation.
   'avis': 100,
+  // COURRIELS-1 (23/10/2026) : e-mails sortants de la direction.
+  'courriels': 70,
 };
 
 /// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) :

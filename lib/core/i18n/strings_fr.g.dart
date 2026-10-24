@@ -103,6 +103,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$sansDonnees$fr sansDonnees = Traductions$sansDonnees$fr.internal(_root);
 	late final Traductions$juridique$fr juridique = Traductions$juridique$fr.internal(_root);
 	late final Traductions$avis$fr avis = Traductions$avis$fr.internal(_root);
+	late final Traductions$courriels$fr courriels = Traductions$courriels$fr.internal(_root);
 }
 
 // Path: commun
@@ -2222,6 +2223,8 @@ class Traductions$compte$fr {
 	/// fr: 'Langue et région'
 	String get langueRegion => 'Langue et région';
 
+	late final Traductions$compte$langueCourriels$fr langueCourriels = Traductions$compte$langueCourriels$fr.internal(_root);
+
 	/// fr: 'Langue de l'interface'
 	String get francaisDetail => 'Langue de l\'interface';
 
@@ -3311,6 +3314,16 @@ class Traductions$avis$fr {
 	// Translations
 	late final Traductions$avis$form$fr form = Traductions$avis$form$fr.internal(_root);
 	late final Traductions$avis$admin$fr admin = Traductions$avis$admin$fr.internal(_root);
+}
+
+// Path: courriels
+class Traductions$courriels$fr {
+	Traductions$courriels$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$courriels$admin$fr admin = Traductions$courriels$admin$fr.internal(_root);
 }
 
 // Path: commun.formats
@@ -11534,6 +11547,53 @@ class Traductions$compte$donnees$fr {
 
 	late final Traductions$compte$donnees$copie$fr copie = Traductions$compte$donnees$copie$fr.internal(_root);
 	late final Traductions$compte$donnees$suppression$fr suppression = Traductions$compte$donnees$suppression$fr.internal(_root);
+}
+
+// Path: compte.langueCourriels
+class Traductions$compte$langueCourriels$fr {
+	Traductions$compte$langueCourriels$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Langue des e-mails et des messages'
+	String get titre => 'Langue des e-mails et des messages';
+
+	/// fr: 'Choisir la langue dans laquelle la direction vous écrit'
+	String get ligneDetail => 'Choisir la langue dans laquelle la direction vous écrit';
+
+	/// fr: 'Les e-mails de l'académie et les messages de la direction vous arrivent dans cette langue. Un message écrit dans une autre langue est traduit automatiquement.'
+	String get sousTitre => 'Les e-mails de l\'académie et les messages de la direction vous arrivent dans cette langue. Un message écrit dans une autre langue est traduit automatiquement.';
+
+	/// fr: 'Votre langue'
+	String get choix => 'Votre langue';
+
+	/// fr: 'Sans choix de votre part, tout vous arrive en français.'
+	String get parDefaut => 'Sans choix de votre part, tout vous arrive en français.';
+
+	/// fr: 'Vous recevez les e-mails et les messages en {langue}.'
+	String optionDetail({required Object langue}) => 'Vous recevez les e-mails et les messages en ${langue}.';
+
+	/// fr: 'Enregistrer la langue'
+	String get enregistrer => 'Enregistrer la langue';
+
+	late final Traductions$compte$langueCourriels$retour$fr retour = Traductions$compte$langueCourriels$retour$fr.internal(_root);
+
+	/// fr: 'Les langues n'ont pas pu être chargées. Réessayez.'
+	String get erreurLangues => 'Les langues n\'ont pas pu être chargées. Réessayez.';
+
+	/// fr: 'Les langues n'ont pas pu être chargées'
+	String get sansDonnees => 'Les langues n\'ont pas pu être chargées';
+
+	/// fr: 'Aucune langue n'est proposée pour le moment. Vos e-mails et vos messages restent en français.'
+	String get vide => 'Aucune langue n\'est proposée pour le moment. Vos e-mails et vos messages restent en français.';
+
+	/// fr: 'Choix de la langue indisponible'
+	String get indisponibleTitre => 'Choix de la langue indisponible';
+
+	/// fr: 'Cette fonction sera disponible au branchement serveur.'
+	String get indisponiblePhrase => 'Cette fonction sera disponible au branchement serveur.';
 }
 
 // Path: compte.roles
@@ -19896,6 +19956,42 @@ class Traductions$avis$admin$fr {
 	late final Traductions$avis$admin$liens$fr liens = Traductions$avis$admin$liens$fr.internal(_root);
 }
 
+// Path: courriels.admin
+class Traductions$courriels$admin$fr {
+	Traductions$courriels$admin$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'E-mails'
+	String get titre => 'E-mails';
+
+	/// fr: 'Écrivez à une personne et suivez les e-mails qui partent de l'académie.'
+	String get sousTitre => 'Écrivez à une personne et suivez les e-mails qui partent de l\'académie.';
+
+	/// fr: 'E-mails'
+	String get outil => 'E-mails';
+
+	/// fr: 'Écrire un e-mail, suivre les envois, voir les adresses d'envoi'
+	String get outilDetail => 'Écrire un e-mail, suivre les envois, voir les adresses d\'envoi';
+
+	late final Traductions$courriels$admin$sections$fr sections = Traductions$courriels$admin$sections$fr.internal(_root);
+
+	/// fr: 'Seule la direction connectée écrit et suit les e-mails. Reconnectez-vous avec le bon compte, puis réessayez.'
+	String get refuse => 'Seule la direction connectée écrit et suit les e-mails. Reconnectez-vous avec le bon compte, puis réessayez.';
+
+	/// fr: 'E-mails indisponibles'
+	String get indisponibleTitre => 'E-mails indisponibles';
+
+	/// fr: 'Cette fonction sera disponible au branchement serveur.'
+	String get indisponiblePhrase => 'Cette fonction sera disponible au branchement serveur.';
+
+	late final Traductions$courriels$admin$ecrire$fr ecrire = Traductions$courriels$admin$ecrire$fr.internal(_root);
+	late final Traductions$courriels$admin$file$fr file = Traductions$courriels$admin$file$fr.internal(_root);
+	late final Traductions$courriels$admin$adresses$fr adresses = Traductions$courriels$admin$adresses$fr.internal(_root);
+}
+
 // Path: commun.etats.chargementProlonge
 class Traductions$commun$etats$chargementProlonge$fr {
 	Traductions$commun$etats$chargementProlonge$fr.internal(this._root);
@@ -26936,6 +27032,30 @@ class Traductions$compte$donnees$suppression$fr {
 
 	/// fr: 'Ce compte ne peut pas demander sa suppression ici.'
 	String get refuse => 'Ce compte ne peut pas demander sa suppression ici.';
+}
+
+// Path: compte.langueCourriels.retour
+class Traductions$compte$langueCourriels$retour$fr {
+	Traductions$compte$langueCourriels$retour$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'C'est enregistré. Les prochains e-mails et messages vous arrivent en {langue}.'
+	String enregistre({required Object langue}) => 'C\'est enregistré. Les prochains e-mails et messages vous arrivent en ${langue}.';
+
+	/// fr: 'Cette langue n'est plus proposée. Choisissez-en une autre dans la liste.'
+	String get refusee => 'Cette langue n\'est plus proposée. Choisissez-en une autre dans la liste.';
+
+	/// fr: 'Seule une personne connectée avec son profil peut choisir sa langue. Reconnectez-vous, puis réessayez.'
+	String get refus => 'Seule une personne connectée avec son profil peut choisir sa langue. Reconnectez-vous, puis réessayez.';
+
+	/// fr: 'Le changement n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Réessayez ; votre langue précédente reste en place tant qu'il n'est pas confirmé.'
+	String get echec => 'Le changement n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Réessayez ; votre langue précédente reste en place tant qu\'il n\'est pas confirmé.';
+
+	/// fr: 'Rien n'est enregistré : le réseau est absent. Réessayez dès son retour.'
+	String get horsLigne => 'Rien n\'est enregistré : le réseau est absent. Réessayez dès son retour.';
 }
 
 // Path: compte.tuteur.identite
@@ -35606,6 +35726,159 @@ class Traductions$avis$admin$liens$fr {
 	String get sansDonnees => 'Les liens n\'ont pas pu être chargés';
 }
 
+// Path: courriels.admin.sections
+class Traductions$courriels$admin$sections$fr {
+	Traductions$courriels$admin$sections$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Sections des e-mails'
+	String get libelle => 'Sections des e-mails';
+
+	/// fr: 'Écrire'
+	String get ecrire => 'Écrire';
+
+	/// fr: 'Envois'
+	String get file => 'Envois';
+
+	/// fr: 'Adresses d'envoi'
+	String get adresses => 'Adresses d\'envoi';
+}
+
+// Path: courriels.admin.ecrire
+class Traductions$courriels$admin$ecrire$fr {
+	Traductions$courriels$admin$ecrire$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nouvel e-mail'
+	String get titre => 'Nouvel e-mail';
+
+	/// fr: 'L'e-mail est mis en file, puis part de l'adresse de sa catégorie, dans la minute. Il n'est envoyé que lorsque la liste des envois affiche Envoyé.'
+	String get intro => 'L\'e-mail est mis en file, puis part de l\'adresse de sa catégorie, dans la minute. Il n\'est envoyé que lorsque la liste des envois affiche Envoyé.';
+
+	/// fr: 'Adresse du destinataire'
+	String get adresse => 'Adresse du destinataire';
+
+	/// fr: 'Une seule adresse. Un compte d'enfant ne reçoit jamais d'e-mail.'
+	String get adresseAide => 'Une seule adresse. Un compte d\'enfant ne reçoit jamais d\'e-mail.';
+
+	/// fr: 'Catégorie'
+	String get categorie => 'Catégorie';
+
+	/// fr: 'Elle décide de l'adresse d'envoi et de la boîte qui reçoit les réponses.'
+	String get categorieAide => 'Elle décide de l\'adresse d\'envoi et de la boîte qui reçoit les réponses.';
+
+	/// fr: 'Part de {adresse}'
+	String partDe({required Object adresse}) => 'Part de ${adresse}';
+
+	/// fr: 'Chaque message porte un lien de désinscription.'
+	String get desinscription => 'Chaque message porte un lien de désinscription.';
+
+	/// fr: 'Sujet'
+	String get sujet => 'Sujet';
+
+	/// fr: '120 caractères au plus.'
+	String get sujetAide => '120 caractères au plus.';
+
+	/// fr: 'Message'
+	String get corps => 'Message';
+
+	/// fr: 'Texte simple, 5000 caractères au plus. Une ligne vide fait un nouveau paragraphe.'
+	String get corpsAide => 'Texte simple, 5000 caractères au plus. Une ligne vide fait un nouveau paragraphe.';
+
+	/// fr: 'Chaque destinataire le reçoit dans sa langue : le message est traduit automatiquement à l'envoi.'
+	String get traduction => 'Chaque destinataire le reçoit dans sa langue : le message est traduit automatiquement à l\'envoi.';
+
+	/// fr: 'Envoyer le message'
+	String get envoyer => 'Envoyer le message';
+
+	/// fr: 'Les catégories n'ont pas pu être chargées. Réessayez.'
+	String get erreurCategories => 'Les catégories n\'ont pas pu être chargées. Réessayez.';
+
+	/// fr: 'Les catégories n'ont pas pu être chargées'
+	String get sansDonneesCategories => 'Les catégories n\'ont pas pu être chargées';
+
+	/// fr: 'Aucune catégorie n'est active : impossible d'écrire pour le moment.'
+	String get pasDeCategorie => 'Aucune catégorie n\'est active : impossible d\'écrire pour le moment.';
+
+	late final Traductions$courriels$admin$ecrire$champ$fr champ = Traductions$courriels$admin$ecrire$champ$fr.internal(_root);
+	late final Traductions$courriels$admin$ecrire$retour$fr retour = Traductions$courriels$admin$ecrire$retour$fr.internal(_root);
+}
+
+// Path: courriels.admin.file
+class Traductions$courriels$admin$file$fr {
+	Traductions$courriels$admin$file$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$courriels$admin$file$filtre$fr filtre = Traductions$courriels$admin$file$filtre$fr.internal(_root);
+	late final Traductions$courriels$admin$file$statut$fr statut = Traductions$courriels$admin$file$statut$fr.internal(_root);
+	late final Traductions$courriels$admin$file$origine$fr origine = Traductions$courriels$admin$file$origine$fr.internal(_root);
+
+	/// fr: 'Message automatique'
+	String get messageAuto => 'Message automatique';
+
+	late final Traductions$courriels$admin$file$champs$fr champs = Traductions$courriels$admin$file$champs$fr.internal(_root);
+
+	/// fr: 'Actualiser'
+	String get actualiser => 'Actualiser';
+
+	/// fr: 'Remettre en file'
+	String get reessayer => 'Remettre en file';
+
+	/// fr: 'Aucun e-mail dans cette liste.'
+	String get vide => 'Aucun e-mail dans cette liste.';
+
+	/// fr: 'Les envois n'ont pas pu être chargés. Réessayez.'
+	String get erreur => 'Les envois n\'ont pas pu être chargés. Réessayez.';
+
+	/// fr: 'Les envois n'ont pas pu être chargés'
+	String get sansDonnees => 'Les envois n\'ont pas pu être chargés';
+
+	late final Traductions$courriels$admin$file$retour$fr retour = Traductions$courriels$admin$file$retour$fr.internal(_root);
+}
+
+// Path: courriels.admin.adresses
+class Traductions$courriels$admin$adresses$fr {
+	Traductions$courriels$admin$adresses$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Chaque catégorie part de son adresse, et les réponses arrivent dans la boîte indiquée. Cette liste se lit ici ; elle ne se modifie pas dans l'application.'
+	String get intro => 'Chaque catégorie part de son adresse, et les réponses arrivent dans la boîte indiquée. Cette liste se lit ici ; elle ne se modifie pas dans l\'application.';
+
+	late final Traductions$courriels$admin$adresses$champs$fr champs = Traductions$courriels$admin$adresses$champs$fr.internal(_root);
+
+	/// fr: 'Lié au service, sans désinscription'
+	String get essentielle => 'Lié au service, sans désinscription';
+
+	/// fr: 'Avec lien de désinscription'
+	String get facultative => 'Avec lien de désinscription';
+
+	/// fr: 'Active'
+	String get active => 'Active';
+
+	/// fr: 'Coupée'
+	String get coupee => 'Coupée';
+
+	/// fr: 'Aucune catégorie pour le moment.'
+	String get vide => 'Aucune catégorie pour le moment.';
+
+	/// fr: 'Les adresses d'envoi n'ont pas pu être chargées. Réessayez.'
+	String get erreur => 'Les adresses d\'envoi n\'ont pas pu être chargées. Réessayez.';
+
+	/// fr: 'Les adresses d'envoi n'ont pas pu être chargées'
+	String get sansDonnees => 'Les adresses d\'envoi n\'ont pas pu être chargées';
+}
+
 // Path: salle.preparation.eleve.guidee
 class Traductions$salle$preparation$eleve$guidee$fr {
 	Traductions$salle$preparation$eleve$guidee$fr.internal(this._root);
@@ -40315,6 +40588,198 @@ class Traductions$avis$admin$liens$etat$fr {
 
 	/// fr: 'Complet'
 	String get plein => 'Complet';
+}
+
+// Path: courriels.admin.ecrire.champ
+class Traductions$courriels$admin$ecrire$champ$fr {
+	Traductions$courriels$admin$ecrire$champ$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Entrez une adresse e-mail valide.'
+	String get adresse => 'Entrez une adresse e-mail valide.';
+
+	/// fr: 'Choisissez une catégorie.'
+	String get categorie => 'Choisissez une catégorie.';
+
+	/// fr: 'Donnez un sujet de 1 à 120 caractères.'
+	String get sujet => 'Donnez un sujet de 1 à 120 caractères.';
+
+	/// fr: 'Écrivez un message de 1 à 5000 caractères.'
+	String get corps => 'Écrivez un message de 1 à 5000 caractères.';
+
+	/// fr: 'Cette personne ne peut pas recevoir cet e-mail : compte d'enfant ou désinscription.'
+	String get destinataireExclu => 'Cette personne ne peut pas recevoir cet e-mail : compte d\'enfant ou désinscription.';
+}
+
+// Path: courriels.admin.ecrire.retour
+class Traductions$courriels$admin$ecrire$retour$fr {
+	Traductions$courriels$admin$ecrire$retour$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Envoi dans la minute. Suivez-le dans la liste des envois.'
+	String get misEnFile => 'Envoi dans la minute. Suivez-le dans la liste des envois.';
+
+	/// fr: 'Voir les envois'
+	String get voir => 'Voir les envois';
+
+	/// fr: 'Seule la direction connectée peut écrire un e-mail.'
+	String get refus => 'Seule la direction connectée peut écrire un e-mail.';
+
+	/// fr: 'L'envoi n'est pas confirmé. Regardez la liste des envois avant de recommencer : le même e-mail ne sera pas mis en file deux fois.'
+	String get echec => 'L\'envoi n\'est pas confirmé. Regardez la liste des envois avant de recommencer : le même e-mail ne sera pas mis en file deux fois.';
+
+	/// fr: 'Rien n'est parti : le réseau est absent. Réessayez dès son retour.'
+	String get horsLigne => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.';
+}
+
+// Path: courriels.admin.file.filtre
+class Traductions$courriels$admin$file$filtre$fr {
+	Traductions$courriels$admin$file$filtre$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Tous'
+	String get tous => 'Tous';
+
+	/// fr: 'En file'
+	String get enAttente => 'En file';
+
+	/// fr: 'En cours d'envoi'
+	String get envoi => 'En cours d\'envoi';
+
+	/// fr: 'Envoyés'
+	String get envoye => 'Envoyés';
+
+	/// fr: 'Non envoyés'
+	String get echec => 'Non envoyés';
+
+	/// fr: 'Annulés'
+	String get annule => 'Annulés';
+}
+
+// Path: courriels.admin.file.statut
+class Traductions$courriels$admin$file$statut$fr {
+	Traductions$courriels$admin$file$statut$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'En file'
+	String get enAttente => 'En file';
+
+	/// fr: 'En cours d'envoi'
+	String get envoi => 'En cours d\'envoi';
+
+	/// fr: 'Envoyé'
+	String get envoye => 'Envoyé';
+
+	/// fr: 'Non envoyé'
+	String get echec => 'Non envoyé';
+
+	/// fr: 'Annulé'
+	String get annule => 'Annulé';
+}
+
+// Path: courriels.admin.file.origine
+class Traductions$courriels$admin$file$origine$fr {
+	Traductions$courriels$admin$file$origine$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Automatique'
+	String get auto => 'Automatique';
+
+	/// fr: 'Manuel'
+	String get manuel => 'Manuel';
+}
+
+// Path: courriels.admin.file.champs
+class Traductions$courriels$admin$file$champs$fr {
+	Traductions$courriels$admin$file$champs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À'
+	String get destinataire => 'À';
+
+	/// fr: 'Catégorie'
+	String get categorie => 'Catégorie';
+
+	/// fr: 'Origine'
+	String get origine => 'Origine';
+
+	/// fr: 'Mis en file le'
+	String get creeLe => 'Mis en file le';
+
+	/// fr: 'Envoyé le'
+	String get envoyeLe => 'Envoyé le';
+
+	/// fr: 'Essais'
+	String get tentatives => 'Essais';
+
+	/// fr: 'Dernière erreur'
+	String get motifEchec => 'Dernière erreur';
+
+	/// fr: 'Langue'
+	String get langue => 'Langue';
+}
+
+// Path: courriels.admin.file.retour
+class Traductions$courriels$admin$file$retour$fr {
+	Traductions$courriels$admin$file$retour$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Remis en file. Envoi dans la minute.'
+	String get relance => 'Remis en file. Envoi dans la minute.';
+
+	/// fr: 'Cet e-mail n'est plus à relancer. La liste est mise à jour.'
+	String get introuvable => 'Cet e-mail n\'est plus à relancer. La liste est mise à jour.';
+
+	/// fr: 'La remise en file n'est pas confirmée. La liste est relue : vérifiez l'état de l'e-mail avant de recommencer.'
+	String get echec => 'La remise en file n\'est pas confirmée. La liste est relue : vérifiez l\'état de l\'e-mail avant de recommencer.';
+
+	/// fr: 'Seule la direction connectée peut relancer un e-mail.'
+	String get refus => 'Seule la direction connectée peut relancer un e-mail.';
+
+	/// fr: 'Rien n'est parti : le réseau est absent. Réessayez dès son retour.'
+	String get horsLigne => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.';
+}
+
+// Path: courriels.admin.adresses.champs
+class Traductions$courriels$admin$adresses$champs$fr {
+	Traductions$courriels$admin$adresses$champs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Part de'
+	String get expediteur => 'Part de';
+
+	/// fr: 'Nom affiché'
+	String get nom => 'Nom affiché';
+
+	/// fr: 'Réponses à'
+	String get reponses => 'Réponses à';
+
+	/// fr: 'Type'
+	String get type => 'Type';
 }
 
 // Path: recrutement.parcours.presentation.p1.academie
@@ -47060,6 +47525,23 @@ extension on Traductions {
 			'compte.effetsDetail' => 'Limite les transparences et les ombres',
 			'compte.lisibiliteDetail' => 'La taille du texte suit le réglage de votre appareil.',
 			'compte.langueRegion' => 'Langue et région',
+			'compte.langueCourriels.titre' => 'Langue des e-mails et des messages',
+			'compte.langueCourriels.ligneDetail' => 'Choisir la langue dans laquelle la direction vous écrit',
+			'compte.langueCourriels.sousTitre' => 'Les e-mails de l\'académie et les messages de la direction vous arrivent dans cette langue. Un message écrit dans une autre langue est traduit automatiquement.',
+			'compte.langueCourriels.choix' => 'Votre langue',
+			'compte.langueCourriels.parDefaut' => 'Sans choix de votre part, tout vous arrive en français.',
+			'compte.langueCourriels.optionDetail' => ({required Object langue}) => 'Vous recevez les e-mails et les messages en ${langue}.',
+			'compte.langueCourriels.enregistrer' => 'Enregistrer la langue',
+			'compte.langueCourriels.retour.enregistre' => ({required Object langue}) => 'C\'est enregistré. Les prochains e-mails et messages vous arrivent en ${langue}.',
+			'compte.langueCourriels.retour.refusee' => 'Cette langue n\'est plus proposée. Choisissez-en une autre dans la liste.',
+			'compte.langueCourriels.retour.refus' => 'Seule une personne connectée avec son profil peut choisir sa langue. Reconnectez-vous, puis réessayez.',
+			'compte.langueCourriels.retour.echec' => 'Le changement n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Réessayez ; votre langue précédente reste en place tant qu\'il n\'est pas confirmé.',
+			'compte.langueCourriels.retour.horsLigne' => 'Rien n\'est enregistré : le réseau est absent. Réessayez dès son retour.',
+			'compte.langueCourriels.erreurLangues' => 'Les langues n\'ont pas pu être chargées. Réessayez.',
+			'compte.langueCourriels.sansDonnees' => 'Les langues n\'ont pas pu être chargées',
+			'compte.langueCourriels.vide' => 'Aucune langue n\'est proposée pour le moment. Vos e-mails et vos messages restent en français.',
+			'compte.langueCourriels.indisponibleTitre' => 'Choix de la langue indisponible',
+			'compte.langueCourriels.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
 			'compte.francaisDetail' => 'Langue de l\'interface',
 			'compte.actif' => 'Actif',
 			'compte.arabe' => 'Arabe',
@@ -47287,6 +47769,8 @@ extension on Traductions {
 			'historique.seance.horaire' => 'Horaire',
 			'historique.seance.dureePrevue' => 'Durée prévue',
 			'historique.seance.classe' => 'Classe',
+			_ => null,
+		} ?? switch (path) {
 			'historique.seance.enseignant' => 'Enseignant',
 			'historique.seance.presence' => 'Présence',
 			'historique.seance.arrivee' => 'Arrivée',
@@ -47801,6 +48285,8 @@ extension on Traductions {
 			'enseignant.signalement.categories.presence' => 'Présence',
 			'enseignant.signalement.categories.technique' => 'Technique',
 			'enseignant.signalement.categories.changement' => 'Changement',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.signalement.categories.autre' => 'Autre',
 			'enseignant.signalement.details' => 'Détails internes',
 			'enseignant.signalement.detailsAide' => 'Lu par l\'équipe de l\'académie seulement.',
@@ -48315,6 +48801,8 @@ extension on Traductions {
 			'enseignant.revenus.classeColonne' => 'Classe',
 			'enseignant.revenus.type' => 'Type',
 			'enseignant.revenus.typeEnfants' => 'Enfants',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.revenus.typeDebutants' => 'Enfants débutants',
 			'enseignant.revenus.typeAdultes' => 'Adultes',
 			'enseignant.revenus.remplacement' => 'Remplacement',
@@ -48829,6 +49317,8 @@ extension on Traductions {
 			'tc.classe.rappel.recu' => 'Le professeur vous appelle',
 			'tc.classe.rappel.echec' => 'Le rappel est resté sans réponse du réseau. Réessayez dans un instant.',
 			'tc.classe.rappel.echecDroit' => 'Votre accès à cette séance ne permet pas d\'appeler un élève',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.rappel.cooldown' => ({required Object secondes}) => 'Déjà appelé. À nouveau dans ${secondes} s',
 			'tc.classe.recitation.titre' => 'Récitation',
 			'tc.classe.recitation.actif' => ({required Object prenom}) => '${prenom} récite',
@@ -49343,6 +49833,8 @@ extension on Traductions {
 			'adulte.reprise.titre' => 'Demande de reprise du foyer',
 			'adulte.reprise.explication' => 'Utilisez cette démarche si le titulaire du foyer est décédé. La demande sera signalée au compte concerné et examinée par l\'administration.',
 			'adulte.reprise.reprisTitre' => 'Ce qui sera repris',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.reprise.repris.profils' => 'Les profils mineurs existants',
 			'adulte.reprise.repris.composition' => 'La composition future du foyer selon les règles actives',
 			'adulte.reprise.repris.paiements' => 'Les paiements futurs du foyer',
@@ -49857,6 +50349,8 @@ extension on Traductions {
 			'com.socle.navigation.communaute' => _root.com.socle.lexique.communaute,
 			'com.socle.navigation.communications' => 'Communications',
 			'com.socle.navigation.communicationsDetail' => 'Annonces, modération et messages des Classes',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.navigation.ongletAnnonces' => 'Annonces',
 			'com.socle.navigation.ongletModeration' => 'Modération',
 			'com.socle.navigation.ongletMessages' => _root.com.socle.lexique.messages,
@@ -50371,6 +50865,8 @@ extension on Traductions {
 			'com.studio.demo.f.canalClotureDetail' => 'Préparation de la clôture mensuelle',
 			'com.studio.demo.f.canalDirection' => 'Direction stratégique',
 			'com.studio.demo.f.canalDirectionDetail' => 'Orientations de la direction',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.demo.f.messagePlanning' => 'Bonjour à toute l\'équipe. Voici le planning du prochain trimestre, dites-moi si quelque chose ne va pas.',
 			'com.studio.demo.f.messageSupports' => 'Je mets à jour les supports du niveau 2 et on fait le point demain.',
 			'com.studio.demo.f.messageMerci' => 'Merci à tous pour la semaine.',
@@ -50885,6 +51381,8 @@ extension on Traductions {
 			'comptable.paiements.filtres.prets' => 'Prêts',
 			'comptable.paiements.filtres.infos' => 'Infos manquantes',
 			'comptable.paiements.filtres.verification' => 'Vérification',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.filtres.validation' => 'Validation',
 			'comptable.paiements.filtres.retard' => 'En retard',
 			'comptable.paiements.filtres.classe' => 'Classe',
@@ -51399,6 +51897,8 @@ extension on Traductions {
 			'comptable.direction.corrigezChamps' => 'Corrigez les champs signalés pour enregistrer.',
 			'comptable.direction.enregistree' => 'Nouvelle version enregistrée.',
 			'comptable.direction.erreurEnregistrement' => 'Nous ne savons pas si cette version a été enregistrée. Relisez la version en vigueur, puis réessayez.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.enregistrementIndisponible' => 'L\'enregistrement n\'est pas encore disponible. Réessayez plus tard.',
 			'comptable.direction.historique' => 'Historique des versions',
 			'comptable.direction.historiqueVide' => 'Aucune version avant celle-ci.',
@@ -51913,6 +52413,8 @@ extension on Traductions {
 			'avis.form.texte.erreur' => 'Écrivez entre 20 et 1500 caractères.',
 			'avis.form.accord.libelle' => 'J\'accepte que cet avis, mon nom affiché, mon pays et la date soient publiés sur le site de Rewayah Academy.',
 			'avis.form.accord.erreur' => 'Acceptez la publication en cochant la case, sinon votre avis ne peut pas être envoyé.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.lecture' => ({required Object courriel}) => 'Votre avis sera lu par la direction avant d\'être publié. Pour le faire retirer plus tard, écrivez à ${courriel}.',
 			'avis.form.regles.titre' => 'Ce que la direction publie',
 			'avis.form.regles.intro' => 'Un avis respectueux est publié, même quand il est critique. La direction ne modifie jamais votre texte. Elle refuse seulement un avis qui contient :',
@@ -52039,6 +52541,88 @@ extension on Traductions {
 			'avis.admin.liens.vide' => 'Aucun lien pour le moment. Créez-en un pour recueillir des avis.',
 			'avis.admin.liens.erreur' => 'Les liens n\'ont pas pu être chargés. Réessayez.',
 			'avis.admin.liens.sansDonnees' => 'Les liens n\'ont pas pu être chargés',
+			'courriels.admin.titre' => 'E-mails',
+			'courriels.admin.sousTitre' => 'Écrivez à une personne et suivez les e-mails qui partent de l\'académie.',
+			'courriels.admin.outil' => 'E-mails',
+			'courriels.admin.outilDetail' => 'Écrire un e-mail, suivre les envois, voir les adresses d\'envoi',
+			'courriels.admin.sections.libelle' => 'Sections des e-mails',
+			'courriels.admin.sections.ecrire' => 'Écrire',
+			'courriels.admin.sections.file' => 'Envois',
+			'courriels.admin.sections.adresses' => 'Adresses d\'envoi',
+			'courriels.admin.refuse' => 'Seule la direction connectée écrit et suit les e-mails. Reconnectez-vous avec le bon compte, puis réessayez.',
+			'courriels.admin.indisponibleTitre' => 'E-mails indisponibles',
+			'courriels.admin.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
+			'courriels.admin.ecrire.titre' => 'Nouvel e-mail',
+			'courriels.admin.ecrire.intro' => 'L\'e-mail est mis en file, puis part de l\'adresse de sa catégorie, dans la minute. Il n\'est envoyé que lorsque la liste des envois affiche Envoyé.',
+			'courriels.admin.ecrire.adresse' => 'Adresse du destinataire',
+			'courriels.admin.ecrire.adresseAide' => 'Une seule adresse. Un compte d\'enfant ne reçoit jamais d\'e-mail.',
+			'courriels.admin.ecrire.categorie' => 'Catégorie',
+			'courriels.admin.ecrire.categorieAide' => 'Elle décide de l\'adresse d\'envoi et de la boîte qui reçoit les réponses.',
+			'courriels.admin.ecrire.partDe' => ({required Object adresse}) => 'Part de ${adresse}',
+			'courriels.admin.ecrire.desinscription' => 'Chaque message porte un lien de désinscription.',
+			'courriels.admin.ecrire.sujet' => 'Sujet',
+			'courriels.admin.ecrire.sujetAide' => '120 caractères au plus.',
+			'courriels.admin.ecrire.corps' => 'Message',
+			'courriels.admin.ecrire.corpsAide' => 'Texte simple, 5000 caractères au plus. Une ligne vide fait un nouveau paragraphe.',
+			'courriels.admin.ecrire.traduction' => 'Chaque destinataire le reçoit dans sa langue : le message est traduit automatiquement à l\'envoi.',
+			'courriels.admin.ecrire.envoyer' => 'Envoyer le message',
+			'courriels.admin.ecrire.erreurCategories' => 'Les catégories n\'ont pas pu être chargées. Réessayez.',
+			'courriels.admin.ecrire.sansDonneesCategories' => 'Les catégories n\'ont pas pu être chargées',
+			'courriels.admin.ecrire.pasDeCategorie' => 'Aucune catégorie n\'est active : impossible d\'écrire pour le moment.',
+			'courriels.admin.ecrire.champ.adresse' => 'Entrez une adresse e-mail valide.',
+			'courriels.admin.ecrire.champ.categorie' => 'Choisissez une catégorie.',
+			'courriels.admin.ecrire.champ.sujet' => 'Donnez un sujet de 1 à 120 caractères.',
+			'courriels.admin.ecrire.champ.corps' => 'Écrivez un message de 1 à 5000 caractères.',
+			'courriels.admin.ecrire.champ.destinataireExclu' => 'Cette personne ne peut pas recevoir cet e-mail : compte d\'enfant ou désinscription.',
+			'courriels.admin.ecrire.retour.misEnFile' => 'Envoi dans la minute. Suivez-le dans la liste des envois.',
+			'courriels.admin.ecrire.retour.voir' => 'Voir les envois',
+			'courriels.admin.ecrire.retour.refus' => 'Seule la direction connectée peut écrire un e-mail.',
+			'courriels.admin.ecrire.retour.echec' => 'L\'envoi n\'est pas confirmé. Regardez la liste des envois avant de recommencer : le même e-mail ne sera pas mis en file deux fois.',
+			'courriels.admin.ecrire.retour.horsLigne' => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.',
+			'courriels.admin.file.filtre.tous' => 'Tous',
+			'courriels.admin.file.filtre.enAttente' => 'En file',
+			'courriels.admin.file.filtre.envoi' => 'En cours d\'envoi',
+			'courriels.admin.file.filtre.envoye' => 'Envoyés',
+			'courriels.admin.file.filtre.echec' => 'Non envoyés',
+			'courriels.admin.file.filtre.annule' => 'Annulés',
+			'courriels.admin.file.statut.enAttente' => 'En file',
+			'courriels.admin.file.statut.envoi' => 'En cours d\'envoi',
+			'courriels.admin.file.statut.envoye' => 'Envoyé',
+			'courriels.admin.file.statut.echec' => 'Non envoyé',
+			'courriels.admin.file.statut.annule' => 'Annulé',
+			'courriels.admin.file.origine.auto' => 'Automatique',
+			'courriels.admin.file.origine.manuel' => 'Manuel',
+			'courriels.admin.file.messageAuto' => 'Message automatique',
+			'courriels.admin.file.champs.destinataire' => 'À',
+			'courriels.admin.file.champs.categorie' => 'Catégorie',
+			'courriels.admin.file.champs.origine' => 'Origine',
+			'courriels.admin.file.champs.creeLe' => 'Mis en file le',
+			'courriels.admin.file.champs.envoyeLe' => 'Envoyé le',
+			'courriels.admin.file.champs.tentatives' => 'Essais',
+			'courriels.admin.file.champs.motifEchec' => 'Dernière erreur',
+			'courriels.admin.file.champs.langue' => 'Langue',
+			'courriels.admin.file.actualiser' => 'Actualiser',
+			'courriels.admin.file.reessayer' => 'Remettre en file',
+			'courriels.admin.file.vide' => 'Aucun e-mail dans cette liste.',
+			'courriels.admin.file.erreur' => 'Les envois n\'ont pas pu être chargés. Réessayez.',
+			'courriels.admin.file.sansDonnees' => 'Les envois n\'ont pas pu être chargés',
+			'courriels.admin.file.retour.relance' => 'Remis en file. Envoi dans la minute.',
+			'courriels.admin.file.retour.introuvable' => 'Cet e-mail n\'est plus à relancer. La liste est mise à jour.',
+			'courriels.admin.file.retour.echec' => 'La remise en file n\'est pas confirmée. La liste est relue : vérifiez l\'état de l\'e-mail avant de recommencer.',
+			'courriels.admin.file.retour.refus' => 'Seule la direction connectée peut relancer un e-mail.',
+			'courriels.admin.file.retour.horsLigne' => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.',
+			'courriels.admin.adresses.intro' => 'Chaque catégorie part de son adresse, et les réponses arrivent dans la boîte indiquée. Cette liste se lit ici ; elle ne se modifie pas dans l\'application.',
+			'courriels.admin.adresses.champs.expediteur' => 'Part de',
+			'courriels.admin.adresses.champs.nom' => 'Nom affiché',
+			'courriels.admin.adresses.champs.reponses' => 'Réponses à',
+			'courriels.admin.adresses.champs.type' => 'Type',
+			'courriels.admin.adresses.essentielle' => 'Lié au service, sans désinscription',
+			'courriels.admin.adresses.facultative' => 'Avec lien de désinscription',
+			'courriels.admin.adresses.active' => 'Active',
+			'courriels.admin.adresses.coupee' => 'Coupée',
+			'courriels.admin.adresses.vide' => 'Aucune catégorie pour le moment.',
+			'courriels.admin.adresses.erreur' => 'Les adresses d\'envoi n\'ont pas pu être chargées. Réessayez.',
+			'courriels.admin.adresses.sansDonnees' => 'Les adresses d\'envoi n\'ont pas pu être chargées',
 			_ => null,
 		};
 	}

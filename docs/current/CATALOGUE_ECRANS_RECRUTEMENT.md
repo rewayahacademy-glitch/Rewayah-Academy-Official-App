@@ -1345,7 +1345,7 @@ ce qui est tapé d'abord), `Routes.inscriptionTelephone`, `lib/main.dart`.
   partir du fichier, jamais redessiné ; trait à l'épaisseur du fichier), à 1,85 fois la largeur
   de la carte, **coupé par les bords**, en blanc à **7 %** : un décor tamisé (M-28), jamais
   retourné, ni en arabe. **Le portail, la lumière et les ténèbres** (directeur, 23/10/2026,
-  exception datée au « aucun dégradé » : M-29) : une petite porte en arche, debout sur une ligne
+  exception datée au « aucun dégradé » : M-33) : une petite porte en arche, debout sur une ligne
   de sol (le seuil), avec son cadre en arche d'un trait fin (aplat) et du vide autour, son cadre
   sur la marge du texte. L'ouverture est la zone la plus claire de la scène (un blanc pur au cœur, qui
   retombe vers la teinte de la variante) avec un halo qui déborde sur son cadre et sur le mur. Le **faisceau** qu'elle pose au sol **part exactement

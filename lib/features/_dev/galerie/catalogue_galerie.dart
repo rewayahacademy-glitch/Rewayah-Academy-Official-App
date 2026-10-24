@@ -96,6 +96,7 @@ import '../../../core/widgets/pied_de_liste.dart';
 import '../../../core/widgets/pile_cartes.dart';
 import '../../../core/widgets/pin_pad.dart';
 import '../../../core/widgets/point_rappel.dart';
+import '../../../core/widgets/porte_lumiere.dart';
 import '../../../core/widgets/pressable.dart';
 import '../../../core/widgets/puce_filtre_actif.dart';
 import '../../../core/widgets/raccourci_tactile.dart';
@@ -2218,6 +2219,26 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
               hauteur: AppSpacing.xxxl,
             ),
           ),
+        ),
+      ),
+    ],
+  ),
+
+  // Page introuvable (directeur, 23/10/2026) : la porte du logo et sa lumiere,
+  // une scene d'attente ; meme famille que la 404 du site public.
+  EntreeGalerie(
+    nom: 'PorteLumiere',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'porte et faisceau',
+        (BuildContext _) => const PorteLumiere(),
+      ),
+      EtatGalerie(
+        'en arabe : meme dessin, jamais retourne',
+        (BuildContext _) => const Directionality(
+          textDirection: TextDirection.rtl,
+          child: PorteLumiere(),
         ),
       ),
     ],
