@@ -988,6 +988,7 @@
       },
       "ecriture": {
         "palette": "أدوات الكتابة",
+        "toutEffacer": "مسح الكل",
         "terminer": "إنهاء",
         "couleur": "اللون",
         "couleurAide": "اللون يدل على قصد الخط، للفصل كله.",

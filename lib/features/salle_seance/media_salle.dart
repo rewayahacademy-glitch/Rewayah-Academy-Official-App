@@ -49,6 +49,7 @@ class PorteeMediaSalle extends InheritedWidget {
     this.onBasculerScene,
     this.actionScene,
     this.pastille,
+    this.boutonEleves,
     this.alerte,
     this.pleinCadre = false,
     this.eleves,
@@ -71,6 +72,11 @@ class PorteeMediaSalle extends InheritedWidget {
   /// Le bouton de coin de la scene au premier plan, a la place de
   /// « Revenir a la page » : l'enseignant sans page ouvre le Coran.
   final ({String libelle, VoidCallback onPress})? actionScene;
+
+  /// Standard des commandes d'appel (24/10/2026) : au telephone, le bouton
+  /// rond « Eleves » de l'enseignant (icone personnes, pastille du nombre),
+  /// en haut a droite a cote de la vignette, ou `null`.
+  final ({int nombre, VoidCallback onPress})? boutonEleves;
 
   /// S0.2 : la pastille posee dans la ligne de l'en-tete (la presence de
   /// l'eleve, section 6.6), ou `null`.
@@ -119,7 +125,6 @@ class PorteeMediaSalle extends InheritedWidget {
     if (portee == null || identite == null) return null;
     return portee.video?.call(identite);
   }
-
 
   // Les pistes changent sans que les rappels changent : la portee se relit
   // a chaque reconstruction de `/salle`.

@@ -755,16 +755,18 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       pleinCadre: true,
       // Au telephone, l'enseignant n'a pas de colonne : « Eleves » ouvre la
       // presence (J3) et le roster (fiche, rappel) en feuille.
-      pastille: enseignant
-          ? (MediaQuery.sizeOf(context).shortestSide < AppGabarit.seuilTablette
-                ? LienFleche(
-                    key: const ValueKey<String>('salle-eleves'),
-                    libelle: t.salle.seance.eleves,
-                    onPress: () => unawaited(_voirEleves(lignes: lignes)),
-                    fleche: false,
-                  )
-                : null)
-          : _PastillePresence(mienne: mienne),
+      pastille: enseignant ? null : _PastillePresence(mienne: mienne),
+      // Standard des commandes d'appel : au telephone, l'enseignant n'a pas
+      // de colonne ; le bouton rond « Eleves » (en haut a droite) ouvre la
+      // presence (J3) et le roster (fiche, rappel) en feuille.
+      boutonEleves:
+          enseignant &&
+              MediaQuery.sizeOf(context).shortestSide < AppGabarit.seuilTablette
+          ? (
+              nombre: lignes.length,
+              onPress: () => unawaited(_voirEleves(lignes: lignes)),
+            )
+          : null,
       eleves: enseignant
           ? _ElevesSeance(
               lignes: lignes,

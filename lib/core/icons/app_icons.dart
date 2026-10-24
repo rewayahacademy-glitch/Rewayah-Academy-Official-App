@@ -622,6 +622,20 @@ abstract final class AppIcons {
     IconData(0xe4ea, fontFamily: _actif),
   );
 
+  /// S0.3b (24/10/2026) : « Tout effacer » de la palette du tableau.
+  /// Phosphor `trash` (0xe4a6).
+  static const AppIcon toutEffacer = AppIcon._(
+    IconData(0xe4a6, fontFamily: _repos),
+    IconData(0xe4a6, fontFamily: _actif),
+  );
+
+  /// Standard des commandes d'appel (24/10/2026) : « Plus » de la pilule
+  /// d'appel, qui ouvre les Commandes. Phosphor `dots-three` (0xe1fe).
+  static const AppIcon plusCommandes = AppIcon._(
+    IconData(0xe1fe, fontFamily: _repos),
+    IconData(0xe1fe, fontFamily: _actif),
+  );
+
   /// Bouton Eleves de la salle : Phosphor `users-three` (0xe68e).
   static const AppIcon eleves = AppIcon._(
     IconData(0xe68e, fontFamily: _repos),

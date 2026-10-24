@@ -438,3 +438,53 @@ class _Epaisseur extends StatelessWidget {
     ),
   );
 }
+
+/// S0.3b (pilote, 24/10/2026) : « Tout effacer » de la palette du tableau.
+/// Chaque trait de la surface montree est retire du depot et le retrait part
+/// a la classe ; l'ensemble entre dans l'historique comme un geste de gomme,
+/// qu'« Annuler » defait.
+Future<void> toutEffacerSurLaSurface(WidgetRef ref, VueSeance vue) async {
+  final ContentPosition? surface = vue.ancrageSurface;
+  if (surface == null) return;
+  final PortAnnotations depot;
+  try {
+    depot = ref.read(portAnnotationsProvider);
+  } on Object {
+    return;
+  }
+  final ControleurHistorique historique = ref.read(
+    historiquePersonnelProvider.notifier,
+  );
+  final Set<String> dejaRetires = ref.read(historiquePersonnelProvider).retires;
+  final EtatOutils etat = ref.read(etatOutilsProvider);
+  final List<TraitVectoriel> retires = <TraitVectoriel>[];
+  for (final TraitVectoriel trait in traitsDeLaSurface(
+    ref,
+    vue,
+    suivre: false,
+  )) {
+    if (dejaRetires.contains(trait.id)) continue;
+    historique.masquer(trait.id);
+    try {
+      final AnnotationLayer? couche = await depot.couche(
+        resourceId: trait.ancrage.resourceId,
+        portee: etat.portee,
+      );
+      if (couche == null) {
+        historique.restaurer(trait.id);
+        continue;
+      }
+      await depot.retirerTrait(couche.id, trait.id);
+      retires.add(trait);
+      emettreEcriture(
+        ref,
+        vue,
+        EvenementTraitRetire(coucheId: couche.id, traitId: trait.id),
+      );
+    } on Object {
+      // Le depot n'a pas retire le trait : il revient (aucun faux succes).
+      historique.restaurer(trait.id);
+    }
+  }
+  historique.traitsGommes(retires, surface: surface, portee: etat.portee);
+}

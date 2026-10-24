@@ -31,9 +31,12 @@ import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_enseignant/page_coran_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart'
+    show DeclencheurCommandes;
 import 'package:rewayah_academy/features/salle_seance/ecriture_seance.dart'
     show diffusionEcritureProvider;
 import 'package:rewayah_academy/features/salle_seance/media_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/palette_tableau.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/tc_mushaf/police_mushaf.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/indicateur_observation.dart';
@@ -2258,6 +2261,156 @@ void main() {
         );
         await capturerVue(tester, 's0-3-tableau-enseignant-${taille.key}');
       });
+    }
+  }, skip: sautSansCapture);
+
+  // Standard des commandes d'appel (directeur, 24/10/2026) : Google Meet
+  // (Material 3). Captures std-* : 390 portrait (eleve, enseignant, tableau
+  // ouvert) et 1366 (enseignant, tableau ouvert), clair et sombre. Verifie
+  // sur le rendu : aucun texte sous un bouton de la pilule, une seule rangee.
+  group('Standard des commandes d appel : captures std', () {
+    setUpAll(() async {
+      await chargerPolicesDuDepot();
+      await chargerPoliceMadina15();
+    });
+    for (final ThemeMode theme in <ThemeMode>[
+      ThemeMode.light,
+      ThemeMode.dark,
+    ]) {
+      for (final (String cas, Size taille, bool enseignant, bool tableau)
+          in <(String, Size, bool, bool)>[
+            ('eleve-390', const Size(390, 844), false, false),
+            ('enseignant-390', const Size(390, 844), true, false),
+            ('enseignant-tableau-390', const Size(390, 844), true, true),
+            ('enseignant-1366', const Size(1366, 768), true, false),
+            ('enseignant-tableau-1366', const Size(1366, 768), true, true),
+          ]) {
+        final String nom =
+            'std-$cas-${theme == ThemeMode.light ? 'clair' : 'sombre'}';
+        testWidgets(nom, (WidgetTester tester) async {
+          masquerRubanDebug();
+          tester.view.physicalSize = taille;
+          tester.view.devicePixelRatio = 1;
+          addTearDown(tester.view.reset);
+          final FauxMoteurSalle moteur = FauxMoteurSalle();
+          await _monterSalle(
+            tester,
+            themeMode: theme,
+            surcharges: <Override>[
+              ..._surcharges(
+                video: FauxServiceVideo(
+                  acces0: _acces(
+                    enseignant ? 'teacher' : 'student',
+                    camera: true,
+                  ),
+                ),
+                moteur: moteur,
+                preVol: FauxServicePreVol(),
+                role: enseignant ? AppRole.teacher : AppRole.student,
+                presence: FauxServicePresence(
+                  lignes: <PresenceParticipant>[
+                    _presence(
+                      EtatPresence.presente,
+                      profilId: enseignant ? 'p1' : 't1',
+                      prenom: 'Omar',
+                      role: 'teacher',
+                    ),
+                    _presence(
+                      EtatPresence.presente,
+                      profilId: enseignant ? 'e1' : 'p1',
+                      prenom: 'Hakim',
+                    ),
+                  ],
+                ),
+              ),
+              ...surchargesMadina15(page: 293),
+              pageCoranProvider.overrideWith(
+                (Ref _, int n) async => PageCoran(
+                  numero: n,
+                  versets: <VersetCoran>[
+                    VersetCoran(
+                      sourateNumero: 18,
+                      numero: 1,
+                      texte: 'verset',
+                      pageNumero: n,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+          moteur.publier(<ParticipantSalle>[
+            _personne(
+              identite: enseignant ? 'p1' : 't1',
+              role: 'teacher',
+              nom: 'Omar',
+              local: enseignant,
+              micro: true,
+              camera: true,
+            ),
+            _personne(
+              identite: enseignant ? 'e1' : 'p1',
+              role: 'student',
+              nom: 'Hakim',
+              local: !enseignant,
+              micro: true,
+            ),
+          ]);
+          final ContenuPresente contenu = ContenuPresente(
+            page: 293,
+            sourate: 18,
+            verset: 1,
+            presentePar: 'p1',
+            emisLe: DateTime.now(),
+          );
+          if (enseignant) {
+            await moteur.presenterContenu(contenu);
+          } else {
+            moteur.publierContenu(contenu);
+          }
+          await tester.pumpAndSettle();
+          if (tableau) {
+            await tester.tap(
+              find.byKey(const ValueKey<String>('bouton-tableau')),
+            );
+            await tester.pumpAndSettle();
+            expect(find.byKey(PaletteTableau.cle), findsOneWidget);
+            expect(
+              find.text(t.salle.seance.surface.aucunSupport),
+              findsNothing,
+            );
+          }
+          // Aucun texte sous un bouton : la pilule ne porte que des icones.
+          final Finder pilule = find.byKey(
+            const ValueKey<String>('dock-seance'),
+          );
+          expect(pilule, findsOneWidget);
+          expect(
+            find.descendant(of: pilule, matching: find.byType(Text)),
+            findsNothing,
+          );
+          // Une seule rangee : tous les boutons ont le meme centre vertical.
+          final List<double> centres = <double>[
+            for (final Element e
+                in find
+                    .descendant(
+                      of: pilule,
+                      matching: find.byKey(
+                        const ValueKey<String>('disque-appel'),
+                      ),
+                    )
+                    .evaluate())
+              tester
+                  .getCenter(find.byElementPredicate((Element x) => x == e))
+                  .dy,
+          ];
+          expect(centres, isNotEmpty);
+          expect(centres.toSet().length, 1);
+          // Aucun declencheur hors de la pilule.
+          expect(find.byKey(DeclencheurCommandes.cle), findsNothing);
+          await capturerVue(tester, nom);
+        });
+      }
     }
   }, skip: sautSansCapture);
 }

@@ -429,6 +429,7 @@
       },
       "ecriture": {
         "palette": "Outils d'écriture",
+        "toutEffacer": "Tout effacer",
         "terminer": "Terminer",
         "couleur": "Couleur",
         "couleurAide": "La couleur dit l'intention du trait, pour toute la classe.",

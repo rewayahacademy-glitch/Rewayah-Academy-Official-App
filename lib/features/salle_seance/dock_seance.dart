@@ -1,23 +1,24 @@
 // Le dock de la salle de seance (I-4) et son bouton unique.
 //
-// Un seul style de bouton : des cercles de meme diametre, icone au centre,
-// libelle dessous. Quitter est un disque plein d'alerte et passe toujours par
-// une confirmation.
-
-import 'dart:math' as math;
+// Standard des commandes d'appel (directeur, 24/10/2026, docs/current/
+// SALLE-PLAN-2026-10-24.md) : Google Meet sur Android et sur le web
+// (Material 3). UNE pilule flottante translucide, une rangee de boutons ronds
+// identiques (56 au telephone, 48 ailleurs ; ecart 12, 16 ailleurs), ICONES
+// SEULES : le libelle vit dans l'infobulle et la semantique. Ordre fixe :
+// micro, camera, tableau, plus, Quitter. Actif : rempli sombre ; coupe :
+// rempli rouge, icone barree ; tableau ouvert : rempli primaire ; Quitter :
+// pilule rouge plus large, toujours confirmee. Remplace dans la salle le mot
+// d'etat sous le bouton (ETATS-BTN-1, ETATS-MA-1, MA-CMD-1).
 
 import 'package:flutter/material.dart';
 
-import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
-import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_gabarit.dart';
-import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/commande_salle.dart';
+import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import 'actions_seance.dart';
 import 'barre_support.dart' show NomsFocus, nomsFocus;
@@ -67,18 +68,20 @@ Future<void> confirmerQuitterSeance(
   if (confirme) quitter();
 }
 
-/// Le diametre commun des boutons d'appel : celui des commandes rondes du
-/// core ([diametreCommandeSalle]). Tous les cercles d'un dock l'ont.
+/// Le diametre des boutons d'appel du standard : 56 au telephone, 48 sur
+/// tablette et ordinateur.
 double diametreBoutonAppel(BuildContext context) =>
-    diametreCommandeSalle(context);
+    AppGabarit.de(context) == Gabarit.mobile
+    ? AppTouchTarget.standard + AppSpacing.sm
+    : AppTouchTarget.standard;
 
-/// Un bouton du dock : cercle, icone, libelle dessous. Le dessin vit dans
-/// [CommandeSalle] (core), partage avec la salle ; ce widget n'ajoute que la
-/// correspondance des fonds du dock.
+/// Un bouton de la pilule d'appel : rond, icone seule, rempli selon son etat
+/// (standard Meet). Le dessin vit dans [BoutonIcone] (forme `appel`, core).
 ///
-/// [bascule] renseigne : c'est une bascule (Micro, Camera), son etat se lit
-/// par le disque (plein / contour), l'icone et le mot d'etat [libelle]
-/// (ETATS-BTN-1).
+/// [bascule] renseigne : c'est une bascule (micro, camera, tableau) ; eteinte,
+/// elle passe au rouge ([TonAppel.coupe]), sauf [ouvertPrimaire] (tableau :
+/// ferme sombre, ouvert primaire). [libelle] (l'etat, « Micro coupé ») est
+/// l'infobulle ; le lecteur d'ecran lit l'acte puis l'etat.
 class BoutonAppel extends StatelessWidget {
   const BoutonAppel({
     required this.icone,
@@ -88,15 +91,11 @@ class BoutonAppel extends StatelessWidget {
     this.fond = FondBoutonAppel.surface,
     this.actif = true,
     this.bascule,
+    this.ouvertPrimaire = false,
     this.focusNode,
     this.selectionne,
-    this.motGarde = false,
     super.key,
   });
-
-  /// TB-2 : le mot reste sous l'icone dans un dock compact (Quitter), voir
-  /// [CommandeSalle.motGarde].
-  final bool motGarde;
 
   /// Le noeud de focus du bouton : la salle y rend le focus a la fermeture
   /// d'une feuille ouverte par ce bouton (micro bloque, W2 2.4.3).
@@ -105,38 +104,53 @@ class BoutonAppel extends StatelessWidget {
   /// Le bouton se dit « selectionne » (son panneau est ouvert).
   final bool? selectionne;
 
-  final IconData icone;
+  final AppIcon icone;
   final String libelle;
   final String? libelleSemantique;
   final VoidCallback onPress;
   final FondBoutonAppel fond;
 
   /// Faux : le bouton reste rendu mais ne repond pas (Micro et Camera
-  /// pendant la reconnexion, lot CL-7, UX_REVIEW U1).
+  /// pendant la reconnexion, lot CL-7, UX_REVIEW U1). Aucun gris (K-56) :
+  /// sa couleur reste celle de son etat.
   final bool actif;
 
   /// `null` : bouton ordinaire. Sinon l'etat de la bascule (vrai : active).
   final bool? bascule;
 
+  /// Une bascule qui, active, se remplit de la couleur primaire et, inactive,
+  /// reste sombre (le tableau) au lieu de passer au rouge.
+  final bool ouvertPrimaire;
+
   @override
-  Widget build(BuildContext context) => CommandeSalle(
-    icone: icone,
-    libelle: libelle,
-    libelleSemantique: libelleSemantique,
-    onPress: onPress,
-    actif: actif,
-    bascule: bascule,
-    focusNode: focusNode,
-    selectionne: selectionne,
-    motGarde: motGarde,
-    fond: switch (fond) {
-      FondBoutonAppel.surface => FondCommande.surface,
-      FondBoutonAppel.alerte => FondCommande.alerte,
-      FondBoutonAppel.succes => FondCommande.succes,
-      FondBoutonAppel.primaire => FondCommande.primaire,
-      FondBoutonAppel.reseau => FondCommande.reseau,
-    },
-  );
+  Widget build(BuildContext context) {
+    final double diametre = diametreBoutonAppel(context);
+    final bool quitter = fond == FondBoutonAppel.alerte;
+    final TonAppel ton = switch (bascule) {
+      _ when quitter => TonAppel.quitter,
+      true when ouvertPrimaire => TonAppel.ouvert,
+      false when !ouvertPrimaire => TonAppel.coupe,
+      _ => TonAppel.actif,
+    };
+    final String semantique = libelleSemantique ?? libelle;
+    return BoutonIcone(
+      forme: FormeBoutonIcone.appel,
+      icone: icone,
+      tonAppel: ton,
+      diametre: diametre,
+      largeur: quitter ? diametre + AppSpacing.lg : null,
+      // L'acte puis l'etat pour une bascule (« Fermer le micro, Micro
+      // ouvert ») ; l'infobulle dit l'etat.
+      libelle: bascule != null && semantique != libelle
+          ? '$semantique, $libelle'
+          : semantique,
+      infobulle: libelle,
+      selectionne: selectionne,
+      focusNode: focusNode,
+      actif: actif,
+      onPress: onPress,
+    );
+  }
 }
 
 /// Le dock : les commandes de [VueSeance.commandesDock], dans l'ordre.
@@ -150,8 +164,13 @@ class DockSeance extends StatelessWidget {
     this.microOuvert = true,
     this.cameraAllumee = true,
     this.agrandi = false,
+    this.plus,
     super.key,
   });
+
+  /// Le bouton « Plus » ([BoutonPlusAppel]) quand il y a des Commandes a
+  /// ouvrir, sinon `null`.
+  final Widget? plus;
 
   final VueSeance vue;
   final ActionsSeance actions;
@@ -179,8 +198,7 @@ class DockSeance extends StatelessWidget {
         final VoidCallback? camera = actions.onCamera;
         if (camera == null) return null;
         return BoutonAppel(
-          icone:
-              (cameraAllumee ? AppIcons.camera : AppIcons.cameraCoupee).actif,
+          icone: (cameraAllumee ? AppIcons.camera : AppIcons.cameraCoupee),
           bascule: cameraAllumee,
           // Le mot d'etat sous l'icone (ETATS-BTN-1) ; la reconnexion garde
           // le nom de la commande, qu'elle dit indisponible.
@@ -200,7 +218,7 @@ class DockSeance extends StatelessWidget {
         final NomsFocus noms = nomsFocus(context, agrandi: agrandi);
         return BoutonAppel(
           key: const ValueKey<String>('bouton-agrandir'),
-          icone: noms.icone.repos,
+          icone: noms.icone,
           // Bascule a deux etats comme micro et camera (ETATS-BTN-1) : plein
           // quand le support occupe l'ecran, contour seul sinon, mot d'etat.
           bascule: agrandi,
@@ -213,7 +231,7 @@ class DockSeance extends StatelessWidget {
         if (reseau == null) return null;
         return BoutonAppel(
           key: const ValueKey<String>('bouton-reseau'),
-          icone: AppIcons.reseau.repos,
+          icone: AppIcons.reseau,
           libelle: t.salle.seance.reseau,
           fond: FondBoutonAppel.reseau,
           onPress: reseau,
@@ -226,7 +244,8 @@ class DockSeance extends StatelessWidget {
         // quand le tableau est ouvert, mot d'etat dessous.
         return BoutonAppel(
           key: const ValueKey<String>('bouton-tableau'),
-          icone: (ouvert ? AppIcons.annoter.actif : AppIcons.annoter.repos),
+          icone: AppIcons.annoter,
+          ouvertPrimaire: true,
           bascule: ouvert,
           libelle: ouvert
               ? t.salle.seance.tableauOuvert
@@ -240,11 +259,9 @@ class DockSeance extends StatelessWidget {
         final VoidCallback? quitter = actions.onQuitter;
         if (quitter == null) return null;
         return BoutonAppel(
-          icone: AppIcons.raccrocher.actif,
+          icone: AppIcons.raccrocher,
           libelle: t.salle.quitter,
           libelleSemantique: t.salle.seance.sortir,
-          // TB-2 : la sortie garde son mot, meme en dock compact (MA, 390).
-          motGarde: true,
           fond: FondBoutonAppel.alerte,
           onPress: () => confirmerQuitterSeance(
             context,
@@ -258,22 +275,13 @@ class DockSeance extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    final Gabarit gabarit = AppGabarit.de(context);
-    final bool large = gabarit == Gabarit.desktop;
+    final bool telephone = AppGabarit.de(context) == Gabarit.mobile;
     final String? texteCamera = vue.texteCameraInterdite;
     final Widget? statutCamera = texteCamera == null
         ? null
         : StatutCameraInterdite(texte: texteCamera);
-    final List<Widget> boutons = <Widget>[];
-    // Une bascule (Micro, Camera) porte son mot d'etat, Quitter son nom
-    // (TB-2) : leur case est plus large que celle d'une commande ordinaire
-    // (ETATS-BTN-1).
-    final List<bool> bascules = <bool>[];
-    // TB-2 : la place de Quitter dans [boutons] (son mot reste visible).
-    int indexQuitter = -1;
-    // TB-2 : Agrandir a quitte la barre de l'appel ; tant que le focus local
-    // est actif ([agrandi]), sa sortie « Reduire » y reste, avant Quitter
-    // (TB18 : la sortie du focus toujours atteignable, jusqu'a TB-4).
+    // TB-2 : tant que le focus local est actif ([agrandi]), sa sortie reste
+    // dans la pilule, avant Quitter.
     final List<CommandeDock> commandes = <CommandeDock>[
       for (final CommandeDock c in vue.commandesDock) ...<CommandeDock>[
         if (c == CommandeDock.quitter &&
@@ -283,206 +291,78 @@ class DockSeance extends StatelessWidget {
         c,
       ],
     ];
+    final List<Widget> boutons = <Widget>[];
     for (final CommandeDock commande in commandes) {
-      // Enseignant desktop (image CLV-06) : un filet vertical avant Quitter.
-      if (large &&
-          commande == CommandeDock.quitter &&
-          vue.quitterOuvreCahier &&
-          actions.onQuitter != null) {
-        boutons.add(_Separateur(hauteur: diametreBoutonAppel(context)));
-        bascules.add(false);
+      // Standard : « Plus » est DANS la pilule, juste avant Quitter, et ouvre
+      // les Commandes (Bibliotheque, Outils, Eleves).
+      if (commande == CommandeDock.quitter && plus != null) {
+        boutons.add(plus!);
       }
       final Widget? bouton = _bouton(context, commande);
-      if (bouton == null) continue;
-      if (commande == CommandeDock.quitter) indexQuitter = boutons.length;
-      boutons.add(bouton);
-      bascules.add(
-        commande == CommandeDock.micro ||
-            commande == CommandeDock.camera ||
-            commande == CommandeDock.tableau ||
-            commande == CommandeDock.quitter,
-      );
+      if (bouton != null) boutons.add(bouton);
     }
-    final AppColorPair fond = palette.surfaceRaised;
-    final BoxDecoration cadre = fond.decoration(
-      borderRadius: AppRadius.arrondiLg,
-      side: palette.borderHairline.asBorderSide(),
+    if (!commandes.contains(CommandeDock.quitter) && plus != null) {
+      boutons.add(plus!);
+    }
+    final double ecart = telephone ? AppSpacing.md : AppSpacing.lg;
+    final Widget dock = DecoratedBox(
+      key: const ValueKey<String>('dock-seance'),
+      decoration: palette.piluleSalle.decoration(
+        borderRadius: AppRadius.arrondiFull,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.sm),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          spacing: ecart,
+          children: boutons,
+        ),
+      ),
     );
-    final Widget dock;
-    if (large) {
-      // Guidee desktop (image CLV-05) : des disques bien separes, centres
-      // a ≈ 130 l'un de l'autre, dans une pilule de ≈ 555 de large.
-      // Chaque bouton tient une case de largeur egale, centree : l'ecart
-      // entre les centres ne depend pas de la longueur des libelles.
-      final bool aere = vue.dockColore;
-      // ETATS-MA-1 : au-dela de 130 %, en Mode Accessibilite, la case tient
-      // aussi le mot d'etat d'une bascule sur deux lignes, sans le couper.
-      final double caseAeree = math.max(
-        diametreBoutonAppel(context) + AppSpacing.titreEcran + AppSpacing.sm,
-        commandesSurDeuxRangees(context)
-            ? largeurCaseBasculeAvecMot(context) + AppSpacing.sm
-            : 0,
-      );
-      dock = DecoratedBox(
-        key: const ValueKey<String>('dock-seance'),
-        decoration: cadre,
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: aere ? AppSpacing.xl : AppSpacing.xxl,
-            vertical: AppSpacing.sm,
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            spacing: aere ? 0 : AppSpacing.xl,
-            children: aere
-                ? <Widget>[
-                    for (final Widget bouton in boutons)
-                      SizedBox(
-                        width: caseAeree,
-                        child: Center(child: bouton),
-                      ),
-                  ]
-                : boutons,
-          ),
-        ),
-      );
-    } else {
-      dock = DecoratedBox(
-        key: const ValueKey<String>('dock-seance'),
-        decoration: cadre,
-        child: Padding(
-          // MA-CMD-1 : dock plus mince en Mode Accessibilite.
-          padding: EdgeInsets.symmetric(
-            horizontal: AppSpacing.sm,
-            vertical: AppMetriques.of(context).mode == InterfaceMode.enfant
-                ? AppSpacing.xs
-                : AppSpacing.md,
-          ),
-          child: LayoutBuilder(
-            builder: (BuildContext contexte, BoxConstraints contraintes) {
-              // TB-2 (defaut TB-F, Quitter sans libelle) : le mot de Quitter
-              // ne se coupe jamais. Plus large que la part egale, il garde
-              // sa largeur ; les autres se partagent le reste.
-              final double motQuitter =
-                  indexQuitter < 0 || !motEtatVisible(contexte)
-                  ? 0
-                  : _largeurMot(contexte, t.salle.quitter);
-              final double partEgale = boutons.isEmpty
-                  ? 0
-                  : contraintes.maxWidth / boutons.length;
-              final bool quitterLarge =
-                  boutons.length > 1 && motQuitter > partEgale;
-              final Widget rangee = Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                // Chaque bouton prend une part egale ; le mot d'etat d'une
-                // bascule passe a la ligne dans sa part.
-                children: <Widget>[
-                  for (int i = 0; i < boutons.length; i++)
-                    if (quitterLarge && i == indexQuitter)
-                      SizedBox(width: motQuitter, child: boutons[i])
-                    else
-                      Expanded(child: boutons[i]),
-                ],
-              );
-              if (boutons.isEmpty) return rangee;
-              final double diametre = diametreBoutonAppel(contexte);
-              final double parCase = quitterLarge
-                  ? (contraintes.maxWidth - motQuitter) / (boutons.length - 1)
-                  : partEgale;
-              final bool serre = parCase < diametre + AppSpacing.sm;
-              final bool texteAgrandi =
-                  MediaQuery.textScalerOf(contexte).scale(1) > 1;
-              // MA-CMD-1 (directeur, 02/10/2026) : en Mode Accessibilite, a
-              // toute taille de texte, icones seules et compactes, disque a
-              // la cible tactile (le libelle reste lu et en infobulle).
-              // Annule le dock a libelles visibles de M1.
-              final bool accessibilite =
-                  AppMetriques.of(contexte).mode == InterfaceMode.enfant;
-              // ETATS-MA-1 (decision du 05/10/2026, WCAG 1.4.1) : au-dela
-              // de 130 %, une rangee unique n'a plus la place du mot d'etat ;
-              // les commandes passent sur deux rangees et les bascules
-              // gardent leur mot (« Micro ouvert », « Camera allumee »).
-              if (accessibilite &&
-                  commandesSurDeuxRangees(contexte) &&
-                  bascules.contains(true)) {
-                return CommandesSurDeuxRangees(
-                  commandes: boutons,
-                  diametre: AppTouchTarget.standard + AppSpacing.sm,
-                );
-              }
-              if (!serre && !texteAgrandi && !accessibilite) return rangee;
-              // EN-12 (17 d) : icone seule, libelle lu ; disque a la case
-              // moins un ecart, jamais sous la cible tactile.
-              // MA-CMD-1 : disque compact de 56 (cible de 48 et plus), pour
-              // que toutes les commandes tiennent sur une rangee a 390.
-              final double cible = accessibilite
-                  ? AppTouchTarget.standard + AppSpacing.sm
-                  : AppMetriques.of(contexte).cibleTactile;
-              // UX_REVIEW_04 n. 17 d, WCAG 1.4.10 : quand la part egale
-              // tombe sous la cible (320), les boutons ne se partagent plus
-              // la largeur ; ils passent sur deux lignes, en cases fixes, et
-              // chaque disque garde la cible tactile.
-              if (parCase < cible + AppSpacing.xs) {
-                return CommandeSalleCompacte(
-                  diametre: cible,
-                  child: Wrap(
-                    alignment: WrapAlignment.center,
-                    runSpacing: AppSpacing.sm,
-                    children: <Widget>[
-                      for (int i = 0; i < boutons.length; i++)
-                        SizedBox(
-                          width: bascules[i]
-                              ? largeurCaseCommande(contexte, bascule: true)
-                              : cible + AppSpacing.xs,
-                          child: Center(child: boutons[i]),
-                        ),
-                    ],
-                  ),
-                );
-              }
-              final double reduit = accessibilite
-                  ? cible
-                  : math.max(
-                      math.min(diametre, parCase - AppSpacing.xs),
-                      cible,
-                    );
-              return CommandeSalleCompacte(diametre: reduit, child: rangee);
-            },
-          ),
-        ),
-      );
-    }
-    if (statutCamera == null) return dock;
-    // Q-S1 (option par defaut), corrige apres T-S5 : a toutes les tailles,
-    // le statut est une ligne de texte d'etat discret au-dessus du dock,
-    // alignee start, ecart 8. Dans le dock, la pilule de deux mots passait
-    // sur deux lignes des 768.
+    // Une seule rangee : si elle ne tient pas (320, texte agrandi), elle se
+    // reduit d'un bloc plutot que de passer sur deux lignes.
+    final Widget pilule = Center(
+      heightFactor: 1,
+      child: FittedBox(fit: BoxFit.scaleDown, child: dock),
+    );
+    if (statutCamera == null) return pilule;
+    // Q-S1 : le statut est une ligne de texte d'etat discret au-dessus de la
+    // pilule, ecart 8.
     return Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: large
-          ? CrossAxisAlignment.start
-          : CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Align(alignment: AlignmentDirectional.centerStart, child: statutCamera),
-        Ecart.vSm,
-        dock,
-      ],
+      children: <Widget>[statutCamera, Ecart.vSm, pilule],
     );
   }
 }
 
-/// La largeur d'un mot de commande, dans le style et a l'echelle de texte de
-/// [CommandeSalle] (labelMedium), arrondie au pixel superieur.
-double _largeurMot(BuildContext context, String mot) {
-  final TextPainter peintre = TextPainter(
-    text: TextSpan(text: mot, style: Theme.of(context).textTheme.labelMedium),
-    textDirection: Directionality.of(context),
-    textScaler: MediaQuery.textScalerOf(context),
-    maxLines: 1,
-  )..layout();
-  final double largeur = peintre.width.ceilToDouble();
-  peintre.dispose();
-  return largeur;
+/// Le bouton « Plus » de la pilule d'appel : il ouvre les Commandes.
+class BoutonPlusAppel extends StatelessWidget {
+  const BoutonPlusAppel({
+    required this.onPress,
+    this.ouvert = false,
+    this.focusNode,
+    super.key = cle,
+  });
+
+  /// La cle du bouton.
+  static const Key cle = ValueKey<String>('bouton-plus-appel');
+
+  final VoidCallback onPress;
+
+  /// Le panneau des Commandes est ouvert.
+  final bool ouvert;
+
+  final FocusNode? focusNode;
+
+  @override
+  Widget build(BuildContext context) => BoutonAppel(
+    icone: AppIcons.plusCommandes,
+    libelle: t.salle.seance.commandes.declencheur,
+    libelleSemantique: t.salle.seance.commandes.declencheurSemantique,
+    selectionne: ouvert,
+    focusNode: focusNode,
+    onPress: onPress,
+  );
 }
 
 /// Le statut « Camera desactivee pour ce profil. » de l'eleve standard
@@ -512,7 +392,6 @@ class StatutCameraInterdite extends StatelessWidget {
   }
 }
 
-/// Le filet vertical du dock enseignant desktop, avant Quitter.
 /// Le bouton Micro du dock. Micro bloque par le systeme
 /// ([VueSeance.microBloque], P09) : le geste ouvre la feuille « micro
 /// bloque » au lieu de basculer le micro, le bouton reste « coupe » et, a la
@@ -567,9 +446,7 @@ class _BoutonMicroState extends State<_BoutonMicro> {
     return BoutonAppel(
       key: const ValueKey<String>('bouton-micro'),
       focusNode: _focus,
-      icone: colore
-          ? (ouvert ? AppIcons.micro : AppIcons.microCoupe).actif
-          : (ouvert ? AppIcons.micro : AppIcons.microCoupe).repos,
+      icone: ouvert ? AppIcons.micro : AppIcons.microCoupe,
       bascule: ouvert,
       libelle: libelle,
       libelleSemantique:
@@ -582,25 +459,4 @@ class _BoutonMicroState extends State<_BoutonMicro> {
       onPress: vue.microBloque ? _ouvrirFeuille : widget.onMicro,
     );
   }
-}
-
-class _Separateur extends StatelessWidget {
-  const _Separateur({required this.hauteur});
-
-  final double hauteur;
-
-  @override
-  Widget build(BuildContext context) => SizedBox(
-    key: const ValueKey<String>('separateur-dock'),
-    // Un filet de 1 (la bordure) dans une case d'un demi-palier.
-    width: AppSpacing.xs,
-    height: hauteur,
-    child: DecoratedBox(
-      decoration: BoxDecoration(
-        border: BorderDirectional(
-          start: AppPalette.of(context).borderResting.asBorderSide(),
-        ),
-      ),
-    ),
-  );
 }

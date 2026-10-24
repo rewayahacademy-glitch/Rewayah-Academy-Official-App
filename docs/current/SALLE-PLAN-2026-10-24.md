@@ -16,6 +16,37 @@ captures avant toute fusion, preuve par le directeur en production après fusion
 - La caméra de l'élève doit marcher quand le tuteur l'a autorisée.
 - **Loi du directeur, 24/10/2026 (soir)** : « Sur téléphone, la page du Coran EST l'écran. Une page A4 = un écran de smartphone. Rien au-dessus, rien en dessous, rien à côté. »
 
+## Standard des commandes d'appel (directeur, 24/10/2026, nuit)
+
+Après la capture du tableau au téléphone (« trop nul » : libellés sur deux lignes, boutons mal
+alignés, chevron « ^ » sans libellé à côté de la barre), le directeur interdit de **deviner** la
+disposition : on suit un standard public. **Référence : Google Meet sur Android et sur le web
+(Material 3).** Il s'applique partout (salle, tableau, tous rôles, toutes largeurs) et remplace,
+dans la salle, le mot d'état sous le bouton (ETATS-BTN-1), les deux rangées à texte agrandi
+(ETATS-MA-1) et le dock compact du Mode Accessibilité (MA-CMD-1).
+
+1. Barre d'appel : UNE pilule flottante, centrée en bas, marge 16 et zone sûre, fond translucide
+   (surface à 85 %), rayon plein. Une seule rangée de boutons ronds identiques : 56 au téléphone,
+   48 sur ordinateur ; écart constant 12 au téléphone, 16 ailleurs. **Icônes seules**, jamais de
+   texte sous un bouton ; le libellé vit dans l'infobulle (survol, appui long) et la sémantique.
+   Ordre fixe : micro, caméra, tableau (enseignant), plus (⋯), puis Quitter.
+2. États : actif = cercle rempli sombre, icône claire ; coupé ou éteint = cercle rempli rouge,
+   icône barrée ; Quitter = pilule rouge plus large (72 × 56), icône du combiné ; tableau ouvert =
+   rempli de la couleur primaire. Aucun gris (K-56).
+3. « Plus » (⋯) est dans la pilule, même taille que les autres, et ouvre les Commandes
+   (Bibliothèque, Outils, Élèves). Aucun déclencheur hors de la pilule.
+4. Ligne d'état : une pilule translucide en haut à gauche, hauteur 36, une seule ligne :
+   « ● En ligne · Visite de contrôle possible » (ADR-011 tenu). Élèves : bouton rond icône
+   « personnes » avec la pastille du nombre, en haut à droite à côté de la vignette vidéo, jamais
+   un lien texte.
+5. Tableau : aucune phrase au centre ; une feuille vide est une feuille vide. Sa palette est une
+   seconde pilule, verticale au bord droit (ordinateur) ou horizontale juste au-dessus de la
+   barre d'appel (téléphone), mêmes tailles, icônes seules, outil actif rempli : stylet,
+   surligneur, gomme, annuler, tout effacer, fermer le tableau.
+6. Alignement : tous les éléments flottants sur une grille de 8, même marge 16 des bords ; la
+   pilule du haut et la vignette alignées sur la même ligne.
+7. Tout disparaît à 3 s et revient au toucher.
+
 ## Les maquettes
 
 Le directeur a fourni des maquettes de la salle à des sessions précédentes, puis les a

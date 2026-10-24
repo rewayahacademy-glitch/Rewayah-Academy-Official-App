@@ -27,6 +27,28 @@ enum FormeBoutonIcone {
   /// L'icone seule, sans disque ni contour, icone de 20 en encre forte : le
   /// retour d'un en-tete de lecteur.
   nue,
+
+  /// Standard des commandes d'appel (directeur, 24/10/2026 ; Google Meet,
+  /// Material 3) : un bouton rond rempli de la pilule d'appel, icone seule
+  /// de 24, couleur de [TonAppel] ; le libelle vit dans l'infobulle et la
+  /// semantique, jamais sous le bouton.
+  appel,
+}
+
+/// La couleur d'un bouton [FormeBoutonIcone.appel] (standard Meet).
+enum TonAppel {
+  /// Actif (micro ouvert, camera allumee, plus) : rempli sombre, icone
+  /// claire.
+  actif,
+
+  /// Coupe ou eteint : rempli rouge, icone barree (choisie par l'appelant).
+  coupe,
+
+  /// Ouvert (tableau) : rempli de la couleur primaire.
+  ouvert,
+
+  /// Quitter : pilule rouge plus large, icone du combine.
+  quitter,
 }
 
 /// Un bouton fait d'une seule icone, a cible tactile pleine (48 au moins).
@@ -51,7 +73,31 @@ class BoutonIcone extends StatelessWidget {
     this.infobulle,
     this.focusNode,
     this.suitTexte = false,
+    this.tonAppel = TonAppel.actif,
+    this.diametre,
+    this.largeur,
+    this.selectionne,
+    this.actif = true,
   });
+
+  /// [FormeBoutonIcone.appel] : faux, le bouton reste rendu dans la couleur
+  /// de son etat mais ne repond pas (reconnexion). Aucun gris (K-56).
+  final bool actif;
+
+  /// [FormeBoutonIcone.appel] : la couleur du bouton.
+  final TonAppel tonAppel;
+
+  /// [FormeBoutonIcone.appel] : la hauteur du bouton (56 au telephone, 48
+  /// ailleurs), `null` pour la cible du mode.
+  final double? diametre;
+
+  /// [FormeBoutonIcone.appel] : la largeur, quand elle depasse la hauteur
+  /// (Quitter, 72 x 56).
+  final double? largeur;
+
+  /// Annonce l'etat d'une bascule (micro, camera, tableau) au lecteur
+  /// d'ecran.
+  final bool? selectionne;
 
   /// Le noeud du bouton, ou `null` : un hote y rend le focus (fermeture
   /// d'un panneau ouvert par ce bouton).
@@ -88,8 +134,54 @@ class BoutonIcone extends StatelessWidget {
   /// Par defaut, le libelle.
   final String? infobulle;
 
+  Widget _appel(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final AppColorPair plein = switch (tonAppel) {
+      TonAppel.actif => palette.boutonAppelActif,
+      TonAppel.coupe || TonAppel.quitter => AppPalette.claire().surfaceAlert,
+      TonAppel.ouvert => palette.surfacePrimary,
+    };
+    final double hauteur = math.max(
+      diametre ?? AppTouchTarget.standard,
+      AppTouchTarget.standard,
+    );
+    final double large = math.max(largeur ?? hauteur, hauteur);
+    return Tooltip(
+      message: infobulle ?? libelle,
+      excludeFromSemantics: true,
+      child: Pressable(
+        onPress: onPress,
+        actif: actif && onPress != null,
+        libelleSemantique: libelle,
+        arrondiFocus: AppRadius.arrondiFull,
+        focusNode: focusNode,
+        selectionne: selectionne,
+        child: ExcludeSemantics(
+          child: SizedBox(
+            key: const ValueKey<String>('disque-appel'),
+            width: large,
+            height: hauteur,
+            child: DecoratedBox(
+              decoration: plein.decoration(borderRadius: AppRadius.arrondiFull),
+              child: Center(
+                child: IconTheme(
+                  data: IconThemeData(
+                    color: plein.onBackground,
+                    size: AppSpacing.xxl,
+                  ),
+                  child: Icon(icone.actif),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (forme == FormeBoutonIcone.appel) return _appel(context);
     final AppPalette palette = AppPalette.of(context);
     final bool commande =
         forme == FormeBoutonIcone.disque || forme == FormeBoutonIcone.nue;
@@ -126,7 +218,7 @@ class BoutonIcone extends StatelessWidget {
         borderRadius: arrondi,
         side: palette.borderHairline.asBorderSide(),
       ),
-      FormeBoutonIcone.nue => const BoxDecoration(),
+      FormeBoutonIcone.nue || FormeBoutonIcone.appel => const BoxDecoration(),
     };
 
     return Tooltip(

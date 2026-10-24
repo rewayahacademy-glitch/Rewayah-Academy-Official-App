@@ -18,18 +18,20 @@ import 'package:flutter/material.dart';
 import '../../core/accessibilite/commandes_masquables.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
-import '../../core/widgets/status_pill.dart';
+import '../../core/widgets/bouton_icone.dart';
 import 'actions_seance.dart';
 import 'commandes_pedagogiques.dart';
 import 'dock_seance.dart';
 import 'media_salle.dart';
 import 'mention_seance.dart';
+import 'palette_tableau.dart';
 import 'salle_seance.dart' show BandeauSecours, EtatLocalSeance;
 import 'surface_page_fixe.dart';
 import 'vignette_video.dart';
@@ -133,7 +135,8 @@ class TelephonePleinEcran extends StatelessWidget {
             aCote: false,
           );
           final Widget bas = Padding(
-            padding: const EdgeInsets.all(AppSpacing.sm),
+            // Standard : marge 16 des bords (et la zone sure).
+            padding: const EdgeInsets.all(AppSpacing.lg),
             child: _Bas(vue: vue, actions: actions, local: local),
           );
           return CommandesMasquables(
@@ -230,69 +233,158 @@ class _Haut extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
-    final Widget? pastille = media?.pastille;
     final Widget? alerte = media?.alerte;
-    final double largeurLigne = math.max(
-      0,
-      aCote
-          ? largeur
-          : largeur - (vignette ? largeurVignetteTelephone + AppSpacing.md : 0),
+    final ({int nombre, VoidCallback onPress})? eleves = media?.boutonEleves;
+    final AppPalette palette = AppPalette.of(context);
+    // Standard des commandes d'appel (24/10/2026) : une pilule translucide en
+    // haut a gauche, hauteur 36, une seule ligne : « ● En ligne · Visite de
+    // controle possible. » (ADR-011) ; a droite, alignes sur la meme ligne,
+    // le bouton rond « Eleves » et la vignette. Marge 16 des bords.
+    final TextStyle style = palette.piluleSalle.applyTo(
+      Theme.of(context).textTheme.labelMedium ?? const TextStyle(),
     );
-    // S0.2d : la ligne flotte sur la page ; elle porte sa propre surface
-    // (comme la barre des commandes) pour se lire sur le papier.
-    final Widget ligne = SizedBox(
-      width: largeurLigne,
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.sm),
-        child: DecoratedBox(
-          decoration: AppPalette.of(context).surfaceRaised.decoration(
-            borderRadius: AppRadius.arrondiLg,
-            side: AppPalette.of(context).borderHairline.asBorderSide(),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.sm),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Wrap(
-                  spacing: AppSpacing.sm,
-                  runSpacing: AppSpacing.xs,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: <Widget>[
-                    StatusPill(
-                      libelle: vue.texteConnexion,
-                      ton: vue.connexion.etablie
-                          ? TonEtat.succes
-                          : TonEtat.avertissement,
-                    ),
-                    ?pastille,
-                  ],
+    final double droite =
+        (vignette ? largeurVignetteTelephone + AppSpacing.sm : 0) +
+        (eleves != null ? AppTouchTarget.standard + AppSpacing.sm : 0);
+    final Widget ligne = ConstrainedBox(
+      constraints: BoxConstraints(
+        maxWidth: math.max(
+          0,
+          largeur - 2 * AppSpacing.lg - (aCote ? 0 : droite),
+        ),
+        minHeight: AppSpacing.xxxl + AppSpacing.xs,
+      ),
+      child: DecoratedBox(
+        key: const ValueKey<String>('ligne-etat-telephone'),
+        decoration: palette.piluleSalle.decoration(
+          borderRadius: AppRadius.arrondiFull,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              SizedBox.square(
+                dimension: AppSpacing.sm,
+                child: DecoratedBox(
+                  decoration:
+                      (vue.connexion.etablie
+                              ? palette.pointsStatut.succes
+                              : palette.pointsStatut.attention)
+                          .pastille(),
                 ),
-                Ecart.vXs,
-                MentionSeance(vue: vue),
-                BandeauSecours(vue: vue, actions: actions, gouttiere: 0),
-                ?alerte,
+              ),
+              Ecart.hSm,
+              Text(vue.texteConnexion, style: style, maxLines: 1),
+              if (vue.texteMention != null) ...<Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xs,
+                  ),
+                  child: Text('\u00b7', style: style),
+                ),
+                Flexible(child: MentionSeance(vue: vue)),
               ],
-            ),
+            ],
           ),
         ),
       ),
     );
     return SafeArea(
       bottom: false,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: <Widget>[
-          Align(alignment: AlignmentDirectional.topStart, child: ligne),
-          if (vignette)
-            PositionedDirectional(
-              top: AppSpacing.sm,
-              end: AppSpacing.sm,
-              child: VignetteVideo(vue: vue, largeur: largeurVignetteTelephone),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Expanded(
+                  child: Align(
+                    alignment: AlignmentDirectional.topStart,
+                    child: ligne,
+                  ),
+                ),
+                if (eleves != null) ...<Widget>[
+                  Ecart.hSm,
+                  _BoutonEleves(nombre: eleves.nombre, onPress: eleves.onPress),
+                ],
+                if (vignette) ...<Widget>[
+                  Ecart.hSm,
+                  VignetteVideo(vue: vue, largeur: largeurVignetteTelephone),
+                ],
+              ],
             ),
-        ],
+            BandeauSecours(vue: vue, actions: actions, gouttiere: 0),
+            ?alerte,
+          ],
+        ),
       ),
+    );
+  }
+}
+
+/// Le bouton rond « Eleves » de l'enseignant au telephone : icone personnes
+/// et pastille du nombre (standard Meet), jamais un lien texte.
+class _BoutonEleves extends StatelessWidget {
+  const _BoutonEleves({required this.nombre, required this.onPress});
+
+  final int nombre;
+  final VoidCallback onPress;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    return Stack(
+      clipBehavior: Clip.none,
+      children: <Widget>[
+        BoutonIcone(
+          key: const ValueKey<String>('salle-eleves'),
+          forme: FormeBoutonIcone.appel,
+          icone: AppIcons.eleves,
+          diametre: AppTouchTarget.standard,
+          libelle: t.salle.seance.eleves,
+          onPress: onPress,
+        ),
+        if (nombre > 0)
+          PositionedDirectional(
+            top: -AppSpacing.xs,
+            end: -AppSpacing.xs,
+            child: IgnorePointer(
+              child: ExcludeSemantics(
+                child: DecoratedBox(
+                  decoration: palette.surfacePrimary.decoration(
+                    borderRadius: AppRadius.arrondiFull,
+                  ),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      minWidth: AppSpacing.lg + AppSpacing.xs,
+                      minHeight: AppSpacing.lg + AppSpacing.xs,
+                    ),
+                    child: Center(
+                      widthFactor: 1,
+                      heightFactor: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.xs,
+                        ),
+                        child: Text(
+                          '$nombre',
+                          style: palette.surfacePrimary.applyTo(
+                            Theme.of(context).textTheme.labelMedium ??
+                                const TextStyle(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
@@ -309,26 +401,35 @@ class _Bas extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final VoidCallback? commandes = actions.onCommandes;
+    // Standard des commandes d'appel (24/10/2026) : une seule pilule, « Plus »
+    // dedans ; aucun declencheur a cote. S0.3b : tableau ouvert, sa palette
+    // juste au-dessus, horizontale.
     final Widget dock = DockSeance(
       vue: vue,
       actions: actions,
       microOuvert: local.microOuvert,
       cameraAllumee: local.cameraAllumee,
       agrandi: local.agrandi,
+      plus:
+          commandes != null &&
+              CommandesPedagogiques.aDesEntrees(vue, actions) &&
+              vue.panneau != PanneauOuvert.commandes
+          ? BoutonPlusAppel(onPress: commandes)
+          : null,
     );
-    if (commandes == null ||
-        !CommandesPedagogiques.aDesEntrees(vue, actions) ||
-        vue.panneau == PanneauOuvert.commandes) {
-      return dock;
-    }
-    // Sur la meme rangee que l'appel, en icone seule : rien ne monte sur la
-    // page.
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
+    if (!vue.tableauOuvert || actions.onTableau == null) return dock;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Expanded(child: dock),
-        Ecart.hSm,
-        DeclencheurCommandes(onPress: commandes, iconeSeule: true),
+        Center(
+          heightFactor: 1,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: PaletteTableau(vue: vue, actions: actions),
+          ),
+        ),
+        Ecart.vSm,
+        dock,
       ],
     );
   }

@@ -41,6 +41,7 @@ import 'composition_salle.dart';
 import 'dock_seance.dart';
 import 'ecriture_seance.dart';
 import 'media_salle.dart';
+import 'palette_tableau.dart';
 import 'panneau_eleves.dart';
 import 'panneau_seance.dart';
 import 'panneau_supports.dart';
@@ -1245,9 +1246,19 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
   /// panneau sur toute la largeur ailleurs.
   Widget _barreEnseignant(VueSeance vue) {
     const double gouttiere = AppPage.gouttiereMobile;
+    final bool pleinCadre = PorteeMediaSalle.de(context)?.pleinCadre ?? false;
+    final VoidCallback? commandes = _actions.onCommandes;
     final Widget dock = DockSeance(
       vue: vue,
       actions: _actions,
+      // Standard : « Plus » dans la pilule ouvre les Commandes.
+      plus:
+          pleinCadre &&
+              commandes != null &&
+              vue.panneau != PanneauOuvert.commandes &&
+              CommandesPedagogiques.aDesEntrees(vue, _actions)
+          ? BoutonPlusAppel(onPress: commandes)
+          : null,
       microOuvert: widget.local.microOuvert,
       cameraAllumee: widget.local.cameraAllumee,
       // TB-4 : en focus, « Reduire » reste dans la barre (TB18), en plus de
@@ -1264,13 +1275,9 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
         ),
         // S0.2c : dans `/salle`, la barre se pose en bas a gauche, sous la
         // colonne Eleves, jamais sur la page (SUPERPOS-1).
-        child: (PorteeMediaSalle.de(context)?.pleinCadre ?? false)
-            ? Align(
-                alignment: AlignmentDirectional.centerStart,
-                heightFactor: 1,
-                child: dock,
-              )
-            : Center(heightFactor: 1, child: dock),
+        // Standard : la pilule est centree en bas, sous la scene (jamais sur
+        // la page, SUPERPOS-1).
+        child: Center(heightFactor: 1, child: dock),
       );
     }
     final double ecartDock = widget.gabarit == Gabarit.mobile
@@ -1489,7 +1496,7 @@ class _SalleEnseignant extends StatelessWidget {
   Widget build(BuildContext context) {
     // Le support partage la hauteur avec les boutons, il se resserre pour
     // montrer la diapositive entiere.
-    final Widget support = Focus(
+    final Widget zone = Focus(
       focusNode: focusSupport,
       child: ZoneSupport(
         vue: vue,
@@ -1498,6 +1505,32 @@ class _SalleEnseignant extends StatelessWidget {
         contenu: contenuSupport,
       ),
     );
+    // S0.3b et standard des commandes d'appel : dans `/salle`, le tableau
+    // ouvert porte sa palette, pilule verticale au bord droit (au telephone,
+    // `TelephonePleinEcran` la pose au-dessus de la pilule d'appel).
+    final Widget support =
+        vue.tableauOuvert &&
+            actions.onTableau != null &&
+            gabarit != Gabarit.mobile &&
+            (PorteeMediaSalle.de(context)?.pleinCadre ?? false)
+        ? Stack(
+            children: <Widget>[
+              Positioned.fill(child: zone),
+              PositionedDirectional(
+                end: AppSpacing.lg,
+                top: AppSpacing.lg,
+                bottom: AppSpacing.lg,
+                child: Center(
+                  child: PaletteTableau(
+                    vue: vue,
+                    actions: actions,
+                    verticale: true,
+                  ),
+                ),
+              ),
+            ],
+          )
+        : zone;
     // TB-9 : la portee du rangement (depart : la feuille de la surface ;
     // arrivee : la Bibliotheque des Commandes).
     return PorteeRangement(
@@ -1538,8 +1571,12 @@ class _SalleEnseignant extends StatelessWidget {
       return null;
     }
     return Consumer(
-      builder: (BuildContext _, WidgetRef ref, Widget? enfant) =>
-          !ecritSurLaSurface(ref, vue)
+      builder: (BuildContext contexte, WidgetRef ref, Widget? enfant) =>
+          // S0.3b : la palette du tableau ouvert remplace la palette courte.
+          vue.tableauOuvert &&
+              (PorteeMediaSalle.de(contexte)?.pleinCadre ?? false)
+          ? const SizedBox.shrink()
+          : !ecritSurLaSurface(ref, vue)
           ? enfant!
           : !enEcriture
           ? const SizedBox.shrink()
@@ -1559,11 +1596,18 @@ class _SalleEnseignant extends StatelessWidget {
                 ),
               ),
             ),
+      // Standard des commandes d'appel (24/10/2026) : dans `/salle`, « Plus »
+      // est dans la pilule d'appel ; aucun declencheur hors de la pilule.
       child: auRepos
-          ? DeclencheurCommandes(
-              onPress: basculer,
-              ouvert: vue.panneau == PanneauOuvert.commandes,
-              focusNode: focusCommandes,
+          ? Builder(
+              builder: (BuildContext contexte) =>
+                  (PorteeMediaSalle.de(contexte)?.pleinCadre ?? false)
+                  ? const SizedBox.shrink()
+                  : DeclencheurCommandes(
+                      onPress: basculer,
+                      ouvert: vue.panneau == PanneauOuvert.commandes,
+                      focusNode: focusCommandes,
+                    ),
             )
           : const SizedBox.shrink(),
     );

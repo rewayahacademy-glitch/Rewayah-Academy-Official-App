@@ -407,7 +407,12 @@ class _SurfacePageFixeState extends ConsumerState<SurfacePageFixe> {
         surface == VueSurface.supportSeul ||
         surface == VueSurface.supportAvecNotes;
     final bool notesVisibles = surface != VueSurface.supportSeul;
-    final bool consigne = libre && vue.voitConsigneTableauLibre;
+    // Standard des commandes d'appel (24/10/2026) : dans `/salle`, une
+    // feuille vide est une feuille vide, aucune phrase au centre.
+    final bool consigne =
+        libre &&
+        vue.voitConsigneTableauLibre &&
+        !(PorteeMediaSalle.de(context)?.pleinCadre ?? false);
     // TB-9 : le depart de la copie du rangement (salle de l'enseignant).
     final GlobalKey? repereRangement = PorteeRangement.maybeOf(context)
         ?.feuille;

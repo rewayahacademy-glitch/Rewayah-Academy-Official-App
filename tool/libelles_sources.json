@@ -6408,5 +6408,6 @@
   "admin.groupes.creneau.dejaLa": "B2.2 bis (c) (24/10/2026), plan de nuit du pilote delegue par le directeur : l ecran Classes de la direction recoit « ajouter un creneau »",
   "admin.groupes.creneau.erreur": "B2.2 bis (c) (24/10/2026), plan de nuit du pilote delegue par le directeur : l ecran Classes de la direction recoit « ajouter un creneau »",
   "admin.groupes.creneau.horsLigne": "B2.2 bis (c) (24/10/2026), plan de nuit du pilote delegue par le directeur : l ecran Classes de la direction recoit « ajouter un creneau »",
-  "admin.groupes.creneau.journalisation": "B2.2 bis (c) (24/10/2026), plan de nuit du pilote delegue par le directeur : l ecran Classes de la direction recoit « ajouter un creneau »"
+  "admin.groupes.creneau.journalisation": "B2.2 bis (c) (24/10/2026), plan de nuit du pilote delegue par le directeur : l ecran Classes de la direction recoit « ajouter un creneau »",
+  "salle.seance.ecriture.toutEffacer": "S0.3b (24/10/2026), ordre du pilote delegue par le directeur : la palette du tableau porte stylet, surligneur, gomme, annuler, tout effacer, fermer le tableau"
 }
