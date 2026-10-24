@@ -1023,6 +1023,52 @@ void main() {
       );
     });
 
+    testWidgets('S0.2 : les grandes fleches tournent la page pour la classe', (
+      WidgetTester tester,
+    ) async {
+      tester.view.physicalSize = const Size(1366, 768);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: <Override>[
+          ..._surcharges(
+            video: FauxServiceVideo(acces0: _acces('teacher')),
+            moteur: moteur,
+            preVol: FauxServicePreVol(),
+            role: AppRole.teacher,
+          ),
+          ...surchargesMadina15(page: 43),
+          pageCoranProvider.overrideWith(
+            (Ref _, int n) async => PageCoran(
+              numero: n,
+              versets: <VersetCoran>[
+                VersetCoran(
+                  sourateNumero: 2,
+                  numero: 1,
+                  texte: 'verset',
+                  pageNumero: n,
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+      await moteur.presenterContenu(_contenu());
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey<String>('fleches-page-salle')),
+        findsOneWidget,
+      );
+      await tester.tap(
+        find.bySemanticsLabel(RegExp(t.salle.seance.pageSuivante)).first,
+      );
+      await tester.pumpAndSettle();
+      expect(moteur.contenusPresentesDemandes.last.page, 43);
+    });
+
     test('S0 : les paliers du zoom, 100 a 200 %', () {
       expect(palierSuivant(1), 1.25);
       expect(palierSuivant(1.5), 2);

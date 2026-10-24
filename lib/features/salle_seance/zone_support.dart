@@ -21,6 +21,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bouton_icone.dart';
+import '../tc_mushaf/fleches_page_mushaf.dart';
 import 'composition_salle.dart';
 import 'media_salle.dart';
 import 'surface_page_fixe.dart';
@@ -446,10 +447,18 @@ extension on ZoneSupport {
                             marge,
                             marge,
                           ),
-                          child: SurfacePageFixe(
-                            vue: vue,
-                            surface: surface,
-                            zoom: zoom,
+                          child: _avecFleches(
+                            context,
+                            boite: Size(
+                              math.max(0, c.maxWidth - 2 * marge),
+                              math.max(0, c.maxHeight - 2 * marge),
+                            ),
+                            ratio: ratio,
+                            page: SurfacePageFixe(
+                              vue: vue,
+                              surface: surface,
+                              zoom: zoom,
+                            ),
                           ),
                         ),
                       ),
@@ -479,6 +488,50 @@ extension on ZoneSupport {
     return _Serti(key: const ValueKey<String>('cadre-support'), child: carte);
   }
 }
+
+/// S0.2 (reference 4 du directeur, « le Coran a du gabarit ») : dans
+/// `/salle`, deux grandes fleches de page a mi-hauteur, une de chaque cote
+/// de la page (la page suivante a gauche, comme un mushaf), seulement quand
+/// elles tiennent a cote de la page en pleine hauteur : elles ne lui volent
+/// rien. Sinon la pagination reste dans les Commandes.
+Widget _avecFleches(
+  BuildContext context, {
+  required Size boite,
+  required double? ratio,
+  required Widget page,
+}) {
+  final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
+  final VoidCallback? precedente = media?.onPagePrecedente;
+  final VoidCallback? suivante = media?.onPageSuivante;
+  if (media == null ||
+      !media.pleinCadre ||
+      ratio == null ||
+      (precedente == null && suivante == null)) {
+    return page;
+  }
+  const double cote = _coteFleches;
+  final double largeurPage = boite.height * ratio;
+  if (boite.width < largeurPage + 2 * (cote + AppSpacing.sm)) return page;
+  // Les fleches encadrent la page, au plus pres d'elle (reference 4).
+  return Center(
+    child: SizedBox(
+      width: largeurPage + 2 * (cote + AppSpacing.sm),
+      child: PageAvecFlechesMushaf(
+        key: const ValueKey<String>('fleches-page-salle'),
+        libellePrecedente: t.salle.seance.pagePrecedente,
+        libelleSuivante: t.salle.seance.pageSuivante,
+        onPrecedente: precedente,
+        onSuivante: suivante,
+        cote: cote,
+        focusAuto: false,
+        child: page,
+      ),
+    ),
+  );
+}
+
+/// Le cote des grandes fleches de la salle (NAV-FLECHES-1 : 48 au moins).
+const double _coteFleches = AppSpacing.respiration;
 
 /// S0 : la scene video de `/salle` a la place de la page, et « Revenir a
 /// la page » en coin quand une page attend derriere.

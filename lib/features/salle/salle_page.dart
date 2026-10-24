@@ -721,6 +721,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
               surCarte: true,
             ),
       onZoom: (double z) => setState(() => _zoom = z),
+      // Reference 4 : les grandes fleches de part et d'autre de la page.
+      onPagePrecedente: actions.onPagePrecedente,
+      onPageSuivante: actions.onPageSuivante,
       child: SalleSeance(
         key: const ValueKey<String>('salle-de-seance'),
         vue: seance,

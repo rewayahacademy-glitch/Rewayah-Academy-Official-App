@@ -52,6 +52,8 @@ class PorteeMediaSalle extends InheritedWidget {
     this.alerte,
     this.pleinCadre = false,
     this.eleves,
+    this.onPagePrecedente,
+    this.onPageSuivante,
     super.key,
   });
 
@@ -85,6 +87,12 @@ class PorteeMediaSalle extends InheritedWidget {
   /// S0.2 : le contenu du panneau Eleves de l'enseignant (colonne ou
   /// panneau) : la presence (J3) et le roster reel, ou `null`.
   final Widget? eleves;
+
+  /// S0.2 (reference 4 du directeur) : les deux grandes fleches de page, a
+  /// mi-hauteur de chaque cote de la page ; `null` aux bornes, ou pour qui
+  /// ne tourne pas la page.
+  final VoidCallback? onPagePrecedente;
+  final VoidCallback? onPageSuivante;
 
   /// Le rendu reel de la camera d'un participant, par son identite (le
   /// `profile_id`), ou `null` : camera coupee ou pas encore recue.
