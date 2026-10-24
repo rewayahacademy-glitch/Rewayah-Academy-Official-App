@@ -11,6 +11,8 @@ import '../../core/presence/vue_presence.dart';
 import '../../core/seance_famille/seance_famille.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/port_horloge_seance.dart';
+import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
@@ -171,7 +173,21 @@ class CarteSeanceClasse extends ConsumerWidget {
       return const <Widget>[Skeleton(hauteur: AppSpacing.respiration * 2)];
     }
     final SeanceFamille? laSeance = seance.value;
+    // Concierge (a), tuteur : l'horloge de la Classe, tiree des creneaux meme
+    // sans seance, ouvre la porte que la seance connue ne dit pas encore.
+    final SessionClockVM? horlogeClasse = ref
+        .watch(horlogeGroupeProvider(contexte.classeId))
+        .value;
     if (laSeance == null) {
+      if (classeRejoignableSansSeance(horlogeClasse)) {
+        return <Widget>[
+          BoutonRejoindreClasseAvecEleve(
+            groupeId: contexte.classeId,
+            sessionId: horlogeClasse!.sessionId,
+            eleve: contexte.eleve,
+          ),
+        ];
+      }
       return <Widget>[
         Text(
           t.classe.seance.aucune,
@@ -231,7 +247,13 @@ class CarteSeanceClasse extends ConsumerWidget {
         Ecart.vSm,
         Text(affichage.heureClasse!, style: discret),
       ],
-      ..._rejoindreAvecEleve(context, laSeance, affichage.etat, discret),
+      ..._rejoindreAvecEleve(
+        context,
+        laSeance,
+        affichage.etat,
+        discret,
+        horlogeClasse,
+      ),
       Ecart.vXl,
       BlocObservationClasse(
         classeId: contexte.classeId,
@@ -254,11 +276,22 @@ class CarteSeanceClasse extends ConsumerWidget {
     SeanceFamille laSeance,
     EtatSeanceFamille etat,
     TextStyle discret,
+    SessionClockVM? horlogeClasse,
   ) {
     if (salleRejoignable(etat)) {
       return <Widget>[
         Ecart.vXl,
         BoutonRejoindreAvecEleve(seance: laSeance, eleve: contexte.eleve),
+      ];
+    }
+    if (classeRejoignableSansSeance(horlogeClasse)) {
+      return <Widget>[
+        Ecart.vXl,
+        BoutonRejoindreClasseAvecEleve(
+          groupeId: contexte.classeId,
+          sessionId: horlogeClasse!.sessionId,
+          eleve: contexte.eleve,
+        ),
       ];
     }
     if (etat == EtatSeanceFamille.aVenir) {

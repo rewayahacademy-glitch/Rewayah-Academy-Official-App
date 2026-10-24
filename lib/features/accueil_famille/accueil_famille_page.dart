@@ -19,6 +19,8 @@ import '../../core/router/routes.dart';
 import '../../core/seance_famille/port_seances_famille.dart';
 import '../../core/seance_famille/seance_famille.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
+import '../../core/tc_horloge/port_horloge_seance.dart';
+import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/tc_parcours/port_travail_a_venir.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
@@ -287,12 +289,27 @@ class _Contenu extends ConsumerWidget {
             maintenantServeurUtc: maintenantServeurUtc,
           ).etat,
         );
+    // Concierge (a), tuteur : sans seance rejoignable connue, l'horloge de la
+    // Classe (tiree des creneaux) ouvre la porte ; le concierge rend la seance.
+    final SessionClockVM? horlogeClasse = groupeId == null || rejoindre
+        ? null
+        : ref.watch(horlogeGroupeProvider(groupeId)).value;
     final Widget? bandeau = rejoindre
         ? AppCard(
             key: AccueilFamillePage.rejoindreKey,
             marge: compact ? AppSpacing.lg : AppSpacing.xxl,
             child: BoutonRejoindreAvecEleve(
               seance: seanceOuverte,
+              eleve: profil,
+            ),
+          )
+        : groupeId != null && classeRejoignableSansSeance(horlogeClasse)
+        ? AppCard(
+            key: AccueilFamillePage.rejoindreKey,
+            marge: compact ? AppSpacing.lg : AppSpacing.xxl,
+            child: BoutonRejoindreClasseAvecEleve(
+              groupeId: groupeId,
+              sessionId: horlogeClasse!.sessionId,
               eleve: profil,
             ),
           )

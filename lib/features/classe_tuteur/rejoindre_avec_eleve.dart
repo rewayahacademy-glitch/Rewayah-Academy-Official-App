@@ -3,7 +3,8 @@
 // avec la meme condition et le meme billet. La porte est celle du serveur
 // (`join_opens_at`), jamais une constante plus courte.
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/domain/enums.dart';
@@ -12,6 +13,11 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/seance_famille/seance_famille.dart';
+import '../../core/tc_groupe/concierge_seance.dart';
+import '../../core/tc_groupe/rejoindre_classe.dart';
+import '../../core/tc_horloge/session_clock_vm.dart';
+import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../core/video/pre_vol.dart' show seuilOuvertureSalle;
 import '../../core/widgets/action_principale.dart';
 
@@ -65,4 +71,82 @@ class BoutonRejoindreAvecEleve extends StatelessWidget {
       ),
     ),
   );
+}
+
+/// Concierge (a), tuteur (decision du pilote, 24/10/2026) : la Classe est
+/// ouverte par son horloge (`horloge_classe`, tiree des creneaux meme sans
+/// seance) alors qu'aucune seance rejoignable n'est connue de la famille.
+bool classeRejoignableSansSeance(SessionClockVM? horloge) =>
+    horloge?.rejoindreOuvert ?? false;
+
+/// « Rejoindre la salle avec {prenom} » depuis l'horloge de la Classe : la
+/// seance connue de l'horloge, sinon celle que le concierge rend (creee si
+/// elle manquait, tuteur du foyer accepte par le serveur) ; refus ou rien :
+/// K-59, « … Revenez 20 minutes avant l'heure du cours. ».
+class BoutonRejoindreClasseAvecEleve extends ConsumerWidget {
+  /// Cree le bouton.
+  const BoutonRejoindreClasseAvecEleve({
+    required this.groupeId,
+    required this.sessionId,
+    required this.eleve,
+    super.key,
+  });
+
+  /// La Classe a rejoindre.
+  final String groupeId;
+
+  /// La seance que l'horloge connait deja, ou `null`.
+  final String? sessionId;
+
+  /// L'eleve qui la rejoint.
+  final ProfilEleveFoyer eleve;
+
+  /// La cle du bouton (tests).
+  static const Key cle = ValueKey<String>('rejoindre-classe-avec-eleve');
+
+  /// La cle de la phrase de refus (tests).
+  static const Key cleRefus = ValueKey<String>('rejoindre-classe-refus');
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final String? refus = ref.watch(refusEntreeProvider)[groupeId];
+    final ActionPrincipale bouton = ActionPrincipale(
+      key: cle,
+      libelle: t.classe.seance.rejoindreAvec(prenom: eleve.prenom),
+      onPress: () => rejoindreClasse(
+        context,
+        groupeId: groupeId,
+        sessionId: sessionId,
+        entrer: (String id) => GoRouter.of(context).push(
+          Routes.salle,
+          extra: BilletSalle(
+            sessionId: id,
+            emisA: DateTime.now(),
+            groupeId: groupeId,
+            eleveId: eleve.eleveId,
+            interfaceGuidee: eleve.mode == InterfaceMode.enfant,
+          ),
+        ),
+      ),
+    );
+    if (refus == null) return bouton;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        bouton,
+        Ecart.vSm,
+        Semantics(
+          liveRegion: true,
+          child: Text(
+            refus,
+            key: cleRefus,
+            style: AppPalette.of(context).inkAlert.applyTo(
+              Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }
