@@ -85,12 +85,15 @@ class ZoneSupport extends StatelessWidget {
     // jamais pendant le partage : la capsule de l'en-tete la remplace (TB-3,
     // UI-01, plan V2 §4.3).
     final bool video = vue.voitVignetteSurSupport;
-    final double largeurVignette = MesuresVignette.largeur(
-      gabarit,
-      guidee: vue.vignetteAgrandie,
-      enseignant: vue.meneLaSeance,
-      panneau: vue.panneau != PanneauOuvert.aucun,
-    );
+    final double largeurVignette =
+        (PorteeMediaSalle.de(context)?.pleinCadre ?? false)
+        ? MesuresVignette.largeurPleinCadre(gabarit)
+        : MesuresVignette.largeur(
+            gabarit,
+            guidee: vue.vignetteAgrandie,
+            enseignant: vue.meneLaSeance,
+            panneau: vue.panneau != PanneauOuvert.aucun,
+          );
     // Guidee web etroit (image CLV-04-05-06 web etroit) : la grande vignette
     // descend jusqu'a l'encadre, qui se range a cote d'elle ; la carte
     // s'arrete apres son contenu, un espace la separe du dock.
@@ -357,6 +360,7 @@ extension on ZoneSupport {
   /// serti que la diapositive), la page posee dedans en `BoxFit.contain`.
   Widget _carteSurface(BuildContext context, VueSurface surface) {
     final Gabarit gabarit = AppGabarit.de(context);
+    final bool pleinCadre = PorteeMediaSalle.de(context)?.pleinCadre ?? false;
     // Tableau libre de l'enseignant, texte agrandi hors bureau : sa propre
     // vignette couvrirait la phrase du §12 (rien ne recouvre un texte a
     // lire) ; elle ne se pose pas sur la feuille. Les eleves gardent la
@@ -367,12 +371,15 @@ extension on ZoneSupport {
         gabarit != Gabarit.desktop &&
         MediaQuery.textScalerOf(context).scale(1) >= _seuilPile;
     final bool video = vignetteEnseignantPosee(context, vue) && !consigneSerree;
-    final double largeurVignette = MesuresVignette.largeur(
-      gabarit,
-      guidee: vue.vignetteAgrandie,
-      enseignant: vue.meneLaSeance,
-      panneau: vue.panneau != PanneauOuvert.aucun,
-    );
+    final double largeurVignette =
+        (PorteeMediaSalle.de(context)?.pleinCadre ?? false)
+        ? MesuresVignette.largeurPleinCadre(gabarit)
+        : MesuresVignette.largeur(
+            gabarit,
+            guidee: vue.vignetteAgrandie,
+            enseignant: vue.meneLaSeance,
+            panneau: vue.panneau != PanneauOuvert.aucun,
+          );
     final Widget carte = Theme(
       // La page et la feuille restent claires : jamais inversees en sombre.
       data: AppTheme.pour(InterfaceMode.standard, Brightness.light),
@@ -388,7 +395,13 @@ extension on ZoneSupport {
               borderRadius: AppRadius.arrondiLg,
               child: LayoutBuilder(
                 builder: (BuildContext _, BoxConstraints c) {
-                  final double marge = serre ? AppSpacing.sm : AppSpacing.md;
+                  // S0.2 : dans `/salle`, la page prend toute la carte
+                  // (zoom 100 = toute la largeur ou toute la hauteur).
+                  final double marge = pleinCadre
+                      ? AppSpacing.xs
+                      : serre
+                      ? AppSpacing.sm
+                      : AppSpacing.md;
                   final double? ratio = ratioSurface(vue);
                   // TB-RC (TB_RAPPORT §d n. 3) : la vignette ne recouvre
                   // jamais la feuille ; si elle la toucherait en coin, la

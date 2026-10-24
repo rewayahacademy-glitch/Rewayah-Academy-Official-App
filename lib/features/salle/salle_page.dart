@@ -542,19 +542,36 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// pedagogique. La feuille du roster se referme avant d'ouvrir la fiche :
   /// deux feuilles empilees sur un telephone ne laisseraient rien voir du
   /// cours.
-  Future<void> _voirEleves() => AppBottomSheet.ouvrir<void>(
-    context,
-    titre: t.tc.classe.roster.titre,
-    constructeur: (BuildContext feuille) => Consumer(
-      builder: (BuildContext _, WidgetRef ref, Widget? _) => PanneauRoster(
-        roster: _roster(ref),
-        onOuvrirFiche: (String academyId) {
-          Navigator.of(feuille).pop();
-          unawaited(_voirFiche(academyId));
-        },
-      ),
-    ),
-  );
+  ///
+  /// S0.2 : depuis l'en-tete sur une ligne de la salle de seance, la meme
+  /// feuille porte d'abord la presence ([lignes], J3), puis le roster.
+  Future<void> _voirEleves({List<_Presence>? lignes}) =>
+      AppBottomSheet.ouvrir<void>(
+        context,
+        titre: t.tc.classe.roster.titre,
+        constructeur: (BuildContext feuille) => Consumer(
+          builder: (BuildContext _, WidgetRef ref, Widget? _) {
+            final Widget roster = PanneauRoster(
+              roster: _roster(ref),
+              onOuvrirFiche: (String academyId) {
+                Navigator.of(feuille).pop();
+                unawaited(_voirFiche(academyId));
+              },
+            );
+            final List<_Presence>? presence = lignes;
+            if (presence == null) return roster;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                _ListePresence(lignes: presence, entete: true),
+                Ecart.vLg,
+                roster,
+              ],
+            );
+          },
+        ),
+      );
 
   Future<void> _voirFiche(String academyId) {
     final TeacherStudentProjection? eleve = _roster(ref)
@@ -621,10 +638,13 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       onCommandes: enseignant
           ? () => _basculerPanneau(PanneauOuvert.commandes)
           : null,
-      // Les eleves de l'enseignant passent par le roster reel de la seance
-      // (fiche, rappel discret) et la liste de presence (J3), poses sous
-      // l'en-tete : le panneau de demonstration n'est pas rendu.
-      onEleves: null,
+      // S0.2 : la colonne Eleves de la salle de seance est repliee d'office
+      // hors ordinateur.
+      // Le panneau Eleves (colonne, ou panneau sur telephone) porte la
+      // presence (J3) et le roster reel (fiche, rappel discret).
+      onEleves: enseignant
+          ? () => _basculerPanneau(PanneauOuvert.eleves)
+          : null,
       // La Bibliotheque des Commandes (et la touche B) ouvre le Coran : une
       // autre sourate se presente a tout moment, comme depuis l'ancien
       // panneau.
@@ -657,17 +677,24 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // vignette, et la toucher remet la scene en grand.
     final bool scenePremierPlan = _scenePremierPlan ?? presentee == null;
     final bool basculable = presentee != null;
-    final RosterClasseVM? roster = enseignant ? _roster(ref) : null;
     return PorteeMediaSalle(
-      entete: _PresenceSeance(
-        erreurCamera: _erreurCamera,
-        mienne: enseignant ? null : mienne,
-        onVoirPresence: vue.voitLesParticipants
-            ? () => unawaited(_voirPresence(lignes))
-            : null,
-        roster: roster,
-        onVoirEleves: () => unawaited(_voirEleves()),
-      ),
+      // S0.2 : l'en-tete tient sur une ligne ; la presence de l'eleve y
+      // passe en pastille (section 6.6, la sienne seulement) ; la liste de
+      // l'enseignant est sa colonne Eleves.
+      pleinCadre: true,
+      pastille: enseignant ? null : _PastillePresence(mienne: mienne),
+      eleves: enseignant
+          ? _ElevesSeance(
+              lignes: lignes,
+              roster: _roster(ref),
+              onOuvrirFiche: (String academyId) =>
+                  unawaited(_voirFiche(academyId)),
+            )
+          : null,
+      alerte: switch (_erreurCamera ?? _moteur.erreurCameraEntree) {
+        final String erreur => _ErreurCamera(erreur: erreur),
+        null => null,
+      },
       scene: _Scene(vue: vue),
       scenePremierPlan: scenePremierPlan,
       onBasculerScene: basculable
@@ -1098,97 +1125,97 @@ String causeEchecCamera(String erreur) {
   return t.salle.cameraEchecAutre;
 }
 
-/// S0 : sous l'en-tete de la salle de seance, ce que `/salle` savait deja
-/// dire et que la salle de seance ne porte pas : l'etat de presence de
-/// l'eleve (section 6.6, le sien seulement) ; chez l'enseignant, la liste de
-/// presence (J3 : jamais « absent » sans le savoir) et le roster de la seance
-/// (fiche, rappel discret).
-class _PresenceSeance extends StatelessWidget {
-  const _PresenceSeance({
-    this.erreurCamera,
-    this.mienne,
-    this.onVoirPresence,
-    this.roster,
-    this.onVoirEleves,
+/// S0.2 : le panneau Eleves de l'enseignant dans la salle de seance : la
+/// presence de chacun (J3 : jamais « absent » sans le savoir, consolide ou
+/// non), puis le roster reel de la seance (fiche, rappel discret).
+class _ElevesSeance extends StatelessWidget {
+  const _ElevesSeance({
+    required this.lignes,
+    required this.roster,
+    required this.onOuvrirFiche,
   });
 
-  /// D14 : la phrase exacte du navigateur quand la camera n'a pas pu
-  /// s'allumer, ou `null`.
-  final String? erreurCamera;
-
-  final VuePresence? mienne;
-  final VoidCallback? onVoirPresence;
-  final RosterClasseVM? roster;
-  final VoidCallback? onVoirEleves;
+  final List<_Presence> lignes;
+  final RosterClasseVM roster;
+  final ValueChanged<String> onOuvrirFiche;
 
   @override
   Widget build(BuildContext context) {
-    final RosterClasseVM? eleves = roster;
-    final VoidCallback? ouvrir = onVoirEleves;
-    final List<Widget> liens = <Widget>[
-      if (onVoirPresence case final VoidCallback voir)
-        LienFleche(
-          libelle: t.presence.titre,
-          libelleSemantique: t.presence.voir,
-          onPress: voir,
-          fleche: false,
-        ),
-      if (eleves != null && ouvrir != null && eleves.disponible)
-        BoutonRoster(
-          key: const ValueKey<String>('salle-eleves'),
-          compteur: eleves.compteurCompact,
-          presents: eleves.presents,
-          attendus: eleves.attendus,
-          onOuvrir: ouvrir,
-        ),
-    ];
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        if (erreurCamera case final String erreur)
-          Semantics(
-            key: const ValueKey<String>('salle-erreur-camera'),
-            liveRegion: true,
-            container: true,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
-                  t.salle.cameraEchec,
-                  style: palette.inkAlert.applyTo(
-                    textes.titleSmall ?? const TextStyle(),
-                  ),
-                ),
-                Text(
-                  causeEchecCamera(erreur),
-                  style: palette.inkStrong.applyTo(
-                    textes.bodyMedium ?? const TextStyle(),
-                  ),
-                ),
-                Text(
-                  t.salle.cameraEchecMessage(erreur: erreur),
-                  style: palette.inkMuted.applyTo(
-                    textes.bodySmall ?? const TextStyle(),
-                  ),
-                ),
-                Ecart.vSm,
-              ],
-            ),
-          ),
-        if (mienne case final VuePresence etat)
-          LignePresence(nom: t.presence.mienne, vue: etat),
-        if (liens.isNotEmpty)
-          Wrap(
-            spacing: AppSpacing.md,
-            runSpacing: AppSpacing.xs,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: liens,
-          ),
+        _ListePresence(lignes: lignes),
+        if (roster.disponible) ...<Widget>[
+          Ecart.vLg,
+          PanneauRoster(roster: roster, onOuvrirFiche: onOuvrirFiche),
+        ],
       ],
+    );
+  }
+}
+
+/// S0.2 : l'etat de presence de l'eleve, en pastille dans l'en-tete de la
+/// salle de seance (section 6.6 : le sien, et aucun autre).
+class _PastillePresence extends StatelessWidget {
+  const _PastillePresence({required this.mienne});
+
+  final VuePresence mienne;
+
+  @override
+  Widget build(BuildContext context) => MergeSemantics(
+    child: Semantics(
+      label: t.presence.mienne,
+      child: StatusPill(
+        libelle: LignePresence.libelle(mienne.etat),
+        ton: mienne.ton,
+      ),
+    ),
+  );
+}
+
+/// D14 : la camera n'a pas pu s'allumer ; la phrase exacte du navigateur, sa
+/// cause probable et quoi faire (K-59), sous l'en-tete.
+class _ErreurCamera extends StatelessWidget {
+  const _ErreurCamera({required this.erreur});
+
+  final String erreur;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    return Semantics(
+      key: const ValueKey<String>('salle-erreur-camera'),
+      liveRegion: true,
+      container: true,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              t.salle.cameraEchec,
+              style: palette.inkAlert.applyTo(
+                textes.titleSmall ?? const TextStyle(),
+              ),
+            ),
+            Text(
+              causeEchecCamera(erreur),
+              style: palette.inkStrong.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+            Text(
+              t.salle.cameraEchecMessage(erreur: erreur),
+              style: palette.inkMuted.applyTo(
+                textes.bodySmall ?? const TextStyle(),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -25,6 +25,7 @@ import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
+import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_enseignant/page_coran_salle.dart';
@@ -224,7 +225,10 @@ Future<void> _monterSalle(
 /// S0 : dans la salle de seance, la liste de presence de l'enseignant
 /// s'ouvre par le lien « Presence » sous l'en-tete (feuille).
 Future<void> _ouvrirPresence(WidgetTester tester) async {
-  await tester.tap(find.bySemanticsLabel(RegExp(t.presence.voir)).first);
+  // S0.2 : la presence (J3) et le roster vivent dans le panneau Eleves de la
+  // salle de seance : colonne deja ouverte, ou bouton « Eleves » a toucher.
+  if (find.byType(LignePresence).evaluate().isNotEmpty) return;
+  await tester.tap(find.byKey(const ValueKey<String>('bouton-eleves')).first);
   await tester.pumpAndSettle();
 }
 
@@ -470,6 +474,25 @@ void main() {
       await tester.tap(_commande(t.salle.ouvrirCamera));
       await tester.pumpAndSettle();
       expect(find.text(t.salle.cameraEchec), findsNothing);
+    });
+
+    testWidgets('D14 : un allumage d entree refuse se dit sans geste', (
+      WidgetTester tester,
+    ) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle()
+        ..erreurEntreeCamera = 'NotAllowedError: Permission denied';
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student', camera: true)),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+
+      expect(moteur.cameraDemandee, isEmpty);
+      expect(find.text(t.salle.cameraEchec), findsOneWidget);
+      expect(find.text(t.salle.cameraEchecRefus), findsOneWidget);
     });
 
     test('D14 : la cause probable se lit dans la phrase du navigateur', () {
@@ -1321,7 +1344,8 @@ void main() {
         ),
       );
 
-      expect(find.text(t.presence.mienne), findsOneWidget);
+      // S0.2 : sa pastille dans l'en-tete, lue « Votre presence ».
+      expect(find.bySemanticsLabel(RegExp(t.presence.mienne)), findsOneWidget);
       expect(find.text(t.presence.enRetard), findsOneWidget);
       // Aucune liste : l'eleve n'y a pas droit, et le bouton qui l'ouvrirait
       // n'existe pas non plus.
@@ -1368,7 +1392,8 @@ void main() {
       await tester.pumpAndSettle();
       await _ouvrirPresence(tester);
 
-      expect(find.text('Khadija'), findsOneWidget);
+      // S0.2 : dans la feuille, et dans la colonne Eleves de la salle.
+      expect(find.text('Khadija'), findsWidgets);
       expect(find.text(t.presence.enAttente), findsOneWidget);
       expect(find.text(t.presence.presente), findsOneWidget);
       // Lui-meme se nomme « Vous », pas par son prenom : c'est deja la regle
@@ -1820,11 +1845,9 @@ void main() {
     testWidgets('le compteur des eleves ouvre la liste, puis la fiche ; '
         'un rappel qui part ne dit rien', (WidgetTester tester) async {
       final FauxRappelDiscret rappel = await monter(tester);
-      final Finder bouton = find.byKey(const ValueKey<String>('salle-eleves'));
-      expect(bouton, findsOneWidget);
-      await tester.tap(bouton);
-      await tester.pumpAndSettle();
-      expect(find.text(t.tc.classe.roster.titre), findsWidgets);
+      // S0.2 : le roster reel vit dans le panneau Eleves de la salle de
+      // seance (colonne ouverte, ou bouton « Eleves »).
+      await _ouvrirPresence(tester);
 
       await tester.tap(find.text('Amina').last);
       await tester.pumpAndSettle();
@@ -1844,8 +1867,7 @@ void main() {
         tester,
         echec: const EchecRappel(MotifEchecRappel.transport),
       );
-      await tester.tap(find.byKey(const ValueKey<String>('salle-eleves')));
-      await tester.pumpAndSettle();
+      await _ouvrirPresence(tester);
       await tester.tap(find.text('Amina').last);
       await tester.pumpAndSettle();
       await tester.ensureVisible(find.text(t.tc.classe.action.rappel));
@@ -1971,7 +1993,7 @@ void main() {
       for (final MapEntry<String, Size> taille in tailles.entries) {
         for (final String role in <String>['enseignant', 'eleve']) {
           final String nom =
-              's0-salle-$role-${taille.key}-${theme == ThemeMode.light ? 'clair' : 'sombre'}';
+              's0-2-salle-$role-${taille.key}-${theme == ThemeMode.light ? 'clair' : 'sombre'}';
           testWidgets(nom, (WidgetTester tester) async {
             masquerRubanDebug();
             tester.view.physicalSize = taille.value;

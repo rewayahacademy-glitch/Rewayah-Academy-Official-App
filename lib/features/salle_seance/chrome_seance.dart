@@ -74,7 +74,14 @@ class ChromeSeance extends StatelessWidget {
       child: ZoneCiblesDebordantes(
         child: _avecEntete(
           context,
-          gabarit == Gabarit.desktop
+          _uneLigne(context)
+              ? _UneLigne(
+                  vue: vue,
+                  actions: actions,
+                  gabarit: gabarit,
+                  pastille: PorteeMediaSalle.de(context)?.pastille,
+                )
+              : gabarit == Gabarit.desktop
               ? _Large(vue: vue, actions: actions, focusCapsule: focusCapsule)
               : _Etroit(
                   vue: vue,
@@ -88,16 +95,23 @@ class ChromeSeance extends StatelessWidget {
     );
   }
 
-  /// S0 : ce que `/salle` pose sous l'en-tete ([PorteeMediaSalle.entete]).
+  /// S0.2 (pilote, 24/10/2026) : dans `/salle`, l'en-tete tient sur une
+  /// ligne de 56 au plus ; a texte agrandi au-dela de 130 %, il reprend la
+  /// tete compacte (titre et etat, mention dessous), rien n'est coupe.
+  static bool _uneLigne(BuildContext context) =>
+      (PorteeMediaSalle.de(context)?.pleinCadre ?? false) &&
+      MediaQuery.textScalerOf(context).scale(1) <= _seuilUneLigne;
+
+  /// S0.2 : ce que `/salle` dit sous l'en-tete, seulement quand il y a lieu
+  /// ([PorteeMediaSalle.alerte] : le refus de la camera).
   Widget _avecEntete(BuildContext context, Widget tete) {
-    final Widget? suite = PorteeMediaSalle.de(context)?.entete;
+    final Widget? suite = PorteeMediaSalle.de(context)?.alerte;
     if (suite == null) return tete;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         tete,
-        Ecart.vXs,
         // La meme gouttiere que la tete : rien ne touche le bord de l'ecran.
         Padding(
           padding: EdgeInsets.symmetric(
@@ -108,6 +122,114 @@ class ChromeSeance extends StatelessWidget {
           child: suite,
         ),
       ],
+    );
+  }
+}
+
+/// Le texte agrandi au-dela duquel l'en-tete de `/salle` quitte sa ligne.
+const double _seuilUneLigne = 1.3;
+
+/// La hauteur de la ligne de l'en-tete de `/salle` (S0.2 : 56 au plus,
+/// marges comprises).
+const double _hauteurUneLigne = AppTouchTarget.standard;
+
+/// S0.2 : l'en-tete de `/salle` sur une ligne : titre court, etat de la
+/// connexion, pastille de presence de l'eleve, mention de controle, coin
+/// (theme et compte) sur ordinateur. Le titre et la mention se reduisent
+/// pour tenir, ils ne sont jamais coupes.
+class _UneLigne extends StatelessWidget {
+  const _UneLigne({
+    required this.vue,
+    required this.actions,
+    required this.gabarit,
+    this.pastille,
+  });
+
+  final VueSeance vue;
+  final ActionsSeance actions;
+  final Gabarit gabarit;
+  final Widget? pastille;
+
+  /// La cle de l'en-tete sur une ligne (tests, captures).
+  static const Key cle = ValueKey<String>('entete-une-ligne');
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final AppPalette palette = AppPalette.of(context);
+    final bool large = gabarit == Gabarit.desktop;
+    final double gouttiere = large
+        ? AppPage.gouttiereDesktop
+        : AppPage.gouttiereMobile;
+    final Widget? laPastille = pastille;
+    return Padding(
+      key: cle,
+      padding: EdgeInsetsDirectional.fromSTEB(
+        gouttiere,
+        AppSpacing.xs,
+        gouttiere,
+        AppSpacing.xs,
+      ),
+      child: SizedBox(
+        height: _hauteurUneLigne,
+        child: Row(
+          children: <Widget>[
+            if (actions.onRetour != null) ...<Widget>[
+              _Retour(onPress: actions.onRetour),
+              Ecart.hXs,
+            ],
+            // Au telephone, la ligne garde l'etat, la presence et la mention
+            // a leur taille : le titre n'y est que lu (en-tete du lecteur
+            // d'ecran), jamais reduit a l'illisible.
+            if (gabarit == Gabarit.mobile)
+              Semantics(
+                header: true,
+                label: vue.titre,
+                hint: vue.ligneEtat,
+                child: const SizedBox.shrink(),
+              )
+            else ...<Widget>[
+              Flexible(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Semantics(
+                    header: true,
+                    hint: vue.ligneEtat,
+                    child: Text(
+                      vue.titre,
+                      maxLines: 1,
+                      softWrap: false,
+                      style: palette.inkStrong.applyTo(
+                        theme.textTheme.titleMedium ?? const TextStyle(),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Ecart.hSm,
+            ],
+            _Connexion(vue: vue, compacte: true),
+            if (laPastille != null) ...<Widget>[Ecart.hSm, laPastille],
+            Ecart.hMd,
+            Expanded(
+              flex: 2,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: AlignmentDirectional.centerStart,
+                child: MentionSeance(vue: vue),
+              ),
+            ),
+            if (large) ...<Widget>[
+              Ecart.hMd,
+              if (vue.voitReglagesEnTete)
+                _CoinComplet(vue: vue, actions: actions)
+              else
+                _CoinGuide(vue: vue, actions: actions),
+            ],
+          ],
+        ),
+      ),
     );
   }
 }

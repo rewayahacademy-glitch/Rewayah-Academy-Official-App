@@ -31,6 +31,7 @@ import 'package:rewayah_academy/core/widgets/commande_salle.dart';
 import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
 import 'package:rewayah_academy/core/widgets/page_immersive.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
+import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_enseignant/panneau_enseignant.dart';
 import 'package:rewayah_academy/features/salle_seance/composition_salle.dart';
@@ -469,15 +470,32 @@ void main() {
             // S0 : l'eleve lit SA ligne sous l'en-tete ; l'enseignant ouvre
             // la liste par le lien « Presence ».
             if (role == 'teacher') {
-              _lisible(tester, find.text(t.presence.titre), 'Presence');
+              // S0.2 : la presence de l'enseignant vit dans son panneau
+              // Eleves (colonne, ou bouton « Eleves » au telephone).
+              if (find.byType(LignePresence).evaluate().isEmpty) {
+                await tester.tap(
+                  find.byKey(const ValueKey<String>('bouton-eleves')).first,
+                );
+                await tester.pumpAndSettle();
+              }
+              _lisible(
+                tester,
+                find.descendant(
+                  of: find.byType(LignePresence),
+                  matching: find.byType(Text),
+                ),
+                'presence ($role)',
+              );
               return;
             }
-            final Finder lignes = find.byType(LignePresence);
-            expect(lignes, findsWidgets);
+            // S0.2 : la pastille de presence de l'eleve, dans l'en-tete.
             _lisible(
               tester,
-              find.descendant(of: lignes, matching: find.byType(Text)),
-              'ligne de presence ($role)',
+              find.descendant(
+                of: find.byType(StatusPill),
+                matching: find.byType(Text),
+              ),
+              'pastille de presence ($role)',
             );
           });
         }

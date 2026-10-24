@@ -40,6 +40,7 @@ import 'commandes_pedagogiques.dart';
 import 'composition_salle.dart';
 import 'dock_seance.dart';
 import 'ecriture_seance.dart';
+import 'media_salle.dart';
 import 'panneau_eleves.dart';
 import 'panneau_seance.dart';
 import 'panneau_supports.dart';
@@ -154,7 +155,12 @@ class SalleSeance extends StatelessWidget {
     // web etroit, l'en-tete tient sur une ligne et les commandes, icones
     // seules, sont posees en bas par-dessus le support, masquables d'une
     // touche (CommandesMasquables) : le support et la video gardent l'ecran.
-    if (vue.role == RoleSeance.guidee && !large) {
+    // S0.2 (pilote, 24/10/2026) : dans `/salle` ([PorteeMediaSalle]
+    // pleinCadre), l'eleve prend la meme disposition a toutes les largeurs :
+    // en-tete sur une ligne, scene sur toute la hauteur restante, commandes
+    // en surimpression masquables.
+    final bool pleinCadre = PorteeMediaSalle.de(context)?.pleinCadre ?? false;
+    if ((vue.role == RoleSeance.guidee && !large) || pleinCadre) {
       return _ContexteEleve(
         vue: vue,
         actions: actions,
@@ -964,13 +970,29 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
   );
 
   /// EN-12 (micro), decision du directeur du 27/09 : l'etat du micro obtenu
-  /// (« Micro ouvert » ou « Micro coupe »), montre brievement et lu par le
-  /// lecteur d'ecran, que le geste vienne du dock ou de la touche M.
-  String? _retourMicro;
+  /// (« Micro ouvert » ou « Micro coupe »), lu par le lecteur d'ecran, que le
+  /// geste vienne du dock ou de la touche M. S0.2 (pilote, 24/10) : il ne
+  /// s'affiche plus sur la page, seulement sous le bouton rond.
 
   /// TB-5 (n. 12) : l'enseignant a replie la colonne des Participants. Etat
   /// local, jamais diffuse ; il survit au focus et au redimensionnement.
   bool _participantsReplies = false;
+
+  /// S0.2 (pilote, 24/10/2026) : dans `/salle`, la colonne des Participants
+  /// est repliee d'office hors ordinateur (telephone, portrait comme couche) ;
+  /// le bouton « Eleves » la deplie. Lu une fois, a la premiere composition.
+  bool _repliDecide = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_repliDecide) return;
+    _repliDecide = true;
+    if ((PorteeMediaSalle.de(context)?.pleinCadre ?? false) &&
+        widget.gabarit != Gabarit.desktop) {
+      _participantsReplies = true;
+    }
+  }
 
   /// TB-5 (UX-16) : le panneau droit ouvert avant le focus, a retrouver en
   /// le quittant si la largeur le permet.
@@ -1079,11 +1101,9 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
   void didUpdateWidget(_FocusPanneaux ancien) {
     super.didUpdateWidget(ancien);
     if (ancien.local.microOuvert != widget.local.microOuvert) {
-      _retourMicro = widget.local.microOuvert
-          ? t.salle.microOuvert
-          : t.salle.microCoupe;
-      // Lu une seule fois : le bandeau visible est exclu des semantiques.
-      _annoncer(_retourMicro!);
+      _annoncer(
+        widget.local.microOuvert ? t.salle.microOuvert : t.salle.microCoupe,
+      );
     }
     if (ancien.vue.contexteOuvert && !widget.vue.contexteOuvert) {
       WidgetsBinding.instance.addPostFrameCallback((Duration _) {
@@ -1215,17 +1235,6 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
     }
   }
 
-  /// La hauteur du retour du micro : au-dessus du dock et de ses libelles,
-  /// et, hors bureau, au-dessus du declencheur « Commandes » pose sur le
-  /// dock.
-  double _hauteurRetourMicro(BuildContext context) {
-    final double dessusDock =
-        diametreBoutonAppel(context) + AppSpacing.respiration;
-    return widget.gabarit == Gabarit.desktop
-        ? dessusDock
-        : dessusDock + AppSpacing.respiration + AppSpacing.lg;
-  }
-
   /// La barre de l'appel de l'enseignant : pilule centree sur bureau,
   /// panneau sur toute la largeur ailleurs.
   Widget _barreEnseignant(VueSeance vue) {
@@ -1353,27 +1362,6 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
                     agrandi: _agrandi,
                   ),
                   barre: _barreEnseignant(vue),
-                ),
-              ),
-              // Le retour du micro : discret, au-dessus du dock, sans
-              // fenetre ni geste ; il ne retient aucun toucher.
-              PositionedDirectional(
-                start: 0,
-                end: 0,
-                bottom: _hauteurRetourMicro(context),
-                child: IgnorePointer(
-                  child: ExcludeSemantics(
-                    // Centre et a la largeur du texte : une etiquette
-                    // breve, pas un bandeau d'une rive a l'autre.
-                    child: Center(
-                      child: IntrinsicWidth(
-                        child: LocalFeedback(
-                          key: const ValueKey<String>('retour-micro'),
-                          message: _retourMicro,
-                        ),
-                      ),
-                    ),
-                  ),
                 ),
               ),
             ],
@@ -1594,24 +1582,30 @@ class _SalleEnseignant extends StatelessWidget {
       forme: forme,
       enMenu: !colonne,
       ajusteAuContenu: true,
-      enfant: PanneauEleves(
-        eleves: vue.eleves,
-        actions: actions,
-        // En colonne, le panneau montre toujours « File de recitation »
-        // (maquettes enseignant, EN-9) ; ailleurs, file au repos : pas de
-        // bloc, le panneau reste celui de CLV-07.
-        recitation:
-            colonne ||
-                vue.recitation.enCours ||
-                vue.recitation.suivants.isNotEmpty
-            ? vue.recitation
-            : null,
-        large: colonne,
-        serre: forme == FormePanneau.feuille,
-        autorisationEcrire: vue.voitAutorisationEcrire,
-        entete: vue.contexteOuvert
-            ? SectionContexte(vue: vue, actions: actions)
-            : null,
+      // S0.2 : dans `/salle`, la presence et le roster reels de la seance
+      // ([PorteeMediaSalle.eleves]) a la place du panneau de demonstration.
+      enfant: Builder(
+        builder: (BuildContext contexte) =>
+            PorteeMediaSalle.de(contexte)?.eleves ??
+            PanneauEleves(
+              eleves: vue.eleves,
+              actions: actions,
+              // En colonne, le panneau montre toujours « File de recitation »
+              // (maquettes enseignant, EN-9) ; ailleurs, file au repos : pas de
+              // bloc, le panneau reste celui de CLV-07.
+              recitation:
+                  colonne ||
+                      vue.recitation.enCours ||
+                      vue.recitation.suivants.isNotEmpty
+                  ? vue.recitation
+                  : null,
+              large: colonne,
+              serre: forme == FormePanneau.feuille,
+              autorisationEcrire: vue.voitAutorisationEcrire,
+              entete: vue.contexteOuvert
+                  ? SectionContexte(vue: vue, actions: actions)
+                  : null,
+            ),
       ),
     );
   }
@@ -3048,14 +3042,21 @@ Widget? _appel(VueSeance vue, double gouttiere) {
 /// focus, panneau ouvert ou erreur critique ([VueSeance.visioMaintenue]),
 /// lecteur d'ecran ; posee par-dessus le contenu, qui garde une marge egale
 /// a sa hauteur mesuree : rien ne bouge quand elle se masque.
+///
+/// S0.2 (pilote, 24/10/2026) : dans `/salle` ([PorteeMediaSalle.pleinCadre]),
+/// la scene garde toute la hauteur et la barre se pose EN SURIMPRESSION sur
+/// son bas, masquee au delai ; elle couvre le bas de la page tant qu'elle est
+/// visible (ecart a SUPERPOS-1, dit au pilote).
 Widget _visioRevelee({
   required VueSeance vue,
   required Widget contenu,
   required Widget barre,
-}) => CommandesMasquables(
-  contenu: contenu,
-  commandes: barre,
-  maintenir: vue.visioMaintenue,
-  margeLecture: true,
-  libelleEntree: t.salle.seance.commandesAppel,
+}) => Builder(
+  builder: (BuildContext context) => CommandesMasquables(
+    contenu: contenu,
+    commandes: barre,
+    maintenir: vue.visioMaintenue,
+    margeLecture: !(PorteeMediaSalle.de(context)?.pleinCadre ?? false),
+    libelleEntree: t.salle.seance.commandesAppel,
+  ),
 );

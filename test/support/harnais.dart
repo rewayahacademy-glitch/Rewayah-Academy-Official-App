@@ -1206,6 +1206,12 @@ class FauxMoteurSalle implements VideoSessionProvider {
     microDemande.add(actif);
   }
 
+  /// D14 : la phrase d'un allumage d'entree refuse.
+  String? erreurEntreeCamera;
+
+  @override
+  String? get erreurCameraEntree => erreurEntreeCamera;
+
   @override
   Future<void> reglerCamera({required bool actif}) async {
     cameraDemandee.add(actif);

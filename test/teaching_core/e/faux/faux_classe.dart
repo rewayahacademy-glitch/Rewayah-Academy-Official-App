@@ -183,6 +183,9 @@ class FauxMoteurClasse implements VideoSessionProvider {
   }
 
   @override
+  String? get erreurCameraEntree => null;
+
+  @override
   Future<void> reglerCamera({required bool actif}) async {
     cameraDemandee.add(actif);
   }

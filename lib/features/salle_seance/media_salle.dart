@@ -48,7 +48,10 @@ class PorteeMediaSalle extends InheritedWidget {
     this.scenePremierPlan = false,
     this.onBasculerScene,
     this.actionScene,
-    this.entete,
+    this.pastille,
+    this.alerte,
+    this.pleinCadre = false,
+    this.eleves,
     super.key,
   });
 
@@ -67,9 +70,21 @@ class PorteeMediaSalle extends InheritedWidget {
   /// « Revenir a la page » : l'enseignant sans page ouvre le Coran.
   final ({String libelle, VoidCallback onPress})? actionScene;
 
-  /// Ce que `/salle` pose sous l'en-tete : la presence de l'eleve (section
-  /// 6.6), la liste de presence et le roster de l'enseignant (J3).
-  final Widget? entete;
+  /// S0.2 : la pastille posee dans la ligne de l'en-tete (la presence de
+  /// l'eleve, section 6.6), ou `null`.
+  final Widget? pastille;
+
+  /// S0.2 : ce qui se dit sous l'en-tete, seulement quand il y a lieu (le
+  /// refus de la camera, D14), ou `null`.
+  final Widget? alerte;
+
+  /// S0.2 : la salle de `/salle` en plein cadre : en-tete sur une ligne,
+  /// commandes en surimpression, scene sur toute la hauteur restante.
+  final bool pleinCadre;
+
+  /// S0.2 : le contenu du panneau Eleves de l'enseignant (colonne ou
+  /// panneau) : la presence (J3) et le roster reel, ou `null`.
+  final Widget? eleves;
 
   /// Le rendu reel de la camera d'un participant, par son identite (le
   /// `profile_id`), ou `null` : camera coupee ou pas encore recue.

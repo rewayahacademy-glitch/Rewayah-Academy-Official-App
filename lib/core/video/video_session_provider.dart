@@ -433,6 +433,11 @@ abstract interface class VideoSessionProvider {
   /// Ouvre ou ferme la camera. Sans effet si le jeton ne le permet pas.
   Future<void> reglerCamera({required bool actif});
 
+  /// D14 (S0.2) : la phrase du navigateur quand la camera n'a pas pu
+  /// s'allumer d'elle-meme a l'entree, ou `null`. Un allumage reussi
+  /// l'efface.
+  String? get erreurCameraEntree;
+
   /// Coupe toute video, emise comme recue.
   ///
   /// C'est le mode « economie de donnees » de l'ADR-001, et le dernier palier

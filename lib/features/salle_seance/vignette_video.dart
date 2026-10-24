@@ -79,6 +79,18 @@ abstract final class MesuresVignette {
     };
   }
 
+  /// S0.2 (pilote, 24/10/2026) : dans `/salle`, la vignette est petite et
+  /// flottante, au coin de la scene : ≈ 110 au telephone, ≈ 200 ailleurs.
+  static double largeurPleinCadre(Gabarit gabarit) => gabarit == Gabarit.mobile
+      ? largeurPleinCadreEtroite
+      : largeurPleinCadreLarge;
+
+  /// Telephone, `/salle` : ≈ 110 x 100.
+  static const double largeurPleinCadreEtroite = 112;
+
+  /// Tablette et ordinateur, `/salle` : ≈ 200 x 180.
+  static const double largeurPleinCadreLarge = 200;
+
   /// La hauteur qui suit du ratio.
   static double hauteur(Gabarit gabarit, {bool guidee = false}) =>
       largeur(gabarit, guidee: guidee) / ratio;
