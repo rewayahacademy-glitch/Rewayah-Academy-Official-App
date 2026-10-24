@@ -65,6 +65,7 @@ import 'media_salle.dart';
 import 'notes_deposees.dart';
 import 'rangement_support.dart';
 import 'repere_page.dart';
+import 'telephone_plein_ecran.dart' show telephonePleinEcran;
 import 'vue_seance.dart';
 
 /// Le rectangle de la page dans sa boite : `BoxFit.contain`, centre (plan
@@ -742,7 +743,14 @@ class _Page extends StatelessWidget {
           page: page.page,
           pages: page.total,
         ),
-        child: _Cadre(child: rendu(page)),
+        // S0.2c : au telephone, la page est l'ecran : ni carte, ni arrondi,
+        // ni ombre.
+        child: telephonePleinEcran(context)
+            ? DecoratedBox(
+                decoration: AppPalette.of(context).surfaceRaised.decoration(),
+                child: rendu(page),
+              )
+            : _Cadre(child: rendu(page)),
       );
     }
     // TB-RC (revue TB-R, m7) : un noeud propre, jamais fondu dans l'en-tete

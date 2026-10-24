@@ -2039,7 +2039,7 @@ void main() {
       for (final MapEntry<String, Size> taille in tailles.entries) {
         for (final String role in <String>['enseignant', 'eleve']) {
           final String nom =
-              's0-2-salle-$role-${taille.key}-${theme == ThemeMode.light ? 'clair' : 'sombre'}';
+              's0-2c-salle-$role-${taille.key}-${theme == ThemeMode.light ? 'clair' : 'sombre'}';
           testWidgets(nom, (WidgetTester tester) async {
             masquerRubanDebug();
             tester.view.physicalSize = taille.value;

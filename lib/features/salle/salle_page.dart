@@ -47,6 +47,7 @@ import '../../core/widgets/page_immersive.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/permanent_notice.dart';
+import '../../core/widgets/pressable.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/status_pill.dart';
 import '../accueil_eleve/apres_seance_accessibilite.dart';
@@ -682,7 +683,18 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // passe en pastille (section 6.6, la sienne seulement) ; la liste de
       // l'enseignant est sa colonne Eleves.
       pleinCadre: true,
-      pastille: enseignant ? null : _PastillePresence(mienne: mienne),
+      // Au telephone, l'enseignant n'a pas de colonne : « Eleves » ouvre la
+      // presence (J3) et le roster (fiche, rappel) en feuille.
+      pastille: enseignant
+          ? (MediaQuery.sizeOf(context).shortestSide < AppGabarit.seuilTablette
+                ? LienFleche(
+                    key: const ValueKey<String>('salle-eleves'),
+                    libelle: t.salle.seance.eleves,
+                    onPress: () => unawaited(_voirEleves(lignes: lignes)),
+                    fleche: false,
+                  )
+                : null)
+          : _PastillePresence(mienne: mienne),
       eleves: enseignant
           ? _ElevesSeance(
               lignes: lignes,
@@ -691,10 +703,13 @@ class _SallePageEtat extends ConsumerState<SallePage> {
                   unawaited(_voirFiche(academyId)),
             )
           : null,
-      alerte: switch (_erreurCamera ?? _moteur.erreurCameraEntree) {
-        final String erreur => _ErreurCamera(erreur: erreur),
-        null => null,
-      },
+      // D14 : effacee des que la camera publie.
+      alerte: (moi?.camera ?? false)
+          ? null
+          : switch (_erreurCamera ?? _moteur.erreurCameraEntree) {
+              final String erreur => _ErreurCamera(erreur: erreur),
+              null => null,
+            },
       scene: _Scene(vue: vue),
       scenePremierPlan: scenePremierPlan,
       onBasculerScene: basculable
@@ -1144,16 +1159,93 @@ class _ElevesSeance extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // S0.2c : une ligne par personne (prenom, etat, micro) ; toucher un eleve
+    // du roster ouvre sa fiche (rappel discret, recitation).
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
+      spacing: AppSpacing.xs,
       children: <Widget>[
-        _ListePresence(lignes: lignes),
-        if (roster.disponible) ...<Widget>[
-          Ecart.vLg,
-          PanneauRoster(roster: roster, onOuvrirFiche: onOuvrirFiche),
-        ],
+        for (final _Presence personne in lignes)
+          _LigneEleve(
+            personne: personne,
+            onFiche:
+                roster.disponible &&
+                    personne.academyId != null &&
+                    roster.parAcademyId(personne.academyId!) != null
+                ? () => onOuvrirFiche(personne.academyId!)
+                : null,
+          ),
       ],
+    );
+  }
+}
+
+/// S0.2c : la ligne d'une personne dans la colonne Eleves : le prenom en
+/// ellipse (jamais coupe ni debordant), son etat en pastille (le mot entier,
+/// J7), le micro coupe ; « consolide » dessous quand une decision l'a fige.
+class _LigneEleve extends StatelessWidget {
+  const _LigneEleve({required this.personne, this.onFiche});
+
+  final _Presence personne;
+  final VoidCallback? onFiche;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final Widget ligne = Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                  personne.nom,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: false,
+                  style: palette.inkStrong.applyTo(
+                    textes.labelLarge ?? const TextStyle(),
+                  ),
+                ),
+              ),
+              Ecart.hSm,
+              StatusPill(
+                libelle: LignePresence.libelle(personne.vue.etat),
+                ton: personne.vue.ton,
+              ),
+              if (personne.micro == false) ...<Widget>[
+                Ecart.hXs,
+                IconTheme(
+                  data: palette.inkMuted.asIconTheme(size: AppSpacing.lg),
+                  child: Icon(
+                    AppIcons.microCoupe.repos,
+                    semanticLabel: t.salle.microCoupe,
+                  ),
+                ),
+              ],
+            ],
+          ),
+          if (personne.vue.consolide)
+            Text(
+              t.presence.consolide,
+              style: palette.inkMuted.applyTo(
+                textes.bodySmall ?? const TextStyle(),
+              ),
+            ),
+        ],
+      ),
+    );
+    final VoidCallback? fiche = onFiche;
+    if (fiche == null) return MergeSemantics(child: ligne);
+    return Pressable(
+      onPress: fiche,
+      libelleSemantique: personne.nom,
+      child: ligne,
     );
   }
 }
@@ -2544,6 +2636,7 @@ class _Presence {
     required this.role,
     required this.vue,
     this.micro,
+    this.academyId,
   });
 
   /// Compose la liste que l'ecran affiche.
@@ -2581,6 +2674,7 @@ class _Presence {
           // pas dans la salle -- et « pas de micro » ne se dit pas alors, parce
           // que ce serait un fait, la ou il n'y a qu'une absence de fait.
           micro: _microDe(vue.participantsListes, ligne.profilId),
+          academyId: ligne.identifiantImmuable,
         ),
     ];
   }
@@ -2619,6 +2713,10 @@ class _Presence {
 
   /// Micro ouvert, ferme, ou absent de la salle.
   final bool? micro;
+
+  /// L'identifiant immuable (matricule) de la personne, qui relie sa ligne a
+  /// sa fiche du roster ; `null` sans presence lue.
+  final String? academyId;
 }
 
 /// La presence de la seance, pour qui a le droit de la lire.

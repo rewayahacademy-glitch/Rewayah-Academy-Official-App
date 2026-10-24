@@ -14,6 +14,7 @@ captures avant toute fusion, preuve par le directeur en production après fusion
 - Rien n'est surdimensionné sur ordinateur ; pas d'écran blanc ; pas de panneaux de consignes.
 - La qualité vidéo doit être bonne sur un bon réseau, et se dégrader seule sur un mauvais.
 - La caméra de l'élève doit marcher quand le tuteur l'a autorisée.
+- **Loi du directeur, 24/10/2026 (soir)** : « Sur téléphone, la page du Coran EST l'écran. Une page A4 = un écran de smartphone. Rien au-dessus, rien en dessous, rien à côté. »
 
 ## Les maquettes
 

@@ -47,6 +47,7 @@ import 'panneau_supports.dart';
 import 'rangement_support.dart';
 import 'selecteur_ressources.dart';
 import 'surface_page_fixe.dart' show rectanglePage;
+import 'telephone_plein_ecran.dart';
 import 'vignette_video.dart' show MesuresVignette;
 import 'vue_seance.dart';
 import 'zone_support.dart';
@@ -125,6 +126,11 @@ class SalleSeance extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final Gabarit gabarit = AppGabarit.de(context);
     final bool large = gabarit == Gabarit.desktop;
+    // S0.2c (loi du directeur, 24/10/2026) : au telephone, dans `/salle`, la
+    // page du Coran EST l'ecran ; tout le reste est en surimpression.
+    if (telephonePleinEcran(context)) {
+      return TelephonePleinEcran(vue: vue, actions: actions, local: local);
+    }
     if (vue.role == RoleSeance.enseignant) {
       // TB-2 : la barre de l'appel est en bas de l'ecran, au-dessus de la
       // feuille ouverte (UX-07) ; c'est elle qui garde la marge du systeme.
@@ -1256,7 +1262,15 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
           gouttiere,
           AppSpacing.lg,
         ),
-        child: Center(heightFactor: 1, child: dock),
+        // S0.2c : dans `/salle`, la barre se pose en bas a gauche, sous la
+        // colonne Eleves, jamais sur la page (SUPERPOS-1).
+        child: (PorteeMediaSalle.de(context)?.pleinCadre ?? false)
+            ? Align(
+                alignment: AlignmentDirectional.centerStart,
+                heightFactor: 1,
+                child: dock,
+              )
+            : Center(heightFactor: 1, child: dock),
       );
     }
     final double ecartDock = widget.gabarit == Gabarit.mobile

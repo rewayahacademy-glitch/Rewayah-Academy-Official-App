@@ -28,7 +28,6 @@ import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/commande_salle.dart';
-import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
 import 'package:rewayah_academy/core/widgets/page_immersive.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
@@ -242,8 +241,14 @@ void main() {
             // l'eleve et l'enseignant, la surface de la salle de seance).
             final bool seance = role == 'teacher' || role == 'student';
             // Marges comprises, comme l'ancien contenu de `PageImmersive`.
+            // S0.2c : au telephone, la page est l'ecran (bord a bord).
+            final Finder pageTelephone = find.byKey(
+              const ValueKey<String>('telephone-page'),
+            );
             final Rect contenu = tester.getRect(
-              seance
+              pageTelephone.evaluate().isNotEmpty
+                  ? pageTelephone
+                  : seance
                   ? find
                         .ancestor(
                           of: find.byType(ZoneSupport),
@@ -470,18 +475,21 @@ void main() {
             // S0 : l'eleve lit SA ligne sous l'en-tete ; l'enseignant ouvre
             // la liste par le lien « Presence ».
             if (role == 'teacher') {
-              // S0.2 : la presence de l'enseignant vit dans son panneau
-              // Eleves (colonne, ou bouton « Eleves » au telephone).
-              if (find.byType(LignePresence).evaluate().isEmpty) {
-                await tester.tap(
-                  find.byKey(const ValueKey<String>('bouton-eleves')).first,
-                );
+              // S0.2c : la presence de l'enseignant vit dans sa colonne
+              // Eleves (une ligne par personne) ; au telephone, « Eleves »
+              // l'ouvre en feuille.
+              final Finder ouvrir = find.byKey(
+                const ValueKey<String>('salle-eleves'),
+              );
+              if (ouvrir.evaluate().isNotEmpty) {
+                _lisible(tester, find.text(t.salle.seance.eleves), 'Eleves');
+                await tester.tap(ouvrir.first);
                 await tester.pumpAndSettle();
               }
               _lisible(
                 tester,
                 find.descendant(
-                  of: find.byType(LignePresence),
+                  of: find.byType(StatusPill),
                   matching: find.byType(Text),
                 ),
                 'presence ($role)',
