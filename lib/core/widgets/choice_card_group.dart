@@ -125,7 +125,14 @@ class ChoiceCardGroup extends StatefulWidget {
     this.valeurInitiale,
     this.autoriserSaisieLibre = true,
     this.coteACote = false,
+    this.indicationMultiple = true,
   });
+
+  /// Vrai (par defaut) : en selection multiple, la phrase « Plusieurs reponses
+  /// possibles » se lit en tete du groupe. Faux quand l'ecran empile plusieurs
+  /// groupes d'une meme question (les competences par famille) et la dit une
+  /// seule fois, au-dessus : la phrase ne se repete pas.
+  final bool indicationMultiple;
 
   /// Vrai pour poser les options **cote a cote** (demande A-5.2, maquette
   /// « onboarding Mble d ») : cartes de meme hauteur, contenu centre, icone
@@ -422,7 +429,7 @@ class _ChoiceCardGroupState extends State<ChoiceCardGroup> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        if (widget.selectionMultiple) ...<Widget>[
+        if (widget.selectionMultiple && widget.indicationMultiple) ...<Widget>[
           TexteSansCoupure(
             t.choix.selectionMultiple,
             style: Theme.of(context).textTheme.bodySmall,

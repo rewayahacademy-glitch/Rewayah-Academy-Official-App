@@ -11,10 +11,7 @@ FeedbackMemoire _depot({int cadence = 1, int seuil = 3, int seances = 12}) =>
       seuilTendance: seuil,
       seances: <String, ContexteSeanceFeedback>{
         for (int rang = 1; rang <= seances; rang++)
-          's$rang': ContexteSeanceFeedback(
-            groupeId: _groupe,
-            rangSeance: rang,
-          ),
+          's$rang': ContexteSeanceFeedback(groupeId: _groupe, rangSeance: rang),
       },
     );
 
@@ -114,9 +111,7 @@ void main() {
         reponse: ReponseFeedback.difficile,
       );
 
-      final TendanceFeedback tendance = await depot.tendance(
-        groupeId: _groupe,
-      );
+      final TendanceFeedback tendance = await depot.tendance(groupeId: _groupe);
 
       expect(tendance.nombreEchantillons, 2);
       expect(tendance.visibleParEnseignant, isFalse);
@@ -147,9 +142,7 @@ void main() {
         reponse: ReponseFeedback.tresBien,
       );
 
-      final TendanceFeedback tendance = await depot.tendance(
-        groupeId: _groupe,
-      );
+      final TendanceFeedback tendance = await depot.tendance(groupeId: _groupe);
 
       expect(tendance.visibleParEnseignant, isTrue);
       expect(tendance.repartition, isNotNull);
@@ -180,9 +173,7 @@ void main() {
           nombreEchantillons: 1,
           seuilMinimum: 5,
           visibleParEnseignant: false,
-          repartition: const <ReponseFeedback, double>{
-            ReponseFeedback.bien: 1,
-          },
+          repartition: const <ReponseFeedback, double>{ReponseFeedback.bien: 1},
         ),
         throwsA(isA<AssertionError>()),
       );

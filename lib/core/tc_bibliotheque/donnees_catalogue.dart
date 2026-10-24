@@ -83,9 +83,7 @@ final Provider<PortEtatOffline> portEtatOfflineProvider =
         resoudre: (String resourceId) async {
           final LibraryResource? r = await catalogue.parId(resourceId);
           if (r == null) return null;
-          final ResourceVersion? v = await versions.versionCourante(
-            resourceId,
-          );
+          final ResourceVersion? v = await versions.versionCourante(resourceId);
           return DescripteurOffline(
             resourceId: resourceId,
             versionId: v?.id,

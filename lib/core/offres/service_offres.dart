@@ -44,6 +44,13 @@ abstract interface class ServiceOffres {
   /// Les langues d'enseignement actives, dans l'ordre publie.
   Future<List<LangueCours>> langues();
 
+  /// Tout le referentiel des langues, retirees comprises, dans l'ordre publie.
+  ///
+  /// Sert a NOMMER une langue deja enregistree (le profil enseignant porte des
+  /// codes, CAND-Q15 lot langue) : une langue retiree de l'onboarding reste
+  /// lisible sur les profils qui la portent. Seules les actives se proposent.
+  Future<List<LangueCours>> referentielLangues();
+
   /// Les tranches d'age actives, dans l'ordre publie.
   Future<List<CohorteAge>> cohortes();
 
@@ -113,6 +120,19 @@ class ServiceOffresSupabase implements ServiceOffres {
         .select('code, nom_humain')
         .eq('actif', true)
         .order('ordre', ascending: true);
+    return lignes.map(LangueCours.depuisJson).toList(growable: false);
+  }
+
+  @override
+  Future<List<LangueCours>> referentielLangues() async {
+    // Sans filtre `actif` : la policy `langues_cours_lecture` (0043) laisse
+    // lire toutes les lignes a tout compte connecte. Meme ordre que le
+    // declencheur serveur qui ramene un nom a son code (ordre, puis code).
+    final List<Map<String, dynamic>> lignes = await _client
+        .from('langues_cours')
+        .select('code, nom_humain, actif')
+        .order('ordre', ascending: true)
+        .order('code', ascending: true);
     return lignes.map(LangueCours.depuisJson).toList(growable: false);
   }
 
@@ -227,6 +247,14 @@ final FutureProvider<ReglesAcademie> reglesAcademieProvider =
 final FutureProvider<List<LangueCours>> languesCoursProvider =
     FutureProvider<List<LangueCours>>(
       (Ref ref) => ref.watch(serviceOffresProvider).langues(),
+    );
+
+/// Tout le referentiel des langues, retirees comprises : ce que le profil
+/// enseignant lit pour nommer les codes qu'il porte et proposer les langues
+/// actives (FORM-L8, CAND-Q15 lot langue).
+final FutureProvider<List<LangueCours>> referentielLanguesProvider =
+    FutureProvider<List<LangueCours>>(
+      (Ref ref) => ref.watch(serviceOffresProvider).referentielLangues(),
     );
 
 /// Les tranches d'age publiees.

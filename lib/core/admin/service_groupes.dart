@@ -5,7 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../offres/affectation_refusee.dart';
 import '../planning/service_planning.dart';
+import 'creation_classe_refusee.dart';
 
 /// Le public d'un groupe : fixe le seuil par defaut (5 enfants, 6 adultes).
 enum TypePublicGroupe {
@@ -188,7 +190,8 @@ abstract interface class ServiceGroupes {
     int? seuilMax,
   });
 
-  /// Modifie le libelle, le seuil et le creneau d'un groupe.
+  /// Modifie le libelle, le seuil et le creneau d'un groupe. Deplacer une
+  /// classe qui a son enseignant peut etre refuse : [AffectationRefusee].
   Future<void> modifier({
     required String groupeId,
     required String libelle,
@@ -249,6 +252,9 @@ class ServiceGroupesSupabase implements ServiceGroupes {
         .toList(growable: false);
   }
 
+  /// Un refus du serveur (CAND-Q15 : piece d'identite, acces, genre,
+  /// plafond, collisions) arrive en [CreationClasseRefusee], jamais avec le
+  /// texte SQL.
   @override
   Future<String> creer({
     required String teacherId,
@@ -256,43 +262,62 @@ class ServiceGroupesSupabase implements ServiceGroupes {
     required String libelle,
     required Creneau creneau,
     int? seuilMax,
-  }) => _client.rpc<String>(
-    'creer_groupe',
-    params: <String, dynamic>{
-      'p_teacher_profile_id': teacherId,
-      'p_type_public': type.valeurSql,
-      'p_libelle': libelle,
-      'p_weekday': creneau.jour,
-      'p_hour_local': creneau.heure,
-      'p_seuil_max': seuilMax,
-      // L3-06 : signature gardee (8 arguments). Fuseau et couleur ne sont pas
-      // saisis dans cet ecran : null, le serveur retient Europe/Paris et
-      // aucune couleur.
-      'p_timezone_iana': null,
-      'p_couleur_jeton': null,
-    },
+  }) => traduireRefusCreationClasse<String>(
+    () => _client.rpc<String>(
+      'creer_groupe',
+      params: <String, dynamic>{
+        'p_teacher_profile_id': teacherId,
+        'p_type_public': type.valeurSql,
+        'p_libelle': libelle,
+        'p_weekday': creneau.jour,
+        'p_hour_local': creneau.heure,
+        'p_seuil_max': seuilMax,
+        // L3-06 : signature gardee (8 arguments). Fuseau et couleur ne sont
+        // pas saisis dans cet ecran : null, le serveur retient Europe/Paris
+        // et aucune couleur.
+        'p_timezone_iana': null,
+        'p_couleur_jeton': null,
+      },
+    ),
   );
 
+  /// CLASSES-DUREE (23/10/2026) : changer le jour ou l'heure d'une classe qui a
+  /// son enseignant repasse le predicat d'affectation cote serveur. Son refus
+  /// (couverture par les disponibilites, collisions, plafond d'heures, compte,
+  /// genre) arrive en [AffectationRefusee], le meme type que la confirmation
+  /// d'un enseignant, jamais avec le texte SQL. Les autres erreurs (droit,
+  /// seuil trop bas, reseau) passent telles quelles.
   @override
   Future<void> modifier({
     required String groupeId,
     required String libelle,
     required int seuilMax,
     required Creneau creneau,
-  }) => _client.rpc<void>(
-    'modifier_groupe',
-    params: <String, dynamic>{
-      'p_groupe_id': groupeId,
-      'p_libelle': libelle,
-      'p_seuil_max': seuilMax,
-      'p_weekday': creneau.jour,
-      'p_hour_local': creneau.heure,
-      // L3-06 : signature gardee (7 arguments). null laisse fuseau et couleur
-      // inchanges cote serveur.
-      'p_timezone_iana': null,
-      'p_couleur_jeton': null,
-    },
-  );
+  }) async {
+    try {
+      await _client.rpc<void>(
+        'modifier_groupe',
+        params: <String, dynamic>{
+          'p_groupe_id': groupeId,
+          'p_libelle': libelle,
+          'p_seuil_max': seuilMax,
+          'p_weekday': creneau.jour,
+          'p_hour_local': creneau.heure,
+          // L3-06 : signature gardee (7 arguments). null laisse fuseau et
+          // couleur inchanges cote serveur.
+          'p_timezone_iana': null,
+          'p_couleur_jeton': null,
+        },
+      );
+    } on PostgrestException catch (e) {
+      final MotifRefusAffectation? motif = motifRefusDeplacementClasse(
+        code: e.code,
+        message: e.message,
+      );
+      if (motif == null) rethrow;
+      throw AffectationRefusee(motif);
+    }
+  }
 
   @override
   Future<void> ajouterEleve({

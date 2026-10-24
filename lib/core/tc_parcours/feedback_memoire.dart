@@ -91,8 +91,7 @@ class FeedbackMemoire implements PortFeedback {
     }
     return RotationFeedback.prochaineQuestion(
       catalogue: _catalogue,
-      dejaPosees:
-          _historique[contexte.groupeId] ?? const <String>[],
+      dejaPosees: _historique[contexte.groupeId] ?? const <String>[],
     );
   }
 

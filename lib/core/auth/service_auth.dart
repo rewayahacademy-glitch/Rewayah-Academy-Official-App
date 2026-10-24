@@ -48,8 +48,8 @@ class ServiceAuthSupabase implements ServiceAuth {
   String? get _retour => kIsWeb ? Uri.base.origin : null;
 
   @override
-  Future<void> envoyerLienCourriel(String courriel) =>
-      _client.auth.signInWithOtp(email: courriel.trim(), emailRedirectTo: _retour);
+  Future<void> envoyerLienCourriel(String courriel) => _client.auth
+      .signInWithOtp(email: courriel.trim(), emailRedirectTo: _retour);
 
   @override
   Future<void> connexionMotDePasse(String courriel, String motDePasse) async {

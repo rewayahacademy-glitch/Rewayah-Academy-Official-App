@@ -255,6 +255,7 @@ class _Entete extends StatelessWidget {
           mesure.dispose();
           return l;
         }
+
         final double motLePlusLong = groupe.libelle
             .split(RegExp(r'\s+'))
             .map((String mot) => largeur(mot, styleNom))

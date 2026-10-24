@@ -92,6 +92,7 @@ class EtatSysteme extends StatelessWidget {
     this.onSecondaire,
     this.dependance,
     this.icone,
+    this.illustration,
   });
 
   /// Hors ligne, sans rien de lu a montrer (EA-HL-DOUBLE-1) : le bloc dit
@@ -145,6 +146,10 @@ class EtatSysteme extends StatelessWidget {
   /// page hors ligne qui ne peut rien afficher ne repose pas le « wifi
   /// barre » que le bandeau porte deja (EA-HL-DOUBLE-1).
   final AppIcon? icone;
+
+  /// Une illustration qui prend la place du cercle d'icone, en portee page
+  /// seulement (la porte et la lumiere de la page introuvable).
+  final Widget? illustration;
 
   /// Le titre et la phrase par defaut d'une nature.
   static ({String titre, String phrase}) textesPar(NatureEtat nature) {
@@ -273,6 +278,7 @@ class EtatSysteme extends StatelessWidget {
         actionEnCours: actionEnCours,
         libelleSecondaire: libelleSecondaire,
         onSecondaire: onSecondaire,
+        illustration: illustration,
       );
     }
     return _Bloc(

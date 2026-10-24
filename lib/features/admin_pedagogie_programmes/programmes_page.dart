@@ -354,6 +354,23 @@ class _Niveaux extends ConsumerWidget {
           defileAvecLaPage: !DataCollection.enTableau(context),
           lignes: v,
           cle: (NiveauProgramme n) => ValueKey<String>(n.id),
+          actionsLigne: version.modifiable
+              ? (BuildContext _, NiveauProgramme n) => MenuActions(
+                  points: true,
+                  objet: n.nomHumain,
+                  actions: <EntreeAction>[
+                    EntreeAction(
+                      libelle: t.admin.programmes.modifierNiveau,
+                      onChoix: () => onModifier(n),
+                    ),
+                    EntreeAction(
+                      libelle: t.admin.programmes.supprimerNiveau,
+                      destructif: true,
+                      onChoix: () => onSupprimer(n),
+                    ),
+                  ],
+                )
+              : null,
           colonnes: <ColonneDonnees<NiveauProgramme>>[
             ColonneDonnees<NiveauProgramme>(
               titre: t.admin.programmes.titre,
@@ -384,31 +401,6 @@ class _Niveaux extends ConsumerWidget {
               tabulaire: true,
               texte: (NiveauProgramme n) => '${n.ordre}',
             ),
-            if (version.modifiable)
-              ColonneDonnees<NiveauProgramme>(
-                titre: '',
-                role: RoleColonne.aPart,
-                flex: 0,
-                // Vide a dessein, meme convention que
-                // `admin_groupes/groupes_page.dart` : un menu d'actions
-                // n'a rien a dire en texte.
-                texte: (NiveauProgramme _) => '',
-                rendreMemeSiTexteVide: true,
-                rendu: (BuildContext _, NiveauProgramme n) => MenuActions(
-                  tooltip: n.nomHumain,
-                  actions: <EntreeAction>[
-                    EntreeAction(
-                      libelle: t.admin.programmes.modifierNiveau,
-                      onChoix: () => onModifier(n),
-                    ),
-                    EntreeAction(
-                      libelle: t.admin.programmes.supprimerNiveau,
-                      destructif: true,
-                      onChoix: () => onSupprimer(n),
-                    ),
-                  ],
-                ),
-              ),
           ],
         ),
       ),

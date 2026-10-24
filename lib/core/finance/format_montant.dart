@@ -31,12 +31,51 @@ const String _milliers = ' ';
 /// Le vrai signe moins.
 const String signeMoins = '−';
 
-/// Le nombre de chiffres apres la virgule d'une devise (ISO 4217). Une
-/// devise inconnue en garde deux, le cas le plus courant.
-int decimalesDe(String devise) => switch (devise) {
-  'XOF' || 'XAF' || 'GNF' || 'JPY' || 'KRW' => 0,
-  _ => 2,
+/// Les devises dont le nombre de decimales n'est pas 2 : la table ISO 4217
+/// complete (exposants 0, 3 et 4).
+///
+/// Miroir exact de `private.devise_decimales` (migration
+/// `20261021210300_fi_devises_decimales_iso4217.sql`), qui fait foi : le
+/// serveur convertit avec cette table, le client la garde pour formater et
+/// saisir hors ligne. `test/core/finance/decimales_devises_test.dart` lit la
+/// migration et compare les deux tables : une devise se modifie des deux
+/// cotes, jamais d'un seul.
+const Map<String, int> decimalesHorsDefaut = <String, int>{
+  // 0 decimale.
+  'BIF': 0,
+  'CLP': 0,
+  'DJF': 0,
+  'GNF': 0,
+  'ISK': 0,
+  'JPY': 0,
+  'KMF': 0,
+  'KRW': 0,
+  'PYG': 0,
+  'RWF': 0,
+  'UGX': 0,
+  'UYI': 0,
+  'VND': 0,
+  'VUV': 0,
+  'XAF': 0,
+  'XOF': 0,
+  'XPF': 0,
+  // 3 decimales.
+  'BHD': 3,
+  'IQD': 3,
+  'JOD': 3,
+  'KWD': 3,
+  'LYD': 3,
+  'OMR': 3,
+  'TND': 3,
+  // 4 decimales.
+  'CLF': 4,
+  'UYW': 4,
 };
+
+/// Le nombre de chiffres apres la virgule d'une devise (ISO 4217). Une
+/// devise hors de [decimalesHorsDefaut] en garde deux, le cas le plus
+/// courant.
+int decimalesDe(String devise) => decimalesHorsDefaut[devise] ?? 2;
 
 /// Le facteur des unites mineures d'une devise : 100 pour l'USD, 1 pour le
 /// franc guineen.

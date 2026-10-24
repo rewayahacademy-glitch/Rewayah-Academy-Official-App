@@ -403,7 +403,7 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
               MenuActions(
                 key: PublicationDetail.cleMenu,
                 points: true,
-                tooltip: p.menu(titre: publication.titre),
+                libelle: p.menu(titre: publication.titre),
                 actions: <EntreeAction>[
                   EntreeAction(
                     libelle: p.signaler,

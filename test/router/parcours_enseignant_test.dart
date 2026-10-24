@@ -12,6 +12,8 @@ import 'package:rewayah_academy/core/enseignant/port_remplacements.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
+import 'package:rewayah_academy/core/offres/offre_horaire.dart';
+import 'package:rewayah_academy/core/offres/service_offres.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
@@ -89,6 +91,11 @@ void main() {
       enseignant ?? FauxServiceEnseignant(),
     ),
     servicePlanningProvider.overrideWithValue(FauxServicePlanning()),
+    // Le profil (ENS-05) nomme les langues par le referentiel : sans cette
+    // surcharge, il interrogerait un vrai service Supabase absent du test.
+    referentielLanguesProvider.overrideWith(
+      (Ref _) async => const <LangueCours>[],
+    ),
     serviceMatchingProvider.overrideWithValue(FauxServiceMatching()),
     serviceReglesProvider.overrideWithValue(FauxServiceRegles()),
     servicePriereProvider.overrideWithValue(FauxServicePriere()),

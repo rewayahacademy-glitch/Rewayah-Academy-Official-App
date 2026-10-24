@@ -50,29 +50,40 @@ void main() {
 
     test('la recherche ignore les accents et la casse', () {
       expect(
-        RechercheCatalogue.chercher(catalogue, 'regles')
-            .map((LibraryResource r) => r.id),
+        RechercheCatalogue.chercher(
+          catalogue,
+          'regles',
+        ).map((LibraryResource r) => r.id),
         <String>['r2'],
       );
       expect(
-        RechercheCatalogue.chercher(catalogue, 'SAKINAH')
-            .map((LibraryResource r) => r.id),
+        RechercheCatalogue.chercher(
+          catalogue,
+          'SAKINAH',
+        ).map((LibraryResource r) => r.id),
         <String>['r2'],
       );
     });
 
-    test('la recherche porte aussi sur la categorie, l edition et le niveau', () {
-      expect(
-        RechercheCatalogue.chercher(catalogue, 'hafs')
-            .map((LibraryResource r) => r.id),
-        <String>['r1'],
-      );
-      expect(
-        RechercheCatalogue.chercher(catalogue, 'F2')
-            .map((LibraryResource r) => r.id),
-        <String>['r2'],
-      );
-    });
+    test(
+      'la recherche porte aussi sur la categorie, l edition et le niveau',
+      () {
+        expect(
+          RechercheCatalogue.chercher(
+            catalogue,
+            'hafs',
+          ).map((LibraryResource r) => r.id),
+          <String>['r1'],
+        );
+        expect(
+          RechercheCatalogue.chercher(
+            catalogue,
+            'F2',
+          ).map((LibraryResource r) => r.id),
+          <String>['r2'],
+        );
+      },
+    );
 
     test('une recherche sans resultat rend une liste vide, pas tout', () {
       expect(RechercheCatalogue.chercher(catalogue, 'biologie'), isEmpty);
@@ -82,13 +93,17 @@ void main() {
       // « 2:255 » ne veut rien dire pour une lecon : la rendre ferait passer
       // une recherche de verset pour une recherche plein texte.
       expect(
-        RechercheCatalogue.chercher(catalogue, '2:255')
-            .map((LibraryResource r) => r.id),
+        RechercheCatalogue.chercher(
+          catalogue,
+          '2:255',
+        ).map((LibraryResource r) => r.id),
         <String>['r1'],
       );
       expect(
-        RechercheCatalogue.chercher(catalogue, '40')
-            .map((LibraryResource r) => r.id),
+        RechercheCatalogue.chercher(
+          catalogue,
+          '40',
+        ).map((LibraryResource r) => r.id),
         <String>['r1', 'r2'],
       );
     });
@@ -125,10 +140,7 @@ void main() {
   group('Filtres : chaque axe relache se tait', () {
     test('un filtre vide ne filtre rien', () {
       expect(
-        RechercheCatalogue.filtrer(
-          catalogue,
-          const FiltreCatalogue(),
-        ).length,
+        RechercheCatalogue.filtrer(catalogue, const FiltreCatalogue()).length,
         3,
       );
       expect(RechercheCatalogue.filtrer(catalogue, null).length, 3);
@@ -193,9 +205,7 @@ void main() {
       expect(sansLangue.niveau, 'F1');
       expect(sansLangue.vide, isFalse);
       expect(
-        filtre
-            .avec(relacher: const <String>{'langue', 'niveau'})
-            .vide,
+        filtre.avec(relacher: const <String>{'langue', 'niveau'}).vide,
         isTrue,
       );
     });

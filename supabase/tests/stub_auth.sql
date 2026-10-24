@@ -21,7 +21,9 @@ grant usage on schema auth to anon, authenticated;
 create table auth.users (
   id uuid primary key,
   email text,
-  email_confirmed_at timestamptz
+  email_confirmed_at timestamptz,
+  -- Lue par COURRIELS-1 (un compte enfant porte child_of) ; Supabase l'a toujours.
+  raw_app_meta_data jsonb not null default '{}'::jsonb
 );
 
 create function auth.uid() returns uuid language sql stable as $auth_uid$

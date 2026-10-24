@@ -12,6 +12,7 @@ import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
@@ -174,6 +175,27 @@ class _Corps extends StatelessWidget {
               defileAvecLaPage: !DataCollection.enTableau(context),
               lignes: visibles,
               cle: (EvaluationAdmin e) => ValueKey<String>(e.id),
+              actionsLigne: (BuildContext contexte, EvaluationAdmin e) =>
+                  e.statut == StatutEvaluation.planifiee
+                  ? MenuActions(
+                      points: true,
+                      objet: e.eleveLibelle,
+                      actions: <EntreeAction>[
+                        EntreeAction(
+                          libelle:
+                              t.admin.evaluations.actionEnregistrerResultat,
+                          onChoix: () => onEnregistrerResultat(e),
+                        ),
+                        EntreeAction(
+                          libelle: t.admin.evaluations.actionAnnuler,
+                          destructif: true,
+                          onChoix: () => onAnnuler(e),
+                        ),
+                      ],
+                    )
+                  : SizedBox.square(
+                      dimension: AppMetriques.of(contexte).cibleTactile,
+                    ),
               colonnes: <ColonneDonnees<EvaluationAdmin>>[
                 ColonneDonnees<EvaluationAdmin>(
                   titre: t.admin.evaluations.colonneEleve,
@@ -210,33 +232,6 @@ class _Corps extends StatelessWidget {
                   titre: t.admin.evaluations.colonneResultat,
                   texte: (EvaluationAdmin e) =>
                       e.resultat == null ? '' : _libelleResultat(e.resultat!),
-                ),
-                ColonneDonnees<EvaluationAdmin>(
-                  titre: '',
-                  role: RoleColonne.aPart,
-                  flex: 0,
-                  // Vide a dessein, meme convention que
-                  // `admin_groupes/groupes_page.dart`.
-                  texte: (EvaluationAdmin _) => '',
-                  rendreMemeSiTexteVide: true,
-                  rendu: (BuildContext _, EvaluationAdmin e) =>
-                      e.statut == StatutEvaluation.planifiee
-                      ? MenuActions(
-                          tooltip: e.eleveLibelle,
-                          actions: <EntreeAction>[
-                            EntreeAction(
-                              libelle:
-                                  t.admin.evaluations.actionEnregistrerResultat,
-                              onChoix: () => onEnregistrerResultat(e),
-                            ),
-                            EntreeAction(
-                              libelle: t.admin.evaluations.actionAnnuler,
-                              destructif: true,
-                              onChoix: () => onAnnuler(e),
-                            ),
-                          ],
-                        )
-                      : const SizedBox.shrink(),
                 ),
               ],
             ),

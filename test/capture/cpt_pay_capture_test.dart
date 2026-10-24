@@ -17,7 +17,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/features/comptable/paiements/barre_selection.dart';
+import 'package:rewayah_academy/core/widgets/barre_selection.dart';
 import 'package:rewayah_academy/features/comptable/paiements/detail_paiement_page.dart';
 import 'package:rewayah_academy/features/comptable/paiements/paiements_page.dart';
 import 'package:rewayah_academy/features/demo/demo_comptable_page.dart';
@@ -211,7 +211,7 @@ void main() {
         debugPrint(
           'PNG ${await capturer(tester, 'pay2_selection_${vue.$3}_light')}',
         );
-        await _appuyer(tester, find.byKey(BarreSelection.clePayer));
+        await _appuyer(tester, find.byKey(BarreSelection.cleAction));
         debugPrint('PNG ${await capturer(tester, 'pay2_lot_${vue.$3}_light')}');
       });
     }

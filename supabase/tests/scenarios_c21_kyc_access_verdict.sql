@@ -57,6 +57,9 @@ BEGIN
     INSERT INTO public.contract_acceptances(profile_id, contract_kind, version)
     VALUES (v_teacher.id, 'recording_and_control_notice', v_notice_version)
     ON CONFLICT (profile_id, contract_kind, version) DO NOTHING;
+    INSERT INTO public.contract_acceptances(profile_id,contract_kind,version)
+    VALUES (v_teacher.id,'teacher_conduct_code',public.code_conduite_version_requise())
+    ON CONFLICT(profile_id,contract_kind,version) DO NOTHING;
     UPDATE public.profiles SET account_status = 'active' WHERE id = v_teacher.id;
   END LOOP;
 

@@ -321,7 +321,9 @@ class MoteurVisiteObservation {
   void _battre(void _) {
     final BudgetObservation? budget = _etat.budget;
     final DateTime? recuA = _etat.budgetRecuA;
-    if (_etat.phase != PhaseVisite.enVisite || budget == null || recuA == null) {
+    if (_etat.phase != PhaseVisite.enVisite ||
+        budget == null ||
+        recuA == null) {
       return;
     }
     final VueBudgetObservation vue = VueBudgetObservation.depuis(
@@ -399,8 +401,9 @@ moteurVisiteObservationProvider =
 final StreamProviderFamily<EtatVisiteObservation, String>
 etatVisiteObservationProvider =
     StreamProvider.family<EtatVisiteObservation, String>(
-      (Ref ref, String sessionId) =>
-          _etatsAvecCourant(ref.watch(moteurVisiteObservationProvider(sessionId))),
+      (Ref ref, String sessionId) => _etatsAvecCourant(
+        ref.watch(moteurVisiteObservationProvider(sessionId)),
+      ),
       isAutoDispose: true,
     );
 

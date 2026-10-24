@@ -34,6 +34,9 @@ BEGIN
     'recording_and_control_notice',
     v_notice_version
   ) ON CONFLICT (profile_id, contract_kind, version) DO NOTHING;
+  INSERT INTO public.contract_acceptances(profile_id,contract_kind,version)
+  VALUES ('c29a1000-0000-0000-0000-000000000002','teacher_conduct_code',public.code_conduite_version_requise())
+  ON CONFLICT(profile_id,contract_kind,version) DO NOTHING;
 
   PERFORM set_config('request.jwt.claim.sub', 'c29a1000-0000-0000-0000-000000000001', true);
   PERFORM set_config('test.uid', 'c29a1000-0000-0000-0000-000000000001', true);

@@ -9,6 +9,11 @@ on:
     branches: [main, 'ccr-1b1bfa0b-m1kvkk', 'ui/**']
   workflow_dispatch:
 
+# Deux poussees rapprochees : la premiere CI est annulee (economie de minutes).
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   migrate-check:
     name: Migrations applicables (Postgres 17)
@@ -280,13 +285,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: ubuntu-latest
-            target: web
-          - os: ubuntu-latest
-            target: apk
-          - os: windows-latest
-            target: windows
+        # Economie de minutes (directeur, 24/10/2026) : une PR ne construit que le Web ;
+        # l'APK et Windows seulement par « Run workflow ».
+        include: ${{ fromJSON(github.event_name == 'pull_request' && '[{"os":"ubuntu-latest","target":"web"}]' || '[{"os":"ubuntu-latest","target":"web"},{"os":"ubuntu-latest","target":"apk"},{"os":"windows-latest","target":"windows"}]') }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4

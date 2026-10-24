@@ -59,9 +59,8 @@ class EleveProgression {
         niveauId: json['niveau_id'] as String?,
         niveauNomHumain: json['niveau_nom_humain'] as String?,
         niveauCycle: json['niveau_cycle'] as String?,
-        niveauDepuis: DateTime.tryParse(
-          json['niveau_depuis'] as String? ?? '',
-        )?.toLocal(),
+        niveauDepuis: DateTime.tryParse(json['niveau_depuis'] as String? ?? '')
+            ?.toLocal(),
         exceptionActiveId: json['exception_active_id'] as String?,
         exceptionActiveType: json['exception_active_type'] == null
             ? null

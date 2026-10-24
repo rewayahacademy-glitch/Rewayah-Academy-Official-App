@@ -38,23 +38,27 @@ void main() {
           isNot(
             CouleurIntention.encre(AppPalette.sombre(), intention).couleur(),
           ),
-          reason: 'une intention prend l encre de SON theme, pas une teinte '
+          reason:
+              'une intention prend l encre de SON theme, pas une teinte '
               'figee : sinon le mode sombre porterait les couleurs du clair',
         );
       }
     });
 
-    test('le surligneur voile la meme encre, il n en choisit pas une autre', () {
-      final AppPalette palette = AppPalette.claire();
-      final EncreIntention encre = CouleurIntention.encre(
-        palette,
-        IntentionPedagogique.aRenforcer,
-      );
-      expect(encre.couleur(opacite: 0.32).a, closeTo(0.32, 0.01));
-      expect(encre.couleur(opacite: 0.32).r, encre.couleur().r);
-      expect(encre.couleur(opacite: 0.32).g, encre.couleur().g);
-      expect(encre.couleur(opacite: 0.32).b, encre.couleur().b);
-    });
+    test(
+      'le surligneur voile la meme encre, il n en choisit pas une autre',
+      () {
+        final AppPalette palette = AppPalette.claire();
+        final EncreIntention encre = CouleurIntention.encre(
+          palette,
+          IntentionPedagogique.aRenforcer,
+        );
+        expect(encre.couleur(opacite: 0.32).a, closeTo(0.32, 0.01));
+        expect(encre.couleur(opacite: 0.32).r, encre.couleur().r);
+        expect(encre.couleur(opacite: 0.32).g, encre.couleur().g);
+        expect(encre.couleur(opacite: 0.32).b, encre.couleur().b);
+      },
+    );
 
     test('les cinq libelles sont ceux de la spec 8.2', () {
       expect(

@@ -12,6 +12,7 @@ import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/theme/app_delais.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/marque_page.dart';
+import 'package:rewayah_academy/core/widgets/porte_lumiere.dart';
 import 'package:rewayah_academy/features/classe_tuteur/classe_tuteur_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 
@@ -37,6 +38,7 @@ void main() {
     ) async {
       final GoRouter routeur = await monterRouteur(tester, '/tuteur/inconnue');
       expect(find.byType(PageIntrouvable), findsOneWidget);
+      expect(find.byType(PorteLumiere), findsOneWidget);
       expect(etat(NatureEtat.introuvable), findsOneWidget);
       expect(find.text(t.commun.etats.introuvable.titre), findsOneWidget);
       // Jamais l'ecran anglais de go_router, ni l'exception brute.
@@ -65,21 +67,29 @@ void main() {
       }
     });
 
-    testWidgets('/tc/classe n est plus routee (A-05, lot L3-01) : introuvable', (
-      WidgetTester tester,
-    ) async {
-      for (final AppRole role in <AppRole>[AppRole.teacher, AppRole.student]) {
-        for (final String chemin in <String>['/tc/classe', '/tc/classe/s1']) {
-          await monterRouteur(
-            tester,
-            chemin,
-            source: FausseSourceSession(sessionActive(role)),
-          );
-          expect(find.byType(PageIntrouvable), findsOneWidget, reason: chemin);
-          expect(tester.takeException(), isNull, reason: chemin);
+    testWidgets(
+      '/tc/classe n est plus routee (A-05, lot L3-01) : introuvable',
+      (WidgetTester tester) async {
+        for (final AppRole role in <AppRole>[
+          AppRole.teacher,
+          AppRole.student,
+        ]) {
+          for (final String chemin in <String>['/tc/classe', '/tc/classe/s1']) {
+            await monterRouteur(
+              tester,
+              chemin,
+              source: FausseSourceSession(sessionActive(role)),
+            );
+            expect(
+              find.byType(PageIntrouvable),
+              findsOneWidget,
+              reason: chemin,
+            );
+            expect(tester.takeException(), isNull, reason: chemin);
+          }
         }
-      }
-    });
+      },
+    );
 
     testWidgets('sans session : page introuvable, action se connecter', (
       WidgetTester tester,

@@ -363,6 +363,13 @@ class ReglagesComptePage extends ConsumerWidget {
           CarteLignes(
             lignes: <Widget>[
               SettingRow(
+                key: const ValueKey<String>('reglage-langue-courriels'),
+                title: t.compte.langueCourriels.titre,
+                description: t.compte.langueCourriels.ligneDetail,
+                icon: AppIcons.direction,
+                onPress: () => context.push(Routes.compteLangueCourriels),
+              ),
+              SettingRow(
                 title: t.compte.francais,
                 description: t.compte.francaisDetail,
                 value: t.compte.actif,

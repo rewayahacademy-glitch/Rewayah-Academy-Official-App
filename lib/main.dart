@@ -23,11 +23,27 @@ import 'core/admin/port_pilotage.dart';
 import 'core/admin/port_planning_direction.dart';
 import 'core/agent/amorce_agent.dart';
 import 'core/agent/session_agent.dart';
+import 'core/candidature/autres_competences_supabase.dart';
+import 'core/candidature/candidatures_direction_supabase.dart';
+import 'core/candidature/import_candidatures_supabase.dart';
+import 'core/candidature/inscription_candidat_supabase.dart';
+import 'core/candidature/ma_candidature_supabase.dart';
+import 'core/candidature/nom_latin_supabase.dart';
+import 'core/candidature/port_autres_competences.dart';
+import 'core/candidature/port_candidatures_direction.dart';
+import 'core/candidature/port_import_candidatures.dart';
+import 'core/candidature/port_inscription_candidat.dart';
+import 'core/candidature/port_ma_candidature.dart';
+import 'core/candidature/port_nom_latin.dart';
+import 'core/candidature/port_prevenir_candidats.dart';
+import 'core/candidature/prevenir_candidats_supabase.dart';
 import 'core/capacites/acces_supabase.dart';
 import 'core/capacites/avis_supabase.dart';
 import 'core/capacites/classes_foyer_supabase.dart';
+import 'core/capacites/courriels_supabase.dart';
 import 'core/capacites/enseignants_classe_supabase.dart';
 import 'core/capacites/identite_titulaire_supabase.dart';
+import 'core/capacites/langues_communication_supabase.dart';
 import 'core/capacites/mes_donnees_supabase.dart';
 import 'core/capacites/mes_finances_supabase.dart';
 import 'core/capacites/paiements_foyer_supabase.dart';
@@ -37,8 +53,10 @@ import 'core/capacites/politiques_commerciales_supabase.dart';
 import 'core/capacites/port_acces_foyer.dart';
 import 'core/capacites/port_avis.dart';
 import 'core/capacites/port_classes_foyer.dart';
+import 'core/capacites/port_courriels.dart';
 import 'core/capacites/port_enseignants_classe.dart';
 import 'core/capacites/port_identite_titulaire.dart';
+import 'core/capacites/port_langues_communication.dart';
 import 'core/capacites/port_mes_donnees.dart';
 import 'core/capacites/port_mes_finances.dart';
 import 'core/capacites/port_paiements_foyer.dart';
@@ -94,6 +112,8 @@ import 'core/offres/port_regroupements_admin.dart';
 import 'core/offres/port_suivi_demandes.dart';
 import 'core/offres/regroupements_c11bis_supabase.dart';
 import 'core/offres/regroupements_pages_supabase.dart';
+import 'core/partage_offre/genre_partageur_supabase.dart';
+import 'core/partage_offre/port_genre_partageur.dart';
 import 'core/recrutement/invitations_comptable_supabase.dart';
 import 'core/recrutement/invitations_enseignant_supabase.dart';
 import 'core/recrutement/port_invitations_comptable.dart';
@@ -218,6 +238,20 @@ List<Override> _surchargesAppReelle() => <Override>[
   portInscriptionComptableProvider.overrideWithValue(
     InscriptionComptableSupabase(Supabase.instance.client),
   ),
+  // CAND-04 : l'inscription du candidat enseignant, par le lien public du site
+  // (sans code, quand le serveur l'ouvre) ou par un code d'invitation. Tant que
+  // le lot serveur CAND-L3 n'est pas verse, l'ouverture ne se lit pas et rien
+  // n'est propose hors du code ; la creation dit que l'inscription n'est pas
+  // disponible.
+  portInscriptionCandidatProvider.overrideWithValue(
+    InscriptionCandidatSupabase(Supabase.instance.client),
+  ),
+  // CAND-NOM-LATIN : le nom en lettres latines du candidat, confirme par lui
+  // (question a l'inscription, puis dans la Salle d'examen). Sans le lot
+  // serveur, la question ne se pose pas.
+  portNomLatinProvider.overrideWithValue(
+    NomLatinSupabase(Supabase.instance.client),
+  ),
   portTirageControleProvider.overrideWithValue(
     PortTirageControleSupabase(Supabase.instance.client),
   ),
@@ -251,6 +285,38 @@ List<Override> _surchargesAppReelle() => <Override>[
   portSignatureContratProvider.overrideWithValue(
     SignatureContratSupabase(Supabase.instance.client),
   ),
+  // CAND-01 : le questionnaire de la Salle d'examen, son brouillon, l'envoi et
+  // le retrait de la candidature. Tant que le lot serveur n'est pas verse, les
+  // lectures rendent « capacite indisponible » et l'ecran le dit.
+  portMaCandidatureProvider.overrideWithValue(
+    MaCandidatureSupabase(Supabase.instance.client),
+  ),
+  // CAND-07 : « Vos autres talents » (autres competences du candidat, apres
+  // l'envoi de sa candidature) et le catalogue des competences que lit la
+  // direction. Tant que le lot serveur n'est pas verse, la tuile du portail
+  // n'est pas rendue et la page dit que l'etape n'est pas encore ouverte.
+  portAutresCompetencesProvider.overrideWithValue(
+    AutresCompetencesSupabase(Supabase.instance.client),
+  ),
+  portCatalogueCompetencesProvider.overrideWithValue(
+    CatalogueCompetencesSupabase(Supabase.instance.client),
+  ),
+  // ADM-20 : la file des candidatures de la direction (capacites et liste
+  // paginee au serveur). Sans lot serveur, l'ecran dit « Disponible au
+  // branchement serveur ».
+  portCandidaturesDirectionProvider.overrideWithValue(
+    CandidaturesDirectionSupabase(Supabase.instance.client),
+  ),
+  // ADM-23 : l'import des formulaires de candidature (super administrateur en
+  // double verification ; le serveur reste la barriere).
+  portImportCandidaturesProvider.overrideWithValue(
+    ImportCandidaturesSupabase(Supabase.instance.client),
+  ),
+  // CAND-PREVENIR : le lien d'inscription envoye par e-mail aux personnes des
+  // formulaires importes (direction ; le serveur reste la barriere).
+  portPrevenirCandidatsProvider.overrideWithValue(
+    PrevenirCandidatsSupabase(Supabase.instance.client),
+  ),
   // Ports a defaut « indisponible » (ou en memoire) dont l'adaptateur
   // serveur existe : compte, tresorerie, observations, controleur, support
   // et etat partage de la classe.
@@ -263,6 +329,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   portMatriculeProvider.overrideWithValue(
     MatriculeSupabase(Supabase.instance.client),
   ),
+  // CAND-06 : le genre du titulaire, lu sur son profil pour choisir la variante
+  // de la carte a partager (directeur, 22/10/2026). Jamais devine.
+  portGenrePartageurProvider.overrideWithValue(
+    GenrePartageurSupabase(Supabase.instance.client),
+  ),
   // Mes donnees : copie JSON et demande de suppression du compte
   // (CPT-SUPPR-EXPORT, migration 20261018150000).
   portMesDonneesProvider.overrideWithValue(
@@ -274,6 +345,14 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   // Les avis des familles : formulaire public et moderation de la direction.
   portAvisProvider.overrideWithValue(AvisSupabase(Supabase.instance.client)),
+  // Les e-mails sortants : envoi manuel et suivi de la file (direction).
+  portCourrielsProvider.overrideWithValue(
+    CourrielsSupabase(Supabase.instance.client),
+  ),
+  // La langue des e-mails et des messages de chaque personne (COURRIELS-2).
+  portLanguesCommunicationProvider.overrideWithValue(
+    LanguesCommunicationSupabase(Supabase.instance.client),
+  ),
   portSeriesTresorerieProvider.overrideWithValue(
     SeriesTresorerieSupabase(Supabase.instance.client),
   ),

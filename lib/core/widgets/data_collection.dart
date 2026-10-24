@@ -4,12 +4,17 @@ import 'package:flutter/material.dart';
 
 import '../accessibilite/texte_sans_coupure.dart';
 import '../i18n/isolat_bidi.dart';
+import '../i18n/strings.g.dart';
+import '../icons/app_icons.dart';
+import '../theme/app_color_pair.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
+import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_typography.dart';
 import 'app_card.dart';
+import 'case_a_cocher.dart';
 import 'pressable.dart';
 
 /// Ce qu'une colonne devient quand le tableau se replie en cartes.
@@ -48,6 +53,7 @@ class ColonneDonnees<T> {
     this.tabulaire = false,
     this.rendu,
     this.rendreMemeSiTexteVide = false,
+    this.tri,
   });
 
   /// L'en-tete de colonne, en rendu tableau. Il sert aussi de libelle parle en
@@ -79,7 +85,101 @@ class ColonneDonnees<T> {
   /// ce qui masque la cellule « Observer » de `CTR-01` quand la ligne ne
   /// l'est pas. `true` rend [rendu] meme si [texte] est vide : c'est le cas
   /// d'un menu d'actions, qui n'a rien a dire en texte.
+  ///
+  /// **Pour le menu d'une ligne, preferer [DataCollection.actionsLigne]**
+  /// (LISTES-1) : la colonne d'actions y est posee hors de la cible de la ligne,
+  /// a une largeur fixe, sans cellule vide ni `flex: 0` recopies page apres page.
+  /// Ce parametre reste pour les autres cellules a part ; les pages qui portaient
+  /// le patron (classes, programmes, progression, evaluations, qualite,
+  /// contractuels) ne sont pas migrees par le socle : c'est leur lot (LISTES-1,
+  /// lot 4).
   final bool rendreMemeSiTexteVide;
+
+  /// Le tri de cette colonne, **fourni par l'ecran** : l'en-tete devient un
+  /// bouton qui l'appelle, avec l'indicateur du sens en cours. `null` : la
+  /// colonne n'est pas triable, son en-tete reste un simple titre. La
+  /// collection ne trie jamais elle-meme : elle ne connait pas l'ordre voulu
+  /// (serveur, ordre metier), et n'en invente aucun.
+  final TriColonne? tri;
+}
+
+/// Le sens d'un tri de colonne.
+enum SensTri {
+  /// Du plus petit au plus grand, de A a Z, du plus ancien au plus recent.
+  croissant,
+
+  /// L'inverse.
+  decroissant,
+}
+
+/// Le tri d'une colonne, tel que l'ecran le fournit (LISTES-1).
+@immutable
+class TriColonne {
+  /// Cree un tri.
+  const TriColonne({required this.onTrier, this.sens});
+
+  /// Le sens du tri **en cours sur cette colonne**, ou `null` : la table n'est
+  /// pas triee sur elle. L'en-tete montre alors deux fleches douces (« on peut
+  /// trier ici »), puis une fleche nette quand le tri est pose.
+  final SensTri? sens;
+
+  /// Ce que l'ecran fait au toucher de l'en-tete : il choisit le sens, charge
+  /// l'ordre ou trie ses lignes. La collection ne fait rien d'autre qu'appeler.
+  final VoidCallback onTrier;
+}
+
+/// La selection multiple d'une table, telle que l'ecran la tient (LISTES-1).
+///
+/// L'ecran **possede** la selection (ensemble d'identifiants, cle de requete) :
+/// la collection n'en garde rien. Elle pose une colonne de cases, et une case
+/// d'en-tete a trois etats qui **ne cochent que la page visible** (les lignes
+/// recues), jamais « tous les resultats » d'un filtre : la page n'est pas le
+/// jeu complet, et un geste groupe sur des profils qu'on ne voit pas serait une
+/// selection silencieuse.
+@immutable
+class SelectionCollection<T> {
+  /// Cree la selection.
+  const SelectionCollection({
+    required this.estCochee,
+    required this.onBasculer,
+    required this.onBasculerPage,
+    required this.libelleLigne,
+    this.estCochable,
+  });
+
+  /// Dit si la ligne est cochee.
+  final bool Function(T ligne) estCochee;
+
+  /// Coche ou vide la case d'une ligne.
+  final void Function(T ligne) onBasculer;
+
+  /// Coche (`true`) ou vide (`false`) **toute la page** : les lignes recues,
+  /// pas les resultats qu'on ne voit pas.
+  final void Function(bool cocher) onBasculerPage;
+
+  /// L'objet de la case d'une ligne, pour le lecteur d'ecran (« Amina Diallo » :
+  /// « Cocher Amina Diallo »).
+  final String Function(T ligne) libelleLigne;
+
+  /// Dit si la case d'une ligne est posee. `null` : toutes le sont. Une ligne
+  /// qu'on ne peut pas retenir n'a **pas de case** (jamais une case grisee) et
+  /// ne compte pas dans l'etat de la case d'en-tete.
+  final bool Function(T ligne)? estCochable;
+
+  /// L'etat de la case d'en-tete pour [lignes] : cochee quand toutes les lignes
+  /// cochables le sont, vide quand aucune, partielle (`null`) sinon.
+  bool? etatPage(List<T> lignes) {
+    int cochables = 0;
+    int cochees = 0;
+    for (final T ligne in lignes) {
+      if (estCochable?.call(ligne) ?? true) {
+        cochables++;
+        if (estCochee(ligne)) cochees++;
+      }
+    }
+    if (cochables == 0 || cochees == 0) return false;
+    return cochees == cochables ? true : null;
+  }
 }
 
 /// Un tableau dense sur desktop, une liste de cartes ailleurs.
@@ -96,7 +196,39 @@ class ColonneDonnees<T> {
 /// a son `PageShell`. C'est ce qui permet a l'en-tete de colonnes de rester
 /// collee en haut pendant que les lignes defilent : un en-tete pris dans le
 /// defilement de la page disparaitrait a la premiere molette, et une colonne de
-/// journal sans son en-tete ne se lit plus.
+/// journal sans son en-tete ne se lit plus. Pour que l'en-tete reste colle, la
+/// page pose la collection dans une [PlaceCollection] (ou une `ColonneCorps` a
+/// `minimumEtire`) et **ne passe pas** [defileAvecLaPage] : sinon tout defile
+/// avec la page et l'en-tete s'en va (c'etait celui de Candidatures).
+///
+/// **Densite (LISTES-1).** Une ligne de table mesure **une cible tactile du
+/// mode** (48, 72 en Interface guidee) quand son contenu tient, **plus 8** quand
+/// elle porte une case ou un menu (la place de l'anneau de focus de leur
+/// cible) ; elle ne grandit que si son contenu l'exige, une alerte, un texte
+/// sur deux lignes. Les marges verticales sont celles du jeton `sm`. Les cellules
+/// sont centrees dans la hauteur de la ligne.
+///
+/// **Ce que l'ecran peut ajouter, tout est facultatif** (les 19 pages qui
+/// emploient ce composant n'ont rien a changer) :
+///
+///   * [selection] : une colonne de cases ([CaseACocher]) et une case d'en-tete
+///     « cocher la page » a trois etats, qui ne coche que la page visible ;
+///   * [actionsLigne] : une colonne d'actions en fin de ligne (un `MenuActions`,
+///     au plus une action rapide devant), **hors de la cible de la ligne** : la
+///     ligne et le menu sont deux arrets de tabulation, et le menu n'ouvre pas
+///     la ligne. Remplace le patron « `rendreMemeSiTexteVide` et `flex: 0` »
+///     que chaque page recopiait ;
+///   * [ColonneDonnees.tri] : l'en-tete d'une colonne devient un bouton de tri,
+///     que **l'ecran** fournit (indicateur du sens, `Semantics`). La collection
+///     ne trie rien.
+///
+/// Sous le seuil du bureau, la collection se replie en cartes : la case se
+/// pose avant la carte et le menu apres, hors de la cible de la carte. Il n'y
+/// a pas de case d'en-tete en cartes : « cocher la page » est une commande de
+/// table.
+///
+/// Regle LISTES-1 : `docs/current/DECISION-LISTES-2026-10-23.md`
+/// (List-first, human-first).
 class DataCollection<T> extends StatelessWidget {
   /// Cree une collection.
   const DataCollection({
@@ -109,7 +241,34 @@ class DataCollection<T> extends StatelessWidget {
     this.defileAvecLaPage = false,
     this.estSelectionnee,
     this.defileSeule = true,
+    this.selection,
+    this.actionsLigne,
+    this.largeurActions,
+    this.piedCollant,
   });
+
+  /// Ce qui se pose **sous les lignes et ne defile pas** : le pied d'une liste
+  /// paginee ([PiedDeListe]). En tableau, il ferme le cadre (un filet le separe
+  /// des lignes) ; en cartes, il suit la derniere carte. Different de
+  /// [piedDePage], qui defile avec les lignes. `null` : rien.
+  final Widget? piedCollant;
+
+  /// La selection multiple (colonne de cases, case d'en-tete), ou `null` :
+  /// aucune case, comme avant l'ajout de ce parametre.
+  final SelectionCollection<T>? selection;
+
+  /// Ce qui se pose en fin de ligne, **hors de la cible de la ligne** : un
+  /// `MenuActions`, eventuellement precede d'une action rapide. `null` : pas de
+  /// colonne d'actions.
+  ///
+  /// Une ligne qui n'a **aucune** action rend `SizedBox.shrink()` : la colonne
+  /// garde sa largeur, la ligne ne se decale pas.
+  final Widget Function(BuildContext context, T ligne)? actionsLigne;
+
+  /// La largeur de la colonne d'actions. Par defaut, une cible tactile du mode
+  /// (un seul `MenuActions`) ; plus large quand une action rapide precede le
+  /// menu.
+  final double? largeurActions;
 
   /// Dit si une ligne est la ligne choisie (inspecteur, AD-X). Nul : aucune
   /// ligne n'est marquee, comme avant l'ajout de ce parametre. La ligne
@@ -201,6 +360,7 @@ class DataCollection<T> extends StatelessWidget {
     required List<ColonneDonnees<T>> colonnes,
     required List<T> lignes,
     required double largeur,
+    double reserve = 2 * AppSpacing.lg,
   }) {
     if (!largeur.isFinite || colonnes.isEmpty) return true;
     final TextScaler echelle = MediaQuery.textScalerOf(context);
@@ -219,6 +379,7 @@ class DataCollection<T> extends StatelessWidget {
     final Object cleCache = (
       echelle,
       largeur,
+      reserve,
       enTete,
       cellule,
       DefaultTextStyle.of(context).style,
@@ -242,6 +403,7 @@ class DataCollection<T> extends StatelessWidget {
       colonnes: colonnes,
       lignes: lignes,
       largeur: largeur,
+      reserve: reserve,
       echelle: echelle,
       enTete: enTete,
       cellule: cellule,
@@ -267,6 +429,7 @@ class DataCollection<T> extends StatelessWidget {
     required List<ColonneDonnees<T>> colonnes,
     required List<T> lignes,
     required double largeur,
+    required double reserve,
     required TextScaler echelle,
     required TextStyle enTete,
     required TextStyle cellule,
@@ -275,7 +438,7 @@ class DataCollection<T> extends StatelessWidget {
       0,
       (int somme, ColonneDonnees<T> c) => somme + c.flex,
     );
-    final double utile = largeur - 2 * AppSpacing.lg;
+    final double utile = largeur - reserve;
     for (final ColonneDonnees<T> colonne in colonnes) {
       final double place = utile * colonne.flex / flexTotal - AppSpacing.md;
       // Un rendu riche (une pastille) entoure son texte d'une marge.
@@ -312,38 +475,61 @@ class DataCollection<T> extends StatelessWidget {
     // sans defileur propre.
     final bool enBloc = defileAvecLaPage || !defileSeule;
 
-    Widget cartes() => _Defilement<T>(
-      enBloc: enBloc,
-      lignes: lignes,
-      piedDePage: piedDePage,
-      cle: cle,
-      espacement: AppSpacing.md,
-      constructeur: (BuildContext contexte, T ligne) => _Carte<T>(
-        colonnes: colonnes,
-        ligne: ligne,
-        onSelectionner: onSelectionner,
-        selectionnee: estSelectionnee?.call(ligne) ?? false,
-      ),
-    );
+    Widget cartes() {
+      final Widget liste = _Defilement<T>(
+        enBloc: enBloc,
+        lignes: lignes,
+        piedDePage: piedDePage,
+        cle: cle,
+        espacement: AppSpacing.md,
+        constructeur: (BuildContext contexte, T ligne) => _Carte<T>(
+          colonnes: colonnes,
+          ligne: ligne,
+          onSelectionner: onSelectionner,
+          selectionnee: estSelectionnee?.call(ligne) ?? false,
+          selection: selection,
+          actionsLigne: actionsLigne,
+        ),
+      );
+      final Widget? pied = piedCollant;
+      if (pied == null) return liste;
+      return Column(
+        mainAxisSize: enBloc ? MainAxisSize.min : MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Flexible(fit: enBloc ? FlexFit.loose : FlexFit.tight, child: liste),
+          Ecart.vMd,
+          pied,
+        ],
+      );
+    }
 
     if (!tableau) return cartes();
 
     // COUPE-MOTS-FOND-1 : un tableau ou une colonne coupe un mot (texte
     // agrandi) se replie en cartes, comme sur une tablette.
     return LayoutBuilder(
-      builder: (BuildContext contexte, BoxConstraints contraintes) =>
-          tientEnTableau<T>(
-            contexte,
-            colonnes: colonnes,
-            lignes: lignes,
-            largeur: contraintes.maxWidth,
-          )
-          ? _tableau(contexte, enBloc)
-          : cartes(),
+      builder: (BuildContext contexte, BoxConstraints contraintes) {
+        final _MiseEnPage mise = _MiseEnPage.de(
+          contexte,
+          avecSelection: selection != null,
+          avecActions: actionsLigne != null,
+          largeurActions: largeurActions,
+        );
+        return tientEnTableau<T>(
+              contexte,
+              colonnes: colonnes,
+              lignes: lignes,
+              largeur: contraintes.maxWidth,
+              reserve: mise.reserveDebut + mise.reserveFin,
+            )
+            ? _tableau(contexte, enBloc, mise)
+            : cartes();
+      },
     );
   }
 
-  Widget _tableau(BuildContext context, bool enBloc) {
+  Widget _tableau(BuildContext context, bool enBloc, _MiseEnPage mise) {
     final AppPalette palette = AppPalette.of(context);
     final AppMetriques metriques = AppMetriques.of(context);
     final Widget corps = _Defilement<T>(
@@ -359,6 +545,9 @@ class DataCollection<T> extends StatelessWidget {
         // Nul sans [estSelectionnee] : un tableau sans selection
         // n'annonce aucun etat « non selectionne ».
         selectionnee: estSelectionnee?.call(ligne),
+        selection: selection,
+        actionsLigne: actionsLigne,
+        mise: mise,
       ),
     );
 
@@ -377,13 +566,102 @@ class DataCollection<T> extends StatelessWidget {
           mainAxisSize: enBloc ? MainAxisSize.min : MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            _EnTeteTableau<T>(colonnes: colonnes),
+            _EnTeteTableau<T>(
+              colonnes: colonnes,
+              selection: selection,
+              lignes: lignes,
+              mise: mise,
+            ),
             Flexible(fit: enBloc ? FlexFit.loose : FlexFit.tight, child: corps),
+            if (piedCollant != null) _PiedTable(child: piedCollant!),
           ],
         ),
       ),
     );
   }
+}
+
+/// Le pied du cadre d'un tableau : un filet, puis le pied de la liste. Ne
+/// defile pas avec les lignes.
+class _PiedTable extends StatelessWidget {
+  const _PiedTable({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: palette.surfaceRaised.background,
+        border: Border(top: palette.borderHairline.asBorderSide()),
+      ),
+      child: Padding(
+        padding: const EdgeInsetsDirectional.symmetric(
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.xs,
+        ),
+        child: child,
+      ),
+    );
+  }
+}
+
+/// La mise en page commune de l'en-tete et des lignes d'une table : ce que la
+/// case, le menu et la cible tactile du mode fixent, une seule fois.
+@immutable
+class _MiseEnPage {
+  const _MiseEnPage({
+    required this.cible,
+    required this.avecSelection,
+    required this.avecActions,
+    required this.largeurActions,
+  });
+
+  factory _MiseEnPage.de(
+    BuildContext context, {
+    required bool avecSelection,
+    required bool avecActions,
+    double? largeurActions,
+  }) {
+    final double cible = AppMetriques.of(context).cibleTactile;
+    return _MiseEnPage(
+      cible: cible,
+      avecSelection: avecSelection,
+      avecActions: avecActions,
+      largeurActions: largeurActions ?? cible,
+    );
+  }
+
+  /// La cible tactile du mode (48, 72 en Interface guidee).
+  final double cible;
+
+  /// La table porte une colonne de cases.
+  final bool avecSelection;
+
+  /// La table porte une colonne d'actions.
+  final bool avecActions;
+
+  /// La largeur de la colonne d'actions.
+  final double largeurActions;
+
+  /// Vrai quand la ligne porte une cible qui n'est pas la ligne (case, menu).
+  bool get commandes => avecSelection || avecActions;
+
+  /// La place gardee avant les cellules : la case (sa cible plus la marge du
+  /// bord) ou la marge de la ligne.
+  double get reserveDebut =>
+      avecSelection ? AppSpacing.sm + cible : AppSpacing.lg;
+
+  /// La place gardee apres les cellules : la colonne d'actions ou la marge de
+  /// la ligne.
+  double get reserveFin =>
+      avecActions ? AppSpacing.sm + largeurActions : AppSpacing.lg;
+
+  /// La hauteur mini d'une ligne : une cible tactile du mode, plus 8 quand une
+  /// case ou un menu y pose sa cible (4 de chaque cote : la place de l'anneau
+  /// de focus de 2 points, qui deborde de 4).
+  double get hauteurLigne => commandes ? cible + AppSpacing.sm : cible;
 }
 
 /// La zone defilante, commune aux deux rendus.
@@ -438,16 +716,57 @@ class _Defilement<T> extends StatelessWidget {
 }
 
 /// L'en-tete de colonnes : surface enfoncee, collee en haut du tableau.
+///
+/// Les titres ne sont pas lus (chaque cellule porte deja le titre de sa colonne
+/// dans son libelle) ; seules les commandes le sont : la case « cocher la
+/// page » et les titres triables.
 class _EnTeteTableau<T> extends StatelessWidget {
-  const _EnTeteTableau({required this.colonnes});
+  const _EnTeteTableau({
+    required this.colonnes,
+    required this.selection,
+    required this.lignes,
+    required this.mise,
+  });
 
   final List<ColonneDonnees<T>> colonnes;
+  final SelectionCollection<T>? selection;
+  final List<T> lignes;
+  final _MiseEnPage mise;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextStyle style = palette.inkMuted.applyTo(
       Theme.of(context).textTheme.labelMedium ?? const TextStyle(),
+    );
+    final bool triable = colonnes.any((ColonneDonnees<T> c) => c.tri != null);
+    // Une commande (case, titre triable) est une cible : l'en-tete en a au moins
+    // la hauteur. Sans commande, il garde la hauteur de son texte.
+    final double hauteurMini = selection != null || triable ? mise.cible : 0;
+
+    final Widget cellules = Row(
+      children: <Widget>[
+        for (final ColonneDonnees<T> colonne in colonnes)
+          Expanded(
+            flex: colonne.flex,
+            child: Padding(
+              padding: const EdgeInsetsDirectional.only(end: AppSpacing.md),
+              child: colonne.tri == null
+                  // COUPE-MOTS-FOND-1 : l'en-tete passe a la ligne entre ses
+                  // mots, jamais tronque (« Entr... ») ; la collection
+                  // garantit que chacun de ses mots tient
+                  // ([DataCollection.tientEnTableau]).
+                  ? ExcludeSemantics(
+                      child: TexteSansCoupure(colonne.titre, style: style),
+                    )
+                  : _TitreTriable(
+                      titre: colonne.titre,
+                      tri: colonne.tri!,
+                      style: style,
+                    ),
+            ),
+          ),
+      ],
     );
 
     return DecoratedBox(
@@ -457,111 +776,299 @@ class _EnTeteTableau<T> extends StatelessWidget {
         color: palette.surfaceSunken.background,
         border: Border(bottom: palette.borderHairline.asBorderSide()),
       ),
-      child: Padding(
-        padding: const EdgeInsetsDirectional.symmetric(
-          horizontal: AppSpacing.lg,
-          vertical: AppSpacing.md,
-        ),
-        // L'en-tete est exclu de l'arbre semantique : chaque cellule porte deja
-        // le titre de sa colonne dans son propre libelle parle, et le lire deux
-        // fois ferait entendre la grille avant le contenu.
-        child: ExcludeSemantics(
-          child: Row(
-            children: <Widget>[
-              for (final ColonneDonnees<T> colonne in colonnes)
-                Expanded(
-                  flex: colonne.flex,
-                  child: Padding(
-                    padding: const EdgeInsetsDirectional.only(
-                      end: AppSpacing.md,
-                    ),
-                    // COUPE-MOTS-FOND-1 : l'en-tete passe a la ligne entre
-                    // ses mots, jamais tronque (« Entr... ») ; la collection
-                    // garantit que chacun de ses mots tient
-                    // ([DataCollection.tientEnTableau]).
-                    child: TexteSansCoupure(colonne.titre, style: style),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Une ligne du tableau dense.
-class _LigneTableau<T> extends StatelessWidget {
-  const _LigneTableau({
-    required this.colonnes,
-    required this.ligne,
-    this.onSelectionner,
-    this.selectionnee,
-  });
-
-  final List<ColonneDonnees<T>> colonnes;
-  final T ligne;
-  final void Function(T ligne)? onSelectionner;
-
-  /// Nul quand le tableau n'a pas de selection : la ligne ne porte alors
-  /// aucun etat `selected` (ni vrai ni faux) dans l'arbre semantique.
-  final bool? selectionnee;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-    final TextStyle base = textes.bodySmall ?? const TextStyle();
-
-    final Widget contenu = Padding(
-      padding: const EdgeInsetsDirectional.symmetric(
-        horizontal: AppSpacing.lg,
-        vertical: AppSpacing.md,
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
+        fit: StackFit.passthrough,
         children: <Widget>[
-          for (final ColonneDonnees<T> colonne in colonnes)
-            Expanded(
-              flex: colonne.flex,
+          ConstrainedBox(
+            constraints: BoxConstraints(minHeight: hauteurMini),
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
               child: Padding(
-                padding: const EdgeInsetsDirectional.only(end: AppSpacing.md),
-                child: _Cellule<T>(
-                  colonne: colonne,
-                  ligne: ligne,
-                  style: colonne.tabulaire
-                      ? AppTypography.tabulaire(base)
-                      : base,
+                padding: EdgeInsetsDirectional.only(
+                  start: mise.reserveDebut,
+                  end: mise.reserveFin,
+                  top: AppSpacing.sm,
+                  bottom: AppSpacing.sm,
+                ),
+                child: cellules,
+              ),
+            ),
+          ),
+          if (selection != null)
+            PositionedDirectional(
+              start: AppSpacing.sm,
+              top: 0,
+              bottom: 0,
+              width: mise.cible,
+              child: Center(
+                child: Semantics(
+                  container: true,
+                  child: _CaseEnTete<T>(selection: selection!, lignes: lignes),
                 ),
               ),
             ),
         ],
       ),
     );
+  }
+}
 
-    return Semantics(
-      selected: selectionnee,
-      child: DecoratedBox(
-        // La ligne choisie : fond doux et contour d'accent de 2, comme
-        // `AppCard.selectionnee` (jamais la couleur seule).
-        decoration: selectionnee ?? false
-            ? BoxDecoration(
-                color: palette.washAccent.background,
-                border: Border.fromBorderSide(
-                  palette.inkAccent.asBorderSide(width: 2),
-                ),
-              )
-            : BoxDecoration(
-                border: Border(bottom: palette.borderHairline.asBorderSide()),
-              ),
-        child: onSelectionner == null
-            ? contenu
-            : Pressable(
-                onPress: () => onSelectionner!(ligne),
-                respecterCibleTactile: false,
-                child: contenu,
-              ),
+/// La case d'en-tete : « cocher la page », a trois etats.
+class _CaseEnTete<T> extends StatelessWidget {
+  const _CaseEnTete({required this.selection, required this.lignes});
+
+  final SelectionCollection<T> selection;
+  final List<T> lignes;
+
+  @override
+  Widget build(BuildContext context) {
+    // Page vide, ou aucune ligne qu'on puisse retenir : rien a cocher, donc pas
+    // de case (jamais une case grisee).
+    if (!lignes.any((T l) => selection.estCochable?.call(l) ?? true)) {
+      return const SizedBox.shrink();
+    }
+    return CaseACocher(
+      valeur: selection.etatPage(lignes),
+      libelle: t.commun.listes.cocherPage,
+      onChange: selection.onBasculerPage,
+    );
+  }
+}
+
+/// Le titre d'une colonne triable : un bouton, avec le sens du tri en cours.
+class _TitreTriable extends StatelessWidget {
+  const _TitreTriable({
+    required this.titre,
+    required this.tri,
+    required this.style,
+  });
+
+  final String titre;
+  final TriColonne tri;
+  final TextStyle style;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final SensTri? sens = tri.sens;
+    final String libelle = switch (sens) {
+      null => t.commun.listes.trierPar(colonne: titre),
+      SensTri.croissant => t.commun.listes.trierParCroissant(colonne: titre),
+      SensTri.decroissant => t.commun.listes.trierParDecroissant(
+        colonne: titre,
       ),
+    };
+    final AppIcon icone = switch (sens) {
+      null => AppIcons.triNeutre,
+      SensTri.croissant => AppIcons.triCroissant,
+      SensTri.decroissant => AppIcons.triDecroissant,
+    };
+    return Pressable.selon(
+      onPress: tri.onTrier,
+      libelleSemantique: libelle,
+      arrondiFocus: AppRadius.arrondiXs,
+      constructeur: (BuildContext contexte, EtatPression etat) {
+        // La colonne triee se dit par la fleche ET par l'encre (jamais la
+        // couleur seule) ; une colonne triable au repos montre deux fleches
+        // douces.
+        final AppInkColor encre = sens != null || etat.survole
+            ? palette.inkStrong
+            : palette.inkMuted;
+        return ExcludeSemantics(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Flexible(
+                child: TexteSansCoupure(titre, style: encre.applyTo(style)),
+              ),
+              Ecart.hXs,
+              Icon(
+                icone.repos,
+                size: AppSpacing.lg,
+                color: (sens == null ? palette.inkFaint : palette.inkAccent)
+                    .asIconTheme()
+                    .color,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Une ligne du tableau dense.
+///
+/// Trois couches, dans cet ordre : **la ligne** (sa cible tactile, qui ouvre),
+/// puis **la case**, puis **le menu**. La case et le menu sont posees PAR-DESSUS
+/// la ligne, pas dedans : un clic dessus ne touche pas la ligne, la ligne et le
+/// menu sont deux arrets de tabulation, et l'arbre d'accessibilite ne contient
+/// jamais un bouton dans un bouton.
+class _LigneTableau<T> extends StatelessWidget {
+  const _LigneTableau({
+    required this.colonnes,
+    required this.ligne,
+    required this.mise,
+    this.onSelectionner,
+    this.selectionnee,
+    this.selection,
+    this.actionsLigne,
+  });
+
+  final List<ColonneDonnees<T>> colonnes;
+  final T ligne;
+  final _MiseEnPage mise;
+  final void Function(T ligne)? onSelectionner;
+
+  /// Nul quand le tableau n'a pas de selection : la ligne ne porte alors
+  /// aucun etat `selected` (ni vrai ni faux) dans l'arbre semantique.
+  final bool? selectionnee;
+
+  final SelectionCollection<T>? selection;
+  final Widget Function(BuildContext context, T ligne)? actionsLigne;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final TextStyle base = textes.bodySmall ?? const TextStyle();
+    final bool cochee = selection?.estCochee(ligne) ?? false;
+    final bool cochable = selection?.estCochable?.call(ligne) ?? true;
+
+    // Les cellules sont centrees dans la hauteur de la ligne : une ligne de
+    // texte seule ne colle pas en haut d'une ligne de 56.
+    final Widget cellules = Row(
+      children: <Widget>[
+        for (final ColonneDonnees<T> colonne in colonnes)
+          Expanded(
+            flex: colonne.flex,
+            child: Padding(
+              padding: const EdgeInsetsDirectional.only(end: AppSpacing.md),
+              child: _Cellule<T>(
+                colonne: colonne,
+                ligne: ligne,
+                style: colonne.tabulaire ? AppTypography.tabulaire(base) : base,
+              ),
+            ),
+          ),
+      ],
+    );
+
+    Widget contenu(Color? fond) {
+      final Widget ligneCentree = ConstrainedBox(
+        constraints: BoxConstraints(minHeight: mise.hauteurLigne),
+        child: Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: Padding(
+            padding: EdgeInsetsDirectional.only(
+              start: mise.reserveDebut,
+              end: mise.reserveFin,
+              top: AppSpacing.sm,
+              bottom: AppSpacing.sm,
+            ),
+            child: cellules,
+          ),
+        ),
+      );
+      return fond == null
+          ? ligneCentree
+          : ColoredBox(color: fond, child: ligneCentree);
+    }
+
+    // Au survol, au focus et sous le doigt : un calque doux de l'accent sur
+    // toute la ligne (on voit quelle ligne va s'ouvrir). Jamais sans cible.
+    final Widget laLigne = onSelectionner == null
+        ? contenu(null)
+        : Pressable.selon(
+            onPress: () => onSelectionner!(ligne),
+            respecterCibleTactile: false,
+            constructeur: (BuildContext _, EtatPression etat) => contenu(
+              etat.presse
+                  ? palette.calqueInteraction(presse: true)
+                  : etat.survole
+                  ? palette.calqueInteraction()
+                  : null,
+            ),
+          );
+
+    final Widget? menu = actionsLigne?.call(context, ligne);
+
+    // Au clavier : la case, puis la ligne, puis le menu (le sens de lecture, la
+    // case avant ce qu'elle retient). Sans cet ordre, la ligne, qui couvre toute
+    // la hauteur, passait avant sa propre case.
+    Widget enOrdre(double rang, Widget enfant) => mise.commandes
+        ? FocusTraversalOrder(order: NumericFocusOrder(rang), child: enfant)
+        : enfant;
+
+    final Widget empilee = Stack(
+      fit: StackFit.passthrough,
+      children: <Widget>[
+        // Un noeud a part quand la ligne porte des commandes : la case et le
+        // menu restent deux noeuds distincts du lecteur d'ecran.
+        enOrdre(
+          2,
+          Semantics(
+            container: mise.commandes,
+            selected: selectionnee,
+            child: laLigne,
+          ),
+        ),
+        if (selection != null && cochable)
+          PositionedDirectional(
+            start: AppSpacing.sm,
+            top: 0,
+            bottom: 0,
+            width: mise.cible,
+            child: Center(
+              child: enOrdre(
+                1,
+                Semantics(
+                  container: true,
+                  child: CaseACocher(
+                    valeur: cochee,
+                    libelle: t.commun.listes.cocherLigne(
+                      objet: selection!.libelleLigne(ligne),
+                    ),
+                    onChange: (bool _) => selection!.onBasculer(ligne),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        if (menu != null)
+          PositionedDirectional(
+            end: AppSpacing.sm,
+            top: 0,
+            bottom: 0,
+            width: mise.largeurActions,
+            child: Center(
+              child: enOrdre(3, Semantics(container: true, child: menu)),
+            ),
+          ),
+      ],
+    );
+    // Le groupe n'ordonne que cette ligne : d'une ligne a l'autre, le sens de
+    // lecture reste celui de la page.
+    final Widget corps = mise.commandes
+        ? FocusTraversalGroup(policy: OrderedTraversalPolicy(), child: empilee)
+        : empilee;
+
+    return DecoratedBox(
+      // La ligne choisie : fond doux et contour d'accent de 2, comme
+      // `AppCard.selectionnee` (jamais la couleur seule). Une ligne cochee :
+      // le fond doux seul, sa case dit le reste.
+      decoration: selectionnee ?? false
+          ? BoxDecoration(
+              color: palette.washAccent.background,
+              border: Border.fromBorderSide(
+                palette.inkAccent.asBorderSide(width: Pressable.epaisseurFocus),
+              ),
+            )
+          : BoxDecoration(
+              color: cochee ? palette.washAccent.background : null,
+              border: Border(bottom: palette.borderHairline.asBorderSide()),
+            ),
+      child: corps,
     );
   }
 }
@@ -586,7 +1093,13 @@ class _Cellule<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final Widget Function(BuildContext, T)? rendu = colonne.rendu;
     if (rendu != null) {
-      return rendu(context, ligne);
+      // Au debut de la cellule, a sa largeur naturelle : une pastille posee sans
+      // cet alignement s'etirait sur toute la colonne (138 a 164 points) et
+      // devenait une barre (LISTES-1, relecture visuelle K-04).
+      return Align(
+        alignment: AlignmentDirectional.centerStart,
+        child: rendu(context, ligne),
+      );
     }
     // DUREE-INSECABLE-5 : la valeur suit le titre de la colonne dans le
     // libelle parle ; une valeur ancree pour s'afficher seule (« 12 jours »,
@@ -612,21 +1125,36 @@ class _Carte<T> extends StatelessWidget {
     required this.ligne,
     this.onSelectionner,
     this.selectionnee = false,
+    this.selection,
+    this.actionsLigne,
   });
 
   final List<ColonneDonnees<T>> colonnes;
   final T ligne;
   final void Function(T ligne)? onSelectionner;
   final bool selectionnee;
+  final SelectionCollection<T>? selection;
+  final Widget Function(BuildContext context, T ligne)? actionsLigne;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
 
-    final Iterable<ColonneDonnees<T>> secondaires = colonnes.where(
-      (ColonneDonnees<T> c) => c.role == RoleColonne.secondaire,
+    // Une colonne a rendu riche (une pastille d'etat) garde sa pastille en
+    // carte : un etat noye dans une ligne de texte ne se lit plus (LISTES-1,
+    // relecture visuelle K-06). Un nombre seul (« 2 ») dit de quoi il est le
+    // nombre : le resume ci-dessous lit des colonnes qui portent deja ce titre.
+    final Iterable<ColonneDonnees<T>> pastilles = colonnes.where(
+      (ColonneDonnees<T> c) =>
+          c.role == RoleColonne.secondaire && c.rendu != null,
     );
+    final Iterable<ColonneDonnees<T>> secondaires = colonnes
+        .where(
+          (ColonneDonnees<T> c) =>
+              c.role == RoleColonne.secondaire && c.rendu == null,
+        )
+        .map(_avecTitreDuNombre<T>);
     final Iterable<ColonneDonnees<T>> aPart = colonnes.where(
       (ColonneDonnees<T> c) => c.role == RoleColonne.aPart,
     );
@@ -661,19 +1189,53 @@ class _Carte<T> extends StatelessWidget {
       ' · ',
     );
 
+    final bool cochee = selection?.estCochee(ligne) ?? false;
+    final bool cochable = selection?.estCochable?.call(ligne) ?? true;
+    final Widget? menu = actionsLigne?.call(context, ligne);
+    final double cible = AppMetriques.of(context).cibleTactile;
+    final bool commandes = selection != null || menu != null;
+
+    // La case et le menu sont **dans** la carte, en tete (ils pendaient a ses
+    // bords et la reduisaient a 262 de large sur 390) : la rangee du titre leur
+    // garde leur place, le reste de la carte garde toute sa largeur.
+    final Widget? titreCarte = titre == null
+        ? null
+        : (titre.rendu?.call(context, ligne) ??
+              _TitreCarte<T>(colonne: titre, ligne: ligne));
+    final Widget? enTeteCarte = commandes
+        ? ConstrainedBox(
+            constraints: BoxConstraints(minHeight: cible),
+            child: Row(
+              children: <Widget>[
+                if (selection != null) SizedBox(width: cible),
+                Expanded(child: titreCarte ?? const SizedBox.shrink()),
+                if (menu != null) SizedBox(width: cible),
+              ],
+            ),
+          )
+        : titreCarte;
+
     // La carte entiere se lit comme un seul element : sans ce regroupement, un
     // lecteur d'ecran enoncerait quatre fragments sans lien entre eux.
-    return MergeSemantics(
+    final Widget carte = MergeSemantics(
       child: AppCard(
-        selectionnee: selectionnee,
+        selectionnee: selectionnee || cochee,
         onPress: onSelectionner == null ? null : () => onSelectionner!(ligne),
+        marge: commandes ? _margeCarteCommandes : null,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            if (titre != null) ...<Widget>[
-              titre.rendu?.call(context, ligne) ??
-                  _TitreCarte<T>(colonne: titre, ligne: ligne),
-              Ecart.vSm,
+            if (enTeteCarte != null) ...<Widget>[enTeteCarte, Ecart.vSm],
+            if (pastilles.isNotEmpty) ...<Widget>[
+              Wrap(
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.xs,
+                children: <Widget>[
+                  for (final ColonneDonnees<T> c in pastilles)
+                    c.rendu!(context, ligne),
+                ],
+              ),
+              if (resume.isNotEmpty) Ecart.vSm,
             ],
             if (resume.isNotEmpty)
               _TexteCollection(
@@ -700,8 +1262,60 @@ class _Carte<T> extends StatelessWidget {
         ),
       ),
     );
+
+    if (!commandes) return carte;
+
+    // Superposees a la carte, **hors de sa cible** (jamais un bouton dans un
+    // bouton), dans l'ordre de lecture : la case, puis le menu.
+    const double decalage = _margeCarteCommandes + 1;
+    return Stack(
+      children: <Widget>[
+        carte,
+        if (selection != null && cochable)
+          PositionedDirectional(
+            start: decalage,
+            top: decalage,
+            child: CaseACocher(
+              valeur: cochee,
+              libelle: t.commun.listes.cocherLigne(
+                objet: selection!.libelleLigne(ligne),
+              ),
+              onChange: (bool _) => selection!.onBasculer(ligne),
+            ),
+          ),
+        if (menu != null)
+          PositionedDirectional(end: decalage, top: decalage, child: menu),
+      ],
+    );
   }
+
+  /// La marge d'une carte qui porte une case ou un menu : serree, pour que la
+  /// liste reste le contenu.
+  static const double _margeCarteCommandes = AppSpacing.md;
 }
+
+/// [colonne], dont la valeur est precedee de son titre quand c'est un nombre
+/// seul (« Contrats : 2 ») ; toute autre valeur est rendue telle quelle.
+ColonneDonnees<T> _avecTitreDuNombre<T>(ColonneDonnees<T> colonne) =>
+    ColonneDonnees<T>(
+      titre: colonne.titre,
+      role: colonne.role,
+      flex: colonne.flex,
+      tabulaire: colonne.tabulaire,
+      rendu: colonne.rendu,
+      tri: colonne.tri,
+      texte: (T ligne) {
+        final String v = colonne.texte(ligne);
+        // [enchainer] : l'ancre de sens de la valeur n'a pas a se trouver
+        // derriere le titre.
+        return _nombreSeul.hasMatch(v)
+            ? enchainer(<String>[colonne.titre, v], ' : ')
+            : v;
+      },
+    );
+
+/// Un nombre seul, avec l'ancre de sens eventuelle : « 2 », « ‎12 ».
+final RegExp _nombreSeul = RegExp('^\\u200E?\\d+\$');
 
 /// Un identifiant technique a traits d'union ordinaires, dans un texte :
 /// des segments en capitales et chiffres, un chiffre au moins

@@ -15,6 +15,14 @@
 //   rien en double ; double appui : un seul envoi ; reponse perdue : « non
 //   confirmee », et la meme cle reprend la meme creation ;
 // - capacite absente : pas de bouton, une phrase ;
+// - refus du serveur a la confirmation (C11BIS-AFFECTATION) : une phrase par
+//   motif, jamais le texte SQL, jamais « la reponse n'est pas arrivee » ;
+//   motif inconnu : la phrase generique ; reponse perdue : « non confirme » ;
+//   par le vrai adaptateur, une passerelle 504 (corps HTML) ou un delai
+//   57014 restent « non confirme », jamais « choisissez-en un autre » ; une
+//   confirmation dont la reponse s'est perdue, rejouee avec le meme
+//   enseignant, aboutit (« Les familles ont ete prevenues »), sans dire
+//   qu'un autre membre de la direction l'a faite ;
 // - 320 px, texte a 200 %, LTR et RTL : aucun debordement, aucun mot coupe,
 //   un seul bouton plein par contexte.
 import 'dart:async';
@@ -24,14 +32,18 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 import 'package:rewayah_academy/core/admin/enseignants_classe.dart'
     show enseignantsDuPortProvider;
 import 'package:rewayah_academy/core/admin/service_groupes.dart';
 import 'package:rewayah_academy/core/capacites/port_enseignants_classe.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/offres/affectation_refusee.dart';
 import 'package:rewayah_academy/core/offres/offre_horaire.dart';
 import 'package:rewayah_academy/core/offres/port_regroupements_admin.dart';
+import 'package:rewayah_academy/core/offres/regroupements_c11bis_supabase.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/reseau/etat_sans_donnees.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
@@ -43,6 +55,8 @@ import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_regroupements/regroupements_libelles.dart';
 import 'package:rewayah_academy/features/admin_regroupements/regroupements_page.dart';
 import 'package:rewayah_academy/features/demo/regroupements_demo.dart';
+import 'package:supabase_flutter/supabase_flutter.dart'
+    show AuthClientOptions, SupabaseClient;
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
@@ -132,6 +146,80 @@ class _PortLecture implements PortRegroupementsAdmin {
     required String classeId,
     required String enseignantId,
   }) async => ResultatAffectation.affecte;
+}
+
+/// La demonstration, dont la confirmation de l'enseignant leve [erreur] :
+/// un refus du serveur ([AffectationRefusee]) ou une reponse perdue.
+class _DemoRefus extends RegroupementsDemo {
+  _DemoRefus(this.erreur);
+
+  final Exception erreur;
+  int refusEnvoyes = 0;
+
+  @override
+  Future<ResultatAffectation> affecterEnseignant({
+    required String classeId,
+    required String enseignantId,
+  }) async {
+    refusEnvoyes++;
+    throw erreur;
+  }
+}
+
+/// La demonstration, dont la confirmation de l'enseignant passe par le vrai
+/// adaptateur Supabase devant un serveur simule qui rend [reponse] : la
+/// traduction de l'erreur par l'adaptateur et son rendu par la feuille sont
+/// eprouves ensemble.
+class _DemoAdaptateur extends RegroupementsDemo {
+  _DemoAdaptateur(this.reponse);
+
+  final http.Response reponse;
+  int envois = 0;
+
+  @override
+  Future<ResultatAffectation> affecterEnseignant({
+    required String classeId,
+    required String enseignantId,
+  }) {
+    envois++;
+    // Sans rafraichissement automatique du jeton : aucun minuteur ne survit
+    // au test.
+    final SupabaseClient client = SupabaseClient(
+      'https://exemple.supabase.co',
+      'cle-anonyme',
+      authOptions: const AuthClientOptions(autoRefreshToken: false),
+      httpClient: MockClient(
+        (http.Request r) async => http.Response(
+          reponse.body,
+          reponse.statusCode,
+          headers: reponse.headers,
+          request: r,
+        ),
+      ),
+    );
+    return RegroupementsC11bisSupabase(client)
+        .affecterEnseignant(classeId: classeId, enseignantId: enseignantId);
+  }
+}
+
+/// La demonstration, dont la premiere confirmation aboutit cote serveur mais
+/// dont la reponse se perd ; l'appui suivant rejoue la meme confirmation.
+class _DemoReponsePerdue extends RegroupementsDemo {
+  int envois = 0;
+
+  @override
+  Future<ResultatAffectation> affecterEnseignant({
+    required String classeId,
+    required String enseignantId,
+  }) async {
+    envois++;
+    final ResultatAffectation resultat = await super.affecterEnseignant(
+      classeId: classeId,
+      enseignantId: enseignantId,
+    );
+    if (envois == 1) throw TimeoutException('reponse perdue');
+    return resultat;
+  }
 }
 
 RegroupementDemandes _reg(
@@ -769,6 +857,228 @@ void main() {
       expect(contexte, contains('sans conversion de fuseau'));
       expect(contexte, isNot(contains('à ces jours et à cette heure')));
       await _demonter(tester);
+    });
+  });
+
+  group('C11BIS-AFFECTATION : refus du serveur a la confirmation', () {
+    Future<_DemoRefus> confirmer(WidgetTester tester, Exception erreur) async {
+      final _DemoRefus port = _DemoRefus(erreur);
+      await _monter(tester, port: port);
+      await _ouvrir(tester, _pret);
+      await _choisirGenre(tester, GenreClasse.femmes);
+      await _presser(tester, 'regroupement-creer');
+      await _laisser(tester);
+      expect(_parCle('regroupement-feuille-enseignant'), findsOneWidget);
+      await _presser(tester, 'regroupement-confirmer');
+      await _laisser(tester);
+      expect(port.refusEnvoyes, 1);
+      return port;
+    }
+
+    testWidgets('disponibilites : la phrase du motif, jamais le texte SQL', (
+      WidgetTester tester,
+    ) async {
+      // Le message exact de 0082, valeurs comprises, passe par la traduction
+      // de l'adaptateur.
+      const String sql =
+          'enseignant non disponible: jour 1, heure 18, fuseau Europe/Paris, '
+          'semaine 0, instant 2026-10-26 17:00:00+00';
+      await confirmer(
+        tester,
+        AffectationRefusee(motifRefusAffectation(code: 'P0001', message: sql)),
+      );
+      expect(
+        find.text(t.admin.regroupements.refusAffectation.nonDisponible),
+        findsOneWidget,
+      );
+      expect(_parCle('regroupement-message'), findsOneWidget);
+      expect(find.textContaining('jour 1'), findsNothing);
+      expect(find.textContaining('Europe/Paris'), findsNothing);
+      expect(
+        find.text(t.admin.regroupements.affectationNonConfirmee),
+        findsNothing,
+      );
+      // La feuille reste sur le choix : une autre personne peut etre choisie.
+      expect(_parCle('regroupement-feuille-enseignant'), findsOneWidget);
+      expect(_parCle('regroupement-familles-prevenues'), findsNothing);
+      await _demonter(tester);
+    });
+
+    testWidgets('chevauchement : la phrase du motif', (
+      WidgetTester tester,
+    ) async {
+      await confirmer(
+        tester,
+        const AffectationRefusee(MotifRefusAffectation.chevauchementClasse),
+      );
+      expect(
+        find.text(t.admin.regroupements.refusAffectation.chevauchementClasse),
+        findsOneWidget,
+      );
+      await _demonter(tester);
+    });
+
+    testWidgets('motif inconnu : la phrase generique honnete', (
+      WidgetTester tester,
+    ) async {
+      await confirmer(
+        tester,
+        AffectationRefusee(
+          motifRefusAffectation(code: 'P0001', message: 'erreur imprevue'),
+        ),
+      );
+      expect(
+        find.text(t.admin.regroupements.refusAffectation.inconnu),
+        findsOneWidget,
+      );
+      expect(find.textContaining('imprevue'), findsNothing);
+      await _demonter(tester);
+    });
+
+    testWidgets('reponse perdue : toujours « non confirme »', (
+      WidgetTester tester,
+    ) async {
+      await confirmer(tester, TimeoutException('coupure'));
+      expect(
+        find.text(t.admin.regroupements.affectationNonConfirmee),
+        findsOneWidget,
+      );
+      await _demonter(tester);
+    });
+
+    // Relecture du lot : passerelle, delai ou interblocage ne sont pas un
+    // verdict ; la transaction a pu aboutir (504) ou etre annulee (57014).
+    // Par le vrai adaptateur, la feuille dit « non confirme » et ne
+    // conseille pas de choisir une autre personne.
+    final Map<String, http.Response> sansVerdict = <String, http.Response>{
+      'passerelle 504, corps HTML': http.Response(
+        '<html><body>504 Gateway Time-out</body></html>',
+        504,
+        headers: <String, String>{'content-type': 'text/html'},
+      ),
+      'delai depasse (57014)': http.Response(
+        '{"code":"57014","message":"canceling statement due to statement '
+        'timeout"}',
+        500,
+        headers: <String, String>{'content-type': 'application/json'},
+      ),
+    };
+    for (final MapEntry<String, http.Response> e in sansVerdict.entries) {
+      testWidgets('${e.key}, par l adaptateur : « non confirme »', (
+        WidgetTester tester,
+      ) async {
+        final _DemoAdaptateur port = _DemoAdaptateur(e.value);
+        await _monter(tester, port: port);
+        await _ouvrir(tester, _pret);
+        await _choisirGenre(tester, GenreClasse.femmes);
+        await _presser(tester, 'regroupement-creer');
+        await _laisser(tester);
+        await _presser(tester, 'regroupement-confirmer');
+        await _laisser(tester);
+        expect(port.envois, 1);
+        expect(
+          find.text(t.admin.regroupements.affectationNonConfirmee),
+          findsOneWidget,
+        );
+        expect(
+          find.text(t.admin.regroupements.refusAffectation.inconnu),
+          findsNothing,
+        );
+        expect(find.textContaining('Gateway'), findsNothing);
+        expect(find.textContaining('timeout'), findsNothing);
+        expect(_parCle('regroupement-feuille-enseignant'), findsOneWidget);
+        await _demonter(tester);
+      });
+    }
+
+    testWidgets('un refus de la fonction, par l adaptateur : la phrase du '
+        'motif', (WidgetTester tester) async {
+      final _DemoAdaptateur port = _DemoAdaptateur(
+        http.Response(
+          '{"code":"P0001","message":"chevauchement avec une classe ou '
+          'affectation active"}',
+          400,
+          headers: <String, String>{'content-type': 'application/json'},
+        ),
+      );
+      await _monter(tester, port: port);
+      await _ouvrir(tester, _pret);
+      await _choisirGenre(tester, GenreClasse.femmes);
+      await _presser(tester, 'regroupement-creer');
+      await _laisser(tester);
+      await _presser(tester, 'regroupement-confirmer');
+      await _laisser(tester);
+      expect(
+        find.text(t.admin.regroupements.refusAffectation.chevauchementClasse),
+        findsOneWidget,
+      );
+      expect(
+        find.text(t.admin.regroupements.affectationNonConfirmee),
+        findsNothing,
+      );
+      await _demonter(tester);
+    });
+
+    testWidgets('reponse perdue puis nouvel appui, meme enseignant : les '
+        'familles sont prevenues, aucun « autre membre »', (
+      WidgetTester tester,
+    ) async {
+      final _DemoReponsePerdue port = _DemoReponsePerdue();
+      await _monter(tester, port: port);
+      await _ouvrir(tester, _pret);
+      await _choisirGenre(tester, GenreClasse.femmes);
+      await _presser(tester, 'regroupement-creer');
+      await _laisser(tester);
+      await _presser(tester, 'regroupement-confirmer');
+      await _laisser(tester);
+      // La confirmation a abouti cote serveur, mais la reponse s'est perdue.
+      expect(
+        find.text(t.admin.regroupements.affectationNonConfirmee),
+        findsOneWidget,
+      );
+      expect(port.enseignantDe.values, <String>['ens-maryam']);
+      // « Pressez de nouveau » : le meme choix est rejoue.
+      await _presser(tester, 'regroupement-confirmer');
+      await _laisser(tester);
+      expect(port.envois, 2);
+      expect(_parCle('regroupement-feuille-termine'), findsOneWidget);
+      expect(_parCle('regroupement-familles-prevenues'), findsOneWidget);
+      expect(_parCle('regroupement-deja-affecte'), findsNothing);
+      expect(find.text(t.admin.regroupements.dejaAffecte), findsNothing);
+      expect(port.enseignantDe.values, <String>['ens-maryam']);
+      await _demonter(tester);
+    });
+
+    test('une phrase par motif, distincte, traduite en arabe, sans tiret '
+        'long ni texte SQL', () async {
+      final Traductions ar = await AppLocale.ar.build();
+      final Traductions fr = await AppLocale.fr.build();
+      final Set<String> phrases = <String>{};
+      for (final MotifRefusAffectation m in MotifRefusAffectation.values) {
+        final String phrase = libelleRefusAffectation(m);
+        phrases.add(phrase);
+        expect(phrase, isNot(contains('\u2014')));
+        expect(phrase, isNot(contains('_')));
+        expect(phrase.toLowerCase(), isNot(contains('admin')));
+      }
+      expect(phrases, hasLength(MotifRefusAffectation.values.length));
+      final r = fr.admin.regroupements.refusAffectation;
+      final a = ar.admin.regroupements.refusAffectation;
+      final List<(String, String)> paires = <(String, String)>[
+        (r.reservee, a.reservee),
+        (r.classeIndisponible, a.classeIndisponible),
+        (r.enseignantIndisponible, a.enseignantIndisponible),
+        (r.genreIncompatible, a.genreIncompatible),
+        (r.plafond, a.plafond),
+        (r.nonDisponible, a.nonDisponible),
+        (r.chevauchementClasse, a.chevauchementClasse),
+        (r.chevauchementSeance, a.chevauchementSeance),
+        (r.inconnu, a.inconnu),
+      ];
+      for (final (String f, String arabe) in paires) {
+        expect(arabe, isNot(f));
+        expect(arabe, isNot(contains('\u2014')));
+      }
     });
   });
 

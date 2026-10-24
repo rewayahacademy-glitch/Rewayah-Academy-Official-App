@@ -1,0 +1,157 @@
+<title>Mise en production Rewayah</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Une colonne : cinq sections dans l ordre, chaque geste avec sa coche, et son bouton Copier quand il y a quelque chose a coller. */
+:root {
+  --bg: #f6f4fb; --surface: #ffffff; --ink: #1e1a2b; --muted: #5d5770; --line: #e2ddef;
+  --accent: #5b3fd1; --accent-ink: #ffffff; --accent-soft: #ece7ff;
+  --ok: #1f7a4d; --ok-soft: #e3f4ea; --warn-ink: #7a4a00; --warn-bg: #fff3dc; --danger: #b42318; --danger-bg: #fdeceb;
+  --font: "Plus Jakarta Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #15121d; --surface: #1f1b2a; --ink: #eeeaf7; --muted: #aaa3bf; --line: #352f48;
+  --accent: #a996ff; --accent-ink: #160f33; --accent-soft: #2b2447;
+  --ok: #63d49c; --ok-soft: #173326; --warn-ink: #f3c46e; --warn-bg: #3a2c12; --danger: #ff8f80; --danger-bg: #3d1a17; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #15121d; --surface: #1f1b2a; --ink: #eeeaf7; --muted: #aaa3bf; --line: #352f48;
+  --accent: #a996ff; --accent-ink: #160f33; --accent-soft: #2b2447;
+  --ok: #63d49c; --ok-soft: #173326; --warn-ink: #f3c46e; --warn-bg: #3a2c12; --danger: #ff8f80; --danger-bg: #3d1a17; color-scheme: dark; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 1.55; }
+.page { max-width: 780px; margin: 0 auto; padding-block: 28px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 22px; }
+h1 { font-size: 1.75rem; line-height: 1.2; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+h2 { font-size: 1.1rem; margin: 0 0 6px; text-wrap: balance; }
+p { margin: 0; }
+.sous { color: var(--muted); }
+.bloc { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; display: grid; gap: 10px; }
+.attention { background: var(--warn-bg); color: var(--warn-ink); border: none; }
+.attention strong { color: inherit; }
+.rouge { background: var(--danger-bg); color: var(--danger); border: none; }
+ol.gestes { margin: 0; padding-left: 1.3em; display: grid; gap: 8px; }
+kbd { font-family: var(--mono); font-size: 0.85em; background: var(--accent-soft); color: var(--ink); border-radius: 5px; padding: 1px 6px; white-space: nowrap; }
+a.bouton, button { font: inherit; font-weight: 600; border-radius: 10px; padding: 10px 16px; border: 1px solid transparent; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; }
+a.bouton, button.principal { background: var(--accent); color: var(--accent-ink); }
+button.secondaire { background: transparent; color: var(--muted); border-color: var(--line); font-weight: 500; }
+a.bouton:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.progression { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 10px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; border-bottom: 1px solid var(--line); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.barre { flex: 1 1 200px; height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; }
+.barre > i { display: block; height: 100%; width: 0; background: var(--ok); transition: width .3s; }
+.compte { font-weight: 700; font-variant-numeric: tabular-nums; }
+.liste { display: grid; gap: 12px; }
+.fichier { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; }
+.fichier.suivant { border: 2px solid var(--accent); padding: 15px 17px; }
+.fichier.fait { opacity: .72; }
+.num { grid-row: span 3; width: 40px; height: 40px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-weight: 700; display: grid; place-items: center; font-variant-numeric: tabular-nums; }
+.fichier.fait .num { background: var(--ok-soft); color: var(--ok); }
+.quoi { font-weight: 600; min-width: 0; }
+.tech { color: var(--muted); font-size: 0.82rem; font-family: var(--mono); overflow-wrap: anywhere; min-width: 0; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; min-width: 0; }
+.coche { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-weight: 500; cursor: pointer; min-height: 44px; }
+.coche input { width: 22px; height: 22px; accent-color: var(--ok); }
+.retour { font-size: 0.92rem; color: var(--ok); font-weight: 600; }
+.retour.manuel { color: var(--warn-ink); }
+textarea.secours { grid-column: 1 / -1; width: 100%; box-sizing: border-box; height: 140px; font-family: var(--mono); font-size: 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); padding: 8px; }
+.fin { text-align: left; }
+@media (max-width: 480px) { h1 { font-size: 1.45rem; } .fichier { grid-template-columns: 1fr; } .num { grid-row: auto; } }
+@media (prefers-reduced-motion: reduce) { .barre > i { transition: none; } }
+.section h2 { font-size: 1.2rem; margin: 6px 0 0; }
+.geste .corps { grid-column: 2; display: grid; gap: 8px; min-width: 0; }
+.geste .corps ul { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; }
+code { font-family: var(--mono); font-size: 0.88em; background: var(--accent-soft); border-radius: 5px; padding: 1px 5px; overflow-wrap: anywhere; }
+.prod { background: var(--danger-bg); color: var(--danger); border: none; }
+.geste .actions { grid-column: 2; }
+</style>
+
+<main class="page">
+  <header style="display:grid;gap:8px">
+    <h1>Mettre Rewayah en production</h1>
+    <p class="sous">Une seule liste pour tout ce qui reste à faire à la main, dans l’ordre. Cochez chaque geste quand il est fait : la page s’en souvient sur cet ordinateur. Comptez environ une heure et demie, surtout pour les 15 lots.</p>
+  </header>
+
+  <section class="bloc prod" aria-labelledby="t-garde">
+    <h2 id="t-garde">Cette fois, c’est la vraie base</h2>
+    <p>En haut à gauche de Supabase, le projet doit être <strong>Rewayah PROD (Real Users)</strong>. Tous les liens de cette page y mènent. Un message rouge « ERROR » : arrêtez-vous, faites une capture et envoyez-la-moi ; un lot en erreur n’a rien écrit (tout passe ou rien).</p>
+  </section>
+
+  <div class="progression" role="status" aria-live="polite">
+    <span class="compte" id="compte">0 sur __NOMBRE__ faits</span>
+    <span class="barre" aria-hidden="true"><i id="jauge"></i></span>
+    <button class="secondaire" id="raz" type="button">Effacer les coches</button>
+  </div>
+
+  <div id="liste" class="liste"></div>
+</main>
+
+<script>
+const GESTES = __DONNEES__;
+const CLE = "rewayah-phase2-2026-10-23";
+let faits = new Set();
+try { faits = new Set(JSON.parse(localStorage.getItem(CLE) || "[]")); } catch (e) {}
+const sauver = () => { try { localStorage.setItem(CLE, JSON.stringify([...faits])); } catch (e) {} };
+
+// Le secret d'envoi : tire une fois, garde sur cet ordinateur pour que les deux endroits ou il sert concordent.
+let secret = null;
+try { secret = localStorage.getItem(CLE + "-secret"); } catch (e) {}
+if (!secret) {
+  const o = new Uint8Array(32); crypto.getRandomValues(o);
+  secret = Array.from(o, (b) => b.toString(16).padStart(2, "0")).join("");
+  try { localStorage.setItem(CLE + "-secret", secret); } catch (e) {}
+}
+const texte = (g) => (g.copie || "").split("@SECRET@").join(secret);
+
+const liste = document.getElementById("liste");
+let section = null;
+GESTES.forEach((g, i) => {
+  const n = i + 1;
+  if (g.section !== section) {
+    section = g.section;
+    const h = document.createElement("h2"); h.className = "section"; h.textContent = section; liste.appendChild(h);
+  }
+  const art = document.createElement("article");
+  art.className = "fichier geste"; art.id = "g" + n;
+  art.innerHTML = '<div class="num" aria-hidden="true">' + n + '</div><div class="quoi"></div><div class="corps">' + g.html + '</div>' +
+    '<div class="actions">' + (g.copie ? '<button class="principal" type="button">Copier</button>' : '') +
+    '<label class="coche"><input type="checkbox" id="fait' + n + '"> Fait</label><span class="retour" aria-live="polite"></span></div>';
+  art.querySelector(".quoi").textContent = g.titre;
+  liste.appendChild(art);
+  if (g.genre === "secret") art.querySelector("#secret-visible").textContent = secret;
+  const retour = art.querySelector(".retour");
+  const bouton = art.querySelector("button");
+  if (bouton) bouton.addEventListener("click", () => {
+    const valeur = texte(g);
+    const ok = () => { retour.className = "retour"; retour.textContent = "Copié."; };
+    const secours = () => {
+      let zone = art.querySelector("textarea");
+      if (!zone) { zone = document.createElement("textarea"); zone.className = "secours"; zone.readOnly = true; zone.value = valeur; zone.setAttribute("aria-label", "Texte à copier, geste " + n); art.appendChild(zone); }
+      zone.focus(); zone.select();
+      let copie = false; try { copie = document.execCommand("copy"); } catch (e) {}
+      if (copie) ok(); else { retour.className = "retour manuel"; retour.textContent = "Texte sélectionné ci-dessous : Ctrl + C (Cmd + C sur Mac)."; }
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(valeur).then(ok, secours); else secours();
+  });
+  const coche = art.querySelector("input");
+  coche.checked = faits.has(n);
+  coche.addEventListener("change", () => { coche.checked ? faits.add(n) : faits.delete(n); sauver(); maj(); });
+});
+
+function maj() {
+  document.getElementById("compte").textContent = faits.size + " sur " + GESTES.length + " faits";
+  document.getElementById("jauge").style.width = (100 * faits.size / GESTES.length) + "%";
+  const suivant = GESTES.findIndex((_, i) => !faits.has(i + 1)) + 1;
+  GESTES.forEach((_, i) => {
+    const el = document.getElementById("g" + (i + 1));
+    el.classList.toggle("fait", faits.has(i + 1));
+    el.classList.toggle("suivant", suivant === i + 1);
+  });
+}
+document.getElementById("raz").addEventListener("click", () => {
+  faits.clear(); sauver();
+  GESTES.forEach((_, i) => { document.getElementById("fait" + (i + 1)).checked = false; });
+  maj();
+});
+maj();
+</script>

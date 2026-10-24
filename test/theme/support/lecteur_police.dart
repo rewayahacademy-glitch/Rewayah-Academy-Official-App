@@ -128,9 +128,7 @@ class LecteurPolice {
         if (decalage == 0) {
           glyphe = (c + delta) & 0xFFFF;
         } else {
-          glyphe = _d.getUint16(
-            decalages + 2 * i + decalage + 2 * (c - debut),
-          );
+          glyphe = _d.getUint16(decalages + 2 * i + decalage + 2 * (c - debut));
           if (glyphe != 0) {
             glyphe = (glyphe + delta) & 0xFFFF;
           }

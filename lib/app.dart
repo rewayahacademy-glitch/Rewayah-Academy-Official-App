@@ -58,8 +58,7 @@ class RewayahApp extends ConsumerWidget {
     // MA-2 (question 2 de MA-1b) : la presentation vient du fournisseur
     // unique du Mode Accessibilite, et le theme reste celui d'`AppTheme.pour`
     // existant, sans aucune couleur nouvelle (K-37).
-    final InterfaceMode presentation =
-        ref.watch(modeAccessibiliteActifProvider)
+    final InterfaceMode presentation = ref.watch(modeAccessibiliteActifProvider)
         ? InterfaceMode.enfant
         : InterfaceMode.standard;
 

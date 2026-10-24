@@ -269,7 +269,8 @@ pause ≥ 15, et les autres bornes de raisonnement) sont retirées. Une valeur d
 des puces se relit dans « Autre » et se réenregistre telle quelle. **Seule exception** : le
 plafond de 2 appareils par élève, source écrite (règle C11, `0001_fondations.sql`, garde
 `guard_devices_max`) ; au-delà : « Choisissez une valeur entre … et …, ou l'une des valeurs
-proposées. ». La colonne « Bornes » ci-dessous dit donc « ≥ 0 » partout sauf là.
+proposées. ». La colonne « Bornes » ci-dessous dit donc « ≥ 0 » partout sauf là et, depuis le 22/10,
+pour `enseignant.classes_max` (1 à 80, bornes écrites par le serveur, voir sa ligne).
 
 | Réglage (écran) | Clé | Proposées | Bornes | Source / raisonnement |
 |---|---|---|---|---|
@@ -278,6 +279,7 @@ proposées. ». La colonne « Bornes » ci-dessous dit donc « ≥ 0 » partout 
 | Durée minimale payée | `session_paid_minimum_minutes` | 30, 45, 60 | ≥ 0 | Défaut 45 (`0005`) ; liste de `FeuilleRegle`. |
 | Pause entre deux séances | `break_minutes_between_sessions` | 15, 30, 45 | ≥ 0 | Défaut 30 (`0005`) ; liste de `FeuilleRegle`. |
 | Élèves par enseignant | `max_students_per_teacher` | 3, 4, 5, 6 | ≥ 0 | Défaut 5 (`0005`) ; liste de `FeuilleRegle` ; 6 = capacité adultes maximale (07). |
+| Classes par enseignant (Règles, à ajouter) | `enseignant.classes_max` | 2, 3, 4, 5 | 1 à 80 | Défaut 3, décision du directeur du 22/10 (`20261022000200`) ; bornes écrites par le serveur (un entier de 1 à 80 : au-delà, `22023`) ; 80 = plafond horaire maximal d'un enseignant ; 2, 4, 5 : voisins du défaut, simples raccourcis. |
 | Horizon d'affectation | `matching_horizon_weeks` | 2, 4, 8 | ≥ 0 | Défaut 4 (`0005`, `0033`). 2 et 8 : moitié et double, simples raccourcis. |
 | Âge minimum caméra automatique | `camera_auto_allow_min_age` | 11, 15, 18 | ≥ 0 | Défaut 11 (`0001`) ; 15 et 18 : bornes des tranches d'âge `cohortes_age` (`0043`). |
 | Âge maximum interface enfant | `child_ui_mode_max_age` | 7, 8, 10 | ≥ 0 | Défaut 8 (`0001`, « à trancher ») ; 10 relevé le 22/09 (`0043`) ; 7 : fin de la tranche 5-7. |

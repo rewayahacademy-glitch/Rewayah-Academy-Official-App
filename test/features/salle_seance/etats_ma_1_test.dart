@@ -204,10 +204,7 @@ void main() {
       final Rect camera = tester.getRect(_bouton(_motsCamera));
       // Meme rangee : centres a la meme hauteur (depuis TB-2, Quitter garde
       // sa largeur et un mot peut passer sur deux lignes dans sa part).
-      expect(
-        micro.center.dy,
-        moreOrLessEquals(camera.center.dy, epsilon: 0.5),
-      );
+      expect(micro.center.dy, moreOrLessEquals(camera.center.dy, epsilon: 0.5));
       // Jusqu'a 130 %, le mot se montrait deja : il reste.
       expect(_motsAffiches(tester).where(_motsMicro.contains), hasLength(1));
     });

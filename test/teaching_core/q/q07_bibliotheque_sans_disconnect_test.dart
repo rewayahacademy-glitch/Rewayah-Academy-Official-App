@@ -164,13 +164,7 @@ void main() {
       expect(toutesLesRessources(), hasLength(5));
       expect(
         toutesLesRessources().map((LibraryResource r) => r.id).toSet(),
-        <String>{
-          'res-coran',
-          'res-pdf',
-          'res-texte',
-          'res-image',
-          'res-lecon',
-        },
+        <String>{'res-coran', 'res-pdf', 'res-texte', 'res-image', 'res-lecon'},
       );
     });
 

@@ -15,7 +15,7 @@ bouton-grise|lib/features/compte/compte_page.dart|onPress: projection.afficheFoy
 bouton-grise|lib/features/compte/espaces_compte.dart|onPress: espaces.peutRejoindre(espace) ? () => rejoindre(espace) : null
 bouton-grise|lib/features/consentements/texte_observation.dart|onPress: geste == null ? null : () => geste(!cochee)
 bouton-grise|lib/features/creneaux/creneaux_page.dart|onPress: ouvrable ? () => _ouvrir(offre) : null
-bouton-grise|lib/features/dossier/accords_page.dart|onPress: rienAFaire ? () => _suite(pieceAFournir: pieceAFournir) : pret && !_envoi ? () => unawaited( _envoyer( accuse: accuseAFaire, contrat: contratAFaire && !serveur, sorte: sorte, version: version, contratServeur: aSigner?.contrat, resignature: resignature, pieceAFournir: pieceAFournir, ), ) : null
+bouton-grise|lib/features/dossier/accords_page.dart|onPress: rienAFaire ? () => _suite(pieceAFournir: pieceAFournir) : pret && !_envoi ? () => unawaited( _envoyer( accuse: accuseAFaire, contrat: contratAFaire && !serveur, sorte: sorte, version: version, contratServeur: aSigner?.contrat, codeConduite: codeConduiteAFaire, resignature: resignature, pieceAFournir: pieceAFournir, ), ) : null
 bouton-grise|lib/features/dossier/depot_piece_page.dart|onPress: piece == null ? null : () => unawaited(_envoyer(piece))
 bouton-grise|lib/features/fiche_groupe/fiche_groupe_page.dart|onPress: onOuvrirEleve == null ? null : () => onOuvrirEleve(membre.studentId)
 bouton-grise|lib/features/foyer/place_adulte.dart|onPress: placeActionnable(place) ? onPress : null

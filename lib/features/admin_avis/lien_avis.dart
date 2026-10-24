@@ -11,8 +11,9 @@
 import '../../core/router/routes.dart';
 
 /// L'adresse publique de l'application quand la page n'en fournit pas
-/// (`docs/current/CONFIGURATION_BASELINE_2026-09-23.md`, alias Vercel).
-const String origineParDefaut = 'https://rewayah-academy.vercel.app';
+/// (`docs/current/DECISION-DOMAINE-2026-10-23.md` : l'application sur
+/// app.rewayahacademy.com).
+const String origineParDefaut = 'https://app.rewayahacademy.com';
 
 /// L'adresse complete du formulaire d'avis pour [jeton], d'apres l'adresse de
 /// la page ouverte [base] (par defaut `Uri.base`). Pure, testee.

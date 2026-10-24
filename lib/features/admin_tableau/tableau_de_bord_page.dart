@@ -205,6 +205,16 @@ class TableauDeBordPage extends ConsumerWidget {
           icon: AppIcons.etoile,
           onPress: () => GoRouter.of(context).go(Routes.adminOperationsAvis),
         ),
+        // COURRIELS-1 : ecrire un e-mail, suivre la file d'envoi et voir les
+        // adresses d'envoi.
+        SettingRow(
+          key: const ValueKey<String>('tableau-courriels'),
+          title: t.courriels.admin.outil,
+          description: t.courriels.admin.outilDetail,
+          icon: AppIcons.envoyerMessage,
+          onPress: () =>
+              GoRouter.of(context).go(Routes.adminOperationsCourriels),
+        ),
         // ECHELLE-ADM-PILOTAGE-1 : la demande et l'offre d'enseignants par
         // horaire, R7 et R19.
         SettingRow(

@@ -26,6 +26,8 @@ class ChampDate extends StatelessWidget {
     required this.onChoix,
     required this.aujourdhui,
     super.key,
+    this.dernier,
+    this.aide,
   });
 
   /// Le nom du champ.
@@ -40,13 +42,26 @@ class ChampDate extends StatelessWidget {
   /// Le jour d'aujourd'hui : la premiere date permise.
   final DateTime aujourdhui;
 
+  /// La derniere date permise, quand ce n'est pas « dans un an » : un jour
+  /// passe a choisir (le jour d'une demande recue) borne le calendrier a
+  /// aujourd'hui. Nul : dans un an.
+  final DateTime? dernier;
+
+  /// La phrase sous le champ, quand elle n'est pas « Entre aujourd'hui et dans
+  /// un an. » : elle dit alors l'etendue reelle du calendrier.
+  final String? aide;
+
   /// La premiere date permise : aujourd'hui, a minuit.
   DateTime get premierJour =>
       DateTime(aujourdhui.year, aujourdhui.month, aujourdhui.day);
 
-  /// La derniere date permise : dans un an.
-  DateTime get dernierJour =>
-      DateTime(premierJour.year + 1, premierJour.month, premierJour.day);
+  /// La derniere date permise : [dernier], sinon dans un an.
+  DateTime get dernierJour {
+    final DateTime? d = dernier;
+    return d != null
+        ? DateTime(d.year, d.month, d.day)
+        : DateTime(premierJour.year + 1, premierJour.month, premierJour.day);
+  }
 
   /// Ecrit un jour `JJ/MM/AAAA`, pour l'afficher.
   static String ecrire(DateTime jour) =>
@@ -97,7 +112,7 @@ class ChampDate extends StatelessWidget {
       child: InputDecorator(
         decoration: InputDecoration(
           labelText: libelle,
-          helperText: t.commun.champDate.aide,
+          helperText: aide ?? t.commun.champDate.aide,
           helperMaxLines: 3,
         ),
         child: Text(

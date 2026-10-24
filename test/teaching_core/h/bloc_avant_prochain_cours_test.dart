@@ -139,10 +139,7 @@ void main() {
       expect(find.text(t.tc.parcours.intention.apprendre), findsOneWidget);
       expect(find.text(t.tc.parcours.intention.revoir), findsNWidgets(2));
       expect(find.text(t.tc.parcours.avant.rien), findsNothing);
-      expect(
-        find.textContaining('Sourate 2, versets 255'),
-        findsOneWidget,
-      );
+      expect(find.textContaining('Sourate 2, versets 255'), findsOneWidget);
     });
 
     testWidgets('« Reprendre le cours » apparait en tete quand elle existe', (
@@ -176,10 +173,7 @@ void main() {
 
       await tester.pumpWidget(
         hoteH(
-          BlocAvantProchainCours(
-            groupeId: _groupe,
-            onAction: choisies.add,
-          ),
+          BlocAvantProchainCours(groupeId: _groupe, onAction: choisies.add),
           surcharges: _surcharges(
             travaux: <LearningAssignment>[_travail(id: 't1')],
           ),

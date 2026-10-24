@@ -22,7 +22,7 @@ import '../../core/enseignant/port_remplacements.dart';
 import '../../core/enseignant/service_enseignant.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/mouvement/mouvement.dart';
-import '../../core/offres/service_offres.dart' show languesCoursProvider;
+import '../../core/offres/service_offres.dart' show referentielLanguesProvider;
 import '../../core/planning/service_planning.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/priere/service_priere.dart';
@@ -266,7 +266,7 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
     serviceDeclarationProvider.overrideWith(
       (Ref ref) => ref.watch(declarationEnseignantDemoProvider),
     ),
-    languesCoursProvider.overrideWith(
+    referentielLanguesProvider.overrideWith(
       (Ref _) async => DonneesEnseignantDemo.languesCours,
     ),
     // Le nom public avec son titre (R18), que le modele ne porte pas encore.

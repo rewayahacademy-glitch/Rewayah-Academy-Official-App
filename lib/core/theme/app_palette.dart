@@ -529,16 +529,13 @@ class AppPointsStatut {
   final AppIndicatorColor neutre;
 
   /// Interpolation, requise par [ThemeExtension].
-  static AppPointsStatut lerp(
-    AppPointsStatut a,
-    AppPointsStatut b,
-    double t,
-  ) => AppPointsStatut(
-    succes: AppIndicatorColor.lerp(a.succes, b.succes, t),
-    attention: AppIndicatorColor.lerp(a.attention, b.attention, t),
-    alerte: AppIndicatorColor.lerp(a.alerte, b.alerte, t),
-    neutre: AppIndicatorColor.lerp(a.neutre, b.neutre, t),
-  );
+  static AppPointsStatut lerp(AppPointsStatut a, AppPointsStatut b, double t) =>
+      AppPointsStatut(
+        succes: AppIndicatorColor.lerp(a.succes, b.succes, t),
+        attention: AppIndicatorColor.lerp(a.attention, b.attention, t),
+        alerte: AppIndicatorColor.lerp(a.alerte, b.alerte, t),
+        neutre: AppIndicatorColor.lerp(a.neutre, b.neutre, t),
+      );
 
   @override
   bool operator ==(Object other) =>
@@ -648,3 +645,156 @@ const List<AppColorPair> _accentsProfilSombres = <AppColorPair>[
   AppColorPair(background: Color(0xFFF7CDAF), onBackground: Color(0xFF5A2A0C)),
   AppColorPair(background: Color(0xFFE9D9B3), onBackground: Color(0xFF45360F)),
 ];
+
+/// Les couleurs de la carte de partage (CAND-06), une par variante.
+///
+/// **La carte est une image, pas un ecran** : elle ne suit ni le theme, ni la
+/// taille de texte, ni l'interface guidee, donc ces valeurs sont les memes en
+/// clair et en sombre et ne sont pas dans [AppPalette]. Elles sont posees ici
+/// parce que ce fichier est, avec `logo_google.dart`, le seul qui porte des
+/// couleurs litterales (`tool/verifier_jetons.dart`).
+///
+/// - [hommes] : le fond violet profond de la palette (`#4E2983`, l'encre du
+///   lavis d'accent), le violet de marque (`#8652E6`) et le violet d'accent du
+///   theme sombre (`#BA98FB`) pour la lumiere, le lavis d'accent (`#EEE6FA`) pour
+///   la porte, le blanc (`#FFFFFF`) pour l'eclat de l'ouverture et un violet
+///   presque noir (`#160A2A`) pour les tenebres. Seuls ces deux derniers sont
+///   nouveaux.
+/// - [femmes] : directeur, 22/10/2026, « une teinte plus douce et feminine,
+///   voisine de la marque » : un mauve prune, une porte lavande rosee ; puis,
+///   le 23/10/2026, une fine branche fleurie dans la penombre et aucun
+///   personnage, et la **meme lumiere** que les hommes (meme luminance, seule la
+///   teinte change : le fond prune est aussi profond que le violet des hommes).
+///   **Valeurs proposees, hors charte de marque** (comme les teintes d'identite,
+///   M-23) : elles n'existent que sur cette carte, et le directeur les valide sur
+///   les captures.
+///
+/// **La lumiere et les tenebres (directeur, 23/10/2026)** : « une sorte de
+/// degrade qui montre la dissipation de la lumiere de l'immensite des tenebres ».
+/// La scene n'est donc plus faite d'aplats : les tenebres ([tenebres]) montent
+/// des bords et des coins vers le fond ([fond]), l'ouverture de la porte est la
+/// zone la plus claire de la scene ([eclat], le blanc, qui retombe vers [porte] a
+/// son bord) avec un halo qui deborde sur son cadre et sur le mur, et le faisceau
+/// qu'elle pose au sol s'eteint ([porte], puis [coeur], puis [chemin], puis
+/// rien). **Exception datee, limitee a la lumiere et a l'obscurite de cette
+/// scene** (y compris le fondu du symbole dans l'ombre, au seuil) : le logo, le
+/// symbole contour, le cadre de la porte, la plaque du QR et la branche fleurie
+/// restent des aplats, sans degrade. Les couleurs, elles, restent
+/// des jetons : la lumiere ne fait que les melanger. Chaque texte est mesure a
+/// 4,5:1 sur le pixel le plus clair qu'il traverse, et chaque forme porteuse de
+/// sens (la porte, la plaque du QR) a 3:1, par
+/// `test/features/partage_offre/carte_partage_test.dart`.
+enum AppPaletteCarte {
+  /// Les hommes, et le genre inconnu.
+  hommes(
+    fond: AppColorPair(
+      background: Color(0xFF4E2983),
+      onBackground: Color(0xFFFFFFFF),
+    ),
+    encreDouce: AppInkColor(Color(0xFFDCCAFD)),
+    porte: AppColorPair(
+      background: Color(0xFFEEE6FA),
+      onBackground: Color(0xFF4E2983),
+    ),
+    chemin: AppColorPair(
+      background: Color(0xFF8652E6),
+      onBackground: Color(0xFFFFFFFF),
+    ),
+    coeur: AppColorPair(
+      background: Color(0xFFBA98FB),
+      onBackground: Color(0xFF25113F),
+    ),
+    eclat: AppColorPair(
+      background: Color(0xFFFFFFFF),
+      onBackground: Color(0xFF4E2983),
+    ),
+    tenebres: AppColorPair(
+      background: Color(0xFF160A2A),
+      onBackground: Color(0xFFFFFFFF),
+    ),
+    filigrane: AppInkColor(Color(0xFFFFFFFF)),
+  ),
+
+  /// Les femmes : la meme scene de lumiere que les hommes, **a la meme
+  /// luminance** (a quelques pour cent pres, mesure sur les pixels de la scene,
+  /// `carte_partage_test.dart`), seule la teinte change : un mauve prune au lieu
+  /// du violet bleute. Le fond, les tenebres et les deux tons de la lumiere
+  /// (`coeur`, `chemin`) sont calibres pour cela ; l'ouverture de la porte est le
+  /// meme blanc. Ces couleurs sont proposees, hors charte (`M-23`).
+  femmes(
+    fond: AppColorPair(
+      background: Color(0xFF542C62),
+      onBackground: Color(0xFFFFFFFF),
+    ),
+    encreDouce: AppInkColor(Color(0xFFF6DDF0)),
+    porte: AppColorPair(
+      background: Color(0xFFFCEFF6),
+      onBackground: Color(0xFF542C62),
+    ),
+    chemin: AppColorPair(
+      background: Color(0xFFA24BB7),
+      onBackground: Color(0xFFFFFFFF),
+    ),
+    coeur: AppColorPair(
+      background: Color(0xFFD192E4),
+      onBackground: Color(0xFF3E1D52),
+    ),
+    eclat: AppColorPair(
+      background: Color(0xFFFFFFFF),
+      onBackground: Color(0xFF542C62),
+    ),
+    tenebres: AppColorPair(
+      background: Color(0xFF190924),
+      onBackground: Color(0xFFFFFFFF),
+    ),
+    filigrane: AppInkColor(Color(0xFFFFFFFF)),
+  );
+
+  const AppPaletteCarte({
+    required this.fond,
+    required this.encreDouce,
+    required this.porte,
+    required this.chemin,
+    required this.coeur,
+    required this.eclat,
+    required this.tenebres,
+    required this.filigrane,
+  });
+
+  /// Le ton moyen de la carte, et le blanc des textes poses dessus : le mur
+  /// entre la lumiere de la porte et l'obscurite des bords.
+  final AppColorPair fond;
+
+  /// L'encre des textes secondaires (sous-titre, traduction, reference), posee
+  /// sur [fond] : un lavande tres clair, 4,5:1 au moins.
+  final AppInkColor encreDouce;
+
+  /// La porte : le bord clair de l'ouverture, de la teinte de la variante. Son
+  /// halo sur le mur et le debut du faisceau au sol en sont faits.
+  final AppColorPair porte;
+
+  /// L'eclat : le blanc pur, au coeur de l'ouverture de la porte, la zone la plus
+  /// claire de la scene (il retombe vers [porte], la teinte de la variante, sur
+  /// les bords de l'ouverture).
+  final AppColorPair eclat;
+
+  /// La lumiere qui s'eteint : la fin du faisceau, et la lueur sur le mur.
+  final AppColorPair chemin;
+
+  /// La lumiere qui s'attenue : le milieu du faisceau, et la teinte de la
+  /// branche fleurie des femmes dans la penombre.
+  final AppColorPair coeur;
+
+  /// Les tenebres : un violet presque noir, de la teinte de la variante, vers
+  /// lequel la carte s'assombrit aux bords et dans les coins.
+  final AppColorPair tenebres;
+
+  /// L'encre du trait du filigrane : du blanc, que le rendu pose a tres faible
+  /// opacite ([opaciteFiligrane]).
+  final AppInkColor filigrane;
+
+  /// L'opacite du filigrane (le symbole contour agrandi) : 7 pour cent, dans
+  /// les 6 a 12 pour cent du directeur. Un decor tamise, qui ne rivalise jamais
+  /// avec le texte.
+  static const double opaciteFiligrane = 0.07;
+}

@@ -43,9 +43,10 @@ TraitVectoriel _trait(String id) => TraitVectoriel(
 void main() {
   group('Q-06 : annoter n ecrit jamais dans la version', () {
     test('cent traits et un marqueur laissent la version intacte', () {
-      final FauxDepotVersions versions = FauxDepotVersions(
-        <ResourceVersion>[versionCoranPubliee, versionPdfPubliee],
-      );
+      final FauxDepotVersions versions = FauxDepotVersions(<ResourceVersion>[
+        versionCoranPubliee,
+        versionPdfPubliee,
+      ]);
       final FauxDepotAnnotations annotations = FauxDepotAnnotations(
         horlogeUtc: _maintenant,
       );

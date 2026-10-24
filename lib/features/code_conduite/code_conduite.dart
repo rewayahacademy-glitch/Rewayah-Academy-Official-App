@@ -12,7 +12,10 @@
 // version et date tracees par la base), jamais par un second chemin.
 //
 // Surface : la lecture partagee (`AppBottomSheet.ouvrirLecture`), ouverte
-// depuis le profil de l'enseignant ; aucune route propre.
+// depuis le profil de l'enseignant ; aucune route propre. Le texte lui-meme
+// ([TexteCodeConduite]) est aussi lu sur la page des accords
+// (`/attente/accords`), ou l'enseignant invite l'accepte avant l'activation
+// de son compte (CAND-Q15 conduite) : un seul texte, deux surfaces.
 //
 // Les cinq etats : chargement (squelette), contenu (le texte et sa case),
 // vide (aucune acceptation lue : le texte et la case, cas normal),
@@ -55,6 +58,42 @@ Acceptation? acceptationCodeConduite(List<Acceptation> lues) {
     }
   }
   return null;
+}
+
+/// Le texte du code de conduite : l'introduction, puis les regles numerotees.
+///
+/// Partage par le profil de l'enseignant ([ContenuCodeConduite]) et par la
+/// page des accords, pour que l'enseignant lise mot pour mot le meme texte
+/// avant et apres l'activation de son compte.
+class TexteCodeConduite extends StatelessWidget {
+  /// Cree le texte.
+  const TexteCodeConduite({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final List<String> regles = t.codeConduite.regles;
+    final TextStyle corps =
+        Theme.of(context).textTheme.bodyLarge ?? const TextStyle();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        TexteSansCoupure(t.codeConduite.intro, style: corps),
+        Ecart.vLg,
+        for (int n = 0; n < regles.length; n++) ...<Widget>[
+          if (n > 0) Ecart.vMd,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text('${n + 1}.', style: corps),
+              Ecart.hSm,
+              Expanded(child: Text(regles[n], style: corps)),
+            ],
+          ),
+        ],
+      ],
+    );
+  }
 }
 
 /// Ouvre le code de conduite en lecture, avec sa case d'acceptation.
@@ -159,26 +198,13 @@ class _ContenuCodeConduiteEtat extends ConsumerState<ContenuCodeConduite> {
     }
 
     final Acceptation? acceptee = acceptationCodeConduite(lecture.requireValue);
-    final List<String> regles = t.codeConduite.regles;
     final TextStyle corps = textes.bodyLarge ?? const TextStyle();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        TexteSansCoupure(t.codeConduite.intro, style: corps),
-        Ecart.vLg,
-        for (int n = 0; n < regles.length; n++) ...<Widget>[
-          if (n > 0) Ecart.vMd,
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text('${n + 1}.', style: corps),
-              Ecart.hSm,
-              Expanded(child: Text(regles[n], style: corps)),
-            ],
-          ),
-        ],
+        const TexteCodeConduite(),
         Ecart.vXl,
         if (acceptee != null)
           Semantics(

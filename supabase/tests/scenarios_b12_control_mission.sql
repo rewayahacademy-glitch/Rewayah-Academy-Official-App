@@ -39,6 +39,9 @@ BEGIN
   INSERT INTO public.contract_acceptances(profile_id,contract_kind,version)
   VALUES ('b1200000-0000-0000-0000-000000000004',
           'recording_and_control_notice',v_notice_version);
+  INSERT INTO public.contract_acceptances(profile_id,contract_kind,version)
+  VALUES ('b1200000-0000-0000-0000-000000000004','teacher_conduct_code',public.code_conduite_version_requise())
+  ON CONFLICT(profile_id,contract_kind,version) DO NOTHING;
   UPDATE public.profiles SET account_status='active'
   WHERE id='b1200000-0000-0000-0000-000000000004';
   PERFORM set_config('request.jwt.claim.sub','',true);

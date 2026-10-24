@@ -87,6 +87,8 @@ const Map<String, int> _domaines = <String, int>{
   'codeConduite': 8,
   // AVIS-PUBLICS (19/10/2026) : formulaire public d'avis et moderation.
   'avis': 100,
+  // COURRIELS-1 (23/10/2026) : e-mails sortants de la direction.
+  'courriels': 70,
 };
 
 /// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) :
@@ -163,6 +165,12 @@ const Set<String> _latins = <String>{
   // Le premier jour du mois s'ecrit en chiffre en arabe (« 1 أكتوبر »),
   // sans le suffixe francais « er » (reunion de la ligne arabe dans ccr).
   'commun.dates.premierJour',
+  // Une langue se nomme dans sa propre langue (CAND-04) : la carte « Français »
+  // reste « Français » dans l'application en arabe, et « العربية » reste
+  // « العربية » en français, pour qu'une personne arrivee dans la mauvaise
+  // langue y retrouve la sienne.
+  'inscription.langue.francais',
+  'inscription.langue.arabe',
 };
 
 final RegExp _parametre = RegExp(r'\{\w+\}');

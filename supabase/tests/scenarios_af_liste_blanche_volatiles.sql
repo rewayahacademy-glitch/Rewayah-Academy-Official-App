@@ -45,6 +45,8 @@ declare
     'accorder_capacite_controle(uuid,timestamp with time zone,timestamp with time zone,boolean,uuid[],uuid[],uuid)',
     'admin_library_review_rights(uuid,uuid,jsonb,integer)',
     'affecter_enseignant_classe_c11bis(uuid,uuid)',
+    -- CAND-L2A2 (22/10) : admission en Salle de verification (transition 10), direction active de son cote (moteur, controles nommes).
+    'admettre_salle_verification(uuid,integer,text)',
     'agent_pre_request()',
     'ajouter_eleve_groupe(uuid,uuid,text)',
     'ajouter_niveau_programme(uuid,text,text,text,integer,text)',
@@ -53,6 +55,12 @@ declare
     -- CPT-SUPPR-EXPORT (18/10) : la personne annule sa demande de suppression (compte valide).
     'annuler_suppression_compte()',
     'annuler_upload_bibliotheque(uuid)',
+    -- CAND-L3 (23/10) : apercu d'import des formulaires, super-admin en double verification (aal2) exigee en base, aucune ecriture sauf le journal d'acces.
+    'apercu_import_formulaires(text,text,text,jsonb,text)',
+    -- CAND-L2A2 (22/10) : apercu d'une action groupee, direction active de son cote (trace des candidatures hors portee).
+    'apercu_lot_candidats(text,uuid[])',
+    -- CAND-PREVENIR (24/10) : apercu des personnes des formulaires a prevenir par e-mail (direction active de son cote, compteurs seulement, audit).
+    'apercu_prevenir_par_courriel()',
     'autoriser_ecoute_archive(uuid)',
     'autoriser_lecture_piece_identite(uuid)',
     'autoriser_lecture_version(uuid)',
@@ -70,7 +78,11 @@ declare
     'completer_kyc_document()',
     'completer_niveau_demande_horaire(uuid)',
     'configurer_canal_support(text,text)',
+    -- CAND-L3 (23/10) : confirmation de l'import des formulaires (super-admin, aal2, cle d'idempotence, jeton HMAC).
+    'confirmer_import_formulaires(text,text,text,text,jsonb,text,jsonb,text)',
     'confirmer_import_inscriptions(text,text,jsonb)',
+    -- CAND-NOM-LATIN (23/10) : le titulaire d'une candidature confirme son nom en lettres latines (garde positive sur la candidature du compte valide ; aucune garde de role ; jamais la direction).
+    'confirmer_nom_latin(text)',
     'confirmer_upload_bibliotheque(uuid,text,bigint,text,text)',
     'controleur_ajouter_complement(uuid,text,text)',
     'controleur_envoyer_message(uuid,uuid,text)',
@@ -97,8 +109,17 @@ declare
     'declarer_conflit_mission(uuid,uuid)',
     -- PED-APRES-BACK (18/10) : la direction regle le partage pedagogique d'une classe et d'un eleve.
     'definir_partage_classe(uuid,boolean,text,text)',
+    -- CAND-L2A2 (22/10) : confirmation et retrait consignes par la direction (transitions 24 et 17), direction active de son cote (moteur).
+    'confirmer_moyen_paiement_candidat(uuid,text,text,integer,text)',
+    -- CAND-L3 (23/10) : personne prevenue par le lien d'inscription (transition 26), direction active de son cote (moteur).
+    'consigner_prevenu_candidat(uuid,text,text,date,integer,text)',
+    'consigner_retrait_candidat(uuid,text,date,text,integer,text)',
     'definir_politique_observation_groupe(uuid,text,smallint,integer,integer)',
+    -- CAND-L2A2 (22/10) : responsable d'une candidature (transition 28), direction active de son cote (moteur).
+    'definir_responsable_candidat(uuid,uuid,integer,text)',
     'definir_regle_partage_eleve(uuid,uuid,text,text,text)',
+    -- CAND-L2A2 (22/10) : complement demande (transitions 7 et 23), direction active de son cote (moteur, liste fermee).
+    'demander_complement_candidat(uuid,text[],text,integer,text)',
     'demander_creneau_personnalise(uuid,text,smallint[],smallint)',
     'demander_presentation_standard()',
     'demander(text,uuid,text,text,integer)',
@@ -121,14 +142,28 @@ declare
     'enregistrer_regles_tirage(jsonb,uuid)',
     'enregistrer_resultat_evaluation(uuid,text,text)',
     'enregistrer_resume_seance(uuid,uuid,text,uuid,boolean)',
+    -- CAND-L6 (21/10) : referentiel de paiement, direction ou comptabilite, compte valide.
+    'enregistrer_ligne_referentiel_paiement(uuid,text,text,text,text,text,text,text,date,text,integer,text)',
+    -- CAND-AUTRES (22/10) : les autres competences du candidat, titulaire d'une candidature enseignant au compte valide (apres l'envoi de la Salle d'examen, version attendue, cle d'idempotence ; aucune garde de role).
+    'enregistrer_autres_competences(jsonb,text,text,boolean,integer,text)',
+    -- CAND-AUTRES (22/10) : le catalogue des competences, ecriture reservee a la direction active (ajout ou modification par version attendue, cle d'idempotence, jamais de suppression ; journal en ajout seul).
+    'enregistrer_competence_catalogue(text,text,integer,text,text,boolean,integer,text)',
+    -- CAND-L2A1 (22/10) : brouillon de la Salle d'examen, titulaire de la candidature (moteur, version du brouillon, cle).
+    'enregistrer_reponses_salle_examen(text,jsonb,integer,text)',
+    -- CAND-L2A1 (22/10) : envoi du questionnaire (transition 6), titulaire de la candidature (moteur, version des conditions).
+    'envoyer_reponses_salle_examen(text,jsonb,boolean,text,integer,text)',
     'enseignants_pour_classe(uuid)',
     'enseignants_pour(uuid)',
     'entrer_observation(uuid,text)',
     -- FAC-D-01 (18/10) : la direction decide les demandes de la comptabilite.
     -- FAC-F-01 (18/10) : la direction (AAL2) lance a la main les relances et la suspension pour paiement.
+    -- CAND-L2A2 (22/10) : execution d'une action groupee, direction active de son cote (jeton, nombre, moteur ligne par ligne).
+    'executer_lot_candidats(text,uuid[],text,integer,text,text,text,date)',
     'fac_traiter_relances_du_jour()',
     'finance_validation_decider(uuid,text,text,uuid)',
     'fusionner_classes(uuid,uuid,text)',
+    -- CAND-L3 (23/10) : reponse importee gardee pour suivi (transition 2), direction active de son cote.
+    'garder_formulaire_pour_suivi(uuid)',
     'geler_archive_seance(uuid,text,boolean)',
     'guard_app_config_history()',
     'guard_assignment_cap()',
@@ -143,15 +178,33 @@ declare
     'guard_rule_override_coherente()',
     'guard_rule_override_immutable()',
     'guard_session_state_transition()',
+    -- CAND-L1 (21/10) : candidatures, lectures journalisees par la direction.
+    'historique_candidature(uuid,bigint,integer)',
+    'lire_candidature(uuid)',
+    'lire_contact_candidature(uuid)',
+    -- CAND-L6 (21/10) : referentiel de paiement, lecture qui journalise l'exception super-admin.
+    'lire_referentiel_paiement(text)',
+    -- CAND-L3 (23/10) : listes de la direction (personnes a prevenir, reponses importees), lecture bornee a son cote et journalisee.
+    'lister_a_prevenir_candidats(boolean,integer)',
+    'lister_formulaires_importes(jsonb,integer)',
+    'lister_candidatures(jsonb,text,integer)',
+    'lister_rapprochements_candidats(integer)',
     'indicateurs_admin()',
+    -- CAND-L3 (23/10) : inscription publique ou sur invitation (compte, accord, plafond horaire ; la candidature suit la confirmation du courriel).
+    'inscrire_candidat(text,text,text,gender,text,text,text)',
     'inscrire_comptable_invite(text,text,text,gender)',
     'inscrire_titulaire(text,text,text,gender,text,boolean)',
     'inscrire_enseignant_invite(text,text,text,gender)',
+    -- CAND-L2A2 (22/10) : infirmation d'un moyen de paiement declare (transition 25), direction active de son cote (moteur, motif).
+    'infirmer_moyen_paiement_candidat(uuid,text,text,text,integer,text)',
     'inviter_conjoint(text,uuid)',
     'inviter_comptable(text)',
     'inviter_enseignant(text)',
+    -- CAND-L2A1 (22/10) : journal borne par genre (C15) ; ecrit la trace de l'exception super-admin.
     'journal_audit_filtres()',
     'journal_audit(uuid,text,timestamp with time zone,integer,timestamp with time zone,bigint)',
+    -- CAND-L2A2 (22/10) : levee de la pause (transition 18), direction active de son cote (moteur).
+    'lever_pause_candidat(uuid,integer,text,text)',
     'library_attribuer(uuid,uuid[],boolean,integer)',
     'library_creer_brouillon(jsonb)',
     'library_get_detail(uuid)',
@@ -166,6 +219,8 @@ declare
     'maj_profil_enseignant(text,text[],text)',
     -- CPT-SUPPR-EXPORT (18/10) : la copie des donnees de la personne (journalisee).
     'mes_donnees_export()',
+    -- CAND-L2A2 (22/10) : pose de la pause (transition 18), direction active de son cote (moteur, motif et modele).
+    'mettre_en_pause_candidat(uuid,text,text,date,integer,text)',
     'modifier_groupe(uuid,text,smallint,smallint,smallint,text,smallint)',
     'modifier_niveau_programme(uuid,text,text,integer,text)',
     'mon_invitation_en_cours()',
@@ -179,6 +234,8 @@ declare
     'preparer_depot_piece_identite(uuid,text)',
     'presenter_support(uuid,uuid,integer,text,jsonb)',
     'previsualiser_import_inscriptions(text,text)',
+    -- CAND-PREVENIR (24/10) : le lien d'inscription mis en file pour les personnes des formulaires (direction active de son cote, inscription ouverte, une adresse une fois).
+    'prevenir_par_courriel(integer)',
     'progression_promouvoir(uuid,uuid,text)',
     'publier_etat_partage(uuid,uuid,uuid,jsonb,jsonb,text,jsonb,jsonb,jsonb,integer)',
     'publier_evaluation(uuid,text,text)',
@@ -196,8 +253,12 @@ declare
     -- FI-BR-06 (18/10) : titulaire du foyer, compte valide (bf1_est_titulaire).
     'recharge_payer(uuid,uuid)',
     'recharge_verifier_montants(jsonb)',
+    -- CAND-L3 (23/10) : reponse importee rattachee a une candidature par la direction (transition 27), direction active de son cote (moteur).
+    'rattacher_formulaire_candidat(uuid,uuid,integer,text)',
     'rechercher_personne_par_matricule(text)',
     'reclamer_preinscription_apres_preuve()',
+    -- CAND-L2A2 (22/10) : refus d'une candidature (transition 16), direction active de son cote (moteur, motif et modele).
+    'refuser_candidat(uuid,text,text,integer,text)',
     'refuser_demande_horaire(uuid,text)',
     'refuser_demande_presentation(uuid)',
     'refuser_reprise_foyer(uuid)',
@@ -205,6 +266,12 @@ declare
     'renoncer_intention_horaire(uuid,text)',
     'repondre_invitation_conjoint(text,uuid)',
     'reprendre_alimentation_tresorerie()',
+    -- CAND-L2A1 (22/10) : retrait par le candidat (transition 17), titulaire de la candidature (moteur).
+    'retrait_candidat(integer,text)',
+    -- CAND-L2A2 (22/10) : reouverture d'une candidature refusee ou retiree (transition 19), direction active de son cote (moteur, controles nommes).
+    'rouvrir_candidat(uuid,text,integer,text)',
+    -- CAND-AUTRES (22/10) : retrait des reponses et de l'accord, meme titulaire (a toute issue de la candidature ; version attendue, cle d'idempotence).
+    'retirer_autres_competences(integer,text)',
     'retirer_bourse(uuid,text)',
     'retirer_capacite_controle(uuid,text,uuid)',
     'retirer_creneau_personnalise(uuid)',
@@ -231,9 +298,29 @@ declare
     'traiter_demande_suppression(uuid)',
     'transferer_eleve(uuid,uuid,uuid,text)',
     'transmettre_student_concern(uuid,text)',
-    'verifier_chaine_audit(integer)'
+    'verifier_chaine_audit(integer)',
+    -- COURRIELS-1 et 2 (23/10) : la direction ecrit, relance et regle les
+    -- adresses d'envoi (garde is_admin_user en tete) ; chacun regle la langue
+    -- de ses propres e-mails (auth.uid()).
+    'admin_courriel_categorie_regler(text,text,text,text,boolean)',
+    'admin_courriel_envoyer(uuid,text,text,text,text,uuid)',
+    'admin_courriel_reessayer(uuid)',
+    'ma_langue_communication_regler(text)',
+    -- COURRIELS-1 : la desinscription par le lien d'un e-mail, sans compte
+    -- (jeton a usage unique, seule son empreinte sha256 est gardee).
+    'courriel_desinscrire(text)',
+    -- AVIS-PUBLICS (19/10) : liens de collecte et moderation par la direction
+    -- (garde positive app_role() = 'admin' et compte valide) ; depot par le
+    -- formulaire, avec ou sans compte (jeton de lien verifie dans la fonction).
+    'avis_lien_creer(text,integer,integer)',
+    'avis_lien_fermer(uuid)',
+    'avis_moderer(uuid,text,text)',
+    'avis_deposer(text,text,text,text,date,integer,text,text,boolean)'
   ];
-  v_anon_ok text[] := array['agent_pre_request()'];
+  -- Ouvertes a anon par choix : la desinscription d'un e-mail et le depot d'un
+  -- avis se font sans compte.
+  v_anon_ok text[] := array['agent_pre_request()', 'courriel_desinscrire(text)',
+    'avis_deposer(text,text,text,text,date,integer,text,text,boolean)'];
   v_hors_liste text;
   v_anon text;
 begin

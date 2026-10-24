@@ -40,6 +40,7 @@ def _load_module(name: str):
 
 # Prix lus dans la base au build (public.tarifs_publics), repli sur la decision.
 tarifs_mod = _load_module("bloc_tarifs")
+porte_mod = _load_module("scene_porte")
 # Avis publies lus dans la base au build (public.avis_publics), repli sur content/avis.json.
 avis_mod = _load_module("bloc_avis")
 CONTENT = ROOT / "content" / "pages.json"
@@ -152,7 +153,7 @@ def load_content() -> tuple[dict[str, dict], dict]:
         raise ValueError("pages.json needs a site.contacts object")
     expected_contacts = {
         "contact@rewayahacademy.com", "support@rewayahacademy.com",
-        "recrutement@rewayahacademy.com", "invoice@rewayahacademy.com",
+        "recrutement@rewayahacademy.com", "invoices@rewayahacademy.com",
     }
     if set(site["contacts"].values()) != expected_contacts:
         raise ValueError("Public contacts differ from the four approved aliases")
@@ -1446,25 +1447,18 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
         + (f"Sitemap: {origin.rstrip('/')}/sitemap.xml\n" if allow_indexing else ""),
         encoding="utf-8",
     )
-    largeurs_404 = image_largeurs(images, "place")
     (output / "404.html").write_text(
-        f'<!doctype html><html lang="fr" data-ambiance="{esc(direction.get("ambiance", "clair"))}"><head><meta charset="utf-8">'
-        '<meta name="viewport" content="width=device-width, initial-scale=1">'
-        '<meta name="color-scheme" content="light dark">'
-        '<meta name="robots" content="noindex,nofollow">'
-        f'<link rel="stylesheet" href="{ASSETS}/site.css">'
-        '<title>Page introuvable | Rewayah Academy</title></head><body class="page-404">'
-        '<main class="introuvable"><div class="introuvable__texte"><h1>Cette page est introuvable.</h1>'
-        '<p>Revenez à l’accueil ou consultez les cours et l’aide.</p>'
-        '<div class="action-row"><a class="cta" href="/fr/">Retour à l’accueil</a>'
-        '<a class="cta cta--secondary" href="/fr/aide">Consulter l’aide</a></div></div>'
-        f'<figure class="scene introuvable__scene"><img src="{ASSETS}/scene-place-{largeurs_404[-1]}.webp" '
-        f'srcset="{", ".join(f"{ASSETS}/scene-place-{w}.webp {w}w" for w in largeurs_404)}" sizes="(max-width: 839px) 90vw, 44vw" '
-        f'width="{largeurs_404[-1]}" height="{round(images["images"]["place"]["hauteur"] * largeurs_404[-1] / images["images"]["place"]["largeur"])}" '
-        f'alt="{esc(images["images"]["place"]["alt"])}"></figure>'
-        '</main></body></html>',
+        page_etat("Page introuvable | Rewayah Academy", "page-404", direction,
+                  '<div class="etat__texte"><h1>Cette page est introuvable.</h1>'
+                  '<p>Cette porte reste fermée : l’adresse a changé, ou la page n’existe plus. '
+                  'Revenez à l’accueil, ou consultez l’aide : nous vous y guidons.</p>'
+                  '<div class="action-row"><a class="cta" href="/fr/">Retour à l’accueil</a>'
+                  '<a class="cta cta--secondary" href="/fr/aide">Consulter l’aide</a></div></div>',
+                  porte_mod.porte_lumiere("attente")),
         encoding="utf-8",
     )
+    (output / "fr" / "courriels").mkdir(parents=True, exist_ok=True)
+    (output / "fr" / "courriels" / "desinscription.html").write_text(page_desinscription(direction), encoding="utf-8")
     config_path = output / "vercel.json"
     config = json.loads(config_path.read_text(encoding="utf-8")) if config_path.exists() else {}
     # Vercel's documented negative-lookahead syntax leaves unknown /fr paths
@@ -1474,11 +1468,79 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
     config["rewrites"] = [
         {"source": route.rstrip("/") or "/", "destination": "/" + str(output_file(Path(), route)).replace("\\", "/")}
         for route in sorted(pages)
-    ] + [{"source": "/fr/", "destination": "/fr/index.html"}, fallback]
+    ] + [{"source": "/fr/", "destination": "/fr/index.html"},
+         {"source": ROUTE_DESINSCRIPTION, "destination": "/fr/courriels/desinscription.html"}, fallback]
     config["redirects"] = aiguillage_domaine()
     config["headers"] = [*config.get("headers", []), *entetes_domaine()]
     config_path.write_text(json.dumps(config, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Built {len(pages)} public routes in {output}")
+
+
+# Page de desinscription des e-mails : hors pages.json (ni index, ni plan du site, ni navigation). Le lien de l'e-mail
+# porte un jeton ; jamais de desinscription sur un simple GET (les scanners de liens l'ouvrent) : la page propose un
+# bouton qui envoie le jeton en POST a la fonction, laquelle repond 303 vers cette page (?etat=ok&categorie=... ou ?etat=invalide).
+# Le site n'a pas de CSP : aucun form-action a completer.
+ROUTE_DESINSCRIPTION = "/fr/courriels/desinscription"
+FONCTION_DESINSCRIPTION = "https://gggmtelinlpseweouyav.supabase.co/functions/v1/courriel-desinscription"
+
+
+def page_etat(titre: str, classe: str, direction: dict, contenu: str, figure: str, script: str = "") -> str:
+    """Page d'etat autonome (introuvable, desinscription) : fond de l'ambiance, logo, texte, puis la porte et sa lumiere."""
+    ambiance = direction.get("ambiance", "clair")
+    couleurs = ('<meta name="color-scheme" content="dark"><meta name="theme-color" content="#6538E4">' if ambiance == "violet"
+                else '<meta name="color-scheme" content="light dark">')
+    return (
+        f'<!doctype html><html lang="fr" data-ambiance="{esc(ambiance)}"><head><meta charset="utf-8">'
+        '<meta name="viewport" content="width=device-width, initial-scale=1">'
+        f'{couleurs}<meta name="robots" content="noindex,nofollow">'
+        f'<link rel="stylesheet" href="{ASSETS}/site.css">'
+        f'<title>{esc(titre)}</title></head><body class="{classe}">'
+        '<main class="etat" id="contenu"><a class="etat__marque" href="/fr/" aria-label="Rewayah Academy, accueil">'
+        f'<img src="{ASSETS}/logo-horizontal-white.svg" width="1027" height="287" alt=""></a>'
+        f'{contenu}<div class="etat__scene">{figure}</div></main>{script}</body></html>')
+
+
+def page_desinscription(direction: dict) -> str:
+    etats = (
+        '<div data-etat="confirmer" hidden><h1>Ne plus recevoir ces e-mails&nbsp;?</h1>'
+        '<p>Vous ne recevrez plus les e-mails de cette catégorie. Les messages liés à votre compte, vos classes '
+        'et vos factures continuent d’arriver.</p>'
+        f'<form class="action-row" method="post" action="{esc(FONCTION_DESINSCRIPTION)}">'
+        '<input type="hidden" name="jeton" value=""><button class="cta" type="submit">Ne plus recevoir ces e-mails</button>'
+        '<a class="cta cta--secondary" href="/fr/">Garder mes e-mails</a></form></div>'
+        '<div data-etat="ok" hidden><h1>C’est fait.</h1>'
+        '<p>Vous ne recevrez plus les e-mails «&nbsp;<span data-categorie>de cette catégorie</span>&nbsp;». '
+        'Les messages liés à votre compte, vos classes et vos factures continuent d’arriver.</p>'
+        '<div class="action-row"><a class="cta" href="/fr/">Retour à l’accueil</a></div></div>'
+        '<div data-etat="invalide" hidden><h1>Ce lien n’est plus valable.</h1>'
+        '<p>Il a expiré, ou nous ne le reconnaissons pas. Écrivez-nous depuis la page Contact : nous ferons le nécessaire.</p>'
+        '<div class="action-row"><a class="cta" href="/fr/contact">Nous contacter</a>'
+        '<a class="cta cta--secondary" href="/fr/">Retour à l’accueil</a></div></div>'
+    )
+    neutre = (
+        '<div data-etat="neutre"><h1>Désinscription des e-mails</h1>'
+        '<p>Cette page enregistre le choix de ne plus recevoir une catégorie d’e-mails ; elle a besoin de '
+        'JavaScript pour lire votre lien. Sans lui, écrivez-nous depuis la page Contact. '
+        'Les messages liés à votre compte, vos classes et vos factures continuent d’arriver.</p>'
+        '<div class="action-row"><a class="cta" href="/fr/contact">Nous contacter</a>'
+        '<a class="cta cta--secondary" href="/fr/">Retour à l’accueil</a></div></div>'
+    )
+    # Etat lu dans l'adresse : ?etat=ok&categorie=… / ?etat=invalide / ?jeton=… (a confirmer) ; sans rien : invalide.
+    # La categorie passe par textContent, jamais par du HTML ; le jeton quitte l'adresse affichee des qu'il est recopie.
+    script = (
+        '<script>(function(){var q=new URLSearchParams(location.search),e=q.get("etat"),j=q.get("jeton"),d=document,'
+        'k=e==="ok"?"ok":e==="invalide"?"invalide":j?"confirmer":"invalide",c=d.querySelector("[data-categorie]");'
+        'd.querySelectorAll("[data-etat]").forEach(function(n){n.hidden=n.dataset.etat!==k});'
+        'd.documentElement.dataset.etat=k;'
+        'if(k==="ok"){var t=(q.get("categorie")||"").slice(0,80);if(t&&c)c.textContent=t}'
+        'if(k==="confirmer"){d.querySelector("input[name=jeton]").value=j.slice(0,200);'
+        'if(history.replaceState)history.replaceState(null,"",location.pathname)}'
+        'd.title=(k==="ok"?"E-mails désactivés":"Désinscription des e-mails")+" | Rewayah Academy"})()</script>')
+    # Deux portes superposees dans le meme cadre : fermee tant qu'on attend, ouverte une fois c'est fait.
+    ouverte = porte_mod.porte_lumiere("ouverte").replace("pl-", "po-")
+    return page_etat("Désinscription des e-mails | Rewayah Academy", "page-desinscription", direction,
+                     f'<div class="etat__texte">{etats}{neutre}</div>',
+                     porte_mod.porte_lumiere("attente") + ouverte, script)
 
 
 def _hote(nom: str) -> list[dict]:

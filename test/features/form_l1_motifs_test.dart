@@ -430,19 +430,22 @@ void main() {
   });
 
   group('L13 : valeurs proposees des reglages entiers', () {
-    test('les quatorze cles ont une proposition coherente', () {
+    test('les quinze cles ont une proposition coherente', () {
       // La quatorzieme : le delai de reflexion de la suppression de compte
-      // (CPT-SUPPR-EXPORT, `compte.suppression_delai_jours`).
-      expect(reglagesEntiersProposes, hasLength(14));
+      // (CPT-SUPPR-EXPORT, `compte.suppression_delai_jours`). La quinzieme :
+      // le nombre maximal de Classes par enseignant (decision du directeur du
+      // 22/10/2026, `enseignant.classes_max`).
+      expect(reglagesEntiersProposes, hasLength(15));
       for (final MapEntry<String, ReglageEntierPropose> e
           in reglagesEntiersProposes.entries) {
-        // Aucune borne inventee (08/10) : seul le plafond a source ecrite
-        // (C11, appareils) reste.
-        expect(
-          e.value.max,
-          e.key == 'max_devices_per_student' ? 2 : isNull,
-          reason: e.key,
-        );
+        // Aucune borne inventee (08/10) : seuls les plafonds a source ecrite
+        // restent : C11 (appareils, 2) et le declencheur
+        // `app_config_classes_max` (Classes par enseignant, 80).
+        expect(e.value.max, switch (e.key) {
+          'max_devices_per_student' => 2,
+          'enseignant.classes_max' => 80,
+          _ => isNull,
+        }, reason: e.key);
         for (final int v in e.value.proposees) {
           expect(v, greaterThanOrEqualTo(0), reason: e.key);
           if (e.value.max case final int max) {

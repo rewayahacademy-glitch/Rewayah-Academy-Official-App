@@ -338,11 +338,10 @@ class AnnotationLayer {
   bool get estVide => traits.isEmpty && marqueurs.isEmpty;
 
   /// La meme couche, avec un trait de plus.
-  AnnotationLayer avecTrait(TraitVectoriel trait, {required DateTime majAUtc}) =>
-      _copie(
-        traits: <TraitVectoriel>[...traits, trait],
-        majAUtc: majAUtc,
-      );
+  AnnotationLayer avecTrait(
+    TraitVectoriel trait, {
+    required DateTime majAUtc,
+  }) => _copie(traits: <TraitVectoriel>[...traits, trait], majAUtc: majAUtc);
 
   /// La meme couche, sans le trait [traitId].
   AnnotationLayer sansTrait(String traitId, {required DateTime majAUtc}) =>
@@ -372,13 +371,15 @@ class AnnotationLayer {
   );
 
   /// La meme couche, sans le marqueur [marqueurId].
-  AnnotationLayer sansMarqueur(String marqueurId, {required DateTime majAUtc}) =>
-      _copie(
-        marqueurs: marqueurs
-            .where((MarqueurSemantique marqueur) => marqueur.id != marqueurId)
-            .toList(growable: false),
-        majAUtc: majAUtc,
-      );
+  AnnotationLayer sansMarqueur(
+    String marqueurId, {
+    required DateTime majAUtc,
+  }) => _copie(
+    marqueurs: marqueurs
+        .where((MarqueurSemantique marqueur) => marqueur.id != marqueurId)
+        .toList(growable: false),
+    majAUtc: majAUtc,
+  );
 
   /// La meme couche, sans son dernier geste.
   ///

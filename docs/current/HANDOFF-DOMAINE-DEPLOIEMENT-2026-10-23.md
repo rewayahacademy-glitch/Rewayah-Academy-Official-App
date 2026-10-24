@@ -132,3 +132,35 @@ Ce sont des réglages de tableau de bord, hors migrations ; s'ils passent par un
   l'application (les contrôles du workflow y lisent racine, SPA, wasm).
 - Rendre compte au directeur avec les statuts de `CLAUDE.md` (présent dans le code / testé / déployé), sans PASS
   inventé.
+
+## 10. Fait le 23/10/2026 (session claude/admiring-brown-r6ai72)
+
+- §2 : site seul en production (PR 47, `claude/site-public-prod`, fusionnée par le directeur à 14 h 24 UTC).
+  Contrôles : `/fr/` 200 et `x-robots-tag: noindex` sur l'alias, `robots.txt` annonce le sitemap, 16 URL dans
+  `sitemap.xml`. Les trois échecs du CI de la PR (migrations, APK, Windows) existaient déjà sur `main`.
+- §3 : les trois noms ajoutés au projet `rewayah-academy` par le directeur.
+- §4 : zone sauvegardée (export du 23/10, 54 lignes, gardé hors dépôt), puis, sur accord du directeur :
+  A `@` 192.248.189.201 (proxy) supprimé ; A `@` 216.198.79.1 et 64.29.17.1, CNAME `www` et `app` vers
+  `2fb4e585278fb72c.vercel-dns-017.com`, tous en DNS seul. Intacts : MX et SPF Google,
+  `google-site-verification`, `pisi` et sa validation ACM, `portail` (Gamma), `resend._domainkey`, `bounce`
+  (MX et SPF Amazon SES). La zone réelle différait de l'inventaire du §0 : la racine pointait vers
+  192.248.189.201, et `portail`, Resend et `bounce` n'y étaient pas notés.
+- §5 : les six contrôles passent (www 308 → nu ; nu 307 → `/fr/` ; `/fr/` 200, `index,follow` ;
+  `/connexion` 307 → `app.` ; `app.` 200 `noindex` ; `app./fr/` 307 → nu).
+- Reste au directeur : §6 (Supabase, adresses de retour, puis Site URL), §7 (Search Console), §8 (DKIM,
+  DMARC), révocation du jeton Cloudflare. Phase 2 : `docs/current/PHASE-2-MISE-EN-PRODUCTION.md`.
+
+## 11. Phase 2 en production (23/10/2026, soir)
+
+- Fusion de la PR 48 dans `main` (17 h 30 UTC) : 260 migrations en production, 18 fonctions déployées
+  (dont `courriels-envoi` et `courriel-desinscription`, après ajout du secret Actions
+  `SUPABASE_ACCESS_TOKEN`), application en ligne. E-mail de connexion reçu depuis support@.
+- Après la fusion, sur la branche (à fusionner plus tard) : bouton pleine largeur et lien de secours
+  « Ouvrir le lien » dans les e-mails (modèles Auth à recoller, page privée envoyée), facturation
+  depuis invoices@, inscriptions depuis inscriptions@ (déjà en production par collage).
+- **À rappeler au directeur après le réglage Google Auth (Branding)** : refondre la navigation de la
+  console d'administration. Trop d'outils sont rangés dans des liens de l'Accueil (E-mails, Avis,
+  Offres, Pilotage...) et ne se classent plus. Point de départ : l'écran E-mails n'est atteint que depuis
+  l'Accueil, pas depuis Opérations.
+- Page de connexion Google : l'adresse `*.supabase.co` reste affichée tant qu'il n'y a ni domaine
+  personnalisé Supabase (offre Pro, au lancement) ni connexion Google intégrée à l'application.

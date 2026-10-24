@@ -11,16 +11,20 @@ import '../../features/accueil_eleve/accueil_eleve_selon_presentation.dart';
 import '../../features/accueil_famille/accueil_famille_page.dart';
 import '../../features/admin_acces_agents/acces_agents_page.dart';
 import '../../features/admin_avis/avis_page.dart';
+import '../../features/admin_candidature/candidature_page.dart';
+import '../../features/admin_candidatures/candidatures_page.dart';
 import '../../features/admin_comptes/comptes_page.dart';
 import '../../features/admin_configuration_conservation_donnees/conservation_donnees_page.dart';
 import '../../features/admin_configuration_fonctionnalites/fonctionnalites_page.dart';
 import '../../features/admin_configuration_politique_kyc/politique_revue_kyc_page.dart';
 import '../../features/admin_configuration_protection_enfants/protection_enfants_page.dart';
 import '../../features/admin_configuration_regles/regles_page.dart';
+import '../../features/admin_courriels/courriels_page.dart';
 import '../../features/admin_demandes/demandes_page.dart';
 import '../../features/admin_dossiers/dossiers_page.dart';
 import '../../features/admin_finance/finance_page.dart';
 import '../../features/admin_groupes/groupes_page.dart';
+import '../../features/admin_import_formulaires/import_formulaires_page.dart';
 import '../../features/admin_import_inscriptions/import_inscriptions_page.dart';
 import '../../features/admin_invitations/invitations_page.dart';
 import '../../features/admin_journal/incidents_page.dart';
@@ -55,6 +59,7 @@ import '../../features/appareils/appareils_page.dart';
 import '../../features/avis_public/avis_public_page.dart';
 import '../../features/bienvenue_enseignant/bienvenue_page.dart';
 import '../../features/cahier/cahier_page.dart';
+import '../../features/candidature/candidature_page.dart';
 import '../../features/classe_tuteur/catalogue_classes_page.dart';
 import '../../features/classe_tuteur/classe_tuteur_page.dart';
 import '../../features/classe_tuteur/planning_classe_page.dart';
@@ -90,6 +95,7 @@ import '../../features/compte/compte_tuteur_page.dart';
 import '../../features/compte/espaces_compte.dart';
 import '../../features/compte/informations_legales_page.dart';
 import '../../features/compte/informations_page.dart';
+import '../../features/compte/langue_courriels_page.dart';
 import '../../features/compte/mes_donnees_page.dart';
 import '../../features/compte/paiements_page.dart';
 import '../../features/compte/preferences_page.dart';
@@ -140,6 +146,7 @@ import '../../features/foyer/invitation_conjoint.dart';
 import '../../features/inscription/etapes/genre_etape.dart';
 import '../../features/inscription/etapes/identite_etape.dart';
 import '../../features/inscription/etapes/recapitulatif_etape.dart';
+import '../../features/inscription/etapes/telephone_etape.dart';
 import '../../features/inscription/etapes/usage_etape.dart';
 import '../../features/inscription/inscription_page.dart';
 import '../../features/journee/journee_page.dart';
@@ -149,6 +156,7 @@ import '../../features/mfa_controleur/mfa_controleur_page.dart';
 import '../../features/notifications/notifications_page.dart';
 import '../../features/paiements_recus/recevoir_paiements_page.dart';
 import '../../features/parcours_offres/parcours_offres_page.dart';
+import '../../features/partage_offre/partage_offre_page.dart';
 import '../../features/presentation_tuteur/demandes_presentation_page.dart';
 import '../../features/profil_enseignant/profil_enseignant_page.dart';
 import '../../features/recherche/entree_recherche.dart';
@@ -165,6 +173,7 @@ import '../../features/suivi_foyer/detail_observations_page.dart';
 import '../../features/suivi_foyer/detail_seance_page.dart';
 import '../../features/suivi_foyer/observations_page.dart';
 import '../../features/suivi_foyer/suivi_foyer_page.dart';
+import '../../features/talents/talents_page.dart';
 import '../../features/tc_catalogue/routes_tc_b.dart';
 import '../../features/tc_mes_groupes/routes_tc_a.dart';
 import '../../features/tc_mushaf/mushaf_page.dart';
@@ -172,6 +181,8 @@ import '../../features/tc_mushaf/routes_tc_c.dart';
 import '../../features/tc_observation_ui/routes_tc_g.dart';
 import '../admin/admin_domaine.dart';
 import '../alertes/port_alertes.dart';
+import '../candidature/modeles_candidatures_direction.dart'
+    show LigneCandidature;
 import '../config/env.dart';
 import '../domain/enums.dart';
 import '../dossier/resignature_contrat.dart';
@@ -340,6 +351,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.inscriptionGenre,
         builder: (BuildContext _, GoRouterState _) => const GenreEtape(),
       ),
+      // CAND-04 : le telephone du candidat enseignant.
+      GoRoute(
+        path: Routes.inscriptionTelephone,
+        builder: (BuildContext _, GoRouterState _) => const TelephoneEtape(),
+      ),
       GoRoute(
         path: Routes.inscriptionRecapitulatif,
         builder: (BuildContext _, GoRouterState _) =>
@@ -408,6 +424,25 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.attentePiece,
         builder: (BuildContext _, GoRouterState _) => const DepotPiecePage(),
       ),
+      // CAND-01 : le questionnaire de la Salle d'examen. Declaree meme sans
+      // le lot serveur : une adresse tapee montre la phrase de capacite
+      // indisponible, jamais une page vide.
+      GoRoute(
+        path: Routes.attenteCandidature,
+        builder: (BuildContext _, GoRouterState _) => const CandidaturePage(),
+      ),
+      // CAND-06 : la carte a partager. Declaree meme sans lien d'offre : une
+      // adresse tapee montre la phrase de capacite indisponible.
+      GoRoute(
+        path: Routes.attentePartage,
+        builder: (BuildContext _, GoRouterState _) => const PartageOffrePage(),
+      ),
+      // CAND-07 : « Vos autres talents ». Declaree meme sans le lot serveur : une
+      // adresse tapee montre la phrase de capacite indisponible.
+      GoRoute(
+        path: Routes.attenteTalents,
+        builder: (BuildContext _, GoRouterState _) => const TalentsPage(),
+      ),
 
       // Compte. Cet espace est partage par les roles actifs, mais ses
       // capacites restent celles projetees par la session et le serveur.
@@ -445,6 +480,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.compteReglages,
         builder: (BuildContext _, GoRouterState _) =>
             const _CoquilleSecondaire(child: ReglagesComptePage()),
+      ),
+      GoRoute(
+        path: Routes.compteLangueCourriels,
+        builder: (BuildContext _, GoRouterState _) =>
+            const _CoquilleSecondaire(child: LangueCourrielsPage()),
       ),
       GoRoute(
         path: Routes.compteMesDonnees,
@@ -1055,6 +1095,19 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                           (GoRouterState _) => const ApparenceComptePage(),
                         ),
                       ),
+                      GoRoute(
+                        path: 'langue-courriels',
+                        pageBuilder: glissee(
+                          (GoRouterState _) => Builder(
+                            builder: (BuildContext context) =>
+                                LangueCourrielsPage(
+                                  onRetour: () => GoRouter.of(
+                                    context,
+                                  ).go(Routes.tuteurComptePreferences),
+                                ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                   GoRoute(
@@ -1529,6 +1582,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           child: AvisAdminPage(),
         ),
       ),
+      // COURRIELS-1 : ecrire un e-mail, suivre la file d'envoi et voir les
+      // adresses d'envoi, atteints depuis l'Accueil comme les avis.
+      GoRoute(
+        path: Routes.adminOperationsCourriels,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          child: CourrielsAdminPage(),
+        ),
+      ),
       // CPT-SUPPR-EXPORT : les demandes de suppression de compte.
       GoRoute(
         path: Routes.adminPersonnesSuppressions,
@@ -1550,6 +1612,46 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
           child: ImportInscriptionsPage(),
+        ),
+      ),
+      // ADM-20 : la file des candidatures, au rang de l'ancien onglet
+      // Invitations. Une ligne ouvre ADM-21 (la reference dans l'adresse,
+      // l'identifiant en `extra` : il evite une recherche, et l'adresse
+      // survit au rechargement). L'action groupee (ADM-22) n'est pas encore
+      // construite : aucune destination n'est donnee, la page le dit.
+      GoRoute(
+        path: Routes.adminPersonnesCandidatures,
+        builder: (BuildContext contexte, GoRouterState _) => _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: CandidaturesPage(
+            ouvrirCandidature: (LigneCandidature ligne) => GoRouter.of(contexte)
+                .push<void>(
+                  Routes.adminPersonnesCandidaturePour(ligne.reference),
+                  extra: ligne.id,
+                ),
+          ),
+        ),
+      ),
+      // ADM-23 : l'import des formulaires de candidature. Chemin statique,
+      // declare AVANT `:reference` (contrainte R5).
+      GoRoute(
+        path: Routes.adminPersonnesCandidaturesImport,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: ImportFormulairesPage(),
+        ),
+      ),
+      // ADM-21 : une candidature ouverte par sa reference `CAND-…`. Le chemin
+      // statique d'ADM-22 (`action-groupee`) se declarera AVANT celui-ci
+      // (contrainte R5).
+      GoRoute(
+        path: Routes.adminPersonnesCandidature,
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: CandidatureDirectionPage(
+            reference: etat.pathParameters['reference'] ?? '',
+            identifiant: etat.extra is String ? etat.extra as String : null,
+          ),
         ),
       ),
       GoRoute(
@@ -1591,6 +1693,9 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           // DASH-ADM-ECHUS : `?filtre=echus` ouvre la page sur les acces echus.
           child: ComptesPage(
             echusSeulement: etat.uri.queryParameters['filtre'] == 'echus',
+            // LISTES-3 : role, etat, recherche et tri dans l'adresse (retour
+            // arriere, lien partage).
+            requete: etat.uri.queryParameters,
           ),
         ),
       ),

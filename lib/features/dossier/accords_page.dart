@@ -31,6 +31,7 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/zone_saisie.dart';
+import '../code_conduite/code_conduite.dart' show TexteCodeConduite;
 import '../connexion/recuperation_page.dart'
     show IssueEnvoiLien, issueEchecEnvoi;
 import '../consentements/texte_observation.dart';
@@ -67,6 +68,9 @@ enum _Case {
 
   /// Le contrat de l'enseignant servi par le serveur (nom tape).
   contratServeur,
+
+  /// Le code de conduite de l'enseignant (CAND-Q15 conduite).
+  codeConduite,
 }
 
 /// Un envoi de la page des accords : une acceptation enregistree a part.
@@ -79,6 +83,9 @@ enum _Envoi {
 
   /// Le contrat de l'enseignant, par le port de signature serveur.
   contratServeur,
+
+  /// Le code de conduite de l'enseignant, a sa version requise.
+  codeConduite,
 }
 
 /// Lot E6 (decision du directeur du 17/10/2026, DECISION-ENTREE) : **une
@@ -88,9 +95,11 @@ enum _Envoi {
 /// ([CaseAccordTexte], toute la carte est la cible) : « Ce que vous devez
 /// savoir » (A3, ou E1 pour l'enseignant), puis pour le tuteur et l'eleve
 /// adulte (`?pour=moi`) les visites des parents, pour l'enseignant son
-/// contrat (clause des visites de controle, politique, article 9). Le texte
-/// A3 n'est affiche qu'une fois : les conditions du tuteur le reprennent, sa
-/// case le couvre.
+/// contrat (clause des visites de controle, politique, article 9), puis son
+/// code de conduite tant que le serveur le dit a accepter (CAND-Q15 : la
+/// garde d'activation l'exige, il se signe donc ici, avant l'activation). Le
+/// texte A3 n'est affiche qu'une fois : les conditions du tuteur le reprennent,
+/// sa case le couvre.
 ///
 /// Un seul bouton « Suivant », **inactif tant qu'une case manque** : cette
 /// regle remplace BOUTONS-GRISES-1 pour les accords. On ne passe donc jamais
@@ -213,6 +222,12 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
         : (!lu.contratSigne || resignature) &&
               !_envoyes.contains(_Envoi.contrat);
 
+    // CAND-Q15 conduite : le code de conduite, tant que le serveur le dit a
+    // accepter. Le serveur rend « signe » pour tout compte qui n'est pas
+    // enseignant : aucun role n'est lu ici.
+    final bool codeConduiteAFaire =
+        !lu.codeConduiteSigne && !_envoyes.contains(_Envoi.codeConduite);
+
     final String version = VersionsContrat.pour(
       sorte,
       demonstration: ref.watch(serviceDossierProvider).demonstration,
@@ -228,6 +243,7 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
       if (contratAFaire && enseignant && !serveur && !ancienContrat)
         _Case.religion,
       if (contratAFaire && serveur) _Case.contratServeur,
+      if (codeConduiteAFaire) _Case.codeConduite,
     ];
     final int restantes = requises.where((_Case c) => !_cochee(c)).length;
     final bool nomRequis = contratAFaire && serveur;
@@ -235,7 +251,8 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
     final bool serveurLisible =
         !nomRequis ||
         (contratLu != null && empreinteConforme(contratLu.contrat));
-    final bool rienAFaire = !accuseAFaire && !contratAFaire;
+    final bool rienAFaire =
+        !accuseAFaire && !contratAFaire && !codeConduiteAFaire;
     final bool pret =
         !rienAFaire && restantes == 0 && !nomManque && serveurLisible;
 
@@ -355,6 +372,25 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
             ],
           ),
         ],
+        // 5. Enseignant : le code de conduite, avant l'activation (CAND-Q15).
+        // Le meme texte que dans son profil, puis sa case.
+        if (codeConduiteAFaire) ...<Widget>[
+          Ecart.vXxl,
+          _Section(
+            titre: t.codeConduite.titre,
+            children: <Widget>[
+              const TexteCodeConduite(),
+              Ecart.vXl,
+              CaseAccordTexte(
+                libelle: t.codeConduite.caseAccord,
+                cochee: _cochee(_Case.codeConduite),
+                onChanged: _envoi
+                    ? null
+                    : (bool v) => _cocher(_Case.codeConduite, v),
+              ),
+            ],
+          ),
+        ],
       ],
     ];
 
@@ -416,6 +452,7 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
                       sorte: sorte,
                       version: version,
                       contratServeur: aSigner?.contrat,
+                      codeConduite: codeConduiteAFaire,
                       resignature: resignature,
                       pieceAFournir: pieceAFournir,
                     ),
@@ -526,6 +563,7 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
     required SorteContrat sorte,
     required String version,
     required ContratCourant? contratServeur,
+    required bool codeConduite,
     required bool resignature,
     required bool pieceAFournir,
   }) async {
@@ -583,6 +621,16 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
         ref
           ..invalidate(contratEnseignantCourantProvider)
           ..invalidate(maSignatureEnseignantProvider);
+      }
+      // CAND-Q15 conduite : le code de conduite, apres le contrat et avant la
+      // relecture du dossier, a la version que la garde d'activation exige.
+      if (codeConduite && !_envoyes.contains(_Envoi.codeConduite)) {
+        await service.accepterContrat(
+          SorteContrat.codeConduiteEnseignant,
+          VersionsContrat.pour(SorteContrat.codeConduiteEnseignant),
+        );
+        _envoyes.add(_Envoi.codeConduite);
+        ref.invalidate(acceptationsProvider);
       }
       ref.invalidate(etatDossierProvider);
       if (resignature) {

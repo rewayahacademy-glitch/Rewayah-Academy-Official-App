@@ -48,8 +48,7 @@ BrouillonCahier _brouillon({
   minutesInterruption: 0,
   dejaDepose: dejaDepose,
   groupeId: groupeId,
-  participants:
-      participants ?? <ParticipantBrouillon>[_participant()],
+  participants: participants ?? <ParticipantBrouillon>[_participant()],
   evenements: const <EvenementSeance>[],
 );
 
@@ -66,11 +65,7 @@ TeacherStudentProjection _projection({
 
 ContentRange _versets({int premier = 255, int dernier = 257}) => ContentRange(
   resourceId: _coran,
-  debut: ContentPosition.ayah(
-    resourceId: _coran,
-    sourate: 2,
-    ayah: premier,
-  ),
+  debut: ContentPosition.ayah(resourceId: _coran, sourate: 2, ayah: premier),
   fin: ContentPosition.ayah(resourceId: _coran, sourate: 2, ayah: dernier),
 );
 
@@ -86,8 +81,7 @@ ContentRange _versets({int premier = 255, int dernier = 257}) => ContentRange(
 _montage({
   BrouillonCahier? brouillon,
   List<TeacherStudentProjection>? eleves,
-  Map<String, List<ContentRange>> ranges =
-      const <String, List<ContentRange>>{},
+  Map<String, List<ContentRange>> ranges = const <String, List<ContentRange>>{},
   Map<String, ContentPosition> reprises = const <String, ContentPosition>{},
 }) {
   final FauxServiceEnseignant service = FauxServiceEnseignant()
@@ -346,10 +340,7 @@ void main() {
           montage.service.cahiersDeposes.single.contenu['eleves']!
               as List<Object?>;
       expect(eleves, hasLength(2));
-      expect(
-        (eleves.first! as Map<String, dynamic>)['confirme'],
-        isTrue,
-      );
+      expect((eleves.first! as Map<String, dynamic>)['confirme'], isTrue);
     });
 
     test('un cahier deja depose ne se redepose pas', () async {

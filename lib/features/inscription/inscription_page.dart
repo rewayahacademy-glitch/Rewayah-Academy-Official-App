@@ -52,14 +52,16 @@ class _InscriptionPageState extends ConsumerState<InscriptionPage> {
 }
 
 /// Renvoie a la premiere etape sans reponse quand une etape est ouverte trop
-/// tot (lien direct, rechargement) : jamais d'etape sans ses prealables.
+/// tot (lien direct, rechargement) : jamais d'etape sans ses prealables. Une
+/// etape que l'usage retenu n'a pas (le telephone d'un tuteur) renvoie de meme.
 void exigerEtapesPrecedentes(
   BuildContext context,
   BrouillonInscription brouillon,
   String route,
 ) {
   final String manquante = brouillon.premiereEtapeManquante;
-  if (rangEtape(manquante) < rangEtape(route)) {
+  final int rang = rangEtape(route, brouillon.usage);
+  if (rang == 0 || rangEtape(manquante, brouillon.usage) < rang) {
     WidgetsBinding.instance.addPostFrameCallback((Duration _) {
       if (context.mounted) {
         context.go(manquante);
@@ -68,42 +70,54 @@ void exigerEtapesPrecedentes(
   }
 }
 
-/// Va a l'etape suivante, ou revient au recapitulatif apres « Modifier ».
-void avancerDepuis(BuildContext context, String route) {
+/// Va a l'etape suivante de [usage], ou revient au recapitulatif apres
+/// « Modifier ».
+void avancerDepuis(
+  BuildContext context,
+  String route, {
+  UsageInscription? usage,
+}) {
   final bool modifier = GoRouterState.of(context).uri.queryParameters
       .containsKey(parametreModifier);
-  final int rang = rangEtape(route);
+  final List<String> etapes = etapesPour(usage);
+  final int rang = rangEtape(route, usage);
   context.go(
-    modifier || rang >= etapesInscription.length
+    modifier || rang >= etapes.length
         ? Routes.inscriptionRecapitulatif
-        : etapesInscription[rang],
+        : etapes[rang],
   );
 }
 
-/// Revient a l'etape precedente (ou au recapitulatif apres « Modifier »).
-void reculerDepuis(BuildContext context, String route) {
+/// Revient a l'etape precedente de [usage] (ou au recapitulatif apres
+/// « Modifier »).
+void reculerDepuis(
+  BuildContext context,
+  String route, {
+  UsageInscription? usage,
+}) {
   final bool modifier = GoRouterState.of(context).uri.queryParameters
       .containsKey(parametreModifier);
-  final int rang = rangEtape(route);
+  final int rang = rangEtape(route, usage);
   context.go(
-    modifier ? Routes.inscriptionRecapitulatif : etapesInscription[rang - 2],
+    modifier ? Routes.inscriptionRecapitulatif : etapesPour(usage)[rang - 2],
   );
 }
 
-/// La coquille commune des quatre etapes, posee sur le gabarit partage
-/// [PageEtape] (demandes B-3 et A-2) : rangee d'etape (disque retour de 48,
-/// progression, « n sur N » calcule depuis [etapesInscription]) sans actions
-/// de coquille ; en bas, CTA en pilule, une ligne d'erreur au besoin, et la
-/// deconnexion toujours possible.
+/// La coquille commune des etapes, posee sur le gabarit partage [PageEtape]
+/// (demandes B-3 et A-2) : rangee d'etape (disque retour de 48, progression,
+/// « n sur N » calcule par [etapesPour] selon l'usage retenu : quatre etapes
+/// pour un tuteur, un eleve adulte ou un comptable, cinq pour un candidat
+/// enseignant) sans actions de coquille ; en bas, CTA en pilule, une ligne
+/// d'erreur au besoin, et la deconnexion toujours possible.
 class CoquilleEtape extends ConsumerWidget {
   /// Cree la coquille d'une etape.
   const CoquilleEtape({
     required this.route,
     required this.question,
     required this.enfant,
-    required this.libelleAction,
     required this.onAction,
     super.key,
+    this.libelleAction,
     this.explication,
     this.onRetour,
     this.enCours = false,
@@ -129,8 +143,10 @@ class CoquilleEtape extends ConsumerWidget {
   /// Le corps de l'etape.
   final Widget enfant;
 
-  /// Le libelle du CTA.
-  final String libelleAction;
+  /// Le libelle du CTA. `null` : l'etape n'a **aucun** bouton plein (un
+  /// bouton qui ne peut pas aboutir n'est pas rendu, il n'est pas grise ; la
+  /// phrase et les liens de l'etape disent quoi faire).
+  final String? libelleAction;
 
   /// Le CTA ; `null` tant qu'on ne peut pas avancer.
   final VoidCallback? onAction;
@@ -158,9 +174,13 @@ class CoquilleEtape extends ConsumerWidget {
     void deconnecter() =>
         unawaited(ref.read(serviceAuthProvider).deconnexion());
 
+    final UsageInscription? usage = ref.watch(
+      brouillonInscriptionProvider.select((BrouillonInscription b) => b.usage),
+    );
+    final int total = etapesPour(usage).length;
     return PageEtape(
-      numero: rangEtape(route),
-      total: etapesInscription.length,
+      numero: rangEtape(route, usage).clamp(1, total),
+      total: total,
       onRetour: onRetour,
       colonneLarge: choix,
       action: Column(
@@ -170,13 +190,14 @@ class CoquilleEtape extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           if (souscription != null) ...<Widget>[souscription!, Ecart.vMd],
-          ActionPrincipale(
-            libelle: libelleAction,
-            onPress: enCours ? null : onAction,
-            enCours: enCours,
-            pilule: true,
-            fleche: true,
-          ),
+          if (libelleAction case final String libelle)
+            ActionPrincipale(
+              libelle: libelle,
+              onPress: enCours ? null : onAction,
+              enCours: enCours,
+              pilule: true,
+              fleche: true,
+            ),
           if (complement != null) ...<Widget>[Ecart.vSm, complement!],
           Ecart.vXs,
           Center(

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/admin_domaine.dart';
+import '../../core/admin/creation_classe_refusee.dart';
 import '../../core/admin/enseignants_classe.dart';
 import '../../core/admin/personnes_proposables.dart';
 import '../../core/admin/port_classes_admin.dart';
@@ -18,6 +19,7 @@ import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/i18n/villes_fuseau.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/offres/affectation_refusee.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart' show horsLigneProvider;
@@ -27,7 +29,6 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/app_card.dart';
-import '../../core/widgets/barre_precedent_suivant.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/champ_etiquete.dart';
 import '../../core/widgets/champ_recherche.dart';
@@ -40,6 +41,7 @@ import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pays_enseignant.dart';
+import '../../core/widgets/pied_de_liste.dart';
 import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/selecteur_motif.dart';
 import '../../core/widgets/selecteur_personne.dart';
@@ -52,6 +54,8 @@ import 'bas_de_feuille.dart';
 import 'cahiers_classe.dart';
 import 'feuille_observation_groupe.dart';
 import 'genre_classe_libelles.dart';
+import 'refus_creation_classe_libelles.dart';
+import 'refus_deplacement_libelles.dart';
 import 'reglage_partage.dart';
 
 /// Operations > Groupes : le noyau du produit depuis le pivot du 19
@@ -562,7 +566,8 @@ class _Inspecteur extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 MenuActions(
-                  tooltip: classe.nom,
+                  points: true,
+                  objet: classe.nom,
                   actions: <EntreeAction>[
                     EntreeAction(
                       libelle: t.admin.groupes.actionModifierSeuil,
@@ -639,10 +644,6 @@ class _Corps extends StatelessWidget {
         icone: AppIcons.rienAAfficher,
       );
     }
-    final String position = t.commun.formats.pageSur(
-      page: '${page.page}',
-      total: '${page.pages}',
-    );
     return DataCollection<ClasseListee>(
       estSelectionnee: choisie == null
           ? null
@@ -650,41 +651,47 @@ class _Corps extends StatelessWidget {
       lignes: visibles,
       cle: (ClasseListee c) => ValueKey<String>(c.id),
       onSelectionner: onSelectionner,
-      // R17 : la position dans la liste, puis la navigation de page (les
-      // fleches disparaissent aux bornes, NAV-FLECHES-1).
-      piedDePage: Column(
-        key: const ValueKey<String>('classes-pagination'),
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Ecart.vLg,
-          TexteSansCoupure(
-            l.resume(
-              debut: '${page.debut}',
-              fin: '${page.fin}',
-              total: '${page.total}',
-            ),
-            key: const ValueKey<String>('classes-resume'),
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          if (page.pages > 1) ...<Widget>[
-            Ecart.vSm,
-            BarrePrecedentSuivant(
-              position: position,
-              positionSemantique: l.positionSemantique(
-                page: '${page.page}',
-                total: '${page.pages}',
-              ),
-              libellePrecedent: l.precedente,
-              libelleSuivant: l.suivante,
-              onPrecedent: page.page > 1 ? () => onPage(page.page - 1) : null,
-              onSuivant: page.page < page.pages
-                  ? () => onPage(page.page + 1)
-                  : null,
-            ),
-          ],
-        ],
+      // LISTES-1 : le menu de la ligne est posé hors de la cible de la ligne
+      // (la ligne ouvre l'inspecteur, le menu ne l'ouvre pas). Une classe
+      // clôturée n'a plus d'actions : sa place reste réservée, pour que les
+      // cartes et les lignes restent alignées.
+      actionsLigne: (BuildContext contexte, ClasseListee c) => c.groupe.actif
+          ? MenuActions(
+              points: true,
+              objet: c.nom,
+              actions: <EntreeAction>[
+                EntreeAction(
+                  libelle: t.admin.groupes.actionAjouter,
+                  onChoix: () => onAjouter(c),
+                ),
+                EntreeAction(
+                  libelle: t.admin.groupes.actionModifierSeuil,
+                  onChoix: () => onModifierSeuil(c),
+                ),
+                EntreeAction(
+                  libelle: t.admin.groupes.actionObservation,
+                  onChoix: () => onObservation(c),
+                ),
+                ..._actionsFusion(contexte, c),
+                EntreeAction(
+                  libelle: t.admin.groupes.actionCloturer,
+                  destructif: true,
+                  onChoix: () => onCloturer(c),
+                ),
+              ],
+            )
+          : SizedBox.square(dimension: AppMetriques.of(contexte).cibleTactile),
+      // R17 : la position dans la liste (« 1-50 sur 634 ») et la navigation de
+      // page, dans le pied commun des listes, **colle sous le tableau** : il se
+      // defilait avec les lignes, et sur 634 classes ni compteur ni pagination ne
+      // se voyaient (LISTES-1, relecture visuelle A-02). Les fleches disparaissent
+      // aux bornes (NAV-FLECHES-1).
+      piedCollant: PiedDeListe(
+        debut: page.debut,
+        fin: page.fin,
+        total: page.total,
+        onPrecedent: page.page > 1 ? () => onPage(page.page - 1) : null,
+        onSuivant: page.page < page.pages ? () => onPage(page.page + 1) : null,
       ),
       colonnes: <ColonneDonnees<ClasseListee>>[
         ColonneDonnees<ClasseListee>(
@@ -744,49 +751,6 @@ class _Corps extends StatelessWidget {
           texte: (ClasseListee c) => _libelleEtat(c.etat),
           rendu: (BuildContext _, ClasseListee c) =>
               _PastilleEtat(etat: c.etat),
-        ),
-        ColonneDonnees<ClasseListee>(
-          titre: '',
-          role: RoleColonne.aPart,
-          flex: 0,
-          // Vide a dessein : un menu d'actions n'a rien a dire en
-          // texte. `rendreMemeSiTexteVide` fait rendre `rendu` quand
-          // meme, sans faire disparaitre la cellule comme le ferait
-          // un texte vide par defaut.
-          texte: (ClasseListee _) => '',
-          rendreMemeSiTexteVide: true,
-          rendu: (BuildContext contexte, ClasseListee c) => c.groupe.actif
-              ? MenuActions(
-                  tooltip: c.nom,
-                  actions: <EntreeAction>[
-                    EntreeAction(
-                      libelle: t.admin.groupes.actionAjouter,
-                      onChoix: () => onAjouter(c),
-                    ),
-                    EntreeAction(
-                      libelle: t.admin.groupes.actionModifierSeuil,
-                      onChoix: () => onModifierSeuil(c),
-                    ),
-                    EntreeAction(
-                      libelle: t.admin.groupes.actionObservation,
-                      onChoix: () => onObservation(c),
-                    ),
-                    ..._actionsFusion(contexte, c),
-                    EntreeAction(
-                      libelle: t.admin.groupes.actionCloturer,
-                      destructif: true,
-                      onChoix: () => onCloturer(c),
-                    ),
-                  ],
-                )
-              // Une classe cloturee n'a plus d'actions. En tableau, sa
-              // cellule garde la largeur du menu (sa cible tactile) : sans
-              // elle, la colonne sans flex retrecit et decale la ligne.
-              : DataCollection.enTableau(contexte)
-              ? SizedBox.square(
-                  dimension: AppMetriques.of(contexte).cibleTactile,
-                )
-              : const SizedBox.shrink(),
         ),
       ],
     );
@@ -1192,6 +1156,12 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
           );
       widget.onCree();
       if (mounted) Navigator.of(context).pop();
+    } on CreationClasseRefusee catch (refus) {
+      // CAND-Q15 : le serveur a refuse l'enseignant ou le creneau. Une phrase
+      // par motif, jamais le texte SQL ; la feuille garde les choix.
+      if (mounted) {
+        setState(() => _erreur = phraseRefusCreationClasse(refus.motif));
+      }
     } catch (erreur) {
       if (mounted) {
         setState(
@@ -1571,7 +1541,8 @@ class _FeuilleDetail extends ConsumerWidget {
                           contentPadding: EdgeInsets.zero,
                           title: Text(membre.libelle),
                           trailing: MenuActions(
-                            tooltip: membre.libelle,
+                            points: true,
+                            objet: membre.libelle,
                             actions: <EntreeAction>[
                               EntreeAction(
                                 libelle: t.admin.groupes.actionRetirer,
@@ -1755,6 +1726,12 @@ class _FeuilleSeuilEtat extends ConsumerState<_FeuilleSeuil> {
           );
       widget.onModifie();
       if (mounted) Navigator.of(context).pop();
+    } on AffectationRefusee {
+      // Le serveur a repondu non (CLASSES-DUREE) : l'horaire envoye par cette
+      // feuille n'est plus celui de la classe (liste perimee) et le predicat
+      // d'affectation le refuse. Cette feuille ne change que le seuil : sa
+      // phrase le dit (jamais « l'horaire n'est pas change », ni le texte SQL).
+      if (mounted) setState(() => _erreur = phraseRefusSeuil());
     } catch (erreur) {
       if (mounted) {
         setState(

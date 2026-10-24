@@ -53,6 +53,12 @@ abstract final class Routes {
   /// Genre.
   static const String inscriptionGenre = '/inscription/genre';
 
+  /// CAND-04 : le telephone du candidat enseignant (indicatif choisi dans la
+  /// liste des pays, numero saisi), entre le genre et le recapitulatif. Cette
+  /// etape n'existe que pour l'usage enseignant, avec ou sans code ; elle est
+  /// sous la porte `inscription` comme les autres.
+  static const String inscriptionTelephone = '/inscription/telephone';
+
   /// RECRUT-ECRANS : le code d'invitation du candidat enseignant, sous la
   /// porte `inscription`. Le parametre `code` d'un lien d'invitation est
   /// verifie des l'ouverture.
@@ -85,6 +91,26 @@ abstract final class Routes {
 
   /// Depot de la piece d'identite.
   static const String attentePiece = '/attente/piece';
+
+  /// CAND-01 : le questionnaire de la Salle d'examen, en parcours d'accueil
+  /// (presentation, une question par ecran, recapitulatif, envoi). Sous
+  /// `/attente`, ouvert au compte en attente ; sans candidature pour le
+  /// compte, la page revient au portail.
+  static const String attenteCandidature = '/attente/candidature';
+
+  /// CAND-06 : la carte a partager, « Aidez une personne a apprendre la parole d'Allah. »
+  /// (envoyer l'offre a un proche, facultatif et sans effet sur la
+  /// candidature). Sous `/attente`,
+  /// ouvert au compte en attente ; sans candidature en cours pour le compte, la
+  /// page revient au portail.
+  static const String attentePartage = '/attente/partage';
+
+  /// CAND-07 : « Vos autres talents », le parcours facultatif de la salle
+  /// d'attente, apres l'envoi de la candidature (competences precises, niveau,
+  /// disponibilite, accord d'etre contacte pour une mission). Sous `/attente`,
+  /// ouvert au compte en attente ; sans candidature pour le compte, la page
+  /// revient au portail.
+  static const String attenteTalents = '/attente/talents';
 
   // --- Eleve, meme arborescence en mode enfant et en mode standard --------
 
@@ -403,6 +429,11 @@ abstract final class Routes {
   static const String tuteurCompteApparence =
       '/tuteur/compte/preferences/apparence';
 
+  /// La langue des e-mails et des messages (COURRIELS-2), sous-page des
+  /// preferences du tuteur.
+  static const String tuteurCompteLangueCourriels =
+      '/tuteur/compte/preferences/langue-courriels';
+
   /// Le consentement aux visites d'observation des comptes existants.
   static const String tuteurCompteConsentements =
       '/tuteur/compte/consentements';
@@ -703,6 +734,11 @@ abstract final class Routes {
   /// refuser, retirer), sous Operations. Atteint depuis l'Accueil.
   static const String adminOperationsAvis = '/admin/operations/avis';
 
+  /// COURRIELS-1 : les e-mails sortants (ecrire a la main, suivre la file
+  /// d'envoi, voir les adresses d'envoi), sous Operations. Atteint depuis
+  /// l'Accueil.
+  static const String adminOperationsCourriels = '/admin/operations/courriels';
+
   /// ECHELLE-ADM-PILOTAGE-1 : le tableau de pilotage par horaire (classes,
   /// remplissage, demandes, enseignants libres et manquants), sous
   /// Operations.
@@ -716,6 +752,35 @@ abstract final class Routes {
   /// Personnes.
   static const String adminPersonnesInvitations =
       '/admin/personnes/invitations';
+
+  /// ADM-20 : la file des candidatures d'enseignement, sous Personnes. Elle
+  /// prend le rang de l'onglet Invitations (pas de septieme onglet) ; la page
+  /// des invitations ([adminPersonnesInvitations]) reste atteignable par un
+  /// lien de cette file (CAND-F01).
+  static const String adminPersonnesCandidatures =
+      '/admin/personnes/candidatures';
+
+  /// ADM-23 : l'import des formulaires de candidature (CSV des formulaires
+  /// Google), sous Personnes. Capacite `candidatures.importer` : le super
+  /// administrateur seul, en double verification. Distincte de
+  /// [adminPersonnesImport] (l'import des inscriptions) ; se declare AVANT
+  /// [adminPersonnesCandidature] dans le routeur (contrainte R5), sinon
+  /// `import` serait lu comme une reference `CAND-...`.
+  static const String adminPersonnesCandidaturesImport =
+      '/admin/personnes/candidatures/import';
+
+  /// ADM-21 : une candidature ouverte par la direction, par sa reference
+  /// `CAND-…` (jamais l'identifiant du profil ni un nom : elle ne nomme
+  /// personne et survit au rechargement, `CAND-F02`). Les chemins statiques
+  /// qui viendront sous [adminPersonnesCandidatures] (`action-groupee`,
+  /// `import`, ADM-22 et ADM-23) se declarent AVANT ce chemin dans le routeur
+  /// (contrainte R5).
+  static const String adminPersonnesCandidature =
+      '/admin/personnes/candidatures/:reference';
+
+  /// Le chemin de la candidature de reference [reference].
+  static String adminPersonnesCandidaturePour(String reference) =>
+      '$adminPersonnesCandidatures/${Uri.encodeComponent(reference)}';
 
   /// BACK-FRONT-REPRISE-1 : la file des reprises de foyer, sous Personnes.
   static const String adminPersonnesReprises = '/admin/personnes/reprises';
@@ -1163,6 +1228,10 @@ abstract final class Routes {
   /// Preferences locales de l'application.
   static const String compteReglages = '/compte/reglages';
 
+  /// La langue des e-mails et des messages de la direction (COURRIELS-2),
+  /// ouverte depuis les reglages. Le tuteur la rejoint sous `/tuteur/compte`.
+  static const String compteLangueCourriels = '/compte/langue-courriels';
+
   /// Mes donnees : la copie de ses donnees et la demande de suppression du
   /// compte (CPT-SUPPR-EXPORT). Le tuteur la rejoint sous `/tuteur/compte`.
   static const String compteMesDonnees = '/compte/mes-donnees';
@@ -1239,8 +1308,7 @@ abstract final class Routes {
   static const String avis = '/avis';
 
   /// L'adresse du formulaire d'avis pour [jeton].
-  static String avisPour(String jeton) =>
-      '$avis/${Uri.encodeComponent(jeton)}';
+  static String avisPour(String jeton) => '$avis/${Uri.encodeComponent(jeton)}';
 
   /// Ou mene la cloche des notifications de la coquille d'un role : la
   /// `NotificationsPage` existante, sous le prefixe du role. Nul pour un

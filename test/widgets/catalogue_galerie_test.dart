@@ -71,6 +71,8 @@ const List<String> composantsDuCatalogue = <String>[
   // BRAND-ORN-1 (directeur, 11/10/2026) : l'ornement, signature discrete ; le
   // separateur vit dans le meme fichier et se montre dans la meme entree.
   'OrnementMarque',
+  // Page introuvable (directeur, 23/10/2026) : la porte du logo et sa lumiere.
+  'PorteLumiere',
   // K-55 (revue du directeur du 01/10) : jamais de cartes collees.
   'PileCartes',
   'CarteGroupee',
@@ -97,6 +99,9 @@ const List<String> composantsDuCatalogue = <String>[
   // produisent : la commande ronde de la salle et la barre precedent / suivant.
   'CommandeSalle',
   'BarrePrecedentSuivant',
+  // ADM-20 : la barre de selection d'une liste, promue du Comptable vers le
+  // core (une seule barre pour le Comptable et les Candidatures).
+  'BarreSelection',
   // Section 2 : le composant d'etat que le lot N4 produit. Il porte a lui seul
   // deux invariants de l'etape 5 -- J3, un etat indisponible se dit « inconnu »
   // et jamais « absent », et J7, une couleur seule ne represente jamais un etat
@@ -127,6 +132,13 @@ const List<String> composantsDuCatalogue = <String>[
   'AdminShell',
   'MenuActions',
   'MenuFiltre',
+  // LISTES-1 (23/10/2026) : ce que les deux menus partagent (declencheur,
+  // ligne d'entree, trait de groupe).
+  'MenuCommun',
+  // LISTES-1 : case a cocher, pied de liste paginee, filtres en cours.
+  'CaseACocher',
+  'PiedDeListe',
+  'PuceFiltreActif',
   // FI-DIR-1 (FI-Q18 (a), 05/10) : le choix du mois des vues chiffrees.
   'SelecteurMois',
   'SelecteurNiveauProgramme',

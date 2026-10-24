@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
+import 'package:rewayah_academy/core/candidature/port_inscription_candidat.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
@@ -23,9 +24,11 @@ import 'package:rewayah_academy/features/inscription/code_comptable_retenu.dart'
 import 'package:rewayah_academy/features/inscription/etapes/genre_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/identite_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/recapitulatif_etape.dart';
+import 'package:rewayah_academy/features/inscription/etapes/telephone_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/usage_etape.dart';
 import 'package:rewayah_academy/features/inscription/inscription_page.dart';
 
+import '../fixtures/candidature/faux_inscription_candidat.dart';
 import '../support/harnais.dart';
 
 /// Une source dont le rafraichissement echoue tant qu'on le demande.
@@ -82,6 +85,7 @@ Future<(FauxServiceDossier, FausseSourceSession)> _monter(
   PortVerificationInvitation? verificationComptable,
   PortInscriptionComptable? inscriptionComptable,
   String? codeComptable,
+  PortInscriptionCandidat? inscriptionCandidat,
 }) async {
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1;
@@ -109,6 +113,10 @@ Future<(FauxServiceDossier, FausseSourceSession)> _monter(
         GoRoute(
           path: Routes.inscriptionGenre,
           builder: (BuildContext _, GoRouterState _) => const GenreEtape(),
+        ),
+        GoRoute(
+          path: Routes.inscriptionTelephone,
+          builder: (BuildContext _, GoRouterState _) => const TelephoneEtape(),
         ),
         GoRoute(
           path: Routes.inscriptionRecapitulatif,
@@ -150,6 +158,7 @@ Future<(FauxServiceDossier, FausseSourceSession)> _monter(
         portInscriptionComptableProvider.overrideWithValue(
           inscriptionComptable,
         ),
+        portInscriptionCandidatProvider.overrideWithValue(inscriptionCandidat),
         if (codeComptable != null)
           codeComptableRetenuProvider.overrideWith(
             () => _CodeDejaRetenu(codeComptable),
@@ -206,7 +215,8 @@ Future<void> _comptableJusquALaCreation(WidgetTester tester) async {
   await _taper(tester, find.text(t.inscription.creer));
 }
 
-/// Le parcours enseignant jusqu'au recapitulatif.
+/// Le parcours enseignant (candidat) jusqu'au recapitulatif : l'identite, le
+/// genre, puis le telephone (CAND-04), dont l'indicatif se choisit.
 Future<void> _enseignantJusquAuRecap(WidgetTester tester) async {
   await _taper(tester, find.byKey(const Key('inscription-lien-enseignant')));
   await tester.enterText(find.byKey(const Key('inscription-prenom')), 'Ali');
@@ -214,12 +224,21 @@ Future<void> _enseignantJusquAuRecap(WidgetTester tester) async {
   await _continuer(tester);
   await _taper(tester, find.text(t.inscription.genreHomme));
   await _continuer(tester);
+  await _taper(tester, find.byKey(TelephoneEtape.paysChoisiKey));
+  await _taper(tester, find.byKey(TelephoneEtape.paysKey('FR')));
+  await tester.enterText(
+    find.byKey(TelephoneEtape.numeroKey),
+    '06 12 34 56 78',
+  );
+  await _continuer(tester);
 }
 
-/// Le parcours enseignant jusqu'a la creation.
+/// Le parcours enseignant jusqu'a la creation : la case de confidentialite
+/// cochee, puis « Creer mon compte ».
 Future<void> _enseignantJusquALaCreation(WidgetTester tester) async {
   await _enseignantJusquAuRecap(tester);
-  await _taper(tester, find.text(t.inscription.creer));
+  await _taper(tester, find.byKey(const Key('inscription-confidentialite')));
+  await _taper(tester, find.text(t.inscription.candidat.envoyer));
 }
 
 /// Le CTA en pilule de la page courante.
@@ -331,27 +350,49 @@ void main() {
       expect(t.inscription.usage.enseignant, 'لدي رمز دعوة');
     });
 
-    // RACCORDEMENT-1016 (D) : le code verifie part avec la creation du
-    // profil enseignant, et un refus du serveur se dit sans avancer.
-    testWidgets('le code d invitation retenu part avec le profil enseignant', (
-      WidgetTester tester,
-    ) async {
-      final (FauxServiceDossier dossier, _) = await _monter(
-        tester,
-        codeRetenu: 'ABCD-EFGH-JKMN',
-      );
-      await _enseignantJusquALaCreation(tester);
-      expect(dossier.profilsCrees.single.role, AppRole.teacher);
-      expect(dossier.codesInvitation.single, 'ABCD-EFGH-JKMN');
-      expect(find.text('ATTENTE'), findsOneWidget);
-    });
+    // CAND-04 : l'enseignant est un candidat, avec ou sans code. Le code verifie
+    // part avec `inscrire_candidat`, qui cree le compte et la candidature d'un
+    // coup ; le service de profil du tuteur n'est plus appele.
+    testWidgets(
+      'le code d invitation retenu part avec l inscription du candidat',
+      (WidgetTester tester) async {
+        final FauxInscriptionCandidat candidat = FauxInscriptionCandidat(
+          cleOuverte: false,
+          codesValides: <String>{'ABCD-EFGH-JKMN'},
+        );
+        final (
+          FauxServiceDossier dossier,
+          FausseSourceSession source,
+        ) = await _monter(
+          tester,
+          codeRetenu: 'ABCD-EFGH-JKMN',
+          inscriptionCandidat: candidat,
+        );
+        await _enseignantJusquALaCreation(tester);
+        expect(dossier.profilsCrees, isEmpty);
+        expect(candidat.appels.single.code, 'ABCD-EFGH-JKMN');
+        expect(candidat.appels.single.prenom, 'Ali');
+        expect(candidat.appels.single.nom, 'Bah');
+        expect(candidat.appels.single.genre, 'male');
+        expect(candidat.appels.single.telephone, '+33612345678');
+        expect(candidat.appels.single.langue, 'fr');
+        expect(candidat.appels.single.versionConfidentialite, '2026-10-v1');
+        expect(candidat.creations, hasLength(1));
+        expect(source.rafraichissements, 1);
+        expect(find.text('ATTENTE'), findsOneWidget);
+      },
+    );
 
     testWidgets('profil enseignant sans code : aucun appel, retour au code', (
       WidgetTester tester,
     ) async {
+      final FauxInscriptionCandidat candidat = FauxInscriptionCandidat(
+        cleOuverte: false,
+      );
       final (FauxServiceDossier dossier, _) = await _monter(
         tester,
         codeRetenu: 'ABCD-EFGH-JKMN',
+        inscriptionCandidat: candidat,
       );
       await _enseignantJusquAuRecap(tester);
       // Le code est perdu entre-temps : le recapitulatif ne tente rien.
@@ -359,23 +400,29 @@ void main() {
         tester.element(find.byType(RecapitulatifEtape)),
       );
       conteneur.read(codeInvitationRetenuProvider.notifier).oublier();
-      await _taper(tester, find.text(t.inscription.creer));
+      await _taper(tester, find.text(t.inscription.candidat.envoyer));
       expect(dossier.profilsCrees, isEmpty);
+      expect(candidat.appels, isEmpty);
       expect(find.text('CODE-INVITATION'), findsOneWidget);
     });
 
     testWidgets('code refuse par le serveur : message K-59, aucune avance', (
       WidgetTester tester,
     ) async {
-      final (FauxServiceDossier dossier, _) = await _monter(
+      final FauxInscriptionCandidat candidat = FauxInscriptionCandidat(
+        cleOuverte: false,
+        codesExpires: <String>{'ABCD-EFGH-JKMN'},
+      );
+      await _monter(
         tester,
         codeRetenu: 'ABCD-EFGH-JKMN',
+        inscriptionCandidat: candidat,
       );
-      dossier.erreurAJeter = const InvitationNonConsommee('expiree');
       await _enseignantJusquALaCreation(tester);
       expect(find.text(t.inscription.erreurInvitation), findsOneWidget);
       expect(find.text('ATTENTE'), findsNothing);
-      expect(find.text('4 sur 4'), findsOneWidget);
+      expect(find.text('5 sur 5'), findsOneWidget);
+      expect(candidat.creations, isEmpty);
     });
 
     // Lot F2 : le comptable invite, par son propre code et sa propre RPC.

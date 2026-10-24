@@ -495,6 +495,30 @@ abstract final class AppIcons {
     IconData(0xe136, fontFamily: _actif),
   );
 
+  /// Le tri d'une colonne de table, **pas encore applique** : deux fleches,
+  /// une vers le bas, une vers le haut (Phosphor `arrows-down-up`). Dit
+  /// qu'un en-tete de colonne se touche pour trier, sans dire dans quel
+  /// sens. LISTES-1.
+  static const AppIcon triNeutre = AppIcon._(
+    IconData(0xe098, fontFamily: _repos),
+    IconData(0xe098, fontFamily: _actif),
+  );
+
+  /// Le tri croissant d'une colonne de table : une fleche vers le haut
+  /// (Phosphor `arrow-up`). Les icones de tri ne se miroitent pas : le haut
+  /// et le bas sont les memes en arabe. LISTES-1.
+  static const AppIcon triCroissant = AppIcon._(
+    IconData(0xe08e, fontFamily: _repos),
+    IconData(0xe08e, fontFamily: _actif),
+  );
+
+  /// Le tri decroissant d'une colonne de table : une fleche vers le bas
+  /// (Phosphor `arrow-down`). LISTES-1.
+  static const AppIcon triDecroissant = AppIcon._(
+    IconData(0xe03e, fontFamily: _repos),
+    IconData(0xe03e, fontFamily: _actif),
+  );
+
   /// Carte "Autre" du composant `ChoiceCardGroup`.
   static const AppIcon autreChoix = AppIcon._(
     IconData(0xe3b4, fontFamily: _repos),
@@ -1039,5 +1063,13 @@ abstract final class AppIcons {
   static const AppIcon copier = AppIcon._(
     IconData(0xe1ca, fontFamily: _repos),
     IconData(0xe1ca, fontFamily: _actif),
+  );
+
+  /// Envoyer l'offre a un proche par une carte a partager (CAND-06, la tuile
+  /// « Aidez une personne a apprendre la parole d'Allah. » du portail) : Phosphor
+  /// `share-network` (0xe408), present dans les deux graisses embarquees.
+  static const AppIcon partager = AppIcon._(
+    IconData(0xe408, fontFamily: _repos),
+    IconData(0xe408, fontFamily: _actif),
   );
 }

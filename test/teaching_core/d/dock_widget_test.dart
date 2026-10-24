@@ -28,11 +28,8 @@ void main() {
   late PositionDockMemoire position;
   late List<EvenementOutil> emis;
 
-  ContentRange plageTest() => ContentRange(
-    resourceId: ressourceTest,
-    debut: ayah1,
-    fin: ayah2,
-  );
+  ContentRange plageTest() =>
+      ContentRange(resourceId: ressourceTest, debut: ayah1, fin: ayah2);
 
   /// Le bouton qui porte ce libelle.
   ///
@@ -66,8 +63,7 @@ void main() {
     portPositionDockProvider.overrideWithValue(position),
   ];
 
-  Widget dock() =>
-      TeachingDock(hote: faux, onEvenement: emis.add);
+  Widget dock() => TeachingDock(hote: faux, onEvenement: emis.add);
 
   group('ce que le dock propose', () {
     testWidgets('les sept outils quand tout est permis', (
@@ -185,7 +181,10 @@ void main() {
 
       await tester.tap(boutonNomme(t.tc.outils.dock.masquer));
       await tester.pump();
-      expect(conteneur.read(etatOutilsProvider).masquage.estMasque(ayah1), isTrue);
+      expect(
+        conteneur.read(etatOutilsProvider).masquage.estMasque(ayah1),
+        isTrue,
+      );
 
       await tester.tap(boutonNomme(t.tc.outils.dock.masquer));
       await tester.pump();
@@ -230,7 +229,10 @@ void main() {
       await tester.tap(find.text(t.tc.outils.intention.aApprendre));
       await tester.pumpAndSettle();
 
-      expect((await assignations.pourGroupe('groupe-1')).single.purpose.valeurSql, 'learn');
+      expect(
+        (await assignations.pourGroupe('groupe-1')).single.purpose.valeurSql,
+        'learn',
+      );
       expect(find.text(t.tc.outils.revision.posee), findsOneWidget);
 
       await tester.tap(find.text(t.tc.outils.trait.annuler));
@@ -403,10 +405,7 @@ void main() {
         reason: 'une icone sans nom ne dit rien a un lecteur d ecran',
       );
     }
-    expect(
-      find.bySemanticsLabel(t.tc.outils.dock.deplacer),
-      findsOneWidget,
-    );
+    expect(find.bySemanticsLabel(t.tc.outils.dock.deplacer), findsOneWidget);
 
     // Libere avant la fin du test : le framework verifie qu'aucun handle ne
     // survit, et un `addTearDown` passerait apres cette verification.
@@ -417,15 +416,10 @@ void main() {
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
-      hoteD(
-        dock(),
-        surcharges: surcharges(),
-        mode: InterfaceMode.enfant,
-      ),
+      hoteD(dock(), surcharges: surcharges(), mode: InterfaceMode.enfant),
     );
 
-    for (final Element bouton
-        in find.byType(BoutonOutil).evaluate().toList()) {
+    for (final Element bouton in find.byType(BoutonOutil).evaluate().toList()) {
       final Size taille = bouton.size!;
       expect(
         taille.width,

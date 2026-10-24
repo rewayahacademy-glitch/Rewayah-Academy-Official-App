@@ -1650,5 +1650,4 @@ class _CahiersEnPanne extends FauxServiceEnseignant {
   @override
   Future<List<CahierEnRetard>> cahiersEnRetard() async =>
       throw StateError('lecture des cahiers en retard impossible');
-
 }

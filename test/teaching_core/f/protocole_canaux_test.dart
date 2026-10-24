@@ -314,25 +314,27 @@ void main() {
       );
     });
 
-    test('un controleur invisible et muet est observateur silencieux', () async {
-      final TransportMemoire coteControleur = TransportMemoire(
-        bus: bus,
-        capacites: capacitesControleur,
-      );
-      addTearDown(coteControleur.liberer);
+    test(
+      'un controleur invisible et muet est observateur silencieux',
+      () async {
+        final TransportMemoire coteControleur = TransportMemoire(
+          bus: bus,
+          capacites: capacitesControleur,
+        );
+        addTearDown(coteControleur.liberer);
 
-      final CapacitesPedagogiques capacites =
-          await ServiceRealtimePedagogique(coteControleur).capacites(seanceF);
+        final CapacitesPedagogiques capacites =
+            await ServiceRealtimePedagogique(coteControleur).capacites(seanceF);
 
-      expect(capacites.estObservateurSilencieux, isTrue);
-      expect(capacites.peutEmettreNudge, isFalse);
-    });
+        expect(capacites.estObservateurSilencieux, isTrue);
+        expect(capacites.peutEmettreNudge, isFalse);
+      },
+    );
 
     test('hors salle, aucun droit connu n est un droit', () async {
-      final CapacitesPedagogiques capacites =
-          await ServiceRealtimePedagogique(
-            const TransportIndisponible(),
-          ).capacites(seanceF);
+      final CapacitesPedagogiques capacites = await ServiceRealtimePedagogique(
+        const TransportIndisponible(),
+      ).capacites(seanceF);
 
       expect(capacites.peutPiloterSupport, isFalse);
       expect(capacites.peutAnnoter, isFalse);

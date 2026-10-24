@@ -12,6 +12,7 @@ import '../../../core/finance/montant.dart';
 import '../../../core/finance/politique_commerciale.dart';
 import '../../../core/i18n/cle_audio.dart';
 import '../../../core/i18n/elision.dart';
+import '../../../core/i18n/pays_iso.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/planning/journee.dart';
@@ -25,6 +26,7 @@ import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/forme_filet_ombre.dart';
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/admin_shell.dart';
 import '../../../core/widgets/app_bottom_sheet.dart';
@@ -37,6 +39,7 @@ import '../../../core/widgets/badge_periode_financee.dart';
 import '../../../core/widgets/bandeau_attention.dart';
 import '../../../core/widgets/bandeau_observation.dart';
 import '../../../core/widgets/barre_precedent_suivant.dart';
+import '../../../core/widgets/barre_selection.dart';
 import '../../../core/widgets/bento_tile.dart';
 import '../../../core/widgets/bouton_icone.dart';
 import '../../../core/widgets/bouton_outil.dart';
@@ -44,6 +47,7 @@ import '../../../core/widgets/brand_logo.dart';
 import '../../../core/widgets/carte_groupee.dart';
 import '../../../core/widgets/carte_lignes.dart';
 import '../../../core/widgets/carte_piece_jointe.dart';
+import '../../../core/widgets/case_a_cocher.dart';
 import '../../../core/widgets/champ_date.dart';
 import '../../../core/widgets/champ_etiquete.dart';
 import '../../../core/widgets/champ_recherche.dart';
@@ -73,6 +77,7 @@ import '../../../core/widgets/ligne_transaction.dart';
 import '../../../core/widgets/local_feedback.dart';
 import '../../../core/widgets/marque_page.dart';
 import '../../../core/widgets/menu_actions.dart';
+import '../../../core/widgets/menu_commun.dart';
 import '../../../core/widgets/menu_filtre.dart';
 import '../../../core/widgets/montant_argent.dart';
 import '../../../core/widgets/nav_shell.dart';
@@ -87,10 +92,13 @@ import '../../../core/widgets/pastille_etat_seance.dart';
 import '../../../core/widgets/pastille_financiere.dart';
 import '../../../core/widgets/pays_enseignant.dart';
 import '../../../core/widgets/permanent_notice.dart';
+import '../../../core/widgets/pied_de_liste.dart';
 import '../../../core/widgets/pile_cartes.dart';
 import '../../../core/widgets/pin_pad.dart';
 import '../../../core/widgets/point_rappel.dart';
+import '../../../core/widgets/porte_lumiere.dart';
 import '../../../core/widgets/pressable.dart';
+import '../../../core/widgets/puce_filtre_actif.dart';
 import '../../../core/widgets/raccourci_tactile.dart';
 import '../../../core/widgets/rangee_filtres.dart';
 import '../../../core/widgets/resume_soldes.dart';
@@ -623,6 +631,11 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       EtatGalerie(
         'liste',
         (BuildContext _) => const Skeleton.liste(lignes: 2, differe: false),
+      ),
+      EtatGalerie(
+        'table dense : une barre par ligne, au pas des lignes',
+        (BuildContext _) =>
+            const Skeleton.tableDense(lignes: 4, differe: false),
       ),
       EtatGalerie(
         'sous 200 ms : rien',
@@ -2211,6 +2224,26 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
     ],
   ),
 
+  // Page introuvable (directeur, 23/10/2026) : la porte du logo et sa lumiere,
+  // une scene d'attente ; meme famille que la 404 du site public.
+  EntreeGalerie(
+    nom: 'PorteLumiere',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'porte et faisceau',
+        (BuildContext _) => const PorteLumiere(),
+      ),
+      EtatGalerie(
+        'en arabe : meme dessin, jamais retourne',
+        (BuildContext _) => const Directionality(
+          textDirection: TextDirection.rtl,
+          child: PorteLumiere(),
+        ),
+      ),
+    ],
+  ),
+
   // BRAND-ORN-1 (directeur, 11/10/2026) : la signature discrete de la marque.
   // Regle d'usage : `docs/current/BRAND-ORN-1.md`.
   EntreeGalerie(
@@ -2497,6 +2530,14 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
             lignes: <List<String>>[],
           ),
         ),
+      ),
+      // LISTES-1 : la liste d'administration. Lignes de 56, une case par ligne
+      // et « cocher la page » a trois etats, en-tete triable (le sens est celui
+      // de l'ecran), un menu par ligne hors de la cible de la ligne, le pied
+      // d'une liste paginee. Elle replie en cartes sous le bureau.
+      EtatGalerie(
+        'liste d\'administration : cases, tri, menu, pied',
+        (BuildContext _) => const _SousMaterial(child: _DemoListeAdmin()),
       ),
     ],
   ),
@@ -2867,7 +2908,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       EtatGalerie(
         'seul',
         (BuildContext _) => const _SousMaterial(
-          child: MenuActions(actions: _actionsExemple, tooltip: 'Actions'),
+          child: MenuActions(actions: _actionsExemple, objet: 'Classe 3'),
         ),
       ),
       // Son contexte d'usage reel : colle en bout d'une ligne de liste, ou il
@@ -2878,9 +2919,179 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           child: Row(
             children: <Widget>[
               Expanded(child: Text('Amina Bah')),
-              MenuActions(actions: _actionsExemple, tooltip: 'Actions'),
+              MenuActions(actions: _actionsExemple, objet: 'Classe 3'),
             ],
           ),
+        ),
+      ),
+    ],
+  ),
+  // LISTES-1 : ce que `MenuActions` et `MenuFiltre` partagent. La galerie ne
+  // sait pas ouvrir une route de menu : elle montre le declencheur (anneau de
+  // focus force) et la liste telle que la route la peint (surface, filet,
+  // ombre du theme, ligne au focus, trait de groupe).
+  EntreeGalerie(
+    nom: 'MenuCommun',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'declencheur',
+        (BuildContext _) => _SousMaterial(
+          child: MenuAncre<int>(
+            libelle: t.commun.listes.actionsDe(objet: 'Classe 3'),
+            arrondiFocus: AppRadius.arrondiFull,
+            onSelected: (int _) {},
+            itemBuilder: (BuildContext _) => <PopupMenuEntry<int>>[],
+            declencheur: (BuildContext _, EtatPression etat) =>
+                Icon(AppIcons.menu.repos),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'liste',
+        (BuildContext contexte) => _SousMaterial(
+          child: Builder(
+            builder: (BuildContext c) {
+              final AppPalette palette = AppPalette.of(c);
+              return Material(
+                color: palette.surfaceOverlay.background,
+                shape: FormeFiletEtOmbre.menu(palette),
+                child: const Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    LigneEntreeMenu(child: Text('Exporter la fiche')),
+                    LigneEntreeMenu(
+                      child: Text('Réinitialiser le mot de passe'),
+                    ),
+                    SeparateurMenu<int>(),
+                    LigneEntreeMenu(child: Text('Clôturer le compte')),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    ],
+  ),
+  // LISTES-1 : la case a cocher du produit, trois etats, cible du mode.
+  EntreeGalerie(
+    nom: 'CaseACocher',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'vide',
+        (BuildContext _) => _SousMaterial(
+          child: CaseACocher(
+            valeur: false,
+            libelle: 'Cocher Amina Diallo',
+            onChange: (bool _) {},
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'cochee : une coche, pas seulement la couleur',
+        (BuildContext _) => _SousMaterial(
+          child: CaseACocher(
+            valeur: true,
+            libelle: 'Cocher Amina Diallo',
+            onChange: (bool _) {},
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'partielle (cocher la page) : un trait',
+        (BuildContext _) => _SousMaterial(
+          child: CaseACocher(
+            valeur: null,
+            libelle: 'Cocher la page',
+            onChange: (bool _) {},
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'au survol et au focus',
+        (BuildContext _) => PressionForcee(
+          etat: const EtatPression(survole: true, focus: true),
+          child: _SousMaterial(
+            child: CaseACocher(
+              valeur: true,
+              libelle: 'Cocher Amina Diallo',
+              onChange: (bool _) {},
+            ),
+          ),
+        ),
+      ),
+    ],
+  ),
+  // LISTES-1 : le pied d'une liste paginee. La taille de page n'est offerte
+  // que si l'ecran la fournit.
+  EntreeGalerie(
+    nom: 'PiedDeListe',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'premiere page : pas de fleche precedente',
+        (BuildContext _) => const _SousMaterial(
+          child: PiedDeListe(debut: 1, fin: 50, total: 614, onSuivant: _rien),
+        ),
+      ),
+      EtatGalerie(
+        'page du milieu, avec la taille de page de l\'ecran',
+        (BuildContext _) => const _SousMaterial(
+          child: PiedDeListe(
+            debut: 51,
+            fin: 100,
+            total: 614,
+            onPrecedent: _rien,
+            onSuivant: _rien,
+            taillePage: 50,
+            taillesProposees: <int>[25, 50, 100],
+            onTaillePage: _tailleIgnoree,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'derniere page : pas de fleche suivante',
+        (BuildContext _) => const _SousMaterial(
+          child: PiedDeListe(
+            debut: 601,
+            fin: 614,
+            total: 614,
+            onPrecedent: _rien,
+          ),
+        ),
+      ),
+    ],
+  ),
+  // LISTES-1 : les filtres en cours, retirables un a un, et « Tout effacer ».
+  EntreeGalerie(
+    nom: 'PuceFiltreActif',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'une puce retirable',
+        (BuildContext _) => const _SousMaterial(
+          child: PuceFiltreActif(libelle: 'Pays : Guinée', onRetirer: _rien),
+        ),
+      ),
+      EtatGalerie(
+        'les filtres en cours et Tout effacer',
+        (BuildContext _) => const _SousMaterial(
+          child: FiltresActifs(
+            filtres: <FiltreActif>[
+              FiltreActif(libelle: 'État : En examen', onRetirer: _rien),
+              FiltreActif(libelle: 'Pays : Guinée', onRetirer: _rien),
+              FiltreActif(libelle: 'Versement : Confirmé', onRetirer: _rien),
+            ],
+            onToutEffacer: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'aucun filtre : rien',
+        (BuildContext _) => const _SousMaterial(
+          child: FiltresActifs(filtres: <FiltreActif>[], onToutEffacer: _rien),
         ),
       ),
     ],
@@ -3230,6 +3441,18 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         (BuildContext _) =>
             _surfaceMaterielle(const PaysEnseignant(pays: 'Comores')),
       ),
+      // LISTES-1 : le pays d'un code ISO (candidatures, comptes), nom de la
+      // langue de l'interface, drapeau si l'image est embarquee.
+      EtatGalerie(
+        'par code : drapeau et nom',
+        (BuildContext _) =>
+            _surfaceMaterielle(const PaysEnseignant.parCode(codeIso: 'SN')),
+      ),
+      EtatGalerie(
+        'par code sans image : le nom seul',
+        (BuildContext _) =>
+            _surfaceMaterielle(const PaysEnseignant.parCode(codeIso: 'KZ')),
+      ),
       EtatGalerie(
         'non declare : rien',
         (BuildContext _) => _surfaceMaterielle(
@@ -3505,6 +3728,81 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       ),
     ],
   ),
+  // ADM-20 : la barre de selection d'une liste, promue du Comptable vers le
+  // core (CATALOGUE_ECRANS_RECRUTEMENT.md, section 4 : « jamais recopiee »).
+  EntreeGalerie(
+    nom: 'BarreSelection',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'avec action',
+        (BuildContext _) => const BarreSelection(
+          titre: '3 candidatures retenues',
+          phrase: 'Choisissez l\'action à lancer sur ces candidatures.',
+          libelleRelacher: 'Tout relâcher',
+          onRelacher: _rien,
+          libelleAction: 'Agir sur la sélection',
+          onAction: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'sans action : la phrase dit pourquoi',
+        (BuildContext _) => const BarreSelection(
+          titre: '1 candidature retenue',
+          phrase:
+              'Les actions pourront être lancées quand la connexion revient.',
+          libelleRelacher: 'Tout relâcher',
+          onRelacher: _rien,
+          libelleAction: 'Agir sur la sélection',
+        ),
+      ),
+      EtatGalerie(
+        'avec un complement avant les boutons',
+        (BuildContext _) => const BarreSelection(
+          titre: '2 paiements sélectionnés',
+          phrase: 'Le total et les exclusions sont rendus par le contrôle.',
+          libelleRelacher: 'Tout relâcher',
+          onRelacher: _rien,
+          avantActions: Text('Exporter la sélection'),
+          libelleAction: 'Payer la sélection',
+          onAction: _rien,
+        ),
+      ),
+      // LISTES-1 : la barre sur une ligne, au-dessus d'une table. Le compte,
+      // les operations que toute la selection permet, « Deselectionner ».
+      EtatGalerie(
+        'compacte : compte, operations, deselectionner',
+        (BuildContext _) => const BarreSelection.compacte(
+          titre: '3 sélectionnées',
+          onRelacher: _rien,
+          operations: <Widget>[
+            ActionPrincipale(
+              libelle: 'Mettre en pause',
+              niveau: NiveauAction.secondaire,
+              compacte: true,
+              pleineLargeur: false,
+              onPress: _rien,
+            ),
+            ActionPrincipale(
+              libelle: 'Refuser',
+              niveau: NiveauAction.destructive,
+              compacte: true,
+              pleineLargeur: false,
+              onPress: _rien,
+            ),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'compacte sans operation : la limite en une phrase',
+        (BuildContext _) => const BarreSelection.compacte(
+          titre: '1 sélectionnée',
+          phrase: 'Les autres gestes se font un par un, depuis la fiche.',
+          onRelacher: _rien,
+        ),
+      ),
+    ],
+  ),
   EntreeGalerie(
     nom: 'LigneCleValeur',
     famille: FamilleComposant.composantEtat,
@@ -3688,9 +3986,22 @@ const List<EntreeFiltre<String>> _acteursExemple = <EntreeFiltre<String>>[
 
 /// Trois actions rares, dont une destructive, pour le menu contextuel.
 const List<EntreeAction> _actionsExemple = <EntreeAction>[
-  EntreeAction(libelle: 'Exporter la fiche', onChoix: _rien),
-  EntreeAction(libelle: 'Réinitialiser le mot de passe', onChoix: _rien),
-  EntreeAction(libelle: 'Clôturer le compte', onChoix: _rien, destructif: true),
+  EntreeAction(
+    libelle: 'Exporter la fiche',
+    onChoix: _rien,
+    icone: AppIcons.telecharger,
+  ),
+  EntreeAction(
+    libelle: 'Réinitialiser le mot de passe',
+    onChoix: _rien,
+    icone: AppIcons.verrou,
+  ),
+  EntreeAction(
+    libelle: 'Clôturer le compte',
+    onChoix: _rien,
+    destructif: true,
+    icone: AppIcons.interdit,
+  ),
 ];
 
 /// Cinq niveaux sur trois cycles, pour le selecteur de niveau.
@@ -4027,4 +4338,108 @@ class _PanneauGalerie extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       Padding(padding: const EdgeInsets.all(AppSpacing.md), child: Text(titre));
+}
+
+void _tailleIgnoree(int taille) {}
+
+/// La liste d'administration de la galerie (LISTES-1) : une table dense avec
+/// sa colonne de cases, son en-tete triable, un menu par ligne et le pied
+/// d'une liste paginee. L'ordre et la selection sont ceux de cet etat local,
+/// comme ceux d'un ecran : la collection ne trie ni ne retient rien.
+class _DemoListeAdmin extends StatefulWidget {
+  const _DemoListeAdmin();
+
+  @override
+  State<_DemoListeAdmin> createState() => _EtatDemoListeAdmin();
+}
+
+class _EtatDemoListeAdmin extends State<_DemoListeAdmin> {
+  static const List<List<String>> _donnees = <List<String>>[
+    <String>['a', 'Amina Diallo', 'GN', 'En examen'],
+    <String>['b', 'Bilal Haddad', 'FR', 'Entretien à planifier'],
+    <String>['c', 'Mariam Camara', 'SN', 'En examen'],
+    <String>['d', 'Youssef Bah', 'KZ', 'En examen'],
+    <String>['e', 'Fatoumata Barry', 'ML', 'Entretien à planifier'],
+  ];
+
+  final Set<String> _cochees = <String>{'b'};
+  bool _croissant = true;
+
+  @override
+  Widget build(BuildContext context) {
+    final List<List<String>> lignes = <List<String>>[..._donnees]
+      ..sort((List<String> a, List<String> b) => a[1].compareTo(b[1]));
+    if (!_croissant) {
+      lignes.setAll(0, lignes.reversed.toList());
+    }
+    return SizedBox(
+      height: _hauteurCollection * 2,
+      child: DataCollection<List<String>>(
+        colonnes: <ColonneDonnees<List<String>>>[
+          ColonneDonnees<List<String>>(
+            titre: 'Nom',
+            texte: (List<String> l) => l[1],
+            role: RoleColonne.identifiante,
+            flex: 4,
+            tri: TriColonne(
+              sens: _croissant ? SensTri.croissant : SensTri.decroissant,
+              onTrier: () => setState(() => _croissant = !_croissant),
+            ),
+          ),
+          ColonneDonnees<List<String>>(
+            titre: 'Pays',
+            texte: (List<String> l) => nomDuPays(l[2]),
+            flex: 3,
+            tri: const TriColonne(onTrier: _rien),
+            rendu: (BuildContext _, List<String> l) =>
+                PaysEnseignant.parCode(codeIso: l[2]),
+          ),
+          ColonneDonnees<List<String>>(
+            titre: 'État',
+            texte: (List<String> l) => l[3],
+            flex: 3,
+          ),
+        ],
+        lignes: lignes,
+        cle: (List<String> l) => ValueKey<String>(l[0]),
+        onSelectionner: (List<String> _) {},
+        selection: SelectionCollection<List<String>>(
+          estCochee: (List<String> l) => _cochees.contains(l[0]),
+          onBasculer: (List<String> l) => setState(() {
+            if (!_cochees.remove(l[0])) _cochees.add(l[0]);
+          }),
+          onBasculerPage: (bool cocher) => setState(() {
+            if (cocher) {
+              _cochees.addAll(lignes.map((List<String> l) => l[0]));
+            } else {
+              _cochees.clear();
+            }
+          }),
+          libelleLigne: (List<String> l) => l[1],
+        ),
+        actionsLigne: (BuildContext _, List<String> l) => MenuActions(
+          objet: l[1],
+          actions: const <EntreeAction>[
+            EntreeAction(
+              libelle: 'Ouvrir le dossier',
+              onChoix: _rien,
+              icone: AppIcons.dossiers,
+            ),
+            EntreeAction(
+              libelle: 'Refuser la candidature',
+              onChoix: _rien,
+              destructif: true,
+              icone: AppIcons.interdit,
+            ),
+          ],
+        ),
+        piedCollant: PiedDeListe(
+          debut: 1,
+          fin: lignes.length,
+          total: 614,
+          onSuivant: _rien,
+        ),
+      ),
+    );
+  }
 }
