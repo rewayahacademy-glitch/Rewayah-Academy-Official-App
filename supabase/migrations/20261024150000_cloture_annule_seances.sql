@@ -16,6 +16,8 @@
 --
 -- Aucune suppression. CREATE OR REPLACE garde les droits existants.
 
+BEGIN;
+
 CREATE OR REPLACE FUNCTION public.cloturer_groupe(
   p_groupe_id uuid,
   p_motif text
@@ -61,3 +63,5 @@ UPDATE public.sessions s
  WHERE g.id = s.groupe_id AND g.ended_at IS NOT NULL
    AND s.deleted_at IS NULL AND s.status = 'planned'
    AND s.started_at > pg_catalog.now();
+
+COMMIT;
