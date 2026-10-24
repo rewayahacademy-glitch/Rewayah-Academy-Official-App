@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/accessibilite/age_eleve.dart';
 import '../../core/accessibilite/mode_accessibilite.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/coran/service_coran.dart' show pageCoranProvider;
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -741,6 +742,24 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     final ContenuPresente? pageEleve = vue.role == RoleSalle.eleve && !enImpasse
         ? ref.watch(contenuPresenteProvider).value
         : null;
+    // D9 : l'enseignant presente une page (le flux qu'il lit lui-meme) : sur
+    // telephone, la page prend alors toute la largeur ou toute la hauteur.
+    final ContenuPresente? pagePresentee = _panneauEnseignant(vue) && !enImpasse
+        ? ref.watch(contenuPresenteProvider).value
+        : null;
+    // Le panneau de l'enseignant lit d'abord la page par le service du Coran
+    // (etats de lecture) : la page ne prend la place que si elle est lue.
+    final bool pageEnseignant =
+        pagePresentee != null &&
+        (ref
+                .watch(pageCoranProvider(pagePresentee.page))
+                .value
+                ?.versets
+                .isNotEmpty ??
+            false) &&
+        pageCoranLisible(ref, pagePresentee.page);
+    final bool pageEleveLisible =
+        pageEleve != null && pageCoranLisible(ref, pageEleve.page);
 
     // CTR-02 : la salle du controleur, la MEME salle (R-salle unique), avec
     // sa zone haute (« Quitter » y vit). Aucune commande en bas : « Son reçu »
@@ -768,6 +787,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
 
     return PageImmersive(
       registre: RegistreImmersif.salle,
+      lateraleEnPaysage: pageEleveLisible || pageEnseignant,
       entete: _Entete(
         vue: vue,
         monTuteurObserve: monTuteurObserve,
@@ -823,6 +843,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
               vue: vue,
               lignes: lignes,
               document: PanneauEnseignantSalle(seanceId: widget.seanceId),
+              pageCoran: pageEnseignant,
             )
           // D9 : l'eleve voit la page du Coran presentee.
           : pageEleve != null
@@ -834,6 +855,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
                 numero: pageEleve.page,
               ),
               presentationLue: true,
+              pageCoran: pageEleveLisible,
             )
           // TB-11a : le tuteur observateur lit la presentation, meme
           // composition (le document d'abord, la scene ensuite).
@@ -1413,10 +1435,20 @@ class _CorpsDocument extends StatelessWidget {
     required this.lignes,
     required this.document,
     this.presentationLue = false,
+    this.pageCoran = false,
   });
 
   final VueSalle vue;
   final List<_Presence> lignes;
+
+  /// D9 (24/10/2026) : une page du Coran est presentee. Sur telephone, en
+  /// portrait, elle prend toute la largeur (sa hauteur suit le ratio de
+  /// l'edition de Medine, la colonne defile, jamais la page) ; en paysage,
+  /// toute la hauteur, la scene reduite a cote.
+  final bool pageCoran;
+
+  /// La largeur de la scene a cote de la page, sur un telephone en paysage.
+  static const double largeurSceneLaterale = AppSpacing.respiration * 3;
 
   /// Le premier niveau : le panneau de l'enseignant, ou la presentation lue.
   final Widget document;
@@ -1474,6 +1506,44 @@ class _CorpsDocument extends StatelessWidget {
     );
 
     final Gabarit gabarit = AppGabarit.de(context);
+    if (pageCoran && PageImmersive.telephonePaysage(context)) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Expanded(child: panneau),
+          SizedBox(
+            width: largeurSceneLaterale,
+            child: _Scene(vue: vue),
+          ),
+        ],
+      );
+    }
+    if (pageCoran &&
+        !gabarit.estLarge &&
+        MediaQuery.orientationOf(context) == Orientation.portrait) {
+      // La page a sa hauteur naturelle (largeur moins les gouttieres) ; la
+      // scene se reduit en bande dessous ; la colonne seule defile.
+      return SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.sm,
+              ),
+              child: document,
+            ),
+            SizedBox(
+              height: _hauteurScene,
+              child: _Scene(vue: vue),
+            ),
+            if (_colonneDePresence(context, vue))
+              _FondPresence(vue: vue, lignes: lignes),
+          ],
+        ),
+      );
+    }
     // TB-RC (TB_RAPPORT §d n° 23) : sur une tablette en paysage, empiler la
     // page et la scene reduisait la page de l'observateur a une vignette
     // (140 points de large a 1100 x 700) : la presentation lue y prend la

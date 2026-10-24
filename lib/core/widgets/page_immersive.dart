@@ -57,6 +57,7 @@ class PageImmersive extends StatelessWidget {
     this.bandeau,
     this.commandes,
     this.surface,
+    this.lateraleEnPaysage = false,
   });
 
   /// Le contenu primaire. Il occupe tout ce qui reste, et va jusqu'aux bords.
@@ -80,6 +81,23 @@ class PageImmersive extends StatelessWidget {
   /// la page est la surface de l'application, jamais un parchemin). Sans elle,
   /// le registre decide.
   final AppColorPair? surface;
+
+  /// D9 (24/10/2026) : sur un telephone en paysage, l'en-tete, le bandeau et
+  /// les commandes passent dans une colonne laterale, et le contenu primaire
+  /// (la page du Coran en salle) prend toute la hauteur. Faux par defaut :
+  /// les autres ecrans immersifs gardent leur composition.
+  final bool lateraleEnPaysage;
+
+  /// La hauteur d'ecran sous laquelle un paysage est un telephone couche.
+  static const double hauteurTelephonePaysage = AppSpacing.respiration * 8;
+
+  /// La largeur de la colonne laterale d'un telephone en paysage.
+  static const double largeurColonneLaterale = AppSpacing.respiration * 5;
+
+  /// Vrai sur un telephone couche (paysage et ecran bas).
+  static bool telephonePaysage(BuildContext context) =>
+      MediaQuery.orientationOf(context) == Orientation.landscape &&
+      MediaQuery.sizeOf(context).height < hauteurTelephonePaysage;
 
   /// La cle de la zone du contenu primaire (tests de geometrie, SALLE-200-1).
   static const Key contenuKey = ValueKey<String>('page-immersive-contenu');
@@ -112,36 +130,69 @@ class PageImmersive extends StatelessWidget {
               color: paire.onBackground,
               size: AppSpacing.xxl,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                if (entete != null)
-                  Padding(
-                    padding: EdgeInsetsDirectional.symmetric(
-                      horizontal: gabarit.gouttiere,
-                      vertical: AppSpacing.md,
-                    ),
-                    child: entete,
+            child: lateraleEnPaysage && telephonePaysage(context)
+                ? _lateral(texteAgrandi)
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      if (entete != null)
+                        Padding(
+                          padding: EdgeInsetsDirectional.symmetric(
+                            horizontal: gabarit.gouttiere,
+                            vertical: AppSpacing.md,
+                          ),
+                          child: entete,
+                        ),
+                      Expanded(
+                        child: KeyedSubtree(key: contenuKey, child: child),
+                      ),
+                      ?bandeau,
+                      if (commandes != null)
+                        Padding(
+                          padding: EdgeInsetsDirectional.symmetric(
+                            horizontal: gabarit.gouttiere,
+                            // SALLE-200-1 : texte tres agrandi, les commandes
+                            // compactes se serrent pour laisser le support respirer.
+                            vertical: texteAgrandi
+                                ? AppSpacing.sm
+                                : AppSpacing.lg,
+                          ),
+                          child: commandes,
+                        ),
+                    ],
                   ),
-                Expanded(
-                  child: KeyedSubtree(key: contenuKey, child: child),
-                ),
-                ?bandeau,
-                if (commandes != null)
-                  Padding(
-                    padding: EdgeInsetsDirectional.symmetric(
-                      horizontal: gabarit.gouttiere,
-                      // SALLE-200-1 : texte tres agrandi, les commandes
-                      // compactes se serrent pour laisser le support respirer.
-                      vertical: texteAgrandi ? AppSpacing.sm : AppSpacing.lg,
-                    ),
-                    child: commandes,
-                  ),
-              ],
-            ),
           ),
         ),
       ),
     );
   }
+
+  /// Le telephone couche : le contenu a gauche sur toute la hauteur, la
+  /// colonne laterale a droite (en-tete en haut, bandeau et commandes en
+  /// bas). Les commandes se reduisent si la colonne est trop etroite, sans
+  /// jamais deborder.
+  Widget _lateral(bool texteAgrandi) => Row(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: <Widget>[
+      Expanded(
+        child: KeyedSubtree(key: contenuKey, child: child),
+      ),
+      SizedBox(
+        width: largeurColonneLaterale,
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.sm),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              ?entete,
+              const Spacer(),
+              ?bandeau,
+              if (commandes != null)
+                FittedBox(fit: BoxFit.scaleDown, child: commandes),
+            ],
+          ),
+        ),
+      ),
+    ],
+  );
 }

@@ -180,52 +180,59 @@ class _CorpsEtat extends ConsumerState<_Corps> {
   @override
   Widget build(BuildContext context) {
     final VuePresentation vue = widget.vue;
+    final Widget contenu = switch (vue.contenu) {
+      final ContenuPresente pointeur => _PagePresentee(contenu: pointeur),
+      null => _Vide(
+        onOuvrir: vue.commandesActives
+            ? () => unawaited(_ouvrirBibliotheque())
+            : null,
+      ),
+    };
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        _Reference(vue: vue),
-        Ecart.vSm,
-        // Le contenu prend toute la place qui reste : c'est le premier niveau de
-        // la hierarchie de la salle, et rien ne se pose par-dessus.
-        Expanded(
-          child: switch (vue.contenu) {
-            final ContenuPresente pointeur => _PagePresentee(contenu: pointeur),
-            null => _Vide(
-              onOuvrir: vue.commandesActives
-                  ? () => unawaited(_ouvrirBibliotheque())
-                  : null,
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints contraintes) => Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          _Reference(vue: vue),
+          Ecart.vSm,
+          // Le contenu prend toute la place qui reste : c'est le premier niveau de
+          // la hierarchie de la salle, et rien ne se pose par-dessus. D9 : sans
+          // hauteur bornee (telephone en portrait), la page prend sa hauteur
+          // naturelle, celle de toute la largeur.
+          if (contraintes.hasBoundedHeight)
+            Expanded(child: contenu)
+          else
+            contenu,
+          if (_echec case final String message) ...<Widget>[
+            Ecart.vSm,
+            LocalFeedback(message: message),
+          ],
+          // Les commandes sont dans le flux, sous le texte : une barre d'outils
+          // posee par-dessus couvrirait le Coran, ce que la fiche interdit.
+          if (vue.presente && vue.peutPresenter) ...<Widget>[
+            Ecart.vSm,
+            _Commandes(
+              vue: vue,
+              actives: vue.commandesActives && !_enCours,
+              onPresenter: (int page) => unawaited(_presenterPage(page)),
+              onBibliotheque: () => unawaited(_ouvrirBibliotheque()),
             ),
-          },
-        ),
-        if (_echec case final String message) ...<Widget>[
-          Ecart.vSm,
-          LocalFeedback(message: message),
-        ],
-        // Les commandes sont dans le flux, sous le texte : une barre d'outils
-        // posee par-dessus couvrirait le Coran, ce que la fiche interdit.
-        if (vue.presente && vue.peutPresenter) ...<Widget>[
-          Ecart.vSm,
-          _Commandes(
-            vue: vue,
-            actives: vue.commandesActives && !_enCours,
-            onPresenter: (int page) => unawaited(_presenterPage(page)),
-            onBibliotheque: () => unawaited(_ouvrirBibliotheque()),
-          ),
-        ],
-        // Un droit que le jeton refuse ne se grise pas : le bouton n'existe pas,
-        // et une phrase prend sa place -- sans quoi l'enseignant chercherait la
-        // commande manquante.
-        if (!vue.peutPresenter) ...<Widget>[
-          Ecart.vSm,
-          Text(
-            t.enseignant.salle.sansDroitPresentation,
-            style: AppPalette.of(context).surfaceInverse.applyTo(
-              Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
+          ],
+          // Un droit que le jeton refuse ne se grise pas : le bouton n'existe pas,
+          // et une phrase prend sa place -- sans quoi l'enseignant chercherait la
+          // commande manquante.
+          if (!vue.peutPresenter) ...<Widget>[
+            Ecart.vSm,
+            Text(
+              t.enseignant.salle.sansDroitPresentation,
+              style: AppPalette.of(context).surfaceInverse.applyTo(
+                Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
+              ),
             ),
-          ),
+          ],
         ],
-      ],
+      ),
     );
   }
 }

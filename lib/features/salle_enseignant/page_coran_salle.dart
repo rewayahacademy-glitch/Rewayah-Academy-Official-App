@@ -25,6 +25,14 @@ import '../../core/widgets/skeleton.dart';
 import '../tc_mushaf/page_madina_15.dart';
 import '../tc_mushaf/police_mushaf.dart';
 
+/// Vrai quand la page [numero] se compose vraiment (mise en page Madina et
+/// police UthmanicHafs lues) : la salle ne lui donne toute la largeur ou
+/// toute la hauteur qu'alors ; un etat d'attente ou d'erreur garde la
+/// composition qui tient son action a l'ecran (SALLE-ERR-320-1).
+bool pageCoranLisible(WidgetRef ref, int numero) =>
+    ref.watch(pageMushafProvider(numero)).value?.estMadina15 == true &&
+    ref.watch(policeMushafDisponibleProvider).value == true;
+
 /// La page [numero] du mushaf, telle que la salle la montre.
 class PageCoranSalle extends ConsumerWidget {
   /// Cree la page.
