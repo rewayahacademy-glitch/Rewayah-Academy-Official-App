@@ -1,6 +1,7 @@
 -- B2.2 bis (24/10/2026, plan de nuit du pilote) : la cloche et le concierge.
--- Migrations 20261025000000_seances_cloche.sql et
--- 20261025010000_seances_concierge.sql.
+-- Migrations 20261025000000_seances_cloche.sql,
+-- 20261025010000_seances_concierge.sql et
+-- 20261025030000_cloche_respecte_suppressions.sql.
 --
 -- A rejouer sur une base NEUVE (stub_auth puis toutes les migrations). Le
 -- scenario pose ses fixtures (aucune donnee personnelle), appelle les vraies
@@ -107,6 +108,11 @@ LANGUAGE sql STABLE AS $$
   SELECT count(*)::integer FROM public.sessions s
    WHERE s.groupe_id = pg_temp.c(p_code) AND s.deleted_at IS NULL $$;
 
+CREATE FUNCTION pg_temp.nb_a_venir(p_code text) RETURNS integer
+LANGUAGE sql STABLE AS $$
+  SELECT count(*)::integer FROM public.sessions s
+   WHERE s.groupe_id = pg_temp.c(p_code) AND s.deleted_at IS NULL AND s.started_at > now() $$;
+
 CREATE FUNCTION pg_temp.cloche() RETURNS integer
 LANGUAGE plpgsql AS $$ BEGIN RETURN private.materialiser_classes_actives(); END $$;
 
@@ -188,6 +194,17 @@ SELECT pg_temp.vrai(
   (SELECT count(*) FROM (SELECT started_at FROM public.sessions WHERE groupe_id = pg_temp.c('EPUISEE')
      AND deleted_at IS NULL GROUP BY started_at HAVING count(*) > 1) d) = 0,
   '(A) aucun doublon a la meme heure');
+
+-- Retour du pilote (constat 6) : une seance a venir supprimee par la
+-- direction n'est jamais recreee par la cloche.
+UPDATE public.sessions SET deleted_at = now()
+ WHERE id = (SELECT id FROM public.sessions WHERE groupe_id = pg_temp.c('EPUISEE')
+               AND started_at > now() AND deleted_at IS NULL ORDER BY started_at LIMIT 1);
+CREATE TEMP TABLE cc_supp ON COMMIT DROP AS SELECT pg_temp.cloche() AS n;
+SELECT pg_temp.vrai((SELECT n FROM cc_supp) = 0
+  AND (SELECT count(*) FROM public.sessions WHERE groupe_id = pg_temp.c('EPUISEE')
+         AND started_at > now() AND deleted_at IS NULL) = 3,
+  '(A) une seance supprimee par la direction n''est pas recreee par la cloche');
 SELECT pg_temp.vrai(pg_temp.nb('CLOSE') = 0 AND pg_temp.nb('ATTENTE') = 0,
   '(A) une Classe close ou sans enseignant ne recoit rien');
 
@@ -196,7 +213,11 @@ SELECT pg_temp.vrai(pg_temp.nb('CLOSE') = 0 AND pg_temp.nb('ATTENTE') = 0,
 -- creneau en base, puis on epuise une autre Classe.
 SELECT pg_temp.classe('ERREUR', 'tC', pg_temp.jour(3), 10);
 SELECT pg_temp.classe('SAINE', 'tD', pg_temp.jour(3), 16);
-UPDATE public.sessions SET deleted_at = now()
+-- Leurs seances sont reculees dans le passe (et non supprimees : une seance
+-- supprimee n'est jamais recreee).
+UPDATE public.sessions SET started_at = started_at - interval '400 days',
+                           ended_at = ended_at - interval '400 days',
+                           join_opens_at = join_opens_at - interval '400 days'
  WHERE groupe_id IN (pg_temp.c('ERREUR'), pg_temp.c('SAINE'));
 -- Une seance hors Classe de tC occupe les quatre prochains creneaux de ERREUR.
 INSERT INTO public.sessions (teacher_id, started_at, ended_at, session_type)
@@ -205,7 +226,11 @@ SELECT pg_temp.t('tC'), d, d + interval '90 minutes', 'standard'
        LATERAL (SELECT public.instant_creneau(pg_temp.jour(3), 10, 'Europe/Paris', i) AS d) x;
 -- (la cloche dans sa propre requete : un instantane ne voit pas ses ecritures)
 CREATE TEMP TABLE cc_n ON COMMIT DROP AS SELECT pg_temp.cloche() AS n;
-SELECT pg_temp.vrai((SELECT n FROM cc_n) = 4 AND pg_temp.nb('SAINE') = 4 AND pg_temp.nb('ERREUR') = 0,
+SELECT pg_temp.vrai((SELECT n FROM cc_n) = 4
+  AND (SELECT count(*) FROM public.sessions WHERE groupe_id = pg_temp.c('SAINE')
+         AND started_at > now() AND deleted_at IS NULL) = 4
+  AND (SELECT count(*) FROM public.sessions WHERE groupe_id = pg_temp.c('ERREUR')
+         AND started_at > now() AND deleted_at IS NULL) = 0,
   '(A) une Classe en erreur (chevauchement) est sautee, les autres sont materialisees');
 
 SELECT pg_temp.vrai(
@@ -265,6 +290,11 @@ SELECT pg_temp.vrai(pg_temp.rejoindre(pg_temp.t('xB'), 'student', pg_temp.c('JOU
   AND (SELECT count(*) FROM public.sessions s, cc_debut
         WHERE s.groupe_id = pg_temp.c('JOUR') AND s.started_at = cc_debut.d) = 1,
   '(B) une seance supprimee n''est jamais recreee');
+CREATE TEMP TABLE cc_supp_b ON COMMIT DROP AS SELECT pg_temp.cloche() AS n;
+SELECT pg_temp.vrai(
+  (SELECT count(*) FROM public.sessions s, cc_debut
+    WHERE s.groupe_id = pg_temp.c('JOUR') AND s.started_at = cc_debut.d AND s.deleted_at IS NULL) = 0,
+  '(B) la cloche ne recree pas non plus la seance supprimee du jour');
 
 -- Hors fenetre (cours demain) : rien, rien d'ecrit.
 SELECT pg_temp.classe('DEMAIN', 'tD', pg_temp.jour(1), pg_temp.heure());
@@ -327,7 +357,7 @@ END $$;
 
 CREATE TEMP TABLE cc_cr ON COMMIT DROP AS
 SELECT pg_temp.creneau(pg_temp.t('admin'), 'admin', pg_temp.c('SAINE'), pg_temp.jour(4), 9) AS n;
-SELECT pg_temp.vrai((SELECT n FROM cc_cr) = 4 AND pg_temp.nb('SAINE') = 8
+SELECT pg_temp.vrai((SELECT n FROM cc_cr) = 4 AND pg_temp.nb_a_venir('SAINE') = 8
   AND EXISTS (SELECT 1 FROM public.groupe_creneaux WHERE groupe_id = pg_temp.c('SAINE')
                 AND weekday = pg_temp.jour(4) AND hour_local = 9),
   '(C) la direction ajoute un creneau : quatre seances de plus, aussitot');
@@ -336,14 +366,14 @@ SELECT pg_temp.vrai(
             AND row_id = pg_temp.c('SAINE')::text),
   '(C) l''ajout est journalise');
 SELECT pg_temp.vrai(pg_temp.creneau(pg_temp.t('admin'), 'admin', pg_temp.c('SAINE'), pg_temp.jour(4), 9) = 0
-  AND pg_temp.nb('SAINE') = 8,
+  AND pg_temp.nb_a_venir('SAINE') = 8,
   '(C) le meme creneau deux fois : rien de plus');
 -- 17 h chevauche le cours de 16 h (90 minutes) du meme enseignant.
 SELECT pg_temp.vrai(
   pg_temp.creneau_refuse(pg_temp.t('admin'), 'admin', pg_temp.c('SAINE'), pg_temp.jour(3), 17, NULL)
   AND NOT EXISTS (SELECT 1 FROM public.groupe_creneaux WHERE groupe_id = pg_temp.c('SAINE')
                     AND weekday = pg_temp.jour(3) AND hour_local = 17)
-  AND pg_temp.nb('SAINE') = 8,
+  AND pg_temp.nb_a_venir('SAINE') = 8,
   '(C) un creneau qui chevauche un cours de l''enseignant est refuse, rien d''ecrit');
 SELECT pg_temp.vrai(
   pg_temp.creneau_refuse(pg_temp.t('tD'), 'teacher', pg_temp.c('SAINE'), pg_temp.jour(5), 9, '42501'),
