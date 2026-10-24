@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' show Ref;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -15,6 +16,7 @@ import 'package:rewayah_academy/core/tc_classe/port_rappel_discret.dart';
 import 'package:rewayah_academy/core/tc_classe/rappel_discret.dart';
 import 'package:rewayah_academy/core/tc_classe/roster_enseignant.dart';
 import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
+import 'package:rewayah_academy/core/tc_coran/moteur_mushaf.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
@@ -24,6 +26,8 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
+import 'package:rewayah_academy/features/salle_enseignant/page_coran_salle.dart';
+import 'package:rewayah_academy/features/tc_mushaf/police_mushaf.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/indicateur_observation.dart';
 
 import '../capture/outil_capture.dart';
@@ -810,6 +814,36 @@ void main() {
       // mesurent separement, sinon un refus se confondrait avec un ecran muet.
       expect(moteur.contenusPresentesDemandes.length, 1);
       expect(moteur.dernierContenuPresente, isNull);
+    });
+
+    testWidgets('D9 : l eleve voit la page du Coran que l enseignant '
+        'presente, et rien sans presentation', (WidgetTester tester) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: <Override>[
+          ..._surcharges(
+            video: FauxServiceVideo(acces0: _acces('student')),
+            moteur: moteur,
+            preVol: FauxServicePreVol(),
+          ),
+          // Aucune source reelle du mushaf : la page dit qu'elle ne peut pas
+          // s'afficher, et c'est le composant qui compte ici.
+          policeMushafDisponibleProvider.overrideWith((Ref _) async => false),
+          pageMushafProvider.overrideWith(
+            (Ref _, int _) async => throw StateError('aucune source'),
+          ),
+        ],
+      );
+      expect(find.byKey(SallePage.pageEleveKey), findsNothing);
+
+      // Une RECEPTION, comme si l'enseignant avait tourne la page.
+      moteur.publierContenu(_contenu());
+      await tester.pumpAndSettle();
+
+      final Finder page = find.byKey(SallePage.pageEleveKey);
+      expect(page, findsOneWidget);
+      expect(tester.widget<PageCoranSalle>(page).numero, 42);
     });
 
     testWidgets('un abonne tardif retrouve la page ouverte', (

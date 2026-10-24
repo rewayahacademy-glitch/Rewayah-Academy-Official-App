@@ -234,6 +234,10 @@
   },
   "salle": {
     "retourner": "Retourner dans la salle",
+    "coran": {
+      "indisponible": "La page du Coran ne s'affiche pas sur cet appareil",
+      "indisponibleDetail": "L'écriture de l'édition de Médine n'a pas pu se charger. Réessayez\u00a0; si rien ne change, prévenez la direction."
+    },
     "preparation": {
       "titre": "Préparer l'entrée dans la classe",
       "retour": "Retour à la Classe",

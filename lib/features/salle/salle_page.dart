@@ -50,7 +50,10 @@ import '../../core/widgets/status_pill.dart';
 import '../accueil_eleve/apres_seance_accessibilite.dart';
 import '../controleur/compte_rendu_controle.dart' show adresseCompteRendu;
 import '../fiche_groupe/preparation_seance.dart';
+import '../salle_enseignant/page_coran_salle.dart';
 import '../salle_enseignant/panneau_enseignant.dart';
+import '../salle_enseignant/presentation_coran.dart'
+    show contenuPresenteProvider;
 import '../salle_seance/actions_seance.dart';
 import '../salle_seance/depuis_salle.dart';
 import '../salle_seance/presentation_observee.dart';
@@ -106,6 +109,9 @@ class SallePage extends ConsumerStatefulWidget {
     this.eleveId,
     this.cheminCompteRenduControle = Routes.controleurCompteRendu,
   });
+
+  /// La page du Coran que l'eleve lit en salle (D9).
+  static const Key pageEleveKey = ValueKey<String>('salle-page-eleve');
 
   /// L'eleve qui rejoint la salle depuis l'appareil de son tuteur (D6), lu
   /// dans le billet ; `null` quand la personne connectee entre pour elle-meme.
@@ -729,6 +735,13 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           )
         : null;
 
+    // D9 : l'eleve lit la page du Coran que l'enseignant presente (canal de
+    // donnees, `contenuPresenteProvider`), en lecture seule, dans la meme
+    // composition que la presentation lue (le document, puis la scene).
+    final ContenuPresente? pageEleve = vue.role == RoleSalle.eleve && !enImpasse
+        ? ref.watch(contenuPresenteProvider).value
+        : null;
+
     // CTR-02 : la salle du controleur, la MEME salle (R-salle unique), avec
     // sa zone haute (« Quitter » y vit). Aucune commande en bas : « Son reçu »
     // attend BR-1 (CTRL-SON-1), « Agrandir le support » attend le rendu d'un
@@ -810,6 +823,17 @@ class _SallePageEtat extends ConsumerState<SallePage> {
               vue: vue,
               lignes: lignes,
               document: PanneauEnseignantSalle(seanceId: widget.seanceId),
+            )
+          // D9 : l'eleve voit la page du Coran presentee.
+          : pageEleve != null
+          ? _CorpsDocument(
+              vue: vue,
+              lignes: lignes,
+              document: PageCoranSalle(
+                key: SallePage.pageEleveKey,
+                numero: pageEleve.page,
+              ),
+              presentationLue: true,
             )
           // TB-11a : le tuteur observateur lit la presentation, meme
           // composition (le document d'abord, la scene ensuite).
