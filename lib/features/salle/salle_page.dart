@@ -684,11 +684,15 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       video: moteur.renduVideo,
       // L'enseignant chez l'eleve ; sa propre image chez l'enseignant.
       identiteVignette: enseignant ? moi?.identite : vue.dominant?.identite,
-      page: (SupportPageFixe support) => PageCoranSalle(
-        key: enseignant ? null : SallePage.pageEleveKey,
-        numero: support.page,
-        surCarte: true,
-      ),
+      // L'enseignant garde les etats de lecture de son panneau (page
+      // indisponible, texte non installe) ; l'eleve lit la page (D9).
+      page: (SupportPageFixe support) => enseignant && presentee != null
+          ? PageCoranPresentee(contenu: presentee, surCarte: true)
+          : PageCoranSalle(
+              key: SallePage.pageEleveKey,
+              numero: support.page,
+              surCarte: true,
+            ),
       onZoom: (double z) => setState(() => _zoom = z),
       child: SalleSeance(
         key: const ValueKey<String>('salle-de-seance'),

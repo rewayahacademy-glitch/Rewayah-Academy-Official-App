@@ -19,6 +19,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bouton_icone.dart';
 import 'composition_salle.dart';
 import 'media_salle.dart';
@@ -481,21 +482,37 @@ class _ScenePremierPlan extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ({String libelle, VoidCallback onPress})? autre = action;
-    final VoidCallback? revenir = autre?.onPress ?? onRevenir;
-    final String libelle = autre?.libelle ?? t.salle.revenirALaPage;
+    final VoidCallback? revenir = onRevenir;
     return Stack(
       key: cle,
       children: <Widget>[
         Positioned.fill(child: scene),
-        if (revenir != null)
+        // L'action de la scene (l'enseignant sans page : « Ouvrir le
+        // Coran ») est un vrai bouton a libelle, le seul plein de l'ecran.
+        if (autre != null)
+          PositionedDirectional(
+            top: AppSpacing.sm,
+            start: AppSpacing.lg,
+            end: AppSpacing.lg,
+            child: Align(
+              alignment: AlignmentDirectional.topStart,
+              child: ActionPrincipale(
+                key: const ValueKey<String>('action-scene'),
+                libelle: autre.libelle,
+                pleineLargeur: false,
+                onPress: autre.onPress,
+              ),
+            ),
+          )
+        else if (revenir != null)
           PositionedDirectional(
             top: AppSpacing.sm,
             start: AppSpacing.sm,
             child: BoutonIcone(
               key: const ValueKey<String>('revenir-page'),
               icone: AppIcons.coran,
-              libelle: libelle,
-              infobulle: libelle,
+              libelle: t.salle.revenirALaPage,
+              infobulle: t.salle.revenirALaPage,
               onPress: revenir,
             ),
           ),

@@ -188,7 +188,7 @@ class _CorpsEtat extends ConsumerState<_Corps> {
   Widget build(BuildContext context) {
     final VuePresentation vue = widget.vue;
     final Widget contenu = switch (vue.contenu) {
-      final ContenuPresente pointeur => _PagePresentee(contenu: pointeur),
+      final ContenuPresente pointeur => PageCoranPresentee(contenu: pointeur),
       null => _Vide(
         onOuvrir: vue.commandesActives
             ? () => unawaited(_ouvrirBibliotheque())
@@ -307,19 +307,37 @@ class _Reference extends StatelessWidget {
 }
 
 /// Le contenu presente : la page du mushaf, dans ses quatre etats de lecture.
-class _PagePresentee extends ConsumerWidget {
-  const _PagePresentee({required this.contenu});
+///
+/// S0 : aussi posee par `/salle` dans la surface a page fixe de la salle de
+/// seance ([surCarte] : l'encre de la carte, [SurCarteSalle]).
+class PageCoranPresentee extends ConsumerWidget {
+  /// Cree la page presentee.
+  const PageCoranPresentee({
+    required this.contenu,
+    this.surCarte = false,
+    super.key,
+  });
 
+  /// Le pointeur presente a la classe.
   final ContenuPresente contenu;
 
+  /// Posee sur la carte de la salle de seance.
+  final bool surCarte;
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context, WidgetRef ref) => surCarte
+      ? SurCarteSalle(
+          child: Builder(builder: (BuildContext c) => _etat(c, ref)),
+        )
+      : _etat(context, ref);
+
+  Widget _etat(BuildContext context, WidgetRef ref) {
     final AsyncValue<PageCoran?> page = ref.watch(
       pageCoranProvider(contenu.page),
     );
     final AsyncValue<List<Sourate>?> sourates = ref.watch(souratesProvider);
     // SALLE-ENCRE-1 : les etats sans page se posent sur le fond de la salle.
-    final AppColorPair salle = AppPalette.of(context).surfaceInverse;
+    final AppColorPair salle = encreSalle(context);
 
     final VueLecteur lecteur = VueLecteur.depuis(
       pageDemandee: contenu.page,
@@ -353,7 +371,10 @@ class _PagePresentee extends ConsumerWidget {
         encre: salle,
       ),
       // D9 : la page du mushaf a quinze lignes, plus le texte continu.
-      EtatLecteur.lecture => PageCoranSalle(numero: contenu.page),
+      EtatLecteur.lecture => PageCoranSalle(
+        numero: contenu.page,
+        surCarte: surCarte,
+      ),
     };
   }
 }

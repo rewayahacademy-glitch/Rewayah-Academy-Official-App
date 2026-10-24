@@ -97,7 +97,7 @@ class ChromeSeance extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         tete,
-        Ecart.vSm,
+        Ecart.vXs,
         // La meme gouttiere que la tete : rien ne touche le bord de l'ecran.
         Padding(
           padding: EdgeInsets.symmetric(

@@ -276,10 +276,12 @@ Future<void> quitterLaSalleMa(
   );
   await stabiliserMaApres(tester);
 
-  final Finder quitter = find.bySemanticsLabel(RegExp(t.salle.quitterLeCours));
+  // S0 : la sortie du dock de la salle de seance (« Sortir de la seance »),
+  // confirmee une seule fois par « Quitter ».
+  final Finder quitter = find.bySemanticsLabel(RegExp(t.salle.seance.sortir));
   expect(quitter, findsWidgets);
   await tester.tap(quitter.first);
   await stabiliserMaApres(tester);
-  await tester.tap(find.text(t.salle.quitterLeCours).last);
+  await tester.tap(find.text(t.salle.quitter).last);
   await stabiliserMaApres(tester);
 }

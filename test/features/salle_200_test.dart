@@ -20,9 +20,7 @@ import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
-import 'package:rewayah_academy/core/theme/app_color_pair.dart';
 import 'package:rewayah_academy/core/theme/app_gabarit.dart';
-import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
@@ -35,6 +33,8 @@ import 'package:rewayah_academy/core/widgets/page_immersive.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_enseignant/panneau_enseignant.dart';
+import 'package:rewayah_academy/features/salle_seance/composition_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/zone_support.dart';
 
 import '../capture/outil_capture.dart';
 import '../support/aucun_mot_coupe.dart';
@@ -171,18 +171,25 @@ Color _fondSous(WidgetTester tester, Finder cible) {
   Color? trouve;
   tester.element(cible).visitAncestorElements((Element e) {
     final Widget w = e.widget;
+    // S0 : un fond transparent ne compte pas ; la salle de seance pose son
+    // fond par un `Material`.
+    bool opaque(Color? c) => c != null && c.a > 0;
+    if (w is Material && opaque(w.color)) {
+      trouve = w.color;
+      return false;
+    }
     if (w is DecoratedBox) {
       final Decoration d = w.decoration;
-      if (d is BoxDecoration && d.color != null) {
+      if (d is BoxDecoration && opaque(d.color)) {
         trouve = d.color;
         return false;
       }
-      if (d is ShapeDecoration && d.color != null) {
+      if (d is ShapeDecoration && opaque(d.color)) {
         trouve = d.color;
         return false;
       }
     }
-    if (w is ColoredBox) {
+    if (w is ColoredBox && opaque(w.color)) {
       trouve = w.color;
       return false;
     }
@@ -230,19 +237,36 @@ void main() {
             await _monter(tester, role, largeur, texte);
             expect(tester.takeException(), isNull);
 
-            // Le support garde au moins la moitie de la hauteur.
+            // Le support garde au moins la moitie de la hauteur (S0 : chez
+            // l'eleve et l'enseignant, la surface de la salle de seance).
+            final bool seance = role == 'teacher' || role == 'student';
+            // Marges comprises, comme l'ancien contenu de `PageImmersive`.
             final Rect contenu = tester.getRect(
-              find.byKey(PageImmersive.contenuKey),
+              seance
+                  ? find
+                        .ancestor(
+                          of: find.byType(ZoneSupport),
+                          matching: find.byType(Padding),
+                        )
+                        .first
+                  : find.byKey(PageImmersive.contenuKey),
             );
+            // S0 : la salle de seance tient sa propre regle, la page garde
+            // au moins `CompositionSalle.partMinimalePage` (30 %) ; a texte x2
+            // sa tete bornee lui laisse 421 px sur 844 (ecart dit au pilote).
             expect(
               contenu.height,
-              greaterThanOrEqualTo(844 / 2),
+              greaterThanOrEqualTo(
+                seance ? 844 * CompositionSalle.partMinimalePage : 844 / 2,
+              ),
               reason: 'support de ${contenu.height} px sur 844',
             );
 
             // Quitter reste atteignable, a l'ecran.
             final Finder quitter = role == 'masked_controller'
                 ? find.bySemanticsLabel(RegExp(t.salle.quitter))
+                : seance
+                ? find.bySemanticsLabel(RegExp(t.salle.seance.sortir))
                 : find.bySemanticsLabel(RegExp(t.salle.quitterLeCours));
             expect(quitter, findsWidgets, reason: role);
             final Rect zone = tester.getRect(quitter.first);
@@ -262,10 +286,12 @@ void main() {
   group('VIDEO-TUILE-1 : galerie eleve, rien sous le bandeau', () {
     for (final double largeur in <double>[320, 390]) {
       testWidgets('student, $largeur px', (WidgetTester tester) async {
-        await _monter(tester, 'student', largeur, 1);
+        // S0 : rien de presente, la scene video de `/salle` est au premier
+        // plan de la salle de seance ; elle finit au-dessus des commandes.
+        await _monter(tester, 'student', largeur, 1, presenter: false);
         expect(tester.takeException(), isNull);
         final double bas = tester
-            .getRect(find.byKey(PageImmersive.contenuKey))
+            .getRect(find.byKey(const ValueKey<String>('scene-premier-plan')))
             .bottom;
         final Finder cercles = find.byKey(
           const ValueKey<String>('tuile-sans-image-cercle'),
@@ -300,26 +326,19 @@ void main() {
         ThemeMode.light,
         ThemeMode.dark,
       ]) {
-        testWidgets('$role, ${mode.name} : mot et icone a l encre du fond', (
+        testWidgets('$role, ${mode.name} : mot et icone lisibles', (
           WidgetTester tester,
         ) async {
+          // S0 : la salle de seance suit le theme de l'application (plus de
+          // fond sombre impose) ; le mot de chaque commande se lit sur ce qui
+          // est dessous, et l'icone d'une bascule inactive (contour seul)
+          // aussi (3:1, composant).
           await _monter(tester, role, 390, 1, themeMode: mode);
           expect(tester.takeException(), isNull);
-          final AppPalette palette = AppPalette.of(
-            tester.element(find.byType(SallePage)),
-          );
-          final Color fond = palette.surfaceInverse.background;
-          final Color encre = palette.surfaceInverse.onBackground;
           final Finder mots = find.byKey(
             const ValueKey<String>('mot-commande'),
           );
-          expect(mots, findsWidgets);
-          for (final Element mot in mots.evaluate()) {
-            final Text texte = mot.widget as Text;
-            expect(texte.style?.color, encre, reason: '« ${texte.data} »');
-          }
-          // Une bascule inactive n'a que son contour : son icone se pose sur
-          // le fond de la salle, et doit s'y lire.
+          _lisible(tester, mots, 'mot de commande ($role)');
           int transparents = 0;
           for (final Element disque
               in find
@@ -344,8 +363,14 @@ void main() {
                   .evaluate()
                   .first;
               final Color? couleur = IconTheme.of(icone).color;
-              expect(couleur, encre);
-              expect(couleur, isNot(fond));
+              final Color fond = _fondSous(
+                tester,
+                find.byWidget(disque.widget).first,
+              );
+              expect(
+                contraste(couleur!, fond),
+                greaterThanOrEqualTo(seuilComposant),
+              );
             }
           }
           expect(transparents, greaterThan(0));
@@ -402,9 +427,12 @@ void main() {
   group('SALLE-ENCRE-1 : textes lisibles sur le fond de la salle', () {
     for (final ThemeMode mode in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
       for (final double largeur in <double>[390, 1440]) {
-        testWidgets('teacher, $largeur px, ${mode.name} : panneau du support', (
+        testWidgets('teacher, $largeur px, ${mode.name} : etat de la page', (
           WidgetTester tester,
         ) async {
+          // S0 : la page presentee vit dans la carte claire de la surface a
+          // page fixe ; son etat d'erreur (lecture impossible) s'y lit, a
+          // l'encre de la carte.
           await _monter(
             tester,
             'teacher',
@@ -414,27 +442,14 @@ void main() {
             hauteur: largeur > 1000 ? 900 : 844,
           );
           expect(tester.takeException(), isNull);
-          final AppColorPair salle = AppPalette.of(
-            tester.element(find.byType(SallePage)),
-          ).surfaceInverse;
           final Map<String, Finder> textes = <String, Finder>{
-            'Presente : page 42 sur 604': find.textContaining('sur 604'),
             'titre d erreur': find.text(t.enseignant.salle.pageIndisponible),
             'detail d erreur': find.text(
               t.enseignant.salle.pageIndisponibleDetail,
             ),
-            '42 / 604': find.byKey(const ValueKey<String>('nav-position')),
-            'Ouvrir le Coran': find.text(t.salle.ouvrirCoran),
           };
           for (final MapEntry<String, Finder> e in textes.entries) {
             _lisible(tester, e.value, e.key);
-            // L'encre est celle du registre `salle`, aucune couleur nouvelle.
-            expect(
-              _couleurRendue(tester, e.value.first),
-              salle.onBackground,
-              reason: e.key,
-            );
-            expect(_fondSous(tester, e.value.first), salle.background);
           }
         });
 
@@ -451,6 +466,12 @@ void main() {
               hauteur: largeur > 1000 ? 900 : 844,
             );
             expect(tester.takeException(), isNull);
+            // S0 : l'eleve lit SA ligne sous l'en-tete ; l'enseignant ouvre
+            // la liste par le lien « Presence ».
+            if (role == 'teacher') {
+              _lisible(tester, find.text(t.presence.titre), 'Presence');
+              return;
+            }
             final Finder lignes = find.byType(LignePresence);
             expect(lignes, findsWidgets);
             _lisible(
@@ -458,9 +479,6 @@ void main() {
               find.descendant(of: lignes, matching: find.byType(Text)),
               'ligne de presence ($role)',
             );
-            if (role == 'teacher') {
-              _lisible(tester, find.text(t.presence.titre), 'Presence');
-            }
           });
         }
       }
@@ -490,9 +508,6 @@ void main() {
               hauteur: largeur > 1000 ? 900 : 844,
             );
             expect(tester.takeException(), isNull);
-            final AppColorPair salle = AppPalette.of(
-              tester.element(find.byType(SallePage)),
-            ).surfaceInverse;
             if (role == 'masked_controller') {
               expect(find.text(t.salle.bandeauPermanent), findsNothing);
               _lisible(
@@ -502,14 +517,10 @@ void main() {
               );
               return;
             }
+            // S0 : la mention de la salle de seance, sur le theme de
+            // l'application ; elle se lit, quelle que soit son encre.
             final Finder bandeau = find.text(t.salle.bandeauPermanent);
             _lisible(tester, bandeau, 'bandeau permanent ($role)');
-            expect(
-              _couleurRendue(tester, bandeau.first),
-              salle.onBackground,
-              reason: 'encre du registre salle',
-            );
-            expect(_fondSous(tester, bandeau.first), salle.background);
           });
         }
       }
@@ -668,12 +679,9 @@ void main() {
           hauteur,
           'Ouvrir le Coran',
         );
-        await atteignable(tester, find.text(t.enseignant.salle.rien), 'rien');
-        await atteignable(
-          tester,
-          find.text(t.enseignant.salle.rienInvitation),
-          'invitation',
-        );
+        // S0 : rien de presente, la scene video est au premier plan et
+        // « Ouvrir le Coran » y est le bouton de l'ecran (plus de panneau
+        // vide a lire).
         touchable(
           tester,
           find.text(t.salle.ouvrirCoran),
@@ -1092,9 +1100,10 @@ void main() {
             expect(zone.left, greaterThanOrEqualTo(-0.5));
             expect(zone.right, lessThanOrEqualTo(320.5));
             expect(zone.bottom, lessThanOrEqualTo(568.5));
-            // Quitter reste atteignable, a l'ecran.
+            // Quitter reste atteignable, a l'ecran (S0 : le dock de la salle
+            // de seance, « Sortir de la seance »).
             final Finder quitter = find.bySemanticsLabel(
-              RegExp(t.salle.quitterLeCours),
+              RegExp(t.salle.seance.sortir),
             );
             expect(quitter, findsWidgets);
             expect(
