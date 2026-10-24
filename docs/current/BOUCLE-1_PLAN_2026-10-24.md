@@ -102,9 +102,10 @@ un défaut de l'étape 2 : une pull request, une seule.
 
 ### Étape 3 : un élève et son tuteur dans la classe (K3)
 
-Comptes : le directeur s'inscrit comme tuteur avec une autre adresse e-mail et crée son élève.
-Variante : « Importer les inscriptions » avec les deux CSV du classeur Google, essai à blanc puis
-confirmation.
+Comptes : « Importer les inscriptions » avec les deux CSV du classeur Google des élèves actuels,
+essai à blanc puis confirmation (les élèves existent depuis 2024 : on ne les ressaisit pas).
+Variante pour un premier essai rapide : le directeur s'inscrit comme tuteur avec une autre adresse
+e-mail et crée son élève.
 
 Puis, en direction : Classes, la classe, « Ajouter un élève », choisir l'élève. Le tuteur
 connecté voit la classe et la prochaine séance : vrai.
@@ -144,32 +145,30 @@ du SQL, une règle RLS, un diagnostic, un choix.
 **Vocabulaire des bilans.** « codé », « test local vert », « fusionné », « déployé », « prouvé
 par le directeur ». Seul le dernier vaut « fait ».
 
-## 5. Après la boucle : les boucles suivantes, dans l'ordre des peines du directeur
+## 5. Après la boucle : l'ordre des besoins du directeur (précisé le 24/10/2026)
 
-Précision du directeur du 24/10/2026 : ces besoins sont réels et actuels. L'académie existe
-depuis 2024, 600 candidats enseignants sont inscrits, les familles ne peuvent pas être
-encaissées, et tout passe encore par WhatsApp, Messenger, Meet, Drive et Docs, tenus par une
-seule personne. **Rien n'est supprimé.** Tout se livre dans cet ordre, une boucle à la fois,
-chacune avec ses phrases vraies ou fausses, prouvées par le directeur en production avant
-d'ouvrir la suivante. Une surface large à 80 % ne soulage aucune peine ; une boucle à 100 % en
-soulage une.
+Ces besoins sont réels et actuels : l'académie existe depuis 2024, et tout passe encore par
+WhatsApp, Messenger, Meet, Drive et Docs, tenus par une seule personne. **Rien n'est
+supprimé.** Tout se livre dans cet ordre, une boucle à la fois, chacune avec ses phrases vraies ou
+fausses prouvées par le directeur en production avant d'ouvrir la suivante. Les phrases de chaque
+boucle s'écrivent **avec les mots du directeur, avant tout code**, pour que ce qu'il pense sorte
+comme il le veut.
 
-| Boucle | Peine qu'elle soulage | État réel le 24/10 | Ce qu'il faudra prouver |
+La Boucle 1 reste première parce que tout le reste lit ses données : sans élèves, enseignants,
+classes et séances dans l'application, les listes de la direction sont vides et aucune présence
+ne peut être comptée.
+
+| Boucle | Besoin, dans les mots du directeur | État réel le 24/10 | Ce qu'il faudra prouver |
 |---|---|---|---|
-| 1 | aucune classe ne tourne dans l'application | tout existe, un fil manque | K1 à K4 |
-| 2 | « on ne peut pas faire payer les familles » | fonctions `recharge-payer` et `stripe-webhook` déployées ; le branchement de production dit encore « la recharge reste indisponible : aucun prestataire de paiement réel » (`lib/main.dart`) | une famille paie une classe, l'élève y entre, le reçu est visible par la famille et la direction |
-| 3 | « on ne recrute plus d'enseignants », 600 candidats en attente | module des candidatures en pull request 50 ; paie à 47 % en base | la direction choisit un candidat dans la file, il devient enseignant actif, sa paie d'une séance se calcule |
-| 4 | suivi et contrôle hors WhatsApp | observation, contrôleur, cahier, messages, avis : présents dans le code, jamais prouvés | une séance observée, un cahier déposé, un avis publié |
-| 5 | comptabilité et inscrits actuels | comptable présent dans le code ; import CSV déployé | les inscrits actuels importés, un mois de paie clos |
-
-Entre deux boucles : retirer des menus les capacités encore « indisponibles » de la boucle qui
-vient, pour que la direction ne voie jamais un écran mort. Après K4, et dans la Boucle 3 :
-alléger le portail d'attente des enseignants (choisir d'abord, identifier les retenus ensuite) et
-permettre une classe sans enseignant depuis l'écran Classes.
+| 1 | « il faut que ça fonctionne » : une classe tourne | tout existe, un fil manque | K1 à K4 |
+| 2 | « voir mes élèves actifs ou non, qui paie ou non, qui vient, qui est régulier, qui s'absente ; combien de profs, quel prof enseigne à quel élève ; l'emploi du temps, qui vient à l'heure » | écrans de pilotage, planning, comptes, suivi et présence présents dans le code, jamais prouvés ; le paiement se saisit à la main (lien Wise), et la saisie puis validation d'un paiement existent déjà en base (FAC-D-01) | la direction ouvre un seul tableau et y lit, pour ses élèves importés, ces états sans rien recalculer ailleurs |
+| 3 | « 568 candidats enseignants, je ne peux pas les gérer à la main : un tri simple, trois salles ; tout le monde ne crée pas de compte, tout le monde n'envoie pas de passeport » | feuille Google de 568 réponses (deux onglets) ; module des candidatures en pull request 50, import et rapprochement depuis la feuille déjà en base | la direction voit les 568 dans une liste, trie, n'invite que les retenus à créer un compte, et seuls ceux-là déposent une pièce |
+| 4 | « un espace admin qui marche très bien » | présent, inégal, 77 capacités encore « indisponibles » | chaque menu de la direction mène à un écran qui fait ce qu'il dit, ou n'apparaît pas |
+| 5 | le paiement en ligne, « en dernier pour l'instant » | fonctions déployées, aucun prestataire réel branché, Stripe volontairement non branché | une famille paie dans l'application et l'élève entre dans sa classe |
 
 ## 6. Journal
 
 | Date | Étape | État | Preuve |
 |---|---|---|---|
 | 2026-10-24 | Plan | écrit | ce fichier |
-| 2026-10-24 | Plan §5 | précisé : ordre des boucles 2 à 5 selon les peines du directeur ; le paiement passe en Boucle 2 | ce fichier |
+| 2026-10-24 | Plan §5 | ordre des besoins fixé par le directeur : tableau de la direction, tri des 568 candidats, espace admin, paiement en dernier ; K3 par l'import des élèves actuels | ce fichier |
