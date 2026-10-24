@@ -76,6 +76,18 @@ fusionne, teste K1. Puis K2 (aucun code prévu), K3 par l'import des élèves ac
   élève qu'il connaît, avec son tuteur, dans Comptes.
 - B2.2 Les enseignants actuels sont validés un par un par K1 et affectés à leurs classes réelles,
   jour et heure vrais. Preuve : l'enseignant voit sa classe et sa prochaine séance.
+- B2.2 bis, **avant la vague 1** (décision du 24/10, besoin du directeur : la classe connaît son
+  emploi du temps indéfiniment, la porte s'ouvre vingt minutes avant chaque occurrence, quel que
+  soit le jour) : (a) **la cloche**, une tâche planifiée de nuit (pg_cron, comme `courriels-envoi`)
+  qui prolonge toutes les classes actives pour qu'elles aient toujours quatre semaines de séances
+  devant elles, en rejouant `materialiser_seances_groupe`, qui ignore les séances existantes, sur
+  tous les créneaux de la classe ; (b) **le concierge**, au clic sur « Rejoindre », si la séance
+  prévue par l'emploi du temps manque, elle est créée sur-le-champ, sans doublon sous deux clics
+  simultanés ; (c) l'écran Classes de la direction gagne « ajouter un créneau » pour une classe à
+  plusieurs jours par semaine. Les séances créées à l'avance restent la source des présences, de
+  la paie, des annulations et des remplacements : rien d'autre ne change. Preuve : une classe
+  créée aujourd'hui montre encore sa séance dans cinq semaines, et la porte s'ouvre vingt minutes
+  avant.
 - B2.3 Vague 1 : deux classes tiennent une semaine de séances dans l'application ; les autres
   restent sur Meet et l'enseignant y marque les présences. Preuve : le tableau de la direction
   montre, pour ces classes, qui est venu et qui a manqué, sans rien recalculer ailleurs.
@@ -103,3 +115,4 @@ l'application et l'élève entre dans sa classe.
 | 2026-10-24 | B1 K2, préalables (lecture seule, production) | **aucun code à prévoir**. `creer_groupe` (8 arguments, celle qu'appelle `ServiceGroupesSupabase`, branché par défaut) exige un enseignant `active` ou `provisional_active`, `teacher_profiles.kyc_status = approved`, un genre compatible, un plafond horaire (40 h ici), sans exiger de disponibilités (`false`). `decider_dossier` approuvé passe le compte en `active` **et** `kyc_status` en `approved` : K1 vraie suffit. Le déclencheur `groupes_horaire_verifie_enseignant` (qui exige les disponibilités) ne joue qu'à la modification de l'horaire, pas à la création : l'enseignant de test n'a aucune disponibilité, ce n'est pas un blocage. `groupes_candidat_non_affectable` : il n'a aucune ligne de candidature, rien ne bloque. Séances : le déclencheur `tc_materialiser_apres_creation_groupe` les crée à l'insertion. 0 classe en production | session de travail |
 | 2026-10-24 | B1 K3, préalables (lecture seule, production) | **aucun code à prévoir**. `ajouter_eleve_groupe`, `previsualiser_import_inscriptions`, `confirmer_import_inscriptions` présentes et ouvertes à `authenticated` ; `ImportInscriptionsSupabase` branché dans `main.dart` ; fonction Edge `creer-profil-enfant` active. Le déclencheur `tc_materialiser_apres_adhesion` matérialise à l'ajout d'un élève. En base : 1 admin, 1 enseignant, aucun tuteur ni élève | session de travail |
 | 2026-10-24 | Boucle 2, risque repéré | **aucune tâche planifiée ne prolonge l'horizon des séances** (seul `courriels-envoi` est dans `cron.job`). Les séances ne se créent qu'à la création de la classe, au changement d'horaire, de l'enseignant ou de l'état, et à l'ajout d'un élève, sur quatre semaines. Sans rien de tout cela, une classe n'a plus de séance au bout de quatre semaines. Sans effet sur l'essai K2-K4 du jour ; à traiter avant B2.3 (une migration, donc sur ordre) | session de travail |
+| 2026-10-24 | B2.2 bis | décidé : cloche de nuit (fenêtre glissante), concierge au clic, « ajouter un créneau » | pilote |
