@@ -1524,10 +1524,14 @@ class _SalleEnseignant extends StatelessWidget {
                 // vignette du coin haut.
                 child: Align(
                   alignment: Alignment.bottomCenter,
-                  child: PaletteTableau(
-                    vue: vue,
-                    actions: actions,
-                    verticale: true,
+                  // Standard, point 7 : elle disparait a 3 s avec la barre
+                  // de l'appel et revient au toucher.
+                  child: MasqueAvecCommandes(
+                    child: PaletteTableau(
+                      vue: vue,
+                      actions: actions,
+                      verticale: true,
+                    ),
                   ),
                 ),
               ),

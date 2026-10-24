@@ -1149,11 +1149,6 @@ void main() {
       'ficheEleve.informations.succes': 'photo de la fiche eleve enregistree',
       'parcours.finTitre': 'preference du parcours enregistree',
       'consentement.compte.merci': 'consentement du compte enregistre',
-      // Hors de la salle : l'arabe dit « enregistre » par « تم الحفظ / تم
-      // حفظ » ; ce ne sont ni des notes ni le tableau.
-      'compte.langueCourriels.retour.enregistre':
-          'langue des courriels enregistree',
-      'recrutement.partage.fait.enregistre': 'image de partage enregistree',
     };
 
     final Map<String, Map<String, String>> valeurs =

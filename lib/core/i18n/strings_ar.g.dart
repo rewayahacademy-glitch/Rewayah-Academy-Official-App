@@ -9343,7 +9343,7 @@ class _Traductions$compte$langueCourriels$retour$ar extends Traductions$compte$l
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String enregistre({required Object langue}) => 'تم الحفظ. ستصلك رسائل البريد الإلكتروني والرسائل القادمة بلغة ⁨${langue}⁩.';
+	@override String enregistre({required Object langue}) => 'تم تسجيل اختيارك. ستصلك رسائل البريد الإلكتروني والرسائل القادمة بلغة ⁨${langue}⁩.';
 	@override String get refusee => 'لم تعد هذه اللغة متاحة. اختر لغة أخرى من القائمة.';
 	@override String get refus => 'يمكن لمن سجّل الدخول بملفه الشخصي فقط أن يختار لغته. أعد تسجيل الدخول ثم أعد المحاولة.';
 	@override String get echec => 'لم يتأكد التغيير: قد لا يكون وصل إلى رواية. أعد المحاولة؛ تبقى لغتك السابقة قائمة ما دام التغيير غير مؤكد.';
@@ -14350,7 +14350,7 @@ class _Traductions$recrutement$partage$fait$ar extends Traductions$recrutement$p
 
 	// Translations
 	@override String get partage => 'تمت مشاركة البطاقة.';
-	@override String get enregistre => 'تم حفظ الصورة.';
+	@override String get enregistre => 'تم تسجيل الصورة.';
 	@override String get copie => 'تم نسخ الرابط.';
 }
 
@@ -20743,7 +20743,7 @@ extension on TraductionsAr {
 			'compte.langueCourriels.parDefaut' => 'إن لم تختر لغة، يصلك كل شيء بالفرنسية.',
 			'compte.langueCourriels.optionDetail' => ({required Object langue}) => 'تصلك رسائل البريد الإلكتروني والرسائل بلغة ⁨${langue}⁩.',
 			'compte.langueCourriels.enregistrer' => 'حفظ اللغة',
-			'compte.langueCourriels.retour.enregistre' => ({required Object langue}) => 'تم الحفظ. ستصلك رسائل البريد الإلكتروني والرسائل القادمة بلغة ⁨${langue}⁩.',
+			'compte.langueCourriels.retour.enregistre' => ({required Object langue}) => 'تم تسجيل اختيارك. ستصلك رسائل البريد الإلكتروني والرسائل القادمة بلغة ⁨${langue}⁩.',
 			'compte.langueCourriels.retour.refusee' => 'لم تعد هذه اللغة متاحة. اختر لغة أخرى من القائمة.',
 			'compte.langueCourriels.retour.refus' => 'يمكن لمن سجّل الدخول بملفه الشخصي فقط أن يختار لغته. أعد تسجيل الدخول ثم أعد المحاولة.',
 			'compte.langueCourriels.retour.echec' => 'لم يتأكد التغيير: قد لا يكون وصل إلى رواية. أعد المحاولة؛ تبقى لغتك السابقة قائمة ما دام التغيير غير مؤكد.',
@@ -26927,7 +26927,7 @@ extension on TraductionsAr {
 			'recrutement.partage.sansMenu' => 'لا يتيح هذا الجهاز المشاركة المباشرة. احفظ الصورة لترسلها بنفسك، أو انسخ الرابط.',
 			'recrutement.partage.lienSeul' => 'يشارك هذا الجهاز الرابط دون الصورة. احفظ الصورة إن أردت إرسالها أيضًا.',
 			'recrutement.partage.fait.partage' => 'تمت مشاركة البطاقة.',
-			'recrutement.partage.fait.enregistre' => 'تم حفظ الصورة.',
+			'recrutement.partage.fait.enregistre' => 'تم تسجيل الصورة.',
 			'recrutement.partage.fait.copie' => 'تم نسخ الرابط.',
 			'recrutement.partage.echec.partage' => 'لم تُفتح قائمة المشاركة: رفضها جهازك هذه المرة. يمكنك حفظ الصورة أو نسخ الرابط.',
 			'recrutement.partage.echec.enregistrement' => 'لم يتأكد حفظ الصورة. حاول مرة أخرى، أو انسخ الرابط.',

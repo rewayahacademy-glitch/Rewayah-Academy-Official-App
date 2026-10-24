@@ -2409,6 +2409,27 @@ void main() {
           // Aucun declencheur hors de la pilule.
           expect(find.byKey(DeclencheurCommandes.cle), findsNothing);
           await capturerVue(tester, nom);
+          if (tableau && taille.width >= 1200) {
+            // Point 7 : la palette du tableau disparait a 3 s avec la barre
+            // de l'appel, et revient au toucher.
+            double opacite() => tester
+                .widget<AnimatedOpacity>(
+                  find
+                      .ancestor(
+                        of: find.byKey(PaletteTableau.cle),
+                        matching: find.byType(AnimatedOpacity),
+                      )
+                      .first,
+                )
+                .opacity;
+            expect(opacite(), 1);
+            await tester.pump(const Duration(seconds: 4));
+            await tester.pumpAndSettle();
+            expect(opacite(), 0);
+            await tester.tapAt(const Offset(800, 400));
+            await tester.pumpAndSettle();
+            expect(opacite(), 1);
+          }
         });
       }
     }
