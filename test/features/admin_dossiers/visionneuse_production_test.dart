@@ -1,8 +1,10 @@
 // AD-7 : la visionneuse depuis la VRAIE coque admin et le vrai routeur, avec
 // l'adaptateur de PRODUCTION et un ServiceValidation factice : aucune
-// demonstration pour la revue (K-07). AD-M3-PROD : le vrai branchement
-// (surchargeRevueDossiersProduction) ferme piece et refus jusqu'a BR-1 ; la
-// visionneuse se teste sur l'adaptateur rebranche comme a BR-1.
+// demonstration pour la revue (K-07). Boucle 1, K1 (24/10/2026) : le vrai
+// branchement (surchargeRevueDossiersProduction) ouvre la piece, le refus et,
+// pour un compte `pending_kyc`, la validation. Le second test garde
+// l'adaptateur de test sans etat de compte : la consequence reste inconnue et
+// la validation reste fermee (Q21).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -55,28 +57,56 @@ ActionPrincipale _action(WidgetTester tester, String libelle) =>
     );
 
 void main() {
-  // AD-M3-PROD : le VRAI branchement de main.dart, depuis la coque admin.
-  testWidgets('production depuis la coque : ni « Voir la piece » ni refus, '
-      'aucune URL signee, aucun appel (decision du 27/09)', (
-    WidgetTester tester,
-  ) async {
+  // Boucle 1, K1 : le VRAI branchement de main.dart, depuis la coque admin.
+  testWidgets('production depuis la coque : « Voir la piece » et refus '
+      'ouverts, aucune URL, puis Approuver apres lecture et trois cases '
+      '(Boucle 1, 24/10)', (WidgetTester tester) async {
     final FauxServiceValidation service = await _monterCoque(
       tester,
       surchargeRevueDossiersProduction,
+      etatCompte: AccountStatus.pendingKyc,
     );
-    expect(find.text(t.dossiers.revue.voirPiece), findsNothing);
-    expect(find.text(t.dossiers.refuser), findsNothing);
-    expect(find.text(t.dossiers.approuver), findsNothing);
-    await tester.ensureVisible(
-      find.text(t.dossiers.revue.etats.decisionIndisponible),
-    );
+
+    await tester.ensureVisible(find.text(t.dossiers.refuser));
     await _stabiliser(tester);
+    expect(find.text(t.dossiers.revue.voirPiece), findsOneWidget);
+    expect(_action(tester, t.dossiers.refuser).onPress, isNotNull);
+    expect(find.text(t.dossiers.approuver), findsNothing);
     expect(
       find.text(t.dossiers.revue.etats.decisionIndisponible),
-      findsOneWidget,
+      findsNothing,
     );
-    expect(find.text(t.dossiers.revue.pieceIndisponible), findsOneWidget);
-    expect(service.apercus, isEmpty);
+    expect(find.textContaining('http'), findsNothing);
+
+    await _toucher(tester, find.text(t.dossiers.revue.voirPiece));
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 100)),
+    );
+    await _stabiliser(tester);
+    expect(find.byType(VisionneusePiece), findsOneWidget);
+    expect(service.apercus, <String>['doc1']);
+    expect(find.textContaining('http'), findsNothing);
+    await _toucher(
+      tester,
+      find.descendant(
+        of: find.byType(VisionneusePiece),
+        matching: find.text(t.commun.fermer),
+      ),
+    );
+    expect(find.byType(VisionneusePiece), findsNothing);
+
+    for (final String point in <String>[
+      t.dossiers.pointLisible,
+      t.dossiers.pointNom,
+      t.dossiers.pointValidite,
+    ]) {
+      await _toucher(tester, find.text(point));
+    }
+    await tester.ensureVisible(find.text(t.dossiers.approuver));
+    await tester.pumpAndSettle();
+    expect(find.text(t.dossiers.approuver), findsOneWidget);
+    expect(_action(tester, t.dossiers.approuver).onPress, isNotNull);
+    expect(find.text(t.dossiers.validation.indisponible), findsNothing);
     expect(service.verdicts, isEmpty);
   });
 
@@ -132,11 +162,14 @@ void main() {
 }
 
 /// Monte la vraie coque admin avec [revue] comme adaptateur de revue, puis
-/// ouvre le dossier de Moussa depuis « Personnes ».
+/// ouvre le dossier de Moussa depuis « Personnes ». [etatCompte] est l'etat
+/// du compte renvoye par `dossiers_en_attente` ; nul, la consequence reste
+/// inconnue et la validation reste fermee.
 Future<FauxServiceValidation> _monterCoque(
   WidgetTester tester,
-  Override revue,
-) async {
+  Override revue, {
+  AccountStatus? etatCompte,
+}) async {
   tester.view.physicalSize = const Size(1440, 900);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.resetPhysicalSize);
@@ -153,6 +186,7 @@ Future<FauxServiceValidation> _monterCoque(
         nom: 'Barry',
         identifiantImmuable: 'TEACHER-MB-000001',
         role: AppRole.teacher,
+        etatCompte: etatCompte,
       ),
     ];
   final EtatRevueDemo e = EtatRevueDemo.initial();

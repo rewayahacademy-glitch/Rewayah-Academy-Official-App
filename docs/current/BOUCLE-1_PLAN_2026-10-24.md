@@ -156,3 +156,4 @@ commençant par celles que la boucle a touchées.
 | Date | Étape | État | Preuve |
 |---|---|---|---|
 | 2026-10-24 | Plan | écrit | ce fichier |
+| 2026-10-24 | Étape 1 (K1) | codé, test local vert (276 tests ciblés, analyse et vérificateurs CI sans défaut) ; non fusionné | branche `claude/admiring-brown-r6ai72` |
