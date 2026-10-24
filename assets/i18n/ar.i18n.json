@@ -528,6 +528,7 @@
     "entree": {
       "coursDans": "الدرس بعد ⁨{duree}⁩",
       "coursImminent": "الدرس بعد أقل من دقيقة",
+      "revenirAvant": "هذا الدرس غير مفتوح لك الآن. عُد قبل موعد الدرس بعشرين دقيقة.",
       "rejoindre": "انضمام",
       "rejoindreLecteur": "الانضمام إلى حصة ⁨{deClasse}⁩",
       "salleOuverte": "القاعة مفتوحة. تبدأ الحصة بعد ⁨{duree}⁩.",

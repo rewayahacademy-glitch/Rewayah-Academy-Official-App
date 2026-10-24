@@ -6770,6 +6770,7 @@
     "entree": {
       "coursDans": "Cours dans {duree}",
       "coursImminent": "Cours dans moins d'une minute",
+      "revenirAvant": "Ce cours ne vous est pas ouvert en ce moment. Revenez 20 minutes avant l'heure du cours.",
       "rejoindre": "Rejoindre",
       "rejoindreLecteur": "Rejoindre la séance {deClasse}",
       "salleOuverte": "La salle est ouverte. La séance commence dans {duree}.",

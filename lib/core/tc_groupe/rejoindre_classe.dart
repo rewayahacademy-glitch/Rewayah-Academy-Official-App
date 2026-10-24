@@ -10,9 +10,9 @@ import 'concierge_seance.dart';
 /// [sessionId] connu : [entrer] tout de suite, aucun appel serveur (rien ne
 /// change). Inconnu alors que la fenetre d'entree est ouverte : le concierge
 /// (`seance_a_rejoindre`) rend la seance, creee si elle manquait, puis
-/// [entrer] avec elle. Sans seance rendue, ou refus : la phrase de la salle
-/// (« Ce cours ne vous est pas ouvert en ce moment ») ; panne : la phrase
-/// existante de la seance illisible. La phrase est retenue par Classe
+/// [entrer] avec elle. Sans seance rendue, ou refus : ce qui manque et quoi
+/// faire (K-59, « … Revenez 20 minutes avant l'heure du cours. ») ; panne :
+/// la phrase existante de la seance illisible. La phrase est retenue par Classe
 /// ([refusEntreeProvider]), dite sous le bouton par l'hote et annoncee ; le
 /// bouton reste actif, un nouvel appui redemande.
 Future<void> rejoindreClasse(
@@ -41,9 +41,9 @@ Future<void> rejoindreClasse(
       if (contexte.mounted) entrer(rendue);
       return;
     }
-    phrase = t.salle.refusAcces;
+    phrase = t.classe.entree.revenirAvant;
   } on RefusConcierge {
-    phrase = t.salle.refusAcces;
+    phrase = t.classe.entree.revenirAvant;
   } on Object {
     phrase = t.classe.entree.indisponible;
   }

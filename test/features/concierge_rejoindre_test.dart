@@ -271,7 +271,7 @@ void main() {
       expect(concierge.appels, <String>[_groupeId]);
       expect(entrees, isEmpty);
       expect(find.byKey(EmplacementEntreeVue.cleRefus), findsOneWidget);
-      expect(find.text(t.salle.refusAcces), findsOneWidget);
+      expect(find.text(t.classe.entree.revenirAvant), findsOneWidget);
     });
 
     testWidgets('refus du serveur : la phrase de la salle, sans entrer', (
@@ -286,7 +286,7 @@ void main() {
         concierge: concierge,
       );
       expect(entrees, isEmpty);
-      expect(find.text(t.salle.refusAcces), findsOneWidget);
+      expect(find.text(t.classe.entree.revenirAvant), findsOneWidget);
     });
 
     testWidgets('panne : la phrase de la seance illisible, sans entrer', (
@@ -362,7 +362,7 @@ void main() {
         expect(concierge.appels, <String>[_groupeId]);
         expect(billet, isNull);
         expect(find.byKey(surface.$3), findsOneWidget);
-        expect(find.text(t.salle.refusAcces), findsOneWidget);
+        expect(find.text(t.classe.entree.revenirAvant), findsOneWidget);
       });
 
       testWidgets('refus du serveur : la phrase, sans entrer', (
@@ -378,7 +378,7 @@ void main() {
           concierge: concierge,
         );
         expect(billet, isNull);
-        expect(find.text(t.salle.refusAcces), findsOneWidget);
+        expect(find.text(t.classe.entree.revenirAvant), findsOneWidget);
       });
     });
   }

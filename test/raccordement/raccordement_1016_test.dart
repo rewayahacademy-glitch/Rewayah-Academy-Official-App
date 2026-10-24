@@ -86,7 +86,7 @@ const String _classeB = '22222222-2222-4222-8222-222222222222';
 const String _seance = '33333333-3333-4333-8333-333333333333';
 const String _eleve = '44444444-4444-4444-8444-444444444444';
 
-Map<String, dynamic> _ligneHorloge(String seance, String debut) =>
+Map<String, dynamic> _ligneHorloge(String? seance, String debut) =>
     <String, dynamic>{
       'session_id': seance,
       'debut_utc': debut,
@@ -175,6 +175,12 @@ void main() {
   setUp(() async {
     serveur = _Serveur();
     await serveur.demarrer();
+    // `horloge_classe` (concierge (a), 24/10/2026) n'est pas encore sur la
+    // base : l'adaptateur garde l'ancien chemin.
+    serveur.reponses['rpc/horloge_classe'] = (
+      statut: 404,
+      corps: <String, dynamic>{'code': 'PGRST202', 'message': 'absente'},
+    );
   });
 
   tearDown(() => serveur.arreter());
@@ -255,6 +261,52 @@ void main() {
         cadence: const Duration(hours: 1),
       ).suivre(groupeId: _classe).first;
       expect(premier.sessionId, _seance);
+    });
+  });
+
+  group('Concierge (a) : l horloge tiree du creneau de la Classe', () {
+    test('horloge_classe repond : une seule lecture, session_id nul tant '
+        'que la seance n existe pas', () async {
+      serveur.reponses['rpc/horloge_classe'] = (
+        statut: 200,
+        corps: <Object>[_ligneHorloge(null, '2026-10-20T09:00:00Z')],
+      );
+      final SessionClockVM? h = await HorlogeSeanceSupabase(serveur.client)
+          .horlogeDe(groupeId: _classe);
+      expect(h, isNotNull);
+      expect(h!.sessionId, isNull);
+      expect(h.debutUtc, DateTime.utc(2026, 10, 20, 9));
+      expect(serveur.vers('rpc/horloge_classe').single.corps, <String, dynamic>{
+        'p_groupe_id': _classe,
+      });
+      expect(serveur.vers('rpc/prochaine_seance_groupe'), isEmpty);
+      expect(serveur.vers('rpc/horloge_seance'), isEmpty);
+    });
+
+    test('horloge_classe vide : null, aucune horloge fabriquee', () async {
+      serveur.reponses['rpc/horloge_classe'] = (
+        statut: 200,
+        corps: const <Object>[],
+      );
+      expect(
+        await HorlogeSeanceSupabase(serveur.client)
+            .horlogeDe(groupeId: _classe),
+        isNull,
+      );
+      expect(serveur.vers('rpc/prochaine_seance_groupe'), isEmpty);
+    });
+
+    test('Classe qui ne concerne pas l appelant (42501) : null', () async {
+      serveur.reponses['rpc/horloge_classe'] = (
+        statut: 403,
+        corps: <String, dynamic>{'code': '42501', 'message': 'refus'},
+      );
+      expect(
+        await HorlogeSeanceSupabase(serveur.client)
+            .horlogeDe(groupeId: _classe),
+        isNull,
+      );
+      expect(serveur.vers('rpc/prochaine_seance_groupe'), isEmpty);
     });
   });
 
