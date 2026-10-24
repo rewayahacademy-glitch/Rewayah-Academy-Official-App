@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart' show Ref;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/coran/service_coran.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -34,6 +35,8 @@ import '../capture/outil_capture.dart';
 import '../support/aucun_mot_coupe.dart';
 import '../support/harnais.dart';
 import '../support/hors_ligne_une_fois.dart';
+import '../support/mushaf_15l.dart'
+    show chargerPoliceMadina15, surchargesMadina15;
 import '../teaching_core/e/faux/faux_classe.dart';
 
 const String _seance = 's1';
@@ -1698,4 +1701,91 @@ void main() {
       expect(find.byKey(const ValueKey<String>('salle-eleves')), findsNothing);
     });
   });
+
+  // D9 (24/10/2026) : captures de la page du Coran en salle, enseignant et
+  // eleve, avec les VRAIES polices (UthmanicHafs comprise) et les vraies
+  // lignes de l'edition de Medine. Sautees sans CAPTURE_DIR.
+  group('D9 : captures de la page du Coran en salle', () {
+    setUpAll(() async {
+      await chargerPolicesDuDepot();
+      await chargerPoliceMadina15();
+    });
+
+    const Map<String, Size> tailles = <String, Size>{
+      '390-portrait': Size(390, 844),
+      '390-paysage': Size(844, 390),
+      '1366': Size(1366, 768),
+    };
+    for (final MapEntry<String, Size> taille in tailles.entries) {
+      for (final String role in <String>['enseignant', 'eleve']) {
+        testWidgets('page du Coran, $role, ${taille.key}', (
+          WidgetTester tester,
+        ) async {
+          masquerRubanDebug();
+          tester.view.physicalSize = taille.value;
+          tester.view.devicePixelRatio = 1;
+          addTearDown(tester.view.reset);
+          final bool enseignant = role == 'enseignant';
+          final FauxMoteurSalle moteur = FauxMoteurSalle();
+          await _monterSalle(
+            tester,
+            surcharges: <Override>[
+              ..._surcharges(
+                video: FauxServiceVideo(
+                  acces0: _acces(enseignant ? 'teacher' : 'student'),
+                ),
+                moteur: moteur,
+                preVol: FauxServicePreVol(),
+                role: enseignant ? AppRole.teacher : AppRole.student,
+              ),
+              ...surchargesMadina15(page: 293),
+              // Le panneau de l'enseignant lit d'abord la page par le service
+              // du Coran (etats de lecture) : une page 293 en memoire.
+              pageCoranProvider.overrideWith(
+                (Ref _, int n) async => PageCoran(
+                  numero: n,
+                  versets: <VersetCoran>[
+                    VersetCoran(
+                      sourateNumero: 18,
+                      numero: 1,
+                      texte: 'verset',
+                      pageNumero: n,
+                    ),
+                  ],
+                ),
+              ),
+              souratesProvider.overrideWith(
+                (Ref _) async => const <Sourate>[
+                  Sourate(
+                    numero: 18,
+                    nomArabe: 'الكهف',
+                    nomTranslittere: 'Al-Kahf',
+                    lieuRevelation: 'mecque',
+                    nombreVersets: 110,
+                  ),
+                ],
+              ),
+            ],
+          );
+          // La page 293 (Al-Kahf) : celle des captures de Madina-15.
+          final ContenuPresente contenu = ContenuPresente(
+            page: 293,
+            sourate: 18,
+            verset: 1,
+            presentePar: 'p1',
+            emisLe: DateTime.now(),
+          );
+          if (enseignant) {
+            await moteur.presenterContenu(contenu);
+          } else {
+            moteur.publierContenu(contenu);
+          }
+          await tester.pumpAndSettle();
+          expect(find.byType(PageCoranSalle), findsOneWidget);
+          expect(find.byKey(PageCoranSalle.cle), findsOneWidget);
+          await capturerVue(tester, 'd9-coran-salle-$role-${taille.key}');
+        });
+      }
+    }
+  }, skip: sautSansCapture);
 }

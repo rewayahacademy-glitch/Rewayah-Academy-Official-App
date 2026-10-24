@@ -22,7 +22,8 @@ import 'package:rewayah_academy/features/avis_public/avis_public_page.dart';
 import 'package:rewayah_academy/features/salle_seance/information_controle.dart'
     show coupuresAdresse;
 
-import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
+import '../../capture/outil_capture.dart'
+    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
 import '../../support/aucun_mot_coupe.dart';
 import '../../support/garde_interface.dart';
 import '../../support/monter_recrutement.dart';
@@ -578,6 +579,27 @@ void main() {
       }
     }
   });
+
+  // AVIS-UI (24/10/2026) : les deux cartes « Vous etes » a 390 px, avec les
+  // VRAIES polices (la police de test dessine chaque caractere en carre).
+  // Sautee sans CAPTURE_DIR.
+  group('AVIS-UI : capture des cartes « Vous etes »', () {
+    setUpAll(chargerPolicesDuDepot);
+
+    testWidgets('390 px', (tester) async {
+      masquerRubanDebug();
+      await _monter(tester, _port());
+      final Size parent = tester.getSize(
+        find.byKey(AvisPublicPage.qualiteKey(QualiteAvis.parent)),
+      );
+      final Size adulte = tester.getSize(
+        find.byKey(AvisPublicPage.qualiteKey(QualiteAvis.eleveAdulte)),
+      );
+      // ignore: avoid_print
+      print('AVIS-UI cartes a 390 px : parent=$parent adulte=$adulte');
+      await capturerVue(tester, 'avis-ui-vous-etes-390');
+    });
+  }, skip: sautSansCapture);
 }
 
 /// Un port dont la lecture de l'etat du lien attend.
