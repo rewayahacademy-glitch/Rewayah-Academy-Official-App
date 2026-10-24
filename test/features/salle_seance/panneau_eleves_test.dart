@@ -369,11 +369,20 @@ void main() {
       WidgetTester tester,
     ) async {
       // K-55 : 16 entre deux fiches (au lieu de 4) ; la liste defile, le
-      // dernier inscrit peut donc finir sous le bord, mais il commence a
-      // l'ecran et les precedents tiennent entiers.
+      // dernier inscrit peut donc finir sous le bord, mais les precedents
+      // tiennent entiers. Standard des commandes d'appel (24/10/2026) : la
+      // pilule de 56 prend 16 de plus, le dernier inscrit s'atteint en
+      // faisant defiler la liste.
       await _monter(tester, _tailles['mobile']!);
       final List<EleveSeance> eleves = _vue(RoleSeance.enseignant).eleves;
       for (int i = 0; i < eleves.length; i++) {
+        if (i == eleves.length - 1) {
+          await tester.scrollUntilVisible(
+            find.byKey(ValueKey<String>('eleve-${eleves[i].prenom}')),
+            64,
+            scrollable: find.byType(Scrollable).last,
+          );
+        }
         final Rect r = tester.getRect(
           find.byKey(ValueKey<String>('eleve-${eleves[i].prenom}')),
         );

@@ -7,18 +7,19 @@ class ConciergeMemoire implements PortConcierge {
   /// `null`). [refus] : le refus leve pour toute Classe. [panne] : l'erreur
   /// levee pour toute Classe.
   ConciergeMemoire({
-    Map<String, String> seances = const <String, String>{},
+    this.seances = const <String, String>{},
     this.refus,
     this.panne,
-  }) : _seances = seances;
+  });
 
-  final Map<String, String> _seances;
+  /// La seance rendue par Classe.
+  final Map<String, String> seances;
 
   /// Le refus leve a chaque appel, s'il est pose.
   final MotifRefusConcierge? refus;
 
   /// L'erreur levee a chaque appel, si elle est posee.
-  final Object? panne;
+  final Exception? panne;
 
   /// Les Classes demandees, dans l'ordre.
   final List<String> appels = <String>[];
@@ -26,10 +27,10 @@ class ConciergeMemoire implements PortConcierge {
   @override
   Future<String?> seanceARejoindre(String groupeId) async {
     appels.add(groupeId);
-    final Object? erreur = panne;
+    final Exception? erreur = panne;
     if (erreur != null) throw erreur;
     final MotifRefusConcierge? motif = refus;
     if (motif != null) throw RefusConcierge(motif);
-    return _seances[groupeId];
+    return seances[groupeId];
   }
 }

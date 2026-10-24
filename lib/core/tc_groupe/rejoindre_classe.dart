@@ -32,7 +32,7 @@ Future<void> rejoindreClasse(
     entrer(sessionId);
     return;
   }
-  final String phrase;
+  String phrase;
   try {
     final String? rendue = await conteneur
         .read(portConciergeProvider)

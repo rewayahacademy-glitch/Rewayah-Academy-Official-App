@@ -237,21 +237,15 @@ class _Haut extends StatelessWidget {
     final ({int nombre, VoidCallback onPress})? eleves = media?.boutonEleves;
     final AppPalette palette = AppPalette.of(context);
     // Standard des commandes d'appel (24/10/2026) : une pilule translucide en
-    // haut a gauche, hauteur 36, une seule ligne : « ● En ligne · Visite de
-    // controle possible. » (ADR-011) ; a droite, alignes sur la meme ligne,
-    // le bouton rond « Eleves » et la vignette. Marge 16 des bords.
+    // haut a gauche, hauteur 36 : « ● En ligne · Visite de controle
+    // possible. » (ADR-011), seule sur sa rangee ; dessous, a droite, le
+    // bouton rond « Eleves » et la vignette. Marge 16 des bords.
     final TextStyle style = palette.piluleSalle.applyTo(
       Theme.of(context).textTheme.labelMedium ?? const TextStyle(),
     );
-    final double droite =
-        (vignette ? largeurVignetteTelephone + AppSpacing.sm : 0) +
-        (eleves != null ? AppTouchTarget.standard + AppSpacing.sm : 0);
     final Widget ligne = ConstrainedBox(
       constraints: BoxConstraints(
-        maxWidth: math.max(
-          0,
-          largeur - 2 * AppSpacing.lg - (aCote ? 0 : droite),
-        ),
+        maxWidth: math.max(0, largeur - 2 * AppSpacing.lg),
         minHeight: AppSpacing.xxxl + AppSpacing.xs,
       ),
       child: DecoratedBox(
@@ -283,15 +277,10 @@ class _Haut extends StatelessWidget {
                   ),
                   child: Text('\u00b7', style: style),
                 ),
-                // Une seule ligne : coupee, la notice finit en points de
-                // suspension ; le lecteur d'ecran lit la phrase entiere.
+                // La phrase entiere, jamais coupee (ADR-011) ; aucun lien
+                // dessous, la mention elle-meme ouvre la lecture.
                 Flexible(
-                  child: DefaultTextStyle.merge(
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    softWrap: false,
-                    child: MentionSeance(vue: vue, lienSousLaLigne: false),
-                  ),
+                  child: MentionSeance(vue: vue, lienSousLaLigne: false),
                 ),
               ],
             ],
@@ -307,25 +296,34 @@ class _Haut extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Expanded(
-                  child: Align(
-                    alignment: AlignmentDirectional.topStart,
-                    child: ligne,
-                  ),
+            // Arbitrage du pilote (24/10/2026) : la pilule d'etat occupe seule
+            // la premiere rangee, a gauche, phrase entiere ; Eleves et la
+            // vignette descendent sur une seconde rangee, a droite, 8 sous la
+            // pilule.
+            Align(alignment: AlignmentDirectional.topStart, child: ligne),
+            if (eleves != null || vignette) ...<Widget>[
+              Ecart.vSm,
+              Align(
+                alignment: AlignmentDirectional.topEnd,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: AppSpacing.sm,
+                  children: <Widget>[
+                    if (eleves != null)
+                      _BoutonEleves(
+                        nombre: eleves.nombre,
+                        onPress: eleves.onPress,
+                      ),
+                    if (vignette)
+                      VignetteVideo(
+                        vue: vue,
+                        largeur: largeurVignetteTelephone,
+                      ),
+                  ],
                 ),
-                if (eleves != null) ...<Widget>[
-                  Ecart.hSm,
-                  _BoutonEleves(nombre: eleves.nombre, onPress: eleves.onPress),
-                ],
-                if (vignette) ...<Widget>[
-                  Ecart.hSm,
-                  VignetteVideo(vue: vue, largeur: largeurVignetteTelephone),
-                ],
-              ],
-            ),
+              ),
+            ],
             BandeauSecours(vue: vue, actions: actions, gouttiere: 0),
             ?alerte,
           ],

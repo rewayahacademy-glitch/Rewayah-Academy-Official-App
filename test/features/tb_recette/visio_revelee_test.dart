@@ -108,7 +108,8 @@ void main() {
         await _attendreDelai(tester);
         expect(_visible(tester), isFalse);
         expect(_ignorees(tester), isTrue);
-        final String micro = find.text(t.salle.microOuvert).evaluate().isEmpty
+        final String micro =
+            find.byTooltip(t.salle.microOuvert).evaluate().isEmpty
             ? t.salle.microCoupe
             : t.salle.microOuvert;
         // Un doigt au milieu du support.
@@ -130,7 +131,7 @@ void main() {
           expect(x[0], lessThan(x[1]));
           expect(x[1], lessThan(x[2]));
         }
-        expect(find.text(micro), findsWidgets);
+        expect(find.byTooltip(micro), findsWidgets);
         expect(_question, findsNothing);
         expect(tester.takeException(), isNull);
       });
@@ -187,12 +188,12 @@ void main() {
   ) async {
     await _ouvrir(tester, RoleSeance.eleve);
     final Rect avant = _support(tester);
-    expect(find.text(t.salle.microOuvert), findsOneWidget);
+    expect(find.byTooltip(t.salle.microOuvert), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey<String>('bouton-micro')));
     await _fondre(tester);
-    expect(find.text(t.salle.microCoupe), findsOneWidget);
-    expect(find.text(t.salle.microOuvert), findsNothing);
-    expect(find.text(t.salle.cameraAllumee), findsOneWidget);
+    expect(find.byTooltip(t.salle.microCoupe), findsOneWidget);
+    expect(find.byTooltip(t.salle.microOuvert), findsNothing);
+    expect(find.byTooltip(t.salle.cameraAllumee), findsOneWidget);
     expect(_question, findsNothing);
     expect(_support(tester), avant);
     // Aucun calque d'annotation n'est monte avant TB-7a : la part
@@ -370,10 +371,22 @@ void main() {
         final Rect barre = tester.getRect(
           find.byKey(CommandesMasquables.commandesKey),
         );
+        // Standard des commandes d'appel : une seule pilule d'icones, d'une
+        // rangee a ces tailles ; elle tient sous le tiers de l'ecran et ne
+        // cache plus de contenu a elle seule (avant : barre a mots, plus
+        // haute, qui chevauchait le contenu).
         expect(
-          contenu.overlaps(barre),
-          isTrue,
-          reason: 'la barre depasse le tiers : elle chevauche le contenu',
+          barre.height,
+          lessThanOrEqualTo(taille.height / 3),
+          reason: 'la pilule tient sur une rangee, sous le tiers',
+        );
+        expect(
+          find.descendant(
+            of: find.byKey(CommandesMasquables.commandesKey),
+            matching: find.byType(Text),
+          ),
+          findsNothing,
+          reason: 'aucun mot visible dans la barre',
         );
         // L'ordre de peinture : le contenu d'abord, la barre ensuite.
         final RenderObject quitter = tester.renderObject(_quitter);
@@ -390,7 +403,11 @@ void main() {
         expect(sous(quitter, dessous), isFalse);
         // Le doigt : la barre d'abord.
         final Offset ou = tester.getCenter(_quitter);
-        expect(contenu.contains(ou), isTrue, reason: 'Quitter sur le contenu');
+        expect(
+          contenu.contains(ou),
+          isTrue,
+          reason: 'la barre est posee sur la zone du contenu',
+        );
         final HitTestResult touche = tester.hitTestOnBinding(ou);
         expect(
           touche.path.any((HitTestEntry e) => identical(e.target, quitter)),
@@ -404,33 +421,46 @@ void main() {
     }
   });
 
-  // Defaut TB-F (fiche TB-2) : a 390 x1, Quitter n'avait plus de libelle
-  // (guidee en Mode Accessibilite, enseignant en dock serre). La sortie garde
-  // son mot, entier, sur une ligne, dans l'ecran.
-  group('Quitter garde son libelle dans la barre', () {
-    for (final RoleSeance role in RoleSeance.values) {
-      for (final Size taille in <Size>[const Size(320, 700), _telephone]) {
-        testWidgets('${role.name} ${taille.width.toInt()} x1', (
-          WidgetTester tester,
-        ) async {
-          await _ouvrir(tester, role, taille: taille);
-          final Finder mot = find.descendant(
-            of: _quitter,
-            matching: find.text(t.salle.quitter),
-          );
-          expect(mot, findsOneWidget);
-          final RenderParagraph p = tester.renderObject<RenderParagraph>(mot);
-          expect(p.didExceedMaxLines, isFalse, reason: 'mot coupe');
-          final Rect r = tester.getRect(mot);
-          expect(r.left, greaterThanOrEqualTo(0));
-          expect(r.right, lessThanOrEqualTo(taille.width));
-          expect(r.bottom, lessThanOrEqualTo(taille.height));
-          expect(tester.getRect(_quitter).height, greaterThanOrEqualTo(48));
-          expect(tester.takeException(), isNull);
-        });
+  // Standard des commandes d'appel (24/10/2026) : Quitter est un bouton rond
+  // rouge, plus large, sans aucun mot visible ; son nom est l'infobulle et
+  // la voix du lecteur d'ecran. Il reste entier dans l'ecran, a 48 au moins.
+  group(
+    'Quitter reste nomme, sans mot visible (standard des commandes d\'appel)',
+    () {
+      for (final RoleSeance role in RoleSeance.values) {
+        for (final Size taille in <Size>[const Size(320, 700), _telephone]) {
+          testWidgets('${role.name} ${taille.width.toInt()} x1', (
+            WidgetTester tester,
+          ) async {
+            await _ouvrir(tester, role, taille: taille);
+            expect(
+              find.descendant(of: _quitter, matching: find.byType(Text)),
+              findsNothing,
+              reason: 'aucun mot visible dans le bouton',
+            );
+            expect(
+              find.descendant(
+                of: _quitter,
+                matching: find.byTooltip(t.salle.quitter),
+              ),
+              findsOneWidget,
+            );
+            final Rect r = tester.getRect(
+              find.descendant(
+                of: _quitter,
+                matching: find.byKey(const ValueKey<String>('disque-appel')),
+              ),
+            );
+            expect(r.left, greaterThanOrEqualTo(0));
+            expect(r.right, lessThanOrEqualTo(taille.width));
+            expect(r.bottom, lessThanOrEqualTo(taille.height));
+            expect(r.height, greaterThanOrEqualTo(48));
+            expect(tester.takeException(), isNull);
+          });
+        }
       }
-    }
-  });
+    },
+  );
 
   testWidgets('UX-08 : Tab revele la barre, entre par « Commandes de '
       'l\'appel », puis Micro', (WidgetTester tester) async {
@@ -494,7 +524,7 @@ void main() {
       adresseDemoSalle(RoleSeance.eleve, EtatDemoSalle.microBloque),
     );
     expect(lieu(routeur), contains('microBloque'));
-    expect(find.text(t.salle.microOuvert), findsNothing);
+    expect(find.byTooltip(t.salle.microOuvert), findsNothing);
     // Aucune interaction : deux delais passent, la barre reste (§18.1).
     await _attendreDelai(tester);
     await _attendreDelai(tester);
@@ -505,8 +535,8 @@ void main() {
     await _fondre(tester);
     await _attendreDelai(tester);
     expect(_visible(tester), isTrue);
-    expect(find.text(t.salle.microOuvert), findsNothing);
-    expect(find.text(t.salle.microCoupe), findsOneWidget);
+    expect(find.byTooltip(t.salle.microOuvert), findsNothing);
+    expect(find.byTooltip(t.salle.microCoupe), findsOneWidget);
   });
 
   // Plan V2 §18.1 : « Erreur critique de connexion ou media : barre

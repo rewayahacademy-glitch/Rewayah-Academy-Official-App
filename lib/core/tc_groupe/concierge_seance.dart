@@ -48,9 +48,8 @@ abstract interface class PortConcierge {
 
 /// Choisit le port selon le mode de compilation : le double ne sort que sous
 /// `PLAYGROUND=true`, et n'y rend aucune seance.
-PortConcierge portConciergeSelon({required bool demo}) => demo
-    ? ConciergeMemoire()
-    : ConciergeSupabase(Supabase.instance.client);
+PortConcierge portConciergeSelon({required bool demo}) =>
+    demo ? ConciergeMemoire() : ConciergeSupabase(Supabase.instance.client);
 
 /// Le concierge employe par l'application.
 final Provider<PortConcierge> portConciergeProvider = Provider<PortConcierge>(

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
@@ -5,6 +7,7 @@ import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
+import '../../core/tc_groupe/rejoindre_classe.dart';
 import '../tc_espace_groupe/espace_groupe_page.dart';
 import '../tc_espace_groupe/roster_enseignant_slot.dart';
 import 'chemins_tc_a.dart';
@@ -63,18 +66,27 @@ List<RouteBase> routesTcA({RoleEspaceGroupe role = RoleEspaceGroupe.eleve}) =>
 /// Aucune nouvelle route : le billet passe par `extra`, jamais par l'URL
 /// (ADR-005). Aussi le « Rejoindre » de l'Accueil adulte (DASH-EA-PROD).
 /// Le nom est reste (usage dans `routes_accueil_adulte.dart`).
+///
+/// Seance connue : on entre, sans appel serveur. Seance illisible alors que
+/// le bouton est offert (fenetre ouverte) : le concierge
+/// (`seance_a_rejoindre`) la rend, creee si elle manquait, puis on entre avec
+/// elle ; sinon la phrase de refus est dite sous le bouton
+/// ([rejoindreClasse], B2.2 bis (b)).
 void preparerSalleEleve(BuildContext contexte, GroupSummaryVM groupe) {
-  final String? sessionId = groupe.prochaineSeance?.sessionId;
-  if (sessionId == null) {
-    return;
-  }
-  GoRouter.of(contexte).go(
-    Routes.salle,
-    extra: BilletSalle(
-      sessionId: sessionId,
-      emisA: DateTime.now(),
-      preparation: true,
+  unawaited(
+    rejoindreClasse(
+      contexte,
       groupeId: groupe.groupeId,
+      sessionId: groupe.prochaineSeance?.sessionId ?? groupe.horloge?.sessionId,
+      entrer: (String sessionId) => GoRouter.of(contexte).go(
+        Routes.salle,
+        extra: BilletSalle(
+          sessionId: sessionId,
+          emisA: DateTime.now(),
+          preparation: true,
+          groupeId: groupe.groupeId,
+        ),
+      ),
     ),
   );
 }

@@ -6,6 +6,7 @@ import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/tc_groupe/concierge_seance.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_groupe/port_groupes.dart';
@@ -203,7 +204,7 @@ class _Grille extends StatelessWidget {
 }
 
 /// Une carte, et ce que ses deux gestes declenchent.
-class _CarteRoutee extends StatelessWidget {
+class _CarteRoutee extends ConsumerWidget {
   const _CarteRoutee({
     required this.groupe,
     required this.attente,
@@ -217,7 +218,7 @@ class _CarteRoutee extends StatelessWidget {
   final void Function(GroupSummaryVM groupe)? onRejoindre;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final void Function(GroupSummaryVM groupe)? rappel = onRejoindre;
     return CarteGroupe(
       groupe: groupe,
@@ -228,6 +229,7 @@ class _CarteRoutee extends StatelessWidget {
       // peut pas honorer (jamais grise, BOUTONS-GRISES-1).
       onRejoindre: rappel == null ? null : () => rappel(groupe),
       attenteEntree: attente,
+      refusEntree: ref.watch(refusEntreeProvider)[groupe.groupeId],
       rejoindreRetire: accesFerme,
     );
   }
