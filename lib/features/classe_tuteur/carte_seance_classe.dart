@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/domain/enums.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/presence/vue_presence.dart';
+import '../../core/router/billet_salle.dart';
+import '../../core/router/routes.dart';
 import '../../core/seance_famille/seance_famille.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
@@ -16,6 +20,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/video/pre_vol.dart' show seuilOuvertureSalle;
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar_nom.dart';
@@ -230,6 +235,7 @@ class CarteSeanceClasse extends ConsumerWidget {
         Ecart.vSm,
         Text(affichage.heureClasse!, style: discret),
       ],
+      ..._rejoindreAvecEleve(context, laSeance, affichage.etat, discret),
       Ecart.vXl,
       BlocObservationClasse(
         classeId: contexte.classeId,
@@ -240,6 +246,62 @@ class CarteSeanceClasse extends ConsumerWidget {
         presence: presence,
       ),
     ];
+  }
+
+  /// D6 : l'enfant rejoint la salle depuis l'appareil de son tuteur, sans
+  /// appairage. Salle ouverte ou seance en direct : « Rejoindre la salle avec
+  /// {prenom} », qui demande le jeton de l'eleve ; avant la porte, l'heure
+  /// d'ouverture, jamais un bouton qui ne peut pas aboutir (R7). Le serveur
+  /// seul decide : foyer, inscription a la seance, role eleve.
+  List<Widget> _rejoindreAvecEleve(
+    BuildContext context,
+    SeanceFamille laSeance,
+    EtatSeanceFamille etat,
+    TextStyle discret,
+  ) {
+    switch (etat) {
+      case EtatSeanceFamille.salleOuverte ||
+          EtatSeanceFamille.enDirect ||
+          EtatSeanceFamille.prolongee:
+        return <Widget>[
+          Ecart.vXl,
+          ActionPrincipale(
+            libelle: t.classe.seance.rejoindreAvec(
+              prenom: contexte.eleve.prenom,
+            ),
+            onPress: () => GoRouter.of(context).push(
+              Routes.salle,
+              extra: BilletSalle(
+                sessionId: laSeance.seanceId,
+                emisA: DateTime.now(),
+                groupeId: laSeance.groupeId,
+                eleveId: contexte.eleveId,
+                interfaceGuidee: contexte.eleve.mode == InterfaceMode.enfant,
+              ),
+            ),
+          ),
+        ];
+      case EtatSeanceFamille.aVenir:
+        final DateTime ouverture = laSeance.debutUtc.subtract(
+          laSeance.fenetre?.fenetreAcces ?? seuilOuvertureSalle,
+        );
+        return <Widget>[
+          Ecart.vSm,
+          Text(
+            t.classe.seance.salleOuvreA(
+              heure: heureDeLAppareil(ouverture.toLocal()),
+            ),
+            style: discret,
+          ),
+        ];
+      case EtatSeanceFamille.terminee ||
+          EtatSeanceFamille.annulee ||
+          EtatSeanceFamille.annuleeTardive ||
+          EtatSeanceFamille.nonTenue ||
+          EtatSeanceFamille.reportee ||
+          EtatSeanceFamille.horaireIncertain:
+        return const <Widget>[];
+    }
   }
 }
 

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart' show Theme;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -179,7 +180,8 @@ import '../../features/tc_mushaf/routes_tc_c.dart';
 import '../../features/tc_observation_ui/routes_tc_g.dart';
 import '../admin/admin_domaine.dart';
 import '../alertes/port_alertes.dart';
-import '../candidature/modeles_candidatures_direction.dart' show LigneCandidature;
+import '../candidature/modeles_candidatures_direction.dart'
+    show LigneCandidature;
 import '../config/env.dart';
 import '../domain/enums.dart';
 import '../dossier/resignature_contrat.dart';
@@ -193,6 +195,7 @@ import '../session/session_controleur.dart';
 import '../session/session_state.dart';
 import '../tc_groupe/group_home_vm.dart' show RoleEspaceGroupe;
 import '../theme/app_gabarit.dart';
+import '../theme/app_theme.dart';
 import '../widgets/admin_shell.dart';
 import '../widgets/bascule_theme.dart';
 import '../widgets/bouton_icone.dart';
@@ -427,8 +430,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // adresse tapee montre la phrase de capacite indisponible.
       GoRoute(
         path: Routes.attentePartage,
-        builder: (BuildContext _, GoRouterState _) =>
-            const PartageOffrePage(),
+        builder: (BuildContext _, GoRouterState _) => const PartageOffrePage(),
       ),
       // CAND-07 : « Vos autres talents ». Declaree meme sans le lot serveur : une
       // adresse tapee montre la phrase de capacite indisponible.
@@ -1094,9 +1096,9 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                           (GoRouterState _) => Builder(
                             builder: (BuildContext context) =>
                                 LangueCourrielsPage(
-                                  onRetour: () => GoRouter.of(
-                                    context,
-                                  ).go(Routes.tuteurComptePreferences),
+                                  onRetour: () =>
+                                      GoRouter.of(context)
+                                          .go(Routes.tuteurComptePreferences),
                                 ),
                           ),
                         ),
@@ -1617,8 +1619,8 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext contexte, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
           child: CandidaturesPage(
-            ouvrirCandidature: (LigneCandidature ligne) =>
-                GoRouter.of(contexte).push<void>(
+            ouvrirCandidature: (LigneCandidature ligne) => GoRouter.of(contexte)
+                .push<void>(
                   Routes.adminPersonnesCandidaturePour(ligne.reference),
                   extra: ligne.id,
                 ),
@@ -2133,17 +2135,29 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // plutot que de lever.
       GoRoute(
         path: Routes.salle,
-        builder: (BuildContext _, GoRouterState etat) => SallePage(
-          seanceId: etat.extra is BilletSalle
-              ? (etat.extra! as BilletSalle).sessionId
-              : '',
-          preparation:
-              etat.extra is BilletSalle &&
-              (etat.extra! as BilletSalle).preparation,
-          groupeId: etat.extra is BilletSalle
-              ? (etat.extra! as BilletSalle).groupeId
-              : null,
-        ),
+        builder: (BuildContext contexte, GoRouterState etat) {
+          final BilletSalle? billet = etat.extra is BilletSalle
+              ? etat.extra! as BilletSalle
+              : null;
+          final Widget salle = SallePage(
+            seanceId: billet?.sessionId ?? '',
+            preparation: billet?.preparation ?? false,
+            groupeId: billet?.groupeId,
+            eleveId: billet?.eleveId,
+          );
+          // D6 : l'enfant qui rejoint depuis l'appareil de son tuteur retrouve
+          // son Interface guidee ; seul l'affichage change, jamais la route.
+          if (billet?.eleveId == null || !billet!.interfaceGuidee) {
+            return salle;
+          }
+          return Theme(
+            data: AppTheme.pour(
+              InterfaceMode.enfant,
+              Theme.of(contexte).brightness,
+            ),
+            child: salle,
+          );
+        },
       ),
 
       // CTR-03, la sortie de la salle d'observation : tache focalisee, sans

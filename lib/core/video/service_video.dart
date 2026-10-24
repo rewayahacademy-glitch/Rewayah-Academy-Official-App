@@ -48,7 +48,11 @@ class EchecSalle implements Exception {
 /// migration 0012 -- personne ne les inscrivait.
 abstract interface class ServiceVideo {
   /// Demande au backend le droit d'entrer dans une seance.
-  Future<AccesSalle> acces(String seanceId);
+  ///
+  /// Avec [eleveId], un tuteur demande le jeton de son enfant, qui rejoint la
+  /// salle depuis l'appareil du tuteur (D6) : la base verifie le foyer et
+  /// l'inscription a la seance, et ne rend que le role eleve.
+  Future<AccesSalle> acces(String seanceId, {String? eleveId});
 
   /// Inscrit l'appelant comme **observateur invisible** d'une seance en cours.
   ///
@@ -73,12 +77,12 @@ class ServiceVideoSupabase implements ServiceVideo {
   final SupabaseClient _client;
 
   @override
-  Future<AccesSalle> acces(String seanceId) async {
+  Future<AccesSalle> acces(String seanceId, {String? eleveId}) async {
     final FunctionResponse reponse;
     try {
       reponse = await _client.functions.invoke(
         'create-room-token',
-        body: <String, dynamic>{'session_id': seanceId},
+        body: <String, dynamic>{'session_id': seanceId, 'eleve_id': ?eleveId},
       );
     } on FunctionException catch (e) {
       throw EchecSalle(_motifDe(e.status, e.details));

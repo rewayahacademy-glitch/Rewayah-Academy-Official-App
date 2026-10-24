@@ -1,6 +1,6 @@
 // Le point de bascule de l'ADR-001.
 //
-//   { session_id }  ->  { ws_url, token, room_name, provider, capabilities, expire_le }
+//   { session_id, eleve_id? }  ->  { ws_url, token, room_name, provider, capabilities, expire_le }
 //
 // C'est ici, et nulle part ailleurs, que le client apprend a quel serveur se
 // connecter. Le contrat de portabilite en decoule : **aucune URL LiveKit
@@ -56,23 +56,36 @@ Deno.serve(async (requete: Request) => {
     return refus('seance non precisee')
   }
 
+  // D6 : un tuteur peut demander le jeton de son enfant, qui entre en salle
+  // depuis l'appareil du tuteur. `eleve_id` est une demande : la base verifie
+  // le foyer, l'inscription a la seance, et ne rend que le role eleve.
+  const eleve = String(corps.eleve_id ?? '').trim()
+
   const service = clientService()
 
   // La cle de service contourne la RLS, elle ne remplace pas le controle :
   // c'est la fonction appelee qui reverifie l'appartenance, la fenetre horaire
   // et le statut de la seance, et qui refuse par exception.
-  const { data, error } = await service.rpc('autoriser_jeton_video', {
-    p_session_id: seance,
-    p_profile_id: compte.id,
-    p_ws_url_cloud: urlDe('cloud'),
-    p_ws_url_self_hosted: urlDe('self_hosted'),
-  })
+  const { data, error } = eleve
+    ? await service.rpc('autoriser_jeton_video_eleve', {
+      p_session_id: seance,
+      p_tuteur_id: compte.id,
+      p_eleve_id: eleve,
+      p_ws_url_cloud: urlDe('cloud'),
+      p_ws_url_self_hosted: urlDe('self_hosted'),
+    })
+    : await service.rpc('autoriser_jeton_video', {
+      p_session_id: seance,
+      p_profile_id: compte.id,
+      p_ws_url_cloud: urlDe('cloud'),
+      p_ws_url_self_hosted: urlDe('self_hosted'),
+    })
 
   if (error || !data) {
     // Le motif exact reste dans les logs. Un appelant qui tente une salle qui
     // n'est pas la sienne n'a pas a apprendre si elle existe, si elle est
     // commencee, ou s'il est simplement en avance.
-    console.error('autoriser_jeton_video refuse', { seance, erreur: error?.message })
+    console.error('autoriser_jeton_video refuse', { seance, eleve: eleve || null, erreur: error?.message })
     return refus('acces a la salle refuse', 403)
   }
 

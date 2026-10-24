@@ -23,7 +23,17 @@ class BilletSalle {
     required this.emisA,
     this.preparation = false,
     this.groupeId,
+    this.eleveId,
+    this.interfaceGuidee = false,
   });
+
+  /// L'eleve qui rejoint la salle depuis l'appareil de son tuteur (D6), ou
+  /// `null` quand la personne connectee entre pour elle-meme. Le jeton est
+  /// alors celui de l'eleve, et le serveur seul en decide.
+  final String? eleveId;
+
+  /// Vrai quand la salle s'ouvre dans l'Interface guidee de l'eleve [eleveId].
+  final bool interfaceGuidee;
 
   /// Ouvrir d'abord la preparation de l'enseignant (CLV-03, CL-4.5).
   final bool preparation;

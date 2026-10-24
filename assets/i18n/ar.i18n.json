@@ -600,7 +600,9 @@
       "aucune": "لا حصة مقررة",
       "aucuneDetail": "ستظهر هنا الحصة القادمة لـ⁨{dePrenom}⁩ بمجرد جدولتها.",
       "illisible": "تعذّرت قراءة الحصة القادمة.",
-      "presence": "⁨{prenom}⁩: ⁨{etat}⁩"
+      "presence": "⁨{prenom}⁩: ⁨{etat}⁩",
+      "rejoindreAvec": "الانضمام إلى القاعة مع ⁨{prenom}⁩",
+      "salleOuvreA": "تُفتح القاعة الساعة ⁨{heure}⁩."
     },
     "observation": {
       "commentCaMarche": "كيف يعمل ذلك؟",

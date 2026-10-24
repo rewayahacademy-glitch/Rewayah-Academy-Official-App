@@ -103,8 +103,13 @@ class SallePage extends ConsumerStatefulWidget {
     super.key,
     this.preparation = false,
     this.groupeId,
+    this.eleveId,
     this.cheminCompteRenduControle = Routes.controleurCompteRendu,
   });
+
+  /// L'eleve qui rejoint la salle depuis l'appareil de son tuteur (D6), lu
+  /// dans le billet ; `null` quand la personne connectee entre pour elle-meme.
+  final String? eleveId;
 
   /// La sortie du controleur (CTR-02 vers CTR-03, P-CTR-03 point 12). La
   /// demonstration la redirige vers son compte rendu fictif.
@@ -277,7 +282,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
 
     final AccesSalle acces;
     try {
-      acces = await ref.read(serviceVideoProvider).acces(widget.seanceId);
+      acces = await ref
+          .read(serviceVideoProvider)
+          .acces(widget.seanceId, eleveId: widget.eleveId);
     } on EchecSalle catch (echec) {
       if (mounted) {
         setState(() => _impasse = CauseImpasse.depuis(echec.motif));
