@@ -12465,6 +12465,12 @@ class Traductions$classe$seance$fr {
 
 	/// fr: '{prenom} : {etat}'
 	String presence({required Object prenom, required Object etat}) => '${prenom} : ${etat}';
+
+	/// fr: 'Rejoindre la salle avec {prenom}'
+	String rejoindreAvec({required Object prenom}) => 'Rejoindre la salle avec ${prenom}';
+
+	/// fr: 'La salle ouvre à {heure}.'
+	String salleOuvreA({required Object heure}) => 'La salle ouvre à ${heure}.';
 }
 
 // Path: classe.observation
@@ -33950,8 +33956,8 @@ class Traductions$avis$form$depuis$fr {
 	/// fr: 'Année'
 	String get annee => 'Année';
 
-	/// fr: 'Choisissez un mois et une année, de 2015 jusqu'à ce mois-ci.'
-	String get erreur => 'Choisissez un mois et une année, de 2015 jusqu\'à ce mois-ci.';
+	/// fr: 'Choisissez un mois et une année, d'avril 2024 jusqu'à ce mois-ci.'
+	String get erreur => 'Choisissez un mois et une année, d\'avril 2024 jusqu\'à ce mois-ci.';
 }
 
 // Path: avis.form.note
@@ -33973,6 +33979,9 @@ class Traductions$avis$form$note$fr {
 
 	/// fr: 'Note : {n} sur 5'
 	String lue({required Object n}) => 'Note : ${n} sur 5';
+
+	/// fr: '{n} sur 5'
+	String surCinq({required Object n}) => '${n} sur 5';
 
 	/// fr: 'Choisissez une note de 1 à 5 étoiles.'
 	String get erreur => 'Choisissez une note de 1 à 5 étoiles.';
@@ -34063,6 +34072,9 @@ class Traductions$avis$form$regles$fr {
 
 	/// fr: 'Ne donnez ni le nom d'un enfant, ni courriel, ni téléphone.'
 	String get donnees => 'Ne donnez ni le nom d\'un enfant, ni courriel, ni téléphone.';
+
+	/// fr: 'Un avis respectueux est publié, même critique. La direction refuse seulement une insulte, des données d'un tiers, de la publicité, un propos hors sujet ou un doublon.'
+	String get publie => 'Un avis respectueux est publié, même critique. La direction refuse seulement une insulte, des données d\'un tiers, de la publicité, un propos hors sujet ou un doublon.';
 }
 
 // Path: avis.form.ferme
@@ -34091,8 +34103,8 @@ class Traductions$avis$form$envoye$fr {
 	/// fr: 'Merci pour votre avis'
 	String get titre => 'Merci pour votre avis';
 
-	/// fr: 'La direction va le lire avant de le publier. S'il est accepté, il paraîtra sur le site de Rewayah Academy avec votre nom affiché, votre pays et la date. Pour le faire retirer, écrivez à {courriel}.'
-	String phrase({required Object courriel}) => 'La direction va le lire avant de le publier. S\'il est accepté, il paraîtra sur le site de Rewayah Academy avec votre nom affiché, votre pays et la date. Pour le faire retirer, écrivez à ${courriel}.';
+	/// fr: 'La direction le lira avant de le publier sur le site, avec votre nom affiché, votre pays et la date. Pour le faire retirer, écrivez à {courriel}.'
+	String phrase({required Object courriel}) => 'La direction le lira avant de le publier sur le site, avec votre nom affiché, votre pays et la date. Pour le faire retirer, écrivez à ${courriel}.';
 }
 
 // Path: avis.admin.sections
@@ -45807,6 +45819,8 @@ extension on Traductions {
 			'classe.seance.aucuneDetail' => ({required Object dePrenom}) => 'La prochaine séance ${dePrenom} apparaîtra ici dès qu\'elle sera programmée.',
 			'classe.seance.illisible' => 'La prochaine séance n\'a pas pu être lue.',
 			'classe.seance.presence' => ({required Object prenom, required Object etat}) => '${prenom} : ${etat}',
+			'classe.seance.rejoindreAvec' => ({required Object prenom}) => 'Rejoindre la salle avec ${prenom}',
+			'classe.seance.salleOuvreA' => ({required Object heure}) => 'La salle ouvre à ${heure}.',
 			'classe.observation.commentCaMarche' => 'Comment ça marche ?',
 			'classe.observation.uneVisite' => '1 visite disponible',
 			'classe.observation.resume' => ({required Object visites, required Object duree}) => '${visites} · ${duree} par visite',
@@ -45981,10 +45995,10 @@ extension on Traductions {
 			'enseignant.signalement.categorieTitre' => 'Catégorie',
 			'enseignant.signalement.categories.pedagogique' => 'Problème pédagogique',
 			'enseignant.signalement.categories.presence' => 'Présence',
-			'enseignant.signalement.categories.technique' => 'Technique',
-			'enseignant.signalement.categories.changement' => 'Changement',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.signalement.categories.technique' => 'Technique',
+			'enseignant.signalement.categories.changement' => 'Changement',
 			'enseignant.signalement.categories.autre' => 'Autre',
 			'enseignant.signalement.details' => 'Détails internes',
 			'enseignant.signalement.detailsAide' => 'Lu par l\'équipe de l\'académie seulement.',
@@ -46495,10 +46509,10 @@ extension on Traductions {
 			'enseignant.revenus.tauxValeur' => ({required Object montant}) => '${montant} par heure',
 			'enseignant.revenus.montantClasse' => 'Montant estimé',
 			'enseignant.revenus.classeColonne' => 'Classe',
-			'enseignant.revenus.type' => 'Type',
-			'enseignant.revenus.typeEnfants' => 'Enfants',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.revenus.type' => 'Type',
+			'enseignant.revenus.typeEnfants' => 'Enfants',
 			'enseignant.revenus.typeDebutants' => 'Enfants débutants',
 			'enseignant.revenus.typeAdultes' => 'Adultes',
 			'enseignant.revenus.remplacement' => 'Remplacement',
@@ -47009,10 +47023,10 @@ extension on Traductions {
 			'tc.classe.action.signaler' => 'Signaler un besoin',
 			'tc.classe.action.contexte' => 'Ouvrir le contexte',
 			'tc.classe.rappel.recu' => 'Le professeur vous appelle',
-			'tc.classe.rappel.echec' => 'Le rappel est resté sans réponse du réseau. Réessayez dans un instant.',
-			'tc.classe.rappel.echecDroit' => 'Votre accès à cette séance ne permet pas d\'appeler un élève',
 			_ => null,
 		} ?? switch (path) {
+			'tc.classe.rappel.echec' => 'Le rappel est resté sans réponse du réseau. Réessayez dans un instant.',
+			'tc.classe.rappel.echecDroit' => 'Votre accès à cette séance ne permet pas d\'appeler un élève',
 			'tc.classe.rappel.cooldown' => ({required Object secondes}) => 'Déjà appelé. À nouveau dans ${secondes} s',
 			'tc.classe.recitation.titre' => 'Récitation',
 			'tc.classe.recitation.actif' => ({required Object prenom}) => '${prenom} récite',
@@ -47523,10 +47537,10 @@ extension on Traductions {
 			'adulte.sortie.pourquoiPhrase' => 'Cette mesure permet de garantir la sécurité des foyers et la bonne gestion des accès des enfants.',
 			'adulte.sortie.foyerPersonnel' => 'Un foyer personnel a été créé pour vous : vous y retrouvez votre compte et vos élèves.',
 			'adulte.reprise.titre' => 'Demande de reprise du foyer',
-			'adulte.reprise.explication' => 'Utilisez cette démarche si le titulaire du foyer est décédé. La demande sera signalée au compte concerné et examinée par l\'administration.',
-			'adulte.reprise.reprisTitre' => 'Ce qui sera repris',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.reprise.explication' => 'Utilisez cette démarche si le titulaire du foyer est décédé. La demande sera signalée au compte concerné et examinée par l\'administration.',
+			'adulte.reprise.reprisTitre' => 'Ce qui sera repris',
 			'adulte.reprise.repris.profils' => 'Les profils mineurs existants',
 			'adulte.reprise.repris.composition' => 'La composition future du foyer selon les règles actives',
 			'adulte.reprise.repris.paiements' => 'Les paiements futurs du foyer',
@@ -48037,10 +48051,10 @@ extension on Traductions {
 			'com.socle.navigation.quitterStudio' => 'Quitter Le Studio',
 			'com.socle.navigation.messages' => _root.com.socle.lexique.messages,
 			'com.socle.navigation.communaute' => _root.com.socle.lexique.communaute,
-			'com.socle.navigation.communications' => 'Communications',
-			'com.socle.navigation.communicationsDetail' => 'Annonces, modération et messages des Classes',
 			_ => null,
 		} ?? switch (path) {
+			'com.socle.navigation.communications' => 'Communications',
+			'com.socle.navigation.communicationsDetail' => 'Annonces, modération et messages des Classes',
 			'com.socle.navigation.ongletAnnonces' => 'Annonces',
 			'com.socle.navigation.ongletModeration' => 'Modération',
 			'com.socle.navigation.ongletMessages' => _root.com.socle.lexique.messages,
@@ -48551,10 +48565,10 @@ extension on Traductions {
 			'com.studio.demo.f.canalRemplacementsDetail' => 'Absences et remplacements de la semaine',
 			'com.studio.demo.f.canalCloture' => 'Clôture du mois',
 			'com.studio.demo.f.canalClotureDetail' => 'Préparation de la clôture mensuelle',
-			'com.studio.demo.f.canalDirection' => 'Direction stratégique',
-			'com.studio.demo.f.canalDirectionDetail' => 'Orientations de la direction',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.demo.f.canalDirection' => 'Direction stratégique',
+			'com.studio.demo.f.canalDirectionDetail' => 'Orientations de la direction',
 			'com.studio.demo.f.messagePlanning' => 'Bonjour à toute l\'équipe. Voici le planning du prochain trimestre, dites-moi si quelque chose ne va pas.',
 			'com.studio.demo.f.messageSupports' => 'Je mets à jour les supports du niveau 2 et on fait le point demain.',
 			'com.studio.demo.f.messageMerci' => 'Merci à tous pour la semaine.',
@@ -49065,10 +49079,10 @@ extension on Traductions {
 			'comptable.paiements.filtres.statut' => 'Statut',
 			'comptable.paiements.filtres.tousStatuts' => 'Tous les statuts',
 			'comptable.paiements.filtres.prets' => 'Prêts',
-			'comptable.paiements.filtres.infos' => 'Infos manquantes',
-			'comptable.paiements.filtres.verification' => 'Vérification',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.paiements.filtres.infos' => 'Infos manquantes',
+			'comptable.paiements.filtres.verification' => 'Vérification',
 			'comptable.paiements.filtres.validation' => 'Validation',
 			'comptable.paiements.filtres.retard' => 'En retard',
 			'comptable.paiements.filtres.classe' => 'Classe',
@@ -49579,10 +49593,10 @@ extension on Traductions {
 			'comptable.direction.enregistrer' => 'Enregistrer une nouvelle version',
 			'comptable.direction.aucuneModification' => 'Aucune modification à enregistrer.',
 			'comptable.direction.corrigezChamps' => 'Corrigez les champs signalés pour enregistrer.',
-			'comptable.direction.enregistree' => 'Nouvelle version enregistrée.',
-			'comptable.direction.erreurEnregistrement' => 'Nous ne savons pas si cette version a été enregistrée. Relisez la version en vigueur, puis réessayez.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.direction.enregistree' => 'Nouvelle version enregistrée.',
+			'comptable.direction.erreurEnregistrement' => 'Nous ne savons pas si cette version a été enregistrée. Relisez la version en vigueur, puis réessayez.',
 			'comptable.direction.enregistrementIndisponible' => 'L\'enregistrement n\'est pas encore disponible. Réessayez plus tard.',
 			'comptable.direction.historique' => 'Historique des versions',
 			'comptable.direction.historiqueVide' => 'Aucune version avant celle-ci.',
@@ -50080,11 +50094,12 @@ extension on Traductions {
 			'avis.form.depuis.aide' => 'Le mois et l\'année où vous avez rejoint l\'académie.',
 			'avis.form.depuis.mois' => 'Mois',
 			'avis.form.depuis.annee' => 'Année',
-			'avis.form.depuis.erreur' => 'Choisissez un mois et une année, de 2015 jusqu\'à ce mois-ci.',
+			'avis.form.depuis.erreur' => 'Choisissez un mois et une année, d\'avril 2024 jusqu\'à ce mois-ci.',
 			'avis.form.note.libelle' => 'Votre note',
 			'avis.form.note.aide' => 'Touchez une étoile : 1 est la note la plus basse, 5 la plus haute.',
 			'avis.form.note.etoile' => ({required Object n}) => 'Donner la note ${n} sur 5',
 			'avis.form.note.lue' => ({required Object n}) => 'Note : ${n} sur 5',
+			'avis.form.note.surCinq' => ({required Object n}) => '${n} sur 5',
 			'avis.form.note.erreur' => 'Choisissez une note de 1 à 5 étoiles.',
 			'avis.form.titreAvis.libelle' => 'Titre (facultatif)',
 			'avis.form.titreAvis.aide' => 'Une phrase courte qui résume votre avis. 80 caractères au plus.',
@@ -50092,11 +50107,11 @@ extension on Traductions {
 			'avis.form.texte.libelle' => 'Votre avis',
 			'avis.form.texte.aide' => 'Ce qui vous a plu, ce que vous avez appris, ce qui pourrait être mieux. Au moins 20 caractères.',
 			'avis.form.texte.compteur' => ({required Object n, required Object max}) => 'Caractères : ${n} sur ${max}',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.texte.erreur' => 'Écrivez entre 20 et 1500 caractères.',
 			'avis.form.accord.libelle' => 'J\'accepte que cet avis, mon nom affiché, mon pays et la date soient publiés sur le site de Rewayah Academy.',
 			'avis.form.accord.erreur' => 'Acceptez la publication en cochant la case, sinon votre avis ne peut pas être envoyé.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.lecture' => ({required Object courriel}) => 'Votre avis sera lu par la direction avant d\'être publié. Pour le faire retirer plus tard, écrivez à ${courriel}.',
 			'avis.form.regles.titre' => 'Ce que la direction publie',
 			'avis.form.regles.intro' => 'Un avis respectueux est publié, même quand il est critique. La direction ne modifie jamais votre texte. Elle refuse seulement un avis qui contient :',
@@ -50106,6 +50121,7 @@ extension on Traductions {
 			'avis.form.regles.horsSujet' => 'un propos hors sujet',
 			'avis.form.regles.doublon' => 'un doublon d\'un avis déjà reçu',
 			'avis.form.regles.donnees' => 'Ne donnez ni le nom d\'un enfant, ni courriel, ni téléphone.',
+			'avis.form.regles.publie' => 'Un avis respectueux est publié, même critique. La direction refuse seulement une insulte, des données d\'un tiers, de la publicité, un propos hors sujet ou un doublon.',
 			'avis.form.envoyer' => 'Envoyer mon avis',
 			'avis.form.aCorriger' => 'Quelques champs sont à corriger avant l\'envoi.',
 			'avis.form.erreurChamp' => 'Un champ n\'est pas accepté. Relisez le formulaire, puis envoyez de nouveau.',
@@ -50114,7 +50130,7 @@ extension on Traductions {
 			'avis.form.ferme.titre' => 'Ce lien n\'accepte plus d\'avis',
 			'avis.form.ferme.phrase' => ({required Object courriel}) => 'Il est fermé, arrivé à échéance, ou le nombre d\'avis prévu est atteint. Pour donner votre avis, demandez un nouveau lien à la direction : ${courriel}.',
 			'avis.form.envoye.titre' => 'Merci pour votre avis',
-			'avis.form.envoye.phrase' => ({required Object courriel}) => 'La direction va le lire avant de le publier. S\'il est accepté, il paraîtra sur le site de Rewayah Academy avec votre nom affiché, votre pays et la date. Pour le faire retirer, écrivez à ${courriel}.',
+			'avis.form.envoye.phrase' => ({required Object courriel}) => 'La direction le lira avant de le publier sur le site, avec votre nom affiché, votre pays et la date. Pour le faire retirer, écrivez à ${courriel}.',
 			'avis.form.erreurChargement' => 'Le formulaire n\'a pas pu s\'ouvrir. Réessayez dans un moment.',
 			'avis.form.sansDonnees' => 'Le formulaire n\'a pas pu s\'ouvrir',
 			'avis.form.indisponibleTitre' => 'Avis indisponibles',

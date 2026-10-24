@@ -28,6 +28,7 @@ import 'package:rewayah_academy/core/tc_observation/disponibilite_observation.da
 import 'package:rewayah_academy/core/tc_observation/port_politique_observation.dart';
 import 'package:rewayah_academy/core/tc_outils/learning_assignment.dart';
 import 'package:rewayah_academy/core/tc_outils/port_assignations.dart';
+import 'package:rewayah_academy/core/theme/app_metriques.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
@@ -48,6 +49,7 @@ import 'package:rewayah_academy/features/classe_tuteur/ressources_classe_page.da
 import 'package:rewayah_academy/features/classe_tuteur/travail_classe_page.dart';
 import 'package:rewayah_academy/features/com_annonces/annonces_de_classe.dart';
 import 'package:rewayah_academy/features/com_messages/entree_messages_contexte.dart';
+import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/suivi_foyer/suivi_foyer_page.dart';
 import 'package:rewayah_academy/features/tc_catalogue/detail_ressource_page.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/entree_observation_page.dart';
@@ -505,6 +507,58 @@ void main() {
         findsOneWidget,
       );
       expect(find.textContaining(t.presence.absente), findsNothing);
+    });
+
+    testWidgets('D6 : salle ouverte, « Rejoindre la salle avec » ouvre la '
+        'salle avec le billet de l eleve, en Interface guidee s il l a', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, depart: Routes.classePour(_classe, eleveId: _a1));
+      final Finder bouton = find.text(
+        t.classe.seance.rejoindreAvec(prenom: 'Élève A1'),
+      );
+      expect(bouton, findsOneWidget);
+
+      await tester.ensureVisible(bouton);
+      await stabiliser(tester);
+      await tester.tap(bouton);
+      await tester.pump();
+      await tester.pump();
+
+      // La salle est empilee sur la classe (`push`), avec le billet de
+      // l'eleve : son identifiant part vers le serveur, et l'eleve A1 des
+      // fixtures (`foyers.dart`) retrouve son Interface guidee.
+      final Finder salle = find.byType(SallePage);
+      expect(salle, findsOneWidget);
+      expect(tester.widget<SallePage>(salle).seanceId, 's1');
+      expect(tester.widget<SallePage>(salle).eleveId, _a1);
+      expect(AppMetriques.of(tester.element(salle)).mode, InterfaceMode.enfant);
+    });
+
+    testWidgets('D6 : avant la porte, l heure d ouverture de la salle, '
+        'jamais le bouton', (WidgetTester tester) async {
+      final SeanceFamille aVenir = seanceSalleOuverte(
+        avant: const Duration(hours: 3, minutes: 28),
+      );
+      await _monter(
+        tester,
+        depart: Routes.classePour(_classe, eleveId: _a1),
+        seances: <SeanceFamille>[aVenir],
+      );
+      expect(
+        find.text(
+          t.classe.seance.salleOuvreA(
+            heure: heureDeLAppareil(
+              aVenir.debutUtc.subtract(aVenir.fenetre!.fenetreAcces).toLocal(),
+            ),
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text(t.classe.seance.rejoindreAvec(prenom: 'Élève A1')),
+        findsNothing,
+      );
     });
 
     testWidgets('seance a venir : l observation ouvre quand elle commence', (

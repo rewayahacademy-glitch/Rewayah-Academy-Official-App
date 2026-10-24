@@ -5,9 +5,17 @@
 /// seulement si ce lien accepte encore des avis (`avis_lien_etat`).
 ///
 /// Ce que la page tient (DECISION-AVIS-2026-10-19, choix 2) : nom affiche, qui
-/// parle, pays, « avec nous depuis », note, titre, avis, la case d'accord de
+/// parle, pays, « avec nous depuis », note, avis, la case d'accord de
 /// publication, la phrase de moderation et de retrait, et les regles de
-/// moderation en bref. Jamais le nom d'un enfant, un courriel ou un telephone.
+/// moderation en deux phrases. Jamais le nom d'un enfant, un courriel ou un
+/// telephone.
+///
+/// AVIS-UI (24/10/2026, captures du directeur a 1366 et 390 px) : un panneau
+/// centre de 560 au plus, en-tete compris ; « Vous etes » en deux cartes cote a
+/// cote a toutes les largeurs ; mois et annee cote a cote, bornes a avril 2024
+/// et au mois courant ; la note lue a cote des etoiles ; plus de titre
+/// d'avis (la colonne reste en base, nulle) ; le logo a sa taille sur l'ecran
+/// de remerciement.
 ///
 /// Un bouton qui ne peut pas aboutir n'est pas grise (lib/CLAUDE.md) : il
 /// reste actif, et un appui sur un formulaire incomplet dit, champ par champ,
@@ -37,6 +45,7 @@ import '../../core/widgets/champ_etiquete.dart';
 import '../../core/widgets/champ_recherche.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/ecran_resultat.dart';
+import '../../core/widgets/entete_page.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/marque_page.dart';
 import '../../core/widgets/menu_filtre.dart';
@@ -98,11 +107,14 @@ class AvisPublicPage extends ConsumerStatefulWidget {
   /// Le champ du nom affiche.
   static const Key nomKey = ValueKey<String>('avis-nom');
 
-  /// Le champ du titre.
-  static const Key titreKey = ValueKey<String>('avis-titre');
-
   /// Le champ de l'avis.
   static const Key texteKey = ValueKey<String>('avis-texte');
+
+  /// Le panneau centre de la page (AVIS-UI).
+  static const Key panneauKey = ValueKey<String>('avis-panneau');
+
+  /// La note lue a cote des etoiles (« 4 sur 5 »).
+  static const Key noteLueKey = ValueKey<String>('avis-note-lue');
 
   /// Le compteur de caracteres de l'avis.
   static const Key compteurKey = ValueKey<String>('avis-compteur');
@@ -136,7 +148,6 @@ class AvisPublicPage extends ConsumerStatefulWidget {
 
 class _AvisPublicPageState extends ConsumerState<AvisPublicPage> {
   final TextEditingController _nom = TextEditingController();
-  final TextEditingController _titre = TextEditingController();
   final TextEditingController _texte = TextEditingController();
   final FocusNode _focusAccord = FocusNode();
   final Map<ChampAvis, GlobalKey> _ancres = <ChampAvis, GlobalKey>{
@@ -160,7 +171,6 @@ class _AvisPublicPageState extends ConsumerState<AvisPublicPage> {
   @override
   void dispose() {
     _nom.dispose();
-    _titre.dispose();
     _texte.dispose();
     _focusAccord.dispose();
     super.dispose();
@@ -175,7 +185,6 @@ class _AvisPublicPageState extends ConsumerState<AvisPublicPage> {
     mois: _mois,
     annee: _annee,
     note: _note,
-    titre: _titre.text,
     texte: _texte.text,
     accord: _accord,
   );
@@ -228,7 +237,7 @@ class _AvisPublicPageState extends ConsumerState<AvisPublicPage> {
               pays: saisie.pays!,
               depuis: moisDepuis(saisie)!,
               note: saisie.note,
-              titre: saisie.titre.trim().isEmpty ? null : saisie.titre.trim(),
+              titre: null,
               texte: saisie.texte.trim(),
               accord: saisie.accord,
             ),
@@ -288,62 +297,80 @@ class _AvisPublicPageState extends ConsumerState<AvisPublicPage> {
       avisLienOuvertProvider(widget.jeton),
     );
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    final bool enTete = !_envoye && !_lienFerme;
     return PageShell(
-      titre: f.titre,
-      sousTitre: _envoye || _lienFerme ? null : f.sousTitre,
       child: Align(
-        alignment: AlignmentDirectional.topStart,
+        alignment: Alignment.topCenter,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxWidth: AppPage.largeurFormulaire,
+          key: AvisPublicPage.panneauKey,
+          constraints: const BoxConstraints(maxWidth: AppPage.largeurDialogue),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              if (enTete) ...<Widget>[
+                EntetePage(titre: f.titre, sousTitre: f.sousTitre),
+                Ecart.vXl,
+              ],
+              _contenu(lien, horsLigne),
+            ],
           ),
-          child: _envoye
-              ? EcranResultat(
-                  key: const ValueKey<String>('avis-envoye'),
-                  icone: AppIcons.succes,
-                  ton: TonEtat.succes,
-                  titre: f.envoye.titre,
-                  phrase: coupuresAdresse(
-                    f.envoye.phrase(courriel: courrielSupportAvis),
-                  ),
-                )
-              : _lienFerme
-              ? _ecranFerme()
-              : BlocAsynchrone<bool>(
-                  key: const ValueKey<String>('avis-bloc'),
-                  valeur: lien,
-                  squelette: const Skeleton.liste(lignes: 4),
-                  onReessayer: () =>
-                      ref.invalidate(avisLienOuvertProvider(widget.jeton)),
-                  erreurVersEtat: (Object e, VoidCallback? reessayer) {
-                    if (e is CapaciteIndisponible) {
-                      return EtatSysteme(
-                        key: const ValueKey<String>('avis-indisponible'),
-                        nature: NatureEtat.indisponible,
-                        titre: f.indisponibleTitre,
-                        phrase: f.indisponiblePhrase,
-                        dependance: e.dependance,
-                      );
-                    }
-                    return horsLigne
-                        ? EtatSansDonnees(
-                            key: const ValueKey<String>('avis-sans-donnees'),
-                            quoi: f.sansDonnees,
-                            onAction: reessayer,
-                          )
-                        : EtatSysteme(
-                            key: const ValueKey<String>('avis-erreur'),
-                            nature: NatureEtat.echecServeur,
-                            phrase: f.erreurChargement,
-                            onAction: reessayer,
-                          );
-                  },
-                  construire: (bool ouvert) =>
-                      ouvert ? _formulaire() : _ecranFerme(),
-                ),
         ),
       ),
     );
+  }
+
+  Widget _contenu(AsyncValue<bool> lien, bool horsLigne) {
+    final f = t.avis.form;
+    return _envoye
+        ? Column(
+            key: const ValueKey<String>('avis-envoye'),
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              const Center(child: MarquePage(logo: true)),
+              Ecart.vXl,
+              EcranResultat(
+                icone: AppIcons.succes,
+                ton: TonEtat.succes,
+                titre: f.envoye.titre,
+                phrase: coupuresAdresse(
+                  f.envoye.phrase(courriel: courrielSupportAvis),
+                ),
+              ),
+            ],
+          )
+        : _lienFerme
+        ? _ecranFerme()
+        : BlocAsynchrone<bool>(
+            key: const ValueKey<String>('avis-bloc'),
+            valeur: lien,
+            squelette: const Skeleton.liste(lignes: 4),
+            onReessayer: () =>
+                ref.invalidate(avisLienOuvertProvider(widget.jeton)),
+            erreurVersEtat: (Object e, VoidCallback? reessayer) {
+              if (e is CapaciteIndisponible) {
+                return EtatSysteme(
+                  key: const ValueKey<String>('avis-indisponible'),
+                  nature: NatureEtat.indisponible,
+                  titre: f.indisponibleTitre,
+                  phrase: f.indisponiblePhrase,
+                  dependance: e.dependance,
+                );
+              }
+              return horsLigne
+                  ? EtatSansDonnees(
+                      key: const ValueKey<String>('avis-sans-donnees'),
+                      quoi: f.sansDonnees,
+                      onAction: reessayer,
+                    )
+                  : EtatSysteme(
+                      key: const ValueKey<String>('avis-erreur'),
+                      nature: NatureEtat.echecServeur,
+                      phrase: f.erreurChargement,
+                      onAction: reessayer,
+                    );
+            },
+            construire: (bool ouvert) => ouvert ? _formulaire() : _ecranFerme(),
+          );
   }
 
   Widget _ecranFerme() => EcranResultat(
@@ -393,8 +420,6 @@ class _AvisPublicPageState extends ConsumerState<AvisPublicPage> {
       key: const ValueKey<String>('avis-formulaire'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        const Center(child: MarquePage()),
-        Ecart.vXl,
         // Nom affiche (saisi : personne ne le connait d'avance).
         KeyedSubtree(
           key: _ancres[ChampAvis.nom],
@@ -429,6 +454,7 @@ class _AvisPublicPageState extends ConsumerState<AvisPublicPage> {
               Ecart.vSm,
               ChoiceCardGroup(
                 autoriserSaisieLibre: false,
+                enLigne: true,
                 options: <OptionChoix>[
                   OptionChoix(
                     cle: AvisPublicPage.qualiteKey(QualiteAvis.parent),
@@ -494,35 +520,44 @@ class _AvisPublicPageState extends ConsumerState<AvisPublicPage> {
               Ecart.vXs,
               Text(f.depuis.aide, style: textes.bodySmall),
               Ecart.vSm,
-              // Choix de formulaire, pas un filtre : le mois et l'annee d'un meme champ.
-              Wrap(
-                spacing: AppSpacing.sm,
-                runSpacing: AppSpacing.sm,
+              // Deux menus de meme largeur, cote a cote : le mois, borne par
+              // l'annee choisie, puis l'annee.
+              Row(
                 children: <Widget>[
-                  MenuFiltre<int>(
-                    key: AvisPublicPage.moisKey,
-                    libelle: f.depuis.mois,
-                    valeur: _mois,
-                    entrees: <EntreeFiltre<int>>[
-                      for (int m = 1; m <= 12; m++)
-                        EntreeFiltre<int>(
-                          valeur: m,
-                          libelle: t.commun.dates.mois[m - 1],
-                        ),
-                    ],
-                    onChoix: (int? m) =>
-                        _modifie(() => _mois = m, ChampAvis.depuis),
+                  Expanded(
+                    child: MenuFiltre<int>(
+                      key: AvisPublicPage.moisKey,
+                      libelle: f.depuis.mois,
+                      valeur: _mois,
+                      entrees: <EntreeFiltre<int>>[
+                        for (final int m in moisProposes(_annee, maintenant))
+                          EntreeFiltre<int>(
+                            valeur: m,
+                            libelle: t.commun.dates.mois[m - 1],
+                          ),
+                      ],
+                      onChoix: (int? m) =>
+                          _modifie(() => _mois = m, ChampAvis.depuis),
+                    ),
                   ),
-                  MenuFiltre<int>(
-                    key: AvisPublicPage.anneeKey,
-                    libelle: f.depuis.annee,
-                    valeur: _annee,
-                    entrees: <EntreeFiltre<int>>[
-                      for (final int a in anneesProposees(maintenant))
-                        EntreeFiltre<int>(valeur: a, libelle: '$a'),
-                    ],
-                    onChoix: (int? a) =>
-                        _modifie(() => _annee = a, ChampAvis.depuis),
+                  Ecart.hLg,
+                  Expanded(
+                    child: MenuFiltre<int>(
+                      key: AvisPublicPage.anneeKey,
+                      libelle: f.depuis.annee,
+                      valeur: _annee,
+                      entrees: <EntreeFiltre<int>>[
+                        for (final int a in anneesProposees(maintenant))
+                          EntreeFiltre<int>(valeur: a, libelle: '$a'),
+                      ],
+                      onChoix: (int? a) => _modifie(() {
+                        _annee = a;
+                        // Un mois hors des bornes de la nouvelle annee tombe.
+                        if (!moisProposes(a, maintenant).contains(_mois)) {
+                          _mois = null;
+                        }
+                      }, ChampAvis.depuis),
+                    ),
                   ),
                 ],
               ),
@@ -545,34 +580,27 @@ class _AvisPublicPageState extends ConsumerState<AvisPublicPage> {
               Ecart.vXs,
               Text(f.note.aide, style: textes.bodySmall),
               Ecart.vSm,
-              Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: NoteEtoiles(
-                  valeur: _note,
-                  onChange: (int n) =>
-                      _modifie(() => _note = n, ChampAvis.note),
-                ),
+              // La note lue suit les etoiles, et passe dessous a 320 px
+              // (cinq cibles de 48 n'y laissent pas sa place).
+              Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: AppSpacing.md,
+                runSpacing: AppSpacing.xs,
+                children: <Widget>[
+                  NoteEtoiles(
+                    valeur: _note,
+                    onChange: (int n) =>
+                        _modifie(() => _note = n, ChampAvis.note),
+                  ),
+                  if (_note > 0)
+                    Text(
+                      f.note.surCinq(n: _note),
+                      key: AvisPublicPage.noteLueKey,
+                      style: textes.bodyLarge,
+                    ),
+                ],
               ),
               _erreur(ChampAvis.note, f.note.erreur),
-            ],
-          ),
-        ),
-        Ecart.vXl,
-        // Titre (facultatif).
-        KeyedSubtree(
-          key: _ancres[ChampAvis.titre],
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              ChampEtiquete(
-                key: AvisPublicPage.titreKey,
-                libelle: f.titreAvis.libelle,
-                aide: f.titreAvis.aide,
-                controller: _titre,
-                textCapitalization: TextCapitalization.sentences,
-                onChanged: (String _) => _modifie(() {}, ChampAvis.titre),
-              ),
-              _erreur(ChampAvis.titre, f.titreAvis.erreur),
             ],
           ),
         ),
@@ -588,19 +616,24 @@ class _AvisPublicPageState extends ConsumerState<AvisPublicPage> {
                 libelle: f.texte.libelle,
                 aide: f.texte.aide,
                 controller: _texte,
-                maxLines: 6,
+                maxLines: 5,
                 obligatoire: true,
                 onChanged: (String _) => _modifie(() {}, ChampAvis.texte),
               ),
               Ecart.vXs,
-              Text(
-                f.texte.compteur(n: longueur, max: BornesAvis.texteMax),
-                key: AvisPublicPage.compteurKey,
-                style: longueur > BornesAvis.texteMax
-                    ? palette.inkAlert.applyTo(
-                        textes.bodySmall ?? const TextStyle(),
-                      )
-                    : textes.bodySmall,
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: Text(
+                  f.texte.compteur(n: longueur, max: BornesAvis.texteMax),
+                  key: AvisPublicPage.compteurKey,
+                  style: longueur > BornesAvis.texteMax
+                      ? palette.inkAlert.applyTo(
+                          textes.bodySmall ?? const TextStyle(),
+                        )
+                      : palette.inkMuted.applyTo(
+                          textes.bodySmall ?? const TextStyle(),
+                        ),
+                ),
               ),
               _erreur(ChampAvis.texte, f.texte.erreur),
             ],
@@ -655,8 +688,11 @@ class _AvisPublicPageState extends ConsumerState<AvisPublicPage> {
           ),
           Ecart.vLg,
         ],
+        // Pleine largeur aussi sur ordinateur (AVIS-UI) : le panneau borne le
+        // bouton a 560, la largeur du formulaire qu'il envoie.
         ActionPrincipale(
           key: AvisPublicPage.envoyerKey,
+          pleineLargeur: true,
           libelle: f.envoyer,
           enCours: _envoi,
           onPress: () => unawaited(_envoyer()),
@@ -684,26 +720,7 @@ class _Regles extends StatelessWidget {
           child: Text(r.titre, style: textes.titleMedium),
         ),
         Ecart.vSm,
-        Text(r.intro, style: textes.bodyMedium),
-        Ecart.vSm,
-        for (final String ligne in <String>[
-          r.insulte,
-          r.tiers,
-          r.publicite,
-          r.horsSujet,
-          r.doublon,
-        ])
-          Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text('•', style: textes.bodyMedium),
-                Ecart.hSm,
-                Expanded(child: Text(ligne, style: textes.bodyMedium)),
-              ],
-            ),
-          ),
+        Text(r.publie, style: textes.bodyMedium),
         Ecart.vSm,
         Text(r.donnees, style: textes.bodyMedium),
       ],

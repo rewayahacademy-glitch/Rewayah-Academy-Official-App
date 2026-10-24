@@ -263,7 +263,7 @@ class FauxServiceVideoClasse implements ServiceVideo {
   final List<String> sorties = <String>[];
 
   @override
-  Future<AccesSalle> acces(String seanceId) async {
+  Future<AccesSalle> acces(String seanceId, {String? eleveId}) async {
     demandes.add(seanceId);
     final MotifRefusSalle? motif = motifARefuser;
     if (motif != null) {

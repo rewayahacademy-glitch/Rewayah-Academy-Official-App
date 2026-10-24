@@ -6812,7 +6812,9 @@
       "aucune": "Aucune séance planifiée",
       "aucuneDetail": "La prochaine séance {dePrenom} apparaîtra ici dès qu'elle sera programmée.",
       "illisible": "La prochaine séance n'a pas pu être lue.",
-      "presence": "{prenom}\u00a0: {etat}"
+      "presence": "{prenom}\u00a0: {etat}",
+      "rejoindreAvec": "Rejoindre la salle avec {prenom}",
+      "salleOuvreA": "La salle ouvre à {heure}."
     },
     "observation": {
       "commentCaMarche": "Comment ça marche\u00a0?",
@@ -12123,13 +12125,14 @@
         "aide": "Le mois et l'année où vous avez rejoint l'académie.",
         "mois": "Mois",
         "annee": "Année",
-        "erreur": "Choisissez un mois et une année, de 2015 jusqu'à ce mois-ci."
+        "erreur": "Choisissez un mois et une année, d'avril 2024 jusqu'à ce mois-ci."
       },
       "note": {
         "libelle": "Votre note",
         "aide": "Touchez une étoile\u00a0: 1 est la note la plus basse, 5 la plus haute.",
         "etoile": "Donner la note {n} sur 5",
         "lue": "Note\u00a0: {n} sur 5",
+        "surCinq": "{n} sur 5",
         "erreur": "Choisissez une note de 1 à 5 étoiles."
       },
       "titreAvis": {
@@ -12156,7 +12159,8 @@
         "publicite": "de la publicité",
         "horsSujet": "un propos hors sujet",
         "doublon": "un doublon d'un avis déjà reçu",
-        "donnees": "Ne donnez ni le nom d'un enfant, ni courriel, ni téléphone."
+        "donnees": "Ne donnez ni le nom d'un enfant, ni courriel, ni téléphone.",
+        "publie": "Un avis respectueux est publié, même critique. La direction refuse seulement une insulte, des données d'un tiers, de la publicité, un propos hors sujet ou un doublon."
       },
       "envoyer": "Envoyer mon avis",
       "aCorriger": "Quelques champs sont à corriger avant l'envoi.",
@@ -12169,7 +12173,7 @@
       },
       "envoye": {
         "titre": "Merci pour votre avis",
-        "phrase": "La direction va le lire avant de le publier. S'il est accepté, il paraîtra sur le site de Rewayah Academy avec votre nom affiché, votre pays et la date. Pour le faire retirer, écrivez à {courriel}."
+        "phrase": "La direction le lira avant de le publier sur le site, avec votre nom affiché, votre pays et la date. Pour le faire retirer, écrivez à {courriel}."
       },
       "erreurChargement": "Le formulaire n'a pas pu s'ouvrir. Réessayez dans un moment.",
       "sansDonnees": "Le formulaire n'a pas pu s'ouvrir",

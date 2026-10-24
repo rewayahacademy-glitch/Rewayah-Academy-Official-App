@@ -100,7 +100,7 @@ Future<void> _remplir(
   }
   if (!sauf.contains(ChampAvis.depuis)) {
     await _taper(tester, find.byKey(AvisPublicPage.moisKey));
-    await tester.tap(find.text('mars').last);
+    await tester.tap(find.text('mai').last);
     await laisser(tester);
     await _taper(tester, find.byKey(AvisPublicPage.anneeKey));
     await tester.tap(find.text('2024').last);
@@ -134,7 +134,8 @@ void main() {
       expect(find.text(f.pays.libelle), findsWidgets);
       expect(find.text(f.depuis.libelle), findsWidgets);
       expect(find.text(f.note.libelle), findsWidgets);
-      expect(find.text(f.titreAvis.libelle), findsWidgets);
+      // AVIS-UI : plus de titre d'avis dans le formulaire public.
+      expect(find.text(f.titreAvis.libelle), findsNothing);
       expect(find.text(f.texte.libelle), findsWidgets);
       expect(
         find.text(
@@ -152,13 +153,10 @@ void main() {
         ),
         findsOneWidget,
       );
-      // Les regles de moderation, en bref.
+      // Les regles de moderation, en deux phrases sans puces (AVIS-UI).
       expect(find.text(f.regles.titre), findsOneWidget);
-      expect(find.text(f.regles.insulte), findsOneWidget);
-      expect(find.text(f.regles.tiers), findsOneWidget);
-      expect(find.text(f.regles.publicite), findsOneWidget);
-      expect(find.text(f.regles.horsSujet), findsOneWidget);
-      expect(find.text(f.regles.doublon), findsOneWidget);
+      expect(find.text(f.regles.publie), findsOneWidget);
+      expect(find.text('•'), findsNothing);
       // Jamais le nom d'un enfant, un courriel ou un telephone.
       expect(find.text(f.regles.donnees), findsOneWidget);
       expect(find.textContaining('vérifié'), findsNothing);
@@ -224,12 +222,12 @@ void main() {
       expect(find.text('France'), findsOneWidget);
     });
 
-    testWidgets('les annees vont de 2015 a l annee courante', (tester) async {
+    testWidgets('les annees vont de 2024 a l annee courante', (tester) async {
       await _monter(tester, _port());
       await _taper(tester, find.byKey(AvisPublicPage.anneeKey));
       expect(find.text('2026'), findsOneWidget);
-      expect(find.text('2015'), findsOneWidget);
-      expect(find.text('2014'), findsNothing);
+      expect(find.text('2024'), findsOneWidget);
+      expect(find.text('2023'), findsNothing);
       expect(find.text('2027'), findsNothing);
     });
 
@@ -299,18 +297,14 @@ void main() {
       expect(p.depots, hasLength(1));
     });
 
-    testWidgets('nom trop court, avis trop court, titre trop long', (
-      tester,
-    ) async {
+    testWidgets('nom trop court, avis trop court', (tester) async {
       final AvisDemonstration p = _port();
       await _monter(tester, p);
       await _remplir(tester, texte: 'trop court');
       await _ecrire(tester, AvisPublicPage.nomKey, 'A');
-      await _ecrire(tester, AvisPublicPage.titreKey, 'T' * 81);
       await _taper(tester, _envoyer);
       expect(find.text(f.nom.erreur), findsOneWidget);
       expect(find.text(f.texte.erreur), findsOneWidget);
-      expect(find.text(f.titreAvis.erreur), findsOneWidget);
       expect(p.depots, isEmpty);
     });
 
@@ -324,12 +318,76 @@ void main() {
     });
   });
 
+  group('AVIS-UI : composition (captures du directeur, 24/10/2026)', () {
+    testWidgets('1366 px : un panneau centre de 560 au plus', (tester) async {
+      await _monter(tester, _port(), largeur: 1366);
+      final Rect panneau = tester.getRect(
+        find.byKey(AvisPublicPage.panneauKey),
+      );
+      expect(panneau.width, lessThanOrEqualTo(560));
+      // Centre : autant de marge a gauche qu'a droite, a un point pres.
+      final double ecran =
+          tester.view.physicalSize.width / tester.view.devicePixelRatio;
+      expect(
+        (panneau.left - (ecran - panneau.right)).abs(),
+        lessThanOrEqualTo(1),
+      );
+      // Le titre est dans le panneau, pas colle a gauche de la page.
+      expect(
+        tester.getRect(find.text(f.titre).first).left,
+        greaterThanOrEqualTo(panneau.left),
+      );
+    });
+
+    testWidgets('390 px : « Vous etes » en deux cartes cote a cote, de meme '
+        'largeur', (tester) async {
+      await _monter(tester, _port());
+      final Rect parent = tester.getRect(
+        find.byKey(AvisPublicPage.qualiteKey(QualiteAvis.parent)),
+      );
+      final Rect adulte = tester.getRect(
+        find.byKey(AvisPublicPage.qualiteKey(QualiteAvis.eleveAdulte)),
+      );
+      expect(parent.top, adulte.top);
+      expect((parent.width - adulte.width).abs(), lessThanOrEqualTo(1));
+    });
+
+    testWidgets('mois bornes : avril en 2024, octobre en 2026 ; mois et '
+        'annee cote a cote', (tester) async {
+      await _monter(tester, _port());
+      expect(
+        tester.getRect(find.byKey(AvisPublicPage.moisKey)).top,
+        tester.getRect(find.byKey(AvisPublicPage.anneeKey)).top,
+      );
+      await _taper(tester, find.byKey(AvisPublicPage.anneeKey));
+      await tester.tap(find.text('2024').last);
+      await laisser(tester);
+      await _taper(tester, find.byKey(AvisPublicPage.moisKey));
+      expect(find.text('mars'), findsNothing);
+      expect(find.text('avril'), findsWidgets);
+      await tester.tap(find.text('avril').last);
+      await laisser(tester);
+      await _taper(tester, find.byKey(AvisPublicPage.anneeKey));
+      await tester.tap(find.text('2026').last);
+      await laisser(tester);
+      await _taper(tester, find.byKey(AvisPublicPage.moisKey));
+      expect(find.text('octobre'), findsWidgets);
+      expect(find.text('novembre'), findsNothing);
+    });
+
+    testWidgets('la note choisie se lit a cote des etoiles', (tester) async {
+      await _monter(tester, _port());
+      expect(find.byKey(AvisPublicPage.noteLueKey), findsNothing);
+      await _taper(tester, find.byKey(NoteEtoiles.etoileKey(4)));
+      expect(find.text(f.note.surCinq(n: 4)), findsOneWidget);
+    });
+  });
+
   group('envoi', () {
     testWidgets('un formulaire valide part, puis le merci', (tester) async {
       final AvisDemonstration p = _port();
       await _monter(tester, p);
       await _remplir(tester);
-      await _ecrire(tester, AvisPublicPage.titreKey, ' Très bien ');
       await _taper(tester, _envoyer);
       expect(p.depots, hasLength(1));
       final (String jeton, DepotAvis d) = p.depots.single;
@@ -337,9 +395,9 @@ void main() {
       expect(d.nom, 'Awa B.');
       expect(d.qualite, QualiteAvis.parent);
       expect(d.pays, 'GN');
-      expect(d.depuis, DateTime(2024, 3));
+      expect(d.depuis, DateTime(2024, 5));
       expect(d.note, 4);
-      expect(d.titre, 'Très bien');
+      expect(d.titre, isNull);
       expect(d.texte, _texteValide);
       expect(d.accord, isTrue);
       // Le merci dit que la direction le lit avant la publication.
@@ -355,14 +413,6 @@ void main() {
       );
       expect(find.textContaining('direction'), findsWidgets);
       expect(_envoyer, findsNothing);
-    });
-
-    testWidgets('titre vide : part sans titre', (tester) async {
-      final AvisDemonstration p = _port();
-      await _monter(tester, p);
-      await _remplir(tester);
-      await _taper(tester, _envoyer);
-      expect(p.depots.single.$2.titre, isNull);
     });
 
     testWidgets('pendant l envoi, un second appui n envoie rien de plus', (

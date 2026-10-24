@@ -186,7 +186,7 @@ class ServiceVideoControleurDemo implements ServiceVideo {
   final String role;
 
   @override
-  Future<AccesSalle> acces(String seanceId) async =>
+  Future<AccesSalle> acces(String seanceId, {String? eleveId}) async =>
       accesControleurDemo(role: role);
 
   @override
