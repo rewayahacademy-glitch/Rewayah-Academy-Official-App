@@ -12,14 +12,20 @@ une langue par destinataire, jamais trois textes dans un même message (décisio
 
 - Expéditeur : `recrutement@rewayahacademy.com` (catégorie `recrutement`, non essentielle :
   lien de désinscription en un clic).
-- Destinataires : les personnes des formulaires Google (feuille des candidats), une fois par
+- Destinataires : les deux onglets de la feuille des réponses (formulaire 1 : 331 adresses uniques,
+  formulaire 2 : 193), soit **524 adresses uniques** le 24/10 (le « 568 » comptait les lignes,
+  doublons compris) ; langues déduites de la colonne « dans quelles langues peux-tu expliquer » :
+  arabe 471, anglais 49, français 4 (arabe par défaut, le formulaire étant en arabe) ; une fois par
   adresse, adresses exclues respectées par `courriel_enfiler`, clé d'idempotence
   `candidat_attente:<adresse>` : jamais deux fois.
-- Cadence : environ 200 par jour sur trois jours, pour rester loin des limites de Workspace et
+- Préalable en base : la catégorie `recrutement` est aujourd'hui `essentielle = true` en production
+  (donc sans lien de désinscription) ; le collage la passe à `false` avant la mise en file.
+- Cadence : environ 180 par jour sur trois jours à partir du lundi 26/10 à 09:00 UTC, pour rester loin des limites de Workspace et
   des filtres anti-pourriel. D'abord une copie au directeur sur une adresse test.
 - Mise en oeuvre : un modèle `attente_candidat` dans `supabase/functions/_shared/courriel/`
-  (déployé par la fusion dans `main`), puis une page de collage pour la mise en file (SQL
-  fabriqué depuis la feuille, collé par le directeur dans la base de production).
+  (déployé par la fusion dans `main`), puis une page de collage privée pour la mise en file (SQL fabriqué depuis la feuille le
+  24/10 au soir, 525 appels à `courriel_enfiler`, jamais versionné : il contient les adresses),
+  à coller par le directeur **après** la fusion de la PR 54, qui déploie le modèle.
 
 ## Langue de chaque envoi (décision du directeur, 24/10)
 
