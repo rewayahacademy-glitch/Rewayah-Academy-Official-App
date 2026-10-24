@@ -218,6 +218,24 @@ class DockSeance extends StatelessWidget {
           fond: FondBoutonAppel.reseau,
           onPress: reseau,
         );
+      case CommandeDock.tableau:
+        final VoidCallback? tableau = actions.onTableau;
+        if (tableau == null) return null;
+        final bool ouvert = vue.tableauOuvert;
+        // Une bascule comme micro et camera (ETATS-BTN-1) : disque plein
+        // quand le tableau est ouvert, mot d'etat dessous.
+        return BoutonAppel(
+          key: const ValueKey<String>('bouton-tableau'),
+          icone: (ouvert ? AppIcons.annoter.actif : AppIcons.annoter.repos),
+          bascule: ouvert,
+          libelle: ouvert
+              ? t.salle.seance.tableauOuvert
+              : t.salle.seance.tableauFerme,
+          libelleSemantique: ouvert
+              ? t.salle.seance.fermerTableau
+              : t.salle.seance.ouvrirTableau,
+          onPress: tableau,
+        );
       case CommandeDock.quitter:
         final VoidCallback? quitter = actions.onQuitter;
         if (quitter == null) return null;
@@ -281,6 +299,7 @@ class DockSeance extends StatelessWidget {
       bascules.add(
         commande == CommandeDock.micro ||
             commande == CommandeDock.camera ||
+            commande == CommandeDock.tableau ||
             commande == CommandeDock.quitter,
       );
     }

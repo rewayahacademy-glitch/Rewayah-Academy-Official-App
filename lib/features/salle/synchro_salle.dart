@@ -27,6 +27,10 @@ import '../../core/video/video_session_provider.dart';
 /// texte, pas un point de la page : il reste tel quel.
 const String typePointeurSalle = 'tc.salle.pointeur';
 
+/// S0.3 : le type du message qui ouvre ou ferme le tableau blanc pour la
+/// classe (canal fiable).
+const String typeTableauSalle = 'tc.salle.tableau';
+
 /// Les pieces de la synchronisation d'une seance, creees a l'entree dans la
 /// salle et liberees a la sortie.
 class SynchroSalle {
@@ -80,6 +84,42 @@ class SynchroSalle {
     _abonnementPointeur = _realtime
         .messagesEphemeres(sessionId)
         .listen(_recevoirPointeur, onError: (Object _) {});
+    _abonnementTableau = _realtime
+        .messagesFiables(sessionId)
+        .listen(_recevoirTableau, onError: (Object _) {});
+  }
+
+  late final StreamSubscription<MessagePedagogique> _abonnementTableau;
+
+  /// S0.3 : le tableau blanc ouvert par l'enseignant, tel que la classe le
+  /// recoit.
+  final ValueNotifier<bool> tableauOuvert = ValueNotifier<bool>(false);
+
+  void _recevoirTableau(MessagePedagogique message) {
+    if (message.type != typeTableauSalle ||
+        message.emetteurProfilId == profilLocalId) {
+      return;
+    }
+    tableauOuvert.value = message.charge['ouvert'] == true;
+  }
+
+  /// S0.3 : ouvre ou ferme le tableau pour la classe (enseignant).
+  void diffuserTableau({required bool ouvert}) {
+    if (!_peutDiffuser) return;
+    unawaited(
+      _realtime
+          .emettre(
+            MessagePedagogique(
+              type: typeTableauSalle,
+              sessionId: sessionId,
+              emetteurProfilId: profilLocalId,
+              charge: <String, dynamic>{'ouvert': ouvert},
+              emisLeUtc: DateTime.now().toUtc(),
+            ),
+            canal: CanalFiabilite.fiable,
+          )
+          .catchError((Object e) => journalDev('tableau non diffuse : $e')),
+    );
   }
 
   /// Le profil de cet appareil.
@@ -155,7 +195,9 @@ class SynchroSalle {
   @mustCallSuper
   Future<void> liberer() async {
     await _abonnementPointeur.cancel();
+    await _abonnementTableau.cancel();
     pointeurDistant.dispose();
+    tableauOuvert.dispose();
     await _reception.liberer();
     await _transport.liberer();
   }

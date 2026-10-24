@@ -203,6 +203,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   PanneauOuvert _panneau = PanneauOuvert.aucun;
   ContexteOuvert _contexte = ContexteOuvert.aucun;
 
+  /// S0.3 : l'enseignant a ouvert le tableau blanc (ferme par defaut).
+  bool _tableau = false;
+
   /// S1 : la synchronisation de l'ecriture de cette seance, creee a la
   /// premiere composition dans la salle, liberee a la sortie.
   SynchroSalle? _synchro;
@@ -217,12 +220,17 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       return existante;
     }
     unawaited(existante?.liberer());
-    return _synchro = SynchroSalle(
+    final SynchroSalle neuve = SynchroSalle(
       moteur: _moteur,
       acces: acces,
       sessionId: widget.seanceId,
       profilLocalId: profil,
     );
+    // L'eleve suit le tableau que l'enseignant ouvre ou ferme.
+    neuve.tableauOuvert.addListener(() {
+      if (mounted) setState(() {});
+    });
+    return _synchro = neuve;
   }
 
   /// D14 (S0) : le dernier refus d'allumer la camera, tel que le navigateur
@@ -646,10 +654,25 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     required VuePresence mienne,
   }) {
     final bool enseignant = base.role == RoleSeance.enseignant;
-    final VueSeance seance = base.copyWith(
-      panneau: _panneau,
-      contexte: _contexte,
+    final SynchroSalle? synchro = _synchroPour(
+      ref.read(sessionProvider).profileId,
     );
+    // S0.3 : le tableau blanc, ouvert par l'enseignant pour toute la classe,
+    // prend la place de la page (le tableau libre existant).
+    final bool tableau = enseignant
+        ? _tableau
+        : (synchro?.tableauOuvert.value ?? false);
+    final VueSeance seance = tableau
+        ? base.copyWith(
+            panneau: _panneau,
+            contexte: _contexte,
+            sansSupportPresente: true,
+            tableauLibre: const TableauLibre(
+              largeurCanonique: 1600,
+              hauteurCanonique: 1000,
+            ),
+          )
+        : base.copyWith(panneau: _panneau, contexte: _contexte);
     final VideoSessionProvider moteur = ref.watch(moteurSalleProvider);
     final double? plus = palierSuivant(_zoom);
     final double? moins = palierPrecedent(_zoom);
@@ -685,6 +708,13 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // La Bibliotheque des Commandes (et la touche B) ouvre le Coran : une
       // autre sourate se presente a tout moment, comme depuis l'ancien
       // panneau.
+      // S0.3 : le tableau blanc, ferme par defaut, ouvert pour la classe.
+      onTableau: enseignant && synchro != null
+          ? () => setState(() {
+              _tableau = !_tableau;
+              synchro.diffuserTableau(ouvert: _tableau);
+            })
+          : null,
       // S1 : « Ecrire » et la gomme de l'enseignant ; l'outil s'arme dans
       // `etatOutilsProvider`, l'encre part a la classe (SynchroSalle).
       onOutil: enseignant ? (OutilEnseignement _) {} : null,
@@ -715,8 +745,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // Rien de presente : la scene en grand pour tous (les visages, ADR-001) ;
     // une page presentee prend l'espace principal, la video revient en
     // vignette, et la toucher remet la scene en grand.
-    final bool scenePremierPlan = _scenePremierPlan ?? presentee == null;
-    final bool basculable = presentee != null;
+    final bool scenePremierPlan =
+        !tableau && (_scenePremierPlan ?? presentee == null);
+    final bool basculable = presentee != null || tableau;
     return PorteeMediaSalle(
       // S0.2 : l'en-tete tient sur une ligne ; la presence de l'eleve y
       // passe en pastille (section 6.6, la sienne seulement) ; la liste de
@@ -779,7 +810,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       onPagePrecedente: actions.onPagePrecedente,
       onPageSuivante: actions.onPageSuivante,
       child: _AvecSynchro(
-        synchro: _synchroPour(ref.read(sessionProvider).profileId),
+        synchro: synchro,
         child: SalleSeance(
           key: const ValueKey<String>('salle-de-seance'),
           vue: seance,

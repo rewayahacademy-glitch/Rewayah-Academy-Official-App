@@ -352,6 +352,10 @@
       "ouvrirReglages": "Ouvrir les réglages"
     },
     "seance": {
+      "tableauOuvert": "Tableau ouvert",
+      "tableauFerme": "Tableau fermé",
+      "ouvrirTableau": "Ouvrir le tableau pour la classe",
+      "fermerTableau": "Fermer le tableau",
       "titre": "Séance en direct",
       "titreGuidee": "Ma séance",
       "ligne": "{debut} · {fin}",

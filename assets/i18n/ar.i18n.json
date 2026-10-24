@@ -911,6 +911,10 @@
     },
     "bandeauPermanent": "قد تجري زيارة مراقبة.",
     "seance": {
+      "tableauOuvert": "السبورة مفتوحة",
+      "tableauFerme": "السبورة مغلقة",
+      "ouvrirTableau": "افتح السبورة للصف",
+      "fermerTableau": "أغلق السبورة",
       "titre": "حصة مباشرة",
       "titreGuidee": "حصتي",
       "ligne": "⁨{debut}⁩ · ⁨{fin}⁩",

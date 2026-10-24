@@ -244,4 +244,49 @@ void main() {
     await pumpEventQueue();
     expect(eleve.pointeurDistant.value, isNull);
   });
+
+  test('S0.3 : le tableau ouvert par l enseignant s ouvre chez l eleve, '
+      'puis se ferme', () async {
+    final FauxMoteurSalle moteurEnseignant = FauxMoteurSalle();
+    final FauxMoteurSalle moteurEleve = FauxMoteurSalle();
+    await moteurEnseignant.rejoindre(accesSalle('teacher'));
+    await moteurEleve.rejoindre(accesSalle('student'));
+    final SynchroSalle enseignant = SynchroSalle(
+      moteur: moteurEnseignant,
+      acces: accesSalle('teacher'),
+      sessionId: _seance,
+      profilLocalId: 't1',
+    );
+    final SynchroSalle eleve = SynchroSalle(
+      moteur: moteurEleve,
+      acces: accesSalle('student'),
+      sessionId: _seance,
+      profilLocalId: 'e1',
+    );
+    addTearDown(enseignant.liberer);
+    addTearDown(eleve.liberer);
+
+    Future<void> relayer() async {
+      await pumpEventQueue();
+      final PaquetDonnees paquet = moteurEnseignant.donneesPubliees.last;
+      expect(paquet.fiable, isTrue);
+      moteurEleve.recevoirDonnees(
+        PaquetDonnees(
+          sujet: paquet.sujet,
+          charge: paquet.charge,
+          fiable: paquet.fiable,
+          emetteurIdentite: 't1',
+        ),
+      );
+      await pumpEventQueue();
+    }
+
+    expect(eleve.tableauOuvert.value, isFalse);
+    enseignant.diffuserTableau(ouvert: true);
+    await relayer();
+    expect(eleve.tableauOuvert.value, isTrue);
+    enseignant.diffuserTableau(ouvert: false);
+    await relayer();
+    expect(eleve.tableauOuvert.value, isFalse);
+  });
 }

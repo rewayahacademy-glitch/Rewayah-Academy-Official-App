@@ -1114,6 +1114,52 @@ void main() {
       });
     }
 
+    testWidgets('S0.3 : le bouton Tableau ouvre la feuille pour la classe, '
+        'puis rend la page', (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1366, 768);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: <Override>[
+          ..._surcharges(
+            video: FauxServiceVideo(acces0: _acces('teacher')),
+            moteur: moteur,
+            preVol: FauxServicePreVol(),
+            role: AppRole.teacher,
+          ),
+          policeMushafDisponibleProvider.overrideWith((Ref _) async => false),
+          pageMushafProvider.overrideWith(
+            (Ref _, int _) async => throw StateError('aucune source'),
+          ),
+        ],
+      );
+      await moteur.presenterContenu(_contenu());
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey<String>('surface-page')),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.byKey(const ValueKey<String>('bouton-tableau')));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey<String>('surface-feuille')),
+        findsOneWidget,
+      );
+      expect(find.text(t.salle.seance.tableauOuvert), findsOneWidget);
+      // L'ouverture part a la classe, sur le canal fiable.
+      expect(moteur.donneesPubliees.last.fiable, isTrue);
+
+      await tester.tap(find.byKey(const ValueKey<String>('bouton-tableau')));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey<String>('surface-page')),
+        findsOneWidget,
+      );
+    });
+
     test('S0 : les paliers du zoom, 100 a 200 %', () {
       expect(palierSuivant(1), 1.25);
       expect(palierSuivant(1.5), 2);
@@ -2173,6 +2219,45 @@ void main() {
           });
         }
       }
+    }
+  }, skip: sautSansCapture);
+
+  // S0.3 : le tableau blanc ouvert par l'enseignant, a 1366 et au telephone.
+  group('S0.3 : captures du tableau', () {
+    setUpAll(() async {
+      await chargerPolicesDuDepot();
+    });
+    for (final MapEntry<String, Size> taille in <String, Size>{
+      '390-portrait': const Size(390, 844),
+      '1366': const Size(1366, 768),
+    }.entries) {
+      testWidgets('s0-3-tableau-enseignant-${taille.key}', (
+        WidgetTester tester,
+      ) async {
+        masquerRubanDebug();
+        tester.view.physicalSize = taille.value;
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        final FauxMoteurSalle moteur = FauxMoteurSalle();
+        await _monterSalle(
+          tester,
+          surcharges: _surcharges(
+            video: FauxServiceVideo(acces0: _acces('teacher')),
+            moteur: moteur,
+            preVol: FauxServicePreVol(),
+            role: AppRole.teacher,
+          ),
+        );
+        await moteur.presenterContenu(_contenu());
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey<String>('bouton-tableau')));
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey<String>('surface-feuille')),
+          findsOneWidget,
+        );
+        await capturerVue(tester, 's0-3-tableau-enseignant-${taille.key}');
+      });
     }
   }, skip: sautSansCapture);
 }

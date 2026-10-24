@@ -83,7 +83,16 @@ class TelephonePleinEcran extends StatelessWidget {
           // notes gardent le repere de cette page (coordonnees normalisees).
           final SupportPageFixe? support = vue.supportPresente;
           final VueSeance vuePage = support == null
-              ? vue
+              // S0.3 : le tableau blanc prend lui aussi tout l'ecran.
+              ? (vue.tableauLibre == null
+                    ? vue
+                    : vue.copyWith(
+                        tableauLibre: TableauLibre(
+                          largeurCanonique: math.max(1, ecran.width.round()),
+                          hauteurCanonique: math.max(1, ecran.height.round()),
+                          aDesNotes: vue.tableauLibre!.aDesNotes,
+                        ),
+                      ))
               : vue.copyWith(
                   supportPresente: SupportPageFixe(
                     id: support.id,

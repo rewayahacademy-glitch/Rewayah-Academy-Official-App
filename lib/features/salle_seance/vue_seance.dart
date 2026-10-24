@@ -477,8 +477,9 @@ enum PanneauOuvert {
   commandes,
 }
 
-/// Une commande du dock, par role (I-4).
-enum CommandeDock { micro, camera, agrandir, reseau, quitter }
+/// Une commande du dock, par role (I-4). S0.3 : [tableau], le tableau blanc
+/// de l'enseignant (rendu seulement avec `ActionsSeance.onTableau`).
+enum CommandeDock { micro, camera, agrandir, reseau, tableau, quitter }
 
 /// Un compte affiche en haut a droite : celui de la personne devant l'ecran.
 @immutable
@@ -1272,6 +1273,7 @@ class VueSeance {
     RoleSeance.enseignant => const <CommandeDock>[
       CommandeDock.micro,
       CommandeDock.camera,
+      CommandeDock.tableau,
       CommandeDock.quitter,
     ],
     RoleSeance.eleve || RoleSeance.guidee => <CommandeDock>[
@@ -1280,6 +1282,10 @@ class VueSeance {
       CommandeDock.quitter,
     ],
   };
+
+  /// S0.3 : le tableau blanc est affiche (aucune page presentee, la feuille
+  /// du tableau libre a sa place).
+  bool get tableauOuvert => supportPresente == null && tableauLibre != null;
 
   /// TB-2 (plan V2 §18.1) : la barre de l'appel reste visible, sans
   /// masquage temporise : un panneau ouvert, une erreur critique de
