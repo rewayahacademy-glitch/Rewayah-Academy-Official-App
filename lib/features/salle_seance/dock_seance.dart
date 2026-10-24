@@ -312,19 +312,19 @@ class DockSeance extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.sm),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
+        // Les boutons gardent leur taille a toute echelle de texte ; si la
+        // rangee ne tient plus en largeur, la pilule passe sur deux rangees,
+        // toujours sans mot (directeur, 24/10/2026).
+        child: Wrap(
+          alignment: WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.center,
           spacing: ecart,
+          runSpacing: ecart,
           children: boutons,
         ),
       ),
     );
-    // Une seule rangee : si elle ne tient pas (320, texte agrandi), elle se
-    // reduit d'un bloc plutot que de passer sur deux lignes.
-    final Widget pilule = Center(
-      heightFactor: 1,
-      child: FittedBox(fit: BoxFit.scaleDown, child: dock),
-    );
+    final Widget pilule = Center(heightFactor: 1, child: dock);
     if (statutCamera == null) return pilule;
     // Q-S1 : le statut est une ligne de texte d'etat discret au-dessus de la
     // pilule, ecart 8.
