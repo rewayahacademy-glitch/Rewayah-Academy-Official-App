@@ -93,11 +93,11 @@ class _Etoile extends StatelessWidget {
     final bool saisie = onChange != null;
     final Widget icone = Icon(
       AppIcons.etoile.resoudre(selectionne: pleine),
-      size: saisie ? AppSpacing.xxxl : AppSpacing.lg,
+      size: saisie ? AppSpacing.section : AppSpacing.lg,
     );
     final Widget colore = IconTheme(
       data: (pleine ? palette.inkAccent : palette.borderStrong).asIconTheme(
-        size: saisie ? AppSpacing.xxxl : AppSpacing.lg,
+        size: saisie ? AppSpacing.section : AppSpacing.lg,
       ),
       child: icone,
     );

@@ -125,8 +125,15 @@ class ChoiceCardGroup extends StatefulWidget {
     this.valeurInitiale,
     this.autoriserSaisieLibre = true,
     this.coteACote = false,
+    this.enLigne = false,
     this.indicationMultiple = true,
   });
+
+  /// Vrai pour poser deux options courtes **en ligne, a toutes les largeurs**
+  /// (AVIS-UI, 24/10/2026) : cartes de liste (radio et libelle) de meme
+  /// largeur, cote a cote meme sur telephone, sans bento ni pile. La carte
+  /// « Autre », si elle est permise, reste pleine largeur dessous.
+  final bool enLigne;
 
   /// Vrai (par defaut) : en selection multiple, la phrase « Plusieurs reponses
   /// possibles » se lit en tete du groupe. Faux quand l'ecran empile plusieurs
@@ -401,6 +408,24 @@ class _ChoiceCardGroupState extends State<ChoiceCardGroup> {
     ),
   );
 
+  /// [ChoiceCardGroup.enLigne] : les options cote a cote, en cartes de liste.
+  ///
+  /// Sans `IntrinsicHeight` : la carte de liste mesure ses libelles par un
+  /// `LayoutBuilder`, qui ne rend pas de dimension intrinseque. Les cartes
+  /// s'alignent en haut ; un libelle sur deux lignes allonge la sienne seule.
+  Widget _rangeeEnLigne() => Padding(
+    padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        for (int i = 0; i < widget.options.length; i++) ...<Widget>[
+          if (i > 0) Ecart.hLg,
+          Expanded(child: _carteOption(widget.options[i], verticale: false)),
+        ],
+      ],
+    ),
+  );
+
   /// La disposition du telephone et des fenetres etroites (inchangee).
   Widget _dispositionMobile() => widget.coteACote
       ? LayoutBuilder(
@@ -439,7 +464,9 @@ class _ChoiceCardGroupState extends State<ChoiceCardGroup> {
         // Lot E2 : au-dela de [ChoiceCardGroup.seuilBento] d'ecran, et si le
         // groupe a la place de quatre colonnes a l'echelle du texte, les
         // options passent en bento ; sinon la disposition du telephone.
-        if (widget.options.isNotEmpty &&
+        if (widget.enLigne)
+          _rangeeEnLigne()
+        else if (widget.options.isNotEmpty &&
             MediaQuery.sizeOf(context).width >= ChoiceCardGroup.seuilBento)
           LayoutBuilder(
             builder: (BuildContext context, BoxConstraints contraintes) =>

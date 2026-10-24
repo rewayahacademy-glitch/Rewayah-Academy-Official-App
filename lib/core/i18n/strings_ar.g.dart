@@ -15360,7 +15360,7 @@ class _Traductions$avis$form$depuis$ar extends Traductions$avis$form$depuis$fr {
 	@override String get aide => 'الشهر والسنة اللذان التحقت فيهما بالأكاديمية.';
 	@override String get mois => 'الشهر';
 	@override String get annee => 'السنة';
-	@override String get erreur => 'اختر شهرًا وسنة، من 2015 إلى هذا الشهر.';
+	@override String get erreur => 'اختر شهرًا وسنة، من أبريل 2024 إلى هذا الشهر.';
 }
 
 // Path: avis.form.note
@@ -15374,6 +15374,7 @@ class _Traductions$avis$form$note$ar extends Traductions$avis$form$note$fr {
 	@override String get aide => 'المس نجمة: 1 أدنى تقييم و5 أعلاه.';
 	@override String etoile({required Object n}) => 'إعطاء التقييم ⁨${n}⁩ من 5';
 	@override String lue({required Object n}) => 'التقييم: ⁨${n}⁩ من 5';
+	@override String surCinq({required Object n}) => '⁨${n}⁩ من 5';
 	@override String get erreur => 'اختر تقييمًا من نجمة إلى 5 نجوم.';
 }
 
@@ -15428,6 +15429,7 @@ class _Traductions$avis$form$regles$ar extends Traductions$avis$form$regles$fr {
 	@override String get horsSujet => 'كلامًا خارج الموضوع';
 	@override String get doublon => 'تكرارًا لرأي وصل من قبل';
 	@override String get donnees => 'لا تكتب اسم طفل ولا بريدًا إلكترونيًا ولا رقم هاتف.';
+	@override String get publie => 'يُنشر الرأي المحترم حتى لو كان ناقدًا. ترفض الإدارة فقط الإهانة، وبيانات طرف ثالث، والإعلان، والكلام خارج الموضوع، والتكرار.';
 }
 
 // Path: avis.form.ferme
@@ -15449,7 +15451,7 @@ class _Traductions$avis$form$envoye$ar extends Traductions$avis$form$envoye$fr {
 
 	// Translations
 	@override String get titre => 'شكرًا على رأيك';
-	@override String phrase({required Object courriel}) => 'ستقرأ الإدارة رأيك قبل نشره. إن قُبل فسيظهر على موقع Rewayah Academy مع اسمك الظاهر وبلدك والتاريخ. لطلب سحبه، اكتب إلى ⁨${courriel}⁩.';
+	@override String phrase({required Object courriel}) => 'ستقرأ الإدارة رأيك قبل نشره على الموقع مع اسمك الظاهر وبلدك والتاريخ. لطلب سحبه، اكتب إلى ⁨${courriel}⁩.';
 }
 
 // Path: avis.admin.sections
@@ -27619,11 +27621,12 @@ extension on TraductionsAr {
 			'avis.form.depuis.aide' => 'الشهر والسنة اللذان التحقت فيهما بالأكاديمية.',
 			'avis.form.depuis.mois' => 'الشهر',
 			'avis.form.depuis.annee' => 'السنة',
-			'avis.form.depuis.erreur' => 'اختر شهرًا وسنة، من 2015 إلى هذا الشهر.',
+			'avis.form.depuis.erreur' => 'اختر شهرًا وسنة، من أبريل 2024 إلى هذا الشهر.',
 			'avis.form.note.libelle' => 'تقييمك',
 			'avis.form.note.aide' => 'المس نجمة: 1 أدنى تقييم و5 أعلاه.',
 			'avis.form.note.etoile' => ({required Object n}) => 'إعطاء التقييم ⁨${n}⁩ من 5',
 			'avis.form.note.lue' => ({required Object n}) => 'التقييم: ⁨${n}⁩ من 5',
+			'avis.form.note.surCinq' => ({required Object n}) => '⁨${n}⁩ من 5',
 			'avis.form.note.erreur' => 'اختر تقييمًا من نجمة إلى 5 نجوم.',
 			'avis.form.titreAvis.libelle' => 'العنوان (اختياري)',
 			'avis.form.titreAvis.aide' => 'جملة قصيرة تلخّص رأيك. 80 حرفًا على الأكثر.',
@@ -27643,6 +27646,7 @@ extension on TraductionsAr {
 			'avis.form.regles.horsSujet' => 'كلامًا خارج الموضوع',
 			'avis.form.regles.doublon' => 'تكرارًا لرأي وصل من قبل',
 			'avis.form.regles.donnees' => 'لا تكتب اسم طفل ولا بريدًا إلكترونيًا ولا رقم هاتف.',
+			'avis.form.regles.publie' => 'يُنشر الرأي المحترم حتى لو كان ناقدًا. ترفض الإدارة فقط الإهانة، وبيانات طرف ثالث، والإعلان، والكلام خارج الموضوع، والتكرار.',
 			'avis.form.envoyer' => 'إرسال رأيي',
 			'avis.form.aCorriger' => 'بعض الحقول تحتاج إلى تصحيح قبل الإرسال.',
 			'avis.form.erreurChamp' => 'هناك حقل غير مقبول. راجع النموذج ثم أرسل من جديد.',
@@ -27651,7 +27655,7 @@ extension on TraductionsAr {
 			'avis.form.ferme.titre' => 'هذا الرابط لم يعد يقبل آراء',
 			'avis.form.ferme.phrase' => ({required Object courriel}) => 'إما أنه أُغلق، أو انتهت مدته، أو بلغ عدد الآراء المقرر. لتشاركنا رأيك اطلب رابطًا جديدًا من الإدارة: ⁨${courriel}⁩.',
 			'avis.form.envoye.titre' => 'شكرًا على رأيك',
-			'avis.form.envoye.phrase' => ({required Object courriel}) => 'ستقرأ الإدارة رأيك قبل نشره. إن قُبل فسيظهر على موقع Rewayah Academy مع اسمك الظاهر وبلدك والتاريخ. لطلب سحبه، اكتب إلى ⁨${courriel}⁩.',
+			'avis.form.envoye.phrase' => ({required Object courriel}) => 'ستقرأ الإدارة رأيك قبل نشره على الموقع مع اسمك الظاهر وبلدك والتاريخ. لطلب سحبه، اكتب إلى ⁨${courriel}⁩.',
 			'avis.form.erreurChargement' => 'تعذّر فتح النموذج. أعد المحاولة بعد قليل.',
 			'avis.form.sansDonnees' => 'تعذّر فتح النموذج',
 			'avis.form.indisponibleTitre' => 'الآراء غير متاحة',
@@ -27782,10 +27786,10 @@ extension on TraductionsAr {
 			'courriels.admin.ecrire.corps' => 'الرسالة',
 			'courriels.admin.ecrire.corpsAide' => 'نص عادي، 5000 حرف على الأكثر. السطر الفارغ يبدأ فقرة جديدة.',
 			'courriels.admin.ecrire.traduction' => 'يتلقاه كل مستلم بلغته: تُترجم الرسالة تلقائيًا عند الإرسال.',
-			'courriels.admin.ecrire.envoyer' => 'إرسال الرسالة',
-			'courriels.admin.ecrire.erreurCategories' => 'تعذّر تحميل الفئات. أعد المحاولة.',
 			_ => null,
 		} ?? switch (path) {
+			'courriels.admin.ecrire.envoyer' => 'إرسال الرسالة',
+			'courriels.admin.ecrire.erreurCategories' => 'تعذّر تحميل الفئات. أعد المحاولة.',
 			'courriels.admin.ecrire.sansDonneesCategories' => 'تعذّر تحميل الفئات',
 			'courriels.admin.ecrire.pasDeCategorie' => 'لا توجد فئة مفعّلة: لا يمكن الكتابة حاليًا.',
 			'courriels.admin.ecrire.champ.adresse' => 'اكتب عنوان بريد إلكتروني صالحًا.',

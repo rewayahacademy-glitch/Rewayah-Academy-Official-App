@@ -21,8 +21,12 @@ abstract final class BornesAvis {
   /// Avis : 20 a 1500 caracteres.
   static const int texteMax = 1500;
 
-  /// Premiere annee d'arrivee acceptee.
-  static const int anneeMin = 2015;
+  /// Premiere annee d'arrivee acceptee : l'academie a ouvert en avril 2024
+  /// (AVIS-UI, 24/10/2026).
+  static const int anneeMin = 2024;
+
+  /// Premier mois d'arrivee accepte, la premiere annee.
+  static const int moisMin = 4;
 }
 
 /// Ce que la personne a rempli.
@@ -86,7 +90,7 @@ List<ChampAvis> champsACorriger(SaisieAvis s, DateTime maintenant) {
     if (s.qualite == null) ChampAvis.qualite,
     if (s.pays == null) ChampAvis.pays,
     if (depuis == null ||
-        depuis.year < BornesAvis.anneeMin ||
+        depuis.isBefore(DateTime(BornesAvis.anneeMin, BornesAvis.moisMin)) ||
         depuis.isAfter(DateTime(maintenant.year, maintenant.month)))
       ChampAvis.depuis,
     if (s.note < 1 || s.note > 5) ChampAvis.note,
@@ -97,7 +101,18 @@ List<ChampAvis> champsACorriger(SaisieAvis s, DateTime maintenant) {
   ];
 }
 
-/// Les annees proposees : de l'annee courante a 2015, la plus recente d'abord.
+/// Les annees proposees : de l'annee courante a 2024, la plus recente d'abord.
 List<int> anneesProposees(DateTime maintenant) => <int>[
   for (int a = maintenant.year; a >= BornesAvis.anneeMin; a--) a,
+];
+
+/// Les mois proposes pour [annee] : a partir d'avril en 2024, jusqu'au mois
+/// courant l'annee courante, les douze sinon (et tant que l'annee manque).
+List<int> moisProposes(int? annee, DateTime maintenant) => <int>[
+  for (
+    int m = annee == BornesAvis.anneeMin ? BornesAvis.moisMin : 1;
+    m <= (annee == maintenant.year ? maintenant.month : 12);
+    m++
+  )
+    m,
 ];

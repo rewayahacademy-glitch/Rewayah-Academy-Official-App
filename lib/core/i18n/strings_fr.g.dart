@@ -33956,8 +33956,8 @@ class Traductions$avis$form$depuis$fr {
 	/// fr: 'Année'
 	String get annee => 'Année';
 
-	/// fr: 'Choisissez un mois et une année, de 2015 jusqu'à ce mois-ci.'
-	String get erreur => 'Choisissez un mois et une année, de 2015 jusqu\'à ce mois-ci.';
+	/// fr: 'Choisissez un mois et une année, d'avril 2024 jusqu'à ce mois-ci.'
+	String get erreur => 'Choisissez un mois et une année, d\'avril 2024 jusqu\'à ce mois-ci.';
 }
 
 // Path: avis.form.note
@@ -33979,6 +33979,9 @@ class Traductions$avis$form$note$fr {
 
 	/// fr: 'Note : {n} sur 5'
 	String lue({required Object n}) => 'Note : ${n} sur 5';
+
+	/// fr: '{n} sur 5'
+	String surCinq({required Object n}) => '${n} sur 5';
 
 	/// fr: 'Choisissez une note de 1 à 5 étoiles.'
 	String get erreur => 'Choisissez une note de 1 à 5 étoiles.';
@@ -34069,6 +34072,9 @@ class Traductions$avis$form$regles$fr {
 
 	/// fr: 'Ne donnez ni le nom d'un enfant, ni courriel, ni téléphone.'
 	String get donnees => 'Ne donnez ni le nom d\'un enfant, ni courriel, ni téléphone.';
+
+	/// fr: 'Un avis respectueux est publié, même critique. La direction refuse seulement une insulte, des données d'un tiers, de la publicité, un propos hors sujet ou un doublon.'
+	String get publie => 'Un avis respectueux est publié, même critique. La direction refuse seulement une insulte, des données d\'un tiers, de la publicité, un propos hors sujet ou un doublon.';
 }
 
 // Path: avis.form.ferme
@@ -34097,8 +34103,8 @@ class Traductions$avis$form$envoye$fr {
 	/// fr: 'Merci pour votre avis'
 	String get titre => 'Merci pour votre avis';
 
-	/// fr: 'La direction va le lire avant de le publier. S'il est accepté, il paraîtra sur le site de Rewayah Academy avec votre nom affiché, votre pays et la date. Pour le faire retirer, écrivez à {courriel}.'
-	String phrase({required Object courriel}) => 'La direction va le lire avant de le publier. S\'il est accepté, il paraîtra sur le site de Rewayah Academy avec votre nom affiché, votre pays et la date. Pour le faire retirer, écrivez à ${courriel}.';
+	/// fr: 'La direction le lira avant de le publier sur le site, avec votre nom affiché, votre pays et la date. Pour le faire retirer, écrivez à {courriel}.'
+	String phrase({required Object courriel}) => 'La direction le lira avant de le publier sur le site, avec votre nom affiché, votre pays et la date. Pour le faire retirer, écrivez à ${courriel}.';
 }
 
 // Path: avis.admin.sections
@@ -50088,11 +50094,12 @@ extension on Traductions {
 			'avis.form.depuis.aide' => 'Le mois et l\'année où vous avez rejoint l\'académie.',
 			'avis.form.depuis.mois' => 'Mois',
 			'avis.form.depuis.annee' => 'Année',
-			'avis.form.depuis.erreur' => 'Choisissez un mois et une année, de 2015 jusqu\'à ce mois-ci.',
+			'avis.form.depuis.erreur' => 'Choisissez un mois et une année, d\'avril 2024 jusqu\'à ce mois-ci.',
 			'avis.form.note.libelle' => 'Votre note',
 			'avis.form.note.aide' => 'Touchez une étoile : 1 est la note la plus basse, 5 la plus haute.',
 			'avis.form.note.etoile' => ({required Object n}) => 'Donner la note ${n} sur 5',
 			'avis.form.note.lue' => ({required Object n}) => 'Note : ${n} sur 5',
+			'avis.form.note.surCinq' => ({required Object n}) => '${n} sur 5',
 			'avis.form.note.erreur' => 'Choisissez une note de 1 à 5 étoiles.',
 			'avis.form.titreAvis.libelle' => 'Titre (facultatif)',
 			'avis.form.titreAvis.aide' => 'Une phrase courte qui résume votre avis. 80 caractères au plus.',
@@ -50100,9 +50107,9 @@ extension on Traductions {
 			'avis.form.texte.libelle' => 'Votre avis',
 			'avis.form.texte.aide' => 'Ce qui vous a plu, ce que vous avez appris, ce qui pourrait être mieux. Au moins 20 caractères.',
 			'avis.form.texte.compteur' => ({required Object n, required Object max}) => 'Caractères : ${n} sur ${max}',
-			'avis.form.texte.erreur' => 'Écrivez entre 20 et 1500 caractères.',
 			_ => null,
 		} ?? switch (path) {
+			'avis.form.texte.erreur' => 'Écrivez entre 20 et 1500 caractères.',
 			'avis.form.accord.libelle' => 'J\'accepte que cet avis, mon nom affiché, mon pays et la date soient publiés sur le site de Rewayah Academy.',
 			'avis.form.accord.erreur' => 'Acceptez la publication en cochant la case, sinon votre avis ne peut pas être envoyé.',
 			'avis.form.lecture' => ({required Object courriel}) => 'Votre avis sera lu par la direction avant d\'être publié. Pour le faire retirer plus tard, écrivez à ${courriel}.',
@@ -50114,6 +50121,7 @@ extension on Traductions {
 			'avis.form.regles.horsSujet' => 'un propos hors sujet',
 			'avis.form.regles.doublon' => 'un doublon d\'un avis déjà reçu',
 			'avis.form.regles.donnees' => 'Ne donnez ni le nom d\'un enfant, ni courriel, ni téléphone.',
+			'avis.form.regles.publie' => 'Un avis respectueux est publié, même critique. La direction refuse seulement une insulte, des données d\'un tiers, de la publicité, un propos hors sujet ou un doublon.',
 			'avis.form.envoyer' => 'Envoyer mon avis',
 			'avis.form.aCorriger' => 'Quelques champs sont à corriger avant l\'envoi.',
 			'avis.form.erreurChamp' => 'Un champ n\'est pas accepté. Relisez le formulaire, puis envoyez de nouveau.',
@@ -50122,7 +50130,7 @@ extension on Traductions {
 			'avis.form.ferme.titre' => 'Ce lien n\'accepte plus d\'avis',
 			'avis.form.ferme.phrase' => ({required Object courriel}) => 'Il est fermé, arrivé à échéance, ou le nombre d\'avis prévu est atteint. Pour donner votre avis, demandez un nouveau lien à la direction : ${courriel}.',
 			'avis.form.envoye.titre' => 'Merci pour votre avis',
-			'avis.form.envoye.phrase' => ({required Object courriel}) => 'La direction va le lire avant de le publier. S\'il est accepté, il paraîtra sur le site de Rewayah Academy avec votre nom affiché, votre pays et la date. Pour le faire retirer, écrivez à ${courriel}.',
+			'avis.form.envoye.phrase' => ({required Object courriel}) => 'La direction le lira avant de le publier sur le site, avec votre nom affiché, votre pays et la date. Pour le faire retirer, écrivez à ${courriel}.',
 			'avis.form.erreurChargement' => 'Le formulaire n\'a pas pu s\'ouvrir. Réessayez dans un moment.',
 			'avis.form.sansDonnees' => 'Le formulaire n\'a pas pu s\'ouvrir',
 			'avis.form.indisponibleTitre' => 'Avis indisponibles',

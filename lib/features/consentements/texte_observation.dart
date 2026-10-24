@@ -150,7 +150,10 @@ class CaseAccordTexte extends StatelessWidget {
         focusNode: focusNode,
         libelleSemantique: libelle,
         onPress: geste == null ? null : () => geste(!cochee),
+        // AVIS-UI (24/10/2026) : la case s'aligne sur la premiere ligne du
+        // texte, jamais au milieu d'un accord de plusieurs lignes.
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             ExcludeSemantics(
               child: ExcludeFocus(
@@ -171,11 +174,16 @@ class CaseAccordTexte extends StatelessWidget {
             ),
             Ecart.hMd,
             Expanded(
-              child: ExcludeSemantics(
-                excluding: geste != null,
-                child: Text(
-                  libelle,
-                  style: Theme.of(context).textTheme.bodyLarge,
+              child: Padding(
+                // La case occupe une cible de 48 : sa ligne mediane tombe a
+                // 12 du haut, celle d'une ligne de corps de 24 aussi.
+                padding: const EdgeInsets.only(top: AppSpacing.md),
+                child: ExcludeSemantics(
+                  excluding: geste != null,
+                  child: Text(
+                    libelle,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
                 ),
               ),
             ),
