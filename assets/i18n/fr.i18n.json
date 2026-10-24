@@ -12113,7 +12113,7 @@
       },
       "qualite": {
         "libelle": "Vous êtes",
-        "parent": "Parent ou tuteur d'un élève",
+        "parent": "Parent ou tuteur",
         "eleveAdulte": "Élève adulte",
         "erreur": "Choisissez qui vous êtes."
       },

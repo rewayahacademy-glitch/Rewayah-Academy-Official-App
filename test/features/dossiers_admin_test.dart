@@ -239,30 +239,32 @@ void main() {
     // AD-M3-PROD (decision du directeur du 27/09, S1 -> a) : jusqu'a BR-1,
     // la production ne refuse pas et ne montre pas la piece, comme elle ne
     // valide pas. Zero appel a decider_dossier, zero URL signee.
-    testWidgets('AD-M3-PROD : en production, ni refus ni piece, aucun appel', (
-      WidgetTester tester,
-    ) async {
-      final FauxServiceValidation service = await _monter(
-        tester,
-        FauxServiceValidation()..file = <DossierAValider>[_dossier()],
-        production: true,
-      );
+    testWidgets(
+      'AD-M3-PROD : en production (Etape 1), la piece se voit et le refus '
+      'est ouvert ; aucun verdict sans geste',
+      (WidgetTester tester) async {
+        // L'ancien debranchement (« ni refus ni piece ») est caduc depuis
+        // l'Etape 1 de la Boucle 1 : la production branche l'apercu, la
+        // decision et la relecture (`surchargeRevueDossiersProduction`).
+        final FauxServiceValidation service = await _monter(
+          tester,
+          FauxServiceValidation()..file = <DossierAValider>[_dossier()],
+          production: true,
+        );
 
-      expect(find.text('Dossier de Moussa Barry'), findsOneWidget);
-      await _allerA(tester, t.dossiers.revue.etats.decisionIndisponible);
-      expect(find.text(t.dossiers.refuser), findsNothing);
-      expect(find.text(t.dossiers.approuver), findsNothing);
-      expect(find.text(t.dossiers.revue.voirPiece), findsNothing);
-      expect(find.text(t.dossiers.revue.pieceIndisponible), findsOneWidget);
-      // Dit une seule fois pour les deux gestes.
-      expect(
-        find.text(t.dossiers.revue.etats.decisionIndisponible),
-        findsOneWidget,
-      );
-      expect(find.text(t.dossiers.revue.etats.refusNonAutorise), findsNothing);
-      expect(service.apercus, isEmpty);
-      expect(service.verdicts, isEmpty);
-    });
+        expect(find.text('Dossier de Moussa Barry'), findsOneWidget);
+        await _allerA(tester, t.dossiers.revue.voirPiece);
+        expect(find.text(t.dossiers.revue.voirPiece), findsOneWidget);
+        expect(find.text(t.dossiers.revue.pieceIndisponible), findsNothing);
+        await _allerA(tester, t.dossiers.refuser);
+        expect(find.text(t.dossiers.refuser), findsOneWidget);
+        expect(
+          find.text(t.dossiers.revue.etats.decisionIndisponible),
+          findsNothing,
+        );
+        expect(service.verdicts, isEmpty);
+      },
+    );
 
     testWidgets(
       'branchee : la consequence est inconnue, Valider reste ferme (Q21)',

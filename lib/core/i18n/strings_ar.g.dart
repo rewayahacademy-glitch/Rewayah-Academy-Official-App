@@ -15342,7 +15342,7 @@ class _Traductions$avis$form$qualite$ar extends Traductions$avis$form$qualite$fr
 
 	// Translations
 	@override String get libelle => 'أنت';
-	@override String get parent => 'ولي أمر أو وصي على طالب';
+	@override String get parent => 'ولي أمر أو وصي';
 	@override String get eleveAdulte => 'طالب بالغ';
 	@override String get erreur => 'اختر صفتك.';
 }
@@ -27624,7 +27624,7 @@ extension on TraductionsAr {
 			'avis.form.nom.aide' => 'يكفي اسمك الأول والحرف الأول من اسم عائلتك.',
 			'avis.form.nom.erreur' => 'اكتب اسمًا من حرفين إلى 60 حرفًا.',
 			'avis.form.qualite.libelle' => 'أنت',
-			'avis.form.qualite.parent' => 'ولي أمر أو وصي على طالب',
+			'avis.form.qualite.parent' => 'ولي أمر أو وصي',
 			'avis.form.qualite.eleveAdulte' => 'طالب بالغ',
 			'avis.form.qualite.erreur' => 'اختر صفتك.',
 			'avis.form.pays.libelle' => 'بلد الإقامة',

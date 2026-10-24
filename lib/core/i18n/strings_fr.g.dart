@@ -33919,8 +33919,8 @@ class Traductions$avis$form$qualite$fr {
 	/// fr: 'Vous êtes'
 	String get libelle => 'Vous êtes';
 
-	/// fr: 'Parent ou tuteur d'un élève'
-	String get parent => 'Parent ou tuteur d\'un élève';
+	/// fr: 'Parent ou tuteur'
+	String get parent => 'Parent ou tuteur';
 
 	/// fr: 'Élève adulte'
 	String get eleveAdulte => 'Élève adulte';
@@ -50104,7 +50104,7 @@ extension on Traductions {
 			'avis.form.nom.aide' => 'Votre prénom et l\'initiale de votre nom suffisent.',
 			'avis.form.nom.erreur' => 'Entrez un nom de 2 à 60 caractères.',
 			'avis.form.qualite.libelle' => 'Vous êtes',
-			'avis.form.qualite.parent' => 'Parent ou tuteur d\'un élève',
+			'avis.form.qualite.parent' => 'Parent ou tuteur',
 			'avis.form.qualite.eleveAdulte' => 'Élève adulte',
 			'avis.form.qualite.erreur' => 'Choisissez qui vous êtes.',
 			'avis.form.pays.libelle' => 'Pays de résidence',
