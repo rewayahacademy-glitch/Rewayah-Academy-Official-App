@@ -22,6 +22,7 @@ import '../../core/theme/app_typography.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/rosace_verset.dart';
+import '../../core/widgets/skeleton.dart';
 import 'page_madina_15.dart';
 import 'police_mushaf.dart';
 import 'textes_lecteur_coran.dart';
@@ -465,13 +466,38 @@ class TexteDePage extends ConsumerWidget {
   /// La largeur du cadre.
   final double largeur;
 
+  /// L'etat qui dit que la page ne peut pas s'afficher (police absente, D9).
+  static const Key cleCoranIndisponible = ValueKey<String>(
+    'mushaf-page-indisponible',
+  );
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final bool police =
-        ref.watch(policeMushafDisponibleProvider).value ?? false;
+    final AsyncValue<bool> lecturePolice = ref.watch(
+      policeMushafDisponibleProvider,
+    );
+    final bool police = lecturePolice.value ?? false;
     // MUSHAF-15L : une source de layout reelle (quinze lignes, cadres de
     // sourate, basmala, rosaces) se compose en page du Mushaf de Medine, avec
-    // UthmanicHafs. Sans elle, jamais le texte KFGQPC : le flux Tanzil simple.
+    // UthmanicHafs. Jamais le texte KFGQPC sans elle.
+    //
+    // D9 (24/10/2026, decision du pilote) : la police absente ne retombe plus
+    // sur le flux Tanzil simple, illisible a cette echelle ; un etat visible
+    // dit ce qui manque et quoi faire (K-59). Pendant sa lecture, un squelette
+    // plutot qu'un eclair de texte continu.
+    if (vue.estMadina15 && !police) {
+      if (!lecturePolice.hasValue && !lecturePolice.hasError) {
+        return const Skeleton.texte(lignes: 6);
+      }
+      return EmptyState(
+        key: cleCoranIndisponible,
+        message: t.salle.coran.indisponible,
+        invitation: t.salle.coran.indisponibleDetail,
+        icone: AppIcons.rienAAfficher,
+        libelleAction: t.commun.reessayer,
+        onAction: () => ref.invalidate(policeMushafDisponibleProvider),
+      );
+    }
     if (vue.estMadina15 && police) {
       return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints contraintes) =>
