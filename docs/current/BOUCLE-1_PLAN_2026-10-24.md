@@ -145,26 +145,14 @@ du SQL, une règle RLS, un diagnostic, un choix.
 **Vocabulaire des bilans.** « codé », « test local vert », « fusionné », « déployé », « prouvé
 par le directeur ». Seul le dernier vaut « fait ».
 
-## 5. Après la boucle : l'ordre des besoins du directeur (précisé le 24/10/2026)
+## 5. Après la boucle
 
-Ces besoins sont réels et actuels : l'académie existe depuis 2024, et tout passe encore par
-WhatsApp, Messenger, Meet, Drive et Docs, tenus par une seule personne. **Rien n'est
-supprimé.** Tout se livre dans cet ordre, une boucle à la fois, chacune avec ses phrases vraies ou
-fausses prouvées par le directeur en production avant d'ouvrir la suivante. Les phrases de chaque
-boucle s'écrivent **avec les mots du directeur, avant tout code**, pour que ce qu'il pense sorte
-comme il le veut.
-
-La Boucle 1 reste première parce que tout le reste lit ses données : sans élèves, enseignants,
-classes et séances dans l'application, les listes de la direction sont vides et aucune présence
-ne peut être comptée.
-
-| Boucle | Besoin, dans les mots du directeur | État réel le 24/10 | Ce qu'il faudra prouver |
-|---|---|---|---|
-| 1 | « il faut que ça fonctionne » : une classe tourne | tout existe, un fil manque | K1 à K4 |
-| 2 | « voir mes élèves actifs ou non, qui paie ou non, qui vient, qui est régulier, qui s'absente ; combien de profs, quel prof enseigne à quel élève ; l'emploi du temps, qui vient à l'heure » | écrans de pilotage, planning, comptes, suivi et présence présents dans le code, jamais prouvés ; le paiement se saisit à la main (lien Wise), et la saisie puis validation d'un paiement existent déjà en base (FAC-D-01) | la direction ouvre un seul tableau et y lit, pour ses élèves importés, ces états sans rien recalculer ailleurs |
-| 3 | « 568 candidats enseignants, je ne peux pas les gérer à la main : un tri simple, trois salles ; tout le monde ne crée pas de compte, tout le monde n'envoie pas de passeport » | feuille Google de 568 réponses (deux onglets) ; module des candidatures en pull request 50, import et rapprochement depuis la feuille déjà en base | la direction voit les 568 dans une liste, trie, n'invite que les retenus à créer un compte, et seuls ceux-là déposent une pièce |
-| 4 | « un espace admin qui marche très bien » | présent, inégal, 77 capacités encore « indisponibles » | chaque menu de la direction mène à un écran qui fait ce qu'il dit, ou n'apparaît pas |
-| 5 | le paiement en ligne, « en dernier pour l'instant » | fonctions déployées, aucun prestataire réel branché, Stripe volontairement non branché | une famille paie dans l'application et l'élève entre dans sa classe |
+Décision du directeur du 24/10/2026 : il délègue le projet à 100 %. L'ordre des boucles
+suivantes, les définitions (actif, à jour de paiement, régulier, ponctuel), la migration par
+vagues avec Meet en secours, la marque de paiement unique et l'e-mail d'attente aux 568 candidats
+sont décidés par Claude et consignés dans `docs/orchestration/PILOTAGE-BOUCLES-2026-10-24.md`,
+qui est le but unique de la session de travail. Après les tests, ce qui ne plaît pas au directeur
+se change.
 
 ## 6. Journal
 

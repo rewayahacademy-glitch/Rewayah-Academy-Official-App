@@ -1,3 +1,5 @@
+> Remplacé par `PILOTAGE-BOUCLES-2026-10-24.md` (but unique de la session de travail). Ce fichier reste comme trace de l'étape 1.
+
 # Passation à la session suivante : Boucle 1, étape 1 (K1), 24/10/2026
 
 Lire ceci, puis `docs/current/BOUCLE-1_PLAN_2026-10-24.md`, puis seulement les fichiers nommés
