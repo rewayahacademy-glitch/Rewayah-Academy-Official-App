@@ -41,7 +41,7 @@ insert into auth.users (id, email) values
   ('77777777-7777-7777-7777-777777777777', 'sansgenre@example.test');
 
 -- ============================================================
--- S3 : une inscription publique est bornee a deux roles et a pending_kyc
+-- S3 : une inscription publique est bornee a deux roles (tuteur actif, D4)
 -- ============================================================
 
 select set_config('test.uid', '11111111-1111-1111-1111-111111111111', false);
@@ -78,14 +78,21 @@ begin
   select account_status, household_id into v_statut, v_foyer
   from public.profiles where id = '11111111-1111-1111-1111-111111111111';
 
-  if v_statut <> 'pending_kyc' then
-    raise exception 'S3 ECHEC : statut % au lieu de pending_kyc (ADR-014)', v_statut;
+  -- D4 (24/10/2026) : le tuteur nait actif (aucune piece pour une famille).
+  if v_statut <> 'active' then
+    raise exception 'S3 ECHEC : statut % au lieu de active (D4)', v_statut;
   end if;
   if v_foyer is null then
     raise exception 'S3 ECHEC : un tuteur doit fonder un foyer';
   end if;
-  raise notice 'S3b ok : le tuteur naît pending_kyc et fonde son foyer';
+  raise notice 'S3b ok : le tuteur naît actif (D4) et fonde son foyer';
 end $$;
+
+-- Fixture : la suite de ce scenario rejoue le parcours de piece d'identite
+-- (depot, verdict de la direction), qui ne concerne plus que les
+-- enseignants depuis D4 ; le tuteur y est remis en attente pour le derouler.
+update public.profiles set account_status = 'pending_kyc'
+ where id = '11111111-1111-1111-1111-111111111111';
 
 -- I3 : un compte, un profil.
 do $$
