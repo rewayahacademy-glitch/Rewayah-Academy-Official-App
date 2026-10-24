@@ -2324,9 +2324,33 @@ class _PlaceDeclencheur extends MultiChildLayoutDelegate {
                   size.height >= b.height + 2 * ecart + bas));
     }
     final double rangee = math.max(d.height, b.height);
-    final double hSurface = auBord
+    double hSurface = auBord
         ? size.height
         : math.max(0, size.height - rangee - ecart - bas);
+    // Standard des commandes d'appel (24/10/2026) : une surface plus haute
+    // elargit la page et peut chasser le declencheur sous elle, ce qui coute
+    // une rangee entiere. Si une surface un peu moins haute lui laisse sa
+    // place a cote et garde une page plus grande, elle est preferee.
+    if (!auBord && r != null && aDecl && !aDebut && r > 0) {
+      final double besoin = d.width + 2 * ecart;
+      final double largeurBoite = math.max(0, size.width - 2 * retrait);
+      final double largeurPage = largeurBoite - 2 * (besoin - retrait);
+      final double hCote = math.min(size.height, largeurPage / r + 2 * retrait);
+      final double pageCote = rectanglePage(
+        ratio: r,
+        boite: Size(largeurBoite, math.max(0, hCote - 2 * retrait)),
+      ).height;
+      final double pageDessous = rectanglePage(
+        ratio: r,
+        boite: Size(largeurBoite, math.max(0, hSurface - 2 * retrait)),
+      ).height;
+      if (largeurPage > 0 &&
+          hCote >= dessus + d.height + 2 * ecart + bas &&
+          pageCote > pageDessous) {
+        auBord = true;
+        hSurface = hCote;
+      }
+    }
     layoutChild(
       _PieceSurface.surface,
       BoxConstraints.tightFor(width: size.width, height: hSurface),
@@ -2335,7 +2359,7 @@ class _PlaceDeclencheur extends MultiChildLayoutDelegate {
     final double marge = auBord ? ecart : 0;
     final bool ltr = sens == TextDirection.ltr;
     double y(Size piece) => auBord
-        ? size.height - bas - piece.height - ecart
+        ? hSurface - bas - piece.height - ecart
         : hSurface + ecart + (rangee - piece.height) / 2;
     if (aDecl) {
       positionChild(

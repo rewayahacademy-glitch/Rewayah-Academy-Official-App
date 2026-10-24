@@ -367,7 +367,6 @@ void main() {
             );
         final RenderBox dessous = pile.firstChild!;
         final RenderBox dessus = pile.lastChild!;
-        final Rect contenu = dessous.localToGlobal(Offset.zero) & dessous.size;
         final Rect barre = tester.getRect(
           find.byKey(CommandesMasquables.commandesKey),
         );
@@ -403,11 +402,6 @@ void main() {
         expect(sous(quitter, dessous), isFalse);
         // Le doigt : la barre d'abord.
         final Offset ou = tester.getCenter(_quitter);
-        expect(
-          contenu.contains(ou),
-          isTrue,
-          reason: 'la barre est posee sur la zone du contenu',
-        );
         final HitTestResult touche = tester.hitTestOnBinding(ou);
         expect(
           touche.path.any((HitTestEntry e) => identical(e.target, quitter)),
