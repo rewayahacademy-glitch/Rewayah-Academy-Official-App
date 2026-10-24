@@ -3576,6 +3576,60 @@
         "ouvrirDossier": "Ouvrir le dossier",
         "titreGesteNonFait": "Geste non fait"
       },
+      "prevenir": {
+        "lien": "Prévenir par e-mail",
+        "titre": "Prévenir par e-mail",
+        "contexte": "Le lien d'inscription part par e-mail aux personnes des formulaires importés qui ont laissé une adresse et n'ont pas encore de compte. Une même adresse ne reçoit jamais le message deux fois.",
+        "lecture": "Comptage des personnes à prévenir en cours.",
+        "comptes": {
+          "aPrevenir": {
+            "one": "{n} personne à prévenir",
+            "other": "{n} personnes à prévenir"
+          },
+          "dejaPrevenus": {
+            "one": "{n} personne déjà prévenue",
+            "other": "{n} personnes déjà prévenues"
+          },
+          "dejaInscrits": {
+            "one": "{n} personne déjà inscrite",
+            "other": "{n} personnes déjà inscrites"
+          }
+        },
+        "message": "Le message rappelle la date de la réponse et le nom du formulaire, demande de créer son compte avec la même adresse, et dit que rien n'est à payer.",
+        "delai": "Les messages partent dans les minutes qui suivent l'envoi, pas à l'instant.",
+        "groupes": "L'envoi part par tranches de {n} personnes au plus.",
+        "fermee": "L'inscription en ligne doit d'abord être ouverte : tant qu'elle est fermée, le lien mènerait à une page fermée et aucun message ne part.",
+        "videTitre": "Tout le monde est déjà prévenu",
+        "vide": "Toutes les personnes qui ont laissé une adresse sont déjà prévenues ou déjà inscrites. Il n'y a rien à envoyer.",
+        "envoyer": {
+          "one": "Envoyer le lien à {n} personne",
+          "other": "Envoyer le lien à {n} personnes"
+        },
+        "envoyerSuivantes": {
+          "one": "Envoyer à la personne suivante",
+          "other": "Envoyer aux {n} suivantes"
+        },
+        "sansDonnees": "Le nombre de personnes à prévenir n'a pas pu être chargé.",
+        "horsLigne": "L'envoi sera possible dès le retour du réseau.",
+        "resultat": {
+          "titre": "Envoi lancé",
+          "mis": {
+            "one": "{n} message part dans les prochaines minutes",
+            "other": "{n} messages partent dans les prochaines minutes"
+          },
+          "restants": {
+            "one": "Il reste {n} personne à prévenir.",
+            "other": "Il reste {n} personnes à prévenir."
+          },
+          "tout": "Plus personne n'attend le lien : tout le monde est prévenu.",
+          "pasDeuxFois": "Une même adresse ne reçoit jamais le message deux fois, même si vous envoyez à nouveau."
+        },
+        "erreurs": {
+          "titre": "Envoi non confirmé",
+          "nonConfirme": "Il est possible que l'envoi ne soit pas parvenu jusqu'à Rewayah. Réessayez : aucune adresse ne recevra le message en double.",
+          "generique": "L'envoi n'a pas abouti et rien n'est confirmé. Réessayez : aucune adresse ne recevra le message en double."
+        }
+      },
       "lot": {
         "selectionnees": {
           "one": "{n} sélectionnée",

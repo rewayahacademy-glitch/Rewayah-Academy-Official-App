@@ -35,6 +35,8 @@ import 'core/candidature/port_import_candidatures.dart';
 import 'core/candidature/port_inscription_candidat.dart';
 import 'core/candidature/port_ma_candidature.dart';
 import 'core/candidature/port_nom_latin.dart';
+import 'core/candidature/port_prevenir_candidats.dart';
+import 'core/candidature/prevenir_candidats_supabase.dart';
 import 'core/capacites/acces_supabase.dart';
 import 'core/capacites/avis_supabase.dart';
 import 'core/capacites/classes_foyer_supabase.dart';
@@ -309,6 +311,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // double verification ; le serveur reste la barriere).
   portImportCandidaturesProvider.overrideWithValue(
     ImportCandidaturesSupabase(Supabase.instance.client),
+  ),
+  // CAND-PREVENIR : le lien d'inscription envoye par e-mail aux personnes des
+  // formulaires importes (direction ; le serveur reste la barriere).
+  portPrevenirCandidatsProvider.overrideWithValue(
+    PrevenirCandidatsSupabase(Supabase.instance.client),
   ),
   // Ports a defaut « indisponible » (ou en memoire) dont l'adaptateur
   // serveur existe : compte, tresorerie, observations, controleur, support

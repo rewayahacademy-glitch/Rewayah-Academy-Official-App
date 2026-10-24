@@ -67,6 +67,7 @@ import '../../core/candidature/modeles_candidatures_direction.dart';
 import '../../core/candidature/modeles_lot_candidatures.dart';
 import '../../core/candidature/port_autres_competences.dart';
 import '../../core/candidature/port_candidatures_direction.dart';
+import '../../core/candidature/port_prevenir_candidats.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
 import '../../core/i18n/pays_iso.dart';
@@ -111,6 +112,7 @@ import 'libelles_candidatures.dart';
 import 'ligne_candidature.dart';
 import 'lot_candidatures.dart';
 import 'menu_ligne_candidature.dart';
+import 'prevenir_candidats.dart';
 import 'synthese_candidatures.dart';
 
 /// L'ecran « Candidatures ».
@@ -1217,6 +1219,19 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
           GoRouter.of(context).push(Routes.adminPersonnesCandidaturesImport),
     );
 
+    // Le message qui previent les personnes des formulaires importes (CAND-
+    // PREVENIR) : rendu seulement si le serveur ouvre le geste a ce lecteur et
+    // que le port est servi, jamais grise.
+    final bool prevenir =
+        caps.geste('consignerPrevenu') &&
+        ref.watch(portPrevenirCandidatsProvider) != null;
+    Widget lienPrevenir() => LienFleche(
+      key: const ValueKey<String>('candidatures-prevenir'),
+      libelle: t.admin.candidatures.prevenir.lien,
+      alignerEnFin: true,
+      onPress: () => ouvrirFeuillePrevenir(context),
+    );
+
     final List<FiltreActif> actifs = commandes
         ? _filtresActifs()
         : const <FiltreActif>[];
@@ -1230,6 +1245,7 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
       // passerait sur le titre et le couperait : il prend alors la premiere
       // ligne du corps.
       actionsEntete: <Widget>[
+        if (prevenir && lienEnTete) lienPrevenir(),
         if (importer && lienEnTete) lienImport(),
         if (invitations && lienEnTete) lienInvitations(),
       ],
@@ -1266,6 +1282,13 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
             Align(
               alignment: AlignmentDirectional.centerEnd,
               child: lienInvitations(),
+            ),
+            Ecart.vXs,
+          ],
+          if (prevenir && !lienEnTete) ...<Widget>[
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: lienPrevenir(),
             ),
             Ecart.vXs,
           ],
