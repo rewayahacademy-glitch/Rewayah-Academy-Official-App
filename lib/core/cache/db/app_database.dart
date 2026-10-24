@@ -162,7 +162,20 @@ class RapportsEnAttente extends Table {
 )
 class AppDatabase extends _$AppDatabase {
   /// Ouvre la base locale de l'appareil.
-  AppDatabase() : super(driftDatabase(name: 'rewayah_local'));
+  ///
+  /// D7 (24/10/2026) : sur le web, drift exige ses options web, sinon il leve
+  /// des l'ouverture (« the `web` parameter needs to be set ») et tout ecran
+  /// qui lit la base echoue. Les deux fichiers sont servis depuis `web/`.
+  AppDatabase()
+    : super(
+        driftDatabase(
+          name: 'rewayah_local',
+          web: DriftWebOptions(
+            sqlite3Wasm: Uri.parse('sqlite3.wasm'),
+            driftWorker: Uri.parse('drift_worker.js'),
+          ),
+        ),
+      );
 
   /// Ouvre une base sur un executeur fourni. Reserve aux tests.
   AppDatabase.surExecuteur(super.executeur);

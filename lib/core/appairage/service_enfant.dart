@@ -306,7 +306,7 @@ String plateformeAppareil() {
 Future<ProfilLocal> connecterCetAppareil({
   required ServiceEnfant service,
   required StockageSecurise coffre,
-  required ProfilsLocaux profils,
+  required ProfilsLocaux? profils,
   required String code,
 }) async {
   final AppairageReussi resultat;
@@ -344,7 +344,7 @@ Future<ProfilLocal> connecterCetAppareil({
   // echec ne defait pas un appairage dont le jeton est deja range. Le profil
   // est passe a l'ecran suivant, qui le montre meme sans base locale.
   try {
-    await profils.enregistrer(profil);
+    await profils?.enregistrer(profil);
   } on Object {
     // Rien de plus a faire ici.
   }

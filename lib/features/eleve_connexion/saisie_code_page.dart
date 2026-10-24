@@ -14,6 +14,7 @@ import '../../core/appairage/service_enfant.dart';
 import '../../core/cache/secure/stockage_securise.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/observabilite/journal_dev.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_gabarit.dart';
@@ -71,9 +72,21 @@ Future<ProfilLocal> connecterDepuisEcran(WidgetRef ref, String code) =>
     connecterCetAppareil(
       service: ref.read(serviceEnfantProvider),
       coffre: ref.read(stockageSecuriseProvider),
-      profils: ref.read(profilsLocauxProvider),
+      profils: profilsLocauxSiDisponibles(ref),
       code: code,
     );
+
+/// La memoire des profils de cet appareil, ou `null` si la base locale ne
+/// s'ouvre pas (D7). Elle n'est qu'un confort : sa panne ne bloque jamais
+/// l'appairage, dont le jeton est range dans le coffre.
+ProfilsLocaux? profilsLocauxSiDisponibles(WidgetRef ref) {
+  try {
+    return ref.read(profilsLocauxProvider);
+  } on Object catch (erreur) {
+    journalDev('memoire des profils indisponible : $erreur');
+    return null;
+  }
+}
 
 /// La composition tablette et bureau des trois taches focalisees de
 /// l'appareil eleve (saisie du code, scanner, choix du profil et code

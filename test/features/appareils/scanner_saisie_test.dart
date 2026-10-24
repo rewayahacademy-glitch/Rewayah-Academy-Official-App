@@ -5,6 +5,7 @@
 // camera rendue a la sortie et en arriere-plan, bureau en panneau centre.
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -878,6 +879,60 @@ void main() {
         expect(profils.profils, isEmpty);
       },
     );
+
+    test(
+      'D7 : sans memoire des profils, l appairage aboutit quand meme',
+      () async {
+        final FauxStockageSecurise coffre = FauxStockageSecurise();
+        final ProfilLocal profil = await connecterCetAppareil(
+          service: FauxServiceEnfantPilote(),
+          coffre: coffre,
+          profils: null,
+          code: 'AB23CD',
+        );
+        expect(profil.id, 'e1');
+        expect(coffre.jetons['e1'], 'jeton-test');
+      },
+    );
+
+    testWidgets('D7 : la base locale qui ne s ouvre pas (web) ne bloque pas '
+        'l appairage depuis l ecran', (WidgetTester tester) async {
+      final FauxStockageSecurise coffre = FauxStockageSecurise();
+      late WidgetRef lu;
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: <Override>[
+            serviceEnfantProvider.overrideWithValue(FauxServiceEnfantPilote()),
+            stockageSecuriseProvider.overrideWithValue(coffre),
+            // L'erreur exacte de drift sur le web sans ses options (D7).
+            profilsLocauxProvider.overrideWith(
+              (Ref _) => throw ArgumentError(
+                'When compiling to the web, the `web` parameter needs to be '
+                'set.',
+              ),
+            ),
+          ],
+          child: Consumer(
+            builder: (BuildContext _, WidgetRef ref, Widget? _) {
+              lu = ref;
+              return const SizedBox();
+            },
+          ),
+        ),
+      );
+      final ProfilLocal profil = await connecterDepuisEcran(lu, 'AB23CD');
+      expect(profil.id, 'e1');
+      expect(coffre.jetons['e1'], 'jeton-test');
+    });
+
+    test('D7 : la base locale recoit ses options web, servies depuis web/', () {
+      final String source = File('lib/core/cache/db/app_database.dart')
+          .readAsStringSync();
+      expect(source, contains("sqlite3Wasm: Uri.parse('sqlite3.wasm')"));
+      expect(source, contains("driftWorker: Uri.parse('drift_worker.js')"));
+      expect(File('web/sqlite3.wasm').existsSync(), isTrue);
+      expect(File('web/drift_worker.js').existsSync(), isTrue);
+    });
 
     test('connecter : un refus ne range rien', () async {
       final FauxServiceEnfantPilote service = FauxServiceEnfantPilote()
