@@ -31,9 +31,9 @@ import 'visionneuse_piece.dart';
 /// decision et ses raisons.
 ///
 /// Les DECISIONS passent par le port : `decider_dossier`
-/// (`ServiceValidation.decider`) A PARTIR DE BR-1, le pont de demonstration
-/// sinon. En production aujourd'hui, la decision est fermee (AD-M3-PROD,
-/// voir `surchargeRevueDossiersProduction`).
+/// (`ServiceValidation.decider`) en production depuis le 24/10/2026 (Boucle 1,
+/// K1, voir `surchargeRevueDossiersProduction`), le pont de demonstration
+/// sinon.
 class RevueDossier extends ConsumerStatefulWidget {
   /// Cree la revue. A cle par dossier et revision : les cases repartent
   /// vides a chaque dossier et a chaque nouvelle revision.

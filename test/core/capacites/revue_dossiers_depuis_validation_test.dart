@@ -410,40 +410,88 @@ void main() {
     expect(demandes, <String>['d1']);
   });
 
-  // AD-RC m2 : la validation reste fermee en production jusqu'a BR-1, par
-  // l'adaptateur lui-meme et non par le seul bouton de l'ecran.
-  test('valider : AD-BR-02, sans lecture de file ni appel RPC', () async {
-    int lectures = 0;
-    int appels = 0;
+  // Boucle 1 (K1, 24/10/2026) : la validation est ouverte. Elle appelle
+  // `decider_dossier` avec `approuve` vrai et sans motif, et rend « valide ».
+  test('valider : decider_dossier approuve, sans motif', () async {
+    final List<(String, bool, String?)> appels = <(String, bool, String?)>[];
     final RevueDossiersDepuisValidation port = RevueDossiersDepuisValidation(
-      () async {
-        lectures++;
-        return <DossierAValider>[_d('p1')];
-      },
+      () async => <DossierAValider>[_d('p1', doc: 'd1')],
       deciderExistant: ({
         required String documentId,
         required bool approuve,
         String? motif,
-      }) async => appels++,
+      }) async => appels.add((documentId, approuve, motif)),
     );
-    await expectLater(
-      port.decider(
-        dossierId: 'p1',
-        revisionAttendue: 0,
-        decision: DecisionDossier.valider,
-        commandeId: 'c',
-        verificationsFaites: verificationsRevue.toSet(),
+    final ResultatDecision r = await port.decider(
+      dossierId: 'p1',
+      revisionAttendue: 0,
+      decision: DecisionDossier.valider,
+      commandeId: 'c',
+      verificationsFaites: verificationsRevue.toSet(),
+    );
+    expect(appels, <(String, bool, String?)>[('d1', true, null)]);
+    expect(r.statutFinal, StatutRevue.valide);
+  });
+
+  // Boucle 1 (K1) : la consequence suit l'etat du compte rendu par la file.
+  test('consequence : lue sur l etat du compte', () {
+    expect(
+      RevueDossiersDepuisValidation.consequencePour(AccountStatus.pendingKyc),
+      ConsequenceValidation.activationPossible,
+    );
+    expect(
+      RevueDossiersDepuisValidation.consequencePour(AccountStatus.active),
+      ConsequenceValidation.documentaireSeule,
+    );
+    expect(
+      RevueDossiersDepuisValidation.consequencePour(
+        AccountStatus.provisionalActive,
       ),
-      throwsA(
-        isA<CapaciteIndisponible>().having(
-          (CapaciteIndisponible e) => e.dependance,
-          'dependance',
-          'AD-BR-02',
+      ConsequenceValidation.documentaireSeule,
+    );
+    expect(
+      RevueDossiersDepuisValidation.consequencePour(AccountStatus.disabled),
+      ConsequenceValidation.indeterminee,
+    );
+    expect(
+      RevueDossiersDepuisValidation.consequencePour(null),
+      ConsequenceValidation.indeterminee,
+    );
+  });
+
+  // Boucle 1 (K1) : apercu et decision branches, compte `pending_kyc` : la
+  // validation s'ouvre et sa consequence est l'activation du compte.
+  test('apercu et decision branches : validation ouverte', () async {
+    final RevueDossiersDepuisValidation port = RevueDossiersDepuisValidation(
+      () async => <DossierAValider>[
+        DossierAValider(
+          documentId: 'd1',
+          profilId: 'p1',
+          type: TypePiece.carteIdentite,
+          cleObjet: 'x/d1.jpg',
+          deposeLe: DateTime.utc(2026, 10, 24, 1, 43),
+          prenom: 'Omar',
+          nom: 'Test',
+          identifiantImmuable: 'ID-p1',
+          role: AppRole.teacher,
+          etatCompte: AccountStatus.pendingKyc,
         ),
-      ),
+      ],
+      apercu: (String documentId) async =>
+          'https://exemple.invalid/$documentId',
+      deciderExistant: ({
+        required String documentId,
+        required bool approuve,
+        String? motif,
+      }) async {},
     );
-    expect(appels, 0);
-    expect(lectures, 0);
+    final DossierPourRevue d = await port.dossierPourRevue('p1');
+    expect(d.peutValider, isTrue);
+    expect(d.peutRefuser, isTrue);
+    expect(d.peutVoirPiece, isTrue);
+    expect(d.lectureRequise, isTrue);
+    expect(d.blocagesValidation, isEmpty);
+    expect(d.consequence, ConsequenceValidation.activationPossible);
   });
 
   group('AD-8 : decision sur decider_dossier existant', () {
@@ -565,32 +613,30 @@ void main() {
       expect(perdue.toString(), isNot(contains('Motif fictif')));
     });
 
-    test(
-      'L1-05 : « dossier déjà décidé » devient dejaDecide, pas un echec certain',
-      () async {
-        final RevueDossiersDepuisValidation port = RevueDossiersDepuisValidation(
-          () async => <DossierAValider>[_d('p1')],
-          deciderExistant: ({
-            required String documentId,
-            required bool approuve,
-            String? motif,
-          }) async => throw const PostgrestException(
-            message: 'dossier déjà décidé',
-            code: '23514',
-          ),
-        );
-        await expectLater(
-          deciderSur(port),
-          throwsA(
-            isA<ErreurRevueDossier>().having(
-              (ErreurRevueDossier e) => e.code,
-              'code',
-              CodeErreurRevue.dejaDecide,
+    test('L1-05 : « dossier déjà décidé » devient dejaDecide, pas un echec certain', () async {
+      final RevueDossiersDepuisValidation port = RevueDossiersDepuisValidation(
+        () async => <DossierAValider>[_d('p1')],
+        deciderExistant:
+            ({
+              required String documentId,
+              required bool approuve,
+              String? motif,
+            }) async => throw const PostgrestException(
+              message: 'dossier déjà décidé',
+              code: '23514',
             ),
+      );
+      await expectLater(
+        deciderSur(port),
+        throwsA(
+          isA<ErreurRevueDossier>().having(
+            (ErreurRevueDossier e) => e.code,
+            'code',
+            CodeErreurRevue.dejaDecide,
           ),
-        );
-      },
-    );
+        ),
+      );
+    });
 
     test('resultatDecision : cache, puis rechargement existant', () async {
       int recharges = 0;
