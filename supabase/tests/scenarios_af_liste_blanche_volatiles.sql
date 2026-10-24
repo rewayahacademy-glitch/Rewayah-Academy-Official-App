@@ -59,6 +59,8 @@ declare
     'apercu_import_formulaires(text,text,text,jsonb,text)',
     -- CAND-L2A2 (22/10) : apercu d'une action groupee, direction active de son cote (trace des candidatures hors portee).
     'apercu_lot_candidats(text,uuid[])',
+    -- CAND-PREVENIR (24/10) : apercu des personnes des formulaires a prevenir par e-mail (direction active de son cote, compteurs seulement, audit).
+    'apercu_prevenir_par_courriel()',
     'autoriser_ecoute_archive(uuid)',
     'autoriser_lecture_piece_identite(uuid)',
     'autoriser_lecture_version(uuid)',
@@ -232,6 +234,8 @@ declare
     'preparer_depot_piece_identite(uuid,text)',
     'presenter_support(uuid,uuid,integer,text,jsonb)',
     'previsualiser_import_inscriptions(text,text)',
+    -- CAND-PREVENIR (24/10) : le lien d'inscription mis en file pour les personnes des formulaires (direction active de son cote, inscription ouverte, une adresse une fois).
+    'prevenir_par_courriel(integer)',
     'progression_promouvoir(uuid,uuid,text)',
     'publier_etat_partage(uuid,uuid,uuid,jsonb,jsonb,text,jsonb,jsonb,jsonb,integer)',
     'publier_evaluation(uuid,text,text)',

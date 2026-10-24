@@ -95,6 +95,25 @@ l'empreinte exacte de la base locale (`cand_ligne_json` adebd658…, `confirmer_
 `lire_nom_latin` 4ab87e93…, `lister_candidatures` d73aaa2c…, `nom_est_latin` ef7575ae…) ; les trois
 fonctions publiques exécutables par `authenticated`, aucune par `anon`. **Le fichier 18 est en production.**
 
+## Fichier 19 : prévenir par e-mail (production, 24/10/2026)
+
+Feu vert du directeur : « oui Prévenir » (24/10/2026) ; « tout doit aller sur prod ».
+
+- **Fichier** : `supabase/migrations/20261024010000_cand_prevenir_par_courriel.sql`. Décompte
+  `DELETE`/`DROP`/`TRUNCATE` : **0**. Deux fonctions neuves, aucune table, aucune donnée touchée.
+- **Preuve locale** : base neuve avec toutes les migrations du dépôt (celles de `main` comprises) ;
+  scénario `scenarios_cand_prevenir_courriel.sql`, 34 contrôles verts, rouge sans la migration ; la liste
+  blanche des volatiles déclare les deux fonctions.
+- **Bloc à coller** : la migration enveloppée (`tool/envelopper_pour_editeur_sql.py`) suivie de
+  l'inscription de `20261024010000 cand_prevenir_par_courriel` dans l'historique. Essayé en local en le collant
+  avec les fins de ligne de Windows : aucun retour chariot, version inscrite, empreinte identique à
+  l'application du fichier, scénario vert ensuite.
+- **Avant collage, en lecture** : 0 fonction avec un retour chariot ; catégorie `recrutement` active ;
+  `courriel_enfiler` présente ; 0 réponse importée ; inscription en ligne fermée. Rien ne part donc à
+  l'installation.
+- **Après collage, Claude vérifie** : version dans `list_migrations`, 0 retour chariot, empreintes des deux
+  fonctions identiques à la base locale, exécutables par `authenticated` seulement.
+
 ## Prochaine livraison sur la base de test (pas encore appliquée)
 
 Ajoutée le 23/10/2026, après l'installation des quinze ci-dessus. Rien n'est appliqué sans un

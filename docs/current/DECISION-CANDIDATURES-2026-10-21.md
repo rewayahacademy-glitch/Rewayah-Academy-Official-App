@@ -177,6 +177,19 @@ l'enverra :
 Statut : `spécifié`. Le texte final passe par le vocabulaire de `.claude/skills/mots-rewayah` et suit le
 gabarit des courriels de l'autre session ; le branchement de « Prévenir » sur la file des courriels le lit.
 
+**Branchement (feu vert du directeur, 24/10/2026, « oui Prévenir »)** : `présent dans le code et testé
+localement`. Migration `supabase/migrations/20261024010000_cand_prevenir_par_courriel.sql` :
+`apercu_prevenir_par_courriel()` (combien recevraient le message, combien sont déjà prévenus ou déjà inscrits,
+l'inscription ouverte ou non) et `prevenir_par_courriel(limite)` (met le modèle `lien_inscription` en file,
+catégorie `recrutement`, clé `candidat_prevenu:<réponse>`). La direction agit de son côté seulement. Règle 8 tenue
+par le serveur : une adresse qui a déjà un compte, déjà prévenue par WhatsApp ou déjà en file n'est jamais reprise,
+même après un échec d'envoi ; deux réponses à la même adresse ne donnent qu'un message. Tant que l'inscription en
+ligne est fermée, rien ne part (le lien mènerait à une page fermée). Données du message : la date de la réponse et
+le nom du formulaire seulement (règle 7) ; pas de prénom, le nom importé n'étant pas découpé, donc « Bonjour ».
+Scénario `supabase/tests/scenarios_cand_prevenir_courriel.sql` (34 contrôles, rouge sans la migration). Ceci amende
+la spec consolidée 7.4, où `lien_inscription` n'était qu'un message WhatsApp consigné : WhatsApp reste le geste des
+personnes sans adresse.
+
 ## Les noms dans une seule écriture sur les listes (directeur, 23/10/2026)
 
 Constat du directeur : dans les formulaires, certains ont écrit leur nom en arabe, d'autres en lettres latines.
