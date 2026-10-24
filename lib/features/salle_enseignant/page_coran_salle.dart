@@ -33,10 +33,37 @@ bool pageCoranLisible(WidgetRef ref, int numero) =>
     ref.watch(pageMushafProvider(numero)).value?.estMadina15 == true &&
     ref.watch(policeMushafDisponibleProvider).value == true;
 
+/// S0 : les etats de la page et du panneau de l'enseignant se posent sur
+/// la carte claire de la salle de seance, et non plus sur son fond
+/// (`PageImmersive`) : leur encre est alors celle de la carte.
+class SurCarteSalle extends InheritedWidget {
+  /// Pose [child] sur la carte de la salle de seance.
+  const SurCarteSalle({required super.child, super.key});
+
+  @override
+  bool updateShouldNotify(SurCarteSalle ancien) => false;
+}
+
+/// SALLE-ENCRE-1 : l'encre des etats sans page, celle du fond de la salle
+/// (`surfaceInverse`), ou celle de la carte sous [SurCarteSalle].
+AppColorPair encreSalle(BuildContext context) {
+  final AppPalette palette = AppPalette.of(context);
+  return context.dependOnInheritedWidgetOfExactType<SurCarteSalle>() == null
+      ? palette.surfaceInverse
+      : palette.surfaceRaised;
+}
+
 /// La page [numero] du mushaf, telle que la salle la montre.
 class PageCoranSalle extends ConsumerWidget {
   /// Cree la page.
-  const PageCoranSalle({required this.numero, super.key});
+  const PageCoranSalle({
+    required this.numero,
+    this.surCarte = false,
+    super.key,
+  });
+
+  /// S0 : posee dans la surface a page fixe de la salle de seance.
+  final bool surCarte;
 
   /// Le numero de la page du mushaf, de 1 a 604.
   final int numero;
@@ -50,12 +77,19 @@ class PageCoranSalle extends ConsumerWidget {
   );
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context, WidgetRef ref) =>
+      surCarte ? SurCarteSalle(child: _page(ref)) : _page(ref);
+
+  Widget _page(WidgetRef ref) => Builder(
+    builder: (BuildContext context) => _rendu(context, ref),
+  );
+
+  Widget _rendu(BuildContext context, WidgetRef ref) {
     final AsyncValue<PageMushafVM> page = ref.watch(pageMushafProvider(numero));
     final AsyncValue<bool> police = ref.watch(policeMushafDisponibleProvider);
     final AppPalette palette = AppPalette.of(context);
     // Les etats sans page se posent sur le fond de la salle (SALLE-ENCRE-1).
-    final AppColorPair salle = palette.surfaceInverse;
+    final AppColorPair salle = encreSalle(context);
 
     // `hasValue` et non le type d'execution (piege deja paye, lib/CLAUDE.md).
     if (!page.hasValue && !page.hasError ||

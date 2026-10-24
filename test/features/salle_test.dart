@@ -28,6 +28,7 @@ import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_enseignant/page_coran_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/media_salle.dart';
 import 'package:rewayah_academy/features/tc_mushaf/police_mushaf.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/indicateur_observation.dart';
 
@@ -160,6 +161,9 @@ Future<void> _monterSalle(
   ThemeMode themeMode = ThemeMode.light,
   TextDirection? direction,
   double echelle = 1,
+  // Une visite annoncee fait battre le point de la mention sans fin
+  // (`PointEnregistrement`) : on ne peut pas attendre le repos.
+  bool auRepos = true,
 }) async {
   await tester.pumpWidget(
     hoteRoutant(
@@ -208,6 +212,19 @@ Future<void> _monterSalle(
       ],
     ),
   );
+  if (auRepos) {
+    await tester.pumpAndSettle();
+    return;
+  }
+  for (int i = 0; i < 10; i++) {
+    await tester.pump(const Duration(milliseconds: 100));
+  }
+}
+
+/// S0 : dans la salle de seance, la liste de presence de l'enseignant
+/// s'ouvre par le lien « Presence » sous l'en-tete (feuille).
+Future<void> _ouvrirPresence(WidgetTester tester) async {
+  await tester.tap(find.bySemanticsLabel(RegExp(t.presence.voir)).first);
   await tester.pumpAndSettle();
 }
 
@@ -396,7 +413,8 @@ void main() {
 
       expect(_commande(t.salle.ouvrirMicro), findsOneWidget);
       expect(_commande(t.salle.ouvrirCamera), findsNothing);
-      expect(_commande(t.salle.quitterLeCours), findsOneWidget);
+      // S0 : le dock de la salle de seance (« Sortir de la seance »).
+      expect(_commande(t.salle.seance.sortir), findsOneWidget);
     });
 
     testWidgets('un eleve autorise a sa camera, meme en mode enfant', (
@@ -416,6 +434,57 @@ void main() {
       );
 
       expect(_commande(t.salle.ouvrirCamera), findsOneWidget);
+    });
+
+    testWidgets('D14 : un refus de camera dit la phrase du navigateur', (
+      WidgetTester tester,
+    ) async {
+      // Le directeur a touche « Camera » cinquante fois sans que rien ne se
+      // passe : l'echec ne doit plus etre silencieux (K-59).
+      final FauxMoteurSalle moteur = FauxMoteurSalle()
+        ..erreurCamera = StateError(
+          'NotReadableError: Could not start video source',
+        );
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student', camera: true)),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+
+      await tester.tap(_commande(t.salle.ouvrirCamera));
+      await tester.pumpAndSettle();
+
+      expect(moteur.cameraDemandee, <bool>[true]);
+      expect(find.text(t.salle.cameraEchec), findsOneWidget);
+      expect(find.text(t.salle.cameraEchecOccupee), findsOneWidget);
+      expect(
+        find.textContaining('NotReadableError: Could not start video source'),
+        findsOneWidget,
+      );
+
+      // Un essai qui aboutit efface le message.
+      moteur.erreurCamera = null;
+      await tester.tap(_commande(t.salle.ouvrirCamera));
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.cameraEchec), findsNothing);
+    });
+
+    test('D14 : la cause probable se lit dans la phrase du navigateur', () {
+      expect(
+        causeEchecCamera('NotAllowedError: Permission denied'),
+        t.salle.cameraEchecRefus,
+      );
+      expect(
+        causeEchecCamera('NotFoundError: Requested device not found'),
+        t.salle.cameraEchecAbsente,
+      );
+      expect(
+        causeEchecCamera('OverconstrainedError: width'),
+        t.salle.cameraEchecAutre,
+      );
     });
 
     testWidgets('observateur et controleur : ni micro ni camera', (
@@ -548,6 +617,7 @@ void main() {
         _personne(identite: 'e1', role: 'student', nom: 'Khadija'),
       ]);
       await tester.pumpAndSettle();
+      await _ouvrirPresence(tester);
 
       expect(find.text(t.salle.vousMeme), findsWidgets);
       expect(find.text('Khadija'), findsWidgets);
@@ -601,7 +671,8 @@ void main() {
       moteur.publierQualite(QualiteLien.mediocre);
       await tester.pumpAndSettle();
 
-      expect(find.text(t.salle.lienMediocre), findsOneWidget);
+      // S0 : le bandeau de la salle de seance le dit en mots.
+      expect(find.text(t.salle.secours.reseauFaible), findsOneWidget);
     });
 
     testWidgets('une reconnexion n est pas une absence', (
@@ -649,7 +720,7 @@ void main() {
         ..poser(EtatSalle.instable);
       await tester.pumpAndSettle();
 
-      expect(find.text(t.salle.lienMediocre), findsOneWidget);
+      expect(find.text(t.salle.secours.reseauFaible), findsOneWidget);
       await tester.tap(_commande(t.salle.ouvrirMicro));
       await tester.pumpAndSettle();
       expect(moteur.microDemande, <bool>[true]);
@@ -678,7 +749,7 @@ void main() {
       moteur.poser(EtatSalle.retabli);
       await tester.pumpAndSettle();
 
-      expect(find.text(t.reseau.retabli), findsOneWidget);
+      expect(find.text(t.salle.secours.retablie), findsOneWidget);
       expect(find.text(t.salle.reconnexionCourt), findsNothing);
       expect(find.text(t.salle.bandeauPermanent), findsOneWidget);
     });
@@ -849,6 +920,96 @@ void main() {
       expect(tester.widget<PageCoranSalle>(page).numero, 42);
     });
 
+    testWidgets('S0 : sans page, la scene en grand ; la page la remplace, '
+        'la vignette la rappelle', (WidgetTester tester) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: <Override>[
+          ..._surcharges(
+            video: FauxServiceVideo(acces0: _acces('student')),
+            moteur: moteur,
+            preVol: FauxServicePreVol(),
+          ),
+          policeMushafDisponibleProvider.overrideWith((Ref _) async => false),
+          pageMushafProvider.overrideWith(
+            (Ref _, int _) async => throw StateError('aucune source'),
+          ),
+        ],
+      );
+      moteur.publier(<ParticipantSalle>[
+        _personne(identite: 'p1', role: 'student', local: true),
+        _personne(identite: 't1', role: 'teacher', nom: 'Omar', camera: true),
+      ]);
+      await tester.pumpAndSettle();
+
+      // Rien de presente : les visages en grand, et rien a « revenir ».
+      final Finder scene = find.byKey(
+        const ValueKey<String>('scene-premier-plan'),
+      );
+      expect(scene, findsOneWidget);
+      expect(find.byKey(const ValueKey<String>('revenir-page')), findsNothing);
+
+      moteur.publierContenu(_contenu());
+      await tester.pumpAndSettle();
+      expect(scene, findsNothing);
+      expect(find.byKey(SallePage.pageEleveKey), findsOneWidget);
+
+      // Toucher la vignette remet la video en grand ; « Revenir a la page ».
+      await tester.tap(find.byKey(const ValueKey<String>('vignette-en-grand')));
+      await tester.pumpAndSettle();
+      expect(scene, findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey<String>('revenir-page')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(SallePage.pageEleveKey), findsOneWidget);
+    });
+
+    testWidgets('S0 : un seul affichage, et le zoom par paliers', (
+      WidgetTester tester,
+    ) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: <Override>[
+          ..._surcharges(
+            video: FauxServiceVideo(acces0: _acces('student')),
+            moteur: moteur,
+            preVol: FauxServicePreVol(),
+          ),
+          policeMushafDisponibleProvider.overrideWith((Ref _) async => false),
+          pageMushafProvider.overrideWith(
+            (Ref _, int _) async => throw StateError('aucune source'),
+          ),
+        ],
+      );
+      moteur.publierContenu(_contenu());
+      await tester.pumpAndSettle();
+
+      // B' : aucun bouton d'affichage (Support, Tableau) n'est propose.
+      expect(
+        find.text(t.salle.seance.commandes.affichageTableau),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const ValueKey<String>('surface-feuille')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const ValueKey<String>('surface-page')),
+        findsOneWidget,
+      );
+    });
+
+    test('S0 : les paliers du zoom, 100 a 200 %', () {
+      expect(palierSuivant(1), 1.25);
+      expect(palierSuivant(1.5), 2);
+      expect(palierSuivant(2), isNull);
+      expect(palierPrecedent(1), isNull);
+      expect(palierPrecedent(1.25), 1);
+      expect(zoomBorne(3), 2);
+      expect(zoomBorne(0.5), 1);
+    });
+
     testWidgets('un abonne tardif retrouve la page ouverte', (
       WidgetTester tester,
     ) async {
@@ -992,15 +1153,16 @@ void main() {
         ),
       );
 
-      await tester.tap(_commande(t.salle.quitterLeCours));
+      await tester.tap(_commande(t.salle.seance.sortir));
       await tester.pumpAndSettle();
 
       // Trois temps : la question, la consequence en langage humain, et deux
-      // actions asymetriques.
-      expect(find.text(t.salle.confirmerSortie), findsWidgets);
-      expect(find.text(t.salle.consequenceSortie), findsOneWidget);
+      // actions asymetriques (S0 : la question du dock de la salle de seance,
+      // posee une seule fois).
+      expect(find.text(t.salle.seance.quitterQuestion), findsWidgets);
+      expect(find.text(t.salle.seance.quitterConsequence), findsOneWidget);
 
-      await tester.tap(find.text(t.salle.quitterLeCours).last);
+      await tester.tap(find.text(t.salle.quitter).last);
       await tester.pumpAndSettle();
 
       expect(video.sorties, <String>[_seance]);
@@ -1034,7 +1196,7 @@ void main() {
         ),
       );
 
-      await tester.tap(_commande(t.salle.quitterLeCours));
+      await tester.tap(_commande(t.salle.seance.sortir));
       await tester.pumpAndSettle();
       await tester.tap(find.text(t.commun.annuler));
       await tester.pumpAndSettle();
@@ -1069,9 +1231,9 @@ void main() {
         ),
       );
 
-      await tester.tap(_commande(t.salle.quitterLeCours));
+      await tester.tap(_commande(t.salle.seance.sortir));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.salle.quitterLeCours).last);
+      await tester.tap(find.text(t.salle.seance.quitterCahier).last);
       await tester.pumpAndSettle();
 
       expect(video.sorties, <String>[_seance]);
@@ -1204,6 +1366,7 @@ void main() {
         _personne(identite: 'p1', role: 'teacher', nom: 'Omar', local: true),
       ]);
       await tester.pumpAndSettle();
+      await _ouvrirPresence(tester);
 
       expect(find.text('Khadija'), findsOneWidget);
       expect(find.text(t.presence.enAttente), findsOneWidget);
@@ -1235,6 +1398,7 @@ void main() {
         _personne(identite: 'e1', role: 'student', nom: 'Khadija'),
       ]);
       await tester.pumpAndSettle();
+      await _ouvrirPresence(tester);
 
       expect(find.text(t.presence.inconnu), findsWidgets);
       expect(find.text(t.presence.absente), findsNothing);
@@ -1309,6 +1473,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
+      await _ouvrirPresence(tester);
 
       expect(find.text(t.presence.excusee), findsOneWidget);
       expect(find.textContaining(t.presence.consolide), findsOneWidget);
@@ -1327,20 +1492,14 @@ void main() {
           preVol: FauxServicePreVol(),
           monTuteurObserve: true,
         ),
+        auRepos: false,
       );
 
-      expect(
-        find.text(t.tc.observation.annonce.enfantIndicateur),
-        findsOneWidget,
-      );
+      // S0 : la notice de la salle de seance (« Votre parent observe le
+      // cours », mots-rewayah), a l'enfant concerne seulement.
+      expect(find.text(t.salle.seance.votreParentObserve), findsOneWidget);
       // Sans bouton : un enfant de sept ans n'a rien a decider ici.
-      expect(
-        find.descendant(
-          of: find.byType(IndicateurObservationEnfant),
-          matching: find.byType(ActionPrincipale),
-        ),
-        findsNothing,
-      );
+      expect(find.byType(ActionPrincipale), findsNothing);
     });
 
     testWidgets('l eleve non observe ne lit rien du tout', (
@@ -1361,6 +1520,7 @@ void main() {
         find.text(t.tc.observation.annonce.enfantIndicateur),
         findsNothing,
       );
+      expect(find.text(t.salle.seance.votreParentObserve), findsNothing);
     });
 
     testWidgets('le controleur masque ne lit jamais la mention de l enfant', (
@@ -1410,10 +1570,11 @@ void main() {
               ),
             ],
           ),
+          auRepos: false,
         );
 
-        expect(find.byType(IndicateurObservation), findsOneWidget);
-        expect(find.text("Tuteur d'Amina observe"), findsOneWidget);
+        // S0 : la notice de la salle de seance, sans prenom (EN-9).
+        expect(find.text(t.salle.seance.unParentObserve), findsOneWidget);
       },
     );
 
@@ -1440,6 +1601,7 @@ void main() {
 
         // Elle porte le prenom d'un enfant qui n'est pas forcement le sien.
         expect(find.byType(IndicateurObservation), findsNothing);
+        expect(find.text(t.salle.seance.unParentObserve), findsNothing);
         expect(find.text("Tuteur d'Amina observe"), findsNothing);
       },
     );
@@ -1785,6 +1947,118 @@ void main() {
           expect(find.byKey(PageCoranSalle.cle), findsOneWidget);
           await capturerVue(tester, 'd9-coran-salle-$role-${taille.key}');
         });
+      }
+    }
+  }, skip: sautSansCapture);
+
+  // S0 (arbitrage du pilote, 24/10/2026) : la salle de seance montee dans
+  // `/salle`, aux trois largeurs, des deux cotes, en clair et en sombre.
+  group('S0 : captures de la salle de seance', () {
+    setUpAll(() async {
+      await chargerPolicesDuDepot();
+      await chargerPoliceMadina15();
+    });
+
+    const Map<String, Size> tailles = <String, Size>{
+      '390-portrait': Size(390, 844),
+      '390-paysage': Size(844, 390),
+      '1366': Size(1366, 768),
+    };
+    for (final ThemeMode theme in <ThemeMode>[
+      ThemeMode.light,
+      ThemeMode.dark,
+    ]) {
+      for (final MapEntry<String, Size> taille in tailles.entries) {
+        for (final String role in <String>['enseignant', 'eleve']) {
+          final String nom =
+              's0-salle-$role-${taille.key}-${theme == ThemeMode.light ? 'clair' : 'sombre'}';
+          testWidgets(nom, (WidgetTester tester) async {
+            masquerRubanDebug();
+            tester.view.physicalSize = taille.value;
+            tester.view.devicePixelRatio = 1;
+            addTearDown(tester.view.reset);
+            final bool enseignant = role == 'enseignant';
+            final FauxMoteurSalle moteur = FauxMoteurSalle();
+            await _monterSalle(
+              tester,
+              themeMode: theme,
+              surcharges: <Override>[
+                ..._surcharges(
+                  video: FauxServiceVideo(
+                    acces0: _acces(
+                      enseignant ? 'teacher' : 'student',
+                      camera: true,
+                    ),
+                  ),
+                  moteur: moteur,
+                  preVol: FauxServicePreVol(),
+                  role: enseignant ? AppRole.teacher : AppRole.student,
+                  presence: FauxServicePresence(
+                    lignes: <PresenceParticipant>[
+                      _presence(
+                        EtatPresence.presente,
+                        profilId: enseignant ? 'p1' : 't1',
+                        prenom: 'Omar',
+                        role: 'teacher',
+                      ),
+                      _presence(
+                        EtatPresence.presente,
+                        profilId: enseignant ? 'e1' : 'p1',
+                        prenom: 'Hakim',
+                      ),
+                    ],
+                  ),
+                ),
+                ...surchargesMadina15(page: 293),
+                pageCoranProvider.overrideWith(
+                  (Ref _, int n) async => PageCoran(
+                    numero: n,
+                    versets: <VersetCoran>[
+                      VersetCoran(
+                        sourateNumero: 18,
+                        numero: 1,
+                        texte: 'verset',
+                        pageNumero: n,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+            moteur.publier(<ParticipantSalle>[
+              _personne(
+                identite: enseignant ? 'p1' : 't1',
+                role: 'teacher',
+                nom: 'Omar',
+                local: enseignant,
+                micro: true,
+                camera: true,
+              ),
+              _personne(
+                identite: enseignant ? 'e1' : 'p1',
+                role: 'student',
+                nom: 'Hakim',
+                local: !enseignant,
+                micro: true,
+              ),
+            ]);
+            final ContenuPresente contenu = ContenuPresente(
+              page: 293,
+              sourate: 18,
+              verset: 1,
+              presentePar: 'p1',
+              emisLe: DateTime.now(),
+            );
+            if (enseignant) {
+              await moteur.presenterContenu(contenu);
+            } else {
+              moteur.publierContenu(contenu);
+            }
+            await tester.pumpAndSettle();
+            expect(find.byKey(PageCoranSalle.cle), findsOneWidget);
+            await capturerVue(tester, nom);
+          });
+        }
       }
     }
   }, skip: sautSansCapture);

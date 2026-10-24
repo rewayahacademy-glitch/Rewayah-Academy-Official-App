@@ -113,6 +113,16 @@ class PanneauEnseignantSalle extends ConsumerWidget {
   }
 }
 
+/// La bibliotheque du Coran de la salle (sourate, verset), ou `null` si
+/// rien n'est choisi. S0 : aussi ouverte depuis la scene video au premier
+/// plan, ou le panneau n'est pas a l'ecran.
+Future<({int sourate, int verset})?> choisirVersetCoran(BuildContext context) =>
+    AppBottomSheet.ouvrir<({int sourate, int verset})>(
+      context,
+      titre: t.enseignant.salle.bibliotheque,
+      constructeur: (BuildContext _) => const _Bibliotheque(),
+    );
+
 /// Le corps du panneau, et le seul endroit qui porte un etat local.
 ///
 /// Deux faits seulement y vivent : une demande en cours, et le dernier echec a
@@ -138,12 +148,9 @@ class _CorpsEtat extends ConsumerState<_Corps> {
 
   /// Ouvre la bibliotheque, puis presente ce qui y a ete choisi.
   Future<void> _ouvrirBibliotheque() async {
-    final ({int sourate, int verset})? choix =
-        await AppBottomSheet.ouvrir<({int sourate, int verset})>(
-          context,
-          titre: t.enseignant.salle.bibliotheque,
-          constructeur: (BuildContext _) => const _Bibliotheque(),
-        );
+    final ({int sourate, int verset})? choix = await choisirVersetCoran(
+      context,
+    );
     if (choix == null || !mounted) {
       return;
     }

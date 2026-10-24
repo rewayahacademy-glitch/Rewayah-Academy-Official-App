@@ -8,7 +8,8 @@ import 'package:go_router/go_router.dart';
 import '../../core/accessibilite/age_eleve.dart';
 import '../../core/accessibilite/mode_accessibilite.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
-import '../../core/coran/service_coran.dart' show pageCoranProvider;
+import '../../core/coran/service_coran.dart'
+    show pageCoranProvider, pagesMushafMedine;
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -54,11 +55,13 @@ import '../fiche_groupe/preparation_seance.dart';
 import '../salle_enseignant/page_coran_salle.dart';
 import '../salle_enseignant/panneau_enseignant.dart';
 import '../salle_enseignant/presentation_coran.dart'
-    show contenuPresenteProvider;
+    show contenuPresenteProvider, presentateurCoranProvider;
 import '../salle_seance/actions_seance.dart';
 import '../salle_seance/depuis_salle.dart';
+import '../salle_seance/media_salle.dart';
 import '../salle_seance/presentation_observee.dart';
 import '../salle_seance/resultat_seance.dart';
+import '../salle_seance/salle_seance.dart';
 import '../salle_seance/vue_seance.dart';
 import '../salle_seance/zone_support.dart';
 import '../tc_espace_groupe/roster_classe.dart';
@@ -180,6 +183,21 @@ class _SallePageEtat extends ConsumerState<SallePage> {
 
   /// L'eleve sorti de la salle (CLV-09).
   IssueSeance? _sortieEleve;
+
+  /// S0 : l'etat local de la salle de seance (rien n'est diffuse) : zoom de
+  /// la page (paliers 100 a 200 %), page agrandie, panneau et contexte.
+  double _zoom = paliersZoom.first;
+  bool _agrandi = false;
+  PanneauOuvert _panneau = PanneauOuvert.aucun;
+  ContexteOuvert _contexte = ContexteOuvert.aucun;
+
+  /// D14 (S0) : le dernier refus d'allumer la camera, tel que le navigateur
+  /// l'a dit, ou `null`.
+  String? _erreurCamera;
+
+  /// S0 : la scene video au premier plan, choisie d'un toucher ; `null` :
+  /// automatique (l'eleve sans page presentee la voit en grand).
+  bool? _scenePremierPlan;
 
   // CTRL-AGRANDIR-1 (releve VERIF-CT-1) : pas de commande « Agrandir le
   // support » dans la salle du controleur tant qu'aucun support n'y est
@@ -361,17 +379,22 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// [vue] est passee plutot que relue : la decision de sortie se prend sur
   /// l'etat d'AVANT la deconnexion. Apres `_moteur.quitter()`, la phase est
   /// retombee et `dansLaSalle` serait faux pour tout le monde.
-  Future<void> _quitter(VueSalle vue) async {
+  ///
+  /// [confirme] : la question a deja ete posee (le dock de la salle de
+  /// seance, `confirmerQuitterSeance`).
+  Future<void> _quitter(VueSalle vue, {bool confirme = false}) async {
     if (vue.role == RoleSalle.controleur) {
       return _quitterControle();
     }
-    final bool confirme = await ConfirmDestructive.demander(
-      context,
-      question: t.salle.confirmerSortie,
-      consequence: t.salle.consequenceSortie,
-      libelleConfirmer: t.salle.quitterLeCours,
-    );
-    if (!confirme || !mounted) {
+    final bool accepte =
+        confirme ||
+        await ConfirmDestructive.demander(
+          context,
+          question: t.salle.confirmerSortie,
+          consequence: t.salle.consequenceSortie,
+          libelleConfirmer: t.salle.quitterLeCours,
+        );
+    if (!accepte || !mounted) {
       return;
     }
 
@@ -499,8 +522,20 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   Future<void> _basculerMicro(bool ouvert) =>
       _moteur.reglerMicro(actif: !ouvert);
 
-  Future<void> _basculerCamera(bool ouverte) =>
-      _moteur.reglerCamera(actif: !ouverte);
+  /// D14 (S0) : un allumage qui echoue n'est plus silencieux. La phrase
+  /// exacte du navigateur s'affiche sous l'en-tete, avec sa cause probable et
+  /// quoi faire (K-59) ; un essai reussi l'efface.
+  Future<void> _basculerCamera(bool ouverte) async {
+    try {
+      await _moteur.reglerCamera(actif: !ouverte);
+      if (mounted && _erreurCamera != null) {
+        setState(() => _erreurCamera = null);
+      }
+    } on Object catch (erreur) {
+      journalDev('camera : $erreur');
+      if (mounted) setState(() => _erreurCamera = '$erreur');
+    }
+  }
 
   /// Point 7 de la passation du 17/10 (spec section 10) : les eleves de la
   /// seance, pour l'enseignant, en feuille ; toucher un eleve ouvre sa fiche
@@ -547,6 +582,145 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     titre: t.presence.titre,
     constructeur: (BuildContext _) => _ListePresence(lignes: lignes),
   );
+
+  /// S0 : la salle de seance, ses rappels et ses medias reels.
+  Widget _salleDeSeance(
+    VueSalle vue,
+    VueSeance base,
+    ContenuPresente? presentee, {
+    required List<_Presence> lignes,
+    required VuePresence mienne,
+  }) {
+    final bool enseignant = base.role == RoleSeance.enseignant;
+    final VueSeance seance = base.copyWith(
+      panneau: _panneau,
+      contexte: _contexte,
+    );
+    final VideoSessionProvider moteur = ref.watch(moteurSalleProvider);
+    final double? plus = palierSuivant(_zoom);
+    final double? moins = palierPrecedent(_zoom);
+    final ParticipantSalle? moi = vue.moi;
+    final int? page = presentee?.page;
+    final ActionsSeance actions = ActionsSeance(
+      // Le dock de la salle de seance confirme deja la sortie
+      // (`confirmerQuitterSeance`) : une seule question.
+      onQuitter: () => unawaited(_quitter(vue, confirme: true)),
+      // Les commandes suivent le jeton (`peutParler`, `peutMontrer`), jamais
+      // le mode d'interface ; pas de bouton sans droit (jamais grise).
+      onMicro: vue.peutParler
+          ? () => unawaited(_basculerMicro(moi?.micro ?? false))
+          : null,
+      onCamera: vue.peutMontrer
+          ? () => unawaited(_basculerCamera(moi?.camera ?? false))
+          : null,
+      onAgrandir: () => setState(() => _agrandi = !_agrandi),
+      onZoomPlus: plus == null ? null : () => setState(() => _zoom = plus),
+      onZoomMoins: moins == null ? null : () => setState(() => _zoom = moins),
+      // B' : un seul affichage, « Avec notes » ; aucun bouton d'affichage.
+      onAffichage: null,
+      onCommandes: enseignant
+          ? () => _basculerPanneau(PanneauOuvert.commandes)
+          : null,
+      // Les eleves de l'enseignant passent par le roster reel de la seance
+      // (fiche, rappel discret) et la liste de presence (J3), poses sous
+      // l'en-tete : le panneau de demonstration n'est pas rendu.
+      onEleves: null,
+      // La Bibliotheque des Commandes (et la touche B) ouvre le Coran : une
+      // autre sourate se presente a tout moment, comme depuis l'ancien
+      // panneau.
+      onBibliotheque: enseignant && vue.peutPresenter
+          ? () => unawaited(_ouvrirCoran())
+          : null,
+      onContexte: (ContexteOuvert c) => setState(() {
+        _contexte = c;
+        if (c != ContexteOuvert.aucun && _panneau == PanneauOuvert.commandes) {
+          _panneau = PanneauOuvert.aucun;
+        }
+      }),
+      // D9 : la page tourne pour toute la classe, par le canal de donnees.
+      onPagePrecedente: enseignant && page != null && page > 1
+          ? () => unawaited(
+              ref.read(presentateurCoranProvider).presenterPage(page - 1),
+            )
+          : null,
+      onPageSuivante: enseignant && page != null && page < pagesMushafMedine
+          ? () => unawaited(
+              ref.read(presentateurCoranProvider).presenterPage(page + 1),
+            )
+          : null,
+    );
+    // La scene en grand : choisie, sinon chez l'eleve tant que rien n'est
+    // presente. Le bouton de retour n'existe que si une page (ou le panneau
+    // de l'enseignant) attend derriere.
+    // Rien de presente : la scene en grand pour tous (les visages, ADR-001) ;
+    // une page presentee prend l'espace principal, la video revient en
+    // vignette, et la toucher remet la scene en grand.
+    final bool scenePremierPlan = _scenePremierPlan ?? presentee == null;
+    final bool basculable = presentee != null;
+    final RosterClasseVM? roster = enseignant ? _roster(ref) : null;
+    return PorteeMediaSalle(
+      entete: _PresenceSeance(
+        erreurCamera: _erreurCamera,
+        mienne: enseignant ? null : mienne,
+        onVoirPresence: vue.voitLesParticipants
+            ? () => unawaited(_voirPresence(lignes))
+            : null,
+        roster: roster,
+        onVoirEleves: () => unawaited(_voirEleves()),
+      ),
+      scene: _Scene(vue: vue),
+      scenePremierPlan: scenePremierPlan,
+      onBasculerScene: basculable
+          ? () => setState(() => _scenePremierPlan = !scenePremierPlan)
+          : null,
+      // L'enseignant sans page ouvre le Coran depuis la scene : la page
+      // choisie prend aussitot l'espace principal.
+      actionScene: enseignant && presentee == null && vue.peutPresenter
+          ? (
+              libelle: t.salle.ouvrirCoran,
+              onPress: () => unawaited(_ouvrirCoran()),
+            )
+          : null,
+      video: moteur.renduVideo,
+      // L'enseignant chez l'eleve ; sa propre image chez l'enseignant.
+      identiteVignette: enseignant ? moi?.identite : vue.dominant?.identite,
+      page: (SupportPageFixe support) => PageCoranSalle(
+        key: enseignant ? null : SallePage.pageEleveKey,
+        numero: support.page,
+        surCarte: true,
+      ),
+      onZoom: (double z) => setState(() => _zoom = z),
+      child: SalleSeance(
+        key: const ValueKey<String>('salle-de-seance'),
+        vue: seance,
+        actions: actions,
+        local: EtatLocalSeance(
+          microOuvert: moi?.micro ?? false,
+          cameraAllumee: moi?.camera ?? false,
+          zoom: _zoom,
+          agrandi: _agrandi,
+        ),
+      ),
+    );
+  }
+
+  /// S0 : la bibliotheque du Coran, puis la page presentee a la classe ;
+  /// la scene cede la place a la page.
+  Future<void> _ouvrirCoran() async {
+    final ({int sourate, int verset})? choix = await choisirVersetCoran(
+      context,
+    );
+    if (choix == null || !mounted) return;
+    setState(() => _scenePremierPlan = null);
+    await ref
+        .read(presentateurCoranProvider)
+        .presenterVerset(sourate: choix.sourate, verset: choix.verset);
+  }
+
+  void _basculerPanneau(PanneauOuvert cible) => setState(() {
+    _panneau = _panneau == cible ? PanneauOuvert.aucun : cible;
+    if (_panneau == PanneauOuvert.commandes) _contexte = ContexteOuvert.aucun;
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -761,6 +935,39 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     final bool pageEleveLisible =
         pageEleve != null && pageCoranLisible(ref, pageEleve.page);
 
+    // S0 (arbitrage du pilote, 24/10/2026) : une fois dans la salle,
+    // l'eleve, la guidee et l'enseignant passent par la salle de seance
+    // (`SalleSeance`), raccordee par `DepuisSalle`. L'entree, l'impasse,
+    // l'observateur et le controleur gardent leur rendu.
+    if (vue.dansLaSalle) {
+      final ContenuPresente? presentee =
+          vue.role == RoleSalle.eleve || _panneauEnseignant(vue)
+          ? ref.watch(contenuPresenteProvider).value
+          : null;
+      final VueSeance? seance = DepuisSalle.vue(
+        salle: vue,
+        mode: AppMetriques.of(context).mode,
+        presence: presence,
+        monProfil: monProfil,
+        monTuteurObserve: monTuteurObserve,
+        annonces: annonces,
+        groupeId: widget.groupeId,
+        age: ref.watch(portAgeEleveProvider).ageDeLEleve(),
+        supportPresente: presentee == null
+            ? null
+            : DepuisSalle.pageCoran(presentee.page),
+      );
+      if (seance != null) {
+        return _salleDeSeance(
+          vue,
+          seance,
+          presentee,
+          lignes: lignes,
+          mienne: mienne,
+        );
+      }
+    }
+
     // CTR-02 : la salle du controleur, la MEME salle (R-salle unique), avec
     // sa zone haute (« Quitter » y vit). Aucune commande en bas : « Son reçu »
     // attend BR-1 (CTRL-SON-1), « Agrandir le support » attend le rendu d'un
@@ -867,6 +1074,117 @@ class _SallePageEtat extends ConsumerState<SallePage> {
               presentationLue: true,
             )
           : _Corps(vue: vue, lignes: lignes),
+    );
+  }
+}
+
+/// D14 (S0) : la cause probable d'un refus de camera, lue dans la phrase du
+/// navigateur (`getUserMedia`), et ce qu'il faut faire (K-59).
+String causeEchecCamera(String erreur) {
+  bool dit(List<String> mots) => mots.any(erreur.contains);
+  if (dit(<String>['NotAllowedError', 'Permission', 'permission'])) {
+    return t.salle.cameraEchecRefus;
+  }
+  if (dit(<String>['NotReadableError', 'TrackStartError', 'Could not start'])) {
+    return t.salle.cameraEchecOccupee;
+  }
+  if (dit(<String>['NotFoundError', 'DevicesNotFound', 'not found'])) {
+    return t.salle.cameraEchecAbsente;
+  }
+  return t.salle.cameraEchecAutre;
+}
+
+/// S0 : sous l'en-tete de la salle de seance, ce que `/salle` savait deja
+/// dire et que la salle de seance ne porte pas : l'etat de presence de
+/// l'eleve (section 6.6, le sien seulement) ; chez l'enseignant, la liste de
+/// presence (J3 : jamais « absent » sans le savoir) et le roster de la seance
+/// (fiche, rappel discret).
+class _PresenceSeance extends StatelessWidget {
+  const _PresenceSeance({
+    this.erreurCamera,
+    this.mienne,
+    this.onVoirPresence,
+    this.roster,
+    this.onVoirEleves,
+  });
+
+  /// D14 : la phrase exacte du navigateur quand la camera n'a pas pu
+  /// s'allumer, ou `null`.
+  final String? erreurCamera;
+
+  final VuePresence? mienne;
+  final VoidCallback? onVoirPresence;
+  final RosterClasseVM? roster;
+  final VoidCallback? onVoirEleves;
+
+  @override
+  Widget build(BuildContext context) {
+    final RosterClasseVM? eleves = roster;
+    final VoidCallback? ouvrir = onVoirEleves;
+    final List<Widget> liens = <Widget>[
+      if (onVoirPresence case final VoidCallback voir)
+        LienFleche(
+          libelle: t.presence.titre,
+          libelleSemantique: t.presence.voir,
+          onPress: voir,
+          fleche: false,
+        ),
+      if (eleves != null && ouvrir != null && eleves.disponible)
+        BoutonRoster(
+          key: const ValueKey<String>('salle-eleves'),
+          compteur: eleves.compteurCompact,
+          presents: eleves.presents,
+          attendus: eleves.attendus,
+          onOuvrir: ouvrir,
+        ),
+    ];
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        if (erreurCamera case final String erreur)
+          Semantics(
+            key: const ValueKey<String>('salle-erreur-camera'),
+            liveRegion: true,
+            container: true,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  t.salle.cameraEchec,
+                  style: palette.inkAlert.applyTo(
+                    textes.titleSmall ?? const TextStyle(),
+                  ),
+                ),
+                Text(
+                  causeEchecCamera(erreur),
+                  style: palette.inkStrong.applyTo(
+                    textes.bodyMedium ?? const TextStyle(),
+                  ),
+                ),
+                Text(
+                  t.salle.cameraEchecMessage(erreur: erreur),
+                  style: palette.inkMuted.applyTo(
+                    textes.bodySmall ?? const TextStyle(),
+                  ),
+                ),
+                Ecart.vSm,
+              ],
+            ),
+          ),
+        if (mienne case final VuePresence etat)
+          LignePresence(nom: t.presence.mienne, vue: etat),
+        if (liens.isNotEmpty)
+          Wrap(
+            spacing: AppSpacing.md,
+            runSpacing: AppSpacing.xs,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: liens,
+          ),
+      ],
     );
   }
 }

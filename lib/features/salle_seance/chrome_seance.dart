@@ -22,6 +22,7 @@ import 'capsule_seance.dart';
 import 'chrono_salle.dart';
 import 'cible_debordante.dart';
 import 'dock_seance.dart';
+import 'media_salle.dart';
 import 'mention_seance.dart';
 import 'vue_seance.dart';
 
@@ -71,16 +72,30 @@ class ChromeSeance extends StatelessWidget {
       // La cible du lien « En savoir plus » de la mention deborde de sa
       // ligne sans prendre de hauteur : l'en-tete entier recoit ses touches.
       child: ZoneCiblesDebordantes(
-        child: gabarit == Gabarit.desktop
-            ? _Large(vue: vue, actions: actions, focusCapsule: focusCapsule)
-            : _Etroit(
-                vue: vue,
-                actions: actions,
-                gabarit: gabarit,
-                compacte: compacte,
-                focusCapsule: focusCapsule,
-              ),
+        child: _avecEntete(
+          context,
+          gabarit == Gabarit.desktop
+              ? _Large(vue: vue, actions: actions, focusCapsule: focusCapsule)
+              : _Etroit(
+                  vue: vue,
+                  actions: actions,
+                  gabarit: gabarit,
+                  compacte: compacte,
+                  focusCapsule: focusCapsule,
+                ),
+        ),
       ),
+    );
+  }
+
+  /// S0 : ce que `/salle` pose sous l'en-tete ([PorteeMediaSalle.entete]).
+  Widget _avecEntete(BuildContext context, Widget tete) {
+    final Widget? suite = PorteeMediaSalle.de(context)?.entete;
+    if (suite == null) return tete;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[tete, Ecart.vSm, suite],
     );
   }
 }

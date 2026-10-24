@@ -33,7 +33,8 @@
 
 import 'dart:math' as math;
 
-import 'package:flutter/gestures.dart' show PointerDeviceKind;
+import 'package:flutter/gestures.dart'
+    show PointerDeviceKind, kDoubleTapSlop, kDoubleTapTimeout;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -60,6 +61,7 @@ import '../../core/theme/app_theme.dart';
 import '../../core/widgets/action_principale.dart';
 import '../tc_dock/couche_annotation.dart';
 import 'ecriture_seance.dart' show emettreEcriture, traitsDeLaSurface;
+import 'media_salle.dart';
 import 'notes_deposees.dart';
 import 'rangement_support.dart';
 import 'repere_page.dart';
@@ -273,8 +275,35 @@ class _SurfacePageFixeState extends ConsumerState<SurfacePageFixe> {
     }
   }
 
+  /// S0 : les doigts poses (pincement) et le dernier toucher leve (double
+  /// toucher), seulement quand la salle donne `PorteeMediaSalle.onZoom`.
+  final Map<int, Offset> _doigts = <int, Offset>{};
+  double _ecartPincement = 0;
+  double _zoomPincement = 1;
+  Offset _departToucher = Offset.zero;
+  bool _pince = false;
+  ({Duration quand, Offset ou})? _dernierToucher;
+
+  static double _ecart(Map<int, Offset> doigts) {
+    final List<Offset> deux = doigts.values.take(2).toList();
+    return (deux[0] - deux[1]).distance;
+  }
+
   void _poser(PointerDownEvent e) {
     _poses[e.pointer] = e.kind;
+    if (e.kind == PointerDeviceKind.touch ||
+        e.kind == PointerDeviceKind.mouse) {
+      _doigts[e.pointer] = e.position;
+      if (_doigts.length == 1) {
+        _departToucher = e.position;
+        _pince = false;
+      }
+      if (_doigts.length == 2) {
+        _ecartPincement = _ecart(_doigts);
+        _zoomPincement = widget.zoom;
+        _pince = true;
+      }
+    }
     if (!_styletVu &&
         (e.kind == PointerDeviceKind.stylus ||
             e.kind == PointerDeviceKind.invertedStylus)) {
@@ -285,7 +314,26 @@ class _SurfacePageFixeState extends ConsumerState<SurfacePageFixe> {
     }
   }
 
-  void _lever(PointerEvent e) => _poses.remove(e.pointer);
+  void _lever(PointerEvent e) {
+    _poses.remove(e.pointer);
+    final bool etaitSeul = _doigts.length == 1;
+    _doigts.remove(e.pointer);
+    final ValueChanged<double>? zoomer = PorteeMediaSalle.de(context)?.onZoom;
+    if (zoomer == null || e is! PointerUpEvent || !etaitSeul || _pince) {
+      return;
+    }
+    // Un toucher immobile : deux de suite, proches, ramenent a 100 %.
+    if ((e.position - _departToucher).distance > kDoubleTapSlop) return;
+    final ({Duration quand, Offset ou})? avant = _dernierToucher;
+    if (avant != null &&
+        e.timeStamp - avant.quand <= kDoubleTapTimeout &&
+        (e.position - avant.ou).distance <= kDoubleTapSlop) {
+      _dernierToucher = null;
+      if (widget.zoom != paliersZoom.first) zoomer(paliersZoom.first);
+      return;
+    }
+    _dernierToucher = (quand: e.timeStamp, ou: e.position);
+  }
 
   /// Les pointeurs qui deplacent la page, selon l'outil retenu.
   List<int> _quiDeplacent(EtatOutils etat) {
@@ -303,6 +351,14 @@ class _SurfacePageFixeState extends ConsumerState<SurfacePageFixe> {
   }
 
   void _bouger(PointerMoveEvent e) {
+    if (_doigts.containsKey(e.pointer)) _doigts[e.pointer] = e.position;
+    final ValueChanged<double>? zoomer = PorteeMediaSalle.de(context)?.onZoom;
+    if (zoomer != null && _doigts.length >= 2 && _ecartPincement > 0) {
+      final double voulu = zoomBorne(
+        _zoomPincement * _ecart(_doigts) / _ecartPincement,
+      );
+      if ((voulu - widget.zoom).abs() >= 0.01) zoomer(voulu);
+    }
     final List<int> deplacent = _quiDeplacent(ref.read(etatOutilsProvider));
     if (!deplacent.contains(e.pointer)) return;
     // Deux doigts qui glissent ensemble deplacent la page de leur pas
@@ -672,6 +728,23 @@ class _Page extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final String? mention = page.mention;
+    // S0 : la vraie page (le Coran de `/salle`) quand la salle la donne ; la
+    // page garde son cadre et son repere, les notes se posent dessus.
+    final Widget Function(SupportPageFixe)? rendu = PorteeMediaSalle.de(
+      context,
+    )?.page;
+    if (rendu != null) {
+      return Semantics(
+        container: true,
+        liveRegion: annoncee,
+        label: t.salle.seance.surface.page(
+          titre: page.titre,
+          page: page.page,
+          pages: page.total,
+        ),
+        child: _Cadre(child: rendu(page)),
+      );
+    }
     // TB-RC (revue TB-R, m7) : un noeud propre, jamais fondu dans l'en-tete
     // ou dans l'ecran entier (eleve, guidee).
     return Semantics(

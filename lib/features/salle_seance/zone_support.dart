@@ -19,7 +19,9 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/widgets/bouton_icone.dart';
 import 'composition_salle.dart';
+import 'media_salle.dart';
 import 'surface_page_fixe.dart';
 import 'vignette_video.dart';
 import 'vue_seance.dart';
@@ -52,6 +54,18 @@ class ZoneSupport extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // S0 : la scene video de `/salle` au premier plan (la vignette touchee,
+    // ou rien de presente chez l'eleve).
+    final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
+    if (media != null && media.scenePremierPlan) {
+      if (media.scene case final Widget scene) {
+        return _ScenePremierPlan(
+          scene: scene,
+          onRevenir: media.onBasculerScene,
+          action: media.actionScene,
+        );
+      }
+    }
     // TB-6 : un support a page fixe presente, ou le tableau libre connu de
     // la vue, prend la surface ; la diapositive et le rendu fourni (Classe
     // Live, Coran) restent ce qu'ils etaient.
@@ -449,6 +463,44 @@ extension on ZoneSupport {
     );
     if (gabarit != Gabarit.desktop) return carte;
     return _Serti(key: const ValueKey<String>('cadre-support'), child: carte);
+  }
+}
+
+/// S0 : la scene video de `/salle` a la place de la page, et « Revenir a
+/// la page » en coin quand une page attend derriere.
+class _ScenePremierPlan extends StatelessWidget {
+  const _ScenePremierPlan({required this.scene, this.onRevenir, this.action});
+
+  final Widget scene;
+  final VoidCallback? onRevenir;
+  final ({String libelle, VoidCallback onPress})? action;
+
+  /// La cle de la scene au premier plan (tests, captures).
+  static const Key cle = ValueKey<String>('scene-premier-plan');
+
+  @override
+  Widget build(BuildContext context) {
+    final ({String libelle, VoidCallback onPress})? autre = action;
+    final VoidCallback? revenir = autre?.onPress ?? onRevenir;
+    final String libelle = autre?.libelle ?? t.salle.revenirALaPage;
+    return Stack(
+      key: cle,
+      children: <Widget>[
+        Positioned.fill(child: scene),
+        if (revenir != null)
+          PositionedDirectional(
+            top: AppSpacing.sm,
+            start: AppSpacing.sm,
+            child: BoutonIcone(
+              key: const ValueKey<String>('revenir-page'),
+              icone: AppIcons.coran,
+              libelle: libelle,
+              infobulle: libelle,
+              onPress: revenir,
+            ),
+          ),
+      ],
+    );
   }
 }
 

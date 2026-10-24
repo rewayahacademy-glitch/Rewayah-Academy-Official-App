@@ -236,7 +236,8 @@
     "retourner": "Retourner dans la salle",
     "coran": {
       "indisponible": "La page du Coran ne s'affiche pas sur cet appareil",
-      "indisponibleDetail": "L'écriture de l'édition de Médine n'a pas pu se charger. Réessayez\u00a0; si rien ne change, prévenez la direction."
+      "indisponibleDetail": "L'écriture de l'édition de Médine n'a pas pu se charger. Réessayez\u00a0; si rien ne change, prévenez la direction.",
+      "titrePage": "Le Coran, édition de Médine"
     },
     "preparation": {
       "titre": "Préparer l'entrée dans la classe",
@@ -681,6 +682,12 @@
     "camera": "Caméra",
     "cameraCoupee": "Caméra éteinte",
     "cameraAllumee": "Caméra allumée",
+    "cameraEchec": "La caméra ne s'allume pas",
+    "cameraEchecRefus": "Le navigateur refuse l'accès à la caméra. Autorisez la caméra dans les réglages du site (à gauche de l'adresse), puis touchez de nouveau la caméra.",
+    "cameraEchecOccupee": "La caméra est déjà utilisée par une autre application ou une autre fenêtre. Fermez-la, puis touchez de nouveau la caméra.",
+    "cameraEchecAbsente": "Aucune caméra n'est trouvée sur cet appareil. Branchez-en une, puis touchez de nouveau la caméra.",
+    "cameraEchecAutre": "Touchez de nouveau la caméra. Si rien ne change, prévenez la direction avec le message ci-dessous.",
+    "cameraEchecMessage": "Message du navigateur\u00a0: {erreur}",
     "quitter": "Quitter",
     "ouvrirCoran": "Ouvrir le Coran",
     "confirmerSortie": "Quitter le cours\u00a0?",
@@ -693,6 +700,8 @@
     "seulEnseignant": "Votre professeur n'est pas encore arrivé",
     "seulEnseignantDetail": "Restez sur cet écran. Vous le verrez apparaître.",
     "seulEleve": "Votre élève n'est pas encore arrivé",
+    "voirVideoEnGrand": "Voir la vidéo en grand",
+    "revenirALaPage": "Revenir à la page",
     "seulEleveDetail": "Restez sur cet écran. Vous le verrez apparaître.",
     "seulObservation": "Personne n'est encore entré dans cette salle",
     "seulObservationDetail": "Le cours n'a pas commencé, ou il est déjà terminé.",

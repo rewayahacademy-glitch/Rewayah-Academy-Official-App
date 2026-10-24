@@ -12,6 +12,8 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_nom.dart';
+import '../../core/widgets/pressable.dart';
+import 'media_salle.dart';
 import 'vue_seance.dart';
 
 /// Les mesures de la vignette, par gabarit.
@@ -97,6 +99,26 @@ class VignetteVideo extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final ThemeData theme = Theme.of(context);
+    // S0 : la vraie camera quand `/salle` la donne ; sinon l'aplat.
+    final Widget? image = PorteeMediaSalle.videoVignette(context);
+    // S0 : toucher la vignette met la video en grand (spec D16, point 4).
+    final VoidCallback? enGrand = PorteeMediaSalle.de(context)?.onBasculerScene;
+    final Widget vignette = _vignette(context, palette, theme, image);
+    if (enGrand == null) return vignette;
+    return Pressable(
+      key: const ValueKey<String>('vignette-en-grand'),
+      libelleSemantique: t.salle.voirVideoEnGrand,
+      onPress: enGrand,
+      child: vignette,
+    );
+  }
+
+  Widget _vignette(
+    BuildContext context,
+    AppPalette palette,
+    ThemeData theme,
+    Widget? image,
+  ) {
     // TB-RC (revue TB-R, m7) : un noeud propre, jamais fondu dans l'ecran.
     return Semantics(
       container: true,
@@ -118,22 +140,24 @@ class VignetteVideo extends StatelessWidget {
               // VIDEO-TUILE-1 : la tuile partagee -- le petit cercle et le
               // nom centre dessous, ensemble au centre, sur l'aplat qui tient
               // lieu d'image ; le signal reste dans le coin bas.
-              child: DecoratedBox(
-                decoration: palette.surfaceActionDouce.decoration(),
-                child: TuileSansImage(
-                  prenom: vue.nomEnseignant,
-                  nom: vue.nomEnseignant,
-                  styleNom: palette.surfaceActionDouce.applyTo(
-                    theme.textTheme.labelSmall ?? const TextStyle(),
+              child:
+                  image ??
+                  DecoratedBox(
+                    decoration: palette.surfaceActionDouce.decoration(),
+                    child: TuileSansImage(
+                      prenom: vue.nomEnseignant,
+                      nom: vue.nomEnseignant,
+                      styleNom: palette.surfaceActionDouce.applyTo(
+                        theme.textTheme.labelSmall ?? const TextStyle(),
+                      ),
+                      coin: vue.voitSignalVideo
+                          ? _Signal(
+                              key: const ValueKey<String>('signal-video'),
+                              barres: vue.signalEnseignant,
+                            )
+                          : null,
+                    ),
                   ),
-                  coin: vue.voitSignalVideo
-                      ? _Signal(
-                          key: const ValueKey<String>('signal-video'),
-                          barres: vue.signalEnseignant,
-                        )
-                      : null,
-                ),
-              ),
             ),
           ),
         ),
