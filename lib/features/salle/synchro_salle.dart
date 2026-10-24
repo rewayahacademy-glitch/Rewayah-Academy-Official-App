@@ -14,6 +14,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart' show Offset;
 
 import '../../core/observabilite/journal_dev.dart';
+import '../../core/tc_outils/annotation_layer.dart';
 import '../../core/tc_outils/evenements_outils.dart';
 import '../../core/tc_outils/port_annotations.dart';
 import '../../core/tc_outils/reception_outils.dart';
@@ -66,6 +67,7 @@ class SynchroSalle {
         depot: depot,
       ),
       realtime: realtime,
+      moteur: moteur,
       profilLocalId: profilLocalId,
       peutDiffuser: acces.capacites.peutPublierDonnees,
     );
@@ -78,15 +80,84 @@ class SynchroSalle {
     required this._diffusion,
     required this._reception,
     required this._realtime,
+    required VideoSessionProvider moteur,
     required this.profilLocalId,
     required this._peutDiffuser,
-  }) {
+  }) : _moteur = moteur {
     _abonnementPointeur = _realtime
         .messagesEphemeres(sessionId)
         .listen(_recevoirPointeur, onError: (Object _) {});
     _abonnementTableau = _realtime
         .messagesFiables(sessionId)
         .listen(_recevoirTableau, onError: (Object _) {});
+    if (_peutDiffuser) {
+      _abonnementPage = moteur.contenusPresentes.listen(
+        (ContenuPresente page) => _pagePresentee = page,
+        onError: (Object _) {},
+      );
+      _abonnementArrivees = moteur.participants.listen(
+        _accueillir,
+        onError: (Object _) {},
+      );
+    }
+  }
+
+  final VideoSessionProvider _moteur;
+  StreamSubscription<ContenuPresente>? _abonnementPage;
+  StreamSubscription<List<ParticipantSalle>>? _abonnementArrivees;
+
+  /// La page que l'enseignant presente (il la lit par le meme flux que la
+  /// classe), ou `null`.
+  ContenuPresente? _pagePresentee;
+
+  /// L'etat du tableau que l'enseignant a diffuse en dernier.
+  bool _tableauDiffuse = false;
+
+  /// Les participants vus a la derniere liste, hors soi.
+  Set<String> _presents = const <String>{};
+
+  /// Le rejeu (retour du pilote, 24/10) : LiveKit ne garde aucun paquet, un
+  /// eleve qui entre apres un tour de page, l'ouverture du tableau ou un
+  /// trait ne recevait rien. Quand quelqu'un arrive (ou revient), l'appareil
+  /// de l'enseignant renvoie a la classe l'etat courant : la page, le
+  /// tableau, puis chaque trait de son depot. La reception ignore ce qu'elle
+  /// a deja (meme identifiant de trait, meme page), donc ceux qui etaient la
+  /// ne voient rien changer.
+  void _accueillir(List<ParticipantSalle> liste) {
+    final Set<String> presents = <String>{
+      for (final ParticipantSalle p in liste)
+        if (!p.estLocal) p.identite,
+    };
+    final bool arrivee = presents.difference(_presents).isNotEmpty;
+    _presents = presents;
+    if (arrivee) rejouer();
+  }
+
+  /// Renvoie a la classe la page, le tableau et les traits de la seance
+  /// (enseignant seulement).
+  @visibleForTesting
+  void rejouer() {
+    if (!_peutDiffuser) return;
+    final ContenuPresente? page = _pagePresentee;
+    if (page != null) {
+      unawaited(
+        _moteur
+            .presenterContenu(page)
+            .catchError((Object e) => journalDev('page non rejouee : $e')),
+      );
+    }
+    if (_tableauDiffuse) diffuserTableau(ouvert: true);
+    for (final AnnotationLayer couche in depot.couches.toList()) {
+      for (final TraitVectoriel trait in couche.traits) {
+        diffuser!(
+          EvenementTraitTermine(
+            coucheId: couche.id,
+            trait: trait,
+            portee: couche.portee,
+          ),
+        );
+      }
+    }
   }
 
   late final StreamSubscription<MessagePedagogique> _abonnementTableau;
@@ -106,6 +177,7 @@ class SynchroSalle {
   /// S0.3 : ouvre ou ferme le tableau pour la classe (enseignant).
   void diffuserTableau({required bool ouvert}) {
     if (!_peutDiffuser) return;
+    _tableauDiffuse = ouvert;
     unawaited(
       _realtime
           .emettre(
@@ -196,6 +268,8 @@ class SynchroSalle {
   Future<void> liberer() async {
     await _abonnementPointeur.cancel();
     await _abonnementTableau.cancel();
+    await _abonnementPage?.cancel();
+    await _abonnementArrivees?.cancel();
     pointeurDistant.dispose();
     tableauOuvert.dispose();
     await _reception.liberer();

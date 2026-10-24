@@ -289,4 +289,107 @@ void main() {
     await relayer();
     expect(eleve.tableauOuvert.value, isFalse);
   });
+
+  test('rejeu : un eleve qui entre apres la page, le tableau et un trait '
+      'les recoit de l appareil de l enseignant', () async {
+    final FauxMoteurSalle moteurEnseignant = FauxMoteurSalle();
+    final FauxMoteurSalle moteurEleve = FauxMoteurSalle();
+    await moteurEnseignant.rejoindre(accesSalle('teacher'));
+    await moteurEleve.rejoindre(accesSalle('student'));
+    final SynchroSalle enseignant = SynchroSalle(
+      moteur: moteurEnseignant,
+      acces: accesSalle('teacher'),
+      sessionId: _seance,
+      profilLocalId: 't1',
+    );
+    addTearDown(enseignant.liberer);
+
+    // Avant l'arrivee : la page 42 presentee, le tableau ouvert, un trait.
+    final ContenuPresente page = ContenuPresente(
+      page: 42,
+      sourate: 2,
+      verset: 253,
+      presentePar: 't1',
+      emisLe: DateTime.utc(2026, 10, 24, 20),
+    );
+    moteurEnseignant.publierContenu(page);
+    enseignant.diffuserTableau(ouvert: true);
+    final AnnotationLayer? couche = await enseignant.depot.couche(
+      resourceId: _page42.resourceId,
+      portee: PorteeAnnotation.temporaire,
+    );
+    await enseignant.depot.ajouterTrait(couche!.id, _trait('trait-avant'));
+    await pumpEventQueue();
+    moteurEnseignant.donneesPubliees.clear();
+    moteurEnseignant.contenusPresentesDemandes.clear();
+
+    ParticipantSalle participant(String id, {bool local = false}) =>
+        ParticipantSalle(
+          identite: id,
+          nom: id,
+          role: local ? 'teacher' : 'student',
+          estLocal: local,
+          micro: false,
+          camera: false,
+          parle: false,
+          qualite: QualiteLien.inconnue,
+        );
+
+    // Une liste sans nouveau venu ne rejoue rien.
+    moteurEnseignant.publier(<ParticipantSalle>[
+      participant('t1', local: true),
+    ]);
+    await pumpEventQueue();
+    expect(moteurEnseignant.donneesPubliees, isEmpty);
+
+    // L'eleve arrive : page, tableau et trait repartent.
+    moteurEnseignant.publier(<ParticipantSalle>[
+      participant('t1', local: true),
+      participant('e1'),
+    ]);
+    await pumpEventQueue();
+    expect(moteurEnseignant.contenusPresentesDemandes, <ContenuPresente>[page]);
+
+    final SynchroSalle eleve = SynchroSalle(
+      moteur: moteurEleve,
+      acces: accesSalle('student'),
+      sessionId: _seance,
+      profilLocalId: 'e1',
+    );
+    addTearDown(eleve.liberer);
+    for (final PaquetDonnees paquet in moteurEnseignant.donneesPubliees) {
+      expect(paquet.fiable, isTrue);
+      moteurEleve.recevoirDonnees(
+        PaquetDonnees(
+          sujet: paquet.sujet,
+          charge: paquet.charge,
+          fiable: paquet.fiable,
+          emetteurIdentite: 't1',
+        ),
+      );
+    }
+    final List<TraitVectoriel> recus = await _traitsDe(eleve.depot);
+    expect(recus.map((TraitVectoriel t) => t.id), <String>['trait-avant']);
+    expect(eleve.tableauOuvert.value, isTrue);
+
+    // Un second rejeu ne double pas le trait.
+    enseignant.rejouer();
+    await pumpEventQueue();
+    final PaquetDonnees dernier = moteurEnseignant.donneesPubliees.last;
+    moteurEleve.recevoirDonnees(
+      PaquetDonnees(
+        sujet: dernier.sujet,
+        charge: dernier.charge,
+        fiable: dernier.fiable,
+        emetteurIdentite: 't1',
+      ),
+    );
+    expect((await _traitsDe(eleve.depot)).length, 1);
+
+    // L'eleve, lui, ne rejoue rien.
+    final int avant = moteurEleve.donneesPubliees.length;
+    eleve.rejouer();
+    await pumpEventQueue();
+    expect(moteurEleve.donneesPubliees.length, avant);
+  });
 }
