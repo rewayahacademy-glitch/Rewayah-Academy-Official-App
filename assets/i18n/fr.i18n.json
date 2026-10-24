@@ -2141,7 +2141,7 @@
       "confirmer": "Confirmer mon nom",
       "plusTard": "Plus tard",
       "erreur": "Écrivez votre nom avec les lettres de l'alphabet latin (a, b, c) pour continuer.",
-      "echec": "Votre nom n'est pas confirmé. Vérifiez votre connexion, puis réessayez."
+      "echec": "Votre nom n'est pas confirmé. Réessayez dans un instant."
     },
     "questionnaire": {
       "titre": "Votre candidature",
