@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/age_eleve.dart';
@@ -25,6 +26,9 @@ import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_classe/roster_enseignant.dart';
 import '../../core/tc_classe/teacher_student_projection.dart';
 import '../../core/tc_observation/port_annonce_observation.dart';
+import '../../core/tc_outils/etat_outils.dart';
+import '../../core/tc_outils/operations_personnelles.dart';
+import '../../core/tc_outils/port_annotations.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
@@ -59,7 +63,9 @@ import '../salle_enseignant/presentation_coran.dart'
     show contenuPresenteProvider, presentateurCoranProvider;
 import '../salle_seance/actions_seance.dart';
 import '../salle_seance/depuis_salle.dart';
+import '../salle_seance/ecriture_seance.dart' show diffusionEcritureProvider;
 import '../salle_seance/media_salle.dart';
+import '../salle_seance/notes_deposees.dart';
 import '../salle_seance/presentation_observee.dart';
 import '../salle_seance/resultat_seance.dart';
 import '../salle_seance/salle_seance.dart';
@@ -71,6 +77,7 @@ import '../tc_observation_ui/indicateur_observation.dart';
 import 'fiche_seance.dart';
 import 'preparation_eleve.dart';
 import 'preparation_enseignant.dart';
+import 'synchro_salle.dart';
 import 'vue_salle.dart';
 
 /// `ELV-03`, `ENS-03`, `CTR-02` : la salle.
@@ -192,6 +199,28 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   PanneauOuvert _panneau = PanneauOuvert.aucun;
   ContexteOuvert _contexte = ContexteOuvert.aucun;
 
+  /// S1 : la synchronisation de l'ecriture de cette seance, creee a la
+  /// premiere composition dans la salle, liberee a la sortie.
+  SynchroSalle? _synchro;
+
+  /// La synchronisation, raccordee au jeton courant, ou `null` (pas de jeton
+  /// ou profil inconnu).
+  SynchroSalle? _synchroPour(String? profil) {
+    final AccesSalle? acces = _acces;
+    if (acces == null || profil == null) return null;
+    final SynchroSalle? existante = _synchro;
+    if (existante != null && existante.sessionId == widget.seanceId) {
+      return existante;
+    }
+    unawaited(existante?.liberer());
+    return _synchro = SynchroSalle(
+      moteur: _moteur,
+      acces: acces,
+      sessionId: widget.seanceId,
+      profilLocalId: profil,
+    );
+  }
+
   /// D14 (S0) : le dernier refus d'allumer la camera, tel que le navigateur
   /// l'a dit, ou `null`.
   String? _erreurCamera;
@@ -251,6 +280,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     unawaited(_sEtats?.cancel());
     unawaited(_sParticipants?.cancel());
     unawaited(_sQualite?.cancel());
+    unawaited(_synchro?.liberer());
     // Quitter au demontage, quelle que soit la raison du demontage : un retour
     // navigateur, une redirection, un billet expire. Sans cela, une salle
     // fermee a l'ecran continuerait a publier un micro ouvert.
@@ -425,6 +455,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // arriver le premier et inscrire une deconnexion.
     await ref.read(serviceVideoProvider).annoncerSortie(widget.seanceId);
     await _moteur.quitter();
+    unawaited(_synchro?.liberer());
+    _synchro = null;
     if (!mounted) {
       return;
     }
@@ -649,6 +681,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // La Bibliotheque des Commandes (et la touche B) ouvre le Coran : une
       // autre sourate se presente a tout moment, comme depuis l'ancien
       // panneau.
+      // S1 : « Ecrire » et la gomme de l'enseignant ; l'outil s'arme dans
+      // `etatOutilsProvider`, l'encre part a la classe (SynchroSalle).
+      onOutil: enseignant ? (OutilEnseignement _) {} : null,
       onBibliotheque: enseignant && vue.peutPresenter
           ? () => unawaited(_ouvrirCoran())
           : null,
@@ -739,15 +774,18 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // Reference 4 : les grandes fleches de part et d'autre de la page.
       onPagePrecedente: actions.onPagePrecedente,
       onPageSuivante: actions.onPageSuivante,
-      child: SalleSeance(
-        key: const ValueKey<String>('salle-de-seance'),
-        vue: seance,
-        actions: actions,
-        local: EtatLocalSeance(
-          microOuvert: moi?.micro ?? false,
-          cameraAllumee: moi?.camera ?? false,
-          zoom: _zoom,
-          agrandi: _agrandi,
+      child: _AvecSynchro(
+        synchro: _synchroPour(ref.read(sessionProvider).profileId),
+        child: SalleSeance(
+          key: const ValueKey<String>('salle-de-seance'),
+          vue: seance,
+          actions: actions,
+          local: EtatLocalSeance(
+            microOuvert: moi?.micro ?? false,
+            cameraAllumee: moi?.camera ?? false,
+            zoom: _zoom,
+            agrandi: _agrandi,
+          ),
         ),
       ),
     );
@@ -1246,6 +1284,35 @@ class _LigneEleve extends StatelessWidget {
       onPress: fiche,
       libelleSemantique: personne.nom,
       child: ligne,
+    );
+  }
+}
+
+/// S1 : la portee de la synchronisation autour de la salle de seance : le
+/// depot local de la seance, l'emission de l'ecriture, et des outils neufs
+/// pour cette salle (jamais ceux de la precedente). Sans synchronisation
+/// (pas de jeton), la salle est rendue telle quelle.
+class _AvecSynchro extends StatelessWidget {
+  const _AvecSynchro({required this.synchro, required this.child});
+
+  final SynchroSalle? synchro;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final SynchroSalle? s = synchro;
+    if (s == null) return child;
+    return ProviderScope(
+      key: ValueKey<String>('synchro-${s.sessionId}'),
+      overrides: <Override>[
+        portAnnotationsProvider.overrideWithValue(s.depot),
+        notesDeposeesProvider.overrideWith2(NotesDeposees.new),
+        traitsNonPartagesProvider.overrideWith(TraitsNonPartages.new),
+        etatOutilsProvider.overrideWith(ControleurOutils.new),
+        historiquePersonnelProvider.overrideWith(ControleurHistorique.new),
+        diffusionEcritureProvider.overrideWithValue(s.diffuser),
+      ],
+      child: child,
     );
   }
 }

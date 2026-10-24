@@ -1,7 +1,8 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart' show Ref;
+import 'package:flutter_riverpod/flutter_riverpod.dart'
+    show ProviderContainer, ProviderScope, Ref;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -19,6 +20,7 @@ import 'package:rewayah_academy/core/tc_classe/roster_enseignant.dart';
 import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
 import 'package:rewayah_academy/core/tc_coran/moteur_mushaf.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
+import 'package:rewayah_academy/core/tc_outils/port_annotations.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
@@ -29,7 +31,10 @@ import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_enseignant/page_coran_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/ecriture_seance.dart'
+    show diffusionEcritureProvider;
 import 'package:rewayah_academy/features/salle_seance/media_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/tc_mushaf/police_mushaf.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/indicateur_observation.dart';
 
@@ -1068,6 +1073,46 @@ void main() {
       await tester.pumpAndSettle();
       expect(moteur.contenusPresentesDemandes.last.page, 43);
     });
+
+    for (final (String role, AppRole appRole, bool diffuse)
+        in <(String, AppRole, bool)>[
+          ('teacher', AppRole.teacher, true),
+          ('student', AppRole.student, false),
+        ]) {
+      testWidgets('S1 : /salle branche la synchronisation de l ecriture '
+          '($role)', (WidgetTester tester) async {
+        final FauxMoteurSalle moteur = FauxMoteurSalle();
+        await _monterSalle(
+          tester,
+          surcharges: <Override>[
+            ..._surcharges(
+              video: FauxServiceVideo(acces0: _acces(role)),
+              moteur: moteur,
+              preVol: FauxServicePreVol(),
+              role: appRole,
+            ),
+            policeMushafDisponibleProvider.overrideWith((Ref _) async => false),
+            pageMushafProvider.overrideWith(
+              (Ref _, int _) async => throw StateError('aucune source'),
+            ),
+          ],
+        );
+        moteur.publierContenu(_contenu());
+        await tester.pumpAndSettle();
+
+        final ProviderContainer salle = ProviderScope.containerOf(
+          tester.element(find.byType(SalleSeance)),
+        );
+        // Le depot de la seance est en memoire ; l'enseignant diffuse, pas
+        // l'eleve (jeton sans `can_publish_data`).
+        expect(salle.read(portAnnotationsProvider), isA<AnnotationsMemoire>());
+        expect(
+          salle.read(diffusionEcritureProvider) != null,
+          diffuse,
+          reason: role,
+        );
+      });
+    }
 
     test('S0 : les paliers du zoom, 100 a 200 %', () {
       expect(palierSuivant(1), 1.25);
