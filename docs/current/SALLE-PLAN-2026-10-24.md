@@ -47,6 +47,12 @@ dans la salle, le mot d'état sous le bouton (ETATS-BTN-1), les deux rangées à
    pilule du haut et la vignette alignées sur la même ligne.
 7. Tout disparaît à 3 s et revient au toucher.
 
+Précision du directeur (24/10, transmise par le pilote) : aucun mot d'état sous les boutons, à aucune
+échelle de texte ; l'état se lit par l'icône barrée, la couleur et le libellé Semantics/infobulle,
+jamais par la couleur seule. Au-delà de 130 % de texte, les boutons gardent leur taille et la pilule
+passe sur deux rangées si elle ne tient plus en largeur. Hors de la salle, ETATS-BTN-1, ETATS-MA-1 et
+MA-CMD-1 restent en vigueur.
+
 ## Les maquettes
 
 Le directeur a fourni des maquettes de la salle à des sessions précédentes, puis les a
