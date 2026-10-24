@@ -416,6 +416,11 @@ class _CommandesMasquablesState extends State<CommandesMasquables> {
       child: MouseRegion(
         onEnter: _surEntreeSurvol,
         onExit: _surSortieSurvol,
+        // S0.2d : la zone des commandes n'absorbe que ses commandes ; ses
+        // parties vides laissent passer le toucher vers le contenu (la salle
+        // au telephone pose ses surimpressions sur tout l'ecran).
+        opaque: false,
+        hitTestBehavior: HitTestBehavior.deferToChild,
         child: IgnorePointer(
           ignoring: !visibles,
           child: AnimatedOpacity(

@@ -81,9 +81,8 @@ class PageCoranSalle extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) =>
       surCarte ? SurCarteSalle(child: _page(ref)) : _page(ref);
 
-  Widget _page(WidgetRef ref) => Builder(
-    builder: (BuildContext context) => _rendu(context, ref),
-  );
+  Widget _page(WidgetRef ref) =>
+      Builder(builder: (BuildContext context) => _rendu(context, ref));
 
   Widget _rendu(BuildContext context, WidgetRef ref) {
     final AsyncValue<PageMushafVM> page = ref.watch(pageMushafProvider(numero));
@@ -128,8 +127,11 @@ class PageCoranSalle extends ConsumerWidget {
             ? BorderRadius.zero
             : metriques.arrondi,
       ),
+      // S0.2d : au telephone, zero marge ; la page remplit l'ecran.
       child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.md),
+        padding: telephonePleinEcran(context)
+            ? EdgeInsets.zero
+            : const EdgeInsets.all(AppSpacing.md),
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints contraintes) => Center(
             child: PageMadina15(
@@ -138,6 +140,7 @@ class PageCoranSalle extends ConsumerWidget {
               hauteur: contraintes.maxHeight.isFinite
                   ? contraintes.maxHeight
                   : null,
+              pleineHauteur: telephonePleinEcran(context),
             ),
           ),
         ),

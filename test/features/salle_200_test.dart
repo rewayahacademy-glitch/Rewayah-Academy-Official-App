@@ -1141,4 +1141,51 @@ void main() {
       }
     }
   });
+
+  // S0.2d (directeur, 24/10/2026) : la carte Eleves de l'enseignant prend la
+  // hauteur de son contenu, avec son rembourrage ; aucune ligne coupee ni
+  // collee au bord, a 1366 et 1024, texte 100 % et 130 %.
+  group('S0.2d : la carte Eleves ne coupe rien', () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final double largeur in <double>[1366, 1024]) {
+      for (final double texte in <double>[1, 1.3]) {
+        testWidgets('${largeur.toInt()} px, texte x$texte', (
+          WidgetTester tester,
+        ) async {
+          await _monter(tester, 'teacher', largeur, texte, hauteur: 768);
+          expect(tester.takeException(), isNull);
+          final Finder carte = find.byKey(
+            const ValueKey<String>('panneau-seance-colonne'),
+          );
+          if (carte.evaluate().isEmpty) {
+            await tester.tap(
+              find.byKey(const ValueKey<String>('bouton-eleves')).first,
+            );
+            await tester.pumpAndSettle();
+          }
+          // A 1024 x1,3, la colonne ne tient pas : le panneau s'ouvre en
+          // volet ; la regle est la meme.
+          final Finder panneau = find.byWidgetPredicate(
+            (Widget w) =>
+                w.key is ValueKey<String> &&
+                (w.key! as ValueKey<String>).value.startsWith(
+                  'panneau-seance-',
+                ),
+          );
+          final Rect cadre = tester.getRect(panneau.first);
+          final Finder pastilles = find.descendant(
+            of: panneau.first,
+            matching: find.byType(StatusPill),
+          );
+          expect(pastilles, findsWidgets);
+          for (final Element e in pastilles.evaluate()) {
+            final Rect r = tester.getRect(find.byWidget(e.widget).first);
+            expect(r.left, greaterThanOrEqualTo(cadre.left + 4));
+            expect(r.right, lessThanOrEqualTo(cadre.right - 4));
+            expect(r.bottom, lessThanOrEqualTo(cadre.bottom - 8));
+          }
+        });
+      }
+    }
+  });
 }

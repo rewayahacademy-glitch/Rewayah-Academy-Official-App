@@ -1198,23 +1198,33 @@ class _ElevesSeance extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // S0.2c : une ligne par personne (prenom, etat, micro) ; toucher un eleve
-    // du roster ouvre sa fiche (rappel discret, recitation).
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      spacing: AppSpacing.xs,
-      children: <Widget>[
-        for (final _Presence personne in lignes)
-          _LigneEleve(
-            personne: personne,
-            onFiche:
-                roster.disponible &&
-                    personne.academyId != null &&
-                    roster.parAcademyId(personne.academyId!) != null
-                ? () => onOuvrirFiche(personne.academyId!)
-                : null,
-          ),
-      ],
+    // du roster ouvre sa fiche (rappel discret, recitation). S0.2d : la carte
+    // prend la hauteur de son contenu, avec son rembourrage ; au-dela, elle
+    // defile (rien de coupe, rien de colle au bord).
+    return SingleChildScrollView(
+      padding: const EdgeInsetsDirectional.fromSTEB(
+        AppSpacing.sm,
+        0,
+        AppSpacing.sm,
+        AppSpacing.md,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        spacing: AppSpacing.xs,
+        children: <Widget>[
+          for (final _Presence personne in lignes)
+            _LigneEleve(
+              personne: personne,
+              onFiche:
+                  roster.disponible &&
+                      personne.academyId != null &&
+                      roster.parAcademyId(personne.academyId!) != null
+                  ? () => onOuvrirFiche(personne.academyId!)
+                  : null,
+            ),
+        ],
+      ),
     );
   }
 }

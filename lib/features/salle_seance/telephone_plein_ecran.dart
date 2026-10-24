@@ -34,7 +34,7 @@ import 'salle_seance.dart' show BandeauSecours, EtatLocalSeance;
 import 'surface_page_fixe.dart';
 import 'vignette_video.dart';
 import 'vue_seance.dart';
-import 'zone_support.dart' show ZoneSupport, ratioSurface, surfaceAMontrer;
+import 'zone_support.dart' show ZoneSupport, surfaceAMontrer;
 
 /// Vrai quand `/salle` est sur un telephone (portrait ou couche) : la page
 /// devient l'ecran.
@@ -44,13 +44,6 @@ bool telephonePleinEcran(BuildContext context) =>
 
 /// La vignette flottante du telephone (≈ 96 de large).
 const double largeurVignetteTelephone = AppSpacing.respiration * 1.5;
-
-/// La largeur d'un cote libre en dessous de laquelle les surimpressions ne
-/// s'y posent pas (couche) : elles passent en haut et en bas.
-const double _coteLibreMinimal = AppSpacing.respiration * 3;
-
-/// Sans ratio connu, celui d'une page A4 en portrait.
-const double _ratioA4 = 1000 / 1414;
 
 /// La salle au telephone : la page est l'ecran.
 class TelephonePleinEcran extends StatelessWidget {
@@ -83,58 +76,56 @@ class TelephonePleinEcran extends StatelessWidget {
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints c) {
           final Size ecran = c.biggest;
-          final double ratio = ratioSurface(vue) ?? _ratioA4;
-          // La page en `contain` sur tout l'ecran : toute la largeur en
-          // portrait, toute la hauteur couche.
-          final Size page = ecran.width / ratio <= ecran.height
-              ? Size(ecran.width, ecran.width / ratio)
-              : Size(ecran.height * ratio, ecran.height);
-          final double cote = (ecran.width - page.width) / 2;
-          final bool aCote = !scene && cote >= _coteLibreMinimal;
-          final double largeurRangee = aCote
-              ? cote - AppSpacing.sm
-              : ecran.width;
-          // La scene video passe par [ZoneSupport] : « Revenir a la page »
-          // et « Ouvrir le Coran » y vivent, sous la ligne du haut.
-          final Widget fond = laScene != null && scene
-              ? const SizedBox.shrink()
-              : Center(
-                  child: SizedBox.fromSize(
-                    key: clePage,
-                    size: page,
-                    // La page et ses notes restent claires (meme regle que
-                    // la carte de la surface).
-                    child: Theme(
-                      data: AppTheme.pour(
-                        InterfaceMode.standard,
-                        Brightness.light,
-                      ),
-                      child: SurfacePageFixe(
-                        vue: vue,
-                        surface: surface!,
-                        zoom: local.zoom,
-                      ),
+          // S0.2d (directeur, 24/10/2026) : « Full screen, full body, no
+          // bezels. » Au telephone, la page n'est plus au ratio A4 : son cadre
+          // EST l'ecran, largeur et hauteur, zero marge. La page Madina se
+          // compose sur cette place (`PageMadina15`, interligne libre). Les
+          // notes gardent le repere de cette page (coordonnees normalisees).
+          final SupportPageFixe? support = vue.supportPresente;
+          final VueSeance vuePage = support == null
+              ? vue
+              : vue.copyWith(
+                  supportPresente: SupportPageFixe(
+                    id: support.id,
+                    version: support.version,
+                    titre: support.titre,
+                    page: support.page,
+                    total: support.total,
+                    largeurCanonique: math.max(1, ecran.width.round()),
+                    hauteurCanonique: math.max(1, ecran.height.round()),
+                    mention: support.mention,
+                    cleImage: support.cleImage,
+                  ),
+                );
+          final Widget? page = scene || surface == null
+              ? null
+              : SizedBox.fromSize(
+                  key: clePage,
+                  size: ecran,
+                  // La page et ses notes restent claires (meme regle que la
+                  // carte de la surface).
+                  child: Theme(
+                    data: AppTheme.pour(
+                      InterfaceMode.standard,
+                      Brightness.light,
+                    ),
+                    child: SurfacePageFixe(
+                      vue: vuePage,
+                      surface: surface,
+                      zoom: local.zoom,
                     ),
                   ),
                 );
           final Widget haut = _Haut(
             vue: vue,
             actions: actions,
-            largeur: largeurRangee,
+            largeur: ecran.width,
             vignette: !scene && vue.voitVignetteSurSupport,
-            aCote: aCote,
+            aCote: false,
           );
-          final Widget bas = Align(
-            alignment: aCote
-                ? AlignmentDirectional.bottomStart
-                : Alignment.bottomCenter,
-            child: SizedBox(
-              width: largeurRangee,
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.sm),
-                child: _Bas(vue: vue, actions: actions, local: local),
-              ),
-            ),
+          final Widget bas = Padding(
+            padding: const EdgeInsets.all(AppSpacing.sm),
+            child: _Bas(vue: vue, actions: actions, local: local),
           );
           return CommandesMasquables(
             delai: AppMouvement.masquageSalle,
@@ -147,7 +138,7 @@ class TelephonePleinEcran extends StatelessWidget {
                 // proteger : le haut se pose au-dessus de la scene, qui passe
                 // par [ZoneSupport] (« Revenir a la page », « Ouvrir le
                 // Coran »).
-                if (scene)
+                if (page == null)
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
@@ -160,11 +151,8 @@ class TelephonePleinEcran extends StatelessWidget {
                       ),
                     ],
                   )
-                else ...<Widget>[
-                  fond,
-                  // Le haut : etat, presence, mention ; la vignette en coin.
-                  PositionedDirectional(top: 0, start: 0, end: 0, child: haut),
-                ],
+                else
+                  page,
                 if (panneau)
                   PositionedDirectional(
                     start: AppSpacing.sm,
@@ -179,7 +167,30 @@ class TelephonePleinEcran extends StatelessWidget {
                   ),
               ],
             ),
-            commandes: bas,
+            // Sur la page, tout flotte et disparait ensemble au delai : la
+            // ligne d'etat et la vignette en haut, les commandes en bas. Les
+            // zones vides laissent passer le toucher vers la page.
+            commandes: page == null
+                ? bas
+                : SizedBox.fromSize(
+                    size: ecran,
+                    child: Stack(
+                      children: <Widget>[
+                        PositionedDirectional(
+                          top: 0,
+                          start: 0,
+                          end: 0,
+                          child: haut,
+                        ),
+                        PositionedDirectional(
+                          start: 0,
+                          end: 0,
+                          bottom: 0,
+                          child: SafeArea(top: false, child: bas),
+                        ),
+                      ],
+                    ),
+                  ),
           );
         },
       ),
@@ -218,38 +229,44 @@ class _Haut extends StatelessWidget {
           ? largeur
           : largeur - (vignette ? largeurVignetteTelephone + AppSpacing.md : 0),
     );
+    // S0.2d : la ligne flotte sur la page ; elle porte sa propre surface
+    // (comme la barre des commandes) pour se lire sur le papier.
     final Widget ligne = SizedBox(
       width: largeurLigne,
       child: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(
-          AppSpacing.lg,
-          AppSpacing.sm,
-          AppSpacing.sm,
-          AppSpacing.xs,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Wrap(
-              spacing: AppSpacing.sm,
-              runSpacing: AppSpacing.xs,
-              crossAxisAlignment: WrapCrossAlignment.center,
+        padding: const EdgeInsets.all(AppSpacing.sm),
+        child: DecoratedBox(
+          decoration: AppPalette.of(context).surfaceRaised.decoration(
+            borderRadius: AppRadius.arrondiLg,
+            side: AppPalette.of(context).borderHairline.asBorderSide(),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.sm),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                StatusPill(
-                  libelle: vue.texteConnexion,
-                  ton: vue.connexion.etablie
-                      ? TonEtat.succes
-                      : TonEtat.avertissement,
+                Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.xs,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: <Widget>[
+                    StatusPill(
+                      libelle: vue.texteConnexion,
+                      ton: vue.connexion.etablie
+                          ? TonEtat.succes
+                          : TonEtat.avertissement,
+                    ),
+                    ?pastille,
+                  ],
                 ),
-                ?pastille,
+                Ecart.vXs,
+                MentionSeance(vue: vue),
+                BandeauSecours(vue: vue, actions: actions, gouttiere: 0),
+                ?alerte,
               ],
             ),
-            Ecart.vXs,
-            MentionSeance(vue: vue),
-            BandeauSecours(vue: vue, actions: actions, gouttiere: 0),
-            ?alerte,
-          ],
+          ),
         ),
       ),
     );
