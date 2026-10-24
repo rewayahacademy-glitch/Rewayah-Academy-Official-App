@@ -53,6 +53,10 @@ jamais par la couleur seule. Au-delà de 130 % de texte, les boutons gardent leu
 passe sur deux rangées si elle ne tient plus en largeur. Hors de la salle, ETATS-BTN-1, ETATS-MA-1 et
 MA-CMD-1 restent en vigueur.
 
+Pilote (24/10, nuit) : sur ordinateur, la barre d'appel est centrée en bas, posée sur la page (place
+Meet, masquée à 3 s) ; elle remplace la consigne « en bas à gauche » de S0.2c. Tableau ouvert sur
+ordinateur : canevas plein, toute la scène, sans marge ni ratio, comme au téléphone.
+
 ## Les maquettes
 
 Le directeur a fourni des maquettes de la salle à des sessions précédentes, puis les a
