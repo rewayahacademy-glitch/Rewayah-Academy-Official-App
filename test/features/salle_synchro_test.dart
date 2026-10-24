@@ -392,4 +392,76 @@ void main() {
     await pumpEventQueue();
     expect(moteurEleve.donneesPubliees.length, avant);
   });
+
+  test('revue PR 54 : par le vrai nommage des sujets, le pointeur part '
+      'sous « -l », revient ephemere et se montre chez l eleve ; une ecriture '
+      'reste fiable', () async {
+    // Le nommage du reseau, aller et retour.
+    expect(sujetSurLeReseau('tc-pedagogique', fiable: true), 'tc-pedagogique');
+    expect(
+      sujetSurLeReseau('tc-pedagogique', fiable: false),
+      'tc-pedagogique-l',
+    );
+    final PaquetDonnees eph = paquetDepuisLeReseau(
+      sujetRecu: 'tc-pedagogique-l',
+      charge: const <int>[1],
+    );
+    expect(eph.sujet, 'tc-pedagogique');
+    expect(eph.fiable, isFalse);
+    expect(
+      paquetDepuisLeReseau(
+        sujetRecu: sujetContenuPresente,
+        charge: const <int>[],
+      ).fiable,
+      isTrue,
+    );
+
+    final FauxMoteurSalle moteurEnseignant = FauxMoteurSalle();
+    final FauxMoteurSalle moteurEleve = FauxMoteurSalle();
+    await moteurEnseignant.rejoindre(accesSalle('teacher'));
+    await moteurEleve.rejoindre(accesSalle('student'));
+    final SynchroSalle enseignant = SynchroSalle(
+      moteur: moteurEnseignant,
+      acces: accesSalle('teacher'),
+      sessionId: _seance,
+      profilLocalId: 't1',
+    );
+    final SynchroSalle eleve = SynchroSalle(
+      moteur: moteurEleve,
+      acces: accesSalle('student'),
+      sessionId: _seance,
+      profilLocalId: 'e1',
+    );
+    addTearDown(enseignant.liberer);
+    addTearDown(eleve.liberer);
+
+    // Ce que LiveKit livre : le sujet tel que pose sur le reseau.
+    Future<void> parLeReseau(PaquetDonnees publie) async {
+      moteurEleve.recevoirDonnees(
+        paquetDepuisLeReseau(
+          sujetRecu: sujetSurLeReseau(publie.sujet, fiable: publie.fiable),
+          charge: publie.charge,
+          emetteurIdentite: 't1',
+        ),
+      );
+      await pumpEventQueue();
+    }
+
+    enseignant.diffuserPointeur!(const Offset(0.3, 0.4));
+    await pumpEventQueue();
+    await parLeReseau(moteurEnseignant.donneesPubliees.last);
+    expect(eleve.pointeurDistant.value, const Offset(0.3, 0.4));
+
+    enseignant.diffuser!(
+      EvenementTraitTermine(
+        coucheId: 'c',
+        trait: _trait('trait-reseau'),
+        portee: PorteeAnnotation.seance,
+      ),
+    );
+    await pumpEventQueue();
+    await parLeReseau(moteurEnseignant.donneesPubliees.last);
+    final List<TraitVectoriel> recus = await _traitsDe(eleve.depot);
+    expect(recus.map((TraitVectoriel t) => t.id), <String>['trait-reseau']);
+  });
 }

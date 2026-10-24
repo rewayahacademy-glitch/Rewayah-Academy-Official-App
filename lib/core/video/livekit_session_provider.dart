@@ -318,10 +318,9 @@ class LiveKitSessionProvider implements VideoSessionProvider {
     // specifique du socle qui suit : voir `TC_CONTRACT_REQUEST_F.md` §1.
     if (!_donnees.isClosed) {
       _donnees.add(
-        PaquetDonnees(
-          sujet: sujet,
+        paquetDepuisLeReseau(
+          sujetRecu: sujet,
           charge: evenement.data,
-          fiable: !sujet.endsWith(suffixeSujetEphemere),
           emetteurIdentite: evenement.participant?.identity,
         ),
       );
@@ -424,7 +423,7 @@ class LiveKitSessionProvider implements VideoSessionProvider {
       await local.publishData(
         charge,
         reliable: fiable,
-        topic: sujet,
+        topic: sujetSurLeReseau(sujet, fiable: fiable),
         destinationIdentities: destinataires.isEmpty ? null : destinataires,
       );
     } catch (e) {

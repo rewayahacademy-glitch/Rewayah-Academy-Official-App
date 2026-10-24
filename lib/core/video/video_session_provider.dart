@@ -252,6 +252,33 @@ class ParticipantSalle {
 /// aucun nom de sujet particulier, seulement ce suffixe.
 const String suffixeSujetEphemere = '-l';
 
+/// Le sujet pose sur le reseau pour [sujet] : le suffixe ephemere s'ajoute
+/// quand le paquet part en mode non fiable (revue de la PR 54 : sans lui, le
+/// recepteur classait le pointeur fiable et le canal ephemere le jetait).
+String sujetSurLeReseau(String sujet, {required bool fiable}) =>
+    fiable || sujet.endsWith(suffixeSujetEphemere)
+    ? sujet
+    : '$sujet$suffixeSujetEphemere';
+
+/// Le paquet recu sous le sujet reseau [sujetRecu] : la fiabilite se lit au
+/// suffixe, puis le sujet revient a son nom logique, celui que les
+/// protocoles filtrent.
+PaquetDonnees paquetDepuisLeReseau({
+  required String sujetRecu,
+  required List<int> charge,
+  String? emetteurIdentite,
+}) {
+  final bool ephemere = sujetRecu.endsWith(suffixeSujetEphemere);
+  return PaquetDonnees(
+    sujet: ephemere
+        ? sujetRecu.substring(0, sujetRecu.length - suffixeSujetEphemere.length)
+        : sujetRecu,
+    charge: charge,
+    fiable: !ephemere,
+    emetteurIdentite: emetteurIdentite,
+  );
+}
+
 /// Le sujet du canal de donnees qui porte le contenu presente.
 ///
 /// **Un sujet nomme, jamais le canal nu.** LiveKit laisse passer n'importe quel
