@@ -33,17 +33,12 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
   /// [lire] rend la file du service existant (en production, le cache
   /// partage `dossiersEnAttenteProvider`).
   ///
-  /// [apercu] signe une URL courte de la piece (a partir de BR-1,
-  /// ServiceValidation.apercu : le createSignedUrl de 60 s DEJA utilise
-  /// avant AD-6, aucun nouvel appel ni changement serveur ; en production
-  /// aujourd'hui l'apercu est ferme, voir `surchargeRevueDossiersProduction`).
-  /// La porte serveur `autoriser_lecture_piece_identite` n'est pas branchee
-  /// (AD-BR-03, BR-1).
-  ///
-  /// [deciderExistant] appelle `decider_dossier` (ServiceValidation.decider,
-  /// a partir de BR-1 ; ferme en production aujourd'hui) ;
-  /// [relire] recharge la file par `dossiers_en_attente`. Nuls, la decision
-  /// reste indisponible.
+  /// [apercu] signe une URL courte de la piece (ServiceValidation.apercu, par
+  /// la porte serveur `piece-identite-acces`) ; [deciderExistant] appelle
+  /// `decider_dossier` (ServiceValidation.decider) ; [relire] recharge la file
+  /// par `dossiers_en_attente`. Nuls (doubles de test), la piece et la
+  /// decision restent indisponibles. En production, les trois sont branches
+  /// depuis le 24/10/2026 (`surchargeRevueDossiersProduction`, Boucle 1, K1).
   const RevueDossiersDepuisValidation(
     this.lire, {
     this.apercu,
@@ -133,6 +128,18 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
     _ => null,
   };
 
+  /// Ce que `decider_dossier` produirait sur ce compte (13.2) : il passe un
+  /// compte `pending_kyc` a `active` ; un compte deja `active` ou
+  /// `provisional_active` ne change pas (decision documentaire seule) ; un
+  /// etat absent ou `disabled` reste indetermine et garde la validation fermee.
+  static ConsequenceValidation consequencePour(AccountStatus? etat) =>
+      switch (etat) {
+        AccountStatus.pendingKyc => ConsequenceValidation.activationPossible,
+        AccountStatus.active || AccountStatus.provisionalActive =>
+          ConsequenceValidation.documentaireSeule,
+        _ => ConsequenceValidation.indeterminee,
+      };
+
   @override
   Future<PageDossiers> listerDossiers({
     String? curseur,
@@ -194,8 +201,8 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
       EtatPieceRevue.nonVisible => BlocageRevue.pieceNonVisible,
       _ => BlocageRevue.pieceAbsente,
     };
-    // AD-M3-PROD (decision S1 -> a du 27/09) : sans `decider_dossier`
-    // branche, le refus est ferme comme la validation, jusqu'a BR-1.
+    // Sans `decider_dossier` branche (doubles de test), le refus est ferme
+    // comme la validation. En production, il l'est (Boucle 1, 24/10/2026).
     final bool decisionBranchee = deciderExistant != null;
     // `decider_dossier` exige `p_document_id` : sans piece, aucun geste.
     final bool peutRefuser = d.documentId != null && decisionBranchee;
@@ -245,9 +252,12 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
           : blocagesDecision.isNotEmpty
           ? blocagesDecision
           : <BlocageRevue>[?manque],
-      // Branchee, la decision passe par `ServiceValidation` sans consequence
-      // connue ; sinon `decisionIndisponible` ferme les deux gestes.
-      consequence: ConsequenceValidation.indeterminee,
+      // Boucle 1 (K1, 24/10/2026) : la consequence se lit sur l'etat du compte
+      // rendu par `dossiers_en_attente`. Sans decision branchee, elle reste
+      // inconnue et `decisionIndisponible` ferme les deux gestes.
+      consequence: decisionBranchee
+          ? consequencePour(d.etatCompte)
+          : ConsequenceValidation.indeterminee,
     );
   }
 
@@ -339,12 +349,6 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
     required Set<String> verificationsFaites,
     String? motif,
   }) async {
-    // AD-RC m2 : la validation reste fermee en production jusqu'a BR-1
-    // (aucune consequence connue, AD-BR-02). Refusee ici meme, avant toute
-    // lecture ou RPC, pour ne pas dependre du seul bouton desactive.
-    if (decision == DecisionDossier.valider) {
-      throw const CapaciteIndisponible('AD-BR-02');
-    }
     final DeciderExistant? rpc = deciderExistant;
     if (rpc == null) {
       throw const CapaciteIndisponible('AD-BR-06');
@@ -353,11 +357,9 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
     if (documentId == null) {
       throw const ErreurRevueDossier(CodeErreurRevue.dejaDecide);
     }
-    // AD-NETTOYAGE-2 : depuis la garde ci-dessus, `decision` ne peut plus etre
-    // `valider` ici ; `approuve` est donc toujours faux et les branches
-    // `approuve ? ...` ci-dessous ne s'executent pas. Elles restent pour que
-    // la reouverture de la validation (BR-1) ne demande que le retrait de la
-    // garde, pas une reecriture de l'appel et de la reponse.
+    // Boucle 1 (K1, 24/10/2026) : la validation est ouverte. `decider_dossier`
+    // approuve la piece et active un compte `pending_kyc` dans la meme
+    // transaction ; le serveur reste la barriere (signatures requises).
     final bool approuve = decision == DecisionDossier.valider;
     try {
       await rpc(
@@ -438,15 +440,21 @@ class EchecDecisionCertain implements Exception {
 
 /// Le branchement de production, pose dans `lib/main.dart` seulement.
 ///
-/// AD-M3-PROD (decision du directeur du 27/09, S1 -> a) : la file et le
-/// detail sont lus, mais le refus et l'apercu de la piece restent fermes
-/// comme la validation jusqu'a BR-1 : ni `decider_dossier`, ni
-/// `createSignedUrl`. A BR-1, rebrancher ici `apercu`
-/// (ServiceValidation.apercu), `deciderExistant` (ServiceValidation.decider)
-/// et `relire` (invalidation puis relecture de `dossiersEnAttenteProvider`).
+/// Boucle 1, K1 (decision du directeur du 24/10/2026) : la file, l'apercu de
+/// la piece (`piece-identite-acces`), la decision (`decider_dossier`) et le
+/// rechargement de la file sont branches. Du 27/09 au 24/10 (AD-M3-PROD),
+/// seule la file l'etait : la direction ne pouvait ni voir une piece ni
+/// decider, et l'ecran disait « La decision est indisponible pour le moment ».
 final Override surchargeRevueDossiersProduction = portRevueDossiersProvider
-    .overrideWith(
-      (Ref ref) => RevueDossiersDepuisValidation(
+    .overrideWith((Ref ref) {
+      final ServiceValidation service = ref.read(serviceValidationProvider);
+      return RevueDossiersDepuisValidation(
         () => ref.read(dossiersEnAttenteProvider.future),
-      ),
-    );
+        apercu: service.apercu,
+        deciderExistant: service.decider,
+        relire: () {
+          ref.invalidate(dossiersEnAttenteProvider);
+          return ref.read(dossiersEnAttenteProvider.future);
+        },
+      );
+    });
