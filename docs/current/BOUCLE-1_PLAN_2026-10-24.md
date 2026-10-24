@@ -144,15 +144,32 @@ du SQL, une règle RLS, un diagnostic, un choix.
 **Vocabulaire des bilans.** « codé », « test local vert », « fusionné », « déployé », « prouvé
 par le directeur ». Seul le dernier vaut « fait ».
 
-## 5. Après la boucle, et seulement après K4 vraie
+## 5. Après la boucle : les boucles suivantes, dans l'ordre des peines du directeur
 
-Dans l'ordre : alléger le portail d'attente des enseignants (moins de pages, un seul fil) ;
-permettre une classe sans enseignant depuis l'écran Classes (le serveur le permet déjà par le
-chemin des regroupements) ; reprendre les 77 capacités « indisponibles » une par une, en
-commençant par celles que la boucle a touchées.
+Précision du directeur du 24/10/2026 : ces besoins sont réels et actuels. L'académie existe
+depuis 2024, 600 candidats enseignants sont inscrits, les familles ne peuvent pas être
+encaissées, et tout passe encore par WhatsApp, Messenger, Meet, Drive et Docs, tenus par une
+seule personne. **Rien n'est supprimé.** Tout se livre dans cet ordre, une boucle à la fois,
+chacune avec ses phrases vraies ou fausses, prouvées par le directeur en production avant
+d'ouvrir la suivante. Une surface large à 80 % ne soulage aucune peine ; une boucle à 100 % en
+soulage une.
+
+| Boucle | Peine qu'elle soulage | État réel le 24/10 | Ce qu'il faudra prouver |
+|---|---|---|---|
+| 1 | aucune classe ne tourne dans l'application | tout existe, un fil manque | K1 à K4 |
+| 2 | « on ne peut pas faire payer les familles » | fonctions `recharge-payer` et `stripe-webhook` déployées ; le branchement de production dit encore « la recharge reste indisponible : aucun prestataire de paiement réel » (`lib/main.dart`) | une famille paie une classe, l'élève y entre, le reçu est visible par la famille et la direction |
+| 3 | « on ne recrute plus d'enseignants », 600 candidats en attente | module des candidatures en pull request 50 ; paie à 47 % en base | la direction choisit un candidat dans la file, il devient enseignant actif, sa paie d'une séance se calcule |
+| 4 | suivi et contrôle hors WhatsApp | observation, contrôleur, cahier, messages, avis : présents dans le code, jamais prouvés | une séance observée, un cahier déposé, un avis publié |
+| 5 | comptabilité et inscrits actuels | comptable présent dans le code ; import CSV déployé | les inscrits actuels importés, un mois de paie clos |
+
+Entre deux boucles : retirer des menus les capacités encore « indisponibles » de la boucle qui
+vient, pour que la direction ne voie jamais un écran mort. Après K4, et dans la Boucle 3 :
+alléger le portail d'attente des enseignants (choisir d'abord, identifier les retenus ensuite) et
+permettre une classe sans enseignant depuis l'écran Classes.
 
 ## 6. Journal
 
 | Date | Étape | État | Preuve |
 |---|---|---|---|
 | 2026-10-24 | Plan | écrit | ce fichier |
+| 2026-10-24 | Plan §5 | précisé : ordre des boucles 2 à 5 selon les peines du directeur ; le paiement passe en Boucle 2 | ce fichier |
