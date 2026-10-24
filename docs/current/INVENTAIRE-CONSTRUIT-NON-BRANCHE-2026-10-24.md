@@ -21,7 +21,7 @@ branché sur le serveur**. Un port a une valeur par défaut « vide », « indis
   les fonctions `rech_*` (seul `matricule_supabase.dart` appelle la recherche par matricule).
   Les journaux de production ne montrent aucun appel `rech_*` sur 24 h.
 - Coût pour brancher : un adaptateur par domaine sur les fonctions existantes, puis la liste
-  dans `main.dart`. Environ 1 jour. **Après la Boucle 1** (reliquat R11).
+  dans `main.dart`. Environ 1 jour. Hors boucles : seulement si une boucle en a besoin.
 
 ## Le même motif ailleurs (grep du 24/10, hors tests et démo)
 
@@ -44,8 +44,11 @@ passation du 17/10 (Codex backend des 10 au 13/10, archives du 13/10, lots de se
 fouiller une à une, c'est sortir de la Boucle 1. Le travail jamais committé n'existe que sur le
 poste du directeur : une session cloud ne peut pas le voir.
 
-## Décision du pilote
+## Décision du pilote (corrigée le soir même, rappel du directeur)
 
-Boucle 1 d'abord (salle). Ensuite, un lot « brancher l'existant » par zone, en commençant par la
-recherche, avec ce tableau comme liste de départ. Aucune recréation tant qu'une ligne de ce
-tableau peut répondre au besoin.
+La recherche n'est dans aucune boucle et n'est pas prioritaire. L'ordre reste celui de
+`docs/orchestration/PILOTAGE-BOUCLES-2026-10-24.md` §3 : Boucle 1 (la salle, K4), Boucle 2 (la
+vraie académie : import des élèves, enseignants validés et affectés, la cloche et le concierge,
+vague 1, tableau de la direction, vagues 2 et 3), Boucle 3 (les 568 candidats), Boucle 4 (le
+paiement). Ce tableau ne sert qu'à une chose : quand une boucle a besoin d'une pièce, on la
+cherche ici avant de la recréer. Aucun lot « brancher l'existant » n'est planifié pour lui-même.
