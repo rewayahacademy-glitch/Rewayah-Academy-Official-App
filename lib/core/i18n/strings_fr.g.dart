@@ -23473,8 +23473,8 @@ class Traductions$admin$groupes$creneau$fr {
 	/// fr: 'Cette Classe a déjà ce créneau : rien n'a changé. Choisissez un autre jour ou une autre heure.'
 	String get dejaLa => 'Cette Classe a déjà ce créneau : rien n\'a changé. Choisissez un autre jour ou une autre heure.';
 
-	/// fr: 'Le créneau n'a pas été ajouté : le serveur n'a pas répondu. Vérifiez la connexion, puis pressez de nouveau.'
-	String get erreur => 'Le créneau n\'a pas été ajouté : le serveur n\'a pas répondu. Vérifiez la connexion, puis pressez de nouveau.';
+	/// fr: 'Le créneau n'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Le créneau n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 
 	/// fr: 'Le créneau pourra être ajouté quand la connexion sera revenue. Vos choix restent affichés.'
 	String get horsLigne => 'Le créneau pourra être ajouté quand la connexion sera revenue. Vos choix restent affichés.';
@@ -43403,7 +43403,7 @@ extension on Traductions {
 			'admin.groupes.creneau.fuseau' => 'L\'heure est celle du fuseau horaire de la Classe.',
 			'admin.groupes.creneau.envoyer' => 'Ajouter ce créneau',
 			'admin.groupes.creneau.dejaLa' => 'Cette Classe a déjà ce créneau : rien n\'a changé. Choisissez un autre jour ou une autre heure.',
-			'admin.groupes.creneau.erreur' => 'Le créneau n\'a pas été ajouté : le serveur n\'a pas répondu. Vérifiez la connexion, puis pressez de nouveau.',
+			'admin.groupes.creneau.erreur' => 'Le créneau n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'admin.groupes.creneau.horsLigne' => 'Le créneau pourra être ajouté quand la connexion sera revenue. Vos choix restent affichés.',
 			'admin.groupes.creneau.journalisation' => 'Chaque créneau ajouté est inscrit au journal d\'audit.',
 			'admin.groupes.ajouterTitre' => ({required Object libelle}) => 'Ajouter un élève à ${libelle}',

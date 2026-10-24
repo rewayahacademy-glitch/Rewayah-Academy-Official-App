@@ -12413,12 +12413,12 @@ class _Traductions$admin$groupes$creneau$ar extends Traductions$admin$groupes$cr
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String titre({required Object deLibelle}) => 'موعد جديد ${deLibelle}';
+	@override String titre({required Object deLibelle}) => 'موعد جديد ⁨${deLibelle}⁩';
 	@override String get contexte => 'يوم وساعة إضافيان كل أسبوع للفصل نفسه. تُنشأ حصص الأسابيع الأربعة القادمة فورًا.';
 	@override String get fuseau => 'الساعة بحسب المنطقة الزمنية للفصل.';
 	@override String get envoyer => 'إضافة هذا الموعد';
 	@override String get dejaLa => 'لهذا الفصل هذا الموعد مسبقًا: لم يتغير شيء. اختر يومًا آخر أو ساعة أخرى.';
-	@override String get erreur => 'لم تتم إضافة الموعد: لم يستجب الخادم. تحقق من الاتصال ثم اضغط مرة أخرى.';
+	@override String get erreur => 'لم تُؤكَّد إضافة الموعد: ربما لم يصل الطلب إلى Rewayah. أعد المحاولة بعد لحظة.';
 	@override String get horsLigne => 'يمكن إضافة الموعد عند عودة الاتصال. تبقى اختياراتك معروضة.';
 	@override String get journalisation => 'يُسجَّل كل موعد مضاف في سجل التدقيق.';
 }
@@ -23026,12 +23026,12 @@ extension on TraductionsAr {
 			'admin.groupes.actionObservation' => 'إعدادات المتابعة',
 			'admin.groupes.actionCloturer' => 'إغلاق الفصل',
 			'admin.groupes.actionAjouterCreneau' => 'إضافة موعد',
-			'admin.groupes.creneau.titre' => ({required Object deLibelle}) => 'موعد جديد ${deLibelle}',
+			'admin.groupes.creneau.titre' => ({required Object deLibelle}) => 'موعد جديد ⁨${deLibelle}⁩',
 			'admin.groupes.creneau.contexte' => 'يوم وساعة إضافيان كل أسبوع للفصل نفسه. تُنشأ حصص الأسابيع الأربعة القادمة فورًا.',
 			'admin.groupes.creneau.fuseau' => 'الساعة بحسب المنطقة الزمنية للفصل.',
 			'admin.groupes.creneau.envoyer' => 'إضافة هذا الموعد',
 			'admin.groupes.creneau.dejaLa' => 'لهذا الفصل هذا الموعد مسبقًا: لم يتغير شيء. اختر يومًا آخر أو ساعة أخرى.',
-			'admin.groupes.creneau.erreur' => 'لم تتم إضافة الموعد: لم يستجب الخادم. تحقق من الاتصال ثم اضغط مرة أخرى.',
+			'admin.groupes.creneau.erreur' => 'لم تُؤكَّد إضافة الموعد: ربما لم يصل الطلب إلى Rewayah. أعد المحاولة بعد لحظة.',
 			'admin.groupes.creneau.horsLigne' => 'يمكن إضافة الموعد عند عودة الاتصال. تبقى اختياراتك معروضة.',
 			'admin.groupes.creneau.journalisation' => 'يُسجَّل كل موعد مضاف في سجل التدقيق.',
 			'admin.groupes.ajouterTitre' => ({required Object libelle}) => 'إضافة طالب إلى ⁨${libelle}⁩',

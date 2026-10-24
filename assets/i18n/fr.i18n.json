@@ -3853,7 +3853,7 @@
         "fuseau": "L'heure est celle du fuseau horaire de la Classe.",
         "envoyer": "Ajouter ce créneau",
         "dejaLa": "Cette Classe a déjà ce créneau\u00a0: rien n'a changé. Choisissez un autre jour ou une autre heure.",
-        "erreur": "Le créneau n'a pas été ajouté\u00a0: le serveur n'a pas répondu. Vérifiez la connexion, puis pressez de nouveau.",
+        "erreur": "Le créneau n'est pas confirmé\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
         "horsLigne": "Le créneau pourra être ajouté quand la connexion sera revenue. Vos choix restent affichés.",
         "journalisation": "Chaque créneau ajouté est inscrit au journal d'audit."
       },
