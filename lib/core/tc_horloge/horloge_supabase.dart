@@ -98,6 +98,23 @@ class HorlogeSeanceSupabase implements PortHorlogeSeance {
     required String groupeId,
     String? sessionId,
   }) async {
+    if (sessionId == null) {
+      // Concierge (a), 24/10/2026 : l'horloge tiree du creneau de la Classe,
+      // meme sans seance (`session_id` nul), pour que « Rejoindre » paraisse
+      // a l'heure. Tant que la migration n'est pas appliquee, l'ancien
+      // chemin repond.
+      try {
+        final List<dynamic> lignes = await _client.rpc<List<dynamic>>(
+          'horloge_classe',
+          params: <String, dynamic>{'p_groupe_id': groupeId},
+        );
+        if (lignes.isEmpty) return null;
+        return horlogeDepuisLigne(lignes.first as Map<String, dynamic>);
+      } on PostgrestException catch (e) {
+        if (e.code == '42501') return null;
+        if (!_fonctionAbsente(e)) rethrow;
+      }
+    }
     final String? seance = sessionId ?? await _prochaineSeance(groupeId);
     if (seance == null) {
       return null;
@@ -111,6 +128,10 @@ class HorlogeSeanceSupabase implements PortHorlogeSeance {
     }
     return horlogeDepuisLigne(lignes.first as Map<String, dynamic>);
   }
+
+  /// La fonction n'existe pas encore sur la base (migration non appliquee).
+  static bool _fonctionAbsente(PostgrestException e) =>
+      e.code == 'PGRST202' || e.code == '42883';
 
   /// L'identifiant de la prochaine seance de la Classe, ou `null`. Un refus
   /// (42501 : la Classe ne concerne pas l'appelant) n'est pas une panne : il

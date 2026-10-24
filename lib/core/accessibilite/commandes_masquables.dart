@@ -73,6 +73,14 @@ class CommandesMasquables extends StatefulWidget {
   /// ferment (reuni par JONCTION-LIGNES-1 avec la version TB-2).
   final bool placeReservee;
 
+  /// Vrai quand les commandes les plus proches sont visibles (vrai hors de
+  /// toutes commandes masquables).
+  static bool visiblesDe(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<_VisibiliteCommandes>()
+          ?.visibles ??
+      true;
+
   /// La part maximale de la hauteur que la marge de lecture peut prendre.
   static const double partMaxMarge = 1 / 3;
 
@@ -450,7 +458,10 @@ class _CommandesMasquablesState extends State<CommandesMasquables> {
             child: _MargeCommandes(
               marge: _marge,
               recouvrement: _recouvrement,
-              child: KeyedSubtree(key: _cleContenu, child: widget.contenu),
+              child: _VisibiliteCommandes(
+                visibles: visibles,
+                child: KeyedSubtree(key: _cleContenu, child: widget.contenu),
+              ),
             ),
           ),
           LayoutId(id: _Partie.commandes, child: zoneCommandes),
@@ -461,6 +472,41 @@ class _CommandesMasquablesState extends State<CommandesMasquables> {
 }
 
 enum _Partie { contenu, commandes }
+
+/// La visibilite des commandes, lue par ce que le contenu pose en
+/// surimpression et qui doit disparaitre avec elles
+/// ([CommandesMasquables.visiblesDe], [MasqueAvecCommandes]).
+class _VisibiliteCommandes extends InheritedWidget {
+  const _VisibiliteCommandes({required this.visibles, required super.child});
+
+  final bool visibles;
+
+  @override
+  bool updateShouldNotify(_VisibiliteCommandes ancien) =>
+      ancien.visibles != visibles;
+}
+
+/// Standard des commandes d'appel (24/10/2026, point 7) : une surimpression
+/// du contenu (la palette du tableau sur ordinateur) disparait et revient
+/// avec les commandes ; masquee, elle ne recoit aucun toucher.
+class MasqueAvecCommandes extends StatelessWidget {
+  const MasqueAvecCommandes({required this.child, super.key});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool visibles = CommandesMasquables.visiblesDe(context);
+    return IgnorePointer(
+      ignoring: !visibles,
+      child: AnimatedOpacity(
+        opacity: visibles ? 1 : 0,
+        duration: Mouvement.reduit(context) ? Duration.zero : Mouvement.moyen,
+        child: child,
+      ),
+    );
+  }
+}
 
 /// Le contenu garde l'ecran ; les commandes, posees en bas sur toute la
 /// largeur, gardent leur hauteur naturelle. Avec la marge de lecture, le

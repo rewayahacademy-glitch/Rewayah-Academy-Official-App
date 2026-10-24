@@ -12443,6 +12443,9 @@ class Traductions$classe$entree$fr {
 	/// fr: 'Cours dans moins d'une minute'
 	String get coursImminent => 'Cours dans moins d\'une minute';
 
+	/// fr: 'Ce cours ne vous est pas ouvert en ce moment. Revenez 20 minutes avant l'heure du cours.'
+	String get revenirAvant => 'Ce cours ne vous est pas ouvert en ce moment. Revenez 20 minutes avant l\'heure du cours.';
+
 	/// fr: 'Rejoindre'
 	String get rejoindre => 'Rejoindre';
 
@@ -45882,6 +45885,7 @@ extension on Traductions {
 			'tuteur.reglages.erreur' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
 			'classe.entree.coursDans' => ({required Object duree}) => 'Cours dans ${duree}',
 			'classe.entree.coursImminent' => 'Cours dans moins d\'une minute',
+			'classe.entree.revenirAvant' => 'Ce cours ne vous est pas ouvert en ce moment. Revenez 20 minutes avant l\'heure du cours.',
 			'classe.entree.rejoindre' => 'Rejoindre',
 			'classe.entree.rejoindreLecteur' => ({required Object deClasse}) => 'Rejoindre la séance ${deClasse}',
 			'classe.entree.salleOuverte' => ({required Object duree}) => 'La salle est ouverte. La séance commence dans ${duree}.',
@@ -46094,9 +46098,9 @@ extension on Traductions {
 			'enseignant.classes.vide' => 'Aucune Classe attribuée',
 			'enseignant.classes.videDetail' => 'Les Classes confirmées apparaîtront ici.',
 			'enseignant.classes.erreur' => 'Vos Classes n\'ont pas pu être lues. Réessayez dans un instant.',
-			'enseignant.classes.chargement' => 'Chargement de vos Classes.',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.classes.chargement' => 'Chargement de vos Classes.',
 			'enseignant.classes.niveau' => ({required Object niveau}) => 'Niveau ${niveau}',
 			'enseignant.classes.eleveUn' => '1 élève',
 			'enseignant.classes.prochaine' => ({required Object jour, required Object heure}) => 'Prochaine séance : ${jour} à ${heure}',
@@ -46608,9 +46612,9 @@ extension on Traductions {
 			'enseignant.revue.aucuneAnomalie' => 'Rien ne demande votre attention.',
 			'enseignant.revue.erreur' => 'La revue n\'a pas pu être lue.',
 			'enseignant.revue.erreurDetail' => 'Cette Classe n\'est peut-être pas la vôtre, ou la lecture a échoué.',
-			'enseignant.revue.pasDeDecision' => 'Vous signalez, l\'académie tranche : un transfert et une réorientation ne se décident pas depuis ici.',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.revue.pasDeDecision' => 'Vous signalez, l\'académie tranche : un transfert et une réorientation ne se décident pas depuis ici.',
 			'enseignant.revue.typeGate' => 'Palier à venir',
 			'enseignant.revue.typeCorridor' => 'Élève hors corridor',
 			'enseignant.revue.typeTransfert' => 'Proposition de transfert',
@@ -47122,9 +47126,9 @@ extension on Traductions {
 			'tc.classe.roster.videDetail' => 'Cette séance n\'a aucun élève inscrit.',
 			'tc.classe.roster.ouvrirFiche' => ({required Object dePrenom}) => 'Ouvrir la fiche ${dePrenom}',
 			'tc.classe.roster.places' => ({required Object inscrits, required Object plafond}) => '${inscrits} / ${plafond} places',
-			'tc.classe.etat.inconnu' => 'État inconnu',
 			_ => null,
 		} ?? switch (path) {
+			'tc.classe.etat.inconnu' => 'État inconnu',
 			'tc.classe.etat.attendu' => 'Attendu',
 			'tc.classe.etat.enConnexion' => 'En connexion',
 			'tc.classe.etat.present' => 'Présent',
@@ -47636,9 +47640,9 @@ extension on Traductions {
 			'adulte.acceptation.sansCompte' => 'Pour répondre, connectez-vous à votre compte, ou créez-en un. Vous lirez alors ce que la personne qui vous invite verra et ne verra pas avant de décider.',
 			'adulte.acceptation.sansCompteAction' => 'Me connecter ou créer mon compte',
 			'adulte.sortie.retirerElle' => 'Retirer ma conjointe',
-			'adulte.sortie.retirerLui' => 'Retirer mon conjoint',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.sortie.retirerLui' => 'Retirer mon conjoint',
 			'adulte.sortie.retirerQuestionElle' => 'Retirer ma conjointe ?',
 			'adulte.sortie.retirerQuestionLui' => 'Retirer mon conjoint ?',
 			'adulte.sortie.retirerConsequence' => 'Son compte, ses cours, son historique et son solde ne seront pas supprimés.',
@@ -48150,9 +48154,9 @@ extension on Traductions {
 			'com.socle.lexique.actionRequise' => 'Action requise',
 			'com.socle.lexique.brouillon' => 'Brouillon',
 			'com.socle.lexique.elementsEpingles' => 'Éléments épinglés',
-			'com.socle.lexique.fichiersPartages' => 'Fichiers partagés',
 			_ => null,
 		} ?? switch (path) {
+			'com.socle.lexique.fichiersPartages' => 'Fichiers partagés',
 			'com.socle.motifs.titre' => 'Pourquoi signalez-vous ce contenu ?',
 			'com.socle.motifs.publicite' => 'Publicité',
 			'com.socle.motifs.lienAffilie' => 'Lien affilié',
@@ -48664,9 +48668,9 @@ extension on Traductions {
 			'com.studio.demo.sansCanaux' => 'Aucun canal ouvert',
 			'com.studio.demo.vue' => ({required Object situation}) => 'Situation : ${situation}',
 			'com.studio.demo.f.nadia' => 'Nadia',
-			'com.studio.demo.f.fonctionDirection' => 'Direction',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.demo.f.fonctionDirection' => 'Direction',
 			'com.studio.demo.f.mariam' => 'Mariam',
 			'com.studio.demo.f.fonctionCoordination' => 'Coordination générale',
 			'com.studio.demo.f.youssef' => 'Youssef',
@@ -49178,9 +49182,9 @@ extension on Traductions {
 			'comptable.paiements.confirmation.confirmerUn' => ({required Object montant}) => 'Confirmer le paiement de ${montant}',
 			'comptable.paiements.confirmation.confirmerLot' => ({required num n, required Object montants}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Confirmer le paiement prêt de ${montants}', other: 'Confirmer les ${n} paiements prêts : ${montants}', ), 
 			'comptable.paiements.confirmation.demanderValidation' => 'Demander validation',
-			'comptable.paiements.confirmation.annuler' => 'Annuler',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.paiements.confirmation.annuler' => 'Annuler',
 			'comptable.paiements.confirmation.fermer' => 'Fermer',
 			'comptable.paiements.confirmation.soumisTitre' => 'Envoyé au prestataire',
 			'comptable.paiements.confirmation.soumisPhrase' => 'Un paiement envoyé n\'est pas encore reçu : son état vient du suivi du prestataire. Actualisez le suivi pour le voir avancer.',
@@ -49692,9 +49696,9 @@ extension on Traductions {
 			'comptable.validation.motifs.reporter' => 'À reporter au prochain cycle',
 			'comptable.validation.motifs.autre' => 'Autre',
 			'comptable.validation.motifAutreChamp' => 'Précisez le motif',
-			'comptable.validation.erreurMotif' => 'Choisissez un motif pour refuser.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.validation.erreurMotif' => 'Choisissez un motif pour refuser.',
 			'comptable.validation.erreurMotifAutre' => 'Précisez le motif pour refuser.',
 			'comptable.validation.decisionValidee' => 'Votre décision est enregistrée : la demande est validée.',
 			'comptable.validation.decisionRefusee' => 'Votre décision est enregistrée : la demande est refusée, avec son motif.',
@@ -50206,9 +50210,9 @@ extension on Traductions {
 			'avis.form.nom.libelle' => 'Nom affiché',
 			'avis.form.nom.aide' => 'Votre prénom et l\'initiale de votre nom suffisent.',
 			'avis.form.nom.erreur' => 'Entrez un nom de 2 à 60 caractères.',
-			'avis.form.qualite.libelle' => 'Vous êtes',
 			_ => null,
 		} ?? switch (path) {
+			'avis.form.qualite.libelle' => 'Vous êtes',
 			'avis.form.qualite.parent' => 'Parent ou tuteur',
 			'avis.form.qualite.eleveAdulte' => 'Élève adulte',
 			'avis.form.qualite.erreur' => 'Choisissez qui vous êtes.',

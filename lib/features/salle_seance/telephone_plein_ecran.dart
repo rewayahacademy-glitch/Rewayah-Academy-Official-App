@@ -30,8 +30,8 @@ import 'actions_seance.dart';
 import 'commandes_pedagogiques.dart';
 import 'dock_seance.dart';
 import 'media_salle.dart';
-import 'mention_seance.dart';
 import 'palette_tableau.dart';
+import 'pilule_etat_salle.dart';
 import 'salle_seance.dart' show BandeauSecours, EtatLocalSeance;
 import 'surface_page_fixe.dart';
 import 'vignette_video.dart';
@@ -235,58 +235,14 @@ class _Haut extends StatelessWidget {
     final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
     final Widget? alerte = media?.alerte;
     final ({int nombre, VoidCallback onPress})? eleves = media?.boutonEleves;
-    final AppPalette palette = AppPalette.of(context);
     // Standard des commandes d'appel (24/10/2026) : une pilule translucide en
     // haut a gauche, hauteur 36 : « ● En ligne · Visite de controle
     // possible. » (ADR-011), seule sur sa rangee ; dessous, a droite, le
     // bouton rond « Eleves » et la vignette. Marge 16 des bords.
-    final TextStyle style = palette.piluleSalle.applyTo(
-      Theme.of(context).textTheme.labelMedium ?? const TextStyle(),
-    );
-    final Widget ligne = ConstrainedBox(
-      constraints: BoxConstraints(
-        maxWidth: math.max(0, largeur - 2 * AppSpacing.lg),
-        minHeight: AppSpacing.xxxl + AppSpacing.xs,
-      ),
-      child: DecoratedBox(
-        key: const ValueKey<String>('ligne-etat-telephone'),
-        decoration: palette.piluleSalle.decoration(
-          borderRadius: AppRadius.arrondiFull,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              SizedBox.square(
-                dimension: AppSpacing.sm,
-                child: DecoratedBox(
-                  decoration:
-                      (vue.connexion.etablie
-                              ? palette.pointsStatut.succes
-                              : palette.pointsStatut.attention)
-                          .pastille(),
-                ),
-              ),
-              Ecart.hSm,
-              Text(vue.texteConnexion, style: style, maxLines: 1),
-              if (vue.texteMention != null) ...<Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.xs,
-                  ),
-                  child: Text('\u00b7', style: style),
-                ),
-                // La phrase entiere, jamais coupee (ADR-011) ; aucun lien
-                // dessous, la mention elle-meme ouvre la lecture.
-                Flexible(
-                  child: MentionSeance(vue: vue, lienSousLaLigne: false),
-                ),
-              ],
-            ],
-          ),
-        ),
-      ),
+    final Widget ligne = PiluleEtatSalle(
+      vue: vue,
+      largeurMax: math.max(0, largeur - 2 * AppSpacing.lg),
+      cle: const ValueKey<String>('ligne-etat-telephone'),
     );
     return SafeArea(
       bottom: false,

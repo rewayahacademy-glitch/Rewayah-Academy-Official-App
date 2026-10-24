@@ -398,16 +398,35 @@ extension on ZoneSupport {
                 builder: (BuildContext _, BoxConstraints c) {
                   // S0.2 : dans `/salle`, la page prend toute la carte
                   // (zoom 100 = toute la largeur ou toute la hauteur).
-                  final double marge = pleinCadre
+                  // Retour du pilote (24/10/2026) : dans `/salle`, le tableau
+                  // ouvert est un canevas plein, toute la scene, sans marge ni
+                  // ratio, comme au telephone ; la vignette se pose dessus.
+                  final TableauLibre? tableau = vue.tableauLibre;
+                  final bool canevas =
+                      pleinCadre &&
+                      surface == VueSurface.tableauLibre &&
+                      tableau != null;
+                  final VueSeance vueSurface = canevas
+                      ? vue.copyWith(
+                          tableauLibre: TableauLibre(
+                            largeurCanonique: math.max(1, c.maxWidth.round()),
+                            hauteurCanonique: math.max(1, c.maxHeight.round()),
+                            aDesNotes: tableau.aDesNotes,
+                          ),
+                        )
+                      : vue;
+                  final double marge = canevas
+                      ? 0
+                      : pleinCadre
                       ? AppSpacing.xs
                       : serre
                       ? AppSpacing.sm
                       : AppSpacing.md;
-                  final double? ratio = ratioSurface(vue);
+                  final double? ratio = ratioSurface(vueSurface);
                   // TB-RC (TB_RAPPORT §d n. 3) : la vignette ne recouvre
                   // jamais la feuille ; si elle la toucherait en coin, la
                   // page descend sous elle (la plus petite reserve).
-                  final double dessus = video
+                  final double dessus = video && !canevas
                       ? reserveSousVignette(
                           boite: c.biggest,
                           marge: marge,
@@ -455,7 +474,7 @@ extension on ZoneSupport {
                             ),
                             ratio: ratio,
                             page: SurfacePageFixe(
-                              vue: vue,
+                              vue: vueSurface,
                               surface: surface,
                               zoom: zoom,
                             ),

@@ -24,6 +24,7 @@ import 'cible_debordante.dart';
 import 'dock_seance.dart';
 import 'media_salle.dart';
 import 'mention_seance.dart';
+import 'pilule_etat_salle.dart';
 import 'vue_seance.dart';
 
 /// Retour ‹, titre, ligne d'etat, pastille « En ligne », mention.
@@ -155,8 +156,6 @@ class _UneLigne extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final AppPalette palette = AppPalette.of(context);
     final bool large = gabarit == Gabarit.desktop;
     final double gouttiere = large
         ? AppPage.gouttiereDesktop
@@ -178,48 +177,32 @@ class _UneLigne extends StatelessWidget {
               _Retour(onPress: actions.onRetour),
               Ecart.hXs,
             ],
-            // Au telephone, la ligne garde l'etat, la presence et la mention
-            // a leur taille : le titre n'y est que lu (en-tete du lecteur
-            // d'ecran), jamais reduit a l'illisible.
-            if (gabarit == Gabarit.mobile)
-              Semantics(
-                header: true,
-                label: vue.titre,
-                hint: vue.ligneEtat,
-                child: const SizedBox.shrink(),
-              )
+            // Standard des commandes d'appel (24/10/2026) : sur ordinateur
+            // aussi, une pilule d'etat et pas une barre de titre ; le titre
+            // n'est que lu (en-tete du lecteur d'ecran).
+            Semantics(
+              header: true,
+              label: vue.titre,
+              hint: vue.ligneEtat,
+              child: const SizedBox.shrink(),
+            ),
+            if (large)
+              PiluleEtatSalle(vue: vue)
+            else ...<Widget>[_Connexion(vue: vue, compacte: true)],
+            if (laPastille != null) ...<Widget>[Ecart.hSm, laPastille],
+            if (large)
+              const Spacer()
             else ...<Widget>[
-              Flexible(
+              Ecart.hMd,
+              Expanded(
+                flex: 2,
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
                   alignment: AlignmentDirectional.centerStart,
-                  child: Semantics(
-                    header: true,
-                    hint: vue.ligneEtat,
-                    child: Text(
-                      vue.titre,
-                      maxLines: 1,
-                      softWrap: false,
-                      style: palette.inkStrong.applyTo(
-                        theme.textTheme.titleMedium ?? const TextStyle(),
-                      ),
-                    ),
-                  ),
+                  child: MentionSeance(vue: vue),
                 ),
               ),
-              Ecart.hSm,
             ],
-            _Connexion(vue: vue, compacte: true),
-            if (laPastille != null) ...<Widget>[Ecart.hSm, laPastille],
-            Ecart.hMd,
-            Expanded(
-              flex: 2,
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: AlignmentDirectional.centerStart,
-                child: MentionSeance(vue: vue),
-              ),
-            ),
             if (large) ...<Widget>[
               Ecart.hMd,
               if (vue.voitReglagesEnTete)
