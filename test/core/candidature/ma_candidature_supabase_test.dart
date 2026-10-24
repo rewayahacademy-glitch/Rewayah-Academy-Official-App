@@ -466,11 +466,9 @@ void main() {
         ),
         throwsA(
           isA<ReponsesInvalides>()
-              .having(
-                (ReponsesInvalides e) => e.champs,
-                'champs',
-                <String>['disponibilitesDeclarees'],
-              )
+              .having((ReponsesInvalides e) => e.champs, 'champs', <String>[
+                'disponibilitesDeclarees',
+              ])
               .having(
                 (ReponsesInvalides e) => e.plagesQuiSeChevauchent,
                 'chevauchement',

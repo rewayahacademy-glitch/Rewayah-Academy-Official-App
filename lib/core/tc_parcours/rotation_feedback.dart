@@ -42,8 +42,7 @@ abstract final class CatalogueFeedback {
         ReponseFeedback.difficile:
             t.tc.parcours.feedback.comprehension.difficile,
         ReponseFeedback.bien: t.tc.parcours.feedback.comprehension.bien,
-        ReponseFeedback.tresBien:
-            t.tc.parcours.feedback.comprehension.tresBien,
+        ReponseFeedback.tresBien: t.tc.parcours.feedback.comprehension.tresBien,
       },
     ),
     QuestionFeedback(

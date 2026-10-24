@@ -67,21 +67,29 @@ void main() {
       }
     });
 
-    testWidgets('/tc/classe n est plus routee (A-05, lot L3-01) : introuvable', (
-      WidgetTester tester,
-    ) async {
-      for (final AppRole role in <AppRole>[AppRole.teacher, AppRole.student]) {
-        for (final String chemin in <String>['/tc/classe', '/tc/classe/s1']) {
-          await monterRouteur(
-            tester,
-            chemin,
-            source: FausseSourceSession(sessionActive(role)),
-          );
-          expect(find.byType(PageIntrouvable), findsOneWidget, reason: chemin);
-          expect(tester.takeException(), isNull, reason: chemin);
+    testWidgets(
+      '/tc/classe n est plus routee (A-05, lot L3-01) : introuvable',
+      (WidgetTester tester) async {
+        for (final AppRole role in <AppRole>[
+          AppRole.teacher,
+          AppRole.student,
+        ]) {
+          for (final String chemin in <String>['/tc/classe', '/tc/classe/s1']) {
+            await monterRouteur(
+              tester,
+              chemin,
+              source: FausseSourceSession(sessionActive(role)),
+            );
+            expect(
+              find.byType(PageIntrouvable),
+              findsOneWidget,
+              reason: chemin,
+            );
+            expect(tester.takeException(), isNull, reason: chemin);
+          }
         }
-      }
-    });
+      },
+    );
 
     testWidgets('sans session : page introuvable, action se connecter', (
       WidgetTester tester,

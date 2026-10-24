@@ -59,6 +59,8 @@ declare
     'apercu_import_formulaires(text,text,text,jsonb,text)',
     -- CAND-L2A2 (22/10) : apercu d'une action groupee, direction active de son cote (trace des candidatures hors portee).
     'apercu_lot_candidats(text,uuid[])',
+    -- CAND-PREVENIR (24/10) : apercu des personnes des formulaires a prevenir par e-mail (direction active de son cote, compteurs seulement, audit).
+    'apercu_prevenir_par_courriel()',
     'autoriser_ecoute_archive(uuid)',
     'autoriser_lecture_piece_identite(uuid)',
     'autoriser_lecture_version(uuid)',
@@ -79,6 +81,8 @@ declare
     -- CAND-L3 (23/10) : confirmation de l'import des formulaires (super-admin, aal2, cle d'idempotence, jeton HMAC).
     'confirmer_import_formulaires(text,text,text,text,jsonb,text,jsonb,text)',
     'confirmer_import_inscriptions(text,text,jsonb)',
+    -- CAND-NOM-LATIN (23/10) : le titulaire d'une candidature confirme son nom en lettres latines (garde positive sur la candidature du compte valide ; aucune garde de role ; jamais la direction).
+    'confirmer_nom_latin(text)',
     'confirmer_upload_bibliotheque(uuid,text,bigint,text,text)',
     'controleur_ajouter_complement(uuid,text,text)',
     'controleur_envoyer_message(uuid,uuid,text)',
@@ -230,6 +234,8 @@ declare
     'preparer_depot_piece_identite(uuid,text)',
     'presenter_support(uuid,uuid,integer,text,jsonb)',
     'previsualiser_import_inscriptions(text,text)',
+    -- CAND-PREVENIR (24/10) : le lien d'inscription mis en file pour les personnes des formulaires (direction active de son cote, inscription ouverte, une adresse une fois).
+    'prevenir_par_courriel(integer)',
     'progression_promouvoir(uuid,uuid,text)',
     'publier_etat_partage(uuid,uuid,uuid,jsonb,jsonb,text,jsonb,jsonb,jsonb,integer)',
     'publier_evaluation(uuid,text,text)',

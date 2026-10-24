@@ -3,9 +3,10 @@
 //
 // - `ADM-20` (la file) : `capacites` et `lister`.
 // - `ADM-21` (la candidature) : `lire`, `lireContact`, `historique`, `geste`,
-//   `responsablesPossibles` et `moyensConfirmes`. Les lots (`preparerLot`,
-//   `executerLot`, `ADM-22`) et les entretiens (`ADM-20E`, L4) s'ajouteront
-//   avec l'ecran qui les emploie.
+//   `responsablesPossibles` et `moyensConfirmes`.
+// - Le traitement groupe (LISTES-1, ex `ADM-22`) : `preparerLot` et
+//   `executerLot`, sur les deux RPC de lot de CAND-L2A2. Les entretiens
+//   (`ADM-20E`, L4) s'ajouteront avec l'ecran qui les emploie.
 //
 // Les refus sont des exceptions typees, jamais un code a l'ecran :
 // [PermissionInsuffisante] (acces refuse, sans « Reessayer »), [GenreLecteurInconnu]
@@ -27,6 +28,7 @@ import 'gestes_candidature.dart';
 import 'modeles_candidature.dart';
 import 'modeles_candidature_detail.dart';
 import 'modeles_candidatures_direction.dart';
+import 'modeles_lot_candidatures.dart';
 
 /// La fiche du lecteur ne dit pas de quel cote (femmes ou hommes) il travaille :
 /// le serveur refuse toute lecture de la file, hors exception du super-admin
@@ -78,6 +80,26 @@ abstract interface class PortCandidaturesDirection {
   /// aucune ecriture n'a eu lieu. [GesteNonConfirme] quand le serveur n'a pas
   /// repondu : rejouer la meme [DemandeGeste.cleIdempotence] est sans risque.
   Future<ResultatGeste> geste(DemandeGeste demande);
+
+  /// L'apercu d'un lot (LISTES-1) : les candidatures que le serveur ferait, celles
+  /// qu'il exclut avec leur raison, le nombre a confirmer et le jeton. **Rien
+  /// n'est ecrit.** [ids] : de 1 a [plafondLotCandidatures].
+  ///
+  /// [GesteNonGroupable] pour un autre geste que les trois du lot,
+  /// [PermissionInsuffisante] sans droit, [GenreLecteurInconnu] sans genre connu.
+  Future<ApercuLot> preparerLot({
+    required GesteLot geste,
+    required List<String> ids,
+  });
+
+  /// Execute le lot de l'apercu. Rend le rapport ligne par ligne ; **jamais un
+  /// succes sans lui**. Un refus du lot entier est un [RefusLot] (jeton perime,
+  /// aucun eligible, nombre discordant, cle reutilisee) ou un [RefusGeste]
+  /// (motif, modele, reprise) : rien n'a ete ecrit. [GesteNonConfirme] quand le
+  /// serveur n'a pas repondu : rejouer la meme
+  /// [DemandeLot.cleIdempotence] est sans risque, le serveur rend le premier
+  /// rapport.
+  Future<RapportLot> executerLot(DemandeLot demande);
 
   /// Les membres de la direction que la candidature peut avoir pour
   /// responsable. `CapaciteIndisponible('CAND-BR-04')` tant que le serveur ne

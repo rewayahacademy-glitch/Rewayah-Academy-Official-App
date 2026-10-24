@@ -6,6 +6,7 @@ import '../../core/admin/service_qualite.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
@@ -205,6 +206,19 @@ class _GroupeAnomalies extends StatelessWidget {
       lignes: anomalies,
       cle: (AnomalieQualite a) =>
           ValueKey<String>('${a.type.valeurSql}-${a.refId}'),
+      actionsLigne: (BuildContext contexte, AnomalieQualite a) =>
+          a.controleStatut == StatutControleQualite.ouvert
+          ? MenuActions(
+              points: true,
+              objet: a.personneLibelle,
+              actions: <EntreeAction>[
+                EntreeAction(
+                  libelle: t.admin.qualite.actionTraiter,
+                  onChoix: () => onTraiter(a),
+                ),
+              ],
+            )
+          : SizedBox.square(dimension: AppMetriques.of(contexte).cibleTactile),
       colonnes: <ColonneDonnees<AnomalieQualite>>[
         ColonneDonnees<AnomalieQualite>(
           titre: t.admin.qualite.colonnePersonne,
@@ -231,27 +245,6 @@ class _GroupeAnomalies extends StatelessWidget {
                 ? TonEtat.succes
                 : TonEtat.avertissement,
           ),
-        ),
-        ColonneDonnees<AnomalieQualite>(
-          titre: '',
-          role: RoleColonne.aPart,
-          flex: 0,
-          // Vide a dessein, meme convention que
-          // `admin_groupes/groupes_page.dart`.
-          texte: (AnomalieQualite _) => '',
-          rendreMemeSiTexteVide: true,
-          rendu: (BuildContext _, AnomalieQualite a) =>
-              a.controleStatut == StatutControleQualite.ouvert
-              ? MenuActions(
-                  tooltip: a.personneLibelle,
-                  actions: <EntreeAction>[
-                    EntreeAction(
-                      libelle: t.admin.qualite.actionTraiter,
-                      onChoix: () => onTraiter(a),
-                    ),
-                  ],
-                )
-              : const SizedBox.shrink(),
         ),
       ],
     );

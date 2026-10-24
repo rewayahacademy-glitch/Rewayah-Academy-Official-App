@@ -301,8 +301,7 @@ class ReponsesAutresCompetences {
     if (dispo == null) {
       return null;
     }
-    final Map<String, NiveauCompetence> domaines =
-        <String, NiveauCompetence>{};
+    final Map<String, NiveauCompetence> domaines = <String, NiveauCompetence>{};
     for (final MapEntry<Object?, Object?> e
         in (brut['domaines'] as Map<Object?, Object?>).entries) {
       final NiveauCompetence? niveau = NiveauCompetence.depuisSql(e.value);

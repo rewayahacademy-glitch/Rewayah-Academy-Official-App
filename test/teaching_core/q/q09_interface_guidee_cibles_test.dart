@@ -29,20 +29,25 @@ Widget _bouton({required InterfaceMode mode, required Key cle}) {
   final double cote = mode == InterfaceMode.enfant
       ? AppTouchTarget.enfant
       : AppTouchTarget.standard;
-  return Center(child: SizedBox(key: cle, width: cote, height: cote));
+  return Center(
+    child: SizedBox(key: cle, width: cote, height: cote),
+  );
 }
 
 void main() {
   group('Q-09 : les jetons de cible tactile', () {
-    test('le socle declare deja les deux tailles, on n en pose pas une troisieme', () {
-      expect(AppTouchTarget.standard, _seuilAccessibilite);
-      expect(AppTouchTarget.enfant, 72);
-      expect(AppTouchTarget.enfant, greaterThan(AppTouchTarget.standard));
-      expect(
-        AppTouchTarget.standard,
-        greaterThanOrEqualTo(_seuilAccessibilite),
-      );
-    });
+    test(
+      'le socle declare deja les deux tailles, on n en pose pas une troisieme',
+      () {
+        expect(AppTouchTarget.standard, _seuilAccessibilite);
+        expect(AppTouchTarget.enfant, 72);
+        expect(AppTouchTarget.enfant, greaterThan(AppTouchTarget.standard));
+        expect(
+          AppTouchTarget.standard,
+          greaterThanOrEqualTo(_seuilAccessibilite),
+        );
+      },
+    );
   });
 
   group('Q-09 : le rendu respecte le jeton', () {
@@ -97,9 +102,8 @@ void main() {
           // reconstruit le sien depuis la vue et ecraserait un ancetre.
           home: Builder(
             builder: (BuildContext context) => MediaQuery(
-              data: MediaQuery.of(
-                context,
-              ).copyWith(textScaler: const TextScaler.linear(2)),
+              data: MediaQuery.of(context)
+                  .copyWith(textScaler: const TextScaler.linear(2)),
               child: _bouton(
                 mode: InterfaceMode.enfant,
                 cle: const Key('cible-guidee-zoom'),

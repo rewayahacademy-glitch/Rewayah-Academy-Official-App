@@ -59,8 +59,9 @@ class DescripteurOffline {
 }
 
 /// Comment le module retrouve le descripteur d'une ressource.
-typedef ResolutionOffline =
-    Future<DescripteurOffline?> Function(String resourceId);
+typedef ResolutionOffline = Future<DescripteurOffline?> Function(
+  String resourceId,
+);
 
 /// Un telechargement qui ne peut pas aboutir.
 ///

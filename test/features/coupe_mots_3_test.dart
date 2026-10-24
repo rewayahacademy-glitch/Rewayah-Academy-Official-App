@@ -178,9 +178,8 @@ List<String> _pourcentagesCoupes(WidgetTester tester, String dans) {
         TextSelection(baseOffset: m.start, extentOffset: m.end),
       );
       final bool scinde = boites.any(
-        (TextBox a) => boites.any(
-          (TextBox b) => a.bottom <= b.top || b.bottom <= a.top,
-        ),
+        (TextBox a) =>
+            boites.any((TextBox b) => a.bottom <= b.top || b.bottom <= a.top),
       );
       if (scinde) coupes.add('$texte : ${m.group(0)}');
     }

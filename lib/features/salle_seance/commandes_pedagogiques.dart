@@ -799,7 +799,7 @@ class _SupportMontre extends StatelessWidget {
           MenuActions(
             key: CommandesPedagogiques.cleMenu,
             actions: menu,
-            tooltip: semantiqueMenu,
+            libelle: semantiqueMenu,
             points: true,
             // TB-RC (n.17) : la copie du rangement ne vole pas sous un menu
             // qui s'efface encore.

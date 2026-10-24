@@ -153,7 +153,10 @@ Map<String, Object?> aplatirPourAudit(TeacherStudentProjection p) {
     plat['lastLesson.dateUtc'] = derniere.dateUtc.toIso8601String();
     plat['lastLesson.pointARevoir'] = derniere.pointARevoir;
     plat.addAll(
-      _aplatirPosition('lastLesson.positionAtteinte', derniere.positionAtteinte),
+      _aplatirPosition(
+        'lastLesson.positionAtteinte',
+        derniere.positionAtteinte,
+      ),
     );
   }
   plat.addAll(_aplatirPosition('resumePoints', p.resumePoints));
@@ -248,9 +251,8 @@ const TeacherStudentProjection projectionAminaHomonyme =
     );
 
 /// Le roster de fixture.
-List<TeacherStudentProjection> rosterDeFixture() =>
-    <TeacherStudentProjection>[
-      projectionAmina,
-      projectionLectureEchouee,
-      projectionAminaHomonyme,
-    ];
+List<TeacherStudentProjection> rosterDeFixture() => <TeacherStudentProjection>[
+  projectionAmina,
+  projectionLectureEchouee,
+  projectionAminaHomonyme,
+];

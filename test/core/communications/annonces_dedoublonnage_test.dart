@@ -146,9 +146,7 @@ void main() {
       serveur,
       libelles: const _Libelles(),
     ).annoncesDeClasse(_classe2);
-    final List<String> ids = v.annonces
-        .map((AnnonceClasse a) => a.id)
-        .toList();
+    final List<String> ids = v.annonces.map((AnnonceClasse a) => a.id).toList();
     expect(ids.where((String id) => id == _generale), hasLength(1));
     expect(ids, contains(_b2));
     expect(ids.toSet(), hasLength(ids.length));

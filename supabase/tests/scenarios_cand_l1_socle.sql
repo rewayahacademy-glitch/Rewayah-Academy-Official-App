@@ -360,8 +360,8 @@ BEGIN
             (SELECT array_agg(x ORDER BY x) FROM unnest(ARRAY['id', 'reference', 'nomComplet', 'type',
               'etape', 'etat', 'issue', 'enPause', 'repriseLe', 'restreinte', 'indisponible',
               'indisponibleJusquAu', 'paiement', 'paysResidence', 'responsableId', 'courrielAObtenir',
-              'indicatifAConfirmer', 'derniereActivite', 'recueLe']) x)),
-    'chaque ligne porte exactement les dix-neuf cles du contrat');
+              'indicatifAConfirmer', 'derniereActivite', 'recueLe', 'nomLatin', 'nomLatinAConfirmer']) x)),
+    'chaque ligne porte exactement les vingt et une cles du contrat (CAND-NOM-LATIN : nomLatin, nomLatinAConfirmer)');
   PERFORM pg_temp.vrai(NOT EXISTS (
       SELECT 1 FROM jsonb_array_elements(r -> 'lignes') l
       WHERE l ? 'courriel' OR l ? 'telephone' OR l ? 'genre' OR l ? 'sourceRef')

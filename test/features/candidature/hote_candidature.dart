@@ -120,6 +120,7 @@ Future<void> monterQuestionnaire(
   TextDirection? direction,
   ThemeMode themeMode = ThemeMode.light,
   FauxServiceDossier? dossier,
+  List<Override> surchargesEnPlus = const <Override>[],
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -131,13 +132,16 @@ Future<void> monterQuestionnaire(
       echelle: echelle,
       direction: direction,
       themeMode: themeMode,
-      surcharges: surchargesCandidature(
-        port: port,
-        etat: etat ?? etatCandidat(candidature: candidatureAFaire()),
-        dossier: dossier,
-        horsLigne: horsLigne,
-        fuseauAppareil: fuseauAppareil,
-      ),
+      surcharges: <Override>[
+        ...surchargesCandidature(
+          port: port,
+          etat: etat ?? etatCandidat(candidature: candidatureAFaire()),
+          dossier: dossier,
+          horsLigne: horsLigne,
+          fuseauAppareil: fuseauAppareil,
+        ),
+        ...surchargesEnPlus,
+      ],
     ),
   );
   if (attendre) {
@@ -204,10 +208,7 @@ const List<(String, List<String>)> parcoursComplet = <(String, List<String>)>[
   ('experienceDebutants', <String>['option-experienceDebutants-oui']),
   ('publics', <String>['option-publics-6_9']),
   ('fuseauIana', <String>['fuseau-oui']),
-  (
-    'jours',
-    <String>['option-jour-1', 'option-jour-3', 'option-jour-5'],
-  ),
+  ('jours', <String>['option-jour-1', 'option-jour-3', 'option-jour-5']),
   ('heures', <String>['heure-1-18', 'heure-1-19']),
   ('memes', <String>['option-memes-oui']),
   ('semaine', <String>[]),

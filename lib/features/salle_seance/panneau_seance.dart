@@ -553,7 +553,7 @@ class _MenuPanneau extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MenuActions(
     key: const ValueKey<String>('menu-panneau-seance'),
-    tooltip: t.salle.seance.optionsPanneau(titre: titre),
+    libelle: t.salle.seance.optionsPanneau(titre: titre),
     points: true,
     actions: <EntreeAction>[
       EntreeAction(libelle: t.salle.seance.fermerPanneau, onChoix: onFermer),

@@ -301,12 +301,12 @@ void main() {
         await _presser(tester, find.byKey(SelecteurMotif.cleAutre));
         await tester.enterText(
           find.descendant(
-        of: find.ancestor(
-          of: find.text(t.admin.groupes.champMotif),
-          matching: find.byType(ZoneSaisie),
-        ),
-        matching: find.byType(TextField),
-      ),
+            of: find.ancestor(
+              of: find.text(t.admin.groupes.champMotif),
+              matching: find.byType(ZoneSaisie),
+            ),
+            matching: find.byType(TextField),
+          ),
           'Inscription confirmee',
         );
         await _presser(tester, find.text(t.admin.groupes.ajouterEnvoyer));

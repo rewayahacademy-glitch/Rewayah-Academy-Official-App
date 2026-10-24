@@ -205,9 +205,10 @@ class PolitiqueObservationSupabase implements PortPolitiqueObservation {
 
   @override
   Future<BudgetObservation> budget({required String sessionId}) async {
-    final Object? reponse = await _appeler('budget_observation', <String, dynamic>{
-      'p_session_id': sessionId,
-    });
+    final Object? reponse = await _appeler(
+      'budget_observation',
+      <String, dynamic>{'p_session_id': sessionId},
+    );
     if (reponse is Map<String, dynamic>) {
       return BudgetObservation.depuisJson(reponse);
     }
@@ -327,8 +328,8 @@ politiqueObservationProvider =
     );
 
 /// Le budget d'observation d'une seance, lu une fois.
-final FutureProviderFamily<BudgetObservation, String> budgetObservationProvider =
-    FutureProvider.family<BudgetObservation, String>(
-      (Ref ref, String sessionId) =>
-          ref.watch(portPolitiqueObservationProvider).budget(sessionId: sessionId),
-    );
+final FutureProviderFamily<BudgetObservation, String>
+budgetObservationProvider = FutureProvider.family<BudgetObservation, String>(
+  (Ref ref, String sessionId) =>
+      ref.watch(portPolitiqueObservationProvider).budget(sessionId: sessionId),
+);

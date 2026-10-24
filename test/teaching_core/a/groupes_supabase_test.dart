@@ -98,39 +98,41 @@ void main() {
   });
 
   group('horlogeDepuisLigne', () {
-    Map<String, dynamic> ligneHorloge({
-      required String maintenant,
-    }) => <String, dynamic>{
-      'session_id': 's-1',
-      'debut_utc': '2026-09-28T15:00:00+00:00',
-      'fin_prevue_utc': '2026-09-28T16:00:00+00:00',
-      'join_opens_at_utc': '2026-09-28T14:40:00+00:00',
-      'fenetre_minutes': 20,
-      'grace_minutes': 15,
-      'maintenant_utc': maintenant,
-      'tz_utilisateur': 'Europe/Paris',
-      'heure_utilisateur': '17:00',
-      'jour_iso_utilisateur': 1,
-      'date_utilisateur': '2026-09-28',
-      'tz_groupe': 'Africa/Conakry',
-      'heure_groupe': '15:00',
-      'jour_iso_groupe': 1,
-      'date_groupe': '2026-09-28',
-    };
+    Map<String, dynamic> ligneHorloge({required String maintenant}) =>
+        <String, dynamic>{
+          'session_id': 's-1',
+          'debut_utc': '2026-09-28T15:00:00+00:00',
+          'fin_prevue_utc': '2026-09-28T16:00:00+00:00',
+          'join_opens_at_utc': '2026-09-28T14:40:00+00:00',
+          'fenetre_minutes': 20,
+          'grace_minutes': 15,
+          'maintenant_utc': maintenant,
+          'tz_utilisateur': 'Europe/Paris',
+          'heure_utilisateur': '17:00',
+          'jour_iso_utilisateur': 1,
+          'date_utilisateur': '2026-09-28',
+          'tz_groupe': 'Africa/Conakry',
+          'heure_groupe': '15:00',
+          'jour_iso_groupe': 1,
+          'date_groupe': '2026-09-28',
+        };
 
-    test('les heures arrivent rendues, la phase vient de l instant serveur', () {
-      final SessionClockVM h = horlogeDepuisLigne(
-        ligneHorloge(maintenant: '2026-09-28T14:45:00+00:00'),
-      );
-      expect(h.phase, PhaseSeance.salleOuverte);
-      expect(h.rejoindreOuvert, isTrue);
-      expect(h.restant, const Duration(minutes: 15));
-      expect(h.horlogeUtilisateur.heureLocaleRendue, '17:00');
-      expect(h.horlogeUtilisateur.dateLocaleRendue, 'Lundi 28 septembre');
-      expect(h.horlogeUtilisateur.libelleVille, 'Paris');
-      expect(h.horlogeContrepartie?.libelleVille, 'Conakry');
-      expect(h.horlogeContrepartie?.heureLocaleRendue, '15:00');
-    });
+    test(
+      'les heures arrivent rendues, la phase vient de l instant serveur',
+      () {
+        final SessionClockVM h = horlogeDepuisLigne(
+          ligneHorloge(maintenant: '2026-09-28T14:45:00+00:00'),
+        );
+        expect(h.phase, PhaseSeance.salleOuverte);
+        expect(h.rejoindreOuvert, isTrue);
+        expect(h.restant, const Duration(minutes: 15));
+        expect(h.horlogeUtilisateur.heureLocaleRendue, '17:00');
+        expect(h.horlogeUtilisateur.dateLocaleRendue, 'Lundi 28 septembre');
+        expect(h.horlogeUtilisateur.libelleVille, 'Paris');
+        expect(h.horlogeContrepartie?.libelleVille, 'Conakry');
+        expect(h.horlogeContrepartie?.heureLocaleRendue, '15:00');
+      },
+    );
 
     test('apres la fin prevue, jamais de temps negatif', () {
       final SessionClockVM h = horlogeDepuisLigne(
@@ -149,10 +151,7 @@ void main() {
     });
 
     test('jours et mois viennent des libelles, accents compris', () {
-      expect(
-        dateRendue(jourIso: 6, dateIso: '2027-02-06'),
-        'Samedi 6 février',
-      );
+      expect(dateRendue(jourIso: 6, dateIso: '2027-02-06'), 'Samedi 6 février');
       expect(dateRendue(jourIso: 7, dateIso: '2027-08-01'), 'Dimanche 1 août');
       expect(
         dateRendue(jourIso: 5, dateIso: '2026-12-25'),

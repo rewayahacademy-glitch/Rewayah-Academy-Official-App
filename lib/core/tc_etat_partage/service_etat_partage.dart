@@ -199,7 +199,9 @@ class ServiceEtatPartage implements PortEtatPartage {
 
   @override
   Future<SharedContentState?> restaurer(String sessionId) async {
-    final SharedContentState? depuisBackend = await _persistance.lire(sessionId);
+    final SharedContentState? depuisBackend = await _persistance.lire(
+      sessionId,
+    );
     final ReducteurEtatPartage reducteur = _reducteur(sessionId);
     final ResultatRevision suite = reducteur.restaurer(depuisBackend);
     if (suite.aChange && suite.etat != null) {
@@ -254,7 +256,8 @@ class ServiceEtatPartage implements PortEtatPartage {
         if (candidat == null) {
           return;
         }
-        final ResultatRevision suite = _reducteur(sessionId).appliquer(candidat);
+        final ResultatRevision suite = _reducteur(sessionId)
+            .appliquer(candidat);
         if (suite.aChange && suite.etat != null) {
           _diffuser(suite.etat!);
         }
@@ -263,22 +266,22 @@ class ServiceEtatPartage implements PortEtatPartage {
       // distingue deja `retabli` de `connecte` pour cette raison exacte : sans
       // lui, un retour de coupure serait indiscernable d'une premiere
       // connexion. `instable` n'en est pas un : la seance continue.
-      _etatsTransport.where((EtatTransport e) => e == EtatTransport.retabli).listen((
-        _,
-      ) {
-        // L'echec d'une restauration apres reconnexion remonte aux abonnes
-        // plutot que de s'echapper d'un `unawaited`. Le lien vient de revenir :
-        // la revision suivante remettra la classe a jour de toute facon, mais
-        // l'ecran doit pouvoir dire qu'il ne sait pas ou en est le cours.
-        unawaited(
-          restaurer(sessionId).catchError((Object e, StackTrace pile) {
-            if (!_diffusion.isClosed) {
-              _diffusion.addError(e, pile);
-            }
-            return null;
+      _etatsTransport
+          .where((EtatTransport e) => e == EtatTransport.retabli)
+          .listen((_) {
+            // L'echec d'une restauration apres reconnexion remonte aux abonnes
+            // plutot que de s'echapper d'un `unawaited`. Le lien vient de revenir :
+            // la revision suivante remettra la classe a jour de toute facon, mais
+            // l'ecran doit pouvoir dire qu'il ne sait pas ou en est le cours.
+            unawaited(
+              restaurer(sessionId).catchError((Object e, StackTrace pile) {
+                if (!_diffusion.isClosed) {
+                  _diffusion.addError(e, pile);
+                }
+                return null;
+              }),
+            );
           }),
-        );
-      }),
     ];
   }
 
@@ -289,10 +292,7 @@ class ServiceEtatPartage implements PortEtatPartage {
     type: typeRevisionEtatPartage,
     sessionId: etat.sessionId,
     emetteurProfilId: etat.updatedBy,
-    charge: <String, dynamic>{
-      ...etatVersJson(etat),
-      'cause': cause.valeurSql,
-    },
+    charge: <String, dynamic>{...etatVersJson(etat), 'cause': cause.valeurSql},
     emisLeUtc: etat.updatedAtUtc,
   );
 }

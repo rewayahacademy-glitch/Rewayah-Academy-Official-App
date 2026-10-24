@@ -116,31 +116,31 @@ void main() {
       );
     });
 
-    test('deux homonymes se distinguent par academyId, jamais par une initiale', () {
-      // La maquette de la spec section 10.1 affiche « Amina B. ». ADR-008
-      // l'emporte : la desambiguisation passe par l'identifiant immuable,
-      // exactement comme `journee_page.dart` le fait deja.
-      expect(projectionAmina.firstName, projectionAminaHomonyme.firstName);
-      expect(
-        projectionAmina.academyId,
-        isNot(projectionAminaHomonyme.academyId),
-      );
-      final String libelleA =
-          '${projectionAmina.firstName} ${projectionAmina.academyId}';
-      final String libelleB =
-          '${projectionAminaHomonyme.firstName} '
-          '${projectionAminaHomonyme.academyId}';
-      expect(libelleA, isNot(libelleB));
-      expect(libelleA.contains('B.'), isFalse);
-    });
+    test(
+      'deux homonymes se distinguent par academyId, jamais par une initiale',
+      () {
+        // La maquette de la spec section 10.1 affiche « Amina B. ». ADR-008
+        // l'emporte : la desambiguisation passe par l'identifiant immuable,
+        // exactement comme `journee_page.dart` le fait deja.
+        expect(projectionAmina.firstName, projectionAminaHomonyme.firstName);
+        expect(
+          projectionAmina.academyId,
+          isNot(projectionAminaHomonyme.academyId),
+        );
+        final String libelleA =
+            '${projectionAmina.firstName} ${projectionAmina.academyId}';
+        final String libelleB =
+            '${projectionAminaHomonyme.firstName} '
+            '${projectionAminaHomonyme.academyId}';
+        expect(libelleA, isNot(libelleB));
+        expect(libelleA.contains('B.'), isFalse);
+      },
+    );
 
     test('une lecture qui echoue dit inconnu, jamais absent', () {
       // Invariant J3 du depot, deja tenu par `service_presence.dart` : ne pas
       // savoir n'est pas une absence, et ne doit ni alarmer ni rassurer.
-      expect(
-        projectionLectureEchouee.liveStatus,
-        EtatPresenceProjete.inconnu,
-      );
+      expect(projectionLectureEchouee.liveStatus, EtatPresenceProjete.inconnu);
       expect(
         projectionLectureEchouee.liveStatus,
         isNot(EtatPresenceProjete.absent),

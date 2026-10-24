@@ -33,15 +33,12 @@ ContentPosition positionPage(int page, {String resourceId = 'res-1'}) =>
     ContentPosition.page(resourceId: resourceId, page: page);
 
 /// Une plage de pages.
-ContentRange plagePages(
-  int debut,
-  int fin, {
-  String resourceId = 'res-1',
-}) => ContentRange(
-  resourceId: resourceId,
-  debut: positionPage(debut, resourceId: resourceId),
-  fin: positionPage(fin, resourceId: resourceId),
-);
+ContentRange plagePages(int debut, int fin, {String resourceId = 'res-1'}) =>
+    ContentRange(
+      resourceId: resourceId,
+      debut: positionPage(debut, resourceId: resourceId),
+      fin: positionPage(fin, resourceId: resourceId),
+    );
 
 /// Un marqueur semantique pose sur une plage de pages.
 MarqueurSemantique marqueur(

@@ -100,3 +100,23 @@ Chaque fois que le directeur doit coller des migrations dans l'éditeur SQL de l
 Les fichiers sans mot d'effacement peuvent toujours être appliqués par Claude avec
 `apply_migration` quand le texte exact peut lui être transmis sans recopie à la main ; sinon, ils
 vont sur la page avec les autres (une recopie de 100 Ko par Claude est un risque d'erreur).
+
+## Troisième leçon : tout va en production, et jamais un fichier brut (24/10/2026)
+
+> « je t'ai dit pas de base test, tout doit aller sur prod » (directeur, 24/10/2026)
+
+- **Décision du directeur** : plus de passage par la base de test. Une migration prouvée en local
+  (base neuve montée avec les migrations de `main`, rejeu complet des scénarios) va directement en
+  production. La base de test n'est plus mise à niveau.
+- **Qui colle** : le garde-fou du projet et les permissions de la session refusent à Claude toute
+  écriture en production et toute page qui la vise. Le directeur colle donc lui-même, dans le SQL
+  Editor du projet « Rewayah PROD (Real Users) ». Claude vérifie ensuite en lecture.
+- **Ce qui s'est passé le 24/10** : le fichier 18 a été donné brut. Ses cinq fonctions ont gardé les
+  retours chariot de Windows, et sa version manquait à l'historique. Il a fallu un second collage :
+  la normalisation de `docs/orchestration/staging/normalisation_fins_de_ligne_editeur_sql.sql`
+  (16 fonctions de la production corrigées) suivie de l'inscription à l'historique, le tout enveloppé.
+- **Donc** : ce que le directeur colle en production est toujours enveloppé
+  (`tool/envelopper_pour_editeur_sql.py`) et finit par l'inscription de la version dans
+  `supabase_migrations.schema_migrations`. Avant : vérifier en lecture
+  `select count(*) from pg_proc where strpos(prosrc, chr(13)) > 0` (0 attendu). Après : comparer les
+  empreintes à la base locale et vérifier la version dans `list_migrations`.

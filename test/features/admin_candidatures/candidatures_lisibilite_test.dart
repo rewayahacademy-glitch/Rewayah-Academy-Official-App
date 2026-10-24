@@ -16,6 +16,7 @@ import 'package:rewayah_academy/core/candidature/modeles_candidatures_direction.
 import 'package:rewayah_academy/core/candidature/port_candidatures_direction.dart';
 import 'package:rewayah_academy/core/capacites/permission_insuffisante.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/widgets/case_a_cocher.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
@@ -112,17 +113,23 @@ Future<void> _etat(
     hauteur: g.taille.height,
     echelle: g.echelle,
     direction: direction,
-    agir: etat.avecSelection ? (_) {} : null,
     invitations: true,
   );
   await _verifier(tester, '${etat.nom}, ${g.nom}');
   if (etat.avecSelection) {
-    await tester.tap(find.byKey(const ValueKey<String>('candidatures-selectionner')));
-    await laisser(tester);
-    await tester.tap(find.byKey(const ValueKey<String>('candidature-a1')));
-    await laisser(tester);
-    await tester.tap(find.byKey(const ValueKey<String>('candidature-c3')));
-    await laisser(tester);
+    for (final String nom in <String>['Amina Diallo', 'Carla Mendes']) {
+      // La case de la carte, ou celle du tableau : la meme voix de lecteur
+      // d'ecran (« Cocher Amina Diallo »).
+      final Finder f = find.byWidgetPredicate(
+        (Widget w) =>
+            w is CaseACocher &&
+            w.libelle == t.commun.listes.cocherLigne(objet: nom),
+      );
+      await tester.ensureVisible(f);
+      await tester.pump();
+      await tester.tap(f);
+      await laisser(tester);
+    }
     await _verifier(tester, '${etat.nom} avec selection, ${g.nom}');
   }
 }
@@ -130,7 +137,10 @@ Future<void> _etat(
 final List<_Etat> _etats = <_Etat>[
   (
     nom: 'liste',
-    port: () => FauxCandidaturesDirection(lignes: _lignes()),
+    port: () => FauxCandidaturesDirection(
+      lignes: _lignes(),
+      capacitesRendues: capacitesGestes,
+    ),
     horsLigne: false,
     avecSelection: false,
   ),
@@ -138,7 +148,7 @@ final List<_Etat> _etats = <_Etat>[
     nom: 'liste et selection',
     port: () => FauxCandidaturesDirection(
       lignes: _lignes(),
-      capacitesRendues: capacitesQuiDecide,
+      capacitesRendues: capacitesGestes,
     ),
     horsLigne: false,
     avecSelection: true,
@@ -147,7 +157,7 @@ final List<_Etat> _etats = <_Etat>[
     nom: 'liste hors ligne et selection',
     port: () => FauxCandidaturesDirection(
       lignes: _lignes(),
-      capacitesRendues: capacitesQuiDecide,
+      capacitesRendues: capacitesGestes,
     ),
     horsLigne: true,
     avecSelection: true,
@@ -187,17 +197,15 @@ final List<_Etat> _etats = <_Etat>[
   ),
   (
     nom: 'erreur',
-    port: () => FauxCandidaturesDirection(
-      erreurLister: (int _) => StateError('panne'),
-    ),
+    port: () =>
+        FauxCandidaturesDirection(erreurLister: (int _) => StateError('panne')),
     horsLigne: false,
     avecSelection: false,
   ),
   (
     nom: 'hors ligne, rien de lu',
-    port: () => FauxCandidaturesDirection(
-      erreurLister: (int _) => StateError('panne'),
-    ),
+    port: () =>
+        FauxCandidaturesDirection(erreurLister: (int _) => StateError('panne')),
     horsLigne: true,
     avecSelection: false,
   ),
@@ -255,14 +263,16 @@ void main() {
       'genre inconnu',
     }.contains(e.nom),
   )) {
-    for (final ({String nom, Size taille, double echelle}) g in _gabarits
-        .where((g) => g.nom != '1440 x2')) {
-      testWidgets('arabe de droite a gauche, ${etat.nom}, ${g.nom} : tout se lit', (
-        WidgetTester tester,
-      ) async {
-        await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
-        await _etat(tester, etat, g, direction: TextDirection.rtl);
-      });
+    for (final ({String nom, Size taille, double echelle}) g in _gabarits.where(
+      (g) => g.nom != '1440 x2',
+    )) {
+      testWidgets(
+        'arabe de droite a gauche, ${etat.nom}, ${g.nom} : tout se lit',
+        (WidgetTester tester) async {
+          await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
+          await _etat(tester, etat, g, direction: TextDirection.rtl);
+        },
+      );
     }
   }
 }

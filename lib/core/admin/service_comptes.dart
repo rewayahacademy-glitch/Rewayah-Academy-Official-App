@@ -176,6 +176,13 @@ class CompteAdmin {
       maintenant.difference(inscritLe).inDays;
 }
 
+/// Le nombre de lignes au-dela duquel le serveur coupe sans le dire
+/// (`max_rows = 1000`, `supabase/config.toml`; la valeur distante n'est pas
+/// connue). `comptes_admin()` n'a ni page ni total : quand la liste recue atteint
+/// ce nombre, elle est peut-etre tronquee, et les inscriptions les plus
+/// recentes sont les premieres a manquer (tri par anciennete croissante).
+const int plafondComptesServeur = 1000;
+
 /// La lecture des comptes par l'administration.
 abstract interface class ServiceComptes {
   /// Tous les comptes, ce qui attend une decision d'abord.

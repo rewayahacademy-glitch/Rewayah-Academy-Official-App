@@ -51,6 +51,73 @@ nouveau feu vert).
 Le décompte des mots compte aussi les commentaires et les droits (`REVOKE ... DELETE`,
 `ON DELETE CASCADE`) : il dit seulement quel chemin passe sans seconde confirmation.
 
+## État de la production (constaté le 23/10/2026 au soir, en lecture)
+
+Le directeur a dit le 23/10 : « si tu es sûr que ç'a été testé, alors on fait la migration sur prod
+directement ». Constat par `list_migrations` (lecture seule) :
+
+- les fichiers 16 et 17 ci-dessous sont **déjà en production** : la session des e-mails les y a posés
+  avec ses migrations `courriels_*` ;
+- seul le fichier 18 (`20261024000000_cand_nom_latin.sql`) manque, et la prod compte 0 candidature.
+
+Preuve pour le 18, sur une base locale neuve montée avec les migrations de `origin/main` (56be9240),
+soit exactement celles de la prod :
+
+- les trois fonctions que le 18 remplace (`private.cand_ligne_json`, `private.candidature_du_titulaire`,
+  `public.lister_candidatures`) ont la même empreinte `md5(pg_get_functiondef)` en prod et en local ;
+  le 18 n'écrase donc rien de la session des e-mails ;
+- le 18 s'applique sans erreur ;
+- rejeu complet ensuite : 127 scénarios verts, 2 rouges, tous deux déjà rouges sur `main` sans le 18 :
+  `scenarios_etape4` (A793, créneau commun suivant) et `scenarios_af_liste_blanche_volatiles` (`avis_*` et
+  cinq fonctions `courriel_*` non déclarées ; session des e-mails prévenue).
+
+Application : les permissions de la session refusent à Claude toute action ou page qui vise la production.
+Le directeur colle donc lui-même le fichier dans l'éditeur SQL du projet « Rewayah PROD (Real Users) ».
+Claude vérifie ensuite en lecture (colonnes, fonctions, droits ; liste au détail du fichier 18).
+La base de test n'a ni le 16, ni le 17, ni le 18, et ne les aura pas : décision du directeur du
+24/10/2026, « pas de base test, tout doit aller sur prod ».
+
+**Collé en production par le directeur le 24/10/2026 vers 1 h (Paris), fichier brut.** Vérification en
+lecture : les deux colonnes présentes ; `lire_nom_latin` et `confirmer_nom_latin` exécutables par
+`authenticated` seulement ; `private.nom_est_latin` par personne. Les cinq fonctions posées gardent les
+retours chariot de Windows (leçon du 23/10, `docs/orchestration/LECONS-MIGRATIONS-STAGING.md`) : une fois
+ces caractères retirés, leurs empreintes sont identiques à la base locale. Onze fonctions plus anciennes de
+la production en ont aussi (16 en tout). La version n'est pas inscrite dans l'historique.
+Correctif remis au directeur : la normalisation de `docs/orchestration/staging/normalisation_fins_de_ligne_editeur_sql.sql`,
+suivie de l'inscription de `20261024000000 cand_nom_latin`, enveloppée par
+`tool/envelopper_pour_editeur_sql.py`, sans effacement, essayée en local (collage CRLF compris).
+À vérifier après son collage : `select count(*) from pg_proc where strpos(prosrc, chr(13)) > 0` vaut 0,
+empreintes identiques à la base locale, version présente dans `list_migrations`.
+
+**Correctif collé par le directeur le 24/10/2026, vérifié en lecture** : 0 fonction avec un retour chariot
+(16 avant) ; `20261024000000 cand_nom_latin` inscrite à l'historique ; les cinq fonctions du fichier 18 à
+l'empreinte exacte de la base locale (`cand_ligne_json` adebd658…, `confirmer_nom_latin` 70a44b76…,
+`lire_nom_latin` 4ab87e93…, `lister_candidatures` d73aaa2c…, `nom_est_latin` ef7575ae…) ; les trois
+fonctions publiques exécutables par `authenticated`, aucune par `anon`. **Le fichier 18 est en production.**
+
+## Fichier 19 : prévenir par e-mail (production, 24/10/2026)
+
+Feu vert du directeur : « oui Prévenir » (24/10/2026) ; « tout doit aller sur prod ».
+
+- **Fichier** : `supabase/migrations/20261024010000_cand_prevenir_par_courriel.sql`. Décompte
+  `DELETE`/`DROP`/`TRUNCATE` : **0**. Deux fonctions neuves, aucune table, aucune donnée touchée.
+- **Preuve locale** : base neuve avec toutes les migrations du dépôt (celles de `main` comprises) ;
+  scénario `scenarios_cand_prevenir_courriel.sql`, 34 contrôles verts, rouge sans la migration ; la liste
+  blanche des volatiles déclare les deux fonctions.
+- **Bloc à coller** : la migration enveloppée (`tool/envelopper_pour_editeur_sql.py`) suivie de
+  l'inscription de `20261024010000 cand_prevenir_par_courriel` dans l'historique. Essayé en local en le collant
+  avec les fins de ligne de Windows : aucun retour chariot, version inscrite, empreinte identique à
+  l'application du fichier, scénario vert ensuite.
+- **Avant collage, en lecture** : 0 fonction avec un retour chariot ; catégorie `recrutement` active ;
+  `courriel_enfiler` présente ; 0 réponse importée ; inscription en ligne fermée. Rien ne part donc à
+  l'installation.
+- **Après collage, Claude vérifie** : version dans `list_migrations`, 0 retour chariot, empreintes des deux
+  fonctions identiques à la base locale, exécutables par `authenticated` seulement.
+- **Collé par le directeur le 24/10/2026, vérifié en lecture** : version `20261024010000 cand_prevenir_par_courriel`
+  inscrite ; 0 retour chariot ; empreintes identiques à la base locale (`apercu_prevenir_par_courriel` 97c7d1f7…,
+  `prevenir_par_courriel` e0da739f…) ; exécutables par `authenticated`, ni `anon` ni `service_role`.
+  **Le fichier 19 est en production.**
+
 ## Prochaine livraison sur la base de test (pas encore appliquée)
 
 Ajoutée le 23/10/2026, après l'installation des quinze ci-dessus. Rien n'est appliqué sans un
@@ -62,10 +129,37 @@ nouveau feu vert du directeur sur cette liste précise ; le collage passe par la
 |---|---|---|---|
 | 16 | `20261022000600_cand_l3_inscription_import_rapprochement.sql` | 6 | directeur (éditeur SQL) |
 | 17 | `20261023000000_classes_duree_bout_en_bout.sql` | 0 | directeur (page de collage), détail ci-dessous |
+| 18 | `20261024000000_cand_nom_latin.sql` | 0 | directeur (page de collage), détail ci-dessous |
 
 Après chaque fichier, Claude vérifie en lecture (`list_migrations`, présence des tables et
 fonctions, droits) avant le suivant. Une erreur arrête la suite ; rien n'est réessayé à
 l'aveugle.
+
+### Détail du fichier 18 (le nom en lettres latines)
+
+- Ajouté le 23/10/2026 pour la décision « Les noms dans une seule écriture sur les listes »
+  (`DECISION-CANDIDATURES-2026-10-21.md`). Décompte par `grep -ciw 'delete\|drop\|truncate'` (commentaires
+  compris) : **0**. Le fichier passe donc sans la seconde confirmation du serveur ; il garde `BEGIN;` et
+  `COMMIT;` : à coller par la page de collage (enveloppe contre les fins de ligne de Windows), comme la règle du
+  23/10.
+- **Ce qu'elle fait** : deux colonnes sur `candidatures` (`nom_latin`, `nom_latin_confirme_le`, nulles ensemble) ;
+  une aide privée `private.nom_est_latin` (aucun compte ne l'exécute) ; `private.cand_ligne_json` rend deux clés de
+  plus (`nomLatin`, `nomLatinAConfirmer`) ; deux RPC pour le titulaire d'une candidature (`lire_nom_latin`,
+  `confirmer_nom_latin`) ; `lister_candidatures` redéfinie (la recherche porte aussi sur le nom latin, le tri par nom
+  suit le nom latin). Aucune table nouvelle, aucune policy touchée, aucune donnée existante modifiée.
+- **Ordre** : après le 17 ; elle ne dépend que du 16 (`private.candidature_du_titulaire`, `lister_candidatures` du
+  fichier `20261022000500`, déjà posé avant le 16).
+- **Rejeu local** : scénario `supabase/tests/scenarios_cand_nom_latin.sql` (59 contrôles), rouge sans la migration ;
+  rejeu complet avec les 18 fichiers : 126 scénarios verts sur 127 (le rouge est `scenarios_af_liste_blanche_volatiles`,
+  pour les quatre fonctions `avis_*`, antérieur ; `confirmer_nom_latin` y est déclarée). Deux scénarios antérieurs
+  (`scenarios_cand_l1_socle`, `scenarios_cand_autres_competences`) comptaient les clés d'une ligne de liste : mis à
+  vingt et une clés.
+- **Vérification de Claude après application** : les deux colonnes présentes, les trois fonctions de `public` à
+  l'empreinte F86 du dépôt (commentaire `md5_functiondef` à jour), aucune fonction nouvelle exécutable par `anon`,
+  `service_role` ni `agent_ro`, `private.nom_est_latin` exécutable par personne, `lister_candidatures` rend une
+  ligne à 21 clés.
+- **Liste blanche des volatiles** : `confirmer_nom_latin(text)` est ajoutée à
+  `supabase/tests/scenarios_af_liste_blanche_volatiles.sql` (garde positive sur la candidature du titulaire).
 
 ## Ce que la base de test permettra ensuite
 

@@ -197,8 +197,10 @@ void main() {
         findsWidgets,
         reason: 'le rappel nomme le niveau',
       );
-      expect(find.text(t.admin.journal.effacerFiltres), findsOneWidget);
-      await tester.tap(find.text(t.admin.journal.effacerFiltres));
+      // « Tout effacer » : une seule fois, sous la rangee des filtres en cours
+      // (l'etat « aucun resultat » ne le redit pas quand les puces l'offrent).
+      expect(find.text(t.commun.listes.toutEffacer), findsOneWidget);
+      await tester.tap(find.text(t.commun.listes.toutEffacer).last);
       await laisser(tester);
       expect(port.appels.last.filtre.estVide, isTrue);
     });

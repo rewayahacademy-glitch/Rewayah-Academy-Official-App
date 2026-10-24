@@ -35,6 +35,8 @@ Sources : les décisions du directeur (annexe 10 du dossier maître, spécificat
 | Accueil · Foyer · Historique · Compte (navigation du tuteur) | Disponibilités, Suivi, Réglages en onglet principal |
 | Aujourd'hui · Apprendre · Suivi · Profil (élève adulte) | la navigation du tuteur recopiée |
 | Journée · Créneaux · Profil (enseignant) | une quatrième entrée |
+| Déposer ma candidature (enseignant sans code) · Envoyer ma candidature (bouton du récapitulatif) · J'ai un code d'invitation | s'inscrire comme enseignant, devenir prof |
+| Indicatif du pays (téléphone) · politique de confidentialité | code pays, préfixe, charte, RGPD |
 
 ## 3. Les mots du programme
 

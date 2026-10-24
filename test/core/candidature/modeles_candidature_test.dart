@@ -113,28 +113,34 @@ void main() {
       expect(c.etape, isNull);
     });
 
-    test('versement pas encore possible : l etat que le serveur rend se lit', () {
-      // `paiement_non_disponible` est une valeur de `candidatures.etat`
-      // (transition 8 de L6) : lue comme telle, jamais ignoree en `null`.
-      final CandidatureDossier c = CandidatureDossier.depuisJson(
-        _bloc(etat: 'paiement_non_disponible')..['paiement'] = 'incompatible',
-      );
-      expect(c.etat, EtatCandidature.paiementNonDisponible);
-      expect(c.enSalleExamen, isTrue);
-      expect(c.questionnaireOuvert, isFalse);
-      expect(c.peutRetirer, isTrue);
-    });
+    test(
+      'versement pas encore possible : l etat que le serveur rend se lit',
+      () {
+        // `paiement_non_disponible` est une valeur de `candidatures.etat`
+        // (transition 8 de L6) : lue comme telle, jamais ignoree en `null`.
+        final CandidatureDossier c = CandidatureDossier.depuisJson(
+          _bloc(etat: 'paiement_non_disponible')..['paiement'] = 'incompatible',
+        );
+        expect(c.etat, EtatCandidature.paiementNonDisponible);
+        expect(c.enSalleExamen, isTrue);
+        expect(c.questionnaireOuvert, isFalse);
+        expect(c.peutRetirer, isTrue);
+      },
+    );
 
-    test('le serveur rend la cle du modele, pas son texte (lot L5 a venir)', () {
-      // `etat_dossier()` rend `pauseModele` et `refusModele` (cles) : aucun
-      // texte, donc rien a afficher, et jamais la cle elle-meme.
-      final Map<String, dynamic> brut = _bloc(enPause: true)
-        ..['pauseModele'] = 'pause_attente_besoin'
-        ..['refusModele'] = null;
-      final CandidatureDossier c = CandidatureDossier.depuisJson(brut);
-      expect(c.pauseTexte, isNull);
-      expect(c.refusTexte, isNull);
-    });
+    test(
+      'le serveur rend la cle du modele, pas son texte (lot L5 a venir)',
+      () {
+        // `etat_dossier()` rend `pauseModele` et `refusModele` (cles) : aucun
+        // texte, donc rien a afficher, et jamais la cle elle-meme.
+        final Map<String, dynamic> brut = _bloc(enPause: true)
+          ..['pauseModele'] = 'pause_attente_besoin'
+          ..['refusModele'] = null;
+        final CandidatureDossier c = CandidatureDossier.depuisJson(brut);
+        expect(c.pauseTexte, isNull);
+        expect(c.refusTexte, isNull);
+      },
+    );
 
     test('le texte d un modele se lit mot pour mot, jamais un motif', () {
       final Map<String, dynamic> brut = _bloc(enPause: true)
@@ -275,24 +281,26 @@ void main() {
       );
     });
 
-    test('les moyens de paiement connus portent leur nom propre et leur methode',
-        () {
-      final Questionnaire q = Questionnaire.depuisJson(
-        questionnaireJsonDeTest(),
-      );
-      final List<OptionQuestionnaire> moyens = q
-          .champ('moyensAccessibles')!
-          .options;
-      expect(moyens.map((OptionQuestionnaire o) => o.code), <String>[
-        'wave',
-        'orange_money',
-        'moov_money',
-      ]);
-      expect(moyens.first.nom, 'Wave');
-      expect(moyens.first.methode, 'mobile_money');
-      // Une option de langue n'a ni nom ni methode : son texte vient de i18n.
-      expect(q.champ('languesExplication')!.options.first.nom, isNull);
-    });
+    test(
+      'les moyens de paiement connus portent leur nom propre et leur methode',
+      () {
+        final Questionnaire q = Questionnaire.depuisJson(
+          questionnaireJsonDeTest(),
+        );
+        final List<OptionQuestionnaire> moyens = q
+            .champ('moyensAccessibles')!
+            .options;
+        expect(moyens.map((OptionQuestionnaire o) => o.code), <String>[
+          'wave',
+          'orange_money',
+          'moov_money',
+        ]);
+        expect(moyens.first.nom, 'Wave');
+        expect(moyens.first.methode, 'mobile_money');
+        // Une option de langue n'a ni nom ni methode : son texte vient de i18n.
+        expect(q.champ('languesExplication')!.options.first.nom, isNull);
+      },
+    );
 
     test('le nombre de Classes propose va de 1 au maximum de la direction', () {
       for (final int max in <int>[1, 3, 5]) {

@@ -94,9 +94,7 @@ class _PeintreLogoGoogle extends CustomPainter {
 /// Le signe moins fait office de separateur dans les donnees officielles
 /// (`0-1.56-.14`), et un nombre peut s'ecrire sans son zero de tete (`.69`) :
 /// c'est pourquoi la lecture se fait par balayage et non par `split`.
-final RegExp _jeton = RegExp(
-  r'[MmLlHhVvCcSsZz]|-?\d*\.?\d+(?:[eE][-+]?\d+)?',
-);
+final RegExp _jeton = RegExp(r'[MmLlHhVvCcSsZz]|-?\d*\.?\d+(?:[eE][-+]?\d+)?');
 
 final RegExp _lettre = RegExp(r'^[MmLlHhVvCcSsZz]$');
 

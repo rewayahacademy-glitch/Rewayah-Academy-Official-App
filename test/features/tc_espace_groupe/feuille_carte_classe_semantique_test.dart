@@ -92,10 +92,7 @@ void main() {
         _champ(tester, FeuilleCarteClasse.texteKey).label,
         contains(texte),
       );
-      expect(
-        _champ(tester, FeuilleCarteClasse.lienKey).label,
-        contains(lien),
-      );
+      expect(_champ(tester, FeuilleCarteClasse.lienKey).label, contains(lien));
 
       // Le nom ecrit au-dessus n'est pas un noeud lu a part : un seul noeud
       // le porte, celui du champ.

@@ -100,7 +100,10 @@ void main() {
       final List<TeacherStudentProjection> roster = composerRoster(
         presences: <PresenceParticipant>[
           for (int i = 0; i < 15; i++)
-            presenceDe(profilId: 'p$i', prenom: 'Eleve${i.toString().padLeft(2, '0')}'),
+            presenceDe(
+              profilId: 'p$i',
+              prenom: 'Eleve${i.toString().padLeft(2, '0')}',
+            ),
         ],
       );
       expect(roster, hasLength(15));

@@ -65,8 +65,8 @@ class CouvertureRessource {
       // Le Coran prend l'index reserve ; les autres se repartissent sur les
       // teintes restantes.
       indexTeinte: coran ? 0 : 1 + graine % (nombreTeintes - 1),
-      motif: MotifCouverture.values[graine ~/ nombreTeintes %
-          MotifCouverture.values.length],
+      motif: MotifCouverture
+          .values[graine ~/ nombreTeintes % MotifCouverture.values.length],
       monogramme: monogrammeDe(ressource),
       type: ressource.resourceType,
     );
@@ -125,14 +125,14 @@ class CouvertureRessource {
   /// de l'identifiant plutot que de rendre un point d'interrogation, pour que
   /// deux ressources sans titre ne portent pas la meme vignette.
   static String monogrammeDe(LibraryResource ressource) {
-    for (final String source in <String>[ressource.shortTitle, ressource.title]) {
+    for (final String source in <String>[
+      ressource.shortTitle,
+      ressource.title,
+    ]) {
       final String m = _initiales(source);
       if (m.isNotEmpty) return m;
     }
-    final String secours = ressource.id.replaceAll(
-      RegExp(r'[^0-9A-Za-z]'),
-      '',
-    );
+    final String secours = ressource.id.replaceAll(RegExp(r'[^0-9A-Za-z]'), '');
     return secours.isEmpty
         ? '?'
         : secours.substring(0, secours.length < 2 ? 1 : 2).toUpperCase();

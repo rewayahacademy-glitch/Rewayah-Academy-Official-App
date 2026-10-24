@@ -787,6 +787,7 @@ void main() {
         Routes.inscriptionUsage,
         Routes.inscriptionIdentite,
         Routes.inscriptionGenre,
+        Routes.inscriptionTelephone,
         Routes.inscriptionRecapitulatif,
       ]) {
         expect(
@@ -799,6 +800,25 @@ void main() {
           reason: chemin,
         );
       }
+    });
+
+    test('l etape du telephone est fermee a un compte deja profile', () {
+      expect(
+        deciderRedirection(
+          session: _session(role: AppRole.teacher),
+          cheminDemande: Routes.inscriptionTelephone,
+          maintenant: maintenant,
+        ),
+        isNot(isNull),
+      );
+      expect(
+        deciderRedirection(
+          session: _session(role: AppRole.teacher),
+          cheminDemande: Routes.inscriptionTelephone,
+          maintenant: maintenant,
+        ),
+        isNot(Routes.inscriptionTelephone),
+      );
     });
 
     test('un compte deja profile ne peut pas revenir a l inscription', () {

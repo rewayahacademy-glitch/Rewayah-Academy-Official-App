@@ -63,7 +63,7 @@ opérateur ; `docs/archive/2026-09-pre-remise-a-plat/design/03-architecture-info
 
 | Code | Écran | Capacité | Niv. | Prof. | Route | Mobile | Desktop | État |
 | :--- | :--- | :--- | :-: | :-: | :--- | :--- | :--- | :--- |
-| `CAND-04` (étend `TUT-00c`) | Inscription sans code | session sans profil ; ouverture lue au serveur | A puis C | 0 | `/connexion?mode=creer`, puis `/inscription/usage`, `/inscription/invitation`, `/inscription/telephone` (neuve) | Pages courtes (`CoquilleEtape` sur `PageEtape`) | Colonne bornée, cartes de choix en bento | **proposée** |
+| `CAND-04` (étend `TUT-00c`) | Inscription sans code | session sans profil ; ouverture lue au serveur | A puis C | 0 | `/connexion?mode=creer`, puis `/inscription/usage`, `/inscription/invitation`, `/inscription/telephone` (neuve) | Pages courtes (`CoquilleEtape` sur `PageEtape`) | Colonne bornée, cartes de choix en bento | **construit (23/10/2026), frontend seul, sur le serveur du lot L3 (`testé localement`, ni staging ni déployé)** : entrée sans code, étape téléphone, récapitulatif du candidat (voir « Construit le 23/10/2026 » dans la fiche) |
 | `TUT-00b` étendu | Portail de la candidature | titulaire ; état rendu par `etat_dossier()` | C | 0 | `/attente` | Blocs empilés | Grille bento | **proposée** |
 | `CAND-01` | Questionnaire de la Salle d'examen | titulaire ; `PortMaCandidature` | C | 1 | `/attente/candidature` (neuve) | Cartes par thème | Colonne bornée, choix en bento | **proposée** |
 | `TUT-00c/a+b` étendu | Page d'accords | titulaire ; textes requis rendus par le serveur | C | 1 | `/attente/accords` | Une page qui défile | Colonne bornée | **proposée** |
@@ -80,7 +80,7 @@ opérateur ; `docs/archive/2026-09-pre-remise-a-plat/design/03-architecture-info
 | `ADM-21F` | Fil « Candidature » | `candidatures.messages` | E | 3 | `/admin/personnes/candidatures/<référence>/fil` | Fil seul | Fil seul | **proposée** |
 | `ADM-21R` | Compte rendu d'entretien | `entretiens.mener`, intervieweur désigné | E | 3 | `/admin/personnes/candidatures/<référence>/compte-rendu` | Tâche focalisée | Formulaire borné | **proposée** (écran ajouté ici) |
 | `ADM-22` | Action groupée | `candidatures.decider` | E | 2 | `/admin/personnes/candidatures/action-groupee` | Page | Page, liste et effet côte à côte | **proposée** |
-| `ADM-23` | Import des formulaires | `candidatures.importer` | E | 2 | `/admin/personnes/candidatures/import` | Pas l'un sous l'autre | Rail des pas au début, contenu à la fin | **proposée** |
+| `ADM-23` | Import des formulaires | `candidatures.importer` | E | 2 | `/admin/personnes/candidatures/import` | Pas l'un sous l'autre | Rail des pas au début, contenu à la fin | **construit (23/10/2026), testé localement, ni testé sur staging ni déployé** : les huit pas sur les RPC de `CAND-L3` ; le lien d'entrée dans `ADM-20` reste à poser (voir « Construit le 23/10/2026 » dans la fiche) |
 | `ADM-24` | Compatibilité de paiement par pays (onglet « Versement par pays ») | `paiement.referentiel.ecrire` | E | 1 | `/admin/finance/paiement-pays` (neuve) | Cartes par pays | Tableau dense, fiche en boîte de dialogue | **proposée** |
 | `ADM-02` étendu | Dossiers à valider | décision : `candidatures.decider`, sur un dossier que le serveur rend porteur d'une candidature | E | 1 | `/admin/personnes/dossiers` (inchangée) | Inchangé | Inchangé (336, 24, 728) | **proposée** |
 
@@ -410,7 +410,9 @@ avant l'état `envoye`.
 
 ### CAND-04 : Inscription sans code (étend TUT-00c)
 
-- **Statut** : proposée, à valider par le directeur.
+- **Statut** : construit le 23/10/2026 sur ordre explicite du directeur (frontend seul), sur le
+  serveur du lot L3 (`testé localement` ; ni `testé sur staging` ni `déployé`) ; à valider par le
+  directeur. Voir « Construit le 23/10/2026 », en fin de fiche.
 - **Tâche** : une personne venue du lien de la page « recrutement » du site crée son
   compte de candidat, sans code d'invitation. L'invité suit le même chemin avec son
   code : même compte, même candidature, seule la provenance diffère (`CONS` 3.3).
@@ -502,7 +504,7 @@ avant l'état `envoye`.
 | `inscription.usage.deposerCandidature` | Déposer ma candidature | à traduire ; usage et code d'invitation |
 | `inscription.usage.enseignant` | J'ai un code d'invitation | existante |
 | `inscription.telephone.question` | Votre numéro de téléphone | à traduire |
-| `inscription.telephone.explication` | Il sert à reconnaître vos réponses aux anciens formulaires et à éviter les doublons. L'académie vous écrit dans l'application. Il n'est jamais montré aux autres personnes qui postulent. | à traduire |
+| `inscription.telephone.explication` | Il sert à éviter les doublons et à relier vos échanges avec l'académie à votre candidature. L'académie vous écrit dans l'application. Il n'est jamais montré aux autres personnes qui postulent. (Révisé le 23/10 : la phrase sur « les anciens formulaires » parlait à des gens qui n'en ont jamais rempli.) | à traduire |
 | `inscription.telephone.indicatif` | Indicatif du pays | à traduire |
 | `inscription.telephone.numero` | Numéro, sans l'indicatif | à traduire |
 | `inscription.telephone.indicatifManquant` | Choisissez l'indicatif de votre pays. | à traduire |
@@ -511,8 +513,11 @@ avant l'état `envoye`.
 | `inscription.confidentialite.case` | J'ai lu et j'accepte la politique de confidentialité. | à traduire |
 | `inscription.confidentialite.lire` | Lire la politique de confidentialité | à traduire |
 | `inscription.creer` | Créer mon compte | existante |
-| `inscription.candidat.creationEchec` | Votre compte n'a pas pu être créé. | à traduire |
-| `inscription.candidat.horsLigne` | Le compte pourra être créé quand la connexion reviendra. | à traduire |
+| `inscription.candidat.creationEchec` | Votre candidature n'est peut-être pas partie. Réessayez dans un instant. | à traduire |
+| `inscription.candidat.envoyer` | Envoyer ma candidature (bouton plein du récapitulatif du candidat ; `inscription.creer` reste celui du tuteur et de l'élève adulte) | à traduire |
+| `inscription.candidat.accueil` | Vous déposez une candidature pour enseigner à Rewayah. Cela ne vous engage à rien. (sous le titre de l'identité) | à traduire |
+| `inscription.candidat.ensuite` | Ensuite, la direction lit votre candidature et vous écrit dans l'application. (récapitulatif) | à traduire |
+| `inscription.candidat.horsLigne` | La candidature pourra être envoyée quand la connexion reviendra. | à traduire |
 | `inscription.candidat.courrielAConfirmer` | Confirmez d'abord votre adresse : ouvrez le lien reçu par courriel. | à traduire |
 | `inscription.candidat.nonOuverte` | Les candidatures sans code ne sont pas encore ouvertes. Si la direction vous a remis un code, saisissez-le. | à traduire |
 | `connexion.lienEnvoye` | Lien envoyé | existante |
@@ -539,6 +544,64 @@ avant l'état `envoye`.
   un courriel connu et un plafond atteint ; la version de confidentialité
   enregistrée est celle affichée ; création refusée à l'écran sans genre ni
   indicatif ; 5.7.
+
+**Construit le 23/10/2026.** Fichiers : `lib/core/candidature/port_inscription_candidat.dart` (port,
+dix résultats typés, `portInscriptionCandidatProvider`, `ouvertureInscriptionCandidatProvider`),
+`lib/core/candidature/inscription_candidat_supabase.dart` (adaptateur des RPC
+`inscription_candidat_ouverte` et `inscrire_candidat`), `lib/core/i18n/indicatifs_telephoniques.dart`
+(248 pays, un indicatif chacun, `telephoneInternational`),
+`lib/features/inscription/etapes/telephone_etape.dart` (étape neuve),
+`etapes/recapitulatif_etape.dart` (branche candidat), `etapes/usage_etape.dart`,
+`brouillon_inscription.dart` (`etapesPour`, `etapesCandidat`), `inscription_page.dart`
+(`CoquilleEtape` : bouton plein facultatif), `lib/features/recrutement/invitation_candidat_page.dart`,
+`lib/features/candidature/choix_avec_recherche.dart` (mots-clés de recherche, noms qui commencent par
+ce qui est tapé d'abord), `Routes.inscriptionTelephone`, `lib/main.dart`.
+
+- **Parcours** : l'enseignant, avec ou sans code, a cinq étapes (usage, identité, genre, téléphone,
+  récapitulatif) ; le tuteur, l'élève adulte et le comptable gardent leurs quatre étapes et leur
+  récapitulatif (testé). Le téléphone : l'indicatif se **choisit** (cartes des pays courants de
+  `CAND-01`, puis « Un autre pays » et une recherche par nom en français, en arabe ou par
+  l'indicatif), le numéro se **saisit** sans l'indicatif et part au format que le serveur lit (`+`,
+  indicatif, numéro sans son 0 national, sauf Italie, Côte d'Ivoire, Gabon et Bénin ; 8 à 15
+  chiffres). Le récapitulatif ajoute le téléphone, la **langue** (deux cartes décrites, la langue de
+  l'écran déjà retenue ; toucher l'autre change l'écran tout de suite et c'est cette langue qui part)
+  et la **case de confidentialité** (jamais précochée, exigée à l'écran, lien « Lire la politique de
+  confidentialité », ligne de version) : la version envoyée est `VersionsJuridiques.version`, celle de
+  la ligne affichée.
+- **Appels serveur** : `inscription_candidat_ouverte()` à l'ouverture de l'usage et de la page du
+  code (une lecture qui échoue, ou un lot absent, rend « fermée » : rien de plus n'est proposé) ;
+  `inscrire_candidat(p_code, prénom, nom, genre, téléphone, langue, version)` à « Créer mon compte ».
+  Refus traduits : `fermee` (« Les candidatures sans code ne sont pas encore ouvertes… », lien vers
+  le code, aucun bouton plein) ; `courriel_non_confirme` ; `invalide` (champs nommés, retour aux
+  réponses) ; `inconnue`, `deja_utilisee`, `expiree` (texte existant, code oublié) ;
+  `confidentialite_requise`, `_perimee`, `_indisponible` ; 42501 (compte déjà profilé : on relit et
+  on entre) ; lot absent ; panne (issue non confirmée, « Réessayer »).
+- **Réponse neutre (`CAND-F03`)** : le plafond se joue dans `inscrire_candidat`, après le lien. Le
+  serveur rend `acceptee` dans les deux cas ; l'écran ne les distingue pas : il relit la session et va
+  à `/attente`. Si le routeur renvoie la personne au récapitulatif (aucun profil), elle lit « Votre
+  compte n'a pas pu être créé. » et « Réessayer », qui rejoue l'appel. La clé
+  `inscription.candidat.reponseNeutre` n'est donc pas créée (elle n'aurait servi qu'avec un plafond
+  placé avant le lien). Aucun texte ne dit qu'une adresse ou un téléphone est connu (testé).
+- **États** : chargement (bouton en cours), contenu ; vide sans objet ; erreur ; hors ligne (bouton
+  non rendu, phrase de la fiche, ton neutre : le bandeau dit déjà que le réseau manque) ; capacité
+  indisponible ; case manquante ; courriel à confirmer ; champs à corriger ; code refusé ; entrée
+  sans code fermée.
+- **Écarts à la fiche, à valider** : (1) la langue est un choix du récapitulatif, pas une étape ;
+  (2) l'enseignant avec code passe aussi par `inscrire_candidat` : le service de profil du tuteur
+  n'est plus appelé pour l'enseignant (la fusion du client doit suivre l'application de la migration
+  `20261022000600`) ; (3) onze textes neufs, déclarés dans `tool/libelles_sources.json`
+  (`inscription.telephone.numeroInvalide`, `.changerIndicatif`, `inscription.langue.*Explication`,
+  `*Exemple`, `inscription.confidentialite.requise`, `inscription.candidat.nonConfirmee`,
+  `.aCorriger`, `.confidentialitePerimee`, `.indisponible`) ; (4) les 21 textes arabes de la page du
+  code d'invitation, qui manquaient, sont traduits ; `inscription.*` : 87 clés sur 87 en arabe.
+- **Limites** : serveur : au-delà du plafond, la réponse est la même que le succès et un second
+  appel d'une même session sans profil rend encore `acceptee` (limite écrite dans `CONS` 0.2 bis,
+  acceptée ou à trancher par le directeur) ; l'ouverture ne dit pas l'état du plafond ; mise en
+  ligne : SMTP d'authentification, `enable_confirmations`, texte de confidentialité complété et relu
+  par le juriste, feu vert du directeur (`CONS` 3.1, ligne 6). Client : la langue choisie n'est
+  gardée que pour la session (aucune préférence de langue persistée) ; la phrase d'introduction de la
+  saisie du code se coupe à 320 px en texte ×2 (antérieure) ; le choix d'un pays montre vingt cartes
+  avant la recherche (la liste de `CAND-01`).
 
 ### TUT-00b étendu : Portail de la candidature (`/attente`)
 
@@ -2297,7 +2360,8 @@ le code et testé en local ; rien n'est testé sur staging ni déployé.
 
 ### ADM-23 : Import des formulaires
 
-- **Statut** : proposée, à valider par le directeur.
+- **Statut** : proposée, à valider par le directeur ; **construite le 23/10/2026** sur les RPC
+  de `CAND-L3` (bloc « Construit le 23/10/2026 » en fin de fiche).
 - **Tâche** : importer une fois les réponses des formulaires Google, pour reconnaître
   et pré-remplir, sans créer de compte ni de candidature.
 - **Route** : `/admin/personnes/candidatures/import`, distincte de
@@ -2374,6 +2438,51 @@ le code et testé en local ; rien n'est testé sur staging ni déployé.
 - **Contrôles d'acceptation** : L3-4, L3-5, L3-6, L3-10, L3-11, L3-15, L3-16 ;
   widget : 0 courriel et 0 téléphone rendus aux pas 2 à 8, clés de doublon
   comprises ; 0 nom au rapport ; lien absent sans `peutImporter` ; 5.7.
+
+**Construit le 23/10/2026.** Statuts : *spécifié* (cette fiche), *présent dans le code*, *testé
+localement* (tests de widget et de modèle, captures) ; **non testé sur staging, non déployé**.
+Fichiers : `lib/core/candidature/modeles_import_candidatures.dart`, `fichier_formulaires.dart`
+(lecture du CSV sur l'appareil), `port_import_candidatures.dart` (`capacites`, `apercu`,
+`confirmer`), `import_candidatures_supabase.dart` ; `lib/features/admin_import_formulaires/`
+(contrôleur, huit pas, composants, mots) ; route `Routes.adminPersonnesCandidaturesImport`
+déclarée avant `:reference` (R5) ; surcharge du port dans `main.dart` ; textes
+`admin.importFormulaires.*` en français et en arabe (le groupe des lignes à vérifier s'appelle
+`controle`, pour ne pas heurter la règle `erreur-sans-action`) ; double
+`test/fixtures/candidature/faux_import_candidatures.dart`.
+
+- **Parcours rendu** : une question par écran, au toucher. 1 la carte du fichier (classeur et onglet
+  déduits du nom « classeur - onglet.csv », deux champs seulement s'il faut les corriger) ; 2 l'aperçu
+  (contacts masqués) ; 3 la liste des colonnes, et la question d'une colonne en lignes (quinze choix :
+  la grille des grands écrans est faite pour deux à cinq) ; 4 les doublons, par cas : la **nature** de la
+  clé, jamais sa valeur ; 5 les lignes à corriger, à regarder, ignorées, sans nom ; 6 les quatre
+  compteurs du serveur et le décompte attendu en trois cartes (fichier du 21/10 : 440 lignes, 409
+  personnes ; d'autres nombres : seul endroit où l'on tape, des chiffres ; aucun) ; 7 la confirmation ;
+  8 le rapport sans nom (référence source, issue), deux liens et aucun bouton plein. Téléphone : barre
+  de progression ; tablette : huit disques ; bureau : rail des pas à 336 au début, pas à 728.
+- **Rien n'est dit importé avant la réponse du serveur.** Pendant l'envoi le bouton tourne et
+  « Retour » n'est pas rendu ; une réponse perdue laisse « Import non confirmé » et la même clé
+  d'idempotence (`import-<uuid>`, gardée jusqu'au succès ou à un changement du fichier, des noms ou
+  du mappage) rejoue la demande ; `jeton_perime`, `choix_invalide`, `cle_idempotence_reutilisee` :
+  rien n'est écrit, « Relancer l'analyse » ramène au pas des doublons.
+- **Refus du serveur traduits** : `double_verification_requise` (rendu d'emblée par la capacité, ou en
+  route) devient « Double vérification requise » et un bouton « Me reconnecter » qui met fin à la
+  session (il n'existe pas, dans l'application, d'écran qui monte la session en aal2 sans la fermer) ;
+  `42501` : « Import réservé » ; `22023` : une phrase qui dit quoi vérifier ; `PGRST202`/`42883` :
+  « Disponible au branchement serveur » (`CAND-BR-09`) ; `fichier_illisible`, `fichier_vide`,
+  `entetes_ambigus`, `mappage_incomplet` : leur cause en mots et la colonne à associer ; un code inconnu :
+  « un point est à vérifier dans cette ligne » (aucun code n'est jamais montré).
+- **Écarts à la fiche, à valider** : sans choix, la ligne la plus récente est gardée (`CAND-Q16`) et
+  l'écran le dit, au lieu de « reste à corriger » ; le fuseau envoyé est fixe (UTC) ; le décompte du
+  21/10 vient de `MAPPAGE_IMPORT_FORMULAIRES` §6.
+- **Limites du serveur** : la table des libellés (« ذكر » veut dire homme) n'est pas rendue, l'écran ne
+  peut ni la montrer ni la corriger et signale les libellés inconnus ligne par ligne ; `fichier_illisible`
+  ne dit pas la ligne (le client la retrouve pour un guillemet non refermé) ; les compteurs de
+  l'aperçu ignorent les choix de doublons ; rien ne relit les réponses importées après l'import
+  (`CAND-F13`).
+- **Entrée à poser dans `ADM-20`** (`lib/features/admin_candidatures/candidatures_page.dart`) : un
+  `LienFleche` « Importer les formulaires » (`t.admin.importFormulaires.lienEntree`), rendu
+  seulement quand `capacitesCandidaturesProvider` rend `peutImporter` vrai (absent sinon, jamais
+  grisé), qui ouvre `GoRouter.of(context).push(Routes.adminPersonnesCandidaturesImport)`.
 
 ### ADM-24 : Compatibilité de paiement par pays
 
@@ -2540,3 +2649,14 @@ questions de suivi `CAND-S01` à `CAND-S11`, sans les remplacer.
 | `CAND-F14` | **Le fil `candidature` reste-t-il ouvert après un retrait ou un refus ?** `CONS` 7.1 admet le compte en attente pour cet objet sans le dire. | Tant que L5 ne l'a pas fixé, aucun texte ne renvoie au fil après un retrait ou un refus, et le lien « Écrire à l'académie » n'est rendu que si le serveur ouvre le fil. | L5, puis directeur |
 | `CAND-F15` | **Brouillon du questionnaire.** `PORTS` n'avait qu'`envoyerReponses`, sans brouillon : des réponses partielles n'étaient gardées nulle part. | Brouillon local à l'appareil (cache borné et effaçable, `C/02_ARCHITECTURE_ET_SECURITE.md`, règle 7) ou au serveur (méthode à ajouter à `PORTS`) ? **Réponse proposée par L2A1 le 22/10, en attente du directeur** : brouillon au serveur (`enregistrerBrouillon`, sa propre version, sans effet sur la version de la candidature), et toutes les questions rouvertes après un complément, quand cette fiche n'en rouvrirait que les nommées (`CONS` 0.2 bis). D'ici sa réponse, quitter `CAND-01` sans envoyer l'annonce avant (`ConfirmDestructive`). | L2 (fait, proposé), puis directeur |
 | `CAND-F16` | `CAND-01` propose le pays de versement égal au pays de résidence (K-57, déduit). `CONS` 3.4 interdit de pré-remplir le pays depuis l'import ; ici la valeur viendrait de la réponse que la personne vient de donner. | Proposer, jamais imposer : la valeur reste modifiable, et rien n'est envoyé sans un pays de versement choisi. | directeur |
+
+**Reprise du 23/10/2026 (relectures de CAND-04).** Corrigé : l'invité garde l'ancien chemin
+(`creer_profil_inscription` avec son code) tant que `inscrire_candidat` n'est pas sur le serveur
+(`CapaciteIndisponible` avec code), sans téléphone ni langue ; sans code, la phrase « pas disponible ».
+La version de confidentialité est comparée à celle du serveur (`inscription_candidat_ouverte`) **avant**
+l'envoi : si elle diffère, rien n'est envoyé et la phrase dit de recharger la page ; `confidentialite_requise`
+n'est plus présenté comme un texte périmé. Après un « acceptée » dont la session ne se relit pas, le code
+reste retenu et « Réessayer » rejoue l'envoi avec lui (jamais le champ du code). Le bouton du candidat dit
+« Envoyer ma candidature ». Écarté : l'étape 1 du candidat existe (le lien « Déposer ma candidature » est sur
+l'écran d'usage, qui compte pour 1) ; le 42501 reste traité comme une suite (limite : l'adaptateur ne distingue
+pas une session sans profil d'une session déjà inscrite, le routeur décide).

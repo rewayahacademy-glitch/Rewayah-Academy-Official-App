@@ -36,7 +36,9 @@ void main() {
     });
 
     test('l Admin incognito est invisible aux participants, sans annonce', () {
-      final CapacitesObservateur c = capacitesDe(RoleObservateur.adminIncognito);
+      final CapacitesObservateur c = capacitesDe(
+        RoleObservateur.adminIncognito,
+      );
 
       expect(c.visibleDesParticipants, isFalse);
       expect(c.annonceFaite, isFalse);
@@ -45,15 +47,20 @@ void main() {
       expect(c.publicationData, isFalse);
     });
 
-    test('l Admin visible parle, sous un nom institutionnel, et est annonce', () {
-      final CapacitesObservateur c = capacitesDe(RoleObservateur.adminVisible);
+    test(
+      'l Admin visible parle, sous un nom institutionnel, et est annonce',
+      () {
+        final CapacitesObservateur c = capacitesDe(
+          RoleObservateur.adminVisible,
+        );
 
-      expect(c.visibleDesParticipants, isTrue);
-      expect(c.annonceFaite, isTrue);
-      expect(c.micro, isTrue);
-      expect(c.camera, isTrue);
-      expect(nomInstitutionnelAdmin, 'Administration Rewayah');
-    });
+        expect(c.visibleDesParticipants, isTrue);
+        expect(c.annonceFaite, isTrue);
+        expect(c.micro, isTrue);
+        expect(c.camera, isTrue);
+        expect(nomInstitutionnelAdmin, 'Administration Rewayah');
+      },
+    );
 
     test('le Controleur est incognito, et ce chantier ne lui offre pas le choix', () {
       final CapacitesObservateur c = capacitesDe(RoleObservateur.controleur);

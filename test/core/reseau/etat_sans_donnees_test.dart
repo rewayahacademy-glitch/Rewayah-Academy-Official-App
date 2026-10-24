@@ -313,6 +313,9 @@ void main() {
       'dossiers.revue.etats.decisionIndisponible',
       'dossiers.refus.indisponible',
       'dossiers.validation.indisponible',
+      // L'inscription du candidat dont le lot serveur est absent
+      // (`CapaciteIndisponible`, CAND-04) : fait annonce par le serveur.
+      'inscription.candidat.indisponible',
       // Aucun moteur de recherche n'est raccorde en production : fait de
       // l'application, pas cause supposee d'un echec (RECH-0, INTEG-NUIT-2).
       'recherche.etats.nonRaccorde.titre',

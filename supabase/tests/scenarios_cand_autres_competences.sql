@@ -1146,7 +1146,7 @@ SELECT pg_temp.vrai((pg_temp.en(pg_temp.p('a2'), 'admin', $$SELECT public.journa
             LIKE '%candidature_autres_competences_retirees%'),
   'les totaux du journal (journal_audit_filtres) ne comptent que le cote du lecteur : une ecriture de candidate, aucun retrait');
 
--- La liste garde ses dix-neuf cles et ne porte aucune reponse.
+-- La liste garde ses vingt et une cles (CAND-NOM-LATIN : nomLatin, nomLatinAConfirmer) et ne porte aucune reponse.
 SELECT pg_temp.garde('lst', pg_temp.en(pg_temp.p('a1'), 'admin', $$SELECT public.lister_candidatures('{}', 'nom', 1)$$));
 SELECT pg_temp.vrai(NOT EXISTS (
       SELECT 1 FROM jsonb_array_elements(pg_temp.lu('lst') -> 'lignes') l
@@ -1154,11 +1154,11 @@ SELECT pg_temp.vrai(NOT EXISTS (
             (SELECT array_agg(x ORDER BY x) FROM unnest(ARRAY['id', 'reference', 'nomComplet', 'type',
               'etape', 'etat', 'issue', 'enPause', 'repriseLe', 'restreinte', 'indisponible',
               'indisponibleJusquAu', 'paiement', 'paysResidence', 'responsableId', 'courrielAObtenir',
-              'indicatifAConfirmer', 'derniereActivite', 'recueLe']) x))
+              'indicatifAConfirmer', 'derniereActivite', 'recueLe', 'nomLatin', 'nomLatinAConfirmer']) x))
   AND jsonb_array_length(pg_temp.lu('lst') -> 'lignes') = 18
   AND pg_temp.lu('lst')::text NOT LIKE '%comptabilite%' AND pg_temp.lu('lst')::text NOT LIKE '%Calligraphie%'
   AND pg_temp.lu('lst')::text NOT LIKE '%autresCompetences%',
-  'la liste de la direction garde ses dix-neuf cles et ne porte aucune reponse (spec 8.3) : 18 candidatures d''hommes');
+  'la liste de la direction garde ses vingt et une cles (CAND-NOM-LATIN : nomLatin, nomLatinAConfirmer) et ne porte aucune reponse (spec 8.3) : 18 candidatures d''hommes');
 
 -- ------------------------------------------------------------
 -- (h) Le filtre de lister_candidatures

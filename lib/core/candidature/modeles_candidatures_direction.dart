@@ -422,6 +422,8 @@ class LigneCandidature {
     this.paysResidence,
     this.responsableId,
     this.recueLe,
+    this.nomLatin,
+    this.nomLatinAConfirmer = false,
   });
 
   /// Lit une ligne rendue par le serveur, ou `null` quand elle n'a pas
@@ -445,6 +447,8 @@ class LigneCandidature {
       id: id,
       reference: reference,
       nomComplet: texte('nomComplet') ?? '',
+      nomLatin: texte('nomLatin'),
+      nomLatinAConfirmer: json['nomLatinAConfirmer'] == true,
       type: texte('type') ?? '',
       etape: EtapeCandidature.depuisSql(json['etape']),
       etat: EtatCandidature.depuisSql(json['etat']),
@@ -474,8 +478,18 @@ class LigneCandidature {
   /// La reference `CAND-…`, jamais reattribuee, distincte du matricule.
   final String reference;
 
-  /// Le nom affiche.
+  /// Le nom d'origine, tel que la personne l'a ecrit (souvent en arabe). Il
+  /// n'est jamais remplace : la liste le montre en second.
   final String nomComplet;
+
+  /// Le nom en lettres latines que la personne a confirme, ou le nom d'origine
+  /// quand il l'est deja ; `null` tant qu'il n'est pas confirme (decision du
+  /// directeur du 23/10/2026).
+  final String? nomLatin;
+
+  /// Le nom d'origine n'est pas latin et la personne n'a rien confirme : la
+  /// liste montre une proposition, marquee « a confirmer ».
+  final bool nomLatinAConfirmer;
 
   /// Le type de candidature (`enseignant`).
   final String type;

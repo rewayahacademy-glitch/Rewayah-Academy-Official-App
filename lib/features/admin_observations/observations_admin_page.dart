@@ -19,10 +19,10 @@ import '../../core/theme/app_typography.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/etat_systeme.dart';
-import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pressable.dart';
+import '../../core/widgets/puce_filtre_actif.dart';
 import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
@@ -466,14 +466,14 @@ class _BarreRecherche extends ConsumerWidget {
     ];
     final List<Widget> personnes = <Widget>[
       if (tuteur case final PersonneAnnuaire p)
-        _PastillePersonne(
-          libelle: t.admin.observations.filtreTuteur(nom: p.nom),
-          onRetirer: onRetirerTuteur,
+        _puceRetirable(
+          t.admin.observations.filtreTuteur(nom: p.nom),
+          onRetirerTuteur,
         ),
       if (eleve case final PersonneAnnuaire p)
-        _PastillePersonne(
-          libelle: t.admin.observations.filtreEleve(nom: p.nom),
-          onRetirer: onRetirerEleve,
+        _puceRetirable(
+          t.admin.observations.filtreEleve(nom: p.nom),
+          onRetirerEleve,
         ),
     ];
 
@@ -515,32 +515,19 @@ class _BarreRecherche extends ConsumerWidget {
   }
 }
 
+/// La personne retenue par la recherche : la toucher la retire. La voix du
+/// lecteur d'ecran garde la phrase de cet ecran (« Retirer le filtre ... »).
+Widget _puceRetirable(String libelle, VoidCallback onRetirer) =>
+    PuceFiltreActif(
+      libelle: libelle,
+      libelleRetirer: t.admin.observations.retirerFiltre(filtre: libelle),
+      onRetirer: onRetirer,
+    );
+
 /// La part de la largeur que la recherche garde au moins, a cote de la
 /// rangee de filtres (a partir de 600) : un champ plus etroit ne laisse plus
 /// lire ce qu'on tape.
 const double _partRecherche = 1 / 3;
-
-/// Une personne retenue par la recherche : la toucher la retire.
-///
-/// Elle se declare [PuceFiltre] retenue : la rangee l'amene dans la vue des
-/// qu'elle apparait au bout des menus, sinon la seule facon de retirer ce
-/// filtre resterait cachee hors de la rangee (FILTRES-1b, reprise).
-class _PastillePersonne extends StatelessWidget implements PuceFiltre {
-  const _PastillePersonne({required this.libelle, required this.onRetirer});
-
-  final String libelle;
-  final VoidCallback onRetirer;
-
-  @override
-  bool get retenue => true;
-
-  @override
-  Widget build(BuildContext context) => Semantics(
-    label: t.admin.observations.retirerFiltre(filtre: libelle),
-    excludeSemantics: true,
-    child: FilterPill(libelle: libelle, retenue: true, onPress: onRetirer),
-  );
-}
 
 /// Le champ « Rechercher un tuteur ou un eleve » : deux lettres au moins,
 /// puis les personnes proposees par l'annuaire ; en choisir une pose le

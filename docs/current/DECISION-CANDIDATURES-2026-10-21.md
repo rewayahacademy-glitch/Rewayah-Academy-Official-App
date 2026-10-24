@@ -177,6 +177,19 @@ l'enverra :
 Statut : `spécifié`. Le texte final passe par le vocabulaire de `.claude/skills/mots-rewayah` et suit le
 gabarit des courriels de l'autre session ; le branchement de « Prévenir » sur la file des courriels le lit.
 
+**Branchement (feu vert du directeur, 24/10/2026, « oui Prévenir »)** : `présent dans le code et testé
+localement`. Migration `supabase/migrations/20261024010000_cand_prevenir_par_courriel.sql` :
+`apercu_prevenir_par_courriel()` (combien recevraient le message, combien sont déjà prévenus ou déjà inscrits,
+l'inscription ouverte ou non) et `prevenir_par_courriel(limite)` (met le modèle `lien_inscription` en file,
+catégorie `recrutement`, clé `candidat_prevenu:<réponse>`). La direction agit de son côté seulement. Règle 8 tenue
+par le serveur : une adresse qui a déjà un compte, déjà prévenue par WhatsApp ou déjà en file n'est jamais reprise,
+même après un échec d'envoi ; deux réponses à la même adresse ne donnent qu'un message. Tant que l'inscription en
+ligne est fermée, rien ne part (le lien mènerait à une page fermée). Données du message : la date de la réponse et
+le nom du formulaire seulement (règle 7) ; pas de prénom, le nom importé n'étant pas découpé, donc « Bonjour ».
+Scénario `supabase/tests/scenarios_cand_prevenir_courriel.sql` (34 contrôles, rouge sans la migration). Ceci amende
+la spec consolidée 7.4, où `lien_inscription` n'était qu'un message WhatsApp consigné : WhatsApp reste le geste des
+personnes sans adresse.
+
 ## Les noms dans une seule écriture sur les listes (directeur, 23/10/2026)
 
 Constat du directeur : dans les formulaires, certains ont écrit leur nom en arabe, d'autres en lettres latines.
@@ -198,5 +211,31 @@ Décision (proposée par Claude, à la demande du directeur, « à toi de voir �
 5. Aucun nom n'est translittéré en silence côté serveur ; la recherche trouve une personne par l'une ou l'autre
    écriture.
 
-Statut : `spécifié`. Lot à suivre : colonne du nom latin et sa confirmation (serveur), question à l'inscription et
-dans la Salle d'examen, colonne des listes (après la réunion des écrans CAND-04 et des listes en cours).
+Statut : `présent dans le code, testé localement` (23/10/2026 ; non testé sur staging, non déployé ; la migration
+`20261024000000_cand_nom_latin.sql` n'est pas appliquée, elle attend le feu vert du directeur sur la liste de
+`CANDIDATURES/LISTE-BASE-DE-TEST-2026-10-23.md`).
+
+Ce que le code fait, et ses limites :
+
+- **Serveur.** Deux colonnes sur `candidatures` (`nom_latin`, `nom_latin_confirme_le`, nulles ensemble). Le serveur
+  n'écrit un nom latin que sur confirmation du titulaire (`confirmer_nom_latin`, lecture `lire_nom_latin`) : il ne
+  translittère rien, même en proposition. « À confirmer » n'est pas un état écrit, il se déduit (nom d'origine non
+  latin et aucun nom latin). `lister_candidatures` et `lire_candidature` rendent `nomLatin` (le nom confirmé, ou le nom
+  d'origine quand il est déjà latin) et `nomLatinAConfirmer` ; la recherche porte sur les deux écritures, le tri
+  « nom » suit le nom latin quand il existe.
+- **Écran.** À l'inscription du candidat enseignant (CAND-04), si le nom saisi contient une autre écriture que
+  l'alphabet latin : un champ « Votre nom en lettres latines » apparaît sur l'étape d'identité, pré-rempli par la
+  proposition (fonction pure `proposerNomLatin`, `lib/core/candidature/nom_latin.dart`), avec la phrase « pour les
+  listes, les attestations et les échanges avec l'académie ». Rien ne part avant « Continuer » ; le nom latin est
+  envoyé par un second appel, une fois la candidature créée. Dans la Salle d'examen, la même question passe avant le
+  questionnaire tant que le nom est « à confirmer » ; « Plus tard » ne bloque rien. La liste de la direction montre le
+  nom latin, le nom d'origine en petit dessous avec la référence, et la marque « à confirmer » sur une proposition.
+- **Limites écrites.** (1) La proposition est une aide pour un nom écrit sans voyelles brèves : une liste courte de
+  prénoms courants et des règles simples ; elle se trompera, la personne corrige. (2) La recherche du serveur ne
+  connaît pas la proposition tant qu'elle n'est pas confirmée : un nom arabe non confirmé se trouve par son écriture
+  d'origine, pas par la proposition latine affichée. (3) Une ligne gardée « pour suivi » à partir d'un import n'a pas
+  de compte : elle reste « à confirmer » jusqu'à l'inscription de la personne. (4) Si le second appel de l'inscription
+  échoue (réseau, plafond horaire), le nom reste « à confirmer » et la Salle d'examen le redemande. (5) Les autres
+  listes qui montrent un nom de candidat (réponses importées, rapprochements, lots) ne sont pas reprises dans ce lot.
+  (6) Le nom latin est une donnée personnelle de plus sur `candidatures` : il suit l'écart connu de la suppression de
+  compte (CAND-Q21, `20261021200000`), qui ne couvre pas encore cette table.

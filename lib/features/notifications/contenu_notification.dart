@@ -22,8 +22,7 @@ NotificationContenu contenuNotificationPour(
     'paiement_relance' => t.notifications.evenements.paiementRelance,
     'acces_suspendu_paiement' =>
       t.notifications.evenements.accesSuspenduPaiement,
-    'acces_retabli_paiement' =>
-      t.notifications.evenements.accesRetabliPaiement,
+    'acces_retabli_paiement' => t.notifications.evenements.accesRetabliPaiement,
     _ => throw const FormatException('Événement de notification inconnu.'),
   };
   return NotificationContenu(titre: titre);

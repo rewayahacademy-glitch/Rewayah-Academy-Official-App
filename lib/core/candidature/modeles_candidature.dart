@@ -662,7 +662,8 @@ class ChampQuestionnaire {
               OptionQuestionnaire(
                 o['code'] as String,
                 horsReferentiel: o['referentiel'] == false,
-                nom: o['nom'] is String && (o['nom'] as String).trim().isNotEmpty
+                nom:
+                    o['nom'] is String && (o['nom'] as String).trim().isNotEmpty
                     ? (o['nom'] as String).trim()
                     : null,
                 methode: o['methode'] is String ? o['methode'] as String : null,

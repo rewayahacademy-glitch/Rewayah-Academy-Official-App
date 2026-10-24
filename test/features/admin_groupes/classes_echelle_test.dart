@@ -230,13 +230,7 @@ void main() {
       // Assez haut pour que les 25 lignes et le pied de liste soient poses.
       await _monter(tester, port: port, taille: const Size(1440, 4000));
       expect(
-        find.text(
-          t.admin.groupes.liste.resume(debut: '1', fin: '25', total: '630'),
-        ),
-        findsOneWidget,
-      );
-      expect(
-        find.text(t.commun.formats.pageSur(page: '1', total: '26')),
+        find.text(t.commun.listes.tranche(debut: 1, fin: 25, total: 630)),
         findsOneWidget,
       );
 
@@ -249,9 +243,7 @@ void main() {
       await tester.tap(suivante.first);
       await tester.pumpAndSettle();
       expect(
-        find.text(
-          t.admin.groupes.liste.resume(debut: '26', fin: '50', total: '630'),
-        ),
+        find.text(t.commun.listes.tranche(debut: 26, fin: 50, total: 630)),
         findsOneWidget,
       );
 
@@ -259,9 +251,7 @@ void main() {
       await tester.enterText(_cle('classes-recherche'), libelleFamilleDemo);
       await tester.pumpAndSettle();
       expect(
-        find.text(
-          t.admin.groupes.liste.resume(debut: '1', fin: '25', total: '30'),
-        ),
+        find.text(t.commun.listes.tranche(debut: 1, fin: 25, total: 30)),
         findsOneWidget,
       );
       for (int n = 1; n <= 25; n++) {
@@ -277,9 +267,7 @@ void main() {
       // « Plus ».
       await toucherFiltre(tester, _cle('classes-filtre-attente'));
       expect(
-        find.text(
-          t.admin.groupes.liste.resume(debut: '1', fin: '3', total: '3'),
-        ),
+        find.text(t.commun.listes.tranche(debut: 1, fin: 3, total: 3)),
         findsOneWidget,
       );
       for (final int n in numerosSansEnseignantDemo) {

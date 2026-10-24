@@ -9,7 +9,9 @@
 //   `refuser_candidat`, `mettre_en_pause_candidat`, `lever_pause_candidat`,
 //   `consigner_retrait_candidat`, `rouvrir_candidat`,
 //   `definir_responsable_candidat`, `confirmer_moyen_paiement_candidat`,
-//   `infirmer_moyen_paiement_candidat`.
+//   `infirmer_moyen_paiement_candidat` ;
+// - le traitement groupe (LISTES-1) : `apercu_lot_candidats` et
+//   `executer_lot_candidats` (mettre en pause, lever la pause, refuser).
 //
 // Le serveur decide : portee de genre dans le WHERE, refus du genre inconnu,
 // pagination de 50, tri, compteurs, controles, transitions permises, journal de
@@ -45,6 +47,7 @@ import 'gestes_candidature.dart';
 import 'modeles_candidature.dart';
 import 'modeles_candidature_detail.dart';
 import 'modeles_candidatures_direction.dart';
+import 'modeles_lot_candidatures.dart';
 import 'port_candidatures_direction.dart';
 
 /// La direction servie par Supabase.
@@ -189,6 +192,49 @@ class CandidaturesDirectionSupabase implements PortCandidaturesDirection {
     return ResultatGeste.depuisJson(corps);
   }
 
+  @override
+  Future<ApercuLot> preparerLot({
+    required GesteLot geste,
+    required List<String> ids,
+  }) async {
+    final (String fonction, Map<String, dynamic> params) = parametresApercuLot(
+      geste,
+      ids,
+    );
+    final Map<String, dynamic> corps = _objet(
+      await _appel(fonction, params, dependanceGestesCandidature),
+    );
+    _refusDeLot(corps);
+    return ApercuLot.depuisJson(corps);
+  }
+
+  @override
+  Future<RapportLot> executerLot(DemandeLot demande) async {
+    final (String fonction, Map<String, dynamic> params) =
+        parametresExecutionLot(demande);
+    final Object? brut;
+    try {
+      brut = await _appel(fonction, params, dependanceGestesCandidature);
+    } on PermissionInsuffisante {
+      rethrow;
+    } on GenreLecteurInconnu {
+      rethrow;
+    } on CapaciteIndisponible {
+      rethrow;
+    } on PostgrestException {
+      rethrow;
+    } on FormatException {
+      rethrow;
+    } on Exception {
+      // Pas de reponse : le lot est non confirme. La meme cle rejoue le lot
+      // sans l'ecrire deux fois (le serveur rend le premier rapport).
+      throw const GesteNonConfirme();
+    }
+    final Map<String, dynamic> corps = _objet(brut);
+    _refusDeLot(corps);
+    return RapportLot.depuisJson(corps);
+  }
+
   Future<Object?> _appel(
     String fonction, [
     Map<String, dynamic>? params,
@@ -303,6 +349,39 @@ class CandidaturesDirectionSupabase implements PortCandidaturesDirection {
   }
 }
 
+/// La RPC de l'apercu d'un lot et ses parametres. Public pour que le test
+/// prouve la forme envoyee.
+(String, Map<String, dynamic>) parametresApercuLot(
+  GesteLot geste,
+  List<String> ids,
+) => (
+  'apercu_lot_candidats',
+  <String, dynamic>{'p_geste': geste.valeurSql, 'p_ids': ids},
+);
+
+/// La RPC d'execution d'un lot et ses parametres : les memes identifiants que
+/// l'apercu, son jeton, le nombre saisi, la cle du lot, et le motif, le modele
+/// et la reprise communs. Public pour que le test prouve la forme envoyee.
+(String, Map<String, dynamic>) parametresExecutionLot(DemandeLot d) {
+  String jour(DateTime j) =>
+      '${j.year.toString().padLeft(4, '0')}-'
+      '${j.month.toString().padLeft(2, '0')}-'
+      '${j.day.toString().padLeft(2, '0')}';
+  return (
+    'executer_lot_candidats',
+    <String, dynamic>{
+      'p_geste': d.geste.valeurSql,
+      'p_ids': d.ids,
+      'p_jeton': d.jeton,
+      'p_nombre_confirme': d.nombreConfirme,
+      'p_cle_idempotence': d.cleIdempotence,
+      'p_motif': d.motif,
+      'p_modele': d.modele,
+      'p_reprise_le': d.repriseLe == null ? null : jour(d.repriseLe!),
+    },
+  );
+}
+
 /// Le filtre tel que `lister_candidatures` le lit : seules les cles posees,
 /// avec les valeurs ecrites en base. Public pour que le test prouve la forme
 /// envoyee.
@@ -404,6 +483,42 @@ void _refusDeGeste(Map<String, dynamic> brut) {
       throw const CleReutilisee();
     default:
       throw FormatException('Refus inconnu : $erreur');
+  }
+}
+
+/// Traduit un refus rendu par le serveur pour un lot en exception typee. Les
+/// refus qui sont ceux d'un geste (motif, modele, reprise) sont les refus du
+/// geste.
+void _refusDeLot(Map<String, dynamic> brut) {
+  final Object? erreur = brut['erreur'];
+  if (erreur == null) {
+    return;
+  }
+  switch (erreur) {
+    case 'jeton_perime':
+      throw const JetonPerime();
+    case 'aucun_eligible':
+      throw const AucunEligible();
+    case 'nombre_discordant':
+      throw NombreDiscordant(
+        brut['nombre'] is int ? brut['nombre'] as int : null,
+      );
+    case 'geste_non_groupable':
+      throw const GesteNonGroupable();
+    case 'cle_idempotence_reutilisee':
+      throw const CleLotReutilisee();
+    case 'hors_portee':
+      throw const CandidatureHorsPortee();
+    case 'motif_requis':
+      throw const MotifRequis();
+    case 'modele_requis':
+      throw const ModeleRequis();
+    case 'modele_inconnu':
+      throw const ModeleInconnu();
+    case 'date_reprise_invalide':
+      throw const RepriseInvalide();
+    default:
+      throw FormatException('Refus de lot inconnu : $erreur');
   }
 }
 

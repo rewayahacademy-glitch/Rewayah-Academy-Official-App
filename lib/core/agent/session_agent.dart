@@ -26,9 +26,8 @@ class RemiseAgent {
       ),
       parcours: json['parcours'] as String? ?? '',
       identiteMasquee: json['identite_masquee'] as bool? ?? true,
-      jetonExpireLe:
-          DateTime.tryParse(json['jeton_expire_le'] as String? ?? '')
-              ?.toLocal(),
+      jetonExpireLe: DateTime.tryParse(json['jeton_expire_le'] as String? ?? '')
+          ?.toLocal(),
     );
   }
 

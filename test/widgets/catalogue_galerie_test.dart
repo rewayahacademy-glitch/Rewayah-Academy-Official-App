@@ -132,6 +132,13 @@ const List<String> composantsDuCatalogue = <String>[
   'AdminShell',
   'MenuActions',
   'MenuFiltre',
+  // LISTES-1 (23/10/2026) : ce que les deux menus partagent (declencheur,
+  // ligne d'entree, trait de groupe).
+  'MenuCommun',
+  // LISTES-1 : case a cocher, pied de liste paginee, filtres en cours.
+  'CaseACocher',
+  'PiedDeListe',
+  'PuceFiltreActif',
   // FI-DIR-1 (FI-Q18 (a), 05/10) : le choix du mois des vues chiffrees.
   'SelecteurMois',
   'SelecteurNiveauProgramme',

@@ -40,6 +40,7 @@ import 'disponibilites_etape.dart';
 import 'lecture_page.dart';
 import 'libelles_parcours.dart';
 import 'modele_questions.dart';
+import 'nom_latin_etape.dart';
 import 'presentation_etape.dart';
 import 'question_etape.dart';
 import 'recapitulatif_etape.dart';
@@ -87,7 +88,9 @@ class _CandidaturePageState extends ConsumerState<CandidaturePage> {
         return const PageSimple(corps: Skeleton.liste(lignes: 3));
       }
       if (c.questionnaireOuvert) {
-        return _Edition(candidature: c);
+        // Le nom en lettres latines d'abord, quand il est du (decision du
+        // directeur du 23/10/2026) ; sinon le parcours s'ouvre aussitot.
+        return PorteNomLatin(enfant: _Edition(candidature: c));
       }
       if (c.questionnaire.envoyeLe != null) {
         return _LectureSeule(candidature: c);
@@ -296,7 +299,9 @@ class _ParcoursState extends ConsumerState<_Parcours> {
       return IndicationParcours(message: renvoi);
     }
     if (_c.brouillonNonGarde) {
-      return IndicationParcours(message: t.recrutement.parcours.sauvegardeEchec);
+      return IndicationParcours(
+        message: t.recrutement.parcours.sauvegardeEchec,
+      );
     }
     return null;
   }

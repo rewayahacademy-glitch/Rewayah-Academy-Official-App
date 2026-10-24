@@ -127,7 +127,9 @@ class VisiteObservationSupabase implements PortVisiteObservation {
   }
 
   @override
-  Future<List<GuardianSessionVisit>> visites({required String sessionId}) async {
+  Future<List<GuardianSessionVisit>> visites({
+    required String sessionId,
+  }) async {
     final Object? reponse = await _appeler(
       'visites_observation',
       <String, dynamic>{'p_session_id': sessionId},

@@ -207,6 +207,24 @@
     "recherche": {
       "effacer": "Effacer la recherche",
       "fermer": "Fermer la recherche"
+    },
+    "listes": {
+      "actions": "Actions",
+      "actionsDe": "Actions\u00a0: {objet}",
+      "cocherPage": "Cocher la page",
+      "cocherLigne": "Cocher {objet}",
+      "trierPar": "Trier par {colonne}",
+      "trierParCroissant": "Trier par {colonne} (actuellement croissant)",
+      "trierParDecroissant": "Trier par {colonne} (actuellement décroissant)",
+      "tranche": "{debut}-{fin} sur {total}",
+      "trancheLue": "Lignes {debut} à {fin} sur {total}",
+      "precedente": "Page précédente",
+      "suivante": "Page suivante",
+      "taillePage": "Lignes par page",
+      "parPage": "{n} par page",
+      "deselectionner": "Désélectionner",
+      "retirerFiltre": "Retirer le filtre\u00a0: {filtre}",
+      "toutEffacer": "Tout effacer"
     }
   },
   "reseau": {
@@ -875,6 +893,47 @@
     }
   },
   "inscription": {
+    "telephone": {
+      "question": "Votre numéro de téléphone",
+      "explication": "Il sert à éviter les doublons et à relier vos échanges avec l'académie à votre candidature. L'académie vous écrit dans l'application. Il n'est jamais montré aux autres personnes qui postulent.",
+      "indicatif": "Indicatif du pays",
+      "numero": "Numéro, sans l'indicatif",
+      "indicatifManquant": "Choisissez l'indicatif de votre pays.",
+      "numeroManquant": "Saisissez votre numéro de téléphone.",
+      "numeroInvalide": "Ce numéro n'est pas lisible. Écrivez-le en chiffres, sans l'indicatif du pays.",
+      "changerIndicatif": "Changer d'indicatif",
+      "pays": "Pays",
+      "numeroCourt": "Numéro",
+      "choisirPays": "Choisir votre pays",
+      "rechercherPays": "Chercher un pays ou un indicatif"
+    },
+    "langue": {
+      "question": "Dans quelle langue voulez-vous lire l'application\u00a0?",
+      "francais": "Français",
+      "arabe": "العربية",
+      "francaisExplication": "L'application et les messages de l'académie sont écrits en français.",
+      "francaisExemple": "les boutons, les explications et les messages s'affichent de gauche à droite.",
+      "arabeExplication": "L'application et les messages de l'académie sont écrits en arabe.",
+      "arabeExemple": "les boutons, les explications et les messages s'affichent de droite à gauche."
+    },
+    "confidentialite": {
+      "case": "J'ai lu et j'accepte la politique de confidentialité.",
+      "lire": "Lire la politique de confidentialité",
+      "requise": "Cochez cette case pour envoyer votre candidature."
+    },
+    "candidat": {
+      "creationEchec": "Votre candidature n'est peut-être pas partie. Réessayez dans un instant.",
+      "envoyer": "Envoyer ma candidature",
+      "accueil": "Vous déposez une candidature pour enseigner à Rewayah. Cela ne vous engage à rien.",
+      "ensuite": "Ensuite, la direction lit votre candidature et vous écrit dans l'application.",
+      "horsLigne": "La candidature pourra être envoyée quand la connexion reviendra.",
+      "courrielAConfirmer": "Confirmez d'abord votre adresse\u00a0: ouvrez le lien reçu par courriel.",
+      "nonOuverte": "Les candidatures sans code ne sont pas encore ouvertes. Si la direction vous a remis un code, saisissez-le.",
+      "nonConfirmee": "Il est possible que votre demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "aCorriger(param=champs)": "Une réponse doit être corrigée\u00a0: {champs}. Appuyez sur «\u00a0Modifier\u00a0» à côté de la réponse.",
+      "confidentialitePerimee": "Le texte de la politique de confidentialité a changé, et la version affichée n'est plus à jour. Rechargez la page ou mettez l'application à jour, puis relisez le texte.",
+      "indisponible": "L'inscription n'est pas disponible pour le moment. Réessayez un peu plus tard."
+    },
     "titre": "Créer votre compte",
     "etapeSur": "Étape {n} sur {total}",
     "tempsRestant": "Environ {minutes} min",
@@ -899,6 +958,12 @@
     "creer": "Créer mon compte",
     "erreur": "La création du compte n'a pas abouti. Réessayez dans un instant.",
     "champRequis": "Cette réponse est nécessaire pour continuer.",
+    "nomLatin": {
+      "libelle": "Votre nom en lettres latines",
+      "raison": "Pour les listes, les attestations et les échanges avec l'académie.",
+      "aide": "Voici notre proposition. Corrigez-la si votre nom ne s'écrit pas ainsi.",
+      "erreur": "Écrivez votre nom avec les lettres de l'alphabet latin (a, b, c) pour continuer."
+    },
     "etapeCourte": "{n} sur {total}",
     "retourEtape": "Revenir à l'étape précédente",
     "seDeconnecter": "Se déconnecter",
@@ -914,6 +979,8 @@
       "familleDescription": "Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous pourrez créer votre propre profil élève à tout moment.",
       "enseignant": "J'ai un code d'invitation",
       "enseignantInvite": "Vous êtes enseignant\u00a0? L'académie vous invite par courriel.",
+      "enseignantPostuler": "Vous souhaitez enseigner à Rewayah\u00a0?",
+      "deposerCandidature": "Déposer ma candidature",
       "comptable": "J'ai un code de comptable",
       "comptableInvite": "Vous êtes comptable\u00a0? La direction vous invite par courriel.",
       "coursQuestion": "Suivez-vous aussi des cours ?",
@@ -927,6 +994,8 @@
       "coursNonExemple": "vous inscrivez votre fille et suivez ses séances depuis votre compte."
     },
     "recap": {
+      "telephone": "Téléphone",
+      "langue": "Langue",
       "usage": "Type de compte",
       "identite": "Nom",
       "genre": "Genre",
@@ -2062,6 +2131,17 @@
       "horsLigne": "Le retrait pourra être fait quand la connexion reviendra.",
       "interdit": "Votre candidature ne peut plus être retirée depuis cette page.",
       "conflit": "Votre candidature a changé depuis l'ouverture de cette page. Relisez-la, puis réessayez."
+    },
+    "nomLatin": {
+      "titre": "Votre nom en lettres latines",
+      "explication": "Votre nom est écrit dans une autre écriture. Pour les listes, les attestations et les échanges avec l'académie, nous avons besoin de son écriture en lettres latines.",
+      "libelle": "Votre nom en lettres latines",
+      "aide": "Voici notre proposition. Corrigez-la si votre nom ne s'écrit pas ainsi, puis confirmez.",
+      "origine": "Votre nom tel que vous l'avez écrit\u00a0: {nom}",
+      "confirmer": "Confirmer mon nom",
+      "plusTard": "Plus tard",
+      "erreur": "Écrivez votre nom avec les lettres de l'alphabet latin (a, b, c) pour continuer.",
+      "echec": "Votre nom n'est pas confirmé. Réessayez dans un instant."
     },
     "questionnaire": {
       "titre": "Votre candidature",
@@ -3468,6 +3548,165 @@
         "rouvrir": "La candidature est rouverte.",
         "responsable": "Le responsable est enregistré.",
         "rejoue": "Ce geste avait déjà été fait : rien n'a été écrit une seconde fois."
+      },
+      "liste": {
+        "salle": "Salle",
+        "toutesSalles": "Toutes les salles",
+        "avecCompteur": "{libelle} ({n} en cours)",
+        "axe": "{axe} : {valeur}",
+        "colonnePays": "Pays",
+        "repereManques": "Informations manquantes : {marques}",
+        "nomAConfirmer": "à confirmer",
+        "nomAConfirmerSemantique": "Nom en lettres latines à confirmer",
+        "separateurMarques": ", ",
+        "synthese": {
+          "informationsManquantes": {
+            "one": "{n} information manquante",
+            "other": "{n} informations manquantes"
+          },
+          "confirmeesIndisponibles": {
+            "one": "{n} confirmée indisponible",
+            "other": "{n} confirmées indisponibles"
+          }
+        },
+        "ouverture": "Lecture du dossier : {nom}",
+        "retourLigne": "{nom}. {retour}",
+        "gestePlusPossible": "Ce geste n'est plus possible depuis l'état « {etat} ». Rien n'a été fait. La liste est actualisée.",
+        "dossierIllisible": "Le dossier n'a pas pu être lu. Rien n'a été fait. Réessayez.",
+        "ouvrirDossier": "Ouvrir le dossier",
+        "titreGesteNonFait": "Geste non fait"
+      },
+      "prevenir": {
+        "lien": "Prévenir par e-mail",
+        "titre": "Prévenir par e-mail",
+        "contexte": "Le lien d'inscription part par e-mail aux personnes des formulaires importés qui ont laissé une adresse et n'ont pas encore de compte. Une même adresse ne reçoit jamais le message deux fois.",
+        "lecture": "Comptage des personnes à prévenir en cours.",
+        "comptes": {
+          "aPrevenir": {
+            "one": "{n} personne à prévenir",
+            "other": "{n} personnes à prévenir"
+          },
+          "dejaPrevenus": {
+            "one": "{n} personne déjà prévenue",
+            "other": "{n} personnes déjà prévenues"
+          },
+          "dejaInscrits": {
+            "one": "{n} personne déjà inscrite",
+            "other": "{n} personnes déjà inscrites"
+          }
+        },
+        "message": "Le message rappelle la date de la réponse et le nom du formulaire, demande de créer son compte avec la même adresse, et dit que rien n'est à payer.",
+        "delai": "Les messages partent dans les minutes qui suivent l'envoi, pas à l'instant.",
+        "groupes": "L'envoi part par tranches de {n} personnes au plus.",
+        "fermee": "L'inscription en ligne doit d'abord être ouverte\u00a0: tant qu'elle est fermée, le lien mènerait à une page fermée et aucun message ne part.",
+        "videTitre": "Tout le monde est déjà prévenu",
+        "vide": "Toutes les personnes qui ont laissé une adresse sont déjà prévenues ou déjà inscrites. Il n'y a rien à envoyer.",
+        "envoyer": {
+          "one": "Envoyer le lien à {n} personne",
+          "other": "Envoyer le lien à {n} personnes"
+        },
+        "envoyerSuivantes": {
+          "one": "Envoyer à la personne suivante",
+          "other": "Envoyer aux {n} suivantes"
+        },
+        "sansDonnees": "Le nombre de personnes à prévenir n'a pas pu être chargé.",
+        "horsLigne": "L'envoi sera possible dès le retour du réseau.",
+        "resultat": {
+          "titre": "Envoi lancé",
+          "mis": {
+            "one": "{n} message part dans les prochaines minutes",
+            "other": "{n} messages partent dans les prochaines minutes"
+          },
+          "restants": {
+            "one": "Il reste {n} personne à prévenir.",
+            "other": "Il reste {n} personnes à prévenir."
+          },
+          "tout": "Plus personne n'attend le lien\u00a0: tout le monde est prévenu.",
+          "pasDeuxFois": "Une même adresse ne reçoit jamais le message deux fois, même si vous envoyez à nouveau."
+        },
+        "erreurs": {
+          "titre": "Envoi non confirmé",
+          "nonConfirme": "Il est possible que l'envoi ne soit pas parvenu jusqu'à Rewayah. Réessayez\u00a0: aucune adresse ne recevra le message en double.",
+          "generique": "L'envoi n'a pas abouti et rien n'est confirmé. Réessayez\u00a0: aucune adresse ne recevra le message en double."
+        }
+      },
+      "lot": {
+        "selectionnees": {
+          "one": "{n} sélectionnée",
+          "other": "{n} sélectionnées"
+        },
+        "dontPage": "dont {n} sur cette page",
+        "avecDont": "{selection}, {dont}",
+        "autresGestes": "Les autres gestes se font un par un, depuis la ligne ou le dossier.",
+        "refuser": "Refuser",
+        "plafond": "Vous pouvez retenir au plus {n} candidatures à la fois.",
+        "selectionRetiree": "La sélection a été retirée, parce que la recherche ou les filtres ont changé.",
+        "feuille": {
+          "sousTitre": {
+            "one": "{n} candidature sélectionnée",
+            "other": "{n} candidatures sélectionnées"
+          },
+          "lecture": "Vérification de la sélection en cours.",
+          "seront": {
+            "one": "{n} candidature sera concernée",
+            "other": "{n} candidatures seront concernées"
+          },
+          "neSeront": {
+            "one": "{n} candidature ne sera pas concernée",
+            "other": "{n} candidatures ne seront pas concernées"
+          },
+          "etAutres": "et {n} autres",
+          "effetPause": "Les candidatures concernées n'avancent plus tant que la pause n'est pas levée.",
+          "effetLever": "Les candidatures concernées reprennent là où elles s'étaient arrêtées.",
+          "effetRefuser": "Les candidatures concernées sont fermées. Vous pourrez les rouvrir une à une.",
+          "motifCommun": "Le même motif et le même message valent pour toutes les candidatures concernées.",
+          "nombre": "Nombre de candidatures concernées",
+          "nombreAide": "Saisissez {n} pour confirmer.",
+          "nombreFaux": "Ce n'est pas le bon nombre. Saisissez {n}.",
+          "actualiserApercu": "Actualiser l'aperçu",
+          "terminer": "Terminer",
+          "raisons": {
+            "absente": "Cette candidature n'existe plus.",
+            "horsPortee": "Vous n'y avez pas accès.",
+            "dejaEnPause": "Elle est déjà en pause.",
+            "pasEnPause": "Elle n'est pas en pause.",
+            "pause": "Sa pause ne permet pas ce geste.",
+            "etat": "Ce geste n'est pas possible depuis l'état « {etat} ».",
+            "conflit": "Elle a changé entre-temps.",
+            "erreurServeur": "Le serveur n'a pas pu la traiter. Réessayez depuis son dossier.",
+            "inconnue": "Le serveur a refusé ce geste."
+          },
+          "rapport": {
+            "titre": "Résultat",
+            "reussies": {
+              "one": "{n} candidature traitée",
+              "other": "{n} candidatures traitées"
+            },
+            "exclues": {
+              "one": "{n} exclue",
+              "other": "{n} exclues"
+            },
+            "refusees": {
+              "one": "{n} refusée par le serveur",
+              "other": "{n} refusées par le serveur"
+            },
+            "rejoue": "Ce traitement avait déjà été fait : rien n'a été écrit une seconde fois.",
+            "ligneEtRaison": "{statut} : {raison}",
+            "ligneReussie": "Fait",
+            "ligneExclue": "Exclue",
+            "ligneRefusee": "Refusée",
+            "sansNom": "Candidature sans nom lisible"
+          }
+        },
+        "erreurs": {
+          "titre": "Traitement refusé",
+          "jetonPerime": "Les candidatures ont changé depuis l'aperçu. Rien n'a été fait. Actualisez l'aperçu.",
+          "aucunEligible": "Aucune candidature de la sélection ne peut recevoir ce geste. Rien n'a été fait.",
+          "nonGroupable": "Ce geste ne se fait pas pour plusieurs candidatures à la fois. Ouvrez le dossier de chacune pour le faire.",
+          "cleReutilisee": "Cette demande a déjà servi à une autre action. Fermez cette fenêtre et recommencez.",
+          "horsPortee": "Une candidature de la sélection est hors de votre accès. Rien n'a été fait. Actualisez l'aperçu.",
+          "lectureApercu": "L'aperçu n'a pas pu être lu. Rien n'a été fait. Réessayez."
+        }
       }
     },
     "importInscriptions": {
@@ -3588,6 +3827,379 @@
       "indisponiblePhrase": "Cette fonction sera disponible au branchement serveur.",
       "erreur": "Les droits d'import n'ont pas pu être lus. Réessayez.",
       "sansDonnees": "l'import des inscriptions"
+    },
+    "importFormulaires": {
+      "titre": "Importer les formulaires de candidature",
+      "intro": "L'import sert à reconnaître les personnes et à pré-remplir leur candidature. Il ne crée aucun compte.",
+      "lienEntree": "Importer les formulaires",
+      "retourCandidatures": "Revenir aux candidatures",
+      "lectureDroits": "Vos droits d'import n'ont pas pu être lus. Réessayez dans un instant.",
+      "sansDonnees": "vos droits d'import des formulaires",
+      "acces": {
+        "refuseTitre": "Import réservé",
+        "refusePhrase": "Seul le super administrateur peut importer les formulaires de candidature. Demandez-lui de s'en charger.",
+        "doublePhrase": "Cet import demande votre second facteur.",
+        "doubleSuite": "Touchez «\u00a0Me reconnecter\u00a0»\u00a0: votre session se ferme et vous revenez à la connexion pour utiliser votre second facteur. Rien n'a été enregistré.",
+        "doubleAction": "Me reconnecter"
+      },
+      "pas": {
+        "liste": "Les huit pas de l'import",
+        "depot": "Déposer le fichier",
+        "apercu": "Aperçu",
+        "colonnes": "Colonnes",
+        "doublons": "Doublons",
+        "controle": "Erreurs",
+        "comptes": "Comptes",
+        "confirmation": "Confirmation",
+        "rapport": "Rapport",
+        "surTotal": "Pas {n} sur {total}",
+        "surTotalNomme": "Pas {n} sur {total}\u00a0: {nom}",
+        "fait": "Terminé",
+        "enCours": "En cours",
+        "aVenir": "À venir"
+      },
+      "depot": {
+        "question": "Quel fichier voulez-vous importer\u00a0?",
+        "explication": "Choisissez l'export CSV de la feuille des formulaires (dans Google Sheets\u00a0: Fichier, Télécharger, Valeurs séparées par des virgules). Rien n'est envoyé avant «\u00a0Analyser le fichier\u00a0».",
+        "carteTitre": "Choisir un fichier CSV",
+        "carteDescription": "Le fichier est lu sur cet appareil. Il part vers Rewayah seulement quand vous touchez «\u00a0Analyser le fichier\u00a0». Taille maximale\u00a0: 5 Mo.",
+        "carteChoisi": "Fichier choisi\u00a0: {nom}",
+        "lignesLues(param=n)": {
+          "one": "{n} ligne de réponses dans ce fichier",
+          "other": "{n} lignes de réponses dans ce fichier"
+        },
+        "autreFichier": "Choisir un autre fichier",
+        "noms": {
+          "titre": "Ce fichier sera enregistré sous",
+          "ligne": "Classeur «\u00a0{classeur}\u00a0», onglet «\u00a0{onglet}\u00a0»",
+          "aide": "Ces deux noms servent à reconnaître chaque réponse. Si vous rejouez plus tard le même fichier corrigé, gardez exactement les mêmes noms\u00a0: aucune réponse ne sera ajoutée deux fois.",
+          "corriger": "Corriger ces noms",
+          "garder": "Garder ces noms",
+          "classeur": "Nom du classeur",
+          "onglet": "Nom de l'onglet",
+          "ongletManquant": "Le nom du fichier ne dit pas l'onglet. Indiquez-le pour continuer.",
+          "invalide": "Un nom ne peut pas être vide, dépasser 200 signes ni contenir la barre verticale. Corrigez-le pour continuer."
+        },
+        "manqueFichier": "Choisissez d'abord un fichier pour pouvoir l'analyser.",
+        "analyser": "Analyser le fichier",
+        "analyseEnCours": "Rewayah lit votre fichier. Rien n'est encore enregistré.",
+        "horsLigne": "L'analyse pourra se faire quand la connexion reviendra.",
+        "vide": "Ce fichier ne contient aucune ligne à importer.",
+        "videAide": "Vérifiez que vous avez exporté la bonne feuille."
+      },
+      "fichier": {
+        "titre": "Fichier illisible",
+        "illisibleLigne": "Ce fichier n'a pas pu être lu, ligne {ligne}\u00a0: {cause}.",
+        "illisible": "Ce fichier n'a pas pu être lu\u00a0: {cause}.",
+        "cause": {
+          "guillemetNonFerme": "un guillemet ouvert n'est jamais refermé",
+          "tropVolumineux": "le fichier dépasse 5 Mo",
+          "malForme": "la mise en forme n'est pas celle d'un export CSV",
+          "inconnue": "son contenu n'est pas celui d'un export CSV"
+        },
+        "quoiFaire": "Exportez de nouveau la feuille en CSV depuis Google Sheets, puis choisissez le fichier."
+      },
+      "colonnes": {
+        "dejaAssocie": "Actuellement lu dans la colonne {n}. Le choisir ici le retire de cette colonne.",
+        "titreColonne": "Colonne {n}\u00a0: {titre}",
+        "question": "Chaque colonne contient-elle bien ce que Rewayah croit\u00a0?",
+        "explication": "Rewayah repère chaque colonne par son titre. Touchez une colonne pour changer ce qu'elle contient.",
+        "sansTitreNumero": "Colonne {n}, sans titre",
+        "nonLue": "Non lue",
+        "nonLueAide": "Cette colonne n'est pas utilisée par l'import.",
+        "choisir": "Que contient la colonne {n}\u00a0?",
+        "sansTitre": "Colonne sans titre",
+        "choixActuel": "Choix actuel",
+        "nePasLire": "Ne pas lire cette colonne",
+        "nePasLireAide": "Son contenu est ignoré par l'import.",
+        "fermer": "Fermer ce choix",
+        "manquants": "Associez d'abord ces colonnes\u00a0: {champs}.",
+        "ambigu": "Plusieurs colonnes portent le titre de\u00a0: {champs}. Touchez celle qu'il faut lire, puis choisissez ce qu'elle contient.",
+        "libelles": {
+          "titre": "Comment les réponses sont lues",
+          "texte": "Les réponses à choix (genre, langues, niveau de mémorisation, début possible) sont lues avec la table des libellés de Rewayah. Un libellé qui n'y figure pas est signalé ligne par ligne, au pas «\u00a0Erreurs\u00a0»."
+        },
+        "relecture": "Vos corrections demandent une nouvelle lecture du fichier avant de continuer."
+      },
+      "doublons": {
+        "casTitre": "{nature}\u00a0: cas {n} sur {total}",
+        "question": "Ces lignes viennent-elles de la même personne\u00a0?",
+        "explication": "Quand des lignes partagent un courriel ou un téléphone, Rewayah les propose comme une même personne. Sans votre choix, la ligne la plus récente est gardée et les autres restent dans l'historique. Rien n'est effacé.",
+        "aucun": "Aucun doublon probable dans ce fichier.",
+        "aucunAide": "Aucune ligne ne partage un courriel ou un téléphone avec une autre.",
+        "total(param=n)": {
+          "one": "{n} cas à regarder",
+          "other": "{n} cas à regarder"
+        },
+        "tranches": "Choix faits par vous\u00a0: {choisis} sur {total}. Pour les autres, la ligne la plus récente est gardée.",
+        "nature": {
+          "courriel": "Même courriel",
+          "telephone": "Même téléphone",
+          "courrielEtTelephone": "Même courriel et même téléphone"
+        },
+        "lignes": "Lignes {liste}",
+        "dansLaBase(param=n)": {
+          "one": "et {n} ligne déjà enregistrée",
+          "other": "et {n} lignes déjà enregistrées"
+        },
+        "choisirLigne": "Choisissez la ligne à garder, ou indiquez qu'il s'agit de personnes distinctes.",
+        "ouvrir": "Voir les choix pour ce cas",
+        "fermer": "Fermer les choix de ce cas",
+        "plus(param=n)": {
+          "one": "Voir {n} cas de plus",
+          "other": "Voir {n} cas de plus"
+        },
+        "etat": {
+          "recente": "La plus récente est gardée",
+          "base": "La ligne déjà enregistrée est gardée",
+          "ligne": "Ligne {ligne} gardée",
+          "distinctes": "Personnes distinctes",
+          "enregistre": "Choix déjà enregistré"
+        },
+        "option": {
+          "recente": {
+            "titre": "Garder la plus récente (ligne {ligne})",
+            "description": "Les autres lignes restent dans l'historique, rien n'est effacé. C'est ce que Rewayah fait sans votre choix."
+          },
+          "base": {
+            "titre": "Garder la ligne déjà enregistrée",
+            "description": "Un import précédent a déjà retenu une ligne pour cette personne. Les lignes de ce fichier restent dans l'historique."
+          },
+          "enregistre": {
+            "titre": "Garder votre choix précédent",
+            "distinctes": "Vous avez déjà indiqué que ce sont des personnes distinctes.",
+            "ligne": "Vous avez déjà choisi la ligne à garder pour cette personne."
+          },
+          "ligne": {
+            "titre": "Garder plutôt la ligne {ligne}",
+            "description": "Cette ligne devient la réponse de la personne. Les autres passent dans l'historique."
+          },
+          "distinctes": {
+            "titre": "Personnes distinctes",
+            "description": "À choisir si ces lignes viennent de personnes différentes qui partagent un contact. Chacune garde sa réponse.",
+            "exemple": "deux personnes d'une même famille qui ont répondu avec le même numéro"
+          }
+        }
+      },
+      "analyse": {
+        "echec": "L'analyse n'a pas abouti.",
+        "echecPhrase": "Rien n'a été enregistré. Réessayez dans un instant.",
+        "refus": "Le serveur ne peut pas lire ce fichier avec ces noms. Vérifiez le classeur, l'onglet et le fichier, puis réessayez.",
+        "reessayer": "Réessayer l'analyse"
+      },
+      "apercu": {
+        "question": "Est-ce bien le bon fichier\u00a0?",
+        "explication": "Voici ce que Rewayah a lu. Rien n'est encore enregistré.",
+        "contactsMasques": "Les contacts sont masqués dans l'aperçu.",
+        "lignes(param=n)": {
+          "one": "{n} ligne lue",
+          "other": "{n} lignes lues"
+        },
+        "colonnesReconnues": "Colonnes reconnues\u00a0: {reconnues} sur {total}",
+        "premieres": "Les premières lignes",
+        "ligne": "Ligne {ligne}",
+        "autres(param=n)": {
+          "one": "{n} autre ligne n'est pas montrée ici.",
+          "other": "{n} autres lignes ne sont pas montrées ici."
+        },
+        "sansLignes": "Les lignes seront lues dès que les colonnes seront associées.",
+        "colonnesATitre": "Des colonnes restent à associer",
+        "mappageIncomplet": "Associez d'abord ces colonnes\u00a0: {champs}.",
+        "ambiguTitre": "Deux colonnes se ressemblent",
+        "ambigu": "Plusieurs colonnes portent le titre de\u00a0: {champs}. Dites laquelle lire, au pas suivant.",
+        "marque": {
+          "courrielAObtenir": "Courriel à obtenir",
+          "indicatifAConfirmer": "Indicatif à confirmer"
+        },
+        "aideMarques": "« Courriel à obtenir » : pas de courriel valide, la personne ne peut pas être invitée. « Indicatif à confirmer » : le téléphone n'a pas d'indicatif reconnu. « Ignorée » : ligne vide ou répétée."
+      },
+      "issue": {
+        "nouvelle": "Nouvelle",
+        "corrigee": "Corrigée",
+        "dejaConnue": "Déjà connue",
+        "ignoree": "Ignorée",
+        "aCorriger": "À corriger",
+        "historique": "En historique"
+      },
+      "champ": {
+        "horodatage": "Date de la réponse",
+        "horodatageAide": "Sert à reconnaître la réponse si vous rejouez le fichier.",
+        "genre": "Genre",
+        "genreAide": "Sert à ranger la réponse du bon côté. Jamais montré dans l'aperçu.",
+        "nom": "Nom complet",
+        "nomAide": "Sert à reconnaître la personne. Jamais montré ici.",
+        "telephone": "Téléphone WhatsApp",
+        "telephoneAide": "Avec l'indicatif du pays. Jamais complété ni deviné.",
+        "langueMaternelle": "Langue maternelle",
+        "langueMaternelleAide": "Facultatif.",
+        "languesExplication": "Langues d'explication",
+        "languesExplicationAide": "Les langues dans lesquelles la personne peut expliquer et corriger.",
+        "memorisation": "Mémorisation du Coran",
+        "memorisationAide": "Une déclaration, pas un constat\u00a0: le niveau se constate à l'entretien.",
+        "ijaza": "Ijaza ou certificat à présenter",
+        "ijazaAide": "Ce que la personne peut montrer à l'entretien.",
+        "experience": "Expérience avec les débutants",
+        "experienceAide": "Facultatif.",
+        "creneaux": "Créneaux (heure de La Mecque)",
+        "creneauxAide": "Gardés tels quels, sans jour. Jamais lus comme une disponibilité.",
+        "heures": "Heures par semaine",
+        "heuresAide": "Converties en nombre de classes souhaitées.",
+        "debut": "Début possible",
+        "debutAide": "Facultatif.",
+        "whatsapp": "Accord de contact par WhatsApp",
+        "whatsappAide": "Vaut pour ce contact seulement.",
+        "courriel": "Courriel",
+        "courrielAide": "Sert à reconnaître la personne à son inscription. Jamais montré ici.",
+        "contact": "Téléphone ou courriel"
+      },
+      "controle": {
+        "question": "Y a-t-il des lignes à corriger\u00a0?",
+        "explication": "Une ligne à corriger n'est pas importée. Corrigez-la dans le classeur, exportez de nouveau le fichier, puis rejouez l'import\u00a0: les lignes déjà importées ne sont pas ajoutées deux fois.",
+        "aucune": "Aucune erreur ni avertissement dans ce fichier.",
+        "aucuneAide": "Chaque ligne a pu être lue.",
+        "aCorriger": {
+          "titre": "À corriger",
+          "aide": "Ces lignes ne seront pas importées."
+        },
+        "avertissements": {
+          "titre": "À regarder",
+          "aide": "Ces lignes sont importées, avec un point à vérifier."
+        },
+        "ignorees": {
+          "titre": "Ignorées",
+          "aide": "Lignes vides ou répétées à l'identique."
+        },
+        "ligne": "Ligne {ligne}\u00a0: {motif}",
+        "plus(param=n)": {
+          "one": "Voir {n} ligne de plus",
+          "other": "Voir {n} lignes de plus"
+        }
+      },
+      "motif": {
+        "ligneVide": "ligne vide",
+        "horodatageIllisible": "la date de la réponse est illisible",
+        "genreIllisible": "le genre n'est pas reconnu",
+        "nomAbsent": "le nom est absent",
+        "nomTropLong": "le nom est trop long",
+        "memeReferenceMemeContenu": "ligne répétée à l'identique",
+        "memeReferenceContenuDifferent": "même date de réponse qu'une autre ligne, mais un contenu différent",
+        "genreChangeSurLigneSuivie": "le genre a changé alors que la personne est suivie\u00a0: il fixe son côté",
+        "inscription1210": "déjà connue par l'import des inscriptions",
+        "inconnu": "un point est à vérifier dans cette ligne"
+      },
+      "avertissement": {
+        "telephoneIllisible": "le téléphone est illisible",
+        "formatNational": "le téléphone n'a pas l'indicatif du pays",
+        "indicatifInconnu": "l'indicatif du téléphone est inconnu",
+        "longueurImplausible": "la longueur du téléphone est inhabituelle",
+        "indicatifAConfirmer": "l'indicatif du téléphone est à confirmer",
+        "zeroNationalEnTrop": "un zéro en trop après l'indicatif du téléphone",
+        "courrielMalforme": "le courriel est mal écrit\u00a0: il est à obtenir",
+        "langueMaternelleVersAutre": "langue maternelle inconnue, classée en autre langue",
+        "langueInconnueVersAutre": "une langue d'explication inconnue est classée en autre langue",
+        "arabeRetire": "l'arabe est retiré des langues d'explication (ce n'est pas une langue de cours)",
+        "libelleInconnu": "une réponse à choix n'est pas reconnue",
+        "ijazaDeclareeEnG": "ijaza déclarée comme mémorisation\u00a0: la mémorisation est à renseigner par la personne",
+        "experiencePretTest": "«\u00a0prêt à un test\u00a0» n'a pas d'équivalent pour l'expérience\u00a0: à renseigner par la personne",
+        "moinsDe3Heures": "moins de 3 heures par semaine\u00a0: cela ne fait pas une classe, à renseigner par la personne",
+        "creneauxContradictoires": "créneaux contradictoires, gardés tels quels"
+      },
+      "comptes": {
+        "question": "Ces nombres sont-ils ceux que vous attendiez\u00a0?",
+        "explication": "Voici ce que Rewayah a compté dans le fichier. Comparez avec votre décompte avant de confirmer.",
+        "nouvelles": "Nouvelles",
+        "nouvellesAide": "Pas encore connues\u00a0: elles seront enregistrées.",
+        "dejaConnues": "Déjà connues",
+        "dejaConnuesAide": "Déjà enregistrées\u00a0: rien ne change.",
+        "ignorees": "Ignorées",
+        "ignoreesAide": "Lignes vides ou répétées.",
+        "aCorriger": "À corriger",
+        "aCorrigerAide": "Lignes illisibles\u00a0: elles ne sont pas importées.",
+        "corrigees": "Corrigées sur place",
+        "personnes": "Personnes concernées",
+        "lignesLues": "Lignes lues",
+        "attendus": {
+          "question": "Quel décompte attendiez-vous\u00a0?",
+          "fichier2110": {
+            "titre": "Le fichier du 21 octobre",
+            "description": "440 lignes, soit 409 personnes une fois les doublons rapprochés\u00a0: le décompte relevé dans le classeur ce jour-là."
+          },
+          "autres": {
+            "titre": "D'autres nombres",
+            "description": "Vous connaissez le nombre de lignes ou de personnes de votre fichier. Saisissez-le\u00a0: Rewayah signale tout écart."
+          },
+          "aucun": {
+            "titre": "Aucun décompte à comparer",
+            "description": "Vous confirmez en vous fiant à l'aperçu."
+          },
+          "lignes": "Lignes attendues",
+          "personnes": "Personnes attendues",
+          "aide": "Un nombre entier. Laissez vide ce que vous ne comparez pas."
+        },
+        "choisir": "Indiquez le décompte à comparer pour continuer.",
+        "saisirNombre": "Saisissez au moins un nombre pour continuer.",
+        "ecartTitre": "Un écart à vérifier",
+        "ecart": "Écart avec les comptes attendus\u00a0: attendu {attendu}, lu {lu}. Vérifiez avant de confirmer\u00a0: vous pouvez importer quand même.",
+        "accord": "Les nombres correspondent à ce que vous attendiez."
+      },
+      "unite": {
+        "lignes(param=n)": {
+          "one": "{n} ligne",
+          "other": "{n} lignes"
+        },
+        "personnes(param=n)": {
+          "one": "{n} personne",
+          "other": "{n} personnes"
+        }
+      },
+      "confirmation": {
+        "question": "Importer ces réponses maintenant\u00a0?",
+        "explication": "Relisez ce que l'import va faire. Il n'est pas annulable depuis cet écran.",
+        "resume": {
+          "titre": "Ce qui sera enregistré",
+          "fichier": "Fichier",
+          "doublons": "Doublons\u00a0: {choisis} cas tranchés par vous sur {total}. Pour les autres, la ligne la plus récente est gardée.",
+          "aucunDoublon": "Aucun doublon probable à régler."
+        },
+        "garanties": {
+          "titre": "Ce que l'import ne fait pas",
+          "texte": "Il ne crée aucun compte, aucune invitation ni aucune candidature, et n'envoie aucun message. Il enregistre des réponses qui servent à reconnaître les personnes quand elles s'inscrivent. Rejouer le même fichier n'ajoute rien."
+        },
+        "importer": "Importer les réponses",
+        "envoi": "Envoi en cours. L'import n'est confirmé qu'à la réponse de Rewayah.",
+        "horsLigne": "L'import pourra être confirmé quand la connexion reviendra.",
+        "nonConfirme": "L'import n'est pas confirmé\u00a0: il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Touchez de nouveau «\u00a0Importer les réponses\u00a0»\u00a0: la même demande ne s'enregistre qu'une fois.",
+        "jetonPerime": "Le fichier ou ses réglages ont changé depuis l'aperçu. Relancez l'analyse pour continuer.",
+        "choixInvalide": "Un choix de doublon ne correspond plus au fichier. Relancez l'analyse, puis choisissez de nouveau.",
+        "cleReutilisee": "Cette demande ne peut pas être rejouée telle quelle. Relancez l'analyse pour recommencer proprement.",
+        "refus": "Le serveur refuse cet import. Vérifiez que vous êtes connecté avec la double vérification, puis réessayez.",
+        "titreNonConfirme": "Import non confirmé",
+        "titreARefaire": "L'analyse est à refaire",
+        "relancer": "Relancer l'analyse"
+      },
+      "rapport": {
+        "titre": "Import terminé",
+        "question": "Voici ce que l'import a fait.",
+        "rejoue": "Cette demande avait déjà été enregistrée\u00a0: rien n'a été ajouté une seconde fois.",
+        "sansCandidature": "Ces réponses ne créent aucune candidature\u00a0: elles servent à reconnaître les personnes quand elles s'inscrivent.",
+        "compteurs": {
+          "nouvelles": "Enregistrées.",
+          "dejaConnues": "Déjà enregistrées\u00a0: rien n'a changé.",
+          "aCorriger": "Lignes illisibles\u00a0: non importées."
+        },
+        "historique": "Remplacées par une plus récente\u00a0: {n}",
+        "lignes": {
+          "titre": "Ligne par ligne",
+          "aide": "Chaque ligne est reconnue par la date de sa réponse, jamais par le nom de la personne.",
+          "reference": "Réponse du {reference}",
+          "sansReference": "Sans référence"
+        },
+        "plus(param=n)": {
+          "one": "Voir {n} ligne de plus",
+          "other": "Voir {n} lignes de plus"
+        },
+        "autreFichier": "Importer un autre fichier"
+      }
     },
     "tableau": {
       "titre": "Centre de commande",
@@ -4440,6 +5052,15 @@
       "erreur": "La progression n'a pas pu être lue. Réessayez dans un instant.",
       "aucun": "Aucun élève actif",
       "aucunDetail": "Les élèves apparaîtront ici dès leur premier diagnostic de placement.",
+      "rechercheLibelle": "Rechercher un élève",
+      "rechercheAide": "Nom, identifiant ou classe",
+      "nombreEleves(param=n)": {
+        "one": "{n} élève",
+        "other": "{n} élèves"
+      },
+      "nombreSurTotal": "{n} sur {total} élèves",
+      "aucunAvecCeFiltre": "Aucun élève ne correspond",
+      "aucunAvecCeFiltreDetail": "Changez la recherche ou le filtre pour voir les autres élèves.",
       "colonneEleve": "Élève",
       "colonneGroupe": "Classe",
       "colonneNiveau": "Niveau",
@@ -4712,6 +5333,29 @@
     },
     "comptes": {
       "titre": "Comptes",
+      "recherche": "Rechercher un compte",
+      "rechercheAide": "Nom ou identifiant",
+      "filtreEtat": "État",
+      "filtreTousLesEtats": "Tous les états",
+      "rolesEleves": "Élèves",
+      "rolesTuteurs": "Tuteurs",
+      "rolesEnseignants": "Enseignants",
+      "rolesAdministration": "Administration",
+      "rolesComptables": "Comptables",
+      "rolesControleurs": "Contrôleurs",
+      "compteur(param=n)": {
+        "one": "{n} compte",
+        "other": "{n} comptes"
+      },
+      "filtreActifEtat": "État\u00a0: {valeur}",
+      "filtreActifRecherche": "Recherche\u00a0: {texte}",
+      "colonneEnfants": "Élèves du foyer",
+      "colonneEnseignant": "Enseignant",
+      "enseignantOui": "Oui",
+      "enseignantAucun": "Aucun",
+      "actionOuvrirDossier": "Ouvrir le dossier d'identité",
+      "plafondTitre": "La liste est peut-être incomplète",
+      "plafondMessage": "Le serveur rend au plus {nombre} comptes, et la liste en compte autant\u00a0: les inscriptions les plus récentes peuvent manquer.",
       "intro": "Toutes les personnes inscrites, celles qui attendent une décision en premier. Un enseignant sans pièce d'identité déposée reste visible ici\u00a0: c'est le seul endroit qui le montre.",
       "attenteUneAujourdhui": "Une personne attend une décision, inscrite aujourd'hui.",
       "attenteUneUnJour": "Une personne attend une décision depuis 1 jour.",

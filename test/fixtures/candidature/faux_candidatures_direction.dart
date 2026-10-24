@@ -16,6 +16,7 @@ import 'package:rewayah_academy/core/candidature/modeles_autres_competences.dart
 import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature_detail.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidatures_direction.dart';
+import 'package:rewayah_academy/core/candidature/modeles_lot_candidatures.dart';
 import 'package:rewayah_academy/core/candidature/port_candidatures_direction.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 
@@ -38,6 +39,8 @@ LigneCandidature ligneTest({
   String id = 'c1',
   String? reference,
   String nom = 'Amina Diallo',
+  String? nomLatin,
+  bool nomLatinAConfirmer = false,
   EtapeCandidature? etape = EtapeCandidature.prequalification,
   EtatCandidature? etat = EtatCandidature.enExamen,
   IssueCandidature issue = IssueCandidature.enCours,
@@ -56,6 +59,8 @@ LigneCandidature ligneTest({
   id: id,
   reference: reference ?? 'CAND-${id.toUpperCase().padLeft(6, '0')}',
   nomComplet: nom,
+  nomLatin: nomLatin,
+  nomLatinAConfirmer: nomLatinAConfirmer,
   type: 'enseignant',
   etape: etape,
   etat: etat,
@@ -126,6 +131,8 @@ DetailCandidature detailTest({
   String id = 'c1',
   String? reference,
   String nom = 'Amina Diallo',
+  String? nomLatin,
+  bool nomLatinAConfirmer = false,
   EtapeCandidature? etape = EtapeCandidature.prequalification,
   EtatCandidature? etat = EtatCandidature.enExamen,
   IssueCandidature issue = IssueCandidature.enCours,
@@ -154,6 +161,8 @@ DetailCandidature detailTest({
     id: id,
     reference: reference ?? 'CAND-${id.toUpperCase().padLeft(6, '0')}',
     nomComplet: nom,
+    nomLatin: nomLatin,
+    nomLatinAConfirmer: nomLatinAConfirmer,
     type: 'enseignant',
     etape: etape,
     etat: etat,
@@ -319,6 +328,8 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
     this.effetGeste,
     this.responsablesIndisponibles = false,
     this.perteApresEcriture = false,
+    this.erreurLot,
+    this.refusParLigne = const <String, String>{},
   }) : lignes = List<LigneCandidature>.of(lignes),
        details = <String, DetailCandidature>{
          for (final DetailCandidature d in details) d.ligne.id: d,
@@ -395,6 +406,25 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
   /// meme arrivee au serveur et ecrite ; seule la reponse est perdue. Rejouer
   /// la meme cle rend alors le premier resultat, sans ecrire une seconde fois.
   bool perteApresEcriture;
+
+  /// Ce que `executerLot()` jette, ou `null`. Une fonction : l'erreur peut
+  /// changer d'un essai a l'autre (non confirme, puis succes).
+  Object? Function(DemandeLot demande, int essai)? erreurLot;
+
+  /// Les candidatures dont le geste de lot est refuse par le serveur, avec le
+  /// code du refus (`conflit_candidature`...) : un refus par ligne, sans
+  /// annuler les autres.
+  final Map<String, String> refusParLigne;
+
+  /// Les apercus de lot demandes, dans l'ordre.
+  final List<({GesteLot geste, List<String> ids})> appelsApercuLot =
+      <({GesteLot geste, List<String> ids})>[];
+
+  /// Les lots recus, dans l'ordre (un essai rejoue compte).
+  final List<DemandeLot> appelsLot = <DemandeLot>[];
+
+  /// Les rapports des lots deja joues, par cle (rejeu sans ecriture).
+  final Map<String, RapportLot> _lots = <String, RapportLot>{};
 
   /// Les lectures de dossier (identifiants), dans l'ordre.
   final List<String> appelsLire = <String>[];
@@ -594,6 +624,254 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
     return resultat;
   }
 
+  /// La raison pour laquelle le serveur exclut [l] d'un lot de [geste], ou
+  /// `null` : elle est eligible. Les regles de `candidature_gestes_regles`
+  /// pour les trois gestes du lot.
+  static ({String raison, String? detail})? _exclusion(
+    LigneCandidature l,
+    GesteLot geste,
+  ) {
+    final bool enCours = l.issue == IssueCandidature.enCours;
+    switch (geste) {
+      case GesteLot.mettreEnPause:
+        if (!enCours) return (raison: 'transition_interdite', detail: 'etat');
+        if (l.enPause) return (raison: 'transition_interdite', detail: 'pause');
+      case GesteLot.leverPause:
+        if (!enCours || !l.enPause) {
+          return (raison: 'transition_interdite', detail: 'etat');
+        }
+      case GesteLot.refuser:
+        final bool avantSalle3 =
+            l.etape != EtapeCandidature.confirmee && l.etape != null;
+        if (!enCours || !avantSalle3) {
+          return (raison: 'transition_interdite', detail: 'etat');
+        }
+    }
+    return null;
+  }
+
+  LigneCandidature? _ligneDuLot(String id) {
+    for (final LigneCandidature l in lignes) {
+      if (l.id == id) return l;
+    }
+    return details[id]?.ligne;
+  }
+
+  int _versionDuLot(String id) => details[id]?.version ?? 1;
+
+  /// Un jeton stable pour ces eligibles et ces versions : 32 signes
+  /// hexadecimaux, comme le HMAC du serveur.
+  String _jeton(GesteLot geste, List<String> eligibles) {
+    final List<String> parts = <String>[
+      for (final String id in eligibles) '$id:${_versionDuLot(id)}',
+    ]..sort();
+    final String base = '${geste.valeurSql}|${parts.join(',')}';
+    int h = 0x811c9dc5;
+    final StringBuffer sortie = StringBuffer();
+    for (int tour = 0; tour < 4; tour++) {
+      for (final int c in '$tour$base'.codeUnits) {
+        h = ((h ^ c) * 0x01000193) & 0xffffffff;
+      }
+      sortie.write(h.toRadixString(16).padLeft(8, '0'));
+    }
+    return sortie.toString();
+  }
+
+  @override
+  Future<ApercuLot> preparerLot({
+    required GesteLot geste,
+    required List<String> ids,
+  }) async {
+    appelsApercuLot.add((geste: geste, ids: List<String>.of(ids)));
+    final List<EligibleLot> eligibles = <EligibleLot>[];
+    final List<ExclusLot> exclus = <ExclusLot>[];
+    for (final String id in ids.toSet()) {
+      final LigneCandidature? l = _ligneDuLot(id);
+      if (l == null) {
+        exclus.add(ExclusLot(id: id, raison: RaisonExclusion.absente));
+        continue;
+      }
+      final ({String raison, String? detail})? x = _exclusion(l, geste);
+      if (x == null) {
+        eligibles.add(
+          EligibleLot(
+            id: l.id,
+            reference: l.reference,
+            nomComplet: l.nomComplet,
+            etape: l.etape,
+            etat: l.etat,
+            issue: l.issue,
+            enPause: l.enPause,
+            version: _versionDuLot(l.id),
+          ),
+        );
+      } else {
+        exclus.add(
+          ExclusLot(
+            id: l.id,
+            raison: RaisonExclusion.transitionInterdite,
+            reference: l.reference,
+            nomComplet: l.nomComplet,
+            etape: l.etape,
+            etat: l.etat,
+            issue: l.issue,
+            enPause: l.enPause,
+            parLaPause: x.detail == 'pause',
+          ),
+        );
+      }
+    }
+    return ApercuLot(
+      geste: geste,
+      motifRequis: geste != GesteLot.leverPause,
+      modeleRequis: geste != GesteLot.leverPause,
+      eligibles: eligibles,
+      exclus: exclus,
+      nombre: eligibles.length,
+      jeton: _jeton(geste, <String>[
+        for (final EligibleLot e in eligibles) e.id,
+      ]),
+    );
+  }
+
+  @override
+  Future<RapportLot> executerLot(DemandeLot demande) async {
+    appelsLot.add(demande);
+    final RapportLot? rejeu = _lots[demande.cleIdempotence];
+    if (rejeu != null) {
+      return RapportLot(
+        geste: rejeu.geste,
+        nombre: rejeu.nombre,
+        reussies: rejeu.reussies,
+        exclues: rejeu.exclues,
+        refusees: rejeu.refusees,
+        lignes: rejeu.lignes,
+        rejoue: true,
+      );
+    }
+    final int essai = appelsLot
+        .where((DemandeLot d) => d.cleIdempotence == demande.cleIdempotence)
+        .length;
+    final Object? e = erreurLot?.call(demande, essai);
+    final bool perdu = e is GesteNonConfirme && perteApresEcriture;
+    if (e != null && !perdu) {
+      Error.throwWithStackTrace(e, StackTrace.current);
+    }
+    if (demande.geste != GesteLot.leverPause) {
+      if ((demande.motif ?? '').trim().isEmpty) throw const MotifRequis();
+      if (demande.modele == null) throw const ModeleRequis();
+    }
+    final List<String> eligibles = <String>[
+      for (final String id in demande.ids.toSet())
+        if (_ligneDuLot(id) case final LigneCandidature l
+            when _exclusion(l, demande.geste) == null)
+          id,
+    ];
+    if (demande.jeton != _jeton(demande.geste, eligibles)) {
+      throw const JetonPerime();
+    }
+    if (eligibles.isEmpty) throw const AucunEligible();
+    if (eligibles.length != demande.nombreConfirme) {
+      throw NombreDiscordant(eligibles.length);
+    }
+    final List<LigneRapportLot> rapport = <LigneRapportLot>[];
+    int reussies = 0;
+    int exclues = 0;
+    int refusees = 0;
+    for (final String id in demande.ids.toSet()) {
+      final LigneCandidature? l = _ligneDuLot(id);
+      if (l == null) {
+        rapport.add(
+          LigneRapportLot(
+            id: id,
+            issue: IssueLigneLot.exclue,
+            raison: 'absente',
+          ),
+        );
+        exclues++;
+        continue;
+      }
+      final ({String raison, String? detail})? x = _exclusion(l, demande.geste);
+      if (x != null) {
+        rapport.add(
+          LigneRapportLot(
+            id: id,
+            reference: l.reference,
+            issue: IssueLigneLot.exclue,
+            raison: x.raison,
+            parLaPause: x.detail == 'pause',
+          ),
+        );
+        exclues++;
+      } else if (refusParLigne[id] != null) {
+        rapport.add(
+          LigneRapportLot(
+            id: id,
+            reference: l.reference,
+            issue: IssueLigneLot.refusee,
+            raison: refusParLigne[id],
+          ),
+        );
+        refusees++;
+      } else {
+        _appliquerAuLot(l, demande.geste);
+        rapport.add(
+          LigneRapportLot(
+            id: id,
+            reference: l.reference,
+            issue: IssueLigneLot.reussie,
+          ),
+        );
+        reussies++;
+      }
+    }
+    final RapportLot resultat = RapportLot(
+      geste: demande.geste,
+      nombre: eligibles.length,
+      reussies: reussies,
+      exclues: exclues,
+      refusees: refusees,
+      lignes: rapport,
+    );
+    _lots[demande.cleIdempotence] = resultat;
+    if (perdu) {
+      Error.throwWithStackTrace(e, StackTrace.current);
+    }
+    return resultat;
+  }
+
+  void _appliquerAuLot(LigneCandidature l, GesteLot geste) {
+    final int i = lignes.indexWhere((LigneCandidature x) => x.id == l.id);
+    if (i < 0) return;
+    lignes[i] = LigneCandidature(
+      id: l.id,
+      reference: l.reference,
+      nomComplet: l.nomComplet,
+      nomLatin: l.nomLatin,
+      nomLatinAConfirmer: l.nomLatinAConfirmer,
+      type: l.type,
+      etape: l.etape,
+      etat: l.etat,
+      issue: geste == GesteLot.refuser ? IssueCandidature.refusee : l.issue,
+      enPause: switch (geste) {
+        GesteLot.mettreEnPause => true,
+        GesteLot.leverPause => false,
+        GesteLot.refuser => l.enPause,
+      },
+      restreinte: l.restreinte,
+      indisponible: l.indisponible,
+      paiement: l.paiement,
+      courrielAObtenir: l.courrielAObtenir,
+      indicatifAConfirmer: l.indicatifAConfirmer,
+      derniereActivite: l.derniereActivite,
+      repriseLe: l.repriseLe,
+      indisponibleJusquAu: l.indisponibleJusquAu,
+      paysResidence: l.paysResidence,
+      responsableId: l.responsableId,
+      recueLe: l.recueLe,
+    );
+  }
+
   static DetailCandidature _memeEtat(DetailCandidature d) => DetailCandidature(
     ligne: d.ligne,
     version: d.version + 1,
@@ -639,7 +917,8 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
     final String q = f.rechercheNette.toLowerCase();
     if (q.isNotEmpty) {
       return l.reference.toLowerCase() == q ||
-          l.nomComplet.toLowerCase().contains(q);
+          l.nomComplet.toLowerCase().contains(q) ||
+          (l.nomLatin ?? '').toLowerCase().contains(q);
     }
     return true;
   }
@@ -655,7 +934,9 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
     TriCandidatures.recente => (b.recueLe ?? b.derniereActivite).compareTo(
       a.recueLe ?? a.derniereActivite,
     ),
-    TriCandidatures.nom => a.nomComplet.compareTo(b.nomComplet),
+    TriCandidatures.nom => (a.nomLatin ?? a.nomComplet).compareTo(
+      b.nomLatin ?? b.nomComplet,
+    ),
   };
 }
 
@@ -713,6 +994,20 @@ class CandidaturesDirectionIndisponible implements PortCandidaturesDirection {
   @override
   Future<MoyensConfirmes> moyensConfirmes(String paysVersement) =>
       Future<MoyensConfirmes>.error(
+        const CapaciteIndisponible(dependanceGestesCandidature),
+      );
+
+  @override
+  Future<ApercuLot> preparerLot({
+    required GesteLot geste,
+    required List<String> ids,
+  }) => Future<ApercuLot>.error(
+    const CapaciteIndisponible(dependanceGestesCandidature),
+  );
+
+  @override
+  Future<RapportLot> executerLot(DemandeLot demande) =>
+      Future<RapportLot>.error(
         const CapaciteIndisponible(dependanceGestesCandidature),
       );
 }

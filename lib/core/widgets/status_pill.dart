@@ -106,6 +106,22 @@ class StatusPill extends StatelessWidget {
         // quand un libelle long passe sur deux ou trois lignes, la forme
         // devient un rectangle arrondi et le bord ne touche plus le texte.
         decoration: fond.decoration(borderRadius: AppRadius.arrondiLg),
+        // LISTES-1 : le neutre prend `surfaceSunken`, presque la couleur d'une
+        // ligne de tableau en sombre (38,37,52 sur 39,39,52) : la pastille y
+        // disparaissait. Un filet pose **par-dessus** (aucune taille ajoutee)
+        // la detache, en clair comme en sombre.
+        foregroundDecoration: ton == TonEtat.neutre
+            ? BoxDecoration(
+                borderRadius: AppRadius.arrondiLg,
+                border: Border.fromBorderSide(
+                  BorderSide(
+                    color: palette.inkFaint.asBorderSide().color.withValues(
+                      alpha: 0.6,
+                    ),
+                  ),
+                ),
+              )
+            : null,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           // Etiree par son parent, la pastille garde son contenu au centre
