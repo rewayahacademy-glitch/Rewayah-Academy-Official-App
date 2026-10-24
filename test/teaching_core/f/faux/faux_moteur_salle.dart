@@ -86,8 +86,16 @@ class FauxMoteurSalle implements VideoSessionProvider {
   Future<void> liberer() => fermer();
 
   @override
-  Stream<PaquetDonnees> get donneesRecues =>
-      const Stream<PaquetDonnees>.empty();
+  Stream<PaquetDonnees> get donneesRecues => _donnees.stream;
+
+  final StreamController<PaquetDonnees> _donnees =
+      StreamController<PaquetDonnees>.broadcast();
+
+  /// S1 : les paquets passes a [publierDonnees], dans l'ordre.
+  final List<PaquetDonnees> publies = <PaquetDonnees>[];
+
+  /// S1 : simule la reception d'un paquet de la salle.
+  void recevoir(PaquetDonnees paquet) => _donnees.add(paquet);
 
   @override
   AccesSalle? get accesCourant => null;
@@ -98,5 +106,7 @@ class FauxMoteurSalle implements VideoSessionProvider {
     required List<int> charge,
     required bool fiable,
     List<String> destinataires = const <String>[],
-  }) async {}
+  }) async {
+    publies.add(PaquetDonnees(sujet: sujet, charge: charge, fiable: fiable));
+  }
 }

@@ -17,48 +17,16 @@ import 'port_transport_donnees.dart';
 /// - les **capacites signees** du jeton (`AccesSalle.capacites`), calculees par
 ///   `autoriser_jeton_video()` et posees par `create-room-token` ;
 /// - l'**etat de connexion** (`VideoSessionProvider.etats`), dont
-///   `EtatSalle.retabli` est le signal qui declenche une restauration d'etat.
-///   Cet etat existe deja dans le socle precisement pour cela : son
-///   commentaire dit qu'il doit se distinguer d'une premiere connexion pour que
-///   l'ecran puisse « republier l'etat pedagogique en cours ».
+///   `EtatSalle.retabli` est le signal qui declenche une restauration d'etat ;
+/// - S1 (24/10/2026) : la primitive de donnees du moteur,
+///   `publierDonnees` a l'emission et `donneesRecues` a la reception. Le
+///   canal (fiable ou ephemere) voyage dans le sujet : c'est le moteur qui
+///   pose et relit le suffixe ([suffixeSujetEphemere]), l'adaptateur ne fait
+///   que traduire un booleen en [CanalFiabilite], dans les deux sens.
 ///
-/// ## Ce qu'il ne fait PAS, et pourquoi
-///
-/// Le socle expose **une** primitive de donnees : `presenterContenu`, qui porte
-/// un `ContenuPresente` -- page, sourate, verset -- sur **un** sujet
-/// (`contenu-presente`), en **diffusion**, en mode **fiable**, sans
-/// destinataire.
-///
-/// Faire passer le protocole pedagogique par elle aurait ete possible et aurait
-/// ete une faute : le mode d'affichage, la plage de travail, les plages
-/// masquees et les marqueurs semantiques n'y tiennent pas. La classe suivrait
-/// les tours de page en perdant silencieusement tout le reste -- une classe qui
-/// suit la moitie de la lecon sans que rien ne le dise est pire qu'une
-/// fonctionnalite annoncee comme non branchee.
-///
-/// Ce transport declare donc [DisponibiliteTransport.partiel] : le plan de
-/// controle fonctionne, le plan de donnees leve
-/// [MotifEchecTransport.primitiveEnvoiAbsente] tant qu'Agent Z n'a pas ajoute
-/// la primitive demandee dans `TC_CONTRACT_REQUEST_F.md`. Le jour ou elle
-/// existera, **seul ce fichier changera** : aucun autre fichier du lot F ne
-/// connait LiveKit.
-///
-/// ## Le piege a connaitre avant d'ecrire cette implementation
-///
-/// **LiveKit ne dit pas, a la reception, par quel canal un paquet est
-/// arrive.** Verifie dans `livekit_client 2.12.0` : `DataReceivedEvent` porte
-/// exactement trois champs -- `participant`, `data`, `topic` -- et aucun mode
-/// de livraison. A l'emission, `publishData(..., reliable: bool)` choisit bien
-/// entre `RELIABLE` et `LOSSY`, mais l'information ne voyage pas jusqu'au
-/// recepteur.
-///
-/// La seule facon de reconstituer [PaquetRealtime.canal] est donc de la porter
-/// **dans le sujet** : deux sujets nommes, l'un pour le fiable, l'autre pour
-/// l'ephemere, et l'adaptateur fait la correspondance dans les deux sens.
-/// Le protocole, lui, continue de ne connaitre qu'un sujet et un canal : c'est
-/// exactement ce qu'un adaptateur doit absorber. La mettre dans l'enveloppe du
-/// message obligerait a decoder chaque paquet de pointeur avant de savoir
-/// s'il nous concerne -- trente fois par seconde, pour rien.
+/// Le transport est donc [DisponibiliteTransport.complet] : plan de controle
+/// et plan de donnees. Le droit d'emettre reste celui du jeton signe ; un
+/// refus du moteur remonte en [EchecTransport], jamais avale.
 class AdaptateurTransportLiveKit implements PortTransportDonnees {
   /// Cree l'adaptateur pour une salle deja ouverte.
   ///
@@ -97,22 +65,23 @@ class AdaptateurTransportLiveKit implements PortTransportDonnees {
   final VideoSessionProvider _moteur;
   final CapacitesTransport _capacites;
 
-  final StreamController<PaquetRealtime> _paquets =
-      StreamController<PaquetRealtime>.broadcast();
-
   @override
-  DisponibiliteTransport get disponibilite => DisponibiliteTransport.partiel;
+  DisponibiliteTransport get disponibilite => DisponibiliteTransport.complet;
 
   @override
   CapacitesTransport get capacites => _capacites;
 
-  /// Le flux des paquets recus.
-  ///
-  /// **Vide tant que le core n'expose pas la reception de donnees brutes.**
-  /// Un flux vide, et non une erreur : un abonne doit pouvoir s'abonner sans
-  /// se proteger, et c'est [disponibilite] qui dit l'etat des lieux.
+  /// Le flux des paquets recus, tous sujets confondus : le protocole filtre
+  /// le sien (`ServiceRealtimePedagogique`).
   @override
-  Stream<PaquetRealtime> paquets() => _paquets.stream;
+  Stream<PaquetRealtime> paquets() => _moteur.donneesRecues.map(
+    (PaquetDonnees paquet) => PaquetRealtime(
+      sujet: paquet.sujet,
+      charge: paquet.charge,
+      canal: paquet.fiable ? CanalFiabilite.fiable : CanalFiabilite.ephemere,
+      emetteurIdentite: paquet.emetteurIdentite,
+    ),
+  );
 
   @override
   Stream<EtatTransport> etats() => _moteur.etats.map(_traduire);
@@ -141,8 +110,8 @@ class AdaptateurTransportLiveKit implements PortTransportDonnees {
     required CanalFiabilite canal,
     List<String> destinataires = const <String>[],
   }) async {
-    // Le droit d'abord : il est signe, et le refuser ici evite d'annoncer une
-    // primitive manquante a qui n'aurait de toute facon pas le droit d'emettre.
+    // Le droit d'abord : il est signe, et le refuser ici evite un aller
+    // inutile vers le moteur.
     if (!_capacites.peutPublierDonnees) {
       throw const EchecTransport(MotifEchecTransport.droitRefuse);
     }
@@ -150,15 +119,22 @@ class AdaptateurTransportLiveKit implements PortTransportDonnees {
         _moteur.etatCourant == EtatSalle.echec) {
       throw const EchecTransport(MotifEchecTransport.horsSalle);
     }
-    throw EchecTransport(
-      MotifEchecTransport.primitiveEnvoiAbsente,
-      'sujet $sujet, canal ${canal.name}'
-      '${destinataires.isEmpty ? '' : ', ${destinataires.length} destinataire(s)'}',
-    );
+    try {
+      await _moteur.publierDonnees(
+        sujet: sujet,
+        charge: charge,
+        fiable: canal == CanalFiabilite.fiable,
+        destinataires: destinataires,
+      );
+    } on EchecPublicationDonnees catch (echec) {
+      throw EchecTransport(switch (echec.motif) {
+        MotifEchecPublication.droitRefuse => MotifEchecTransport.droitRefuse,
+        MotifEchecPublication.horsSalle => MotifEchecTransport.horsSalle,
+        MotifEchecPublication.transport => MotifEchecTransport.reseau,
+      }, echec.detail);
+    }
   }
 
   @override
-  Future<void> liberer() async {
-    await _paquets.close();
-  }
+  Future<void> liberer() async {}
 }
