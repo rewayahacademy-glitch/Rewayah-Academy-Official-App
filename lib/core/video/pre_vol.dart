@@ -21,7 +21,12 @@ import '../observabilite/journal_dev.dart';
 /// l'integration du lot Enseignant (`CONTRACT_REQUEST_A.md` §1) : une constante
 /// que tout ecran offrant l'entree doit respecter n'a pas sa place dans le
 /// fichier de l'un d'eux.
-const Duration seuilOuvertureSalle = Duration(minutes: 10);
+///
+/// R8 (24/10/2026, decision du pilote) : vingt minutes, la valeur par defaut
+/// du serveur (`app_config_int('join_window_minutes', 20)`, qui pose
+/// `sessions.join_opens_at`). A dix, l'enseignant et le tuteur voyaient la
+/// salle fermee dix minutes de trop alors que le serveur l'ouvrait deja.
+const Duration seuilOuvertureSalle = Duration(minutes: 20);
 
 /// Ce que le pre-vol a trouve.
 ///

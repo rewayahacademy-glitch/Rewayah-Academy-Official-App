@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/capacites/capacite_indisponible.dart';
-import '../../core/domain/enums.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/presence/vue_presence.dart';
-import '../../core/router/billet_salle.dart';
-import '../../core/router/routes.dart';
 import '../../core/seance_famille/seance_famille.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
@@ -20,7 +16,6 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
-import '../../core/video/pre_vol.dart' show seuilOuvertureSalle;
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar_nom.dart';
@@ -32,6 +27,7 @@ import '../../core/widgets/status_pill.dart';
 import '../accueil_famille/bloc_seance.dart';
 import 'bloc_observation_classe.dart';
 import 'contexte_classe.dart';
+import 'rejoindre_avec_eleve.dart';
 
 /// Le bandeau d'etat de la seance, en une ligne : ce que la seance est, et a
 /// droite ce qui l'accompagne (compte a rebours, presence de l'eleve).
@@ -259,49 +255,24 @@ class CarteSeanceClasse extends ConsumerWidget {
     EtatSeanceFamille etat,
     TextStyle discret,
   ) {
-    switch (etat) {
-      case EtatSeanceFamille.salleOuverte ||
-          EtatSeanceFamille.enDirect ||
-          EtatSeanceFamille.prolongee:
-        return <Widget>[
-          Ecart.vXl,
-          ActionPrincipale(
-            libelle: t.classe.seance.rejoindreAvec(
-              prenom: contexte.eleve.prenom,
-            ),
-            onPress: () => GoRouter.of(context).push(
-              Routes.salle,
-              extra: BilletSalle(
-                sessionId: laSeance.seanceId,
-                emisA: DateTime.now(),
-                groupeId: laSeance.groupeId,
-                eleveId: contexte.eleveId,
-                interfaceGuidee: contexte.eleve.mode == InterfaceMode.enfant,
-              ),
-            ),
-          ),
-        ];
-      case EtatSeanceFamille.aVenir:
-        final DateTime ouverture = laSeance.debutUtc.subtract(
-          laSeance.fenetre?.fenetreAcces ?? seuilOuvertureSalle,
-        );
-        return <Widget>[
-          Ecart.vSm,
-          Text(
-            t.classe.seance.salleOuvreA(
-              heure: heureDeLAppareil(ouverture.toLocal()),
-            ),
-            style: discret,
-          ),
-        ];
-      case EtatSeanceFamille.terminee ||
-          EtatSeanceFamille.annulee ||
-          EtatSeanceFamille.annuleeTardive ||
-          EtatSeanceFamille.nonTenue ||
-          EtatSeanceFamille.reportee ||
-          EtatSeanceFamille.horaireIncertain:
-        return const <Widget>[];
+    if (salleRejoignable(etat)) {
+      return <Widget>[
+        Ecart.vXl,
+        BoutonRejoindreAvecEleve(seance: laSeance, eleve: contexte.eleve),
+      ];
     }
+    if (etat == EtatSeanceFamille.aVenir) {
+      return <Widget>[
+        Ecart.vSm,
+        Text(
+          t.classe.seance.salleOuvreA(
+            heure: heureDeLAppareil(ouvertureSalle(laSeance).toLocal()),
+          ),
+          style: discret,
+        ),
+      ];
+    }
+    return const <Widget>[];
   }
 }
 

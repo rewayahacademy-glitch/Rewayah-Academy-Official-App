@@ -900,7 +900,8 @@ void main() {
     testWidgets('l etat se rafraichit a la minute : la salle ouvre', (
       WidgetTester tester,
     ) async {
-      DateTime maintenant = DateTime(2026, 9, 28, 17, 19);
+      // R8 : la salle ouvre vingt minutes avant (17:30), comme le serveur.
+      DateTime maintenant = DateTime(2026, 9, 28, 17, 9);
       _fenetre(tester, const Size(390, 2400));
       await tester.pumpWidget(
         hote(
@@ -914,7 +915,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.text(t.enseignant.journee.preparerSeance), findsOneWidget);
-      maintenant = DateTime(2026, 9, 28, 17, 21);
+      maintenant = DateTime(2026, 9, 28, 17, 11);
       await tester.pump(const Duration(minutes: 1));
       await tester.pumpAndSettle();
       expect(find.text(t.enseignant.journee.rejoindreSalle), findsOneWidget);

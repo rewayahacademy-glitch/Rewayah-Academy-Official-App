@@ -8,6 +8,16 @@ import 'package:livekit_client/livekit_client.dart' as lk;
 import '../observabilite/journal_dev.dart';
 import 'video_session_provider.dart';
 
+/// Le debit maximal de la couche 720p, en bits par seconde (D15) : environ
+/// 1,8 Mbit/s envoyes pour les trois couches, 1,2 recus pour une video agrandie.
+const int debitMax720p = 1200000;
+
+/// Vrai quand la camera s'allume d'elle-meme a l'entree : un eleve dont le
+/// jeton permet l'image, donc dont le tuteur a autorise la camera (D14,
+/// 24/10/2026). Jamais pour un autre role, jamais en audio seul.
+bool cameraAllumeeALEntree(AccesSalle acces) =>
+    acces.role == 'student' && acces.capacites.peutPublierVideo;
+
 /// La seule implementation du contrat, et le seul endroit ou le SDK est
 /// **traduit**.
 ///
@@ -138,6 +148,24 @@ class LiveKitSessionProvider implements VideoSessionProvider {
         // prime sur la fidelite, ce serait un contresens -- et le premier
         // cours en environnement bruyant le prouverait.
         defaultAudioCaptureOptions: lk.AudioCaptureOptions(),
+        // D15 (24/10/2026, decision du pilote) : l'image paraissait « 240p »
+        // avec les reglages par defaut, parce que les petites vignettes ne
+        // demandaient que la couche basse. Publication 720p en trois couches
+        // (180p, 360p, 720p), 720p plafonne a 1,2 Mbit/s ; `adaptiveStream`
+        // reste : une video agrandie demande d'elle-meme la couche 720p.
+        defaultCameraCaptureOptions: lk.CameraCaptureOptions(
+          params: lk.VideoParametersPresets.h720_169,
+        ),
+        defaultVideoPublishOptions: lk.VideoPublishOptions(
+          videoEncoding: lk.VideoEncoding(
+            maxBitrate: debitMax720p,
+            maxFramerate: 30,
+          ),
+          videoSimulcastLayers: <lk.VideoParameters>[
+            lk.VideoParametersPresets.h180_169,
+            lk.VideoParametersPresets.h360_169,
+          ],
+        ),
       ),
     );
     _salle = salle;
@@ -166,7 +194,23 @@ class LiveKitSessionProvider implements VideoSessionProvider {
     // etait fausse : aucun ecran n'existait alors pour l'exercer, donc rien ne
     // l'a signalee. Ouvrir un micro sans geste, dans une maison ou un enfant
     // recite, est exactement ce que la regle empeche.
+    //
+    // **Une exception, decidee le 24/10/2026 (D14, pilote delegue par le
+    // directeur)** : l'eleve dont le tuteur a autorise la camera (jeton qui
+    // permet l'image) entre camera ALLUMEE, l'etat « Camera allumee » visible
+    // et le bouton pour la couper. L'invariant reste entier pour le micro, pour
+    // les autres roles, et pour l'eleve sans autorisation (pas de bouton).
     _poser(EtatSalle.connecte);
+    if (cameraAllumeeALEntree(acces)) {
+      try {
+        await salle.localParticipant?.setCameraEnabled(true);
+        _cameraAvantDegradation = true;
+      } catch (e) {
+        // Camera refusee par le navigateur ou occupee : l'eleve reste en
+        // salle, camera coupee, et le bouton le lui dit.
+        journalDev('camera de l eleve non allumee a l entree : $e');
+      }
+    }
     _publierParticipants();
   }
 

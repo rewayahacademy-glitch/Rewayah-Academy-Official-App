@@ -18,6 +18,7 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/skeleton.dart';
+import '../classe_tuteur/rejoindre_avec_eleve.dart';
 import 'bloc_seance.dart';
 
 /// La carte classe de l'Accueil : l'eleve, sa classe et son enseignant, la
@@ -47,6 +48,9 @@ class CarteClasseSeance extends StatelessWidget {
     super.key,
     this.urlPhotoEleve,
   });
+
+  /// L'heure d'ouverture de la salle, avant la porte (tests).
+  static const Key salleOuvreKey = ValueKey<String>('carte-classe-salle-ouvre');
 
   /// L'eleve selectionne.
   final ProfilEleveFoyer profil;
@@ -347,12 +351,28 @@ class _Seance extends StatelessWidget {
         ],
       );
     }
-    return BlocSeance(
-      affichage: AffichageSeance.depuis(
-        laSeance,
-        maintenantServeurUtc: maintenantServeurUtc,
-      ),
-      compact: compact,
+    final AffichageSeance affichage = AffichageSeance.depuis(
+      laSeance,
+      maintenantServeurUtc: maintenantServeurUtc,
+    );
+    final Widget bloc = BlocSeance(affichage: affichage, compact: compact);
+    // R8 : avant la porte du serveur, l'heure d'ouverture de la salle ; le
+    // bouton pour y entrer vit hors de la carte, qui est un lien.
+    if (affichage.etat != EtatSeanceFamille.aVenir) return bloc;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        bloc,
+        Ecart.vSm,
+        Text(
+          t.classe.seance.salleOuvreA(
+            heure: heureDeLAppareil(ouvertureSalle(laSeance).toLocal()),
+          ),
+          key: CarteClasseSeance.salleOuvreKey,
+          style: discret,
+        ),
+      ],
     );
   }
 }
