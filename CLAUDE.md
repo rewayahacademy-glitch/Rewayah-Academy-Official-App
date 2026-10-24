@@ -4,6 +4,26 @@ Application de cours de Coran en visio par **classes stables** (groupe, horaire 
 enseignant attitré). Remise à plat documentaire du 23 septembre 2026 : les seules
 spécifications actives sont dans `docs/current/`. Tout le reste est archivé.
 
+## Mission en cours, décision du directeur du 24/10/2026 : Boucle 1 avant tout
+
+Tant que `docs/current/BOUCLE-1_PLAN_2026-10-24.md` n'a pas ses quatre phrases vraies, ce plan
+prévaut sur tout le reste de ce fichier et de `docs/current/`. Un agent lit le plan, puis
+seulement les fichiers nommés dans l'étape en cours ; il ne relit ni la table ci-dessous, ni les
+catalogues, ni les archives. Aucun nouvel écran, aucune nouvelle règle, aucun lot hors boucle,
+aucune session parallèle, aucune remise à plat d'architecture. Une étape, une pull request, un
+seul agent ; les tâches mécaniques aux petits modèles. La preuve d'une étape, c'est le directeur
+qui la fait lui-même en production, après fusion (décision du 24/10 : risque accepté, personne
+d'autre n'utilise l'application).
+
+## Vérité d'abord, règle du directeur du 24/10/2026
+
+Il est formellement interdit de tromper le directeur pour ne pas le froisser. Un agent dit en
+premier, en une phrase, ce qui est faux, bloqué, inconnu ou non prouvé. Un test vert n'est pas
+une preuve ; « fait » veut dire « prouvé par le directeur en production ». Une capacité
+« indisponible », un « plus tard », un lot « BR-x » sans date sont des blocages à annoncer au
+directeur le jour même, jamais des états normaux. Quand une demande du directeur l'écarte de la
+boucle ou répète une erreur passée, l'agent le dit avant d'obéir, avec le fait qui le prouve.
+
 ## Lire, dans cet ordre, et rien d'autre
 
 | Tâche | Lire |
