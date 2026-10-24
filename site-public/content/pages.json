@@ -17,14 +17,18 @@
   },
   "site": {
     "locale": "fr-FR",
-    "author_credit": "Site conçu par Abdoulaye Mouhidine Sow.",
+    "author_credit": "Site conçu par Dynamahinyessow.",
     "social_links": [
       {
         "label": "Facebook officiel de Rewayah Academy",
         "href": "https://www.facebook.com/share/1CVee2teiN/"
       },
       {
-        "label": "Facebook de l'auteur du site",
+        "label": "Instagram officiel de Rewayah Academy",
+        "href": "https://www.instagram.com/rewayahacademy/"
+      },
+      {
+        "label": "Facebook de Dynamahinyessow",
         "href": "https://www.facebook.com/share/1D6H2EYhci/"
       }
     ],

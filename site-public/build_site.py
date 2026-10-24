@@ -161,9 +161,12 @@ def load_content() -> tuple[dict[str, dict], dict]:
     if not isinstance(social, list) or {item.get("href") for item in social} != {
         "https://www.facebook.com/share/1CVee2teiN/",
         "https://www.facebook.com/share/1D6H2EYhci/",
+        "https://www.instagram.com/rewayahacademy/",
     }:
-        raise ValueError("Social destinations differ from the two approved URLs")
-    if site.get("author_credit") != "Site conçu par Abdoulaye Mouhidine Sow.":
+        raise ValueError("Social destinations differ from the three approved URLs")
+    # Directeur, 24/10/2026 : son nom quitte le pied de page (il reste sur sa biographie de fondateur) ; le
+    # createur du site signe du nom exact de sa page Facebook.
+    if site.get("author_credit") != "Site conçu par Dynamahinyessow.":
         raise ValueError("Site creator credit differs from the approved text")
     missing = REQUIRED - pages.keys()
     if missing:
@@ -1217,6 +1220,11 @@ def donnees_structurees(origin: str) -> str:
                 "legalName": "REWAYAH ACADEMY LTD",
                 "url": base + "/fr/",
                 "logo": base + f"{ASSETS}/logo-horizontal.svg",
+                # Les comptes officiels de l'academie (directeur, 24/10/2026), pour la fiche de Google.
+                "sameAs": [
+                    "https://www.facebook.com/share/1CVee2teiN/",
+                    "https://www.instagram.com/rewayahacademy/",
+                ],
             },
             {
                 "@type": "WebSite",
@@ -1266,6 +1274,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
     discovery_links += f'<li class="pied-contact pied-contact--telephone">{contact}</li>'
     social_by_href = {item["href"]: item for item in site["social_links"]}
     academy_facebook = social_by_href["https://www.facebook.com/share/1CVee2teiN/"]
+    academy_instagram = social_by_href["https://www.instagram.com/rewayahacademy/"]
     author_facebook = social_by_href["https://www.facebook.com/share/1D6H2EYhci/"]
     cta = bouton(page["cta"]["label"], page["cta"]["href"])
     if route == "/fr/tarifs":
@@ -1378,7 +1387,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
      <div class="footer-identity"><a class="brand" href="/fr/" aria-label="Rewayah Academy, accueil"><img src="{ASSETS}/logo-horizontal-white.svg" width="1027" height="287" alt=""></a></div>
     <details class="pied-volet pied-volet--liens" open><summary class="footer-title">Découvrir</summary><nav aria-label="Découvrir Rewayah"><ul>{discovery_links}</ul></nav></details>
     <details class="pied-volet pied-volet--legal" open><summary class="footer-title">Informations légales</summary><div class="pied-legal"><nav class="footer-legal" aria-label="Navigation légale"><ul>{footer_links}</ul></nav>
-      <div class="pied-societe"><p><span>REWAYAH ACADEMY LTD</span> <span>Société\u00a0n°\u00a016624644</span></p><address><span>71-75 Shelton Street</span> <span>Covent Garden, London</span> <span>WC2H 9JQ, Royaume-Uni</span></address><p>{anchor(academy_facebook['label'], academy_facebook['href'])}</p><p>{anchor(author_facebook['label'], author_facebook['href'])}</p><p class="pied-credit"><span>Français</span> <span>{esc(site['author_credit'])}</span></p></div></div></details>
+      <div class="pied-societe"><p><span>REWAYAH ACADEMY LTD</span> <span>Société\u00a0n°\u00a016624644</span></p><address><span>71-75 Shelton Street</span> <span>Covent Garden, London</span> <span>WC2H 9JQ, Royaume-Uni</span></address><p>{anchor(academy_facebook['label'], academy_facebook['href'])}</p><p>{anchor(academy_instagram['label'], academy_instagram['href'])}</p><p>{anchor(author_facebook['label'], author_facebook['href'])}</p><p class="pied-credit"><span>Français</span> <span>{esc(site['author_credit'])}</span></p></div></div></details>
     <p class="footer-bottom"><span>Français</span> <span>{esc(site['author_credit'])}</span></p>
   </div></footer>
 </body>
