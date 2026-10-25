@@ -103,6 +103,34 @@ const MODELES: Record<string, Fabrique> = {
       ],
     }
   },
+  // Ecrit a la main, phrase par phrase depuis le francais valide par le
+  // directeur le 24/10 (pilote, 25/10/2026 : la traduction automatique
+  // inversait des sens). Vouvoiement de respect (أنتم) ; le nom en arabe,
+  // « أكاديمية الرواية » (registre de marque M-27, confirme par le directeur le
+  // 25/10) ; « تطبيق Rewayah » garde le nom du produit affiche.
+  attente_candidat: () => {
+    const sujet = 'ترشحكم للتدريس في أكاديمية الرواية: ما وصلنا إليه'
+    const accroche = 'ملأتم نموذجنا لتدريس القرآن في أكاديمية الرواية. نشكركم على ثقتكم، ومن حقكم علينا أن نوافيكم بجواب واضح.'
+    return {
+      sujet,
+      apercu: accroche,
+      titre: sujet,
+      blocs: [
+        { type: 'texte', texte: 'السلام عليكم ورحمة الله،' },
+        { type: 'texte', texte: accroche },
+        { type: 'texte', texte: 'لقد أجاب قرابة ستمئة منكم. نقرأ كل ترشح على حدة، ولا نفتح الفصول إلا مع معلمين التقينا بهم. وهذا يتطلب وقتًا، ونفضّل أن نأخذ وقتنا على أن نُسيء العمل.' },
+        { type: 'texte', texte: 'هذا ما سيحدث:' },
+        { type: 'texte', texte: '1. في غضون ثلاثة أسابيع، ستصلكم منا رسالة شخصية عبر البريد الإلكتروني، في كل الأحوال.\n' +
+          '2. إن كان ملفكم يوافق احتياجاتنا الحالية، فستتضمن هذه الرسالة دعوة إلى إنشاء حسابكم في تطبيق Rewayah، ثم مقابلة عبر الفيديو مع الإدارة.\n' +
+          '3. وإن لم يكن الأمر كذلك في الوقت الحالي، فسنخبركم بذلك أيضًا، وسنحتفظ بترشحكم للفصول التي سنفتحها لاحقًا، إلا إذا فضّلتم أن نحذفه.' },
+        { type: 'texte', texte: 'لا شيء عليكم دفعه، لا اليوم ولا لاحقًا: التدريس في أكاديمية الرواية عمل تتقاضون عليه أجرًا، ولا يُطلب منكم فيه أي مبلغ، ولا أي رسوم تدريب.' },
+        { type: 'texte', texte: 'لا شيء مطلوب منكم اليوم. ولا حاجة إلى مراسلتنا للسؤال عن مآل طلبكم: نحن من سيتواصل معكم، على هذا العنوان.' },
+        { type: 'texte', texte: 'وإن لم تعودوا ترغبون في التدريس معنا، فتكفي نقرة على الرابط في أسفل هذه الرسالة، دون حاجة إلى أي تبرير.' },
+        { type: 'texte', texte: 'جزاكم الله خيرًا على مبادرتكم.' },
+        { type: 'texte', texte: 'الإدارة\nأكاديمية الرواية' },
+      ],
+    }
+  },
   message_libre: (d) => libre(d, PAROLE.sujetLibre),
   nouvelles: (d) => libre(d, PAROLE.sujetLibre),
 }

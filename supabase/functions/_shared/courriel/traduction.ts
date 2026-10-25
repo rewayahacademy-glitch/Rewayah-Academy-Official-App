@@ -4,16 +4,23 @@
 // l'API Cloud Translation v2 (`GOOGLE_TRADUCTION_CLE`). Les passages en
 // ecriture arabe d'un texte qui n'est pas traduit vers l'arabe (versets,
 // invocations, noms) sont proteges : jamais traduits automatiquement
-// (competence mots-rewayah, §6).
+// (competence mots-rewayah, §6). Le nom de la marque (« Rewayah Academy »,
+// « Rewayah ») est protege de meme, vers toutes les langues : il reste en
+// latin et s'ecrit pareil partout (pilote, 25/10/2026, apres une copie de test
+// en arabe qui le rendait de trois facons).
 
 import type { Bloc, Contenu } from './gabarit.ts'
 
 const API = 'https://translation.googleapis.com/language/translate/v2'
 const ARABE = /[؀-ۿݐ-ݿࢠ-ࣿﭐ-﷿ﹰ-﻿][؀-ۿݐ-ݿࢠ-ࣿﭐ-﷿ﹰ-﻿\sً-ٰٟ]*/g
 
+const MARQUE = /Rewayah(?: Academy)?/g
+const proteger = (m: string) => `<span translate="no" class="notranslate">${m}</span>`
+
 export function versHtml(t: string, protegerArabe: boolean): string {
   const e = t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')
-  return protegerArabe ? e.replace(ARABE, (m) => `<span translate="no" class="notranslate">${m}</span>`) : e
+  const marque = e.replace(MARQUE, proteger)
+  return protegerArabe ? marque.replace(ARABE, proteger) : marque
 }
 
 export function depuisHtml(h: string): string {

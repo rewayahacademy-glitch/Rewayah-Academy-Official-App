@@ -37,6 +37,9 @@ mise en file porte la langue ; l'envoi traduit par Google Traduction (protection
 ci-dessous ne servent qu'à vérifier la traduction automatique sur deux langues lues par la
 direction ; elles ne sont pas envoyées telles quelles.
 
+Pulaar : pas de traduction automatique (directeur, 25/10/2026) ; seconde langue déclarée, l'arabe
+pour les 9 candidats concernés ; répartition finale ar 403, en 59, fr 59, pt 3.
+
 ## Objet
 
 Votre candidature pour enseigner à Rewayah Academy : où nous en sommes
@@ -73,6 +76,47 @@ Qu'Allah vous récompense pour votre démarche.
 
 La direction
 Rewayah Academy
+
+## Version arabe écrite à la main, à valider par le directeur
+
+Décision du pilote du 25/10/2026 : la copie de test traduite par Google rendait le nom de trois
+façons et inversait des sens (« nous vous devons une réponse claire » devenu « nous attendons votre
+réponse », « votre dossier » rendu par « votre procès »). Les 394 envois en arabe partent donc avec
+ce texte, écrit à la main, sans traduction automatique ni note « traduit automatiquement » ; les
+autres langues (en, es, pt ; le pulaar n'est pas traduit, ci-dessus) restent traduites à l'envoi, le nom « Rewayah Academy » protégé.
+Source : `supabase/functions/_shared/courriel/modeles_ar.ts`, `attente_candidat` (texte ci-dessous
+tiré du rendu, identique à l'envoi). Le nom s'écrit « أكاديمية الرواية » (registre de marque M-27,
+confirmé par le directeur le 25/10) ; « تطبيق Rewayah » garde le nom du produit affiché. La
+référence plus bas, qui écrit « أكاديمية رواية », n'est pas envoyée.
+
+**Objet**
+
+ترشحكم للتدريس في أكاديمية الرواية: ما وصلنا إليه
+
+**Corps**
+
+السلام عليكم ورحمة الله،
+
+ملأتم نموذجنا لتدريس القرآن في أكاديمية الرواية. نشكركم على ثقتكم، ومن حقكم علينا أن نوافيكم بجواب واضح.
+
+لقد أجاب قرابة ستمئة منكم. نقرأ كل ترشح على حدة، ولا نفتح الفصول إلا مع معلمين التقينا بهم. وهذا يتطلب وقتًا، ونفضّل أن نأخذ وقتنا على أن نُسيء العمل.
+
+هذا ما سيحدث:
+
+1. في غضون ثلاثة أسابيع، ستصلكم منا رسالة شخصية عبر البريد الإلكتروني، في كل الأحوال.
+2. إن كان ملفكم يوافق احتياجاتنا الحالية، فستتضمن هذه الرسالة دعوة إلى إنشاء حسابكم في تطبيق Rewayah، ثم مقابلة عبر الفيديو مع الإدارة.
+3. وإن لم يكن الأمر كذلك في الوقت الحالي، فسنخبركم بذلك أيضًا، وسنحتفظ بترشحكم للفصول التي سنفتحها لاحقًا، إلا إذا فضّلتم أن نحذفه.
+
+لا شيء عليكم دفعه، لا اليوم ولا لاحقًا: التدريس في أكاديمية الرواية عمل تتقاضون عليه أجرًا، ولا يُطلب منكم فيه أي مبلغ، ولا أي رسوم تدريب.
+
+لا شيء مطلوب منكم اليوم. ولا حاجة إلى مراسلتنا للسؤال عن مآل طلبكم: نحن من سيتواصل معكم، على هذا العنوان.
+
+وإن لم تعودوا ترغبون في التدريس معنا، فتكفي نقرة على الرابط في أسفل هذه الرسالة، دون حاجة إلى أي تبرير.
+
+جزاكم الله خيرًا على مبادرتكم.
+
+الإدارة
+أكاديمية الرواية
 
 ## Référence arabe (contrôle de la traduction, non envoyée telle quelle)
 

@@ -150,8 +150,8 @@ Deno.test('chaque langue ecrite a tous les modeles et toutes les raisons', () =>
     const L = LANGUES[l]
     assert(L, l)
     for (const m of modelesConnus) {
-      // Ecrit en francais seul, traduit a l'envoi : verifie plus bas.
-      if (l !== 'fr' && TRADUITS_A_L_ENVOI.includes(m)) continue
+      // Traduit a l'envoi vers les langues qui ne l'ecrivent pas : verifie plus bas.
+      if (l !== 'fr' && l !== 'ar' && TRADUITS_A_L_ENVOI.includes(m)) continue
       assert(typeof L.modeles[m] === 'function', `${l} : modele ${m}`)
     }
     for (const c of CATEGORIES) assert(L.raisons[c] && L.raisons[c].length > 20, `${l} : raison ${c}`)
@@ -165,7 +165,7 @@ Deno.test('chaque modele dans chaque langue : leger, bonne langue, bonne directi
     for (const m of modelesConnus) {
       const base = { modele: m, categorie: 'classes', essentielle: false, donnees: { ...DONNEES, jeton_desinscription: 'abc', langue_source: l } }
       const r = rendre(base, l)
-      if (l !== 'fr' && TRADUITS_A_L_ENVOI.includes(m)) {
+      if (l !== 'fr' && l !== 'ar' && TRADUITS_A_L_ENVOI.includes(m)) {
         assertEquals(r.traduireDepuis, 'fr', `${l} ${m} : traduit a l envoi`)
         continue
       }
@@ -235,8 +235,8 @@ Deno.test('attente_candidat : le texte valide par le directeur, mot pour mot', a
   assert(!c.blocs.some((b) => b.type === 'bouton'))
 })
 
-Deno.test('attente_candidat : rendu en anglais et en arabe par le faux traducteur, une langue par message', async () => {
-  for (const cible of ['en', 'ar']) {
+Deno.test('attente_candidat : rendu en anglais et en peul par le faux traducteur, une langue par message', async () => {
+  for (const cible of ['en', 'ff']) {
     const r = rendre(ATTENTE, cible)
     assertEquals(r.traduireDepuis, 'fr', cible)
     const envoyes: string[][] = []
@@ -259,4 +259,48 @@ Deno.test('attente_candidat : rendu en anglais et en arabe par le faux traducteu
   const { versHtml } = await import('./traduction.ts')
   // Un passage arabe dans un texte traduit vers l'anglais n'est jamais traduit.
   assert(versHtml('Qu’Allah vous récompense, جزاكم الله خيرا.', true).includes('<span translate="no" class="notranslate">جزاكم الله خيرا</span>'))
+})
+
+Deno.test('le nom de la marque n est jamais traduit, vers aucune langue', async () => {
+  const { versHtml, depuisHtml } = await import('./traduction.ts')
+  // Faux traducteur : transforme tout ce qui n'est pas protege par translate="no".
+  const brouiller = (h: string) => h.split(/(<span translate="no" class="notranslate">.*?<\/span>)/s)
+    .map((x) => (x.startsWith('<span translate="no"') ? x : x.toUpperCase().replace(/REWAYAH/g, 'روايا')))
+    .join('')
+  for (const arabeProtege of [true, false]) {
+    const sortie = depuisHtml(brouiller(versHtml('Enseigner à Rewayah Academy, dans l’application Rewayah.', arabeProtege)))
+    assertEquals(sortie, 'ENSEIGNER À Rewayah Academy, DANS L’APPLICATION Rewayah.', `arabe protege : ${arabeProtege}`)
+  }
+  // Le sujet du courriel d'attente traduit garde le nom en latin.
+  const r = rendre({ ...ATTENTE }, 'en')
+  const c = await traduireContenu(r.contenu, 'fr', 'en', async (textes, _s, vers) =>
+    textes.map((t) => depuisHtml(brouiller(versHtml(t, vers !== 'ar')))))
+  assert(c.sujet.includes('Rewayah Academy') && !c.sujet.includes('روايا'), c.sujet)
+})
+
+Deno.test('attente_candidat en arabe : ecrit a la main, jamais traduit, de droite a gauche', () => {
+  const r = rendre(ATTENTE, 'ar')
+  assertEquals(r.traduireDepuis, undefined)
+  const c = r.contenu
+  assertEquals(c.langue, 'ar')
+  assertEquals(c.droiteAGauche, true)
+  assertEquals(c.sujet, 'ترشحكم للتدريس في أكاديمية الرواية: ما وصلنا إليه')
+  assertEquals(c.noteTraduction, undefined)
+  const { html, texte } = composer(c)
+  assert(html.includes('<html lang="ar" dir="rtl">'))
+  assert(!texte.includes('traduit automatiquement') && !html.includes('traduit automatiquement'))
+  assert(texte.includes('السلام عليكم ورحمة الله،') && texte.includes('طلبكم') && texte.includes('رسوم تدريب'))
+  // Aucun mot francais ; dans le corps, le nom ecrit selon M-27, jamais une
+  // autre forme (le pied commun du gabarit, hors de ce modele, reste en latin).
+  const corps = c.sujet + c.blocs.map((b) => (b.type === 'texte' ? b.texte : '')).join('\n')
+  assert(!/Bonjour|Vous |votre |Assalamou/.test(texte), texte)
+  assert(!corps.includes('Rewayah Academy'), corps)
+  assert(!/روايا|روية|أكاديمية رواية/.test(texte))
+  assert(texte.includes('الإدارة\nأكاديمية الرواية') && texte.includes('تطبيق Rewayah'))
+  assert(html.includes('/fr/courriels/desinscription?jeton=jeton-1'))
+  assert(!c.blocs.some((b) => b.type === 'bouton'))
+  // Meme forme que le francais : memes blocs, meme liste en trois points.
+  const fr = rendre(ATTENTE, 'fr').contenu
+  assertEquals(c.blocs.length, fr.blocs.length)
+  assertEquals((c.blocs[4] as { texte: string }).texte.split('\n').length, 3)
 })
