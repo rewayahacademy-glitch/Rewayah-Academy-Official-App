@@ -115,6 +115,8 @@ export const MODELES: Record<string, Fabrique> = {
       sujet,
       apercu: accroche,
       titre: sujet,
+      // Lettre personnelle (pilote, 25/10/2026) : jamais « Promotions ».
+      lettre: true,
       blocs: [
         { type: 'texte', texte: 'Assalamou alaykoum wa rahmatoullah,' },
         { type: 'texte', texte: accroche },

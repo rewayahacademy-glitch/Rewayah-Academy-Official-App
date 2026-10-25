@@ -29,7 +29,10 @@ Deno.test('chaque e-mail reste leger : moins de 15 Ko, sans script ni police web
     assert(ko < 15, `${m} : ${ko.toFixed(1)} Ko`)
     assert(!/<script|@font-face|fonts\.googleapis|<link /i.test(html), m)
     assert(!/#F8F4EE|creme|crème/i.test(html), `${m} : couleur perimee`)
-    assert(html.includes('/fr/assets/courriel-logo-violet.png') && html.includes('/fr/assets/courriel-ornement-violet.png'), m)
+    // Une lettre personnelle (pilote, 25/10/2026) n'a aucune image ; les
+    // autres portent le logo et l'ornement.
+    if (c.lettre === true) assert(!/<img/i.test(html), `${m} : lettre sans image`)
+    else assert(html.includes('/fr/assets/courriel-logo-violet.png') && html.includes('/fr/assets/courriel-ornement-violet.png'), m)
     assert(texte.length > 20 && !texte.includes('<'), `${m} : version texte`)
   }
 })
@@ -303,4 +306,59 @@ Deno.test('attente_candidat en arabe : ecrit a la main, jamais traduit, de droit
   const fr = rendre(ATTENTE, 'fr').contenu
   assertEquals(c.blocs.length, fr.blocs.length)
   assertEquals((c.blocs[4] as { texte: string }).texte.split('\n').length, 3)
+})
+
+// Pilote, 25/10/2026 : la copie de test du courriel d'attente arrivait dans
+// « Promotions » de Gmail (logo, ornement, carte, en-tetes de liste). Le
+// courriel d'attente part en lettre personnelle.
+Deno.test('lettre personnelle : attente_candidat sans image ni en-tete de liste, lien de desinscription en corps', async () => {
+  const { entetes, lienUnClic } = await import('./entetes.ts')
+  for (const langue of ['fr', 'ar']) {
+    const c = rendre(ATTENTE, langue).contenu
+    assertEquals(c.lettre, true, langue)
+    const { html, texte } = composer(c)
+    assert(!/<img/i.test(html), `${langue} : aucune image`)
+    assert(!/border-radius|border:1px/.test(html), `${langue} : ni carte ni bordure`)
+    assert(!/<h1/i.test(html), `${langue} : pas de titre`)
+    assert(html.includes('background:#FFFFFF'), `${langue} : fond blanc`)
+    assert(html.includes('Rewayah Academy · rewayahacademy.com'), `${langue} : pied en une ligne`)
+    assert(html.includes('/fr/courriels/desinscription?jeton=jeton-1'), `${langue} : lien en corps`)
+    assert(texte.includes('/fr/courriels/desinscription?jeton=jeton-1'), `${langue} : lien dans le texte brut`)
+    assert(html.includes(`dir="${langue === 'ar' ? 'rtl' : 'ltr'}"`), langue)
+    // Aucun en-tete de liste a l'envoi.
+    const lien = lienUnClic({ lettre: c.lettre, essentielle: false, jeton: 'jeton-1', base: 'https://x/fn' })
+    assertEquals(lien, undefined, langue)
+    const h = entetes({ de: 'a@b', deNom: 'A', repondreA: 'a@b', a: 'c@d', sujet: c.sujet, html, texte,
+      idMessage: 'id-1', desinscriptionUnClic: lien })
+    assert(!('List-Unsubscribe' in h) && !('List-Unsubscribe-Post' in h), `${langue} : en-tetes`)
+    assert(!Object.keys(h).some((k) => /^List-/i.test(k)), `${langue} : aucun en-tete de liste`)
+  }
+  // Le texte arabe ecrit a la main est inchange.
+  const ar = rendre(ATTENTE, 'ar').contenu
+  assertEquals(ar.sujet, 'ترشحكم للتدريس في أكاديمية الرواية: ما وصلنا إليه')
+  assert(composer(ar).texte.includes('الإدارة\nأكاديمية الرواية'))
+})
+
+Deno.test('lettre personnelle : traduite a l envoi, elle reste une lettre', async () => {
+  const r = rendre(ATTENTE, 'en')
+  const c = await traduireContenu(r.contenu, 'fr', 'en', (t) => Promise.resolve(t))
+  assertEquals(c.lettre, true)
+  assert(!/<img/i.test(composer(c).html))
+})
+
+Deno.test('les autres modeles gardent le gabarit de marque et leurs en-tetes de liste', async () => {
+  const { entetes, lienUnClic } = await import('./entetes.ts')
+  const c = rendre({ modele: 'classe_validee', categorie: 'inscription', essentielle: false,
+    donnees: { prenom: 'Awa', jeton_desinscription: 'j2' } }, 'fr').contenu
+  assertEquals(c.lettre, undefined)
+  const { html } = composer(c)
+  assert(html.includes('courriel-logo-violet.png') && html.includes('courriel-ornement-violet.png'))
+  const lien = lienUnClic({ lettre: c.lettre, essentielle: false, jeton: 'j2', base: 'https://x/fn' })
+  assertEquals(lien, 'https://x/fn?jeton=j2')
+  const h = entetes({ de: 'a@b', deNom: 'A', repondreA: 'a@b', a: 'c@d', sujet: c.sujet, html, texte: '',
+    idMessage: 'id-2', desinscriptionUnClic: lien })
+  assertEquals(h['List-Unsubscribe'], '<https://x/fn?jeton=j2>')
+  assertEquals(h['List-Unsubscribe-Post'], 'List-Unsubscribe=One-Click')
+  // Essentiel : jamais de lien en un clic.
+  assertEquals(lienUnClic({ essentielle: true, jeton: 'j2', base: 'https://x/fn' }), undefined)
 })
