@@ -192,7 +192,8 @@ class TelephonePleinEcran extends StatelessWidget {
             vue: vue,
             actions: actions,
             largeur: ecran.width,
-            vignette: !scene && vue.voitVignetteSurSupport,
+            // Lot salle 2 : la vignette est posee a part, deplacable.
+            vignette: false,
             aCote: !telephone,
           );
           final Widget bas = Padding(
@@ -282,6 +283,31 @@ class TelephonePleinEcran extends StatelessWidget {
                           end: 0,
                           child: haut,
                         ),
+                        // Lot salle 2 (directeur, 25/10/2026) : la vignette se
+                        // deplace au doigt et a la souris, aimantee aux quatre
+                        // coins (standard Meet, FaceTime).
+                        if (!scene && vue.voitVignetteSurSupport)
+                          VignetteAimantee(
+                            vue: vue,
+                            largeur: telephone
+                                ? largeurVignetteTelephone
+                                : MesuresVignette.largeurPleinCadreLarge,
+                            haut:
+                                AppSpacing.lg +
+                                (telephone
+                                    ? hauteurPiluleEtat +
+                                          AppSpacing.sm +
+                                          (media?.boutonEleves == null
+                                              ? 0
+                                              : AppTouchTarget.standard +
+                                                    AppSpacing.sm)
+                                    : 0),
+                            bas:
+                                AppSpacing.lg +
+                                diametreBoutonAppel(context) +
+                                2 * AppSpacing.sm +
+                                AppSpacing.lg,
+                          ),
                         PositionedDirectional(
                           start: 0,
                           end: 0,
@@ -326,6 +352,97 @@ class TelephonePleinEcran extends StatelessWidget {
                   ),
           );
         },
+      ),
+    );
+  }
+}
+
+/// La hauteur de la pilule d'etat ([PiluleEtatSalle]).
+const double hauteurPiluleEtat = AppSpacing.xxxl + AppSpacing.xs;
+
+/// Un coin de la scene ou la vignette s'aimante.
+enum CoinVignette { hautDebut, hautFin, basDebut, basFin }
+
+/// Lot salle 2 (directeur, 25/10/2026) : la vignette video, deplacable au
+/// doigt et a la souris, aimantee au coin le plus proche du lacher (standard
+/// Meet, FaceTime). Le coin choisi est garde pendant la seance (stockage de
+/// la route). Toucher la vignette la met toujours en grand.
+class VignetteAimantee extends StatefulWidget {
+  const VignetteAimantee({
+    required this.vue,
+    required this.largeur,
+    required this.haut,
+    required this.bas,
+    super.key,
+  });
+
+  final VueSeance vue;
+  final double largeur;
+
+  /// La marge des coins du haut (sous la ligne d'etat) et du bas (au-dessus
+  /// de la pilule d'appel).
+  final double haut;
+  final double bas;
+
+  /// La cle de la vignette deplacable (tests).
+  static const Key cle = ValueKey<String>('vignette-aimantee');
+
+  @override
+  State<VignetteAimantee> createState() => _EtatVignetteAimantee();
+}
+
+class _EtatVignetteAimantee extends State<VignetteAimantee> {
+  static const String _cleStockage = 'salle-vignette-coin';
+
+  CoinVignette get _coin =>
+      PageStorage.maybeOf(context)?.readState(context, identifier: _cleStockage)
+          as CoinVignette? ??
+      CoinVignette.hautFin;
+
+  void _lacher(DraggableDetails d) {
+    final Size ecran = MediaQuery.sizeOf(context);
+    final Offset centre =
+        d.offset +
+        Offset(widget.largeur, widget.largeur / MesuresVignette.ratio) / 2;
+    final bool gauche = centre.dx < ecran.width / 2;
+    final bool enHaut = centre.dy < ecran.height / 2;
+    // Debut et fin suivent le sens de lecture.
+    final bool debut =
+        gauche == (Directionality.of(context) == TextDirection.ltr);
+    final CoinVignette coin = enHaut
+        ? (debut ? CoinVignette.hautDebut : CoinVignette.hautFin)
+        : (debut ? CoinVignette.basDebut : CoinVignette.basFin);
+    PageStorage.maybeOf(context)
+        ?.writeState(context, coin, identifier: _cleStockage);
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final CoinVignette coin = _coin;
+    final bool enHaut =
+        coin == CoinVignette.hautDebut || coin == CoinVignette.hautFin;
+    final bool debut =
+        coin == CoinVignette.hautDebut || coin == CoinVignette.basDebut;
+    final Widget vignette = VignetteVideo(
+      vue: widget.vue,
+      largeur: widget.largeur,
+    );
+    return PositionedDirectional(
+      key: VignetteAimantee.cle,
+      top: enHaut ? widget.haut : null,
+      bottom: enHaut ? null : widget.bas,
+      start: debut ? AppSpacing.lg : null,
+      end: debut ? null : AppSpacing.lg,
+      child: Draggable<CoinVignette>(
+        data: coin,
+        feedback: Material(type: MaterialType.transparency, child: vignette),
+        childWhenDragging: SizedBox(
+          width: widget.largeur,
+          height: widget.largeur / MesuresVignette.ratio,
+        ),
+        onDragEnd: _lacher,
+        child: vignette,
       ),
     );
   }
