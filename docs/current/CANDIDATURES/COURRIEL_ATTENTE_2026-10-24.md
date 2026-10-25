@@ -37,6 +37,9 @@ mise en file porte la langue ; l'envoi traduit par Google Traduction (protection
 ci-dessous ne servent qu'à vérifier la traduction automatique sur deux langues lues par la
 direction ; elles ne sont pas envoyées telles quelles.
 
+Pulaar : pas de traduction automatique (directeur, 25/10/2026) ; seconde langue déclarée, l'arabe
+pour les 9 candidats concernés ; répartition finale ar 403, en 59, fr 59, pt 3.
+
 ## Objet
 
 Votre candidature pour enseigner à Rewayah Academy : où nous en sommes
@@ -80,7 +83,7 @@ Décision du pilote du 25/10/2026 : la copie de test traduite par Google rendait
 façons et inversait des sens (« nous vous devons une réponse claire » devenu « nous attendons votre
 réponse », « votre dossier » rendu par « votre procès »). Les 394 envois en arabe partent donc avec
 ce texte, écrit à la main, sans traduction automatique ni note « traduit automatiquement » ; les
-autres langues (en, es, ff, pt) restent traduites à l'envoi, le nom « Rewayah Academy » protégé.
+autres langues (en, es, pt ; le pulaar n'est pas traduit, ci-dessus) restent traduites à l'envoi, le nom « Rewayah Academy » protégé.
 Source : `supabase/functions/_shared/courriel/modeles_ar.ts`, `attente_candidat` (texte ci-dessous
 tiré du rendu, identique à l'envoi). Nom en latin, comme dans tous les courriels arabes ; la
 référence plus bas, qui écrit « أكاديمية رواية », n'est pas envoyée.
