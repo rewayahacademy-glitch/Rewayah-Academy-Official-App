@@ -10,6 +10,7 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
+import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
 import 'package:rewayah_academy/features/connexion/connexion_page.dart';
 
 import '../support/harnais.dart';
@@ -151,6 +152,8 @@ void main() {
 
       await tester.enterText(find.byType(TextField), 'fatou');
       await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text(t.connexion.envoyerLien));
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.connexion.envoyerLien));
       await tester.pumpAndSettle();
 
@@ -164,6 +167,8 @@ void main() {
       final FauxServiceAuth auth = await _monter(tester);
 
       await tester.enterText(find.byType(TextField), 'fatou@example.test');
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text(t.connexion.envoyerLien));
       await tester.pumpAndSettle();
       await tester.tap(find.text(t.connexion.envoyerLien));
       await tester.pumpAndSettle();
@@ -181,6 +186,8 @@ void main() {
       expect(find.text(t.connexion.titre), findsOneWidget);
       expect(find.text(t.connexion.appareilEleve), findsOneWidget);
 
+      await tester.ensureVisible(find.text(t.connexion.modeCreation));
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.connexion.modeCreation));
       await tester.pumpAndSettle();
       expect(find.text(t.connexion.titreCreation), findsOneWidget);
@@ -225,6 +232,8 @@ void main() {
       await _monter(tester);
       await tester.enterText(find.byType(TextField), 'fatou@example.test');
       await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text(t.connexion.envoyerLien));
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.connexion.envoyerLien));
       await tester.pumpAndSettle();
 
@@ -239,6 +248,8 @@ void main() {
       auth.erreurAJeter = StateError('reseau');
 
       await tester.enterText(find.byType(TextField), 'fatou@example.test');
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text(t.connexion.envoyerLien));
       await tester.pumpAndSettle();
       await tester.tap(find.text(t.connexion.envoyerLien));
       await tester.pumpAndSettle();
@@ -260,33 +271,34 @@ void main() {
       expect(champs.single.obscureText, isFalse);
     });
 
-    testWidgets('trois rangs d action, et une seule bordure a l ecran', (
+    testWidgets('un bouton plein, un filet, puis des liens avec fleche', (
       WidgetTester tester,
     ) async {
       // Le defaut rapporte par l'operateur : « il y a des bordures sur chaque
-      // bouton ». Les trois moyens d'entrer se lisaient au meme poids. Ils se
-      // lisent maintenant en trois rangs, et le filet ne reste qu'a un seul --
-      // c'est ce qui le rend porteur de sens (`02-regles-ux.md` section 4).
+      // bouton ». Les moyens d'entrer se lisent en trois rangs : l'aplat pour
+      // le lien, le filet pour Google -- le seul de l'ecran -- puis les
+      // sorties en liens avec fleche (parcours d'entree, 25/10/2026, §3 C).
       await _monter(tester);
 
       final List<NiveauAction> rangs = tester
           .widgetList<ActionPrincipale>(find.byType(ActionPrincipale))
           .map((ActionPrincipale a) => a.niveau)
           .toList();
-
-      // Lien, Google, entree eleve, puis la sortie discrete (LA-1) : la
-      // recuperation d'acces, en texte seul. Plus de lien vers une
-      // presentation (17/10).
       expect(rangs, <NiveauAction>[
         NiveauAction.principale,
         NiveauAction.secondaire,
-        NiveauAction.tertiaire,
-        NiveauAction.tertiaire,
       ]);
       expect(
-        rangs.where((NiveauAction n) => n == NiveauAction.secondaire),
-        hasLength(1),
-        reason: 'le filet ne vaut que s il est seul',
+        find.byKey(const ValueKey<String>('connexion-appareil-eleve')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey<String>('connexion-probleme')),
+        findsOneWidget,
+      );
+      expect(
+        find.widgetWithText(LienFleche, t.juridique.titre),
+        findsOneWidget,
       );
     });
 
@@ -357,10 +369,8 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final AppCard carte = tester.widget<AppCard>(
-        find.byKey(const ValueKey<String>('connexion-carte')),
-      );
-      expect(carte.dominante, isTrue);
+      // Aucune carte : le formulaire est pose sur la page (25/10/2026).
+      expect(find.byType(AppCard), findsNothing);
 
       final ActionPrincipale connexion = tester.widget<ActionPrincipale>(
         find.widgetWithText(ActionPrincipale, t.connexion.envoyerLien),

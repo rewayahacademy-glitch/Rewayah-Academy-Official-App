@@ -101,6 +101,10 @@ void main() {
 
         await tester.enterText(find.byKey(_cleCourriel), 'fatou@example.test');
         await tester.pump();
+        await tester.ensureVisible(
+          find.widgetWithText(ActionPrincipale, t.connexion.envoyerLien),
+        );
+        await tester.pumpAndSettle();
         await tester.tap(
           find.widgetWithText(ActionPrincipale, t.connexion.envoyerLien),
         );
@@ -119,6 +123,10 @@ void main() {
       await tester.enterText(find.byKey(_cleCourriel), 'fatou@example.test');
       await tester.enterText(find.byKey(_cleMotDePasse), 'essai-local');
       await tester.pump();
+      await tester.ensureVisible(
+        find.widgetWithText(ActionPrincipale, t.connexion.entrerDemo),
+      );
+      await tester.pumpAndSettle();
       await tester.tap(
         find.widgetWithText(ActionPrincipale, t.connexion.entrerDemo),
       );
@@ -238,6 +246,10 @@ void main() {
         _verifierEtatRempli(tester);
         expect(find.byKey(_cleMotDePasse), findsOneWidget);
 
+        await tester.ensureVisible(
+          find.widgetWithText(ActionPrincipale, t.connexion.entrerDemo),
+        );
+        await tester.pumpAndSettle();
         await tester.tap(
           find.widgetWithText(ActionPrincipale, t.connexion.entrerDemo),
         );

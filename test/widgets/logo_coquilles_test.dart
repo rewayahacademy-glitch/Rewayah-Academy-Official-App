@@ -6,7 +6,7 @@
 //   l'accueil du role ; au debut de ligne, aussi en arabe ;
 // - coquille admin : horizontal (barre laterale, tiroir), symbole (rail),
 //   rien dans la barre mobile ;
-// - connexion : logo vertical ; demarrage : aucun logo (animation a venir,
+// - connexion : logo horizontal blanc centre en haut (25/10/2026) ; demarrage : aucun logo (animation a venir,
 //   decision du directeur du 10/10).
 
 import 'package:flutter/material.dart';
@@ -20,6 +20,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/etats_routeur.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/core/theme/app_mouvement.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/brand_logo.dart';
@@ -169,9 +170,11 @@ void main() {
   });
 
   for (final Size vue in <Size>[const Size(320, 640), vueBureau]) {
-    testWidgets('connexion : logo vertical centre (${vue.width} px)', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('connexion : logo horizontal blanc centre en haut '
+        '(${vue.width} px)', (WidgetTester tester) async {
+      // Decision du directeur du 25/10/2026 (16:40) : logo horizontal blanc,
+      // centre en haut, sur la surface de marque ; le second dessin du logo
+      // est le symbole de l'illustration, decoratif.
       fixerVue(tester, vue);
       await tester.pumpWidget(
         hoteTheme(
@@ -182,15 +185,23 @@ void main() {
           ],
         ),
       );
-      await tester.pump();
-      expect(find.byType(BrandLogo), findsOneWidget);
-      expect(logoRendu(VarianteLogo.vertical), findsOneWidget);
-      final Rect logo = tester.getRect(logoRendu(VarianteLogo.vertical));
+      await tester.pump(AppMouvement.entreeIllustration);
+      final Finder entete = find.byKey(const ValueKey<String>('entree-logo'));
+      final BrandLogo logo = tester.widget<BrandLogo>(entete);
+      expect(logo.variante, VarianteLogo.horizontal);
+      expect(logo.fond, FondLogo.violet);
       expect(
-        tester.renderObject<RenduLogo>(find.byType(LogoPeint)).hauteurDessin,
-        greaterThanOrEqualTo(BrandLogo.minimumVertical),
+        tester
+            .renderObject<RenduLogo>(
+              find.descendant(of: entete, matching: find.byType(LogoPeint)),
+            )
+            .hauteurDessin,
+        greaterThanOrEqualTo(BrandLogo.minimumHorizontal),
       );
-      expect(logo.center.dx, closeTo(vue.width / 2, 1));
+      // Centre dans la page (telephone) ou dans le volet de marque, la
+      // premiere moitie de la fenetre (bureau).
+      final double centre = vue.width >= 840 ? vue.width / 4 : vue.width / 2;
+      expect(tester.getRect(entete).center.dx, closeTo(centre, 1));
       expect(find.bySemanticsLabel(t.commun.marque), findsOneWidget);
       expect(tester.takeException(), isNull);
     });

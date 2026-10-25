@@ -142,12 +142,12 @@ void main() {
         );
         await tester.pump();
 
-        // LOGO-APP (10/10) : la marque de la connexion est le logo vertical,
-        // une image, plus un texte ; HIER-1 ne compare que des textes. Le
-        // titre reste le seul titre d'ecran, sans mot-marque concurrent.
+        // La marque de la connexion est le logo horizontal (25/10/2026), une
+        // image, plus un texte ; HIER-1 ne compare que des textes. Le titre
+        // reste le seul titre d'ecran, sans mot-marque concurrent.
         expect(find.text(t.connexion.titre), findsOneWidget);
         expect(find.text(t.commun.marque), findsNothing);
-        expect(logoRendu(VarianteLogo.vertical), findsOneWidget);
+        expect(logoRendu(VarianteLogo.horizontal), findsOneWidget);
       });
 
       testWidgets('compte : titre d\'ecran et titres de section '

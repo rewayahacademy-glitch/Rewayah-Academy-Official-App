@@ -10,13 +10,10 @@ import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/auth/service_auth.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
-import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
-import '../../core/widgets/app_card.dart';
-import '../../core/widgets/marque_page.dart';
-import '../../core/widgets/page_shell.dart';
+import 'coquille_entree.dart';
 
 /// Pourquoi l'usager arrive sur la recuperation d'acces.
 ///
@@ -110,9 +107,6 @@ String phraseEchecEnvoi(IssueEnvoiLien issue) => switch (issue) {
   IssueEnvoiLien.horsLigne => t.connexion.horsLigne,
   IssueEnvoiLien.erreur => t.connexion.erreurEnvoi,
 };
-
-/// Largeur de la carte, la meme que celle de la connexion.
-const double _largeurCarte = 460;
 
 /// La recuperation d'acces : un nouveau lien de connexion, jamais un mot de
 /// passe (C03 section 9, aucun mot de passe en production).
@@ -209,62 +203,37 @@ class _RecuperationPageState extends ConsumerState<RecuperationPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Widget respiration = AppGabarit.de(context) == Gabarit.mobile
-        ? Ecart.vXxl
-        : Ecart.vSection;
     final MotifRecuperation? motif = _motif(context);
 
-    return PageShell(
+    // Meme habillage que la connexion (parcours d'entree, 25/10/2026, §3 D) ;
+    // le retour vers la connexion reste visible a chaque etat.
+    return CoquilleEntree(
       onRetour: _revenir,
-      defilante: false,
-      child: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints contraintes) =>
-            SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: contraintes.maxHeight),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    const MarquePage(),
-                    respiration,
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        maxWidth: _largeurCarte,
-                      ),
-                      child: AppCard(
-                        key: const ValueKey<String>('recuperation-carte'),
-                        dominante: true,
-                        child: _envoye
-                            ? _Envoye(
-                                courriel: _courriel.text.trim(),
-                                renvoye: _renvoye,
-                                envoi: _envoi,
-                                erreur: _erreurEnvoi,
-                                onRenvoyer: () =>
-                                    unawaited(_envoyer(renvoi: true)),
-                                onAutreAdresse: () => setState(() {
-                                  _envoye = false;
-                                  _renvoye = false;
-                                  _erreurEnvoi = null;
-                                }),
-                                onRevenir: _revenir,
-                              )
-                            : _Saisie(
-                                motif: motif,
-                                courriel: _courriel,
-                                erreurChamp: _erreurChamp,
-                                erreurEnvoi: _erreurEnvoi,
-                                envoi: _envoi,
-                                onEnvoyer: () => unawaited(_envoyer()),
-                                onRevenir: _revenir,
-                              ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+      formulaire: (bool bureau) => _envoye
+          ? _Envoye(
+              bureau: bureau,
+              courriel: _courriel.text.trim(),
+              renvoye: _renvoye,
+              envoi: _envoi,
+              erreur: _erreurEnvoi,
+              onRenvoyer: () => unawaited(_envoyer(renvoi: true)),
+              onAutreAdresse: () => setState(() {
+                _envoye = false;
+                _renvoye = false;
+                _erreurEnvoi = null;
+              }),
+              onRevenir: _revenir,
+            )
+          : _Saisie(
+              bureau: bureau,
+              motif: motif,
+              courriel: _courriel,
+              erreurChamp: _erreurChamp,
+              erreurEnvoi: _erreurEnvoi,
+              envoi: _envoi,
+              onEnvoyer: () => unawaited(_envoyer()),
+              onRevenir: _revenir,
             ),
-      ),
     );
   }
 }
@@ -281,14 +250,17 @@ class _PhraseErreur extends StatelessWidget {
     child: Text(
       texte,
       key: const ValueKey<String>('recuperation-erreur'),
-      style: Theme.of(context).textTheme.bodyMedium
-          ?.copyWith(color: Theme.of(context).colorScheme.error),
+      // L'encre d'alerte de la surface : blanche sur la marque, d'alerte sur
+      // le parchemin.
+      style: AppPalette.of(context).inkAlert
+          .applyTo(Theme.of(context).textTheme.bodyMedium!),
     ),
   );
 }
 
 class _Saisie extends StatelessWidget {
   const _Saisie({
+    required this.bureau,
     required this.motif,
     required this.courriel,
     required this.erreurChamp,
@@ -298,6 +270,7 @@ class _Saisie extends StatelessWidget {
     required this.onRevenir,
   });
 
+  final bool bureau;
   final MotifRecuperation? motif;
   final TextEditingController courriel;
   final String? erreurChamp;
@@ -351,38 +324,35 @@ class _Saisie extends StatelessWidget {
         ],
         Text(t.connexion.recuperation.intro, style: discret),
         Ecart.vXxl,
-        Text(t.connexion.courriel, style: textes.labelLarge),
-        Ecart.vSm,
-        TextField(
-          key: const ValueKey<String>('recuperation-courriel'),
-          controller: courriel,
-          onSubmitted: (String _) => onEnvoyer(),
-          keyboardType: TextInputType.emailAddress,
-          autofillHints: const <String>[AutofillHints.email],
-          textInputAction: TextInputAction.go,
-          decoration: InputDecoration(
-            hintText: t.connexion.courrielIndice,
-            errorText: erreurChamp,
-          ),
+        ChampEntree(
+          cle: 'recuperation-courriel',
+          etiquette: t.connexion.courriel,
+          indice: t.connexion.courrielIndice,
+          controleur: courriel,
+          erreur: erreurChamp,
+          onSoumettre: onEnvoyer,
+          clavier: TextInputType.emailAddress,
+          autofill: const <String>[AutofillHints.email],
         ),
         if (erreurEnvoi != null) ...<Widget>[
           Ecart.vMd,
           _PhraseErreur(erreurEnvoi!),
         ],
-        Ecart.vXl,
-        ActionPrincipale(
-          libelle: t.connexion.recuperation.envoyer,
-          onPress: onEnvoyer,
-          enCours: envoi,
-        ),
         Ecart.vLg,
-        Align(
+        BoutonEntree(
+          bureau: bureau,
           child: ActionPrincipale(
-            libelle: t.connexion.recuperation.revenirConnexion,
-            onPress: onRevenir,
-            niveau: NiveauAction.tertiaire,
-            pleineLargeur: false,
+            libelle: t.connexion.recuperation.envoyer,
+            onPress: onEnvoyer,
+            enCours: envoi,
+            affirmee: true,
+            pleineLargeur: !bureau,
           ),
+        ),
+        Ecart.vXxl,
+        LienEntree(
+          libelle: t.connexion.recuperation.revenirConnexion,
+          onPress: onRevenir,
         ),
       ],
     );
@@ -391,6 +361,7 @@ class _Saisie extends StatelessWidget {
 
 class _Envoye extends StatelessWidget {
   const _Envoye({
+    required this.bureau,
     required this.courriel,
     required this.renvoye,
     required this.envoi,
@@ -400,6 +371,7 @@ class _Envoye extends StatelessWidget {
     required this.onRevenir,
   });
 
+  final bool bureau;
   final String courriel;
   final bool renvoye;
   final bool envoi;
@@ -437,29 +409,25 @@ class _Envoye extends StatelessWidget {
         Ecart.vMd,
         Text(t.connexion.recuperation.envoyeEncart, style: discret),
         if (erreur != null) ...<Widget>[Ecart.vMd, _PhraseErreur(erreur!)],
-        Ecart.vXl,
-        ActionPrincipale(
-          libelle: t.connexion.renvoyer,
-          onPress: onRenvoyer,
-          enCours: envoi,
-          niveau: NiveauAction.secondaire,
+        Ecart.vXxl,
+        BoutonEntree(
+          bureau: bureau,
+          child: ActionPrincipale(
+            libelle: t.connexion.renvoyer,
+            onPress: onRenvoyer,
+            enCours: envoi,
+            niveau: NiveauAction.secondaire,
+            pleineLargeur: !bureau,
+          ),
         ),
         Ecart.vLg,
-        Align(
-          child: ActionPrincipale(
-            libelle: t.connexion.recuperation.autreAdresse,
-            onPress: onAutreAdresse,
-            niveau: NiveauAction.tertiaire,
-            pleineLargeur: false,
-          ),
+        LienEntree(
+          libelle: t.connexion.recuperation.autreAdresse,
+          onPress: onAutreAdresse,
         ),
-        Align(
-          child: ActionPrincipale(
-            libelle: t.connexion.recuperation.revenirConnexion,
-            onPress: onRevenir,
-            niveau: NiveauAction.tertiaire,
-            pleineLargeur: false,
-          ),
+        LienEntree(
+          libelle: t.connexion.recuperation.revenirConnexion,
+          onPress: onRevenir,
         ),
       ],
     );
