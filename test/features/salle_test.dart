@@ -2453,7 +2453,12 @@ void main() {
   // de la fenetre, aucun widget opaque ne reduit sa boite, les Commandes sont
   // repliees ; le tableau occupe la fenetre (feuille 16:9 ajustee).
   group('K4 : plein ecran sur ordinateur', () {
+    // Les vraies polices seulement pour les captures : apres les autres
+    // groupes du fichier, leur chargement par `rootBundle` restait en attente
+    // jusqu'au delai de la suite (la geometrie testee n'en depend pas : la
+    // page se compose sur la hauteur donnee).
     setUpAll(() async {
+      if (dossierCapture == null) return;
       await chargerPolicesDuDepot();
       await chargerPoliceMadina15();
     });
