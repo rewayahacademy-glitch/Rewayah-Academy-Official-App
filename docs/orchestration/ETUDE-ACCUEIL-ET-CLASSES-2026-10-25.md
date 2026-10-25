@@ -69,9 +69,21 @@ le 10/10 (2 000 demandes) n'existent pas dans `supabase/tests`.
 5. **Preuve** : le directeur, avec un compte famille de test, fait une demande sur l'offre publiée,
    puis crée la classe depuis « Regroupements ». C'est la preuve du chemin (b), à faire quand la
    Boucle 1 est close.
+6. **Page de connexion (directeur, 25/10, après le test du courriel)** : la marque est au cœur de
+   tout ce qui précède l'accueil des vrais utilisateurs (pas de budget publicitaire, la
+   différenciation vient d'un système moderne). Modèle : la page « Ne plus recevoir ces e-mails »
+   (fond de marque plein, logo et nom en haut, illustration de l'arche, titre, texte, boutons posés
+   directement sur la page, aucun conteneur emboîté). Sur téléphone, la connexion suit ce modèle :
+   actions à même la page, sans rectangles dans des rectangles. Sur ordinateur, deux volets :
+   l'illustration à gauche (celle des pages 404 du site public, déjà en code), le formulaire à
+   droite sur fond caramel clair ; clair et sombre à décider dans la fiche. C'est un écran, une
+   fiche d'écran validée par le directeur, puis une PR, **avant** l'invitation des enseignants et
+   des élèves actuels (B2.1, B2.2), puisque la connexion est le premier écran qu'ils verront.
+   Les autres écrans de ce lot (inscription, parcours) suivent la même règle.
 
 ## 4. Journal
 
 | Date | Fait | Source |
 | :-- | :-- | :-- |
+| 2026-10-25 | Page de connexion : décision 6 ajoutée | pilote |
 | 2026-10-25 | Étude écrite ; production lue en lecture seule (8 classes, 1 offre, 1 élève ; fonctions de regroupement présentes) | pilote |
