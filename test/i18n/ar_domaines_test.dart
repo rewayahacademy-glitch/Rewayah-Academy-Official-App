@@ -30,6 +30,8 @@ const Map<String, int> _domaines = <String, int>{
   'commun': 70,
   'accessibilite': 50,
   'reseau': 3,
+  // Lot demarrage (25/10/2026) : bandeau « nouvelle version ».
+  'miseAJour': 1,
   'etat': 10,
   'vide': 4,
   'notifications': 5,
