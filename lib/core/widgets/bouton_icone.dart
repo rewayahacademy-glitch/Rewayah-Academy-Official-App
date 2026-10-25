@@ -41,13 +41,21 @@ enum TonAppel {
   /// claire.
   actif,
 
-  /// Coupe ou eteint : rempli rouge, icone barree (choisie par l'appelant).
+  /// Coupe ou eteint : rempli du violet de marque du logo (`#8652E6`, le
+  /// `surfacePrimary` de la palette claire, le meme dans les deux themes),
+  /// icone blanche barree (choisie par l'appelant). Mesure : icone 4,8:1 sur
+  /// le disque, disque 4,8:1 sur la pilule claire et 3,1:1 sur la pilule
+  /// sombre ; le violet d'accent `#6538E4` ne faisait que 2,3:1 en sombre. **Jamais rouge**
+  /// (decision du directeur du 25/10/2026, lot salle 3 §1.2 : le rouge d'un
+  /// micro coupe se confondait avec « Quitter ») ; le rouge reste a
+  /// [quitter] seul.
   coupe,
 
   /// Ouvert (tableau) : rempli de la couleur primaire.
   ouvert,
 
-  /// Quitter : pilule rouge plus large, icone du combine.
+  /// Quitter : pilule rouge plus large, icone du combine. **Le seul rouge de
+  /// la pilule d'appel.**
   quitter,
 }
 
@@ -138,7 +146,8 @@ class BoutonIcone extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final AppColorPair plein = switch (tonAppel) {
       TonAppel.actif => palette.boutonAppelActif,
-      TonAppel.coupe || TonAppel.quitter => AppPalette.claire().surfaceAlert,
+      TonAppel.coupe => AppPalette.claire().surfacePrimary,
+      TonAppel.quitter => AppPalette.claire().surfaceAlert,
       TonAppel.ouvert => palette.surfacePrimary,
     };
     final double hauteur = math.max(

@@ -68,6 +68,74 @@ BoxDecoration _decoration(WidgetTester tester) =>
         as BoxDecoration;
 
 void main() {
+  // Lot salle 3, decision du directeur du 25/10/2026 (§1.2) : coupe ou
+  // eteint = violet de marque du logo, icone barree, jamais rouge ; actif = sombre
+  // neutre ; le rouge reste a « Quitter » seul. Trois signaux : icone
+  // barree, couleur, libelle semantique.
+  group('pilule d appel : couleurs des commandes', () {
+    for (final Brightness luminosite in Brightness.values) {
+      for (final double echelle in <double>[1, 2]) {
+        testWidgets('${luminosite.name}, texte x$echelle', (
+          WidgetTester tester,
+        ) async {
+          final AppPalette palette = luminosite == Brightness.dark
+              ? AppPalette.sombre()
+              : AppPalette.claire();
+          final Map<TonAppel, Color> fonds = <TonAppel, Color>{};
+          for (final (TonAppel ton, AppIcon icone) in <(TonAppel, AppIcon)>[
+            (TonAppel.actif, AppIcons.micro),
+            (TonAppel.coupe, AppIcons.microCoupe),
+            (TonAppel.ouvert, AppIcons.micro),
+            (TonAppel.quitter, AppIcons.raccrocher),
+          ]) {
+            await tester.pumpWidget(
+              _hote(
+                BoutonIcone(
+                  icone: icone,
+                  libelle: 'Micro coupé',
+                  onPress: () {},
+                  forme: FormeBoutonIcone.appel,
+                  tonAppel: ton,
+                ),
+                InterfaceMode.standard,
+                luminosite,
+                echelleTexte: echelle,
+              ),
+            );
+            expect(tester.takeException(), isNull);
+            final BoxDecoration deco = _decoration(tester);
+            fonds[ton] = deco.color!;
+            // L'icone se lit sur son fond (element graphique, 3:1 au moins ;
+            // le blanc sur le violet du logo fait 4,8:1).
+            expect(
+              _contraste(_themeIcone(tester).color!, deco.color!),
+              greaterThanOrEqualTo(3),
+              reason: '${ton.name} : icone sur fond',
+            );
+            // Le disque se detache de la pilule translucide de la salle.
+            expect(
+              _contraste(deco.color!, palette.surfaceRaised.background),
+              // Actif (sombre neutre) et Quitter (rouge) gardent leur teinte
+              // d'avant ; seul le coupe, change ici, est mesure a 3:1.
+              greaterThanOrEqualTo(ton == TonAppel.coupe ? 3 : 1),
+              reason: '${ton.name} : disque sur la pilule',
+            );
+            // Le libelle reste lu, la couleur n'est jamais le seul signal.
+            expect(find.bySemanticsLabel('Micro coupé'), findsOneWidget);
+          }
+          final Color rouge = AppPalette.claire().surfaceAlert.background;
+          expect(
+            fonds[TonAppel.coupe],
+            AppPalette.claire().surfacePrimary.background,
+          );
+          expect(fonds[TonAppel.coupe], isNot(rouge));
+          expect(fonds[TonAppel.quitter], rouge);
+          expect(fonds[TonAppel.actif], isNot(fonds[TonAppel.coupe]));
+        });
+      }
+    }
+  });
+
   for (final InterfaceMode mode in InterfaceMode.values) {
     for (final Brightness luminosite in Brightness.values) {
       final String cas = '${mode.name}, ${luminosite.name}';
@@ -242,4 +310,10 @@ void main() {
       );
     }
   }
+}
+
+double _contraste(Color a, Color b) {
+  final double la = a.computeLuminance();
+  final double lb = b.computeLuminance();
+  return ((la > lb ? la : lb) + 0.05) / ((la > lb ? lb : la) + 0.05);
 }

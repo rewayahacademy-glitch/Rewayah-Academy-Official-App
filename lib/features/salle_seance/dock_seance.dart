@@ -6,8 +6,9 @@
 // identiques (56 au telephone, 48 ailleurs ; ecart 12, 16 ailleurs), ICONES
 // SEULES : le libelle vit dans l'infobulle et la semantique. Ordre fixe :
 // micro, camera, tableau, plus, Quitter. Actif : rempli sombre ; coupe :
-// rempli rouge, icone barree ; tableau ouvert : rempli primaire ; Quitter :
-// pilule rouge plus large, toujours confirmee. Remplace dans la salle le mot
+// rempli du violet de marque, icone barree (directeur, 25/10/2026, jamais
+// rouge) ; tableau ouvert : rempli primaire ; Quitter : pilule rouge plus
+// large, toujours confirmee, seul rouge de la pilule. Remplace dans la salle le mot
 // d'etat sous le bouton (ETATS-BTN-1, ETATS-MA-1, MA-CMD-1).
 
 import 'package:flutter/material.dart';
@@ -79,7 +80,7 @@ double diametreBoutonAppel(BuildContext context) =>
 /// (standard Meet). Le dessin vit dans [BoutonIcone] (forme `appel`, core).
 ///
 /// [bascule] renseigne : c'est une bascule (micro, camera, tableau) ; eteinte,
-/// elle passe au rouge ([TonAppel.coupe]), sauf [ouvertPrimaire] (tableau :
+/// elle passe au violet de marque ([TonAppel.coupe]), sauf [ouvertPrimaire] (tableau :
 /// ferme sombre, ouvert primaire). [libelle] (l'etat, « Micro coupé ») est
 /// l'infobulle ; le lecteur d'ecran lit l'acte puis l'etat.
 class BoutonAppel extends StatelessWidget {
@@ -119,7 +120,7 @@ class BoutonAppel extends StatelessWidget {
   final bool? bascule;
 
   /// Une bascule qui, active, se remplit de la couleur primaire et, inactive,
-  /// reste sombre (le tableau) au lieu de passer au rouge.
+  /// reste sombre (le tableau) au lieu de passer au violet de marque.
   final bool ouvertPrimaire;
 
   @override
