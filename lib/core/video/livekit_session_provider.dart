@@ -8,12 +8,52 @@ import 'package:livekit_client/livekit_client.dart' as lk;
 import '../observabilite/journal_dev.dart';
 import 'video_session_provider.dart';
 
-/// Le debit maximal de la couche 720p, en bits par seconde (D15) : environ
-/// 1,8 Mbit/s envoyes pour les trois couches, 1,2 recus pour une video agrandie.
-const int debitMax720p = 1200000;
+/// Le debit maximal de la video publiee, en bits par seconde : 450 kbit/s
+/// pour une capture 360p (decision du directeur du 25/10/2026, audit reseau,
+/// reseaux faibles ; remplace le 720p a 1,2 Mbit/s de D15 du 24/10/2026).
+const int debitMaxVideo = 450000;
 
-/// D15 (S0.2) : `adaptiveStream` seulement chez l'enseignant.
-bool adaptiveStreamPour(AccesSalle acces) => acces.role == 'teacher';
+/// Le nombre d'images par seconde maximal de la video publiee (25/10/2026).
+const int imagesParSecondeMax = 20;
+
+/// Les reglages de la salle pour les reseaux faibles (decision du directeur
+/// du 25/10/2026, audit reseau, `docs/current/maquettes/salle/LOT-3-2026-10-25.md`
+/// section 7) : capture 360p, simulcast explicite avec une couche 180p,
+/// 450 kbit/s et 20 images par seconde au plus, resolution maintenue quand le
+/// reseau faiblit ; audio parole (24 kbit/s), DTX et RED ; `adaptiveStream`
+/// pour TOUS les roles (D15 du 24/10/2026, qui le reservait a l'enseignant,
+/// est revu le 25/10/2026) et `dynacast`. Micro et camera restent fermes a
+/// l'entree : ces reglages ne publient rien.
+///
+/// **Les defauts de capture audio sont conserves volontairement.** La
+/// specification section 18 met en garde : une configuration « musicale »
+/// desactive l'annulation d'echo, la suppression de bruit et le gain
+/// automatique. Pour de la recitation, ou l'intelligibilite prime sur la
+/// fidelite, ce serait un contresens.
+lk.RoomOptions optionsSalle() => const lk.RoomOptions(
+  adaptiveStream: true,
+  dynacast: true,
+  defaultAudioCaptureOptions: lk.AudioCaptureOptions(),
+  defaultAudioPublishOptions: lk.AudioPublishOptions(
+    encoding: lk.AudioEncoding.presetSpeech,
+    dtx: true,
+    red: true,
+  ),
+  defaultCameraCaptureOptions: lk.CameraCaptureOptions(
+    params: lk.VideoParametersPresets.h360_169,
+  ),
+  defaultVideoPublishOptions: lk.VideoPublishOptions(
+    simulcast: true,
+    videoEncoding: lk.VideoEncoding(
+      maxBitrate: debitMaxVideo,
+      maxFramerate: imagesParSecondeMax,
+    ),
+    videoSimulcastLayers: <lk.VideoParameters>[
+      lk.VideoParametersPresets.h180_169,
+    ],
+    degradationPreference: lk.DegradationPreference.maintainResolution,
+  ),
+);
 
 /// Vrai quand la camera s'allume d'elle-meme a l'entree : **jamais**, pour
 /// aucun role (decision du directeur du 25/10/2026, lot salle 3 §1.1, apres
@@ -137,51 +177,7 @@ class LiveKitSessionProvider implements VideoSessionProvider {
 
     // `RoomOptions` se pose au CONSTRUCTEUR : le passer a `connect()` est
     // deprecie depuis livekit_client 2.x et sera ignore un jour.
-    final lk.Room salle = lk.Room(
-      roomOptions: lk.RoomOptions(
-        // Les deux leviers que la specification section 13 demande d'activer :
-        // `adaptiveStream` ajuste la resolution recue a la taille reellement
-        // affichee, `dynacast` cesse d'emettre les couches que personne ne
-        // regarde. Ce sont eux qui tiennent la promesse « ne pas rendre toutes
-        // les videos en haute qualite » sans une ligne de code maison.
-        //
-        // D15 (S0.2, tranche par le pilote le 24/10/2026) : `adaptiveStream`
-        // est coupe chez qui n'est pas enseignant. Sur Flutter web, il ne
-        // remonte pas toujours la taille reelle du rendu, et la video agrandie
-        // de l'enseignant restait floue ; `setVideoQuality` n'y peut rien, car
-        // le SDK garde la plus petite des deux demandes (livekit_client 2.12,
-        // `remote.dart:298-303`). L'eleve ne recoit qu'un flux utile, celui de
-        // l'enseignant, plafonne a 1,2 Mbit/s ([debitMax720p]) ; l'enseignant,
-        // qui recoit jusqu'a six flux, le garde.
-        adaptiveStream: adaptiveStreamPour(acces),
-        dynacast: true,
-        // **Les defauts de capture audio sont conserves volontairement.**
-        // La specification section 18 met en garde : une configuration
-        // « musicale » desactive l'annulation d'echo, la suppression de bruit
-        // et le gain automatique. Pour de la recitation, ou l'intelligibilite
-        // prime sur la fidelite, ce serait un contresens -- et le premier
-        // cours en environnement bruyant le prouverait.
-        defaultAudioCaptureOptions: const lk.AudioCaptureOptions(),
-        // D15 (24/10/2026, decision du pilote) : l'image paraissait « 240p »
-        // avec les reglages par defaut, parce que les petites vignettes ne
-        // demandaient que la couche basse. Publication 720p en trois couches
-        // (180p, 360p, 720p), 720p plafonne a 1,2 Mbit/s ; `adaptiveStream`
-        // reste chez l'enseignant (voir plus haut).
-        defaultCameraCaptureOptions: const lk.CameraCaptureOptions(
-          params: lk.VideoParametersPresets.h720_169,
-        ),
-        defaultVideoPublishOptions: const lk.VideoPublishOptions(
-          videoEncoding: lk.VideoEncoding(
-            maxBitrate: debitMax720p,
-            maxFramerate: 30,
-          ),
-          videoSimulcastLayers: <lk.VideoParameters>[
-            lk.VideoParametersPresets.h180_169,
-            lk.VideoParametersPresets.h360_169,
-          ],
-        ),
-      ),
-    );
+    final lk.Room salle = lk.Room(roomOptions: optionsSalle());
     _salle = salle;
 
     final lk.EventsListener<lk.RoomEvent> ecouteur = salle.createListener();
