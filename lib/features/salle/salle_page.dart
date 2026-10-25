@@ -246,6 +246,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// l'a dit, ou `null`.
   String? _erreurCamera;
 
+  /// Lot salle 3 (directeur, 25/10/2026) : tout bandeau d'erreur se ferme.
+  /// Vrai quand l'usager a ferme le message de la camera ; un nouvel essai
+  /// le fait revenir s'il echoue encore.
+  bool _erreurCameraFermee = false;
+
   /// S0 : la scene video au premier plan, choisie d'un toucher ; `null` :
   /// automatique (l'eleve sans page presentee la voit en grand).
   bool? _scenePremierPlan;
@@ -580,6 +585,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// exacte du navigateur s'affiche sous l'en-tete, avec sa cause probable et
   /// quoi faire (K-59) ; un essai reussi l'efface.
   Future<void> _basculerCamera(bool ouverte) async {
+    if (_erreurCameraFermee) setState(() => _erreurCameraFermee = false);
     try {
       await _moteur.reglerCamera(actif: !ouverte);
       if (mounted && _erreurCamera != null) {
@@ -788,10 +794,13 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             )
           : null,
       // D14 : effacee des que la camera publie.
-      alerte: (moi?.camera ?? false)
+      alerte: (moi?.camera ?? false) || _erreurCameraFermee
           ? null
           : switch (_erreurCamera ?? _moteur.erreurCameraEntree) {
-              final String erreur => _ErreurCamera(erreur: erreur),
+              final String erreur => _ErreurCamera(
+                erreur: erreur,
+                onFermer: () => setState(() => _erreurCameraFermee = true),
+              ),
               null => null,
             },
       scene: _Scene(
@@ -1470,10 +1479,14 @@ class _PastillePresence extends StatelessWidget {
 
 /// D14 : la camera n'a pas pu s'allumer ; la phrase exacte du navigateur, sa
 /// cause probable et quoi faire (K-59), sous l'en-tete.
+///
+/// Lot salle 3 (directeur, 25/10/2026) : le message se ferme (croix au bord
+/// de fin, cible de 48, « Fermer »).
 class _ErreurCamera extends StatelessWidget {
-  const _ErreurCamera({required this.erreur});
+  const _ErreurCamera({required this.erreur, required this.onFermer});
 
   final String erreur;
+  final VoidCallback onFermer;
 
   @override
   Widget build(BuildContext context) {
@@ -1487,10 +1500,12 @@ class _ErreurCamera extends StatelessWidget {
     final TextStyle style = palette.piluleSalle.applyTo(
       textes.bodySmall ?? const TextStyle(),
     );
+    // Le message et sa croix sont deux noeuds : le message s'annonce, la
+    // croix est un bouton a part (sinon tout le message devenait le bouton).
     return Semantics(
       key: const ValueKey<String>('salle-erreur-camera'),
-      liveRegion: true,
       container: true,
+      explicitChildNodes: true,
       child: Padding(
         padding: const EdgeInsets.only(top: AppSpacing.sm),
         child: DecoratedBox(
@@ -1502,17 +1517,41 @@ class _ErreurCamera extends StatelessWidget {
               horizontal: AppSpacing.md,
               vertical: AppSpacing.sm,
             ),
-            child: Wrap(
-              spacing: AppSpacing.xs,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  t.salle.cameraEchec,
-                  style: palette.piluleSalle.applyTo(
-                    textes.labelMedium ?? const TextStyle(),
+                Flexible(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: AppSpacing.md),
+                    child: Semantics(
+                      liveRegion: true,
+                      container: true,
+                      child: Wrap(
+                        spacing: AppSpacing.xs,
+                        children: <Widget>[
+                          Text(
+                            t.salle.cameraEchec,
+                            style: palette.piluleSalle.applyTo(
+                              textes.labelMedium ?? const TextStyle(),
+                            ),
+                          ),
+                          Text(cause, style: style),
+                          Text(
+                            t.salle.cameraEchecMessage(erreur: erreur),
+                            style: style,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-                Text(cause, style: style),
-                Text(t.salle.cameraEchecMessage(erreur: erreur), style: style),
+                BoutonIcone(
+                  key: const ValueKey<String>('salle-erreur-camera-fermer'),
+                  icone: AppIcons.fermer,
+                  libelle: t.commun.fermer,
+                  onPress: onFermer,
+                  forme: FormeBoutonIcone.nue,
+                ),
               ],
             ),
           ),

@@ -502,6 +502,43 @@ void main() {
       expect(find.text(t.salle.cameraEchec), findsNothing);
     });
 
+    testWidgets('Lot salle 3 : le message de la camera se ferme, et revient '
+        'si un nouvel essai echoue', (WidgetTester tester) async {
+      // Directeur, 25/10/2026 : « La camera ne s'allume pas » ne se fermait
+      // pas. Une croix « Fermer », cible de 48, le ferme.
+      final FauxMoteurSalle moteur = FauxMoteurSalle()
+        ..erreurCamera = StateError(
+          'NotFoundError: Requested device not found',
+        );
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student', camera: true)),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+      await tester.tap(_commande(t.salle.ouvrirCamera));
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.cameraEchecAbsente), findsOneWidget);
+
+      const Key croix = ValueKey<String>('salle-erreur-camera-fermer');
+      final SemanticsHandle semantique = tester.ensureSemantics();
+      expect(find.bySemanticsLabel(t.commun.fermer), findsOneWidget);
+      semantique.dispose();
+      final Size cible = tester.getSize(find.byKey(croix));
+      expect(cible.width, greaterThanOrEqualTo(48));
+      expect(cible.height, greaterThanOrEqualTo(48));
+      await tester.tap(find.byKey(croix));
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.cameraEchec), findsNothing);
+
+      // Un nouvel essai qui echoue encore : le message revient.
+      await tester.tap(_commande(t.salle.ouvrirCamera));
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.cameraEchec), findsOneWidget);
+    });
+
     testWidgets('D14 : un allumage d entree refuse se dit sans geste', (
       WidgetTester tester,
     ) async {
