@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'
     show ProviderContainer, ProviderScope, Ref;
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -2687,6 +2688,82 @@ void main() {
         );
       });
     }
+
+    // EN-KB (25/10/2026) : la bascule K4 avait perdu M, V, R, B avec
+    // `_FocusPanneaux` ; ils reviennent a l'enseignant sur ordinateur, une
+    // touche par test.
+    Future<FauxMoteurSalle> monterAvecMoi(
+      WidgetTester tester, {
+      Size taille = const Size(1366, 768),
+      bool camera = false,
+    }) async {
+      final FauxMoteurSalle moteur = await monterAvecPage(tester, taille);
+      moteur.publier(<ParticipantSalle>[
+        _personne(identite: 't1', role: 'teacher', local: true, camera: camera),
+      ]);
+      await tester.pumpAndSettle();
+      return moteur;
+    }
+
+    Future<void> touche(WidgetTester tester, LogicalKeyboardKey cle) async {
+      await tester.sendKeyEvent(cle);
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('EN-KB, ordinateur : M ouvre le micro', (
+      WidgetTester tester,
+    ) async {
+      final FauxMoteurSalle moteur = await monterAvecMoi(tester);
+      await touche(tester, LogicalKeyboardKey.keyM);
+      expect(moteur.microDemande, <bool>[true]);
+    });
+
+    testWidgets('EN-KB, ordinateur : V coupe la camera, ne l allume jamais', (
+      WidgetTester tester,
+    ) async {
+      final FauxMoteurSalle allumee = await monterAvecMoi(tester, camera: true);
+      await touche(tester, LogicalKeyboardKey.keyV);
+      expect(allumee.cameraDemandee, <bool>[false]);
+    });
+
+    testWidgets('EN-KB, ordinateur : V n allume pas une camera eteinte', (
+      WidgetTester tester,
+    ) async {
+      final FauxMoteurSalle eteinte = await monterAvecMoi(tester);
+      await touche(tester, LogicalKeyboardKey.keyV);
+      expect(eteinte.cameraDemandee, isEmpty);
+    });
+
+    testWidgets('EN-KB, ordinateur : R ouvre les Eleves', (
+      WidgetTester tester,
+    ) async {
+      await monterAvecMoi(tester);
+      expect(find.text(t.tc.classe.roster.titre), findsNothing);
+      await touche(tester, LogicalKeyboardKey.keyR);
+      expect(find.text(t.tc.classe.roster.titre), findsOneWidget);
+    });
+
+    testWidgets('EN-KB, ordinateur : B ouvre le choix du support', (
+      WidgetTester tester,
+    ) async {
+      await monterAvecMoi(tester);
+      expect(find.text(t.salle.supports.titre), findsNothing);
+      await touche(tester, LogicalKeyboardKey.keyB);
+      expect(find.text(t.salle.supports.titre), findsOneWidget);
+    });
+
+    testWidgets('EN-KB, telephone : aucune lettre n agit', (
+      WidgetTester tester,
+    ) async {
+      final FauxMoteurSalle moteur = await monterAvecMoi(
+        tester,
+        taille: const Size(390, 844),
+      );
+      await touche(tester, LogicalKeyboardKey.keyM);
+      await touche(tester, LogicalKeyboardKey.keyB);
+      expect(moteur.microDemande, isEmpty);
+      expect(find.text(t.salle.supports.titre), findsNothing);
+    });
   });
 
   // Lot salle 2 (directeur, 25/10/2026, capture du telephone de l'eleve) :
