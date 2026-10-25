@@ -71,7 +71,7 @@ void main() {
       const Size(320, 640),
       const Size(1440, 900),
     ]) {
-      for (final double texte in <double>[1, 2]) {
+      for (final double texte in <double>[1, 1.5, 2]) {
         for (final ThemeMode theme in <ThemeMode>[
           ThemeMode.light,
           ThemeMode.dark,
@@ -136,6 +136,27 @@ void main() {
                 } else {
                   expect(bouton.left, moreOrLessEquals(champ2.left));
                 }
+                // Connexion : Google puis le lien sur une rangee au bord de
+                // fin ; si elle ne tient pas (police de test tres large,
+                // texte agrandi), empilees pleine largeur.
+                final Finder google = find.widgetWithText(
+                  ActionPrincipale,
+                  t.connexion.avecGoogle,
+                );
+                if (google.evaluate().isNotEmpty) {
+                  final Rect g = tester.getRect(google);
+                  if (g.top == bouton.top) {
+                    expect(g.height, bouton.height);
+                    if (sens == TextDirection.ltr) {
+                      expect(bouton.left - g.right, moreOrLessEquals(8));
+                    } else {
+                      expect(g.left - bouton.right, moreOrLessEquals(8));
+                    }
+                  } else {
+                    expect(g.width, moreOrLessEquals(champ2.width));
+                    expect(bouton.width, moreOrLessEquals(champ2.width));
+                  }
+                }
               } else {
                 // Telephone : le logo est centre, le bouton pleine largeur.
                 final Rect logoRect = tester.getRect(
@@ -181,6 +202,54 @@ void main() {
       const Duration(seconds: 2),
     );
     expect(tester.hasRunningAnimations, isFalse);
+  });
+
+  group('RangeeActions sur ordinateur (correctif du 25/10/2026)', () {
+    Widget rangee(double largeur, TextDirection sens) => Directionality(
+      textDirection: sens,
+      child: Center(
+        child: SizedBox(
+          width: largeur,
+          child: const RangeeActions(
+            pileePleineLargeur: true,
+            children: <Widget>[
+              SizedBox(key: ValueKey<String>('g'), width: 150, height: 52),
+              SizedBox(key: ValueKey<String>('p'), width: 120, height: 52),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    for (final TextDirection sens in TextDirection.values) {
+      testWidgets('une rangee au bord de fin quand elle tient (${sens.name})', (
+        WidgetTester tester,
+      ) async {
+        await tester.pumpWidget(rangee(400, sens));
+        final Rect g = tester.getRect(find.byKey(const ValueKey<String>('g')));
+        final Rect p = tester.getRect(find.byKey(const ValueKey<String>('p')));
+        final Rect cadre = tester.getRect(find.byType(RangeeActions));
+        expect(g.top, p.top);
+        if (sens == TextDirection.ltr) {
+          expect(p.right, cadre.right);
+          expect(p.left - g.right, 8);
+        } else {
+          expect(p.left, cadre.left);
+          expect(g.left - p.right, 8);
+        }
+      });
+    }
+
+    testWidgets('empilee pleine largeur quand elle ne tient pas', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(rangee(260, TextDirection.ltr));
+      final Rect g = tester.getRect(find.byKey(const ValueKey<String>('g')));
+      final Rect p = tester.getRect(find.byKey(const ValueKey<String>('p')));
+      expect(g.width, 260);
+      expect(p.width, 260);
+      expect(p.top - g.bottom, 8);
+    });
   });
 
   group('contraste mesure', () {

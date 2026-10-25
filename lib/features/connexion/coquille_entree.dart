@@ -8,6 +8,7 @@ import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/brand_logo.dart';
 import '../../core/widgets/entete_page.dart';
 import '../../core/widgets/lien_fleche.dart';
@@ -16,7 +17,11 @@ import '../../core/widgets/porte_lumiere.dart';
 
 /// La largeur de lecture du formulaire sur ordinateur
 /// (`docs/current/PARCOURS-ENTREE-2026-10-25.md`, §3 C).
-const double largeurFormulaireEntree = AppPage.largeurEtatVide;
+///
+/// 560 (decision du 25/10/2026, correctif de la PR 1) : « Continuer avec
+/// Google » et « Recevoir le lien d'inscription » tiennent sur une rangee
+/// (508 mesures avec les polices du depot) ; 400 les empilait.
+const double largeurFormulaireEntree = AppPage.largeurDialogue;
 
 /// La largeur de la scene dans le volet de marque sur ordinateur (560 sur le
 /// site, ramene a l'echelle d'espacement).
@@ -431,4 +436,53 @@ class LienEntree extends StatelessWidget {
       onPress: onPress,
     ),
   );
+}
+
+/// Les deux actions d'un formulaire d'entree (correctif du directeur du
+/// 25/10/2026 sur la PR 1, contrat B) :
+///
+/// - **ordinateur** : [RangeeActions], une seule rangee au bord de fin du
+///   formulaire, l'action secondaire puis la principale dans le sens de
+///   lecture (« Continuer avec Google » puis « Recevoir le lien » ; miroir en
+///   arabe), 8 points entre elles, chacune a la largeur de son contenu ; si
+///   la rangee ne tient pas (texte agrandi), elle s'empile pleine largeur ;
+/// - **telephone** : la principale puis la secondaire, empilees, pleine
+///   largeur.
+///
+/// Les deux boutons se construisent avec `pleineLargeur: !bureau`.
+class ActionsEntree extends StatelessWidget {
+  /// Pose [principale] et, s'il y en a une, [secondaire].
+  const ActionsEntree({
+    required this.bureau,
+    required this.principale,
+    this.secondaire,
+    super.key,
+  });
+
+  /// Vrai dans le volet d'ordinateur.
+  final bool bureau;
+
+  /// L'action principale (le seul bouton plein).
+  final Widget principale;
+
+  /// L'action secondaire, s'il y en a une.
+  final Widget? secondaire;
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget? autre = secondaire;
+    if (autre == null) {
+      return BoutonEntree(bureau: bureau, child: principale);
+    }
+    if (!bureau) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[principale, Ecart.vSm, autre],
+      );
+    }
+    return RangeeActions(
+      pileePleineLargeur: true,
+      children: <Widget>[autre, principale],
+    );
+  }
 }

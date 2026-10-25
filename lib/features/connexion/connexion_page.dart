@@ -477,9 +477,13 @@ class _Saisie extends StatelessWidget {
           ),
         ],
         Ecart.vLg,
-        BoutonEntree(
+        // Une rangee au bord de fin sur ordinateur, Google puis le lien ;
+        // empiles pleine largeur sur telephone (correctif du 25/10/2026). Le
+        // parcours de demonstration n'ouvre pas Google : un chemin reel vers
+        // un vrai compte.
+        ActionsEntree(
           bureau: bureau,
-          child: ActionPrincipale(
+          principale: ActionPrincipale(
             libelle: !versLien
                 ? t.connexion.entrerDemo
                 : creation
@@ -492,25 +496,20 @@ class _Saisie extends StatelessWidget {
             affirmee: true,
             pleineLargeur: !bureau,
           ),
+          secondaire: demo
+              ? null
+              : ActionPrincipale(
+                  libelle: t.connexion.avecGoogle,
+                  onPress: onGoogle,
+                  niveau: NiveauAction.secondaire,
+                  pleineLargeur: !bureau,
+                  // Une marque tierce se montre, elle ne se decrit pas : le
+                  // logo est ce que l'usager cherche des yeux avant de lire
+                  // le libelle.
+                  prefixe: const LogoGoogle(),
+                ),
         ),
-
-        // Le parcours de demonstration s'arrete la : il n'ouvre ni Google ni
-        // l'entree eleve, qui sont des chemins reels vers un vrai compte.
         if (!demo) ...<Widget>[
-          Ecart.vSm,
-          BoutonEntree(
-            bureau: bureau,
-            child: ActionPrincipale(
-              libelle: t.connexion.avecGoogle,
-              onPress: onGoogle,
-              niveau: NiveauAction.secondaire,
-              pleineLargeur: !bureau,
-              // Une marque tierce se montre, elle ne se decrit pas : le logo
-              // est ce que l'usager cherche des yeux avant de lire le libelle.
-              prefixe: const LogoGoogle(),
-            ),
-          ),
-
           // L4 : en creation, les sorties reservees aux comptes existants
           // s'effacent (appareil d'un eleve, lien expire).
           if (!creation) ...<Widget>[
