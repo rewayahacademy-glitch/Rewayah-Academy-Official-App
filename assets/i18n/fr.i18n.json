@@ -209,6 +209,10 @@
       "fermer": "Fermer la recherche"
     }
   },
+  "miseAJour": {
+    "prete": "Une nouvelle version de l'application est prête.",
+    "recharger": "Recharger"
+  },
   "reseau": {
     "horsLigne": "Pas de réseau. Ce qui est déjà affiché reste consultable.",
     "enAttenteEnvoi": "Sera envoyé dès le retour du réseau",
