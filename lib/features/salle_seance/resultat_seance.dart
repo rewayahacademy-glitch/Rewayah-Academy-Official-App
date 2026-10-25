@@ -45,6 +45,8 @@ class ResultatSeance extends StatelessWidget {
   const ResultatSeance({
     required this.issue,
     required this.onRetour,
+    this.onRevenir,
+    this.onAccueil,
     super.key,
   });
 
@@ -53,12 +55,26 @@ class ResultatSeance extends StatelessWidget {
   /// Retour a la Classe (standard) ou a l'accueil (guidee).
   final VoidCallback onRetour;
 
+  /// Lot salle 2 (directeur, 25/10/2026, standard Meet « You left the
+  /// meeting / Rejoin ») : apres « Quitter », revenir dans la salle tant
+  /// qu'elle est ouverte (le serveur seul dit si elle l'est). Seule action
+  /// pleine ; [onAccueil] passe en lien.
+  final VoidCallback? onRevenir;
+
+  /// Le retour a l'accueil qui accompagne [onRevenir].
+  final VoidCallback? onAccueil;
+
+  /// L'action « Retourner dans la salle ».
+  static const Key revenirKey = ValueKey<String>('resultat-revenir-salle');
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final bool guidee = AppMetriques.of(context).mode == InterfaceMode.enfant;
     final bool large = AppGabarit.de(context) == Gabarit.desktop;
     final bool fin = guidee || issue == IssueSeance.terminee;
+    final bool revenir =
+        !guidee && issue == IssueSeance.quittee && onRevenir != null;
     // Guidee : une phrase courte, sans suite (S CLV-09, moins de 10 mots).
     final String titre = guidee
         ? t.salle.fin.titreGuidee
@@ -101,10 +117,17 @@ class ResultatSeance extends StatelessWidget {
                       ton: fin ? TonEtat.succes : TonEtat.neutre,
                       titre: titre,
                       phrase: phrase,
-                      libelleAction: guidee
+                      libelleAction: revenir
+                          ? t.salle.retourner
+                          : guidee
                           ? t.salle.fin.retourAccueil
                           : t.salle.fin.retourClasse,
-                      onAction: onRetour,
+                      onAction: revenir ? onRevenir : onRetour,
+                      cleAction: revenir ? revenirKey : null,
+                      libelleSecondaire: revenir
+                          ? t.salle.fin.retourAccueil
+                          : null,
+                      onSecondaire: revenir ? (onAccueil ?? onRetour) : null,
                       // P12 (UX_REVIEW CL-7) : l'acces retire remplace la
                       // salle sans geste de l'eleve ; le focus clavier se
                       // pose sur la seule action, visible a l'ouverture.
