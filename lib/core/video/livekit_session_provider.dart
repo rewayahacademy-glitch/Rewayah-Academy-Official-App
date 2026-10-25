@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:livekit_client/livekit_client.dart' as lk;
 
 import '../observabilite/journal_dev.dart';
+import 'diagnostic_transport.dart';
+import 'repli_audio.dart';
 import 'video_session_provider.dart';
 
 /// Le debit maximal de la video publiee, en bits par seconde : 450 kbit/s
@@ -121,7 +123,16 @@ class LiveKitSessionProvider implements VideoSessionProvider {
   /// au retour du reseau, plus rien ne saurait qu'il faut la rouvrir, et
   /// l'usager croirait sa camera cassee.
   bool _cameraAvantDegradation = false;
-  bool _degradee = false;
+
+  /// Le repli audio seul, avec hysteresis (lot salle 3, 25/10/2026).
+  final RepliAudio _repli = RepliAudio();
+
+  /// Le diagnostic du transport de l'entree en cours (lot salle 3).
+  DiagnosticTransport? _diagnostic;
+
+  /// La derniere qualite du lien local, pour ne relire le transport qu'aux
+  /// changements.
+  QualiteLien? _dernierLien;
 
   @override
   EtatSalle get etatCourant => _etat;
@@ -211,6 +222,13 @@ class LiveKitSessionProvider implements VideoSessionProvider {
     // aucun appareil (l'essai sur un poste sans camera faisait naitre le
     // bandeau « Aucune camera n'est trouvee »). [cameraAllumeeALEntree] le dit.
     _poser(EtatSalle.connecte);
+    // Lot salle 3 (audit reseau du 25/10/2026) : le diagnostic du transport,
+    // sans identite (nom de salle opaque), rien de visible en salle.
+    final DiagnosticTransport diagnostic = DiagnosticTransport(
+      salleOpaque: acces.nomSalle,
+    );
+    _diagnostic = diagnostic;
+    unawaited(diagnostic.lireTransports(salle, 'connexion'));
     _publierParticipants();
   }
 
@@ -241,17 +259,39 @@ class LiveKitSessionProvider implements VideoSessionProvider {
         // sans page. Un recepteur, lui, garde simplement ce qu'il avait.
         unawaited(_republierContenu());
       })
-      ..on<lk.RoomDisconnectedEvent>((_) {
-        _poser(EtatSalle.absent);
+      ..on<lk.RoomDisconnectedEvent>((lk.RoomDisconnectedEvent e) {
+        // Lot salle 3 (audit reseau du 25/10/2026) : `quitter` cesse
+        // d'ecouter avant de fermer ; une deconnexion recue ici n'est donc
+        // pas voulue (reseau, serveur, salle fermee). Elle passe en echec
+        // avec sa raison : la salle dit « La connexion au cours est
+        // perdue » et propose « Reessayer » (nouveau jeton), jamais un ecran
+        // « Connexion » fige.
+        final lk.DisconnectReason? raison = e.reason;
+        signalerTransport('deconnexion', <String, Object?>{
+          'salle': _acces?.nomSalle,
+          'raison': raison?.name ?? 'inconnue',
+        });
+        _poser(
+          raison == lk.DisconnectReason.clientInitiated
+              ? EtatSalle.absent
+              : EtatSalle.echec,
+        );
         _publierParticipants();
       })
       ..on<lk.ParticipantConnectedEvent>((_) => _publierParticipants())
       ..on<lk.ParticipantDisconnectedEvent>((_) => _publierParticipants())
       ..on<lk.TrackPublishedEvent>((_) => _publierParticipants())
       ..on<lk.TrackUnpublishedEvent>((_) => _publierParticipants())
-      ..on<lk.TrackSubscribedEvent>((_) => _publierParticipants())
+      ..on<lk.TrackSubscribedEvent>((lk.TrackSubscribedEvent e) {
+        _diagnostic?.suivrePiste(e.track);
+        _publierParticipants();
+      })
       ..on<lk.TrackUnsubscribedEvent>((_) => _publierParticipants())
-      ..on<lk.LocalTrackPublishedEvent>((_) => _publierParticipants())
+      ..on<lk.LocalTrackPublishedEvent>((lk.LocalTrackPublishedEvent e) {
+        final lk.Track? piste = e.publication.track;
+        if (piste != null) _diagnostic?.suivrePiste(piste);
+        _publierParticipants();
+      })
       ..on<lk.TrackMutedEvent>((_) => _publierParticipants())
       ..on<lk.TrackUnmutedEvent>((_) => _publierParticipants())
       ..on<lk.ActiveSpeakersChangedEvent>((_) => _publierParticipants())
@@ -261,6 +301,15 @@ class LiveKitSessionProvider implements VideoSessionProvider {
       ) {
         if (e.participant.identity == _salle?.localParticipant?.identity) {
           final QualiteLien lien = _traduireQualite(e.connectionQuality);
+          // Lot salle 3 : le transport se relit a chaque changement de
+          // qualite (paire de candidats, aller-retour, pertes).
+          final lk.Room? salle = _salle;
+          if (salle != null && lien != _dernierLien) {
+            _dernierLien = lien;
+            unawaited(
+              _diagnostic?.lireTransports(salle, 'qualite:${lien.name}'),
+            );
+          }
           if (!_qualite.isClosed) {
             _qualite.add(lien);
           }
@@ -423,38 +472,60 @@ class LiveKitSessionProvider implements VideoSessionProvider {
   ///
   /// Ce n'est pas une mesure maison de la bande passante (section 30
   /// l'interdit) : c'est la lecture du signal que LiveKit publie deja.
+  ///
+  /// Lot salle 3 (audit reseau du 25/10/2026, decision du pilote) : repli en
+  /// deux paliers avec hysteresis ([RepliAudio]). Lien mediocre : videos
+  /// recues en couche basse, camera locale coupee. Lien perdu : videos recues
+  /// desabonnees (seule la voix circule). Retour apres deux bonnes mesures
+  /// consecutives, jamais sur une seule : pas de clignotement. Un « audio
+  /// seul » demande par l'usager ([reglerAudioSeul]) prime : on n'y touche
+  /// pas.
   Future<void> _degrader(QualiteLien lien) async {
-    final AccesSalle? acces = _acces;
-    if (acces == null || !acces.capacites.peutPublierVideo || _audioSeul) {
+    final NiveauRepli avant = _repli.niveau;
+    final NiveauRepli apres = _repli.mesurer(lien);
+    if (avant == apres || _audioSeul) {
       return;
     }
-    final lk.LocalParticipant? local = _salle?.localParticipant;
-    if (local == null) {
+    final lk.Room? salle = _salle;
+    if (salle == null) {
       return;
     }
+    final lk.LocalParticipant? local = salle.localParticipant;
+    final bool peutMontrer = _acces?.capacites.peutPublierVideo ?? false;
 
-    final bool mauvais =
-        lien == QualiteLien.mediocre || lien == QualiteLien.perdue;
-
-    if (mauvais && !_degradee) {
-      _cameraAvantDegradation = local.isCameraEnabled();
-      _degradee = true;
-      if (_cameraAvantDegradation) {
-        await local.setCameraEnabled(false);
-        _publierParticipants();
-      }
-      return;
-    }
-
-    if (!mauvais && _degradee) {
-      _degradee = false;
-      // Restauration PROGRESSIVE : on ne rouvre que ce qui etait ouvert. Une
-      // camera que l'usager avait fermee lui-meme doit le rester.
-      if (_cameraAvantDegradation) {
+    // La camera locale : coupee des le premier palier, rouverte au retour
+    // seulement si elle etait ouverte (une camera fermee par l'usager le
+    // reste).
+    if (local != null && peutMontrer) {
+      if (avant == NiveauRepli.aucun) {
+        _cameraAvantDegradation = local.isCameraEnabled();
+        if (_cameraAvantDegradation) {
+          await local.setCameraEnabled(false);
+        }
+      } else if (apres == NiveauRepli.aucun && _cameraAvantDegradation) {
         await local.setCameraEnabled(true);
-        _publierParticipants();
       }
     }
+
+    // Les videos recues : couche basse, puis plus rien, puis le retour.
+    for (final lk.RemoteParticipant distant
+        in salle.remoteParticipants.values) {
+      for (final lk.RemoteTrackPublication<lk.RemoteVideoTrack> piste
+          in distant.videoTrackPublications) {
+        switch (apres) {
+          case NiveauRepli.audioSeul:
+            await piste.unsubscribe();
+          case NiveauRepli.videoBasse:
+            await piste.subscribe();
+            await piste.setVideoQuality(lk.VideoQuality.LOW);
+          case NiveauRepli.aucun:
+            await piste.subscribe();
+            await piste.setVideoQuality(lk.VideoQuality.HIGH);
+        }
+      }
+    }
+    journalDev('salle : repli ${avant.name} -> ${apres.name}');
+    _publierParticipants();
   }
 
   QualiteLien _traduireQualite(lk.ConnectionQuality q) => switch (q) {
@@ -633,6 +704,11 @@ class LiveKitSessionProvider implements VideoSessionProvider {
     _ecouteur = null;
     await ecouteur?.dispose();
 
+    final DiagnosticTransport? diagnostic = _diagnostic;
+    _diagnostic = null;
+    _dernierLien = null;
+    await diagnostic?.arreter();
+
     final lk.Room? salle = _salle;
     _salle = null;
     if (salle != null) {
@@ -645,7 +721,7 @@ class LiveKitSessionProvider implements VideoSessionProvider {
     }
 
     _acces = null;
-    _degradee = false;
+    _repli.remettre();
     _cameraAvantDegradation = false;
     // Le refus de camera ne vaut que pour la seance ou il a eu lieu (revue de
     // la PR 54) : le moteur vit toute l'application, et `rejoindre` passe par

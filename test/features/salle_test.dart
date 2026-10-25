@@ -563,6 +563,54 @@ void main() {
       expect(find.textContaining('Message du navigateur'), findsNothing);
     });
 
+    testWidgets('Lot salle 3 (reseau) : salle ouverte puis deconnexion : '
+        '« connexion perdue », et Reessayer redemande un jeton', (
+      WidgetTester tester,
+    ) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      final FauxServiceVideo video = FauxServiceVideo(
+        acces0: _acces('student'),
+      );
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: video,
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+      expect(video.demandes, hasLength(1));
+      moteur.poser(EtatSalle.connecte);
+      await tester.pumpAndSettle();
+      // Deconnexion definitive (reseau, serveur) : le moteur passe en echec.
+      moteur.poser(EtatSalle.echec);
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.perdue), findsOneWidget);
+      expect(find.text(t.salle.secours.echec), findsOneWidget);
+      // Jamais « La salle n'a pas pu s'ouvrir » : elle etait ouverte.
+      expect(find.text(t.salle.refusReseau), findsNothing);
+      await tester.tap(find.text(t.commun.reessayer));
+      await tester.pumpAndSettle();
+      expect(video.demandes, hasLength(2), reason: 'un nouveau jeton');
+      expect(find.text(t.salle.perdue), findsNothing);
+    });
+
+    testWidgets('Lot salle 3 (reseau) : un echec avant toute ouverture reste '
+        '« La salle n a pas pu s ouvrir »', (WidgetTester tester) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle()
+        ..erreurEntree = StateError('lien coupe');
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+      expect(find.text(t.salle.refusReseau), findsOneWidget);
+      expect(find.text(t.salle.perdue), findsNothing);
+    });
+
     testWidgets('D14 : un allumage d entree refuse se dit sans geste', (
       WidgetTester tester,
     ) async {

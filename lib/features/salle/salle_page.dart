@@ -38,6 +38,7 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/video/livekit_session_provider.dart';
 import '../../core/video/pre_vol.dart';
+import '../../core/video/repli_audio.dart';
 import '../../core/video/service_video.dart';
 import '../../core/video/video_session_provider.dart';
 import '../../core/widgets/action_principale.dart';
@@ -192,6 +193,14 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   AccesSalle? _acces;
   CauseImpasse? _impasse;
   EtatSalle _etatMoteur = EtatSalle.absent;
+
+  /// Vrai des que la salle s'est ouverte a cette entree.
+  bool _aEteConnecte = false;
+
+  /// Lot salle 3 (audit reseau du 25/10/2026) : le repli audio, suivi sur le
+  /// flux de qualite avec la meme hysteresis que le moteur ; la pilule d'etat
+  /// dit « Image coupee... La voix continue. » tant qu'il dure.
+  final RepliAudio _repliAffiche = RepliAudio();
   List<ParticipantSalle> _participants = const <ParticipantSalle>[];
   QualiteLien _qualite = QualiteLien.inconnue;
 
@@ -277,7 +286,17 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // `rejoindre`, et un abonnement pose apres manquerait la connexion.
     _sEtats = _moteur.etats.listen((EtatSalle etat) {
       if (mounted) {
-        setState(() => _etatMoteur = etat);
+        setState(() {
+          _etatMoteur = etat;
+          // Lot salle 3 (audit reseau du 25/10/2026) : un echec qui suit une
+          // salle ouverte est une connexion perdue pour de bon, pas une salle
+          // qui n'a pas pu s'ouvrir ; jamais un ecran « Connexion » fige.
+          if (etat == EtatSalle.connecte || etat == EtatSalle.retabli) {
+            _aEteConnecte = true;
+          } else if (etat == EtatSalle.echec && _aEteConnecte) {
+            _impasse = CauseImpasse.connexionPerdue;
+          }
+        });
       }
     });
     _sParticipants = _moteur.participants.listen((
@@ -289,7 +308,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     });
     _sQualite = _moteur.qualite.listen((QualiteLien lien) {
       if (mounted) {
-        setState(() => _qualite = lien);
+        setState(() {
+          _qualite = lien;
+          // Lot salle 3 : la meme hysteresis que le moteur, pour le dire.
+          _repliAffiche.mesurer(lien);
+        });
       }
     });
     // Le tuteur observateur n'a AUCUNE preparation (D-14) : il n'ouvre ni
@@ -328,6 +351,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   Future<void> _entrer() async {
     setState(() {
       _impasse = null;
+      _aEteConnecte = false;
+      _repliAffiche.remettre();
       _materielPret = false;
       _acces = null;
     });
@@ -1186,6 +1211,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         supportPresente: presentee == null
             ? null
             : DepuisSalle.pageCoran(presentee.page),
+        videoSuspendue: _repliAffiche.videoSuspendue,
       );
       if (seance != null) {
         return _salleDeSeance(
@@ -3308,6 +3334,9 @@ class _Impasse extends StatelessWidget {
         t.salle.refusConfigurationDetail,
       ),
       CauseImpasse.reseau => (t.salle.refusReseau, t.salle.refusReseauDetail),
+      // Lot salle 3 (audit reseau du 25/10/2026) : la salle etait ouverte ;
+      // « Reessayer » rentre avec un nouveau jeton.
+      CauseImpasse.connexionPerdue => (t.salle.perdue, t.salle.secours.echec),
     };
 
     return Center(

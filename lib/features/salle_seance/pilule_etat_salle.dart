@@ -58,7 +58,9 @@ class PiluleEtatSalle extends StatelessWidget {
                 ),
               ),
               Ecart.hSm,
-              Text(vue.texteConnexion, style: style, maxLines: 1),
+              // Lot salle 3 : la phrase du repli audio peut passer sur deux
+              // lignes, jamais coupee ni debordante.
+              Flexible(child: Text(vue.texteConnexion, style: style)),
               if (vue.texteMention != null) ...<Widget>[
                 Padding(
                   padding: const EdgeInsets.symmetric(

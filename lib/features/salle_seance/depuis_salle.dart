@@ -33,6 +33,7 @@ abstract final class DepuisSalle {
     FinSeance? fin,
     AgeEleve age = AgeEleve.inconnu,
     SupportPageFixe? supportPresente,
+    bool videoSuspendue = false,
   }) {
     final RoleSeance? role = RoleSeance.resoudre(salle.role, mode);
     if (role == null) return null;
@@ -106,6 +107,7 @@ abstract final class DepuisSalle {
       // S0 : la page du Coran presentee (canal de donnees, D9), dans la
       // surface a page fixe, au seul affichage « Avec notes ».
       supportPresente: supportPresente,
+      videoSuspendue: videoSuspendue,
     );
   }
 
