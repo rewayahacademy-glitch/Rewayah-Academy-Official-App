@@ -14,34 +14,15 @@
 // journaux : pour la recette sur staging.
 
 import nodemailer from 'npm:nodemailer@6.9.16'
+import { type Envoi, entetes } from './entetes.ts'
 
-export interface Envoi {
-  de: string
-  deNom: string
-  repondreA: string
-  a: string
-  sujet: string
-  html: string
-  texte: string
-  /// URL HTTPS de desinscription en un clic (RFC 8058), categories non essentielles.
-  desinscriptionUnClic?: string
-  /// Identifiant stable : Gmail regroupe sans doublon un message renvoye.
-  idMessage: string
-}
+export { type Envoi, entetes, lienUnClic } from './entetes.ts'
+
 
 export interface Resultat {
   ok: boolean
   id?: string
   erreur?: string
-}
-
-function entetes(e: Envoi): Record<string, string> {
-  const h: Record<string, string> = { 'X-Entity-Ref-ID': e.idMessage }
-  if (e.desinscriptionUnClic) {
-    h['List-Unsubscribe'] = `<${e.desinscriptionUnClic}>`
-    h['List-Unsubscribe-Post'] = 'List-Unsubscribe=One-Click'
-  }
-  return h
 }
 
 let smtp: ReturnType<typeof nodemailer.createTransport> | null = null

@@ -154,6 +154,15 @@ sont décidés par Claude et consignés dans `docs/orchestration/PILOTAGE-BOUCLE
 qui est le but unique de la session de travail. Après les tests, ce qui ne plaît pas au directeur
 se change.
 
+**Décision du directeur du 25/10/2026, nom des classes (Boucle 2, création des classes).** Les
+classes sont nommées automatiquement par le système, depuis une bibliothèque de noms versionnée
+dans le dépôt : des noms de personnalités islamiques et historiques, simples à prononcer ; des noms
+féminins pour les groupes et classes féminins, des noms masculins pour les groupes et classes
+masculins. La direction ne saisit pas de nom ; elle peut le changer après coup. Chaque nom sert à
+une seule classe active à la fois. La bibliothèque est un fichier de données lu par la fonction de
+création de classe (« Créer la classe », `DECISION-OFFRES-GROUPES-2026-10-09.md`), proposée au
+directeur pour validation avant d'être versionnée.
+
 ## 6. Journal
 
 | Date | Étape | État | Preuve |
@@ -161,4 +170,5 @@ se change.
 | 2026-10-24 | Plan | écrit | ce fichier |
 | 2026-10-24 | Plan §5 | ordre des besoins fixé par le directeur : tableau de la direction, tri des 568 candidats, espace admin, paiement en dernier ; K3 par l'import des élèves actuels | ce fichier |
 | 2026-10-24 | Plan §5 | précisé : ordre des boucles 2 à 5 selon les peines du directeur ; le paiement passe en Boucle 2 | ce fichier |
+| 2026-10-25 | Plan §5 | décision : les classes sont nommées automatiquement depuis une bibliothèque de noms (féminins / masculins, personnalités islamiques et historiques, simples à prononcer) | ce fichier |
 | 2026-10-24 | Étape 1 (K1) | codé, test local vert (276 tests ciblés, analyse et vérificateurs CI sans défaut) ; non fusionné | branche `claude/admiring-brown-r6ai72` |

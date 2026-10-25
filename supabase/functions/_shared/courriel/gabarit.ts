@@ -53,6 +53,12 @@ export interface Contenu {
   libelleDesinscription?: string
   /// Ligne ajoutee quand le message a ete traduit a l'envoi.
   noteTraduction?: string
+  /// Une lettre personnelle (pilote, 25/10/2026 : la copie de test du
+  /// courriel d'attente arrivait dans « Promotions » de Gmail) : rendu sobre,
+  /// comme un courriel ecrit a la main ; ni image, ni carte, ni titre, police
+  /// du systeme, pied en une ligne de texte. L'envoi n'y ajoute aucun en-tete
+  /// de liste (`List-Unsubscribe`) : le lien de desinscription est en corps.
+  lettre?: boolean
 }
 
 /// Typographie francaise : espace insecable avant « : ; ? ! » et apres « ».
@@ -111,7 +117,61 @@ function blocTexte(b: Bloc): string {
   }
 }
 
+/// La police du systeme de la lettre : celle d'un courriel ecrit a la main.
+const POLICE_LETTRE = 'Arial,Helvetica,sans-serif'
+
+/// La lettre personnelle ([Contenu.lettre]) : des paragraphes sur fond
+/// blanc, une colonne, aucune image, aucun bouton peint ; le pied en texte.
+function composerLettre(c: Contenu): { html: string; texte: string } {
+  const langue = c.langue ?? 'fr'
+  const rtl = c.droiteAGauche === true
+  const dir = rtl ? 'rtl' : 'ltr'
+  const cote = rtl ? 'right' : 'left'
+  const typo = langue === 'fr' ? insecables : (h: string) => h
+  const desinscrire = c.libelleDesinscription ?? 'Ne plus recevoir ces e-mails'
+  const paragraphe = (t: string, style: string) =>
+    `<p style="margin:0 0 14px;${style}">${typo(echapper(t)).replace(/\n/g, '<br>')}</p>`
+  const corps = c.blocs.map((b) => {
+    switch (b.type) {
+      case 'texte':
+        return paragraphe(b.texte, '')
+      case 'note':
+        return paragraphe(b.texte, 'color:#555555;font-size:13px')
+      case 'code':
+        return paragraphe(b.code, 'font-weight:bold')
+      case 'bouton':
+        return `<p style="margin:0 0 14px"><a href="${echapper(b.href)}">${echapper(b.libelle)}</a></p>`
+      case 'lien':
+        return `<p style="margin:0 0 14px">${typo(echapper(b.texte))} <a href="${echapper(b.href)}">${typo(echapper(b.libelle))}</a></p>`
+    }
+  }).join('')
+  const pied = [
+    'Rewayah Academy · rewayahacademy.com',
+    c.noteTraduction ? echapper(c.noteTraduction) : '',
+    echapper(c.raison),
+    c.desinscription ? `<a href="${echapper(c.desinscription)}">${echapper(desinscrire)}</a>` : '',
+  ].filter(Boolean).join('<br>')
+  const html = `<!doctype html><html lang="${echapper(langue)}" dir="${dir}"><head><meta charset="utf-8">` +
+    `<meta name="viewport" content="width=device-width,initial-scale=1">` +
+    `<title>${echapper(c.sujet)}</title></head>` +
+    `<body style="margin:0;padding:16px;background:#FFFFFF">` +
+    `<div dir="${dir}" style="max-width:600px;text-align:${cote};font:14px/1.6 ${POLICE_LETTRE};color:#222222">` +
+    corps +
+    `<p style="margin:24px 0 0;font-size:12px;color:#777777">${pied}</p>` +
+    `</div></body></html>`
+  const texte = [
+    ...c.blocs.map(blocTexte).flatMap((t) => [t, '']),
+    '--',
+    'Rewayah Academy · rewayahacademy.com',
+    c.noteTraduction ?? '',
+    c.raison,
+    c.desinscription ? `${desinscrire} : ${c.desinscription}` : '',
+  ].filter((l, i, t) => !(l === '' && t[i - 1] === '')).join('\n').trim()
+  return { html, texte }
+}
+
 export function composer(c: Contenu): { html: string; texte: string } {
+  if (c.lettre === true) return composerLettre(c)
   const langue = c.langue ?? 'fr'
   const rtl = c.droiteAGauche === true
   const dir = rtl ? 'rtl' : 'ltr'

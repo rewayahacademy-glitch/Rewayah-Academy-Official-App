@@ -8,7 +8,7 @@ import { clientService, json, refus } from '../_shared/clients.ts'
 import { composer } from '../_shared/courriel/gabarit.ts'
 import { rendre } from '../_shared/courriel/modeles.ts'
 import { traduireContenu } from '../_shared/courriel/traduction.ts'
-import { envoyer } from '../_shared/courriel/transport.ts'
+import { envoyer, lienUnClic } from '../_shared/courriel/transport.ts'
 
 function egal(a: string, b: string): boolean {
   const x = new TextEncoder().encode(a)
@@ -67,8 +67,9 @@ Deno.serve(async (req) => {
         const envoi = await envoyer({
           de: l.de, deNom: l.de_nom, repondreA: l.repondre_a, a: l.a,
           sujet: c.sujet, html, texte, idMessage: l.id,
-          desinscriptionUnClic: !l.essentielle && jeton
-            ? `${urlDesinscription}?jeton=${encodeURIComponent(jeton)}` : undefined,
+          desinscriptionUnClic: lienUnClic({
+            lettre: c.lettre, essentielle: l.essentielle, jeton, base: urlDesinscription,
+          }),
         })
         ;({ ok, id, erreur } = envoi)
       } catch (e) {
