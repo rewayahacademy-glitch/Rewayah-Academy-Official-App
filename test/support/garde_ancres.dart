@@ -815,6 +815,15 @@ _Destination _instruction(_Source s, int o, int p, {bool collection = false}) {
   final RegExpMatch? aff = _affectation.firstMatch(segment);
   if (aff != null) {
     final String nom = aff[1]!;
+    // Une variable declaree booleenne ou numerique ne porte aucun texte : ce
+    // qui la calcule (`ref.watch(x).value ?? false`, lu comme un champ
+    // `value` d'un autre composant) n'atteint aucun libelle par elle
+    // (faux positif de la reprise 2, PR 54 : SettingRow.value > horsLigne).
+    if (RegExp(r'\b(bool|int|double|num)\??\s*$').hasMatch(
+      segment.substring(0, aff.start),
+    )) {
+      return const _Affichee();
+    }
     // `champ = valeur` sans declaration locale, dans une classe qui declare
     // ce champ : la valeur est rangee dans l'objet.
     final String? classe = s.classeAutour(p);
@@ -1448,6 +1457,12 @@ List<_Decl> _declarationsDe(_Source s, String nom) {
   for (final RegExpMatch x in RegExp(
     '\\((\\s*(?:\\w+\\s*,\\s*)*$n\\s*(?:,\\s*\\w+\\s*)*)\\)\\s*(?:=>|\\{|async)',
   ).allMatches(s.m)) {
+    // `switch (nom) {`, `if (nom) {` : une condition, pas une lambda. Prise
+    // pour une declaration sans type, elle masquait la vraie (`Motif motif`)
+    // et gardait toute lecture `objet.nom.champ` (faux positif, PR 54).
+    if (_motsDeControle.contains(_motFinissantEn(s, s.avant(x.start)))) {
+      continue;
+    }
     final int o = s.ouvrant(x.start);
     int? source;
     if (o >= 0 && s.m[o] == '(') {
