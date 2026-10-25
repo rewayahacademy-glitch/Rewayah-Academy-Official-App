@@ -67,6 +67,16 @@ abstract final class AppMouvement {
   /// [pulsation] (1,2 s, imminence) pour que les deux ne se confondent pas.
   static const Duration pulsationDirect = Duration(milliseconds: 1500);
 
+  /// L'entree de l'illustration « la porte et la lumiere » sur la surface de
+  /// marque (parcours d'entree, decision du directeur du 25/10/2026,
+  /// `docs/current/PARCOURS-ENTREE-2026-10-25.md` §3) : le symbole se dessine,
+  /// la porte s'ouvre, la lumiere sort et s'etire au sol, les pas et la
+  /// lanterne apparaissent. **Une fois, 1,5 s au plus, jamais en boucle**,
+  /// puis la scene reste immobile. **Hors du budget de transition**, comme
+  /// [pulsation] : elle raconte l'arrivee, elle n'explique pas un changement.
+  /// En mouvement reduit, la meme duree en fondus seuls, meme image finale.
+  static const Duration entreeIllustration = Duration(milliseconds: 1500);
+
   /// Nombre de battements du point « En direct » avant qu'il reste fixe :
   /// trois fois [pulsationDirect], soit 4,5 s, **sous les cinq secondes** au
   /// dela desquelles WCAG 2.2.2 exige une commande d'arret. Le mot « En
