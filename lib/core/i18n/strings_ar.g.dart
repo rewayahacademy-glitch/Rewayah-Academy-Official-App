@@ -17995,7 +17995,7 @@ class _Traductions$recrutement$talents$c$developpement$ar extends Traductions$re
 
 	// Translations
 	@override String get libelle => 'تطوير الويب أو تطبيقات الجوال';
-	@override String get description => 'برمجة المواقع والتطبيقات.';
+	@override String get description => 'تطوير المواقع والتطبيقات.';
 	@override String get exemple => 'موقع، تطبيق، أداة داخلية';
 }
 
@@ -27425,7 +27425,7 @@ extension on TraductionsAr {
 			'recrutement.talents.c.accompagnement_enfants.description' => 'مساعدة الأطفال الذين يحتاجون إلى عناية خاصة.',
 			'recrutement.talents.c.accompagnement_enfants.exemple' => 'علم نفس الطفل، الاحتياجات الخاصة، الأطفال شديدو الخجل',
 			'recrutement.talents.c.developpement.libelle' => 'تطوير الويب أو تطبيقات الجوال',
-			'recrutement.talents.c.developpement.description' => 'برمجة المواقع والتطبيقات.',
+			'recrutement.talents.c.developpement.description' => 'تطوير المواقع والتطبيقات.',
 			'recrutement.talents.c.developpement.exemple' => 'موقع، تطبيق، أداة داخلية',
 			'recrutement.talents.c.assistance_technique.libelle' => 'الدعم التقني للأسر والمعلمين',
 			'recrutement.talents.c.assistance_technique.description' => 'حلّ المشكلات التقنية عن بُعد لمن يواجهها.',
