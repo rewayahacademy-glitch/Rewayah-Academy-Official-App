@@ -284,15 +284,19 @@ Deno.test('attente_candidat en arabe : ecrit a la main, jamais traduit, de droit
   const c = r.contenu
   assertEquals(c.langue, 'ar')
   assertEquals(c.droiteAGauche, true)
-  assertEquals(c.sujet, 'ترشحكم للتدريس في Rewayah Academy: ما وصلنا إليه')
+  assertEquals(c.sujet, 'ترشحكم للتدريس في أكاديمية الرواية: ما وصلنا إليه')
   assertEquals(c.noteTraduction, undefined)
   const { html, texte } = composer(c)
   assert(html.includes('<html lang="ar" dir="rtl">'))
   assert(!texte.includes('traduit automatiquement') && !html.includes('traduit automatiquement'))
   assert(texte.includes('السلام عليكم ورحمة الله،') && texte.includes('طلبكم') && texte.includes('رسوم تدريب'))
-  // Aucun mot francais, le nom en latin seul ; aucune transcription arabe du nom.
+  // Aucun mot francais ; dans le corps, le nom ecrit selon M-27, jamais une
+  // autre forme (le pied commun du gabarit, hors de ce modele, reste en latin).
+  const corps = c.sujet + c.blocs.map((b) => (b.type === 'texte' ? b.texte : '')).join('\n')
   assert(!/Bonjour|Vous |votre |Assalamou/.test(texte), texte)
+  assert(!corps.includes('Rewayah Academy'), corps)
   assert(!/روايا|روية|أكاديمية رواية/.test(texte))
+  assert(texte.includes('الإدارة\nأكاديمية الرواية') && texte.includes('تطبيق Rewayah'))
   assert(html.includes('/fr/courriels/desinscription?jeton=jeton-1'))
   assert(!c.blocs.some((b) => b.type === 'bouton'))
   // Meme forme que le francais : memes blocs, meme liste en trois points.

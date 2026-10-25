@@ -85,18 +85,19 @@ réponse », « votre dossier » rendu par « votre procès »). Les 394 envois 
 ce texte, écrit à la main, sans traduction automatique ni note « traduit automatiquement » ; les
 autres langues (en, es, pt ; le pulaar n'est pas traduit, ci-dessus) restent traduites à l'envoi, le nom « Rewayah Academy » protégé.
 Source : `supabase/functions/_shared/courriel/modeles_ar.ts`, `attente_candidat` (texte ci-dessous
-tiré du rendu, identique à l'envoi). Nom en latin, comme dans tous les courriels arabes ; la
+tiré du rendu, identique à l'envoi). Le nom s'écrit « أكاديمية الرواية » (registre de marque M-27,
+confirmé par le directeur le 25/10) ; « تطبيق Rewayah » garde le nom du produit affiché. La
 référence plus bas, qui écrit « أكاديمية رواية », n'est pas envoyée.
 
 **Objet**
 
-ترشحكم للتدريس في Rewayah Academy: ما وصلنا إليه
+ترشحكم للتدريس في أكاديمية الرواية: ما وصلنا إليه
 
 **Corps**
 
 السلام عليكم ورحمة الله،
 
-ملأتم نموذجنا لتدريس القرآن في Rewayah Academy. نشكركم على ثقتكم، ومن حقكم علينا أن نوافيكم بجواب واضح.
+ملأتم نموذجنا لتدريس القرآن في أكاديمية الرواية. نشكركم على ثقتكم، ومن حقكم علينا أن نوافيكم بجواب واضح.
 
 لقد أجاب قرابة ستمئة منكم. نقرأ كل ترشح على حدة، ولا نفتح الفصول إلا مع معلمين التقينا بهم. وهذا يتطلب وقتًا، ونفضّل أن نأخذ وقتنا على أن نُسيء العمل.
 
@@ -106,7 +107,7 @@ référence plus bas, qui écrit « أكاديمية رواية », n'est pas en
 2. إن كان ملفكم يوافق احتياجاتنا الحالية، فستتضمن هذه الرسالة دعوة إلى إنشاء حسابكم في تطبيق Rewayah، ثم مقابلة عبر الفيديو مع الإدارة.
 3. وإن لم يكن الأمر كذلك في الوقت الحالي، فسنخبركم بذلك أيضًا، وسنحتفظ بترشحكم للفصول التي سنفتحها لاحقًا، إلا إذا فضّلتم أن نحذفه.
 
-لا شيء عليكم دفعه، لا اليوم ولا لاحقًا: التدريس في Rewayah Academy عمل تتقاضون عليه أجرًا، ولا يُطلب منكم فيه أي مبلغ، ولا أي رسوم تدريب.
+لا شيء عليكم دفعه، لا اليوم ولا لاحقًا: التدريس في أكاديمية الرواية عمل تتقاضون عليه أجرًا، ولا يُطلب منكم فيه أي مبلغ، ولا أي رسوم تدريب.
 
 لا شيء مطلوب منكم اليوم. ولا حاجة إلى مراسلتنا للسؤال عن مآل طلبكم: نحن من سيتواصل معكم، على هذا العنوان.
 
@@ -115,7 +116,7 @@ référence plus bas, qui écrit « أكاديمية رواية », n'est pas en
 جزاكم الله خيرًا على مبادرتكم.
 
 الإدارة
-Rewayah Academy
+أكاديمية الرواية
 
 ## Référence arabe (contrôle de la traduction, non envoyée telle quelle)
 
