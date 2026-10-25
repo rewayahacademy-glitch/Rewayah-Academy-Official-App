@@ -251,6 +251,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// le fait revenir s'il echoue encore.
   bool _erreurCameraFermee = false;
 
+  /// Lot salle 3 (pilote, 25/10/2026, audit reseau) : le pre-vol sait qu'il
+  /// n'y a aucune camera ; un appui sur « camera » dit la phrase existante
+  /// sans rien demander au navigateur.
+  bool _cameraAbsente = false;
+
   /// S0 : la scene video au premier plan, choisie d'un toucher ; `null` :
   /// automatique (l'eleve sans page presentee la voit en grand).
   bool? _scenePremierPlan;
@@ -586,6 +591,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// quoi faire (K-59) ; un essai reussi l'efface.
   Future<void> _basculerCamera(bool ouverte) async {
     if (_erreurCameraFermee) setState(() => _erreurCameraFermee = false);
+    if (!ouverte && ref.read(preVolProvider).value?.cameraDisponible == false) {
+      setState(() => _cameraAbsente = true);
+      return;
+    }
     try {
       await _moteur.reglerCamera(actif: !ouverte);
       if (mounted && _erreurCamera != null) {
@@ -796,6 +805,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // D14 : effacee des que la camera publie.
       alerte: (moi?.camera ?? false) || _erreurCameraFermee
           ? null
+          : _cameraAbsente
+          ? _ErreurCamera(
+              erreur: null,
+              onFermer: () => setState(() => _erreurCameraFermee = true),
+            )
           : switch (_erreurCamera ?? _moteur.erreurCameraEntree) {
               final String erreur => _ErreurCamera(
                 erreur: erreur,
@@ -1485,14 +1499,19 @@ class _PastillePresence extends StatelessWidget {
 class _ErreurCamera extends StatelessWidget {
   const _ErreurCamera({required this.erreur, required this.onFermer});
 
-  final String erreur;
+  /// La phrase du navigateur, ou `null` quand le pre-vol a vu qu'aucune
+  /// camera n'existe (rien n'a ete demande au navigateur).
+  final String? erreur;
   final VoidCallback onFermer;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final String cause = causeEchecCamera(erreur);
+    final String? navigateur = erreur;
+    final String cause = navigateur == null
+        ? t.salle.cameraEchecAbsente
+        : causeEchecCamera(navigateur);
     // K4 (directeur, 25/10/2026) : l'erreur de camera est une pilule
     // translucente sous la ligne d'etat, dans la couche qui se masque, jamais
     // un bloc qui pousse la page. Ce qui manque, la cause et quoi faire
@@ -1536,10 +1555,11 @@ class _ErreurCamera extends StatelessWidget {
                             ),
                           ),
                           Text(cause, style: style),
-                          Text(
-                            t.salle.cameraEchecMessage(erreur: erreur),
-                            style: style,
-                          ),
+                          if (navigateur != null)
+                            Text(
+                              t.salle.cameraEchecMessage(erreur: navigateur),
+                              style: style,
+                            ),
                         ],
                       ),
                     ),

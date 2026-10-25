@@ -210,21 +210,11 @@ class LiveKitSessionProvider implements VideoSessionProvider {
     // recite, est exactement ce que la regle empeche.
     //
     // L'exception D14 du 24/10/2026 (l'eleve autorise entrait camera allumee)
-    // est retiree le 25/10/2026 par le directeur (lot salle 3 §1.1) : la
-    // camera est fermee a l'entree pour tous les roles ; [cameraAllumeeALEntree]
-    // le dit et ses tests le gardent.
+    // est retiree le 25/10/2026 par le directeur (lot salle 3 §1.1) : **aucune
+    // activation de camera n'est tentee a l'entree**, pour aucun role et sur
+    // aucun appareil (l'essai sur un poste sans camera faisait naitre le
+    // bandeau « Aucune camera n'est trouvee »). [cameraAllumeeALEntree] le dit.
     _poser(EtatSalle.connecte);
-    if (cameraAllumeeALEntree(acces)) {
-      try {
-        await salle.localParticipant?.setCameraEnabled(true);
-        _cameraAvantDegradation = true;
-      } catch (e) {
-        // Camera refusee par le navigateur ou occupee : l'eleve reste en
-        // salle, camera coupee ; la salle dit la phrase du navigateur (D14).
-        journalDev('camera de l eleve non allumee a l entree : $e');
-        _erreurCameraEntree = '$e';
-      }
-    }
     _publierParticipants();
   }
 

@@ -539,6 +539,30 @@ void main() {
       expect(find.text(t.salle.cameraEchec), findsOneWidget);
     });
 
+    testWidgets('Lot salle 3 : sans camera, l appui dit la phrase existante '
+        'sans rien demander au navigateur', (WidgetTester tester) async {
+      // Audit reseau du pilote (25/10/2026) : sur un poste sans camera, la
+      // salle demandait quand meme la camera au navigateur.
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student', camera: true)),
+          moteur: moteur,
+          preVol: FauxServicePreVol(cameraDisponible: false),
+        ),
+      );
+      // A l'entree, rien n'est tente.
+      expect(moteur.cameraDemandee, isEmpty);
+      expect(find.text(t.salle.cameraEchec), findsNothing);
+
+      await tester.tap(_commande(t.salle.ouvrirCamera));
+      await tester.pumpAndSettle();
+      expect(moteur.cameraDemandee, isEmpty);
+      expect(find.text(t.salle.cameraEchecAbsente), findsOneWidget);
+      expect(find.textContaining('Message du navigateur'), findsNothing);
+    });
+
     testWidgets('D14 : un allumage d entree refuse se dit sans geste', (
       WidgetTester tester,
     ) async {
