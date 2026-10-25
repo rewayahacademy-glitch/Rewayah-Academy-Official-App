@@ -27,6 +27,7 @@ import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/app_bottom_sheet.dart';
 import 'package:rewayah_academy/core/widgets/page_immersive.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
@@ -1152,7 +1153,8 @@ void main() {
 
   // S0.2d (directeur, 24/10/2026) : la carte Eleves de l'enseignant prend la
   // hauteur de son contenu, avec son rembourrage ; aucune ligne coupee ni
-  // collee au bord, a 1366 et 1024, texte 100 % et 130 %.
+  // collee au bord, a 1366 et 1024, texte 100 % et 130 % (feuille Eleves
+  // depuis K4).
   group('S0.2d : la carte Eleves ne coupe rien', () {
     setUpAll(chargerPolicesDuDepot);
     for (final double largeur in <double>[1366, 1024]) {
@@ -1165,21 +1167,13 @@ void main() {
           final Finder carte = find.byKey(
             const ValueKey<String>('panneau-seance-colonne'),
           );
-          if (carte.evaluate().isEmpty) {
-            await tester.tap(
-              find.byKey(const ValueKey<String>('bouton-eleves')).first,
-            );
-            await tester.pumpAndSettle();
-          }
-          // A 1024 x1,3, la colonne ne tient pas : le panneau s'ouvre en
-          // volet ; la regle est la meme.
-          final Finder panneau = find.byWidgetPredicate(
-            (Widget w) =>
-                w.key is ValueKey<String> &&
-                (w.key! as ValueKey<String>).value.startsWith(
-                  'panneau-seance-',
-                ),
-          );
+          // K4 (25/10/2026) : dans `/salle`, l'ordinateur n'a plus de colonne
+          // Eleves ; le bouton rond « Eleves » ouvre la presence et le roster
+          // en feuille. La regle est la meme : rien de coupe ni de colle.
+          expect(carte, findsNothing);
+          await tester.tap(find.byKey(const ValueKey<String>('salle-eleves')));
+          await tester.pumpAndSettle();
+          final Finder panneau = find.byType(AppBottomSheet);
           final Rect cadre = tester.getRect(panneau.first);
           final Finder pastilles = find.descendant(
             of: panneau.first,

@@ -128,8 +128,9 @@ class SalleSeance extends StatelessWidget {
     final Gabarit gabarit = AppGabarit.de(context);
     final bool large = gabarit == Gabarit.desktop;
     // S0.2c (loi du directeur, 24/10/2026) : au telephone, dans `/salle`, la
-    // page du Coran EST l'ecran ; tout le reste est en surimpression.
-    if (telephonePleinEcran(context)) {
+    // page du Coran EST l'ecran ; tout le reste est en surimpression. K4
+    // (25/10/2026) : de meme sur ordinateur et tablette.
+    if (pleinEcranSalle(context)) {
       return TelephonePleinEcran(vue: vue, actions: actions, local: local);
     }
     if (vue.role == RoleSeance.enseignant) {

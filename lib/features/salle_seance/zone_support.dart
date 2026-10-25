@@ -528,7 +528,7 @@ Widget _avecFleches(
       (precedente == null && suivante == null)) {
     return page;
   }
-  const double cote = _coteFleches;
+  const double cote = coteFlechesSalle;
   final double largeurPage = boite.height * ratio;
   if (boite.width < largeurPage + 2 * (cote + AppSpacing.sm)) return page;
   // Les fleches encadrent la page, au plus pres d'elle (reference 4).
@@ -550,7 +550,7 @@ Widget _avecFleches(
 }
 
 /// Le cote des grandes fleches de la salle (NAV-FLECHES-1 : 48 au moins).
-const double _coteFleches = AppSpacing.respiration;
+const double coteFlechesSalle = AppSpacing.respiration;
 
 /// S0 : la scene video de `/salle` a la place de la page, et « Revenir a
 /// la page » en coin quand une page attend derriere.

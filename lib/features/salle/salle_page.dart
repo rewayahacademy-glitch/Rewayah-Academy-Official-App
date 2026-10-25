@@ -33,6 +33,7 @@ import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/video/livekit_session_provider.dart';
 import '../../core/video/pre_vol.dart';
@@ -756,12 +757,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // Au telephone, l'enseignant n'a pas de colonne : « Eleves » ouvre la
       // presence (J3) et le roster (fiche, rappel) en feuille.
       pastille: enseignant ? null : _PastillePresence(mienne: mienne),
-      // Standard des commandes d'appel : au telephone, l'enseignant n'a pas
-      // de colonne ; le bouton rond « Eleves » (en haut a droite) ouvre la
-      // presence (J3) et le roster (fiche, rappel) en feuille.
-      boutonEleves:
-          enseignant &&
-              MediaQuery.sizeOf(context).shortestSide < AppGabarit.seuilTablette
+      // Standard des commandes d'appel : l'enseignant n'a pas de colonne (K4,
+      // 25/10/2026 : ni au telephone ni sur ordinateur) ; le bouton rond
+      // « Eleves » ouvre la presence (J3) et le roster (fiche, rappel) en
+      // feuille.
+      boutonEleves: enseignant
           ? (
               nombre: lignes.length,
               onPress: () => unawaited(_voirEleves(lignes: lignes)),
@@ -1396,35 +1396,43 @@ class _ErreurCamera extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final String cause = causeEchecCamera(erreur);
+    // K4 (directeur, 25/10/2026) : l'erreur de camera est une pilule
+    // translucente sous la ligne d'etat, dans la couche qui se masque, jamais
+    // un bloc qui pousse la page. Ce qui manque, la cause et quoi faire
+    // (K-59), puis le message exact du navigateur (D14).
+    final TextStyle style = palette.piluleSalle.applyTo(
+      textes.bodySmall ?? const TextStyle(),
+    );
     return Semantics(
       key: const ValueKey<String>('salle-erreur-camera'),
       liveRegion: true,
       container: true,
       child: Padding(
-        padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(
-              t.salle.cameraEchec,
-              style: palette.inkAlert.applyTo(
-                textes.titleSmall ?? const TextStyle(),
-              ),
+        padding: const EdgeInsets.only(top: AppSpacing.sm),
+        child: DecoratedBox(
+          decoration: palette.piluleSalle.decoration(
+            borderRadius: AppRadius.arrondiLg,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.sm,
             ),
-            Text(
-              causeEchecCamera(erreur),
-              style: palette.inkStrong.applyTo(
-                textes.bodyMedium ?? const TextStyle(),
-              ),
+            child: Wrap(
+              spacing: AppSpacing.xs,
+              children: <Widget>[
+                Text(
+                  t.salle.cameraEchec,
+                  style: palette.piluleSalle.applyTo(
+                    textes.labelMedium ?? const TextStyle(),
+                  ),
+                ),
+                Text(cause, style: style),
+                Text(t.salle.cameraEchecMessage(erreur: erreur), style: style),
+              ],
             ),
-            Text(
-              t.salle.cameraEchecMessage(erreur: erreur),
-              style: palette.inkMuted.applyTo(
-                textes.bodySmall ?? const TextStyle(),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
