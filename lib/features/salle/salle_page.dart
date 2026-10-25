@@ -668,10 +668,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             panneau: _panneau,
             contexte: _contexte,
             sansSupportPresente: true,
-            tableauLibre: const TableauLibre(
-              largeurCanonique: 1600,
-              hauteurCanonique: 1000,
-            ),
+            // K4 : la forme fixe de la classe (16:9), ajustee sans
+            // etirement sur chaque appareil.
+            tableauLibre: TableauLibre.classe,
           )
         : base.copyWith(panneau: _panneau, contexte: _contexte);
     final VideoSessionProvider moteur = ref.watch(moteurSalleProvider);
