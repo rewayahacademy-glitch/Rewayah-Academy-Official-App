@@ -53,6 +53,7 @@ import '../support/hors_ligne_une_fois.dart';
 import '../support/mushaf_15l.dart'
     show chargerPoliceMadina15, surchargesMadina15;
 import '../teaching_core/e/faux/faux_classe.dart';
+import '../theme/support/contraste.dart';
 
 const String _seance = 's1';
 
@@ -2649,6 +2650,80 @@ void main() {
           find.byKey(const ValueKey<String>('salle-zoom-moins')),
           findsOneWidget,
         );
+      });
+    }
+  });
+
+  // Lot salle 2 (directeur, 25/10/2026, capture du telephone de l'eleve) :
+  // l'attente etait un texte blanc sur gris clair. Surface teintee (jamais
+  // du blanc pur), ornement, titre qui nomme l'enseignant attendu, une
+  // phrase ; contraste >= 4,5:1, en clair et en sombre.
+  group('Lot salle 2 : l attente de l eleve se lit', () {
+    for (final ThemeMode theme in <ThemeMode>[
+      ThemeMode.light,
+      ThemeMode.dark,
+    ]) {
+      testWidgets('390 x 844, ${theme.name}', (WidgetTester tester) async {
+        tester.view.physicalSize = const Size(390, 844);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        final FauxMoteurSalle moteur = FauxMoteurSalle();
+        await _monterSalle(
+          tester,
+          themeMode: theme,
+          surcharges: _surcharges(
+            video: FauxServiceVideo(acces0: _acces('student')),
+            moteur: moteur,
+            preVol: FauxServicePreVol(),
+            presence: FauxServicePresence(
+              lignes: <PresenceParticipant>[
+                _presence(
+                  EtatPresence.enAttente,
+                  profilId: 't1',
+                  prenom: 'Omar',
+                  role: 'teacher',
+                ),
+                _presence(EtatPresence.presente, profilId: 'p1', prenom: 'Aya'),
+              ],
+            ),
+          ),
+        );
+        moteur.publier(<ParticipantSalle>[
+          _personne(identite: 'p1', role: 'student', nom: 'Aya', local: true),
+        ]);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+
+        final Finder attente = find.byKey(
+          const ValueKey<String>('salle-attente'),
+        );
+        expect(attente, findsOneWidget);
+        final Color fond =
+            (tester.widget<DecoratedBox>(attente).decoration as BoxDecoration)
+                .color!;
+        expect(fond, isNot(const Color(0xFFFFFFFF)));
+        for (final String texte in <String>[
+          t.salle.attenteDe(deNom: "d'Omar"),
+          t.salle.seulEnseignantDetail,
+        ]) {
+          final Finder f = find.descendant(
+            of: attente,
+            matching: find.text(texte),
+          );
+          expect(f, findsOneWidget, reason: texte);
+          final Color encre = tester
+              .widget<RichText>(
+                find.descendant(of: f, matching: find.byType(RichText)),
+              )
+              .text
+              .style!
+              .color!;
+          expect(
+            contraste(encre, fond),
+            greaterThanOrEqualTo(4.5),
+            reason: texte,
+          );
+        }
       });
     }
   });

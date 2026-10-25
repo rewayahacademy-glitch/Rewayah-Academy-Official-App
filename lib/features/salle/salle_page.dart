@@ -12,6 +12,7 @@ import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/coran/service_coran.dart'
     show pageCoranProvider, pagesMushafMedine;
 import '../../core/domain/enums.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/observabilite/journal_dev.dart';
@@ -48,6 +49,7 @@ import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_presence.dart';
 import '../../core/widgets/offline_banner.dart' show ReserveCoinFin;
+import '../../core/widgets/ornement_marque.dart';
 import '../../core/widgets/page_immersive.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
@@ -781,7 +783,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
               final String erreur => _ErreurCamera(erreur: erreur),
               null => null,
             },
-      scene: _Scene(vue: vue),
+      scene: _Scene(
+        vue: vue,
+        attendu: enseignant ? null : seance.nomEnseignant,
+      ),
       scenePremierPlan: scenePremierPlan,
       onBasculerScene: basculable
           ? () => setState(() => _scenePremierPlan = !scenePremierPlan)
@@ -2404,9 +2409,12 @@ class _PresentationLue extends StatelessWidget {
 /// etait deja mesure a deux, par le test d'invisibilite du controleur, ou une
 /// vignette de 96x128 ne contenait pas son propre bloc « sans image ».
 class _Scene extends StatelessWidget {
-  const _Scene({required this.vue});
+  const _Scene({required this.vue, this.attendu});
 
   final VueSalle vue;
+
+  /// Le prenom de l'enseignant attendu, pour l'attente de l'eleve.
+  final String? attendu;
 
   @override
   Widget build(BuildContext context) {
@@ -2447,7 +2455,7 @@ class _Scene extends StatelessWidget {
       children: <Widget>[
         Positioned.fill(
           child: distants.isEmpty
-              ? _Seul(role: vue.role)
+              ? _Seul(role: vue.role, attendu: attendu)
               : _Galerie(participants: distants),
         ),
         if (moi case final ParticipantSalle local)
@@ -2693,20 +2701,42 @@ class _SansImage extends StatelessWidget {
 }
 
 /// Seul dans la salle.
+///
+/// Lot salle 2 (directeur, 25/10/2026, capture du telephone de l'eleve) :
+/// l'attente etait un texte blanc sur gris clair, illisible. Elle se pose sur
+/// sa propre surface teintee du theme (`surfaceSunken`, jamais du blanc pur),
+/// avec l'ornement de la marque, un titre qui nomme qui l'on attend et une
+/// phrase : ce qui se passe et quoi faire. Encre de la surface (contraste
+/// > 4,5:1, clair et sombre). Le depart de l'enseignant ramene ici.
 class _Seul extends StatelessWidget {
-  const _Seul({required this.role});
+  const _Seul({required this.role, this.attendu});
 
   final RoleSalle role;
 
+  /// Le prenom de l'enseignant attendu (eleve), s'il est connu. Le titre
+  /// Sayyid / Sayyida n'est pas lu dans `/salle` : le prenom seul, jamais
+  /// « le professeur » (TB-10).
+  final String? attendu;
+
+  /// La cle de l'attente (tests, captures).
+  static const Key cle = ValueKey<String>('salle-attente');
+
   @override
   Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final String? nom = attendu?.trim();
 
     // Qui manque depend de qui attend. « Un participant n'est pas connecte »
     // serait vrai et inutile : l'enfant attend son professeur, le professeur
     // attend son eleve, et l'observateur attend que le cours commence.
     final (String, String) phrase = switch (role) {
-      RoleSalle.eleve => (t.salle.seulEnseignant, t.salle.seulEnseignantDetail),
+      RoleSalle.eleve => (
+        nom == null || nom.isEmpty
+            ? t.salle.seulEnseignant
+            : t.salle.attenteDe(deNom: deDevant(nom, cle: 'salle.attenteDe')),
+        t.salle.seulEnseignantDetail,
+      ),
       RoleSalle.enseignant => (t.salle.seulEleve, t.salle.seulEleveDetail),
       RoleSalle.tuteurObservateur ||
       RoleSalle.controleur ||
@@ -2720,25 +2750,37 @@ class _Seul extends StatelessWidget {
 
     // SALLE-200-1 : la phrase d'attente defile plutot que de deborder quand
     // le texte est agrandi sur un petit ecran.
-    return Center(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSpacing.xxl),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(
-              phrase.$1,
-              textAlign: TextAlign.center,
-              style: _encreSalle(context, textes.titleMedium),
-            ),
-            Ecart.vSm,
-            Text(
-              phrase.$2,
-              textAlign: TextAlign.center,
-              style: _encreSalle(context, textes.bodyMedium),
-            ),
-          ],
+    return DecoratedBox(
+      key: cle,
+      decoration: palette.surfaceSunken.decoration(
+        borderRadius: AppRadius.arrondiLg,
+      ),
+      child: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(AppSpacing.xxl),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const OrnementMarque(taille: TailleOrnement.grand),
+              Ecart.vLg,
+              Text(
+                phrase.$1,
+                textAlign: TextAlign.center,
+                style: palette.surfaceSunken.applyTo(
+                  textes.titleMedium ?? const TextStyle(),
+                ),
+              ),
+              Ecart.vSm,
+              Text(
+                phrase.$2,
+                textAlign: TextAlign.center,
+                style: palette.surfaceSunken.applyTo(
+                  textes.bodyMedium ?? const TextStyle(),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
