@@ -7,7 +7,7 @@
 // SEULES : le libelle vit dans l'infobulle et la semantique. Ordre fixe :
 // micro, camera, tableau, plus, Quitter. Actif : rempli sombre ; coupe :
 // rempli du violet de marque, icone barree (directeur, 25/10/2026, jamais
-// rouge) ; tableau ouvert : rempli primaire ; Quitter : pilule rouge plus
+// rouge) ; tableau ouvert : sombre neutre comme toute bascule active ; Quitter : pilule rouge plus
 // large, toujours confirmee, seul rouge de la pilule. Remplace dans la salle le mot
 // d'etat sous le bouton (ETATS-BTN-1, ETATS-MA-1, MA-CMD-1).
 
@@ -80,8 +80,8 @@ double diametreBoutonAppel(BuildContext context) =>
 /// (standard Meet). Le dessin vit dans [BoutonIcone] (forme `appel`, core).
 ///
 /// [bascule] renseigne : c'est une bascule (micro, camera, tableau) ; eteinte,
-/// elle passe au violet de marque ([TonAppel.coupe]), sauf [ouvertPrimaire] (tableau :
-/// ferme sombre, ouvert primaire). [libelle] (l'etat, « Micro coupé ») est
+/// elle passe au violet de marque ([TonAppel.coupe]) ; active, sombre
+/// neutre ([TonAppel.actif]), le tableau compris. [libelle] (l'etat, « Micro coupé ») est
 /// l'infobulle ; le lecteur d'ecran lit l'acte puis l'etat.
 class BoutonAppel extends StatelessWidget {
   const BoutonAppel({
@@ -119,8 +119,10 @@ class BoutonAppel extends StatelessWidget {
   /// `null` : bouton ordinaire. Sinon l'etat de la bascule (vrai : active).
   final bool? bascule;
 
-  /// Une bascule qui, active, se remplit de la couleur primaire et, inactive,
-  /// reste sombre (le tableau) au lieu de passer au violet de marque.
+  /// Sans effet depuis le lot salle 3 (pilote, 25/10/2026, « active =
+  /// neutre ») : le tableau suit la regle des autres bascules, ouvert sombre
+  /// neutre, ferme violet de marque (son icone ne change pas d'un etat a
+  /// l'autre : la teinte et le libelle portent l'etat). Garde pour l'appelant.
   final bool ouvertPrimaire;
 
   @override
@@ -129,8 +131,7 @@ class BoutonAppel extends StatelessWidget {
     final bool quitter = fond == FondBoutonAppel.alerte;
     final TonAppel ton = switch (bascule) {
       _ when quitter => TonAppel.quitter,
-      true when ouvertPrimaire => TonAppel.ouvert,
-      false when !ouvertPrimaire => TonAppel.coupe,
+      false => TonAppel.coupe,
       _ => TonAppel.actif,
     };
     final String semantique = libelleSemantique ?? libelle;
