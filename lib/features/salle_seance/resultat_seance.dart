@@ -358,7 +358,7 @@ class _CorpsFin extends StatelessWidget {
         ],
         if (ouvrir != null) ...<Widget>[
           Ecart.vLg,
-          ActionPrincipale(
+          _plein(
             libelle: cahierIndisponible
                 ? t.commun.reessayer
                 : t.salle.fin.enseignant.ouvrirCahier,
@@ -378,6 +378,22 @@ class _CorpsFin extends StatelessWidget {
     );
   }
 
+  /// L'unique action pleine de la fin, au telephone comme sur ordinateur
+  /// (branches exclusives : une seule est rendue).
+  Widget _plein({
+    required String libelle,
+    required VoidCallback onPress,
+    required bool fleche,
+    Key? key,
+    bool? pleineLargeur,
+  }) => ActionPrincipale(
+    key: key,
+    libelle: libelle,
+    onPress: onPress,
+    fleche: fleche,
+    pleineLargeur: pleineLargeur,
+  );
+
   /// Ordinateur (lot salle 3, pilote, 25/10/2026) : titre et phrase compacts,
   /// sans l'icone de 160 ; la carte recapitulative au debut, les actions a
   /// la fin, cote a cote. « Retourner dans la salle » est la seule action
@@ -393,21 +409,18 @@ class _CorpsFin extends StatelessWidget {
     final String libelleCahier = cahierIndisponible
         ? t.commun.reessayer
         : t.salle.fin.enseignant.ouvrirCahier;
+    // Une seule action pleine : le retour dans la salle, ou, seance close,
+    // le cahier.
+    final VoidCallback? plein = retourner ?? ouvrir;
     final List<Widget> rangee = <Widget>[
       if (retourner != null && ouvrir != null)
         LienFleche(libelle: libelleCahier, onPress: ouvrir),
-      if (retourner != null)
-        ActionPrincipale(
-          key: FinSeanceEnseignant.retourSalleKey,
-          libelle: t.salle.retourner,
-          onPress: retourner,
-          pleineLargeur: false,
-        )
-      else if (ouvrir != null)
-        ActionPrincipale(
-          libelle: libelleCahier,
-          onPress: ouvrir,
-          fleche: !cahierIndisponible,
+      if (plein != null)
+        _plein(
+          key: retourner != null ? FinSeanceEnseignant.retourSalleKey : null,
+          libelle: retourner != null ? t.salle.retourner : libelleCahier,
+          onPress: plein,
+          fleche: retourner == null && !cahierIndisponible,
           pleineLargeur: false,
         ),
     ];
