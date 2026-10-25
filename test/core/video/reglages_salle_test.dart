@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
@@ -25,9 +27,33 @@ void main() {
     expect(adaptiveStreamPour(_acces('guardian_observer')), isFalse);
   });
 
-  test('D14 : la camera de l eleve autorise s allume a l entree', () {
-    expect(cameraAllumeeALEntree(_acces('student', camera: true)), isTrue);
-    expect(cameraAllumeeALEntree(_acces('student')), isFalse);
-    expect(cameraAllumeeALEntree(_acces('teacher', camera: true)), isFalse);
+  test('lot salle 3 (25/10/2026) : camera fermee a l entree, tous roles', () {
+    // Le directeur : la camera d'un compte enfant s'allumait seule (D14,
+    // retire). Elle est fermee comme le micro, meme quand le jeton permet
+    // l'image ; un appui volontaire l'allume.
+    for (final String role in <String>[
+      'student',
+      'teacher',
+      'guardian_observer',
+      'controller',
+      'admin',
+    ]) {
+      for (final bool camera in <bool>[true, false]) {
+        expect(
+          cameraAllumeeALEntree(_acces(role, camera: camera)),
+          isFalse,
+          reason: '$role, image permise : $camera',
+        );
+      }
+    }
+  });
+
+  test('le micro ne s ouvre que par un geste : aucun appel force', () {
+    // Le seul appel au micro est celui du geste (`reglerMicro`), qui recoit
+    // l'etat voulu ; rien n'ouvre le micro a la connexion.
+    final String source = File('lib/core/video/livekit_session_provider.dart')
+        .readAsStringSync();
+    expect(source.contains('setMicrophoneEnabled(true)'), isFalse);
+    expect(RegExp(r'setMicrophoneEnabled\(').allMatches(source), hasLength(1));
   });
 }

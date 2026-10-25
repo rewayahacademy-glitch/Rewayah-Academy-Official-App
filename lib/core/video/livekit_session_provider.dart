@@ -15,11 +15,13 @@ const int debitMax720p = 1200000;
 /// D15 (S0.2) : `adaptiveStream` seulement chez l'enseignant.
 bool adaptiveStreamPour(AccesSalle acces) => acces.role == 'teacher';
 
-/// Vrai quand la camera s'allume d'elle-meme a l'entree : un eleve dont le
-/// jeton permet l'image, donc dont le tuteur a autorise la camera (D14,
-/// 24/10/2026). Jamais pour un autre role, jamais en audio seul.
-bool cameraAllumeeALEntree(AccesSalle acces) =>
-    acces.role == 'student' && acces.capacites.peutPublierVideo;
+/// Vrai quand la camera s'allume d'elle-meme a l'entree : **jamais**, pour
+/// aucun role (decision du directeur du 25/10/2026, lot salle 3 §1.1, apres
+/// le test K4 : la camera d'un compte enfant s'allumait seule). La camera est
+/// fermee a l'entree comme le micro ; un appui volontaire l'allume. Remplace
+/// l'exception D14 du 24/10/2026 (eleve dont le tuteur autorisait l'image).
+/// [acces] reste en parametre : la regle se lit par role dans les tests.
+bool cameraAllumeeALEntree(AccesSalle acces) => false;
 
 /// La seule implementation du contrat, et le seul endroit ou le SDK est
 /// **traduit**.
@@ -207,11 +209,10 @@ class LiveKitSessionProvider implements VideoSessionProvider {
     // l'a signalee. Ouvrir un micro sans geste, dans une maison ou un enfant
     // recite, est exactement ce que la regle empeche.
     //
-    // **Une exception, decidee le 24/10/2026 (D14, pilote delegue par le
-    // directeur)** : l'eleve dont le tuteur a autorise la camera (jeton qui
-    // permet l'image) entre camera ALLUMEE, l'etat « Camera allumee » visible
-    // et le bouton pour la couper. L'invariant reste entier pour le micro, pour
-    // les autres roles, et pour l'eleve sans autorisation (pas de bouton).
+    // L'exception D14 du 24/10/2026 (l'eleve autorise entrait camera allumee)
+    // est retiree le 25/10/2026 par le directeur (lot salle 3 §1.1) : la
+    // camera est fermee a l'entree pour tous les roles ; [cameraAllumeeALEntree]
+    // le dit et ses tests le gardent.
     _poser(EtatSalle.connecte);
     if (cameraAllumeeALEntree(acces)) {
       try {
