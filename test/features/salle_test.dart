@@ -38,6 +38,9 @@ import 'package:rewayah_academy/features/salle_seance/ecriture_seance.dart'
 import 'package:rewayah_academy/features/salle_seance/media_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/palette_tableau.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/telephone_plein_ecran.dart';
+import 'package:rewayah_academy/features/tc_mushaf/page_madina_15.dart'
+    show cleLigneMadina15;
 import 'package:rewayah_academy/features/tc_mushaf/police_mushaf.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/indicateur_observation.dart';
 
@@ -2441,4 +2444,147 @@ void main() {
       }
     }
   }, skip: sautSansCapture);
+
+  // K4 (directeur, 25/10/2026, essai en production sur ordinateur) : « full
+  // screen, full body, no bezels ; tout ce qui reste est superpose au-dessus
+  // et disparait ». Sur ordinateur, la page du Coran occupe toute la hauteur
+  // de la fenetre, aucun widget opaque ne reduit sa boite, les Commandes sont
+  // repliees ; le tableau occupe la fenetre (feuille 16:9 ajustee).
+  group('K4 : plein ecran sur ordinateur', () {
+    setUpAll(() async {
+      await chargerPolicesDuDepot();
+      await chargerPoliceMadina15();
+    });
+
+    Future<FauxMoteurSalle> monterAvecPage(
+      WidgetTester tester,
+      Size taille,
+    ) async {
+      masquerRubanDebug();
+      tester.view.physicalSize = taille;
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: <Override>[
+          ..._surcharges(
+            video: FauxServiceVideo(acces0: _acces('teacher')),
+            moteur: moteur,
+            preVol: FauxServicePreVol(),
+            role: AppRole.teacher,
+          ),
+          ...surchargesMadina15(page: 293),
+          pageCoranProvider.overrideWith(
+            (Ref _, int n) async => PageCoran(
+              numero: n,
+              versets: <VersetCoran>[
+                VersetCoran(
+                  sourateNumero: 18,
+                  numero: 1,
+                  texte: 'verset',
+                  pageNumero: n,
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+      await moteur.presenterContenu(
+        ContenuPresente(
+          page: 293,
+          sourate: 18,
+          verset: 1,
+          presentePar: 'p1',
+          emisLe: DateTime.now(),
+        ),
+      );
+      await tester.pumpAndSettle();
+      return moteur;
+    }
+
+    for (final Size taille in <Size>[
+      const Size(1366, 768),
+      const Size(1920, 1080),
+    ]) {
+      final String nom = '${taille.width.toInt()}x${taille.height.toInt()}';
+      testWidgets('enseignant, $nom : la page prend toute la hauteur, rien '
+          'ne reduit sa boite, Commandes repliees', (
+        WidgetTester tester,
+      ) async {
+        await monterAvecPage(tester, taille);
+        expect(tester.takeException(), isNull);
+        final Rect boite = tester.getRect(
+          find.byKey(TelephonePleinEcran.clePage),
+        );
+        // Quatre bords : de haut en bas de la fenetre, centree.
+        expect(boite.top, closeTo(0, 0.5));
+        expect(boite.bottom, closeTo(taille.height, 0.5));
+        expect(boite.center.dx, closeTo(taille.width / 2, 0.5));
+        // Sa largeur suit la composition du mushaf, plafonnee a 1,4 fois.
+        final Size attendue = boitePagePleinEcran(taille, telephone: false);
+        expect(boite.width, closeTo(attendue.width, 0.5));
+        // La page composee remplit la hauteur de sa boite.
+        final Rect page = tester.getRect(find.byKey(PageCoranSalle.cle));
+        expect(page.height, closeTo(taille.height, 0.5));
+        // Les quinze lignes se partagent la hauteur de la fenetre.
+        final double ligne = tester
+            .getRect(find.byKey(cleLigneMadina15(3)))
+            .height;
+        // Le cadre et l'en-tete du mushaf pris, chaque ligne recoit plus de
+        // 85 % de la fenetre / 15 (45 px a 768, 64 px a 1080).
+        expect(ligne, greaterThan(taille.height / 15 * 0.85));
+        if (dossierCapture != null) {
+          await capturerVue(tester, 'k4-page-enseignant-$nom');
+        }
+        // Commandes repliees par defaut ; aucune carte opaque a cote.
+        expect(
+          find.byKey(const ValueKey<String>('telephone-commandes')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const ValueKey<String>('panneau-seance-colonne')),
+          findsNothing,
+        );
+      });
+    }
+
+    for (final Size taille in <Size>[
+      const Size(390, 844),
+      const Size(1366, 768),
+    ]) {
+      final String nom = '${taille.width.toInt()}x${taille.height.toInt()}';
+      testWidgets('tableau, $nom : le canevas est la fenetre, la feuille '
+          '16:9 ajustee sans etirement', (WidgetTester tester) async {
+        await monterAvecPage(tester, taille);
+        await tester.tap(find.byKey(const ValueKey<String>('bouton-tableau')));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(
+          tester.getRect(find.byKey(TelephonePleinEcran.clePage)),
+          Offset.zero & taille,
+        );
+        final Rect feuille = tester.getRect(
+          find.byKey(const ValueKey<String>('surface-feuille')),
+        );
+        // La forme de la classe, 16:9, ajustee a echelle uniforme, centree,
+        // dans la fenetre (bandes vides ailleurs).
+        expect(feuille.width / feuille.height, closeTo(16 / 9, 0.01));
+        expect(feuille.width, lessThanOrEqualTo(taille.width + 0.5));
+        expect(feuille.height, lessThanOrEqualTo(taille.height + 0.5));
+        expect(feuille.center.dx, closeTo(taille.width / 2, 0.5));
+        expect(feuille.center.dy, closeTo(taille.height / 2, 0.5));
+        expect(
+          math.max(
+            feuille.width / taille.width,
+            feuille.height / taille.height,
+          ),
+          closeTo(1, 0.01),
+        );
+        if (dossierCapture != null) {
+          await capturerVue(tester, 'k4-tableau-enseignant-$nom');
+        }
+      });
+    }
+  });
 }
