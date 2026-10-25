@@ -15,6 +15,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/theme/app_mouvement.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 
 import '../router/support_routeur.dart' hide stabiliser;
@@ -71,6 +72,9 @@ Future<GoRouter> _monter(
   await stabiliser(tester);
   routeur.go(depart);
   await stabiliser(tester);
+  // L'illustration de l'entree joue une fois, puis reste immobile : la
+  // capture montre son image finale.
+  await tester.pump(AppMouvement.entreeIllustration);
   return routeur;
 }
 

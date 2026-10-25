@@ -11,17 +11,13 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/marque/logo_google.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
-import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
-import '../../core/widgets/app_card.dart';
 import '../../core/widgets/controle_segmente.dart';
-import '../../core/widgets/lien_fleche.dart';
-import '../../core/widgets/marque_page.dart';
-import '../../core/widgets/page_shell.dart';
 import '../demo/mode_demonstration.dart';
 import '../demo/racine_demonstrable.dart';
+import 'coquille_entree.dart';
 import 'feuille_appareil_eleve.dart';
 import 'recuperation_page.dart';
 
@@ -86,13 +82,6 @@ ModeConnexion modeDepuisAdresse(Uri adresse) =>
     adresse.queryParameters['mode'] == parametreModeCreation
     ? ModeConnexion.creation
     : ModeConnexion.connexion;
-
-/// Largeur de la carte d'entree.
-///
-/// Une colonne unique aux trois gabarits : la fiche `TUT-00` le prescrit, et
-/// une seconde colonne n'aurait rien a porter. Ce qui change d'un gabarit a
-/// l'autre, c'est la respiration autour, pas la forme.
-const double _largeurCarte = 460;
 
 /// `TUT-00` : la connexion.
 ///
@@ -333,90 +322,55 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    // La respiration au dessus de la carte, pas sa largeur : le gabarit change
-    // l'air autour de la colonne, jamais la colonne.
-    final Widget respiration = AppGabarit.de(context) == Gabarit.mobile
-        ? Ecart.vXxl
-        : Ecart.vSection;
-
-    return PageShell(
-      // La page mene son propre defilement : la carte se centre verticalement
-      // quand la hauteur le permet, et redevient defilante des qu'elle ne le
-      // permet plus. Sans cela, une fenetre de bureau posait la carte tout en
-      // haut avec un desert en dessous, et un telephone en mode paysage
-      // rognait le bas du formulaire.
-      defilante: false,
-      child: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints contraintes) =>
-            SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: contraintes.maxHeight),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    const MarquePage(logo: true),
-                    respiration,
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        maxWidth: _largeurCarte,
-                      ),
-                      child: AppCard(
-                        key: const ValueKey<String>('connexion-carte'),
-                        dominante: true,
-                        child: _envoye
-                            ? _LienEnvoye(
-                                courriel: _courriel.text.trim(),
-                                renvoi: _renvoi,
-                                renvoye: _renvoye,
-                                erreurRenvoi: _erreurRenvoi,
-                                onRenvoyer: () => unawaited(_renvoyerLien()),
-                                onChangerAdresse: () => setState(() {
-                                  _envoye = false;
-                                  _renvoye = false;
-                                  _erreurRenvoi = null;
-                                }),
-                                onProbleme: _versRecuperation,
-                              )
-                            : _Saisie(
-                                courriel: _courriel,
-                                motDePasse: _motDePasse,
-                                demo: _demo,
-                                mode: _mode,
-                                onMode: (ModeConnexion m) => setState(() {
-                                  _mode = m;
-                                  _erreur = null;
-                                }),
-                                erreur: _erreur,
-                                envoi: _envoi,
-                                onChanged: () => setState(() {}),
-                                onSoumettre: () => unawaited(_soumettre()),
-                                onGoogle: () => unawaited(_google()),
-                                onEleve: () => unawaited(_entreeEleve()),
-                                onProbleme: _versRecuperation,
-                              ),
-                      ),
-                    ),
-                    Ecart.vLg,
-                    LienFleche(
-                      libelle: t.juridique.titre,
-                      onPress: () =>
-                          GoRouter.of(context).push(Routes.juridique),
-                    ),
-                    // Hors production seulement : sans lanceur, rien.
-                    const EntreeDemonstration(),
-                  ],
-                ),
-              ),
-            ),
+  Widget build(BuildContext context) => CoquilleEntree(
+    formulaire: (bool bureau) => _envoye
+        ? _LienEnvoye(
+            bureau: bureau,
+            courriel: _courriel.text.trim(),
+            renvoi: _renvoi,
+            renvoye: _renvoye,
+            erreurRenvoi: _erreurRenvoi,
+            onRenvoyer: () => unawaited(_renvoyerLien()),
+            onChangerAdresse: () => setState(() {
+              _envoye = false;
+              _renvoye = false;
+              _erreurRenvoi = null;
+            }),
+            onProbleme: _versRecuperation,
+          )
+        : _Saisie(
+            bureau: bureau,
+            courriel: _courriel,
+            motDePasse: _motDePasse,
+            demo: _demo,
+            mode: _mode,
+            onMode: (ModeConnexion m) => setState(() {
+              _mode = m;
+              _erreur = null;
+            }),
+            erreur: _erreur,
+            envoi: _envoi,
+            onChanged: () => setState(() {}),
+            onSoumettre: () => unawaited(_soumettre()),
+            onGoogle: () => unawaited(_google()),
+            onEleve: () => unawaited(_entreeEleve()),
+            onProbleme: _versRecuperation,
+          ),
+    pied: <Widget>[
+      Ecart.vXxl,
+      LienEntree(
+        libelle: t.juridique.titre,
+        onPress: () => GoRouter.of(context).push(Routes.juridique),
       ),
-    );
-  }
+      // Hors production seulement : sans lanceur, rien.
+      const EntreeDemonstration(),
+    ],
+  );
 }
 
 class _Saisie extends StatelessWidget {
   const _Saisie({
+    required this.bureau,
     required this.courriel,
     required this.motDePasse,
     required this.demo,
@@ -431,6 +385,9 @@ class _Saisie extends StatelessWidget {
     required this.onProbleme,
   });
 
+  /// Vrai dans le volet du formulaire sur ordinateur : boutons a la largeur
+  /// de leur contenu, au bord de fin.
+  final bool bureau;
   final VoidCallback onProbleme;
   final TextEditingController courriel;
   final TextEditingController motDePasse;
@@ -460,23 +417,6 @@ class _Saisie extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        // L4 : deux chemins distincts, choisis avant tout le reste.
-        ControleSegmente<ModeConnexion>(
-          key: const ValueKey<String>('connexion-mode'),
-          segments: <Segment<ModeConnexion>>[
-            Segment<ModeConnexion>(
-              valeur: ModeConnexion.connexion,
-              libelle: t.connexion.modeConnexion,
-            ),
-            Segment<ModeConnexion>(
-              valeur: ModeConnexion.creation,
-              libelle: t.connexion.modeCreation,
-            ),
-          ],
-          valeur: mode,
-          onChange: onMode,
-        ),
-        Ecart.vXl,
         Text(
           creation ? t.connexion.titreCreation : t.connexion.titre,
           style: textes.headlineMedium,
@@ -493,7 +433,24 @@ class _Saisie extends StatelessWidget {
           ),
         ),
         Ecart.vXxl,
-        _Champ(
+        // L4 : deux chemins distincts, choisis avant de saisir.
+        ControleSegmente<ModeConnexion>(
+          key: const ValueKey<String>('connexion-mode'),
+          segments: <Segment<ModeConnexion>>[
+            Segment<ModeConnexion>(
+              valeur: ModeConnexion.connexion,
+              libelle: t.connexion.modeConnexion,
+            ),
+            Segment<ModeConnexion>(
+              valeur: ModeConnexion.creation,
+              libelle: t.connexion.modeCreation,
+            ),
+          ],
+          valeur: mode,
+          onChange: onMode,
+        ),
+        Ecart.vXxl,
+        ChampEntree(
           cle: 'connexion-courriel',
           etiquette: t.connexion.courriel,
           indice: t.connexion.courrielIndice,
@@ -505,8 +462,8 @@ class _Saisie extends StatelessWidget {
           autofill: const <String>[AutofillHints.email],
         ),
         if (demo) ...<Widget>[
-          Ecart.vLg,
-          _Champ(
+          Ecart.vMd,
+          ChampEntree(
             cle: 'connexion-mot-de-passe',
             etiquette: t.connexion.motDePasseDemo,
             indice: null,
@@ -519,84 +476,64 @@ class _Saisie extends StatelessWidget {
             masque: true,
           ),
         ],
-        Ecart.vXl,
-        ActionPrincipale(
-          libelle: !versLien
-              ? t.connexion.entrerDemo
-              : creation
-              ? t.connexion.envoyerLienCreation
-              : t.connexion.envoyerLien,
-          onPress: onSoumettre,
-          enCours: envoi,
-        ),
-
-        // Le parcours de demonstration s'arrete la : il n'ouvre ni Google ni
-        // l'entree eleve, qui sont des chemins reels vers un vrai compte.
-        if (!demo) ...<Widget>[
-          Ecart.vXl,
-          Row(
-            children: <Widget>[
-              const Expanded(child: Divider()),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                child: Text(
-                  t.connexion.ou,
-                  style: palette.inkMuted.applyTo(
-                    textes.bodySmall ?? const TextStyle(),
-                  ),
+        Ecart.vLg,
+        // Une rangee au bord de fin sur ordinateur, Google puis le lien ;
+        // empiles pleine largeur sur telephone (correctif du 25/10/2026). Le
+        // parcours de demonstration n'ouvre pas Google : un chemin reel vers
+        // un vrai compte.
+        ActionsEntree(
+          bureau: bureau,
+          principale: ActionPrincipale(
+            libelle: !versLien
+                ? t.connexion.entrerDemo
+                : creation
+                ? t.connexion.envoyerLienCreation
+                : t.connexion.envoyerLien,
+            onPress: onSoumettre,
+            enCours: envoi,
+            // Sur la marque, l'aplat blanc a encre violette ; sur le volet
+            // caramel, le violet a encre blanche (fiche, sections 3 et 4).
+            affirmee: true,
+            pleineLargeur: !bureau,
+          ),
+          secondaire: demo
+              ? null
+              : ActionPrincipale(
+                  libelle: t.connexion.avecGoogle,
+                  onPress: onGoogle,
+                  niveau: NiveauAction.secondaire,
+                  pleineLargeur: !bureau,
+                  // Une marque tierce se montre, elle ne se decrit pas : le
+                  // logo est ce que l'usager cherche des yeux avant de lire
+                  // le libelle.
+                  prefixe: const LogoGoogle(),
                 ),
-              ),
-              const Expanded(child: Divider()),
-            ],
-          ),
-          Ecart.vXl,
-          ActionPrincipale(
-            libelle: t.connexion.avecGoogle,
-            onPress: onGoogle,
-            niveau: NiveauAction.secondaire,
-            // Une marque tierce se montre, elle ne se decrit pas : le logo est
-            // ce que l'usager cherche des yeux avant de lire le libelle.
-            prefixe: const LogoGoogle(),
-          ),
-
+        ),
+        if (!demo) ...<Widget>[
           // L4 : en creation, les sorties reservees aux comptes existants
           // s'effacent (appareil d'un eleve, lien expire).
           if (!creation) ...<Widget>[
-            // L'entree de l'eleve, en texte seul : c'est un parcours different,
-            // pas une autre facon de faire le meme. Elle etait au meme rang que
-            // Google, avec le meme filet, et son libelle -- « J'ai un code » --
-            // ne disait ni a qui elle s'adressait ni ou trouver ce code. La
-            // feuille qui s'ouvre au clic porte desormais cette explication.
-            Ecart.vSection,
+            // L'entree de l'eleve : un parcours different, pas une autre
+            // facon de faire le meme. Un lien avec fleche, sous la phrase qui
+            // dit a qui il s'adresse ; la feuille qui s'ouvre explique le code.
+            Ecart.vXxl,
             Text(
               t.connexion.appareilEleveAide,
-              textAlign: TextAlign.center,
               style: palette.inkMuted.applyTo(
                 textes.bodySmall ?? const TextStyle(),
               ),
             ),
-            Ecart.vSm,
-            Align(
-              child: ActionPrincipale(
-                libelle: t.connexion.appareilEleve,
-                onPress: onEleve,
-                niveau: NiveauAction.tertiaire,
-                pleineLargeur: false,
-              ),
+            LienEntree(
+              cle: const ValueKey<String>('connexion-appareil-eleve'),
+              libelle: t.connexion.appareilEleve,
+              onPress: onEleve,
             ),
-            Ecart.vLg,
-            const Divider(),
-            Ecart.vSm,
             // Une sortie discrete : la recuperation d'acces (lien expire ou
             // jamais recu).
-            Center(
-              child: ActionPrincipale(
-                key: const ValueKey<String>('connexion-probleme'),
-                libelle: t.connexion.probleme,
-                onPress: onProbleme,
-                niveau: NiveauAction.tertiaire,
-                pleineLargeur: false,
-              ),
+            LienEntree(
+              cle: const ValueKey<String>('connexion-probleme'),
+              libelle: t.connexion.probleme,
+              onPress: onProbleme,
             ),
           ],
         ],
@@ -605,69 +542,9 @@ class _Saisie extends StatelessWidget {
   }
 }
 
-/// Un champ avec son etiquette **au dessus**, et non flottante dans le cadre.
-///
-/// L'etiquette flottante de Material se pose a l'interieur du champ tant qu'il
-/// est vide, en gris, exactement la ou l'oeil attend un texte d'invite. Le
-/// champ courriel de cet ecran se lisait donc comme desactive alors qu'il
-/// attendait une frappe. L'etiquette monte, l'invite descend, et les deux
-/// disent chacune une chose.
-class _Champ extends StatelessWidget {
-  const _Champ({
-    required this.cle,
-    required this.etiquette,
-    required this.indice,
-    required this.controleur,
-    required this.erreur,
-    required this.onChanged,
-    required this.onSoumettre,
-    required this.clavier,
-    required this.autofill,
-    this.masque = false,
-  });
-
-  final String cle;
-  final String etiquette;
-  final String? indice;
-  final TextEditingController controleur;
-  final String? erreur;
-  final VoidCallback onChanged;
-  final VoidCallback? onSoumettre;
-  final TextInputType clavier;
-  final List<String> autofill;
-  final bool masque;
-
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Text(etiquette, style: textes.labelLarge),
-        Ecart.vSm,
-        TextField(
-          key: ValueKey<String>(cle),
-          controller: controleur,
-          onChanged: (String _) => onChanged(),
-          onSubmitted: onSoumettre == null
-              ? null
-              : (String _) => onSoumettre!(),
-          keyboardType: clavier,
-          autofillHints: autofill,
-          obscureText: masque,
-          textInputAction: onSoumettre == null
-              ? TextInputAction.next
-              : TextInputAction.go,
-          decoration: InputDecoration(hintText: indice, errorText: erreur),
-        ),
-      ],
-    );
-  }
-}
-
 class _LienEnvoye extends StatelessWidget {
   const _LienEnvoye({
+    required this.bureau,
     required this.courriel,
     required this.renvoi,
     required this.renvoye,
@@ -677,6 +554,7 @@ class _LienEnvoye extends StatelessWidget {
     required this.onProbleme,
   });
 
+  final bool bureau;
   final String courriel;
   final bool renvoi;
   final bool renvoye;
@@ -722,30 +600,23 @@ class _LienEnvoye extends StatelessWidget {
           ),
         ],
         Ecart.vXxl,
-        ActionPrincipale(
-          key: const ValueKey<String>('connexion-renvoyer'),
-          libelle: t.connexion.renvoyer,
-          onPress: onRenvoyer,
-          enCours: renvoi,
-          niveau: NiveauAction.secondaire,
+        BoutonEntree(
+          bureau: bureau,
+          child: ActionPrincipale(
+            key: const ValueKey<String>('connexion-renvoyer'),
+            libelle: t.connexion.renvoyer,
+            onPress: onRenvoyer,
+            enCours: renvoi,
+            niveau: NiveauAction.secondaire,
+            pleineLargeur: !bureau,
+          ),
         ),
         Ecart.vLg,
-        Align(
-          child: ActionPrincipale(
-            libelle: t.connexion.changerAdresse,
-            onPress: onChangerAdresse,
-            niveau: NiveauAction.tertiaire,
-            pleineLargeur: false,
-          ),
+        LienEntree(
+          libelle: t.connexion.changerAdresse,
+          onPress: onChangerAdresse,
         ),
-        Align(
-          child: ActionPrincipale(
-            libelle: t.connexion.probleme,
-            onPress: onProbleme,
-            niveau: NiveauAction.tertiaire,
-            pleineLargeur: false,
-          ),
-        ),
+        LienEntree(libelle: t.connexion.probleme, onPress: onProbleme),
       ],
     );
   }

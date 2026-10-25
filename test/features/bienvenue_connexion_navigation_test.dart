@@ -40,6 +40,8 @@ void main() {
       expect(lieu(routeur), Routes.connexionRecuperation);
       expect(find.byType(RecuperationPage), findsOneWidget);
 
+      await tester.ensureVisible(find.byType(DisqueRetour));
+      await tester.pumpAndSettle();
       await tester.tap(find.byType(DisqueRetour));
       await tester.pumpAndSettle();
 
@@ -135,6 +137,8 @@ void main() {
       );
       await tester.enterText(find.byType(TextField), 'fatou@example.test');
       await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text(t.connexion.envoyerLien));
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.connexion.envoyerLien));
       await tester.pumpAndSettle();
       expect(find.text(t.connexion.lienEnvoye), findsOneWidget);
@@ -146,6 +150,8 @@ void main() {
     ) async {
       final FauxServiceAuth auth = await monter(tester);
 
+      await tester.ensureVisible(find.text(t.connexion.renvoyer));
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.connexion.renvoyer));
       await tester.pumpAndSettle();
 
@@ -169,6 +175,8 @@ void main() {
         code: 'over_email_send_rate_limit',
       );
 
+      await tester.ensureVisible(find.text(t.connexion.renvoyer));
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.connexion.renvoyer));
       await tester.pumpAndSettle();
 
@@ -187,6 +195,8 @@ void main() {
         message: 'Failed host lookup',
       );
 
+      await tester.ensureVisible(find.text(t.connexion.renvoyer));
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.connexion.renvoyer));
       await tester.pumpAndSettle();
 
@@ -297,6 +307,8 @@ void main() {
         'pas-une-adresse',
       );
       await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text(t.connexion.recuperation.envoyer));
+      await tester.pumpAndSettle();
       await tester.tap(find.text(t.connexion.recuperation.envoyer));
       await tester.pumpAndSettle();
 
@@ -320,6 +332,8 @@ void main() {
         find.byKey(const ValueKey<String>('recuperation-courriel')),
         'fatou@example.test',
       );
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text(t.connexion.recuperation.envoyer));
       await tester.pumpAndSettle();
       await tester.tap(find.text(t.connexion.recuperation.envoyer));
       await tester.pumpAndSettle();
@@ -353,6 +367,8 @@ void main() {
         );
         await tester.pumpAndSettle();
 
+        await tester.ensureVisible(find.byType(DisqueRetour));
+        await tester.pumpAndSettle();
         await tester.tap(find.byType(DisqueRetour));
         await tester.pumpAndSettle();
 

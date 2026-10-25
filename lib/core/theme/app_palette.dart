@@ -364,6 +364,57 @@ class AppPalette extends ThemeExtension<AppPalette> {
   /// themes (comme Meet).
   AppColorPair get boutonAppelActif => AppPalette.claire().surfaceInverse;
 
+  /// La surface pleine de marque (connexion, directeur, 25/10/2026,
+  /// `docs/current/maquettes/connexion/FICHE-CONNEXION-2026-10-25.md`) : le
+  /// violet d'accent `#6538E4` en aplat, encre blanche (6,5:1), **identique en
+  /// clair et en sombre**, comme la page « Ne plus recevoir ces e-mails » du
+  /// site public qui force son rendu. Le logo s'y pose en blanc
+  /// (`FondLogo.violet`) : jamais de degrade sous lui.
+  AppColorPair get surfaceMarque => AppPalette.surMarque().surfaceCanvas;
+
+  /// La palette des contenus poses **sur** [surfaceMarque] : chaque composant
+  /// partage (`ActionPrincipale`, `LienFleche`, `ControleSegmente`, textes du
+  /// theme) y lit des paires lisibles sur le violet, sans qu'un ecran ait a
+  /// les redemander. Le bouton plein devient blanc a encre violette, le bouton
+  /// a filet garde le fond de la page et un filet blanc, les liens et les
+  /// textes sont blancs, le controle segmente pose ses segments sur le violet
+  /// profond (`#4E2983`, l'encre du lavis d'accent). Le champ de saisie, lui,
+  /// reste sur la palette claire (fond blanc, encre sombre) : c'est l'ecran
+  /// qui le pose.
+  factory AppPalette.surMarque() {
+    const AppColorPair marque = AppColorPair(
+      background: Color(0xFF6538E4),
+      onBackground: Color(0xFFFFFFFF),
+    );
+    const AppColorPair blanc = AppColorPair(
+      background: Color(0xFFFFFFFF),
+      onBackground: Color(0xFF6538E4),
+    );
+    const AppColorPair profond = AppColorPair(
+      background: Color(0xFF4E2983),
+      onBackground: Color(0xFFFFFFFF),
+    );
+    const AppInkColor encre = AppInkColor(Color(0xFFFFFFFF));
+    return AppPalette.claire().copyWith(
+      surfaceCanvas: marque,
+      surfaceRaised: marque,
+      surfaceOverlay: marque,
+      surfaceMiseEnAvant: marque,
+      surfaceSunken: profond,
+      surfaceActionDouce: blanc,
+      surfacePrimary: blanc,
+      washAccent: blanc,
+      borderHairline: const AppInkColor(Color(0x66FFFFFF)),
+      borderResting: encre,
+      borderStrong: encre,
+      inkFaint: encre,
+      inkMuted: encre,
+      inkStrong: encre,
+      inkAccent: encre,
+      inkAlert: encre,
+    );
+  }
+
   /// S0.2d, retouche du pilote (24/10/2026) : la ligne d'etat de la salle au
   /// telephone, translucide (fond a 70 %) sur la page ; l'encre reste celle
   /// de la surface.
@@ -817,4 +868,27 @@ enum AppPaletteCarte {
   /// les 6 a 12 pour cent du directeur. Un decor tamise, qui ne rivalise jamais
   /// avec le texte.
   static const double opaciteFiligrane = 0.07;
+}
+
+/// Les teintes de « la porte et la lumiere » posee sur [AppPalette.surfaceMarque]
+/// (connexion, 25/10/2026), celles de `site-public/scene_porte.py`, une a une :
+/// la scene est la meme que celle des pages d'etat du site. **Identiques en
+/// clair et en sombre** : la scene est une image, posee sur un fond qui ne
+/// change pas avec le theme. Decoratives (aucun texte ne s'y pose).
+abstract final class AppCouleursPorte {
+  /// Le blanc : le symbole, l'eclat du faisceau, les pas, la flamme.
+  static const AppInkColor blanc = AppInkColor(Color(0xFFFFFFFF));
+
+  /// La lavande : le corps de la lanterne, son anse, le halo, la fin du
+  /// faisceau et le bas du vide de la porte.
+  static const AppInkColor lavande = AppInkColor(Color(0xFFE8D8FF));
+
+  /// Le violet profond : le haut du vide de la porte, la piece derriere elle.
+  static const AppInkColor profond = AppInkColor(Color(0xFF4E2983));
+
+  /// Le violet d'accent : le milieu du vide de la porte.
+  static const AppInkColor accent = AppInkColor(Color(0xFF6538E4));
+
+  /// L'ombre portee au sol, sous la porte.
+  static const AppInkColor ombre = AppInkColor(Color(0xFF25113F));
 }

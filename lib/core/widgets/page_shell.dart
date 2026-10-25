@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart' show SchedulerBinding;
 
 import '../accessibilite/texte_sans_coupure.dart';
+import '../theme/app_color_pair.dart';
 import '../theme/app_elevation.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
@@ -79,6 +80,8 @@ class PageShell extends StatelessWidget {
     this.actionsCoquille = true,
     this.focusTitre,
     this.bandeauHorsLigne = const OfflineBanner(),
+    this.fond,
+    this.bordABord = false,
   });
 
   /// Le bandeau hors ligne pose en tete de page, sans gouttiere. Par defaut,
@@ -92,6 +95,19 @@ class PageShell extends StatelessWidget {
   /// `SizedBox.shrink()` quand leur corps pose deja ce bandeau lui-meme
   /// (Messages, Studio). Les autres ecrans ne changent pas.
   final Widget bandeauHorsLigne;
+
+  /// Le fond plein de la page, quand ce n'est pas le fond creme du theme : la
+  /// surface de marque de la connexion ([AppPalette.surfaceMarque], directeur,
+  /// 25/10/2026). Le fond seul : les textes et les composants poses dessus
+  /// prennent leurs paires dans le theme de l'ecran (`AppTheme.depuis`).
+  /// `null` : le fond du theme.
+  final AppColorPair? fond;
+
+  /// Vrai pour un corps qui va d'un bord a l'autre, sans gouttiere ni largeur
+  /// bornee ni respiration au-dessus d'une page sans titre : deux volets
+  /// pleins sur ordinateur (la connexion). Le corps pose alors lui-meme ses
+  /// marges. Faux par defaut.
+  final bool bordABord;
 
   /// Le focus du titre, pour qu'une page y ramene le lecteur (voir
   /// [EntetePage.focusTitre]).
@@ -246,7 +262,9 @@ class PageShell extends StatelessWidget {
           ],
         ),
         Ecart.vLg,
-      ] else
+      ] else if (!bordABord)
+        // Bord a bord, le corps pose lui-meme son haut : une bande de fond
+        // au-dessus de ses volets les couperait du haut de l'ecran.
         Ecart.vXxl,
       if (entete != null) ...<Widget>[
         entete!,
@@ -292,6 +310,7 @@ class PageShell extends StatelessWidget {
         defilante && MediaQuery.textScalerOf(context).scale(1) > 1.3;
 
     return Scaffold(
+      backgroundColor: fond?.background,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -300,6 +319,7 @@ class PageShell extends StatelessWidget {
             Expanded(
               child: _Colonne(
                 gouttiere: gabarit.gouttiere,
+                bordABord: bordABord,
                 // AD-11 (1.4.10) : sur une vue tres basse (1280x1024 a
                 // 400 %, soit 256 de haut), la tete fixe ne laisse plus de
                 // place au corps et deborde ; la page defilante fait alors
@@ -1686,13 +1706,21 @@ class TetePageConfiee extends InheritedWidget {
 
 /// La colonne de contenu : gouttiere du gabarit, largeur bornee, centree.
 class _Colonne extends StatelessWidget {
-  const _Colonne({required this.gouttiere, required this.child});
+  const _Colonne({
+    required this.gouttiere,
+    required this.child,
+    this.bordABord = false,
+  });
 
   final double gouttiere;
   final Widget child;
+  final bool bordABord;
 
   @override
   Widget build(BuildContext context) {
+    if (bordABord) {
+      return child;
+    }
     return Align(
       alignment: AlignmentDirectional.topCenter,
       child: ConstrainedBox(

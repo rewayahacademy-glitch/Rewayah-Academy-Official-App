@@ -484,15 +484,27 @@ class _Peinture {
 /// rangee, jamais recopiee. Elle vit ici, avec les actions qu'elle range.
 class RangeeActions extends MultiChildRenderObjectWidget {
   /// Cree la rangee ; [children] dans l'ordre de lecture du contrat B.
-  const RangeeActions({required super.children, super.key});
+  const RangeeActions({
+    required super.children,
+    this.pileePleineLargeur = false,
+    super.key,
+  });
+
+  /// Vrai pour qu'une rangee qui ne tient pas s'empile **pleine largeur**
+  /// (toute la place offerte) au lieu de la largeur du plus long libelle :
+  /// le formulaire d'entree sur ordinateur a texte agrandi, qui retrouve
+  /// alors la colonne du telephone (directeur, 25/10/2026). Faux par defaut.
+  final bool pileePleineLargeur;
 
   @override
   RenderObject createRenderObject(BuildContext context) =>
-      _RenduRangeeActions(Directionality.of(context));
+      _RenduRangeeActions(Directionality.of(context), pileePleineLargeur);
 
   @override
   void updateRenderObject(BuildContext context, RenderObject renderObject) {
-    (renderObject as _RenduRangeeActions).sens = Directionality.of(context);
+    (renderObject as _RenduRangeeActions)
+      ..sens = Directionality.of(context)
+      ..pileePleineLargeur = pileePleineLargeur;
   }
 }
 
@@ -502,9 +514,16 @@ class _RenduRangeeActions extends RenderBox
     with
         ContainerRenderObjectMixin<RenderBox, _DonneesRangee>,
         RenderBoxContainerDefaultsMixin<RenderBox, _DonneesRangee> {
-  _RenduRangeeActions(this._sens);
+  _RenduRangeeActions(this._sens, this._pileePleineLargeur);
 
   static const double _ecart = AppSpacing.sm;
+
+  bool _pileePleineLargeur;
+  set pileePleineLargeur(bool valeur) {
+    if (valeur == _pileePleineLargeur) return;
+    _pileePleineLargeur = valeur;
+    markNeedsLayout();
+  }
 
   TextDirection _sens;
   set sens(TextDirection valeur) {
@@ -576,7 +595,11 @@ class _RenduRangeeActions extends RenderBox
     final List<double> largeurs = _largeurs(max);
     final double ligne = _somme(largeurs);
     final bool enLigne = ligne <= max;
-    final double groupe = enLigne ? ligne : largeurs.fold<double>(0, math.max);
+    final double groupe = enLigne
+        ? ligne
+        : _pileePleineLargeur && max.isFinite
+        ? max
+        : largeurs.fold<double>(0, math.max);
     final double largeur = max.isFinite ? max : groupe;
     // Le bord de fin : a droite en LTR, a gauche en RTL.
     final bool rtl = _sens == TextDirection.rtl;

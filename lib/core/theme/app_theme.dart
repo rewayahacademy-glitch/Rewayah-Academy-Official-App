@@ -9,10 +9,21 @@ import 'app_typography.dart';
 
 /// Existing application adapter. No service/provider is consulted by the theme.
 abstract final class AppTheme {
-  static ThemeData pour(InterfaceMode mode, Brightness brightness) {
-    final palette = brightness == Brightness.dark
-        ? AppPalette.sombre()
-        : AppPalette.claire();
+  static ThemeData pour(InterfaceMode mode, Brightness brightness) => depuis(
+    brightness == Brightness.dark ? AppPalette.sombre() : AppPalette.claire(),
+    mode,
+    brightness,
+  );
+
+  /// Le theme d'une palette donnee : celle d'une surface qui n'est ni le
+  /// clair ni le sombre de l'application ([AppPalette.surMarque], la
+  /// connexion), pour que les composants partages posent leurs paires
+  /// lisibles sur cette surface sans qu'un ecran ait a les redemander.
+  static ThemeData depuis(
+    AppPalette palette,
+    InterfaceMode mode,
+    Brightness brightness,
+  ) {
     final metriques = AppMetriques.pour(mode);
     final texte =
         (metriques.estEnfant ? AppTypography.enfant : AppTypography.standard)

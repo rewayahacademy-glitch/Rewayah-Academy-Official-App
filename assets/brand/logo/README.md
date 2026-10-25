@@ -9,8 +9,8 @@ Trois dossiers de couleur, mêmes noms dedans. Les SVG sont des aplats à un seu
 
 | Fichier | Origine | Usage |
 |---|---|---|
-| `logo-horizontal.svg` | RA logo horizontal | **Logo principal** : en-tête web, barre de navigation large, pied de page, documents, e-mails |
-| `logo-vertical.svg` | RA logo vertical | Écran d'accueil / connexion, splash, couverture, certificats, zones carrées ou étroites |
+| `logo-horizontal.svg` | RA logo horizontal | **Logo principal** : en-tête web, barre de navigation large, pied de page, documents, e-mails, connexion (25/10/2026) |
+| `logo-vertical.svg` | RA logo vertical | Écran d'accueil, splash, couverture, certificats, zones carrées ou étroites |
 | `symbole-plein.svg` | RA symbole full color | Petit format : avatar, favicon, barre mobile, filigrane de carte |
 | `symbole-contour.svg` | RA symbole outsroke | Grand format décoratif seulement (fond, filigrane très grand, état vide). Jamais sous 64 px |
 | `icone-plein.svg` | RA icone full color | Même dessin que `symbole-plein` (doublon livré) : préférer `symbole-plein` |
@@ -35,7 +35,7 @@ Un seul `fill` à changer si une autre couleur du design system devient nécessa
 
 - **En-tête web / app bar** : `logo-horizontal`, aligné au début de ligne (gauche en français, droite en arabe RTL : le logo suit le sens de lecture, il ne se retourne jamais). Un seul logo par écran visible.
 - **Mobile, barre étroite** : `symbole-plein` seul.
-- **Connexion, splash, onboarding** : `logo-vertical`, centré, dans un espace dégagé.
+- **Connexion** : logo horizontal centré en haut (décision du directeur du 25/10/2026) ; **splash, onboarding** : logo vertical centré.
 - **Pied de page, documents, e-mails** : `logo-horizontal`, petit, une fois.
 - **Jamais** : à l'intérieur d'un bouton, d'un champ, d'une carte de cours, d'une liste ; répété en motif de texte ; sur une photo de personne ; collé à un bord de l'écran ; derrière du texte ; dans un contenu pédagogique ou une page du Coran.
 - Le logo n'est pas cliquable sauf en en-tête (retour accueil) ; il porte alors un libellé d'accessibilité ("Rewayah Academy, accueil"). Ailleurs il est décoratif (masqué aux lecteurs d'écran) si le nom de marque est déjà écrit en texte.
