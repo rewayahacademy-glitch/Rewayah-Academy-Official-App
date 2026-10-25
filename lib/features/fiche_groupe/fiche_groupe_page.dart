@@ -276,7 +276,7 @@ class _CorpsState extends ConsumerState<_Corps> {
     }
 
     final Widget entete = _EnteteGroupe(groupe: groupe);
-    final Widget seance = _Seance(groupeId: groupe.id, onPreparer: onPreparer);
+    final Widget seance = _Seance(groupe: groupe, onPreparer: onPreparer);
     final Widget preparation = _Preparation(groupeId: groupe.id);
     final Widget eleves = _Membres(
       membres: membres.requireValue,
@@ -485,23 +485,52 @@ class _EnDebut extends StatelessWidget {
 /// l'ouverture, l'emplacement devient « Preparer l'entree », qui mene a la
 /// preparation (le pre-vol de la salle), jamais directement dans la salle.
 class _Seance extends ConsumerWidget {
-  const _Seance({required this.groupeId, this.onPreparer});
+  const _Seance({required this.groupe, this.onPreparer});
 
-  final String groupeId;
+  /// La Classe telle que l'enseignant la lit (`mes_groupes_v`).
+  final GroupeEnseignant groupe;
   final void Function(String sessionId)? onPreparer;
+
+  String get groupeId => groupe.id;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<GroupSummaryVM?> lecture = ref.watch(
-      groupeProvider(groupeId),
+    // Lot salle 3 (pilote, 25/10/2026, test K4 du directeur) : la carte ne
+    // depend plus de `groupeProvider`. Celui-ci lit `mes_groupes_famille_v`,
+    // qui ne rend une ligne qu'a l'eleve ou a son foyer : pour l'enseignant,
+    // la carte disait « Aucune seance prevue » pendant une seance en cours,
+    // sans jamais lire l'horloge. L'identite vient de la fiche ; la seance,
+    // de l'horloge de la Classe (`horloge_classe`) ; « Aucune seance prevue »
+    // seulement quand l'horloge ne rend rien.
+    final GroupSummaryVM classe = GroupSummaryVM(
+      groupeId: groupe.id,
+      libelle: groupe.libelle,
+      couleurJeton: const JetonCouleurGroupe(index: 0, codeStable: 'g00'),
+      enseignant: const EnseignantVM(
+        enseignantId: '',
+        titre: TitreEnseignant.sayyid,
+        nomAffichage: '',
+      ),
+      nombreMembres: groupe.nbMembres,
+      seuilMax: groupe.seuilMax,
+      typePublic: groupe.type == TypePublicGroupe.adulte
+          ? TypePublicGroupeVM.adulte
+          : TypePublicGroupeVM.enfant,
+      actif: true,
     );
 
-    if (!lecture.hasValue && !lecture.hasError) {
+    final AsyncValue<SessionClockVM> flux = ref.watch(
+      horlogeGroupeProvider(groupeId),
+    );
+    final AsyncValue<SessionClockVM?> lue = ref.watch(
+      horlogeClasseLueProvider(groupeId),
+    );
+    // Rien encore de lu, ni par le flux ni par la lecture ponctuelle.
+    if (!flux.hasValue && !flux.hasError && !lue.hasValue && !lue.hasError) {
       return const SqueletteCarteSession();
     }
-
-    final GroupSummaryVM? classe = lecture.value;
-    if (lecture.hasError || classe == null) {
+    final SessionClockVM? tic = flux.value ?? lue.value;
+    if (tic == null && lue.hasError) {
       // La seance n'a pas pu etre lue : la carte le dit, et n'offre qu'une
       // relecture. Le reste de la fiche reste lisible.
       return AppCard(
@@ -509,32 +538,19 @@ class _Seance extends ConsumerWidget {
         child: EmptyState(
           // FINITIONS-CORR2-1 : le message, en style titre, dit seulement ce
           // qui a echoue ; la cause probable et quoi faire passent dans la
-          // ligne d'invitation, comme la bibliotheque et l'observation (la
-          // phrase entiere faisait 14 lignes en gras a 320 px texte x2).
-          message: lecture.hasError
-              ? t.classe.entree.indisponibleCourt
-              : t.classe.entree.aucune,
-          invitation: lecture.hasError
-              ? t.classe.entree.indisponibleInvitation
-              : null,
+          // ligne d'invitation.
+          message: t.classe.entree.indisponibleCourt,
+          invitation: t.classe.entree.indisponibleInvitation,
           icone: AppIcons.cours,
-          // EA-HL-DOUBLE-1f : un registre subi taisait le bouton, et
-          // « Reessayez dans un instant » restait sans action.
-          registre: lecture.hasError
-              ? RegistreVide.actionnable
-              : RegistreVide.subi,
-          libelleAction: lecture.hasError ? t.classe.entree.reessayer : null,
-          onAction: lecture.hasError
-              ? () => ref.invalidate(groupeProvider(groupeId))
-              : null,
+          // EA-HL-DOUBLE-1f : « Reessayez dans un instant » a son bouton.
+          registre: RegistreVide.actionnable,
+          libelleAction: t.classe.entree.reessayer,
+          onAction: () => ref
+            ..invalidate(horlogeClasseLueProvider(groupeId))
+            ..invalidate(horlogeGroupeProvider(groupeId)),
         ),
       );
     }
-
-    final AsyncValue<SessionClockVM> flux = ref.watch(
-      horlogeGroupeProvider(groupeId),
-    );
-    final SessionClockVM? tic = flux.value;
     final GroupSummaryVM identite = tic == null
         ? classe
         : classe.avecHorloge(tic);
@@ -555,7 +571,8 @@ class _Seance extends ConsumerWidget {
       lectureEchouee: flux.hasError && tic == null,
       onReessayer: () => ref
         ..invalidate(horsLigneProvider)
-        ..invalidate(horlogeGroupeProvider(groupeId)),
+        ..invalidate(horlogeGroupeProvider(groupeId))
+        ..invalidate(horlogeClasseLueProvider(groupeId)),
       // B2.2 bis (b) : seance connue, on entre sans appel serveur ; fenetre
       // ouverte sans seance lisible, le bouton reste et demande la seance au
       // concierge (`seance_a_rejoindre`), puis entre avec elle. Sans seance
