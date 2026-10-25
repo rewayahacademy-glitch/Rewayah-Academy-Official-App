@@ -308,6 +308,7 @@ class _ChoiceCardGroupState extends State<ChoiceCardGroup> {
     retenue: _selection.contains(option.valeur),
     radio: !widget.selectionMultiple,
     verticale: verticale,
+    compacte: widget.enLigne && !verticale,
     onPress: option.disponible ? () => _basculer(option.valeur) : null,
   );
 
@@ -522,6 +523,7 @@ class _Carte extends StatelessWidget {
     this.illustration,
     this.raisonIndisponible,
     this.verticale = false,
+    this.compacte = false,
     this.bento,
     this.coteACote = false,
     this.voisinsLibelle = const <String>[],
@@ -546,6 +548,10 @@ class _Carte extends StatelessWidget {
   /// Vrai pour la disposition cote a cote : contenu centre, icone dans un
   /// disque au-dessus du titre, radio (ou coche) en haut a droite.
   final bool verticale;
+
+  /// AVIS-UI : la carte de liste en ligne ([ChoiceCardGroup.enLigne]),
+  /// serree : marges de 16 et 12, hauteur minimale de la seule cible tactile.
+  final bool compacte;
 
   final String libelle;
   final bool retenue;
@@ -621,7 +627,7 @@ class _Carte extends StatelessWidget {
             curve: Mouvement.entree,
             constraints: BoxConstraints(
               // En bento, la grille fixe la hauteur minimale de la tuile.
-              minHeight: bento != null
+              minHeight: bento != null || compacte
                   ? cible
                   : math.max(
                       cible,
@@ -630,7 +636,12 @@ class _Carte extends StatelessWidget {
                           : AppPage.hauteurChoix,
                     ),
             ),
-            padding: const EdgeInsets.all(AppSpacing.xl),
+            padding: compacte
+                ? const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.lg,
+                    vertical: AppSpacing.md,
+                  )
+                : const EdgeInsets.all(AppSpacing.xl),
             decoration:
                 AppElevation.avecFilet(
                   surface: paire,

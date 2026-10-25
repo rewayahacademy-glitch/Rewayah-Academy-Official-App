@@ -19,6 +19,8 @@ import '../../core/router/routes.dart';
 import '../../core/seance_famille/port_seances_famille.dart';
 import '../../core/seance_famille/seance_famille.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
+import '../../core/tc_horloge/port_horloge_seance.dart';
+import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/tc_parcours/port_travail_a_venir.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
@@ -31,6 +33,7 @@ import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/skeleton.dart';
 import '../acces_finance/carte_acces_finance.dart';
+import '../classe_tuteur/rejoindre_avec_eleve.dart';
 import '../consentements/consentement_observation_page.dart';
 import '../parcours_offres/bloc_parcours.dart';
 import '../presentation_tuteur/demandes_presentation_page.dart'
@@ -98,6 +101,9 @@ class AccueilFamillePage extends ConsumerStatefulWidget {
 
   /// La cle de la carte des finances du profil choisi (lot F1).
   static const Key financesKey = Key('tuteur.accueil.finances');
+
+  /// La tuile « Rejoindre la salle avec {prenom} », salle ouverte (D6, R8).
+  static const Key rejoindreKey = Key('tuteur.accueil.rejoindre');
 
   /// L'horloge de l'appareil, **pour mesurer un ecoulement seulement** :
   /// l'instant affiche est l'instant serveur lu a l'ouverture, avance du
@@ -270,7 +276,44 @@ class _Contenu extends ConsumerWidget {
       onReessayerSeance: () => ref.invalidate(prochaineSeanceProvider(eleveId)),
     );
 
-    final Widget? bandeau = blocage
+    // D6 et R8 (24/10/2026) : salle ouverte ou seance en direct, la tache
+    // immediate est d'y entrer ; le bouton prend la place du blocage en tete
+    // (un seul bouton plein, jamais un bouton dans la carte-lien).
+    final SeanceFamille? seanceOuverte = prochaine.value;
+    final bool rejoindre =
+        seanceOuverte != null &&
+        !prochaine.hasError &&
+        salleRejoignable(
+          AffichageSeance.depuis(
+            seanceOuverte,
+            maintenantServeurUtc: maintenantServeurUtc,
+          ).etat,
+        );
+    // Concierge (a), tuteur : sans seance rejoignable connue, l'horloge de la
+    // Classe (tiree des creneaux) ouvre la porte ; le concierge rend la seance.
+    final SessionClockVM? horlogeClasse = groupeId == null || rejoindre
+        ? null
+        : ref.watch(horlogeGroupeProvider(groupeId)).value;
+    final Widget? bandeau = rejoindre
+        ? AppCard(
+            key: AccueilFamillePage.rejoindreKey,
+            marge: compact ? AppSpacing.lg : AppSpacing.xxl,
+            child: BoutonRejoindreAvecEleve(
+              seance: seanceOuverte,
+              eleve: profil,
+            ),
+          )
+        : groupeId != null && classeRejoignableSansSeance(horlogeClasse)
+        ? AppCard(
+            key: AccueilFamillePage.rejoindreKey,
+            marge: compact ? AppSpacing.lg : AppSpacing.xxl,
+            child: BoutonRejoindreClasseAvecEleve(
+              groupeId: groupeId,
+              sessionId: horlogeClasse!.sessionId,
+              eleve: profil,
+            ),
+          )
+        : blocage
         ? BandeauBlocage(
             prenom: profil.prenom,
             onConnecter: () => routeur.go(Routes.appairerPour(eleveId)),

@@ -46,7 +46,20 @@ class CarteSession extends StatefulWidget {
     this.tutoiement = false,
     this.entreeRetiree = false,
     this.attenteEntree,
+    this.seanceParServeur = false,
+    this.refusEntree,
   });
+
+  /// Vrai quand [onRejoindre] sait demander la seance au serveur (le
+  /// concierge `seance_a_rejoindre`, B2.2 bis (b)) : une fenetre ouverte sans
+  /// seance lisible garde alors son bouton, au lieu de la ligne « L'acces a
+  /// la salle ne peut pas etre verifie ». Faux : rendu inchange.
+  final bool seanceParServeur;
+
+  /// La phrase dite sous le bouton apres un appui qui n'a pas pu entrer (le
+  /// serveur n'a rendu aucune seance, ou l'a refusee). Le bouton reste
+  /// actif : un nouvel appui redemande. Nulle : rien n'est dit.
+  final String? refusEntree;
 
   /// L'entree ne peut pas encore aboutir alors que la fenetre est ouverte
   /// (acces de l'eleve qui se lit encore, FI-9a) : « Rejoindre » reste
@@ -155,6 +168,7 @@ class _CarteSessionState extends State<CarteSession> {
       // materialisee (revue CL-4.R, m3).
       accesInverifiable:
           espace.role != RoleEspaceGroupe.tuteur &&
+          !widget.seanceParServeur &&
           horloge.sessionId == null &&
           occurrence.sessionId == null,
       tutoiement: widget.tutoiement,
@@ -254,6 +268,7 @@ class _CarteSessionState extends State<CarteSession> {
               sansBouton: espace.role == RoleEspaceGroupe.tuteur,
               onEntrer: widget.onRejoindre,
               motifAttente: widget.attenteEntree,
+              refus: widget.refusEntree,
               onReessayer: widget.onReessayer,
               focusRetour: _focusTitre,
             ),
@@ -386,7 +401,12 @@ class EmplacementEntreeVue extends StatefulWidget {
     this.sansBouton = false,
     this.focusRetour,
     this.motifAttente,
+    this.refus,
   });
+
+  /// La phrase dite sous le bouton apres un appui qui n'a pas pu entrer
+  /// (region live, encre d'alerte). Le bouton reste actif.
+  final String? refus;
 
   /// Pose : l'appui sur le bouton n'entre pas, il dit cette phrase sous le
   /// bouton (region live) et l'annonce (BOUTONS-GRISES-1, jamais grise).
@@ -408,6 +428,9 @@ class EmplacementEntreeVue extends StatefulWidget {
 
   /// Vrai pour un role qui n'entre pas (tuteur) : le bouton devient la ligne.
   final bool sansBouton;
+
+  /// La cle de la phrase de refus (tests).
+  static const Key cleRefus = ValueKey<String>('emplacement-refus-entree');
 
   @override
   State<EmplacementEntreeVue> createState() => _EmplacementEntreeVueState();
@@ -501,6 +524,20 @@ class _EmplacementEntreeVueState extends State<EmplacementEntreeVue> {
               motif,
               key: const ValueKey<String>('emplacement-attente-entree'),
               style: AppPalette.of(context).inkMuted.applyTo(
+                Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+          ),
+        ],
+        if (widget.refus case final String refus
+            when motif == null) ...<Widget>[
+          Ecart.vSm,
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              refus,
+              key: EmplacementEntreeVue.cleRefus,
+              style: AppPalette.of(context).inkAlert.applyTo(
                 Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
               ),
             ),

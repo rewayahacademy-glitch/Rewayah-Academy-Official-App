@@ -7,6 +7,7 @@ import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/tc_groupe/concierge_seance.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
@@ -204,7 +205,12 @@ class LectureGroupe {
     required this.annulee,
     required this.lectureEchouee,
     required this.onReessayer,
+    this.refusEntree,
   });
+
+  /// La phrase dite sous « Rejoindre » apres un appui qui n'a pas pu entrer
+  /// (le concierge n'a rendu aucune seance, ou l'a refusee), nulle sinon.
+  final String? refusEntree;
 
   /// L'espace du groupe pour le role qui regarde.
   final GroupHomeVM espace;
@@ -253,6 +259,12 @@ class LectureGroupe {
                 ? t.eleve.accueil.entreeSePrepare
                 : t.tc.groupe.carte.entreeSePrepare)
           : null,
+      // En production, « Rejoindre » d'une Classe passe par
+      // `preparerSalleEleve`, qui
+      // demande la seance au concierge quand elle n'est pas lisible : une
+      // fenetre ouverte sans seance garde donc son bouton (B2.2 bis (b)).
+      seanceParServeur: onRejoindre != null,
+      refusEntree: refusEntree,
       onRejoindre: onRejoindre == null ? null : () => onRejoindre(identite),
     );
   }
@@ -379,6 +391,7 @@ class LecteurGroupe extends ConsumerWidget {
         onReessayer: () => ref
           ..invalidate(horsLigneProvider)
           ..invalidate(horlogeGroupeProvider(groupeId)),
+        refusEntree: ref.watch(refusEntreeProvider)[groupeId],
       ),
     );
   }

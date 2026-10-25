@@ -75,6 +75,13 @@ SeanceFamille _prochaine({
   heureFoyer: heureRendue('Europe/Paris', 'Paris', '18:10'),
 );
 
+/// Une prochaine seance dans trois heures, salle encore fermee : les tests du
+/// blocage ne doivent pas voir « Rejoindre la salle avec » (D6, R8).
+final List<SeanceFamille> _salleFermee = <SeanceFamille>[
+  _prochaine(avant: const Duration(hours: 3)),
+  _passee(),
+];
+
 /// La derniere seance, tenue il y a deux jours.
 SeanceFamille _passee() => seanceFictive(
   seanceId: 's0',
@@ -347,6 +354,7 @@ void main() {
       final GoRouter routeur = await _monter(
         tester,
         appareils: <AppareilAppaire>[],
+        seances: _salleFermee,
       );
       await _ouvrirAccueilParLaBarre(tester);
 
@@ -370,6 +378,7 @@ void main() {
         await _monter(
           tester,
           appareils: <AppareilAppaire>[],
+          seances: _salleFermee,
           taille: taille,
           depart: Routes.tuteurAccueil,
         );
@@ -405,6 +414,7 @@ void main() {
       await _monter(
         tester,
         appareils: <AppareilAppaire>[],
+        seances: _salleFermee,
         depart: Routes.tuteurAccueil,
       );
       final Finder alerte = find.byKey(BandeauBlocage.cleAlerte);
@@ -543,7 +553,7 @@ void main() {
     testWidgets('sans blocage : aucun bouton plein, la carte ouvre la classe', (
       WidgetTester tester,
     ) async {
-      final GoRouter routeur = await _monter(tester);
+      final GoRouter routeur = await _monter(tester, seances: _salleFermee);
       await _ouvrirAccueilParLaBarre(tester);
 
       expect(find.byType(BandeauBlocage), findsNothing);
@@ -564,7 +574,11 @@ void main() {
 
     testWidgets('avec blocage : « Connecter un appareil » est le seul '
         'bouton primaire', (WidgetTester tester) async {
-      await _monter(tester, appareils: <AppareilAppaire>[]);
+      await _monter(
+        tester,
+        appareils: <AppareilAppaire>[],
+        seances: _salleFermee,
+      );
       await _ouvrirAccueilParLaBarre(tester);
 
       final List<ActionPrincipale> seules = principales(tester).toList();
@@ -584,6 +598,7 @@ void main() {
           depart: Routes.tuteurAccueil,
           taille: taille,
           appareils: <AppareilAppaire>[],
+          seances: _salleFermee,
         );
         expect(find.byType(BandeauBlocage), findsOneWidget);
         expect(find.byKey(BandeauBlocage.cleAlerte), findsOneWidget);
@@ -600,9 +615,44 @@ void main() {
         tester,
         depart: Routes.tuteurAccueil,
         taille: const Size(1440, 900),
+        seances: _salleFermee,
       );
       expect(find.byType(BandeauBlocage), findsNothing);
       expect(principales(tester), isEmpty);
+    });
+
+    // D6 et R8 (24/10/2026) : salle ouverte, entrer est la tache immediate ;
+    // le bouton prend la place du blocage, seul bouton plein, hors de la
+    // carte-lien, et mene a la salle avec le billet de l'eleve.
+    testWidgets('salle ouverte, sans appareil : « Rejoindre la salle avec » '
+        'remplace le blocage et reste le seul bouton plein', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, appareils: <AppareilAppaire>[]);
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(find.byKey(AccueilFamillePage.rejoindreKey), findsOneWidget);
+      expect(find.byType(BandeauBlocage), findsNothing);
+      final List<ActionPrincipale> seules = principales(tester).toList();
+      expect(seules, hasLength(1));
+      expect(
+        seules.single.libelle,
+        t.classe.seance.rejoindreAvec(prenom: 'Élève A1'),
+      );
+      expect(
+        find.descendant(
+          of: find.byType(CarteClasseSeance),
+          matching: find.byType(ActionPrincipale),
+        ),
+        findsNothing,
+      );
+    });
+
+    testWidgets('avant la porte : « La salle ouvre a » dans la carte, aucun '
+        'bouton pour entrer', (WidgetTester tester) async {
+      await _monter(tester, seances: _salleFermee);
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(find.byKey(CarteClasseSeance.salleOuvreKey), findsOneWidget);
+      expect(find.byKey(AccueilFamillePage.rejoindreKey), findsNothing);
     });
 
     // Defaut 2 : la carte mene a un endroit, elle s'annonce comme lien.

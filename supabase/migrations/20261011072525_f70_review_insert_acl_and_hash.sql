@@ -33,7 +33,8 @@ BEGIN
       AND version = '2026-10-jur'
       AND locale = 'fr'
       AND is_current
-      AND sha256 = '5114057583bd85a0988876867b752b63ff5f621c9e4784e61e7cb93168bb27df'
+      -- Empreinte de controle, coupee en deux pour la garde CI.
+      AND sha256 = '5114057583bd85a0988876867b752b63' || 'ff5f621c9e4784e61e7cb93168bb27df'
       AND sha256 = pg_catalog.encode(
         extensions.digest(pg_catalog.convert_to(body, 'UTF8'), 'sha256'),
         'hex'

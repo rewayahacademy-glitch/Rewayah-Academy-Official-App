@@ -4,6 +4,7 @@ import { composer } from './gabarit.ts'
 import { contenuPour, modelesConnus } from './modeles.ts'
 import { htmlAuth, LANGUES_AUTH, MODELES_AUTH, MODELES_AUTH_LANGUES } from './auth_modeles.ts'
 import { FRANCAIS, LANGUES } from './modeles.ts'
+import { TRADUITS_A_L_ENVOI } from './modeles_fr.ts'
 
 // Les evenements de la contrainte notifications_evenement_check (etat au
 // 23/10/2026) et les deux modeles propres a la file.
@@ -13,7 +14,7 @@ const EVENEMENTS = ['demande_recue', 'classe_validee', 'enseignant_affecte', 'de
   'acces_retabli_paiement']
 
 Deno.test('chaque evenement de notification a son modele', () => {
-  for (const e of [...EVENEMENTS, 'invitation_foyer', 'lien_inscription', 'message_libre', 'nouvelles']) {
+  for (const e of [...EVENEMENTS, 'invitation_foyer', 'lien_inscription', 'attente_candidat', 'message_libre', 'nouvelles']) {
     assert(modelesConnus.includes(e), e)
   }
 })
@@ -148,7 +149,11 @@ Deno.test('chaque langue ecrite a tous les modeles et toutes les raisons', () =>
   for (const l of ECRITES) {
     const L = LANGUES[l]
     assert(L, l)
-    for (const m of modelesConnus) assert(typeof L.modeles[m] === 'function', `${l} : modele ${m}`)
+    for (const m of modelesConnus) {
+      // Ecrit en francais seul, traduit a l'envoi : verifie plus bas.
+      if (l !== 'fr' && TRADUITS_A_L_ENVOI.includes(m)) continue
+      assert(typeof L.modeles[m] === 'function', `${l} : modele ${m}`)
+    }
     for (const c of CATEGORIES) assert(L.raisons[c] && L.raisons[c].length > 20, `${l} : raison ${c}`)
     assert(L.desinscription.length > 5, l)
     assertEquals(L.droiteAGauche === true, l === 'ar', l)
@@ -160,6 +165,10 @@ Deno.test('chaque modele dans chaque langue : leger, bonne langue, bonne directi
     for (const m of modelesConnus) {
       const base = { modele: m, categorie: 'classes', essentielle: false, donnees: { ...DONNEES, jeton_desinscription: 'abc', langue_source: l } }
       const r = rendre(base, l)
+      if (l !== 'fr' && TRADUITS_A_L_ENVOI.includes(m)) {
+        assertEquals(r.traduireDepuis, 'fr', `${l} ${m} : traduit a l envoi`)
+        continue
+      }
       assertEquals(r.traduireDepuis, undefined, `${l} ${m}`)
       const { html, texte } = composer(r.contenu)
       assert(new TextEncoder().encode(html).length / 1024 < 15, `${l} ${m} : trop gros`)
@@ -201,4 +210,53 @@ Deno.test('langue non ecrite : traduite du francais ; francais inchange', () => 
   assertEquals(fr.blocs[0], { type: 'texte', texte: 'Bonjour Awa,' })
   assertEquals(fr.blocs[3], { type: 'note', texte: 'Le détail se trouve dans l’application, une fois connecté.' })
   assertEquals(fr.raison, 'Vous recevez cet e-mail parce qu’il concerne une demande faite sur Rewayah Academy.')
+})
+
+// B3.1 : le courriel d'attente des candidats, texte du directeur mot pour mot,
+// ecrit en francais seul et traduit a l'envoi.
+const ATTENTE = { modele: 'attente_candidat', categorie: 'recrutement', essentielle: false,
+  donnees: { jeton_desinscription: 'jeton-1' } }
+
+Deno.test('attente_candidat : le texte valide par le directeur, mot pour mot', async () => {
+  const doc = await Deno.readTextFile(new URL('../../../../docs/current/CANDIDATURES/COURRIEL_ATTENTE_2026-10-24.md', import.meta.url))
+  const section = (titre: string) => doc.split(`## ${titre}`)[1].split('\n## ')[0]
+  const norme = (t: string) => t.replace(/[’']/g, "'").replace(/\s+/g, ' ').trim()
+  const c = rendre(ATTENTE, 'fr').contenu
+  assertEquals(c.sujet, norme(section('Objet')))
+  const corps = c.blocs.map((b) => (b.type === 'texte' ? b.texte : '')).join('\n\n')
+  assertEquals(norme(corps), norme(section('Corps (texte source, français)')))
+  const { html, texte } = composer(c)
+  assert(texte.includes('rien à payer') && texte.includes('Assalamou alaykoum wa rahmatoullah,'))
+  assert(!/<script|@font-face/i.test(html) && new TextEncoder().encode(html).length / 1024 < 15)
+  // Non essentiel : desinscription en un clic, raison du recrutement.
+  assert(html.includes('/fr/courriels/desinscription?jeton=jeton-1'))
+  assertEquals(c.raison, FRANCAIS.raisons.recrutement)
+  // Aucun bouton : rien a faire aujourd'hui.
+  assert(!c.blocs.some((b) => b.type === 'bouton'))
+})
+
+Deno.test('attente_candidat : rendu en anglais et en arabe par le faux traducteur, une langue par message', async () => {
+  for (const cible of ['en', 'ar']) {
+    const r = rendre(ATTENTE, cible)
+    assertEquals(r.traduireDepuis, 'fr', cible)
+    const envoyes: string[][] = []
+    // Comme le vrai : les passages en ecriture arabe sont proteges sauf vers l'arabe.
+    const capture: Traducteur = async (textes, source, vers) => {
+      const { versHtml, depuisHtml } = await import('./traduction.ts')
+      envoyes.push(textes)
+      assertEquals(source, 'fr')
+      return textes.map((t) => `[${vers}] ${depuisHtml(versHtml(t, vers !== 'ar'))}`)
+    }
+    const c = await traduireContenu(r.contenu, 'fr', cible, capture)
+    assertEquals(envoyes.length, 1, `${cible} : un seul appel`)
+    assert(c.sujet.startsWith(`[${cible}] Votre candidature`), cible)
+    assert(c.blocs.every((b) => b.type !== 'texte' || b.texte.startsWith(`[${cible}] `)), cible)
+    assertEquals(c.noteTraduction, `[${cible}] Ce message a été traduit automatiquement.`)
+    const { html } = composer({ ...c, droiteAGauche: cible === 'ar' })
+    assert(html.includes(`lang="${cible}" dir="${cible === 'ar' ? 'rtl' : 'ltr'}"`), cible)
+    assert(html.includes('/fr/courriels/desinscription?jeton=jeton-1'), `${cible} : desinscription`)
+  }
+  const { versHtml } = await import('./traduction.ts')
+  // Un passage arabe dans un texte traduit vers l'anglais n'est jamais traduit.
+  assert(versHtml('Qu’Allah vous récompense, جزاكم الله خيرا.', true).includes('<span translate="no" class="notranslate">جزاكم الله خيرا</span>'))
 })

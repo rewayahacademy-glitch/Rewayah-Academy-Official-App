@@ -19,7 +19,11 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/bouton_icone.dart';
+import '../tc_mushaf/fleches_page_mushaf.dart';
 import 'composition_salle.dart';
+import 'media_salle.dart';
 import 'surface_page_fixe.dart';
 import 'vignette_video.dart';
 import 'vue_seance.dart';
@@ -52,6 +56,18 @@ class ZoneSupport extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // S0 : la scene video de `/salle` au premier plan (la vignette touchee,
+    // ou rien de presente chez l'eleve).
+    final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
+    if (media != null && media.scenePremierPlan) {
+      if (media.scene case final Widget scene) {
+        return _ScenePremierPlan(
+          scene: scene,
+          onRevenir: media.onBasculerScene,
+          action: media.actionScene,
+        );
+      }
+    }
     // TB-6 : un support a page fixe presente, ou le tableau libre connu de
     // la vue, prend la surface ; la diapositive et le rendu fourni (Classe
     // Live, Coran) restent ce qu'ils etaient.
@@ -70,12 +86,15 @@ class ZoneSupport extends StatelessWidget {
     // jamais pendant le partage : la capsule de l'en-tete la remplace (TB-3,
     // UI-01, plan V2 §4.3).
     final bool video = vue.voitVignetteSurSupport;
-    final double largeurVignette = MesuresVignette.largeur(
-      gabarit,
-      guidee: vue.vignetteAgrandie,
-      enseignant: vue.meneLaSeance,
-      panneau: vue.panneau != PanneauOuvert.aucun,
-    );
+    final double largeurVignette =
+        (PorteeMediaSalle.de(context)?.pleinCadre ?? false)
+        ? MesuresVignette.largeurPleinCadre(gabarit)
+        : MesuresVignette.largeur(
+            gabarit,
+            guidee: vue.vignetteAgrandie,
+            enseignant: vue.meneLaSeance,
+            panneau: vue.panneau != PanneauOuvert.aucun,
+          );
     // Guidee web etroit (image CLV-04-05-06 web etroit) : la grande vignette
     // descend jusqu'a l'encadre, qui se range a cote d'elle ; la carte
     // s'arrete apres son contenu, un espace la separe du dock.
@@ -342,6 +361,7 @@ extension on ZoneSupport {
   /// serti que la diapositive), la page posee dedans en `BoxFit.contain`.
   Widget _carteSurface(BuildContext context, VueSurface surface) {
     final Gabarit gabarit = AppGabarit.de(context);
+    final bool pleinCadre = PorteeMediaSalle.de(context)?.pleinCadre ?? false;
     // Tableau libre de l'enseignant, texte agrandi hors bureau : sa propre
     // vignette couvrirait la phrase du §12 (rien ne recouvre un texte a
     // lire) ; elle ne se pose pas sur la feuille. Les eleves gardent la
@@ -352,12 +372,15 @@ extension on ZoneSupport {
         gabarit != Gabarit.desktop &&
         MediaQuery.textScalerOf(context).scale(1) >= _seuilPile;
     final bool video = vignetteEnseignantPosee(context, vue) && !consigneSerree;
-    final double largeurVignette = MesuresVignette.largeur(
-      gabarit,
-      guidee: vue.vignetteAgrandie,
-      enseignant: vue.meneLaSeance,
-      panneau: vue.panneau != PanneauOuvert.aucun,
-    );
+    final double largeurVignette =
+        (PorteeMediaSalle.de(context)?.pleinCadre ?? false)
+        ? MesuresVignette.largeurPleinCadre(gabarit)
+        : MesuresVignette.largeur(
+            gabarit,
+            guidee: vue.vignetteAgrandie,
+            enseignant: vue.meneLaSeance,
+            panneau: vue.panneau != PanneauOuvert.aucun,
+          );
     final Widget carte = Theme(
       // La page et la feuille restent claires : jamais inversees en sombre.
       data: AppTheme.pour(InterfaceMode.standard, Brightness.light),
@@ -373,12 +396,37 @@ extension on ZoneSupport {
               borderRadius: AppRadius.arrondiLg,
               child: LayoutBuilder(
                 builder: (BuildContext _, BoxConstraints c) {
-                  final double marge = serre ? AppSpacing.sm : AppSpacing.md;
-                  final double? ratio = ratioSurface(vue);
+                  // S0.2 : dans `/salle`, la page prend toute la carte
+                  // (zoom 100 = toute la largeur ou toute la hauteur).
+                  // Retour du pilote (24/10/2026) : dans `/salle`, le tableau
+                  // ouvert est un canevas plein, toute la scene, sans marge ni
+                  // ratio, comme au telephone ; la vignette se pose dessus.
+                  final TableauLibre? tableau = vue.tableauLibre;
+                  final bool canevas =
+                      pleinCadre &&
+                      surface == VueSurface.tableauLibre &&
+                      tableau != null;
+                  final VueSeance vueSurface = canevas
+                      ? vue.copyWith(
+                          tableauLibre: TableauLibre(
+                            largeurCanonique: math.max(1, c.maxWidth.round()),
+                            hauteurCanonique: math.max(1, c.maxHeight.round()),
+                            aDesNotes: tableau.aDesNotes,
+                          ),
+                        )
+                      : vue;
+                  final double marge = canevas
+                      ? 0
+                      : pleinCadre
+                      ? AppSpacing.xs
+                      : serre
+                      ? AppSpacing.sm
+                      : AppSpacing.md;
+                  final double? ratio = ratioSurface(vueSurface);
                   // TB-RC (TB_RAPPORT §d n. 3) : la vignette ne recouvre
                   // jamais la feuille ; si elle la toucherait en coin, la
                   // page descend sous elle (la plus petite reserve).
-                  final double dessus = video
+                  final double dessus = video && !canevas
                       ? reserveSousVignette(
                           boite: c.biggest,
                           marge: marge,
@@ -418,10 +466,18 @@ extension on ZoneSupport {
                             marge,
                             marge,
                           ),
-                          child: SurfacePageFixe(
-                            vue: vue,
-                            surface: surface,
-                            zoom: zoom,
+                          child: _avecFleches(
+                            context,
+                            boite: Size(
+                              math.max(0, c.maxWidth - 2 * marge),
+                              math.max(0, c.maxHeight - 2 * marge),
+                            ),
+                            ratio: ratio,
+                            page: SurfacePageFixe(
+                              vue: vueSurface,
+                              surface: surface,
+                              zoom: zoom,
+                            ),
                           ),
                         ),
                       ),
@@ -449,6 +505,104 @@ extension on ZoneSupport {
     );
     if (gabarit != Gabarit.desktop) return carte;
     return _Serti(key: const ValueKey<String>('cadre-support'), child: carte);
+  }
+}
+
+/// S0.2 (reference 4 du directeur, « le Coran a du gabarit ») : dans
+/// `/salle`, deux grandes fleches de page a mi-hauteur, une de chaque cote
+/// de la page (la page suivante a gauche, comme un mushaf), seulement quand
+/// elles tiennent a cote de la page en pleine hauteur : elles ne lui volent
+/// rien. Sinon la pagination reste dans les Commandes.
+Widget _avecFleches(
+  BuildContext context, {
+  required Size boite,
+  required double? ratio,
+  required Widget page,
+}) {
+  final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
+  final VoidCallback? precedente = media?.onPagePrecedente;
+  final VoidCallback? suivante = media?.onPageSuivante;
+  if (media == null ||
+      !media.pleinCadre ||
+      ratio == null ||
+      (precedente == null && suivante == null)) {
+    return page;
+  }
+  const double cote = _coteFleches;
+  final double largeurPage = boite.height * ratio;
+  if (boite.width < largeurPage + 2 * (cote + AppSpacing.sm)) return page;
+  // Les fleches encadrent la page, au plus pres d'elle (reference 4).
+  return Center(
+    child: SizedBox(
+      width: largeurPage + 2 * (cote + AppSpacing.sm),
+      child: PageAvecFlechesMushaf(
+        key: const ValueKey<String>('fleches-page-salle'),
+        libellePrecedente: t.salle.seance.pagePrecedente,
+        libelleSuivante: t.salle.seance.pageSuivante,
+        onPrecedente: precedente,
+        onSuivante: suivante,
+        cote: cote,
+        focusAuto: false,
+        child: page,
+      ),
+    ),
+  );
+}
+
+/// Le cote des grandes fleches de la salle (NAV-FLECHES-1 : 48 au moins).
+const double _coteFleches = AppSpacing.respiration;
+
+/// S0 : la scene video de `/salle` a la place de la page, et « Revenir a
+/// la page » en coin quand une page attend derriere.
+class _ScenePremierPlan extends StatelessWidget {
+  const _ScenePremierPlan({required this.scene, this.onRevenir, this.action});
+
+  final Widget scene;
+  final VoidCallback? onRevenir;
+  final ({String libelle, VoidCallback onPress})? action;
+
+  /// La cle de la scene au premier plan (tests, captures).
+  static const Key cle = ValueKey<String>('scene-premier-plan');
+
+  @override
+  Widget build(BuildContext context) {
+    final ({String libelle, VoidCallback onPress})? autre = action;
+    final VoidCallback? revenir = onRevenir;
+    return Stack(
+      key: cle,
+      children: <Widget>[
+        Positioned.fill(child: scene),
+        // L'action de la scene (l'enseignant sans page : « Ouvrir le
+        // Coran ») est un vrai bouton a libelle, le seul plein de l'ecran.
+        if (autre != null)
+          PositionedDirectional(
+            top: AppSpacing.sm,
+            start: AppSpacing.lg,
+            end: AppSpacing.lg,
+            child: Align(
+              alignment: AlignmentDirectional.topStart,
+              child: ActionPrincipale(
+                key: const ValueKey<String>('action-scene'),
+                libelle: autre.libelle,
+                pleineLargeur: false,
+                onPress: autre.onPress,
+              ),
+            ),
+          )
+        else if (revenir != null)
+          PositionedDirectional(
+            top: AppSpacing.sm,
+            start: AppSpacing.sm,
+            child: BoutonIcone(
+              key: const ValueKey<String>('revenir-page'),
+              icone: AppIcons.coran,
+              libelle: t.salle.revenirALaPage,
+              infobulle: t.salle.revenirALaPage,
+              onPress: revenir,
+            ),
+          ),
+      ],
+    );
   }
 }
 

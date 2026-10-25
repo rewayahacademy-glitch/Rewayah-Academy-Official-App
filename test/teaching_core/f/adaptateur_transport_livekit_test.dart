@@ -10,12 +10,9 @@ import 'support/fabriques.dart';
 /// L'adaptateur au-dessus du moteur existant : ce qu'il sait faire, et ce
 /// qu'il ne sait pas.
 ///
-/// **Ce fichier est la preuve que `TC_CONTRACT_REQUEST_F.md` n'est pas une
-/// precaution.** Le socle expose une primitive de donnees -- `presenterContenu`,
-/// un pointeur coranique, un sujet, fiable, en diffusion -- et rien d'autre.
-/// Tant qu'Agent Z n'a pas ajoute la primitive demandee, tout envoi du
-/// protocole pedagogique leve [MotifEchecTransport.primitiveEnvoiAbsente],
-/// nomme explicitement, plutot que de reussir en silence.
+/// S1 (24/10/2026) : la primitive demandee par `TC_CONTRACT_REQUEST_F.md`
+/// existe (`publierDonnees`, `donneesRecues`) ; l'adaptateur s'en sert, et ne
+/// passe jamais par `presenterContenu`, le pointeur coranique du socle.
 void main() {
   late FauxMoteurSalle moteur;
   late AdaptateurTransportLiveKit adaptateur;
@@ -34,8 +31,8 @@ void main() {
     await moteur.fermer();
   });
 
-  test('il se declare partiel, il ne se declare pas complet', () {
-    expect(adaptateur.disponibilite, DisponibiliteTransport.partiel);
+  test('il se declare complet', () {
+    expect(adaptateur.disponibilite, DisponibiliteTransport.complet);
   });
 
   test('les capacites sont recopiees du jeton signe', () {
@@ -127,35 +124,33 @@ void main() {
     });
 
     test(
-      'en salle et avec le droit, la primitive manque, et cela se DIT',
+      'en salle et avec le droit, le paquet part sur le canal voulu',
       () async {
-        await expectLater(
-          adaptateur.envoyer(
-            sujet: 'tc-pedagogique',
-            charge: const <int>[1],
-            canal: CanalFiabilite.ephemere,
-          ),
-          throwsA(
-            isA<EchecTransport>().having(
-              (EchecTransport e) => e.motif,
-              'motif',
-              MotifEchecTransport.primitiveEnvoiAbsente,
-            ),
-          ),
+        await adaptateur.envoyer(
+          sujet: 'tc-pedagogique',
+          charge: const <int>[1, 2],
+          canal: CanalFiabilite.ephemere,
         );
+        await adaptateur.envoyer(
+          sujet: 'tc-pedagogique',
+          charge: const <int>[3],
+          canal: CanalFiabilite.fiable,
+        );
+
+        expect(moteur.publies.map((PaquetDonnees p) => p.fiable), <bool>[
+          false,
+          true,
+        ]);
+        expect(moteur.publies.first.charge, const <int>[1, 2]);
       },
     );
 
     test('aucun paquet ne part par la primitive coranique du socle', () async {
-      try {
-        await adaptateur.envoyer(
-          sujet: 'tc-pedagogique',
-          charge: const <int>[1],
-          canal: CanalFiabilite.fiable,
-        );
-      } on EchecTransport {
-        // Attendu : la primitive manque. Ce qui compte est ce qui suit.
-      }
+      await adaptateur.envoyer(
+        sujet: 'tc-pedagogique',
+        charge: const <int>[1],
+        canal: CanalFiabilite.fiable,
+      );
 
       // **Faire passer le protocole pedagogique par `presenterContenu` aurait
       // ete possible et aurait ete une faute** : le mode d'affichage, la plage
@@ -165,15 +160,31 @@ void main() {
     });
   });
 
-  test('le flux de paquets ne livre rien, et ne leve pas', () async {
-    // Un abonne doit pouvoir s'abonner sans se proteger : c'est
-    // `disponibilite` qui dit l'etat des lieux, pas une exception au premier
-    // evenement.
+  test('le flux livre les paquets recus, canal reconstitue', () async {
     final List<PaquetRealtime> recus = <PaquetRealtime>[];
     adaptateur.paquets().listen(recus.add, onError: (Object e) => fail('$e'));
-    moteur.poser(EtatSalle.connecte);
+    moteur
+      ..recevoir(
+        const PaquetDonnees(
+          sujet: 'tc-pedagogique',
+          charge: <int>[7],
+          fiable: false,
+          emetteurIdentite: 'e1',
+        ),
+      )
+      ..recevoir(
+        const PaquetDonnees(
+          sujet: 'tc-pedagogique',
+          charge: <int>[8],
+          fiable: true,
+        ),
+      );
     await pumpEventQueue();
 
-    expect(recus, isEmpty);
+    expect(recus.map((PaquetRealtime p) => p.canal), <CanalFiabilite>[
+      CanalFiabilite.ephemere,
+      CanalFiabilite.fiable,
+    ]);
+    expect(recus.first.emetteurIdentite, 'e1');
   });
 }

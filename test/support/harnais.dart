@@ -1069,6 +1069,9 @@ class FauxMoteurSalle implements VideoSessionProvider {
   /// Les reglages de camera demandes, dans l'ordre.
   final List<bool> cameraDemandee = <bool>[];
 
+  /// Ce que `reglerCamera` doit lever (D14 : un refus du navigateur).
+  Error? erreurCamera;
+
   /// Ce que `rejoindre` doit lever, quand on teste un echec de connexion.
   Object? erreurEntree;
 
@@ -1203,9 +1206,16 @@ class FauxMoteurSalle implements VideoSessionProvider {
     microDemande.add(actif);
   }
 
+  /// D14 : la phrase d'un allumage d'entree refuse.
+  String? erreurEntreeCamera;
+
+  @override
+  String? get erreurCameraEntree => erreurEntreeCamera;
+
   @override
   Future<void> reglerCamera({required bool actif}) async {
     cameraDemandee.add(actif);
+    if (erreurCamera case final Error erreur) throw erreur;
   }
 
   @override

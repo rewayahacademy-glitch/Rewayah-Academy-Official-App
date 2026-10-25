@@ -331,7 +331,7 @@ void main() {
         );
         await tester.pump();
         expect(tester.takeException(), isNull, reason: e.name);
-        await tester.tap(find.text(t.salle.quitter).last);
+        await tester.tap(find.byTooltip(t.salle.quitter).last);
         await tester.pumpAndSettle();
         await tester.tap(find.text(t.salle.seance.quitterCahier));
         await tester.pumpAndSettle();

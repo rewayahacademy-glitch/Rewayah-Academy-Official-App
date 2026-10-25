@@ -101,10 +101,18 @@ void main() {
             find.byKey(const ValueKey<String>('pagination-support')),
             findsNothing,
           );
-          // ETATS-BTN-1 : le mot d'etat des deux bascules, micro ouvert et
-          // camera allumee par defaut.
-          expect(find.text('Micro ouvert'), findsOneWidget);
-          expect(find.text('Caméra allumée'), findsOneWidget);
+          // Standard des commandes d'appel : le mot d'etat des deux bascules
+          // (micro ouvert, camera allumee par defaut) vit dans l'infobulle ;
+          // aucun texte visible dans la pilule.
+          expect(find.byTooltip('Micro ouvert'), findsOneWidget);
+          expect(find.byTooltip('Caméra allumée'), findsOneWidget);
+          expect(
+            find.descendant(
+              of: find.byKey(const ValueKey<String>('dock-seance')),
+              matching: find.byType(Text),
+            ),
+            findsNothing,
+          );
           // TB-2 (VIS-01) : Agrandir a quitte la barre de l'appel (Micro,
           // Camera, Quitter). Sur bureau, seule la barre du support (zoom
           // local) le porte encore ; sans support, rien a agrandir.
@@ -115,7 +123,7 @@ void main() {
                 ? findsOneWidget
                 : findsNothing,
           );
-          expect(find.text('Quitter'), findsOneWidget);
+          expect(find.byTooltip('Quitter'), findsOneWidget);
         });
       }
     }
@@ -177,7 +185,7 @@ void main() {
 
   testWidgets('Quitter demande confirmation', (WidgetTester tester) async {
     await _monter(tester, const Size(390, 844), EtatDemoSalle.repos);
-    await tester.tap(find.text('Quitter'));
+    await tester.tap(find.byTooltip('Quitter'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
     expect(
@@ -195,11 +203,11 @@ void main() {
       EtatDemoSalle.repos,
       local: const EtatLocalSeance(agrandi: true),
     );
-    // Revue TB-R m1 : « Focus » (mot d'etat), lu « Quitter le focus » ;
-    // jamais « Reduire » ni « Agrandir ».
-    expect(find.text('Focus'), findsOneWidget);
-    expect(find.text('Réduire'), findsNothing);
-    expect(find.text('Agrandir'), findsNothing);
+    // Revue TB-R m1 : « Focus » (infobulle de l'etat), lu « Quitter le
+    // focus » ; jamais « Reduire » ni « Agrandir ».
+    expect(find.byTooltip('Focus'), findsOneWidget);
+    expect(find.byTooltip('Réduire'), findsNothing);
+    expect(find.byTooltip('Agrandir'), findsNothing);
   });
 
   for (final ThemeMode mode in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {

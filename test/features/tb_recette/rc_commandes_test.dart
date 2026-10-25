@@ -20,6 +20,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/widgets/bouton_outil.dart';
+import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
@@ -244,7 +245,8 @@ void main() {
         await tester.tap(focus);
         await tester.pumpAndSettle();
         // En focus : la bascule de la barre garde son mot d'etat « Focus »
-        // (une ligne, ETATS-BTN-1) et se lit « Quitter le focus » ; plus
+        // en infobulle (standard des commandes d'appel : aucun mot visible)
+        // et se lit « Quitter le focus » ; plus
         // aucun « Reduire » ni « Agrandir » pour elle.
         final Finder sortie = find.byWidgetPredicate(
           (Widget w) =>
@@ -254,18 +256,49 @@ void main() {
         expect(sortie, findsWidgets);
         for (final Element e in sortie.evaluate()) {
           final Finder f = find.byWidget(e.widget);
-          expect(
-            find.descendant(
-              of: f,
-              matching: find.text(t.salle.seance.commandes.focus),
-            ),
-            findsOneWidget,
-          );
+          if (e.widget.key == const ValueKey<String>('bouton-agrandir')) {
+            // Bouton rond du dock : le mot d'etat est l'infobulle, aucun mot
+            // visible (standard des commandes d'appel).
+            expect(
+              find.descendant(
+                of: f,
+                matching: find.byTooltip(t.salle.seance.commandes.focus),
+              ),
+              findsOneWidget,
+            );
+            expect(
+              find.descendant(of: f, matching: find.byType(Text)),
+              findsNothing,
+              reason: 'aucun mot visible dans le bouton',
+            );
+          } else {
+            // Barre du support (autre composant, regles inchangees) : le mot
+            // d'etat reste visible.
+            expect(
+              find.descendant(
+                of: f,
+                matching: find.text(t.salle.seance.commandes.focus),
+              ),
+              findsOneWidget,
+            );
+          }
           expect(
             find.descendant(of: f, matching: find.text(t.salle.seance.reduire)),
             findsNothing,
           );
-          final String lu = tester.getSemantics(f).label;
+          expect(
+            find.descendant(
+              of: f,
+              matching: find.byTooltip(t.salle.seance.reduire),
+            ),
+            findsNothing,
+          );
+          // Le bouton rond porte son nom sur son Pressable (le noeud lu).
+          final Finder lecture =
+              e.widget.key == const ValueKey<String>('bouton-agrandir')
+              ? find.descendant(of: f, matching: find.byType(Pressable))
+              : f;
+          final String lu = tester.getSemantics(lecture).label;
           expect(lu, contains(t.salle.seance.commandes.quitterFocus));
           expect(lu, isNot(contains(t.salle.seance.agrandir)));
           expect(lu, isNot(contains(t.salle.seance.reduire)));
@@ -351,10 +384,19 @@ void main() {
             false,
           ),
           ('eleve 320 x1 : coupe, chevron', _etroit, 1, RoleSeance.eleve, true),
+          // Standard des commandes d'appel : la barre ronde est plus basse, la
+          // feuille de l'Interface guidee (moins d'entrees) tient a 320 x1.
           (
-            'guidee 320 x1 : coupe, chevron',
+            'guidee 320 x1 : tout tient, pas de chevron',
             _etroit,
             1,
+            RoleSeance.guidee,
+            false,
+          ),
+          (
+            'guidee 320 x2 : coupe, chevron',
+            _etroit,
+            2,
             RoleSeance.guidee,
             true,
           ),

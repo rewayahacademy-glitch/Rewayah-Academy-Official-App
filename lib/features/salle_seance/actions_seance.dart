@@ -55,7 +55,12 @@ class ActionsSeance {
     this.onEffacerNotes,
     this.onAutoriserEcrire,
     this.onPause,
+    this.onTableau,
   });
+
+  /// S0.3 : ouvre ou ferme le tableau blanc pour la classe (enseignant) ;
+  /// `null` : pas de bouton.
+  final VoidCallback? onTableau;
 
   /// TB-10 (plan V2 §4.3, §12, §20 ; UX-20) : « Autoriser a ecrire » ou
   /// « Retirer l'autorisation d'ecrire » sur la fiche d'un eleve, selon
@@ -203,5 +208,6 @@ class ActionsSeance {
     onRanger: onRanger,
     onEffacerNotes: onEffacerNotes,
     onAutoriserEcrire: onAutoriserEcrire,
+    onTableau: onTableau,
   );
 }

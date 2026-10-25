@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' show Ref;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/coran/service_coran.dart';
@@ -10,8 +11,10 @@ import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/page_immersive.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
+import 'package:rewayah_academy/features/salle_enseignant/page_coran_salle.dart';
 import 'package:rewayah_academy/features/salle_enseignant/panneau_enseignant.dart';
 import 'package:rewayah_academy/features/salle_enseignant/vue_presentation.dart';
+import 'package:rewayah_academy/features/tc_mushaf/police_mushaf.dart';
 
 import '../support/harnais.dart';
 
@@ -161,7 +164,20 @@ List<Override> _surcharges({
   ),
   moteurSalleProvider.overrideWithValue(moteur),
   serviceCoranProvider.overrideWithValue(coran),
+  // D9 : la police du mushaf se lit dans `FontManifest.json`, une lecture
+  // reelle que l'horloge des tests n'attend pas toujours ; on la fixe. Sans
+  // elle, la page dit qu'elle ne peut pas s'afficher (etat visible).
+  policeMushafDisponibleProvider.overrideWith((Ref _) async => false),
 ];
+
+/// Le numero de la page du mushaf montree, ou `null` (D9 : la page se rend
+/// en page de quinze lignes, plus en texte continu).
+int? _pageMontree(WidgetTester tester) {
+  final Finder page = find.byType(PageCoranSalle);
+  return page.evaluate().isEmpty
+      ? null
+      : tester.widget<PageCoranSalle>(page).numero;
+}
 
 /// Monte le panneau dans la coquille reelle de la salle.
 ///
@@ -417,11 +433,25 @@ void main() {
         ),
         findsOneWidget,
       );
-      // `findRichText` : le texte du mushaf est un flux continu, donc un
-      // `Text.rich`, que le finder ignore sans ce drapeau.
+      // D9 : la page presentee se rend en page du mushaf (PageCoranSalle).
+      expect(_pageMontree(tester), 42);
+    });
+
+    testWidgets('D9 : sans la police du mushaf, un etat visible, jamais le '
+        'texte continu', (WidgetTester tester) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await moteur.rejoindre(_acces());
+      await _monter(
+        tester,
+        surcharges: _surcharges(moteur: moteur, coran: _corpus()),
+      );
+      moteur.publierContenu(_contenu());
+      await tester.pumpAndSettle();
+      expect(find.byKey(PageCoranSalle.cleIndisponible), findsOneWidget);
+      expect(find.text(t.salle.coran.indisponible), findsOneWidget);
       expect(
         find.textContaining('texte du verset 2:255', findRichText: true),
-        findsWidgets,
+        findsNothing,
       );
     });
 
@@ -481,11 +511,8 @@ void main() {
       moteur.poser(EtatSalle.reconnexion);
       await tester.pumpAndSettle();
 
-      // L'etat pedagogique survit : la reference et le texte restent la.
-      expect(
-        find.textContaining('texte du verset 2:255', findRichText: true),
-        findsWidgets,
-      );
+      // L'etat pedagogique survit : la reference et la page restent la.
+      expect(_pageMontree(tester), 42);
       // Le mot, jamais la seule couleur (invariant J7).
       expect(
         find.textContaining(t.enseignant.salle.presentationConservee),
@@ -608,11 +635,12 @@ void main() {
 
       await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
+      // D9 : la page du mushaf relit la page par `pageMushafProvider`, au
+      // meme delai : une seconde de plus, sans image a dessiner entre deux.
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pumpAndSettle();
       expect(find.byType(Skeleton), findsNothing);
-      expect(
-        find.textContaining('texte du verset 2:255', findRichText: true),
-        findsWidgets,
-      );
+      expect(_pageMontree(tester), 42);
     });
 
     testWidgets('une page illisible se dit, et se reessaye', (
@@ -685,10 +713,7 @@ void main() {
       await _monter(tester, surcharges: surcharges);
       moteur.publierContenu(_contenu());
       await tester.pumpAndSettle();
-      expect(
-        find.textContaining('texte du verset 2:255', findRichText: true),
-        findsWidgets,
-      );
+      expect(_pageMontree(tester), 42);
 
       // La sortie de salle demonte le panneau. Un flux ne republie jamais
       // « plus rien » : si le provider survivait, la page de ce cours serait

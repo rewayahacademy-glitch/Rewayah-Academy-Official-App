@@ -233,6 +233,12 @@
     "irreversible": "Cette action ne peut pas être annulée."
   },
   "salle": {
+    "retourner": "Retourner dans la salle",
+    "coran": {
+      "indisponible": "La page du Coran ne s'affiche pas sur cet appareil",
+      "indisponibleDetail": "L'écriture de l'édition de Médine n'a pas pu se charger. Réessayez\u00a0; si rien ne change, prévenez la direction.",
+      "titrePage": "Le Coran, édition de Médine"
+    },
     "preparation": {
       "titre": "Préparer l'entrée dans la classe",
       "retour": "Retour à la Classe",
@@ -346,6 +352,10 @@
       "ouvrirReglages": "Ouvrir les réglages"
     },
     "seance": {
+      "tableauOuvert": "Tableau ouvert",
+      "tableauFerme": "Tableau fermé",
+      "ouvrirTableau": "Ouvrir le tableau pour la classe",
+      "fermerTableau": "Fermer le tableau",
       "titre": "Séance en direct",
       "titreGuidee": "Ma séance",
       "ligne": "{debut} · {fin}",
@@ -419,6 +429,7 @@
       },
       "ecriture": {
         "palette": "Outils d'écriture",
+        "toutEffacer": "Tout effacer",
         "terminer": "Terminer",
         "couleur": "Couleur",
         "couleurAide": "La couleur dit l'intention du trait, pour toute la classe.",
@@ -676,6 +687,12 @@
     "camera": "Caméra",
     "cameraCoupee": "Caméra éteinte",
     "cameraAllumee": "Caméra allumée",
+    "cameraEchec": "La caméra ne s'allume pas",
+    "cameraEchecRefus": "Le navigateur refuse l'accès à la caméra. Autorisez la caméra dans les réglages du site (à gauche de l'adresse), puis touchez de nouveau la caméra.",
+    "cameraEchecOccupee": "La caméra est déjà utilisée par une autre application ou une autre fenêtre. Fermez-la, puis touchez de nouveau la caméra.",
+    "cameraEchecAbsente": "Aucune caméra n'est trouvée sur cet appareil. Branchez-en une, puis touchez de nouveau la caméra.",
+    "cameraEchecAutre": "Touchez de nouveau la caméra. Si rien ne change, prévenez la direction avec le message ci-dessous.",
+    "cameraEchecMessage": "Message du navigateur\u00a0: {erreur}",
     "quitter": "Quitter",
     "ouvrirCoran": "Ouvrir le Coran",
     "confirmerSortie": "Quitter le cours\u00a0?",
@@ -688,6 +705,8 @@
     "seulEnseignant": "Votre professeur n'est pas encore arrivé",
     "seulEnseignantDetail": "Restez sur cet écran. Vous le verrez apparaître.",
     "seulEleve": "Votre élève n'est pas encore arrivé",
+    "voirVideoEnGrand": "Voir la vidéo en grand",
+    "revenirALaPage": "Revenir à la page",
     "seulEleveDetail": "Restez sur cet écran. Vous le verrez apparaître.",
     "seulObservation": "Personne n'est encore entré dans cette salle",
     "seulObservationDetail": "Le cours n'a pas commencé, ou il est déjà terminé.",
@@ -3827,6 +3846,17 @@
       "actionModifierSeuil": "Modifier le seuil",
       "actionObservation": "Réglages d'observation",
       "actionCloturer": "Clôturer la classe",
+      "actionAjouterCreneau": "Ajouter un créneau",
+      "creneau": {
+        "titre": "Nouveau créneau {deLibelle}",
+        "contexte": "Un jour et une heure de plus, chaque semaine, pour la même Classe. Les séances des quatre prochaines semaines sont créées tout de suite.",
+        "fuseau": "L'heure est celle du fuseau horaire de la Classe.",
+        "envoyer": "Ajouter ce créneau",
+        "dejaLa": "Cette Classe a déjà ce créneau\u00a0: rien n'a changé. Choisissez un autre jour ou une autre heure.",
+        "erreur": "Le créneau n'est pas confirmé\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+        "horsLigne": "Le créneau pourra être ajouté quand la connexion sera revenue. Vos choix restent affichés.",
+        "journalisation": "Chaque créneau ajouté est inscrit au journal d'audit."
+      },
       "ajouterTitre": "Ajouter un élève à {libelle}",
       "manqueEleve": "Il manque l'élève\u00a0: choisissez-le dans la liste.",
       "champMotif": "Motif",
@@ -6740,6 +6770,7 @@
     "entree": {
       "coursDans": "Cours dans {duree}",
       "coursImminent": "Cours dans moins d'une minute",
+      "revenirAvant": "Ce cours ne vous est pas ouvert en ce moment. Revenez 20 minutes avant l'heure du cours.",
       "rejoindre": "Rejoindre",
       "rejoindreLecteur": "Rejoindre la séance {deClasse}",
       "salleOuverte": "La salle est ouverte. La séance commence dans {duree}.",
@@ -12108,7 +12139,7 @@
       },
       "qualite": {
         "libelle": "Vous êtes",
-        "parent": "Parent ou tuteur d'un élève",
+        "parent": "Parent ou tuteur",
         "eleveAdulte": "Élève adulte",
         "erreur": "Choisissez qui vous êtes."
       },

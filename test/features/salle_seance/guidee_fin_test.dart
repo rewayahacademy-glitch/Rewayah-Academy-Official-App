@@ -204,10 +204,11 @@ void main() {
         EtatDemoSalle.visite,
       ).copyWith(cameraAutorisee: false),
     );
-    expect(find.text('Caméra allumée'), findsNothing);
-    expect(find.text('Caméra éteinte'), findsNothing);
-    expect(find.text('Micro ouvert'), findsOneWidget);
-    // Le bouton lui-meme (MA-CMD-1 : icones seules), par son mot d'etat.
+    // Standard des commandes d'appel : l'etat vit dans l'infobulle, aucun mot.
+    expect(find.byTooltip('Caméra allumée'), findsNothing);
+    expect(find.byTooltip('Caméra éteinte'), findsNothing);
+    expect(find.byTooltip('Micro ouvert'), findsOneWidget);
+    // Le bouton lui-meme (icones seules), par son mot d'etat.
     expect(_bouton('Caméra allumée'), findsNothing);
     expect(_bouton('Caméra éteinte'), findsNothing);
     expect(_bouton('Micro ouvert'), findsOneWidget);
@@ -292,7 +293,7 @@ void main() {
     expect(dock.top - support.bottom, greaterThan(40));
   });
 
-  testWidgets('guidee desktop : dock aere comme l\'image', (
+  testWidgets('guidee desktop : standard des commandes d appel, pilule aeree', (
     WidgetTester tester,
   ) async {
     await _monterGuidee(tester, const Size(1440, 900));
@@ -303,14 +304,23 @@ void main() {
     ]..sort((Rect a, Rect b) => a.left.compareTo(b.left));
     // TB-2 : Micro, Camera, Quitter (Agrandir a quitte la barre).
     expect(disques.length, 3);
+    // Un ecart de 16 entre deux boutons (bureau), sans aucun mot dessous.
     for (int i = 1; i < disques.length; i++) {
-      expect(disques[i].center.dx - disques[i - 1].center.dx, closeTo(130, 8));
+      expect(disques[i].left - disques[i - 1].right, closeTo(16, 0.5));
     }
     final Rect dock = tester.getRect(
       find.byKey(const ValueKey<String>('dock-seance')),
     );
-    // Une case aeree de moins (≈ 130) que la pilule de l'image (≈ 555).
-    expect(dock.width, closeTo(555 - 130, 15));
+    // La pilule enveloppe les boutons avec un retrait de 8.
+    expect(disques.first.left - dock.left, closeTo(8, 0.5));
+    expect(dock.right - disques.last.right, closeTo(8, 0.5));
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey<String>('dock-seance')),
+        matching: find.byType(Text),
+      ),
+      findsNothing,
+    );
   });
 
   testWidgets('guidee desktop : la sortie de l\'en-tete demande confirmation', (

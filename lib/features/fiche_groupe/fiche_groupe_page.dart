@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -14,10 +16,12 @@ import '../../core/planning/service_planning.dart' show Creneau;
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/concierge_seance.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_groupe/port_groupes.dart';
+import '../../core/tc_groupe/rejoindre_classe.dart';
 import '../../core/tc_horloge/port_horloge_seance.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/theme/app_gabarit.dart';
@@ -552,9 +556,22 @@ class _Seance extends ConsumerWidget {
       onReessayer: () => ref
         ..invalidate(horsLigneProvider)
         ..invalidate(horlogeGroupeProvider(groupeId)),
-      onRejoindre: horsLigne || sessionId == null
+      // B2.2 bis (b) : seance connue, on entre sans appel serveur ; fenetre
+      // ouverte sans seance lisible, le bouton reste et demande la seance au
+      // concierge (`seance_a_rejoindre`), puis entre avec elle. Sans seance
+      // rendue, ou refus, la phrase est dite sous le bouton.
+      seanceParServeur: true,
+      refusEntree: ref.watch(refusEntreeProvider)[groupeId],
+      onRejoindre: horsLigne
           ? null
-          : () => preparer(sessionId),
+          : () => unawaited(
+              rejoindreClasse(
+                context,
+                groupeId: groupeId,
+                sessionId: sessionId,
+                entrer: preparer,
+              ),
+            ),
     );
   }
 

@@ -167,12 +167,16 @@ void main() {
       }
     });
 
-    test('jamais Agrandir au dock : Micro, Camera, Quitter (TB-4)', () {
+    test('jamais Agrandir au dock : Micro, Camera, Tableau, Quitter '
+        '(TB-4, S0.3)', () {
       // TB-2 (VIS-01, D5) : Reseau quitte la barre ; TB-4 : Supports et
-      // Outils passent dans les Commandes, Partager n'est pas repris.
+      // Outils passent dans les Commandes, Partager n'est pas repris. S0.3 :
+      // le tableau blanc s'ouvre de la barre (rendu seulement avec
+      // `ActionsSeance.onTableau`).
       expect(_vue(r).commandesDock, <CommandeDock>[
         CommandeDock.micro,
         CommandeDock.camera,
+        CommandeDock.tableau,
         CommandeDock.quitter,
       ]);
     });

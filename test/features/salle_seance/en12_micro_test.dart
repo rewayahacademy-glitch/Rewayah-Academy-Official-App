@@ -6,6 +6,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+// S0.2 (pilote, 24/10/2026) : l'etat du micro ne s'affiche plus en bulle sur
+// la page ; seule l'infobulle du bouton rond le dit (standard des commandes
+// d'appel : icone seule, aucun mot sous le bouton), et l'annonce reste.
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/theme/app_mouvement.dart';
@@ -44,15 +48,16 @@ Future<void> _monter(WidgetTester tester, Size taille) async {
   await tester.pump(const Duration(milliseconds: 300));
 }
 
-IconData _iconeMicro(WidgetTester tester) => tester
+AppIcon _iconeMicro(WidgetTester tester) => tester
     .widget<BoutonAppel>(find.byKey(const ValueKey<String>('bouton-micro')))
     .icone;
 
-/// Le mot d'etat sous l'icone du bouton Micro du dock (ETATS-BTN-1), distinct
-/// du bandeau bref qui dit le meme texte.
+/// L'infobulle d'etat du bouton Micro du dock (standard des commandes
+/// d'appel : aucun mot sous l'icone), distincte du bandeau bref qui dit le
+/// meme texte.
 Finder _motDuBouton(String texte) => find.descendant(
   of: find.byKey(const ValueKey<String>('bouton-micro')),
-  matching: find.text(texte),
+  matching: find.byTooltip(texte),
 );
 
 List<String> _annonces(WidgetTester tester) => tester
@@ -72,24 +77,25 @@ void main() {
         WidgetTester tester,
       ) async {
         await _monter(tester, taille);
-        expect(_iconeMicro(tester), AppIcons.microCoupe.repos);
+        expect(_iconeMicro(tester), AppIcons.microCoupe);
         expect(find.text(t.salle.microOuvert), findsNothing);
-        // Le mot d'etat du bouton dit « Micro coupe » avant toute annonce.
+        // L'infobulle du bouton dit « Micro coupe » avant toute annonce.
         expect(_motDuBouton(t.salle.microCoupe), findsOneWidget);
         tester.takeAnnouncements();
 
         await tester.tap(find.byKey(const ValueKey<String>('bouton-micro')));
         await _attendre(tester);
-        expect(_iconeMicro(tester), AppIcons.micro.repos);
-        // Deux fois le meme mot : sur le bouton, et dans le bandeau bref.
-        expect(find.text(t.salle.microOuvert), findsNWidgets(2));
+        expect(_iconeMicro(tester), AppIcons.micro);
+        // Aucun mot a l'ecran : ni sous le bouton, ni en bandeau ; l'etat est
+        // dans l'infobulle et l'annonce.
+        expect(find.text(t.salle.microOuvert), findsNothing);
         expect(_motDuBouton(t.salle.microOuvert), findsOneWidget);
         expect(_annonces(tester), <String>[t.salle.microOuvert]);
 
         await tester.tap(find.byKey(const ValueKey<String>('bouton-micro')));
         await _attendre(tester);
-        expect(_iconeMicro(tester), AppIcons.microCoupe.repos);
-        expect(find.text(t.salle.microCoupe), findsNWidgets(2));
+        expect(_iconeMicro(tester), AppIcons.microCoupe);
+        expect(find.text(t.salle.microCoupe), findsNothing);
         expect(_motDuBouton(t.salle.microCoupe), findsOneWidget);
         expect(find.text(t.salle.microOuvert), findsNothing);
         expect(_annonces(tester), <String>[t.salle.microCoupe]);
@@ -99,8 +105,8 @@ void main() {
         await tester.pump(AppMouvement.retourLocalMaintien);
         await tester.pump();
         await tester.pump(AppMouvement.plafond);
-        // Le bandeau est parti ; le mot d'etat du bouton reste.
-        expect(find.text(t.salle.microCoupe), findsOneWidget);
+        // Toujours aucun mot ; l'infobulle du bouton reste.
+        expect(find.text(t.salle.microCoupe), findsNothing);
         expect(_motDuBouton(t.salle.microCoupe), findsOneWidget);
       });
     }
@@ -113,13 +119,13 @@ void main() {
 
       await tester.sendKeyEvent(LogicalKeyboardKey.keyM);
       await _attendre(tester);
-      expect(_iconeMicro(tester), AppIcons.micro.repos);
-      expect(find.text(t.salle.microOuvert), findsNWidgets(2));
+      expect(_iconeMicro(tester), AppIcons.micro);
+      expect(find.text(t.salle.microOuvert), findsNothing);
       expect(_annonces(tester), <String>[t.salle.microOuvert]);
 
       await tester.sendKeyEvent(LogicalKeyboardKey.keyM);
       await _attendre(tester);
-      expect(find.text(t.salle.microCoupe), findsNWidgets(2));
+      expect(find.text(t.salle.microCoupe), findsNothing);
       expect(_annonces(tester), <String>[t.salle.microCoupe]);
       await tester.pump(AppMouvement.retourLocalMaintien);
     });

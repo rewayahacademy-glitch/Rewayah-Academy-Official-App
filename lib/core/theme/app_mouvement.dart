@@ -18,6 +18,10 @@ abstract final class AppMouvement {
   /// La pression d'un element. Tenu par `Pressable`.
   static const Duration retourTactile = Duration(milliseconds: 100);
 
+  /// S0.2c (pilote, 24/10/2026) : les surimpressions de la salle plein ecran
+  /// au telephone se masquent apres trois secondes sans geste.
+  static const Duration masquageSalle = Duration(seconds: 3);
+
   /// Bascule, case cochee, pastille qui change d'etat, survol.
   static const Duration micro = Duration(milliseconds: 120);
 

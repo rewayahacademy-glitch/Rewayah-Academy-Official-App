@@ -229,8 +229,14 @@ class PageMadina15 extends StatefulWidget {
     required this.largeur,
     this.hauteur,
     this.versetsSurlignes = const <String>{},
+    this.pleineHauteur = false,
     super.key,
   });
+
+  /// S0.2d (directeur, 24/10/2026) : la page prend TOUTE la [hauteur] donnee
+  /// (salle au telephone, « une page A4 = un ecran de smartphone ») :
+  /// l'interligne absorbe le reste, sans la limite d'etirement du lecteur.
+  final bool pleineHauteur;
 
   /// La page, avec des lignes reelles.
   final PageMushafVM vue;
@@ -340,7 +346,11 @@ class _EtatPageMadina15 extends State<PageMadina15> {
     final double libre = hauteurDisponible - 2 * bande - _fixesParCorps * corps;
     final double hauteurCadreTexte = lignes < lignesPageMadina15
         ? math.max(demande, libre)
-        : (libre / demande).clamp(1.0, _etirementMax) * demande;
+        : (libre / demande).clamp(
+                1.0,
+                widget.pleineHauteur ? double.infinity : _etirementMax,
+              ) *
+              demande;
     final double hauteurPage =
         2 * bande + _fixesParCorps * corps + hauteurCadreTexte;
     final double hauteurLigne = hauteurCadreTexte / vue.nombreLignes;

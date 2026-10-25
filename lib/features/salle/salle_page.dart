@@ -3,11 +3,14 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/age_eleve.dart';
 import '../../core/accessibilite/mode_accessibilite.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/coran/service_coran.dart'
+    show pageCoranProvider, pagesMushafMedine;
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -23,6 +26,9 @@ import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_classe/roster_enseignant.dart';
 import '../../core/tc_classe/teacher_student_projection.dart';
 import '../../core/tc_observation/port_annonce_observation.dart';
+import '../../core/tc_outils/etat_outils.dart';
+import '../../core/tc_outils/operations_personnelles.dart';
+import '../../core/tc_outils/port_annotations.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
@@ -45,16 +51,28 @@ import '../../core/widgets/page_immersive.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/permanent_notice.dart';
+import '../../core/widgets/pressable.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/status_pill.dart';
 import '../accueil_eleve/apres_seance_accessibilite.dart';
 import '../controleur/compte_rendu_controle.dart' show adresseCompteRendu;
 import '../fiche_groupe/preparation_seance.dart';
+import '../salle_enseignant/page_coran_salle.dart';
 import '../salle_enseignant/panneau_enseignant.dart';
+import '../salle_enseignant/presentation_coran.dart'
+    show contenuPresenteProvider, presentateurCoranProvider;
 import '../salle_seance/actions_seance.dart';
 import '../salle_seance/depuis_salle.dart';
+import '../salle_seance/ecriture_seance.dart'
+    show
+        diffusionEcritureProvider,
+        diffusionPointeurProvider,
+        pointeurDistantProvider;
+import '../salle_seance/media_salle.dart';
+import '../salle_seance/notes_deposees.dart';
 import '../salle_seance/presentation_observee.dart';
 import '../salle_seance/resultat_seance.dart';
+import '../salle_seance/salle_seance.dart';
 import '../salle_seance/vue_seance.dart';
 import '../salle_seance/zone_support.dart';
 import '../tc_espace_groupe/roster_classe.dart';
@@ -63,6 +81,7 @@ import '../tc_observation_ui/indicateur_observation.dart';
 import 'fiche_seance.dart';
 import 'preparation_eleve.dart';
 import 'preparation_enseignant.dart';
+import 'synchro_salle.dart';
 import 'vue_salle.dart';
 
 /// `ELV-03`, `ENS-03`, `CTR-02` : la salle.
@@ -106,6 +125,9 @@ class SallePage extends ConsumerStatefulWidget {
     this.eleveId,
     this.cheminCompteRenduControle = Routes.controleurCompteRendu,
   });
+
+  /// La page du Coran que l'eleve lit en salle (D9).
+  static const Key pageEleveKey = ValueKey<String>('salle-page-eleve');
 
   /// L'eleve qui rejoint la salle depuis l'appareil de son tuteur (D6), lu
   /// dans le billet ; `null` quand la personne connectee entre pour elle-meme.
@@ -174,6 +196,51 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// L'eleve sorti de la salle (CLV-09).
   IssueSeance? _sortieEleve;
 
+  /// S0 : l'etat local de la salle de seance (rien n'est diffuse) : zoom de
+  /// la page (paliers 100 a 200 %), page agrandie, panneau et contexte.
+  double _zoom = paliersZoom.first;
+  bool _agrandi = false;
+  PanneauOuvert _panneau = PanneauOuvert.aucun;
+  ContexteOuvert _contexte = ContexteOuvert.aucun;
+
+  /// S0.3 : l'enseignant a ouvert le tableau blanc (ferme par defaut).
+  bool _tableau = false;
+
+  /// S1 : la synchronisation de l'ecriture de cette seance, creee a la
+  /// premiere composition dans la salle, liberee a la sortie.
+  SynchroSalle? _synchro;
+
+  /// La synchronisation, raccordee au jeton courant, ou `null` (pas de jeton
+  /// ou profil inconnu).
+  SynchroSalle? _synchroPour(String? profil) {
+    final AccesSalle? acces = _acces;
+    if (acces == null || profil == null) return null;
+    final SynchroSalle? existante = _synchro;
+    if (existante != null && existante.sessionId == widget.seanceId) {
+      return existante;
+    }
+    unawaited(existante?.liberer());
+    final SynchroSalle neuve = SynchroSalle(
+      moteur: _moteur,
+      acces: acces,
+      sessionId: widget.seanceId,
+      profilLocalId: profil,
+    );
+    // L'eleve suit le tableau que l'enseignant ouvre ou ferme.
+    neuve.tableauOuvert.addListener(() {
+      if (mounted) setState(() {});
+    });
+    return _synchro = neuve;
+  }
+
+  /// D14 (S0) : le dernier refus d'allumer la camera, tel que le navigateur
+  /// l'a dit, ou `null`.
+  String? _erreurCamera;
+
+  /// S0 : la scene video au premier plan, choisie d'un toucher ; `null` :
+  /// automatique (l'eleve sans page presentee la voit en grand).
+  bool? _scenePremierPlan;
+
   // CTRL-AGRANDIR-1 (releve VERIF-CT-1) : pas de commande « Agrandir le
   // support » dans la salle du controleur tant qu'aucun support n'y est
   // rendu. Elle agrandissait l'enseignant (la personne dominante), pas un
@@ -225,6 +292,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     unawaited(_sEtats?.cancel());
     unawaited(_sParticipants?.cancel());
     unawaited(_sQualite?.cancel());
+    unawaited(_synchro?.liberer());
     // Quitter au demontage, quelle que soit la raison du demontage : un retour
     // navigateur, une redirection, un billet expire. Sans cela, une salle
     // fermee a l'ecran continuerait a publier un micro ouvert.
@@ -354,17 +422,22 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// [vue] est passee plutot que relue : la decision de sortie se prend sur
   /// l'etat d'AVANT la deconnexion. Apres `_moteur.quitter()`, la phase est
   /// retombee et `dansLaSalle` serait faux pour tout le monde.
-  Future<void> _quitter(VueSalle vue) async {
+  ///
+  /// [confirme] : la question a deja ete posee (le dock de la salle de
+  /// seance, `confirmerQuitterSeance`).
+  Future<void> _quitter(VueSalle vue, {bool confirme = false}) async {
     if (vue.role == RoleSalle.controleur) {
       return _quitterControle();
     }
-    final bool confirme = await ConfirmDestructive.demander(
-      context,
-      question: t.salle.confirmerSortie,
-      consequence: t.salle.consequenceSortie,
-      libelleConfirmer: t.salle.quitterLeCours,
-    );
-    if (!confirme || !mounted) {
+    final bool accepte =
+        confirme ||
+        await ConfirmDestructive.demander(
+          context,
+          question: t.salle.confirmerSortie,
+          consequence: t.salle.consequenceSortie,
+          libelleConfirmer: t.salle.quitterLeCours,
+        );
+    if (!accepte || !mounted) {
       return;
     }
 
@@ -394,6 +467,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // arriver le premier et inscrire une deconnexion.
     await ref.read(serviceVideoProvider).annoncerSortie(widget.seanceId);
     await _moteur.quitter();
+    unawaited(_synchro?.liberer());
+    _synchro = null;
     if (!mounted) {
       return;
     }
@@ -466,6 +541,17 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     GoRouter.of(context).go(Routes.tcGroupes);
   }
 
+  /// D10 : l'enseignant sorti retourne dans la meme salle, par le meme
+  /// chemin que l'entree (pre-vol, jeton, salle). Le serveur seul dit si la
+  /// seance est close (« salle fermee » : l'impasse le dit).
+  void _retournerDansLaSalle() {
+    setState(() {
+      _finEnseignant = null;
+      _cahierIndisponible = false;
+    });
+    unawaited(_entrer());
+  }
+
   /// Retour a la racine de son role.
   ///
   /// C'est la sortie de qui n'a rien a transmettre : les trois autres roles, et
@@ -481,27 +567,56 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   Future<void> _basculerMicro(bool ouvert) =>
       _moteur.reglerMicro(actif: !ouvert);
 
-  Future<void> _basculerCamera(bool ouverte) =>
-      _moteur.reglerCamera(actif: !ouverte);
+  /// D14 (S0) : un allumage qui echoue n'est plus silencieux. La phrase
+  /// exacte du navigateur s'affiche sous l'en-tete, avec sa cause probable et
+  /// quoi faire (K-59) ; un essai reussi l'efface.
+  Future<void> _basculerCamera(bool ouverte) async {
+    try {
+      await _moteur.reglerCamera(actif: !ouverte);
+      if (mounted && _erreurCamera != null) {
+        setState(() => _erreurCamera = null);
+      }
+    } on Object catch (erreur) {
+      journalDev('camera : $erreur');
+      if (mounted) setState(() => _erreurCamera = '$erreur');
+    }
+  }
 
   /// Point 7 de la passation du 17/10 (spec section 10) : les eleves de la
   /// seance, pour l'enseignant, en feuille ; toucher un eleve ouvre sa fiche
   /// pedagogique. La feuille du roster se referme avant d'ouvrir la fiche :
   /// deux feuilles empilees sur un telephone ne laisseraient rien voir du
   /// cours.
-  Future<void> _voirEleves() => AppBottomSheet.ouvrir<void>(
-    context,
-    titre: t.tc.classe.roster.titre,
-    constructeur: (BuildContext feuille) => Consumer(
-      builder: (BuildContext _, WidgetRef ref, Widget? _) => PanneauRoster(
-        roster: _roster(ref),
-        onOuvrirFiche: (String academyId) {
-          Navigator.of(feuille).pop();
-          unawaited(_voirFiche(academyId));
-        },
-      ),
-    ),
-  );
+  ///
+  /// S0.2 : depuis l'en-tete sur une ligne de la salle de seance, la meme
+  /// feuille porte d'abord la presence ([lignes], J3), puis le roster.
+  Future<void> _voirEleves({List<_Presence>? lignes}) =>
+      AppBottomSheet.ouvrir<void>(
+        context,
+        titre: t.tc.classe.roster.titre,
+        constructeur: (BuildContext feuille) => Consumer(
+          builder: (BuildContext _, WidgetRef ref, Widget? _) {
+            final Widget roster = PanneauRoster(
+              roster: _roster(ref),
+              onOuvrirFiche: (String academyId) {
+                Navigator.of(feuille).pop();
+                unawaited(_voirFiche(academyId));
+              },
+            );
+            final List<_Presence>? presence = lignes;
+            if (presence == null) return roster;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                _ListePresence(lignes: presence, entete: true),
+                Ecart.vLg,
+                roster,
+              ],
+            );
+          },
+        ),
+      );
 
   Future<void> _voirFiche(String academyId) {
     final TeacherStudentProjection? eleve = _roster(ref)
@@ -529,6 +644,207 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     titre: t.presence.titre,
     constructeur: (BuildContext _) => _ListePresence(lignes: lignes),
   );
+
+  /// S0 : la salle de seance, ses rappels et ses medias reels.
+  Widget _salleDeSeance(
+    VueSalle vue,
+    VueSeance base,
+    ContenuPresente? presentee, {
+    required List<_Presence> lignes,
+    required VuePresence mienne,
+  }) {
+    final bool enseignant = base.role == RoleSeance.enseignant;
+    final SynchroSalle? synchro = _synchroPour(
+      ref.read(sessionProvider).profileId,
+    );
+    // S0.3 : le tableau blanc, ouvert par l'enseignant pour toute la classe,
+    // prend la place de la page (le tableau libre existant).
+    final bool tableau = enseignant
+        ? _tableau
+        : (synchro?.tableauOuvert.value ?? false);
+    final VueSeance seance = tableau
+        ? base.copyWith(
+            panneau: _panneau,
+            contexte: _contexte,
+            sansSupportPresente: true,
+            tableauLibre: const TableauLibre(
+              largeurCanonique: 1600,
+              hauteurCanonique: 1000,
+            ),
+          )
+        : base.copyWith(panneau: _panneau, contexte: _contexte);
+    final VideoSessionProvider moteur = ref.watch(moteurSalleProvider);
+    final double? plus = palierSuivant(_zoom);
+    final double? moins = palierPrecedent(_zoom);
+    final ParticipantSalle? moi = vue.moi;
+    final int? page = presentee?.page;
+    final ActionsSeance actions = ActionsSeance(
+      // Le dock de la salle de seance confirme deja la sortie
+      // (`confirmerQuitterSeance`) : une seule question.
+      onQuitter: () => unawaited(_quitter(vue, confirme: true)),
+      // Les commandes suivent le jeton (`peutParler`, `peutMontrer`), jamais
+      // le mode d'interface ; pas de bouton sans droit (jamais grise).
+      onMicro: vue.peutParler
+          ? () => unawaited(_basculerMicro(moi?.micro ?? false))
+          : null,
+      onCamera: vue.peutMontrer
+          ? () => unawaited(_basculerCamera(moi?.camera ?? false))
+          : null,
+      onAgrandir: () => setState(() => _agrandi = !_agrandi),
+      onZoomPlus: plus == null ? null : () => setState(() => _zoom = plus),
+      onZoomMoins: moins == null ? null : () => setState(() => _zoom = moins),
+      // B' : un seul affichage, « Avec notes » ; aucun bouton d'affichage.
+      onAffichage: null,
+      onCommandes: enseignant
+          ? () => _basculerPanneau(PanneauOuvert.commandes)
+          : null,
+      // S0.2 : la colonne Eleves de la salle de seance est repliee d'office
+      // hors ordinateur.
+      // Le panneau Eleves (colonne, ou panneau sur telephone) porte la
+      // presence (J3) et le roster reel (fiche, rappel discret).
+      onEleves: enseignant
+          ? () => _basculerPanneau(PanneauOuvert.eleves)
+          : null,
+      // La Bibliotheque des Commandes (et la touche B) ouvre le Coran : une
+      // autre sourate se presente a tout moment, comme depuis l'ancien
+      // panneau.
+      // S0.3 : le tableau blanc, ferme par defaut, ouvert pour la classe.
+      onTableau: enseignant && synchro != null
+          ? () => setState(() {
+              _tableau = !_tableau;
+              synchro.diffuserTableau(ouvert: _tableau);
+            })
+          : null,
+      // S1 : « Ecrire » et la gomme de l'enseignant ; l'outil s'arme dans
+      // `etatOutilsProvider`, l'encre part a la classe (SynchroSalle).
+      onOutil: enseignant ? (OutilEnseignement _) {} : null,
+      onBibliotheque: enseignant && vue.peutPresenter
+          ? () => unawaited(_ouvrirCoran())
+          : null,
+      onContexte: (ContexteOuvert c) => setState(() {
+        _contexte = c;
+        if (c != ContexteOuvert.aucun && _panneau == PanneauOuvert.commandes) {
+          _panneau = PanneauOuvert.aucun;
+        }
+      }),
+      // D9 : la page tourne pour toute la classe, par le canal de donnees.
+      onPagePrecedente: enseignant && page != null && page > 1
+          ? () => unawaited(
+              ref.read(presentateurCoranProvider).presenterPage(page - 1),
+            )
+          : null,
+      onPageSuivante: enseignant && page != null && page < pagesMushafMedine
+          ? () => unawaited(
+              ref.read(presentateurCoranProvider).presenterPage(page + 1),
+            )
+          : null,
+    );
+    // La scene en grand : choisie, sinon chez l'eleve tant que rien n'est
+    // presente. Le bouton de retour n'existe que si une page (ou le panneau
+    // de l'enseignant) attend derriere.
+    // Rien de presente : la scene en grand pour tous (les visages, ADR-001) ;
+    // une page presentee prend l'espace principal, la video revient en
+    // vignette, et la toucher remet la scene en grand.
+    final bool scenePremierPlan =
+        !tableau && (_scenePremierPlan ?? presentee == null);
+    final bool basculable = presentee != null || tableau;
+    return PorteeMediaSalle(
+      // S0.2 : l'en-tete tient sur une ligne ; la presence de l'eleve y
+      // passe en pastille (section 6.6, la sienne seulement) ; la liste de
+      // l'enseignant est sa colonne Eleves.
+      pleinCadre: true,
+      // Au telephone, l'enseignant n'a pas de colonne : « Eleves » ouvre la
+      // presence (J3) et le roster (fiche, rappel) en feuille.
+      pastille: enseignant ? null : _PastillePresence(mienne: mienne),
+      // Standard des commandes d'appel : au telephone, l'enseignant n'a pas
+      // de colonne ; le bouton rond « Eleves » (en haut a droite) ouvre la
+      // presence (J3) et le roster (fiche, rappel) en feuille.
+      boutonEleves:
+          enseignant &&
+              MediaQuery.sizeOf(context).shortestSide < AppGabarit.seuilTablette
+          ? (
+              nombre: lignes.length,
+              onPress: () => unawaited(_voirEleves(lignes: lignes)),
+            )
+          : null,
+      eleves: enseignant
+          ? _ElevesSeance(
+              lignes: lignes,
+              roster: _roster(ref),
+              onOuvrirFiche: (String academyId) =>
+                  unawaited(_voirFiche(academyId)),
+            )
+          : null,
+      // D14 : effacee des que la camera publie.
+      alerte: (moi?.camera ?? false)
+          ? null
+          : switch (_erreurCamera ?? _moteur.erreurCameraEntree) {
+              final String erreur => _ErreurCamera(erreur: erreur),
+              null => null,
+            },
+      scene: _Scene(vue: vue),
+      scenePremierPlan: scenePremierPlan,
+      onBasculerScene: basculable
+          ? () => setState(() => _scenePremierPlan = !scenePremierPlan)
+          : null,
+      // L'enseignant sans page ouvre le Coran depuis la scene : la page
+      // choisie prend aussitot l'espace principal.
+      actionScene: enseignant && presentee == null && vue.peutPresenter
+          ? (
+              libelle: t.salle.ouvrirCoran,
+              onPress: () => unawaited(_ouvrirCoran()),
+            )
+          : null,
+      video: moteur.renduVideo,
+      // L'enseignant chez l'eleve ; sa propre image chez l'enseignant.
+      identiteVignette: enseignant ? moi?.identite : vue.dominant?.identite,
+      // L'enseignant garde les etats de lecture de son panneau (page
+      // indisponible, texte non installe) ; l'eleve lit la page (D9).
+      page: (SupportPageFixe support) => enseignant && presentee != null
+          ? PageCoranPresentee(contenu: presentee, surCarte: true)
+          : PageCoranSalle(
+              key: SallePage.pageEleveKey,
+              numero: support.page,
+              surCarte: true,
+            ),
+      onZoom: (double z) => setState(() => _zoom = z),
+      // Reference 4 : les grandes fleches de part et d'autre de la page.
+      onPagePrecedente: actions.onPagePrecedente,
+      onPageSuivante: actions.onPageSuivante,
+      child: _AvecSynchro(
+        synchro: synchro,
+        child: SalleSeance(
+          key: const ValueKey<String>('salle-de-seance'),
+          vue: seance,
+          actions: actions,
+          local: EtatLocalSeance(
+            microOuvert: moi?.micro ?? false,
+            cameraAllumee: moi?.camera ?? false,
+            zoom: _zoom,
+            agrandi: _agrandi,
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// S0 : la bibliotheque du Coran, puis la page presentee a la classe ;
+  /// la scene cede la place a la page.
+  Future<void> _ouvrirCoran() async {
+    final ({int sourate, int verset})? choix = await choisirVersetCoran(
+      context,
+    );
+    if (choix == null || !mounted) return;
+    setState(() => _scenePremierPlan = null);
+    await ref
+        .read(presentateurCoranProvider)
+        .presenterVerset(sourate: choix.sourate, verset: choix.verset);
+  }
+
+  void _basculerPanneau(PanneauOuvert cible) => setState(() {
+    _panneau = _panneau == cible ? PanneauOuvert.aucun : cible;
+    if (_panneau == PanneauOuvert.commandes) _contexte = ContexteOuvert.aucun;
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -609,6 +925,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           onNaviguer: (String route) => GoRouter.of(context).go(route),
         ),
         onOuvrirCahier: _ouvrirCahier,
+        onRetournerSalle: _retournerDansLaSalle,
         onRevenirJournee: () =>
             GoRouter.of(context).go(Routes.enseignantJournee),
         cahierIndisponible: _cahierIndisponible,
@@ -717,6 +1034,64 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           )
         : null;
 
+    // D9 : l'eleve lit la page du Coran que l'enseignant presente (canal de
+    // donnees, `contenuPresenteProvider`), en lecture seule, dans la meme
+    // composition que la presentation lue (le document, puis la scene).
+    final ContenuPresente? pageEleve = vue.role == RoleSalle.eleve && !enImpasse
+        ? ref.watch(contenuPresenteProvider).value
+        : null;
+    // D9 : l'enseignant presente une page (le flux qu'il lit lui-meme) : sur
+    // telephone, la page prend alors toute la largeur ou toute la hauteur.
+    final ContenuPresente? pagePresentee = _panneauEnseignant(vue) && !enImpasse
+        ? ref.watch(contenuPresenteProvider).value
+        : null;
+    // Le panneau de l'enseignant lit d'abord la page par le service du Coran
+    // (etats de lecture) : la page ne prend la place que si elle est lue.
+    final bool pageEnseignant =
+        pagePresentee != null &&
+        (ref
+                .watch(pageCoranProvider(pagePresentee.page))
+                .value
+                ?.versets
+                .isNotEmpty ??
+            false) &&
+        pageCoranLisible(ref, pagePresentee.page);
+    final bool pageEleveLisible =
+        pageEleve != null && pageCoranLisible(ref, pageEleve.page);
+
+    // S0 (arbitrage du pilote, 24/10/2026) : une fois dans la salle,
+    // l'eleve, la guidee et l'enseignant passent par la salle de seance
+    // (`SalleSeance`), raccordee par `DepuisSalle`. L'entree, l'impasse,
+    // l'observateur et le controleur gardent leur rendu.
+    if (vue.dansLaSalle) {
+      final ContenuPresente? presentee =
+          vue.role == RoleSalle.eleve || _panneauEnseignant(vue)
+          ? ref.watch(contenuPresenteProvider).value
+          : null;
+      final VueSeance? seance = DepuisSalle.vue(
+        salle: vue,
+        mode: AppMetriques.of(context).mode,
+        presence: presence,
+        monProfil: monProfil,
+        monTuteurObserve: monTuteurObserve,
+        annonces: annonces,
+        groupeId: widget.groupeId,
+        age: ref.watch(portAgeEleveProvider).ageDeLEleve(),
+        supportPresente: presentee == null
+            ? null
+            : DepuisSalle.pageCoran(presentee.page),
+      );
+      if (seance != null) {
+        return _salleDeSeance(
+          vue,
+          seance,
+          presentee,
+          lignes: lignes,
+          mienne: mienne,
+        );
+      }
+    }
+
     // CTR-02 : la salle du controleur, la MEME salle (R-salle unique), avec
     // sa zone haute (« Quitter » y vit). Aucune commande en bas : « Son reçu »
     // attend BR-1 (CTRL-SON-1), « Agrandir le support » attend le rendu d'un
@@ -743,6 +1118,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
 
     return PageImmersive(
       registre: RegistreImmersif.salle,
+      lateraleEnPaysage: pageEleveLisible || pageEnseignant,
       entete: _Entete(
         vue: vue,
         monTuteurObserve: monTuteurObserve,
@@ -798,6 +1174,19 @@ class _SallePageEtat extends ConsumerState<SallePage> {
               vue: vue,
               lignes: lignes,
               document: PanneauEnseignantSalle(seanceId: widget.seanceId),
+              pageCoran: pageEnseignant,
+            )
+          // D9 : l'eleve voit la page du Coran presentee.
+          : pageEleve != null
+          ? _CorpsDocument(
+              vue: vue,
+              lignes: lignes,
+              document: PageCoranSalle(
+                key: SallePage.pageEleveKey,
+                numero: pageEleve.page,
+              ),
+              presentationLue: true,
+              pageCoran: pageEleveLisible,
             )
           // TB-11a : le tuteur observateur lit la presentation, meme
           // composition (le document d'abord, la scene ensuite).
@@ -809,6 +1198,235 @@ class _SallePageEtat extends ConsumerState<SallePage> {
               presentationLue: true,
             )
           : _Corps(vue: vue, lignes: lignes),
+    );
+  }
+}
+
+/// D14 (S0) : la cause probable d'un refus de camera, lue dans la phrase du
+/// navigateur (`getUserMedia`), et ce qu'il faut faire (K-59).
+String causeEchecCamera(String erreur) {
+  bool dit(List<String> mots) => mots.any(erreur.contains);
+  if (dit(<String>['NotAllowedError', 'Permission', 'permission'])) {
+    return t.salle.cameraEchecRefus;
+  }
+  if (dit(<String>['NotReadableError', 'TrackStartError', 'Could not start'])) {
+    return t.salle.cameraEchecOccupee;
+  }
+  if (dit(<String>['NotFoundError', 'DevicesNotFound', 'not found'])) {
+    return t.salle.cameraEchecAbsente;
+  }
+  return t.salle.cameraEchecAutre;
+}
+
+/// S0.2 : le panneau Eleves de l'enseignant dans la salle de seance : la
+/// presence de chacun (J3 : jamais « absent » sans le savoir, consolide ou
+/// non), puis le roster reel de la seance (fiche, rappel discret).
+class _ElevesSeance extends StatelessWidget {
+  const _ElevesSeance({
+    required this.lignes,
+    required this.roster,
+    required this.onOuvrirFiche,
+  });
+
+  final List<_Presence> lignes;
+  final RosterClasseVM roster;
+  final ValueChanged<String> onOuvrirFiche;
+
+  @override
+  Widget build(BuildContext context) {
+    // S0.2c : une ligne par personne (prenom, etat, micro) ; toucher un eleve
+    // du roster ouvre sa fiche (rappel discret, recitation). S0.2d : la carte
+    // prend la hauteur de son contenu, avec son rembourrage ; au-dela, elle
+    // defile (rien de coupe, rien de colle au bord).
+    return SingleChildScrollView(
+      padding: const EdgeInsetsDirectional.fromSTEB(
+        AppSpacing.sm,
+        0,
+        AppSpacing.sm,
+        AppSpacing.md,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        spacing: AppSpacing.xs,
+        children: <Widget>[
+          for (final _Presence personne in lignes)
+            _LigneEleve(
+              personne: personne,
+              onFiche:
+                  roster.disponible &&
+                      personne.academyId != null &&
+                      roster.parAcademyId(personne.academyId!) != null
+                  ? () => onOuvrirFiche(personne.academyId!)
+                  : null,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// S0.2c : la ligne d'une personne dans la colonne Eleves : le prenom en
+/// ellipse (jamais coupe ni debordant), son etat en pastille (le mot entier,
+/// J7), le micro coupe ; « consolide » dessous quand une decision l'a fige.
+class _LigneEleve extends StatelessWidget {
+  const _LigneEleve({required this.personne, this.onFiche});
+
+  final _Presence personne;
+  final VoidCallback? onFiche;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final Widget ligne = Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                  personne.nom,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: false,
+                  style: palette.inkStrong.applyTo(
+                    textes.labelLarge ?? const TextStyle(),
+                  ),
+                ),
+              ),
+              Ecart.hSm,
+              StatusPill(
+                libelle: LignePresence.libelle(personne.vue.etat),
+                ton: personne.vue.ton,
+              ),
+              if (personne.micro == false) ...<Widget>[
+                Ecart.hXs,
+                IconTheme(
+                  data: palette.inkMuted.asIconTheme(size: AppSpacing.lg),
+                  child: Icon(
+                    AppIcons.microCoupe.repos,
+                    semanticLabel: t.salle.microCoupe,
+                  ),
+                ),
+              ],
+            ],
+          ),
+          if (personne.vue.consolide)
+            Text(
+              t.presence.consolide,
+              style: palette.inkMuted.applyTo(
+                textes.bodySmall ?? const TextStyle(),
+              ),
+            ),
+        ],
+      ),
+    );
+    final VoidCallback? fiche = onFiche;
+    if (fiche == null) return MergeSemantics(child: ligne);
+    return Pressable(
+      onPress: fiche,
+      libelleSemantique: personne.nom,
+      child: ligne,
+    );
+  }
+}
+
+/// S1 : la portee de la synchronisation autour de la salle de seance : le
+/// depot local de la seance, l'emission de l'ecriture, et des outils neufs
+/// pour cette salle (jamais ceux de la precedente). Sans synchronisation
+/// (pas de jeton), la salle est rendue telle quelle.
+class _AvecSynchro extends StatelessWidget {
+  const _AvecSynchro({required this.synchro, required this.child});
+
+  final SynchroSalle? synchro;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final SynchroSalle? s = synchro;
+    if (s == null) return child;
+    return ProviderScope(
+      key: ValueKey<String>('synchro-${s.sessionId}'),
+      overrides: <Override>[
+        portAnnotationsProvider.overrideWithValue(s.depot),
+        notesDeposeesProvider.overrideWith2(NotesDeposees.new),
+        traitsNonPartagesProvider.overrideWith(TraitsNonPartages.new),
+        etatOutilsProvider.overrideWith(ControleurOutils.new),
+        historiquePersonnelProvider.overrideWith(ControleurHistorique.new),
+        diffusionEcritureProvider.overrideWithValue(s.diffuser),
+        diffusionPointeurProvider.overrideWithValue(s.diffuserPointeur),
+        pointeurDistantProvider.overrideWithValue(s.pointeurDistant),
+      ],
+      child: child,
+    );
+  }
+}
+
+/// S0.2 : l'etat de presence de l'eleve, en pastille dans l'en-tete de la
+/// salle de seance (section 6.6 : le sien, et aucun autre).
+class _PastillePresence extends StatelessWidget {
+  const _PastillePresence({required this.mienne});
+
+  final VuePresence mienne;
+
+  @override
+  Widget build(BuildContext context) => MergeSemantics(
+    child: Semantics(
+      label: t.presence.mienne,
+      child: StatusPill(
+        libelle: LignePresence.libelle(mienne.etat),
+        ton: mienne.ton,
+      ),
+    ),
+  );
+}
+
+/// D14 : la camera n'a pas pu s'allumer ; la phrase exacte du navigateur, sa
+/// cause probable et quoi faire (K-59), sous l'en-tete.
+class _ErreurCamera extends StatelessWidget {
+  const _ErreurCamera({required this.erreur});
+
+  final String erreur;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    return Semantics(
+      key: const ValueKey<String>('salle-erreur-camera'),
+      liveRegion: true,
+      container: true,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              t.salle.cameraEchec,
+              style: palette.inkAlert.applyTo(
+                textes.titleSmall ?? const TextStyle(),
+              ),
+            ),
+            Text(
+              causeEchecCamera(erreur),
+              style: palette.inkStrong.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+            Text(
+              t.salle.cameraEchecMessage(erreur: erreur),
+              style: palette.inkMuted.applyTo(
+                textes.bodySmall ?? const TextStyle(),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -1377,10 +1995,20 @@ class _CorpsDocument extends StatelessWidget {
     required this.lignes,
     required this.document,
     this.presentationLue = false,
+    this.pageCoran = false,
   });
 
   final VueSalle vue;
   final List<_Presence> lignes;
+
+  /// D9 (24/10/2026) : une page du Coran est presentee. Sur telephone, en
+  /// portrait, elle prend toute la largeur (sa hauteur suit le ratio de
+  /// l'edition de Medine, la colonne defile, jamais la page) ; en paysage,
+  /// toute la hauteur, la scene reduite a cote.
+  final bool pageCoran;
+
+  /// La largeur de la scene a cote de la page, sur un telephone en paysage.
+  static const double largeurSceneLaterale = AppSpacing.respiration * 3;
 
   /// Le premier niveau : le panneau de l'enseignant, ou la presentation lue.
   final Widget document;
@@ -1438,6 +2066,44 @@ class _CorpsDocument extends StatelessWidget {
     );
 
     final Gabarit gabarit = AppGabarit.de(context);
+    if (pageCoran && PageImmersive.telephonePaysage(context)) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Expanded(child: panneau),
+          SizedBox(
+            width: largeurSceneLaterale,
+            child: _Scene(vue: vue),
+          ),
+        ],
+      );
+    }
+    if (pageCoran &&
+        !gabarit.estLarge &&
+        MediaQuery.orientationOf(context) == Orientation.portrait) {
+      // La page a sa hauteur naturelle (largeur moins les gouttieres) ; la
+      // scene se reduit en bande dessous ; la colonne seule defile.
+      return SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.sm,
+              ),
+              child: document,
+            ),
+            SizedBox(
+              height: _hauteurScene,
+              child: _Scene(vue: vue),
+            ),
+            if (_colonneDePresence(context, vue))
+              _FondPresence(vue: vue, lignes: lignes),
+          ],
+        ),
+      );
+    }
     // TB-RC (TB_RAPPORT §d n° 23) : sur une tablette en paysage, empiler la
     // page et la scene reduisait la page de l'observateur a une vignette
     // (140 points de large a 1100 x 700) : la presentation lue y prend la
@@ -2086,6 +2752,7 @@ class _Presence {
     required this.role,
     required this.vue,
     this.micro,
+    this.academyId,
   });
 
   /// Compose la liste que l'ecran affiche.
@@ -2123,6 +2790,7 @@ class _Presence {
           // pas dans la salle -- et « pas de micro » ne se dit pas alors, parce
           // que ce serait un fait, la ou il n'y a qu'une absence de fait.
           micro: _microDe(vue.participantsListes, ligne.profilId),
+          academyId: ligne.identifiantImmuable,
         ),
     ];
   }
@@ -2161,6 +2829,10 @@ class _Presence {
 
   /// Micro ouvert, ferme, ou absent de la salle.
   final bool? micro;
+
+  /// L'identifiant immuable (matricule) de la personne, qui relie sa ligne a
+  /// sa fiche du roster ; `null` sans presence lue.
+  final String? academyId;
 }
 
 /// La presence de la seance, pour qui a le droit de la lire.

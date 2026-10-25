@@ -102,9 +102,43 @@ export const MODELES: Record<string, Fabrique> = {
       ],
     }
   },
+  // B3.1 (Boucle 3) : les candidats des formulaires Google, prevenus de ce qui
+  // va se passer. Texte valide par le directeur le 24/10/2026, mot pour mot :
+  // docs/current/CANDIDATURES/COURRIEL_ATTENTE_2026-10-24.md. Ecrit une seule
+  // fois, en francais : chaque candidat le recoit traduit dans sa langue a
+  // l'envoi (traduction.ts), jamais trois langues dans un message. Categorie
+  // `recrutement`, non essentielle : lien de desinscription en un clic.
+  attente_candidat: () => {
+    const sujet = 'Votre candidature pour enseigner à Rewayah Academy : où nous en sommes'
+    const accroche = 'Vous avez rempli notre formulaire pour enseigner le Coran à Rewayah Academy. Nous vous remercions de votre confiance et nous vous devons une réponse claire.'
+    return {
+      sujet,
+      apercu: accroche,
+      titre: sujet,
+      blocs: [
+        { type: 'texte', texte: 'Assalamou alaykoum wa rahmatoullah,' },
+        { type: 'texte', texte: accroche },
+        { type: 'texte', texte: 'Vous êtes près de six cents à avoir répondu. Nous lisons chaque candidature une par une, et nous n’ouvrons les classes qu’avec des enseignants que nous avons rencontrés. Cela prend du temps, et nous préférons le prendre plutôt que de mal faire.' },
+        { type: 'texte', texte: 'Ce qui va se passer :' },
+        { type: 'texte', texte: '1. D’ici trois semaines, vous recevrez un courriel personnel de notre part, dans tous les cas.\n' +
+          '2. Si votre profil correspond à nos besoins du moment, ce courriel contiendra une invitation à créer votre compte dans l’application Rewayah, puis un entretien en visio avec la direction.\n' +
+          '3. Si ce n’est pas le cas pour l’instant, nous vous le dirons aussi, et nous garderons votre candidature pour les prochaines ouvertures, sauf si vous préférez qu’on l’efface.' },
+        { type: 'texte', texte: 'Il n’y a rien à payer, ni aujourd’hui ni plus tard : enseigner à Rewayah Academy est un travail rémunéré, jamais une formation payante.' },
+        { type: 'texte', texte: 'Vous n’avez rien à faire aujourd’hui. Inutile de nous écrire pour demander où en est votre dossier : c’est nous qui reviendrons vers vous, à cette adresse.' },
+        { type: 'texte', texte: 'Si vous ne souhaitez plus enseigner avec nous, un clic sur le lien en bas de ce message suffit, sans justification.' },
+        { type: 'texte', texte: 'Qu’Allah vous récompense pour votre démarche.' },
+        { type: 'texte', texte: 'La direction\nRewayah Academy' },
+      ],
+    }
+  },
   message_libre: (d) => libre(d),
   nouvelles: (d) => libre(d),
 }
+
+/// Les modeles ecrits une seule fois, en francais, et toujours traduits a
+/// l'envoi vers la langue du destinataire (decision du directeur, 24/10/2026).
+/// Les langues ecrites a la main ne les portent pas.
+export const TRADUITS_A_L_ENVOI: readonly string[] = ['attente_candidat']
 
 export const FRANCAIS: LangueEcrite = {
   modeles: MODELES,

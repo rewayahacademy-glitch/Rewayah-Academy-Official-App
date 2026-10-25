@@ -84,10 +84,10 @@ final Finder _statut = find.byKey(
 );
 final Finder _dock = find.byKey(const ValueKey<String>('dock-seance'));
 
-/// Le bouton Camera du dock : son mot d'etat visible (ETATS-BTN-1), « Camera
-/// allumee » quand la camera est allumee.
+/// Le bouton Camera du dock : icone seule (standard des commandes d'appel,
+/// 24/10/2026), « Camera allumee » en infobulle quand la camera est allumee.
 Finder get _boutonCamera =>
-    find.descendant(of: _dock, matching: find.text('Caméra allumée'));
+    find.descendant(of: _dock, matching: find.byTooltip('Caméra allumée'));
 
 void main() {
   group('P10 camera interdite', () {
@@ -154,7 +154,9 @@ void main() {
       );
     });
 
-    testWidgets('ES 1440 : le statut est aligne sur le debut du dock', (
+    // Standard des commandes d'appel (24/10/2026) : la pilule est centree et
+    // le statut la surplombe, centre sur elle (plus aligne sur son debut).
+    testWidgets('ES 1440 : le statut est centre sur la pilule du dock', (
       WidgetTester tester,
     ) async {
       await _monter(
@@ -164,8 +166,8 @@ void main() {
         taille: _tailles.last,
       );
       expect(
-        tester.getTopLeft(_statut).dx,
-        moreOrLessEquals(tester.getTopLeft(_dock).dx),
+        tester.getCenter(_statut).dx,
+        moreOrLessEquals(tester.getCenter(_dock).dx),
       );
     });
 
@@ -210,9 +212,8 @@ void main() {
       });
     }
 
-    testWidgets('ES camera autorisee : bouton, pas de statut', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('ES camera autorisee (standard des commandes d\'appel) : '
+        'bouton, pas de statut', (WidgetTester tester) async {
       await _monter(tester, RoleSeance.eleve, EtatDemoSalle.repos);
       expect(_boutonCamera, findsOneWidget);
       expect(_statut, findsNothing);
@@ -265,7 +266,7 @@ void main() {
       await _monter(tester, RoleSeance.eleve, EtatDemoSalle.prolongee);
       expect(find.textContaining('Prolonger'), findsNothing);
       await tester.tap(
-        find.descendant(of: _dock, matching: find.text('Quitter')),
+        find.descendant(of: _dock, matching: find.byTooltip('Quitter')),
       );
       await tester.pumpAndSettle();
       expect(find.text('Quitter la séance\u00A0?'), findsOneWidget);

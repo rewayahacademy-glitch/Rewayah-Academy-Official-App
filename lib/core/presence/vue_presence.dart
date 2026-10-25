@@ -80,9 +80,10 @@ class VuePresence {
     final Duration? ecoule = origine == null
         ? null
         : switch (repere) {
-            RepereTemps.retard => ligne.debutSeance == null
-                ? null
-                : origine.difference(ligne.debutSeance!),
+            RepereTemps.retard =>
+              ligne.debutSeance == null
+                  ? null
+                  : origine.difference(ligne.debutSeance!),
             RepereTemps.entree ||
             RepereTemps.silence ||
             RepereTemps.attente => maintenant.difference(origine),
@@ -92,9 +93,7 @@ class VuePresence {
     return VuePresence._(
       etat: ligne.etat,
       ton: _ton(ligne.etat),
-      repere: ecoule == null || ecoule.isNegative
-          ? RepereTemps.aucun
-          : repere,
+      repere: ecoule == null || ecoule.isNegative ? RepereTemps.aucun : repere,
       consolide: ligne.consolide,
       ecoule: ecoule != null && ecoule.isNegative ? null : ecoule,
     );
@@ -186,15 +185,14 @@ List<PresenceParticipant> tableauDePresence(List<PresenceParticipant>? lignes) {
   if (lignes == null) {
     return const <PresenceParticipant>[];
   }
-  return lignes.toList()
-    ..sort((PresenceParticipant a, PresenceParticipant b) {
-      final int rangA = a.estEnseignant ? 1 : 0;
-      final int rangB = b.estEnseignant ? 1 : 0;
-      if (rangA != rangB) {
-        return rangA - rangB;
-      }
-      return a.prenom.compareTo(b.prenom);
-    });
+  return lignes.toList()..sort((PresenceParticipant a, PresenceParticipant b) {
+    final int rangA = a.estEnseignant ? 1 : 0;
+    final int rangB = b.estEnseignant ? 1 : 0;
+    if (rangA != rangB) {
+      return rangA - rangB;
+    }
+    return a.prenom.compareTo(b.prenom);
+  });
 }
 
 /// Ma propre ligne dans la presence d'une seance.

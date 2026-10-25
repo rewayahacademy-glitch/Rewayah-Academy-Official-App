@@ -351,6 +351,26 @@ class AppPalette extends ThemeExtension<AppPalette> {
     background: Color(0xFFFFFFFF),
     onBackground: Color(0xFF110E20),
   );
+
+  /// Standard des commandes d'appel (24/10/2026, Google Meet, Material 3) :
+  /// le fond translucide des pilules flottantes de la salle (surface a 85 %).
+  AppColorPair get piluleSalle => AppColorPair(
+    background: surfaceRaised.background.withValues(alpha: 0.85),
+    onBackground: surfaceRaised.onBackground,
+  );
+
+  /// Standard des commandes d'appel : le bouton rond actif (micro ouvert,
+  /// camera allumee, plus), rempli sombre, icone claire, dans les deux
+  /// themes (comme Meet).
+  AppColorPair get boutonAppelActif => AppPalette.claire().surfaceInverse;
+
+  /// S0.2d, retouche du pilote (24/10/2026) : la ligne d'etat de la salle au
+  /// telephone, translucide (fond a 70 %) sur la page ; l'encre reste celle
+  /// de la surface.
+  AppColorPair get ligneSalle => AppColorPair(
+    background: surfaceRaised.background.withValues(alpha: 0.7),
+    onBackground: surfaceRaised.onBackground,
+  );
   Color get voile =>
       const Color(0xFF000000).withValues(alpha: estSombre ? 0.56 : 0.32);
   AppShadowColor get ombreDialogue => const AppShadowColor(Color(0xFF000000));

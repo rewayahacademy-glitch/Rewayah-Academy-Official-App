@@ -8,6 +8,19 @@ import 'package:livekit_client/livekit_client.dart' as lk;
 import '../observabilite/journal_dev.dart';
 import 'video_session_provider.dart';
 
+/// Le debit maximal de la couche 720p, en bits par seconde (D15) : environ
+/// 1,8 Mbit/s envoyes pour les trois couches, 1,2 recus pour une video agrandie.
+const int debitMax720p = 1200000;
+
+/// D15 (S0.2) : `adaptiveStream` seulement chez l'enseignant.
+bool adaptiveStreamPour(AccesSalle acces) => acces.role == 'teacher';
+
+/// Vrai quand la camera s'allume d'elle-meme a l'entree : un eleve dont le
+/// jeton permet l'image, donc dont le tuteur a autorise la camera (D14,
+/// 24/10/2026). Jamais pour un autre role, jamais en audio seul.
+bool cameraAllumeeALEntree(AccesSalle acces) =>
+    acces.role == 'student' && acces.capacites.peutPublierVideo;
+
 /// La seule implementation du contrat, et le seul endroit ou le SDK est
 /// **traduit**.
 ///
@@ -123,13 +136,22 @@ class LiveKitSessionProvider implements VideoSessionProvider {
     // `RoomOptions` se pose au CONSTRUCTEUR : le passer a `connect()` est
     // deprecie depuis livekit_client 2.x et sera ignore un jour.
     final lk.Room salle = lk.Room(
-      roomOptions: const lk.RoomOptions(
+      roomOptions: lk.RoomOptions(
         // Les deux leviers que la specification section 13 demande d'activer :
         // `adaptiveStream` ajuste la resolution recue a la taille reellement
         // affichee, `dynacast` cesse d'emettre les couches que personne ne
         // regarde. Ce sont eux qui tiennent la promesse « ne pas rendre toutes
         // les videos en haute qualite » sans une ligne de code maison.
-        adaptiveStream: true,
+        //
+        // D15 (S0.2, tranche par le pilote le 24/10/2026) : `adaptiveStream`
+        // est coupe chez qui n'est pas enseignant. Sur Flutter web, il ne
+        // remonte pas toujours la taille reelle du rendu, et la video agrandie
+        // de l'enseignant restait floue ; `setVideoQuality` n'y peut rien, car
+        // le SDK garde la plus petite des deux demandes (livekit_client 2.12,
+        // `remote.dart:298-303`). L'eleve ne recoit qu'un flux utile, celui de
+        // l'enseignant, plafonne a 1,2 Mbit/s ([debitMax720p]) ; l'enseignant,
+        // qui recoit jusqu'a six flux, le garde.
+        adaptiveStream: adaptiveStreamPour(acces),
         dynacast: true,
         // **Les defauts de capture audio sont conserves volontairement.**
         // La specification section 18 met en garde : une configuration
@@ -137,7 +159,25 @@ class LiveKitSessionProvider implements VideoSessionProvider {
         // et le gain automatique. Pour de la recitation, ou l'intelligibilite
         // prime sur la fidelite, ce serait un contresens -- et le premier
         // cours en environnement bruyant le prouverait.
-        defaultAudioCaptureOptions: lk.AudioCaptureOptions(),
+        defaultAudioCaptureOptions: const lk.AudioCaptureOptions(),
+        // D15 (24/10/2026, decision du pilote) : l'image paraissait « 240p »
+        // avec les reglages par defaut, parce que les petites vignettes ne
+        // demandaient que la couche basse. Publication 720p en trois couches
+        // (180p, 360p, 720p), 720p plafonne a 1,2 Mbit/s ; `adaptiveStream`
+        // reste chez l'enseignant (voir plus haut).
+        defaultCameraCaptureOptions: const lk.CameraCaptureOptions(
+          params: lk.VideoParametersPresets.h720_169,
+        ),
+        defaultVideoPublishOptions: const lk.VideoPublishOptions(
+          videoEncoding: lk.VideoEncoding(
+            maxBitrate: debitMax720p,
+            maxFramerate: 30,
+          ),
+          videoSimulcastLayers: <lk.VideoParameters>[
+            lk.VideoParametersPresets.h180_169,
+            lk.VideoParametersPresets.h360_169,
+          ],
+        ),
       ),
     );
     _salle = salle;
@@ -166,7 +206,24 @@ class LiveKitSessionProvider implements VideoSessionProvider {
     // etait fausse : aucun ecran n'existait alors pour l'exercer, donc rien ne
     // l'a signalee. Ouvrir un micro sans geste, dans une maison ou un enfant
     // recite, est exactement ce que la regle empeche.
+    //
+    // **Une exception, decidee le 24/10/2026 (D14, pilote delegue par le
+    // directeur)** : l'eleve dont le tuteur a autorise la camera (jeton qui
+    // permet l'image) entre camera ALLUMEE, l'etat « Camera allumee » visible
+    // et le bouton pour la couper. L'invariant reste entier pour le micro, pour
+    // les autres roles, et pour l'eleve sans autorisation (pas de bouton).
     _poser(EtatSalle.connecte);
+    if (cameraAllumeeALEntree(acces)) {
+      try {
+        await salle.localParticipant?.setCameraEnabled(true);
+        _cameraAvantDegradation = true;
+      } catch (e) {
+        // Camera refusee par le navigateur ou occupee : l'eleve reste en
+        // salle, camera coupee ; la salle dit la phrase du navigateur (D14).
+        journalDev('camera de l eleve non allumee a l entree : $e');
+        _erreurCameraEntree = '$e';
+      }
+    }
     _publierParticipants();
   }
 
@@ -261,10 +318,9 @@ class LiveKitSessionProvider implements VideoSessionProvider {
     // specifique du socle qui suit : voir `TC_CONTRACT_REQUEST_F.md` §1.
     if (!_donnees.isClosed) {
       _donnees.add(
-        PaquetDonnees(
-          sujet: sujet,
+        paquetDepuisLeReseau(
+          sujetRecu: sujet,
           charge: evenement.data,
-          fiable: !sujet.endsWith(suffixeSujetEphemere),
           emetteurIdentite: evenement.participant?.identity,
         ),
       );
@@ -367,7 +423,7 @@ class LiveKitSessionProvider implements VideoSessionProvider {
       await local.publishData(
         charge,
         reliable: fiable,
-        topic: sujet,
+        topic: sujetSurLeReseau(sujet, fiable: fiable),
         destinationIdentities: destinataires.isEmpty ? null : destinataires,
       );
     } catch (e) {
@@ -479,6 +535,16 @@ class LiveKitSessionProvider implements VideoSessionProvider {
     _publierParticipants();
   }
 
+  String? _erreurCameraEntree;
+
+  @override
+  String? get erreurCameraEntree => _erreurCameraEntree;
+
+  /// Pose un refus de camera sans navigateur (tests).
+  @visibleForTesting
+  set erreurCameraEntreePourTest(String? erreur) =>
+      _erreurCameraEntree = erreur;
+
   @override
   Future<void> reglerCamera({required bool actif}) async {
     final lk.LocalParticipant? local = _salle?.localParticipant;
@@ -491,6 +557,7 @@ class LiveKitSessionProvider implements VideoSessionProvider {
       return;
     }
     await local.setCameraEnabled(actif);
+    _erreurCameraEntree = null;
     // Un geste explicite de l'usager redefinit ce que la degradation devra
     // restaurer : sans cela, un retour de reseau rouvrirait une camera qu'il
     // venait de fermer.
@@ -593,6 +660,10 @@ class LiveKitSessionProvider implements VideoSessionProvider {
     _acces = null;
     _degradee = false;
     _cameraAvantDegradation = false;
+    // Le refus de camera ne vaut que pour la seance ou il a eu lieu (revue de
+    // la PR 54) : le moteur vit toute l'application, et `rejoindre` passe par
+    // ici avant chaque entree.
+    _erreurCameraEntree = null;
     // **Ici, et seulement ici.** Quitter est un acte volontaire : la seance est
     // finie pour soi. Une deconnexion, elle, laisse le contenu en place --
     // c'est toute la difference entre « la seance est terminee » et « le

@@ -40,12 +40,15 @@ import 'commandes_pedagogiques.dart';
 import 'composition_salle.dart';
 import 'dock_seance.dart';
 import 'ecriture_seance.dart';
+import 'media_salle.dart';
+import 'palette_tableau.dart';
 import 'panneau_eleves.dart';
 import 'panneau_seance.dart';
 import 'panneau_supports.dart';
 import 'rangement_support.dart';
 import 'selecteur_ressources.dart';
 import 'surface_page_fixe.dart' show rectanglePage;
+import 'telephone_plein_ecran.dart';
 import 'vignette_video.dart' show MesuresVignette;
 import 'vue_seance.dart';
 import 'zone_support.dart';
@@ -124,6 +127,11 @@ class SalleSeance extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final Gabarit gabarit = AppGabarit.de(context);
     final bool large = gabarit == Gabarit.desktop;
+    // S0.2c (loi du directeur, 24/10/2026) : au telephone, dans `/salle`, la
+    // page du Coran EST l'ecran ; tout le reste est en surimpression.
+    if (telephonePleinEcran(context)) {
+      return TelephonePleinEcran(vue: vue, actions: actions, local: local);
+    }
     if (vue.role == RoleSeance.enseignant) {
       // TB-2 : la barre de l'appel est en bas de l'ecran, au-dessus de la
       // feuille ouverte (UX-07) ; c'est elle qui garde la marge du systeme.
@@ -154,7 +162,12 @@ class SalleSeance extends StatelessWidget {
     // web etroit, l'en-tete tient sur une ligne et les commandes, icones
     // seules, sont posees en bas par-dessus le support, masquables d'une
     // touche (CommandesMasquables) : le support et la video gardent l'ecran.
-    if (vue.role == RoleSeance.guidee && !large) {
+    // S0.2 (pilote, 24/10/2026) : dans `/salle` ([PorteeMediaSalle]
+    // pleinCadre), l'eleve prend la meme disposition a toutes les largeurs :
+    // en-tete sur une ligne, scene sur toute la hauteur restante, commandes
+    // en surimpression masquables.
+    final bool pleinCadre = PorteeMediaSalle.de(context)?.pleinCadre ?? false;
+    if ((vue.role == RoleSeance.guidee && !large) || pleinCadre) {
       return _ContexteEleve(
         vue: vue,
         actions: actions,
@@ -964,13 +977,29 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
   );
 
   /// EN-12 (micro), decision du directeur du 27/09 : l'etat du micro obtenu
-  /// (« Micro ouvert » ou « Micro coupe »), montre brievement et lu par le
-  /// lecteur d'ecran, que le geste vienne du dock ou de la touche M.
-  String? _retourMicro;
+  /// (« Micro ouvert » ou « Micro coupe »), lu par le lecteur d'ecran, que le
+  /// geste vienne du dock ou de la touche M. S0.2 (pilote, 24/10) : il ne
+  /// s'affiche plus sur la page, seulement sous le bouton rond.
 
   /// TB-5 (n. 12) : l'enseignant a replie la colonne des Participants. Etat
   /// local, jamais diffuse ; il survit au focus et au redimensionnement.
   bool _participantsReplies = false;
+
+  /// S0.2 (pilote, 24/10/2026) : dans `/salle`, la colonne des Participants
+  /// est repliee d'office hors ordinateur (telephone, portrait comme couche) ;
+  /// le bouton « Eleves » la deplie. Lu une fois, a la premiere composition.
+  bool _repliDecide = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_repliDecide) return;
+    _repliDecide = true;
+    if ((PorteeMediaSalle.de(context)?.pleinCadre ?? false) &&
+        widget.gabarit != Gabarit.desktop) {
+      _participantsReplies = true;
+    }
+  }
 
   /// TB-5 (UX-16) : le panneau droit ouvert avant le focus, a retrouver en
   /// le quittant si la largeur le permet.
@@ -1079,11 +1108,9 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
   void didUpdateWidget(_FocusPanneaux ancien) {
     super.didUpdateWidget(ancien);
     if (ancien.local.microOuvert != widget.local.microOuvert) {
-      _retourMicro = widget.local.microOuvert
-          ? t.salle.microOuvert
-          : t.salle.microCoupe;
-      // Lu une seule fois : le bandeau visible est exclu des semantiques.
-      _annoncer(_retourMicro!);
+      _annoncer(
+        widget.local.microOuvert ? t.salle.microOuvert : t.salle.microCoupe,
+      );
     }
     if (ancien.vue.contexteOuvert && !widget.vue.contexteOuvert) {
       WidgetsBinding.instance.addPostFrameCallback((Duration _) {
@@ -1215,24 +1242,23 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
     }
   }
 
-  /// La hauteur du retour du micro : au-dessus du dock et de ses libelles,
-  /// et, hors bureau, au-dessus du declencheur « Commandes » pose sur le
-  /// dock.
-  double _hauteurRetourMicro(BuildContext context) {
-    final double dessusDock =
-        diametreBoutonAppel(context) + AppSpacing.respiration;
-    return widget.gabarit == Gabarit.desktop
-        ? dessusDock
-        : dessusDock + AppSpacing.respiration + AppSpacing.lg;
-  }
-
   /// La barre de l'appel de l'enseignant : pilule centree sur bureau,
   /// panneau sur toute la largeur ailleurs.
   Widget _barreEnseignant(VueSeance vue) {
     const double gouttiere = AppPage.gouttiereMobile;
+    final bool pleinCadre = PorteeMediaSalle.de(context)?.pleinCadre ?? false;
+    final VoidCallback? commandes = _actions.onCommandes;
     final Widget dock = DockSeance(
       vue: vue,
       actions: _actions,
+      // Standard : « Plus » dans la pilule ouvre les Commandes.
+      plus:
+          pleinCadre &&
+              commandes != null &&
+              vue.panneau != PanneauOuvert.commandes &&
+              CommandesPedagogiques.aDesEntrees(vue, _actions)
+          ? BoutonPlusAppel(onPress: commandes)
+          : null,
       microOuvert: widget.local.microOuvert,
       cameraAllumee: widget.local.cameraAllumee,
       // TB-4 : en focus, « Reduire » reste dans la barre (TB18), en plus de
@@ -1247,6 +1273,10 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
           gouttiere,
           AppSpacing.lg,
         ),
+        // S0.2c : dans `/salle`, la barre se pose en bas a gauche, sous la
+        // colonne Eleves, jamais sur la page (SUPERPOS-1).
+        // Standard : la pilule est centree en bas, sous la scene (jamais sur
+        // la page, SUPERPOS-1).
         child: Center(heightFactor: 1, child: dock),
       );
     }
@@ -1353,27 +1383,6 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
                     agrandi: _agrandi,
                   ),
                   barre: _barreEnseignant(vue),
-                ),
-              ),
-              // Le retour du micro : discret, au-dessus du dock, sans
-              // fenetre ni geste ; il ne retient aucun toucher.
-              PositionedDirectional(
-                start: 0,
-                end: 0,
-                bottom: _hauteurRetourMicro(context),
-                child: IgnorePointer(
-                  child: ExcludeSemantics(
-                    // Centre et a la largeur du texte : une etiquette
-                    // breve, pas un bandeau d'une rive a l'autre.
-                    child: Center(
-                      child: IntrinsicWidth(
-                        child: LocalFeedback(
-                          key: const ValueKey<String>('retour-micro'),
-                          message: _retourMicro,
-                        ),
-                      ),
-                    ),
-                  ),
                 ),
               ),
             ],
@@ -1487,7 +1496,7 @@ class _SalleEnseignant extends StatelessWidget {
   Widget build(BuildContext context) {
     // Le support partage la hauteur avec les boutons, il se resserre pour
     // montrer la diapositive entiere.
-    final Widget support = Focus(
+    final Widget zone = Focus(
       focusNode: focusSupport,
       child: ZoneSupport(
         vue: vue,
@@ -1496,6 +1505,39 @@ class _SalleEnseignant extends StatelessWidget {
         contenu: contenuSupport,
       ),
     );
+    // S0.3b et standard des commandes d'appel : dans `/salle`, le tableau
+    // ouvert porte sa palette, pilule verticale au bord droit (au telephone,
+    // `TelephonePleinEcran` la pose au-dessus de la pilule d'appel).
+    final Widget support =
+        vue.tableauOuvert &&
+            actions.onTableau != null &&
+            gabarit != Gabarit.mobile &&
+            (PorteeMediaSalle.de(context)?.pleinCadre ?? false)
+        ? Stack(
+            children: <Widget>[
+              Positioned.fill(child: zone),
+              PositionedDirectional(
+                end: AppSpacing.lg,
+                top: AppSpacing.lg,
+                bottom: AppSpacing.lg,
+                // En bas du bord, a hauteur de la barre d'appel : jamais sur la
+                // vignette du coin haut.
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  // Standard, point 7 : elle disparait a 3 s avec la barre
+                  // de l'appel et revient au toucher.
+                  child: MasqueAvecCommandes(
+                    child: PaletteTableau(
+                      vue: vue,
+                      actions: actions,
+                      verticale: true,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )
+        : zone;
     // TB-9 : la portee du rangement (depart : la feuille de la surface ;
     // arrivee : la Bibliotheque des Commandes).
     return PorteeRangement(
@@ -1536,8 +1578,12 @@ class _SalleEnseignant extends StatelessWidget {
       return null;
     }
     return Consumer(
-      builder: (BuildContext _, WidgetRef ref, Widget? enfant) =>
-          !ecritSurLaSurface(ref, vue)
+      builder: (BuildContext contexte, WidgetRef ref, Widget? enfant) =>
+          // S0.3b : la palette du tableau ouvert remplace la palette courte.
+          vue.tableauOuvert &&
+              (PorteeMediaSalle.de(contexte)?.pleinCadre ?? false)
+          ? const SizedBox.shrink()
+          : !ecritSurLaSurface(ref, vue)
           ? enfant!
           : !enEcriture
           ? const SizedBox.shrink()
@@ -1557,11 +1603,18 @@ class _SalleEnseignant extends StatelessWidget {
                 ),
               ),
             ),
+      // Standard des commandes d'appel (24/10/2026) : dans `/salle`, « Plus »
+      // est dans la pilule d'appel ; aucun declencheur hors de la pilule.
       child: auRepos
-          ? DeclencheurCommandes(
-              onPress: basculer,
-              ouvert: vue.panneau == PanneauOuvert.commandes,
-              focusNode: focusCommandes,
+          ? Builder(
+              builder: (BuildContext contexte) =>
+                  (PorteeMediaSalle.de(contexte)?.pleinCadre ?? false)
+                  ? const SizedBox.shrink()
+                  : DeclencheurCommandes(
+                      onPress: basculer,
+                      ouvert: vue.panneau == PanneauOuvert.commandes,
+                      focusNode: focusCommandes,
+                    ),
             )
           : const SizedBox.shrink(),
     );
@@ -1594,24 +1647,30 @@ class _SalleEnseignant extends StatelessWidget {
       forme: forme,
       enMenu: !colonne,
       ajusteAuContenu: true,
-      enfant: PanneauEleves(
-        eleves: vue.eleves,
-        actions: actions,
-        // En colonne, le panneau montre toujours « File de recitation »
-        // (maquettes enseignant, EN-9) ; ailleurs, file au repos : pas de
-        // bloc, le panneau reste celui de CLV-07.
-        recitation:
-            colonne ||
-                vue.recitation.enCours ||
-                vue.recitation.suivants.isNotEmpty
-            ? vue.recitation
-            : null,
-        large: colonne,
-        serre: forme == FormePanneau.feuille,
-        autorisationEcrire: vue.voitAutorisationEcrire,
-        entete: vue.contexteOuvert
-            ? SectionContexte(vue: vue, actions: actions)
-            : null,
+      // S0.2 : dans `/salle`, la presence et le roster reels de la seance
+      // ([PorteeMediaSalle.eleves]) a la place du panneau de demonstration.
+      enfant: Builder(
+        builder: (BuildContext contexte) =>
+            PorteeMediaSalle.de(contexte)?.eleves ??
+            PanneauEleves(
+              eleves: vue.eleves,
+              actions: actions,
+              // En colonne, le panneau montre toujours « File de recitation »
+              // (maquettes enseignant, EN-9) ; ailleurs, file au repos : pas de
+              // bloc, le panneau reste celui de CLV-07.
+              recitation:
+                  colonne ||
+                      vue.recitation.enCours ||
+                      vue.recitation.suivants.isNotEmpty
+                  ? vue.recitation
+                  : null,
+              large: colonne,
+              serre: forme == FormePanneau.feuille,
+              autorisationEcrire: vue.voitAutorisationEcrire,
+              entete: vue.contexteOuvert
+                  ? SectionContexte(vue: vue, actions: actions)
+                  : null,
+            ),
       ),
     );
   }
@@ -2269,9 +2328,33 @@ class _PlaceDeclencheur extends MultiChildLayoutDelegate {
                   size.height >= b.height + 2 * ecart + bas));
     }
     final double rangee = math.max(d.height, b.height);
-    final double hSurface = auBord
+    double hSurface = auBord
         ? size.height
         : math.max(0, size.height - rangee - ecart - bas);
+    // Standard des commandes d'appel (24/10/2026) : une surface plus haute
+    // elargit la page et peut chasser le declencheur sous elle, ce qui coute
+    // une rangee entiere. Si une surface un peu moins haute lui laisse sa
+    // place a cote et garde une page plus grande, elle est preferee.
+    if (!auBord && r != null && aDecl && !aDebut && r > 0) {
+      final double besoin = d.width + 2 * ecart;
+      final double largeurBoite = math.max(0, size.width - 2 * retrait);
+      final double largeurPage = largeurBoite - 2 * (besoin - retrait);
+      final double hCote = math.min(size.height, largeurPage / r + 2 * retrait);
+      final double pageCote = rectanglePage(
+        ratio: r,
+        boite: Size(largeurBoite, math.max(0, hCote - 2 * retrait)),
+      ).height;
+      final double pageDessous = rectanglePage(
+        ratio: r,
+        boite: Size(largeurBoite, math.max(0, hSurface - 2 * retrait)),
+      ).height;
+      if (largeurPage > 0 &&
+          hCote >= dessus + d.height + 2 * ecart + bas &&
+          pageCote > pageDessous) {
+        auBord = true;
+        hSurface = hCote;
+      }
+    }
     layoutChild(
       _PieceSurface.surface,
       BoxConstraints.tightFor(width: size.width, height: hSurface),
@@ -2280,7 +2363,7 @@ class _PlaceDeclencheur extends MultiChildLayoutDelegate {
     final double marge = auBord ? ecart : 0;
     final bool ltr = sens == TextDirection.ltr;
     double y(Size piece) => auBord
-        ? size.height - bas - piece.height - ecart
+        ? hSurface - bas - piece.height - ecart
         : hSurface + ecart + (rangee - piece.height) / 2;
     if (aDecl) {
       positionChild(
@@ -3048,14 +3131,21 @@ Widget? _appel(VueSeance vue, double gouttiere) {
 /// focus, panneau ouvert ou erreur critique ([VueSeance.visioMaintenue]),
 /// lecteur d'ecran ; posee par-dessus le contenu, qui garde une marge egale
 /// a sa hauteur mesuree : rien ne bouge quand elle se masque.
+///
+/// S0.2 (pilote, 24/10/2026) : dans `/salle` ([PorteeMediaSalle.pleinCadre]),
+/// la scene garde toute la hauteur et la barre se pose EN SURIMPRESSION sur
+/// son bas, masquee au delai ; elle couvre le bas de la page tant qu'elle est
+/// visible (ecart a SUPERPOS-1, dit au pilote).
 Widget _visioRevelee({
   required VueSeance vue,
   required Widget contenu,
   required Widget barre,
-}) => CommandesMasquables(
-  contenu: contenu,
-  commandes: barre,
-  maintenir: vue.visioMaintenue,
-  margeLecture: true,
-  libelleEntree: t.salle.seance.commandesAppel,
+}) => Builder(
+  builder: (BuildContext context) => CommandesMasquables(
+    contenu: contenu,
+    commandes: barre,
+    maintenir: vue.visioMaintenue,
+    margeLecture: !(PorteeMediaSalle.de(context)?.pleinCadre ?? false),
+    libelleEntree: t.salle.seance.commandesAppel,
+  ),
 );

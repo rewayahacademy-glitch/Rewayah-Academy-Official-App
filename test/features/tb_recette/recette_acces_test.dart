@@ -60,10 +60,11 @@ final Finder _continuerSansMicro = find.byKey(
 );
 final Finder _question = find.text(t.salle.seance.quitterQuestion);
 
-/// Le bouton Quitter de la barre de l'appel.
+/// Le bouton Quitter de la barre de l'appel (standard des commandes
+/// d'appel : bouton rond sans mot, son nom est l'infobulle).
 final Finder _quitter = find.descendant(
   of: find.byKey(CommandesMasquables.commandesKey),
-  matching: find.text(t.salle.quitter),
+  matching: find.byTooltip(t.salle.quitter),
 );
 
 const String _titreInitial = 'Les bonnes manières';
@@ -354,7 +355,7 @@ void main() {
           adresseDemoSalle(role, EtatDemoSalle.microBloque),
         );
         // Etat reel : coupe avant tout geste.
-        expect(find.text(t.salle.microOuvert), findsNothing);
+        expect(find.byTooltip(t.salle.microOuvert), findsNothing);
         await tester.tap(_micro);
         await stabiliser(tester);
         expect(_texteMicroBloque, findsOneWidget);
@@ -366,14 +367,14 @@ void main() {
           findsOneWidget,
         );
         // Le geste n'a rien bascule.
-        expect(find.text(t.salle.microOuvert), findsNothing);
+        expect(find.byTooltip(t.salle.microOuvert), findsNothing);
         await tester.tap(_continuerSansMicro);
         await stabiliser(tester);
         expect(_texteMicroBloque, findsNothing);
         // Focus rendu au bouton Micro, toujours coupe : a l'ecran ET dans
         // l'etat local que la salle donnerait au moteur.
         expect(FocusManager.instance.primaryFocus?.debugLabel, 'bouton-micro');
-        expect(find.text(t.salle.microOuvert), findsNothing);
+        expect(find.byTooltip(t.salle.microOuvert), findsNothing);
         expect(
           tester
               .widget<SalleSeance>(find.byType(SalleSeance))
@@ -383,18 +384,18 @@ void main() {
           reason: 'Continuer sans micro laisse le micro coupe',
         );
         if (role != RoleSeance.guidee) {
-          expect(find.text(t.salle.microCoupe), findsWidgets);
+          expect(find.byTooltip(t.salle.microCoupe), findsWidgets);
         }
         // Un second geste rouvre l'explication : jamais un micro actif.
         await tester.tap(_micro);
         await stabiliser(tester);
         expect(_texteMicroBloque, findsOneWidget);
-        expect(find.text(t.salle.microOuvert), findsNothing);
+        expect(find.byTooltip(t.salle.microOuvert), findsNothing);
         await tester.sendKeyEvent(LogicalKeyboardKey.escape);
         await stabiliser(tester);
         expect(_texteMicroBloque, findsNothing);
         expect(FocusManager.instance.primaryFocus?.debugLabel, 'bouton-micro');
-        expect(find.text(t.salle.microOuvert), findsNothing);
+        expect(find.byTooltip(t.salle.microOuvert), findsNothing);
         expect(tester.takeException(), isNull);
       });
     }

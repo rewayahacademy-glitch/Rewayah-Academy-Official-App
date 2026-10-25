@@ -227,6 +227,7 @@ class ServicePresenceSupabase implements ServicePresence {
 
   @override
   Future<List<PresenceParticipant>?> presence(String seanceId) async {
+    if (seanceId.trim().isEmpty) return null;
     try {
       final List<Map<String, dynamic>> lignes = await _client
           .from('presence_seance_v')
@@ -280,6 +281,13 @@ presenceSeanceProvider =
       Ref ref,
       String seanceId,
     ) {
+      // D12 (24/10/2026) : une salle ouverte sans billet (page rechargee sur
+      // le web, `extra` perdu) demandait la presence avec un identifiant vide
+      // toutes les 20 s (`session_id=eq.`, 400 22P02). Sans seance, aucun
+      // appel et aucune minuterie : la presence est inconnue, sans plus.
+      if (seanceId.trim().isEmpty) {
+        return Stream<List<PresenceParticipant>?>.value(null);
+      }
       final ServicePresence service = ref.watch(servicePresenceProvider);
       final StreamController<List<PresenceParticipant>?> sortie =
           StreamController<List<PresenceParticipant>?>();

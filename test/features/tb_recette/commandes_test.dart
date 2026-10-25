@@ -560,9 +560,11 @@ void main() {
     ) async {
       await _ouvrir(tester, RoleSeance.enseignant, SituationTb.cmd01);
       expect(_contenu, findsOneWidget);
+      // Standard des commandes d'appel : Quitter est un bouton rond rouge,
+      // son nom est l'infobulle.
       final Finder quitter = find.descendant(
         of: find.byKey(CommandesMasquables.commandesKey),
-        matching: find.text(t.salle.quitter),
+        matching: find.byTooltip(t.salle.quitter),
       );
       expect(quitter, findsOneWidget);
       // La feuille s'arrete au-dessus de la barre de l'appel.

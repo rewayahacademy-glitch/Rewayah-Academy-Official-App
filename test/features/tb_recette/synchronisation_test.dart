@@ -929,11 +929,12 @@ void main() {
       (RoleSeance.enseignant, SituationTb.err03),
     ]) {
       await _monter(tester, role: role, situation: s);
-      final Finder ouvert = find.text(t.salle.microOuvert);
+      // Standard des commandes d'appel : le mot d'etat est l'infobulle.
+      final Finder ouvert = find.byTooltip(t.salle.microOuvert);
       expect(ouvert, findsOneWidget, reason: '${role.name} ${s.name}');
       await _taper(tester, ouvert);
       expect(
-        find.text(t.salle.microCoupe),
+        find.byTooltip(t.salle.microCoupe),
         findsWidgets,
         reason: '${role.name} ${s.name}',
       );

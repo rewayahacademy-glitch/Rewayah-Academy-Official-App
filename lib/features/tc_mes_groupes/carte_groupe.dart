@@ -72,7 +72,13 @@ class CarteGroupe extends StatelessWidget {
     this.urlPhotoEnseignant,
     this.rejoindreRetire = false,
     this.attenteEntree,
+    this.refusEntree,
   });
+
+  /// La phrase dite sous « Rejoindre » apres un appui qui n'a pas pu entrer
+  /// (le concierge n'a rendu aucune seance, ou l'a refusee, B2.2 bis (b)).
+  /// Le bouton reste actif : un nouvel appui redemande.
+  final String? refusEntree;
 
   /// L'entree ne peut pas encore aboutir (hors ligne, acces qui se lit
   /// encore) : « Rejoindre » reste present et actif, jamais grise
@@ -82,6 +88,9 @@ class CarteGroupe extends StatelessWidget {
 
   /// Le groupe montre.
   final GroupSummaryVM groupe;
+
+  /// La cle de la phrase de refus (tests).
+  static const Key cleRefus = ValueKey<String>('carte-groupe-refus-entree');
 
   /// Ce que fait un tap sur la carte.
   final VoidCallback? onOuvrir;
@@ -112,7 +121,11 @@ class CarteGroupe extends StatelessWidget {
       actions: switch (onRejoindre) {
         final VoidCallback rejoindre
             when groupe.rejoindreOuvert && !rejoindreRetire =>
-          _Rejoindre(onRejoindre: rejoindre, attente: attenteEntree),
+          _Rejoindre(
+            onRejoindre: rejoindre,
+            attente: attenteEntree,
+            refus: refusEntree,
+          ),
         _ => null,
       },
       child: Column(
@@ -155,10 +168,11 @@ class CarteGroupe extends StatelessWidget {
 /// posee, l'appui n'entre pas : il dit la phrase sous le bouton (region
 /// live) et l'annonce au lecteur d'ecran.
 class _Rejoindre extends StatefulWidget {
-  const _Rejoindre({required this.onRejoindre, this.attente});
+  const _Rejoindre({required this.onRejoindre, this.attente, this.refus});
 
   final VoidCallback onRejoindre;
   final String? attente;
+  final String? refus;
 
   @override
   State<_Rejoindre> createState() => _RejoindreEtat();
@@ -199,6 +213,20 @@ class _RejoindreEtat extends State<_Rejoindre> {
               attente,
               key: const ValueKey<String>('carte-groupe-attente-entree'),
               style: AppPalette.of(context).inkMuted.applyTo(
+                Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+          ),
+        ],
+        if (widget.refus case final String refus
+            when attente == null) ...<Widget>[
+          Ecart.vSm,
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              refus,
+              key: CarteGroupe.cleRefus,
+              style: AppPalette.of(context).inkAlert.applyTo(
                 Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
               ),
             ),
@@ -255,6 +283,7 @@ class _Entete extends StatelessWidget {
           mesure.dispose();
           return l;
         }
+
         final double motLePlusLong = groupe.libelle
             .split(RegExp(r'\s+'))
             .map((String mot) => largeur(mot, styleNom))

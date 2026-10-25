@@ -1,5 +1,9 @@
 # AGENTS.md — Rewayah Academy (pour ChatGPT / Codex)
 
+> **Note du 24/10/2026 (revue de la PR 54)** : le partage des zones ci-dessous (« Zone de Claude »,
+> `lib/features/**` réservé aux écrans) est caduc depuis la passation du 17/10 : un seul agent, Claude,
+> fait backend et écrans. Fait foi : `CLAUDE.md` à la racine ; le reste de ce fichier est gardé pour l'historique.
+
 > **Statut au 17/10/2026** : ChatGPT (Codex) n'est plus disponible ; Claude fait aussi le backend
 > (`CLAUDE.md`, ligne « Backend et écrans », et `docs/orchestration/PASSATION-2026-10-17.md`). Les
 > zones, branches et interdits ci-dessous restent valables pour tout agent qui lit ce fichier.

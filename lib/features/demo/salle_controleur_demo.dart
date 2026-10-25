@@ -127,6 +127,9 @@ class MoteurSalleControleurDemo implements VideoSessionProvider {
   Future<void> reglerMicro({required bool actif}) async {}
 
   @override
+  String? get erreurCameraEntree => null;
+
+  @override
   Future<void> reglerCamera({required bool actif}) async {}
 
   @override

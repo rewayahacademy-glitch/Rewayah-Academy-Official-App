@@ -15,8 +15,13 @@ class FlechePageMushaf extends StatelessWidget {
     required this.libelle,
     required this.versLaGauche,
     required this.onPress,
+    this.cote,
     super.key,
   });
+
+  /// Le cote du disque ; par defaut la cible tactile (la salle, S0.2 : plus
+  /// grand, reference 4 du directeur).
+  final double? cote;
 
   /// Ce que le lecteur d'ecran annonce.
   final String libelle;
@@ -28,8 +33,12 @@ class FlechePageMushaf extends StatelessWidget {
   final VoidCallback? onPress;
 
   @override
-  Widget build(BuildContext context) =>
-      FlecheRonde(libelle: libelle, onPress: onPress, retourne: versLaGauche);
+  Widget build(BuildContext context) => FlecheRonde(
+    libelle: libelle,
+    onPress: onPress,
+    retourne: versLaGauche,
+    cote: cote,
+  );
 }
 
 /// La page encadree de ses deux fleches (tablette et bureau).
@@ -47,8 +56,17 @@ class PageAvecFlechesMushaf extends StatelessWidget {
     required this.onPrecedente,
     required this.onSuivante,
     required this.child,
+    this.cote,
+    this.focusAuto = true,
     super.key,
   });
+
+  /// Le cote des fleches ; par defaut la cible tactile.
+  final double? cote;
+
+  /// Vrai : la page prend le focus clavier a l'ouverture (lecteur du Coran).
+  /// La salle le laisse a ses propres raccourcis.
+  final bool focusAuto;
 
   /// Le libelle de la fleche de droite.
   final String libellePrecedente;
@@ -74,7 +92,7 @@ class PageAvecFlechesMushaf extends StatelessWidget {
         const SingleActivator(LogicalKeyboardKey.arrowRight): ?onPrecedente,
       },
       child: Focus(
-        autofocus: true,
+        autofocus: focusAuto,
         // Les fleches du clavier appartiennent a la page, pas a un champ : le
         // focus reste sur elle tant qu'aucun autre controle ne le prend.
         child: Directionality(
@@ -86,6 +104,7 @@ class PageAvecFlechesMushaf extends StatelessWidget {
                 libelle: libelleSuivante,
                 versLaGauche: true,
                 onPress: onSuivante,
+                cote: cote,
               ),
               Expanded(
                 child: Directionality(textDirection: sens, child: child),
@@ -94,6 +113,7 @@ class PageAvecFlechesMushaf extends StatelessWidget {
                 libelle: libellePrecedente,
                 versLaGauche: false,
                 onPress: onPrecedente,
+                cote: cote,
               ),
             ],
           ),

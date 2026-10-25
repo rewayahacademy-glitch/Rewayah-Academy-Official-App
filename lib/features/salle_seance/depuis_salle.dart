@@ -7,9 +7,12 @@
 // BR-1 ne les a pas cables : `support` est nul ici.
 
 import '../../core/accessibilite/age_eleve.dart';
+import '../../core/coran/service_coran.dart' show pagesMushafMedine;
 import '../../core/domain/enums.dart';
+import '../../core/i18n/strings.g.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/tc_observation/port_annonce_observation.dart';
+import '../../core/video/video_session_provider.dart' show QualiteLien;
 import '../salle/vue_salle.dart';
 import 'presentation_observee.dart';
 import 'vue_seance.dart';
@@ -29,6 +32,7 @@ abstract final class DepuisSalle {
     String? groupeId,
     FinSeance? fin,
     AgeEleve age = AgeEleve.inconnu,
+    SupportPageFixe? supportPresente,
   }) {
     final RoleSeance? role = RoleSeance.resoudre(salle.role, mode);
     if (role == null) return null;
@@ -79,7 +83,7 @@ abstract final class DepuisSalle {
       nomEnseignant: nomEnseignant,
       initialesEnseignant: initiales(nomEnseignant),
       prenomEleve: prenomEleve,
-      connexion: connexionDe(salle.phase),
+      connexion: connexionDe(salle.phase, qualite: salle.qualite),
       // Une impasse n'est pas une salle : rien n'y est enregistre.
       enregistrementConfirme: salle.phase != PhaseSalle.refus,
       visite: visite,
@@ -99,8 +103,23 @@ abstract final class DepuisSalle {
       // MA-TUTOIEMENT-1 : le registre suit l'age, jamais la presentation ;
       // un age inconnu (avant BR-1) vouvoie.
       tutoiement: age.tutoiement,
+      // S0 : la page du Coran presentee (canal de donnees, D9), dans la
+      // surface a page fixe, au seul affichage « Avec notes ».
+      supportPresente: supportPresente,
     );
   }
+
+  /// S0 : la page [numero] du mushaf de Medine comme support a page fixe,
+  /// au ratio du papier A4 (directeur, 24/10/2026), jamais etiree.
+  static SupportPageFixe pageCoran(int numero) => SupportPageFixe(
+    id: 'mushaf-madina-15',
+    version: '1',
+    titre: t.salle.coran.titrePage,
+    page: numero,
+    total: pagesMushafMedine,
+    largeurCanonique: 1000,
+    hauteurCanonique: 1414,
+  );
 
   /// TB-11a (plan V2 §5, UX-21) : la vue de la presentation que suit un
   /// observateur (tuteur, controleur), lue par la surface partagee
@@ -140,7 +159,16 @@ abstract final class DepuisSalle {
   /// La connexion vue par la salle de seance : seulement les phases DEJA
   /// connues du moteur (lot CL-7). Echec durable et hors ligne confirme
   /// viendront du moteur a BR-1.
-  static ConnexionSeance connexionDe(PhaseSalle phase) => switch (phase) {
+  ///
+  /// S0 : un lien que le SDK mesure mediocre se dit « Reseau faible » meme
+  /// quand la phase reste en salle (« un etat ne se dit jamais par la couleur
+  /// seule », J7).
+  static ConnexionSeance connexionDe(
+    PhaseSalle phase, {
+    QualiteLien qualite = QualiteLien.inconnue,
+  }) => switch (phase) {
+    PhaseSalle.enSalle when qualite == QualiteLien.mediocre =>
+      ConnexionSeance.reseauFaible,
     PhaseSalle.instable => ConnexionSeance.reseauFaible,
     PhaseSalle.reconnexion => ConnexionSeance.reconnexion,
     PhaseSalle.retabli => ConnexionSeance.retablie,

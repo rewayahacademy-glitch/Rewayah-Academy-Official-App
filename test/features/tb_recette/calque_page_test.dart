@@ -655,8 +655,9 @@ void main() {
         // couche n'y recoit rien, la barre garde son toucher.
         final bool sousLaPage = tester.getRect(_page).overlaps(rMicro);
         expect(sousLaPage, clics > 0, reason: 'cas mesure : page sous Micro');
+        // Standard des commandes d'appel : le mot d'etat est l'infobulle.
         final bool ouvert = find
-            .descendant(of: micro, matching: find.text(t.salle.microOuvert))
+            .byTooltip(t.salle.microOuvert)
             .evaluate()
             .isNotEmpty;
         // Un doigt pose sur Micro qui glisse jusque dans la page.
@@ -670,12 +671,7 @@ void main() {
         await _attendre(tester);
         expect(_traits(depot), isEmpty, reason: 'toucher Micro');
         expect(
-          find.descendant(
-            of: micro,
-            matching: find.text(
-              ouvert ? t.salle.microCoupe : t.salle.microOuvert,
-            ),
-          ),
+          find.byTooltip(ouvert ? t.salle.microCoupe : t.salle.microOuvert),
           findsOneWidget,
           reason: 'le toucher a bascule le micro',
         );

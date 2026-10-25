@@ -9,7 +9,6 @@ import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_color_pair.dart';
-import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
@@ -20,8 +19,8 @@ import '../../core/widgets/barre_precedent_suivant.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/pressable.dart';
-import '../../core/widgets/rosace_verset.dart';
 import '../../core/widgets/skeleton.dart';
+import 'page_coran_salle.dart';
 import 'presentation_coran.dart';
 import 'vue_presentation.dart';
 
@@ -114,6 +113,16 @@ class PanneauEnseignantSalle extends ConsumerWidget {
   }
 }
 
+/// La bibliotheque du Coran de la salle (sourate, verset), ou `null` si
+/// rien n'est choisi. S0 : aussi ouverte depuis la scene video au premier
+/// plan, ou le panneau n'est pas a l'ecran.
+Future<({int sourate, int verset})?> choisirVersetCoran(BuildContext context) =>
+    AppBottomSheet.ouvrir<({int sourate, int verset})>(
+      context,
+      titre: t.enseignant.salle.bibliotheque,
+      constructeur: (BuildContext _) => const _Bibliotheque(),
+    );
+
 /// Le corps du panneau, et le seul endroit qui porte un etat local.
 ///
 /// Deux faits seulement y vivent : une demande en cours, et le dernier echec a
@@ -139,12 +148,9 @@ class _CorpsEtat extends ConsumerState<_Corps> {
 
   /// Ouvre la bibliotheque, puis presente ce qui y a ete choisi.
   Future<void> _ouvrirBibliotheque() async {
-    final ({int sourate, int verset})? choix =
-        await AppBottomSheet.ouvrir<({int sourate, int verset})>(
-          context,
-          titre: t.enseignant.salle.bibliotheque,
-          constructeur: (BuildContext _) => const _Bibliotheque(),
-        );
+    final ({int sourate, int verset})? choix = await choisirVersetCoran(
+      context,
+    );
     if (choix == null || !mounted) {
       return;
     }
@@ -181,52 +187,59 @@ class _CorpsEtat extends ConsumerState<_Corps> {
   @override
   Widget build(BuildContext context) {
     final VuePresentation vue = widget.vue;
+    final Widget contenu = switch (vue.contenu) {
+      final ContenuPresente pointeur => PageCoranPresentee(contenu: pointeur),
+      null => _Vide(
+        onOuvrir: vue.commandesActives
+            ? () => unawaited(_ouvrirBibliotheque())
+            : null,
+      ),
+    };
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        _Reference(vue: vue),
-        Ecart.vSm,
-        // Le contenu prend toute la place qui reste : c'est le premier niveau de
-        // la hierarchie de la salle, et rien ne se pose par-dessus.
-        Expanded(
-          child: switch (vue.contenu) {
-            final ContenuPresente pointeur => _PagePresentee(contenu: pointeur),
-            null => _Vide(
-              onOuvrir: vue.commandesActives
-                  ? () => unawaited(_ouvrirBibliotheque())
-                  : null,
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints contraintes) => Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          _Reference(vue: vue),
+          Ecart.vSm,
+          // Le contenu prend toute la place qui reste : c'est le premier niveau de
+          // la hierarchie de la salle, et rien ne se pose par-dessus. D9 : sans
+          // hauteur bornee (telephone en portrait), la page prend sa hauteur
+          // naturelle, celle de toute la largeur.
+          if (contraintes.hasBoundedHeight)
+            Expanded(child: contenu)
+          else
+            contenu,
+          if (_echec case final String message) ...<Widget>[
+            Ecart.vSm,
+            LocalFeedback(message: message),
+          ],
+          // Les commandes sont dans le flux, sous le texte : une barre d'outils
+          // posee par-dessus couvrirait le Coran, ce que la fiche interdit.
+          if (vue.presente && vue.peutPresenter) ...<Widget>[
+            Ecart.vSm,
+            _Commandes(
+              vue: vue,
+              actives: vue.commandesActives && !_enCours,
+              onPresenter: (int page) => unawaited(_presenterPage(page)),
+              onBibliotheque: () => unawaited(_ouvrirBibliotheque()),
             ),
-          },
-        ),
-        if (_echec case final String message) ...<Widget>[
-          Ecart.vSm,
-          LocalFeedback(message: message),
-        ],
-        // Les commandes sont dans le flux, sous le texte : une barre d'outils
-        // posee par-dessus couvrirait le Coran, ce que la fiche interdit.
-        if (vue.presente && vue.peutPresenter) ...<Widget>[
-          Ecart.vSm,
-          _Commandes(
-            vue: vue,
-            actives: vue.commandesActives && !_enCours,
-            onPresenter: (int page) => unawaited(_presenterPage(page)),
-            onBibliotheque: () => unawaited(_ouvrirBibliotheque()),
-          ),
-        ],
-        // Un droit que le jeton refuse ne se grise pas : le bouton n'existe pas,
-        // et une phrase prend sa place -- sans quoi l'enseignant chercherait la
-        // commande manquante.
-        if (!vue.peutPresenter) ...<Widget>[
-          Ecart.vSm,
-          Text(
-            t.enseignant.salle.sansDroitPresentation,
-            style: AppPalette.of(context).surfaceInverse.applyTo(
-              Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
+          ],
+          // Un droit que le jeton refuse ne se grise pas : le bouton n'existe pas,
+          // et une phrase prend sa place -- sans quoi l'enseignant chercherait la
+          // commande manquante.
+          if (!vue.peutPresenter) ...<Widget>[
+            Ecart.vSm,
+            Text(
+              t.enseignant.salle.sansDroitPresentation,
+              style: AppPalette.of(context).surfaceInverse.applyTo(
+                Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
+              ),
             ),
-          ),
+          ],
         ],
-      ],
+      ),
     );
   }
 }
@@ -294,19 +307,37 @@ class _Reference extends StatelessWidget {
 }
 
 /// Le contenu presente : la page du mushaf, dans ses quatre etats de lecture.
-class _PagePresentee extends ConsumerWidget {
-  const _PagePresentee({required this.contenu});
+///
+/// S0 : aussi posee par `/salle` dans la surface a page fixe de la salle de
+/// seance ([surCarte] : l'encre de la carte, [SurCarteSalle]).
+class PageCoranPresentee extends ConsumerWidget {
+  /// Cree la page presentee.
+  const PageCoranPresentee({
+    required this.contenu,
+    this.surCarte = false,
+    super.key,
+  });
 
+  /// Le pointeur presente a la classe.
   final ContenuPresente contenu;
 
+  /// Posee sur la carte de la salle de seance.
+  final bool surCarte;
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context, WidgetRef ref) => surCarte
+      ? SurCarteSalle(
+          child: Builder(builder: (BuildContext c) => _etat(c, ref)),
+        )
+      : _etat(context, ref);
+
+  Widget _etat(BuildContext context, WidgetRef ref) {
     final AsyncValue<PageCoran?> page = ref.watch(
       pageCoranProvider(contenu.page),
     );
     final AsyncValue<List<Sourate>?> sourates = ref.watch(souratesProvider);
     // SALLE-ENCRE-1 : les etats sans page se posent sur le fond de la salle.
-    final AppColorPair salle = AppPalette.of(context).surfaceInverse;
+    final AppColorPair salle = encreSalle(context);
 
     final VueLecteur lecteur = VueLecteur.depuis(
       pageDemandee: contenu.page,
@@ -339,85 +370,12 @@ class _PagePresentee extends ConsumerWidget {
         registre: RegistreVide.subi,
         encre: salle,
       ),
-      EtatLecteur.lecture => _Texte(lecteur: lecteur),
+      // D9 : la page du mushaf a quinze lignes, plus le texte continu.
+      EtatLecteur.lecture => PageCoranSalle(
+        numero: contenu.page,
+        surCarte: surCarte,
+      ),
     };
-  }
-}
-
-/// Le texte de la page, decoupe par sourate.
-///
-/// **En registre de lecture, pas en registre de salle.** La salle est sombre ;
-/// un texte coranique ne se lit pas sur un fond de scene video. La surface
-/// reprend donc le parchemin du lecteur (`surfaceQuran`) plutot que d'inventer un
-/// troisieme registre, et la taille est celle du rendu de document, jamais une
-/// taille posee pour cette surface.
-///
-/// La composition -- flux continu, rosace de verset dessinee, sens de lecture du
-/// document -- est celle du lecteur de l'eleve. `ponytail:` duplication assumee
-/// de trois lignes de composition, faute d'un widget partage de page de mushaf.
-/// Plafond : la troisieme surface qui rendra du Coran. Chemin de reprise :
-/// extraire un composant de texte de page a ce moment-la, pas avant.
-class _Texte extends StatelessWidget {
-  const _Texte({required this.lecteur});
-
-  final VueLecteur lecteur;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final AppMetriques metriques = AppMetriques.of(context);
-    final TextStyle base = palette.surfaceQuran.applyTo(
-      AppTypography.document(),
-    );
-
-    return DecoratedBox(
-      decoration: palette.surfaceQuran.decoration(
-        borderRadius: metriques.arrondi,
-      ),
-      child: ClipRRect(
-        borderRadius: metriques.arrondi,
-        child: Directionality(
-          // Le sens de lecture appartient au document, pas a l'application : on
-          // tourne les pages d'un mushaf de la droite vers la gauche, meme quand
-          // l'interface autour est en francais.
-          textDirection: TextDirection.rtl,
-          child: SelectionArea(
-            child: ListView(
-              padding: const EdgeInsets.all(AppSpacing.md),
-              children: <Widget>[
-                for (final SectionSourate section in lecteur.sections)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                    child: Text.rich(
-                      TextSpan(
-                        children: <InlineSpan>[
-                          for (final VersetCoran verset
-                              in section.versets) ...<InlineSpan>[
-                            TextSpan(text: '${verset.texte} '),
-                            WidgetSpan(
-                              alignment: PlaceholderAlignment.middle,
-                              // Un numero de verset est un repere de mise en
-                              // page, pas du texte revele : un lecteur d'ecran
-                              // doit lire le verset, pas epeler son numero au
-                              // milieu de la phrase.
-                              child: ExcludeSemantics(
-                                child: RosaceVerset(numero: verset.numero),
-                              ),
-                            ),
-                            const TextSpan(text: ' '),
-                          ],
-                        ],
-                      ),
-                      textAlign: TextAlign.justify,
-                      style: base,
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }
 
