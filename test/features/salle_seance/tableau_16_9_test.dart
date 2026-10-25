@@ -43,7 +43,7 @@ void main() {
       expect(repere.page.center.dy, closeTo(ecran.height / 2, 1e-6));
     }
     // Le rapport des longueurs x / y du trait est le meme partout.
-    final double attendu = (0.5 * 16) / (0.3 * 9);
+    const double attendu = (0.5 * 16) / (0.3 * 9);
     for (final ({double dx, double dy, Rect feuille}) r in rendus.values) {
       expect(r.dx / r.dy, closeTo(attendu, 1e-6));
     }
