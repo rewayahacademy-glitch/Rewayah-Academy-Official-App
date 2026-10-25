@@ -302,9 +302,15 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     _sParticipants = _moteur.participants.listen((
       List<ParticipantSalle> liste,
     ) {
-      if (mounted) {
-        setState(() => _participants = liste);
+      if (!mounted) return;
+      // Lot salle 3, audit reseau (e) : la salle n'affiche pas qui parle ; un
+      // changement d'orateur seul (ActiveSpeakersChangedEvent, plusieurs fois
+      // par seconde) ne reconstruit pas toute la page.
+      if (memesHorsParole(_participants, liste)) {
+        _participants = liste;
+        return;
       }
+      setState(() => _participants = liste);
     });
     _sQualite = _moteur.qualite.listen((QualiteLien lien) {
       if (mounted) {
