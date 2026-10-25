@@ -135,9 +135,10 @@ export const MODELES: Record<string, Fabrique> = {
   nouvelles: (d) => libre(d),
 }
 
-/// Les modeles ecrits une seule fois, en francais, et toujours traduits a
-/// l'envoi vers la langue du destinataire (decision du directeur, 24/10/2026).
-/// Les langues ecrites a la main ne les portent pas.
+/// Les modeles ecrits en francais et traduits a l'envoi vers la langue du
+/// destinataire (decision du directeur, 24/10/2026), sauf vers une langue qui
+/// les ecrit a la main : `attente_candidat` est ecrit en arabe (pilote,
+/// 25/10/2026), traduit vers en, es, pt et les autres.
 export const TRADUITS_A_L_ENVOI: readonly string[] = ['attente_candidat']
 
 export const FRANCAIS: LangueEcrite = {

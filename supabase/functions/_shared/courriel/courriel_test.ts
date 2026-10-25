@@ -150,8 +150,8 @@ Deno.test('chaque langue ecrite a tous les modeles et toutes les raisons', () =>
     const L = LANGUES[l]
     assert(L, l)
     for (const m of modelesConnus) {
-      // Ecrit en francais seul, traduit a l'envoi : verifie plus bas.
-      if (l !== 'fr' && TRADUITS_A_L_ENVOI.includes(m)) continue
+      // Traduit a l'envoi vers les langues qui ne l'ecrivent pas : verifie plus bas.
+      if (l !== 'fr' && l !== 'ar' && TRADUITS_A_L_ENVOI.includes(m)) continue
       assert(typeof L.modeles[m] === 'function', `${l} : modele ${m}`)
     }
     for (const c of CATEGORIES) assert(L.raisons[c] && L.raisons[c].length > 20, `${l} : raison ${c}`)
@@ -165,7 +165,7 @@ Deno.test('chaque modele dans chaque langue : leger, bonne langue, bonne directi
     for (const m of modelesConnus) {
       const base = { modele: m, categorie: 'classes', essentielle: false, donnees: { ...DONNEES, jeton_desinscription: 'abc', langue_source: l } }
       const r = rendre(base, l)
-      if (l !== 'fr' && TRADUITS_A_L_ENVOI.includes(m)) {
+      if (l !== 'fr' && l !== 'ar' && TRADUITS_A_L_ENVOI.includes(m)) {
         assertEquals(r.traduireDepuis, 'fr', `${l} ${m} : traduit a l envoi`)
         continue
       }
@@ -235,8 +235,8 @@ Deno.test('attente_candidat : le texte valide par le directeur, mot pour mot', a
   assert(!c.blocs.some((b) => b.type === 'bouton'))
 })
 
-Deno.test('attente_candidat : rendu en anglais et en arabe par le faux traducteur, une langue par message', async () => {
-  for (const cible of ['en', 'ar']) {
+Deno.test('attente_candidat : rendu en anglais et en peul par le faux traducteur, une langue par message', async () => {
+  for (const cible of ['en', 'ff']) {
     const r = rendre(ATTENTE, cible)
     assertEquals(r.traduireDepuis, 'fr', cible)
     const envoyes: string[][] = []
@@ -276,4 +276,27 @@ Deno.test('le nom de la marque n est jamais traduit, vers aucune langue', async 
   const c = await traduireContenu(r.contenu, 'fr', 'en', async (textes, _s, vers) =>
     textes.map((t) => depuisHtml(brouiller(versHtml(t, vers !== 'ar')))))
   assert(c.sujet.includes('Rewayah Academy') && !c.sujet.includes('روايا'), c.sujet)
+})
+
+Deno.test('attente_candidat en arabe : ecrit a la main, jamais traduit, de droite a gauche', () => {
+  const r = rendre(ATTENTE, 'ar')
+  assertEquals(r.traduireDepuis, undefined)
+  const c = r.contenu
+  assertEquals(c.langue, 'ar')
+  assertEquals(c.droiteAGauche, true)
+  assertEquals(c.sujet, 'ترشحكم للتدريس في Rewayah Academy: ما وصلنا إليه')
+  assertEquals(c.noteTraduction, undefined)
+  const { html, texte } = composer(c)
+  assert(html.includes('<html lang="ar" dir="rtl">'))
+  assert(!texte.includes('traduit automatiquement') && !html.includes('traduit automatiquement'))
+  assert(texte.includes('السلام عليكم ورحمة الله،') && texte.includes('طلبكم') && texte.includes('رسوم تدريب'))
+  // Aucun mot francais, le nom en latin seul ; aucune transcription arabe du nom.
+  assert(!/Bonjour|Vous |votre |Assalamou/.test(texte), texte)
+  assert(!/روايا|روية|أكاديمية رواية/.test(texte))
+  assert(html.includes('/fr/courriels/desinscription?jeton=jeton-1'))
+  assert(!c.blocs.some((b) => b.type === 'bouton'))
+  // Meme forme que le francais : memes blocs, meme liste en trois points.
+  const fr = rendre(ATTENTE, 'fr').contenu
+  assertEquals(c.blocs.length, fr.blocs.length)
+  assertEquals((c.blocs[4] as { texte: string }).texte.split('\n').length, 3)
 })
