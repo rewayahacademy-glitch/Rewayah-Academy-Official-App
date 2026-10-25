@@ -1,4 +1,8 @@
 {
+  "salle.supports.titre": "Lot salle 2 (25/10/2026), demande du directeur via le pilote : l onglet Bibliotheque montre un choix de supports, une tuile « Coran, Mushaf de Medine », une ligne « D autres supports viendront », la tuile ouvre la page",
+  "salle.supports.coran": "Lot salle 2 (25/10/2026), demande du directeur via le pilote : l onglet Bibliotheque montre un choix de supports, une tuile « Coran, Mushaf de Medine », une ligne « D autres supports viendront », la tuile ouvre la page",
+  "salle.supports.coranDetail": "Lot salle 2 (25/10/2026), demande du directeur via le pilote : l onglet Bibliotheque montre un choix de supports, une tuile « Coran, Mushaf de Medine », une ligne « D autres supports viendront », la tuile ouvre la page",
+  "salle.supports.aVenir": "Lot salle 2 (25/10/2026), demande du directeur via le pilote : l onglet Bibliotheque montre un choix de supports, une tuile « Coran, Mushaf de Medine », une ligne « D autres supports viendront », la tuile ouvre la page",
   "salle.seulEnseignantDetail": "Lot salle 2 (25/10/2026), texte demande par le directeur via le pilote : « Restez sur cet ecran : la seance commence des que votre enseignant entre. »",
   "salle.attenteDe": "Lot salle 2 (25/10/2026), demande du directeur transmise par le pilote apres la capture du telephone de l eleve : titre « En attente de Sayyid X » ; le titre Sayyid / Sayyida n est pas lu dans /salle, le prenom seul (TB-10)",
   "salle.seance.tableauOuvert": "S0.3 (24/10/2026), arbitrage du pilote delegue par le directeur : le tableau blanc est le tableauLibre existant, affiche sur demande d un bouton de la surimpression, ferme par defaut, synchronise avec la classe",

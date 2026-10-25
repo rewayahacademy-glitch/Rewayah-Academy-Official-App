@@ -234,6 +234,12 @@
   },
   "salle": {
     "retourner": "Retourner dans la salle",
+    "supports": {
+      "titre": "Choisir un support",
+      "coran": "Coran, Mushaf de Médine",
+      "coranDetail": "La page s'ouvre pour toute la classe.",
+      "aVenir": "D'autres supports viendront."
+    },
     "coran": {
       "indisponible": "La page du Coran ne s'affiche pas sur cet appareil",
       "indisponibleDetail": "L'écriture de l'édition de Médine n'a pas pu se charger. Réessayez\u00a0; si rien ne change, prévenez la direction.",

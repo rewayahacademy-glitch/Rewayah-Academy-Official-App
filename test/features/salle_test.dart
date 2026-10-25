@@ -34,7 +34,9 @@ import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_enseignant/page_coran_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart'
-    show DeclencheurCommandes;
+    show CommandesPedagogiques, DeclencheurCommandes;
+import 'package:rewayah_academy/features/salle_seance/dock_seance.dart'
+    show BoutonPlusAppel;
 import 'package:rewayah_academy/features/salle_seance/ecriture_seance.dart'
     show diffusionEcritureProvider;
 import 'package:rewayah_academy/features/salle_seance/media_salle.dart';
@@ -180,6 +182,7 @@ Future<void> _monterSalle(
   // Une visite annoncee fait battre le point de la mention sans fin
   // (`PointEnregistrement`) : on ne peut pas attendre le repos.
   bool auRepos = true,
+  String? groupeId,
 }) async {
   await tester.pumpWidget(
     hoteRoutant(
@@ -193,7 +196,7 @@ Future<void> _monterSalle(
         GoRoute(
           path: Routes.salle,
           builder: (BuildContext _, GoRouterState _) =>
-              const SallePage(seanceId: _seance),
+              SallePage(seanceId: _seance, groupeId: groupeId),
         ),
         GoRoute(
           path: Routes.eleve,
@@ -2822,5 +2825,100 @@ void main() {
         expect(apres.left, closeTo(16, 0.5));
       });
     }
+  });
+
+  // Lot salle 2 (directeur, 25/10/2026) : la Bibliotheque montre le choix des
+  // supports ; la salle reprend a la derniere page presentee dans la classe.
+  group('Lot salle 2 : choix du support et reprise de la page', () {
+    List<Override> surcharges(FauxMoteurSalle moteur) => <Override>[
+      ..._surcharges(
+        video: FauxServiceVideo(acces0: _acces('teacher')),
+        moteur: moteur,
+        preVol: FauxServicePreVol(),
+        role: AppRole.teacher,
+      ),
+      ...surchargesMadina15(page: 604),
+      pageCoranProvider.overrideWith(
+        (Ref _, int n) async => PageCoran(
+          numero: n,
+          versets: <VersetCoran>[
+            VersetCoran(
+              sourateNumero: 114,
+              numero: 1,
+              texte: 'verset',
+              pageNumero: n,
+            ),
+          ],
+        ),
+      ),
+    ];
+
+    testWidgets('la Bibliotheque montre le Coran et ce qui viendra', (
+      WidgetTester tester,
+    ) async {
+      tester.view.physicalSize = const Size(1366, 768);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: surcharges(moteur),
+        groupeId: 'g1',
+      );
+      await moteur.presenterContenu(
+        ContenuPresente(
+          page: 604,
+          sourate: 114,
+          verset: 1,
+          presentePar: 'p1',
+          emisLe: DateTime.now(),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(BoutonPlusAppel.cle));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(CommandesPedagogiques.cleBibliotheque));
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.supports.coran), findsOneWidget);
+      expect(find.text(t.salle.supports.aVenir), findsOneWidget);
+      final int avant = moteur.contenusPresentesDemandes.length;
+      await tester.tap(find.byKey(SallePage.supportCoranKey));
+      await tester.pumpAndSettle();
+      // La tuile ouvre la page retenue pour la classe, sans autre question.
+      expect(moteur.contenusPresentesDemandes.length, avant + 1);
+      expect(moteur.contenusPresentesDemandes.last.page, 604);
+    });
+
+    testWidgets('page 604, Quitter, retourner : la salle reprend a la page '
+        '604', (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1366, 768);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: surcharges(moteur),
+        groupeId: 'g1',
+      );
+      await moteur.presenterContenu(
+        ContenuPresente(
+          page: 604,
+          sourate: 114,
+          verset: 1,
+          presentePar: 'p1',
+          emisLe: DateTime.now(),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(_commande(t.salle.seance.sortir));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.salle.seance.quitterCahier).last);
+      await tester.pumpAndSettle();
+      final int avant = moteur.contenusPresentesDemandes.length;
+      await tester.tap(find.byKey(FinSeanceEnseignant.retourSalleKey));
+      await tester.pumpAndSettle();
+      expect(moteur.contenusPresentesDemandes.length, avant + 1);
+      expect(moteur.contenusPresentesDemandes.last.page, 604);
+    });
   });
 }

@@ -44,6 +44,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/bouton_icone.dart';
+import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/commande_salle.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/lien_fleche.dart';
@@ -56,6 +57,7 @@ import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/permanent_notice.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/section_header.dart';
+import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/status_pill.dart';
 import '../accueil_eleve/apres_seance_accessibilite.dart';
 import '../controleur/compte_rendu_controle.dart' show adresseCompteRendu;
@@ -82,6 +84,7 @@ import '../tc_espace_groupe/roster_classe.dart';
 import '../tc_mes_groupes/chemins_tc_a.dart';
 import '../tc_observation_ui/indicateur_observation.dart';
 import 'fiche_seance.dart';
+import 'memoire_page_classe.dart';
 import 'preparation_eleve.dart';
 import 'preparation_enseignant.dart';
 import 'synchro_salle.dart';
@@ -148,6 +151,9 @@ class SallePage extends ConsumerStatefulWidget {
   /// La classe d'origine, pour « Retour a la Classe » et le contexte.
   final String? groupeId;
 
+  /// La tuile « Coran » du choix des supports (lot salle 2).
+  static const Key supportCoranKey = ValueKey<String>('salle-support-coran');
+
   /// La seance visee, lue dans le billet d'entree (ADR-005). Elle ne transite
   /// jamais par l'URL : une adresse copiee arrive sans billet et repart.
   final String seanceId;
@@ -198,6 +204,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
 
   /// L'eleve sorti de la salle (CLV-09).
   IssueSeance? _sortieEleve;
+
+  /// Lot salle 2 : la page retenue pour la classe a deja ete reprise a cette
+  /// entree (une seule fois ; l'enseignant change ensuite librement).
+  bool _repriseFaite = false;
 
   /// S0 : l'etat local de la salle de seance (rien n'est diffuse) : zoom de
   /// la page (paliers 100 a 200 %), page agrandie, panneau et contexte.
@@ -311,6 +321,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// est encore seul devant son ecran coute une seconde et evite cela.
   Future<void> _entrer() async {
     setState(() {
+      _repriseFaite = false;
       _impasse = null;
       _materielPret = false;
       _acces = null;
@@ -721,7 +732,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // `etatOutilsProvider`, l'encre part a la classe (SynchroSalle).
       onOutil: enseignant ? (OutilEnseignement _) {} : null,
       onBibliotheque: enseignant && vue.peutPresenter
-          ? () => unawaited(_ouvrirCoran())
+          ? () => unawaited(_choisirSupport())
           : null,
       onContexte: (ContexteOuvert c) => setState(() {
         _contexte = c;
@@ -834,6 +845,71 @@ class _SallePageEtat extends ConsumerState<SallePage> {
 
   /// S0 : la bibliotheque du Coran, puis la page presentee a la classe ;
   /// la scene cede la place a la page.
+  /// Lot salle 2 (directeur, 25/10/2026) : la Bibliotheque montre le choix
+  /// des supports (aujourd'hui le Coran seul, d'autres viendront) au lieu
+  /// d'ouvrir le Coran d'office. Le Coran reprend a la derniere page
+  /// presentee dans la classe, sinon le choix de la sourate et du verset.
+  Future<void> _choisirSupport() async {
+    final bool coran =
+        await AppBottomSheet.ouvrir<bool>(
+          context,
+          titre: t.salle.supports.titre,
+          constructeur: (BuildContext feuille) => Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              CarteLignes(
+                lignes: <Widget>[
+                  SettingRow(
+                    key: SallePage.supportCoranKey,
+                    icon: AppIcons.coran,
+                    title: t.salle.supports.coran,
+                    description: t.salle.supports.coranDetail,
+                    lien: true,
+                    onPress: () => Navigator.of(feuille).pop(true),
+                  ),
+                ],
+              ),
+              Ecart.vLg,
+              Text(
+                t.salle.supports.aVenir,
+                style: AppPalette.of(feuille).inkMuted.applyTo(
+                  Theme.of(feuille).textTheme.bodyMedium ?? const TextStyle(),
+                ),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+    if (!coran || !mounted) return;
+    final String? groupe = widget.groupeId;
+    final int? retenue = groupe == null
+        ? null
+        : ref.read(memoirePageClasseProvider).lire(groupe);
+    if (retenue == null) return _ouvrirCoran();
+    setState(() => _scenePremierPlan = null);
+    await ref.read(presentateurCoranProvider).presenterPage(retenue);
+  }
+
+  /// Lot salle 2 : a l'entree de l'enseignant, la page retenue pour la
+  /// classe revient, une fois, si rien n'est encore presente.
+  void _reprendrePage(VueSalle vue, ContenuPresente? presentee) {
+    final String? groupe = widget.groupeId;
+    if (_repriseFaite ||
+        groupe == null ||
+        vue.role != RoleSalle.enseignant ||
+        !vue.dansLaSalle) {
+      return;
+    }
+    _repriseFaite = true;
+    final int? retenue = ref.read(memoirePageClasseProvider).lire(groupe);
+    if (presentee != null || retenue == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (!mounted) return;
+      unawaited(ref.read(presentateurCoranProvider).presenterPage(retenue));
+    });
+  }
+
   Future<void> _ouvrirCoran() async {
     final ({int sourate, int verset})? choix = await choisirVersetCoran(
       context,
@@ -1084,6 +1160,15 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           vue.role == RoleSalle.eleve || _panneauEnseignant(vue)
           ? ref.watch(contenuPresenteProvider).value
           : null;
+      // Lot salle 2 : la page que l'enseignant presente est retenue pour la
+      // classe ; a son entree suivante, elle revient.
+      final String? groupe = widget.groupeId;
+      if (groupe != null &&
+          vue.role == RoleSalle.enseignant &&
+          presentee != null) {
+        ref.read(memoirePageClasseProvider).ecrire(groupe, presentee.page);
+      }
+      _reprendrePage(vue, presentee);
       final VueSeance? seance = DepuisSalle.vue(
         salle: vue,
         mode: AppMetriques.of(context).mode,
