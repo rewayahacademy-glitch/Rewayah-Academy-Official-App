@@ -20,6 +20,8 @@ import 'package:rewayah_academy/core/tc_classe/roster_enseignant.dart';
 import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
 import 'package:rewayah_academy/core/tc_coran/moteur_mushaf.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
+import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart'
+    show PointNormalise;
 import 'package:rewayah_academy/core/tc_outils/port_annotations.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
@@ -2584,6 +2586,64 @@ void main() {
         if (dossierCapture != null) {
           await capturerVue(tester, 'k4-tableau-enseignant-$nom');
         }
+
+        // Retour du directeur (25/10) : le tableau « devient bizarre » quand
+        // les commandes se masquent. La boite ne bouge plus au masquage, et
+        // meme si la fenetre change, un trait garde son rapport x / y.
+        PointNormalise a = const PointNormalise(0.1, 0.2);
+        PointNormalise b = const PointNormalise(0.6, 0.5);
+        double rapport(Rect f) =>
+            ((b.x - a.x) * f.width) / ((b.y - a.y) * f.height);
+        await tester.pump(const Duration(seconds: 4));
+        await tester.pumpAndSettle();
+        final Rect masquee = tester.getRect(
+          find.byKey(const ValueKey<String>('surface-feuille')),
+        );
+        expect(masquee, feuille);
+        tester.view.physicalSize = Size(taille.width * 0.8, taille.height);
+        await tester.pumpAndSettle();
+        final Rect autre = tester.getRect(
+          find.byKey(const ValueKey<String>('surface-feuille')),
+        );
+        expect(rapport(autre), closeTo(rapport(feuille), 0.02));
+        a = const PointNormalise(0, 0);
+        b = const PointNormalise(1, 1);
+        expect(rapport(autre), closeTo(16 / 9, 0.02));
+      });
+    }
+
+    for (final Size taille in <Size>[
+      const Size(1366, 768),
+      const Size(390, 844),
+    ]) {
+      final String nom = '${taille.width.toInt()}x${taille.height.toInt()}';
+      testWidgets('zoom, $nom : + et - visibles, la page passe de 100 a '
+          '200 %', (WidgetTester tester) async {
+        await monterAvecPage(tester, taille);
+        final Finder plus = find.byKey(
+          const ValueKey<String>('salle-zoom-plus'),
+        );
+        expect(plus, findsOneWidget);
+        // Au premier palier, « moins » n'est pas rendu (jamais grise).
+        expect(
+          find.byKey(const ValueKey<String>('salle-zoom-moins')),
+          findsNothing,
+        );
+        final double avant = tester
+            .getRect(find.byKey(PageCoranSalle.cle))
+            .height;
+        while (plus.evaluate().isNotEmpty) {
+          await tester.tap(plus);
+          await tester.pumpAndSettle();
+        }
+        final double apres = tester
+            .getRect(find.byKey(PageCoranSalle.cle))
+            .height;
+        expect(apres / avant, closeTo(2, 0.01));
+        expect(
+          find.byKey(const ValueKey<String>('salle-zoom-moins')),
+          findsOneWidget,
+        );
       });
     }
   });

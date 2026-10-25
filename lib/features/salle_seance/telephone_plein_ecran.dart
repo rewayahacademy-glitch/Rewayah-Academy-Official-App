@@ -288,6 +288,21 @@ class TelephonePleinEcran extends StatelessWidget {
                           bottom: 0,
                           child: SafeArea(top: false, child: bas),
                         ),
+                        // Zoom de la page (directeur, 25/10/2026 : « aucune
+                        // commande de zoom vue sur ordinateur ») : une pilule
+                        // flottante au bord droit, - et +, icones seules ;
+                        // Ctrl + molette et le pincement restent.
+                        if (!libre &&
+                            !paletteADroite &&
+                            commandesADroite == null &&
+                            (actions.onZoomPlus != null ||
+                                actions.onZoomMoins != null))
+                          PositionedDirectional(
+                            top: 0,
+                            bottom: 0,
+                            end: AppSpacing.lg,
+                            child: Center(child: _PiluleZoom(actions: actions)),
+                          ),
                         if (paletteADroite || commandesADroite != null)
                           PositionedDirectional(
                             top: 0,
@@ -496,6 +511,60 @@ class _BoutonEleves extends StatelessWidget {
             ),
           ),
       ],
+    );
+  }
+}
+
+/// La pilule du zoom local de la page : moins en bas, plus en haut (100 a
+/// 200 %). Au premier et au dernier palier, le bouton disparait et garde sa
+/// place (jamais grise).
+class _PiluleZoom extends StatelessWidget {
+  const _PiluleZoom({required this.actions});
+
+  final ActionsSeance actions;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final double diametre = diametreBoutonAppel(context);
+    Widget bouton(Key cle, AppIcon icone, String libelle, VoidCallback? f) =>
+        f == null
+        ? SizedBox.square(dimension: diametre)
+        : BoutonIcone(
+            key: cle,
+            forme: FormeBoutonIcone.appel,
+            icone: icone,
+            diametre: diametre,
+            libelle: libelle,
+            infobulle: libelle,
+            onPress: f,
+          );
+    return DecoratedBox(
+      key: const ValueKey<String>('salle-zoom'),
+      decoration: palette.piluleSalle.decoration(
+        borderRadius: AppRadius.arrondiFull,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.sm),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          spacing: AppSpacing.sm,
+          children: <Widget>[
+            bouton(
+              const ValueKey<String>('salle-zoom-plus'),
+              AppIcons.zoomPlus,
+              t.salle.seance.zoomPlus,
+              actions.onZoomPlus,
+            ),
+            bouton(
+              const ValueKey<String>('salle-zoom-moins'),
+              AppIcons.zoomMoins,
+              t.salle.seance.zoomMoins,
+              actions.onZoomMoins,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
