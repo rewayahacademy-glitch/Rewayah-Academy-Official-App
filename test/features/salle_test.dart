@@ -2966,8 +2966,10 @@ void main() {
       expect(moteur.contenusPresentesDemandes.last.page, 604);
     });
 
-    testWidgets('page 604, Quitter, retourner : la salle reprend a la page '
-        '604', (WidgetTester tester) async {
+    // Lot salle 3 (directeur, 25/10/2026) : la page ne se rouvre plus seule
+    // a l'entree ; la Bibliotheque la propose, au choix de l'enseignant.
+    testWidgets('page 604, Quitter, retourner : rien ne se rouvre seul, la '
+        'Bibliotheque reprend a la page 604', (WidgetTester tester) async {
       tester.view.physicalSize = const Size(1366, 768);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
@@ -2994,8 +2996,70 @@ void main() {
       final int avant = moteur.contenusPresentesDemandes.length;
       await tester.tap(find.byKey(FinSeanceEnseignant.retourSalleKey));
       await tester.pumpAndSettle();
+      expect(moteur.contenusPresentesDemandes.length, avant);
+      expect(find.byKey(_croixRanger), findsNothing);
+
+      await tester.tap(find.byKey(BoutonPlusAppel.cle));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(CommandesPedagogiques.cleBibliotheque));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(SallePage.supportCoranKey));
+      await tester.pumpAndSettle();
       expect(moteur.contenusPresentesDemandes.length, avant + 1);
       expect(moteur.contenusPresentesDemandes.last.page, 604);
     });
+
+    testWidgets('Lot salle 3 : entrer, aucun support ; ouvrir, fermer, '
+        'sortir, revenir : toujours ferme', (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1366, 768);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: surcharges(moteur),
+        groupeId: 'g1',
+      );
+      // A l'entree : rien de presente, aucune croix.
+      expect(moteur.contenusPresentesDemandes, isEmpty);
+      expect(find.byKey(_croixRanger), findsNothing);
+
+      // Ouvrir : la croix « Ranger dans la bibliotheque » apparait.
+      await moteur.presenterContenu(
+        ContenuPresente(
+          page: 604,
+          sourate: 114,
+          verset: 1,
+          presentePar: 'p1',
+          emisLe: DateTime.now(),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(_croixRanger), findsOneWidget);
+      expect(
+        find.bySemanticsLabel(t.salle.seance.rangement.ranger),
+        findsOneWidget,
+      );
+
+      // Fermer : un contenu retire part a la classe, la croix disparait.
+      await tester.tap(find.byKey(_croixRanger));
+      await tester.pumpAndSettle();
+      expect(moteur.contenusPresentesDemandes.last.estRetire, isTrue);
+      expect(find.byKey(_croixRanger), findsNothing);
+
+      // Sortir puis revenir : toujours ferme, rien ne repart seul.
+      await tester.tap(_commande(t.salle.seance.sortir));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.salle.seance.quitterCahier).last);
+      await tester.pumpAndSettle();
+      final int avant = moteur.contenusPresentesDemandes.length;
+      await tester.tap(find.byKey(FinSeanceEnseignant.retourSalleKey));
+      await tester.pumpAndSettle();
+      expect(moteur.contenusPresentesDemandes.length, avant);
+      expect(find.byKey(_croixRanger), findsNothing);
+    });
   });
 }
+
+/// La croix « Ranger dans la bibliotheque » de la salle plein ecran.
+const Key _croixRanger = ValueKey<String>('salle-ranger-support');

@@ -205,10 +205,6 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// L'eleve sorti de la salle (CLV-09).
   IssueSeance? _sortieEleve;
 
-  /// Lot salle 2 : la page retenue pour la classe a deja ete reprise a cette
-  /// entree (une seule fois ; l'enseignant change ensuite librement).
-  bool _repriseFaite = false;
-
   /// S0 : l'etat local de la salle de seance (rien n'est diffuse) : zoom de
   /// la page (paliers 100 a 200 %), page agrandie, panneau et contexte.
   double _zoom = paliersZoom.first;
@@ -321,7 +317,6 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// est encore seul devant son ecran coute une seconde et evite cela.
   Future<void> _entrer() async {
     setState(() {
-      _repriseFaite = false;
       _impasse = null;
       _materielPret = false;
       _acces = null;
@@ -734,6 +729,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       onBibliotheque: enseignant && vue.peutPresenter
           ? () => unawaited(_choisirSupport())
           : null,
+      // Lot salle 3 (directeur, 25/10/2026) : un support ouvert se ferme ;
+      // la classe revient au tableau ou a la scene.
+      onRanger: enseignant && presentee != null
+          ? () => unawaited(ref.read(presentateurCoranProvider).fermer())
+          : null,
       onContexte: (ContexteOuvert c) => setState(() {
         _contexte = c;
         if (c != ContexteOuvert.aucun && _panneau == PanneauOuvert.commandes) {
@@ -889,25 +889,6 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     if (retenue == null) return _ouvrirCoran();
     setState(() => _scenePremierPlan = null);
     await ref.read(presentateurCoranProvider).presenterPage(retenue);
-  }
-
-  /// Lot salle 2 : a l'entree de l'enseignant, la page retenue pour la
-  /// classe revient, une fois, si rien n'est encore presente.
-  void _reprendrePage(VueSalle vue, ContenuPresente? presentee) {
-    final String? groupe = widget.groupeId;
-    if (_repriseFaite ||
-        groupe == null ||
-        vue.role != RoleSalle.enseignant ||
-        !vue.dansLaSalle) {
-      return;
-    }
-    _repriseFaite = true;
-    final int? retenue = ref.read(memoirePageClasseProvider).lire(groupe);
-    if (presentee != null || retenue == null) return;
-    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
-      if (!mounted) return;
-      unawaited(ref.read(presentateurCoranProvider).presenterPage(retenue));
-    });
   }
 
   Future<void> _ouvrirCoran() async {
@@ -1161,14 +1142,15 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           ? ref.watch(contenuPresenteProvider).value
           : null;
       // Lot salle 2 : la page que l'enseignant presente est retenue pour la
-      // classe ; a son entree suivante, elle revient.
+      // classe. Lot salle 3 (directeur, 25/10/2026) : elle ne se rouvre plus
+      // seule a l'entree ; « Ouvrir le Coran » la propose (choix de
+      // l'enseignant).
       final String? groupe = widget.groupeId;
       if (groupe != null &&
           vue.role == RoleSalle.enseignant &&
           presentee != null) {
         ref.read(memoirePageClasseProvider).ecrire(groupe, presentee.page);
       }
-      _reprendrePage(vue, presentee);
       final VueSeance? seance = DepuisSalle.vue(
         salle: vue,
         mode: AppMetriques.of(context).mode,

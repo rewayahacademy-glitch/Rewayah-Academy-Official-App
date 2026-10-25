@@ -351,6 +351,27 @@ class ContenuPresente {
   /// cette date qui permet de ne pas reculer d'une page.
   final DateTime emisLe;
 
+  /// La page qui signale « rien n'est presente » : l'enseignant a range le
+  /// support (lot salle 3, directeur, 25/10/2026 : un support ouvert se
+  /// ferme). Elle voyage comme une page, pour que la classe et un eleve qui
+  /// arrive apres l'apprennent par le meme canal et le meme rejeu.
+  static const int pageRetiree = 0;
+
+  /// Le contenu « rien n'est presente », pose par [presentePar].
+  factory ContenuPresente.retire({
+    required String presentePar,
+    required DateTime emisLe,
+  }) => ContenuPresente(
+    page: pageRetiree,
+    sourate: 0,
+    verset: 0,
+    presentePar: presentePar,
+    emisLe: emisLe,
+  );
+
+  /// Vrai quand ce contenu dit que rien n'est presente.
+  bool get estRetire => page == pageRetiree;
+
   /// L'adresse courte, « 2:255 ». Le meme format que `VersetCoran.reference`.
   String get reference => '$sourate:$verset';
 

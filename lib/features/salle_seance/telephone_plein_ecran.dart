@@ -480,6 +480,19 @@ class _Haut extends StatelessWidget {
     // Section 6.6 : la presence de l'eleve (la sienne seulement), a cote de
     // la pilule d'etat.
     final Widget? presence = media?.pastille;
+    // Lot salle 3 (directeur, 25/10/2026) : un support ouvert se ferme. La
+    // croix « Ranger dans la bibliotheque » se tient au bord de fin, en haut,
+    // pour l'enseignant qui presente une page.
+    final VoidCallback? ranger = vue.voitRanger ? actions.onRanger : null;
+    final Widget? fermer = ranger == null
+        ? null
+        : BoutonIcone(
+            key: const ValueKey<String>('salle-ranger-support'),
+            icone: AppIcons.fermer,
+            libelle: t.salle.seance.rangement.ranger,
+            onPress: ranger,
+            forme: FormeBoutonIcone.appel,
+          );
     final Widget pilule = PiluleEtatSalle(
       vue: vue,
       largeurMax: math.max(
@@ -529,6 +542,7 @@ class _Haut extends StatelessWidget {
                       vue: vue,
                       largeur: MesuresVignette.largeurPleinCadreLarge,
                     ),
+                  ?fermer,
                 ],
               )
             // Arbitrage du pilote (24/10/2026) : la pilule d'etat occupe seule
@@ -537,7 +551,8 @@ class _Haut extends StatelessWidget {
             // pilule.
             else
               Align(alignment: AlignmentDirectional.topStart, child: ligne),
-            if (!aCote && (eleves != null || vignette)) ...<Widget>[
+            if (!aCote &&
+                (eleves != null || vignette || fermer != null)) ...<Widget>[
               Ecart.vSm,
               Align(
                 alignment: AlignmentDirectional.topEnd,
@@ -556,6 +571,7 @@ class _Haut extends StatelessWidget {
                         vue: vue,
                         largeur: largeurVignetteTelephone,
                       ),
+                    ?fermer,
                   ],
                 ),
               ),
