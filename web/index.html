@@ -38,6 +38,30 @@
   <title>Rewayah Academy</title>
   <link rel="manifest" href="manifest.json">
 
+  <!--
+    Audit du 25/10 : les polices partaient apres main.dart.js, +5 s en 4G lente.
+    Le moteur ne les demande qu'apres avoir lu assets/FontManifest.json, une
+    fois main.dart.js charge et lance. Ici, elles partent avec la page, en
+    parallele de main.dart.js. La liste suit le FontManifest.json construit
+    (section fonts de pubspec.yaml, plus les icones Material et Cupertino) :
+    une police ajoutee ou retiree la-bas se reporte ici. `as="fetch"` et
+    `crossorigin` : le moteur les lit par fetch(), meme origine ; sans ces deux
+    attributs, le navigateur les telechargerait deux fois.
+    canvaskit (moteur de rendu) vient de www.gstatic.com : connexion ouverte
+    d'avance.
+  -->
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <link rel="preload" href="main.dart.js" as="script">
+  <link rel="preload" href="assets/fonts/MaterialIcons-Regular.otf" as="fetch" crossorigin>
+  <link rel="preload" href="assets/assets/fonts/UthmanTahaNaskh-Regular.otf" as="fetch" crossorigin>
+  <link rel="preload" href="assets/assets/fonts/UthmanicHafs-v-3.0.ttf" as="fetch" crossorigin>
+  <link rel="preload" href="assets/assets/fonts/NotoSansArabic-Variable.ttf" as="fetch" crossorigin>
+  <link rel="preload" href="assets/assets/fonts/PlusJakartaSans-Variable.ttf" as="fetch" crossorigin>
+  <link rel="preload" href="assets/assets/fonts/DMSans-Variable.ttf" as="fetch" crossorigin>
+  <link rel="preload" href="assets/assets/fonts/Phosphor-Regular.ttf" as="fetch" crossorigin>
+  <link rel="preload" href="assets/assets/fonts/Phosphor-Fill.ttf" as="fetch" crossorigin>
+  <link rel="preload" href="assets/packages/cupertino_icons/assets/CupertinoIcons.ttf" as="fetch" crossorigin>
+
   <style>
     /*
       Le fond du document porte la meme couleur que le fond de l'application,
