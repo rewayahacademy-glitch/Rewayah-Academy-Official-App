@@ -39,6 +39,7 @@ import 'package:rewayah_academy/features/salle_seance/ecriture_seance.dart'
     show diffusionEcritureProvider;
 import 'package:rewayah_academy/features/salle_seance/media_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/palette_tableau.dart';
+import 'package:rewayah_academy/features/salle_seance/resultat_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/telephone_plein_ecran.dart';
 import 'package:rewayah_academy/features/tc_mushaf/page_madina_15.dart'
@@ -1350,11 +1351,42 @@ void main() {
         findsNothing,
       );
       expect(find.text(t.salle.bandeauPermanent), findsNothing);
-      // « Retour a la Classe » mene a la Classe (l'espace des Classes de
-      // l'eleve), pas a l'accueil : libelle et destination concordent.
-      await tester.tap(find.text(t.salle.fin.retourClasse));
+      // Lot salle 2 (pilote, 25/10/2026, standard Meet « You left the
+      // meeting / Rejoin ») : « Retourner dans la salle » d'abord, puis
+      // « Retour a l'accueil » ; libelle et destination concordent.
+      expect(find.byKey(ResultatSeance.revenirKey), findsOneWidget);
+      await tester.tap(find.text(t.salle.fin.retourAccueil));
       await tester.pumpAndSettle();
-      expect(find.text('classes eleve'), findsOneWidget);
+      expect(find.text('accueil eleve'), findsOneWidget);
+    });
+
+    testWidgets('Lot salle 2 : apres Quitter, un toucher ramene dans la '
+        'salle, sans passer par la carte', (WidgetTester tester) async {
+      final FauxServiceVideo video = FauxServiceVideo(
+        acces0: _acces('student'),
+      );
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: video,
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+      await tester.tap(_commande(t.salle.seance.sortir));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.salle.quitter).last);
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.fin.quitteTitre), findsOneWidget);
+      final int demandes = video.demandes.length;
+
+      await tester.tap(find.byKey(ResultatSeance.revenirKey));
+      await tester.pumpAndSettle();
+      // Le meme chemin que l'entree : un nouveau jeton, la salle de seance.
+      expect(video.demandes.length, demandes + 1);
+      expect(find.text(t.salle.fin.quitteTitre), findsNothing);
+      expect(find.byType(SalleSeance), findsOneWidget);
       expect(find.text('accueil eleve'), findsNothing);
     });
 

@@ -962,7 +962,19 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           onAide: () => GoRouter.of(context).go(Routes.compte),
         );
       }
-      return ResultatSeance(issue: sortie, onRetour: _retourClasse);
+      return ResultatSeance(
+        issue: sortie,
+        onRetour: _retourClasse,
+        // Lot salle 2 : apres « Quitter », revenir par le meme chemin que
+        // l'entree (pre-vol, jeton, salle).
+        onRevenir: sortie == IssueSeance.quittee
+            ? () {
+                setState(() => _sortieEleve = null);
+                unawaited(_entrer());
+              }
+            : null,
+        onAccueil: _rentrer,
+      );
     }
 
     final VueSalle vue = VueSalle.depuis(
