@@ -137,8 +137,8 @@ void main() {
     },
   );
 
-  testWidgets('une piece a verifier garde la checklist ; en production, '
-      'aucun verdict avant BR-1 (AD-M3-PROD)', (WidgetTester tester) async {
+  testWidgets('une piece a verifier garde la checklist ; en production, la '
+      'decision est branchee (Boucle 1, etape 1)', (WidgetTester tester) async {
     final FauxServiceValidation service = await monter(
       tester,
       <DossierAValider>[
@@ -153,15 +153,16 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.text('Vérifications'), findsOneWidget);
     expect(find.text('Aucune pièce déposée'), findsNothing);
-    // Decision du 27/09 (S1 -> a) : refus et piece fermes comme la
-    // validation ; la raison est dite une fois a la place des boutons.
-    expect(find.text('Valider le dossier'), findsNothing);
-    expect(find.text('Refuser le dossier'), findsNothing);
-    expect(find.text('Voir la pièce'), findsNothing);
+    // Decision du directeur du 24/10/2026 (docs/current/BOUCLE-1_PLAN_2026-10-24.md,
+    // etape 1, K1 ; commit 196b61d) : en production, la direction voit la
+    // piece et tranche. Elle remplace la fermeture du 27/09 (AD-M3-PROD).
+    expect(find.text('Voir la pièce'), findsOneWidget);
+    expect(_actif(tester, 'Refuser le dossier'), isTrue);
     expect(
       find.text('La décision est indisponible pour le moment.'),
-      findsOneWidget,
+      findsNothing,
     );
+    // Rien n'est demande au serveur tant que la direction n'a pas agi.
     expect(service.apercus, isEmpty);
     expect(service.verdicts, isEmpty);
   });
