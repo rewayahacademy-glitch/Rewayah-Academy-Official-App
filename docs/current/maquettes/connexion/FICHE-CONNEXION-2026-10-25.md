@@ -8,7 +8,7 @@ Une seule PR, poussée après la fusion de la PR 57, sur la branche de travail r
 ## 1. En une phrase
 
 La connexion prend, à l'identique, la page « Ne plus recevoir ces e-mails » du site public : fond
-violet de marque uni, logo horizontal blanc en haut au début de ligne, l'illustration de la porte
+violet de marque uni, logo horizontal blanc centré en haut, l'illustration de la porte
 (celle des pages 404 et de désinscription, telle quelle), titre, texte, puis le formulaire posé
 directement sur la page, aucun rectangle emboîté. On ajoute seulement les champs et les boutons
 de la connexion ; rien d'autre ne change.
@@ -27,11 +27,11 @@ de la connexion ; rien d'autre ne change.
 ## 3. Téléphone (moins de 840 points de large) : la capture du directeur, plus le formulaire
 
 De haut en bas, page qui défile, sur fond violet uni :
-1. logo horizontal blanc (`BrandLogo`, `horizontal`, `FondLogo.violet`), aligné au début de ligne
-   (gauche en français, droite en arabe), zone de protection respectée ;
+1. logo horizontal blanc (`BrandLogo`, `horizontal`, `FondLogo.violet`), centré (décision du
+   directeur du 25/10, 16:40), zone de protection respectée ;
 2. l'illustration de la porte, centrée, exactement celle du site : symbole blanc, vide de la porte
-   en dégradé, faisceau de lumière, pas en pointillés, lanterne ; la lumière respire lentement,
-   immobile si « réduire les animations » ;
+   en dégradé, faisceau de lumière, pas en pointillés, lanterne ; scène immobile, comme sur la
+   capture du directeur ; aucune animation, règle des durées gelées et WCAG 2.2.2 ;
 3. le titre « Se connecter » (ou « Créer votre compte »), blanc, comme le titre du modèle ;
 4. la phrase d'intro, blanche ;
 5. le choix « J'ai déjà un compte » / « Créer un compte » (contrôle segmenté existant, en blanc
@@ -48,8 +48,8 @@ deux boutons, 24 entre sections.
 ## 4. Ordinateur (840 points et plus) : deux volets, l'image au début de ligne
 
 - **Volet image, 50 %, au début de ligne** (gauche en français, **droite en arabe** : `Row` avec
-  `start` / `end`, jamais `left` / `right`) : fond violet uni, logo horizontal blanc en haut au
-  début, l'illustration centrée.
+  `start` / `end`, jamais `left` / `right`) : fond violet uni, logo horizontal blanc centré en
+  haut, l'illustration centrée dessous.
 - **Volet formulaire, 50 %** : les points 3 à 9 du téléphone, largeur de lecture 400 au plus,
   centré verticalement, sur fond caramel clair ; encre sombre, bouton plein violet à texte blanc
   (couleur d'action de l'application), largeur du contenu et non pleine largeur ; bouton Google à
@@ -63,14 +63,15 @@ deux boutons, 24 entre sections.
 | D2 | L'écran est identique en thème clair et sombre, comme la page modèle qui force son rendu : une seule composition à tester. |
 | D3 | L'illustration est celle du site, telle quelle (la porte du logo est toujours ouverte) : aucune variante. |
 | D4 | Téléphone : l'image au-dessus du titre, comme sur la capture ; la page défile, l'image ne disparaît jamais. |
-| Logo | Le guide du logo prévoyait « connexion : logo vertical centré » ; demande du directeur du 25/10 : horizontal, en haut au début de ligne, comme le modèle. Le guide (`assets/brand/logo/README.md`, ligne « Connexion, splash, onboarding ») est mis à jour dans la même PR. |
+| Logo | Le guide du logo prévoyait « connexion : logo vertical centré » ; demande du directeur du 25/10 : horizontal, centré en haut (16:40). Le guide (`assets/brand/logo/README.md`, ligne « Connexion, splash, onboarding ») est mis à jour dans la même PR. |
 
 ## 6. États obligatoires
 
 Chargement (envoi du lien : bouton en attente, jamais grisé sans mot) ; contenu ; « Lien envoyé »
 (même page, le formulaire remplacé par le texte, « Renvoyer le lien », « Utiliser une autre
 adresse ») ; erreur (phrase sous le champ, lisible sur le fond : blanc sur violet, encre d'alerte
-sur caramel) ; hors ligne (phrase existante `horsLigne`, bouton remplacé par l'explication).
+sur caramel) ; hors ligne : la phrase existante `horsLigne` sous le champ après la tentative, et
+le bandeau de `PageShell`.
 Contraste mesuré en test : blanc sur `#6538E4` 6,5:1 ; encre sur `surfaceQuran` à mesurer ;
 jamais de texte lavande sur violet sous 4,5:1.
 
