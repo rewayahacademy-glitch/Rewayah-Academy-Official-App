@@ -575,9 +575,8 @@ class _Seance extends ConsumerWidget {
     );
   }
 
-  /// Le chemin existant vers la preparation : la salle canonique, qui montre
-  /// d'abord le pre-vol complet de l'enseignant (`PreCours`) et n'entre
-  /// qu'apres. Le billet passe par `extra`, jamais par l'URL (ADR-005).
+  /// Le chemin vers la salle : on entre directement (lot salle 3, pilote,
+  /// 25/10/2026), camera et micro fermes, sans page de preparation. Le billet passe par `extra`, jamais par l'URL (ADR-005).
   static void Function(String) _versPreparation(
     BuildContext context,
     String groupeId,
@@ -587,7 +586,8 @@ class _Seance extends ConsumerWidget {
         extra: BilletSalle(
           sessionId: sessionId,
           emisA: DateTime.now(),
-          preparation: true,
+          // Lot salle 3 : entree directe, sans page de preparation.
+          preparation: false,
           groupeId: groupeId,
         ),
       );

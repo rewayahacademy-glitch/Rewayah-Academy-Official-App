@@ -797,7 +797,8 @@ void main() {
       expect(pastille, findsNothing);
     });
 
-    testWidgets('Rejoindre la salle ouvre la salle par son pre-vol', (
+    // Lot salle 3 (pilote, 25/10/2026) : entree directe, sans preparation.
+    testWidgets('Rejoindre la salle entre directement dans la salle', (
       WidgetTester tester,
     ) async {
       _fenetre(tester, const Size(390, 2400));
@@ -817,7 +818,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text(t.enseignant.journee.rejoindreSalle));
       await tester.pumpAndSettle();
-      expect(find.text('salle:an-nour:true:g-an-nour'), findsOneWidget);
+      expect(find.text('salle:an-nour:false:g-an-nour'), findsOneWidget);
     });
 
     testWidgets('Remplir le cahier ouvre le cahier de la seance', (

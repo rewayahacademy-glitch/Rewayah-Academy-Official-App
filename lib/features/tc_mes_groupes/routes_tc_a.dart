@@ -83,7 +83,8 @@ void preparerSalleEleve(BuildContext contexte, GroupSummaryVM groupe) {
         extra: BilletSalle(
           sessionId: sessionId,
           emisA: DateTime.now(),
-          preparation: true,
+          // Lot salle 3 : entree directe, sans page de preparation.
+          preparation: false,
           groupeId: groupe.groupeId,
         ),
       ),
