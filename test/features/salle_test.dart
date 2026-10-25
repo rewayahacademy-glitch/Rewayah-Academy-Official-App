@@ -236,7 +236,14 @@ Future<void> _ouvrirPresence(WidgetTester tester) async {
   // S0.2 : la presence (J3) et le roster vivent dans le panneau Eleves de la
   // salle de seance : colonne deja ouverte, ou bouton « Eleves » a toucher.
   if (find.byType(LignePresence).evaluate().isNotEmpty) return;
-  await tester.tap(find.byKey(const ValueKey<String>('bouton-eleves')).first);
+  // K4 (25/10/2026) : dans `/salle`, a toutes les largeurs, le bouton rond
+  // « Eleves » de la ligne d'etat ; ailleurs, celui de l'en-tete.
+  final Finder rond = find.byKey(const ValueKey<String>('salle-eleves'));
+  await tester.tap(
+    rond.evaluate().isNotEmpty
+        ? rond.first
+        : find.byKey(const ValueKey<String>('bouton-eleves')).first,
+  );
   await tester.pumpAndSettle();
 }
 

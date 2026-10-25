@@ -71,7 +71,7 @@ import 'media_salle.dart';
 import 'notes_deposees.dart';
 import 'rangement_support.dart';
 import 'repere_page.dart';
-import 'telephone_plein_ecran.dart' show telephonePleinEcran;
+import 'telephone_plein_ecran.dart' show pleinEcranSalle;
 import 'vue_seance.dart';
 
 /// Le rectangle de la page dans sa boite : `BoxFit.contain`, centre (plan
@@ -825,9 +825,9 @@ class _Page extends StatelessWidget {
           page: page.page,
           pages: page.total,
         ),
-        // S0.2c : au telephone, la page est l'ecran : ni carte, ni arrondi,
-        // ni ombre.
-        child: telephonePleinEcran(context)
+        // S0.2c, K4 : dans `/salle`, la page est l'ecran : ni carte, ni
+        // arrondi, ni ombre.
+        child: pleinEcranSalle(context)
             ? DecoratedBox(
                 decoration: AppPalette.of(context).surfaceRaised.decoration(),
                 child: rendu(page),

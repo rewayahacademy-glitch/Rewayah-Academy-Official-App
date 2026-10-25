@@ -481,6 +481,10 @@ class _EtatPageMadina15 extends State<PageMadina15> {
 /// fois plus haute que large).
 const double _ratioHauteurNaturelle = 1.8;
 
+/// Le rapport hauteur sur largeur de la page composee (cadre compris) : la
+/// salle en tire la largeur de la page quand la hauteur de la fenetre la fixe.
+const double ratioHauteurPageMadina15 = _ratioHauteurNaturelle;
+
 /// Une ligne de texte : justifiee sur la largeur du cadre, ou centree quand
 /// c'est une page d'Al-Fatiha ou une fin de sourate qui ne remplit pas le
 /// cadre.
