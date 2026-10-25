@@ -630,7 +630,7 @@ void main() {
           nom: 'Le controleur',
           local: true,
         ),
-        _personne(identite: 't1', role: 'teacher', nom: 'Omar'),
+        _personne(identite: 't1', role: 'teacher', nom: 'Omar', camera: true),
         _personne(identite: 'e1', role: 'student', nom: 'Khadija'),
       ]);
       await tester.pumpAndSettle();
@@ -2724,6 +2724,70 @@ void main() {
             reason: texte,
           );
         }
+      });
+    }
+  });
+
+  // Lot salle 2 : la vignette se deplace au doigt et a la souris, aimantee
+  // aux quatre coins (standard Meet, FaceTime).
+  group('Lot salle 2 : vignette deplacable', () {
+    for (final Size taille in <Size>[
+      const Size(1366, 768),
+      const Size(390, 844),
+    ]) {
+      testWidgets('${taille.width.toInt()} px : un glisser l emmene au coin '
+          'oppose', (WidgetTester tester) async {
+        tester.view.physicalSize = taille;
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        final FauxMoteurSalle moteur = FauxMoteurSalle();
+        await _monterSalle(
+          tester,
+          surcharges: <Override>[
+            ..._surcharges(
+              video: FauxServiceVideo(acces0: _acces('student')),
+              moteur: moteur,
+              preVol: FauxServicePreVol(),
+            ),
+            ...surchargesMadina15(page: 293),
+          ],
+        );
+        moteur
+          ..publier(<ParticipantSalle>[
+            _personne(
+              identite: 't1',
+              role: 'teacher',
+              nom: 'Omar',
+              camera: true,
+            ),
+            _personne(identite: 'p1', role: 'student', nom: 'Aya', local: true),
+          ])
+          ..publierContenu(
+            ContenuPresente(
+              page: 293,
+              sourate: 18,
+              verset: 1,
+              presentePar: 't1',
+              emisLe: DateTime.now(),
+            ),
+          );
+        await tester.pumpAndSettle();
+        final Finder vignette = find.byKey(VignetteAimantee.cle);
+        expect(vignette, findsOneWidget);
+        final Rect avant = tester.getRect(vignette);
+        // Par defaut, en haut a droite (sens de lecture francais).
+        expect(avant.center.dx, greaterThan(taille.width / 2));
+        expect(avant.center.dy, lessThan(taille.height / 2));
+        await tester.drag(
+          vignette,
+          Offset(-taille.width * 0.7, taille.height * 0.7),
+        );
+        await tester.pumpAndSettle();
+        final Rect apres = tester.getRect(vignette);
+        expect(apres.center.dx, lessThan(taille.width / 2));
+        expect(apres.center.dy, greaterThan(taille.height / 2));
+        // Aimantee au coin : a 16 du bord.
+        expect(apres.left, closeTo(16, 0.5));
       });
     }
   });
