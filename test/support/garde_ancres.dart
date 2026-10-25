@@ -819,9 +819,8 @@ _Destination _instruction(_Source s, int o, int p, {bool collection = false}) {
     // qui la calcule (`ref.watch(x).value ?? false`, lu comme un champ
     // `value` d'un autre composant) n'atteint aucun libelle par elle
     // (faux positif de la reprise 2, PR 54 : SettingRow.value > horsLigne).
-    if (RegExp(r'\b(bool|int|double|num)\??\s*$').hasMatch(
-      segment.substring(0, aff.start),
-    )) {
+    if (RegExp(r'\b(bool|int|double|num)\??\s*$')
+        .hasMatch(segment.substring(0, aff.start))) {
       return const _Affichee();
     }
     // `champ = valeur` sans declaration locale, dans une classe qui declare
@@ -1303,6 +1302,13 @@ void _suivreChamp(
   );
   for (final _Source s in fichiers) {
     if (!s.m.contains(champ)) continue;
+    // Une classe privee n'existe que dans son fichier : un `.champ` lu
+    // ailleurs est celui d'une autre classe, du meme nom de champ.
+    if (classe != null &&
+        classe.startsWith('_') &&
+        !declaration.hasMatch(s.m)) {
+      continue;
+    }
     for (final RegExpMatch u in acces.allMatches(s.m)) {
       if (_affectee(s, u.end)) continue;
       final ({String nom, int debut}) lecture = s.appelant(u.end);
@@ -1363,7 +1369,16 @@ const Set<String> _typesOuverts = <String>{'dynamic', 'Object', 'T'};
 bool _peutEtre(List<_Source> fichiers, _Source s, int point, String classe) {
   final RegExp nommee = RegExp('(?<![\\w\$])${RegExp.escape(classe)}\\b');
   final String? type = _typeAvant(fichiers, s, point);
-  if (type == null) return nommee.hasMatch(s.m);
+  if (type == null) {
+    // `ref.watch(x).value` : l'objet est le resultat d'un appel, de type
+    // illisible. Que la classe soit nommee ailleurs dans le fichier ne dit
+    // rien de lui : un champ du meme nom (`value`, `id`) d'une autre classe
+    // n'est pas suivi.
+    int a = s.avant(point);
+    if (a >= 0 && (s.m[a] == '?' || s.m[a] == '!')) a = s.avant(a);
+    if (a >= 0 && (s.m[a] == ')' || s.m[a] == ']')) return false;
+    return nommee.hasMatch(s.m);
+  }
   final String base = type.replaceAll(RegExp(r'<.*$|\?'), '').trim();
   return _typesOuverts.contains(base) || nommee.hasMatch(type);
 }
@@ -1401,7 +1416,20 @@ String? _typeDeNom(
   if (_motsExpression.contains(nom) || nom == 'this') return null;
   final _Decl? d = _declarationProche(s, nom, position);
   if (d == null) {
-    return _typeRendu(fichiers, nom) ?? _typeDeChamp(fichiers, nom);
+    // Les types des champs du meme nom dans les autres sources ne valent que
+    // pour un membre (`participant.membre`) : un nom nu sans declaration
+    // lisible ici (`x` d'un `for (final ({String valeur}) x in ...)`) est
+    // local, et ne prend pas le type de ses homonymes d'autres fichiers.
+    final int a = s.avant(position);
+    final bool membre = a >= 0 && s.m[a] == '.';
+    if (membre) {
+      return _typeRendu(fichiers, nom) ?? _typeDeChamp(fichiers, nom);
+    }
+    // Un nom nu appele (`colonnes()`) est une fonction ; lu sans appel, ce
+    // ne peut etre qu'un accesseur (`get colonnes`).
+    final bool appel = RegExp(r'^\s*(?:<[^>]*>)?\s*\(')
+        .hasMatch(s.m.substring(position + nom.length));
+    return _typeRendu(fichiers, nom, accesseur: !appel);
   }
   final String cle = '${s.fichier}:${d.p}:$nom';
   if (_cacheTypes.containsKey(cle)) return _cacheTypes[cle];
@@ -1474,10 +1502,47 @@ List<_Decl> _declarationsDe(_Source s, String nom) {
   return _cacheDecl[cle] = liste;
 }
 
+/// Vrai si la declaration en [p] est visible en [position] : dans son bloc
+/// (`{ ... }`, corps de classe compris), ou dans le corps qui suit sa liste
+/// de parametres (`(Object? x) { ... }`, `(x) => ...`, `for (T x in ...)`).
+/// Un homonyme declare dans une autre fonction du fichier n'est pas vu.
+bool _visible(_Source s, int p, int position) {
+  final int o = s.ouvrant(p);
+  if (o < 0) return true;
+  if (s.m[o] != '(') {
+    final int? f = s.paire[o];
+    return position > o && (f == null || position < f);
+  }
+  final int? f = s.paire[o];
+  if (f == null) return true;
+  if (position > o && position < f) return true;
+  if (position <= f) return false;
+  // Le corps qui suit : `{ ... }` (apres un eventuel `async`), sinon une
+  // expression `=> ...` ou une instruction, bornee par le bloc englobant.
+  int j = f + 1;
+  while (j < s.m.length && s.m[j].trim().isEmpty) {
+    j++;
+  }
+  if (s.m.startsWith('async', j)) {
+    j += 5;
+    while (j < s.m.length && s.m[j].trim().isEmpty) {
+      j++;
+    }
+  }
+  if (j < s.m.length && s.m[j] == '{') {
+    final int? fin = s.paire[j];
+    return position > j && (fin == null || position < fin);
+  }
+  final int haut = s.ouvrant(o);
+  final int? fin = haut < 0 ? null : s.paire[haut];
+  return fin == null || position < fin;
+}
+
 _Decl? _declarationProche(_Source s, String nom, int position) {
   _Decl? proche;
   _Decl? premiere;
   for (final _Decl d in _declarationsDe(s, nom)) {
+    if (!_visible(s, d.p, position)) continue;
     if (d.p < position && (proche == null || d.p > proche.p)) proche = d;
     if (premiere == null || d.p < premiere.p) premiere = d;
   }
@@ -1530,21 +1595,27 @@ final Map<String, String?> _cacheRendus = <String, String?>{};
 
 /// Le type rendu par une fonction, une methode ou un accesseur [nom]
 /// declare dans les sources (`List<Colonne<int>> colonnes() =>`).
-String? _typeRendu(List<_Source> fichiers, String nom) {
-  if (_cacheRendus.containsKey(nom)) return _cacheRendus[nom];
+String? _typeRendu(
+  List<_Source> fichiers,
+  String nom, {
+  bool accesseur = false,
+}) {
+  final String cle = accesseur ? 'get $nom' : nom;
+  if (_cacheRendus.containsKey(cle)) return _cacheRendus[cle];
   final RegExp re = RegExp(
     '(?<![\\w.\$])((?:[A-Z_]\\w*|int|double|num|bool)'
-    '(?:<[^;{}()=]*?>)?\\??)\\s+(?:get\\s+)?${RegExp.escape(nom)}'
+    '(?:<[^;{}()=]*?>)?\\??)\\s+(?:get\\s+)${accesseur ? '' : '?'}'
+    '${RegExp.escape(nom)}'
     '\\s*(?:<[^>]*>)?\\s*(?:\\(|=>|\\{)',
   );
   for (final _Source s in fichiers) {
     if (!s.m.contains(nom)) continue;
     final RegExpMatch? x = re.firstMatch(s.m);
     if (x != null && !_motsExpression.contains(x[1])) {
-      return _cacheRendus[nom] = x[1];
+      return _cacheRendus[cle] = x[1];
     }
   }
-  return _cacheRendus[nom] = null;
+  return _cacheRendus[cle] = null;
 }
 
 /// Une lecture du champ en [p] : `$champ` dans une chaine, ou une
@@ -1645,9 +1716,13 @@ List<AncreGlissee> ancresGlissees([Iterable<File>? sources]) {
   _cacheDecl.clear();
   _cacheRendus.clear();
   _cacheChamps.clear();
+  // L'ordre de `Directory.listSync` change d'une machine a l'autre, et le
+  // parcours en depend (premier fichier lu, caches) : les sources sont
+  // triees, pour un resultat identique sur la CI et en local.
+  final List<File> triees = <File>[...(sources ?? sourcesDart())]
+    ..sort((File a, File b) => a.path.compareTo(b.path));
   final List<_Source> fichiers = <_Source>[
-    for (final File f in sources ?? sourcesDart())
-      _Source(f.path, f.readAsStringSync()),
+    for (final File f in triees) _Source(f.path, f.readAsStringSync()),
   ];
   final List<AncreGlissee> fautes = <AncreGlissee>[];
   final Set<String> vus = <String>{};
@@ -1771,7 +1846,7 @@ List<AncreGlissee> ancresGlissees([Iterable<File>? sources]) {
         }
       case _Appel(:final String nom, :final String? nomme, :final int position):
         final String id =
-            '${x.s.fichier}#$nom/${nomme ?? position}/${x.collection}';
+            '${x.s.fichier}:${x.p}#$nom/${nomme ?? position}/${x.collection}';
         if (!appelsSuivis.add(id)) break;
         final String suite = '${x.chemin} > $nom(${nomme ?? '#$position'})';
         for (final _Declaration d in _cibles(fichiers, x.s, x.p, nom)) {

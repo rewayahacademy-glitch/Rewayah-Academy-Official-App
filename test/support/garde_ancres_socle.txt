@@ -19,34 +19,10 @@
 # retires : une variable bool ou numerique ne porte aucun texte, et
 # `switch (nom) {` n'est plus pris pour une lambda qui masquait la vraie
 # declaration typee (`MotifSignalement motif`).
-lib/core/finance/format_montant.dart | symboleDe : interpolee au milieu d'une chaine
-lib/core/widgets/comptable/carte_reserve_strategique.dart | i : argument du libelle c.atteint
-lib/core/widgets/comptable/ligne_activite.dart | locale : argument du libelle t.comptable.commun.date
-lib/core/widgets/montant_sensible.dart | symboleDe : interpolee au milieu d'une chaine
-lib/features/acces_finance/acces_finance.dart | montant : argument du libelle t.argent.acces.regulariserManque
-lib/features/acces_finance/acces_finance.dart | montant : argument du libelle t.argent.acces.regulariserManqueNouvellePeriode
-lib/features/admin_finance/politiques_commerciales.dart | _texteValeur : argument du libelle pol.erreurMargeForte
-lib/features/admin_finance/politiques_commerciales.dart | _texteValeur : argument du libelle pol.erreurMargeStretch
-lib/features/admin_finance/politiques_commerciales.dart | _texteValeur : argument du libelle pol.erreurPlafond
-lib/features/admin_finance/politiques_commerciales.dart | _texteValeur : argument du libelle pol.erreurRemise
-lib/features/admin_finance/politiques_commerciales.dart | formaterMontant : argument du libelle pol.apercuRemise
-lib/features/admin_finance/politiques_commerciales.dart | formaterMontant : argument du libelle pol.parHeure
-lib/features/admin_finance/politiques_commerciales.dart | valeur : argument du libelle t.admin.finance.pol.versionActiveValeur
-lib/features/admin_finance/vue_globale_finance.dart | montant : argument du libelle alerteT.aRegulariserMontant
-lib/features/admin_finance/vue_globale_finance.dart | montant : argument du libelle alerteT.confirmationMontant
-lib/features/comptable/paiements/confirmation/confirmation_payout.dart | formaterMontant : element d'une collection jointe
-lib/features/foyer/fiche/finances_page.dart | formaterMontant : argument du libelle t.ficheEleve.finances.mensualiteValeur
-lib/features/foyer/fiche/finances_page.dart | formaterMontant : argument du libelle t.ficheEleve.finances.periodeAFinancerValeur
-lib/features/foyer/fiche/finances_page.dart | formaterMontant : argument du libelle t.foyer.finances.prochainDebitValeur
-lib/features/foyer/finances_foyer.dart | formaterMontant : argument du libelle t.ficheEleve.finances.periodeAFinancerValeur
-lib/features/foyer/finances_foyer.dart | formaterMontant : argument du libelle t.foyer.finances.prochainDebitValeur
-lib/features/foyer/finances_foyer.dart | manque : argument du libelle t.ficheEleve.finances.manquePourMois
-lib/features/foyer/finances_foyer.dart | manque : argument du libelle t.foyer.finances.manque
-lib/features/foyer/recharge_foyer.dart | RecapitulatifRecharge.total : argument du libelle t.adulte.recharge.payer
-lib/features/foyer/recharge_foyer.dart | formaterMontant : argument du libelle t.adulte.recharge.soldeActuel
-lib/features/foyer/resultat_recharge.dart | formaterMontant : argument du libelle r.nouveauSolde
-lib/features/foyer/resultat_recharge.dart | formaterMontant : argument du libelle r.terminePhrase
-lib/features/revenus_enseignant/revenus_enseignant_page.dart | _Cellule.texte : interpolee au milieu
-lib/features/revenus_enseignant/revenus_enseignant_page.dart | base : argument du libelle t.enseignant.revenus.baseDetail
-lib/features/revenus_enseignant/revenus_enseignant_page.dart | formaterMontant : argument du libelle t.enseignant.revenus.tauxValeur
-lib/features/revenus_enseignant/revenus_enseignant_page.dart | plafond : argument du libelle t.enseignant.revenus.plafondDetail
+# 25/10/2026 (PR 54, CI rouge sur d909ba0) : le parcours dependait de l'ordre
+# de Directory.listSync (0 releve hors socle ici, 24 sur la CI). Sources triees, et trois
+# sauts par homonymie fermes : objet resultat d'un appel (`ref.watch(x).value`)
+# pris pour un champ d'une classe nommee dans le fichier ; champ d'une classe
+# privee suivi hors de son fichier ; nom local type par une declaration hors de
+# sa portee ou par une fonction homonyme d'un autre fichier. Les 31 releves
+# ci-dessus (tous de la premiere chaine) ne sont plus trouves : socle vide.
