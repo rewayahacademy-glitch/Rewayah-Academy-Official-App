@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'
     show ProviderContainer, ProviderScope, Ref;
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -20,6 +21,8 @@ import 'package:rewayah_academy/core/tc_classe/roster_enseignant.dart';
 import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
 import 'package:rewayah_academy/core/tc_coran/moteur_mushaf.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
+import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart'
+    show PointNormalise;
 import 'package:rewayah_academy/core/tc_outils/port_annotations.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
@@ -32,12 +35,18 @@ import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_enseignant/page_coran_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart'
-    show DeclencheurCommandes;
+    show CommandesPedagogiques, DeclencheurCommandes;
+import 'package:rewayah_academy/features/salle_seance/dock_seance.dart'
+    show BoutonPlusAppel;
 import 'package:rewayah_academy/features/salle_seance/ecriture_seance.dart'
     show diffusionEcritureProvider;
 import 'package:rewayah_academy/features/salle_seance/media_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/palette_tableau.dart';
+import 'package:rewayah_academy/features/salle_seance/resultat_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/telephone_plein_ecran.dart';
+import 'package:rewayah_academy/features/tc_mushaf/page_madina_15.dart'
+    show cleLigneMadina15;
 import 'package:rewayah_academy/features/tc_mushaf/police_mushaf.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/indicateur_observation.dart';
 
@@ -48,6 +57,7 @@ import '../support/hors_ligne_une_fois.dart';
 import '../support/mushaf_15l.dart'
     show chargerPoliceMadina15, surchargesMadina15;
 import '../teaching_core/e/faux/faux_classe.dart';
+import '../theme/support/contraste.dart';
 
 const String _seance = 's1';
 
@@ -173,6 +183,7 @@ Future<void> _monterSalle(
   // Une visite annoncee fait battre le point de la mention sans fin
   // (`PointEnregistrement`) : on ne peut pas attendre le repos.
   bool auRepos = true,
+  String? groupeId,
 }) async {
   await tester.pumpWidget(
     hoteRoutant(
@@ -186,7 +197,7 @@ Future<void> _monterSalle(
         GoRoute(
           path: Routes.salle,
           builder: (BuildContext _, GoRouterState _) =>
-              const SallePage(seanceId: _seance),
+              SallePage(seanceId: _seance, groupeId: groupeId),
         ),
         GoRoute(
           path: Routes.eleve,
@@ -236,7 +247,14 @@ Future<void> _ouvrirPresence(WidgetTester tester) async {
   // S0.2 : la presence (J3) et le roster vivent dans le panneau Eleves de la
   // salle de seance : colonne deja ouverte, ou bouton « Eleves » a toucher.
   if (find.byType(LignePresence).evaluate().isNotEmpty) return;
-  await tester.tap(find.byKey(const ValueKey<String>('bouton-eleves')).first);
+  // K4 (25/10/2026) : dans `/salle`, a toutes les largeurs, le bouton rond
+  // « Eleves » de la ligne d'etat ; ailleurs, celui de l'en-tete.
+  final Finder rond = find.byKey(const ValueKey<String>('salle-eleves'));
+  await tester.tap(
+    rond.evaluate().isNotEmpty
+        ? rond.first
+        : find.byKey(const ValueKey<String>('bouton-eleves')).first,
+  );
   await tester.pumpAndSettle();
 }
 
@@ -617,7 +635,7 @@ void main() {
           nom: 'Le controleur',
           local: true,
         ),
-        _personne(identite: 't1', role: 'teacher', nom: 'Omar'),
+        _personne(identite: 't1', role: 'teacher', nom: 'Omar', camera: true),
         _personne(identite: 'e1', role: 'student', nom: 'Khadija'),
       ]);
       await tester.pumpAndSettle();
@@ -1337,11 +1355,42 @@ void main() {
         findsNothing,
       );
       expect(find.text(t.salle.bandeauPermanent), findsNothing);
-      // « Retour a la Classe » mene a la Classe (l'espace des Classes de
-      // l'eleve), pas a l'accueil : libelle et destination concordent.
-      await tester.tap(find.text(t.salle.fin.retourClasse));
+      // Lot salle 2 (pilote, 25/10/2026, standard Meet « You left the
+      // meeting / Rejoin ») : « Retourner dans la salle » d'abord, puis
+      // « Retour a l'accueil » ; libelle et destination concordent.
+      expect(find.byKey(ResultatSeance.revenirKey), findsOneWidget);
+      await tester.tap(find.text(t.salle.fin.retourAccueil));
       await tester.pumpAndSettle();
-      expect(find.text('classes eleve'), findsOneWidget);
+      expect(find.text('accueil eleve'), findsOneWidget);
+    });
+
+    testWidgets('Lot salle 2 : apres Quitter, un toucher ramene dans la '
+        'salle, sans passer par la carte', (WidgetTester tester) async {
+      final FauxServiceVideo video = FauxServiceVideo(
+        acces0: _acces('student'),
+      );
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: video,
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+      await tester.tap(_commande(t.salle.seance.sortir));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.salle.quitter).last);
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.fin.quitteTitre), findsOneWidget);
+      final int demandes = video.demandes.length;
+
+      await tester.tap(find.byKey(ResultatSeance.revenirKey));
+      await tester.pumpAndSettle();
+      // Le meme chemin que l'entree : un nouveau jeton, la salle de seance.
+      expect(video.demandes.length, demandes + 1);
+      expect(find.text(t.salle.fin.quitteTitre), findsNothing);
+      expect(find.byType(SalleSeance), findsOneWidget);
       expect(find.text('accueil eleve'), findsNothing);
     });
 
@@ -2434,4 +2483,519 @@ void main() {
       }
     }
   }, skip: sautSansCapture);
+
+  // K4 (directeur, 25/10/2026, essai en production sur ordinateur) : « full
+  // screen, full body, no bezels ; tout ce qui reste est superpose au-dessus
+  // et disparait ». Sur ordinateur, la page du Coran occupe toute la hauteur
+  // de la fenetre, aucun widget opaque ne reduit sa boite, les Commandes sont
+  // repliees ; le tableau occupe la fenetre (feuille 16:9 ajustee).
+  group('K4 : plein ecran sur ordinateur', () {
+    // Les vraies polices seulement pour les captures : apres les autres
+    // groupes du fichier, leur chargement par `rootBundle` restait en attente
+    // jusqu'au delai de la suite (la geometrie testee n'en depend pas : la
+    // page se compose sur la hauteur donnee).
+    setUpAll(() async {
+      if (dossierCapture == null) return;
+      await chargerPolicesDuDepot();
+      await chargerPoliceMadina15();
+    });
+
+    Future<FauxMoteurSalle> monterAvecPage(
+      WidgetTester tester,
+      Size taille,
+    ) async {
+      masquerRubanDebug();
+      tester.view.physicalSize = taille;
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: <Override>[
+          ..._surcharges(
+            video: FauxServiceVideo(acces0: _acces('teacher')),
+            moteur: moteur,
+            preVol: FauxServicePreVol(),
+            role: AppRole.teacher,
+          ),
+          ...surchargesMadina15(page: 293),
+          pageCoranProvider.overrideWith(
+            (Ref _, int n) async => PageCoran(
+              numero: n,
+              versets: <VersetCoran>[
+                VersetCoran(
+                  sourateNumero: 18,
+                  numero: 1,
+                  texte: 'verset',
+                  pageNumero: n,
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+      await moteur.presenterContenu(
+        ContenuPresente(
+          page: 293,
+          sourate: 18,
+          verset: 1,
+          presentePar: 'p1',
+          emisLe: DateTime.now(),
+        ),
+      );
+      await tester.pumpAndSettle();
+      return moteur;
+    }
+
+    for (final Size taille in <Size>[
+      const Size(1366, 768),
+      const Size(1920, 1080),
+    ]) {
+      final String nom = '${taille.width.toInt()}x${taille.height.toInt()}';
+      testWidgets('enseignant, $nom : la page prend toute la hauteur, rien '
+          'ne reduit sa boite, Commandes repliees', (
+        WidgetTester tester,
+      ) async {
+        await monterAvecPage(tester, taille);
+        expect(tester.takeException(), isNull);
+        final Rect boite = tester.getRect(
+          find.byKey(TelephonePleinEcran.clePage),
+        );
+        // Quatre bords : de haut en bas de la fenetre, centree.
+        expect(boite.top, closeTo(0, 0.5));
+        expect(boite.bottom, closeTo(taille.height, 0.5));
+        expect(boite.center.dx, closeTo(taille.width / 2, 0.5));
+        // Sa largeur suit la composition du mushaf, plafonnee a 1,4 fois.
+        final Size attendue = boitePagePleinEcran(taille, telephone: false);
+        expect(boite.width, closeTo(attendue.width, 0.5));
+        // La page composee remplit la hauteur de sa boite.
+        final Rect page = tester.getRect(find.byKey(PageCoranSalle.cle));
+        expect(page.height, closeTo(taille.height, 0.5));
+        // Les quinze lignes se partagent la hauteur de la fenetre.
+        final double ligne = tester
+            .getRect(find.byKey(cleLigneMadina15(3)))
+            .height;
+        // Le cadre et l'en-tete du mushaf pris, chaque ligne recoit plus de
+        // 85 % de la fenetre / 15 (45 px a 768, 64 px a 1080).
+        expect(ligne, greaterThan(taille.height / 15 * 0.85));
+        if (dossierCapture != null) {
+          await capturerVue(tester, 'k4-page-enseignant-$nom');
+        }
+        // Commandes repliees par defaut ; aucune carte opaque a cote.
+        expect(
+          find.byKey(const ValueKey<String>('telephone-commandes')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const ValueKey<String>('panneau-seance-colonne')),
+          findsNothing,
+        );
+      });
+    }
+
+    for (final Size taille in <Size>[
+      const Size(390, 844),
+      const Size(1366, 768),
+    ]) {
+      final String nom = '${taille.width.toInt()}x${taille.height.toInt()}';
+      testWidgets('tableau, $nom : le canevas est la fenetre, la feuille '
+          '16:9 ajustee sans etirement', (WidgetTester tester) async {
+        await monterAvecPage(tester, taille);
+        await tester.tap(find.byKey(const ValueKey<String>('bouton-tableau')));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(
+          tester.getRect(find.byKey(TelephonePleinEcran.clePage)),
+          Offset.zero & taille,
+        );
+        final Rect feuille = tester.getRect(
+          find.byKey(const ValueKey<String>('surface-feuille')),
+        );
+        // La forme de la classe, 16:9, ajustee a echelle uniforme, centree,
+        // dans la fenetre (bandes vides ailleurs).
+        expect(feuille.width / feuille.height, closeTo(16 / 9, 0.01));
+        expect(feuille.width, lessThanOrEqualTo(taille.width + 0.5));
+        expect(feuille.height, lessThanOrEqualTo(taille.height + 0.5));
+        expect(feuille.center.dx, closeTo(taille.width / 2, 0.5));
+        expect(feuille.center.dy, closeTo(taille.height / 2, 0.5));
+        expect(
+          math.max(
+            feuille.width / taille.width,
+            feuille.height / taille.height,
+          ),
+          closeTo(1, 0.01),
+        );
+        if (dossierCapture != null) {
+          await capturerVue(tester, 'k4-tableau-enseignant-$nom');
+        }
+
+        // Retour du directeur (25/10) : le tableau « devient bizarre » quand
+        // les commandes se masquent. La boite ne bouge plus au masquage, et
+        // meme si la fenetre change, un trait garde son rapport x / y.
+        PointNormalise a = const PointNormalise(0.1, 0.2);
+        PointNormalise b = const PointNormalise(0.6, 0.5);
+        double rapport(Rect f) =>
+            ((b.x - a.x) * f.width) / ((b.y - a.y) * f.height);
+        await tester.pump(const Duration(seconds: 4));
+        await tester.pumpAndSettle();
+        final Rect masquee = tester.getRect(
+          find.byKey(const ValueKey<String>('surface-feuille')),
+        );
+        expect(masquee, feuille);
+        tester.view.physicalSize = Size(taille.width * 0.8, taille.height);
+        await tester.pumpAndSettle();
+        final Rect autre = tester.getRect(
+          find.byKey(const ValueKey<String>('surface-feuille')),
+        );
+        expect(rapport(autre), closeTo(rapport(feuille), 0.02));
+        a = const PointNormalise(0, 0);
+        b = const PointNormalise(1, 1);
+        expect(rapport(autre), closeTo(16 / 9, 0.02));
+      });
+    }
+
+    for (final Size taille in <Size>[
+      const Size(1366, 768),
+      const Size(390, 844),
+    ]) {
+      final String nom = '${taille.width.toInt()}x${taille.height.toInt()}';
+      testWidgets('zoom, $nom : + et - visibles, la page passe de 100 a '
+          '200 %', (WidgetTester tester) async {
+        await monterAvecPage(tester, taille);
+        final Finder plus = find.byKey(
+          const ValueKey<String>('salle-zoom-plus'),
+        );
+        expect(plus, findsOneWidget);
+        // Au premier palier, « moins » n'est pas rendu (jamais grise).
+        expect(
+          find.byKey(const ValueKey<String>('salle-zoom-moins')),
+          findsNothing,
+        );
+        final double avant = tester
+            .getRect(find.byKey(PageCoranSalle.cle))
+            .height;
+        while (plus.evaluate().isNotEmpty) {
+          await tester.tap(plus);
+          await tester.pumpAndSettle();
+        }
+        final double apres = tester
+            .getRect(find.byKey(PageCoranSalle.cle))
+            .height;
+        expect(apres / avant, closeTo(2, 0.01));
+        expect(
+          find.byKey(const ValueKey<String>('salle-zoom-moins')),
+          findsOneWidget,
+        );
+      });
+    }
+
+    // EN-KB (25/10/2026) : la bascule K4 avait perdu M, V, R, B avec
+    // `_FocusPanneaux` ; ils reviennent a l'enseignant sur ordinateur, une
+    // touche par test.
+    Future<FauxMoteurSalle> monterAvecMoi(
+      WidgetTester tester, {
+      Size taille = const Size(1366, 768),
+      bool camera = false,
+    }) async {
+      final FauxMoteurSalle moteur = await monterAvecPage(tester, taille);
+      moteur.publier(<ParticipantSalle>[
+        _personne(identite: 't1', role: 'teacher', local: true, camera: camera),
+      ]);
+      await tester.pumpAndSettle();
+      return moteur;
+    }
+
+    Future<void> touche(WidgetTester tester, LogicalKeyboardKey cle) async {
+      await tester.sendKeyEvent(cle);
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('EN-KB, ordinateur : M ouvre le micro', (
+      WidgetTester tester,
+    ) async {
+      final FauxMoteurSalle moteur = await monterAvecMoi(tester);
+      await touche(tester, LogicalKeyboardKey.keyM);
+      expect(moteur.microDemande, <bool>[true]);
+    });
+
+    testWidgets('EN-KB, ordinateur : V coupe la camera, ne l allume jamais', (
+      WidgetTester tester,
+    ) async {
+      final FauxMoteurSalle allumee = await monterAvecMoi(tester, camera: true);
+      await touche(tester, LogicalKeyboardKey.keyV);
+      expect(allumee.cameraDemandee, <bool>[false]);
+    });
+
+    testWidgets('EN-KB, ordinateur : V n allume pas une camera eteinte', (
+      WidgetTester tester,
+    ) async {
+      final FauxMoteurSalle eteinte = await monterAvecMoi(tester);
+      await touche(tester, LogicalKeyboardKey.keyV);
+      expect(eteinte.cameraDemandee, isEmpty);
+    });
+
+    testWidgets('EN-KB, ordinateur : R ouvre les Eleves', (
+      WidgetTester tester,
+    ) async {
+      await monterAvecMoi(tester);
+      expect(find.text(t.tc.classe.roster.titre), findsNothing);
+      await touche(tester, LogicalKeyboardKey.keyR);
+      expect(find.text(t.tc.classe.roster.titre), findsOneWidget);
+    });
+
+    testWidgets('EN-KB, ordinateur : B ouvre le choix du support', (
+      WidgetTester tester,
+    ) async {
+      await monterAvecMoi(tester);
+      expect(find.text(t.salle.supports.titre), findsNothing);
+      await touche(tester, LogicalKeyboardKey.keyB);
+      expect(find.text(t.salle.supports.titre), findsOneWidget);
+    });
+
+    testWidgets('EN-KB, telephone : aucune lettre n agit', (
+      WidgetTester tester,
+    ) async {
+      final FauxMoteurSalle moteur = await monterAvecMoi(
+        tester,
+        taille: const Size(390, 844),
+      );
+      await touche(tester, LogicalKeyboardKey.keyM);
+      await touche(tester, LogicalKeyboardKey.keyB);
+      expect(moteur.microDemande, isEmpty);
+      expect(find.text(t.salle.supports.titre), findsNothing);
+    });
+  });
+
+  // Lot salle 2 (directeur, 25/10/2026, capture du telephone de l'eleve) :
+  // l'attente etait un texte blanc sur gris clair. Surface teintee (jamais
+  // du blanc pur), ornement, titre qui nomme l'enseignant attendu, une
+  // phrase ; contraste >= 4,5:1, en clair et en sombre.
+  group('Lot salle 2 : l attente de l eleve se lit', () {
+    for (final ThemeMode theme in <ThemeMode>[
+      ThemeMode.light,
+      ThemeMode.dark,
+    ]) {
+      testWidgets('390 x 844, ${theme.name}', (WidgetTester tester) async {
+        tester.view.physicalSize = const Size(390, 844);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        final FauxMoteurSalle moteur = FauxMoteurSalle();
+        await _monterSalle(
+          tester,
+          themeMode: theme,
+          surcharges: _surcharges(
+            video: FauxServiceVideo(acces0: _acces('student')),
+            moteur: moteur,
+            preVol: FauxServicePreVol(),
+            presence: FauxServicePresence(
+              lignes: <PresenceParticipant>[
+                _presence(
+                  EtatPresence.enAttente,
+                  profilId: 't1',
+                  prenom: 'Omar',
+                  role: 'teacher',
+                ),
+                _presence(EtatPresence.presente, profilId: 'p1', prenom: 'Aya'),
+              ],
+            ),
+          ),
+        );
+        moteur.publier(<ParticipantSalle>[
+          _personne(identite: 'p1', role: 'student', nom: 'Aya', local: true),
+        ]);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+
+        final Finder attente = find.byKey(
+          const ValueKey<String>('salle-attente'),
+        );
+        expect(attente, findsOneWidget);
+        final Color fond =
+            (tester.widget<DecoratedBox>(attente).decoration as BoxDecoration)
+                .color!;
+        expect(fond, isNot(const Color(0xFFFFFFFF)));
+        for (final String texte in <String>[
+          t.salle.attenteDe(deNom: "d'Omar"),
+          t.salle.seulEnseignantDetail,
+        ]) {
+          final Finder f = find.descendant(
+            of: attente,
+            matching: find.text(texte),
+          );
+          expect(f, findsOneWidget, reason: texte);
+          final Color encre = tester
+              .widget<RichText>(
+                find.descendant(of: f, matching: find.byType(RichText)),
+              )
+              .text
+              .style!
+              .color!;
+          expect(
+            contraste(encre, fond),
+            greaterThanOrEqualTo(4.5),
+            reason: texte,
+          );
+        }
+      });
+    }
+  });
+
+  // Lot salle 2 : la vignette se deplace au doigt et a la souris, aimantee
+  // aux quatre coins (standard Meet, FaceTime).
+  group('Lot salle 2 : vignette deplacable', () {
+    for (final Size taille in <Size>[
+      const Size(1366, 768),
+      const Size(390, 844),
+    ]) {
+      testWidgets('${taille.width.toInt()} px : un glisser l emmene au coin '
+          'oppose', (WidgetTester tester) async {
+        tester.view.physicalSize = taille;
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        final FauxMoteurSalle moteur = FauxMoteurSalle();
+        await _monterSalle(
+          tester,
+          surcharges: <Override>[
+            ..._surcharges(
+              video: FauxServiceVideo(acces0: _acces('student')),
+              moteur: moteur,
+              preVol: FauxServicePreVol(),
+            ),
+            ...surchargesMadina15(page: 293),
+          ],
+        );
+        moteur
+          ..publier(<ParticipantSalle>[
+            _personne(
+              identite: 't1',
+              role: 'teacher',
+              nom: 'Omar',
+              camera: true,
+            ),
+            _personne(identite: 'p1', role: 'student', nom: 'Aya', local: true),
+          ])
+          ..publierContenu(
+            ContenuPresente(
+              page: 293,
+              sourate: 18,
+              verset: 1,
+              presentePar: 't1',
+              emisLe: DateTime.now(),
+            ),
+          );
+        await tester.pumpAndSettle();
+        final Finder vignette = find.byKey(VignetteAimantee.cle);
+        expect(vignette, findsOneWidget);
+        final Rect avant = tester.getRect(vignette);
+        // Par defaut, en haut a droite (sens de lecture francais).
+        expect(avant.center.dx, greaterThan(taille.width / 2));
+        expect(avant.center.dy, lessThan(taille.height / 2));
+        await tester.drag(
+          vignette,
+          Offset(-taille.width * 0.7, taille.height * 0.7),
+        );
+        await tester.pumpAndSettle();
+        final Rect apres = tester.getRect(vignette);
+        expect(apres.center.dx, lessThan(taille.width / 2));
+        expect(apres.center.dy, greaterThan(taille.height / 2));
+        // Aimantee au coin : a 16 du bord.
+        expect(apres.left, closeTo(16, 0.5));
+      });
+    }
+  });
+
+  // Lot salle 2 (directeur, 25/10/2026) : la Bibliotheque montre le choix des
+  // supports ; la salle reprend a la derniere page presentee dans la classe.
+  group('Lot salle 2 : choix du support et reprise de la page', () {
+    List<Override> surcharges(FauxMoteurSalle moteur) => <Override>[
+      ..._surcharges(
+        video: FauxServiceVideo(acces0: _acces('teacher')),
+        moteur: moteur,
+        preVol: FauxServicePreVol(),
+        role: AppRole.teacher,
+      ),
+      ...surchargesMadina15(page: 604),
+      pageCoranProvider.overrideWith(
+        (Ref _, int n) async => PageCoran(
+          numero: n,
+          versets: <VersetCoran>[
+            VersetCoran(
+              sourateNumero: 114,
+              numero: 1,
+              texte: 'verset',
+              pageNumero: n,
+            ),
+          ],
+        ),
+      ),
+    ];
+
+    testWidgets('la Bibliotheque montre le Coran et ce qui viendra', (
+      WidgetTester tester,
+    ) async {
+      tester.view.physicalSize = const Size(1366, 768);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: surcharges(moteur),
+        groupeId: 'g1',
+      );
+      await moteur.presenterContenu(
+        ContenuPresente(
+          page: 604,
+          sourate: 114,
+          verset: 1,
+          presentePar: 'p1',
+          emisLe: DateTime.now(),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(BoutonPlusAppel.cle));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(CommandesPedagogiques.cleBibliotheque));
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.supports.coran), findsOneWidget);
+      expect(find.text(t.salle.supports.aVenir), findsOneWidget);
+      final int avant = moteur.contenusPresentesDemandes.length;
+      await tester.tap(find.byKey(SallePage.supportCoranKey));
+      await tester.pumpAndSettle();
+      // La tuile ouvre la page retenue pour la classe, sans autre question.
+      expect(moteur.contenusPresentesDemandes.length, avant + 1);
+      expect(moteur.contenusPresentesDemandes.last.page, 604);
+    });
+
+    testWidgets('page 604, Quitter, retourner : la salle reprend a la page '
+        '604', (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1366, 768);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: surcharges(moteur),
+        groupeId: 'g1',
+      );
+      await moteur.presenterContenu(
+        ContenuPresente(
+          page: 604,
+          sourate: 114,
+          verset: 1,
+          presentePar: 'p1',
+          emisLe: DateTime.now(),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(_commande(t.salle.seance.sortir));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.salle.seance.quitterCahier).last);
+      await tester.pumpAndSettle();
+      final int avant = moteur.contenusPresentesDemandes.length;
+      await tester.tap(find.byKey(FinSeanceEnseignant.retourSalleKey));
+      await tester.pumpAndSettle();
+      expect(moteur.contenusPresentesDemandes.length, avant + 1);
+      expect(moteur.contenusPresentesDemandes.last.page, 604);
+    });
+  });
 }

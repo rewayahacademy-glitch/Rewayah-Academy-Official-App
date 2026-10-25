@@ -234,6 +234,12 @@
   },
   "salle": {
     "retourner": "Retourner dans la salle",
+    "supports": {
+      "titre": "Choisir un support",
+      "coran": "Coran, Mushaf de Médine",
+      "coranDetail": "La page s'ouvre pour toute la classe.",
+      "aVenir": "D'autres supports viendront."
+    },
     "coran": {
       "indisponible": "La page du Coran ne s'affiche pas sur cet appareil",
       "indisponibleDetail": "L'écriture de l'édition de Médine n'a pas pu se charger. Réessayez\u00a0; si rien ne change, prévenez la direction.",
@@ -703,7 +709,8 @@
     "reconnexionCourt": "Reconnexion",
     "perdue": "La connexion au cours est perdue",
     "seulEnseignant": "Votre professeur n'est pas encore arrivé",
-    "seulEnseignantDetail": "Restez sur cet écran. Vous le verrez apparaître.",
+    "seulEnseignantDetail": "Restez sur cet écran\u00a0: la séance commence dès que votre enseignant entre.",
+    "attenteDe": "En attente {deNom}",
     "seulEleve": "Votre élève n'est pas encore arrivé",
     "voirVideoEnGrand": "Voir la vidéo en grand",
     "revenirALaPage": "Revenir à la page",

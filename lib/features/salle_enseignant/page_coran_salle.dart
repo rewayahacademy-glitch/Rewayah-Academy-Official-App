@@ -22,7 +22,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/skeleton.dart';
-import '../salle_seance/telephone_plein_ecran.dart' show telephonePleinEcran;
+import '../salle_seance/telephone_plein_ecran.dart' show pleinEcranSalle;
 import '../tc_mushaf/page_madina_15.dart';
 import '../tc_mushaf/police_mushaf.dart';
 
@@ -121,15 +121,15 @@ class PageCoranSalle extends ConsumerWidget {
     // un texte coranique ne se lit pas sur un fond de scene video.
     return DecoratedBox(
       key: cle,
-      // S0.2c : au telephone, la page est l'ecran, bord a bord, sans arrondi.
+      // S0.2c, K4 : dans `/salle`, la page est l'ecran, bord a bord, sans arrondi.
       decoration: palette.surfaceQuran.decoration(
-        borderRadius: telephonePleinEcran(context)
+        borderRadius: pleinEcranSalle(context)
             ? BorderRadius.zero
             : metriques.arrondi,
       ),
-      // S0.2d : au telephone, zero marge ; la page remplit l'ecran.
+      // S0.2d, K4 : zero marge ; la page remplit sa boite.
       child: Padding(
-        padding: telephonePleinEcran(context)
+        padding: pleinEcranSalle(context)
             ? EdgeInsets.zero
             : const EdgeInsets.all(AppSpacing.md),
         child: LayoutBuilder(
@@ -140,7 +140,7 @@ class PageCoranSalle extends ConsumerWidget {
               hauteur: contraintes.maxHeight.isFinite
                   ? contraintes.maxHeight
                   : null,
-              pleineHauteur: telephonePleinEcran(context),
+              pleineHauteur: pleinEcranSalle(context),
             ),
           ),
         ),

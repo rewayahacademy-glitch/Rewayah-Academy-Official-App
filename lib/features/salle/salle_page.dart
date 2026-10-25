@@ -12,6 +12,7 @@ import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/coran/service_coran.dart'
     show pageCoranProvider, pagesMushafMedine;
 import '../../core/domain/enums.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/observabilite/journal_dev.dart';
@@ -33,6 +34,7 @@ import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/video/livekit_session_provider.dart';
 import '../../core/video/pre_vol.dart';
@@ -42,17 +44,20 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/bouton_icone.dart';
+import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/commande_salle.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_presence.dart';
 import '../../core/widgets/offline_banner.dart' show ReserveCoinFin;
+import '../../core/widgets/ornement_marque.dart';
 import '../../core/widgets/page_immersive.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/permanent_notice.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/section_header.dart';
+import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/status_pill.dart';
 import '../accueil_eleve/apres_seance_accessibilite.dart';
 import '../controleur/compte_rendu_controle.dart' show adresseCompteRendu;
@@ -79,6 +84,7 @@ import '../tc_espace_groupe/roster_classe.dart';
 import '../tc_mes_groupes/chemins_tc_a.dart';
 import '../tc_observation_ui/indicateur_observation.dart';
 import 'fiche_seance.dart';
+import 'memoire_page_classe.dart';
 import 'preparation_eleve.dart';
 import 'preparation_enseignant.dart';
 import 'synchro_salle.dart';
@@ -145,6 +151,9 @@ class SallePage extends ConsumerStatefulWidget {
   /// La classe d'origine, pour « Retour a la Classe » et le contexte.
   final String? groupeId;
 
+  /// La tuile « Coran » du choix des supports (lot salle 2).
+  static const Key supportCoranKey = ValueKey<String>('salle-support-coran');
+
   /// La seance visee, lue dans le billet d'entree (ADR-005). Elle ne transite
   /// jamais par l'URL : une adresse copiee arrive sans billet et repart.
   final String seanceId;
@@ -195,6 +204,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
 
   /// L'eleve sorti de la salle (CLV-09).
   IssueSeance? _sortieEleve;
+
+  /// Lot salle 2 : la page retenue pour la classe a deja ete reprise a cette
+  /// entree (une seule fois ; l'enseignant change ensuite librement).
+  bool _repriseFaite = false;
 
   /// S0 : l'etat local de la salle de seance (rien n'est diffuse) : zoom de
   /// la page (paliers 100 a 200 %), page agrandie, panneau et contexte.
@@ -308,6 +321,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// est encore seul devant son ecran coute une seconde et evite cela.
   Future<void> _entrer() async {
     setState(() {
+      _repriseFaite = false;
       _impasse = null;
       _materielPret = false;
       _acces = null;
@@ -667,10 +681,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             panneau: _panneau,
             contexte: _contexte,
             sansSupportPresente: true,
-            tableauLibre: const TableauLibre(
-              largeurCanonique: 1600,
-              hauteurCanonique: 1000,
-            ),
+            // K4 : la forme fixe de la classe (16:9), ajustee sans
+            // etirement sur chaque appareil.
+            tableauLibre: TableauLibre.classe,
           )
         : base.copyWith(panneau: _panneau, contexte: _contexte);
     final VideoSessionProvider moteur = ref.watch(moteurSalleProvider);
@@ -719,7 +732,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // `etatOutilsProvider`, l'encre part a la classe (SynchroSalle).
       onOutil: enseignant ? (OutilEnseignement _) {} : null,
       onBibliotheque: enseignant && vue.peutPresenter
-          ? () => unawaited(_ouvrirCoran())
+          ? () => unawaited(_choisirSupport())
           : null,
       onContexte: (ContexteOuvert c) => setState(() {
         _contexte = c;
@@ -756,12 +769,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // Au telephone, l'enseignant n'a pas de colonne : « Eleves » ouvre la
       // presence (J3) et le roster (fiche, rappel) en feuille.
       pastille: enseignant ? null : _PastillePresence(mienne: mienne),
-      // Standard des commandes d'appel : au telephone, l'enseignant n'a pas
-      // de colonne ; le bouton rond « Eleves » (en haut a droite) ouvre la
-      // presence (J3) et le roster (fiche, rappel) en feuille.
-      boutonEleves:
-          enseignant &&
-              MediaQuery.sizeOf(context).shortestSide < AppGabarit.seuilTablette
+      // Standard des commandes d'appel : l'enseignant n'a pas de colonne (K4,
+      // 25/10/2026 : ni au telephone ni sur ordinateur) ; le bouton rond
+      // « Eleves » ouvre la presence (J3) et le roster (fiche, rappel) en
+      // feuille.
+      boutonEleves: enseignant
           ? (
               nombre: lignes.length,
               onPress: () => unawaited(_voirEleves(lignes: lignes)),
@@ -782,7 +794,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
               final String erreur => _ErreurCamera(erreur: erreur),
               null => null,
             },
-      scene: _Scene(vue: vue),
+      scene: _Scene(
+        vue: vue,
+        attendu: enseignant ? null : seance.nomEnseignant,
+      ),
       scenePremierPlan: scenePremierPlan,
       onBasculerScene: basculable
           ? () => setState(() => _scenePremierPlan = !scenePremierPlan)
@@ -830,6 +845,71 @@ class _SallePageEtat extends ConsumerState<SallePage> {
 
   /// S0 : la bibliotheque du Coran, puis la page presentee a la classe ;
   /// la scene cede la place a la page.
+  /// Lot salle 2 (directeur, 25/10/2026) : la Bibliotheque montre le choix
+  /// des supports (aujourd'hui le Coran seul, d'autres viendront) au lieu
+  /// d'ouvrir le Coran d'office. Le Coran reprend a la derniere page
+  /// presentee dans la classe, sinon le choix de la sourate et du verset.
+  Future<void> _choisirSupport() async {
+    final bool coran =
+        await AppBottomSheet.ouvrir<bool>(
+          context,
+          titre: t.salle.supports.titre,
+          constructeur: (BuildContext feuille) => Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              CarteLignes(
+                lignes: <Widget>[
+                  SettingRow(
+                    key: SallePage.supportCoranKey,
+                    icon: AppIcons.coran,
+                    title: t.salle.supports.coran,
+                    description: t.salle.supports.coranDetail,
+                    lien: true,
+                    onPress: () => Navigator.of(feuille).pop(true),
+                  ),
+                ],
+              ),
+              Ecart.vLg,
+              Text(
+                t.salle.supports.aVenir,
+                style: AppPalette.of(feuille).inkMuted.applyTo(
+                  Theme.of(feuille).textTheme.bodyMedium ?? const TextStyle(),
+                ),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+    if (!coran || !mounted) return;
+    final String? groupe = widget.groupeId;
+    final int? retenue = groupe == null
+        ? null
+        : ref.read(memoirePageClasseProvider).lire(groupe);
+    if (retenue == null) return _ouvrirCoran();
+    setState(() => _scenePremierPlan = null);
+    await ref.read(presentateurCoranProvider).presenterPage(retenue);
+  }
+
+  /// Lot salle 2 : a l'entree de l'enseignant, la page retenue pour la
+  /// classe revient, une fois, si rien n'est encore presente.
+  void _reprendrePage(VueSalle vue, ContenuPresente? presentee) {
+    final String? groupe = widget.groupeId;
+    if (_repriseFaite ||
+        groupe == null ||
+        vue.role != RoleSalle.enseignant ||
+        !vue.dansLaSalle) {
+      return;
+    }
+    _repriseFaite = true;
+    final int? retenue = ref.read(memoirePageClasseProvider).lire(groupe);
+    if (presentee != null || retenue == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (!mounted) return;
+      unawaited(ref.read(presentateurCoranProvider).presenterPage(retenue));
+    });
+  }
+
   Future<void> _ouvrirCoran() async {
     final ({int sourate, int verset})? choix = await choisirVersetCoran(
       context,
@@ -958,7 +1038,19 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           onAide: () => GoRouter.of(context).go(Routes.compte),
         );
       }
-      return ResultatSeance(issue: sortie, onRetour: _retourClasse);
+      return ResultatSeance(
+        issue: sortie,
+        onRetour: _retourClasse,
+        // Lot salle 2 : apres « Quitter », revenir par le meme chemin que
+        // l'entree (pre-vol, jeton, salle).
+        onRevenir: sortie == IssueSeance.quittee
+            ? () {
+                setState(() => _sortieEleve = null);
+                unawaited(_entrer());
+              }
+            : null,
+        onAccueil: _rentrer,
+      );
     }
 
     final VueSalle vue = VueSalle.depuis(
@@ -1068,6 +1160,15 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           vue.role == RoleSalle.eleve || _panneauEnseignant(vue)
           ? ref.watch(contenuPresenteProvider).value
           : null;
+      // Lot salle 2 : la page que l'enseignant presente est retenue pour la
+      // classe ; a son entree suivante, elle revient.
+      final String? groupe = widget.groupeId;
+      if (groupe != null &&
+          vue.role == RoleSalle.enseignant &&
+          presentee != null) {
+        ref.read(memoirePageClasseProvider).ecrire(groupe, presentee.page);
+      }
+      _reprendrePage(vue, presentee);
       final VueSeance? seance = DepuisSalle.vue(
         salle: vue,
         mode: AppMetriques.of(context).mode,
@@ -1396,35 +1497,43 @@ class _ErreurCamera extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final String cause = causeEchecCamera(erreur);
+    // K4 (directeur, 25/10/2026) : l'erreur de camera est une pilule
+    // translucente sous la ligne d'etat, dans la couche qui se masque, jamais
+    // un bloc qui pousse la page. Ce qui manque, la cause et quoi faire
+    // (K-59), puis le message exact du navigateur (D14).
+    final TextStyle style = palette.piluleSalle.applyTo(
+      textes.bodySmall ?? const TextStyle(),
+    );
     return Semantics(
       key: const ValueKey<String>('salle-erreur-camera'),
       liveRegion: true,
       container: true,
       child: Padding(
-        padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(
-              t.salle.cameraEchec,
-              style: palette.inkAlert.applyTo(
-                textes.titleSmall ?? const TextStyle(),
-              ),
+        padding: const EdgeInsets.only(top: AppSpacing.sm),
+        child: DecoratedBox(
+          decoration: palette.piluleSalle.decoration(
+            borderRadius: AppRadius.arrondiLg,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.sm,
             ),
-            Text(
-              causeEchecCamera(erreur),
-              style: palette.inkStrong.applyTo(
-                textes.bodyMedium ?? const TextStyle(),
-              ),
+            child: Wrap(
+              spacing: AppSpacing.xs,
+              children: <Widget>[
+                Text(
+                  t.salle.cameraEchec,
+                  style: palette.piluleSalle.applyTo(
+                    textes.labelMedium ?? const TextStyle(),
+                  ),
+                ),
+                Text(cause, style: style),
+                Text(t.salle.cameraEchecMessage(erreur: erreur), style: style),
+              ],
             ),
-            Text(
-              t.salle.cameraEchecMessage(erreur: erreur),
-              style: palette.inkMuted.applyTo(
-                textes.bodySmall ?? const TextStyle(),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -2397,9 +2506,12 @@ class _PresentationLue extends StatelessWidget {
 /// etait deja mesure a deux, par le test d'invisibilite du controleur, ou une
 /// vignette de 96x128 ne contenait pas son propre bloc « sans image ».
 class _Scene extends StatelessWidget {
-  const _Scene({required this.vue});
+  const _Scene({required this.vue, this.attendu});
 
   final VueSalle vue;
+
+  /// Le prenom de l'enseignant attendu, pour l'attente de l'eleve.
+  final String? attendu;
 
   @override
   Widget build(BuildContext context) {
@@ -2440,7 +2552,7 @@ class _Scene extends StatelessWidget {
       children: <Widget>[
         Positioned.fill(
           child: distants.isEmpty
-              ? _Seul(role: vue.role)
+              ? _Seul(role: vue.role, attendu: attendu)
               : _Galerie(participants: distants),
         ),
         if (moi case final ParticipantSalle local)
@@ -2686,20 +2798,42 @@ class _SansImage extends StatelessWidget {
 }
 
 /// Seul dans la salle.
+///
+/// Lot salle 2 (directeur, 25/10/2026, capture du telephone de l'eleve) :
+/// l'attente etait un texte blanc sur gris clair, illisible. Elle se pose sur
+/// sa propre surface teintee du theme (`surfaceSunken`, jamais du blanc pur),
+/// avec l'ornement de la marque, un titre qui nomme qui l'on attend et une
+/// phrase : ce qui se passe et quoi faire. Encre de la surface (contraste
+/// > 4,5:1, clair et sombre). Le depart de l'enseignant ramene ici.
 class _Seul extends StatelessWidget {
-  const _Seul({required this.role});
+  const _Seul({required this.role, this.attendu});
 
   final RoleSalle role;
 
+  /// Le prenom de l'enseignant attendu (eleve), s'il est connu. Le titre
+  /// Sayyid / Sayyida n'est pas lu dans `/salle` : le prenom seul, jamais
+  /// « le professeur » (TB-10).
+  final String? attendu;
+
+  /// La cle de l'attente (tests, captures).
+  static const Key cle = ValueKey<String>('salle-attente');
+
   @override
   Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final String? nom = attendu?.trim();
 
     // Qui manque depend de qui attend. « Un participant n'est pas connecte »
     // serait vrai et inutile : l'enfant attend son professeur, le professeur
     // attend son eleve, et l'observateur attend que le cours commence.
     final (String, String) phrase = switch (role) {
-      RoleSalle.eleve => (t.salle.seulEnseignant, t.salle.seulEnseignantDetail),
+      RoleSalle.eleve => (
+        nom == null || nom.isEmpty
+            ? t.salle.seulEnseignant
+            : t.salle.attenteDe(deNom: deDevant(nom, cle: 'salle.attenteDe')),
+        t.salle.seulEnseignantDetail,
+      ),
       RoleSalle.enseignant => (t.salle.seulEleve, t.salle.seulEleveDetail),
       RoleSalle.tuteurObservateur ||
       RoleSalle.controleur ||
@@ -2713,25 +2847,37 @@ class _Seul extends StatelessWidget {
 
     // SALLE-200-1 : la phrase d'attente defile plutot que de deborder quand
     // le texte est agrandi sur un petit ecran.
-    return Center(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSpacing.xxl),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(
-              phrase.$1,
-              textAlign: TextAlign.center,
-              style: _encreSalle(context, textes.titleMedium),
-            ),
-            Ecart.vSm,
-            Text(
-              phrase.$2,
-              textAlign: TextAlign.center,
-              style: _encreSalle(context, textes.bodyMedium),
-            ),
-          ],
+    return DecoratedBox(
+      key: cle,
+      decoration: palette.surfaceSunken.decoration(
+        borderRadius: AppRadius.arrondiLg,
+      ),
+      child: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(AppSpacing.xxl),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const OrnementMarque(taille: TailleOrnement.grand),
+              Ecart.vLg,
+              Text(
+                phrase.$1,
+                textAlign: TextAlign.center,
+                style: palette.surfaceSunken.applyTo(
+                  textes.titleMedium ?? const TextStyle(),
+                ),
+              ),
+              Ecart.vSm,
+              Text(
+                phrase.$2,
+                textAlign: TextAlign.center,
+                style: palette.surfaceSunken.applyTo(
+                  textes.bodyMedium ?? const TextStyle(),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

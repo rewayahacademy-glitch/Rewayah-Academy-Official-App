@@ -128,9 +128,28 @@ class SalleSeance extends StatelessWidget {
     final Gabarit gabarit = AppGabarit.de(context);
     final bool large = gabarit == Gabarit.desktop;
     // S0.2c (loi du directeur, 24/10/2026) : au telephone, dans `/salle`, la
-    // page du Coran EST l'ecran ; tout le reste est en surimpression.
-    if (telephonePleinEcran(context)) {
-      return TelephonePleinEcran(vue: vue, actions: actions, local: local);
+    // page du Coran EST l'ecran ; tout le reste est en surimpression. K4
+    // (25/10/2026) : de meme sur ordinateur et tablette.
+    if (pleinEcranSalle(context)) {
+      final Widget salle = TelephonePleinEcran(
+        vue: vue,
+        actions: actions,
+        local: local,
+      );
+      // EN-KB en plein ecran (25/10/2026) : M, V, R, B restent a
+      // l'enseignant sur ordinateur, comme avant la bascule K4.
+      if (vue.role != RoleSeance.enseignant || !large) return salle;
+      return _avecPreferenceRaccourcis(
+        context,
+        (bool raccourcis) => raccourcis
+            ? RaccourcisPleinEcran(
+                vue: vue,
+                actions: actions,
+                local: local,
+                child: salle,
+              )
+            : salle,
+      );
     }
     if (vue.role == RoleSeance.enseignant) {
       // TB-2 : la barre de l'appel est en bas de l'ecran, au-dessus de la
@@ -1182,15 +1201,6 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
     }
   }
 
-  /// Vrai quand un champ de texte tient le focus : aucune lettre n'est
-  /// alors un raccourci (E19, jamais pendant une saisie).
-  static bool _saisieEnCours() {
-    final BuildContext? focus = FocusManager.instance.primaryFocus?.context;
-    if (focus == null) return false;
-    return focus.widget is EditableText ||
-        focus.findAncestorWidgetOfExactType<EditableText>() != null;
-  }
-
   /// Le raccourci peut-il agir maintenant ? Salle enseignant sur bureau,
   /// preference active, hors saisie, et le bouton correspondant existe.
   bool _permis(RaccourciSalle raccourci) {
@@ -1332,20 +1342,7 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
     // jamais globales ; l'action refuse (et laisse passer la touche) hors
     // bureau, preference coupee, ou pendant une saisie.
     return Shortcuts(
-      shortcuts: const <ShortcutActivator, Intent>{
-        SingleActivator(LogicalKeyboardKey.keyM): IntentRaccourciSalle(
-          RaccourciSalle.micro,
-        ),
-        SingleActivator(LogicalKeyboardKey.keyV): IntentRaccourciSalle(
-          RaccourciSalle.camera,
-        ),
-        SingleActivator(LogicalKeyboardKey.keyR): IntentRaccourciSalle(
-          RaccourciSalle.eleves,
-        ),
-        SingleActivator(LogicalKeyboardKey.keyB): IntentRaccourciSalle(
-          RaccourciSalle.bibliotheque,
-        ),
-      },
+      shortcuts: _raccourcisSalle,
       child: Actions(
         actions: <Type, Action<Intent>>{
           IntentRaccourciSalle: _ActionRaccourciSalle(
@@ -1392,6 +1389,110 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
     );
   }
 }
+
+/// Vrai quand un champ de texte tient le focus : aucune lettre n'est
+/// alors un raccourci (E19, jamais pendant une saisie).
+bool _saisieEnCours() {
+  final BuildContext? focus = FocusManager.instance.primaryFocus?.context;
+  if (focus == null) return false;
+  return focus.widget is EditableText ||
+      focus.findAncestorWidgetOfExactType<EditableText>() != null;
+}
+
+/// EN-KB dans `/salle` en plein ecran (K4, 25/10/2026) : les raccourcis M,
+/// V, R, B de l'enseignant sur ordinateur, que la bascule K4 avait perdus
+/// avec [_FocusPanneaux]. Memes regles : M bascule le micro (sauf micro
+/// bloque), V coupe la camera sans jamais l'allumer, R ouvre « Eleves »
+/// (la feuille du plein ecran), B ouvre le choix du support ; jamais
+/// pendant une saisie. Le focus est pose sur la salle a l'ouverture.
+class RaccourcisPleinEcran extends StatelessWidget {
+  const RaccourcisPleinEcran({
+    required this.vue,
+    required this.actions,
+    required this.local,
+    required this.child,
+    super.key,
+  });
+
+  final VueSeance vue;
+  final ActionsSeance actions;
+  final EtatLocalSeance local;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final VoidCallback? eleves = PorteeMediaSalle.de(context)
+        ?.boutonEleves
+        ?.onPress;
+    bool permis(RaccourciSalle raccourci) {
+      if (_saisieEnCours()) return false;
+      return switch (raccourci) {
+        RaccourciSalle.micro =>
+          actions.onMicro != null &&
+              vue.commandesPublicationActives &&
+              !vue.microBloque,
+        RaccourciSalle.camera =>
+          actions.onCamera != null &&
+              vue.commandesPublicationActives &&
+              local.cameraAllumee,
+        RaccourciSalle.eleves => eleves != null,
+        RaccourciSalle.bibliotheque =>
+          actions.onBibliotheque != null &&
+              vue.panneau != PanneauOuvert.ressources,
+      };
+    }
+
+    void executer(RaccourciSalle raccourci) {
+      switch (raccourci) {
+        case RaccourciSalle.micro:
+          actions.onMicro?.call();
+        case RaccourciSalle.camera:
+          actions.onCamera?.call();
+          unawaited(
+            SemanticsService.sendAnnouncement(
+              View.of(context),
+              t.salle.cameraCoupee,
+              Directionality.of(context),
+            ),
+          );
+        case RaccourciSalle.eleves:
+          eleves?.call();
+        case RaccourciSalle.bibliotheque:
+          actions.onBibliotheque?.call();
+      }
+    }
+
+    return Shortcuts(
+      shortcuts: _raccourcisSalle,
+      child: Actions(
+        actions: <Type, Action<Intent>>{
+          IntentRaccourciSalle: _ActionRaccourciSalle(
+            permis: permis,
+            executer: executer,
+          ),
+        },
+        child: Focus(autofocus: true, skipTraversal: true, child: child),
+      ),
+    );
+  }
+}
+
+/// Les lettres de la salle enseignant (E19, EN-KB).
+const Map<ShortcutActivator, Intent> _raccourcisSalle =
+    <ShortcutActivator, Intent>{
+      SingleActivator(LogicalKeyboardKey.keyM): IntentRaccourciSalle(
+        RaccourciSalle.micro,
+      ),
+      SingleActivator(LogicalKeyboardKey.keyV): IntentRaccourciSalle(
+        RaccourciSalle.camera,
+      ),
+      SingleActivator(LogicalKeyboardKey.keyR): IntentRaccourciSalle(
+        RaccourciSalle.eleves,
+      ),
+      SingleActivator(LogicalKeyboardKey.keyB): IntentRaccourciSalle(
+        RaccourciSalle.bibliotheque,
+      ),
+    };
 
 /// Les raccourcis clavier de la salle enseignant (E19, EN-KB).
 enum RaccourciSalle {

@@ -383,6 +383,20 @@ class TableauLibre {
     this.aDesNotes = false,
   }) : assert(largeurCanonique > 0 && hauteurCanonique > 0);
 
+  /// K4 (directeur, 25/10/2026) : le tableau blanc de `/salle` a UNE forme
+  /// pour toute la classe, un espace virtuel 16:9 (origine en haut a gauche,
+  /// coordonnees de 0 a 1). Chaque appareil l'affiche ajuste, a echelle
+  /// UNIFORME et centre ([rectanglePage], `BoxFit.contain`), avec des bandes
+  /// vides la ou son ecran a un autre ratio : jamais d'etirement non
+  /// uniforme (standard des tableaux partages de Zoom et Jamboard). Un trait
+  /// garde donc la meme forme sur le telephone de l'eleve et l'ordinateur
+  /// de l'enseignant. La page du Coran garde, elle, les coordonnees de sa
+  /// page : un trait reste sous le meme mot sur tous les appareils.
+  static const TableauLibre classe = TableauLibre(
+    largeurCanonique: 1600,
+    hauteurCanonique: 900,
+  );
+
   /// TB-7a : la ressource a laquelle s'ancrent les notes du tableau libre,
   /// distincte de tout support (TB5 : rien n'y est copie).
   static const String idRessource = 'tableau-libre';

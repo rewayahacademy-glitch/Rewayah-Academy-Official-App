@@ -399,22 +399,15 @@ extension on ZoneSupport {
                   // S0.2 : dans `/salle`, la page prend toute la carte
                   // (zoom 100 = toute la largeur ou toute la hauteur).
                   // Retour du pilote (24/10/2026) : dans `/salle`, le tableau
-                  // ouvert est un canevas plein, toute la scene, sans marge ni
-                  // ratio, comme au telephone ; la vignette se pose dessus.
-                  final TableauLibre? tableau = vue.tableauLibre;
+                  // ouvert prend toute la scene, sans marge ; la vignette se
+                  // pose dessus. K4 (25/10/2026) : sa feuille garde la forme
+                  // fixe de la classe (16:9), ajustee sans etirement
+                  // ([TableauLibre.classe]).
                   final bool canevas =
                       pleinCadre &&
                       surface == VueSurface.tableauLibre &&
-                      tableau != null;
-                  final VueSeance vueSurface = canevas
-                      ? vue.copyWith(
-                          tableauLibre: TableauLibre(
-                            largeurCanonique: math.max(1, c.maxWidth.round()),
-                            hauteurCanonique: math.max(1, c.maxHeight.round()),
-                            aDesNotes: tableau.aDesNotes,
-                          ),
-                        )
-                      : vue;
+                      vue.tableauLibre != null;
+                  final VueSeance vueSurface = vue;
                   final double marge = canevas
                       ? 0
                       : pleinCadre
@@ -528,7 +521,7 @@ Widget _avecFleches(
       (precedente == null && suivante == null)) {
     return page;
   }
-  const double cote = _coteFleches;
+  const double cote = coteFlechesSalle;
   final double largeurPage = boite.height * ratio;
   if (boite.width < largeurPage + 2 * (cote + AppSpacing.sm)) return page;
   // Les fleches encadrent la page, au plus pres d'elle (reference 4).
@@ -550,7 +543,7 @@ Widget _avecFleches(
 }
 
 /// Le cote des grandes fleches de la salle (NAV-FLECHES-1 : 48 au moins).
-const double _coteFleches = AppSpacing.respiration;
+const double coteFlechesSalle = AppSpacing.respiration;
 
 /// S0 : la scene video de `/salle` a la place de la page, et « Revenir a
 /// la page » en coin quand une page attend derriere.
