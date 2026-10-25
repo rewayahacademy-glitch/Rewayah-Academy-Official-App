@@ -173,7 +173,8 @@ class TelephonePleinEcran extends StatelessWidget {
                   (precedente != null || suivante != null) &&
                   ecran.width >= boite.width + 2 * cote
               ? SizedBox(
-                  width: boite.width + 2 * cote,
+                  // La page garde sa boite : chaque fleche prend son cote.
+                  width: boite.width + 2 * coteFlechesSalle,
                   height: boite.height,
                   child: PageAvecFlechesMushaf(
                     key: const ValueKey<String>('fleches-page-salle'),
