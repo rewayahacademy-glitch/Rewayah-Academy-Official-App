@@ -219,6 +219,14 @@ class FinSeanceEnseignant extends StatelessWidget {
                         final double vertical = large
                             ? AppSpacing.xl
                             : AppSpacing.xxl;
+                        // Lot salle 3 (pilote, 25/10/2026) : sur ordinateur
+                        // (fenetre « expanded », 840 utiles), la fin tient
+                        // dans 1440 x 768 sans defilement ; le telephone ne
+                        // change pas.
+                        final bool bureau =
+                            c.maxWidth /
+                                MediaQuery.textScalerOf(context).scale(1) >=
+                            AppGabarit.seuilEtendu;
                         return SingleChildScrollView(
                           padding: EdgeInsets.symmetric(
                             horizontal: large
@@ -232,10 +240,13 @@ class FinSeanceEnseignant extends StatelessWidget {
                             ),
                             child: Center(
                               child: ConstrainedBox(
-                                constraints: const BoxConstraints(
-                                  maxWidth: _largeurFin,
+                                constraints: BoxConstraints(
+                                  maxWidth: bureau
+                                      ? AppPage.largeurLecture
+                                      : _largeurFin,
                                 ),
                                 child: _CorpsFin(
+                                  bureau: bureau,
                                   vue: vue,
                                   onRetournerSalle: onRetournerSalle,
                                   onOuvrirCahier: onOuvrirCahier,
@@ -261,6 +272,7 @@ class FinSeanceEnseignant extends StatelessWidget {
 
 class _CorpsFin extends StatelessWidget {
   const _CorpsFin({
+    required this.bureau,
     required this.vue,
     required this.onRetournerSalle,
     required this.onOuvrirCahier,
@@ -268,6 +280,8 @@ class _CorpsFin extends StatelessWidget {
     required this.cahierIndisponible,
   });
 
+  /// Vrai sur ordinateur : en-tete compact, carte et actions cote a cote.
+  final bool bureau;
   final VueSeance vue;
   final VoidCallback? onRetournerSalle;
   final VoidCallback? onOuvrirCahier;
@@ -276,6 +290,7 @@ class _CorpsFin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (bureau) return _bureau(context);
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final VoidCallback? ouvrir = onOuvrirCahier;
@@ -359,6 +374,100 @@ class _CorpsFin extends StatelessWidget {
             niveau: NiveauAction.secondaire,
           ),
         ],
+      ],
+    );
+  }
+
+  /// Ordinateur (lot salle 3, pilote, 25/10/2026) : titre et phrase compacts,
+  /// sans l'icone de 160 ; la carte recapitulative au debut, les actions a
+  /// la fin, cote a cote. « Retourner dans la salle » est la seule action
+  /// pleine ; « Ouvrir le cahier » (ou « Reessayer ») et « Revenir a ma
+  /// journee » sont des liens avec fleche. Sans retour possible (seance
+  /// close), le cahier reprend l'action pleine.
+  Widget _bureau(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final VoidCallback? ouvrir = onOuvrirCahier;
+    final VoidCallback? revenir = onRevenirJournee;
+    final VoidCallback? retourner = onRetournerSalle;
+    final String libelleCahier = cahierIndisponible
+        ? t.commun.reessayer
+        : t.salle.fin.enseignant.ouvrirCahier;
+    final List<Widget> rangee = <Widget>[
+      if (retourner != null && ouvrir != null)
+        LienFleche(libelle: libelleCahier, onPress: ouvrir),
+      if (retourner != null)
+        ActionPrincipale(
+          key: FinSeanceEnseignant.retourSalleKey,
+          libelle: t.salle.retourner,
+          onPress: retourner,
+          pleineLargeur: false,
+        )
+      else if (ouvrir != null)
+        ActionPrincipale(
+          libelle: libelleCahier,
+          onPress: ouvrir,
+          fleche: !cahierIndisponible,
+          pleineLargeur: false,
+        ),
+    ];
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Semantics(
+          header: true,
+          child: Text(
+            t.salle.fin.titre,
+            style: palette.inkStrong.applyTo(
+              textes.headlineSmall ?? const TextStyle(),
+            ),
+          ),
+        ),
+        Ecart.vSm,
+        Text(
+          t.salle.fin.enseignant.phrase,
+          style: palette.inkMuted.applyTo(
+            textes.bodyMedium ?? const TextStyle(),
+          ),
+        ),
+        Ecart.vXl,
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Expanded(child: _CarteRecapitulatif(vue: vue)),
+            Ecart.hXxl,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  if (cahierIndisponible) ...<Widget>[
+                    Text(
+                      t.salle.fin.enseignant.erreurCahier,
+                      key: const ValueKey<String>('fin-erreur-cahier'),
+                      style: palette.inkAlert.applyTo(
+                        textes.bodyMedium ?? const TextStyle(),
+                      ),
+                    ),
+                    Ecart.vLg,
+                  ],
+                  if (rangee.isNotEmpty) RangeeActions(children: rangee),
+                  if (revenir != null) ...<Widget>[
+                    Ecart.vMd,
+                    Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: LienFleche(
+                        libelle: t.salle.fin.enseignant.revenirJournee,
+                        onPress: revenir,
+                        alignerEnFin: true,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }
