@@ -260,3 +260,20 @@ Deno.test('attente_candidat : rendu en anglais et en arabe par le faux traducteu
   // Un passage arabe dans un texte traduit vers l'anglais n'est jamais traduit.
   assert(versHtml('Qu’Allah vous récompense, جزاكم الله خيرا.', true).includes('<span translate="no" class="notranslate">جزاكم الله خيرا</span>'))
 })
+
+Deno.test('le nom de la marque n est jamais traduit, vers aucune langue', async () => {
+  const { versHtml, depuisHtml } = await import('./traduction.ts')
+  // Faux traducteur : transforme tout ce qui n'est pas protege par translate="no".
+  const brouiller = (h: string) => h.split(/(<span translate="no" class="notranslate">.*?<\/span>)/s)
+    .map((x) => (x.startsWith('<span translate="no"') ? x : x.toUpperCase().replace(/REWAYAH/g, 'روايا')))
+    .join('')
+  for (const arabeProtege of [true, false]) {
+    const sortie = depuisHtml(brouiller(versHtml('Enseigner à Rewayah Academy, dans l’application Rewayah.', arabeProtege)))
+    assertEquals(sortie, 'ENSEIGNER À Rewayah Academy, DANS L’APPLICATION Rewayah.', `arabe protege : ${arabeProtege}`)
+  }
+  // Le sujet du courriel d'attente traduit garde le nom en latin.
+  const r = rendre({ ...ATTENTE }, 'en')
+  const c = await traduireContenu(r.contenu, 'fr', 'en', async (textes, _s, vers) =>
+    textes.map((t) => depuisHtml(brouiller(versHtml(t, vers !== 'ar')))))
+  assert(c.sujet.includes('Rewayah Academy') && !c.sujet.includes('روايا'), c.sujet)
+})
