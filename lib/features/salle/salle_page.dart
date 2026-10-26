@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/accessibilite/age_eleve.dart';
 import '../../core/accessibilite/mode_accessibilite.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/appairage/service_avatar.dart' show avatarUrlProvider;
 import '../../core/coran/service_coran.dart'
     show pageCoranProvider, pagesMushafMedine;
 import '../../core/domain/enums.dart';
@@ -26,6 +27,7 @@ import '../../core/tc_classe/controleur_recitation.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_classe/roster_enseignant.dart';
 import '../../core/tc_classe/teacher_student_projection.dart';
+import '../../core/tc_groupe/port_groupes.dart';
 import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/tc_outils/etat_outils.dart';
 import '../../core/tc_outils/operations_personnelles.dart';
@@ -84,6 +86,7 @@ import '../salle_seance/zone_support.dart';
 import '../tc_espace_groupe/roster_classe.dart';
 import '../tc_mes_groupes/chemins_tc_a.dart';
 import '../tc_observation_ui/indicateur_observation.dart';
+import 'annuaire_seance.dart';
 import 'fiche_seance.dart';
 import 'memoire_page_classe.dart';
 import 'preparation_eleve.dart';
@@ -867,6 +870,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       video: moteur.renduVideo,
       // L'enseignant chez l'eleve ; sa propre image chez l'enseignant.
       identiteVignette: enseignant ? moi?.identite : vue.dominant?.identite,
+      photoVignette: switch ((enseignant ? moi : vue.dominant)?.cleAvatar) {
+        final String cle => ref.watch(avatarUrlProvider(cle)).value,
+        null => null,
+      },
       // L'enseignant garde les etats de lecture de son panneau (page
       // indisponible, texte non installe) ; l'eleve lit la page (D9).
       page: (SupportPageFixe support) => enseignant && presentee != null
@@ -1088,11 +1095,31 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       );
     }
 
+    // **`.value`, et surtout pas un filtrage par le type de l'AsyncValue**
+    // (piege de l'etape 3, Riverpod 3). Les trois cas qui rendent `null` --
+    // pas encore charge, lecture refusee, reseau coupe -- se disent de la meme
+    // facon a l'ecran : inconnu. C'est J3, et c'est ce qui le rend simple.
+    final List<PresenceParticipant>? presence = ref
+        .watch(presenceSeanceProvider(widget.seanceId))
+        .value;
+    // Directeur, 26/10/2026 (test en production) : le jeton ne porte aucun
+    // nom. L'annuaire de la seance nomme chaque participant (« Sayyida
+    // Amina », « Yasmine ») et donne sa photo ; l'identite technique n'est
+    // jamais rendue.
+    final String? groupeDeLaSeance = widget.groupeId;
+    final AnnuaireSeance annuaire = AnnuaireSeance(
+      presence: presence,
+      enseignant: groupeDeLaSeance == null
+          ? null
+          : ref.watch(groupeProvider(groupeDeLaSeance)).value?.enseignant,
+    );
     final VueSalle vue = VueSalle.depuis(
       materielPret: _materielPret,
       acces: _acces,
       etatMoteur: _etatMoteur,
-      participants: _participants,
+      participants: <ParticipantSalle>[
+        for (final ParticipantSalle p in _participants) annuaire.nommer(p),
+      ],
       qualite: _qualite,
       impasse: _impasse,
     );
@@ -1106,18 +1133,12 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         vue.role == RoleSalle.eleve &&
         ref.watch(modeAccessibiliteActifProvider);
 
-    // **`.value`, et surtout pas un filtrage par le type de l'AsyncValue**
-    // (piege de l'etape 3, Riverpod 3). Les trois cas qui rendent `null` --
-    // pas encore charge, lecture refusee, reseau coupe -- se disent de la meme
-    // facon a l'ecran : inconnu. C'est J3, et c'est ce qui le rend simple.
-    final List<PresenceParticipant>? presence = ref
-        .watch(presenceSeanceProvider(widget.seanceId))
-        .value;
     final List<_Presence> lignes = _Presence.composer(
       presence: presence,
       vue: vue,
       monProfil: monProfil,
       maintenant: DateTime.now(),
+      annuaire: annuaire,
     );
     final VuePresence mienne = VuePresence.depuis(
       ligne: maPresence(presence, monProfil),
@@ -1208,6 +1229,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       final VueSeance? seance = DepuisSalle.vue(
         salle: vue,
         mode: AppMetriques.of(context).mode,
+        nomEnseignantConnu: annuaire.enseignant,
         presence: presence,
         monProfil: monProfil,
         monTuteurObserve: monTuteurObserve,
@@ -2784,7 +2806,12 @@ class _Cadre extends ConsumerWidget {
         .renduVideo(participant.identite);
 
     final String nom = moi ? t.salle.vousMeme : participant.nom;
-
+    // Directeur, 26/10/2026 : la photo du profil quand l'annuaire en a la
+    // cle ; sinon le cercle des initiales.
+    final String? cle = participant.cleAvatar;
+    final String? photo = cle == null
+        ? null
+        : ref.watch(avatarUrlProvider(cle)).value;
     return DecoratedBox(
       decoration: palette.surfaceSunken.decoration(
         borderRadius: metriques.arrondi,
@@ -2797,7 +2824,9 @@ class _Cadre extends ConsumerWidget {
             // ensemble au centre ; l'etiquette du bas n'existe qu'au-dessus
             // d'une video reelle.
             Positioned.fill(
-              child: image ?? _SansImage(participant: participant, nom: nom),
+              child:
+                  image ??
+                  _SansImage(participant: participant, nom: nom, photo: photo),
             ),
             if (image != null)
               PositionedDirectional(
@@ -2846,9 +2875,16 @@ class _Cadre extends ConsumerWidget {
 /// « Sans image » ne s'ecrit plus : le cercle le dit. Il reste annonce aux
 /// technologies d'assistance, pour qui rien ne se voit.
 class _SansImage extends StatelessWidget {
-  const _SansImage({required this.participant, required this.nom});
+  const _SansImage({
+    required this.participant,
+    required this.nom,
+    this.photo,
+  });
 
   final ParticipantSalle participant;
+
+  /// La photo du profil (URL signee), ou `null`.
+  final String? photo;
 
   /// Le nom affiche (« Vous » pour soi).
   final String nom;
@@ -2860,6 +2896,7 @@ class _SansImage extends StatelessWidget {
     return TuileSansImage(
       prenom: participant.nom,
       nom: nom,
+      urlSignee: photo,
       libelleSansImage: t.salle.sansImage,
       libelleMicroCoupe: participant.micro ? null : t.salle.microCoupe,
       couleurIcone: palette.surfaceSunken.onBackground,
@@ -2985,6 +3022,7 @@ class _Presence {
     required VueSalle vue,
     required String? monProfil,
     required DateTime maintenant,
+    AnnuaireSeance? annuaire,
   }) {
     if (presence == null) {
       return <_Presence>[
@@ -3001,7 +3039,9 @@ class _Presence {
     return <_Presence>[
       for (final PresenceParticipant ligne in tableauDePresence(presence))
         _Presence(
-          nom: ligne.profilId == monProfil ? t.salle.vousMeme : ligne.prenom,
+          nom: ligne.profilId == monProfil
+              ? t.salle.vousMeme
+              : annuaire?.personne(ligne.profilId)?.nom ?? ligne.prenom,
           role: _libelleRole(ligne.role),
           vue: VuePresence.depuis(ligne: ligne, maintenant: maintenant),
           // La base emet `identity = profile_id` : le rapprochement se fait

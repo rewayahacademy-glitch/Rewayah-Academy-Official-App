@@ -55,8 +55,13 @@ class PorteeMediaSalle extends InheritedWidget {
     this.eleves,
     this.onPagePrecedente,
     this.onPageSuivante,
+    this.photoVignette,
     super.key,
   });
+
+  /// Directeur, 26/10/2026 : la photo du profil montre dans la vignette
+  /// (URL signee), quand la camera est fermee ; `null` : les initiales.
+  final String? photoVignette;
 
   /// La scene video de `/salle` (les cameras en grand, ADR-001 : les
   /// makharij se lisent sur une bouche), ou `null`.

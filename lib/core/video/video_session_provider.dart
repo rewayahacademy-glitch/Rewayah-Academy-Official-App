@@ -229,13 +229,35 @@ class ParticipantSalle {
     required this.camera,
     required this.parle,
     required this.qualite,
+    this.cleAvatar,
   });
 
   /// L'identifiant de profil. C'est le backend qui l'a inscrit dans le jeton.
+  /// **Jamais rendu a l'ecran** (directeur, 26/10/2026) : une chaine
+  /// technique ne nomme personne.
   final String identite;
 
-  /// Le nom affichable.
+  /// Le nom affichable : celui du jeton s'il en porte un (vide sinon),
+  /// puis celui de l'annuaire de la seance (`AnnuaireSeance`).
   final String nom;
+
+  /// La cle de la photo du profil (seau `avatars`), quand l'annuaire la
+  /// connait ; `null` : le cercle sans image.
+  final String? cleAvatar;
+
+  /// Le meme participant, nomme par l'annuaire de la seance.
+  ParticipantSalle nomme({required String nom, String? cleAvatar}) =>
+      ParticipantSalle(
+        identite: identite,
+        nom: nom,
+        role: role,
+        estLocal: estLocal,
+        micro: micro,
+        camera: camera,
+        parle: parle,
+        qualite: qualite,
+        cleAvatar: cleAvatar,
+      );
 
   /// Le role porte dans la seance.
   final String role;

@@ -7,6 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart'
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/appairage/service_avatar.dart'
+    show avatarUrlProvider;
 import 'package:rewayah_academy/core/coran/service_coran.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/elision.dart';
@@ -20,6 +22,8 @@ import 'package:rewayah_academy/core/tc_classe/rappel_discret.dart';
 import 'package:rewayah_academy/core/tc_classe/roster_enseignant.dart';
 import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
 import 'package:rewayah_academy/core/tc_coran/moteur_mushaf.dart';
+import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
+import 'package:rewayah_academy/core/tc_groupe/port_groupes.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
 import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart'
     show PointNormalise;
@@ -57,6 +61,7 @@ import '../support/hors_ligne_une_fois.dart';
 import '../support/mushaf_15l.dart'
     show chargerPoliceMadina15, surchargesMadina15;
 import '../teaching_core/e/faux/faux_classe.dart';
+import '../teaching_core/fixtures/fixtures_groupes.dart' show groupe;
 import '../theme/support/contraste.dart';
 
 const String _seance = 's1';
@@ -3166,6 +3171,125 @@ void main() {
       await tester.pumpAndSettle();
       expect(moteur.contenusPresentesDemandes.length, avant);
       expect(find.byKey(_croixRanger), findsNothing);
+    });
+  });
+
+  // Directeur, test en production du 26/10/2026 (09:15) : le jeton LiveKit ne
+  // porte aucun nom. La salle nomme chacun par l'annuaire de la seance
+  // (« Sayyida Amina », « Yasmine »), montre la photo quand elle est connue,
+  // et ne rend jamais l'identite technique.
+  group('Annuaire de seance : des noms, jamais une identite', () {
+    const String idProf = '7c1e9a40-1b2d-4c55-9e1a-0000000000aa';
+    const String idEleve = '7c1e9a40-1b2d-4c55-9e1a-0000000000bb';
+    const String idInconnu = '7c1e9a40-1b2d-4c55-9e1a-0000000000cc';
+    const String url = 'https://exemple.invalid/amina.webp';
+
+    Future<void> monter(
+      WidgetTester tester, {
+      required String? photo,
+      bool avecGroupe = true,
+    }) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        groupeId: avecGroupe ? 'g1' : null,
+        surcharges: <Override>[
+          ..._surcharges(
+            video: FauxServiceVideo(acces0: _acces('student')),
+            moteur: moteur,
+            preVol: FauxServicePreVol(),
+            presence: FauxServicePresence(
+              lignes: <PresenceParticipant>[
+                _presence(
+                  EtatPresence.presente,
+                  profilId: idProf,
+                  prenom: 'Amina',
+                  role: 'teacher',
+                ),
+                _presence(
+                  EtatPresence.presente,
+                  profilId: idEleve,
+                  prenom: 'Yasmine',
+                ),
+              ],
+            ),
+          ),
+          groupeProvider.overrideWith(
+            (Ref _, String _) async => groupe(
+              groupeId: 'g1',
+              libelle: 'Classe du soir',
+              nombreMembres: 3,
+              seuilMax: 6,
+              enseignant: EnseignantVM(
+                enseignantId: idProf,
+                titre: TitreEnseignant.sayyida,
+                nomAffichage: 'Amina',
+                photoUrlOuCle: photo,
+              ),
+            ),
+          ),
+          avatarUrlProvider.overrideWith((Ref _, String _) async => url),
+        ],
+      );
+      // Le jeton ne porte que l'identite : aucun nom.
+      moteur.publier(<ParticipantSalle>[
+        _personne(identite: idEleve, role: 'student', nom: '', local: true),
+        _personne(identite: idProf, role: 'teacher', nom: ''),
+        _personne(identite: idInconnu, role: 'student', nom: ''),
+      ]);
+      await tester.pumpAndSettle();
+    }
+
+    void aucuneIdentite(WidgetTester tester) {
+      for (final Element e in find.byType(RichText).evaluate()) {
+        final String texte = (e.widget as RichText).text.toPlainText();
+        for (final String id in <String>[idProf, idEleve, idInconnu]) {
+          expect(
+            texte,
+            isNot(contains(id)),
+            reason: 'identite rendue : $texte',
+          );
+        }
+      }
+    }
+
+    testWidgets(
+      'eleve : Sayyida Amina avec sa photo, l inconnu « Participant »',
+      (WidgetTester tester) async {
+        await monter(tester, photo: 'avatars/amina.webp');
+        expect(find.textContaining('Sayyida Amina'), findsWidgets);
+        expect(find.text(t.salle.participant), findsWidgets);
+        aucuneIdentite(tester);
+        // La photo rendue quand le profil en a une.
+        expect(
+          tester
+              .widgetList<AvatarTile>(find.byType(AvatarTile))
+              .where((AvatarTile a) => a.urlSignee == url),
+          isNotEmpty,
+        );
+      },
+    );
+
+    testWidgets('sans photo : le cercle des initiales, sans URL', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, photo: null);
+      aucuneIdentite(tester);
+      expect(
+        tester
+            .widgetList<AvatarTile>(find.byType(AvatarTile))
+            .where((AvatarTile a) => a.urlSignee != null),
+        isEmpty,
+      );
+    });
+
+    testWidgets('sans Classe connue : le prenom seul, jamais l identite', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, photo: null, avecGroupe: false);
+      expect(find.textContaining('Amina'), findsWidgets);
+      expect(find.textContaining('Sayyida'), findsNothing);
+      aucuneIdentite(tester);
     });
   });
 }
