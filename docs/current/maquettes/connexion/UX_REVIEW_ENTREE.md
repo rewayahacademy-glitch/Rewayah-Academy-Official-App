@@ -32,3 +32,23 @@ Rien n'est prouvé en production ; « fait » attend la vérification du directe
 
 Ce que cette PR ne change pas : les textes (aucune clé nouvelle), les routes, les redirections, les
 règles d'accès, le comportement des envois de lien et de Google.
+
+## PR 2 : démarrage animé, raccord avec la connexion (26/10/2026)
+
+Codée et testée localement, non poussée, **non prouvée** par le directeur. Décisions du pilote du
+26/10 : l'animation joue à chaque lancement ; version courte quand une session est déjà active ;
+mouvement réduit en fondus seuls.
+
+| Proposition contrôlée | Standard | Règle utile | Conclusion | Conséquence dans le code |
+|---|---|---|---|---|
+| Démarrage sur la surface de marque : logo horizontal blanc en haut, la porte au centre, aucune roue, ni mot-marque ni ornement | Material 3, écran de lancement (une marque, pas de contenu) ; `PARCOURS-ENTREE` §3 A | Un écran de lancement montre la marque et rien d'autre | conforme | `EcranDemarrage` : `PageShell(fond: surfaceMarque, bordABord)`, `LogoEntree`, `PorteLumiere.surMarque` ; `MarquePage`, `OrnementMarque` et l'indicateur circulaire retirés de cet écran |
+| La porte joue une fois, 1,5 s, puis reste immobile | WCAG 2.2.2 ; contrat E (dérogation datée de la PR 1) | Un mouvement court qui s'arrête de lui-même | conforme, dérogation déjà datée | Même `AppMouvement.entreeIllustration` que la connexion ; test « joue une fois, puis s'arrête » |
+| Raccord sans coupure avec la connexion | Material 3, transitions (continuité d'un élément partagé) | Un élément qui reste à l'écran ne recommence pas | ajustée | `RaccordEntree` : le démarrage inscrit l'avancement à chaque image ; la première coquille d'entrée le **prend** et reprend la porte à ce point (image finale si l'entrée avait fini). Écart avec la consigne (« vrai quand l'animation est finie ») : un avancement plutôt qu'un booléen, sinon une redirection à 1 s faisait rejouer la porte du début. Un retour ou un lien direct plus tard la rejoue, comme avant |
+| Session déjà active : version courte | Nielsen, efficacité pour l'utilisateur fréquent | Ne pas faire attendre qui revient | conforme | Fondus seuls sur `AppMouvement.plafond` (400 ms) ; session lue active pendant l'entrée : fin accélérée sur 400 ms. Limite : la redirection remplace l'écran aussitôt ; cette fin accélérée ne se voit que si la transition de page la laisse affichée |
+| Mouvement réduit : fondus seuls, même image finale | WCAG 2.3.3 ; contrat E | Réduire sans retirer le sens | conforme | Même chemin que la PR 1 (`MediaQuery.disableAnimations`) ; test : aucun symbole qui se dessine, animation finie |
+| Message « plus long que prévu » à 8 s, sous la porte, qui reste | Nielsen, visibilité de l'état ; charte 03 (états) | L'état long se dit sans retirer le repère | conforme | `EtatSysteme(chargementProlonge)` sous la porte ; tests « sous la porte » |
+| Thème unique sur cet écran | Dérogation de la PR 1 (décision du directeur du 25/10) | Comme la connexion qui suit | dérogation déjà datée | Thème clair forcé, contenu sous `SurMarque` |
+
+Ce que cette PR ne change pas : les textes (aucune clé nouvelle ; la marque est lue par le
+libellé du logo, `commun.marque`, et l'ouverture par `commun.demarrage.ouverture`), les routes, les
+redirections.

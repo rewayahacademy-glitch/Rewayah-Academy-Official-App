@@ -14,6 +14,7 @@ import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/etats_routeur.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/widgets/ecran_resultat.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
@@ -36,7 +37,13 @@ void main() {
       testWidgets('1 demarrage $n', (WidgetTester tester) async {
         fixerVueCapture(tester, const Size(390, 844), 2);
         await tester.pumpWidget(
-          hoteCapture(const EcranDemarrage(), themeMode: theme),
+          hoteCapture(
+            const EcranDemarrage(),
+            themeMode: theme,
+            surcharges: <Override>[
+              sourceSessionProvider.overrideWithValue(FausseSourceSession()),
+            ],
+          ),
         );
         await tester.pump(const Duration(milliseconds: 300));
         expect(tester.takeException(), isNull);

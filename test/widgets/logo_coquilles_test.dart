@@ -6,8 +6,9 @@
 //   l'accueil du role ; au debut de ligne, aussi en arabe ;
 // - coquille admin : horizontal (barre laterale, tiroir), symbole (rail),
 //   rien dans la barre mobile ;
-// - connexion : logo horizontal blanc centre en haut (25/10/2026) ; demarrage : aucun logo (animation a venir,
-//   decision du directeur du 10/10).
+// - connexion et demarrage : logo horizontal blanc centre en haut (25/10/2026 ;
+//   le demarrage anime, PR 2 du parcours d'entree, remplace « aucun logo » du
+//   10/10).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -207,7 +208,7 @@ void main() {
     });
   }
 
-  testWidgets('demarrage : aucun logo (animation a venir)', (
+  testWidgets('demarrage : le logo horizontal blanc, centre en haut', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
@@ -220,6 +221,16 @@ void main() {
       ),
     );
     await tester.pump();
-    expect(find.byType(BrandLogo), findsNothing);
+    final BrandLogo logo = tester.widget(
+      find.byKey(const ValueKey<String>('entree-logo')),
+    );
+    expect(logo.variante, VarianteLogo.horizontal);
+    expect(logo.fond, FondLogo.violet);
+    final Rect r = tester.getRect(
+      find.byKey(const ValueKey<String>('entree-logo')),
+    );
+    final Rect page = tester.getRect(find.byType(EcranDemarrage));
+    expect(r.center.dx, closeTo(page.center.dx, 1));
+    expect(r.top, lessThan(page.height / 4));
   });
 }

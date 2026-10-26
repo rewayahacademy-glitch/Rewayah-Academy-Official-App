@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
@@ -14,6 +15,7 @@ import '../../core/widgets/entete_page.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/porte_lumiere.dart';
+import 'raccord_entree.dart';
 
 /// La largeur de lecture du formulaire sur ordinateur
 /// (`docs/current/PARCOURS-ENTREE-2026-10-25.md`, §3 C).
@@ -46,7 +48,11 @@ const double largeurSceneBureau = AppSpacing.respiration * 9;
 ///
 /// Les textes et les gestes restent ceux des ecrans : [formulaire] recoit
 /// `bureau` pour poser ses boutons a la largeur de leur contenu.
-class CoquilleEntree extends StatelessWidget {
+///
+/// **Raccord avec le demarrage** (PR 2) : arrivee depuis le demarrage, la
+/// porte reprend la ou il l'a laissee ([RaccordEntree]) ; depuis une autre
+/// route, elle joue une fois comme avant.
+class CoquilleEntree extends ConsumerStatefulWidget {
   /// Cree l'habillage.
   const CoquilleEntree({
     required this.formulaire,
@@ -66,7 +72,16 @@ class CoquilleEntree extends StatelessWidget {
   final VoidCallback? onRetour;
 
   @override
+  ConsumerState<CoquilleEntree> createState() => _CoquilleEntreeState();
+}
+
+class _CoquilleEntreeState extends ConsumerState<CoquilleEntree> {
+  /// L'avancement de la porte a l'arrivee, pris une fois au demarrage.
+  late final double _depart = ref.read(raccordEntreeProvider).prendre();
+
+  @override
   Widget build(BuildContext context) {
+    final VoidCallback? onRetour = widget.onRetour;
     final InterfaceMode mode = AppMetriques.of(context).mode;
     final double facteur = MediaQuery.textScalerOf(context).scale(1);
     final ThemeData clair = AppTheme.pour(mode, Brightness.light);
@@ -100,10 +115,10 @@ class CoquilleEntree extends StatelessWidget {
                     children: <Widget>[
                       _Tete(onRetour: onRetour),
                       Ecart.vXxl,
-                      const Center(child: PorteLumiere.surMarque()),
+                      Center(child: PorteLumiere.surMarque(depart: _depart)),
                       Ecart.vXxl,
-                      formulaire(false),
-                      ...pied,
+                      widget.formulaire(false),
+                      ...widget.pied,
                       Ecart.vXxl,
                     ],
                   ),
@@ -124,16 +139,17 @@ class CoquilleEntree extends StatelessWidget {
                     color: palette.surfaceMarque.background,
                     child: SurMarque(
                       theme: marque,
-                      child: const Padding(
-                        padding: EdgeInsets.all(AppPage.gouttiereDesktop),
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppPage.gouttiereDesktop),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: <Widget>[
-                            LogoEntree(),
+                            const LogoEntree(),
                             Expanded(
                               child: Center(
                                 child: PorteLumiere.surMarque(
                                   largeurMax: largeurSceneBureau,
+                                  depart: _depart,
                                 ),
                               ),
                             ),
@@ -163,12 +179,12 @@ class CoquilleEntree extends StatelessWidget {
                               if (onRetour != null) ...<Widget>[
                                 Align(
                                   alignment: AlignmentDirectional.centerStart,
-                                  child: DisqueRetour(onPress: onRetour!),
+                                  child: DisqueRetour(onPress: onRetour),
                                 ),
                                 Ecart.vXxl,
                               ],
-                              formulaire(true),
-                              ...pied,
+                              widget.formulaire(true),
+                              ...widget.pied,
                             ],
                           ),
                         ),

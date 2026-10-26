@@ -99,6 +99,9 @@ changement dans le portail.
 Les PR 1 et 2 passent avant l'invitation des enseignants et des élèves actuels (B2.1, B2.2) : ce
 sont les premiers écrans qu'ils verront. Les PR 3 et 4 ne les concernent pas et viennent après.
 
+État au 26/10/2026 : PR 2 codée et testée localement, sur la branche locale `entree-pr2`, non
+poussée, **non prouvée** par le directeur.
+
 ## 5. Règles de preuve, pour chaque PR
 
 Textes : aucune clé nouvelle sans décision (vocabulaire `mots-rewayah`). Marque : logo par

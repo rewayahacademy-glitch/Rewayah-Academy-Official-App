@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 
 import '../marque/logo_traces.g.dart';
@@ -33,18 +35,44 @@ import 'brand_logo.dart';
 /// faisait respirer la lumiere sans fin).
 class PorteLumiere extends StatelessWidget {
   /// Cree l'illustration de la page de l'application.
-  const PorteLumiere({super.key}) : surMarque = false, largeurMax = largeur;
+  const PorteLumiere({super.key})
+    : surMarque = false,
+      largeurMax = largeur,
+      depart = 0,
+      courte = false,
+      onProgres = null;
 
   /// Cree la scene du site, posee sur [AppPalette.surfaceMarque], a la
   /// largeur disponible et au plus [largeurMax].
-  const PorteLumiere.surMarque({super.key, this.largeurMax = largeurScene})
-    : surMarque = true;
+  ///
+  /// PR 2 du parcours d'entree (demarrage anime, 25/10/2026) : [depart]
+  /// reprend l'entree ou l'ecran precedent l'a laissee (0 : du debut, 1 :
+  /// image finale, sans mouvement) ; [courte] la joue en fondus seuls sur
+  /// [AppMouvement.plafond] (session deja active), et, passee a vrai en cours
+  /// de route, la finit sur cette duree ; [onProgres] recoit l'avancement a
+  /// chaque image.
+  const PorteLumiere.surMarque({
+    super.key,
+    this.largeurMax = largeurScene,
+    this.depart = 0,
+    this.courte = false,
+    this.onProgres,
+  }) : surMarque = true;
 
   /// Vrai pour la scene du site, sur la surface de marque.
   final bool surMarque;
 
   /// La largeur maximale de la scene du site.
   final double largeurMax;
+
+  /// L'avancement de l'entree a l'arrivee, de 0 a 1.
+  final double depart;
+
+  /// Vrai : la version courte, en fondus seuls.
+  final bool courte;
+
+  /// L'avancement de l'entree, a chaque image.
+  final ValueChanged<double>? onProgres;
 
   /// La largeur du `viewBox` de la scene du site.
   static const double largeurViewBox = 640;
@@ -83,7 +111,12 @@ class PorteLumiere extends StatelessWidget {
             final double l = contraintes.maxWidth < largeurMax
                 ? contraintes.maxWidth
                 : largeurMax;
-            return _SceneSite(largeur: l);
+            return _SceneSite(
+              largeur: l,
+              depart: depart,
+              courte: courte,
+              onProgres: onProgres,
+            );
           },
         ),
       );
@@ -215,9 +248,17 @@ abstract final class _Temps {
 /// temps en fondus seuls (le symbole ne se dessine pas, la lumiere ne s'etire
 /// pas) ; l'image finale est la meme.
 class _SceneSite extends StatefulWidget {
-  const _SceneSite({required this.largeur});
+  const _SceneSite({
+    required this.largeur,
+    required this.depart,
+    required this.courte,
+    required this.onProgres,
+  });
 
   final double largeur;
+  final double depart;
+  final bool courte;
+  final ValueChanged<double>? onProgres;
 
   @override
   State<_SceneSite> createState() => _SceneSiteState();
@@ -227,8 +268,34 @@ class _SceneSiteState extends State<_SceneSite>
     with SingleTickerProviderStateMixin {
   late final AnimationController _entree = AnimationController(
     vsync: this,
-    duration: AppMouvement.entreeIllustration,
-  )..forward();
+    duration: widget.courte
+        ? AppMouvement.plafond
+        : AppMouvement.entreeIllustration,
+    value: widget.depart.clamp(0, 1).toDouble(),
+  );
+
+  /// Vrai quand la scene est nee courte : fondus seuls jusqu'au bout.
+  late final bool _neeCourte = widget.courte;
+
+  @override
+  void initState() {
+    super.initState();
+    _entree.addListener(_signaler);
+    if (_entree.value < 1) {
+      unawaited(_entree.forward());
+    }
+  }
+
+  void _signaler() => widget.onProgres?.call(_entree.value);
+
+  @override
+  void didUpdateWidget(_SceneSite ancien) {
+    super.didUpdateWidget(ancien);
+    // Session lue active pendant l'entree : elle finit sur la duree courte.
+    if (widget.courte && !ancien.courte && _entree.isAnimating) {
+      unawaited(_entree.animateTo(1, duration: AppMouvement.plafond));
+    }
+  }
 
   @override
   void dispose() {
@@ -238,7 +305,7 @@ class _SceneSiteState extends State<_SceneSite>
 
   @override
   Widget build(BuildContext context) {
-    final bool reduit = AppMouvement.mouvementReduit(context);
+    final bool reduit = AppMouvement.mouvementReduit(context) || _neeCourte;
     final double e = widget.largeur / PorteLumiere.largeurViewBox;
     final double hauteurSymbole = logoSymbole.hauteur * _symboleEchelle * e;
     final double zone = hauteurSymbole * BrandLogo.zoneProtection;
