@@ -35,7 +35,7 @@ import '../../core/widgets/selecteur_section.dart';
 import '../../core/widgets/setting_row.dart';
 import 'actions_seance.dart';
 import 'barre_outils_salle.dart';
-import 'dock_seance.dart' show diametreBoutonAppel;
+import 'dock_seance.dart' show CoucheSalle, diametreBoutonAppel;
 import 'media_salle.dart';
 import 'panneau_bibliotheque_salle.dart';
 import 'panneau_eleves.dart';
@@ -90,47 +90,50 @@ class CapsuleVideoTelephone extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final VoidCallback? enGrand = PorteeMediaSalle.de(context)?.onBasculerScene;
-    return DecoratedBox(
-      decoration: palette.piluleSalle.decoration(
-        borderRadius: AppRadius.arrondiLg,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.sm),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          spacing: AppSpacing.sm,
-          children: <Widget>[
-            Pressable(
-              key: cleDeplier,
-              onPress: onDeplier,
-              libelleSemantique: t.salle.seance.contexte.titre,
-              arrondiFocus: AppRadius.arrondiMd,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  VignetteVideo(
-                    vue: vue,
-                    largeur: largeurVideo,
-                    touchable: false,
-                    avecNom: false,
-                  ),
-                  SizedBox.square(
-                    dimension: AppTouchTarget.standard,
-                    child: Center(child: PointEtatTelephone(vue: vue)),
-                  ),
-                ],
+    // C1 : UNE surface sombre qui porte la vignette, le point et l'oeil.
+    return CoucheSalle(
+      child: DecoratedBox(
+        decoration: palette.coucheSalle.decoration(
+          borderRadius: AppRadius.arrondiLg,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.sm),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            spacing: AppSpacing.sm,
+            children: <Widget>[
+              Pressable(
+                key: cleDeplier,
+                onPress: onDeplier,
+                libelleSemantique: t.salle.seance.contexte.titre,
+                arrondiFocus: AppRadius.arrondiMd,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    VignetteVideo(
+                      vue: vue,
+                      largeur: largeurVideo,
+                      touchable: false,
+                      avecNom: false,
+                    ),
+                    SizedBox.square(
+                      dimension: AppTouchTarget.standard,
+                      child: Center(child: PointEtatTelephone(vue: vue)),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            if (enGrand != null)
-              BoutonIcone(
-                key: cleVoir,
-                icone: AppIcons.oeil,
-                libelle: t.salle.voirVideoEnGrand,
-                infobulle: t.salle.voirVideoEnGrand,
-                forme: FormeBoutonIcone.appel,
-                onPress: enGrand,
-              ),
-          ],
+              if (enGrand != null)
+                BoutonIcone(
+                  key: cleVoir,
+                  icone: AppIcons.oeil,
+                  libelle: t.salle.voirVideoEnGrand,
+                  infobulle: t.salle.voirVideoEnGrand,
+                  forme: FormeBoutonIcone.appel,
+                  onPress: enGrand,
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -187,8 +190,12 @@ class ProfilTelephone extends StatelessWidget {
   /// La cle de « Reduire ».
   static const Key cleReduire = ValueKey<String>('telephone-profil-reduire');
 
+  // C4 : la capsule depliee, meme surface sombre, texte clair.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      CoucheSalle(child: Builder(builder: _contenu));
+
+  Widget _contenu(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final String role = vue.titreEnseignant == TitreEnseignant.sayyida
@@ -201,13 +208,13 @@ class ProfilTelephone extends StatelessWidget {
       children: <Widget>[
         Text(
           vue.nomEnseignant,
-          style: palette.piluleSalle.applyTo(
+          style: palette.coucheSalle.applyTo(
             textes.titleSmall ?? const TextStyle(),
           ),
         ),
         Text(
           role,
-          style: palette.piluleSalle.applyTo(
+          style: palette.coucheSalle.applyTo(
             textes.bodySmall ?? const TextStyle(),
           ),
         ),
@@ -230,7 +237,7 @@ class ProfilTelephone extends StatelessWidget {
       mot: t.salle.seance.contexte.reduire,
       semantique: t.salle.seance.contexte.reduireInformations,
       icone: AppIcons.replier,
-      sur: palette.piluleSalle,
+      sur: palette.coucheSalle,
       onPress: onReduire,
     );
     final Widget photo = VignetteVideo(
@@ -241,7 +248,7 @@ class ProfilTelephone extends StatelessWidget {
     );
     final TextScaler echelle = MediaQuery.textScalerOf(context);
     return DecoratedBox(
-      decoration: palette.piluleSalle.decoration(
+      decoration: palette.coucheSalle.decoration(
         borderRadius: AppRadius.arrondiLg,
       ),
       child: Padding(
@@ -335,6 +342,7 @@ class ProfilTelephone extends StatelessWidget {
               child: PiluleEtatSalle(
                 vue: vue,
                 aLaLigne: true,
+                surface: palette.coucheSalle,
                 cle: const ValueKey<String>('ligne-etat-telephone'),
               ),
             ),

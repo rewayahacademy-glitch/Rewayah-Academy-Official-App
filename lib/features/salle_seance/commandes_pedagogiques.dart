@@ -39,6 +39,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/tc_outils/etat_outils.dart';
 import '../../core/tc_outils/operations_personnelles.dart';
 import '../../core/tc_outils/port_dock_hote.dart' show OutilDock;
+import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
@@ -78,8 +79,13 @@ class DeclencheurCommandes extends StatelessWidget {
     this.ouvert = false,
     this.focusNode,
     this.iconeSeule = false,
+    this.surface,
     super.key = cle,
   });
+
+  /// La surface de la carte (la couche sombre du telephone, pilote C2) ;
+  /// `null` : celle du theme.
+  final AppColorPair? surface;
 
   /// La cle du declencheur.
   static const Key cle = ValueKey<String>('declencheur-commandes');
@@ -123,6 +129,7 @@ class DeclencheurCommandes extends StatelessWidget {
       libelleSemantique: t.salle.seance.commandes.declencheurSemantique,
       focusNode: focusNode,
       marge: AppSpacing.md,
+      surface: surface,
       child: ExcludeSemantics(
         child: Row(
           mainAxisSize: MainAxisSize.min,

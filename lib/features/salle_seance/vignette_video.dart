@@ -123,7 +123,8 @@ class VignetteVideo extends StatelessWidget {
   final bool avecSignal;
 
   /// Faux dans la capsule et le profil du telephone (fiche 1, lignes 1 et
-  /// 5) : le cercle seul, le nom est lu a cote ou nulle part.
+  /// 5) : le cercle seul, sans nom, sans cadre ni aplat (il se pose sur la
+  /// couche sombre, pilote C1).
   final bool avecNom;
 
   @override
@@ -164,10 +165,12 @@ class VignetteVideo extends StatelessWidget {
         child: AspectRatio(
           aspectRatio: MesuresVignette.ratio,
           child: DecoratedBox(
-            decoration: palette.surfaceInverse.decoration(
-              borderRadius: AppRadius.arrondiMd,
-              side: palette.borderHairline.asBorderSide(width: 2),
-            ),
+            decoration: avecNom
+                ? palette.surfaceInverse.decoration(
+                    borderRadius: AppRadius.arrondiMd,
+                    side: palette.borderHairline.asBorderSide(width: 2),
+                  )
+                : const BoxDecoration(),
             child: ClipRRect(
               borderRadius: AppRadius.arrondiMd,
               // VIDEO-TUILE-1 : la tuile partagee -- le petit cercle et le
@@ -176,7 +179,9 @@ class VignetteVideo extends StatelessWidget {
               child:
                   image ??
                   DecoratedBox(
-                    decoration: palette.surfaceActionDouce.decoration(),
+                    decoration: avecNom
+                        ? palette.surfaceActionDouce.decoration()
+                        : const BoxDecoration(),
                     child: TuileSansImage(
                       prenom: vue.nomEnseignant,
                       nom: avecNom ? vue.nomEnseignant : '',

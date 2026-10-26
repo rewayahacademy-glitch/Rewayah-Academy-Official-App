@@ -14,6 +14,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
+import 'package:rewayah_academy/core/profil/service_profil_enseignant.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
@@ -120,6 +121,16 @@ List<Override> _surcharges(String role, FauxMoteurSalle moteur) => <Override>[
     FauxAnnonceObservation(lignes: const <AnnonceObservation>[]),
   ),
   ...surchargesMadina15(page: 42),
+  // Pilote C4 : Amina, enseignante, porte le titre feminin.
+  profilEnseignantParIdProvider.overrideWith(
+    (Ref _, String id) async => id == 't1'
+        ? const ProfilEnseignant(
+            prenom: 'Amina',
+            identifiant: 'RA-26-t1',
+            titre: 'sayyida',
+          )
+        : null,
+  ),
   pageCoranProvider.overrideWith(
     (Ref _, int n) async => PageCoran(
       numero: n,
@@ -400,7 +411,9 @@ void main() {
                         )
                         .decoration
                     as BoxDecoration;
-            expect(fond.color, AppPalette.of(ctx).piluleSalle.background);
+            // C1 : la couche sombre, la meme dans les deux themes.
+            expect(fond.color, AppPalette.of(ctx).coucheSalle.background);
+            expect(fond.color, AppPalette.claire().surfaceInverse.background);
             // Rien d'autre en haut de l'ecran.
             final Rect c = tester.getRect(capsule);
             await _toucher(tester);
@@ -478,8 +491,12 @@ void main() {
               dans(find.byKey(const ValueKey<String>('vignette-video'))),
               findsOneWidget,
             );
-            expect(dans(find.text('Amina')), findsOneWidget);
-            expect(dans(find.text(t.commun.roles.enseignant)), findsOneWidget);
+            expect(dans(find.textContaining('Amina')), findsOneWidget);
+            // C4 : le role suit le genre.
+            expect(
+              dans(find.text(t.salle.seance.contexte.enseignante)),
+              findsOneWidget,
+            );
             expect(dans(find.byKey(PointEtatTelephone.cle)), findsOneWidget);
             expect(
               dans(
@@ -496,7 +513,9 @@ void main() {
             expect(dans(find.byType(PiluleEtatSalle)), findsOneWidget);
             expect(
               tester.getRect(dans(find.byType(PiluleEtatSalle))).top,
-              greaterThan(tester.getRect(dans(find.text('Amina'))).bottom),
+              greaterThan(
+                tester.getRect(dans(find.textContaining('Amina'))).bottom,
+              ),
             );
             expect(tester.takeException(), isNull);
             verifierAucunMotCoupe(tester, profil);

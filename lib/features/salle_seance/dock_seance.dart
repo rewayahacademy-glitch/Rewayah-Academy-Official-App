@@ -16,9 +16,11 @@ import 'package:flutter/material.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_gabarit.dart';
+import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_theme.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/commande_salle.dart'
     show SurfaceTuilesSalle, TonTuileSalle, TuileCommandeSalle;
@@ -27,6 +29,22 @@ import 'actions_seance.dart';
 import 'barre_support.dart' show NomsFocus, nomsFocus;
 import 'feuille_micro_bloque.dart';
 import 'vue_seance.dart';
+
+/// Pilote (26/10/2026, C1, C2, C4) : les commandes posees sur la page (la
+/// capsule, le profil, la pilule de l'appel, « Commandes », le zoom) sont une
+/// couche sombre dans les deux themes ([AppPalette.coucheSalle]) : leur
+/// contenu se rend dans le theme sombre, encres claires.
+class CoucheSalle extends StatelessWidget {
+  const CoucheSalle({required this.child, super.key});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Theme(
+    data: AppTheme.pour(AppMetriques.of(context).mode, Brightness.dark),
+    child: child,
+  );
+}
 
 /// Le fond d'un [BoutonAppel].
 enum FondBoutonAppel {
@@ -397,24 +415,27 @@ class DockSeance extends StatelessWidget {
     if (rond) {
       // Fiche 1, ligne 4 : la pilule sombre de l'appel, les disques nommes
       // centres ; texte agrandi, elle passe sur deux rangees.
-      return Center(
-        heightFactor: 1,
-        child: DecoratedBox(
-          key: const ValueKey<String>('dock-seance'),
-          decoration: palette.piluleSalle.decoration(
-            borderRadius: AppRadius.arrondiLg,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.sm),
-            child: SurfaceTuilesSalle(
-              surface: palette.piluleSalle,
-              rond: true,
-              child: Wrap(
-                alignment: WrapAlignment.center,
-                crossAxisAlignment: WrapCrossAlignment.start,
-                spacing: AppSpacing.sm,
-                runSpacing: AppSpacing.sm,
-                children: boutons,
+      // Pilote C2 : la pilule sombre dans les deux themes, disques clairs.
+      return CoucheSalle(
+        child: Center(
+          heightFactor: 1,
+          child: DecoratedBox(
+            key: const ValueKey<String>('dock-seance'),
+            decoration: palette.coucheSalle.decoration(
+              borderRadius: AppRadius.arrondiLg,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.sm),
+              child: SurfaceTuilesSalle(
+                surface: palette.coucheSalle,
+                rond: true,
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.start,
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
+                  children: boutons,
+                ),
               ),
             ),
           ),

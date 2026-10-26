@@ -471,9 +471,12 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                             child: SafeArea(
                               top: false,
                               child: Center(
-                                child: DeclencheurCommandes(
-                                  key: TelephonePleinEcran.cleCommandesRepos,
-                                  onPress: _declencheur(actions, vue)!,
+                                child: CoucheSalle(
+                                  child: DeclencheurCommandes(
+                                    key: TelephonePleinEcran.cleCommandesRepos,
+                                    surface: palette.coucheSalle,
+                                    onPress: _declencheur(actions, vue)!,
+                                  ),
                                 ),
                               ),
                             ),
@@ -587,10 +590,13 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                                     ),
                                     child: Align(
                                       alignment: AlignmentDirectional.centerEnd,
-                                      child: DeclencheurCommandes(
-                                        key: TelephonePleinEcran
-                                            .cleCommandesToucher,
-                                        onPress: _declencheur(actions, vue)!,
+                                      child: CoucheSalle(
+                                        child: DeclencheurCommandes(
+                                          key: TelephonePleinEcran
+                                              .cleCommandesToucher,
+                                          surface: palette.coucheSalle,
+                                          onPress: _declencheur(actions, vue)!,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -620,7 +626,10 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                             bottom: 0,
                             end: AppSpacing.lg,
                             child: Center(
-                              child: PiluleZoomSalle(actions: actions),
+                              child: PiluleZoomSalle(
+                                actions: actions,
+                                couche: enseignant,
+                              ),
                             ),
                           ),
                         if (paletteADroite || commandesADroite != null)
@@ -956,8 +965,12 @@ class PiluleZoomSalle extends StatelessWidget {
   const PiluleZoomSalle({
     required this.actions,
     this.horizontale = false,
+    this.couche = false,
     super.key,
   });
+
+  /// Pilote C2 : la couche sombre de l'enseignant au telephone.
+  final bool couche;
 
   final ActionsSeance actions;
 
@@ -987,11 +1000,10 @@ class PiluleZoomSalle extends StatelessWidget {
       t.salle.seance.zoomMoins,
       actions.onZoomMoins,
     );
-    return DecoratedBox(
+    final Widget pilule = DecoratedBox(
       key: const ValueKey<String>('salle-zoom'),
-      decoration: palette.piluleSalle.decoration(
-        borderRadius: AppRadius.arrondiFull,
-      ),
+      decoration: (couche ? palette.coucheSalle : palette.piluleSalle)
+          .decoration(borderRadius: AppRadius.arrondiFull),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.sm),
         child: Flex(
@@ -1011,6 +1023,7 @@ class PiluleZoomSalle extends StatelessWidget {
         ),
       ),
     );
+    return couche ? CoucheSalle(child: pilule) : pilule;
   }
 }
 

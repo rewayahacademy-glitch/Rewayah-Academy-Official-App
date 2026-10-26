@@ -359,6 +359,12 @@ class AppPalette extends ThemeExtension<AppPalette> {
     onBackground: surfaceRaised.onBackground,
   );
 
+  /// Fiche 1 de la salle au telephone (pilote, 26/10/2026, C1 et C2) : la
+  /// couche sombre des commandes posees sur la page (capsule, profil, pilule
+  /// de l'appel, « Commandes », zoom), la meme que la barre sombre de
+  /// l'ordinateur en theme clair, **sombre dans les deux themes** (Meet).
+  AppColorPair get coucheSalle => AppPalette.claire().surfaceInverse;
+
   /// Standard des commandes d'appel : le bouton rond actif (micro ouvert,
   /// camera allumee, plus), rempli sombre, icone claire, dans les deux
   /// themes (comme Meet).

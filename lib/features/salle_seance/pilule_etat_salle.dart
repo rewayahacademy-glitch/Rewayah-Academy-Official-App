@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
@@ -16,8 +17,13 @@ class PiluleEtatSalle extends StatelessWidget {
     this.largeurMax = double.infinity,
     this.cle = const ValueKey<String>('pilule-etat-salle'),
     this.aLaLigne = false,
+    this.surface,
     super.key,
   });
+
+  /// La surface ou la ligne se pose (la couche sombre du profil, pilote C4) ;
+  /// `null` : la pilule translucide de la salle.
+  final AppColorPair? surface;
 
   /// Fiche 1, ligne 5 (carte du profil du telephone) : etroite ou texte
   /// agrandi, la phrase passe a la ligne entre deux mots, jamais dans un mot.
@@ -34,7 +40,8 @@ class PiluleEtatSalle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    final TextStyle style = palette.piluleSalle.applyTo(
+    final AppColorPair fond = surface ?? palette.piluleSalle;
+    final TextStyle style = fond.applyTo(
       Theme.of(context).textTheme.labelMedium ?? const TextStyle(),
     );
     final Widget point = SizedBox.square(
@@ -54,7 +61,7 @@ class PiluleEtatSalle extends StatelessWidget {
       ),
       child: DecoratedBox(
         key: cle,
-        decoration: palette.piluleSalle.decoration(
+        decoration: fond.decoration(
           borderRadius: aLaLigne ? AppRadius.arrondiMd : AppRadius.arrondiFull,
         ),
         child: Padding(
