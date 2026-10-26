@@ -27,6 +27,7 @@ import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/champ_recherche.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/rangee_filtres.dart';
 import '../tc_catalogue/vignette_ressource.dart';
@@ -135,9 +136,10 @@ class _EtatPanneauBibliotheque extends State<PanneauBibliothequeSalle> {
       retenue: _filtre == f,
       onPress: () => setState(() => _filtre = f),
     );
-    return Column(
+    // Le panneau defile d'un seul tenant : a 720 de haut et texte x2, la
+    // tete (titre, recherche, filtres) ne prend jamais toute la place.
+    return ListView(
       key: PanneauBibliothequeSalle.cle,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Row(
           children: <Widget>[
@@ -182,29 +184,26 @@ class _EtatPanneauBibliotheque extends State<PanneauBibliothequeSalle> {
           ],
         ),
         Ecart.vLg,
-        Expanded(
-          child: visibles.isEmpty
-              ? Text(
-                  t.tc.bibliotheque.aucunResultat.message,
-                  style: palette.inkMuted.applyTo(
-                    textes.bodyMedium ?? const TextStyle(),
-                  ),
-                )
-              : ListView.separated(
-                  itemCount: visibles.length,
-                  separatorBuilder: (BuildContext _, int _) => Ecart.vLg,
-                  itemBuilder: (BuildContext _, int i) {
-                    final SupportBibliotheque s = visibles[i];
-                    final bool deplie = _deplie == s.id;
-                    return _CarteSupport(
-                      key: deplie ? _carteDepliee : null,
-                      support: s,
-                      deplie: deplie,
-                      onBasculer: () => _basculer(s.id),
-                    );
-                  },
+        if (visibles.isEmpty)
+          Text(
+            t.tc.bibliotheque.aucunResultat.message,
+            style: palette.inkMuted.applyTo(
+              textes.bodyMedium ?? const TextStyle(),
+            ),
+          )
+        else
+          // K-55 : des cartes independantes, 16 entre elles.
+          PileCartes(
+            children: <Widget>[
+              for (final SupportBibliotheque s in visibles)
+                _CarteSupport(
+                  key: _deplie == s.id ? _carteDepliee : null,
+                  support: s,
+                  deplie: _deplie == s.id,
+                  onBasculer: () => _basculer(s.id),
                 ),
-        ),
+            ],
+          ),
       ],
     );
   }

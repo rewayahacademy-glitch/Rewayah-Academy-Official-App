@@ -1013,7 +1013,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// Plan de composition du 26/10/2026 : les inscrits de la seance avec leur
   /// fiche (roster pedagogique), pour le panneau Eleves de l'ordinateur. Un
   /// fait que le serveur ne projette pas reste vide (la carte ne le montre
-  /// pas) ; un eleve absent du roster n'a pas de fiche.
+  /// pas) ; un eleve que le roster ne rend pas (lecture en echec) garde une
+  /// fiche vide : sa carte se deplie quand meme et porte ses actions
+  /// (rappel, recitation), qui ne visent que son matricule.
   static List<EleveSeance> _avecFiches(
     List<EleveSeance> eleves,
     RosterClasseVM roster,
@@ -1027,6 +1029,21 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           cleAvatar: e.cleAvatar,
           peutEcrire: e.peutEcrire,
           fiche: ficheDeSeance(p),
+        ),
+        null when e.id != null => EleveSeance(
+          prenom: e.prenom,
+          statut: e.statut,
+          id: e.id,
+          cleAvatar: e.cleAvatar,
+          peutEcrire: e.peutEcrire,
+          fiche: const FicheEleveSeance(
+            niveau: '',
+            objectifActuel: '',
+            derniereSeance: '',
+            aReprendre: '',
+            presenceRecente: '',
+            travailActuel: '',
+          ),
         ),
         null => e,
       },
