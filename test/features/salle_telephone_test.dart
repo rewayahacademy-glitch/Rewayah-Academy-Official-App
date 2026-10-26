@@ -25,6 +25,7 @@ import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
+import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_outils_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_bibliotheque_salle.dart';
@@ -51,11 +52,11 @@ AccesSalle _acces(String role) => AccesSalle(
   fournisseur: FournisseurVideo.cloud,
   role: role,
   capacites: CapacitesSalle(
-    peutPublier: true,
+    peutPublier: role == 'teacher' || role == 'student',
     peutPublierVideo: role == 'teacher',
     peutPublierDonnees: role == 'teacher',
     peutRecevoir: true,
-    invisible: false,
+    invisible: role == 'masked_controller',
   ),
   expireLe: DateTime.now().add(const Duration(minutes: 10)),
 );
@@ -93,8 +94,18 @@ List<Override> _surcharges(String role, FauxMoteurSalle moteur) => <Override>[
     FausseSourceSession(
       SessionState(
         resolue: true,
-        role: role == 'teacher' ? AppRole.teacher : AppRole.student,
-        profileId: role == 'teacher' ? 't1' : 'e1',
+        role: switch (role) {
+          'teacher' => AppRole.teacher,
+          'guardian_observer' => AppRole.guardian,
+          'masked_controller' => AppRole.controller,
+          _ => AppRole.student,
+        },
+        profileId: switch (role) {
+          'teacher' => 't1',
+          'guardian_observer' => 'g1',
+          'masked_controller' => 'c1',
+          _ => 'e1',
+        },
         accountStatus: AccountStatus.active,
         lectureProfil: LectureProfil.presente,
       ),
@@ -233,6 +244,41 @@ List<({String texte, Rect cadre})> _horsDe(
     }
   }
   return hors;
+}
+
+/// Ligne 14 : dans l'etat courant, rien ne se recouvre parmi les objets
+/// poses sur la page, aucun mot coupe, cibles de 48 au moins.
+void _verifierLigne14(WidgetTester tester, String etat) {
+  expect(tester.takeException(), isNull, reason: etat);
+  final List<Finder> objets = <Finder>[
+    for (final Key k in <Key>[
+      CapsuleVideoTelephone.cle,
+      ProfilTelephone.cle,
+      const ValueKey<String>('dock-seance'),
+      TelephonePleinEcran.cleCommandesRepos,
+      TelephonePleinEcran.cleCommandesToucher,
+      TiroirCommandesTelephone.cle,
+      FeuilleElevesTelephone.cle,
+      const ValueKey<String>('salle-zoom'),
+    ])
+      if (find.byKey(k).hitTestable().evaluate().isNotEmpty) find.byKey(k),
+  ];
+  if (objets.length > 1) verifierSansChevauchement(tester, objets);
+  for (final Finder o in objets) {
+    verifierAucunMotCoupe(tester, o);
+    for (final Element e
+        in find
+            .descendant(of: o, matching: find.byType(Pressable))
+            .hitTestable()
+            .evaluate()) {
+      final Size z = tester.getSize(find.byWidget(e.widget));
+      expect(
+        z.width >= 47.5 && z.height >= 47.5,
+        isTrue,
+        reason: '$etat : cible de ${z.width} x ${z.height}',
+      );
+    }
+  }
 }
 
 /// Le bord de debut de l'ecran est-il a gauche ?
@@ -839,6 +885,138 @@ void main() {
             _aucuneCommandeEnDouble(tester, 'eleves');
           });
 
+          testWidgets('$nom : ligne 14, rien ne se recouvre, aucun mot '
+              'coupe, cibles de 48', (WidgetTester tester) async {
+            await _monter(tester, taille: taille, texte: texte);
+            await _attendreLeRepos(tester);
+            _verifierLigne14(tester, 'repos');
+            await _toucher(tester);
+            _verifierLigne14(tester, 'toucher');
+            await tester.tap(find.byKey(CapsuleVideoTelephone.cleDeplier));
+            await tester.pumpAndSettle();
+            _verifierLigne14(tester, 'profil');
+            await tester.tap(find.byKey(ProfilTelephone.cleReduire));
+            await tester.pumpAndSettle();
+            await _ouvrirTiroir(tester);
+            _verifierLigne14(tester, 'tiroir Support');
+            await _onglet(tester, t.salle.seance.commandes.ongletOutils);
+            await tester.tap(
+              find.byKey(const ValueKey<String>('barre-outils-stylet')),
+            );
+            await tester.pumpAndSettle();
+            _verifierLigne14(tester, 'tiroir Outils');
+            await tester.tap(find.byKey(TelephonePleinEcran.cleEleves));
+            await tester.pumpAndSettle();
+            _verifierLigne14(tester, 'eleves');
+          });
+
+          testWidgets('$nom : ligne 15, tout suit le sens de lecture', (
+            WidgetTester tester,
+          ) async {
+            await _monter(tester, taille: taille, texte: texte);
+            final bool ltr = _ltr();
+            expect(
+              Directionality.of(tester.element(_dock)),
+              ltr ? TextDirection.ltr : TextDirection.rtl,
+            );
+            await _toucher(tester);
+            // La pilule : Micro au debut, Quitter a la fin.
+            final double micro = tester
+                .getCenter(find.byKey(const ValueKey<String>('bouton-micro')))
+                .dx;
+            final double eleves = tester
+                .getCenter(find.byKey(TelephonePleinEcran.cleEleves))
+                .dx;
+            if (texte == 1) {
+              expect(ltr ? micro < eleves : micro > eleves, isTrue);
+            }
+            // « Commandes » au toucher, au bord de fin.
+            final Rect k = tester.getRect(
+              find.byKey(TelephonePleinEcran.cleCommandesToucher),
+            );
+            expect(
+              ltr ? taille.width - k.right : k.left,
+              moreOrLessEquals(16, epsilon: 1),
+            );
+            // Le zoom, au bord de fin.
+            final Rect z = tester.getRect(
+              find.byKey(const ValueKey<String>('salle-zoom')),
+            );
+            expect(
+              ltr ? taille.width - z.right : z.left,
+              moreOrLessEquals(16, epsilon: 1),
+            );
+            // La capsule : vignette, point, oeil dans le sens de lecture.
+            final double v = tester
+                .getCenter(
+                  find.descendant(
+                    of: find.byKey(CapsuleVideoTelephone.cle),
+                    matching: find.byKey(
+                      const ValueKey<String>('vignette-video'),
+                    ),
+                  ),
+                )
+                .dx;
+            final double o = tester
+                .getCenter(find.byKey(CapsuleVideoTelephone.cleVoir))
+                .dx;
+            expect(ltr ? v < o : v > o, isTrue);
+            // Le tiroir : « Commandes » au debut, « Reduire » a la fin.
+            await tester.tap(
+              find.byKey(TelephonePleinEcran.cleCommandesToucher),
+            );
+            await tester.pumpAndSettle();
+            final Finder tiroir = find.byKey(TiroirCommandesTelephone.cle);
+            final double xt = tester
+                .getCenter(
+                  find.descendant(
+                    of: tiroir,
+                    matching: find.text(t.salle.seance.commandes.titre),
+                  ),
+                )
+                .dx;
+            final double xr = tester
+                .getCenter(
+                  find.descendant(
+                    of: tiroir,
+                    matching: find.byKey(PanneauSeance.cleReduire),
+                  ),
+                )
+                .dx;
+            expect(ltr ? xt < xr : xt > xr, isTrue);
+            expect(tester.takeException(), isNull);
+          });
+
+          for (final String autre in <String>[
+            'student',
+            'guardian_observer',
+            'masked_controller',
+          ]) {
+            testWidgets('$nom : ligne 16, $autre inchange : ni capsule, ni '
+                'tiroir, ni « Commandes »', (WidgetTester tester) async {
+              await _monter(tester, role: autre, taille: taille, texte: texte);
+              await _toucher(tester);
+              for (final Key k in <Key>[
+                CapsuleVideoTelephone.cle,
+                ProfilTelephone.cle,
+                TelephonePleinEcran.cleCommandesRepos,
+                TelephonePleinEcran.cleCommandesToucher,
+                TelephonePleinEcran.cleEleves,
+                TiroirCommandesTelephone.cle,
+                FeuilleElevesTelephone.cle,
+                const ValueKey<String>('disque-commande'),
+              ]) {
+                expect(find.byKey(k), findsNothing, reason: '$k');
+              }
+              await _attendreLeRepos(tester);
+              expect(
+                find.byKey(TelephonePleinEcran.cleCommandesRepos),
+                findsNothing,
+              );
+              expect(tester.takeException(), isNull);
+            });
+          }
+
           testWidgets('$nom : ligne 8, Outils : Stylo, Surligner, Gomme, '
               'Annuler, les couleurs', (WidgetTester tester) async {
             await _monter(tester, taille: taille, texte: texte);
@@ -1142,10 +1320,26 @@ void main() {
               _ltr() ? taille.width - z.right : z.left,
               moreOrLessEquals(16, epsilon: 1),
             );
-            expect(
-              z.center.dy,
-              moreOrLessEquals(taille.height / 2, epsilon: 1),
-            );
+            if (texte == 1) {
+              expect(
+                z.center.dy,
+                moreOrLessEquals(taille.height / 2, epsilon: 1),
+              );
+            } else {
+              // Texte agrandi (cas limite) : remonte au besoin, jamais sur
+              // « Commandes » ni sur la pilule.
+              expect(z.center.dy, lessThanOrEqualTo(taille.height / 2 + 1));
+              expect(
+                z.bottom,
+                lessThanOrEqualTo(
+                  tester
+                      .getRect(
+                        find.byKey(TelephonePleinEcran.cleCommandesToucher),
+                      )
+                      .top,
+                ),
+              );
+            }
             // Jamais sur un panneau ouvert ni sur le profil.
             await tester.tap(
               find.byKey(TelephonePleinEcran.cleCommandesToucher),
@@ -1166,40 +1360,63 @@ void main() {
     });
   }
 
-  testWidgets('eleve au telephone : ni capsule, ni tiroir, ni « Commandes »', (
-    WidgetTester tester,
-  ) async {
-    await _monter(tester, role: 'student');
-    await _toucher(tester);
-    expect(find.byKey(CapsuleVideoTelephone.cle), findsNothing);
-    expect(find.byKey(TelephonePleinEcran.cleCommandesRepos), findsNothing);
-    expect(find.byKey(TiroirCommandesTelephone.cle), findsNothing);
-    expect(find.byType(PanneauEleves), findsNothing);
-  });
+  // Ligne 14 : a 320 en texte x2, les noms peuvent se reduire a l'icone,
+  // jamais disparaitre (les quatre disques restent).
+  for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+    group('${langue.languageCode} 320', () {
+      setUp(() => LocaleSettings.setLocale(langue));
+      testWidgets('${langue.languageCode} 320x568, texte x2 : ligne 14', (
+        WidgetTester tester,
+      ) async {
+        const Size petit = Size(320, 568);
+        await _monter(tester, taille: petit, texte: 2);
+        await _attendreLeRepos(tester);
+        _verifierLigne14(tester, 'repos');
+        await _toucher(tester);
+        expect(
+          find.descendant(
+            of: _dock,
+            matching: find.byKey(const ValueKey<String>('disque-commande')),
+          ),
+          findsNWidgets(4),
+        );
+        _verifierLigne14(tester, 'toucher');
+        await _ouvrirTiroir(tester);
+        _verifierLigne14(tester, 'tiroir');
+        await tester.tap(find.byKey(TelephonePleinEcran.cleEleves));
+        await tester.pumpAndSettle();
+        _verifierLigne14(tester, 'eleves');
+      });
+    });
+  }
 
-  // Fiche 1, « Captures a produire » : a 390 x 844 (pilote, 26/10), nommees
+  // Fiche 1, « Captures a produire » : a 390 x 844 et 834 x 1194, nommees
   // fiche1-<taille>-<etat>.png, avec CAPTURE_DIR seulement.
-  testWidgets('captures de la fiche 1, 390 x 844', (WidgetTester tester) async {
-    if (dossierCapture == null) return;
-    const String taille = '390x844';
-    await _monter(tester);
-    await _attendreLeRepos(tester);
-    await capturerVue(tester, 'fiche1-$taille-repos');
-    await _toucher(tester);
-    await capturerVue(tester, 'fiche1-$taille-toucher');
-    await tester.tap(find.byKey(CapsuleVideoTelephone.cleDeplier));
-    await tester.pumpAndSettle();
-    await capturerVue(tester, 'fiche1-$taille-profil');
-    await tester.tap(find.byKey(ProfilTelephone.cleReduire));
-    await tester.pumpAndSettle();
-    await _ouvrirTiroir(tester);
-    await capturerVue(tester, 'fiche1-$taille-tiroir-support');
-    await _onglet(tester, t.salle.seance.commandes.ongletOutils);
-    await tester.tap(find.byKey(const ValueKey<String>('barre-outils-stylet')));
-    await tester.pumpAndSettle();
-    await capturerVue(tester, 'fiche1-$taille-tiroir-outils');
-    await tester.tap(find.byKey(TelephonePleinEcran.cleEleves));
-    await tester.pumpAndSettle();
-    await capturerVue(tester, 'fiche1-$taille-eleves');
-  });
+  for (final Size ecran in <Size>[_telephone, _ipad]) {
+    final String taille = '${ecran.width.toInt()}x${ecran.height.toInt()}';
+    testWidgets('captures de la fiche 1, $taille', (WidgetTester tester) async {
+      if (dossierCapture == null) return;
+      await _monter(tester, taille: ecran);
+      await _attendreLeRepos(tester);
+      await capturerVue(tester, 'fiche1-$taille-repos');
+      await _toucher(tester);
+      await capturerVue(tester, 'fiche1-$taille-toucher');
+      await tester.tap(find.byKey(CapsuleVideoTelephone.cleDeplier));
+      await tester.pumpAndSettle();
+      await capturerVue(tester, 'fiche1-$taille-profil');
+      await tester.tap(find.byKey(ProfilTelephone.cleReduire));
+      await tester.pumpAndSettle();
+      await _ouvrirTiroir(tester);
+      await capturerVue(tester, 'fiche1-$taille-tiroir-support');
+      await _onglet(tester, t.salle.seance.commandes.ongletOutils);
+      await tester.tap(
+        find.byKey(const ValueKey<String>('barre-outils-stylet')),
+      );
+      await tester.pumpAndSettle();
+      await capturerVue(tester, 'fiche1-$taille-tiroir-outils');
+      await tester.tap(find.byKey(TelephonePleinEcran.cleEleves));
+      await tester.pumpAndSettle();
+      await capturerVue(tester, 'fiche1-$taille-eleves');
+    });
+  }
 }

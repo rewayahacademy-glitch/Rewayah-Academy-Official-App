@@ -388,6 +388,23 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                   hauteurMax: ecran.height * _partPanneau,
                 )
               : null;
+          // Fiche 1, ligne 13 : la pilule du zoom ni sur un panneau ouvert,
+          // ni sur le profil deplie.
+          final bool zoom =
+              !libre &&
+              !sceneDevant &&
+              !paletteADroite &&
+              commandesADroite == null &&
+              !((panneau || eleves) && enseignant) &&
+              !_profil &&
+              (actions.onZoomPlus != null || actions.onZoomMoins != null);
+          // Le haut de la colonne du bas : sous la capsule (ligne 11).
+          final double hautColonne = capsule
+              ? MediaQuery.paddingOf(context).top +
+                    AppSpacing.lg +
+                    CapsuleVideoTelephone.hauteur(context) +
+                    AppSpacing.sm
+              : 0;
           return CommandesMasquables(
             delai: AppMouvement.masquageSalle,
             maintenir:
@@ -560,12 +577,7 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                         // au lieu de la recouvrir. Fiche 1, ligne 11 : ils
                         // s'arretent aussi sous la capsule.
                         PositionedDirectional(
-                          top: capsule
-                              ? MediaQuery.paddingOf(context).top +
-                                    AppSpacing.lg +
-                                    CapsuleVideoTelephone.hauteur(context) +
-                                    AppSpacing.sm
-                              : 0,
+                          top: hautColonne,
                           start: 0,
                           end: 0,
                           bottom: 0,
@@ -574,6 +586,19 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
+                                // Fiche 1, lignes 13 et 14 : chez
+                                // l'enseignant, le zoom flotte au bord de fin,
+                                // a mi-hauteur de l'ecran quand il y tient,
+                                // sinon remonte juste au-dessus de
+                                // « Commandes » et de la pilule (texte
+                                // agrandi) : il ne les recouvre jamais.
+                                if (zoom && enseignant)
+                                  Expanded(
+                                    child: _ZoomFlottant(
+                                      actions: actions,
+                                      milieu: ecran.height / 2 - hautColonne,
+                                    ),
+                                  ),
                                 if ((panneau || eleves) && enseignant)
                                   Flexible(
                                     key: _clePanneau,
@@ -632,14 +657,7 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                         // par-dessus.
                         // Fiche 1, ligne 13 : ni sur un panneau ouvert, ni
                         // sur le profil deplie.
-                        if (!libre &&
-                            !sceneDevant &&
-                            !paletteADroite &&
-                            commandesADroite == null &&
-                            !((panneau || eleves) && enseignant) &&
-                            !_profil &&
-                            (actions.onZoomPlus != null ||
-                                actions.onZoomMoins != null))
+                        if (zoom && !enseignant)
                           PositionedDirectional(
                             top: 0,
                             bottom: 0,
@@ -675,6 +693,39 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
           );
         },
       ),
+    );
+  }
+}
+
+/// La pilule du zoom de l'enseignant au telephone, dans la place libre
+/// au-dessus du bas : son centre a [milieu] (mi-hauteur de l'ecran, dans le
+/// repere de cette place), ramene dans la place si elle n'y tient pas.
+class _ZoomFlottant extends StatelessWidget {
+  const _ZoomFlottant({required this.actions, required this.milieu});
+
+  final ActionsSeance actions;
+  final double milieu;
+
+  @override
+  Widget build(BuildContext context) {
+    final double hauteur = 2 * diametreBoutonAppel(context) + 3 * AppSpacing.sm;
+    return LayoutBuilder(
+      builder: (BuildContext contexte, BoxConstraints c) {
+        final double place = c.maxHeight;
+        final double haut = math.max(
+          0,
+          math.min(milieu - hauteur / 2, place - hauteur - AppSpacing.sm),
+        );
+        return Stack(
+          children: <Widget>[
+            PositionedDirectional(
+              top: haut,
+              end: AppSpacing.lg,
+              child: PiluleZoomSalle(actions: actions, couche: true),
+            ),
+          ],
+        );
+      },
     );
   }
 }

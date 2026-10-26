@@ -429,6 +429,11 @@ class DockSeance extends StatelessWidget {
               child: SurfaceTuilesSalle(
                 surface: palette.coucheSalle,
                 rond: true,
+                // Ligne 14 : a 320 en texte x2, les noms se reduisent a
+                // l'icone, jamais les disques.
+                sansNom:
+                    MediaQuery.sizeOf(context).width < 360 &&
+                    MediaQuery.textScalerOf(context).scale(1) > 1.5,
                 child: Wrap(
                   alignment: WrapAlignment.center,
                   crossAxisAlignment: WrapCrossAlignment.start,

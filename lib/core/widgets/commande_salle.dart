@@ -503,8 +503,13 @@ class SurfaceTuilesSalle extends InheritedWidget {
     required this.surface,
     required super.child,
     this.rond = false,
+    this.sansNom = false,
     super.key,
   });
+
+  /// Fiche 1, ligne 14 : a 320 en texte x2, les noms des disques se
+  /// reduisent a l'icone (l'infobulle et la semantique les gardent).
+  final bool sansNom;
 
   /// La surface ou les tuiles se posent : leur encre est la sienne.
   final AppColorPair surface;
@@ -518,7 +523,9 @@ class SurfaceTuilesSalle extends InheritedWidget {
 
   @override
   bool updateShouldNotify(SurfaceTuilesSalle ancien) =>
-      ancien.surface != surface || ancien.rond != rond;
+      ancien.surface != surface ||
+      ancien.rond != rond ||
+      ancien.sansNom != sansNom;
 }
 
 /// Plan de composition du 26/10/2026 (Q1, decision du directeur : « oui » ;
@@ -698,21 +705,23 @@ class TuileCommandeSalle extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 tete,
-                Ecart.vXs,
-                ExcludeSemantics(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minWidth: _largeurPlusLongMot(context, nom, style),
-                    ),
-                    child: Text(
-                      nom,
-                      key: const ValueKey<String>('nom-commande'),
-                      maxLines: 2,
-                      textAlign: TextAlign.center,
-                      style: style,
+                if (!(surface?.sansNom ?? false)) ...<Widget>[
+                  Ecart.vXs,
+                  ExcludeSemantics(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minWidth: _largeurPlusLongMot(context, nom, style),
+                      ),
+                      child: Text(
+                        nom,
+                        key: const ValueKey<String>('nom-commande'),
+                        maxLines: 2,
+                        textAlign: TextAlign.center,
+                        style: style,
+                      ),
                     ),
                   ),
-                ),
+                ],
               ],
             ),
           ),
