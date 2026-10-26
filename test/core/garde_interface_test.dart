@@ -462,37 +462,40 @@ void main() {
         }
         // Plan de la salle du 26/10/2026 (Q1, §3) : la commande nommee de
         // l'ordinateur (bouton rond, nom dessous) et la pastille de couleur.
-        testWidgets(
-          'CommandeSalleNommee : bouton et nom centres l un sur l autre, '
-          '${largeur.toInt()} px, texte x${echelle.toInt()}',
-          (WidgetTester tester) async {
-            fixerVue(tester, Size(largeur, 900));
-            await tester.pumpWidget(
-              hoteTheme(
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: CommandeSalleNommee(
-                    nom: 'Bibliothèque',
-                    bouton: BoutonIcone(
-                      icone: AppIcons.bibliotheque,
+        for (final TonTuileSalle ton in TonTuileSalle.values) {
+          testWidgets(
+            'TuileCommandeSalle ${ton.name} : icone et nom centres l un sur '
+            'l autre, cible de 48, ${largeur.toInt()} px, texte '
+            'x${echelle.toInt()}',
+            (WidgetTester tester) async {
+              fixerVue(tester, Size(largeur, 900));
+              await tester.pumpWidget(
+                hoteTheme(
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: TuileCommandeSalle(
+                      icone: AppIcons.bibliotheque.repos,
+                      nom: 'Bibliothèque',
                       libelle: 'Bibliothèque',
-                      forme: FormeBoutonIcone.appel,
+                      ton: ton,
                       onPress: () {},
                     ),
                   ),
+                  echelleTexte: echelle,
                 ),
-                echelleTexte: echelle,
-              ),
-            );
-            final Rect bouton = tester.getRect(find.byType(BoutonIcone));
-            final Rect nom = tester.getRect(find.text('Bibliothèque'));
-            expect((nom.center.dx - bouton.center.dx).abs(), lessThan(1.5));
-            expect(bouton.bottom, lessThanOrEqualTo(nom.top));
-            verifierContenuCentre(tester, find.byType(BoutonIcone), <Finder>[
-              find.byType(Icon),
-            ]);
-          },
-        );
+              );
+              final Rect tuile = tester.getRect(
+                find.byKey(const ValueKey<String>('tuile-commande')),
+              );
+              final Rect icone = tester.getRect(find.byType(Icon));
+              final Rect nom = tester.getRect(find.text('Bibliothèque'));
+              expect((icone.center.dx - tuile.center.dx).abs(), lessThan(1.5));
+              expect((nom.center.dx - tuile.center.dx).abs(), lessThan(1.5));
+              expect(icone.bottom, lessThanOrEqualTo(nom.top));
+              expect(tuile.height, greaterThanOrEqualTo(48));
+            },
+          );
+        }
         for (final bool retenue in <bool>[false, true]) {
           testWidgets(
             'BoutonCouleur ${retenue ? 'retenue' : 'libre'} : disque au '

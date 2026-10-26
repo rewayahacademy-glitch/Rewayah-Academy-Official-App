@@ -20,7 +20,8 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bouton_icone.dart';
-import '../../core/widgets/commande_salle.dart' show CommandeSalleNommee;
+import '../../core/widgets/commande_salle.dart'
+    show TonTuileSalle, TuileCommandeSalle;
 import '../../core/widgets/confirm_destructive.dart';
 import 'actions_seance.dart';
 import 'barre_support.dart' show NomsFocus, nomsFocus;
@@ -102,7 +103,7 @@ class BoutonAppel extends StatelessWidget {
   });
 
   /// Plan de composition du 26/10/2026 (Q1) : sur ordinateur, le nom de la
-  /// commande sous le bouton ([CommandeSalleNommee]) ; `null` : icone seule
+  /// commande sous son icone ([TuileCommandeSalle], barre sombre) ; `null` : icone seule
   /// (standard du 24/10, telephone).
   final String? nom;
 
@@ -146,12 +147,37 @@ class BoutonAppel extends StatelessWidget {
     final bool quitter = fond == FondBoutonAppel.alerte;
     final TonAppel ton = switch (bascule) {
       _ when quitter => TonAppel.quitter,
-      _ when retenu != null => retenu! ? TonAppel.actif : TonAppel.coupe,
+      // Un panneau ou un outil n'est jamais « coupe » : retenu, il prend
+      // l'aplat lilas de la tuile ; sinon, la tuile au repos.
+      _ when retenu != null => TonAppel.actif,
       false => TonAppel.coupe,
       _ => TonAppel.actif,
     };
     final String semantique = libelleSemantique ?? libelle;
-    final Widget bouton = BoutonIcone(
+    final String lu = bascule != null && semantique != libelle
+        ? '$semantique, $libelle'
+        : semantique;
+    // Ordinateur (plan du 26/10/2026) : la tuile nommee de la barre sombre.
+    final String? leNom = nom;
+    if (leNom != null) {
+      return TuileCommandeSalle(
+        icone: icone.repos,
+        nom: leNom,
+        libelle: lu,
+        infobulle: libelle,
+        ton: switch (ton) {
+          TonAppel.quitter => TonTuileSalle.quitter,
+          TonAppel.coupe => TonTuileSalle.coupe,
+          _ when retenu ?? false => TonTuileSalle.retenu,
+          _ => TonTuileSalle.repos,
+        },
+        selectionne: selectionne,
+        actif: actif,
+        focusNode: focusNode,
+        onPress: onPress,
+      );
+    }
+    return BoutonIcone(
       forme: FormeBoutonIcone.appel,
       icone: icone,
       tonAppel: ton,
@@ -159,18 +185,13 @@ class BoutonAppel extends StatelessWidget {
       largeur: quitter ? diametre + AppSpacing.lg : null,
       // L'acte puis l'etat pour une bascule (« Fermer le micro, Micro
       // ouvert ») ; l'infobulle dit l'etat.
-      libelle: bascule != null && semantique != libelle
-          ? '$semantique, $libelle'
-          : semantique,
+      libelle: lu,
       infobulle: libelle,
       selectionne: selectionne,
       focusNode: focusNode,
       actif: actif,
       onPress: onPress,
     );
-    final String? leNom = nom;
-    if (leNom == null) return bouton;
-    return CommandeSalleNommee(bouton: bouton, nom: leNom);
   }
 }
 
@@ -354,6 +375,17 @@ class DockSeance extends StatelessWidget {
     if (!commandesRendues.contains(CommandeDock.quitter)) {
       boutons.addAll(avantQuitter);
       if (plus != null) boutons.add(plus!);
+    }
+    // Ordinateur (plan du 26/10/2026) : les tuiles nommees se posent dans la
+    // barre sombre de la salle, sans pilule.
+    if (nommee) {
+      return Wrap(
+        key: const ValueKey<String>('dock-seance'),
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: AppSpacing.sm,
+        runSpacing: AppSpacing.sm,
+        children: boutons,
+      );
     }
     final double ecart = telephone ? AppSpacing.md : AppSpacing.lg;
     final Widget dock = DecoratedBox(

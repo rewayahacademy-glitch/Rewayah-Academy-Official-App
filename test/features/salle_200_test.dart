@@ -1081,7 +1081,7 @@ void main() {
       final Finder ce = find.byWidget(dock.widget);
       final Finder disques = find.descendant(
         of: ce,
-        matching: find.byKey(const ValueKey<String>('disque-appel')),
+        matching: find.byKey(const ValueKey<String>('tuile-commande')),
       );
       final Finder noms = find.descendant(
         of: ce,
@@ -1091,7 +1091,7 @@ void main() {
       expect(noms.evaluate().length, disques.evaluate().length);
       for (final Element e in disques.evaluate()) {
         final Size taille = tester.getSize(find.byWidget(e.widget));
-        expect(taille.height, closeTo(diametre, 0.5));
+        expect(taille.height, greaterThanOrEqualTo(diametre - 0.5));
       }
       verifierAucunMotCoupe(tester, ce);
       final Rect zone = tester.getRect(ce);

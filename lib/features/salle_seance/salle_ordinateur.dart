@@ -609,24 +609,50 @@ class _Bas extends ConsumerWidget {
           ),
       ],
     );
-    return Row(
+    // Maquette du directeur du 26/10/2026 (barre precisee par le pilote) :
+    // UNE barre sombre sur toute la largeur, deux groupes de tuiles, un filet
+    // entre eux.
+    final AppPalette palette = AppPalette.of(context);
+    return DecoratedBox(
       key: SalleOrdinateur.cleBas,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: <Widget>[
-        Flexible(
-          child: Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: gauche,
+      decoration: palette.surfaceInverse.decoration(
+        borderRadius: AppRadius.arrondiLg,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.sm),
+        child: IntrinsicHeight(
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: gauche,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm,
+                  vertical: AppSpacing.sm,
+                ),
+                child: VerticalDivider(
+                  key: const ValueKey<String>('salle-barre-filet'),
+                  width: 1,
+                  thickness: 1,
+                  color: palette.surfaceInverse.onBackground.withValues(
+                    alpha: 0.3,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: droite,
+                ),
+              ),
+            ],
           ),
         ),
-        Ecart.hLg,
-        Flexible(
-          child: Align(
-            alignment: AlignmentDirectional.centerEnd,
-            child: droite,
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

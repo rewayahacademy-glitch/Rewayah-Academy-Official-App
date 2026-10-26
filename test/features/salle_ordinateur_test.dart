@@ -23,7 +23,10 @@ import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_bottom_sheet.dart';
+import 'package:rewayah_academy/core/widgets/commande_salle.dart'
+    show TonTuileSalle, TuileCommandeSalle;
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_outils_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_bibliotheque_salle.dart';
@@ -78,7 +81,11 @@ PresenceParticipant _ligne(String id, String prenom, String role) =>
       entreLe: DateTime.now(),
     );
 
-List<Override> _surcharges(String role, FauxMoteurSalle moteur) => <Override>[
+List<Override> _surcharges(
+  String role,
+  FauxMoteurSalle moteur, {
+  bool pageLisible = true,
+}) => <Override>[
   sourceSessionProvider.overrideWithValue(
     FausseSourceSession(
       SessionState(
@@ -111,20 +118,21 @@ List<Override> _surcharges(String role, FauxMoteurSalle moteur) => <Override>[
     FauxAnnonceObservation(lignes: const <AnnonceObservation>[]),
   ),
   // La page 42 se lit (sinon son etat d'erreur pose « Reessayer »).
-  ...surchargesMadina15(page: 42),
-  pageCoranProvider.overrideWith(
-    (Ref _, int n) async => PageCoran(
-      numero: n,
-      versets: <VersetCoran>[
-        VersetCoran(
-          sourateNumero: 2,
-          numero: 255,
-          texte: 'verset',
-          pageNumero: n,
-        ),
-      ],
+  if (pageLisible) ...surchargesMadina15(page: 42),
+  if (pageLisible)
+    pageCoranProvider.overrideWith(
+      (Ref _, int n) async => PageCoran(
+        numero: n,
+        versets: <VersetCoran>[
+          VersetCoran(
+            sourateNumero: 2,
+            numero: 255,
+            texte: 'verset',
+            pageNumero: n,
+          ),
+        ],
+      ),
     ),
-  ),
 ];
 
 Future<void> _monter(
@@ -133,13 +141,14 @@ Future<void> _monter(
   Size taille = const Size(1440, 900),
   double texte = 1,
   ThemeMode theme = ThemeMode.light,
+  bool pageLisible = true,
 }) async {
   fixerVueCapture(tester, taille, 1);
   final FauxMoteurSalle moteur = FauxMoteurSalle();
   await tester.pumpWidget(
     hoteCapture(
       const SallePage(seanceId: 's1'),
-      surcharges: _surcharges(role, moteur),
+      surcharges: _surcharges(role, moteur, pageLisible: pageLisible),
       echelleTexte: texte,
       themeMode: theme,
     ),
@@ -305,5 +314,30 @@ void main() {
     if (dossierCapture != null) {
       await capturerVue(tester, 'salle-1440-barre-outils');
     }
+  });
+
+  testWidgets('barre du bas : une barre sombre, deux groupes de tuiles '
+      'nommees, un filet entre eux, cibles de 48', (WidgetTester tester) async {
+    await _monter(tester);
+    final Rect barre = tester.getRect(find.byKey(SalleOrdinateur.cleBas));
+    expect(barre.width, greaterThan(1440 - 2 * 16 - 1));
+    expect(
+      find.byKey(const ValueKey<String>('salle-barre-filet')),
+      findsOneWidget,
+    );
+    final Finder tuiles = find.byType(TuileCommandeSalle);
+    expect(tuiles, findsNWidgets(9));
+    for (final Element e in tuiles.evaluate()) {
+      final Size taille = tester.getSize(find.byWidget(e.widget));
+      expect(taille.height, greaterThanOrEqualTo(48));
+      expect(taille.width, greaterThanOrEqualTo(48));
+    }
+    final List<TonTuileSalle> tons = <TonTuileSalle>[
+      for (final TuileCommandeSalle t in tester.widgetList(tuiles)) t.ton,
+    ];
+    expect(
+      tons.where((TonTuileSalle t) => t == TonTuileSalle.quitter),
+      hasLength(1),
+    );
   });
 }
