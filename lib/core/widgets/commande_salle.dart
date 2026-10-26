@@ -492,6 +492,35 @@ enum TonTuileSalle {
   quitter,
 }
 
+/// Fiche 1 de la salle au telephone (26/10/2026) : la surface ou se posent
+/// les [TuileCommandeSalle] de dessous, quand ce n'est pas la barre sombre de
+/// l'ordinateur. [rond] : la pilule de l'appel du telephone (maquette M1),
+/// chaque commande est un disque cerne et son nom dessous ; Quitter, seul
+/// disque plein (rouge) ; une bascule coupee se lit par l'icone barree et son
+/// nom (« Micro coupé »), sans aplat violet (ligne 4, juste milieu du pilote).
+class SurfaceTuilesSalle extends InheritedWidget {
+  const SurfaceTuilesSalle({
+    required this.surface,
+    required super.child,
+    this.rond = false,
+    super.key,
+  });
+
+  /// La surface ou les tuiles se posent : leur encre est la sienne.
+  final AppColorPair surface;
+
+  /// Les tuiles sont des disques nommes (pilule du telephone).
+  final bool rond;
+
+  /// La surface la plus proche, ou `null` (barre sombre de l'ordinateur).
+  static SurfaceTuilesSalle? de(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<SurfaceTuilesSalle>();
+
+  @override
+  bool updateShouldNotify(SurfaceTuilesSalle ancien) =>
+      ancien.surface != surface || ancien.rond != rond;
+}
+
 /// Plan de composition du 26/10/2026 (Q1, decision du directeur : « oui » ;
 /// maquette « ordinateur, trois panneaux », barre precisee par le pilote le
 /// 26/10) : la tuile d'une commande de la barre sombre de la salle sur
@@ -515,8 +544,13 @@ class TuileCommandeSalle extends StatelessWidget {
     this.actif = true,
     this.focusNode,
     this.infobulle,
+    this.pastille,
     super.key,
   });
+
+  /// Un nombre pose en pastille au coin de l'icone (Eleves presents), ou
+  /// `null`.
+  final int? pastille;
 
   final IconData icone;
 
@@ -546,17 +580,98 @@ class TuileCommandeSalle extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final AppPalette claire = AppPalette.claire();
-    // La barre est `surfaceInverse` ; la tuile au repos prend son encre.
+    final SurfaceTuilesSalle? surface = SurfaceTuilesSalle.de(context);
+    final bool rond = surface?.rond ?? false;
+    // La barre est `surfaceInverse` (ordinateur) ou la surface donnee par
+    // [SurfaceTuilesSalle] ; la tuile au repos prend son encre.
+    final Color encreSurface =
+        (surface?.surface ?? palette.surfaceInverse).onBackground;
     final AppColorPair? aplat = switch (ton) {
       TonTuileSalle.repos => null,
       TonTuileSalle.retenu => palette.washAccent,
-      TonTuileSalle.coupe => claire.surfacePrimary,
+      // Telephone (fiche 1, ligne 4) : jamais d'aplat violet ; l'icone
+      // barree et le nom disent l'etat.
+      TonTuileSalle.coupe => rond ? null : claire.surfacePrimary,
       TonTuileSalle.quitter => claire.surfaceAlert,
     };
-    final Color encre = aplat?.onBackground ?? palette.surfaceInverse.onBackground;
-    final TextStyle style = (Theme.of(context).textTheme.labelMedium ??
-            const TextStyle())
-        .copyWith(color: encre);
+    // Disques : seul Quitter est plein ; les autres sont cernes.
+    final AppColorPair? disque = rond
+        ? (ton == TonTuileSalle.quitter ? aplat : null)
+        : null;
+    final Color encre = rond
+        ? encreSurface
+        : aplat?.onBackground ?? encreSurface;
+    final Color encreIcone = disque?.onBackground ?? encre;
+    // Telephone : le nom en petit, pour que deux disques au moins tiennent
+    // sur une rangee de la pilule a 390 en texte x2.
+    final TextTheme textes = Theme.of(context).textTheme;
+    final TextStyle style =
+        ((rond ? textes.labelSmall : textes.labelMedium) ?? const TextStyle())
+            .copyWith(color: encre);
+    final Widget icon = IconTheme(
+      data: IconThemeData(color: encreIcone, size: AppSpacing.xxl),
+      child: Icon(icone),
+    );
+    final Widget dessin = rond
+        ? SizedBox.square(
+            key: const ValueKey<String>('disque-commande'),
+            dimension: AppTouchTarget.standard,
+            child: DecoratedBox(
+              decoration: disque != null
+                  ? disque.decoration(borderRadius: AppRadius.arrondiFull)
+                  : BoxDecoration(
+                      borderRadius: AppRadius.arrondiFull,
+                      border: Border.fromBorderSide(
+                        BorderSide(color: encre, width: 2),
+                      ),
+                    ),
+              child: Center(child: icon),
+            ),
+          )
+        : icon;
+    final int? nombre = pastille;
+    final Widget tete = nombre == null || nombre <= 0
+        ? dessin
+        : Stack(
+            clipBehavior: Clip.none,
+            children: <Widget>[
+              dessin,
+              PositionedDirectional(
+                top: -AppSpacing.xs,
+                end: -AppSpacing.sm,
+                child: ExcludeSemantics(
+                  child: DecoratedBox(
+                    key: const ValueKey<String>('pastille-commande'),
+                    decoration: palette.surfacePrimary.decoration(
+                      borderRadius: AppRadius.arrondiFull,
+                    ),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        minWidth: AppSpacing.lg + AppSpacing.xs,
+                        minHeight: AppSpacing.lg + AppSpacing.xs,
+                      ),
+                      child: Center(
+                        widthFactor: 1,
+                        heightFactor: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.xs,
+                          ),
+                          child: Text(
+                            '$nombre',
+                            style: palette.surfacePrimary.applyTo(
+                              Theme.of(context).textTheme.labelMedium ??
+                                  const TextStyle(),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
     final Widget tuile = Pressable(
       onPress: onPress,
       actif: actif,
@@ -565,27 +680,24 @@ class TuileCommandeSalle extends StatelessWidget {
       selectionne: selectionne,
       arrondiFocus: AppRadius.arrondiMd,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(
-          minWidth: largeurMin,
+        constraints: BoxConstraints(
+          minWidth: rond ? AppTouchTarget.standard : largeurMin,
           minHeight: AppTouchTarget.standard,
         ),
         child: DecoratedBox(
           key: const ValueKey<String>('tuile-commande'),
-          decoration: aplat == null
+          decoration: aplat == null || rond
               ? const BoxDecoration()
               : aplat.decoration(borderRadius: AppRadius.arrondiMd),
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.md,
-              vertical: AppSpacing.sm,
+            padding: EdgeInsets.symmetric(
+              horizontal: rond ? AppSpacing.xs : AppSpacing.md,
+              vertical: rond ? AppSpacing.xs : AppSpacing.sm,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                IconTheme(
-                  data: IconThemeData(color: encre, size: AppSpacing.xxl),
-                  child: Icon(icone),
-                ),
+                tete,
                 Ecart.vXs,
                 ExcludeSemantics(
                   child: ConstrainedBox(

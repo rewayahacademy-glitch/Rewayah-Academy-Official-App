@@ -27,6 +27,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bouton_icone.dart';
+import '../../core/widgets/commande_salle.dart' show SurfaceTuilesSalle;
 import '../../core/widgets/controle_segmente.dart' show Segment;
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/pressable.dart';
@@ -44,8 +45,9 @@ import 'salle_seance.dart' show EtatLocalSeance;
 import 'vignette_video.dart' show SignalVideo, VignetteVideo;
 import 'vue_seance.dart';
 
-/// Les trois onglets du tiroir des Commandes du telephone.
-enum OngletTiroir { support, outils, seance }
+/// Les deux onglets du tiroir des Commandes du telephone (fiche 1, ligne 7 :
+/// l'appel est dans la pilule, jamais dans un onglet).
+enum OngletTiroir { support, outils }
 
 /// Fiche 1 (26/10/2026), ligne 2 : la capsule du haut, une seule, sombre,
 /// au centre : la vignette video, le point d'etat (rouge seulement sur un
@@ -334,24 +336,8 @@ class ProfilTelephone extends StatelessWidget {
   }
 }
 
-/// Une bande sombre de tuiles, comme la barre de l'ordinateur.
-class _Bande extends StatelessWidget {
-  const _Bande({required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) => DecoratedBox(
-    decoration: AppPalette.of(context).surfaceInverse
-        .decoration(borderRadius: AppRadius.arrondiLg),
-    child: Padding(
-      padding: const EdgeInsets.all(AppSpacing.sm),
-      child: Center(child: child),
-    ),
-  );
-}
-
-/// Le tiroir des Commandes : « Commandes », « Reduire », trois onglets.
+/// Le tiroir des Commandes : « Commandes », « Reduire », deux onglets, sur
+/// une seule surface du theme (fiche 1, ligne 7).
 class TiroirCommandesTelephone extends ConsumerStatefulWidget {
   const TiroirCommandesTelephone({
     required this.vue,
@@ -376,13 +362,8 @@ class TiroirCommandesTelephone extends ConsumerStatefulWidget {
   /// La cle des onglets.
   static const Key cleOnglets = ValueKey<String>('telephone-tiroir-onglets');
 
-  /// La cle de la tuile « Eleves » de l'onglet Seance (le bouton rond du
-  /// haut garde la sienne).
-  static const Key cleEleves = ValueKey<String>('salle-eleves-tiroir');
-
-  /// La cle de la bande des outils, et celle de la bande de la seance.
+  /// La cle de la rangee des outils.
   static const Key cleOutils = ValueKey<String>('telephone-tiroir-outils');
-  static const Key cleSeance = ValueKey<String>('telephone-tiroir-seance');
 
   @override
   ConsumerState<TiroirCommandesTelephone> createState() => _EtatTiroir();
@@ -411,7 +392,7 @@ class _EtatTiroir extends ConsumerState<TiroirCommandesTelephone> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            _Bande(
+            Center(
               child: DockSeance(
                 key: TiroirCommandesTelephone.cleOutils,
                 vue: vue,
@@ -449,34 +430,6 @@ class _EtatTiroir extends ConsumerState<TiroirCommandesTelephone> {
           ],
         ),
       ),
-      OngletTiroir.seance => SingleChildScrollView(
-        child: _Bande(
-          child: DockSeance(
-            key: TiroirCommandesTelephone.cleSeance,
-            vue: vue,
-            actions: actions,
-            microOuvert: local.microOuvert,
-            cameraAllumee: local.cameraAllumee,
-            agrandi: local.agrandi,
-            nommee: true,
-            commandes: const <CommandeDock>[
-              CommandeDock.micro,
-              CommandeDock.camera,
-              CommandeDock.quitter,
-            ],
-            avantQuitter: <Widget>[
-              if (actions.onEleves case final VoidCallback eleves)
-                BoutonAppel(
-                  key: TiroirCommandesTelephone.cleEleves,
-                  icone: AppIcons.eleves,
-                  libelle: t.salle.seance.eleves,
-                  nom: t.salle.seance.eleves,
-                  onPress: eleves,
-                ),
-            ],
-          ),
-        ),
-      ),
     };
     return ConstrainedBox(
       constraints: BoxConstraints(maxHeight: widget.hauteur),
@@ -491,9 +444,7 @@ class _EtatTiroir extends ConsumerState<TiroirCommandesTelephone> {
           children: <Widget>[
             KeyedSubtree(
               key: TiroirCommandesTelephone.cleOnglets,
-              // ONGLETS-1 : le selecteur du core ; a 360 en texte x2, les
-              // trois mots ne tiennent pas en ligne et il passe en menu
-              // deroulant plutot que de couper « Support ».
+              // ONGLETS-1 : le selecteur du core, deux segments.
               child: SelecteurSection<OngletTiroir>(
                 libelle: t.salle.seance.commandes.titre,
                 sections: <Segment<OngletTiroir>>[
@@ -505,17 +456,20 @@ class _EtatTiroir extends ConsumerState<TiroirCommandesTelephone> {
                     valeur: OngletTiroir.outils,
                     libelle: t.salle.seance.commandes.ongletOutils,
                   ),
-                  Segment<OngletTiroir>(
-                    valeur: OngletTiroir.seance,
-                    libelle: t.salle.seance.commandes.ongletSeance,
-                  ),
                 ],
                 valeur: _onglet,
                 onChange: (OngletTiroir o) => setState(() => _onglet = o),
               ),
             ),
             Ecart.vMd,
-            Expanded(child: contenu),
+            // Les tuiles se posent sur la surface du tiroir, sans bloc d'une
+            // autre couleur ; leur encre est la sienne.
+            Expanded(
+              child: SurfaceTuilesSalle(
+                surface: AppPalette.of(context).surfaceRaised,
+                child: contenu,
+              ),
+            ),
           ],
         ),
       ),

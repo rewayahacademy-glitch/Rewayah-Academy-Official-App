@@ -27,6 +27,7 @@ import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_gabarit.dart';
+import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
@@ -197,6 +198,9 @@ class TelephonePleinEcran extends StatefulWidget {
   static const Key cleCommandesToucher = ValueKey<String>(
     'telephone-commandes-toucher',
   );
+
+  /// Fiche 1, ligne 4 : « Eleves » dans la pilule de l'appel.
+  static const Key cleEleves = ValueKey<String>('telephone-pilule-eleves');
 
   @override
   State<TelephonePleinEcran> createState() => _EtatTelephonePleinEcran();
@@ -965,6 +969,12 @@ class _Bas extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final VoidCallback? commandes = actions.onCommandes;
+    // Fiche 1, ligne 4 : les disques nommes, en interface standard (le cas
+    // principal). En Mode Accessibilite, la pilule a icones seules du
+    // standard du 24/10 reste (cas limite, tests `salle_200_test`).
+    final bool rond =
+        enseignantTelephone &&
+        AppMetriques.of(context).mode != InterfaceMode.enfant;
     // Standard des commandes d'appel (24/10/2026) : une seule pilule, « Plus »
     // dedans ; aucun declencheur a cote. S0.3b : tableau ouvert, sa palette
     // juste au-dessus, horizontale.
@@ -981,6 +991,25 @@ class _Bas extends StatelessWidget {
               CommandeDock.quitter,
             ]
           : null,
+      // Fiche 1, ligne 4 : Micro, Camera, Eleves, Quitter, des disques
+      // nommes ; Eleves porte le nombre d'eleves presents.
+      rond: rond,
+      avantQuitter: <Widget>[
+        if (enseignantTelephone && actions.onEleves != null)
+          BoutonAppel(
+            key: TelephonePleinEcran.cleEleves,
+            icone: AppIcons.eleves,
+            libelle: t.salle.seance.compteurEleves(
+              connectes: vue.connectes,
+              inscrits: vue.inscrits,
+            ),
+            libelleSemantique: t.salle.seance.eleves,
+            nom: rond ? t.salle.seance.eleves : null,
+            pastille: vue.connectes,
+            selectionne: vue.panneau == PanneauOuvert.eleves,
+            onPress: actions.onEleves!,
+          ),
+      ],
       // Fiche 1, ligne 3 : chez l'enseignant au telephone, « Commandes » est
       // au-dessus de la pilule, jamais dedans.
       plus:
