@@ -14,6 +14,9 @@ import '../../core/appairage/service_avatar.dart'
 import '../../core/coran/service_coran.dart'
     show pageCoranProvider, pagesMushafMedine;
 import '../../core/domain/enums.dart';
+import '../../core/enseignant/modeles_enseignant.dart' show GroupeEnseignant;
+import '../../core/enseignant/service_enseignant.dart'
+    show groupesEnseignantProvider;
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -757,6 +760,25 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     );
   }
 
+  /// Le nom de la Classe de la seance : pour l'enseignant, dans ses Classes
+  /// (`mes_groupes_v`) ; pour les familles, la Classe du billet, ou celle de
+  /// cette seance ; vide si rien n'est lisible (« Séance en direct »).
+  String _nomClasse(WidgetRef ref, RoleSalle role) {
+    final String? groupe = widget.groupeId;
+    if (role == RoleSalle.enseignant) {
+      for (final GroupeEnseignant g
+          in ref.watch(groupesEnseignantProvider).value ??
+              const <GroupeEnseignant>[]) {
+        if (g.id == groupe) return g.libelle;
+      }
+      return '';
+    }
+    final GroupSummaryVM? classe = groupe != null
+        ? ref.watch(groupeProvider(groupe)).value
+        : _classeDeLaSeance(ref.watch(mesGroupesProvider).value, null);
+    return classe?.libelle ?? '';
+  }
+
   /// La Classe de cette seance parmi celles de la famille : par la seance
   /// (prochaine occurrence ou horloge), sinon par l'enseignant [idEnseignant].
   GroupSummaryVM? _classeDeLaSeance(
@@ -976,7 +998,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       video: moteur.renduVideo,
       // L'enseignant chez l'eleve ; sa propre image chez l'enseignant.
       identiteVignette: enseignant ? moi?.identite : vue.dominant?.identite,
-      photoVignette: switch ((enseignant ? moi : vue.dominant)?.clePhotoEnseignant) {
+      photoVignette: switch ((enseignant ? moi : vue.dominant)
+          ?.clePhotoEnseignant) {
         final String cle => ref.watch(photoEnseignantUrlProvider(cle)).value,
         null => null,
       },
@@ -1283,9 +1306,13 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // nom. L'annuaire de la seance nomme chaque participant (« Sayyida
     // Amina », « Yasmine ») et donne sa photo ; l'identite technique n'est
     // jamais rendue.
+    final FicheEnseignantSeance? ficheEnseignant = _ficheEnseignant(
+      ref,
+      presence,
+    );
     final AnnuaireSeance annuaire = AnnuaireSeance(
       presence: presence,
-      enseignant: _ficheEnseignant(ref, presence),
+      enseignant: ficheEnseignant,
     );
     final VueSalle vue = VueSalle.depuis(
       materielPret: _materielPret,
@@ -1401,17 +1428,16 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         ref.read(memoirePageClasseProvider).ecrire(groupe, presentee.page);
       }
       // Plan de composition du 26/10/2026 : le nom de la Classe et le titre
-      // de l'enseignant (« Sayyida Amina ») en haut de la salle.
-      final String? idGroupe = widget.groupeId;
-      final GroupSummaryVM? laClasse = idGroupe == null
-          ? null
-          : ref.watch(groupeProvider(idGroupe)).value;
+      // de l'enseignant (« Sayyida Amina ») en haut de la salle. Revue de la
+      // PR 60 : l'enseignant lit le nom de sa Classe dans les siennes
+      // (`mes_groupes_v`) ; la vue des familles ne lui rend rien.
+      final String nomClasse = _nomClasse(ref, vue.role);
       final VueSeance? seance = DepuisSalle.vue(
         salle: vue,
         mode: AppMetriques.of(context).mode,
         nomEnseignantConnu: annuaire.enseignant,
-        nomClasse: laClasse?.libelle ?? '',
-        titreEnseignant: laClasse?.enseignant.titre,
+        nomClasse: nomClasse,
+        titreEnseignant: ficheEnseignant?.titre,
         presence: presence,
         monProfil: monProfil,
         monTuteurObserve: monTuteurObserve,
@@ -3057,11 +3083,7 @@ class _Cadre extends ConsumerWidget {
 /// « Sans image » ne s'ecrit plus : le cercle le dit. Il reste annonce aux
 /// technologies d'assistance, pour qui rien ne se voit.
 class _SansImage extends StatelessWidget {
-  const _SansImage({
-    required this.participant,
-    required this.nom,
-    this.photo,
-  });
+  const _SansImage({required this.participant, required this.nom, this.photo});
 
   final ParticipantSalle participant;
 

@@ -7,12 +7,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart'
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/admin/service_groupes.dart'
+    show TypePublicGroupe;
 import 'package:rewayah_academy/core/appairage/service_avatar.dart'
     show photoEnseignantUrlProvider;
 import 'package:rewayah_academy/core/coran/service_coran.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
+import 'package:rewayah_academy/core/enseignant/service_enseignant.dart'
+    show groupesEnseignantProvider;
 import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/planning/service_planning.dart'
+    show Creneau;
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/profil/service_profil_enseignant.dart'
     show ProfilEnseignant, profilEnseignantParIdProvider;
@@ -121,6 +128,7 @@ List<Override> _surcharges({
   FauxServicePresence? presence,
   bool monTuteurObserve = false,
   List<AnnonceObservation> annonces = const <AnnonceObservation>[],
+  List<GroupeEnseignant> groupesEnseignant = const <GroupeEnseignant>[],
 }) => <Override>[
   sourceSessionProvider.overrideWithValue(FausseSourceSession(_session(role))),
   servicePreVolProvider.overrideWithValue(preVol),
@@ -141,6 +149,9 @@ List<Override> _surcharges({
   portAnnonceObservationProvider.overrideWithValue(
     FauxAnnonceObservation(lignes: annonces),
   ),
+  // Les Classes de l'enseignant (`mes_groupes_v`) : sans surcharge, le vrai
+  // service, donc Supabase.
+  groupesEnseignantProvider.overrideWith((Ref _) async => groupesEnseignant),
 ];
 
 /// Une ligne de presence telle que `presence_seance_v` la rend.
@@ -3370,6 +3381,7 @@ void main() {
       String entree = 'billet',
       String role = 'student',
       ProfilEnseignant? profil,
+      List<GroupeEnseignant> groupesEnseignant = const <GroupeEnseignant>[],
     }) async {
       final FauxMoteurSalle moteur = FauxMoteurSalle();
       final bool prof = role == 'teacher';
@@ -3382,6 +3394,7 @@ void main() {
             moteur: moteur,
             preVol: FauxServicePreVol(),
             role: prof ? AppRole.teacher : AppRole.student,
+            groupesEnseignant: groupesEnseignant,
             presence: FauxServicePresence(
               lignes: <PresenceParticipant>[
                 _presence(
@@ -3505,6 +3518,46 @@ void main() {
         url,
       );
       aucuneIdentite(tester);
+    });
+
+    // Le nom de la Classe en haut de la salle : l'enseignant ne lit pas la
+    // vue des familles (`mes_groupes_famille_v`) ; ses Classes viennent de
+    // `mes_groupes_v`.
+    testWidgets('enseignant : le nom de sa Classe, lu par ses Classes', (
+      WidgetTester tester,
+    ) async {
+      await monter(
+        tester,
+        photo: null,
+        role: 'teacher',
+        groupesEnseignant: <GroupeEnseignant>[
+          GroupeEnseignant(
+            id: 'g1',
+            libelle: 'Classe An-Nour',
+            type: TypePublicGroupe.enfant,
+            seuilMax: 6,
+            creneau: const Creneau(jour: 1, heure: 18, fuseau: 'Europe/Paris'),
+            nbMembres: 3,
+            creeLe: DateTime.utc(2026, 9, 1),
+          ),
+        ],
+      );
+      expect(
+        tester.widget<SalleSeance>(find.byType(SalleSeance)).vue.nomClasse,
+        'Classe An-Nour',
+      );
+      // La vue des familles, surchargee avec une autre Classe, n'est pas lue.
+      expect(find.textContaining('Classe du soir'), findsNothing);
+    });
+
+    testWidgets('enseignant hors de ses Classes : aucun nom de Classe', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, photo: null, role: 'teacher');
+      expect(
+        tester.widget<SalleSeance>(find.byType(SalleSeance)).vue.nomClasse,
+        isEmpty,
+      );
     });
 
     // Revue de la PR 60 : l'eleve qui entre par son accueil n'a pas de
