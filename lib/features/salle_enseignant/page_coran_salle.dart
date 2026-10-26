@@ -34,6 +34,17 @@ bool pageCoranLisible(WidgetRef ref, int numero) =>
     ref.watch(pageMushafProvider(numero)).value?.estMadina15 == true &&
     ref.watch(policeMushafDisponibleProvider).value == true;
 
+/// Vrai quand la page [numero] montre son etat d'erreur (« Reessayer ») :
+/// mise en page et police lues, mais la page ne se compose pas. Pendant
+/// l'attente, faux.
+bool pageCoranEnErreur(WidgetRef ref, int numero) {
+  final AsyncValue<PageMushafVM> page = ref.watch(pageMushafProvider(numero));
+  final AsyncValue<bool> police = ref.watch(policeMushafDisponibleProvider);
+  final bool resolues =
+      (page.hasValue || page.hasError) && (police.hasValue || police.hasError);
+  return resolues && !pageCoranLisible(ref, numero);
+}
+
 /// S0 : les etats de la page et du panneau de l'enseignant se posent sur
 /// la carte claire de la salle de seance, et non plus sur son fond
 /// (`PageImmersive`) : leur encre est alors celle de la carte.

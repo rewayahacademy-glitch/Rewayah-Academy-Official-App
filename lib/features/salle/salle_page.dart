@@ -918,7 +918,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // l'enseignant est sa colonne Eleves.
       pleinCadre: true,
       supports: enseignant && vue.peutPresenter
-          ? <SupportBibliotheque>[_coranDeLaBibliotheque()]
+          ? <SupportBibliotheque>[_coranDeLaBibliotheque(page)]
           : const <SupportBibliotheque>[],
       messageEleves: enseignant ? _echecRappel : null,
       // Au telephone, l'enseignant n'a pas de colonne : « Eleves » ouvre la
@@ -1065,7 +1065,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// Le Coran dans la Bibliotheque de l'ordinateur : « Presenter » choisit
   /// la sourate et le verset ; « Reprendre page N » la page retenue pour la
   /// Classe.
-  SupportBibliotheque _coranDeLaBibliotheque() {
+  SupportBibliotheque _coranDeLaBibliotheque(int? pagePresentee) {
     final String? groupe = widget.groupeId;
     final int? retenue = groupe == null
         ? null
@@ -1082,6 +1082,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       onReprendre: retenue == null
           ? null
           : () => unawaited(_presenterPage(retenue)),
+      presenterSecondaire:
+          pagePresentee != null && pagePresenteeEnErreur(ref, pagePresentee),
     );
   }
 

@@ -316,6 +316,24 @@ void main() {
     }
   });
 
+  // K-56 (pilote, 26/10/2026) : la page presentee en erreur garde
+  // « Reessayer » comme seul bouton plein ; « Presenter » passe en contour.
+  testWidgets('page en erreur, Bibliotheque depliee : un seul bouton plein', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, pageLisible: false);
+    expect(find.text(t.commun.reessayer), findsOneWidget);
+    await tester.tap(
+      find.byKey(const ValueKey<String>('bibliotheque-deplier-coran')),
+    );
+    await tester.pumpAndSettle();
+    final ActionPrincipale presenter = tester.widget<ActionPrincipale>(
+      find.byKey(const ValueKey<String>('bibliotheque-presenter-coran')),
+    );
+    expect(presenter.niveau, NiveauAction.secondaire);
+    verifierUnSeulBoutonPlein(tester);
+  });
+
   testWidgets('barre du bas : une barre sombre, deux groupes de tuiles '
       'nommees, un filet entre eux, cibles de 48', (WidgetTester tester) async {
     await _monter(tester);

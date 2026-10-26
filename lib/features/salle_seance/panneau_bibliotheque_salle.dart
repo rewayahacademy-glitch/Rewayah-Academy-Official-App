@@ -43,7 +43,13 @@ class SupportBibliotheque {
     required this.onPresenter,
     this.pageReprise,
     this.onReprendre,
+    this.presenterSecondaire = false,
   });
+
+  /// K-56 (pilote, 26/10/2026) : la page presentee est en erreur et son
+  /// « Reessayer » est le seul bouton plein ; « Presenter » passe en
+  /// secondaire (contour) tant que l'erreur est affichee.
+  final bool presenterSecondaire;
 
   final String id;
   final String titre;
@@ -311,12 +317,15 @@ class _CarteSupport extends StatelessWidget {
               ),
               Ecart.vLg,
               // K-56 : le seul bouton plein du panneau, en bas de la carte,
-              // sur toute sa largeur.
+              // sur toute sa largeur ; secondaire quand la page est en erreur.
               ActionPrincipale(
                 key: ValueKey<String>('bibliotheque-presenter-${support.id}'),
                 libelle: t.salle.seance.bibliotheque.presenter,
                 onPress: support.onPresenter,
                 pleineLargeur: true,
+                niveau: support.presenterSecondaire
+                    ? NiveauAction.secondaire
+                    : NiveauAction.principale,
               ),
               if (reprendre != null && page != null) ...<Widget>[
                 Ecart.vSm,
