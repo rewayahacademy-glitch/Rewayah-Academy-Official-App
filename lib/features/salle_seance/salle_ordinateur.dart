@@ -103,10 +103,23 @@ class _EtatSalleOrdinateur extends State<SalleOrdinateur> {
           as bool? ??
       defaut;
 
-  void _basculer(String cle, bool defaut) {
-    PageStorage.maybeOf(context)
-        ?.writeState(context, !_lire(cle, defaut), identifier: cle);
+  void _basculer(String cle, bool defaut) => _poser(cle, !_lire(cle, defaut));
+
+  void _poser(String cle, bool ouvert) {
+    PageStorage.maybeOf(context)?.writeState(context, ouvert, identifier: cle);
     setState(() {});
+  }
+
+  /// Bibliotheque demandee (tuile ou touche B). Revue de la PR 61 : quand les
+  /// Commandes occupent la droite, elles se ferment et la Bibliotheque
+  /// s'ouvre, au lieu d'un drapeau bascule sans effet visible.
+  void _bibliotheque() {
+    if (widget.vue.panneau == PanneauOuvert.commandes) {
+      widget.actions.onCommandes?.call();
+      _poser(_cleBibliotheque, true);
+    } else {
+      _basculer(_cleBibliotheque, _bibliothequeDefaut);
+    }
   }
 
   /// La Bibliotheque est ouverte d'office quand la page garde au moins la
@@ -125,9 +138,7 @@ class _EtatSalleOrdinateur extends State<SalleOrdinateur> {
     final bool peutBibliotheque = widget.actions.onBibliotheque != null;
     final ActionsSeance actions = widget.actions.avecPanneaux(
       onEleves: () => _basculer(_cleEleves, true),
-      onBibliotheque: peutBibliotheque
-          ? () => _basculer(_cleBibliotheque, _bibliothequeDefaut)
-          : null,
+      onBibliotheque: peutBibliotheque ? _bibliotheque : null,
     );
     final bool commandes = vue.panneau == PanneauOuvert.commandes;
     final Widget? droite = focus
@@ -503,9 +514,9 @@ class _PanneauCommandes extends StatelessWidget {
   );
 }
 
-/// La barre des commandes, deux groupes, chaque bouton nomme : a gauche
-/// Bibliotheque, Pointeur, Ecrire, Tableau, Plus ; a droite Micro, Camera,
-/// Eleves, Quitter.
+/// La barre des commandes, deux groupes, chaque bouton nomme : au debut
+/// Eleves, Pointeur, Ecrire, Tableau, Plus ; a la fin Micro, Camera,
+/// Bibliotheque, Quitter.
 class _Bas extends ConsumerWidget {
   const _Bas({
     required this.vue,

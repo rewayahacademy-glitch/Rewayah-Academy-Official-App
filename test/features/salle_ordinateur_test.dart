@@ -29,6 +29,8 @@ import 'package:rewayah_academy/core/widgets/commande_salle.dart'
     show TonTuileSalle, TuileCommandeSalle;
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_outils_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/dock_seance.dart'
+    show BoutonPlusAppel;
 import 'package:rewayah_academy/features/salle_seance/panneau_bibliotheque_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_eleves.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_ordinateur.dart';
@@ -348,6 +350,28 @@ void main() {
     );
     expect(presenter.niveau, NiveauAction.secondaire);
     verifierUnSeulBoutonPlein(tester);
+  });
+
+  // Revue de la PR 61 : Plus, puis Bibliotheque. Les Commandes se ferment et
+  // la Bibliotheque prend la droite ; la fermer laisse la droite vide.
+  testWidgets('Commandes ouvertes, Bibliotheque demandee : les Commandes se '
+      'ferment, la Bibliotheque s ouvre', (WidgetTester tester) async {
+    await _monter(tester);
+    const Key commandes = ValueKey<String>('salle-ordinateur-commandes');
+    await tester.tap(find.byKey(BoutonPlusAppel.cle));
+    await tester.pumpAndSettle();
+    expect(find.byKey(commandes), findsOneWidget);
+    expect(find.byType(PanneauBibliothequeSalle), findsNothing);
+
+    await tester.tap(find.byKey(const ValueKey<String>('salle-bibliotheque')));
+    await tester.pumpAndSettle();
+    expect(find.byType(PanneauBibliothequeSalle), findsOneWidget);
+    expect(find.byKey(commandes), findsNothing);
+
+    await tester.tap(find.byKey(const ValueKey<String>('bibliotheque-fermer')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(SalleOrdinateur.cleDroite), findsNothing);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('barre du bas : une barre sombre, deux groupes de tuiles '
