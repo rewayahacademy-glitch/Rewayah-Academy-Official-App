@@ -4,9 +4,11 @@
 // aucun nom. L'annuaire associe cette identite a la personne que
 // l'application connait deja, et donne le nom a afficher et la photo :
 //
-// - l'enseignant de la Classe (`EnseignantVM` : profil, titre, prenom,
-//   cle de photo) : « Sayyid Prenom » ou « Sayyida Prenom », le prenom seul
-//   sans titre connu ;
+// - l'enseignant de la seance ([FicheEnseignantSeance] : profil, prenom,
+//   titre, cle de photo), lue la ou le role de l'appelant le permet (sa
+//   propre fiche pour l'enseignant, la fiche lue par la direction, la Classe
+//   de la famille pour l'eleve et le tuteur) : « Sayyid Prenom » ou
+//   « Sayyida Prenom », le prenom seul sans titre connu ;
 // - les autres, par la presence de la seance (`PresenceParticipant` : profil,
 //   prenom, role) : « Prenom » ;
 // - personne de connu : « Participant », jamais l'identite.
@@ -20,14 +22,23 @@ import '../../core/video/video_session_provider.dart';
 import 'vue_salle.dart' show RoleSalle;
 
 /// Une personne connue de la seance.
-typedef PersonneSeance = ({String nom, String? cleAvatar});
+typedef PersonneSeance = ({String nom, String? clePhotoEnseignant});
+
+/// L'enseignant de la seance, tel que l'appelant peut le lire ; [titre]
+/// `null` quand il n'est pas renseigne (jamais devine).
+typedef FicheEnseignantSeance = ({
+  String id,
+  String prenom,
+  TitreEnseignant? titre,
+  String? clePhoto,
+});
 
 /// L'annuaire d'une seance : l'identite LiveKit vers la personne.
 class AnnuaireSeance {
   /// Compose l'annuaire depuis la presence lue et l'enseignant de la Classe.
   factory AnnuaireSeance({
     List<PresenceParticipant>? presence,
-    EnseignantVM? enseignant,
+    FicheEnseignantSeance? enseignant,
   }) {
     final Map<String, PersonneSeance> personnes = <String, PersonneSeance>{};
     final Map<String, String> prenoms = <String, String>{};
@@ -42,21 +53,21 @@ class AnnuaireSeance {
         nom: estEnseignant
             ? nomEnseignant(ligne.prenom, enseignant?.titre)
             : ligne.prenom,
-        cleAvatar: null,
+        clePhotoEnseignant: null,
       );
       if (estEnseignant) nomDeLEnseignant = personnes[ligne.profilId]!.nom;
     }
-    final EnseignantVM? e = enseignant;
-    if (e != null && e.enseignantId.isNotEmpty) {
-      final String prenom = e.nomAffichage.isNotEmpty
-          ? e.nomAffichage
-          : (prenoms[e.enseignantId] ?? '');
+    final FicheEnseignantSeance? e = enseignant;
+    if (e != null && e.id.isNotEmpty) {
+      final String prenom = e.prenom.isNotEmpty
+          ? e.prenom
+          : (prenoms[e.id] ?? '');
       if (prenom.isNotEmpty) {
-        personnes[e.enseignantId] = (
+        personnes[e.id] = (
           nom: nomEnseignant(prenom, e.titre),
-          cleAvatar: e.photoUrlOuCle,
+          clePhotoEnseignant: e.clePhoto,
         );
-        nomDeLEnseignant = personnes[e.enseignantId]!.nom;
+        nomDeLEnseignant = personnes[e.id]!.nom;
       }
     }
     return AnnuaireSeance._(personnes, nomDeLEnseignant);
@@ -92,7 +103,10 @@ class AnnuaireSeance {
   ParticipantSalle nommer(ParticipantSalle p) {
     final PersonneSeance? connue = _personnes[p.identite];
     if (connue != null) {
-      return p.nomme(nom: connue.nom, cleAvatar: connue.cleAvatar);
+      return p.nomme(
+        nom: connue.nom,
+        clePhotoEnseignant: connue.clePhotoEnseignant,
+      );
     }
     final bool nomDuJeton = p.nom.isNotEmpty && p.nom != p.identite;
     return p.nomme(nom: nomDuJeton ? p.nom : t.salle.participant);

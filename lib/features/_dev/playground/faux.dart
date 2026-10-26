@@ -313,6 +313,10 @@ class FauxServiceAvatar implements ServiceAvatar {
   @override
   Future<String> urlSignee(String cleAvatar) async =>
       'https://exemple.test/$cleAvatar';
+
+  @override
+  Future<String> urlSigneePhotoEnseignant(String cle) async =>
+      'https://exemple.test/$cle';
 }
 
 /// Un selecteur de photo qui rend toujours la meme image.

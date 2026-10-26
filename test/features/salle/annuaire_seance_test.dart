@@ -47,16 +47,16 @@ void main() {
     test('enseignant : $attendu, selon son titre', () {
       final AnnuaireSeance annuaire = AnnuaireSeance(
         presence: presence,
-        enseignant: EnseignantVM(
-          enseignantId: _idProf,
+        enseignant: (
+          id: _idProf,
+          prenom: 'Amina',
           titre: titre,
-          nomAffichage: 'Amina',
-          photoUrlOuCle: 'avatars/amina.webp',
+          clePhoto: '$_idProf/amina.webp',
         ),
       );
       final ParticipantSalle nomme = annuaire.nommer(_p(_idProf));
       expect(nomme.nom, attendu);
-      expect(nomme.cleAvatar, 'avatars/amina.webp');
+      expect(nomme.clePhotoEnseignant, '$_idProf/amina.webp');
       expect(annuaire.enseignant, attendu);
     });
   }
@@ -64,13 +64,18 @@ void main() {
   test('enseignant sans titre connu : le prenom seul', () {
     final AnnuaireSeance annuaire = AnnuaireSeance(presence: presence);
     expect(annuaire.nommer(_p(_idProf)).nom, 'Amina');
+    // Un titre absent de la fiche ne se devine pas.
+    final AnnuaireSeance sansTitre = AnnuaireSeance(
+      enseignant: (id: _idProf, prenom: 'Amina', titre: null, clePhoto: null),
+    );
+    expect(sansTitre.nommer(_p(_idProf)).nom, 'Amina');
   });
 
   test('eleve : son prenom, sans photo connue', () {
     final ParticipantSalle nomme = AnnuaireSeance(presence: presence)
         .nommer(_p(_idEleve));
     expect(nomme.nom, 'Yasmine');
-    expect(nomme.cleAvatar, isNull);
+    expect(nomme.clePhotoEnseignant, isNull);
   });
 
   test('inconnu : « Participant », jamais l identite', () {

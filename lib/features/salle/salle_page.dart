@@ -9,7 +9,8 @@ import 'package:go_router/go_router.dart';
 import '../../core/accessibilite/age_eleve.dart';
 import '../../core/accessibilite/mode_accessibilite.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
-import '../../core/appairage/service_avatar.dart' show avatarUrlProvider;
+import '../../core/appairage/service_avatar.dart'
+    show photoEnseignantUrlProvider;
 import '../../core/coran/service_coran.dart'
     show pageCoranProvider, pagesMushafMedine;
 import '../../core/domain/enums.dart';
@@ -19,6 +20,8 @@ import '../../core/icons/app_icons.dart';
 import '../../core/observabilite/journal_dev.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/presence/vue_presence.dart';
+import '../../core/profil/service_profil_enseignant.dart'
+    show ProfilEnseignant, profilEnseignantParIdProvider;
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
@@ -27,6 +30,7 @@ import '../../core/tc_classe/controleur_recitation.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_classe/roster_enseignant.dart';
 import '../../core/tc_classe/teacher_student_projection.dart';
+import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/port_groupes.dart';
 import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/tc_outils/etat_outils.dart';
@@ -695,6 +699,68 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       .watch(rosterClasseProvider(widget.seanceId))
       .avecFile(ref.watch(recitationProvider));
 
+  /// L'enseignant de la seance, lu la ou le role de l'appelant le permet
+  /// (revue de la PR 60, 26/10/2026) : son identite dans la salle ou dans la
+  /// presence ; sa fiche par son profil (`teacher_profiles` : lui-meme, la
+  /// direction) ; sinon la Classe de la famille (`mes_groupes_famille_v` :
+  /// l'eleve et le tuteur), celle du billet, ou celle de cette seance quand
+  /// l'eleve arrive par son accueil, sans Classe dans le billet. `null` :
+  /// rien de lisible ; les prenoms de la presence restent.
+  FicheEnseignantSeance? _ficheEnseignant(
+    WidgetRef ref,
+    List<PresenceParticipant>? presence,
+  ) {
+    String? id;
+    for (final ParticipantSalle p in _participants) {
+      if (RoleSalle.depuis(p.role) == RoleSalle.enseignant) id = p.identite;
+    }
+    for (final PresenceParticipant ligne
+        in presence ?? const <PresenceParticipant>[]) {
+      if (RoleSalle.depuis(ligne.role) == RoleSalle.enseignant &&
+          ligne.profilId.isNotEmpty) {
+        id ??= ligne.profilId;
+      }
+    }
+    final String? groupe = widget.groupeId;
+    final GroupSummaryVM? classe = groupe != null
+        ? ref.watch(groupeProvider(groupe)).value
+        : _classeDeLaSeance(ref.watch(mesGroupesProvider).value, id);
+    final EnseignantVM? deLaClasse = classe?.enseignant;
+    id ??= deLaClasse == null || deLaClasse.enseignantId.isEmpty
+        ? null
+        : deLaClasse.enseignantId;
+    if (id == null) return null;
+    final ProfilEnseignant? profil = ref
+        .watch(profilEnseignantParIdProvider(id))
+        .value;
+    return (
+      id: id,
+      prenom: profil?.prenom ?? deLaClasse?.nomAffichage ?? '',
+      titre: TitreEnseignant.depuisSql(profil?.titre) ?? deLaClasse?.titre,
+      clePhoto: profil?.clePhoto ?? deLaClasse?.photoUrlOuCle,
+    );
+  }
+
+  /// La Classe de cette seance parmi celles de la famille : par la seance
+  /// (prochaine occurrence ou horloge), sinon par l'enseignant [idEnseignant].
+  GroupSummaryVM? _classeDeLaSeance(
+    List<GroupSummaryVM>? classes,
+    String? idEnseignant,
+  ) {
+    final List<GroupSummaryVM> toutes = classes ?? const <GroupSummaryVM>[];
+    for (final GroupSummaryVM c in toutes) {
+      if (c.prochaineSeance?.sessionId == widget.seanceId ||
+          c.horloge?.sessionId == widget.seanceId) {
+        return c;
+      }
+    }
+    if (idEnseignant == null) return null;
+    for (final GroupSummaryVM c in toutes) {
+      if (c.enseignant.enseignantId == idEnseignant) return c;
+    }
+    return null;
+  }
+
   /// Ouvre la presence en feuille, pour qui n'a pas la place de la garder
   /// ouverte a cote de la scene.
   Future<void> _voirPresence(List<_Presence> lignes) => AppBottomSheet.ouvrir(
@@ -870,8 +936,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       video: moteur.renduVideo,
       // L'enseignant chez l'eleve ; sa propre image chez l'enseignant.
       identiteVignette: enseignant ? moi?.identite : vue.dominant?.identite,
-      photoVignette: switch ((enseignant ? moi : vue.dominant)?.cleAvatar) {
-        final String cle => ref.watch(avatarUrlProvider(cle)).value,
+      photoVignette: switch ((enseignant ? moi : vue.dominant)?.clePhotoEnseignant) {
+        final String cle => ref.watch(photoEnseignantUrlProvider(cle)).value,
         null => null,
       },
       // L'enseignant garde les etats de lecture de son panneau (page
@@ -1106,12 +1172,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // nom. L'annuaire de la seance nomme chaque participant (« Sayyida
     // Amina », « Yasmine ») et donne sa photo ; l'identite technique n'est
     // jamais rendue.
-    final String? groupeDeLaSeance = widget.groupeId;
     final AnnuaireSeance annuaire = AnnuaireSeance(
       presence: presence,
-      enseignant: groupeDeLaSeance == null
-          ? null
-          : ref.watch(groupeProvider(groupeDeLaSeance)).value?.enseignant,
+      enseignant: _ficheEnseignant(ref, presence),
     );
     final VueSalle vue = VueSalle.depuis(
       materielPret: _materielPret,
@@ -2808,10 +2871,10 @@ class _Cadre extends ConsumerWidget {
     final String nom = moi ? t.salle.vousMeme : participant.nom;
     // Directeur, 26/10/2026 : la photo du profil quand l'annuaire en a la
     // cle ; sinon le cercle des initiales.
-    final String? cle = participant.cleAvatar;
+    final String? cle = participant.clePhotoEnseignant;
     final String? photo = cle == null
         ? null
-        : ref.watch(avatarUrlProvider(cle)).value;
+        : ref.watch(photoEnseignantUrlProvider(cle)).value;
     return DecoratedBox(
       decoration: palette.surfaceSunken.decoration(
         borderRadius: metriques.arrondi,
