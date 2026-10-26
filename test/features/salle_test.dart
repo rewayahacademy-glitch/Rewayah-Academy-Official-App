@@ -572,6 +572,41 @@ void main() {
       expect(find.textContaining('Message du navigateur'), findsNothing);
     });
 
+    // Revue de la PR 59 : le drapeau « aucune camera » ne survit pas a une
+    // nouvelle entree ; une camera branchee entre-temps s'allume.
+    testWidgets('camera absente, sortie, camera branchee, retour : la camera '
+        's allume, la phrase ne revient pas', (WidgetTester tester) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      final FauxServicePreVol preVol = FauxServicePreVol(
+        cameraDisponible: false,
+      );
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student', camera: true)),
+          moteur: moteur,
+          preVol: preVol,
+        ),
+      );
+      await tester.tap(_commande(t.salle.ouvrirCamera));
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.cameraEchecAbsente), findsOneWidget);
+
+      await tester.tap(_commande(t.salle.seance.sortir));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.salle.quitter).last);
+      await tester.pumpAndSettle();
+      preVol.cameraDisponible = true;
+      await tester.tap(find.byKey(ResultatSeance.revenirKey));
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.cameraEchecAbsente), findsNothing);
+
+      await tester.tap(_commande(t.salle.ouvrirCamera));
+      await tester.pumpAndSettle();
+      expect(moteur.cameraDemandee, <bool>[true]);
+      expect(find.text(t.salle.cameraEchecAbsente), findsNothing);
+    });
+
     testWidgets('Lot salle 3 (reseau) : salle ouverte puis deconnexion : '
         '« connexion perdue », et Reessayer redemande un jeton', (
       WidgetTester tester,

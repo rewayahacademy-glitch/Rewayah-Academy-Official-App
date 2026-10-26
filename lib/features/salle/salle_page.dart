@@ -373,6 +373,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     setState(() {
       _impasse = null;
       _aEteConnecte = false;
+      // Revue de la PR 59 : une nouvelle entree relit le materiel ; une
+      // camera branchee entre-temps ne fait plus dire « aucune camera ».
+      _cameraAbsente = false;
+      _erreurCameraFermee = false;
       _repliAffiche.remettre();
       _materielPret = false;
       _acces = null;
@@ -643,8 +647,12 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     }
     try {
       await _moteur.reglerCamera(actif: !ouverte);
-      if (mounted && _erreurCamera != null) {
-        setState(() => _erreurCamera = null);
+      if (mounted && (_erreurCamera != null || (!ouverte && _cameraAbsente))) {
+        // Une camera allumee : elle existe (revue de la PR 59).
+        setState(() {
+          _erreurCamera = null;
+          if (!ouverte) _cameraAbsente = false;
+        });
       }
     } on Object catch (erreur) {
       journalDev('camera : $erreur');
