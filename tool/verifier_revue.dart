@@ -1230,6 +1230,12 @@ bool _enCoursFixe(String t, int position) {
 /// (`bouton-grise-conditionnel-exclu`), jamais caches.
 const List<String> exclusBoutonsConditionnels = <String>[
   'lib/features/salle/',
+  // Fiche 1 de la salle au telephone (26/10/2026) : vignette_video.dart,
+  // `Pressable onPress: enGrand`. La vignette n'est un Pressable que si
+  // `enGrand` existe (`if (enGrand == null) return vignette;`) : dans la
+  // capsule du telephone (`touchable: false`), elle est rendue sans
+  // Pressable, jamais grisee ; le detecteur lit la condition sans voir ce
+  // retour anticipe.
   'lib/features/salle_seance/',
   'lib/features/salle_enseignant/',
   'lib/features/tc_dock/',
