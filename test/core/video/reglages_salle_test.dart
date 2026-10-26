@@ -23,23 +23,25 @@ AccesSalle _acces(String role, {bool camera = false}) => AccesSalle(
 
 void main() {
   // Decision du directeur du 25/10/2026 (audit reseau, lot salle 3
-  // section 7) : reseaux faibles. Revient sur D15 (24/10/2026 : 720p a
-  // 1,2 Mbit/s, adaptiveStream chez l'enseignant seulement).
-  test('reseaux faibles : 360p, couche 180p, 450 kbit/s, 20 i/s, parole', () {
+  // section 7), revue le 26/10/2026 apres la mesure LiveKit du test K4
+  // (relais TURN des deux cotes) : capture 720p retablie, deux couches basses
+  // pour les liens faibles ; adaptiveStream pour tous, dynacast, parole.
+  test('720p, couches 180p et 360p, 1,2 Mbit/s, 30 i/s, parole', () {
     final lk.RoomOptions o = optionsSalle();
     expect(o.adaptiveStream, isTrue, reason: 'pour tous les roles');
     expect(o.dynacast, isTrue);
     expect(
       o.defaultCameraCaptureOptions.params,
-      lk.VideoParametersPresets.h360_169,
+      lk.VideoParametersPresets.h720_169,
     );
     final lk.VideoPublishOptions v = o.defaultVideoPublishOptions;
     expect(v.simulcast, isTrue);
     expect(v.videoSimulcastLayers, <lk.VideoParameters>[
       lk.VideoParametersPresets.h180_169,
+      lk.VideoParametersPresets.h360_169,
     ]);
-    expect(v.videoEncoding?.maxBitrate, 450000);
-    expect(v.videoEncoding?.maxFramerate, 20);
+    expect(v.videoEncoding?.maxBitrate, 1200000);
+    expect(v.videoEncoding?.maxFramerate, 30);
     expect(
       v.degradationPreference,
       lk.DegradationPreference.maintainResolution,
