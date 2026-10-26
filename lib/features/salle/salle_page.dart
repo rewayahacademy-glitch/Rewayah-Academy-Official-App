@@ -26,7 +26,10 @@ import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
+import '../../core/tc_bibliotheque/couverture_ressource.dart';
 import '../../core/tc_classe/controleur_recitation.dart';
+import '../../core/tc_classe/rappel_discret.dart'
+    show portRappelDiscretProvider;
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_classe/roster_enseignant.dart';
 import '../../core/tc_classe/teacher_student_projection.dart';
@@ -82,6 +85,7 @@ import '../salle_seance/ecriture_seance.dart'
         pointeurDistantProvider;
 import '../salle_seance/media_salle.dart';
 import '../salle_seance/notes_deposees.dart';
+import '../salle_seance/panneau_bibliotheque_salle.dart';
 import '../salle_seance/presentation_observee.dart';
 import '../salle_seance/resultat_seance.dart';
 import '../salle_seance/salle_seance.dart';
@@ -230,6 +234,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
 
   /// S0.3 : l'enseignant a ouvert le tableau blanc (ferme par defaut).
   bool _tableau = false;
+
+  /// Plan de composition du 26/10/2026 : le dernier rappel discret qui n'a
+  /// pas pu partir depuis le panneau Eleves, ou `null`.
+  String? _echecRappel;
 
   /// S1 : la synchronisation de l'ecriture de cette seance, creee a la
   /// premiere composition dans la salle, liberee a la sortie.
@@ -786,7 +794,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     final bool tableau = enseignant
         ? _tableau
         : (synchro?.tableauOuvert.value ?? false);
-    final VueSeance seance = tableau
+    final VueSeance seanceSansFiches = tableau
         ? base.copyWith(
             panneau: _panneau,
             contexte: _contexte,
@@ -796,6 +804,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             tableauLibre: TableauLibre.classe,
           )
         : base.copyWith(panneau: _panneau, contexte: _contexte);
+    final VueSeance seance = enseignant
+        ? seanceSansFiches.copyWith(
+            eleves: _avecFiches(seanceSansFiches.eleves, _roster(ref)),
+          )
+        : seanceSansFiches;
     final VideoSessionProvider moteur = ref.watch(moteurSalleProvider);
     final double? plus = palierSuivant(_zoom);
     final double? moins = palierPrecedent(_zoom);
@@ -827,6 +840,21 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // presence (J3) et le roster reel (fiche, rappel discret).
       onEleves: enseignant
           ? () => _basculerPanneau(PanneauOuvert.eleves)
+          : null,
+      // Plan de composition du 26/10/2026 : la carte d'un eleve, depliee
+      // dans le panneau de gauche, porte les deux actions qui aboutissent
+      // dans `/salle` (rappel discret, recitation). « Noter » et « Signaler »
+      // n'ont pas encore de proprietaire : absentes, jamais grisees.
+      onRappeler: enseignant
+          ? (EleveSeance e) => unawaited(_rappeler(e))
+          : null,
+      onChoisirPourReciter: enseignant
+          ? (EleveSeance e) {
+              final String? id = e.id;
+              if (id != null) {
+                ref.read(recitationProvider.notifier).donnerLaParoleA(id);
+              }
+            }
           : null,
       // La Bibliotheque des Commandes (et la touche B) ouvre le Coran : une
       // autre sourate se presente a tout moment, comme depuis l'ancien
@@ -881,6 +909,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // passe en pastille (section 6.6, la sienne seulement) ; la liste de
       // l'enseignant est sa colonne Eleves.
       pleinCadre: true,
+      supports: enseignant && vue.peutPresenter
+          ? <SupportBibliotheque>[_coranDeLaBibliotheque()]
+          : const <SupportBibliotheque>[],
+      messageEleves: enseignant ? _echecRappel : null,
       // Au telephone, l'enseignant n'a pas de colonne : « Eleves » ouvre la
       // presence (J3) et le roster (fiche, rappel) en feuille.
       pastille: enseignant ? null : _PastillePresence(mienne: mienne),
@@ -970,39 +1002,91 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     );
   }
 
+  /// Plan de composition du 26/10/2026 : les inscrits de la seance avec leur
+  /// fiche (roster pedagogique), pour le panneau Eleves de l'ordinateur. Un
+  /// fait que le serveur ne projette pas reste vide (la carte ne le montre
+  /// pas) ; un eleve absent du roster n'a pas de fiche.
+  static List<EleveSeance> _avecFiches(
+    List<EleveSeance> eleves,
+    RosterClasseVM roster,
+  ) => <EleveSeance>[
+    for (final EleveSeance e in eleves)
+      switch (e.id == null ? null : roster.parAcademyId(e.id!)) {
+        final TeacherStudentProjection p => EleveSeance(
+          prenom: e.prenom,
+          statut: e.statut,
+          id: e.id,
+          cleAvatar: e.cleAvatar,
+          peutEcrire: e.peutEcrire,
+          fiche: ficheDeSeance(p),
+        ),
+        null => e,
+      },
+  ];
+
+  /// Le rappel discret depuis le panneau Eleves ; l'echec se dit sous son
+  /// titre, la reussite ne dit rien (spec section 10.2).
+  Future<void> _rappeler(EleveSeance eleve) async {
+    final String? id = eleve.id;
+    if (id == null) return;
+    final String? echec = await rappelerDiscretement(
+      ref.read(portRappelDiscretProvider),
+      sessionId: widget.seanceId,
+      academyId: id,
+    );
+    if (mounted) setState(() => _echecRappel = echec);
+  }
+
+  /// Le Coran dans la Bibliotheque de l'ordinateur : « Presenter » choisit
+  /// la sourate et le verset ; « Reprendre page N » la page retenue pour la
+  /// Classe.
+  SupportBibliotheque _coranDeLaBibliotheque() {
+    final String? groupe = widget.groupeId;
+    final int? retenue = groupe == null
+        ? null
+        : ref.read(memoirePageClasseProvider).lire(groupe);
+    return SupportBibliotheque(
+      id: 'coran',
+      titre: t.salle.supports.coran,
+      detail: retenue == null
+          ? t.salle.supports.coranDetail
+          : t.salle.seance.bibliotheque.detailReprise(page: retenue),
+      couverture: CouvertureRessource.coran(t.salle.supports.coran),
+      onPresenter: () => unawaited(_ouvrirCoran()),
+      pageReprise: retenue,
+      onReprendre: retenue == null
+          ? null
+          : () => unawaited(_presenterPage(retenue)),
+    );
+  }
+
+  Future<void> _presenterPage(int page) async {
+    setState(() => _scenePremierPlan = null);
+    await ref.read(presentateurCoranProvider).presenterPage(page);
+  }
+
   /// S0 : la bibliotheque du Coran, puis la page presentee a la classe ;
   /// la scene cede la place a la page.
   /// Lot salle 2 (directeur, 25/10/2026) : la Bibliotheque montre le choix
-  /// des supports (aujourd'hui le Coran seul, d'autres viendront) au lieu
+  /// des supports (aujourd'hui le Coran seul) au lieu
   /// d'ouvrir le Coran d'office. Le Coran reprend a la derniere page
   /// presentee dans la classe, sinon le choix de la sourate et du verset.
   Future<void> _choisirSupport() async {
     final bool coran =
         await AppBottomSheet.ouvrir<bool>(
           context,
-          titre: t.salle.supports.titre,
-          constructeur: (BuildContext feuille) => Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              CarteLignes(
-                lignes: <Widget>[
-                  SettingRow(
-                    key: SallePage.supportCoranKey,
-                    icon: AppIcons.coran,
-                    title: t.salle.supports.coran,
-                    description: t.salle.supports.coranDetail,
-                    lien: true,
-                    onPress: () => Navigator.of(feuille).pop(true),
-                  ),
-                ],
-              ),
-              Ecart.vLg,
-              Text(
-                t.salle.supports.aVenir,
-                style: AppPalette.of(feuille).inkMuted.applyTo(
-                  Theme.of(feuille).textTheme.bodyMedium ?? const TextStyle(),
-                ),
+          // Plan de composition du 26/10/2026 : « Bibliotheque » partout,
+          // et aucune promesse de supports a venir.
+          titre: t.tc.bibliotheque.titre,
+          constructeur: (BuildContext feuille) => CarteLignes(
+            lignes: <Widget>[
+              SettingRow(
+                key: SallePage.supportCoranKey,
+                icon: AppIcons.coran,
+                title: t.salle.supports.coran,
+                description: t.salle.supports.coranDetail,
+                lien: true,
+                onPress: () => Navigator.of(feuille).pop(true),
               ),
             ],
           ),
@@ -1289,10 +1373,18 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           presentee != null) {
         ref.read(memoirePageClasseProvider).ecrire(groupe, presentee.page);
       }
+      // Plan de composition du 26/10/2026 : le nom de la Classe et le titre
+      // de l'enseignant (« Sayyida Amina ») en haut de la salle.
+      final String? idGroupe = widget.groupeId;
+      final GroupSummaryVM? laClasse = idGroupe == null
+          ? null
+          : ref.watch(groupeProvider(idGroupe)).value;
       final VueSeance? seance = DepuisSalle.vue(
         salle: vue,
         mode: AppMetriques.of(context).mode,
         nomEnseignantConnu: annuaire.enseignant,
+        nomClasse: laClasse?.libelle ?? '',
+        titreEnseignant: laClasse?.enseignant.titre,
         presence: presence,
         monProfil: monProfil,
         monTuteurObserve: monTuteurObserve,

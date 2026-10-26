@@ -239,10 +239,8 @@
   "salle": {
     "retourner": "Retourner dans la salle",
     "supports": {
-      "titre": "Choisir un support",
       "coran": "Coran, Mushaf de Médine",
-      "coranDetail": "La page s'ouvre pour toute la classe.",
-      "aVenir": "D'autres supports viendront."
+      "coranDetail": "La page s'ouvre pour toute la classe."
     },
     "coran": {
       "indisponible": "La page du Coran ne s'affiche pas sur cet appareil",
@@ -537,7 +535,11 @@
         "revenir": "Revenir aux supports",
         "ouverture": "Ouverture du support…",
         "echec": "Fichier non ouvert.",
-        "echecDetail": "Le fichier de ce support est indisponible. Réessayez, ou revenez aux supports pour en choisir un autre."
+        "echecDetail": "Le fichier de ce support est indisponible. Réessayez, ou revenez aux supports pour en choisir un autre.",
+        "tous": "Tous",
+        "reprendrePage": "Reprendre page {page}",
+        "detailReprise": "Page {page} · Dernière séance",
+        "titreCoranPage": "Coran · Page {page}"
       },
       "surface": {
         "aucunSupport": "Choisissez un support ou écrivez au tableau.",

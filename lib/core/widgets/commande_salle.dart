@@ -472,3 +472,58 @@ class CommandeSalle extends StatelessWidget {
         : Semantics(selected: choisi, child: annonce);
   }
 }
+
+/// Plan de composition du 26/10/2026 (Q1, decision du directeur : « oui ») :
+/// sur ordinateur, la barre des commandes de la salle porte le NOM de chaque
+/// commande sous son bouton rond (« Micro », « Bibliothèque »), pour
+/// l'enseignant qui lit le mot avant de reconnaitre l'icone. Ecart date au
+/// standard des commandes d'appel du 24/10/2026 (icones seules), qui reste
+/// celui du telephone.
+///
+/// Le bouton est [bouton] (le bouton rond de l'appel, `BoutonIcone` forme
+/// `appel`), jamais recompose ; le nom dessous est muet au lecteur d'ecran
+/// (le bouton porte deja l'acte et l'etat). La case garde la largeur du nom :
+/// un nom ne se coupe jamais au milieu d'un mot (K-54), il passe sur deux
+/// lignes entre ses mots.
+class CommandeSalleNommee extends StatelessWidget {
+  const CommandeSalleNommee({
+    required this.bouton,
+    required this.nom,
+    super.key,
+  });
+
+  /// Le bouton rond, deja complet (icone, ton, libelle lu, action).
+  final Widget bouton;
+
+  /// Le nom de la commande, peint sous le bouton.
+  final String nom;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextStyle style = palette.inkStrong.applyTo(
+      Theme.of(context).textTheme.labelMedium ?? const TextStyle(),
+    );
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        bouton,
+        Ecart.vXs,
+        ConstrainedBox(
+          constraints: BoxConstraints(
+            minWidth: _largeurPlusLongMot(context, nom, style),
+          ),
+          child: ExcludeSemantics(
+            child: Text(
+              nom,
+              key: const ValueKey<String>('nom-commande'),
+              maxLines: 2,
+              textAlign: TextAlign.center,
+              style: style,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}

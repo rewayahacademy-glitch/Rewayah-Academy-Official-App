@@ -55,14 +55,14 @@ abstract final class MesuresOutils {
   static const double hauteurCompacte = AppSpacing.respiration;
 }
 
-String _libelle(OutilEnseignement outil) => switch (outil) {
+String libelleOutilEnseignement(OutilEnseignement outil) => switch (outil) {
   OutilEnseignement.pointeur => t.salle.seance.outils.pointeur,
   OutilEnseignement.ecrire => t.salle.seance.outils.ecrire,
   OutilEnseignement.marquer => t.salle.seance.outils.marquer,
   OutilEnseignement.masquer => t.salle.seance.outils.masquer,
 };
 
-AppIcon _icone(OutilEnseignement outil) => switch (outil) {
+AppIcon iconeOutilEnseignement(OutilEnseignement outil) => switch (outil) {
   OutilEnseignement.pointeur => AppIcons.curseur,
   OutilEnseignement.ecrire => AppIcons.annoter,
   OutilEnseignement.marquer => AppIcons.crayon,
@@ -80,7 +80,7 @@ OutilDock outilDock(OutilEnseignement outil) => switch (outil) {
 /// La salle a-t-elle un depot d'annotations ? Ni quand le provider leve, ni
 /// quand il rend le depot indisponible du defaut de production (SALLE-ROBUSTE) :
 /// aucun serveur, rien ne serait conserve (TB-BR).
-bool _depotDisponible(WidgetRef ref) {
+bool depotAnnotationsDisponible(WidgetRef ref) {
   try {
     return ref.read(portAnnotationsProvider) is! PortIndisponible;
   } on Object {
@@ -129,7 +129,7 @@ class OutilsEnseignement extends ConsumerWidget {
       outil: o,
       actif: outilDock(o) == actif,
       onPress: () {
-        if (_depotDisponible(ref)) {
+        if (depotAnnotationsDisponible(ref)) {
           ref.read(etatOutilsProvider.notifier).choisirOutil(outilDock(o));
         }
         rappel(o);
@@ -276,8 +276,8 @@ class _Tuile extends StatelessWidget {
         selected: actif,
         child: BoutonOutil(
           key: ValueKey<String>('outil-${outil.name}'),
-          icone: _icone(outil),
-          libelle: _libelle(outil),
+          icone: iconeOutilEnseignement(outil),
+          libelle: libelleOutilEnseignement(outil),
           retenu: actif,
           avecLibelle:
               !agrandi ||

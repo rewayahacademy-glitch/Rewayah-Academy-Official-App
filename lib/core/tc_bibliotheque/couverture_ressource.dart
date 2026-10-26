@@ -72,6 +72,19 @@ class CouvertureRessource {
     );
   }
 
+  /// La couverture du Coran de la salle (plan de composition du 26/10/2026),
+  /// sans ressource de catalogue : la teinte reservee au Coran, le
+  /// monogramme de son [titre].
+  factory CouvertureRessource.coran(String titre) => CouvertureRessource(
+    indexTeinte: 0,
+    motif:
+        MotifCouverture.values[empreinte(titre) ~/
+            nombreTeintes %
+            MotifCouverture.values.length],
+    monogramme: _initiales(titre),
+    type: TypeRessource.quran,
+  );
+
   /// Le nombre de teintes disponibles. L'index 0 est reserve au Coran, les
   /// 32 suivantes sont celles d'`AppPalette.teintesIdentite`.
   static const int nombreTeintes = 33;

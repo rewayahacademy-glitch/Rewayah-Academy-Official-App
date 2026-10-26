@@ -41,14 +41,14 @@ import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_enseignant/page_coran_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart'
-    show CommandesPedagogiques, DeclencheurCommandes;
-import 'package:rewayah_academy/features/salle_seance/dock_seance.dart'
-    show BoutonPlusAppel;
+    show DeclencheurCommandes;
 import 'package:rewayah_academy/features/salle_seance/ecriture_seance.dart'
     show diffusionEcritureProvider;
 import 'package:rewayah_academy/features/salle_seance/media_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/palette_tableau.dart';
+import 'package:rewayah_academy/features/salle_seance/panneau_bibliotheque_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/resultat_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/salle_ordinateur.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/telephone_plein_ecran.dart';
 import 'package:rewayah_academy/features/tc_mushaf/page_madina_15.dart'
@@ -2668,8 +2668,11 @@ void main() {
       const Size(1920, 1080),
     ]) {
       final String nom = '${taille.width.toInt()}x${taille.height.toInt()}';
-      testWidgets('enseignant, $nom : la page prend toute la hauteur, rien '
-          'ne reduit sa boite, Commandes repliees', (
+      // Plan de composition du 26/10/2026 (remplace K4 sur ordinateur) :
+      // la page occupe toute la hauteur du centre, entre les deux panneaux,
+      // et rien ne la recouvre.
+      testWidgets('enseignant, $nom : la page prend toute la hauteur du '
+          'centre, rien ne reduit sa boite, Commandes repliees', (
         WidgetTester tester,
       ) async {
         await monterAvecPage(tester, taille);
@@ -2677,23 +2680,39 @@ void main() {
         final Rect boite = tester.getRect(
           find.byKey(TelephonePleinEcran.clePage),
         );
-        // Quatre bords : de haut en bas de la fenetre, centree.
-        expect(boite.top, closeTo(0, 0.5));
-        expect(boite.bottom, closeTo(taille.height, 0.5));
-        expect(boite.center.dx, closeTo(taille.width / 2, 0.5));
+        final Rect centre = tester.getRect(
+          find.byKey(SalleOrdinateur.cleCentre),
+        );
+        // De bas en haut de sa zone, centree dans le centre.
+        expect(boite.bottom, closeTo(centre.bottom, 0.5));
+        expect(boite.center.dx, closeTo(centre.center.dx, 0.5));
+        expect(boite.left, greaterThanOrEqualTo(centre.left - 0.5));
+        expect(boite.right, lessThanOrEqualTo(centre.right + 0.5));
+        for (final Key cote in <Key>[
+          SalleOrdinateur.cleGauche,
+          SalleOrdinateur.cleDroite,
+          SalleOrdinateur.cleBas,
+        ]) {
+          expect(
+            boite.overlaps(tester.getRect(find.byKey(cote))),
+            isFalse,
+            reason: '$cote recouvre la page',
+          );
+        }
         // Sa largeur suit la composition du mushaf, plafonnee a 1,4 fois.
-        final Size attendue = boitePagePleinEcran(taille, telephone: false);
+        final Size attendue = boitePagePleinEcran(
+          Size(centre.width, boite.height),
+          telephone: false,
+        );
         expect(boite.width, closeTo(attendue.width, 0.5));
         // La page composee remplit la hauteur de sa boite.
         final Rect page = tester.getRect(find.byKey(PageCoranSalle.cle));
-        expect(page.height, closeTo(taille.height, 0.5));
-        // Les quinze lignes se partagent la hauteur de la fenetre.
+        expect(page.height, closeTo(boite.height, 0.5));
+        // Les quinze lignes se partagent la hauteur de la boite.
         final double ligne = tester
             .getRect(find.byKey(cleLigneMadina15(3)))
             .height;
-        // Le cadre et l'en-tete du mushaf pris, chaque ligne recoit plus de
-        // 85 % de la fenetre / 15 (45 px a 768, 64 px a 1080).
-        expect(ligne, greaterThan(taille.height / 15 * 0.85));
+        expect(ligne, greaterThan(boite.height / 15 * 0.85));
         if (dossierCapture != null) {
           await capturerVue(tester, 'k4-page-enseignant-$nom');
         }
@@ -2720,24 +2739,35 @@ void main() {
         await tester.tap(find.byKey(const ValueKey<String>('bouton-tableau')));
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
-        expect(
-          tester.getRect(find.byKey(TelephonePleinEcran.clePage)),
-          Offset.zero & taille,
+        final Rect canevas = tester.getRect(
+          find.byKey(TelephonePleinEcran.clePage),
         );
+        // Telephone : la fenetre. Ordinateur (plan du 26/10/2026) : tout le
+        // centre, sous la ligne du titre.
+        if (taille.width < 840) {
+          expect(canevas, Offset.zero & taille);
+        } else {
+          final Rect centre = tester.getRect(
+            find.byKey(SalleOrdinateur.cleCentre),
+          );
+          expect(canevas.left, closeTo(centre.left, 0.5));
+          expect(canevas.right, closeTo(centre.right, 0.5));
+          expect(canevas.bottom, closeTo(centre.bottom, 0.5));
+        }
         final Rect feuille = tester.getRect(
           find.byKey(const ValueKey<String>('surface-feuille')),
         );
         // La forme de la classe, 16:9, ajustee a echelle uniforme, centree,
-        // dans la fenetre (bandes vides ailleurs).
+        // dans le canevas (bandes vides ailleurs).
         expect(feuille.width / feuille.height, closeTo(16 / 9, 0.01));
-        expect(feuille.width, lessThanOrEqualTo(taille.width + 0.5));
-        expect(feuille.height, lessThanOrEqualTo(taille.height + 0.5));
-        expect(feuille.center.dx, closeTo(taille.width / 2, 0.5));
-        expect(feuille.center.dy, closeTo(taille.height / 2, 0.5));
+        expect(feuille.width, lessThanOrEqualTo(canevas.width + 0.5));
+        expect(feuille.height, lessThanOrEqualTo(canevas.height + 0.5));
+        expect(feuille.center.dx, closeTo(canevas.center.dx, 0.5));
+        expect(feuille.center.dy, closeTo(canevas.center.dy, 0.5));
         expect(
           math.max(
-            feuille.width / taille.width,
-            feuille.height / taille.height,
+            feuille.width / canevas.width,
+            feuille.height / canevas.height,
           ),
           closeTo(1, 0.01),
         );
@@ -2850,22 +2880,48 @@ void main() {
       expect(eteinte.cameraDemandee, isEmpty);
     });
 
-    testWidgets('EN-KB, ordinateur : R ouvre les Eleves', (
+    // Plan de composition du 26/10/2026 : sur ordinateur, R et B ouvrent
+    // et ferment les panneaux (Eleves a gauche, Bibliotheque a droite) ;
+    // rien ne s'ouvre au milieu.
+    const Key panneauEleves = ValueKey<String>('salle-ordinateur-eleves');
+
+    testWidgets('EN-KB, ordinateur : R ferme puis rouvre les Eleves', (
       WidgetTester tester,
     ) async {
       await monterAvecMoi(tester);
-      expect(find.text(t.tc.classe.roster.titre), findsNothing);
+      expect(find.byKey(panneauEleves), findsOneWidget);
       await touche(tester, LogicalKeyboardKey.keyR);
-      expect(find.text(t.tc.classe.roster.titre), findsOneWidget);
+      expect(find.byKey(panneauEleves), findsNothing);
+      await touche(tester, LogicalKeyboardKey.keyR);
+      expect(find.byKey(panneauEleves), findsOneWidget);
     });
 
-    testWidgets('EN-KB, ordinateur : B ouvre le choix du support', (
+    testWidgets('EN-KB, ordinateur : B ouvre la Bibliotheque', (
+      WidgetTester tester,
+    ) async {
+      // 1366 : la Bibliotheque est ouverte d'office ; B la ferme et la
+      // rouvre.
+      await monterAvecMoi(tester);
+      expect(find.byKey(PanneauBibliothequeSalle.cle), findsOneWidget);
+      await touche(tester, LogicalKeyboardKey.keyB);
+      expect(find.byKey(PanneauBibliothequeSalle.cle), findsNothing);
+      await touche(tester, LogicalKeyboardKey.keyB);
+      expect(find.byKey(PanneauBibliothequeSalle.cle), findsOneWidget);
+    });
+
+    testWidgets('F : focus, puis retour des panneaux', (
       WidgetTester tester,
     ) async {
       await monterAvecMoi(tester);
-      expect(find.text(t.salle.supports.titre), findsNothing);
-      await touche(tester, LogicalKeyboardKey.keyB);
-      expect(find.text(t.salle.supports.titre), findsOneWidget);
+      expect(find.byKey(SalleOrdinateur.cleGauche), findsOneWidget);
+      await touche(tester, LogicalKeyboardKey.keyF);
+      expect(find.byKey(SalleOrdinateur.cleGauche), findsNothing);
+      expect(find.byKey(SalleOrdinateur.cleHaut), findsNothing);
+      expect(find.byKey(SalleOrdinateur.cleDroite), findsNothing);
+      expect(find.byKey(SalleOrdinateur.cleBas), findsOneWidget);
+      await touche(tester, LogicalKeyboardKey.keyF);
+      expect(find.byKey(SalleOrdinateur.cleGauche), findsOneWidget);
+      expect(find.byKey(SalleOrdinateur.cleDroite), findsOneWidget);
     });
 
     testWidgets('EN-KB, telephone : aucune lettre n agit', (
@@ -2878,7 +2934,7 @@ void main() {
       await touche(tester, LogicalKeyboardKey.keyM);
       await touche(tester, LogicalKeyboardKey.keyB);
       expect(moteur.microDemande, isEmpty);
-      expect(find.text(t.salle.supports.titre), findsNothing);
+      expect(find.text(t.tc.bibliotheque.titre), findsNothing);
     });
   });
 
@@ -3046,9 +3102,8 @@ void main() {
       ),
     ];
 
-    testWidgets('la Bibliotheque montre le Coran et ce qui viendra', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('la Bibliotheque montre le Coran, sans promesse, et reprend '
+        'la page de la classe', (WidgetTester tester) async {
       tester.view.physicalSize = const Size(1366, 768);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
@@ -3068,16 +3123,24 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(BoutonPlusAppel.cle));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(CommandesPedagogiques.cleBibliotheque));
-      await tester.pumpAndSettle();
+      // Plan de composition du 26/10/2026 : sur ordinateur, la
+      // Bibliotheque est le panneau de droite ; le Coran y est seul.
+      expect(find.byKey(PanneauBibliothequeSalle.cle), findsOneWidget);
       expect(find.text(t.salle.supports.coran), findsOneWidget);
-      expect(find.text(t.salle.supports.aVenir), findsOneWidget);
-      final int avant = moteur.contenusPresentesDemandes.length;
-      await tester.tap(find.byKey(SallePage.supportCoranKey));
+      await tester.tap(
+        find.byKey(const ValueKey<String>('bibliotheque-deplier-coran')),
+      );
       await tester.pumpAndSettle();
-      // La tuile ouvre la page retenue pour la classe, sans autre question.
+      final int avant = moteur.contenusPresentesDemandes.length;
+      await tester.ensureVisible(
+        find.byKey(const ValueKey<String>('bibliotheque-reprendre-coran')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey<String>('bibliotheque-reprendre-coran')),
+      );
+      await tester.pumpAndSettle();
+      // « Reprendre page 604 » ouvre la page retenue, sans autre question.
       expect(moteur.contenusPresentesDemandes.length, avant + 1);
       expect(moteur.contenusPresentesDemandes.last.page, 604);
     });
@@ -3115,11 +3178,19 @@ void main() {
       expect(moteur.contenusPresentesDemandes.length, avant);
       expect(find.byKey(_croixRanger), findsNothing);
 
-      await tester.tap(find.byKey(BoutonPlusAppel.cle));
+      // Plan de composition du 26/10/2026 : la Bibliotheque du panneau de
+      // droite, « Reprendre page 604 ».
+      await tester.tap(
+        find.byKey(const ValueKey<String>('bibliotheque-deplier-coran')),
+      );
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(CommandesPedagogiques.cleBibliotheque));
+      await tester.ensureVisible(
+        find.byKey(const ValueKey<String>('bibliotheque-reprendre-coran')),
+      );
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(SallePage.supportCoranKey));
+      await tester.tap(
+        find.byKey(const ValueKey<String>('bibliotheque-reprendre-coran')),
+      );
       await tester.pumpAndSettle();
       expect(moteur.contenusPresentesDemandes.length, avant + 1);
       expect(moteur.contenusPresentesDemandes.last.page, 604);

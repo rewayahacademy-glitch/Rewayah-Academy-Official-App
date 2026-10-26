@@ -11,8 +11,10 @@ import '../../core/coran/service_coran.dart' show pagesMushafMedine;
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/presence/service_presence.dart';
+import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
 import '../../core/tc_observation/port_annonce_observation.dart';
-import '../../core/video/video_session_provider.dart' show QualiteLien;
+import '../../core/video/video_session_provider.dart'
+    show ParticipantSalle, QualiteLien;
 import '../salle/vue_salle.dart';
 import 'presentation_observee.dart';
 import 'vue_seance.dart';
@@ -35,6 +37,7 @@ abstract final class DepuisSalle {
     SupportPageFixe? supportPresente,
     bool videoSuspendue = false,
     String? nomEnseignantConnu,
+    TitreEnseignant? titreEnseignant,
   }) {
     final RoleSeance? role = RoleSeance.resoudre(salle.role, mode);
     if (role == null) return null;
@@ -85,6 +88,7 @@ abstract final class DepuisSalle {
       nomClasse: nomClasse,
       nomEnseignant: nomEnseignant,
       initialesEnseignant: initiales(nomEnseignant),
+      titreEnseignant: titreEnseignant,
       prenomEleve: prenomEleve,
       connexion: connexionDe(salle.phase, qualite: salle.qualite),
       // Une impasse n'est pas une salle : rien n'y est enregistre.
@@ -94,11 +98,32 @@ abstract final class DepuisSalle {
           (enseignant ? salle.moi?.camera : salle.dominant?.camera) ?? false,
       cameraAutorisee: salle.peutMontrer,
       // L'eleve ne lit jamais la liste de ses camarades (roster enseignant).
-      eleves: enseignant
+      // Plan de composition du 26/10/2026 : presence illisible (lecture en
+      // echec ou pas encore rendue), l'enseignant voit au moins les eleves
+      // que la salle connait, connectes ; jamais une liste vide qui dirait
+      // « personne ».
+      eleves: enseignant && presence == null
+          ? <EleveSeance>[
+              for (final ParticipantSalle p in salle.participantsListes)
+                if (RoleSalle.depuis(p.role) == RoleSalle.eleve)
+                  EleveSeance(
+                    prenom: p.nom,
+                    statut: StatutEleveSeance.connecte,
+                  ),
+            ]
+          : enseignant
           ? <EleveSeance>[
               for (final PresenceParticipant p in lignes)
                 if (RoleSalle.depuis(p.role) == RoleSalle.eleve)
-                  EleveSeance(prenom: p.prenom, statut: statut(p)),
+                  EleveSeance(
+                    prenom: p.prenom,
+                    statut: statut(p),
+                    // Le matricule : la fiche et ses actions (rappel,
+                    // recitation) visent l'eleve par lui.
+                    id: p.identifiantImmuable.isEmpty
+                        ? null
+                        : p.identifiantImmuable,
+                  ),
             ]
           : const <EleveSeance>[],
       fin: fin,

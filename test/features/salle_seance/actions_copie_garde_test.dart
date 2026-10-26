@@ -1,4 +1,5 @@
-// ACTIONS-COPIE-GARDE : `ActionsSeance.avecAgrandir` recopie chaque rappel du
+// ACTIONS-COPIE-GARDE : `ActionsSeance.avecPanneaux` (et `avecAgrandir`, qui
+// la reprend ; plan de composition du 26/10/2026) recopie chaque rappel du
 // constructeur. Un champ ajoute au constructeur et oublie dans la copie
 // disparaitrait en silence de la salle (defaut vu avec `onPause`). Ce test lit
 // le source du fichier (analyse de texte, sans reflexion) et compare :
@@ -31,8 +32,8 @@ Set<String> _champs(String source) => RegExp(
 ).allMatches(source).map((RegExpMatch m) => m.group(1)!).toSet();
 
 Set<String> _copie(String source) =>
-    RegExp(r'^\s*(\w+):\s*(\w+),', multiLine: true)
-        .allMatches(_bloc(source, 'avecAgrandir('))
+    RegExp(r'^\s*(\w+):\s*\w+(?:\s*\?\?\s*this\.\w+)?,', multiLine: true)
+        .allMatches(_bloc(source, 'avecPanneaux({'))
         .map((RegExpMatch m) => m.group(1)!)
         .toSet();
 
@@ -57,7 +58,7 @@ void main() {
     expect(
       constructeur.difference(copie),
       isEmpty,
-      reason: 'rappel non copie par avecAgrandir',
+      reason: 'rappel non copie par avecPanneaux',
     );
     expect(
       copie.difference(constructeur),

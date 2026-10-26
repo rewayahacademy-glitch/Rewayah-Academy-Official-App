@@ -20,6 +20,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bouton_icone.dart';
+import '../../core/widgets/commande_salle.dart' show CommandeSalleNommee;
 import '../../core/widgets/confirm_destructive.dart';
 import 'actions_seance.dart';
 import 'barre_support.dart' show NomsFocus, nomsFocus;
@@ -95,8 +96,20 @@ class BoutonAppel extends StatelessWidget {
     this.ouvertPrimaire = false,
     this.focusNode,
     this.selectionne,
+    this.nom,
+    this.retenu,
     super.key,
   });
+
+  /// Plan de composition du 26/10/2026 (Q1) : sur ordinateur, le nom de la
+  /// commande sous le bouton ([CommandeSalleNommee]) ; `null` : icone seule
+  /// (standard du 24/10, telephone).
+  final String? nom;
+
+  /// Un outil ou un panneau (Bibliotheque, Pointeur, Ecrire, Eleves) : vrai
+  /// quand il est retenu ou ouvert (rempli de la couleur primaire, comme la
+  /// palette du tableau), faux sinon ; `null` : la regle des bascules.
+  final bool? retenu;
 
   /// Le noeud de focus du bouton : la salle y rend le focus a la fermeture
   /// d'une feuille ouverte par ce bouton (micro bloque, W2 2.4.3).
@@ -131,11 +144,12 @@ class BoutonAppel extends StatelessWidget {
     final bool quitter = fond == FondBoutonAppel.alerte;
     final TonAppel ton = switch (bascule) {
       _ when quitter => TonAppel.quitter,
+      _ when retenu != null => retenu! ? TonAppel.ouvert : TonAppel.actif,
       false => TonAppel.coupe,
       _ => TonAppel.actif,
     };
     final String semantique = libelleSemantique ?? libelle;
-    return BoutonIcone(
+    final Widget bouton = BoutonIcone(
       forme: FormeBoutonIcone.appel,
       icone: icone,
       tonAppel: ton,
@@ -152,6 +166,9 @@ class BoutonAppel extends StatelessWidget {
       actif: actif,
       onPress: onPress,
     );
+    final String? leNom = nom;
+    if (leNom == null) return bouton;
+    return CommandeSalleNommee(bouton: bouton, nom: leNom);
   }
 }
 
@@ -167,8 +184,27 @@ class DockSeance extends StatelessWidget {
     this.cameraAllumee = true,
     this.agrandi = false,
     this.plus,
+    this.nommee = false,
+    this.commandes,
+    this.avant = const <Widget>[],
+    this.avantQuitter = const <Widget>[],
     super.key,
   });
+
+  /// Plan de composition du 26/10/2026 (Q1) : sur ordinateur, chaque bouton
+  /// porte son nom dessous ([BoutonAppel.nom]).
+  final bool nommee;
+
+  /// Les commandes de cette pilule, a la place de [VueSeance.commandesDock]
+  /// (ordinateur : deux groupes) ; toujours filtrees par la vue.
+  final List<CommandeDock>? commandes;
+
+  /// Les boutons poses en tete de la pilule (ordinateur : Bibliotheque,
+  /// Pointeur, Ecrire).
+  final List<Widget> avant;
+
+  /// Les boutons poses juste avant Quitter (ordinateur : Eleves).
+  final List<Widget> avantQuitter;
 
   /// Le bouton « Plus » ([BoutonPlusAppel]) quand il y a des Commandes a
   /// ouvrir, sinon `null`.
@@ -195,6 +231,7 @@ class DockSeance extends StatelessWidget {
           actions: actions,
           microOuvert: microOuvert,
           onMicro: micro,
+          nom: nommee ? t.salle.micro : null,
         );
       case CommandeDock.camera:
         final VoidCallback? camera = actions.onCamera;
@@ -210,6 +247,7 @@ class DockSeance extends StatelessWidget {
               (cameraAllumee ? t.salle.fermerCamera : t.salle.ouvrirCamera),
           actif: vue.commandesPublicationActives,
           fond: colore ? FondBoutonAppel.primaire : FondBoutonAppel.surface,
+          nom: nommee ? t.salle.camera : null,
           onPress: camera,
         );
       case CommandeDock.agrandir:
@@ -226,6 +264,7 @@ class DockSeance extends StatelessWidget {
           bascule: agrandi,
           libelle: noms.etat,
           libelleSemantique: noms.semantique,
+          nom: nommee ? noms.etat : null,
           onPress: agrandir,
         );
       case CommandeDock.reseau:
@@ -255,6 +294,7 @@ class DockSeance extends StatelessWidget {
           libelleSemantique: ouvert
               ? t.salle.seance.fermerTableau
               : t.salle.seance.ouvrirTableau,
+          nom: nommee ? t.salle.seance.commandes.affichageTableau : null,
           onPress: tableau,
         );
       case CommandeDock.quitter:
@@ -265,6 +305,7 @@ class DockSeance extends StatelessWidget {
           libelle: t.salle.quitter,
           libelleSemantique: t.salle.seance.sortir,
           fond: FondBoutonAppel.alerte,
+          nom: nommee ? t.salle.quitter : null,
           onPress: () => confirmerQuitterSeance(
             context,
             quitter,
@@ -284,27 +325,33 @@ class DockSeance extends StatelessWidget {
         : StatutCameraInterdite(texte: texteCamera);
     // TB-2 : tant que le focus local est actif ([agrandi]), sa sortie reste
     // dans la pilule, avant Quitter.
-    final List<CommandeDock> commandes = <CommandeDock>[
-      for (final CommandeDock c in vue.commandesDock) ...<CommandeDock>[
+    final List<CommandeDock> voulues = <CommandeDock>[
+      for (final CommandeDock c in commandes ?? vue.commandesDock)
+        if (vue.commandesDock.contains(c)) c,
+    ];
+    final List<CommandeDock> commandesRendues = <CommandeDock>[
+      for (final CommandeDock c in voulues) ...<CommandeDock>[
         if (c == CommandeDock.quitter &&
             agrandi &&
-            !vue.commandesDock.contains(CommandeDock.agrandir))
+            !voulues.contains(CommandeDock.agrandir))
           CommandeDock.agrandir,
         c,
       ],
     ];
-    final List<Widget> boutons = <Widget>[];
-    for (final CommandeDock commande in commandes) {
+    final List<Widget> boutons = <Widget>[...avant];
+    for (final CommandeDock commande in commandesRendues) {
       // Standard : « Plus » est DANS la pilule, juste avant Quitter, et ouvre
       // les Commandes (Bibliotheque, Outils, Eleves).
-      if (commande == CommandeDock.quitter && plus != null) {
-        boutons.add(plus!);
+      if (commande == CommandeDock.quitter) {
+        boutons.addAll(avantQuitter);
+        if (plus != null) boutons.add(plus!);
       }
       final Widget? bouton = _bouton(context, commande);
       if (bouton != null) boutons.add(bouton);
     }
-    if (!commandes.contains(CommandeDock.quitter) && plus != null) {
-      boutons.add(plus!);
+    if (!commandesRendues.contains(CommandeDock.quitter)) {
+      boutons.addAll(avantQuitter);
+      if (plus != null) boutons.add(plus!);
     }
     final double ecart = telephone ? AppSpacing.md : AppSpacing.lg;
     final Widget dock = DecoratedBox(
@@ -345,8 +392,12 @@ class BoutonPlusAppel extends StatelessWidget {
     required this.onPress,
     this.ouvert = false,
     this.focusNode,
+    this.nom,
     super.key = cle,
   });
+
+  /// Le nom sous le bouton, sur ordinateur ([BoutonAppel.nom]).
+  final String? nom;
 
   /// La cle du bouton.
   static const Key cle = ValueKey<String>('bouton-plus-appel');
@@ -365,6 +416,8 @@ class BoutonPlusAppel extends StatelessWidget {
     libelleSemantique: t.salle.seance.commandes.declencheurSemantique,
     selectionne: ouvert,
     focusNode: focusNode,
+    nom: nom,
+    retenu: nom == null ? null : ouvert,
     onPress: onPress,
   );
 }
@@ -406,12 +459,14 @@ class _BoutonMicro extends StatefulWidget {
     required this.actions,
     required this.microOuvert,
     required this.onMicro,
+    this.nom,
   });
 
   final VueSeance vue;
   final ActionsSeance actions;
   final bool microOuvert;
   final VoidCallback onMicro;
+  final String? nom;
 
   @override
   State<_BoutonMicro> createState() => _BoutonMicroState();
@@ -460,6 +515,7 @@ class _BoutonMicroState extends State<_BoutonMicro> {
           (ouvert ? t.salle.fermerMicro : t.salle.ouvrirMicro),
       actif: vue.commandesPublicationActives,
       fond: colore ? FondBoutonAppel.succes : FondBoutonAppel.surface,
+      nom: widget.nom,
       onPress: vue.microBloque ? _ouvrirFeuille : widget.onMicro,
     );
   }

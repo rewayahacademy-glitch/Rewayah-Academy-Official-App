@@ -489,23 +489,42 @@ class _GrilleFiche extends StatelessWidget {
           serre: serre,
           objectif: objectif,
         );
+    // Plan de composition du 26/10/2026 (`/salle`) : un fait que le serveur
+    // ne projette pas encore reste vide ; il ne se montre pas (jamais une
+    // valeur vide qui se lirait comme un zero). Sans aucun fait, la phrase
+    // de la fiche dit que la donnee n'est pas ouverte.
+    final List<Widget> gauches = <Widget>[
+      if (fiche.niveau.isNotEmpty)
+        champ(t.tc.classe.fiche.niveau, fiche.niveau),
+      if (fiche.objectifActuel.isNotEmpty)
+        champ(t.tc.classe.fiche.objectif, fiche.objectifActuel, objectif: true),
+      if (fiche.derniereSeance.isNotEmpty)
+        champ(t.tc.classe.fiche.derniereSeance, fiche.derniereSeance),
+    ];
+    final List<Widget> droites = <Widget>[
+      if (fiche.aReprendre.isNotEmpty)
+        champ(t.tc.classe.fiche.aReprendre, fiche.aReprendre),
+      if (fiche.presenceRecente.isNotEmpty)
+        champ(t.tc.classe.fiche.presenceRecente, fiche.presenceRecente),
+      if (fiche.travailActuel.isNotEmpty)
+        champ(t.tc.classe.fiche.travailActuel, fiche.travailActuel),
+    ];
+    if (gauches.isEmpty && droites.isEmpty) {
+      return Text(
+        t.tc.classe.fiche.sansPedagogie,
+        key: const ValueKey<String>('fiche-eleve-vide'),
+        style: palette.inkMuted.applyTo(_styleFiche(context)),
+      );
+    }
     final Widget gauche = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: ecart,
-      children: <Widget>[
-        champ(t.tc.classe.fiche.niveau, fiche.niveau),
-        champ(t.tc.classe.fiche.objectif, fiche.objectifActuel, objectif: true),
-        champ(t.tc.classe.fiche.derniereSeance, fiche.derniereSeance),
-      ],
+      children: gauches.isEmpty ? droites : gauches,
     );
     final Widget droite = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: ecart,
-      children: <Widget>[
-        champ(t.tc.classe.fiche.aReprendre, fiche.aReprendre),
-        champ(t.tc.classe.fiche.presenceRecente, fiche.presenceRecente),
-        champ(t.tc.classe.fiche.travailActuel, fiche.travailActuel),
-      ],
+      children: gauches.isEmpty ? const <Widget>[] : droites,
     );
     return DecoratedBox(
       key: const ValueKey<String>('fiche-eleve'),

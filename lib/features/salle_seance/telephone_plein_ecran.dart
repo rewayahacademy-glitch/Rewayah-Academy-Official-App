@@ -82,6 +82,85 @@ Size boitePagePleinEcran(Size ecran, {required bool telephone}) {
 /// La vignette flottante du telephone (≈ 96 de large).
 const double largeurVignetteTelephone = AppSpacing.respiration * 1.5;
 
+/// La page (ou le tableau) de la salle composee dans [ecran], avec ses
+/// grandes fleches quand elles tiennent a cote ; `null` : rien a montrer
+/// (la scene prend la place). Un seul calcul pour le telephone et
+/// l'ordinateur (plan de composition du 26/10/2026, K-10).
+Widget? pageSalle(
+  BuildContext context, {
+  required VueSeance vue,
+  required double zoom,
+  required Size ecran,
+  required bool telephone,
+}) {
+  final VueSurface? surface = surfaceAMontrer(vue);
+  if (surface == null) return null;
+  final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
+  final Size boite = boitePagePleinEcran(ecran, telephone: telephone);
+  // S0.2d (directeur, 24/10/2026) : « Full screen, full body, no
+  // bezels. » Au telephone, la page n'est plus au ratio A4 : son cadre
+  // EST l'ecran, largeur et hauteur, zero marge. La page Madina se
+  // compose sur cette place (`PageMadina15`, interligne libre). Les
+  // notes gardent le repere de cette page (coordonnees normalisees).
+  final SupportPageFixe? support = vue.supportPresente;
+  // S0.3, K4 : le tableau blanc prend toute la fenetre ; sa feuille
+  // garde la forme fixe de la classe (16:9), ajustee sans etirement
+  // ([TableauLibre.classe]).
+  final VueSeance vuePage = support == null
+      ? vue
+      : vue.copyWith(
+          supportPresente: SupportPageFixe(
+            id: support.id,
+            version: support.version,
+            titre: support.titre,
+            page: support.page,
+            total: support.total,
+            largeurCanonique: math.max(1, boite.width.round()),
+            hauteurCanonique: math.max(1, boite.height.round()),
+            mention: support.mention,
+            cleImage: support.cleImage,
+          ),
+        );
+  final bool libre = support == null;
+  final Widget page = SizedBox.fromSize(
+    key: TelephonePleinEcran.clePage,
+    // Le tableau occupe la fenetre ; la page du Coran, sa boite.
+    size: libre ? ecran : boite,
+    // La page et ses notes restent claires (meme regle que la
+    // carte de la surface).
+    child: Theme(
+      data: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+      child: SurfacePageFixe(vue: vuePage, surface: surface, zoom: zoom),
+    ),
+  );
+  // Ordinateur : les grandes fleches de page (reference 4 du
+  // directeur) dans les marges vides a cote de la page, quand elles y
+  // tiennent : elles ne prennent rien a la page.
+  final VoidCallback? precedente = media?.onPagePrecedente;
+  final VoidCallback? suivante = media?.onPageSuivante;
+  const double cote = coteFlechesSalle + AppSpacing.sm;
+  return !telephone &&
+          !libre &&
+          (precedente != null || suivante != null) &&
+          ecran.width >= boite.width + 2 * cote
+      ? SizedBox(
+          // La page garde sa boite : chaque fleche prend son cote.
+          width: boite.width + 2 * coteFlechesSalle,
+          height: boite.height,
+          child: PageAvecFlechesMushaf(
+            key: const ValueKey<String>('fleches-page-salle'),
+            libellePrecedente: t.salle.seance.pagePrecedente,
+            libelleSuivante: t.salle.seance.pageSuivante,
+            onPrecedente: precedente,
+            onSuivante: suivante,
+            cote: coteFlechesSalle,
+            focusAuto: false,
+            child: page,
+          ),
+        )
+      : page;
+}
+
 /// La salle au telephone : la page est l'ecran.
 class TelephonePleinEcran extends StatelessWidget {
   const TelephonePleinEcran({
@@ -114,80 +193,17 @@ class TelephonePleinEcran extends StatelessWidget {
         builder: (BuildContext context, BoxConstraints c) {
           final Size ecran = c.biggest;
           final bool telephone = telephonePleinEcran(context);
-          final Size boite = boitePagePleinEcran(ecran, telephone: telephone);
-          // S0.2d (directeur, 24/10/2026) : « Full screen, full body, no
-          // bezels. » Au telephone, la page n'est plus au ratio A4 : son cadre
-          // EST l'ecran, largeur et hauteur, zero marge. La page Madina se
-          // compose sur cette place (`PageMadina15`, interligne libre). Les
-          // notes gardent le repere de cette page (coordonnees normalisees).
-          final SupportPageFixe? support = vue.supportPresente;
-          // S0.3, K4 : le tableau blanc prend toute la fenetre ; sa feuille
-          // garde la forme fixe de la classe (16:9), ajustee sans etirement
-          // ([TableauLibre.classe]).
-          final VueSeance vuePage = support == null
-              ? vue
-              : vue.copyWith(
-                  supportPresente: SupportPageFixe(
-                    id: support.id,
-                    version: support.version,
-                    titre: support.titre,
-                    page: support.page,
-                    total: support.total,
-                    largeurCanonique: math.max(1, boite.width.round()),
-                    hauteurCanonique: math.max(1, boite.height.round()),
-                    mention: support.mention,
-                    cleImage: support.cleImage,
-                  ),
-                );
-          final bool libre = support == null;
-          final Widget? page = scene || surface == null
+          final bool libre = vue.supportPresente == null;
+          final Widget? pageVue = scene
               ? null
-              : SizedBox.fromSize(
-                  key: clePage,
-                  // Le tableau occupe la fenetre ; la page du Coran, sa boite.
-                  size: libre ? ecran : boite,
-                  // La page et ses notes restent claires (meme regle que la
-                  // carte de la surface).
-                  child: Theme(
-                    data: AppTheme.pour(
-                      InterfaceMode.standard,
-                      Brightness.light,
-                    ),
-                    child: SurfacePageFixe(
-                      vue: vuePage,
-                      surface: surface,
-                      zoom: local.zoom,
-                    ),
-                  ),
+              : pageSalle(
+                  context,
+                  vue: vue,
+                  zoom: local.zoom,
+                  ecran: ecran,
+                  telephone: telephone,
                 );
-          // Ordinateur : les grandes fleches de page (reference 4 du
-          // directeur) dans les marges vides a cote de la page, quand elles y
-          // tiennent : elles ne prennent rien a la page.
-          final VoidCallback? precedente = media?.onPagePrecedente;
-          final VoidCallback? suivante = media?.onPageSuivante;
-          const double cote = coteFlechesSalle + AppSpacing.sm;
-          final Widget? pageVue =
-              page != null &&
-                  !telephone &&
-                  !libre &&
-                  (precedente != null || suivante != null) &&
-                  ecran.width >= boite.width + 2 * cote
-              ? SizedBox(
-                  // La page garde sa boite : chaque fleche prend son cote.
-                  width: boite.width + 2 * coteFlechesSalle,
-                  height: boite.height,
-                  child: PageAvecFlechesMushaf(
-                    key: const ValueKey<String>('fleches-page-salle'),
-                    libellePrecedente: t.salle.seance.pagePrecedente,
-                    libelleSuivante: t.salle.seance.pageSuivante,
-                    onPrecedente: precedente,
-                    onSuivante: suivante,
-                    cote: coteFlechesSalle,
-                    focusAuto: false,
-                    child: page,
-                  ),
-                )
-              : page;
+          final Widget? page = pageVue;
           final Widget haut = _Haut(
             vue: vue,
             actions: actions,
@@ -327,7 +343,9 @@ class TelephonePleinEcran extends StatelessWidget {
                             top: 0,
                             bottom: 0,
                             end: AppSpacing.lg,
-                            child: Center(child: _PiluleZoom(actions: actions)),
+                            child: Center(
+                              child: PiluleZoomSalle(actions: actions),
+                            ),
                           ),
                         if (paletteADroite || commandesADroite != null)
                           PositionedDirectional(
@@ -651,10 +669,18 @@ class _BoutonEleves extends StatelessWidget {
 /// La pilule du zoom local de la page : moins en bas, plus en haut (100 a
 /// 200 %). Au premier et au dernier palier, le bouton disparait et garde sa
 /// place (jamais grise).
-class _PiluleZoom extends StatelessWidget {
-  const _PiluleZoom({required this.actions});
+class PiluleZoomSalle extends StatelessWidget {
+  const PiluleZoomSalle({
+    required this.actions,
+    this.horizontale = false,
+    super.key,
+  });
 
   final ActionsSeance actions;
+
+  /// Ordinateur (plan du 26/10/2026) : moins puis plus, en rangee, dans la
+  /// ligne du titre de la page.
+  final bool horizontale;
 
   @override
   Widget build(BuildContext context) {
@@ -672,6 +698,12 @@ class _PiluleZoom extends StatelessWidget {
             infobulle: libelle,
             onPress: f,
           );
+    final Widget moins = bouton(
+      const ValueKey<String>('salle-zoom-moins'),
+      AppIcons.zoomMoins,
+      t.salle.seance.zoomMoins,
+      actions.onZoomMoins,
+    );
     return DecoratedBox(
       key: const ValueKey<String>('salle-zoom'),
       decoration: palette.piluleSalle.decoration(
@@ -679,22 +711,19 @@ class _PiluleZoom extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.sm),
-        child: Column(
+        child: Flex(
+          direction: horizontale ? Axis.horizontal : Axis.vertical,
           mainAxisSize: MainAxisSize.min,
           spacing: AppSpacing.sm,
           children: <Widget>[
+            if (horizontale) moins,
             bouton(
               const ValueKey<String>('salle-zoom-plus'),
               AppIcons.zoomPlus,
               t.salle.seance.zoomPlus,
               actions.onZoomPlus,
             ),
-            bouton(
-              const ValueKey<String>('salle-zoom-moins'),
-              AppIcons.zoomMoins,
-              t.salle.seance.zoomMoins,
-              actions.onZoomMoins,
-            ),
+            if (!horizontale) moins,
           ],
         ),
       ),
