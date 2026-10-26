@@ -39,6 +39,7 @@ import '../../../core/widgets/bandeau_observation.dart';
 import '../../../core/widgets/barre_precedent_suivant.dart';
 import '../../../core/widgets/barre_selection.dart';
 import '../../../core/widgets/bento_tile.dart';
+import '../../../core/widgets/bouton_couleur.dart';
 import '../../../core/widgets/bouton_icone.dart';
 import '../../../core/widgets/bouton_outil.dart';
 import '../../../core/widgets/brand_logo.dart';
@@ -3487,6 +3488,36 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           child: CommandeSalle(
             icone: AppIcons.supports.repos,
             libelle: 'Supports',
+            onPress: _rien,
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'BoutonCouleur',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'libre',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topStart,
+          child: BoutonCouleur(
+            encre: AppNuancierTrait.bleu,
+            libelle: 'Bleu',
+            retenue: false,
+            onPress: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'retenue',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topStart,
+          child: BoutonCouleur(
+            encre: AppNuancierTrait.orange,
+            libelle: 'Orange',
+            retenue: true,
             onPress: _rien,
           ),
         ),
