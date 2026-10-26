@@ -112,6 +112,11 @@ abstract interface class ServiceAvatar {
   /// (ADR-012).
   Future<String> urlSignee(String cleAvatar);
 
+  /// Une URL signee de courte duree pour la photo publique d'un enseignant
+  /// (seau `photos_enseignants`, 0030 et 0032 : lisible par lui-meme, la
+  /// direction, les eleves et les familles de ses Classes).
+  Future<String> urlSigneePhotoEnseignant(String cle);
+
   /// Taille maximale acceptee pour une photo de profil.
   ///
   /// Plus basse que celle d'une piece d'identite : une piece doit rester
@@ -165,6 +170,14 @@ class ServiceAvatarSupabase implements ServiceAvatar {
   Future<String> urlSignee(String cleAvatar) => _client.storage
       .from(ServiceAvatarSupabase.seauAvatars)
       .createSignedUrl(cleAvatar, dureeUrlSecondes);
+
+  /// Le seau prive des photos publiques des enseignants (0030).
+  static const String seauPhotosEnseignants = 'photos_enseignants';
+
+  @override
+  Future<String> urlSigneePhotoEnseignant(String cle) => _client.storage
+      .from(seauPhotosEnseignants)
+      .createSignedUrl(cle, dureeUrlSecondes);
 }
 
 /// Le service de photos employe par l'application.
@@ -185,4 +198,12 @@ final FutureProviderFamily<String, String> avatarUrlProvider =
     FutureProvider.family<String, String>(
       (Ref ref, String cleAvatar) =>
           ref.watch(serviceAvatarProvider).urlSignee(cleAvatar),
+    );
+
+/// L'URL signee de la photo publique d'un enseignant, par sa cle (seau
+/// `photos_enseignants`, jamais `avatars`).
+final FutureProviderFamily<String, String> photoEnseignantUrlProvider =
+    FutureProvider.family<String, String>(
+      (Ref ref, String cle) =>
+          ref.watch(serviceAvatarProvider).urlSigneePhotoEnseignant(cle),
     );

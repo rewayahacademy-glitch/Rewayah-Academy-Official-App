@@ -40,7 +40,8 @@ class OfflineBanner extends ConsumerWidget {
     : message = null,
       sousTexte = null,
       icone = null,
-      encadre = false;
+      encadre = false,
+      action = null;
 
   /// Cree le bandeau avec un [message] fourni par l'appelant, sans lire
   /// [horsLigneProvider] : la salle de seance (lot CL-7) y pose l'etat que
@@ -52,11 +53,14 @@ class OfflineBanner extends ConsumerWidget {
   /// [encadre] : vrai quand le bandeau suit les marges de la page
   /// (contrat A) au lieu d'aller d'un bord a l'autre : filet sur les quatre
   /// cotes et rayon `AppRadius.arrondiSm`, comme le retour local.
+  /// [action] : un lien au bord de fin (« Recharger », nouvelle version),
+  /// au plus un.
   const OfflineBanner.message({
     required String this.message,
     this.sousTexte,
     this.icone,
     this.encadre = false,
+    this.action,
     super.key,
   });
 
@@ -72,6 +76,9 @@ class OfflineBanner extends ConsumerWidget {
   /// Vrai : bandeau borne par les marges de la page, cadre arrondi.
   final bool encadre;
 
+  /// Un lien au bord de fin, ou `null`.
+  final Widget? action;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final String? fourni = message;
@@ -81,6 +88,7 @@ class OfflineBanner extends ConsumerWidget {
         sousTexte: sousTexte,
         icone: icone ?? AppIcons.horsLigne.repos,
         encadre: encadre,
+        action: action,
       );
     }
     // Tant que la reponse n'est pas la, l'appareil est repute en ligne : un
@@ -127,12 +135,14 @@ class _Bandeau extends StatelessWidget {
     required this.icone,
     this.sousTexte,
     this.encadre = false,
+    this.action,
   });
 
   final String message;
   final String? sousTexte;
   final IconData icone;
   final bool encadre;
+  final Widget? action;
 
   @override
   Widget build(BuildContext context) {
@@ -189,6 +199,7 @@ class _Bandeau extends StatelessWidget {
                   ],
                 ),
               ),
+              if (action case final Widget a) ...<Widget>[Ecart.hSm, a],
             ],
           ),
         ),

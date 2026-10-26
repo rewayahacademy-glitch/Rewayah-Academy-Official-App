@@ -159,6 +159,7 @@ class VignetteVideo extends StatelessWidget {
                     child: TuileSansImage(
                       prenom: vue.nomEnseignant,
                       nom: vue.nomEnseignant,
+                      urlSignee: PorteeMediaSalle.de(context)?.photoVignette,
                       styleNom: palette.surfaceActionDouce.applyTo(
                         theme.textTheme.labelSmall ?? const TextStyle(),
                       ),

@@ -34,6 +34,7 @@ abstract final class DepuisSalle {
     AgeEleve age = AgeEleve.inconnu,
     SupportPageFixe? supportPresente,
     bool videoSuspendue = false,
+    String? nomEnseignantConnu,
   }) {
     final RoleSeance? role = RoleSeance.resoudre(salle.role, mode);
     if (role == null) return null;
@@ -50,10 +51,11 @@ abstract final class DepuisSalle {
       return null;
     }
 
+    // Directeur, 26/10/2026 : « Sayyid Prenom » ou « Sayyida Prenom »,
+    // celui de l'annuaire de la seance ([nomEnseignantConnu], connu avant
+    // meme son entree), sinon le prenom de la presence.
     final String nomEnseignant =
-        prenomDe(RoleSalle.enseignant) ??
-        (enseignant ? salle.moi?.nom : salle.dominant?.nom) ??
-        '';
+        nomEnseignantConnu ?? prenomDe(RoleSalle.enseignant) ?? '';
 
     String? prenomEleve;
     if (!enseignant) {

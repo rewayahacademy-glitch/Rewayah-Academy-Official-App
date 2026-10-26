@@ -12,6 +12,7 @@ import 'core/session/session_controleur.dart';
 import 'core/session/session_state.dart';
 import 'core/theme/app_palette.dart';
 import 'core/theme/app_theme.dart';
+import 'core/version/bandeau_nouvelle_version.dart';
 import 'core/widgets/bandeau_observation.dart';
 
 /// Racine de l'application.
@@ -58,8 +59,7 @@ class RewayahApp extends ConsumerWidget {
     // MA-2 (question 2 de MA-1b) : la presentation vient du fournisseur
     // unique du Mode Accessibilite, et le theme reste celui d'`AppTheme.pour`
     // existant, sans aucune couleur nouvelle (K-37).
-    final InterfaceMode presentation =
-        ref.watch(modeAccessibiliteActifProvider)
+    final InterfaceMode presentation = ref.watch(modeAccessibiliteActifProvider)
         ? InterfaceMode.enfant
         : InterfaceMode.standard;
 
@@ -87,20 +87,17 @@ class RewayahApp extends ConsumerWidget {
         // navigateur montrait le fond creme de `web/index.html` : un flash
         // clair a chaque changement d'ecran en mode sombre.
         final Color fond = AppPalette.of(context).surfaceCanvas.background;
-        if (observation == null) {
-          return ReglageMouvement(
-            child: ColoredBox(
-              color: fond,
-              child: rendu ?? const SizedBox.shrink(),
-            ),
-          );
-        }
+        // Lot demarrage (25/10/2026) : « nouvelle version prete » coiffe
+        // l'ecran courant, quel qu'il soit, comme le bandeau d'observation ;
+        // il ne prend aucune place tant qu'il n'a rien a dire.
         return ReglageMouvement(
           child: ColoredBox(
             color: fond,
             child: Column(
               children: <Widget>[
-                BandeauObservation(observation: observation),
+                const BandeauNouvelleVersion(),
+                if (observation != null)
+                  BandeauObservation(observation: observation),
                 Expanded(child: rendu ?? const SizedBox.shrink()),
               ],
             ),

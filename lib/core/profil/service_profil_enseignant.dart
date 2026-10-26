@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../domain/enums.dart';
@@ -18,7 +19,17 @@ class ProfilEnseignant {
     this.plafondHeures,
     this.statutCompte,
     this.verification,
+    this.titre,
+    this.clePhoto,
   });
+
+  /// Le titre (`sayyid`, `sayyida`) de `teacher_profiles.titre`, ou `null`
+  /// (salle, directeur, 26/10/2026 : « Sayyida Prenom » dans sa propre salle).
+  final String? titre;
+
+  /// La cle de la photo publique (`teacher_profiles.photo_storage_key`, seau
+  /// `photos_enseignants`), ou `null`.
+  final String? clePhoto;
 
   /// Prénom fourni par le profil authentifié.
   final String prenom;
@@ -52,6 +63,8 @@ class ProfilEnseignant {
       pays: _texteOptionnel(enseignant['country']),
       langues: _langues(enseignant['languages']),
       plafondHeures: _entier(enseignant['weekly_hours_cap']),
+      titre: _texteOptionnel(enseignant['titre']),
+      clePhoto: _texteOptionnel(enseignant['photo_storage_key']),
       statutCompte: AccountStatus.depuisSql(
         _texteOptionnel(json['account_status']),
       ),
@@ -141,7 +154,10 @@ class ServiceProfilEnseignantSupabase implements ServiceProfilEnseignant {
         .from('profiles')
         .select(
           'first_name, immutable_id, account_status, '
-          'teacher_profiles(country, languages, weekly_hours_cap, kyc_status)',
+          // `titre` et `photo_storage_key` (0030) : la salle nomme et montre
+          // l'enseignant dans sa propre salle (teacher_profiles_self).
+          'teacher_profiles(country, languages, weekly_hours_cap, kyc_status, '
+          'titre, photo_storage_key)',
         )
         .eq('id', profilId)
         .maybeSingle();
@@ -178,3 +194,14 @@ final FutureProvider<ProfilEnseignant?> profilEnseignantProvider =
       }
       return ref.watch(serviceProfilEnseignantProvider).profil(profilId);
     });
+
+/// La fiche d'un enseignant par son profil, quand l'appelant a le droit de
+/// la lire (lui-meme : `teacher_profiles_self` ; la direction :
+/// `teacher_profiles_admin_all`). Ailleurs, `null` : la salle se replie sur
+/// la Classe de la famille (salle, annuaire de seance, 26/10/2026).
+final FutureProviderFamily<ProfilEnseignant?, String>
+profilEnseignantParIdProvider =
+    FutureProvider.family<ProfilEnseignant?, String>(
+      (Ref ref, String profilId) =>
+          ref.watch(serviceProfilEnseignantProvider).profil(profilId),
+    );

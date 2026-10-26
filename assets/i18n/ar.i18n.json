@@ -404,6 +404,10 @@
       "ouverture": "جارٍ فتح Rewayah"
     }
   },
+  "miseAJour": {
+    "prete": "نسخة جديدة من التطبيق جاهزة.",
+    "recharger": "إعادة التحميل"
+  },
   "reseau": {
     "retabli": "عادت الشبكة",
     "horsLigne": "لا شبكة. ما هو معروض يبقى قابلًا للاطلاع.",
@@ -962,6 +966,7 @@
       "sortir": "مغادرة الحصة",
       "commandesAppel": "عناصر التحكم في المكالمة",
       "compteurEleves": "الطلاب ⁦⁨{connectes}⁩/⁨{inscrits}⁩⁩",
+      "enseignantTitre": "⁨{titre}⁩ ⁨{prenom}⁩",
       "parler": "تحدّث",
       "agrandir": "تكبير",
       "reduire": "تصغير",
@@ -1291,6 +1296,7 @@
     "quitterLeCours": "مغادرة الدرس",
     "consequenceSortie": "يستمر الدرس دونك، ويُسجَّل خروجك في الحصة.",
     "vousMeme": "أنت",
+    "participant": "مشارك",
     "sansImage": "دون صورة",
     "lienMediocre": "اتصال ضعيف",
     "lienPerdu": "انقطع الاتصال",

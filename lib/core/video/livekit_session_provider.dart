@@ -560,7 +560,10 @@ class LiveKitSessionProvider implements VideoSessionProvider {
   ParticipantSalle _traduire(lk.Participant p, {required bool local}) =>
       ParticipantSalle(
         identite: p.identity,
-        nom: p.name.isNotEmpty ? p.name : p.identity,
+        // Directeur, 26/10/2026 : le jeton ne porte aucun nom ; l'identite
+        // (le profil) n'est jamais un nom a afficher. L'annuaire de la
+        // seance nomme la personne.
+        nom: p.name,
         role: _roleDe(p),
         estLocal: local,
         micro: p.isMicrophoneEnabled(),

@@ -1,7 +1,8 @@
-// BRAND-ORN-1 : la signature de la marque, aux deux seuls ecrans qui la
-// portent ici. (1) Elle est affirmee : une fois au demarrage, une fois au pied
-// de l'accueil de l'eleve, petite et a l'opacite fixee. (2) Elle ne deborde
-// nulle part : a 320 points de large et texte x2.
+// BRAND-ORN-1 : la signature de la marque. (1) Elle est affirmee : une fois au
+// pied de l'accueil de l'eleve, petite et a l'opacite fixee. Le demarrage ne
+// la porte plus depuis la PR 2 du parcours d'entree (25/10/2026) : logo et
+// porte sur la surface de marque. (2) Rien ne deborde : a 320 points de large
+// et texte x2.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -10,7 +11,9 @@ import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/etats_routeur.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/widgets/ornement_marque.dart';
+import 'package:rewayah_academy/core/widgets/porte_lumiere.dart';
 import 'package:rewayah_academy/features/accueil_eleve/accueil_eleve_page.dart';
 
 import '../../capture/outil_capture.dart';
@@ -31,7 +34,13 @@ Future<void> _monterDemarrage(
 }) async {
   fixerVueCapture(tester, taille, 1);
   await tester.pumpWidget(
-    hoteCapture(const EcranDemarrage(), echelleTexte: echelle),
+    hoteCapture(
+      const EcranDemarrage(),
+      echelleTexte: echelle,
+      surcharges: <Override>[
+        sourceSessionProvider.overrideWithValue(FausseSourceSession()),
+      ],
+    ),
   );
   await tester.pump(const Duration(milliseconds: 300));
 }
@@ -65,15 +74,12 @@ void main() {
 
   group('(1) la signature est affirmee', () {
     testWidgets(
-      'au demarrage : une signature, entre la marque et l indicateur',
+      'au demarrage : plus de signature ni d indicateur (PR 2, 25/10/2026)',
       (WidgetTester tester) async {
         await _monterDemarrage(tester);
-        _signatureUnique(tester);
-        final Rect signature = tester.getRect(find.byType(OrnementMarque));
-        final Rect indicateur = tester.getRect(
-          find.byType(CircularProgressIndicator),
-        );
-        expect(signature.bottom, lessThanOrEqualTo(indicateur.top));
+        expect(find.byType(OrnementMarque), findsNothing);
+        expect(find.byType(CircularProgressIndicator), findsNothing);
+        expect(find.byType(PorteLumiere), findsOneWidget);
       },
     );
 
@@ -119,11 +125,10 @@ void main() {
     testWidgets('demarrage', (WidgetTester tester) async {
       await _monterDemarrage(tester, taille: etroit, echelle: 2);
       expect(tester.takeException(), isNull);
-      _signatureUnique(tester);
-      final Rect signature = tester.getRect(find.byType(OrnementMarque));
-      expect(signature.left, greaterThanOrEqualTo(0));
-      expect(signature.right, lessThanOrEqualTo(etroit.width));
-      expect(signature.bottom, lessThanOrEqualTo(etroit.height));
+      final Rect porte = tester.getRect(find.byType(PorteLumiere));
+      expect(porte.left, greaterThanOrEqualTo(0));
+      expect(porte.right, lessThanOrEqualTo(etroit.width));
+      expect(porte.bottom, lessThanOrEqualTo(etroit.height));
     });
 
     testWidgets('accueil de l eleve', (WidgetTester tester) async {

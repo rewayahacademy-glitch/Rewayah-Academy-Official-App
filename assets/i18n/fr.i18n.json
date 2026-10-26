@@ -209,6 +209,10 @@
       "fermer": "Fermer la recherche"
     }
   },
+  "miseAJour": {
+    "prete": "Une nouvelle version de l'application est prête.",
+    "recharger": "Recharger"
+  },
   "reseau": {
     "horsLigne": "Pas de réseau. Ce qui est déjà affiché reste consultable.",
     "enAttenteEnvoi": "Sera envoyé dès le retour du réseau",
@@ -402,6 +406,7 @@
       "sortir": "Quitter la séance",
       "commandesAppel": "Commandes de l'appel",
       "compteurEleves": "Élèves {connectes}/{inscrits}",
+      "enseignantTitre": "{titre} {prenom}",
       "parler": "Parler",
       "agrandir": "Agrandir",
       "reduire": "Réduire",
@@ -733,6 +738,7 @@
     "quitterLeCours": "Quitter le cours",
     "consequenceSortie": "Le cours continue sans vous, et votre départ est inscrit dans la séance.",
     "vousMeme": "Vous",
+    "participant": "Participant",
     "sansImage": "Sans image",
     "lienMediocre": "Connexion faible",
     "lienPerdu": "Connexion perdue",

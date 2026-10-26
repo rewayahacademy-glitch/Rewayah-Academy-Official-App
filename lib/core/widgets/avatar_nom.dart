@@ -344,7 +344,12 @@ class TuileSansImage extends StatelessWidget {
     this.styleNom,
     this.couleurIcone,
     this.coin,
+    this.urlSignee,
   });
+
+  /// La photo du profil (URL signee) ; `null` : les initiales dans le cercle
+  /// (salle, directeur, 26/10/2026).
+  final String? urlSignee;
 
   /// Le prenom, source des initiales du cercle.
   final String prenom;
@@ -399,6 +404,7 @@ class TuileSansImage extends StatelessWidget {
                     child: AvatarTile(
                       key: const ValueKey<String>('tuile-sans-image-cercle'),
                       prenom: prenom,
+                      urlSignee: urlSignee,
                       diametre: AppAvatar.moyen,
                     ),
                   ),

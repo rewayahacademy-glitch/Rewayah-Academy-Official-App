@@ -7,11 +7,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart'
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/appairage/service_avatar.dart'
+    show photoEnseignantUrlProvider;
 import 'package:rewayah_academy/core/coran/service_coran.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
+import 'package:rewayah_academy/core/profil/service_profil_enseignant.dart'
+    show ProfilEnseignant, profilEnseignantParIdProvider;
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
@@ -20,6 +24,8 @@ import 'package:rewayah_academy/core/tc_classe/rappel_discret.dart';
 import 'package:rewayah_academy/core/tc_classe/roster_enseignant.dart';
 import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
 import 'package:rewayah_academy/core/tc_coran/moteur_mushaf.dart';
+import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
+import 'package:rewayah_academy/core/tc_groupe/port_groupes.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
 import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart'
     show PointNormalise;
@@ -57,6 +63,7 @@ import '../support/hors_ligne_une_fois.dart';
 import '../support/mushaf_15l.dart'
     show chargerPoliceMadina15, surchargesMadina15;
 import '../teaching_core/e/faux/faux_classe.dart';
+import '../teaching_core/fixtures/fixtures_groupes.dart' show groupe;
 import '../theme/support/contraste.dart';
 
 const String _seance = 's1';
@@ -3166,6 +3173,193 @@ void main() {
       await tester.pumpAndSettle();
       expect(moteur.contenusPresentesDemandes.length, avant);
       expect(find.byKey(_croixRanger), findsNothing);
+    });
+  });
+
+  // Directeur, test en production du 26/10/2026 (09:15) : le jeton LiveKit ne
+  // porte aucun nom. La salle nomme chacun par l'annuaire de la seance
+  // (« Sayyida Amina », « Yasmine »), montre la photo quand elle est connue,
+  // et ne rend jamais l'identite technique.
+  group('Annuaire de seance : des noms, jamais une identite', () {
+    const String idProf = '7c1e9a40-1b2d-4c55-9e1a-0000000000aa';
+    const String idEleve = '7c1e9a40-1b2d-4c55-9e1a-0000000000bb';
+    const String idInconnu = '7c1e9a40-1b2d-4c55-9e1a-0000000000cc';
+    const String url = 'https://exemple.invalid/amina.webp';
+
+    GroupSummaryVM classe(String? photo, {String? seance}) => groupe(
+      groupeId: 'g1',
+      libelle: 'Classe du soir',
+      nombreMembres: 3,
+      seuilMax: 6,
+      enseignant: EnseignantVM(
+        enseignantId: idProf,
+        titre: TitreEnseignant.sayyida,
+        nomAffichage: 'Amina',
+        photoUrlOuCle: photo,
+      ),
+      prochaineSeance: seance == null
+          ? null
+          : OccurrenceSeance(
+              sessionId: seance,
+              debutUtc: DateTime.utc(2026, 10, 26, 18),
+              duree: const Duration(hours: 1),
+              fuseauReferenceGroupe: 'Europe/Paris',
+            ),
+    );
+
+    /// [entree] : `billet` (la Classe dans le billet), `accueil` (l'eleve
+    /// arrive par son accueil, sans Classe dans le billet), `aucune`.
+    Future<void> monter(
+      WidgetTester tester, {
+      required String? photo,
+      String entree = 'billet',
+      String role = 'student',
+      ProfilEnseignant? profil,
+    }) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      final bool prof = role == 'teacher';
+      await _monterSalle(
+        tester,
+        groupeId: entree == 'billet' ? 'g1' : null,
+        surcharges: <Override>[
+          ..._surcharges(
+            video: FauxServiceVideo(acces0: _acces(role)),
+            moteur: moteur,
+            preVol: FauxServicePreVol(),
+            role: prof ? AppRole.teacher : AppRole.student,
+            presence: FauxServicePresence(
+              lignes: <PresenceParticipant>[
+                _presence(
+                  EtatPresence.presente,
+                  profilId: idProf,
+                  prenom: 'Amina',
+                  role: 'teacher',
+                ),
+                _presence(
+                  EtatPresence.presente,
+                  profilId: idEleve,
+                  prenom: 'Yasmine',
+                ),
+              ],
+            ),
+          ),
+          groupeProvider.overrideWith(
+            (Ref _, String _) async =>
+                entree == 'billet' ? classe(photo) : null,
+          ),
+          mesGroupesProvider.overrideWith(
+            (Ref _) async => entree == 'accueil'
+                ? <GroupSummaryVM>[classe(photo, seance: _seance)]
+                : const <GroupSummaryVM>[],
+          ),
+          profilEnseignantParIdProvider.overrideWith(
+            (Ref _, String id) async => id == idProf ? profil : null,
+          ),
+          photoEnseignantUrlProvider.overrideWith(
+            (Ref _, String _) async => url,
+          ),
+        ],
+      );
+      // Le jeton ne porte que l'identite : aucun nom.
+      moteur.publier(<ParticipantSalle>[
+        _personne(identite: idEleve, role: 'student', nom: '', local: !prof),
+        _personne(identite: idProf, role: 'teacher', nom: '', local: prof),
+        _personne(identite: idInconnu, role: 'student', nom: ''),
+      ]);
+      await tester.pumpAndSettle();
+    }
+
+    void aucuneIdentite(WidgetTester tester) {
+      for (final Element e in find.byType(RichText).evaluate()) {
+        final String texte = (e.widget as RichText).text.toPlainText();
+        for (final String id in <String>[idProf, idEleve, idInconnu]) {
+          expect(
+            texte,
+            isNot(contains(id)),
+            reason: 'identite rendue : $texte',
+          );
+        }
+      }
+    }
+
+    testWidgets(
+      'eleve : Sayyida Amina avec sa photo, l inconnu « Participant »',
+      (WidgetTester tester) async {
+        await monter(tester, photo: '$idProf/amina.webp');
+        expect(find.textContaining('Sayyida Amina'), findsWidgets);
+        expect(find.text(t.salle.participant), findsWidgets);
+        aucuneIdentite(tester);
+        // La photo rendue quand le profil en a une.
+        expect(
+          tester
+              .widgetList<AvatarTile>(find.byType(AvatarTile))
+              .where((AvatarTile a) => a.urlSignee == url),
+          isNotEmpty,
+        );
+      },
+    );
+
+    testWidgets('sans photo : le cercle des initiales, sans URL', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, photo: null);
+      aucuneIdentite(tester);
+      expect(
+        tester
+            .widgetList<AvatarTile>(find.byType(AvatarTile))
+            .where((AvatarTile a) => a.urlSignee != null),
+        isEmpty,
+      );
+    });
+
+    testWidgets('sans Classe connue : le prenom seul, jamais l identite', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, photo: null, entree: 'aucune');
+      expect(find.textContaining('Amina'), findsWidgets);
+      expect(find.textContaining('Sayyida'), findsNothing);
+      aucuneIdentite(tester);
+    });
+
+    // Revue de la PR 60 (26/10/2026) : l'enseignant ne lit pas la vue des
+    // familles ; sa propre fiche (`teacher_profiles`) le nomme et le montre.
+    testWidgets('enseignant dans sa salle : Sayyida Amina et sa photo, '
+        'sans Classe lisible', (WidgetTester tester) async {
+      await monter(
+        tester,
+        photo: null,
+        entree: 'aucune',
+        role: 'teacher',
+        profil: const ProfilEnseignant(
+          prenom: 'Amina',
+          identifiant: 'RA-26-1001',
+          titre: 'sayyida',
+          clePhoto: '$idProf/amina.webp',
+        ),
+      );
+      // La salle recoit le nom titre (haut de la salle, vignette) et la
+      // photo de sa vignette ; ici, sans camera, aucune image ne la couvre.
+      expect(
+        tester.widget<SalleSeance>(find.byType(SalleSeance)).vue.nomEnseignant,
+        'Sayyida Amina',
+      );
+      expect(
+        tester
+            .widget<PorteeMediaSalle>(find.byType(PorteeMediaSalle))
+            .photoVignette,
+        url,
+      );
+      aucuneIdentite(tester);
+    });
+
+    // Revue de la PR 60 : l'eleve qui entre par son accueil n'a pas de
+    // Classe dans son billet ; la Classe de cette seance la donne.
+    testWidgets('eleve arrive par son accueil : l enseignant titre', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, photo: null, entree: 'accueil');
+      expect(find.textContaining('Sayyida Amina'), findsWidgets);
+      aucuneIdentite(tester);
     });
   });
 }
