@@ -29,7 +29,6 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_outils/etat_outils.dart';
 import '../../core/theme/app_gabarit.dart';
-import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
@@ -1055,12 +1054,9 @@ class _Bas extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final VoidCallback? commandes = actions.onCommandes;
-    // Fiche 1, ligne 4 : les disques nommes, en interface standard (le cas
-    // principal). En Mode Accessibilite, la pilule a icones seules du
-    // standard du 24/10 reste (cas limite, tests `salle_200_test`).
-    final bool rond =
-        enseignantTelephone &&
-        AppMetriques.of(context).mode != InterfaceMode.enfant;
+    // Fiche 1, ligne 4 : les disques nommes, dans tous les modes (pilote,
+    // 26/10 : un mode d'accessibilite ne retire pas les mots).
+    final bool rond = enseignantTelephone;
     // Standard des commandes d'appel (24/10/2026) : une seule pilule, « Plus »
     // dedans ; aucun declencheur a cote. S0.3b : tableau ouvert, sa palette
     // juste au-dessus, horizontale.
