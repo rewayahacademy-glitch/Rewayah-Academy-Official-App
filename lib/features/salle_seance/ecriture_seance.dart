@@ -160,6 +160,30 @@ Future<void> annulerSurLaSurface(WidgetRef ref, VueSeance vue) async {
       );
 }
 
+/// Plan de la salle du 26/10/2026 (§3) : « Retablir » a-t-il quelque chose
+/// a refaire sur la surface montree ?
+bool peutRetablirSurLaSurface(WidgetRef ref, VueSeance vue) => ref
+    .watch(historiquePersonnelProvider)
+    .peutRetablir(surLaSurface(vue.ancrageSurface));
+
+/// Retablir : refait la derniere operation annulee de la surface de [vue]
+/// et l'emet a la classe par [emettreEcriture], comme Annuler.
+Future<void> retablirSurLaSurface(WidgetRef ref, VueSeance vue) async {
+  final PortAnnotations depot;
+  try {
+    depot = ref.read(portAnnotationsProvider);
+  } on Object {
+    return;
+  }
+  await ref
+      .read(historiquePersonnelProvider.notifier)
+      .retablir(
+        surLaSurface(vue.ancrageSurface),
+        depot,
+        emettre: (EvenementOutil e) => emettreEcriture(ref, vue, e),
+      );
+}
+
 /// TB-10 (plan V2 §5) : l'outil de trace revient au Stylo s'il n'est pas
 /// propose a cette personne (Surligner, reserve a l'enseignant).
 void garderOutilPropose(WidgetRef ref, VueSeance vue) {

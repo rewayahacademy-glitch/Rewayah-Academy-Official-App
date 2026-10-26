@@ -30,6 +30,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/local_feedback.dart';
 import 'actions_seance.dart';
+import 'barre_outils_salle.dart';
 import 'barre_support.dart' show NomsFocus, nomsFocus;
 import 'commandes_pedagogiques.dart';
 import 'dock_seance.dart';
@@ -178,6 +179,17 @@ class _EtatSalleOrdinateur extends State<SalleOrdinateur> {
                       ),
                   ],
                 ),
+              ),
+              // Plan §3 : quand l'enseignant ecrit, la barre d'outils au-dessus
+              // des commandes, tout visible.
+              Consumer(
+                builder: (BuildContext _, WidgetRef ref, Widget? _) =>
+                    barreOutilsVisible(ref, vue)
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: AppSpacing.lg),
+                        child: Center(child: BarreOutilsSalle(vue: vue)),
+                      )
+                    : const SizedBox.shrink(),
               ),
               Ecart.vLg,
               _Bas(

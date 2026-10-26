@@ -69,6 +69,34 @@ enum OutilTrait {
   }
 }
 
+/// Plan de la salle du 26/10/2026 (§3) : les six couleurs franches du
+/// nuancier, choisies librement apres les quatre tons d'intention. Un trait
+/// qui en porte une la garde ; sinon sa couleur derive de son intention
+/// (`CouleurIntention`). Elle voyage dans le message du trait (champ
+/// `couleur`), jamais en base (aucune colonne : perdue au rechargement).
+enum CouleurFranche {
+  noir('noir'),
+  bleu('bleu'),
+  turquoise('turquoise'),
+  orange('orange'),
+  rose('rose'),
+  marron('marron');
+
+  const CouleurFranche(this.valeurSql);
+
+  /// La valeur telle qu'elle voyage avec le trait.
+  final String valeurSql;
+
+  /// Lit une couleur depuis sa valeur. `null` sur valeur inconnue : le
+  /// trait prend alors la couleur de son intention.
+  static CouleurFranche? depuisSql(String? valeur) {
+    for (final CouleurFranche couleur in CouleurFranche.values) {
+      if (couleur.valeurSql == valeur) return couleur;
+    }
+    return null;
+  }
+}
+
 /// TB-7b (plan V2 §4.2, §20 « Options ») : l'epaisseur d'un trait, en
 /// trois choix courts. Elle multiplie l'epaisseur de base de l'outil (qui
 /// suit la largeur de la page, §9) ; aucune valeur libre, aucun curseur
@@ -168,7 +196,12 @@ class TraitVectoriel {
     this.pression,
     this.inclinaison,
     this.epaisseur,
+    this.couleur,
   });
+
+  /// Plan de la salle du 26/10/2026 : la couleur franche choisie, ou `null`
+  /// (la couleur derive de [intention]).
+  final CouleurFranche? couleur;
 
   /// L'identifiant du trait.
   final String id;
@@ -208,11 +241,13 @@ class TraitVectoriel {
     pression: pression,
     inclinaison: inclinaison,
     epaisseur: epaisseur,
+    couleur: couleur,
   );
 
   @override
   bool operator ==(Object other) =>
       other is TraitVectoriel &&
+      other.couleur == couleur &&
       other.id == id &&
       other.ancrage == ancrage &&
       listEquals(other.points, points) &&
@@ -232,6 +267,7 @@ class TraitVectoriel {
     pression,
     inclinaison,
     epaisseur,
+    couleur,
   );
 }
 

@@ -439,6 +439,15 @@
       "ecriture": {
         "palette": "Outils d'écriture",
         "toutEffacer": "Tout effacer",
+        "retablir": "Rétablir",
+        "couleurs": {
+          "noir": "Noir",
+          "bleu": "Bleu",
+          "turquoise": "Turquoise",
+          "orange": "Orange",
+          "rose": "Rose",
+          "marron": "Marron"
+        },
         "terminer": "Terminer",
         "couleur": "Couleur",
         "couleurAide": "La couleur dit l'intention du trait, pour toute la classe.",

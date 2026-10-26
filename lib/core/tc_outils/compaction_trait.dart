@@ -95,6 +95,7 @@ class TraitEnCours {
     required this.outil,
     this.intention,
     this.epaisseur,
+    this.couleur,
     this.pointsParPaquet = pointsParPaquetParDefaut,
   }) : assert(pointsParPaquet > 0, 'un paquet porte au moins un point');
 
@@ -116,6 +117,9 @@ class TraitEnCours {
 
   /// TB-7b : l'epaisseur choisie, `null` = moyenne.
   final EpaisseurTrait? epaisseur;
+
+  /// Plan de la salle du 26/10/2026 : la couleur franche, ou `null`.
+  final CouleurFranche? couleur;
 
   /// Le seuil d'emission d'un paquet ephemere.
   final int pointsParPaquet;
@@ -182,6 +186,7 @@ class TraitEnCours {
     pression: _moyenne(_pressions),
     inclinaison: _moyenne(_inclinaisons),
     epaisseur: epaisseur,
+    couleur: couleur,
   );
 
   static double? _moyenne(List<double> valeurs) {

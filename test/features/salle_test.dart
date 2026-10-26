@@ -36,10 +36,12 @@ import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
+import 'package:rewayah_academy/core/widgets/bouton_couleur.dart';
 import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_enseignant/page_coran_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/barre_outils_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart'
     show DeclencheurCommandes;
 import 'package:rewayah_academy/features/salle_seance/ecriture_seance.dart'
@@ -2907,6 +2909,53 @@ void main() {
       expect(find.byKey(PanneauBibliothequeSalle.cle), findsNothing);
       await touche(tester, LogicalKeyboardKey.keyB);
       expect(find.byKey(PanneauBibliothequeSalle.cle), findsOneWidget);
+    });
+
+    testWidgets('barre d outils : Ecrire ou tableau ouvert, dix couleurs, '
+        'tout visible au-dessus des commandes', (WidgetTester tester) async {
+      await monterAvecMoi(tester);
+      expect(find.byKey(BarreOutilsSalle.cle), findsNothing);
+      await tester.tap(
+        find.byKey(const ValueKey<String>('salle-outil-ecrire')),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(BarreOutilsSalle.cle), findsOneWidget);
+      expect(find.byType(BoutonCouleur), findsNWidgets(10));
+      // Rien a annuler ni a retablir : les deux fleches ne sont pas rendues.
+      expect(
+        find.byKey(const ValueKey<String>('barre-outils-retablir')),
+        findsNothing,
+      );
+      final Rect barre = tester.getRect(find.byKey(BarreOutilsSalle.cle));
+      expect(
+        barre.bottom,
+        lessThanOrEqualTo(
+          tester.getRect(find.byKey(SalleOrdinateur.cleBas)).top,
+        ),
+      );
+      // Une couleur franche : retenue (anneau et coche, jamais la couleur
+      // seule) ; la couleur d'intention ne l'est plus.
+      Finder coche(String c) => find.descendant(
+        of: find.byKey(ValueKey<String>('barre-couleur-$c')),
+        matching: find.byType(Icon),
+      );
+      expect(coche('review'), findsOneWidget);
+      await tester.tap(
+        find.byKey(const ValueKey<String>('barre-couleur-bleu')),
+      );
+      await tester.pumpAndSettle();
+      expect(coche('bleu'), findsOneWidget);
+      expect(coche('review'), findsNothing);
+      // Ecrire relache : la barre part. Le tableau ouvert la ramene.
+      await tester.tap(
+        find.byKey(const ValueKey<String>('salle-outil-ecrire')),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(BarreOutilsSalle.cle), findsNothing);
+      await tester.tap(find.byKey(const ValueKey<String>('bouton-tableau')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(BarreOutilsSalle.cle), findsOneWidget);
+      expect(tester.takeException(), isNull);
     });
 
     testWidgets('F : focus, puis retour des panneaux', (

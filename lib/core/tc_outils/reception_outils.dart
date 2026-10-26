@@ -108,5 +108,6 @@ TraitVectoriel? traitDepuisCharge(Map<String, dynamic> charge) {
     pression: (trait['pression'] as num?)?.toDouble(),
     inclinaison: (trait['inclinaison'] as num?)?.toDouble(),
     epaisseur: EpaisseurTrait.depuisSql(trait['epaisseur'] as String?),
+    couleur: CouleurFranche.depuisSql(trait['couleur'] as String?),
   );
 }

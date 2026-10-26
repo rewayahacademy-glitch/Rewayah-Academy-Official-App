@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_palette.dart';
 import '../widgets/status_pill.dart';
+import 'annotation_layer.dart' show CouleurFranche;
 import 'intention_pedagogique.dart';
 
 /// La derivation **intention -> couleur**, et jamais l'inverse.
@@ -16,6 +17,14 @@ import 'intention_pedagogique.dart';
 /// chacune rattachee a une paire du theme. Reutiliser ce vocabulaire plutot que
 /// d'en inventer un second garantit qu'un marqueur « A renforcer » et une
 /// pilule « En retard » ne finiront pas avec deux rouges differents.
+///
+/// **Ecart date (demande explicite du directeur du 26/10/2026, plan de la
+/// salle §3 : « des couleurs primaires, dix au moins, accessibles, standard
+/// tablette »), qui prevaut sur l'invariant 2 du contrat :** le nuancier de
+/// la salle propose dix couleurs. Les quatre tons d'intention restent les
+/// quatre premieres pastilles, avec leurs noms (la pedagogie reste
+/// lisible) ; six couleurs franches suivent ([CouleurFranche],
+/// [encreFranche]). Elles voyagent dans le message du trait, jamais en base.
 ///
 /// **Et la couleur ne voyage jamais seule.** Le rendu d'un marqueur passe par
 /// `StatusPill`, qui refuse par construction une pastille sans libelle
@@ -53,6 +62,18 @@ abstract final class CouleurIntention {
     TonEtat.alerte => palette.inkAlert,
   });
 }
+
+/// L'encre d'une couleur franche du nuancier (plan de la salle du
+/// 26/10/2026), prete a peindre comme une encre d'intention.
+EncreIntention encreFranche(CouleurFranche couleur) =>
+    EncreIntention._(switch (couleur) {
+      CouleurFranche.noir => AppNuancierTrait.noir,
+      CouleurFranche.bleu => AppNuancierTrait.bleu,
+      CouleurFranche.turquoise => AppNuancierTrait.turquoise,
+      CouleurFranche.orange => AppNuancierTrait.orange,
+      CouleurFranche.rose => AppNuancierTrait.rose,
+      CouleurFranche.marron => AppNuancierTrait.marron,
+    });
 
 /// Une encre d'intention, prete a peindre.
 ///

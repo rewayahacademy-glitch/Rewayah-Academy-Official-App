@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
+import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
+import 'package:rewayah_academy/core/widgets/bouton_couleur.dart';
 import 'package:rewayah_academy/core/widgets/bouton_icone.dart';
 import 'package:rewayah_academy/core/widgets/bouton_outil.dart';
 import 'package:rewayah_academy/core/widgets/commande_salle.dart';
@@ -455,6 +457,77 @@ void main() {
               expect((icone.center.dx - disque.center.dx).abs(), lessThan(1.5));
               expect((icone.center.dy - disque.center.dy).abs(), lessThan(1.5));
               expect(disque.bottom, lessThanOrEqualTo(mot.top));
+            },
+          );
+        }
+        // Plan de la salle du 26/10/2026 (Q1, §3) : la commande nommee de
+        // l'ordinateur (bouton rond, nom dessous) et la pastille de couleur.
+        testWidgets(
+          'CommandeSalleNommee : bouton et nom centres l un sur l autre, '
+          '${largeur.toInt()} px, texte x${echelle.toInt()}',
+          (WidgetTester tester) async {
+            fixerVue(tester, Size(largeur, 900));
+            await tester.pumpWidget(
+              hoteTheme(
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: CommandeSalleNommee(
+                    nom: 'Bibliothèque',
+                    bouton: BoutonIcone(
+                      icone: AppIcons.bibliotheque,
+                      libelle: 'Bibliothèque',
+                      forme: FormeBoutonIcone.appel,
+                      onPress: () {},
+                    ),
+                  ),
+                ),
+                echelleTexte: echelle,
+              ),
+            );
+            final Rect bouton = tester.getRect(find.byType(BoutonIcone));
+            final Rect nom = tester.getRect(find.text('Bibliothèque'));
+            expect((nom.center.dx - bouton.center.dx).abs(), lessThan(1.5));
+            expect(bouton.bottom, lessThanOrEqualTo(nom.top));
+            verifierContenuCentre(tester, find.byType(BoutonIcone), <Finder>[
+              find.byType(Icon),
+            ]);
+          },
+        );
+        for (final bool retenue in <bool>[false, true]) {
+          testWidgets(
+            'BoutonCouleur ${retenue ? 'retenue' : 'libre'} : disque au '
+            'centre de sa cible, ${largeur.toInt()} px, texte '
+            'x${echelle.toInt()}',
+            (WidgetTester tester) async {
+              fixerVue(tester, Size(largeur, 900));
+              await tester.pumpWidget(
+                hoteTheme(
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: BoutonCouleur(
+                      encre: AppNuancierTrait.bleu,
+                      libelle: 'Bleu',
+                      retenue: retenue,
+                      onPress: () {},
+                    ),
+                  ),
+                  echelleTexte: echelle,
+                ),
+              );
+              verifierContenuCentre(
+                tester,
+                find.byType(BoutonCouleur),
+                <Finder>[find.byKey(const ValueKey<String>('disque-couleur'))],
+              );
+              expect(
+                tester.getSize(find.byType(BoutonCouleur)).height,
+                greaterThanOrEqualTo(48),
+              );
+              // L'etat ne se dit jamais par la couleur seule.
+              expect(
+                find.byType(Icon),
+                retenue ? findsOneWidget : findsNothing,
+              );
             },
           );
         }

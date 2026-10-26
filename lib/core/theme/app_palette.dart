@@ -892,3 +892,21 @@ abstract final class AppCouleursPorte {
   /// L'ombre portee au sol, sous la porte.
   static const AppInkColor ombre = AppInkColor(Color(0xFF25113F));
 }
+
+/// Plan de la salle du 26/10/2026 (§3, demande du directeur : « des couleurs
+/// primaires, dix au moins, accessibles, standard tablette ») : les six
+/// couleurs franches du nuancier des traits, apres les quatre tons
+/// d'intention (`CouleurIntention`). **Identiques en clair et en sombre** :
+/// la page du Coran et le tableau restent clairs dans les deux themes, et un
+/// trait garde sa couleur chez toute la classe. Choisies distinctes des tons
+/// d'intention (violet, gris, rouge, vert) ; chacune tient au moins 4,5:1
+/// sur le fond de la page (`surfaceCanvas` clair) et sur la feuille blanche
+/// du tableau, mesure en test (`test/theme/nuancier_trait_test.dart`).
+abstract final class AppNuancierTrait {
+  static const AppInkColor noir = AppInkColor(Color(0xFF1F1F24));
+  static const AppInkColor bleu = AppInkColor(Color(0xFF1F5BD6));
+  static const AppInkColor turquoise = AppInkColor(Color(0xFF00756A));
+  static const AppInkColor orange = AppInkColor(Color(0xFFB83E0B));
+  static const AppInkColor rose = AppInkColor(Color(0xFFB0175F));
+  static const AppInkColor marron = AppInkColor(Color(0xFF7A4A1E));
+}

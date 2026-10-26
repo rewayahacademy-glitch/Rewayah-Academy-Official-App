@@ -23,6 +23,12 @@
 // est la seule regle, lue par la couche, le panneau et la palette. La purge
 // de l'historique par les retraits venus d'autres appareils reste a faire
 // au branchement du transport (TB-BR).
+//
+// Plan de la salle du 26/10/2026 (§3, « petites fleches pour annuler et
+// refaire ») : « Retablir » refait la derniere operation annulee sur la
+// surface, par la meme voie que Annuler ([ControleurHistorique.retablir],
+// [evenementsRefaits]) ; la pile de retablissement se vide a tout nouveau
+// trait ou geste de gomme (standard des editeurs).
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -88,7 +94,40 @@ class HistoriquePersonnel {
     this.operations = const <OperationPersonnelle>[],
     this.retires = const <String>{},
     this.mesTraits = const <String>{},
+    this.annulees = const <OperationPersonnelle>[],
   });
+
+  /// Les operations annulees que « Retablir » peut refaire, de la plus
+  /// ancienne a la plus recente annulee.
+  final List<OperationPersonnelle> annulees;
+
+  /// La meme, en changeant ce qui est donne.
+  HistoriquePersonnel copier({
+    List<OperationPersonnelle>? operations,
+    Set<String>? retires,
+    Set<String>? mesTraits,
+    List<OperationPersonnelle>? annulees,
+  }) => HistoriquePersonnel(
+    operations: operations ?? this.operations,
+    retires: retires ?? this.retires,
+    mesTraits: mesTraits ?? this.mesTraits,
+    annulees: annulees ?? this.annulees,
+  );
+
+  /// La derniere operation annulee sur la surface que [sur] reconnait, ou
+  /// `null` : « Retablir » n'est pas propose.
+  OperationPersonnelle? derniereAnnulee(
+    bool Function(ContentPosition surface) sur,
+  ) {
+    for (int i = annulees.length - 1; i >= 0; i--) {
+      if (sur(annulees[i].surface)) return annulees[i];
+    }
+    return null;
+  }
+
+  /// « Retablir » a-t-il quelque chose a refaire sur la surface ?
+  bool peutRetablir(bool Function(ContentPosition surface) sur) =>
+      derniereAnnulee(sur) != null;
 
   /// Les operations, de la plus ancienne a la plus recente.
   final List<OperationPersonnelle> operations;
@@ -148,6 +187,26 @@ List<EvenementOutil> evenementsDefaits(OperationDefaite defaite) =>
       ],
     };
 
+/// Ce que la classe doit recevoir pour une operation refaite (« Retablir »),
+/// l'inverse de [evenementsDefaits] : un trait pose revient
+/// (`tc.outils.trait_termine`), des traits gommes repartent
+/// (`tc.outils.trait_retire`).
+List<EvenementOutil> evenementsRefaits(OperationDefaite refaite) =>
+    switch (refaite.operation) {
+      final TraitPosePersonnel pose => <EvenementOutil>[
+        EvenementTraitTermine(
+          coucheId: refaite.coucheId,
+          trait: pose.trait,
+          portee: pose.portee,
+        ),
+      ],
+      TraitsGommesPersonnels(:final List<TraitVectoriel> traits) =>
+        <EvenementOutil>[
+          for (final TraitVectoriel trait in traits)
+            EvenementTraitRetire(coucheId: refaite.coucheId, traitId: trait.id),
+        ],
+    };
+
 /// La surface [surface] exactement (une page, le tableau libre) ; aucune
 /// surface si elle est `null`.
 bool Function(ContentPosition) surLaSurface(ContentPosition? surface) =>
@@ -188,11 +247,8 @@ class ControleurHistorique extends Notifier<HistoriquePersonnel> {
   );
 
   /// La gomme retire [id] de l'ecran, avant meme la reponse du depot.
-  void masquer(String id) => state = HistoriquePersonnel(
-    operations: state.operations,
-    retires: <String>{...state.retires, id},
-    mesTraits: state.mesTraits,
-  );
+  void masquer(String id) =>
+      state = state.copier(retires: <String>{...state.retires, id});
 
   /// Le depot a refuse le retrait de [id] : le trait revient, et il sort du
   /// geste de gomme qui le comptait (un « Annuler » ulterieur ne rajoute pas
@@ -219,6 +275,7 @@ class ControleurHistorique extends Notifier<HistoriquePersonnel> {
     ],
     retires: <String>{...state.retires}..remove(id),
     mesTraits: state.mesTraits,
+    annulees: state.annulees,
   );
 
   /// Un geste de gomme a retire [traits] de [surface]. Un trait que le
@@ -254,13 +311,15 @@ class ControleurHistorique extends Notifier<HistoriquePersonnel> {
   /// ses operations s'en vont (« Annuler » ne rajoute jamais un trait que
   /// l'effacement a retire).
   void oublierSurface(bool Function(ContentPosition surface) sur) =>
-      state = HistoriquePersonnel(
+      state = state.copier(
         operations: <OperationPersonnelle>[
           for (final OperationPersonnelle o in state.operations)
             if (!sur(o.surface)) o,
         ],
-        retires: state.retires,
-        mesTraits: state.mesTraits,
+        annulees: <OperationPersonnelle>[
+          for (final OperationPersonnelle o in state.annulees)
+            if (!sur(o.surface)) o,
+        ],
       );
 
   /// Defait la derniere operation personnelle sur [surface] : un trait pose
@@ -325,13 +384,82 @@ class ControleurHistorique extends Notifier<HistoriquePersonnel> {
           for (final TraitVectoriel trait in traits) trait.id,
         });
     }
-    state = HistoriquePersonnel(
+    state = state.copier(
       operations: <OperationPersonnelle>[
         for (final OperationPersonnelle o in state.operations)
           if (!identical(o, operation)) o,
       ],
       retires: retires,
-      mesTraits: state.mesTraits,
+      annulees: <OperationPersonnelle>[...state.annulees, operation],
+    );
+    return (coucheId: couche.id, operation: operation);
+  }
+
+  /// Refait la derniere operation annulee sur [surface] : un trait pose
+  /// revient, des traits gommes repartent ; l'operation retourne dans
+  /// l'historique (Annuler la defait de nouveau). Rend ce qui a ete refait,
+  /// ou `null` ; sans depot, rien n'est refait. Ce qui a ete refait part a
+  /// la classe par [emettre] ([evenementsRefaits]), comme Annuler.
+  Future<OperationDefaite?> retablir(
+    bool Function(ContentPosition surface) sur,
+    PortAnnotations depot, {
+    void Function(EvenementOutil evenement)? emettre,
+  }) async {
+    if (_annulationEnCours) return null;
+    _annulationEnCours = true;
+    final OperationDefaite? refaite;
+    try {
+      refaite = await _retablir(sur, depot);
+    } finally {
+      _annulationEnCours = false;
+    }
+    if (refaite != null && emettre != null) {
+      evenementsRefaits(refaite).forEach(emettre);
+    }
+    return refaite;
+  }
+
+  Future<OperationDefaite?> _retablir(
+    bool Function(ContentPosition surface) sur,
+    PortAnnotations depot,
+  ) async {
+    final OperationPersonnelle? operation = state.derniereAnnulee(sur);
+    if (operation == null) return null;
+    final AnnotationLayer? couche;
+    try {
+      couche = await depot.couche(
+        resourceId: operation.surface.resourceId,
+        sessionId: operation.sessionId,
+        portee: operation.portee,
+      );
+      if (couche == null) return null;
+      switch (operation) {
+        case TraitPosePersonnel(:final TraitVectoriel trait):
+          await depot.ajouterTrait(couche.id, trait);
+        case TraitsGommesPersonnels(:final List<TraitVectoriel> traits):
+          for (final TraitVectoriel trait in traits) {
+            await depot.retirerTrait(couche.id, trait.id);
+          }
+      }
+    } on Object {
+      return null;
+    }
+    final Set<String> retires = <String>{...state.retires};
+    switch (operation) {
+      case TraitPosePersonnel(:final TraitVectoriel trait):
+        retires.remove(trait.id);
+      case TraitsGommesPersonnels(:final List<TraitVectoriel> traits):
+        retires.addAll(<String>{
+          for (final TraitVectoriel trait in traits) trait.id,
+        });
+    }
+    state = state.copier(
+      operations: <OperationPersonnelle>[...state.operations, operation],
+      retires: retires,
+      annulees: <OperationPersonnelle>[
+        for (final OperationPersonnelle o in state.annulees)
+          if (!identical(o, operation)) o,
+      ],
     );
     return (coucheId: couche.id, operation: operation);
   }

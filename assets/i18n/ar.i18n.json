@@ -999,6 +999,15 @@
       "ecriture": {
         "palette": "أدوات الكتابة",
         "toutEffacer": "مسح الكل",
+        "retablir": "إعادة",
+        "couleurs": {
+          "noir": "أسود",
+          "bleu": "أزرق",
+          "turquoise": "فيروزي",
+          "orange": "برتقالي",
+          "rose": "وردي",
+          "marron": "بني"
+        },
         "terminer": "إنهاء",
         "couleur": "اللون",
         "couleurAide": "اللون يدل على قصد الخط، للفصل كله.",
