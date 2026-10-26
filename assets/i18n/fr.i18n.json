@@ -547,6 +547,7 @@
         "echecDetail": "Le fichier de ce support est indisponible. Réessayez, ou revenez aux supports pour en choisir un autre.",
         "tous": "Tous",
         "reprendrePage": "Reprendre page {page}",
+        "cetteClasse": "Cette classe",
         "detailReprise": "Page {page} · Dernière séance",
         "titreCoranPage": "Coran · Page {page}"
       },

@@ -49,6 +49,9 @@ String libelleCouleurFranche(CouleurFranche couleur) => switch (couleur) {
 bool barreOutilsVisible(WidgetRef ref, VueSeance vue) =>
     ecritSurLaSurface(ref, vue) || (vue.tableauOuvert && vue.ecritureProposee);
 
+/// La largeur du choix des trois epaisseurs (≈ 96 par segment).
+const double largeurEpaisseurs = AppSpacing.respiration * 4 + AppSpacing.xxxl;
+
 /// La barre d'outils de l'ordinateur.
 class BarreOutilsSalle extends ConsumerWidget {
   const BarreOutilsSalle({required this.vue, super.key = cle});
@@ -196,20 +199,25 @@ class BarreOutilsSalle extends ConsumerWidget {
                   children: couleurs,
                 ),
               ),
-              ControleSegmente<EpaisseurTrait>(
-                key: const ValueKey<String>('barre-outils-epaisseur'),
-                segments: <Segment<EpaisseurTrait>>[
-                  for (final EpaisseurTrait e in EpaisseurTrait.values)
-                    Segment<EpaisseurTrait>(
-                      valeur: e,
-                      libelle: libelleEpaisseur(e),
-                    ),
-                ],
-                valeur: etat.epaisseur,
-                onChange: (EpaisseurTrait e) {
-                  armer();
-                  controleur.choisirEpaisseur(e);
-                },
+              // Trois epaisseurs, a la largeur de leurs mots : jamais
+              // etirees sur toute la barre.
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: largeurEpaisseurs),
+                child: ControleSegmente<EpaisseurTrait>(
+                  key: const ValueKey<String>('barre-outils-epaisseur'),
+                  segments: <Segment<EpaisseurTrait>>[
+                    for (final EpaisseurTrait e in EpaisseurTrait.values)
+                      Segment<EpaisseurTrait>(
+                        valeur: e,
+                        libelle: libelleEpaisseur(e),
+                      ),
+                  ],
+                  valeur: etat.epaisseur,
+                  onChange: (EpaisseurTrait e) {
+                    armer();
+                    controleur.choisirEpaisseur(e);
+                  },
+                ),
               ),
             ],
           ),

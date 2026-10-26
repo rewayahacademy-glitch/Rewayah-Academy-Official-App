@@ -34,7 +34,8 @@ import '../capture/outil_capture.dart';
 import '../support/aucun_mot_coupe.dart';
 import '../support/garde_interface.dart';
 import '../support/harnais.dart';
-import '../support/mushaf_15l.dart' show surchargesMadina15;
+import '../support/mushaf_15l.dart'
+    show chargerPoliceMadina15, surchargesMadina15;
 import '../teaching_core/e/faux/faux_classe.dart';
 
 AccesSalle _acces(String role) => AccesSalle(
@@ -170,6 +171,12 @@ bool _carte(Widget w) {
 }
 
 void main() {
+  // Les vraies polices seulement pour les captures.
+  setUpAll(() async {
+    if (dossierCapture == null) return;
+    await chargerPolicesDuDepot();
+    await chargerPoliceMadina15();
+  });
   tearDown(() => LocaleSettings.setLocale(AppLocale.fr));
 
   for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {

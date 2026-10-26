@@ -170,7 +170,10 @@ class _EtatPanneauBibliotheque extends State<PanneauBibliothequeSalle> {
           onChange: (String _) => setState(() {}),
         ),
         Ecart.vSm,
+        // Plan §2 : les trois filtres toujours visibles, jamais derriere
+        // « Plus ».
         RangeeFiltres(
+          replier: false,
           filtres: <Widget>[
             filtre(
               FiltreBibliotheque.recents,
@@ -178,7 +181,7 @@ class _EtatPanneauBibliotheque extends State<PanneauBibliothequeSalle> {
             ),
             filtre(
               FiltreBibliotheque.classe,
-              t.tc.bibliotheque.sections.pourCeGroupe,
+              t.salle.seance.bibliotheque.cetteClasse,
             ),
             filtre(FiltreBibliotheque.tous, t.salle.seance.bibliotheque.tous),
           ],

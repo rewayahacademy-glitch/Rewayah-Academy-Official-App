@@ -539,7 +539,11 @@ class _Bas extends ConsumerWidget {
 
     Widget boutonOutil(OutilEnseignement o) => BoutonAppel(
       key: ValueKey<String>('salle-outil-${o.name}'),
-      icone: iconeOutilEnseignement(o),
+      // « Ecrire » arme le stylo : son icone, et non celle du tableau, qui
+      // est la meme (`annoter`) et se tient a cote dans la barre.
+      icone: o == OutilEnseignement.ecrire
+          ? AppIcons.stylet
+          : iconeOutilEnseignement(o),
       libelle: libelleOutilEnseignement(o),
       nom: libelleOutilEnseignement(o),
       retenu: outil == outilDock(o),

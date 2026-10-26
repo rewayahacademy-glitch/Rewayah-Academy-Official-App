@@ -106,9 +106,11 @@ class BoutonAppel extends StatelessWidget {
   /// (standard du 24/10, telephone).
   final String? nom;
 
-  /// Un outil ou un panneau (Bibliotheque, Pointeur, Ecrire, Eleves) : vrai
-  /// quand il est retenu ou ouvert (rempli de la couleur primaire, comme la
-  /// palette du tableau), faux sinon ; `null` : la regle des bascules.
+  /// Un outil ou un panneau (Bibliotheque, Pointeur, Ecrire, Eleves) : la
+  /// regle des bascules du lot 3 (25/10/2026), comme le tableau : retenu ou
+  /// ouvert, sombre neutre ; ferme, violet de marque. Jamais la couleur
+  /// primaire seule, qui se confondait avec un micro coupe. `null` : bouton
+  /// ordinaire.
   final bool? retenu;
 
   /// Le noeud de focus du bouton : la salle y rend le focus a la fermeture
@@ -144,7 +146,7 @@ class BoutonAppel extends StatelessWidget {
     final bool quitter = fond == FondBoutonAppel.alerte;
     final TonAppel ton = switch (bascule) {
       _ when quitter => TonAppel.quitter,
-      _ when retenu != null => retenu! ? TonAppel.ouvert : TonAppel.actif,
+      _ when retenu != null => retenu! ? TonAppel.actif : TonAppel.coupe,
       false => TonAppel.coupe,
       _ => TonAppel.actif,
     };
