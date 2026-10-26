@@ -35,6 +35,8 @@ portrait). Tailles contrôlées : 390×844 et 834×1194 ; texte ×1 et ×2 ; fra
 | 15 | **Miroir en arabe** : tout suit le sens de lecture ; « Commandes » au toucher est aligné du côté de fin de ligne. | contrat B |
 | 16 | **L'élève, le tuteur, le contrôleur au téléphone sont inchangés** : ni capsule, ni tiroir, ni « Commandes ». | plan §5 |
 
+**À valider par le directeur** (ligne 9) : le libellé arabe de « Ranger le support », « إرجاع المادة », proposé par le worker le 26/10.
+
 ## Captures à produire (par les tests, `CAPTURE_DIR`)
 
 À 390×844 et 834×1194 : repos, toucher, profil déplié, tiroir Support, tiroir Outils avec stylo

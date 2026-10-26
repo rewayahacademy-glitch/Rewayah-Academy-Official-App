@@ -21,11 +21,13 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/accessibilite/commandes_masquables.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_outils/etat_outils.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_mouvement.dart';
@@ -246,6 +248,20 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
     }
   }
 
+  /// Pilote (26/10, L11) : Stylo, Surligner ou Gomme retenu, un toucher de
+  /// la page dessine et le tiroir reste ouvert ; seul « Reduire » le ferme.
+  bool _outilActif() {
+    if (!vue.ecritureProposee ||
+        context.findAncestorWidgetOfExactType<UncontrolledProviderScope>() ==
+            null) {
+      return false;
+    }
+    return ProviderScope.containerOf(
+      context,
+      listen: false,
+    ).read(etatOutilsProvider).styletArme;
+  }
+
   void _deplierProfil() {
     // Ligne 11 : un panneau du bas ne couvre jamais le haut ; le profil
     // deplie le referme.
@@ -268,8 +284,8 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
   /// panneau du bas (lignes 5 et 11).
   void _toucherPage(PointerDownEvent e) {
     if (salleTelephoneEnseignant(context, vue) &&
-        (vue.panneau == PanneauOuvert.commandes ||
-            vue.panneau == PanneauOuvert.eleves) &&
+        (vue.panneau == PanneauOuvert.eleves ||
+            (vue.panneau == PanneauOuvert.commandes && !_outilActif())) &&
         !_dans(_clePanneau, e.position) &&
         !_dans(_cleBas, e.position) &&
         !_dans(_cleProfil, e.position)) {

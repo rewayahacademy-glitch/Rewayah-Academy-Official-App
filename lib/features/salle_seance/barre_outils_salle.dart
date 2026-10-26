@@ -340,20 +340,23 @@ class OutilsTelephone extends ConsumerWidget {
                 },
               ),
             ),
-          // Annuler disparait quand il n'a rien a faire ; sa case reste (jamais
-          // grise, la rangee ne saute pas).
+          // Pilote (26/10, L8) : Annuler toujours visible, comme la
+          // maquette ; sans rien a annuler, il ne fait rien (ni grise, ni
+          // absent).
           (
             cle: const ValueKey<String>('barre-outils-annuler'),
             nom: t.tc.outils.trait.annuler,
-            tuile: peutAnnulerSurLaSurface(ref, vue)
-                ? BoutonAppel(
-                    key: const ValueKey<String>('barre-outils-annuler'),
-                    icone: AppIcons.annuler,
-                    libelle: t.tc.outils.trait.annuler,
-                    nom: t.tc.outils.trait.annuler,
-                    onPress: () => unawaited(annulerSurLaSurface(ref, vue)),
-                  )
-                : null,
+            tuile: BoutonAppel(
+              key: const ValueKey<String>('barre-outils-annuler'),
+              icone: AppIcons.annuler,
+              libelle: t.tc.outils.trait.annuler,
+              nom: t.tc.outils.trait.annuler,
+              onPress: () {
+                if (peutAnnulerSurLaSurface(ref, vue, suivre: false)) {
+                  unawaited(annulerSurLaSurface(ref, vue));
+                }
+              },
+            ),
           ),
         ];
     final bool couleurs =

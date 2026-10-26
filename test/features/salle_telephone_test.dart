@@ -778,13 +778,17 @@ void main() {
             final Finder stylo = cle('barre-outils-stylet');
             final Finder surligner = cle('barre-outils-surligneur');
             final Finder gomme = cle('barre-outils-gomme');
-            for (final Finder f in <Finder>[stylo, surligner, gomme]) {
+            final Finder annuler = cle('barre-outils-annuler');
+            // Annuler toujours visible, meme sans rien a annuler (pilote,
+            // 26/10).
+            for (final Finder f in <Finder>[stylo, surligner, gomme, annuler]) {
               expect(f.hitTestable(), findsOneWidget);
             }
             for (final String n in <String>[
               t.tc.outils.trait.stylet,
               t.tc.outils.trait.surligneur,
               t.tc.outils.trait.gomme,
+              t.tc.outils.trait.annuler,
             ]) {
               expect(
                 find.descendant(of: outils, matching: find.text(n)),
@@ -806,11 +810,12 @@ void main() {
               find.byKey(OutilsTelephone.cleTuiles),
             );
             final List<Rect> r = <Rect>[
-              for (final Finder f in <Finder>[stylo, surligner, gomme])
+              for (final Finder f in <Finder>[stylo, surligner, gomme, annuler])
                 tester.getRect(f),
             ];
-            expect(r[1].width, moreOrLessEquals(r[0].width, epsilon: 0.5));
-            expect(r[2].width, moreOrLessEquals(r[0].width, epsilon: 0.5));
+            for (final Rect x in r) {
+              expect(x.width, moreOrLessEquals(r[0].width, epsilon: 0.5));
+            }
             if (texte == 1) {
               expect(
                 r[0].width,
@@ -818,7 +823,12 @@ void main() {
               );
               expect(r[1].top, moreOrLessEquals(r[0].top, epsilon: 0.5));
               expect(r[2].top, moreOrLessEquals(r[0].top, epsilon: 0.5));
+              expect(r[3].top, moreOrLessEquals(r[0].top, epsilon: 0.5));
             }
+            // Sans rien a annuler, le toucher ne fait rien et ne casse rien.
+            await tester.tap(annuler);
+            await tester.pumpAndSettle();
+            expect(annuler.hitTestable(), findsOneWidget);
             // Aucun outil retenu : aucune couleur.
             final Finder couleurs = cle('barre-outils-couleurs');
             expect(couleurs, findsNothing);
@@ -1010,6 +1020,35 @@ void main() {
               await tester.tapAt(Offset(taille.width / 2, (haut + bas) / 2));
               await tester.pumpAndSettle();
               expect(ouvert, findsNothing);
+              if (!elevesOuverts) {
+                // Pilote (26/10) : un outil retenu, le toucher de la page
+                // dessine et le tiroir reste ouvert ; « Reduire » le ferme.
+                await _toucher(tester);
+                await ouvrir();
+                await _onglet(tester, t.salle.seance.commandes.ongletOutils);
+                await tester.tap(
+                  find.byKey(const ValueKey<String>('barre-outils-stylet')),
+                );
+                await tester.pumpAndSettle();
+                final double haut2 = tester.getRect(capsule).bottom;
+                final double bas2 = tester.getRect(ouvert).top;
+                await tester.tapAt(
+                  Offset(taille.width / 2, (haut2 + bas2) / 2),
+                );
+                await tester.pumpAndSettle();
+                expect(ouvert, findsOneWidget);
+                await tester.tap(
+                  find
+                      .descendant(
+                        of: ouvert,
+                        matching: find.byKey(PanneauSeance.cleReduire),
+                      )
+                      .hitTestable()
+                      .first,
+                );
+                await tester.pumpAndSettle();
+                expect(ouvert, findsNothing);
+              }
               expect(tester.takeException(), isNull);
             });
           }
@@ -1066,20 +1105,29 @@ void main() {
     expect(find.byType(PanneauEleves), findsNothing);
   });
 
-  testWidgets('captures 390', (WidgetTester tester) async {
+  // Fiche 1, « Captures a produire » : a 390 x 844 (pilote, 26/10), nommees
+  // fiche1-<taille>-<etat>.png, avec CAPTURE_DIR seulement.
+  testWidgets('captures de la fiche 1, 390 x 844', (WidgetTester tester) async {
     if (dossierCapture == null) return;
+    const String taille = '390x844';
     await _monter(tester);
     await _attendreLeRepos(tester);
-    await capturerVue(tester, 'salle-390-repos');
+    await capturerVue(tester, 'fiche1-$taille-repos');
     await _toucher(tester);
-    await capturerVue(tester, 'salle-390-toucher');
-    await tester.tap(find.byKey(TelephonePleinEcran.cleCommandesToucher));
+    await capturerVue(tester, 'fiche1-$taille-toucher');
+    await tester.tap(find.byKey(CapsuleVideoTelephone.cleDeplier));
     await tester.pumpAndSettle();
-    await capturerVue(tester, 'salle-390-commandes-support');
+    await capturerVue(tester, 'fiche1-$taille-profil');
+    await tester.tap(find.byKey(ProfilTelephone.cleReduire));
+    await tester.pumpAndSettle();
+    await _ouvrirTiroir(tester);
+    await capturerVue(tester, 'fiche1-$taille-tiroir-support');
     await _onglet(tester, t.salle.seance.commandes.ongletOutils);
-    await capturerVue(tester, 'salle-390-commandes-outils');
+    await tester.tap(find.byKey(const ValueKey<String>('barre-outils-stylet')));
+    await tester.pumpAndSettle();
+    await capturerVue(tester, 'fiche1-$taille-tiroir-outils');
     await tester.tap(find.byKey(TelephonePleinEcran.cleEleves));
     await tester.pumpAndSettle();
-    await capturerVue(tester, 'salle-390-eleves');
+    await capturerVue(tester, 'fiche1-$taille-eleves');
   });
 }
