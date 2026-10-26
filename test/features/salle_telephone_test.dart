@@ -26,6 +26,7 @@ import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_outils_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/panneau_bibliotheque_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_eleves.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_seance.dart'
     show PanneauSeance;
@@ -301,8 +302,9 @@ bool _carte(Widget w) {
 }
 
 void main() {
+  // Les polices du depot, toujours : les largeurs mesurees sont celles de
+  // l'appareil (la police de test peint des carres, deux fois plus larges).
   setUpAll(() async {
-    if (dossierCapture == null) return;
     await chargerPolicesDuDepot();
     await chargerPoliceMadina15();
   });
@@ -765,31 +767,288 @@ void main() {
             _aucuneCommandeEnDouble(tester, 'eleves');
           });
 
-          testWidgets('$nom : les eleves en feuille, cartes qui se deplient', (
-            WidgetTester tester,
-          ) async {
+          testWidgets('$nom : ligne 8, Outils : Stylo, Surligner, Gomme, '
+              'Annuler, les couleurs', (WidgetTester tester) async {
             await _monter(tester, taille: taille, texte: texte);
-            // « Eleves » de la pilule ouvre la feuille.
-            await _toucher(tester);
+            await _ouvrirTiroir(tester);
+            await _onglet(tester, t.salle.seance.commandes.ongletOutils);
+            final Finder outils = find.byKey(OutilsTelephone.cle);
+            expect(outils, findsOneWidget);
+            Finder cle(String k) => find.byKey(ValueKey<String>(k));
+            final Finder stylo = cle('barre-outils-stylet');
+            final Finder surligner = cle('barre-outils-surligneur');
+            final Finder gomme = cle('barre-outils-gomme');
+            for (final Finder f in <Finder>[stylo, surligner, gomme]) {
+              expect(f.hitTestable(), findsOneWidget);
+            }
+            for (final String n in <String>[
+              t.tc.outils.trait.stylet,
+              t.tc.outils.trait.surligneur,
+              t.tc.outils.trait.gomme,
+            ]) {
+              expect(
+                find.descendant(of: outils, matching: find.text(n)),
+                findsOneWidget,
+              );
+            }
+            // Ni Pointeur, ni Ecrire, ni Retablir, ni epaisseurs au telephone.
+            for (final String k in <String>[
+              'salle-outil-pointeur',
+              'salle-outil-ecrire',
+              'barre-outils-retablir',
+              'barre-outils-effacer',
+              'barre-outils-epaisseur',
+            ]) {
+              expect(cle(k), findsNothing, reason: k);
+            }
+            // Quatre cases de meme largeur ; a x1, sur une rangee.
+            final Rect rangee = tester.getRect(
+              find.byKey(OutilsTelephone.cleTuiles),
+            );
+            final List<Rect> r = <Rect>[
+              for (final Finder f in <Finder>[stylo, surligner, gomme])
+                tester.getRect(f),
+            ];
+            expect(r[1].width, moreOrLessEquals(r[0].width, epsilon: 0.5));
+            expect(r[2].width, moreOrLessEquals(r[0].width, epsilon: 0.5));
+            if (texte == 1) {
+              expect(
+                r[0].width,
+                moreOrLessEquals((rangee.width - 3 * 8) / 4, epsilon: 0.5),
+              );
+              expect(r[1].top, moreOrLessEquals(r[0].top, epsilon: 0.5));
+              expect(r[2].top, moreOrLessEquals(r[0].top, epsilon: 0.5));
+            }
+            // Aucun outil retenu : aucune couleur.
+            final Finder couleurs = cle('barre-outils-couleurs');
+            expect(couleurs, findsNothing);
+            Color? aplat(Finder f) =>
+                (tester
+                            .widget<DecoratedBox>(
+                              find.descendant(
+                                of: f,
+                                matching: cle('tuile-commande'),
+                              ),
+                            )
+                            .decoration
+                        as BoxDecoration)
+                    .color;
+            // Stylo : lui seul en couleur ; les couleurs, qui defilent.
+            await tester.tap(stylo);
+            await tester.pumpAndSettle();
+            expect(aplat(stylo), isNotNull);
+            expect(aplat(surligner), isNull);
+            expect(aplat(gomme), isNull);
+            expect(couleurs, findsOneWidget);
+            expect(
+              find.ancestor(of: couleurs, matching: find.byType(Scrollable)),
+              findsWidgets,
+            );
+            final Finder derniere = cle('barre-couleur-marron');
+            await tester.ensureVisible(couleurs);
+            await tester.pumpAndSettle();
+            await tester.drag(
+              couleurs,
+              Offset(_ltr() ? -taille.width : taille.width, 0),
+            );
+            await tester.pumpAndSettle();
+            expect(derniere.hitTestable(), findsOneWidget);
+            // Gomme : plus de couleurs ; Surligner : de nouveau.
+            await tester.tap(gomme);
+            await tester.pumpAndSettle();
+            expect(aplat(gomme), isNotNull);
+            expect(aplat(stylo), isNull);
+            expect(couleurs, findsNothing);
+            await tester.tap(surligner);
+            await tester.pumpAndSettle();
+            expect(couleurs, findsOneWidget);
+            expect(tester.takeException(), isNull);
+            verifierAucunMotCoupe(tester, outils);
+          });
+
+          testWidgets('$nom : ligne 9, Support : Tableau, Bibliotheque, '
+              '« Ranger le support »', (WidgetTester tester) async {
+            await _monter(tester, taille: taille, texte: texte);
+            await _ouvrirTiroir(tester);
+            final Finder tiroir = find.byKey(TiroirCommandesTelephone.cle);
+            Finder dans(Finder f) => find.descendant(of: tiroir, matching: f);
+            // Le Tableau.
+            expect(
+              dans(find.byKey(const ValueKey<String>('bouton-tableau'))),
+              findsOneWidget,
+            );
+            expect(
+              dans(find.text(t.salle.seance.commandes.affichageTableau)),
+              findsOneWidget,
+            );
+            // La Bibliotheque existante, sans sa croix ; la page du Coran y
+            // est.
+            expect(dans(find.byType(PanneauBibliothequeSalle)), findsOneWidget);
+            expect(
+              find.byKey(const ValueKey<String>('bibliotheque-fermer')),
+              findsNothing,
+            );
+            // « Ranger le support », une ligne nommee, a la place de la croix
+            // du haut (nulle part ailleurs).
+            final Finder ranger = find.byKey(
+              TiroirCommandesTelephone.cleRanger,
+            );
+            expect(ranger, findsOneWidget);
+            expect(dans(ranger), findsOneWidget);
+            expect(
+              dans(find.text(t.salle.seance.rangement.rangerSupport)),
+              findsOneWidget,
+            );
+            // Aucune croix hors du tiroir.
+            for (final Element e
+                in find
+                    .byIcon(AppIcons.fermer.repos)
+                    .hitTestable()
+                    .evaluate()) {
+              expect(
+                dans(find.byWidget(e.widget)).evaluate(),
+                isNotEmpty,
+                reason: 'croix hors du tiroir',
+              );
+            }
+            verifierAucunMotCoupe(tester, ranger);
+            // La page du Coran, plus bas dans la liste.
+            final Finder liste = find.byKey(PanneauBibliothequeSalle.cle);
+            for (
+              int i = 0;
+              i < 20 &&
+                  dans(find.text(t.salle.supports.coran)).evaluate().isEmpty;
+              i++
+            ) {
+              await tester.drag(liste, const Offset(0, -120));
+              await tester.pumpAndSettle();
+            }
+            expect(dans(find.text(t.salle.supports.coran)), findsWidgets);
+            expect(tester.takeException(), isNull);
+          });
+
+          testWidgets('$nom : ligne 10, Eleves ouvre la feuille, a la place '
+              'du tiroir', (WidgetTester tester) async {
+            await _monter(tester, taille: taille, texte: texte);
+            await _ouvrirTiroir(tester);
+            expect(find.byKey(TiroirCommandesTelephone.cle), findsOneWidget);
             await tester.tap(find.byKey(TelephonePleinEcran.cleEleves));
             await tester.pumpAndSettle();
-            expect(find.byKey(FeuilleElevesTelephone.cle), findsOneWidget);
+            final Finder feuille = find.byKey(FeuilleElevesTelephone.cle);
+            expect(feuille, findsOneWidget);
+            expect(find.byKey(TiroirCommandesTelephone.cle), findsNothing);
             expect(find.byType(PanneauEleves), findsOneWidget);
-            expect(find.text('Yasmine'), findsWidgets);
-            // ignore: avoid_print
-            print(
-              'DBG feuille ${tester.getRect(find.byKey(FeuilleElevesTelephone.cle))} dock ${tester.getRect(_dock)} yas ${find.text('Yasmine').evaluate().map((Element e) => tester.getRect(find.byWidget(e.widget))).toList()}',
-            );
+            expect(_piluleDuBas(tester, feuille).hitTestable(), findsOneWidget);
             // La carte d'un eleve se deplie sur place (comme sur ordinateur).
+            expect(find.text('Yasmine'), findsWidgets);
+            await tester.ensureVisible(find.text('Yasmine').first);
+            await tester.pumpAndSettle();
             await tester.tap(find.text('Yasmine').first);
             await tester.pumpAndSettle();
             expect(tester.takeException(), isNull);
             expect(verifierAucuneCarteCollee(tester, estCarte: _carte), 2);
-            final Finder feuille = find.byKey(FeuilleElevesTelephone.cle);
-            verifierSansChevauchement(tester, <Finder>[
-              feuille,
-              _piluleDuBas(tester, feuille),
-            ]);
+            expect(find.byType(PanneauEleves), findsOneWidget);
+          });
+
+          for (final bool elevesOuverts in <bool>[false, true]) {
+            final String panneau = elevesOuverts ? 'eleves' : 'tiroir';
+            testWidgets('$nom : ligne 11, $panneau : un seul panneau, ni sur '
+                'la pilule ni sur la capsule ; Reduire et la page le '
+                'referment', (WidgetTester tester) async {
+              await _monter(tester, taille: taille, texte: texte);
+              await _toucher(tester);
+              Future<Finder> ouvrir() async {
+                if (elevesOuverts) {
+                  await tester.tap(find.byKey(TelephonePleinEcran.cleEleves));
+                } else {
+                  await tester.tap(
+                    find.byKey(TelephonePleinEcran.cleCommandesToucher),
+                  );
+                }
+                await tester.pumpAndSettle();
+                return find.byKey(
+                  elevesOuverts
+                      ? FeuilleElevesTelephone.cle
+                      : TiroirCommandesTelephone.cle,
+                );
+              }
+
+              final Finder ouvert = await ouvrir();
+              expect(ouvert, findsOneWidget);
+              expect(
+                find.byKey(
+                  elevesOuverts
+                      ? TiroirCommandesTelephone.cle
+                      : FeuilleElevesTelephone.cle,
+                ),
+                findsNothing,
+              );
+              final Finder capsule = find.byKey(CapsuleVideoTelephone.cle);
+              verifierSansChevauchement(tester, <Finder>[
+                ouvert,
+                _piluleDuBas(tester, ouvert),
+              ]);
+              verifierSansChevauchement(tester, <Finder>[ouvert, capsule]);
+              // « Reduire » le referme.
+              await tester.tap(
+                find
+                    .descendant(
+                      of: ouvert,
+                      matching: find.byKey(PanneauSeance.cleReduire),
+                    )
+                    .hitTestable()
+                    .first,
+              );
+              await tester.pumpAndSettle();
+              expect(ouvert, findsNothing);
+              // Un toucher de la page, entre la capsule et le panneau, aussi.
+              await _toucher(tester);
+              await ouvrir();
+              final double haut = tester.getRect(capsule).bottom;
+              final double bas = tester.getRect(ouvert).top;
+              expect(bas, greaterThan(haut));
+              await tester.tapAt(Offset(taille.width / 2, (haut + bas) / 2));
+              await tester.pumpAndSettle();
+              expect(ouvert, findsNothing);
+              expect(tester.takeException(), isNull);
+            });
+          }
+
+          testWidgets('$nom : ligne 13, la pilule du zoom suit le toucher', (
+            WidgetTester tester,
+          ) async {
+            await _monter(tester, taille: taille, texte: texte);
+            final Finder zoom = find.byKey(
+              const ValueKey<String>('salle-zoom'),
+            );
+            await _attendreLeRepos(tester);
+            expect(zoom.hitTestable(), findsNothing);
+            await _toucher(tester);
+            expect(zoom, findsOneWidget);
+            final Rect z = tester.getRect(zoom);
+            // Au bord de fin, a mi-hauteur.
+            expect(
+              _ltr() ? taille.width - z.right : z.left,
+              moreOrLessEquals(16, epsilon: 1),
+            );
+            expect(
+              z.center.dy,
+              moreOrLessEquals(taille.height / 2, epsilon: 1),
+            );
+            // Jamais sur un panneau ouvert ni sur le profil.
+            await tester.tap(
+              find.byKey(TelephonePleinEcran.cleCommandesToucher),
+            );
+            await tester.pumpAndSettle();
+            expect(zoom, findsNothing);
+            await tester.tap(
+              find.byKey(PanneauSeance.cleReduire).hitTestable().first,
+            );
+            await tester.pumpAndSettle();
+            await tester.tap(find.byKey(CapsuleVideoTelephone.cleDeplier));
+            await tester.pumpAndSettle();
+            expect(zoom, findsNothing);
+            expect(tester.takeException(), isNull);
           });
         }
       }
@@ -805,39 +1064,6 @@ void main() {
     expect(find.byKey(TelephonePleinEcran.cleCommandesRepos), findsNothing);
     expect(find.byKey(TiroirCommandesTelephone.cle), findsNothing);
     expect(find.byType(PanneauEleves), findsNothing);
-  });
-
-  testWidgets('la barre d ecriture tient dans le tiroir : les dix couleurs '
-      'restent atteignables', (WidgetTester tester) async {
-    await _monter(tester);
-    await _ouvrirTiroir(tester);
-    await _onglet(tester, t.salle.seance.commandes.ongletOutils);
-    await tester.tap(
-      find
-          .byKey(const ValueKey<String>('salle-outil-${'ecrire'}'))
-          .hitTestable()
-          .first,
-    );
-    await tester.pumpAndSettle();
-    expect(find.byType(BarreOutilsSalle), findsOneWidget);
-    expect(tester.takeException(), isNull);
-    // Chaque couleur reste atteignable : la rangee defile au doigt.
-    final Finder couleurs = find.byKey(
-      const ValueKey<String>('barre-outils-couleurs'),
-    );
-    expect(couleurs, findsOneWidget);
-    final Finder derniere = find.byKey(
-      const ValueKey<String>('barre-couleur-marron'),
-    );
-    expect(derniere, findsOneWidget);
-    final Finder defilement = find.ancestor(
-      of: couleurs,
-      matching: find.byType(Scrollable),
-    );
-    expect(defilement, findsWidgets);
-    await tester.drag(couleurs, const Offset(-400, 0));
-    await tester.pumpAndSettle();
-    expect(derniere.hitTestable(), findsOneWidget);
   });
 
   testWidgets('captures 390', (WidgetTester tester) async {

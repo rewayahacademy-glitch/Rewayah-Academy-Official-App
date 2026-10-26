@@ -79,10 +79,15 @@ class PanneauBibliothequeSalle extends StatefulWidget {
   const PanneauBibliothequeSalle({
     required this.supports,
     this.onFermer,
+    this.entete = const <Widget>[],
     super.key,
   });
 
   final List<SupportBibliotheque> supports;
+
+  /// Ce qui se pose en tete de la liste et defile avec elle (le tiroir du
+  /// telephone : le Tableau et « Ranger le support », fiche 1, ligne 9).
+  final List<Widget> entete;
 
   /// La croix « Fermer » et le titre du panneau ; `null` : ni l'un ni
   /// l'autre (le tiroir du telephone porte deja son titre et « Reduire »).
@@ -150,6 +155,7 @@ class _EtatPanneauBibliotheque extends State<PanneauBibliothequeSalle> {
     return ListView(
       key: PanneauBibliothequeSalle.cle,
       children: <Widget>[
+        ...widget.entete,
         if (widget.onFermer case final VoidCallback fermer) ...<Widget>[
           Row(
             children: <Widget>[

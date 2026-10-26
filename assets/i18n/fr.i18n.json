@@ -574,6 +574,7 @@
       },
       "rangement": {
         "ranger": "Ranger dans la bibliothèque",
+        "rangerSupport": "Ranger le support",
         "menuSupport": "Actions du support affiché",
         "menuTableau": "Actions du tableau libre",
         "range": "Support rangé",

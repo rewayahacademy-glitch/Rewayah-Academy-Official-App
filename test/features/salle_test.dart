@@ -46,7 +46,6 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
 import 'package:rewayah_academy/core/widgets/bouton_couleur.dart';
 import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
-import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_enseignant/page_coran_salle.dart';
@@ -63,8 +62,6 @@ import 'package:rewayah_academy/features/salle_seance/panneau_seance.dart'
 import 'package:rewayah_academy/features/salle_seance/resultat_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_ordinateur.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
-import 'package:rewayah_academy/features/salle_seance/telephone_enseignant.dart'
-    show OngletTiroir;
 import 'package:rewayah_academy/features/salle_seance/telephone_plein_ecran.dart';
 import 'package:rewayah_academy/features/tc_mushaf/page_madina_15.dart'
     show cleLigneMadina15;
@@ -2800,16 +2797,8 @@ void main() {
           // Fiche 1, ligne 3 : « Commandes » au-dessus de la pilule.
           await tester.tap(find.byKey(TelephonePleinEcran.cleCommandesToucher));
           await tester.pumpAndSettle();
-          // ONGLETS-1 : en menu quand les trois mots ne tiennent pas.
-          final Finder menu = find.byType(MenuFiltre<OngletTiroir>);
-          if (menu.evaluate().isNotEmpty) {
-            await tester.tap(menu);
-            await tester.pumpAndSettle();
-          }
-          await tester.tap(
-            find.text(t.salle.seance.commandes.ongletOutils).hitTestable().last,
-          );
-          await tester.pumpAndSettle();
+          // Fiche 1, ligne 9 : le Tableau est dans l'onglet Support, ouvert
+          // d'emblee.
         }
         await tester.tap(find.byKey(const ValueKey<String>('bouton-tableau')));
         await tester.pumpAndSettle();

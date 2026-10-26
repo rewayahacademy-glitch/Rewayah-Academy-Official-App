@@ -216,18 +216,66 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
   bool _profil = false;
   final GlobalKey _cleProfil = GlobalKey();
 
+  /// Le panneau du bas ouvert et la pilule : un toucher sur eux traverse
+  /// jusqu'a la page (les zones vides laissent passer le toucher) ; il ne
+  /// referme rien.
+  final GlobalKey _clePanneau = GlobalKey();
+  final GlobalKey _cleBas = GlobalKey();
+
+  /// Vrai quand [position] tombe dans le widget de [cle].
+  bool _dans(GlobalKey cle, Offset position) {
+    final RenderObject? r = cle.currentContext?.findRenderObject();
+    if (r is! RenderBox || !r.hasSize) return false;
+    return (Offset.zero & r.size).contains(r.globalToLocal(position));
+  }
+
   void _replier() {
     if (_profil) setState(() => _profil = false);
   }
 
-  /// Un toucher hors de la carte du profil la replie.
-  void _toucherPage(PointerDownEvent e) {
-    if (!_profil) return;
-    final RenderObject? carte = _cleProfil.currentContext?.findRenderObject();
-    if (carte is RenderBox && carte.hasSize) {
-      final Offset local = carte.globalToLocal(e.position);
-      if ((Offset.zero & carte.size).contains(local)) return;
+  /// Fiche 1, ligne 11 : le panneau du bas ouvert (tiroir ou feuille des
+  /// eleves) se referme.
+  void _fermerPanneau() {
+    switch (vue.panneau) {
+      case PanneauOuvert.commandes:
+        actions.onCommandes?.call();
+      case PanneauOuvert.eleves:
+        actions.onEleves?.call();
+      default:
+        break;
     }
+  }
+
+  void _deplierProfil() {
+    // Ligne 11 : un panneau du bas ne couvre jamais le haut ; le profil
+    // deplie le referme.
+    _fermerPanneau();
+    setState(() => _profil = true);
+  }
+
+  @override
+  void didUpdateWidget(TelephonePleinEcran ancien) {
+    super.didUpdateWidget(ancien);
+    // Un panneau du bas s'ouvre : le profil se replie (rien ne se recouvre).
+    if (_profil &&
+        widget.vue.panneau != PanneauOuvert.aucun &&
+        widget.vue.panneau != ancien.vue.panneau) {
+      _profil = false;
+    }
+  }
+
+  /// Un toucher de la page replie le profil (hors de sa carte) et referme le
+  /// panneau du bas (lignes 5 et 11).
+  void _toucherPage(PointerDownEvent e) {
+    if (salleTelephoneEnseignant(context, vue) &&
+        (vue.panneau == PanneauOuvert.commandes ||
+            vue.panneau == PanneauOuvert.eleves) &&
+        !_dans(_clePanneau, e.position) &&
+        !_dans(_cleBas, e.position) &&
+        !_dans(_cleProfil, e.position)) {
+      _fermerPanneau();
+    }
+    if (!_profil || _dans(_cleProfil, e.position)) return;
     _replier();
   }
 
@@ -365,8 +413,7 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                               Center(
                                 child: CapsuleVideoTelephone(
                                   vue: vue,
-                                  onDeplier: () =>
-                                      setState(() => _profil = true),
+                                  onDeplier: _deplierProfil,
                                 ),
                               ),
                             BandeauSecours(
@@ -473,9 +520,15 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                         // Plan §4 : le tiroir des Commandes et la feuille
                         // des eleves montent du bas, AU-DESSUS de la pilule
                         // de l'appel : a 360 en texte agrandi, ils se tassent
-                        // au lieu de la recouvrir.
+                        // au lieu de la recouvrir. Fiche 1, ligne 11 : ils
+                        // s'arretent aussi sous la capsule.
                         PositionedDirectional(
-                          top: 0,
+                          top: capsule
+                              ? MediaQuery.paddingOf(context).top +
+                                    AppSpacing.lg +
+                                    CapsuleVideoTelephone.hauteur(context) +
+                                    AppSpacing.sm
+                              : 0,
                           start: 0,
                           end: 0,
                           bottom: 0,
@@ -486,6 +539,7 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                               children: <Widget>[
                                 if ((panneau || eleves) && enseignant)
                                   Flexible(
+                                    key: _clePanneau,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: AppSpacing.sm,
@@ -524,7 +578,7 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                                       ),
                                     ),
                                   ),
-                                bas,
+                                KeyedSubtree(key: _cleBas, child: bas),
                               ],
                             ),
                           ),
@@ -536,10 +590,13 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                         // Plan §4 : un panneau ouvert au telephone prend le
                         // bas de l'ecran ; la pilule du zoom ne flotte pas
                         // par-dessus.
+                        // Fiche 1, ligne 13 : ni sur un panneau ouvert, ni
+                        // sur le profil deplie.
                         if (!libre &&
                             !paletteADroite &&
                             commandesADroite == null &&
                             !((panneau || eleves) && enseignant) &&
+                            !_profil &&
                             (actions.onZoomPlus != null ||
                                 actions.onZoomMoins != null))
                           PositionedDirectional(

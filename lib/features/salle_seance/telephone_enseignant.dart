@@ -1,16 +1,16 @@
-// Plan de composition de la salle du 26/10/2026, §4 (PR B), valide par le
-// directeur a 08:40 : l'enseignant au telephone (moins de 600 points).
+// Fiche 1 de la salle au telephone (26/10/2026, docs/current/maquettes/salle/
+// FICHE-1-TELEPHONE-2026-10-26.md) : l'enseignant sous 840 points de large
+// (telephone, iPad en portrait).
 //
-// Au repos, la page ou le tableau seul et, en bas, « Commandes ». Au toucher,
-// en haut la capsule de sa video (« Voir la video en grand »), en bas la
-// pilule micro, camera, quitter. « Commandes » deplie un tiroir a trois
-// onglets : Support (la Bibliotheque), Outils (Pointeur, Ecrire, Tableau, et
-// quand on ecrit la barre d'outils), Seance (micro, camera, eleves, quitter).
+// Au repos, la capsule de sa video en haut et « Commandes » en bas. Au
+// toucher, la pilule Micro, Camera, Eleves, Quitter, et « Commandes »
+// au-dessus. Toucher la capsule deplie le profil. « Commandes » deplie un
+// tiroir a deux onglets : Support (Tableau, « Ranger le support », la
+// Bibliotheque), Outils (Stylo, Surligner, Gomme, Annuler, et les couleurs).
 // Les eleves montent en feuille du bas, leurs cartes se deplient sur place.
 // Rien de neuf : le cadre est [PanneauSeance] (feuille), la Bibliotheque
-// [PanneauBibliothequeSalle], les tuiles celles de la barre de l'ordinateur
-// ([DockSeance] nommee, [tuileOutilSalle]), la barre d'outils
-// [BarreOutilsSalle], les eleves [PanneauEleves].
+// [PanneauBibliothequeSalle], les tuiles [TuileCommandeSalle], les eleves
+// [PanneauEleves].
 
 import 'dart:math' as math;
 
@@ -22,27 +22,27 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
 import '../../core/tc_outils/etat_outils.dart';
-import '../../core/tc_outils/port_dock_hote.dart' show OutilDock;
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bouton_icone.dart';
+import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/commande_salle.dart' show SurfaceTuilesSalle;
 import '../../core/widgets/controle_segmente.dart' show Segment;
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/selecteur_section.dart';
+import '../../core/widgets/setting_row.dart';
 import 'actions_seance.dart';
 import 'barre_outils_salle.dart';
-import 'dock_seance.dart';
+import 'dock_seance.dart' show diametreBoutonAppel;
 import 'media_salle.dart';
 import 'panneau_bibliotheque_salle.dart';
 import 'panneau_eleves.dart';
 import 'panneau_seance.dart';
 import 'pilule_etat_salle.dart';
-import 'salle_ordinateur.dart' show tuileOutilSalle;
 import 'salle_seance.dart' show EtatLocalSeance;
-import 'vignette_video.dart' show SignalVideo, VignetteVideo;
+import 'vignette_video.dart' show MesuresVignette, SignalVideo, VignetteVideo;
 import 'vue_seance.dart';
 
 /// Les deux onglets du tiroir des Commandes du telephone (fiche 1, ligne 7 :
@@ -76,6 +76,15 @@ class CapsuleVideoTelephone extends StatelessWidget {
 
   /// La largeur de la video dans la capsule.
   static const double largeurVideo = AppSpacing.respiration * 1.5;
+
+  /// La hauteur de la capsule : la plus haute de la video, de la cible du
+  /// point et de l'oeil, et sa marge.
+  static double hauteur(BuildContext context) =>
+      2 * AppSpacing.sm +
+      math.max(
+        largeurVideo / MesuresVignette.ratio,
+        math.max(AppTouchTarget.standard, diametreBoutonAppel(context)),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -362,8 +371,8 @@ class TiroirCommandesTelephone extends ConsumerStatefulWidget {
   /// La cle des onglets.
   static const Key cleOnglets = ValueKey<String>('telephone-tiroir-onglets');
 
-  /// La cle de la rangee des outils.
-  static const Key cleOutils = ValueKey<String>('telephone-tiroir-outils');
+  /// La cle de « Ranger le support » (fiche 1, ligne 9).
+  static const Key cleRanger = ValueKey<String>('salle-ranger-support');
 
   @override
   ConsumerState<TiroirCommandesTelephone> createState() => _EtatTiroir();
@@ -379,56 +388,44 @@ class _EtatTiroir extends ConsumerState<TiroirCommandesTelephone> {
   Widget build(BuildContext context) {
     final VueSeance vue = widget.vue;
     final ActionsSeance actions = widget.actions;
-    final EtatLocalSeance local = widget.local;
     final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
-    final OutilDock? outil = ref.watch(
-      etatOutilsProvider.select((EtatOutils e) => e.outilActif),
-    );
+    final VoidCallback? tableau = actions.onTableau;
+    final VoidCallback? ranger = vue.voitRanger ? actions.onRanger : null;
     final Widget contenu = switch (_onglet) {
+      // Fiche 1, ligne 9 : le Tableau, « Ranger le support » (a la place de
+      // la croix du haut), puis la Bibliotheque (le Coran et les supports).
       OngletTiroir.support => PanneauBibliothequeSalle(
         supports: media?.supports ?? const <SupportBibliotheque>[],
-      ),
-      OngletTiroir.outils => SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Center(
-              child: DockSeance(
-                key: TiroirCommandesTelephone.cleOutils,
-                vue: vue,
-                actions: actions,
-                microOuvert: local.microOuvert,
-                cameraAllumee: local.cameraAllumee,
-                nommee: true,
-                commandes: const <CommandeDock>[CommandeDock.tableau],
-                avant: <Widget>[
-                  if (actions.onOutil != null) ...<Widget>[
-                    tuileOutilSalle(
-                      ref,
-                      actions: actions,
-                      outil: outil,
-                      o: OutilEnseignement.pointeur,
-                    ),
-                    if (vue.ecritureProposee)
-                      tuileOutilSalle(
-                        ref,
-                        actions: actions,
-                        outil: outil,
-                        o: OutilEnseignement.ecrire,
-                      ),
-                  ],
-                ],
-              ),
+        entete: <Widget>[
+          if (tableau != null || ranger != null) ...<Widget>[
+            CarteLignes(
+              lignes: <Widget>[
+                if (tableau != null)
+                  SettingRow(
+                    key: const ValueKey<String>('bouton-tableau'),
+                    icon: AppIcons.annoter,
+                    title: t.salle.seance.commandes.affichageTableau,
+                    value: vue.tableauOuvert
+                        ? t.salle.seance.tableauOuvert
+                        : t.salle.seance.tableauFerme,
+                    onPress: tableau,
+                  ),
+                if (ranger != null)
+                  SettingRow(
+                    key: TiroirCommandesTelephone.cleRanger,
+                    icon: AppIcons.fermer,
+                    title: t.salle.seance.rangement.rangerSupport,
+                    onPress: ranger,
+                  ),
+              ],
             ),
-            // Plan §3 : quand l'enseignant ecrit, la barre d'outils, tout
-            // visible (stylo, surligneur, gomme, annuler, retablir, couleurs,
-            // epaisseurs).
-            if (barreOutilsVisible(ref, vue)) ...<Widget>[
-              Ecart.vMd,
-              BarreOutilsSalle(vue: vue),
-            ],
+            Ecart.vLg,
           ],
-        ),
+        ],
+      ),
+      // Fiche 1, ligne 8 : Stylo, Surligner, Gomme, Annuler.
+      OngletTiroir.outils => SingleChildScrollView(
+        child: OutilsTelephone(vue: vue, actions: actions),
       ),
     };
     return ConstrainedBox(
@@ -505,6 +502,9 @@ class FeuilleElevesTelephone extends StatelessWidget {
           inscrits: vue.inscrits,
         ),
         onFermer: actions.onEleves,
+        // Fiche 1, ligne 11 : « Reduire » comme le tiroir.
+        libelleFermer: t.salle.seance.contexte.reduire,
+        semantiqueFermer: t.salle.seance.contexte.reduireParticipants,
         forme: FormePanneau.feuille,
         enfant: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
