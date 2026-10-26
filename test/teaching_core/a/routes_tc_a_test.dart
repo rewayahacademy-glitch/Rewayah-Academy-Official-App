@@ -93,7 +93,8 @@ void main() {
     RoleEspaceGroupe.eleve,
     RoleEspaceGroupe.enseignant,
   ]) {
-    testWidgets('${role.name} : « Rejoindre » mene a /salle avec sa '
+    // Lot salle 3 (pilote, 25/10/2026) : entree directe, sans preparation.
+    testWidgets('${role.name} : « Rejoindre » mene a /salle, sans '
         'preparation', (WidgetTester tester) async {
       await avecLargeur(tester, largeurMobile, () async {
         BilletSalle? billet;
@@ -132,7 +133,7 @@ void main() {
         expect(find.text('salle'), findsOneWidget);
         expect(billet, isNotNull);
         expect(billet!.sessionId, 'demo-seance-an-nour');
-        expect(billet!.preparation, isTrue);
+        expect(billet!.preparation, isFalse);
         expect(billet!.groupeId, GroupesDemonstration.anNour);
       });
     });

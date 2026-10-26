@@ -14,8 +14,9 @@ enum FournisseurVideo {
   autoHeberge;
 
   /// Lit la valeur rendue par la base.
-  static FournisseurVideo depuis(String? valeur) =>
-      valeur == 'self_hosted' ? FournisseurVideo.autoHeberge : FournisseurVideo.cloud;
+  static FournisseurVideo depuis(String? valeur) => valeur == 'self_hosted'
+      ? FournisseurVideo.autoHeberge
+      : FournisseurVideo.cloud;
 }
 
 /// Ce qu'un participant a le droit de faire dans la salle.
@@ -37,13 +38,14 @@ class CapacitesSalle {
   });
 
   /// Lit les capacites rendues par `create-room-token`.
-  factory CapacitesSalle.depuisJson(Map<String, dynamic> json) => CapacitesSalle(
-    peutPublier: json['can_publish'] as bool? ?? false,
-    peutPublierVideo: json['can_publish_video'] as bool? ?? false,
-    peutPublierDonnees: json['can_publish_data'] as bool? ?? false,
-    peutRecevoir: json['can_subscribe'] as bool? ?? true,
-    invisible: json['hidden'] as bool? ?? false,
-  );
+  factory CapacitesSalle.depuisJson(Map<String, dynamic> json) =>
+      CapacitesSalle(
+        peutPublier: json['can_publish'] as bool? ?? false,
+        peutPublierVideo: json['can_publish_video'] as bool? ?? false,
+        peutPublierDonnees: json['can_publish_data'] as bool? ?? false,
+        peutRecevoir: json['can_subscribe'] as bool? ?? true,
+        invisible: json['hidden'] as bool? ?? false,
+      );
 
   /// Le participant peut publier au moins sa voix.
   final bool peutPublier;
@@ -91,7 +93,8 @@ class AccesSalle {
     fournisseur: FournisseurVideo.depuis(json['provider'] as String?),
     role: json['role'] as String? ?? '',
     capacites: CapacitesSalle.depuisJson(
-      (json['capabilities'] as Map<String, dynamic>?) ?? const <String, dynamic>{},
+      (json['capabilities'] as Map<String, dynamic>?) ??
+          const <String, dynamic>{},
     ),
     expireLe:
         DateTime.tryParse(json['expire_le'] as String? ?? '')?.toLocal() ??
@@ -186,6 +189,26 @@ enum QualiteLien {
 
   /// Perdue.
   perdue,
+}
+
+/// Vrai si [a] et [b] ne different que par `parle` (qui parle en ce moment) :
+/// memes personnes, dans le meme ordre, memes micro, camera et qualite.
+bool memesHorsParole(List<ParticipantSalle> a, List<ParticipantSalle> b) {
+  if (a.length != b.length) return false;
+  for (int i = 0; i < a.length; i++) {
+    final ParticipantSalle x = a[i];
+    final ParticipantSalle y = b[i];
+    if (x.identite != y.identite ||
+        x.nom != y.nom ||
+        x.role != y.role ||
+        x.estLocal != y.estLocal ||
+        x.micro != y.micro ||
+        x.camera != y.camera ||
+        x.qualite != y.qualite) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /// Un participant de la salle, reduit a ce que l'interface affiche.
@@ -350,6 +373,27 @@ class ContenuPresente {
   /// dernier connu peut arriver apres lui sur un canal non fiable, et c'est
   /// cette date qui permet de ne pas reculer d'une page.
   final DateTime emisLe;
+
+  /// La page qui signale « rien n'est presente » : l'enseignant a range le
+  /// support (lot salle 3, directeur, 25/10/2026 : un support ouvert se
+  /// ferme). Elle voyage comme une page, pour que la classe et un eleve qui
+  /// arrive apres l'apprennent par le meme canal et le meme rejeu.
+  static const int pageRetiree = 0;
+
+  /// Le contenu « rien n'est presente », pose par [presentePar].
+  factory ContenuPresente.retire({
+    required String presentePar,
+    required DateTime emisLe,
+  }) => ContenuPresente(
+    page: pageRetiree,
+    sourate: 0,
+    verset: 0,
+    presentePar: presentePar,
+    emisLe: emisLe,
+  );
+
+  /// Vrai quand ce contenu dit que rien n'est presente.
+  bool get estRetire => page == pageRetiree;
 
   /// L'adresse courte, « 2:255 ». Le meme format que `VersetCoran.reference`.
   String get reference => '$sourate:$verset';

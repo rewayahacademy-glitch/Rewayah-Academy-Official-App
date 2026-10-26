@@ -1,7 +1,9 @@
-// BTN-TESTER-1 (revue du directeur 01/10, K-54, K-56) : « Tester la camera »
-// occupe toute la largeur de sa carte, en bas de la carte, contenu centre.
-// Le test mesure la geometrie rendue, a 320 et 1440 px, texte x1 et x2, en
-// clair et en sombre.
+// BTN-TESTER-1 (revue du directeur 01/10) remplace par le lot salle 3
+// (pilote, 25/10/2026) : « Tester la camera », l'apercu fixe et la liste
+// d'equipement sont retires de la preparation (ils ne mesuraient rien). Le
+// test verifie leur absence, meme avec un test de camera branche, et que la
+// page reste sans debordement avec son seul bouton « Entrer », a 320 et
+// 1440 px, texte x1 et x2, en clair et en sombre.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -72,50 +74,25 @@ void main() {
     for (final double texte in const <double>[1, 2]) {
       for (final Brightness lum in Brightness.values) {
         testWidgets(
-          '« Tester la camera » prend la largeur de sa carte, en bas, centre '
+          'lot salle 3 : aucun « Tester la camera » ni apercu fixe '
           '(${taille.width.toInt()} px, texte x${texte.toInt()}, ${lum.name})',
           (WidgetTester tester) async {
             await _poser(tester, taille: taille, texte: texte, luminosite: lum);
-
-            final Finder bouton = find.byKey(
-              const ValueKey<String>('preparation-tester-camera'),
-            );
-            expect(bouton, findsOneWidget);
-            expect(tester.widget(bouton), isA<ActionPrincipale>());
-            await tester.ensureVisible(bouton);
-            await tester.pump();
-
-            final Finder carte = find
-                .ancestor(of: bouton, matching: find.byType(AppCard))
-                .first;
-            final Rect c = tester.getRect(carte);
-            final Rect b = tester.getRect(bouton);
-
-            // La marge de la carte, lue a gauche, est celle de droite et du
-            // bas : le bouton remplit la carte en largeur et ferme sa colonne.
-            final double margeDebut = b.left - c.left;
-            final double margeFin = c.right - b.right;
-            final double margeBas = c.bottom - b.bottom;
+            expect(tester.takeException(), isNull);
             expect(
-              (margeDebut - margeFin).abs(),
-              lessThanOrEqualTo(toleranceGarde),
-              reason: 'bouton pas sur toute la largeur : $b dans $c',
+              find.byKey(const ValueKey<String>('preparation-tester-camera')),
+              findsNothing,
             );
-            expect(
-              (margeBas - margeDebut).abs(),
-              lessThanOrEqualTo(toleranceGarde),
-              reason: 'bouton pas en bas de la carte : $b dans $c',
+            expect(find.text(t.salle.preparation.testerCamera), findsNothing);
+            expect(find.text(t.salle.preparation.cameraCoupee), findsNothing);
+            // Une seule carte : la fiche de la seance.
+            expect(find.byType(AppCard), findsOneWidget);
+            final Finder entrer = find.byKey(
+              const ValueKey<String>('preparation-entrer'),
             );
-            expect(
-              b.width,
-              greaterThan(c.width * 0.6),
-              reason: 'le bouton ne remplit pas sa carte : $b dans $c',
-            );
-            verifierBoutonCentre(
-              tester,
-              bouton,
-              t.salle.preparation.testerCamera,
-            );
+            expect(entrer, findsOneWidget);
+            expect(tester.widget(entrer), isA<ActionPrincipale>());
+            verifierUnSeulBoutonPlein(tester);
           },
         );
       }

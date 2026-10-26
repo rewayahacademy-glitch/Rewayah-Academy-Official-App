@@ -87,7 +87,12 @@ enum CauseImpasse {
   configuration,
 
   /// Le reseau ou le backend n'a pas repondu. Se reessaye.
-  reseau;
+  reseau,
+
+  /// La salle etait ouverte, puis la connexion est perdue pour de bon
+  /// (deconnexion definitive, lot salle 3, audit reseau du 25/10/2026). Se
+  /// reessaie avec un nouveau jeton, comme « Retourner dans la salle ».
+  connexionPerdue;
 
   /// Traduit le refus du backend en ce que l'usager peut comprendre.
   static CauseImpasse depuis(MotifRefusSalle motif) => switch (motif) {
@@ -99,7 +104,8 @@ enum CauseImpasse {
 
   /// Vrai quand reessayer a un sens. Un refus d'acces n'en a pas : l'heure
   /// n'aura pas change, et un bouton qui echoue deux fois use la confiance.
-  bool get seReessaye => this == materiel || this == reseau;
+  bool get seReessaye =>
+      this == materiel || this == reseau || this == connexionPerdue;
 }
 
 /// Ou en est l'entree en salle.

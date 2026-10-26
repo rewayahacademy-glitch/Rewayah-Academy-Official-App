@@ -14,6 +14,8 @@ import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
@@ -24,6 +26,7 @@ import 'package:rewayah_academy/features/salle_seance/resultat_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../support/garde_interface.dart';
 
 void _rien() {}
 void _aller(String _) {}
@@ -50,6 +53,7 @@ Future<void> _monterFin(
   VueSeance? vue,
   bool indisponible = false,
   ThemeMode mode = ThemeMode.light,
+  VoidCallback? onRetournerSalle,
 }) async {
   fixerVueCapture(tester, taille, 1);
   await tester.pumpWidget(
@@ -61,6 +65,7 @@ Future<void> _monterFin(
         actions: _actions,
         onOuvrirCahier: _rien,
         onRevenirJournee: _rien,
+        onRetournerSalle: onRetournerSalle,
         cahierIndisponible: indisponible,
       ),
       themeMode: mode,
@@ -177,6 +182,51 @@ void main() {
         expect(
           find.byKey(const ValueKey<String>('rail-seance')),
           desktop ? findsOneWidget : findsNothing,
+        );
+      });
+    }
+
+    // Lot salle 3 (pilote, 25/10/2026) : sur ordinateur, la fin tient dans
+    // 1440 x 768 sans defilement ; carte et actions cote a cote ;
+    // « Retourner dans la salle » seule action pleine.
+    for (final ThemeMode mode in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
+      testWidgets('ordinateur 1440 x 768 : tout tient, sans defilement '
+          '(${mode.name})', (WidgetTester tester) async {
+        await _monterFin(
+          tester,
+          const Size(1440, 768),
+          mode: mode,
+          onRetournerSalle: _rien,
+        );
+        expect(tester.takeException(), isNull);
+        final ScrollableState defile = tester.state<ScrollableState>(
+          find
+              .descendant(
+                of: find.byType(FinSeanceEnseignant),
+                matching: find.byType(Scrollable),
+              )
+              .first,
+        );
+        expect(defile.position.maxScrollExtent, 0);
+        verifierUnSeulBoutonPlein(tester);
+        final Finder retour = find.byKey(FinSeanceEnseignant.retourSalleKey);
+        expect(tester.widget(retour), isA<ActionPrincipale>());
+        expect(
+          tester.widget<ActionPrincipale>(retour).niveau,
+          NiveauAction.principale,
+        );
+        // La carte au debut, les actions a la fin, sur la meme hauteur.
+        final Rect carte = tester.getRect(find.byKey(_recap));
+        final Rect bouton = tester.getRect(retour);
+        expect(bouton.left, greaterThan(carte.right));
+        expect(bouton.top, lessThan(carte.bottom));
+        expect(
+          find.widgetWithText(LienFleche, 'Ouvrir le cahier de transmission'),
+          findsOneWidget,
+        );
+        expect(
+          find.widgetWithText(LienFleche, 'Revenir à ma journée'),
+          findsOneWidget,
         );
       });
     }

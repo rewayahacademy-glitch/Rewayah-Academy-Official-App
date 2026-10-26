@@ -1,7 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // `StreamProviderFamily` n'est pas exporte par l'entree principale de
 // `flutter_riverpod` : meme convention que `service_planning.dart`.
-import 'package:flutter_riverpod/misc.dart' show StreamProviderFamily;
+import 'package:flutter_riverpod/misc.dart'
+    show FutureProviderFamily, StreamProviderFamily;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../config/env.dart';
@@ -69,6 +70,16 @@ final Provider<PortHorlogeSeance> portHorlogeSeanceProvider =
 /// **Un seul abonnement par groupe, et aucun minuteur dans un widget.** Le
 /// depot porte deja deux `Timer.periodic` poses dans des ecrans ; en ajouter un
 /// troisieme rendrait le temps dependant de l'ecran affiche.
+/// Une seule lecture de l'horloge d'une Classe (lot salle 3, 25/10/2026) :
+/// `null` quand aucune seance ni occurrence n'existe. [horlogeGroupeProvider]
+/// n'emet rien dans ce cas ; cette lecture dit a la carte que l'attente est
+/// finie (« Aucune seance prevue ») au lieu d'un squelette sans fin.
+final FutureProviderFamily<SessionClockVM?, String> horlogeClasseLueProvider =
+    FutureProvider.family<SessionClockVM?, String>(
+      (Ref ref, String groupeId) =>
+          ref.watch(portHorlogeSeanceProvider).horlogeDe(groupeId: groupeId),
+    );
+
 final StreamProviderFamily<SessionClockVM, String> horlogeGroupeProvider =
     StreamProvider.family<SessionClockVM, String>(
       (Ref ref, String groupeId) =>

@@ -502,6 +502,115 @@ void main() {
       expect(find.text(t.salle.cameraEchec), findsNothing);
     });
 
+    testWidgets('Lot salle 3 : le message de la camera se ferme, et revient '
+        'si un nouvel essai echoue', (WidgetTester tester) async {
+      // Directeur, 25/10/2026 : « La camera ne s'allume pas » ne se fermait
+      // pas. Une croix « Fermer », cible de 48, le ferme.
+      final FauxMoteurSalle moteur = FauxMoteurSalle()
+        ..erreurCamera = StateError(
+          'NotFoundError: Requested device not found',
+        );
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student', camera: true)),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+      await tester.tap(_commande(t.salle.ouvrirCamera));
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.cameraEchecAbsente), findsOneWidget);
+
+      const Key croix = ValueKey<String>('salle-erreur-camera-fermer');
+      final SemanticsHandle semantique = tester.ensureSemantics();
+      expect(find.bySemanticsLabel(t.commun.fermer), findsOneWidget);
+      semantique.dispose();
+      final Size cible = tester.getSize(find.byKey(croix));
+      expect(cible.width, greaterThanOrEqualTo(48));
+      expect(cible.height, greaterThanOrEqualTo(48));
+      await tester.tap(find.byKey(croix));
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.cameraEchec), findsNothing);
+
+      // Un nouvel essai qui echoue encore : le message revient.
+      await tester.tap(_commande(t.salle.ouvrirCamera));
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.cameraEchec), findsOneWidget);
+    });
+
+    testWidgets('Lot salle 3 : sans camera, l appui dit la phrase existante '
+        'sans rien demander au navigateur', (WidgetTester tester) async {
+      // Audit reseau du pilote (25/10/2026) : sur un poste sans camera, la
+      // salle demandait quand meme la camera au navigateur.
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student', camera: true)),
+          moteur: moteur,
+          preVol: FauxServicePreVol(cameraDisponible: false),
+        ),
+      );
+      // A l'entree, rien n'est tente.
+      expect(moteur.cameraDemandee, isEmpty);
+      expect(find.text(t.salle.cameraEchec), findsNothing);
+
+      await tester.tap(_commande(t.salle.ouvrirCamera));
+      await tester.pumpAndSettle();
+      expect(moteur.cameraDemandee, isEmpty);
+      expect(find.text(t.salle.cameraEchecAbsente), findsOneWidget);
+      expect(find.textContaining('Message du navigateur'), findsNothing);
+    });
+
+    testWidgets('Lot salle 3 (reseau) : salle ouverte puis deconnexion : '
+        '« connexion perdue », et Reessayer redemande un jeton', (
+      WidgetTester tester,
+    ) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      final FauxServiceVideo video = FauxServiceVideo(
+        acces0: _acces('student'),
+      );
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: video,
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+      expect(video.demandes, hasLength(1));
+      moteur.poser(EtatSalle.connecte);
+      await tester.pumpAndSettle();
+      // Deconnexion definitive (reseau, serveur) : le moteur passe en echec.
+      moteur.poser(EtatSalle.echec);
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.perdue), findsOneWidget);
+      expect(find.text(t.salle.secours.echec), findsOneWidget);
+      // Jamais « La salle n'a pas pu s'ouvrir » : elle etait ouverte.
+      expect(find.text(t.salle.refusReseau), findsNothing);
+      await tester.tap(find.text(t.commun.reessayer));
+      await tester.pumpAndSettle();
+      expect(video.demandes, hasLength(2), reason: 'un nouveau jeton');
+      expect(find.text(t.salle.perdue), findsNothing);
+    });
+
+    testWidgets('Lot salle 3 (reseau) : un echec avant toute ouverture reste '
+        '« La salle n a pas pu s ouvrir »', (WidgetTester tester) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle()
+        ..erreurEntree = StateError('lien coupe');
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+      expect(find.text(t.salle.refusReseau), findsOneWidget);
+      expect(find.text(t.salle.perdue), findsNothing);
+    });
+
     testWidgets('D14 : un allumage d entree refuse se dit sans geste', (
       WidgetTester tester,
     ) async {
@@ -2966,8 +3075,10 @@ void main() {
       expect(moteur.contenusPresentesDemandes.last.page, 604);
     });
 
-    testWidgets('page 604, Quitter, retourner : la salle reprend a la page '
-        '604', (WidgetTester tester) async {
+    // Lot salle 3 (directeur, 25/10/2026) : la page ne se rouvre plus seule
+    // a l'entree ; la Bibliotheque la propose, au choix de l'enseignant.
+    testWidgets('page 604, Quitter, retourner : rien ne se rouvre seul, la '
+        'Bibliotheque reprend a la page 604', (WidgetTester tester) async {
       tester.view.physicalSize = const Size(1366, 768);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
@@ -2994,8 +3105,70 @@ void main() {
       final int avant = moteur.contenusPresentesDemandes.length;
       await tester.tap(find.byKey(FinSeanceEnseignant.retourSalleKey));
       await tester.pumpAndSettle();
+      expect(moteur.contenusPresentesDemandes.length, avant);
+      expect(find.byKey(_croixRanger), findsNothing);
+
+      await tester.tap(find.byKey(BoutonPlusAppel.cle));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(CommandesPedagogiques.cleBibliotheque));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(SallePage.supportCoranKey));
+      await tester.pumpAndSettle();
       expect(moteur.contenusPresentesDemandes.length, avant + 1);
       expect(moteur.contenusPresentesDemandes.last.page, 604);
     });
+
+    testWidgets('Lot salle 3 : entrer, aucun support ; ouvrir, fermer, '
+        'sortir, revenir : toujours ferme', (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1366, 768);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: surcharges(moteur),
+        groupeId: 'g1',
+      );
+      // A l'entree : rien de presente, aucune croix.
+      expect(moteur.contenusPresentesDemandes, isEmpty);
+      expect(find.byKey(_croixRanger), findsNothing);
+
+      // Ouvrir : la croix « Ranger dans la bibliotheque » apparait.
+      await moteur.presenterContenu(
+        ContenuPresente(
+          page: 604,
+          sourate: 114,
+          verset: 1,
+          presentePar: 'p1',
+          emisLe: DateTime.now(),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(_croixRanger), findsOneWidget);
+      expect(
+        find.bySemanticsLabel(t.salle.seance.rangement.ranger),
+        findsOneWidget,
+      );
+
+      // Fermer : un contenu retire part a la classe, la croix disparait.
+      await tester.tap(find.byKey(_croixRanger));
+      await tester.pumpAndSettle();
+      expect(moteur.contenusPresentesDemandes.last.estRetire, isTrue);
+      expect(find.byKey(_croixRanger), findsNothing);
+
+      // Sortir puis revenir : toujours ferme, rien ne repart seul.
+      await tester.tap(_commande(t.salle.seance.sortir));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.salle.seance.quitterCahier).last);
+      await tester.pumpAndSettle();
+      final int avant = moteur.contenusPresentesDemandes.length;
+      await tester.tap(find.byKey(FinSeanceEnseignant.retourSalleKey));
+      await tester.pumpAndSettle();
+      expect(moteur.contenusPresentesDemandes.length, avant);
+      expect(find.byKey(_croixRanger), findsNothing);
+    });
   });
 }
+
+/// La croix « Ranger dans la bibliotheque » de la salle plein ecran.
+const Key _croixRanger = ValueKey<String>('salle-ranger-support');

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -200,6 +201,30 @@ abstract final class Supervision {
   ///
   /// Retourne l'identifiant de l'evenement envoye, ou `null` quand la
   /// supervision n'est pas configuree.
+  /// Une miette de contexte (lot salle 3, diagnostic du transport, 25/10/2026) :
+  /// elle accompagnera la prochaine erreur envoyee. [donnees] ne porte
+  /// **jamais** d'identite ni d'identifiant de personne ; [nettoyer] masque
+  /// encore les chemins de stockage. Sans supervision demarree, rien.
+  static void miette({
+    required String categorie,
+    required String message,
+    Map<String, Object?> donnees = const <String, Object?>{},
+  }) {
+    if (!_demarree) {
+      return;
+    }
+    unawaited(
+      Sentry.addBreadcrumb(
+        Breadcrumb(
+          category: categorie,
+          message: message,
+          data: <String, dynamic>{...donnees},
+          level: SentryLevel.info,
+        ),
+      ),
+    );
+  }
+
   static Future<SentryId?> declencherErreurDeTest() async {
     if (!_demarree) {
       return null;

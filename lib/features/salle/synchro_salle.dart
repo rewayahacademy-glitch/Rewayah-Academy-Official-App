@@ -92,7 +92,8 @@ class SynchroSalle {
         .listen(_recevoirTableau, onError: (Object _) {});
     if (_peutDiffuser) {
       _abonnementPage = moteur.contenusPresentes.listen(
-        (ContenuPresente page) => _pagePresentee = page,
+        (ContenuPresente page) =>
+            _pagePresentee = page.estRetire ? null : page,
         onError: (Object _) {},
       );
       _abonnementArrivees = moteur.participants.listen(

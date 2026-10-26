@@ -958,15 +958,17 @@ class _CarteProchaineSeance extends ConsumerWidget {
       return;
     }
     if (emplacement.libelle == t.enseignant.journee.rejoindreSalle) {
-      // « Rejoindre la salle » mene a la salle, par son pre-vol : meme chemin
-      // que le bouton de la fiche de la Classe, un seul geste (CTA-FIN-1).
+      // « Rejoindre la salle » entre directement dans la salle (lot salle 3,
+      // pilote, 25/10/2026) : camera et micro y sont fermes, il n'y a plus
+      // rien a verifier avant. Meme chemin que la fiche de la Classe.
       routeur.go(
         Routes.salle,
         // Le billet passe par `extra`, jamais par l'URL (ADR-005).
         extra: BilletSalle(
           sessionId: cours.id,
           emisA: DateTime.now(),
-          preparation: true,
+          // Lot salle 3 : entree directe, sans page de preparation.
+          preparation: false,
           groupeId: idGroupe,
         ),
       );

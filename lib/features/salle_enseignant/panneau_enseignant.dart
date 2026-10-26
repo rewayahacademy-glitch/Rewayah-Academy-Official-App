@@ -85,7 +85,7 @@ class PanneauEnseignantSalle extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final AsyncValue<EtatSalle> lien = ref.watch(etatLienSalleProvider);
-    final AsyncValue<ContenuPresente> contenu = ref.watch(
+    final AsyncValue<ContenuPresente?> contenu = ref.watch(
       contenuPresenteProvider,
     );
 

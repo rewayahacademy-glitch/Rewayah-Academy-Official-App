@@ -14,7 +14,6 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/video/pre_vol.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
-import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import 'pre_vol_classe.dart';
 import 'vue_salle.dart';
@@ -136,18 +135,6 @@ class PreparationEnseignant extends StatefulWidget {
 }
 
 class _PreparationEnseignantEtat extends State<PreparationEnseignant> {
-  bool _testCameraFait = false;
-
-  /// « Tester la camera » n'existe que si un vrai test est branche (R10) :
-  /// sans [PreparationEnseignant.onTesterCamera], ni bouton ni « Test local
-  /// termine ».
-  void _testerCamera() {
-    final VoidCallback? tester = widget.onTesterCamera;
-    if (tester == null) return;
-    tester();
-    setState(() => _testCameraFait = true);
-  }
-
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
@@ -268,22 +255,6 @@ class _PreparationEnseignantEtat extends State<PreparationEnseignant> {
     final bool enVerification =
         !vue.bloque && (resultat == null || reseau == null);
 
-    final Widget apercu = _Apercu(
-      compact: !bureau,
-      testable:
-          widget.onTesterCamera != null &&
-          (resultat?.cameraDisponible ?? false),
-      testFait: _testCameraFait,
-      onTester: _testerCamera,
-    );
-    final Widget equipement = _Equipement(
-      resultat: resultat,
-      vue: vue,
-      reseau: reseau,
-      sortieAudio: widget.sortieAudioChoisissable,
-      onModifier: widget.onModifierPeripheriques,
-    );
-
     final String? raison = switch (vue.motif) {
       MotifPreCours.microAbsent => t.salle.preparation.microAbsentRaison,
       MotifPreCours.permissionRefusee => t.salle.preparation.permissionRefusee,
@@ -298,17 +269,12 @@ class _PreparationEnseignantEtat extends State<PreparationEnseignant> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        if (bureau)
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Expanded(child: apercu),
-              Ecart.hXxl,
-              Expanded(child: equipement),
-            ],
-          )
-        else ...<Widget>[apercu, Ecart.vLg, equipement],
-        Ecart.vXxl,
+        // Lot salle 3 (pilote, 25/10/2026) : l'apercu « camera coupee » fixe
+        // et la liste d'equipement sont retires. Ils ne mesuraient rien (le
+        // pre-vol enumere les appareils sans jamais ouvrir micro ni camera) ;
+        // camera et micro sont fermes a l'entree. Reste ce qui sert : la
+        // fiche de la seance, et la raison ecrite si l'entree est bloquee
+        // (aucun micro, permission refusee, hors ligne).
         _Contexte(contexte: widget.contexte),
         if (raison != null) ...<Widget>[
           Ecart.vLg,
@@ -402,190 +368,6 @@ class _PreparationEnseignantEtat extends State<PreparationEnseignant> {
                     onPress: peutEntrer ? widget.onEntrer : null,
                     pleineLargeur: !bureau,
                   ),
-          ),
-      ],
-    );
-  }
-}
-
-/// L'apercu media, toujours coupe a l'ouverture (R8, point 16).
-class _Apercu extends StatelessWidget {
-  const _Apercu({
-    required this.compact,
-    required this.testable,
-    required this.testFait,
-    required this.onTester,
-  });
-
-  final bool compact;
-  final bool testable;
-  final bool testFait;
-  final VoidCallback onTester;
-
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-    final AppPalette palette = AppPalette.of(context);
-    return AppCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          ConstrainedBox(
-            constraints: BoxConstraints(minHeight: compact ? 96 : 200),
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  ExcludeSemantics(
-                    child: IconTheme(
-                      data: palette.inkMuted.asIconTheme(size: AppSpacing.xxxl),
-                      child: Icon(AppIcons.cameraCoupee.repos),
-                    ),
-                  ),
-                  Ecart.vSm,
-                  Text(
-                    t.salle.preparation.cameraCoupee,
-                    textAlign: TextAlign.center,
-                    style: palette.inkMuted.applyTo(
-                      textes.bodyMedium ?? const TextStyle(),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          if (testable) ...<Widget>[
-            Ecart.vMd,
-            if (testFait) ...<Widget>[
-              Semantics(
-                liveRegion: true,
-                child: Text(
-                  t.salle.preparation.testCameraFait,
-                  style: palette.inkMuted.applyTo(
-                    textes.bodySmall ?? const TextStyle(),
-                  ),
-                ),
-              ),
-              Ecart.vSm,
-            ],
-            // BTN-TESTER-1 : le bouton occupe toute la largeur de sa carte, en
-            // bas, contenu centre (K-54) : la carte est une colonne etiree.
-            ActionPrincipale(
-              key: const ValueKey<String>('preparation-tester-camera'),
-              libelle: t.salle.preparation.testerCamera,
-              onPress: onTester,
-              niveau: NiveauAction.secondaire,
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-/// « Votre equipement » : une ligne par verification, chacune avec son etat.
-class _Equipement extends StatelessWidget {
-  const _Equipement({
-    required this.resultat,
-    required this.vue,
-    required this.reseau,
-    required this.sortieAudio,
-    required this.onModifier,
-  });
-
-  final ResultatPreVol? resultat;
-  final VuePreCours vue;
-  final ReseauPreparation? reseau;
-  final bool sortieAudio;
-  final VoidCallback? onModifier;
-
-  @override
-  Widget build(BuildContext context) {
-    final ResultatPreVol? r = resultat;
-    final String verif = t.salle.preparation.verification;
-
-    final (String, TonPreparation) connexion = switch (reseau) {
-      null => (verif, TonPreparation.verification),
-      ReseauPreparation.bonne => (
-        t.salle.preparation.connexionPrete,
-        TonPreparation.ok,
-      ),
-      ReseauPreparation.instable => (
-        t.salle.preparation.connexionInstable,
-        TonPreparation.attention,
-      ),
-      ReseauPreparation.horsLigne => (
-        t.salle.preparation.connexionInstable,
-        TonPreparation.bloque,
-      ),
-    };
-    final (String, TonPreparation) micro = r == null
-        ? (verif, TonPreparation.verification)
-        : vue.motif == MotifPreCours.permissionRefusee
-        ? (t.salle.preparation.microBloque, TonPreparation.bloque)
-        : vue.microPresent
-        ? (t.salle.preparation.microPret, TonPreparation.ok)
-        : (t.salle.preparation.microAbsent, TonPreparation.bloque);
-    final (String, TonPreparation) sortie = r == null
-        ? (verif, TonPreparation.verification)
-        : (t.salle.preparation.sortieSysteme, TonPreparation.ok);
-    final (String, TonPreparation) camera = r == null
-        ? (verif, TonPreparation.verification)
-        : vue.cameraPresente
-        ? (t.salle.preparation.cameraPrete, TonPreparation.ok)
-        : (t.salle.preparation.cameraAbsente, TonPreparation.attention);
-
-    LigneRubrique ligne(
-      String cle,
-      AppIcon icone,
-      String libelle,
-      (String, TonPreparation) etat,
-    ) => LigneRubrique(
-      icone: icone,
-      libelle: libelle,
-      legende: etat.$1,
-      controle: KeyedSubtree(
-        key: ValueKey<String>('etat-$cle-${etat.$2.name}'),
-        child: IconeEtatPreparation(ton: etat.$2),
-      ),
-    );
-
-    final VoidCallback? modifier = onModifier;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        GroupeReglages(
-          titre: t.salle.preparation.equipement,
-          lignes: <LigneRubrique>[
-            ligne(
-              'connexion',
-              AppIcons.reseau,
-              t.salle.preparation.connexion,
-              connexion,
-            ),
-            ligne('micro', AppIcons.micro, t.salle.preparation.micro, micro),
-            if (sortieAudio)
-              ligne(
-                'sortie',
-                AppIcons.micro,
-                t.salle.preparation.sortieAudio,
-                sortie,
-              ),
-            ligne(
-              'camera',
-              AppIcons.camera,
-              t.salle.preparation.camera,
-              camera,
-            ),
-          ],
-        ),
-        if (modifier != null)
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: LienFleche(
-              libelle: t.salle.preparation.modifierPeripheriques,
-              onPress: modifier,
-            ),
           ),
       ],
     );

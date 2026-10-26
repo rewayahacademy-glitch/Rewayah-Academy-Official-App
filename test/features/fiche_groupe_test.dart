@@ -13,7 +13,11 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/tc_groupe/port_groupes.dart';
+import 'package:rewayah_academy/core/tc_horloge/port_horloge_seance.dart';
+import 'package:rewayah_academy/core/tc_horloge/session_clock_vm.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
@@ -31,6 +35,7 @@ import '../capture/outil_capture.dart';
 import '../support/aucun_mot_coupe.dart';
 import '../support/harnais.dart';
 import '../support/hors_ligne_une_fois.dart';
+import '../teaching_core/a/faux/faux_groupes.dart' show PortHorlogeMuet;
 
 const String _groupeId = 'g1';
 
@@ -58,6 +63,9 @@ List<Override> _surcharges(FauxServiceEnseignant enseignant) => <Override>[
   // CL-4.4 : la carte de seance lit la Classe par le port des groupes ; sans
   // seance, elle le dit, et le reste de la fiche reste lu.
   groupeProvider(_groupeId).overrideWith((Ref _) async => null),
+  // Lot salle 3 (25/10/2026) : la carte lit l'horloge de la Classe ; aucune
+  // seance ni occurrence ici, elle dit « Aucune seance prevue ».
+  portHorlogeSeanceProvider.overrideWithValue(const PortHorlogeMuet()),
 ];
 
 /// Un service qui rend un groupe et ses membres.
@@ -107,6 +115,77 @@ List<RouteBase> _routes() => <RouteBase>[
 ];
 
 void main() {
+  // Lot salle 3 (pilote, 25/10/2026, test K4 du directeur, Classe « Test
+  // 03 ») : `mes_groupes_famille_v` ne rend rien a l'enseignant (le faux du
+  // port rend `null`, comme la base) ; la carte lit l'horloge de la Classe et
+  // propose « Rejoindre la salle » pendant une seance en cours.
+  testWidgets('enseignant, seance en cours : « Rejoindre la salle », jamais '
+      '« Aucune seance prevue »', (WidgetTester tester) async {
+    _fenetreHaute(tester);
+    final DateTime debut = DateTime.utc(2026, 10, 25, 18);
+    final SessionClockVM enCours = SessionClockVM.depuisFenetre(
+      fenetre: FenetreSeance(
+        debutUtc: debut,
+        finPrevueUtc: debut.add(const Duration(minutes: 90)),
+        fenetreAcces: const Duration(minutes: 20),
+        graceApresFin: const Duration(minutes: 15),
+      ),
+      maintenantServeurUtc: debut.add(const Duration(minutes: 35)),
+      sessionId: 'seance-en-cours',
+      horlogeUtilisateur: const HorlogeAffichee(
+        fuseauIana: 'Europe/Paris',
+        libelleVille: 'Paris',
+        heureLocaleRendue: '19:00',
+        dateLocaleRendue: 'Dimanche 25 octobre',
+      ),
+    );
+    final List<String> entrees = <String>[];
+    await tester.pumpWidget(
+      hote(
+        FicheGroupePage(groupeId: _groupeId, onPreparer: entrees.add),
+        surcharges: <Override>[
+          ..._surcharges(_avec()),
+          horlogeClasseLueProvider(_groupeId)
+              .overrideWith((Ref _) async => enCours),
+          horlogeGroupeProvider(_groupeId)
+              .overrideWith((Ref _) => Stream<SessionClockVM>.value(enCours)),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text(t.classe.entree.aucune), findsNothing);
+    expect(find.text(LibellesGroupe.aucuneSeance), findsNothing);
+    final Finder bouton = find.widgetWithText(
+      ActionPrincipale,
+      t.enseignant.journee.rejoindreSalle,
+    );
+    expect(bouton, findsOneWidget);
+    await tester.ensureVisible(bouton);
+    await tester.tap(bouton);
+    await tester.pumpAndSettle();
+    expect(entrees, <String>['seance-en-cours']);
+  });
+
+  testWidgets('enseignant, aucune seance ni occurrence : « Aucune seance '
+      'prevue »', (WidgetTester tester) async {
+    _fenetreHaute(tester);
+    await tester.pumpWidget(
+      hote(
+        const FicheGroupePage(groupeId: _groupeId),
+        surcharges: _surcharges(_avec()),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text(LibellesGroupe.aucuneSeance), findsOneWidget);
+    expect(
+      find.widgetWithText(
+        ActionPrincipale,
+        t.enseignant.journee.rejoindreSalle,
+      ),
+      findsNothing,
+    );
+  });
+
   group('ENS-07 : les etats de la fiche', () {
     testWidgets('loading : un squelette a la forme de la fiche', (
       WidgetTester tester,
@@ -692,8 +771,13 @@ void main() {
       serviceReseauProvider.overrideWithValue(
         FauxServiceReseau(horsLigneRendu: horsLigne),
       ),
-      groupeProvider(_groupeId)
+      // Lot salle 3 (25/10/2026) : la carte lit l'horloge de la Classe, plus
+      // `groupeProvider` ; c'est sa lecture qui echoue ici.
+      horlogeClasseLueProvider(_groupeId)
           .overrideWith((Ref _) async => throw StateError('lecture coupee')),
+      horlogeGroupeProvider(_groupeId).overrideWith(
+        (Ref _) => Stream<SessionClockVM>.error(StateError('lecture coupee')),
+      ),
     ];
 
     Future<void> monter(

@@ -50,9 +50,14 @@ Stream<EtatSalle> _etatsAvecCourant(VideoSessionProvider moteur) async* {
 /// suivant verrait la page du cours precedent -- et un « page suivante » partirait
 /// de ce pointeur perime. La duree de vie du provider est donc celle du panneau :
 /// une coupure ne le demonte pas, une sortie de salle si.
-final StreamProvider<ContenuPresente> contenuPresenteProvider =
-    StreamProvider<ContenuPresente>(
-      (Ref ref) => ref.watch(moteurSalleProvider).contenusPresentes,
+final StreamProvider<ContenuPresente?> contenuPresenteProvider =
+    StreamProvider<ContenuPresente?>(
+      // Un contenu retire (support range) se lit `null` : rien n'est
+      // presente, pour l'enseignant comme pour la classe.
+      (Ref ref) => ref
+          .watch(moteurSalleProvider)
+          .contenusPresentes
+          .map((ContenuPresente c) => c.estRetire ? null : c),
       isAutoDispose: true,
     );
 
@@ -123,6 +128,18 @@ class PresentateurCoran {
     }
     return _presenter(page: page, sourate: sourate, verset: verset);
   }
+
+  /// Range la page presentee (lot salle 3, directeur, 25/10/2026) : la
+  /// classe revient au tableau ou a la scene. Rien n'est efface ; « Ouvrir
+  /// le Coran » la presente de nouveau.
+  Future<void> fermer() => _ref
+      .read(moteurSalleProvider)
+      .presenterContenu(
+        ContenuPresente.retire(
+          presentePar: _ref.read(sessionProvider).profileId ?? '',
+          emisLe: DateTime.now(),
+        ),
+      );
 
   Future<SortPresentation> _presenter({
     required int page,

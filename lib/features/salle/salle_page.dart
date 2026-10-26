@@ -38,6 +38,7 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/video/livekit_session_provider.dart';
 import '../../core/video/pre_vol.dart';
+import '../../core/video/repli_audio.dart';
 import '../../core/video/service_video.dart';
 import '../../core/video/video_session_provider.dart';
 import '../../core/widgets/action_principale.dart';
@@ -192,6 +193,14 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   AccesSalle? _acces;
   CauseImpasse? _impasse;
   EtatSalle _etatMoteur = EtatSalle.absent;
+
+  /// Vrai des que la salle s'est ouverte a cette entree.
+  bool _aEteConnecte = false;
+
+  /// Lot salle 3 (audit reseau du 25/10/2026) : le repli audio, suivi sur le
+  /// flux de qualite avec la meme hysteresis que le moteur ; la pilule d'etat
+  /// dit « Image coupee... La voix continue. » tant qu'il dure.
+  final RepliAudio _repliAffiche = RepliAudio();
   List<ParticipantSalle> _participants = const <ParticipantSalle>[];
   QualiteLien _qualite = QualiteLien.inconnue;
 
@@ -204,10 +213,6 @@ class _SallePageEtat extends ConsumerState<SallePage> {
 
   /// L'eleve sorti de la salle (CLV-09).
   IssueSeance? _sortieEleve;
-
-  /// Lot salle 2 : la page retenue pour la classe a deja ete reprise a cette
-  /// entree (une seule fois ; l'enseignant change ensuite librement).
-  bool _repriseFaite = false;
 
   /// S0 : l'etat local de la salle de seance (rien n'est diffuse) : zoom de
   /// la page (paliers 100 a 200 %), page agrandie, panneau et contexte.
@@ -250,6 +255,16 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// l'a dit, ou `null`.
   String? _erreurCamera;
 
+  /// Lot salle 3 (directeur, 25/10/2026) : tout bandeau d'erreur se ferme.
+  /// Vrai quand l'usager a ferme le message de la camera ; un nouvel essai
+  /// le fait revenir s'il echoue encore.
+  bool _erreurCameraFermee = false;
+
+  /// Lot salle 3 (pilote, 25/10/2026, audit reseau) : le pre-vol sait qu'il
+  /// n'y a aucune camera ; un appui sur « camera » dit la phrase existante
+  /// sans rien demander au navigateur.
+  bool _cameraAbsente = false;
+
   /// S0 : la scene video au premier plan, choisie d'un toucher ; `null` :
   /// automatique (l'eleve sans page presentee la voit en grand).
   bool? _scenePremierPlan;
@@ -271,19 +286,39 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // `rejoindre`, et un abonnement pose apres manquerait la connexion.
     _sEtats = _moteur.etats.listen((EtatSalle etat) {
       if (mounted) {
-        setState(() => _etatMoteur = etat);
+        setState(() {
+          _etatMoteur = etat;
+          // Lot salle 3 (audit reseau du 25/10/2026) : un echec qui suit une
+          // salle ouverte est une connexion perdue pour de bon, pas une salle
+          // qui n'a pas pu s'ouvrir ; jamais un ecran « Connexion » fige.
+          if (etat == EtatSalle.connecte || etat == EtatSalle.retabli) {
+            _aEteConnecte = true;
+          } else if (etat == EtatSalle.echec && _aEteConnecte) {
+            _impasse = CauseImpasse.connexionPerdue;
+          }
+        });
       }
     });
     _sParticipants = _moteur.participants.listen((
       List<ParticipantSalle> liste,
     ) {
-      if (mounted) {
-        setState(() => _participants = liste);
+      if (!mounted) return;
+      // Lot salle 3, audit reseau (e) : la salle n'affiche pas qui parle ; un
+      // changement d'orateur seul (ActiveSpeakersChangedEvent, plusieurs fois
+      // par seconde) ne reconstruit pas toute la page.
+      if (memesHorsParole(_participants, liste)) {
+        _participants = liste;
+        return;
       }
+      setState(() => _participants = liste);
     });
     _sQualite = _moteur.qualite.listen((QualiteLien lien) {
       if (mounted) {
-        setState(() => _qualite = lien);
+        setState(() {
+          _qualite = lien;
+          // Lot salle 3 : la meme hysteresis que le moteur, pour le dire.
+          _repliAffiche.mesurer(lien);
+        });
       }
     });
     // Le tuteur observateur n'a AUCUNE preparation (D-14) : il n'ouvre ni
@@ -321,8 +356,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// est encore seul devant son ecran coute une seconde et evite cela.
   Future<void> _entrer() async {
     setState(() {
-      _repriseFaite = false;
       _impasse = null;
+      _aEteConnecte = false;
+      _repliAffiche.remettre();
       _materielPret = false;
       _acces = null;
     });
@@ -585,6 +621,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// exacte du navigateur s'affiche sous l'en-tete, avec sa cause probable et
   /// quoi faire (K-59) ; un essai reussi l'efface.
   Future<void> _basculerCamera(bool ouverte) async {
+    if (_erreurCameraFermee) setState(() => _erreurCameraFermee = false);
+    if (!ouverte && ref.read(preVolProvider).value?.cameraDisponible == false) {
+      setState(() => _cameraAbsente = true);
+      return;
+    }
     try {
       await _moteur.reglerCamera(actif: !ouverte);
       if (mounted && _erreurCamera != null) {
@@ -734,6 +775,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       onBibliotheque: enseignant && vue.peutPresenter
           ? () => unawaited(_choisirSupport())
           : null,
+      // Lot salle 3 (directeur, 25/10/2026) : un support ouvert se ferme ;
+      // la classe revient au tableau ou a la scene.
+      onRanger: enseignant && presentee != null
+          ? () => unawaited(ref.read(presentateurCoranProvider).fermer())
+          : null,
       onContexte: (ContexteOuvert c) => setState(() {
         _contexte = c;
         if (c != ContexteOuvert.aucun && _panneau == PanneauOuvert.commandes) {
@@ -788,10 +834,18 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             )
           : null,
       // D14 : effacee des que la camera publie.
-      alerte: (moi?.camera ?? false)
+      alerte: (moi?.camera ?? false) || _erreurCameraFermee
           ? null
+          : _cameraAbsente
+          ? _ErreurCamera(
+              erreur: null,
+              onFermer: () => setState(() => _erreurCameraFermee = true),
+            )
           : switch (_erreurCamera ?? _moteur.erreurCameraEntree) {
-              final String erreur => _ErreurCamera(erreur: erreur),
+              final String erreur => _ErreurCamera(
+                erreur: erreur,
+                onFermer: () => setState(() => _erreurCameraFermee = true),
+              ),
               null => null,
             },
       scene: _Scene(
@@ -889,25 +943,6 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     if (retenue == null) return _ouvrirCoran();
     setState(() => _scenePremierPlan = null);
     await ref.read(presentateurCoranProvider).presenterPage(retenue);
-  }
-
-  /// Lot salle 2 : a l'entree de l'enseignant, la page retenue pour la
-  /// classe revient, une fois, si rien n'est encore presente.
-  void _reprendrePage(VueSalle vue, ContenuPresente? presentee) {
-    final String? groupe = widget.groupeId;
-    if (_repriseFaite ||
-        groupe == null ||
-        vue.role != RoleSalle.enseignant ||
-        !vue.dansLaSalle) {
-      return;
-    }
-    _repriseFaite = true;
-    final int? retenue = ref.read(memoirePageClasseProvider).lire(groupe);
-    if (presentee != null || retenue == null) return;
-    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
-      if (!mounted) return;
-      unawaited(ref.read(presentateurCoranProvider).presenterPage(retenue));
-    });
   }
 
   Future<void> _ouvrirCoran() async {
@@ -1161,14 +1196,15 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           ? ref.watch(contenuPresenteProvider).value
           : null;
       // Lot salle 2 : la page que l'enseignant presente est retenue pour la
-      // classe ; a son entree suivante, elle revient.
+      // classe. Lot salle 3 (directeur, 25/10/2026) : elle ne se rouvre plus
+      // seule a l'entree ; « Ouvrir le Coran » la propose (choix de
+      // l'enseignant).
       final String? groupe = widget.groupeId;
       if (groupe != null &&
           vue.role == RoleSalle.enseignant &&
           presentee != null) {
         ref.read(memoirePageClasseProvider).ecrire(groupe, presentee.page);
       }
-      _reprendrePage(vue, presentee);
       final VueSeance? seance = DepuisSalle.vue(
         salle: vue,
         mode: AppMetriques.of(context).mode,
@@ -1181,6 +1217,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         supportPresente: presentee == null
             ? null
             : DepuisSalle.pageCoran(presentee.page),
+        videoSuspendue: _repliAffiche.videoSuspendue,
       );
       if (seance != null) {
         return _salleDeSeance(
@@ -1488,16 +1525,25 @@ class _PastillePresence extends StatelessWidget {
 
 /// D14 : la camera n'a pas pu s'allumer ; la phrase exacte du navigateur, sa
 /// cause probable et quoi faire (K-59), sous l'en-tete.
+///
+/// Lot salle 3 (directeur, 25/10/2026) : le message se ferme (croix au bord
+/// de fin, cible de 48, « Fermer »).
 class _ErreurCamera extends StatelessWidget {
-  const _ErreurCamera({required this.erreur});
+  const _ErreurCamera({required this.erreur, required this.onFermer});
 
-  final String erreur;
+  /// La phrase du navigateur, ou `null` quand le pre-vol a vu qu'aucune
+  /// camera n'existe (rien n'a ete demande au navigateur).
+  final String? erreur;
+  final VoidCallback onFermer;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final String cause = causeEchecCamera(erreur);
+    final String? navigateur = erreur;
+    final String cause = navigateur == null
+        ? t.salle.cameraEchecAbsente
+        : causeEchecCamera(navigateur);
     // K4 (directeur, 25/10/2026) : l'erreur de camera est une pilule
     // translucente sous la ligne d'etat, dans la couche qui se masque, jamais
     // un bloc qui pousse la page. Ce qui manque, la cause et quoi faire
@@ -1505,10 +1551,12 @@ class _ErreurCamera extends StatelessWidget {
     final TextStyle style = palette.piluleSalle.applyTo(
       textes.bodySmall ?? const TextStyle(),
     );
+    // Le message et sa croix sont deux noeuds : le message s'annonce, la
+    // croix est un bouton a part (sinon tout le message devenait le bouton).
     return Semantics(
       key: const ValueKey<String>('salle-erreur-camera'),
-      liveRegion: true,
       container: true,
+      explicitChildNodes: true,
       child: Padding(
         padding: const EdgeInsets.only(top: AppSpacing.sm),
         child: DecoratedBox(
@@ -1520,17 +1568,42 @@ class _ErreurCamera extends StatelessWidget {
               horizontal: AppSpacing.md,
               vertical: AppSpacing.sm,
             ),
-            child: Wrap(
-              spacing: AppSpacing.xs,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  t.salle.cameraEchec,
-                  style: palette.piluleSalle.applyTo(
-                    textes.labelMedium ?? const TextStyle(),
+                Flexible(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: AppSpacing.md),
+                    child: Semantics(
+                      liveRegion: true,
+                      container: true,
+                      child: Wrap(
+                        spacing: AppSpacing.xs,
+                        children: <Widget>[
+                          Text(
+                            t.salle.cameraEchec,
+                            style: palette.piluleSalle.applyTo(
+                              textes.labelMedium ?? const TextStyle(),
+                            ),
+                          ),
+                          Text(cause, style: style),
+                          if (navigateur != null)
+                            Text(
+                              t.salle.cameraEchecMessage(erreur: navigateur),
+                              style: style,
+                            ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-                Text(cause, style: style),
-                Text(t.salle.cameraEchecMessage(erreur: erreur), style: style),
+                BoutonIcone(
+                  key: const ValueKey<String>('salle-erreur-camera-fermer'),
+                  icone: AppIcons.fermer,
+                  libelle: t.commun.fermer,
+                  onPress: onFermer,
+                  forme: FormeBoutonIcone.nue,
+                ),
               ],
             ),
           ),
@@ -3267,6 +3340,9 @@ class _Impasse extends StatelessWidget {
         t.salle.refusConfigurationDetail,
       ),
       CauseImpasse.reseau => (t.salle.refusReseau, t.salle.refusReseauDetail),
+      // Lot salle 3 (audit reseau du 25/10/2026) : la salle etait ouverte ;
+      // « Reessayer » rentre avec un nouveau jeton.
+      CauseImpasse.connexionPerdue => (t.salle.perdue, t.salle.secours.echec),
     };
 
     return Center(

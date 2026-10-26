@@ -97,7 +97,8 @@ void main() {
     await _poser(tester, resultat: _pret, onEntrer: () => entrees++);
 
     expect(find.text(t.salle.preparation.titre), findsOneWidget);
-    expect(find.text(t.salle.preparation.equipement), findsOneWidget);
+    // Lot salle 3 (pilote, 25/10/2026) : plus de liste d'equipement.
+    expect(find.text(t.salle.preparation.equipement), findsNothing);
     expect(find.text(t.salle.preparation.contexte), findsOneWidget);
     expect(find.text('Page 24'), findsOneWidget);
     expect(_entrer(tester).onPress, isNotNull);
@@ -173,72 +174,22 @@ void main() {
     expect(find.text(t.salle.secours.horsLigne), findsOneWidget);
   });
 
-  testWidgets('micro et camera coupes a l entree, jamais « activé »', (
+  // Lot salle 3 (pilote, 25/10/2026) : l'apercu « camera coupee » fixe, la
+  // liste d'equipement et « Tester la camera » sont retires : ils ne
+  // mesuraient rien (le pre-vol enumere les appareils sans les ouvrir).
+  testWidgets('lot salle 3 : ni apercu fixe, ni equipement, ni test camera', (
     WidgetTester tester,
   ) async {
-    await _poser(tester, resultat: _pret);
-    expect(find.text(t.salle.preparation.microPret), findsOneWidget);
-    expect(find.text(t.salle.preparation.cameraPrete), findsOneWidget);
-    expect(find.textContaining('activé'), findsNothing);
-    expect(find.text(t.salle.preparation.cameraCoupee), findsOneWidget);
-  });
-
-  testWidgets('« Tester la camera » n existe qu avec un vrai test (R10)', (
-    WidgetTester tester,
-  ) async {
-    // Sans rappel branche : aucun bouton, jamais « Test local termine ».
-    await _poser(tester, resultat: _pret);
-    expect(find.text(t.salle.preparation.testerCamera), findsNothing);
-    expect(
-      find.byKey(const ValueKey<String>('preparation-tester-camera')),
-      findsNothing,
-    );
-    expect(find.text(t.salle.preparation.testCameraFait), findsNothing);
-
-    // Avec un vrai rappel : le bouton existe, le test a lieu, puis le
-    // message local s'affiche.
-    int tests = 0;
-    await _poser(tester, resultat: _pret, onTesterCamera: () => tests++);
-    await tester.tap(find.text(t.salle.preparation.testerCamera));
-    await tester.pump();
-    expect(tests, 1);
-    expect(find.text(t.salle.preparation.testCameraFait), findsOneWidget);
-  });
-
-  testWidgets('pas de sortie audio si la plateforme ne la choisit pas', (
-    WidgetTester tester,
-  ) async {
-    await _poser(tester, resultat: _pret);
-    expect(find.text(t.salle.preparation.sortieAudio), findsNothing);
-
-    await _poser(tester, resultat: _pret, sortieAudio: true);
-    expect(find.text(t.salle.preparation.sortieAudio), findsOneWidget);
-  });
-
-  testWidgets('chaque ligne evolue seule pendant la verification', (
-    WidgetTester tester,
-  ) async {
-    // Le reseau a rendu, le materiel pas encore.
-    await _poser(tester, resultat: null);
-    expect(find.byKey(const ValueKey<String>('etat-connexion-ok')), findsOne);
-    expect(
-      find.byKey(const ValueKey<String>('etat-micro-verification')),
-      findsOne,
-    );
-    expect(
-      find.byKey(const ValueKey<String>('etat-camera-verification')),
-      findsOne,
-    );
-    expect(find.text(t.salle.preparation.connexionPrete), findsOneWidget);
-
-    // Le materiel a rendu, le reseau pas encore.
-    await _poser(tester, resultat: _pret, reseau: null);
-    expect(
-      find.byKey(const ValueKey<String>('etat-connexion-verification')),
-      findsOne,
-    );
-    expect(find.byKey(const ValueKey<String>('etat-micro-ok')), findsOne);
-    expect(find.byType(GroupeReglages), findsOneWidget);
+    for (final ResultatPreVol? r in <ResultatPreVol?>[null, _pret]) {
+      await _poser(tester, resultat: r, onTesterCamera: () {});
+      expect(find.text(t.salle.preparation.cameraCoupee), findsNothing);
+      expect(find.text(t.salle.preparation.equipement), findsNothing);
+      expect(find.text(t.salle.preparation.microPret), findsNothing);
+      expect(find.text(t.salle.preparation.cameraPrete), findsNothing);
+      expect(find.text(t.salle.preparation.testerCamera), findsNothing);
+      expect(find.byType(GroupeReglages), findsNothing);
+      expect(find.textContaining('activé'), findsNothing);
+    }
   });
 
   testWidgets('verification : une ligne d etat, jamais un bouton grise', (
@@ -273,27 +224,6 @@ void main() {
     expect(_entrer(tester).onPress, isNotNull);
   });
 
-  testWidgets('bureau : deux volets ; sous 840, une colonne', (
-    WidgetTester tester,
-  ) async {
-    await _poser(tester, resultat: _pret);
-    final Offset apercu = tester.getTopLeft(
-      find.text(t.salle.preparation.cameraCoupee),
-    );
-    final Offset equipement = tester.getTopLeft(
-      find.text(t.salle.preparation.equipement),
-    );
-    expect(equipement.dx, greaterThan(apercu.dx));
-
-    await _poser(tester, resultat: _pret, taille: const Size(768, 1400));
-    expect(
-      tester.getTopLeft(find.text(t.salle.preparation.equipement)).dy,
-      greaterThan(
-        tester.getTopLeft(find.text(t.salle.preparation.cameraCoupee)).dy,
-      ),
-    );
-  });
-
   testWidgets('reflow a 320 et texte a 200 % : aucun debordement', (
     WidgetTester tester,
   ) async {
@@ -306,15 +236,9 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.text(t.salle.preparation.entrer), findsOneWidget);
 
-    // A 1440 avec un texte a 200 %, 1440 / 2 < 840 : une seule colonne.
     await _poser(tester, resultat: _pret, texte: 2);
     expect(tester.takeException(), isNull);
-    expect(
-      tester.getTopLeft(find.text(t.salle.preparation.equipement)).dy,
-      greaterThan(
-        tester.getTopLeft(find.text(t.salle.preparation.cameraCoupee)).dy,
-      ),
-    );
+    expect(find.text(t.salle.preparation.contexte), findsOneWidget);
   });
 
   test('eleve et tuteur ne recoivent pas le rendu complet', () {

@@ -345,7 +345,8 @@ void main() {
         expect(concierge.appels, <String>[_groupeId]);
         expect(find.text('salle'), findsOneWidget);
         expect(billet?.sessionId, _seanceRendue);
-        expect(billet?.preparation, isTrue);
+        // Lot salle 3 (25/10/2026) : entree directe, sans preparation.
+        expect(billet?.preparation, isFalse);
         expect(billet?.groupeId, _groupeId);
       });
 

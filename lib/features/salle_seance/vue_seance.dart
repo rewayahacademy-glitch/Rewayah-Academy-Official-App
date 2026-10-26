@@ -517,6 +517,7 @@ class VueSeance {
     this.chrono,
     this.pause,
     this.connexion = ConnexionSeance.enLigne,
+    this.videoSuspendue = false,
     this.enregistrementConfirme = true,
     this.visite,
     this.recitation = FileRecitation.vide,
@@ -634,6 +635,10 @@ class VueSeance {
   /// chrono. Jamais une preuve de presence.
   final PauseSeance? pause;
   final ConnexionSeance connexion;
+
+  /// Lot salle 3 (audit reseau du 25/10/2026) : le repli audio est en cours
+  /// (images reduites ou coupees, la voix continue). La pilule d'etat le dit.
+  final bool videoSuspendue;
 
   /// Le serveur a confirme l'enregistrement (I-1). Sans confirmation, aucune
   /// mention.
@@ -796,8 +801,11 @@ class VueSeance {
 
   /// Le libelle de la pastille de connexion : « En ligne » tant que la room
   /// est connectee, meme en reseau faible (P06.5).
-  String get texteConnexion =>
-      connexion.etablie ? t.salle.seance.enLigne : t.salle.seance.reconnexion;
+  String get texteConnexion => videoSuspendue && connexion.etablie
+      ? t.salle.videoSuspendue
+      : connexion.etablie
+      ? t.salle.seance.enLigne
+      : t.salle.seance.reconnexion;
 
   // --- Ecrans de secours (lot CL-7, P05, P06, P09 a P12) ---
 
@@ -1490,6 +1498,7 @@ class VueSeance {
     PauseSeance? pause,
     bool sansPause = false,
     ConnexionSeance? connexion,
+    bool? videoSuspendue,
     VisiteSeance? visite,
     bool sansVisite = false,
     FileRecitation? recitation,
@@ -1528,6 +1537,7 @@ class VueSeance {
     chrono: sansChrono ? null : chrono ?? this.chrono,
     pause: sansPause ? null : pause ?? this.pause,
     connexion: connexion ?? this.connexion,
+    videoSuspendue: videoSuspendue ?? this.videoSuspendue,
     enregistrementConfirme:
         enregistrementConfirme ?? this.enregistrementConfirme,
     visite: sansVisite ? null : visite ?? this.visite,
