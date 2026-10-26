@@ -15,8 +15,13 @@ class PiluleEtatSalle extends StatelessWidget {
     required this.vue,
     this.largeurMax = double.infinity,
     this.cle = const ValueKey<String>('pilule-etat-salle'),
+    this.aLaLigne = false,
     super.key,
   });
+
+  /// Fiche 1, ligne 5 (carte du profil du telephone) : etroite ou texte
+  /// agrandi, la phrase passe a la ligne entre deux mots, jamais dans un mot.
+  final bool aLaLigne;
 
   final VueSeance vue;
 
@@ -32,6 +37,16 @@ class PiluleEtatSalle extends StatelessWidget {
     final TextStyle style = palette.piluleSalle.applyTo(
       Theme.of(context).textTheme.labelMedium ?? const TextStyle(),
     );
+    final Widget point = SizedBox.square(
+      dimension: AppSpacing.sm,
+      child: DecoratedBox(
+        decoration:
+            (vue.connexion.etablie
+                    ? palette.pointsStatut.succes
+                    : palette.pointsStatut.attention)
+                .pastille(),
+      ),
+    );
     return ConstrainedBox(
       constraints: BoxConstraints(
         maxWidth: largeurMax,
@@ -40,42 +55,50 @@ class PiluleEtatSalle extends StatelessWidget {
       child: DecoratedBox(
         key: cle,
         decoration: palette.piluleSalle.decoration(
-          borderRadius: AppRadius.arrondiFull,
+          borderRadius: aLaLigne ? AppRadius.arrondiMd : AppRadius.arrondiFull,
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              SizedBox.square(
-                dimension: AppSpacing.sm,
-                child: DecoratedBox(
-                  decoration:
-                      (vue.connexion.etablie
-                              ? palette.pointsStatut.succes
-                              : palette.pointsStatut.attention)
-                          .pastille(),
-                ),
-              ),
-              Ecart.hSm,
-              // Lot salle 3 : la phrase du repli audio peut passer sur deux
-              // lignes, jamais coupee ni debordante.
-              Flexible(child: Text(vue.texteConnexion, style: style)),
-              if (vue.texteMention != null) ...<Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.xs,
+          child: aLaLigne
+              ? Padding(
+                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                  child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: AppSpacing.sm,
+                    runSpacing: AppSpacing.xs,
+                    children: <Widget>[
+                      point,
+                      Text(vue.texteConnexion, style: style),
+                      if (vue.texteMention != null) ...<Widget>[
+                        Text('\u00b7', style: style),
+                        MentionSeance(vue: vue, lienSousLaLigne: false),
+                      ],
+                    ],
                   ),
-                  child: Text('\u00b7', style: style),
+                )
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    point,
+                    Ecart.hSm,
+                    // Lot salle 3 : la phrase du repli audio peut passer sur deux
+                    // lignes, jamais coupee ni debordante.
+                    Flexible(child: Text(vue.texteConnexion, style: style)),
+                    if (vue.texteMention != null) ...<Widget>[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.xs,
+                        ),
+                        child: Text('\u00b7', style: style),
+                      ),
+                      // La phrase entiere, jamais coupee (ADR-011) ; aucun lien
+                      // dessous, la mention elle-meme ouvre la lecture.
+                      Flexible(
+                        child: MentionSeance(vue: vue, lienSousLaLigne: false),
+                      ),
+                    ],
+                  ],
                 ),
-                // La phrase entiere, jamais coupee (ADR-011) ; aucun lien
-                // dessous, la mention elle-meme ouvre la lecture.
-                Flexible(
-                  child: MentionSeance(vue: vue, lienSousLaLigne: false),
-                ),
-              ],
-            ],
-          ),
         ),
       ),
     );

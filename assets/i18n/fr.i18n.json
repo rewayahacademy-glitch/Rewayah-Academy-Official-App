@@ -604,7 +604,8 @@
         "controleActifDetail": "Une visite de contrôle a lieu en ce moment.",
         "reduire": "Réduire",
         "reduireParticipants": "Réduire les participants",
-        "reduireInformations": "Réduire les informations"
+        "reduireInformations": "Réduire les informations",
+        "enseignante": "Enseignante"
       },
       "demo": {
         "titre": "Salle de démonstration",

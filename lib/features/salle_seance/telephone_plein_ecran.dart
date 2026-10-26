@@ -64,6 +64,14 @@ bool telephonePleinEcran(BuildContext context) =>
     pleinEcranSalle(context) &&
     MediaQuery.sizeOf(context).shortestSide < AppGabarit.seuilTablette;
 
+/// Fiche 1 (26/10/2026) : la composition du telephone de l'enseignant (la
+/// capsule, « Commandes », le tiroir, la feuille des eleves) vaut pour toute
+/// fenetre de moins de 840 points de large : telephone et iPad en portrait.
+bool salleTelephoneEnseignant(BuildContext context, VueSeance vue) =>
+    pleinEcranSalle(context) &&
+    vue.role == RoleSeance.enseignant &&
+    MediaQuery.sizeOf(context).width < AppGabarit.seuilEtendu;
+
 /// Ordinateur et tablette : la page du Coran se compose sur toute la hauteur
 /// de la fenetre ; sa largeur suit la composition (ratio du mushaf), jusqu'a
 /// [plafondLargeurPage] fois cette largeur au plus, centree ; au-dela, des
@@ -163,7 +171,7 @@ Widget? pageSalle(
 }
 
 /// La salle au telephone : la page est l'ecran.
-class TelephonePleinEcran extends StatelessWidget {
+class TelephonePleinEcran extends StatefulWidget {
   const TelephonePleinEcran({
     required this.vue,
     required this.actions,
@@ -184,6 +192,41 @@ class TelephonePleinEcran extends StatelessWidget {
     'telephone-commandes-repos',
   );
 
+  /// Fiche 1, ligne 3 : « Commandes » au toucher, au-dessus de la pilule,
+  /// au bord de fin.
+  static const Key cleCommandesToucher = ValueKey<String>(
+    'telephone-commandes-toucher',
+  );
+
+  @override
+  State<TelephonePleinEcran> createState() => _EtatTelephonePleinEcran();
+}
+
+class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
+  VueSeance get vue => widget.vue;
+  ActionsSeance get actions => widget.actions;
+  EtatLocalSeance get local => widget.local;
+
+  /// Fiche 1, ligne 5 : le profil deplie depuis la capsule ; il reste
+  /// jusqu'a « Reduire » ou un toucher de la page (pas de masquage a 3 s).
+  bool _profil = false;
+  final GlobalKey _cleProfil = GlobalKey();
+
+  void _replier() {
+    if (_profil) setState(() => _profil = false);
+  }
+
+  /// Un toucher hors de la carte du profil la replie.
+  void _toucherPage(PointerDownEvent e) {
+    if (!_profil) return;
+    final RenderObject? carte = _cleProfil.currentContext?.findRenderObject();
+    if (carte is RenderBox && carte.hasSize) {
+      final Offset local = carte.globalToLocal(e.position);
+      if ((Offset.zero & carte.size).contains(local)) return;
+    }
+    _replier();
+  }
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -203,8 +246,7 @@ class TelephonePleinEcran extends StatelessWidget {
           // Plan de composition du 26/10/2026, §4 (PR B) : l'enseignant au
           // telephone a sa capsule, son tiroir des Commandes et ses eleves en
           // feuille ; l'eleve, le tuteur et le controleur ne changent pas.
-          final bool enseignant =
-              telephone && vue.role == RoleSeance.enseignant;
+          final bool enseignant = salleTelephoneEnseignant(context, vue);
           final bool eleves = enseignant && vue.panneau == PanneauOuvert.eleves;
           final bool libre = vue.supportPresente == null;
           final Widget? pageVue = scene
@@ -214,21 +256,22 @@ class TelephonePleinEcran extends StatelessWidget {
                   vue: vue,
                   zoom: local.zoom,
                   ecran: ecran,
-                  telephone: telephone,
+                  telephone: telephone || enseignant,
                 );
           final Widget? page = pageVue;
+          // Fiche 1, lignes 1, 2, 5 : la capsule (ou le profil deplie) reste
+          // en haut au repos comme au toucher. Sans page (scene video en
+          // grand), rien a reduire : pas de capsule. Page illisible : son
+          // constat et son « Reessayer » se lisent, rien ne se pose dessus.
+          final bool capsule =
+              enseignant && page != null && !(media?.pageEnErreur ?? false);
           final Widget haut = _Haut(
             vue: vue,
             actions: actions,
             largeur: ecran.width,
             // Lot salle 2 : la vignette est posee a part, deplacable.
             vignette: false,
-            aCote: !telephone,
-            // Sans page (scene video en grand), rien a reduire : pas de
-            // capsule. Page illisible : son constat et son « Reessayer » se
-            // lisent, rien ne se pose dessus.
-            capsule:
-                enseignant && page != null && !(media?.pageEnErreur ?? false),
+            aCote: !telephone && !enseignant,
           );
           final Widget bas = Padding(
             // Standard : marge 16 des bords (et la zone sure).
@@ -237,7 +280,7 @@ class TelephonePleinEcran extends StatelessWidget {
               vue: vue,
               actions: actions,
               local: local,
-              paletteAuDessus: telephone,
+              paletteAuDessus: telephone || enseignant,
               enseignantTelephone: enseignant,
             ),
           );
@@ -246,10 +289,13 @@ class TelephonePleinEcran extends StatelessWidget {
           final double hauteurFeuille = ecran.height * _partPanneau;
           // Ordinateur : la palette du tableau, verticale au bord droit.
           final bool paletteADroite =
-              !telephone && vue.tableauOuvert && actions.onTableau != null;
+              !telephone &&
+              !enseignant &&
+              vue.tableauOuvert &&
+              actions.onTableau != null;
           // Ordinateur : les Commandes ouvertes flottent au bord droit, dans
           // la couche qui se masque a 3 s ; aucune carte pleine hauteur.
-          final Widget? commandesADroite = !telephone && panneau
+          final Widget? commandesADroite = !telephone && !enseignant && panneau
               ? _PanneauCommandes(
                   vue: vue,
                   actions: actions,
@@ -259,7 +305,10 @@ class TelephonePleinEcran extends StatelessWidget {
               : null;
           return CommandesMasquables(
             delai: AppMouvement.masquageSalle,
-            maintenir: vue.visioMaintenue || (panneau && telephone),
+            maintenir:
+                vue.visioMaintenue ||
+                (panneau && telephone) ||
+                ((panneau || eleves) && enseignant),
             libelleEntree: t.salle.seance.commandesAppel,
             contenu: Stack(
               fit: StackFit.expand,
@@ -282,7 +331,51 @@ class TelephonePleinEcran extends StatelessWidget {
                     ],
                   )
                 else
-                  Center(child: pageVue),
+                  Listener(
+                    behavior: HitTestBehavior.translucent,
+                    onPointerDown: _toucherPage,
+                    child: Center(child: pageVue),
+                  ),
+                if (capsule)
+                  PositionedDirectional(
+                    top: 0,
+                    start: 0,
+                    end: 0,
+                    child: SafeArea(
+                      bottom: false,
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppSpacing.lg),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            if (_profil)
+                              KeyedSubtree(
+                                key: _cleProfil,
+                                child: ProfilTelephone(
+                                  vue: vue,
+                                  onReduire: _replier,
+                                ),
+                              )
+                            else
+                              Center(
+                                child: CapsuleVideoTelephone(
+                                  vue: vue,
+                                  onDeplier: () =>
+                                      setState(() => _profil = true),
+                                ),
+                              ),
+                            BandeauSecours(
+                              vue: vue,
+                              actions: actions,
+                              gouttiere: 0,
+                            ),
+                            ?media?.alerte,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 if (panneau && telephone && !enseignant)
                   PositionedDirectional(
                     start: AppSpacing.sm,
@@ -339,12 +432,15 @@ class TelephonePleinEcran extends StatelessWidget {
                     size: ecran,
                     child: Stack(
                       children: <Widget>[
-                        PositionedDirectional(
-                          top: 0,
-                          start: 0,
-                          end: 0,
-                          child: haut,
-                        ),
+                        // Fiche 1, ligne 1 : chez l'enseignant au telephone,
+                        // rien en haut hors de la capsule (posee au repos).
+                        if (!capsule)
+                          PositionedDirectional(
+                            top: 0,
+                            start: 0,
+                            end: 0,
+                            child: haut,
+                          ),
                         // Lot salle 2 (directeur, 25/10/2026) : la vignette se
                         // deplace au doigt et a la souris, aimantee aux quatre
                         // coins (standard Meet, FaceTime).
@@ -402,6 +498,26 @@ class TelephonePleinEcran extends StatelessWidget {
                                               local: local,
                                               hauteur: hauteurFeuille,
                                             ),
+                                    ),
+                                  ),
+                                // Fiche 1, ligne 3 : au toucher,
+                                // « Commandes » remonte au-dessus de la
+                                // pilule, au bord de fin.
+                                if (enseignant &&
+                                    !(panneau || eleves) &&
+                                    _declencheur(actions, vue) != null)
+                                  Padding(
+                                    padding: const EdgeInsetsDirectional.only(
+                                      start: AppSpacing.lg,
+                                      end: AppSpacing.lg,
+                                    ),
+                                    child: Align(
+                                      alignment: AlignmentDirectional.centerEnd,
+                                      child: DeclencheurCommandes(
+                                        key: TelephonePleinEcran
+                                            .cleCommandesToucher,
+                                        onPress: _declencheur(actions, vue)!,
+                                      ),
                                     ),
                                   ),
                                 bas,
@@ -568,7 +684,6 @@ class _Haut extends StatelessWidget {
     required this.largeur,
     required this.vignette,
     required this.aCote,
-    this.capsule = false,
   });
 
   final VueSeance vue;
@@ -577,22 +692,11 @@ class _Haut extends StatelessWidget {
   final bool vignette;
   final bool aCote;
 
-  /// Plan §4 : l'enseignant au telephone, la capsule de sa video a la place
-  /// du bouton « Eleves » (ses eleves sont dans l'onglet Seance).
-  final bool capsule;
-
   @override
   Widget build(BuildContext context) {
     final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
     final Widget? alerte = media?.alerte;
-    // Plan §4 : l'enseignant au telephone garde son bouton rond « Eleves »
-    // en haut ; il ouvre la feuille des cartes (les memes que sur
-    // ordinateur), et non plus l'ancienne liste.
-    final ({int nombre, VoidCallback onPress})? basique = media?.boutonEleves;
-    final ({int nombre, VoidCallback onPress})? eleves =
-        capsule && basique != null && actions.onEleves != null
-        ? (nombre: basique.nombre, onPress: actions.onEleves!)
-        : basique;
+    final ({int nombre, VoidCallback onPress})? eleves = media?.boutonEleves;
     // Standard des commandes d'appel (24/10/2026) : une pilule translucide en
     // haut a gauche, hauteur 36 : « ● En ligne · Visite de controle
     // possible. » (ADR-011), seule sur sa rangee ; dessous, a droite, le
@@ -672,10 +776,7 @@ class _Haut extends StatelessWidget {
             else
               Align(alignment: AlignmentDirectional.topStart, child: ligne),
             if (!aCote &&
-                (eleves != null ||
-                    vignette ||
-                    capsule ||
-                    fermer != null)) ...<Widget>[
+                (eleves != null || vignette || fermer != null)) ...<Widget>[
               Ecart.vSm,
               Align(
                 alignment: AlignmentDirectional.topEnd,
@@ -694,7 +795,6 @@ class _Haut extends StatelessWidget {
                         vue: vue,
                         largeur: largeurVignetteTelephone,
                       ),
-                    if (capsule) CapsuleVideoTelephone(vue: vue),
                     ?fermer,
                   ],
                 ),
@@ -881,8 +981,11 @@ class _Bas extends StatelessWidget {
               CommandeDock.quitter,
             ]
           : null,
+      // Fiche 1, ligne 3 : chez l'enseignant au telephone, « Commandes » est
+      // au-dessus de la pilule, jamais dedans.
       plus:
-          commandes != null &&
+          !enseignantTelephone &&
+              commandes != null &&
               CommandesPedagogiques.aDesEntrees(vue, actions) &&
               vue.panneau != PanneauOuvert.commandes
           ? BoutonPlusAppel(onPress: commandes)

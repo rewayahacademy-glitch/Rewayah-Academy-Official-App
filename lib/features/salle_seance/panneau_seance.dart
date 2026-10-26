@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_elevation.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
@@ -433,39 +434,11 @@ class _EnTete extends StatelessWidget {
     if (mot != null && fermer != null) {
       // « Reduire » et son chevron (planches 1 et 6) : une cible de 48 au
       // moins, le mot passe a la ligne plutot que d'etre coupe.
-      final Widget reduire = Pressable(
+      final Widget reduire = BoutonReduire(
         key: cleFermer,
+        mot: mot,
+        semantique: semantiqueFermer ?? mot,
         onPress: fermer,
-        libelleSemantique: semantiqueFermer ?? mot,
-        arrondiFocus: AppRadius.arrondiMd,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            minHeight: AppSpacing.titreEcran,
-            minWidth: AppSpacing.titreEcran,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-            child: ExcludeSemantics(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(
-                    mot,
-                    style: palette.inkAccent.applyTo(
-                      Theme.of(context).textTheme.labelLarge ??
-                          const TextStyle(),
-                    ),
-                  ),
-                  Ecart.hXs,
-                  IconTheme(
-                    data: palette.inkAccent.asIconTheme(size: AppSpacing.xl),
-                    child: Icon(AppIcons.suiteEnBas.repos),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
       );
       // TB-10 (COUPE-MOTS-1) : quand le mot le plus long du titre ne tient
       // plus a cote de « Reduire » (Mode Accessibilite, 320 a 200 %), le
@@ -778,6 +751,76 @@ class _DefilementAFonduState extends State<DefilementAFondu> {
         onNotification: (ScrollMetricsNotification n) =>
             n.depth == 0 && _suivre(n.metrics),
         child: contenu,
+      ),
+    );
+  }
+}
+
+/// « Reduire » et son chevron (planches 1 et 6) : une cible de 48 au moins,
+/// le mot passe a la ligne plutot que d'etre coupe. Le meme dans l'en-tete
+/// d'un panneau et dans la carte du profil du telephone (fiche 1, ligne 5).
+class BoutonReduire extends StatelessWidget {
+  const BoutonReduire({
+    required this.mot,
+    required this.semantique,
+    required this.onPress,
+    this.icone = AppIcons.suiteEnBas,
+    this.sur,
+    super.key,
+  });
+
+  final String mot;
+  final String semantique;
+  final VoidCallback onPress;
+
+  /// Le chevron : vers le bas (un panneau du bas), vers le haut (le profil).
+  final AppIcon icone;
+
+  /// La surface sombre ou il se pose (encre de cette surface) ; sinon
+  /// l'encre d'accent.
+  final AppColorPair? sur;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextStyle base =
+        Theme.of(context).textTheme.labelLarge ?? const TextStyle();
+    final AppColorPair? fond = sur;
+    return Pressable(
+      onPress: onPress,
+      libelleSemantique: semantique,
+      arrondiFocus: AppRadius.arrondiMd,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(
+          minHeight: AppSpacing.titreEcran,
+          minWidth: AppSpacing.titreEcran,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+          child: ExcludeSemantics(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  mot,
+                  style: fond == null
+                      ? palette.inkAccent.applyTo(base)
+                      : fond.applyTo(base),
+                ),
+                Ecart.hXs,
+                IconTheme(
+                  data: fond == null
+                      ? palette.inkAccent.asIconTheme(size: AppSpacing.xl)
+                      : IconThemeData(
+                          color: fond.onBackground,
+                          size: AppSpacing.xl,
+                        ),
+                  child: Icon(icone.repos),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

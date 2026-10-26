@@ -53,8 +53,6 @@ import 'package:rewayah_academy/features/salle_enseignant/page_coran_salle.dart'
 import 'package:rewayah_academy/features/salle_seance/barre_outils_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart'
     show DeclencheurCommandes;
-import 'package:rewayah_academy/features/salle_seance/dock_seance.dart'
-    show BoutonPlusAppel;
 import 'package:rewayah_academy/features/salle_seance/ecriture_seance.dart'
     show diffusionEcritureProvider;
 import 'package:rewayah_academy/features/salle_seance/media_salle.dart';
@@ -2799,7 +2797,8 @@ void main() {
           // Les commandes se masquent au delai : un toucher les ramene.
           await tester.tapAt(const Offset(10, 10));
           await tester.pumpAndSettle();
-          await tester.tap(find.byKey(BoutonPlusAppel.cle));
+          // Fiche 1, ligne 3 : « Commandes » au-dessus de la pilule.
+          await tester.tap(find.byKey(TelephonePleinEcran.cleCommandesToucher));
           await tester.pumpAndSettle();
           // ONGLETS-1 : en menu quand les trois mots ne tiennent pas.
           final Finder menu = find.byType(MenuFiltre<OngletTiroir>);

@@ -12,11 +12,15 @@
 // ([DockSeance] nommee, [tuileOutilSalle]), la barre d'outils
 // [BarreOutilsSalle], les eleves [PanneauEleves].
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
 import '../../core/tc_outils/etat_outils.dart';
 import '../../core/tc_outils/port_dock_hote.dart' show OutilDock;
 import '../../core/theme/app_palette.dart';
@@ -25,6 +29,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/controle_segmente.dart' show Segment;
 import '../../core/widgets/local_feedback.dart';
+import '../../core/widgets/pressable.dart';
 import '../../core/widgets/selecteur_section.dart';
 import 'actions_seance.dart';
 import 'barre_outils_salle.dart';
@@ -33,26 +38,39 @@ import 'media_salle.dart';
 import 'panneau_bibliotheque_salle.dart';
 import 'panneau_eleves.dart';
 import 'panneau_seance.dart';
+import 'pilule_etat_salle.dart';
 import 'salle_ordinateur.dart' show tuileOutilSalle;
 import 'salle_seance.dart' show EtatLocalSeance;
-import 'vignette_video.dart';
+import 'vignette_video.dart' show SignalVideo, VignetteVideo;
 import 'vue_seance.dart';
 
 /// Les trois onglets du tiroir des Commandes du telephone.
 enum OngletTiroir { support, outils, seance }
 
-/// La capsule du haut : la video de l'enseignant, petite, et « Voir la video
-/// en grand ».
+/// Fiche 1 (26/10/2026), ligne 2 : la capsule du haut, une seule, sombre,
+/// au centre : la vignette video, le point d'etat (rouge seulement sur un
+/// enregistrement reel, vert sinon), l'oeil « Voir la video en grand ».
+/// Ligne 5 : toucher la capsule (hors de l'oeil) deplie le profil.
 class CapsuleVideoTelephone extends StatelessWidget {
-  const CapsuleVideoTelephone({required this.vue, super.key = cle});
+  const CapsuleVideoTelephone({
+    required this.vue,
+    required this.onDeplier,
+    super.key = cle,
+  });
 
   final VueSeance vue;
+
+  /// Deplie la carte du profil ([ProfilTelephone]).
+  final VoidCallback onDeplier;
 
   /// La cle de la capsule (tests, captures).
   static const Key cle = ValueKey<String>('telephone-capsule');
 
   /// La cle de « Voir la video en grand ».
   static const Key cleVoir = ValueKey<String>('telephone-capsule-voir');
+
+  /// La cle de la partie qui deplie le profil.
+  static const Key cleDeplier = ValueKey<String>('telephone-capsule-deplier');
 
   /// La largeur de la video dans la capsule.
   static const double largeurVideo = AppSpacing.respiration * 1.5;
@@ -71,7 +89,27 @@ class CapsuleVideoTelephone extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           spacing: AppSpacing.sm,
           children: <Widget>[
-            VignetteVideo(vue: vue, largeur: largeurVideo),
+            Pressable(
+              key: cleDeplier,
+              onPress: onDeplier,
+              libelleSemantique: t.salle.seance.contexte.titre,
+              arrondiFocus: AppRadius.arrondiMd,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  VignetteVideo(
+                    vue: vue,
+                    largeur: largeurVideo,
+                    touchable: false,
+                    avecNom: false,
+                  ),
+                  SizedBox.square(
+                    dimension: AppTouchTarget.standard,
+                    child: Center(child: PointEtatTelephone(vue: vue)),
+                  ),
+                ],
+              ),
+            ),
             if (enGrand != null)
               BoutonIcone(
                 key: cleVoir,
@@ -81,6 +119,214 @@ class CapsuleVideoTelephone extends StatelessWidget {
                 forme: FormeBoutonIcone.appel,
                 onPress: enGrand,
               ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Le point d'etat de la capsule et du profil : rouge seulement sur un
+/// enregistrement reel ([VueSeance.voitPointEnregistrement], faux tant
+/// qu'aucun cours n'est capte, A-01), vert sinon.
+class PointEtatTelephone extends StatelessWidget {
+  const PointEtatTelephone({required this.vue, super.key = cle});
+
+  final VueSeance vue;
+
+  /// La cle du point (tests).
+  static const Key cle = ValueKey<String>('telephone-point-etat');
+
+  /// Vrai quand le point est rouge (tests).
+  static bool rouge(VueSeance vue) => vue.voitPointEnregistrement;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    return SizedBox.square(
+      dimension: AppSpacing.md,
+      child: DecoratedBox(
+        decoration:
+            (rouge(vue)
+                    ? palette.pointsStatut.alerte
+                    : palette.pointsStatut.succes)
+                .pastille(),
+      ),
+    );
+  }
+}
+
+/// Fiche 1, ligne 5 : la carte du profil, depliee depuis la capsule, en haut :
+/// la video, le nom, le role, le point d'etat et le signal, « Reduire », et
+/// dessous la ligne d'etat de la salle ([PiluleEtatSalle]), qu'on ne lit
+/// nulle part ailleurs au telephone.
+class ProfilTelephone extends StatelessWidget {
+  const ProfilTelephone({
+    required this.vue,
+    required this.onReduire,
+    super.key = cle,
+  });
+
+  final VueSeance vue;
+  final VoidCallback onReduire;
+
+  /// La cle de la carte (tests, captures).
+  static const Key cle = ValueKey<String>('telephone-profil');
+
+  /// La cle de « Reduire ».
+  static const Key cleReduire = ValueKey<String>('telephone-profil-reduire');
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final String role = vue.titreEnseignant == TitreEnseignant.sayyida
+        ? t.salle.seance.contexte.enseignante
+        : t.commun.roles.enseignant;
+    final Widget identite = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      spacing: AppSpacing.xs,
+      children: <Widget>[
+        Text(
+          vue.nomEnseignant,
+          style: palette.piluleSalle.applyTo(
+            textes.titleSmall ?? const TextStyle(),
+          ),
+        ),
+        Text(
+          role,
+          style: palette.piluleSalle.applyTo(
+            textes.bodySmall ?? const TextStyle(),
+          ),
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          spacing: AppSpacing.sm,
+          children: <Widget>[
+            PointEtatTelephone(vue: vue),
+            if (vue.voitSignalVideo)
+              SignalVideo(
+                key: const ValueKey<String>('telephone-profil-signal'),
+                barres: vue.signalEnseignant,
+              ),
+          ],
+        ),
+      ],
+    );
+    final Widget reduire = BoutonReduire(
+      key: cleReduire,
+      mot: t.salle.seance.contexte.reduire,
+      semantique: t.salle.seance.contexte.reduireInformations,
+      icone: AppIcons.replier,
+      sur: palette.piluleSalle,
+      onPress: onReduire,
+    );
+    final Widget photo = VignetteVideo(
+      vue: vue,
+      largeur: CapsuleVideoTelephone.largeurVideo,
+      avecSignal: false,
+      avecNom: false,
+    );
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    return DecoratedBox(
+      decoration: palette.piluleSalle.decoration(
+        borderRadius: AppRadius.arrondiLg,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            // COUPE-MOTS-1 : quand le mot le plus long du nom ou du role ne
+            // tient plus a cote de « Reduire », « Reduire » passe dessous, au
+            // bord de fin, plutot que de couper le nom.
+            LayoutBuilder(
+              builder: (BuildContext contexte, BoxConstraints c) {
+                final double mot = math.max(
+                  largeurMotLePlusLong(
+                    contexte,
+                    vue.nomEnseignant,
+                    textes.titleSmall,
+                    echelle,
+                  ),
+                  largeurMotLePlusLong(
+                    contexte,
+                    role,
+                    textes.bodySmall,
+                    echelle,
+                  ),
+                );
+                final double largeurReduire = math.max(
+                  AppSpacing.titreEcran,
+                  largeurMotLePlusLong(
+                        contexte,
+                        t.salle.seance.contexte.reduire,
+                        textes.labelLarge,
+                        echelle,
+                      ) +
+                      AppSpacing.xs +
+                      AppSpacing.xl +
+                      2 * AppSpacing.sm,
+                );
+                const double video = CapsuleVideoTelephone.largeurVideo;
+                final bool photoACote =
+                    video + AppSpacing.md + mot <= c.maxWidth;
+                final bool aCote =
+                    photoACote &&
+                    video + mot + largeurReduire + 2 * AppSpacing.md <=
+                        c.maxWidth;
+                if (aCote) {
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: AppSpacing.md,
+                    children: <Widget>[
+                      photo,
+                      Expanded(child: identite),
+                      reduire,
+                    ],
+                  );
+                }
+                // Etroit ou texte agrandi : « Reduire » sous le nom, au bord
+                // de fin ; tres etroit, le nom passe aussi sous la photo.
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  spacing: AppSpacing.sm,
+                  children: <Widget>[
+                    if (photoACote)
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: AppSpacing.md,
+                        children: <Widget>[
+                          photo,
+                          Expanded(child: identite),
+                        ],
+                      )
+                    else ...<Widget>[
+                      Align(
+                        alignment: AlignmentDirectional.centerStart,
+                        child: photo,
+                      ),
+                      identite,
+                    ],
+                    Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: reduire,
+                    ),
+                  ],
+                );
+              },
+            ),
+            Ecart.vMd,
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: PiluleEtatSalle(
+                vue: vue,
+                aLaLigne: true,
+                cle: const ValueKey<String>('ligne-etat-telephone'),
+              ),
+            ),
           ],
         ),
       ),

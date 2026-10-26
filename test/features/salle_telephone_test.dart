@@ -1,14 +1,9 @@
-// Plan de composition du 26/10/2026, §4 (PR B) : la salle de l'enseignant au
-// telephone, a 390 x 844 et 360 x 780, texte x1 et x2, francais et arabe.
+// Fiche 1 (26/10/2026, docs/current/maquettes/salle/
+// FICHE-1-TELEPHONE-2026-10-26.md) : la salle de l'enseignant au telephone et
+// sur l'iPad en portrait, a 390 x 844 et 834 x 1194, texte x1 et x2,
+// francais et arabe. Un test par ligne de la fiche, nomme « ligne N ».
 //
-// Au repos, la page seule et « Commandes » en bas ; au toucher, la capsule
-// video en haut et la pilule micro, camera, quitter en bas ; « Commandes »
-// deplie le tiroir (Support, Outils, Seance) ; « Eleves » ouvre la feuille.
-// Rien ne se recouvre, aucun mot coupe, un seul bouton plein, cartes
-// separees de 16.
-//
-// Captures 390 (repos, toucher, les trois onglets, eleves) seulement avec
-// CAPTURE_DIR.
+// Captures (fiche, « Captures a produire ») seulement avec CAPTURE_DIR.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' show Ref;
@@ -22,6 +17,7 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
 import 'package:rewayah_academy/core/theme/app_mouvement.dart';
+import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
@@ -29,10 +25,9 @@ import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_outils_salle.dart';
-import 'package:rewayah_academy/features/salle_seance/dock_seance.dart'
-    show BoutonPlusAppel;
 import 'package:rewayah_academy/features/salle_seance/panneau_bibliotheque_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_eleves.dart';
+import 'package:rewayah_academy/features/salle_seance/pilule_etat_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_ordinateur.dart';
 import 'package:rewayah_academy/features/salle_seance/telephone_enseignant.dart';
 import 'package:rewayah_academy/features/salle_seance/telephone_plein_ecran.dart';
@@ -134,7 +129,7 @@ List<Override> _surcharges(String role, FauxMoteurSalle moteur) => <Override>[
 ];
 
 const Size _telephone = Size(390, 844);
-const Size _petit = Size(360, 780);
+const Size _ipad = Size(834, 1194);
 
 Future<void> _monter(
   WidgetTester tester, {
@@ -182,12 +177,45 @@ Future<void> _toucher(WidgetTester tester) async {
   await tester.pumpAndSettle();
 }
 
-/// Ouvre le tiroir des Commandes (le « Plus » de la pilule).
+/// Ouvre le tiroir des Commandes (« Commandes » au toucher, ligne 3).
 Future<void> _ouvrirTiroir(WidgetTester tester) async {
   await _toucher(tester);
-  await tester.tap(find.byKey(BoutonPlusAppel.cle));
+  await tester.tap(find.byKey(TelephonePleinEcran.cleCommandesToucher));
   await tester.pumpAndSettle();
 }
+
+/// Les textes et icones touchables a l'ecran (ce qu'on voit et qu'on peut
+/// toucher), hors des zones [permises] ; la page elle-meme est toujours
+/// permise.
+List<({String texte, Rect cadre})> _horsDe(
+  WidgetTester tester,
+  List<Finder> permises,
+) {
+  final List<({String texte, Rect cadre})> hors =
+      <({String texte, Rect cadre})>[];
+  final List<Finder> zones = <Finder>[
+    find.byKey(TelephonePleinEcran.clePage),
+    ...permises,
+  ];
+  for (final Element e in find.byType(RichText).hitTestable().evaluate()) {
+    final bool dedans = zones.any(
+      (Finder z) => find
+          .descendant(of: z, matching: find.byWidget(e.widget))
+          .evaluate()
+          .isNotEmpty,
+    );
+    if (!dedans) {
+      hors.add((
+        texte: (e.widget as RichText).text.toPlainText(),
+        cadre: tester.getRect(find.byWidget(e.widget)),
+      ));
+    }
+  }
+  return hors;
+}
+
+/// Le bord de debut de l'ecran est-il a gauche ?
+bool _ltr() => LocaleSettings.currentLocale != AppLocale.ar;
 
 /// Change d'onglet, que le selecteur du core soit en rangee segmentee ou,
 /// faute de place (360 en texte x2), en menu deroulant (ONGLETS-1).
@@ -234,35 +262,210 @@ void main() {
   for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
     group(langue.languageCode, () {
       setUp(() => LocaleSettings.setLocale(langue));
-      for (final Size taille in <Size>[_telephone, _petit]) {
+      for (final Size taille in <Size>[_telephone, _ipad]) {
         for (final double texte in <double>[1, 2]) {
           final String nom =
               '${taille.width.toInt()}x${taille.height.toInt()}, '
               'texte x${texte.toInt()}';
 
-          testWidgets('$nom : au repos, la page et « Commandes » ; au '
-              'toucher, la capsule et la pilule', (WidgetTester tester) async {
+          testWidgets('$nom : ligne 1, au repos, la capsule et « Commandes » '
+              'seulement', (WidgetTester tester) async {
             await _monter(tester, taille: taille, texte: texte);
             expect(find.byType(SalleOrdinateur), findsNothing);
-            // Au repos (les commandes masquees) : « Commandes » seul en bas.
             await _attendreLeRepos(tester);
+            final Finder capsule = find.byKey(CapsuleVideoTelephone.cle);
+            final Finder commandes = find.byKey(
+              TelephonePleinEcran.cleCommandesRepos,
+            );
+            expect(capsule.hitTestable(), findsOneWidget);
+            expect(commandes.hitTestable(), findsOneWidget);
+            // Rien d'autre : ni pilule d'etat, ni Eleves, ni croix, ni texte.
+            expect(_horsDe(tester, <Finder>[capsule, commandes]), isEmpty);
+            expect(find.byType(PiluleEtatSalle), findsNothing);
+            expect(
+              find.byKey(const ValueKey<String>('salle-eleves')),
+              findsNothing,
+            );
+            expect(
+              find.byKey(const ValueKey<String>('salle-ranger-support')),
+              findsNothing,
+            );
+            // La capsule en haut au centre, « Commandes » en bas au centre.
+            final Rect c = tester.getRect(capsule);
+            final Rect k = tester.getRect(commandes);
+            expect(c.center.dx, moreOrLessEquals(taille.width / 2, epsilon: 1));
+            expect(k.center.dx, moreOrLessEquals(taille.width / 2, epsilon: 1));
+            expect(c.bottom, lessThan(taille.height / 4));
+            expect(k.top, greaterThan(taille.height * 3 / 4));
+            expect(tester.takeException(), isNull);
+          });
+
+          testWidgets('$nom : ligne 2, la capsule : vignette, point vert, '
+              'oeil', (WidgetTester tester) async {
+            await _monter(tester, taille: taille, texte: texte);
+            await _attendreLeRepos(tester);
+            final Finder capsule = find.byKey(CapsuleVideoTelephone.cle);
+            expect(capsule, findsOneWidget);
+            Finder dans(Finder f) => find.descendant(of: capsule, matching: f);
+            final Finder vignette = dans(
+              find.byKey(const ValueKey<String>('vignette-video')),
+            );
+            final Finder point = dans(find.byKey(PointEtatTelephone.cle));
+            final Finder oeil = dans(find.byKey(CapsuleVideoTelephone.cleVoir));
+            expect(vignette, findsOneWidget);
+            expect(point, findsOneWidget);
+            expect(oeil, findsOneWidget);
+            // De gauche a droite (de droite a gauche en arabe).
+            final double xv = tester.getCenter(vignette).dx;
+            final double xp = tester.getCenter(point).dx;
+            final double xo = tester.getCenter(oeil).dx;
+            expect(_ltr() ? xv < xp && xp < xo : xv > xp && xp > xo, isTrue);
+            // Vert : aucun enregistrement reel (A-01).
+            final BuildContext ctx = tester.element(point);
+            final BoxDecoration deco =
+                tester
+                        .widget<DecoratedBox>(
+                          find.descendant(
+                            of: point,
+                            matching: find.byType(DecoratedBox),
+                          ),
+                        )
+                        .decoration
+                    as BoxDecoration;
+            expect(
+              deco.color,
+              AppPalette.of(ctx).pointsStatut.succes.debugValue,
+            );
+            // Sombre : la surface des pilules de la salle.
+            final BoxDecoration fond =
+                tester
+                        .widget<DecoratedBox>(
+                          find
+                              .descendant(
+                                of: capsule,
+                                matching: find.byType(DecoratedBox),
+                              )
+                              .first,
+                        )
+                        .decoration
+                    as BoxDecoration;
+            expect(fond.color, AppPalette.of(ctx).piluleSalle.background);
+            // Rien d'autre en haut de l'ecran.
+            final Rect c = tester.getRect(capsule);
+            await _toucher(tester);
+            expect(
+              _horsDe(tester, <Finder>[
+                capsule,
+              ]).where((h) => h.cadre.top <= c.bottom),
+              isEmpty,
+              reason: 'en haut hors de la capsule',
+            );
+          });
+
+          testWidgets('$nom : ligne 3, au toucher la pilule, « Commandes » '
+              'au-dessus, au bord de fin', (WidgetTester tester) async {
+            await _monter(tester, taille: taille, texte: texte);
+            await _attendreLeRepos(tester);
+            final Finder dock = find.byKey(
+              const ValueKey<String>('dock-seance'),
+            );
+            expect(dock.hitTestable(), findsNothing);
+            await _toucher(tester);
+            expect(dock.hitTestable(), findsOneWidget);
+            final Finder commandes = find.byKey(
+              TelephonePleinEcran.cleCommandesToucher,
+            );
+            expect(commandes.hitTestable(), findsOneWidget);
             expect(
               find.byKey(TelephonePleinEcran.cleCommandesRepos),
+              findsNothing,
+            );
+            // Au-dessus de la pilule, au bord de fin (16 du bord).
+            final Rect k = tester.getRect(commandes);
+            final Rect d = tester.getRect(dock);
+            expect(k.bottom, lessThanOrEqualTo(d.top));
+            expect(
+              _ltr() ? taille.width - k.right : k.left,
+              moreOrLessEquals(16, epsilon: 1),
+            );
+            // Au delai, tout se masque de nouveau.
+            await _attendreLeRepos(tester);
+            expect(dock.hitTestable(), findsNothing);
+            expect(commandes.hitTestable(), findsNothing);
+            expect(
+              find.byKey(TelephonePleinEcran.cleCommandesRepos).hitTestable(),
               findsOneWidget,
             );
-            expect(find.byKey(TiroirCommandesTelephone.cle), findsNothing);
-            // La pilule reste montee, masquee : rien ne s'y touche.
-            expect(find.byKey(BoutonPlusAppel.cle).hitTestable(), findsNothing);
-            await _toucher(tester);
-            // Au toucher : la capsule, la pilule, et « Commandes » dedans.
-            expect(find.byKey(CapsuleVideoTelephone.cle), findsOneWidget);
-            expect(find.byKey(BoutonPlusAppel.cle), findsOneWidget);
+            // Un panneau ouvert : la pilule reste.
+            await _ouvrirTiroir(tester);
+            await _attendreLeRepos(tester);
+            expect(
+              _piluleDuBas(
+                tester,
+                find.byKey(TiroirCommandesTelephone.cle),
+              ).hitTestable(),
+              findsOneWidget,
+            );
             expect(tester.takeException(), isNull);
             verifierUnSeulBoutonPlein(tester);
-            verifierSansChevauchement(tester, <Finder>[
-              find.byKey(CapsuleVideoTelephone.cle),
-              find.byKey(const ValueKey<String>('dock-seance')),
-            ]);
+          });
+
+          testWidgets('$nom : ligne 5, la capsule deplie le profil', (
+            WidgetTester tester,
+          ) async {
+            await _monter(tester, taille: taille, texte: texte);
+            await _toucher(tester);
+            // La ligne d'etat n'est nulle part avant.
+            expect(find.byType(PiluleEtatSalle), findsNothing);
+            await tester.tap(find.byKey(CapsuleVideoTelephone.cleDeplier));
+            await tester.pumpAndSettle();
+            final Finder profil = find.byKey(ProfilTelephone.cle);
+            expect(profil, findsOneWidget);
+            expect(find.byKey(CapsuleVideoTelephone.cle), findsNothing);
+            Finder dans(Finder f) => find.descendant(of: profil, matching: f);
+            expect(
+              dans(find.byKey(const ValueKey<String>('vignette-video'))),
+              findsOneWidget,
+            );
+            expect(dans(find.text('Amina')), findsOneWidget);
+            expect(dans(find.text(t.commun.roles.enseignant)), findsOneWidget);
+            expect(dans(find.byKey(PointEtatTelephone.cle)), findsOneWidget);
+            expect(
+              dans(
+                find.byKey(const ValueKey<String>('telephone-profil-signal')),
+              ),
+              findsOneWidget,
+            );
+            expect(
+              dans(find.byKey(ProfilTelephone.cleReduire)),
+              findsOneWidget,
+            );
+            // La ligne d'etat, dessous, une seule fois a l'ecran.
+            expect(find.byType(PiluleEtatSalle), findsOneWidget);
+            expect(dans(find.byType(PiluleEtatSalle)), findsOneWidget);
+            expect(
+              tester.getRect(dans(find.byType(PiluleEtatSalle))).top,
+              greaterThan(tester.getRect(dans(find.text('Amina'))).bottom),
+            );
+            expect(tester.takeException(), isNull);
+            verifierAucunMotCoupe(tester, profil);
+            // Il ne se masque pas au delai.
+            await _attendreLeRepos(tester);
+            expect(profil.hitTestable(), findsOneWidget);
+            // « Reduire » le replie.
+            await tester.tap(find.byKey(ProfilTelephone.cleReduire));
+            await tester.pumpAndSettle();
+            expect(profil, findsNothing);
+            expect(find.byKey(CapsuleVideoTelephone.cle), findsOneWidget);
+            // Un toucher de la page le replie aussi.
+            await tester.tap(find.byKey(CapsuleVideoTelephone.cleDeplier));
+            await tester.pumpAndSettle();
+            expect(profil, findsOneWidget);
+            // Sous la carte (texte x2 : elle descend loin), au-dessus de la
+            // pilule.
+            await tester.tapAt(Offset(taille.width / 2, taille.height * 0.7));
+            await tester.pumpAndSettle();
+            expect(profil, findsNothing);
           });
 
           testWidgets('$nom : le tiroir, ses trois onglets, rien ne se '
@@ -313,12 +516,11 @@ void main() {
             WidgetTester tester,
           ) async {
             await _monter(tester, taille: taille, texte: texte);
-            await _toucher(tester);
-            // Le bouton rond « Eleves » du haut, et la tuile de l'onglet
-            // Seance, ouvrent la meme feuille.
-            await tester.tap(
-              find.byKey(const ValueKey<String>('salle-eleves')),
-            );
+            // La tuile de l'onglet Seance ouvre la feuille (ligne 4, groupe
+            // suivant : le bouton Eleves de la pilule).
+            await _ouvrirTiroir(tester);
+            await _onglet(tester, t.salle.seance.commandes.ongletSeance);
+            await tester.tap(find.byKey(TiroirCommandesTelephone.cleEleves));
             await tester.pumpAndSettle();
             expect(find.byKey(FeuilleElevesTelephone.cle), findsOneWidget);
             expect(find.byType(PanneauEleves), findsOneWidget);
@@ -390,14 +592,14 @@ void main() {
     await capturerVue(tester, 'salle-390-repos');
     await _toucher(tester);
     await capturerVue(tester, 'salle-390-toucher');
-    await tester.tap(find.byKey(BoutonPlusAppel.cle));
+    await tester.tap(find.byKey(TelephonePleinEcran.cleCommandesToucher));
     await tester.pumpAndSettle();
     await capturerVue(tester, 'salle-390-commandes-support');
     await _onglet(tester, t.salle.seance.commandes.ongletOutils);
     await capturerVue(tester, 'salle-390-commandes-outils');
     await _onglet(tester, t.salle.seance.commandes.ongletSeance);
     await capturerVue(tester, 'salle-390-commandes-seance');
-    await tester.tap(find.byKey(const ValueKey<String>('salle-eleves')));
+    await tester.tap(find.byKey(TiroirCommandesTelephone.cleEleves));
     await tester.pumpAndSettle();
     await capturerVue(tester, 'salle-390-eleves');
   });
