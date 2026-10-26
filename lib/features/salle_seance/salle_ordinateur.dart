@@ -560,15 +560,15 @@ class _Bas extends ConsumerWidget {
       nommee: true,
       commandes: const <CommandeDock>[CommandeDock.tableau],
       avant: <Widget>[
-        if (livres != null)
+        if (lesEleves != null)
           BoutonAppel(
-            key: const ValueKey<String>('salle-bibliotheque'),
-            icone: AppIcons.bibliotheque,
-            libelle: t.salle.seance.commandes.bibliotheque,
-            nom: t.salle.seance.commandes.bibliotheque,
-            retenu: bibliotheque,
-            selectionne: bibliotheque,
-            onPress: livres,
+            key: const ValueKey<String>('salle-eleves'),
+            icone: AppIcons.eleves,
+            libelle: t.salle.seance.eleves,
+            nom: t.salle.seance.eleves,
+            retenu: eleves,
+            selectionne: eleves,
+            onPress: lesEleves,
           ),
         if (outils) ...<Widget>[
           boutonOutil(OutilEnseignement.pointeur),
@@ -597,21 +597,22 @@ class _Bas extends ConsumerWidget {
         CommandeDock.quitter,
       ],
       avantQuitter: <Widget>[
-        if (lesEleves != null)
+        if (livres != null)
           BoutonAppel(
-            key: const ValueKey<String>('salle-eleves'),
-            icone: AppIcons.eleves,
-            libelle: t.salle.seance.eleves,
-            nom: t.salle.seance.eleves,
-            retenu: eleves,
-            selectionne: eleves,
-            onPress: lesEleves,
+            key: const ValueKey<String>('salle-bibliotheque'),
+            icone: AppIcons.bibliotheque,
+            libelle: t.salle.seance.commandes.bibliotheque,
+            nom: t.salle.seance.commandes.bibliotheque,
+            retenu: bibliotheque,
+            selectionne: bibliotheque,
+            onPress: livres,
           ),
       ],
     );
     // Maquette du directeur du 26/10/2026 (barre precisee par le pilote) :
     // UNE barre sombre sur toute la largeur, deux groupes de tuiles, un filet
-    // entre eux.
+    // entre eux. Decision du directeur du 26/10/2026 : une tuile se place du
+    // cote du panneau qu'elle ouvre (Eleves au debut, Bibliotheque a la fin).
     final AppPalette palette = AppPalette.of(context);
     return DecoratedBox(
       key: SalleOrdinateur.cleBas,
