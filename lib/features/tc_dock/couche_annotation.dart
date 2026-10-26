@@ -448,6 +448,7 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
                   bloc: () => _blocEnCours,
                   outil: etat.outilTrait,
                   intention: etat.intention,
+                  couleur: etat.couleur,
                   epaisseur: etat.epaisseur,
                   largeurPage: largeurPage,
                   pointille: widget.encreNonPartagee,
@@ -557,6 +558,7 @@ class _CoucheAnnotationState extends ConsumerState<CoucheAnnotation> {
       outil: etat.outilTrait,
       intention: etat.intention,
       epaisseur: etat.epaisseur,
+      couleur: etat.couleur,
     )..ajouter(normaliserDans(cadre, point));
     _apercu.commencer(normaliserDans(cadre, point));
   }
@@ -785,13 +787,18 @@ abstract final class _Trace {
     required double? pression,
     required EpaisseurTrait? epaisseur,
     required double? largeurPage,
+    CouleurFranche? couleur,
     bool pointille = false,
   }) {
     if (outil == OutilTrait.gomme || points.length < 2) {
       return;
     }
     final bool surligne = outil == OutilTrait.surligneur;
-    final EncreIntention encre = CouleurIntention.encre(palette, intention);
+    // Plan de la salle du 26/10/2026 : une couleur franche l'emporte sur la
+    // couleur de l'intention.
+    final EncreIntention encre = couleur == null
+        ? CouleurIntention.encre(palette, intention)
+        : encreFranche(couleur);
     // La pression, quand le materiel la fournit, epaissit le trait sans jamais
     // le faire disparaitre : un trait a pression nulle reste visible.
     final double facteurPression = pression == null
@@ -907,6 +914,7 @@ class _PeintreAnnotations extends CustomPainter {
         palette: palette,
         outil: trait.outil,
         intention: trait.intention ?? intentionParDefaut,
+        couleur: trait.couleur,
         pression: trait.pression,
         epaisseur: trait.epaisseur,
         largeurPage: largeurPage,
@@ -944,8 +952,12 @@ class _PeintreApercu extends CustomPainter {
     required this.intention,
     required this.epaisseur,
     required this.largeurPage,
+    this.couleur,
     this.pointille = false,
   }) : super(repaint: apercu);
+
+  /// Plan de la salle du 26/10/2026 : la couleur franche retenue, ou `null`.
+  final CouleurFranche? couleur;
 
   final AppPalette palette;
   final _Apercu apercu;
@@ -979,6 +991,7 @@ class _PeintreApercu extends CustomPainter {
       palette: palette,
       outil: outil,
       intention: intention,
+      couleur: couleur,
       // TB-RC (m18), ecart ecrit : la pression du stylet n'est pas encore
       // capturee (le geste passe par `onPan*`, sans `PointerEvent.pressure`) ;
       // le trait garde l'epaisseur choisie. A reprendre avec TB-BR (le
@@ -995,6 +1008,7 @@ class _PeintreApercu extends CustomPainter {
       ancien.apercu != apercu ||
       ancien.outil != outil ||
       ancien.intention != intention ||
+      ancien.couleur != couleur ||
       ancien.epaisseur != epaisseur ||
       ancien.largeurPage != largeurPage ||
       ancien.pointille != pointille ||

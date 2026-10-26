@@ -472,3 +472,144 @@ class CommandeSalle extends StatelessWidget {
         : Semantics(selected: choisi, child: annonce);
   }
 }
+
+/// L'etat d'une [TuileCommandeSalle].
+enum TonTuileSalle {
+  /// Au repos, ou bascule active (micro ouvert, camera allumee, tableau
+  /// ouvert) : la tuile se fond dans la barre, encre claire.
+  repos,
+
+  /// Un panneau ouvert ou un outil retenu (Bibliotheque, Eleves, Pointeur,
+  /// Ecrire) : aplat lilas, encre sombre (maquette du 26/10/2026).
+  retenu,
+
+  /// Bascule coupee ou eteinte (micro coupe, camera eteinte, tableau ferme) :
+  /// violet de marque, icone barree (regle du lot 3 du 25/10/2026, jamais
+  /// rouge).
+  coupe,
+
+  /// Quitter : le seul rouge de la barre.
+  quitter,
+}
+
+/// Plan de composition du 26/10/2026 (Q1, decision du directeur : « oui » ;
+/// maquette « ordinateur, trois panneaux », barre precisee par le pilote le
+/// 26/10) : la tuile d'une commande de la barre sombre de la salle sur
+/// ordinateur, une icone et son NOM dessous (« Micro », « Bibliotheque »).
+/// Ecart date au standard des commandes d'appel du 24/10/2026 (icones
+/// seules), qui reste celui du telephone.
+///
+/// **Seul point d'entree** de cette tuile (K-54) : contenu centre ligne a
+/// ligne, cible de 48 au moins, le nom passe sur deux lignes entre ses mots,
+/// jamais coupe. L'etat se lit par trois signaux : l'aplat ([ton]), l'icone
+/// (barree pour une bascule coupee, choisie par l'appelant) et le lecteur
+/// d'ecran ([libelle], [selectionne]) ; le [nom] peint se tait.
+class TuileCommandeSalle extends StatelessWidget {
+  const TuileCommandeSalle({
+    required this.icone,
+    required this.nom,
+    required this.libelle,
+    required this.onPress,
+    this.ton = TonTuileSalle.repos,
+    this.selectionne,
+    this.actif = true,
+    this.focusNode,
+    this.infobulle,
+    super.key,
+  });
+
+  final IconData icone;
+
+  /// Le nom peint sous l'icone.
+  final String nom;
+
+  /// Ce que lit le lecteur d'ecran : l'acte, puis l'etat.
+  final String libelle;
+
+  final VoidCallback? onPress;
+  final TonTuileSalle ton;
+  final bool? selectionne;
+
+  /// Faux : la tuile reste dans la couleur de son etat mais ne repond pas
+  /// (reconnexion, lot CL-7) ; aucun gris.
+  final bool actif;
+
+  final FocusNode? focusNode;
+
+  /// L'etat montre au survol (« Micro coupé »), ou `null`.
+  final String? infobulle;
+
+  /// La largeur minimale d'une tuile.
+  static const double largeurMin = AppSpacing.respiration + AppSpacing.lg;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final AppPalette claire = AppPalette.claire();
+    // La barre est `surfaceInverse` ; la tuile au repos prend son encre.
+    final AppColorPair? aplat = switch (ton) {
+      TonTuileSalle.repos => null,
+      TonTuileSalle.retenu => palette.washAccent,
+      TonTuileSalle.coupe => claire.surfacePrimary,
+      TonTuileSalle.quitter => claire.surfaceAlert,
+    };
+    final Color encre = aplat?.onBackground ?? palette.surfaceInverse.onBackground;
+    final TextStyle style = (Theme.of(context).textTheme.labelMedium ??
+            const TextStyle())
+        .copyWith(color: encre);
+    final Widget tuile = Pressable(
+      onPress: onPress,
+      actif: actif,
+      focusNode: focusNode,
+      libelleSemantique: libelle,
+      selectionne: selectionne,
+      arrondiFocus: AppRadius.arrondiMd,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(
+          minWidth: largeurMin,
+          minHeight: AppTouchTarget.standard,
+        ),
+        child: DecoratedBox(
+          key: const ValueKey<String>('tuile-commande'),
+          decoration: aplat == null
+              ? const BoxDecoration()
+              : aplat.decoration(borderRadius: AppRadius.arrondiMd),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.sm,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                IconTheme(
+                  data: IconThemeData(color: encre, size: AppSpacing.xxl),
+                  child: Icon(icone),
+                ),
+                Ecart.vXs,
+                ExcludeSemantics(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minWidth: _largeurPlusLongMot(context, nom, style),
+                    ),
+                    child: Text(
+                      nom,
+                      key: const ValueKey<String>('nom-commande'),
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                      style: style,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+    final String? bulle = infobulle;
+    return bulle == null
+        ? tuile
+        : Tooltip(message: bulle, excludeFromSemantics: true, child: tuile);
+  }
+}

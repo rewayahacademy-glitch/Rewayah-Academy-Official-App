@@ -14,7 +14,70 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/status_pill.dart';
+import '../salle_seance/vue_seance.dart' show FicheEleveSeance;
 import '../tc_espace_groupe/roster_classe.dart';
+
+/// La fiche courte d'un eleve pour le panneau Eleves de la salle sur
+/// ordinateur (plan de composition du 26/10/2026) : les memes faits que la
+/// fiche ([_Faits]), avec les memes mots. Un fait que le serveur ne projette
+/// pas reste vide, et la carte ne le montre pas (jamais « - »).
+FicheEleveSeance ficheDeSeance(TeacherStudentProjection eleve) {
+  final ResumeSeance? derniere = eleve.lastLesson;
+  final AssiduiteRecente? assiduite = eleve.recentAttendance;
+  final int? page = derniere?.positionAtteinte?.page;
+  return FicheEleveSeance(
+    niveau: eleve.level ?? '',
+    objectifActuel: eleve.activeGoals.isEmpty ? '' : eleve.activeGoals.first,
+    derniereSeance: page == null ? '' : t.tc.classe.fiche.page(page: page),
+    aReprendre: derniere?.pointARevoir ?? '',
+    presenceRecente: assiduite == null
+        ? ''
+        : t.tc.classe.fiche.assiduite(
+            presences: assiduite.presences,
+            total: assiduite.total,
+          ),
+    travailActuel: eleve.currentAssignments.isEmpty
+        ? ''
+        : t.tc.classe.fiche.travailEnCours(
+            nombre: eleve.currentAssignments.length,
+          ),
+  );
+}
+
+/// Le rappel discret d'un eleve (spec section 10.2) : `null` quand il est
+/// parti (reussite silencieuse, rien ne s'affiche), sinon le message de
+/// l'echec, choisi sur le motif. Le meme pour la fiche et pour le panneau
+/// Eleves de la salle sur ordinateur (plan de composition du 26/10/2026).
+///
+/// Le cooldown se dit **sans reproche** : ce n'est pas une erreur de
+/// l'enseignant, c'est la protection contre le spam, et elle annonce quand
+/// l'action redeviendra possible.
+Future<String?> rappelerDiscretement(
+  PortRappelDiscret rappel, {
+  required String sessionId,
+  required String academyId,
+}) async {
+  try {
+    await rappel.rappeler(sessionId: sessionId, academyId: academyId);
+    return null;
+  } on EchecRappel catch (echec) {
+    return switch (echec.motif) {
+      MotifEchecRappel.cooldown => LibellesGroupe.insecable(
+        t.tc.classe.rappel.cooldown(
+          secondes:
+              (rappel.cooldownRestant(
+                        sessionId: sessionId,
+                        academyId: academyId,
+                      ) ??
+                      rappel.cooldown)
+                  .inSeconds,
+        ),
+      ),
+      MotifEchecRappel.droitRefuse => t.tc.classe.rappel.echecDroit,
+      MotifEchecRappel.transport => t.tc.classe.rappel.echec,
+    };
+  }
+}
 
 /// La fiche pedagogique de seance (spec section 10.1).
 ///
@@ -71,45 +134,14 @@ class _FicheSeanceEtat extends ConsumerState<FicheSeance> {
   String? _echec;
 
   Future<void> _rappeler() async {
-    final PortRappelDiscret rappel = ref.read(portRappelDiscretProvider);
-    try {
-      await rappel.rappeler(
-        sessionId: widget.sessionId,
-        academyId: widget.eleve.academyId,
-      );
-      // Reussite silencieuse. Rien ne s'affiche, volontairement.
-      if (mounted) {
-        setState(() => _echec = null);
-      }
-    } on EchecRappel catch (echec) {
-      if (!mounted) {
-        return;
-      }
-      setState(() => _echec = _messageEchec(echec, rappel));
-    }
+    final String? echec = await rappelerDiscretement(
+      ref.read(portRappelDiscretProvider),
+      sessionId: widget.sessionId,
+      academyId: widget.eleve.academyId,
+    );
+    // Reussite silencieuse. Rien ne s'affiche, volontairement.
+    if (mounted) setState(() => _echec = echec);
   }
-
-  /// Le message d'echec, choisi sur le motif.
-  ///
-  /// Le cooldown se dit **sans reproche** : ce n'est pas une erreur de
-  /// l'enseignant, c'est la protection contre le spam, et elle annonce quand
-  /// l'action redeviendra possible.
-  String _messageEchec(EchecRappel echec, PortRappelDiscret rappel) =>
-      switch (echec.motif) {
-        MotifEchecRappel.cooldown => LibellesGroupe.insecable(
-          t.tc.classe.rappel.cooldown(
-            secondes:
-                (rappel.cooldownRestant(
-                          sessionId: widget.sessionId,
-                          academyId: widget.eleve.academyId,
-                        ) ??
-                        rappel.cooldown)
-                    .inSeconds,
-          ),
-        ),
-        MotifEchecRappel.droitRefuse => t.tc.classe.rappel.echecDroit,
-        MotifEchecRappel.transport => t.tc.classe.rappel.echec,
-      };
 
   void _donnerLaParole() {
     ref

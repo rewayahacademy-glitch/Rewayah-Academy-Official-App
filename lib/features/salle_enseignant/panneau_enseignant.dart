@@ -306,6 +306,23 @@ class _Reference extends StatelessWidget {
   }
 }
 
+/// K-56 (pilote, 26/10/2026) : vrai quand la page presentee [numero] montre
+/// un etat d'erreur avec « Reessayer » (page du Coran injoignable, ou page
+/// lue mais qui ne se compose pas) : « Reessayer » reste alors le seul bouton
+/// plein de la salle.
+bool pagePresenteeEnErreur(WidgetRef ref, int numero) {
+  final AsyncValue<PageCoran?> page = ref.watch(pageCoranProvider(numero));
+  final EtatLecteur etat = VueLecteur.depuis(
+    pageDemandee: numero,
+    page: page.value,
+    chargementEnCours: page.isLoading,
+    sourates: ref.watch(souratesProvider).value,
+    position: null,
+  ).etat;
+  return etat == EtatLecteur.indisponible ||
+      (etat == EtatLecteur.lecture && pageCoranEnErreur(ref, numero));
+}
+
 /// Le contenu presente : la page du mushaf, dans ses quatre etats de lecture.
 ///
 /// S0 : aussi posee par `/salle` dans la surface a page fixe de la salle de

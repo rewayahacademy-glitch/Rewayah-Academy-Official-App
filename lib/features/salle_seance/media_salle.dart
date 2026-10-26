@@ -9,6 +9,7 @@
 
 import 'package:flutter/widgets.dart';
 
+import 'panneau_bibliotheque_salle.dart' show SupportBibliotheque;
 import 'vue_seance.dart';
 
 /// Les paliers du zoom local de la page (directeur, 24/10/2026) : 100, 125,
@@ -56,12 +57,23 @@ class PorteeMediaSalle extends InheritedWidget {
     this.onPagePrecedente,
     this.onPageSuivante,
     this.photoVignette,
+    this.supports = const <SupportBibliotheque>[],
+    this.messageEleves,
     super.key,
   });
 
   /// Directeur, 26/10/2026 : la photo du profil montre dans la vignette
   /// (URL signee), quand la camera est fermee ; `null` : les initiales.
   final String? photoVignette;
+
+  /// Plan de composition du 26/10/2026 : ce que la Bibliotheque de la salle
+  /// peut presenter maintenant (aujourd'hui le Coran seul), panneau de
+  /// droite sur ordinateur.
+  final List<SupportBibliotheque> supports;
+
+  /// Le dernier echec d'une action du panneau Eleves (rappel discret), dit
+  /// sous son titre, ou `null`.
+  final String? messageEleves;
 
   /// La scene video de `/salle` (les cameras en grand, ADR-001 : les
   /// makharij se lisent sur une bouche), ou `null`.

@@ -99,6 +99,8 @@ const List<String> composantsDuCatalogue = <String>[
   // produisent : la commande ronde de la salle et la barre precedent / suivant.
   'CommandeSalle',
   'BarrePrecedentSuivant',
+  // Plan de la salle du 26/10/2026 (§3) : la pastille du nuancier des traits.
+  'BoutonCouleur',
   // ADM-20 : la barre de selection d'une liste, promue du Comptable vers le
   // core (une seule barre pour le Comptable et les Candidatures).
   'BarreSelection',

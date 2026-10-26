@@ -34,9 +34,11 @@ import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_enseignant/panneau_enseignant.dart';
 import 'package:rewayah_academy/features/salle_seance/composition_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/salle_ordinateur.dart';
 import 'package:rewayah_academy/features/salle_seance/zone_support.dart';
 
 import '../capture/outil_capture.dart';
+import '../support/aucun_mot_coupe.dart';
 import '../support/harnais.dart';
 import '../teaching_core/e/faux/faux_classe.dart';
 import '../theme/support/contraste.dart';
@@ -469,8 +471,17 @@ void main() {
             // Standard des commandes d'appel : au telephone, la presence se
             // lit dans la pilule translucide « ● En ligne · … » (une seule
             // ligne d'etat) ; ailleurs, dans la pastille de l'en-tete.
+            // Plan de composition du 26/10/2026 : sur ordinateur,
+            // l'enseignant a sa pilule d'etat en haut et ses Eleves dans le
+            // panneau de gauche, deja ouvert.
+            final bool ordinateur = find
+                .byType(SalleOrdinateur)
+                .evaluate()
+                .isNotEmpty;
             final Finder ligne = find.byKey(
-              const ValueKey<String>('ligne-etat-telephone'),
+              ValueKey<String>(
+                ordinateur ? 'pilule-etat-salle' : 'ligne-etat-telephone',
+              ),
             );
             if (ligne.evaluate().isNotEmpty) {
               _lisible(
@@ -487,7 +498,7 @@ void main() {
               final Finder ouvrir = find.byKey(
                 const ValueKey<String>('salle-eleves'),
               );
-              if (ouvrir.evaluate().isNotEmpty) {
+              if (!ordinateur && ouvrir.evaluate().isNotEmpty) {
                 await tester.tap(ouvrir.first);
                 await tester.pumpAndSettle();
               }
@@ -1053,6 +1064,49 @@ void main() {
     );
   }
 
+  // Plan de composition du 26/10/2026 (Q1, decision du directeur) : sur
+  // ordinateur, l'enseignant a deux groupes de commandes, chaque bouton
+  // nomme dessous ; les boutons gardent leur taille, chaque nom se lit
+  // entier, rien ne sort de l'ecran.
+  Future<void> verifierBarreNommee(
+    WidgetTester tester, {
+    required double largeur,
+    required double hauteurEcran,
+    required double diametre,
+  }) async {
+    expect(tester.takeException(), isNull);
+    final Finder docks = find.byKey(const ValueKey<String>('dock-seance'));
+    expect(docks, findsNWidgets(2));
+    for (final Element dock in docks.evaluate()) {
+      final Finder ce = find.byWidget(dock.widget);
+      final Finder disques = find.descendant(
+        of: ce,
+        matching: find.byKey(const ValueKey<String>('tuile-commande')),
+      );
+      final Finder noms = find.descendant(
+        of: ce,
+        matching: find.byKey(const ValueKey<String>('nom-commande')),
+      );
+      expect(disques, findsWidgets);
+      expect(noms.evaluate().length, disques.evaluate().length);
+      for (final Element e in disques.evaluate()) {
+        final Size taille = tester.getSize(find.byWidget(e.widget));
+        expect(taille.height, greaterThanOrEqualTo(diametre - 0.5));
+      }
+      verifierAucunMotCoupe(tester, ce);
+      final Rect zone = tester.getRect(ce);
+      expect(zone.left, greaterThanOrEqualTo(-0.5));
+      expect(zone.right, lessThanOrEqualTo(largeur + 0.5));
+      expect(zone.bottom, lessThanOrEqualTo(hauteurEcran + 0.5));
+    }
+    final Finder quitter = find.bySemanticsLabel(RegExp(t.salle.seance.sortir));
+    expect(quitter, findsWidgets);
+    expect(
+      tester.getRect(quitter.first).bottom,
+      lessThanOrEqualTo(hauteurEcran + 0.5),
+    );
+  }
+
   group('Standard des commandes d\'appel : /salle en Mode Accessibilite, '
       'texte agrandi', () {
     setUpAll(chargerPolicesDuDepot);
@@ -1112,18 +1166,27 @@ void main() {
         (1024, 768),
       ]) {
         for (final double texte in <double>[1.5, 2]) {
-          testWidgets(
-            '$role, ${l.toInt()} px, texte x$texte : pilule sans mot',
-            (WidgetTester tester) async {
-              await _monter(tester, role, l, texte, hauteur: h);
+          testWidgets('$role, ${l.toInt()} px, texte x$texte : '
+              '${role == 'teacher' ? 'barre nommee' : 'pilule sans mot'}', (
+            WidgetTester tester,
+          ) async {
+            await _monter(tester, role, l, texte, hauteur: h);
+            if (role == 'teacher') {
+              await verifierBarreNommee(
+                tester,
+                largeur: l,
+                hauteurEcran: h,
+                diametre: 48,
+              );
+            } else {
               await verifierPiluleSansMot(
                 tester,
                 largeur: l,
                 hauteurEcran: h,
                 diametre: 48,
               );
-            },
-          );
+            }
+          });
         }
       }
       for (final double texte in <double>[1.5, 2]) {
@@ -1164,22 +1227,25 @@ void main() {
         ) async {
           await _monter(tester, 'teacher', largeur, texte, hauteur: 768);
           expect(tester.takeException(), isNull);
-          final Finder carte = find.byKey(
-            const ValueKey<String>('panneau-seance-colonne'),
+          // Plan de composition du 26/10/2026 : sur ordinateur, les Eleves
+          // sont le panneau de gauche, ouvert ; une carte par eleve. La regle
+          // est la meme : rien de coupe ni de colle au bord.
+          final Finder panneau = find.byKey(
+            const ValueKey<String>('salle-ordinateur-eleves'),
           );
-          // K4 (25/10/2026) : dans `/salle`, l'ordinateur n'a plus de colonne
-          // Eleves ; le bouton rond « Eleves » ouvre la presence et le roster
-          // en feuille. La regle est la meme : rien de coupe ni de colle.
-          expect(carte, findsNothing);
-          await tester.tap(find.byKey(const ValueKey<String>('salle-eleves')));
-          await tester.pumpAndSettle();
-          final Finder panneau = find.byType(AppBottomSheet);
-          final Rect cadre = tester.getRect(panneau.first);
+          expect(panneau, findsOneWidget);
+          expect(find.byType(AppBottomSheet), findsNothing);
+          final Rect cadre = tester.getRect(panneau);
           final Finder pastilles = find.descendant(
-            of: panneau.first,
-            matching: find.byType(StatusPill),
+            of: panneau,
+            matching: find.byWidgetPredicate(
+              (Widget w) =>
+                  w.key is ValueKey<String> &&
+                  (w.key! as ValueKey<String>).value.startsWith('eleve-'),
+            ),
           );
           expect(pastilles, findsWidgets);
+          verifierAucunMotCoupe(tester, panneau);
           for (final Element e in pastilles.evaluate()) {
             final Rect r = tester.getRect(find.byWidget(e.widget).first);
             expect(r.left, greaterThanOrEqualTo(cadre.left + 4));

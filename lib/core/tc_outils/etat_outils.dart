@@ -96,7 +96,12 @@ class EtatOutils {
     this.portee = PorteeAnnotation.temporaire,
     this.pointeur,
     this.epaisseur = EpaisseurTrait.moyenne,
+    this.couleur,
   });
+
+  /// Plan de la salle du 26/10/2026 (§3) : la couleur franche retenue dans
+  /// le nuancier, ou `null` : la couleur des traits derive de [intention].
+  final CouleurFranche? couleur;
 
   /// L'outil retenu. `null` = aucun, le support se lit normalement.
   final OutilDock? outilActif;
@@ -161,6 +166,8 @@ class EtatOutils {
     ContentPosition? pointeur,
     bool retirerPointeur = false,
     EpaisseurTrait? epaisseur,
+    CouleurFranche? couleur,
+    bool retirerCouleur = false,
   }) => EtatOutils(
     outilActif: retirerOutil ? null : (outilActif ?? this.outilActif),
     position: position ?? this.position,
@@ -171,6 +178,7 @@ class EtatOutils {
     portee: portee ?? this.portee,
     pointeur: retirerPointeur ? null : (pointeur ?? this.pointeur),
     epaisseur: epaisseur ?? this.epaisseur,
+    couleur: retirerCouleur ? null : (couleur ?? this.couleur),
   );
 
   @override
@@ -184,7 +192,8 @@ class EtatOutils {
       other.intention == intention &&
       other.portee == portee &&
       other.pointeur == pointeur &&
-      other.epaisseur == epaisseur;
+      other.epaisseur == epaisseur &&
+      other.couleur == couleur;
 
   @override
   int get hashCode => Object.hash(
@@ -197,6 +206,7 @@ class EtatOutils {
     portee,
     pointeur,
     epaisseur,
+    couleur,
   );
 }
 
@@ -257,9 +267,15 @@ class ControleurOutils extends Notifier<EtatOutils> {
   void choisirOutilTrait(OutilTrait outil) =>
       state = state.copier(outilTrait: outil);
 
-  /// Change l'intention courante.
+  /// Change l'intention courante ; sa couleur reprend la place d'une
+  /// couleur franche.
   void choisirIntention(IntentionPedagogique intention) =>
-      state = state.copier(intention: intention);
+      state = state.copier(intention: intention, retirerCouleur: true);
+
+  /// Plan de la salle du 26/10/2026 : retient une couleur franche du
+  /// nuancier pour les prochains traits (l'intention reste celle d'avant).
+  void choisirCouleur(CouleurFranche couleur) =>
+      state = state.copier(couleur: couleur);
 
   /// TB-7b : change l'epaisseur des prochains traits.
   void choisirEpaisseur(EpaisseurTrait epaisseur) =>

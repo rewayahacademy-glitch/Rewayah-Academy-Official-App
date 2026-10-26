@@ -146,7 +146,8 @@ class EleveSeance {
 
   /// L'identifiant d'academie : les actions de la fiche
   /// (rappel, recitation) visent un inscrit par lui, jamais par son prenom.
-  /// `null` en demonstration et dans `/salle`.
+  /// `null` en demonstration ; dans `/salle`, le matricule lu dans la
+  /// presence (plan de composition du 26/10/2026).
   final String? id;
 
   final String prenom;

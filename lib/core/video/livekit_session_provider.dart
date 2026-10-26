@@ -10,19 +10,24 @@ import 'diagnostic_transport.dart';
 import 'repli_audio.dart';
 import 'video_session_provider.dart';
 
-/// Le debit maximal de la video publiee, en bits par seconde : 450 kbit/s
-/// pour une capture 360p (decision du directeur du 25/10/2026, audit reseau,
-/// reseaux faibles ; remplace le 720p a 1,2 Mbit/s de D15 du 24/10/2026).
-const int debitMaxVideo = 450000;
+/// Le debit maximal de la video publiee, en bits par seconde : 1,2 Mbit/s
+/// pour une capture 720p. Mesure LiveKit du test K4 du directeur du
+/// 26/10/2026 (relais TURN des deux cotes, UDP bloque) : la capture 360p du
+/// 25/10 n'avait rien gagne sur le retard et degradait l'image ; le 720p de
+/// D15 (24/10/2026) est retabli, les couches basses servent les liens
+/// faibles.
+const int debitMaxVideo = 1200000;
 
-/// Le nombre d'images par seconde maximal de la video publiee (25/10/2026).
-const int imagesParSecondeMax = 20;
+/// Le nombre d'images par seconde maximal de la video publiee (D15, retabli
+/// le 26/10/2026).
+const int imagesParSecondeMax = 30;
 
 /// Les reglages de la salle pour les reseaux faibles (decision du directeur
 /// du 25/10/2026, audit reseau, `docs/current/maquettes/salle/LOT-3-2026-10-25.md`
-/// section 7) : capture 360p, simulcast explicite avec une couche 180p,
-/// 450 kbit/s et 20 images par seconde au plus, resolution maintenue quand le
-/// reseau faiblit ; audio parole (24 kbit/s), DTX et RED ; `adaptiveStream`
+/// section 7) : capture 720p (retablie le 26/10/2026) en simulcast avec deux
+/// couches basses (180p et 360p) pour les liens faibles, 1,2 Mbit/s et 30
+/// images par seconde au plus, resolution maintenue quand le reseau
+/// faiblit ; audio parole (24 kbit/s), DTX et RED ; `adaptiveStream`
 /// pour TOUS les roles (D15 du 24/10/2026, qui le reservait a l'enseignant,
 /// est revu le 25/10/2026) et `dynacast`. Micro et camera restent fermes a
 /// l'entree : ces reglages ne publient rien.
@@ -42,7 +47,7 @@ lk.RoomOptions optionsSalle() => const lk.RoomOptions(
     red: true,
   ),
   defaultCameraCaptureOptions: lk.CameraCaptureOptions(
-    params: lk.VideoParametersPresets.h360_169,
+    params: lk.VideoParametersPresets.h720_169,
   ),
   defaultVideoPublishOptions: lk.VideoPublishOptions(
     simulcast: true,
@@ -52,6 +57,7 @@ lk.RoomOptions optionsSalle() => const lk.RoomOptions(
     ),
     videoSimulcastLayers: <lk.VideoParameters>[
       lk.VideoParametersPresets.h180_169,
+      lk.VideoParametersPresets.h360_169,
     ],
     degradationPreference: lk.DegradationPreference.maintainResolution,
   ),

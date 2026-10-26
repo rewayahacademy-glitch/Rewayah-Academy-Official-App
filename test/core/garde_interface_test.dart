@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
+import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
+import 'package:rewayah_academy/core/widgets/bouton_couleur.dart';
 import 'package:rewayah_academy/core/widgets/bouton_icone.dart';
 import 'package:rewayah_academy/core/widgets/bouton_outil.dart';
 import 'package:rewayah_academy/core/widgets/commande_salle.dart';
@@ -455,6 +457,80 @@ void main() {
               expect((icone.center.dx - disque.center.dx).abs(), lessThan(1.5));
               expect((icone.center.dy - disque.center.dy).abs(), lessThan(1.5));
               expect(disque.bottom, lessThanOrEqualTo(mot.top));
+            },
+          );
+        }
+        // Plan de la salle du 26/10/2026 (Q1, §3) : la commande nommee de
+        // l'ordinateur (bouton rond, nom dessous) et la pastille de couleur.
+        for (final TonTuileSalle ton in TonTuileSalle.values) {
+          testWidgets(
+            'TuileCommandeSalle ${ton.name} : icone et nom centres l un sur '
+            'l autre, cible de 48, ${largeur.toInt()} px, texte '
+            'x${echelle.toInt()}',
+            (WidgetTester tester) async {
+              fixerVue(tester, Size(largeur, 900));
+              await tester.pumpWidget(
+                hoteTheme(
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: TuileCommandeSalle(
+                      icone: AppIcons.bibliotheque.repos,
+                      nom: 'Bibliothèque',
+                      libelle: 'Bibliothèque',
+                      ton: ton,
+                      onPress: () {},
+                    ),
+                  ),
+                  echelleTexte: echelle,
+                ),
+              );
+              final Rect tuile = tester.getRect(
+                find.byKey(const ValueKey<String>('tuile-commande')),
+              );
+              final Rect icone = tester.getRect(find.byType(Icon));
+              final Rect nom = tester.getRect(find.text('Bibliothèque'));
+              expect((icone.center.dx - tuile.center.dx).abs(), lessThan(1.5));
+              expect((nom.center.dx - tuile.center.dx).abs(), lessThan(1.5));
+              expect(icone.bottom, lessThanOrEqualTo(nom.top));
+              expect(tuile.height, greaterThanOrEqualTo(48));
+            },
+          );
+        }
+        for (final bool retenue in <bool>[false, true]) {
+          testWidgets(
+            'BoutonCouleur ${retenue ? 'retenue' : 'libre'} : disque au '
+            'centre de sa cible, ${largeur.toInt()} px, texte '
+            'x${echelle.toInt()}',
+            (WidgetTester tester) async {
+              fixerVue(tester, Size(largeur, 900));
+              await tester.pumpWidget(
+                hoteTheme(
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: BoutonCouleur(
+                      encre: AppNuancierTrait.bleu,
+                      libelle: 'Bleu',
+                      retenue: retenue,
+                      onPress: () {},
+                    ),
+                  ),
+                  echelleTexte: echelle,
+                ),
+              );
+              verifierContenuCentre(
+                tester,
+                find.byType(BoutonCouleur),
+                <Finder>[find.byKey(const ValueKey<String>('disque-couleur'))],
+              );
+              expect(
+                tester.getSize(find.byType(BoutonCouleur)).height,
+                greaterThanOrEqualTo(48),
+              );
+              // L'etat ne se dit jamais par la couleur seule.
+              expect(
+                find.byType(Icon),
+                retenue ? findsOneWidget : findsNothing,
+              );
             },
           );
         }

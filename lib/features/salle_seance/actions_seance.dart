@@ -172,14 +172,24 @@ class ActionsSeance {
 
   /// TB-5 : les memes rappels, Focus et sa sortie passes par la salle, qui
   /// replie puis restaure ses panneaux (plan V2 §18.1, UX-14 a UX-16).
-  ActionsSeance avecAgrandir(VoidCallback? onAgrandir) => ActionsSeance(
+  ActionsSeance avecAgrandir(VoidCallback? onAgrandir) =>
+      avecPanneaux(onAgrandir: onAgrandir);
+
+  /// Plan de composition du 26/10/2026 : sur ordinateur, Eleves (touche R)
+  /// et Bibliotheque (touche B) ouvrent et ferment les panneaux de la salle,
+  /// au lieu d'une feuille ; les autres rappels restent les memes.
+  ActionsSeance avecPanneaux({
+    VoidCallback? onAgrandir,
+    VoidCallback? onEleves,
+    VoidCallback? onBibliotheque,
+  }) => ActionsSeance(
     onRetour: onRetour,
     onQuitter: onQuitter,
     onMicro: onMicro,
     onCamera: onCamera,
-    onAgrandir: onAgrandir,
+    onAgrandir: onAgrandir ?? this.onAgrandir,
     onReseau: onReseau,
-    onEleves: onEleves,
+    onEleves: onEleves ?? this.onEleves,
     onSupports: onSupports,
     onCommandes: onCommandes,
     onAffichage: onAffichage,
@@ -198,7 +208,7 @@ class ActionsSeance {
     onNoter: onNoter,
     onSignaler: onSignaler,
     onOuvrirSupport: onOuvrirSupport,
-    onBibliotheque: onBibliotheque,
+    onBibliotheque: onBibliotheque ?? this.onBibliotheque,
     onReessayerConnexion: onReessayerConnexion,
     onContinuerSansMicro: onContinuerSansMicro,
     onOuvrirReglages: onOuvrirReglages,

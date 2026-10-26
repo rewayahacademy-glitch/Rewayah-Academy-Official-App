@@ -46,6 +46,7 @@ import 'panneau_eleves.dart';
 import 'panneau_seance.dart';
 import 'panneau_supports.dart';
 import 'rangement_support.dart';
+import 'salle_ordinateur.dart';
 import 'selecteur_ressources.dart';
 import 'surface_page_fixe.dart' show rectanglePage;
 import 'telephone_plein_ecran.dart';
@@ -130,6 +131,19 @@ class SalleSeance extends StatelessWidget {
     // S0.2c (loi du directeur, 24/10/2026) : au telephone, dans `/salle`, la
     // page du Coran EST l'ecran ; tout le reste est en surimpression. K4
     // (25/10/2026) : de meme sur ordinateur et tablette.
+    // Plan de composition du 26/10/2026 : l'enseignant sur ordinateur (840 et
+    // plus) a trois panneaux ; rien ne vient au milieu.
+    if (salleOrdinateur(context, vue)) {
+      return _avecPreferenceRaccourcis(
+        context,
+        (bool raccourcis) => SalleOrdinateur(
+          vue: vue,
+          actions: actions,
+          local: local,
+          raccourcis: raccourcis,
+        ),
+      );
+    }
     if (pleinEcranSalle(context)) {
       final Widget salle = TelephonePleinEcran(
         vue: vue,
@@ -1232,6 +1246,7 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
         vue.voitBoutonsPanneaux &&
             actions.onBibliotheque != null &&
             panneau != PanneauOuvert.ressources,
+      RaccourciSalle.focus => actions.onAgrandir != null,
     };
   }
 
@@ -1249,6 +1264,8 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
         _basculerParticipants();
       case RaccourciSalle.bibliotheque:
         actions.onBibliotheque?.call();
+      case RaccourciSalle.focus:
+        actions.onAgrandir?.call();
     }
   }
 
@@ -1411,6 +1428,7 @@ class RaccourcisPleinEcran extends StatelessWidget {
     required this.actions,
     required this.local,
     required this.child,
+    this.onEleves,
     super.key,
   });
 
@@ -1419,11 +1437,14 @@ class RaccourcisPleinEcran extends StatelessWidget {
   final EtatLocalSeance local;
   final Widget child;
 
+  /// R : ce qu'ouvre « Eleves » ; `null` : le bouton rond du plein ecran
+  /// (la feuille). Sur ordinateur, le panneau de gauche.
+  final VoidCallback? onEleves;
+
   @override
   Widget build(BuildContext context) {
-    final VoidCallback? eleves = PorteeMediaSalle.de(context)
-        ?.boutonEleves
-        ?.onPress;
+    final VoidCallback? eleves =
+        onEleves ?? PorteeMediaSalle.de(context)?.boutonEleves?.onPress;
     bool permis(RaccourciSalle raccourci) {
       if (_saisieEnCours()) return false;
       return switch (raccourci) {
@@ -1439,6 +1460,7 @@ class RaccourcisPleinEcran extends StatelessWidget {
         RaccourciSalle.bibliotheque =>
           actions.onBibliotheque != null &&
               vue.panneau != PanneauOuvert.ressources,
+        RaccourciSalle.focus => actions.onAgrandir != null,
       };
     }
 
@@ -1459,6 +1481,8 @@ class RaccourcisPleinEcran extends StatelessWidget {
           eleves?.call();
         case RaccourciSalle.bibliotheque:
           actions.onBibliotheque?.call();
+        case RaccourciSalle.focus:
+          actions.onAgrandir?.call();
       }
     }
 
@@ -1492,6 +1516,9 @@ const Map<ShortcutActivator, Intent> _raccourcisSalle =
       SingleActivator(LogicalKeyboardKey.keyB): IntentRaccourciSalle(
         RaccourciSalle.bibliotheque,
       ),
+      SingleActivator(LogicalKeyboardKey.keyF): IntentRaccourciSalle(
+        RaccourciSalle.focus,
+      ),
     };
 
 /// Les raccourcis clavier de la salle enseignant (E19, EN-KB).
@@ -1507,6 +1534,10 @@ enum RaccourciSalle {
 
   /// B : le selecteur de ressources (bibliotheque, EN-10).
   bibliotheque,
+
+  /// F : le focus (plan de composition du 26/10/2026) ; un second appui
+  /// ramene les panneaux.
+  focus,
 }
 
 /// L'intention d'un raccourci de la salle.

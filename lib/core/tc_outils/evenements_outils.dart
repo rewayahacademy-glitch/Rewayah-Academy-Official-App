@@ -109,6 +109,9 @@ class EvenementTraitTermine extends EvenementOutil {
       'points': _pointsJson(trait.points),
       'outil': trait.outil.valeurSql,
       'intention': trait.intention?.valeurSql,
+      // Plan de la salle du 26/10/2026 : la couleur franche, a cote de
+      // l'intention ; un client plus ancien l'ignore et peint l'intention.
+      'couleur': trait.couleur?.valeurSql,
       'pression': trait.pression,
       'inclinaison': trait.inclinaison,
       'epaisseur': trait.epaisseur?.valeurSql,

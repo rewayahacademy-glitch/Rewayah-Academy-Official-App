@@ -724,6 +724,13 @@ abstract final class AppIcons {
     IconData(0xe038, fontFamily: _actif),
   );
 
+  /// Plan de la salle du 26/10/2026 (§3) : Retablir, la fleche horaire
+  /// (Phosphor `arrow-clockwise`), le pendant d'[annuler].
+  static const AppIcon retablir = AppIcon._(
+    IconData(0xe036, fontFamily: _repos),
+    IconData(0xe036, fontFamily: _actif),
+  );
+
   /// Teaching Dock (D) : poignee de deplacement, six points. Remplace
   /// [menuDeroulant].
   static const AppIcon poigneeDock = AppIcon._(

@@ -14,6 +14,9 @@ import '../../core/appairage/service_avatar.dart'
 import '../../core/coran/service_coran.dart'
     show pageCoranProvider, pagesMushafMedine;
 import '../../core/domain/enums.dart';
+import '../../core/enseignant/modeles_enseignant.dart' show GroupeEnseignant;
+import '../../core/enseignant/service_enseignant.dart'
+    show groupesEnseignantProvider;
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -26,7 +29,10 @@ import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
+import '../../core/tc_bibliotheque/couverture_ressource.dart';
 import '../../core/tc_classe/controleur_recitation.dart';
+import '../../core/tc_classe/rappel_discret.dart'
+    show portRappelDiscretProvider;
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_classe/roster_enseignant.dart';
 import '../../core/tc_classe/teacher_student_projection.dart';
@@ -82,6 +88,7 @@ import '../salle_seance/ecriture_seance.dart'
         pointeurDistantProvider;
 import '../salle_seance/media_salle.dart';
 import '../salle_seance/notes_deposees.dart';
+import '../salle_seance/panneau_bibliotheque_salle.dart';
 import '../salle_seance/presentation_observee.dart';
 import '../salle_seance/resultat_seance.dart';
 import '../salle_seance/salle_seance.dart';
@@ -231,6 +238,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// S0.3 : l'enseignant a ouvert le tableau blanc (ferme par defaut).
   bool _tableau = false;
 
+  /// Plan de composition du 26/10/2026 : le dernier rappel discret qui n'a
+  /// pas pu partir depuis le panneau Eleves, ou `null`.
+  String? _echecRappel;
+
   /// S1 : la synchronisation de l'ecriture de cette seance, creee a la
   /// premiere composition dans la salle, liberee a la sortie.
   SynchroSalle? _synchro;
@@ -365,6 +376,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     setState(() {
       _impasse = null;
       _aEteConnecte = false;
+      // Revue de la PR 59 : une nouvelle entree relit le materiel ; une
+      // camera branchee entre-temps ne fait plus dire « aucune camera ».
+      _cameraAbsente = false;
+      _erreurCameraFermee = false;
       _repliAffiche.remettre();
       _materielPret = false;
       _acces = null;
@@ -635,8 +650,12 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     }
     try {
       await _moteur.reglerCamera(actif: !ouverte);
-      if (mounted && _erreurCamera != null) {
-        setState(() => _erreurCamera = null);
+      if (mounted && (_erreurCamera != null || (!ouverte && _cameraAbsente))) {
+        // Une camera allumee : elle existe (revue de la PR 59).
+        setState(() {
+          _erreurCamera = null;
+          if (!ouverte) _cameraAbsente = false;
+        });
       }
     } on Object catch (erreur) {
       journalDev('camera : $erreur');
@@ -741,6 +760,25 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     );
   }
 
+  /// Le nom de la Classe de la seance : pour l'enseignant, dans ses Classes
+  /// (`mes_groupes_v`) ; pour les familles, la Classe du billet, ou celle de
+  /// cette seance ; vide si rien n'est lisible (« Séance en direct »).
+  String _nomClasse(WidgetRef ref, RoleSalle role) {
+    final String? groupe = widget.groupeId;
+    if (role == RoleSalle.enseignant) {
+      for (final GroupeEnseignant g
+          in ref.watch(groupesEnseignantProvider).value ??
+              const <GroupeEnseignant>[]) {
+        if (g.id == groupe) return g.libelle;
+      }
+      return '';
+    }
+    final GroupSummaryVM? classe = groupe != null
+        ? ref.watch(groupeProvider(groupe)).value
+        : _classeDeLaSeance(ref.watch(mesGroupesProvider).value, null);
+    return classe?.libelle ?? '';
+  }
+
   /// La Classe de cette seance parmi celles de la famille : par la seance
   /// (prochaine occurrence ou horloge), sinon par l'enseignant [idEnseignant].
   GroupSummaryVM? _classeDeLaSeance(
@@ -786,7 +824,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     final bool tableau = enseignant
         ? _tableau
         : (synchro?.tableauOuvert.value ?? false);
-    final VueSeance seance = tableau
+    final VueSeance seanceSansFiches = tableau
         ? base.copyWith(
             panneau: _panneau,
             contexte: _contexte,
@@ -796,6 +834,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             tableauLibre: TableauLibre.classe,
           )
         : base.copyWith(panneau: _panneau, contexte: _contexte);
+    final VueSeance seance = enseignant
+        ? seanceSansFiches.copyWith(
+            eleves: _avecFiches(seanceSansFiches.eleves, _roster(ref)),
+          )
+        : seanceSansFiches;
     final VideoSessionProvider moteur = ref.watch(moteurSalleProvider);
     final double? plus = palierSuivant(_zoom);
     final double? moins = palierPrecedent(_zoom);
@@ -827,6 +870,21 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // presence (J3) et le roster reel (fiche, rappel discret).
       onEleves: enseignant
           ? () => _basculerPanneau(PanneauOuvert.eleves)
+          : null,
+      // Plan de composition du 26/10/2026 : la carte d'un eleve, depliee
+      // dans le panneau de gauche, porte les deux actions qui aboutissent
+      // dans `/salle` (rappel discret, recitation). « Noter » et « Signaler »
+      // n'ont pas encore de proprietaire : absentes, jamais grisees.
+      onRappeler: enseignant
+          ? (EleveSeance e) => unawaited(_rappeler(e))
+          : null,
+      onChoisirPourReciter: enseignant
+          ? (EleveSeance e) {
+              final String? id = e.id;
+              if (id != null) {
+                ref.read(recitationProvider.notifier).donnerLaParoleA(id);
+              }
+            }
           : null,
       // La Bibliotheque des Commandes (et la touche B) ouvre le Coran : une
       // autre sourate se presente a tout moment, comme depuis l'ancien
@@ -881,6 +939,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // passe en pastille (section 6.6, la sienne seulement) ; la liste de
       // l'enseignant est sa colonne Eleves.
       pleinCadre: true,
+      supports: enseignant && vue.peutPresenter
+          ? <SupportBibliotheque>[_coranDeLaBibliotheque(page)]
+          : const <SupportBibliotheque>[],
+      messageEleves: enseignant ? _echecRappel : null,
       // Au telephone, l'enseignant n'a pas de colonne : « Eleves » ouvre la
       // presence (J3) et le roster (fiche, rappel) en feuille.
       pastille: enseignant ? null : _PastillePresence(mienne: mienne),
@@ -936,7 +998,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       video: moteur.renduVideo,
       // L'enseignant chez l'eleve ; sa propre image chez l'enseignant.
       identiteVignette: enseignant ? moi?.identite : vue.dominant?.identite,
-      photoVignette: switch ((enseignant ? moi : vue.dominant)?.clePhotoEnseignant) {
+      photoVignette: switch ((enseignant ? moi : vue.dominant)
+          ?.clePhotoEnseignant) {
         final String cle => ref.watch(photoEnseignantUrlProvider(cle)).value,
         null => null,
       },
@@ -970,39 +1033,110 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     );
   }
 
+  /// Plan de composition du 26/10/2026 : les inscrits de la seance avec leur
+  /// fiche (roster pedagogique), pour le panneau Eleves de l'ordinateur. Un
+  /// fait que le serveur ne projette pas reste vide (la carte ne le montre
+  /// pas) ; un eleve que le roster ne rend pas (lecture en echec) garde une
+  /// fiche vide : sa carte se deplie quand meme et porte ses actions
+  /// (rappel, recitation), qui ne visent que son matricule.
+  static List<EleveSeance> _avecFiches(
+    List<EleveSeance> eleves,
+    RosterClasseVM roster,
+  ) => <EleveSeance>[
+    for (final EleveSeance e in eleves)
+      switch (e.id == null ? null : roster.parAcademyId(e.id!)) {
+        final TeacherStudentProjection p => EleveSeance(
+          prenom: e.prenom,
+          statut: e.statut,
+          id: e.id,
+          cleAvatar: e.cleAvatar,
+          peutEcrire: e.peutEcrire,
+          fiche: ficheDeSeance(p),
+        ),
+        null when e.id != null => EleveSeance(
+          prenom: e.prenom,
+          statut: e.statut,
+          id: e.id,
+          cleAvatar: e.cleAvatar,
+          peutEcrire: e.peutEcrire,
+          fiche: const FicheEleveSeance(
+            niveau: '',
+            objectifActuel: '',
+            derniereSeance: '',
+            aReprendre: '',
+            presenceRecente: '',
+            travailActuel: '',
+          ),
+        ),
+        null => e,
+      },
+  ];
+
+  /// Le rappel discret depuis le panneau Eleves ; l'echec se dit sous son
+  /// titre, la reussite ne dit rien (spec section 10.2).
+  Future<void> _rappeler(EleveSeance eleve) async {
+    final String? id = eleve.id;
+    if (id == null) return;
+    final String? echec = await rappelerDiscretement(
+      ref.read(portRappelDiscretProvider),
+      sessionId: widget.seanceId,
+      academyId: id,
+    );
+    if (mounted) setState(() => _echecRappel = echec);
+  }
+
+  /// Le Coran dans la Bibliotheque de l'ordinateur : « Presenter » choisit
+  /// la sourate et le verset ; « Reprendre page N » la page retenue pour la
+  /// Classe.
+  SupportBibliotheque _coranDeLaBibliotheque(int? pagePresentee) {
+    final String? groupe = widget.groupeId;
+    final int? retenue = groupe == null
+        ? null
+        : ref.read(memoirePageClasseProvider).lire(groupe);
+    return SupportBibliotheque(
+      id: 'coran',
+      titre: t.salle.supports.coran,
+      detail: retenue == null
+          ? t.salle.supports.coranDetail
+          : t.salle.seance.bibliotheque.detailReprise(page: retenue),
+      couverture: CouvertureRessource.coran(t.salle.supports.coran),
+      onPresenter: () => unawaited(_ouvrirCoran()),
+      pageReprise: retenue,
+      onReprendre: retenue == null
+          ? null
+          : () => unawaited(_presenterPage(retenue)),
+      presenterSecondaire:
+          pagePresentee != null && pagePresenteeEnErreur(ref, pagePresentee),
+    );
+  }
+
+  Future<void> _presenterPage(int page) async {
+    setState(() => _scenePremierPlan = null);
+    await ref.read(presentateurCoranProvider).presenterPage(page);
+  }
+
   /// S0 : la bibliotheque du Coran, puis la page presentee a la classe ;
   /// la scene cede la place a la page.
   /// Lot salle 2 (directeur, 25/10/2026) : la Bibliotheque montre le choix
-  /// des supports (aujourd'hui le Coran seul, d'autres viendront) au lieu
+  /// des supports (aujourd'hui le Coran seul) au lieu
   /// d'ouvrir le Coran d'office. Le Coran reprend a la derniere page
   /// presentee dans la classe, sinon le choix de la sourate et du verset.
   Future<void> _choisirSupport() async {
     final bool coran =
         await AppBottomSheet.ouvrir<bool>(
           context,
-          titre: t.salle.supports.titre,
-          constructeur: (BuildContext feuille) => Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              CarteLignes(
-                lignes: <Widget>[
-                  SettingRow(
-                    key: SallePage.supportCoranKey,
-                    icon: AppIcons.coran,
-                    title: t.salle.supports.coran,
-                    description: t.salle.supports.coranDetail,
-                    lien: true,
-                    onPress: () => Navigator.of(feuille).pop(true),
-                  ),
-                ],
-              ),
-              Ecart.vLg,
-              Text(
-                t.salle.supports.aVenir,
-                style: AppPalette.of(feuille).inkMuted.applyTo(
-                  Theme.of(feuille).textTheme.bodyMedium ?? const TextStyle(),
-                ),
+          // Plan de composition du 26/10/2026 : « Bibliotheque » partout,
+          // et aucune promesse de supports a venir.
+          titre: t.tc.bibliotheque.titre,
+          constructeur: (BuildContext feuille) => CarteLignes(
+            lignes: <Widget>[
+              SettingRow(
+                key: SallePage.supportCoranKey,
+                icon: AppIcons.coran,
+                title: t.salle.supports.coran,
+                description: t.salle.supports.coranDetail,
+                lien: true,
+                onPress: () => Navigator.of(feuille).pop(true),
               ),
             ],
           ),
@@ -1172,9 +1306,13 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // nom. L'annuaire de la seance nomme chaque participant (« Sayyida
     // Amina », « Yasmine ») et donne sa photo ; l'identite technique n'est
     // jamais rendue.
+    final FicheEnseignantSeance? ficheEnseignant = _ficheEnseignant(
+      ref,
+      presence,
+    );
     final AnnuaireSeance annuaire = AnnuaireSeance(
       presence: presence,
-      enseignant: _ficheEnseignant(ref, presence),
+      enseignant: ficheEnseignant,
     );
     final VueSalle vue = VueSalle.depuis(
       materielPret: _materielPret,
@@ -1289,10 +1427,17 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           presentee != null) {
         ref.read(memoirePageClasseProvider).ecrire(groupe, presentee.page);
       }
+      // Plan de composition du 26/10/2026 : le nom de la Classe et le titre
+      // de l'enseignant (« Sayyida Amina ») en haut de la salle. Revue de la
+      // PR 60 : l'enseignant lit le nom de sa Classe dans les siennes
+      // (`mes_groupes_v`) ; la vue des familles ne lui rend rien.
+      final String nomClasse = _nomClasse(ref, vue.role);
       final VueSeance? seance = DepuisSalle.vue(
         salle: vue,
         mode: AppMetriques.of(context).mode,
         nomEnseignantConnu: annuaire.enseignant,
+        nomClasse: nomClasse,
+        titreEnseignant: ficheEnseignant?.titre,
         presence: presence,
         monProfil: monProfil,
         monTuteurObserve: monTuteurObserve,
@@ -2938,11 +3083,7 @@ class _Cadre extends ConsumerWidget {
 /// « Sans image » ne s'ecrit plus : le cercle le dit. Il reste annonce aux
 /// technologies d'assistance, pour qui rien ne se voit.
 class _SansImage extends StatelessWidget {
-  const _SansImage({
-    required this.participant,
-    required this.nom,
-    this.photo,
-  });
+  const _SansImage({required this.participant, required this.nom, this.photo});
 
   final ParticipantSalle participant;
 
