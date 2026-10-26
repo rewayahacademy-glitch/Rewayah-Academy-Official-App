@@ -26,3 +26,21 @@ centrée, au ratio papier ; deux grandes flèches à mi-hauteur de chaque côté
 étroite de réglages à gauche et une liste à droite, qui ne volent rien à la page ; la vidéo de
 l'enseignant en petite vignette dans un coin haut. « Le Coran a du gabarit. » À appliquer à la
 salle (lot S0.2).
+
+## Références 5 à 7 (directeur, 26/10/2026, soir) : l'ordinateur, « plus sobre, adapté »
+
+`2026-10-26-directeur-ref-5…7-*.jpg` : trois vues d'un même outil de visio avec tableau
+(générées, non canoniques), déposées pour l'ordinateur et l'iPad, « surtout les commandes en bas ».
+À retenir pour la fiche 2 (iPad et ordinateur), rien pour le téléphone :
+
+- **Une seule barre du bas, centrée, claire** : icône au-dessus du nom (Audio, Vidéo, Partager,
+  Outils du tableau, Supports, Plus), toutes de la même taille, sans groupe de gauche et de droite ;
+  la sortie (rouge) à part, à droite, hors de la rangée.
+- **La vidéo de l'enseignant en médaillon rond, en haut au centre de la page**, petite, avec la
+  pastille du micro : l'équivalent de la capsule du téléphone. La page garde tout l'espace.
+- **Les outils de dessin en colonne étroite au bord gauche de la page**, et une petite feuille
+  (« crayons ») qui s'ouvre au-dessus du bouton de la barre, jamais une barre d'outils permanente.
+- **Un menu « replier tous les panneaux » et « page en plein écran »** : réponse au défaut de l'iPad
+  en paysage (panneaux qui mangent la page).
+- Panneau de droite : les élèves avec l'état du micro et de la caméra de chacun ; panneau de
+  gauche : la bibliothèque. Les deux se replient.
