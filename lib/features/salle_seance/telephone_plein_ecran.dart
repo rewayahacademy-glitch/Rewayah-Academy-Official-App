@@ -44,6 +44,7 @@ import 'panneau_seance.dart' show largeurPanneauSeance;
 import 'pilule_etat_salle.dart';
 import 'salle_seance.dart' show BandeauSecours, EtatLocalSeance;
 import 'surface_page_fixe.dart';
+import 'telephone_enseignant.dart';
 import 'vignette_video.dart';
 import 'vue_seance.dart';
 import 'zone_support.dart' show ZoneSupport, coteFlechesSalle, surfaceAMontrer;
@@ -177,6 +178,12 @@ class TelephonePleinEcran extends StatelessWidget {
   /// La cle de la page bord a bord (tests, captures).
   static const Key clePage = ValueKey<String>('telephone-page');
 
+  /// Plan §4 : « Commandes » au repos (seul en bas) et au toucher (au-dessus
+  /// de la pilule de l'appel).
+  static const Key cleCommandesRepos = ValueKey<String>(
+    'telephone-commandes-repos',
+  );
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -193,6 +200,12 @@ class TelephonePleinEcran extends StatelessWidget {
         builder: (BuildContext context, BoxConstraints c) {
           final Size ecran = c.biggest;
           final bool telephone = telephonePleinEcran(context);
+          // Plan de composition du 26/10/2026, §4 (PR B) : l'enseignant au
+          // telephone a sa capsule, son tiroir des Commandes et ses eleves en
+          // feuille ; l'eleve, le tuteur et le controleur ne changent pas.
+          final bool enseignant =
+              telephone && vue.role == RoleSeance.enseignant;
+          final bool eleves = enseignant && vue.panneau == PanneauOuvert.eleves;
           final bool libre = vue.supportPresente == null;
           final Widget? pageVue = scene
               ? null
@@ -211,6 +224,11 @@ class TelephonePleinEcran extends StatelessWidget {
             // Lot salle 2 : la vignette est posee a part, deplacable.
             vignette: false,
             aCote: !telephone,
+            // Sans page (scene video en grand), rien a reduire : pas de
+            // capsule. Page illisible : son constat et son « Reessayer » se
+            // lisent, rien ne se pose dessus.
+            capsule:
+                enseignant && page != null && !(media?.pageEnErreur ?? false),
           );
           final Widget bas = Padding(
             // Standard : marge 16 des bords (et la zone sure).
@@ -220,8 +238,12 @@ class TelephonePleinEcran extends StatelessWidget {
               actions: actions,
               local: local,
               paletteAuDessus: telephone,
+              enseignantTelephone: enseignant,
             ),
           );
+          // Plan §4 : le tiroir des Commandes et la feuille des eleves
+          // montent du bas, au-dessus de la pilule de l'appel.
+          final double hauteurFeuille = ecran.height * _partPanneau;
           // Ordinateur : la palette du tableau, verticale au bord droit.
           final bool paletteADroite =
               !telephone && vue.tableauOuvert && actions.onTableau != null;
@@ -261,7 +283,7 @@ class TelephonePleinEcran extends StatelessWidget {
                   )
                 else
                   Center(child: pageVue),
-                if (panneau && telephone)
+                if (panneau && telephone && !enseignant)
                   PositionedDirectional(
                     start: AppSpacing.sm,
                     end: AppSpacing.sm,
@@ -272,6 +294,30 @@ class TelephonePleinEcran extends StatelessWidget {
                       local: local,
                       hauteurMax: ecran.height * _partPanneau,
                     ),
+                  ),
+                // Plan §4 : au repos, « Commandes » seul en bas ; au toucher,
+                // il remonte au-dessus de la pilule, avec elle.
+                if (enseignant &&
+                    vue.panneau == PanneauOuvert.aucun &&
+                    _declencheur(actions, vue) != null)
+                  Builder(
+                    builder: (BuildContext contexte) =>
+                        CommandesMasquables.visiblesDe(contexte)
+                        ? const SizedBox.shrink()
+                        : PositionedDirectional(
+                            start: 0,
+                            end: 0,
+                            bottom: AppSpacing.lg,
+                            child: SafeArea(
+                              top: false,
+                              child: Center(
+                                child: DeclencheurCommandes(
+                                  key: TelephonePleinEcran.cleCommandesRepos,
+                                  onPress: _declencheur(actions, vue)!,
+                                ),
+                              ),
+                            ),
+                          ),
                   ),
                 // Scene en grand (sans page) : les Commandes restent sur la
                 // scene, au bord droit.
@@ -302,7 +348,7 @@ class TelephonePleinEcran extends StatelessWidget {
                         // Lot salle 2 (directeur, 25/10/2026) : la vignette se
                         // deplace au doigt et a la souris, aimantee aux quatre
                         // coins (standard Meet, FaceTime).
-                        if (!scene && vue.voitVignetteSurSupport)
+                        if (!scene && vue.voitVignetteSurSupport && !enseignant)
                           VignetteAimantee(
                             vue: vue,
                             largeur: telephone
@@ -324,19 +370,56 @@ class TelephonePleinEcran extends StatelessWidget {
                                 2 * AppSpacing.sm +
                                 AppSpacing.lg,
                           ),
+                        // Plan §4 : le tiroir des Commandes et la feuille
+                        // des eleves montent du bas, AU-DESSUS de la pilule
+                        // de l'appel : a 360 en texte agrandi, ils se tassent
+                        // au lieu de la recouvrir.
                         PositionedDirectional(
+                          top: 0,
                           start: 0,
                           end: 0,
                           bottom: 0,
-                          child: SafeArea(top: false, child: bas),
+                          child: SafeArea(
+                            top: false,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                if ((panneau || eleves) && enseignant)
+                                  Flexible(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: AppSpacing.sm,
+                                      ),
+                                      child: eleves
+                                          ? FeuilleElevesTelephone(
+                                              vue: vue,
+                                              actions: actions,
+                                              hauteur: hauteurFeuille,
+                                            )
+                                          : TiroirCommandesTelephone(
+                                              vue: vue,
+                                              actions: actions,
+                                              local: local,
+                                              hauteur: hauteurFeuille,
+                                            ),
+                                    ),
+                                  ),
+                                bas,
+                              ],
+                            ),
+                          ),
                         ),
                         // Zoom de la page (directeur, 25/10/2026 : « aucune
                         // commande de zoom vue sur ordinateur ») : une pilule
                         // flottante au bord droit, - et +, icones seules ;
                         // Ctrl + molette et le pincement restent.
+                        // Plan §4 : un panneau ouvert au telephone prend le
+                        // bas de l'ecran ; la pilule du zoom ne flotte pas
+                        // par-dessus.
                         if (!libre &&
                             !paletteADroite &&
                             commandesADroite == null &&
+                            !((panneau || eleves) && enseignant) &&
                             (actions.onZoomPlus != null ||
                                 actions.onZoomMoins != null))
                           PositionedDirectional(
@@ -466,6 +549,13 @@ class _EtatVignetteAimantee extends State<VignetteAimantee> {
   }
 }
 
+/// Plan §4 : le rappel de « Commandes » de l'enseignant au telephone, si le
+/// tiroir a quelque chose a montrer.
+VoidCallback? _declencheur(ActionsSeance actions, VueSeance vue) =>
+    CommandesPedagogiques.aDesEntrees(vue, actions)
+    ? actions.onCommandes
+    : null;
+
 /// La part maximale de l'ecran que prend le panneau des Commandes.
 const double _partPanneau = 0.6;
 
@@ -478,6 +568,7 @@ class _Haut extends StatelessWidget {
     required this.largeur,
     required this.vignette,
     required this.aCote,
+    this.capsule = false,
   });
 
   final VueSeance vue;
@@ -486,11 +577,22 @@ class _Haut extends StatelessWidget {
   final bool vignette;
   final bool aCote;
 
+  /// Plan §4 : l'enseignant au telephone, la capsule de sa video a la place
+  /// du bouton « Eleves » (ses eleves sont dans l'onglet Seance).
+  final bool capsule;
+
   @override
   Widget build(BuildContext context) {
     final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
     final Widget? alerte = media?.alerte;
-    final ({int nombre, VoidCallback onPress})? eleves = media?.boutonEleves;
+    // Plan §4 : l'enseignant au telephone garde son bouton rond « Eleves »
+    // en haut ; il ouvre la feuille des cartes (les memes que sur
+    // ordinateur), et non plus l'ancienne liste.
+    final ({int nombre, VoidCallback onPress})? basique = media?.boutonEleves;
+    final ({int nombre, VoidCallback onPress})? eleves =
+        capsule && basique != null && actions.onEleves != null
+        ? (nombre: basique.nombre, onPress: actions.onEleves!)
+        : basique;
     // Standard des commandes d'appel (24/10/2026) : une pilule translucide en
     // haut a gauche, hauteur 36 : « ● En ligne · Visite de controle
     // possible. » (ADR-011), seule sur sa rangee ; dessous, a droite, le
@@ -570,7 +672,10 @@ class _Haut extends StatelessWidget {
             else
               Align(alignment: AlignmentDirectional.topStart, child: ligne),
             if (!aCote &&
-                (eleves != null || vignette || fermer != null)) ...<Widget>[
+                (eleves != null ||
+                    vignette ||
+                    capsule ||
+                    fermer != null)) ...<Widget>[
               Ecart.vSm,
               Align(
                 alignment: AlignmentDirectional.topEnd,
@@ -589,6 +694,7 @@ class _Haut extends StatelessWidget {
                         vue: vue,
                         largeur: largeurVignetteTelephone,
                       ),
+                    if (capsule) CapsuleVideoTelephone(vue: vue),
                     ?fermer,
                   ],
                 ),
@@ -739,11 +845,18 @@ class _Bas extends StatelessWidget {
     required this.actions,
     required this.local,
     required this.paletteAuDessus,
+    this.enseignantTelephone = false,
   });
 
   final VueSeance vue;
   final ActionsSeance actions;
   final EtatLocalSeance local;
+
+  /// Plan §4 : la pilule de l'enseignant au telephone ne garde que micro,
+  /// camera et quitter ; le tableau passe dans l'onglet Outils du tiroir, et
+  /// « Commandes » ouvre le tiroir (dans la pilule, au toucher ; seul en bas,
+  /// au repos).
+  final bool enseignantTelephone;
 
   /// Telephone : la palette du tableau au-dessus de la pilule d'appel ;
   /// ordinateur : au bord droit (posee ailleurs).
@@ -761,6 +874,13 @@ class _Bas extends StatelessWidget {
       microOuvert: local.microOuvert,
       cameraAllumee: local.cameraAllumee,
       agrandi: local.agrandi,
+      commandes: enseignantTelephone
+          ? const <CommandeDock>[
+              CommandeDock.micro,
+              CommandeDock.camera,
+              CommandeDock.quitter,
+            ]
+          : null,
       plus:
           commandes != null &&
               CommandesPedagogiques.aDesEntrees(vue, actions) &&

@@ -185,18 +185,22 @@ class BarreOutilsSalle extends ConsumerWidget {
             spacing: AppSpacing.lg,
             runSpacing: AppSpacing.sm,
             children: <Widget>[
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                spacing: AppSpacing.sm,
-                children: outils,
+              _Groupe(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  spacing: AppSpacing.sm,
+                  children: outils,
+                ),
               ),
               Semantics(
                 container: true,
                 label: t.salle.seance.ecriture.couleur,
-                child: Row(
-                  key: const ValueKey<String>('barre-outils-couleurs'),
-                  mainAxisSize: MainAxisSize.min,
-                  children: couleurs,
+                child: _Groupe(
+                  child: Row(
+                    key: const ValueKey<String>('barre-outils-couleurs'),
+                    mainAxisSize: MainAxisSize.min,
+                    children: couleurs,
+                  ),
                 ),
               ),
               // Trois epaisseurs, a la largeur de leurs mots : jamais
@@ -225,4 +229,18 @@ class BarreOutilsSalle extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// Un groupe de la barre : au telephone (plan §4, PR B), la place manque pour
+/// dix couleurs sur une rangee ; le groupe defile alors au doigt, sans
+/// qu'aucune couleur ni aucun outil disparaisse. Sur ordinateur, il garde sa
+/// largeur naturelle.
+class _Groupe extends StatelessWidget {
+  const _Groupe({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) =>
+      SingleChildScrollView(scrollDirection: Axis.horizontal, child: child);
 }

@@ -78,12 +78,15 @@ enum FiltreBibliotheque { recents, classe, tous }
 class PanneauBibliothequeSalle extends StatefulWidget {
   const PanneauBibliothequeSalle({
     required this.supports,
-    required this.onFermer,
+    this.onFermer,
     super.key,
   });
 
   final List<SupportBibliotheque> supports;
-  final VoidCallback onFermer;
+
+  /// La croix « Fermer » et le titre du panneau ; `null` : ni l'un ni
+  /// l'autre (le tiroir du telephone porte deja son titre et « Reduire »).
+  final VoidCallback? onFermer;
 
   /// La cle du panneau (tests, captures).
   static const Key cle = ValueKey<String>('salle-panneau-bibliotheque');
@@ -147,27 +150,29 @@ class _EtatPanneauBibliotheque extends State<PanneauBibliothequeSalle> {
     return ListView(
       key: PanneauBibliothequeSalle.cle,
       children: <Widget>[
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: Text(
-                t.tc.bibliotheque.titre,
-                style: palette.inkStrong.applyTo(
-                  textes.titleMedium ?? const TextStyle(),
+        if (widget.onFermer case final VoidCallback fermer) ...<Widget>[
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                  t.tc.bibliotheque.titre,
+                  style: palette.inkStrong.applyTo(
+                    textes.titleMedium ?? const TextStyle(),
+                  ),
                 ),
               ),
-            ),
-            BoutonIcone(
-              key: const ValueKey<String>('bibliotheque-fermer'),
-              icone: AppIcons.fermer,
-              libelle: t.commun.fermer,
-              infobulle: t.commun.fermer,
-              forme: FormeBoutonIcone.nue,
-              onPress: widget.onFermer,
-            ),
-          ],
-        ),
-        Ecart.vSm,
+              BoutonIcone(
+                key: const ValueKey<String>('bibliotheque-fermer'),
+                icone: AppIcons.fermer,
+                libelle: t.commun.fermer,
+                infobulle: t.commun.fermer,
+                forme: FormeBoutonIcone.nue,
+                onPress: fermer,
+              ),
+            ],
+          ),
+          Ecart.vSm,
+        ],
         ChampRecherche(
           controleur: _recherche,
           libelle: t.tc.bibliotheque.rechercheLibelle,

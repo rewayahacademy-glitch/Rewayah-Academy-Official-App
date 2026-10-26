@@ -943,6 +943,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           ? <SupportBibliotheque>[_coranDeLaBibliotheque(page)]
           : const <SupportBibliotheque>[],
       messageEleves: enseignant ? _echecRappel : null,
+      // La page presentee ne se lit pas : rien ne se pose par-dessus son
+      // constat ni son « Reessayer » (capsule du telephone).
+      pageEnErreur: page != null && pagePresenteeEnErreur(ref, page),
       // Au telephone, l'enseignant n'a pas de colonne : « Eleves » ouvre la
       // presence (J3) et le roster (fiche, rappel) en feuille.
       pastille: enseignant ? null : _PastillePresence(mienne: mienne),

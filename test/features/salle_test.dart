@@ -37,6 +37,7 @@ import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dar
 import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart'
     show PointNormalise;
 import 'package:rewayah_academy/core/tc_outils/port_annotations.dart';
+import 'package:rewayah_academy/core/theme/app_gabarit.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
@@ -45,20 +46,27 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
 import 'package:rewayah_academy/core/widgets/bouton_couleur.dart';
 import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
+import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_enseignant/page_coran_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_outils_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart'
     show DeclencheurCommandes;
+import 'package:rewayah_academy/features/salle_seance/dock_seance.dart'
+    show BoutonPlusAppel;
 import 'package:rewayah_academy/features/salle_seance/ecriture_seance.dart'
     show diffusionEcritureProvider;
 import 'package:rewayah_academy/features/salle_seance/media_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/palette_tableau.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_bibliotheque_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/panneau_seance.dart'
+    show PanneauSeance;
 import 'package:rewayah_academy/features/salle_seance/resultat_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_ordinateur.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/telephone_enseignant.dart'
+    show OngletTiroir;
 import 'package:rewayah_academy/features/salle_seance/telephone_plein_ecran.dart';
 import 'package:rewayah_academy/features/tc_mushaf/page_madina_15.dart'
     show cleLigneMadina15;
@@ -2784,8 +2792,35 @@ void main() {
       testWidgets('tableau, $nom : le canevas est la fenetre, la feuille '
           '16:9 ajustee sans etirement', (WidgetTester tester) async {
         await monterAvecPage(tester, taille);
+        // Plan §4 (PR B) : au telephone, le tableau vit dans l'onglet Outils
+        // du tiroir des Commandes ; la pilule ne garde que micro, camera et
+        // quitter. Sur ordinateur, la barre du bas le porte.
+        if (taille.width < AppGabarit.seuilTablette) {
+          // Les commandes se masquent au delai : un toucher les ramene.
+          await tester.tapAt(const Offset(10, 10));
+          await tester.pumpAndSettle();
+          await tester.tap(find.byKey(BoutonPlusAppel.cle));
+          await tester.pumpAndSettle();
+          // ONGLETS-1 : en menu quand les trois mots ne tiennent pas.
+          final Finder menu = find.byType(MenuFiltre<OngletTiroir>);
+          if (menu.evaluate().isNotEmpty) {
+            await tester.tap(menu);
+            await tester.pumpAndSettle();
+          }
+          await tester.tap(
+            find.text(t.salle.seance.commandes.ongletOutils).hitTestable().last,
+          );
+          await tester.pumpAndSettle();
+        }
         await tester.tap(find.byKey(const ValueKey<String>('bouton-tableau')));
         await tester.pumpAndSettle();
+        // Le tiroir se referme pour laisser voir le tableau.
+        if (taille.width < AppGabarit.seuilTablette) {
+          await tester.tap(
+            find.byKey(PanneauSeance.cleReduire).hitTestable().first,
+          );
+          await tester.pumpAndSettle();
+        }
         expect(tester.takeException(), isNull);
         final Rect canevas = tester.getRect(
           find.byKey(TelephonePleinEcran.clePage),

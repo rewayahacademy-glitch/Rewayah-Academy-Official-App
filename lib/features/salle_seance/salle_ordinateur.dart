@@ -514,6 +514,33 @@ class _PanneauCommandes extends StatelessWidget {
   );
 }
 
+/// La tuile nommee d'un outil de l'enseignant (Pointeur, Ecrire) : la barre
+/// de l'ordinateur et l'onglet Outils du tiroir du telephone (plan du
+/// 26/10/2026). [outil] : l'outil retenu.
+Widget tuileOutilSalle(
+  WidgetRef ref, {
+  required ActionsSeance actions,
+  required OutilDock? outil,
+  required OutilEnseignement o,
+}) => BoutonAppel(
+  key: ValueKey<String>('salle-outil-${o.name}'),
+  // « Ecrire » arme le stylo : son icone, et non celle du tableau, qui est la
+  // meme (`annoter`) et se tient a cote dans la barre.
+  icone: o == OutilEnseignement.ecrire
+      ? AppIcons.stylet
+      : iconeOutilEnseignement(o),
+  libelle: libelleOutilEnseignement(o),
+  nom: libelleOutilEnseignement(o),
+  retenu: outil == outilDock(o),
+  selectionne: outil == outilDock(o),
+  onPress: () {
+    if (depotAnnotationsDisponible(ref)) {
+      ref.read(etatOutilsProvider.notifier).choisirOutil(outilDock(o));
+    }
+    actions.onOutil?.call(o);
+  },
+);
+
 /// La barre des commandes, deux groupes, chaque bouton nomme : au debut
 /// Eleves, Pointeur, Ecrire, Tableau, Plus ; a la fin Micro, Camera,
 /// Bibliotheque, Quitter.
@@ -541,26 +568,8 @@ class _Bas extends ConsumerWidget {
     final VoidCallback? lesEleves = actions.onEleves;
     final VoidCallback? commandes = actions.onCommandes;
     final bool outils = actions.onOutil != null;
-    void choisir(OutilEnseignement o) {
-      if (depotAnnotationsDisponible(ref)) {
-        ref.read(etatOutilsProvider.notifier).choisirOutil(outilDock(o));
-      }
-      actions.onOutil?.call(o);
-    }
-
-    Widget boutonOutil(OutilEnseignement o) => BoutonAppel(
-      key: ValueKey<String>('salle-outil-${o.name}'),
-      // « Ecrire » arme le stylo : son icone, et non celle du tableau, qui
-      // est la meme (`annoter`) et se tient a cote dans la barre.
-      icone: o == OutilEnseignement.ecrire
-          ? AppIcons.stylet
-          : iconeOutilEnseignement(o),
-      libelle: libelleOutilEnseignement(o),
-      nom: libelleOutilEnseignement(o),
-      retenu: outil == outilDock(o),
-      selectionne: outil == outilDock(o),
-      onPress: () => choisir(o),
-    );
+    Widget boutonOutil(OutilEnseignement o) =>
+        tuileOutilSalle(ref, actions: actions, outil: outil, o: o);
 
     final Widget gauche = DockSeance(
       key: const ValueKey<String>('salle-commandes-gauche'),
