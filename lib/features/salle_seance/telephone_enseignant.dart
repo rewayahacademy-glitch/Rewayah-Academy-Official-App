@@ -57,8 +57,13 @@ class CapsuleVideoTelephone extends StatelessWidget {
   const CapsuleVideoTelephone({
     required this.vue,
     required this.onDeplier,
+    this.onRevenirPage,
     super.key = cle,
   });
+
+  /// La video est en grand devant la page (pilote, 26/10) : l'oeil devient
+  /// « Revenir a la page » ; `null` : « Voir la video en grand ».
+  final VoidCallback? onRevenirPage;
 
   final VueSeance vue;
 
@@ -70,6 +75,9 @@ class CapsuleVideoTelephone extends StatelessWidget {
 
   /// La cle de « Voir la video en grand ».
   static const Key cleVoir = ValueKey<String>('telephone-capsule-voir');
+
+  /// La cle de « Revenir a la page ».
+  static const Key cleRevenir = ValueKey<String>('telephone-capsule-revenir');
 
   /// La cle de la partie qui deplie le profil.
   static const Key cleDeplier = ValueKey<String>('telephone-capsule-deplier');
@@ -123,7 +131,16 @@ class CapsuleVideoTelephone extends StatelessWidget {
                   ],
                 ),
               ),
-              if (enGrand != null)
+              if (onRevenirPage case final VoidCallback revenir)
+                BoutonIcone(
+                  key: cleRevenir,
+                  icone: AppIcons.coran,
+                  libelle: t.salle.revenirALaPage,
+                  infobulle: t.salle.revenirALaPage,
+                  forme: FormeBoutonIcone.appel,
+                  onPress: revenir,
+                )
+              else if (enGrand != null)
                 BoutonIcone(
                   key: cleVoir,
                   icone: AppIcons.oeil,

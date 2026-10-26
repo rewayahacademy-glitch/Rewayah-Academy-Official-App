@@ -325,10 +325,28 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                   ecran: ecran,
                   telephone: telephone || enseignant,
                 );
-          final Widget? page = pageVue;
+          // Pilote (26/10) : la video en grand devant une page qui attend est
+          // la meme scene pour l'enseignant au telephone (lignes 1 a 3) : la
+          // capsule seule en haut, son oeil devient « Revenir a la page ».
+          final VoidCallback? revenir = media?.onBasculerScene;
+          final bool sceneDevant =
+              enseignant &&
+              scene &&
+              (media?.scenePremierPlan ?? false) &&
+              media?.actionScene == null &&
+              revenir != null;
+          final Widget? page =
+              pageVue ??
+              (sceneDevant
+                  ? SizedBox.fromSize(
+                      key: const ValueKey<String>('telephone-scene'),
+                      size: ecran,
+                      child: laScene,
+                    )
+                  : null);
           // Fiche 1, lignes 1, 2, 5 : la capsule (ou le profil deplie) reste
-          // en haut au repos comme au toucher. Sans page (scene video en
-          // grand), rien a reduire : pas de capsule. Page illisible : son
+          // en haut au repos comme au toucher. Sans page ni scene devant une
+          // page, rien a reduire : pas de capsule. Page illisible : son
           // constat et son « Reessayer » se lisent, rien ne se pose dessus.
           final bool capsule =
               enseignant && page != null && !(media?.pageEnErreur ?? false);
@@ -401,7 +419,7 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                   Listener(
                     behavior: HitTestBehavior.translucent,
                     onPointerDown: _toucherPage,
-                    child: Center(child: pageVue),
+                    child: Center(child: page),
                   ),
                 if (capsule)
                   PositionedDirectional(
@@ -429,6 +447,7 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                                 child: CapsuleVideoTelephone(
                                   vue: vue,
                                   onDeplier: _deplierProfil,
+                                  onRevenirPage: sceneDevant ? revenir : null,
                                 ),
                               ),
                             BandeauSecours(
@@ -614,6 +633,7 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                         // Fiche 1, ligne 13 : ni sur un panneau ouvert, ni
                         // sur le profil deplie.
                         if (!libre &&
+                            !sceneDevant &&
                             !paletteADroite &&
                             commandesADroite == null &&
                             !((panneau || eleves) && enseignant) &&

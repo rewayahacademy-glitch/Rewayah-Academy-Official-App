@@ -474,6 +474,59 @@ void main() {
             verifierUnSeulBoutonPlein(tester);
           });
 
+          testWidgets('$nom : lignes 1 a 3, video en grand : la capsule seule, '
+              '« Revenir a la page »', (WidgetTester tester) async {
+            await _monter(tester, taille: taille, texte: texte);
+            await _toucher(tester);
+            await tester.tap(find.byKey(CapsuleVideoTelephone.cleVoir));
+            await tester.pumpAndSettle();
+            final Finder scene = find.byKey(
+              const ValueKey<String>('telephone-scene'),
+            );
+            expect(scene, findsOneWidget);
+            expect(find.byKey(TelephonePleinEcran.clePage), findsNothing);
+            final Finder capsule = find.byKey(CapsuleVideoTelephone.cle);
+            expect(capsule, findsOneWidget);
+            expect(
+              find.byKey(CapsuleVideoTelephone.cleRevenir).hitTestable(),
+              findsOneWidget,
+            );
+            expect(find.byKey(CapsuleVideoTelephone.cleVoir), findsNothing);
+            expect(
+              find.byKey(const ValueKey<String>('revenir-page')),
+              findsNothing,
+            );
+            expect(find.byType(PiluleEtatSalle), findsNothing);
+            expect(
+              find.byKey(const ValueKey<String>('salle-eleves')),
+              findsNothing,
+            );
+            // Au repos : la capsule et « Commandes », rien d'autre hors de la
+            // scene.
+            await _attendreLeRepos(tester);
+            final Finder commandes = find.byKey(
+              TelephonePleinEcran.cleCommandesRepos,
+            );
+            expect(commandes.hitTestable(), findsOneWidget);
+            expect(
+              _horsDe(tester, <Finder>[capsule, commandes, scene]),
+              isEmpty,
+            );
+            // Au toucher : la pilule et « Commandes » au-dessus.
+            await _toucher(tester);
+            expect(_dock.hitTestable(), findsOneWidget);
+            expect(
+              find.byKey(TelephonePleinEcran.cleCommandesToucher).hitTestable(),
+              findsOneWidget,
+            );
+            // « Revenir a la page ».
+            await tester.tap(find.byKey(CapsuleVideoTelephone.cleRevenir));
+            await tester.pumpAndSettle();
+            expect(find.byKey(TelephonePleinEcran.clePage), findsOneWidget);
+            expect(find.byKey(CapsuleVideoTelephone.cleVoir), findsOneWidget);
+            expect(tester.takeException(), isNull);
+          });
+
           testWidgets('$nom : ligne 5, la capsule deplie le profil', (
             WidgetTester tester,
           ) async {
