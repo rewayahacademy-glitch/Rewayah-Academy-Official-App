@@ -76,11 +76,28 @@ dans les textes i18n (le vocabulaire de `mots-rewayah` s'applique aux libellés)
 | :-- | :-- | :-- |
 | 24 | **Chaque ligne** est un test à deux appareils simulés (l'enseignante et un élève ; un tuteur pour 14 à 17) et le directeur la vérifie avec deux appareils sur l'aperçu de la PR, avant fusion. | contrat de l'écran §2 |
 
+## H. Journal de présence et de qualité (la raison première de l'application)
+
+Le directeur, 27/10 : les parents reprochaient des enseignants absents, en retard ou mal connectés,
+les enseignants disaient le contraire, et personne ne pouvait juger. L'application existe d'abord
+pour cela : des faits mesurés par le serveur, lisibles par l'administration et par le parent.
+
+| N° | Ce qui doit être vrai | Source |
+| :-- | :-- | :-- |
+| 25 | **Le serveur, et lui seul,** enregistre pour chaque personne de la séance l'heure d'arrivée, chaque coupure et chaque retour, l'heure de sortie, à l'heure du serveur, jamais à celle de l'appareil. | existant en partie (événements d'entrée et de sortie, migration 0010) |
+| 26 | **Le retard et le départ anticipé** se calculent par rapport à l'horaire prévu de la séance, pour l'enseignante comme pour chaque élève : « arrivée 7 min après le début », « sortie 12 min avant la fin ». Même règle pour tout le monde. | présence J3 (retard à 5 min), Zoom (rapport de présence) |
+| 27 | **Toutes les 30 s,** l'appareil de chacun envoie au serveur sa qualité de réseau (excellente, bonne, faible, perdue, mesure LiveKit) et l'état de son micro et de sa caméra ; le serveur garde ces mesures pour la séance. | LiveKit ConnectionQuality, Zoom (qualité de service) **[arbitrage : 30 s]** |
+| 28 | **Pendant la séance,** l'enseignante voit l'état de chacun en direct (présence, réseau, micro, caméra) dans sa feuille Élèves ; l'élève voit le sien seulement. | fiche 1 l. 10 ; existant en partie |
+| 29 | **Après la séance,** l'administration lit la frise de chaque personne (arrivée, coupures, sortie, réseau, micro, caméra) et le résumé de la séance : enseignante arrivée à, sortie à, réseau ; élèves présents, en retard, absents. Des faits, sans jugement écrit. | 01 § Après séance, Zoom (rapport) |
+| 30 | **Le tuteur** lit la même frise pour son enfant seulement, et le résumé de l'enseignante (arrivée, sortie, réseau) des séances de son enfant ; jamais les autres élèves. | raison première de l'application **[arbitrage]** |
+| 31 | **Une mesure manquante** se lit « inconnu », jamais « absent » ni « mauvais réseau ». Le cahier de l'enseignante ne remplace pas ces faits, il s'y ajoute. | existant (vue de la présence) |
+| 32 | **Limite** : les lignes 27, 29 et 30 demandent des migrations (table des mesures, lecture par rôle) que le directeur collera depuis une page privée, et des écrans pour l'administration et le tuteur. Elles viennent après les sections A à G, par PR, chacune prouvée. | inventaire 27/10 |
+
 ## État
 
 | Lignes | Spécifié | Codé | Prouvé par le directeur |
 | :-- | :-- | :-- | :-- |
-| 1 à 24 | 27/10 | aucune (l'inventaire du 27/10 dit ce qui existe en partie : 8, 9, 14, 15, 18, 20, 23) | |
+| 1 à 32 | 27/10 | aucune ligne entière (l'inventaire du 27/10 dit ce qui existe en partie : 8, 9, 14, 15, 18, 20, 23, 25, 26, 28, 31) | |
 
 ## Journal
 
@@ -90,3 +107,5 @@ dans les textes i18n (le vocabulaire de `mots-rewayah` s'applique aux libellés)
   l'enseignante (4), élève qui revient sans enseignante (8), vidéos des autres élèves (11),
   plusieurs tuteurs (16), ce que voit le tuteur (17), budget du tuteur épuisé (17), clignotement
   (15), délai des avis (22).
+- 27/10, plus tard : section H ajoutée sur demande du directeur (journal de présence, réseau,
+  micro et caméra pour l'administration et les parents : la raison première de l'application).
