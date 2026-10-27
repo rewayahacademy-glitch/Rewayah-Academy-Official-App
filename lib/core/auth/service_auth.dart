@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../observabilite/journal_dev.dart';
+
 /// Ce que l'application sait faire de l'authentification.
 ///
 /// Une interface plutot qu'un appel direct a Supabase, pour la meme raison que
@@ -26,7 +28,9 @@ abstract interface class ServiceAuth {
   /// Ouvre le parcours Google.
   Future<void> connexionGoogle();
 
-  /// Ferme la session.
+  /// Ferme la session **locale** et rend la main aussitot ; le serveur est
+  /// prevenu ensuite, au mieux, sans que l'appel ne l'attende (fiche du
+  /// 27/10/2026, ligne 16 : sortie en moins de 2 secondes, meme sans reseau).
   Future<void> deconnexion();
 }
 
@@ -48,8 +52,8 @@ class ServiceAuthSupabase implements ServiceAuth {
   String? get _retour => kIsWeb ? Uri.base.origin : null;
 
   @override
-  Future<void> envoyerLienCourriel(String courriel) =>
-      _client.auth.signInWithOtp(email: courriel.trim(), emailRedirectTo: _retour);
+  Future<void> envoyerLienCourriel(String courriel) => _client.auth
+      .signInWithOtp(email: courriel.trim(), emailRedirectTo: _retour);
 
   @override
   Future<void> connexionMotDePasse(String courriel, String motDePasse) async {
@@ -64,7 +68,23 @@ class ServiceAuthSupabase implements ServiceAuth {
       _client.auth.signInWithOAuth(OAuthProvider.google, redirectTo: _retour);
 
   @override
-  Future<void> deconnexion() => _client.auth.signOut();
+  Future<void> deconnexion() async {
+    // Locale d'abord : gotrue retire la session et previent ses abonnes
+    // (`signedOut`) AVANT son appel au serveur (`_signOut`, portee locale).
+    // L'appel n'est pas attendu : un reseau coupe ou lent ne retient jamais
+    // la sortie, et le serveur ne revoque que la session de cet appareil.
+    final Future<void> serveur = _client.auth.signOut(
+      scope: SignOutScope.local,
+    );
+    unawaited(
+      serveur.then<void>(
+        (_) {},
+        onError: (Object erreur) => journalDev(
+          'Deconnexion : serveur non prevenu (${erreur.runtimeType}).',
+        ),
+      ),
+    );
+  }
 }
 
 /// Le service d'authentification employe par l'application.

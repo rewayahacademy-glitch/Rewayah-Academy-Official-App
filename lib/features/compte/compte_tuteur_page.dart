@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
-import '../../core/auth/service_auth.dart';
 import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/foyer/selection_eleve.dart';
@@ -13,6 +12,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/router/routes.dart';
+import '../../core/session/deconnexion.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import '../../core/theme/app_gabarit.dart';
@@ -579,7 +579,7 @@ class _CarteDeconnexionState extends ConsumerState<CarteDeconnexion> {
       _echec = false;
     });
     try {
-      await ref.read(serviceAuthProvider).deconnexion();
+      await ref.read(deconnexionProvider).executer();
     } on Object {
       if (mounted) {
         setState(() => _echec = true);

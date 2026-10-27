@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/auth/service_auth.dart';
 import '../../core/candidature/modeles_candidature.dart';
 import '../../core/dossier/etat_dossier.dart';
 import '../../core/dossier/service_dossier.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
+import '../../core/session/deconnexion.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
@@ -155,8 +155,7 @@ class _AttentePageState extends ConsumerState<AttentePage> {
           ],
           ActionPrincipale(
             libelle: t.attente.seDeconnecter,
-            onPress: () =>
-                unawaited(ref.read(serviceAuthProvider).deconnexion()),
+            onPress: () => unawaited(ref.read(deconnexionProvider).executer()),
             niveau: NiveauAction.tertiaire,
           ),
         ],

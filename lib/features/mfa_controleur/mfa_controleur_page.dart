@@ -6,8 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
-import '../../core/auth/service_auth.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/session/deconnexion.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
@@ -176,8 +176,7 @@ class _MfaControleurPageState extends ConsumerState<MfaControleurPage> {
     }
   }
 
-  void _seDeconnecter() =>
-      unawaited(ref.read(serviceAuthProvider).deconnexion());
+  void _seDeconnecter() => unawaited(ref.read(deconnexionProvider).executer());
 
   @override
   Widget build(BuildContext context) {

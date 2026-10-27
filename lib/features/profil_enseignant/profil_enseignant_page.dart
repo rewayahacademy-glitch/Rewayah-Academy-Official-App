@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/auth/service_auth.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -16,6 +15,7 @@ import '../../core/profil/service_declaration.dart';
 import '../../core/profil/service_profil_enseignant.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
+import '../../core/session/deconnexion.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
@@ -791,10 +791,10 @@ class _Deconnexion extends ConsumerWidget {
     // lire pendant `build` aurait un autre defaut, moins visible : il
     // construirait le client Supabase au montage, et tout test qui monte cet
     // ecran sans surcharger le service echouerait avant d'avoir rien mesure.
-    onPress: () => unawaited(_demander(context, ref.read(serviceAuthProvider))),
+    onPress: () => unawaited(_demander(context, ref.read(deconnexionProvider))),
   );
 
-  Future<void> _demander(BuildContext context, ServiceAuth auth) async {
+  Future<void> _demander(BuildContext context, Deconnexion deconnexion) async {
     final bool confirme = await ConfirmDestructive.demander(
       context,
       question: t.enseignant.profil.deconnexionQuestion,
@@ -804,7 +804,7 @@ class _Deconnexion extends ConsumerWidget {
       libelleConfirmer: t.enseignant.profil.deconnexionConfirmer,
     );
     if (confirme) {
-      await auth.deconnexion();
+      await deconnexion.executer();
     }
   }
 }

@@ -5,9 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
-import '../../core/auth/service_auth.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
+import '../../core/session/deconnexion.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -155,8 +155,7 @@ class CoquilleEtape extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
-    void deconnecter() =>
-        unawaited(ref.read(serviceAuthProvider).deconnexion());
+    void deconnecter() => unawaited(ref.read(deconnexionProvider).executer());
 
     return PageEtape(
       numero: rangEtape(route),

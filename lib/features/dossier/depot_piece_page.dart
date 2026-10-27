@@ -5,12 +5,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
-import '../../core/auth/service_auth.dart';
 import '../../core/domain/enums.dart';
 import '../../core/dossier/selecteur_fichier.dart';
 import '../../core/dossier/service_dossier.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
+import '../../core/session/deconnexion.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -159,7 +159,7 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
               niveau: NiveauAction.tertiaire,
               pleineLargeur: false,
               onPress: () =>
-                  unawaited(ref.read(serviceAuthProvider).deconnexion()),
+                  unawaited(ref.read(deconnexionProvider).executer()),
             ),
           ),
         ],
