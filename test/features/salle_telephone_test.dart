@@ -582,6 +582,55 @@ void main() {
             expect(tester.takeException(), isNull);
           });
 
+          testWidgets('$nom : lignes 1 a 3, scene sans aucune page : la '
+              'capsule sans oeil', (WidgetTester tester) async {
+            await _monter(
+              tester,
+              taille: taille,
+              texte: texte,
+              presenter: false,
+            );
+            final Finder scene = find.byKey(
+              const ValueKey<String>('telephone-scene'),
+            );
+            expect(scene, findsOneWidget);
+            final Finder capsule = find.byKey(CapsuleVideoTelephone.cle);
+            expect(capsule, findsOneWidget);
+            expect(find.byKey(CapsuleVideoTelephone.cleVoir), findsNothing);
+            expect(find.byKey(CapsuleVideoTelephone.cleRevenir), findsNothing);
+            expect(find.byType(PiluleEtatSalle), findsNothing);
+            // « Ouvrir le Coran », seul bouton plein, au centre de la scene.
+            final Finder ouvrir = find.byKey(
+              const ValueKey<String>('action-scene'),
+            );
+            expect(ouvrir, findsOneWidget);
+            expect(
+              tester.getCenter(ouvrir).dx,
+              moreOrLessEquals(taille.width / 2, epsilon: 1),
+            );
+            verifierUnSeulBoutonPlein(tester);
+            expect(
+              find.byKey(const ValueKey<String>('salle-eleves')),
+              findsNothing,
+            );
+            await _attendreLeRepos(tester);
+            final Finder commandes = find.byKey(
+              TelephonePleinEcran.cleCommandesRepos,
+            );
+            expect(commandes.hitTestable(), findsOneWidget);
+            expect(
+              _horsDe(tester, <Finder>[capsule, commandes, scene, ouvrir]),
+              isEmpty,
+            );
+            await _toucher(tester);
+            expect(_dock.hitTestable(), findsOneWidget);
+            expect(
+              find.byKey(TelephonePleinEcran.cleCommandesToucher).hitTestable(),
+              findsOneWidget,
+            );
+            expect(tester.takeException(), isNull);
+          });
+
           testWidgets('$nom : ligne 5, la capsule deplie le profil', (
             WidgetTester tester,
           ) async {

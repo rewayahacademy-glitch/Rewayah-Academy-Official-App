@@ -58,8 +58,13 @@ class CapsuleVideoTelephone extends StatelessWidget {
     required this.vue,
     required this.onDeplier,
     this.onRevenirPage,
+    this.oeil = true,
     super.key = cle,
   });
+
+  /// Pilote C9 : faux dans la scene sans aucune page (rien a mettre en
+  /// grand, aucune page ou revenir).
+  final bool oeil;
 
   /// La video est en grand devant la page (pilote, 26/10) : l'oeil devient
   /// « Revenir a la page » ; `null` : « Voir la video en grand ».
@@ -131,7 +136,9 @@ class CapsuleVideoTelephone extends StatelessWidget {
                   ],
                 ),
               ),
-              if (onRevenirPage case final VoidCallback revenir)
+              if (!oeil)
+                ...<Widget>[]
+              else if (onRevenirPage case final VoidCallback revenir)
                 BoutonIcone(
                   key: cleRevenir,
                   icone: AppIcons.coran,

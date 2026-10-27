@@ -34,6 +34,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../tc_mushaf/fleches_page_mushaf.dart';
 import '../tc_mushaf/page_madina_15.dart' show ratioHauteurPageMadina15;
@@ -340,23 +341,42 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
           // la meme scene pour l'enseignant au telephone (lignes 1 a 3) : la
           // capsule seule en haut, son oeil devient « Revenir a la page ».
           final VoidCallback? revenir = media?.onBasculerScene;
-          // Pilote (26/10) : la video en grand devant une page qui attend.
-          // C9 (scene sans aucune page) en attente d'arbitrage : l'ancien
-          // rendu reste.
-          final bool sceneDevant =
-              enseignant &&
-              scene &&
-              (media?.scenePremierPlan ?? false) &&
-              media?.actionScene == null &&
-              revenir != null;
-          final VoidCallback? revenirPage = sceneDevant ? revenir : null;
+          // Pilote C9 (option a) : la scene sans aucune page suit les memes
+          // regles ; la capsule y est sans oeil, et « Ouvrir le Coran » reste
+          // le seul bouton plein, au centre de la scene.
+          final bool sceneDevant = enseignant && scene;
+          final ({String libelle, VoidCallback onPress})? actionScene =
+              sceneDevant ? media?.actionScene : null;
+          final VoidCallback? revenirPage =
+              sceneDevant &&
+                  (media?.scenePremierPlan ?? false) &&
+                  actionScene == null
+              ? revenir
+              : null;
           final Widget? page =
               pageVue ??
               (sceneDevant
                   ? SizedBox.fromSize(
-                      key: const ValueKey<String>('telephone-scene'),
                       size: ecran,
-                      child: laScene,
+                      child: Stack(
+                        children: <Widget>[
+                          Positioned.fill(
+                            child: KeyedSubtree(
+                              key: const ValueKey<String>('telephone-scene'),
+                              child: laScene,
+                            ),
+                          ),
+                          if (actionScene != null)
+                            Center(
+                              child: ActionPrincipale(
+                                key: const ValueKey<String>('action-scene'),
+                                libelle: actionScene.libelle,
+                                pleineLargeur: false,
+                                onPress: actionScene.onPress,
+                              ),
+                            ),
+                        ],
+                      ),
                     )
                   : null);
           // Fiche 1, lignes 1, 2, 5 : la capsule (ou le profil deplie) reste
@@ -484,6 +504,7 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                                   vue: vue,
                                   onDeplier: _deplierProfil,
                                   onRevenirPage: revenirPage,
+                                  oeil: !sceneDevant || revenirPage != null,
                                 ),
                               ),
                             BandeauSecours(

@@ -62,6 +62,8 @@ import 'package:rewayah_academy/features/salle_seance/panneau_seance.dart'
 import 'package:rewayah_academy/features/salle_seance/resultat_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_ordinateur.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/telephone_enseignant.dart'
+    show CapsuleVideoTelephone;
 import 'package:rewayah_academy/features/salle_seance/telephone_plein_ecran.dart';
 import 'package:rewayah_academy/features/tc_mushaf/page_madina_15.dart'
     show cleLigneMadina15;
@@ -272,6 +274,18 @@ Future<void> _ouvrirPresence(WidgetTester tester) async {
   if (find.byType(LignePresence).evaluate().isNotEmpty) return;
   // K4 (25/10/2026) : dans `/salle`, a toutes les largeurs, le bouton rond
   // « Eleves » de la ligne d'etat ; ailleurs, celui de l'en-tete.
+  // Fiche 1 (pilote C9, 27/10/2026) : l'enseignant au telephone ouvre ses
+  // eleves par « Eleves » de la pilule, qui se montre au toucher.
+  final Finder pilule = find.byKey(TelephonePleinEcran.cleEleves);
+  if (pilule.evaluate().isNotEmpty) {
+    if (pilule.hitTestable().evaluate().isEmpty) {
+      await tester.tapAt(const Offset(10, 10));
+      await tester.pumpAndSettle();
+    }
+    await tester.tap(pilule);
+    await tester.pumpAndSettle();
+    return;
+  }
   final Finder rond = find.byKey(const ValueKey<String>('salle-eleves'));
   await tester.tap(
     rond.evaluate().isNotEmpty
@@ -279,6 +293,17 @@ Future<void> _ouvrirPresence(WidgetTester tester) async {
         : find.byKey(const ValueKey<String>('bouton-eleves')).first,
   );
   await tester.pumpAndSettle();
+}
+
+/// Fiche 1 (pilote C9, 27/10/2026) : chez l'enseignant au telephone, la
+/// ligne d'etat (mention, notice d'observation) se lit dans le profil
+/// deplie depuis la capsule ; ailleurs, rien a faire.
+Future<void> _deplierProfilSiCapsule(WidgetTester tester) async {
+  final Finder capsule = find.byKey(CapsuleVideoTelephone.cleDeplier);
+  if (capsule.evaluate().isEmpty) return;
+  await tester.tap(capsule);
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 400));
 }
 
 void main() {
@@ -438,6 +463,7 @@ void main() {
               preVol: FauxServicePreVol(),
             ),
           );
+          await _deplierProfilSiCapsule(tester);
           expect(
             find.text(t.salle.bandeauPermanent),
             findsOneWidget,
@@ -1955,6 +1981,7 @@ void main() {
         );
 
         // S0 : la notice de la salle de seance, sans prenom (EN-9).
+        await _deplierProfilSiCapsule(tester);
         expect(find.text(t.salle.seance.unParentObserve), findsOneWidget);
       },
     );
