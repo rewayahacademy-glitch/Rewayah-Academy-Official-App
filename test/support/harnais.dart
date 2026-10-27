@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
+import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // `Override` n'est pas exporte par l'entree principale de Riverpod 3 : il vit
@@ -13,6 +14,7 @@ import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/appairage/service_avatar.dart';
 import 'package:rewayah_academy/core/appairage/service_enfant.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
+import 'package:rewayah_academy/core/cache/db/app_database.dart';
 import 'package:rewayah_academy/core/cache/secure/stockage_securise.dart';
 import 'package:rewayah_academy/core/cache/sync/file_rapports.dart';
 import 'package:rewayah_academy/core/capacites/port_consentements.dart';
@@ -70,6 +72,18 @@ Widget hote(
 /// profil » du debut a la fin : aucune relecture parasite.
 Override sansPersonneConnectee() =>
     sourceSessionProvider.overrideWithValue(FausseSourceSession());
+
+/// Une base locale vide, en memoire, fermee avec le conteneur.
+///
+/// La deconnexion vide la base locale avant de fermer la session (revue de la
+/// PR 63) : la base reelle de l'appareil ne repond jamais sous test, et une
+/// base qui ne se vide pas refuse la sortie. Tout test qui va au bout d'une
+/// deconnexion fournit donc cette base vide, explicitement.
+Override baseLocaleEnMemoire() => baseLocaleProvider.overrideWith((Ref ref) {
+  final AppDatabase base = AppDatabase.surExecuteur(NativeDatabase.memory());
+  ref.onDispose(base.close);
+  return base;
+});
 
 /// L'hote d'un ecran qui navigue.
 ///

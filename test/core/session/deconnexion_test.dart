@@ -1,8 +1,10 @@
-// Fiche « Fraicheur et notifications » (27/10/2026), lignes 16, 17, 18 : la
-// deconnexion donne une derniere chance aux cahiers en file, demande avant de
-// les perdre, ferme la session locale d'abord, retire les donnees de la
-// personne de la base locale (les reglages de l'appareil restent), remet la
-// memoire de l'application a zero, et n'attend jamais le serveur.
+// Fiche « Fraicheur et notifications » (27/10/2026), lignes 16, 17, 18, et
+// revue de la PR 63 : la deconnexion donne une derniere chance aux cahiers en
+// file, demande avant de les perdre, retire les donnees de la personne de la
+// base locale (les reglages de l'appareil restent) avant de fermer la session
+// locale, remet la memoire de l'application a zero, et n'attend jamais le
+// serveur. Une base qui ne se vide pas ou une file illisible refusent la
+// sortie : la personne reste connectee.
 
 import 'dart:async';
 
@@ -95,6 +97,25 @@ class _DepotMemoire implements DepotRapports {
   }
 }
 
+/// Un depot dont la lecture ne repond jamais (base locale muette).
+class _DepotMuet implements DepotRapports {
+  _DepotMuet(this._lecture);
+
+  final Future<List<RapportEnAttente>> _lecture;
+
+  @override
+  Future<List<RapportEnAttente>> enAttente() => _lecture;
+
+  @override
+  Future<void> deposer(RapportEnAttente rapport) async {}
+
+  @override
+  Future<void> retirer(String cleIdempotence) async {}
+
+  @override
+  Future<void> majApresEchec(RapportEnAttente rapport) async {}
+}
+
 RapportEnAttente _rapport(String cle) => RapportEnAttente(
   cleIdempotence: cle,
   sessionId: 's1',
@@ -184,7 +205,7 @@ void main() {
     expect(apres.values.toList(), everyElement(0));
   });
 
-  test('ligne 16 : session locale fermee d abord, base videe, memoire a zero, sans attendre le serveur', () async {
+  test('ligne 16 : base videe, puis session locale fermee, memoire a zero, sans attendre le serveur', () async {
     final List<String> journal = <String>[];
     final _AuthLente auth = _AuthLente(journal);
     await _remplir(base);
@@ -201,8 +222,8 @@ void main() {
     expect(await deconnexion.executer(confirmerPerte: _jamaisDemande), isTrue);
 
     expect(journal, <String>[
-      'session locale fermee',
       'base locale videe',
+      'session locale fermee',
       'memoire a zero',
     ]);
     expect((await _lignes(base))['profils_foyer'], 0);
@@ -224,11 +245,11 @@ void main() {
       throwsStateError,
     );
 
-    expect(vidages, 0);
+    expect(vidages, 1);
     expect(remises, 0);
   });
 
-  test('une base locale qui ne se vide pas n empeche pas la sortie', () async {
+  test('revue PR 63 : une base locale qui ne se vide pas refuse la sortie, la session reste ouverte', () async {
     final FauxServiceAuth auth = FauxServiceAuth();
     int remises = 0;
     final Deconnexion deconnexion = Deconnexion(
@@ -238,11 +259,32 @@ void main() {
       remiseAZero: () => remises++,
     );
 
-    expect(await deconnexion.executer(confirmerPerte: _jamaisDemande), isTrue);
+    await expectLater(
+      deconnexion.executer(confirmerPerte: _jamaisDemande),
+      throwsStateError,
+    );
 
-    expect(auth.deconnexions, 1);
-    expect(remises, 1);
+    expect(auth.deconnexions, 0);
+    expect(remises, 0);
   });
+
+  test(
+    'revue PR 63 : un vidage qui echoue en transaction ne laisse rien a moitie',
+    () async {
+      await _remplir(base);
+      final Map<String, int> avant = await _lignes(base);
+
+      await expectLater(
+        base.transaction(() async {
+          await base.delete(base.profilsFoyer).go();
+          throw StateError('base verrouillee');
+        }),
+        throwsStateError,
+      );
+
+      expect(await _lignes(base), avant);
+    },
+  );
 
   group('cahiers en file (ligne 16, arbitrage du pilote)', () {
     test(
@@ -292,20 +334,88 @@ void main() {
       expect(restants, 1);
     });
 
-    test('une file illisible vaut aucun cahier', () async {
+    test('revue PR 63 : une file illisible refuse la sortie', () async {
       final _DepotMemoire depot = _DepotMemoire(<RapportEnAttente>[
         _rapport('a'),
       ])..illisible = true;
+      int rejeux = 0;
 
-      expect(
-        await rapportsRestantsApresEnvoi(
-          depot,
+      await expectLater(
+        rapportsRestantsApresEnvoi(depot, () {
+          rejeux++;
+          return () async => 0;
+        }),
+        throwsStateError,
+      );
+      expect(rejeux, 0);
+    });
+
+    test(
+      'revue PR 63 : une file muette au-dela du delai refuse la sortie',
+      () async {
+        final Completer<List<RapportEnAttente>> jamais =
+            Completer<List<RapportEnAttente>>();
+        final _DepotMuet depot = _DepotMuet(jamais.future);
+
+        await expectLater(
+          rapportsRestantsApresEnvoi(
+            depot,
+            () =>
+                () async => 0,
+          ),
+          throwsA(isA<TimeoutException>()),
+        );
+      },
+    );
+
+    test('revue PR 63 : une file lue et vide sort sans question', () async {
+      final FauxServiceAuth auth = FauxServiceAuth();
+      int vidages = 0;
+      final Deconnexion deconnexion = Deconnexion(
+        auth: auth,
+        rapportsRestants: () => rapportsRestantsApresEnvoi(
+          _DepotMemoire(),
           () =>
               () async => 0,
         ),
-        0,
+        viderAppareil: () async => vidages++,
+        remiseAZero: () {},
       );
+
+      expect(
+        await deconnexion.executer(confirmerPerte: _jamaisDemande),
+        isTrue,
+      );
+      expect(auth.deconnexions, 1);
+      expect(vidages, 1);
     });
+
+    test(
+      'revue PR 63 : une file illisible laisse la session ouverte',
+      () async {
+        final FauxServiceAuth auth = FauxServiceAuth();
+        int vidages = 0;
+        int remises = 0;
+        final Deconnexion deconnexion = Deconnexion(
+          auth: auth,
+          rapportsRestants: () => rapportsRestantsApresEnvoi(
+            _DepotMemoire(<RapportEnAttente>[_rapport('a')])..illisible = true,
+            () =>
+                () async => 0,
+          ),
+          viderAppareil: () async => vidages++,
+          remiseAZero: () => remises++,
+        );
+
+        await expectLater(
+          deconnexion.executer(confirmerPerte: _jamaisDemande),
+          throwsStateError,
+        );
+        expect(auth.deconnexions, 0);
+        expect(vidages, 0);
+        expect(remises, 0);
+      },
+    );
 
     test('il en reste : la personne annule, rien n est touche', () async {
       final FauxServiceAuth auth = FauxServiceAuth();

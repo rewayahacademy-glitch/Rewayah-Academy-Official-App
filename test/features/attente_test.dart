@@ -433,6 +433,7 @@ void main() {
             serviceDossierProvider.overrideWithValue(dossier),
             sourceSessionProvider.overrideWithValue(source),
             serviceAuthProvider.overrideWithValue(auth),
+            baseLocaleEnMemoire(),
           ],
         ),
       );

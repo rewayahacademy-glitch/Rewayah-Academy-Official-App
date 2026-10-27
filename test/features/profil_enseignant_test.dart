@@ -121,6 +121,7 @@ Future<_Monte> _monter(
         ),
         serviceAuthProvider.overrideWithValue(auth),
         depotRapportsProvider.overrideWithValue(FauxDepotRapports()),
+        baseLocaleEnMemoire(),
         serviceDeclarationProvider.overrideWithValue(declaration),
         // FORM-L8 : les langues se cochent parmi celles que l'academie publie,
         // et le profil les nomme par ce referentiel.

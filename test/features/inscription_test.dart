@@ -140,6 +140,7 @@ Future<(FauxServiceDossier, FausseSourceSession)> _monter(
         serviceDossierProvider.overrideWithValue(dossier),
         sourceSessionProvider.overrideWithValue(session),
         serviceAuthProvider.overrideWithValue(auth ?? FauxServiceAuth()),
+        baseLocaleEnMemoire(),
         if (codeRetenu != null)
           codeInvitationRetenuProvider.overrideWith(
             () => _CodeDejaRetenu(codeRetenu),

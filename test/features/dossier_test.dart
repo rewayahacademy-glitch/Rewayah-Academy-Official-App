@@ -366,6 +366,7 @@ void main() {
             selecteurFichierProvider.overrideWithValue(selecteur),
             serviceAuthProvider.overrideWithValue(auth ?? FauxServiceAuth()),
             depotRapportsProvider.overrideWithValue(FauxDepotRapports()),
+            baseLocaleEnMemoire(),
           ],
         ),
       );

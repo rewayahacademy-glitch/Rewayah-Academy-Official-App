@@ -90,10 +90,11 @@ List<Override> surchargesCompte({
   ServiceAcceptations? acceptations,
   List<EleveDuFoyer> eleves = FoyersFictifs.foyerA,
 }) => <Override>[
-  // La deconnexion lit la file des cahiers avant de fermer la session : en
-  // memoire ici, jamais la base locale de l'appareil (qui ne repond pas
-  // sous test).
+  // La deconnexion lit la file des cahiers puis vide la base locale avant de
+  // fermer la session : en memoire ici, jamais la base locale de l'appareil
+  // (qui ne repond pas sous test).
   depotRapportsProvider.overrideWithValue(FauxDepotRapports()),
+  baseLocaleEnMemoire(),
   portIdentiteTitulaireProvider.overrideWithValue(
     identite ?? FauxIdentiteTitulaire(),
   ),
