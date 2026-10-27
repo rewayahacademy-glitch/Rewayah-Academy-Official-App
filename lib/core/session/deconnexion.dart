@@ -16,11 +16,13 @@ import '../appairage/profils_locaux.dart' show baseLocaleProvider;
 import '../auth/service_auth.dart';
 import '../cache/db/app_database.dart';
 import '../cache/sync/file_rapports.dart';
+import '../domain/enums.dart';
 import '../enseignant/depot_cahiers.dart';
 import '../i18n/strings.g.dart';
 import '../observabilite/journal_dev.dart';
 import '../theme/app_delais.dart';
 import '../widgets/confirm_destructive.dart';
+import 'session_controleur.dart';
 
 /// Remet toute la memoire de l'application a zero : la racine renouvelle sa
 /// `ProviderScope`, et chaque provider se reconstruit a sa prochaine lecture.
@@ -152,14 +154,26 @@ Future<bool> seDeconnecter(BuildContext context, WidgetRef ref) => ref
 
 /// La deconnexion employee par l'application. La base locale n'est lue qu'au
 /// moment du geste : un ecran monte sans base locale (test, galerie) ne
-/// l'ouvre jamais.
+/// l'ouvre jamais. Seule l'enseignante a des cahiers en file : pour les
+/// autres roles, rien n'est lu avant la fermeture.
 final Provider<Deconnexion> deconnexionProvider = Provider<Deconnexion>(
   (Ref ref) => Deconnexion(
     auth: ref.watch(serviceAuthProvider),
-    rapportsRestants: () => rapportsRestantsApresEnvoi(
-      ref.read(depotRapportsProvider),
-      () => ref.read(soumissionCahierProvider).rejouer,
-    ),
+    rapportsRestants: () async {
+      // Un ecran monte sans source de session (test, galerie) n'a aucune
+      // file a lire : une session illisible vaut « pas une enseignante ».
+      AppRole? role;
+      try {
+        role = ref.read(sessionProvider).role;
+      } on Object {
+        role = null;
+      }
+      if (role != AppRole.teacher) return 0;
+      return rapportsRestantsApresEnvoi(
+        ref.read(depotRapportsProvider),
+        () => ref.read(soumissionCahierProvider).rejouer,
+      );
+    },
     viderAppareil: () => viderTablesDeLaPersonne(ref.read(baseLocaleProvider)),
     remiseAZero: ref.watch(remiseAZeroProvider),
   ),

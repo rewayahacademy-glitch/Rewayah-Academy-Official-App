@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/enseignant/depot_cahiers.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/offres/offre_horaire.dart';
 import 'package:rewayah_academy/core/offres/service_offres.dart';
@@ -119,6 +120,7 @@ Future<_Monte> _monter(
           FausseSourceSession(_session(statutSession)),
         ),
         serviceAuthProvider.overrideWithValue(auth),
+        depotRapportsProvider.overrideWithValue(FauxDepotRapports()),
         serviceDeclarationProvider.overrideWithValue(declaration),
         // FORM-L8 : les langues se cochent parmi celles que l'academie publie,
         // et le profil les nomme par ce referentiel.
