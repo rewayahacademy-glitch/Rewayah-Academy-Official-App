@@ -205,6 +205,19 @@ abstract interface class PortLectureNotifications {
   Future<void> marquerLue(String id);
 }
 
+/// Un port qui sait marquer lues **toutes** les notifications de la personne
+/// en une fois (fiche « Fraicheur et notifications » du 27/10/2026, ligne 14 :
+/// ouvrir la page Notifications marque lues ; le point disparait sur tous les
+/// appareils par la veille Realtime).
+///
+/// Interface separee, comme [PortLectureNotifications] : un port qui ne la
+/// porte pas ne marque rien, et l'ecran ne pretend rien.
+abstract interface class PortLectureGroupeeNotifications {
+  /// Enregistre que la personne a lu toutes ses notifications non lues. Leve
+  /// en cas d'echec : rien n'est alors suppose lu.
+  Future<void> marquerToutesLues();
+}
+
 /// Les notifications tant qu'aucune source n'existe (DB-CPT-04) : « Les
 /// notifications ne sont pas encore disponibles », cloche sans pastille,
 /// jamais un faux etat vide. Aucun adaptateur prevu.

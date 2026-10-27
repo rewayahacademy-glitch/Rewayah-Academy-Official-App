@@ -22,7 +22,11 @@ typedef NotificationContenuResolver = NotificationContenu Function(
   Map<String, dynamic> params,
 );
 
-const Set<String> _evenementsPrisEnCharge = <String>{
+/// Les événements que le serveur écrit (contrainte `notifications_evenement_check`,
+/// migration 20261027120000). Un événement hors de cette liste n'est **pas**
+/// perdu : le résolveur lui donne un titre de repli lisible (fiche du 27/10,
+/// ligne 13 : aucun événement inconnu ne fait planter la page).
+const Set<String> evenementsNotificationConnus = <String>{
   'demande_recue',
   'classe_validee',
   'enseignant_affecte',
@@ -39,6 +43,16 @@ const Set<String> _evenementsPrisEnCharge = <String>{
   'paiement_relance',
   'acces_suspendu_paiement',
   'acces_retabli_paiement',
+  // Fiche « Fraicheur et notifications » du 27/10/2026, ligne 11.
+  'classe_creee',
+  'enseignant_change',
+  'eleve_inscrit',
+  'eleve_retire',
+  'creneau_change',
+  'seance_annulee',
+  'seance_deplacee',
+  'enseignante_absente',
+  'classe_supprimee',
 };
 
 const Set<String> _destinationsAutorisees = <String>{
@@ -48,11 +62,32 @@ const Set<String> _destinationsAutorisees = <String>{
   '/admin/securite-audit/tirages',
   // La recharge du foyer : le bouton Payer des relances (FAC-F-01).
   '/tuteur/foyer/recharge',
+  // Fiche du 27/10 : les accueils et les classes de chaque role.
+  '/eleve',
+  '/tuteur',
+  '/enseignant/classes',
+  '/enseignant/journee',
 };
+
+/// La classe d'un eleve du foyer, et son planning : `/tuteur/classes/<uuid>`
+/// ou `/tuteur/classes/<uuid>/planning` (la meme forme que la contrainte SQL).
+final RegExp _destinationClasse = RegExp(
+  r'^/tuteur/classes/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(/planning)?$',
+);
+
+/// Vrai si [destination] est un ecran que l'ouverture d'une notification peut
+/// atteindre. Pure.
+bool destinationNotificationAutorisee(String? destination) =>
+    destination != null &&
+    (_destinationsAutorisees.contains(destination) ||
+        _destinationClasse.hasMatch(destination));
 
 /// Adaptateur Supabase de la boîte privée de notifications.
 class NotificationsSupabase
-    implements PortNotifications, PortLectureNotifications {
+    implements
+        PortNotifications,
+        PortLectureNotifications,
+        PortLectureGroupeeNotifications {
   /// Crée l'adaptateur avec le client de l'application et le résolveur localisé.
   const NotificationsSupabase(this._client, {required this.contenuPour});
 
@@ -126,10 +161,28 @@ class NotificationsSupabase
         .eq('destinataire', destinataire)
         .timeout(AppDelais.requeteMax);
   }
+
+  /// Toutes les non-lues de la personne en une requête (politique
+  /// `notifications_destinataire_accuse` de 0063 : UPDATE de `lu_le` par le
+  /// destinataire seulement). Realtime transmet la mise à jour aux autres
+  /// appareils de la personne, qui relisent la liste (ligne 14).
+  @override
+  Future<void> marquerToutesLues() async {
+    final String destinataire = _destinataire;
+    await _client
+        .from('notifications')
+        .update(<String, dynamic>{
+          'lu_le': DateTime.now().toUtc().toIso8601String(),
+        })
+        .eq('destinataire', destinataire)
+        .isFilter('lu_le', null)
+        .timeout(AppDelais.requeteMax);
+  }
 }
 
-/// Décode les lignes indépendamment : une ligne inconnue ou mal formée ne
-/// rend pas illisible toute la boîte du destinataire.
+/// Décode les lignes indépendamment : une ligne mal formée ne rend pas
+/// illisible toute la boîte du destinataire. Un événement inconnu est gardé,
+/// avec le titre de repli du résolveur (ligne 13).
 List<NotificationTuteur> notificationsDepuis(
   List<dynamic> rows, {
   required NotificationContenuResolver titrePour,
@@ -137,8 +190,6 @@ List<NotificationTuteur> notificationsDepuis(
   final List<NotificationTuteur> notifications = <NotificationTuteur>[];
   for (final dynamic row in rows) {
     if (row is! Map || row['evenement'] is! String) continue;
-    final String evenement = row['evenement'] as String;
-    if (!_evenementsPrisEnCharge.contains(evenement)) continue;
     try {
       notifications.add(
         notificationDepuis(
@@ -169,7 +220,7 @@ NotificationTuteur notificationDepuis(
       : null;
 
   final String id = rawId is String ? rawId.trim() : '';
-  final String? evenement = rawEvent is String ? rawEvent : null;
+  final String? evenement = rawEvent is String ? rawEvent.trim() : null;
   final DateTime? date = DateTime.tryParse(rawCreated?.toString() ?? '');
   final DateTime? luLe = rawRead == null
       ? null
@@ -177,7 +228,7 @@ NotificationTuteur notificationDepuis(
 
   if (id.isEmpty ||
       evenement == null ||
-      !_evenementsPrisEnCharge.contains(evenement) ||
+      evenement.isEmpty ||
       rawParams is! Map ||
       date == null ||
       (rawRead != null && luLe == null)) {
@@ -198,7 +249,7 @@ NotificationTuteur notificationDepuis(
     titre: titre,
     texte: texte == null || texte.isEmpty ? null : texte,
     date: date.toUtc(),
-    destination: _destinationsAutorisees.contains(destination)
+    destination: destinationNotificationAutorisee(destination)
         ? destination
         : null,
     niveau: lue ? NiveauAttention.information : NiveauAttention.aLire,
@@ -208,7 +259,15 @@ NotificationTuteur notificationDepuis(
 }
 
 Map<String, dynamic> _parametresAffichables(Map<dynamic, dynamic> bruts) {
-  const Set<String> clesAutorisees = <String>{'etat', 'debut_local', 'motif'};
+  // `portee` (soi, foyer, classe) dit a qui le fait arrive, pour choisir la
+  // phrase ; `debut_local` est l'heure de la seance dans le fuseau de la
+  // personne. Jamais un identifiant.
+  const Set<String> clesAutorisees = <String>{
+    'etat',
+    'debut_local',
+    'motif',
+    'portee',
+  };
   final Map<String, dynamic> valeurs = <String, dynamic>{};
   for (final MapEntry<dynamic, dynamic> entree in bruts.entries) {
     if (entree.key is String &&
@@ -225,7 +284,16 @@ TypeNotification _typePour(String evenement) => switch (evenement) {
   'demande_recue' => TypeNotification.messageMetier,
   'classe_validee' ||
   'enseignant_affecte' ||
-  'classe_changee' => TypeNotification.changementPlanning,
+  'classe_changee' ||
+  'classe_creee' ||
+  'enseignant_change' ||
+  'eleve_inscrit' ||
+  'eleve_retire' ||
+  'creneau_change' ||
+  'classe_supprimee' => TypeNotification.changementPlanning,
+  'seance_annulee' ||
+  'seance_deplacee' ||
+  'enseignante_absente' => TypeNotification.changementSeance,
   'demande_close' => TypeNotification.decisionDossier,
   'remplacement_propose' ||
   'remplacement_pris' => TypeNotification.remplacement,

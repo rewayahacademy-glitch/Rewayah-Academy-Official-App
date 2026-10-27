@@ -2495,6 +2495,9 @@ class Traductions$notifications$fr {
 	/// fr: 'Notifications'
 	String get titre => 'Notifications';
 
+	/// fr: '{date} à {heure}'
+	String quand({required Object date, required Object heure}) => '${date} à ${heure}';
+
 	/// fr: 'Les notifications ne sont pas encore disponibles'
 	String get indisponibleTitre => 'Les notifications ne sont pas encore disponibles';
 
@@ -11809,6 +11812,93 @@ class Traductions$notifications$evenements$fr {
 
 	/// fr: 'L'accès est rétabli : le paiement est reçu.'
 	String get accesRetabliPaiement => 'L\'accès est rétabli : le paiement est reçu.';
+
+	/// fr: 'Un enseignant a été affecté à votre classe.'
+	String get enseignantAffecteSoi => 'Un enseignant a été affecté à votre classe.';
+
+	/// fr: 'Une classe vous est confiée.'
+	String get enseignantAffecteClasse => 'Une classe vous est confiée.';
+
+	/// fr: 'La séance du {quand} sera assurée par un enseignant remplaçant.'
+	String remplacementPrisQuand({required Object quand}) => 'La séance du ${quand} sera assurée par un enseignant remplaçant.';
+
+	/// fr: 'Une classe vient d'être créée.'
+	String get classeCreee => 'Une classe vient d\'être créée.';
+
+	/// fr: 'Votre classe est créée. Son horaire est dans l'application.'
+	String get classeCreeeSoi => 'Votre classe est créée. Son horaire est dans l\'application.';
+
+	/// fr: 'Une classe est créée pour un élève de votre foyer.'
+	String get classeCreeeFoyer => 'Une classe est créée pour un élève de votre foyer.';
+
+	/// fr: 'Une nouvelle classe vous est confiée.'
+	String get classeCreeeClasse => 'Une nouvelle classe vous est confiée.';
+
+	/// fr: 'L'enseignant de la classe a changé.'
+	String get enseignantChange => 'L\'enseignant de la classe a changé.';
+
+	/// fr: 'L'enseignant d'une de vos classes a changé.'
+	String get enseignantChangeClasse => 'L\'enseignant d\'une de vos classes a changé.';
+
+	/// fr: 'Un élève est inscrit dans la classe.'
+	String get eleveInscrit => 'Un élève est inscrit dans la classe.';
+
+	/// fr: 'Vous êtes inscrit dans une classe.'
+	String get eleveInscritSoi => 'Vous êtes inscrit dans une classe.';
+
+	/// fr: 'Un élève de votre foyer est inscrit dans une classe.'
+	String get eleveInscritFoyer => 'Un élève de votre foyer est inscrit dans une classe.';
+
+	/// fr: 'Un élève rejoint une de vos classes.'
+	String get eleveInscritClasse => 'Un élève rejoint une de vos classes.';
+
+	/// fr: 'Un élève ne fait plus partie de la classe.'
+	String get eleveRetire => 'Un élève ne fait plus partie de la classe.';
+
+	/// fr: 'Vous ne faites plus partie de cette classe.'
+	String get eleveRetireSoi => 'Vous ne faites plus partie de cette classe.';
+
+	/// fr: 'Un élève de votre foyer ne fait plus partie de sa classe.'
+	String get eleveRetireFoyer => 'Un élève de votre foyer ne fait plus partie de sa classe.';
+
+	/// fr: 'Un élève quitte une de vos classes.'
+	String get eleveRetireClasse => 'Un élève quitte une de vos classes.';
+
+	/// fr: 'L'horaire de la classe a changé.'
+	String get creneauChange => 'L\'horaire de la classe a changé.';
+
+	/// fr: 'Une séance est annulée.'
+	String get seanceAnnulee => 'Une séance est annulée.';
+
+	/// fr: 'La séance du {quand} est annulée.'
+	String seanceAnnuleeQuand({required Object quand}) => 'La séance du ${quand} est annulée.';
+
+	/// fr: 'Une séance est déplacée.'
+	String get seanceDeplacee => 'Une séance est déplacée.';
+
+	/// fr: 'Une séance est déplacée au {quand}.'
+	String seanceDeplaceeQuand({required Object quand}) => 'Une séance est déplacée au ${quand}.';
+
+	/// fr: 'L'enseignant sera absent à une séance. Un remplacement est recherché.'
+	String get enseignanteAbsente => 'L\'enseignant sera absent à une séance. Un remplacement est recherché.';
+
+	/// fr: 'L'enseignant sera absent à la séance du {quand}. Un remplacement est recherché.'
+	String enseignanteAbsenteQuand({required Object quand}) => 'L\'enseignant sera absent à la séance du ${quand}. Un remplacement est recherché.';
+
+	/// fr: 'La classe est fermée.'
+	String get classeSupprimee => 'La classe est fermée.';
+
+	/// fr: 'Votre classe est fermée.'
+	String get classeSupprimeeSoi => 'Votre classe est fermée.';
+
+	/// fr: 'La classe d'un élève de votre foyer est fermée.'
+	String get classeSupprimeeFoyer => 'La classe d\'un élève de votre foyer est fermée.';
+
+	/// fr: 'Une de vos classes est fermée.'
+	String get classeSupprimeeClasse => 'Une de vos classes est fermée.';
+
+	/// fr: 'Cette notification demande une version plus récente de l'application. Rechargez la page pour la lire.'
+	String get inconnu => 'Cette notification demande une version plus récente de l\'application. Rechargez la page pour la lire.';
 }
 
 // Path: notifications.filtres
@@ -45806,6 +45896,35 @@ extension on Traductions {
 			'notifications.evenements.paiementRelance' => 'Un paiement arrive à échéance. Il se règle dans Paiements.',
 			'notifications.evenements.accesSuspenduPaiement' => 'Un accès est suspendu : le paiement du mois n\'est pas reçu.',
 			'notifications.evenements.accesRetabliPaiement' => 'L\'accès est rétabli : le paiement est reçu.',
+			'notifications.evenements.enseignantAffecteSoi' => 'Un enseignant a été affecté à votre classe.',
+			'notifications.evenements.enseignantAffecteClasse' => 'Une classe vous est confiée.',
+			'notifications.evenements.remplacementPrisQuand' => ({required Object quand}) => 'La séance du ${quand} sera assurée par un enseignant remplaçant.',
+			'notifications.evenements.classeCreee' => 'Une classe vient d\'être créée.',
+			'notifications.evenements.classeCreeeSoi' => 'Votre classe est créée. Son horaire est dans l\'application.',
+			'notifications.evenements.classeCreeeFoyer' => 'Une classe est créée pour un élève de votre foyer.',
+			'notifications.evenements.classeCreeeClasse' => 'Une nouvelle classe vous est confiée.',
+			'notifications.evenements.enseignantChange' => 'L\'enseignant de la classe a changé.',
+			'notifications.evenements.enseignantChangeClasse' => 'L\'enseignant d\'une de vos classes a changé.',
+			'notifications.evenements.eleveInscrit' => 'Un élève est inscrit dans la classe.',
+			'notifications.evenements.eleveInscritSoi' => 'Vous êtes inscrit dans une classe.',
+			'notifications.evenements.eleveInscritFoyer' => 'Un élève de votre foyer est inscrit dans une classe.',
+			'notifications.evenements.eleveInscritClasse' => 'Un élève rejoint une de vos classes.',
+			'notifications.evenements.eleveRetire' => 'Un élève ne fait plus partie de la classe.',
+			'notifications.evenements.eleveRetireSoi' => 'Vous ne faites plus partie de cette classe.',
+			'notifications.evenements.eleveRetireFoyer' => 'Un élève de votre foyer ne fait plus partie de sa classe.',
+			'notifications.evenements.eleveRetireClasse' => 'Un élève quitte une de vos classes.',
+			'notifications.evenements.creneauChange' => 'L\'horaire de la classe a changé.',
+			'notifications.evenements.seanceAnnulee' => 'Une séance est annulée.',
+			'notifications.evenements.seanceAnnuleeQuand' => ({required Object quand}) => 'La séance du ${quand} est annulée.',
+			'notifications.evenements.seanceDeplacee' => 'Une séance est déplacée.',
+			'notifications.evenements.seanceDeplaceeQuand' => ({required Object quand}) => 'Une séance est déplacée au ${quand}.',
+			'notifications.evenements.enseignanteAbsente' => 'L\'enseignant sera absent à une séance. Un remplacement est recherché.',
+			'notifications.evenements.enseignanteAbsenteQuand' => ({required Object quand}) => 'L\'enseignant sera absent à la séance du ${quand}. Un remplacement est recherché.',
+			'notifications.evenements.classeSupprimee' => 'La classe est fermée.',
+			'notifications.evenements.classeSupprimeeSoi' => 'Votre classe est fermée.',
+			'notifications.evenements.classeSupprimeeFoyer' => 'La classe d\'un élève de votre foyer est fermée.',
+			'notifications.evenements.classeSupprimeeClasse' => 'Une de vos classes est fermée.',
+			'notifications.evenements.inconnu' => 'Cette notification demande une version plus récente de l\'application. Rechargez la page pour la lire.',
 			'notifications.filtres.libelle' => 'Filtrer les notifications',
 			'notifications.filtres.toutes' => 'Toutes',
 			'notifications.filtres.nonLues' => 'Non lues',
@@ -45851,6 +45970,7 @@ extension on Traductions {
 			'notifications.types.evenementContextuel' => 'Événement',
 			'notifications.types.autre' => 'Notification',
 			'notifications.titre' => 'Notifications',
+			'notifications.quand' => ({required Object date, required Object heure}) => '${date} à ${heure}',
 			'notifications.indisponibleTitre' => 'Les notifications ne sont pas encore disponibles',
 			'notifications.indisponiblePhrase' => 'Les rappels de séance et les messages de l\'académie s\'afficheront ici dès qu\'ils seront ouverts.',
 			'notifications.videTitre' => 'Aucune notification',
@@ -46183,6 +46303,8 @@ extension on Traductions {
 			'classe.cartes.titre' => 'Cartes de la classe',
 			'classe.cartes.contexteEnseignant' => 'Touchez une carte pour la modifier. Les élèves et leurs familles la voient aussitôt.',
 			'classe.cartes.modificationPlusTard' => 'Les cartes pourront être modifiées quand la connexion reviendra.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.cartes.aucune' => 'Aucune carte pour l\'instant',
 			'classe.cartes.aucuneDetail' => 'L\'enseignant de la classe y posera les informations utiles.',
 			'classe.cartes.aucuneEnseignant' => 'Aucune carte pour l\'instant. Ajoutez-en une : la classe la verra aussitôt.',
@@ -46213,8 +46335,6 @@ extension on Traductions {
 			'classe.cartes.modeles.rappel' => 'À ne pas oublier',
 			'classe.cartes.feuille.titreNouvelle' => 'Nouvelle carte de la classe',
 			'classe.cartes.feuille.titreModifier' => ({required Object titre}) => 'Modifier la carte « ${titre} »',
-			_ => null,
-		} ?? switch (path) {
 			'classe.cartes.feuille.contexte' => 'Choisissez un modèle : il préremplit la carte. Elle est visible aussitôt par les élèves de la classe et leurs familles.',
 			'classe.cartes.feuille.modele' => 'Modèle de la carte',
 			'classe.cartes.feuille.champTitre' => 'Titre de la carte',
@@ -46697,6 +46817,8 @@ extension on Traductions {
 			'enseignant.creneaux.manqueJour' => 'Aucun jour choisi. Touchez au moins un jour pour enregistrer la plage.',
 			'enseignant.creneaux.fusion' => ({required Object jour, required Object de, required Object a}) => '${jour} : cette plage chevauche ou touche une plage déjà posée. Elles seront réunies en une seule, ${de} ${a}.',
 			'enseignant.creneaux.dejaPosee' => ({required Object jour, required Object de, required Object a}) => '${jour} : ces heures sont déjà posées, dans la plage ${de} ${a}. Rien ne change pour ce jour.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.creneaux.enregistrerPlage' => 'Enregistrer la plage',
 			'enseignant.creneaux.supprimerPlage' => 'Supprimer cette plage',
 			'enseignant.creneaux.plageEnregistree' => ({required Object jours, required Object de, required Object a}) => 'Plage enregistrée : ${jours}, ${de} ${a}.',
@@ -46727,8 +46849,6 @@ extension on Traductions {
 			'enseignant.ficheGroupe.objectif' => 'Objectif',
 			'enseignant.ficheGroupe.preparationVide' => 'Aucune préparation renseignée pour cette séance.',
 			'enseignant.ficheGroupe.supportsTitre' => 'Supports récents',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.ficheGroupe.repriseEleve' => ({required Object page}) => 'Reprise : ${page}',
 			'enseignant.ficheGroupe.dernierPoint' => ({required Object texte}) => 'Dernier point : ${texte}',
 			'enseignant.ficheGroupe.chargementClasse' => 'Chargement de la Classe.',
@@ -47211,6 +47331,8 @@ extension on Traductions {
 			'tc.coran.navigation.pageNumero' => ({required Object page}) => 'Page ${page}',
 			'tc.coran.reprise.groupe' => 'Reprendre le cours',
 			'tc.coran.reprise.groupeDetail' => ({required Object page}) => 'La Classe en était page ${page}',
+			_ => null,
+		} ?? switch (path) {
 			'tc.coran.focus.aucunePlage' => 'Aucun passage mis en avant',
 			'tc.coran.focus.aucunePlageDetail' => 'Le focus suit le passage que l\'enseignant désigne. Hors classe, il centre la page ouverte.',
 			'tc.coran.focus.quitter' => 'Quitter le focus',
@@ -47241,8 +47363,6 @@ extension on Traductions {
 			'tc.outils.portee.temporaire' => 'Le temps d\'expliquer',
 			'tc.outils.portee.seance' => 'Jusqu\'à la fin du cours',
 			'tc.outils.portee.enregistree' => 'Enregistrer',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.portee.aide' => 'Combien de temps garder ces annotations ?',
 			'tc.outils.marquer.titre' => 'Marquer ce passage',
 			'tc.outils.marquer.aide' => 'Choisissez ce que ce passage demande.',
@@ -47725,6 +47845,8 @@ extension on Traductions {
 			'adulte.invitation.envoyer' => 'Envoyer l\'invitation',
 			'adulte.invitation.horsLigne' => 'Rien n\'est envoyé. Vous pourrez envoyer l\'invitation vous-même quand la connexion sera revenue.',
 			'adulte.invitation.echecTitre' => 'L\'envoi n\'a pas été confirmé.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.invitation.echecPhrase' => 'Vérifiez avant de réessayer. Vos informations sont conservées.',
 			'adulte.invitation.refusTitre' => 'Cette invitation ne peut pas être envoyée',
 			'adulte.invitation.refusPhrase' => 'Ma famille indique l\'état actuel de la place.',
@@ -47755,8 +47877,6 @@ extension on Traductions {
 			'adulte.acceptation.vousTitre' => 'Ce que vous ne verrez pas',
 			'adulte.acceptation.vous' => ({required Object dePrenom}) => 'Les cours, les progrès et les messages ${dePrenom} et des enfants du foyer. Vous ne pourrez pas ajouter d\'enfant, inviter quelqu\'un ni modifier le foyer.',
 			'adulte.acceptation.autresTitre' => 'Qui d\'autre voit',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.acceptation.autres' => 'Votre enseignant ne voit rien de votre foyer. L\'équipe de l\'académie voit le rattachement, pour le gérer et, si nécessaire, le valider.',
 			'adulte.acceptation.dureeTitre' => 'Combien de temps',
 			'adulte.acceptation.duree' => ({required Object quePrenom}) => 'Le rattachement dure jusqu\'à ce que vous quittiez le forfait famille, ou ${quePrenom} y mette fin.',
@@ -48239,6 +48359,8 @@ extension on Traductions {
 			'com.socle.composants.pieceJointe.tailleMo' => ({required Object taille}) => '${taille} Mo',
 			'com.socle.composants.pieceJointe.autorisee' => 'Prêt à envoyer',
 			'com.socle.composants.pieceJointe.tropVolumineuse' => 'Fichier trop lourd',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.composants.pieceJointe.tropVolumineuseDetail' => 'Ce fichier dépasse la taille autorisée. Choisissez un fichier plus léger.',
 			'com.socle.composants.pieceJointe.typeInterdit' => 'Type de fichier refusé',
 			'com.socle.composants.pieceJointe.typeInterditDetail' => 'Ce type de fichier n\'est pas accepté ici. Choisissez un autre format.',
@@ -48269,8 +48391,6 @@ extension on Traductions {
 			'com.socle.composants.etats.videTitre' => 'Rien ici pour le moment',
 			'com.socle.composants.etats.erreurTitre' => 'Impossible de charger ce contenu.',
 			'com.socle.composants.etats.erreur' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.composants.etats.reessayer' => 'Réessayer',
 			'com.socle.composants.etats.horsLigne' => 'Vous êtes hors ligne. Les nouveaux messages ne peuvent pas être actualisés.',
 			'com.socle.composants.etats.horsLigneBloc' => 'Réessayez quand la connexion revient.',
@@ -48753,6 +48873,8 @@ extension on Traductions {
 			'com.studio.canal.lectureSeule' => 'Vous pouvez lire ce canal. L\'écriture n\'y est pas ouverte pour vous.',
 			'com.studio.canal.aucunMessageTitre' => 'Aucun message pour le moment',
 			'com.studio.canal.aucunMessage' => 'Les messages de ce canal s\'afficheront ici dès leur publication.',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.canal.indisponibleTitre' => 'Canal indisponible',
 			'com.studio.canal.indisponible' => 'Ce canal n\'est pas disponible pour vous. Choisissez un autre canal dans la liste.',
 			'com.studio.panneau.titre' => 'À propos du canal',
@@ -48783,8 +48905,6 @@ extension on Traductions {
 			'com.studio.enregistres.sansDestination' => ({required Object type}) => '${type}, ne s\'ouvre plus d\'ici',
 			'com.studio.enregistres.types.canal' => 'Canal',
 			'com.studio.enregistres.types.publication' => 'Publication',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.enregistres.types.message' => 'Message',
 			'com.studio.enregistres.types.element' => 'Élément du Studio',
 			'com.studio.recherche.champ' => 'Rechercher dans Le Studio',
@@ -49267,6 +49387,8 @@ extension on Traductions {
 			'comptable.aujourdhui.encaissementsVide' => 'Aucun encaissement récent.',
 			'comptable.aujourdhui.activiteVide' => 'Aucune activité récente.',
 			'comptable.aujourdhui.prestatairesVide' => 'Aucun prestataire activé.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.aujourdhui.prestatairesVideDetail' => 'Les paiements sortants partiront quand la direction aura activé un prestataire.',
 			'comptable.aujourdhui.accesPaiements' => 'Voir les paiements à effectuer',
 			'comptable.aujourdhui.accesContractuels' => 'Gérer les obligations des contractuels',
@@ -49297,8 +49419,6 @@ extension on Traductions {
 			'comptable.paiements.confirmation.beneficiaire' => 'Bénéficiaire',
 			'comptable.paiements.confirmation.devise' => 'Devise',
 			'comptable.paiements.confirmation.type' => 'Type',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.confirmation.periode' => 'Période / objet',
 			'comptable.paiements.confirmation.prestataire' => 'Prestataire prévu',
 			'comptable.paiements.confirmation.prestataireAucun' => 'Non rendu par la source',
@@ -49781,6 +49901,8 @@ extension on Traductions {
 			'comptable.contractuels.aideObjet' => 'Par exemple : Facture #024',
 			'comptable.contractuels.champRefJustificatif' => 'Référence du justificatif (facultatif)',
 			'comptable.contractuels.champMontantSaisi' => 'Montant',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.aideMontant' => 'Saisi une seule fois : il ne se modifie plus après l\'approbation.',
 			'comptable.contractuels.creer' => 'Créer l\'obligation',
 			'comptable.contractuels.horsLigneCreation' => 'L\'obligation ne peut pas être créée maintenant. Créez-la dès que l\'envoi est de nouveau possible.',
@@ -49811,8 +49933,6 @@ extension on Traductions {
 			'comptable.validation.motif' => ({required Object motif}) => 'Motif : ${motif}',
 			'comptable.validation.ouvrir' => ({required Object objet}) => 'Voir la demande : ${objet}',
 			'comptable.validation.votreDemandeTitre' => 'Votre propre demande',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.validation.votreDemandePhrase' => 'Une autre personne habilitée la décidera : vous ne validez jamais une demande que vous avez faite.',
 			'comptable.validation.detail.titre' => 'Demande de validation',
 			'comptable.validation.detail.nature' => 'Nature',
@@ -50295,6 +50415,8 @@ extension on Traductions {
 			'juridique.confidentialite.s5.blocs.2' => 'Une mention rappelle dans la salle qu\'une visite de contrôle est possible.',
 			'juridique.confidentialite.s6.titre' => '6. Où sont vos informations',
 			'juridique.confidentialite.s6.blocs.0' => 'Nous utilisons un hébergeur de pages web, une base de données avec la connexion des comptes, un service de visio, un stockage privé pour les fichiers, un prestataire de paiement et un service de rapports d\'erreurs. Ils traitent vos informations pour nous, pour ces seules raisons.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.confidentialite.s7.titre' => '7. Combien de temps',
 			'juridique.confidentialite.s7.blocs.0' => 'Nous gardons chaque type d\'information le temps nécessaire, pas davantage. La pièce d\'identité d\'un enseignant est supprimée à la fin d\'un délai fixé. Une suppression peut être gelée en cas de litige.',
 			'juridique.confidentialite.s8.titre' => '8. Vos droits',
@@ -50325,8 +50447,6 @@ extension on Traductions {
 			'juridique.cookies.s5.blocs.0' => 'Vous pouvez effacer les données du site dans les réglages de votre navigateur, ou vous déconnecter depuis le Compte. Vous devrez alors vous reconnecter et refaire vos réglages d\'affichage.',
 			'juridique.cookies.s6.titre' => '6. Services tiers',
 			'juridique.cookies.s6.blocs.0' => 'Si vous quittez Rewayah Academy pour un autre service, par exemple le paiement, ce service applique ses propres règles.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.enfants.titre' => 'Protection des enfants',
 			'juridique.enfants.resume' => 'Comment nous protégeons les élèves mineurs.',
 			'juridique.enfants.intro' => 'Les élèves mineurs suivent leurs cours sous la responsabilité d\'un adulte. Voici les règles que nous appliquons et comment nous faire part d\'une inquiétude.',

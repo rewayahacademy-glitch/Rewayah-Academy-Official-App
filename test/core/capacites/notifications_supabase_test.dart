@@ -59,7 +59,8 @@ void main() {
       },
     );
 
-    test('maps presentation requests and skips unknown events per row', () {
+    test('maps presentation requests and keeps unknown events with the '
+        'resolver fallback title (fiche 27/10, ligne 13)', () {
       final List<NotificationTuteur> notifications = notificationsDepuis(
         <dynamic>[
           _row(evenement: 'evenement_futur'),
@@ -76,10 +77,12 @@ void main() {
             ),
       );
 
-      expect(notifications, hasLength(1));
-      expect(notifications.single.titre, 'Demande de présentation');
-      expect(notifications.single.destination, '/tuteur/demandes');
-      expect(notifications.single.type, TypeNotification.messageMetier);
+      expect(notifications, hasLength(2));
+      expect(notifications.first.titre, 'Inattendu');
+      expect(notifications.first.type, TypeNotification.autre);
+      expect(notifications.last.titre, 'Demande de présentation');
+      expect(notifications.last.destination, '/tuteur/demandes');
+      expect(notifications.last.type, TypeNotification.messageMetier);
     });
 
     test('maps assigned control missions to the controller destination', () {

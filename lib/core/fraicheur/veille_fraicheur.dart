@@ -16,6 +16,8 @@ import '../../features/classe_tuteur/planning_classe_page.dart'
 import '../../features/foyer/foyer_page.dart' show classesMembreProvider;
 import '../../features/ma_classe_adulte/ma_classe_adulte_page.dart'
     show maClasseAdulteProvider;
+import '../../features/notifications/notifications_page.dart'
+    show notificationsTuteurProvider;
 import '../enseignant/service_enseignant.dart';
 import '../observabilite/journal_dev.dart';
 import '../planning/service_planning.dart' show seancesProvider;
@@ -57,6 +59,12 @@ final Map<FamilleLecture, List<void Function(Ref)>> lecturesVeillees =
         (Ref ref) => ref.invalidate(rosterSeanceProvider),
         (Ref ref) => ref.invalidate(cahiersEnRetardProvider),
         (Ref ref) => ref.invalidate(groupesDesSeancesProvider),
+      ],
+      // Lignes 12 et 14 : la liste du centre de notifications porte aussi le
+      // point de non-lus de la cloche (`nonLuesProvider`) ; une insertion ou
+      // une lecture sur l'autre appareil la fait relire.
+      FamilleLecture.notifications: <void Function(Ref)>[
+        (Ref ref) => ref.invalidate(notificationsTuteurProvider),
       ],
     };
 

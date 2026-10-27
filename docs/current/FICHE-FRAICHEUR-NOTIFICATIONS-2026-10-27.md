@@ -132,10 +132,11 @@ sans rien faire.
 | 4, 5, 6, 8 | 27/10 | fait : `groupes`, `groupe_membres`, `groupe_creneaux` publiés (migration 20261027100000) ; tout changement fait relire les classes | non |
 | 7 | 27/10 | fait : « Cette classe n'existe plus. » (FR, AR) et retour à l'accueil du rôle ; testé chez le tuteur, codé sans test widget chez l'enseignante | non |
 | 9 | 27/10 | fait : `sessions` publiée ; tout changement fait relire suivi, planning, prochaine et dernière séance, journée, roster, cahiers | non |
-| 10, 11 | 27/10 | partiel : table, six événements, écrits par certaines fonctions seulement ; 0 ligne en production | non |
-| 12 | 27/10 | partiel : cloche sur l'accueil adulte seulement, lue une fois | non |
-| 13, 14 | 27/10 | partiel : page Notifications et `lu_le` existent | non |
-| 15 | 27/10 | oui (déclencheur du 23/10), jamais déclenché en production | non |
+| 10, 11 | 27/10 | fait, testé localement : migration 20261027120000 (douze événements, `private.notifier_classe`, déclencheurs différés à la validation sur `groupes`, `groupe_membres`, `groupe_creneaux`, `sessions`, `remplacements_seance` ; une notification par personne et par fait, jamais deux dans la même transaction, y compris face à 0066, 0078, 0085, c11bis, fusion, b09) ; scénario `scenarios_notifications_classes.sql` vert sur Postgres 16 local après toutes les migrations (la CI a Postgres 17 ; ligne à ajouter dans `ci.yml` par le directeur) ; 0 ligne en production tant que la migration n'est pas collée | non |
+| 12 | 27/10 | fait, testé localement : cloche de la coquille du tuteur, de l'élève (`/eleve/notifications`, nouveau ; remplace la réponse Q5 du 04/10 « pas de cloche pour l'élève mineur »), de l'enseignante et du contrôleur ; point de non-lus d'un seul provider (`nonLuesProvider`) dérivé de la liste, relu par la veille Realtime quand la table `notifications` change (publiée par 20261027120000) ; tests widget sur les trois accueils (point présent, absent, Interface guidée) | non |
+| 13 | 27/10 | fait, testé localement : phrase FR et AR par événement, selon la portée (élève, tuteur, enseignante) et l'heure locale de la séance ; destination par rôle (accueil de l'élève, classe ou planning du tuteur, classes ou journée de l'enseignante) ; événement inconnu rendu par une phrase de repli, jamais perdu | non |
+| 14 | 27/10 | fait, testé localement : ouvrir la page marque tout lu (UPDATE `lu_le`, politique 0063) et relit la liste ; la disparition du point sur l'autre appareil passe par la veille (`notifications` publiée), testée avec un canal simulé seulement | non |
+| 15 | 27/10 | oui (déclencheur du 23/10, conservé) : le scénario vérifie une ligne `courriels_sortants` par notification, aucune pour un compte enfant ; jamais déclenché en production | non |
 | 16 | 27/10 | fait : session locale fermée d'abord (`signOut` portée locale, serveur prévenu sans être attendu) ; avant, 3 s pour envoyer les cahiers en file, puis choix « Annuler » ou « Se déconnecter quand même » s'il en reste | non |
 | 17 | 27/10 | fait : profils, séances, ressources et rapports retirés de la base locale (les réglages de l'appareil restent), portée des providers renouvelée | non |
 | 18 | 27/10 | fait par construction (providers neufs), non prouvé à deux comptes | non |
@@ -154,3 +155,23 @@ sans rien faire.
   temps d'une frame en debug, rien de prouvé sur un appareil.
 - 27/10 : revue de la PR 63 : vidage de la base locale avant la fermeture de session ;
   une file de cahiers illisible refuse la déconnexion au lieu de la laisser passer.
+- 27/10 : lot 2 (lignes 10 à 15), un seul agent, non poussé tant que le pilote ne l'a pas
+  écrit. Choix : déclencheurs **différés à la validation** (constraint triggers), qui lisent
+  l'état final de la transaction ; c'est ce qui donne une seule notification « classe créée »
+  par personne quand l'administration crée la classe avec ses élèves et ses créneaux, et qui
+  évite une seconde ligne quand un chemin plus ancien (classe_validee, enseignant_affecte de
+  c11bis, classe_changee de la fusion) a déjà prévenu la même personne du même fait dans la
+  même transaction. L'absence de l'enseignante ne passe par aucune des quatre tables de la
+  fiche : un déclencheur sur `remplacements_seance` prévient les familles (b09 garde les
+  enseignants). La migration contient les mots DROP CONSTRAINT (les deux CHECK se remplacent,
+  comme c29 et FAC-F) et DROP TRIGGER IF EXISTS (un déclencheur de contrainte ne se remplace
+  pas) : la page de collage la marquera, rien n'est effacé. `20261027100000` reçoit BEGIN;/COMMIT;
+  pour la page de collage, sans autre changement.
+- 27/10 : limites admises du lot 2 : rien de prouvé sur un appareil ni en production ; la
+  disparition du point « sur l'autre appareil » n'est testée qu'avec un canal simulé ; la
+  liste des notifications n'a plus de relance automatique Riverpod (elle se relit par la
+  veille, par « Réessayer » et après une lecture) ; l'Accueil adulte et l'Interface guidée
+  de l'élève gardent la cloche de leur coquille (MA-3 la retirait exprès : écart à signaler
+  au directeur) ; un événement inconnu est affiché par une phrase de repli au lieu d'être
+  ignoré (le test « skips unknown events » de l'adaptateur change de sens) ; Postgres 16 en
+  local, 17 en CI.

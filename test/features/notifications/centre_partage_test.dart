@@ -116,7 +116,9 @@ _monter(
       portAnnoncesProvider.overrideWithValue(portAnnonces),
     ],
   );
-  await tester.tap(find.bySemanticsLabel(t.commun.entete.notifications).first);
+  // La cloche dit ses non-lus (« Notifications, n non lues ») depuis la fiche
+  // du 27/10 : on la touche par son type.
+  await tester.tap(find.byType(ClocheNotifications).first);
   await stabiliser(tester);
   expect(lieu(routeur), Routes.tuteurNotifications);
   return (routeur: routeur, notifications: port, annonces: portAnnonces);

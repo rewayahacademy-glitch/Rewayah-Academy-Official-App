@@ -18,14 +18,20 @@ enum FamilleLecture {
 
   /// Les seances : planning, prochaine et derniere seance, cahiers.
   seances,
+
+  /// Les notifications de la personne : la liste du centre et le point de
+  /// non-lus de la cloche (fiche du 27/10, lignes 12 et 14 ; lot 2).
+  notifications,
 }
 
-/// Les tables veillees, celles de la migration 20261027100000.
+/// Les tables veillees : celles de la migration 20261027100000, et
+/// `notifications` depuis 20261027120000.
 const List<String> tablesVeillees = <String>[
   'groupes',
   'groupe_membres',
   'groupe_creneaux',
   'sessions',
+  'notifications',
 ];
 
 /// La famille d'une table veillee ; `null` pour une table inconnue, qui ne
@@ -33,6 +39,7 @@ const List<String> tablesVeillees = <String>[
 FamilleLecture? familleDeLaTable(String table) => switch (table) {
   'groupes' || 'groupe_membres' || 'groupe_creneaux' => FamilleLecture.classes,
   'sessions' => FamilleLecture.seances,
+  'notifications' => FamilleLecture.notifications,
   _ => null,
 };
 
