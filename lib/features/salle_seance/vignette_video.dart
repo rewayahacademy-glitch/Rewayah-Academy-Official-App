@@ -102,10 +102,30 @@ abstract final class MesuresVignette {
 /// dessous (VIDEO-TUILE-1) ; barres de signal seulement pour l'enseignant
 /// ([VueSeance.voitSignalVideo]).
 class VignetteVideo extends StatelessWidget {
-  const VignetteVideo({required this.vue, required this.largeur, super.key});
+  const VignetteVideo({
+    required this.vue,
+    required this.largeur,
+    this.touchable = true,
+    this.avecSignal = true,
+    this.avecNom = true,
+    super.key,
+  });
 
   final VueSeance vue;
   final double largeur;
+
+  /// Faux dans la capsule du telephone (fiche 1, ligne 5) : toucher la
+  /// capsule deplie le profil, l'oeil met la video en grand.
+  final bool touchable;
+
+  /// Faux dans la carte du profil du telephone, qui porte le signal a cote
+  /// du nom (fiche 1, ligne 5).
+  final bool avecSignal;
+
+  /// Faux dans la capsule et le profil du telephone (fiche 1, lignes 1 et
+  /// 5) : le cercle seul, sans nom, sans cadre ni aplat (il se pose sur la
+  /// couche sombre, pilote C1).
+  final bool avecNom;
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +134,9 @@ class VignetteVideo extends StatelessWidget {
     // S0 : la vraie camera quand `/salle` la donne ; sinon l'aplat.
     final Widget? image = PorteeMediaSalle.videoVignette(context);
     // S0 : toucher la vignette met la video en grand (spec D16, point 4).
-    final VoidCallback? enGrand = PorteeMediaSalle.de(context)?.onBasculerScene;
+    final VoidCallback? enGrand = touchable
+        ? PorteeMediaSalle.de(context)?.onBasculerScene
+        : null;
     final Widget vignette = _vignette(context, palette, theme, image);
     if (enGrand == null) return vignette;
     return Pressable(
@@ -143,10 +165,12 @@ class VignetteVideo extends StatelessWidget {
         child: AspectRatio(
           aspectRatio: MesuresVignette.ratio,
           child: DecoratedBox(
-            decoration: palette.surfaceInverse.decoration(
-              borderRadius: AppRadius.arrondiMd,
-              side: palette.borderHairline.asBorderSide(width: 2),
-            ),
+            decoration: avecNom
+                ? palette.surfaceInverse.decoration(
+                    borderRadius: AppRadius.arrondiMd,
+                    side: palette.borderHairline.asBorderSide(width: 2),
+                  )
+                : const BoxDecoration(),
             child: ClipRRect(
               borderRadius: AppRadius.arrondiMd,
               // VIDEO-TUILE-1 : la tuile partagee -- le petit cercle et le
@@ -155,16 +179,18 @@ class VignetteVideo extends StatelessWidget {
               child:
                   image ??
                   DecoratedBox(
-                    decoration: palette.surfaceActionDouce.decoration(),
+                    decoration: avecNom
+                        ? palette.surfaceActionDouce.decoration()
+                        : const BoxDecoration(),
                     child: TuileSansImage(
                       prenom: vue.nomEnseignant,
-                      nom: vue.nomEnseignant,
+                      nom: avecNom ? vue.nomEnseignant : '',
                       urlSignee: PorteeMediaSalle.de(context)?.photoVignette,
                       styleNom: palette.surfaceActionDouce.applyTo(
                         theme.textTheme.labelSmall ?? const TextStyle(),
                       ),
-                      coin: vue.voitSignalVideo
-                          ? _Signal(
+                      coin: vue.voitSignalVideo && avecSignal
+                          ? SignalVideo(
                               key: const ValueKey<String>('signal-video'),
                               barres: vue.signalEnseignant,
                             )
@@ -180,8 +206,8 @@ class VignetteVideo extends StatelessWidget {
 }
 
 /// Trois barres de signal (enseignant seulement).
-class _Signal extends StatelessWidget {
-  const _Signal({required this.barres, super.key});
+class SignalVideo extends StatelessWidget {
+  const SignalVideo({required this.barres, super.key});
 
   final int barres;
 

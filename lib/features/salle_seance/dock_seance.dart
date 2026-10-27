@@ -16,17 +16,35 @@ import 'package:flutter/material.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_gabarit.dart';
+import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_theme.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/commande_salle.dart'
-    show TonTuileSalle, TuileCommandeSalle;
+    show SurfaceTuilesSalle, TonTuileSalle, TuileCommandeSalle;
 import '../../core/widgets/confirm_destructive.dart';
 import 'actions_seance.dart';
 import 'barre_support.dart' show NomsFocus, nomsFocus;
 import 'feuille_micro_bloque.dart';
 import 'vue_seance.dart';
+
+/// Pilote (26/10/2026, C1, C2, C4) : les commandes posees sur la page (la
+/// capsule, le profil, la pilule de l'appel, « Commandes », le zoom) sont une
+/// couche sombre dans les deux themes ([AppPalette.coucheSalle]) : leur
+/// contenu se rend dans le theme sombre, encres claires.
+class CoucheSalle extends StatelessWidget {
+  const CoucheSalle({required this.child, super.key});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Theme(
+    data: AppTheme.pour(AppMetriques.of(context).mode, Brightness.dark),
+    child: child,
+  );
+}
 
 /// Le fond d'un [BoutonAppel].
 enum FondBoutonAppel {
@@ -99,8 +117,12 @@ class BoutonAppel extends StatelessWidget {
     this.selectionne,
     this.nom,
     this.retenu,
+    this.pastille,
     super.key,
   });
+
+  /// Un nombre en pastille au coin de la tuile nommee (Eleves presents).
+  final int? pastille;
 
   /// Plan de composition du 26/10/2026 (Q1) : sur ordinateur, le nom de la
   /// commande sous son icone ([TuileCommandeSalle], barre sombre) ; `null` : icone seule
@@ -174,6 +196,7 @@ class BoutonAppel extends StatelessWidget {
         selectionne: selectionne,
         actif: actif,
         focusNode: focusNode,
+        pastille: pastille,
         onPress: onPress,
       );
     }
@@ -211,12 +234,20 @@ class DockSeance extends StatelessWidget {
     this.commandes,
     this.avant = const <Widget>[],
     this.avantQuitter = const <Widget>[],
+    this.rond = false,
     super.key,
   });
 
   /// Plan de composition du 26/10/2026 (Q1) : sur ordinateur, chaque bouton
   /// porte son nom dessous ([BoutonAppel.nom]).
   final bool nommee;
+
+  /// Fiche 1 (26/10/2026), ligne 4 : la pilule de l'enseignant au telephone,
+  /// des disques nommes (Micro, Camera, Eleves, Quitter) sur la pilule
+  /// sombre ; une bascule coupee porte son etat pour nom (« Micro coupé »).
+  final bool rond;
+
+  bool get _nommee => nommee || rond;
 
   /// Les commandes de cette pilule, a la place de [VueSeance.commandesDock]
   /// (ordinateur : deux groupes) ; toujours filtrees par la vue.
@@ -254,7 +285,8 @@ class DockSeance extends StatelessWidget {
           actions: actions,
           microOuvert: microOuvert,
           onMicro: micro,
-          nom: nommee ? t.salle.micro : null,
+          nom: _nommee ? t.salle.micro : null,
+          nomCoupe: rond ? t.salle.microCoupe : null,
         );
       case CommandeDock.camera:
         final VoidCallback? camera = actions.onCamera;
@@ -270,7 +302,9 @@ class DockSeance extends StatelessWidget {
               (cameraAllumee ? t.salle.fermerCamera : t.salle.ouvrirCamera),
           actif: vue.commandesPublicationActives,
           fond: colore ? FondBoutonAppel.primaire : FondBoutonAppel.surface,
-          nom: nommee ? t.salle.camera : null,
+          nom: _nommee
+              ? (rond && !cameraAllumee ? t.salle.cameraCoupee : t.salle.camera)
+              : null,
           onPress: camera,
         );
       case CommandeDock.agrandir:
@@ -287,7 +321,7 @@ class DockSeance extends StatelessWidget {
           bascule: agrandi,
           libelle: noms.etat,
           libelleSemantique: noms.semantique,
-          nom: nommee ? noms.etat : null,
+          nom: _nommee ? noms.etat : null,
           onPress: agrandir,
         );
       case CommandeDock.reseau:
@@ -317,7 +351,7 @@ class DockSeance extends StatelessWidget {
           libelleSemantique: ouvert
               ? t.salle.seance.fermerTableau
               : t.salle.seance.ouvrirTableau,
-          nom: nommee ? t.salle.seance.commandes.affichageTableau : null,
+          nom: _nommee ? t.salle.seance.commandes.affichageTableau : null,
           onPress: tableau,
         );
       case CommandeDock.quitter:
@@ -328,7 +362,7 @@ class DockSeance extends StatelessWidget {
           libelle: t.salle.quitter,
           libelleSemantique: t.salle.seance.sortir,
           fond: FondBoutonAppel.alerte,
-          nom: nommee ? t.salle.quitter : null,
+          nom: _nommee ? t.salle.quitter : null,
           onPress: () => confirmerQuitterSeance(
             context,
             quitter,
@@ -378,6 +412,41 @@ class DockSeance extends StatelessWidget {
     }
     // Ordinateur (plan du 26/10/2026) : les tuiles nommees se posent dans la
     // barre sombre de la salle, sans pilule.
+    if (rond) {
+      // Fiche 1, ligne 4 : la pilule sombre de l'appel, les disques nommes
+      // centres ; texte agrandi, elle passe sur deux rangees.
+      // Pilote C2 : la pilule sombre dans les deux themes, disques clairs.
+      return CoucheSalle(
+        child: Center(
+          heightFactor: 1,
+          child: DecoratedBox(
+            key: const ValueKey<String>('dock-seance'),
+            decoration: palette.coucheSalle.decoration(
+              borderRadius: AppRadius.arrondiLg,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.sm),
+              child: SurfaceTuilesSalle(
+                surface: palette.coucheSalle,
+                rond: true,
+                // Ligne 14 : a 320 en texte x2, les noms se reduisent a
+                // l'icone, jamais les disques.
+                sansNom:
+                    MediaQuery.sizeOf(context).width < 360 &&
+                    MediaQuery.textScalerOf(context).scale(1) > 1.5,
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.start,
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
+                  children: boutons,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
     if (nommee) {
       return Wrap(
         key: const ValueKey<String>('dock-seance'),
@@ -494,6 +563,7 @@ class _BoutonMicro extends StatefulWidget {
     required this.microOuvert,
     required this.onMicro,
     this.nom,
+    this.nomCoupe,
   });
 
   final VueSeance vue;
@@ -501,6 +571,10 @@ class _BoutonMicro extends StatefulWidget {
   final bool microOuvert;
   final VoidCallback onMicro;
   final String? nom;
+
+  /// Le nom peint quand le micro est coupe (telephone : « Micro coupé ») ;
+  /// `null` : [nom].
+  final String? nomCoupe;
 
   @override
   State<_BoutonMicro> createState() => _BoutonMicroState();
@@ -549,7 +623,7 @@ class _BoutonMicroState extends State<_BoutonMicro> {
           (ouvert ? t.salle.fermerMicro : t.salle.ouvrirMicro),
       actif: vue.commandesPublicationActives,
       fond: colore ? FondBoutonAppel.succes : FondBoutonAppel.surface,
-      nom: widget.nom,
+      nom: ouvert ? widget.nom : widget.nomCoupe ?? widget.nom,
       onPress: vue.microBloque ? _ouvrirFeuille : widget.onMicro,
     );
   }

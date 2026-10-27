@@ -29,6 +29,8 @@ import 'package:rewayah_academy/core/widgets/commande_salle.dart'
     show TonTuileSalle, TuileCommandeSalle;
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_outils_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/dock_seance.dart'
+    show BoutonPlusAppel;
 import 'package:rewayah_academy/features/salle_seance/panneau_bibliotheque_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_eleves.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_ordinateur.dart';
@@ -242,6 +244,22 @@ void main() {
               // liste : la regle s'y verifie sur celles qui sont rendues.
               if (taille.height >= 900) expect(cartes, greaterThan(0));
               verifierAucunMotCoupe(tester, find.byKey(SalleOrdinateur.cleBas));
+              // Decision du directeur du 26/10/2026 : une tuile se place du
+              // cote du panneau qu'elle ouvre, en arabe comme en francais.
+              final double filet = tester
+                  .getCenter(
+                    find.byKey(const ValueKey<String>('salle-barre-filet')),
+                  )
+                  .dx;
+              bool memeCote(String cle, Rect panneau) {
+                final double x = tester
+                    .getCenter(find.byKey(ValueKey<String>(cle)))
+                    .dx;
+                return (x < filet) == (panneau.center.dx < filet);
+              }
+
+              expect(memeCote('salle-eleves', gauche), isTrue);
+              expect(memeCote('salle-bibliotheque', droite), isTrue);
             });
           }
         }
@@ -334,6 +352,28 @@ void main() {
     verifierUnSeulBoutonPlein(tester);
   });
 
+  // Revue de la PR 61 : Plus, puis Bibliotheque. Les Commandes se ferment et
+  // la Bibliotheque prend la droite ; la fermer laisse la droite vide.
+  testWidgets('Commandes ouvertes, Bibliotheque demandee : les Commandes se '
+      'ferment, la Bibliotheque s ouvre', (WidgetTester tester) async {
+    await _monter(tester);
+    const Key commandes = ValueKey<String>('salle-ordinateur-commandes');
+    await tester.tap(find.byKey(BoutonPlusAppel.cle));
+    await tester.pumpAndSettle();
+    expect(find.byKey(commandes), findsOneWidget);
+    expect(find.byType(PanneauBibliothequeSalle), findsNothing);
+
+    await tester.tap(find.byKey(const ValueKey<String>('salle-bibliotheque')));
+    await tester.pumpAndSettle();
+    expect(find.byType(PanneauBibliothequeSalle), findsOneWidget);
+    expect(find.byKey(commandes), findsNothing);
+
+    await tester.tap(find.byKey(const ValueKey<String>('bibliotheque-fermer')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(SalleOrdinateur.cleDroite), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('barre du bas : une barre sombre, deux groupes de tuiles '
       'nommees, un filet entre eux, cibles de 48', (WidgetTester tester) async {
     await _monter(tester);
@@ -356,6 +396,32 @@ void main() {
     expect(
       tons.where((TonTuileSalle t) => t == TonTuileSalle.quitter),
       hasLength(1),
+    );
+    // Decision du directeur du 26/10/2026 : une tuile se place du cote du
+    // panneau qu'elle ouvre. Quitter reste le dernier.
+    List<String> noms(String groupe) => <String>[
+      for (final TuileCommandeSalle t in tester.widgetList(
+        find.descendant(
+          of: find.byKey(ValueKey<String>(groupe)),
+          matching: tuiles,
+        ),
+      ))
+        t.nom,
+    ];
+    expect(noms('salle-commandes-gauche'), <String>[
+      t.salle.seance.eleves,
+      t.salle.seance.outils.pointeur,
+      t.salle.seance.outils.ecrire,
+      t.salle.seance.commandes.affichageTableau,
+      t.tc.outils.trait.plus,
+    ]);
+    final List<String> droite = noms('salle-commandes-droite');
+    expect(droite, hasLength(4));
+    expect(droite[2], t.salle.seance.commandes.bibliotheque);
+    expect(droite.last, t.salle.quitter);
+    expect(
+      tester.widgetList<TuileCommandeSalle>(tuiles).last.ton,
+      TonTuileSalle.quitter,
     );
   });
 }

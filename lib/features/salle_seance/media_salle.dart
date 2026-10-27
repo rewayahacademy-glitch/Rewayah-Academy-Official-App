@@ -59,6 +59,7 @@ class PorteeMediaSalle extends InheritedWidget {
     this.photoVignette,
     this.supports = const <SupportBibliotheque>[],
     this.messageEleves,
+    this.pageEnErreur = false,
     super.key,
   });
 
@@ -70,6 +71,11 @@ class PorteeMediaSalle extends InheritedWidget {
   /// peut presenter maintenant (aujourd'hui le Coran seul), panneau de
   /// droite sur ordinateur.
   final List<SupportBibliotheque> supports;
+
+  /// Plan de composition du 26/10/2026 : la page presentee ne se lit pas
+  /// (erreur, corpus absent). La capsule video du telephone ne se pose pas
+  /// par-dessus un constat a lire et son « Reessayer ».
+  final bool pageEnErreur;
 
   /// Le dernier echec d'une action du panneau Eleves (rappel discret), dit
   /// sous son titre, ou `null`.

@@ -943,6 +943,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           ? <SupportBibliotheque>[_coranDeLaBibliotheque(page)]
           : const <SupportBibliotheque>[],
       messageEleves: enseignant ? _echecRappel : null,
+      // La page presentee ne se lit pas : rien ne se pose par-dessus son
+      // constat ni son « Reessayer » (capsule du telephone).
+      pageEnErreur: page != null && pagePresenteeEnErreur(ref, page),
       // Au telephone, l'enseignant n'a pas de colonne : « Eleves » ouvre la
       // presence (J3) et le roster (fiche, rappel) en feuille.
       pastille: enseignant ? null : _PastillePresence(mienne: mienne),
@@ -1653,26 +1656,24 @@ class _LigneEleve extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Row(
+          // Fiche 1, ligne 14 (27/10/2026) : etroit ou texte agrandi, l'etat
+          // passe sous le prenom plutot que de le tronquer.
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.xs,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: <Widget>[
-              Expanded(
-                child: Text(
-                  personne.nom,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  softWrap: false,
-                  style: palette.inkStrong.applyTo(
-                    textes.labelLarge ?? const TextStyle(),
-                  ),
+              Text(
+                personne.nom,
+                style: palette.inkStrong.applyTo(
+                  textes.labelLarge ?? const TextStyle(),
                 ),
               ),
-              Ecart.hSm,
               StatusPill(
                 libelle: LignePresence.libelle(personne.vue.etat),
                 ton: personne.vue.ton,
               ),
               if (personne.micro == false) ...<Widget>[
-                Ecart.hXs,
                 IconTheme(
                   data: palette.inkMuted.asIconTheme(size: AppSpacing.lg),
                   child: Icon(

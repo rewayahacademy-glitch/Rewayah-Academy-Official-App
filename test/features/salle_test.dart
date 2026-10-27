@@ -37,6 +37,7 @@ import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dar
 import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart'
     show PointNormalise;
 import 'package:rewayah_academy/core/tc_outils/port_annotations.dart';
+import 'package:rewayah_academy/core/theme/app_gabarit.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
@@ -56,9 +57,13 @@ import 'package:rewayah_academy/features/salle_seance/ecriture_seance.dart'
 import 'package:rewayah_academy/features/salle_seance/media_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/palette_tableau.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_bibliotheque_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/panneau_seance.dart'
+    show PanneauSeance;
 import 'package:rewayah_academy/features/salle_seance/resultat_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_ordinateur.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/telephone_enseignant.dart'
+    show CapsuleVideoTelephone, FeuilleElevesTelephone;
 import 'package:rewayah_academy/features/salle_seance/telephone_plein_ecran.dart';
 import 'package:rewayah_academy/features/tc_mushaf/page_madina_15.dart'
     show cleLigneMadina15;
@@ -269,6 +274,18 @@ Future<void> _ouvrirPresence(WidgetTester tester) async {
   if (find.byType(LignePresence).evaluate().isNotEmpty) return;
   // K4 (25/10/2026) : dans `/salle`, a toutes les largeurs, le bouton rond
   // « Eleves » de la ligne d'etat ; ailleurs, celui de l'en-tete.
+  // Fiche 1 (pilote C9, 27/10/2026) : l'enseignant au telephone ouvre ses
+  // eleves par « Eleves » de la pilule, qui se montre au toucher.
+  final Finder pilule = find.byKey(TelephonePleinEcran.cleEleves);
+  if (pilule.evaluate().isNotEmpty) {
+    if (pilule.hitTestable().evaluate().isEmpty) {
+      await tester.tapAt(const Offset(10, 10));
+      await tester.pumpAndSettle();
+    }
+    await tester.tap(pilule);
+    await tester.pumpAndSettle();
+    return;
+  }
   final Finder rond = find.byKey(const ValueKey<String>('salle-eleves'));
   await tester.tap(
     rond.evaluate().isNotEmpty
@@ -276,6 +293,30 @@ Future<void> _ouvrirPresence(WidgetTester tester) async {
         : find.byKey(const ValueKey<String>('bouton-eleves')).first,
   );
   await tester.pumpAndSettle();
+}
+
+/// Fiche 1 (pilote, 27/10/2026) : dans la feuille des eleves du telephone,
+/// la presence (J3, qui ouvre la fiche) est en tete, les cartes dessous ; la
+/// ligne de presence de [prenom] est la premiere. Ailleurs, la derniere.
+Finder _ligneDePresence(String prenom) {
+  final Finder dansFeuille = find.descendant(
+    of: find.byKey(FeuilleElevesTelephone.cle),
+    matching: find.text(prenom),
+  );
+  return dansFeuille.evaluate().isNotEmpty
+      ? dansFeuille.first
+      : find.text(prenom).last;
+}
+
+/// Fiche 1 (pilote C9, 27/10/2026) : chez l'enseignant au telephone, la
+/// ligne d'etat (mention, notice d'observation) se lit dans le profil
+/// deplie depuis la capsule ; ailleurs, rien a faire.
+Future<void> _deplierProfilSiCapsule(WidgetTester tester) async {
+  final Finder capsule = find.byKey(CapsuleVideoTelephone.cleDeplier);
+  if (capsule.evaluate().isEmpty) return;
+  await tester.tap(capsule);
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 400));
 }
 
 void main() {
@@ -435,6 +476,7 @@ void main() {
               preVol: FauxServicePreVol(),
             ),
           );
+          await _deplierProfilSiCapsule(tester);
           expect(
             find.text(t.salle.bandeauPermanent),
             findsOneWidget,
@@ -1952,6 +1994,7 @@ void main() {
         );
 
         // S0 : la notice de la salle de seance, sans prenom (EN-9).
+        await _deplierProfilSiCapsule(tester);
         expect(find.text(t.salle.seance.unParentObserve), findsOneWidget);
       },
     );
@@ -2202,9 +2245,11 @@ void main() {
       // seance (colonne ouverte, ou bouton « Eleves »).
       await _ouvrirPresence(tester);
 
-      await tester.tap(find.text('Amina').last);
+      await tester.tap(_ligneDePresence('Amina'));
       await tester.pumpAndSettle();
-      expect(find.text('Decodage consolide'), findsOneWidget);
+      // La fiche ouverte, au-dessus de la feuille des eleves (qui porte
+      // aussi le niveau dans la presence, dessous).
+      expect(find.text('Decodage consolide').hitTestable(), findsOneWidget);
       await tester.ensureVisible(find.text(t.tc.classe.action.rappel));
       await tester.tap(find.text(t.tc.classe.action.rappel));
       await tester.pump();
@@ -2221,7 +2266,7 @@ void main() {
         echec: const EchecRappel(MotifEchecRappel.transport),
       );
       await _ouvrirPresence(tester);
-      await tester.tap(find.text('Amina').last);
+      await tester.tap(_ligneDePresence('Amina'));
       await tester.pumpAndSettle();
       await tester.ensureVisible(find.text(t.tc.classe.action.rappel));
       await tester.tap(find.text(t.tc.classe.action.rappel));
@@ -2784,8 +2829,28 @@ void main() {
       testWidgets('tableau, $nom : le canevas est la fenetre, la feuille '
           '16:9 ajustee sans etirement', (WidgetTester tester) async {
         await monterAvecPage(tester, taille);
+        // Plan §4 (PR B) : au telephone, le tableau vit dans l'onglet Outils
+        // du tiroir des Commandes ; la pilule ne garde que micro, camera et
+        // quitter. Sur ordinateur, la barre du bas le porte.
+        if (taille.width < AppGabarit.seuilTablette) {
+          // Les commandes se masquent au delai : un toucher les ramene.
+          await tester.tapAt(const Offset(10, 10));
+          await tester.pumpAndSettle();
+          // Fiche 1, ligne 3 : « Commandes » au-dessus de la pilule.
+          await tester.tap(find.byKey(TelephonePleinEcran.cleCommandesToucher));
+          await tester.pumpAndSettle();
+          // Fiche 1, ligne 9 : le Tableau est dans l'onglet Support, ouvert
+          // d'emblee.
+        }
         await tester.tap(find.byKey(const ValueKey<String>('bouton-tableau')));
         await tester.pumpAndSettle();
+        // Le tiroir se referme pour laisser voir le tableau.
+        if (taille.width < AppGabarit.seuilTablette) {
+          await tester.tap(
+            find.byKey(PanneauSeance.cleReduire).hitTestable().first,
+          );
+          await tester.pumpAndSettle();
+        }
         expect(tester.takeException(), isNull);
         final Rect canevas = tester.getRect(
           find.byKey(TelephonePleinEcran.clePage),

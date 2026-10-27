@@ -1107,39 +1107,92 @@ void main() {
     );
   }
 
+  // Fiche 1 (pilote, 26/10/2026) : l'enseignant au telephone a la pilule
+  // nommee dans tous les modes ; a 320 en texte x2, un nom peut se reduire a
+  // l'icone (ligne 14), jamais a 390.
+  Future<void> verifierPiluleNommee(
+    WidgetTester tester, {
+    required double largeur,
+    required double hauteurEcran,
+    required double diametre,
+    required bool nomsExiges,
+  }) async {
+    expect(tester.takeException(), isNull);
+    final Finder dock = find.byKey(const ValueKey<String>('dock-seance'));
+    expect(dock, findsOneWidget);
+    final Finder tuiles = find.descendant(
+      of: dock,
+      matching: find.byKey(const ValueKey<String>('tuile-commande')),
+    );
+    final Finder noms = find.descendant(
+      of: dock,
+      matching: find.byKey(const ValueKey<String>('nom-commande')),
+    );
+    expect(tuiles, findsNWidgets(4));
+    expect(
+      find.descendant(
+        of: dock,
+        matching: find.byKey(const ValueKey<String>('disque-commande')),
+      ),
+      findsNWidgets(4),
+    );
+    if (nomsExiges) {
+      expect(noms, findsNWidgets(4));
+    }
+    for (final Element e in tuiles.evaluate()) {
+      final Size taille = tester.getSize(find.byWidget(e.widget));
+      expect(taille.height, greaterThanOrEqualTo(diametre - 0.5));
+    }
+    verifierAucunMotCoupe(tester, dock);
+    final Rect zone = tester.getRect(dock);
+    expect(zone.left, greaterThanOrEqualTo(-0.5));
+    expect(zone.right, lessThanOrEqualTo(largeur + 0.5));
+    expect(zone.bottom, lessThanOrEqualTo(hauteurEcran + 0.5));
+    final Finder quitter = find.bySemanticsLabel(RegExp(t.salle.seance.sortir));
+    expect(quitter, findsWidgets);
+  }
+
   group('Standard des commandes d\'appel : /salle en Mode Accessibilite, '
       'texte agrandi', () {
     setUpAll(chargerPolicesDuDepot);
     for (final String role in <String>['student', 'teacher']) {
       for (final double largeur in <double>[320, 390]) {
         for (final double texte in <double>[1.5, 2]) {
-          testWidgets(
-            '$role, $largeur px, texte x$texte : pilule sans mot, boutons '
-            'a leur taille',
-            (WidgetTester tester) async {
-              await _monter(
+          testWidgets('$role, $largeur px, texte x$texte : '
+              '${role == 'teacher' ? 'pilule nommee' : 'pilule sans mot'}, '
+              'boutons a leur taille', (WidgetTester tester) async {
+            await _monter(
+              tester,
+              role,
+              largeur,
+              texte,
+              interfaceMode: InterfaceMode.enfant,
+            );
+            if (role == 'teacher') {
+              await verifierPiluleNommee(
                 tester,
-                role,
-                largeur,
-                texte,
-                interfaceMode: InterfaceMode.enfant,
+                largeur: largeur,
+                hauteurEcran: 844,
+                diametre: 72,
+                nomsExiges: largeur > 320 || texte < 2,
               );
+            } else {
               await verifierPiluleSansMot(
                 tester,
                 largeur: largeur,
                 hauteurEcran: 844,
                 diametre: 72,
               );
-              if (role == 'teacher') {
-                expect(
-                  find.byTooltip(
-                    RegExp('${t.salle.cameraAllumee}|${t.salle.cameraCoupee}'),
-                  ),
-                  findsOneWidget,
-                );
-              }
-            },
-          );
+            }
+            if (role == 'teacher') {
+              expect(
+                find.byTooltip(
+                  RegExp('${t.salle.cameraAllumee}|${t.salle.cameraCoupee}'),
+                ),
+                findsOneWidget,
+              );
+            }
+          });
         }
       }
     }
@@ -1190,26 +1243,35 @@ void main() {
         }
       }
       for (final double texte in <double>[1.5, 2]) {
-        testWidgets(
-          '$role, 320 x 568, Mode Accessibilite, texte x$texte : pilule '
-          'sans mot (m5)',
-          (WidgetTester tester) async {
-            await _monter(
+        testWidgets('$role, 320 x 568, Mode Accessibilite, texte x$texte : '
+            '${role == 'teacher' ? 'pilule nommee' : 'pilule sans mot'} (m5)', (
+          WidgetTester tester,
+        ) async {
+          await _monter(
+            tester,
+            role,
+            320,
+            texte,
+            hauteur: 568,
+            interfaceMode: InterfaceMode.enfant,
+          );
+          if (role == 'teacher') {
+            await verifierPiluleNommee(
               tester,
-              role,
-              320,
-              texte,
-              hauteur: 568,
-              interfaceMode: InterfaceMode.enfant,
+              largeur: 320,
+              hauteurEcran: 568,
+              diametre: 72,
+              nomsExiges: texte < 2,
             );
+          } else {
             await verifierPiluleSansMot(
               tester,
               largeur: 320,
               hauteurEcran: 568,
               diametre: 72,
             );
-          },
-        );
+          }
+        });
       }
     }
   });

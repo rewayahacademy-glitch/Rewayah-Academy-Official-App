@@ -1082,6 +1082,7 @@
         "reduireSemantique": "تصغير عناصر التحكم",
         "ongletSupport": "المادة",
         "ongletOutils": "الأدوات",
+        "ongletSeance": "الحصة",
         "bibliotheque": "المكتبة",
         "affichageSupport": "المادة",
         "affichageAvecNotes": "مع الملاحظات",
@@ -1137,6 +1138,7 @@
       },
       "rangement": {
         "ranger": "إرجاع إلى المكتبة",
+        "rangerSupport": "إرجاع المادة",
         "menuSupport": "إجراءات المادة المعروضة",
         "menuTableau": "إجراءات السبورة الحرة",
         "range": "أُرجعت المادة",
@@ -1167,7 +1169,8 @@
         "controleActifDetail": "تجري زيارة مراقبة الآن.",
         "reduire": "تصغير",
         "reduireParticipants": "تصغير المشاركين",
-        "reduireInformations": "تصغير المعلومات"
+        "reduireInformations": "تصغير المعلومات",
+        "enseignante": "معلّمة"
       },
       "demo": {
         "titre": "قاعة العرض التجريبي",

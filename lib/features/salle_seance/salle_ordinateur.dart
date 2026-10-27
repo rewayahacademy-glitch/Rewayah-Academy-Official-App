@@ -103,10 +103,23 @@ class _EtatSalleOrdinateur extends State<SalleOrdinateur> {
           as bool? ??
       defaut;
 
-  void _basculer(String cle, bool defaut) {
-    PageStorage.maybeOf(context)
-        ?.writeState(context, !_lire(cle, defaut), identifier: cle);
+  void _basculer(String cle, bool defaut) => _poser(cle, !_lire(cle, defaut));
+
+  void _poser(String cle, bool ouvert) {
+    PageStorage.maybeOf(context)?.writeState(context, ouvert, identifier: cle);
     setState(() {});
+  }
+
+  /// Bibliotheque demandee (tuile ou touche B). Revue de la PR 61 : quand les
+  /// Commandes occupent la droite, elles se ferment et la Bibliotheque
+  /// s'ouvre, au lieu d'un drapeau bascule sans effet visible.
+  void _bibliotheque() {
+    if (widget.vue.panneau == PanneauOuvert.commandes) {
+      widget.actions.onCommandes?.call();
+      _poser(_cleBibliotheque, true);
+    } else {
+      _basculer(_cleBibliotheque, _bibliothequeDefaut);
+    }
   }
 
   /// La Bibliotheque est ouverte d'office quand la page garde au moins la
@@ -125,9 +138,7 @@ class _EtatSalleOrdinateur extends State<SalleOrdinateur> {
     final bool peutBibliotheque = widget.actions.onBibliotheque != null;
     final ActionsSeance actions = widget.actions.avecPanneaux(
       onEleves: () => _basculer(_cleEleves, true),
-      onBibliotheque: peutBibliotheque
-          ? () => _basculer(_cleBibliotheque, _bibliothequeDefaut)
-          : null,
+      onBibliotheque: peutBibliotheque ? _bibliotheque : null,
     );
     final bool commandes = vue.panneau == PanneauOuvert.commandes;
     final Widget? droite = focus
@@ -503,9 +514,36 @@ class _PanneauCommandes extends StatelessWidget {
   );
 }
 
-/// La barre des commandes, deux groupes, chaque bouton nomme : a gauche
-/// Bibliotheque, Pointeur, Ecrire, Tableau, Plus ; a droite Micro, Camera,
-/// Eleves, Quitter.
+/// La tuile nommee d'un outil de l'enseignant (Pointeur, Ecrire) : la barre
+/// de l'ordinateur et l'onglet Outils du tiroir du telephone (plan du
+/// 26/10/2026). [outil] : l'outil retenu.
+Widget tuileOutilSalle(
+  WidgetRef ref, {
+  required ActionsSeance actions,
+  required OutilDock? outil,
+  required OutilEnseignement o,
+}) => BoutonAppel(
+  key: ValueKey<String>('salle-outil-${o.name}'),
+  // « Ecrire » arme le stylo : son icone, et non celle du tableau, qui est la
+  // meme (`annoter`) et se tient a cote dans la barre.
+  icone: o == OutilEnseignement.ecrire
+      ? AppIcons.stylet
+      : iconeOutilEnseignement(o),
+  libelle: libelleOutilEnseignement(o),
+  nom: libelleOutilEnseignement(o),
+  retenu: outil == outilDock(o),
+  selectionne: outil == outilDock(o),
+  onPress: () {
+    if (depotAnnotationsDisponible(ref)) {
+      ref.read(etatOutilsProvider.notifier).choisirOutil(outilDock(o));
+    }
+    actions.onOutil?.call(o);
+  },
+);
+
+/// La barre des commandes, deux groupes, chaque bouton nomme : au debut
+/// Eleves, Pointeur, Ecrire, Tableau, Plus ; a la fin Micro, Camera,
+/// Bibliotheque, Quitter.
 class _Bas extends ConsumerWidget {
   const _Bas({
     required this.vue,
@@ -530,26 +568,8 @@ class _Bas extends ConsumerWidget {
     final VoidCallback? lesEleves = actions.onEleves;
     final VoidCallback? commandes = actions.onCommandes;
     final bool outils = actions.onOutil != null;
-    void choisir(OutilEnseignement o) {
-      if (depotAnnotationsDisponible(ref)) {
-        ref.read(etatOutilsProvider.notifier).choisirOutil(outilDock(o));
-      }
-      actions.onOutil?.call(o);
-    }
-
-    Widget boutonOutil(OutilEnseignement o) => BoutonAppel(
-      key: ValueKey<String>('salle-outil-${o.name}'),
-      // « Ecrire » arme le stylo : son icone, et non celle du tableau, qui
-      // est la meme (`annoter`) et se tient a cote dans la barre.
-      icone: o == OutilEnseignement.ecrire
-          ? AppIcons.stylet
-          : iconeOutilEnseignement(o),
-      libelle: libelleOutilEnseignement(o),
-      nom: libelleOutilEnseignement(o),
-      retenu: outil == outilDock(o),
-      selectionne: outil == outilDock(o),
-      onPress: () => choisir(o),
-    );
+    Widget boutonOutil(OutilEnseignement o) =>
+        tuileOutilSalle(ref, actions: actions, outil: outil, o: o);
 
     final Widget gauche = DockSeance(
       key: const ValueKey<String>('salle-commandes-gauche'),
@@ -560,15 +580,15 @@ class _Bas extends ConsumerWidget {
       nommee: true,
       commandes: const <CommandeDock>[CommandeDock.tableau],
       avant: <Widget>[
-        if (livres != null)
+        if (lesEleves != null)
           BoutonAppel(
-            key: const ValueKey<String>('salle-bibliotheque'),
-            icone: AppIcons.bibliotheque,
-            libelle: t.salle.seance.commandes.bibliotheque,
-            nom: t.salle.seance.commandes.bibliotheque,
-            retenu: bibliotheque,
-            selectionne: bibliotheque,
-            onPress: livres,
+            key: const ValueKey<String>('salle-eleves'),
+            icone: AppIcons.eleves,
+            libelle: t.salle.seance.eleves,
+            nom: t.salle.seance.eleves,
+            retenu: eleves,
+            selectionne: eleves,
+            onPress: lesEleves,
           ),
         if (outils) ...<Widget>[
           boutonOutil(OutilEnseignement.pointeur),
@@ -597,21 +617,22 @@ class _Bas extends ConsumerWidget {
         CommandeDock.quitter,
       ],
       avantQuitter: <Widget>[
-        if (lesEleves != null)
+        if (livres != null)
           BoutonAppel(
-            key: const ValueKey<String>('salle-eleves'),
-            icone: AppIcons.eleves,
-            libelle: t.salle.seance.eleves,
-            nom: t.salle.seance.eleves,
-            retenu: eleves,
-            selectionne: eleves,
-            onPress: lesEleves,
+            key: const ValueKey<String>('salle-bibliotheque'),
+            icone: AppIcons.bibliotheque,
+            libelle: t.salle.seance.commandes.bibliotheque,
+            nom: t.salle.seance.commandes.bibliotheque,
+            retenu: bibliotheque,
+            selectionne: bibliotheque,
+            onPress: livres,
           ),
       ],
     );
     // Maquette du directeur du 26/10/2026 (barre precisee par le pilote) :
     // UNE barre sombre sur toute la largeur, deux groupes de tuiles, un filet
-    // entre eux.
+    // entre eux. Decision du directeur du 26/10/2026 : une tuile se place du
+    // cote du panneau qu'elle ouvre (Eleves au debut, Bibliotheque a la fin).
     final AppPalette palette = AppPalette.of(context);
     return DecoratedBox(
       key: SalleOrdinateur.cleBas,

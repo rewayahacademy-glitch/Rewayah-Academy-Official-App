@@ -518,6 +518,7 @@
         "reduireSemantique": "Réduire les commandes",
         "ongletSupport": "Support",
         "ongletOutils": "Outils",
+        "ongletSeance": "Séance",
         "bibliotheque": "Bibliothèque",
         "affichageSupport": "Support",
         "affichageAvecNotes": "Avec notes",
@@ -573,6 +574,7 @@
       },
       "rangement": {
         "ranger": "Ranger dans la bibliothèque",
+        "rangerSupport": "Ranger le support",
         "menuSupport": "Actions du support affiché",
         "menuTableau": "Actions du tableau libre",
         "range": "Support rangé",
@@ -603,7 +605,8 @@
         "controleActifDetail": "Une visite de contrôle a lieu en ce moment.",
         "reduire": "Réduire",
         "reduireParticipants": "Réduire les participants",
-        "reduireInformations": "Réduire les informations"
+        "reduireInformations": "Réduire les informations",
+        "enseignante": "Enseignante"
       },
       "demo": {
         "titre": "Salle de démonstration",
