@@ -7,7 +7,7 @@
 // l'application, ou l'information vit derriere la connexion.
 
 import { APP } from './gabarit.ts'
-import { avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, PAROLE_FR } from './outils.ts'
+import { avisDans, bonjour, dateLongue, type Donnees, type Fabrique, type LangueEcrite, libre, PAROLE_FR } from './outils.ts'
 
 export const RAISON: Record<string, string> = {
   compte: 'Vous recevez cet e-mail parce qu’il concerne votre compte Rewayah Academy.',
@@ -20,6 +20,18 @@ export const RAISON: Record<string, string> = {
 }
 
 const avis = avisDans(PAROLE_FR)
+
+/// L'heure locale d'une seance telle que le serveur la pose dans les
+/// notifications des classes (`debut_local`, « AAAA-MM-JJTHH:MM:SS », deja
+/// dans le fuseau de la personne, migration 20261027120000) : « 6 novembre
+/// 2026 a 18:00 » ; `null` quand elle manque. Le jour vient de `dateLongue`,
+/// l'heure est lue telle quelle (elle est deja locale, aucun fuseau a appliquer).
+export function quandSeance(d: Donnees, locale = 'fr-FR', a = 'à'): string | null {
+  const v = d.debut_local
+  if (typeof v !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(v)) return null
+  const jour = dateLongue(v.slice(0, 10), locale)
+  return jour ? `${jour} ${a} ${v.slice(11, 16)}` : null
+}
 
 export const MODELES: Record<string, Fabrique> = {
   demande_recue: (d) => avis(d, 'Votre demande est bien reçue', 'Votre demande est bien reçue',
@@ -40,6 +52,48 @@ export const MODELES: Record<string, Fabrique> = {
   classe_changee: (d) => avis(d, 'Changement de classe, même horaire', 'Changement de classe',
     'Un élève de votre foyer a rejoint une autre classe, au même horaire.',
     'Voir le détail', '/tuteur/demandes'),
+  // Fiche « Fraicheur et notifications » (27/10/2026), ligne 15 : les neuf
+  // evenements des classes et des seances (migration 20261027120000). Le
+  // lien reel vient de `destination` (accueil de l'eleve, classe ou planning
+  // du tuteur, classes ou journee de l'enseignant) ; le repli suit le
+  // destinataire que l'evenement vise d'abord.
+  classe_creee: (d) => avis(d, 'Votre classe est créée', 'Votre classe est créée',
+    'Une classe vient d’être créée. Son horaire et son enseignant sont dans l’application.',
+    'Voir l’horaire', '/tuteur'),
+  enseignant_change: (d) => avis(d, 'L’enseignant de la classe change', 'L’enseignant de la classe change',
+    'Un autre enseignant prend la classe, au même horaire. Son nom est dans l’application.',
+    'Voir la classe', '/tuteur'),
+  eleve_inscrit: (d) => avis(d, 'Un élève rejoint votre classe', 'Un élève rejoint votre classe',
+    'Un élève rejoint votre classe. Sa fiche est dans l’application.',
+    'Voir mes classes', '/enseignant/classes'),
+  eleve_retire: (d) => avis(d, 'Un élève quitte votre classe', 'Un élève quitte votre classe',
+    'Un élève quitte votre classe. La liste à jour est dans l’application.',
+    'Voir mes classes', '/enseignant/classes'),
+  creneau_change: (d) => avis(d, 'L’horaire de la classe change', 'L’horaire de la classe change',
+    'L’horaire de la classe change. Le nouvel horaire est dans l’application.',
+    'Voir le nouvel horaire', '/tuteur'),
+  seance_annulee: (d) => {
+    const quand = quandSeance(d)
+    return avis(d, 'Une séance est annulée', 'Une séance est annulée',
+      quand ? `La séance du ${quand} est annulée.` : 'Une séance de la classe est annulée.',
+      'Voir le planning', '/tuteur')
+  },
+  seance_deplacee: (d) => {
+    const quand = quandSeance(d)
+    return avis(d, 'Une séance est déplacée', 'Une séance est déplacée',
+      quand ? `Une séance est déplacée au ${quand}.` : 'Une séance de la classe est déplacée. Le nouvel horaire est dans l’application.',
+      'Voir le nouvel horaire', '/tuteur')
+  },
+  enseignante_absente: (d) => {
+    const quand = quandSeance(d)
+    return avis(d, 'L’enseignant est absent pour une séance', 'L’enseignant est absent pour une séance',
+      (quand ? `L’enseignant est absent pour la séance du ${quand}.` : 'L’enseignant est absent pour une séance de la classe.')
+        + ' La direction vous tient informé.',
+      'Voir le planning', '/tuteur')
+  },
+  classe_supprimee: (d) => avis(d, 'La classe est fermée', 'La classe est fermée',
+    'La classe est fermée. La direction vous contacte pour la suite.',
+    'Ouvrir l’application', '/tuteur'),
   remplacement_propose: (d) => avis(d, 'Un remplacement vous est proposé', 'Un remplacement vous est proposé',
     'Un remplacement de cours vous est proposé. Répondez dans l’application pour que la classe soit assurée.',
     'Voir le remplacement', '/enseignant/journee/remplacements'),

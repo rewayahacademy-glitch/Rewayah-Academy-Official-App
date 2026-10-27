@@ -4,6 +4,7 @@
 
 import { APP } from './gabarit.ts'
 import { avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole } from './outils.ts'
+import { quandSeance } from './modeles_fr.ts'
 
 const PAROLE: Parole = {
   salut: 'Olá',
@@ -44,6 +45,44 @@ const MODELES: Record<string, Fabrique> = {
   classe_changee: (d) => avis(d, 'Mudança de turma, mesmo horário', 'Mudança de turma',
     'Um aluno do seu agregado familiar passou para outra turma, no mesmo horário.',
     'Ver o detalhe', '/tuteur/demandes'),
+  // Ficha de 27/10/2026, linha 15: os nove eventos de turmas e sessões.
+  classe_creee: (d) => avis(d, 'A sua turma está criada', 'A sua turma está criada',
+    'Acaba de ser criada uma turma. O horário e o professor estão na aplicação.',
+    'Ver o horário', '/tuteur'),
+  enseignant_change: (d) => avis(d, 'O professor da turma muda', 'O professor da turma muda',
+    'Outro professor assume a turma, no mesmo horário. O nome está na aplicação.',
+    'Ver a turma', '/tuteur'),
+  eleve_inscrit: (d) => avis(d, 'Um aluno junta-se à sua turma', 'Um aluno junta-se à sua turma',
+    'Um aluno junta-se à sua turma. A ficha está na aplicação.',
+    'Ver as minhas turmas', '/enseignant/classes'),
+  eleve_retire: (d) => avis(d, 'Um aluno deixa a sua turma', 'Um aluno deixa a sua turma',
+    'Um aluno deixa a sua turma. A lista atualizada está na aplicação.',
+    'Ver as minhas turmas', '/enseignant/classes'),
+  creneau_change: (d) => avis(d, 'O horário da turma muda', 'O horário da turma muda',
+    'O horário da turma muda. O novo horário está na aplicação.',
+    'Ver o novo horário', '/tuteur'),
+  seance_annulee: (d) => {
+    const quand = quandSeance(d, 'pt-PT', 'às')
+    return avis(d, 'Uma sessão está anulada', 'Uma sessão está anulada',
+      quand ? `A sessão de ${quand} está anulada.` : 'Uma sessão da turma está anulada.',
+      'Ver o planeamento', '/tuteur')
+  },
+  seance_deplacee: (d) => {
+    const quand = quandSeance(d, 'pt-PT', 'às')
+    return avis(d, 'Uma sessão foi adiada', 'Uma sessão foi adiada',
+      quand ? `Uma sessão passa para ${quand}.` : 'Uma sessão da turma passa para outro horário. O novo horário está na aplicação.',
+      'Ver o novo horário', '/tuteur')
+  },
+  enseignante_absente: (d) => {
+    const quand = quandSeance(d, 'pt-PT', 'às')
+    return avis(d, 'O professor está ausente numa sessão', 'O professor está ausente numa sessão',
+      (quand ? `O professor está ausente na sessão de ${quand}.` : 'O professor está ausente numa sessão da turma.')
+        + ' A direção mantém-no informado.',
+      'Ver o planeamento', '/tuteur')
+  },
+  classe_supprimee: (d) => avis(d, 'A turma está encerrada', 'A turma está encerrada',
+    'A turma está encerrada. A direção entra em contacto consigo sobre o que se segue.',
+    'Abrir a aplicação', '/tuteur'),
   remplacement_propose: (d) => avis(d, 'É-lhe proposta uma substituição', 'É-lhe proposta uma substituição',
     'É-lhe proposta a substituição de uma aula. Responda na aplicação para que a turma fique assegurada.',
     'Ver a substituição', '/enseignant/journee/remplacements'),

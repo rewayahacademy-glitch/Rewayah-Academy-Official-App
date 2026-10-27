@@ -30,9 +30,11 @@
 --      modele exact de 20261027100000 : le point de la cloche apparait et
 --      disparait sur l'autre appareil sans geste (lignes 12 et 14).
 --
--- Le courriel part deja pour chaque ligne inseree (declencheur
--- courriel_notification du 23/10, cle d'idempotence « notification:<id> ») :
--- rien n'est duplique ici (ligne 15).
+-- Le courriel : le declencheur courriel_notification du 23/10 enfile chaque
+-- ligne inseree (cle d'idempotence « notification:<id> », modele = evenement) ;
+-- les neuf modeles de courriel de ces evenements sont ajoutes dans ce meme lot,
+-- dans supabase/functions/_shared/courriel (fr, en, ar, es, pt). Rien n'est
+-- duplique ici (ligne 15).
 --
 -- Mots de ce fichier a connaitre avant le collage : DROP CONSTRAINT, deux
 -- fois. Une contrainte CHECK ne se modifie pas : elle se remplace, comme dans

@@ -3,6 +3,7 @@
 
 import { APP } from './gabarit.ts'
 import { avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole } from './outils.ts'
+import { quandSeance } from './modeles_fr.ts'
 
 const PAROLE: Parole = {
   salut: 'Hello',
@@ -43,6 +44,44 @@ const MODELES: Record<string, Fabrique> = {
   classe_changee: (d) => avis(d, 'Class change, same schedule', 'Class change',
     'A student in your household has joined another class, at the same time.',
     'View the details', '/tuteur/demandes'),
+  // Fiche of 27/10/2026, line 15: the nine class and session events.
+  classe_creee: (d) => avis(d, 'Your class is created', 'Your class is created',
+    'A class has just been created. Its schedule and its teacher are in the app.',
+    'View the schedule', '/tuteur'),
+  enseignant_change: (d) => avis(d, 'The class teacher is changing', 'The class teacher is changing',
+    'Another teacher is taking the class, at the same time. The name is in the app.',
+    'View the class', '/tuteur'),
+  eleve_inscrit: (d) => avis(d, 'A student joins your class', 'A student joins your class',
+    'A student joins your class. The profile is in the app.',
+    'View my classes', '/enseignant/classes'),
+  eleve_retire: (d) => avis(d, 'A student leaves your class', 'A student leaves your class',
+    'A student leaves your class. The updated list is in the app.',
+    'View my classes', '/enseignant/classes'),
+  creneau_change: (d) => avis(d, 'The class schedule is changing', 'The class schedule is changing',
+    'The class schedule is changing. The new schedule is in the app.',
+    'View the new schedule', '/tuteur'),
+  seance_annulee: (d) => {
+    const quand = quandSeance(d, 'en-GB', 'at')
+    return avis(d, 'A session is cancelled', 'A session is cancelled',
+      quand ? `The session of ${quand} is cancelled.` : 'A class session is cancelled.',
+      'View the schedule', '/tuteur')
+  },
+  seance_deplacee: (d) => {
+    const quand = quandSeance(d, 'en-GB', 'at')
+    return avis(d, 'A session is moved', 'A session is moved',
+      quand ? `A session is moved to ${quand}.` : 'A class session is moved. The new time is in the app.',
+      'View the new time', '/tuteur')
+  },
+  enseignante_absente: (d) => {
+    const quand = quandSeance(d, 'en-GB', 'at')
+    return avis(d, 'The teacher is absent for a session', 'The teacher is absent for a session',
+      (quand ? `The teacher is absent for the session of ${quand}.` : 'The teacher is absent for a class session.')
+        + ' The management will keep you informed.',
+      'View the schedule', '/tuteur')
+  },
+  classe_supprimee: (d) => avis(d, 'The class is closed', 'The class is closed',
+    'The class is closed. The management will contact you about what comes next.',
+    'Open the app', '/tuteur'),
   remplacement_propose: (d) => avis(d, 'A replacement is offered to you', 'A replacement is offered to you',
     'A class replacement is offered to you. Reply in the app so that the class is covered.',
     'View the replacement', '/enseignant/journee/remplacements'),
