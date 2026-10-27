@@ -696,6 +696,49 @@ void main() {
             expect(tester.takeException(), isNull);
           });
 
+          testWidgets('$nom : C12, le bandeau de secours reste au repos, '
+              'la capsule sous lui', (WidgetTester tester) async {
+            // Pilote C12 (27/10) : une alerte n'est pas une commande (fiche
+            // 0, regle 22) : elle reste tant que l'etat dure.
+            final FauxMoteurSalle moteur = await _monter(
+              tester,
+              taille: taille,
+              texte: texte,
+            );
+            moteur.publierQualite(QualiteLien.mediocre);
+            await tester.pumpAndSettle();
+            await _attendreLeRepos(tester);
+            final Finder bandeau = find.text(t.salle.secours.reseauFaible);
+            expect(bandeau.hitTestable(), findsOneWidget);
+            final Finder capsule = find.byKey(CapsuleVideoTelephone.cle);
+            expect(capsule.hitTestable(), findsNothing);
+            // Aucune bande reservee : la page garde l'ecran entier.
+            final Rect p = tester.getRect(
+              find.byKey(TelephonePleinEcran.clePage),
+            );
+            expect(p.top, moreOrLessEquals(0, epsilon: 1));
+            expect(p.height, moreOrLessEquals(taille.height, epsilon: 1));
+            // Au toucher, la capsule se place sous le bandeau.
+            await _toucher(tester);
+            expect(bandeau.hitTestable(), findsOneWidget);
+            expect(capsule.hitTestable(), findsOneWidget);
+            expect(
+              tester.getRect(capsule).top,
+              greaterThanOrEqualTo(tester.getRect(bandeau).bottom),
+            );
+            // Le tiroir ouvert ne le recouvre pas.
+            await tester.tap(
+              find.byKey(TelephonePleinEcran.cleCommandesToucher),
+            );
+            await tester.pumpAndSettle();
+            expect(bandeau.hitTestable(), findsOneWidget);
+            verifierSansChevauchement(tester, <Finder>[
+              find.byKey(TiroirCommandesTelephone.cle),
+              bandeau,
+            ]);
+            expect(tester.takeException(), isNull);
+          });
+
           testWidgets('$nom : ligne 5, la capsule deplie le profil', (
             WidgetTester tester,
           ) async {

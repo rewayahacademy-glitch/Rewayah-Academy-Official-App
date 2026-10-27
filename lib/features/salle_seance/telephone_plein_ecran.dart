@@ -431,7 +431,24 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                     AppSpacing.sm
               : 0;
           // Fiche 1, ligne 2 : la capsule (ou le profil deplie) en haut au
-          // centre, avec le bandeau de secours et l'alerte.
+          // centre. Pilote C12 : le bandeau de secours et l'alerte sont des
+          // alertes, pas des commandes (fiche 0, regle 22) : au-dessus, au
+          // repos comme au toucher, poses sur la page sans la retrecir ; la
+          // capsule se place sous eux et suit le toucher (C10), sauf sur la
+          // scene video en grand.
+          final Widget laCapsule = _profil
+              ? KeyedSubtree(
+                  key: _cleProfil,
+                  child: ProfilTelephone(vue: vue, onReduire: _replier),
+                )
+              : Center(
+                  child: CapsuleVideoTelephone(
+                    vue: vue,
+                    onDeplier: _deplierProfil,
+                    onRevenirPage: revenirPage,
+                    oeil: !sceneDevant || revenirPage != null,
+                  ),
+                );
           final Widget capsuleEnHaut = PositionedDirectional(
             top: 0,
             start: 0,
@@ -444,22 +461,12 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    if (_profil)
-                      KeyedSubtree(
-                        key: _cleProfil,
-                        child: ProfilTelephone(vue: vue, onReduire: _replier),
-                      )
-                    else
-                      Center(
-                        child: CapsuleVideoTelephone(
-                          vue: vue,
-                          onDeplier: _deplierProfil,
-                          onRevenirPage: revenirPage,
-                          oeil: !sceneDevant || revenirPage != null,
-                        ),
-                      ),
                     BandeauSecours(vue: vue, actions: actions, gouttiere: 0),
                     ?media?.alerte,
+                    if (sceneDevant)
+                      laCapsule
+                    else
+                      MasqueAvecCommandes(child: laCapsule),
                   ],
                 ),
               ),
@@ -500,8 +507,9 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                     child: Center(child: page),
                   ),
                 // Pilote C10 (27/10) : sur la scene video en grand, rien a
-                // proteger, la capsule reste au repos.
-                if (capsule && sceneDevant) capsuleEnHaut,
+                // proteger, la capsule reste au repos ; sur la page, elle se
+                // masque avec les commandes (C12 : sous les alertes).
+                if (capsule) capsuleEnHaut,
                 if (panneau && telephone && !enseignant)
                   PositionedDirectional(
                     start: AppSpacing.sm,
@@ -561,10 +569,9 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                     size: ecran,
                     child: Stack(
                       children: <Widget>[
-                        // Pilote C10 (27/10) : sur la page, la capsule suit le
-                        // toucher, comme la pilule et le zoom ; chez
-                        // l'enseignant au telephone, rien d'autre en haut.
-                        if (capsule && !sceneDevant) capsuleEnHaut,
+                        // Chez l'enseignant au telephone, rien en haut hors
+                        // de la capsule et des alertes (posees dans le
+                        // contenu).
                         if (!capsule)
                           PositionedDirectional(
                             top: 0,
