@@ -9,6 +9,7 @@ import '../../core/admin/service_groupes.dart' show TypePublicGroupe;
 import '../../core/communications/modeles_communication.dart';
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/service_enseignant.dart';
+import '../../core/fraicheur/classe_disparue.dart';
 import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -215,6 +216,23 @@ class _CorpsState extends ConsumerState<_Corps> {
     final String groupeId = widget.groupeId;
     final void Function(String sessionId)? onPreparer = widget.onPreparer;
     final void Function(String studentId)? onOuvrirEleve = widget.onOuvrirEleve;
+    // Ligne 7 (27/10/2026) : la classe etait dans mes classes, la relecture
+    // (veille de fraicheur) ne l'y trouve plus : « Cette classe n'existe
+    // plus. », retour a la Journee.
+    bool contient(List<GroupeEnseignant> lus) =>
+        lus.any((GroupeEnseignant g) => g.id == groupeId);
+    ref.listen<AsyncValue<List<GroupeEnseignant>>>(groupesEnseignantProvider, (
+      AsyncValue<List<GroupeEnseignant>>? avant,
+      AsyncValue<List<GroupeEnseignant>> apres,
+    ) {
+      if (classeDisparue<List<GroupeEnseignant>>(
+        avant,
+        apres,
+        presente: contient,
+      )) {
+        revenirApresClasseDisparue(context, ref);
+      }
+    });
     final AsyncValue<List<GroupeEnseignant>> groupes = ref.watch(
       groupesEnseignantProvider,
     );

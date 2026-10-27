@@ -2579,6 +2579,9 @@ class Traductions$classe$fr {
 	/// fr: 'Elle a peut-être pris fin, ou elle concerne un autre élève du foyer.'
 	String get introuvablePhrase => 'Elle a peut-être pris fin, ou elle concerne un autre élève du foyer.';
 
+	/// fr: 'Cette classe n'existe plus.'
+	String get disparue => 'Cette classe n\'existe plus.';
+
 	late final Traductions$classe$seance$fr seance = Traductions$classe$seance$fr.internal(_root);
 	late final Traductions$classe$observation$fr observation = Traductions$classe$observation$fr.internal(_root);
 	late final Traductions$classe$pagePlanning$fr pagePlanning = Traductions$classe$pagePlanning$fr.internal(_root);
@@ -46064,6 +46067,7 @@ extension on Traductions {
 			'classe.indisponiblePhrase' => 'Le détail de la classe n\'est pas encore disponible ici.',
 			'classe.introuvableTitre' => 'Cette classe n\'est pas ouverte à ce profil',
 			'classe.introuvablePhrase' => 'Elle a peut-être pris fin, ou elle concerne un autre élève du foyer.',
+			'classe.disparue' => 'Cette classe n\'existe plus.',
 			'classe.seance.aucune' => 'Aucune séance planifiée',
 			'classe.seance.aucuneDetail' => ({required Object dePrenom}) => 'La prochaine séance ${dePrenom} apparaîtra ici dès qu\'elle sera programmée.',
 			'classe.seance.illisible' => 'La prochaine séance n\'a pas pu être lue.',
@@ -46194,9 +46198,9 @@ extension on Traductions {
 			'classe.cartes.feuille.modele' => 'Modèle de la carte',
 			'classe.cartes.feuille.champTitre' => 'Titre de la carte',
 			'classe.cartes.feuille.champTexte' => 'Texte de la carte (facultatif)',
-			'classe.cartes.feuille.champLien' => 'Lien de la carte (facultatif)',
 			_ => null,
 		} ?? switch (path) {
+			'classe.cartes.feuille.champLien' => 'Lien de la carte (facultatif)',
 			'classe.cartes.feuille.aideLongueur' => ({required Object max}) => '${max} caractères au plus',
 			'classe.cartes.feuille.aideLien' => 'Une adresse complète, qui commence par https://',
 			'classe.cartes.feuille.echeanceAucune' => 'Aucune échéance',
@@ -46708,9 +46712,9 @@ extension on Traductions {
 			'enseignant.ficheGroupe.dernierPoint' => ({required Object texte}) => 'Dernier point : ${texte}',
 			'enseignant.ficheGroupe.chargementClasse' => 'Chargement de la Classe.',
 			'enseignant.ficheGroupe.ressourcesTitre' => 'Ressources récentes',
-			'enseignant.ficheGroupe.progressionTitre' => 'Progression de la Classe',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.ficheGroupe.progressionTitre' => 'Progression de la Classe',
 			'enseignant.ficheGroupe.pause.titre' => 'Pause de la séance',
 			'enseignant.ficheGroupe.pause.detail' => 'Une pause programmée à l\'avance sur cette Classe, par exemple pour la prière. Elle vaut pour chaque séance, jusqu\'à ce que vous la changiez.',
 			'enseignant.ficheGroupe.pause.actif' => 'Programmer une pause',
@@ -47222,9 +47226,9 @@ extension on Traductions {
 			'tc.outils.marquer.titre' => 'Marquer ce passage',
 			'tc.outils.marquer.aide' => 'Choisissez ce que ce passage demande.',
 			'tc.outils.marquer.retirer' => 'Retirer le marqueur',
-			'tc.outils.revision.titre' => 'À préparer',
 			_ => null,
 		} ?? switch (path) {
+			'tc.outils.revision.titre' => 'À préparer',
 			'tc.outils.revision.aide' => 'Le passage sélectionné devient un travail à préparer.',
 			'tc.outils.revision.groupeEntier' => 'Toute la classe',
 			'tc.outils.revision.consigne' => 'Consigne courte (facultatif)',
@@ -47736,9 +47740,9 @@ extension on Traductions {
 			'adulte.acceptation.dureeTitre' => 'Combien de temps',
 			'adulte.acceptation.duree' => ({required Object quePrenom}) => 'Le rattachement dure jusqu\'à ce que vous quittiez le forfait famille, ou ${quePrenom} y mette fin.',
 			'adulte.acceptation.conservation' => ({required Object duree}) => 'Nous gardons la trace du rattachement ${duree}.',
-			'adulte.acceptation.partirTitre' => 'Comment partir',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.acceptation.partirTitre' => 'Comment partir',
 			'adulte.acceptation.partir' => 'Dans Mon espace, Forfait famille, Quitter le forfait famille. Vous n\'avez pas besoin de son accord. Votre compte, vos cours, votre historique et votre solde restent disponibles.',
 			'adulte.acceptation.refusTitre' => 'Si vous refusez',
 			'adulte.acceptation.refus' => 'Rien ne change pour votre compte, vos cours ni votre solde.',
@@ -48250,9 +48254,9 @@ extension on Traductions {
 			'com.socle.composants.etats.horsLigne' => 'Vous êtes hors ligne. Les nouveaux messages ne peuvent pas être actualisés.',
 			'com.socle.composants.etats.horsLigneBloc' => 'Réessayez quand la connexion revient.',
 			'com.socle.composants.etats.indisponibleTitre' => 'Pas encore disponible',
-			'com.socle.composants.etats.indisponible' => 'Cette fonction n\'est pas encore disponible ici. Elle s\'ouvrira dès que le service sera prêt.',
 			_ => null,
 		} ?? switch (path) {
+			'com.socle.composants.etats.indisponible' => 'Cette fonction n\'est pas encore disponible ici. Elle s\'ouvrira dès que le service sera prêt.',
 			'com.socle.composants.etats.permissionRefusee' => 'Vous n\'avez pas accès à ce contenu.',
 			'com.socle.composants.espace.ouvrirPanneau' => 'Ouvrir le panneau de contexte',
 			'com.socle.composants.espace.fermerPanneau' => 'Fermer le panneau de contexte',
@@ -48764,9 +48768,9 @@ extension on Traductions {
 			'com.studio.enregistres.types.element' => 'Élément du Studio',
 			'com.studio.recherche.champ' => 'Rechercher dans Le Studio',
 			'com.studio.recherche.aide' => 'Canal, message ou fichier',
-			'com.studio.recherche.aucunTitre' => 'Aucun résultat',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.recherche.aucunTitre' => 'Aucun résultat',
 			'com.studio.recherche.aucun' => ({required Object texte}) => 'Rien ne correspond à « ${texte} » dans vos canaux. Essayez un autre mot.',
 			'com.studio.recherche.aucunDansFiltre' => 'Rien de ce type ne correspond. Choisissez Tout pour voir les autres résultats.',
 			'com.studio.recherche.resultatUn' => '1 résultat',
@@ -49278,9 +49282,9 @@ extension on Traductions {
 			'comptable.paiements.confirmation.prestataire' => 'Prestataire prévu',
 			'comptable.paiements.confirmation.prestataireAucun' => 'Non rendu par la source',
 			'comptable.paiements.confirmation.taux' => 'Taux de change',
-			'comptable.paiements.confirmation.tauxDate' => ({required Object taux, required Object date}) => '${taux}, au ${date}',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.paiements.confirmation.tauxDate' => ({required Object taux, required Object date}) => '${taux}, au ${date}',
 			'comptable.paiements.confirmation.frais' => 'Frais du prestataire',
 			'comptable.paiements.confirmation.change' => 'Coût du change',
 			'comptable.paiements.confirmation.montantEnvoye' => 'Total envoyé',
@@ -49792,9 +49796,9 @@ extension on Traductions {
 			'comptable.validation.detail.titre' => 'Demande de validation',
 			'comptable.validation.detail.nature' => 'Nature',
 			'comptable.validation.detail.objet' => 'Objet',
-			'comptable.validation.detail.demandeur' => 'Demandée par',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.validation.detail.demandeur' => 'Demandée par',
 			'comptable.validation.detail.date' => 'Date de la demande',
 			'comptable.validation.detail.raison' => 'Raison',
 			'comptable.validation.detail.montant' => 'Montant exact',
@@ -50306,9 +50310,9 @@ extension on Traductions {
 			'juridique.enfants.resume' => 'Comment nous protégeons les élèves mineurs.',
 			'juridique.enfants.intro' => 'Les élèves mineurs suivent leurs cours sous la responsabilité d\'un adulte. Voici les règles que nous appliquons et comment nous faire part d\'une inquiétude.',
 			'juridique.enfants.s1.titre' => '1. Un adulte responsable',
-			'juridique.enfants.s1.blocs.0' => 'Un enfant n\'accède pas aux cours sans tuteur adulte autorisé. L\'inscription, les accords et les paiements relèvent du tuteur.',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.enfants.s1.blocs.0' => 'Un enfant n\'accède pas aux cours sans tuteur adulte autorisé. L\'inscription, les accords et les paiements relèvent du tuteur.',
 			'juridique.enfants.s1.blocs.1' => 'La formule enfant va de 6 à 17 ans. Aucun mineur n\'est placé dans une Classe d\'adultes.',
 			'juridique.enfants.s1.blocs.2' => 'De 6 à 9 ans, l\'Interface guidée est activée par défaut : des écrans plus simples, avec de grandes touches.',
 			'juridique.enfants.s2.titre' => '2. Pendant les séances',

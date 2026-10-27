@@ -6867,6 +6867,7 @@
     "indisponiblePhrase": "Le détail de la classe n'est pas encore disponible ici.",
     "introuvableTitre": "Cette classe n'est pas ouverte à ce profil",
     "introuvablePhrase": "Elle a peut-être pris fin, ou elle concerne un autre élève du foyer.",
+    "disparue": "Cette classe n'existe plus.",
     "seance": {
       "aucune": "Aucune séance planifiée",
       "aucuneDetail": "La prochaine séance {dePrenom} apparaîtra ici dès qu'elle sera programmée.",

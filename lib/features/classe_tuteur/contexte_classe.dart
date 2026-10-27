@@ -10,6 +10,7 @@ import '../../core/appairage/service_appairage.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_classes_foyer.dart';
 import '../../core/foyer/selection_eleve.dart';
+import '../../core/fraicheur/classe_disparue.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
@@ -134,6 +135,21 @@ class CadreClasse extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Ligne 7 (27/10/2026) : la classe etait la, la relecture (veille de
+    // fraicheur) ne la trouve plus : « Cette classe n'existe plus. », retour
+    // a l'accueil du role.
+    ref.listen<AsyncValue<ContexteClasse?>>(contexteClasseProvider(cle), (
+      AsyncValue<ContexteClasse?>? avant,
+      AsyncValue<ContexteClasse?> apres,
+    ) {
+      if (classeDisparue<ContexteClasse?>(
+        avant,
+        apres,
+        presente: (ContexteClasse? c) => c != null,
+      )) {
+        revenirApresClasseDisparue(context, ref);
+      }
+    });
     final AsyncValue<ContexteClasse?> lecture = ref.watch(
       contexteClasseProvider(cle),
     );

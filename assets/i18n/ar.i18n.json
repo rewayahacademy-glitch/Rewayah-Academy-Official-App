@@ -601,6 +601,7 @@
     "indisponiblePhrase": "تفاصيل الفصل غير متاحة هنا بعد.",
     "introuvableTitre": "هذا الفصل غير مفتوح لهذا الملف",
     "introuvablePhrase": "ربما انتهى، أو يخص طالبًا آخر في الأسرة.",
+    "disparue": "هذا الفصل لم يعد موجودًا.",
     "seance": {
       "aucune": "لا حصة مقررة",
       "aucuneDetail": "ستظهر هنا الحصة القادمة لـ⁨{dePrenom}⁩ بمجرد جدولتها.",

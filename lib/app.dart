@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 
 import 'core/accessibilite/mode_accessibilite.dart';
 import 'core/domain/enums.dart';
+import 'core/fraicheur/avis_ephemere.dart';
+import 'core/fraicheur/veille_fraicheur.dart';
 import 'core/i18n/strings.g.dart';
 import 'core/preferences/preferences_locales.dart';
 import 'core/router/app_router.dart';
@@ -55,6 +57,9 @@ class RewayahApp extends ConsumerWidget {
     ref.watch(persistanceNavigationProvider);
     // Meme regle pour les raccourcis clavier de la salle (EN-KB).
     ref.watch(persistanceRaccourcisProvider);
+    // Fraicheur (27/10/2026) : une seule veille des classes et des seances,
+    // ouverte avec la session, fermee avec elle.
+    ref.watch(veilleFraicheurProvider);
     final ThemeMode mode = themeMode ?? ref.watch(modeThemeProvider);
     // MA-2 (question 2 de MA-1b) : la presentation vient du fournisseur
     // unique du Mode Accessibilite, et le theme reste celui d'`AppTheme.pour`
@@ -96,6 +101,9 @@ class RewayahApp extends ConsumerWidget {
             child: Column(
               children: <Widget>[
                 const BandeauNouvelleVersion(),
+                // Un avis court (« Cette classe n'existe plus. »), meme place,
+                // meme registre, retire de lui-meme.
+                const BandeauAvisEphemere(),
                 if (observation != null)
                   BandeauObservation(observation: observation),
                 Expanded(child: rendu ?? const SizedBox.shrink()),
