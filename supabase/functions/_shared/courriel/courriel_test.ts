@@ -7,11 +7,14 @@ import { FRANCAIS, LANGUES } from './modeles.ts'
 import { TRADUITS_A_L_ENVOI } from './modeles_fr.ts'
 
 // Les evenements de la contrainte notifications_evenement_check (etat au
-// 23/10/2026) et les deux modeles propres a la file.
+// 27/10/2026 : les treize du 23/10 et les neuf de la fiche « Fraicheur et
+// notifications », migration 20261027120000) et les modeles propres a la file.
 const EVENEMENTS = ['demande_recue', 'classe_validee', 'enseignant_affecte', 'demande_close',
   'remplacement_propose', 'remplacement_pris', 'demande_presentation', 'controle_mission_attribuee',
   'controle_mission_non_controlee', 'classe_changee', 'paiement_relance', 'acces_suspendu_paiement',
-  'acces_retabli_paiement']
+  'acces_retabli_paiement',
+  'classe_creee', 'enseignant_change', 'eleve_inscrit', 'eleve_retire', 'creneau_change',
+  'seance_annulee', 'seance_deplacee', 'enseignante_absente', 'classe_supprimee']
 
 Deno.test('chaque evenement de notification a son modele', () => {
   for (const e of [...EVENEMENTS, 'invitation_foyer', 'lien_inscription', 'attente_candidat', 'message_libre', 'nouvelles']) {

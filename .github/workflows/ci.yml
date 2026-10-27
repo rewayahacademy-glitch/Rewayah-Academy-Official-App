@@ -206,6 +206,14 @@ jobs:
       - name: Scenarios négatifs B-18 (SECURITY DEFINER)
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b18_security_definer.sql
+        
+      - name: Scenarios fraicheur temps reel (lot 1)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_fraicheur_realtime.sql
+
+      - name: Scenarios notifications de classes et de seances (lot 2)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_notifications_classes.sql
 
   edge-r2:
     name: Fonctions Edge -- stockage R2 (Deno)

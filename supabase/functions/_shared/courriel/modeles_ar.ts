@@ -6,6 +6,7 @@
 
 import { APP } from './gabarit.ts'
 import { avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole } from './outils.ts'
+import { quandSeance } from './modeles_fr.ts'
 
 const PAROLE: Parole = {
   salut: 'مرحبًا',
@@ -46,6 +47,44 @@ const MODELES: Record<string, Fabrique> = {
   classe_changee: (d) => avis(d, 'تغيير الفصل، في الموعد نفسه', 'تغيير الفصل',
     'انتقل أحد طلاب أسرتك إلى فصل آخر في الموعد نفسه.',
     'عرض التفاصيل', '/tuteur/demandes'),
+  // بطاقة 27/10/2026، السطر 15: الأحداث التسعة للفصول والحصص.
+  classe_creee: (d) => avis(d, 'تم إنشاء فصلك', 'تم إنشاء فصلك',
+    'تم إنشاء فصل للتو. موعده ومعلمه في التطبيق.',
+    'عرض الموعد', '/tuteur'),
+  enseignant_change: (d) => avis(d, 'يتغيّر معلم الفصل', 'يتغيّر معلم الفصل',
+    'يتولى معلم آخر الفصل في الموعد نفسه. اسمه في التطبيق.',
+    'عرض الفصل', '/tuteur'),
+  eleve_inscrit: (d) => avis(d, 'ينضم طالب إلى فصلك', 'ينضم طالب إلى فصلك',
+    'ينضم طالب إلى فصلك. ملفه في التطبيق.',
+    'عرض فصولي', '/enseignant/classes'),
+  eleve_retire: (d) => avis(d, 'يغادر طالب فصلك', 'يغادر طالب فصلك',
+    'يغادر طالب فصلك. القائمة المحدّثة في التطبيق.',
+    'عرض فصولي', '/enseignant/classes'),
+  creneau_change: (d) => avis(d, 'يتغيّر موعد الفصل', 'يتغيّر موعد الفصل',
+    'يتغيّر موعد الفصل. الموعد الجديد في التطبيق.',
+    'عرض الموعد الجديد', '/tuteur'),
+  seance_annulee: (d) => {
+    const quand = quandSeance(d, 'ar', 'الساعة')
+    return avis(d, 'أُلغيت حصة', 'أُلغيت حصة',
+      quand ? `أُلغيت حصة ${quand}.` : 'أُلغيت إحدى حصص الفصل.',
+      'عرض الجدول', '/tuteur')
+  },
+  seance_deplacee: (d) => {
+    const quand = quandSeance(d, 'ar', 'الساعة')
+    return avis(d, 'تم نقل حصة', 'تم نقل حصة',
+      quand ? `تم نقل حصة إلى ${quand}.` : 'تم نقل إحدى حصص الفصل. الموعد الجديد في التطبيق.',
+      'عرض الموعد الجديد', '/tuteur')
+  },
+  enseignante_absente: (d) => {
+    const quand = quandSeance(d, 'ar', 'الساعة')
+    return avis(d, 'المعلم غائب عن حصة', 'المعلم غائب عن حصة',
+      (quand ? `المعلم غائب عن حصة ${quand}.` : 'المعلم غائب عن إحدى حصص الفصل.')
+        + ' الإدارة تُبقيكم على اطلاع.',
+      'عرض الجدول', '/tuteur')
+  },
+  classe_supprimee: (d) => avis(d, 'أُغلق الفصل', 'أُغلق الفصل',
+    'أُغلق الفصل. تتواصل الإدارة معكم بشأن ما يلي.',
+    'فتح التطبيق', '/tuteur'),
   remplacement_propose: (d) => avis(d, 'عُرض عليك تعويض', 'عُرض عليك تعويض',
     'عُرض عليك تعويض حصة. أجب في التطبيق حتى يكون الفصل مضمونًا.',
     'عرض التعويض', '/enseignant/journee/remplacements'),

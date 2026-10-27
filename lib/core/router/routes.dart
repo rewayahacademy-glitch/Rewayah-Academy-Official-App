@@ -1297,7 +1297,9 @@ abstract final class Routes {
 
   /// Ou mene la cloche des notifications de la coquille d'un role : la
   /// `NotificationsPage` existante, sous le prefixe du role. Nul pour un
-  /// role sans cloche (l'eleve, le comptable).
+  /// role sans cloche (l'eleve, le comptable). L'eleve mineur n'a pas de
+  /// cloche (reponse Q5 du directeur du 04/10, maintenue le 27/10 : le foyer
+  /// est prevenu).
   static String? notificationsPour(AppRole role) => switch (role) {
     AppRole.guardian => tuteurNotifications,
     AppRole.teacher => enseignantNotifications,

@@ -23,6 +23,8 @@
 -- elle existe. La RLS, elle, est exigee partout : une table publiee sans RLS
 -- serait lisible par tout abonne.
 
+BEGIN;
+
 DO $realtime$
 DECLARE
   v_table text;
@@ -78,3 +80,5 @@ BEGIN
   END LOOP;
 END;
 $postflight$;
+
+COMMIT;

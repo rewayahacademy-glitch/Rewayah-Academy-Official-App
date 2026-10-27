@@ -160,6 +160,39 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
 
   bool get _detailSeul => _selection != null && !_deuxPanneaux;
 
+  @override
+  void initState() {
+    super.initState();
+    // Ligne 14 de la fiche du 27/10 : ouvrir la page marque lues toutes les
+    // notifications de la personne ; la liste est relue ensuite, et le point
+    // disparait sur les autres appareils par la veille Realtime.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) unawaited(_marquerToutesLues());
+    });
+  }
+
+  /// Marque lues toutes les notifications non lues, si le port le sait
+  /// (`PortLectureGroupeeNotifications`), puis relit la liste. Rien n'est
+  /// suppose : sans ce port ou sans source, rien ne change ; un echec garde
+  /// les notifications non lues et le dit.
+  Future<void> _marquerToutesLues() async {
+    final PortNotifications port = ref.read(notificationsPagePortProvider);
+    if (port is! PortLectureGroupeeNotifications) return;
+    final PortLectureGroupeeNotifications groupee =
+        port as PortLectureGroupeeNotifications;
+    try {
+      await groupee.marquerToutesLues();
+    } on CapaciteIndisponible {
+      return;
+    } on Object {
+      if (!mounted) return;
+      setState(() => _retour = t.notifications.lectureNonConfirmee);
+      return;
+    }
+    if (!mounted) return;
+    ref.invalidate(notificationsTuteurProvider);
+  }
+
   void _retourPage() {
     if (_detailSeul) {
       setState(() => _selection = null);
@@ -451,9 +484,21 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
 }
 
 /// Les notifications, dans l'ordre du port (la plus recente d'abord).
+///
+/// Une seule lecture pour la page et pour le point de la cloche de chaque
+/// coquille (`nonLuesProvider`), relue par la veille de fraicheur a chaque
+/// changement de la table `notifications` (fiche du 27/10, lignes 12 et 14).
+/// Aucune relance automatique (Riverpod 3) : la cloche regarde cette liste
+/// sur toutes les pages, et une relance qui insiste depuis chaque ecran n'est
+/// pas voulue ; une capacite absente ne revient pas en insistant. La liste
+/// se relit par la veille (retour du reseau, canal rejoint, table changee),
+/// par « Reessayer » et apres une lecture. Pendant une relance automatique,
+/// « Reessayer » aurait de plus ete inerte (`BlocAsynchrone` le tient pour
+/// « en cours »).
 final FutureProvider<List<NotificationTuteur>> notificationsTuteurProvider =
     FutureProvider<List<NotificationTuteur>>(
       (Ref ref) => ref.watch(notificationsPagePortProvider).liste(),
+      retry: (int _, Object _) => null,
     );
 
 /// L'horloge du centre de notifications : l'instant de reference de la date

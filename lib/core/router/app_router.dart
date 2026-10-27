@@ -152,6 +152,7 @@ import '../../features/journee/journee_page.dart';
 import '../../features/juridique/juridique_pages.dart';
 import '../../features/juridique/textes_juridiques.dart';
 import '../../features/mfa_controleur/mfa_controleur_page.dart';
+import '../../features/notifications/non_lues.dart';
 import '../../features/notifications/notifications_page.dart';
 import '../../features/paiements_recus/recevoir_paiements_page.dart';
 import '../../features/parcours_offres/parcours_offres_page.dart';
@@ -2520,8 +2521,9 @@ class _CoquilleNavigation extends ConsumerWidget {
       // COM-F : la cloche des notifications, posee par la coquille du role
       // quand ce role en a une (`Routes.notificationsPour` : enseignant et
       // controleur ; jamais l'eleve mineur, reponse Q5 du directeur du
-      // 04/10). Sans point tant que le port est indisponible, comme le
-      // tuteur. Elle s'ajoute, en dernier, aux actions deja posees au-dessus
+      // 04/10, maintenue le 27/10). Le point de non-lus vient de
+      // `nonLuesProvider` (fiche du 27/10, ligne 12) ; sans source, pas de
+      // point, comme le tuteur. Elle s'ajoute, en dernier, aux actions deja posees au-dessus
       // (le raccourci Espaces de CT-9), et se montre active sur sa page.
       final Widget avecCloche = cheminCloche == null && !rechercheServie
           ? coquille
@@ -2531,7 +2533,7 @@ class _CoquilleNavigation extends ConsumerWidget {
                   ...ActionsEnteteCoquille.de(contexte),
                   if (rechercheServie) const LoupeRecherche(),
                   if (cheminCloche != null)
-                    ClocheNotifications(
+                    ClocheCoquille(
                       actif: surNotifications,
                       onPress: () => GoRouter.of(contexte).go(cheminCloche),
                     ),
@@ -2553,8 +2555,9 @@ class _CoquilleNavigation extends ConsumerWidget {
     }
     // Le tuteur porte, sur chaque page de sa coquille, la cloche des
     // notifications et, a partir de la tablette, la bascule clair / sombre
-    // (manifeste visuel Tuteur V1 section 4.2). La cloche n'a pas de point
-    // tant qu'aucune source de notifications n'existe (DB-CPT-04).
+    // (manifeste visuel Tuteur V1 section 4.2). Le point de non-lus vient de
+    // `nonLuesProvider` (fiche du 27/10, ligne 12) ; sans source de
+    // notifications (DB-CPT-04), il n'y a pas de point.
     final bool large = AppGabarit.de(context).estLarge;
     return RaccourciRecherche(
       actif: rechercheServie,
@@ -2562,7 +2565,7 @@ class _CoquilleNavigation extends ConsumerWidget {
         actions: <Widget>[
           if (large) const BasculeTheme(),
           if (rechercheServie) const LoupeRecherche(),
-          ClocheNotifications(
+          ClocheCoquille(
             actif: surNotifications,
             onPress: () => GoRouter.of(context).go(Routes.tuteurNotifications),
           ),
