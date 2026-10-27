@@ -1294,14 +1294,38 @@ void main() {
             expect(find.byKey(TiroirCommandesTelephone.cle), findsNothing);
             expect(find.byType(PanneauEleves), findsOneWidget);
             expect(_piluleDuBas(tester, feuille).hitTestable(), findsOneWidget);
-            // La carte d'un eleve se deplie sur place (comme sur ordinateur).
+            // La carte d'un eleve se deplie sur place (comme sur ordinateur) ;
+            // la presence de la seance est en tete de la feuille (pilote,
+            // 27/10).
             expect(find.text('Yasmine'), findsWidgets);
-            await tester.ensureVisible(find.text('Yasmine').first);
+            final Finder cartes = find.byWidgetPredicate(
+              (Widget w) =>
+                  w.key is ValueKey<String> &&
+                  (w.key! as ValueKey<String>).value.startsWith('eleve-'),
+            );
+            // La liste ne construit que ce qui est a l'ecran : elle defile
+            // jusqu'aux cartes.
+            for (int i = 0; i < 20 && cartes.evaluate().isEmpty; i++) {
+              await tester.drag(
+                find.byType(PanneauEleves),
+                const Offset(0, -120),
+              );
+              await tester.pumpAndSettle();
+            }
+            final Finder carte = cartes.first;
+            await tester.ensureVisible(carte);
             await tester.pumpAndSettle();
-            await tester.tap(find.text('Yasmine').first);
+            await tester.tap(
+              find.descendant(of: carte, matching: find.text('Yasmine')).first,
+            );
             await tester.pumpAndSettle();
             expect(tester.takeException(), isNull);
-            expect(verifierAucuneCarteCollee(tester, estCarte: _carte), 2);
+            // Texte x2 : la presence en tete laisse moins de place ; les
+            // cartes visibles restent separees de 16.
+            expect(
+              verifierAucuneCarteCollee(tester, estCarte: _carte),
+              texte == 1 ? 2 : greaterThanOrEqualTo(1),
+            );
             expect(find.byType(PanneauEleves), findsOneWidget);
           });
 

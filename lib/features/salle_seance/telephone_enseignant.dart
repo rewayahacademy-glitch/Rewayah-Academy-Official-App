@@ -538,7 +538,8 @@ class FeuilleElevesTelephone extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String? message = PorteeMediaSalle.de(context)?.messageEleves;
+    final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
+    final String? message = media?.messageEleves;
     return ConstrainedBox(
       constraints: BoxConstraints(maxHeight: hauteur),
       child: PanneauSeance(
@@ -561,6 +562,10 @@ class FeuilleElevesTelephone extends StatelessWidget {
             Flexible(
               fit: ajuste ? FlexFit.loose : FlexFit.tight,
               child: PanneauEleves(
+                // Pilote (27/10, repli autorise) : la presence de la seance
+                // (J3) et le roster (fiche, rappel) en tete de la feuille,
+                // puis les cartes : l'enseignant sait qui manque.
+                entete: media?.eleves,
                 eleves: vue.eleves,
                 actions: actions,
                 recitation: vue.recitation,

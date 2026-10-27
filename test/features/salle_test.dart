@@ -63,7 +63,7 @@ import 'package:rewayah_academy/features/salle_seance/resultat_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_ordinateur.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/telephone_enseignant.dart'
-    show CapsuleVideoTelephone;
+    show CapsuleVideoTelephone, FeuilleElevesTelephone;
 import 'package:rewayah_academy/features/salle_seance/telephone_plein_ecran.dart';
 import 'package:rewayah_academy/features/tc_mushaf/page_madina_15.dart'
     show cleLigneMadina15;
@@ -293,6 +293,19 @@ Future<void> _ouvrirPresence(WidgetTester tester) async {
         : find.byKey(const ValueKey<String>('bouton-eleves')).first,
   );
   await tester.pumpAndSettle();
+}
+
+/// Fiche 1 (pilote, 27/10/2026) : dans la feuille des eleves du telephone,
+/// la presence (J3, qui ouvre la fiche) est en tete, les cartes dessous ; la
+/// ligne de presence de [prenom] est la premiere. Ailleurs, la derniere.
+Finder _ligneDePresence(String prenom) {
+  final Finder dansFeuille = find.descendant(
+    of: find.byKey(FeuilleElevesTelephone.cle),
+    matching: find.text(prenom),
+  );
+  return dansFeuille.evaluate().isNotEmpty
+      ? dansFeuille.first
+      : find.text(prenom).last;
 }
 
 /// Fiche 1 (pilote C9, 27/10/2026) : chez l'enseignant au telephone, la
@@ -2232,9 +2245,11 @@ void main() {
       // seance (colonne ouverte, ou bouton « Eleves »).
       await _ouvrirPresence(tester);
 
-      await tester.tap(find.text('Amina').last);
+      await tester.tap(_ligneDePresence('Amina'));
       await tester.pumpAndSettle();
-      expect(find.text('Decodage consolide'), findsOneWidget);
+      // La fiche ouverte, au-dessus de la feuille des eleves (qui porte
+      // aussi le niveau dans la presence, dessous).
+      expect(find.text('Decodage consolide').hitTestable(), findsOneWidget);
       await tester.ensureVisible(find.text(t.tc.classe.action.rappel));
       await tester.tap(find.text(t.tc.classe.action.rappel));
       await tester.pump();
@@ -2251,7 +2266,7 @@ void main() {
         echec: const EchecRappel(MotifEchecRappel.transport),
       );
       await _ouvrirPresence(tester);
-      await tester.tap(find.text('Amina').last);
+      await tester.tap(_ligneDePresence('Amina'));
       await tester.pumpAndSettle();
       await tester.ensureVisible(find.text(t.tc.classe.action.rappel));
       await tester.tap(find.text(t.tc.classe.action.rappel));

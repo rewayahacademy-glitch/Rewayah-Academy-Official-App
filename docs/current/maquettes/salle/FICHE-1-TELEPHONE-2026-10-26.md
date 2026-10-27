@@ -27,7 +27,7 @@ portrait). Tailles contrôlées : 390×844 et 834×1194 ; texte ×1 et ×2 ; fra
 | 7 | **Le tiroir est une seule surface** du thème (sombre en thème sombre, claire en thème clair) : les tuiles sont posées directement dessus ; aucun bloc d'une autre couleur emboîté dedans. En-tête : « Commandes » à gauche, « Réduire ⌄ » à droite ; dessous le sélecteur à deux segments Support | Outils. Pas d'onglet Séance. | M1 cadre 3 ; juste milieu |
 | 8 | **Onglet Outils** : une rangée de quatre tuiles de même taille, Stylo, Surligner, Gomme, Annuler, l'outil actif seul en couleur ; dessous, seulement quand Stylo ou Surligner est actif, une rangée de couleurs qui défile au doigt. Rétablir et les épaisseurs ne sont pas sur téléphone. | M1 cadre 3 ; juste milieu (couleurs gardées : elles existent sur ordinateur) |
 | 9 | **Onglet Support** : la page du Coran, le Tableau, les supports de la Bibliothèque (liste existante), et une ligne nommée « Ranger le support » qui remplace la croix ⊠ du haut. Le tableau du téléphone garde sa bande 16:9 (Q3). | plan §4 ; passation 26/10 §3 (croix non comprise) |
-| 10 | **Élèves** (bouton de la pilule) ouvre la feuille des élèves ; elle remplace le tiroir s'il était ouvert ; la pilule reste visible ; les cartes se déplient sur place, mêmes cartes que sur ordinateur. | plan §4 |
+| 10 | **Élèves** (bouton de la pilule) ouvre la feuille des élèves ; elle remplace le tiroir s'il était ouvert ; la pilule reste visible ; les cartes se déplient sur place, mêmes cartes que sur ordinateur. Pilote, 27/10 : la présence de la séance (J3) et les actions du roster restent dans la salle. Cible : chaque carte porte la présence de la séance et les actions du roster ; un élève n'apparaît qu'une fois. **En place (repli autorisé)** : la présence et le roster en tête de la feuille, puis les cartes ; un élève y figure donc deux fois. | plan §4 ; pilote 27/10 |
 | 11 | **Un seul panneau du bas à la fois** (tiroir ou feuille des élèves) ; un panneau ouvert ne couvre jamais la pilule ni la capsule ; « Réduire » ou un toucher sur la page le referme. | M1 ; SUPERPOS-1 |
 | 12 | **Aucune commande n'apparaît deux fois à l'écran**, dans aucun état : chaque libellé de commande (Micro, Caméra, Élèves, Quitter, Stylo…) se trouve au plus une fois. | directeur, 26/10 |
 | 13 | **La pilule du zoom** suit la règle du toucher (visible au toucher, masquée au repos), au bord droit à mi-hauteur, jamais sur un panneau ouvert. | existant |
@@ -46,4 +46,4 @@ actif, feuille des élèves. Nom : `fiche1-<taille>-<etat>.png`, dans `captures/
 
 | Ligne | Local (tests) | Aperçu Vercel (directeur) | Production (directeur) |
 | :-- | :-- | :-- | :-- |
-| 1 à 16 | à faire | | |
+| 1 à 16 | vert à 390×844 et 834×1194, texte ×1 et ×2, français et arabe (ligne 7 en clair et sombre, ligne 14 aussi à 320×568 ×2), 27/10 | | |
