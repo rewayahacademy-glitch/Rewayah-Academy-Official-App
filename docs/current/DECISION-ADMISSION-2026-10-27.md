@@ -112,7 +112,7 @@ Un geste sur une demande déjà tranchée par quelqu'un d'autre est refusé par 
 | A | Cette décision ; ligne au journal du `08` | lue et fusionnée |
 | B | Serveur : une famille et un élève adulte naissent en attente avec leur demande ; types `famille`, `eleve_adulte`, `personnel` ; page d'attente avec un vrai contenu ; confirmation d'e-mail allumée | il s'inscrit comme famille test, voit la page d'attente, ne voit rien d'autre, reçoit l'e-mail « demande reçue » |
 | C | Listes séparées de la direction, quatre gestes, e-mails | il accepte la famille test et elle entre ; il refuse une autre et voit la confirmation |
-| D | Entrée enseignant depuis le site : écrans portés depuis les PR 45 et 50, lien sur le site public, clé `candidatures.inscription_publique_ouverte` à `true` | un enseignant test s'inscrit depuis le site et arrive en salle d'examen, sans invitation |
+| D | Entrée enseignant depuis le site : écrans portés depuis les PR 45 et 50, lien sur le site public, clé `candidatures.inscription_publique_ouverte` à `true`. La salle d'examen est la première salle du dossier (`docs/current/CANDIDATURES/`), avant toute admission : elle ne donne accès à rien d'autre, comme la page d'attente (règles 1 et 2.1), et l'enseignant n'entre dans l'application qu'après la décision de la direction, pièces comprises | un enseignant test s'inscrit depuis le site sans invitation, remplit la salle d'examen, ne voit rien d'autre, et n'entre qu'après la décision de la direction |
 | E | Reste des écrans des PR 45 et 50, par morceaux ; règles automatiques, une par PR, sur décision | lot par lot |
 
 Les inscriptions rouvrent après la preuve de B et C. Les Google Forms ferment après la
