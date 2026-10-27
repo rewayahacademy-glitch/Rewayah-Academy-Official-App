@@ -316,25 +316,40 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
           final bool enseignant = salleTelephoneEnseignant(context, vue);
           final bool eleves = enseignant && vue.panneau == PanneauOuvert.eleves;
           final bool libre = vue.supportPresente == null;
+          // Pilote C6 : chez l'enseignant au telephone, une bande du haut est
+          // reservee a la capsule (sa hauteur et ses marges) ; la page du
+          // Coran se compose dans ce qui reste, jamais sous la capsule. Le
+          // tableau garde la fenetre (sa feuille 16:9 y est ajustee).
+          final double bande =
+              enseignant && !scene && !libre && !(media?.pageEnErreur ?? false)
+              ? MediaQuery.paddingOf(context).top +
+                    AppSpacing.lg +
+                    CapsuleVideoTelephone.hauteur(context) +
+                    AppSpacing.sm
+              : 0;
           final Widget? pageVue = scene
               ? null
               : pageSalle(
                   context,
                   vue: vue,
                   zoom: local.zoom,
-                  ecran: ecran,
+                  ecran: Size(ecran.width, ecran.height - bande),
                   telephone: telephone || enseignant,
                 );
           // Pilote (26/10) : la video en grand devant une page qui attend est
           // la meme scene pour l'enseignant au telephone (lignes 1 a 3) : la
           // capsule seule en haut, son oeil devient « Revenir a la page ».
           final VoidCallback? revenir = media?.onBasculerScene;
+          // Pilote (26/10) : la video en grand devant une page qui attend.
+          // C9 (scene sans aucune page) en attente d'arbitrage : l'ancien
+          // rendu reste.
           final bool sceneDevant =
               enseignant &&
               scene &&
               (media?.scenePremierPlan ?? false) &&
               media?.actionScene == null &&
               revenir != null;
+          final VoidCallback? revenirPage = sceneDevant ? revenir : null;
           final Widget? page =
               pageVue ??
               (sceneDevant
@@ -372,6 +387,7 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
           // Plan §4 : le tiroir des Commandes et la feuille des eleves
           // montent du bas, au-dessus de la pilule de l'appel.
           final double hauteurFeuille = ecran.height * _partPanneau;
+          final bool large = ecran.width >= AppGabarit.seuilTablette;
           // Ordinateur : la palette du tableau, verticale au bord droit.
           final bool paletteADroite =
               !telephone &&
@@ -436,7 +452,10 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                   Listener(
                     behavior: HitTestBehavior.translucent,
                     onPointerDown: _toucherPage,
-                    child: Center(child: page),
+                    child: Padding(
+                      padding: EdgeInsets.only(top: bande),
+                      child: Center(child: page),
+                    ),
                   ),
                 if (capsule)
                   PositionedDirectional(
@@ -464,7 +483,7 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                                 child: CapsuleVideoTelephone(
                                   vue: vue,
                                   onDeplier: _deplierProfil,
-                                  onRevenirPage: sceneDevant ? revenir : null,
+                                  onRevenirPage: revenirPage,
                                 ),
                               ),
                             BandeauSecours(
@@ -606,18 +625,32 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: AppSpacing.sm,
                                       ),
-                                      child: eleves
-                                          ? FeuilleElevesTelephone(
-                                              vue: vue,
-                                              actions: actions,
-                                              hauteur: hauteurFeuille,
-                                            )
-                                          : TiroirCommandesTelephone(
-                                              vue: vue,
-                                              actions: actions,
-                                              local: local,
-                                              hauteur: hauteurFeuille,
-                                            ),
+                                      // Pilote C8 : a 600 et plus, centre,
+                                      // 640 au plus (feuille du bas M3 sur
+                                      // tablette), hauteur du contenu.
+                                      child: Align(
+                                        alignment: Alignment.bottomCenter,
+                                        heightFactor: 1,
+                                        child: ConstrainedBox(
+                                          constraints: const BoxConstraints(
+                                            maxWidth: largeurMaxFeuille,
+                                          ),
+                                          child: eleves
+                                              ? FeuilleElevesTelephone(
+                                                  vue: vue,
+                                                  actions: actions,
+                                                  hauteur: hauteurFeuille,
+                                                  ajuste: large,
+                                                )
+                                              : TiroirCommandesTelephone(
+                                                  vue: vue,
+                                                  actions: actions,
+                                                  local: local,
+                                                  hauteur: hauteurFeuille,
+                                                  ajuste: large,
+                                                ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 // Fiche 1, ligne 3 : au toucher,
@@ -708,7 +741,11 @@ class _ZoomFlottant extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double hauteur = 2 * diametreBoutonAppel(context) + 3 * AppSpacing.sm;
+    final bool seul =
+        (actions.onZoomPlus == null) != (actions.onZoomMoins == null);
+    final double hauteur = seul
+        ? diametreBoutonAppel(context)
+        : 2 * diametreBoutonAppel(context) + 3 * AppSpacing.sm;
     return LayoutBuilder(
       builder: (BuildContext contexte, BoxConstraints c) {
         final double place = c.maxHeight;
@@ -827,6 +864,10 @@ VoidCallback? _declencheur(ActionsSeance actions, VueSeance vue) =>
     CommandesPedagogiques.aDesEntrees(vue, actions)
     ? actions.onCommandes
     : null;
+
+/// Pilote C8 : la largeur maximale du tiroir et de la feuille des eleves
+/// (feuille du bas Material 3 sur tablette).
+const double largeurMaxFeuille = AppSpacing.respiration * 10;
 
 /// La part maximale de l'ecran que prend le panneau des Commandes.
 const double _partPanneau = 0.6;
@@ -1070,6 +1111,24 @@ class PiluleZoomSalle extends StatelessWidget {
       t.salle.seance.zoomMoins,
       actions.onZoomMoins,
     );
+    // Pilote C7 : une seule action possible (100 % : « + » seulement ;
+    // 200 % : « - » seulement), un seul bouton rond, sans case vide.
+    // Telephone de l'enseignant seulement : l'ordinateur garde sa pilule.
+    if (couche &&
+        (actions.onZoomPlus == null) != (actions.onZoomMoins == null)) {
+      final Widget seul = KeyedSubtree(
+        key: const ValueKey<String>('salle-zoom'),
+        child: actions.onZoomPlus != null
+            ? bouton(
+                const ValueKey<String>('salle-zoom-plus'),
+                AppIcons.zoomPlus,
+                t.salle.seance.zoomPlus,
+                actions.onZoomPlus,
+              )
+            : moins,
+      );
+      return couche ? CoucheSalle(child: seul) : seul;
+    }
     final Widget pilule = DecoratedBox(
       key: const ValueKey<String>('salle-zoom'),
       decoration: (couche ? palette.coucheSalle : palette.piluleSalle)

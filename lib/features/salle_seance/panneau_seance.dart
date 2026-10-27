@@ -79,6 +79,7 @@ class PanneauSeance extends StatefulWidget {
     this.forme = FormePanneau.colonne,
     this.enMenu = false,
     this.ajusteAuContenu = false,
+    this.sansOmbre = false,
     this.libelleFermer,
     this.semantiqueFermer,
     this.cleFermer = cleReduire,
@@ -114,6 +115,10 @@ class PanneauSeance extends StatefulWidget {
   /// descendre jusqu'en bas. L'[enfant] doit alors se mesurer (liste
   /// `shrinkWrap`). Colonne seulement.
   final bool ajusteAuContenu;
+
+  /// Fiche 1 (pilote C8) : la feuille du telephone posee au-dessus de la
+  /// pilule, sans ombre portee (elle faisait une bande grise dessous).
+  final bool sansOmbre;
 
   /// Le contenu, deja defilant (une liste) ou court.
   final Widget enfant;
@@ -203,7 +208,9 @@ class _PanneauSeanceState extends State<PanneauSeance> {
     final AppPalette palette = AppPalette.of(context);
     final bool feuille = forme == FormePanneau.feuille;
     final bool colonne = forme == FormePanneau.colonne;
-    final bool ajuste = colonne && ajusteAuContenu;
+    // Pilote C8 : la feuille du telephone large (600 et plus) prend aussi
+    // la hauteur de son contenu.
+    final bool ajuste = (colonne || feuille) && ajusteAuContenu;
     final Widget suivi = NotificationListener<ScrollMetricsNotification>(
       onNotification: (ScrollMetricsNotification n) {
         if (n.depth != 0 || n.metrics.axis != Axis.vertical) return false;
@@ -225,7 +232,9 @@ class _PanneauSeanceState extends State<PanneauSeance> {
             filet: palette.borderHairline,
             ombre: palette.ombre,
             arrondi: AppRadius.arrondiFeuille,
-            ombres: AppElevation.niveau3(palette.ombre),
+            ombres: widget.sansOmbre
+                ? AppElevation.niveau0
+                : AppElevation.niveau3(palette.ombre),
           )
         : palette.surfaceRaised
               .decoration(
@@ -320,7 +329,7 @@ class _PanneauSeanceState extends State<PanneauSeance> {
         ),
       ),
     );
-    if (!ajuste) return cadre;
+    if (!ajuste || feuille) return cadre;
     return Align(alignment: AlignmentDirectional.topCenter, child: cadre);
   }
 }

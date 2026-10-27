@@ -265,6 +265,9 @@ class _Groupe extends StatelessWidget {
       SingleChildScrollView(scrollDirection: Axis.horizontal, child: child);
 }
 
+/// Pilote C8 : la largeur maximale d'une case d'outil du telephone.
+const double largeurMaxTuileOutil = AppSpacing.respiration * 2 - AppSpacing.sm;
+
 /// Fiche 1 (26/10/2026), ligne 8 : l'onglet Outils du tiroir du telephone.
 /// Une rangee de quatre tuiles de meme taille, Stylo, Surligner, Gomme,
 /// Annuler, l'outil retenu seul en couleur ; dessous, seulement quand Stylo
@@ -399,12 +402,20 @@ class OutilsTelephone extends ConsumerWidget {
               spacing: AppSpacing.sm,
               children: <Widget>[
                 for (int i = 0; i < cases.length; i += parRangee)
+                  // Pilote C8 : la taille du telephone, jamais plus de 120 ;
+                  // sur une colonne plus large, la rangee part du debut.
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     spacing: AppSpacing.sm,
                     children: <Widget>[
                       for (int j = i; j < i + parRangee; j++)
-                        Expanded(
+                        SizedBox(
+                          // Jamais plus etroite que son mot le plus long.
+                          width: math.min(
+                            math.max(largeurMaxTuileOutil, tuile),
+                            (c.maxWidth - (parRangee - 1) * AppSpacing.sm) /
+                                parRangee,
+                          ),
                           child: j < cases.length
                               ? cases[j].tuile ?? const SizedBox.shrink()
                               : const SizedBox.shrink(),

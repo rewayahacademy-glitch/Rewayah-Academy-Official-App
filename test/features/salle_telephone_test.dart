@@ -5,6 +5,8 @@
 //
 // Captures (fiche, « Captures a produire ») seulement avec CAPTURE_DIR.
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' show Ref;
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -166,6 +168,7 @@ Future<FauxMoteurSalle> _monter(
   Size taille = _telephone,
   double texte = 1,
   ThemeMode theme = ThemeMode.light,
+  bool presenter = true,
 }) async {
   fixerVueCapture(tester, taille, 1);
   final FauxMoteurSalle moteur = FauxMoteurSalle();
@@ -184,6 +187,7 @@ Future<FauxMoteurSalle> _monter(
     _personne('e2', 'student', false),
   ]);
   await tester.pumpAndSettle();
+  if (!presenter) return moteur;
   await moteur.presenterContenu(
     ContenuPresente(
       page: 42,
@@ -404,6 +408,11 @@ void main() {
             expect(c.center.dx, moreOrLessEquals(taille.width / 2, epsilon: 1));
             expect(k.center.dx, moreOrLessEquals(taille.width / 2, epsilon: 1));
             expect(c.bottom, lessThan(taille.height / 4));
+            // Pilote C6 : aucun pixel de la page sous la capsule.
+            expect(
+              tester.getRect(find.byKey(TelephonePleinEcran.clePage)).top,
+              greaterThanOrEqualTo(c.bottom),
+            );
             expect(k.top, greaterThan(taille.height * 3 / 4));
             expect(tester.takeException(), isNull);
           });
@@ -1024,6 +1033,40 @@ void main() {
             await _onglet(tester, t.salle.seance.commandes.ongletOutils);
             final Finder outils = find.byKey(OutilsTelephone.cle);
             expect(outils, findsOneWidget);
+            // Pilote C8 : a 600 et plus, le tiroir centre, 640 au plus, sans
+            // ombre ; Stylo a sa taille de telephone.
+            final Rect tiroir = tester.getRect(
+              find.byKey(TiroirCommandesTelephone.cle),
+            );
+            if (taille.width >= 600) {
+              expect(tiroir.width, lessThanOrEqualTo(640));
+              // Texte x2 : le mot le plus long peut imposer plus de 120.
+              expect(
+                tiroir.center.dx,
+                moreOrLessEquals(taille.width / 2, epsilon: 1),
+              );
+              expect(
+                tester
+                    .getRect(
+                      find.byKey(const ValueKey<String>('barre-outils-stylet')),
+                    )
+                    .width,
+                lessThanOrEqualTo(texte == 1 ? 120 : taille.width),
+              );
+            }
+            final BoxDecoration feuille =
+                tester
+                        .widget<DecoratedBox>(
+                          find.descendant(
+                            of: find.byKey(TiroirCommandesTelephone.cle),
+                            matching: find.byKey(
+                              const ValueKey<String>('panneau-seance-feuille'),
+                            ),
+                          ),
+                        )
+                        .decoration
+                    as BoxDecoration;
+            expect(feuille.boxShadow ?? const <BoxShadow>[], isEmpty);
             Finder cle(String k) => find.byKey(ValueKey<String>(k));
             final Finder stylo = cle('barre-outils-stylet');
             final Finder surligner = cle('barre-outils-surligneur');
@@ -1069,7 +1112,10 @@ void main() {
             if (texte == 1) {
               expect(
                 r[0].width,
-                moreOrLessEquals((rangee.width - 3 * 8) / 4, epsilon: 0.5),
+                moreOrLessEquals(
+                  math.min(120, (rangee.width - 3 * 8) / 4),
+                  epsilon: 0.5,
+                ),
               );
               expect(r[1].top, moreOrLessEquals(r[0].top, epsilon: 0.5));
               expect(r[2].top, moreOrLessEquals(r[0].top, epsilon: 0.5));
@@ -1315,6 +1361,17 @@ void main() {
             await _toucher(tester);
             expect(zoom, findsOneWidget);
             final Rect z = tester.getRect(zoom);
+            // Pilote C7 : a 100 %, « + » seul, un bouton rond, sans case
+            // vide.
+            expect(
+              find.byKey(const ValueKey<String>('salle-zoom-moins')),
+              findsNothing,
+            );
+            expect(
+              find.byKey(const ValueKey<String>('salle-zoom-plus')),
+              findsOneWidget,
+            );
+            expect(z.width, moreOrLessEquals(z.height, epsilon: 0.5));
             // Au bord de fin, a mi-hauteur.
             expect(
               _ltr() ? taille.width - z.right : z.left,

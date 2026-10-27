@@ -378,12 +378,17 @@ class TiroirCommandesTelephone extends ConsumerStatefulWidget {
     required this.actions,
     required this.local,
     required this.hauteur,
+    this.ajuste = false,
     super.key = cle,
   });
 
   final VueSeance vue;
   final ActionsSeance actions;
   final EtatLocalSeance local;
+
+  /// Pilote C8 : a 600 de large et plus, le tiroir prend la hauteur de son
+  /// contenu, jusqu'a [hauteur].
+  final bool ajuste;
 
   /// La hauteur maximale du tiroir : il la prend si la place le permet (la
   /// meme pour les trois onglets, rien ne saute quand on change d'onglet),
@@ -461,8 +466,11 @@ class _EtatTiroir extends ConsumerState<TiroirCommandesTelephone> {
         libelleFermer: t.salle.seance.commandes.reduire,
         semantiqueFermer: t.salle.seance.commandes.reduireSemantique,
         forme: FormePanneau.feuille,
+        ajusteAuContenu: widget.ajuste,
+        sansOmbre: true,
         enfant: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: widget.ajuste ? MainAxisSize.min : MainAxisSize.max,
           children: <Widget>[
             KeyedSubtree(
               key: TiroirCommandesTelephone.cleOnglets,
@@ -486,7 +494,8 @@ class _EtatTiroir extends ConsumerState<TiroirCommandesTelephone> {
             Ecart.vMd,
             // Les tuiles se posent sur la surface du tiroir, sans bloc d'une
             // autre couleur ; leur encre est la sienne.
-            Expanded(
+            Flexible(
+              fit: widget.ajuste ? FlexFit.loose : FlexFit.tight,
               child: SurfaceTuilesSalle(
                 surface: AppPalette.of(context).surfaceRaised,
                 child: contenu,
@@ -506,12 +515,16 @@ class FeuilleElevesTelephone extends StatelessWidget {
     required this.vue,
     required this.actions,
     required this.hauteur,
+    this.ajuste = false,
     super.key = cle,
   });
 
   final VueSeance vue;
   final ActionsSeance actions;
   final double hauteur;
+
+  /// Pilote C8 : comme le tiroir, a 600 de large et plus.
+  final bool ajuste;
 
   /// La cle de la feuille (tests, captures).
   static const Key cle = ValueKey<String>('telephone-feuille-eleves');
@@ -531,11 +544,15 @@ class FeuilleElevesTelephone extends StatelessWidget {
         libelleFermer: t.salle.seance.contexte.reduire,
         semantiqueFermer: t.salle.seance.contexte.reduireParticipants,
         forme: FormePanneau.feuille,
+        ajusteAuContenu: ajuste,
+        sansOmbre: true,
         enfant: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: ajuste ? MainAxisSize.min : MainAxisSize.max,
           children: <Widget>[
             LocalFeedback(message: message),
-            Expanded(
+            Flexible(
+              fit: ajuste ? FlexFit.loose : FlexFit.tight,
               child: PanneauEleves(
                 eleves: vue.eleves,
                 actions: actions,
