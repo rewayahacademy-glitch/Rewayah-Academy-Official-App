@@ -12,6 +12,7 @@ import 'package:rewayah_academy/core/dossier/resignature_contrat.dart';
 import 'package:rewayah_academy/core/dossier/selecteur_fichier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/dossier/versions_contrat.dart';
+import 'package:rewayah_academy/core/enseignant/depot_cahiers.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
@@ -364,6 +365,7 @@ void main() {
             serviceDossierProvider.overrideWithValue(dossier),
             selecteurFichierProvider.overrideWithValue(selecteur),
             serviceAuthProvider.overrideWithValue(auth ?? FauxServiceAuth()),
+            depotRapportsProvider.overrideWithValue(FauxDepotRapports()),
           ],
         ),
       );

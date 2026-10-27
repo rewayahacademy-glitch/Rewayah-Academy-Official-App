@@ -26,4 +26,9 @@ abstract final class AppDelais {
   /// Toujours plus long que [chargementProlonge] : on dit d'abord que c'est
   /// long, et seulement ensuite que c'est perdu.
   static const Duration requeteMax = Duration(seconds: 20);
+
+  /// Avant de se deconnecter, les cahiers de transmission encore en file ont
+  /// cette duree pour partir ; au-dela, la personne choisit de les perdre ou
+  /// d'annuler (fiche du 27/10/2026, ligne 16, arbitrage du pilote).
+  static const Duration envoiAvantDeconnexion = Duration(seconds: 3);
 }

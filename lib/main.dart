@@ -87,6 +87,8 @@ import 'core/enseignant/remplacements_supabase.dart';
 import 'core/finance/page_paiement.dart';
 import 'core/foyer/port_reprises_admin.dart';
 import 'core/foyer/reprises_admin_supabase.dart';
+import 'core/fraicheur/port_veille.dart';
+import 'core/fraicheur/veille_supabase.dart';
 import 'core/i18n/langue_demarrage.dart';
 import 'core/i18n/strings.g.dart';
 import 'core/identite/matricule_supabase.dart';
@@ -161,6 +163,10 @@ import 'features/foyer/invitation_conjoint_supabase.dart';
 List<Override> _surchargesAppReelle() => <Override>[
   portClassesFoyerProvider.overrideWithValue(
     ClassesFoyerSupabase(Supabase.instance.client),
+  ),
+  // Fraicheur (27/10/2026) : la veille Realtime des classes et des seances.
+  portVeilleProvider.overrideWithValue(
+    VeilleSupabase(Supabase.instance.client),
   ),
   surchargeRevueDossiersProduction,
   // Direction : chaque port d'administration lit et ecrit par les RPC de

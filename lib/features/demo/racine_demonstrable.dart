@@ -12,6 +12,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import '../../app.dart';
 import '../../core/config/env.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/session/deconnexion.dart';
 import '../../core/widgets/action_principale.dart';
 import 'mode_demonstration.dart';
 import 'repere_demonstration.dart';
@@ -57,11 +58,21 @@ class RacineDemonstrable extends StatefulWidget {
 class _RacineDemonstrableState extends State<RacineDemonstrable> {
   bool _demo = false;
 
+  /// Le rang de la portee reelle : chaque remise a zero (deconnexion) le
+  /// fait avancer, la `ProviderScope` est renouvelee et tout provider repart
+  /// de zero (fiche du 27/10/2026, ligne 17).
+  int _generation = 0;
+
   bool get _autorisee => environnementAutoriseDemo(widget.environnement);
 
   void _lancer() {
     if (!_autorisee || _demo) return;
     setState(() => _demo = true);
+  }
+
+  void _remettreAZero() {
+    if (!mounted) return;
+    setState(() => _generation += 1);
   }
 
   @override
@@ -83,9 +94,10 @@ class _RacineDemonstrableState extends State<RacineDemonstrable> {
       );
     }
     return ProviderScope(
-      key: const ValueKey<String>('portee-reelle'),
+      key: ValueKey<String>('portee-reelle-$_generation'),
       overrides: <Override>[
         ...widget.surchargesReelles,
+        remiseAZeroProvider.overrideWithValue(_remettreAZero),
         if (_autorisee) lanceurDemoProvider.overrideWithValue(_lancer),
       ],
       child: TranslationProvider(

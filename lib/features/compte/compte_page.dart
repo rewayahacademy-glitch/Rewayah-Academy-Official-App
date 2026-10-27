@@ -6,13 +6,13 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/mode_accessibilite.dart';
 import '../../core/appairage/service_appairage.dart';
-import '../../core/auth/service_auth.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/preferences/preferences_locales.dart';
 import '../../core/router/routes.dart';
+import '../../core/session/deconnexion.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import '../../core/theme/app_palette.dart';
@@ -163,8 +163,7 @@ class ComptePage extends ConsumerWidget {
             title: t.compte.deconnexion,
             description: t.compte.deconnexionDetail,
             icon: AppIcons.sortie,
-            onPress: () =>
-                unawaited(ref.read(serviceAuthProvider).deconnexion()),
+            onPress: () => unawaited(seDeconnecter(context, ref)),
           ),
         ],
       ),
