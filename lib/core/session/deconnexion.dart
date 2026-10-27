@@ -51,15 +51,15 @@ class Deconnexion {
   /// Remet la memoire de l'application a zero.
   final void Function() remiseAZero;
 
-  /// Execute la deconnexion. Ne leve jamais : une etape qui echoue est
-  /// journalisee et la suivante se fait quand meme, parce que la sortie doit
-  /// toujours aboutir.
+  /// Execute la deconnexion.
+  ///
+  /// La fermeture de la session locale est la seule etape qui peut faire
+  /// echouer la sortie : si elle leve, rien d'autre n'est fait et l'erreur
+  /// remonte a l'ecran, qui la dit (K-59) ; la personne est encore connectee.
+  /// Une base locale qui ne se vide pas est journalisee et la sortie aboutit
+  /// quand meme : la personne est deja sortie, la memoire repart de zero.
   Future<void> executer() async {
-    try {
-      await auth.deconnexion();
-    } on Object catch (erreur) {
-      journalDev('Deconnexion : session locale, ${erreur.runtimeType}');
-    }
+    await auth.deconnexion();
     try {
       await viderAppareil();
     } on Object catch (erreur) {

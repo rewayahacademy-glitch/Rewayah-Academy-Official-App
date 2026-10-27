@@ -161,16 +161,33 @@ void main() {
     expect(auth.serveur.isCompleted, isFalse);
   });
 
-  test('une etape en echec n empeche pas la sortie', () async {
+  test('la session locale qui ne se ferme pas arrete tout et le dit', () async {
+    int vidages = 0;
     int remises = 0;
     final Deconnexion deconnexion = Deconnexion(
       auth: _AuthEnEchec(),
+      viderAppareil: () async => vidages++,
+      remiseAZero: () => remises++,
+    );
+
+    await expectLater(deconnexion.executer(), throwsStateError);
+
+    expect(vidages, 0);
+    expect(remises, 0);
+  });
+
+  test('une base locale qui ne se vide pas n empeche pas la sortie', () async {
+    final FauxServiceAuth auth = FauxServiceAuth();
+    int remises = 0;
+    final Deconnexion deconnexion = Deconnexion(
+      auth: auth,
       viderAppareil: () => throw StateError('base verrouillee'),
       remiseAZero: () => remises++,
     );
 
     await deconnexion.executer();
 
+    expect(auth.deconnexions, 1);
     expect(remises, 1);
   });
 
