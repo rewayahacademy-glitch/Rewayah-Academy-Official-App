@@ -25,18 +25,19 @@ final Provider<void Function()> remiseAZeroProvider = Provider<void Function()>(
 /// Vide toutes les tables de la base locale, en une transaction : profils du
 /// foyer, seances a venir, ressources hors ligne, preferences, rapports en
 /// attente. Rien de la personne ne reste sur l'appareil.
-Future<void> viderBaseLocale(AppDatabase base) => base.transaction(() async {
-  for (final TableInfo<Table, dynamic> table in base.allTables) {
-    await base.delete(table).go();
-  }
-});
+Future<void> viderTablesDeLAppareil(AppDatabase base) =>
+    base.transaction(() async {
+      for (final TableInfo<Table, dynamic> table in base.allTables) {
+        await base.delete(table).go();
+      }
+    });
 
 /// Ce que « Se deconnecter » fait, dans l'ordre.
 class Deconnexion {
   /// Cree la deconnexion.
   const Deconnexion({
     required this.auth,
-    required this.viderLocal,
+    required this.viderAppareil,
     required this.remiseAZero,
   });
 
@@ -45,7 +46,7 @@ class Deconnexion {
   final ServiceAuth auth;
 
   /// Vide la base locale.
-  final Future<void> Function() viderLocal;
+  final Future<void> Function() viderAppareil;
 
   /// Remet la memoire de l'application a zero.
   final void Function() remiseAZero;
@@ -60,7 +61,7 @@ class Deconnexion {
       journalDev('Deconnexion : session locale, ${erreur.runtimeType}');
     }
     try {
-      await viderLocal();
+      await viderAppareil();
     } on Object catch (erreur) {
       journalDev('Deconnexion : base locale non videe, ${erreur.runtimeType}');
     }
@@ -74,7 +75,7 @@ class Deconnexion {
 final Provider<Deconnexion> deconnexionProvider = Provider<Deconnexion>(
   (Ref ref) => Deconnexion(
     auth: ref.watch(serviceAuthProvider),
-    viderLocal: () => viderBaseLocale(ref.read(baseLocaleProvider)),
+    viderAppareil: () => viderTablesDeLAppareil(ref.read(baseLocaleProvider)),
     remiseAZero: ref.watch(remiseAZeroProvider),
   ),
 );

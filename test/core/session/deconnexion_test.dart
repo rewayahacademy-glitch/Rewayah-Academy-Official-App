@@ -127,11 +127,11 @@ void main() {
 
   tearDown(() => base.close());
 
-  test('ligne 17 : viderBaseLocale vide les cinq tables', () async {
+  test('ligne 17 : viderTablesDeLAppareil vide les cinq tables', () async {
     await _remplir(base);
     expect(await _lignes(base), 5);
 
-    await viderBaseLocale(base);
+    await viderTablesDeLAppareil(base);
 
     expect(await _lignes(base), 0);
     expect(base.allTables, hasLength(5));
@@ -143,9 +143,9 @@ void main() {
     await _remplir(base);
     final Deconnexion deconnexion = Deconnexion(
       auth: auth,
-      viderLocal: () async {
+      viderAppareil: () async {
         journal.add('base locale videe');
-        await viderBaseLocale(base);
+        await viderTablesDeLAppareil(base);
       },
       remiseAZero: () => journal.add('memoire a zero'),
     );
@@ -165,7 +165,7 @@ void main() {
     int remises = 0;
     final Deconnexion deconnexion = Deconnexion(
       auth: _AuthEnEchec(),
-      viderLocal: () => throw StateError('base verrouillee'),
+      viderAppareil: () => throw StateError('base verrouillee'),
       remiseAZero: () => remises++,
     );
 
