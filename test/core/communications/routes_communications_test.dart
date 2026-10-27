@@ -259,36 +259,19 @@ void main() {
       expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, isNull);
     });
 
-    testWidgets(
-      'l eleve a sa cloche depuis la fiche du 27/10 (ligne 12), elle ouvre '
-      'son centre et le retour ramene a son Accueil',
-      (WidgetTester tester) async {
-        final GoRouter routeur = await _monter(
-          tester,
-          Routes.eleve,
-          AppRole.student,
-        );
-        expect(find.byType(ClocheNotifications), findsOneWidget);
-        await tester.tap(find.byType(ClocheNotifications));
-        await stabiliser(tester);
-        expect(lieu(routeur), Routes.eleveNotifications);
-        expect(find.byType(NotificationsPage), findsOneWidget);
-        expect(
-          tester.widget<NavShell>(find.byType(NavShell)).indexActif,
-          isNull,
-        );
-        await tester.tap(find.byType(DisqueRetour));
-        await stabiliser(tester);
-        expect(lieu(routeur), Routes.eleve);
-      },
-    );
+    testWidgets('l eleve n a toujours aucune cloche', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, Routes.eleve, AppRole.student);
+      expect(find.byType(ClocheNotifications), findsNothing);
+    });
 
     test(
       'notificationsPour : une page par role a cloche, sous son prefixe',
       () {
         for (final AppRole role in AppRole.values) {
           final String? chemin = Routes.notificationsPour(role);
-          if (role == AppRole.accountant) {
+          if (role == AppRole.student || role == AppRole.accountant) {
             expect(chemin, isNull, reason: role.valeurSql);
             continue;
           }

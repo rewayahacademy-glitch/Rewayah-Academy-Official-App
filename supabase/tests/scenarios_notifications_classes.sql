@@ -429,6 +429,25 @@ SELECT pg_temp.vrai(
   pg_temp.lignes('remplacement_pris', 'f27b0000-0000-0000-0000-000000000207')
     = ARRAY['0021=/tuteur/classes/f27b0000-0000-0000-0000-000000000207/planning', '0025=/eleve'],
   '6.2 remplacement pris : le foyer de la classe est prevenu, vers le planning');
+-- Absence posee puis remplacement pris dans la meme transaction : pour la
+-- meme seance, une seule ligne par personne et par evenement, en comptant
+-- celles de b09 (remplacement_propose et remplacement_pris vers les autres
+-- enseignants ; ici les enseignants sont en provisional_active, que b09
+-- n'adresse pas : ses lignes, quand il y en a, entrent dans le meme compte),
+-- et l'enseignante absente ne recoit rien.
+SELECT pg_temp.vrai(
+  NOT EXISTS (
+    SELECT 1 FROM public.notifications n
+     WHERE n.params ->> 'session_id' = 'f27b0000-0000-0000-0000-000000000407'
+     GROUP BY n.destinataire, n.evenement
+    HAVING pg_catalog.count(*) > 1)
+  AND NOT EXISTS (
+    SELECT 1 FROM public.notifications n
+     WHERE n.params ->> 'session_id' = 'f27b0000-0000-0000-0000-000000000407'
+       AND n.destinataire = 'f27b0000-0000-0000-0000-000000000001')
+  AND (SELECT pg_catalog.count(*) FROM public.notifications n
+        WHERE n.params ->> 'session_id' = 'f27b0000-0000-0000-0000-000000000407') = 4,
+  '6.3 absence puis remplacement : quatre lignes, une par personne et par evenement, rien a l''absente');
 SET CONSTRAINTS ALL DEFERRED;
 
 -- ------------------------------------------------------------------

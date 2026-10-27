@@ -34,12 +34,14 @@
 -- courriel_notification du 23/10, cle d'idempotence « notification:<id> ») :
 -- rien n'est duplique ici (ligne 15).
 --
--- Mots de ce fichier a connaitre avant le collage : DROP CONSTRAINT (les deux
--- CHECK se remplacent, comme dans c29 et FAC-F) et DROP TRIGGER IF EXISTS (un
--- declencheur de contrainte ne se remplace pas par CREATE OR REPLACE). Aucune
--- table, aucune ligne, aucune fonction n'est effacee.
+-- Mots de ce fichier a connaitre avant le collage : DROP CONSTRAINT, deux
+-- fois. Une contrainte CHECK ne se modifie pas : elle se remplace, comme dans
+-- c29 (20261011210000) et FAC-F (20261018170000). Aucune table, aucune ligne,
+-- aucune fonction, aucun declencheur n'est efface : les declencheurs se creent
+-- sous garde « s'il n'existe pas deja » (un declencheur de contrainte ne se
+-- remplace pas par CREATE OR REPLACE).
 --
--- Rejeu : idempotente (CREATE OR REPLACE, DROP TRIGGER IF EXISTS, garde sur la
+-- Rejeu : idempotente (CREATE OR REPLACE, gardes sur les declencheurs et la
 -- publication). Sur un Postgres nu sans publication supabase_realtime (CI), la
 -- publication est ignoree ; la RLS, elle, est exigee partout.
 
@@ -457,47 +459,60 @@ BEGIN
 END
 $droits$;
 
--- Les declencheurs. Un declencheur de contrainte ne se remplace pas par
--- CREATE OR REPLACE : il est retire puis recree, a l'identique au rejeu.
-DROP TRIGGER IF EXISTS notifications_classe_groupes ON public.groupes;
-CREATE CONSTRAINT TRIGGER notifications_classe_groupes
-  AFTER INSERT OR UPDATE OF teacher_id, ended_at, weekday, hour_local, timezone_iana
-  ON public.groupes
-  DEFERRABLE INITIALLY DEFERRED
-  FOR EACH ROW EXECUTE FUNCTION private.notifier_classe_groupes();
-
-DROP TRIGGER IF EXISTS notifications_classe_groupes_effacee ON public.groupes;
-CREATE TRIGGER notifications_classe_groupes_effacee
-  BEFORE DELETE ON public.groupes
-  FOR EACH ROW EXECUTE FUNCTION private.notifier_classe_groupes_effacee();
-
-DROP TRIGGER IF EXISTS notifications_classe_membres ON public.groupe_membres;
-CREATE CONSTRAINT TRIGGER notifications_classe_membres
-  AFTER INSERT OR UPDATE OF left_at OR DELETE
-  ON public.groupe_membres
-  DEFERRABLE INITIALLY DEFERRED
-  FOR EACH ROW EXECUTE FUNCTION private.notifier_classe_membres();
-
-DROP TRIGGER IF EXISTS notifications_classe_creneaux ON public.groupe_creneaux;
-CREATE CONSTRAINT TRIGGER notifications_classe_creneaux
-  AFTER INSERT OR UPDATE OR DELETE
-  ON public.groupe_creneaux
-  DEFERRABLE INITIALLY DEFERRED
-  FOR EACH ROW EXECUTE FUNCTION private.notifier_classe_creneaux();
-
-DROP TRIGGER IF EXISTS notifications_classe_seances ON public.sessions;
-CREATE CONSTRAINT TRIGGER notifications_classe_seances
-  AFTER UPDATE OF status, started_at, deleted_at OR DELETE
-  ON public.sessions
-  DEFERRABLE INITIALLY DEFERRED
-  FOR EACH ROW EXECUTE FUNCTION private.notifier_classe_seances();
-
-DROP TRIGGER IF EXISTS notifications_classe_remplacements ON public.remplacements_seance;
-CREATE CONSTRAINT TRIGGER notifications_classe_remplacements
-  AFTER INSERT
-  ON public.remplacements_seance
-  DEFERRABLE INITIALLY DEFERRED
-  FOR EACH ROW EXECUTE FUNCTION private.notifier_classe_remplacements();
+-- Les declencheurs : crees s'ils n'existent pas, jamais retires. Au rejeu,
+-- rien ne change.
+DO $declencheurs$
+DECLARE
+  v_nom text;
+  v_sql text;
+BEGIN
+  FOR v_nom, v_sql IN
+    SELECT * FROM (VALUES
+      ('notifications_classe_groupes', $t$
+        CREATE CONSTRAINT TRIGGER notifications_classe_groupes
+          AFTER INSERT OR UPDATE OF teacher_id, ended_at, weekday, hour_local, timezone_iana
+          ON public.groupes
+          DEFERRABLE INITIALLY DEFERRED
+          FOR EACH ROW EXECUTE FUNCTION private.notifier_classe_groupes()$t$),
+      ('notifications_classe_groupes_effacee', $t$
+        CREATE TRIGGER notifications_classe_groupes_effacee
+          BEFORE DELETE ON public.groupes
+          FOR EACH ROW EXECUTE FUNCTION private.notifier_classe_groupes_effacee()$t$),
+      ('notifications_classe_membres', $t$
+        CREATE CONSTRAINT TRIGGER notifications_classe_membres
+          AFTER INSERT OR UPDATE OF left_at OR DELETE
+          ON public.groupe_membres
+          DEFERRABLE INITIALLY DEFERRED
+          FOR EACH ROW EXECUTE FUNCTION private.notifier_classe_membres()$t$),
+      ('notifications_classe_creneaux', $t$
+        CREATE CONSTRAINT TRIGGER notifications_classe_creneaux
+          AFTER INSERT OR UPDATE OR DELETE
+          ON public.groupe_creneaux
+          DEFERRABLE INITIALLY DEFERRED
+          FOR EACH ROW EXECUTE FUNCTION private.notifier_classe_creneaux()$t$),
+      ('notifications_classe_seances', $t$
+        CREATE CONSTRAINT TRIGGER notifications_classe_seances
+          AFTER UPDATE OF status, started_at, deleted_at OR DELETE
+          ON public.sessions
+          DEFERRABLE INITIALLY DEFERRED
+          FOR EACH ROW EXECUTE FUNCTION private.notifier_classe_seances()$t$),
+      ('notifications_classe_remplacements', $t$
+        CREATE CONSTRAINT TRIGGER notifications_classe_remplacements
+          AFTER INSERT
+          ON public.remplacements_seance
+          DEFERRABLE INITIALLY DEFERRED
+          FOR EACH ROW EXECUTE FUNCTION private.notifier_classe_remplacements()$t$)
+    ) AS d(nom, sql)
+  LOOP
+    IF NOT EXISTS (
+      SELECT 1 FROM pg_catalog.pg_trigger t
+       WHERE t.tgname = v_nom AND NOT t.tgisinternal
+    ) THEN
+      EXECUTE v_sql;
+    END IF;
+  END LOOP;
+END
+$declencheurs$;
 
 -- ------------------------------------------------------------------
 -- 4. Realtime : public.notifications, comme les quatre tables du lot 1

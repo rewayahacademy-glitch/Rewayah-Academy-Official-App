@@ -126,13 +126,6 @@ abstract final class Routes {
   /// role s'y applique sans rien ajouter.
   static const String eleveAide = '/eleve/aide';
 
-  /// Les notifications de l'eleve, ouvertes par la cloche de sa coquille
-  /// (fiche « Fraicheur et notifications » du 27/10/2026, ligne 12 : la
-  /// cloche est sur l'accueil de l'eleve ; elle remplace la reponse Q5 du
-  /// 04/10 qui l'en ecartait). La `NotificationsPage` existante, jamais un
-  /// second centre. L'eleve adulte (compte tuteur sous `/eleve`) l'ouvre aussi.
-  static const String eleveNotifications = '/eleve/notifications';
-
   // --- DASH-EA-PROD : Accueil de l'eleve adulte (bloc propre a l'etape) ----
   //
   // Sous le prefixe `/eleve` : l'eleve adulte est un compte tuteur
@@ -1304,15 +1297,15 @@ abstract final class Routes {
 
   /// Ou mene la cloche des notifications de la coquille d'un role : la
   /// `NotificationsPage` existante, sous le prefixe du role. Nul pour un
-  /// role sans cloche (le comptable). L'eleve en a une depuis la fiche du
-  /// 27/10/2026 (ligne 12).
+  /// role sans cloche (l'eleve, le comptable). L'eleve mineur n'a pas de
+  /// cloche (reponse Q5 du directeur du 04/10, maintenue le 27/10 : le foyer
+  /// est prevenu).
   static String? notificationsPour(AppRole role) => switch (role) {
-    AppRole.student => eleveNotifications,
     AppRole.guardian => tuteurNotifications,
     AppRole.teacher => enseignantNotifications,
     AppRole.controller => controleurNotifications,
     AppRole.admin => adminNotifications,
-    AppRole.accountant => null,
+    AppRole.student || AppRole.accountant => null,
   };
 
   /// La racine de chaque role, ou une redirection renvoie toujours.

@@ -75,10 +75,8 @@ void main() {
         find.text(t.adulte.accueil.salutation(prenom: 'Mamadou')),
         findsOneWidget,
       );
-      // La cloche de la coquille de l'eleve (fiche du 27/10, ligne 12) : une
-      // seule, celle de la coquille ; l'Accueil adulte n'en pose pas une
-      // seconde.
-      expect(find.byType(ClocheNotifications), findsOneWidget);
+      // Pas de centre de notifications pour l'eleve : pas de cloche inerte.
+      expect(find.byType(ClocheNotifications), findsNothing);
       verifierUnSeulBoutonPlein(tester);
     });
 

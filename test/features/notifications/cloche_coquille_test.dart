@@ -1,8 +1,10 @@
 // Fiche « Fraicheur et notifications » (27/10/2026), lignes 12 et 14 : la
-// cloche et son point de non-lus sur l'accueil du tuteur, de l'eleve et de
-// l'enseignante, sur le VRAI routeur ; le point vient d'un seul provider
-// alimente par le port de notifications ; ouvrir la page marque tout lu et
-// le point disparait.
+// cloche et son point de non-lus sur l'accueil du tuteur et de l'enseignante,
+// sur le VRAI routeur ; le point vient d'un seul provider alimente par le
+// port de notifications ; ouvrir la page marque tout lu et le point
+// disparait. L'eleve mineur n'a pas de cloche (reponse Q5 du directeur du
+// 04/10, maintenue le 27/10 : le foyer est prevenu) ; le test des coquilles
+// (`routes_communications_test`) le tient.
 //
 // Le port est un faux en memoire ; aucun Supabase.
 
@@ -14,8 +16,6 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
-import 'package:rewayah_academy/features/accueil_eleve/accueil_accessibilite.dart';
-import 'package:rewayah_academy/features/accueil_eleve/accueil_eleve_page.dart';
 import 'package:rewayah_academy/features/accueil_famille/accueil_famille_page.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
@@ -65,12 +65,10 @@ Future<GoRouter> _monter(
   String depart,
   AppRole role, {
   required PortNotifications port,
-  InterfaceMode mode = InterfaceMode.standard,
 }) => monterRouteur(
   tester,
   depart,
-  source: FausseSourceSession(sessionActive(role, mode: mode)),
-  interface: mode,
+  source: FausseSourceSession(sessionActive(role)),
   surcharges: <Override>[portNotificationsProvider.overrideWithValue(port)],
 );
 
@@ -84,11 +82,10 @@ void main() {
   // (depart, role, ecran attendu)
   final List<(String, AppRole, Type)> accueils = <(String, AppRole, Type)>[
     (Routes.tuteurAccueil, AppRole.guardian, AccueilFamillePage),
-    (Routes.eleve, AppRole.student, AccueilElevePage),
     (Routes.enseignantJournee, AppRole.teacher, JourneePage),
   ];
 
-  group('ligne 12 : la cloche et son point sur les trois accueils', () {
+  group('ligne 12 : la cloche et son point sur les accueils', () {
     for (final (String depart, AppRole role, Type ecran) in accueils) {
       testWidgets('$depart : une non-lue, un point (${role.valeurSql})', (
         WidgetTester tester,
@@ -129,8 +126,8 @@ void main() {
     ) async {
       await _monter(
         tester,
-        Routes.eleve,
-        AppRole.student,
+        Routes.enseignantJournee,
+        AppRole.teacher,
         port: const NotificationsIndisponibles(),
       );
       expect(find.byType(ClocheNotifications), findsOneWidget);
@@ -138,21 +135,17 @@ void main() {
       expect(find.bySemanticsLabel(RegExp('non lue')), findsNothing);
     });
 
-    testWidgets(
-      'Interface guidee : l accueil de l eleve garde la cloche de sa coquille',
-      (WidgetTester tester) async {
-        await _monter(
-          tester,
-          Routes.eleve,
-          AppRole.student,
-          mode: InterfaceMode.enfant,
-          port: _FauxNotifications(<NotificationTuteur>[_notification('n1')]),
-        );
-        expect(find.byType(AccueilAccessibilite), findsOneWidget);
-        expect(find.byType(ClocheNotifications), findsOneWidget);
-        expect(_clocheAvecPoint(), findsOneWidget);
-      },
-    );
+    testWidgets('l eleve mineur n a pas de cloche, meme avec des non-lues', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        Routes.eleve,
+        AppRole.student,
+        port: _FauxNotifications(<NotificationTuteur>[_notification('n1')]),
+      );
+      expect(find.byType(ClocheNotifications), findsNothing);
+    });
   });
 
   group('ligne 14 : ouvrir la page marque tout lu', () {
@@ -197,21 +190,5 @@ void main() {
         },
       );
     }
-
-    testWidgets('l eleve revient a son Accueil depuis le centre', (
-      WidgetTester tester,
-    ) async {
-      final GoRouter routeur = await _monter(
-        tester,
-        Routes.eleveNotifications,
-        AppRole.student,
-        port: _FauxNotifications(<NotificationTuteur>[_notification('n1')]),
-      );
-      expect(find.byType(NotificationsPage), findsOneWidget);
-      await tester.tap(find.byType(DisqueRetour));
-      await stabiliser(tester);
-      expect(lieu(routeur), Routes.eleve);
-      expect(find.byType(AccueilElevePage), findsOneWidget);
-    });
   });
 }
