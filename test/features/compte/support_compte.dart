@@ -17,10 +17,12 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
+import 'package:rewayah_academy/core/cache/sync/file_rapports.dart';
 import 'package:rewayah_academy/core/capacites/acces_foyer_depuis_eleves.dart';
 import 'package:rewayah_academy/core/capacites/port_acces_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_identite_titulaire.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/enseignant/depot_cahiers.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/profil/service_acceptations.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
@@ -89,6 +91,10 @@ List<Override> surchargesCompte({
   ServiceAcceptations? acceptations,
   List<EleveDuFoyer> eleves = FoyersFictifs.foyerA,
 }) => <Override>[
+  // La deconnexion lit la file des cahiers avant de fermer la session : en
+  // memoire ici, jamais la base locale de l'appareil (qui ne repond pas
+  // sous test).
+  depotRapportsProvider.overrideWithValue(FauxDepotRapports()),
   portIdentiteTitulaireProvider.overrideWithValue(
     identite ?? FauxIdentiteTitulaire(),
   ),
@@ -185,4 +191,27 @@ Future<void> toucher(WidgetTester tester, Finder cible) async {
   await stabiliser(tester);
   await tester.tap(cible);
   await stabiliser(tester);
+}
+
+/// Une file de cahiers en memoire, vide par defaut.
+class FauxDepotRapports implements DepotRapports {
+  final Map<String, RapportEnAttente> _lignes = <String, RapportEnAttente>{};
+
+  @override
+  Future<List<RapportEnAttente>> enAttente() async => _lignes.values.toList();
+
+  @override
+  Future<void> deposer(RapportEnAttente rapport) async {
+    _lignes.putIfAbsent(rapport.cleIdempotence, () => rapport);
+  }
+
+  @override
+  Future<void> retirer(String cleIdempotence) async {
+    _lignes.remove(cleIdempotence);
+  }
+
+  @override
+  Future<void> majApresEchec(RapportEnAttente rapport) async {
+    _lignes[rapport.cleIdempotence] = rapport;
+  }
 }

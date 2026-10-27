@@ -579,7 +579,7 @@ class _CarteDeconnexionState extends ConsumerState<CarteDeconnexion> {
       _echec = false;
     });
     try {
-      await ref.read(deconnexionProvider).executer();
+      await seDeconnecter(context, ref);
     } on Object {
       if (mounted) {
         setState(() => _echec = true);

@@ -126,15 +126,29 @@ sans rien faire.
 
 | Lignes | Spécifié | Présent dans le code | Prouvé par le directeur |
 | :--- | :--- | :--- | :--- |
-| 1 à 9 | 27/10 | non (lecture unique, aucun abonnement hors salle) | non |
+| 1 | 27/10 | partiel : veille Realtime (classes, séances) montée avec la session, lectures du tuteur, de l'élève et de l'enseignante invalidées ; écrans de l'administration hors de la veille (lot suivant) | non |
+| 2 | 27/10 | fait : au retour du réseau, nouvelle écoute et relecture de tout ; canal rejoint = relecture de tout | non |
+| 3 | 27/10 | fait par construction (aucun geste requis) | non |
+| 4, 5, 6, 8 | 27/10 | fait : `groupes`, `groupe_membres`, `groupe_creneaux` publiés (migration 20261027100000) ; tout changement fait relire les classes | non |
+| 7 | 27/10 | fait : « Cette classe n'existe plus. » (FR, AR) et retour à l'accueil du rôle ; testé chez le tuteur, codé sans test widget chez l'enseignante | non |
+| 9 | 27/10 | fait : `sessions` publiée ; tout changement fait relire suivi, planning, prochaine et dernière séance, journée, roster, cahiers | non |
 | 10, 11 | 27/10 | partiel : table, six événements, écrits par certaines fonctions seulement ; 0 ligne en production | non |
 | 12 | 27/10 | partiel : cloche sur l'accueil adulte seulement, lue une fois | non |
 | 13, 14 | 27/10 | partiel : page Notifications et `lu_le` existent | non |
 | 15 | 27/10 | oui (déclencheur du 23/10), jamais déclenché en production | non |
-| 16 à 18 | 27/10 | non (`signOut` seul, base locale conservée) | non |
+| 16 | 27/10 | fait : session locale fermée d'abord (`signOut` portée locale, serveur prévenu sans être attendu) ; avant, 3 s pour envoyer les cahiers en file, puis choix « Annuler » ou « Se déconnecter quand même » s'il en reste | non |
+| 17 | 27/10 | fait : profils, séances, ressources et rapports retirés de la base locale (les réglages de l'appareil restent), portée des providers renouvelée | non |
+| 18 | 27/10 | fait par construction (providers neufs), non prouvé à deux comptes | non |
 
 ## Journal
 
 - 27/10 : fiche écrite après le constat du directeur (classe créée invisible chez
   l'élève sans effacer l'historique ; notifications attendues pour classe, créneau,
   absence de l'enseignant) et l'inventaire du code et de la production.
+- 27/10 : lot 1 (lignes 1 à 9, 16 à 18) poussé sur la branche du pilote ; migration
+  rejouée sur un Postgres jetable avec et sans publication, chaîne verte.
+- 27/10 : choix sans `replica identity full` : avec lui, une suppression enverrait la
+  ligne entière à tous les abonnés hors RLS ; la clé primaire seule suffit à relire.
+- 27/10 : limites admises : administration hors de la veille, ligne 7 enseignante sans
+  test widget, scénario SQL à lister dans la CI par le directeur, double base locale le
+  temps d'une frame en debug, rien de prouvé sur un appareil.

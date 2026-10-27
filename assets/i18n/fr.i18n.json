@@ -6305,7 +6305,14 @@
         "question": "Se déconnecter de Rewayah\u00a0?",
         "consequence": "Vous devrez vous reconnecter pour revenir sur cet appareil. Vos autres appareils restent connectés.",
         "confirmer": "Me déconnecter",
-        "echec": "La déconnexion n'a pas abouti. Réessayez dans un instant."
+        "echec": "La déconnexion n'a pas abouti. Réessayez dans un instant.",
+        "rapportsQuestion": "Se déconnecter quand même\u00a0?",
+        "rapportsConsequence(param=n)": {
+          "one": "{n} cahier de transmission n'est pas envoyé. Se déconnecter le perdra.",
+          "other": "{n} cahiers de transmission ne sont pas envoyés. Se déconnecter les perdra."
+        },
+        "rapportsConfirmer": "Se déconnecter quand même",
+        "rapportsAnnuler": "Annuler"
       },
       "pageInformations": {
         "titre": "Informations personnelles",

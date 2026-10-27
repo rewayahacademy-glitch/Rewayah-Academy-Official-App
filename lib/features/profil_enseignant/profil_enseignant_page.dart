@@ -803,8 +803,11 @@ class _Deconnexion extends ConsumerWidget {
       // l'exige : « Me deconnecter maintenant », jamais « OK ».
       libelleConfirmer: t.enseignant.profil.deconnexionConfirmer,
     );
-    if (confirme) {
-      await deconnexion.executer();
+    if (confirme && context.mounted) {
+      await deconnexion.executer(
+        confirmerPerte: (int restants) =>
+            confirmerRapportsPerdus(context, restants),
+      );
     }
   }
 }

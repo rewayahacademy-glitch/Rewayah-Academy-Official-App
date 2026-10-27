@@ -155,7 +155,7 @@ class CoquilleEtape extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
-    void deconnecter() => unawaited(ref.read(deconnexionProvider).executer());
+    void deconnecter() => unawaited(seDeconnecter(context, ref));
 
     return PageEtape(
       numero: rangEtape(route),

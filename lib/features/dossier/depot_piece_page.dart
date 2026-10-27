@@ -158,8 +158,7 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
               libelle: t.attente.seDeconnecter,
               niveau: NiveauAction.tertiaire,
               pleineLargeur: false,
-              onPress: () =>
-                  unawaited(ref.read(deconnexionProvider).executer()),
+              onPress: () => unawaited(seDeconnecter(context, ref)),
             ),
           ),
         ],

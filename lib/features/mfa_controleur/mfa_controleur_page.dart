@@ -176,7 +176,7 @@ class _MfaControleurPageState extends ConsumerState<MfaControleurPage> {
     }
   }
 
-  void _seDeconnecter() => unawaited(ref.read(deconnexionProvider).executer());
+  void _seDeconnecter() => unawaited(seDeconnecter(context, ref));
 
   @override
   Widget build(BuildContext context) {

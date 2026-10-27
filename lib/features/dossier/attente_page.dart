@@ -155,7 +155,7 @@ class _AttentePageState extends ConsumerState<AttentePage> {
           ],
           ActionPrincipale(
             libelle: t.attente.seDeconnecter,
-            onPress: () => unawaited(ref.read(deconnexionProvider).executer()),
+            onPress: () => unawaited(seDeconnecter(context, ref)),
             niveau: NiveauAction.tertiaire,
           ),
         ],

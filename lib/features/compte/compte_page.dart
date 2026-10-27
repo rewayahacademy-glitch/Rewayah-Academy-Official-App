@@ -163,7 +163,7 @@ class ComptePage extends ConsumerWidget {
             title: t.compte.deconnexion,
             description: t.compte.deconnexionDetail,
             icon: AppIcons.sortie,
-            onPress: () => unawaited(ref.read(deconnexionProvider).executer()),
+            onPress: () => unawaited(seDeconnecter(context, ref)),
           ),
         ],
       ),
