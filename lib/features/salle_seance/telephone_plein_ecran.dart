@@ -317,24 +317,13 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
           final bool enseignant = salleTelephoneEnseignant(context, vue);
           final bool eleves = enseignant && vue.panneau == PanneauOuvert.eleves;
           final bool libre = vue.supportPresente == null;
-          // Pilote C6 : chez l'enseignant au telephone, une bande du haut est
-          // reservee a la capsule (sa hauteur et ses marges) ; la page du
-          // Coran se compose dans ce qui reste, jamais sous la capsule. Le
-          // tableau garde la fenetre (sa feuille 16:9 y est ajustee).
-          final double bande =
-              enseignant && !scene && !libre && !(media?.pageEnErreur ?? false)
-              ? MediaQuery.paddingOf(context).top +
-                    AppSpacing.lg +
-                    CapsuleVideoTelephone.hauteur(context) +
-                    AppSpacing.sm
-              : 0;
           final Widget? pageVue = scene
               ? null
               : pageSalle(
                   context,
                   vue: vue,
                   zoom: local.zoom,
-                  ecran: Size(ecran.width, ecran.height - bande),
+                  ecran: ecran,
                   telephone: telephone || enseignant,
                 );
           // Pilote (26/10) : la video en grand devant une page qui attend est
@@ -379,10 +368,10 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                       ),
                     )
                   : null);
-          // Fiche 1, lignes 1, 2, 5 : la capsule (ou le profil deplie) reste
-          // en haut au repos comme au toucher. Sans page ni scene devant une
-          // page, rien a reduire : pas de capsule. Page illisible : son
-          // constat et son « Reessayer » se lisent, rien ne se pose dessus.
+          // Fiche 1, lignes 1, 2, 5 : la capsule (ou le profil deplie) en
+          // haut. Sans page ni scene devant une page, rien a reduire : pas de
+          // capsule. Page illisible : son constat et son « Reessayer » se
+          // lisent, rien ne se pose dessus.
           final bool capsule =
               enseignant && page != null && !(media?.pageEnErreur ?? false);
           final Widget haut = _Haut(
@@ -441,11 +430,47 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                     CapsuleVideoTelephone.hauteur(context) +
                     AppSpacing.sm
               : 0;
+          // Fiche 1, ligne 2 : la capsule (ou le profil deplie) en haut au
+          // centre, avec le bandeau de secours et l'alerte.
+          final Widget capsuleEnHaut = PositionedDirectional(
+            top: 0,
+            start: 0,
+            end: 0,
+            child: SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    if (_profil)
+                      KeyedSubtree(
+                        key: _cleProfil,
+                        child: ProfilTelephone(vue: vue, onReduire: _replier),
+                      )
+                    else
+                      Center(
+                        child: CapsuleVideoTelephone(
+                          vue: vue,
+                          onDeplier: _deplierProfil,
+                          onRevenirPage: revenirPage,
+                          oeil: !sceneDevant || revenirPage != null,
+                        ),
+                      ),
+                    BandeauSecours(vue: vue, actions: actions, gouttiere: 0),
+                    ?media?.alerte,
+                  ],
+                ),
+              ),
+            ),
+          );
           return CommandesMasquables(
             delai: AppMouvement.masquageSalle,
             maintenir:
                 vue.visioMaintenue ||
                 (panneau && telephone) ||
+                (_profil && enseignant) ||
                 ((panneau || eleves) && enseignant),
             libelleEntree: t.salle.seance.commandesAppel,
             contenu: Stack(
@@ -472,52 +497,11 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                   Listener(
                     behavior: HitTestBehavior.translucent,
                     onPointerDown: _toucherPage,
-                    child: Padding(
-                      padding: EdgeInsets.only(top: bande),
-                      child: Center(child: page),
-                    ),
+                    child: Center(child: page),
                   ),
-                if (capsule)
-                  PositionedDirectional(
-                    top: 0,
-                    start: 0,
-                    end: 0,
-                    child: SafeArea(
-                      bottom: false,
-                      child: Padding(
-                        padding: const EdgeInsets.all(AppSpacing.lg),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            if (_profil)
-                              KeyedSubtree(
-                                key: _cleProfil,
-                                child: ProfilTelephone(
-                                  vue: vue,
-                                  onReduire: _replier,
-                                ),
-                              )
-                            else
-                              Center(
-                                child: CapsuleVideoTelephone(
-                                  vue: vue,
-                                  onDeplier: _deplierProfil,
-                                  onRevenirPage: revenirPage,
-                                  oeil: !sceneDevant || revenirPage != null,
-                                ),
-                              ),
-                            BandeauSecours(
-                              vue: vue,
-                              actions: actions,
-                              gouttiere: 0,
-                            ),
-                            ?media?.alerte,
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                // Pilote C10 (27/10) : sur la scene video en grand, rien a
+                // proteger, la capsule reste au repos.
+                if (capsule && sceneDevant) capsuleEnHaut,
                 if (panneau && telephone && !enseignant)
                   PositionedDirectional(
                     start: AppSpacing.sm,
@@ -577,8 +561,10 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                     size: ecran,
                     child: Stack(
                       children: <Widget>[
-                        // Fiche 1, ligne 1 : chez l'enseignant au telephone,
-                        // rien en haut hors de la capsule (posee au repos).
+                        // Pilote C10 (27/10) : sur la page, la capsule suit le
+                        // toucher, comme la pilule et le zoom ; chez
+                        // l'enseignant au telephone, rien d'autre en haut.
+                        if (capsule && !sceneDevant) capsuleEnHaut,
                         if (!capsule)
                           PositionedDirectional(
                             top: 0,

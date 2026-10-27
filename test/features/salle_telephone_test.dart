@@ -380,8 +380,8 @@ void main() {
               '${taille.width.toInt()}x${taille.height.toInt()}, '
               'texte x${texte.toInt()}';
 
-          testWidgets('$nom : ligne 1, au repos, la capsule et « Commandes » '
-              'seulement', (WidgetTester tester) async {
+          testWidgets('$nom : ligne 1, au repos, « Commandes » seul, la '
+              'page sur tout l\'ecran', (WidgetTester tester) async {
             await _monter(tester, taille: taille, texte: texte);
             expect(find.byType(SalleOrdinateur), findsNothing);
             await _attendreLeRepos(tester);
@@ -389,10 +389,11 @@ void main() {
             final Finder commandes = find.byKey(
               TelephonePleinEcran.cleCommandesRepos,
             );
-            expect(capsule.hitTestable(), findsOneWidget);
+            // Pilote C10 : la capsule suit le toucher, absente au repos.
+            expect(capsule.hitTestable(), findsNothing);
             expect(commandes.hitTestable(), findsOneWidget);
             // Rien d'autre : ni pilule d'etat, ni Eleves, ni croix, ni texte.
-            expect(_horsDe(tester, <Finder>[capsule, commandes]), isEmpty);
+            expect(_horsDe(tester, <Finder>[commandes]), isEmpty);
             expect(find.byType(PiluleEtatSalle), findsNothing);
             expect(
               find.byKey(const ValueKey<String>('salle-eleves')),
@@ -402,18 +403,17 @@ void main() {
               find.byKey(const ValueKey<String>('salle-ranger-support')),
               findsNothing,
             );
-            // La capsule en haut au centre, « Commandes » en bas au centre.
-            final Rect c = tester.getRect(capsule);
+            // « Commandes » en bas au centre.
             final Rect k = tester.getRect(commandes);
-            expect(c.center.dx, moreOrLessEquals(taille.width / 2, epsilon: 1));
             expect(k.center.dx, moreOrLessEquals(taille.width / 2, epsilon: 1));
-            expect(c.bottom, lessThan(taille.height / 4));
-            // Pilote C6 : aucun pixel de la page sous la capsule.
-            expect(
-              tester.getRect(find.byKey(TelephonePleinEcran.clePage)).top,
-              greaterThanOrEqualTo(c.bottom),
-            );
             expect(k.top, greaterThan(taille.height * 3 / 4));
+            // Pilote C10 (loi du 24/10) : aucune bande reservee, la page a
+            // la hauteur de l'ecran et touche son haut.
+            final Rect p = tester.getRect(
+              find.byKey(TelephonePleinEcran.clePage),
+            );
+            expect(p.top, moreOrLessEquals(0, epsilon: 1));
+            expect(p.height, moreOrLessEquals(taille.height, epsilon: 1));
             expect(tester.takeException(), isNull);
           });
 
@@ -422,7 +422,17 @@ void main() {
             await _monter(tester, taille: taille, texte: texte);
             await _attendreLeRepos(tester);
             final Finder capsule = find.byKey(CapsuleVideoTelephone.cle);
-            expect(capsule, findsOneWidget);
+            // Pilote C10 : au repos rien, au toucher la capsule en haut au
+            // centre.
+            expect(capsule.hitTestable(), findsNothing);
+            await _toucher(tester);
+            expect(capsule.hitTestable(), findsOneWidget);
+            final Rect haut = tester.getRect(capsule);
+            expect(
+              haut.center.dx,
+              moreOrLessEquals(taille.width / 2, epsilon: 1),
+            );
+            expect(haut.bottom, lessThan(taille.height / 4));
             Finder dans(Finder f) => find.descendant(of: capsule, matching: f);
             final Finder vignette = dans(
               find.byKey(const ValueKey<String>('vignette-video')),
@@ -479,6 +489,9 @@ void main() {
               isEmpty,
               reason: 'en haut hors de la capsule',
             );
+            // Elle se masque avec la pilule au delai.
+            await _attendreLeRepos(tester);
+            expect(capsule.hitTestable(), findsNothing);
           });
 
           testWidgets('$nom : ligne 3, au toucher la pilule, « Commandes » '
@@ -491,6 +504,11 @@ void main() {
             expect(dock.hitTestable(), findsNothing);
             await _toucher(tester);
             expect(dock.hitTestable(), findsOneWidget);
+            // Pilote C10 : et la capsule apparait en haut.
+            expect(
+              find.byKey(CapsuleVideoTelephone.cle).hitTestable(),
+              findsOneWidget,
+            );
             final Finder commandes = find.byKey(
               TelephonePleinEcran.cleCommandesToucher,
             );
@@ -512,6 +530,10 @@ void main() {
             expect(dock.hitTestable(), findsNothing);
             expect(commandes.hitTestable(), findsNothing);
             expect(
+              find.byKey(CapsuleVideoTelephone.cle).hitTestable(),
+              findsNothing,
+            );
+            expect(
               find.byKey(TelephonePleinEcran.cleCommandesRepos).hitTestable(),
               findsOneWidget,
             );
@@ -523,6 +545,11 @@ void main() {
                 tester,
                 find.byKey(TiroirCommandesTelephone.cle),
               ).hitTestable(),
+              findsOneWidget,
+            );
+            // Et la capsule, tant que le panneau est ouvert.
+            expect(
+              find.byKey(CapsuleVideoTelephone.cle).hitTestable(),
               findsOneWidget,
             );
             expect(tester.takeException(), isNull);
@@ -562,6 +589,8 @@ void main() {
             final Finder commandes = find.byKey(
               TelephonePleinEcran.cleCommandesRepos,
             );
+            // Pilote C10 : sur la scene, rien a proteger, la capsule reste.
+            expect(capsule.hitTestable(), findsOneWidget);
             expect(commandes.hitTestable(), findsOneWidget);
             expect(
               _horsDe(tester, <Finder>[capsule, commandes, scene]),
@@ -617,6 +646,8 @@ void main() {
             final Finder commandes = find.byKey(
               TelephonePleinEcran.cleCommandesRepos,
             );
+            // Pilote C10 : sur la scene, rien a proteger, la capsule reste.
+            expect(capsule.hitTestable(), findsOneWidget);
             expect(commandes.hitTestable(), findsOneWidget);
             expect(
               _horsDe(tester, <Finder>[capsule, commandes, scene, ouvrir]),

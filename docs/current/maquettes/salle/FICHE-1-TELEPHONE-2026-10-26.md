@@ -18,9 +18,9 @@ portrait). Tailles contrôlées : 390×844 et 834×1194 ; texte ×1 et ×2 ; fra
 
 | N° | Ce qui est vrai à l'écran | Source |
 | :-- | :-- | :-- |
-| 1 | **Au repos** (rien touché depuis 3 s) : sur la page, deux objets seulement : la capsule vidéo en haut au centre et le bouton « Commandes ⌃ » en bas au centre. Aucune pilule d'état, aucun bouton Élèves, aucune croix, aucun texte posé sur la page. | M1 cadre 1 |
-| 2 | **La capsule** : une seule, sombre, en haut au centre, de gauche à droite : la vignette vidéo, le point d'état (rouge si la séance est enregistrée, vert sinon), l'œil « Voir la vidéo en grand ». Rien d'autre en haut de l'écran. | M1, M2 |
-| 3 | **Au toucher** de la page : la pilule de l'appel apparaît en bas, « Commandes ⌃ » remonte au-dessus d'elle, aligné à droite. Tout se masque de nouveau après 3 s sans toucher, sauf la pilule quand un panneau est ouvert. | M1 cadre 2 |
+| 1 | **Au repos** (rien touché depuis 3 s) : sur la page, un seul objet : le bouton « Commandes ⌃ » en bas au centre. La page du Coran occupe l'écran entier, rien ne la rétrécit ni ne la recouvre (loi du 24/10). Aucune capsule, aucune pilule d'état, aucun bouton Élèves, aucune croix, aucun texte posé sur la page. | M1 cadre 1 |
+| 2 | **La capsule**, au toucher seulement : une seule, sombre, en haut au centre, de gauche à droite : la vignette vidéo, le point d'état (rouge si la séance est enregistrée, vert sinon), l'œil « Voir la vidéo en grand ». Elle se masque avec la pilule après 3 s, reste tant qu'un panneau ou le profil est ouvert. Sur la scène vidéo en grand (sans page), elle reste au repos. | M1, M2 |
+| 3 | **Au toucher** de la page : la pilule de l'appel apparaît en bas et la capsule apparaît en haut, « Commandes ⌃ » remonte au-dessus d'elle, aligné à droite. Tout se masque de nouveau après 3 s sans toucher, sauf la pilule quand un panneau est ouvert. | M1 cadre 2 |
 | 4 | **La pilule** : quatre boutons ronds nommés, Micro, Caméra, Élèves, Quitter ; Quitter rouge (le seul bouton plein de l'écran) ; micro ou caméra coupés se lisent par l'icône barrée et le libellé ; Élèves porte le nombre d'élèves présents en pastille. | M1 ; juste milieu (Élèves dans la pilule, pas dans un onglet) |
 | 5 | **Toucher la capsule** déplie le profil : une carte en haut, photo, « Sayyida Amina », « Enseignante », point d'état et signal, « Réduire ⌃ », et dessous la ligne d'état (« En ligne · Visite de contrôle possible » ou « Cours enregistré, visite de contrôle possible »). Ce texte n'apparaît nulle part ailleurs. | M2 cadre 1 |
 | 6 | **« Commandes »** ouvre le tiroir en bas ; le tiroir se pose au-dessus de la pilule, qui reste visible et entière ; le bouton « Commandes » disparaît tant que le tiroir est ouvert. | M1 cadre 3 |
@@ -47,3 +47,5 @@ actif, feuille des élèves. Nom : `fiche1-<taille>-<etat>.png`, dans `captures/
 | Ligne | Local (tests) | Aperçu Vercel (directeur) | Production (directeur) |
 | :-- | :-- | :-- | :-- |
 | 1 à 16 | vert à 390×844 et 834×1194, texte ×1 et ×2, français et arabe (ligne 7 en clair et sombre, ligne 14 aussi à 320×568 ×2), 27/10 | | |
+
+C10 (27/10, directeur) : C6 annulé, la capsule suit le toucher, la page reprend l'écran entier
