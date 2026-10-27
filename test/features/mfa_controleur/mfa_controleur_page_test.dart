@@ -87,6 +87,7 @@ Future<void> _monter(
       surcharges: <Override>[
         portMfaProvider.overrideWithValue(port),
         serviceAuthProvider.overrideWithValue(auth ?? FauxServiceAuth()),
+        baseLocaleEnMemoire(),
       ],
       routes: <RouteBase>[
         GoRoute(
@@ -215,6 +216,7 @@ void main() {
         surcharges: <Override>[
           portMfaProvider.overrideWithValue(port),
           serviceAuthProvider.overrideWithValue(FauxServiceAuth()),
+          baseLocaleEnMemoire(),
         ],
         routes: <RouteBase>[
           GoRoute(

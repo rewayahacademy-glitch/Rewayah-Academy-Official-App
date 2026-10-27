@@ -152,3 +152,5 @@ sans rien faire.
 - 27/10 : limites admises : administration hors de la veille, ligne 7 enseignante sans
   test widget, scénario SQL à lister dans la CI par le directeur, double base locale le
   temps d'une frame en debug, rien de prouvé sur un appareil.
+- 27/10 : revue de la PR 63 : vidage de la base locale avant la fermeture de session ;
+  une file de cahiers illisible refuse la déconnexion au lieu de la laisser passer.

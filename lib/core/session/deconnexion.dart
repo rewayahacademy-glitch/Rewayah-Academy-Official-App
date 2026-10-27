@@ -1,10 +1,12 @@
 // La deconnexion (fiche du 27/10/2026, lignes 16 a 18, arbitrages du pilote
-// du 27/10) : les cahiers de transmission encore en file ont une derniere
-// chance de partir (envoi borne) ; s'il en reste, la personne choisit de les
-// perdre ou d'annuler ; puis la session locale est fermee d'abord, le serveur
-// prevenu ensuite au mieux sans bloquer ; les donnees de la personne sont
-// retirees de la base locale, les reglages de l'appareil restent ; la memoire
-// de l'application repart de zero.
+// du 27/10, revue de la PR 63) : les cahiers de transmission encore en file
+// ont une derniere chance de partir (envoi borne) ; s'il en reste, la personne
+// choisit de les perdre ou d'annuler ; puis les donnees de la personne sont
+// retirees de la base locale (les reglages de l'appareil restent), et
+// seulement ensuite la session locale est fermee, le serveur prevenu au mieux
+// sans bloquer ; la memoire de l'application repart de zero. Une base locale
+// qui ne se vide pas laisse la personne connectee : un autre compte sur le
+// meme appareil ne doit jamais relire ses profils.
 
 import 'dart:async';
 
@@ -78,11 +80,12 @@ class Deconnexion {
   /// [confirmerPerte] est demande avec le nombre de cahiers qui n'ont pas pu
   /// partir ; `false` annule tout, rien n'est touche.
   ///
-  /// La fermeture de la session locale est la seule etape qui peut faire
-  /// echouer la sortie : si elle leve, rien d'autre n'est fait et l'erreur
-  /// remonte a l'ecran, qui la dit (K-59) ; la personne est encore connectee.
-  /// Une base locale qui ne se vide pas est journalisee et la sortie aboutit
-  /// quand meme : la personne est deja sortie, la memoire repart de zero.
+  /// La base locale est videe avant la fermeture de la session : une base qui
+  /// ne se vide pas ou une fermeture qui echoue arretent tout, l'erreur
+  /// remonte a l'ecran, qui la dit (K-59), et la personne est encore
+  /// connectee ; elle peut reessayer. La transaction du vidage garantit qu'un
+  /// echec ne laisse rien a moitie : jamais les profils d'une personne ne
+  /// restent sur l'appareil une fois sa session fermee.
   Future<bool> executer({
     required Future<bool> Function(int restants) confirmerPerte,
   }) async {
@@ -90,35 +93,27 @@ class Deconnexion {
     if (restants > 0 && !await confirmerPerte(restants)) {
       return false;
     }
+    await viderAppareil();
     await auth.deconnexion();
-    try {
-      await viderAppareil();
-    } on Object catch (erreur) {
-      journalDev('Deconnexion : base locale non videe, ${erreur.runtimeType}');
-    }
     remiseAZero();
     return true;
   }
 }
 
 /// Les cahiers en file ont une derniere chance de partir, bornee : au-dela,
-/// l'envoi continue en arriere-plan mais la sortie n'attend plus. Une file
-/// illisible ou muette (base locale absente : test, galerie) vaut « aucun
-/// cahier », dans la meme borne : la sortie n'attend jamais plus que
-/// [AppDelais.envoiAvantDeconnexion] par etape. [rejouer] n'est construit que
-/// s'il y a quelque chose a envoyer.
+/// l'envoi continue en arriere-plan mais la sortie n'attend plus. Zero ne vaut
+/// que pour une file lue et vide : une file illisible ou muette au-dela de
+/// [AppDelais.envoiAvantDeconnexion] fait echouer la sortie (l'erreur remonte
+/// a l'ecran, K-59) plutot que de detruire des cahiers non envoyes. Un envoi
+/// qui echoue est journalise, puis la file est recomptee. [rejouer] n'est
+/// construit que s'il y a quelque chose a envoyer. La base locale absente
+/// (test, galerie) ne passe pas ici : seule l'enseignante lit sa file.
 Future<int> rapportsRestantsApresEnvoi(
   DepotRapports depot,
   Future<int> Function() Function() rejouer,
 ) async {
-  Future<int> compter() async {
-    try {
-      return (await depot.enAttente().timeout(AppDelais.envoiAvantDeconnexion))
-          .length;
-    } on Object {
-      return 0;
-    }
-  }
+  Future<int> compter() async =>
+      (await depot.enAttente().timeout(AppDelais.envoiAvantDeconnexion)).length;
 
   if (await compter() == 0) return 0;
   try {
