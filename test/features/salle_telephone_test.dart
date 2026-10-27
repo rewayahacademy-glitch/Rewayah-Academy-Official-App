@@ -47,7 +47,7 @@ import '../support/mushaf_15l.dart'
     show chargerPoliceMadina15, surchargesMadina15;
 import '../teaching_core/e/faux/faux_classe.dart';
 
-AccesSalle _acces(String role) => AccesSalle(
+AccesSalle _acces(String role, {bool donnees = true}) => AccesSalle(
   urlServeur: 'wss://exemple.invalid',
   jeton: 'jeton.signe',
   nomSalle: 'r_0123456789abcdef0123456789abcdef',
@@ -56,7 +56,7 @@ AccesSalle _acces(String role) => AccesSalle(
   capacites: CapacitesSalle(
     peutPublier: role == 'teacher' || role == 'student',
     peutPublierVideo: role == 'teacher',
-    peutPublierDonnees: role == 'teacher',
+    peutPublierDonnees: role == 'teacher' && donnees,
     peutRecevoir: true,
     invisible: role == 'masked_controller',
   ),
@@ -91,7 +91,11 @@ PresenceParticipant _ligne(String id, String prenom, String role) =>
       entreLe: DateTime.now(),
     );
 
-List<Override> _surcharges(String role, FauxMoteurSalle moteur) => <Override>[
+List<Override> _surcharges(
+  String role,
+  FauxMoteurSalle moteur, {
+  bool donnees = true,
+}) => <Override>[
   sourceSessionProvider.overrideWithValue(
     FausseSourceSession(
       SessionState(
@@ -115,7 +119,7 @@ List<Override> _surcharges(String role, FauxMoteurSalle moteur) => <Override>[
   ),
   servicePreVolProvider.overrideWithValue(FauxServicePreVol()),
   serviceVideoProvider.overrideWithValue(
-    FauxServiceVideo(acces0: _acces(role)),
+    FauxServiceVideo(acces0: _acces(role, donnees: donnees)),
   ),
   moteurSalleProvider.overrideWithValue(moteur),
   servicePresenceProvider.overrideWithValue(
@@ -169,13 +173,14 @@ Future<FauxMoteurSalle> _monter(
   double texte = 1,
   ThemeMode theme = ThemeMode.light,
   bool presenter = true,
+  bool donnees = true,
 }) async {
   fixerVueCapture(tester, taille, 1);
   final FauxMoteurSalle moteur = FauxMoteurSalle();
   await tester.pumpWidget(
     hoteCapture(
       const SallePage(seanceId: 's1'),
-      surcharges: _surcharges(role, moteur),
+      surcharges: _surcharges(role, moteur, donnees: donnees),
       echelleTexte: texte,
       themeMode: theme,
     ),
@@ -657,6 +662,35 @@ void main() {
             expect(_dock.hitTestable(), findsOneWidget);
             expect(
               find.byKey(TelephonePleinEcran.cleCommandesToucher).hitTestable(),
+              findsOneWidget,
+            );
+            expect(tester.takeException(), isNull);
+          });
+
+          testWidgets('$nom : C11, sans droit de presenter, « Commandes » '
+              'mene au Tableau', (WidgetTester tester) async {
+            // Pilote C11 (27/10) : enseignant sans support, peutPresenter
+            // faux (pas de Bibliotheque), le Tableau seul : « Commandes »
+            // reste, au repos, et le tiroir montre la ligne Tableau.
+            await _monter(
+              tester,
+              taille: taille,
+              texte: texte,
+              presenter: false,
+              donnees: false,
+            );
+            await _attendreLeRepos(tester);
+            final Finder repos = find.byKey(
+              TelephonePleinEcran.cleCommandesRepos,
+            );
+            expect(repos.hitTestable(), findsOneWidget);
+            await tester.tap(repos);
+            await tester.pumpAndSettle();
+            expect(find.byKey(TiroirCommandesTelephone.cle), findsOneWidget);
+            expect(
+              find
+                  .byKey(const ValueKey<String>('bouton-tableau'))
+                  .hitTestable(),
               findsOneWidget,
             );
             expect(tester.takeException(), isNull);

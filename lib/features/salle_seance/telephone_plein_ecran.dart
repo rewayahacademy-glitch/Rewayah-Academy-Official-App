@@ -866,9 +866,12 @@ class _EtatVignetteAimantee extends State<VignetteAimantee> {
 }
 
 /// Plan §4 : le rappel de « Commandes » de l'enseignant au telephone, si le
-/// tiroir a quelque chose a montrer.
+/// tiroir a quelque chose a montrer. Pilote C11 : le Tableau (onglet Support)
+/// suffit, meme sans droit de presenter ; [CommandesPedagogiques.aDesEntrees]
+/// reste celui de l'ordinateur, ou le panneau n'a pas de ligne Tableau.
 VoidCallback? _declencheur(ActionsSeance actions, VueSeance vue) =>
-    CommandesPedagogiques.aDesEntrees(vue, actions)
+    CommandesPedagogiques.aDesEntrees(vue, actions) ||
+        (vue.voitCommandes && actions.onTableau != null)
     ? actions.onCommandes
     : null;
 
