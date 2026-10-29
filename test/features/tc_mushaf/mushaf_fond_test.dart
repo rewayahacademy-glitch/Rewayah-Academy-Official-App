@@ -89,7 +89,7 @@ void main() {
         find
             .descendant(
               of: find.byType(NavShell),
-              matching: find.text(t.nav.eleve.coran),
+              matching: find.text(t.nav.eleve.apprendre),
             )
             .last,
       );

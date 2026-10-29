@@ -28,7 +28,7 @@ import 'package:rewayah_academy/features/accueil_eleve/accueil_eleve_page.dart';
 import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
-import '../../router/support_routeur.dart' show lieu;
+import '../../router/support_routeur.dart' show lieu, stabiliser;
 import '../../support/aucun_mot_coupe.dart';
 import '../../support/garde_interface.dart';
 import '../../support/hors_ligne_une_fois.dart';
@@ -75,9 +75,59 @@ void main() {
         find.text(t.adulte.accueil.salutation(prenom: 'Mamadou')),
         findsOneWidget,
       );
-      // Pas de centre de notifications pour l'eleve : pas de cloche inerte.
-      expect(find.byType(ClocheNotifications), findsNothing);
+      // Lot B2 : la cloche de la coquille de l'eleve, une seule.
+      expect(find.byType(ClocheNotifications), findsOneWidget);
       verifierUnSeulBoutonPlein(tester);
+    });
+
+    testWidgets('lot B2 : barre Aujourd\'hui, Apprendre, Suivi, Profil ; '
+        'Suivi et Profil menent a leurs pages, la cloche aux notifications', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await monterAccueilAdulteReel(
+        tester,
+        surcharges: surchargesAccueilAdulte(
+          accueil: Valeur(accueilDemo()),
+          historique: Valeur(DonneesAdulteDemo.historiqueSeances()),
+        ),
+        depart: Routes.eleve,
+      );
+      final NavShell barre = tester.widget<NavShell>(find.byType(NavShell));
+      expect(
+        barre.destinations.map((Destination d) => d.libelle).toList(),
+        <String>[
+          t.nav.eleve.aujourdhui,
+          t.nav.eleve.apprendre,
+          t.nav.eleve.suivi,
+          t.nav.eleve.profil,
+        ],
+      );
+      Finder onglet(String libelle) => find.descendant(
+        of: find.byType(NavShell),
+        matching: find.text(libelle),
+      );
+
+      await tester.tap(onglet(t.nav.eleve.suivi).last);
+      await stabiliser(tester);
+      expect(lieu(routeur), Routes.eleveSuivi);
+      expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, 2);
+
+      await tester.tap(onglet(t.nav.eleve.profil).last);
+      await stabiliser(tester);
+      // Ecart connu du lot B2 : l'adulte est un compte tuteur, `/compte` le
+      // mene au compte du tuteur (comme « Mon espace » avant B2). Le garder
+      // dans sa barre demande de distinguer « pour moi » du parent qui suit
+      // aussi des cours, ce que fait le lot B (`usageTitulaireProvider`).
+      expect(lieu(routeur), Routes.tuteurCompte);
+
+      routeur.go(Routes.eleve);
+      await stabiliser(tester);
+      expect(lieu(routeur), Routes.eleveAdulte);
+      await tester.tap(find.byType(ClocheNotifications));
+      await stabiliser(tester);
+      expect(lieu(routeur), Routes.eleveNotifications);
+      expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, isNull);
+      expect(tester.takeException(), isNull);
     });
 
     testWidgets('« Voir tout » ouvre l\'historique, le retour ramene a '

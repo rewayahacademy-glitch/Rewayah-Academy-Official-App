@@ -11095,6 +11095,15 @@ class Traductions$nav$eleve$fr {
 
 	/// fr: 'Compte'
 	String get compte => 'Compte';
+
+	/// fr: 'Aujourd'hui'
+	String get aujourdhui => 'Aujourd\'hui';
+
+	/// fr: 'Apprendre'
+	String get apprendre => 'Apprendre';
+
+	/// fr: 'Profil'
+	String get profil => 'Profil';
 }
 
 // Path: nav.tuteur
@@ -45471,6 +45480,9 @@ extension on Traductions {
 			'nav.eleve.monEspace' => 'Mon espace',
 			'nav.eleve.suivi' => 'Suivi',
 			'nav.eleve.compte' => 'Compte',
+			'nav.eleve.aujourdhui' => 'Aujourd\'hui',
+			'nav.eleve.apprendre' => 'Apprendre',
+			'nav.eleve.profil' => 'Profil',
 			'nav.tuteur.accueil' => 'Accueil',
 			'nav.tuteur.foyer' => 'Foyer',
 			'nav.tuteur.disponibilites' => 'Disponibilités',
@@ -45786,11 +45798,11 @@ extension on Traductions {
 			'historique.plage' => ({required Object debut, required Object fin}) => '${debut} - ${fin}',
 			'historique.duree.secondes' => ({required Object s}) => '${s} s',
 			'historique.duree.minutes' => ({required Object m}) => '${m} min',
+			_ => null,
+		} ?? switch (path) {
 			'historique.duree.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
 			'historique.duree.heures' => ({required Object h}) => '${h} h',
 			'historique.duree.heuresMinutes' => ({required Object h, required Object m}) => '${h} h ${m}',
-			_ => null,
-		} ?? switch (path) {
 			'historique.fuseauListe' => 'Heures affichées à l\'heure de cet appareil.',
 			'historique.fuseauDetail' => ({required Object decalage}) => 'Heures affichées à l\'heure de cet appareil (UTC${decalage}).',
 			'historique.classeInconnue' => 'Classe non disponible',
@@ -46300,11 +46312,11 @@ extension on Traductions {
 			'classe.pageCatalogue.resultat.autresClasses' => 'Voir les autres classes',
 			'classe.pageCatalogue.resultat.retourAccueil' => 'Retour à l\'accueil',
 			'classe.pageCatalogue.places' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} place restante', other: '${nombre} places restantes', ), 
+			_ => null,
+		} ?? switch (path) {
 			'classe.cartes.titre' => 'Cartes de la classe',
 			'classe.cartes.contexteEnseignant' => 'Touchez une carte pour la modifier. Les élèves et leurs familles la voient aussitôt.',
 			'classe.cartes.modificationPlusTard' => 'Les cartes pourront être modifiées quand la connexion reviendra.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.cartes.aucune' => 'Aucune carte pour l\'instant',
 			'classe.cartes.aucuneDetail' => 'L\'enseignant de la classe y posera les informations utiles.',
 			'classe.cartes.aucuneEnseignant' => 'Aucune carte pour l\'instant. Ajoutez-en une : la classe la verra aussitôt.',
@@ -46814,11 +46826,11 @@ extension on Traductions {
 			'enseignant.creneaux.heures' => 'Heures',
 			'enseignant.creneaux.menuDe' => 'Heure de début',
 			'enseignant.creneaux.menuA' => 'Heure de fin',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.creneaux.manqueJour' => 'Aucun jour choisi. Touchez au moins un jour pour enregistrer la plage.',
 			'enseignant.creneaux.fusion' => ({required Object jour, required Object de, required Object a}) => '${jour} : cette plage chevauche ou touche une plage déjà posée. Elles seront réunies en une seule, ${de} ${a}.',
 			'enseignant.creneaux.dejaPosee' => ({required Object jour, required Object de, required Object a}) => '${jour} : ces heures sont déjà posées, dans la plage ${de} ${a}. Rien ne change pour ce jour.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.enregistrerPlage' => 'Enregistrer la plage',
 			'enseignant.creneaux.supprimerPlage' => 'Supprimer cette plage',
 			'enseignant.creneaux.plageEnregistree' => ({required Object jours, required Object de, required Object a}) => 'Plage enregistrée : ${jours}, ${de} ${a}.',
@@ -47328,11 +47340,11 @@ extension on Traductions {
 			'tc.coran.navigation.limite' => 'La recherche porte sur les numéros de page, les références et les noms de sourate. La recherche dans le texte du Coran n\'est pas encore disponible.',
 			'tc.coran.navigation.aucunResultat' => 'Aucune référence trouvée',
 			'tc.coran.navigation.aucunResultatDetail' => 'Essayez un numéro de page, un nom de sourate, ou une référence comme 2:255.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.coran.navigation.pageNumero' => ({required Object page}) => 'Page ${page}',
 			'tc.coran.reprise.groupe' => 'Reprendre le cours',
 			'tc.coran.reprise.groupeDetail' => ({required Object page}) => 'La Classe en était page ${page}',
-			_ => null,
-		} ?? switch (path) {
 			'tc.coran.focus.aucunePlage' => 'Aucun passage mis en avant',
 			'tc.coran.focus.aucunePlageDetail' => 'Le focus suit le passage que l\'enseignant désigne. Hors classe, il centre la page ouverte.',
 			'tc.coran.focus.quitter' => 'Quitter le focus',
@@ -47842,11 +47854,11 @@ extension on Traductions {
 			'adulte.invitation.verifierPhrase' => 'Relisez ces informations. L\'invitation partira à cette adresse.',
 			'adulte.invitation.nonRenseigne' => 'Non renseigné',
 			'adulte.invitation.modifier' => 'Modifier',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.invitation.envoyer' => 'Envoyer l\'invitation',
 			'adulte.invitation.horsLigne' => 'Rien n\'est envoyé. Vous pourrez envoyer l\'invitation vous-même quand la connexion sera revenue.',
 			'adulte.invitation.echecTitre' => 'L\'envoi n\'a pas été confirmé.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.invitation.echecPhrase' => 'Vérifiez avant de réessayer. Vos informations sont conservées.',
 			'adulte.invitation.refusTitre' => 'Cette invitation ne peut pas être envoyée',
 			'adulte.invitation.refusPhrase' => 'Ma famille indique l\'état actuel de la place.',
@@ -48356,11 +48368,11 @@ extension on Traductions {
 			'com.socle.composants.pieceJointe.retirerLecteur' => ({required Object nom}) => 'Retirer ${nom}',
 			'com.socle.composants.pieceJointe.tailleOctets' => ({required Object taille}) => '${taille} octets',
 			'com.socle.composants.pieceJointe.tailleKo' => ({required Object taille}) => '${taille} Ko',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.composants.pieceJointe.tailleMo' => ({required Object taille}) => '${taille} Mo',
 			'com.socle.composants.pieceJointe.autorisee' => 'Prêt à envoyer',
 			'com.socle.composants.pieceJointe.tropVolumineuse' => 'Fichier trop lourd',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.composants.pieceJointe.tropVolumineuseDetail' => 'Ce fichier dépasse la taille autorisée. Choisissez un fichier plus léger.',
 			'com.socle.composants.pieceJointe.typeInterdit' => 'Type de fichier refusé',
 			'com.socle.composants.pieceJointe.typeInterditDetail' => 'Ce type de fichier n\'est pas accepté ici. Choisissez un autre format.',
@@ -48870,11 +48882,11 @@ extension on Traductions {
 			'com.studio.canal.membresUn' => '1 membre',
 			'com.studio.canal.membres' => ({required Object nombre}) => '${nombre} membres',
 			'com.studio.canal.aide' => ({required Object nom}) => 'Écrire dans ${nom}',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.canal.lectureSeule' => 'Vous pouvez lire ce canal. L\'écriture n\'y est pas ouverte pour vous.',
 			'com.studio.canal.aucunMessageTitre' => 'Aucun message pour le moment',
 			'com.studio.canal.aucunMessage' => 'Les messages de ce canal s\'afficheront ici dès leur publication.',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.canal.indisponibleTitre' => 'Canal indisponible',
 			'com.studio.canal.indisponible' => 'Ce canal n\'est pas disponible pour vous. Choisissez un autre canal dans la liste.',
 			'com.studio.panneau.titre' => 'À propos du canal',
@@ -49384,11 +49396,11 @@ extension on Traductions {
 			'comptable.aujourdhui.paiementsAEffectuerDetail' => 'Chaque paiement se vérifie dans sa liste avant d\'être payé.',
 			'comptable.aujourdhui.paiementsVide' => 'Aucun paiement à effectuer.',
 			'comptable.aujourdhui.echeancesVide' => 'Aucune échéance proche.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.aujourdhui.encaissementsVide' => 'Aucun encaissement récent.',
 			'comptable.aujourdhui.activiteVide' => 'Aucune activité récente.',
 			'comptable.aujourdhui.prestatairesVide' => 'Aucun prestataire activé.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.aujourdhui.prestatairesVideDetail' => 'Les paiements sortants partiront quand la direction aura activé un prestataire.',
 			'comptable.aujourdhui.accesPaiements' => 'Voir les paiements à effectuer',
 			'comptable.aujourdhui.accesContractuels' => 'Gérer les obligations des contractuels',
@@ -49898,11 +49910,11 @@ extension on Traductions {
 			'comptable.contractuels.changerEcheance' => 'Changer l\'échéance',
 			'comptable.contractuels.deviseDe' => ({required Object devise}) => 'Devise : ${devise}',
 			'comptable.contractuels.champObjet' => 'Objet de l\'obligation',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.aideObjet' => 'Par exemple : Facture #024',
 			'comptable.contractuels.champRefJustificatif' => 'Référence du justificatif (facultatif)',
 			'comptable.contractuels.champMontantSaisi' => 'Montant',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.aideMontant' => 'Saisi une seule fois : il ne se modifie plus après l\'approbation.',
 			'comptable.contractuels.creer' => 'Créer l\'obligation',
 			'comptable.contractuels.horsLigneCreation' => 'L\'obligation ne peut pas être créée maintenant. Créez-la dès que l\'envoi est de nouveau possible.',
@@ -50412,11 +50424,11 @@ extension on Traductions {
 			'juridique.confidentialite.s5.titre' => '5. Séances en direct et enregistrement',
 			'juridique.confidentialite.s5.blocs.0' => 'La visio passe par un service spécialisé. L\'accès à une séance est donné par le serveur, pour cette séance seulement et pour peu de temps.',
 			'juridique.confidentialite.s5.blocs.1' => 'Aujourd\'hui, l\'application n\'enregistre pas les cours. Si l\'enregistrement revient, nous vous dirons avant pourquoi, combien de temps il est gardé et qui peut y accéder, et nous demanderons votre accord.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.confidentialite.s5.blocs.2' => 'Une mention rappelle dans la salle qu\'une visite de contrôle est possible.',
 			'juridique.confidentialite.s6.titre' => '6. Où sont vos informations',
 			'juridique.confidentialite.s6.blocs.0' => 'Nous utilisons un hébergeur de pages web, une base de données avec la connexion des comptes, un service de visio, un stockage privé pour les fichiers, un prestataire de paiement et un service de rapports d\'erreurs. Ils traitent vos informations pour nous, pour ces seules raisons.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.confidentialite.s7.titre' => '7. Combien de temps',
 			'juridique.confidentialite.s7.blocs.0' => 'Nous gardons chaque type d\'information le temps nécessaire, pas davantage. La pièce d\'identité d\'un enseignant est supprimée à la fin d\'un délai fixé. Une suppression peut être gelée en cas de litige.',
 			'juridique.confidentialite.s8.titre' => '8. Vos droits',
