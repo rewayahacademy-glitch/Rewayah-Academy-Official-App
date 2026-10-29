@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // Riverpod 3 a sorti `Override` de l'export principal.
@@ -95,6 +97,7 @@ import 'core/identite/matricule_supabase.dart';
 import 'core/identite/port_matricule.dart';
 import 'core/import_inscriptions/import_inscriptions_supabase.dart';
 import 'core/import_inscriptions/port_import_inscriptions.dart';
+import 'core/observabilite/journal_dev.dart';
 import 'core/observabilite/supervision.dart';
 import 'core/offres/demandes_suivi_supabase.dart';
 import 'core/offres/frise_demandes_supabase.dart';
@@ -137,6 +140,7 @@ import 'core/tc_parcours/port_feedback.dart';
 import 'core/tc_parcours/port_signalement.dart';
 import 'core/tc_parcours/port_travail_a_venir.dart';
 import 'core/tc_parcours/signalement_supabase.dart';
+import 'core/theme/app_delais.dart';
 import 'features/_dev/playground/playground_racine.dart';
 import 'features/bienvenue_enseignant/prerequis_enseignant_supabase.dart';
 import 'features/com_annonces/annonces_supabase.dart';
@@ -513,10 +517,7 @@ Future<void> main() async {
     return;
   }
 
-  await Supabase.initialize(
-    url: Env.supabaseUrl,
-    publishableKey: Env.supabaseAnonKey,
-  );
+  await _initialiserSupabase();
 
   // Demonstration tuteur (P2-07) : `?demo=tuteur`, jamais en production.
   if (Env.demoCompilee && demoTuteurActiveIci) {
@@ -575,6 +576,25 @@ Future<void> main() async {
   runApp(RacineDemonstrable(surchargesReelles: _surchargesAppReelle()));
 }
 
+/// Initialise Supabase sans jamais retenir l'ouverture plus de
+/// [AppDelais.demarrageMax].
+///
+/// Au retour d'un lien de connexion, `initialize` attend l'echange du code
+/// avec le serveur : sur un reseau lent, l'application restait sur l'ecran
+/// d'ouverture sans fin. Le client, lui, est pret des le debut de l'appel ;
+/// passe le delai, l'application s'ouvre et la session arrive ensuite par
+/// `onAuthStateChange`, ou la connexion se refait.
+Future<void> _initialiserSupabase() async {
+  try {
+    await Supabase.initialize(
+      url: Env.supabaseUrl,
+      publishableKey: Env.supabaseAnonKey,
+    ).timeout(AppDelais.demarrageMax);
+  } on TimeoutException {
+    journalDev('Supabase.initialize depasse le delai du demarrage.');
+  }
+}
+
 /// Demarre l'application en session d'observation.
 ///
 /// L'echange du jeton se fait AVANT `Supabase.initialize`, pour deux raisons.
@@ -604,10 +624,7 @@ Future<void> _demarrerObservation(String jeton) async {
   }
 
   if (echec != null) {
-    await Supabase.initialize(
-      url: Env.supabaseUrl,
-      publishableKey: Env.supabaseAnonKey,
-    );
+    await _initialiserSupabase();
     runApp(
       ProviderScope(
         overrides: <Override>[
