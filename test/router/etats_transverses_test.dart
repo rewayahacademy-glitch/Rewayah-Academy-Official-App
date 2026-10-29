@@ -13,7 +13,6 @@ import 'package:rewayah_academy/core/theme/app_delais.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/porte_lumiere.dart';
 import 'package:rewayah_academy/features/classe_tuteur/classe_tuteur_page.dart';
-import 'package:rewayah_academy/features/connexion/coquille_entree.dart';
 import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 
 import '../capture/outil_capture.dart'
@@ -409,10 +408,11 @@ void main() {
       await monterRouteur(tester, null, source: source);
 
       expect(find.byType(EcranDemarrage), findsOneWidget);
-      // PR 2 du parcours d'entree (25/10/2026) : le logo horizontal et la
-      // porte sur la surface de marque, aucune roue.
-      expect(find.byType(LogoEntree), findsOneWidget);
-      expect(find.byType(PorteLumiere), findsOneWidget);
+      // Lot ouverture rapide (29/10/2026) : le logo d'ouverture seul sur la
+      // surface de marque, ni porte ni roue.
+      final Finder logo = find.byKey(const ValueKey<String>('demarrage-logo'));
+      expect(logo, findsOneWidget);
+      expect(find.byType(PorteLumiere), findsNothing);
       expect(find.byType(CircularProgressIndicator), findsNothing);
       expect(
         find.bySemanticsLabel(t.commun.demarrage.ouverture),
@@ -424,11 +424,11 @@ void main() {
       await tester.pump(AppDelais.chargementProlonge);
       await tester.pump();
       expect(etat(NatureEtat.chargementProlonge), findsOneWidget);
-      // Le message arrive sous la porte, qui reste.
-      expect(find.byType(PorteLumiere), findsOneWidget);
+      // Le message arrive sous le logo, qui reste.
+      expect(logo, findsOneWidget);
       expect(
         tester.getRect(etat(NatureEtat.chargementProlonge)).top,
-        greaterThanOrEqualTo(tester.getRect(find.byType(PorteLumiere)).bottom),
+        greaterThanOrEqualTo(tester.getRect(logo).bottom),
       );
       await tester.tap(find.text(t.commun.etats.actions.reessayer));
       await tester.pump();
