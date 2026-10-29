@@ -8,7 +8,12 @@
       "mcp__Supabase__query_logs",
       "mcp__github__pull_request_read",
       "mcp__github__list_pull_requests",
-      "mcp__github__actions_list"
+      "mcp__github__actions_list",
+      "mcp__Supabase__apply_migration",
+      "mcp__Supabase__list_migrations",
+      "mcp__github__create_pull_request",
+      "mcp__github__merge_pull_request",
+      "mcp__github__update_pull_request_branch"
     ]
   },
   "hooks": {
@@ -16,7 +21,11 @@
       {
         "matcher": "startup|resume",
         "hooks": [
-          { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/demarrage.sh\"", "timeout": 360 }
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/demarrage.sh\"",
+            "timeout": 360
+          }
         ]
       }
     ],
@@ -24,7 +33,11 @@
       {
         "matcher": "Edit|Write|MultiEdit|NotebookEdit|Bash|Monitor|mcp__.*",
         "hooks": [
-          { "type": "command", "command": "P=; for c in python3 python py; do command -v \"$c\" >/dev/null 2>&1 && \"$c\" -c 'import json' >/dev/null 2>&1 && { P=$c; break; }; done; [ -n \"$P\" ] || { echo 'Garde-fou : Python introuvable, action refusée par prudence' >&2; exit 2; }; \"$P\" \"$CLAUDE_PROJECT_DIR/.claude/hooks/garde.py\"; rc=$?; [ $rc -eq 0 ] && exit 0; [ $rc -eq 2 ] || echo \"Garde-fou : échec du contrôle (code $rc), action refusée par prudence\" >&2; exit 2", "timeout": 15 }
+          {
+            "type": "command",
+            "command": "P=; for c in python3 python py; do command -v \"$c\" >/dev/null 2>&1 && \"$c\" -c 'import json' >/dev/null 2>&1 && { P=$c; break; }; done; [ -n \"$P\" ] || { echo 'Garde-fou : Python introuvable, action refusée par prudence' >&2; exit 2; }; \"$P\" \"$CLAUDE_PROJECT_DIR/.claude/hooks/garde.py\"; rc=$?; [ $rc -eq 0 ] && exit 0; [ $rc -eq 2 ] || echo \"Garde-fou : échec du contrôle (code $rc), action refusée par prudence\" >&2; exit 2",
+            "timeout": 15
+          }
         ]
       }
     ],
@@ -32,7 +45,11 @@
       {
         "matcher": "Bash",
         "hooks": [
-          { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/zones_apres.sh\"", "timeout": 15 }
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/zones_apres.sh\"",
+            "timeout": 15
+          }
         ]
       }
     ]
