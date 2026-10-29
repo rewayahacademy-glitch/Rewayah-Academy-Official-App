@@ -11,6 +11,8 @@ tant que les quatre phrases du KPI ne sont pas vraies.
    ne pas le froisser.
 4. **Rien d'autre** : aucun nouvel écran, aucune nouvelle règle, aucun lot hors boucle, aucune
    session parallèle, aucune remise à plat d'architecture.
+   **Amendé le 29/10/2026** : deux agents de construction au plus, et la fusion et les migrations
+   par le pilote (`DECISION-AUTONOMIE-2026-10-29.md`).
 
 ## 1. Le KPI : quatre phrases, vraies ou fausses, vérifiées par le directeur
 
