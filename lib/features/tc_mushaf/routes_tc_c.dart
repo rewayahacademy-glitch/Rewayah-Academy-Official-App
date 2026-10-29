@@ -33,3 +33,9 @@ List<RouteBase> routesTcC() => <RouteBase>[
     ),
   ),
 ];
+
+/// L'ecran du Coran charge a la demande, pour le precharger
+/// (`test/flutter_test_config.dart`).
+final List<MorceauDiffere> morceauxDifferesTcC = <MorceauDiffere>[
+  ('routes_tc_c.d_mushaf_page', d_mushaf_page.loadLibrary),
+];

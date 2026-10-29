@@ -22,6 +22,9 @@ import '../widgets/etat_systeme.dart';
 /// [cle] nomme l'import differe (un par prefixe : dart2js verifie le
 /// chargement prefixe par prefixe) ; une fois charge, l'ecran se construit
 /// des la premiere image, sans repasser par l'etat vide.
+/// Un import differe : son nom (la [PageDifferee.cle]) et son chargement.
+typedef MorceauDiffere = (String cle, Future<void> Function() charger);
+
 class PageDifferee extends StatefulWidget {
   /// Cree l'ecran differe.
   const PageDifferee({
@@ -45,6 +48,17 @@ class PageDifferee extends StatefulWidget {
   /// Vrai si le morceau [cle] est deja charge (tests).
   @visibleForTesting
   static bool estCharge(String cle) => _charges.contains(cle);
+
+  /// Charge le morceau [cle] d'avance : l'ecran se construira alors des sa
+  /// premiere image. Sert aux tests, qui pompent une image apres la
+  /// navigation et attendent l'ecran.
+  static Future<void> precharger(
+    String cle,
+    Future<void> Function() charger,
+  ) async {
+    await charger();
+    _charges.add(cle);
+  }
 
   @override
   State<PageDifferee> createState() => _PageDiffereeState();
