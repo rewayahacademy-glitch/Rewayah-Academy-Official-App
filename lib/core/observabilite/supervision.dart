@@ -225,6 +225,32 @@ abstract final class Supervision {
     );
   }
 
+  /// Un avertissement envoye tout de suite, sans erreur (29/10/2026 : la
+  /// veille temps reel qui ne se rejoint pas). Meme regle que [miette] :
+  /// [donnees] ne porte jamais d'identite ni d'identifiant de personne. Sans
+  /// supervision demarree, rien.
+  static void signaler({
+    required String categorie,
+    required String message,
+    Map<String, Object?> donnees = const <String, Object?>{},
+  }) {
+    if (!_demarree) {
+      return;
+    }
+    unawaited(
+      Sentry.captureMessage(
+        message,
+        level: SentryLevel.warning,
+        withScope: (Scope portee) {
+          portee.setTag('categorie', categorie);
+          for (final MapEntry<String, Object?> d in donnees.entries) {
+            portee.setTag(d.key, '${d.value}');
+          }
+        },
+      ),
+    );
+  }
+
   static Future<SentryId?> declencherErreurDeTest() async {
     if (!_demarree) {
       return null;

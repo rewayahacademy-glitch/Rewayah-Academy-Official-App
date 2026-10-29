@@ -24,13 +24,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/accessibilite/port_accueil_accessibilite.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/capacites/capacite_indisponible.dart';
-import '../../core/fraicheur/relecture_reguliere.dart';
+import '../../core/fraicheur/relectures_accueil.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -206,9 +207,16 @@ class AccueilAccessibilite extends ConsumerWidget {
       );
       // Tant que la reponse manque, l'appareil est repute en ligne.
       final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
-      // Secours de la veille temps reel (appareil de Hakim, 27/10/2026).
-      haut = RelectureReguliere(
+      // Secours de la veille temps reel (appareil de Hakim, 27/10/2026) : au
+      // retour dans l'application, et une seule relecture programmee a
+      // l'ouverture de « Rejoindre » puis au debut de la seance connue (le
+      // serveur calcule l'ouverture), sans minuterie fixe.
+      final SessionClockVM? horloge = lecture.value?.espace?.identite.horloge;
+      haut = RelecturesAccueil(
         relire: () => ref.invalidate(donneesAccueilAccessibiliteProvider),
+        instants: horloge == null
+            ? const <DateTime>[]
+            : <DateTime>[horloge.joinOpensAtUtc, horloge.debutUtc],
         child: BlocAsynchrone<DonneesAccueilAccessibilite>(
           valeur: lecture,
           squelette: _Squelette(key: cleSquelette, aCote: aCote),

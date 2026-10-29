@@ -20,6 +20,7 @@ import '../../features/notifications/notifications_page.dart'
     show notificationsTuteurProvider;
 import '../enseignant/service_enseignant.dart';
 import '../observabilite/journal_dev.dart';
+import '../observabilite/supervision.dart';
 import '../planning/service_planning.dart' show seancesProvider;
 import '../reseau/service_reseau.dart';
 import '../seance_famille/port_seances_famille.dart';
@@ -28,6 +29,7 @@ import '../session/session_state.dart';
 import '../suivi/groupes_seances.dart';
 import '../suivi/service_suivi.dart';
 import '../tc_groupe/port_groupes.dart';
+import '../theme/app_delais.dart';
 import 'generation_veille.dart';
 import 'port_veille.dart';
 
@@ -109,11 +111,31 @@ final Provider<void> veilleFraicheurProvider = Provider<void>((Ref ref) {
   }
   final PortVeille port = ref.watch(portVeilleProvider);
   StreamSubscription<SignalVeille>? abonnement;
+  Timer? nonRejointe;
 
   void ouvrir() {
     unawaited(abonnement?.cancel());
+    // Appareil de Hakim (27/10/2026) : le temps reel ne l'a pas prevenu, sans
+    // trace. Un canal qui ne se rejoint pas se dit desormais a la
+    // supervision, avec le role seulement (jamais une personne).
+    // Sans supervision demarree (tests, poste sans DSN), rien a prevenir.
+    nonRejointe?.cancel();
+    nonRejointe = !Supervision.demarree
+        ? null
+        : Timer(AppDelais.veilleNonRejointe, () {
+            Supervision.signaler(
+              categorie: 'veille',
+              message: 'Veille temps reel : canal non rejoint',
+              donnees: <String, Object?>{
+                'role': ref.read(sessionProvider).role?.name ?? 'inconnu',
+              },
+            );
+          });
     abonnement = port.ecouter().listen(
       (SignalVeille signal) {
+        if (signal is CanalRejoint) {
+          nonRejointe?.cancel();
+        }
         for (final FamilleLecture famille in famillesPourSignal(signal)) {
           invaliderFamille(ref, famille);
         }
@@ -124,7 +146,10 @@ final Provider<void> veilleFraicheurProvider = Provider<void>((Ref ref) {
   }
 
   ouvrir();
-  ref.onDispose(() => unawaited(abonnement?.cancel()));
+  ref.onDispose(() {
+    nonRejointe?.cancel();
+    unawaited(abonnement?.cancel());
+  });
 
   // Ligne 2 : au retour du reseau, re-souscription et relecture de tout, car
   // ce qui a change pendant la coupure n'a pas ete signale.

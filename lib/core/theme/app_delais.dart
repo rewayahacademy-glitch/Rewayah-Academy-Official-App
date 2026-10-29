@@ -27,10 +27,17 @@ abstract final class AppDelais {
   /// long, et seulement ensuite que c'est perdu.
   static const Duration requeteMax = Duration(seconds: 20);
 
-  /// Tous les combien l'accueil de l'eleve relit ses seances, en plus de la
-  /// veille temps reel : une seance creee apres l'ouverture de l'ecran doit y
-  /// apparaitre, avec « Rejoindre » (appareil de Hakim, 27/10/2026).
-  static const Duration relectureAccueil = Duration(minutes: 2);
+  /// La relecture programmee d'un accueil d'eleve qui precede sa seance
+  /// connue (la seconde tombe a l'heure de debut). Decision du directeur du
+  /// 29/10/2026 : aucune minuterie fixe.
+  static const Duration avantSeanceRelecture = Duration(minutes: 5);
+
+  /// L'alea maximal ajoute a chaque relecture programmee, contre les rafales.
+  static const Duration aleaRelecture = Duration(seconds: 30);
+
+  /// Passe ce delai sans que le canal temps reel de la veille soit rejoint, un
+  /// avertissement part vers la supervision (29/10/2026).
+  static const Duration veilleNonRejointe = Duration(seconds: 15);
   /// Le plus long qu'un appel du demarrage (session, profil) peut retenir
   /// l'ouverture (lot ouverture rapide, 29/10/2026). Passe ce delai, l'ecran
   /// dit ce qui manque et propose « Reessayer », au lieu de rester bloque.
