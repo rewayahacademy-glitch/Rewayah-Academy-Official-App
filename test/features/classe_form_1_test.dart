@@ -123,6 +123,7 @@ class _CreationRefusee extends FauxCreationClasse {
     required String libelle,
     required Creneau creneau,
     required int seuilMax,
+    List<Creneau> autresCreneaux = const <Creneau>[],
   }) async {
     if (refus > 0) {
       refus--;
@@ -135,6 +136,7 @@ class _CreationRefusee extends FauxCreationClasse {
       libelle: libelle,
       creneau: creneau,
       seuilMax: seuilMax,
+      autresCreneaux: autresCreneaux,
     );
   }
 }
@@ -241,6 +243,14 @@ Future<void> _heure(WidgetTester tester, int heure) async {
     tester,
     find.text(t.admin.groupes.formulaire.heureValeur(heure: '$heure')).last,
   );
+}
+
+/// D2 (29/10/2026) : la feuille propose trois creneaux par defaut ; ces
+/// tests creent une classe d'un seul creneau, et retirent les deux autres.
+Future<void> _unSeulCreneau(WidgetTester tester) async {
+  while (_cle('classe-autre-2-retirer').evaluate().isNotEmpty) {
+    await _presser(tester, _cle('classe-autre-2-retirer'));
+  }
 }
 
 void main() {
@@ -383,6 +393,8 @@ void main() {
       );
       expect(bouton.onPress, isNotNull);
 
+      await _unSeulCreneau(tester);
+
       await _presser(tester, _envoyer);
       expect(find.text(t.admin.groupes.formulaire.manqueGenre), findsOneWidget);
       expect(creation.creations, isEmpty);
@@ -390,10 +402,12 @@ void main() {
       // Le genre choisi, le manque suivant est dit : l'enseignant.
       await _presser(tester, _cle('classe-genre-femmes'));
       expect(find.text(t.admin.groupes.formulaire.manqueGenre), findsNothing);
+      await _unSeulCreneau(tester);
       await _presser(tester, _envoyer);
       expect(find.text(t.admin.groupes.manqueEnseignant), findsOneWidget);
       // Puis le creneau.
       await _presser(tester, _cle('personne-f1'));
+      await _unSeulCreneau(tester);
       await _presser(tester, _envoyer);
       expect(
         find.text(t.admin.groupes.formulaire.manqueCreneau),
@@ -409,9 +423,12 @@ void main() {
       expect(find.text(f.contexte), findsOneWidget);
       expect(find.text(f.genreGarcons), findsOneWidget);
       expect(find.text(f.genreFilles), findsOneWidget);
-      expect(find.text(f.genreIndetermine), findsOneWidget);
+      // D1 (29/10/2026) : « Mixte » remplace « Non determine » pour une
+      // classe nouvelle.
+      expect(find.text(f.genreMixte), findsOneWidget);
+      expect(find.text(f.genreIndetermine), findsNothing);
       expect(find.text(f.genreFillesDetail), findsOneWidget);
-      expect(find.text(f.genreIndetermineDetail), findsOneWidget);
+      expect(find.text(f.genreMixteDetailEnfants), findsOneWidget);
 
       await _presser(tester, _cle('classe-public-adulte'));
       expect(find.text(f.genreHommes), findsOneWidget);
@@ -458,6 +475,7 @@ void main() {
       expect(find.text(f.raisonFemmes), findsNWidgets(2));
       // Toucher un enseignant indisponible ne le retient pas.
       await _presser(tester, _cle('personne-h1'));
+      await _unSeulCreneau(tester);
       await _presser(tester, _envoyer);
       expect(find.text(t.admin.groupes.manqueEnseignant), findsOneWidget);
     });
@@ -484,6 +502,7 @@ void main() {
       expect(_nom(tester), contains('vendredi'));
 
       final String nomPropose = _nom(tester);
+      await _unSeulCreneau(tester);
       await _presser(tester, _envoyer);
       expect(creation.creations.single.seuilMax, 6);
       expect(creation.creations.single.libelle, nomPropose);
@@ -508,6 +527,7 @@ void main() {
       await _presser(tester, find.byKey(SelecteurEntier.clePuce(4)));
       await tester.enterText(_champNom, 'Al-Fajr');
       await tester.pumpAndSettle();
+      await _unSeulCreneau(tester);
       await _presser(tester, _envoyer);
 
       final CreationRecue c = creation.creations.single;
@@ -521,6 +541,49 @@ void main() {
       expect(c.seuilMax, 4);
       // La feuille se ferme apres la creation.
       expect(_envoyer, findsNothing);
+    });
+
+    // D2 (29/10/2026) : trois creneaux par semaine par defaut, a des jours
+    // fixes ; les deux suivants partent avec le premier.
+    testWidgets('trois creneaux : les deux suivants partent au port, un '
+        'creneau incomplet ou en double se dit', (WidgetTester tester) async {
+      final FauxCreationClasse creation = FauxCreationClasse();
+      final f = t.admin.groupes.formulaire;
+      await _ouvrir(tester, _surcharges(creation: creation));
+      await _presser(tester, _cle('classe-public-adulte'));
+      await _presser(tester, _cle('classe-genre-hommes'));
+      await _presser(tester, _cle('personne-h1'));
+      await _presser(tester, _cle('classe-libre-4-18'));
+      expect(find.text(f.autresCreneauxTitre), findsOneWidget);
+      // Les deux lignes vides : le creneau 2 manque.
+      await _presser(tester, _envoyer);
+      expect(find.text(f.manqueAutreCreneau(n: 2)), findsOneWidget);
+      expect(creation.creations, isEmpty);
+
+      Future<void> ligne(int numero, int jour, int heure) async {
+        await _presser(tester, _cle('classe-autre-$numero-jour-$jour'));
+        await _presser(tester, _cle('classe-autre-$numero-heure'));
+        await _presser(
+          tester,
+          find.text(f.heureValeur(heure: '$heure')).last,
+        );
+      }
+
+      // Le creneau 2 au meme instant que le premier : en double.
+      await ligne(2, 4, 18);
+      await ligne(3, 6, 10);
+      await _presser(tester, _envoyer);
+      expect(find.text(f.creneauEnDouble), findsOneWidget);
+      expect(creation.creations, isEmpty);
+
+      await ligne(2, 1, 18);
+      await _presser(tester, _envoyer);
+      expect(creation.creations.single.creneau.jour, 4);
+      final List<Creneau> autres = creation.autresCreneauxRecus.single;
+      expect(
+        autres.map((Creneau c) => (c.jour, c.heure, c.fuseau)).toList(),
+        <(int, int, String)>[(1, 18, _casablanca), (6, 10, _casablanca)],
+      );
     });
 
     testWidgets('adaptateur reel : le fuseau affiche est celui que le serveur '
@@ -555,6 +618,7 @@ void main() {
         findsOneWidget,
       );
       await _presser(tester, _cle('classe-libre-2-17'));
+      await _unSeulCreneau(tester);
       await _presser(tester, _envoyer);
 
       final CreationRecue c = groupes.creations.single;
@@ -574,6 +638,7 @@ void main() {
       await _presser(tester, _cle('classe-genre-femmes'));
       await _presser(tester, _cle('personne-f1'));
       await _presser(tester, _cle('classe-libre-2-17'));
+      await _unSeulCreneau(tester);
       await _presser(tester, _envoyer);
 
       expect(
@@ -588,6 +653,7 @@ void main() {
       expect(_envoyer, findsOneWidget);
 
       // Reessayer avec les memes choix aboutit.
+      await _unSeulCreneau(tester);
       await _presser(tester, _envoyer);
       expect(creation.creations, hasLength(1));
     });
@@ -617,6 +683,7 @@ void main() {
       await _presser(tester, _cle('personne-f1'));
       await _presser(tester, _cle('classe-libre-5-10'));
       expect(_nom(tester), 'Al-Fajr');
+      await _unSeulCreneau(tester);
       await _presser(tester, _envoyer);
       expect(creation.creations.single.libelle, 'Al-Fajr');
     });
@@ -630,6 +697,7 @@ void main() {
       await _presser(tester, _cle('classe-genre-femmes'));
       await _presser(tester, _cle('personne-f1'));
       await _presser(tester, _cle('classe-libre-2-17'));
+      await _unSeulCreneau(tester);
       await _presser(tester, _envoyer);
       expect(creation.creations.single.seuilMax, 3);
     });
@@ -652,6 +720,7 @@ void main() {
         ),
         findsOneWidget,
       );
+      await _unSeulCreneau(tester);
       await _presser(tester, _envoyer);
       expect(
         find.text(f.manqueEnseignantPris(nom: 'Hamza Sow')),
@@ -670,6 +739,7 @@ void main() {
       await _presser(tester, _cle('personne-f1'));
       await _presser(tester, _cle('classe-libre-2-17'));
       await _presser(tester, _cle('classe-genre-hommes'));
+      await _unSeulCreneau(tester);
       await _presser(tester, _envoyer);
       expect(
         find.text(
@@ -692,6 +762,7 @@ void main() {
       await _presser(tester, _cle('classe-libre-2-17'));
       // La source des adultes ne repond pas encore.
       await _presser(tester, _cle('classe-public-adulte'));
+      await _unSeulCreneau(tester);
       await _presser(tester, _envoyer);
       expect(
         find.text(t.admin.groupes.formulaire.manqueListeEnseignants),
@@ -725,6 +796,7 @@ void main() {
       await _presser(tester, _cle('classe-genre-femmes'));
       await _presser(tester, _cle('personne-demo-ens-1'));
       await _presser(tester, _cle('classe-libre-1-17'));
+      await _unSeulCreneau(tester);
       await _presser(tester, _envoyer);
       expect(_envoyer, findsNothing);
       final String id = creees.groupes.single.id;
@@ -757,7 +829,7 @@ void main() {
       final FauxCreationClasse creation = FauxCreationClasse();
       final f = t.admin.groupes.formulaire;
       await _ouvrir(tester, _surcharges(creation: creation));
-      await _presser(tester, _cle('classe-genre-indetermine'));
+      await _presser(tester, _cle('classe-genre-mixte'));
       await _presser(tester, _cle('classe-jour-2'));
       await _heure(tester, 17);
       expect(
@@ -769,6 +841,7 @@ void main() {
       );
       // Toucher la personne ne la retient pas : rien ne part.
       await _presser(tester, _cle('personne-x1'));
+      await _unSeulCreneau(tester);
       await _presser(tester, _envoyer);
       expect(find.text(t.admin.groupes.manqueEnseignant), findsOneWidget);
       expect(creation.creations, isEmpty);
@@ -788,6 +861,7 @@ void main() {
         await _presser(tester, _cle('personne-f1'));
         await _presser(tester, _cle('classe-libre-2-17'));
         final String nom = _nom(tester);
+        await _unSeulCreneau(tester);
         await _presser(tester, _envoyer);
 
         final String attendu = switch (motif) {
@@ -809,6 +883,8 @@ void main() {
         expect(creation.creations, isEmpty);
         expect(_envoyer, findsOneWidget);
         expect(_nom(tester), nom);
+
+        await _unSeulCreneau(tester);
 
         await _presser(tester, _envoyer);
         expect(creation.creations, hasLength(1));
