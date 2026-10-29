@@ -143,6 +143,12 @@ abstract final class Env {
   /// publication (DEMO-ENV-1).
   static const bool environnementDeclare = bool.hasEnvironment('ENVIRONNEMENT');
 
+  /// Faux dans la compilation de production : les demonstrations (`/demo/*`,
+  /// `?demo=`) n'y sont pas compilees du tout. Constante de compilation, pour
+  /// que dart2js retire leur code de `main.dart.js` (213 Ko le 28/10/2026) ;
+  /// la garde d'execution [environnementAutoriseDemo] reste la seconde porte.
+  static const bool demoCompilee = environnement != 'production';
+
   /// Vrai quand la configuration minimale est presente et plausible.
   static bool get configuree =>
       _urlSupabaseValide(supabaseUrl) && cleSupabaseValide(supabaseAnonKey);

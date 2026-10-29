@@ -519,7 +519,7 @@ Future<void> main() async {
   );
 
   // Demonstration tuteur (P2-07) : `?demo=tuteur`, jamais en production.
-  if (demoTuteurActiveIci) {
+  if (Env.demoCompilee && demoTuteurActiveIci) {
     final ({EtatRevueDemo dossiers, String titulaire})? titulaireDemo =
         dossierTitulaireDemoPour(Uri.base);
     runApp(
@@ -541,7 +541,7 @@ Future<void> main() async {
 
   // Demonstration admin (AD-4) : `?demo=admin`, meme garde et meme repere.
   // Aucun adaptateur serveur des ports de revue n'est branche (K-28).
-  if (demoAdminActiveIci) {
+  if (Env.demoCompilee && demoAdminActiveIci) {
     runApp(
       ProviderScope(
         overrides: surchargesDemoAdmin(

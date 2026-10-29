@@ -2199,15 +2199,18 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         ),
 
       // La salle de seance en demonstration : aucune route en production.
-      ...routesDemoSalle(Env.environnement),
-      ...routesDemoClasse(Env.environnement),
-      ...routesDemoEnseignant(Env.environnement),
-      ...routesDemoControleur(Env.environnement),
-      ...routesDemoAccessibilite(Env.environnement),
-      ...routesDemoAdulte(Env.environnement),
-      ...routesDemoFinance(Env.environnement),
-      ...routesDemoCommunications(Env.environnement),
-      ...routesDemoComptable(Env.environnement),
+      // Ni compilees en production (`Env.demoCompilee`, constante).
+      if (Env.demoCompilee) ...<RouteBase>[
+        ...routesDemoSalle(Env.environnement),
+        ...routesDemoClasse(Env.environnement),
+        ...routesDemoEnseignant(Env.environnement),
+        ...routesDemoControleur(Env.environnement),
+        ...routesDemoAccessibilite(Env.environnement),
+        ...routesDemoAdulte(Env.environnement),
+        ...routesDemoFinance(Env.environnement),
+        ...routesDemoCommunications(Env.environnement),
+        ...routesDemoComptable(Env.environnement),
+      ],
     ],
   );
 });
