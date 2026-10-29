@@ -1,11 +1,11 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/connexion/coquille_entree.dart';
-import '../../features/connexion/raccord_entree.dart';
 import '../domain/enums.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
@@ -15,10 +15,10 @@ import '../session/session_controleur.dart';
 import '../session/session_state.dart';
 import '../theme/app_delais.dart';
 import '../theme/app_metriques.dart';
-import '../theme/app_mouvement.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_theme.dart';
+import '../widgets/brand_logo.dart';
 import '../widgets/etat_systeme.dart';
 import '../widgets/page_shell.dart';
 import '../widgets/porte_lumiere.dart';
@@ -138,20 +138,24 @@ class _PageHorsLigneState extends ConsumerState<PageHorsLigne> {
   }
 }
 
-/// L'ecran de `/`, pendant la resolution de la session (PR 2 du parcours
-/// d'entree, `docs/current/PARCOURS-ENTREE-2026-10-25.md` §3 A) : la surface
-/// de marque, le logo horizontal blanc en haut par un fondu net, et la porte
-/// qui joue une fois ([AppMouvement.entreeIllustration]) ; aucune roue. Passe
-/// [AppDelais.chargementProlonge], la phrase « La connexion prend plus de
-/// temps que prevu » et une relance arrivent sous la porte, qui reste.
+/// L'ecran de `/`, pendant la resolution de la session : la meme image que
+/// l'ouverture HTML de `web/index.html` (surface de marque, logo vertical
+/// blanc centre, immobile), pour que le passage de l'une a l'autre ne se voie
+/// pas. Passe [AppDelais.chargementProlonge], la phrase « La connexion prend
+/// plus de temps que prevu » et une relance arrivent sous le logo.
 ///
-/// Session deja lue active : la version courte (fondus, [AppMouvement.plafond]),
-/// puis la redirection habituelle ; lue active pendant l'entree, celle-ci
-/// finit sur la duree courte. Sinon, l'avancement de la porte est inscrit au
-/// [RaccordEntree] : la connexion qui suit la reprend sans la rejouer.
+/// Lot ouverture rapide (29/10/2026) : plus de porte animee ici. Le
+/// directeur n'a demande que l'animation de la page de connexion et celle du
+/// logo d'ouverture ; au retour d'un lien de connexion, cet ecran se tenait
+/// entre la connexion et l'accueil avec sa propre animation. La connexion
+/// joue toujours la sienne ([CoquilleEntree]).
 class EcranDemarrage extends ConsumerStatefulWidget {
   /// Cree l'ecran.
   const EcranDemarrage({super.key});
+
+  /// La largeur du logo, celle de l'ouverture HTML : `min(55vw, 256px)`.
+  static double largeurLogo(double largeurEcran) =>
+      math.min(largeurEcran * 0.55, AppSpacing.respiration * 4);
 
   @override
   ConsumerState<EcranDemarrage> createState() => _EcranDemarrageState();
@@ -160,9 +164,6 @@ class EcranDemarrage extends ConsumerStatefulWidget {
 class _EcranDemarrageState extends ConsumerState<EcranDemarrage> {
   Timer? _minuterie;
   bool _prolonge = false;
-  late bool _courte = _sessionActive(ref.read(sessionProvider));
-
-  static bool _sessionActive(SessionState s) => s.resolue && s.connecte;
 
   @override
   void initState() {
@@ -188,29 +189,19 @@ class _EcranDemarrageState extends ConsumerState<EcranDemarrage> {
     }
   }
 
-  void _suivre(double avancement) {
-    if (!_courte) {
-      ref.read(raccordEntreeProvider).suivre(avancement);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    ref.listen<SessionState>(sessionProvider, (
-      SessionState? _,
-      SessionState s,
-    ) {
-      if (_sessionActive(s) && !_courte) {
-        ref.read(raccordEntreeProvider).oublier();
-        setState(() => _courte = true);
-      }
-    });
     final InterfaceMode mode = AppMetriques.of(context).mode;
     final ThemeData marque = AppTheme.depuis(
       AppPalette.surMarque(),
       mode,
       Brightness.dark,
     );
+    // Le rapport du logo vertical (viewBox 680 x 489).
+    final double hauteurLogo =
+        EcranDemarrage.largeurLogo(MediaQuery.sizeOf(context).width) *
+        489 /
+        680;
     // Theme unique, comme la connexion qui suit (decision du 25/10/2026).
     return Theme(
       data: AppTheme.pour(mode, Brightness.light),
@@ -223,36 +214,33 @@ class _EcranDemarrageState extends ConsumerState<EcranDemarrage> {
             theme: marque,
             child: Padding(
               padding: const EdgeInsets.all(AppSpacing.xxl),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  const LogoEntree(),
-                  Expanded(
-                    child: Center(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Semantics(
-                              label: t.commun.demarrage.ouverture,
-                              child: PorteLumiere.surMarque(
-                                courte: _courte,
-                                onProgres: _suivre,
-                              ),
-                            ),
-                            if (_prolonge) ...<Widget>[
-                              Ecart.vXxl,
-                              EtatSysteme(
-                                nature: NatureEtat.chargementProlonge,
-                                onAction: () => unawaited(_relancer()),
-                              ),
-                            ],
-                          ],
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Semantics(
+                        label: t.commun.demarrage.ouverture,
+                        child: BrandLogo(
+                          key: const ValueKey<String>('demarrage-logo'),
+                          variante: VarianteLogo.vertical,
+                          hauteur: math.max(
+                            hauteurLogo,
+                            BrandLogo.minimumVertical,
+                          ),
+                          fond: FondLogo.violet,
                         ),
                       ),
-                    ),
+                      if (_prolonge) ...<Widget>[
+                        Ecart.vXxl,
+                        EtatSysteme(
+                          nature: NatureEtat.chargementProlonge,
+                          onAction: () => unawaited(_relancer()),
+                        ),
+                      ],
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),

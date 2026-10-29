@@ -31,6 +31,10 @@ abstract final class AppDelais {
   /// veille temps reel : une seance creee apres l'ouverture de l'ecran doit y
   /// apparaitre, avec « Rejoindre » (appareil de Hakim, 27/10/2026).
   static const Duration relectureAccueil = Duration(minutes: 2);
+  /// Le plus long qu'un appel du demarrage (session, profil) peut retenir
+  /// l'ouverture (lot ouverture rapide, 29/10/2026). Passe ce delai, l'ecran
+  /// dit ce qui manque et propose « Reessayer », au lieu de rester bloque.
+  static const Duration demarrageMax = Duration(seconds: 10);
 
   /// Avant de se deconnecter, les cahiers de transmission encore en file ont
   /// cette duree pour partir ; au-dela, la personne choisit de les perdre ou

@@ -46,7 +46,7 @@ class SourceSessionSupabase implements SourceSession {
     if (_client.auth.currentSession == null) {
       return;
     }
-    await _client.auth.refreshSession();
+    await _client.auth.refreshSession().timeout(AppDelais.demarrageMax);
   }
 
   Future<SessionState> _resoudre(Session? session) async {
@@ -97,7 +97,7 @@ class SourceSessionSupabase implements SourceSession {
           )
           .eq('id', profileId)
           .maybeSingle()
-          .timeout(AppDelais.requeteMax);
+          .timeout(AppDelais.demarrageMax);
 
       // Aucune ligne, mais la requete a abouti : le compte existe et son profil
       // reste a creer. C'est une inscription a terminer, pas un dossier a
