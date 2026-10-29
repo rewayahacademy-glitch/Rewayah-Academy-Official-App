@@ -27,6 +27,11 @@ abstract final class AppDelais {
   /// long, et seulement ensuite que c'est perdu.
   static const Duration requeteMax = Duration(seconds: 20);
 
+  /// Tous les combien l'accueil de l'eleve relit ses seances, en plus de la
+  /// veille temps reel : une seance creee apres l'ouverture de l'ecran doit y
+  /// apparaitre, avec « Rejoindre » (appareil de Hakim, 27/10/2026).
+  static const Duration relectureAccueil = Duration(minutes: 2);
+
   /// Avant de se deconnecter, les cahiers de transmission encore en file ont
   /// cette duree pour partir ; au-dela, la personne choisit de les perdre ou
   /// d'annuler (fiche du 27/10/2026, ligne 16, arbitrage du pilote).

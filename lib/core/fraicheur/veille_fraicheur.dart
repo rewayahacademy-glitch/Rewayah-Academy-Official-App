@@ -28,6 +28,7 @@ import '../session/session_state.dart';
 import '../suivi/groupes_seances.dart';
 import '../suivi/service_suivi.dart';
 import '../tc_groupe/port_groupes.dart';
+import 'generation_veille.dart';
 import 'port_veille.dart';
 
 /// Les lectures de chaque famille : ce que la veille invalide quand le
@@ -46,6 +47,10 @@ final Map<FamilleLecture, List<void Function(Ref)>> lecturesVeillees =
         (Ref ref) => ref.invalidate(groupesEnseignantProvider),
         (Ref ref) => ref.invalidate(membresGroupeEnseignantProvider),
         (Ref ref) => ref.invalidate(groupesDesSeancesProvider),
+        // L'accueil de l'eleve en Interface guidee (classe et prochaine
+        // seance), sur l'appareil appaire comme ailleurs (29/10/2026) : une
+        // lecture a portee, qui suit le rang de la veille.
+        (Ref ref) => ref.read(generationVeilleProvider.notifier).avancer(),
       ],
       FamilleLecture.seances: <void Function(Ref)>[
         (Ref ref) => ref.invalidate(seancesDeMonSuiviProvider),
@@ -59,6 +64,7 @@ final Map<FamilleLecture, List<void Function(Ref)>> lecturesVeillees =
         (Ref ref) => ref.invalidate(rosterSeanceProvider),
         (Ref ref) => ref.invalidate(cahiersEnRetardProvider),
         (Ref ref) => ref.invalidate(groupesDesSeancesProvider),
+        (Ref ref) => ref.read(generationVeilleProvider.notifier).avancer(),
       ],
       // Lignes 12 et 14 : la liste du centre de notifications porte aussi le
       // point de non-lus de la cloche (`nonLuesProvider`) ; une insertion ou

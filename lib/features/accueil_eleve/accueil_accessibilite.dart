@@ -24,6 +24,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/accessibilite/port_accueil_accessibilite.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/fraicheur/relecture_reguliere.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -205,66 +206,71 @@ class AccueilAccessibilite extends ConsumerWidget {
       );
       // Tant que la reponse manque, l'appareil est repute en ligne.
       final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
-      haut = BlocAsynchrone<DonneesAccueilAccessibilite>(
-        valeur: lecture,
-        squelette: _Squelette(key: cleSquelette, aCote: aCote),
-        onReessayer: () => ref.invalidate(donneesAccueilAccessibiliteProvider),
-        // Echec ou indisponibilite : en deux colonnes, le Coran et l'aide
-        // restent dessous (D11), tentative perdue comprise.
-        piedEchec: dessous,
-        erreurVersEtat: (Object erreur, VoidCallback? reessayer) =>
-            erreur is CapaciteIndisponible
-            // La source n'existe pas encore (BR-1) : on le dit, sans
-            // « Reessayer », et on mene a Ma classe.
-            ? EtatSysteme(
-                key: cleIndisponible,
-                nature: NatureEtat.indisponible,
-                titre: t.accessibilite.accueil.indisponibleTitre,
-                phrase: t.accessibilite.accueil.indisponiblePhrase,
-                libelleAction: t.accessibilite.accueil.voirMaClasse,
-                onAction: onVoirClasse,
-                dependance: erreur.dependance,
-              )
-            // K-59 : ce qui manque, la cause probable, quoi faire.
-            : EtatSysteme(
-                key: cleErreur,
-                nature: NatureEtat.echecServeur,
-                titre: t.accessibilite.accueil.erreurTitre,
-                phrase: reessayer == null
-                    ? t.commun.etats.reessaisEpuises
-                    : t.accessibilite.accueil.erreurPhrase,
-                onAction: reessayer,
-              ),
-        construire: (DonneesAccueilAccessibilite donnees) {
-          final GroupHomeVM? lu = donnees.espace;
-          if (lu == null) {
-            // Sans Classe, aucune tache : une seule colonne.
-            final Widget vide = _Vide(key: cleVide, prenom: donnees.prenom);
-            return dessous == null
-                ? vide
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[vide, dessous],
-                  );
-          }
-          final ValueChanged<GroupHomeVM>? rejoindre = onRejoindreEspace;
-          return _Haut(
-            prenom: donnees.prenom,
-            espace: lu,
-            tutoiement: donnees.tutoiement,
-            accesFerme: accesFerme,
-            horsLigne: horsLigne,
-            onVoirClasse: onVoirClasse,
-            onRejoindre: rejoindre == null ? null : () => rejoindre(lu),
-            // Hors ligne, « Reessayer » relit l'etat du reseau (precedent
-            // de `fiche_groupe_page.dart`) : jamais un bouton grise (D9).
-            // De retour en ligne, l'entree et « Voir ma classe » reviennent.
-            onReessayer: () => ref.invalidate(horsLigneProvider),
-            onTache: onTache,
-            aCote: aCote,
-          );
-        },
+      // Secours de la veille temps reel (appareil de Hakim, 27/10/2026).
+      haut = RelectureReguliere(
+        relire: () => ref.invalidate(donneesAccueilAccessibiliteProvider),
+        child: BlocAsynchrone<DonneesAccueilAccessibilite>(
+          valeur: lecture,
+          squelette: _Squelette(key: cleSquelette, aCote: aCote),
+          onReessayer: () =>
+              ref.invalidate(donneesAccueilAccessibiliteProvider),
+          // Echec ou indisponibilite : en deux colonnes, le Coran et l'aide
+          // restent dessous (D11), tentative perdue comprise.
+          piedEchec: dessous,
+          erreurVersEtat: (Object erreur, VoidCallback? reessayer) =>
+              erreur is CapaciteIndisponible
+              // La source n'existe pas encore (BR-1) : on le dit, sans
+              // « Reessayer », et on mene a Ma classe.
+              ? EtatSysteme(
+                  key: cleIndisponible,
+                  nature: NatureEtat.indisponible,
+                  titre: t.accessibilite.accueil.indisponibleTitre,
+                  phrase: t.accessibilite.accueil.indisponiblePhrase,
+                  libelleAction: t.accessibilite.accueil.voirMaClasse,
+                  onAction: onVoirClasse,
+                  dependance: erreur.dependance,
+                )
+              // K-59 : ce qui manque, la cause probable, quoi faire.
+              : EtatSysteme(
+                  key: cleErreur,
+                  nature: NatureEtat.echecServeur,
+                  titre: t.accessibilite.accueil.erreurTitre,
+                  phrase: reessayer == null
+                      ? t.commun.etats.reessaisEpuises
+                      : t.accessibilite.accueil.erreurPhrase,
+                  onAction: reessayer,
+                ),
+          construire: (DonneesAccueilAccessibilite donnees) {
+            final GroupHomeVM? lu = donnees.espace;
+            if (lu == null) {
+              // Sans Classe, aucune tache : une seule colonne.
+              final Widget vide = _Vide(key: cleVide, prenom: donnees.prenom);
+              return dessous == null
+                  ? vide
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[vide, dessous],
+                    );
+            }
+            final ValueChanged<GroupHomeVM>? rejoindre = onRejoindreEspace;
+            return _Haut(
+              prenom: donnees.prenom,
+              espace: lu,
+              tutoiement: donnees.tutoiement,
+              accesFerme: accesFerme,
+              horsLigne: horsLigne,
+              onVoirClasse: onVoirClasse,
+              onRejoindre: rejoindre == null ? null : () => rejoindre(lu),
+              // Hors ligne, « Reessayer » relit l'etat du reseau (precedent
+              // de `fiche_groupe_page.dart`) : jamais un bouton grise (D9).
+              // De retour en ligne, l'entree et « Voir ma classe » reviennent.
+              onReessayer: () => ref.invalidate(horsLigneProvider),
+              onTache: onTache,
+              aCote: aCote,
+            );
+          },
+        ),
       );
     }
 

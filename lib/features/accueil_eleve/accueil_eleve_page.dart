@@ -20,6 +20,7 @@ import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_color_pair.dart';
+import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
@@ -152,6 +153,8 @@ class AccueilElevePage extends ConsumerStatefulWidget {
 
 class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
   Timer? _minuteur;
+  Timer? _relecture;
+  late final AppLifecycleListener _cycle;
   late DateTime _maintenant = widget.horloge();
 
   @override
@@ -163,11 +166,25 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
       const Duration(minutes: 1),
       (Timer _) => setState(() => _maintenant = widget.horloge()),
     );
+    // Appareil de Hakim (27/10/2026) : une seance creee apres l'ouverture de
+    // l'ecran n'y apparaissait jamais, ni sa carte ni « Rejoindre ». La veille
+    // temps reel reste la voie principale ; cette relecture est le secours, et
+    // le retour dans l'application relit aussi. La valeur deja lue reste
+    // affichee pendant la relecture (aucun squelette).
+    _relecture = Timer.periodic(
+      AppDelais.relectureAccueil,
+      (Timer _) => ref.invalidate(seancesProvider),
+    );
+    _cycle = AppLifecycleListener(
+      onResume: () => ref.invalidate(seancesProvider),
+    );
   }
 
   @override
   void dispose() {
     _minuteur?.cancel();
+    _relecture?.cancel();
+    _cycle.dispose();
     super.dispose();
   }
 

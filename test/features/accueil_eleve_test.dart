@@ -18,6 +18,7 @@ import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
+import 'package:rewayah_academy/core/theme/app_delais.dart';
 import 'package:rewayah_academy/core/theme/app_metriques.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
@@ -409,6 +410,50 @@ void main() {
       // EA-HL-DOUBLE-1 (reprise) : le bandeau seul dit « hors ligne », en
       // mots et en icone ; la ligne d'attente ne repose pas le wifi barre.
       expectHorsLigneUneFois();
+    });
+  });
+
+  // L'appareil de Hakim, 27/10/2026 : l'accueil s'ouvre a 16:15, la seance de
+  // 16:00 n'est creee qu'a 16:19. Lue une seule fois, la liste ne la montrait
+  // jamais : ni la carte de la classe, ni « Rejoindre ».
+  group('ELV-02 : une seance creee apres l ouverture de l accueil', () {
+    testWidgets('elle apparait avec Rejoindre, sans relancer l application', (
+      WidgetTester tester,
+    ) async {
+      final FauxServicePlanning planning = FauxServicePlanning()
+        ..seancesRendues = <Seance>[
+          _cours(
+            id: 's-semaine-prochaine',
+            debut: _maintenant.add(const Duration(days: 7)),
+            fin: _maintenant.add(const Duration(days: 7, hours: 1)),
+          ),
+        ];
+
+      await tester.pumpWidget(
+        hote(_ecran(), surcharges: _surcharges(planning: planning)),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(t.eleve.accueil.coursEnDirect), findsNothing);
+
+      // La direction cree la seance du jour, deja commencee.
+      planning.seancesRendues = <Seance>[
+        _cours(
+          id: 's-du-jour',
+          debut: _maintenant.subtract(const Duration(minutes: 10)),
+          fin: _maintenant.add(const Duration(minutes: 50)),
+          statut: StatutSeance.enCours,
+        ),
+        ...planning.seancesRendues,
+      ];
+      await tester.pump(AppDelais.relectureAccueil);
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.eleve.accueil.coursEnDirect), findsOneWidget);
+      final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
+        find.byType(ActionPrincipale),
+      );
+      expect(bouton.libelle, t.eleve.accueil.rejoindre);
+      expect(bouton.onPress, isNotNull);
     });
   });
 
