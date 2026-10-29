@@ -135,6 +135,10 @@ class FauxServiceDossier implements ServiceDossier {
   final List<({UsageTitulaire? usage, bool suitDesCours})> usages =
       <({UsageTitulaire? usage, bool suitDesCours})>[];
 
+  /// Admission, lot B : les apprenants envoyes a chaque creation.
+  final List<List<Map<String, Object?>>?> apprenantsEnvoyes =
+      <List<Map<String, Object?>>?>[];
+
   /// Vrai pour simuler le service de la demonstration.
   @override
   bool demonstration = false;
@@ -169,10 +173,12 @@ class FauxServiceDossier implements ServiceDossier {
     String? codeInvitation,
     UsageTitulaire? usage,
     bool suitDesCours = false,
+    List<Map<String, Object?>>? apprenants,
   }) async {
     _peutEchouer();
     codesInvitation.add(codeInvitation);
     usages.add((usage: usage, suitDesCours: suitDesCours));
+    apprenantsEnvoyes.add(apprenants);
     profilsCrees.add((role: role, prenom: prenom, nom: nom, genre: genre));
   }
 

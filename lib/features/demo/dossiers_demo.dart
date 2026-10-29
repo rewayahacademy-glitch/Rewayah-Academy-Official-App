@@ -769,6 +769,7 @@ class ServiceDossierDemo implements ServiceDossier {
     String? codeInvitation,
     UsageTitulaire? usage,
     bool suitDesCours = false,
+    List<Map<String, Object?>>? apprenants,
   }) async {}
 
   @override

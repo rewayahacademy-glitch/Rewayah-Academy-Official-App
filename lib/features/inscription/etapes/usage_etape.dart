@@ -13,6 +13,7 @@ import '../../../core/widgets/choice_card_group.dart';
 import '../brouillon_inscription.dart';
 import '../code_comptable_retenu.dart';
 import '../inscription_page.dart';
+import '../questionnaire/questionnaire_inscription.dart';
 
 /// `/inscription/usage` : deux cartes exactement, aucune preselection, aucune
 /// carte « Autre » ; l'enseignant passe par un lien discret vers le code
@@ -32,12 +33,6 @@ class UsageEtape extends ConsumerWidget {
       brouillonInscriptionProvider.notifier,
     );
 
-    final bool? suitDesCours = ref.watch(
-      brouillonInscriptionProvider.select(
-        (BrouillonInscription b) => b.parentSuitDesCours,
-      ),
-    );
-
     // Une carte deja choisie reste retenue au retour ; l'enseignant n'est pas
     // une carte : on ne le montre pas comme une preselection.
     final UsageInscription? retenu =
@@ -55,11 +50,16 @@ class UsageEtape extends ConsumerWidget {
       choix: true,
       question: t.inscription.usage.question,
       libelleAction: t.commun.continuer,
-      onAction:
-          retenu == null ||
-              (retenu == UsageInscription.famille && suitDesCours == null)
+      // Admission, lot B : « pour moi » et « mon enfant » continuent dans le
+      // questionnaire (`/commencer`), qui revient ici une fois repondu.
+      onAction: retenu == null
           ? null
-          : () => avancerDepuis(context, _route),
+          : () {
+              ref
+                  .read(questionnaireInscriptionProvider.notifier)
+                  .choisirUsage(retenu);
+              context.go(Routes.commencer);
+            },
       // L1-11 (A-07, option 1) : l'enseignant n'entre que par invitation. Une
       // phrase dit pourquoi il n'y a pas de carte, et le lien ouvre le champ du
       // code ; jamais de bouton grise (K-59).
@@ -89,7 +89,11 @@ class UsageEtape extends ConsumerWidget {
                 if (ref.read(codeInvitationRetenuProvider) == null) {
                   context.go(Routes.inscriptionInvitation);
                 } else {
-                  avancerDepuis(context, _route);
+                  avancerDepuis(
+                    context,
+                    ref.read(brouillonInscriptionProvider),
+                    _route,
+                  );
                 }
               },
             ),
@@ -116,7 +120,11 @@ class UsageEtape extends ConsumerWidget {
                   if (ref.read(codeComptableRetenuProvider) == null) {
                     context.go(Routes.inscriptionInvitationComptable);
                   } else {
-                    avancerDepuis(context, _route);
+                    avancerDepuis(
+                      context,
+                      ref.read(brouillonInscriptionProvider),
+                      _route,
+                    );
                   }
                 },
               ),
@@ -181,55 +189,6 @@ class UsageEtape extends ConsumerWidget {
               }
             },
           ),
-          if (retenu == UsageInscription.famille) ...<Widget>[
-            const SizedBox(height: 24),
-            Text(
-              t.inscription.usage.coursQuestion,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 12),
-            ChoiceCardGroup(
-              key: const Key('inscription-parent-suit-des-cours'),
-              autoriserSaisieLibre: false,
-              coteACote: true,
-              valeurInitiale: suitDesCours == null
-                  ? null
-                  : ReponseChoix(
-                      valeurs: <String>{suitDesCours ? 'oui' : 'non'},
-                    ),
-              options: <OptionChoix>[
-                OptionChoix(
-                  valeur: 'oui',
-                  libelle: t.inscription.usage.coursOui,
-                  explication: t.inscription.usage.coursOuiExplication,
-                  exemple: t.inscription.usage.coursOuiExemple,
-                  icone: AppIcons.livreOuvert,
-                  illustration: const IllustrationChoix(
-                    AppIcons.livreOuvert,
-                    autour: <AppIcon>[AppIcons.profil, AppIcons.eleves],
-                  ),
-                ),
-                OptionChoix(
-                  valeur: 'non',
-                  libelle: t.inscription.usage.coursNon,
-                  explication: t.inscription.usage.coursNonExplication,
-                  exemple: t.inscription.usage.coursNonExemple,
-                  icone: AppIcons.suivi,
-                  illustration: const IllustrationChoix(
-                    AppIcons.suivi,
-                    autour: <AppIcon>[AppIcons.eleves],
-                  ),
-                ),
-              ],
-              onChange: (ReponseChoix reponse) {
-                if (reponse.valeurs.contains('oui')) {
-                  controleur.choisirParentSuitDesCours(suit: true);
-                } else if (reponse.valeurs.contains('non')) {
-                  controleur.choisirParentSuitDesCours(suit: false);
-                }
-              },
-            ),
-          ],
         ],
       ),
     );

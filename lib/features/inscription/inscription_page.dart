@@ -15,6 +15,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/page_etape.dart';
 import 'brouillon_inscription.dart';
 import 'etapes/usage_etape.dart';
+import 'questionnaire/questionnaire_inscription.dart';
 
 /// `TUT-00c` : creer son profil, en pages courtes.
 ///
@@ -35,16 +36,37 @@ class _InscriptionPageState extends ConsumerState<InscriptionPage> {
   @override
   void initState() {
     super.initState();
-    final String manquante = ref
-        .read(brouillonInscriptionProvider)
-        .premiereEtapeManquante;
-    if (manquante != Routes.inscriptionUsage) {
-      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
-        if (mounted) {
-          context.go(manquante);
-        }
-      });
-    }
+    // Apres la premiere image : modifier un provider pendant la construction
+    // est refuse.
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (!mounted) {
+        return;
+      }
+      // Admission, lot B : « Pour qui » a sa reponse dans le questionnaire
+      // pose avant le compte ; l'inscription la reprend.
+      final UsageInscription? usageQuestionnaire = ref
+          .read(questionnaireInscriptionProvider)
+          .usage;
+      if (usageQuestionnaire != null &&
+          ref.read(brouillonInscriptionProvider).usage == null) {
+        ref
+            .read(brouillonInscriptionProvider.notifier)
+            .choisirUsage(usageQuestionnaire);
+      }
+      final BrouillonInscription brouillon = ref.read(
+        brouillonInscriptionProvider,
+      );
+      // Un titulaire dont le questionnaire n'est pas fini le reprend d'abord.
+      final String manquante =
+          brouillon.titulaire &&
+              !brouillon.profilCree &&
+              !ref.read(questionnaireInscriptionProvider).complet
+          ? Routes.commencer
+          : brouillon.premiereEtapeManquante;
+      if (manquante != Routes.inscriptionUsage) {
+        context.go(manquante);
+      }
+    });
   }
 
   @override
@@ -59,7 +81,7 @@ void exigerEtapesPrecedentes(
   String route,
 ) {
   final String manquante = brouillon.premiereEtapeManquante;
-  if (rangEtape(manquante) < rangEtape(route)) {
+  if (rangEtape(brouillon, manquante) < rangEtape(brouillon, route)) {
     WidgetsBinding.instance.addPostFrameCallback((Duration _) {
       if (context.mounted) {
         context.go(manquante);
@@ -69,30 +91,45 @@ void exigerEtapesPrecedentes(
 }
 
 /// Va a l'etape suivante, ou revient au recapitulatif apres « Modifier ».
-void avancerDepuis(BuildContext context, String route) {
+void avancerDepuis(
+  BuildContext context,
+  BrouillonInscription brouillon,
+  String route,
+) {
   final bool modifier = GoRouterState.of(context).uri.queryParameters
       .containsKey(parametreModifier);
-  final int rang = rangEtape(route);
+  final List<String> etapes = etapesPour(brouillon);
+  final int rang = rangEtape(brouillon, route);
   context.go(
-    modifier || rang >= etapesInscription.length
+    modifier || rang == 0 || rang >= etapes.length
         ? Routes.inscriptionRecapitulatif
-        : etapesInscription[rang],
+        : etapes[rang],
   );
 }
 
-/// Revient a l'etape precedente (ou au recapitulatif apres « Modifier »).
-void reculerDepuis(BuildContext context, String route) {
+/// Revient a l'etape precedente (ou au recapitulatif apres « Modifier ») ;
+/// `null` quand il n'y en a pas.
+VoidCallback? reculerDepuis(
+  BuildContext context,
+  BrouillonInscription brouillon,
+  String route,
+) {
   final bool modifier = GoRouterState.of(context).uri.queryParameters
       .containsKey(parametreModifier);
-  final int rang = rangEtape(route);
-  context.go(
-    modifier ? Routes.inscriptionRecapitulatif : etapesInscription[rang - 2],
+  final int rang = rangEtape(brouillon, route);
+  if (!modifier && rang < 2) {
+    return null;
+  }
+  return () => context.go(
+    modifier
+        ? Routes.inscriptionRecapitulatif
+        : etapesPour(brouillon)[rang - 2],
   );
 }
 
 /// La coquille commune des quatre etapes, posee sur le gabarit partage
 /// [PageEtape] (demandes B-3 et A-2) : rangee d'etape (disque retour de 48,
-/// progression, « n sur N » calcule depuis [etapesInscription]) sans actions
+/// progression, « n sur N » calcule depuis [etapesPour]) sans actions
 /// de coquille ; en bas, CTA en pilule, une ligne d'erreur au besoin, et la
 /// deconnexion toujours possible.
 class CoquilleEtape extends ConsumerWidget {
@@ -157,9 +194,14 @@ class CoquilleEtape extends ConsumerWidget {
     final AppPalette palette = AppPalette.of(context);
     void deconnecter() => unawaited(seDeconnecter(context, ref));
 
+    final BrouillonInscription brouillon = ref.watch(
+      brouillonInscriptionProvider,
+    );
     return PageEtape(
-      numero: rangEtape(route),
-      total: etapesInscription.length,
+      // L'etape d'usage d'un titulaire n'est plus dans sa liste (il a
+      // repondu dans le questionnaire) : elle reste la premiere.
+      numero: rangEtape(brouillon, route).clamp(1, 99),
+      total: etapesPour(brouillon).length,
       onRetour: onRetour,
       colonneLarge: choix,
       action: Column(

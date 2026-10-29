@@ -10,8 +10,51 @@ Branche `claude/admiring-brown-r6ai72-admission-b`, depuis `origin/main` (027854
 3. **La confirmation d'e-mail** (`enable_confirmations`) est un réglage du tableau de bord Supabase : c'est au directeur de l'allumer (Authentication, Sign In / Providers, Email, « Confirm email »).
 4. **Le plafond d'inscriptions par heure** (`candidatures.inscriptions_par_heure` = 60 en production) n'est lu par aucune des deux fonctions d'inscription des familles. Je ne l'ai pas branché : à décider avec ce lot ou au suivant.
 5. **Scénarios serveur mis à jour** (rejoués chacun sur une base neuve, Postgres 16) : `scenarios_tuteur_nait_actif.sql` et `scenarios_af_l1_11_inscription_enseignant_invitation.sql` (D4 annulé : le tuteur naît en attente ; la famille est admise à la main dans la fixture avant de créer l'enfant) ; `scenarios_etape3.sql` (idem, et la fixture retire la demande de la famille pour dérouler l'ancien parcours de pièce) ; `scenarios_l5_usage_inscription.sql` et `scenarios_imm_back_1_registrations.sql` (le genre est désormais exigé) ; `scenarios_cand_l1_socle.sql` et `scenarios_cand_l2a2_gestes_direction.sql` passent tels quels, la migration mettant à jour les empreintes F86 des fonctions recréées. Bilan : 127 scénarios verts ; 7 rouges, qui l'étaient déjà sans la migration (Postgres 16 local ou scénario dépendant d'un autre).
-6. Une famille en attente ne peut pas encore créer les profils de ses enfants (`creer_profil_enfant` exige un tuteur actif). C'est cohérent avec « rien d'autre n'est visible avant la décision », mais la direction décidera sans voir les enfants. À trancher pour le lot C.
+6. Une famille en attente ne peut pas encore créer les profils de ses enfants (`creer_profil_enfant` exige un tuteur actif). **Tranché le 29/10 (Q2)** : les enfants partent avec la demande (`candidature_apprenants`, ci-dessous) ; leurs profils seront créés à l'acceptation (lot C). Aucun écran de la direction ne lit encore ces lignes (lot C).
 7. Les compteurs du tableau de bord de la direction qui comptent les candidatures sans filtre de type compteront aussi les familles. Non vérifié un par un.
+
+## Refonte de l'onboarding (fiche `FICHE-ONBOARDING-2026-10-29.md`, validée le 29/10 par le pilote sur délégation du directeur)
+
+### Ce qui n'est pas vrai, ou pas prouvé, d'abord
+
+1. **Rien n'est prouvé en production ni sur staging** : tests locaux seulement. La nouvelle migration (`20261029150000_admission_lot_b_apprenants.sql`) contient un `DROP FUNCTION` (remplacement de la signature de `inscrire_titulaire`) : le directeur la colle dans l'éditeur SQL de staging, après celle du 29/10 matin (page de collage à fabriquer au moment de la mise en staging).
+2. **La langue du cours n'est pas avant le compte** (écart à la fiche, écran 6) : la liste des langues ne se lit pas sans compte (migration 0043 : « anon n'a rien à faire ici ») et je n'ai pas ouvert cette règle de sécurité pour une question. Elle est la première question après la connexion.
+3. **L'âge commence à 5 ans, pas 4** : la première cohorte du serveur est `enfant_5_7` ; un âge de 4 ans ne correspondrait à aucune classe.
+4. **Sur le web, les réponses attendent la connexion dans le stockage du navigateur** (`localStorage`) : c'est ce qui permet au lien de connexion, souvent ouvert dans un nouvel onglet, de les retrouver. Le prénom et l'âge d'un enfant y restent jusqu'à l'envoi de la demande, puis sont effacés. Sur un autre appareil, ou si le navigateur a effacé ses données, la famille reprend les premières questions (le récapitulatif le dit).
+5. **Le pays et le fuseau** (ligne « détectés de l'appareil » de la fiche) ne sont pas une étape : le fuseau reste celui que le serveur pose aujourd'hui. Non fait.
+6. **« Classes non mixtes »** : le genre de chaque enfant et du titulaire est demandé et rangé avec la demande ; le regroupement ne s'en sert pas encore (réglage de mixité par classe : lot « créneaux », décision D1 du 29/10).
+7. **La revue UX détaillée** est dans `docs/current/UX_REVIEW_ONBOARDING.md`.
+
+### Le parcours, tel qu'il est codé
+
+- **Avant le compte** (`/commencer`, une question par écran, « n sur N », un seul bouton plein « Continuer », retour en disque) : « Pour qui créez-vous ce compte ? » (deux choix égaux ; liens « J'ai déjà un compte » et « J'ai un code d'invitation ») ; pour chaque enfant, son prénom, son âge (puces de 5 à 17 ans, et « 18 ans ou plus », qui dit de s'inscrire soi-même), son genre (« Un garçon », « Une fille »), son niveau ; « Suivez-vous aussi des cours ? » ; le niveau du titulaire s'il apprend ; l'objectif ; les moments de la journée. « Pour moi » : quatre écrans ; une famille d'un enfant : huit, neuf si le parent apprend ; chaque enfant de plus : quatre (Q5).
+- **Créer un compte** passe d'abord par ces questions (`/connexion?mode=creer` y renvoie tant qu'elles ne sont pas répondues), sauf avec un code d'invitation.
+- **Après la connexion** : la langue du cours, « Comment vous appelez-vous ? », « Vous êtes » (genre du titulaire), puis « Voici ce que nous avons compris » : pour qui, le parent, chaque apprenant et son niveau, la langue, l'identité, le genre, chaque ligne avec « Modifier » ; « Ajouter un autre profil élève » ; « Envoyer ma demande ».
+- **Envoi** : `inscrire_titulaire` reçoit les apprenants (`p_apprenants`) et les range avec la demande dans la même transaction ; les réponses quittent l'appareil.
+- **Page d'attente** : « Votre demande porte sur : Yasmine, 9 ans · Vous. » (relu par `mes_apprenants_demande()`).
+- L'enseignant et le comptable gardent leur chemin (étape « usage », code d'invitation), inchangé.
+
+### Serveur (`supabase/migrations/20261029150000_admission_lot_b_apprenants.sql`)
+
+- `public.candidature_apprenants` : une ligne par apprenant (rang, titulaire ou non, prénom, âge de 5 à 17 ans pour un enfant, genre, niveau déclaré, objectif, moments, langue). RLS active, **aucune politique ni aucun droit client** : on la lit par fonction, comme les autres tables des candidatures.
+- `public.inscrire_titulaire(..., p_apprenants jsonb)` : 6 apprenants au plus ; « pour moi » n'a que le titulaire ; une famille a au moins un enfant ; le titulaire porte son prénom et son genre de compte, jamais ceux du JSON. Un refus ne laisse rien.
+- `public.mes_apprenants_demande()` : le titulaire relit prénom, âge et rang des apprenants de **sa** demande.
+- Scénario `supabase/tests/scenarios_admission_lot_b_apprenants.sql` (vert, Postgres 16 local) ; `scenarios_l5_usage_inscription.sql` et `scenarios_af_liste_blanche_volatiles.sql` suivent la nouvelle signature. La liste blanche reste rouge pour deux fonctions qui ne sont pas de ce lot (`ajouter_creneau_classe_admin`, `seance_a_rejoindre`), comme avant.
+
+### Tests (Flutter)
+
+- `test/features/inscription/questionnaire_test.dart` : l'ordre et le nombre des écrans (Q5), la relecture des réponses, ce qui part au serveur, le parcours complet d'une famille jusqu'à la création du compte, « 18 ans ou plus », une adresse ouverte trop tôt, le retour qui retire un enfant ajouté vide, « J'ai déjà un compte », la règle « créer un compte passe par le questionnaire ».
+- `test/features/inscription_test.dart` : après la connexion, langue, identité, genre, récapitulatif ; les apprenants partent avec la demande (« pour moi », famille avec et sans parent qui apprend).
+- `test/features/attente_test.dart` : « Votre demande porte sur ».
+- `test/features/connexion_test.dart` : la création suit le questionnaire.
+
+### Ce que le directeur vérifie, après fusion et migration (en gestes simples)
+
+1. Sur un téléphone, ouvrir l'application sans être connecté, toucher « Créer un compte » : la question « Pour qui créez-vous ce compte ? » s'affiche.
+2. Choisir « J'inscris mon enfant », répondre : prénom, âge, « Une fille », niveau, « Non », objectif, « Le soir ». Compter les écrans : huit.
+3. Saisir son adresse, ouvrir le lien reçu (même dans un autre onglet) : l'application demande la langue du cours, sans reposer les premières questions.
+4. Finir (nom, genre) : le récapitulatif montre l'enfant, son âge et son niveau. Toucher « Envoyer ma demande » : la page « Votre demande est en cours » dit « Votre demande porte sur : (prénom), (âge) ans ».
+5. Recommencer avec « Je m'inscris pour moi » : quatre écrans avant l'adresse.
 
 ## Ce que fait ce lot dans l'application (codé, testé localement)
 

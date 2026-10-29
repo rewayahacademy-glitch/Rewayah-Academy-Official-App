@@ -560,6 +560,8 @@ void main() {
       expect(Routes.publiques, <String>{
         Routes.connexion,
         Routes.bienvenue,
+        // Admission, lot B : le questionnaire avant le compte.
+        Routes.commencer,
         Routes.agentEntree,
         Routes.juridique,
       });

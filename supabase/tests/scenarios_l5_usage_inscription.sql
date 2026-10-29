@@ -122,14 +122,14 @@ SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.profiles WHERE id = 'd18000
   'usage refuse : aucun profil');
 
 -- 5. Droits.
-SELECT pg_temp.vrai(NOT has_function_privilege('anon', 'public.inscrire_titulaire(text,text,text,public.gender,text,boolean)', 'EXECUTE')
-                AND has_function_privilege('authenticated', 'public.inscrire_titulaire(text,text,text,public.gender,text,boolean)', 'EXECUTE')
+SELECT pg_temp.vrai(NOT has_function_privilege('anon', 'public.inscrire_titulaire(text,text,text,public.gender,text,boolean,jsonb)', 'EXECUTE')
+                AND has_function_privilege('authenticated', 'public.inscrire_titulaire(text,text,text,public.gender,text,boolean,jsonb)', 'EXECUTE')
                 AND NOT has_function_privilege('anon', 'public.etat_dossier()', 'EXECUTE'),
   'anon n execute rien, authenticated oui');
 SELECT pg_temp.vrai((SELECT p.prosecdef AND p.proconfig @> ARRAY['search_path=""']
                        AND position('md5_functiondef=' || md5(pg_get_functiondef(p.oid))
                                     IN coalesce(obj_description(p.oid, 'pg_proc'), '')) > 0
-                     FROM pg_proc p WHERE p.oid = 'public.inscrire_titulaire(text,text,text,public.gender,text,boolean)'::regprocedure),
+                     FROM pg_proc p WHERE p.oid = 'public.inscrire_titulaire(text,text,text,public.gender,text,boolean,jsonb)'::regprocedure),
   'DEFINER, search_path vide, empreinte F86 exacte');
 
 \ir _acl_retablir.sql

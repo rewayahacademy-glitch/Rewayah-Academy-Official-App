@@ -29,15 +29,25 @@ enum UsageInscription {
 }
 
 /// Les etapes de l'inscription, dans l'ordre. « n sur N » se calcule ici.
-const List<String> etapesInscription = <String>[
-  Routes.inscriptionUsage,
+///
+/// Admission, lot B (29/10/2026) : le titulaire (« pour moi », « mon
+/// enfant ») a repondu « Pour qui » dans le questionnaire avant le compte
+/// (`/commencer`) ; apres la connexion, il commence par la langue du cours.
+/// L'enseignant et le comptable gardent l'etape d'usage, sans langue.
+List<String> etapesPour(BrouillonInscription brouillon) => <String>[
+  if (brouillon.titulaire)
+    Routes.inscriptionLangue
+  else
+    Routes.inscriptionUsage,
   Routes.inscriptionIdentite,
   Routes.inscriptionGenre,
   Routes.inscriptionRecapitulatif,
 ];
 
-/// Le rang (a partir de 1) d'une etape dans [etapesInscription].
-int rangEtape(String route) => etapesInscription.indexOf(route) + 1;
+/// Le rang (a partir de 1) d'une etape dans [etapesPour], 0 si elle n'y est
+/// pas.
+int rangEtape(BrouillonInscription brouillon, String route) =>
+    etapesPour(brouillon).indexOf(route) + 1;
 
 /// Le parametre de requete qui ramene au recapitulatif apres « Modifier ».
 const String parametreModifier = 'modifier';
@@ -54,6 +64,7 @@ class BrouillonInscription {
     this.genre,
     this.profilCree = false,
     this.parentSuitDesCours,
+    this.langue,
   });
 
   /// L'usage retenu.
@@ -73,6 +84,14 @@ class BrouillonInscription {
   /// donne aucun droit : l'eleve autonome est une capacite servie (C-24).
   final bool? parentSuitDesCours;
 
+  /// La langue du cours (code de `langues_cours`), demandee au titulaire
+  /// juste apres la connexion (admission, lot B).
+  final String? langue;
+
+  /// Vrai pour « pour moi » et « mon enfant ».
+  bool get titulaire =>
+      usage == UsageInscription.moi || usage == UsageInscription.famille;
+
   /// Vrai des que le serveur a cree le profil : une nouvelle tentative ne
   /// rappelle alors que le rafraichissement de session, jamais la creation.
   final bool profilCree;
@@ -84,6 +103,9 @@ class BrouillonInscription {
   String get premiereEtapeManquante {
     if (usage == null) {
       return Routes.inscriptionUsage;
+    }
+    if (titulaire && langue == null) {
+      return Routes.inscriptionLangue;
     }
     if (!identiteRemplie) {
       return Routes.inscriptionIdentite;
@@ -102,6 +124,7 @@ class BrouillonInscription {
     Genre? genre,
     bool? profilCree,
     bool? parentSuitDesCours,
+    String? langue,
   }) => BrouillonInscription(
     usage: usage ?? this.usage,
     prenom: prenom ?? this.prenom,
@@ -109,6 +132,7 @@ class BrouillonInscription {
     genre: genre ?? this.genre,
     profilCree: profilCree ?? this.profilCree,
     parentSuitDesCours: parentSuitDesCours ?? this.parentSuitDesCours,
+    langue: langue ?? this.langue,
   );
 }
 
@@ -124,6 +148,9 @@ class BrouillonInscriptionControleur extends Notifier<BrouillonInscription> {
   /// Retient si le parent suit aussi des cours.
   void choisirParentSuitDesCours({required bool suit}) =>
       state = state.copier(parentSuitDesCours: suit);
+
+  /// Retient la langue du cours.
+  void choisirLangue(String langue) => state = state.copier(langue: langue);
 
   /// Retient l'identite.
   void saisirIdentite({required String prenom, required String nom}) =>

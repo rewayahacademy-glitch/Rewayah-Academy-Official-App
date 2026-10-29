@@ -202,9 +202,13 @@ import '../../features/foyer/foyer_page.dart';
 import '../../features/foyer/invitation_conjoint.dart';
 import '../../features/inscription/etapes/genre_etape.dart';
 import '../../features/inscription/etapes/identite_etape.dart';
+import '../../features/inscription/etapes/langue_etape.dart';
 import '../../features/inscription/etapes/recapitulatif_etape.dart';
 import '../../features/inscription/etapes/usage_etape.dart';
 import '../../features/inscription/inscription_page.dart';
+import '../../features/inscription/questionnaire/questionnaire_inscription.dart'
+    show questionnaireInscriptionProvider;
+import '../../features/inscription/questionnaire/questionnaire_page.dart';
 import '../../features/journee/journee_page.dart';
 import '../../features/juridique/juridique_pages.dart';
 import '../../features/juridique/textes_juridiques.dart';
@@ -425,8 +429,23 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRoute(
         path: Routes.connexion,
+        // Admission, lot B : creer un compte passe d'abord par le
+        // questionnaire (fiche du 29/10, « compte en dernier »), sauf avec un
+        // code d'invitation.
+        redirect: (BuildContext _, GoRouterState etat) =>
+            redirectionCreationCompte(
+              etat.uri,
+              questionnaireComplet: ref
+                  .read(questionnaireInscriptionProvider)
+                  .complet,
+            ),
         builder: (BuildContext _, GoRouterState etat) =>
             ConnexionPage(mode: modeDepuisAdresse(etat.uri)),
+      ),
+      GoRoute(
+        path: Routes.commencer,
+        builder: (BuildContext _, GoRouterState etat) =>
+            QuestionnairePage(code: etat.uri.queryParameters['etape']),
       ),
       GoRoute(
         path: Routes.connexionEleve,
@@ -467,6 +486,10 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRoute(
         path: Routes.inscriptionUsage,
         builder: (BuildContext _, GoRouterState _) => const UsageEtape(),
+      ),
+      GoRoute(
+        path: Routes.inscriptionLangue,
+        builder: (BuildContext _, GoRouterState _) => const LangueEtape(),
       ),
       GoRoute(
         path: Routes.inscriptionInvitation,

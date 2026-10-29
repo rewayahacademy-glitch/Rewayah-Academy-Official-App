@@ -27,6 +27,7 @@ import '../connexion/recuperation_page.dart'
 import '../inscription/brouillon_inscription.dart';
 import '../partage_offre/tuile_partage.dart';
 import '../talents/tuile_talents.dart';
+import 'apprenants_demande.dart';
 
 /// `TUT-00b` : le portail d'attente, refondu (05 section A, sous-paquet 3).
 ///
@@ -422,11 +423,17 @@ class _Statut extends StatelessWidget {
       // Admission, lot B (decision du 27/10/2026, regle 1) : la famille et
       // l'eleve adulte attendent la decision de la direction. Ni piece, ni
       // delai promis ; l'e-mail dit la suite (regle 4).
-      EtapeDossier.accesEnPreparation => _Bloc(
-        titre: t.attente.demandeTitre,
-        message: t.attente.demandeMessage,
-        detail: t.attente.demandeDetail,
-        icone: AppIcons.foyer,
+      EtapeDossier.accesEnPreparation => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          _Bloc(
+            titre: t.attente.demandeTitre,
+            message: t.attente.demandeMessage,
+            detail: t.attente.demandeDetail,
+            icone: AppIcons.foyer,
+          ),
+          const _ApprenantsDemande(),
+        ],
       ),
       EtapeDossier.refuse => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -500,6 +507,41 @@ class _Bloc extends StatelessWidget {
           Text(detail!, textAlign: TextAlign.center, style: textes.bodySmall),
         ],
       ],
+    );
+  }
+}
+
+/// Admission, lot B (fiche du 29/10, §4) : qui la demande concerne, relu
+/// sur le serveur. Sans lecture (en cours, en echec, aucune ligne), rien :
+/// la page dit deja l'essentiel.
+class _ApprenantsDemande extends ConsumerWidget {
+  const _ApprenantsDemande();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final List<ApprenantDemande> apprenants =
+        ref.watch(apprenantsDemandeProvider).value ??
+        const <ApprenantDemande>[];
+    if (apprenants.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    final String liste = <String>[
+      for (final ApprenantDemande a in apprenants)
+        a.titulaire || a.age == null
+            ? t.inscription.questionnaire.ligneVous
+            : t.inscription.questionnaire.ligneEnfant(
+                prenom: a.prenom,
+                age: a.age!,
+              ),
+    ].join(' · ');
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.lg),
+      child: Text(
+        t.attente.demandePour(liste: liste),
+        key: const Key('attente-apprenants'),
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.bodyMedium,
+      ),
     );
   }
 }

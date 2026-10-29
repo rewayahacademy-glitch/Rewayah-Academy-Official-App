@@ -2,7 +2,7 @@
 
 Demande du directeur (29/10, par le pilote) : refaire **tout** l'onboarding, pas seulement le premier écran ; style allégé, sans gros rectangles ; une question par écran ; les bonnes questions dans le bon ordre, pour que le profil qui arrive dans l'application soit le bon. Références : `docs/current/PARCOURS-ENTREE-2026-10-25.md` (§3 B et E), `docs/orchestration/ETUDE-ACCUEIL-ET-CLASSES-2026-10-25.md` (comparaison avec Riwayah), `docs/current/DECISION-ADMISSION-2026-10-27.md`.
 
-Cette fiche est écrite **avant** de construire, comme l'étude le demande (« une fiche d'écran d'abord, validée par le directeur, puis une seule PR »). Rien de ce qui suit n'est encore codé, sauf le premier écran (deux choix égaux, branche `claude/admiring-brown-r6ai72-admission-b`).
+Cette fiche est écrite **avant** de construire, comme l'étude le demande (« une fiche d'écran d'abord, validée par le directeur, puis une seule PR »). **Validée le 29/10/2026** par le pilote, sur délégation du directeur (§7) ; la construction suit sur la branche `claude/admiring-brown-r6ai72-admission-b`.
 
 ## 1. Ce qui se contredit, à trancher d'abord
 
@@ -11,7 +11,7 @@ Cette fiche est écrite **avant** de construire, comme l'étude le demande (« u
 | C1 | PARCOURS-ENTREE (25/10) et l'étude : « **aucune attente de validation pour une famille** ». DECISION-ADMISSION (27/10, plus récente) : « **personne n'entre sans décision de la direction** », familles comprises. | La plus récente prévaut : la famille répond au questionnaire, crée son compte, puis attend sur « Votre demande est en cours ». Le lot B est codé ainsi. |
 | C2 | Questionnaire **avant** le compte (PARCOURS-ENTREE §3 B, « sinon les gens fuient ») ; aujourd'hui, les questions de la classe (langue, niveau, objectif, moments, horaires) ne se posent qu'**après** l'admission, par enfant, dans `/tuteur/parcours`. | Les poser avant le compte, gardées sur l'appareil, puis envoyées avec la demande : la direction décide en voyant qui apprend et quoi (§4). |
 | C3 | Un tuteur en attente **ne peut pas créer de profil élève** (`creer_profil_enfant` exige un compte actif) ; la direction déciderait donc sans voir les enfants. | Les enfants du questionnaire partent avec la demande (prénom, âge, réponses) ; leurs profils sont créés **à l'acceptation** (lot C), sans rien ressaisir. Changement serveur : §4. |
-| C4 | Le genre de l'enfant n'est demandé nulle part (l'ajout d'un profil élève demande prénom, nom et âge) ; or les classes ont un genre et la clé des regroupements aussi. | Le demander pour chaque enfant (« Garçon » / « Fille »), une puce. À confirmer : à partir de quel âge les classes ne sont plus mixtes. |
+| C4 | Le genre de l'enfant n'est demandé nulle part (l'ajout d'un profil élève demande prénom, nom et âge) ; or les classes ont un genre et la clé des regroupements aussi. | Le demander pour chaque apprenant et pour le titulaire. Tranché le 29/10 (§7, Q4) : classes non mixtes à tout âge, sauf réglage explicite de la classe par la direction. |
 
 ## 2. Le style
 
@@ -78,3 +78,15 @@ Changements serveur que cela suppose (à écrire avec la PR, dans `supabase/`) :
 | Q3 | Les horaires publiés restent après l'admission ? | Oui : on ne propose pas un horaire avant d'avoir accepté la famille |
 | Q4 | C4 : le genre de l'enfant est demandé ; à partir de quel âge les classes ne sont plus mixtes ? | Le demander toujours ; la règle d'âge vient de vous |
 | Q5 | Neuf écrans au plus avant la connexion pour une famille d'un enfant, cinq pour « pour moi », comme ci-dessus ? | Oui |
+
+## 7. Décisions du 29/10/2026 (le pilote, par délégation du directeur)
+
+| # | Décision |
+|---|---|
+| Q1 | Oui : la décision du 27/10 prévaut ; la famille répond, crée son compte, puis attend la décision de la direction. |
+| Q2 | Oui : les enfants partent avec la demande ; leurs profils sont créés à l'acceptation. |
+| Q3 | Oui : les horaires ne sont proposés qu'après l'admission. |
+| Q4 | Le genre est demandé pour chaque apprenant **et pour le titulaire**. Une classe est **non mixte par défaut**, à tout âge (« Classes non mixtes, décidé le 10/10 », `REGISTRE-RECONCILIATION-2026-10-14.md`), donc sans seuil d'âge. **Exception** (directeur, 29/10, D1) : la direction peut rendre une classe mixte par un réglage explicite de la classe (motif : pas assez d'enseignants d'un genre) ; le regroupement automatique respecte ce réglage. Détail : `DECISION-CLASSES-HORAIRES-MIXITE-2026-10-29.md`. |
+| Q5 | Oui : neuf écrans au plus avant la connexion pour une famille d'un enfant, cinq pour « pour moi ». |
+
+Consigne jointe : quand on demande une preuve au directeur, on la donne en gestes simples.

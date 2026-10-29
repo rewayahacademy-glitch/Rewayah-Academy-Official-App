@@ -17,6 +17,7 @@ import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/marque_page.dart';
 import 'package:rewayah_academy/features/candidature/portail_candidature.dart';
 import 'package:rewayah_academy/features/dossier/accords_page.dart';
+import 'package:rewayah_academy/features/dossier/apprenants_demande.dart';
 import 'package:rewayah_academy/features/dossier/attente_page.dart';
 import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart';
 import 'package:rewayah_academy/features/partage_offre/tuile_partage.dart';
@@ -410,8 +411,9 @@ void main() {
   group('AD-10 : correction, correction interdite, relecture au retour', () {
     Future<(FausseSourceSession, FauxServiceAuth)> monter(
       WidgetTester tester,
-      EtatDossier etat,
-    ) async {
+      EtatDossier etat, {
+      List<ApprenantDemande>? apprenants,
+    }) async {
       final FauxServiceDossier dossier = FauxServiceDossier()..etatRendu = etat;
       final FausseSourceSession source = FausseSourceSession();
       final FauxServiceAuth auth = FauxServiceAuth();
@@ -438,6 +440,9 @@ void main() {
             sourceSessionProvider.overrideWithValue(source),
             serviceAuthProvider.overrideWithValue(auth),
             baseLocaleEnMemoire(),
+            lectureApprenantsDemandeProvider.overrideWithValue(
+              () async => apprenants ?? const <ApprenantDemande>[],
+            ),
           ],
         ),
       );
@@ -625,6 +630,30 @@ void main() {
         expect(auth.deconnexions, 1);
       },
     );
+
+    // Admission, lot B (fiche du 29/10, §4) : la demande dit qui apprend.
+    testWidgets('tuteur en attente : la demande dit qui elle concerne', (
+      WidgetTester tester,
+    ) async {
+      await monter(
+        tester,
+        _etat(role: AppRole.guardian, accuse: true, contrat: true),
+        apprenants: const <ApprenantDemande>[
+          (prenom: 'Yasmine', age: 9, titulaire: false),
+          (prenom: 'Fatou', age: null, titulaire: true),
+        ],
+      );
+      expect(
+        find.text(
+          t.attente.demandePour(
+            liste:
+                '${t.inscription.questionnaire.ligneEnfant(prenom: 'Yasmine', age: 9)}'
+                ' · ${t.inscription.questionnaire.ligneVous}',
+          ),
+        ),
+        findsOneWidget,
+      );
+    });
 
     testWidgets(
       'tuteur avec une ancienne piece refusee : ni refus ni Corriger',

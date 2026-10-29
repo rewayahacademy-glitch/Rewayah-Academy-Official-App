@@ -71,6 +71,9 @@ abstract interface class ServiceDossier {
   /// choix « Moi » ou « Famille » et la reponse « Suivez-vous aussi des
   /// cours ? ». Le serveur les garde avec le profil, dans la meme
   /// transaction ; « Moi » ouvre toujours la fiche d'eleve du titulaire.
+  ///
+  /// [apprenants] (admission, lot B) : les apprenants du questionnaire, tels
+  /// que `inscrire_titulaire` les range avec la demande (`p_apprenants`).
   Future<void> creerProfil({
     required AppRole role,
     required String prenom,
@@ -79,6 +82,7 @@ abstract interface class ServiceDossier {
     String? codeInvitation,
     UsageTitulaire? usage,
     bool suitDesCours = false,
+    List<Map<String, Object?>>? apprenants,
   });
 
   /// Ou en est le dossier.
@@ -124,6 +128,7 @@ class ServiceDossierSupabase implements ServiceDossier {
     String? codeInvitation,
     UsageTitulaire? usage,
     bool suitDesCours = false,
+    List<Map<String, Object?>>? apprenants,
   }) async {
     if (role == AppRole.guardian && usage != null) {
       await _client.rpc<Object?>(
@@ -134,6 +139,7 @@ class ServiceDossierSupabase implements ServiceDossier {
           'p_last_name': nom,
           'p_gender': genre?.valeurSql,
           'p_suit_des_cours': suitDesCours,
+          'p_apprenants': ?apprenants,
         },
       );
       return;

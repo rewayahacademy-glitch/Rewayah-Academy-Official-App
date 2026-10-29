@@ -1,0 +1,20 @@
+# UX_REVIEW_ONBOARDING : revue UX de l'onboarding (admission, lot B, 29/10/2026)
+
+- **Cadre** : DESIGN-GOV-2026-09-26 §4.2 ; fiche `docs/current/FICHE-ONBOARDING-2026-10-29.md` (validée le 29/10 par le pilote, sur délégation du directeur).
+- **Sources** : Material Design 3 (chips, boutons, progression), Apple Human Interface Guidelines (Onboarding), Baymard Institute (formulaires sur mobile, création de compte), WCAG 2.2 AA, Nielsen. **Non reconsultées en ligne le 29/10** (session sans navigation web) : les règles citées sont celles connues et déjà relevées dans les revues précédentes du dépôt. GOV.UK exclu.
+- **Limite §4.3** : aucune ligne ne change une permission, un état serveur ni l'effet de la décision de la direction. La famille attend toujours cette décision (Q1).
+- **Composants** : `PageEtape`, `ActionPrincipale`, `ChoiceCardGroup`, `FilterPill`, `GroupeReglages` ; aucun composant nouveau, aucune couleur ni valeur d'espacement nouvelle.
+
+| Proposition | Source | Règle utile | Conclusion | Modification | Écart |
+|---|---|---|---|---|---|
+| Une question par écran, « n sur N » en tête | Baymard (formulaires longs sur mobile) ; NN/g (progression visible) | Découper, montrer où l'on en est | Conforme | `PageEtape` : rangée d'étape, barre continue, « n sur N » calculé des réponses | Avant « Pour qui », N vaut celui de « pour moi » (4) : le total réel ne se connaît qu'après |
+| Compte en dernier : les questions avant l'adresse | Baymard (création de compte tardive) ; Apple HIG (Onboarding : ne demander que ce qui sert) | Faire voir la valeur avant de demander un compte | Conforme | `/commencer` public ; « Créer un compte » y mène tant qu'il n'est pas répondu | La langue du cours vient après la connexion (référentiel fermé sans compte, 0043) |
+| Un seul bouton plein « Continuer », en bas ; liens discrets | Material 3 (une action principale) ; contrat K-56 | Une action pleine par écran | Conforme | « J'ai déjà un compte », « J'ai un code d'invitation » en boutons tertiaires ; `verifierUnSeulBoutonPlein` dans le test | Aucun |
+| Âge en puces (5 à 17 ans, « 18 ans ou plus ») | Material 3 (chips de choix) ; Fitts ; Hick | Choix court et visible d'un geste, cibles de 48 | Ajustée | `FilterPill` dans un `Wrap` déclaré « choix de formulaire, pas un filtre » | 5 ans au lieu de 4 (première cohorte du serveur) |
+| « 18 ans ou plus » dit la suite au lieu de bloquer en silence | Nielsen n°9 ; K-59 | Dire ce qui ne va pas et quoi faire | Conforme | Phrase annoncée (`liveRegion`) : s'inscrire soi-même avec « Je m'inscris pour moi » ; « Continuer » reste sans action | Aucun |
+| Genre, « le parent aussi » : deux choix en ligne, sans illustration | Material 3 (segmented, chips) ; fiche §2 (« sans gros rectangles ») | Choix binaire court, compact | Conforme | `ChoiceCardGroup(enLigne: true)` | Aucun |
+| Niveau et objectif en liste de cartes | Fiche §2 ; K-58 | Une réponse qui demande d'être lue | Conforme | Mêmes libellés et même phrase de raison que le parcours existant | Pas d'exemple par niveau (aucun texte décidé) |
+| Moments, plusieurs réponses | Material 3 (filter chips) | Choix multiple dit comme tel | Conforme | `ChoiceCardGroup(selectionMultiple)`, « Plusieurs réponses possibles » | Aucun |
+| Récapitulatif avant l'envoi, chaque ligne avec « Modifier » | Baymard (relecture avant soumission) ; Nielsen n°3 | Contrôle et retour arrière | Conforme | `GroupeReglages`, « Ajouter un autre profil élève », « Envoyer ma demande » | Modifier un enfant repasse par ses quatre écrans, puis revient |
+| Réponses gardées si le lien s'ouvre dans un autre onglet | Baymard (ne jamais perdre une saisie) | Pas de ressaisie | Conforme | `localStorage` sur le web, effacé à l'envoi | Sur un autre appareil, la famille reprend les questions (dit au récapitulatif) |
+| Ordinateur, deux volets et lettres A, B, C au clavier (fiche §2) | Fiche §2 ; WCAG 2.1.1 | Tout au clavier | Non fait | La colonne de `PageEtape` reste centrée ; le clavier passe par Tab et Entrée | À faire, lot suivant |

@@ -142,8 +142,12 @@ String? deciderRedirection({
     // Sans cette porte, ce compte retombait en `deconnecte` et repartait sur
     // l'ecran de connexion en boucle
     // (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-3-auth-kyc.md` section 2.1).
+    // Admission, lot B : le questionnaire aussi (« Ajouter un autre profil
+    // eleve » depuis le recapitulatif).
     case PorteAcces.inscription:
-      return _dansLeSousArbre(cheminDemande, Routes.inscription) || !routeConnue
+      return _dansLeSousArbre(cheminDemande, Routes.inscription) ||
+              _dansLeSousArbre(cheminDemande, Routes.commencer) ||
+              !routeConnue
           ? null
           : Routes.inscription;
 
@@ -226,6 +230,7 @@ String? deciderRedirection({
           cheminDemande == Routes.horsLigne ||
           _dansLeSousArbre(cheminDemande, Routes.connexion) ||
           _dansLeSousArbre(cheminDemande, Routes.bienvenue) ||
+          _dansLeSousArbre(cheminDemande, Routes.commencer) ||
           _dansLeSousArbre(cheminDemande, Routes.inscription) ||
           _dansLeSousArbre(cheminDemande, Routes.agentEntree) ||
           _dansLeSousArbre(cheminDemande, Routes.attente)) {

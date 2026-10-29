@@ -1058,6 +1058,7 @@ class _Traductions$attente$ar extends Traductions$attente$fr {
 	@override String get demandeTitre => 'طلبك قيد الدراسة';
 	@override String get demandeMessage => 'تقرأ الإدارة كل طلب قبل فتح أي حساب.';
 	@override String get demandeDetail => 'ليس عليك إرسال أي شيء. سنكتب إليك على بريدك الإلكتروني فور رد الإدارة.';
+	@override String demandePour({required Object liste}) => 'يخص طلبك: ${liste}.';
 	@override String get actualiserCompte => 'تحديث';
 	@override String get lireEtAccepter => 'قراءة شروطنا وقبولها';
 	@override String get nosConditions => 'يلزم قراءة الشروط والموافقة عليها';
@@ -1111,6 +1112,7 @@ class _Traductions$inscription$ar extends Traductions$inscription$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$inscription$questionnaire$ar questionnaire = _Traductions$inscription$questionnaire$ar._(_root);
 	@override String get titre => 'إنشاء حسابك';
 	@override String etapeSur({required Object n, required Object total}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩';
 	@override String tempsRestant({required Object minutes}) => 'نحو ⁨${minutes}⁩ د';
@@ -6636,6 +6638,36 @@ class _Traductions$connexion$feuilleAppareil$ar extends Traductions$connexion$fe
 	@override String get plafond => 'عدد الأجهزة لكل طالب محدود. إن بلغت الحد، أزل أحدها من «الأسرة»، «أجهزة الأسرة».';
 	@override String get saisir => 'إدخال الرمز';
 	@override String get fermer => 'إغلاق';
+}
+
+// Path: inscription.questionnaire
+class _Traductions$inscription$questionnaire$ar extends Traductions$inscription$questionnaire$fr {
+	_Traductions$inscription$questionnaire$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get recapLangue => 'لغة الدرس';
+	@override String get prenomQuestion => 'ما اسم طفلك؟';
+	@override String get prenomRaison => 'يكفي الاسم الأول. يمكنك تسجيل أطفال آخرين في النهاية.';
+	@override String ageQuestion({required Object prenom}) => 'كم عمر ${prenom}؟';
+	@override String ans({required Object n}) => '${n} سنة';
+	@override String get adulte => '18 سنة أو أكثر';
+	@override String get adulteDetail => 'ابتداء من 18 سنة، يسجل كل شخص نفسه، باختيار « أسجل نفسي ».';
+	@override String genreQuestion({required Object prenom}) => '${prenom}…';
+	@override String get garcon => 'ولد';
+	@override String get fille => 'بنت';
+	@override String get genreRaison => 'تأخذ الأكاديمية ذلك بعين الاعتبار عند تكوين الفصول.';
+	@override String get niveauQuestionMoi => 'أين وصلت اليوم؟';
+	@override String etapeCourte({required Object n, required Object total}) => '${n} من ${total}';
+	@override String get recapTitre => 'هذا ما فهمناه';
+	@override String get recapApprenants => 'من سيتعلم';
+	@override String ligneEnfant({required Object prenom, required Object age}) => '${prenom}، ${age} سنة';
+	@override String get ligneVous => 'أنت';
+	@override String get ajouterProfil => 'إضافة ملف طالب آخر';
+	@override String get envoyer => 'إرسال طلبي';
+	@override String get dejaUnCompte => 'لدي حساب بالفعل';
+	@override String get aucuneReponse => 'لم تعد إجابات تسجيلك على هذا الجهاز. أعد الإجابة عن الأسئلة الأولى: تستغرق دقيقتين.';
 }
 
 // Path: inscription.usage
@@ -25865,13 +25897,14 @@ extension on TraductionsAr {
 			'attente.demandeTitre' => 'طلبك قيد الدراسة',
 			'attente.demandeMessage' => 'تقرأ الإدارة كل طلب قبل فتح أي حساب.',
 			'attente.demandeDetail' => 'ليس عليك إرسال أي شيء. سنكتب إليك على بريدك الإلكتروني فور رد الإدارة.',
+			'attente.demandePour' => ({required Object liste}) => 'يخص طلبك: ${liste}.',
 			'attente.actualiserCompte' => 'تحديث',
 			'attente.lireEtAccepter' => 'قراءة شروطنا وقبولها',
 			'attente.nosConditions' => 'يلزم قراءة الشروط والموافقة عليها',
 			'attente.etatAAccepter' => 'للقبول',
-			'attente.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم يبق أي عنصر للتقديم.', one: 'بقي عنصر واحد للتقديم.', two: 'بقي عنصران للتقديم.', few: 'بقيت ⁨${n}⁩ عناصر للتقديم.', many: 'بقي ⁨${n}⁩ عنصرًا للتقديم.', other: 'بقي ⁨${n}⁩ عنصر للتقديم.', ), 
 			_ => null,
 		} ?? switch (path) {
+			'attente.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم يبق أي عنصر للتقديم.', one: 'بقي عنصر واحد للتقديم.', two: 'بقي عنصران للتقديم.', few: 'بقيت ⁨${n}⁩ عناصر للتقديم.', many: 'بقي ⁨${n}⁩ عنصرًا للتقديم.', other: 'بقي ⁨${n}⁩ عنصر للتقديم.', ), 
 			'attente.etatAFournir' => 'للتقديم',
 			'attente.prochaineEtape' => ({required Object etape}) => 'الخطوة التالية: ⁨${etape}⁩',
 			'attente.refuseDetail' => ({required Object element}) => 'لطلب التحقق من جديد، ابدأ بهذا العنصر: ⁨${element}⁩.',
@@ -25888,6 +25921,27 @@ extension on TraductionsAr {
 			'accords.suivant' => 'التالي',
 			'accords.dejaAcceptes' => 'موافقاتك محفوظة بالفعل.',
 			'accords.cadreNonPublie' => 'سيصبح إرسال طلب ترشحك ممكنًا عند نشر الإطار الديني والتربوي.',
+			'inscription.questionnaire.recapLangue' => 'لغة الدرس',
+			'inscription.questionnaire.prenomQuestion' => 'ما اسم طفلك؟',
+			'inscription.questionnaire.prenomRaison' => 'يكفي الاسم الأول. يمكنك تسجيل أطفال آخرين في النهاية.',
+			'inscription.questionnaire.ageQuestion' => ({required Object prenom}) => 'كم عمر ${prenom}؟',
+			'inscription.questionnaire.ans' => ({required Object n}) => '${n} سنة',
+			'inscription.questionnaire.adulte' => '18 سنة أو أكثر',
+			'inscription.questionnaire.adulteDetail' => 'ابتداء من 18 سنة، يسجل كل شخص نفسه، باختيار « أسجل نفسي ».',
+			'inscription.questionnaire.genreQuestion' => ({required Object prenom}) => '${prenom}…',
+			'inscription.questionnaire.garcon' => 'ولد',
+			'inscription.questionnaire.fille' => 'بنت',
+			'inscription.questionnaire.genreRaison' => 'تأخذ الأكاديمية ذلك بعين الاعتبار عند تكوين الفصول.',
+			'inscription.questionnaire.niveauQuestionMoi' => 'أين وصلت اليوم؟',
+			'inscription.questionnaire.etapeCourte' => ({required Object n, required Object total}) => '${n} من ${total}',
+			'inscription.questionnaire.recapTitre' => 'هذا ما فهمناه',
+			'inscription.questionnaire.recapApprenants' => 'من سيتعلم',
+			'inscription.questionnaire.ligneEnfant' => ({required Object prenom, required Object age}) => '${prenom}، ${age} سنة',
+			'inscription.questionnaire.ligneVous' => 'أنت',
+			'inscription.questionnaire.ajouterProfil' => 'إضافة ملف طالب آخر',
+			'inscription.questionnaire.envoyer' => 'إرسال طلبي',
+			'inscription.questionnaire.dejaUnCompte' => 'لدي حساب بالفعل',
+			'inscription.questionnaire.aucuneReponse' => 'لم تعد إجابات تسجيلك على هذا الجهاز. أعد الإجابة عن الأسئلة الأولى: تستغرق دقيقتين.',
 			'inscription.titre' => 'إنشاء حسابك',
 			'inscription.etapeSur' => ({required Object n, required Object total}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩',
 			'inscription.tempsRestant' => ({required Object minutes}) => 'نحو ⁨${minutes}⁩ د',
@@ -26362,6 +26416,8 @@ extension on TraductionsAr {
 			'dossiers.file.accesRefuse' => 'ليس لديك إذن بالوصول إلى الملفات المطلوب اعتمادها.',
 			'dossiers.file.actualisation' => 'جارٍ تحديث الملفات…',
 			'dossiers.file.chargementProlonge' => 'التحميل يستغرق وقتًا أطول من المتوقع.',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.file.suivantsErreur' => 'تعذّر تحميل الملفات التالية.',
 			'dossiers.file.indisponible' => 'الاطلاع على الملفات غير متاح الآن.',
 			'dossiers.file.selectionRetiree' => 'هذا الملف لم يعد متاحًا في القائمة.',
@@ -26384,8 +26440,6 @@ extension on TraductionsAr {
 			'dossiers.visionneuse.erreur' => 'لا يمكن عرض الوثيقة.',
 			'dossiers.visionneuse.expire' => 'انتهى الوصول إلى هذه الوثيقة.',
 			'dossiers.visionneuse.recharger' => 'إعادة تحميل الوثيقة',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.visionneuse.formatNonPrisEnCharge' => 'لا يمكن عرض تنسيق هذه الوثيقة.',
 			'dossiers.visionneuse.accesRetire' => 'لم يعد لديك وصول إلى هذه الوثيقة.',
 			'dossiers.visionneuse.apercuRefuse' => 'هذه الوثيقة غير مرئية بحسابك.',
@@ -26876,6 +26930,8 @@ extension on TraductionsAr {
 			'suiviDemandes.etapes.classeValidee' => 'تم اعتماد الفصل',
 			'suiviDemandes.etapes.enseignantAffecte' => 'تم تعيين المعلم',
 			'suiviDemandes.etapes.eleveIntegre' => 'الطالب مندمج في الفصل',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.etapes.coursCommences' => 'بدء الدروس',
 			'suiviDemandes.etats.fait' => 'تم',
 			'suiviDemandes.etats.enCours' => 'جارية',
@@ -26898,8 +26954,6 @@ extension on TraductionsAr {
 			'suiviDemandes.personnaliseNotice' => 'لن يُفتح هذا الموعد إلا إذا اختاره طلاب آخرون واكتمل الفصل.',
 			'suiviDemandes.jalon.apres' => ({required Object date, required Object heure, required Object duree}) => '⁨${date}⁩ في ⁨${heure}⁩، ⁨${duree}⁩',
 			'suiviDemandes.jalon.aussitot' => 'فورًا',
-			_ => null,
-		} ?? switch (path) {
 			'suiviDemandes.jalon.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'بعد أقل من دقيقة', one: 'بعد دقيقة', two: 'بعد دقيقتين', few: 'بعد ⁨${n}⁩ دقائق', many: 'بعد ⁨${n}⁩ دقيقة', other: 'بعد ⁨${n}⁩ دقيقة', ), 
 			'suiviDemandes.jalon.heures' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'بعد أقل من ساعة', one: 'بعد ساعة', two: 'بعد ساعتين', few: 'بعد ⁨${n}⁩ ساعات', many: 'بعد ⁨${n}⁩ ساعة', other: 'بعد ⁨${n}⁩ ساعة', ), 
 			'suiviDemandes.jalon.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'في اليوم نفسه', one: 'بعد يوم', two: 'بعد يومين', few: 'بعد ⁨${n}⁩ أيام', many: 'بعد ⁨${n}⁩ يومًا', other: 'بعد ⁨${n}⁩ يوم', ), 
@@ -27390,6 +27444,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.disponibilitesDeclarees.heures.explication' => 'اختر كل الساعات التي تستطيع أن تبدأ فيها درسًا. تُحسب نهاية الدرس لك.',
 			'recrutement.parcours.q.disponibilitesDeclarees.heures.suite' => 'ستقول بعد ذلك إن كان الأمر نفسه في الأيام الأخرى.',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.titre' => 'هل الساعات نفسها في كل هذه الأيام؟',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.explication' => ({required Object jours, required Object premier, required Object heures}) => 'اخترت ⁨${jours}⁩. يوم ⁨${premier}⁩، تبدأ في ⁧${heures}⁩.',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.libelle' => 'نعم، الساعات نفسها',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.description' => ({required Object premier, required Object autres}) => 'ساعات يوم ⁨${premier}⁩ تصلح لباقي الأيام: ⁨${autres}⁩.',
@@ -27412,8 +27468,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.debutPossible.options.immediat.libelle' => 'من الآن',
 			'recrutement.parcours.q.debutPossible.options.immediat.description' => 'تستطيع البدء فور إسناد فصل إليك.',
 			'recrutement.parcours.q.debutPossible.options.immediat.exemple' => 'لا التزام يشغلك هذا الشهر.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.debutPossible.options.mois_prochain.libelle' => 'الشهر القادم',
 			'recrutement.parcours.q.debutPossible.options.mois_prochain.description' => 'ستكون متفرغًا ابتداءً من الشهر القادم.',
 			'recrutement.parcours.q.debutPossible.options.mois_prochain.exemple' => 'تنهي عملًا آخر في نهاية هذا الشهر.',
@@ -27904,6 +27958,8 @@ extension on TraductionsAr {
 			'avis.admin.vide' => 'لا توجد آراء في هذه القائمة.',
 			'avis.admin.erreur' => 'تعذّر تحميل الآراء. أعد المحاولة.',
 			'avis.admin.sansDonnees' => 'تعذّر تحميل الآراء',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.refuse' => 'الإدارة المتصلة وحدها تقرأ الآراء وتقرر بشأنها. أعد الاتصال بالحساب المناسب ثم أعد المحاولة.',
 			'avis.admin.indisponibleTitre' => 'الآراء غير متاحة',
 			'avis.admin.indisponiblePhrase' => 'ستتوفر هذه الخاصية عند ربط الخادم.',
@@ -27926,8 +27982,6 @@ extension on TraductionsAr {
 			'avis.admin.refuser.titre' => ({required Object deNom}) => 'رفض رأي ⁨${deNom}⁩',
 			'avis.admin.refuser.intro' => 'اختر سبب الرفض. الرأي الناقد المحترم يُنشر.',
 			'avis.admin.refuser.consequence' => 'لن يُنشر الرأي. يُحفظ السبب.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.refuser.action' => 'رفض الرأي',
 			'avis.admin.refuser.rester' => 'عدم تغيير شيء',
 			'avis.admin.retirer.titre' => ({required Object deNom}) => 'سحب رأي ⁨${deNom}⁩',
