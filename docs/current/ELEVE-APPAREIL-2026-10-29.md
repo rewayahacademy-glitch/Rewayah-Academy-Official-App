@@ -35,18 +35,9 @@ Le directeur a refusé une relecture toutes les 2 minutes (première version de 
 
 **Limite, dite au pilote avant d'appliquer ce modèle :** dans le cas exact de Hakim, la séance a été créée après l'ouverture de l'accueil. Une relecture « par séance connue » ne la voit pas : seuls le temps réel ou un retour dans l'application la montrent. Tant que le temps réel ne passe pas sur l'appareil appairé, le défaut peut revenir.
 
-### À faire dans la zone interdite (adaptateur temps réel)
+### Adaptateur temps réel
 
-`lib/core/fraicheur/veille_supabase.dart` ne transmet pas les erreurs du canal : il les écrit seulement dans le journal de développement, invisible en production. Correctif proposé, dans `subscribe` :
-
-```dart
-          } else if (erreur != null) {
-            journalDev('Veille de fraicheur : ${statut.name}, $erreur');
-            if (!flux.isClosed) flux.addError(erreur);
-          }
-```
-
-`veille_fraicheur.dart` reçoit déjà ces erreurs (`onError`) ; il faudra alors les envoyer à la supervision avec le statut (`channelError`, `timedOut`, `closed`).
+Correction du 29/10 : `veille_supabase.dart` n'est pas en zone interdite. Il transmet désormais à la veille les états `channelError` et `timedOut` du canal (`ErreurCanalVeille`, qui ne porte que le nom de l'état) ; la veille les envoie à Sentry (« Veille temps réel : canal en erreur », statut et rôle) sans s'arrêter. Avant, ces états n'allaient que dans le journal de développement, invisible en production.
 
 ## Ce que les tests prouvent
 

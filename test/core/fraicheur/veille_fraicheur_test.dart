@@ -261,6 +261,17 @@ void main() {
     },
   );
 
+  // 29/10/2026 : une erreur du canal temps reel arrive a la veille (qui la
+  // dit a la supervision quand elle est demarree) sans l'arreter.
+  test('une erreur du canal ne coupe pas la veille', () async {
+    await connecter('p1');
+    veille.ecoutes.last.addError(const ErreurCanalVeille('channelError'));
+    await pumpEventQueue();
+    final int seancesAvant = seances.lectures;
+    await signaler(const ChangementTable('sessions'));
+    expect(seances.lectures, seancesAvant + 1);
+  });
+
   test('une table inconnue ne fait rien relire', () async {
     await connecter('p1');
     final int classesAvant = classes.lectures;

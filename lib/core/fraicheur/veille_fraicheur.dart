@@ -140,8 +140,19 @@ final Provider<void> veilleFraicheurProvider = Provider<void>((Ref ref) {
           invaliderFamille(ref, famille);
         }
       },
-      onError: (Object erreur) =>
-          journalDev('Veille de fraicheur en erreur : ${erreur.runtimeType}'),
+      onError: (Object erreur) {
+        journalDev('Veille de fraicheur en erreur : ${erreur.runtimeType}');
+        if (erreur is ErreurCanalVeille) {
+          Supervision.signaler(
+            categorie: 'veille',
+            message: 'Veille temps reel : canal en erreur',
+            donnees: <String, Object?>{
+              'statut': erreur.statut,
+              'role': ref.read(sessionProvider).role?.name ?? 'inconnu',
+            },
+          );
+        }
+      },
     );
   }
 
