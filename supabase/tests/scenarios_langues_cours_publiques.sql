@@ -23,6 +23,11 @@ BEGIN
   IF 'fixture_retiree' = ANY (v_codes) THEN
     RAISE EXCEPTION 'LANGUES ROUGE : anon lit une langue retiree';
   END IF;
+  -- Dans l'ordre publie (ordre croissant), comme la vitrine le montre.
+  IF (SELECT pg_catalog.array_agg(l.code) FROM public.langues_cours_publiques() AS l)
+     IS DISTINCT FROM ARRAY['poular', 'francais', 'english'] THEN
+    RAISE EXCEPTION 'LANGUES ROUGE : ordre publie non respecte';
+  END IF;
   -- Deux colonnes, code et libelle, rien d'autre.
   SELECT pg_catalog.count(*) INTO v_colonnes
     FROM pg_catalog.pg_proc p, pg_catalog.unnest(p.proargnames) AS a
