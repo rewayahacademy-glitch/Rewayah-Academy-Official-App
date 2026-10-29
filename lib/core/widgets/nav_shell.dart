@@ -83,14 +83,47 @@ class Destination {
 /// (`destinationsPour(mode: InterfaceMode.standard)`), jamais l'index de la
 /// liste courte ([indexDansBarre]).
 ///
+/// **Lot B2 (29/10/2026)** : l'eleve adulte ([eleveAdulte], la capacite
+/// « eleve autonome » servie, jamais le role) a sa propre barre, Aujourd'hui,
+/// Apprendre, Suivi, Profil (dossier maitre 08.1 ; competence mots-rewayah).
+/// Memes routes que l'eleve, dans un autre ordre : les branches du routeur
+/// restent celles de la liste de l'eleve ([destinationsPour] sans
+/// [eleveAdulte]), retrouvees par leur chemin, jamais par leur rang.
+///
 /// Le comptable n'a pas de coquille : une destination unique ne monte pas une
 /// barre. Le controleur en a une a quatre destinations depuis le 27/09/2026
 /// (C13).
 List<Destination> destinationsPour({
   required AppRole role,
   required InterfaceMode mode,
+  bool eleveAdulte = false,
 }) {
   final List<Destination> completes = switch (role) {
+    // Lot B2 : Aujourd'hui mene a `/eleve` (que le routeur ouvre sur
+    // l'accueil adulte), Apprendre au Coran, Suivi a ses seances, Profil au
+    // compte.
+    AppRole.student when eleveAdulte => <Destination>[
+      Destination(
+        libelle: t.nav.eleve.aujourdhui,
+        icone: AppIcons.journee,
+        chemin: Routes.eleve,
+      ),
+      Destination(
+        libelle: t.nav.eleve.apprendre,
+        icone: AppIcons.coran,
+        chemin: Routes.eleveCoran,
+      ),
+      Destination(
+        libelle: t.nav.eleve.suivi,
+        icone: AppIcons.suivi,
+        chemin: Routes.eleveSuivi,
+      ),
+      Destination(
+        libelle: t.nav.eleve.profil,
+        icone: AppIcons.profil,
+        chemin: Routes.compte,
+      ),
+    ],
     // L'ordre est celui des branches de la coquille eleve dans
     // `app_router.dart` (Accueil, Ma classe, Coran) : les deux doivent rester
     // d'accord. Mon espace n'a pas de branche, il se rejoint par `go`.

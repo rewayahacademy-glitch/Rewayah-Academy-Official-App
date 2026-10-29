@@ -11171,6 +11171,15 @@ class Traductions$nav$eleve$fr {
 
 	/// fr: 'Compte'
 	String get compte => 'Compte';
+
+	/// fr: 'Aujourd'hui'
+	String get aujourdhui => 'Aujourd\'hui';
+
+	/// fr: 'Apprendre'
+	String get apprendre => 'Apprendre';
+
+	/// fr: 'Profil'
+	String get profil => 'Profil';
 }
 
 // Path: nav.tuteur
@@ -45569,6 +45578,9 @@ extension on Traductions {
 			'nav.eleve.monEspace' => 'Mon espace',
 			'nav.eleve.suivi' => 'Suivi',
 			'nav.eleve.compte' => 'Compte',
+			'nav.eleve.aujourdhui' => 'Aujourd\'hui',
+			'nav.eleve.apprendre' => 'Apprendre',
+			'nav.eleve.profil' => 'Profil',
 			'nav.tuteur.accueil' => 'Accueil',
 			'nav.tuteur.foyer' => 'Foyer',
 			'nav.tuteur.disponibilites' => 'Disponibilités',
@@ -45862,11 +45874,11 @@ extension on Traductions {
 			'compte.tuteur.pageLegal.aucunTitre' => 'Aucun document accepté',
 			'compte.tuteur.pageLegal.aucun' => 'Aucun document accepté n\'est enregistré pour ce compte.',
 			'compte.tuteur.pageLegal.lectureSeule' => 'Un document accepté ne se modifie pas.',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pageLegal.textes' => 'Conditions et confidentialité',
 			'historique.titre' => 'Historique',
 			'historique.detailSeance' => 'Détail de la séance',
-			_ => null,
-		} ?? switch (path) {
 			'historique.segments.seances' => 'Séances',
 			'historique.segments.observations' => 'Observations',
 			'historique.moisCourts.0' => 'janv.',
@@ -46376,11 +46388,11 @@ extension on Traductions {
 			'classe.pageCatalogue.rejoindreAttente' => 'Rejoindre la liste d\'attente',
 			'classe.pageCatalogue.precisionsTitre' => 'Avant de choisir',
 			'classe.pageCatalogue.precisionEnseignant' => 'Une classe garde le même enseignant pour toutes ses séances.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pageCatalogue.precisionPlaces' => 'Les places affichées sont celles de l\'académie au moment de la lecture.',
 			'classe.pageCatalogue.precisionReserve' => 'Rien n\'est réservé avant votre confirmation.',
 			'classe.pageCatalogue.confirmerTitre' => 'Confirmer la classe',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageCatalogue.confirmerPhrase' => ({required Object prenom}) => 'Vous inscrivez ${prenom} dans cette classe.',
 			'classe.pageCatalogue.confirmerAttentePhrase' => ({required Object prenom}) => 'Vous inscrivez ${prenom} sur la liste d\'attente de cette classe.',
 			'classe.pageCatalogue.memeEnseignant' => ({required Object enseignant}) => 'Même classe et même enseignant pour toutes les séances de la semaine : ${enseignant}.',
@@ -46890,11 +46902,11 @@ extension on Traductions {
 			'enseignant.creneaux.revenir' => 'Revenir',
 			'enseignant.creneaux.cleNiveau' => 'Niveau',
 			'enseignant.creneaux.cleLangue' => 'Langue',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.creneaux.cleRecurrence' => 'Récurrence',
 			'enseignant.creneaux.cleFuseau' => 'Fuseau de référence',
 			'enseignant.creneaux.cleHeureLocale' => 'Heure locale',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.cleDuree' => 'Durée',
 			'enseignant.creneaux.plagesContexte' => 'Une ligne par plage. Touchez une plage pour la modifier ou la supprimer.',
 			'enseignant.creneaux.plageDe' => ({required Object heure}) => 'de ${heure} h',
@@ -47404,11 +47416,11 @@ extension on Traductions {
 			'tc.coran.modes.versets' => ({required Object debut, required Object fin}) => 'v. ${debut} à ${fin}',
 			'tc.coran.modes.versetsEntre' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
 			'tc.coran.mushaf.coteDroite' => 'Page de droite',
+			_ => null,
+		} ?? switch (path) {
 			'tc.coran.mushaf.coteGauche' => 'Page de gauche',
 			'tc.coran.mushaf.ouverture' => ({required Object droite, required Object gauche}) => 'Ouverture, pages ${droite} et ${gauche}',
 			'tc.coran.mushaf.page15.creditMiseEnPage' => 'Mise en page : KFGQPC, quran.ws (CC BY 4.0)',
-			_ => null,
-		} ?? switch (path) {
 			'tc.coran.mushaf.page15.aProposOuvrir' => 'À propos de cette édition',
 			'tc.coran.mushaf.page15.aProposTitre' => 'À propos de cette édition',
 			'tc.coran.mushaf.page15.aProposPolice' => 'Police : KFGQPC UthmanicHafs v3.0 (Complexe du Roi Fahd)',
@@ -47918,11 +47930,11 @@ extension on Traductions {
 			'adulte.famille.place.nouvelleInvitation' => ({required Object date}) => 'Nouvelle invitation possible à partir du ${date}',
 			'adulte.famille.place.envoyeeA' => ({required Object courriel}) => 'Envoyée à ${courriel}',
 			'adulte.famille.place.expiree' => 'L\'invitation précédente a expiré. Vous pouvez en envoyer une nouvelle.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.famille.place.annulee' => 'L\'invitation a été annulée et ne peut plus être acceptée. Vous pouvez en envoyer une nouvelle.',
 			'adulte.invitation.titreElle' => 'Inviter ma conjointe',
 			'adulte.invitation.titreLui' => 'Inviter mon conjoint',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.invitation.enteteElle' => 'Un compte personnel pour elle',
 			'adulte.invitation.enteteLui' => 'Un compte personnel pour lui',
 			'adulte.invitation.phraseElle' => 'Votre conjointe utilisera son propre compte. Elle ne pourra pas gérer votre foyer ni les profils élèves que vous avez créés.',
@@ -48432,11 +48444,11 @@ extension on Traductions {
 			'identiteProfil.lecteurEnfant' => ({required Object prenom}) => '${prenom}, profil enfant',
 			'identiteProfil.lecteurAdulte' => ({required Object prenom}) => '${prenom}, profil adulte',
 			'identiteProfil.lecteurAvecClasse' => ({required Object profil, required Object classe}) => '${profil}, ${classe}',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.composants.lecture.pieceJointe' => ({required Object nom}) => 'Pièce jointe : ${nom}',
 			'com.socle.composants.lecture.vocal' => ({required Object duree}) => 'Message vocal de ${duree}',
 			'com.socle.composants.lecture.vocalSansDuree' => 'Message vocal',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.composants.lecture.horodatage' => ({required Object date, required Object heure}) => '${date}, ${heure}',
 			'com.socle.composants.badge.nonLuUn' => '1 non lu',
 			'com.socle.composants.badge.nonLus' => ({required Object nombre}) => '${nombre} non lus',
@@ -48946,11 +48958,11 @@ extension on Traductions {
 			'com.studio.sousTitre' => 'Espace de travail de l\'équipe',
 			'com.studio.navigation.aujourdhui' => _root.com.socle.lexique.aujourdhui,
 			'com.studio.navigation.brouillons' => 'Brouillons',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.navigation.canaux' => 'Canaux',
 			'com.studio.navigation.enregistres' => 'Éléments enregistrés',
 			'com.studio.choisirTitre' => 'Choisissez un canal',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.choisir' => 'Choisissez un canal dans la liste pour lire la discussion et y écrire.',
 			'com.studio.aucunCanalTitre' => 'Aucun canal pour le moment',
 			'com.studio.aucunCanal' => 'Les canaux qui vous sont ouverts apparaîtront ici.',
@@ -49460,11 +49472,11 @@ extension on Traductions {
 			'comptable.statuts.raison.plafondExceptionDepasse' => 'Au-dessus du plafond de cette délégation',
 			'comptable.statuts.raison.paiementHorsApplication' => 'Paiement reçu hors de l\'application : la direction le valide avant qu\'il soit crédité à l\'élève',
 			'comptable.alertes.enseignantsAPayer' => 'Enseignants à payer',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.alertes.contractuelsAEcheance' => 'Contractuels à échéance',
 			'comptable.alertes.infosManquantes' => 'Infos paiement manquantes',
 			'comptable.alertes.payoutEchoue' => 'Payout échoué',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.alertes.paiementFamilleEchoue' => 'Paiement famille échoué',
 			'comptable.alertes.transactionNonRapprochee' => 'Transaction non rapprochée',
 			'comptable.alertes.remboursementEnAttente' => 'Remboursement en attente',
@@ -49974,11 +49986,11 @@ extension on Traductions {
 			'comptable.contractuels.champJustificatif' => 'Justificatif',
 			'comptable.contractuels.champCentreCout' => 'Centre de coût',
 			'comptable.contractuels.champAuteur' => 'Auteur',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.champApprobateur' => 'Approbateur',
 			'comptable.contractuels.champProfilPaiement' => 'Paiement du bénéficiaire',
 			'comptable.contractuels.champMotifRefus' => 'Motif du refus',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.aucunJustificatif' => 'Aucun justificatif joint',
 			'comptable.contractuels.nonRenseigne' => 'Non renseigné',
 			'comptable.contractuels.ligneSource' => ({required Object source}) => 'Source : ${source}',
@@ -50488,11 +50500,11 @@ extension on Traductions {
 			'juridique.confidentialite.s1.titre' => '1. Qui est responsable',
 			'juridique.confidentialite.s1.blocs.0' => 'Rewayah Academy Ltd décide pourquoi et comment vos informations sont utilisées. Ses coordonnées sont dans les Mentions légales.',
 			'juridique.confidentialite.s1.representant' => ({required Object nom}) => 'Représentant dans l\'Union européenne : ${nom}.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.confidentialite.s2.titre' => '2. Ce que nous recueillons',
 			'juridique.confidentialite.s2.blocs.0' => '- Pour créer un compte : le nom, l\'adresse de courriel, la langue de l\'interface, le pays de résidence et le fuseau horaire.',
 			'juridique.confidentialite.s2.blocs.1' => '- Pour un élève : la date de naissance, qui sert à choisir la bonne formule et les règles propres aux mineurs.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.confidentialite.s2.blocs.2' => '- Facultatif : photo, téléphone, adresse, niveau, préférences d\'horaires.',
 			'juridique.confidentialite.s2.blocs.3' => '- Pendant les cours : la présence, le cahier de transmission et la progression de l\'élève.',
 			'juridique.confidentialite.s2.blocs.4' => '- Pour payer : l\'abonnement et les factures. Le paiement lui-même passe par un prestataire de paiement.',

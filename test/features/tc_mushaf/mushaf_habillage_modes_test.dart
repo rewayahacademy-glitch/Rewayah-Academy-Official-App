@@ -126,7 +126,8 @@ void main() {
         find
             .descendant(
               of: find.byType(NavShell),
-              matching: find.text(t.nav.eleve.coran),
+              // Lot B2 : la barre de l adulte dit « Apprendre ».
+              matching: find.text(t.nav.eleve.apprendre),
             )
             .last,
       );

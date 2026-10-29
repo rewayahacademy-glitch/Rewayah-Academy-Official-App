@@ -40,8 +40,9 @@ String? redirectionFinancesAdulte({required bool eleveAutonome}) =>
 /// Les routes : l'Accueil adulte, l'historique de ses seances, le suivi de
 /// ses demandes et ses finances.
 ///
-/// Pas de cloche : l'eleve n'a pas encore de centre de notifications reel
-/// (EA-8) ; une cloche sans destination serait inerte (D9).
+/// La cloche n'est pas ici : depuis le lot B2 (29/10/2026), la coquille de
+/// l'eleve la pose sur toutes les pages de l'eleve adulte et elle mene a
+/// `Routes.eleveNotifications`.
 List<GoRoute> routesAccueilAdulte() => <GoRoute>[
   GoRoute(
     path: Routes.eleveAdulte,

@@ -124,6 +124,12 @@ abstract final class Routes {
   /// Suivi et historique de l'eleve.
   static const String eleveSuivi = '/eleve/suivi';
 
+  /// Les notifications de l'eleve adulte (lot B2, 29/10/2026), la meme page
+  /// que les autres roles. L'eleve mineur n'en a pas (reponse Q5 du
+  /// directeur du 04/10, maintenue le 29/10) : son adresse le ramene a
+  /// l'accueil.
+  static const String eleveNotifications = '/eleve/notifications';
+
   // --- DASH-MA-PROD : l'aide de l'eleve -------------------------------------
   //
   // Bloc separe : une autre etape ajoute aussi une route dans ce fichier.
