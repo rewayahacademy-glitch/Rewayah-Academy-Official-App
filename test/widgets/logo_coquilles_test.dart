@@ -208,7 +208,7 @@ void main() {
     });
   }
 
-  testWidgets('demarrage : le logo horizontal blanc, centre en haut', (
+  testWidgets('demarrage : le logo vertical blanc, centre, comme l ouverture', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
@@ -222,15 +222,15 @@ void main() {
     );
     await tester.pump();
     final BrandLogo logo = tester.widget(
-      find.byKey(const ValueKey<String>('entree-logo')),
+      find.byKey(const ValueKey<String>('demarrage-logo')),
     );
-    expect(logo.variante, VarianteLogo.horizontal);
+    expect(logo.variante, VarianteLogo.vertical);
     expect(logo.fond, FondLogo.violet);
     final Rect r = tester.getRect(
-      find.byKey(const ValueKey<String>('entree-logo')),
+      find.byKey(const ValueKey<String>('demarrage-logo')),
     );
     final Rect page = tester.getRect(find.byType(EcranDemarrage));
     expect(r.center.dx, closeTo(page.center.dx, 1));
-    expect(r.top, lessThan(page.height / 4));
+    expect(r.center.dy, closeTo(page.center.dy, 1));
   });
 }

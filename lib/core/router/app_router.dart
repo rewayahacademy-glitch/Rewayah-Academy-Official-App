@@ -10,45 +10,82 @@ import '../../features/accueil_adulte/accueil_adulte_page.dart'
 import '../../features/accueil_adulte/routes_accueil_adulte.dart';
 import '../../features/accueil_eleve/accueil_eleve_selon_presentation.dart';
 import '../../features/accueil_famille/accueil_famille_page.dart';
-import '../../features/admin_acces_agents/acces_agents_page.dart';
-import '../../features/admin_avis/avis_page.dart';
-import '../../features/admin_candidature/candidature_page.dart';
-import '../../features/admin_candidatures/candidatures_page.dart';
-import '../../features/admin_comptes/comptes_page.dart';
-import '../../features/admin_configuration_conservation_donnees/conservation_donnees_page.dart';
-import '../../features/admin_configuration_fonctionnalites/fonctionnalites_page.dart';
-import '../../features/admin_configuration_politique_kyc/politique_revue_kyc_page.dart';
-import '../../features/admin_configuration_protection_enfants/protection_enfants_page.dart';
-import '../../features/admin_configuration_regles/regles_page.dart';
-import '../../features/admin_courriels/courriels_page.dart';
-import '../../features/admin_demandes/demandes_page.dart';
-import '../../features/admin_dossiers/dossiers_page.dart';
-import '../../features/admin_finance/finance_page.dart';
-import '../../features/admin_groupes/groupes_page.dart';
-import '../../features/admin_import_inscriptions/import_inscriptions_page.dart';
-import '../../features/admin_invitations/invitations_page.dart';
-import '../../features/admin_journal/incidents_page.dart';
-import '../../features/admin_journal/journal_page.dart';
-import '../../features/admin_observations/observations_admin_page.dart';
-import '../../features/admin_offres/admin_offres_page.dart';
-import '../../features/admin_pedagogie_bibliotheque/attribution/attribution_page.dart';
-import '../../features/admin_pedagogie_bibliotheque/catalogue/catalogue_page.dart';
-import '../../features/admin_pedagogie_bibliotheque/fiche/fiche_page.dart';
-import '../../features/admin_pedagogie_bibliotheque/import/import_page.dart';
-import '../../features/admin_pedagogie_bibliotheque/publication/publication_page.dart';
-import '../../features/admin_pedagogie_diagnostics/diagnostics_page.dart';
-import '../../features/admin_pedagogie_evaluations/evaluations_page.dart';
-import '../../features/admin_pedagogie_programmes/programmes_page.dart';
-import '../../features/admin_pedagogie_progression/progression_page.dart';
-import '../../features/admin_pedagogie_qualite/qualite_page.dart';
-import '../../features/admin_pilotage/pilotage_page.dart';
-import '../../features/admin_planning/planning_page.dart';
-import '../../features/admin_regroupements/regroupements_page.dart';
-import '../../features/admin_reprises/reprises_page.dart';
-import '../../features/admin_suppressions/suppressions_page.dart';
-import '../../features/admin_tableau/tableau_de_bord_page.dart';
-import '../../features/admin_tirage/tirage_page.dart';
-import '../../features/admin_traitement/traitement_page.dart';
+import '../../features/admin_acces_agents/acces_agents_page.dart'
+    deferred as d_acces_agents_page;
+import '../../features/admin_avis/avis_page.dart' deferred as d_avis_page;
+import '../../features/admin_candidature/candidature_page.dart'
+    deferred as d_candidature_page;
+import '../../features/admin_candidatures/candidatures_page.dart'
+    deferred as d_candidatures_page;
+import '../../features/admin_comptes/comptes_page.dart'
+    deferred as d_comptes_page;
+import '../../features/admin_configuration_conservation_donnees/conservation_donnees_page.dart'
+    deferred as d_conservation_donnees_page;
+import '../../features/admin_configuration_fonctionnalites/fonctionnalites_page.dart'
+    deferred as d_fonctionnalites_page;
+import '../../features/admin_configuration_politique_kyc/politique_revue_kyc_page.dart'
+    deferred as d_politique_revue_kyc_page;
+import '../../features/admin_configuration_protection_enfants/protection_enfants_page.dart'
+    deferred as d_protection_enfants_page;
+import '../../features/admin_configuration_regles/regles_page.dart'
+    deferred as d_regles_page;
+import '../../features/admin_courriels/courriels_page.dart'
+    deferred as d_courriels_page;
+import '../../features/admin_demandes/demandes_page.dart'
+    deferred as d_demandes_page;
+import '../../features/admin_dossiers/dossiers_page.dart'
+    deferred as d_dossiers_page;
+import '../../features/admin_finance/finance_page.dart'
+    deferred as d_finance_page;
+import '../../features/admin_groupes/groupes_page.dart'
+    deferred as d_groupes_page;
+import '../../features/admin_import_inscriptions/import_inscriptions_page.dart'
+    deferred as d_import_inscriptions_page;
+import '../../features/admin_invitations/invitations_page.dart'
+    deferred as d_invitations_page;
+import '../../features/admin_journal/incidents_page.dart'
+    deferred as d_incidents_page;
+import '../../features/admin_journal/journal_page.dart'
+    deferred as d_journal_page;
+import '../../features/admin_observations/observations_admin_page.dart'
+    deferred as d_observations_admin_page;
+import '../../features/admin_offres/admin_offres_page.dart'
+    deferred as d_admin_offres_page;
+import '../../features/admin_pedagogie_bibliotheque/attribution/attribution_page.dart'
+    deferred as d_attribution_page;
+import '../../features/admin_pedagogie_bibliotheque/catalogue/catalogue_page.dart'
+    deferred as d_catalogue_page;
+import '../../features/admin_pedagogie_bibliotheque/fiche/fiche_page.dart'
+    deferred as d_fiche_page;
+import '../../features/admin_pedagogie_bibliotheque/import/import_page.dart'
+    deferred as d_import_page;
+import '../../features/admin_pedagogie_bibliotheque/publication/publication_page.dart'
+    deferred as d_publication_page;
+import '../../features/admin_pedagogie_diagnostics/diagnostics_page.dart'
+    deferred as d_diagnostics_page;
+import '../../features/admin_pedagogie_evaluations/evaluations_page.dart'
+    deferred as d_evaluations_page;
+import '../../features/admin_pedagogie_programmes/programmes_page.dart'
+    deferred as d_programmes_page;
+import '../../features/admin_pedagogie_progression/progression_page.dart'
+    deferred as d_progression_page;
+import '../../features/admin_pedagogie_qualite/qualite_page.dart'
+    deferred as d_qualite_page;
+import '../../features/admin_pilotage/pilotage_page.dart'
+    deferred as d_pilotage_page;
+import '../../features/admin_planning/planning_page.dart'
+    deferred as d_planning_page;
+import '../../features/admin_regroupements/regroupements_page.dart'
+    deferred as d_regroupements_page;
+import '../../features/admin_reprises/reprises_page.dart'
+    deferred as d_reprises_page;
+import '../../features/admin_suppressions/suppressions_page.dart'
+    deferred as d_suppressions_page;
+import '../../features/admin_tableau/tableau_de_bord_page.dart'
+    deferred as d_tableau_de_bord_page;
+import '../../features/admin_tirage/tirage_page.dart' deferred as d_tirage_page;
+import '../../features/admin_traitement/traitement_page.dart'
+    deferred as d_traitement_page;
 import '../../features/agent_entree/agent_entree_page.dart';
 import '../../features/alertes/alertes_page.dart';
 import '../../features/alertes/bandeau_alerte_urgente.dart';
@@ -66,27 +103,47 @@ import '../../features/classe_tuteur/planning_classe_page.dart';
 import '../../features/classe_tuteur/progression_classe_page.dart';
 import '../../features/classe_tuteur/ressources_classe_page.dart';
 import '../../features/classe_tuteur/travail_classe_page.dart';
-import '../../features/com_annonces/administration_communications_page.dart';
-import '../../features/com_annonces/publier_annonce_classe_page.dart';
-import '../../features/com_communaute/communaute_page.dart';
-import '../../features/com_messages/messages_admin.dart';
-import '../../features/com_messages/messages_page.dart';
+import '../../features/com_annonces/administration_communications_page.dart'
+    deferred as d_administration_communications_page;
+import '../../features/com_annonces/publier_annonce_classe_page.dart'
+    deferred as d_publier_annonce_classe_page;
+import '../../features/com_communaute/communaute_page.dart'
+    deferred as d_communaute_page;
+import '../../features/com_messages/messages_admin.dart'
+    deferred as d_messages_admin;
+import '../../features/com_messages/messages_page.dart'
+    deferred as d_messages_page;
 import '../../features/com_studio/studio_page.dart';
-import '../../features/comptable/aujourdhui/aujourdhui_page.dart';
-import '../../features/comptable/beneficiaires/beneficiaires_page.dart';
-import '../../features/comptable/beneficiaires/fil_profil_paiement_page.dart';
-import '../../features/comptable/beneficiaires/profil_paiement_page.dart';
-import '../../features/comptable/contractuels/contractuels_page.dart';
-import '../../features/comptable/contractuels/nouvelle_obligation_page.dart';
-import '../../features/comptable/contractuels/obligation_contractuel_page.dart';
-import '../../features/comptable/encaissements/detail_encaissement_page.dart';
-import '../../features/comptable/encaissements/encaissements_page.dart';
-import '../../features/comptable/encaissements/rapprochement_page.dart';
-import '../../features/comptable/graphiques/rapports_page.dart';
-import '../../features/comptable/paiements/detail_paiement_page.dart';
-import '../../features/comptable/paiements/paiements_page.dart';
-import '../../features/comptable/paiements_familles/paiements_familles_page.dart';
-import '../../features/comptable/tresorerie/tresorerie_page.dart';
+import '../../features/comptable/aujourdhui/aujourdhui_page.dart'
+    deferred as d_aujourdhui_page;
+import '../../features/comptable/beneficiaires/beneficiaires_page.dart'
+    deferred as d_beneficiaires_page;
+import '../../features/comptable/beneficiaires/fil_profil_paiement_page.dart'
+    deferred as d_fil_profil_paiement_page;
+import '../../features/comptable/beneficiaires/profil_paiement_page.dart'
+    deferred as d_profil_paiement_page;
+import '../../features/comptable/contractuels/contractuels_page.dart'
+    deferred as d_contractuels_page;
+import '../../features/comptable/contractuels/nouvelle_obligation_page.dart'
+    deferred as d_nouvelle_obligation_page;
+import '../../features/comptable/contractuels/obligation_contractuel_page.dart'
+    deferred as d_obligation_contractuel_page;
+import '../../features/comptable/encaissements/detail_encaissement_page.dart'
+    deferred as d_detail_encaissement_page;
+import '../../features/comptable/encaissements/encaissements_page.dart'
+    deferred as d_encaissements_page;
+import '../../features/comptable/encaissements/rapprochement_page.dart'
+    deferred as d_rapprochement_page;
+import '../../features/comptable/graphiques/rapports_page.dart'
+    deferred as d_rapports_page;
+import '../../features/comptable/paiements/detail_paiement_page.dart'
+    deferred as d_detail_paiement_page;
+import '../../features/comptable/paiements/paiements_page.dart'
+    deferred as d_paiements_page;
+import '../../features/comptable/paiements_familles/paiements_familles_page.dart'
+    deferred as d_paiements_familles_page;
+import '../../features/comptable/tresorerie/tresorerie_page.dart'
+    deferred as d_tresorerie_page;
 import '../../features/compte/acces_page.dart';
 import '../../features/compte/aide_page.dart';
 import '../../features/compte/apparence_page.dart';
@@ -160,12 +217,13 @@ import '../../features/partage_offre/partage_offre_page.dart';
 import '../../features/presentation_tuteur/demandes_presentation_page.dart';
 import '../../features/profil_enseignant/profil_enseignant_page.dart';
 import '../../features/recherche/entree_recherche.dart';
-import '../../features/recherche/page_recherche.dart';
+import '../../features/recherche/page_recherche.dart'
+    deferred as d_page_recherche;
 import '../../features/recrutement/invitation_candidat_page.dart';
 import '../../features/remplacements/remplacements_page.dart';
 import '../../features/revenus_enseignant/revenus_enseignant_page.dart';
 import '../../features/revue_groupe/revue_groupe_page.dart';
-import '../../features/salle/salle_page.dart';
+import '../../features/salle/salle_page.dart' deferred as d_salle_page;
 import '../../features/suivi_demandes/changement_classe_page.dart';
 import '../../features/suivi_eleve/suivi_eleve_page.dart';
 import '../../features/suivi_famille/suivi_famille_page.dart';
@@ -176,7 +234,7 @@ import '../../features/suivi_foyer/suivi_foyer_page.dart';
 import '../../features/talents/talents_page.dart';
 import '../../features/tc_catalogue/routes_tc_b.dart';
 import '../../features/tc_mes_groupes/routes_tc_a.dart';
-import '../../features/tc_mushaf/mushaf_page.dart';
+import '../../features/tc_mushaf/mushaf_page.dart' deferred as d_mushaf_page;
 import '../../features/tc_mushaf/routes_tc_c.dart';
 import '../../features/tc_observation_ui/routes_tc_g.dart';
 import '../admin/admin_domaine.dart';
@@ -205,8 +263,79 @@ import '../widgets/nav_shell.dart';
 import '../widgets/page_shell.dart';
 import 'billet_salle.dart';
 import 'etats_routeur.dart';
+import 'page_differee.dart';
 import 'redirection.dart';
 import 'routes.dart';
+
+/// Les ecrans charges a la demande par ce routeur (lot ouverture rapide,
+/// 29/10/2026), pour les precharger d'un coup (`test/flutter_test_config.dart`).
+final List<MorceauDiffere> morceauxDifferesRouteur = <MorceauDiffere>[
+  ('d_acces_agents_page', d_acces_agents_page.loadLibrary),
+  ('d_admin_offres_page', d_admin_offres_page.loadLibrary),
+  (
+    'd_administration_communications_page',
+    d_administration_communications_page.loadLibrary,
+  ),
+  ('d_attribution_page', d_attribution_page.loadLibrary),
+  ('d_aujourdhui_page', d_aujourdhui_page.loadLibrary),
+  ('d_avis_page', d_avis_page.loadLibrary),
+  ('d_beneficiaires_page', d_beneficiaires_page.loadLibrary),
+  ('d_candidature_page', d_candidature_page.loadLibrary),
+  ('d_candidatures_page', d_candidatures_page.loadLibrary),
+  ('d_catalogue_page', d_catalogue_page.loadLibrary),
+  ('d_communaute_page', d_communaute_page.loadLibrary),
+  ('d_comptes_page', d_comptes_page.loadLibrary),
+  ('d_conservation_donnees_page', d_conservation_donnees_page.loadLibrary),
+  ('d_contractuels_page', d_contractuels_page.loadLibrary),
+  ('d_courriels_page', d_courriels_page.loadLibrary),
+  ('d_demandes_page', d_demandes_page.loadLibrary),
+  ('d_detail_encaissement_page', d_detail_encaissement_page.loadLibrary),
+  ('d_detail_paiement_page', d_detail_paiement_page.loadLibrary),
+  ('d_diagnostics_page', d_diagnostics_page.loadLibrary),
+  ('d_dossiers_page', d_dossiers_page.loadLibrary),
+  ('d_encaissements_page', d_encaissements_page.loadLibrary),
+  ('d_evaluations_page', d_evaluations_page.loadLibrary),
+  ('d_fiche_page', d_fiche_page.loadLibrary),
+  ('d_fil_profil_paiement_page', d_fil_profil_paiement_page.loadLibrary),
+  ('d_finance_page', d_finance_page.loadLibrary),
+  ('d_fonctionnalites_page', d_fonctionnalites_page.loadLibrary),
+  ('d_groupes_page', d_groupes_page.loadLibrary),
+  ('d_import_inscriptions_page', d_import_inscriptions_page.loadLibrary),
+  ('d_import_page', d_import_page.loadLibrary),
+  ('d_incidents_page', d_incidents_page.loadLibrary),
+  ('d_invitations_page', d_invitations_page.loadLibrary),
+  ('d_journal_page', d_journal_page.loadLibrary),
+  ('d_messages_admin', d_messages_admin.loadLibrary),
+  ('d_messages_page', d_messages_page.loadLibrary),
+  ('d_mushaf_page', d_mushaf_page.loadLibrary),
+  ('d_nouvelle_obligation_page', d_nouvelle_obligation_page.loadLibrary),
+  ('d_obligation_contractuel_page', d_obligation_contractuel_page.loadLibrary),
+  ('d_observations_admin_page', d_observations_admin_page.loadLibrary),
+  ('d_page_recherche', d_page_recherche.loadLibrary),
+  ('d_paiements_familles_page', d_paiements_familles_page.loadLibrary),
+  ('d_paiements_page', d_paiements_page.loadLibrary),
+  ('d_pilotage_page', d_pilotage_page.loadLibrary),
+  ('d_planning_page', d_planning_page.loadLibrary),
+  ('d_politique_revue_kyc_page', d_politique_revue_kyc_page.loadLibrary),
+  ('d_profil_paiement_page', d_profil_paiement_page.loadLibrary),
+  ('d_programmes_page', d_programmes_page.loadLibrary),
+  ('d_progression_page', d_progression_page.loadLibrary),
+  ('d_protection_enfants_page', d_protection_enfants_page.loadLibrary),
+  ('d_publication_page', d_publication_page.loadLibrary),
+  ('d_publier_annonce_classe_page', d_publier_annonce_classe_page.loadLibrary),
+  ('d_qualite_page', d_qualite_page.loadLibrary),
+  ('d_rapports_page', d_rapports_page.loadLibrary),
+  ('d_rapprochement_page', d_rapprochement_page.loadLibrary),
+  ('d_regles_page', d_regles_page.loadLibrary),
+  ('d_regroupements_page', d_regroupements_page.loadLibrary),
+  ('d_reprises_page', d_reprises_page.loadLibrary),
+  ('d_salle_page', d_salle_page.loadLibrary),
+  ('d_suppressions_page', d_suppressions_page.loadLibrary),
+  ('d_tableau_de_bord_page', d_tableau_de_bord_page.loadLibrary),
+  ('d_tirage_page', d_tirage_page.loadLibrary),
+  ('d_traitement_page', d_traitement_page.loadLibrary),
+  ('d_tresorerie_page', d_tresorerie_page.loadLibrary),
+];
 
 /// Le routeur de l'application.
 ///
@@ -461,9 +590,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.recherche,
         builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
           avecRaccourciRecherche: false,
-          child: PageRecherche(
-            espaceDemande: etat.uri.queryParameters['espace'],
-            domaineDemande: etat.uri.queryParameters['domaine'],
+          child: PageDifferee(
+            cle: 'd_page_recherche',
+            charger: d_page_recherche.loadLibrary,
+            construire: () => d_page_recherche.PageRecherche(
+              espaceDemande: etat.uri.queryParameters['espace'],
+              domaineDemande: etat.uri.queryParameters['domaine'],
+            ),
           ),
         ),
       ),
@@ -565,8 +698,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 // arbitrage entérine au plan d'integration section 3.1 point
                 // 1, « la destination /eleve/coran existante pointe sur le
                 // nouveau moteur ». `sessionId` reste nul : hors classe.
-                builder: (BuildContext _, GoRouterState _) =>
-                    const MushafPage(),
+                builder: (BuildContext _, GoRouterState _) => PageDifferee(
+                  cle: 'd_mushaf_page',
+                  charger: d_mushaf_page.loadLibrary,
+                  construire: () => d_mushaf_page.MushafPage(),
+                ),
               ),
             ],
           ),
@@ -768,16 +904,25 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               GoRoute(
                 path: Routes.tuteurMessages,
                 pageBuilder: glissee(
-                  (GoRouterState _) =>
-                      const MessagesPage(cheminRetour: Routes.tuteurAccueil),
+                  (GoRouterState _) => PageDifferee(
+                    cle: 'd_messages_page',
+                    charger: d_messages_page.loadLibrary,
+                    construire: () => d_messages_page.MessagesPage(
+                      cheminRetour: Routes.tuteurAccueil,
+                    ),
+                  ),
                 ),
                 routes: <RouteBase>[
                   GoRoute(
                     path: ':filId',
                     pageBuilder: glissee(
-                      (GoRouterState etat) => MessagesPage(
-                        filId: _parametre(etat, 'filId'),
-                        cheminRetour: Routes.tuteurMessages,
+                      (GoRouterState etat) => PageDifferee(
+                        cle: 'd_messages_page',
+                        charger: d_messages_page.loadLibrary,
+                        construire: () => d_messages_page.MessagesPage(
+                          filId: _parametre(etat, 'filId'),
+                          cheminRetour: Routes.tuteurMessages,
+                        ),
                       ),
                     ),
                   ),
@@ -1195,14 +1340,21 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               ),
               GoRoute(
                 path: Routes.enseignantCommunaute,
-                builder: (BuildContext _, GoRouterState _) =>
-                    const CommunautePage(),
+                builder: (BuildContext _, GoRouterState _) => PageDifferee(
+                  cle: 'd_communaute_page',
+                  charger: d_communaute_page.loadLibrary,
+                  construire: () => d_communaute_page.CommunautePage(),
+                ),
                 routes: <RouteBase>[
                   GoRoute(
                     path: ':publicationId',
                     builder: (BuildContext _, GoRouterState etat) =>
-                        CommunautePage(
-                          publicationId: _parametre(etat, 'publicationId'),
+                        PageDifferee(
+                          cle: 'd_communaute_page',
+                          charger: d_communaute_page.loadLibrary,
+                          construire: () => d_communaute_page.CommunautePage(
+                            publicationId: _parametre(etat, 'publicationId'),
+                          ),
                         ),
                   ),
                 ],
@@ -1222,15 +1374,24 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               // branche Classes (aucune destination ajoutee, E10).
               GoRoute(
                 path: Routes.enseignantMessages,
-                builder: (BuildContext _, GoRouterState _) =>
-                    const MessagesPage(cheminRetour: Routes.enseignantClasses),
+                builder: (BuildContext _, GoRouterState _) => PageDifferee(
+                  cle: 'd_messages_page',
+                  charger: d_messages_page.loadLibrary,
+                  construire: () => d_messages_page.MessagesPage(
+                    cheminRetour: Routes.enseignantClasses,
+                  ),
+                ),
                 routes: <RouteBase>[
                   GoRoute(
                     path: ':filId',
                     builder: (BuildContext _, GoRouterState etat) =>
-                        MessagesPage(
-                          filId: _parametre(etat, 'filId'),
-                          cheminRetour: Routes.enseignantMessages,
+                        PageDifferee(
+                          cle: 'd_messages_page',
+                          charger: d_messages_page.loadLibrary,
+                          construire: () => d_messages_page.MessagesPage(
+                            filId: _parametre(etat, 'filId'),
+                            cheminRetour: Routes.enseignantMessages,
+                          ),
                         ),
                   ),
                 ],
@@ -1318,8 +1479,14 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // coquille comme l'Espace Classe d'ou elle part (voie COM-ANN).
       GoRoute(
         path: '${Routes.enseignantGroupe}/:groupeId/annonce',
-        builder: (BuildContext _, GoRouterState etat) =>
-            PublierAnnonceClassePage(groupeId: _parametre(etat, 'groupeId')),
+        builder: (BuildContext _, GoRouterState etat) => PageDifferee(
+          cle: 'd_publier_annonce_classe_page',
+          charger: d_publier_annonce_classe_page.loadLibrary,
+          construire: () =>
+              d_publier_annonce_classe_page.PublierAnnonceClassePage(
+                groupeId: _parametre(etat, 'groupeId'),
+              ),
+        ),
       ),
 
       // Controleur : la seconde etape de connexion (TOTP, L1-10), hors de la
@@ -1398,9 +1565,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // « Pas encore disponible ».
       GoRoute(
         path: Routes.admin,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.accueil,
-          child: TableauDeBordPage(),
+          child: PageDifferee(
+            cle: 'd_tableau_de_bord_page',
+            charger: d_tableau_de_bord_page.loadLibrary,
+            construire: () => d_tableau_de_bord_page.TableauDeBordPage(),
+          ),
         ),
       ),
       GoRoute(
@@ -1428,9 +1599,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRoute(
         path: Routes.adminOperationsTraitement,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.operations,
-          child: TraitementPage(),
+          child: PageDifferee(
+            cle: 'd_traitement_page',
+            charger: d_traitement_page.loadLibrary,
+            construire: () => d_traitement_page.TraitementPage(),
+          ),
         ),
       ),
       GoRoute(
@@ -1439,8 +1614,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           domaine: AdminDomaine.operations,
           // ECHELLE-ADM-PILOTAGE-1 : `?etat=attente` ouvre la liste sur les
           // classes en attente d'enseignant.
-          child: GroupesPage(
-            attenteInitiale: etat.uri.queryParameters['etat'] == 'attente',
+          child: PageDifferee(
+            cle: 'd_groupes_page',
+            charger: d_groupes_page.loadLibrary,
+            construire: () => d_groupes_page.GroupesPage(
+              attenteInitiale: etat.uri.queryParameters['etat'] == 'attente',
+            ),
           ),
         ),
       ),
@@ -1448,17 +1627,25 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // depuis l'Accueil (raccourci « Pilotage des horaires »).
       GoRoute(
         path: Routes.adminOperationsPilotage,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.operations,
-          child: PilotagePage(),
+          child: PageDifferee(
+            cle: 'd_pilotage_page',
+            charger: d_pilotage_page.loadLibrary,
+            construire: () => d_pilotage_page.PilotagePage(),
+          ),
         ),
       ),
       // DASH-ADM-PLANNING : le planning de la semaine, atteint depuis l'Accueil.
       GoRoute(
         path: Routes.adminOperationsPlanning,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.operations,
-          child: PlanningPage(),
+          child: PageDifferee(
+            cle: 'd_planning_page',
+            charger: d_planning_page.loadLibrary,
+            construire: () => d_planning_page.PlanningPage(),
+          ),
         ),
       ),
       // La reaffectation (demandes) reste atteinte depuis l'Accueil, jamais
@@ -1466,9 +1653,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // (docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md).
       GoRoute(
         path: Routes.adminOperationsDemandes,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.operations,
-          child: DemandesPage(),
+          child: PageDifferee(
+            cle: 'd_demandes_page',
+            charger: d_demandes_page.loadLibrary,
+            construire: () => d_demandes_page.DemandesPage(),
+          ),
         ),
       ),
       // COM-F : l'Administration des communications, sous Operations
@@ -1481,19 +1672,33 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRoute(
         path: Routes.adminCommunicationsAnnonces,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.operations,
-          child: AdministrationCommunicationsPage(
-            onglet: OngletCommunications.annonces,
+          child: PageDifferee(
+            cle: 'd_administration_communications_page',
+            charger: d_administration_communications_page.loadLibrary,
+            construire: () =>
+                d_administration_communications_page.AdministrationCommunicationsPage(
+                  onglet: d_administration_communications_page
+                      .OngletCommunications
+                      .annonces,
+                ),
           ),
         ),
       ),
       GoRoute(
         path: Routes.adminCommunicationsModeration,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.operations,
-          child: AdministrationCommunicationsPage(
-            onglet: OngletCommunications.moderation,
+          child: PageDifferee(
+            cle: 'd_administration_communications_page',
+            charger: d_administration_communications_page.loadLibrary,
+            construire: () =>
+                d_administration_communications_page.AdministrationCommunicationsPage(
+                  onglet: d_administration_communications_page
+                      .OngletCommunications
+                      .moderation,
+                ),
           ),
         ),
       ),
@@ -1501,16 +1706,26 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // (`MessagesAdminPage`), meme sous-navigation des trois onglets.
       GoRoute(
         path: Routes.adminCommunicationsMessages,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.operations,
-          child: MessagesAdminPage(),
+          child: PageDifferee(
+            cle: 'd_messages_admin',
+            charger: d_messages_admin.loadLibrary,
+            construire: () => d_messages_admin.MessagesAdminPage(),
+          ),
         ),
         routes: <RouteBase>[
           GoRoute(
             path: ':filId',
             builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
               domaine: AdminDomaine.operations,
-              child: MessagesAdminPage(filId: _parametre(etat, 'filId')),
+              child: PageDifferee(
+                cle: 'd_messages_admin',
+                charger: d_messages_admin.loadLibrary,
+                construire: () => d_messages_admin.MessagesAdminPage(
+                  filId: _parametre(etat, 'filId'),
+                ),
+              ),
             ),
           ),
         ],
@@ -1555,59 +1770,88 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // ouvrir »), comme les Demandes.
       GoRoute(
         path: Routes.adminOperationsRegroupements,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.operations,
-          child: RegroupementsPage(),
+          child: PageDifferee(
+            cle: 'd_regroupements_page',
+            charger: d_regroupements_page.loadLibrary,
+            construire: () => d_regroupements_page.RegroupementsPage(),
+          ),
         ),
       ),
       // L2-05 : les offres vitrine (creer, publier, retirer), atteintes depuis
       // l'Accueil comme les Classes a ouvrir.
       GoRoute(
         path: Routes.adminOperationsOffres,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.operations,
-          child: AdminOffresPage(),
+          child: PageDifferee(
+            cle: 'd_admin_offres_page',
+            charger: d_admin_offres_page.loadLibrary,
+            construire: () => d_admin_offres_page.AdminOffresPage(),
+          ),
         ),
       ),
       // AVIS-PUBLICS : les liens de collecte et la moderation des avis,
       // atteints depuis l'Accueil comme les offres.
       GoRoute(
         path: Routes.adminOperationsAvis,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.operations,
-          child: AvisAdminPage(),
+          child: PageDifferee(
+            cle: 'd_avis_page',
+            charger: d_avis_page.loadLibrary,
+            construire: () => d_avis_page.AvisAdminPage(),
+          ),
         ),
       ),
       // COURRIELS-1 : ecrire un e-mail, suivre la file d'envoi et voir les
       // adresses d'envoi, atteints depuis l'Accueil comme les avis.
       GoRoute(
         path: Routes.adminOperationsCourriels,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.operations,
-          child: CourrielsAdminPage(),
+          child: PageDifferee(
+            cle: 'd_courriels_page',
+            charger: d_courriels_page.loadLibrary,
+            construire: () => d_courriels_page.CourrielsAdminPage(),
+          ),
         ),
       ),
       // CPT-SUPPR-EXPORT : les demandes de suppression de compte.
       GoRoute(
         path: Routes.adminPersonnesSuppressions,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
-          child: SuppressionsPage(),
+          child: PageDifferee(
+            cle: 'd_suppressions_page',
+            charger: d_suppressions_page.loadLibrary,
+            construire: () => d_suppressions_page.SuppressionsPage(),
+          ),
         ),
       ),
       GoRoute(
         path: Routes.adminPersonnesReprises,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
-          child: ReprisesPage(),
+          child: PageDifferee(
+            cle: 'd_reprises_page',
+            charger: d_reprises_page.loadLibrary,
+            construire: () => d_reprises_page.ReprisesPage(),
+          ),
         ),
       ),
       // IMM-ACCUEIL-FRONT : l'import des inscriptions actuelles.
       GoRoute(
         path: Routes.adminPersonnesImport,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
-          child: ImportInscriptionsPage(),
+          child: PageDifferee(
+            cle: 'd_import_inscriptions_page',
+            charger: d_import_inscriptions_page.loadLibrary,
+            construire: () =>
+                d_import_inscriptions_page.ImportInscriptionsPage(),
+          ),
         ),
       ),
       // ADM-20 : la file des candidatures, au rang de l'ancien onglet
@@ -1619,12 +1863,16 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.adminPersonnesCandidatures,
         builder: (BuildContext contexte, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
-          child: CandidaturesPage(
-            ouvrirCandidature: (LigneCandidature ligne) => GoRouter.of(contexte)
-                .push<void>(
-                  Routes.adminPersonnesCandidaturePour(ligne.reference),
-                  extra: ligne.id,
-                ),
+          child: PageDifferee(
+            cle: 'd_candidatures_page',
+            charger: d_candidatures_page.loadLibrary,
+            construire: () => d_candidatures_page.CandidaturesPage(
+              ouvrirCandidature: (LigneCandidature ligne) =>
+                  GoRouter.of(contexte).push<void>(
+                    Routes.adminPersonnesCandidaturePour(ligne.reference),
+                    extra: ligne.id,
+                  ),
+            ),
           ),
         ),
       ),
@@ -1635,17 +1883,25 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.adminPersonnesCandidature,
         builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
-          child: CandidatureDirectionPage(
-            reference: etat.pathParameters['reference'] ?? '',
-            identifiant: etat.extra is String ? etat.extra as String : null,
+          child: PageDifferee(
+            cle: 'd_candidature_page',
+            charger: d_candidature_page.loadLibrary,
+            construire: () => d_candidature_page.CandidatureDirectionPage(
+              reference: etat.pathParameters['reference'] ?? '',
+              identifiant: etat.extra is String ? etat.extra as String : null,
+            ),
           ),
         ),
       ),
       GoRoute(
         path: Routes.adminPersonnesInvitations,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
-          child: InvitationsPage(),
+          child: PageDifferee(
+            cle: 'd_invitations_page',
+            charger: d_invitations_page.loadLibrary,
+            construire: () => d_invitations_page.InvitationsPage(),
+          ),
         ),
       ),
       GoRoute(
@@ -1660,11 +1916,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         // historique de navigateur (spec l.1933).
         builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
-          child: DossiersPage(
-            profilId: switch (etat.extra) {
-              final String id => id,
-              _ => null,
-            },
+          child: PageDifferee(
+            cle: 'd_dossiers_page',
+            charger: d_dossiers_page.loadLibrary,
+            construire: () => d_dossiers_page.DossiersPage(
+              profilId: switch (etat.extra) {
+                final String id => id,
+                _ => null,
+              },
+            ),
           ),
         ),
       ),
@@ -1678,8 +1938,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
           // DASH-ADM-ECHUS : `?filtre=echus` ouvre la page sur les acces echus.
-          child: ComptesPage(
-            echusSeulement: etat.uri.queryParameters['filtre'] == 'echus',
+          child: PageDifferee(
+            cle: 'd_comptes_page',
+            charger: d_comptes_page.loadLibrary,
+            construire: () => d_comptes_page.ComptesPage(
+              echusSeulement: etat.uri.queryParameters['filtre'] == 'echus',
+            ),
           ),
         ),
       ),
@@ -1695,52 +1959,84 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRoute(
         path: Routes.adminPedagogieDiagnostics,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
-          child: DiagnosticsPage(),
+          child: PageDifferee(
+            cle: 'd_diagnostics_page',
+            charger: d_diagnostics_page.loadLibrary,
+            construire: () => d_diagnostics_page.DiagnosticsPage(),
+          ),
         ),
       ),
       GoRoute(
         path: Routes.adminPedagogieProgression,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
-          child: ProgressionPage(),
+          child: PageDifferee(
+            cle: 'd_progression_page',
+            charger: d_progression_page.loadLibrary,
+            construire: () => d_progression_page.ProgressionPage(),
+          ),
         ),
       ),
       GoRoute(
         path: Routes.adminPedagogieEvaluations,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
-          child: EvaluationsPage(),
+          child: PageDifferee(
+            cle: 'd_evaluations_page',
+            charger: d_evaluations_page.loadLibrary,
+            construire: () => d_evaluations_page.EvaluationsPage(),
+          ),
         ),
       ),
       GoRoute(
         path: Routes.adminPedagogieBibliotheque,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
-          child: CataloguePage(),
+          child: PageDifferee(
+            cle: 'd_catalogue_page',
+            charger: d_catalogue_page.loadLibrary,
+            construire: () => d_catalogue_page.CataloguePage(),
+          ),
         ),
       ),
       GoRoute(
         path: Routes.adminPedagogieBibliothequeNouveau,
         builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
-          child: ImportPage(supportId: etat.uri.queryParameters['support']),
+          child: PageDifferee(
+            cle: 'd_import_page',
+            charger: d_import_page.loadLibrary,
+            construire: () => d_import_page.ImportPage(
+              supportId: etat.uri.queryParameters['support'],
+            ),
+          ),
         ),
       ),
       GoRoute(
         path: '${Routes.adminPedagogieBibliotheque}/:supportId/publication',
         builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
-          child: PublicationPage(supportId: _parametre(etat, 'supportId')),
+          child: PageDifferee(
+            cle: 'd_publication_page',
+            charger: d_publication_page.loadLibrary,
+            construire: () => d_publication_page.PublicationPage(
+              supportId: _parametre(etat, 'supportId'),
+            ),
+          ),
         ),
       ),
       GoRoute(
         path: '${Routes.adminPedagogieBibliotheque}/:supportId/attribution',
         builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
-          child: AttributionSupportPage(
-            supportId: _parametre(etat, 'supportId'),
+          child: PageDifferee(
+            cle: 'd_attribution_page',
+            charger: d_attribution_page.loadLibrary,
+            construire: () => d_attribution_page.AttributionSupportPage(
+              supportId: _parametre(etat, 'supportId'),
+            ),
           ),
         ),
       ),
@@ -1748,21 +2044,35 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: '${Routes.adminPedagogieBibliotheque}/:supportId',
         builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
-          child: FichePage(supportId: _parametre(etat, 'supportId')),
+          child: PageDifferee(
+            cle: 'd_fiche_page',
+            charger: d_fiche_page.loadLibrary,
+            construire: () => d_fiche_page.FichePage(
+              supportId: _parametre(etat, 'supportId'),
+            ),
+          ),
         ),
       ),
       GoRoute(
         path: Routes.adminPedagogieProgrammes,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
-          child: ProgrammesPage(),
+          child: PageDifferee(
+            cle: 'd_programmes_page',
+            charger: d_programmes_page.loadLibrary,
+            construire: () => d_programmes_page.ProgrammesPage(),
+          ),
         ),
       ),
       GoRoute(
         path: Routes.adminPedagogieQualite,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
-          child: QualitePage(),
+          child: PageDifferee(
+            cle: 'd_qualite_page',
+            charger: d_qualite_page.loadLibrary,
+            construire: () => d_qualite_page.QualitePage(),
+          ),
         ),
       ),
       // Domaine Finance (FI-1b) : la racine EST la Vue globale (route
@@ -1771,16 +2081,28 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // (`ongletsFinance()`).
       GoRoute(
         path: Routes.adminFinance,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.finance,
-          child: FinancePage(onglet: OngletFinance.vueGlobale),
+          child: PageDifferee(
+            cle: 'd_finance_page',
+            charger: d_finance_page.loadLibrary,
+            construire: () => d_finance_page.FinancePage(
+              onglet: d_finance_page.OngletFinance.vueGlobale,
+            ),
+          ),
         ),
       ),
       GoRoute(
         path: Routes.adminFinancePolitiques,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.finance,
-          child: FinancePage(onglet: OngletFinance.politiques),
+          child: PageDifferee(
+            cle: 'd_finance_page',
+            charger: d_finance_page.loadLibrary,
+            construire: () => d_finance_page.FinancePage(
+              onglet: d_finance_page.OngletFinance.politiques,
+            ),
+          ),
         ),
       ),
       // Reserve et delegation (Comptable V1, CPT-F ; spec Finance
@@ -1788,27 +2110,45 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // second systeme Finance. La voie CPT-DIR remplit sa page.
       GoRoute(
         path: Routes.adminFinanceReserveDelegation,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.finance,
-          child: FinancePage(onglet: OngletFinance.reserveDelegation),
+          child: PageDifferee(
+            cle: 'd_finance_page',
+            charger: d_finance_page.loadLibrary,
+            construire: () => d_finance_page.FinancePage(
+              onglet: d_finance_page.OngletFinance.reserveDelegation,
+            ),
+          ),
         ),
       ),
       // A valider (CPT-VAL-1, decision Q-8 = (a) du 05/10) : le quatrieme
       // onglet du meme domaine.
       GoRoute(
         path: Routes.adminFinanceAValider,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.finance,
-          child: FinancePage(onglet: OngletFinance.aValider),
+          child: PageDifferee(
+            cle: 'd_finance_page',
+            charger: d_finance_page.loadLibrary,
+            construire: () => d_finance_page.FinancePage(
+              onglet: d_finance_page.OngletFinance.aValider,
+            ),
+          ),
         ),
       ),
       // Paiements (FAC-C-01, passation du 17/10 point 3) : le cinquieme
       // onglet du meme domaine.
       GoRoute(
         path: Routes.adminFinancePaiements,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.finance,
-          child: FinancePage(onglet: OngletFinance.paiements),
+          child: PageDifferee(
+            cle: 'd_finance_page',
+            charger: d_finance_page.loadLibrary,
+            construire: () => d_finance_page.FinancePage(
+              onglet: d_finance_page.OngletFinance.paiements,
+            ),
+          ),
         ),
       ),
       // Domaine Configuration : la racine redirige vers Regles, sa fonction
@@ -1822,39 +2162,61 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRoute(
         path: Routes.adminConfigurationRegles,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.configuration,
-          child: ReglesPage(),
+          child: PageDifferee(
+            cle: 'd_regles_page',
+            charger: d_regles_page.loadLibrary,
+            construire: () => d_regles_page.ReglesPage(),
+          ),
         ),
       ),
       GoRoute(
         path: Routes.adminConfigurationFonctionnalites,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.configuration,
-          child: FonctionnalitesPage(),
+          child: PageDifferee(
+            cle: 'd_fonctionnalites_page',
+            charger: d_fonctionnalites_page.loadLibrary,
+            construire: () => d_fonctionnalites_page.FonctionnalitesPage(),
+          ),
         ),
       ),
       GoRoute(
         path: Routes.adminConfigurationConservationDonnees,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.configuration,
-          child: ConservationDonneesPage(),
+          child: PageDifferee(
+            cle: 'd_conservation_donnees_page',
+            charger: d_conservation_donnees_page.loadLibrary,
+            construire: () =>
+                d_conservation_donnees_page.ConservationDonneesPage(),
+          ),
         ),
       ),
       // AD-9 : pas de redirect, la capacite arrive de facon asynchrone ; la
       // garde est dans la page (accesRefuse / indisponible).
       GoRoute(
         path: Routes.adminConfigurationPolitiqueRevueKyc,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.configuration,
-          child: PolitiqueRevueKycPage(),
+          child: PageDifferee(
+            cle: 'd_politique_revue_kyc_page',
+            charger: d_politique_revue_kyc_page.loadLibrary,
+            construire: () =>
+                d_politique_revue_kyc_page.PolitiqueRevueKycPage(),
+          ),
         ),
       ),
       GoRoute(
         path: Routes.adminConfigurationProtectionEnfants,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.configuration,
-          child: ProtectionEnfantsPage(),
+          child: PageDifferee(
+            cle: 'd_protection_enfants_page',
+            charger: d_protection_enfants_page.loadLibrary,
+            construire: () => d_protection_enfants_page.ProtectionEnfantsPage(),
+          ),
         ),
       ),
       GoRoute(
@@ -1864,44 +2226,64 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRoute(
         path: Routes.adminSecuriteAuditJournal,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.securite,
-          child: JournalPage(),
+          child: PageDifferee(
+            cle: 'd_journal_page',
+            charger: d_journal_page.loadLibrary,
+            construire: () => d_journal_page.JournalPage(),
+          ),
         ),
       ),
       // DASH-ADM-INC : les incidents des 24 dernieres heures, atteints par la
       // tuile « Incidents (24 h) » de l'Accueil.
       GoRoute(
         path: Routes.adminSecuriteAuditIncidents,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.securite,
-          child: IncidentsPage(),
+          child: PageDifferee(
+            cle: 'd_incidents_page',
+            charger: d_incidents_page.loadLibrary,
+            construire: () => d_incidents_page.IncidentsPage(),
+          ),
         ),
       ),
       // `ADM-07` : l'acces des agents IA (ADR-025), atteint depuis l'Accueil.
       GoRoute(
         path: Routes.adminSecuriteAuditAccesAgents,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.securite,
-          child: AccesAgentsPage(),
+          child: PageDifferee(
+            cle: 'd_acces_agents_page',
+            charger: d_acces_agents_page.loadLibrary,
+            construire: () => d_acces_agents_page.AccesAgentsPage(),
+          ),
         ),
       ),
       // L'historique des observations (complement observation du mandat
       // Tuteur V1, section 8), onglet pair du Journal (`ongletsSecurite()`).
       GoRoute(
         path: Routes.adminSecuriteAuditObservations,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.securite,
-          child: ObservationsAdminPage(),
+          child: PageDifferee(
+            cle: 'd_observations_admin_page',
+            charger: d_observations_admin_page.loadLibrary,
+            construire: () => d_observations_admin_page.ObservationsAdminPage(),
+          ),
         ),
       ),
       // ECHELLE-CTRL-DIRECT-1 : le tirage des controles, onglet pair du
       // Journal et des observations (`ongletsSecurite()`).
       GoRoute(
         path: Routes.adminSecuriteAuditTirages,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.securite,
-          child: TiragePage(),
+          child: PageDifferee(
+            cle: 'd_tirage_page',
+            charger: d_tirage_page.loadLibrary,
+            construire: () => d_tirage_page.TiragePage(),
+          ),
         ),
       ),
 
@@ -1969,12 +2351,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             routes: <GoRoute>[
               GoRoute(
                 path: Routes.comptable,
-                builder: (BuildContext _, GoRouterState etat) =>
-                    AujourdhuiComptablePage(
-                      vue: etat
-                          .uri
-                          .queryParameters[Routes.parametreVueComptable],
-                    ),
+                builder: (BuildContext _, GoRouterState etat) => PageDifferee(
+                  cle: 'd_aujourdhui_page',
+                  charger: d_aujourdhui_page.loadLibrary,
+                  construire: () => d_aujourdhui_page.AujourdhuiComptablePage(
+                    vue: etat.uri.queryParameters[Routes.parametreVueComptable],
+                  ),
+                ),
               ),
             ],
           ),
@@ -1982,43 +2365,68 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             routes: <GoRoute>[
               GoRoute(
                 path: Routes.comptablePaiements,
-                builder: (BuildContext _, GoRouterState etat) =>
-                    PaiementsAEffectuerPage(
-                      filtre: etat
-                          .uri
-                          .queryParameters[Routes.parametreFiltreComptable],
-                      type: etat
-                          .uri
-                          .queryParameters[Routes.parametreTypeComptable],
-                      classe: etat
-                          .uri
-                          .queryParameters[Routes.parametreClasseComptable],
-                    ),
+                builder: (BuildContext _, GoRouterState etat) => PageDifferee(
+                  cle: 'd_paiements_page',
+                  charger: d_paiements_page.loadLibrary,
+                  construire: () => d_paiements_page.PaiementsAEffectuerPage(
+                    filtre: etat
+                        .uri
+                        .queryParameters[Routes.parametreFiltreComptable],
+                    type:
+                        etat.uri.queryParameters[Routes.parametreTypeComptable],
+                    classe: etat
+                        .uri
+                        .queryParameters[Routes.parametreClasseComptable],
+                  ),
+                ),
                 routes: <RouteBase>[
                   GoRoute(
                     path: 'obligation/:obligationId',
                     builder: (BuildContext _, GoRouterState etat) =>
-                        DetailPaiementPage(
-                          obligationId: _parametre(etat, 'obligationId'),
+                        PageDifferee(
+                          cle: 'd_detail_paiement_page',
+                          charger: d_detail_paiement_page.loadLibrary,
+                          construire: () =>
+                              d_detail_paiement_page.DetailPaiementPage(
+                                obligationId: _parametre(etat, 'obligationId'),
+                              ),
                         ),
                   ),
                   GoRoute(
                     path: 'contractuels',
                     builder: (BuildContext _, GoRouterState etat) =>
-                        ContractuelsPage(
-                          onglet: etat.uri.queryParameters['onglet'],
+                        PageDifferee(
+                          cle: 'd_contractuels_page',
+                          charger: d_contractuels_page.loadLibrary,
+                          construire: () =>
+                              d_contractuels_page.ContractuelsPage(
+                                onglet: etat.uri.queryParameters['onglet'],
+                              ),
                         ),
                     routes: <RouteBase>[
                       GoRoute(
                         path: 'nouvelle',
-                        builder: (BuildContext _, GoRouterState _) =>
-                            const NouvelleObligationPage(),
+                        builder: (BuildContext _, GoRouterState _) => PageDifferee(
+                          cle: 'd_nouvelle_obligation_page',
+                          charger: d_nouvelle_obligation_page.loadLibrary,
+                          construire: () =>
+                              d_nouvelle_obligation_page.NouvelleObligationPage(),
+                        ),
                       ),
                       GoRoute(
                         path: 'obligation/:obligationId',
                         builder: (BuildContext _, GoRouterState etat) =>
-                            ObligationContractuelPage(
-                              obligationId: _parametre(etat, 'obligationId'),
+                            PageDifferee(
+                              cle: 'd_obligation_contractuel_page',
+                              charger:
+                                  d_obligation_contractuel_page.loadLibrary,
+                              construire: () =>
+                                  d_obligation_contractuel_page.ObligationContractuelPage(
+                                    obligationId: _parametre(
+                                      etat,
+                                      'obligationId',
+                                    ),
+                                  ),
                             ),
                       ),
                     ],
@@ -2026,20 +2434,30 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                   GoRoute(
                     path: 'beneficiaires',
                     builder: (BuildContext _, GoRouterState etat) =>
-                        BeneficiairesPage(
-                          filtre: etat
-                              .uri
-                              .queryParameters[Routes.parametreFiltreComptable],
+                        PageDifferee(
+                          cle: 'd_beneficiaires_page',
+                          charger: d_beneficiaires_page.loadLibrary,
+                          construire: () =>
+                              d_beneficiaires_page.BeneficiairesPage(
+                                filtre:
+                                    etat.uri.queryParameters[Routes
+                                        .parametreFiltreComptable],
+                              ),
                         ),
                     routes: <RouteBase>[
                       GoRoute(
                         path: ':beneficiaireId',
                         builder: (BuildContext _, GoRouterState etat) =>
-                            ProfilPaiementPage(
-                              beneficiaireId: _parametre(
-                                etat,
-                                'beneficiaireId',
-                              ),
+                            PageDifferee(
+                              cle: 'd_profil_paiement_page',
+                              charger: d_profil_paiement_page.loadLibrary,
+                              construire: () =>
+                                  d_profil_paiement_page.ProfilPaiementPage(
+                                    beneficiaireId: _parametre(
+                                      etat,
+                                      'beneficiaireId',
+                                    ),
+                                  ),
                             ),
                         routes: <RouteBase>[
                           // CPT-COM : le fil « Profil de paiement », ouvert
@@ -2047,11 +2465,17 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                           GoRoute(
                             path: 'fil',
                             builder: (BuildContext _, GoRouterState etat) =>
-                                FilProfilPaiementPage(
-                                  beneficiaireId: _parametre(
-                                    etat,
-                                    'beneficiaireId',
-                                  ),
+                                PageDifferee(
+                                  cle: 'd_fil_profil_paiement_page',
+                                  charger:
+                                      d_fil_profil_paiement_page.loadLibrary,
+                                  construire: () =>
+                                      d_fil_profil_paiement_page.FilProfilPaiementPage(
+                                        beneficiaireId: _parametre(
+                                          etat,
+                                          'beneficiaireId',
+                                        ),
+                                      ),
                                 ),
                           ),
                         ],
@@ -2066,46 +2490,72 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             routes: <GoRoute>[
               GoRoute(
                 path: Routes.comptableTresorerie,
-                builder: (BuildContext _, GoRouterState etat) => TresoreriePage(
-                  action:
-                      etat.uri.queryParameters[Routes.parametreActionComptable],
+                builder: (BuildContext _, GoRouterState etat) => PageDifferee(
+                  cle: 'd_tresorerie_page',
+                  charger: d_tresorerie_page.loadLibrary,
+                  construire: () => d_tresorerie_page.TresoreriePage(
+                    action: etat
+                        .uri
+                        .queryParameters[Routes.parametreActionComptable],
+                  ),
                 ),
                 routes: <RouteBase>[
                   GoRoute(
                     path: 'encaissements',
                     builder: (BuildContext _, GoRouterState etat) =>
-                        EncaissementsPage(
-                          filtre: etat
-                              .uri
-                              .queryParameters[Routes.parametreFiltreComptable],
+                        PageDifferee(
+                          cle: 'd_encaissements_page',
+                          charger: d_encaissements_page.loadLibrary,
+                          construire: () =>
+                              d_encaissements_page.EncaissementsPage(
+                                filtre:
+                                    etat.uri.queryParameters[Routes
+                                        .parametreFiltreComptable],
+                              ),
                         ),
                     routes: <RouteBase>[
                       GoRoute(
                         path: ':encaissementId',
                         builder: (BuildContext _, GoRouterState etat) =>
-                            DetailEncaissementPage(
-                              encaissementId: _parametre(
-                                etat,
-                                'encaissementId',
-                              ),
+                            PageDifferee(
+                              cle: 'd_detail_encaissement_page',
+                              charger: d_detail_encaissement_page.loadLibrary,
+                              construire: () =>
+                                  d_detail_encaissement_page.DetailEncaissementPage(
+                                    encaissementId: _parametre(
+                                      etat,
+                                      'encaissementId',
+                                    ),
+                                  ),
                             ),
                       ),
                     ],
                   ),
                   GoRoute(
                     path: 'paiements-familles',
-                    builder: (BuildContext _, GoRouterState _) =>
-                        const PaiementsFamillesPage(),
+                    builder: (BuildContext _, GoRouterState _) => PageDifferee(
+                      cle: 'd_paiements_familles_page',
+                      charger: d_paiements_familles_page.loadLibrary,
+                      construire: () =>
+                          d_paiements_familles_page.PaiementsFamillesPage(),
+                    ),
                   ),
                   GoRoute(
                     path: 'rapprochement',
-                    builder: (BuildContext _, GoRouterState _) =>
-                        const RapprochementPage(),
+                    builder: (BuildContext _, GoRouterState _) => PageDifferee(
+                      cle: 'd_rapprochement_page',
+                      charger: d_rapprochement_page.loadLibrary,
+                      construire: () =>
+                          d_rapprochement_page.RapprochementPage(),
+                    ),
                   ),
                   GoRoute(
                     path: 'rapports',
-                    builder: (BuildContext _, GoRouterState _) =>
-                        const RapportsPage(),
+                    builder: (BuildContext _, GoRouterState _) => PageDifferee(
+                      cle: 'd_rapports_page',
+                      charger: d_rapports_page.loadLibrary,
+                      construire: () => d_rapports_page.RapportsPage(),
+                    ),
                   ),
                 ],
               ),
@@ -2140,11 +2590,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           final BilletSalle? billet = etat.extra is BilletSalle
               ? etat.extra! as BilletSalle
               : null;
-          final Widget salle = SallePage(
-            seanceId: billet?.sessionId ?? '',
-            preparation: billet?.preparation ?? false,
-            groupeId: billet?.groupeId,
-            eleveId: billet?.eleveId,
+          final Widget salle = PageDifferee(
+            cle: 'd_salle_page',
+            charger: d_salle_page.loadLibrary,
+            construire: () => d_salle_page.SallePage(
+              seanceId: billet?.sessionId ?? '',
+              preparation: billet?.preparation ?? false,
+              groupeId: billet?.groupeId,
+              eleveId: billet?.eleveId,
+            ),
           );
           // D6 : l'enfant qui rejoint depuis l'appareil de son tuteur retrouve
           // son Interface guidee ; seul l'affichage change, jamais la route.
@@ -2199,15 +2653,18 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         ),
 
       // La salle de seance en demonstration : aucune route en production.
-      ...routesDemoSalle(Env.environnement),
-      ...routesDemoClasse(Env.environnement),
-      ...routesDemoEnseignant(Env.environnement),
-      ...routesDemoControleur(Env.environnement),
-      ...routesDemoAccessibilite(Env.environnement),
-      ...routesDemoAdulte(Env.environnement),
-      ...routesDemoFinance(Env.environnement),
-      ...routesDemoCommunications(Env.environnement),
-      ...routesDemoComptable(Env.environnement),
+      // Ni compilees en production (`Env.demoCompilee`, constante).
+      if (Env.demoCompilee) ...<RouteBase>[
+        ...routesDemoSalle(Env.environnement),
+        ...routesDemoClasse(Env.environnement),
+        ...routesDemoEnseignant(Env.environnement),
+        ...routesDemoControleur(Env.environnement),
+        ...routesDemoAccessibilite(Env.environnement),
+        ...routesDemoAdulte(Env.environnement),
+        ...routesDemoFinance(Env.environnement),
+        ...routesDemoCommunications(Env.environnement),
+        ...routesDemoComptable(Env.environnement),
+      ],
     ],
   );
 });
