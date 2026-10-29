@@ -18,6 +18,7 @@ import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
+import 'package:rewayah_academy/core/theme/app_delais.dart';
 import 'package:rewayah_academy/core/theme/app_metriques.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
@@ -74,6 +75,17 @@ Seance _cours({
   enseignantPrenom: 'Aminata',
   enseignantIdentifiant: 'TEACH-AD-000001',
 );
+
+/// Le planning qui compte ses lectures.
+class _PlanningCompte extends FauxServicePlanning {
+  int lectures = 0;
+
+  @override
+  Future<List<Seance>> seances({String? eleveId}) {
+    lectures++;
+    return super.seances(eleveId: eleveId);
+  }
+}
 
 List<Override> _surcharges({
   required FauxServicePlanning planning,
@@ -409,6 +421,101 @@ void main() {
       // EA-HL-DOUBLE-1 (reprise) : le bandeau seul dit « hors ligne », en
       // mots et en icone ; la ligne d'attente ne repose pas le wifi barre.
       expectHorsLigneUneFois();
+    });
+  });
+
+  // L'appareil de Hakim, 27/10/2026 : l'accueil s'ouvre a 16:15, la seance de
+  // 16:00 n'est creee qu'a 16:19. Lue une seule fois, la liste ne la montrait
+  // jamais : ni la carte de la classe, ni « Rejoindre ». Decision du directeur
+  // du 29/10 : le temps reel d'abord, puis le retour dans l'application et une
+  // relecture programmee par seance connue, jamais de minuterie fixe.
+  group('ELV-02 : relectures de l accueil, sans minuterie fixe', () {
+    testWidgets('seance creee apres l ouverture : elle apparait avec Rejoindre '
+        'au retour dans l application', (WidgetTester tester) async {
+      final _PlanningCompte planning = _PlanningCompte()
+        ..seancesRendues = <Seance>[
+          _cours(
+            id: 's-semaine-prochaine',
+            debut: _maintenant.add(const Duration(days: 7)),
+            fin: _maintenant.add(const Duration(days: 7, hours: 1)),
+          ),
+        ];
+      await tester.pumpWidget(
+        hote(_ecran(), surcharges: _surcharges(planning: planning)),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(t.eleve.accueil.coursEnDirect), findsNothing);
+
+      // La direction cree la seance du jour, deja commencee.
+      planning.seancesRendues = <Seance>[
+        _cours(
+          id: 's-du-jour',
+          debut: _maintenant.subtract(const Duration(minutes: 10)),
+          fin: _maintenant.add(const Duration(minutes: 50)),
+          statut: StatutSeance.enCours,
+        ),
+        ...planning.seancesRendues,
+      ];
+      // Sans signal ni retour, rien ne relit : aucune minuterie fixe.
+      final int lues = planning.lectures;
+      await tester.pump(const Duration(minutes: 30));
+      expect(planning.lectures, lues);
+
+      tester.binding
+        ..handleAppLifecycleStateChanged(AppLifecycleState.inactive)
+        ..handleAppLifecycleStateChanged(AppLifecycleState.hidden)
+        ..handleAppLifecycleStateChanged(AppLifecycleState.paused)
+        ..handleAppLifecycleStateChanged(AppLifecycleState.hidden)
+        ..handleAppLifecycleStateChanged(AppLifecycleState.inactive)
+        ..handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.eleve.accueil.coursEnDirect), findsOneWidget);
+      final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
+        find.byType(ActionPrincipale),
+      );
+      expect(bouton.libelle, t.eleve.accueil.rejoindre);
+      expect(bouton.onPress, isNotNull);
+    });
+
+    testWidgets('seance connue : une relecture avant son debut, une a son '
+        'debut, pas d autre', (WidgetTester tester) async {
+      DateTime maintenant = _maintenant;
+      Future<void> avancer(Duration d) async {
+        maintenant = maintenant.add(d);
+        await tester.pump(d);
+        await tester.pump();
+      }
+
+      final _PlanningCompte planning = _PlanningCompte()
+        ..seancesRendues = <Seance>[
+          _cours(
+            debut: _maintenant.add(const Duration(minutes: 30)),
+            fin: _maintenant.add(const Duration(minutes: 90)),
+          ),
+        ];
+      await tester.pumpWidget(
+        hote(
+          AccueilElevePage(horloge: () => maintenant),
+          surcharges: _surcharges(planning: planning),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final int lues = planning.lectures;
+
+      // La seance commence dans 5 minutes, plus un alea de 30 s au plus.
+      await avancer(const Duration(minutes: 25) - const Duration(seconds: 1));
+      expect(planning.lectures, lues);
+      await avancer(AppDelais.aleaRelecture + const Duration(seconds: 2));
+      expect(planning.lectures, lues + 1);
+
+      // L'heure de debut, plus l'alea.
+      await avancer(const Duration(minutes: 5));
+      expect(planning.lectures, lues + 2);
+
+      // Puis plus rien, pendant toute la seance et apres.
+      await avancer(const Duration(hours: 2));
+      expect(planning.lectures, lues + 2);
     });
   });
 

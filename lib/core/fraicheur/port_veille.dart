@@ -68,6 +68,21 @@ final class CanalRejoint extends SignalVeille {
   const CanalRejoint();
 }
 
+/// Le canal temps reel est en erreur ou n'a pas repondu a temps (29/10/2026,
+/// appareil de Hakim : ces etats n'etaient ecrits que dans le journal de
+/// developpement, invisibles en production). Arrive comme erreur du flux
+/// d'[PortVeille.ecouter] ; ne porte que le nom de l'etat, jamais de donnee.
+final class ErreurCanalVeille implements Exception {
+  /// Cree l'erreur.
+  const ErreurCanalVeille(this.statut);
+
+  /// Le nom de l'etat du canal (`channelError`, `timedOut`).
+  final String statut;
+
+  @override
+  String toString() => 'ErreurCanalVeille($statut)';
+}
+
 /// Par ou l'application ecoute le serveur.
 abstract interface class PortVeille {
   /// Ouvre la veille pour la personne connectee et signale chaque changement

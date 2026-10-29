@@ -1012,6 +1012,7 @@ class _Traductions$connexion$ar extends Traductions$connexion$fr {
 	@override String get appareilEleve => 'ربط جهاز طالب';
 	@override String get renvoyer => 'إعادة إرسال الرابط';
 	@override String renvoye({required Object courriel}) => 'أُرسل رابط جديد إلى ⁨${courriel}⁩. استخدم رابط أحدث رسالة.';
+	@override String get inscriptionFermee => 'التسجيل يتم حاليًا بدعوة فقط. هل قدّمتم ترشحكم للتدريس؟ ستصلكم منا رسالة شخصية عبر البريد الإلكتروني: لا شيء مطلوب منكم. هل أنتم أسرة؟ يُعاد فتح التسجيل قريبًا.';
 	@override String get erreurTropTot => 'أُرسل رابط للتو. انتظر قليلًا قبل طلب رابط آخر.';
 	@override String get horsLigne => 'أنت غير متصل: لا يمكن إرسال الرابط الآن.';
 	@override String get probleme => 'انتهت صلاحية الرابط أو لم يصل؟';
@@ -25841,6 +25842,7 @@ extension on TraductionsAr {
 			'connexion.appareilEleve' => 'ربط جهاز طالب',
 			'connexion.renvoyer' => 'إعادة إرسال الرابط',
 			'connexion.renvoye' => ({required Object courriel}) => 'أُرسل رابط جديد إلى ⁨${courriel}⁩. استخدم رابط أحدث رسالة.',
+			'connexion.inscriptionFermee' => 'التسجيل يتم حاليًا بدعوة فقط. هل قدّمتم ترشحكم للتدريس؟ ستصلكم منا رسالة شخصية عبر البريد الإلكتروني: لا شيء مطلوب منكم. هل أنتم أسرة؟ يُعاد فتح التسجيل قريبًا.',
 			'connexion.erreurTropTot' => 'أُرسل رابط للتو. انتظر قليلًا قبل طلب رابط آخر.',
 			'connexion.horsLigne' => 'أنت غير متصل: لا يمكن إرسال الرابط الآن.',
 			'connexion.probleme' => 'انتهت صلاحية الرابط أو لم يصل؟',
@@ -25901,9 +25903,9 @@ extension on TraductionsAr {
 			'attente.actualiserCompte' => 'تحديث',
 			'attente.lireEtAccepter' => 'قراءة شروطنا وقبولها',
 			'attente.nosConditions' => 'يلزم قراءة الشروط والموافقة عليها',
-			'attente.etatAAccepter' => 'للقبول',
 			_ => null,
 		} ?? switch (path) {
+			'attente.etatAAccepter' => 'للقبول',
 			'attente.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم يبق أي عنصر للتقديم.', one: 'بقي عنصر واحد للتقديم.', two: 'بقي عنصران للتقديم.', few: 'بقيت ⁨${n}⁩ عناصر للتقديم.', many: 'بقي ⁨${n}⁩ عنصرًا للتقديم.', other: 'بقي ⁨${n}⁩ عنصر للتقديم.', ), 
 			'attente.etatAFournir' => 'للتقديم',
 			'attente.prochaineEtape' => ({required Object etape}) => 'الخطوة التالية: ⁨${etape}⁩',
@@ -26415,9 +26417,9 @@ extension on TraductionsAr {
 			'dossiers.file.horsLigne' => 'أنت غير متصل. لا يمكن تحديث الملفات.',
 			'dossiers.file.accesRefuse' => 'ليس لديك إذن بالوصول إلى الملفات المطلوب اعتمادها.',
 			'dossiers.file.actualisation' => 'جارٍ تحديث الملفات…',
-			'dossiers.file.chargementProlonge' => 'التحميل يستغرق وقتًا أطول من المتوقع.',
 			_ => null,
 		} ?? switch (path) {
+			'dossiers.file.chargementProlonge' => 'التحميل يستغرق وقتًا أطول من المتوقع.',
 			'dossiers.file.suivantsErreur' => 'تعذّر تحميل الملفات التالية.',
 			'dossiers.file.indisponible' => 'الاطلاع على الملفات غير متاح الآن.',
 			'dossiers.file.selectionRetiree' => 'هذا الملف لم يعد متاحًا في القائمة.',
@@ -26929,9 +26931,9 @@ extension on TraductionsAr {
 			'suiviDemandes.etapes.listeAttente' => 'في قائمة الانتظار',
 			'suiviDemandes.etapes.classeValidee' => 'تم اعتماد الفصل',
 			'suiviDemandes.etapes.enseignantAffecte' => 'تم تعيين المعلم',
-			'suiviDemandes.etapes.eleveIntegre' => 'الطالب مندمج في الفصل',
 			_ => null,
 		} ?? switch (path) {
+			'suiviDemandes.etapes.eleveIntegre' => 'الطالب مندمج في الفصل',
 			'suiviDemandes.etapes.coursCommences' => 'بدء الدروس',
 			'suiviDemandes.etats.fait' => 'تم',
 			'suiviDemandes.etats.enCours' => 'جارية',
@@ -27443,9 +27445,9 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.disponibilitesDeclarees.heures.titre' => ({required Object jour}) => 'في أي ساعة تستطيع أن تبدأ يوم ⁨${jour}⁩؟',
 			'recrutement.parcours.q.disponibilitesDeclarees.heures.explication' => 'اختر كل الساعات التي تستطيع أن تبدأ فيها درسًا. تُحسب نهاية الدرس لك.',
 			'recrutement.parcours.q.disponibilitesDeclarees.heures.suite' => 'ستقول بعد ذلك إن كان الأمر نفسه في الأيام الأخرى.',
-			'recrutement.parcours.q.disponibilitesDeclarees.memes.titre' => 'هل الساعات نفسها في كل هذه الأيام؟',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.q.disponibilitesDeclarees.memes.titre' => 'هل الساعات نفسها في كل هذه الأيام؟',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.explication' => ({required Object jours, required Object premier, required Object heures}) => 'اخترت ⁨${jours}⁩. يوم ⁨${premier}⁩، تبدأ في ⁧${heures}⁩.',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.libelle' => 'نعم، الساعات نفسها',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.description' => ({required Object premier, required Object autres}) => 'ساعات يوم ⁨${premier}⁩ تصلح لباقي الأيام: ⁨${autres}⁩.',
@@ -27957,9 +27959,9 @@ extension on TraductionsAr {
 			'avis.admin.attente' => ({required Object n}) => 'آراء قيد الانتظار: ⁨${n}⁩',
 			'avis.admin.vide' => 'لا توجد آراء في هذه القائمة.',
 			'avis.admin.erreur' => 'تعذّر تحميل الآراء. أعد المحاولة.',
-			'avis.admin.sansDonnees' => 'تعذّر تحميل الآراء',
 			_ => null,
 		} ?? switch (path) {
+			'avis.admin.sansDonnees' => 'تعذّر تحميل الآراء',
 			'avis.admin.refuse' => 'الإدارة المتصلة وحدها تقرأ الآراء وتقرر بشأنها. أعد الاتصال بالحساب المناسب ثم أعد المحاولة.',
 			'avis.admin.indisponibleTitre' => 'الآراء غير متاحة',
 			'avis.admin.indisponiblePhrase' => 'ستتوفر هذه الخاصية عند ربط الخادم.',
