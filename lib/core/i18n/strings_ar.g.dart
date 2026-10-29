@@ -1055,10 +1055,9 @@ class _Traductions$attente$ar extends Traductions$attente$fr {
 	@override String get titreDossier => 'ملفك';
 	@override String get titreCompte => 'حسابك';
 	@override String get accordsARelire => 'بقي عليك قراءة شروطنا وقبولها.';
-	@override String get accesTitre => 'أُنشئ حسابك';
-	@override String get accesEnPreparation => 'فتح حسابك ليس تلقائيًا بعد.';
-	@override String get aucunDocument => 'ليس عليك إرسال أي وثيقة.';
-	@override String get accesContact => 'يمكن للأكاديمية فتحه لك: تواصل معها.';
+	@override String get demandeTitre => 'طلبك قيد الدراسة';
+	@override String get demandeMessage => 'تقرأ الإدارة كل طلب قبل فتح أي حساب.';
+	@override String get demandeDetail => 'ليس عليك إرسال أي شيء. سنكتب إليك على بريدك الإلكتروني فور ردّ الإدارة.';
 	@override String get actualiserCompte => 'تحديث';
 	@override String get lireEtAccepter => 'قراءة شروطنا وقبولها';
 	@override String get nosConditions => 'يلزم قراءة الشروط والموافقة عليها';
@@ -25863,17 +25862,16 @@ extension on TraductionsAr {
 			'attente.titreDossier' => 'ملفك',
 			'attente.titreCompte' => 'حسابك',
 			'attente.accordsARelire' => 'بقي عليك قراءة شروطنا وقبولها.',
-			'attente.accesTitre' => 'أُنشئ حسابك',
-			'attente.accesEnPreparation' => 'فتح حسابك ليس تلقائيًا بعد.',
-			'attente.aucunDocument' => 'ليس عليك إرسال أي وثيقة.',
-			'attente.accesContact' => 'يمكن للأكاديمية فتحه لك: تواصل معها.',
+			'attente.demandeTitre' => 'طلبك قيد الدراسة',
+			'attente.demandeMessage' => 'تقرأ الإدارة كل طلب قبل فتح أي حساب.',
+			'attente.demandeDetail' => 'ليس عليك إرسال أي شيء. سنكتب إليك على بريدك الإلكتروني فور ردّ الإدارة.',
 			'attente.actualiserCompte' => 'تحديث',
 			'attente.lireEtAccepter' => 'قراءة شروطنا وقبولها',
 			'attente.nosConditions' => 'يلزم قراءة الشروط والموافقة عليها',
 			'attente.etatAAccepter' => 'للقبول',
+			'attente.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم يبق أي عنصر للتقديم.', one: 'بقي عنصر واحد للتقديم.', two: 'بقي عنصران للتقديم.', few: 'بقيت ⁨${n}⁩ عناصر للتقديم.', many: 'بقي ⁨${n}⁩ عنصرًا للتقديم.', other: 'بقي ⁨${n}⁩ عنصر للتقديم.', ), 
 			_ => null,
 		} ?? switch (path) {
-			'attente.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم يبق أي عنصر للتقديم.', one: 'بقي عنصر واحد للتقديم.', two: 'بقي عنصران للتقديم.', few: 'بقيت ⁨${n}⁩ عناصر للتقديم.', many: 'بقي ⁨${n}⁩ عنصرًا للتقديم.', other: 'بقي ⁨${n}⁩ عنصر للتقديم.', ), 
 			'attente.etatAFournir' => 'للتقديم',
 			'attente.prochaineEtape' => ({required Object etape}) => 'الخطوة التالية: ⁨${etape}⁩',
 			'attente.refuseDetail' => ({required Object element}) => 'لطلب التحقق من جديد، ابدأ بهذا العنصر: ⁨${element}⁩.',
@@ -26385,9 +26383,9 @@ extension on TraductionsAr {
 			'dossiers.visionneuse.chargement' => 'جارٍ تحميل الوثيقة…',
 			'dossiers.visionneuse.erreur' => 'لا يمكن عرض الوثيقة.',
 			'dossiers.visionneuse.expire' => 'انتهى الوصول إلى هذه الوثيقة.',
+			'dossiers.visionneuse.recharger' => 'إعادة تحميل الوثيقة',
 			_ => null,
 		} ?? switch (path) {
-			'dossiers.visionneuse.recharger' => 'إعادة تحميل الوثيقة',
 			'dossiers.visionneuse.formatNonPrisEnCharge' => 'لا يمكن عرض تنسيق هذه الوثيقة.',
 			'dossiers.visionneuse.accesRetire' => 'لم يعد لديك وصول إلى هذه الوثيقة.',
 			'dossiers.visionneuse.apercuRefuse' => 'هذه الوثيقة غير مرئية بحسابك.',
@@ -26899,9 +26897,9 @@ extension on TraductionsAr {
 			'suiviDemandes.enseignant' => 'المعلم',
 			'suiviDemandes.personnaliseNotice' => 'لن يُفتح هذا الموعد إلا إذا اختاره طلاب آخرون واكتمل الفصل.',
 			'suiviDemandes.jalon.apres' => ({required Object date, required Object heure, required Object duree}) => '⁨${date}⁩ في ⁨${heure}⁩، ⁨${duree}⁩',
+			'suiviDemandes.jalon.aussitot' => 'فورًا',
 			_ => null,
 		} ?? switch (path) {
-			'suiviDemandes.jalon.aussitot' => 'فورًا',
 			'suiviDemandes.jalon.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'بعد أقل من دقيقة', one: 'بعد دقيقة', two: 'بعد دقيقتين', few: 'بعد ⁨${n}⁩ دقائق', many: 'بعد ⁨${n}⁩ دقيقة', other: 'بعد ⁨${n}⁩ دقيقة', ), 
 			'suiviDemandes.jalon.heures' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'بعد أقل من ساعة', one: 'بعد ساعة', two: 'بعد ساعتين', few: 'بعد ⁨${n}⁩ ساعات', many: 'بعد ⁨${n}⁩ ساعة', other: 'بعد ⁨${n}⁩ ساعة', ), 
 			'suiviDemandes.jalon.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'في اليوم نفسه', one: 'بعد يوم', two: 'بعد يومين', few: 'بعد ⁨${n}⁩ أيام', many: 'بعد ⁨${n}⁩ يومًا', other: 'بعد ⁨${n}⁩ يوم', ), 
@@ -27413,9 +27411,9 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.debutPossible.court' => 'تاريخ البدء',
 			'recrutement.parcours.q.debutPossible.options.immediat.libelle' => 'من الآن',
 			'recrutement.parcours.q.debutPossible.options.immediat.description' => 'تستطيع البدء فور إسناد فصل إليك.',
+			'recrutement.parcours.q.debutPossible.options.immediat.exemple' => 'لا التزام يشغلك هذا الشهر.',
 			_ => null,
 		} ?? switch (path) {
-			'recrutement.parcours.q.debutPossible.options.immediat.exemple' => 'لا التزام يشغلك هذا الشهر.',
 			'recrutement.parcours.q.debutPossible.options.mois_prochain.libelle' => 'الشهر القادم',
 			'recrutement.parcours.q.debutPossible.options.mois_prochain.description' => 'ستكون متفرغًا ابتداءً من الشهر القادم.',
 			'recrutement.parcours.q.debutPossible.options.mois_prochain.exemple' => 'تنهي عملًا آخر في نهاية هذا الشهر.',
@@ -27927,9 +27925,9 @@ extension on TraductionsAr {
 			'avis.admin.publier.rester' => 'عدم تغيير شيء',
 			'avis.admin.refuser.titre' => ({required Object deNom}) => 'رفض رأي ⁨${deNom}⁩',
 			'avis.admin.refuser.intro' => 'اختر سبب الرفض. الرأي الناقد المحترم يُنشر.',
+			'avis.admin.refuser.consequence' => 'لن يُنشر الرأي. يُحفظ السبب.',
 			_ => null,
 		} ?? switch (path) {
-			'avis.admin.refuser.consequence' => 'لن يُنشر الرأي. يُحفظ السبب.',
 			'avis.admin.refuser.action' => 'رفض الرأي',
 			'avis.admin.refuser.rester' => 'عدم تغيير شيء',
 			'avis.admin.retirer.titre' => ({required Object deNom}) => 'سحب رأي ⁨${deNom}⁩',

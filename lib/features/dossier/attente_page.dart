@@ -91,10 +91,16 @@ class _AttentePageState extends ConsumerState<AttentePage> {
     // ou apres un refus ou un retrait, le portail montre son etat a elle ; en
     // Salle de verification et d'entretien, les accords, la piece et la
     // verification gardent leurs ecrans sous l'en-tete de la salle.
-    final bool vueCand = lu != null && vueCandidature(lu);
-    final CandidatureDossier? candidature = lu != null && lu.candidature.existe
-        ? lu.candidature
-        : null;
+    //
+    // Admission, lot B (decision du 27/10/2026) : la demande d'une famille ou
+    // d'un eleve adulte est aussi une candidature cote serveur (types
+    // `famille`, `eleve_adulte`), mais ses salles, sa tuile de partage et
+    // « Vos autres talents » ne concernent que les enseignants. Le tuteur
+    // garde son propre etat, « Votre demande est en cours ».
+    final bool candidatEnseignant = lu != null && !lu.estTuteur;
+    final bool vueCand = candidatEnseignant && vueCandidature(lu);
+    final CandidatureDossier? candidature =
+        candidatEnseignant && lu.candidature.existe ? lu.candidature : null;
     final ({String libelle, String chemin})? actionCand = vueCand
         ? prochaineCandidature(lu.candidature)
         : null;
@@ -413,17 +419,13 @@ class _Statut extends StatelessWidget {
         ].join('\n'),
         icone: AppIcons.dossiers,
       ),
-      // K-47 (HL-A-6) : l'etat honnete du tuteur tant que le serveur le fait
-      // naitre en attente (BR-1) : ni piece, ni verification, ni delai. Rien
-      // n'est promis « en cours » : aucun ecran admin ne l'ouvre avant BR-1,
-      // la sortie est de joindre l'academie (comme l'etat suspendu).
+      // Admission, lot B (decision du 27/10/2026, regle 1) : la famille et
+      // l'eleve adulte attendent la decision de la direction. Ni piece, ni
+      // delai promis ; l'e-mail dit la suite (regle 4).
       EtapeDossier.accesEnPreparation => _Bloc(
-        titre: t.attente.accesTitre,
-        message: t.attente.accesEnPreparation,
-        detail: <String>[
-          t.attente.aucunDocument,
-          t.attente.accesContact,
-        ].join('\n'),
+        titre: t.attente.demandeTitre,
+        message: t.attente.demandeMessage,
+        detail: t.attente.demandeDetail,
         icone: AppIcons.foyer,
       ),
       EtapeDossier.refuse => Column(

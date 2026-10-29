@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
+import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
 import 'package:rewayah_academy/core/dossier/resignature_contrat.dart';
@@ -14,9 +15,12 @@ import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/marque_page.dart';
+import 'package:rewayah_academy/features/candidature/portail_candidature.dart';
 import 'package:rewayah_academy/features/dossier/accords_page.dart';
 import 'package:rewayah_academy/features/dossier/attente_page.dart';
 import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart';
+import 'package:rewayah_academy/features/partage_offre/tuile_partage.dart';
+import 'package:rewayah_academy/features/talents/tuile_talents.dart';
 
 import '../support/harnais.dart';
 
@@ -596,11 +600,10 @@ void main() {
           _etat(role: AppRole.guardian, accuse: true, contrat: true),
         );
 
-        expect(find.text(t.attente.accesTitre), findsOneWidget);
-        expect(find.text(t.attente.accesEnPreparation), findsOneWidget);
-        expect(find.textContaining(t.attente.aucunDocument), findsOneWidget);
-        // Aucune ouverture n'est promise « en cours » : la sortie est dite.
-        expect(find.textContaining(t.attente.accesContact), findsOneWidget);
+        // Admission, lot B : la demande attend la decision de la direction.
+        expect(find.text(t.attente.demandeTitre), findsOneWidget);
+        expect(find.text(t.attente.demandeMessage), findsOneWidget);
+        expect(find.text(t.attente.demandeDetail), findsOneWidget);
         expect(find.text(t.attente.titreCompte), findsWidgets);
         for (final String interdit in <String>[
           t.attente.titre,
@@ -641,10 +644,41 @@ void main() {
         expect(find.text(t.attente.refuse), findsNothing);
         expect(find.text('Motif fictif.'), findsNothing);
         expect(find.text(t.attente.corriger), findsNothing);
-        expect(find.text(t.attente.accesEnPreparation), findsOneWidget);
+        expect(find.text(t.attente.demandeMessage), findsOneWidget);
         expect(find.text('route-piece'), findsNothing);
       },
     );
+
+    // Admission, lot B (27/10/2026) : la demande d'une famille est une
+    // candidature cote serveur ; le tuteur ne voit jamais les salles des
+    // enseignants, seulement « Votre demande est en cours ».
+    for (final EtapeCandidature etape in <EtapeCandidature>[
+      EtapeCandidature.recue,
+      EtapeCandidature.prequalification,
+    ]) {
+      testWidgets('tuteur avec sa demande ${etape.name} : jamais une salle', (
+        WidgetTester tester,
+      ) async {
+        await monter(
+          tester,
+          EtatDossier(
+            profilExiste: true,
+            role: AppRole.guardian,
+            statutCompte: AccountStatus.pendingKyc,
+            accuseSigne: true,
+            contratSigne: true,
+            codeConduiteSigne: true,
+            pieceDeposee: false,
+            candidature: CandidatureDossier(existe: true, etape: etape),
+          ),
+        );
+        expect(find.text(t.attente.demandeTitre), findsOneWidget);
+        expect(find.byType(StatutCandidature), findsNothing);
+        expect(find.byType(EnteteSalle), findsNothing);
+        expect(find.byType(TuilePartageOffre), findsNothing);
+        expect(find.byType(TuileTalents), findsNothing);
+      });
+    }
 
     test('tuteur : aucune piece exigee, meme si la base ne le dit pas', () {
       final EtatDossier lu = EtatDossier.depuisJson(const <String, dynamic>{
