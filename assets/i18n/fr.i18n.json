@@ -892,6 +892,7 @@
     "appareilEleve": "Connecter l'appareil d'un élève",
     "renvoyer": "Renvoyer le lien",
     "renvoye": "Un nouveau lien est parti à {courriel}. Utilisez celui du message le plus récent.",
+    "inscriptionFermee": "Les inscriptions se font pour l'instant sur invitation. Vous avez proposé votre candidature pour enseigner ? Vous recevrez un courriel personnel de notre part : vous n'avez rien à faire. Vous êtes une famille ? Les inscriptions rouvrent bientôt.",
     "erreurTropTot": "Un lien vient déjà de partir. Attendez un moment avant d'en demander un autre.",
     "horsLigne": "Le lien ne peut pas partir pour l'instant. Réessayez quand la connexion sera revenue.",
     "probleme": "Lien expiré ou jamais reçu\u00a0?",

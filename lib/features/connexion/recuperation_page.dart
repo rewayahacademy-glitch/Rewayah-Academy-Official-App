@@ -48,6 +48,19 @@ MotifRecuperation? motifDepuisUrlRetour(Uri url) {
       : MotifRecuperation.refuse;
 }
 
+/// Vrai quand l'URL de retour du fournisseur dit que les inscriptions sont
+/// fermees (`error_code=signup_disabled`).
+bool inscriptionFermeeDepuisUrlRetour(Uri url) {
+  final Map<String, String> champs = <String, String>{
+    ...url.queryParameters,
+    ..._champsFragment(url.fragment),
+  };
+  return estInscriptionFermee(
+    code: champs['error_code'],
+    message: champs['error_description'],
+  );
+}
+
 Map<String, String> _champsFragment(String fragment) {
   // Un fragment de go_router (`#/connexion`) n'est pas une requete.
   final String brut = fragment.contains('?')
@@ -76,9 +89,21 @@ enum IssueEnvoiLien {
   /// Le reseau ne repond pas.
   horsLigne,
 
+  /// Les inscriptions sont fermees sur le serveur (« Allow new users to sign
+  /// up » coupe) : l'adresse n'a pas de compte et le serveur n'en cree pas.
+  inscriptionFermee,
+
   /// Tout autre echec.
   erreur,
 }
+
+/// Vrai quand Supabase refuse parce que les inscriptions sont fermees :
+/// `otp_disabled` / « Signups not allowed for otp » pour le lien par courriel,
+/// `signup_disabled` pour Google (dans l'URL de retour).
+bool estInscriptionFermee({String? code, String? message}) =>
+    code == 'otp_disabled' ||
+    code == 'signup_disabled' ||
+    (message ?? '').toLowerCase().contains('signups not allowed');
 
 /// Classe l'exception d'un envoi de lien.
 IssueEnvoiLien issueEchecEnvoi(Object erreur) {
@@ -89,6 +114,9 @@ IssueEnvoiLien issueEchecEnvoi(Object erreur) {
     final String code = erreur.code ?? '';
     if (erreur.statusCode == '429' || code.contains('rate_limit')) {
       return IssueEnvoiLien.tropTot;
+    }
+    if (estInscriptionFermee(code: code, message: erreur.message)) {
+      return IssueEnvoiLien.inscriptionFermee;
     }
     return IssueEnvoiLien.erreur;
   }
@@ -105,6 +133,7 @@ IssueEnvoiLien issueEchecEnvoi(Object erreur) {
 String phraseEchecEnvoi(IssueEnvoiLien issue) => switch (issue) {
   IssueEnvoiLien.tropTot => t.connexion.erreurTropTot,
   IssueEnvoiLien.horsLigne => t.connexion.horsLigne,
+  IssueEnvoiLien.inscriptionFermee => t.connexion.inscriptionFermee,
   IssueEnvoiLien.erreur => t.connexion.erreurEnvoi,
 };
 
