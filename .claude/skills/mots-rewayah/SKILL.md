@@ -35,6 +35,7 @@ Sources : les décisions du directeur (annexe 10 du dossier maître, spécificat
 | Accueil · Foyer · Historique · Compte (navigation du tuteur) | Disponibilités, Suivi, Réglages en onglet principal |
 | Aujourd'hui · Apprendre · Suivi · Profil (élève adulte) | la navigation du tuteur recopiée |
 | Journée · Créneaux · Profil (enseignant) | une quatrième entrée |
+| Recharger (bouton de l'ouverture de l'application quand elle dépasse 20 s, lot du 29/10/2026) | Actualiser, Rafraîchir |
 
 ## 3. Les mots du programme
 

@@ -141,6 +141,7 @@ import 'core/tc_parcours/port_signalement.dart';
 import 'core/tc_parcours/port_travail_a_venir.dart';
 import 'core/tc_parcours/signalement_supabase.dart';
 import 'core/theme/app_delais.dart';
+import 'core/theme/polices_differees.dart';
 import 'features/_dev/playground/playground_racine.dart';
 import 'features/bienvenue_enseignant/prerequis_enseignant_supabase.dart';
 import 'features/com_annonces/annonces_supabase.dart';
@@ -574,6 +575,12 @@ Future<void> main() async {
   // (P2-07) ; en production elle n'a aucun lanceur et se comporte comme
   // l'application seule.
   runApp(RacineDemonstrable(surchargesReelles: _surchargesAppReelle()));
+  // Les polices arabes et du Coran, apres la premiere image seulement
+  // (`polices_differees.dart` ; sans effet tant que le pubspec les declare
+  // dans `fonts`).
+  WidgetsBinding.instance.addPostFrameCallback(
+    (Duration _) => unawaited(chargerPolicesDifferees()),
+  );
 }
 
 /// Initialise Supabase sans jamais retenir l'ouverture plus de
