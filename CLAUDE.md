@@ -10,8 +10,10 @@ Tant que `docs/current/BOUCLE-1_PLAN_2026-10-24.md` n'a pas ses quatre phrases v
 prévaut sur tout le reste de ce fichier et de `docs/current/`. Un agent lit le plan, puis
 seulement les fichiers nommés dans l'étape en cours ; il ne relit ni la table ci-dessous, ni les
 catalogues, ni les archives. Aucun nouvel écran, aucune nouvelle règle, aucun lot hors boucle,
-aucune session parallèle, aucune remise à plat d'architecture. Une étape, une pull request, un
-seul agent ; les tâches mécaniques aux petits modèles. La preuve d'une étape, c'est le directeur
+aucune remise à plat d'architecture. Une étape, une pull request ; **depuis le 29/10, deux agents
+de construction au plus, zones séparées, et les agents ouvrent les PR, le pilote fusionne et
+installe les migrations** (`docs/current/DECISION-AUTONOMIE-2026-10-29.md`, qui prévaut ici) ;
+les tâches mécaniques aux petits modèles. La preuve d'une étape, c'est le directeur
 qui la fait lui-même en production, après fusion (décision du 24/10 : risque accepté, personne
 d'autre n'utilise l'application).
 
