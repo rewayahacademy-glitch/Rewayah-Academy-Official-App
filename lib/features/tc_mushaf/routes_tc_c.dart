@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 
-import 'mushaf_page.dart';
+import '../../core/router/page_differee.dart';
+import 'mushaf_page.dart' deferred as d_mushaf_page;
 
 /// Les chemins du moteur Coran, sous le prefixe reserve `/tc/`.
 abstract final class RoutesCoran {
@@ -24,6 +25,17 @@ abstract final class RoutesCoran {
 List<RouteBase> routesTcC() => <RouteBase>[
   GoRoute(
     path: RoutesCoran.mushaf,
-    builder: (_, _) => const MushafPage(),
+    // Charge a la demande (lot ouverture rapide, 29/10/2026).
+    builder: (_, _) => PageDifferee(
+      cle: 'routes_tc_c.d_mushaf_page',
+      charger: d_mushaf_page.loadLibrary,
+      construire: () => d_mushaf_page.MushafPage(),
+    ),
   ),
+];
+
+/// L'ecran du Coran charge a la demande, pour le precharger
+/// (`test/flutter_test_config.dart`).
+final List<MorceauDiffere> morceauxDifferesTcC = <MorceauDiffere>[
+  ('routes_tc_c.d_mushaf_page', d_mushaf_page.loadLibrary),
 ];

@@ -63,7 +63,8 @@ class _RacineDemonstrableState extends State<RacineDemonstrable> {
   /// de zero (fiche du 27/10/2026, ligne 17).
   int _generation = 0;
 
-  bool get _autorisee => environnementAutoriseDemo(widget.environnement);
+  bool get _autorisee =>
+      Env.demoCompilee && environnementAutoriseDemo(widget.environnement);
 
   void _lancer() {
     if (!_autorisee || _demo) return;

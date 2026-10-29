@@ -79,7 +79,12 @@ void main() {
         await _monterDemarrage(tester);
         expect(find.byType(OrnementMarque), findsNothing);
         expect(find.byType(CircularProgressIndicator), findsNothing);
-        expect(find.byType(PorteLumiere), findsOneWidget);
+        // Lot ouverture rapide (29/10/2026) : le logo seul, plus de porte.
+        expect(find.byType(PorteLumiere), findsNothing);
+        expect(
+          find.byKey(const ValueKey<String>('demarrage-logo')),
+          findsOneWidget,
+        );
       },
     );
 
@@ -125,7 +130,9 @@ void main() {
     testWidgets('demarrage', (WidgetTester tester) async {
       await _monterDemarrage(tester, taille: etroit, echelle: 2);
       expect(tester.takeException(), isNull);
-      final Rect porte = tester.getRect(find.byType(PorteLumiere));
+      final Rect porte = tester.getRect(
+        find.byKey(const ValueKey<String>('demarrage-logo')),
+      );
       expect(porte.left, greaterThanOrEqualTo(0));
       expect(porte.right, lessThanOrEqualTo(etroit.width));
       expect(porte.bottom, lessThanOrEqualTo(etroit.height));

@@ -27,6 +27,11 @@ abstract final class AppDelais {
   /// long, et seulement ensuite que c'est perdu.
   static const Duration requeteMax = Duration(seconds: 20);
 
+  /// Le plus long qu'un appel du demarrage (session, profil) peut retenir
+  /// l'ouverture (lot ouverture rapide, 29/10/2026). Passe ce delai, l'ecran
+  /// dit ce qui manque et propose « Reessayer », au lieu de rester bloque.
+  static const Duration demarrageMax = Duration(seconds: 10);
+
   /// Avant de se deconnecter, les cahiers de transmission encore en file ont
   /// cette duree pour partir ; au-dela, la personne choisit de les perdre ou
   /// d'annuler (fiche du 27/10/2026, ligne 16, arbitrage du pilote).
