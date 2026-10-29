@@ -1057,7 +1057,7 @@ class _Traductions$attente$ar extends Traductions$attente$fr {
 	@override String get accordsARelire => 'بقي عليك قراءة شروطنا وقبولها.';
 	@override String get demandeTitre => 'طلبك قيد الدراسة';
 	@override String get demandeMessage => 'تقرأ الإدارة كل طلب قبل فتح أي حساب.';
-	@override String get demandeDetail => 'ليس عليك إرسال أي شيء. سنكتب إليك على بريدك الإلكتروني فور ردّ الإدارة.';
+	@override String get demandeDetail => 'ليس عليك إرسال أي شيء. سنكتب إليك على بريدك الإلكتروني فور رد الإدارة.';
 	@override String get actualiserCompte => 'تحديث';
 	@override String get lireEtAccepter => 'قراءة شروطنا وقبولها';
 	@override String get nosConditions => 'يلزم قراءة الشروط والموافقة عليها';
@@ -25864,7 +25864,7 @@ extension on TraductionsAr {
 			'attente.accordsARelire' => 'بقي عليك قراءة شروطنا وقبولها.',
 			'attente.demandeTitre' => 'طلبك قيد الدراسة',
 			'attente.demandeMessage' => 'تقرأ الإدارة كل طلب قبل فتح أي حساب.',
-			'attente.demandeDetail' => 'ليس عليك إرسال أي شيء. سنكتب إليك على بريدك الإلكتروني فور ردّ الإدارة.',
+			'attente.demandeDetail' => 'ليس عليك إرسال أي شيء. سنكتب إليك على بريدك الإلكتروني فور رد الإدارة.',
 			'attente.actualiserCompte' => 'تحديث',
 			'attente.lireEtAccepter' => 'قراءة شروطنا وقبولها',
 			'attente.nosConditions' => 'يلزم قراءة الشروط والموافقة عليها',
