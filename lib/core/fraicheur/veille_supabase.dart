@@ -52,6 +52,13 @@ class VeilleSupabase implements PortVeille {
           } else if (erreur != null) {
             journalDev('Veille de fraicheur : ${statut.name}, $erreur');
           }
+          // Erreur ou delai depasse : transmis a la veille, qui le dit a la
+          // supervision (29/10/2026). La fermeture voulue (`closed`) ne
+          // compte pas.
+          if (statut == RealtimeSubscribeStatus.channelError ||
+              statut == RealtimeSubscribeStatus.timedOut) {
+            flux.addError(ErreurCanalVeille(statut.name));
+          }
         });
       },
       onCancel: () async {
