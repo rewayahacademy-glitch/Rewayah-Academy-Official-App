@@ -22,6 +22,13 @@ sur les PR vers `main`, la fusion et les migrations.
 | Réglages Supabase (tableau de bord), `.github/`, `pubspec.yaml`, `vercel.json`, garde-fou | le directeur | inchangé : le directeur |
 | Preuve en production | le directeur | inchangé : « fait » veut dire prouvé par le directeur |
 
+Le garde-fou ne distingue pas les sessions : techniquement, toute session peut fusionner et
+appliquer une migration. La règle est donc écrite dans chaque consigne d'agent de construction, en
+toutes lettres : **interdit : `merge_pull_request`, `apply_migration`**. Avant chaque fusion, le
+pilote relit lui-même les vérifications du dernier commit de la PR (toutes vertes, aucune en
+cours). Avant toute migration qui supprime une fonction (`DROP FUNCTION`), il vérifie qu'aucun code
+déjà en production ne l'appelle encore.
+
 Restent interdits par le garde-fou : pousser directement sur `main` sans PR, forcer un envoi,
 supprimer une branche distante, déclencher un workflow, déployer une fonction Edge en production,
 modifier le garde-fou.
