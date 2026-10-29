@@ -4408,20 +4408,20 @@ class Traductions$inscription$usage$fr {
 
 	// Translations
 
-	/// fr: 'Quel type de compte souhaitez-vous créer ?'
-	String get question => 'Quel type de compte souhaitez-vous créer ?';
+	/// fr: 'Pour qui créez-vous ce compte ?'
+	String get question => 'Pour qui créez-vous ce compte ?';
 
-	/// fr: 'Moi uniquement'
-	String get moiTitre => 'Moi uniquement';
+	/// fr: 'Je m'inscris pour moi'
+	String get moiTitre => 'Je m\'inscris pour moi';
 
-	/// fr: 'Je souhaite suivre les cours avec mon propre profil élève.'
-	String get moiDescription => 'Je souhaite suivre les cours avec mon propre profil élève.';
+	/// fr: 'Vous suivez les cours vous-même. Votre profil élève est créé avec votre compte.'
+	String get moiDescription => 'Vous suivez les cours vous-même. Votre profil élève est créé avec votre compte.';
 
-	/// fr: 'Moi et ma famille'
-	String get familleTitre => 'Moi et ma famille';
+	/// fr: 'J'inscris mon enfant'
+	String get familleTitre => 'J\'inscris mon enfant';
 
-	/// fr: 'Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous pourrez créer votre propre profil élève à tout moment.'
-	String get familleDescription => 'Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous pourrez créer votre propre profil élève à tout moment.';
+	/// fr: 'Vous inscrivez un ou plusieurs enfants et suivez leurs progrès. Vous pouvez aussi suivre des cours vous-même.'
+	String get familleDescription => 'Vous inscrivez un ou plusieurs enfants et suivez leurs progrès. Vous pouvez aussi suivre des cours vous-même.';
 
 	/// fr: 'J'ai un code d'invitation'
 	String get enseignant => 'J\'ai un code d\'invitation';
@@ -4444,8 +4444,8 @@ class Traductions$inscription$usage$fr {
 	/// fr: 'Non'
 	String get coursNon => 'Non';
 
-	/// fr: 'vous apprenez la récitation pour vous-même, sans inscrire d'enfant.'
-	String get moiExemple => 'vous apprenez la récitation pour vous-même, sans inscrire d\'enfant.';
+	/// fr: 'vous avez 18 ans ou plus et vous apprenez la récitation pour vous.'
+	String get moiExemple => 'vous avez 18 ans ou plus et vous apprenez la récitation pour vous.';
 
 	/// fr: 'vous inscrivez Yasmine, 9 ans, et Bilal, 12 ans.'
 	String get familleExemple => 'vous inscrivez Yasmine, 9 ans, et Bilal, 12 ans.';
@@ -41428,11 +41428,11 @@ extension on Traductions {
 			'inscription.reessayer' => 'Réessayer',
 			'inscription.erreurActualisation' => 'Votre compte est créé, mais la connexion n\'a pas pu être actualisée. Réessayez, ou déconnectez-vous puis reconnectez-vous.',
 			'inscription.erreurInvitation' => 'Votre code d\'invitation n\'a pas pu être utilisé : il a expiré, a déjà servi ou ne correspond pas à votre adresse. Demandez un nouveau code à la direction, puis saisissez-le de nouveau.',
-			'inscription.usage.question' => 'Quel type de compte souhaitez-vous créer ?',
-			'inscription.usage.moiTitre' => 'Moi uniquement',
-			'inscription.usage.moiDescription' => 'Je souhaite suivre les cours avec mon propre profil élève.',
-			'inscription.usage.familleTitre' => 'Moi et ma famille',
-			'inscription.usage.familleDescription' => 'Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous pourrez créer votre propre profil élève à tout moment.',
+			'inscription.usage.question' => 'Pour qui créez-vous ce compte ?',
+			'inscription.usage.moiTitre' => 'Je m\'inscris pour moi',
+			'inscription.usage.moiDescription' => 'Vous suivez les cours vous-même. Votre profil élève est créé avec votre compte.',
+			'inscription.usage.familleTitre' => 'J\'inscris mon enfant',
+			'inscription.usage.familleDescription' => 'Vous inscrivez un ou plusieurs enfants et suivez leurs progrès. Vous pouvez aussi suivre des cours vous-même.',
 			'inscription.usage.enseignant' => 'J\'ai un code d\'invitation',
 			'inscription.usage.enseignantInvite' => 'Vous êtes enseignant ? L\'académie vous invite par courriel.',
 			'inscription.usage.comptable' => 'J\'ai un code de comptable',
@@ -41440,7 +41440,7 @@ extension on Traductions {
 			'inscription.usage.coursQuestion' => 'Suivez-vous aussi des cours ?',
 			'inscription.usage.coursOui' => 'Oui',
 			'inscription.usage.coursNon' => 'Non',
-			'inscription.usage.moiExemple' => 'vous apprenez la récitation pour vous-même, sans inscrire d\'enfant.',
+			'inscription.usage.moiExemple' => 'vous avez 18 ans ou plus et vous apprenez la récitation pour vous.',
 			'inscription.usage.familleExemple' => 'vous inscrivez Yasmine, 9 ans, et Bilal, 12 ans.',
 			'inscription.usage.coursOuiExplication' => 'Vous suivez vous aussi des cours, en plus de ceux de vos proches.',
 			'inscription.usage.coursOuiExemple' => 'vos enfants suivent leur classe et vous suivez la vôtre.',

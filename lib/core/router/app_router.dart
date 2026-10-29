@@ -250,6 +250,7 @@ import '../icons/app_icons.dart';
 import '../mouvement/transitions.dart';
 import '../recherche/controleur_recherche.dart';
 import '../recherche/modeles_recherche.dart';
+import '../session/atterrissage_adulte.dart';
 import '../session/session_controleur.dart';
 import '../session/session_state.dart';
 import '../tc_groupe/group_home_vm.dart' show RoleEspaceGroupe;
@@ -362,6 +363,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
   });
   // --- fin du bloc DASH-EA-PROD ---------------------------------------------
 
+  // Admission, lot B : l'atterrissage de l'eleve adulte inscrit « pour moi »
+  // se lit apres la session ; le routeur se reveille quand il change.
+  ref.listen<bool>(atterrissageAdulteProvider, (bool? _, bool _) {
+    rafraichisseur.declencher();
+  });
+
   // Q-2 = a : la nouvelle signature du contrat enseignant se lit apres la
   // session (acceptations) ; le routeur se reveille quand elle change.
   ref.listen<bool>(resignatureContratEnseignantProvider, (bool? _, bool _) {
@@ -392,6 +399,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         cheminComplet: etat.uri.toString(),
         retour: etat.uri.queryParameters['retour'],
         resignatureContrat: ref.read(resignatureContratEnseignantProvider),
+        atterrissageAdulte: ref.read(atterrissageAdulteProvider),
       );
     },
     // Un chemin qu'aucune route ne sert : une page d'etat dans la charte, qui

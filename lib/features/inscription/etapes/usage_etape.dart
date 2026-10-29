@@ -129,9 +129,14 @@ class UsageEtape extends ConsumerWidget {
       enfant: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          // Admission, lot B (directeur, 29/10/2026, apres une eleve adulte
+          // perdue le 28/10) : deux grands choix egaux, cote a cote, en haut,
+          // « Je m'inscris pour moi » et « J'inscris mon enfant ».
           ChoiceCardGroup(
             key: const Key('inscription-usage'),
             autoriserSaisieLibre: false,
+            coteACote: true,
+            choixEgaux: true,
             valeurInitiale: retenu == null
                 ? null
                 : ReponseChoix(valeurs: <String>{retenu.name}),

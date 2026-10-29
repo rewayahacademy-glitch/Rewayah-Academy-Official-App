@@ -293,19 +293,35 @@ void main() {
         ),
     ];
 
-    testWidgets('usage : tailles differentes, explications, exemples, carte '
+    testWidgets('usage : deux choix egaux, explications, exemples, carte '
         'entiere cliquable', (WidgetTester tester) async {
       await monterInscription(tester);
       const Key usage = Key('inscription-usage');
-      final List<Size> tailles = cartes(tester, usage);
-      expect(tailles, hasLength(2));
-      expect(tailles.first, isNot(tailles.last));
+      Size carte(String titre) => tester.getSize(
+        find
+            .ancestor(
+              of: find.descendant(
+                of: find.byKey(usage),
+                matching: find.text(titre),
+              ),
+              matching: find.byType(AnimatedContainer),
+            )
+            .first,
+      );
+      final List<Size> tailles = <Size>[
+        carte(t.inscription.usage.moiTitre),
+        carte(t.inscription.usage.familleTitre),
+      ];
+      // Admission, lot B (directeur, 29/10/2026) : « Je m'inscris pour moi »
+      // et « J'inscris mon enfant », deux grands choix de meme taille, jamais
+      // le bento inegal.
+      expect(tailles.first, tailles.last);
       expect(find.text(t.inscription.usage.moiDescription), findsOneWidget);
       expect(
         find.text(t.choix.exemple(texte: t.inscription.usage.familleExemple)),
         findsOneWidget,
       );
-      // Un appui dans la marge de la carte « Moi et ma famille », loin du
+      // Un appui dans la marge de la carte « J'inscris mon enfant », loin du
       // texte, la retient et ouvre la sous-question.
       final Rect famille = tester.getRect(
         find

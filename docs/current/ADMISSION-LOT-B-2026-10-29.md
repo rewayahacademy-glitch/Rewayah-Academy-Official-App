@@ -18,6 +18,18 @@ Branche `claude/admiring-brown-r6ai72-admission-b`, depuis `origin/main` (027854
 
 ## Ce que fait ce lot dans l'application (codé, testé localement)
 
+### Ajout du directeur du 29/10 : l'entrée de l'élève adulte
+
+Constat du 28/10 : une élève adulte s'est perdue à l'onboarding ; elle a choisi « Moi et ma famille », puis a dû ajouter un profil élève pour être placée dans une classe.
+
+- **Premier écran** : « Pour qui créez-vous ce compte ? », deux grands choix égaux, côte à côte, en haut : « Je m'inscris pour moi » (« Vous suivez les cours vous-même. Votre profil élève est créé avec votre compte. ») et « J'inscris mon enfant » (« Vous inscrivez un ou plusieurs enfants et suivez leurs progrès. Vous pouvez aussi suivre des cours vous-même. »). Le parcours enseignant reste dessous, à part (« J'ai un code d'invitation »). Le composant commun `ChoiceCardGroup` gagne `choixEgaux` : jamais le bento inégal pour ce choix, à toutes les largeurs ; à 320 points en texte ×2, les cartes s'empilent plutôt que de couper un mot.
+- **Profil élève titulaire** : déjà créé par le serveur pour « pour moi » (`inscrire_titulaire('moi')` pose `p_parent_suit_des_cours`, fiche `autonomous`). Rien à écrire côté serveur.
+- **Le tuteur qui suit lui-même des cours** : la question « Suivez-vous aussi des cours ? » existe déjà sous « J'inscris mon enfant », sans faux enfant. Rien à changer.
+- **Atterrissage, lacune trouvée** : un titulaire « pour moi » admis arrivait sur l'accueil du **tuteur** (`/tuteur`, racine du rôle) ; seul `/eleve` menait à l'accueil adulte. Désormais, un titulaire élève autonome inscrit « pour moi » (usage lu par `etat_dossier()`) atterrit sur l'accueil adulte (`/eleve/adulte`), et l'accueil du tuteur l'y renvoie. Le parent qui suit aussi des cours garde l'accueil du tuteur.
+- **Non fait, dit au pilote** : la barre « Aujourd'hui · Apprendre · Suivi · Profil » n'existe nulle part dans le code. Sous `/eleve`, l'adulte a la barre de l'élève (Accueil, Ma classe, Coran, Mon espace). La créer change la coquille de navigation commune et l'ordre de ses branches : lot à part, sur décision.
+
+Tests : `test/features/inscription_choix_egaux_test.dart` (390 et 1440 côte à côte, 320 en texte ×2 empilées), `test/features/inscription_test.dart` (textes du mandat ; « pour moi » envoie l'usage `moi` et le profil élève), `test/core/widgets/choice_card_group_bento_test.dart` (à 1440, les deux cartes de même taille), `test/features/accueil_adulte/atterrissage_adulte_test.dart` (vrai routeur : « pour moi » sur l'accueil adulte, parent qui suit des cours sur l'accueil du tuteur ; règles de redirection).
+
 - La page d'attente d'un tuteur (famille ou élève adulte) dit : « Votre demande est en cours », « La direction lit chaque demande avant d'ouvrir un compte. », « Vous n'avez rien à envoyer. Nous vous écrivons à votre adresse e-mail dès que la direction a répondu. » Avant : « L'ouverture de votre compte n'est pas encore automatique », et « joignez l'académie ».
 - La page d'attente d'un tuteur ignore la demande d'admission pour son affichage : elle ne montre jamais les salles d'examen, la tuile de partage ni « Vos autres talents », qui ne concernent que les enseignants.
 
@@ -319,3 +331,4 @@ Les inscriptions restent fermées en production (décision, §6) : la preuve se 
 2. S'inscrire comme famille test, confirmer l'adresse.
 3. Après les conditions à accepter, la page dit « Votre demande est en cours » ; aucune autre page n'est atteignable (taper `/tuteur` dans l'adresse ramène à la page d'attente) : vrai. Sinon : faux, capture.
 4. L'e-mail « Votre demande est bien reçue » arrive : vrai. Sinon : faux, capture.
+5. S'inscrire comme élève adulte test : le premier écran montre « Je m'inscris pour moi » et « J'inscris mon enfant », côte à côte. Choisir « pour moi ». Après l'admission (lot C, ou à la main en attendant), la connexion ouvre l'accueil de l'élève adulte, sans « Ajouter un profil élève » : vrai. Elle ouvre l'accueil du tuteur : faux, capture.

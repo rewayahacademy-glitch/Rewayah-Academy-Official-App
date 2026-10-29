@@ -260,19 +260,25 @@ void main() {
       await _monter(tester);
 
       expect(find.text(t.inscription.usage.question), findsOneWidget);
-      expect(find.text('Moi uniquement'), findsOneWidget);
-      expect(
-        find.text('Je souhaite suivre les cours avec mon propre profil élève.'),
-        findsOneWidget,
-      );
-      expect(find.text('Moi et ma famille'), findsOneWidget);
+      // Admission, lot B (directeur, 29/10/2026) : les deux choix du mandat.
+      expect(find.text('Je m\'inscris pour moi'), findsOneWidget);
       expect(
         find.text(
-          'Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous '
-          'pourrez créer votre propre profil élève à tout moment.',
+          'Vous suivez les cours vous-même. Votre profil élève est créé avec '
+          'votre compte.',
         ),
         findsOneWidget,
       );
+      expect(find.text('J\'inscris mon enfant'), findsOneWidget);
+      // Le texte est pose sans coupure de mots (espaces insecables) : on le
+      // cherche par sa clef.
+      expect(
+        find.textContaining(
+          t.inscription.usage.familleDescription.substring(0, 40),
+        ),
+        findsOneWidget,
+      );
+      // La disposition (deux choix egaux) : inscription_choix_egaux_test.dart.
       expect(find.text('J\'ai un code d\'invitation'), findsOneWidget);
       expect(
         find.text(

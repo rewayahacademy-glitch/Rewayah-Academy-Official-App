@@ -6645,11 +6645,11 @@ class _Traductions$inscription$usage$ar extends Traductions$inscription$usage$fr
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get question => 'أي نوع من الحسابات تريد إنشاءه؟';
-	@override String get moiTitre => 'أنا فقط';
-	@override String get moiDescription => 'أريد متابعة الدروس بملفي الخاص كطالب.';
-	@override String get familleTitre => 'أنا وأسرتي';
-	@override String get familleDescription => 'سجّل أطفالك أو أقاربك، معك أو دونك. يمكنك إنشاء ملفك الخاص كطالب في أي وقت.';
+	@override String get question => 'لمن تنشئ هذا الحساب؟';
+	@override String get moiTitre => 'أسجّل لنفسي';
+	@override String get moiDescription => 'تتابع الدروس بنفسك. يُنشأ ملفك كطالب مع حسابك.';
+	@override String get familleTitre => 'أسجّل طفلي';
+	@override String get familleDescription => 'تسجّل طفلًا أو أكثر وتتابع تقدّمهم. يمكنك أيضًا متابعة الدروس بنفسك.';
 	@override String get enseignant => 'لدي رمز دعوة';
 	@override String get enseignantInvite => 'هل أنت معلّم؟ تدعوك الأكاديمية عبر البريد الإلكتروني.';
 	@override String get comptable => 'لدي رمز محاسب';
@@ -6657,7 +6657,7 @@ class _Traductions$inscription$usage$ar extends Traductions$inscription$usage$fr
 	@override String get coursQuestion => 'هل تتابع أنت أيضًا دروسًا؟';
 	@override String get coursOui => 'نعم';
 	@override String get coursNon => 'لا';
-	@override String get moiExemple => 'تتعلّم التلاوة لنفسك، دون تسجيل أي طفل.';
+	@override String get moiExemple => 'عمرك 18 سنة أو أكثر وتتعلّم التلاوة لنفسك.';
 	@override String get familleExemple => 'تسجّل ياسمين، 9 سنوات، وبلال، 12 سنة.';
 	@override String get coursOuiExplication => 'تتابع أنت أيضًا دروسًا، إلى جانب دروس أقاربك.';
 	@override String get coursOuiExemple => 'يتابع أطفالك صفّهم وتتابع أنت صفّك.';
@@ -25919,11 +25919,11 @@ extension on TraductionsAr {
 			'inscription.reessayer' => 'إعادة المحاولة',
 			'inscription.erreurActualisation' => 'أُنشئ حسابك، لكن تعذّر تحديث الاتصال. أعد المحاولة، أو سجّل الخروج ثم الدخول من جديد.',
 			'inscription.erreurInvitation' => 'تعذّر استخدام رمز الدعوة: انتهت صلاحيته، أو استُعمل من قبل، أو لا يطابق عنوانك. اطلب رمزًا جديدًا من الإدارة، ثم أدخله من جديد.',
-			'inscription.usage.question' => 'أي نوع من الحسابات تريد إنشاءه؟',
-			'inscription.usage.moiTitre' => 'أنا فقط',
-			'inscription.usage.moiDescription' => 'أريد متابعة الدروس بملفي الخاص كطالب.',
-			'inscription.usage.familleTitre' => 'أنا وأسرتي',
-			'inscription.usage.familleDescription' => 'سجّل أطفالك أو أقاربك، معك أو دونك. يمكنك إنشاء ملفك الخاص كطالب في أي وقت.',
+			'inscription.usage.question' => 'لمن تنشئ هذا الحساب؟',
+			'inscription.usage.moiTitre' => 'أسجّل لنفسي',
+			'inscription.usage.moiDescription' => 'تتابع الدروس بنفسك. يُنشأ ملفك كطالب مع حسابك.',
+			'inscription.usage.familleTitre' => 'أسجّل طفلي',
+			'inscription.usage.familleDescription' => 'تسجّل طفلًا أو أكثر وتتابع تقدّمهم. يمكنك أيضًا متابعة الدروس بنفسك.',
 			'inscription.usage.enseignant' => 'لدي رمز دعوة',
 			'inscription.usage.enseignantInvite' => 'هل أنت معلّم؟ تدعوك الأكاديمية عبر البريد الإلكتروني.',
 			'inscription.usage.comptable' => 'لدي رمز محاسب',
@@ -25931,7 +25931,7 @@ extension on TraductionsAr {
 			'inscription.usage.coursQuestion' => 'هل تتابع أنت أيضًا دروسًا؟',
 			'inscription.usage.coursOui' => 'نعم',
 			'inscription.usage.coursNon' => 'لا',
-			'inscription.usage.moiExemple' => 'تتعلّم التلاوة لنفسك، دون تسجيل أي طفل.',
+			'inscription.usage.moiExemple' => 'عمرك 18 سنة أو أكثر وتتعلّم التلاوة لنفسك.',
 			'inscription.usage.familleExemple' => 'تسجّل ياسمين، 9 سنوات، وبلال، 12 سنة.',
 			'inscription.usage.coursOuiExplication' => 'تتابع أنت أيضًا دروسًا، إلى جانب دروس أقاربك.',
 			'inscription.usage.coursOuiExemple' => 'يتابع أطفالك صفّهم وتتابع أنت صفّك.',
