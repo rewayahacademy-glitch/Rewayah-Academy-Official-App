@@ -146,7 +146,8 @@ void main() {
       expect(find.byType(AccueilAdultePage), findsOneWidget);
       expect(_actif(tester), 0);
 
-      await tester.tap(_onglet(t.nav.eleve.coran));
+      // Lot B2 : la barre de l'adulte, Aujourd'hui, Apprendre, Suivi, Profil.
+      await tester.tap(_onglet(t.nav.eleve.apprendre));
       await _poser(tester);
 
       expect(lieu(routeur), Routes.eleveCoran);
@@ -157,9 +158,9 @@ void main() {
       expect(find.byType(CoranDemoAdulte), findsNothing);
       expect(find.text(_phraseProvisoire), findsNothing);
       expect(find.text(t.adulte.coranDemo.titre), findsNothing);
-      expect(_actif(tester), 2);
+      expect(_actif(tester), 1);
 
-      await tester.tap(_onglet(t.nav.eleve.accueil));
+      await tester.tap(_onglet(t.nav.eleve.aujourdhui));
       await _poser(tester);
       expect(lieu(routeur), Routes.eleveAdulte);
       expect(find.byType(AccueilAdultePage), findsOneWidget);
@@ -320,7 +321,7 @@ void main() {
             echelle: echelle,
             direction: sens,
           );
-          await tester.tap(_onglet(t.nav.eleve.coran));
+          await tester.tap(_onglet(t.nav.eleve.apprendre));
           await _poser(tester);
           expect(lieu(routeur), Routes.eleveCoran);
           expect(find.byType(MushafPage), findsOneWidget);

@@ -266,6 +266,21 @@ void main() {
       expect(find.byType(ClocheNotifications), findsNothing);
     });
 
+    // Lot B2 (29/10/2026) : l'adresse des notifications de l'eleve adulte
+    // ramene le mineur a son accueil (Q5).
+    testWidgets('le mineur qui tape /eleve/notifications revient a l accueil', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await _monter(
+        tester,
+        Routes.eleveNotifications,
+        AppRole.student,
+      );
+      expect(lieu(routeur), Routes.eleve);
+      expect(find.byType(NotificationsPage), findsNothing);
+      expect(find.byType(ClocheNotifications), findsNothing);
+    });
+
     test(
       'notificationsPour : une page par role a cloche, sous son prefixe',
       () {

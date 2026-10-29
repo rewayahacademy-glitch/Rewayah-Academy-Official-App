@@ -675,6 +675,20 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 builder: (BuildContext _, GoRouterState _) =>
                     const AccueilEleveSelonPresentation(),
               ),
+              // Lot B2 : les notifications de l'eleve adulte, dans la branche
+              // Accueil ; la cloche de la coquille y mene. Le mineur n'en a
+              // pas (Q5) : son adresse le ramene a l'accueil.
+              GoRoute(
+                path: Routes.eleveNotifications,
+                redirect: (BuildContext _, GoRouterState _) =>
+                    ref.read(sessionProvider).eleveAutonome
+                    ? null
+                    : Routes.eleve,
+                builder: (BuildContext contexte, GoRouterState _) =>
+                    NotificationsPage(
+                      onRetour: () => GoRouter.of(contexte).go(Routes.eleve),
+                    ),
+              ),
               // --- DASH-EA-PROD : Accueil adulte et historique -------------
               // Dans la branche Accueil : la destination reste allumee.
               ...routesAccueilAdulte(),
@@ -2901,12 +2915,25 @@ class _CoquilleNavigation extends ConsumerWidget {
       role: role,
       mode: InterfaceMode.standard,
     );
-    final List<Destination> visibles = destinationsPour(role: role, mode: mode);
+    // Lot B2 : l'eleve adulte (capacite « eleve autonome », jamais le role)
+    // voit sa barre, Aujourd'hui, Apprendre, Suivi, Profil ; les branches
+    // restent celles de [destinations], retrouvees par chemin.
+    final bool eleveAdulte =
+        role == AppRole.student &&
+        ref.watch(sessionProvider.select((SessionState s) => s.eleveAutonome));
+    final List<Destination> visibles = destinationsPour(
+      role: role,
+      mode: mode,
+      eleveAdulte: eleveAdulte,
+    );
     // COM-F-Q5 : sur la page des notifications, la cloche est la seule
     // entree active. La page vit sous une branche (la Journee, l'Accueil),
     // mais la barre ne surligne pas cet onglet : deux selections a la fois
     // diraient deux endroits.
-    final String? cheminCloche = Routes.notificationsPour(role);
+    // Lot B2 : l'eleve adulte a sa cloche ; le mineur n'en a pas (Q5).
+    final String? cheminCloche = eleveAdulte
+        ? Routes.eleveNotifications
+        : Routes.notificationsPour(role);
     final bool surNotifications = chemin == cheminCloche;
 
     final Widget coquille = NavShell(
@@ -2977,8 +3004,9 @@ class _CoquilleNavigation extends ConsumerWidget {
     if (role != AppRole.guardian) {
       // COM-F : la cloche des notifications, posee par la coquille du role
       // quand ce role en a une (`Routes.notificationsPour` : enseignant et
-      // controleur ; jamais l'eleve mineur, reponse Q5 du directeur du
-      // 04/10, maintenue le 27/10). Le point de non-lus vient de
+      // controleur ; l'eleve adulte depuis le lot B2 du 29/10 ; jamais
+      // l'eleve mineur, reponse Q5 du directeur du 04/10, maintenue le 27/10
+      // et le 29/10). Le point de non-lus vient de
       // `nonLuesProvider` (fiche du 27/10, ligne 12) ; sans source, pas de
       // point, comme le tuteur. Elle s'ajoute, en dernier, aux actions deja posees au-dessus
       // (le raccourci Espaces de CT-9), et se montre active sur sa page.
