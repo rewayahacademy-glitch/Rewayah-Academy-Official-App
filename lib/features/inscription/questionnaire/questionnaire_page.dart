@@ -10,6 +10,7 @@ import '../../../core/offres/offre_horaire.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/session/session_controleur.dart';
 import '../../../core/session/session_state.dart';
+import '../../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../../core/theme/app_gabarit.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -382,7 +383,9 @@ class _EcranQuestionState extends State<_EcranQuestion> {
                 for (int a = ageMinimum; a <= ageMaximum; a++)
                   FilterPill(
                     key: ValueKey<String>('questionnaire-age-$a'),
-                    libelle: t.inscription.questionnaire.ans(n: a),
+                    libelle: LibellesGroupe.insecable(
+                      t.inscription.questionnaire.ans(n: a),
+                    ),
                     retenue: !_adulte && _enfant.age == a,
                     onPress: () {
                       setState(() => _adulte = false);

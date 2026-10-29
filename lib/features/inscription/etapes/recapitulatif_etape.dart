@@ -13,6 +13,7 @@ import '../../../core/recrutement/port_invitations_comptable.dart';
 import '../../../core/recrutement/port_invitations_enseignant.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/session/session_controleur.dart';
+import '../../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/groupe_reglages.dart';
 import '../../parcours_offres/libelles_parcours.dart' show libelleNiveau;
@@ -349,9 +350,11 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
               for (int i = 0; i < questionnaire.enfants.length; i++)
                 LigneRubrique(
                   icone: AppIcons.eleves,
-                  libelle: t.inscription.questionnaire.ligneEnfant(
-                    prenom: questionnaire.enfants[i].prenom.trim(),
-                    age: questionnaire.enfants[i].age ?? 0,
+                  libelle: LibellesGroupe.insecable(
+                    t.inscription.questionnaire.ligneEnfant(
+                      prenom: questionnaire.enfants[i].prenom.trim(),
+                      age: questionnaire.enfants[i].age ?? 0,
+                    ),
                   ),
                   legende: questionnaire.enfants[i].niveau == null
                       ? ''

@@ -12,6 +12,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/deconnexion.dart';
 import '../../core/session/session_controleur.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -529,9 +530,11 @@ class _ApprenantsDemande extends ConsumerWidget {
       for (final ApprenantDemande a in apprenants)
         a.titulaire || a.age == null
             ? t.inscription.questionnaire.ligneVous
-            : t.inscription.questionnaire.ligneEnfant(
-                prenom: a.prenom,
-                age: a.age!,
+            : LibellesGroupe.insecable(
+                t.inscription.questionnaire.ligneEnfant(
+                  prenom: a.prenom,
+                  age: a.age!,
+                ),
               ),
     ].join(' · ');
     return Padding(

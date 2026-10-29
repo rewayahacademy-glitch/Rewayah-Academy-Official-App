@@ -11,6 +11,7 @@ import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
@@ -647,7 +648,7 @@ void main() {
         find.text(
           t.attente.demandePour(
             liste:
-                '${t.inscription.questionnaire.ligneEnfant(prenom: 'Yasmine', age: 9)}'
+                '${LibellesGroupe.insecable(t.inscription.questionnaire.ligneEnfant(prenom: 'Yasmine', age: 9))}'
                 ' · ${t.inscription.questionnaire.ligneVous}',
           ),
         ),

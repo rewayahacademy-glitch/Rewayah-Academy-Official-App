@@ -1059,7 +1059,7 @@ class _Traductions$attente$ar extends Traductions$attente$fr {
 	@override String get demandeTitre => 'طلبك قيد الدراسة';
 	@override String get demandeMessage => 'تقرأ الإدارة كل طلب قبل فتح أي حساب.';
 	@override String get demandeDetail => 'ليس عليك إرسال أي شيء. سنكتب إليك على بريدك الإلكتروني فور رد الإدارة.';
-	@override String demandePour({required Object liste}) => 'يخص طلبك: ${liste}.';
+	@override String demandePour({required Object liste}) => 'يخص طلبك: ⁨${liste}⁩.';
 	@override String get actualiserCompte => 'تحديث';
 	@override String get lireEtAccepter => 'قراءة شروطنا وقبولها';
 	@override String get nosConditions => 'يلزم قراءة الشروط والموافقة عليها';
@@ -6651,19 +6651,19 @@ class _Traductions$inscription$questionnaire$ar extends Traductions$inscription$
 	@override String get recapLangue => 'لغة الدرس';
 	@override String get prenomQuestion => 'ما اسم طفلك؟';
 	@override String get prenomRaison => 'يكفي الاسم الأول. يمكنك تسجيل أطفال آخرين في النهاية.';
-	@override String ageQuestion({required Object prenom}) => 'كم عمر ${prenom}؟';
-	@override String ans({required Object n}) => '${n} سنة';
+	@override String ageQuestion({required Object prenom}) => 'كم عمر ⁨${prenom}⁩؟';
+	@override String ans({required Object n}) => '⁨${n}⁩ سنة';
 	@override String get adulte => '18 سنة أو أكثر';
-	@override String get adulteDetail => 'ابتداء من 18 سنة، يسجل كل شخص نفسه، باختيار « أسجل نفسي ».';
-	@override String genreQuestion({required Object prenom}) => '${prenom}…';
+	@override String get adulteDetail => 'ابتداء من 18 سنة، يسجل كل شخص نفسه، باختيار «أسجل نفسي».';
+	@override String genreQuestion({required Object prenom}) => 'هل ⁨${prenom}⁩ ولد أم بنت؟';
 	@override String get garcon => 'ولد';
 	@override String get fille => 'بنت';
 	@override String get genreRaison => 'تأخذ الأكاديمية ذلك بعين الاعتبار عند تكوين الفصول.';
 	@override String get niveauQuestionMoi => 'أين وصلت اليوم؟';
-	@override String etapeCourte({required Object n, required Object total}) => '${n} من ${total}';
+	@override String etapeCourte({required Object n, required Object total}) => '⁨${n}⁩ من ⁨${total}⁩';
 	@override String get recapTitre => 'هذا ما فهمناه';
 	@override String get recapApprenants => 'من سيتعلم';
-	@override String ligneEnfant({required Object prenom, required Object age}) => '${prenom}، ${age} سنة';
+	@override String ligneEnfant({required Object prenom, required Object age}) => '⁨${prenom}⁩، ⁨${age}⁩ سنة';
 	@override String get ligneVous => 'أنت';
 	@override String get ajouterProfil => 'إضافة ملف طالب آخر';
 	@override String get envoyer => 'إرسال طلبي';
@@ -25899,7 +25899,7 @@ extension on TraductionsAr {
 			'attente.demandeTitre' => 'طلبك قيد الدراسة',
 			'attente.demandeMessage' => 'تقرأ الإدارة كل طلب قبل فتح أي حساب.',
 			'attente.demandeDetail' => 'ليس عليك إرسال أي شيء. سنكتب إليك على بريدك الإلكتروني فور رد الإدارة.',
-			'attente.demandePour' => ({required Object liste}) => 'يخص طلبك: ${liste}.',
+			'attente.demandePour' => ({required Object liste}) => 'يخص طلبك: ⁨${liste}⁩.',
 			'attente.actualiserCompte' => 'تحديث',
 			'attente.lireEtAccepter' => 'قراءة شروطنا وقبولها',
 			'attente.nosConditions' => 'يلزم قراءة الشروط والموافقة عليها',
@@ -25926,19 +25926,19 @@ extension on TraductionsAr {
 			'inscription.questionnaire.recapLangue' => 'لغة الدرس',
 			'inscription.questionnaire.prenomQuestion' => 'ما اسم طفلك؟',
 			'inscription.questionnaire.prenomRaison' => 'يكفي الاسم الأول. يمكنك تسجيل أطفال آخرين في النهاية.',
-			'inscription.questionnaire.ageQuestion' => ({required Object prenom}) => 'كم عمر ${prenom}؟',
-			'inscription.questionnaire.ans' => ({required Object n}) => '${n} سنة',
+			'inscription.questionnaire.ageQuestion' => ({required Object prenom}) => 'كم عمر ⁨${prenom}⁩؟',
+			'inscription.questionnaire.ans' => ({required Object n}) => '⁨${n}⁩ سنة',
 			'inscription.questionnaire.adulte' => '18 سنة أو أكثر',
-			'inscription.questionnaire.adulteDetail' => 'ابتداء من 18 سنة، يسجل كل شخص نفسه، باختيار « أسجل نفسي ».',
-			'inscription.questionnaire.genreQuestion' => ({required Object prenom}) => '${prenom}…',
+			'inscription.questionnaire.adulteDetail' => 'ابتداء من 18 سنة، يسجل كل شخص نفسه، باختيار «أسجل نفسي».',
+			'inscription.questionnaire.genreQuestion' => ({required Object prenom}) => 'هل ⁨${prenom}⁩ ولد أم بنت؟',
 			'inscription.questionnaire.garcon' => 'ولد',
 			'inscription.questionnaire.fille' => 'بنت',
 			'inscription.questionnaire.genreRaison' => 'تأخذ الأكاديمية ذلك بعين الاعتبار عند تكوين الفصول.',
 			'inscription.questionnaire.niveauQuestionMoi' => 'أين وصلت اليوم؟',
-			'inscription.questionnaire.etapeCourte' => ({required Object n, required Object total}) => '${n} من ${total}',
+			'inscription.questionnaire.etapeCourte' => ({required Object n, required Object total}) => '⁨${n}⁩ من ⁨${total}⁩',
 			'inscription.questionnaire.recapTitre' => 'هذا ما فهمناه',
 			'inscription.questionnaire.recapApprenants' => 'من سيتعلم',
-			'inscription.questionnaire.ligneEnfant' => ({required Object prenom, required Object age}) => '${prenom}، ${age} سنة',
+			'inscription.questionnaire.ligneEnfant' => ({required Object prenom, required Object age}) => '⁨${prenom}⁩، ⁨${age}⁩ سنة',
 			'inscription.questionnaire.ligneVous' => 'أنت',
 			'inscription.questionnaire.ajouterProfil' => 'إضافة ملف طالب آخر',
 			'inscription.questionnaire.envoyer' => 'إرسال طلبي',

@@ -19,6 +19,7 @@ import 'package:rewayah_academy/core/recrutement/port_invitations_comptable.dart
 import 'package:rewayah_academy/core/recrutement/port_invitations_enseignant.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/features/demo/recrutement_demo.dart';
@@ -568,7 +569,12 @@ void main() {
         );
         expect(
           find.text(
-            t.inscription.questionnaire.ligneEnfant(prenom: 'Yasmine', age: 9),
+            LibellesGroupe.insecable(
+              t.inscription.questionnaire.ligneEnfant(
+                prenom: 'Yasmine',
+                age: 9,
+              ),
+            ),
           ),
           findsOneWidget,
         );

@@ -638,7 +638,7 @@ class Traductions$attente$fr {
 	String get demandeDetail => 'Vous n\'avez rien à envoyer. Nous vous écrivons à votre adresse e-mail dès que la direction a répondu.';
 
 	/// fr: 'Votre demande porte sur : {liste}.'
-	String demandePour({required Object liste}) => 'Votre demande porte sur : ${liste}.';
+	String demandePour({required Object liste}) => 'Votre demande porte sur : ${liste}.';
 
 	/// fr: 'Actualiser'
 	String get actualiserCompte => 'Actualiser';
@@ -4419,13 +4419,13 @@ class Traductions$inscription$questionnaire$fr {
 	String get recapLangue => 'Langue du cours';
 
 	/// fr: 'Comment s'appelle votre enfant ?'
-	String get prenomQuestion => 'Comment s\'appelle votre enfant ?';
+	String get prenomQuestion => 'Comment s\'appelle votre enfant ?';
 
 	/// fr: 'Son prénom suffit. Vous pourrez inscrire d'autres enfants à la fin.'
 	String get prenomRaison => 'Son prénom suffit. Vous pourrez inscrire d\'autres enfants à la fin.';
 
 	/// fr: 'Quel âge a {prenom} ?'
-	String ageQuestion({required Object prenom}) => 'Quel âge a ${prenom} ?';
+	String ageQuestion({required Object prenom}) => 'Quel âge a ${prenom} ?';
 
 	/// fr: '{n} ans'
 	String ans({required Object n}) => '${n} ans';
@@ -4434,7 +4434,7 @@ class Traductions$inscription$questionnaire$fr {
 	String get adulte => '18 ans ou plus';
 
 	/// fr: 'À partir de 18 ans, chacun s'inscrit lui-même, avec « Je m'inscris pour moi ».'
-	String get adulteDetail => 'À partir de 18 ans, chacun s\'inscrit lui-même, avec « Je m\'inscris pour moi ».';
+	String get adulteDetail => 'À partir de 18 ans, chacun s\'inscrit lui-même, avec « Je m\'inscris pour moi ».';
 
 	/// fr: '{prenom} est…'
 	String genreQuestion({required Object prenom}) => '${prenom} est…';
@@ -4449,7 +4449,7 @@ class Traductions$inscription$questionnaire$fr {
 	String get genreRaison => 'L\'académie en tient compte pour former les classes.';
 
 	/// fr: 'Où en êtes-vous aujourd'hui ?'
-	String get niveauQuestionMoi => 'Où en êtes-vous aujourd\'hui ?';
+	String get niveauQuestionMoi => 'Où en êtes-vous aujourd\'hui ?';
 
 	/// fr: '{n} sur {total}'
 	String etapeCourte({required Object n, required Object total}) => '${n} sur ${total}';
@@ -4476,7 +4476,7 @@ class Traductions$inscription$questionnaire$fr {
 	String get dejaUnCompte => 'J\'ai déjà un compte';
 
 	/// fr: 'Les réponses de votre inscription ne sont plus sur cet appareil. Reprenez les premières questions : elles prennent deux minutes.'
-	String get aucuneReponse => 'Les réponses de votre inscription ne sont plus sur cet appareil. Reprenez les premières questions : elles prennent deux minutes.';
+	String get aucuneReponse => 'Les réponses de votre inscription ne sont plus sur cet appareil. Reprenez les premières questions : elles prennent deux minutes.';
 }
 
 // Path: inscription.usage
@@ -41405,7 +41405,7 @@ extension on Traductions {
 			'attente.demandeTitre' => 'Votre demande est en cours',
 			'attente.demandeMessage' => 'La direction lit chaque demande avant d\'ouvrir un compte.',
 			'attente.demandeDetail' => 'Vous n\'avez rien à envoyer. Nous vous écrivons à votre adresse e-mail dès que la direction a répondu.',
-			'attente.demandePour' => ({required Object liste}) => 'Votre demande porte sur : ${liste}.',
+			'attente.demandePour' => ({required Object liste}) => 'Votre demande porte sur : ${liste}.',
 			'attente.actualiserCompte' => 'Actualiser',
 			'attente.lireEtAccepter' => 'Lire et accepter nos conditions',
 			'attente.nosConditions' => 'Nos conditions, à lire et à accepter',
@@ -41479,17 +41479,17 @@ extension on Traductions {
 			'connexion.feuilleAppareil.saisir' => 'Saisir le code',
 			'connexion.feuilleAppareil.fermer' => 'Fermer',
 			'inscription.questionnaire.recapLangue' => 'Langue du cours',
-			'inscription.questionnaire.prenomQuestion' => 'Comment s\'appelle votre enfant ?',
+			'inscription.questionnaire.prenomQuestion' => 'Comment s\'appelle votre enfant ?',
 			'inscription.questionnaire.prenomRaison' => 'Son prénom suffit. Vous pourrez inscrire d\'autres enfants à la fin.',
-			'inscription.questionnaire.ageQuestion' => ({required Object prenom}) => 'Quel âge a ${prenom} ?',
+			'inscription.questionnaire.ageQuestion' => ({required Object prenom}) => 'Quel âge a ${prenom} ?',
 			'inscription.questionnaire.ans' => ({required Object n}) => '${n} ans',
 			'inscription.questionnaire.adulte' => '18 ans ou plus',
-			'inscription.questionnaire.adulteDetail' => 'À partir de 18 ans, chacun s\'inscrit lui-même, avec « Je m\'inscris pour moi ».',
+			'inscription.questionnaire.adulteDetail' => 'À partir de 18 ans, chacun s\'inscrit lui-même, avec « Je m\'inscris pour moi ».',
 			'inscription.questionnaire.genreQuestion' => ({required Object prenom}) => '${prenom} est…',
 			'inscription.questionnaire.garcon' => 'Un garçon',
 			'inscription.questionnaire.fille' => 'Une fille',
 			'inscription.questionnaire.genreRaison' => 'L\'académie en tient compte pour former les classes.',
-			'inscription.questionnaire.niveauQuestionMoi' => 'Où en êtes-vous aujourd\'hui ?',
+			'inscription.questionnaire.niveauQuestionMoi' => 'Où en êtes-vous aujourd\'hui ?',
 			'inscription.questionnaire.etapeCourte' => ({required Object n, required Object total}) => '${n} sur ${total}',
 			'inscription.questionnaire.recapTitre' => 'Voici ce que nous avons compris',
 			'inscription.questionnaire.recapApprenants' => 'Qui apprend',
@@ -41498,7 +41498,7 @@ extension on Traductions {
 			'inscription.questionnaire.ajouterProfil' => 'Ajouter un autre profil élève',
 			'inscription.questionnaire.envoyer' => 'Envoyer ma demande',
 			'inscription.questionnaire.dejaUnCompte' => 'J\'ai déjà un compte',
-			'inscription.questionnaire.aucuneReponse' => 'Les réponses de votre inscription ne sont plus sur cet appareil. Reprenez les premières questions : elles prennent deux minutes.',
+			'inscription.questionnaire.aucuneReponse' => 'Les réponses de votre inscription ne sont plus sur cet appareil. Reprenez les premières questions : elles prennent deux minutes.',
 			'inscription.titre' => 'Créer votre compte',
 			'inscription.etapeSur' => ({required Object n, required Object total}) => 'Étape ${n} sur ${total}',
 			'inscription.tempsRestant' => ({required Object minutes}) => 'Environ ${minutes} min',
