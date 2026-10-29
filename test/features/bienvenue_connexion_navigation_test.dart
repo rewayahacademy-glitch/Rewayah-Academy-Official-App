@@ -124,6 +124,36 @@ void main() {
         );
       },
     );
+
+    testWidgets(
+      'une URL de retour avec error_code=signup_disabled reste sur la '
+      'connexion et dit que les inscriptions sont fermees',
+      (WidgetTester tester) async {
+        final FauxServiceAuth auth = FauxServiceAuth();
+        await tester.pumpWidget(
+          hoteRoutant(
+            depart: Routes.connexion,
+            routes: <RouteBase>[
+              GoRoute(
+                path: Routes.connexion,
+                builder: (BuildContext context, GoRouterState state) =>
+                    ConnexionPage(
+                      urlRetour: Uri.parse(
+                        'https://app.test/connexion#error=access_denied'
+                        '&error_code=signup_disabled',
+                      ),
+                    ),
+              ),
+            ],
+            surcharges: <Override>[serviceAuthProvider.overrideWithValue(auth)],
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.byType(RecuperationPage), findsNothing);
+        expect(find.text(t.connexion.inscriptionFermee), findsOneWidget);
+      },
+    );
   });
 
   group('LA-1 : « Renvoyer le lien »', () {
@@ -435,6 +465,35 @@ void main() {
         IssueEnvoiLien.horsLigne,
       );
       expect(issueEchecEnvoi(StateError('autre')), IssueEnvoiLien.erreur);
+    });
+
+    test('inscriptions fermees : lien par courriel et retour de Google', () {
+      expect(
+        issueEchecEnvoi(
+          const AuthException(
+            'Signups not allowed for otp',
+            statusCode: '422',
+            code: 'otp_disabled',
+          ),
+        ),
+        IssueEnvoiLien.inscriptionFermee,
+      );
+      expect(
+        inscriptionFermeeDepuisUrlRetour(
+          Uri.parse(
+            'https://app.rewayahacademy.com/#error=access_denied'
+            '&error_code=signup_disabled'
+            '&error_description=Signups+not+allowed+for+this+instance',
+          ),
+        ),
+        isTrue,
+      );
+      expect(
+        inscriptionFermeeDepuisUrlRetour(
+          Uri.parse('https://app.rewayahacademy.com/#error_code=otp_expired'),
+        ),
+        isFalse,
+      );
     });
   });
 }

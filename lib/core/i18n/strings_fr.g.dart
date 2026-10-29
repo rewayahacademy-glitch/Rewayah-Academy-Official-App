@@ -805,6 +805,9 @@ class Traductions$connexion$fr {
 	/// fr: 'Un nouveau lien est parti à {courriel}. Utilisez celui du message le plus récent.'
 	String renvoye({required Object courriel}) => 'Un nouveau lien est parti à ${courriel}. Utilisez celui du message le plus récent.';
 
+	/// fr: 'Les inscriptions se font pour l'instant sur invitation. Vous avez proposé votre candidature pour enseigner ? Vous recevrez un courriel personnel de notre part : vous n'avez rien à faire. Vous êtes une famille ? Les inscriptions rouvrent bientôt.'
+	String get inscriptionFermee => 'Les inscriptions se font pour l\'instant sur invitation. Vous avez proposé votre candidature pour enseigner ? Vous recevrez un courriel personnel de notre part : vous n\'avez rien à faire. Vous êtes une famille ? Les inscriptions rouvrent bientôt.';
+
 	/// fr: 'Un lien vient déjà de partir. Attendez un moment avant d'en demander un autre.'
 	String get erreurTropTot => 'Un lien vient déjà de partir. Attendez un moment avant d\'en demander un autre.';
 
@@ -41386,6 +41389,7 @@ extension on Traductions {
 			'connexion.appareilEleve' => 'Connecter l\'appareil d\'un élève',
 			'connexion.renvoyer' => 'Renvoyer le lien',
 			'connexion.renvoye' => ({required Object courriel}) => 'Un nouveau lien est parti à ${courriel}. Utilisez celui du message le plus récent.',
+			'connexion.inscriptionFermee' => 'Les inscriptions se font pour l\'instant sur invitation. Vous avez proposé votre candidature pour enseigner ? Vous recevrez un courriel personnel de notre part : vous n\'avez rien à faire. Vous êtes une famille ? Les inscriptions rouvrent bientôt.',
 			'connexion.erreurTropTot' => 'Un lien vient déjà de partir. Attendez un moment avant d\'en demander un autre.',
 			'connexion.horsLigne' => 'Le lien ne peut pas partir pour l\'instant. Réessayez quand la connexion sera revenue.',
 			'connexion.probleme' => 'Lien expiré ou jamais reçu ?',
@@ -41685,9 +41689,9 @@ extension on Traductions {
 			'kyc.explicationAutre' => 'Une autre pièce délivrée par une administration, qui porte votre photo et votre nom.',
 			'kyc.exempleAutre' => 'un permis de conduire ou une carte consulaire',
 			'kyc.choisirFichier' => 'Choisir la photo',
-			'kyc.fichierChoisi' => 'Photo prête à être envoyée',
 			_ => null,
 		} ?? switch (path) {
+			'kyc.fichierChoisi' => 'Photo prête à être envoyée',
 			'kyc.envoyer' => 'Envoyer ma pièce',
 			'kyc.envoiEnCours' => 'Envoi en cours',
 			'kyc.deposee' => 'Pièce reçue',
@@ -42199,9 +42203,9 @@ extension on Traductions {
 			'recrutement.invitations.nonAutorise' => 'Vous n\'avez pas le droit d\'inviter un enseignant. Adressez-vous à la direction.',
 			'recrutement.invitations.horsLigne' => 'L\'invitation n\'a pas été créée. Réessayez dans un instant.',
 			'recrutement.invitations.erreur' => 'La création de l\'invitation n\'est pas confirmée. Elle existe peut-être : regardez la liste avant de recommencer.',
-			'recrutement.invitations.creee' => ({required Object code}) => 'Invitation créée. Transmettez ce code à l\'enseignant : ${code}',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.invitations.creee' => ({required Object code}) => 'Invitation créée. Transmettez ce code à l\'enseignant : ${code}',
 			'recrutement.invitations.liste' => 'Invitations',
 			'recrutement.invitations.vide' => 'Aucune invitation pour le moment',
 			'recrutement.invitations.videDetail' => 'Invitez un enseignant avec son adresse e-mail : le code apparaît ici.',
@@ -42713,9 +42717,9 @@ extension on Traductions {
 			'recrutement.parcours.q.compteBancaire.court' => 'Compte bancaire',
 			'recrutement.parcours.q.compteBancaire.options.oui.libelle' => 'Oui, j\'ai un compte bancaire',
 			'recrutement.parcours.q.compteBancaire.options.oui.description' => 'Un compte à votre nom, dans une banque.',
-			'recrutement.parcours.q.compteBancaire.options.oui.explication' => 'Le virement pourra être votre moyen de versement, si l\'académie l\'a confirmé dans votre pays.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.q.compteBancaire.options.oui.explication' => 'Le virement pourra être votre moyen de versement, si l\'académie l\'a confirmé dans votre pays.',
 			'recrutement.parcours.q.compteBancaire.options.oui.exemple' => 'un compte ouvert à votre nom dans une banque de votre pays.',
 			'recrutement.parcours.q.compteBancaire.options.non.libelle' => 'Non, je n\'en ai pas',
 			'recrutement.parcours.q.compteBancaire.options.non.description' => 'Vous n\'avez pas de compte bancaire à votre nom.',
@@ -43227,9 +43231,9 @@ extension on Traductions {
 			'admin.candidatures.historique.deA' => ({required Object avant, required Object apres}) => 'De « ${avant} » à « ${apres} »',
 			'admin.candidatures.historique.motif' => ({required Object motif}) => 'Motif : ${motif}',
 			'admin.candidatures.historique.le' => ({required Object date, required Object heure}) => 'Le ${date} à ${heure}',
-			'admin.candidatures.historique.separateur' => ' · ',
 			_ => null,
 		} ?? switch (path) {
+			'admin.candidatures.historique.separateur' => ' · ',
 			'admin.candidatures.gestes.admettre' => 'Admettre en Salle de vérification et d\'entretien',
 			'admin.candidatures.gestes.confirmerMoyen' => 'Confirmer le moyen de versement',
 			'admin.candidatures.gestes.ecarterMoyen' => 'Écarter ce moyen de versement',
@@ -43741,9 +43745,9 @@ extension on Traductions {
 			'admin.groupes.partage.regleJamaisAide' => 'À choisir quand sa famille ne doit pas les voir automatiquement : ils sont masqués tout de suite, le cahier reste conservé.',
 			'admin.groupes.partage.confirmerEleve' => ({required Object prenom}) => 'Modifier le partage pour ${prenom} ?',
 			'admin.groupes.partage.consequenceEleve' => 'Cette règle ne concerne que cet élève. Elle ne change ni la classe, ni les autres élèves.',
-			'admin.groupes.partage.consequenceEleveJamais' => 'Les comptes rendus visibles au titre du partage automatique sont masqués tout de suite pour sa famille. Le cahier et la preuve de séance sont conservés.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.groupes.partage.consequenceEleveJamais' => 'Les comptes rendus visibles au titre du partage automatique sont masqués tout de suite pour sa famille. Le cahier et la preuve de séance sont conservés.',
 			'admin.groupes.partage.comptesRendus' => 'Voir les comptes rendus',
 			'admin.groupes.partage.comptesRendusTitre' => ({required Object dePrenom}) => 'Comptes rendus ${dePrenom}',
 			'admin.groupes.partage.aucunCompteRendu' => 'Aucun compte rendu n\'existe encore pour cet élève.',
@@ -44255,9 +44259,9 @@ extension on Traductions {
 			'admin.programmes.champDescription' => 'Description (optionnelle)',
 			'admin.programmes.champMotif' => 'Motif',
 			'admin.programmes.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
-			'admin.programmes.journalisation' => 'Chaque création, modification, suppression et publication est inscrite au journal d\'audit.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.programmes.journalisation' => 'Chaque création, modification, suppression et publication est inscrite au journal d\'audit.',
 			'admin.programmes.niveauxSur' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} niveau', other: '${nombre} niveaux', ), 
 			'admin.programmes.publierSansNiveau' => 'Ajoutez au moins un niveau pour pouvoir publier cette version.',
 			'admin.journal.titre' => 'Journal',
@@ -44769,9 +44773,9 @@ extension on Traductions {
 			'admin.finance.pol.apercuFamille' => 'Exemple de foyer',
 			'admin.finance.pol.apercuFamilleDetail' => 'La mensualité de chaque enfant payant, dans l\'ordre des rangs, puis le total du foyer.',
 			'admin.finance.pol.apercuEnfantsChoix' => 'Nombre d\'enfants payants',
-			'admin.finance.pol.apercuEnfants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} enfant', other: '${n} enfants', ), 
 			_ => null,
 		} ?? switch (path) {
+			'admin.finance.pol.apercuEnfants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} enfant', other: '${n} enfants', ), 
 			'admin.finance.pol.apercuEnfant' => ({required Object rang}) => 'Enfant ${rang}',
 			'admin.finance.pol.apercuPrixNormal' => 'Prix normal, aucune remise',
 			'admin.finance.pol.apercuRemise' => ({required Object montant}) => 'Remise de rang : ${montant}',
@@ -45283,9 +45287,9 @@ extension on Traductions {
 			'admin.bibliotheque.publication.intro' => 'Chaque point est contrôlé par le serveur. La publication fige la version.',
 			'admin.bibliotheque.publication.apercuTitre' => 'Source et fichier',
 			'admin.bibliotheque.publication.apercuAucunFichier' => 'Aucun fichier n\'est déposé : le rendu ne peut pas être contrôlé.',
-			'admin.bibliotheque.publication.apercuFichier' => 'Fichier déposé. Son rendu se contrôle dans le lecteur de son type ; le serveur dit ci-dessous s\'il a été testé.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.bibliotheque.publication.apercuFichier' => 'Fichier déposé. Son rendu se contrôle dans le lecteur de son type ; le serveur dit ci-dessous s\'il a été testé.',
 			'admin.bibliotheque.publication.empreinte' => ({required Object valeur}) => 'Empreinte ${valeur}',
 			'admin.bibliotheque.publication.droitsTitre' => 'Revue des droits',
 			'admin.bibliotheque.publication.confirmerControle' => 'J\'ai contrôlé la source et la preuve de cette version.',
@@ -45797,9 +45801,9 @@ extension on Traductions {
 			'historique.dateLongue' => ({required Object jourSemaine, required Object jour, required Object mois, required Object annee}) => '${jourSemaine} ${jour} ${mois} ${annee}',
 			'historique.plage' => ({required Object debut, required Object fin}) => '${debut} - ${fin}',
 			'historique.duree.secondes' => ({required Object s}) => '${s} s',
-			'historique.duree.minutes' => ({required Object m}) => '${m} min',
 			_ => null,
 		} ?? switch (path) {
+			'historique.duree.minutes' => ({required Object m}) => '${m} min',
 			'historique.duree.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
 			'historique.duree.heures' => ({required Object h}) => '${h} h',
 			'historique.duree.heuresMinutes' => ({required Object h, required Object m}) => '${h} h ${m}',
@@ -46311,9 +46315,9 @@ extension on Traductions {
 			'classe.pageCatalogue.resultat.refusePhrase' => ({required Object prenom}) => 'Aucune place n\'a été réservée pour ${prenom}. Vous pouvez choisir une autre classe.',
 			'classe.pageCatalogue.resultat.autresClasses' => 'Voir les autres classes',
 			'classe.pageCatalogue.resultat.retourAccueil' => 'Retour à l\'accueil',
-			'classe.pageCatalogue.places' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} place restante', other: '${nombre} places restantes', ), 
 			_ => null,
 		} ?? switch (path) {
+			'classe.pageCatalogue.places' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} place restante', other: '${nombre} places restantes', ), 
 			'classe.cartes.titre' => 'Cartes de la classe',
 			'classe.cartes.contexteEnseignant' => 'Touchez une carte pour la modifier. Les élèves et leurs familles la voient aussitôt.',
 			'classe.cartes.modificationPlusTard' => 'Les cartes pourront être modifiées quand la connexion reviendra.',
@@ -46825,9 +46829,9 @@ extension on Traductions {
 			'enseignant.creneaux.jours' => 'Jours',
 			'enseignant.creneaux.heures' => 'Heures',
 			'enseignant.creneaux.menuDe' => 'Heure de début',
-			'enseignant.creneaux.menuA' => 'Heure de fin',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.creneaux.menuA' => 'Heure de fin',
 			'enseignant.creneaux.manqueJour' => 'Aucun jour choisi. Touchez au moins un jour pour enregistrer la plage.',
 			'enseignant.creneaux.fusion' => ({required Object jour, required Object de, required Object a}) => '${jour} : cette plage chevauche ou touche une plage déjà posée. Elles seront réunies en une seule, ${de} ${a}.',
 			'enseignant.creneaux.dejaPosee' => ({required Object jour, required Object de, required Object a}) => '${jour} : ces heures sont déjà posées, dans la plage ${de} ${a}. Rien ne change pour ce jour.',
@@ -47339,9 +47343,9 @@ extension on Traductions {
 			'tc.coran.navigation.indice' => 'Par exemple 18, Al-Kahf, juz 15, 2:255',
 			'tc.coran.navigation.limite' => 'La recherche porte sur les numéros de page, les références et les noms de sourate. La recherche dans le texte du Coran n\'est pas encore disponible.',
 			'tc.coran.navigation.aucunResultat' => 'Aucune référence trouvée',
-			'tc.coran.navigation.aucunResultatDetail' => 'Essayez un numéro de page, un nom de sourate, ou une référence comme 2:255.',
 			_ => null,
 		} ?? switch (path) {
+			'tc.coran.navigation.aucunResultatDetail' => 'Essayez un numéro de page, un nom de sourate, ou une référence comme 2:255.',
 			'tc.coran.navigation.pageNumero' => ({required Object page}) => 'Page ${page}',
 			'tc.coran.reprise.groupe' => 'Reprendre le cours',
 			'tc.coran.reprise.groupeDetail' => ({required Object page}) => 'La Classe en était page ${page}',
@@ -47853,9 +47857,9 @@ extension on Traductions {
 			'adulte.invitation.verifierTitre' => 'Vérifier et envoyer',
 			'adulte.invitation.verifierPhrase' => 'Relisez ces informations. L\'invitation partira à cette adresse.',
 			'adulte.invitation.nonRenseigne' => 'Non renseigné',
-			'adulte.invitation.modifier' => 'Modifier',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.invitation.modifier' => 'Modifier',
 			'adulte.invitation.envoyer' => 'Envoyer l\'invitation',
 			'adulte.invitation.horsLigne' => 'Rien n\'est envoyé. Vous pourrez envoyer l\'invitation vous-même quand la connexion sera revenue.',
 			'adulte.invitation.echecTitre' => 'L\'envoi n\'a pas été confirmé.',
@@ -48367,9 +48371,9 @@ extension on Traductions {
 			'com.socle.composants.pieceJointe.retirer' => 'Retirer',
 			'com.socle.composants.pieceJointe.retirerLecteur' => ({required Object nom}) => 'Retirer ${nom}',
 			'com.socle.composants.pieceJointe.tailleOctets' => ({required Object taille}) => '${taille} octets',
-			'com.socle.composants.pieceJointe.tailleKo' => ({required Object taille}) => '${taille} Ko',
 			_ => null,
 		} ?? switch (path) {
+			'com.socle.composants.pieceJointe.tailleKo' => ({required Object taille}) => '${taille} Ko',
 			'com.socle.composants.pieceJointe.tailleMo' => ({required Object taille}) => '${taille} Mo',
 			'com.socle.composants.pieceJointe.autorisee' => 'Prêt à envoyer',
 			'com.socle.composants.pieceJointe.tropVolumineuse' => 'Fichier trop lourd',
@@ -48881,9 +48885,9 @@ extension on Traductions {
 			'com.studio.visibilite.priveDetail' => 'Canal privé, ouvert à ses seuls membres. Vous en faites partie.',
 			'com.studio.canal.membresUn' => '1 membre',
 			'com.studio.canal.membres' => ({required Object nombre}) => '${nombre} membres',
-			'com.studio.canal.aide' => ({required Object nom}) => 'Écrire dans ${nom}',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.canal.aide' => ({required Object nom}) => 'Écrire dans ${nom}',
 			'com.studio.canal.lectureSeule' => 'Vous pouvez lire ce canal. L\'écriture n\'y est pas ouverte pour vous.',
 			'com.studio.canal.aucunMessageTitre' => 'Aucun message pour le moment',
 			'com.studio.canal.aucunMessage' => 'Les messages de ce canal s\'afficheront ici dès leur publication.',
@@ -49395,9 +49399,9 @@ extension on Traductions {
 			'comptable.aujourdhui.paiementsAEffectuer' => 'Paiements à effectuer',
 			'comptable.aujourdhui.paiementsAEffectuerDetail' => 'Chaque paiement se vérifie dans sa liste avant d\'être payé.',
 			'comptable.aujourdhui.paiementsVide' => 'Aucun paiement à effectuer.',
-			'comptable.aujourdhui.echeancesVide' => 'Aucune échéance proche.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.aujourdhui.echeancesVide' => 'Aucune échéance proche.',
 			'comptable.aujourdhui.encaissementsVide' => 'Aucun encaissement récent.',
 			'comptable.aujourdhui.activiteVide' => 'Aucune activité récente.',
 			'comptable.aujourdhui.prestatairesVide' => 'Aucun prestataire activé.',
@@ -49909,9 +49913,9 @@ extension on Traductions {
 			'comptable.contractuels.champNomExterne' => 'Nom du bénéficiaire externe',
 			'comptable.contractuels.changerEcheance' => 'Changer l\'échéance',
 			'comptable.contractuels.deviseDe' => ({required Object devise}) => 'Devise : ${devise}',
-			'comptable.contractuels.champObjet' => 'Objet de l\'obligation',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.contractuels.champObjet' => 'Objet de l\'obligation',
 			'comptable.contractuels.aideObjet' => 'Par exemple : Facture #024',
 			'comptable.contractuels.champRefJustificatif' => 'Référence du justificatif (facultatif)',
 			'comptable.contractuels.champMontantSaisi' => 'Montant',
@@ -50423,9 +50427,9 @@ extension on Traductions {
 			'juridique.confidentialite.s4.blocs.2' => 'Un contrôleur qualité peut assister aux séances. Les accès sensibles sont inscrits dans un journal.',
 			'juridique.confidentialite.s5.titre' => '5. Séances en direct et enregistrement',
 			'juridique.confidentialite.s5.blocs.0' => 'La visio passe par un service spécialisé. L\'accès à une séance est donné par le serveur, pour cette séance seulement et pour peu de temps.',
-			'juridique.confidentialite.s5.blocs.1' => 'Aujourd\'hui, l\'application n\'enregistre pas les cours. Si l\'enregistrement revient, nous vous dirons avant pourquoi, combien de temps il est gardé et qui peut y accéder, et nous demanderons votre accord.',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.confidentialite.s5.blocs.1' => 'Aujourd\'hui, l\'application n\'enregistre pas les cours. Si l\'enregistrement revient, nous vous dirons avant pourquoi, combien de temps il est gardé et qui peut y accéder, et nous demanderons votre accord.',
 			'juridique.confidentialite.s5.blocs.2' => 'Une mention rappelle dans la salle qu\'une visite de contrôle est possible.',
 			'juridique.confidentialite.s6.titre' => '6. Où sont vos informations',
 			'juridique.confidentialite.s6.blocs.0' => 'Nous utilisons un hébergeur de pages web, une base de données avec la connexion des comptes, un service de visio, un stockage privé pour les fichiers, un prestataire de paiement et un service de rapports d\'erreurs. Ils traitent vos informations pour nous, pour ces seules raisons.',

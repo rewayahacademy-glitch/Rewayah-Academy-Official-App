@@ -11,7 +11,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 
 import '../capacites/capacite_indisponible.dart';
+import '../fraicheur/generation_veille.dart';
 import '../tc_groupe/group_home_vm.dart';
+import '../theme/app_delais.dart';
 
 /// Ce que l'Accueil du Mode Accessibilite lit.
 @immutable
@@ -68,10 +70,22 @@ final Provider<PortAccueilAccessibilite> portAccueilAccessibiliteProvider =
 /// Aucune retentative automatique (`retry` nul) : Riverpod 3 relancerait la
 /// lecture en echec, et une capacite absente ne revient pas en insistant ;
 /// seule la personne relance, par « Reessayer » (`BlocAsynchrone`).
+///
+/// Relue a chaque signal de la veille temps reel sur les classes ou les
+/// seances (`veille_fraicheur.dart`, par [generationVeilleProvider]) et, en
+/// secours, toutes les [AppDelais.relectureAccueil] par l'ecran qui la montre
+/// (appareil de Hakim, 27/10/2026 : une seance creee apres l'ouverture de
+/// l'ecran n'y apparaissait jamais).
 final FutureProvider<DonneesAccueilAccessibilite>
 donneesAccueilAccessibiliteProvider =
     FutureProvider<DonneesAccueilAccessibilite>(
-      (Ref ref) => ref.watch(portAccueilAccessibiliteProvider).lire(),
-      dependencies: <ProviderOrFamily>[portAccueilAccessibiliteProvider],
+      (Ref ref) {
+        ref.watch(generationVeilleProvider);
+        return ref.watch(portAccueilAccessibiliteProvider).lire();
+      },
+      dependencies: <ProviderOrFamily>[
+        portAccueilAccessibiliteProvider,
+        generationVeilleProvider,
+      ],
       retry: (int _, Object _) => null,
     );

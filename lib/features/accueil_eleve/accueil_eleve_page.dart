@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/signaler_manque.dart';
 import '../../core/capacites/port_acces_foyer.dart';
+import '../../core/fraicheur/relectures_accueil.dart';
 import '../../core/i18n/cle_audio.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -20,6 +21,7 @@ import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_color_pair.dart';
+import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
@@ -241,65 +243,79 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
     final bool enChargement =
         !echec && seances.isLoading && seances.value == null;
 
-    return PageShell(
-      child: enChargement
-          ? const Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Skeleton.tuileBento(hauteur: 160),
-                Ecart.vXl,
-                Skeleton.tuileBento(hauteur: 156),
-              ],
-            )
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                // DASH-ELV-ERR (DASH_STRATEGIE D10, D11) : une lecture en
-                // echec n'est jamais « pas de cours aujourd'hui ». Le bloc dit
-                // que les cours manquent et propose de relire ; le Coran, lu
-                // ailleurs, reste en place. Une erreur apres une valeur deja
-                // lue garde cette valeur (DASH-ELV-ERR-b, m3) : l'eleve voit
-                // encore son prochain cours plutot qu'un message. Hors ligne,
-                // le bloc dit la cause par sa nature (K-59, m2).
-                if (accesFerme) ...<Widget>[
-                  BandeauAccesFerme(acces: acces?.value),
-                  Ecart.vLg,
+    // Appareil de Hakim (27/10/2026) : la veille temps reel reste la source ;
+    // en secours, une relecture au retour dans l'application, puis une seule
+    // programmee avant la seance connue et a son debut (aucune minuterie
+    // fixe, decision du directeur du 29/10/2026).
+    return RelecturesAccueil(
+      relire: () => ref.invalidate(seancesProvider),
+      instants: prochain == null
+          ? const <DateTime>[]
+          : <DateTime>[
+              prochain.debut.subtract(AppDelais.avantSeanceRelecture),
+              prochain.debut,
+            ],
+      horloge: widget.horloge,
+      child: PageShell(
+        child: enChargement
+            ? const Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Skeleton.tuileBento(hauteur: 160),
+                  Ecart.vXl,
+                  Skeleton.tuileBento(hauteur: 156),
                 ],
-                if (echec)
-                  EtatSysteme(
-                    key: const ValueKey<String>('accueil-eleve-erreur'),
-                    nature: horsLigne
-                        ? NatureEtat.horsLigne
-                        : NatureEtat.echecServeur,
-                    // Hors ligne se dit une fois (EA-HL-DOUBLE-1d) : le
-                    // « wifi barre » est celui du bandeau de `PageShell` ;
-                    // sous lui, le bloc prend l'attente (sablier).
-                    icone: horsLigne ? AppIcons.attente : null,
-                    // Le titre commun hors ligne vouvoie ; l'accueil eleve
-                    // tutoie.
-                    titre: horsLigne
-                        ? t.eleve.accueil.erreurCoursHorsLigneTitre
-                        : null,
-                    phrase: t.eleve.accueil.erreurCours,
-                    onAction: () => ref.invalidate(seancesProvider),
-                    actionEnCours: seances.isLoading,
-                  )
-                else
-                  _BlocPrincipal(
-                    etat: etat,
-                    prochain: prochain,
-                    interruptions: interruptions,
-                    maintenant: _maintenant,
-                    accesFerme: accesFerme,
-                    accesEnLecture: accesEnLecture,
-                  ),
-                Ecart.vXl,
-                const _BlocCoran(),
-                // BRAND-ORN-1 : la signature de la marque, une fois, au pied.
-                Ecart.vXxl,
-                const Center(child: OrnementMarque.signature()),
-              ],
-            ),
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  // DASH-ELV-ERR (DASH_STRATEGIE D10, D11) : une lecture en
+                  // echec n'est jamais « pas de cours aujourd'hui ». Le bloc dit
+                  // que les cours manquent et propose de relire ; le Coran, lu
+                  // ailleurs, reste en place. Une erreur apres une valeur deja
+                  // lue garde cette valeur (DASH-ELV-ERR-b, m3) : l'eleve voit
+                  // encore son prochain cours plutot qu'un message. Hors ligne,
+                  // le bloc dit la cause par sa nature (K-59, m2).
+                  if (accesFerme) ...<Widget>[
+                    BandeauAccesFerme(acces: acces?.value),
+                    Ecart.vLg,
+                  ],
+                  if (echec)
+                    EtatSysteme(
+                      key: const ValueKey<String>('accueil-eleve-erreur'),
+                      nature: horsLigne
+                          ? NatureEtat.horsLigne
+                          : NatureEtat.echecServeur,
+                      // Hors ligne se dit une fois (EA-HL-DOUBLE-1d) : le
+                      // « wifi barre » est celui du bandeau de `PageShell` ;
+                      // sous lui, le bloc prend l'attente (sablier).
+                      icone: horsLigne ? AppIcons.attente : null,
+                      // Le titre commun hors ligne vouvoie ; l'accueil eleve
+                      // tutoie.
+                      titre: horsLigne
+                          ? t.eleve.accueil.erreurCoursHorsLigneTitre
+                          : null,
+                      phrase: t.eleve.accueil.erreurCours,
+                      onAction: () => ref.invalidate(seancesProvider),
+                      actionEnCours: seances.isLoading,
+                    )
+                  else
+                    _BlocPrincipal(
+                      etat: etat,
+                      prochain: prochain,
+                      interruptions: interruptions,
+                      maintenant: _maintenant,
+                      accesFerme: accesFerme,
+                      accesEnLecture: accesEnLecture,
+                    ),
+                  Ecart.vXl,
+                  const _BlocCoran(),
+                  // BRAND-ORN-1 : la signature de la marque, une fois, au pied.
+                  Ecart.vXxl,
+                  const Center(child: OrnementMarque.signature()),
+                ],
+              ),
+      ),
     );
   }
 }

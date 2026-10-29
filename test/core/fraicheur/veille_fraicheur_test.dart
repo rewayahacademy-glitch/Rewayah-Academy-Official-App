@@ -13,6 +13,7 @@ import 'package:flutter/material.dart' show DateTimeRange;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/accessibilite/port_accueil_accessibilite.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/fraicheur/port_veille.dart';
 import 'package:rewayah_academy/core/fraicheur/veille_fraicheur.dart';
@@ -125,12 +126,28 @@ class _SeancesComptees implements PortSeancesFamille {
       const Stream<SeanceFamille>.empty();
 }
 
+/// L'accueil de l'eleve en Interface guidee, qui compte ses lectures.
+class _AccueilCompte implements PortAccueilAccessibilite {
+  int lectures = 0;
+
+  @override
+  Future<DonneesAccueilAccessibilite> lire() async {
+    lectures++;
+    return const DonneesAccueilAccessibilite(
+      prenom: 'Fixture',
+      tutoiement: true,
+      espace: null,
+    );
+  }
+}
+
 void main() {
   late StreamController<SessionState> session;
   late _VeillePilotee veille;
   late _ReseauPilote reseau;
   late _ClassesComptees classes;
   late _SeancesComptees seances;
+  late _AccueilCompte accueil;
   late ProviderContainer conteneur;
 
   Future<void> connecter(String? profil) async {
@@ -153,6 +170,7 @@ void main() {
     reseau = _ReseauPilote();
     classes = _ClassesComptees();
     seances = _SeancesComptees();
+    accueil = _AccueilCompte();
     conteneur = ProviderContainer(
       overrides: <Override>[
         sourceSessionProvider.overrideWithValue(_SourcePilotee(session)),
@@ -160,6 +178,7 @@ void main() {
         serviceReseauProvider.overrideWithValue(reseau),
         portClassesFoyerProvider.overrideWithValue(classes),
         portSeancesFamilleProvider.overrideWithValue(seances),
+        portAccueilAccessibiliteProvider.overrideWithValue(accueil),
       ],
     );
     // Comme dans l'application : la session, la veille et les lectures des
@@ -168,7 +187,8 @@ void main() {
       ..listen(sessionProvider, (_, _) {})
       ..listen(veilleFraicheurProvider, (_, _) {})
       ..listen(classesMembreProvider('e1'), (_, _) {})
-      ..listen(prochaineSeanceProvider('e1'), (_, _) {});
+      ..listen(prochaineSeanceProvider('e1'), (_, _) {})
+      ..listen(donneesAccueilAccessibiliteProvider, (_, _) {});
   });
 
   tearDown(() async {
@@ -226,6 +246,31 @@ void main() {
       expect(classes.lectures, classesAvant);
     },
   );
+
+  // Appareil appaire (29/10/2026) : l'accueil de l'eleve en Interface guidee
+  // suit lui aussi les classes et les seances.
+  test(
+    'un changement des seances ou des classes relit l accueil guide',
+    () async {
+      await connecter('p1');
+      final int avant = accueil.lectures;
+      await signaler(const ChangementTable('sessions'));
+      expect(accueil.lectures, avant + 1);
+      await signaler(const ChangementTable('groupe_membres'));
+      expect(accueil.lectures, avant + 2);
+    },
+  );
+
+  // 29/10/2026 : une erreur du canal temps reel arrive a la veille (qui la
+  // dit a la supervision quand elle est demarree) sans l'arreter.
+  test('une erreur du canal ne coupe pas la veille', () async {
+    await connecter('p1');
+    veille.ecoutes.last.addError(const ErreurCanalVeille('channelError'));
+    await pumpEventQueue();
+    final int seancesAvant = seances.lectures;
+    await signaler(const ChangementTable('sessions'));
+    expect(seances.lectures, seancesAvant + 1);
+  });
 
   test('une table inconnue ne fait rien relire', () async {
     await connecter('p1');

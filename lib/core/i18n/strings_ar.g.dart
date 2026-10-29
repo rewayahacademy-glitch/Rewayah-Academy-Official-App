@@ -1012,6 +1012,7 @@ class _Traductions$connexion$ar extends Traductions$connexion$fr {
 	@override String get appareilEleve => 'ربط جهاز طالب';
 	@override String get renvoyer => 'إعادة إرسال الرابط';
 	@override String renvoye({required Object courriel}) => 'أُرسل رابط جديد إلى ⁨${courriel}⁩. استخدم رابط أحدث رسالة.';
+	@override String get inscriptionFermee => 'التسجيل يتم حاليًا بدعوة فقط. هل قدّمتم ترشحكم للتدريس؟ ستصلكم منا رسالة شخصية عبر البريد الإلكتروني: لا شيء مطلوب منكم. هل أنتم أسرة؟ يُعاد فتح التسجيل قريبًا.';
 	@override String get erreurTropTot => 'أُرسل رابط للتو. انتظر قليلًا قبل طلب رابط آخر.';
 	@override String get horsLigne => 'أنت غير متصل: لا يمكن إرسال الرابط الآن.';
 	@override String get probleme => 'انتهت صلاحية الرابط أو لم يصل؟';
@@ -25816,6 +25817,7 @@ extension on TraductionsAr {
 			'connexion.appareilEleve' => 'ربط جهاز طالب',
 			'connexion.renvoyer' => 'إعادة إرسال الرابط',
 			'connexion.renvoye' => ({required Object courriel}) => 'أُرسل رابط جديد إلى ⁨${courriel}⁩. استخدم رابط أحدث رسالة.',
+			'connexion.inscriptionFermee' => 'التسجيل يتم حاليًا بدعوة فقط. هل قدّمتم ترشحكم للتدريس؟ ستصلكم منا رسالة شخصية عبر البريد الإلكتروني: لا شيء مطلوب منكم. هل أنتم أسرة؟ يُعاد فتح التسجيل قريبًا.',
 			'connexion.erreurTropTot' => 'أُرسل رابط للتو. انتظر قليلًا قبل طلب رابط آخر.',
 			'connexion.horsLigne' => 'أنت غير متصل: لا يمكن إرسال الرابط الآن.',
 			'connexion.probleme' => 'انتهت صلاحية الرابط أو لم يصل؟',
@@ -25873,9 +25875,9 @@ extension on TraductionsAr {
 			'attente.accesEnPreparation' => 'فتح حسابك ليس تلقائيًا بعد.',
 			'attente.aucunDocument' => 'ليس عليك إرسال أي وثيقة.',
 			'attente.accesContact' => 'يمكن للأكاديمية فتحه لك: تواصل معها.',
-			'attente.actualiserCompte' => 'تحديث',
 			_ => null,
 		} ?? switch (path) {
+			'attente.actualiserCompte' => 'تحديث',
 			'attente.lireEtAccepter' => 'قراءة شروطنا وقبولها',
 			'attente.nosConditions' => 'يلزم قراءة الشروط والموافقة عليها',
 			'attente.etatAAccepter' => 'للقبول',
@@ -26387,9 +26389,9 @@ extension on TraductionsAr {
 			'dossiers.file.zoneUtc' => 'UTC',
 			'dossiers.file.suivantAnnonce' => ({required Object nom}) => 'الملف التالي: ⁨${nom}⁩',
 			'dossiers.detail.titreDe' => ({required Object nom}) => 'ملف ⁨${nom}⁩',
-			'dossiers.detail.titreElide' => ({required Object nom}) => 'ملف ⁨${nom}⁩',
 			_ => null,
 		} ?? switch (path) {
+			'dossiers.detail.titreElide' => ({required Object nom}) => 'ملف ⁨${nom}⁩',
 			'dossiers.visionneuse.chargement' => 'جارٍ تحميل الوثيقة…',
 			'dossiers.visionneuse.erreur' => 'لا يمكن عرض الوثيقة.',
 			'dossiers.visionneuse.expire' => 'انتهى الوصول إلى هذه الوثيقة.',
@@ -26901,9 +26903,9 @@ extension on TraductionsAr {
 			'suiviDemandes.prochaine.eleveIntegre' => 'الخطوة التالية: بدء الدروس',
 			'suiviDemandes.debutCours' => 'بدء الدروس',
 			'suiviDemandes.debutValeur' => ({required Object date, required Object heure, required Object deVille}) => '⁨${date}⁩ في ⁨${heure}⁩، بتوقيت ⁨${deVille}⁩',
-			'suiviDemandes.debutAFixer' => 'سيظهر موعد الدرس الأول هنا فور تحديده.',
 			_ => null,
 		} ?? switch (path) {
+			'suiviDemandes.debutAFixer' => 'سيظهر موعد الدرس الأول هنا فور تحديده.',
 			'suiviDemandes.enseignant' => 'المعلم',
 			'suiviDemandes.personnaliseNotice' => 'لن يُفتح هذا الموعد إلا إذا اختاره طلاب آخرون واكتمل الفصل.',
 			'suiviDemandes.jalon.apres' => ({required Object date, required Object heure, required Object duree}) => '⁨${date}⁩ في ⁨${heure}⁩، ⁨${duree}⁩',
@@ -27415,9 +27417,9 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.classesSouhaitees.explication' => 'الفصل طلاب يلتقون ثلاث مرات في الأسبوع، في الأيام نفسها وفي الساعة نفسها، مع المعلّم نفسه. هذه رغبة منك: الأكاديمية هي التي تقرّر الفصول التي تُسندها إليك.',
 			'recrutement.parcours.q.classesSouhaitees.court' => 'عدد الفصول',
 			'recrutement.parcours.q.debutPossible.titre' => 'متى تستطيع البدء؟',
-			'recrutement.parcours.q.debutPossible.explication' => 'يساعد هذا التاريخ الإدارة على معرفة متى تقترح عليك فصلًا.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.q.debutPossible.explication' => 'يساعد هذا التاريخ الإدارة على معرفة متى تقترح عليك فصلًا.',
 			'recrutement.parcours.q.debutPossible.court' => 'تاريخ البدء',
 			'recrutement.parcours.q.debutPossible.options.immediat.libelle' => 'من الآن',
 			'recrutement.parcours.q.debutPossible.options.immediat.description' => 'تستطيع البدء فور إسناد فصل إليك.',
@@ -27929,9 +27931,9 @@ extension on TraductionsAr {
 			'avis.admin.actions.retirer' => 'سحب',
 			'avis.admin.publier.question' => ({required Object deNom}) => 'هل تنشر رأي ⁨${deNom}⁩؟',
 			'avis.admin.publier.consequence' => 'سيظهر الرأي والاسم الظاهر والبلد والتاريخ على موقع Rewayah Academy عند التحديث التالي للموقع. لا يتغير النص.',
-			'avis.admin.publier.action' => 'نشر الرأي',
 			_ => null,
 		} ?? switch (path) {
+			'avis.admin.publier.action' => 'نشر الرأي',
 			'avis.admin.publier.rester' => 'عدم تغيير شيء',
 			'avis.admin.refuser.titre' => ({required Object deNom}) => 'رفض رأي ⁨${deNom}⁩',
 			'avis.admin.refuser.intro' => 'اختر سبب الرفض. الرأي الناقد المحترم يُنشر.',

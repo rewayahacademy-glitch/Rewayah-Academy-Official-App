@@ -154,9 +154,14 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
   @override
   void initState() {
     super.initState();
-    final MotifRecuperation? motif = motifDepuisUrlRetour(
-      widget.urlRetour ?? Uri.base,
-    );
+    final Uri retour = widget.urlRetour ?? Uri.base;
+    // Google refuse un nouveau compte quand les inscriptions sont fermees :
+    // la phrase se dit ici, la recuperation d'acces n'y peut rien.
+    if (inscriptionFermeeDepuisUrlRetour(retour)) {
+      _erreur = t.connexion.inscriptionFermee;
+      return;
+    }
+    final MotifRecuperation? motif = motifDepuisUrlRetour(retour);
     if (motif != null) {
       WidgetsBinding.instance.addPostFrameCallback((Duration _) {
         if (mounted) {
@@ -295,7 +300,12 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
       // `invalid_client` : le bouton Google etait casse pour tout le monde, et
       // la seule phrase capable de le dire etait avalee ici.
       if (mounted) {
-        setState(() => _erreur = erreur.message);
+        setState(
+          () => _erreur =
+              estInscriptionFermee(code: erreur.code, message: erreur.message)
+              ? t.connexion.inscriptionFermee
+              : erreur.message,
+        );
       }
     } on Object {
       if (mounted) {
