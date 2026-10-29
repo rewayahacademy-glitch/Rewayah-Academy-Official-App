@@ -5,14 +5,11 @@ Branche `claude/admiring-brown-r6ai72-admission-b`, depuis `origin/main` (027854
 
 ## Ce qui est bloqué, inconnu ou non prouvé (à lire d'abord)
 
-1. **Le cœur du lot est côté serveur, zone interdite aux agents.** La migration et le modèle d'e-mail sont écrits ci-dessous, mot pour mot, mais **ni appliqués, ni rejoués sur un Postgres nu, ni testés sur staging**. Rien de ce lot n'est vrai en production tant qu'ils ne sont pas posés.
+1. **Le cœur du lot est côté serveur.** Correction du 29/10 : le garde-fou n'interdit que `.github/`, `vercel.json`, `pubspec.yaml` et ses propres fichiers ; la migration (`supabase/migrations/20261029120000_admission_lot_b_famille_en_attente.sql`), son scénario (`supabase/tests/scenarios_admission_lot_b.sql`), les scénarios mis à jour et le modèle d'e-mail sont donc **dans la branche**. Rejoués sur Postgres 16 local (la CI tourne en 17), **non appliqués, non testés sur staging**. Rien de ce lot n'est vrai en production tant que la migration n'est pas appliquée. Le nouveau scénario n'est pas ajouté à `.github/workflows/ci.yml` (zone interdite) : ligne à ajouter par le directeur, à côté des autres.
 2. **Le type `personnel` n'est pas créé.** `candidature_types.role_compte` est obligatoire et ne porte qu'un rôle ; le personnel en a plusieurs (comptable, contrôleur, direction). Il faut une décision : un type par rôle (`personnel_comptable`, `personnel_controleur`, `personnel_direction`), ou une colonne de plus. Sans enjeu pour le lot B : le personnel entre toujours sur invitation.
 3. **La confirmation d'e-mail** (`enable_confirmations`) est un réglage du tableau de bord Supabase : c'est au directeur de l'allumer (Authentication, Sign In / Providers, Email, « Confirm email »).
 4. **Le plafond d'inscriptions par heure** (`candidatures.inscriptions_par_heure` = 60 en production) n'est lu par aucune des deux fonctions d'inscription des familles. Je ne l'ai pas branché : à décider avec ce lot ou au suivant.
-5. **Cinq scénarios serveur de la CI deviennent rouges avec cette migration** (rejoué en local, voir plus bas) ; ils sont dans la zone interdite, à mettre à jour dans la même pull request :
-   - `scenarios_tuteur_nait_actif.sql` et `scenarios_af_l1_11_inscription_enseignant_invitation.sql` (l. 112) : ils prouvent D4, que la décision du 27/10 annule. Attendre `pending_kyc` au lieu de `active` ;
-   - `scenarios_cand_l1_socle.sql` (l. 276) et `scenarios_cand_l2a2_gestes_direction.sql` (l. 338) : ils figent l'empreinte du corps de `lister_candidatures` ; droits, propriétaire, `SECURITY DEFINER` et `search_path` sont inchangés (vérifié), seule l'empreinte est à remplacer ;
-   - `scenarios_l5_usage_inscription.sql` (l. 71) : sa fixture inscrit un tuteur sans genre ; lui donner un genre (l'application l'exige déjà à l'étape « Genre »).
+5. **Scénarios serveur mis à jour** (rejoués chacun sur une base neuve, Postgres 16) : `scenarios_tuteur_nait_actif.sql` et `scenarios_af_l1_11_inscription_enseignant_invitation.sql` (D4 annulé : le tuteur naît en attente ; la famille est admise à la main dans la fixture avant de créer l'enfant) ; `scenarios_etape3.sql` (idem, et la fixture retire la demande de la famille pour dérouler l'ancien parcours de pièce) ; `scenarios_l5_usage_inscription.sql` et `scenarios_imm_back_1_registrations.sql` (le genre est désormais exigé) ; `scenarios_cand_l1_socle.sql` et `scenarios_cand_l2a2_gestes_direction.sql` passent tels quels, la migration mettant à jour les empreintes F86 des fonctions recréées. Bilan : 127 scénarios verts ; 7 rouges, qui l'étaient déjà sans la migration (Postgres 16 local ou scénario dépendant d'un autre).
 6. Une famille en attente ne peut pas encore créer les profils de ses enfants (`creer_profil_enfant` exige un tuteur actif). C'est cohérent avec « rien d'autre n'est visible avant la décision », mais la direction décidera sans voir les enfants. À trancher pour le lot C.
 7. Les compteurs du tableau de bord de la direction qui comptent les candidatures sans filtre de type compteront aussi les familles. Non vérifié un par un.
 
@@ -33,7 +30,9 @@ Tests : `test/features/inscription_choix_egaux_test.dart` (390 et 1440 côte à 
 - La page d'attente d'un tuteur (famille ou élève adulte) dit : « Votre demande est en cours », « La direction lit chaque demande avant d'ouvrir un compte. », « Vous n'avez rien à envoyer. Nous vous écrivons à votre adresse e-mail dès que la direction a répondu. » Avant : « L'ouverture de votre compte n'est pas encore automatique », et « joignez l'académie ».
 - La page d'attente d'un tuteur ignore la demande d'admission pour son affichage : elle ne montre jamais les salles d'examen, la tuile de partage ni « Vos autres talents », qui ne concernent que les enseignants.
 
-## La migration, à poser dans `supabase/migrations/20261029120000_admission_lot_b_famille_en_attente.sql`
+## La migration (`supabase/migrations/20261029120000_admission_lot_b_famille_en_attente.sql`)
+
+Le texte ci-dessous est la première version ; celle du dépôt y ajoute la mise à jour des empreintes F86, et la file ADM-20 y écarte les seuls types `famille` et `eleve_adulte` (au lieu de ne garder que `enseignant`, ce qui cachait aussi d'autres types).
 
 Écrite à partir des définitions **lues en production le 29/10/2026** (`private.creer_profil_inscription_interne`, `public.inscrire_titulaire`, `public.lister_candidatures`, `public.courriel_enfiler`). Aucun `DELETE`, `DROP` ni `TRUNCATE`.
 
@@ -311,7 +310,7 @@ $file$;
 ROLLBACK;
 ```
 
-## Le modèle d'e-mail, dans `supabase/functions/_shared/courriel/modeles_fr.ts`
+## Le modèle d'e-mail (posé : `modeles_fr.ts`, `modeles_ar.ts`, traduit à l'envoi vers les autres langues ; `deno test` : 24 verts)
 
 Dans `MODELES`, après `demande_recue` :
 

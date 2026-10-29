@@ -68,12 +68,14 @@ INSERT INTO auth.users(id, email) VALUES
 -- 1. « Moi » : eleve adulte, son propre tuteur.
 SELECT pg_temp.qui('d1800000-0000-4000-8000-000000000101', NULL);
 SET LOCAL ROLE authenticated;
-SELECT public.inscrire_titulaire('moi', 'Amina', 'L5');
+-- Le genre est exige depuis l'admission (lot B, 29/10/2026) : la demande le
+-- recopie. L'application le demande deja a l'etape « Genre ».
+SELECT public.inscrire_titulaire('moi', 'Amina', 'L5', 'female');
 SELECT set_config('test.etat', public.etat_dossier()::text, true);
 RESET ROLE;
-SELECT pg_temp.vrai((SELECT role = 'guardian' AND account_status = 'active' FROM public.profiles
+SELECT pg_temp.vrai((SELECT role = 'guardian' AND account_status = 'pending_kyc' FROM public.profiles
                      WHERE id = 'd1800000-0000-4000-8000-000000000101'),
-  'moi : profil tuteur actif (D4)');
+  'moi : profil tuteur en attente de la decision (admission, 27/10)');
 SELECT pg_temp.vrai((SELECT h.usage_inscription = 'moi' FROM public.households h
                      JOIN public.profiles p ON p.household_id = h.id
                      WHERE p.id = 'd1800000-0000-4000-8000-000000000101'),
