@@ -366,10 +366,7 @@ void main() {
       await monterInscription(
         tester,
         depart: Routes.inscriptionIdentite,
-        brouillon: const BrouillonInscription(
-          usage: UsageInscription.moi,
-          langue: 'francais',
-        ),
+        brouillon: const BrouillonInscription(usage: UsageInscription.moi),
       );
       await tester.enterText(
         find.byKey(const Key('inscription-prenom')),

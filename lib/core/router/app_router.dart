@@ -202,7 +202,6 @@ import '../../features/foyer/foyer_page.dart';
 import '../../features/foyer/invitation_conjoint.dart';
 import '../../features/inscription/etapes/genre_etape.dart';
 import '../../features/inscription/etapes/identite_etape.dart';
-import '../../features/inscription/etapes/langue_etape.dart';
 import '../../features/inscription/etapes/recapitulatif_etape.dart';
 import '../../features/inscription/etapes/usage_etape.dart';
 import '../../features/inscription/inscription_page.dart';
@@ -486,10 +485,6 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRoute(
         path: Routes.inscriptionUsage,
         builder: (BuildContext _, GoRouterState _) => const UsageEtape(),
-      ),
-      GoRoute(
-        path: Routes.inscriptionLangue,
-        builder: (BuildContext _, GoRouterState _) => const LangueEtape(),
       ),
       GoRoute(
         path: Routes.inscriptionInvitation,

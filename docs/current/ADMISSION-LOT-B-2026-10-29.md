@@ -18,7 +18,7 @@ Branche `claude/admiring-brown-r6ai72-admission-b`, depuis `origin/main` (027854
 ### Ce qui n'est pas vrai, ou pas prouvé, d'abord
 
 1. **Rien n'est prouvé en production ni sur staging** : tests locaux seulement. La nouvelle migration (`20261029150000_admission_lot_b_apprenants.sql`) contient un `DROP FUNCTION` (remplacement de la signature de `inscrire_titulaire`) : le directeur la colle dans l'éditeur SQL de staging, après celle du 29/10 matin (page de collage à fabriquer au moment de la mise en staging).
-2. **La langue du cours n'est pas avant le compte** (écart à la fiche, écran 6) : la liste des langues ne se lit pas sans compte (migration 0043 : « anon n'a rien à faire ici ») et je n'ai pas ouvert cette règle de sécurité pour une question. Elle est la première question après la connexion.
+2. **La langue du cours est avant le compte** (directeur, 29/10 au soir, par le pilote : toutes les questions avant la création du compte). La liste des langues de cours actives est lue sans compte par `public.langues_cours_publiques()` (migration `20261029180000_langues_cours_publiques.sql`) : code et libellé des seules langues actives, rien d'autre ; la table `langues_cours` reste fermée à `anon`. Une fonction plutôt qu'une politique RLS : la RLS borne les lignes, pas les colonnes, et la lecture filtre et trie sur deux autres colonnes, qu'`anon` aurait alors pu lire. Scénario : `supabase/tests/scenarios_langues_cours_publiques.sql`.
 3. **L'âge commence à 5 ans, pas 4** : la première cohorte du serveur est `enfant_5_7` ; un âge de 4 ans ne correspondrait à aucune classe.
 4. **Sur le web, les réponses attendent la connexion dans le stockage du navigateur** (`localStorage`) : c'est ce qui permet au lien de connexion, souvent ouvert dans un nouvel onglet, de les retrouver. Le prénom et l'âge d'un enfant y restent jusqu'à l'envoi de la demande, puis sont effacés. Sur un autre appareil, ou si le navigateur a effacé ses données, la famille reprend les premières questions (le récapitulatif le dit).
 5. **Le pays et le fuseau** (ligne « détectés de l'appareil » de la fiche) ne sont pas une étape : le fuseau reste celui que le serveur pose aujourd'hui. Non fait.
@@ -27,9 +27,10 @@ Branche `claude/admiring-brown-r6ai72-admission-b`, depuis `origin/main` (027854
 
 ### Le parcours, tel qu'il est codé
 
-- **Avant le compte** (`/commencer`, une question par écran, « n sur N », un seul bouton plein « Continuer », retour en disque) : « Pour qui créez-vous ce compte ? » (deux choix égaux ; liens « J'ai déjà un compte » et « J'ai un code d'invitation ») ; pour chaque enfant, son prénom, son âge (puces de 5 à 17 ans, et « 18 ans ou plus », qui dit de s'inscrire soi-même), son genre (« Un garçon », « Une fille »), son niveau ; « Suivez-vous aussi des cours ? » ; le niveau du titulaire s'il apprend ; l'objectif ; les moments de la journée. « Pour moi » : quatre écrans ; une famille d'un enfant : huit, neuf si le parent apprend ; chaque enfant de plus : quatre (Q5).
+- **Avant le compte** (`/commencer`, une question par écran, « n sur N », un seul bouton plein « Continuer », retour en disque) : « Pour qui créez-vous ce compte ? » (deux choix égaux ; liens « J'ai déjà un compte » et « J'ai un code d'invitation ») ; pour chaque enfant, son prénom, son âge (puces de 5 à 17 ans, et « 18 ans ou plus », qui dit de s'inscrire soi-même), son genre (« Un garçon », « Une fille »), son niveau ; « Suivez-vous aussi des cours ? » ; le niveau du titulaire s'il apprend ; l'objectif ; les moments de la journée. Chaque enfant de plus ajoute quatre écrans (Q5).
 - **Créer un compte** passe d'abord par ces questions (`/connexion?mode=creer` y renvoie tant qu'elles ne sont pas répondues), sauf avec un code d'invitation.
-- **Après la connexion** : la langue du cours, « Comment vous appelez-vous ? », « Vous êtes » (genre du titulaire), puis « Voici ce que nous avons compris » : pour qui, le parent, chaque apprenant et son niveau, la langue, l'identité, le genre, chaque ligne avec « Modifier » ; « Ajouter un autre profil élève » ; « Envoyer ma demande ».
+- **Avant le compte, aussi** : la langue du cours (après « Suivez-vous aussi des cours ? »). « Pour moi » : cinq écrans ; une famille d'un enfant : neuf.
+- **Après la connexion** : « Comment vous appelez-vous ? », « Vous êtes » (genre du titulaire), puis « Voici ce que nous avons compris » : pour qui, le parent, chaque apprenant et son niveau, la langue, l'identité, le genre, chaque ligne avec « Modifier » ; « Ajouter un autre profil élève » ; « Envoyer ma demande ».
 - **Envoi** : `inscrire_titulaire` reçoit les apprenants (`p_apprenants`) et les range avec la demande dans la même transaction ; les réponses quittent l'appareil.
 - **Page d'attente** : « Votre demande porte sur : Yasmine, 9 ans · Vous. » (relu par `mes_apprenants_demande()`).
 - L'enseignant et le comptable gardent leur chemin (étape « usage », code d'invitation), inchangé.
@@ -51,10 +52,10 @@ Branche `claude/admiring-brown-r6ai72-admission-b`, depuis `origin/main` (027854
 ### Ce que le directeur vérifie, après fusion et migration (en gestes simples)
 
 1. Sur un téléphone, ouvrir l'application sans être connecté, toucher « Créer un compte » : la question « Pour qui créez-vous ce compte ? » s'affiche.
-2. Choisir « J'inscris mon enfant », répondre : prénom, âge, « Une fille », niveau, « Non », objectif, « Le soir ». Compter les écrans : huit.
-3. Saisir son adresse, ouvrir le lien reçu (même dans un autre onglet) : l'application demande la langue du cours, sans reposer les premières questions.
+2. Choisir « J'inscris mon enfant », répondre : prénom, âge, « Une fille », niveau, « Non », langue du cours, objectif, « Le soir ». Compter les écrans : neuf.
+3. Saisir son adresse, ouvrir le lien reçu (même dans un autre onglet) : l'application demande seulement le nom et le genre, sans reposer les premières questions.
 4. Finir (nom, genre) : le récapitulatif montre l'enfant, son âge et son niveau. Toucher « Envoyer ma demande » : la page « Votre demande est en cours » dit « Votre demande porte sur : (prénom), (âge) ans ».
-5. Recommencer avec « Je m'inscris pour moi » : quatre écrans avant l'adresse.
+5. Recommencer avec « Je m'inscris pour moi » : cinq écrans avant l'adresse.
 
 ## Ce que fait ce lot dans l'application (codé, testé localement)
 

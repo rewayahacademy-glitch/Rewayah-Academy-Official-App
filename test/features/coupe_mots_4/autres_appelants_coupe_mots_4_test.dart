@@ -320,8 +320,6 @@ void main() {
 /// Admission, lot B : le brouillon d'un titulaire arrive a l'identite.
 class _BrouillonTitulaire extends BrouillonInscriptionControleur {
   @override
-  BrouillonInscription build() => const BrouillonInscription(
-    usage: UsageInscription.moi,
-    langue: 'francais',
-  );
+  BrouillonInscription build() =>
+      const BrouillonInscription(usage: UsageInscription.moi);
 }

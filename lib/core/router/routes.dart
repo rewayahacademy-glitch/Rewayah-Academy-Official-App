@@ -54,10 +54,6 @@ abstract final class Routes {
   /// `inscription` (contrainte R4 : aucun prefixe `/onboarding`).
   static const String inscriptionUsage = '/inscription/usage';
 
-  /// Admission, lot B : la langue du cours, juste apres la connexion (le
-  /// referentiel des langues ne se lit pas sans compte, 0043).
-  static const String inscriptionLangue = '/inscription/langue';
-
   /// Identite.
   static const String inscriptionIdentite = '/inscription/identite';
 

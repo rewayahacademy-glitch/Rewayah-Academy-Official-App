@@ -37,10 +37,8 @@ import '../support/harnais.dart';
 /// Le brouillon d'un titulaire arrive a la page d'identite.
 class _BrouillonALIdentite extends BrouillonInscriptionControleur {
   @override
-  BrouillonInscription build() => const BrouillonInscription(
-    usage: UsageInscription.moi,
-    langue: 'francais',
-  );
+  BrouillonInscription build() =>
+      const BrouillonInscription(usage: UsageInscription.moi);
 }
 
 void main() {

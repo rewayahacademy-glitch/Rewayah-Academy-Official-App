@@ -98,6 +98,9 @@ enum SorteEtape {
   /// « Suivez-vous aussi des cours ? »
   parent,
 
+  /// La langue du cours, une pour toute la demande.
+  langue,
+
   /// Le niveau d'un enfant.
   niveau,
 
@@ -168,6 +171,7 @@ class QuestionnaireInscription {
     this.niveauTitulaire,
     this.objectif,
     this.moments = const <MomentJournee>{},
+    this.langue,
   });
 
   /// « Pour moi » ou « mon enfant » ; jamais enseignant ni comptable.
@@ -187,6 +191,10 @@ class QuestionnaireInscription {
 
   /// Les moments retenus.
   final Set<MomentJournee> moments;
+
+  /// La langue du cours (code de `langues_cours`), lue sans compte
+  /// (`langues_cours_publiques`).
+  final String? langue;
 
   /// Vrai quand le titulaire suit des cours.
   bool get titulaireApprend =>
@@ -211,6 +219,7 @@ class QuestionnaireInscription {
       }
       liste.add(const EtapeQuestionnaire(SorteEtape.parent));
     }
+    liste.add(const EtapeQuestionnaire(SorteEtape.langue));
     if (titulaireApprend) {
       liste.add(const EtapeQuestionnaire(SorteEtape.niveauTitulaire));
     }
@@ -232,6 +241,7 @@ class QuestionnaireInscription {
     SorteEtape.age => _enfant(etape.rang)?.age != null,
     SorteEtape.genre => _enfant(etape.rang)?.genre != null,
     SorteEtape.parent => parentSuitDesCours != null,
+    SorteEtape.langue => langue != null,
     SorteEtape.niveau => _enfant(etape.rang)?.niveau != null,
     SorteEtape.niveauTitulaire => niveauTitulaire != null,
     SorteEtape.objectif => objectif != null,
@@ -247,9 +257,7 @@ class QuestionnaireInscription {
 
   /// Les apprenants, tels que `inscrire_titulaire` les attend
   /// (`p_apprenants`) : les enfants, puis le titulaire s'il apprend.
-  /// [langue] (code de `langues_cours`) est demandee apres la connexion : le
-  /// referentiel ne se lit pas sans compte (0043).
-  List<Map<String, Object?>> apprenantsPourServeur({String? langue}) {
+  List<Map<String, Object?>> apprenantsPourServeur() {
     final List<String> momentsSql = <String>[
       for (final MomentJournee m in MomentJournee.values)
         if (moments.contains(m)) momentSql(m),
@@ -285,6 +293,7 @@ class QuestionnaireInscription {
     NiveauDeclare? niveauTitulaire,
     ObjectifApprentissage? objectif,
     Set<MomentJournee>? moments,
+    String? langue,
   }) => QuestionnaireInscription(
     usage: usage ?? this.usage,
     enfants: enfants ?? this.enfants,
@@ -292,6 +301,7 @@ class QuestionnaireInscription {
     niveauTitulaire: niveauTitulaire ?? this.niveauTitulaire,
     objectif: objectif ?? this.objectif,
     moments: moments ?? this.moments,
+    langue: langue ?? this.langue,
   );
 
   /// Le texte garde sur l'appareil.
@@ -304,6 +314,7 @@ class QuestionnaireInscription {
     'niveauTitulaire': niveauTitulaire?.valeurSql,
     'objectif': objectif?.valeurSql,
     'moments': <String>[for (final MomentJournee m in moments) m.name],
+    'langue': langue,
   });
 
   /// Relit le texte garde ; un texte illisible rend un questionnaire vide.
@@ -341,6 +352,7 @@ class QuestionnaireInscription {
             for (final MomentJournee m in MomentJournee.values)
               if (moments.contains(m.name)) m,
         },
+        langue: json['langue'] is String ? json['langue']! as String : null,
       );
     } on Object catch (erreur) {
       journalDev('Questionnaire d inscription illisible : $erreur');
@@ -431,6 +443,9 @@ class QuestionnaireControleur extends Notifier<QuestionnaireInscription> {
   /// Retient l'objectif.
   void choisirObjectif(ObjectifApprentissage objectif) =>
       _poser(state.copier(objectif: objectif));
+
+  /// Retient la langue du cours.
+  void choisirLangue(String langue) => _poser(state.copier(langue: langue));
 
   /// Ajoute ou retire un moment.
   void basculerMoment(MomentJournee moment) {

@@ -196,6 +196,7 @@ void main() {
           niveauTitulaire: NiveauDeclare.lectureLente,
           objectif: ObjectifApprentissage.indecis,
           moments: <MomentJournee>{MomentJournee.soir},
+          langue: 'francais',
         ).versTexte(),
       );
       addTearDown(() => effacerMemoireAppareil(clefQuestionnaire));

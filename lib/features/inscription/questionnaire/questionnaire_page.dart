@@ -7,6 +7,7 @@ import '../../../core/domain/enums.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/offres/offre_horaire.dart';
+import '../../../core/offres/service_offres.dart' show languesCoursProvider;
 import '../../../core/router/routes.dart';
 import '../../../core/session/session_controleur.dart';
 import '../../../core/session/session_state.dart';
@@ -16,8 +17,10 @@ import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/choice_card_group.dart';
+import '../../../core/widgets/etat_systeme.dart';
 import '../../../core/widgets/filter_pill.dart';
 import '../../../core/widgets/page_etape.dart';
+import '../../../core/widgets/skeleton.dart';
 import '../../connexion/connexion_page.dart' show parametreModeCreation;
 import '../../parcours_offres/libelles_parcours.dart';
 import '../brouillon_inscription.dart' show UsageInscription;
@@ -467,6 +470,44 @@ class _EcranQuestionState extends State<_EcranQuestion> {
             } else if (r.valeurs.contains('non')) {
               c.choisirParent(suit: false);
             }
+          },
+        ),
+      ),
+      // La langue du cours, avant le compte (directeur, 29/10/2026) : la liste
+      // des langues actives se lit sans compte (`langues_cours_publiques`).
+      SorteEtape.langue => (
+        t.parcours.langueQuestion,
+        t.parcours.langueRaison,
+        Consumer(
+          builder: (BuildContext _, WidgetRef ref, Widget? _) {
+            final AsyncValue<List<LangueCours>> langues = ref.watch(
+              languesCoursProvider,
+            );
+            if (langues.hasValue) {
+              return ChoiceCardGroup(
+                key: const Key('questionnaire-langue'),
+                autoriserSaisieLibre: false,
+                valeurInitiale: q.langue == null
+                    ? null
+                    : ReponseChoix(valeurs: <String>{q.langue!}),
+                options: <OptionChoix>[
+                  // Le nom vient du serveur et ne se traduit pas.
+                  for (final LangueCours l in langues.requireValue)
+                    OptionChoix(valeur: l.code, libelle: l.nom),
+                ],
+                onChange: (ReponseChoix r) {
+                  if (r.valeurs.isNotEmpty) c.choisirLangue(r.valeurs.first);
+                },
+              );
+            }
+            if (langues.hasError) {
+              return EtatSysteme(
+                nature: NatureEtat.echecServeur,
+                libelleAction: t.commun.etats.actions.reessayer,
+                onAction: () => ref.invalidate(languesCoursProvider),
+              );
+            }
+            return const Skeleton.liste(lignes: 3);
           },
         ),
       ),

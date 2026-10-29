@@ -110,9 +110,7 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
               // Admission, lot B : les apprenants du questionnaire partent
               // avec la demande, dans la meme transaction.
               apprenants: brouillon.titulaire
-                  ? questionnaire.apprenantsPourServeur(
-                      langue: brouillon.langue,
-                    )
+                  ? questionnaire.apprenantsPourServeur()
                   : null,
             );
         ref.read(brouillonInscriptionProvider.notifier).noterProfilCree();
@@ -381,9 +379,9 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
             LigneRubrique(
               icone: AppIcons.livreOuvert,
               libelle: t.inscription.questionnaire.recapLangue,
-              legende: _nomLangue(brouillon.langue),
+              legende: _nomLangue(questionnaire.langue),
               controle: modifier(
-                Routes.inscriptionLangue,
+                _question(const EtapeQuestionnaire(SorteEtape.langue)),
                 'inscription-modifier-langue',
               ),
             ),

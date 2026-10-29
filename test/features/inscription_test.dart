@@ -28,7 +28,6 @@ import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart'
 import 'package:rewayah_academy/features/inscription/code_comptable_retenu.dart';
 import 'package:rewayah_academy/features/inscription/etapes/genre_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/identite_etape.dart';
-import 'package:rewayah_academy/features/inscription/etapes/langue_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/recapitulatif_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/usage_etape.dart';
 import 'package:rewayah_academy/features/inscription/inscription_page.dart';
@@ -52,6 +51,7 @@ const QuestionnaireInscription _qMoi = QuestionnaireInscription(
   niveauTitulaire: NiveauDeclare.lectureLente,
   objectif: ObjectifApprentissage.memoriser,
   moments: <MomentJournee>{MomentJournee.soir},
+  langue: 'francais',
 );
 
 /// « Mon enfant », un enfant, et le parent qui suit ou non des cours.
@@ -70,6 +70,7 @@ QuestionnaireInscription _qFamille({required bool parent}) =>
       niveauTitulaire: parent ? NiveauDeclare.lectureCourante : null,
       objectif: ObjectifApprentissage.apprendreALire,
       moments: const <MomentJournee>{MomentJournee.matin},
+      langue: 'francais',
     );
 
 /// Une source dont le rafraichissement echoue tant qu'on le demande.
@@ -147,10 +148,6 @@ Future<(FauxServiceDossier, FausseSourceSession)> _monter(
         GoRoute(
           path: Routes.inscriptionUsage,
           builder: (BuildContext _, GoRouterState _) => const UsageEtape(),
-        ),
-        GoRoute(
-          path: Routes.inscriptionLangue,
-          builder: (BuildContext _, GoRouterState _) => const LangueEtape(),
         ),
         GoRoute(
           path: Routes.commencer,
@@ -301,11 +298,10 @@ Future<void> _taper(WidgetTester tester, Finder cible) async {
 Future<void> _continuer(WidgetTester tester) =>
     _taper(tester, find.text(t.commun.continuer));
 
-/// Le titulaire, questionnaire repondu, de la langue au recapitulatif.
+/// Le titulaire, questionnaire repondu (langue comprise), de l'identite au
+/// recapitulatif.
 Future<void> _jusquAuRecap(WidgetTester tester) async {
-  expect(find.text('1 sur 4'), findsOneWidget);
-  await _taper(tester, find.text('Français'));
-  await _continuer(tester);
+  expect(find.text('1 sur 3'), findsOneWidget);
   await tester.enterText(find.byKey(const Key('inscription-prenom')), 'Amina');
   await tester.enterText(find.byKey(const Key('inscription-nom')), 'Diallo');
   await _continuer(tester);
@@ -365,7 +361,7 @@ void main() {
           await _monter(tester, questionnaire: _qMoi);
       await _jusquAuRecap(tester);
 
-      expect(find.text('4 sur 4'), findsOneWidget);
+      expect(find.text('3 sur 3'), findsOneWidget);
       expect(find.text('Amina Diallo'), findsOneWidget);
       expect(find.text(t.inscription.questionnaire.recapTitre), findsOneWidget);
       // Usage, vous, langue, identite, genre.
@@ -551,8 +547,6 @@ void main() {
           tester,
           questionnaire: _qFamille(parent: suit),
         );
-        await _taper(tester, find.text('Français'));
-        await _continuer(tester);
         await tester.enterText(
           find.byKey(const Key('inscription-prenom')),
           'Karim',
@@ -607,11 +601,9 @@ void main() {
       WidgetTester tester,
     ) async {
       await _monter(tester, questionnaire: _qMoi);
-      await _taper(tester, find.text('Français'));
-      await _continuer(tester);
       await _continuer(tester);
       expect(find.text(t.inscription.champRequis), findsNWidgets(2));
-      expect(find.text('2 sur 4'), findsOneWidget);
+      expect(find.text('1 sur 3'), findsOneWidget);
     });
 
     testWidgets('retour 48 dp et « Modifier » ramenent au bon endroit', (
@@ -624,17 +616,17 @@ void main() {
         tester,
         find.byKey(const Key('inscription-modifier-identite')),
       );
-      expect(find.text('2 sur 4'), findsOneWidget);
+      expect(find.text('1 sur 3'), findsOneWidget);
       await tester.enterText(
         find.byKey(const Key('inscription-prenom')),
         'Awa',
       );
       await _continuer(tester);
-      expect(find.text('4 sur 4'), findsOneWidget);
+      expect(find.text('3 sur 3'), findsOneWidget);
       expect(find.text('Awa Diallo'), findsOneWidget);
 
       await _taper(tester, find.byType(DisqueRetour));
-      expect(find.text('3 sur 4'), findsOneWidget);
+      expect(find.text('2 sur 3'), findsOneWidget);
       expect(
         tester.getSize(find.byType(DisqueRetour)).width,
         greaterThanOrEqualTo(48),
@@ -674,7 +666,7 @@ void main() {
       await _jusquAuRecap(tester);
       await _taper(tester, find.text(t.inscription.questionnaire.envoyer));
       expect(find.text(t.inscription.erreur), findsOneWidget);
-      expect(find.text('4 sur 4'), findsOneWidget);
+      expect(find.text('3 sur 3'), findsOneWidget);
     });
 
     testWidgets('double soumission bloquee : un second appui pendant '
@@ -710,10 +702,10 @@ void main() {
       await _jusquAuRecap(tester);
 
       await _taper(tester, find.byKey(const Key('inscription-modifier-genre')));
-      expect(find.text('3 sur 4'), findsOneWidget);
+      expect(find.text('2 sur 3'), findsOneWidget);
       await _taper(tester, find.text(t.inscription.genreHomme));
       await _continuer(tester);
-      expect(find.text('4 sur 4'), findsOneWidget);
+      expect(find.text('3 sur 3'), findsOneWidget);
 
       // Admission, lot B : « Pour qui » se modifie dans le questionnaire.
       await _taper(tester, find.byKey(const Key('inscription-modifier-usage')));
@@ -746,7 +738,7 @@ void main() {
       expect(find.byType(DisqueRetour), findsNothing);
       await _taper(tester, find.byKey(const Key('inscription-deconnexion')));
       expect(auth.deconnexions, 1);
-      expect(find.text('3 sur 4'), findsNothing);
+      expect(find.text('2 sur 3'), findsNothing);
     });
 
     testWidgets('la premiere etape n a pas de disque retour, la rangee reste '

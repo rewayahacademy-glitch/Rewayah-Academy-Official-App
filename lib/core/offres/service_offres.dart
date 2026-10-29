@@ -115,12 +115,16 @@ class ServiceOffresSupabase implements ServiceOffres {
 
   @override
   Future<List<LangueCours>> langues() async {
-    final List<Map<String, dynamic>> lignes = await _client
-        .from('langues_cours')
-        .select('code, nom_humain')
-        .eq('actif', true)
-        .order('ordre', ascending: true);
-    return lignes.map(LangueCours.depuisJson).toList(growable: false);
+    // Admission, lot B (29/10/2026) : lisible sans compte, pour l'inscription
+    // avant le compte ; code et libelle des langues actives, dans l'ordre
+    // publie (`langues_cours_publiques`, 20261029180000).
+    final List<dynamic> lignes = await _client.rpc<List<dynamic>>(
+      'langues_cours_publiques',
+    );
+    return <LangueCours>[
+      for (final Object? l in lignes)
+        if (l is Map<String, dynamic>) LangueCours.depuisJson(l),
+    ];
   }
 
   @override

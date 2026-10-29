@@ -1,7 +1,7 @@
 // Admission, lot B (fiche onboarding du 29/10/2026, validee le 29/10) : le
 // questionnaire avant le compte, une question par ecran. L'ordre et le
 // nombre des ecrans (Q5 : neuf au plus pour une famille d'un enfant, cinq
-// pour « pour moi », la langue venant apres la connexion), le parcours
+// pour « pour moi », langue du cours comprise, 29/10), le parcours
 // complet jusqu'a la creation du compte, la limite de 18 ans, le retour, et
 // une adresse ouverte trop tot.
 
@@ -12,6 +12,8 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/offres/offre_horaire.dart';
+import 'package:rewayah_academy/core/offres/service_offres.dart'
+    show languesCoursProvider;
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart'
     show sourceSessionProvider;
@@ -46,6 +48,13 @@ Future<GoRouter> _monter(WidgetTester tester, String depart) async {
       depart: depart,
       surcharges: <Override>[
         sourceSessionProvider.overrideWithValue(FausseSourceSession()),
+        // La liste publique des langues (lue sans compte).
+        languesCoursProvider.overrideWith(
+          (_) async => const <LangueCours>[
+            LangueCours(code: 'francais', nom: 'Français'),
+            LangueCours(code: 'poular', nom: 'Poular'),
+          ],
+        ),
       ],
       routes: <RouteBase>[
         GoRoute(
@@ -83,39 +92,38 @@ void main() {
   setUp(() => effacerMemoireAppareil(clefQuestionnaire));
 
   group('les ecrans, dans l ordre (Q5)', () {
-    test('pour moi : quatre ecrans avant la connexion', () {
+    test('pour moi : cinq ecrans avant la connexion', () {
       const QuestionnaireInscription q = QuestionnaireInscription(
         usage: UsageInscription.moi,
       );
       expect(q.etapes.map((EtapeQuestionnaire e) => e.code), <String>[
         'pourQui',
+        'langue',
         'niveauTitulaire',
         'objectif',
         'moments',
       ]);
     });
 
-    test(
-      'une famille d un enfant : huit ecrans, neuf si le parent apprend',
-      () {
-        const QuestionnaireInscription sans = QuestionnaireInscription(
-          usage: UsageInscription.famille,
-          enfants: <EnfantQuestionnaire>[_yasmine],
-          parentSuitDesCours: false,
-        );
-        expect(sans.etapes.map((EtapeQuestionnaire e) => e.code), <String>[
-          'pourQui',
-          'prenom-0',
-          'age-0',
-          'genre-0',
-          'niveau-0',
-          'parent',
-          'objectif',
-          'moments',
-        ]);
-        expect(sans.copier(parentSuitDesCours: true).etapes, hasLength(9));
-      },
-    );
+    test('une famille d un enfant : neuf ecrans, dix si le parent apprend', () {
+      const QuestionnaireInscription sans = QuestionnaireInscription(
+        usage: UsageInscription.famille,
+        enfants: <EnfantQuestionnaire>[_yasmine],
+        parentSuitDesCours: false,
+      );
+      expect(sans.etapes.map((EtapeQuestionnaire e) => e.code), <String>[
+        'pourQui',
+        'prenom-0',
+        'age-0',
+        'genre-0',
+        'niveau-0',
+        'parent',
+        'langue',
+        'objectif',
+        'moments',
+      ]);
+      expect(sans.copier(parentSuitDesCours: true).etapes, hasLength(10));
+    });
 
     test('chaque enfant de plus ajoute quatre ecrans', () {
       const QuestionnaireInscription q = QuestionnaireInscription(
@@ -123,7 +131,7 @@ void main() {
         enfants: <EnfantQuestionnaire>[_yasmine, EnfantQuestionnaire()],
         parentSuitDesCours: false,
       );
-      expect(q.etapes, hasLength(12));
+      expect(q.etapes, hasLength(13));
       expect(
         q.premiereManquante,
         const EtapeQuestionnaire(SorteEtape.prenom, 1),
@@ -138,12 +146,13 @@ void main() {
         niveauTitulaire: NiveauDeclare.lectureCourante,
         objectif: ObjectifApprentissage.memoriser,
         moments: <MomentJournee>{MomentJournee.soir, MomentJournee.matin},
+        langue: 'poular',
       );
       final QuestionnaireInscription relu =
           QuestionnaireInscription.depuisTexte(q.versTexte());
       expect(relu.complet, isTrue);
       expect(relu.enfants.single.prenom, 'Yasmine');
-      expect(relu.apprenantsPourServeur(langue: 'poular'), <Object?>[
+      expect(relu.apprenantsPourServeur(), <Object?>[
         <String, Object?>{
           'prenom': 'Yasmine',
           'age': 9,
@@ -206,7 +215,7 @@ void main() {
     ) async {
       final GoRouter routeur = await _monter(tester, Routes.commencer);
       expect(find.text(t.inscription.usage.question), findsOneWidget);
-      expect(find.text('1 sur 4'), findsOneWidget);
+      expect(find.text('1 sur 5'), findsOneWidget);
       verifierUnSeulBoutonPlein(tester);
       // Jamais grise : sans reponse, « Continuer » le dit et reste ici.
       await _continuer(tester);
@@ -222,7 +231,7 @@ void main() {
         find.text(t.inscription.questionnaire.prenomQuestion),
         findsOneWidget,
       );
-      expect(find.text('2 sur 8'), findsOneWidget);
+      expect(find.text('2 sur 9'), findsOneWidget);
       await tester.enterText(
         find.byKey(const Key('questionnaire-prenom')),
         'Yasmine',
@@ -258,12 +267,17 @@ void main() {
       await _taper(tester, find.text(t.inscription.usage.coursNon));
       await _continuer(tester);
 
+      // La langue du cours, avant le compte (directeur, 29/10).
+      expect(find.text(t.parcours.langueQuestion), findsOneWidget);
+      await _taper(tester, find.text('Poular'));
+      await _continuer(tester);
+
       expect(find.text(t.parcours.objectifQuestion), findsOneWidget);
       await _taper(tester, find.text(t.parcours.objectifApprendreALire));
       await _continuer(tester);
 
       expect(find.text(t.parcours.momentsQuestion), findsOneWidget);
-      expect(find.text('8 sur 8'), findsOneWidget);
+      expect(find.text('9 sur 9'), findsOneWidget);
       await _taper(tester, find.text(t.parcours.momentSoir));
       await _continuer(tester);
 
@@ -276,6 +290,7 @@ void main() {
           );
       expect(garde.complet, isTrue);
       expect(garde.enfants.single.genre, Genre.femme);
+      expect(garde.langue, 'poular');
       expect(garde.moments, <MomentJournee>{MomentJournee.soir});
     });
 
@@ -324,6 +339,7 @@ void main() {
           parentSuitDesCours: false,
           objectif: ObjectifApprentissage.indecis,
           moments: <MomentJournee>{MomentJournee.matin},
+          langue: 'francais',
         ).versTexte(),
       );
       await _monter(tester, '${Routes.commencer}?etape=prenom-1');
