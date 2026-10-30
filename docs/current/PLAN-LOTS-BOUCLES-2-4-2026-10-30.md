@@ -52,6 +52,13 @@ pilote fusionne, applique les migrations et tient ce tableau à jour.
   listes (candidatures, tableau de la direction, paie, présences). La PR 50 entière (577
   fichiers) ne se fusionne pas telle quelle : le portage se fait en deux lots, LISTES puis
   CANDIDATURES, puis la PR 50 est fermée.
+- **Stripe plutôt qu'un marchand de référence (Creem), avis du pilote demandé par le directeur
+  le 30/10** : chez Creem, les « services de toute sorte » sont une catégorie restreinte
+  (vérification renforcée), et leur liste d'interdits nomme les services spirituels ; le risque
+  d'un compte gelé au démarrage pèse plus que la tenue des taxes. Frais plus élevés, paiement
+  au nom de Creem, et Stripe est déjà construit et déployé. Les taxes : avis du comptable, puis
+  Stripe Tax si besoin. Creem seulement sur accord écrit de leur support, demandé par le
+  directeur.
 - **Paiement** : paiement mensuel par la famille sur Stripe Checkout, avec les relances
   existantes (J-7, J-3, J-1). Pas d'abonnement automatique pour l'instant.
 - **Après le paiement**, la direction place l'élève dans sa classe (geste existant). Le
