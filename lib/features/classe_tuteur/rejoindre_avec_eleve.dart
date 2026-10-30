@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/domain/enums.dart';
 import '../../core/foyer/selection_eleve.dart';
+import '../../core/i18n/dates_appareil.dart' show heureDeLAppareil;
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
@@ -39,6 +40,32 @@ bool salleRejoignable(EtatSeanceFamille etat) => switch (etat) {
 DateTime ouvertureSalle(SeanceFamille seance) => seance.debutUtc.subtract(
   seance.fenetre?.fenetreAcces ?? seuilOuvertureSalle,
 );
+
+/// L'heure d'ouverture de la salle dans le fuseau de l'heure du debut
+/// affichee sur la meme carte (directeur, 30/10/2026 : jamais deux fuseaux sur
+/// une carte). Avec l'heure du foyer rendue par le serveur (`HH24:MI`),
+/// l'ouverture est cette heure moins la fenetre d'acces ; sans elle, la carte
+/// dit « Heure de cet appareil » et l'ouverture est a l'heure de l'appareil.
+/// `null` si l'heure du foyer ne se lit pas : la ligne se tait plutot que de
+/// changer de fuseau. Un changement d'heure dans la fenetre (vers 2 h du
+/// matin) decalerait d'une heure : aucun cours n'est place a cette heure.
+String? heureOuvertureSalle(SeanceFamille seance) {
+  final HorlogeAffichee? foyer = seance.heureFoyer;
+  if (foyer == null) {
+    return heureDeLAppareil(ouvertureSalle(seance).toLocal());
+  }
+  final RegExpMatch? lue = RegExp(r'^(\d{2}):(\d{2})$')
+      .firstMatch(foyer.heureLocaleRendue);
+  if (lue == null) return null;
+  const int jour = 24 * 60;
+  final int debut = int.parse(lue.group(1)!) * 60 + int.parse(lue.group(2)!);
+  final int avance = seance.debutUtc
+      .difference(ouvertureSalle(seance))
+      .inMinutes;
+  final int ouverture = ((debut - avance) % jour + jour) % jour;
+  return '${(ouverture ~/ 60).toString().padLeft(2, '0')}:'
+      '${(ouverture % 60).toString().padLeft(2, '0')}';
+}
 
 /// « Rejoindre la salle avec {prenom} », qui demande le jeton de l'eleve.
 class BoutonRejoindreAvecEleve extends StatelessWidget {

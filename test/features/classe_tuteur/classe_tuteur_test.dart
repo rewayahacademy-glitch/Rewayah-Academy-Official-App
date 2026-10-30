@@ -535,10 +535,13 @@ void main() {
       expect(AppMetriques.of(tester.element(salle)).mode, InterfaceMode.enfant);
     });
 
-    testWidgets('D6 : avant la porte, l heure d ouverture de la salle, '
-        'jamais le bouton', (WidgetTester tester) async {
+    testWidgets('D6 : avant la porte, l heure d ouverture de la salle a '
+        'l heure du foyer (30/10), jamais le bouton', (
+      WidgetTester tester,
+    ) async {
       final SeanceFamille aVenir = seanceSalleOuverte(
         avant: const Duration(hours: 3, minutes: 28),
+        heure: '18:00',
       );
       await _monter(
         tester,
@@ -546,14 +549,9 @@ void main() {
         seances: <SeanceFamille>[aVenir],
       );
       expect(
-        find.text(
-          t.classe.seance.salleOuvreA(
-            heure: heureDeLAppareil(
-              aVenir.debutUtc.subtract(aVenir.fenetre!.fenetreAcces).toLocal(),
-            ),
-          ),
-        ),
+        find.text(t.classe.seance.salleOuvreA(heure: '17:40')),
         findsOneWidget,
+        reason: 'l heure du foyer (18:00) moins la fenetre de 20 min',
       );
       expect(
         find.text(t.classe.seance.rejoindreAvec(prenom: 'Élève A1')),
