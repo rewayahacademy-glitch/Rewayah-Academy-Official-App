@@ -52,6 +52,7 @@ import '../admin_fusion/feuilles_fusion.dart';
 import '../creneaux/plages.dart' show jourCapitalise, nommerHeure;
 import 'bas_de_feuille.dart';
 import 'cahiers_classe.dart';
+import 'duree_creneau.dart';
 import 'feuille_observation_groupe.dart';
 import 'feuille_reglages_classe.dart';
 import 'genre_classe_libelles.dart';
@@ -1109,13 +1110,18 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
   int? _jour;
   int? _heure;
 
+  /// La duree du premier creneau, en minutes ; nulle pour celle de la classe
+  /// (30/10/2026).
+  int? _duree;
+
   /// D2 (29/10/2026) : les creneaux suivants de la semaine. Trois creneaux
   /// par defaut, a des jours fixes : le premier, et deux lignes a remplir ou
   /// a retirer.
-  final List<({int? jour, int? heure})> _autres = <({int? jour, int? heure})>[
-    (jour: null, heure: null),
-    (jour: null, heure: null),
-  ];
+  final List<({int? jour, int? heure, int? duree})> _autres =
+      <({int? jour, int? heure, int? duree})>[
+        (jour: null, heure: null, duree: null),
+        (jour: null, heure: null, duree: null),
+      ];
   late int? _seuil = _seuilParDefaut(_type);
   bool _seuilChoisi = false;
   late final TextEditingController _nom = TextEditingController(
@@ -1198,7 +1204,7 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
       }
     }
     final Set<(int?, int?)> vus = <(int?, int?)>{(_jour, _heure)};
-    for (final ({int? jour, int? heure}) c in _autres) {
+    for (final ({int? jour, int? heure, int? duree}) c in _autres) {
       if (!vus.add((c.jour, c.heure))) return f.creneauEnDouble;
     }
     if (choisi == null) return f.manqueListeEnseignants;
@@ -1241,8 +1247,13 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
             creneau: Creneau(jour: jour, heure: heure, fuseau: fuseau),
             seuilMax: seuil,
             autresCreneaux: <Creneau>[
-              for (final ({int? jour, int? heure}) c in _autres)
+              for (final ({int? jour, int? heure, int? duree}) c in _autres)
                 Creneau(jour: c.jour!, heure: c.heure!, fuseau: fuseau),
+            ],
+            durees: <int?>[
+              _duree,
+              for (final ({int? jour, int? heure, int? duree}) c in _autres)
+                c.duree,
             ],
           );
       widget.onCree();
@@ -1475,6 +1486,19 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
             },
           ),
         ),
+        Ecart.vLg,
+        TexteSansCoupure(f.duree, style: textes.labelLarge),
+        Ecart.vXs,
+        TexteSansCoupure(f.dureeContexte, style: textes.bodySmall),
+        Ecart.vSm,
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: MenuDureeCreneau(
+            key: const ValueKey<String>('classe-duree'),
+            duree: _duree,
+            onChoix: (int? d) => _maj(() => _duree = d),
+          ),
+        ),
         Ecart.vSm,
         TexteSansCoupure(fuseau.phrase, style: textes.bodySmall),
         Ecart.vXl,
@@ -1490,10 +1514,28 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
             numero: i + 2,
             jour: _autres[i].jour,
             heure: _autres[i].heure,
-            onJour: (int j) =>
-                _maj(() => _autres[i] = (jour: j, heure: _autres[i].heure)),
-            onHeure: (int h) =>
-                _maj(() => _autres[i] = (jour: _autres[i].jour, heure: h)),
+            duree: _autres[i].duree,
+            onJour: (int j) => _maj(
+              () => _autres[i] = (
+                jour: j,
+                heure: _autres[i].heure,
+                duree: _autres[i].duree,
+              ),
+            ),
+            onHeure: (int h) => _maj(
+              () => _autres[i] = (
+                jour: _autres[i].jour,
+                heure: h,
+                duree: _autres[i].duree,
+              ),
+            ),
+            onDuree: (int? d) => _maj(
+              () => _autres[i] = (
+                jour: _autres[i].jour,
+                heure: _autres[i].heure,
+                duree: d,
+              ),
+            ),
             onRetirer: () => _maj(() => _autres.removeAt(i)),
           ),
           Ecart.vLg,
@@ -1506,7 +1548,9 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
               libelle: f.ajouterCreneauLigne,
               niveau: NiveauAction.tertiaire,
               pleineLargeur: false,
-              onPress: () => _maj(() => _autres.add((jour: null, heure: null))),
+              onPress: () => _maj(
+                () => _autres.add((jour: null, heure: null, duree: null)),
+              ),
             ),
           ),
         Ecart.vXl,
@@ -2002,14 +2046,17 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
 }
 
 /// Un creneau de plus dans la creation d'une classe : le jour en puces,
-/// l'heure en menu, et « Retirer ce creneau » (D2, 29/10/2026).
+/// l'heure et la duree en menus, et « Retirer ce creneau » (D2, 29/10/2026 ;
+/// duree, 30/10/2026).
 class _LigneAutreCreneau extends StatelessWidget {
   const _LigneAutreCreneau({
     required this.numero,
     required this.jour,
     required this.heure,
+    required this.duree,
     required this.onJour,
     required this.onHeure,
+    required this.onDuree,
     required this.onRetirer,
     super.key,
   });
@@ -2017,8 +2064,10 @@ class _LigneAutreCreneau extends StatelessWidget {
   final int numero;
   final int? jour;
   final int? heure;
+  final int? duree;
   final ValueChanged<int> onJour;
   final ValueChanged<int> onHeure;
+  final ValueChanged<int?> onDuree;
   final VoidCallback onRetirer;
 
   @override
@@ -2067,6 +2116,11 @@ class _LigneAutreCreneau extends StatelessWidget {
               onChoix: (int? h) {
                 if (h != null) onHeure(h);
               },
+            ),
+            MenuDureeCreneau(
+              key: ValueKey<String>('classe-autre-$numero-duree'),
+              duree: duree,
+              onChoix: onDuree,
             ),
             ActionPrincipale(
               key: ValueKey<String>('classe-autre-$numero-retirer'),

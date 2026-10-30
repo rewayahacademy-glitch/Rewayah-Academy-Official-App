@@ -172,6 +172,7 @@ class CreationClasseDemo implements PortCreationClasse {
     required Creneau creneau,
     required int seuilMax,
     List<Creneau> autresCreneaux = const <Creneau>[],
+    List<int?> durees = const <int?>[],
   }) async {
     final _EnseignantDemo e = _enseignants.firstWhere(
       (_EnseignantDemo e) => e.id == teacherId,

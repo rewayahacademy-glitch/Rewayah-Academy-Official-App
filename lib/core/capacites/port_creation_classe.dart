@@ -29,6 +29,9 @@ abstract interface class PortCreationClasse {
   /// Cree la classe et rend son identifiant. [creneau] est le premier
   /// creneau de la semaine (l'ancre) ; [autresCreneaux], les suivants
   /// (classe a plusieurs creneaux, decision D2 du 29/10/2026).
+  /// [durees] : la duree en minutes de chaque creneau, dans l'ordre
+  /// ([creneau] puis [autresCreneaux]) ; nulle ou absente, la duree de la
+  /// classe (30/10/2026).
   Future<String> creer({
     required String teacherId,
     required TypePublicGroupe type,
@@ -37,6 +40,7 @@ abstract interface class PortCreationClasse {
     required Creneau creneau,
     required int seuilMax,
     List<Creneau> autresCreneaux = const <Creneau>[],
+    List<int?> durees = const <int?>[],
   });
 }
 
@@ -56,7 +60,8 @@ class CreationClasseParServiceGroupes implements PortCreationClasse {
   @override
   bool get retientFuseau => false;
 
-  /// Un seul creneau : [autresCreneaux] ne part pas avec `creer_groupe`.
+  /// Un seul creneau : [autresCreneaux] et [durees] ne partent pas avec
+  /// `creer_groupe`.
   @override
   Future<String> creer({
     required String teacherId,
@@ -66,6 +71,7 @@ class CreationClasseParServiceGroupes implements PortCreationClasse {
     required Creneau creneau,
     required int seuilMax,
     List<Creneau> autresCreneaux = const <Creneau>[],
+    List<int?> durees = const <int?>[],
   }) => _service.creer(
     teacherId: teacherId,
     type: type,

@@ -5,8 +5,8 @@ Reprise du lot par l'agent de construction n° 2 (consigne du pilote du 29/10 au
 ## Ce qui est faux, bloqué ou non prouvé, d'abord
 
 - **Rien n'est appliqué ni prouvé en production ni sur staging.**
-- **Bloqué, en attente de l'accord du pilote (i18n)** : quatre tests Flutter sont rouges à cause de ce lot et verts sur `main` : `test/i18n/ar_domaines_test.dart` (AR-COMPLET-1, « chaque clé admin.* a sa traduction arabe », pluriels arabes complets) et `test/core/i18n/elision_test.dart` (`admin.groupes.reglagesClasse.titre`). Les clés françaises `admin.groupes.formulaire.*` et `admin.groupes.reglagesClasse.*` ajoutées le 29/10 n'ont pas d'arabe. La note de passation « pas d'arabe, cette partie de l'administration n'en a pas » était fausse. Les corriger, c'est ajouter leurs traductions dans `assets/i18n/ar.i18n.json` : un ajout i18n, que je ne fais pas sans l'accord du pilote.
-- **La durée par créneau n'a pas d'écran.** Le serveur la porte entièrement (ci-dessous) ; l'écran ne permet pas encore de la choisir ni ne l'affiche, faute de libellés (aucun ajout i18n sans accord). Un créneau déplacé à l'écran garde sa durée.
+- Arabe des clés du lot (accord du pilote du 30/10) : ajouté pour `admin.groupes.formulaire.*` et `admin.groupes.reglagesClasse.*` du lot ; les tests `ar_domaines_test` et `elision_test` sont verts. La note de passation « pas d'arabe, cette partie de l'administration n'en a pas » était fausse.
+- Durée par créneau à l'écran (décision relayée par le pilote le 30/10) : un menu « Durée » par créneau dans « Nouvelle classe » et dans « Modifier ce créneau » (« Durée de la classe » par défaut, sinon 30 à 120 minutes) ; la liste des créneaux dit la durée quand elle n'est pas celle de la classe ; la durée seule modifiée dit « Durée enregistrée ». Libellés fr et ar. Non essayé en production.
 - Les scénarios SQL rejoués sur Postgres 16 local, chacun sur une copie neuve de la base : 129 verts, 7 rouges, **les mêmes 7 que sur `main`** (même message, même ligne) ; le seul écart est `scenarios_classe_plusieurs_creneaux.sql`, vert. Cinq des 7 rouges s'arrêtent sur « cannot ALTER TABLE ... pending trigger events » ; rejoués à part, avec les déclencheurs différés rendus immédiats (copie locale, non versionnée), `scenarios_classes_duree_affectation`, `scenarios_classes_duree_bout_en_bout`, `scenarios_cand_l1b_forme_compte`, `scenarios_fac_e_paie_par_eleve` et `scenarios_ses_cloture_auto` sont verts sur cette branche.
 
 ## Ce qui est fait
@@ -21,9 +21,8 @@ Reprise du lot par l'agent de construction n° 2 (consigne du pilote du 29/10 au
 
 ## Ce qui reste
 
-1. Accord du pilote sur l'arabe des clés du lot (ou décision contraire), puis l'écran de la durée par créneau (libellés à accorder).
-2. Ajouter `scenarios_classe_plusieurs_creneaux.sql` à `ci.yml` (zone du directeur).
-3. PR, fusion, migration (pilote), puis la preuve du directeur (gestes dans `LOT-CRENEAUX-2026-10-29.md`).
+1. Ajouter `scenarios_classe_plusieurs_creneaux.sql` à `ci.yml` (zone du directeur).
+2. PR, fusion, migration (pilote), puis la preuve du directeur (gestes dans `LOT-CRENEAUX-2026-10-29.md`).
 
 ## Fichiers touchés
 

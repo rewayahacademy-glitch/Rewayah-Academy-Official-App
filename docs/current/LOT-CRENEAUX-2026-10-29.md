@@ -5,7 +5,7 @@ Décisions : `DECISION-CLASSES-HORAIRES-MIXITE-2026-10-29.md` (D1, D2, arbitrage
 ## Ce qui n'est pas vrai, ou pas prouvé, d'abord
 
 1. **Rien n'est appliqué ni prouvé en production ni sur staging.** La migration `supabase/migrations/20261030100000_classe_plusieurs_creneaux.sql` n'est appliquée nulle part. Elle contient deux mots de suppression, dans des corps de fonction (`DELETE` du retrait d'un créneau, `delete` du déclencheur d'ancrage) ; aucun `DROP`, aucun `TRUNCATE`. Elle est appliquée par le pilote après fusion (`DECISION-AUTONOMIE-2026-10-29.md`).
-2. **La durée par créneau (30/10) est faite côté serveur, pas à l'écran.** L'écran ne la montre pas et ne la fait pas choisir (libellés et traductions arabes en attente de l'accord du pilote, `CRENEAUX-ETAT.md`) ; un créneau déplacé à l'écran garde sa durée. Quatre tests Flutter sont rouges à cause de ce lot (arabe manquant des clés du 29/10), verts sur `main`.
+2. **La durée par créneau (30/10) est faite côté serveur et à l'écran**, non essayée en production : menu « Durée » par créneau dans « Nouvelle classe » et « Modifier ce créneau » (« Durée de la classe » par défaut). Les clés du lot ont leur arabe (accord du pilote du 30/10).
 3. **Trouvé en lisant le code** : le genre choisi dans « Nouvelle classe » n'était jamais envoyé au serveur (l'écran le disait : « genre non enregistré »), ni le fuseau. C'est pourquoi toutes les classes de la production sont de genre « indéterminé ». La création passe désormais par `creer_classe_creneaux_admin`, qui enregistre le genre et le fuseau.
 4. **Le regroupement automatique n'ajoute aujourd'hui aucun élève à une classe existante** : il crée de nouvelles classes depuis les demandes semblables (genre de la clé). La règle Q1 (« pas d'élève ajouté à une classe au genre non réglé ») est donc vraie par construction ; l'écran « Créneaux et genre » le dit pour chaque classe non réglée. L'ajout d'un élève à la main par la direction ne contrôle pas le genre (inchangé).
 5. **Modifier ou ajouter un créneau** exige que l'enseignant soit disponible à ce créneau (règle déjà en production pour l'ajout) ; **créer** une classe à plusieurs créneaux ne l'exige pas (comme la création d'une classe à un créneau, décision D4). Différence voulue, à confirmer si elle gêne.
@@ -33,6 +33,7 @@ Décisions : `DECISION-CLASSES-HORAIRES-MIXITE-2026-10-29.md` (D1, D2, arbitrage
 
 1. Classes, « Nouvelle classe » : sous le premier créneau, « Autres créneaux de la semaine » avec deux lignes. Choisir lundi 18 h, mercredi 18 h, vendredi 18 h, un enseignant, créer.
 2. Ouvrir le planning de cette classe : trois séances par semaine.
-3. Menu de la classe, « Créneaux et genre » : les trois créneaux. « Modifier ce créneau » sur mercredi : jeudi 19 h, écrire un motif, « Déplacer le créneau ». Les séances du mercredi passent en « annulée », celles du jeudi apparaissent ; la famille et l'enseignant reçoivent la notification.
-4. « Retirer ce créneau » sur le dernier qui reste : la phrase dit qu'une classe garde au moins un créneau.
-5. « Modifier le genre » d'une classe existante : choisir « Mixte », écrire un motif, enregistrer ; la liste des classes dit « Mixte ».
+3. Menu de la classe, « Créneaux et genre » : les trois créneaux. « Modifier ce créneau » sur mercredi : jeudi 19 h, écrire un motif, « Enregistrer le créneau ». Les séances du mercredi passent en « annulée », celles du jeudi apparaissent ; la famille et l'enseignant reçoivent la notification.
+4. « Modifier ce créneau » sur jeudi : « Durée », 60 min, un motif, enregistrer : « Durée enregistrée » ; les séances du jeudi durent 60 minutes, aucune n'est annulée.
+5. « Retirer ce créneau » sur le dernier qui reste : la phrase dit qu'une classe garde au moins un créneau.
+6. « Modifier le genre » d'une classe existante : choisir « Mixte », écrire un motif, enregistrer ; la liste des classes dit « Mixte ».

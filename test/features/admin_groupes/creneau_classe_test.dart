@@ -19,6 +19,7 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/menu_actions.dart';
+import 'package:rewayah_academy/features/admin_groupes/duree_creneau.dart';
 import 'package:rewayah_academy/features/admin_groupes/feuille_reglages_classe.dart';
 import 'package:rewayah_academy/features/admin_groupes/groupes_page.dart';
 
@@ -331,6 +332,41 @@ void main() {
       await _presser(tester, find.text(r.envoyerModifier).last);
       expect(creneaux.modifications.single.$1, (jour: 2, heure: 18, duree: 45));
       expect(creneaux.modifications.single.$2, (jour: 4, heure: 18, duree: 45));
+    });
+
+    testWidgets('duree par creneau (30/10/2026) : la duree seule change, '
+        'les seances a venir la prennent sans etre annulees', (
+      WidgetTester tester,
+    ) async {
+      final _FauxCreneaux creneaux = _FauxCreneaux()
+        ..creneaux = <CreneauClasse>[(jour: 2, heure: 18, duree: null)];
+      await _monter(tester, creneaux);
+      await _gesteCreneau(tester, r.modifierCreneau);
+      expect(find.text(r.dureeContexte), findsOneWidget);
+      await _presser(
+        tester,
+        find.byKey(const ValueKey<String>('reglages-duree')),
+      );
+      await _presser(tester, find.text(libelleDureeCreneau(60)).last);
+      await tester.enterText(
+        find.byKey(const ValueKey<String>('reglages-motif')),
+        'Seance plus courte',
+      );
+      await _presser(tester, find.text(r.envoyerModifier).last);
+      expect(creneaux.modifications.single.$2, (jour: 2, heure: 18, duree: 60));
+      expect(find.text(r.faitDuree(n: 4)), findsOneWidget);
+    });
+
+    test('le libelle d un creneau dit sa duree quand elle n est pas celle '
+        'de la classe', () {
+      expect(
+        libelleCreneauClasse((jour: 2, heure: 18, duree: 45)),
+        endsWith(libelleDureeCreneau(45)),
+      );
+      expect(
+        libelleCreneauClasse((jour: 2, heure: 18, duree: null)),
+        isNot(contains(libelleDureeCreneau(45))),
+      );
     });
 
     testWidgets('retirer le dernier creneau : le refus du serveur se dit en '

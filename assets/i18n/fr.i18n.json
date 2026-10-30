@@ -3892,7 +3892,7 @@
         "consequence": "Les séances à venir de ce créneau sont annulées, jamais supprimées\u00a0; les familles et l'enseignant sont prévenus. Les séances passées ne changent pas.",
         "motif": "Motif",
         "motifAide": "Il est gardé avec les séances annulées et dans le journal.",
-        "envoyerModifier": "Déplacer le créneau",
+        "envoyerModifier": "Enregistrer le créneau",
         "envoyerRetirer": "Retirer le créneau",
         "envoyerGenre": "Enregistrer le genre",
         "retour": "Revenir aux créneaux",
@@ -3915,6 +3915,12 @@
           "zero": "Créneau retiré\u00a0: aucune séance à venir à annuler.",
           "one": "Créneau retiré\u00a0: {n} séance à venir annulée.",
           "other": "Créneau retiré\u00a0: {n} séances à venir annulées."
+        },
+        "dureeContexte": "Changer seulement la durée n'annule aucune séance\u00a0: les séances à venir de ce créneau la prennent.",
+        "faitDuree(param=n)": {
+          "zero": "Durée enregistrée\u00a0: aucune séance à venir à changer pour le moment.",
+          "one": "Durée enregistrée\u00a0: {n} séance à venir la prend.",
+          "other": "Durée enregistrée\u00a0: {n} séances à venir la prennent."
         }
       },
       "creneau": {
@@ -4093,6 +4099,10 @@
         "ajouterCreneauLigne": "Ajouter un créneau",
         "manqueAutreCreneau": "Choisissez le jour et l'heure du créneau {n}, ou retirez-le.",
         "creneauEnDouble": "Deux créneaux tombent le même jour à la même heure\u00a0: changez-en un.",
+        "duree": "Durée",
+        "dureeClasse": "Durée de la classe",
+        "dureeValeur": "{minutes} min",
+        "dureeContexte": "Par défaut, un créneau dure le temps de la classe, fixé par son public. Choisissez une autre durée pour ce créneau seulement.",
         "genreMixte": "Mixte",
         "genreMixteDetailEnfants": "Garçons et filles ensemble\u00a0: tout enseignant dont le genre est renseigné pourra la prendre. À choisir seulement quand les enseignants d'un genre manquent.",
         "genreMixteDetailAdultes": "Hommes et femmes ensemble\u00a0: tout enseignant dont le genre est renseigné pourra la prendre. À choisir seulement quand les enseignants d'un genre manquent.",

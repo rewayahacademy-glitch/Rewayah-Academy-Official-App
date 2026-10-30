@@ -48,6 +48,7 @@ class CreationClasseSupabase implements PortCreationClasse {
     required Creneau creneau,
     required int seuilMax,
     List<Creneau> autresCreneaux = const <Creneau>[],
+    List<int?> durees = const <int?>[],
   }) => traduireRefusCreationClasse<String>(
     () => _client.rpc<String>(
       'creer_classe_creneaux_admin',
@@ -58,8 +59,16 @@ class CreationClasseSupabase implements PortCreationClasse {
         'p_seuil_max': seuilMax,
         'p_timezone_iana': creneau.fuseau,
         'p_creneaux': <Map<String, int>>[
-          for (final Creneau c in <Creneau>[creneau, ...autresCreneaux])
-            <String, int>{'jour': c.jour, 'heure': c.heure},
+          for (final (int i, Creneau c) in <Creneau>[
+            creneau,
+            ...autresCreneaux,
+          ].indexed)
+            <String, int>{
+              'jour': c.jour,
+              'heure': c.heure,
+              // Nulle : la duree de la classe, que le serveur retient seul.
+              if (i < durees.length && durees[i] != null) 'duree': durees[i]!,
+            },
         ],
         'p_genre': genreClasseSql(genre),
         'p_couleur_jeton': null,

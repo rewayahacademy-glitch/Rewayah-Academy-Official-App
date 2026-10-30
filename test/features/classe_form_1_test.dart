@@ -31,6 +31,7 @@ import 'package:rewayah_academy/core/widgets/menu_actions.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_personne.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
+import 'package:rewayah_academy/features/admin_groupes/duree_creneau.dart';
 import 'package:rewayah_academy/features/admin_groupes/groupes_page.dart';
 import 'package:rewayah_academy/features/demo/classe_form_demo.dart';
 
@@ -124,6 +125,7 @@ class _CreationRefusee extends FauxCreationClasse {
     required Creneau creneau,
     required int seuilMax,
     List<Creneau> autresCreneaux = const <Creneau>[],
+    List<int?> durees = const <int?>[],
   }) async {
     if (refus > 0) {
       refus--;
@@ -137,6 +139,7 @@ class _CreationRefusee extends FauxCreationClasse {
       creneau: creneau,
       seuilMax: seuilMax,
       autresCreneaux: autresCreneaux,
+      durees: durees,
     );
   }
 }
@@ -563,10 +566,7 @@ void main() {
       Future<void> ligne(int numero, int jour, int heure) async {
         await _presser(tester, _cle('classe-autre-$numero-jour-$jour'));
         await _presser(tester, _cle('classe-autre-$numero-heure'));
-        await _presser(
-          tester,
-          find.text(f.heureValeur(heure: '$heure')).last,
-        );
+        await _presser(tester, find.text(f.heureValeur(heure: '$heure')).last);
       }
 
       // Le creneau 2 au meme instant que le premier : en double.
@@ -584,6 +584,35 @@ void main() {
         autres.map((Creneau c) => (c.jour, c.heure, c.fuseau)).toList(),
         <(int, int, String)>[(1, 18, _casablanca), (6, 10, _casablanca)],
       );
+    });
+
+    // Duree par creneau (30/10/2026) : par defaut celle de la classe (nulle
+    // au port) ; une autre duree vaut pour son creneau seulement.
+    testWidgets('duree par creneau : la duree choisie part avec son creneau, '
+        'les autres gardent celle de la classe', (WidgetTester tester) async {
+      final FauxCreationClasse creation = FauxCreationClasse();
+      final f = t.admin.groupes.formulaire;
+      await _ouvrir(tester, _surcharges(creation: creation));
+      await _presser(tester, _cle('classe-public-adulte'));
+      await _presser(tester, _cle('classe-genre-hommes'));
+      await _presser(tester, _cle('personne-h1'));
+      await _presser(tester, _cle('classe-libre-4-18'));
+      expect(find.text(f.dureeContexte), findsOneWidget);
+      await _presser(tester, _cle('classe-duree'));
+      await _presser(tester, find.text(libelleDureeCreneau(45)).last);
+
+      Future<void> ligne(int numero, int jour, int heure) async {
+        await _presser(tester, _cle('classe-autre-$numero-jour-$jour'));
+        await _presser(tester, _cle('classe-autre-$numero-heure'));
+        await _presser(tester, find.text(f.heureValeur(heure: '$heure')).last);
+      }
+
+      await ligne(2, 1, 18);
+      await ligne(3, 6, 10);
+      await _presser(tester, _cle('classe-autre-3-duree'));
+      await _presser(tester, find.text(libelleDureeCreneau(120)).last);
+      await _presser(tester, _envoyer);
+      expect(creation.dureesRecues.single, <int?>[45, null, 120]);
     });
 
     testWidgets('adaptateur reel : le fuseau affiche est celui que le serveur '

@@ -32,6 +32,7 @@ import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/skeleton.dart';
 import '../creneaux/plages.dart' show jourCapitalise;
 import 'bas_de_feuille.dart';
+import 'duree_creneau.dart';
 import 'feuille_creneau.dart';
 import 'genre_classe_libelles.dart';
 import 'refus_deplacement_libelles.dart';
@@ -69,11 +70,18 @@ void ouvrirReglagesClasse(
   );
 }
 
-/// Le libelle d'un creneau : « Mardi 18 h », insecable.
-String libelleCreneauClasse(CreneauClasse c) => LibellesGroupe.insecable(
-  '${jourCapitalise(c.jour)} '
-  '${t.admin.groupes.formulaire.heureValeur(heure: '${c.heure}')}',
-);
+/// Le libelle d'un creneau : « Mardi 18 h », insecable, suivi de sa duree
+/// quand elle n'est pas celle de la classe (« Mardi 18 h, 45 min »).
+String libelleCreneauClasse(CreneauClasse c) {
+  final String jourHeure = LibellesGroupe.insecable(
+    '${jourCapitalise(c.jour)} '
+    '${t.admin.groupes.formulaire.heureValeur(heure: '${c.heure}')}',
+  );
+  final int? duree = c.duree;
+  return duree == null
+      ? jourHeure
+      : '$jourHeure, ${libelleDureeCreneau(duree)}';
+}
 
 enum _Vue { liste, modifier, retirer, genre }
 
@@ -110,6 +118,9 @@ class _FeuilleReglagesClasseEtat extends ConsumerState<FeuilleReglagesClasse> {
   CreneauClasse? _cible;
   int? _jour;
   int? _heure;
+
+  /// La duree du creneau modifie, en minutes ; nulle pour celle de la classe.
+  int? _duree;
   GenreClasse? _genreChoisi;
   late GenreClasse? _genreActuel = widget.genre;
   final TextEditingController _motif = TextEditingController();
@@ -128,6 +139,7 @@ class _FeuilleReglagesClasseEtat extends ConsumerState<FeuilleReglagesClasse> {
     _cible = cible;
     _jour = cible?.jour;
     _heure = cible?.heure;
+    _duree = cible?.duree;
     _genreChoisi = null;
     _motif.clear();
     _erreur = null;
@@ -176,11 +188,14 @@ class _FeuilleReglagesClasseEtat extends ConsumerState<FeuilleReglagesClasse> {
           final int n = await service.modifier(
             groupeId: widget.groupe.id,
             ancien: cible!,
-            // Le creneau deplace garde sa duree.
-            nouveau: (jour: jour!, heure: heure!, duree: cible.duree),
+            nouveau: (jour: jour!, heure: heure!, duree: _duree),
             motif: motif,
           );
-          fait = r.faitModifie(n: n);
+          // La duree seule : les seances a venir sont realignees, aucune
+          // n'est annulee ni creee.
+          fait = jour == cible.jour && heure == cible.heure
+              ? r.faitDuree(n: n)
+              : r.faitModifie(n: n);
         case _Vue.retirer:
           final int n = await service.retirer(
             groupeId: widget.groupe.id,
@@ -376,6 +391,22 @@ class _FeuilleReglagesClasseEtat extends ConsumerState<FeuilleReglagesClasse> {
                   });
                 }
               },
+            ),
+          ),
+          Ecart.vLg,
+          TexteSansCoupure(f.duree, style: textes.labelLarge),
+          Ecart.vXs,
+          TexteSansCoupure(r.dureeContexte, style: textes.bodySmall),
+          Ecart.vSm,
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: MenuDureeCreneau(
+              key: const ValueKey<String>('reglages-duree'),
+              duree: _duree,
+              onChoix: (int? d) => setState(() {
+                _duree = d;
+                _erreur = null;
+              }),
             ),
           ),
           Ecart.vLg,
