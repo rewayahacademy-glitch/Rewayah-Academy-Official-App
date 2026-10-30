@@ -58,7 +58,14 @@ pilote fusionne, applique les migrations et tient ce tableau à jour.
   d'un compte gelé au démarrage pèse plus que la tenue des taxes. Frais plus élevés, paiement
   au nom de Creem, et Stripe est déjà construit et déployé. Les taxes : avis du comptable, puis
   Stripe Tax si besoin. Creem seulement sur accord écrit de leur support, demandé par le
-  directeur.
+  directeur. **Le directeur, 30/10 : « On garde Stripe ».**
+- **Taxes avec Stripe (question du directeur, 30/10)** : rien n'est automatique de bout en bout.
+  Stripe Tax calcule et ajoute la taxe au paiement et signale les seuils atteints par pays ;
+  l'inscription auprès de chaque autorité et les déclarations se font par le comptable ou par
+  un partenaire de dépôt proposé par Stripe (payant à part). Inconnus à trancher par le
+  comptable avant d'activer Stripe Tax : pays de la société, taxe déjà due dans ce pays, nature
+  fiscale d'un cours en direct (service éducatif ou service électronique) selon le pays de
+  l'élève. Aucun code ne change d'ici là : les prix restent affichés hors taxes.
 - **Paiement** : paiement mensuel par la famille sur Stripe Checkout, avec les relances
   existantes (J-7, J-3, J-1). Pas d'abonnement automatique pour l'instant.
 - **Après le paiement**, la direction place l'élève dans sa classe (geste existant). Le
