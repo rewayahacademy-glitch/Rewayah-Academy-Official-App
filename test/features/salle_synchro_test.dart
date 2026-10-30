@@ -290,6 +290,67 @@ void main() {
     expect(eleve.tableauOuvert.value, isFalse);
   });
 
+  test('salle en groupe : la parole donnee par l enseignant arrive chez '
+      'l eleve, se rejoue a un arrivant, puis se reprend', () async {
+    final FauxMoteurSalle moteurEnseignant = FauxMoteurSalle();
+    final FauxMoteurSalle moteurEleve = FauxMoteurSalle();
+    await moteurEnseignant.rejoindre(accesSalle('teacher'));
+    await moteurEleve.rejoindre(accesSalle('student'));
+    final SynchroSalle enseignant = SynchroSalle(
+      moteur: moteurEnseignant,
+      acces: accesSalle('teacher'),
+      sessionId: _seance,
+      profilLocalId: 't1',
+    );
+    final SynchroSalle eleve = SynchroSalle(
+      moteur: moteurEleve,
+      acces: accesSalle('student'),
+      sessionId: _seance,
+      profilLocalId: 'e1',
+    );
+    addTearDown(enseignant.liberer);
+    addTearDown(eleve.liberer);
+
+    Future<void> relayer() async {
+      await pumpEventQueue();
+      final PaquetDonnees paquet = moteurEnseignant.donneesPubliees.last;
+      expect(paquet.fiable, isTrue);
+      moteurEleve.recevoirDonnees(
+        PaquetDonnees(
+          sujet: paquet.sujet,
+          charge: paquet.charge,
+          fiable: paquet.fiable,
+          emetteurIdentite: 't1',
+        ),
+      );
+      await pumpEventQueue();
+    }
+
+    const ParoleSalle yusuf = ParoleSalle(profilId: 'e2', prenom: 'Yusuf');
+    expect(eleve.parole.value, isNull);
+    enseignant.diffuserParole(yusuf);
+    expect(enseignant.parole.value, yusuf);
+    await relayer();
+    expect(eleve.parole.value, yusuf);
+
+    // Rejeu a un arrivant : la parole repart avec le reste.
+    moteurEnseignant.donneesPubliees.clear();
+    enseignant.rejouer();
+    await relayer();
+    expect(eleve.parole.value, yusuf);
+
+    enseignant.diffuserParole(null);
+    await relayer();
+    expect(eleve.parole.value, isNull);
+
+    // L'eleve ne donne pas la parole : son jeton n'a pas le canal.
+    final int avant = moteurEleve.donneesPubliees.length;
+    eleve.diffuserParole(yusuf);
+    await pumpEventQueue();
+    expect(moteurEleve.donneesPubliees.length, avant);
+    expect(eleve.parole.value, isNull);
+  });
+
   test('rejeu : un eleve qui entre apres la page, le tableau et un trait '
       'les recoit de l appareil de l enseignant', () async {
     final FauxMoteurSalle moteurEnseignant = FauxMoteurSalle();

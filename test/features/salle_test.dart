@@ -23,6 +23,7 @@ import 'package:rewayah_academy/core/planning/service_planning.dart'
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/profil/service_profil_enseignant.dart'
     show ProfilEnseignant, profilEnseignantParIdProvider;
+import 'package:rewayah_academy/core/router/garde_sortie_salle.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
@@ -38,6 +39,7 @@ import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart'
     show PointNormalise;
 import 'package:rewayah_academy/core/tc_outils/port_annotations.dart';
 import 'package:rewayah_academy/core/theme/app_gabarit.dart';
+import 'package:rewayah_academy/core/video/gestes_salle.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
@@ -95,9 +97,36 @@ AccesSalle _acces(String role, {bool camera = false, bool? voix}) => AccesSalle(
     peutPublierDonnees: role == 'teacher',
     peutRecevoir: true,
     invisible: role == 'masked_controller',
+    peutModerer: role == 'teacher',
   ),
   expireLe: DateTime.now().add(const Duration(minutes: 10)),
 );
+
+/// Salle en groupe (30/10/2026) : les gestes de l'enseignant, sans reseau.
+class FauxGestesSalle implements PortGestesSalle {
+  /// Les gestes demandes, dans l'ordre : (eleve, geste).
+  final List<(String, GesteSalle)> gestes = <(String, GesteSalle)>[];
+
+  /// Les readmissions demandees.
+  final List<String> readmissions = <String>[];
+
+  /// Les eleves sortis que la base rendrait.
+  List<EleveSorti> sortisRendus = const <EleveSorti>[];
+
+  @override
+  Future<void> appliquer(
+    String seanceId,
+    String eleveId,
+    GesteSalle geste,
+  ) async => gestes.add((eleveId, geste));
+
+  @override
+  Future<void> readmettre(String seanceId, String eleveId) async =>
+      readmissions.add(eleveId);
+
+  @override
+  Future<List<EleveSorti>> sortis(String seanceId) async => sortisRendus;
+}
 
 ParticipantSalle _personne({
   required String identite,
@@ -134,7 +163,9 @@ List<Override> _surcharges({
   bool monTuteurObserve = false,
   List<AnnonceObservation> annonces = const <AnnonceObservation>[],
   List<GroupeEnseignant> groupesEnseignant = const <GroupeEnseignant>[],
+  FauxGestesSalle? gestes,
 }) => <Override>[
+  portGestesSalleProvider.overrideWithValue(gestes ?? FauxGestesSalle()),
   sourceSessionProvider.overrideWithValue(FausseSourceSession(_session(role))),
   servicePreVolProvider.overrideWithValue(preVol),
   serviceVideoProvider.overrideWithValue(video),
@@ -221,6 +252,8 @@ Future<void> _monterSalle(
       routes: <RouteBase>[
         GoRoute(
           path: Routes.salle,
+          // Comme le vrai routeur : le retour passe par la salle.
+          onExit: GardeSortieSalle.instance.autoriserSortie,
           builder: (BuildContext _, GoRouterState _) =>
               SallePage(seanceId: _seance, groupeId: groupeId),
         ),
@@ -1516,6 +1549,150 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('accueil eleve'), findsOneWidget);
+    });
+  });
+
+  group('Salle en groupe (30/10/2026)', () {
+    testWidgets('l enseignant a les gestes sur un eleve de la grille ; '
+        'faire sortir se confirme puis part au serveur', (
+      WidgetTester tester,
+    ) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      final FauxGestesSalle gestes = FauxGestesSalle();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('teacher')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+          role: AppRole.teacher,
+          gestes: gestes,
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      moteur.publier(<ParticipantSalle>[
+        _personne(identite: 't1', role: 'teacher', nom: 'Omar', local: true),
+        _personne(identite: 'e1', role: 'student', nom: 'Yusuf', micro: true),
+      ]);
+      await tester.pumpAndSettle();
+
+      // Un menu sur l'eleve, aucun sur l'enseignant lui-meme.
+      expect(find.byKey(const ValueKey<String>('gestes-e1')), findsOneWidget);
+      expect(find.byKey(const ValueKey<String>('gestes-t1')), findsNothing);
+
+      await tester.tap(find.byKey(const ValueKey<String>('gestes-e1')));
+      await tester.pumpAndSettle();
+      // Le micro ouvert se coupe ; la camera eteinte ne se propose pas.
+      expect(
+        find.text(t.salle.gestes.couperMicro(prenom: 'Yusuf')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(t.salle.gestes.couperCamera(prenom: 'Yusuf')),
+        findsNothing,
+      );
+      await tester.tap(find.text(t.salle.gestes.faireSortir(prenom: 'Yusuf')));
+      await tester.pumpAndSettle();
+      expect(
+        find.text(t.salle.gestes.consequenceSortie(prenom: 'Yusuf')),
+        findsOneWidget,
+      );
+      await tester.tap(
+        find.text(t.salle.gestes.faireSortir(prenom: 'Yusuf')).last,
+      );
+      await tester.pumpAndSettle();
+      expect(gestes.gestes, <(String, GesteSalle)>[
+        ('e1', GesteSalle.faireSortir),
+      ]);
+    });
+
+    testWidgets('l eleve n a aucun geste sur ses camarades', (
+      WidgetTester tester,
+    ) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      moteur.publier(<ParticipantSalle>[
+        _personne(identite: 'e1', role: 'student', nom: 'Yusuf', local: true),
+        _personne(identite: 't1', role: 'teacher', nom: 'Omar'),
+        _personne(identite: 'e2', role: 'student', nom: 'Aicha'),
+      ]);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey<String>('gestes-e2')), findsNothing);
+      expect(find.byKey(const ValueKey<String>('gestes-t1')), findsNothing);
+    });
+
+    testWidgets('l eleve sorti par l enseignant lit pourquoi, et Reessayer '
+        'redemande un jeton', (WidgetTester tester) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      final FauxServiceVideo video = FauxServiceVideo(
+        acces0: _acces('student'),
+      );
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: video,
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      await tester.pumpAndSettle();
+      moteur.poser(EtatSalle.retire);
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.retire), findsOneWidget);
+      expect(find.text(t.salle.retireDetail), findsOneWidget);
+      expect(find.text(t.salle.perdue), findsNothing);
+      await tester.tap(find.text(t.commun.reessayer));
+      await tester.pumpAndSettle();
+      expect(video.demandes, hasLength(2));
+    });
+
+    testWidgets('point 4 : le retour du telephone dans l appel demande '
+        'avant de quitter ; « Annuler » garde l appel', (
+      WidgetTester tester,
+    ) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      final FauxServiceVideo video = FauxServiceVideo(
+        acces0: _acces('student'),
+      );
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: video,
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      await tester.pumpAndSettle();
+      final int departs = moteur.departs;
+
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.confirmerSortie), findsWidgets);
+      await tester.tap(find.text(t.commun.annuler));
+      await tester.pumpAndSettle();
+      expect(moteur.departs, departs, reason: 'l appel continue');
+      expect(video.sorties, isEmpty);
+      expect(find.byType(SallePage), findsOneWidget);
+
+      // Le retour du navigateur, puis « Quitter le cours » : la sortie
+      // volontaire habituelle (annonce, puis deconnexion).
+      await tester.binding.handlePushRoute(Routes.eleve);
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.confirmerSortie), findsWidgets);
+      await tester.tap(find.text(t.salle.quitterLeCours).last);
+      await tester.pumpAndSettle();
+      expect(video.sorties, <String>[_seance]);
+      expect(moteur.departs, greaterThan(departs));
     });
   });
 
