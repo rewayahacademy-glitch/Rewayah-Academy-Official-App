@@ -939,6 +939,10 @@ void main() {
   group('tuteur : Compte > Acces', () {
     List<Override> surcharges(JeuFoyerFinance jeu, {bool finance = true}) =>
         <Override>[
+          // R9 : l'acces du foyer n'est lu que pour une personne connectee.
+          sourceSessionProvider.overrideWithValue(
+            FausseSourceSession(sessionActive(AppRole.guardian)),
+          ),
           portAccesFoyerProvider.overrideWithValue(AccesFoyerFinanceDemo(jeu)),
           if (finance)
             portPaiementsFoyerProvider.overrideWithValue(
@@ -1421,6 +1425,9 @@ void main() {
         _hote(
           const AccesComptePage(),
           surcharges: <Override>[
+            sourceSessionProvider.overrideWithValue(
+              FausseSourceSession(sessionActive(AppRole.guardian)),
+            ),
             portAccesFoyerProvider.overrideWithValue(
               const AccesFoyerFinanceDemo(
                 JeuFoyerFinance.unARegulariser,
