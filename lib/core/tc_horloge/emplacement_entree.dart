@@ -340,11 +340,17 @@ String _dansEnseignant(Duration reste, DateTime debut) =>
       debut: debut,
       textes: (
         imminent: () => t.enseignant.journee.minuteurImminent,
-        minutes: (int m) => t.enseignant.journee.minuteurMinutes(minutes: m),
-        heures: (int h, String m) =>
-            t.enseignant.journee.minuteurHeures(heures: h, minutes: m),
-        demain: (String heure) =>
-            t.enseignant.journee.minuteurDemain(heure: heure),
-        jours: (int j) => t.enseignant.journee.minuteurJours(jours: j),
+        minutes: (int m) => LibellesGroupe.insecable(
+          t.enseignant.journee.minuteurMinutes(minutes: m),
+        ),
+        heures: (int h, String m) => LibellesGroupe.insecable(
+          t.enseignant.journee.minuteurHeures(heures: h, minutes: m),
+        ),
+        demain: (String heure) => LibellesGroupe.insecable(
+          t.enseignant.journee.minuteurDemain(heure: heure),
+        ),
+        jours: (int j) => LibellesGroupe.insecable(
+          t.enseignant.journee.minuteurJours(jours: j),
+        ),
       ),
     );

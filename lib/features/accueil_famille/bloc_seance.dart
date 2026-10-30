@@ -228,11 +228,12 @@ class AffichageSeance {
     return LibellesGroupe.compteAReboursAvec(
       restant,
       textes: (
-        imminent: () => e.dansMinutes(minutes: 1),
-        minutes: (int m) => e.dansMinutes(minutes: m),
-        heures: (int h, String m) => e.dansHeures(heures: h, minutes: m),
-        demain: (String _) => e.dansJours(jours: 1),
-        jours: (int j) => e.dansJours(jours: j),
+        imminent: () => LibellesGroupe.insecable(e.dansMinutes(minutes: 1)),
+        minutes: (int m) => LibellesGroupe.insecable(e.dansMinutes(minutes: m)),
+        heures: (int h, String m) =>
+            LibellesGroupe.insecable(e.dansHeures(heures: h, minutes: m)),
+        demain: (String _) => LibellesGroupe.insecable(e.dansJours(jours: 1)),
+        jours: (int j) => LibellesGroupe.insecable(e.dansJours(jours: j)),
       ),
     );
   }
