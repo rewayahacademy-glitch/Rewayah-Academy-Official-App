@@ -792,6 +792,10 @@ abstract final class Routes {
   static const String adminPersonnesSuppressions =
       '/admin/personnes/suppressions';
 
+  /// Admission, lot C : les demandes des familles et des eleves adultes, que
+  /// la direction accepte, refuse ou complete, sous Personnes.
+  static const String adminPersonnesAdmissions = '/admin/personnes/demandes';
+
   /// Domaine Personnes.
   static const String adminPersonnes = '/admin/personnes';
 

@@ -328,7 +328,9 @@ BEGIN
       'formulaires_journal', 'formulaires_rapprochements', 'formulaires_choix_doublons', 'candidat_accords_confidentialite',
       'inscriptions_publiques', 'indicatifs_telephoniques', 'formulaires_entetes', 'formulaires_libelles')),
     'dix tables du lot : RLS active, aucun privilege client, aucune policy');
-  PERFORM pg_temp.vrai((SELECT count(*) FROM private.candidature_gestes_regles) = 26,
+  -- Les regles de l'admission (lot C, gestes *_admission) ont leur scenario.
+  PERFORM pg_temp.vrai((SELECT count(*) FROM private.candidature_gestes_regles
+                         WHERE geste NOT LIKE '%admission') = 26,
     'la table des regles de CAND-L2A1 est inchangee (vingt-six variantes)');
 END $f86$;
 

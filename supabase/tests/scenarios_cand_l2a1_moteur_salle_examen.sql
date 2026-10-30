@@ -1687,13 +1687,15 @@ SELECT pg_temp.refus($$SELECT private.candidature_geste_appliquer('ca2acccc-0000
   'lever_pause', 1::smallint, 'direction', 'ca2a0000-0000-4000-8000-0000000000a1', NULL, NULL,
   '{"etape": "confirmee"}'::jsonb)$$, '22023', 'changement non admis (etape) : refuse');
 
--- La table des regles suit la section 4.2.
+-- La table des regles suit la section 4.2. Les regles de l'admission (lot C,
+-- gestes *_admission) ont leur scenario, scenarios_admission_lot_c.sql.
 SELECT pg_temp.vrai((SELECT string_agg(DISTINCT transition::text, ',' ORDER BY transition::text)
-                       FROM private.candidature_gestes_regles WHERE 'direction' = ANY (motif_requis))
+                       FROM private.candidature_gestes_regles WHERE 'direction' = ANY (motif_requis)
+                        AND geste NOT LIKE '%admission')
     = '12,15,16,17,18,19,20,21,23,25,7'
-  AND (SELECT string_agg(geste, ',' ORDER BY geste) FROM private.candidature_gestes_regles WHERE pause <> 'interdite')
+  AND (SELECT string_agg(geste, ',' ORDER BY geste) FROM private.candidature_gestes_regles WHERE pause <> 'interdite' AND geste NOT LIKE '%admission')
     = 'lever_pause,refuser,retirer'
-  AND (SELECT string_agg(geste, ',' ORDER BY geste) FROM private.candidature_gestes_regles WHERE 'candidat' = ANY (auteurs))
+  AND (SELECT string_agg(geste, ',' ORDER BY geste) FROM private.candidature_gestes_regles WHERE 'candidat' = ANY (auteurs) AND geste NOT LIKE '%admission')
     = 'enregistrer_reponses,envoyer_reponses,retirer'
   AND NOT EXISTS (SELECT 1 FROM private.candidature_gestes_regles WHERE 'candidat' = ANY (motif_requis)),
   'regles : motif exige ou la section 4.2 le dit (7, 12, 15, 16, 17 direction, 18 pose, 19, 20, 21, 23, 25) ; en pause seuls lever, refuser, retirer');
@@ -1710,7 +1712,8 @@ DECLARE
   v_n integer := 0;
 BEGIN
   FOR r IN SELECT * FROM private.candidature_gestes_regles
-           WHERE 'direction' = ANY (motif_requis) ORDER BY transition, geste, variante LOOP
+           WHERE 'direction' = ANY (motif_requis) AND geste NOT LIKE '%admission'
+           ORDER BY transition, geste, variante LOOP
     v_n := v_n + 1;
     v_id := pg_temp.fixture(r.geste, r.variante, false);
     v_avant := pg_temp.trace(v_id);
@@ -1761,7 +1764,8 @@ DECLARE
   v_res jsonb;
   v_n integer := 0;
 BEGIN
-  FOR r IN SELECT * FROM private.candidature_gestes_regles ORDER BY geste, variante LOOP
+  FOR r IN SELECT * FROM private.candidature_gestes_regles WHERE geste NOT LIKE '%admission'
+           ORDER BY geste, variante LOOP
     v_n := v_n + 1;
     v_id := pg_temp.fixture(r.geste, r.variante, true);
     IF 'direction' = ANY (r.auteurs) THEN

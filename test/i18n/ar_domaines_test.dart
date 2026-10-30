@@ -91,6 +91,8 @@ const Map<String, int> _domaines = <String, int>{
   'avis': 100,
   // COURRIELS-1 (23/10/2026) : e-mails sortants de la direction.
   'courriels': 70,
+  // ADMISSION-C (30/10/2026) : l'onglet Demandes de la direction.
+  'admissions': 70,
 };
 
 /// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) :

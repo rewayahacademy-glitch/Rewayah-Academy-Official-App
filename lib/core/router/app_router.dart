@@ -12,6 +12,8 @@ import '../../features/accueil_eleve/accueil_eleve_selon_presentation.dart';
 import '../../features/accueil_famille/accueil_famille_page.dart';
 import '../../features/admin_acces_agents/acces_agents_page.dart'
     deferred as d_acces_agents_page;
+import '../../features/admin_admissions/admissions_page.dart'
+    deferred as d_admissions_page;
 import '../../features/admin_avis/avis_page.dart' deferred as d_avis_page;
 import '../../features/admin_candidature/candidature_page.dart'
     deferred as d_candidature_page;
@@ -276,6 +278,7 @@ import 'routes.dart';
 final List<MorceauDiffere> morceauxDifferesRouteur = <MorceauDiffere>[
   ('d_acces_agents_page', d_acces_agents_page.loadLibrary),
   ('d_admin_offres_page', d_admin_offres_page.loadLibrary),
+  ('d_admissions_page', d_admissions_page.loadLibrary),
   (
     'd_administration_communications_page',
     d_administration_communications_page.loadLibrary,
@@ -1855,6 +1858,18 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             cle: 'd_courriels_page',
             charger: d_courriels_page.loadLibrary,
             construire: () => d_courriels_page.CourrielsAdminPage(),
+          ),
+        ),
+      ),
+      // Admission, lot C : les demandes d'admission.
+      GoRoute(
+        path: Routes.adminPersonnesAdmissions,
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: PageDifferee(
+            cle: 'd_admissions_page',
+            charger: d_admissions_page.loadLibrary,
+            construire: () => d_admissions_page.AdmissionsPage(),
           ),
         ),
       ),

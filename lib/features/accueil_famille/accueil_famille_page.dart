@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 import 'package:go_router/go_router.dart';
 
+import '../../core/admission/profils_demande.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/appairage/service_avatar.dart';
 import '../../core/capacites/port_classes_foyer.dart';
@@ -125,6 +126,16 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage>
       profilsElevesFoyerProvider,
     );
     final DateTime? maintenant = maintenantServeur();
+    // Admission, lot C : a la premiere ouverture apres l'acceptation, les
+    // enfants de la demande recoivent leur profil ; le foyer se relit.
+    ref.listen<AsyncValue<int>>(profilsDemandeCreesProvider, (
+      AsyncValue<int>? _,
+      AsyncValue<int> lies,
+    ) {
+      if ((lies.value ?? 0) > 0) {
+        ref.invalidate(elevesDuFoyerProvider);
+      }
+    });
 
     return PageShell(
       titre: t.tuteur.accueil.titre,

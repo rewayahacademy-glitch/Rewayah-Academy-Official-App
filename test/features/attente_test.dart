@@ -414,6 +414,7 @@ void main() {
       WidgetTester tester,
       EtatDossier etat, {
       List<ApprenantDemande>? apprenants,
+      DemandeFamille? demande,
     }) async {
       final FauxServiceDossier dossier = FauxServiceDossier()..etatRendu = etat;
       final FausseSourceSession source = FausseSourceSession();
@@ -443,6 +444,9 @@ void main() {
             baseLocaleEnMemoire(),
             lectureApprenantsDemandeProvider.overrideWithValue(
               () async => apprenants ?? const <ApprenantDemande>[],
+            ),
+            lectureDemandeFamilleProvider.overrideWithValue(
+              () async => demande,
             ),
           ],
         ),
@@ -654,6 +658,39 @@ void main() {
         ),
         findsOneWidget,
       );
+    });
+
+    // Admission, lot C : la page dit la precision demandee, ou le refus.
+    testWidgets('tuteur en attente : la precision demandee est dite', (
+      WidgetTester tester,
+    ) async {
+      await monter(
+        tester,
+        _etat(role: AppRole.guardian, accuse: true, contrat: true),
+        demande: (
+          issue: IssueDemandeFamille.aCompleter,
+          precisions: 'Quel est le niveau exact de Yasmine ?',
+        ),
+      );
+      expect(find.text(t.attente.precisionsTitre), findsOneWidget);
+      expect(
+        find.text('Quel est le niveau exact de Yasmine ?'),
+        findsOneWidget,
+      );
+      expect(find.text(t.attente.precisionsReponse), findsOneWidget);
+      expect(find.text(t.attente.demandeTitre), findsNothing);
+    });
+
+    testWidgets('tuteur refuse : la page ne dit plus « en cours »', (
+      WidgetTester tester,
+    ) async {
+      await monter(
+        tester,
+        _etat(role: AppRole.guardian, accuse: true, contrat: true),
+        demande: (issue: IssueDemandeFamille.refusee, precisions: null),
+      );
+      expect(find.text(t.attente.demandeRefuseeTitre), findsOneWidget);
+      expect(find.text(t.attente.demandeTitre), findsNothing);
     });
 
     testWidgets(

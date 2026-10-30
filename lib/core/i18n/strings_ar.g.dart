@@ -98,6 +98,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$juridique$ar juridique = _Traductions$juridique$ar._(_root);
 	@override late final _Traductions$avis$ar avis = _Traductions$avis$ar._(_root);
 	@override late final _Traductions$courriels$ar courriels = _Traductions$courriels$ar._(_root);
+	@override late final _Traductions$admissions$ar admissions = _Traductions$admissions$ar._(_root);
 }
 
 // Path: notifications
@@ -1060,6 +1061,12 @@ class _Traductions$attente$ar extends Traductions$attente$fr {
 	@override String get demandeMessage => 'تقرأ الإدارة كل طلب قبل فتح أي حساب.';
 	@override String get demandeDetail => 'ليس عليك إرسال أي شيء. سنكتب إليك على بريدك الإلكتروني فور رد الإدارة.';
 	@override String demandePour({required Object liste}) => 'يخص طلبك: ⁨${liste}⁩.';
+	@override String get demandeRefuseeTitre => 'لا يمكننا متابعة طلبك';
+	@override String get demandeRefuseeMessage => 'قرأت الإدارة طلبك ولا يمكنها متابعته في الوقت الحالي.';
+	@override String get demandeRefuseeDetail => 'الرسالة التي أرسلناها إليك تذكر السبب. يمكنك الرد عليها لأي سؤال.';
+	@override String get precisionsTitre => 'تنقصنا معلومة';
+	@override String get precisionsMessage => 'لدراسة طلبك، تحتاج الإدارة إلى توضيح:';
+	@override String get precisionsReponse => 'يكفي أن ترد على الرسالة التي أرسلناها إليك. تستأنف الإدارة دراسة طلبك فور ردك.';
 	@override String get actualiserCompte => 'تحديث';
 	@override String get lireEtAccepter => 'قراءة شروطنا وقبولها';
 	@override String get nosConditions => 'يلزم قراءة الشروط والموافقة عليها';
@@ -1706,6 +1713,84 @@ class _Traductions$courriels$ar extends Traductions$courriels$fr {
 
 	// Translations
 	@override late final _Traductions$courriels$admin$ar admin = _Traductions$courriels$admin$ar._(_root);
+}
+
+// Path: admissions
+class _Traductions$admissions$ar extends Traductions$admissions$fr {
+	_Traductions$admissions$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الطلبات';
+	@override String get sousTitre => 'طلبات الالتحاق من الأسر والطلاب البالغين. لا يدخل أحد دون قرار الإدارة.';
+	@override String get population => 'الفئة';
+	@override String get familles => 'الأسر';
+	@override String get elevesAdultes => 'الطلاب البالغون';
+	@override String aTraiter({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا طلب للمعالجة',
+		one: 'طلب واحد للمعالجة',
+		two: 'طلبان للمعالجة',
+		few: '⁨${n}⁩ طلبات للمعالجة',
+		many: '⁨${n}⁩ طلبًا للمعالجة',
+		other: '⁨${n}⁩ طلب للمعالجة',
+	);
+	@override String get rechercher => 'بحث';
+	@override String get rechercherAide => 'اسم أو عنوان بريد إلكتروني أو مرجع.';
+	@override String get lectureErreur => 'لا تظهر الطلبات الآن. أعد المحاولة بعد قليل.';
+	@override String get vide => 'لا طلبات في الوقت الحالي.';
+	@override String get videRecherche => 'لا طلب يطابق هذا البحث.';
+	@override String get pagePrecedente => 'الصفحة السابقة';
+	@override String get pageSuivante => 'الصفحة التالية';
+	@override String pageSur({required Object n, required Object total}) => 'الصفحة ⁨${n}⁩ من ⁨${total}⁩';
+	@override String feuilleTitre({required Object deNom}) => 'طلب ⁨${deNom}⁩';
+	@override String ouvrir({required Object deNom}) => 'فتح طلب ⁨${deNom}⁩';
+	@override String get recueLe => 'تاريخ الاستلام';
+	@override String get reference => 'المرجع';
+	@override String get courriel => 'عنوان البريد الإلكتروني';
+	@override String get etatLibelle => 'الحالة';
+	@override String titulaire({required Object prenom}) => '⁨${prenom}⁩، لنفسه أو لنفسها';
+	@override String enfant({required Object prenom, required Object age}) => '⁨${prenom}⁩، العمر ⁨${age}⁩';
+	@override late final _Traductions$admissions$etat$ar etat = _Traductions$admissions$etat$ar._(_root);
+	@override String accepter({required Object deNom}) => 'قبول طلب ⁨${deNom}⁩';
+	@override String get accepterConsequence => 'يُفتح حسابه وتُرسل فورًا رسالة «قُبل طلبك». تُنشأ ملفات الأطفال عند أول دخول له، بإجابات الطلب.';
+	@override String get demanderPrecisions => 'طلب توضيحات';
+	@override String contacter({required Object nom}) => 'الكتابة إلى ⁨${nom}⁩';
+	@override String get refuser => 'رفض الطلب';
+	@override String get refuserContexte => 'اختر الجملة التي سيتلقاها الشخص، ثم اكتب السبب للإدارة. لا يرى الشخص السبب أبدًا.';
+	@override String refuserQuestion({required Object deNom}) => 'رفض طلب ⁨${deNom}⁩؟';
+	@override String get refuserConsequence => 'يتلقى الشخص رسالة «لا يمكننا متابعة طلبك». يمكن إلغاء الرفض خلال سبعة أيام.';
+	@override String get motifInterne => 'السبب، للإدارة';
+	@override String get motifInterneAide => 'يبقى في سجل الطلب.';
+	@override String get precisionsContexte => 'يصير الطلب «للاستكمال». يتلقى الشخص رسالتك بالبريد الإلكتروني ويجدها في صفحة الانتظار.';
+	@override String get precisionsMessage => 'ما ينقص';
+	@override String get precisionsAide => 'جملة أو جملتان بكلمات بسيطة.';
+	@override String get precisionsEnvoyer => 'إرسال طلب التوضيحات';
+	@override String get contactContexte => 'رسالة حرة تُرسل بالبريد الإلكتروني. لا يتغير الطلب.';
+	@override String get contactSujet => 'الموضوع';
+	@override String get contactMessage => 'الرسالة';
+	@override String get contactEnvoyer => 'إرسال الرسالة';
+	@override String get annulerRefus => 'إلغاء الرفض';
+	@override String get annulerRefusDetail => 'يمكن إلغاء الرفض خلال سبعة أيام: يعود الطلب «للمعالجة». لا يتلقى الشخص أي رسالة.';
+	@override String faitAcceptationAnnulee({required Object deNom}) => 'أُلغي قبول طلب ⁨${deNom}⁩.';
+	@override String get annulerAcceptationConsequence => 'يعود حسابه إلى الانتظار فورًا.';
+	@override String annulerAcceptationQuestion({required Object deNom}) => 'إلغاء قبول ⁨${deNom}⁩؟';
+	@override String get annulerAcceptationDetail => 'يمكن إلغاء القبول خلال سبعة أيام، ما دام لم يدخل أي طفل من الطلب فصلًا. يعود الطلب «للمعالجة» ويعود الحساب إلى الانتظار، وتُنحّى ملفات الأطفال دون حذفها أبدًا. لا يتلقى الشخص أي رسالة: اكتب إليه عند الحاجة.';
+	@override String get annulerAcceptation => 'إلغاء القبول';
+	@override String get retour => 'العودة إلى الطلب';
+	@override String get manqueModele => 'اختر الجملة التي سيتلقاها الشخص.';
+	@override String get manqueMotif => 'اكتب السبب: يبقى في سجل الطلب.';
+	@override String get manqueMessage => 'اكتب ما ينقص.';
+	@override String get manqueContact => 'اكتب موضوعًا ورسالة.';
+	@override String get horsLigne => 'لم يُرسل شيء. أعد المحاولة بعد قليل.';
+	@override String get erreur => 'لم يتم الإجراء. لم يُؤكَّد شيء. أعد المحاولة بعد قليل.';
+	@override String faitAcceptee({required Object deNom}) => 'قُبل طلب ⁨${deNom}⁩، والرسالة في الطريق.';
+	@override String faitRefusee({required Object deNom}) => 'رُفض طلب ⁨${deNom}⁩، والرسالة في الطريق.';
+	@override String faitPrecisions({required Object nom}) => 'طُلبت التوضيحات من ⁨${nom}⁩، والرسالة في الطريق.';
+	@override String faitContact({required Object nom}) => 'الرسالة إلى ⁨${nom}⁩ في الطريق.';
+	@override String faitRefusAnnule({required Object deNom}) => 'أُلغي رفض طلب ⁨${deNom}⁩.';
+	@override late final _Traductions$admissions$refus$ar refus = _Traductions$admissions$refus$ar._(_root);
+	@override late final _Traductions$admissions$modeles$ar modeles = _Traductions$admissions$modeles$ar._(_root);
 }
 
 // Path: notifications.evenements
@@ -8586,6 +8671,52 @@ class _Traductions$courriels$admin$ar extends Traductions$courriels$admin$fr {
 	@override late final _Traductions$courriels$admin$ecrire$ar ecrire = _Traductions$courriels$admin$ecrire$ar._(_root);
 	@override late final _Traductions$courriels$admin$file$ar file = _Traductions$courriels$admin$file$ar._(_root);
 	@override late final _Traductions$courriels$admin$adresses$ar adresses = _Traductions$courriels$admin$adresses$ar._(_root);
+}
+
+// Path: admissions.etat
+class _Traductions$admissions$etat$ar extends Traductions$admissions$etat$fr {
+	_Traductions$admissions$etat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get aTraiter => 'للمعالجة';
+	@override String get aCompleter => 'للاستكمال';
+	@override String get acceptee => 'مقبول';
+	@override String get refusee => 'مرفوض';
+	@override String get retiree => 'مسحوب';
+}
+
+// Path: admissions.refus
+class _Traductions$admissions$refus$ar extends Traductions$admissions$refus$fr {
+	_Traductions$admissions$refus$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get dejaTraitee => 'عالج شخص آخر من الإدارة هذا الطلب للتو. تُعاد قراءة القائمة.';
+	@override String get transitionInterdite => 'لم يعد هذا الإجراء صالحًا لهذا الطلب (تغيرت حالته أو انقضت مهلة الأيام السبعة).';
+	@override String get motifRequis => 'يلزم سبب لهذا الإجراء.';
+	@override String get adresseInconnue => 'عنوان البريد الإلكتروني لهذا الشخص غير معروف: لا يمكن إرسال أي رسالة.';
+	@override String get enfantEnClasse => 'أحد أطفال هذا الطلب في فصل بالفعل: لم يعد إلغاء القبول ممكنًا.';
+	@override String get autre => 'رفض الخادم هذا الإجراء. أعد فتح الطلب لترى حالته.';
+}
+
+// Path: admissions.modeles
+class _Traductions$admissions$modeles$ar extends Traductions$admissions$modeles$fr {
+	_Traductions$admissions$modeles$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get general => 'دون تفصيل';
+	@override String get generalPhrase => '«لا يمكننا متابعة طلبك في الوقت الحالي.»';
+	@override String get besoins => 'فصولنا لا تلبي الطلب';
+	@override String get besoinsPhrase => '«فصولنا لا تلبي بعد ما تبحث عنه.»';
+	@override String get niveau => 'المستوى غير متاح بعد';
+	@override String get niveauPhrase => '«المستوى المطلوب غير متاح بعد.»';
+	@override String get sansReponse => 'لا رد';
+	@override String get sansReponsePhrase => '«لم نتلق ردًا على رسالتنا الأخيرة.»';
 }
 
 // Path: commun.etats.chargementProlonge
@@ -26084,6 +26215,12 @@ extension on TraductionsAr {
 			'attente.demandeMessage' => 'تقرأ الإدارة كل طلب قبل فتح أي حساب.',
 			'attente.demandeDetail' => 'ليس عليك إرسال أي شيء. سنكتب إليك على بريدك الإلكتروني فور رد الإدارة.',
 			'attente.demandePour' => ({required Object liste}) => 'يخص طلبك: ⁨${liste}⁩.',
+			'attente.demandeRefuseeTitre' => 'لا يمكننا متابعة طلبك',
+			'attente.demandeRefuseeMessage' => 'قرأت الإدارة طلبك ولا يمكنها متابعته في الوقت الحالي.',
+			'attente.demandeRefuseeDetail' => 'الرسالة التي أرسلناها إليك تذكر السبب. يمكنك الرد عليها لأي سؤال.',
+			'attente.precisionsTitre' => 'تنقصنا معلومة',
+			'attente.precisionsMessage' => 'لدراسة طلبك، تحتاج الإدارة إلى توضيح:',
+			'attente.precisionsReponse' => 'يكفي أن ترد على الرسالة التي أرسلناها إليك. تستأنف الإدارة دراسة طلبك فور ردك.',
 			'attente.actualiserCompte' => 'تحديث',
 			'attente.lireEtAccepter' => 'قراءة شروطنا وقبولها',
 			'attente.nosConditions' => 'يلزم قراءة الشروط والموافقة عليها',
@@ -26533,14 +26670,14 @@ extension on TraductionsAr {
 			'adulte.reprise.notifications.refuseeParTitulaire' => 'رفض صاحب حساب الأسرة طلبك لاستلام الأسرة.',
 			'adulte.reprise.notifications.attenteAdministration' => 'طلبك لاستلام الأسرة بانتظار الإدارة.',
 			'adulte.reprise.notifications.validee' => 'اعتُمد طلبك لاستلام الأسرة.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.reprise.notifications.refusee' => 'رُفض طلبك لاستلام الأسرة.',
 			'adulte.demo.titre' => 'عرض تجريبي للطالب البالغ',
 			'adulte.demo.mention' => 'البيانات وهمية ولا يُرسل شيء.',
 			'adulte.demo.intro' => 'اختر شاشة، ثم حالة من حالات أسرة ديالو.',
 			'adulte.demo.ecrans' => 'الشاشات',
 			'adulte.demo.situations' => 'حالات الأسرة',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.variantes' => 'المتغيرات',
 			'adulte.demo.titulaireFemme' => 'صاحبة الحساب امرأة، وزوجها هو البالغ الثاني.',
 			'adulte.demo.vueConjointe' => '«مساحتي» كما تراها الزوجة، البالغة الثانية في الأسرة.',
@@ -27047,14 +27184,14 @@ extension on TraductionsAr {
 			'agent.refus' => 'رُفض الرمز',
 			'agent.refusDetail' => 'هذا الرمز غير معروف أو ملغى أو منتهي الصلاحية. اطلب رمزًا جديدًا من الأكاديمية.',
 			'agent.indisponible' => 'الخدمة غير متاحة',
+			_ => null,
+		} ?? switch (path) {
 			'agent.indisponibleDetail' => 'لم تستجب عملية فتح الجلسة. أعد المحاولة بعد لحظة.',
 			'agent.reessayer' => 'إعادة المحاولة',
 			'agent.bandeau' => 'متابعة، للقراءة فقط',
 			'agent.bandeauMasque' => 'الأسماء مخفية',
 			'agent.bandeauExpire' => ({required Object heure}) => 'حتى ⁨${heure}⁩',
 			'suiviFamille.titre' => 'متابعة الطلبات',
-			_ => null,
-		} ?? switch (path) {
 			'suiviFamille.contexte' => 'يتقدّم كل طلب خطوة بعد خطوة. نُبلغكم عند كل انتقال.',
 			'suiviFamille.carteTitre' => ({required Object dePrenom}) => 'طلب ⁨${dePrenom}⁩',
 			'suiviFamille.detailTitre' => ({required Object dePrenom}) => 'متابعة طلب ⁨${dePrenom}⁩',
@@ -27561,14 +27698,14 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.riwayat.options.qalun.libelle' => 'قالون',
 			'recrutement.parcours.q.riwayat.options.qalun.description' => 'رواية عن نافع',
 			'recrutement.parcours.q.riwayat.options.al_bazzi.libelle' => 'البزي',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.al_bazzi.description' => 'رواية عن ابن كثير',
 			'recrutement.parcours.q.riwayat.options.qunbul.libelle' => 'قنبل',
 			'recrutement.parcours.q.riwayat.options.qunbul.description' => 'رواية عن ابن كثير',
 			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.libelle' => 'الدوري (أبو عمرو)',
 			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.description' => 'رواية عن أبي عمرو',
 			'recrutement.parcours.q.riwayat.options.as_susi.libelle' => 'السوسي',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.as_susi.description' => 'رواية عن أبي عمرو',
 			'recrutement.parcours.q.riwayat.options.hisham.libelle' => 'هشام',
 			'recrutement.parcours.q.riwayat.options.hisham.description' => 'رواية عن ابن عامر',
@@ -28075,14 +28212,14 @@ extension on TraductionsAr {
 			'avis.form.pays.libelle' => 'بلد الإقامة',
 			'avis.form.pays.choisir' => 'اختيار بلد',
 			'avis.form.pays.rechercheLibelle' => 'البحث عن بلد',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.pays.rechercheAide' => 'اكتب اسم البلد',
 			'avis.form.pays.aucun' => 'لا يوجد بلد مطابق. جرّب كتابة أخرى.',
 			'avis.form.pays.erreur' => 'اختر بلد إقامتك.',
 			'avis.form.depuis.libelle' => 'معنا منذ',
 			'avis.form.depuis.aide' => 'الشهر والسنة اللذان التحقت فيهما بالأكاديمية.',
 			'avis.form.depuis.mois' => 'الشهر',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.depuis.annee' => 'السنة',
 			'avis.form.depuis.erreur' => 'اختر شهرًا وسنة، من أبريل 2024 إلى هذا الشهر.',
 			'avis.form.note.libelle' => 'تقييمك',
@@ -28307,6 +28444,84 @@ extension on TraductionsAr {
 			'courriels.admin.adresses.vide' => 'لا توجد فئات حاليًا.',
 			'courriels.admin.adresses.erreur' => 'تعذّر تحميل عناوين الإرسال. أعد المحاولة.',
 			'courriels.admin.adresses.sansDonnees' => 'تعذّر تحميل عناوين الإرسال',
+			'admissions.titre' => 'الطلبات',
+			'admissions.sousTitre' => 'طلبات الالتحاق من الأسر والطلاب البالغين. لا يدخل أحد دون قرار الإدارة.',
+			'admissions.population' => 'الفئة',
+			'admissions.familles' => 'الأسر',
+			'admissions.elevesAdultes' => 'الطلاب البالغون',
+			'admissions.aTraiter' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا طلب للمعالجة', one: 'طلب واحد للمعالجة', two: 'طلبان للمعالجة', few: '⁨${n}⁩ طلبات للمعالجة', many: '⁨${n}⁩ طلبًا للمعالجة', other: '⁨${n}⁩ طلب للمعالجة', ), 
+			'admissions.rechercher' => 'بحث',
+			'admissions.rechercherAide' => 'اسم أو عنوان بريد إلكتروني أو مرجع.',
+			'admissions.lectureErreur' => 'لا تظهر الطلبات الآن. أعد المحاولة بعد قليل.',
+			'admissions.vide' => 'لا طلبات في الوقت الحالي.',
+			'admissions.videRecherche' => 'لا طلب يطابق هذا البحث.',
+			'admissions.pagePrecedente' => 'الصفحة السابقة',
+			'admissions.pageSuivante' => 'الصفحة التالية',
+			'admissions.pageSur' => ({required Object n, required Object total}) => 'الصفحة ⁨${n}⁩ من ⁨${total}⁩',
+			'admissions.feuilleTitre' => ({required Object deNom}) => 'طلب ⁨${deNom}⁩',
+			'admissions.ouvrir' => ({required Object deNom}) => 'فتح طلب ⁨${deNom}⁩',
+			'admissions.recueLe' => 'تاريخ الاستلام',
+			'admissions.reference' => 'المرجع',
+			'admissions.courriel' => 'عنوان البريد الإلكتروني',
+			'admissions.etatLibelle' => 'الحالة',
+			'admissions.titulaire' => ({required Object prenom}) => '⁨${prenom}⁩، لنفسه أو لنفسها',
+			'admissions.enfant' => ({required Object prenom, required Object age}) => '⁨${prenom}⁩، العمر ⁨${age}⁩',
+			'admissions.etat.aTraiter' => 'للمعالجة',
+			'admissions.etat.aCompleter' => 'للاستكمال',
+			'admissions.etat.acceptee' => 'مقبول',
+			'admissions.etat.refusee' => 'مرفوض',
+			'admissions.etat.retiree' => 'مسحوب',
+			'admissions.accepter' => ({required Object deNom}) => 'قبول طلب ⁨${deNom}⁩',
+			'admissions.accepterConsequence' => 'يُفتح حسابه وتُرسل فورًا رسالة «قُبل طلبك». تُنشأ ملفات الأطفال عند أول دخول له، بإجابات الطلب.',
+			'admissions.demanderPrecisions' => 'طلب توضيحات',
+			'admissions.contacter' => ({required Object nom}) => 'الكتابة إلى ⁨${nom}⁩',
+			'admissions.refuser' => 'رفض الطلب',
+			'admissions.refuserContexte' => 'اختر الجملة التي سيتلقاها الشخص، ثم اكتب السبب للإدارة. لا يرى الشخص السبب أبدًا.',
+			'admissions.refuserQuestion' => ({required Object deNom}) => 'رفض طلب ⁨${deNom}⁩؟',
+			'admissions.refuserConsequence' => 'يتلقى الشخص رسالة «لا يمكننا متابعة طلبك». يمكن إلغاء الرفض خلال سبعة أيام.',
+			'admissions.motifInterne' => 'السبب، للإدارة',
+			'admissions.motifInterneAide' => 'يبقى في سجل الطلب.',
+			'admissions.precisionsContexte' => 'يصير الطلب «للاستكمال». يتلقى الشخص رسالتك بالبريد الإلكتروني ويجدها في صفحة الانتظار.',
+			'admissions.precisionsMessage' => 'ما ينقص',
+			'admissions.precisionsAide' => 'جملة أو جملتان بكلمات بسيطة.',
+			'admissions.precisionsEnvoyer' => 'إرسال طلب التوضيحات',
+			'admissions.contactContexte' => 'رسالة حرة تُرسل بالبريد الإلكتروني. لا يتغير الطلب.',
+			'admissions.contactSujet' => 'الموضوع',
+			'admissions.contactMessage' => 'الرسالة',
+			'admissions.contactEnvoyer' => 'إرسال الرسالة',
+			'admissions.annulerRefus' => 'إلغاء الرفض',
+			'admissions.annulerRefusDetail' => 'يمكن إلغاء الرفض خلال سبعة أيام: يعود الطلب «للمعالجة». لا يتلقى الشخص أي رسالة.',
+			'admissions.faitAcceptationAnnulee' => ({required Object deNom}) => 'أُلغي قبول طلب ⁨${deNom}⁩.',
+			'admissions.annulerAcceptationConsequence' => 'يعود حسابه إلى الانتظار فورًا.',
+			'admissions.annulerAcceptationQuestion' => ({required Object deNom}) => 'إلغاء قبول ⁨${deNom}⁩؟',
+			'admissions.annulerAcceptationDetail' => 'يمكن إلغاء القبول خلال سبعة أيام، ما دام لم يدخل أي طفل من الطلب فصلًا. يعود الطلب «للمعالجة» ويعود الحساب إلى الانتظار، وتُنحّى ملفات الأطفال دون حذفها أبدًا. لا يتلقى الشخص أي رسالة: اكتب إليه عند الحاجة.',
+			'admissions.annulerAcceptation' => 'إلغاء القبول',
+			'admissions.retour' => 'العودة إلى الطلب',
+			'admissions.manqueModele' => 'اختر الجملة التي سيتلقاها الشخص.',
+			'admissions.manqueMotif' => 'اكتب السبب: يبقى في سجل الطلب.',
+			'admissions.manqueMessage' => 'اكتب ما ينقص.',
+			'admissions.manqueContact' => 'اكتب موضوعًا ورسالة.',
+			'admissions.horsLigne' => 'لم يُرسل شيء. أعد المحاولة بعد قليل.',
+			'admissions.erreur' => 'لم يتم الإجراء. لم يُؤكَّد شيء. أعد المحاولة بعد قليل.',
+			'admissions.faitAcceptee' => ({required Object deNom}) => 'قُبل طلب ⁨${deNom}⁩، والرسالة في الطريق.',
+			'admissions.faitRefusee' => ({required Object deNom}) => 'رُفض طلب ⁨${deNom}⁩، والرسالة في الطريق.',
+			'admissions.faitPrecisions' => ({required Object nom}) => 'طُلبت التوضيحات من ⁨${nom}⁩، والرسالة في الطريق.',
+			'admissions.faitContact' => ({required Object nom}) => 'الرسالة إلى ⁨${nom}⁩ في الطريق.',
+			'admissions.faitRefusAnnule' => ({required Object deNom}) => 'أُلغي رفض طلب ⁨${deNom}⁩.',
+			'admissions.refus.dejaTraitee' => 'عالج شخص آخر من الإدارة هذا الطلب للتو. تُعاد قراءة القائمة.',
+			'admissions.refus.transitionInterdite' => 'لم يعد هذا الإجراء صالحًا لهذا الطلب (تغيرت حالته أو انقضت مهلة الأيام السبعة).',
+			'admissions.refus.motifRequis' => 'يلزم سبب لهذا الإجراء.',
+			'admissions.refus.adresseInconnue' => 'عنوان البريد الإلكتروني لهذا الشخص غير معروف: لا يمكن إرسال أي رسالة.',
+			'admissions.refus.enfantEnClasse' => 'أحد أطفال هذا الطلب في فصل بالفعل: لم يعد إلغاء القبول ممكنًا.',
+			'admissions.refus.autre' => 'رفض الخادم هذا الإجراء. أعد فتح الطلب لترى حالته.',
+			'admissions.modeles.general' => 'دون تفصيل',
+			'admissions.modeles.generalPhrase' => '«لا يمكننا متابعة طلبك في الوقت الحالي.»',
+			'admissions.modeles.besoins' => 'فصولنا لا تلبي الطلب',
+			'admissions.modeles.besoinsPhrase' => '«فصولنا لا تلبي بعد ما تبحث عنه.»',
+			'admissions.modeles.niveau' => 'المستوى غير متاح بعد',
+			'admissions.modeles.niveauPhrase' => '«المستوى المطلوب غير متاح بعد.»',
+			'admissions.modeles.sansReponse' => 'لا رد',
+			'admissions.modeles.sansReponsePhrase' => '«لم نتلق ردًا على رسالتنا الأخيرة.»',
 			_ => null,
 		};
 	}

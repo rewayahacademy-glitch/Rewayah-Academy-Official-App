@@ -28,7 +28,27 @@ const RAISON: Record<string, string> = {
   nouvelles: 'وصلتك هذه الرسالة لأنك تتابع أخبار Rewayah Academy.',
 }
 
+const REFUS_ADMISSION: Record<string, string> = {
+  refus_general: 'لا يمكننا متابعة طلبك في الوقت الحالي.',
+  refus_niveau: 'لا يمكننا متابعة طلبك: المستوى المطلوب غير متاح بعد.',
+  refus_besoins: 'لا يمكننا متابعة طلبك: فصولنا لا تلبي بعد ما تبحث عنه.',
+  refus_sans_reponse: 'لا يمكننا متابعة طلبك: لم يصلنا رد على رسالتنا الأخيرة.',
+}
+
 const MODELES: Record<string, Fabrique> = {
+  admission_acceptee: (d) => avis(d, 'قُبل طلبك', 'أهلا بك في أكاديمية رواية',
+    'قبلت الإدارة طلبك. مساحتك مفتوحة: ادخل إلى التطبيق لتجدها.',
+    'الدخول إلى التطبيق', '/'),
+  admission_refusee: (d) => avis(d, 'لا يمكننا متابعة طلبك', 'طلبك',
+    REFUS_ADMISSION[String(d.modele ?? '')] ?? REFUS_ADMISSION.refus_general,
+    'عرض طلبي', '/attente'),
+  admission_precisions: (d) => {
+    const c = avis(d, 'تنقصنا معلومة', 'تنقصنا معلومة',
+      'لدراسة طلبك، تحتاج الإدارة إلى توضيح:',
+      'عرض طلبي', '/attente')
+    c.blocs.splice(2, 0, { type: 'texte', texte: String(d.precisions ?? '') })
+    return c
+  },
   admission_recue: (d) => avis(d, 'وصلنا طلبك', 'طلبك قيد الدراسة',
     'وصلنا طلبك. تقرأ الإدارة كل طلب قبل فتح أي حساب. ليس عليك إرسال أي شيء: سنكتب إليك على هذا العنوان فور رد الإدارة.',
     'عرض طلبي', '/attente'),
