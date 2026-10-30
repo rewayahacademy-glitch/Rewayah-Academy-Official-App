@@ -1680,7 +1680,7 @@ class _CollectionParTranchesEtat<T> extends State<_CollectionParTranches<T>> {
           tranches.addAll(<Widget>[
             SliverList.separated(
               itemCount: c.lignes.length,
-              separatorBuilder: (BuildContext _, int _) => Ecart.vMd,
+              separatorBuilder: (BuildContext _, int _) => Ecart.vLg,
               itemBuilder: (BuildContext ctx, int i) => KeyedSubtree(
                 key: c.cle?.call(c.lignes[i]),
                 child: _Carte<T>(
