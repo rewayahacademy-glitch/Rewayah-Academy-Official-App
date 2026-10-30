@@ -235,6 +235,10 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_admission_lot_c.sql
 
+      - name: Scenarios K4 seance ouverte
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_k4_seance_ouverte.sql
+
   edge-r2:
     name: Fonctions Edge -- stockage R2 (Deno)
     if: github.event_name != 'pull_request' || github.base_ref == 'main' || github.base_ref == 'ccr-1b1bfa0b-m1kvkk'
