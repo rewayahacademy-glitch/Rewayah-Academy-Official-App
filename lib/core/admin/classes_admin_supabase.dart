@@ -149,6 +149,8 @@ GenreClasse? _genre(Object? v) => switch (v) {
   'hommes' => GenreClasse.hommes,
   'femmes' => GenreClasse.femmes,
   'indetermine' => GenreClasse.indetermine,
+  // D1 (29/10/2026) : la liste dit « mixte » pour une classe mixte.
+  'mixte' => GenreClasse.mixte,
   _ => null,
 };
 

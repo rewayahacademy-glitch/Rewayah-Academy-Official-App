@@ -229,6 +229,12 @@ class FauxCreationClasse implements PortCreationClasse {
   /// Chaque creation recue.
   final List<CreationRecue> creations = <CreationRecue>[];
 
+  /// Les creneaux suivants de chaque creation (D2, 29/10/2026).
+  final List<List<Creneau>> autresCreneauxRecus = <List<Creneau>>[];
+
+  /// La duree de chaque creneau de chaque creation (30/10/2026).
+  final List<List<int?>> dureesRecues = <List<int?>>[];
+
   @override
   Future<String> creer({
     required String teacherId,
@@ -237,6 +243,8 @@ class FauxCreationClasse implements PortCreationClasse {
     required String libelle,
     required Creneau creneau,
     required int seuilMax,
+    List<Creneau> autresCreneaux = const <Creneau>[],
+    List<int?> durees = const <int?>[],
   }) async {
     if (echecs > 0) {
       echecs--;
@@ -250,6 +258,8 @@ class FauxCreationClasse implements PortCreationClasse {
       creneau: creneau,
       seuilMax: seuilMax,
     ));
+    autresCreneauxRecus.add(autresCreneaux);
+    dureesRecues.add(durees);
     return 'c1';
   }
 }

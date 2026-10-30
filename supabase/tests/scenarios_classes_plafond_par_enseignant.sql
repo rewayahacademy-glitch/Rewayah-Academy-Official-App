@@ -571,9 +571,12 @@ SELECT pg_temp.vrai(
      FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
     WHERE n.nspname NOT IN ('pg_catalog', 'information_schema') AND p.prokind = 'f'
       AND p.prosrc ~* 'update\s+(only\s+)?(public\.)?groupes\y' AND p.prosrc ~* '(set|,)\s*teacher_id\s*=') =
+  -- 29/10/2026 : creer_classe_creneaux_admin (classe a plusieurs creneaux),
+  -- relue : meme predicat que creer_groupe, avant l'affectation.
   ARRAY['affecter_enseignant_classe(uuid,uuid)', 'affecter_enseignant_classe_c11bis(uuid,uuid)',
+        'creer_classe_creneaux_admin(uuid,text,text,smallint,text,jsonb,text,smallint)',
         'creer_groupe(uuid,text,text,smallint,smallint,smallint,text,smallint)'],
-  '(j) trois fonctions seulement ecrivent groupes.teacher_id (affecter_enseignant_classe, sa version c11bis, creer_groupe a 8 arguments)');
+  '(j) quatre fonctions seulement ecrivent groupes.teacher_id (affecter_enseignant_classe, sa version c11bis, creer_groupe a 8 arguments, creer_classe_creneaux_admin)');
 SELECT pg_temp.vrai(
   (SELECT bool_and(p.prosrc ~* 'verifier_affectation_enseignant')
      FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
@@ -589,10 +592,13 @@ SELECT pg_temp.vrai(
      FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
     WHERE n.nspname NOT IN ('pg_catalog', 'information_schema') AND p.prokind = 'f'
       AND p.prosrc ~* 'insert\s+into\s+(public\.)?groupes\s*\(') =
-  ARRAY['creer_classe_depuis_regroupement(uuid,uuid,text)',
+  -- 29/10/2026 : creer_classe_creneaux_admin insere aussi une classe SANS
+  -- enseignant, puis passe le predicat avant de l'affecter.
+  ARRAY['creer_classe_creneaux_admin(uuid,text,text,smallint,text,jsonb,text,smallint)',
+        'creer_classe_depuis_regroupement(uuid,uuid,text)',
         'creer_groupe(uuid,text,text,smallint,smallint,smallint)',
         'creer_groupe(uuid,text,text,smallint,smallint,smallint,text,smallint)'],
-  '(j) trois fonctions seulement inserent dans groupes');
+  '(j) quatre fonctions seulement inserent dans groupes');
 SELECT pg_temp.vrai(
   NOT EXISTS (SELECT 1 FROM unnest(ARRAY['anon', 'authenticated', 'service_role', 'agent_ro']) r
                WHERE has_function_privilege(r, 'public.creer_groupe(uuid,text,text,smallint,smallint,smallint)'::regprocedure, 'EXECUTE')),

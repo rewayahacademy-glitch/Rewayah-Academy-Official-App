@@ -21,6 +21,7 @@ String libelleGenreClasse(GenreClasse genre, TypePublicGroupe type) {
     GenreClasse.hommes => enfants ? f.genreGarcons : f.genreHommes,
     GenreClasse.femmes => enfants ? f.genreFilles : f.genreFemmes,
     GenreClasse.indetermine => f.genreIndetermine,
+    GenreClasse.mixte => f.genreMixte,
   };
 }
 
@@ -47,6 +48,10 @@ String detailGenreClasse(
     (GenreClasse.femmes, false) =>
       enfants ? f.genreFillesDetailSansSource : f.genreFemmesDetailSansSource,
     (GenreClasse.indetermine, _) => f.genreIndetermineDetail,
+    // D1 (29/10/2026) : la mixite est un reglage explicite, pour quand les
+    // enseignants d'un genre manquent ; tous les enseignants sont proposes.
+    (GenreClasse.mixte, _) =>
+      enfants ? f.genreMixteDetailEnfants : f.genreMixteDetailAdultes,
   };
 }
 
@@ -59,8 +64,9 @@ String raisonGenreClasse(GenreClasse genre, TypePublicGroupe type) {
     GenreClasse.femmes => enfants ? f.raisonFilles : f.raisonFemmes,
     // Un genre non determine accepte tout le monde (D2) : aucune raison
     // d'indisponibilite n'existe, et aucune phrase hors sujet ne s'affiche.
-    GenreClasse.indetermine => throw StateError(
-      'Aucun enseignant n est incompatible avec une classe sans genre (D2).',
+    GenreClasse.indetermine || GenreClasse.mixte => throw StateError(
+      'Aucun enseignant n est incompatible avec une classe sans genre ou '
+      'mixte (D2, D1).',
     ),
   };
 }
@@ -89,8 +95,9 @@ String manqueEnseignantClasse(
         enfants
             ? f.manqueEnseignantFilles(nom: nom)
             : f.manqueEnseignantFemmes(nom: nom),
-      GenreClasse.indetermine => throw StateError(
-        'Aucun enseignant n est incompatible avec une classe sans genre (D2).',
+      GenreClasse.indetermine || GenreClasse.mixte => throw StateError(
+        'Aucun enseignant n est incompatible avec une classe sans genre ou '
+        'mixte (D2, D1).',
       ),
     };
   }
