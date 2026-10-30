@@ -1417,4 +1417,51 @@ void main() {
       await tester.pumpWidget(const SizedBox());
     });
   });
+
+  group(
+    'Heure du foyer 30/10 : « La salle ouvre a » sur l Accueil famille',
+    () {
+      testWidgets('foyer a Paris, cours a 18:00 Paris : 17:40, jamais l heure '
+          'de l appareil', (WidgetTester tester) async {
+        final DateTime debut = DateTime.utc(2026, 10, 29, 17);
+        await _monter(
+          tester,
+          depart: Routes.tuteurAccueil,
+          maintenant: DateTime.utc(2026, 10, 29, 9),
+          seances: <SeanceFamille>[
+            seanceFictive(
+              seanceId: 'jeudi',
+              eleveId: _a1,
+              debutUtc: debut,
+              heureFoyer: heureRendue(
+                'Europe/Paris',
+                'Paris',
+                '18:00',
+                date: 'Jeudi 29 octobre',
+              ),
+            ),
+          ],
+        );
+        expect(
+          find.text(t.classe.seance.salleOuvreA(heure: '17:40')),
+          findsOneWidget,
+        );
+        // Sur un appareil en UTC (CI), l'heure de l'appareil serait 16:40.
+        final String appareil = heureDeLAppareil(
+          debut.subtract(const Duration(minutes: 20)).toLocal(),
+        );
+        if (appareil != '17:40') {
+          expect(
+            find.text(t.classe.seance.salleOuvreA(heure: appareil)),
+            findsNothing,
+          );
+        }
+        expect(
+          find.text(t.classe.seance.salleOuvreA(heure: '16:40')),
+          findsNothing,
+        );
+        await tester.pumpWidget(const SizedBox());
+      });
+    },
+  );
 }

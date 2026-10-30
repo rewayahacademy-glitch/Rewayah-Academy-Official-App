@@ -294,15 +294,11 @@ class CarteSeanceClasse extends ConsumerWidget {
         ),
       ];
     }
-    if (etat == EtatSeanceFamille.aVenir) {
+    final String? ouvre = heureOuvertureSalle(laSeance);
+    if (etat == EtatSeanceFamille.aVenir && ouvre != null) {
       return <Widget>[
         Ecart.vSm,
-        Text(
-          t.classe.seance.salleOuvreA(
-            heure: heureDeLAppareil(ouvertureSalle(laSeance).toLocal()),
-          ),
-          style: discret,
-        ),
+        Text(t.classe.seance.salleOuvreA(heure: ouvre), style: discret),
       ];
     }
     return const <Widget>[];

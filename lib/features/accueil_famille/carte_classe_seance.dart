@@ -358,7 +358,10 @@ class _Seance extends StatelessWidget {
     final Widget bloc = BlocSeance(affichage: affichage, compact: compact);
     // R8 : avant la porte du serveur, l'heure d'ouverture de la salle ; le
     // bouton pour y entrer vit hors de la carte, qui est un lien.
-    if (affichage.etat != EtatSeanceFamille.aVenir) return bloc;
+    final String? ouvre = heureOuvertureSalle(laSeance);
+    if (affichage.etat != EtatSeanceFamille.aVenir || ouvre == null) {
+      return bloc;
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -366,9 +369,7 @@ class _Seance extends StatelessWidget {
         bloc,
         Ecart.vSm,
         Text(
-          t.classe.seance.salleOuvreA(
-            heure: heureDeLAppareil(ouvertureSalle(laSeance).toLocal()),
-          ),
+          t.classe.seance.salleOuvreA(heure: ouvre),
           key: CarteClasseSeance.salleOuvreKey,
           style: discret,
         ),
