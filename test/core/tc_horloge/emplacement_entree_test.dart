@@ -1,6 +1,8 @@
 // CL-4.2 : le modele d'etats de l'emplacement d'entree unique (R4 a R6).
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/tc_horloge/emplacement_entree.dart';
 import 'package:rewayah_academy/core/tc_horloge/session_clock_vm.dart';
 import 'package:rewayah_academy/features/demo/classe_demo.dart';
@@ -289,5 +291,31 @@ void main() {
     expect(DonneesClasseDemo.actions.length, lessThanOrEqualTo(3));
     expect(DonneesClasseDemo.ressources, hasLength(3));
     expect(DonneesClasseDemo.enseignant.photoUrlOuCle, isNull);
+  });
+
+  // Directeur, 30/10/2026 : « Dans 116 h 52 » sur la fiche de classe de
+  // l'enseignant. Au-dela du jour, le formateur unique parle en jours.
+  test('enseignant, a plus de 48 h : en jours, jamais en heures', () {
+    const Duration reste = Duration(hours: 116, minutes: 52);
+    final EmplacementEntree e = a(
+      t0.subtract(reste),
+      role: RoleEntree.enseignant,
+    );
+    expect(e.etat, EtatEntree.aVenir);
+    final DateTime debut = t0.toLocal();
+    final DateTime depuis = debut.subtract(reste);
+    final int jours = DateTime.utc(
+      debut.year,
+      debut.month,
+      debut.day,
+    ).difference(DateTime.utc(depuis.year, depuis.month, depuis.day)).inDays;
+    expect(
+      e.libelle,
+      LibellesGroupe.insecable(
+        t.enseignant.journee.minuteurJours(jours: jours),
+      ),
+    );
+    expect(e.libelle, isNot(contains('116')));
+    expect(e.libelle, startsWith('Dans'));
   });
 }

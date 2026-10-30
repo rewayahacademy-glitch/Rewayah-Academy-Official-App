@@ -134,7 +134,7 @@ class EmplacementEntree {
           libelle: imminent
               ? t.classe.entree.coursImminent
               : role == RoleEntree.enseignant
-              ? _dansEnseignant(reste)
+              ? _dansEnseignant(reste, horloge.debutUtc.toLocal())
               // RTL-ISOL-1 : « الدرس بعد 3 h 28 », jamais « h 28 3 ».
               : phraseAvecValeur(
                   (String d) => t.classe.entree.coursDans(duree: d),
@@ -329,18 +329,22 @@ class EmplacementEntree {
 
 /// La ligne de contexte de l'enseignant, au format d'E11 : « Dans 1 h 24 »
 /// (ENSEIGNANT-2026-09-26, E11), et non « Cours dans 1 h 24 ».
-String _dansEnseignant(Duration reste) {
-  final int minutes = reste.inMinutes;
-  // DUREE-INSECABLE-1 : la duree ne se scinde jamais sur deux lignes.
-  if (minutes < Duration.minutesPerHour) {
-    return LibellesGroupe.insecable(
-      t.enseignant.journee.minuteurMinutes(minutes: minutes),
+///
+/// Le formateur unique ([LibellesGroupe.compteAReboursAvec]) avec les mots de
+/// l'enseignant : au-dela du jour, « Demain a 19:00 » ou « Dans 4 jours »,
+/// jamais « Dans 116 h 52 » (directeur, 30/10/2026). [debut] : l'heure locale
+/// du cours.
+String _dansEnseignant(Duration reste, DateTime debut) =>
+    LibellesGroupe.compteAReboursAvec(
+      reste,
+      debut: debut,
+      textes: (
+        imminent: () => t.enseignant.journee.minuteurImminent,
+        minutes: (int m) => t.enseignant.journee.minuteurMinutes(minutes: m),
+        heures: (int h, String m) =>
+            t.enseignant.journee.minuteurHeures(heures: h, minutes: m),
+        demain: (String heure) =>
+            t.enseignant.journee.minuteurDemain(heure: heure),
+        jours: (int j) => t.enseignant.journee.minuteurJours(jours: j),
+      ),
     );
-  }
-  return LibellesGroupe.insecable(
-    t.enseignant.journee.minuteurHeures(
-      heures: minutes ~/ Duration.minutesPerHour,
-      minutes: (minutes % Duration.minutesPerHour).toString().padLeft(2, '0'),
-    ),
-  );
-}

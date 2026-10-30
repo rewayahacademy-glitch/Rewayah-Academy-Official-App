@@ -13651,6 +13651,15 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Ça commence'
 	String get minuteurImminent => 'Ça commence';
 
+	/// fr: 'Demain à {heure}'
+	String minuteurDemain({required Object heure}) => 'Demain à ${heure}';
+
+	/// fr: '(one) {Dans {jours} jour} (other) {Dans {jours} jours}'
+	String minuteurJours({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours,
+		one: 'Dans ${jours} jour',
+		other: 'Dans ${jours} jours',
+	);
+
 	/// fr: 'Jusqu'à {heure}'
 	String jusqua({required Object heure}) => 'Jusqu\'à ${heure}';
 
@@ -47266,6 +47275,8 @@ extension on Traductions {
 			'enseignant.journee.minuteurHeures' => ({required Object heures, required Object minutes}) => 'Dans ${heures} h ${minutes}',
 			'enseignant.journee.minuteurMinutes' => ({required Object minutes}) => 'Dans ${minutes} min',
 			'enseignant.journee.minuteurImminent' => 'Ça commence',
+			'enseignant.journee.minuteurDemain' => ({required Object heure}) => 'Demain à ${heure}',
+			'enseignant.journee.minuteurJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Dans ${jours} jour', other: 'Dans ${jours} jours', ), 
 			'enseignant.journee.jusqua' => ({required Object heure}) => 'Jusqu\'à ${heure}',
 			'enseignant.journee.unAutreJour' => ({required Object jour, required Object heure}) => '${jour}, à ${heure}',
 			'enseignant.journee.lancementPlusTard' => 'Le lancement s\'ouvre dix minutes avant l\'heure du cours.',
@@ -47540,10 +47551,10 @@ extension on Traductions {
 			'enseignant.profil.contratAucun' => 'Aucun contrat enregistré',
 			'enseignant.profil.contratAucunDetail' => 'Votre dossier n\'est pas encore passé par la signature.',
 			'enseignant.profil.contratErreur' => 'Vos contrats n\'ont pas pu être lus.',
-			'enseignant.profil.contratLectureSeule' => 'Ces pièces sont en lecture seule.',
-			'enseignant.profil.personnel' => 'Mes réglages',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.profil.contratLectureSeule' => 'Ces pièces sont en lecture seule.',
+			'enseignant.profil.personnel' => 'Mes réglages',
 			'enseignant.profil.deconnexionQuestion' => 'Se déconnecter de cet appareil ?',
 			'enseignant.profil.deconnexionConfirmer' => 'Me déconnecter maintenant',
 			'enseignant.profil.deconnexionConsequence' => 'Votre journée, vos créneaux et vos cahiers de transmission restent enregistrés. Il faudra un nouveau lien de connexion pour revenir.',
@@ -48054,10 +48065,10 @@ extension on Traductions {
 			'tc.bibliotheque.sections.tousLesSupports' => 'Tous les supports',
 			'tc.bibliotheque.sections.resultats' => 'Résultats',
 			'tc.bibliotheque.vide.message' => 'Aucun support publié pour le moment',
-			'tc.bibliotheque.vide.invitation' => 'Vos enseignants déposeront ici les supports de vos cours.',
-			'tc.bibliotheque.aucunResultat.message' => 'Aucun support ne correspond',
 			_ => null,
 		} ?? switch (path) {
+			'tc.bibliotheque.vide.invitation' => 'Vos enseignants déposeront ici les supports de vos cours.',
+			'tc.bibliotheque.aucunResultat.message' => 'Aucun support ne correspond',
 			'tc.bibliotheque.aucunResultat.invitation' => 'Essayez un autre mot, ou relâchez les filtres.',
 			'tc.bibliotheque.indisponible.message' => 'La bibliothèque n\'a pas pu être chargée',
 			'tc.bibliotheque.indisponible.invitation' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
@@ -48568,10 +48579,10 @@ extension on Traductions {
 			'adulte.recharge.resultat.nouveauSolde' => ({required Object montant}) => 'Nouveau solde : ${montant}',
 			'adulte.recharge.resultat.soldesTitre' => 'Soldes mis à jour',
 			'adulte.recharge.resultat.soldesPhrase' => 'Les nouveaux soldes sont disponibles pour chaque profil concerné.',
-			'adulte.recharge.resultat.retourSoldes' => 'Retour aux soldes',
-			'adulte.recharge.resultat.echecTitre' => 'Le paiement a échoué',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.recharge.resultat.retourSoldes' => 'Retour aux soldes',
+			'adulte.recharge.resultat.echecTitre' => 'Le paiement a échoué',
 			'adulte.recharge.resultat.echecPhrase' => 'Aucun solde n\'a été crédité. Votre sélection est conservée : vous pouvez réessayer ou changer de moyen de paiement.',
 			'adulte.recharge.resultat.echecMotif' => 'Motif',
 			'adulte.recharge.resultat.reessayer' => 'Réessayer',
@@ -49082,10 +49093,10 @@ extension on Traductions {
 			'alertes.gravite.important' => 'Importante',
 			'alertes.gravite.info' => 'Pour information',
 			'alertes.creeeLe' => ({required Object date, required Object heure}) => 'Le ${date} à ${heure}',
-			'alertes.ligne' => ({required Object gravite, required Object titre, required Object date, required Object heure}) => '${gravite}, ${titre}, le ${date} à ${heure}',
-			'alertes.bandeauUne' => ({required Object titre}) => 'Alerte urgente : ${titre}',
 			_ => null,
 		} ?? switch (path) {
+			'alertes.ligne' => ({required Object gravite, required Object titre, required Object date, required Object heure}) => '${gravite}, ${titre}, le ${date} à ${heure}',
+			'alertes.bandeauUne' => ({required Object titre}) => 'Alerte urgente : ${titre}',
 			'alertes.bandeauPlusieurs' => ({required Object nombre, required Object titre}) => '${nombre} alertes urgentes. La plus récente : ${titre}',
 			'alertes.bandeauCourtUne' => 'Alerte urgente à traiter',
 			'alertes.bandeauCourtPlusieurs' => ({required Object nombre}) => '${nombre} alertes urgentes à traiter',
@@ -49596,10 +49607,10 @@ extension on Traductions {
 			'com.communaute.demo.f.categorieRessources' => 'Ressources',
 			'com.communaute.demo.f.categorieGestion' => 'Gestion',
 			'com.communaute.demo.f.fonctionSoi' => 'Enseignant, Classe Al-Fatiha',
-			'com.communaute.demo.f.prenomSoi' => 'Ibrahim',
-			'com.communaute.demo.f.samira' => 'Samira Belkacem',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.demo.f.prenomSoi' => 'Ibrahim',
+			'com.communaute.demo.f.samira' => 'Samira Belkacem',
 			'com.communaute.demo.f.fonctionSamira' => 'Enseignante, Classe An-Nour',
 			'com.communaute.demo.f.nour' => 'Nour El Idrissi',
 			'com.communaute.demo.f.fonctionNour' => 'Enseignante, Classe Al-Fajr',
@@ -50110,10 +50121,10 @@ extension on Traductions {
 			'comptable.commun.derniereAllocation' => ({required Object date}) => 'Dernière allocation : ${date}',
 			'comptable.commun.prochaineAllocation' => ({required Object date}) => 'Prochaine allocation prévue : ${date}',
 			'comptable.commun.aucuneAllocation' => 'Aucune allocation enregistrée',
-			'comptable.commun.destination' => 'Destination',
-			'comptable.commun.destinationMasquee' => ({required Object type, required Object suffixe}) => '${type} •••• ${suffixe}',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.commun.destination' => 'Destination',
+			'comptable.commun.destinationMasquee' => ({required Object type, required Object suffixe}) => '${type} •••• ${suffixe}',
 			'comptable.commun.destinationMasqueeLecteur' => ({required Object type, required Object suffixe}) => '${type}, numéro masqué, se termine par ${suffixe}',
 			'comptable.commun.destinationAucune' => 'Aucune méthode de paiement',
 			'comptable.commun.paysDevise' => ({required Object pays, required Object devise}) => '${pays} · ${devise}',
@@ -50624,10 +50635,10 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.externe' => ({required Object nom}) => '${nom} n\'a pas de compte Rewayah : une invitation sécurisée lui permet de saisir lui-même sa méthode. Renvoyez-la depuis son obligation, dans Contractuels.',
 			'comptable.beneficiaires.profil.voirContractuels' => 'Voir les obligations des contractuels',
 			'comptable.beneficiaires.profil.aucuneAction' => 'Aucune action n\'est ouverte sur ce profil : il est à jour.',
-			'comptable.beneficiaires.profil.filTitre' => 'Fil « Profil de paiement »',
-			'comptable.beneficiaires.profil.relanceRefusee' => ({required Object nom}) => 'Aucun fil « Profil de paiement » ne peut être ouvert avec ${nom} : Rewayah ne l\'autorise pas pour ce bénéficiaire. Demandez plutôt une mise à jour, ou signalez-le à la direction.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.profil.filTitre' => 'Fil « Profil de paiement »',
+			'comptable.beneficiaires.profil.relanceRefusee' => ({required Object nom}) => 'Aucun fil « Profil de paiement » ne peut être ouvert avec ${nom} : Rewayah ne l\'autorise pas pour ce bénéficiaire. Demandez plutôt une mise à jour, ou signalez-le à la direction.',
 			'comptable.beneficiaires.profil.messageModele' => 'Vos informations de paiement doivent être complétées avant votre prochain versement. Vous pouvez les ajouter depuis votre espace personnel.',
 			'comptable.beneficiaires.profil.miseAJourDemandee' => ({required Object nom}) => 'Demande de mise à jour enregistrée pour ${nom}.',
 			'comptable.beneficiaires.profil.suspendus' => ({required Object nom}) => 'Paiements de ${nom} suspendus : aucun versement ne part tant qu\'ils ne sont pas repris.',
@@ -51138,10 +51149,10 @@ extension on Traductions {
 			'sansDonnees.paiement' => 'Ce paiement n\'a pas pu être chargé',
 			'sansDonnees.paiementsAEffectuer' => 'Les paiements à effectuer n\'ont pas pu être chargés',
 			'sansDonnees.encaissements' => 'Les encaissements n\'ont pas pu être chargés',
-			'sansDonnees.tresorerie' => 'La trésorerie n\'a pas pu être chargée',
-			'sansDonnees.obligation' => 'Cette obligation n\'a pas pu être chargée',
 			_ => null,
 		} ?? switch (path) {
+			'sansDonnees.tresorerie' => 'La trésorerie n\'a pas pu être chargée',
+			'sansDonnees.obligation' => 'Cette obligation n\'a pas pu être chargée',
 			'sansDonnees.contractuels' => 'Les contractuels n\'ont pas pu être chargés',
 			'sansDonnees.reserve' => 'La politique de réserve n\'a pas pu être chargée',
 			'sansDonnees.vueGlobale' => 'La vue d\'ensemble des finances n\'a pas pu être chargée',

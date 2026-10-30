@@ -1492,6 +1492,8 @@
       "minuteurHeures": "بعد ⁨{heures}⁩ س ⁨{minutes}⁩ د",
       "minuteurMinutes": "بعد ⁨{minutes}⁩ د",
       "minuteurImminent": "يبدأ الآن",
+      "minuteurDemain": "غدًا الساعة ⁨{heure}⁩",
+      "minuteurJours(param=jours)": {"zero": "اليوم", "one": "بعد يوم واحد", "two": "بعد يومين", "few": "بعد ⁨{jours}⁩ أيام", "many": "بعد ⁨{jours}⁩ يومًا", "other": "بعد ⁨{jours}⁩ يوم"},
       "jusqua": "حتى ⁨{heure}⁩",
       "unAutreJour": "⁨{jour}⁩، الساعة ⁨{heure}⁩",
       "lancementPlusTard": "يُتاح البدء قبل موعد الدرس بعشر دقائق.",

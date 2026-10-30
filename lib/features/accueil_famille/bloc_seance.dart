@@ -221,26 +221,20 @@ class AffichageSeance {
     if (restant == null) {
       return e.prevue;
     }
-    // COM-RC tour 7 (lot L) : arrondi au superieur, comme l'heure affichee.
-    final int minutes = LibellesGroupe.minutesAvant(restant);
-    // DUREE-INSECABLE-1 : « Dans 3 h 28 » ne se scinde jamais.
-    if (minutes < Duration.minutesPerHour) {
-      return LibellesGroupe.insecable(
-        e.dansMinutes(minutes: minutes < 1 ? 1 : minutes),
-      );
-    }
-    if (minutes < Duration.minutesPerDay) {
-      return LibellesGroupe.insecable(
-        e.dansHeures(
-          heures: minutes ~/ Duration.minutesPerHour,
-          minutes: (minutes % Duration.minutesPerHour).toString().padLeft(
-            2,
-            '0',
-          ),
-        ),
-      );
-    }
-    return LibellesGroupe.insecable(e.dansJours(jours: restant.inDays));
+    // Le formateur unique (directeur, 30/10/2026), avec les mots courts du
+    // selecteur : sans debut, au-dela du jour, « Dans 4 j ». COM-RC tour 7
+    // (lot L) : arrondi au superieur, comme l'heure affichee ; jamais moins
+    // d'une minute.
+    return LibellesGroupe.compteAReboursAvec(
+      restant,
+      textes: (
+        imminent: () => e.dansMinutes(minutes: 1),
+        minutes: (int m) => e.dansMinutes(minutes: m),
+        heures: (int h, String m) => e.dansHeures(heures: h, minutes: m),
+        demain: (String _) => e.dansJours(jours: 1),
+        jours: (int j) => e.dansJours(jours: j),
+      ),
+    );
   }
 }
 
