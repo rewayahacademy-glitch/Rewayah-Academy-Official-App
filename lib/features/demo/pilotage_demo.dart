@@ -78,7 +78,7 @@ List<LignePilotage> lignesPilotageDemo({
           x.attenteHommes++;
         case GenreClasse.femmes:
           x.attenteFemmes++;
-        case GenreClasse.indetermine || null:
+        case GenreClasse.indetermine || GenreClasse.mixte || null:
           x.attenteSansGenre++;
       }
     }

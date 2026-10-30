@@ -88,6 +88,13 @@ declare
     'creer_classe_depuis_regroupement(uuid,uuid,text)',
     'creer_code_appairage(uuid)',
     'creer_groupe(uuid,text,text,smallint,smallint,smallint,text,smallint)',
+    -- Classe a plusieurs creneaux et mixite (29/10), duree par creneau (30/10) :
+    -- direction active seulement.
+    'creer_classe_creneaux_admin(uuid,text,text,smallint,text,jsonb,text,smallint)',
+    'modifier_creneau_classe_admin(uuid,integer,integer,integer,integer,integer,text)',
+    'ajouter_creneau_classe_admin(uuid,integer,integer,integer)',
+    'retirer_creneau_classe_admin(uuid,integer,integer,text)',
+    'regler_genre_classe_admin(uuid,text,text)',
     'creer_jeton_agent(text,uuid,integer,boolean)',
     'creer_offre_horaire(text,text,text,smallint[],smallint,smallint)',
     'creer_profil_eleve_titulaire()',
@@ -190,6 +197,16 @@ declare
     'inscrire_candidat(text,text,text,gender,text,text,text)',
     'inscrire_comptable_invite(text,text,text,gender)',
     'inscrire_titulaire(text,text,text,gender,text,boolean,jsonb)',
+    -- ADMISSION lot C (30/10) : gestes de la direction sur les familles et
+    -- les eleves adultes (direction active seulement), et le lien d'un enfant
+    -- de la demande a son profil (le titulaire, sur sa demande confirmee).
+    'accepter_admission(uuid,integer,text)',
+    'refuser_admission(uuid,text,text,integer,text)',
+    'annuler_refus_admission(uuid,text,integer,text)',
+    'annuler_admission(uuid,text,integer,text)',
+    'demander_precisions_admission(uuid,text,integer,text)',
+    'contacter_admission(uuid,text,text,text)',
+    'lier_apprenant_profil(uuid,uuid)',
     'inscrire_enseignant_invite(text,text,text,gender)',
     -- CAND-L2A2 (22/10) : infirmation d'un moyen de paiement declare (transition 25), direction active de son cote (moteur, motif).
     'infirmer_moyen_paiement_candidat(uuid,text,text,text,integer,text)',

@@ -52,8 +52,9 @@ import '../admin_fusion/feuilles_fusion.dart';
 import '../creneaux/plages.dart' show jourCapitalise, nommerHeure;
 import 'bas_de_feuille.dart';
 import 'cahiers_classe.dart';
-import 'feuille_creneau.dart';
+import 'duree_creneau.dart';
 import 'feuille_observation_groupe.dart';
+import 'feuille_reglages_classe.dart';
 import 'genre_classe_libelles.dart';
 import 'refus_creation_classe_libelles.dart';
 import 'refus_deplacement_libelles.dart';
@@ -399,8 +400,15 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
                       c.groupe,
                       nom: c.nom,
                     ),
-                    onAjouterCreneau: (ClasseListee c) =>
-                        ouvrirAjoutCreneau(context, ref, c.groupe, nom: c.nom),
+                    // D2 et D1 (29/10/2026) : creneaux de la semaine (ajout,
+                    // modification, retrait) et genre de la classe.
+                    onAjouterCreneau: (ClasseListee c) => ouvrirReglagesClasse(
+                      context,
+                      ref,
+                      c.groupe,
+                      nom: c.nom,
+                      genre: c.genre,
+                    ),
                     onObservation: (ClasseListee c) =>
                         _ouvrirObservation(context, ref, c.groupe, nom: c.nom),
                     onCloturer: (ClasseListee c) =>
@@ -441,11 +449,12 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
                               groupe,
                               nom: nom,
                             ),
-                            onAjouterCreneau: () => ouvrirAjoutCreneau(
+                            onAjouterCreneau: () => ouvrirReglagesClasse(
                               context,
                               ref,
                               groupe,
                               nom: nom,
+                              genre: choisie.genre,
                             ),
                             onObservation: () => _ouvrirObservation(
                               context,
@@ -584,7 +593,7 @@ class _Inspecteur extends StatelessWidget {
                       onChoix: onModifierSeuil,
                     ),
                     EntreeAction(
-                      libelle: t.admin.groupes.actionAjouterCreneau,
+                      libelle: t.admin.groupes.reglagesClasse.action,
                       onChoix: onAjouterCreneau,
                     ),
                     EntreeAction(
@@ -789,7 +798,7 @@ class _Corps extends StatelessWidget {
                       onChoix: () => onModifierSeuil(c),
                     ),
                     EntreeAction(
-                      libelle: t.admin.groupes.actionAjouterCreneau,
+                      libelle: t.admin.groupes.reglagesClasse.action,
                       onChoix: () => onAjouterCreneau(c),
                     ),
                     EntreeAction(
@@ -877,6 +886,7 @@ String _genre(GenreClasse genre, TypePublicGroupe? type) {
     GenreClasse.hommes => l.genreMasculin,
     GenreClasse.femmes => l.genreFeminin,
     GenreClasse.indetermine => t.admin.groupes.formulaire.genreIndetermine,
+    GenreClasse.mixte => t.admin.groupes.formulaire.genreMixte,
   };
 }
 
@@ -1099,6 +1109,19 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
   String? _enseignantId;
   int? _jour;
   int? _heure;
+
+  /// La duree du premier creneau, en minutes ; nulle pour celle de la classe
+  /// (30/10/2026).
+  int? _duree;
+
+  /// D2 (29/10/2026) : les creneaux suivants de la semaine. Trois creneaux
+  /// par defaut, a des jours fixes : le premier, et deux lignes a remplir ou
+  /// a retirer.
+  final List<({int? jour, int? heure, int? duree})> _autres =
+      <({int? jour, int? heure, int? duree})>[
+        (jour: null, heure: null, duree: null),
+        (jour: null, heure: null, duree: null),
+      ];
   late int? _seuil = _seuilParDefaut(_type);
   bool _seuilChoisi = false;
   late final TextEditingController _nom = TextEditingController(
@@ -1175,6 +1198,15 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
     if (genre == null) return f.manqueGenre;
     if (_enseignantId == null) return t.admin.groupes.manqueEnseignant;
     if (_jour == null || _heure == null) return f.manqueCreneau;
+    for (int i = 0; i < _autres.length; i++) {
+      if (_autres[i].jour == null || _autres[i].heure == null) {
+        return f.manqueAutreCreneau(n: i + 2);
+      }
+    }
+    final Set<(int?, int?)> vus = <(int?, int?)>{(_jour, _heure)};
+    for (final ({int? jour, int? heure, int? duree}) c in _autres) {
+      if (!vus.add((c.jour, c.heure))) return f.creneauEnDouble;
+    }
     if (choisi == null) return f.manqueListeEnseignants;
     if (!choisi.choisissable) {
       return manqueEnseignantClasse(choisi, genre, _type);
@@ -1214,6 +1246,15 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
             libelle: _nom.text.trim(),
             creneau: Creneau(jour: jour, heure: heure, fuseau: fuseau),
             seuilMax: seuil,
+            autresCreneaux: <Creneau>[
+              for (final ({int? jour, int? heure, int? duree}) c in _autres)
+                Creneau(jour: c.jour!, heure: c.heure!, fuseau: fuseau),
+            ],
+            durees: <int?>[
+              _duree,
+              for (final ({int? jour, int? heure, int? duree}) c in _autres)
+                c.duree,
+            ],
           );
       widget.onCree();
       if (mounted) Navigator.of(context).pop();
@@ -1350,17 +1391,20 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
         ChoiceCardGroup(
           autoriserSaisieLibre: false,
           options: <OptionChoix>[
+            // D1 (29/10/2026) : une classe nouvelle a un genre, ou elle est
+            // rendue mixte explicitement ; jamais « non determine ».
             for (final GenreClasse g in GenreClasse.values)
-              OptionChoix(
-                cle: ValueKey<String>('classe-genre-${g.name}'),
-                valeur: g.name,
-                libelle: libelleGenreClasse(g, _type),
-                description: detailGenreClasse(
-                  g,
-                  _type,
-                  genreConnu: genreConnu,
+              if (g != GenreClasse.indetermine)
+                OptionChoix(
+                  cle: ValueKey<String>('classe-genre-${g.name}'),
+                  valeur: g.name,
+                  libelle: libelleGenreClasse(g, _type),
+                  description: detailGenreClasse(
+                    g,
+                    _type,
+                    genreConnu: genreConnu,
+                  ),
                 ),
-              ),
           ],
           onChange: (ReponseChoix r) {
             final GenreClasse? genre = GenreClasse.values
@@ -1442,8 +1486,73 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
             },
           ),
         ),
+        Ecart.vLg,
+        TexteSansCoupure(f.duree, style: textes.labelLarge),
+        Ecart.vXs,
+        TexteSansCoupure(f.dureeContexte, style: textes.bodySmall),
+        Ecart.vSm,
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: MenuDureeCreneau(
+            key: const ValueKey<String>('classe-duree'),
+            duree: _duree,
+            onChoix: (int? d) => _maj(() => _duree = d),
+          ),
+        ),
         Ecart.vSm,
         TexteSansCoupure(fuseau.phrase, style: textes.bodySmall),
+        Ecart.vXl,
+
+        // 4 bis. Les autres creneaux de la semaine (D2, 29/10/2026).
+        TitreChamp(f.autresCreneauxTitre, style: textes.titleMedium),
+        Ecart.vXs,
+        TexteSansCoupure(f.autresCreneauxContexte, style: textes.bodySmall),
+        Ecart.vMd,
+        for (int i = 0; i < _autres.length; i++) ...<Widget>[
+          _LigneAutreCreneau(
+            key: ValueKey<String>('classe-autre-creneau-$i'),
+            numero: i + 2,
+            jour: _autres[i].jour,
+            heure: _autres[i].heure,
+            duree: _autres[i].duree,
+            onJour: (int j) => _maj(
+              () => _autres[i] = (
+                jour: j,
+                heure: _autres[i].heure,
+                duree: _autres[i].duree,
+              ),
+            ),
+            onHeure: (int h) => _maj(
+              () => _autres[i] = (
+                jour: _autres[i].jour,
+                heure: h,
+                duree: _autres[i].duree,
+              ),
+            ),
+            onDuree: (int? d) => _maj(
+              () => _autres[i] = (
+                jour: _autres[i].jour,
+                heure: _autres[i].heure,
+                duree: d,
+              ),
+            ),
+            onRetirer: () => _maj(() => _autres.removeAt(i)),
+          ),
+          Ecart.vLg,
+        ],
+        if (_autres.length < 6)
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: ActionPrincipale(
+              key: const ValueKey<String>('classe-ajouter-creneau'),
+              libelle: f.ajouterCreneauLigne,
+              niveau: NiveauAction.tertiaire,
+              pleineLargeur: false,
+              onPress: () => _maj(
+                () => _autres.add((jour: null, heure: null, duree: null)),
+              ),
+            ),
+          ),
         Ecart.vXl,
 
         // 5. Seuil : deduit puis choisi, 1 a 6 (D7).
@@ -1930,6 +2039,97 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
           libelle: widget.libelleEnvoyer,
           enCours: _envoi,
           onPress: _envoyer,
+        ),
+      ],
+    );
+  }
+}
+
+/// Un creneau de plus dans la creation d'une classe : le jour en puces,
+/// l'heure et la duree en menus, et « Retirer ce creneau » (D2, 29/10/2026 ;
+/// duree, 30/10/2026).
+class _LigneAutreCreneau extends StatelessWidget {
+  const _LigneAutreCreneau({
+    required this.numero,
+    required this.jour,
+    required this.heure,
+    required this.duree,
+    required this.onJour,
+    required this.onHeure,
+    required this.onDuree,
+    required this.onRetirer,
+    super.key,
+  });
+
+  final int numero;
+  final int? jour;
+  final int? heure;
+  final int? duree;
+  final ValueChanged<int> onJour;
+  final ValueChanged<int> onHeure;
+  final ValueChanged<int?> onDuree;
+  final VoidCallback onRetirer;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    final f = t.admin.groupes.formulaire;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        TexteSansCoupure(f.creneauNumero(n: numero), style: textes.labelLarge),
+        Ecart.vSm,
+        // Choix de formulaire, pas un filtre : le jour d'un creneau de plus.
+        Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: <Widget>[
+            for (int j = 1; j <= 7; j++)
+              FilterPill(
+                key: ValueKey<String>('classe-autre-$numero-jour-$j'),
+                libelle: jourCapitalise(j),
+                retenue: jour == j,
+                onPress: () => onJour(j),
+              ),
+          ],
+        ),
+        Ecart.vSm,
+        // Choix de formulaire, pas un filtre : l'heure d'un creneau de plus.
+        Wrap(
+          spacing: AppSpacing.lg,
+          runSpacing: AppSpacing.sm,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: <Widget>[
+            MenuFiltre<int>(
+              key: ValueKey<String>('classe-autre-$numero-heure'),
+              libelle: f.heure,
+              valeur: heure,
+              entrees: <EntreeFiltre<int>>[
+                for (int h = _heureDebut; h <= _heureFin; h++)
+                  EntreeFiltre<int>(
+                    valeur: h,
+                    libelle: LibellesGroupe.insecable(
+                      f.heureValeur(heure: '$h'),
+                    ),
+                  ),
+              ],
+              onChoix: (int? h) {
+                if (h != null) onHeure(h);
+              },
+            ),
+            MenuDureeCreneau(
+              key: ValueKey<String>('classe-autre-$numero-duree'),
+              duree: duree,
+              onChoix: onDuree,
+            ),
+            ActionPrincipale(
+              key: ValueKey<String>('classe-autre-$numero-retirer'),
+              libelle: f.retirerCreneau(n: numero),
+              niveau: NiveauAction.tertiaire,
+              pleineLargeur: false,
+              onPress: onRetirer,
+            ),
+          ],
         ),
       ],
     );

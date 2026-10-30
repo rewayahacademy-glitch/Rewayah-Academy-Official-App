@@ -17,8 +17,14 @@ enum GenreClasse {
   /// Une classe de femmes (de filles chez les enfants).
   femmes,
 
-  /// Genre pas encore connu : tous les enseignants sont proposables.
+  /// Genre pas encore connu : tous les enseignants sont proposables. Une
+  /// classe nouvelle ne nait plus ainsi (decision D1 du 29/10/2026) ; les
+  /// classes existantes le restent jusqu'au reglage de la direction.
   indetermine,
+
+  /// D1 (29/10/2026) : classe rendue mixte par un reglage explicite de la
+  /// direction ; tous les enseignants sont proposables.
+  mixte,
 }
 
 /// Le genre d'un enseignant, tel qu'une source **publique** le dirait

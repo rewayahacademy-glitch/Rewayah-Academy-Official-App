@@ -74,7 +74,9 @@ class _AttentePageState extends ConsumerState<AttentePage> {
   /// Relit le dossier puis la session : un compte devenu actif est alors
   /// redirige par la garde existante vers la racine de son role.
   Future<void> _relire() async {
-    ref.invalidate(etatDossierProvider);
+    ref
+      ..invalidate(etatDossierProvider)
+      ..invalidate(demandeFamilleProvider);
     await ref.read(sourceSessionProvider).rafraichir();
   }
 
@@ -424,18 +426,7 @@ class _Statut extends StatelessWidget {
       // Admission, lot B (decision du 27/10/2026, regle 1) : la famille et
       // l'eleve adulte attendent la decision de la direction. Ni piece, ni
       // delai promis ; l'e-mail dit la suite (regle 4).
-      EtapeDossier.accesEnPreparation => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          _Bloc(
-            titre: t.attente.demandeTitre,
-            message: t.attente.demandeMessage,
-            detail: t.attente.demandeDetail,
-            icone: AppIcons.foyer,
-          ),
-          const _ApprenantsDemande(),
-        ],
-      ),
+      EtapeDossier.accesEnPreparation => const _DemandeFamille(),
       EtapeDossier.refuse => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -473,6 +464,7 @@ class _Statut extends StatelessWidget {
 class _Bloc extends StatelessWidget {
   const _Bloc({
     required this.titre,
+    super.key,
     required this.message,
     required this.icone,
     this.detail,
@@ -507,6 +499,63 @@ class _Bloc extends StatelessWidget {
           Ecart.vMd,
           Text(detail!, textAlign: TextAlign.center, style: textes.bodySmall),
         ],
+      ],
+    );
+  }
+}
+
+/// L'attente d'une famille ou d'un eleve adulte. Admission, lot C : la page
+/// dit la precision que la direction demande, ou que la demande n'a pas de
+/// suite ; tant que rien d'autre n'est lu, « Votre demande est en cours ».
+class _DemandeFamille extends ConsumerWidget {
+  const _DemandeFamille();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final DemandeFamille? demande = ref.watch(demandeFamilleProvider).value;
+    final TextTheme textes = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        switch (demande) {
+          (issue: IssueDemandeFamille.refusee, precisions: _) => _Bloc(
+            key: const Key('attente-demande-refusee'),
+            titre: t.attente.demandeRefuseeTitre,
+            message: t.attente.demandeRefuseeMessage,
+            detail: t.attente.demandeRefuseeDetail,
+            icone: AppIcons.foyer,
+          ),
+          (
+            issue: IssueDemandeFamille.aCompleter,
+            precisions: final String precisions,
+          ) =>
+            Column(
+              key: const Key('attente-demande-precisions'),
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                _Bloc(
+                  titre: t.attente.precisionsTitre,
+                  message: t.attente.precisionsMessage,
+                  icone: AppIcons.foyer,
+                ),
+                Ecart.vLg,
+                AppCard(child: Text(precisions, style: textes.bodyLarge)),
+                Ecart.vLg,
+                Text(
+                  t.attente.precisionsReponse,
+                  textAlign: TextAlign.center,
+                  style: textes.bodyMedium,
+                ),
+              ],
+            ),
+          _ => _Bloc(
+            titre: t.attente.demandeTitre,
+            message: t.attente.demandeMessage,
+            detail: t.attente.demandeDetail,
+            icone: AppIcons.foyer,
+          ),
+        },
+        const _ApprenantsDemande(),
       ],
     );
   }

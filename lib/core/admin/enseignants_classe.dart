@@ -23,12 +23,14 @@ import 'service_groupes.dart';
 /// ne conclut rien. Un genre d'enseignant non renseigne se traite a part
 /// ([EnseignantClasse.genreInconnu], D3 revue le 21/10).
 bool? genreCompatible(GenreClasse? classe, GenreEnseignant? enseignant) {
-  if (classe == GenreClasse.indetermine) return true;
+  if (classe == GenreClasse.indetermine || classe == GenreClasse.mixte) {
+    return true;
+  }
   if (classe == null || enseignant == null) return null;
   return switch (classe) {
     GenreClasse.hommes => enseignant == GenreEnseignant.homme,
     GenreClasse.femmes => enseignant == GenreEnseignant.femme,
-    GenreClasse.indetermine => true,
+    GenreClasse.indetermine || GenreClasse.mixte => true,
   };
 }
 

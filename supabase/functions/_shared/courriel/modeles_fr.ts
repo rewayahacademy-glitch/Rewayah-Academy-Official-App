@@ -21,6 +21,15 @@ export const RAISON: Record<string, string> = {
 
 const avis = avisDans(PAROLE_FR)
 
+/// La phrase courte d'un refus d'admission, choisie pour la famille d'apres
+/// le modele du refus (la famille ne voit jamais le motif interne).
+export const REFUS_ADMISSION_FR: Record<string, string> = {
+  refus_general: 'Nous ne pouvons pas donner suite à votre demande pour le moment.',
+  refus_niveau: 'Nous ne pouvons pas donner suite à votre demande : le niveau demandé n’est pas encore proposé.',
+  refus_besoins: 'Nous ne pouvons pas donner suite à votre demande : nos classes ne répondent pas encore à ce que vous cherchez.',
+  refus_sans_reponse: 'Nous ne pouvons pas donner suite à votre demande : nous n’avons pas reçu de réponse à notre dernier message.',
+}
+
 /// L'heure locale d'une seance telle que le serveur la pose dans les
 /// notifications des classes (`debut_local`, « AAAA-MM-JJTHH:MM:SS », deja
 /// dans le fuseau de la personne, migration 20261027120000) : « 6 novembre
@@ -39,6 +48,21 @@ export const MODELES: Record<string, Fabrique> = {
     'Suivre ma demande', '/tuteur/demandes'),
   // Admission, lot B (decision du directeur du 27/10/2026, regle 4) : la
   // demande d'acces d'une famille ou d'un eleve adulte, a son inscription.
+  // Admission, lot C (30/10/2026) : les trois gestes de la direction qui
+  // changent l'etat d'une demande de famille ou d'eleve adulte.
+  admission_acceptee: (d) => avis(d, 'Votre demande est acceptée', 'Bienvenue à Rewayah Academy',
+    'La direction a accepté votre demande. Votre espace est ouvert : entrez dans l’application pour le retrouver.',
+    'Entrer dans l’application', '/'),
+  admission_refusee: (d) => avis(d, 'Nous ne pouvons pas donner suite', 'Votre demande',
+    REFUS_ADMISSION_FR[String(d.modele ?? '')] ?? REFUS_ADMISSION_FR.refus_general,
+    'Voir ma demande', '/attente'),
+  admission_precisions: (d) => {
+    const c = avis(d, 'Il nous manque une information', 'Il nous manque une information',
+      'Pour étudier votre demande, la direction a besoin d’une précision :',
+      'Voir ma demande', '/attente')
+    c.blocs.splice(2, 0, { type: 'texte', texte: String(d.precisions ?? '') })
+    return c
+  },
   admission_recue: (d) => avis(d, 'Votre demande est bien reçue', 'Votre demande est en cours',
     'Nous avons bien reçu votre demande. La direction lit chaque demande avant d’ouvrir un compte. Vous n’avez rien à envoyer : nous vous écrivons à cette adresse dès que la direction a répondu.',
     'Voir ma demande', '/attente'),
@@ -200,8 +224,11 @@ export const MODELES: Record<string, Fabrique> = {
 /// destinataire (decision du directeur, 24/10/2026), sauf vers une langue qui
 /// les ecrit a la main : `attente_candidat` est ecrit en arabe (pilote,
 /// 25/10/2026), traduit vers en, es, pt et les autres ; `admission_recue`
-/// (lot B de l'admission, 29/10/2026), ecrit en francais et en arabe.
-export const TRADUITS_A_L_ENVOI: readonly string[] = ['attente_candidat', 'admission_recue']
+/// (lot B de l'admission, 29/10/2026) et les trois modeles du lot C (30/10),
+/// ecrits en francais et en arabe.
+export const TRADUITS_A_L_ENVOI: readonly string[] = [
+  'attente_candidat', 'admission_recue', 'admission_acceptee', 'admission_refusee', 'admission_precisions',
+]
 
 export const FRANCAIS: LangueEcrite = {
   modeles: MODELES,
