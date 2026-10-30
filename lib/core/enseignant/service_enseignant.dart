@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../planning/cours_du_moment.dart';
 import 'modeles_enseignant.dart';
 
 /// Ce que le role Enseignant lit et ecrit.
@@ -74,26 +75,8 @@ class ServiceEnseignantSupabase implements ServiceEnseignant {
         .order('started_at');
     return avecCoursSansSeance(
       lignes.map(SeanceEnseignant.depuisJson).toList(growable: false),
-      await _coursDuMoment(),
+      await lireCoursDuMoment(_client),
     );
-  }
-
-  /// Le cours du moment de chaque Classe de l'enseignant, lu sur l'horloge du
-  /// serveur (`cours_du_moment_mes_classes`, defaut du 30/10/2026). Tant que
-  /// la migration n'est pas appliquee, rien de plus : l'ecran garde les
-  /// seances deja creees.
-  Future<List<Map<String, dynamic>>> _coursDuMoment() async {
-    try {
-      final List<dynamic> lignes = await _client.rpc<List<dynamic>>(
-        'cours_du_moment_mes_classes',
-      );
-      return lignes.cast<Map<String, dynamic>>();
-    } on PostgrestException catch (e) {
-      if (e.code == 'PGRST202' || e.code == '42883') {
-        return const <Map<String, dynamic>>[];
-      }
-      rethrow;
-    }
   }
 
   @override
@@ -201,11 +184,7 @@ List<SeanceEnseignant> avecCoursSansSeance(
 ) {
   final List<SeanceEnseignant> ajouts = <SeanceEnseignant>[
     for (final Map<String, dynamic> ligne in coursDuMoment)
-      if (ligne['session_id'] == null &&
-          ligne['groupe_id'] is String &&
-          ligne['debut_utc'] is String &&
-          ligne['fin_prevue_utc'] is String)
-        SeanceEnseignant.coursSansSeance(ligne),
+      if (estCoursSansSeance(ligne)) SeanceEnseignant.coursSansSeance(ligne),
   ];
   final List<SeanceEnseignant> nouveaux = <SeanceEnseignant>[
     for (final SeanceEnseignant a in ajouts)

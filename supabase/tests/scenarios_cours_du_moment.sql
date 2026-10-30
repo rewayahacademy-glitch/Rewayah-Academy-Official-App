@@ -1,6 +1,6 @@
 -- Defaut du 30/10/2026 : une Classe creee pendant son creneau n'apparaissait
 -- ni sur « Aujourd'hui » ni sur « Classes ». Migration
--- 20261101100000_cours_du_moment_par_classe.sql.
+-- 20261101100100_cours_du_moment_par_classe.sql.
 --
 -- A rejouer sur une base NEUVE (stub_auth puis toutes les migrations). Le
 -- scenario pose ses fixtures (aucune donnee personnelle) et annule tout.
@@ -132,7 +132,7 @@ SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.sessions s, hc_debut
 
 -- La lecture sous le role connecte, en tant que p_qui.
 CREATE TEMP TABLE cm_l (n int, groupe_id uuid, session_id uuid, debut timestamptz,
-                        fin timestamptz, ouvre timestamptz, nb int) ON COMMIT DROP;
+                        fin timestamptz, ouvre timestamptz, nb int, ens uuid) ON COMMIT DROP;
 GRANT ALL ON cm_l TO authenticated;
 CREATE FUNCTION pg_temp.lire(p_n int, p_qui uuid, p_role text) RETURNS void
 LANGUAGE plpgsql AS $$
@@ -140,7 +140,8 @@ BEGIN
   PERFORM pg_temp.qui(p_qui, p_role);
   SET LOCAL ROLE authenticated;
   INSERT INTO cm_l
-  SELECT p_n, c.groupe_id, c.session_id, c.debut_utc, c.fin_prevue_utc, c.join_opens_at_utc, c.nb_membres
+  SELECT p_n, c.groupe_id, c.session_id, c.debut_utc, c.fin_prevue_utc, c.join_opens_at_utc, c.nb_membres,
+         c.teacher_id
     FROM public.cours_du_moment_mes_classes() c;
   RESET ROLE;
   PERFORM pg_temp.qui(NULL, NULL);
@@ -157,7 +158,7 @@ SELECT pg_temp.vrai(
   (SELECT count(*) FROM cm_l WHERE n = 1 AND groupe_id = pg_temp.c('JOUR')) = 1
   AND (SELECT session_id IS NULL AND debut = (SELECT d FROM hc_debut)
               AND fin = debut + interval '90 minutes'
-              AND ouvre <= now() AND debut <= now() AND fin > now() AND nb = 1
+              AND ouvre <= now() AND debut <= now() AND fin > now() AND nb = 1 AND ens = pg_temp.t('tA')
          FROM cm_l WHERE n = 1 AND groupe_id = pg_temp.c('JOUR')),
   '(1) classe creee pendant son creneau : l''enseignant lit le cours en cours, session_id nul');
 

@@ -21,6 +21,8 @@
 -- occurrence d'un creneau dont le cours n'est pas fini, la plus proche des
 -- deux, exactement ce que rend `horloge_classe` (memes fenetre, grace et
 -- duree, lues sur le serveur). Une Classe sans cours a venir ne rend rien.
+-- Le prenom de l'enseignant (jamais son nom de famille, ADR-008), comme
+-- `mes_seances_v` le rend deja a l'eleve et au tuteur.
 --
 -- STABLE, aucune ecriture : la lecture ne cree jamais de seance ; le concierge
 -- reste seul a la creer, a l'appui sur « Rejoindre ».
@@ -36,6 +38,8 @@ RETURNS TABLE (
   type_public          text,
   seuil_max            int,
   nb_membres           int,
+  teacher_id           uuid,
+  teacher_first_name   text,
   session_id           uuid,
   debut_utc            timestamptz,
   fin_prevue_utc       timestamptz,
@@ -59,8 +63,10 @@ BEGIN
   FOR v_g IN
     SELECT g.id, g.libelle, g.type_public::text AS type_public, g.seuil_max::int AS seuil_max,
            (SELECT pg_catalog.count(*) FROM public.groupe_membres m
-             WHERE m.groupe_id = g.id AND m.left_at IS NULL)::int AS nb_membres
+             WHERE m.groupe_id = g.id AND m.left_at IS NULL)::int AS nb_membres,
+           g.teacher_id, ens.first_name AS teacher_first_name
       FROM public.groupes g
+      LEFT JOIN public.profiles ens ON ens.id = g.teacher_id AND ens.deleted_at IS NULL
      WHERE g.ended_at IS NULL
        AND g.etat = 'active'
        AND (
@@ -75,6 +81,7 @@ BEGIN
   LOOP
     RETURN QUERY
       SELECT v_g.id, v_g.libelle, v_g.type_public, v_g.seuil_max, v_g.nb_membres,
+             v_g.teacher_id, v_g.teacher_first_name,
              h.session_id, h.debut_utc, h.fin_prevue_utc, h.join_opens_at_utc,
              h.fenetre_minutes, h.grace_minutes, h.maintenant_utc
         FROM public.horloge_classe(v_g.id) h;
