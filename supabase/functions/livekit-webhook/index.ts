@@ -73,6 +73,22 @@ Deno.serve(async (requete: Request) => {
     ? String(evenement.id)
     : `sans_id:${type}:${salle ?? '?'}:${identite ?? '?'}:${horodatage}`
 
+  // K4 n° 13 (30/10/2026) : pour `track_published` et `track_unpublished`,
+  // la piste en quelques champs (jamais le flux), afin de relire une seance :
+  // l'image de l'eleve est-elle partie ? La base y ajoute l'identite.
+  const track = evenement.track as Record<string, unknown> | undefined
+  const piste = track
+    ? {
+      sid: track.sid ? String(track.sid) : null,
+      type: track.type ? String(track.type) : null,
+      source: track.source ? String(track.source) : null,
+      muted: track.muted === true,
+      simulcast: track.simulcast === true,
+      width: Number(track.width ?? 0) || null,
+      height: Number(track.height ?? 0) || null,
+    }
+    : null
+
   const service = clientService()
   const { data, error } = await service.rpc('enregistrer_webhook_livekit', {
     p_event_id: identifiant,
@@ -83,6 +99,7 @@ Deno.serve(async (requete: Request) => {
     p_detail: {
       sans_id_livekit: !evenement.id,
       identite_non_exploitable: identite !== null && profil === null,
+      ...(piste ? { piste } : {}),
     },
   })
 
