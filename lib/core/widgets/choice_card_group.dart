@@ -125,6 +125,7 @@ class ChoiceCardGroup extends StatefulWidget {
     this.valeurInitiale,
     this.autoriserSaisieLibre = true,
     this.coteACote = false,
+    this.choixEgaux = false,
     this.enLigne = false,
     this.indicationMultiple = true,
   });
@@ -147,6 +148,13 @@ class ChoiceCardGroup extends StatefulWidget {
   /// deux ou trois options courtes ; la carte « Autre », si elle est permise,
   /// reste pleine largeur dessous. Faux par defaut : rendu en liste inchange.
   final bool coteACote;
+
+  /// Vrai pour des choix **de meme taille a toutes les largeurs** : jamais de
+  /// bento (dont les tuiles sont inegales), la disposition [coteACote] du
+  /// telephone partout (admission, lot B, 29/10/2026 : « Je m'inscris pour
+  /// moi » et « J'inscris mon enfant », deux grands choix egaux). Sans effet
+  /// sans [coteACote].
+  final bool choixEgaux;
 
   /// Les reponses les plus courantes.
   final List<OptionChoix> options;
@@ -468,6 +476,7 @@ class _ChoiceCardGroupState extends State<ChoiceCardGroup> {
         if (widget.enLigne)
           _rangeeEnLigne()
         else if (widget.options.isNotEmpty &&
+            !(widget.choixEgaux && widget.coteACote) &&
             MediaQuery.sizeOf(context).width >= ChoiceCardGroup.seuilBento)
           LayoutBuilder(
             builder: (BuildContext context, BoxConstraints contraintes) =>

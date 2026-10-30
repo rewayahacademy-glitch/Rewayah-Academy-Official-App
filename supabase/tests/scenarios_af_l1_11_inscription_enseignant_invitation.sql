@@ -107,9 +107,9 @@ SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai((public.creer_profil_inscription('guardian','Fatou','L111','male')).id IS NOT NULL,
   'tuteur : inscription toujours ouverte');
 RESET ROLE;
-SELECT pg_temp.vrai((SELECT role = 'guardian' AND account_status = 'active' AND household_id IS NOT NULL
+SELECT pg_temp.vrai((SELECT role = 'guardian' AND account_status = 'pending_kyc' AND household_id IS NOT NULL
                        FROM public.profiles WHERE id = 'd1700000-0000-4000-8000-000000000103'),
-  'tuteur : profil actif avec foyer (D4)');
+  'tuteur : profil en attente avec foyer (admission, 27/10)');
 SELECT pg_temp.qui('d1700000-0000-4000-8000-000000000104', NULL);
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.refus($$SELECT public.creer_profil_inscription('student','Eleve','L111')$$,

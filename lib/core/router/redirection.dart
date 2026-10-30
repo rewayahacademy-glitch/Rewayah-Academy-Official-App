@@ -44,6 +44,7 @@ String? deciderRedirection({
   String? retour,
   String environnement = Env.environnement,
   bool resignatureContrat = false,
+  bool atterrissageAdulte = false,
 }) {
   // La salle de demonstration passe sans session hors production : donnees
   // fictives, aucun appel serveur (K-28). En production, la route n'existe
@@ -141,8 +142,12 @@ String? deciderRedirection({
     // Sans cette porte, ce compte retombait en `deconnecte` et repartait sur
     // l'ecran de connexion en boucle
     // (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-3-auth-kyc.md` section 2.1).
+    // Admission, lot B : le questionnaire aussi (« Ajouter un autre profil
+    // eleve » depuis le recapitulatif).
     case PorteAcces.inscription:
-      return _dansLeSousArbre(cheminDemande, Routes.inscription) || !routeConnue
+      return _dansLeSousArbre(cheminDemande, Routes.inscription) ||
+              _dansLeSousArbre(cheminDemande, Routes.commencer) ||
+              !routeConnue
           ? null
           : Routes.inscription;
 
@@ -178,7 +183,17 @@ String? deciderRedirection({
       if (role == null) {
         return Routes.connexion;
       }
-      final String racine = Routes.racinePour(role);
+      // Admission, lot B (29/10/2026) : le titulaire inscrit « pour moi »,
+      // eleve autonome, atterrit sur l'accueil de l'eleve adulte, et l'accueil
+      // du tuteur l'y renvoie (la capacite se lit apres la session : il a pu
+      // y arriver d'abord).
+      final bool adulte = role == AppRole.guardian && atterrissageAdulte;
+      final String racine = adulte
+          ? Routes.eleveAdulte
+          : Routes.racinePour(role);
+      if (adulte && cheminDemande == Routes.tuteurAccueil) {
+        return Routes.eleveAdulte;
+      }
 
       // Q-2 = a (05/10/2026) : l'enseignant qui a signe le contrat 2026-09
       // signe la nouvelle version a sa prochaine entree, avant tout le reste.
@@ -215,6 +230,7 @@ String? deciderRedirection({
           cheminDemande == Routes.horsLigne ||
           _dansLeSousArbre(cheminDemande, Routes.connexion) ||
           _dansLeSousArbre(cheminDemande, Routes.bienvenue) ||
+          _dansLeSousArbre(cheminDemande, Routes.commencer) ||
           _dansLeSousArbre(cheminDemande, Routes.inscription) ||
           _dansLeSousArbre(cheminDemande, Routes.agentEntree) ||
           _dansLeSousArbre(cheminDemande, Routes.attente)) {

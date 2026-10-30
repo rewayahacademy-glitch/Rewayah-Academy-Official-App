@@ -1056,10 +1056,10 @@ class _Traductions$attente$ar extends Traductions$attente$fr {
 	@override String get titreDossier => 'ملفك';
 	@override String get titreCompte => 'حسابك';
 	@override String get accordsARelire => 'بقي عليك قراءة شروطنا وقبولها.';
-	@override String get accesTitre => 'أُنشئ حسابك';
-	@override String get accesEnPreparation => 'فتح حسابك ليس تلقائيًا بعد.';
-	@override String get aucunDocument => 'ليس عليك إرسال أي وثيقة.';
-	@override String get accesContact => 'يمكن للأكاديمية فتحه لك: تواصل معها.';
+	@override String get demandeTitre => 'طلبك قيد الدراسة';
+	@override String get demandeMessage => 'تقرأ الإدارة كل طلب قبل فتح أي حساب.';
+	@override String get demandeDetail => 'ليس عليك إرسال أي شيء. سنكتب إليك على بريدك الإلكتروني فور رد الإدارة.';
+	@override String demandePour({required Object liste}) => 'يخص طلبك: ⁨${liste}⁩.';
 	@override String get actualiserCompte => 'تحديث';
 	@override String get lireEtAccepter => 'قراءة شروطنا وقبولها';
 	@override String get nosConditions => 'يلزم قراءة الشروط والموافقة عليها';
@@ -1113,6 +1113,7 @@ class _Traductions$inscription$ar extends Traductions$inscription$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$inscription$questionnaire$ar questionnaire = _Traductions$inscription$questionnaire$ar._(_root);
 	@override String get titre => 'إنشاء حسابك';
 	@override String etapeSur({required Object n, required Object total}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩';
 	@override String tempsRestant({required Object minutes}) => 'نحو ⁨${minutes}⁩ د';
@@ -6643,6 +6644,36 @@ class _Traductions$connexion$feuilleAppareil$ar extends Traductions$connexion$fe
 	@override String get fermer => 'إغلاق';
 }
 
+// Path: inscription.questionnaire
+class _Traductions$inscription$questionnaire$ar extends Traductions$inscription$questionnaire$fr {
+	_Traductions$inscription$questionnaire$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get recapLangue => 'لغة الدرس';
+	@override String get prenomQuestion => 'ما اسم طفلك؟';
+	@override String get prenomRaison => 'يكفي الاسم الأول. يمكنك تسجيل أطفال آخرين في النهاية.';
+	@override String ageQuestion({required Object prenom}) => 'كم عمر ⁨${prenom}⁩؟';
+	@override String ans({required Object n}) => '⁨${n}⁩ سنة';
+	@override String get adulte => '18 سنة أو أكثر';
+	@override String get adulteDetail => 'ابتداء من 18 سنة، يسجل كل شخص نفسه، باختيار «أسجل نفسي».';
+	@override String genreQuestion({required Object prenom}) => 'هل ⁨${prenom}⁩ ولد أم بنت؟';
+	@override String get garcon => 'ولد';
+	@override String get fille => 'بنت';
+	@override String get genreRaison => 'تأخذ الأكاديمية ذلك بعين الاعتبار عند تكوين الفصول.';
+	@override String get niveauQuestionMoi => 'أين وصلت اليوم؟';
+	@override String etapeCourte({required Object n, required Object total}) => '⁨${n}⁩ من ⁨${total}⁩';
+	@override String get recapTitre => 'هذا ما فهمناه';
+	@override String get recapApprenants => 'من سيتعلم';
+	@override String ligneEnfant({required Object prenom, required Object age}) => '⁨${prenom}⁩، ⁨${age}⁩ سنة';
+	@override String get ligneVous => 'أنت';
+	@override String get ajouterProfil => 'إضافة ملف طالب آخر';
+	@override String get envoyer => 'إرسال طلبي';
+	@override String get dejaUnCompte => 'لدي حساب بالفعل';
+	@override String get aucuneReponse => 'لم تعد إجابات تسجيلك على هذا الجهاز. أعد الإجابة عن الأسئلة الأولى: تستغرق دقيقتين.';
+}
+
 // Path: inscription.usage
 class _Traductions$inscription$usage$ar extends Traductions$inscription$usage$fr {
 	_Traductions$inscription$usage$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -6650,11 +6681,11 @@ class _Traductions$inscription$usage$ar extends Traductions$inscription$usage$fr
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get question => 'أي نوع من الحسابات تريد إنشاءه؟';
-	@override String get moiTitre => 'أنا فقط';
-	@override String get moiDescription => 'أريد متابعة الدروس بملفي الخاص كطالب.';
-	@override String get familleTitre => 'أنا وأسرتي';
-	@override String get familleDescription => 'سجّل أطفالك أو أقاربك، معك أو دونك. يمكنك إنشاء ملفك الخاص كطالب في أي وقت.';
+	@override String get question => 'لمن تنشئ هذا الحساب؟';
+	@override String get moiTitre => 'أسجّل لنفسي';
+	@override String get moiDescription => 'تتابع الدروس بنفسك. يُنشأ ملفك كطالب مع حسابك.';
+	@override String get familleTitre => 'أسجّل طفلي';
+	@override String get familleDescription => 'تسجّل طفلًا أو أكثر وتتابع تقدّمهم. يمكنك أيضًا متابعة الدروس بنفسك.';
 	@override String get enseignant => 'لدي رمز دعوة';
 	@override String get enseignantInvite => 'هل أنت معلّم؟ تدعوك الأكاديمية عبر البريد الإلكتروني.';
 	@override String get comptable => 'لدي رمز محاسب';
@@ -6662,7 +6693,7 @@ class _Traductions$inscription$usage$ar extends Traductions$inscription$usage$fr
 	@override String get coursQuestion => 'هل تتابع أنت أيضًا دروسًا؟';
 	@override String get coursOui => 'نعم';
 	@override String get coursNon => 'لا';
-	@override String get moiExemple => 'تتعلّم التلاوة لنفسك، دون تسجيل أي طفل.';
+	@override String get moiExemple => 'عمرك 18 سنة أو أكثر وتتعلّم التلاوة لنفسك.';
 	@override String get familleExemple => 'تسجّل ياسمين، 9 سنوات، وبلال، 12 سنة.';
 	@override String get coursOuiExplication => 'تتابع أنت أيضًا دروسًا، إلى جانب دروس أقاربك.';
 	@override String get coursOuiExemple => 'يتابع أطفالك صفّهم وتتابع أنت صفّك.';
@@ -25871,10 +25902,10 @@ extension on TraductionsAr {
 			'attente.titreDossier' => 'ملفك',
 			'attente.titreCompte' => 'حسابك',
 			'attente.accordsARelire' => 'بقي عليك قراءة شروطنا وقبولها.',
-			'attente.accesTitre' => 'أُنشئ حسابك',
-			'attente.accesEnPreparation' => 'فتح حسابك ليس تلقائيًا بعد.',
-			'attente.aucunDocument' => 'ليس عليك إرسال أي وثيقة.',
-			'attente.accesContact' => 'يمكن للأكاديمية فتحه لك: تواصل معها.',
+			'attente.demandeTitre' => 'طلبك قيد الدراسة',
+			'attente.demandeMessage' => 'تقرأ الإدارة كل طلب قبل فتح أي حساب.',
+			'attente.demandeDetail' => 'ليس عليك إرسال أي شيء. سنكتب إليك على بريدك الإلكتروني فور رد الإدارة.',
+			'attente.demandePour' => ({required Object liste}) => 'يخص طلبك: ⁨${liste}⁩.',
 			_ => null,
 		} ?? switch (path) {
 			'attente.actualiserCompte' => 'تحديث',
@@ -25898,6 +25929,27 @@ extension on TraductionsAr {
 			'accords.suivant' => 'التالي',
 			'accords.dejaAcceptes' => 'موافقاتك محفوظة بالفعل.',
 			'accords.cadreNonPublie' => 'سيصبح إرسال طلب ترشحك ممكنًا عند نشر الإطار الديني والتربوي.',
+			'inscription.questionnaire.recapLangue' => 'لغة الدرس',
+			'inscription.questionnaire.prenomQuestion' => 'ما اسم طفلك؟',
+			'inscription.questionnaire.prenomRaison' => 'يكفي الاسم الأول. يمكنك تسجيل أطفال آخرين في النهاية.',
+			'inscription.questionnaire.ageQuestion' => ({required Object prenom}) => 'كم عمر ⁨${prenom}⁩؟',
+			'inscription.questionnaire.ans' => ({required Object n}) => '⁨${n}⁩ سنة',
+			'inscription.questionnaire.adulte' => '18 سنة أو أكثر',
+			'inscription.questionnaire.adulteDetail' => 'ابتداء من 18 سنة، يسجل كل شخص نفسه، باختيار «أسجل نفسي».',
+			'inscription.questionnaire.genreQuestion' => ({required Object prenom}) => 'هل ⁨${prenom}⁩ ولد أم بنت؟',
+			'inscription.questionnaire.garcon' => 'ولد',
+			'inscription.questionnaire.fille' => 'بنت',
+			'inscription.questionnaire.genreRaison' => 'تأخذ الأكاديمية ذلك بعين الاعتبار عند تكوين الفصول.',
+			'inscription.questionnaire.niveauQuestionMoi' => 'أين وصلت اليوم؟',
+			'inscription.questionnaire.etapeCourte' => ({required Object n, required Object total}) => '⁨${n}⁩ من ⁨${total}⁩',
+			'inscription.questionnaire.recapTitre' => 'هذا ما فهمناه',
+			'inscription.questionnaire.recapApprenants' => 'من سيتعلم',
+			'inscription.questionnaire.ligneEnfant' => ({required Object prenom, required Object age}) => '⁨${prenom}⁩، ⁨${age}⁩ سنة',
+			'inscription.questionnaire.ligneVous' => 'أنت',
+			'inscription.questionnaire.ajouterProfil' => 'إضافة ملف طالب آخر',
+			'inscription.questionnaire.envoyer' => 'إرسال طلبي',
+			'inscription.questionnaire.dejaUnCompte' => 'لدي حساب بالفعل',
+			'inscription.questionnaire.aucuneReponse' => 'لم تعد إجابات تسجيلك على هذا الجهاز. أعد الإجابة عن الأسئلة الأولى: تستغرق دقيقتين.',
 			'inscription.titre' => 'إنشاء حسابك',
 			'inscription.etapeSur' => ({required Object n, required Object total}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩',
 			'inscription.tempsRestant' => ({required Object minutes}) => 'نحو ⁨${minutes}⁩ د',
@@ -25929,11 +25981,11 @@ extension on TraductionsAr {
 			'inscription.reessayer' => 'إعادة المحاولة',
 			'inscription.erreurActualisation' => 'أُنشئ حسابك، لكن تعذّر تحديث الاتصال. أعد المحاولة، أو سجّل الخروج ثم الدخول من جديد.',
 			'inscription.erreurInvitation' => 'تعذّر استخدام رمز الدعوة: انتهت صلاحيته، أو استُعمل من قبل، أو لا يطابق عنوانك. اطلب رمزًا جديدًا من الإدارة، ثم أدخله من جديد.',
-			'inscription.usage.question' => 'أي نوع من الحسابات تريد إنشاءه؟',
-			'inscription.usage.moiTitre' => 'أنا فقط',
-			'inscription.usage.moiDescription' => 'أريد متابعة الدروس بملفي الخاص كطالب.',
-			'inscription.usage.familleTitre' => 'أنا وأسرتي',
-			'inscription.usage.familleDescription' => 'سجّل أطفالك أو أقاربك، معك أو دونك. يمكنك إنشاء ملفك الخاص كطالب في أي وقت.',
+			'inscription.usage.question' => 'لمن تنشئ هذا الحساب؟',
+			'inscription.usage.moiTitre' => 'أسجّل لنفسي',
+			'inscription.usage.moiDescription' => 'تتابع الدروس بنفسك. يُنشأ ملفك كطالب مع حسابك.',
+			'inscription.usage.familleTitre' => 'أسجّل طفلي',
+			'inscription.usage.familleDescription' => 'تسجّل طفلًا أو أكثر وتتابع تقدّمهم. يمكنك أيضًا متابعة الدروس بنفسك.',
 			'inscription.usage.enseignant' => 'لدي رمز دعوة',
 			'inscription.usage.enseignantInvite' => 'هل أنت معلّم؟ تدعوك الأكاديمية عبر البريد الإلكتروني.',
 			'inscription.usage.comptable' => 'لدي رمز محاسب',
@@ -25941,7 +25993,7 @@ extension on TraductionsAr {
 			'inscription.usage.coursQuestion' => 'هل تتابع أنت أيضًا دروسًا؟',
 			'inscription.usage.coursOui' => 'نعم',
 			'inscription.usage.coursNon' => 'لا',
-			'inscription.usage.moiExemple' => 'تتعلّم التلاوة لنفسك، دون تسجيل أي طفل.',
+			'inscription.usage.moiExemple' => 'عمرك 18 سنة أو أكثر وتتعلّم التلاوة لنفسك.',
 			'inscription.usage.familleExemple' => 'تسجّل ياسمين، 9 سنوات، وبلال، 12 سنة.',
 			'inscription.usage.coursOuiExplication' => 'تتابع أنت أيضًا دروسًا، إلى جانب دروس أقاربك.',
 			'inscription.usage.coursOuiExemple' => 'يتابع أطفالك صفّهم وتتابع أنت صفّك.',
@@ -26368,6 +26420,8 @@ extension on TraductionsAr {
 			'dossiers.aucunDetail' => 'ستظهر الملفات الجديدة هنا حين تصبح جاهزة.',
 			'dossiers.file.chargement' => 'جارٍ تحميل الملفات…',
 			'dossiers.file.erreur' => 'تعذّر تحميل الملفات.',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.file.horsLigne' => 'أنت غير متصل. لا يمكن تحديث الملفات.',
 			'dossiers.file.accesRefuse' => 'ليس لديك إذن بالوصول إلى الملفات المطلوب اعتمادها.',
 			'dossiers.file.actualisation' => 'جارٍ تحديث الملفات…',
@@ -26389,8 +26443,6 @@ extension on TraductionsAr {
 			'dossiers.file.zoneUtc' => 'UTC',
 			'dossiers.file.suivantAnnonce' => ({required Object nom}) => 'الملف التالي: ⁨${nom}⁩',
 			'dossiers.detail.titreDe' => ({required Object nom}) => 'ملف ⁨${nom}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.detail.titreElide' => ({required Object nom}) => 'ملف ⁨${nom}⁩',
 			'dossiers.visionneuse.chargement' => 'جارٍ تحميل الوثيقة…',
 			'dossiers.visionneuse.erreur' => 'لا يمكن عرض الوثيقة.',
@@ -26882,6 +26934,8 @@ extension on TraductionsAr {
 			'suiviDemandes.fuseauChoisi' => 'المنطقة الزمنية',
 			'suiviDemandes.fuseauValeur' => ({required Object deVille}) => 'بتوقيت ⁨${deVille}⁩',
 			'suiviDemandes.etapes.envoyee' => 'تم إرسال الطلب',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.etapes.listeAttente' => 'في قائمة الانتظار',
 			'suiviDemandes.etapes.classeValidee' => 'تم اعتماد الفصل',
 			'suiviDemandes.etapes.enseignantAffecte' => 'تم تعيين المعلم',
@@ -26903,8 +26957,6 @@ extension on TraductionsAr {
 			'suiviDemandes.prochaine.eleveIntegre' => 'الخطوة التالية: بدء الدروس',
 			'suiviDemandes.debutCours' => 'بدء الدروس',
 			'suiviDemandes.debutValeur' => ({required Object date, required Object heure, required Object deVille}) => '⁨${date}⁩ في ⁨${heure}⁩، بتوقيت ⁨${deVille}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'suiviDemandes.debutAFixer' => 'سيظهر موعد الدرس الأول هنا فور تحديده.',
 			'suiviDemandes.enseignant' => 'المعلم',
 			'suiviDemandes.personnaliseNotice' => 'لن يُفتح هذا الموعد إلا إذا اختاره طلاب آخرون واكتمل الفصل.',
@@ -27396,6 +27448,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.disponibilitesDeclarees.titre' => 'ما الأيام التي تستطيع التدريس فيها؟',
 			'recrutement.parcours.q.disponibilitesDeclarees.explication' => 'يُعقد الفصل ثلاث مرات في الأسبوع، في الأيام نفسها وفي الساعة نفسها. المس الأيام التي تستطيع التدريس فيها، أو استعمل اختصارًا.',
 			'recrutement.parcours.q.disponibilitesDeclarees.court' => 'أوقات التفرّغ',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.disponibilitesDeclarees.heures.titre' => ({required Object jour}) => 'في أي ساعة تستطيع أن تبدأ يوم ⁨${jour}⁩؟',
 			'recrutement.parcours.q.disponibilitesDeclarees.heures.explication' => 'اختر كل الساعات التي تستطيع أن تبدأ فيها درسًا. تُحسب نهاية الدرس لك.',
 			'recrutement.parcours.q.disponibilitesDeclarees.heures.suite' => 'ستقول بعد ذلك إن كان الأمر نفسه في الأيام الأخرى.',
@@ -27417,8 +27471,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.classesSouhaitees.explication' => 'الفصل طلاب يلتقون ثلاث مرات في الأسبوع، في الأيام نفسها وفي الساعة نفسها، مع المعلّم نفسه. هذه رغبة منك: الأكاديمية هي التي تقرّر الفصول التي تُسندها إليك.',
 			'recrutement.parcours.q.classesSouhaitees.court' => 'عدد الفصول',
 			'recrutement.parcours.q.debutPossible.titre' => 'متى تستطيع البدء؟',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.debutPossible.explication' => 'يساعد هذا التاريخ الإدارة على معرفة متى تقترح عليك فصلًا.',
 			'recrutement.parcours.q.debutPossible.court' => 'تاريخ البدء',
 			'recrutement.parcours.q.debutPossible.options.immediat.libelle' => 'من الآن',
@@ -27910,6 +27962,8 @@ extension on TraductionsAr {
 			'avis.admin.filtre.publie' => 'المنشورة',
 			'avis.admin.filtre.refuse' => 'المرفوضة',
 			'avis.admin.filtre.retire' => 'المسحوبة',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.attente' => ({required Object n}) => 'آراء قيد الانتظار: ⁨${n}⁩',
 			'avis.admin.vide' => 'لا توجد آراء في هذه القائمة.',
 			'avis.admin.erreur' => 'تعذّر تحميل الآراء. أعد المحاولة.',
@@ -27931,8 +27985,6 @@ extension on TraductionsAr {
 			'avis.admin.actions.retirer' => 'سحب',
 			'avis.admin.publier.question' => ({required Object deNom}) => 'هل تنشر رأي ⁨${deNom}⁩؟',
 			'avis.admin.publier.consequence' => 'سيظهر الرأي والاسم الظاهر والبلد والتاريخ على موقع Rewayah Academy عند التحديث التالي للموقع. لا يتغير النص.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.publier.action' => 'نشر الرأي',
 			'avis.admin.publier.rester' => 'عدم تغيير شيء',
 			'avis.admin.refuser.titre' => ({required Object deNom}) => 'رفض رأي ⁨${deNom}⁩',

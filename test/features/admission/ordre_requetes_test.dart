@@ -44,10 +44,17 @@ void main() {
       .singleWhere((Uri u) => u.path.endsWith('/$table'))
       .queryParameters['order']!;
 
-  test('langues_cours est trie par ordre CROISSANT', () async {
-    await ServiceOffresSupabase(client).langues();
-    expect(ordreDe('langues_cours'), startsWith('ordre.asc'));
-  });
+  // Admission, lot B (29/10/2026) : les langues de cours se lisent par
+  // `langues_cours_publiques()`, lisible sans compte, qui trie elle-meme par
+  // `ordre` croissant (prouve par scenarios_langues_cours_publiques.sql).
+  test(
+    'langues_cours se lit par la fonction publique, triee par le serveur',
+    () async {
+      await ServiceOffresSupabase(client).langues();
+      expect(requetes.single.path, endsWith('/rpc/langues_cours_publiques'));
+      expect(requetes.single.queryParameters.containsKey('order'), isFalse);
+    },
+  );
 
   test('cohortes_age est trie par ordre CROISSANT', () async {
     await ServiceOffresSupabase(client).cohortes();

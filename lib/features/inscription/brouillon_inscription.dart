@@ -29,15 +29,23 @@ enum UsageInscription {
 }
 
 /// Les etapes de l'inscription, dans l'ordre. « n sur N » se calcule ici.
-const List<String> etapesInscription = <String>[
-  Routes.inscriptionUsage,
+///
+/// Admission, lot B (29/10/2026) : le titulaire (« pour moi », « mon
+/// enfant ») a repondu a toutes les questions avant le compte
+/// (`/commencer`, langue comprise) ; apres la connexion, il ne dit plus que
+/// son nom et son genre. L'enseignant et le comptable gardent l'etape
+/// d'usage.
+List<String> etapesPour(BrouillonInscription brouillon) => <String>[
+  if (!brouillon.titulaire) Routes.inscriptionUsage,
   Routes.inscriptionIdentite,
   Routes.inscriptionGenre,
   Routes.inscriptionRecapitulatif,
 ];
 
-/// Le rang (a partir de 1) d'une etape dans [etapesInscription].
-int rangEtape(String route) => etapesInscription.indexOf(route) + 1;
+/// Le rang (a partir de 1) d'une etape dans [etapesPour], 0 si elle n'y est
+/// pas.
+int rangEtape(BrouillonInscription brouillon, String route) =>
+    etapesPour(brouillon).indexOf(route) + 1;
 
 /// Le parametre de requete qui ramene au recapitulatif apres « Modifier ».
 const String parametreModifier = 'modifier';
@@ -72,6 +80,10 @@ class BrouillonInscription {
   /// PAQ-DIR-EA) ; `null` tant que la question n'est pas repondue. Elle ne
   /// donne aucun droit : l'eleve autonome est une capacite servie (C-24).
   final bool? parentSuitDesCours;
+
+  /// Vrai pour « pour moi » et « mon enfant ».
+  bool get titulaire =>
+      usage == UsageInscription.moi || usage == UsageInscription.famille;
 
   /// Vrai des que le serveur a cree le profil : une nouvelle tentative ne
   /// rappelle alors que le rafraichissement de session, jamais la creation.

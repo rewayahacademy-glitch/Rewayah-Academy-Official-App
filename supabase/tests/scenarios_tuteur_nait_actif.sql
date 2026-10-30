@@ -1,7 +1,9 @@
--- D4 (24/10/2026) : le tuteur inscrit par l'application nait actif ;
--- l'enseignant reste en attente de sa piece ; l'enfant cree par le tuteur
--- nait actif, donc proposable a « Ajouter un eleve ».
--- Migration 20261024160000_tuteur_nait_actif.sql.
+-- D4 (24/10/2026) faisait naitre le tuteur ACTIF. Annule par la decision du
+-- directeur du 27/10/2026 (DECISION-ADMISSION-2026-10-27.md, lot B, migration
+-- 20261029120000_admission_lot_b_famille_en_attente.sql) : le tuteur nait en
+-- attente avec sa demande ; une fois la demande confirmee et le compte active
+-- par la direction, l'enfant cree par le tuteur nait actif, donc proposable a
+-- « Ajouter un eleve ». L'enseignant reste en attente de sa piece.
 --
 -- Rejoue sur une base neuve, apres stub_auth.sql et toutes les migrations.
 -- Fixtures sans donnee personnelle ; tout est annule a la fin. Chaque
@@ -34,8 +36,8 @@ SELECT private.creer_profil_inscription_interne('teacher', 'Fixture', 'Enseignan
 DO $statuts$
 BEGIN
   IF (SELECT p.account_status FROM public.profiles p
-       WHERE p.id = 'd4000000-0000-4000-8000-000000000001') <> 'active' THEN
-    RAISE EXCEPTION 'D4 ROUGE : le tuteur ne nait pas actif';
+       WHERE p.id = 'd4000000-0000-4000-8000-000000000001') <> 'pending_kyc' THEN
+    RAISE EXCEPTION 'D4 ROUGE : le tuteur ne nait pas en attente (admission, 27/10)';
   END IF;
   IF (SELECT p.household_id FROM public.profiles p
        WHERE p.id = 'd4000000-0000-4000-8000-000000000001') IS NULL THEN
@@ -45,9 +47,16 @@ BEGIN
        WHERE p.id = 'd4000000-0000-4000-8000-000000000002') <> 'pending_kyc' THEN
     RAISE EXCEPTION 'D4 ROUGE : l''enseignant ne nait plus en attente de sa piece';
   END IF;
-  RAISE NOTICE 'D4 OK : tuteur actif avec foyer, enseignant en attente';
+  RAISE NOTICE 'D4 OK : tuteur en attente avec foyer, enseignant en attente';
 END
 $statuts$;
+
+-- La direction admet la famille (geste du lot C, joue ici a la main) : la
+-- demande est confirmee, puis le compte est active.
+UPDATE public.candidatures SET etape = 'confirmee'
+ WHERE profile_id = 'd4000000-0000-4000-8000-000000000001' AND type_code = 'famille';
+UPDATE public.profiles SET account_status = 'active'
+ WHERE id = 'd4000000-0000-4000-8000-000000000001';
 
 -- Le tuteur cree un enfant (comme la fonction Edge creer-profil-enfant).
 UPDATE auth.users SET raw_app_meta_data = jsonb_build_object(

@@ -17,6 +17,8 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/controle_segmente.dart';
 import '../demo/mode_demonstration.dart';
 import '../demo/racine_demonstrable.dart';
+import '../inscription/questionnaire/questionnaire_inscription.dart'
+    show questionnaireInscriptionProvider;
 import 'coquille_entree.dart';
 import 'feuille_appareil_eleve.dart';
 import 'recuperation_page.dart';
@@ -354,10 +356,19 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
             motDePasse: _motDePasse,
             demo: _demo,
             mode: _mode,
-            onMode: (ModeConnexion m) => setState(() {
-              _mode = m;
-              _erreur = null;
-            }),
+            onMode: (ModeConnexion m) {
+              // Admission, lot B : creer un compte commence par le
+              // questionnaire (fiche du 29/10, « compte en dernier »).
+              if (m == ModeConnexion.creation &&
+                  !ref.read(questionnaireInscriptionProvider).complet) {
+                GoRouter.of(context).go(Routes.commencer);
+                return;
+              }
+              setState(() {
+                _mode = m;
+                _erreur = null;
+              });
+            },
             erreur: _erreur,
             envoi: _envoi,
             onChanged: () => setState(() {}),
