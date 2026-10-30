@@ -13,11 +13,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_paiements_foyer.dart';
-import '../../core/capacites/port_politiques_commerciales.dart';
+import '../../core/capacites/port_politique_famille.dart';
 import '../../core/finance/finances_profil.dart';
 import '../../core/finance/format_montant.dart';
 import '../../core/finance/periode_a_financer.dart';
-import '../../core/finance/politique_commerciale.dart';
+import '../../core/finance/politique_famille.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -29,6 +29,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/badge_periode_financee.dart';
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/pastille_financiere.dart';
 import '../../core/widgets/resume_soldes.dart';
@@ -44,13 +45,16 @@ final FutureProvider<FinancesFoyer> financesFoyerProvider =
       return ref.watch(portPaiementsFoyerProvider).finances();
     });
 
-/// La politique commerciale active, pour le nombre de seances d'essai : une
-/// valeur commerciale n'est jamais ecrite dans un ecran (guide §8 F1).
-/// Liee a la personne connectee (R7-04), comme les finances du foyer.
-final FutureProvider<PolitiqueCommerciale> politiqueActiveProvider =
-    FutureProvider<PolitiqueCommerciale>((Ref ref) {
+/// La politique commerciale en vigueur, vue d'une famille : le nombre de
+/// seances d'essai, les moyens de paiement, la repartition du paiement. Une
+/// valeur commerciale n'est jamais ecrite dans un ecran (guide §8 F1). Lue par
+/// `politique_commerciale_famille` (TRANSPARENCE, 30/10/2026), jamais par la
+/// fonction de la direction, qui la refuse au foyer. Liee a la personne
+/// connectee (R7-04), comme les finances du foyer.
+final FutureProvider<PolitiqueFamille> politiqueActiveProvider =
+    FutureProvider<PolitiqueFamille>((Ref ref) {
       surveillerPersonneConnectee(ref);
-      return ref.watch(portPolitiquesCommercialesProvider).active();
+      return ref.watch(portPolitiqueFamilleProvider).lire();
     });
 
 /// La finance de chaque profil rendu, par identifiant ; vide tant que la
@@ -170,7 +174,11 @@ class SyntheseSoldesFoyer extends ConsumerWidget {
 /// rien.
 class VueFinanciereFoyer extends ConsumerWidget {
   /// Cree le panneau.
-  const VueFinanciereFoyer({super.key});
+  const VueFinanciereFoyer({super.key, this.onNosPrix});
+
+  /// Ouvre « Nos prix, en toute transparence » (TRANSPARENCE, 30/10/2026) ;
+  /// sans lui, aucun lien.
+  final VoidCallback? onNosPrix;
 
   /// Le panneau.
   static const Key cle = Key('foyer.finances.vueFinanciere');
@@ -234,6 +242,14 @@ class VueFinanciereFoyer extends ConsumerWidget {
           ),
           Ecart.vSm,
           AppCard(child: corps),
+          if (onNosPrix case final VoidCallback ouvrir) ...<Widget>[
+            Ecart.vSm,
+            LienFleche(
+              alignerEnDebut: true,
+              libelle: t.argent.transparence.lien,
+              onPress: ouvrir,
+            ),
+          ],
         ],
       ),
     );
@@ -253,7 +269,7 @@ class BlocFinanceMembre extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final AppPalette palette = AppPalette.of(context);
-    final AsyncValue<PolitiqueCommerciale> politique = ref.watch(
+    final AsyncValue<PolitiqueFamille> politique = ref.watch(
       politiqueActiveProvider,
     );
     final int? essaisMax = politique.hasValue && !politique.hasError

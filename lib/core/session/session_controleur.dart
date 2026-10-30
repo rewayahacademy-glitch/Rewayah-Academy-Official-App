@@ -155,7 +155,12 @@ class SessionControleur extends Notifier<SessionState> {
 /// d'argent (soldes, mouvements, recharge, revenus) ne survit jamais a la
 /// personne qui l'a demandee (revue FI-VAGUE-R R7-04 ; meme precedent que
 /// `identiteTitulaireProvider` et `monAccesProvider`).
-void surveillerPersonneConnectee(Ref ref) =>
+///
+/// Rend l'identifiant, `null` sans personne connectee. R9 (30/10/2026) : une
+/// lecture qui ne s'arrete pas sur `null` repart aussitot SANS session, et
+/// le serveur la refuse (401, essai K4 du 24/10). Une lecture du serveur
+/// rend donc sa valeur vide quand ce retour est nul, sans aucun appel.
+String? surveillerPersonneConnectee(Ref ref) =>
     ref.watch(sessionProvider.select((SessionState s) => s.profileId));
 
 /// Les providers qui gardent en memoire du processus l'etat d'une personne dans

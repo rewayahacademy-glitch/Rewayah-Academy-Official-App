@@ -13,7 +13,6 @@ import '../../core/admin/service_comptes.dart';
 import '../../core/admin/service_groupes.dart';
 import '../../core/capacites/port_creation_classe.dart';
 import '../../core/capacites/port_enseignants_classe.dart';
-import '../../core/domain/enums.dart';
 import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
@@ -1807,13 +1806,19 @@ class _FeuilleAjoutEtat extends State<_FeuilleAjout> {
         children: <Widget>[
           SelecteurPersonne(
             sorte: SortePersonne.eleve,
-            personnes: ref.watch(personnesProposablesProvider(AppRole.student)),
+            // D5 : les eleves, et l'adulte titulaire si la classe est adulte
+            // et de son genre.
+            personnes: ref.watch(
+              elevesProposablesClasseProvider(widget.groupe.id),
+            ),
             choisie: _eleveId,
             onChoix: (PersonneProposee p) => setState(() {
               _eleveId = p.id;
               _erreur = null;
             }),
-            onReessayer: () => ref.invalidate(comptesProvider),
+            onReessayer: () => ref.invalidate(
+              elevesProposablesClasseProvider(widget.groupe.id),
+            ),
           ),
           Ecart.vLg,
           Text(

@@ -202,6 +202,7 @@ import '../../features/foyer/fiche_eleve_page.dart';
 import '../../features/foyer/finances_foyer.dart' show financesFoyerProvider;
 import '../../features/foyer/foyer_page.dart';
 import '../../features/foyer/invitation_conjoint.dart';
+import '../../features/foyer/nos_prix_page.dart';
 import '../../features/inscription/etapes/genre_etape.dart';
 import '../../features/inscription/etapes/identite_etape.dart';
 import '../../features/inscription/etapes/recapitulatif_etape.dart';
@@ -250,6 +251,7 @@ import '../config/env.dart';
 import '../domain/enums.dart';
 import '../dossier/resignature_contrat.dart';
 import '../finance/montant.dart';
+import '../fraicheur/relecture_page.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../mouvement/transitions.dart';
@@ -997,6 +999,18 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     path: 'appareils',
                     pageBuilder: glissee(
                       (GoRouterState _) => const AppareilsPage(),
+                    ),
+                  ),
+                  // TRANSPARENCE (30/10/2026) : avant `:eleveId`.
+                  GoRoute(
+                    path: 'prix',
+                    pageBuilder: glissee(
+                      (GoRouterState _) => Builder(
+                        builder: (BuildContext context) => NosPrixPage(
+                          onRetour: () =>
+                              GoRouter.of(context).go(Routes.tuteurFoyer),
+                        ),
+                      ),
                     ),
                   ),
                   GoRoute(
@@ -3011,6 +3025,11 @@ class _CoquilleNavigation extends ConsumerWidget {
         if (index >= navigationShell.route.branches.length) {
           GoRouter.of(context).go(destination);
           return;
+        }
+        // R3 (30/10/2026) : revenir sur un onglet relit ses donnees (au plus
+        // toutes les 10 s, `intervalleRelectureAutomatique`).
+        if (index != navigationShell.currentIndex) {
+          RelecturePage.auRetourDe(context)?.call();
         }
         navigationShell.goBranch(
           index,

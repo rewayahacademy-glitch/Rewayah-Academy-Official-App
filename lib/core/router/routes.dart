@@ -172,6 +172,10 @@ abstract final class Routes {
   /// L'historique des mouvements de son seul profil.
   static const String eleveFinancesMouvements = '$eleveFinances/mouvements';
 
+  /// « Nos prix, en toute transparence » (TRANSPARENCE, 30/10/2026), depuis
+  /// ses finances.
+  static const String eleveFinancesPrix = '$eleveFinances/prix';
+
   // --- fin du bloc DASH-EA-PROD ---------------------------------------------
 
   // --- Tuteur -------------------------------------------------------------
@@ -220,6 +224,10 @@ abstract final class Routes {
   /// un chemin statique declare avant `:eleveId` (contrainte R5). Un seul
   /// moteur de recharge (`RechargeFoyerPage`).
   static const String tuteurFoyerRecharge = '/tuteur/foyer/recharge';
+
+  /// « Nos prix, en toute transparence » (TRANSPARENCE, 30/10/2026) : la
+  /// repartition de chaque paiement en pourcentages, depuis le Foyer.
+  static const String tuteurFoyerPrix = '/tuteur/foyer/prix';
 
   /// La recharge avec [profils] deja coches (`?profils=a,b`).
   static String rechargePour(Iterable<String> profils) => Uri(

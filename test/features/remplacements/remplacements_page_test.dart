@@ -24,6 +24,8 @@ import 'package:rewayah_academy/core/enseignant/port_remplacements.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/etat_sans_donnees.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
@@ -120,6 +122,18 @@ class _ConfirmesFixes extends RemplacementsControleur {
   List<OffreRemplacement> build() => _depart;
 }
 
+/// R9 : le tableau commun n'est lue que pour une personne connectee.
+class _Connecte extends SessionControleur {
+  @override
+  SessionState build() => const SessionState(
+    resolue: true,
+    role: AppRole.teacher,
+    profileId: 'p-connecte',
+    accountStatus: AccountStatus.active,
+    lectureProfil: LectureProfil.presente,
+  );
+}
+
 Future<void> _monter(
   WidgetTester tester, {
   PortRemplacements? port,
@@ -135,6 +149,7 @@ Future<void> _monter(
   await tester.pumpWidget(
     ProviderScope(
       overrides: <Override>[
+        sessionProvider.overrideWith(_Connecte.new),
         portRemplacementsProvider.overrideWithValue(port),
         horsLigneProvider.overrideWith(
           (Ref _) => Stream<bool>.value(horsLigne),

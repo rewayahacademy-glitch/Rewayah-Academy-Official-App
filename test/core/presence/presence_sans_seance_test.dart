@@ -3,7 +3,10 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/core/session/session_state.dart';
 
 class _ServiceCompte implements ServicePresence {
   int appels = 0;
@@ -15,12 +18,27 @@ class _ServiceCompte implements ServicePresence {
   }
 }
 
+/// R9 : la presence n'est lue que pour une personne connectee.
+class _Connecte extends SessionControleur {
+  @override
+  SessionState build() => const SessionState(
+    resolue: true,
+    role: AppRole.teacher,
+    profileId: 'p-connecte',
+    accountStatus: AccountStatus.active,
+    lectureProfil: LectureProfil.presente,
+  );
+}
+
 void main() {
   for (final String vide in <String>['', '  ']) {
     test('identifiant « $vide » : aucun appel, presence inconnue', () async {
       final _ServiceCompte service = _ServiceCompte();
       final ProviderContainer conteneur = ProviderContainer(
-        overrides: [servicePresenceProvider.overrideWithValue(service)],
+        overrides: [
+          sessionProvider.overrideWith(_Connecte.new),
+          servicePresenceProvider.overrideWithValue(service),
+        ],
       );
       addTearDown(conteneur.dispose);
       final ProviderSubscription<AsyncValue<List<PresenceParticipant>?>> abo =
@@ -39,7 +57,10 @@ void main() {
   test('une vraie seance est lue', () async {
     final _ServiceCompte service = _ServiceCompte();
     final ProviderContainer conteneur = ProviderContainer(
-      overrides: [servicePresenceProvider.overrideWithValue(service)],
+      overrides: [
+        sessionProvider.overrideWith(_Connecte.new),
+        servicePresenceProvider.overrideWithValue(service),
+      ],
     );
     addTearDown(conteneur.dispose);
     final ProviderSubscription<AsyncValue<List<PresenceParticipant>?>> abo =

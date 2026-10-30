@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart' show SchedulerBinding;
 
 import '../accessibilite/texte_sans_coupure.dart';
+import '../fraicheur/relecture_page.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_elevation.dart';
 import '../theme/app_gabarit.dart';
@@ -346,6 +347,13 @@ class PageShell extends StatelessWidget {
     final bool teteDefile =
         defilante && MediaQuery.textScalerOf(context).scale(1) > 1.3;
 
+    // R3 (30/10/2026) : une page qui defile se tire vers le bas pour relire
+    // ses donnees. La relecture est posee par l'application
+    // (`RelectureGenerale`) ; une page montee seule (un test) ne se tire pas.
+    final Future<void> Function()? relire = defilante
+        ? RelecturePage.de(context)
+        : null;
+
     return Scaffold(
       backgroundColor: fond?.background,
       body: SafeArea(
@@ -388,27 +396,31 @@ class PageShell extends StatelessWidget {
                 // (1440x500 : 358 sous le bandeau, fenetre de 500) ; c'est
                 // [_Bascule] qui mesure la tete et ne la fait defiler que si
                 // elle ne laisse plus au corps une cible tactile.
-                child: _Bascule(
-                  teteDefilante: (double hauteur) =>
-                      teteAvecLaListe ||
-                      teteDefile ||
-                      (defilante &&
-                          !sousBandeau &&
-                          gabarit != Gabarit.mobile &&
-                          MediaQuery.sizeOf(context).height <
-                              _hauteurVueBasse) ||
-                      (sousBandeau
-                              ? MediaQuery.sizeOf(context).height
-                              : hauteur +
-                                    View.of(context).viewInsets.bottom /
-                                        View.of(context).devicePixelRatio) <
-                          _hauteurTeteFixe ||
-                      (gabarit == Gabarit.mobile &&
-                          MediaQuery.textScalerOf(context).scale(1) >= 2),
-                  tete: tete,
-                  complement: complement,
-                  corps: corps,
-                  defilante: defilante,
+                child: _tirable(
+                  relire,
+                  _Bascule(
+                    tirable: relire != null,
+                    teteDefilante: (double hauteur) =>
+                        teteAvecLaListe ||
+                        teteDefile ||
+                        (defilante &&
+                            !sousBandeau &&
+                            gabarit != Gabarit.mobile &&
+                            MediaQuery.sizeOf(context).height <
+                                _hauteurVueBasse) ||
+                        (sousBandeau
+                                ? MediaQuery.sizeOf(context).height
+                                : hauteur +
+                                      View.of(context).viewInsets.bottom /
+                                          View.of(context).devicePixelRatio) <
+                            _hauteurTeteFixe ||
+                        (gabarit == Gabarit.mobile &&
+                            MediaQuery.textScalerOf(context).scale(1) >= 2),
+                    tete: tete,
+                    complement: complement,
+                    corps: corps,
+                    defilante: defilante,
+                  ),
                 ),
               ),
             ),
@@ -420,6 +432,12 @@ class PageShell extends StatelessWidget {
     );
   }
 }
+
+/// R3 : [enfant] sous un « tirer pour rafraichir » quand [relire] existe.
+Widget _tirable(Future<void> Function()? relire, Widget enfant) =>
+    relire == null
+    ? enfant
+    : RefreshIndicator(onRefresh: relire, child: enfant);
 
 /// Les actions d'en-tete qu'une **coquille de role** pose sur chacune de ses
 /// pages : la cloche des notifications, et, a partir de la tablette, la
@@ -497,6 +515,7 @@ class ActionsEnteteCoquille extends InheritedWidget {
 /// donc jamais a deux endroits de l'arbre.
 class _Bascule extends StatefulWidget {
   const _Bascule({
+    required this.tirable,
     required this.teteDefilante,
     required this.tete,
     required this.corps,
@@ -517,6 +536,10 @@ class _Bascule extends StatefulWidget {
   final List<Widget> complement;
   final Widget corps;
   final bool defilante;
+
+  /// R3 : la page se tire pour rafraichir ; son defilement accepte le geste
+  /// meme quand le contenu tient dans l'ecran.
+  final bool tirable;
 
   @override
   State<_Bascule> createState() => _BasculeState();
@@ -842,6 +865,9 @@ class _BasculeState extends State<_Bascule> {
               // position.
               controller: defileur,
               primary: widget.defilante ? null : false,
+              physics: widget.tirable
+                  ? const AlwaysScrollableScrollPhysics()
+                  : null,
               child: widget.defilante
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -881,7 +907,13 @@ class _BasculeState extends State<_Bascule> {
             children: <Widget>[
               tete,
               if (widget.defilante)
-                SingleChildScrollView(controller: defileur, child: corps)
+                SingleChildScrollView(
+                  controller: defileur,
+                  physics: widget.tirable
+                      ? const AlwaysScrollableScrollPhysics()
+                      : null,
+                  child: corps,
+                )
               else
                 corps,
             ],

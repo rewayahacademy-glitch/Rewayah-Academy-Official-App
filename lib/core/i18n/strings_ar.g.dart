@@ -1668,6 +1668,7 @@ class _Traductions$argent$ar extends Traductions$argent$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$argent$transparence$ar transparence = _Traductions$argent$transparence$ar._(_root);
 	@override late final _Traductions$argent$acces$ar acces = _Traductions$argent$acces$ar._(_root);
 }
 
@@ -2783,7 +2784,7 @@ class _Traductions$salle$preparation$ar extends Traductions$salle$preparation$fr
 	@override String get contexte => 'سياق الحصة';
 	@override String get classe => 'الفصل';
 	@override String get debut => 'البداية';
-	@override String get support => 'المادة المقررة';
+	@override String get support => 'المستند المقرر';
 	@override String get reprise => 'الاستئناف';
 	@override String get eleves => 'الطلاب المنتظرون';
 	@override String get entrer => 'دخول الفصل';
@@ -2841,11 +2842,11 @@ class _Traductions$salle$seance$ar extends Traductions$salle$seance$fr {
 	@override String get zoomPlus => 'زيادة التكبير';
 	@override String get quitterQuestion => 'مغادرة الحصة؟';
 	@override String get quitterConsequence => 'يمكنك العودة ما دامت الحصة مفتوحة.';
-	@override String get illustration => 'رسم توضيحي للمادة';
+	@override String get illustration => 'رسم توضيحي للمستند';
 	@override String get quitterCahierConsequence => 'ستنتقل بعد ذلك إلى دفتر المتابعة.';
 	@override String get quitterCahier => 'المغادرة وفتح دفتر المتابعة';
 	@override String get rester => 'البقاء';
-	@override String get supports => 'المواد';
+	@override String get supports => 'المكتبة';
 	@override String get reseau => 'الشبكة';
 	@override String get pagePrecedente => 'الصفحة السابقة';
 	@override String get pageSuivante => 'الصفحة التالية';
@@ -2906,8 +2907,8 @@ class _Traductions$salle$visiteControle$ar extends Traductions$salle$visiteContr
 	@override String get sonCoupe => 'الصوت الوارد مكتوم';
 	@override String get couperSon => 'كتم الصوت الوارد';
 	@override String get retablirSon => 'إعادة الصوت الوارد';
-	@override String get agrandir => 'تكبير المادة';
-	@override String get reduire => 'تصغير المادة';
+	@override String get agrandir => 'تكبير المستند';
+	@override String get reduire => 'تصغير المستند';
 }
 
 // Path: salle.informationControle
@@ -8497,6 +8498,40 @@ class _Traductions$recrutement$talents$ar extends Traductions$recrutement$talent
 	@override late final _Traductions$recrutement$talents$erreurs$ar erreurs = _Traductions$recrutement$talents$erreurs$ar._(_root);
 }
 
+// Path: argent.transparence
+class _Traductions$argent$transparence$ar extends Traductions$argent$transparence$fr {
+	_Traductions$argent$transparence$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'أسعارنا بكل شفافية';
+	@override String get lien => 'أسعارنا بكل شفافية';
+	@override String get intro => 'هكذا يتوزع كل دفعة يدفعها الطالب، بندًا بندًا، بالنسب المئوية.';
+	@override String get repartitionTitre => 'أين تذهب كل دفعة';
+	@override String version({required Object date}) => 'تقدير للأسعار المعمول بها ابتداءً من ⁨${date}⁩.';
+	@override String part({required Object valeur}) => '⁨${valeur}⁩ ٪';
+	@override String get virgule => '٫';
+	@override String get total => 'المجموع';
+	@override late final _Traductions$argent$transparence$postes$ar postes = _Traductions$argent$transparence$postes$ar._(_root);
+	@override String posteSemantique({required Object poste, required Object part}) => '⁨${poste}⁩: ⁨${part}⁩ من دفعة الطالب';
+	@override String estimation({required Object enfants, required Object adultes}) => 'هذه النسب تقدير، محسوب على أساس ⁨${enfants}⁩ طفلًا و⁨${adultes}⁩ بالغًا، كلٌّ منهم بالسعر الكامل وحاضر في كل حصة. وتُراجَع مع كل إصدار جديد للأسعار.';
+	@override String get magasinsTitre => 'لماذا لا يوجد التطبيق على App Store ولا على Google Play';
+	@override String get magasinsPhrase => 'تأخذ هذه المتاجر من 15 إلى 30 ٪ من كل دفعة. ولا تستطيع الأكاديمية تحمّل هذه الرسوم دون رفع أسعارها. لذلك يتم الدفع عبر الويب.';
+	@override String get taxesTitre => 'الضرائب';
+	@override String get taxesPhrase => 'أسعارنا دون احتساب الضرائب. وضريبة بلدكم، حين تكون مستحقة، تُضاف إلى الدفعة وتعود كاملة إلى الدولة: وهي غير واردة في هذا التوزيع.';
+	@override String get hausseTitre => 'قد ترتفع الأسعار';
+	@override String get haussePhrase => 'تعتمد أسعارنا على كلفة الخدمات التي نستعملها وعلى التضخم. وإذا ارتفعت هذه الكلفة، فستضطر الأكاديمية إلى تعديل أسعارها. وستُعلمكم بذلك قبل الدفعة التالية، ويمكنكم التوقف إذا لم يناسبكم السعر الجديد.';
+	@override String get montantsTitre => 'المبالغ الدقيقة';
+	@override String get montantsPhrase => 'لا تعرض هذه الصفحة إلا النسب المئوية: فالمبالغ تتغير كل شهر بحسب عدد الطلاب. ومن أراد المبالغ الدقيقة فليطلبها من الإدارة.';
+	@override String get indisponibleTitre => 'تعذّرت قراءة توزيع الأسعار';
+	@override String get indisponiblePhrase => 'سيُعرض هنا حين يصبح متاحًا.';
+	@override String get erreurTitre => 'لم نتمكن من قراءة توزيع الأسعار';
+	@override String get sansDonnees => 'لم نتمكن من تحميل توزيع الأسعار';
+	@override String get videTitre => 'لم يُنشر توزيع الأسعار بعد';
+	@override String get videPhrase => 'سيُنشر مع الإصدار القادم للأسعار.';
+}
+
 // Path: argent.acces
 class _Traductions$argent$acces$ar extends Traductions$argent$acces$fr {
 	_Traductions$argent$acces$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -9228,7 +9263,7 @@ class _Traductions$salle$seance$ecriture$ar extends Traductions$salle$seance$ecr
 	@override String get retirer => 'سحب الإذن بالكتابة';
 	@override String autoriserSemantique({required Object prenom}) => 'السماح بالكتابة: ⁨${prenom}⁩';
 	@override String retirerSemantique({required Object dePrenom}) => 'سحب الإذن بالكتابة من ⁨${dePrenom}⁩';
-	@override String autoriserAide({required Object prenom}) => 'سيكون بإمكان ⁨${prenom}⁩ الكتابة على الصفحة أو السبورة. تبقى الصفحة والمادة بيدك.';
+	@override String autoriserAide({required Object prenom}) => 'سيكون بإمكان ⁨${prenom}⁩ الكتابة على الصفحة أو السبورة. تبقى الصفحة والمستند بيدك.';
 	@override String get retirerAide => 'تبقى الخطوط على الصفحة؛ وتُسحب أدوات الكتابة.';
 }
 
@@ -9291,15 +9326,15 @@ class _Traductions$salle$seance$commandes$ar extends Traductions$salle$seance$co
 
 	// Translations
 	@override String get declencheur => 'التحكم';
-	@override String get declencheurSemantique => 'فتح عناصر التحكم في المادة والسبورة';
+	@override String get declencheurSemantique => 'فتح عناصر التحكم في المكتبة والسبورة';
 	@override String get titre => 'عناصر التحكم';
 	@override String get reduire => 'تصغير';
 	@override String get reduireSemantique => 'تصغير عناصر التحكم';
-	@override String get ongletSupport => 'المادة';
+	@override String get ongletSupport => 'المكتبة';
 	@override String get ongletOutils => 'الأدوات';
 	@override String get ongletSeance => 'الحصة';
 	@override String get bibliotheque => 'المكتبة';
-	@override String get affichageSupport => 'المادة';
+	@override String get affichageSupport => 'الصفحة';
 	@override String get affichageAvecNotes => 'مع الملاحظات';
 	@override String get affichageTableau => 'السبورة';
 	@override String get lecture => 'القراءة';
@@ -9324,14 +9359,14 @@ class _Traductions$salle$seance$bibliotheque$ar extends Traductions$salle$seance
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get intro => 'المادة التي تختارها تُفتح لك وحدك. يبقى الفصل على المادة الحالية حتى «عرض على الفصل».';
+	@override String get intro => 'المستند الذي تختاره يُفتح لك وحدك. يبقى الفصل على المستند الحالي حتى «عرض على الفصل».';
 	@override String get apercu => 'معاينة خاصة';
-	@override String get apercuClasse => 'ما زال الطلاب يرون المادة الحالية.';
+	@override String get apercuClasse => 'ما زال الطلاب يرون المستند الحالي.';
 	@override String get presenter => 'عرض على الفصل';
-	@override String get revenir => 'العودة إلى المواد';
-	@override String get ouverture => 'جارٍ فتح المادة…';
+	@override String get revenir => 'العودة إلى المكتبة';
+	@override String get ouverture => 'جارٍ فتح المستند…';
 	@override String get echec => 'تعذّر فتح الملف.';
-	@override String get echecDetail => 'ملف هذه المادة غير متاح حاليًا. أعد المحاولة، أو عد إلى المواد لاختيار مادة أخرى.';
+	@override String get echecDetail => 'ملف هذا المستند غير متاح حاليًا. أعد المحاولة، أو عد إلى المكتبة لاختيار مستند آخر.';
 	@override String get tous => 'الكل';
 	@override String reprendrePage({required Object page}) => 'متابعة الصفحة ⁨${page}⁩';
 	@override String get cetteClasse => 'هذا الفصل';
@@ -9346,14 +9381,14 @@ class _Traductions$salle$seance$surface$ar extends Traductions$salle$seance$surf
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get aucunSupport => 'اختر مادة أو اكتب على السبورة.';
+	@override String get aucunSupport => 'اختر مستندًا من المكتبة أو اكتب على السبورة.';
 	@override String page({required Object titre, required Object page, required Object pages}) => '⁨${titre}⁩، الصفحة ⁨${page}⁩ من ⁨${pages}⁩';
-	@override String get supportMasque => 'السبورة، المادة مخفية';
-	@override String get supportArrive => 'المادة في الطريق…';
-	@override String get supportIndisponible => 'المادة لا تظهر.';
+	@override String get supportMasque => 'السبورة، المستند مخفي';
+	@override String get supportArrive => 'المستند في الطريق…';
+	@override String get supportIndisponible => 'المستند لا يظهر.';
 	@override String get supportIndisponibleDetail => 'الملف غير متاح. أعد المحاولة: الحصة والصوت مستمران.';
-	@override String get reessayerSemantique => 'إعادة محاولة عرض المادة';
-	@override String get supportIllustratif => 'مادة توضيحية';
+	@override String get reessayerSemantique => 'إعادة محاولة عرض المستند';
+	@override String get supportIllustratif => 'مستند توضيحي';
 }
 
 // Path: salle.seance.synchro
@@ -9381,13 +9416,13 @@ class _Traductions$salle$seance$rangement$ar extends Traductions$salle$seance$ra
 
 	// Translations
 	@override String get ranger => 'إرجاع إلى المكتبة';
-	@override String get rangerSupport => 'إرجاع المادة';
-	@override String get menuSupport => 'إجراءات المادة المعروضة';
+	@override String get rangerSupport => 'إرجاع المستند';
+	@override String get menuSupport => 'إجراءات المستند المعروض';
 	@override String get menuTableau => 'إجراءات السبورة الحرة';
-	@override String get range => 'أُرجعت المادة';
+	@override String get range => 'أُرجع المستند';
 	@override String get rangeDetail => 'تبقى في المكتبة، عند صفحتها ومع ملاحظاتها. «عرض على الفصل» يعيدها.';
 	@override String get tableauLibre => 'السبورة الحرة';
-	@override String get section => 'مواد أُرجعت خلال الحصة';
+	@override String get section => 'مستندات أُرجعت خلال الحصة';
 	@override String reprise({required Object page, required Object total}) => 'الاستئناف من الصفحة ⁨${page}⁩ من ⁨${total}⁩.';
 	@override String get notesConservees => 'الملاحظات محفوظة في هذه الحصة فقط.';
 	@override String get effacer => 'مسح الملاحظات';
@@ -15248,6 +15283,27 @@ class _Traductions$recrutement$talents$erreurs$ar extends Traductions$recrutemen
 	@override String get retraitEchec => 'لم يكتمل السحب. أعد المحاولة بعد لحظة.';
 }
 
+// Path: argent.transparence.postes
+class _Traductions$argent$transparence$postes$ar extends Traductions$argent$transparence$postes$fr {
+	_Traductions$argent$transparence$postes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get enseignant => 'معلّم الصف';
+	@override String get fraisCarteChange => 'رسوم الدفع بالبطاقة وتحويل العملة';
+	@override String get fraisEnvoiPaie => 'رسوم إرسال أجور المعلّمين';
+	@override String get visioconference => 'الاتصال المرئي';
+	@override String get applicationHebergement => 'التطبيق والاستضافة';
+	@override String get emails => 'البريد الإلكتروني';
+	@override String get stockage => 'تخزين الملفات';
+	@override String get comptabilite => 'المحاسبة';
+	@override String get developpement => 'تطوير التطبيق';
+	@override String get administration => 'إدارة الأكاديمية';
+	@override String get impotSocietes => 'ضريبة الشركات';
+	@override String get benefice => 'ربح الأكاديمية';
+}
+
 // Path: juridique.mentions.s1
 class _Traductions$juridique$mentions$s1$ar extends Traductions$juridique$mentions$s1$fr {
 	_Traductions$juridique$mentions$s1$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -16305,7 +16361,7 @@ class _Traductions$salle$seance$demo$groupes$ar extends Traductions$salle$seance
 	// Translations
 	@override String get seance => 'مجرى الحصة';
 	@override String get secours => 'حالات الاحتياط';
-	@override String get tableau => 'المواد والسبورة';
+	@override String get tableau => 'المكتبة والسبورة';
 }
 
 // Path: salle.seance.demo.roles
@@ -16334,7 +16390,7 @@ class _Traductions$salle$seance$demo$etats$ar extends Traductions$salle$seance$d
 	@override String get rienPartage => 'لا شيء مُشارَك';
 	@override String get appel => 'نداء خاص';
 	@override String get eleves => 'لوحة الطلاب';
-	@override String get supports => 'لوحة المواد';
+	@override String get supports => 'لوحة المكتبة';
 	@override String get fin => 'نهاية الحصة';
 	@override String get reseauFaible => 'شبكة ضعيفة';
 	@override String get reconnexion => 'إعادة الاتصال';
@@ -16355,10 +16411,10 @@ class _Traductions$salle$seance$demo$tb$ar extends Traductions$salle$seance$demo
 
 	// Translations
 	@override String get sal00 => 'SAL-00 القاعة والأشخاص';
-	@override String get ped01 => 'PED-01 سبورة حرة، دون مادة';
-	@override String get ped02 => 'PED-02 المادة وحدها';
-	@override String get ped03 => 'PED-03 المادة مع الملاحظات';
-	@override String get ped04 => 'PED-04 السبورة، المادة مخفية';
+	@override String get ped01 => 'PED-01 سبورة حرة، دون مستند';
+	@override String get ped02 => 'PED-02 المستند وحده';
+	@override String get ped03 => 'PED-03 المستند مع الملاحظات';
+	@override String get ped04 => 'PED-04 السبورة، المستند مخفي';
 	@override String get ui01 => 'UI-01 عرض مضغوط';
 	@override String get ui02 => 'UI-02 قاعة موسَّعة';
 	@override String get ui03 => 'UI-03 تركيز محلي';
@@ -16370,7 +16426,7 @@ class _Traductions$salle$seance$demo$tb$ar extends Traductions$salle$seance$demo
 	@override String get cmd03 => 'CMD-03 الكتابة جارية';
 	@override String get lib01 => 'LIB-01 المكتبة';
 	@override String get lib02 => 'LIB-02 معاينة خاصة';
-	@override String get lib03 => 'LIB-03 فتح المادة';
+	@override String get lib03 => 'LIB-03 فتح المستند';
 	@override String get lib04 => 'LIB-04 بحث دون نتيجة';
 	@override String get per01 => 'PER-01 المشاركون والأذونات';
 	@override String get dlg01 => 'DLG-01 مسح ملاحظات الصفحة';
@@ -16378,7 +16434,7 @@ class _Traductions$salle$seance$demo$tb$ar extends Traductions$salle$seance$demo
 	@override String get err02 => 'ERR-02 استعادة السبورة';
 	@override String get err03 => 'ERR-03 فشل الحفظ';
 	@override String get end01 => 'END-01 مغادرة الحصة';
-	@override String get supportArrive => 'المادة في الطريق';
+	@override String get supportArrive => 'المستند في الطريق';
 	@override String get ressourceIndisponible => 'المورد غير متاح';
 	@override String get autorisationEcrire => 'إذن بالكتابة';
 	@override String get droitRetire => 'سُحب الإذن';
@@ -20262,7 +20318,7 @@ extension on TraductionsAr {
 			'salle.preparation.contexte' => 'سياق الحصة',
 			'salle.preparation.classe' => 'الفصل',
 			'salle.preparation.debut' => 'البداية',
-			'salle.preparation.support' => 'المادة المقررة',
+			'salle.preparation.support' => 'المستند المقرر',
 			'salle.preparation.reprise' => 'الاستئناف',
 			'salle.preparation.eleves' => 'الطلاب المنتظرون',
 			'salle.preparation.entrer' => 'دخول الفصل',
@@ -20351,11 +20407,11 @@ extension on TraductionsAr {
 			'salle.seance.zoomPlus' => 'زيادة التكبير',
 			'salle.seance.quitterQuestion' => 'مغادرة الحصة؟',
 			'salle.seance.quitterConsequence' => 'يمكنك العودة ما دامت الحصة مفتوحة.',
-			'salle.seance.illustration' => 'رسم توضيحي للمادة',
+			'salle.seance.illustration' => 'رسم توضيحي للمستند',
 			'salle.seance.quitterCahierConsequence' => 'ستنتقل بعد ذلك إلى دفتر المتابعة.',
 			'salle.seance.quitterCahier' => 'المغادرة وفتح دفتر المتابعة',
 			'salle.seance.rester' => 'البقاء',
-			'salle.seance.supports' => 'المواد',
+			'salle.seance.supports' => 'المكتبة',
 			'salle.seance.reseau' => 'الشبكة',
 			'salle.seance.pagePrecedente' => 'الصفحة السابقة',
 			'salle.seance.pageSuivante' => 'الصفحة التالية',
@@ -20398,7 +20454,7 @@ extension on TraductionsAr {
 			'salle.seance.ecriture.retirer' => 'سحب الإذن بالكتابة',
 			'salle.seance.ecriture.autoriserSemantique' => ({required Object prenom}) => 'السماح بالكتابة: ⁨${prenom}⁩',
 			'salle.seance.ecriture.retirerSemantique' => ({required Object dePrenom}) => 'سحب الإذن بالكتابة من ⁨${dePrenom}⁩',
-			'salle.seance.ecriture.autoriserAide' => ({required Object prenom}) => 'سيكون بإمكان ⁨${prenom}⁩ الكتابة على الصفحة أو السبورة. تبقى الصفحة والمادة بيدك.',
+			'salle.seance.ecriture.autoriserAide' => ({required Object prenom}) => 'سيكون بإمكان ⁨${prenom}⁩ الكتابة على الصفحة أو السبورة. تبقى الصفحة والمستند بيدك.',
 			'salle.seance.ecriture.retirerAide' => 'تبقى الخطوط على الصفحة؛ وتُسحب أدوات الكتابة.',
 			'salle.seance.rail.navigation' => 'التنقل',
 			'salle.seance.rail.marque' => 'Rewayah',
@@ -20429,15 +20485,15 @@ extension on TraductionsAr {
 			'salle.seance.fiche.seancesSemaine' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'عدد الحصص هذا الأسبوع: ⁨${nombre}⁩', one: 'عدد الحصص هذا الأسبوع: ⁨${nombre}⁩', two: 'عدد الحصص هذا الأسبوع: ⁨${nombre}⁩', few: 'عدد الحصص هذا الأسبوع: ⁨${nombre}⁩', many: 'عدد الحصص هذا الأسبوع: ⁨${nombre}⁩', other: 'عدد الحصص هذا الأسبوع: ⁨${nombre}⁩', ), 
 			'salle.seance.optionsPanneau' => ({required Object titre}) => 'خيارات لوحة ⁨${titre}⁩',
 			'salle.seance.commandes.declencheur' => 'التحكم',
-			'salle.seance.commandes.declencheurSemantique' => 'فتح عناصر التحكم في المادة والسبورة',
+			'salle.seance.commandes.declencheurSemantique' => 'فتح عناصر التحكم في المكتبة والسبورة',
 			'salle.seance.commandes.titre' => 'عناصر التحكم',
 			'salle.seance.commandes.reduire' => 'تصغير',
 			'salle.seance.commandes.reduireSemantique' => 'تصغير عناصر التحكم',
-			'salle.seance.commandes.ongletSupport' => 'المادة',
+			'salle.seance.commandes.ongletSupport' => 'المكتبة',
 			'salle.seance.commandes.ongletOutils' => 'الأدوات',
 			'salle.seance.commandes.ongletSeance' => 'الحصة',
 			'salle.seance.commandes.bibliotheque' => 'المكتبة',
-			'salle.seance.commandes.affichageSupport' => 'المادة',
+			'salle.seance.commandes.affichageSupport' => 'الصفحة',
 			'salle.seance.commandes.affichageAvecNotes' => 'مع الملاحظات',
 			'salle.seance.commandes.affichageTableau' => 'السبورة',
 			'salle.seance.commandes.lecture' => 'القراءة',
@@ -20453,27 +20509,27 @@ extension on TraductionsAr {
 			'salle.seance.commandes.classeVoitSupport' => 'يرى الفصل الصفحة دون الملاحظات.',
 			'salle.seance.commandes.classeVoitAvecNotes' => 'يرى الفصل الصفحة والملاحظات.',
 			'salle.seance.commandes.classeVoitTableau' => 'يرى الفصل السبورة دون الصفحة.',
-			'salle.seance.bibliotheque.intro' => 'المادة التي تختارها تُفتح لك وحدك. يبقى الفصل على المادة الحالية حتى «عرض على الفصل».',
+			'salle.seance.bibliotheque.intro' => 'المستند الذي تختاره يُفتح لك وحدك. يبقى الفصل على المستند الحالي حتى «عرض على الفصل».',
 			'salle.seance.bibliotheque.apercu' => 'معاينة خاصة',
-			'salle.seance.bibliotheque.apercuClasse' => 'ما زال الطلاب يرون المادة الحالية.',
+			'salle.seance.bibliotheque.apercuClasse' => 'ما زال الطلاب يرون المستند الحالي.',
 			'salle.seance.bibliotheque.presenter' => 'عرض على الفصل',
-			'salle.seance.bibliotheque.revenir' => 'العودة إلى المواد',
-			'salle.seance.bibliotheque.ouverture' => 'جارٍ فتح المادة…',
+			'salle.seance.bibliotheque.revenir' => 'العودة إلى المكتبة',
+			'salle.seance.bibliotheque.ouverture' => 'جارٍ فتح المستند…',
 			'salle.seance.bibliotheque.echec' => 'تعذّر فتح الملف.',
-			'salle.seance.bibliotheque.echecDetail' => 'ملف هذه المادة غير متاح حاليًا. أعد المحاولة، أو عد إلى المواد لاختيار مادة أخرى.',
+			'salle.seance.bibliotheque.echecDetail' => 'ملف هذا المستند غير متاح حاليًا. أعد المحاولة، أو عد إلى المكتبة لاختيار مستند آخر.',
 			'salle.seance.bibliotheque.tous' => 'الكل',
 			'salle.seance.bibliotheque.reprendrePage' => ({required Object page}) => 'متابعة الصفحة ⁨${page}⁩',
 			'salle.seance.bibliotheque.cetteClasse' => 'هذا الفصل',
 			'salle.seance.bibliotheque.detailReprise' => ({required Object page}) => 'الصفحة ⁨${page}⁩ · آخر حصة',
 			'salle.seance.bibliotheque.titreCoranPage' => ({required Object page}) => 'القرآن · الصفحة ⁨${page}⁩',
-			'salle.seance.surface.aucunSupport' => 'اختر مادة أو اكتب على السبورة.',
+			'salle.seance.surface.aucunSupport' => 'اختر مستندًا من المكتبة أو اكتب على السبورة.',
 			'salle.seance.surface.page' => ({required Object titre, required Object page, required Object pages}) => '⁨${titre}⁩، الصفحة ⁨${page}⁩ من ⁨${pages}⁩',
-			'salle.seance.surface.supportMasque' => 'السبورة، المادة مخفية',
-			'salle.seance.surface.supportArrive' => 'المادة في الطريق…',
-			'salle.seance.surface.supportIndisponible' => 'المادة لا تظهر.',
+			'salle.seance.surface.supportMasque' => 'السبورة، المستند مخفي',
+			'salle.seance.surface.supportArrive' => 'المستند في الطريق…',
+			'salle.seance.surface.supportIndisponible' => 'المستند لا يظهر.',
 			'salle.seance.surface.supportIndisponibleDetail' => 'الملف غير متاح. أعد المحاولة: الحصة والصوت مستمران.',
-			'salle.seance.surface.reessayerSemantique' => 'إعادة محاولة عرض المادة',
-			'salle.seance.surface.supportIllustratif' => 'مادة توضيحية',
+			'salle.seance.surface.reessayerSemantique' => 'إعادة محاولة عرض المستند',
+			'salle.seance.surface.supportIllustratif' => 'مستند توضيحي',
 			'salle.seance.synchro.nonPartagees' => 'ملاحظاتك الجديدة غير مشارَكة.',
 			'salle.seance.synchro.nonPartageesSuite' => 'الملاحظات المنقّطة لا تظهر إلا على شاشتك، ريثما تعود السبورة إلى الاتصال.',
 			'salle.seance.synchro.seReconnecte' => 'السبورة تعيد الاتصال.',
@@ -20483,13 +20539,13 @@ extension on TraductionsAr {
 			'salle.seance.synchro.nonSauvegardees' => 'ملاحظات هذه الحصة غير محفوظة.',
 			'salle.seance.synchro.nonSauvegardeesSuite' => 'تبقى على السبورة حتى نهاية الحصة، لكنها لن تُسترجع في الدرس القادم.',
 			'salle.seance.rangement.ranger' => 'إرجاع إلى المكتبة',
-			'salle.seance.rangement.rangerSupport' => 'إرجاع المادة',
-			'salle.seance.rangement.menuSupport' => 'إجراءات المادة المعروضة',
+			'salle.seance.rangement.rangerSupport' => 'إرجاع المستند',
+			'salle.seance.rangement.menuSupport' => 'إجراءات المستند المعروض',
 			'salle.seance.rangement.menuTableau' => 'إجراءات السبورة الحرة',
-			'salle.seance.rangement.range' => 'أُرجعت المادة',
+			'salle.seance.rangement.range' => 'أُرجع المستند',
 			'salle.seance.rangement.rangeDetail' => 'تبقى في المكتبة، عند صفحتها ومع ملاحظاتها. «عرض على الفصل» يعيدها.',
 			'salle.seance.rangement.tableauLibre' => 'السبورة الحرة',
-			'salle.seance.rangement.section' => 'مواد أُرجعت خلال الحصة',
+			'salle.seance.rangement.section' => 'مستندات أُرجعت خلال الحصة',
 			'salle.seance.rangement.reprise' => ({required Object page, required Object total}) => 'الاستئناف من الصفحة ⁨${page}⁩ من ⁨${total}⁩.',
 			'salle.seance.rangement.notesConservees' => 'الملاحظات محفوظة في هذه الحصة فقط.',
 			'salle.seance.rangement.effacer' => 'مسح الملاحظات',
@@ -20516,7 +20572,7 @@ extension on TraductionsAr {
 			'salle.seance.demo.intro' => 'بيانات وهمية، دون خادم. اختر دورًا وحالة.',
 			'salle.seance.demo.groupes.seance' => 'مجرى الحصة',
 			'salle.seance.demo.groupes.secours' => 'حالات الاحتياط',
-			'salle.seance.demo.groupes.tableau' => 'المواد والسبورة',
+			'salle.seance.demo.groupes.tableau' => 'المكتبة والسبورة',
 			'salle.seance.demo.roles.eleve' => 'طالب عادي',
 			'salle.seance.demo.roles.guidee' => 'الواجهة الموجَّهة',
 			'salle.seance.demo.roles.enseignant' => 'المعلم',
@@ -20527,7 +20583,7 @@ extension on TraductionsAr {
 			'salle.seance.demo.etats.rienPartage' => 'لا شيء مُشارَك',
 			'salle.seance.demo.etats.appel' => 'نداء خاص',
 			'salle.seance.demo.etats.eleves' => 'لوحة الطلاب',
-			'salle.seance.demo.etats.supports' => 'لوحة المواد',
+			'salle.seance.demo.etats.supports' => 'لوحة المكتبة',
 			'salle.seance.demo.etats.fin' => 'نهاية الحصة',
 			'salle.seance.demo.etats.reseauFaible' => 'شبكة ضعيفة',
 			'salle.seance.demo.etats.reconnexion' => 'إعادة الاتصال',
@@ -20539,10 +20595,10 @@ extension on TraductionsAr {
 			'salle.seance.demo.etats.prolongee' => 'حصة ممدَّدة',
 			'salle.seance.demo.etats.accesRetire' => 'سُحب الدخول',
 			'salle.seance.demo.tb.sal00' => 'SAL-00 القاعة والأشخاص',
-			'salle.seance.demo.tb.ped01' => 'PED-01 سبورة حرة، دون مادة',
-			'salle.seance.demo.tb.ped02' => 'PED-02 المادة وحدها',
-			'salle.seance.demo.tb.ped03' => 'PED-03 المادة مع الملاحظات',
-			'salle.seance.demo.tb.ped04' => 'PED-04 السبورة، المادة مخفية',
+			'salle.seance.demo.tb.ped01' => 'PED-01 سبورة حرة، دون مستند',
+			'salle.seance.demo.tb.ped02' => 'PED-02 المستند وحده',
+			'salle.seance.demo.tb.ped03' => 'PED-03 المستند مع الملاحظات',
+			'salle.seance.demo.tb.ped04' => 'PED-04 السبورة، المستند مخفي',
 			'salle.seance.demo.tb.ui01' => 'UI-01 عرض مضغوط',
 			'salle.seance.demo.tb.ui02' => 'UI-02 قاعة موسَّعة',
 			'salle.seance.demo.tb.ui03' => 'UI-03 تركيز محلي',
@@ -20554,7 +20610,7 @@ extension on TraductionsAr {
 			'salle.seance.demo.tb.cmd03' => 'CMD-03 الكتابة جارية',
 			'salle.seance.demo.tb.lib01' => 'LIB-01 المكتبة',
 			'salle.seance.demo.tb.lib02' => 'LIB-02 معاينة خاصة',
-			'salle.seance.demo.tb.lib03' => 'LIB-03 فتح المادة',
+			'salle.seance.demo.tb.lib03' => 'LIB-03 فتح المستند',
 			'salle.seance.demo.tb.lib04' => 'LIB-04 بحث دون نتيجة',
 			'salle.seance.demo.tb.per01' => 'PER-01 المشاركون والأذونات',
 			'salle.seance.demo.tb.dlg01' => 'DLG-01 مسح ملاحظات الصفحة',
@@ -20562,7 +20618,7 @@ extension on TraductionsAr {
 			'salle.seance.demo.tb.err02' => 'ERR-02 استعادة السبورة',
 			'salle.seance.demo.tb.err03' => 'ERR-03 فشل الحفظ',
 			'salle.seance.demo.tb.end01' => 'END-01 مغادرة الحصة',
-			'salle.seance.demo.tb.supportArrive' => 'المادة في الطريق',
+			'salle.seance.demo.tb.supportArrive' => 'المستند في الطريق',
 			'salle.seance.demo.tb.ressourceIndisponible' => 'المورد غير متاح',
 			'salle.seance.demo.tb.autorisationEcrire' => 'إذن بالكتابة',
 			'salle.seance.demo.tb.droitRetire' => 'سُحب الإذن',
@@ -20647,8 +20703,8 @@ extension on TraductionsAr {
 			'salle.visiteControle.sonCoupe' => 'الصوت الوارد مكتوم',
 			'salle.visiteControle.couperSon' => 'كتم الصوت الوارد',
 			'salle.visiteControle.retablirSon' => 'إعادة الصوت الوارد',
-			'salle.visiteControle.agrandir' => 'تكبير المادة',
-			'salle.visiteControle.reduire' => 'تصغير المادة',
+			'salle.visiteControle.agrandir' => 'تكبير المستند',
+			'salle.visiteControle.reduire' => 'تصغير المستند',
 			'salle.informationControle.lien' => 'اعرف المزيد',
 			'salle.informationControle.e1.titre' => 'هناك من يطمئن على حصتك',
 			'salle.informationControle.e1.p1' => 'أحيانًا، يشاهد شخص من الأكاديمية حصتك ويستمع إليها مباشرةً.',
@@ -28151,6 +28207,42 @@ extension on TraductionsAr {
 			'sansDonnees.vueGlobale' => 'تعذّر تحميل النظرة العامة على المالية',
 			'sansDonnees.beneficiaires' => 'تعذّر تحميل المستفيدين',
 			'sansDonnees.profilPaiement' => 'تعذّر تحميل ملف الدفع هذا',
+			'argent.transparence.titre' => 'أسعارنا بكل شفافية',
+			'argent.transparence.lien' => 'أسعارنا بكل شفافية',
+			'argent.transparence.intro' => 'هكذا يتوزع كل دفعة يدفعها الطالب، بندًا بندًا، بالنسب المئوية.',
+			'argent.transparence.repartitionTitre' => 'أين تذهب كل دفعة',
+			'argent.transparence.version' => ({required Object date}) => 'تقدير للأسعار المعمول بها ابتداءً من ⁨${date}⁩.',
+			'argent.transparence.part' => ({required Object valeur}) => '⁨${valeur}⁩ ٪',
+			'argent.transparence.virgule' => '٫',
+			'argent.transparence.total' => 'المجموع',
+			'argent.transparence.postes.enseignant' => 'معلّم الصف',
+			'argent.transparence.postes.fraisCarteChange' => 'رسوم الدفع بالبطاقة وتحويل العملة',
+			'argent.transparence.postes.fraisEnvoiPaie' => 'رسوم إرسال أجور المعلّمين',
+			'argent.transparence.postes.visioconference' => 'الاتصال المرئي',
+			'argent.transparence.postes.applicationHebergement' => 'التطبيق والاستضافة',
+			'argent.transparence.postes.emails' => 'البريد الإلكتروني',
+			'argent.transparence.postes.stockage' => 'تخزين الملفات',
+			'argent.transparence.postes.comptabilite' => 'المحاسبة',
+			'argent.transparence.postes.developpement' => 'تطوير التطبيق',
+			'argent.transparence.postes.administration' => 'إدارة الأكاديمية',
+			'argent.transparence.postes.impotSocietes' => 'ضريبة الشركات',
+			'argent.transparence.postes.benefice' => 'ربح الأكاديمية',
+			'argent.transparence.posteSemantique' => ({required Object poste, required Object part}) => '⁨${poste}⁩: ⁨${part}⁩ من دفعة الطالب',
+			'argent.transparence.estimation' => ({required Object enfants, required Object adultes}) => 'هذه النسب تقدير، محسوب على أساس ⁨${enfants}⁩ طفلًا و⁨${adultes}⁩ بالغًا، كلٌّ منهم بالسعر الكامل وحاضر في كل حصة. وتُراجَع مع كل إصدار جديد للأسعار.',
+			'argent.transparence.magasinsTitre' => 'لماذا لا يوجد التطبيق على App Store ولا على Google Play',
+			'argent.transparence.magasinsPhrase' => 'تأخذ هذه المتاجر من 15 إلى 30 ٪ من كل دفعة. ولا تستطيع الأكاديمية تحمّل هذه الرسوم دون رفع أسعارها. لذلك يتم الدفع عبر الويب.',
+			'argent.transparence.taxesTitre' => 'الضرائب',
+			'argent.transparence.taxesPhrase' => 'أسعارنا دون احتساب الضرائب. وضريبة بلدكم، حين تكون مستحقة، تُضاف إلى الدفعة وتعود كاملة إلى الدولة: وهي غير واردة في هذا التوزيع.',
+			'argent.transparence.hausseTitre' => 'قد ترتفع الأسعار',
+			'argent.transparence.haussePhrase' => 'تعتمد أسعارنا على كلفة الخدمات التي نستعملها وعلى التضخم. وإذا ارتفعت هذه الكلفة، فستضطر الأكاديمية إلى تعديل أسعارها. وستُعلمكم بذلك قبل الدفعة التالية، ويمكنكم التوقف إذا لم يناسبكم السعر الجديد.',
+			'argent.transparence.montantsTitre' => 'المبالغ الدقيقة',
+			'argent.transparence.montantsPhrase' => 'لا تعرض هذه الصفحة إلا النسب المئوية: فالمبالغ تتغير كل شهر بحسب عدد الطلاب. ومن أراد المبالغ الدقيقة فليطلبها من الإدارة.',
+			'argent.transparence.indisponibleTitre' => 'تعذّرت قراءة توزيع الأسعار',
+			'argent.transparence.indisponiblePhrase' => 'سيُعرض هنا حين يصبح متاحًا.',
+			'argent.transparence.erreurTitre' => 'لم نتمكن من قراءة توزيع الأسعار',
+			'argent.transparence.sansDonnees' => 'لم نتمكن من تحميل توزيع الأسعار',
+			'argent.transparence.videTitre' => 'لم يُنشر توزيع الأسعار بعد',
+			'argent.transparence.videPhrase' => 'سيُنشر مع الإصدار القادم للأسعار.',
 			'argent.acces.suspenduPaiementTuteur' => ({required Object prenom}) => 'لم تُستلم دفعة هذا الشهر. تعذّر انضمام ⁨${prenom}⁩ إلى الحصص. يبقى الحساب والمحتويات متاحة.',
 			'argent.acces.suspenduPaiementAdulte' => 'لم تُستلم دفعة هذا الشهر. لا يمكنك الانضمام إلى حصصك الآن. يبقى حسابك ومحتوياتك متاحة.',
 			'juridique.titre' => 'المعلومات القانونية',
@@ -28250,6 +28342,8 @@ extension on TraductionsAr {
 			'juridique.confidentialite.s2.titre' => '٢. ما الذي نجمعه',
 			'juridique.confidentialite.s2.blocs.0' => '- لإنشاء حساب: الاسم، وعنوان البريد الإلكتروني، ولغة الواجهة، وبلد الإقامة، والمنطقة الزمنية.',
 			'juridique.confidentialite.s2.blocs.1' => '- للطالب: تاريخ الميلاد، وهو يُستخدم لاختيار الصيغة المناسبة وللقواعد الخاصة بالقاصرين.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.confidentialite.s2.blocs.2' => '- اختياري: الصورة، والهاتف، والعنوان، والمستوى، وتفضيلات المواعيد.',
 			'juridique.confidentialite.s2.blocs.3' => '- أثناء الدروس: الحضور، ودفتر التواصل، وتقدّم الطالب.',
 			'juridique.confidentialite.s2.blocs.4' => '- للدفع: الاشتراك والفواتير. أما الدفع نفسه فيتم عبر مزوّد للدفع.',
@@ -28286,8 +28380,6 @@ extension on TraductionsAr {
 			'juridique.cookies.titre' => 'ملفات تعريف الارتباط',
 			'juridique.cookies.resume' => 'ما يحتفظ به التطبيق والموقع على جهازكم.',
 			'juridique.cookies.intro' => 'يحتفظ التطبيق والموقع بالقليل على جهازكم. هذا هو.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.cookies.s1.titre' => '١. ما هي',
 			'juridique.cookies.s1.blocs.0' => 'ملف تعريف الارتباط أو البيان المحلي عنصر صغير يحتفظ به متصفحكم أو جهازكم. وهو يساعد الخدمة على التعرّف عليكم أو على تذكّر إعداد.',
 			'juridique.cookies.s2.titre' => '٢. ما يحتفظ به التطبيق',

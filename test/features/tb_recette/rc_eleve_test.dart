@@ -145,7 +145,7 @@ void main() {
         ),
         findsOneWidget,
       );
-      expect(t.salle.seance.surface.supportArrive, 'Le support arrive…');
+      expect(t.salle.seance.surface.supportArrive, 'Le document arrive…');
       // Le dernier contenu reste a l'ecran, marque en attente.
       expect(_page, findsOneWidget);
       expect(_enAttente, findsOneWidget);
@@ -180,7 +180,7 @@ void main() {
         final String adresse = lieu(routeur);
         expect(
           t.salle.seance.surface.supportIndisponible,
-          "Le support ne s'affiche pas.",
+          "Le document ne s'affiche pas.",
         );
         expect(
           find.descendant(
@@ -579,7 +579,7 @@ void main() {
       tester,
       const DemoSallePage(role: RoleSeance.eleve, situation: SituationTb.ped03),
     );
-    expect(find.text('Support illustratif'), findsNothing);
+    expect(find.text('Document illustratif'), findsNothing);
     expect(
       find.descendant(
         of: _page,
@@ -587,7 +587,7 @@ void main() {
       ),
       findsOneWidget,
     );
-    expect(t.salle.seance.surface.supportIllustratif, 'مادة توضيحية');
+    expect(t.salle.seance.surface.supportIllustratif, 'مستند توضيحي');
   });
 
   // --- n. 14 : le ruban de demonstration --------------------------------------

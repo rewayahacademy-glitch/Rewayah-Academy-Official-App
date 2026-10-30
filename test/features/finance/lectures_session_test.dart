@@ -13,6 +13,7 @@ import 'package:rewayah_academy/core/capacites/port_acces_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_finance_direction.dart';
 import 'package:rewayah_academy/core/capacites/port_mes_finances.dart';
 import 'package:rewayah_academy/core/capacites/port_paiements_foyer.dart';
+import 'package:rewayah_academy/core/capacites/port_politique_famille.dart';
 import 'package:rewayah_academy/core/capacites/port_politiques_commerciales.dart';
 import 'package:rewayah_academy/core/capacites/port_recharge_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_revenus_enseignant.dart';
@@ -20,6 +21,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/finances_profil.dart';
 import 'package:rewayah_academy/core/finance/mouvements_profil.dart';
 import 'package:rewayah_academy/core/finance/politique_commerciale.dart';
+import 'package:rewayah_academy/core/finance/politique_famille.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/features/admin_finance/politiques_commerciales.dart';
 import 'package:rewayah_academy/features/admin_finance/vue_globale_finance.dart';
@@ -157,6 +159,19 @@ class _Politiques extends PolitiquesCommercialesDemo {
   }
 }
 
+/// La politique vue d'une famille, lectures comptees (TRANSPARENCE).
+class _PolitiqueFamille extends PolitiqueFamilleDemo {
+  _PolitiqueFamille();
+
+  int lectures = 0;
+
+  @override
+  Future<PolitiqueFamille> lire() {
+    lectures++;
+    return super.lire();
+  }
+}
+
 void main() {
   late _Paiements paiements;
   late _Recharge recharge;
@@ -164,6 +179,7 @@ void main() {
   late _Revenus revenus;
   late _Direction direction;
   late _Politiques politiques;
+  late _PolitiqueFamille politiqueFamille;
   late _Acces accesFoyer;
 
   setUp(() {
@@ -174,6 +190,7 @@ void main() {
     revenus = _Revenus();
     direction = _Direction();
     politiques = _Politiques();
+    politiqueFamille = _PolitiqueFamille();
   });
 
   final List<(String, ProviderListenable<AsyncValue<Object?>>, int Function())>
@@ -227,7 +244,7 @@ void main() {
     (
       'politique active (Foyer)',
       politiqueActiveProvider,
-      () => politiques.lectures,
+      () => politiqueFamille.lectures,
     ),
   ];
 
@@ -249,6 +266,7 @@ void main() {
           portRevenusEnseignantProvider.overrideWithValue(revenus),
           portFinanceDirectionProvider.overrideWithValue(direction),
           portPolitiquesCommercialesProvider.overrideWithValue(politiques),
+          portPolitiqueFamilleProvider.overrideWithValue(politiqueFamille),
           portAccesFoyerProvider.overrideWithValue(accesFoyer),
         ],
       );

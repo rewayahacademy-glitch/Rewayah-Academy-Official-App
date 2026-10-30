@@ -9,7 +9,7 @@ import '../../../core/finance/finances_profil.dart';
 import '../../../core/finance/format_montant.dart';
 import '../../../core/finance/mouvements_profil.dart';
 import '../../../core/finance/periode_a_financer.dart';
-import '../../../core/finance/politique_commerciale.dart';
+import '../../../core/finance/politique_famille.dart';
 import '../../../core/foyer/selection_eleve.dart';
 import '../../../core/i18n/elision.dart';
 import '../../../core/i18n/strings.g.dart';
@@ -564,7 +564,7 @@ class VueFinancesProfil extends ConsumerWidget {
     final TextStyle note = palette.inkStrong.applyTo(
       textes.bodyMedium ?? const TextStyle(),
     );
-    final AsyncValue<PolitiqueCommerciale> politique = ref.watch(
+    final AsyncValue<PolitiqueFamille> politique = ref.watch(
       politiqueActiveProvider,
     );
     final int? essaisMax = politique.hasValue && !politique.hasError

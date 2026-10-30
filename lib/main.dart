@@ -57,6 +57,7 @@ import 'core/capacites/port_paiements_foyer.dart';
 import 'core/capacites/port_paiements_saisis.dart';
 import 'core/capacites/port_partage_pedagogique.dart'
     show portPartagePedagogiqueProvider;
+import 'core/capacites/port_politique_famille.dart';
 import 'core/capacites/port_politiques_commerciales.dart';
 import 'core/capacites/port_profil_eleve_titulaire.dart';
 import 'core/capacites/port_progression_famille.dart';
@@ -361,6 +362,12 @@ List<Override> _surchargesAppReelle() => <Override>[
   // direction en double verification.
   portPolitiquesCommercialesProvider.overrideWithValue(
     PolitiquesCommercialesSupabase(Supabase.instance.client),
+  ),
+  // Ce qu'une famille lit de la politique (TRANSPARENCE, migration
+  // 20261031100000) : tarifs publics, essai, remises, moyens de paiement et
+  // repartition en pourcentages ; ni paie, ni marge, ni budget.
+  portPolitiqueFamilleProvider.overrideWithValue(
+    PolitiqueFamilleSupabase(Supabase.instance.client),
   ),
   // Saisie des paiements recus (FAC-C-01, migration 20261017172000) : la
   // direction et la comptabilite, attribues a un eleve.

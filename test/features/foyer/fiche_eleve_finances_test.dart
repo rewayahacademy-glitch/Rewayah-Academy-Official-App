@@ -15,6 +15,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/port_paiements_foyer.dart';
+import 'package:rewayah_academy/core/capacites/port_politique_famille.dart';
 import 'package:rewayah_academy/core/capacites/port_politiques_commerciales.dart';
 import 'package:rewayah_academy/core/capacites/port_recharge_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_recus.dart';
@@ -217,6 +218,9 @@ Future<GoRouter> _monter(
           ),
           portPolitiquesCommercialesProvider.overrideWithValue(
             const PolitiquesCommercialesDemo(),
+          ),
+          portPolitiqueFamilleProvider.overrideWithValue(
+            const PolitiqueFamilleDemo(),
           ),
           portRechargeFoyerProvider.overrideWithValue(
             const RechargeFoyerFinanceDemo(),

@@ -36,6 +36,8 @@ Sources : les décisions du directeur (annexe 10 du dossier maître, spécificat
 | Aujourd'hui · Apprendre · Suivi · Profil (élève adulte) | la navigation du tuteur recopiée |
 | Journée · Créneaux · Profil (enseignant) | une quatrième entrée |
 | Recharger (bouton de l'ouverture de l'application quand elle dépasse 20 s, lot du 29/10/2026) | Actualiser, Rafraîchir |
+| Bibliothèque (le conteneur de tous les supports, onglet du tiroir de la salle compris ; directeur, 30/10/2026) ; document (une pièce ouverte ou affichée) ; Page (l'affichage sans notes) | Support, Supports |
+| Nos prix, en toute transparence (répartition du paiement en pourcentages, jamais en montants ; 30/10/2026) | grille de coûts, détail des charges |
 
 ## 3. Les mots du programme
 
