@@ -36,6 +36,13 @@ abstract final class Routes {
   /// reste publique et mene a la connexion (signets, PWA installees).
   static const String bienvenue = '/bienvenue';
 
+  /// Admission, lot B (29/10/2026) : le questionnaire d'inscription, une
+  /// question par ecran, **avant** le compte (fiche onboarding du 29/10).
+  /// Public, et ouvert aussi a la porte `inscription` (« Ajouter un autre
+  /// profil eleve » depuis le recapitulatif). L'ecran courant est le
+  /// parametre `etape`.
+  static const String commencer = '/commencer';
+
   /// Inscription : le compte existe, le profil reste a creer.
   ///
   /// Atteignable uniquement depuis [PorteAcces.inscription], donc avec une
@@ -1278,6 +1285,7 @@ abstract final class Routes {
   static const Set<String> publiques = <String>{
     connexion,
     bienvenue,
+    commencer,
     agentEntree,
     juridique,
   };

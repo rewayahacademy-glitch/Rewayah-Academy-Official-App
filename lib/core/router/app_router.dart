@@ -205,6 +205,9 @@ import '../../features/inscription/etapes/identite_etape.dart';
 import '../../features/inscription/etapes/recapitulatif_etape.dart';
 import '../../features/inscription/etapes/usage_etape.dart';
 import '../../features/inscription/inscription_page.dart';
+import '../../features/inscription/questionnaire/questionnaire_inscription.dart'
+    show questionnaireInscriptionProvider;
+import '../../features/inscription/questionnaire/questionnaire_page.dart';
 import '../../features/journee/journee_page.dart';
 import '../../features/juridique/juridique_pages.dart';
 import '../../features/juridique/textes_juridiques.dart';
@@ -250,6 +253,7 @@ import '../icons/app_icons.dart';
 import '../mouvement/transitions.dart';
 import '../recherche/controleur_recherche.dart';
 import '../recherche/modeles_recherche.dart';
+import '../session/atterrissage_adulte.dart';
 import '../session/session_controleur.dart';
 import '../session/session_state.dart';
 import '../tc_groupe/group_home_vm.dart' show RoleEspaceGroupe;
@@ -362,6 +366,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
   });
   // --- fin du bloc DASH-EA-PROD ---------------------------------------------
 
+  // Admission, lot B : l'atterrissage de l'eleve adulte inscrit « pour moi »
+  // se lit apres la session ; le routeur se reveille quand il change.
+  ref.listen<bool>(atterrissageAdulteProvider, (bool? _, bool _) {
+    rafraichisseur.declencher();
+  });
+
   // Q-2 = a : la nouvelle signature du contrat enseignant se lit apres la
   // session (acceptations) ; le routeur se reveille quand elle change.
   ref.listen<bool>(resignatureContratEnseignantProvider, (bool? _, bool _) {
@@ -392,6 +402,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         cheminComplet: etat.uri.toString(),
         retour: etat.uri.queryParameters['retour'],
         resignatureContrat: ref.read(resignatureContratEnseignantProvider),
+        atterrissageAdulte: ref.read(atterrissageAdulteProvider),
       );
     },
     // Un chemin qu'aucune route ne sert : une page d'etat dans la charte, qui
@@ -417,8 +428,23 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRoute(
         path: Routes.connexion,
+        // Admission, lot B : creer un compte passe d'abord par le
+        // questionnaire (fiche du 29/10, « compte en dernier »), sauf avec un
+        // code d'invitation.
+        redirect: (BuildContext _, GoRouterState etat) =>
+            redirectionCreationCompte(
+              etat.uri,
+              questionnaireComplet: ref
+                  .read(questionnaireInscriptionProvider)
+                  .complet,
+            ),
         builder: (BuildContext _, GoRouterState etat) =>
             ConnexionPage(mode: modeDepuisAdresse(etat.uri)),
+      ),
+      GoRoute(
+        path: Routes.commencer,
+        builder: (BuildContext _, GoRouterState etat) =>
+            QuestionnairePage(code: etat.uri.queryParameters['etape']),
       ),
       GoRoute(
         path: Routes.connexionEleve,

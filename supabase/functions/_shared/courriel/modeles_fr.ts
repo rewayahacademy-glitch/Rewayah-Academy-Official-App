@@ -37,6 +37,11 @@ export const MODELES: Record<string, Fabrique> = {
   demande_recue: (d) => avis(d, 'Votre demande est bien reçue', 'Votre demande est bien reçue',
     'Nous avons reçu votre demande de créneau. La direction l’étudie et vous répond dans l’application.',
     'Suivre ma demande', '/tuteur/demandes'),
+  // Admission, lot B (decision du directeur du 27/10/2026, regle 4) : la
+  // demande d'acces d'une famille ou d'un eleve adulte, a son inscription.
+  admission_recue: (d) => avis(d, 'Votre demande est bien reçue', 'Votre demande est en cours',
+    'Nous avons bien reçu votre demande. La direction lit chaque demande avant d’ouvrir un compte. Vous n’avez rien à envoyer : nous vous écrivons à cette adresse dès que la direction a répondu.',
+    'Voir ma demande', '/attente'),
   demande_presentation: (d) => avis(d, 'Une demande de présentation est reçue', 'Demande de présentation reçue',
     'Une demande de présentation a été reçue. Elle vous attend dans l’application.',
     'Ouvrir la demande', '/tuteur/demandes'),
@@ -194,8 +199,9 @@ export const MODELES: Record<string, Fabrique> = {
 /// Les modeles ecrits en francais et traduits a l'envoi vers la langue du
 /// destinataire (decision du directeur, 24/10/2026), sauf vers une langue qui
 /// les ecrit a la main : `attente_candidat` est ecrit en arabe (pilote,
-/// 25/10/2026), traduit vers en, es, pt et les autres.
-export const TRADUITS_A_L_ENVOI: readonly string[] = ['attente_candidat']
+/// 25/10/2026), traduit vers en, es, pt et les autres ; `admission_recue`
+/// (lot B de l'admission, 29/10/2026), ecrit en francais et en arabe.
+export const TRADUITS_A_L_ENVOI: readonly string[] = ['attente_candidat', 'admission_recue']
 
 export const FRANCAIS: LangueEcrite = {
   modeles: MODELES,

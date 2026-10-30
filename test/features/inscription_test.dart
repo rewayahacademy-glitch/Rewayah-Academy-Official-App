@@ -12,21 +12,66 @@ import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
+import 'package:rewayah_academy/core/offres/offre_horaire.dart';
+import 'package:rewayah_academy/core/offres/service_offres.dart'
+    show languesCoursProvider;
 import 'package:rewayah_academy/core/recrutement/port_invitations_comptable.dart';
 import 'package:rewayah_academy/core/recrutement/port_invitations_enseignant.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/features/demo/recrutement_demo.dart';
+import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart'
+    show UsageInscription;
 import 'package:rewayah_academy/features/inscription/code_comptable_retenu.dart';
 import 'package:rewayah_academy/features/inscription/etapes/genre_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/identite_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/recapitulatif_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/usage_etape.dart';
 import 'package:rewayah_academy/features/inscription/inscription_page.dart';
+import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_inscription.dart';
+import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_page.dart';
+import 'package:rewayah_academy/features/parcours_offres/libelles_parcours.dart';
 
 import '../support/harnais.dart';
+
+/// Admission, lot B : le questionnaire deja repondu avant le compte.
+class _QuestionnaireRepondu extends QuestionnaireControleur {
+  _QuestionnaireRepondu(this._q);
+  final QuestionnaireInscription _q;
+  @override
+  QuestionnaireInscription build() => _q;
+}
+
+/// « Pour moi », toutes les questions repondues.
+const QuestionnaireInscription _qMoi = QuestionnaireInscription(
+  usage: UsageInscription.moi,
+  niveauTitulaire: NiveauDeclare.lectureLente,
+  objectif: ObjectifApprentissage.memoriser,
+  moments: <MomentJournee>{MomentJournee.soir},
+  langue: 'francais',
+);
+
+/// « Mon enfant », un enfant, et le parent qui suit ou non des cours.
+QuestionnaireInscription _qFamille({required bool parent}) =>
+    QuestionnaireInscription(
+      usage: UsageInscription.famille,
+      enfants: const <EnfantQuestionnaire>[
+        EnfantQuestionnaire(
+          prenom: 'Yasmine',
+          age: 9,
+          genre: Genre.femme,
+          niveau: NiveauDeclare.debutLettres,
+        ),
+      ],
+      parentSuitDesCours: parent,
+      niveauTitulaire: parent ? NiveauDeclare.lectureCourante : null,
+      objectif: ObjectifApprentissage.apprendreALire,
+      moments: const <MomentJournee>{MomentJournee.matin},
+      langue: 'francais',
+    );
 
 /// Une source dont le rafraichissement echoue tant qu'on le demande.
 class _SourceCapricieuse extends FausseSourceSession {
@@ -57,6 +102,7 @@ class _DossierLent extends FauxServiceDossier {
     String? codeInvitation,
     UsageTitulaire? usage,
     bool suitDesCours = false,
+    List<Map<String, Object?>>? apprenants,
   }) async {
     await _porte.future;
     await super.creerProfil(
@@ -82,6 +128,7 @@ Future<(FauxServiceDossier, FausseSourceSession)> _monter(
   PortVerificationInvitation? verificationComptable,
   PortInscriptionComptable? inscriptionComptable,
   String? codeComptable,
+  QuestionnaireInscription questionnaire = const QuestionnaireInscription(),
 }) async {
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1;
@@ -101,6 +148,11 @@ Future<(FauxServiceDossier, FausseSourceSession)> _monter(
         GoRoute(
           path: Routes.inscriptionUsage,
           builder: (BuildContext _, GoRouterState _) => const UsageEtape(),
+        ),
+        GoRoute(
+          path: Routes.commencer,
+          builder: (BuildContext _, GoRouterState etat) =>
+              QuestionnairePage(code: etat.uri.queryParameters['etape']),
         ),
         GoRoute(
           path: Routes.inscriptionIdentite,
@@ -141,6 +193,14 @@ Future<(FauxServiceDossier, FausseSourceSession)> _monter(
         sourceSessionProvider.overrideWithValue(session),
         serviceAuthProvider.overrideWithValue(auth ?? FauxServiceAuth()),
         baseLocaleEnMemoire(),
+        questionnaireInscriptionProvider.overrideWith(
+          () => _QuestionnaireRepondu(questionnaire),
+        ),
+        languesCoursProvider.overrideWith(
+          (_) async => const <LangueCours>[
+            LangueCours(code: 'francais', nom: 'Français'),
+          ],
+        ),
         if (codeRetenu != null)
           codeInvitationRetenuProvider.overrideWith(
             () => _CodeDejaRetenu(codeRetenu),
@@ -238,9 +298,10 @@ Future<void> _taper(WidgetTester tester, Finder cible) async {
 Future<void> _continuer(WidgetTester tester) =>
     _taper(tester, find.text(t.commun.continuer));
 
+/// Le titulaire, questionnaire repondu (langue comprise), de l'identite au
+/// recapitulatif.
 Future<void> _jusquAuRecap(WidgetTester tester) async {
-  await _taper(tester, find.text(t.inscription.usage.moiTitre));
-  await _continuer(tester);
+  expect(find.text('1 sur 3'), findsOneWidget);
   await tester.enterText(find.byKey(const Key('inscription-prenom')), 'Amina');
   await tester.enterText(find.byKey(const Key('inscription-nom')), 'Diallo');
   await _continuer(tester);
@@ -260,19 +321,25 @@ void main() {
       await _monter(tester);
 
       expect(find.text(t.inscription.usage.question), findsOneWidget);
-      expect(find.text('Moi uniquement'), findsOneWidget);
-      expect(
-        find.text('Je souhaite suivre les cours avec mon propre profil élève.'),
-        findsOneWidget,
-      );
-      expect(find.text('Moi et ma famille'), findsOneWidget);
+      // Admission, lot B (directeur, 29/10/2026) : les deux choix du mandat.
+      expect(find.text('Je m\'inscris pour moi'), findsOneWidget);
       expect(
         find.text(
-          'Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous '
-          'pourrez créer votre propre profil élève à tout moment.',
+          'Vous suivez les cours vous-même. Votre profil élève est créé avec '
+          'votre compte.',
         ),
         findsOneWidget,
       );
+      expect(find.text('J\'inscris mon enfant'), findsOneWidget);
+      // Le texte est pose sans coupure de mots (espaces insecables) : on le
+      // cherche par sa clef.
+      expect(
+        find.textContaining(
+          t.inscription.usage.familleDescription.substring(0, 40),
+        ),
+        findsOneWidget,
+      );
+      // La disposition (deux choix egaux) : inscription_choix_egaux_test.dart.
       expect(find.text('J\'ai un code d\'invitation'), findsOneWidget);
       expect(
         find.text(
@@ -291,14 +358,16 @@ void main() {
       WidgetTester tester,
     ) async {
       final (FauxServiceDossier dossier, FausseSourceSession source) =
-          await _monter(tester);
+          await _monter(tester, questionnaire: _qMoi);
       await _jusquAuRecap(tester);
 
-      expect(find.text('4 sur 4'), findsOneWidget);
+      expect(find.text('3 sur 3'), findsOneWidget);
       expect(find.text('Amina Diallo'), findsOneWidget);
-      expect(find.text(t.inscription.modifier), findsNWidgets(3));
+      expect(find.text(t.inscription.questionnaire.recapTitre), findsOneWidget);
+      // Usage, vous, langue, identite, genre.
+      expect(find.text(t.inscription.modifier), findsNWidgets(5));
 
-      await _taper(tester, find.text(t.inscription.creer));
+      await _taper(tester, find.text(t.inscription.questionnaire.envoyer));
 
       expect(dossier.profilsCrees, hasLength(1));
       expect(dossier.profilsCrees.single.role, AppRole.guardian);
@@ -306,6 +375,16 @@ void main() {
       // L5-01 : « Moi » part avec le profil, et ouvre la fiche d'eleve.
       expect(dossier.usages.single.usage, UsageTitulaire.moi);
       expect(dossier.usages.single.suitDesCours, isTrue);
+      // Admission, lot B : l'apprenant du questionnaire part avec la demande.
+      expect(dossier.apprenantsEnvoyes.single, <Map<String, Object?>>[
+        <String, Object?>{
+          'est_titulaire': true,
+          'niveau': 'lecture_lente',
+          'objectif': 'memoriser',
+          'moments': <String>['soir'],
+          'langue': 'francais',
+        },
+      ]);
       expect(source.rafraichissements, 1);
       expect(find.text('ATTENTE'), findsOneWidget);
     });
@@ -447,32 +526,27 @@ void main() {
       expect(t.ficheEleve.mouvements.nature.remboursement, 'استرداد');
     });
 
-    testWidgets('« Moi et ma famille » pose « Suivez-vous aussi des cours ? » '
-        'et ne continue qu\'une fois repondu', (WidgetTester tester) async {
+    testWidgets('« J\'inscris mon enfant » apres la connexion, sans '
+        'questionnaire : les questions s ouvrent', (WidgetTester tester) async {
       await _monter(tester);
-      expect(find.text(t.inscription.usage.coursQuestion), findsNothing);
       await _taper(tester, find.text(t.inscription.usage.familleTitre));
-      expect(find.text(t.inscription.usage.coursQuestion), findsOneWidget);
-      // Sans reponse, « Continuer » reste ferme.
       await _continuer(tester);
-      expect(find.text('1 sur 4'), findsOneWidget);
-      await _taper(tester, find.text(t.inscription.usage.coursOui));
-      await _continuer(tester);
-      expect(find.text('2 sur 4'), findsOneWidget);
+      expect(find.byType(QuestionnairePage), findsOneWidget);
+      expect(
+        find.text(t.inscription.questionnaire.prenomQuestion),
+        findsOneWidget,
+      );
     });
 
-    for (final (String reponse, bool suit) in <(String, bool)>[
-      (t.inscription.usage.coursOui, true),
-      (t.inscription.usage.coursNon, false),
-    ]) {
-      testWidgets('L5-01 : « Famille », cours $suit : la reponse est montree '
-          'au recapitulatif et part avec le profil', (
+    for (final bool suit in <bool>[true, false]) {
+      testWidgets('L5-01 : « Famille », cours $suit : la reponse et l enfant '
+          'sont montres au recapitulatif et partent avec la demande', (
         WidgetTester tester,
       ) async {
-        final (FauxServiceDossier dossier, _) = await _monter(tester);
-        await _taper(tester, find.text(t.inscription.usage.familleTitre));
-        await _taper(tester, find.text(reponse));
-        await _continuer(tester);
+        final (FauxServiceDossier dossier, _) = await _monter(
+          tester,
+          questionnaire: _qFamille(parent: suit),
+        );
         await tester.enterText(
           find.byKey(const Key('inscription-prenom')),
           'Karim',
@@ -487,45 +561,72 @@ void main() {
           ),
           findsOneWidget,
         );
-        await _taper(tester, find.text(t.inscription.creer));
+        expect(
+          find.text(
+            LibellesGroupe.insecable(
+              t.inscription.questionnaire.ligneEnfant(
+                prenom: 'Yasmine',
+                age: 9,
+              ),
+            ),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('inscription-ajouter-profil')),
+          findsOneWidget,
+        );
+        await _taper(tester, find.text(t.inscription.questionnaire.envoyer));
         expect(dossier.usages.single.usage, UsageTitulaire.famille);
         expect(dossier.usages.single.suitDesCours, suit);
+        final List<Map<String, Object?>> apprenants =
+            dossier.apprenantsEnvoyes.single!;
+        expect(apprenants, hasLength(suit ? 2 : 1));
+        expect(apprenants.first, <String, Object?>{
+          'prenom': 'Yasmine',
+          'age': 9,
+          'genre': 'female',
+          'niveau': 'debut_lettres',
+          'objectif': 'apprendre_a_lire',
+          'moments': <String>['matin'],
+          'langue': 'francais',
+        });
+        if (suit) {
+          expect(apprenants.last['est_titulaire'], isTrue);
+        }
       });
     }
 
     testWidgets('identite : les erreurs se disent sous les champs', (
       WidgetTester tester,
     ) async {
-      await _monter(tester);
-      await _taper(tester, find.text(t.inscription.usage.familleTitre));
-      await _taper(tester, find.text(t.inscription.usage.coursNon));
-      await _continuer(tester);
+      await _monter(tester, questionnaire: _qMoi);
       await _continuer(tester);
       expect(find.text(t.inscription.champRequis), findsNWidgets(2));
-      expect(find.text('2 sur 4'), findsOneWidget);
+      expect(find.text('1 sur 3'), findsOneWidget);
     });
 
     testWidgets('retour 48 dp et « Modifier » ramenent au bon endroit', (
       WidgetTester tester,
     ) async {
-      await _monter(tester);
+      await _monter(tester, questionnaire: _qMoi);
       await _jusquAuRecap(tester);
 
       await _taper(
         tester,
         find.byKey(const Key('inscription-modifier-identite')),
       );
-      expect(find.text('2 sur 4'), findsOneWidget);
+      expect(find.text('1 sur 3'), findsOneWidget);
       await tester.enterText(
         find.byKey(const Key('inscription-prenom')),
         'Awa',
       );
       await _continuer(tester);
-      expect(find.text('4 sur 4'), findsOneWidget);
+      expect(find.text('3 sur 3'), findsOneWidget);
       expect(find.text('Awa Diallo'), findsOneWidget);
 
       await _taper(tester, find.byType(DisqueRetour));
-      expect(find.text('3 sur 4'), findsOneWidget);
+      expect(find.text('2 sur 3'), findsOneWidget);
       expect(
         tester.getSize(find.byType(DisqueRetour)).width,
         greaterThanOrEqualTo(48),
@@ -539,9 +640,10 @@ void main() {
       final (FauxServiceDossier dossier, _) = await _monter(
         tester,
         source: source,
+        questionnaire: _qMoi,
       );
       await _jusquAuRecap(tester);
-      await _taper(tester, find.text(t.inscription.creer));
+      await _taper(tester, find.text(t.inscription.questionnaire.envoyer));
 
       expect(find.text(t.inscription.erreurActualisation), findsOneWidget);
       expect(find.byKey(const Key('inscription-deconnexion')), findsOneWidget);
@@ -556,12 +658,15 @@ void main() {
     testWidgets('un echec de creation se dit, et ne fait pas avancer', (
       WidgetTester tester,
     ) async {
-      final (FauxServiceDossier dossier, _) = await _monter(tester);
+      final (FauxServiceDossier dossier, _) = await _monter(
+        tester,
+        questionnaire: _qMoi,
+      );
       dossier.erreurAJeter = StateError('reseau');
       await _jusquAuRecap(tester);
-      await _taper(tester, find.text(t.inscription.creer));
+      await _taper(tester, find.text(t.inscription.questionnaire.envoyer));
       expect(find.text(t.inscription.erreur), findsOneWidget);
-      expect(find.text('4 sur 4'), findsOneWidget);
+      expect(find.text('3 sur 3'), findsOneWidget);
     });
 
     testWidgets('double soumission bloquee : un second appui pendant '
@@ -570,10 +675,11 @@ void main() {
       final (_, FausseSourceSession source) = await _monter(
         tester,
         dossierFourni: dossier,
+        questionnaire: _qMoi,
       );
       await _jusquAuRecap(tester);
 
-      final Finder cta = find.text(t.inscription.creer);
+      final Finder cta = find.text(t.inscription.questionnaire.envoyer);
       await tester.tap(cta);
       await tester.pump();
       // Le premier envoi est toujours en vol (la porte n'est pas liberee) :
@@ -592,21 +698,19 @@ void main() {
 
     testWidgets('le « Modifier » de l-usage et du genre ramenent au bon '
         'endroit', (WidgetTester tester) async {
-      await _monter(tester);
+      await _monter(tester, questionnaire: _qMoi);
       await _jusquAuRecap(tester);
 
-      await _taper(tester, find.byKey(const Key('inscription-modifier-usage')));
-      expect(find.text('1 sur 4'), findsOneWidget);
-      await _taper(tester, find.text(t.inscription.usage.familleTitre));
-      await _taper(tester, find.text(t.inscription.usage.coursNon));
-      await _continuer(tester);
-      expect(find.text('4 sur 4'), findsOneWidget);
-
       await _taper(tester, find.byKey(const Key('inscription-modifier-genre')));
-      expect(find.text('3 sur 4'), findsOneWidget);
+      expect(find.text('2 sur 3'), findsOneWidget);
       await _taper(tester, find.text(t.inscription.genreHomme));
       await _continuer(tester);
-      expect(find.text('4 sur 4'), findsOneWidget);
+      expect(find.text('3 sur 3'), findsOneWidget);
+
+      // Admission, lot B : « Pour qui » se modifie dans le questionnaire.
+      await _taper(tester, find.byKey(const Key('inscription-modifier-usage')));
+      expect(find.byType(QuestionnairePage), findsOneWidget);
+      expect(find.text(t.inscription.usage.question), findsOneWidget);
     });
 
     testWidgets('une fois le profil cree, « Modifier » et le retour '
@@ -615,9 +719,9 @@ void main() {
     ) async {
       final _SourceCapricieuse source = _SourceCapricieuse();
       final FauxServiceAuth auth = FauxServiceAuth();
-      await _monter(tester, source: source, auth: auth);
+      await _monter(tester, source: source, auth: auth, questionnaire: _qMoi);
       await _jusquAuRecap(tester);
-      await _taper(tester, find.text(t.inscription.creer));
+      await _taper(tester, find.text(t.inscription.questionnaire.envoyer));
 
       expect(find.text(t.inscription.erreurActualisation), findsOneWidget);
       // Jamais grise (BOUTONS-GRISES-1) : « Modifier » n'est plus rendu.
@@ -634,7 +738,7 @@ void main() {
       expect(find.byType(DisqueRetour), findsNothing);
       await _taper(tester, find.byKey(const Key('inscription-deconnexion')));
       expect(auth.deconnexions, 1);
-      expect(find.text('3 sur 4'), findsNothing);
+      expect(find.text('2 sur 3'), findsNothing);
     });
 
     testWidgets('la premiere etape n a pas de disque retour, la rangee reste '

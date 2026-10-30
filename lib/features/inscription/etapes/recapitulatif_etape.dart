@@ -7,15 +7,21 @@ import '../../../core/dossier/etat_dossier.dart';
 import '../../../core/dossier/service_dossier.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
+import '../../../core/offres/offre_horaire.dart' show LangueCours;
+import '../../../core/offres/service_offres.dart' show languesCoursProvider;
 import '../../../core/recrutement/port_invitations_comptable.dart';
 import '../../../core/recrutement/port_invitations_enseignant.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/session/session_controleur.dart';
+import '../../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/groupe_reglages.dart';
+import '../../parcours_offres/libelles_parcours.dart' show libelleNiveau;
 import '../brouillon_inscription.dart';
 import '../code_comptable_retenu.dart';
 import '../inscription_page.dart';
+import '../questionnaire/questionnaire_inscription.dart';
+import '../questionnaire/questionnaire_page.dart';
 
 /// `/inscription/recapitulatif` : les reponses, un « Modifier » par ligne, et
 /// la creation du compte.
@@ -49,6 +55,15 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
     );
     final UsageInscription? usage = brouillon.usage;
     if (usage == null) {
+      return;
+    }
+    final QuestionnaireInscription questionnaire = ref.read(
+      questionnaireInscriptionProvider,
+    );
+    if (brouillon.titulaire &&
+        !brouillon.profilCree &&
+        !questionnaire.complet) {
+      context.go(Routes.commencer);
       return;
     }
     if (usage == UsageInscription.comptable) {
@@ -88,11 +103,19 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
                 UsageInscription.enseignant ||
                 UsageInscription.comptable => null,
               },
-              suitDesCours:
-                  usage == UsageInscription.moi ||
-                  brouillon.parentSuitDesCours == true,
+              suitDesCours: brouillon.titulaire
+                  ? questionnaire.titulaireApprend
+                  : usage == UsageInscription.moi ||
+                        brouillon.parentSuitDesCours == true,
+              // Admission, lot B : les apprenants du questionnaire partent
+              // avec la demande, dans la meme transaction.
+              apprenants: brouillon.titulaire
+                  ? questionnaire.apprenantsPourServeur()
+                  : null,
             );
         ref.read(brouillonInscriptionProvider.notifier).noterProfilCree();
+        // La demande est partie : les reponses quittent l'appareil.
+        ref.read(questionnaireInscriptionProvider.notifier).effacer();
         ref.read(codeInvitationRetenuProvider.notifier).oublier();
       }
     } on InvitationNonConsommee {
@@ -174,11 +197,31 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
     }
   }
 
+  /// L'adresse d'une question du questionnaire.
+  String _question(EtapeQuestionnaire etape) =>
+      QuestionnairePage.adresse(etape);
+
+  /// Le nom d'une langue, lu dans le referentiel deja charge par l'etape de
+  /// la langue ; son code sinon.
+  String _nomLangue(String? code) {
+    if (code == null) {
+      return '';
+    }
+    final List<LangueCours> langues =
+        ref.read(languesCoursProvider).value ?? const <LangueCours>[];
+    return langues.where((LangueCours l) => l.code == code).firstOrNull?.nom ??
+        code;
+  }
+
+  /// Une question du questionnaire s'ouvre telle quelle (il revient ici une
+  /// fois tout repondu) ; une etape de l'inscription, avec « Modifier ».
   void _modifier(String route) => context.go(
-    Uri(
-      path: route,
-      queryParameters: <String, String>{parametreModifier: '1'},
-    ).toString(),
+    route.startsWith(Routes.commencer)
+        ? route
+        : Uri(
+            path: route,
+            queryParameters: <String, String>{parametreModifier: '1'},
+          ).toString(),
   );
 
   @override
@@ -187,6 +230,13 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
       brouillonInscriptionProvider,
     );
     exigerEtapesPrecedentes(context, brouillon, _route);
+    final QuestionnaireInscription questionnaire = ref.watch(
+      questionnaireInscriptionProvider,
+    );
+    // Admission, lot B : sans les reponses du questionnaire (un autre
+    // appareil, une memoire effacee), on reprend les premieres questions.
+    final bool sansQuestionnaire =
+        brouillon.titulaire && !brouillon.profilCree && !questionnaire.complet;
     final String? erreur =
         _erreur ??
         (brouillon.profilCree && !_envoi
@@ -206,13 +256,51 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
             onPress: _envoi ? null : () => _modifier(route),
           );
 
+    final bool peutAjouter =
+        brouillon.usage == UsageInscription.famille &&
+        !brouillon.profilCree &&
+        !_envoi &&
+        questionnaire.enfants.length +
+                (questionnaire.titulaireApprend ? 1 : 0) <
+            apprenantsMaximum;
     return CoquilleEtape(
       route: _route,
-      question: t.inscription.recapitulatif,
+      question: brouillon.titulaire
+          ? t.inscription.questionnaire.recapTitre
+          : t.inscription.recapitulatif,
+      explication: sansQuestionnaire
+          ? t.inscription.questionnaire.aucuneReponse
+          : null,
       libelleAction: brouillon.profilCree
           ? t.inscription.reessayer
+          : sansQuestionnaire
+          ? t.commun.continuer
+          : brouillon.titulaire
+          ? t.inscription.questionnaire.envoyer
           : t.inscription.creer,
       onAction: brouillon.usage == null ? null : _creer,
+      complement: peutAjouter
+          ? Center(
+              child: ActionPrincipale(
+                key: const Key('inscription-ajouter-profil'),
+                libelle: t.inscription.questionnaire.ajouterProfil,
+                niveau: NiveauAction.tertiaire,
+                pleineLargeur: false,
+                onPress: () {
+                  final int? rang = ref
+                      .read(questionnaireInscriptionProvider.notifier)
+                      .ajouterEnfant();
+                  if (rang != null) {
+                    context.go(
+                      QuestionnairePage.adresse(
+                        EtapeQuestionnaire(SorteEtape.prenom, rang),
+                      ),
+                    );
+                  }
+                },
+              ),
+            )
+          : null,
       onRetour: _envoi || brouillon.profilCree
           ? null
           : () => context.go(Routes.inscriptionGenre),
@@ -233,25 +321,71 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
               null => '',
             },
             controle: modifier(
-              Routes.inscriptionUsage,
+              brouillon.titulaire
+                  ? _question(const EtapeQuestionnaire(SorteEtape.pourQui))
+                  : Routes.inscriptionUsage,
               'inscription-modifier-usage',
             ),
           ),
           // L5-01 : la reponse « Suivez-vous aussi des cours ? » est montree
           // avant l'envoi, et part avec le profil.
           if (brouillon.usage == UsageInscription.famille &&
-              brouillon.parentSuitDesCours != null)
+              questionnaire.parentSuitDesCours != null)
             LigneRubrique(
               icone: AppIcons.livreOuvert,
               libelle: t.inscription.recap.cours,
-              legende: brouillon.parentSuitDesCours!
+              legende: questionnaire.parentSuitDesCours!
                   ? t.inscription.recap.coursOui
                   : t.inscription.recap.coursNon,
               controle: modifier(
-                Routes.inscriptionUsage,
+                _question(const EtapeQuestionnaire(SorteEtape.parent)),
                 'inscription-modifier-cours',
               ),
             ),
+          // Admission, lot B : qui apprend, et ou il en est.
+          if (brouillon.titulaire && !sansQuestionnaire) ...<LigneRubrique>[
+            if (brouillon.usage == UsageInscription.famille)
+              for (int i = 0; i < questionnaire.enfants.length; i++)
+                LigneRubrique(
+                  icone: AppIcons.eleves,
+                  libelle: LibellesGroupe.insecable(
+                    t.inscription.questionnaire.ligneEnfant(
+                      prenom: questionnaire.enfants[i].prenom.trim(),
+                      age: questionnaire.enfants[i].age ?? 0,
+                    ),
+                  ),
+                  legende: questionnaire.enfants[i].niveau == null
+                      ? ''
+                      : libelleNiveau(questionnaire.enfants[i].niveau!),
+                  controle: modifier(
+                    _question(EtapeQuestionnaire(SorteEtape.prenom, i)),
+                    'inscription-modifier-enfant-$i',
+                  ),
+                ),
+            if (questionnaire.titulaireApprend)
+              LigneRubrique(
+                icone: AppIcons.profil,
+                libelle: t.inscription.questionnaire.ligneVous,
+                legende: questionnaire.niveauTitulaire == null
+                    ? ''
+                    : libelleNiveau(questionnaire.niveauTitulaire!),
+                controle: modifier(
+                  _question(
+                    const EtapeQuestionnaire(SorteEtape.niveauTitulaire),
+                  ),
+                  'inscription-modifier-vous',
+                ),
+              ),
+            LigneRubrique(
+              icone: AppIcons.livreOuvert,
+              libelle: t.inscription.questionnaire.recapLangue,
+              legende: _nomLangue(questionnaire.langue),
+              controle: modifier(
+                _question(const EtapeQuestionnaire(SorteEtape.langue)),
+                'inscription-modifier-langue',
+              ),
+            ),
+          ],
           LigneRubrique(
             icone: AppIcons.profil,
             libelle: t.inscription.recap.identite,

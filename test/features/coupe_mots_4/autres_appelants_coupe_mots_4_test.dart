@@ -30,6 +30,7 @@ import 'package:rewayah_academy/core/tc_parcours/port_signalement.dart';
 import 'package:rewayah_academy/features/demo/cartes_classe_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_enseignant_page.dart';
 import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
+import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart';
 import 'package:rewayah_academy/features/inscription/etapes/genre_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/identite_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/usage_etape.dart';
@@ -99,7 +100,9 @@ void main() {
           tester,
           () => Router.withConfig(
             config: GoRouter(
-              initialLocation: Routes.inscriptionUsage,
+              // Admission, lot B : le titulaire a repondu au questionnaire
+              // et choisi la langue ; l'identite est la suivante.
+              initialLocation: Routes.inscriptionIdentite,
               routes: <RouteBase>[
                 GoRoute(
                   path: Routes.inscriptionUsage,
@@ -126,11 +129,12 @@ void main() {
           ),
           langue: langue,
           interface: interface,
-          surcharges: _inscription(),
+          surcharges: <Override>[
+            ..._inscription(),
+            brouillonInscriptionProvider.overrideWith(_BrouillonTitulaire.new),
+          ],
         );
         await tester.pumpAndSettle();
-        await _toucher(tester, find.text(t.inscription.usage.moiTitre));
-        await _toucher(tester, find.text(t.commun.continuer));
         await tester.enterText(
           find.byKey(const Key('inscription-prenom')),
           'Amina',
@@ -311,4 +315,11 @@ void main() {
       });
     }
   }
+}
+
+/// Admission, lot B : le brouillon d'un titulaire arrive a l'identite.
+class _BrouillonTitulaire extends BrouillonInscriptionControleur {
+  @override
+  BrouillonInscription build() =>
+      const BrouillonInscription(usage: UsageInscription.moi);
 }

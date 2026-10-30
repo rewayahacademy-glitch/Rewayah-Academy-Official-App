@@ -53,7 +53,7 @@ class _IdentiteEtapeState extends ConsumerState<IdentiteEtape> {
     ref
         .read(brouillonInscriptionProvider.notifier)
         .saisirIdentite(prenom: _prenom.text, nom: _nom.text);
-    avancerDepuis(context, _route);
+    avancerDepuis(context, ref.read(brouillonInscriptionProvider), _route);
   }
 
   @override
@@ -75,7 +75,11 @@ class _IdentiteEtapeState extends ConsumerState<IdentiteEtape> {
           : null,
       libelleAction: t.commun.continuer,
       onAction: _continuer,
-      onRetour: () => reculerDepuis(context, _route),
+      onRetour: reculerDepuis(
+        context,
+        ref.watch(brouillonInscriptionProvider),
+        _route,
+      ),
       enfant: AutofillGroup(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

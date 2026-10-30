@@ -5,16 +5,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
-import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/app_bottom_sheet.dart';
 import 'package:rewayah_academy/core/widgets/confirm_destructive.dart';
+import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart';
 import 'package:rewayah_academy/features/inscription/etapes/identite_etape.dart';
-import 'package:rewayah_academy/features/inscription/etapes/usage_etape.dart';
-import 'package:rewayah_academy/features/inscription/inscription_page.dart';
 
 import '../support/harnais.dart';
 
@@ -36,6 +34,13 @@ import '../support/harnais.dart';
 ///    (`AppBottomSheet.ouvrir`) : le prouver ici couvre transitivement
 ///    `ConfirmDestructive`, `FeuilleDemandeTuteur` et `FeuilleRegle`, qui n'en
 ///    sont que des contenus.
+/// Le brouillon d'un titulaire arrive a la page d'identite.
+class _BrouillonALIdentite extends BrouillonInscriptionControleur {
+  @override
+  BrouillonInscription build() =>
+      const BrouillonInscription(usage: UsageInscription.moi);
+}
+
 void main() {
   group('Ordre de focus au clavier', () {
     testWidgets(
@@ -47,18 +52,10 @@ void main() {
         // `test/features/inscription_test.dart`.
         await tester.pumpWidget(
           hoteRoutant(
-            depart: Routes.inscription,
+            // Admission, lot B : le titulaire a repondu au questionnaire et
+            // choisi la langue ; la page d'identite est la suivante.
+            depart: Routes.inscriptionIdentite,
             routes: <RouteBase>[
-              GoRoute(
-                path: Routes.inscription,
-                builder: (BuildContext _, GoRouterState _) =>
-                    const InscriptionPage(),
-              ),
-              GoRoute(
-                path: Routes.inscriptionUsage,
-                builder: (BuildContext _, GoRouterState _) =>
-                    const UsageEtape(),
-              ),
               GoRoute(
                 path: Routes.inscriptionIdentite,
                 builder: (BuildContext _, GoRouterState _) =>
@@ -68,20 +65,13 @@ void main() {
             surcharges: <Override>[
               serviceDossierProvider.overrideWithValue(FauxServiceDossier()),
               sourceSessionProvider.overrideWithValue(FausseSourceSession()),
+              brouillonInscriptionProvider.overrideWith(
+                _BrouillonALIdentite.new,
+              ),
             ],
           ),
         );
         await tester.pumpAndSettle();
-
-        Future<void> taper(Finder cible) async {
-          await tester.ensureVisible(cible);
-          await tester.pumpAndSettle();
-          await tester.tap(cible);
-          await tester.pumpAndSettle();
-        }
-
-        await taper(find.text(t.inscription.usage.moiTitre));
-        await taper(find.text(t.commun.continuer));
 
         final List<Finder> champs = <Finder>[
           find.byKey(const Key('inscription-prenom')),

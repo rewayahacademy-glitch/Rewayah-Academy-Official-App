@@ -492,7 +492,7 @@ void main() {
             Routes.attente,
             repere: false,
           );
-          expect(find.text(t.attente.accesEnPreparation), findsOneWidget);
+          expect(find.text(t.attente.demandeMessage), findsOneWidget);
           expect(find.text(t.attente.deposerLaPiece), findsNothing);
           debugPrint(
             'PNG ${await capturer(tester, fichier('tuteur_attente_ouverture'))}',

@@ -196,7 +196,7 @@ declare
     -- CAND-L3 (23/10) : inscription publique ou sur invitation (compte, accord, plafond horaire ; la candidature suit la confirmation du courriel).
     'inscrire_candidat(text,text,text,gender,text,text,text)',
     'inscrire_comptable_invite(text,text,text,gender)',
-    'inscrire_titulaire(text,text,text,gender,text,boolean)',
+    'inscrire_titulaire(text,text,text,gender,text,boolean,jsonb)',
     'inscrire_enseignant_invite(text,text,text,gender)',
     -- CAND-L2A2 (22/10) : infirmation d'un moyen de paiement declare (transition 25), direction active de son cote (moteur, motif).
     'infirmer_moyen_paiement_candidat(uuid,text,text,text,integer,text)',
