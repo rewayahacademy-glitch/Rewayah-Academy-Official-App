@@ -47,25 +47,61 @@ class CadenceSeance extends StatefulWidget {
   State<CadenceSeance> createState() => _CadenceSeanceEtat();
 }
 
-class _CadenceSeanceEtat extends State<CadenceSeance> {
-  Timer? _minuteur;
-  late DateTime _maintenant = widget.lire();
+class _CadenceSeanceEtat extends State<CadenceSeance> with CadenceSeanceEtat {
+  @override
+  DateTime lireCadence() => widget.lire();
 
   @override
   void initState() {
     super.initState();
-    _armer();
+    suivreBascules(widget.instants);
   }
 
   @override
   void didUpdateWidget(CadenceSeance ancien) {
     super.didUpdateWidget(ancien);
+    suivreBascules(widget.instants);
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.constructeur(maintenantCadence);
+}
+
+/// Le minuteur de [CadenceSeance], pour un ecran qui porte lui-meme l'heure
+/// (un `ConsumerState` dont les lectures doivent rester dans son `build`).
+/// [maintenantCadence] avance a la prochaine bascule donnee a
+/// [suivreBascules] et a chaque minute pleine ; un seul `Timer` a la fois.
+mixin CadenceSeanceEtat<T extends StatefulWidget> on State<T> {
+  Timer? _minuteurCadence;
+  List<DateTime> _instantsCadence = const <DateTime>[];
+  bool _armeCadence = false;
+
+  /// L'horloge (`DateTime.now` en production, simulee dans les tests).
+  DateTime lireCadence();
+
+  /// L'heure de la derniere bascule ou minute vue.
+  late DateTime maintenantCadence = lireCadence();
+
+  /// Les bascules a voir a l'instant exact. Sans effet si elles n'ont pas
+  /// change : peut s'appeler a chaque `build`.
+  void suivreBascules(List<DateTime> instants) {
+    if (_armeCadence && _memes(instants, _instantsCadence)) return;
+    _instantsCadence = List<DateTime>.of(instants);
+    _armeCadence = true;
     _armer();
   }
 
+  static bool _memes(List<DateTime> a, List<DateTime> b) {
+    if (a.length != b.length) return false;
+    for (int i = 0; i < a.length; i++) {
+      if (!a[i].isAtSameMomentAs(b[i])) return false;
+    }
+    return true;
+  }
+
   void _armer() {
-    _minuteur?.cancel();
-    final DateTime m = widget.lire();
+    _minuteurCadence?.cancel();
+    final DateTime m = lireCadence();
     DateTime prochain = DateTime(
       m.year,
       m.month,
@@ -73,22 +109,19 @@ class _CadenceSeanceEtat extends State<CadenceSeance> {
       m.hour,
       m.minute,
     ).add(const Duration(minutes: 1));
-    for (final DateTime i in widget.instants) {
+    for (final DateTime i in _instantsCadence) {
       if (i.isAfter(m) && i.isBefore(prochain)) prochain = i;
     }
-    _minuteur = Timer(prochain.difference(m), () {
+    _minuteurCadence = Timer(prochain.difference(m), () {
       if (!mounted) return;
-      setState(() => _maintenant = widget.lire());
+      setState(() => maintenantCadence = lireCadence());
       _armer();
     });
   }
 
   @override
   void dispose() {
-    _minuteur?.cancel();
+    _minuteurCadence?.cancel();
     super.dispose();
   }
-
-  @override
-  Widget build(BuildContext context) => widget.constructeur(_maintenant);
 }

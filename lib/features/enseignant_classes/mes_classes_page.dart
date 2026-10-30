@@ -303,9 +303,12 @@ String _quand(ClasseListee l, DateTime maintenant) {
   if (p == null) return t.enseignant.classes.sansProchaine;
   final TextesCompteARebours mots = (
     imminent: () => t.enseignant.classes.reste.imminent,
-    minutes: (int m) => t.enseignant.classes.reste.minutes(minutes: m),
-    heures: (int h, String m) =>
-        t.enseignant.classes.reste.heures(heures: h, minutes: m),
+    minutes: (int m) => LibellesGroupe.insecable(
+      t.enseignant.classes.reste.minutes(minutes: m),
+    ),
+    heures: (int h, String m) => LibellesGroupe.insecable(
+      t.enseignant.classes.reste.heures(heures: h, minutes: m),
+    ),
     demain: (String _) => t.enseignant.classes.reste.demain,
     jours: (int j) => t.enseignant.classes.reste.jours(jours: j),
   );

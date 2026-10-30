@@ -73,7 +73,12 @@ class CarteGroupe extends StatelessWidget {
     this.rejoindreRetire = false,
     this.attenteEntree,
     this.refusEntree,
+    this.dominante = false,
   });
+
+  /// La Classe en cours ou la plus proche de la liste : la seule carte mise
+  /// en avant (Mes classes, 30/10/2026).
+  final bool dominante;
 
   /// La phrase dite sous « Rejoindre » apres un appui qui n'a pas pu entrer
   /// (le concierge n'a rendu aucune seance, ou l'a refusee, B2.2 bis (b)).
@@ -115,6 +120,7 @@ class CarteGroupe extends StatelessWidget {
     final SessionClockVM? horloge = groupe.horloge;
 
     return AppCard(
+      dominante: dominante,
       onPress: onOuvrir,
       libelleSemantique: LibellesGroupe.ouvrirGroupe(groupe.libelle),
       entete: _Entete(groupe: groupe),

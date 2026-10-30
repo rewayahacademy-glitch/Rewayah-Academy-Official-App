@@ -16,7 +16,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/seance_famille/seance_famille.dart';
 import 'package:rewayah_academy/core/tc_groupe/concierge_seance.dart';
 import 'package:rewayah_academy/core/tc_groupe/concierge_seance_memoire.dart';
-import 'package:rewayah_academy/core/tc_horloge/port_horloge_seance.dart';
+import 'package:rewayah_academy/core/tc_horloge/horloge_vivante.dart';
 import 'package:rewayah_academy/core/tc_horloge/session_clock_vm.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/accueil_famille/accueil_famille_page.dart';
@@ -69,8 +69,8 @@ Future<void> _monter(
     ProviderScope(
       overrides: <Override>[
         ...surchargesClasse(seances: const <SeanceFamille>[]),
-        horlogeGroupeProvider(_classe)
-            .overrideWith((Ref _) => Stream<SessionClockVM>.value(horloge)),
+        horlogeClasseVivanteProvider(_classe)
+            .overrideWith((Ref _) => Stream<SessionClockVM?>.value(horloge)),
         portConciergeProvider.overrideWithValue(concierge),
       ],
       child: TranslationProvider(

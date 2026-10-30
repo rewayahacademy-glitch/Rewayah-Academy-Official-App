@@ -335,9 +335,9 @@ abstract final class LibellesGroupe {
   /// Les mots du compte a rebours d'une Classe (« Cours dans 12 min »).
   static final TextesCompteARebours textesClasse = (
     imminent: () => t.tc.groupe.temps.imminent,
-    minutes: (int m) => t.tc.groupe.temps.dansMinutes(minutes: m),
+    minutes: (int m) => insecable(t.tc.groupe.temps.dansMinutes(minutes: m)),
     heures: (int h, String m) =>
-        t.tc.groupe.temps.dansHeures(heures: h, minutes: m),
+        insecable(t.tc.groupe.temps.dansHeures(heures: h, minutes: m)),
     demain: (String heure) => t.tc.groupe.temps.demainA(heure: heure),
     jours: (int j) => t.tc.groupe.temps.dansJours(jours: j),
   );

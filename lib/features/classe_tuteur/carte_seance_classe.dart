@@ -11,7 +11,7 @@ import '../../core/presence/vue_presence.dart';
 import '../../core/seance_famille/seance_famille.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
-import '../../core/tc_horloge/port_horloge_seance.dart';
+import '../../core/tc_horloge/horloge_vivante.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_palette.dart';
@@ -176,7 +176,7 @@ class CarteSeanceClasse extends ConsumerWidget {
     // Concierge (a), tuteur : l'horloge de la Classe, tiree des creneaux meme
     // sans seance, ouvre la porte que la seance connue ne dit pas encore.
     final SessionClockVM? horlogeClasse = ref
-        .watch(horlogeGroupeProvider(contexte.classeId))
+        .watch(horlogeClasseVivanteProvider(contexte.classeId))
         .value;
     if (laSeance == null) {
       if (classeRejoignableSansSeance(horlogeClasse)) {

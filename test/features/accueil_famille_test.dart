@@ -28,6 +28,8 @@ import 'package:rewayah_academy/core/seance_famille/seance_famille.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_home_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
+import 'package:rewayah_academy/core/tc_horloge/horloge_vivante.dart';
+import 'package:rewayah_academy/core/tc_horloge/port_horloge_seance.dart';
 import 'package:rewayah_academy/core/tc_parcours/port_travail_a_venir.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
@@ -54,6 +56,8 @@ import '../fixtures/tuteur/foyers.dart';
 import '../router/support_routeur.dart';
 import '../support/aucun_mot_coupe.dart';
 import '../support/harnais.dart';
+import '../support/port_horloge_simule.dart';
+import '../teaching_core/a/faux/faux_groupes.dart' show PortHorlogeMuet;
 
 /// Le premier profil retenu : « Élève A1 » (tri par prenom, contrat K1).
 const String _a1 = 'foyer-a-eleve-1';
@@ -171,6 +175,7 @@ Future<GoRouter> _monter(
   Object? erreurSeances,
   Size taille = const Size(390, 844),
   List<Override> autres = const <Override>[],
+  PortHorlogeSeance? horloges,
   double echelle = 1,
   TextDirection? direction,
 }) async {
@@ -195,6 +200,7 @@ Future<GoRouter> _monter(
         ...surchargesRouteur(
           FausseSourceSession(sessionActive(AppRole.guardian)),
           appairage: appairage,
+          horloges: horloges ?? const PortHorlogeMuet(),
         ),
         portSeancesFamilleProvider.overrideWithValue(faux),
         portClassesFoyerProvider.overrideWithValue(
@@ -1280,6 +1286,57 @@ void main() {
         find.text(LignePresence.libelle(EtatPresence.inconnu)),
         findsOneWidget,
       );
+    });
+  });
+
+  group('Mes classes 30/10 : Rejoindre a T-20 pile sur l Accueil famille', () {
+    testWidgets('horloge de la Classe (chemin 2) : pas de bouton a T-20 '
+        'moins 1 s, le bouton a T-20 pile, sans relire toutes les 30 s', (
+      WidgetTester tester,
+    ) async {
+      final DateTime debut = DateTime.utc(2026, 10, 30, 17);
+      // T-20 moins 40 s.
+      final DateTime depart = debut.subtract(
+        const Duration(minutes: 20, seconds: 40),
+      );
+      final DateTime t0 = tester.binding.clock.now();
+      DateTime serveur() =>
+          depart.add(tester.binding.clock.now().difference(t0));
+      final PortHorlogeSimule port = PortHorlogeSimule(
+        debutUtc: debut,
+        maintenant: serveur,
+        sessionId: null,
+      );
+      await _monter(
+        tester,
+        depart: Routes.tuteurAccueil,
+        // Aucune seance connue de la famille : seule l'horloge de la Classe
+        // ouvre la porte.
+        seances: <SeanceFamille>[],
+        horloges: port,
+      );
+      final int lues = port.lectures;
+      expect(lues, greaterThan(0), reason: 'lue a l affichage');
+      final Finder rejoindre = find.byKey(AccueilFamillePage.rejoindreKey);
+      expect(rejoindre, findsNothing);
+
+      final Duration avantOuverture = debut
+          .subtract(const Duration(minutes: 20))
+          .difference(serveur());
+      await tester.pump(avantOuverture - const Duration(seconds: 1));
+      await tester.pump();
+      expect(rejoindre, findsNothing, reason: 'T-20 moins 1 s');
+      expect(port.lectures, lues, reason: 'aucune relecture avant la bascule');
+
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pump();
+      expect(rejoindre, findsOneWidget, reason: 'T-20 pile');
+
+      await tester.pump(margeBascule);
+      await tester.pump();
+      expect(port.lectures, greaterThan(lues), reason: 'relue a la bascule');
+      expect(rejoindre, findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
     });
   });
 }

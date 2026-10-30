@@ -1,12 +1,18 @@
+import 'package:flutter/widgets.dart' show SizedBox;
 // `Override` n'est pas exporte par l'entree principale de Riverpod 3.
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
+import 'package:rewayah_academy/core/tc_groupe/groupes_supabase.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/tc_groupe/port_groupes.dart';
 import 'package:rewayah_academy/core/tc_horloge/demonstration_horloge.dart';
+import 'package:rewayah_academy/core/tc_horloge/horloge_vivante.dart';
+import 'package:rewayah_academy/core/tc_horloge/port_horloge_seance.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
 import 'package:rewayah_academy/core/widgets/offline_banner.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
@@ -14,6 +20,7 @@ import 'package:rewayah_academy/features/tc_mes_groupes/carte_groupe.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/mes_groupes_page.dart';
 
 import '../../support/annonces.dart';
+import '../../support/port_horloge_simule.dart';
 import 'faux/faux_groupes.dart';
 import 'faux/faux_reseau.dart';
 import 'support/hote_tc_a.dart';
@@ -244,6 +251,97 @@ void main() {
       expect(find.textContaining(LibellesGroupe.prolongee), findsOneWidget);
       expect(find.textContaining(LibellesGroupe.terminee), findsOneWidget);
       expect(find.text(LibellesGroupe.aucuneSeance), findsOneWidget);
+    });
+  });
+
+  group('Mes classes 30/10 : liste B a l heure du serveur', () {
+    // Deux Classes telles que la vue de production les rend : sans horloge.
+    GroupSummaryVM classe(String id, String libelle) =>
+        groupeDepuisLigne(<String, dynamic>{
+          'groupe_id': id,
+          'libelle': libelle,
+          'seuil_max': 5,
+          'nb_membres': 3,
+          'teacher_id': 't1',
+          'teacher_prenom': 'Aminata',
+        });
+
+    testWidgets('la plus proche en tete et seule mise en avant ; pas de '
+        'Rejoindre a T-21, Rejoindre a T-20 pile, une lecture par carte a '
+        'l affichage puis une a la bascule', (WidgetTester tester) async {
+      final DateTime debut = DateTime.utc(2026, 10, 30, 17);
+      // T-20 moins 40 s : un battement a la minute arriverait 20 s trop tard.
+      final DateTime depart = debut.subtract(
+        const Duration(minutes: 20, seconds: 40),
+      );
+      Duration ecoule = Duration.zero;
+      final PortHorlogeSimule port = PortHorlogeSimule(
+        debutUtc: debut,
+        maintenant: () => depart.add(ecoule),
+        debutsParClasse: <String, DateTime>{
+          'g-loin': debut.add(const Duration(hours: 3)),
+        },
+      );
+      Future<void> avancer(Duration d) async {
+        ecoule += d;
+        await tester.pump(d);
+        await tester.pump();
+      }
+
+      await tester.pumpWidget(
+        hoteTcA(
+          MesGroupesPage(onRejoindre: (_) {}),
+          surcharges: <Override>[
+            portGroupesProvider.overrideWithValue(
+              FauxPortGroupes(
+                groupes: <GroupSummaryVM>[
+                  classe('g-loin', 'Classe Loin'),
+                  classe('g-proche', 'Classe Proche'),
+                ],
+              ),
+            ),
+            portHorlogeSeanceProvider.overrideWithValue(port),
+            serviceReseauProvider.overrideWithValue(const FauxServiceReseau()),
+          ],
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(port.lectures, 2, reason: 'une lecture par carte a l affichage');
+      expect(
+        <String>[
+          for (final CarteGroupe c in tester.widgetList<CarteGroupe>(
+            find.byType(CarteGroupe),
+          ))
+            c.groupe.libelle,
+        ],
+        <String>['Classe Proche', 'Classe Loin'],
+        reason: 'la plus proche en tete, dans l ordre de lecture',
+      );
+      AppCard carteDe(String libelle) => tester.widget<AppCard>(
+        find.ancestor(of: find.text(libelle), matching: find.byType(AppCard)),
+      );
+      expect(carteDe('Classe Proche').dominante, isTrue);
+      expect(carteDe('Classe Loin').dominante, isFalse);
+
+      final Finder rejoindre = find.text(LibellesGroupe.rejoindre);
+      expect(rejoindre, findsNothing, reason: 'T-20 moins 40 s');
+      await avancer(const Duration(seconds: 39));
+      expect(rejoindre, findsNothing, reason: 'T-20 moins 1 s');
+      await avancer(const Duration(seconds: 1));
+      expect(rejoindre, findsOneWidget, reason: 'T-20 pile');
+      expect(port.lectures, 2, reason: 'rien relu avant la bascule');
+      await avancer(margeBascule);
+      expect(port.lectures, 3, reason: 'relue a la bascule de sa carte');
+      expect(rejoindre, findsOneWidget);
+
+      // Aucune relecture toutes les 30 s : rien jusqu'a T0.
+      await avancer(const Duration(minutes: 19));
+      expect(port.lectures, 3);
+      await avancer(const Duration(minutes: 1));
+      expect(port.lectures, 4, reason: 'relue a T0');
+      await tester.pumpWidget(const SizedBox());
     });
   });
 }

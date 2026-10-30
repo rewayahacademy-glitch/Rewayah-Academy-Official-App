@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -20,12 +18,13 @@ import '../../core/reseau/service_reseau.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/cadence_seance.dart';
 import '../../core/theme/app_color_pair.dart';
-import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/video/pre_vol.dart' show seuilOuvertureSalle;
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/audio_label.dart';
 import '../../core/widgets/bento_tile.dart';
@@ -89,6 +88,17 @@ const Key clePulsationImminente = Key('elv02-pulsation');
 /// qui fait basculer le bloc en violet, et un test doit pouvoir le nommer.
 const Duration seuilImminence = Duration(minutes: 5);
 
+/// Vrai quand la salle du cours a venir est deja ouverte : de
+/// [seuilOuvertureSalle] avant le debut (le seuil unique, celui du serveur,
+/// `join_window_minutes`) jusqu'au debut. « Rejoindre » parait alors sur le
+/// bloc du cours a venir, sans la pastille « En direct », qui attend le debut
+/// (directeur, 30/10/2026 : Rejoindre des T-20, sans recharger).
+bool salleOuverteAvantDebut(Seance? prochain, DateTime maintenant) =>
+    prochain != null &&
+    !prochain.enCoursA(maintenant) &&
+    maintenant.isBefore(prochain.debut) &&
+    !maintenant.isBefore(prochain.debut.subtract(seuilOuvertureSalle));
+
 /// L'etat du bloc principal, a un instant donne.
 ///
 /// Fonction pure, comme `deciderRedirection` : les six etats se verifient sans
@@ -117,7 +127,10 @@ EtatAccueilEleve etatAccueilEleve({
         ? EtatAccueilEleve.horsLigne
         : EtatAccueilEleve.coursEnDirect;
   }
-  if (!_memeJour(prochain.debut, maintenant)) {
+  // Un cours de 00:10 ouvre sa salle la veille a 23:50 : il est alors le
+  // cours a venir, pas un cours d'un autre jour.
+  if (!_memeJour(prochain.debut, maintenant) &&
+      !salleOuverteAvantDebut(prochain, maintenant)) {
     return EtatAccueilEleve.aucunCoursAujourdhui;
   }
   return prochain.avantDebut(maintenant) <= seuilImminence
@@ -152,30 +165,24 @@ class AccueilElevePage extends ConsumerStatefulWidget {
   ConsumerState<AccueilElevePage> createState() => _AccueilElevePageEtat();
 }
 
-class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
-  Timer? _minuteur;
-  late DateTime _maintenant = widget.horloge();
-
+class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage>
+    with CadenceSeanceEtat {
   @override
-  void initState() {
-    super.initState();
-    // Le compte a rebours se lit en minutes, comme celui de `ENS-02` : le
-    // rafraichir a la seconde ferait travailler l'ecran soixante fois pour rien.
-    _minuteur = Timer.periodic(
-      const Duration(minutes: 1),
-      (Timer _) => setState(() => _maintenant = widget.horloge()),
-    );
-  }
-
-  @override
-  void dispose() {
-    _minuteur?.cancel();
-    super.dispose();
-  }
+  DateTime lireCadence() => widget.horloge();
 
   @override
   Widget build(BuildContext context) {
     final AsyncValue<List<Seance>> seances = ref.watch(seancesProvider);
+    // Le compte a rebours se lit en minutes, comme celui de `ENS-02` ; les
+    // bascules (ouverture de la salle a T-20, debut, fin) se voient a
+    // l'instant exact, sans recharger : un seul minuteur, rearme sur la
+    // prochaine (`CadenceSeanceEtat`).
+    suivreBascules(<DateTime>[
+      for (final Seance s in seances.value ?? const <Seance>[])
+        ...basculesSeance(s.debut, s.fin),
+    ]);
+    final DateTime maintenant = maintenantCadence;
+
     // Lu par `value`, jamais par le type d'execution de l'AsyncValue : Riverpod
     // relance un provider en echec et repasse par AsyncLoading. Tant que la
     // reponse manque, l'appareil est repute en ligne.
@@ -193,12 +200,12 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
     }
 
     final List<Seance> toutes = seances.value ?? const <Seance>[];
-    final Seance? prochain = prochainCours(toutes, _maintenant);
-    final Seance? annulee = seanceAnnuleeDuJour(toutes, _maintenant);
+    final Seance? prochain = prochainCours(toutes, maintenant);
+    final Seance? annulee = seanceAnnuleeDuJour(toutes, maintenant);
     final EtatAccueilEleve etat = etatAccueilEleve(
       prochain: prochain,
       annulee: annulee,
-      maintenant: _maintenant,
+      maintenant: maintenant,
       horsLigne: horsLigne,
     );
 
@@ -251,10 +258,7 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
       relire: () => ref.invalidate(seancesProvider),
       instants: prochain == null
           ? const <DateTime>[]
-          : <DateTime>[
-              prochain.debut.subtract(AppDelais.avantSeanceRelecture),
-              prochain.debut,
-            ],
+          : <DateTime>[...basculesSeance(prochain.debut, prochain.fin).take(3)],
       horloge: widget.horloge,
       child: PageShell(
         child: enChargement
@@ -304,7 +308,8 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
                       etat: etat,
                       prochain: prochain,
                       interruptions: interruptions,
-                      maintenant: _maintenant,
+                      maintenant: maintenant,
+                      horsLigne: horsLigne,
                       accesFerme: accesFerme,
                       accesEnLecture: accesEnLecture,
                     ),
@@ -327,6 +332,7 @@ class _BlocPrincipal extends StatelessWidget {
     required this.prochain,
     required this.interruptions,
     required this.maintenant,
+    this.horsLigne = false,
     this.accesFerme = false,
     this.accesEnLecture = false,
   });
@@ -335,6 +341,9 @@ class _BlocPrincipal extends StatelessWidget {
   final Seance? prochain;
   final List<InterruptionPriere> interruptions;
   final DateTime maintenant;
+
+  /// Sans reseau : « Rejoindre », salle ouverte avant le debut, dit l'attente.
+  final bool horsLigne;
 
   /// Seances fermees (FI-9a) : Rejoindre n'est pas rendu.
   final bool accesFerme;
@@ -370,6 +379,10 @@ class _BlocPrincipal extends StatelessWidget {
           paire: paire,
           interruptions: interruptions,
           maintenant: maintenant,
+          salleOuverte: salleOuverteAvantDebut(prochain, maintenant),
+          joignable: !horsLigne && !accesEnLecture,
+          accesFerme: accesFerme,
+          accesEnLecture: accesEnLecture,
         ),
         EtatAccueilEleve.coursEnDirect ||
         EtatAccueilEleve.horsLigne => _CoursEnDirect(
@@ -413,12 +426,29 @@ class _CoursAVenir extends StatelessWidget {
     required this.paire,
     required this.interruptions,
     required this.maintenant,
+    this.salleOuverte = false,
+    this.joignable = true,
+    this.accesFerme = false,
+    this.accesEnLecture = false,
   });
 
   final Seance seance;
   final AppColorPair paire;
   final List<InterruptionPriere> interruptions;
   final DateTime maintenant;
+
+  /// La salle est ouverte avant le debut (voir [salleOuverteAvantDebut]) :
+  /// « Rejoindre » parait sous le compte a rebours.
+  final bool salleOuverte;
+
+  /// Faux sans reseau ou tant que l'acces se lit : l'appui dit pourquoi.
+  final bool joignable;
+
+  /// Seances fermees (FI-9a) : le bouton est absent, jamais grise.
+  final bool accesFerme;
+
+  /// L'acces se lit encore : l'appui dit d'attendre un instant.
+  final bool accesEnLecture;
 
   @override
   Widget build(BuildContext context) {
@@ -449,6 +479,19 @@ class _CoursAVenir extends StatelessWidget {
           style: paire.applyTo(textes.bodyMedium ?? const TextStyle()),
         ),
         _Interruptions(interruptions: interruptions, paire: paire),
+        if (salleOuverte && !accesFerme) ...<Widget>[
+          Ecart.vLg,
+          _Rejoindre(
+            joignable: joignable,
+            accesEnLecture: accesEnLecture,
+            paire: paire,
+            onRejoindre: () => GoRouter.of(context).go(
+              Routes.salle,
+              // Le billet passe par `extra`, jamais par l'URL (ADR-005).
+              extra: BilletSalle(sessionId: seance.id, emisA: DateTime.now()),
+            ),
+          ),
+        ],
       ],
     );
   }
@@ -926,9 +969,12 @@ String _compteARebours(Duration reste, DateTime debut) =>
       debut: debut,
       textes: (
         imminent: () => t.eleve.accueil.imminent,
-        minutes: (int m) => t.eleve.accueil.dansMinutes(minutes: '$m'),
-        heures: (int h, String m) =>
-            t.eleve.accueil.dansHeures(heures: '$h', minutes: m),
+        minutes: (int m) => LibellesGroupe.insecable(
+          t.eleve.accueil.dansMinutes(minutes: '$m'),
+        ),
+        heures: (int h, String m) => LibellesGroupe.insecable(
+          t.eleve.accueil.dansHeures(heures: '$h', minutes: m),
+        ),
         demain: (String heure) => t.eleve.accueil.demainA(heure: heure),
         jours: (int j) => t.eleve.accueil.dansJours(jours: j),
       ),
