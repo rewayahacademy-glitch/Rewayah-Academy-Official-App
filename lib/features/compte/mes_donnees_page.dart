@@ -32,10 +32,24 @@ import 'carte_rubriques.dart';
 
 /// La demande de suppression en cours et ce qui reste du, lus au serveur
 /// (`ma_situation_suppression`). Relu a chaque ouverture de l'ecran.
+///
+/// Un refus ou une capacite absente ne se relance pas (R10, essai du
+/// 24/10/2026) : le Compte de la direction et de l'eleve mineur pose la
+/// question pour masquer la rubrique, le serveur repond 403, et la relance
+/// par defaut de Riverpod 3 refaisait l'appel dix fois en quarante secondes.
+/// Les autres echecs (reseau) gardent la relance par defaut.
 final FutureProvider<SituationSuppression> situationSuppressionProvider =
     FutureProvider.autoDispose<SituationSuppression>(
       (Ref ref) => ref.watch(portMesDonneesProvider).situation(),
+      retry: relanceSituationSuppression,
     );
+
+/// La relance de [situationSuppressionProvider] : aucune sur un refus ou une
+/// capacite absente, celle de Riverpod sinon. Pure, testee.
+Duration? relanceSituationSuppression(int essai, Object erreur) =>
+    erreur is PermissionInsuffisante || erreur is CapaciteIndisponible
+    ? null
+    : ProviderContainer.defaultRetry(essai, erreur);
 
 /// Vrai quand « Mes donnees » existe pour cette personne : la source repond,
 /// ou echoue pour une autre raison qu'une capacite absente ou un refus. C'est

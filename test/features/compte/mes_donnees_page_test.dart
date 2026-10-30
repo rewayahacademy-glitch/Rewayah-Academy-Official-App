@@ -487,6 +487,31 @@ void main() {
       expect(find.byKey(RubriqueMesDonnees.ligneKey), findsNothing);
     });
 
+    // R10 (essai du 24/10/2026) : onze appels refuses en quarante secondes
+    // a chaque ouverture du Compte de la direction.
+    testWidgets('un refus du serveur n est demande qu une fois', (
+      WidgetTester tester,
+    ) async {
+      final _FauxPort port = _FauxPort(
+        erreurSituation: const PermissionInsuffisante('x'),
+      );
+      await monterRubrique(tester, port, onOuvrir: () {});
+      await tester.pump(const Duration(minutes: 1));
+      expect(port.lectures, 1);
+    });
+
+    test('la relance : aucune sur un refus ou une capacite absente', () {
+      expect(
+        relanceSituationSuppression(0, const PermissionInsuffisante('x')),
+        isNull,
+      );
+      expect(
+        relanceSituationSuppression(0, const CapaciteIndisponible('x')),
+        isNull,
+      );
+      expect(relanceSituationSuppression(0, Exception('panne')), isNotNull);
+    });
+
     testWidgets('presente sur une panne : la page dira l echec', (
       WidgetTester tester,
     ) async {
