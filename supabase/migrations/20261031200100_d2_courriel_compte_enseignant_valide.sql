@@ -15,7 +15,7 @@
 -- deja actifs ne recoivent rien. Sans adresse, rien ne part et la decision
 -- n'est pas empechee.
 --
--- Ni DELETE, ni DROP, ni TRUNCATE.
+-- Aucune suppression : ni ligne, ni objet, ni table videe.
 
 begin;
 

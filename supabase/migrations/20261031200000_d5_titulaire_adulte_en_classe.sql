@@ -21,7 +21,7 @@
 -- comme participant `student`, et `autoriser_jeton_video` prend le role de
 -- `session_participants`, jamais celui du compte.
 --
--- Ni DELETE, ni DROP, ni TRUNCATE.
+-- Aucune suppression : ni ligne, ni objet, ni table videe.
 
 begin;
 
