@@ -64,6 +64,8 @@ sans rien faire.
 
 ### C. Notifications dans l'application
 
+**Lignes 10 à 15 : prouvées par le directeur le 29/10/2026** (lot 2, en production ; relayé par le pilote le 29/10).
+
 10. Chaque changement des lignes 4 à 9 crée une notification pour chaque personne
     concernée (élève, tuteur du foyer, enseignante), quel que soit le chemin par
     lequel l'administration a agi : écran des groupes, regroupement, ou cloche.

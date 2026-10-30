@@ -88,6 +88,13 @@ declare
     'creer_classe_depuis_regroupement(uuid,uuid,text)',
     'creer_code_appairage(uuid)',
     'creer_groupe(uuid,text,text,smallint,smallint,smallint,text,smallint)',
+    -- Classe a plusieurs creneaux et mixite (29/10), duree par creneau (30/10) :
+    -- direction active seulement.
+    'creer_classe_creneaux_admin(uuid,text,text,smallint,text,jsonb,text,smallint)',
+    'modifier_creneau_classe_admin(uuid,integer,integer,integer,integer,integer,text)',
+    'ajouter_creneau_classe_admin(uuid,integer,integer,integer)',
+    'retirer_creneau_classe_admin(uuid,integer,integer,text)',
+    'regler_genre_classe_admin(uuid,text,text)',
     'creer_jeton_agent(text,uuid,integer,boolean)',
     'creer_offre_horaire(text,text,text,smallint[],smallint,smallint)',
     'creer_profil_eleve_titulaire()',

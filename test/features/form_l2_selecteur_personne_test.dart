@@ -138,6 +138,14 @@ void main() {
           find.byKey(const ValueKey<String>('classe-heure')),
         );
         await _presser(tester, find.text('17\u00a0h').last);
+        // D2 (29/10/2026) : trois creneaux par defaut ; cette classe n'en a
+        // qu'un, les deux autres lignes sont retirees.
+        for (int i = 0; i < 2; i++) {
+          await _presser(
+            tester,
+            find.byKey(const ValueKey<String>('classe-autre-2-retirer')),
+          );
+        }
         await tester.enterText(_champNom, 'Al-Fajr');
         await _presser(tester, find.text(t.admin.groupes.creerEnvoyer));
 
