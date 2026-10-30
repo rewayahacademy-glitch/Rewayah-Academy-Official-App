@@ -63,6 +63,10 @@ export const MODELES: Record<string, Fabrique> = {
     c.blocs.splice(2, 0, { type: 'texte', texte: String(d.precisions ?? '') })
     return c
   },
+  // D2 (30/10/2026) : proposition, texte non valide par le directeur.
+  compte_enseignant_valide: (d) => avis(d, 'Votre compte enseignant est validé', 'Votre compte est validé',
+    'La direction a validé votre compte enseignant. Entrez dans l’application : vos classes y apparaîtront dès que la direction vous en confiera une.',
+    'Entrer dans l’application', '/'),
   admission_recue: (d) => avis(d, 'Votre demande est bien reçue', 'Votre demande est en cours',
     'Nous avons bien reçu votre demande. La direction lit chaque demande avant d’ouvrir un compte. Vous n’avez rien à envoyer : nous vous écrivons à cette adresse dès que la direction a répondu.',
     'Voir ma demande', '/attente'),
@@ -228,6 +232,8 @@ export const MODELES: Record<string, Fabrique> = {
 /// ecrits en francais et en arabe.
 export const TRADUITS_A_L_ENVOI: readonly string[] = [
   'attente_candidat', 'admission_recue', 'admission_acceptee', 'admission_refusee', 'admission_precisions',
+  // D2 (30/10/2026) : ecrit en francais et en arabe.
+  'compte_enseignant_valide',
 ]
 
 export const FRANCAIS: LangueEcrite = {
