@@ -274,42 +274,48 @@ String premier(int n) => lu(LibellesGroupe.dureeSeule(Duration(minutes: n)), nul
       );
     });
 
-    testWidgets('Comptes, replie en cartes : « … · 12 jours » sans ancre', (
-      WidgetTester tester,
-    ) async {
-      tester.view.physicalSize = const Size(800, 1200);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.reset);
-      await tester.pumpWidget(
-        hote(
-          const ComptesPage(),
-          surcharges: <Override>[
-            serviceComptesProvider.overrideWithValue(
-              _FauxServiceComptes(<CompteAdmin>[
-                CompteAdmin(
-                  profilId: 'p1',
-                  identifiant: 'TEACHER-AS-000001',
-                  prenom: 'Aicha',
-                  nom: 'Sow',
-                  role: AppRole.teacher,
-                  etat: AccountStatus.pendingKyc,
-                  inscritLe: DateTime.now().subtract(const Duration(days: 12)),
-                  accesJusquAu: null,
-                  foyerId: null,
-                  piece: EtatPiece.aucune,
-                  contrats: 2,
-                  aEnseignant: false,
-                  enfantsDuFoyer: 0,
-                ),
-              ]),
-            ),
-            serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
-          ],
-        ),
-      );
-      await tester.pumpAndSettle();
-      _sansAncreAuMilieu(tester, '12${_nbsp}jours');
-    });
+    // LISTES-2 (30/10/2026) : la ligne dense du telephone ne porte plus la
+    // duree d'inscription (l'essentiel seulement). La garde reste sur la
+    // ligne jointe qu'elle porte : « matricule · Aucune piece deposee ».
+    testWidgets(
+      'Comptes, ligne dense : « … · Aucune pièce déposée » sans ancre',
+      (WidgetTester tester) async {
+        tester.view.physicalSize = const Size(800, 1200);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await tester.pumpWidget(
+          hote(
+            const ComptesPage(),
+            surcharges: <Override>[
+              serviceComptesProvider.overrideWithValue(
+                _FauxServiceComptes(<CompteAdmin>[
+                  CompteAdmin(
+                    profilId: 'p1',
+                    identifiant: 'TEACHER-AS-000001',
+                    prenom: 'Aicha',
+                    nom: 'Sow',
+                    role: AppRole.teacher,
+                    etat: AccountStatus.pendingKyc,
+                    inscritLe: DateTime.now().subtract(
+                      const Duration(days: 12),
+                    ),
+                    accesJusquAu: null,
+                    foyerId: null,
+                    piece: EtatPiece.aucune,
+                    contrats: 2,
+                    aEnseignant: false,
+                    enfantsDuFoyer: 0,
+                  ),
+                ]),
+              ),
+              serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+            ],
+          ),
+        );
+        await tester.pumpAndSettle();
+        _sansAncreAuMilieu(tester, 'Aucune pièce déposée');
+      },
+    );
 
     testWidgets('Progression, repliee en cartes : « … · 9 jours » sans ancre', (
       WidgetTester tester,
