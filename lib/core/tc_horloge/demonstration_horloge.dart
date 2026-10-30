@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
+import '../video/pre_vol.dart' show seuilOuvertureSalle;
 import 'port_horloge_seance.dart';
 // `session_clock_vm.dart` reexporte `FenetreSeance` et `PhaseSeance` : une
 // seule porte d'entree pour le temps, comme le veut l'unification.
@@ -97,7 +98,8 @@ class DonneeSeanceDemonstration {
 /// ne sont **calculees nulle part** : ce sont des chaines de fixture, produites
 /// une fois pour que l'interface ait quelque chose de juste a montrer.
 Map<String, DonneeSeanceDemonstration> seancesDemonstration() {
-  const Duration fenetreAcces = Duration(minutes: 20);
+  // Le seuil unique de l'application, jamais une copie (30/10/2026).
+  const Duration fenetreAcces = seuilOuvertureSalle;
   const Duration grace = Duration(minutes: 15);
 
   return <String, DonneeSeanceDemonstration>{
