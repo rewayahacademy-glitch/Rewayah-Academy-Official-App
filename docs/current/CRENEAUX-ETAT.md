@@ -1,34 +1,33 @@
-# Lot créneaux : état à la passation, 29/10/2026, 22 h UTC
+# Lot créneaux : état au 30/10/2026
 
-Passation demandée par le pilote (décision du directeur du 29/10 : un autre agent reprend les créneaux). Rapport détaillé : `LOT-CRENEAUX-2026-10-29.md` ; décisions : `DECISION-CLASSES-HORAIRES-MIXITE-2026-10-29.md` ; fiche et arbitrages : `FICHE-CRENEAUX-2026-10-29.md`.
+Reprise du lot par l'agent de construction n° 2 (consigne du pilote du 29/10 au soir). Rapport détaillé : `LOT-CRENEAUX-2026-10-29.md` ; décisions : `DECISION-CLASSES-HORAIRES-MIXITE-2026-10-29.md` ; fiche et arbitrages : `FICHE-CRENEAUX-2026-10-29.md`.
 
-## Ce qui est prouvé, et ce qui ne l'est pas
+## Ce qui est faux, bloqué ou non prouvé, d'abord
 
-- Rien n'est appliqué ni prouvé en production ni sur staging.
-- Scénarios SQL rejoués sur Postgres 16 local, chacun sur une base neuve : mêmes résultats que `main` (7 rouges déjà rouges sur `main`), plus `scenarios_classe_plusieurs_creneaux.sql` vert.
-- Tests Flutter ciblés verts (`creneau_classe_test`, `classe_form_1_test`, `form_l2_selecteur_personne_test`) ; `dart analyze --fatal-infos` propre, `verifier_jetons` propre, `verifier_revue` à 1074 (le socle de `main`). **La suite Flutter complète tournait encore au moment de pousser** : son résultat n'est pas connu.
+- **Rien n'est appliqué ni prouvé en production ni sur staging.**
+- **Bloqué, en attente de l'accord du pilote (i18n)** : quatre tests Flutter sont rouges à cause de ce lot et verts sur `main` : `test/i18n/ar_domaines_test.dart` (AR-COMPLET-1, « chaque clé admin.* a sa traduction arabe », pluriels arabes complets) et `test/core/i18n/elision_test.dart` (`admin.groupes.reglagesClasse.titre`). Les clés françaises `admin.groupes.formulaire.*` et `admin.groupes.reglagesClasse.*` ajoutées le 29/10 n'ont pas d'arabe. La note de passation « pas d'arabe, cette partie de l'administration n'en a pas » était fausse. Les corriger, c'est ajouter leurs traductions dans `assets/i18n/ar.i18n.json` : un ajout i18n, que je ne fais pas sans l'accord du pilote.
+- **La durée par créneau n'a pas d'écran.** Le serveur la porte entièrement (ci-dessous) ; l'écran ne permet pas encore de la choisir ni ne l'affiche, faute de libellés (aucun ajout i18n sans accord). Un créneau déplacé à l'écran garde sa durée.
+- Les scénarios SQL rejoués sur Postgres 16 local, chacun sur une copie neuve de la base : 129 verts, 7 rouges, **les mêmes 7 que sur `main`** (même message, même ligne) ; le seul écart est `scenarios_classe_plusieurs_creneaux.sql`, vert. Cinq des 7 rouges s'arrêtent sur « cannot ALTER TABLE ... pending trigger events » ; rejoués à part, avec les déclencheurs différés rendus immédiats (copie locale, non versionnée), `scenarios_classes_duree_affectation`, `scenarios_classes_duree_bout_en_bout`, `scenarios_cand_l1b_forme_compte`, `scenarios_fac_e_paie_par_eleve` et `scenarios_ses_cloture_auto` sont verts sur cette branche.
 
 ## Ce qui est fait
 
-- Serveur, une migration : `supabase/migrations/20261029170000_classe_plusieurs_creneaux.sql`. **Son numéro est hors de la réserve des créneaux (2026103010xxxx, consigne du pilote du 29/10) : à renommer avant toute application.** Elle contient un `DELETE` dans le corps d'une fonction.
-  - `sessions.motif_annulation`, `groupes.mixte` ;
-  - `private.annuler_seances_creneau`, `private.classe_creneau_garde` ;
-  - `public.retirer_creneau_classe_admin`, `public.modifier_creneau_classe_admin`, `public.creer_classe_creneaux_admin` (genre et fuseau enregistrés enfin), `public.regler_genre_classe_admin` ;
-  - `classes_admin_page` dit « mixte » pour une classe mixte (remplacement vérifié dans son corps, empreinte F86 suivie).
-- Écrans : « Nouvelle classe » à trois créneaux par défaut (« Autres créneaux de la semaine ») ; menu de la classe « Créneaux et genre » (liste, modifier, retirer, ajouter, genre hommes, femmes ou mixte, motif exigé).
-- Libellés français (`admin.groupes.formulaire.*`, `admin.groupes.reglagesClasse.*`) et leurs sources ; pas d'arabe (cette partie de l'administration n'en a pas).
+- Serveur, une migration : `supabase/migrations/20261030100000_classe_plusieurs_creneaux.sql` (renommée le 30/10 depuis `20261029170000`, dans la réserve du lot). Deux mots de suppression dans des corps de fonction (`DELETE` du retrait d'un créneau, `delete` du déclencheur d'ancrage) : aucun `DROP`, aucun `TRUNCATE`.
+  - `sessions.motif_annulation`, `groupes.mixte`, **`groupe_creneaux.duree_minutes`** (15 à 240, vide = durée de la classe) ;
+  - `private.annuler_seances_creneau`, `private.classe_creneau_garde`, `app_private.creneaux_de_classe` (chaque créneau avec sa durée), `app_private.duree_seance_de_classe` ;
+  - `public.retirer_creneau_classe_admin`, `public.modifier_creneau_classe_admin` (**reçoit la nouvelle durée** ; la durée seule modifiée réaligne les séances à venir sans les annuler), `public.creer_classe_creneaux_admin` (genre, fuseau, **« duree » par créneau**, créneaux de la classe contrôlés entre eux), `public.regler_genre_classe_admin`, `public.ajouter_creneau_classe_admin` à quatre arguments (avec la durée ; celle à trois reste) ;
+  - durée par créneau lue par : génération des séances (`materialiser_seances_groupe`, `seance_a_rejoindre`, `horloge_classe`), prédicat de l'enseignant (`verifier_affectation_enseignant_base` : charge, couverture par les disponibilités, chevauchements), contrôle des créneaux entre eux et contre les séances déjà générées (`verifier_horaire_contre_seances_planifiees`), propositions d'enseignants (`enseignants_pour_classe`, `enseignants_pour_public`), transfert d'un élève (`transferer_eleve`), réalignement (`seances_a_venir_a_realigner`) ; le contrôle de `groupe_creneaux` repasse quand seule la durée change ; l'ancre déplacée garde sa durée (`groupe_creneau_ancre`) ; empreintes F86 suivies ;
+  - `classes_admin_page` dit « mixte » pour une classe mixte.
+- Écrans : « Nouvelle classe » à trois créneaux par défaut ; menu de la classe « Créneaux et genre ». Deux libellés de ce lot reformulés le 30/10 (ils redisaient « hors ligne » et « connexion », test `etat_sans_donnees_test`).
 
 ## Ce qui reste
 
-1. Renommer la migration dans la réserve 2026103010xxxx, puis l'appliquer (staging, puis production).
-2. La durée par créneau (le directeur : « jour + heure + durée ») : non faite ; elle touche le contrôle des chevauchements de l'enseignant dans plusieurs fonctions du serveur.
-3. Résultat de la suite Flutter complète ; corriger ce qui serait rouge.
-4. Ajouter `scenarios_classe_plusieurs_creneaux.sql` à `ci.yml` (zone du directeur).
-5. Fusion de `main`, puis la preuve du directeur (gestes dans `LOT-CRENEAUX-2026-10-29.md`).
+1. Accord du pilote sur l'arabe des clés du lot (ou décision contraire), puis l'écran de la durée par créneau (libellés à accorder).
+2. Ajouter `scenarios_classe_plusieurs_creneaux.sql` à `ci.yml` (zone du directeur).
+3. PR, fusion, migration (pilote), puis la preuve du directeur (gestes dans `LOT-CRENEAUX-2026-10-29.md`).
 
 ## Fichiers touchés
 
-- `supabase/migrations/20261029170000_classe_plusieurs_creneaux.sql` (nouveau), `supabase/tests/scenarios_classe_plusieurs_creneaux.sql` (nouveau), `supabase/tests/scenarios_af_liste_blanche_volatiles.sql`, `supabase/tests/scenarios_classes_plafond_par_enseignant.sql`.
+- `supabase/migrations/20261030100000_classe_plusieurs_creneaux.sql` (nouveau), `supabase/tests/scenarios_classe_plusieurs_creneaux.sql` (nouveau), `supabase/tests/scenarios_af_liste_blanche_volatiles.sql`, `supabase/tests/scenarios_classes_plafond_par_enseignant.sql`.
 - `lib/core/admin/creneaux_classe.dart`, `lib/core/admin/creneaux_classe_supabase.dart`, `lib/core/admin/classes_admin_supabase.dart`, `lib/core/admin/enseignants_classe.dart`, `lib/core/capacites/port_creation_classe.dart`, `lib/core/capacites/creation_classe_supabase.dart` (nouveau), `lib/core/capacites/port_enseignants_classe.dart` (`GenreClasse.mixte`).
 - `lib/features/admin_groupes/groupes_page.dart`, `lib/features/admin_groupes/feuille_reglages_classe.dart` (nouveau), `lib/features/admin_groupes/genre_classe_libelles.dart`, `lib/features/admin_pilotage/pilotage_libelles.dart`, `lib/features/demo/classe_form_demo.dart`, `lib/features/demo/pilotage_demo.dart`.
 - `assets/i18n/fr.i18n.json`, `lib/core/i18n/strings*.g.dart`, `tool/libelles_sources.json`.

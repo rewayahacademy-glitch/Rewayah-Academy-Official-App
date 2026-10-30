@@ -176,7 +176,8 @@ class _FeuilleReglagesClasseEtat extends ConsumerState<FeuilleReglagesClasse> {
           final int n = await service.modifier(
             groupeId: widget.groupe.id,
             ancien: cible!,
-            nouveau: (jour: jour!, heure: heure!),
+            // Le creneau deplace garde sa duree.
+            nouveau: (jour: jour!, heure: heure!, duree: cible.duree),
             motif: motif,
           );
           fait = r.faitModifie(n: n);

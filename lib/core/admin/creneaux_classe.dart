@@ -5,10 +5,14 @@
 // (`ajouter_creneau_classe_admin`, migration 20261025020000).
 //
 // Classe a plusieurs creneaux et mixite (decisions D1 et D2 du 29/10/2026,
-// migration 20261029170000) : la direction lit les creneaux d'une Classe, en
+// migration 20261030100000) : la direction lit les creneaux d'une Classe, en
 // modifie ou en retire un (ses seances a venir sont annulees avec le motif,
 // jamais supprimees ; familles et enseignant prevenus), et regle son genre
 // (hommes, femmes ou mixte).
+//
+// Duree par creneau (30/10/2026, meme migration) : chaque creneau porte sa
+// duree en minutes, nulle quand il suit la duree de la Classe ; deplacer un
+// creneau garde sa duree.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
@@ -17,8 +21,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../capacites/port_enseignants_classe.dart' show GenreClasse;
 import 'creneaux_classe_supabase.dart';
 
-/// Un creneau hebdomadaire d'une Classe, dans son fuseau.
-typedef CreneauClasse = ({int jour, int heure});
+/// Un creneau hebdomadaire d'une Classe, dans son fuseau. [duree] en
+/// minutes (15 a 240), `null` quand le creneau suit la duree de la Classe.
+typedef CreneauClasse = ({int jour, int heure, int? duree});
 
 /// Pourquoi le serveur refuse un geste sur un creneau.
 enum MotifRefusCreneau {
@@ -62,8 +67,10 @@ abstract interface class ServiceCreneauxClasse {
   /// Les creneaux de la Classe, par jour puis par heure.
   Future<List<CreneauClasse>> lister(String groupeId);
 
-  /// Deplace un creneau et rend le nombre de seances creees. Les seances a
-  /// venir de l'ancien creneau sont annulees avec [motif]. Un refus du
+  /// Deplace un creneau ou change sa duree (celle de [nouveau]) et rend le
+  /// nombre de seances creees, ou realignees quand seule la duree change.
+  /// Les seances a venir de l'ancien creneau deplace sont annulees avec
+  /// [motif]. Un refus du
   /// predicat arrive en `AffectationRefusee`, un autre en [CreneauRefuse].
   Future<int> modifier({
     required String groupeId,

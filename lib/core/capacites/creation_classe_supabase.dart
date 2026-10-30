@@ -1,6 +1,6 @@
 // Classe a plusieurs creneaux et mixite (decisions D1 et D2 du directeur,
 // 29/10/2026) : la creation d'une classe a la main part par
-// `creer_classe_creneaux_admin` (migration 20261029170000), qui retient enfin
+// `creer_classe_creneaux_admin` (migration 20261030100000), qui retient enfin
 // le genre choisi et le fuseau, et pose tous les creneaux de la semaine dans
 // une seule transaction. Un refus du predicat arrive en
 // `CreationClasseRefusee`, comme pour `creer_groupe`.

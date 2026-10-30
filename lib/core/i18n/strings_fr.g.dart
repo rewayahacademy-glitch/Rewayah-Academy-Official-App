@@ -23700,14 +23700,14 @@ class Traductions$admin$groupes$reglagesClasse$fr {
 	/// fr: 'Cette classe est fermée : ses créneaux ne changent plus.'
 	String get refusClasseFermee => 'Cette classe est fermée : ses créneaux ne changent plus.';
 
-	/// fr: 'Le changement n'a pas abouti. Vérifiez votre connexion, puis réessayez.'
-	String get erreur => 'Le changement n\'a pas abouti. Vérifiez votre connexion, puis réessayez.';
+	/// fr: 'Le changement n'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Le changement n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 
 	/// fr: 'Les créneaux de cette classe ne se lisent pas pour le moment.'
 	String get lectureErreur => 'Les créneaux de cette classe ne se lisent pas pour le moment.';
 
-	/// fr: 'Hors ligne : le changement partira quand la connexion reviendra. Réessayez alors.'
-	String get horsLigne => 'Hors ligne : le changement partira quand la connexion reviendra. Réessayez alors.';
+	/// fr: 'Le changement pourra partir quand la connexion sera revenue. Vos choix restent affichés.'
+	String get horsLigne => 'Le changement pourra partir quand la connexion sera revenue. Vos choix restent affichés.';
 
 	/// fr: 'Le genre de la classe est enregistré.'
 	String get faitGenre => 'Le genre de la classe est enregistré.';
@@ -43795,9 +43795,9 @@ extension on Traductions {
 			'admin.groupes.reglagesClasse.refusExistant' => 'La classe a déjà ce créneau : choisissez un autre jour ou une autre heure.',
 			'admin.groupes.reglagesClasse.refusIntrouvable' => 'Ce créneau a déjà changé : revenez aux créneaux pour voir la liste à jour.',
 			'admin.groupes.reglagesClasse.refusClasseFermee' => 'Cette classe est fermée : ses créneaux ne changent plus.',
-			'admin.groupes.reglagesClasse.erreur' => 'Le changement n\'a pas abouti. Vérifiez votre connexion, puis réessayez.',
+			'admin.groupes.reglagesClasse.erreur' => 'Le changement n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'admin.groupes.reglagesClasse.lectureErreur' => 'Les créneaux de cette classe ne se lisent pas pour le moment.',
-			'admin.groupes.reglagesClasse.horsLigne' => 'Hors ligne : le changement partira quand la connexion reviendra. Réessayez alors.',
+			'admin.groupes.reglagesClasse.horsLigne' => 'Le changement pourra partir quand la connexion sera revenue. Vos choix restent affichés.',
 			'admin.groupes.reglagesClasse.faitGenre' => 'Le genre de la classe est enregistré.',
 			'admin.groupes.reglagesClasse.faitModifie' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, zero: 'Créneau déplacé : aucune séance à venir créée pour le moment.', one: 'Créneau déplacé : ${n} séance à venir créée.', other: 'Créneau déplacé : ${n} séances à venir créées.', ), 
 			'admin.groupes.reglagesClasse.faitRetire' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, zero: 'Créneau retiré : aucune séance à venir à annuler.', one: 'Créneau retiré : ${n} séance à venir annulée.', other: 'Créneau retiré : ${n} séances à venir annulées.', ), 

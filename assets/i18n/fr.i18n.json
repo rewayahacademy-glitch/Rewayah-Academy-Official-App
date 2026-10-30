@@ -3902,9 +3902,9 @@
         "refusExistant": "La classe a déjà ce créneau\u00a0: choisissez un autre jour ou une autre heure.",
         "refusIntrouvable": "Ce créneau a déjà changé\u00a0: revenez aux créneaux pour voir la liste à jour.",
         "refusClasseFermee": "Cette classe est fermée\u00a0: ses créneaux ne changent plus.",
-        "erreur": "Le changement n'a pas abouti. Vérifiez votre connexion, puis réessayez.",
+        "erreur": "Le changement n'est pas confirmé\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
         "lectureErreur": "Les créneaux de cette classe ne se lisent pas pour le moment.",
-        "horsLigne": "Hors ligne\u00a0: le changement partira quand la connexion reviendra. Réessayez alors.",
+        "horsLigne": "Le changement pourra partir quand la connexion sera revenue. Vos choix restent affichés.",
         "faitGenre": "Le genre de la classe est enregistré.",
         "faitModifie(param=n)": {
           "zero": "Créneau déplacé\u00a0: aucune séance à venir créée pour le moment.",

@@ -43,7 +43,9 @@ class _FauxCreneaux implements ServiceCreneauxClasse {
   }
 
   /// D2 (29/10/2026) : les creneaux de la Classe et les gestes recus.
-  List<CreneauClasse> creneaux = <CreneauClasse>[(jour: 2, heure: 18)];
+  List<CreneauClasse> creneaux = <CreneauClasse>[
+    (jour: 2, heure: 18, duree: null),
+  ];
   final List<(CreneauClasse, CreneauClasse, String)> modifications =
       <(CreneauClasse, CreneauClasse, String)>[];
   final List<(CreneauClasse, String)> retraits = <(CreneauClasse, String)>[];
@@ -249,17 +251,17 @@ void main() {
     ) async {
       final _FauxCreneaux creneaux = _FauxCreneaux()
         ..creneaux = <CreneauClasse>[
-          (jour: 1, heure: 18),
-          (jour: 3, heure: 18),
+          (jour: 1, heure: 18, duree: null),
+          (jour: 3, heure: 18, duree: null),
         ];
       await _monter(tester, creneaux);
       expect(find.text(r.creneauxTitre), findsOneWidget);
       expect(
-        find.text(libelleCreneauClasse((jour: 1, heure: 18))),
+        find.text(libelleCreneauClasse((jour: 1, heure: 18, duree: null))),
         findsOneWidget,
       );
       expect(
-        find.text(libelleCreneauClasse((jour: 3, heure: 18))),
+        find.text(libelleCreneauClasse((jour: 3, heure: 18, duree: null))),
         findsOneWidget,
       );
       expect(find.text(r.genreTitre), findsOneWidget);
@@ -295,13 +297,40 @@ void main() {
         'Enseignant indisponible le mardi',
       );
       await _presser(tester, find.text(r.envoyerModifier).last);
-      expect(creneaux.modifications.single.$1, (jour: 2, heure: 18));
-      expect(creneaux.modifications.single.$2, (jour: 4, heure: 20));
+      expect(creneaux.modifications.single.$1, (
+        jour: 2,
+        heure: 18,
+        duree: null,
+      ));
+      expect(creneaux.modifications.single.$2, (
+        jour: 4,
+        heure: 20,
+        duree: null,
+      ));
       expect(
         creneaux.modifications.single.$3,
         'Enseignant indisponible le mardi',
       );
       expect(find.text(r.faitModifie(n: 4)), findsOneWidget);
+    });
+
+    testWidgets('duree par creneau (30/10/2026) : un creneau deplace garde '
+        'sa duree', (WidgetTester tester) async {
+      final _FauxCreneaux creneaux = _FauxCreneaux()
+        ..creneaux = <CreneauClasse>[(jour: 2, heure: 18, duree: 45)];
+      await _monter(tester, creneaux);
+      await _gesteCreneau(tester, r.modifierCreneau);
+      await _presser(
+        tester,
+        find.byKey(const ValueKey<String>('reglages-jour-4')),
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey<String>('reglages-motif')),
+        'Enseignant indisponible le mardi',
+      );
+      await _presser(tester, find.text(r.envoyerModifier).last);
+      expect(creneaux.modifications.single.$1, (jour: 2, heure: 18, duree: 45));
+      expect(creneaux.modifications.single.$2, (jour: 4, heure: 18, duree: 45));
     });
 
     testWidgets('retirer le dernier creneau : le refus du serveur se dit en '
@@ -329,7 +358,7 @@ void main() {
       );
       await _presser(tester, find.text(r.envoyerRetirer).last);
       expect(creneaux.retraits.single, (
-        (jour: 2, heure: 18),
+        (jour: 2, heure: 18, duree: null),
         'Moins de séances',
       ));
       expect(find.text(r.faitRetire(n: 3)), findsOneWidget);

@@ -64,7 +64,7 @@ class CreneauxClasseSupabase implements ServiceCreneauxClasse {
   Future<List<CreneauClasse>> lister(String groupeId) async {
     final List<Map<String, dynamic>> lignes = await _client
         .from('groupe_creneaux')
-        .select('weekday, hour_local')
+        .select('weekday, hour_local, duree_minutes')
         .eq('groupe_id', groupeId)
         .order('weekday')
         .order('hour_local');
@@ -73,6 +73,7 @@ class CreneauxClasseSupabase implements ServiceCreneauxClasse {
         (
           jour: (l['weekday'] as num).toInt(),
           heure: (l['hour_local'] as num).toInt(),
+          duree: (l['duree_minutes'] as num?)?.toInt(),
         ),
     ];
   }
@@ -92,6 +93,7 @@ class CreneauxClasseSupabase implements ServiceCreneauxClasse {
         'p_hour_local': ancien.heure,
         'p_nouveau_weekday': nouveau.jour,
         'p_nouvelle_heure': nouveau.heure,
+        'p_nouvelle_duree': nouveau.duree,
         'p_motif': motif,
       },
     );
