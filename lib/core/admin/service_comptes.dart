@@ -75,7 +75,8 @@ class CompteAdmin {
     this.tuteurPrenom,
     this.tuteurNom,
     this.admissionATraiter = false,
-  });
+    bool? apprenant,
+  }) : apprenant = apprenant ?? role == AppRole.student;
 
   /// Lit une ligne rendue par `comptes_admin()`.
   factory CompteAdmin.depuisJson(Map<String, dynamic> json) {
@@ -118,6 +119,7 @@ class CompteAdmin {
       tuteurPrenom: json['tuteur_prenom'] as String?,
       tuteurNom: json['tuteur_nom'] as String?,
       admissionATraiter: json['admission_a_traiter'] as bool? ?? false,
+      apprenant: json['est_apprenant'] as bool?,
     );
   }
 
@@ -194,6 +196,12 @@ class CompteAdmin {
 
   /// Son nom, nul dans les memes conditions.
   final String? tuteurNom;
+
+  /// Vrai pour un compte qui apprend : un eleve, ou un adulte titulaire qui
+  /// apprend pour lui-meme (compte `guardian` avec une fiche d'eleve autonome,
+  /// D5 du 30/10/2026). Sans la lecture `comptes_admin_par_role()`, seul le
+  /// role eleve le dit.
+  final bool apprenant;
 
   /// Vrai quand ce compte porte une demande d'admission recue, encore a
   /// traiter (famille ou eleve adulte, DECISION-ADMISSION du 27/10).

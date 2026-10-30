@@ -477,6 +477,47 @@ void main() {
       },
     );
 
+    testWidgets(
+      'un adulte titulaire (un seul compte tuteur qui apprend) : dans les deux vues',
+      (tester) async {
+        await monter(tester, <CompteAdmin>[
+          CompteAdmin(
+            profilId: 'p-karim',
+            identifiant: 'RA-26-7777',
+            prenom: 'Karim',
+            nom: 'Sy',
+            role: AppRole.guardian,
+            etat: AccountStatus.active,
+            inscritLe: DateTime.now(),
+            accesJusquAu: null,
+            foyerId: null,
+            piece: EtatPiece.aucune,
+            contrats: 0,
+            aEnseignant: false,
+            enfantsDuFoyer: 0,
+            detailsServis: true,
+            apprenant: true,
+            tranche: TrancheAge.adulte,
+            classeLibelle: 'Adultes, mercredi 20 h',
+            classesActives: 1,
+          ),
+          _c(
+            'GUARDIAN-FD-000004',
+            prenom: 'Fatou',
+            nom: 'Diop',
+            role: AppRole.guardian,
+          ),
+        ]);
+        // Élèves : la fiche d'eleve de Karim, jamais la tutrice Fatou.
+        expect(find.text('Karim Sy'), findsOneWidget);
+        expect(find.text('Adultes, mercredi 20 h'), findsOneWidget);
+        expect(find.text('Fatou Diop'), findsNothing);
+        await _choisirVue(tester, 'Familles (2)');
+        expect(find.text('Karim Sy'), findsOneWidget);
+        expect(find.text('Fatou Diop'), findsOneWidget);
+      },
+    );
+
     testWidgets('chaque vue garde sa recherche', (tester) async {
       await monter(
         tester,

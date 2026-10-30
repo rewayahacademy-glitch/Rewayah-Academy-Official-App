@@ -18,9 +18,12 @@ INSERT INTO auth.users (id, email) VALUES
   ('1c000000-0000-4000-8000-000000000003', 'listes-enfant@example.test'),
   ('1c000000-0000-4000-8000-000000000004', 'listes-tuteur-eleve@example.test'),
   ('1c000000-0000-4000-8000-000000000005', 'listes-enseignant@example.test'),
-  ('1c000000-0000-4000-8000-000000000006', 'listes-famille@example.test');
+  ('1c000000-0000-4000-8000-000000000006', 'listes-famille@example.test'),
+  ('1c000000-0000-4000-8000-000000000007', 'listes-titulaire@example.test');
 
-INSERT INTO public.households (id) VALUES ('1c000000-0000-4000-8000-0000000000f1');
+INSERT INTO public.households (id) VALUES
+  ('1c000000-0000-4000-8000-0000000000f1'),
+  ('1c000000-0000-4000-8000-0000000000f2');
 
 -- La direction est une femme : une demande d'admission en cours d'une famille
 -- tenue par une femme est dans sa portée (compte_candidat_hors_portee).
@@ -37,22 +40,31 @@ VALUES
   ('1c000000-0000-4000-8000-000000000004', 'LISTESADULTE0001', 'student',
    '1c000000-0000-4000-8000-0000000000f1', 'Amina', 'Tuteur', 'active', 'female'),
   ('1c000000-0000-4000-8000-000000000005', 'LISTESENSEIG0001', 'teacher', NULL,
-   'Fixture', 'Enseignant', 'pending_kyc', 'female');
+   'Fixture', 'Enseignant', 'pending_kyc', 'female'),
+  -- D5 (30/10/2026) : un adulte titulaire qui apprend pour lui-meme, un seul
+  -- compte `guardian` avec une fiche d'eleve autonome sur lui-meme.
+  ('1c000000-0000-4000-8000-000000000007', 'LISTESTITULA0001', 'guardian',
+   '1c000000-0000-4000-8000-0000000000f2', 'Karim', 'Titulaire', 'active', 'female');
 
 UPDATE public.households SET primary_guardian_id = '1c000000-0000-4000-8000-000000000002'
  WHERE id = '1c000000-0000-4000-8000-0000000000f1';
 
 INSERT INTO public.student_profiles (profile_id, student_type) VALUES
   ('1c000000-0000-4000-8000-000000000003', 'minor'),
-  ('1c000000-0000-4000-8000-000000000004', 'autonomous');
+  ('1c000000-0000-4000-8000-000000000004', 'autonomous'),
+  ('1c000000-0000-4000-8000-000000000007', 'autonomous');
 INSERT INTO public.teacher_profiles (profile_id, country) VALUES
   ('1c000000-0000-4000-8000-000000000005', 'MA');
 
 INSERT INTO public.groupes (id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local)
 VALUES ('1c000000-0000-4000-8000-0000000000c1', '1c000000-0000-4000-8000-000000000005',
         'enfant', 5, 'Classe des lettres', 2, 18);
+INSERT INTO public.groupes (id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local)
+VALUES ('1c000000-0000-4000-8000-0000000000c2', '1c000000-0000-4000-8000-000000000005',
+        'adulte', 6, 'Classe des adultes', 3, 20);
 INSERT INTO public.groupe_membres (groupe_id, student_id) VALUES
-  ('1c000000-0000-4000-8000-0000000000c1', '1c000000-0000-4000-8000-000000000003');
+  ('1c000000-0000-4000-8000-0000000000c1', '1c000000-0000-4000-8000-000000000003'),
+  ('1c000000-0000-4000-8000-0000000000c2', '1c000000-0000-4000-8000-000000000007');
 
 SELECT set_config('request.jwt.claims', '{}', true);
 SELECT set_config('test.jwt', '{}', true);
@@ -104,8 +116,8 @@ BEGIN
     RAISE EXCEPTION 'LISTES ROUGE : comptes_admin_par_role ne rend pas les memes comptes';
   END IF;
   SELECT pg_catalog.count(*) INTO v_nombre FROM public.comptes_admin_par_role();
-  IF v_nombre < 6 THEN
-    RAISE EXCEPTION 'LISTES ROUGE : % comptes lus, 6 attendus au moins', v_nombre;
+  IF v_nombre < 7 THEN
+    RAISE EXCEPTION 'LISTES ROUGE : % comptes lus, 7 attendus au moins', v_nombre;
   END IF;
   RAISE NOTICE 'LISTES OK : les memes comptes que comptes_admin (%)', v_nombre;
 
@@ -118,7 +130,8 @@ BEGIN
      OR r.classe_numero IS DISTINCT FROM 1
      OR r.classes_actives IS DISTINCT FROM 1
      OR r.tuteur_id IS DISTINCT FROM '1c000000-0000-4000-8000-000000000002'
-     OR r.tuteur_prenom IS DISTINCT FROM 'Amina' THEN
+     OR r.tuteur_prenom IS DISTINCT FROM 'Amina'
+     OR NOT r.est_apprenant THEN
     RAISE EXCEPTION 'LISTES ROUGE : ligne de l''enfant incomplete : %', r;
   END IF;
   RAISE NOTICE 'LISTES OK : un enfant porte sa tranche, sa classe et son tuteur';
@@ -137,7 +150,8 @@ BEGIN
    WHERE profile_id = '1c000000-0000-4000-8000-000000000002';
   IF r.role IS DISTINCT FROM 'guardian' OR r.tranche_age IS NOT NULL OR r.classe_id IS NOT NULL
      OR r.classes_actives IS NOT NULL OR r.tuteur_id IS NOT NULL
-     OR r.enfants_du_foyer IS DISTINCT FROM 2 OR r.admission_a_traiter THEN
+     OR r.enfants_du_foyer IS DISTINCT FROM 2 OR r.admission_a_traiter
+     OR r.est_apprenant THEN
     RAISE EXCEPTION 'LISTES ROUGE : ligne de la tutrice incorrecte : %', r;
   END IF;
   -- Jamais deux lignes du même rôle pour une même personne (même foyer, même nom).
@@ -147,6 +161,19 @@ BEGIN
     RAISE EXCEPTION 'LISTES ROUGE : une personne a deux lignes du meme role';
   END IF;
   RAISE NOTICE 'LISTES OK : la tutrice aussi eleve a une ligne de tuteur et une ligne d''eleve';
+
+  -- L'adulte titulaire (D5) : un seul compte, tuteur ET apprenant, avec sa
+  -- tranche et sa classe ; personne d'autre dont il depende.
+  SELECT * INTO r FROM public.comptes_admin_par_role()
+   WHERE profile_id = '1c000000-0000-4000-8000-000000000007';
+  IF r.role IS DISTINCT FROM 'guardian' OR NOT r.est_apprenant
+     OR r.tranche_age IS DISTINCT FROM 'adulte'
+     OR r.classe_id IS DISTINCT FROM '1c000000-0000-4000-8000-0000000000c2'
+     OR r.classes_actives IS DISTINCT FROM 1
+     OR r.tuteur_id IS NOT NULL THEN
+    RAISE EXCEPTION 'LISTES ROUGE : ligne de l''adulte titulaire incorrecte : %', r;
+  END IF;
+  RAISE NOTICE 'LISTES OK : l''adulte titulaire est apprenant, avec sa tranche et sa classe';
 
   -- L'enseignant : son pays ; aucune donnée d'élève.
   SELECT * INTO r FROM public.comptes_admin_par_role()

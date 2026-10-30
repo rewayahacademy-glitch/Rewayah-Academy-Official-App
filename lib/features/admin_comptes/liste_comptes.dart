@@ -9,9 +9,11 @@ import '../../core/i18n/pays_iso.dart' show formeDeRecherche;
 /// classe ». Cette decision prevaut, pour cette page, sur LISTES-1 §6 (une
 /// seule liste filtree par role).
 ///
-/// Une vue range les **profils** par role : un tuteur qui est aussi eleve a
-/// deux profils (deux lignes de roles differents), il est donc une fois dans
-/// Familles et une fois dans Eleves, jamais deux fois dans la meme vue.
+/// Une vue range les comptes par role : un tuteur qui est aussi eleve est une
+/// fois dans Familles et une fois dans Eleves, jamais deux fois dans la meme
+/// vue. Deux formes existent : deux profils (une ligne de chaque role), ou un
+/// seul compte `guardian` qui apprend pour lui-meme (D5 du 30/10/2026,
+/// [CompteAdmin.apprenant]) : sa ligne est alors dans les deux vues.
 enum VueComptes {
   /// Les profils d'eleves, enfants et adultes autonomes.
   eleves,
@@ -25,16 +27,19 @@ enum VueComptes {
   /// L'administration, la comptabilite et le controle.
   direction;
 
-  /// La vue d'un compte, ou nulle quand son role est illisible (il est alors
+  /// Les vues d'un compte, vides quand son role est illisible (il est alors
   /// signale au-dessus des vues, jamais range au hasard).
-  static VueComptes? de(CompteAdmin c) => switch (c.role) {
-    AppRole.student => VueComptes.eleves,
-    AppRole.guardian => VueComptes.familles,
-    AppRole.teacher => VueComptes.enseignants,
-    AppRole.admin ||
-    AppRole.accountant ||
-    AppRole.controller => VueComptes.direction,
-    null => null,
+  static Set<VueComptes> de(CompteAdmin c) => <VueComptes>{
+    ?switch (c.role) {
+      AppRole.student => VueComptes.eleves,
+      AppRole.guardian => VueComptes.familles,
+      AppRole.teacher => VueComptes.enseignants,
+      AppRole.admin ||
+      AppRole.accountant ||
+      AppRole.controller => VueComptes.direction,
+      null => null,
+    },
+    if (c.apprenant) VueComptes.eleves,
   };
 
   /// La vue ouverte quand l'adresse n'en dit aucune : la premiere, dans
@@ -42,7 +47,8 @@ enum VueComptes {
   static VueComptes parDefaut(List<CompteAdmin> comptes) {
     for (final VueComptes vue in VueComptes.values) {
       if (comptes.any(
-        (CompteAdmin c) => VueComptes.de(c) == vue && c.attendUneDecision,
+        (CompteAdmin c) =>
+            VueComptes.de(c).contains(vue) && c.attendUneDecision,
       )) {
         return vue;
       }

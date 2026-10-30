@@ -20,6 +20,11 @@
 --                        (le tuteur principal, sinon le plus ancien tuteur du
 --                        foyer) ; nul hors élève et sous masquage d'identité
 --                        pour le prénom et le nom ;
+--   * est_apprenant    : vrai pour un eleve, et pour un adulte titulaire qui
+--                        apprend pour lui-meme (compte `guardian` avec un
+--                        `student_profiles` autonome sur lui-meme, D5 du
+--                        30/10/2026, 20261031200000) : il est alors aussi
+--                        dans la vue Eleves, avec sa tranche et sa classe ;
 --   * admission_a_traiter : vrai quand le profil porte une demande d'admission
 --                        (famille ou élève adulte) en cours et encore reçue,
 --                        la même définition que le compteur « à traiter » de
@@ -37,7 +42,7 @@ RETURNS TABLE(profile_id uuid, immutable_id text, prenom text, nom text, role pu
               teacher_country text, tranche_age text,
               classe_id uuid, classe_libelle text, classe_numero integer,
               classes_actives integer, tuteur_id uuid, tuteur_prenom text,
-              tuteur_nom text, admission_a_traiter boolean)
+              tuteur_nom text, admission_a_traiter boolean, est_apprenant boolean)
 LANGUAGE sql
 STABLE
 SECURITY DEFINER
@@ -80,13 +85,13 @@ AS $function$
       where e.household_id = p.household_id
         and e.role = 'student' and e.deleted_at is null),
     case when p.role = 'teacher' then tp.country end,
-    case when p.role = 'student' then
+    case when (p.role = 'student' or (p.role = 'guardian' and sp.student_type = 'autonomous')) then
       case sp.student_type when 'minor' then 'enfant' when 'autonomous' then 'adulte' end
     end,
     cl.groupe_id,
     cl.libelle,
     cl.numero,
-    case when p.role = 'student' then
+    case when (p.role = 'student' or (p.role = 'guardian' and sp.student_type = 'autonomous')) then
       (select count(*)::int from public.groupe_membres m
          join public.groupes g on g.id = m.groupe_id
         where m.student_id = p.id and m.left_at is null and g.ended_at is null)
@@ -100,7 +105,8 @@ AS $function$
         and ca.type_code in ('famille', 'eleve_adulte')
         and ca.issue = 'en_cours'
         and ca.etape = 'recue'
-    )
+    ),
+    coalesce((p.role = 'student' or (p.role = 'guardian' and sp.student_type = 'autonomous')), false)
   from public.profiles p
   left join public.teacher_profiles tp on tp.profile_id = p.id and tp.deleted_at is null
   left join public.student_profiles sp on sp.profile_id = p.id and sp.deleted_at is null
@@ -109,7 +115,7 @@ AS $function$
       from public.groupe_membres m
       join public.groupes g on g.id = m.groupe_id
       left join numeros n on n.groupe_id = g.id
-     where p.role = 'student'
+     where (p.role = 'student' or (p.role = 'guardian' and sp.student_type = 'autonomous'))
        and m.student_id = p.id and m.left_at is null and g.ended_at is null
      order by m.joined_at, g.id
      limit 1

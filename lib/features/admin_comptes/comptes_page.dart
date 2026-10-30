@@ -363,7 +363,8 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
       final DateTime maintenant = DateTime.now();
       for (final VueComptes vue in VueComptes.values) {
         if (comptes.any(
-          (CompteAdmin c) => VueComptes.de(c) == vue && c.accesEchu(maintenant),
+          (CompteAdmin c) =>
+              VueComptes.de(c).contains(vue) && c.accesEchu(maintenant),
         )) {
           return vue;
         }
@@ -390,8 +391,9 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
           for (final VueComptes v in VueComptes.values) v: <CompteAdmin>[],
         };
     for (final CompteAdmin c in comptes) {
-      final VueComptes? v = VueComptes.de(c);
-      if (v != null) parVue[v]!.add(c);
+      for (final VueComptes v in VueComptes.de(c)) {
+        parVue[v]!.add(c);
+      }
     }
     final List<CompteAdmin> deLaVue = parVue[_vue]!;
     final List<CompteAdmin> visibles = filtre.appliquer(
