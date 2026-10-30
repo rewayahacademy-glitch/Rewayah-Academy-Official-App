@@ -69,6 +69,12 @@ Base de calcul choisie par le pilote : 100 élèves, moitié enfants et moitié 
 
 ## 4. La communauté (demande du directeur, 30/10 ; forme choisie par le pilote)
 
+**Le directeur, 30/10 : « ça existe déjà », pas en Boucle 1.** Exact : les écrans existent
+(`lib/features/com_communaute/` : publications, composition, signalement, garde contre la
+promotion), mais le port `PortCommunaute` n'a qu'un double de démonstration, aucun adaptateur
+Supabase. Ce qui suit est donc ce qu'il faut **ajouter à l'existant**, pas un nouveau module :
+le branchement serveur, la mesure des heures d'affluence et la règle « pas en cours ».
+
 Demande du directeur : l'application étudie les heures où les gens se connectent le plus, et
 leur offre à ces heures un chat en communauté, pour leur donner des raisons de rester fidèles.
 Celui qui participe ne doit pas être en cours.
