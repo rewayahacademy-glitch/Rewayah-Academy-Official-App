@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart' show SizedBox;
+import 'package:flutter/widgets.dart' show Size, SizedBox;
 // `Override` n'est pas exporte par l'entree principale de Riverpod 3.
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -19,6 +19,8 @@ import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/carte_groupe.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/mes_groupes_page.dart';
 
+import '../../capture/outil_capture.dart'
+    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
 import '../../support/annonces.dart';
 import '../../support/port_horloge_simule.dart';
 import 'faux/faux_groupes.dart';
@@ -342,6 +344,62 @@ void main() {
       await avancer(const Duration(minutes: 1));
       expect(port.lectures, 4, reason: 'relue a T0');
       await tester.pumpWidget(const SizedBox());
+    });
+  });
+
+  // Captures du directeur (30/10/2026) : UNE classe a deux creneaux par
+  // semaine, lundi 18:00 et jeudi 18:00 (Paris) ; le jeudi est la plus proche.
+  group('Captures creneaux 30/10 : /tc/groupes', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    testWidgets('(3) jeudi 10:00 Paris : la carte suit le jeudi, une fois', (
+      WidgetTester tester,
+    ) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(390, 844);
+      addTearDown(tester.view.reset);
+      final PortHorlogeSimule port = PortHorlogeSimule(
+        debutUtc: DateTime.utc(2026, 10, 29, 17),
+        maintenant: () => DateTime.utc(2026, 10, 29, 9),
+        creneaux: <(DateTime, String)>[
+          (DateTime.utc(2026, 11, 2, 17), 'Lundi 2 novembre'),
+          (DateTime.utc(2026, 10, 29, 17), 'Jeudi 29 octobre'),
+        ],
+      );
+      await tester.pumpWidget(
+        hoteTcA(
+          MesGroupesPage(onRejoindre: (_) {}),
+          surcharges: <Override>[
+            portGroupesProvider.overrideWithValue(
+              FauxPortGroupes(
+                groupes: <GroupSummaryVM>[
+                  groupeDepuisLigne(<String, dynamic>{
+                    'groupe_id': 'g-creneaux',
+                    'libelle': 'Al-Fatiha',
+                    'seuil_max': 5,
+                    'nb_membres': 4,
+                    'teacher_id': 't1',
+                    'teacher_prenom': 'Aminata',
+                  }),
+                ],
+              ),
+            ),
+            portHorlogeSeanceProvider.overrideWithValue(port),
+            serviceReseauProvider.overrideWithValue(const FauxServiceReseau()),
+          ],
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+      expect(find.byType(CarteGroupe), findsOneWidget, reason: 'une fois');
+      expect(find.textContaining('Jeudi 29 octobre'), findsWidgets);
+      expect(find.textContaining('Lundi'), findsNothing);
+      expect(
+        find.textContaining(RegExp(r'8\sh\s00'), findRichText: true),
+        findsOneWidget,
+      );
+      await capturerVue(tester, '3-tc-groupes');
     });
   });
 }

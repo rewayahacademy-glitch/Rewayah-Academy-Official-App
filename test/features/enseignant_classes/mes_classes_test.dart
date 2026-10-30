@@ -20,6 +20,8 @@ import 'package:rewayah_academy/features/enseignant_classes/mes_classes_page.dar
 import 'package:rewayah_academy/features/journee/journee_page.dart'
     show maintenantJourneeProvider;
 
+import '../../capture/outil_capture.dart'
+    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
 import '../../support/aucun_mot_coupe.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
@@ -580,4 +582,107 @@ void main() {
     expect(messages.objetId, isNull);
     expect(messages.ecartAvant, isNotNull);
   });
+
+  // Captures du directeur (30/10/2026) : UNE classe a deux creneaux par
+  // semaine, lundi 18:00 et jeudi 18:00 ; le jeudi est la plus proche.
+  // Sautees sans CAPTURE_DIR (test/capture/LISEZ-MOI.md).
+  group('Captures creneaux 30/10 : Mes classes', () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    final GroupeEnseignant demo = DonneesEnseignantDemo.groupes().first;
+    final GroupeEnseignant g = GroupeEnseignant(
+      id: 'g-creneaux',
+      libelle: 'Al-Fatiha',
+      type: demo.type,
+      seuilMax: 5,
+      creneau: demo.creneau,
+      nbMembres: 4,
+      creeLe: demo.creeLe,
+    );
+    final DateTime jeudi = DateTime(2026, 10, 29, 18);
+    final DateTime lundi = DateTime(2026, 11, 2, 18);
+    List<SeanceEnseignant> deuxCreneaux() => <SeanceEnseignant>[
+      for (final (String id, DateTime d) in <(String, DateTime)>[
+        ('lundi', lundi),
+        ('jeudi', jeudi),
+      ])
+        SeanceEnseignant(
+          id: id,
+          debut: d,
+          fin: d.add(const Duration(minutes: 45)),
+          statut: StatutSeance.planifiee,
+          nbParticipants: 4,
+          cahierDepose: false,
+          groupeId: g.id,
+        ),
+    ];
+
+    Future<void> capturerA(
+      WidgetTester tester,
+      DateTime maintenant,
+      String nom,
+    ) async {
+      _fenetre(tester, const Size(390, 844));
+      await tester.pumpWidget(
+        hote(
+          const MesClassesPage(),
+          surcharges: <Override>[
+            maintenantJourneeProvider.overrideWithValue(() => maintenant),
+            groupesEnseignantProvider.overrideWith(
+              (Ref _) async => <GroupeEnseignant>[g],
+            ),
+            seancesEnseignantProvider.overrideWith(
+              (Ref _) async => deuxCreneaux(),
+            ),
+            cahiersEnRetardProvider.overrideWith(
+              (Ref _) async => const <CahierEnRetard>[],
+            ),
+          ],
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+      expect(find.text(g.libelle), findsOneWidget, reason: 'une seule fois');
+      final String lu = tester
+          .widgetList<Text>(
+            find.descendant(
+              of: find.byKey(const ValueKey<String>('classes-a-la-une')),
+              matching: find.byType(Text),
+            ),
+          )
+          .map((Text x) => x.data ?? x.textSpan?.toPlainText() ?? '')
+          .join('|');
+      expect(lu, contains(t.disponibilites.joursLongs[3]), reason: 'jeudi');
+      expect(lu, isNot(contains(t.disponibilites.joursLongs[0])));
+      await capturerVue(tester, nom);
+    }
+
+    testWidgets('(1) jeudi 10:00 : la ligne suit le jeudi', (
+      WidgetTester tester,
+    ) async {
+      await capturerA(tester, DateTime(2026, 10, 29, 10), '1-mes-classes');
+      expect(
+        find.textContaining(RegExp(r'8\sh\s00'), findRichText: true),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey<String>('classes-rejoindre')),
+        findsNothing,
+      );
+    });
+
+    testWidgets('(5) jeudi 17:40, T-20 : Rejoindre', (
+      WidgetTester tester,
+    ) async {
+      await capturerA(
+        tester,
+        jeudi.subtract(const Duration(minutes: 20)),
+        '5-mes-classes-t-20',
+      );
+      expect(
+        find.byKey(const ValueKey<String>('classes-rejoindre')),
+        findsOneWidget,
+      );
+    });
+  }, skip: sautSansCapture);
 }

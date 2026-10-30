@@ -49,7 +49,8 @@ import 'package:rewayah_academy/features/accueil_famille/carte_classe_seance.dar
 import 'package:rewayah_academy/features/accueil_famille/ligne_derniere_seance.dart';
 import 'package:rewayah_academy/features/classe_tuteur/classe_tuteur_page.dart';
 
-import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
+import '../capture/outil_capture.dart'
+    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
 import '../fixtures/tuteur/faux_classes_foyer.dart';
 import '../fixtures/tuteur/faux_seances_famille.dart';
 import '../fixtures/tuteur/foyers.dart';
@@ -1336,6 +1337,83 @@ void main() {
       await tester.pump();
       expect(port.lectures, greaterThan(lues), reason: 'relue a la bascule');
       expect(rejoindre, findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+    });
+  });
+
+  // Captures du directeur (30/10/2026) : UNE classe a deux creneaux par
+  // semaine, lundi 18:00 et jeudi 18:00 (Paris) ; le jeudi est la plus proche.
+  group('Captures creneaux 30/10 : Accueil famille', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    testWidgets('(4) jeudi 10:00 Paris : la seance du jeudi, une fois', (
+      WidgetTester tester,
+    ) async {
+      final DateTime jeudi = DateTime.utc(2026, 10, 29, 17);
+      final DateTime lundi = DateTime.utc(2026, 11, 2, 17);
+      await _monter(
+        tester,
+        depart: Routes.tuteurAccueil,
+        taille: const Size(390, 1200),
+        maintenant: DateTime.utc(2026, 10, 29, 9),
+        classes: <ClasseFoyer>[
+          ClasseFoyer(
+            eleveId: _a1,
+            classe: classeFictive(
+              groupeId: 'g-creneaux',
+              libelle: 'Al-Fatiha',
+              nombreMembres: 4,
+              seuilMax: 5,
+            ),
+          ),
+        ],
+        seances: <SeanceFamille>[
+          seanceFictive(
+            seanceId: 'lundi',
+            eleveId: _a1,
+            debutUtc: lundi,
+            heureFoyer: heureRendue(
+              'Europe/Paris',
+              'Paris',
+              '18:00',
+              date: 'Lundi 2 novembre',
+            ),
+          ),
+          seanceFictive(
+            seanceId: 'jeudi',
+            eleveId: _a1,
+            debutUtc: jeudi,
+            heureFoyer: heureRendue(
+              'Europe/Paris',
+              'Paris',
+              '18:00',
+              date: 'Jeudi 29 octobre',
+            ),
+          ),
+        ],
+        horloges: PortHorlogeSimule(
+          debutUtc: jeudi,
+          maintenant: () => DateTime.utc(2026, 10, 29, 9),
+          creneaux: <(DateTime, String)>[
+            (lundi, 'Lundi 2 novembre'),
+            (jeudi, 'Jeudi 29 octobre'),
+          ],
+        ),
+      );
+      expect(tester.takeException(), isNull);
+      expect(
+        find.textContaining('Fatiha', findRichText: true),
+        findsOneWidget,
+        reason: 'une seule fois',
+      );
+      expect(find.textContaining('Jeudi 29 octobre'), findsOneWidget);
+      expect(find.textContaining('Lundi 2 novembre'), findsNothing);
+      // Le compte a rebours suit le jeudi : sur la carte et sous l'avatar.
+      expect(
+        find.textContaining(RegExp(r'8\sh\s00'), findRichText: true),
+        findsNWidgets(2),
+      );
+      await capturerVue(tester, '4-accueil-famille');
       await tester.pumpWidget(const SizedBox());
     });
   });

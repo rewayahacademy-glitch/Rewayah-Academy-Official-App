@@ -1672,6 +1672,55 @@ void main() {
       }
     }
   });
+
+  // Captures du directeur (30/10/2026) : UNE classe a deux creneaux par
+  // semaine, lundi 18:00 et jeudi 18:00 ; le jeudi est la plus proche.
+  group('Captures creneaux 30/10 : la Journee', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    testWidgets('(2) jeudi 10:00 : la seance du jeudi, une seule fois', (
+      WidgetTester tester,
+    ) async {
+      _fenetre(tester, const Size(390, 1400));
+      await tester.pumpWidget(
+        hote(
+          const JourneePage(),
+          surcharges: _surcharges(
+            maintenant: DateTime(2026, 10, 29, 10),
+            enseignant: FauxServiceEnseignant()
+              ..seancesRendues = <SeanceEnseignant>[
+                seanceDeTest(
+                  id: 'lundi',
+                  debut: DateTime(2026, 11, 2, 18),
+                  nbParticipants: 4,
+                  groupeId: 'g-creneaux',
+                  groupeLibelle: 'Al-Fatiha',
+                ),
+                seanceDeTest(
+                  id: 'jeudi',
+                  debut: DateTime(2026, 10, 29, 18),
+                  nbParticipants: 4,
+                  groupeId: 'g-creneaux',
+                  groupeLibelle: 'Al-Fatiha',
+                ),
+              ],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      // Constat du 30/10 : la meme seance du jeudi parait deux fois, dans
+      // « Prochaine seance » et dans « Ma journee » ; le lundi, jamais.
+      expect(find.text('Al-Fatiha'), findsOneWidget);
+      expect(find.text('Classe Al-Fatiha'), findsOneWidget);
+      expect(find.textContaining('18:00'), findsNWidgets(2));
+      expect(
+        find.textContaining(RegExp(r'8\sh\s00'), findRichText: true),
+        findsOneWidget,
+      );
+      await capturerVue(tester, '2-journee');
+    });
+  });
 }
 
 /// Les horaires de priere ne se lisent pas : l'echec partiel de la Journee.

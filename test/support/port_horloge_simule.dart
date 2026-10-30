@@ -16,7 +16,13 @@ class PortHorlogeSimule implements PortHorlogeSeance {
     this.duree = const Duration(minutes: 45),
     this.sessionId = 'seance-simulee',
     this.debutsParClasse = const <String, DateTime>{},
+    this.creneaux = const <(DateTime, String)>[],
   });
+
+  /// Les creneaux d'une Classe a plusieurs creneaux par semaine (debut UTC,
+  /// date locale rendue) : comme `horloge_classe`, le serveur rend le plus
+  /// proche qui n'est pas fini, grace comprise. Vide : [debutUtc].
+  final List<(DateTime, String)> creneaux;
 
   /// Le debut propre a une Classe, sinon [debutUtc].
   final Map<String, DateTime> debutsParClasse;
@@ -37,11 +43,25 @@ class PortHorlogeSimule implements PortHorlogeSeance {
   int lectures = 0;
 
   SessionClockVM _horloge([String? groupeId]) {
+    final DateTime m = maintenant().toUtc();
+    final List<(DateTime, String)> restants =
+        <(DateTime, String)>[
+          for (final (DateTime, String) c in creneaux)
+            if (c.$1.add(duree + const Duration(minutes: 15)).isAfter(m)) c,
+        ]..sort(
+          ((DateTime, String) a, (DateTime, String) b) => a.$1.compareTo(b.$1),
+        );
+    if (restants.isNotEmpty) {
+      return _horlogeA(restants.first.$1, restants.first.$2);
+    }
     final DateTime debut = debutsParClasse[groupeId] ?? debutUtc;
     return _horlogeA(debut);
   }
 
-  SessionClockVM _horlogeA(DateTime debut) => SessionClockVM.depuisFenetre(
+  SessionClockVM _horlogeA(
+    DateTime debut, [
+    String dateRendue = 'Vendredi 30 octobre',
+  ]) => SessionClockVM.depuisFenetre(
     fenetre: FenetreSeance(
       debutUtc: debut,
       finPrevueUtc: debut.add(duree),
@@ -50,11 +70,11 @@ class PortHorlogeSimule implements PortHorlogeSeance {
     ),
     maintenantServeurUtc: maintenant().toUtc(),
     sessionId: sessionId,
-    horlogeUtilisateur: const HorlogeAffichee(
+    horlogeUtilisateur: HorlogeAffichee(
       fuseauIana: 'Europe/Paris',
       libelleVille: 'Paris',
       heureLocaleRendue: '18:00',
-      dateLocaleRendue: 'Vendredi 30 octobre',
+      dateLocaleRendue: dateRendue,
     ),
   );
 
