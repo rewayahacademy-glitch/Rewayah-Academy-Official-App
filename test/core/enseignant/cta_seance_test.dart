@@ -303,5 +303,35 @@ void main() {
         isNull,
       );
     });
+
+    // Defaut du 30/10/2026 : un cours sans seance en base (cours du moment).
+    test(
+      'un cours sans seance en base : Rejoindre, puis il quitte la carte',
+      () {
+        final SeanceEnseignant cours = SeanceEnseignant.coursSansSeance(
+          <String, dynamic>{
+            'groupe_id': 'g',
+            'debut_utc': DateTime(2026, 9, 28, 9).toUtc().toIso8601String(),
+            'fin_prevue_utc': DateTime(
+              2026,
+              9,
+              28,
+              10,
+              30,
+            ).toUtc().toIso8601String(),
+          },
+        );
+        expect(
+          choisir(<SeanceEnseignant>[cours], DateTime(2026, 9, 28, 9, 25)),
+          same(cours),
+        );
+        expect(
+          choisir(<SeanceEnseignant>[
+            cours,
+          ], DateTime(2026, 9, 28, 10, 30).add(_grace)),
+          isNull,
+        );
+      },
+    );
   });
 }

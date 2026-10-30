@@ -43,7 +43,38 @@ class SeanceEnseignant {
     this.typePublic,
     this.seuilMax,
     this.minutesInterruption = 0,
+    this.aCreer = false,
   });
+
+  /// Lit une ligne de `cours_du_moment_mes_classes()` dont la seance n'existe
+  /// pas encore (`session_id` nul) : le cours du jour d'une Classe nee pendant
+  /// son creneau, ou dont la seance n'a pas ete creee (defaut du 30/10/2026).
+  ///
+  /// Debut et fin viennent de l'horloge du serveur (`horloge_classe`), jamais
+  /// d'un calcul d'horaire ici. L'identifiant est un repere local, unique par
+  /// Classe, qui ne part jamais au serveur : le concierge
+  /// (`seance_a_rejoindre`) cree la seance a l'appui sur « Rejoindre ».
+  factory SeanceEnseignant.coursSansSeance(Map<String, dynamic> json) {
+    final String groupe = json['groupe_id'] as String;
+    return SeanceEnseignant(
+      id: '$prefixeCoursSansSeance$groupe',
+      debut: DateTime.parse(json['debut_utc'] as String).toLocal(),
+      fin: DateTime.parse(json['fin_prevue_utc'] as String).toLocal(),
+      statut: StatutSeance.planifiee,
+      nbParticipants: (json['nb_membres'] as num?)?.toInt() ?? 0,
+      cahierDepose: false,
+      groupeId: groupe,
+      groupeLibelle: json['groupe_libelle'] as String?,
+      typePublic: json['type_public'] == null
+          ? null
+          : TypePublicGroupe.depuisSql(json['type_public'] as String?),
+      seuilMax: (json['seuil_max'] as num?)?.toInt(),
+      aCreer: true,
+    );
+  }
+
+  /// Le debut du repere local d'un cours sans seance.
+  static const String prefixeCoursSansSeance = 'cours-sans-seance:';
 
   /// Lit une ligne de `mes_seances_enseignant_v`.
   factory SeanceEnseignant.depuisJson(Map<String, dynamic> json) =>
@@ -102,6 +133,12 @@ class SeanceEnseignant {
 
   /// Minutes d'interruption consignees, prieres comprises (ADR-017).
   final int minutesInterruption;
+
+  /// Vrai quand la seance n'existe pas encore en base
+  /// ([SeanceEnseignant.coursSansSeance]) : [id] n'est alors qu'un repere
+  /// local. Presence, absence et cahier n'ont rien a lire ; « Rejoindre »
+  /// passe par le concierge, qui la cree.
+  final bool aCreer;
 
   /// Vrai quand cette seance est la reunion d'un groupe.
   ///

@@ -24,6 +24,7 @@ import 'package:rewayah_academy/core/router/billet_salle.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/tc_groupe/concierge_seance.dart';
 import 'package:rewayah_academy/core/tc_horloge/emplacement_entree.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
@@ -202,6 +203,17 @@ List<RouteBase> _routes() => <RouteBase>[
         Text('cahier:${etat.pathParameters['seanceId']}'),
   ),
 ];
+
+/// Le concierge qui cree la seance du cours du moment.
+class _ConciergeQuiCree implements PortConcierge {
+  final List<String> appels = <String>[];
+
+  @override
+  Future<String?> seanceARejoindre(String groupeId) async {
+    appels.add(groupeId);
+    return 'seance-creee';
+  }
+}
 
 /// Un service dont seule la lecture des cahiers en retard echoue.
 class _EnseignantRetardsEnEchec extends FauxServiceEnseignant {
@@ -819,6 +831,69 @@ void main() {
       await tester.tap(find.text(t.enseignant.journee.rejoindreSalle));
       await tester.pumpAndSettle();
       expect(find.text('salle:an-nour:false:g-an-nour'), findsOneWidget);
+    });
+
+    // Defaut du 30/10/2026 : une Classe nee pendant son creneau n'a pas de
+    // seance en base ; le cours du moment (horloge du serveur) est la carte,
+    // en direct, et « Rejoindre » passe par le concierge qui la cree.
+    testWidgets('cours sans seance : en direct, le concierge cree la seance', (
+      WidgetTester tester,
+    ) async {
+      final _ConciergeQuiCree concierge = _ConciergeQuiCree();
+      _fenetre(tester, const Size(390, 2400));
+      await tester.pumpWidget(
+        hoteRoutant(
+          depart: Routes.enseignantJournee,
+          routes: _routes(),
+          surcharges: <Override>[
+            ..._surcharges(
+              maintenant: DateTime(2026, 9, 28, 17, 40),
+              enseignant: FauxServiceEnseignant()
+                ..seancesRendues = avecCoursSansSeance(
+                  const <SeanceEnseignant>[],
+                  <Map<String, dynamic>>[
+                    <String, dynamic>{
+                      'groupe_id': 'g-garcons',
+                      'groupe_libelle': 'Garcons',
+                      'nb_membres': 3,
+                      'session_id': null,
+                      'debut_utc': DateTime(
+                        2026,
+                        9,
+                        28,
+                        17,
+                        30,
+                      ).toUtc().toIso8601String(),
+                      'fin_prevue_utc': DateTime(
+                        2026,
+                        9,
+                        28,
+                        19,
+                      ).toUtc().toIso8601String(),
+                    },
+                  ],
+                ),
+            ),
+            portConciergeProvider.overrideWithValue(concierge),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey<String>('journee-carte-classe')),
+        findsOneWidget,
+      );
+      expect(find.text('Garcons'), findsWidgets);
+      expect(find.text(t.enseignant.journee.coursEnCours), findsWidgets);
+      // Aucune absence a declarer : la seance n'existe pas encore.
+      expect(
+        find.byKey(const ValueKey<String>('journee-declarer-absence')),
+        findsNothing,
+      );
+      await tester.tap(find.text(t.enseignant.journee.rejoindreSalle));
+      await tester.pumpAndSettle();
+      expect(concierge.appels, <String>['g-garcons']);
+      expect(find.text('salle:seance-creee:false:g-garcons'), findsOneWidget);
     });
 
     testWidgets('Remplir le cahier ouvre le cahier de la seance', (
