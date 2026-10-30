@@ -61,11 +61,14 @@ pilote fusionne, applique les migrations et tient ce tableau à jour.
   directeur. **Le directeur, 30/10 : « On garde Stripe ».**
 - **Taxes avec Stripe (question du directeur, 30/10)** : rien n'est automatique de bout en bout.
   Stripe Tax calcule et ajoute la taxe au paiement et signale les seuils atteints par pays ;
-  l'inscription auprès de chaque autorité et les déclarations se font par le comptable ou par
-  un partenaire de dépôt proposé par Stripe (payant à part). Inconnus à trancher par le
-  comptable avant d'activer Stripe Tax : pays de la société, taxe déjà due dans ce pays, nature
-  fiscale d'un cours en direct (service éducatif ou service électronique) selon le pays de
-  l'élève. Aucun code ne change d'ici là : les prix restent affichés hors taxes.
+  l'inscription et les déclarations se font par le comptable ou un partenaire de dépôt proposé
+  par Stripe. Faits connus (mentions légales du site) : Rewayah Academy Ltd, société anglaise
+  (16624644). Donc : Royaume-Uni, TVA seulement au-delà du seuil britannique de chiffre
+  d'affaires ; Union européenne, depuis le 01/01/2025 un cours en direct à un particulier est
+  taxé dans le pays de l'élève, et une société hors UE le déclare par le guichet unique
+  « non-Union OSS » (une seule déclaration pour les 27 pays), sans le seuil de 10 000 € réservé
+  aux sociétés de l'UE ; Canada, Suisse, États-Unis : seuils propres à chaque pays. Le comptable
+  confirme avant l'ouverture des paiements. Aucun code ne change : prix affichés hors taxes.
 - **Paiement** : paiement mensuel par la famille sur Stripe Checkout, avec les relances
   existantes (J-7, J-3, J-1). Pas d'abonnement automatique pour l'instant.
 - **Après le paiement**, la direction place l'élève dans sa classe (geste existant). Le
