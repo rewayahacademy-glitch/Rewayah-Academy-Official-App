@@ -15,6 +15,7 @@ import '../theme/app_spacing.dart';
 import '../theme/app_typography.dart';
 import 'app_card.dart';
 import 'case_a_cocher.dart';
+import 'page_shell.dart' show RelaisTetePage, TetePageConfiee;
 import 'pressable.dart';
 
 /// Ce qu'une colonne devient quand le tableau se replie en cartes.
@@ -54,7 +55,14 @@ class ColonneDonnees<T> {
     this.rendu,
     this.rendreMemeSiTexteVide = false,
     this.tri,
+    this.ligneDense = true,
   });
+
+  /// LISTES-2 : faux, la colonne n'entre pas dans la ligne secondaire d'une
+  /// ligne dense de telephone ([DataCollection.densiteTelephone]) ; elle reste
+  /// au tableau. Pour garder cette ligne sur une ligne : l'essentiel seulement
+  /// (« matricule · classe · tuteur »).
+  final bool ligneDense;
 
   /// L'en-tete de colonne, en rendu tableau. Il sert aussi de libelle parle en
   /// rendu carte, ou aucun en-tete n'est visible.
@@ -245,7 +253,36 @@ class DataCollection<T> extends StatelessWidget {
     this.actionsLigne,
     this.largeurActions,
     this.piedCollant,
+    this.tete,
+    this.prendTeteDePage = false,
+    this.densiteTelephone = false,
   });
+
+  /// LISTES-2 (directeur, 30/10/2026) : ce qui precede les lignes et
+  /// **defile avec elles** (choix de vue, filtres, recherche, synthese), au
+  /// lieu de rester fixe au-dessus de la liste. Au bureau, seule la rangee
+  /// d'en-tetes de colonnes reste collee ; le pied ([piedCollant]) vient
+  /// apres la derniere ligne. Opt-in, adopte liste par liste
+  /// (`DECISION-LISTES-2026-10-23.md` §5 ter). `null` : le rendu d'avant.
+  final Widget? tete;
+
+  /// LISTES-2 : vrai, la collection **prend la tete de la page**
+  /// (`PageShell(teteAvecLaListe: true)`, [TetePageConfiee]) et la pose en
+  /// premier element de son defilement, avant [tete]. Implique le rendu de
+  /// [tete] (defilement par tranches) meme sans elle.
+  final bool prendTeteDePage;
+
+  /// LISTES-2 : vrai, sous le seuil du tableau, une **ligne dense** par objet
+  /// au lieu d'une carte : la colonne identifiante, puis les autres sur une
+  /// ligne (« matricule · classe · tuteur »), 64 px au moins (la cible du mode
+  /// en Interface guidee, plus 8 avec une case ou un menu), filets fins dans
+  /// un seul cadre (K-55). Une colonne a pastille ne montre que sa valeur non
+  /// vide. Ne vaut que dans le rendu par tranches ([tete] ou
+  /// [prendTeteDePage]).
+  final bool densiteTelephone;
+
+  /// Vrai quand la collection se rend par tranches (LISTES-2).
+  bool get _parTranches => tete != null || prendTeteDePage;
 
   /// Ce qui se pose **sous les lignes et ne defile pas** : le pied d'une liste
   /// paginee ([PiedDeListe]). En tableau, il ferme le cadre (un filet le separe
@@ -468,6 +505,9 @@ class DataCollection<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (_parTranches) {
+      return _CollectionParTranches<T>(collection: this);
+    }
     final bool tableau = enTableau(context);
     // JONCTION-LIGNES-1 : deux lignes de travail ont pose le meme besoin sous
     // deux noms ([defileAvecLaPage], ONGLETS-COUPE-1 ; [defileSeule] a faux,
@@ -1486,4 +1526,408 @@ class PlaceCollection extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       DataCollection.enTableau(context) ? Expanded(child: child) : child;
+}
+
+/// LISTES-2 : la collection rendue par tranches (`CustomScrollView`) : la tete
+/// de la page quand elle est prise, la [DataCollection.tete], puis le tableau
+/// (en-tete de colonnes colle) ou les lignes, puis le pied. Rien d'autre ne
+/// reste fixe.
+class _CollectionParTranches<T> extends StatefulWidget {
+  const _CollectionParTranches({required this.collection});
+
+  final DataCollection<T> collection;
+
+  @override
+  State<_CollectionParTranches<T>> createState() =>
+      _CollectionParTranchesEtat<T>();
+}
+
+class _CollectionParTranchesEtat<T> extends State<_CollectionParTranches<T>> {
+  /// Le relais de la page ou la collection s'est declaree preneuse.
+  RelaisTetePage? _relais;
+  Widget? _tetePage;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final TetePageConfiee? page = widget.collection.prendTeteDePage
+        ? TetePageConfiee.de(context)
+        : null;
+    final RelaisTetePage? relais = page?.relais;
+    if (!identical(relais, _relais)) {
+      _relais?.rendre(this);
+      _relais = relais?..prendre(this);
+    }
+    _tetePage = page != null && identical(page.titulaire, this)
+        ? page.tete
+        : null;
+  }
+
+  @override
+  void dispose() {
+    _relais?.rendre(this);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final DataCollection<T> c = widget.collection;
+    return LayoutBuilder(
+      builder: (BuildContext contexte, BoxConstraints contraintes) {
+        final _MiseEnPage mise = _MiseEnPage.de(
+          contexte,
+          avecSelection: c.selection != null,
+          avecActions: c.actionsLigne != null,
+          largeurActions: c.largeurActions,
+        );
+        final bool tableau =
+            DataCollection.enTableau(contexte) &&
+            DataCollection.tientEnTableau<T>(
+              contexte,
+              colonnes: c.colonnes,
+              lignes: c.lignes,
+              largeur: contraintes.maxWidth,
+              reserve: mise.reserveDebut + mise.reserveFin,
+            );
+        final AppPalette palette = AppPalette.of(contexte);
+        final AppMetriques metriques = AppMetriques.of(contexte);
+        final BoxDecoration cadre = palette.surfaceRaised.decoration(
+          borderRadius: metriques.arrondi,
+          side: palette.borderHairline.asBorderSide(),
+        );
+        final List<Widget> tranches = <Widget>[
+          if (_tetePage != null) SliverToBoxAdapter(child: _tetePage),
+          if (c.tete != null) SliverToBoxAdapter(child: c.tete),
+        ];
+        Widget ligneDeTable(BuildContext ctx, int i) => KeyedSubtree(
+          key: c.cle?.call(c.lignes[i]),
+          child: _LigneTableau<T>(
+            colonnes: c.colonnes,
+            ligne: c.lignes[i],
+            onSelectionner: c.onSelectionner,
+            selectionnee: c.estSelectionnee?.call(c.lignes[i]),
+            selection: c.selection,
+            actionsLigne: c.actionsLigne,
+            mise: mise,
+          ),
+        );
+        if (tableau) {
+          tranches.add(
+            DecoratedSliver(
+              decoration: cadre,
+              sliver: SliverMainAxisGroup(
+                slivers: <Widget>[
+                  // La seule rangee collee : sans ses en-tetes, une colonne
+                  // ne se lit plus.
+                  PinnedHeaderSliver(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.only(
+                        topLeft: metriques.arrondi.topLeft,
+                        topRight: metriques.arrondi.topRight,
+                      ),
+                      child: _EnTeteTableau<T>(
+                        colonnes: c.colonnes,
+                        selection: c.selection,
+                        lignes: c.lignes,
+                        mise: mise,
+                      ),
+                    ),
+                  ),
+                  SliverList.builder(
+                    itemCount: c.lignes.length,
+                    itemBuilder: ligneDeTable,
+                  ),
+                  if (c.piedCollant != null)
+                    SliverToBoxAdapter(
+                      child: _PiedTable(child: c.piedCollant!),
+                    ),
+                ],
+              ),
+            ),
+          );
+        } else if (c.densiteTelephone) {
+          tranches
+            ..add(
+              DecoratedSliver(
+                decoration: cadre,
+                sliver: SliverList.builder(
+                  itemCount: c.lignes.length,
+                  itemBuilder: (BuildContext ctx, int i) => KeyedSubtree(
+                    key: c.cle?.call(c.lignes[i]),
+                    child: _LigneDense<T>(
+                      colonnes: c.colonnes,
+                      ligne: c.lignes[i],
+                      premiere: i == 0,
+                      onSelectionner: c.onSelectionner,
+                      selection: c.selection,
+                      actionsLigne: c.actionsLigne,
+                      mise: mise,
+                    ),
+                  ),
+                ),
+              ),
+            )
+            ..addAll(<Widget>[
+              if (c.piedCollant != null)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: AppSpacing.sm),
+                    child: c.piedCollant,
+                  ),
+                ),
+            ]);
+        } else {
+          tranches.addAll(<Widget>[
+            SliverList.separated(
+              itemCount: c.lignes.length,
+              separatorBuilder: (BuildContext _, int _) => Ecart.vMd,
+              itemBuilder: (BuildContext ctx, int i) => KeyedSubtree(
+                key: c.cle?.call(c.lignes[i]),
+                child: _Carte<T>(
+                  colonnes: c.colonnes,
+                  ligne: c.lignes[i],
+                  onSelectionner: c.onSelectionner,
+                  selectionnee: c.estSelectionnee?.call(c.lignes[i]) ?? false,
+                  selection: c.selection,
+                  actionsLigne: c.actionsLigne,
+                ),
+              ),
+            ),
+            if (c.piedCollant != null)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: AppSpacing.md),
+                  child: c.piedCollant,
+                ),
+              ),
+          ]);
+        }
+        if (c.piedDePage != null) {
+          tranches.add(
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(top: AppSpacing.xl),
+                child: c.piedDePage,
+              ),
+            ),
+          );
+        }
+        // La respiration de bas de liste.
+        tranches.add(const SliverToBoxAdapter(child: Ecart.vXl));
+        return CustomScrollView(slivers: tranches);
+      },
+    );
+  }
+}
+
+/// LISTES-2 : une ligne dense de telephone ([DataCollection.densiteTelephone]).
+class _LigneDense<T> extends StatelessWidget {
+  const _LigneDense({
+    required this.colonnes,
+    required this.ligne,
+    required this.premiere,
+    required this.mise,
+    this.onSelectionner,
+    this.selection,
+    this.actionsLigne,
+  });
+
+  final List<ColonneDonnees<T>> colonnes;
+  final T ligne;
+  final bool premiere;
+  final _MiseEnPage mise;
+  final void Function(T ligne)? onSelectionner;
+  final SelectionCollection<T>? selection;
+  final Widget Function(BuildContext context, T ligne)? actionsLigne;
+
+  /// La hauteur mini d'une ligne dense en interface standard : deux lignes de
+  /// texte et leurs marges.
+  static const double _hauteurStandard = AppSpacing.respiration;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    ColonneDonnees<T>? titre;
+    for (final ColonneDonnees<T> colonne in colonnes) {
+      if (colonne.role == RoleColonne.identifiante) {
+        titre = colonne;
+        break;
+      }
+    }
+    // Une pastille ne dit que l'exception : vide, elle n'est pas posee.
+    final List<ColonneDonnees<T>> pastilles = <ColonneDonnees<T>>[
+      for (final ColonneDonnees<T> c in colonnes)
+        if (c != titre &&
+            c.role == RoleColonne.secondaire &&
+            c.rendu != null &&
+            c.texte(ligne).isNotEmpty)
+          c,
+    ];
+    // Une colonne a part a rendu riche (le pays et son drapeau, ENS-PAYS-1)
+    // ouvre la ligne secondaire avec son rendu, jamais son seul texte.
+    final List<ColonneDonnees<T>> riches = <ColonneDonnees<T>>[
+      for (final ColonneDonnees<T> c in colonnes)
+        if (c != titre &&
+            c.ligneDense &&
+            c.role == RoleColonne.aPart &&
+            c.rendu != null &&
+            c.texte(ligne).isNotEmpty)
+          c,
+    ];
+    final String? enTete = titre == null
+        ? null
+        : identifiantsInsecables(titre.texte(ligne)).trim();
+    final String resume = enchainer(
+      colonnes
+          .where(
+            (ColonneDonnees<T> c) =>
+                c != titre &&
+                c.ligneDense &&
+                !riches.contains(c) &&
+                !(c.role == RoleColonne.secondaire && c.rendu != null),
+          )
+          .map(_avecTitreDuNombre<T>)
+          .map((ColonneDonnees<T> c) => c.texte(ligne))
+          .where(
+            (String v) =>
+                v.trim().isNotEmpty &&
+                (enTete == null || identifiantsInsecables(v).trim() != enTete),
+          ),
+      ' · ',
+    );
+    final bool cochee = selection?.estCochee(ligne) ?? false;
+    final bool cochable = selection?.estCochable?.call(ligne) ?? true;
+    final Widget? menu = actionsLigne?.call(context, ligne);
+    final double hauteur = math.max(_hauteurStandard, mise.hauteurLigne);
+    // Texte agrandi (au-dela de 130 %) : la pastille passe sous le texte, elle
+    // ne tiendrait plus a cote du nom (320 x2).
+    final bool pastillesDessous =
+        MediaQuery.textScalerOf(context).scale(1) > 1.3;
+
+    final Widget texte = MergeSemantics(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          if (titre != null)
+            titre.rendu?.call(context, ligne) ??
+                _TexteCollection(
+                  titre.texte(ligne),
+                  style: textes.titleSmall ?? const TextStyle(),
+                ),
+          // Une seule ligne : le detail se lit en entier par le lecteur
+          // d'ecran (le texte complet reste dans la semantique) et au bureau.
+          // Texte agrandi : le rendu riche prend sa ligne, entier (un nom de
+          // pays ne se coupe pas).
+          if (pastillesDessous)
+            for (final ColonneDonnees<T> c in riches) c.rendu!(context, ligne),
+          if ((riches.isNotEmpty && !pastillesDessous) || resume.isNotEmpty)
+            Row(
+              children: <Widget>[
+                if (!pastillesDessous)
+                  for (final ColonneDonnees<T> c in riches) ...<Widget>[
+                    Flexible(child: c.rendu!(context, ligne)),
+                    Ecart.hSm,
+                  ],
+                if (resume.isNotEmpty)
+                  Expanded(
+                    child: Text(
+                      resume,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: palette.inkMuted.applyTo(
+                        textes.bodySmall ?? const TextStyle(),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          if (pastillesDessous)
+            for (final ColonneDonnees<T> c in pastilles) ...<Widget>[
+              Ecart.vXs,
+              c.rendu!(context, ligne),
+            ],
+        ],
+      ),
+    );
+
+    Widget contenu(Color? fond) {
+      final Widget rangee = ConstrainedBox(
+        constraints: BoxConstraints(minHeight: hauteur),
+        child: Padding(
+          padding: EdgeInsetsDirectional.only(
+            start: selection != null ? mise.reserveDebut : AppSpacing.lg,
+            end: menu != null ? mise.reserveFin : AppSpacing.lg,
+            top: AppSpacing.sm,
+            bottom: AppSpacing.sm,
+          ),
+          child: Row(
+            children: <Widget>[
+              Expanded(child: texte),
+              if (!pastillesDessous)
+                for (final ColonneDonnees<T> c in pastilles) ...<Widget>[
+                  Ecart.hSm,
+                  c.rendu!(context, ligne),
+                ],
+            ],
+          ),
+        ),
+      );
+      return fond == null ? rangee : ColoredBox(color: fond, child: rangee);
+    }
+
+    final Widget laLigne = onSelectionner == null
+        ? contenu(null)
+        : Pressable.selon(
+            onPress: () => onSelectionner!(ligne),
+            respecterCibleTactile: false,
+            constructeur: (BuildContext _, EtatPression etat) => contenu(
+              etat.presse
+                  ? palette.calqueInteraction(presse: true)
+                  : etat.survole
+                  ? palette.calqueInteraction()
+                  : null,
+            ),
+          );
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: cochee ? palette.washAccent.background : null,
+        border: premiere
+            ? null
+            : Border(top: palette.borderHairline.asBorderSide()),
+      ),
+      child: Stack(
+        fit: StackFit.passthrough,
+        children: <Widget>[
+          laLigne,
+          if (selection != null && cochable)
+            PositionedDirectional(
+              start: AppSpacing.sm,
+              top: 0,
+              bottom: 0,
+              width: mise.cible,
+              child: Center(
+                child: CaseACocher(
+                  valeur: cochee,
+                  libelle: t.commun.listes.cocherLigne(
+                    objet: selection!.libelleLigne(ligne),
+                  ),
+                  onChange: (bool _) => selection!.onBasculer(ligne),
+                ),
+              ),
+            ),
+          if (menu != null)
+            PositionedDirectional(
+              end: AppSpacing.sm,
+              top: 0,
+              bottom: 0,
+              width: mise.largeurActions,
+              child: Center(child: menu),
+            ),
+        ],
+      ),
+    );
+  }
 }

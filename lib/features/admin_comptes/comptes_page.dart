@@ -15,9 +15,9 @@ import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bandeau_attention.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
+import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/champ_recherche.dart';
 import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/data_collection.dart';
@@ -188,6 +188,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
       tri: tri,
     );
     _vueChoisie = vue;
+    _vueDefaut = null;
     _filtres.clear();
     _pages.clear();
     // Sans vue dans l'adresse, le filtre lu s'applique a la vue qui s'ouvrira
@@ -195,6 +196,9 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
     _filtreAdresse = filtre;
     _recherche.text = filtre.recherche;
   }
+
+  /// La vue ouverte par defaut, decidee au premier rendu des comptes.
+  VueComptes? _vueDefaut;
 
   /// Le filtre lu dans l'adresse, pose sur la premiere vue rendue.
   FiltreComptes? _filtreAdresse;
@@ -316,8 +320,12 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
     return PageShell(
       titre: t.admin.comptes.titre,
       entete: SousNavigationDomaine(onglets: ongletsPersonnes(), indexActif: 1),
-      // `DataCollection` porte son propre `ListView` : il exige une hauteur
-      // bornee, donc l'ecran gere son defilement.
+      // LISTES-2 (directeur, 30/10/2026) : la tete de la page (retour,
+      // « Comptes ▾ », actions) defile avec la liste, qui la prend
+      // (`DataCollection.prendTeteDePage`). Rien de fixe au-dessus des
+      // lignes, sauf la barre de l'application.
+      teteAvecLaListe: true,
+      // `DataCollection` porte son propre defilement.
       defilante: false,
       child: ColonneCorps(
         children: <Widget>[
@@ -364,10 +372,12 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
     return VueComptes.parDefaut(comptes);
   }
 
-  /// Le selecteur de vue, la synthese, les commandes, puis le tableau.
+  /// Les commandes (qui defilent avec la liste), puis les lignes.
   Widget _corps(List<CompteAdmin> comptes) {
     final DateTime maintenant = DateTime.now();
-    _vue = _vueChoisie ?? _vueParDefaut(comptes);
+    // La vue par defaut se decide une fois par adresse lue : une relecture
+    // des comptes ne fait pas sauter l'ecran d'une vue a l'autre.
+    _vue = _vueChoisie ?? (_vueDefaut ??= _vueParDefaut(comptes));
     final FiltreComptes? lu = _filtreAdresse;
     if (lu != null) {
       _filtres[_vue] = lu;
@@ -413,8 +423,9 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
         deLaVue.isNotEmpty &&
         deLaVue.any((CompteAdmin c) => !c.detailsServis);
 
-    return ColonneCorps(
-      minimumEtire: DataCollection.minimumLisible(context),
+    final Widget? synthese = _synthese(comptes);
+    final Widget commandes = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         if (comptes.length >= plafondComptesServeur) ...<Widget>[
           BandeauAttention(
@@ -436,7 +447,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
           ),
           Ecart.vSm,
         ],
-        _vuesEtRecherche(
+        _rangeeCommandes(
           SelecteurSection<VueComptes>(
             key: const ValueKey<String>('comptes-vues'),
             libelle: t.admin.comptes.vues,
@@ -453,75 +464,85 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
                 ),
             ],
           ),
+          (bool etroit) =>
+              _filtresVue(deLaVue, maintenant, filtre, etroit: etroit),
+          filtre,
         ),
-        Ecart.vSm,
-        ?_commandes(deLaVue, maintenant, filtre),
-        _synthese(comptes, deLaVue, visibles.length, filtre),
-        Ecart.vSm,
+        if (synthese != null) ...<Widget>[Ecart.vSm, synthese],
         _filtresActifs(filtre),
-        if (deLaVue.isEmpty)
-          EmptyState(
-            key: ValueKey<String>('comptes-vide-${_vue.name}'),
-            message: _videVue(_vue),
-            invitation: t.admin.comptes.videDetail,
-            registre: RegistreVide.subi,
-            icone: AppIcons.rienAAfficher,
-          )
-        else if (visibles.isEmpty)
-          EmptyState(
-            message: t.admin.comptes.aucunAvecCeFiltre,
-            invitation: t.admin.comptes.aucunAvecCeFiltreDetail,
-            registre: RegistreVide.subi,
-            icone: AppIcons.rienAAfficher,
-          )
-        else
-          Expanded(
-            child: _HauteurLisible(
-              child: DataCollection<CompteAdmin>(
-                key: ValueKey<String>(
-                  'comptes-table-${_vue.name}-$page-$taille',
-                ),
-                lignes: visibles.sublist(debut, fin),
-                cle: (CompteAdmin c) => ValueKey<String>(c.profilId),
-                colonnes: _colonnes(visibles, filtre),
-                // Une colonne d'actions seulement si au moins un compte de la
-                // vue en a une, jugee sur toute la liste (la largeur ne saute
-                // pas d'une page a l'autre).
-                actionsLigne: visibles.any(_ouvreUnDossier) ? _actions : null,
-                // PAS DE SELECTION MULTIPLE (LISTES-1 §5.6) : aucune operation
-                // groupee fiable n'existe pour des comptes. Une case sans geste
-                // groupe serait un faux controle.
-                piedCollant: PiedDeListe(
-                  debut: debut + 1,
-                  fin: fin,
-                  total: visibles.length,
-                  onPrecedent: page > 0
-                      ? () => setState(() => _pages[_vue] = page - 1)
-                      : null,
-                  onSuivant: fin < visibles.length
-                      ? () => setState(() => _pages[_vue] = page + 1)
-                      : null,
-                  taillePage: taille,
-                  taillesProposees: _taillesPage,
-                  onTaillePage: (int n) => setState(() {
-                    _taillePage = n;
-                    _pages.clear();
-                  }),
-                ),
-              ),
-            ),
-          ),
+        Ecart.vSm,
       ],
+    );
+
+    if (deLaVue.isEmpty || visibles.isEmpty) {
+      // Sans ligne, pas de liste pour prendre la tete : la page fait defiler
+      // sa tete et ce corps ensemble.
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          commandes,
+          if (deLaVue.isEmpty)
+            EmptyState(
+              key: ValueKey<String>('comptes-vide-${_vue.name}'),
+              message: _videVue(_vue),
+              invitation: t.admin.comptes.videDetail,
+              registre: RegistreVide.subi,
+              icone: AppIcons.rienAAfficher,
+            )
+          else
+            EmptyState(
+              message: t.admin.comptes.aucunAvecCeFiltre,
+              invitation: t.admin.comptes.aucunAvecCeFiltreDetail,
+              registre: RegistreVide.subi,
+              icone: AppIcons.rienAAfficher,
+            ),
+        ],
+      );
+    }
+
+    return DataCollection<CompteAdmin>(
+      key: ValueKey<String>('comptes-table-${_vue.name}-$page-$taille'),
+      prendTeteDePage: true,
+      tete: commandes,
+      densiteTelephone: true,
+      lignes: visibles.sublist(debut, fin),
+      cle: (CompteAdmin c) => ValueKey<String>(c.profilId),
+      colonnes: _colonnes(visibles, filtre),
+      // Une colonne d'actions seulement si au moins un compte de la vue en a
+      // une, jugee sur toute la liste (la largeur ne saute pas d'une page a
+      // l'autre).
+      actionsLigne: visibles.any(_ouvreUnDossier) ? _actions : null,
+      // PAS DE SELECTION MULTIPLE (LISTES-1 §5.6) : aucune operation groupee
+      // fiable n'existe pour des comptes. Une case sans geste groupe serait un
+      // faux controle.
+      piedCollant: PiedDeListe(
+        debut: debut + 1,
+        fin: fin,
+        total: visibles.length,
+        onPrecedent: page > 0
+            ? () => setState(() => _pages[_vue] = page - 1)
+            : null,
+        onSuivant: fin < visibles.length
+            ? () => setState(() => _pages[_vue] = page + 1)
+            : null,
+        taillePage: taille,
+        taillesProposees: _taillesPage,
+        onTaillePage: (int n) => setState(() {
+          _taillePage = n;
+          _pages.clear();
+        }),
+      ),
     );
   }
 
-  /// Les filtres de la vue : l'etat en menu, les acces echus. Rien quand
+  /// Les filtres de la vue : l'etat en menu, les acces echus. Nul quand
   /// aucun n'offre de choix (un controle sans choix n'est pas un controle).
-  Widget? _commandes(
+  Widget? _filtresVue(
     List<CompteAdmin> deLaVue,
     DateTime maintenant,
-    FiltreComptes filtre,
-  ) {
+    FiltreComptes filtre, {
+    required bool etroit,
+  }) {
     final Map<EtatAffiche, int> parEtat = <EtatAffiche, int>{};
     for (final CompteAdmin c in deLaVue) {
       final EtatAffiche e = EtatAffiche.de(c);
@@ -532,55 +553,77 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
         .length;
     final bool menuEtat = parEtat.length > 1 || filtre.etat != null;
     final bool puceEchus = filtre.echus || echus > 0;
-    if (!menuEtat && !puceEchus) return null;
+    // LISTES-2 : l'exception qui appelle un geste (une decision attendue) est
+    // une puce, en tete de la rangee : un toucher retient « En attente ».
+    final int attendent = parEtat[EtatAffiche.attente] ?? 0;
+    // Etroit (telephone), la rangee n'a la place que du menu d'etat : la
+    // ligne en attente porte sa puce, passe en tete, et le menu « État »
+    // propose « En attente ».
+    final bool puceAttente = attendent > 0 && !etroit;
+    if (!menuEtat && !puceEchus && !puceAttente) return null;
 
-    return Padding(
-      padding: const EdgeInsetsDirectional.only(bottom: AppSpacing.sm),
-      child: RangeeFiltres(
-        replier: false,
-        filtres: <Widget>[
-          if (menuEtat)
-            MenuFiltre<EtatAffiche>(
-              key: const ValueKey<String>('comptes-filtre-etat'),
-              libelle: t.admin.comptes.filtreEtat,
-              valeur: filtre.etat,
-              onChoix: (EtatAffiche? e) => _appliquer(
-                e == null ? filtre.avec(sansEtat: true) : filtre.avec(etat: e),
+    return RangeeFiltres(
+      replier: false,
+      filtres: <Widget>[
+        if (puceAttente)
+          FilterPill(
+            key: const ValueKey<String>('comptes-attente'),
+            libelle: t.admin.comptes.etatEnAttente,
+            compteur: attendent,
+            retenue: filtre.etat == EtatAffiche.attente,
+            onPress: () => _appliquer(
+              filtre.etat == EtatAffiche.attente
+                  ? filtre.avec(sansEtat: true)
+                  : filtre.avec(etat: EtatAffiche.attente),
+            ),
+          ),
+        if (menuEtat)
+          MenuFiltre<EtatAffiche>(
+            key: const ValueKey<String>('comptes-filtre-etat'),
+            libelle: t.admin.comptes.filtreEtat,
+            valeur: filtre.etat,
+            onChoix: (EtatAffiche? e) => _appliquer(
+              e == null ? filtre.avec(sansEtat: true) : filtre.avec(etat: e),
+            ),
+            entrees: <EntreeFiltre<EtatAffiche>>[
+              EntreeFiltre<EtatAffiche>(
+                valeur: null,
+                libelle: t.admin.comptes.filtreTousLesEtats,
+                compteur: deLaVue.length,
               ),
-              entrees: <EntreeFiltre<EtatAffiche>>[
-                EntreeFiltre<EtatAffiche>(
-                  valeur: null,
-                  libelle: t.admin.comptes.filtreTousLesEtats,
-                  compteur: deLaVue.length,
-                ),
-                for (final EtatAffiche e in EtatAffiche.values)
-                  if (parEtat.containsKey(e) || filtre.etat == e)
-                    EntreeFiltre<EtatAffiche>(
-                      valeur: e,
-                      libelle: _libelleEtat(e),
-                      compteur: parEtat[e] ?? 0,
-                    ),
-              ],
-            ),
-          // DASH-ADM-ECHUS : les acces echus de la vue, rendus des qu'il y en
-          // a, ou quand le filtre est retenu (il doit pouvoir se relacher).
-          if (puceEchus)
-            FilterPill(
-              key: const ValueKey<String>('comptes-filtre-echus'),
-              libelle: t.admin.tableau.comptes,
-              compteur: echus,
-              retenue: filtre.echus,
-              onPress: () => _appliquer(filtre.avec(echus: !filtre.echus)),
-            ),
-        ],
-      ),
+              for (final EtatAffiche e in EtatAffiche.values)
+                if (parEtat.containsKey(e) || filtre.etat == e)
+                  EntreeFiltre<EtatAffiche>(
+                    valeur: e,
+                    libelle: _libelleEtat(e),
+                    compteur: parEtat[e] ?? 0,
+                  ),
+            ],
+          ),
+        // DASH-ADM-ECHUS : les acces echus de la vue, rendus des qu'il y en
+        // a, ou quand le filtre est retenu (il doit pouvoir se relacher).
+        if (puceEchus)
+          FilterPill(
+            key: const ValueKey<String>('comptes-filtre-echus'),
+            libelle: t.admin.tableau.comptes,
+            compteur: echus,
+            retenue: filtre.echus,
+            onPress: () => _appliquer(filtre.avec(echus: !filtre.echus)),
+          ),
+      ],
     );
   }
 
-  /// Le choix de la vue, et la recherche dans la vue sur la meme rangee au
-  /// bureau (la rangee d'en-tete ne coute qu'une ligne a la table, LISTES-1
-  /// §3.1). Etroit, la recherche passe sous le choix de la vue.
-  Widget _vuesEtRecherche(Widget vues) {
+  /// LISTES-2 : **une seule rangee de commandes**. Au bureau : les vues
+  /// (segmentees si elles tiennent), les filtres, la recherche a droite.
+  /// Etroit : les vues (en menu quand elles ne tiennent pas, ONGLETS-1), les
+  /// filtres, et une loupe qui ouvre la recherche a la demande, sous la
+  /// rangee ; elle reste ouverte tant qu'un texte est cherche.
+  Widget _rangeeCommandes(
+    Widget vues,
+    Widget? Function(bool etroit) filtresSelon,
+    FiltreComptes filtre,
+  ) {
     final Widget recherche = ChampRecherche(
       cleChamp: const ValueKey<String>('comptes-recherche'),
       cleEffacer: const ValueKey<String>('comptes-recherche-effacer'),
@@ -594,24 +637,77 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
     );
     return LayoutBuilder(
       builder: (BuildContext contexte, BoxConstraints contraintes) {
-        if (contraintes.maxWidth >= _largeurUneRangee) {
+        final bool etroit = contraintes.maxWidth < _largeurUneRangee;
+        final Widget? filtres = filtresSelon(etroit);
+        if (!etroit) {
           return Row(
             children: <Widget>[
-              Flexible(child: vues),
-              Ecart.hLg,
+              if (filtres != null) ...<Widget>[
+                Flexible(flex: 3, child: vues),
+                Ecart.hMd,
+                Flexible(flex: 2, child: filtres),
+              ] else
+                Expanded(child: vues),
+              Ecart.hMd,
               SizedBox(width: _largeurRecherche, child: recherche),
+            ],
+          );
+        }
+        final bool ouverte =
+            _rechercheOuverte || filtre.recherche.trim().isNotEmpty;
+        // Texte agrandi (au-dela de 130 %) : les filtres passent sous la
+        // rangee des vues, qui garderait sinon trop peu de place (320 x2).
+        final bool grandTexte =
+            MediaQuery.textScalerOf(contexte).scale(1) > 1.3;
+        final Widget loupe = BoutonIcone(
+          key: const ValueKey<String>('comptes-loupe'),
+          icone: AppIcons.recherche,
+          libelle: t.admin.comptes.recherche,
+          selectionne: ouverte,
+          onPress: () => setState(() => _rechercheOuverte = !_rechercheOuverte),
+        );
+        if (grandTexte) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Expanded(child: vues),
+                  Ecart.hSm,
+                  loupe,
+                ],
+              ),
+              if (filtres != null) ...<Widget>[Ecart.vSm, filtres],
+              if (ouverte) ...<Widget>[Ecart.vSm, recherche],
             ],
           );
         }
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[vues, Ecart.vMd, recherche],
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                if (filtres != null) ...<Widget>[
+                  Flexible(flex: 3, child: vues),
+                  Ecart.hSm,
+                  Flexible(flex: 2, child: filtres),
+                ] else
+                  Expanded(child: vues),
+                Ecart.hSm,
+                loupe,
+              ],
+            ),
+            if (ouverte) ...<Widget>[Ecart.vSm, recherche],
+          ],
         );
       },
     );
   }
 
-  /// En dessous, la recherche passe sous le choix de la vue.
+  /// Vrai quand la loupe a ouvert la recherche (rangee etroite).
+  bool _rechercheOuverte = false;
+
+  /// En dessous, la recherche passe derriere la loupe.
   static const double _largeurUneRangee = 900;
 
   /// La largeur de la recherche quand elle partage sa rangee.
@@ -643,62 +739,21 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
     onToutEffacer: _toutEffacer,
   );
 
-  /// La synthese, au ras du tableau : combien de comptes dans la vue, et ce
-  /// qui y attend une decision (un toucher applique ce filtre).
-  Widget _synthese(
-    List<CompteAdmin> comptes,
-    List<CompteAdmin> deLaVue,
-    int nombre,
-    FiltreComptes filtre,
-  ) {
-    final DateTime maintenant = DateTime.now();
-    final List<CompteAdmin> attendent = deLaVue
-        .where((CompteAdmin c) => c.attendUneDecision)
-        .toList(growable: false);
-    // Un compte au role illisible n'entre dans aucune vue : l'ecran le dit.
+  /// La seule phrase qui reste au-dessus des lignes, et seulement quand elle
+  /// a lieu d'etre : un compte au role illisible n'entre dans aucune vue.
+  /// Le nombre de comptes est dans le choix de la vue et le pied (« 1-28 sur
+  /// 28 ») ; ce qui attend une decision est la puce « En attente » de la
+  /// rangee des filtres (LISTES-2).
+  Widget? _synthese(List<CompteAdmin> comptes) {
     final int roleIllisible = comptes
         .where((CompteAdmin c) => c.role == null)
         .length;
-    final TextTheme textes = Theme.of(context).textTheme;
-    return Wrap(
-      crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: AppSpacing.lg,
-      runSpacing: AppSpacing.xs,
-      children: <Widget>[
-        Semantics(
-          liveRegion: true,
-          child: Text(
-            t.admin.comptes.compteur(n: nombre),
-            key: const ValueKey<String>('comptes-compteur'),
-            style: textes.titleSmall,
-          ),
-        ),
-        if (attendent.isNotEmpty && filtre.etat != EtatAffiche.attente)
-          ActionPrincipale(
-            key: const ValueKey<String>('comptes-attente'),
-            niveau: NiveauAction.tertiaire,
-            pleineLargeur: false,
-            libelle: attendent.length == 1
-                ? switch (attendent.first.joursDAttente(maintenant)) {
-                    <= 0 => t.admin.comptes.attenteUneAujourdhui,
-                    1 => t.admin.comptes.attenteUneUnJour,
-                    final int jours => LibellesGroupe.insecable(
-                      t.admin.comptes.attenteUne(jours: jours),
-                    ),
-                  }
-                : t.admin.comptes.attentePlusieurs(nombre: attendent.length),
-            onPress: () => _appliquer(filtre.avec(etat: EtatAffiche.attente)),
-          ),
-        if (roleIllisible > 0)
-          Text(
-            roleIllisible == 1
-                ? t.admin.comptes.roleIllisibleUn
-                : t.admin.comptes.roleIllisiblePlusieurs(
-                    nombre: '$roleIllisible',
-                  ),
-            style: textes.bodySmall,
-          ),
-      ],
+    if (roleIllisible == 0) return null;
+    return Text(
+      roleIllisible == 1
+          ? t.admin.comptes.roleIllisibleUn
+          : t.admin.comptes.roleIllisiblePlusieurs(nombre: '$roleIllisible'),
+      style: Theme.of(context).textTheme.bodySmall,
     );
   }
 
@@ -736,17 +791,25 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
             texte: (CompteAdmin c) => identifiantInsecable(c.identifiant),
           )
         : null;
+    // LISTES-2 : seule l'exception s'affiche ; « Actif » ne se repete pas sur
+    // chaque ligne (la cellule reste vide, le filtre d'etat le garde).
+    String exception(CompteAdmin c) {
+      final EtatAffiche e = EtatAffiche.de(c);
+      return e == EtatAffiche.actif ? '' : _libelleEtat(e);
+    }
+
     final ColonneDonnees<CompteAdmin> etat = ColonneDonnees<CompteAdmin>(
       titre: t.admin.comptes.colonneEtat,
       tri: tri(ChampTriComptes.etat),
-      texte: (CompteAdmin c) => _libelleEtat(EtatAffiche.de(c)),
-      rendu: (BuildContext _, CompteAdmin c) => StatusPill(
-        libelle: _libelleEtat(EtatAffiche.de(c)),
-        ton: _tonEtat(EtatAffiche.de(c)),
-      ),
+      texte: exception,
+      rendu: (BuildContext _, CompteAdmin c) => exception(c).isEmpty
+          ? const SizedBox.shrink()
+          : StatusPill(libelle: exception(c), ton: _tonEtat(EtatAffiche.de(c))),
     );
     final ColonneDonnees<CompteAdmin> inscrit = ColonneDonnees<CompteAdmin>(
       titre: t.admin.comptes.colonneAttente,
+      // LISTES-2 : la ligne dense du telephone garde l'essentiel.
+      ligneDense: false,
       tabulaire: true,
       tri: tri(ChampTriComptes.inscrit),
       // L'anciennete, pas la date : c'est elle qui appelle un geste.
@@ -764,6 +827,8 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
         )) ...<ColonneDonnees<CompteAdmin>>[
           ColonneDonnees<CompteAdmin>(
             titre: t.admin.comptes.colonneTranche,
+            // Telephone : « matricule · classe · tuteur » (pilote, 30/10).
+            ligneDense: false,
             texte: (CompteAdmin c) => switch (c.tranche) {
               TrancheAge.enfant => t.admin.comptes.trancheEnfant,
               TrancheAge.adulte => t.admin.comptes.trancheAdulte,
@@ -821,6 +886,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
         ColonneDonnees<CompteAdmin>(
           titre: t.admin.comptes.colonneContrats,
           tabulaire: true,
+          ligneDense: false,
           texte: (CompteAdmin c) => '${c.contrats}',
         ),
       ],
@@ -928,33 +994,3 @@ String _nomPiece(EtatPiece piece) => switch (piece) {
   EtatPiece.refusee => t.admin.comptes.pieceRefusee,
   EtatPiece.nonVisible => t.admin.comptes.pieceNonVisible,
 };
-
-/// Donne a [child] au moins la hauteur lisible d'une collection, meme quand la
-/// premiere mise en page de la page ne lui laisse que quelques dizaines de
-/// points. Le trop est rogne ; des que la page a donne la hauteur, rien n'est
-/// enveloppe.
-class _HauteurLisible extends StatelessWidget {
-  const _HauteurLisible({required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    final double minimum = DataCollection.minimumLisible(context);
-    return LayoutBuilder(
-      builder: (BuildContext _, BoxConstraints contraintes) {
-        if (!contraintes.hasBoundedHeight || contraintes.maxHeight >= minimum) {
-          return child;
-        }
-        return ClipRect(
-          child: OverflowBox(
-            alignment: AlignmentDirectional.topStart,
-            minHeight: minimum,
-            maxHeight: minimum,
-            child: child,
-          ),
-        );
-      },
-    );
-  }
-}

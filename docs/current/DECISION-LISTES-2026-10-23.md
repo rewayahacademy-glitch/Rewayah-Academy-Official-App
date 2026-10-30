@@ -76,6 +76,18 @@ Capture de l'écran Comptes au téléphone, mot du directeur : « Sur ce profil,
 4. Lecture : `comptes_admin_par_role()` (migration `20261101100000`, lecture seule) ; tant qu'elle n'est pas installée, repli sur `comptes_admin()` et bandeau qui dit que l'âge, la classe et le tuteur ne sont pas servis. L'adresse porte `vue`, `etat`, `filtre`, `tri` ; un ancien lien `?role=` ouvre la vue de ce rôle.
 5. Toujours **aucune sélection multiple** (§5.6 reste vrai sur ce point).
 
+## 5 ter. La tête défile avec la liste (directeur, 30/10/2026)
+
+**Source : directeur, 30/10 : « tout ce qui n'est pas important ne doit pas apparaître en permanence à l'écran ; l'en-tête ne reste pas fixe au-dessus d'une liste ».** Dit sur les captures de Comptes au téléphone et au bureau (« le header est fixe, donc tout ce qu'on fait défiler passe dessous ; imagine avec 500 ou 1000 élèves »). Revue UX : `UX_REVIEW_LISTES-2.md`.
+
+1. **Rien de fixe au-dessus des lignes, sauf la barre de l'application.** Titre, choix de vue, filtres et recherche défilent avec la liste ; au bureau, seule la rangée d'en-têtes de colonnes reste collée ; le pied de liste vient après la dernière ligne.
+2. **Un seul titre** : quand la page a une sous-navigation, sa liste déroulante remplace le grand titre (« Comptes ▾ »), sur la rangée du retour et des actions.
+3. **Une seule rangée de commandes** : au téléphone, [vues ▾ | État | loupe] (ONGLETS-1 respecté, sans exception) ; au bureau, les vues en segmenté si elles tiennent, les filtres, la recherche à droite. Au-delà de 130 % de texte, les filtres passent sous la rangée des vues.
+4. **Pas de compteur redondant** (le nombre est dans le choix de vue et le pied) ; ce qui attend une décision est une puce « En attente » de la rangée (bureau) ; seule l'exception d'état a sa pastille, jamais « Actif ».
+5. **Lignes denses au téléphone** (amende §3 « cartes sous 1200 px » pour les listes qui adoptent le mode) : nom, puis l'essentiel sur une ligne (« matricule · classe · tuteur »), 64 px au moins, filets fins dans un seul cadre ; l'Interface guidée garde 72 et 80 px.
+6. **Adoption liste par liste** (`DESIGN-GOV` §4 bis.8) : mode opt-in des composants partagés, `PageShell(teteAvecLaListe: true)`, `DataCollection(prendTeteDePage: true, tete: ..., densiteTelephone: true)`, `ColonneDonnees(ligneDense: false)`. Comptes l'adopte le 30/10 ; Candidatures sera la suivante. Les autres pages ne changent pas.
+7. **Mesures (Comptes, 30/10, vraies polices, `test/capture/listes_comptes_vues_capture_test.dart`)** : 390 x 844, première ligne à y = 192, 10 lignes entières ; 1440 x 900, première ligne à y = 204, 14 lignes entières (Élèves, Familles), 12 (Enseignants, menu de 56) ; 1366 x 768, y = 204, 11 lignes (10 en Enseignants).
+
 ## 6. Limites serveur (frontend seulement : non corrigées)
 
 - `lister_candidatures` : page de 50 en dur ; pas de `version` dans la ligne ; 2 alertes sur 4 non servies et aucune clé de filtre « alerte » ; audit à chaque lecture. Colonne Date non triable en croissant.
@@ -134,6 +146,7 @@ Non migrés vers `CaseACocher` : 8 `Checkbox` ou `CheckboxListTile` dans `lib/fe
 | Candidatures (liste, menu de ligne, lot) | oui | oui | oui | non | non |
 | Comptes (élèves, tuteurs) | oui | oui | oui | non | non |
 | Comptes séparé par rôle (30/10) et `comptes_admin_par_role()` | oui | oui | oui (tests Flutter, scénario SQL sur Postgres 16 neuf) | non | non |
+| Tête qui défile avec la liste, lignes denses (§5 ter, Comptes seulement) | oui | oui | oui (tests Flutter, captures et mesures) | non | non |
 | Autres listes (menus migrés, recherche de Progression) | oui | oui | oui | non | non |
 | Listes non traitées (§7, « inchangée ») | oui | non | non | non | non |
 

@@ -7,6 +7,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/identifiant_insecable.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/widgets/filter_pill.dart';
 import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
 import 'package:rewayah_academy/core/widgets/puce_filtre_actif.dart';
 import 'package:rewayah_academy/features/admin_comptes/comptes_page.dart';
@@ -65,6 +66,26 @@ CompteAdmin _compte({
   enfantsDuFoyer: 0,
 );
 
+/// Le pied de liste d'une collection de [n] comptes (une seule page).
+Finder _pied(int n) => find.text('1-$n sur $n');
+
+/// Choisit la vue [libelle], que le selecteur soit segmente ou en menu
+/// (ONGLETS-1 : le rendu depend de la largeur).
+Future<void> _choisirVue(WidgetTester tester, String libelle) async {
+  if (find.text(libelle).hitTestable().evaluate().isEmpty) {
+    await tester.tap(find.byKey(const ValueKey<String>('comptes-vues')));
+    await tester.pumpAndSettle();
+  }
+  await tester.tap(find.text(libelle).hitTestable().last);
+  await tester.pumpAndSettle();
+}
+
+/// Le nombre que porte la puce « En attente » (LISTES-2 : elle remplace la
+/// phrase « N personnes attendent une decision »).
+int? _attente(WidgetTester tester) => tester
+    .widget<FilterPill>(find.byKey(const ValueKey<String>('comptes-attente')))
+    .compteur;
+
 void main() {
   Future<void> monter(
     WidgetTester tester,
@@ -75,7 +96,7 @@ void main() {
     // Une surface haute : la liste est paresseuse, et le tri place les lignes
     // sans decision en dernier, hors d'une surface de test courte.
     tester.view.devicePixelRatio = 1;
-    tester.view.physicalSize = const Size(800, 2400);
+    tester.view.physicalSize = const Size(1440, 2400);
     addTearDown(tester.view.reset);
     await tester.pumpWidget(
       hote(
@@ -146,7 +167,7 @@ void main() {
     );
 
     expect(tester.takeException(), isNull);
-    expect(find.text('3 personnes attendent une décision.'), findsOneWidget);
+    expect(_attente(tester), 3);
   });
 
   // K-47 : la verification d'identite et la validation ne concernent que
@@ -177,11 +198,10 @@ void main() {
 
       expect(tester.takeException(), isNull);
       // La vue Enseignants s'ouvre : deux enseignants attendent.
-      expect(find.text('2 personnes attendent une décision.'), findsOneWidget);
+      expect(_attente(tester), 2);
       expect(find.textContaining('Aucune pièce déposée'), findsWidgets);
       // Le tuteur est dans Familles, sans phrase d'attente ni piece.
-      await tester.tap(find.text('Familles (1)'));
-      await tester.pumpAndSettle();
+      await _choisirVue(tester, 'Familles (1)');
       expect(
         find.textContaining(identifiantInsecable('GUARDIAN-SR-000003')),
         findsWidgets,
@@ -404,7 +424,7 @@ void main() {
     );
     expect(attente.compteur, 2);
     // La synthese dit le meme chiffre.
-    expect(find.text('2 personnes attendent une décision.'), findsOneWidget);
+    expect(_attente(tester), 2);
 
     // Retenu, l'etat montre exactement ces deux enseignants.
     await ouvrirEtat(tester);
@@ -452,7 +472,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('Lina Sow'), findsNothing);
     expect(find.textContaining('Aicha Sow'), findsWidgets);
-    expect(find.text('1 compte'), findsOneWidget);
+    expect(_pied(1), findsOneWidget);
   });
 
   // Revue croisee de LIB-DIR-1 (08/10) : chaque compte entre dans un seul
@@ -576,7 +596,10 @@ void main() {
     );
 
     expect(tester.takeException(), isNull);
-    expect(find.textContaining('Actif'), findsWidgets);
+    // LISTES-2 : « Actif » ne se repete pas sur chaque ligne ; seule une
+    // exception a sa pastille.
+    expect(find.textContaining('Actif'), findsNothing);
+    expect(find.textContaining('Sow'), findsWidgets);
     // Un seul etat present : le menu n'offrirait aucun choix, il n'est pas
     // rendu. Un controle qui n'offre qu'un choix n'est pas un choix.
     expect(menuEtat(), findsNothing);

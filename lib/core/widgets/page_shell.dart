@@ -82,7 +82,23 @@ class PageShell extends StatelessWidget {
     this.bandeauHorsLigne = const OfflineBanner(),
     this.fond,
     this.bordABord = false,
+    this.teteAvecLaListe = false,
   });
+
+  /// LISTES-2 (directeur, 30/10/2026 : « tout ce qui n'est pas important ne
+  /// doit pas apparaitre en permanence a l'ecran ; l'en-tete ne reste pas fixe
+  /// au-dessus d'une liste ») : vrai, la tete de la page **defile avec la
+  /// liste**. Mode opt-in, adopte liste par liste (DESIGN-GOV §4 bis.8,
+  /// `docs/current/DECISION-LISTES-2026-10-23.md` §5 ter).
+  ///
+  /// La tete est confiee a la liste du corps qui la prend
+  /// (`DataCollection(prendTeteDePage: true)`, [TetePageConfiee]) et devient
+  /// son premier element ; sans liste (chargement, vide, echec), elle defile
+  /// avec le corps. Quand la page a un [entete] (la sous-navigation d'un
+  /// domaine), il **remplace le grand titre** sur la rangee du retour et des
+  /// actions : une seule rangee, jamais deux pour dire « Comptes ». Le titre
+  /// reste annonce comme en-tete au lecteur d'ecran. Exige `defilante: false`.
+  final bool teteAvecLaListe;
 
   /// Le bandeau hors ligne pose en tete de page, sans gouttiere. Par defaut,
   /// le bandeau generique de l'application ([OfflineBanner], texte
@@ -197,8 +213,29 @@ class PageShell extends StatelessWidget {
     final bool compact = EnteteCompact.actif(context);
     final TextStyle styleTitreSimple =
         textes.headlineLarge ?? const TextStyle();
+    final bool rangeeUnique = teteAvecLaListe && entete != null;
     final List<Widget> tete = <Widget>[
-      if (titre != null) ...<Widget>[
+      if (rangeeUnique) ...<Widget>[
+        // LISTES-2 : la sous-navigation tient lieu de titre, sur la rangee du
+        // retour et des actions de la coquille.
+        if (gabarit == Gabarit.mobile) Ecart.vSm else Ecart.vLg,
+        if (titre != null)
+          Semantics(header: true, label: titre, child: const SizedBox.shrink()),
+        Row(
+          children: <Widget>[
+            if (retour != null) ...<Widget>[
+              DisqueRetour(onPress: retour),
+              Ecart.hMd,
+            ],
+            Expanded(child: entete!),
+            for (final Widget action in actionsTete) ...<Widget>[
+              Ecart.hXs,
+              action,
+            ],
+          ],
+        ),
+        if (gabarit == Gabarit.mobile) Ecart.vSm else Ecart.vMd,
+      ] else if (titre != null) ...<Widget>[
         // 48 au dessus d'un titre d'ecran, c'est le rythme de page
         // (`01-systeme-visuel.md` section 6). En mode enfant, la marge de
         // respiration prend le relais. Un en-tete a actions (cloche, disque
@@ -266,7 +303,7 @@ class PageShell extends StatelessWidget {
         // Bord a bord, le corps pose lui-meme son haut : une bande de fond
         // au-dessus de ses volets les couperait du haut de l'ecran.
         Ecart.vXxl,
-      if (entete != null) ...<Widget>[
+      if (entete != null && !rangeeUnique) ...<Widget>[
         entete!,
         if (enteteSecondaire == null) Ecart.vXl else Ecart.vLg,
       ],
@@ -353,6 +390,7 @@ class PageShell extends StatelessWidget {
                 // elle ne laisse plus au corps une cible tactile.
                 child: _Bascule(
                   teteDefilante: (double hauteur) =>
+                      teteAvecLaListe ||
                       teteDefile ||
                       (defilante &&
                           !sousBandeau &&

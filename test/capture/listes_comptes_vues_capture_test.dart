@@ -95,24 +95,24 @@ CompteAdmin _compte(
 }
 
 List<CompteAdmin> _jeu() => <CompteAdmin>[
-  for (int i = 0; i < 8; i++)
+  for (int i = 0; i < 24; i++)
     _compte(
       i,
       AppRole.teacher,
       piece: i < 2 ? EtatPiece.aVerifier : EtatPiece.validee,
       jours: 30 + i * 5,
-      pays: const <String>['SN', 'MA', 'FR', 'GN'][i % 4],
+      pays: const <String>['Sénégal', 'Maroc', 'France', 'Guinée'][i % 4],
     ),
-  for (int i = 8; i < 20; i++)
+  for (int i = 100; i < 130; i++)
     _compte(
       i,
       AppRole.guardian,
-      etat: i == 9 ? AccountStatus.pendingKyc : AccountStatus.active,
-      admission: i == 9,
+      etat: i == 109 ? AccountStatus.pendingKyc : AccountStatus.active,
+      admission: i == 109,
       jours: 2 + i,
       enfants: 1 + i % 3,
     ),
-  for (int i = 20; i < 48; i++)
+  for (int i = 200; i < 260; i++)
     _compte(
       i,
       AppRole.student,
@@ -122,8 +122,8 @@ List<CompteAdmin> _jeu() => <CompteAdmin>[
       numero: i % 4 == 0 ? null : 1 + i % 2,
       tuteur: i % 5 == 0 ? null : '${_prenoms[i % 7]} ${_noms[i % 5]}',
     ),
-  _compte(48, AppRole.admin, jours: 200),
-  _compte(49, AppRole.controller, jours: 180),
+  _compte(300, AppRole.admin, jours: 200),
+  _compte(301, AppRole.controller, jours: 180),
 ];
 
 class _Faux implements ServiceComptes {
@@ -200,45 +200,45 @@ void main() {
 
     const String base = Routes.adminPersonnesComptes;
     const Size bureau = Size(1366, 768);
+    const Size bureau1440 = Size(1440, 900);
     const Size telephone = Size(390, 844);
-    final List<(String, String, Size, ThemeMode)> cas =
-        <(String, String, Size, ThemeMode)>[
-          ('defaut_1366_light', base, bureau, ThemeMode.light),
-          ('eleves_1366_light', '$base?vue=eleves', bureau, ThemeMode.light),
-          ('eleves_1366_dark', '$base?vue=eleves', bureau, ThemeMode.dark),
-          (
-            'familles_1366_light',
-            '$base?vue=familles',
-            bureau,
-            ThemeMode.light,
-          ),
-          (
-            'enseignants_1366_light',
-            '$base?vue=enseignants',
-            bureau,
-            ThemeMode.light,
-          ),
-          (
-            'direction_1366_light',
-            '$base?vue=direction',
-            bureau,
-            ThemeMode.light,
-          ),
-          ('eleves_390_light', '$base?vue=eleves', telephone, ThemeMode.light),
-          ('eleves_390_dark', '$base?vue=eleves', telephone, ThemeMode.dark),
-          (
-            'familles_390_light',
-            '$base?vue=familles',
-            telephone,
-            ThemeMode.light,
-          ),
-          (
-            'enseignants_390_light',
-            '$base?vue=enseignants',
-            telephone,
-            ThemeMode.light,
-          ),
-        ];
+    final List<(String, String, Size, ThemeMode)>
+    cas = <(String, String, Size, ThemeMode)>[
+      ('defaut_1366_light', base, bureau, ThemeMode.light),
+      ('eleves_1440_light', '$base?vue=eleves', bureau1440, ThemeMode.light),
+      (
+        'familles_1440_light',
+        '$base?vue=familles',
+        bureau1440,
+        ThemeMode.light,
+      ),
+      (
+        'enseignants_1440_light',
+        '$base?vue=enseignants',
+        bureau1440,
+        ThemeMode.light,
+      ),
+      ('eleves_1440_dark', '$base?vue=eleves', bureau1440, ThemeMode.dark),
+      ('eleves_1366_light', '$base?vue=eleves', bureau, ThemeMode.light),
+      ('eleves_1366_dark', '$base?vue=eleves', bureau, ThemeMode.dark),
+      ('familles_1366_light', '$base?vue=familles', bureau, ThemeMode.light),
+      (
+        'enseignants_1366_light',
+        '$base?vue=enseignants',
+        bureau,
+        ThemeMode.light,
+      ),
+      ('direction_1366_light', '$base?vue=direction', bureau, ThemeMode.light),
+      ('eleves_390_light', '$base?vue=eleves', telephone, ThemeMode.light),
+      ('eleves_390_dark', '$base?vue=eleves', telephone, ThemeMode.dark),
+      ('familles_390_light', '$base?vue=familles', telephone, ThemeMode.light),
+      (
+        'enseignants_390_light',
+        '$base?vue=enseignants',
+        telephone,
+        ThemeMode.light,
+      ),
+    ];
 
     testWidgets('comptes eleves_1366_ar', (WidgetTester tester) async {
       await LocaleSettings.setLocale(AppLocale.ar);
@@ -251,8 +251,51 @@ void main() {
       testWidgets('comptes ${c.$1}', (WidgetTester tester) async {
         fixerVueCapture(tester, c.$3, c.$3.width < 500 ? 2 : 1);
         await _monter(tester, c.$2, mode: c.$4);
+        debugPrint('MESURE comptes_${c.$1} ${_mesurer(tester, c.$3)}');
+        debugPrint('PNG ${await capturer(tester, 'comptes_${c.$1}')}');
+      });
+    }
+
+    // Preuve qu'il ne reste rien de fixe au-dessus des lignes : apres
+    // defilement, seules la barre de l'application et (au bureau) la rangee
+    // d'en-tetes de colonnes restent.
+    for (final (String, Size) c in <(String, Size)>[
+      ('apres_defilement_390', telephone),
+      ('apres_defilement_1440', bureau1440),
+    ]) {
+      testWidgets('comptes ${c.$1}', (WidgetTester tester) async {
+        fixerVueCapture(tester, c.$2, c.$2.width < 500 ? 2 : 1);
+        await _monter(tester, '$base?vue=eleves', mode: ThemeMode.light);
+        await tester.drag(
+          find.byType(CustomScrollView).first,
+          const Offset(0, -400),
+        );
+        await stabiliser(tester);
         debugPrint('PNG ${await capturer(tester, 'comptes_${c.$1}')}');
       });
     }
   });
+}
+
+/// Le haut de la premiere ligne de la liste et le nombre de lignes entieres
+/// visibles sans defiler, en points logiques.
+String _mesurer(WidgetTester tester, Size vue) {
+  final List<Rect> lignes =
+      find
+          .byWidgetPredicate(
+            (Widget w) =>
+                w is KeyedSubtree &&
+                w.key is ValueKey<String> &&
+                (w.key! as ValueKey<String>).value.startsWith('p-'),
+          )
+          .evaluate()
+          .map((Element e) => tester.getRect(find.byWidget(e.widget)))
+          .toList()
+        ..sort((Rect a, Rect b) => a.top.compareTo(b.top));
+  if (lignes.isEmpty) return 'aucune ligne';
+  final int entieres = lignes
+      .where((Rect r) => r.top >= 0 && r.bottom <= vue.height)
+      .length;
+  return 'premiere ligne y=${lignes.first.top.toStringAsFixed(0)}, '
+      'lignes entieres visibles=$entieres';
 }

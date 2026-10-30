@@ -16,6 +16,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/case_a_cocher.dart';
+import 'package:rewayah_academy/core/widgets/controle_segmente.dart';
 import 'package:rewayah_academy/core/widgets/data_collection.dart';
 import 'package:rewayah_academy/core/widgets/filter_pill.dart';
 import 'package:rewayah_academy/core/widgets/menu_actions.dart';
@@ -140,6 +141,29 @@ List<CompteAdmin> _annuaire() => <CompteAdmin>[
     pays: 'MA',
   ),
 ];
+
+/// Le pied de liste d'une collection de [n] comptes (une seule page).
+Finder _pied(int n) => find.text('1-$n sur $n');
+
+/// Choisit la vue [libelle], que le selecteur soit segmente ou en menu
+/// (ONGLETS-1 : le rendu depend de la largeur).
+Future<void> _choisirVue(WidgetTester tester, String libelle) async {
+  if (find.text(libelle).hitTestable().evaluate().isEmpty) {
+    await tester.tap(find.byKey(const ValueKey<String>('comptes-vues')));
+    await tester.pumpAndSettle();
+  }
+  await tester.tap(find.text(libelle).hitTestable().last);
+  await tester.pumpAndSettle();
+}
+
+/// Les libelles des vues proposees.
+List<String> _vues(WidgetTester tester) => tester
+    .widget<SelecteurSection<VueComptes>>(
+      find.byType(SelecteurSection<VueComptes>),
+    )
+    .sections
+    .map((Segment<VueComptes> s) => s.libelle)
+    .toList();
 
 void main() {
   setUpAll(() async {
@@ -316,9 +340,9 @@ void main() {
       (tester) async {
         await monter(tester, _annuaire());
         expect(find.byType(SelecteurSection<VueComptes>), findsOneWidget);
-        expect(find.text('Élèves (2)'), findsOneWidget);
-        expect(find.text('Familles (2)'), findsOneWidget);
-        expect(find.text('Enseignants (2)'), findsOneWidget);
+        expect(_vues(tester), contains('Élèves (2)'));
+        expect(_vues(tester), contains('Familles (2)'));
+        expect(_vues(tester), contains('Enseignants (2)'));
         expect(find.textContaining('Direction'), findsNothing);
         await monter(tester, <CompteAdmin>[
           ..._annuaire(),
@@ -359,17 +383,15 @@ void main() {
       (tester) async {
         await monter(tester, _annuaire());
         // Aicha (enseignante) attend une decision : Enseignants s'ouvre.
-        expect(find.text('2 comptes'), findsOneWidget);
+        expect(_pied(2), findsOneWidget);
         expect(find.text('Aicha Barry'), findsOneWidget);
         expect(find.text('Lina Diallo'), findsNothing);
-        await tester.tap(find.text('Élèves (2)'));
-        await tester.pumpAndSettle();
+        await _choisirVue(tester, 'Élèves (2)');
         expect(find.text('Lina Diallo'), findsOneWidget);
         expect(find.text('Yacine Kane'), findsOneWidget);
         expect(find.text('Mariam Sow'), findsNothing);
         expect(find.text('Aicha Barry'), findsNothing);
-        await tester.tap(find.text('Familles (2)'));
-        await tester.pumpAndSettle();
+        await _choisirVue(tester, 'Familles (2)');
         expect(find.text('Mariam Sow'), findsOneWidget);
         expect(find.text('Fatou Diop'), findsOneWidget);
         expect(find.text('Lina Diallo'), findsNothing);
@@ -444,15 +466,14 @@ void main() {
         ]);
         // Élèves : la fiche d'eleve d'Amina et celle de Bilal, jamais sa ligne
         // de tuteur.
-        expect(find.text('Élèves (2)'), findsOneWidget);
-        expect(find.text('Familles (1)'), findsOneWidget);
+        expect(_vues(tester), contains('Élèves (2)'));
+        expect(_vues(tester), contains('Familles (1)'));
         expect(find.text('RA‑26‑2222'), findsOneWidget);
         expect(find.text('RA‑26‑1111'), findsNothing);
-        await tester.tap(find.text('Familles (1)'));
-        await tester.pumpAndSettle();
+        await _choisirVue(tester, 'Familles (1)');
         expect(find.text('RA‑26‑1111'), findsOneWidget);
         expect(find.text('RA‑26‑2222'), findsNothing);
-        expect(find.text('1 compte'), findsOneWidget);
+        expect(_pied(1), findsOneWidget);
       },
     );
 
@@ -468,10 +489,9 @@ void main() {
       );
       await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
-      expect(find.text('1 compte'), findsOneWidget);
-      await tester.tap(find.text('Familles (2)'));
-      await tester.pumpAndSettle();
-      expect(find.text('2 comptes'), findsOneWidget);
+      expect(_pied(1), findsOneWidget);
+      await _choisirVue(tester, 'Familles (2)');
+      expect(_pied(2), findsOneWidget);
       expect(
         tester
             .widget<TextField>(
@@ -481,9 +501,8 @@ void main() {
             .text,
         isEmpty,
       );
-      await tester.tap(find.text('Élèves (2)'));
-      await tester.pumpAndSettle();
-      expect(find.text('1 compte'), findsOneWidget);
+      await _choisirVue(tester, 'Élèves (2)');
+      expect(_pied(1), findsOneWidget);
       expect(find.text('Yacine Kane'), findsOneWidget);
     });
 
@@ -559,7 +578,7 @@ void main() {
       await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
       // Majuscules et accents sont ignores : « LÎNA » trouve Lina.
-      expect(find.text('1 compte'), findsOneWidget);
+      expect(_pied(1), findsOneWidget);
       expect(find.text('Lina Diallo'), findsOneWidget);
       await tester.enterText(
         find.byKey(const ValueKey<String>('comptes-recherche')),
@@ -567,7 +586,7 @@ void main() {
       );
       await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
-      expect(find.text('1 compte'), findsOneWidget);
+      expect(_pied(1), findsOneWidget);
       expect(find.text('Lina Diallo'), findsOneWidget);
       // Par identifiant.
       await tester.enterText(
@@ -582,7 +601,7 @@ void main() {
       expect(find.byKey(FiltresActifs.cleToutEffacer), findsOneWidget);
       await tester.tap(find.byKey(FiltresActifs.cleToutEffacer));
       await tester.pumpAndSettle();
-      expect(find.text('2 comptes'), findsOneWidget);
+      expect(_pied(2), findsOneWidget);
       expect(find.byKey(FiltresActifs.cleToutEffacer), findsNothing);
     });
 
@@ -594,13 +613,13 @@ void main() {
       await tester.tap(find.text('Actif').last);
       await tester.pumpAndSettle();
       // Vue Enseignants (Aicha attend) : seul Omar est actif.
-      expect(find.text('1 compte'), findsOneWidget);
+      expect(_pied(1), findsOneWidget);
       final Finder puce = find.byType(PuceFiltreActif);
       expect(puce, findsOneWidget);
       expect(tester.widget<PuceFiltreActif>(puce).libelle, 'État : Actif');
       await tester.tap(puce);
       await tester.pumpAndSettle();
-      expect(find.text('2 comptes'), findsOneWidget);
+      expect(_pied(2), findsOneWidget);
       expect(find.byType(PuceFiltreActif), findsNothing);
     });
 
@@ -630,8 +649,7 @@ void main() {
       expect(find.text("Pièce d'identité"), findsOneWidget);
       expect(find.text('Pays'), findsOneWidget);
       expect(find.text('Élèves rattachés'), findsNothing);
-      await tester.tap(find.text('Familles (2)'));
-      await tester.pumpAndSettle();
+      await _choisirVue(tester, 'Familles (2)');
       expect(find.text('Élèves rattachés'), findsOneWidget);
       expect(find.text("Pièce d'identité"), findsNothing);
       expect(find.text('Classe'), findsNothing);
@@ -745,14 +763,27 @@ void main() {
           ),
       ];
       await monter(tester, beaucoup);
-      expect(find.byKey(PiedDeListe.cle), findsOneWidget);
+      // LISTES-2 : le pied vient apres la derniere ligne, il ne colle pas.
+      Future<void> allerAuPied() async {
+        await tester.dragUntilVisible(
+          find.byKey(PiedDeListe.cle),
+          find.byType(CustomScrollView),
+          const Offset(0, -600),
+        );
+        await tester.ensureVisible(find.byKey(PiedDeListe.cle));
+        await tester.pumpAndSettle();
+      }
+
+      await allerAuPied();
       expect(find.text('1-50 sur 120'), findsOneWidget);
       // Les fleches : la page suivante, puis la derniere.
       await tester.tap(find.bySemanticsLabel('Page suivante'));
       await tester.pumpAndSettle();
+      await allerAuPied();
       expect(find.text('51-100 sur 120'), findsOneWidget);
       await tester.tap(find.bySemanticsLabel('Page suivante'));
       await tester.pumpAndSettle();
+      await allerAuPied();
       expect(find.text('101-120 sur 120'), findsOneWidget);
       expect(find.bySemanticsLabel('Page suivante'), findsNothing);
       // La taille de page revient a la premiere page.
@@ -760,16 +791,24 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('25 par page').last);
       await tester.pumpAndSettle();
+      await allerAuPied();
       expect(find.text('1-25 sur 120'), findsOneWidget);
       // Un filtre qui raccourcit la liste revient a la premiere page.
       await tester.tap(find.bySemanticsLabel('Page suivante'));
       await tester.pumpAndSettle();
+      // La recherche est en tete de la liste : on y remonte.
+      await tester.dragUntilVisible(
+        find.byKey(const ValueKey<String>('comptes-recherche')),
+        find.byType(CustomScrollView),
+        const Offset(0, 600),
+      );
       await tester.enterText(
         find.byKey(const ValueKey<String>('comptes-recherche')),
         'N11',
       );
       await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
+      await allerAuPied();
       expect(find.text('1-10 sur 10'), findsOneWidget);
     });
 
@@ -801,13 +840,18 @@ void main() {
       'la synthese annonce ceux qui attendent et les filtre d un toucher',
       (tester) async {
         await monter(tester, _annuaire());
+        // LISTES-2 : la puce « En attente », en tete de la rangee des filtres.
         expect(
-          find.textContaining('Une personne attend', findRichText: true),
-          findsOneWidget,
+          tester
+              .widget<FilterPill>(
+                find.byKey(const ValueKey<String>('comptes-attente')),
+              )
+              .compteur,
+          1,
         );
         await tester.tap(find.byKey(const ValueKey<String>('comptes-attente')));
         await tester.pumpAndSettle();
-        expect(find.text('1 compte'), findsOneWidget);
+        expect(_pied(1), findsOneWidget);
         expect(find.text('Aicha Barry'), findsOneWidget);
       },
     );
@@ -829,27 +873,40 @@ void main() {
       await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
       expect(find.text('Aucun compte avec ce filtre'), findsOneWidget);
-      // En francais, zero est un singulier.
-      expect(find.text('0 compte'), findsOneWidget);
+      // LISTES-2 : plus de compteur au-dessus des lignes, ni de pied sans
+      // ligne.
+      expect(find.byKey(PiedDeListe.cle), findsNothing);
     });
 
-    testWidgets('en-tete colle : il ne defile pas avec les lignes', (
-      tester,
-    ) async {
-      final List<CompteAdmin> beaucoup = <CompteAdmin>[
-        for (int i = 0; i < 80; i++)
-          _c(
-            'STUDENT-XX-${i.toString().padLeft(6, '0')}',
-            prenom: 'E',
-            nom: '$i',
-          ),
-      ];
-      await monter(tester, beaucoup);
-      final double avant = tester.getTopLeft(find.text('Personne')).dy;
-      await tester.drag(find.byType(Scrollable).last, const Offset(0, -600));
-      await tester.pumpAndSettle();
-      expect(tester.getTopLeft(find.text('Personne')).dy, avant);
-    });
+    testWidgets(
+      'en-tete colle : la tete s en va, les en-tetes de colonnes restent',
+      (tester) async {
+        final List<CompteAdmin> beaucoup = <CompteAdmin>[
+          for (int i = 0; i < 80; i++)
+            _c(
+              'STUDENT-XX-${i.toString().padLeft(6, '0')}',
+              prenom: 'E',
+              nom: '$i',
+            ),
+        ];
+        await monter(tester, beaucoup);
+        final double avant = tester.getTopLeft(find.text('Personne')).dy;
+        expect(avant, greaterThan(0));
+        await tester.drag(
+          find.byType(CustomScrollView).first,
+          const Offset(0, -600),
+        );
+        await tester.pumpAndSettle();
+        // LISTES-2 : la recherche et le choix de vue sont partis ; la rangee
+        // d'en-tetes est collee en haut de la liste, toujours lisible.
+        expect(
+          find.byKey(const ValueKey<String>('comptes-recherche')).hitTestable(),
+          findsNothing,
+        );
+        expect(find.text('Personne').hitTestable(), findsOneWidget);
+        expect(tester.getTopLeft(find.text('Personne')).dy, lessThan(avant));
+      },
+    );
 
     // Mesure sur la VRAIE coque (barre laterale, en-tete, sous-navigation) a
     // 1440 x 900 : les lignes entierement visibles, au-dessus du pied de liste.
@@ -867,11 +924,14 @@ void main() {
           serviceComptesProvider.overrideWithValue(_Service(comptes)),
         ],
       );
-      final double pied = tester.getTopLeft(find.byKey(PiedDeListe.cle)).dy;
+      // LISTES-2 : le pied vient apres la derniere ligne ; on compte les
+      // lignes entieres sous les en-tetes, jusqu'au bas de la fenetre.
+      final double bas =
+          tester.view.physicalSize.height / tester.view.devicePixelRatio;
       final double entete = tester.getBottomLeft(find.text('Personne')).dy;
       return find.textContaining('‑XX‑').evaluate().where((Element e) {
         final Rect r = tester.getRect(find.byWidget(e.widget));
-        return r.top >= entete && r.bottom <= pied;
+        return r.top >= entete && r.bottom <= bas;
       }).length;
     }
 
@@ -955,7 +1015,7 @@ void main() {
       tester,
     ) async {
       await ouvrir(tester, '/c?role=student&q=lina&tri=-nom');
-      expect(find.text('1 compte'), findsOneWidget);
+      expect(_pied(1), findsOneWidget);
       expect(find.text('Lina Diallo'), findsOneWidget);
       final TextField champ = tester.widget<TextField>(
         find.byKey(const ValueKey<String>('comptes-recherche')),
@@ -968,7 +1028,7 @@ void main() {
     ) async {
       await ouvrir(tester, '/c?vue=martien&role=martien&etat=zzz&tri=nimporte');
       // La vue par defaut : Enseignants (Aicha attend une decision).
-      expect(find.text('2 comptes'), findsOneWidget);
+      expect(_pied(2), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
 
@@ -976,11 +1036,9 @@ void main() {
       tester,
     ) async {
       final GoRouter routeur = await ouvrir(tester, '/c');
-      await tester.tap(find.text('Élèves (2)'));
-      await tester.pumpAndSettle();
+      await _choisirVue(tester, 'Élèves (2)');
       expect(adresse(routeur), '/c?vue=eleves');
-      await tester.tap(find.text('Enseignants (2)'));
-      await tester.pumpAndSettle();
+      await _choisirVue(tester, 'Enseignants (2)');
       expect(adresse(routeur), '/c?vue=enseignants');
       await tester.tap(find.text('Personne'));
       await tester.pumpAndSettle();
@@ -1002,11 +1060,11 @@ void main() {
       tester,
     ) async {
       final GoRouter routeur = await ouvrir(tester, '/c?vue=eleves&q=lina');
-      expect(find.text('1 compte'), findsOneWidget);
+      expect(_pied(1), findsOneWidget);
       routeur.go('/c');
       await tester.pumpAndSettle();
       // La vue par defaut, entiere : Enseignants (Aicha attend).
-      expect(find.text('2 comptes'), findsOneWidget);
+      expect(_pied(2), findsOneWidget);
       final TextField champ = tester.widget<TextField>(
         find.byKey(const ValueKey<String>('comptes-recherche')),
       );
@@ -1045,7 +1103,7 @@ void main() {
         expect(tester.takeException(), isNull);
         expect(find.byType(SelecteurSection<VueComptes>), findsOneWidget);
         expect(find.byType(RangeeFiltres), findsOneWidget);
-        expect(find.text('2 comptes'), findsOneWidget);
+        expect(_pied(2), findsOneWidget);
       });
     }
 
@@ -1069,7 +1127,10 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
-      expect(find.text(t.admin.comptes.compteur(n: 2)), findsOneWidget);
+      expect(
+        find.text(t.commun.listes.tranche(debut: 1, fin: 2, total: 2)),
+        findsOneWidget,
+      );
     });
   });
 }
