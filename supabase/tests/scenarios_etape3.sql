@@ -78,14 +78,15 @@ begin
   select account_status, household_id into v_statut, v_foyer
   from public.profiles where id = '11111111-1111-1111-1111-111111111111';
 
-  -- D4 (24/10/2026) : le tuteur nait actif (aucune piece pour une famille).
-  if v_statut <> 'active' then
-    raise exception 'S3 ECHEC : statut % au lieu de active (D4)', v_statut;
+  -- Admission (27/10/2026, annule D4) : le tuteur nait en attente de la
+  -- decision de la direction, sans piece a deposer.
+  if v_statut <> 'pending_kyc' then
+    raise exception 'S3 ECHEC : statut % au lieu de pending_kyc (admission)', v_statut;
   end if;
   if v_foyer is null then
     raise exception 'S3 ECHEC : un tuteur doit fonder un foyer';
   end if;
-  raise notice 'S3b ok : le tuteur naît actif (D4) et fonde son foyer';
+  raise notice 'S3b ok : le tuteur naît en attente (admission) et fonde son foyer';
 end $$;
 
 -- Fixture : la suite de ce scenario rejoue le parcours de piece d'identite
@@ -93,6 +94,12 @@ end $$;
 -- enseignants depuis D4 ; le tuteur y est remis en attente pour le derouler.
 update public.profiles set account_status = 'pending_kyc'
  where id = '11111111-1111-1111-1111-111111111111';
+-- Depuis l'admission (lot B, 29/10/2026), le tuteur nait avec sa demande
+-- d'admission ; une demande ouverte reserve le depot de piece a la Salle de
+-- verification des enseignants. Ce parcours de piece n'est plus celui d'une
+-- famille : la fixture retire la demande pour le derouler comme avant.
+delete from public.candidatures
+ where profile_id = '11111111-1111-1111-1111-111111111111' and type_code = 'famille';
 
 -- I3 : un compte, un profil.
 do $$

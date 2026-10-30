@@ -12,6 +12,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/deconnexion.dart';
 import '../../core/session/session_controleur.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -27,6 +28,7 @@ import '../connexion/recuperation_page.dart'
 import '../inscription/brouillon_inscription.dart';
 import '../partage_offre/tuile_partage.dart';
 import '../talents/tuile_talents.dart';
+import 'apprenants_demande.dart';
 
 /// `TUT-00b` : le portail d'attente, refondu (05 section A, sous-paquet 3).
 ///
@@ -91,10 +93,16 @@ class _AttentePageState extends ConsumerState<AttentePage> {
     // ou apres un refus ou un retrait, le portail montre son etat a elle ; en
     // Salle de verification et d'entretien, les accords, la piece et la
     // verification gardent leurs ecrans sous l'en-tete de la salle.
-    final bool vueCand = lu != null && vueCandidature(lu);
-    final CandidatureDossier? candidature = lu != null && lu.candidature.existe
-        ? lu.candidature
-        : null;
+    //
+    // Admission, lot B (decision du 27/10/2026) : la demande d'une famille ou
+    // d'un eleve adulte est aussi une candidature cote serveur (types
+    // `famille`, `eleve_adulte`), mais ses salles, sa tuile de partage et
+    // « Vos autres talents » ne concernent que les enseignants. Le tuteur
+    // garde son propre etat, « Votre demande est en cours ».
+    final bool candidatEnseignant = lu != null && !lu.estTuteur;
+    final bool vueCand = candidatEnseignant && vueCandidature(lu);
+    final CandidatureDossier? candidature =
+        candidatEnseignant && lu.candidature.existe ? lu.candidature : null;
     final ({String libelle, String chemin})? actionCand = vueCand
         ? prochaineCandidature(lu.candidature)
         : null;
@@ -413,18 +421,20 @@ class _Statut extends StatelessWidget {
         ].join('\n'),
         icone: AppIcons.dossiers,
       ),
-      // K-47 (HL-A-6) : l'etat honnete du tuteur tant que le serveur le fait
-      // naitre en attente (BR-1) : ni piece, ni verification, ni delai. Rien
-      // n'est promis « en cours » : aucun ecran admin ne l'ouvre avant BR-1,
-      // la sortie est de joindre l'academie (comme l'etat suspendu).
-      EtapeDossier.accesEnPreparation => _Bloc(
-        titre: t.attente.accesTitre,
-        message: t.attente.accesEnPreparation,
-        detail: <String>[
-          t.attente.aucunDocument,
-          t.attente.accesContact,
-        ].join('\n'),
-        icone: AppIcons.foyer,
+      // Admission, lot B (decision du 27/10/2026, regle 1) : la famille et
+      // l'eleve adulte attendent la decision de la direction. Ni piece, ni
+      // delai promis ; l'e-mail dit la suite (regle 4).
+      EtapeDossier.accesEnPreparation => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          _Bloc(
+            titre: t.attente.demandeTitre,
+            message: t.attente.demandeMessage,
+            detail: t.attente.demandeDetail,
+            icone: AppIcons.foyer,
+          ),
+          const _ApprenantsDemande(),
+        ],
       ),
       EtapeDossier.refuse => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -498,6 +508,43 @@ class _Bloc extends StatelessWidget {
           Text(detail!, textAlign: TextAlign.center, style: textes.bodySmall),
         ],
       ],
+    );
+  }
+}
+
+/// Admission, lot B (fiche du 29/10, §4) : qui la demande concerne, relu
+/// sur le serveur. Sans lecture (en cours, en echec, aucune ligne), rien :
+/// la page dit deja l'essentiel.
+class _ApprenantsDemande extends ConsumerWidget {
+  const _ApprenantsDemande();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final List<ApprenantDemande> apprenants =
+        ref.watch(apprenantsDemandeProvider).value ??
+        const <ApprenantDemande>[];
+    if (apprenants.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    final String liste = <String>[
+      for (final ApprenantDemande a in apprenants)
+        a.titulaire || a.age == null
+            ? t.inscription.questionnaire.ligneVous
+            : LibellesGroupe.insecable(
+                t.inscription.questionnaire.ligneEnfant(
+                  prenom: a.prenom,
+                  age: a.age!,
+                ),
+              ),
+    ].join(' · ');
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.lg),
+      child: Text(
+        t.attente.demandePour(liste: liste),
+        key: const Key('attente-apprenants'),
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.bodyMedium,
+      ),
     );
   }
 }

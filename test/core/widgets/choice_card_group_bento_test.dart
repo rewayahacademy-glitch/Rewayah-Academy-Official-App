@@ -20,6 +20,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/widgets/choice_card_group.dart';
 import 'package:rewayah_academy/core/widgets/grille_bento.dart';
+import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart';
 import 'package:rewayah_academy/features/inscription/etapes/genre_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/identite_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/usage_etape.dart';
@@ -230,13 +231,17 @@ void main() {
   });
 
   group('inscription a 1440', () {
-    Future<void> monterInscription(WidgetTester tester) async {
+    Future<void> monterInscription(
+      WidgetTester tester, {
+      String depart = Routes.inscription,
+      BrouillonInscription? brouillon,
+    }) async {
       tester.view.physicalSize = const Size(1440, 900);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
       await tester.pumpWidget(
         hoteRoutant(
-          depart: Routes.inscription,
+          depart: depart,
           routes: <RouteBase>[
             GoRoute(
               path: Routes.inscription,
@@ -261,6 +266,10 @@ void main() {
             serviceDossierProvider.overrideWithValue(FauxServiceDossier()),
             sourceSessionProvider.overrideWithValue(FausseSourceSession()),
             serviceAuthProvider.overrideWithValue(FauxServiceAuth()),
+            if (brouillon != null)
+              brouillonInscriptionProvider.overrideWith(
+                () => _Brouillon(brouillon),
+              ),
           ],
         ),
       );
@@ -293,20 +302,37 @@ void main() {
         ),
     ];
 
-    testWidgets('usage : tailles differentes, explications, exemples, carte '
+    testWidgets('usage : deux choix egaux, explications, exemples, carte '
         'entiere cliquable', (WidgetTester tester) async {
       await monterInscription(tester);
       const Key usage = Key('inscription-usage');
-      final List<Size> tailles = cartes(tester, usage);
-      expect(tailles, hasLength(2));
-      expect(tailles.first, isNot(tailles.last));
+      Size carte(String titre) => tester.getSize(
+        find
+            .ancestor(
+              of: find.descendant(
+                of: find.byKey(usage),
+                matching: find.text(titre),
+              ),
+              matching: find.byType(AnimatedContainer),
+            )
+            .first,
+      );
+      final List<Size> tailles = <Size>[
+        carte(t.inscription.usage.moiTitre),
+        carte(t.inscription.usage.familleTitre),
+      ];
+      // Admission, lot B (directeur, 29/10/2026) : « Je m'inscris pour moi »
+      // et « J'inscris mon enfant », deux grands choix de meme taille, jamais
+      // le bento inegal.
+      expect(tailles.first, tailles.last);
       expect(find.text(t.inscription.usage.moiDescription), findsOneWidget);
       expect(
         find.text(t.choix.exemple(texte: t.inscription.usage.familleExemple)),
         findsOneWidget,
       );
-      // Un appui dans la marge de la carte « Moi et ma famille », loin du
-      // texte, la retient et ouvre la sous-question.
+      // Un appui dans la marge de la carte « J'inscris mon enfant », loin du
+      // texte, la retient. Admission, lot B : « Suivez-vous aussi des
+      // cours ? » est une question du questionnaire, plus une sous-question.
       final Rect famille = tester.getRect(
         find
             .ancestor(
@@ -317,23 +343,31 @@ void main() {
       );
       await tester.tapAt(famille.bottomLeft + const Offset(6, -6));
       await tester.pumpAndSettle();
-      expect(find.text(t.inscription.usage.coursQuestion), findsOneWidget);
-      const Key cours = Key('inscription-parent-suit-des-cours');
-      final List<Size> taillesCours = cartes(tester, cours);
-      expect(taillesCours, hasLength(2));
-      expect(taillesCours.first, isNot(taillesCours.last));
-      expect(
-        find.text(t.inscription.usage.coursNonExplication),
-        findsOneWidget,
+      final RadioChoix radio = tester.widget<RadioChoix>(
+        find.descendant(
+          of: find
+              .ancestor(
+                of: find.text(t.inscription.usage.familleTitre),
+                matching: find.byType(AnimatedContainer),
+              )
+              .first,
+          matching: find.byType(RadioChoix),
+        ),
       );
+      expect(radio.retenue, isTrue);
+      expect(find.text(t.inscription.usage.coursQuestion), findsNothing);
     });
 
     testWidgets('genre : tailles differentes, explication pour le tuteur', (
       WidgetTester tester,
     ) async {
-      await monterInscription(tester);
-      await taper(tester, find.text(t.inscription.usage.moiTitre));
-      await taper(tester, find.text(t.commun.continuer));
+      // Admission, lot B : le titulaire a repondu au questionnaire et choisi
+      // la langue ; l'identite est la suivante.
+      await monterInscription(
+        tester,
+        depart: Routes.inscriptionIdentite,
+        brouillon: const BrouillonInscription(usage: UsageInscription.moi),
+      );
       await tester.enterText(
         find.byKey(const Key('inscription-prenom')),
         'Amina',
@@ -371,4 +405,12 @@ void main() {
       expect(radio.retenue, isTrue);
     });
   });
+}
+
+/// Un brouillon d'inscription deja commence.
+class _Brouillon extends BrouillonInscriptionControleur {
+  _Brouillon(this._b);
+  final BrouillonInscription _b;
+  @override
+  BrouillonInscription build() => _b;
 }

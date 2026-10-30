@@ -156,8 +156,9 @@ begin
   perform set_config('request.jwt.claim.sub', 'a1100000-0000-0000-0000-000000000005', true);
   perform set_config('request.jwt.claims',
     '{"sub":"a1100000-0000-0000-0000-000000000005","app_metadata":{"role":"guardian"}}', true);
+  -- Le genre est exige depuis l'admission (lot B, 29/10/2026).
   v_profile := public.creer_profil_inscription(
-    'guardian', 'Salma', 'Signup', null, 'Europe/Paris', false
+    'guardian', 'Salma', 'Signup', 'female', 'Europe/Paris', false
   );
   if not exists (select 1 from private.person_registrations r
                   where r.profile_id = v_profile.id and r.matricule = v_profile.immutable_id) then
@@ -238,8 +239,9 @@ begin
     jsonb_build_object('sub', p_actor, 'role', 'authenticated')::text, true);
   begin
     set local role authenticated;
+    -- Le genre est exige depuis l'admission (lot B, 29/10/2026).
     perform public.creer_profil_inscription(
-      p_role, p_first, p_last, null, 'Europe/Paris', p_parent
+      p_role, p_first, p_last, 'female', 'Europe/Paris', p_parent
     );
     raise exception '__f86_accepte__';
   exception when others then

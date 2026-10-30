@@ -6,12 +6,19 @@ import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/marque/logo_google.dart';
+import 'package:rewayah_academy/core/offres/offre_horaire.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
 import 'package:rewayah_academy/features/connexion/connexion_page.dart';
+import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart'
+    show UsageInscription;
+import 'package:rewayah_academy/features/inscription/questionnaire/memoire_appareil.dart';
+import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_inscription.dart';
+import 'package:rewayah_academy/features/parcours_offres/libelles_parcours.dart'
+    show MomentJournee;
 
 import '../support/harnais.dart';
 
@@ -180,6 +187,19 @@ void main() {
     testWidgets('L4 : deux chemins distincts, choisis en tete de carte', (
       WidgetTester tester,
     ) async {
+      // Admission, lot B : la creation suit le questionnaire, deja repondu
+      // ici (sans lui, « Creer un compte » ouvre `/commencer`).
+      ecrireMemoireAppareil(
+        clefQuestionnaire,
+        const QuestionnaireInscription(
+          usage: UsageInscription.moi,
+          niveauTitulaire: NiveauDeclare.lectureLente,
+          objectif: ObjectifApprentissage.indecis,
+          moments: <MomentJournee>{MomentJournee.soir},
+          langue: 'francais',
+        ).versTexte(),
+      );
+      addTearDown(() => effacerMemoireAppareil(clefQuestionnaire));
       final FauxServiceAuth auth = await _monter(tester);
       expect(find.text(t.connexion.modeConnexion), findsOneWidget);
       expect(find.text(t.connexion.modeCreation), findsOneWidget);
