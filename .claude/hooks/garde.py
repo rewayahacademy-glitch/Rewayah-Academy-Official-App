@@ -597,11 +597,7 @@ def verifier_gh(c):
         base = re.search(r"(--base|-B)(=|\s+)['\"]?([^\s'\"]+)", c)
         if not base:
             refuser("gh pr create sans --base vise main par défaut ; donner --base <branche de travail>")
-        if base.group(3).lower() in {"main", "master"}:
-            refuser("aucune PR vers main sans le feu vert du directeur (consigne du directeur)")
-    if re.search(r"\bgh\s+pr\s+edit\b", c) and re.search(r"(--base|-B)(=|\s+)['\"]?(main|master)\b", c):
-        refuser("rebaser une PR sur main est interdit sans le feu vert du directeur")
-    if re.search(r"\bgh\s+(pr\s+merge|workflow\s+(run|enable)|run\s+rerun|release\s+(create|edit|delete)"
+    if re.search(r"\bgh\s+(workflow\s+(run|enable)|run\s+rerun|release\s+(create|edit|delete)"
                  r"|repo\s+(delete|rename|edit|archive|sync)|secret\s+(set|delete)|variable\s+(set|delete))\b", c):
         refuser("fusion, déclenchement de workflow, release ou réglage de dépôt GitHub réservés au directeur")
     if re.search(r"\bgh\s+api\b", c):
@@ -712,12 +708,15 @@ def verifier_mcp(nom, entree):
             motif = sql_en_ecriture(entree.get("query", ""))
             if motif:
                 refuser(motif)
-        if PROD in texte and not re.match(r"^(get_|list_|search_|query_logs$|execute_sql$)", action):
-            refuser("seules les lectures sont permises sur le projet de production")
+        # Décision du directeur du 29/10/2026 : migrations en production par apply_migration (tracées) ;
+        # execute_sql reste en lecture seule partout.
+        if PROD in texte and not re.match(r"^(get_|list_|search_|query_logs$|execute_sql$|apply_migration$)", action):
+            refuser("en production : lectures et migrations seulement")
     if nom.startswith("mcp__github__"):
-        if action in {"merge_pull_request", "enable_pr_auto_merge", "actions_run_trigger", "create_repository",
-                      "fork_repository"}:
-            refuser("aucune fusion de PR, déclenchement de workflow ni création de dépôt par un agent ; le directeur décide")
+        # Décision du directeur du 29/10/2026 : les agents ouvrent les PR vers main et les fusionnent
+        # (CI verte exigée, règle écrite dans DECISION-AUTONOMIE-2026-10-29.md).
+        if action in {"enable_pr_auto_merge", "actions_run_trigger", "create_repository", "fork_repository"}:
+            refuser("aucun déclenchement de workflow ni création de dépôt par un agent ; le directeur décide")
         branche = str(entree.get("branch") or "").strip()
         branche = branche[len("refs/heads/"):] if branche.startswith("refs/heads/") else branche
         ecrit = action in {"push_files", "create_or_update_file", "delete_file"}
@@ -730,10 +729,6 @@ def verifier_mcp(nom, entree):
             for ch in chemins:
                 if ch:
                     verifier_chemin(ch)
-        base = str(entree.get("base") or "").strip()
-        base = base[len("refs/heads/"):] if base.startswith("refs/heads/") else base
-        if action in {"create_pull_request", "update_pull_request"} and base.lower() in {"main", "master"}:
-            refuser("aucune PR vers main sans le feu vert du directeur (consigne du directeur)")
     if nom.startswith("mcp__Vercel__") and not VERCEL_LECTURE.search(action):
         refuser("action Vercel en écriture réservée au directeur")
 

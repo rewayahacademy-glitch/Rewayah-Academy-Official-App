@@ -11099,6 +11099,15 @@ class Traductions$nav$eleve$fr {
 
 	/// fr: 'Compte'
 	String get compte => 'Compte';
+
+	/// fr: 'Aujourd'hui'
+	String get aujourdhui => 'Aujourd\'hui';
+
+	/// fr: 'Apprendre'
+	String get apprendre => 'Apprendre';
+
+	/// fr: 'Profil'
+	String get profil => 'Profil';
 }
 
 // Path: nav.tuteur
@@ -45657,6 +45666,9 @@ extension on Traductions {
 			'nav.eleve.monEspace' => 'Mon espace',
 			'nav.eleve.suivi' => 'Suivi',
 			'nav.eleve.compte' => 'Compte',
+			'nav.eleve.aujourdhui' => 'Aujourd\'hui',
+			'nav.eleve.apprendre' => 'Apprendre',
+			'nav.eleve.profil' => 'Profil',
 			'nav.tuteur.accueil' => 'Accueil',
 			'nav.tuteur.foyer' => 'Foyer',
 			'nav.tuteur.disponibilites' => 'Disponibilités',
@@ -45930,11 +45942,11 @@ extension on Traductions {
 			'compte.tuteur.pageApparence.sousTitre' => 'Appliqué sur cet appareil.',
 			'compte.tuteur.pageApparence.theme' => 'Thème de l\'application',
 			'compte.tuteur.pageApparence.themeDetail' => 'Personnalisez l\'apparence de Rewayah.',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pageApparence.confort' => 'Confort visuel',
 			'compte.tuteur.pageApparence.animations' => 'Animations',
 			'compte.tuteur.pageApparence.animationsDetail' => 'Réduites quand votre appareil le demande',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageApparence.texte' => 'Taille du texte',
 			'compte.tuteur.pageApparence.texteDetail' => 'Suit la taille du système',
 			'compte.tuteur.pageAide.titre' => 'Aide et support',
@@ -46444,11 +46456,11 @@ extension on Traductions {
 			'classe.pageProgression.indisponible' => ({required Object dePrenom}) => 'La progression ${dePrenom} n\'est pas encore partagée ici.',
 			'classe.pageProgression.niveau' => 'Niveau',
 			'classe.pageProgression.jalons' => 'Étapes franchies',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pageProgression.aucune' => 'Aucune étape partagée pour l\'instant',
 			'classe.pageProgression.aucuneDetail' => 'Les progrès que l\'enseignant partage avec la famille apparaîtront ici.',
 			'classe.pageCatalogue.pour' => ({required Object prenom}) => 'Pour ${prenom}',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageCatalogue.proposees' => 'Classes proposées',
 			'classe.pageCatalogue.indisponible' => 'Le choix de classe en ligne n\'est pas encore ouvert.',
 			'classe.pageCatalogue.aucune' => 'Aucune classe ne convient pour l\'instant',
@@ -46958,11 +46970,11 @@ extension on Traductions {
 			'enseignant.creneaux.refusDejaPris' => 'Cet élève vient d\'être pris par un autre enseignant. La liste ci-dessous est à jour.',
 			'enseignant.creneaux.refusDejaSuivi' => 'Cet élève a déjà un enseignant. La liste ci-dessous est à jour.',
 			'enseignant.creneaux.refusCreneauRetire' => 'Cette famille ne propose plus ce créneau. La liste ci-dessous est à jour.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.creneaux.refusHorsMesHeures' => 'Ce créneau ne figure plus dans vos heures. Reposez-le dans Mes heures pour pouvoir le prendre.',
 			'enseignant.creneaux.refusPlafond' => 'Vous avez atteint votre maximum d\'élèves. Demandez une augmentation pour en suivre un de plus.',
 			'enseignant.creneaux.mesDisponibilites' => 'Mes disponibilités',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.ajouterCreneau' => 'Ajouter un créneau',
 			'enseignant.creneaux.heure' => ({required Object heure}) => '${heure} h',
 			'enseignant.creneaux.classesDisponibles' => 'Classes disponibles',
@@ -47472,11 +47484,11 @@ extension on Traductions {
 			'tc.bibliotheque.rendu.lienIndisponible' => 'L\'ouverture n\'est pas disponible pour ce support.',
 			'tc.bibliotheque.rendu.lienHorsLigne' => 'L\'ouverture pourra se faire quand la connexion reviendra.',
 			'tc.bibliotheque.rendu.lienBloque' => 'Votre navigateur a bloqué l\'ouverture. Autorisez les fenêtres de ce site, puis réessayez.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.actif.indisponibleTitre' => 'Support présenté pas encore ouvert',
 			'tc.bibliotheque.actif.indisponible' => 'Le suivi du support présenté s\'ouvrira au branchement serveur.',
 			'tc.bibliotheque.actif.sansDonnees' => 'le support présenté',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.actif.erreur' => 'Le support présenté n\'a pas pu être chargé. Réessayez.',
 			'tc.bibliotheque.actif.aucun' => 'Aucun support présenté',
 			'tc.bibliotheque.actif.aucunDetail' => 'Quand votre enseignant présentera un support, il apparaîtra ici sans rien faire de votre part.',
@@ -47986,11 +47998,11 @@ extension on Traductions {
 			'adulte.famille.paiementsFoyer' => 'Paiements du foyer',
 			'adulte.famille.aProposForfait' => 'À propos du forfait famille',
 			'adulte.famille.aProposForfaitPhrase' => 'Le forfait famille comprend un titulaire, un conjoint ou une conjointe adulte, et les enfants ou adolescents sous la responsabilité du titulaire. Chaque adulte conserve son propre compte.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.famille.profilNonCreeTitre' => 'Démonstration : aucun profil n\'a été créé',
 			'adulte.famille.profilNonCreePhrase' => 'En démonstration, rien n\'est envoyé. Ma famille reste telle qu\'elle était.',
 			'adulte.famille.profilNonCreePhraseSeul' => 'En démonstration, rien n\'est envoyé. Votre espace élève reste tel qu\'il était.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.famille.monProfilIndisponibleTitre' => 'Pas encore disponible',
 			'adulte.famille.monProfilIndisponiblePhrase' => 'La création d\'un profil élève séparé n\'est pas encore disponible. Vos cours et Ma famille restent tels qu\'ils sont.',
 			'adulte.famille.indisponibleTitre' => 'La rubrique famille n\'est pas encore disponible',
@@ -48500,11 +48512,11 @@ extension on Traductions {
 			'argent.acces.seancesFermeesTitre' => 'Nouvelles séances indisponibles',
 			'argent.acces.seancesFermees' => ({required Object prenom}) => '${prenom} ne peut pas rejoindre de nouvelle séance pour le moment. Son compte et ses contenus restent accessibles.',
 			'argent.acces.adulteSeancesFermees' => 'Vous ne pouvez pas rejoindre de nouvelle séance pour le moment. Votre compte et vos contenus restent accessibles.',
+			_ => null,
+		} ?? switch (path) {
 			'argent.acces.suspenduTitre' => 'Accès suspendu',
 			'argent.acces.suspenduTuteur' => ({required Object prenom, required Object date}) => 'La place réservée à ${prenom} a été libérée le ${date}. Son compte et ses contenus restent accessibles.',
 			'argent.acces.suspenduTuteurSansDate' => ({required Object prenom}) => 'La place réservée à ${prenom} a été libérée. Son compte et ses contenus restent accessibles.',
-			_ => null,
-		} ?? switch (path) {
 			'argent.acces.suspenduAdulte' => ({required Object date}) => 'Votre place a été libérée le ${date}. Votre compte et vos contenus restent accessibles.',
 			'argent.acces.suspenduAdulteSansDate' => 'Votre place a été libérée. Votre compte et vos contenus restent accessibles.',
 			'argent.acces.reactiveTitre' => 'Accès réactivé',
@@ -49014,11 +49026,11 @@ extension on Traductions {
 			'com.studio.aujourdhui.acces.messagesDetail' => 'Les conversations avec les familles, les enseignants et les contrôleurs',
 			'com.studio.aujourdhui.acces.annonces' => 'Annonces',
 			'com.studio.aujourdhui.acces.annoncesDetail' => 'Publier et suivre les annonces',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.aujourdhui.acces.dossiers' => 'Dossiers à valider',
 			'com.studio.aujourdhui.acces.dossiersDetail' => 'Les dossiers prêts pour une décision',
 			'com.studio.aujourdhui.acces.classes' => 'Classes',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.aujourdhui.acces.classesDetail' => 'Les Classes, leurs horaires et leurs enseignants',
 			'com.studio.aujourdhui.acces.demandes' => 'Demandes à trancher',
 			'com.studio.aujourdhui.acces.demandesDetail' => 'Les demandes de changement en attente',
@@ -49528,11 +49540,11 @@ extension on Traductions {
 			'comptable.statuts.remboursement.execute' => 'Exécuté',
 			'comptable.statuts.remboursement.refuse' => 'Refusé',
 			'comptable.statuts.validation.enAttente' => 'Validation demandée',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.validation.validee' => 'Validée',
 			'comptable.statuts.validation.refusee' => 'Refusée',
 			'comptable.statuts.raison.autoPaiement' => 'Traitement par un autre responsable requis',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.statuts.raison.validationRequise' => 'Validation supplémentaire requise',
 			'comptable.statuts.raison.infosManquantes' => 'Informations de paiement manquantes',
 			'comptable.statuts.raison.verificationRequise' => 'Vérification paiement requise',
@@ -50042,11 +50054,11 @@ extension on Traductions {
 			'comptable.contractuels.ouvrirLecteur' => ({required Object objet}) => 'Ouvrir l\'obligation ${objet}',
 			'comptable.contractuels.creationBloquee' => ({required Object raison}) => 'Nouvelle obligation indisponible : ${raison}.',
 			'comptable.contractuels.videObligations' => 'Aucune obligation en cours',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.videObligationsDetail' => 'Les obligations créées apparaissent ici, avec leur échéance et leur statut.',
 			'comptable.contractuels.videAApprouver' => 'Rien à approuver',
 			'comptable.contractuels.videAApprouverDetail' => 'Les obligations en attente d\'une approbation apparaissent ici.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.videAPayer' => 'Rien à payer',
 			'comptable.contractuels.videAPayerDetail' => 'Une obligation approuvée apparaît ici, prête à être payée.',
 			'comptable.contractuels.videHistorique' => 'Aucune obligation terminée',
@@ -50556,11 +50568,11 @@ extension on Traductions {
 			'juridique.annulation.s2.blocs.0' => 'L\'abonnement mensuel s\'arrête à tout moment, sans justification. Il prend fin à la fin du mois en cours.',
 			'juridique.annulation.s2.blocs.1' => 'Les formules payées d\'avance, au trimestre ou à l\'année, ne sont pas remboursées après la première semaine.',
 			'juridique.annulation.s2.blocs.2' => 'Une inscription en cours de mois paie seulement les séances restantes du mois.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.annulation.s3.titre' => '3. Absences et séances annulées',
 			'juridique.annulation.s3.blocs.0' => 'Une place manquée n\'est pas remboursée : elle est réservée pour l\'élève dans une Classe fixe.',
 			'juridique.annulation.s3.blocs.1' => 'Une séance annulée par l\'académie ou par l\'enseignant est remplacée.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.annulation.s3.blocs.2' => 'Si la Classe n\'ouvre pas faute d\'inscrits, rien n\'est facturé.',
 			'juridique.annulation.s4.titre' => '4. Paiement en retard',
 			'juridique.annulation.s4.blocs.0' => 'Avant le renouvellement, vous recevez des rappels automatiques.',

@@ -2450,7 +2450,10 @@
       "coran": "القرآن",
       "monEspace": "مساحتي",
       "suivi": "المتابعة",
-      "compte": "الحساب"
+      "compte": "الحساب",
+      "aujourdhui": "اليوم",
+      "apprendre": "التعلم",
+      "profil": "الملف الشخصي"
     },
     "tuteur": {
       "accueil": "الرئيسية",
