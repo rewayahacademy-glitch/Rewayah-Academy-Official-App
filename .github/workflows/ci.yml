@@ -239,6 +239,22 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_k4_seance_ouverte.sql
 
+      - name: Scenarios politique commerciale famille
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_politique_famille.sql
+
+      - name: Scenarios D5 titulaire adulte en classe
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_d5_titulaire_adulte_en_classe.sql
+
+      - name: Scenarios D2 courriel compte enseignant valide
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_d2_courriel_compte_enseignant_valide.sql
+
+      - name: Scenarios B2.1 import foyers
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b2_1_import_foyers.sql
+
   edge-r2:
     name: Fonctions Edge -- stockage R2 (Deno)
     if: github.event_name != 'pull_request' || github.base_ref == 'main' || github.base_ref == 'ccr-1b1bfa0b-m1kvkk'
