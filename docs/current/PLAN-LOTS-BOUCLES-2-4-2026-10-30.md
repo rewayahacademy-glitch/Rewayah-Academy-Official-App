@@ -10,7 +10,7 @@ pilote fusionne, applique les migrations et tient ce tableau à jour.
 - **B2.1 ne peut pas marcher aujourd'hui.** L'import des inscrits actuels range les élèves dans
   `private.preinscription_*` : ni compte, ni foyer, ni matricule. Ils n'apparaissent pas dans
   Comptes et ne se placent pas en classe.
-- **B2.4** (tableau des définitions) et **B3.3** (liste des 568) n'ont aucun écran.
+- **B2.4** (tableau des définitions) et **B3.3** (liste des candidatures) n'ont aucun écran.
 - **B2.5** : la vue de la paie par la direction renvoie `CapaciteIndisponible`.
 - **PR 50** : 267 commits de retard, 20 conflits ; `prevenir_par_courriel` (en production)
   enverrait le lien d'inscription à toutes les réponses, pas aux seuls retenus.
@@ -18,12 +18,25 @@ pilote fusionne, applique les migrations et tient ce tableau à jour.
 - **Stripe** : fonctions `recharge-payer` et `stripe-webhook` déployées (lu le 30/10) ; la
   présence des secrets est inconnue (illisible pour le pilote).
 
+## Transitions entre lots (consigne du directeur du 30/10)
+
+- **Une session neuve par lot.** Quand un agent a remis sa PR et son bilan, il s'arrête ; le
+  pilote archive sa session après la fusion, et le lot suivant part dans une session neuve,
+  avec une consigne autonome : le but, les fichiers à lire, la zone (branche, dossiers,
+  numéros de migration), ce qui est déjà su (constats du lot précédent), les vérifications,
+  et le format du bilan. Le contexte d'un lot ne déborde jamais sur le suivant.
+- Toujours deux agents de construction au plus en même temps ; l'i18n à un seul à la fois,
+  désigné dans la consigne.
+- Le pilote ne lance un lot qui dépend d'un autre qu'après la fusion de celui-ci dans `main`.
+- Aucune valeur qui change dans le temps n'est écrite en dur (nombre de candidats, prix,
+  pourcentages, dates) : elle est lue en base ou dans un fichier de données versionné.
+
 ## Files des agents
 
 | Ordre | Agent 1 (seul sur l'i18n) | Agent 2 |
 |---|---|---|
 | 1 | TRANSPARENCE : `politique_commerciale_famille`, page des prix en pourcentages, « Bibliothèque » dans la salle | RELIQUATS-B2 : R9, D5 (adulte élève), D2 (e-mail d'enseignant validé), R3 ; retirer Communauté du menu tant qu'elle n'est pas branchée |
-| 2 | B3 : écran « Réponses importées » (les 568 : tri, filtre, sélection, « retenu ») sur `lister_formulaires_importes` ; invitation nominative d'un retenu ; `prevenir_par_courriel` limité aux retenus | B2.1 : les pré-inscriptions deviennent foyers, comptes de tuteur, profils d'élèves et matricules, par une fonction serveur appelée à la confirmation de l'import (idempotente, essai à blanc inchangé) |
+| 2 | B3 : écran « Réponses importées » (toutes les candidatures, nombre jamais écrit en dur : il en arrive chaque jour ; tri, filtre, sélection, « retenu ») sur `lister_formulaires_importes` ; invitation nominative d'un retenu ; `prevenir_par_courriel` limité aux retenus | B2.1 : les pré-inscriptions deviennent foyers, comptes de tuteur, profils d'élèves et matricules, par une fonction serveur appelée à la confirmation de l'import (idempotente, essai à blanc inchangé) |
 | 3 | B2.3 : « Séance tenue sur Meet : marquer présents » en un geste pour l'enseignant | B2.4 : les cinq définitions (actif, à jour, régulier, à surveiller, ponctuel), l'enseignant de chaque élève et l'emploi du temps, calculés par le serveur ; écran de la direction |
 | 4 | Communauté : tables, RLS, RPC, adaptateurs ; règle « pas en cours » côté serveur ; mesure agrégée des heures d'affluence | B2.5 : relevé mensuel de la paie par enseignant pour la direction ; B4 : émission des factures le 1er par cron, commentaire faux de `main.dart:341` |
 
@@ -43,4 +56,6 @@ pilote fusionne, applique les migrations et tient ce tableau à jour.
 - La liste réelle classe, enseignant, élèves, jour, heure ; la validation de chaque enseignant.
 - Le tri des candidats (jugement du directeur).
 - Stripe : compte vérifié, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, adresse du webhook
-  déclarée chez Stripe.
+  déclarée chez Stripe. **Le directeur, 30/10 : clés pas encore renseignées.** Tant qu'elles
+  manquent, le bouton de paiement doit dire une phrase claire au lieu d'échouer ; le lot B4 le
+  vérifie.
