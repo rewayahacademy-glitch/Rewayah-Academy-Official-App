@@ -15,51 +15,51 @@
 -- migrations. Une seule fois par base : il insere ses fixtures.
 
 insert into auth.users (id, email) values
-  ('c4000000-0000-0000-0000-000000000001', 'k4-enseignant@example.test'),
-  ('c4000000-0000-0000-0000-000000000002', 'k4-eleve@example.test');
+  ('4b4e0000-0000-0000-0000-000000000001', 'k4-enseignant@example.test'),
+  ('4b4e0000-0000-0000-0000-000000000002', 'k4-eleve@example.test');
 
 insert into public.households (id, timezone) values
-  ('c4ffffff-0000-0000-0000-00000000000a', 'Europe/Paris');
+  ('4b4effff-0000-0000-0000-00000000000a', 'Europe/Paris');
 
 insert into public.profiles
   (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
 values
-  ('c4000000-0000-0000-0000-000000000001', 'TEACH-K4-000001', 'teacher',
-   'c4ffffff-0000-0000-0000-00000000000a', 'Hakim', 'Test', 'provisional_active', 'male'),
-  ('c4000000-0000-0000-0000-000000000002', 'STUD-K4-000001', 'student',
-   'c4ffffff-0000-0000-0000-00000000000a', 'Yanis', 'Test', 'active', 'male');
+  ('4b4e0000-0000-0000-0000-000000000001', 'TEACH-K4-000001', 'teacher',
+   '4b4effff-0000-0000-0000-00000000000a', 'Hakim', 'Test', 'provisional_active', 'male'),
+  ('4b4e0000-0000-0000-0000-000000000002', 'STUD-K4-000001', 'student',
+   '4b4effff-0000-0000-0000-00000000000a', 'Yanis', 'Test', 'active', 'male');
 
 insert into public.student_profiles (profile_id, student_type, interface_mode, camera_policy)
-values ('c4000000-0000-0000-0000-000000000002', 'minor', 'standard', 'forbidden');
+values ('4b4e0000-0000-0000-0000-000000000002', 'minor', 'standard', 'forbidden');
 
 -- a : la seance du jour, commencee il y a deux minutes ;
 -- b : une seance close ; c : une seance annulee ; d : la seance du K5.
 insert into public.sessions (id, teacher_id, started_at, ended_at, status)
 values
-  ('c4aaaaaa-0000-0000-0000-00000000000a', 'c4000000-0000-0000-0000-000000000001',
+  ('4b4e0a00-0000-0000-0000-00000000000a', '4b4e0000-0000-0000-0000-000000000001',
    now() - interval '2 minutes', now() + interval '58 minutes', 'planned'),
-  ('c4aaaaaa-0000-0000-0000-00000000000b', 'c4000000-0000-0000-0000-000000000001',
+  ('4b4e0a00-0000-0000-0000-00000000000b', '4b4e0000-0000-0000-0000-000000000001',
    now() - interval '5 hours', now() - interval '4 hours', 'planned'),
-  ('c4aaaaaa-0000-0000-0000-00000000000c', 'c4000000-0000-0000-0000-000000000001',
+  ('4b4e0a00-0000-0000-0000-00000000000c', '4b4e0000-0000-0000-0000-000000000001',
    now() + interval '1 day', now() + interval '1 day 1 hour', 'canceled'),
-  ('c4aaaaaa-0000-0000-0000-00000000000d', 'c4000000-0000-0000-0000-000000000001',
+  ('4b4e0a00-0000-0000-0000-00000000000d', '4b4e0000-0000-0000-0000-000000000001',
    now() + interval '2 days', now() + interval '2 days 1 hour', 'planned');
 
-update public.sessions set status = 'preflight' where id = 'c4aaaaaa-0000-0000-0000-00000000000b';
-update public.sessions set status = 'in_progress' where id = 'c4aaaaaa-0000-0000-0000-00000000000b';
-update public.sessions set status = 'ended' where id = 'c4aaaaaa-0000-0000-0000-00000000000b';
+update public.sessions set status = 'preflight' where id = '4b4e0a00-0000-0000-0000-00000000000b';
+update public.sessions set status = 'in_progress' where id = '4b4e0a00-0000-0000-0000-00000000000b';
+update public.sessions set status = 'ended' where id = '4b4e0a00-0000-0000-0000-00000000000b';
 
 insert into public.session_participants (session_id, profile_id, role) values
-  ('c4aaaaaa-0000-0000-0000-00000000000a', 'c4000000-0000-0000-0000-000000000002', 'student');
+  ('4b4e0a00-0000-0000-0000-00000000000a', '4b4e0000-0000-0000-0000-000000000002', 'student');
 
 do $$
 begin
   perform r.room_name
      from unnest(array[
-       'c4aaaaaa-0000-0000-0000-00000000000a',
-       'c4aaaaaa-0000-0000-0000-00000000000b',
-       'c4aaaaaa-0000-0000-0000-00000000000c',
-       'c4aaaaaa-0000-0000-0000-00000000000d']::uuid[]) s,
+       '4b4e0a00-0000-0000-0000-00000000000a',
+       '4b4e0a00-0000-0000-0000-00000000000b',
+       '4b4e0a00-0000-0000-0000-00000000000c',
+       '4b4e0a00-0000-0000-0000-00000000000d']::uuid[]) s,
           lateral public.video_route_de_seance(s, 'wss://k4.cloud.test', 'wss://k4.auto.test') r;
 end $$;
 
@@ -72,13 +72,13 @@ create function pg_temp.statut(p uuid) returns public.session_status language sq
 do $$
 begin
   if not public.enregistrer_webhook_livekit('evt_k4_1', 'participant_joined',
-       pg_temp.salle('c4aaaaaa-0000-0000-0000-00000000000a'),
-       'c4000000-0000-0000-0000-000000000002', now(), '{}'::jsonb) then
+       pg_temp.salle('4b4e0a00-0000-0000-0000-00000000000a'),
+       '4b4e0000-0000-0000-0000-000000000002', now(), '{}'::jsonb) then
     raise exception 'K1 ECHEC : la presence de l''eleve n''a pas ete ecrite';
   end if;
-  if pg_temp.statut('c4aaaaaa-0000-0000-0000-00000000000a') <> 'planned' then
+  if pg_temp.statut('4b4e0a00-0000-0000-0000-00000000000a') <> 'planned' then
     raise exception 'K1 ECHEC : un eleve a ouvert la seance (%)',
-      pg_temp.statut('c4aaaaaa-0000-0000-0000-00000000000a');
+      pg_temp.statut('4b4e0a00-0000-0000-0000-00000000000a');
   end if;
 end $$;
 
@@ -88,11 +88,11 @@ declare
   v_s public.sessions%rowtype;
 begin
   if not public.enregistrer_webhook_livekit('evt_k4_2', 'participant_joined',
-       pg_temp.salle('c4aaaaaa-0000-0000-0000-00000000000a'),
-       'c4000000-0000-0000-0000-000000000001', now(), '{}'::jsonb) then
+       pg_temp.salle('4b4e0a00-0000-0000-0000-00000000000a'),
+       '4b4e0000-0000-0000-0000-000000000001', now(), '{}'::jsonb) then
     raise exception 'K2 ECHEC : la presence de l''enseignant n''a pas ete ecrite';
   end if;
-  select * into v_s from public.sessions where id = 'c4aaaaaa-0000-0000-0000-00000000000a';
+  select * into v_s from public.sessions where id = '4b4e0a00-0000-0000-0000-00000000000a';
   if v_s.status <> 'in_progress' then
     raise exception 'K2 ECHEC : attendu in_progress, lu %', v_s.status;
   end if;
@@ -102,11 +102,11 @@ begin
   end if;
   if not exists (select 1 from public.session_events e
                   where e.session_id = v_s.id and e.event_type = 'joined'
-                    and e.profile_id = 'c4000000-0000-0000-0000-000000000001') then
+                    and e.profile_id = '4b4e0000-0000-0000-0000-000000000001') then
     raise exception 'K2 ECHEC : presence de l''enseignant absente';
   end if;
   if (select d.detail->>'profile_id' from public.livekit_webhook_deliveries d
-       where d.event_id = 'evt_k4_2') is distinct from 'c4000000-0000-0000-0000-000000000001' then
+       where d.event_id = 'evt_k4_2') is distinct from '4b4e0000-0000-0000-0000-000000000001' then
     raise exception 'K2 ECHEC : identite absente du journal de reception';
   end if;
 end $$;
@@ -117,19 +117,19 @@ declare
   v_debut timestamptz;
 begin
   select finance_started_at into v_debut from public.sessions
-   where id = 'c4aaaaaa-0000-0000-0000-00000000000a';
+   where id = '4b4e0a00-0000-0000-0000-00000000000a';
   if public.enregistrer_webhook_livekit('evt_k4_2', 'participant_joined',
-       pg_temp.salle('c4aaaaaa-0000-0000-0000-00000000000a'),
-       'c4000000-0000-0000-0000-000000000001', now(), '{}'::jsonb) then
+       pg_temp.salle('4b4e0a00-0000-0000-0000-00000000000a'),
+       '4b4e0000-0000-0000-0000-000000000001', now(), '{}'::jsonb) then
     raise exception 'K3 ECHEC : un rejeu a ete applique';
   end if;
   -- Une seconde entree (reconnexion) ne rouvre pas le temps paye.
   perform public.enregistrer_webhook_livekit('evt_k4_3', 'participant_joined',
-    pg_temp.salle('c4aaaaaa-0000-0000-0000-00000000000a'),
-    'c4000000-0000-0000-0000-000000000001', now(), '{}'::jsonb);
+    pg_temp.salle('4b4e0a00-0000-0000-0000-00000000000a'),
+    '4b4e0000-0000-0000-0000-000000000001', now(), '{}'::jsonb);
   if (select finance_started_at from public.sessions
-       where id = 'c4aaaaaa-0000-0000-0000-00000000000a') is distinct from v_debut
-     or pg_temp.statut('c4aaaaaa-0000-0000-0000-00000000000a') <> 'in_progress' then
+       where id = '4b4e0a00-0000-0000-0000-00000000000a') is distinct from v_debut
+     or pg_temp.statut('4b4e0a00-0000-0000-0000-00000000000a') <> 'in_progress' then
     raise exception 'K3 ECHEC : une seconde entree a change la seance';
   end if;
 end $$;
@@ -138,16 +138,16 @@ end $$;
 do $$
 begin
   perform public.enregistrer_webhook_livekit('evt_k4_4', 'participant_joined',
-    pg_temp.salle('c4aaaaaa-0000-0000-0000-00000000000b'),
-    'c4000000-0000-0000-0000-000000000001', now(), '{}'::jsonb);
+    pg_temp.salle('4b4e0a00-0000-0000-0000-00000000000b'),
+    '4b4e0000-0000-0000-0000-000000000001', now(), '{}'::jsonb);
   perform public.enregistrer_webhook_livekit('evt_k4_5', 'participant_joined',
-    pg_temp.salle('c4aaaaaa-0000-0000-0000-00000000000c'),
-    'c4000000-0000-0000-0000-000000000001', now(), '{}'::jsonb);
-  if pg_temp.statut('c4aaaaaa-0000-0000-0000-00000000000b') <> 'ended'
-     or pg_temp.statut('c4aaaaaa-0000-0000-0000-00000000000c') <> 'canceled' then
+    pg_temp.salle('4b4e0a00-0000-0000-0000-00000000000c'),
+    '4b4e0000-0000-0000-0000-000000000001', now(), '{}'::jsonb);
+  if pg_temp.statut('4b4e0a00-0000-0000-0000-00000000000b') <> 'ended'
+     or pg_temp.statut('4b4e0a00-0000-0000-0000-00000000000c') <> 'canceled' then
     raise exception 'K4 ECHEC : une seance close ou annulee a change (%, %)',
-      pg_temp.statut('c4aaaaaa-0000-0000-0000-00000000000b'),
-      pg_temp.statut('c4aaaaaa-0000-0000-0000-00000000000c');
+      pg_temp.statut('4b4e0a00-0000-0000-0000-00000000000b'),
+      pg_temp.statut('4b4e0a00-0000-0000-0000-00000000000c');
   end if;
   if exists (select 1 from public.livekit_webhook_deliveries
               where event_id in ('evt_k4_4', 'evt_k4_5') and detail ? 'statut_seance_erreur') then
@@ -161,22 +161,22 @@ begin
   raise exception 'refus de test K5';
 end $$;
 create trigger k4_refus_test before update of status on public.sessions
-  for each row when (new.id = 'c4aaaaaa-0000-0000-0000-00000000000d')
+  for each row when (new.id = '4b4e0a00-0000-0000-0000-00000000000d')
   execute function pg_temp.k4_refus();
 
 do $$
 begin
   if not public.enregistrer_webhook_livekit('evt_k4_6', 'participant_joined',
-       pg_temp.salle('c4aaaaaa-0000-0000-0000-00000000000d'),
-       'c4000000-0000-0000-0000-000000000001', now(), '{}'::jsonb) then
+       pg_temp.salle('4b4e0a00-0000-0000-0000-00000000000d'),
+       '4b4e0000-0000-0000-0000-000000000001', now(), '{}'::jsonb) then
     raise exception 'K5 ECHEC : la presence a ete perdue avec le statut';
   end if;
-  if pg_temp.statut('c4aaaaaa-0000-0000-0000-00000000000d') <> 'planned' then
+  if pg_temp.statut('4b4e0a00-0000-0000-0000-00000000000d') <> 'planned' then
     raise exception 'K5 ECHEC : passage a moitie fait (%)',
-      pg_temp.statut('c4aaaaaa-0000-0000-0000-00000000000d');
+      pg_temp.statut('4b4e0a00-0000-0000-0000-00000000000d');
   end if;
   if not exists (select 1 from public.session_events
-                  where session_id = 'c4aaaaaa-0000-0000-0000-00000000000d'
+                  where session_id = '4b4e0a00-0000-0000-0000-00000000000d'
                     and event_type = 'joined') then
     raise exception 'K5 ECHEC : presence absente';
   end if;
@@ -194,13 +194,13 @@ declare
   v_d jsonb;
 begin
   if public.enregistrer_webhook_livekit('evt_k4_7', 'track_published',
-       pg_temp.salle('c4aaaaaa-0000-0000-0000-00000000000a'),
-       'c4000000-0000-0000-0000-000000000002', now(),
+       pg_temp.salle('4b4e0a00-0000-0000-0000-00000000000a'),
+       '4b4e0000-0000-0000-0000-000000000002', now(),
        '{"piste":{"sid":"TR_k4","type":"VIDEO","source":"CAMERA","muted":false}}'::jsonb) then
     raise exception 'K6 ECHEC : une piste a ete ecrite comme presence';
   end if;
   select detail into v_d from public.livekit_webhook_deliveries where event_id = 'evt_k4_7';
-  if v_d->>'profile_id' is distinct from 'c4000000-0000-0000-0000-000000000002'
+  if v_d->>'profile_id' is distinct from '4b4e0000-0000-0000-0000-000000000002'
      or v_d#>>'{piste,source}' is distinct from 'CAMERA' then
     raise exception 'K6 ECHEC : journal de piste incomplet : %', v_d;
   end if;
@@ -212,7 +212,7 @@ declare
   v_s public.sessions%rowtype;
 begin
   perform private.ses_cloturer_seances_echues(now() + interval '3 hours');
-  select * into v_s from public.sessions where id = 'c4aaaaaa-0000-0000-0000-00000000000a';
+  select * into v_s from public.sessions where id = '4b4e0a00-0000-0000-0000-00000000000a';
   if v_s.status <> 'ended' or v_s.finance_ended_at is null
      or v_s.finance_ended_at <= v_s.finance_started_at then
     raise exception 'K7 ECHEC : attendu ended avec temps paye ferme, lu % (% / %)',
