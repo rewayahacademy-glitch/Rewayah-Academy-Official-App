@@ -10,8 +10,8 @@
 --    on la lit par fonction.
 -- 2. public.inscrire_titulaire recoit p_apprenants (JSON borne : 6 au plus,
 --    champs valides) et les range dans la meme transaction que la demande.
---    Remplace la signature a six parametres (DROP puis CREATE : l'ancienne
---    forme rendrait l'appel nomme ambigu).
+--    Remplace la signature a six parametres (mise de cote puis CREATE :
+--    l'ancienne forme rendrait l'appel nomme ambigu).
 -- 3. public.mes_apprenants_demande() : le titulaire relit les prenoms et
 --    les ages de sa demande, pour la page d'attente.
 
@@ -46,7 +46,20 @@ CREATE UNIQUE INDEX candidature_apprenants_un_titulaire
 ALTER TABLE public.candidature_apprenants ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON TABLE public.candidature_apprenants FROM PUBLIC, anon, authenticated;
 
-DROP FUNCTION public.inscrire_titulaire(text, text, text, public.gender, text, boolean);
+-- L'ancienne forme a six parametres est mise de cote au lieu d'etre
+-- supprimee (decision du pilote du 30/10/2026 : aucune suppression a
+-- l'application, le serveur Supabase exigerait une confirmation humaine).
+-- Elle quitte public, perd SECURITY DEFINER et tout droit : inerte.
+ALTER FUNCTION public.inscrire_titulaire(text, text, text, public.gender, text, boolean)
+  RENAME TO inscrire_titulaire_avant_lot_b;
+ALTER FUNCTION public.inscrire_titulaire_avant_lot_b(text, text, text, public.gender, text, boolean)
+  SET SCHEMA private;
+ALTER FUNCTION private.inscrire_titulaire_avant_lot_b(text, text, text, public.gender, text, boolean)
+  SECURITY INVOKER;
+REVOKE ALL ON FUNCTION private.inscrire_titulaire_avant_lot_b(text, text, text, public.gender, text, boolean)
+  FROM PUBLIC, anon, authenticated, service_role;
+COMMENT ON FUNCTION private.inscrire_titulaire_avant_lot_b(text, text, text, public.gender, text, boolean) IS
+  'Admission lot B (30/10/2026) : ancienne forme a six parametres, inerte, a supprimer lors d''un lot de nettoyage avec le directeur present.';
 
 CREATE FUNCTION public.inscrire_titulaire(
   p_usage text,
