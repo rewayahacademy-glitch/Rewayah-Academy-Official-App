@@ -17760,8 +17760,8 @@ class Traductions$argent$transparence$fr {
 	/// fr: 'Les montants exacts'
 	String get montantsTitre => 'Les montants exacts';
 
-	/// fr: 'Cette page ne donne que des pourcentages : les montants changent chaque mois avec le nombre d'élèves.'
-	String get montantsPhrase => 'Cette page ne donne que des pourcentages : les montants changent chaque mois avec le nombre d\'élèves.';
+	/// fr: 'Cette page ne donne que des pourcentages : les montants changent chaque mois avec le nombre d'élèves. Qui veut les montants exacts les demande à l'administration.'
+	String get montantsPhrase => 'Cette page ne donne que des pourcentages : les montants changent chaque mois avec le nombre d\'élèves. Qui veut les montants exacts les demande à l\'administration.';
 
 	/// fr: 'La répartition des prix ne peut pas être lue'
 	String get indisponibleTitre => 'La répartition des prix ne peut pas être lue';
@@ -49129,7 +49129,7 @@ extension on Traductions {
 			'argent.transparence.hausseTitre' => 'Les prix peuvent augmenter',
 			'argent.transparence.haussePhrase' => 'Nos prix dépendent du coût des services que nous utilisons et de l\'inflation. Si ces coûts augmentent, l\'académie devra ajuster ses prix. Elle vous préviendra avant le paiement suivant, et vous pourrez arrêter si le nouveau prix ne vous convient pas.',
 			'argent.transparence.montantsTitre' => 'Les montants exacts',
-			'argent.transparence.montantsPhrase' => 'Cette page ne donne que des pourcentages : les montants changent chaque mois avec le nombre d\'élèves.',
+			'argent.transparence.montantsPhrase' => 'Cette page ne donne que des pourcentages : les montants changent chaque mois avec le nombre d\'élèves. Qui veut les montants exacts les demande à l\'administration.',
 			'argent.transparence.indisponibleTitre' => 'La répartition des prix ne peut pas être lue',
 			'argent.transparence.indisponiblePhrase' => 'Elle sera affichée ici dès qu\'elle sera disponible.',
 			'argent.transparence.erreurTitre' => 'La répartition des prix n\'a pas pu être lue',
