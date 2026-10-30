@@ -66,10 +66,20 @@ Prises par délégation, réversibles, sans contradiction avec les règles gelé
 12. **Filtres actifs** : la rangée de puces ne montre que ce que la barre ne montre pas déjà (axes rangés sous « Plus »). Le compteur d'une salle dit « n en cours ».
 13. **Pied commun** : la taille de page imposée par la source est dite (`PiedDeListe.mention`) au même endroit que le sélecteur d'une taille réelle ; Classes passe au pied collé.
 
+## 5 bis. Comptes séparé par rôle (directeur, 30/10/2026)
+
+Capture de l'écran Comptes au téléphone, mot du directeur : « Sur ce profil, il y a des tuteurs, des enseignants, des élèves, mais l'application ne fait pas de différence. C'est compliqué. Normalement, les élèves doivent être à part, parce qu'on ne peut pas ajouter les tuteurs directement dans une classe. » **Cette décision prévaut sur §5.6 pour la page Comptes** (une seule liste filtrée par rôle).
+
+1. **Quatre vues**, choisies en haut de l'écran par `SelecteurSection` (ONGLETS-1 : en ligne au bureau, menu au téléphone quand quatre libellés ne tiennent pas), chacune avec sa liste, ses colonnes, sa recherche, son tri et sa page : **Élèves** (matricule, âge, classe, tuteur), **Familles** (tuteurs, élèves rattachés), **Enseignants** (pays, pièce d'identité, contrats), **Direction** (administration, comptabilité, contrôle ; proposée seulement si elle a des comptes).
+2. Une vue range les **profils** par rôle : un tuteur qui est aussi élève (deux profils) est une fois dans Familles, une fois dans Élèves, jamais deux fois dans la même vue.
+3. **La vue ouverte par défaut** est la première, dans cet ordre, qui contient une décision en attente (enseignant en attente ; demande d'admission reçue, `DECISION-ADMISSION-2026-10-27.md`) ; sinon Élèves. Le nombre de chaque vue est compté dans les données lues.
+4. Lecture : `comptes_admin_par_role()` (migration `20261101100000`, lecture seule) ; tant qu'elle n'est pas installée, repli sur `comptes_admin()` et bandeau qui dit que l'âge, la classe et le tuteur ne sont pas servis. L'adresse porte `vue`, `etat`, `filtre`, `tri` ; un ancien lien `?role=` ouvre la vue de ce rôle.
+5. Toujours **aucune sélection multiple** (§5.6 reste vrai sur ce point).
+
 ## 6. Limites serveur (frontend seulement : non corrigées)
 
 - `lister_candidatures` : page de 50 en dur ; pas de `version` dans la ligne ; 2 alertes sur 4 non servies et aucune clé de filtre « alerte » ; audit à chaque lecture. Colonne Date non triable en croissant.
-- `comptes_admin()` : ni recherche, ni tri, ni total, ni pagination ; plafond `max_rows` (1000 en local, valeur distante inconnue) ; ni courriel, ni matricule, ni pays, ni dernière activité pour tous les rôles. Les comptes candidats ne sont pas écartés (pas de marqueur serveur).
+- `comptes_admin()` : ni recherche, ni tri, ni total, ni pagination ; plafond `max_rows` (1000 en local, valeur distante inconnue) ; ni courriel, ni matricule, ni pays, ni dernière activité pour tous les rôles. Les comptes candidats ne sont pas écartés (pas de marqueur serveur). Depuis le 30/10, `comptes_admin_par_role()` ajoute la tranche d'âge (jamais l'âge exact : aucune date de naissance au profil), la classe active, le tuteur d'un élève, le pays d'un enseignant et la demande d'admission à traiter ; ni page, ni recherche, ni total non plus.
 - Aucune RPC de lot, de suspension ou d'export pour élèves et tuteurs : **demande de contrat serveur à ouvrir**.
 - `journal_audit` : ni total ni recherche. Catalogue de la bibliothèque : curseur, pas de total.
 - **Les alertes de la synthèse ne filtrent pas** : la mission voulait que chaque indicateur applique son filtre. `lister_candidatures` n'a aucune clé de filtre « alerte », et aucun filtre existant n'est équivalent (« Informations manquantes » compte aussi le complément demandé en Salle de vérification). Les nombres sont ceux du serveur, calculés sur toute la portée ; la ligne dit le fait, sans faux contrôle. Contrat serveur à ouvrir : une clé de filtre par alerte.
@@ -82,7 +92,7 @@ Détail et défauts : l'inventaire du lot 4 (`5-inventaire-traitement.md`, copi�
 
 | # | Liste | Statut | Prochaine étape |
 | :-: | :--- | :--- | :--- |
-| 1 | Comptes (élèves, tuteurs) | refondue | contrat serveur `comptes_admin` paginé et recherché |
+| 1 | Comptes (élèves, familles, enseignants, direction) | refondue, séparée par rôle (30/10) | contrat serveur paginé et recherché |
 | 2 | Progression | corrigée (recherche, menu) | pagination client, tri d'en-tête, mot « cycles » à arbitrer |
 | 3 | Paiements (à régulariser) | inchangée | recherche client et compteur ; décision du directeur sur toute action groupée |
 | 4 | Dossiers à valider | inchangée | recherche client ; sélection groupée interdite (DEC:24) |
@@ -123,6 +133,7 @@ Non migrés vers `CaseACocher` : 8 `Checkbox` ou `CheckboxListTile` dans `lib/fe
 | `DataCollection`, `CaseACocher`, `PiedDeListe`, `PuceFiltreActif`, `BarreSelection.compacte`, `PaysEnseignant.parCode` | oui | oui | oui | non | non |
 | Candidatures (liste, menu de ligne, lot) | oui | oui | oui | non | non |
 | Comptes (élèves, tuteurs) | oui | oui | oui | non | non |
+| Comptes séparé par rôle (30/10) et `comptes_admin_par_role()` | oui | oui | oui (tests Flutter, scénario SQL sur Postgres 16 neuf) | non | non |
 | Autres listes (menus migrés, recherche de Progression) | oui | oui | oui | non | non |
 | Listes non traitées (§7, « inchangée ») | oui | non | non | non | non |
 

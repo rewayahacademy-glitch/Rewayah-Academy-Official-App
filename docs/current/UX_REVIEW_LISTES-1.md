@@ -52,6 +52,12 @@ Une relecture des pages web reste à faire ; aucune conclusion ci-dessous n'en d
 - **Conclusion : conforme.** La liste reste empilée (`push`) ; test d'état gardé au retour.
 - **Modification.** `candidatures_page.dart`, adresse de Comptes (`role`, `etat`, `filtre`, `tri`) ; le texte cherché n'y est pas.
 
+### 6. Comptes : une vue par rôle (directeur, 30/10/2026)
+
+- **Règle utile.** ONGLETS-1 (`lib/CLAUDE.md`, `SelecteurSection`) : jusqu'à quatre sections, contrôle segmenté si tout tient, sinon menu ; Nielsen, « correspondance avec le monde réel » et « reconnaissance plutôt que rappel » (les populations que la direction gère sont nommées, pas un filtre de rôle à deviner) ; LISTES-1 §3.1 (environ 10 lignes à 1440 x 900).
+- **Conclusion : conforme.** Quatre vues comptées ; au bureau, le choix de la vue et la recherche partagent la rangée d'en-tête (la table garde 9 lignes entières à 1440 x 900 avec les polices de test, 10 visibles à 1366 x 768 en capture) ; au téléphone, le choix passe en menu « Élèves (28) » quand les quatre libellés ne tiennent pas.
+- **Modification.** `comptes_page.dart`, `liste_comptes.dart` ; captures `docs/captures/2026-10-31-listes/`.
+
 ## Relecture adverse du 23/10/2026 (lot 6)
 
 Deux relectures (code, captures) ont donné 5 constats à corriger du côté code et 26 du côté visuel. Corrigés : menu (filet franc, ombre en sombre), pastille neutre, barre de sélection flottante et sur une ligne, cartes de téléphone, tri en menu, pied commun, plage arabe, puces de filtre, texte cherché hors de l'adresse, tri Comptes par libellé. Écartés avec preuve ou renvoyés au contrat serveur : voir le compte rendu du lot.
