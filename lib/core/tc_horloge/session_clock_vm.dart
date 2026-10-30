@@ -254,4 +254,25 @@ class SessionClockVM {
 
   /// La duree prevue de la seance.
   Duration get duree => finPrevueUtc.difference(debutUtc);
+
+  /// La meme horloge, derivee a un autre instant serveur (Mes classes,
+  /// 30/10/2026) : la phase, le restant et « Rejoindre » recalcules sur la
+  /// meme fenetre, sans relire le serveur. L'instant vient de
+  /// [calculeeAUtc] plus le temps ecoule depuis la lecture, jamais de
+  /// l'horloge de l'appareil (`horloge_vivante.dart`). Pour une horloge lue
+  /// par `horlogeDepuisLigne`, qui ne pose ni connexion ni ouverture forcee.
+  SessionClockVM aLInstant(DateTime maintenantServeurUtc) =>
+      SessionClockVM.depuisFenetre(
+        fenetre: FenetreSeance(
+          debutUtc: debutUtc,
+          finPrevueUtc: finPrevueUtc,
+          fenetreAcces: fenetreAcces,
+          graceApresFin: graceApresFin,
+        ),
+        maintenantServeurUtc: maintenantServeurUtc,
+        horlogeUtilisateur: horlogeUtilisateur,
+        sessionId: sessionId,
+        horlogeContrepartie: horlogeContrepartie,
+        noticeDst: noticeDst,
+      );
 }

@@ -478,8 +478,10 @@ void main() {
       expect(bouton.onPress, isNotNull);
     });
 
-    testWidgets('seance connue : une relecture avant son debut, une a son '
-        'debut, pas d autre', (WidgetTester tester) async {
+    testWidgets('seance connue : une relecture a l ouverture de la salle '
+        '(T-20), une a son debut, une a sa fin, pas d autre', (
+      WidgetTester tester,
+    ) async {
       DateTime maintenant = _maintenant;
       Future<void> avancer(Duration d) async {
         maintenant = maintenant.add(d);
@@ -503,19 +505,23 @@ void main() {
       await tester.pumpAndSettle();
       final int lues = planning.lectures;
 
-      // La seance commence dans 5 minutes, plus un alea de 30 s au plus.
-      await avancer(const Duration(minutes: 25) - const Duration(seconds: 1));
+      // La salle ouvre dans 10 minutes (T-20), plus un alea de 30 s au plus.
+      await avancer(const Duration(minutes: 10) - const Duration(seconds: 1));
       expect(planning.lectures, lues);
       await avancer(AppDelais.aleaRelecture + const Duration(seconds: 2));
       expect(planning.lectures, lues + 1);
 
       // L'heure de debut, plus l'alea.
-      await avancer(const Duration(minutes: 5));
+      await avancer(const Duration(minutes: 20));
       expect(planning.lectures, lues + 2);
 
-      // Puis plus rien, pendant toute la seance et apres.
+      // La fin prevue, une heure plus tard, plus l'alea.
+      await avancer(const Duration(minutes: 60));
+      expect(planning.lectures, lues + 3);
+
+      // Puis plus rien.
       await avancer(const Duration(hours: 2));
-      expect(planning.lectures, lues + 2);
+      expect(planning.lectures, lues + 3);
     });
   });
 
@@ -1491,6 +1497,67 @@ void main() {
       // du second bloc reserve (`Skeleton.tuileBento(hauteur: 156)`). Si ce
       // test change, changer le squelette avec lui.
       expect(tester.getSize(carte()).height, 156);
+    });
+  });
+
+  group('Mes classes 30/10 : Rejoindre a T-20 pile, sans recharger', () {
+    test('salleOuverteAvantDebut : de T-20 inclus jusqu au debut exclu, '
+        'meme la veille d un cours de 00:10', () {
+      final Seance s = _cours(
+        debut: DateTime(2026, 9, 9, 0, 10),
+        fin: DateTime(2026, 9, 9, 1),
+      );
+      expect(salleOuverteAvantDebut(s, DateTime(2026, 9, 8, 23, 49)), isFalse);
+      expect(salleOuverteAvantDebut(s, DateTime(2026, 9, 8, 23, 50)), isTrue);
+      expect(salleOuverteAvantDebut(s, DateTime(2026, 9, 9, 0, 10)), isFalse);
+      expect(
+        etatAccueilEleve(
+          prochain: s,
+          annulee: null,
+          maintenant: DateTime(2026, 9, 8, 23, 55),
+          horsLigne: false,
+        ),
+        isNot(EtatAccueilEleve.aucunCoursAujourdhui),
+      );
+    });
+
+    testWidgets('pas de bouton a T-21, le bouton a T-20 pile (40 s apres '
+        'l affichage), « En direct » a T0', (WidgetTester tester) async {
+      // Monte a T-20 moins 40 s : un battement d'une minute pose a
+      // l'affichage ne verrait T-20 que 20 s trop tard.
+      final DateTime debut = _maintenant.add(const Duration(minutes: 21));
+      DateTime maintenant = _maintenant.add(const Duration(seconds: 20));
+      Future<void> avancer(Duration d) async {
+        maintenant = maintenant.add(d);
+        await tester.pump(d);
+        await tester.pump();
+      }
+
+      final FauxServicePlanning planning = FauxServicePlanning()
+        ..seancesRendues = <Seance>[
+          _cours(debut: debut, fin: debut.add(const Duration(minutes: 45))),
+        ];
+      await tester.pumpWidget(
+        hote(
+          _SansAnimation(child: AccueilElevePage(horloge: () => maintenant)),
+          surcharges: _surcharges(planning: planning),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+      final Finder rejoindre = find.text(t.eleve.accueil.rejoindre);
+      expect(rejoindre, findsNothing, reason: 'T-20 moins 40 s');
+
+      await avancer(const Duration(seconds: 39));
+      expect(rejoindre, findsNothing, reason: 'T-20 moins 1 s');
+
+      await avancer(const Duration(seconds: 1));
+      expect(rejoindre, findsOneWidget, reason: 'T-20 pile');
+      expect(find.text(t.eleve.accueil.coursEnDirect), findsNothing);
+
+      await avancer(const Duration(minutes: 20));
+      expect(rejoindre, findsOneWidget, reason: 'T0');
+      expect(find.text(t.eleve.accueil.coursEnDirect), findsOneWidget);
     });
   });
 }

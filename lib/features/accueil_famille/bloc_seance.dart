@@ -41,6 +41,7 @@ class AffichageSeance {
     required this.duree,
     required this.dureeEnPhrase,
     this.heureClasse,
+    this.debutAppareil,
   });
 
   /// Calcule l'affichage de [seance] a [maintenantServeurUtc].
@@ -74,6 +75,10 @@ class AffichageSeance {
       date: foyer?.dateLocaleRendue ?? dateDeLAppareil(local),
       duree: LibellesGroupe.dureeSeule(seance.dureePrevue),
       dureeEnPhrase: LibellesGroupe.dureeLisible(seance.dureePrevue),
+      // « Demain à 18:00 » se dit a l'heure de l'appareil : seulement quand
+      // c'est aussi celle de la ligne du dessus, jamais contre l'heure du
+      // foyer rendue par le serveur.
+      debutAppareil: foyer == null ? local : null,
       heureClasse: classe == null
           ? null
           : t.tuteur.accueil.heureClasse(
@@ -120,13 +125,17 @@ class AffichageSeance {
   /// L'heure dans le fuseau de la classe quand il differe, sinon `null`.
   final String? heureClasse;
 
+  /// Le debut a l'heure de l'appareil, quand c'est l'heure affichee ; sinon
+  /// `null`, et le compte a rebours ne dit pas « Demain à ».
+  final DateTime? debutAppareil;
+
   /// La ligne d'etat, sous l'heure : « Cours dans 3 h 28 », « Seance en
   /// direct », « Seance toujours en direct »... **Jamais de nombre negatif.**
   String get ligneEtat => switch (etat) {
     EtatSeanceFamille.aVenir || EtatSeanceFamille.salleOuverte =>
       restant == null
           ? t.tuteur.accueil.horaireIncertain
-          : LibellesGroupe.compteARebours(restant!),
+          : LibellesGroupe.compteARebours(restant!, debut: debutAppareil),
     EtatSeanceFamille.enDirect => t.tuteur.accueil.seanceEnDirect,
     EtatSeanceFamille.prolongee => LibellesGroupe.prolongee,
     EtatSeanceFamille.terminee => t.tuteur.accueil.seanceTerminee,

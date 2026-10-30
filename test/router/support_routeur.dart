@@ -94,6 +94,7 @@ List<Override> surchargesRouteur(
   SourceSession source, {
   ServiceAppairage? appairage,
   ServiceSuivi? suivi,
+  PortHorlogeSeance horloges = const PortHorlogeMuet(),
 }) => <Override>[
   sourceSessionProvider.overrideWithValue(source),
   serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
@@ -115,7 +116,7 @@ List<Override> surchargesRouteur(
   portGroupesProvider.overrideWithValue(
     const FauxPortGroupes(groupes: <Never>[]),
   ),
-  portHorlogeSeanceProvider.overrideWithValue(const PortHorlogeMuet()),
+  portHorlogeSeanceProvider.overrideWithValue(horloges),
   stockagePreferencesProvider.overrideWithValue(StockagePreferencesMemoire()),
 ];
 

@@ -20,7 +20,7 @@ import '../../core/router/routes.dart';
 import '../../core/seance_famille/port_seances_famille.dart';
 import '../../core/seance_famille/seance_famille.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
-import '../../core/tc_horloge/port_horloge_seance.dart';
+import '../../core/tc_horloge/horloge_vivante.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/tc_parcours/port_travail_a_venir.dart';
 import '../../core/theme/app_gabarit.dart';
@@ -304,7 +304,7 @@ class _Contenu extends ConsumerWidget {
     // Classe (tiree des creneaux) ouvre la porte ; le concierge rend la seance.
     final SessionClockVM? horlogeClasse = groupeId == null || rejoindre
         ? null
-        : ref.watch(horlogeGroupeProvider(groupeId)).value;
+        : ref.watch(horlogeClasseVivanteProvider(groupeId)).value;
     final Widget? bandeau = rejoindre
         ? AppCard(
             key: AccueilFamillePage.rejoindreKey,

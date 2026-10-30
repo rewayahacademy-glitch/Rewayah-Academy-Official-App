@@ -10,6 +10,7 @@ import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
+import 'package:rewayah_academy/core/widgets/pastille_etat_seance.dart';
 import 'package:rewayah_academy/core/widgets/point_rappel.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/com_messages/entree_messages_contexte.dart';
@@ -19,7 +20,10 @@ import 'package:rewayah_academy/features/enseignant_classes/mes_classes_page.dar
 import 'package:rewayah_academy/features/journee/journee_page.dart'
     show maintenantJourneeProvider;
 
+import '../../capture/outil_capture.dart'
+    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 
 void _fenetre(WidgetTester tester, Size taille) {
@@ -297,6 +301,154 @@ void main() {
     }
   });
 
+  // Mes classes (directeur, 30/10/2026) : la Classe en cours ou la plus
+  // proche en tete, seule mise en avant ; « Rejoindre la salle » a T-20 pile,
+  // sans recharger ; « En direct » a T0 ; l'ordre suit l'heure.
+  group('Mes classes 30/10 : la Classe a la une', () {
+    final DateTime t0 = DateTime(2026, 11, 2, 18);
+    List<GroupeEnseignant> groupes() => <GroupeEnseignant>[
+      for (final GroupeEnseignant g in DonneesEnseignantDemo.groupes().take(2))
+        g,
+    ];
+    List<SeanceEnseignant> seances(List<GroupeEnseignant> gs) =>
+        <SeanceEnseignant>[
+          SeanceEnseignant(
+            id: 'sa',
+            debut: t0,
+            fin: t0.add(const Duration(minutes: 45)),
+            statut: StatutSeance.planifiee,
+            nbParticipants: 4,
+            cahierDepose: false,
+            groupeId: gs[0].id,
+          ),
+          SeanceEnseignant(
+            id: 'sb',
+            debut: t0.add(const Duration(hours: 2)),
+            fin: t0.add(const Duration(hours: 2, minutes: 45)),
+            statut: StatutSeance.planifiee,
+            nbParticipants: 3,
+            cahierDepose: false,
+            groupeId: gs[1].id,
+          ),
+        ];
+
+    Future<void> monter(
+      WidgetTester tester,
+      DateTime Function() horloge, {
+      double largeur = 390,
+      double echelle = 1,
+    }) async {
+      _fenetre(tester, Size(largeur, 1600));
+      tester.platformDispatcher.textScaleFactorTestValue = echelle;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      final List<GroupeEnseignant> gs = groupes();
+      await tester.pumpWidget(
+        hote(
+          const MesClassesPage(),
+          surcharges: <Override>[
+            maintenantJourneeProvider.overrideWithValue(horloge),
+            groupesEnseignantProvider.overrideWith((Ref _) async => gs),
+            seancesEnseignantProvider.overrideWith(
+              (Ref _) async => seances(gs),
+            ),
+            cahiersEnRetardProvider.overrideWith(
+              (Ref _) async => const <CahierEnRetard>[],
+            ),
+          ],
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+    }
+
+    final Finder rejoindre = find.byKey(
+      const ValueKey<String>('classes-rejoindre'),
+    );
+    final Finder une = find.byKey(const ValueKey<String>('classes-a-la-une'));
+
+    testWidgets('pas de bouton a T-21, le bouton a T-20, En direct a T0, '
+        'sans recharger', (WidgetTester tester) async {
+      DateTime maintenant = t0.subtract(const Duration(minutes: 21));
+      await monter(tester, () => maintenant);
+      final String nomA = groupes()[0].libelle;
+      expect(
+        find.descendant(of: une, matching: find.text(nomA)),
+        findsOneWidget,
+      );
+      expect(rejoindre, findsNothing);
+      // La minute passe : T-20, la salle ouvre.
+      maintenant = t0.subtract(const Duration(minutes: 20));
+      await tester.pump(const Duration(minutes: 1));
+      expect(rejoindre, findsOneWidget);
+      expect(find.byType(PastilleEtatSeance), findsNothing);
+      verifierUnSeulBoutonPlein(tester);
+      // T0 : « En direct », le bouton reste.
+      maintenant = t0;
+      await tester.pump(const Duration(minutes: 20));
+      expect(rejoindre, findsOneWidget);
+      expect(
+        find.descendant(of: une, matching: find.byType(PastilleEtatSeance)),
+        findsOneWidget,
+      );
+      // Apres la fin et la grace : plus de bouton, l'autre Classe passe en
+      // tete, sans recharger.
+      maintenant = t0.add(const Duration(minutes: 61));
+      await tester.pump(const Duration(minutes: 61));
+      expect(rejoindre, findsNothing);
+      expect(
+        find.descendant(of: une, matching: find.text(groupes()[1].libelle)),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('a une seconde pres : le minuteur vise la bascule, pas la '
+        'minute suivante', (WidgetTester tester) async {
+      // Monte a T-20 min 40 s : le battement d'une minute non aligne n'aurait
+      // vu T-20 qu'a T-19 min 40 s.
+      DateTime maintenant = t0.subtract(
+        const Duration(minutes: 20, seconds: 40),
+      );
+      await monter(tester, () => maintenant);
+      expect(rejoindre, findsNothing);
+      maintenant = t0.subtract(const Duration(minutes: 20));
+      await tester.pump(const Duration(seconds: 40));
+      expect(rejoindre, findsOneWidget);
+    });
+
+    testWidgets('la ligne : « jour heure · dans … », l effectif', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, () => t0.subtract(const Duration(days: 6)));
+      String brut(String s) => s
+          .replaceAll(RegExp('[\u2066-\u2069\u00A0]'), ' ')
+          .replaceAll(RegExp(' +'), ' ');
+      final Iterable<String> textes = tester
+          .widgetList<Text>(find.byType(Text))
+          .map((Text w) => brut(w.data ?? ''));
+      expect(textes.join('|'), contains('lundi 18:00 · dans 6 jours'));
+      expect(textes.join('|'), contains('lundi 20:00 · dans 6 jours'));
+      expect(textes.join('|'), contains('3 élèves'));
+    });
+
+    for (final double largeur in <double>[320, 1440]) {
+      for (final double echelle in <double>[1, 2]) {
+        testWidgets('a $largeur px, texte a ${(echelle * 100).round()} % : '
+            'un seul bouton plein, rien de coupe', (WidgetTester tester) async {
+          await monter(
+            tester,
+            () => t0.subtract(const Duration(minutes: 5)),
+            largeur: largeur,
+            echelle: echelle,
+          );
+          expect(tester.takeException(), isNull);
+          expect(rejoindre, findsOneWidget);
+          verifierUnSeulBoutonPlein(tester);
+          verifierEcranSansMotCoupe(tester);
+        });
+      }
+    }
+  });
+
   group('PointRappel', () {
     testWidgets('fixe d emblee quand les animations sont reduites', (
       WidgetTester tester,
@@ -430,4 +582,107 @@ void main() {
     expect(messages.objetId, isNull);
     expect(messages.ecartAvant, isNotNull);
   });
+
+  // Captures du directeur (30/10/2026) : UNE classe a deux creneaux par
+  // semaine, lundi 18:00 et jeudi 18:00 ; le jeudi est la plus proche.
+  // Sautees sans CAPTURE_DIR (test/capture/LISEZ-MOI.md).
+  group('Captures creneaux 30/10 : Mes classes', () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    final GroupeEnseignant demo = DonneesEnseignantDemo.groupes().first;
+    final GroupeEnseignant g = GroupeEnseignant(
+      id: 'g-creneaux',
+      libelle: 'Al-Fatiha',
+      type: demo.type,
+      seuilMax: 5,
+      creneau: demo.creneau,
+      nbMembres: 4,
+      creeLe: demo.creeLe,
+    );
+    final DateTime jeudi = DateTime(2026, 10, 29, 18);
+    final DateTime lundi = DateTime(2026, 11, 2, 18);
+    List<SeanceEnseignant> deuxCreneaux() => <SeanceEnseignant>[
+      for (final (String id, DateTime d) in <(String, DateTime)>[
+        ('lundi', lundi),
+        ('jeudi', jeudi),
+      ])
+        SeanceEnseignant(
+          id: id,
+          debut: d,
+          fin: d.add(const Duration(minutes: 45)),
+          statut: StatutSeance.planifiee,
+          nbParticipants: 4,
+          cahierDepose: false,
+          groupeId: g.id,
+        ),
+    ];
+
+    Future<void> capturerA(
+      WidgetTester tester,
+      DateTime maintenant,
+      String nom,
+    ) async {
+      _fenetre(tester, const Size(390, 844));
+      await tester.pumpWidget(
+        hote(
+          const MesClassesPage(),
+          surcharges: <Override>[
+            maintenantJourneeProvider.overrideWithValue(() => maintenant),
+            groupesEnseignantProvider.overrideWith(
+              (Ref _) async => <GroupeEnseignant>[g],
+            ),
+            seancesEnseignantProvider.overrideWith(
+              (Ref _) async => deuxCreneaux(),
+            ),
+            cahiersEnRetardProvider.overrideWith(
+              (Ref _) async => const <CahierEnRetard>[],
+            ),
+          ],
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+      expect(find.text(g.libelle), findsOneWidget, reason: 'une seule fois');
+      final String lu = tester
+          .widgetList<Text>(
+            find.descendant(
+              of: find.byKey(const ValueKey<String>('classes-a-la-une')),
+              matching: find.byType(Text),
+            ),
+          )
+          .map((Text x) => x.data ?? x.textSpan?.toPlainText() ?? '')
+          .join('|');
+      expect(lu, contains(t.disponibilites.joursLongs[3]), reason: 'jeudi');
+      expect(lu, isNot(contains(t.disponibilites.joursLongs[0])));
+      await capturerVue(tester, nom);
+    }
+
+    testWidgets('(1) jeudi 10:00 : la ligne suit le jeudi', (
+      WidgetTester tester,
+    ) async {
+      await capturerA(tester, DateTime(2026, 10, 29, 10), '1-mes-classes');
+      expect(
+        find.textContaining(RegExp(r'8\sh\s00'), findRichText: true),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey<String>('classes-rejoindre')),
+        findsNothing,
+      );
+    });
+
+    testWidgets('(5) jeudi 17:40, T-20 : Rejoindre', (
+      WidgetTester tester,
+    ) async {
+      await capturerA(
+        tester,
+        jeudi.subtract(const Duration(minutes: 20)),
+        '5-mes-classes-t-20',
+      );
+      expect(
+        find.byKey(const ValueKey<String>('classes-rejoindre')),
+        findsOneWidget,
+      );
+    });
+  }, skip: sautSansCapture);
 }

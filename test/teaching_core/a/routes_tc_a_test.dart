@@ -50,6 +50,10 @@ void main() {
       await tester.pump();
 
       expect(find.byType(MesGroupesPage), findsOneWidget);
+      // La liste suit la prochaine seance (Mes classes, 30/10/2026) : la
+      // carte n'est plus forcement la premiere.
+      await tester.ensureVisible(find.text('Classe Al-Fatiha'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Classe Al-Fatiha'));
       await tester.pumpAndSettle();
 

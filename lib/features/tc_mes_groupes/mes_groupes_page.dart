@@ -10,6 +10,8 @@ import '../../core/tc_groupe/concierge_seance.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_groupe/port_groupes.dart';
+import '../../core/tc_horloge/horloge_vivante.dart';
+import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/empty_state.dart';
@@ -138,7 +140,7 @@ class _Corps extends ConsumerWidget {
 /// Mobile une colonne, tablette et desktop deux : au dela, la carte s'etirerait
 /// sans rien apprendre de plus. La largeur de page est deja bornee a 1200 et
 /// centree par `PageShell`, donc rien ne s'etale a l'infini sur un grand ecran.
-class _Grille extends StatelessWidget {
+class _Grille extends ConsumerWidget {
   const _Grille({
     required this.groupes,
     required this.attente,
@@ -157,15 +159,33 @@ class _Grille extends StatelessWidget {
   final void Function(GroupSummaryVM groupe)? onRejoindre;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final bool deuxColonnes = AppGabarit.de(context).estLarge;
+    // Mes classes (30/10/2026) : chaque carte porte l'horloge vivante de sa
+    // Classe (lue a l'affichage, a chaque bascule, sur la veille temps reel) ;
+    // la liste suit la prochaine seance et la plus proche, en cours ou a
+    // venir, passe en tete, seule mise en avant.
+    final List<GroupSummaryVM> horodates = classesParProchaineSeance(
+      <GroupSummaryVM>[
+        for (final GroupSummaryVM groupe in groupes)
+          groupe.horloge != null
+              ? groupe
+              : groupe.avecHorloge(
+                  ref
+                      .watch(horlogeClasseVivanteProvider(groupe.groupeId))
+                      .value,
+                ),
+      ],
+    );
     final List<Widget> cartes = <Widget>[
-      for (final GroupSummaryVM groupe in groupes)
+      for (final (int i, GroupSummaryVM groupe) in horodates.indexed)
         _CarteRoutee(
+          key: ValueKey<String>(groupe.groupeId),
           groupe: groupe,
           attente: attente,
           accesFerme: accesFerme,
           onRejoindre: onRejoindre,
+          aLaUne: i == 0 && groupe.horloge != null,
         ),
     ];
 
@@ -210,7 +230,12 @@ class _CarteRoutee extends ConsumerWidget {
     required this.attente,
     required this.accesFerme,
     this.onRejoindre,
+    this.aLaUne = false,
+    super.key,
   });
+
+  /// La Classe en cours ou la plus proche : la seule carte mise en avant.
+  final bool aLaUne;
 
   final GroupSummaryVM groupe;
   final String? attente;
@@ -231,6 +256,27 @@ class _CarteRoutee extends ConsumerWidget {
       attenteEntree: attente,
       refusEntree: ref.watch(refusEntreeProvider)[groupe.groupeId],
       rejoindreRetire: accesFerme,
+      dominante: aLaUne,
     );
   }
+}
+
+/// Les Classes dans l'ordre de leur prochaine seance : la seance en cours ou
+/// la plus proche d'abord, puis les suivantes ; celles sans seance prevue a la
+/// fin, dans l'ordre recu. Pure.
+List<GroupSummaryVM> classesParProchaineSeance(List<GroupSummaryVM> groupes) {
+  final List<(int, GroupSummaryVM)> rangs = groupes.indexed.toList();
+  int cle((int, GroupSummaryVM) r) => r.$1;
+  rangs.sort(((int, GroupSummaryVM) a, (int, GroupSummaryVM) b) {
+    final SessionClockVM? ha = a.$2.horloge;
+    final SessionClockVM? hb = b.$2.horloge;
+    if (ha == null || hb == null) {
+      if (ha != null) return -1;
+      if (hb != null) return 1;
+      return cle(a).compareTo(cle(b));
+    }
+    final int parDebut = ha.debutUtc.compareTo(hb.debutUtc);
+    return parDebut != 0 ? parDebut : cle(a).compareTo(cle(b));
+  });
+  return <GroupSummaryVM>[for (final (int, GroupSummaryVM) r in rangs) r.$2];
 }

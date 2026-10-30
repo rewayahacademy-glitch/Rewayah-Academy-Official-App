@@ -65,6 +65,7 @@ import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/cadence_seance.dart';
 import '../../core/tc_horloge/emplacement_entree.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/theme/app_palette.dart';
@@ -173,8 +174,17 @@ class _JourneePageEtat extends ConsumerState<JourneePage> {
     final DateTime Function() lire = ref.watch(maintenantJourneeProvider);
     // Un seul `PageShell`, quel que soit l'etat : le titre ne disparait pas
     // pendant une charge, et le bandeau hors ligne du shell coiffe la page.
-    return _Cadence(
+    // Les bascules de chaque seance (ouverture a T-20, debut, fin) se voient
+    // a l'instant exact, sans recharger (directeur, 30/10/2026).
+    final List<SeanceEnseignant> seances =
+        ref.watch(seancesEnseignantProvider).value ??
+        const <SeanceEnseignant>[];
+    return CadenceSeance(
       lire: lire,
+      instants: <DateTime>[
+        for (final SeanceEnseignant s in seances)
+          ...basculesSeance(s.debut, s.fin),
+      ],
       constructeur: (DateTime maintenant) => PageShell(
         titre: t.enseignant.journee.titre,
         sousTitre: dateLisible(maintenant),
@@ -188,42 +198,6 @@ class _JourneePageEtat extends ConsumerState<JourneePage> {
       ),
     );
   }
-}
-
-/// Le battement d'une minute, pose sur l'ecran et non dans un provider.
-class _Cadence extends StatefulWidget {
-  const _Cadence({required this.lire, required this.constructeur});
-
-  final DateTime Function() lire;
-  final Widget Function(DateTime maintenant) constructeur;
-
-  @override
-  State<_Cadence> createState() => _CadenceEtat();
-}
-
-class _CadenceEtat extends State<_Cadence> {
-  Timer? _horloge;
-  late DateTime _maintenant = widget.lire();
-
-  @override
-  void initState() {
-    super.initState();
-    // Le decompte se lit en minutes : le rafraichir a la seconde ferait
-    // travailler l'ecran soixante fois pour rien.
-    _horloge = Timer.periodic(
-      const Duration(minutes: 1),
-      (Timer _) => setState(() => _maintenant = widget.lire()),
-    );
-  }
-
-  @override
-  void dispose() {
-    _horloge?.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => widget.constructeur(_maintenant);
 }
 
 /// Le corps : quatre lectures, puis la composition.
@@ -958,20 +932,7 @@ class _CarteProchaineSeance extends ConsumerWidget {
       return;
     }
     if (emplacement.libelle == t.enseignant.journee.rejoindreSalle) {
-      // « Rejoindre la salle » entre directement dans la salle (lot salle 3,
-      // pilote, 25/10/2026) : camera et micro y sont fermes, il n'y a plus
-      // rien a verifier avant. Meme chemin que la fiche de la Classe.
-      routeur.go(
-        Routes.salle,
-        // Le billet passe par `extra`, jamais par l'URL (ADR-005).
-        extra: BilletSalle(
-          sessionId: cours.id,
-          emisA: DateTime.now(),
-          // Lot salle 3 : entree directe, sans page de preparation.
-          preparation: false,
-          groupeId: idGroupe,
-        ),
-      );
+      entrerEnSalle(routeur, cours.id, idGroupe);
       return;
     }
     // `push` : le retour de l'Espace Classe se referme sur Aujourd'hui (R1).
@@ -1704,3 +1665,20 @@ bool _memeJour(DateTime a, DateTime b) =>
 String _hhmm(DateTime quand) =>
     '${quand.hour.toString().padLeft(2, '0')}:'
     '${quand.minute.toString().padLeft(2, '0')}';
+
+/// « Rejoindre la salle » entre directement dans la salle (lot salle 3,
+/// pilote, 25/10/2026) : camera et micro y sont fermes, il n'y a plus rien a
+/// verifier avant. Meme chemin depuis la Journee, Mes classes et la fiche de
+/// la Classe.
+void entrerEnSalle(GoRouter routeur, String sessionId, String groupeId) =>
+    routeur.go(
+      Routes.salle,
+      // Le billet passe par `extra`, jamais par l'URL (ADR-005).
+      extra: BilletSalle(
+        sessionId: sessionId,
+        emisA: DateTime.now(),
+        // Lot salle 3 : entree directe, sans page de preparation.
+        preparation: false,
+        groupeId: groupeId,
+      ),
+    );

@@ -923,6 +923,41 @@ void main() {
       expect(find.text(t.enseignant.journee.preparerSeance), findsNothing);
     });
 
+    testWidgets('pas de bouton a T-21, le bouton a T-20 pile : le minuteur '
+        'vise la bascule, pas la minute suivante', (WidgetTester tester) async {
+      // Mes classes (directeur, 30/10/2026). Cours a 17:30 (_anNour), salle
+      // ouverte a 17:10. Monte a 17:09:20 : l'ancien battement d'une minute,
+      // non aligne, ne voyait 17:10 qu'a 17:10:20.
+      final DateTime ouverture = _anNour().debut.subtract(
+        const Duration(minutes: 20),
+      );
+      DateTime maintenant = ouverture.subtract(const Duration(minutes: 21));
+      _fenetre(tester, const Size(390, 2400));
+      await tester.pumpWidget(
+        hote(
+          const JourneePage(),
+          surcharges: _surcharges(
+            horloge: () => maintenant,
+            enseignant: FauxServiceEnseignant()
+              ..seancesRendues = <SeanceEnseignant>[_anNour()],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      // T-21 : rien.
+      expect(find.text(t.enseignant.journee.rejoindreSalle), findsNothing);
+      // 17:09:20, la minute suivante : toujours rien.
+      maintenant = ouverture.subtract(const Duration(seconds: 40));
+      await tester.pump(const Duration(minutes: 1));
+      await tester.pump();
+      expect(find.text(t.enseignant.journee.rejoindreSalle), findsNothing);
+      // 40 s plus tard, T-20 pile : le bouton.
+      maintenant = ouverture;
+      await tester.pump(const Duration(seconds: 40));
+      await tester.pump();
+      expect(find.text(t.enseignant.journee.rejoindreSalle), findsOneWidget);
+    });
+
     final List<(String, Size, double, Brightness)>
     vues = <(String, Size, double, Brightness)>[
       ('320 px, texte x1, clair', const Size(320, 2400), 1, Brightness.light),
@@ -1637,6 +1672,55 @@ void main() {
       }
     }
   });
+
+  // Captures du directeur (30/10/2026) : UNE classe a deux creneaux par
+  // semaine, lundi 18:00 et jeudi 18:00 ; le jeudi est la plus proche.
+  group('Captures creneaux 30/10 : la Journee', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    testWidgets('(2) jeudi 10:00 : la seance du jeudi, une seule fois', (
+      WidgetTester tester,
+    ) async {
+      _fenetre(tester, const Size(390, 1400));
+      await tester.pumpWidget(
+        hote(
+          const JourneePage(),
+          surcharges: _surcharges(
+            maintenant: DateTime(2026, 10, 29, 10),
+            enseignant: FauxServiceEnseignant()
+              ..seancesRendues = <SeanceEnseignant>[
+                seanceDeTest(
+                  id: 'lundi',
+                  debut: DateTime(2026, 11, 2, 18),
+                  nbParticipants: 4,
+                  groupeId: 'g-creneaux',
+                  groupeLibelle: 'Al-Fatiha',
+                ),
+                seanceDeTest(
+                  id: 'jeudi',
+                  debut: DateTime(2026, 10, 29, 18),
+                  nbParticipants: 4,
+                  groupeId: 'g-creneaux',
+                  groupeLibelle: 'Al-Fatiha',
+                ),
+              ],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      // Constat du 30/10 : la meme seance du jeudi parait deux fois, dans
+      // « Prochaine seance » et dans « Ma journee » ; le lundi, jamais.
+      expect(find.text('Al-Fatiha'), findsOneWidget);
+      expect(find.text('Classe Al-Fatiha'), findsOneWidget);
+      expect(find.textContaining('18:00'), findsNWidgets(2));
+      expect(
+        find.textContaining(RegExp(r'8\sh\s00'), findRichText: true),
+        findsOneWidget,
+      );
+      await capturerVue(tester, '2-journee');
+    });
+  });
 }
 
 /// Les horaires de priere ne se lisent pas : l'echec partiel de la Journee.
@@ -1652,5 +1736,4 @@ class _CahiersEnPanne extends FauxServiceEnseignant {
   @override
   Future<List<CahierEnRetard>> cahiersEnRetard() async =>
       throw StateError('lecture des cahiers en retard impossible');
-
 }
