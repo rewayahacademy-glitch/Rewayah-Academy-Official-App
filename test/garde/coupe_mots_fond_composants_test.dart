@@ -26,7 +26,6 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_observation/port_historique_observations.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/data_collection.dart';
 import 'package:rewayah_academy/core/widgets/filter_pill.dart';
 import 'package:rewayah_academy/core/widgets/rangee_filtres.dart';
@@ -190,9 +189,12 @@ void main() {
             _comptes(),
             _config(const Size(320, 4000), 2, langue: langue, interface: i),
           );
+          // LISTES-2 (30/10/2026) : au telephone, Comptes rend des lignes
+          // denses, plus des cartes ; chaque ligne, comme chaque carte, est un
+          // seul noeud `MergeSemantics`, avec la meme regle de titre.
           final Finder cartes = find.descendant(
             of: find.byType(DataCollection<CompteAdmin>),
-            matching: find.byType(AppCard),
+            matching: find.byType(MergeSemantics),
           );
           // Comptes par role (30/10/2026) : la vue Enseignants s'ouvre (deux
           // enseignants attendent) et montre les trois enseignants du jeu.
@@ -241,7 +243,7 @@ void main() {
           // en tete de la ligne de resume. Une seule fois dans sa carte.
           final Finder carteId = find.ancestor(
             of: find.text('TEACHER\u2011AS\u2011000002'),
-            matching: find.byType(AppCard),
+            matching: find.byType(MergeSemantics),
           );
           expect(carteId, findsOneWidget);
           final List<String> textesCarteId = find

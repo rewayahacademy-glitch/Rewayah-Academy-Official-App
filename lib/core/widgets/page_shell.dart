@@ -222,19 +222,38 @@ class PageShell extends StatelessWidget {
         if (gabarit == Gabarit.mobile) Ecart.vSm else Ecart.vLg,
         if (titre != null)
           Semantics(header: true, label: titre, child: const SizedBox.shrink()),
-        Row(
-          children: <Widget>[
-            if (retour != null) ...<Widget>[
-              DisqueRetour(onPress: retour),
-              Ecart.hMd,
+        // Texte agrandi ou Interface guidee sur telephone : la liste
+        // deroulante n'aurait plus la place de son mot ; elle passe sous la
+        // rangee du retour et des actions, jamais rognee.
+        if (gabarit == Gabarit.mobile &&
+            (metriques.estEnfant ||
+                MediaQuery.textScalerOf(context).scale(1) > 1.3)) ...<Widget>[
+          Row(
+            children: <Widget>[
+              if (retour != null) DisqueRetour(onPress: retour),
+              const Spacer(),
+              for (final Widget action in actionsTete) ...<Widget>[
+                Ecart.hXs,
+                action,
+              ],
             ],
-            Expanded(child: entete!),
-            for (final Widget action in actionsTete) ...<Widget>[
-              Ecart.hXs,
-              action,
+          ),
+          Ecart.vSm,
+          entete!,
+        ] else
+          Row(
+            children: <Widget>[
+              if (retour != null) ...<Widget>[
+                DisqueRetour(onPress: retour),
+                Ecart.hMd,
+              ],
+              Expanded(child: entete!),
+              for (final Widget action in actionsTete) ...<Widget>[
+                Ecart.hXs,
+                action,
+              ],
             ],
-          ],
-        ),
+          ),
         if (gabarit == Gabarit.mobile) Ecart.vSm else Ecart.vMd,
       ] else if (titre != null) ...<Widget>[
         // 48 au dessus d'un titre d'ecran, c'est le rythme de page

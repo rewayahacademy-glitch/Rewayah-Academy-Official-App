@@ -60,7 +60,8 @@
 
 | Vue | Première ligne | Lignes entières visibles | Cible |
 | :--- | :-: | :-: | :-: |
-| 390 x 844, Élèves, Familles, Enseignants | y = 192 | 10 | y ≤ 200, 8 au moins : atteinte |
+| 390 x 844, Élèves | y = 192 | 9 | y ≤ 200, 8 au moins : atteinte |
+| 390 x 844, Familles, Enseignants | y = 192 | 10 | y ≤ 200, 8 au moins : atteinte |
 | 1440 x 900, Élèves et Familles | y = 204 | 14 | y ≤ 260, 12 au moins : atteinte |
 | 1440 x 900, Enseignants (menu de 56) | y = 204 | 12 | environ 10 : atteinte |
 | 1366 x 768, Élèves et Familles | y = 204 | 11 | mesurée |
@@ -72,4 +73,5 @@ Captures : `docs/captures/2026-10-31-listes/` (clair, sombre, arabe ; `comptes_a
 
 - Au bureau, quand la rangée porte aussi des filtres (Familles : « En attente », « État »), les quatre vues ne tiennent plus en segmenté et passent en menu (ONGLETS-1, automatique).
 - Au téléphone, la puce « En attente » n'est pas dans la rangée (place) : la ligne en attente porte sa pastille, passe en tête, et le menu « État » propose « En attente ».
-- La ligne secondaire dense se termine par des points de suspension quand elle ne tient pas ; le texte entier reste dans la sémantique et au bureau.
+- La ligne secondaire dense passe à la ligne quand elle ne tient pas (une classe au nom long) : la règle « aucun mot coupé ni rogné » (COUPE-MOTS, contrôlée sur tous les écrans) prévaut sur « deux lignes au plus ». Une telle ligne fait trois lignes de texte.
+- Au téléphone en Interface guidée ou au-delà de 130 % de texte, « Comptes ▾ » passe sous la rangée du retour et des actions (il y serait rogné).

@@ -56,6 +56,23 @@ const String _pdi = '\u2069';
 class _Comptes implements ServiceComptes {
   @override
   Future<List<CompteAdmin>> comptes() async => <CompteAdmin>[
+    // Un eleve lu sans la lecture par role : la vue Eleves dit, par un
+    // bandeau, ce qui manque (LISTES, 30/10/2026).
+    CompteAdmin(
+      profilId: 'STUDENT-LS-000004',
+      identifiant: 'STUDENT-LS-000004',
+      prenom: 'Lina',
+      nom: 'Sow',
+      role: AppRole.student,
+      etat: AccountStatus.active,
+      inscritLe: DateTime(2026, 9, 1),
+      accesJusquAu: null,
+      foyerId: null,
+      piece: EtatPiece.aucune,
+      contrats: 0,
+      aEnseignant: false,
+      enfantsDuFoyer: 0,
+    ),
     CompteAdmin(
       profilId: 'GUARDIAN-FB-000003',
       identifiant: 'GUARDIAN-FB-000003',
@@ -515,7 +532,10 @@ void main() {
     // LISTES-3 : la page n'a plus de paragraphe d'introduction ; la phrase de
     // synthese qui annonce une personne en attente la remplace (meme garde : son
     // point suit son dernier mot dans le sens de la phrase).
-    testWidgets('Comptes : la phrase de synthese garde son point ($cas)', (
+    // LISTES-2 (30/10/2026) : plus de phrase de synthese au-dessus de la
+    // liste (une puce « En attente » la remplace) ; la garde porte sur la
+    // phrase qui reste, celle du bandeau de la vue Eleves.
+    testWidgets('Comptes : la phrase du bandeau garde son point ($cas)', (
       WidgetTester tester,
     ) async {
       await _monter(
@@ -531,17 +551,17 @@ void main() {
             ),
             serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
           ],
-          child: const ComptesPage(),
+          child: const ComptesPage(requete: <String, String>{'vue': 'eleves'}),
         ),
       );
-      final String phrase = t.admin.comptes.attenteUne(jours: 5);
+      final String phrase = t.admin.comptes.detailsAbsentsMessage;
       expect(phrase, endsWith('.'));
       final String dernier = phrase
           .substring(0, phrase.length - 1)
           .split(' ')
           .last;
       _suit(
-        _paragraphe(tester, phrase.split(' ').first),
+        _paragraphe(tester, phrase.split(' ').take(3).join(' ')),
         precedent: dernier,
         suivant: '.',
         sens: sensDuTexte(phrase) ?? TextDirection.ltr,

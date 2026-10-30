@@ -1810,35 +1810,28 @@ class _LigneDense<T> extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
+          // Le titre se rend comme celui d'une carte (meme taille pour
+          // toutes les lignes ; un identifiant seul qui ne tient pas passe en
+          // sous-titre, entier : COUPE-MOTS-FOND-1).
           if (titre != null)
             titre.rendu?.call(context, ligne) ??
-                _TexteCollection(
-                  titre.texte(ligne),
-                  style: textes.titleSmall ?? const TextStyle(),
-                ),
-          // Une seule ligne : le detail se lit en entier par le lecteur
-          // d'ecran (le texte complet reste dans la semantique) et au bureau.
-          // Texte agrandi : le rendu riche prend sa ligne, entier (un nom de
-          // pays ne se coupe pas).
-          if (pastillesDessous)
-            for (final ColonneDonnees<T> c in riches) c.rendu!(context, ligne),
-          if ((riches.isNotEmpty && !pastillesDessous) || resume.isNotEmpty)
-            Row(
+                _TitreCarte<T>(colonne: titre, ligne: ligne),
+          // L'essentiel seulement (`ColonneDonnees.ligneDense`), pour tenir
+          // sur une ligne ; jamais tronque ni coupe dans un mot (COUPE-MOTS) :
+          // la ligne passe a la ligne quand elle ne tient pas. Le rendu riche
+          // (le pays et son drapeau) la precede, entier.
+          if (riches.isNotEmpty || resume.isNotEmpty)
+            Wrap(
+              spacing: AppSpacing.sm,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: <Widget>[
-                if (!pastillesDessous)
-                  for (final ColonneDonnees<T> c in riches) ...<Widget>[
-                    Flexible(child: c.rendu!(context, ligne)),
-                    Ecart.hSm,
-                  ],
+                for (final ColonneDonnees<T> c in riches)
+                  c.rendu!(context, ligne),
                 if (resume.isNotEmpty)
-                  Expanded(
-                    child: Text(
-                      resume,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: palette.inkMuted.applyTo(
-                        textes.bodySmall ?? const TextStyle(),
-                      ),
+                  _TexteCollection(
+                    resume,
+                    style: palette.inkMuted.applyTo(
+                      textes.bodySmall ?? const TextStyle(),
                     ),
                   ),
               ],
