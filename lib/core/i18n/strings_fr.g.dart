@@ -8166,6 +8166,7 @@ class Traductions$admin$groupes$fr {
 	/// fr: 'Ajouter un créneau'
 	String get actionAjouterCreneau => 'Ajouter un créneau';
 
+	late final Traductions$admin$groupes$reglagesClasse$fr reglagesClasse = Traductions$admin$groupes$reglagesClasse$fr.internal(_root);
 	late final Traductions$admin$groupes$creneau$fr creneau = Traductions$admin$groupes$creneau$fr.internal(_root);
 
 	/// fr: 'Ajouter un élève à {libelle}'
@@ -23698,6 +23699,126 @@ class Traductions$admin$groupes$refusCreation$fr {
 	String get inconnu => 'La classe n\'est pas créée : le serveur a refusé ces choix. Vérifiez l\'enseignant et le créneau, puis pressez de nouveau.';
 }
 
+// Path: admin.groupes.reglagesClasse
+class Traductions$admin$groupes$reglagesClasse$fr {
+	Traductions$admin$groupes$reglagesClasse$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Créneaux et genre'
+	String get action => 'Créneaux et genre';
+
+	/// fr: 'Créneaux et genre {deLibelle}'
+	String titre({required Object deLibelle}) => 'Créneaux et genre ${deLibelle}';
+
+	/// fr: 'Créneaux de la semaine'
+	String get creneauxTitre => 'Créneaux de la semaine';
+
+	/// fr: 'Chaque créneau donne une séance par semaine, dans le fuseau de la classe. Aucune date à saisir.'
+	String get creneauxContexte => 'Chaque créneau donne une séance par semaine, dans le fuseau de la classe. Aucune date à saisir.';
+
+	/// fr: 'Modifier ce créneau'
+	String get modifierCreneau => 'Modifier ce créneau';
+
+	/// fr: 'Retirer ce créneau'
+	String get retirerCreneau => 'Retirer ce créneau';
+
+	/// fr: 'Ajouter un créneau'
+	String get ajouterCreneau => 'Ajouter un créneau';
+
+	/// fr: 'Genre de la classe'
+	String get genreTitre => 'Genre de la classe';
+
+	/// fr: 'Genre non réglé'
+	String get genreNonRegle => 'Genre non réglé';
+
+	/// fr: 'Le regroupement automatique n'ajoute aucun élève à cette classe tant que son genre n'est pas choisi. Les élèves déjà inscrits ne changent pas.'
+	String get genreNonRegleDetail => 'Le regroupement automatique n\'ajoute aucun élève à cette classe tant que son genre n\'est pas choisi. Les élèves déjà inscrits ne changent pas.';
+
+	/// fr: 'Modifier le genre'
+	String get modifierGenre => 'Modifier le genre';
+
+	/// fr: 'Une classe n'est pas mixte, sauf réglage de la direction quand les enseignants d'un genre manquent. Les élèves déjà inscrits ne changent pas.'
+	String get genreContexte => 'Une classe n\'est pas mixte, sauf réglage de la direction quand les enseignants d\'un genre manquent. Les élèves déjà inscrits ne changent pas.';
+
+	/// fr: 'Les séances à venir de ce créneau sont annulées, jamais supprimées ; les familles et l'enseignant sont prévenus. Les séances passées ne changent pas.'
+	String get consequence => 'Les séances à venir de ce créneau sont annulées, jamais supprimées ; les familles et l\'enseignant sont prévenus. Les séances passées ne changent pas.';
+
+	/// fr: 'Motif'
+	String get motif => 'Motif';
+
+	/// fr: 'Il est gardé avec les séances annulées et dans le journal.'
+	String get motifAide => 'Il est gardé avec les séances annulées et dans le journal.';
+
+	/// fr: 'Enregistrer le créneau'
+	String get envoyerModifier => 'Enregistrer le créneau';
+
+	/// fr: 'Retirer le créneau'
+	String get envoyerRetirer => 'Retirer le créneau';
+
+	/// fr: 'Enregistrer le genre'
+	String get envoyerGenre => 'Enregistrer le genre';
+
+	/// fr: 'Revenir aux créneaux'
+	String get retour => 'Revenir aux créneaux';
+
+	/// fr: 'Écrivez le motif : il est gardé avec les séances annulées.'
+	String get manqueMotif => 'Écrivez le motif : il est gardé avec les séances annulées.';
+
+	/// fr: 'Choisissez le genre de la classe.'
+	String get manqueGenre => 'Choisissez le genre de la classe.';
+
+	/// fr: 'Une classe garde au moins un créneau : ajoutez-en un autre avant de retirer celui-ci.'
+	String get refusDernier => 'Une classe garde au moins un créneau : ajoutez-en un autre avant de retirer celui-ci.';
+
+	/// fr: 'La classe a déjà ce créneau : choisissez un autre jour ou une autre heure.'
+	String get refusExistant => 'La classe a déjà ce créneau : choisissez un autre jour ou une autre heure.';
+
+	/// fr: 'Ce créneau a déjà changé : revenez aux créneaux pour voir la liste à jour.'
+	String get refusIntrouvable => 'Ce créneau a déjà changé : revenez aux créneaux pour voir la liste à jour.';
+
+	/// fr: 'Cette classe est fermée : ses créneaux ne changent plus.'
+	String get refusClasseFermee => 'Cette classe est fermée : ses créneaux ne changent plus.';
+
+	/// fr: 'Le changement n'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Le changement n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: 'Les créneaux de cette classe ne se lisent pas pour le moment.'
+	String get lectureErreur => 'Les créneaux de cette classe ne se lisent pas pour le moment.';
+
+	/// fr: 'Le changement pourra partir quand la connexion sera revenue. Vos choix restent affichés.'
+	String get horsLigne => 'Le changement pourra partir quand la connexion sera revenue. Vos choix restent affichés.';
+
+	/// fr: 'Le genre de la classe est enregistré.'
+	String get faitGenre => 'Le genre de la classe est enregistré.';
+
+	/// fr: '(zero) {Créneau déplacé : aucune séance à venir créée pour le moment.} (one) {Créneau déplacé : {n} séance à venir créée.} (other) {Créneau déplacé : {n} séances à venir créées.}'
+	String faitModifie({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		zero: 'Créneau déplacé : aucune séance à venir créée pour le moment.',
+		one: 'Créneau déplacé : ${n} séance à venir créée.',
+		other: 'Créneau déplacé : ${n} séances à venir créées.',
+	);
+
+	/// fr: '(zero) {Créneau retiré : aucune séance à venir à annuler.} (one) {Créneau retiré : {n} séance à venir annulée.} (other) {Créneau retiré : {n} séances à venir annulées.}'
+	String faitRetire({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		zero: 'Créneau retiré : aucune séance à venir à annuler.',
+		one: 'Créneau retiré : ${n} séance à venir annulée.',
+		other: 'Créneau retiré : ${n} séances à venir annulées.',
+	);
+
+	/// fr: 'Changer seulement la durée n'annule aucune séance : les séances à venir de ce créneau la prennent.'
+	String get dureeContexte => 'Changer seulement la durée n\'annule aucune séance : les séances à venir de ce créneau la prennent.';
+
+	/// fr: '(zero) {Durée enregistrée : aucune séance à venir à changer pour le moment.} (one) {Durée enregistrée : {n} séance à venir la prend.} (other) {Durée enregistrée : {n} séances à venir la prennent.}'
+	String faitDuree({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		zero: 'Durée enregistrée : aucune séance à venir à changer pour le moment.',
+		one: 'Durée enregistrée : ${n} séance à venir la prend.',
+		other: 'Durée enregistrée : ${n} séances à venir la prennent.',
+	);
+}
+
 // Path: admin.groupes.creneau
 class Traductions$admin$groupes$creneau$fr {
 	Traductions$admin$groupes$creneau$fr.internal(this._root);
@@ -24161,6 +24282,48 @@ class Traductions$admin$groupes$formulaire$fr {
 
 	/// fr: 'À choisir quand le genre n'est pas encore connu : tout enseignant dont le genre est renseigné pourra la prendre.'
 	String get genreIndetermineDetail => 'À choisir quand le genre n\'est pas encore connu : tout enseignant dont le genre est renseigné pourra la prendre.';
+
+	/// fr: 'Autres créneaux de la semaine'
+	String get autresCreneauxTitre => 'Autres créneaux de la semaine';
+
+	/// fr: 'Une classe se réunit trois fois par semaine par défaut, à des jours fixes. Retirez une ligne pour une classe qui se réunit moins souvent ; aucune date à saisir.'
+	String get autresCreneauxContexte => 'Une classe se réunit trois fois par semaine par défaut, à des jours fixes. Retirez une ligne pour une classe qui se réunit moins souvent ; aucune date à saisir.';
+
+	/// fr: 'Créneau {n}'
+	String creneauNumero({required Object n}) => 'Créneau ${n}';
+
+	/// fr: 'Retirer le créneau {n}'
+	String retirerCreneau({required Object n}) => 'Retirer le créneau ${n}';
+
+	/// fr: 'Ajouter un créneau'
+	String get ajouterCreneauLigne => 'Ajouter un créneau';
+
+	/// fr: 'Choisissez le jour et l'heure du créneau {n}, ou retirez-le.'
+	String manqueAutreCreneau({required Object n}) => 'Choisissez le jour et l\'heure du créneau ${n}, ou retirez-le.';
+
+	/// fr: 'Deux créneaux tombent le même jour à la même heure : changez-en un.'
+	String get creneauEnDouble => 'Deux créneaux tombent le même jour à la même heure : changez-en un.';
+
+	/// fr: 'Durée'
+	String get duree => 'Durée';
+
+	/// fr: 'Durée de la classe'
+	String get dureeClasse => 'Durée de la classe';
+
+	/// fr: '{minutes} min'
+	String dureeValeur({required Object minutes}) => '${minutes} min';
+
+	/// fr: 'Par défaut, un créneau dure le temps de la classe, fixé par son public. Choisissez une autre durée pour ce créneau seulement.'
+	String get dureeContexte => 'Par défaut, un créneau dure le temps de la classe, fixé par son public. Choisissez une autre durée pour ce créneau seulement.';
+
+	/// fr: 'Mixte'
+	String get genreMixte => 'Mixte';
+
+	/// fr: 'Garçons et filles ensemble : tout enseignant dont le genre est renseigné pourra la prendre. À choisir seulement quand les enseignants d'un genre manquent.'
+	String get genreMixteDetailEnfants => 'Garçons et filles ensemble : tout enseignant dont le genre est renseigné pourra la prendre. À choisir seulement quand les enseignants d\'un genre manquent.';
+
+	/// fr: 'Hommes et femmes ensemble : tout enseignant dont le genre est renseigné pourra la prendre. À choisir seulement quand les enseignants d'un genre manquent.'
+	String get genreMixteDetailAdultes => 'Hommes et femmes ensemble : tout enseignant dont le genre est renseigné pourra la prendre. À choisir seulement quand les enseignants d\'un genre manquent.';
 
 	/// fr: 'À choisir pour une classe d'hommes. Le genre des enseignants n'est pas encore lisible ici : vérifiez vous-même que l'enseignant choisi est un homme.'
 	String get genreHommesDetailSansSource => 'À choisir pour une classe d\'hommes. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que l\'enseignant choisi est un homme.';
@@ -43732,6 +43895,39 @@ extension on Traductions {
 			'admin.groupes.actionObservation' => 'Réglages d\'observation',
 			'admin.groupes.actionCloturer' => 'Clôturer la classe',
 			'admin.groupes.actionAjouterCreneau' => 'Ajouter un créneau',
+			'admin.groupes.reglagesClasse.action' => 'Créneaux et genre',
+			'admin.groupes.reglagesClasse.titre' => ({required Object deLibelle}) => 'Créneaux et genre ${deLibelle}',
+			'admin.groupes.reglagesClasse.creneauxTitre' => 'Créneaux de la semaine',
+			'admin.groupes.reglagesClasse.creneauxContexte' => 'Chaque créneau donne une séance par semaine, dans le fuseau de la classe. Aucune date à saisir.',
+			'admin.groupes.reglagesClasse.modifierCreneau' => 'Modifier ce créneau',
+			'admin.groupes.reglagesClasse.retirerCreneau' => 'Retirer ce créneau',
+			'admin.groupes.reglagesClasse.ajouterCreneau' => 'Ajouter un créneau',
+			'admin.groupes.reglagesClasse.genreTitre' => 'Genre de la classe',
+			'admin.groupes.reglagesClasse.genreNonRegle' => 'Genre non réglé',
+			'admin.groupes.reglagesClasse.genreNonRegleDetail' => 'Le regroupement automatique n\'ajoute aucun élève à cette classe tant que son genre n\'est pas choisi. Les élèves déjà inscrits ne changent pas.',
+			'admin.groupes.reglagesClasse.modifierGenre' => 'Modifier le genre',
+			'admin.groupes.reglagesClasse.genreContexte' => 'Une classe n\'est pas mixte, sauf réglage de la direction quand les enseignants d\'un genre manquent. Les élèves déjà inscrits ne changent pas.',
+			'admin.groupes.reglagesClasse.consequence' => 'Les séances à venir de ce créneau sont annulées, jamais supprimées ; les familles et l\'enseignant sont prévenus. Les séances passées ne changent pas.',
+			'admin.groupes.reglagesClasse.motif' => 'Motif',
+			'admin.groupes.reglagesClasse.motifAide' => 'Il est gardé avec les séances annulées et dans le journal.',
+			'admin.groupes.reglagesClasse.envoyerModifier' => 'Enregistrer le créneau',
+			'admin.groupes.reglagesClasse.envoyerRetirer' => 'Retirer le créneau',
+			'admin.groupes.reglagesClasse.envoyerGenre' => 'Enregistrer le genre',
+			'admin.groupes.reglagesClasse.retour' => 'Revenir aux créneaux',
+			'admin.groupes.reglagesClasse.manqueMotif' => 'Écrivez le motif : il est gardé avec les séances annulées.',
+			'admin.groupes.reglagesClasse.manqueGenre' => 'Choisissez le genre de la classe.',
+			'admin.groupes.reglagesClasse.refusDernier' => 'Une classe garde au moins un créneau : ajoutez-en un autre avant de retirer celui-ci.',
+			'admin.groupes.reglagesClasse.refusExistant' => 'La classe a déjà ce créneau : choisissez un autre jour ou une autre heure.',
+			'admin.groupes.reglagesClasse.refusIntrouvable' => 'Ce créneau a déjà changé : revenez aux créneaux pour voir la liste à jour.',
+			'admin.groupes.reglagesClasse.refusClasseFermee' => 'Cette classe est fermée : ses créneaux ne changent plus.',
+			'admin.groupes.reglagesClasse.erreur' => 'Le changement n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'admin.groupes.reglagesClasse.lectureErreur' => 'Les créneaux de cette classe ne se lisent pas pour le moment.',
+			'admin.groupes.reglagesClasse.horsLigne' => 'Le changement pourra partir quand la connexion sera revenue. Vos choix restent affichés.',
+			'admin.groupes.reglagesClasse.faitGenre' => 'Le genre de la classe est enregistré.',
+			'admin.groupes.reglagesClasse.faitModifie' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, zero: 'Créneau déplacé : aucune séance à venir créée pour le moment.', one: 'Créneau déplacé : ${n} séance à venir créée.', other: 'Créneau déplacé : ${n} séances à venir créées.', ), 
+			'admin.groupes.reglagesClasse.faitRetire' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, zero: 'Créneau retiré : aucune séance à venir à annuler.', one: 'Créneau retiré : ${n} séance à venir annulée.', other: 'Créneau retiré : ${n} séances à venir annulées.', ), 
+			'admin.groupes.reglagesClasse.dureeContexte' => 'Changer seulement la durée n\'annule aucune séance : les séances à venir de ce créneau la prennent.',
+			'admin.groupes.reglagesClasse.faitDuree' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, zero: 'Durée enregistrée : aucune séance à venir à changer pour le moment.', one: 'Durée enregistrée : ${n} séance à venir la prend.', other: 'Durée enregistrée : ${n} séances à venir la prennent.', ), 
 			'admin.groupes.creneau.titre' => ({required Object deLibelle}) => 'Nouveau créneau ${deLibelle}',
 			'admin.groupes.creneau.contexte' => 'Un jour et une heure de plus, chaque semaine, pour la même Classe. Les séances des quatre prochaines semaines sont créées tout de suite.',
 			'admin.groupes.creneau.fuseau' => 'L\'heure est celle du fuseau horaire de la Classe.',
@@ -43785,6 +43981,8 @@ extension on Traductions {
 			'admin.groupes.cahiers.apercu' => 'Voir l\'aperçu familial',
 			'admin.groupes.cahiers.nonValide' => 'Le cahier n\'est pas encore validé.',
 			'admin.groupes.cahiers.corrigeLe' => ({required Object date}) => 'Corrigé le ${date}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.cahiers.enseignant' => 'Enseignant',
 			'admin.groupes.cahiers.seanceDu' => ({required Object date}) => 'Séance du ${date}',
 			'admin.groupes.cahiers.rubriqueTravail' => 'Travail à préparer',
@@ -43818,8 +44016,6 @@ extension on Traductions {
 			'admin.groupes.partage.enregistrer' => 'Enregistrer',
 			'admin.groupes.partage.exceptionsTitre' => 'Exceptions individuelles',
 			'admin.groupes.partage.exceptionsAide' => 'Une exception ne concerne que l\'élève choisi. Elle ne transmet jamais les données d\'un autre élève.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.partage.rechercheEleve' => 'Rechercher un élève',
 			'admin.groupes.partage.colonneEleve' => 'Élève',
 			'admin.groupes.partage.colonneRegle' => 'Règle appliquée',
@@ -43894,6 +44090,20 @@ extension on Traductions {
 			'admin.groupes.formulaire.genreGarconsDetail' => 'À choisir pour une classe de garçons : seuls les enseignants hommes pourront la prendre.',
 			'admin.groupes.formulaire.genreFillesDetail' => 'À choisir pour une classe de filles : seules les enseignantes pourront la prendre.',
 			'admin.groupes.formulaire.genreIndetermineDetail' => 'À choisir quand le genre n\'est pas encore connu : tout enseignant dont le genre est renseigné pourra la prendre.',
+			'admin.groupes.formulaire.autresCreneauxTitre' => 'Autres créneaux de la semaine',
+			'admin.groupes.formulaire.autresCreneauxContexte' => 'Une classe se réunit trois fois par semaine par défaut, à des jours fixes. Retirez une ligne pour une classe qui se réunit moins souvent ; aucune date à saisir.',
+			'admin.groupes.formulaire.creneauNumero' => ({required Object n}) => 'Créneau ${n}',
+			'admin.groupes.formulaire.retirerCreneau' => ({required Object n}) => 'Retirer le créneau ${n}',
+			'admin.groupes.formulaire.ajouterCreneauLigne' => 'Ajouter un créneau',
+			'admin.groupes.formulaire.manqueAutreCreneau' => ({required Object n}) => 'Choisissez le jour et l\'heure du créneau ${n}, ou retirez-le.',
+			'admin.groupes.formulaire.creneauEnDouble' => 'Deux créneaux tombent le même jour à la même heure : changez-en un.',
+			'admin.groupes.formulaire.duree' => 'Durée',
+			'admin.groupes.formulaire.dureeClasse' => 'Durée de la classe',
+			'admin.groupes.formulaire.dureeValeur' => ({required Object minutes}) => '${minutes} min',
+			'admin.groupes.formulaire.dureeContexte' => 'Par défaut, un créneau dure le temps de la classe, fixé par son public. Choisissez une autre durée pour ce créneau seulement.',
+			'admin.groupes.formulaire.genreMixte' => 'Mixte',
+			'admin.groupes.formulaire.genreMixteDetailEnfants' => 'Garçons et filles ensemble : tout enseignant dont le genre est renseigné pourra la prendre. À choisir seulement quand les enseignants d\'un genre manquent.',
+			'admin.groupes.formulaire.genreMixteDetailAdultes' => 'Hommes et femmes ensemble : tout enseignant dont le genre est renseigné pourra la prendre. À choisir seulement quand les enseignants d\'un genre manquent.',
 			'admin.groupes.formulaire.genreHommesDetailSansSource' => 'À choisir pour une classe d\'hommes. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que l\'enseignant choisi est un homme.',
 			'admin.groupes.formulaire.genreFemmesDetailSansSource' => 'À choisir pour une classe de femmes. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que vous choisissez une enseignante.',
 			'admin.groupes.formulaire.genreGarconsDetailSansSource' => 'À choisir pour une classe de garçons. Le genre des enseignants n\'est pas encore lisible ici : vérifiez vous-même que l\'enseignant choisi est un homme.',
@@ -44285,6 +44495,8 @@ extension on Traductions {
 			'admin.progression.actionCloreException' => 'Clore l\'exception',
 			'admin.progression.actionPromouvoir' => 'Changer de niveau',
 			'admin.progression.poserExceptionTitre' => ({required Object type, required Object eleve}) => '${type} pour ${eleve}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.progression.poserExceptionEnvoyer' => 'Poser l\'exception',
 			'admin.progression.poserExceptionErreur' => ({required Object message}) => 'La pose n\'a pas abouti : ${message}',
 			'admin.progression.clorerExceptionTitre' => ({required Object deEleve}) => 'Clore l\'exception ${deEleve}',
@@ -44332,8 +44544,6 @@ extension on Traductions {
 			'admin.programmes.publierVersion' => 'Publier la version',
 			'admin.programmes.publierVersionTitre' => ({required Object version}) => 'Publier ${version}',
 			'admin.programmes.publierVersionDetail' => 'Une fois publiée, cette version ne pourra plus être modifiée. Toute évolution académique en créera une nouvelle.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.programmes.publierVersionEnvoyer' => 'Publier',
 			'admin.programmes.publierVersionErreur' => ({required Object message}) => 'La publication n\'a pas abouti : ${message}',
 			'admin.programmes.champCodeTechnique' => 'Code technique (usage interne, jamais affiché à l\'élève)',
@@ -44799,6 +45009,8 @@ extension on Traductions {
 			'admin.finance.pol.capaciteDebutantDetail' => 'Plus petite, pour suivre chaque débutant de près.',
 			'admin.finance.pol.minimum' => 'Minimum d\'ouverture',
 			'admin.finance.pol.minimumDetail' => 'En dessous, une classe ne s\'ouvre pas et la direction en est alertée.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.paiement' => 'Paiement',
 			'admin.finance.pol.paiementDetail' => 'Le moyen de paiement et le délai de conservation d\'une place.',
 			'admin.finance.pol.railWeb' => 'Paiement web (Stripe)',
@@ -44846,8 +45058,6 @@ extension on Traductions {
 			'admin.finance.pol.invariantDoubleDebit' => 'Un même paiement n\'est jamais débité deux fois.',
 			'admin.finance.pol.invariantPeriode' => 'L\'accès au cours dépend de la période financée, jamais du solde.',
 			'admin.finance.pol.invariantSoldes' => 'Chaque profil a son propre solde ; le total du foyer n\'est qu\'une lecture.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.invariantIdempotence' => 'Un même paiement reçu deux fois n\'est enregistré qu\'une fois.',
 			'admin.finance.pol.invariantHistorique' => 'L\'historique des paiements ne s\'efface ni ne se réécrit : on y ajoute seulement.',
 			'admin.finance.pol.publier' => 'Publier la version',
@@ -45313,6 +45523,8 @@ extension on Traductions {
 			'admin.bibliotheque.fiche.nouvelleVersionEchec' => 'La nouvelle version n\'a pas pu être confirmée. Réessayez.',
 			'admin.bibliotheque.fiche.version.publieeLe' => ({required Object date}) => 'Publiée le ${date}',
 			'admin.bibliotheque.fiche.version.empreinte' => ({required Object valeur}) => 'Empreinte ${valeur}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.fiche.version.sansFichier' => 'Sans fichier',
 			'admin.bibliotheque.fiche.droitsChamps.revue' => 'Revue des droits',
 			'admin.bibliotheque.fiche.droitsChamps.source' => 'Source',
@@ -45360,8 +45572,6 @@ extension on Traductions {
 			'admin.bibliotheque.import.etats.pret' => 'Fichier vérifié. Passez aux droits.',
 			'admin.bibliotheque.import.etats.annule' => 'Dépôt annulé.',
 			'admin.bibliotheque.import.erreurs.taille' => 'Ce fichier est trop volumineux. Choisissez un fichier plus léger.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.import.erreurs.type' => 'Ce type de fichier n\'est pas pris en charge pour ce support. Choisissez un autre fichier.',
 			'admin.bibliotheque.import.erreurs.reseau' => 'La connexion s\'est interrompue. Le dépôt n\'est pas confirmé : réessayez.',
 			'admin.bibliotheque.import.erreurs.refuse' => 'Le serveur a refusé ce dépôt. Réessayez ou choisissez un autre fichier.',
@@ -45827,6 +46037,8 @@ extension on Traductions {
 			'compte.tuteur.pageSecurite.appareils' => 'Les appareils connectés à votre compte ne sont pas encore listés dans l\'application.',
 			'compte.tuteur.pageSecurite.deconnexion' => 'Pour fermer la session de cet appareil, utilisez « Se déconnecter » en bas de Mon compte.',
 			'compte.tuteur.pageAcces.titre' => 'Accès des profils élèves',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pageAcces.sousTitre' => 'Le statut de l\'accès de chaque profil élève.',
 			'compte.tuteur.pageAcces.sansEcheance' => 'Sans date de fin',
 			'compte.tuteur.pageAcces.jusqua' => ({required Object date}) => 'Ouvert jusqu\'au ${date}',
@@ -45874,8 +46086,6 @@ extension on Traductions {
 			'compte.tuteur.pageLegal.aucunTitre' => 'Aucun document accepté',
 			'compte.tuteur.pageLegal.aucun' => 'Aucun document accepté n\'est enregistré pour ce compte.',
 			'compte.tuteur.pageLegal.lectureSeule' => 'Un document accepté ne se modifie pas.',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageLegal.textes' => 'Conditions et confidentialité',
 			'historique.titre' => 'Historique',
 			'historique.detailSeance' => 'Détail de la séance',
@@ -46341,6 +46551,8 @@ extension on Traductions {
 			'classe.observation.motif.enfantAbsent' => ({required Object dePrenom}) => 'L\'observation attend l\'arrivée ${dePrenom}.',
 			'classe.observation.motif.presenceEnVerification' => ({required Object dePrenom}) => 'La présence ${dePrenom} est en cours de vérification.',
 			'classe.observation.motif.visiteDejaOuverte' => 'Une visite est déjà ouverte, sur cet appareil ou sur un autre.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.observation.motif.garantieServeurAbsente' => 'L\'observation des séances n\'est pas encore ouverte.',
 			'classe.observation.motif.reseau' => 'La disponibilité de l\'observation n\'a pas pu être vérifiée.',
 			'classe.observation.motif.capaciteAbsente' => 'L\'observation ne peut pas s\'ouvrir pour cette séance.',
@@ -46388,8 +46600,6 @@ extension on Traductions {
 			'classe.pageCatalogue.rejoindreAttente' => 'Rejoindre la liste d\'attente',
 			'classe.pageCatalogue.precisionsTitre' => 'Avant de choisir',
 			'classe.pageCatalogue.precisionEnseignant' => 'Une classe garde le même enseignant pour toutes ses séances.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageCatalogue.precisionPlaces' => 'Les places affichées sont celles de l\'académie au moment de la lecture.',
 			'classe.pageCatalogue.precisionReserve' => 'Rien n\'est réservé avant votre confirmation.',
 			'classe.pageCatalogue.confirmerTitre' => 'Confirmer la classe',
@@ -46855,6 +47065,8 @@ extension on Traductions {
 			'enseignant.profil.paysRequis' => 'Choisissez un pays, ou écrivez-le dans « Autre ».',
 			'enseignant.profil.languesConsigne' => 'Cochez les langues dans lesquelles vous pouvez enseigner.',
 			'enseignant.profil.langueDejaDeclaree' => 'Déjà déclarée dans votre profil',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.languesRequises' => 'Cochez au moins une langue.',
 			'enseignant.profil.languesErreur' => 'La liste des langues n\'a pas pu être lue',
 			'enseignant.profil.languesErreurDetail' => 'Vos langues actuelles ne changent pas. Réessayez dans un instant.',
@@ -46902,8 +47114,6 @@ extension on Traductions {
 			'enseignant.creneaux.revenir' => 'Revenir',
 			'enseignant.creneaux.cleNiveau' => 'Niveau',
 			'enseignant.creneaux.cleLangue' => 'Langue',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.cleRecurrence' => 'Récurrence',
 			'enseignant.creneaux.cleFuseau' => 'Fuseau de référence',
 			'enseignant.creneaux.cleHeureLocale' => 'Heure locale',
@@ -47369,6 +47579,8 @@ extension on Traductions {
 			'tc.bibliotheque.type.pdf' => 'PDF',
 			'tc.bibliotheque.type.image' => 'Image',
 			'tc.bibliotheque.type.lecon' => 'Leçon',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.detail.titre' => 'Support',
 			'tc.bibliotheque.detail.capacites' => 'Ce que ce support permet',
 			'tc.bibliotheque.detail.niveaux' => 'Niveaux',
@@ -47416,8 +47628,6 @@ extension on Traductions {
 			'tc.coran.modes.versets' => ({required Object debut, required Object fin}) => 'v. ${debut} à ${fin}',
 			'tc.coran.modes.versetsEntre' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
 			'tc.coran.mushaf.coteDroite' => 'Page de droite',
-			_ => null,
-		} ?? switch (path) {
 			'tc.coran.mushaf.coteGauche' => 'Page de gauche',
 			'tc.coran.mushaf.ouverture' => ({required Object droite, required Object gauche}) => 'Ouverture, pages ${droite} et ${gauche}',
 			'tc.coran.mushaf.page15.creditMiseEnPage' => 'Mise en page : KFGQPC, quran.ws (CC BY 4.0)',
@@ -47883,6 +48093,8 @@ extension on Traductions {
 			'adulte.recharge.resultat.indisponibleTitre' => 'Suivi du paiement pas encore disponible',
 			'adulte.recharge.resultat.indisponiblePhrase' => 'L\'état des paiements n\'est pas encore disponible dans l\'application. Aucun paiement n\'a été effectué ici.',
 			'adulte.recharge.resultat.lectureEchecTitre' => 'L\'état du paiement n\'a pas pu être lu.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.recharge.resultat.lectureEchecPhrase' => 'Le paiement n\'est pas annulé pour autant. Ne payez pas une seconde fois : réessayez la lecture.',
 			'adulte.recharge.source.avantPaiement' => 'En attente du paiement',
 			'adulte.recharge.source.motifs.paiementRefuse' => 'Le paiement a été refusé par la banque ou la carte. Rien n\'a été prélevé.',
@@ -47930,8 +48142,6 @@ extension on Traductions {
 			'adulte.famille.place.nouvelleInvitation' => ({required Object date}) => 'Nouvelle invitation possible à partir du ${date}',
 			'adulte.famille.place.envoyeeA' => ({required Object courriel}) => 'Envoyée à ${courriel}',
 			'adulte.famille.place.expiree' => 'L\'invitation précédente a expiré. Vous pouvez en envoyer une nouvelle.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.famille.place.annulee' => 'L\'invitation a été annulée et ne peut plus être acceptée. Vous pouvez en envoyer une nouvelle.',
 			'adulte.invitation.titreElle' => 'Inviter ma conjointe',
 			'adulte.invitation.titreLui' => 'Inviter mon conjoint',
@@ -48397,6 +48607,8 @@ extension on Traductions {
 			'alertes.clocheUrgentes' => ({required Object nombre}) => 'Alertes, ${nombre} urgentes',
 			'argent.etat.finance' => 'Financé',
 			'argent.etat.essai' => 'Essai',
+			_ => null,
+		} ?? switch (path) {
 			'argent.etat.essaiCompte' => ({required Object n, required Object max}) => 'Essai : ${n}/${max}',
 			'argent.etat.manque' => 'À financer',
 			'argent.etat.enConfirmation' => 'En confirmation',
@@ -48444,8 +48656,6 @@ extension on Traductions {
 			'identiteProfil.lecteurEnfant' => ({required Object prenom}) => '${prenom}, profil enfant',
 			'identiteProfil.lecteurAdulte' => ({required Object prenom}) => '${prenom}, profil adulte',
 			'identiteProfil.lecteurAvecClasse' => ({required Object profil, required Object classe}) => '${profil}, ${classe}',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.composants.lecture.pieceJointe' => ({required Object nom}) => 'Pièce jointe : ${nom}',
 			'com.socle.composants.lecture.vocal' => ({required Object duree}) => 'Message vocal de ${duree}',
 			'com.socle.composants.lecture.vocalSansDuree' => 'Message vocal',
@@ -48911,6 +49121,8 @@ extension on Traductions {
 			'com.studio.aujourdhui.indicateurs.nonLus' => 'Non lus',
 			'com.studio.aujourdhui.blocs.aTraiter' => 'À traiter aujourd\'hui',
 			'com.studio.aujourdhui.blocs.mentions' => 'Mentions et réponses',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.aujourdhui.blocs.decisions' => 'Décisions en attente',
 			'com.studio.aujourdhui.blocs.echeances' => 'Échéances proches',
 			'com.studio.aujourdhui.blocs.activite' => 'Activité récente',
@@ -48958,8 +49170,6 @@ extension on Traductions {
 			'com.studio.sousTitre' => 'Espace de travail de l\'équipe',
 			'com.studio.navigation.aujourdhui' => _root.com.socle.lexique.aujourdhui,
 			'com.studio.navigation.brouillons' => 'Brouillons',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.navigation.canaux' => 'Canaux',
 			'com.studio.navigation.enregistres' => 'Éléments enregistrés',
 			'com.studio.choisirTitre' => 'Choisissez un canal',
@@ -49425,6 +49635,8 @@ extension on Traductions {
 			'comptable.statuts.profil.incomplet' => 'Incomplet',
 			'comptable.statuts.profil.enVerification' => 'En vérification',
 			'comptable.statuts.profil.verifie' => 'Vérifié',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.profil.suspendu' => 'Suspendu',
 			'comptable.statuts.profil.actionRequise' => 'Action requise',
 			'comptable.statuts.profil.invitationEnvoyee' => 'Invitation envoyée',
@@ -49472,8 +49684,6 @@ extension on Traductions {
 			'comptable.statuts.raison.plafondExceptionDepasse' => 'Au-dessus du plafond de cette délégation',
 			'comptable.statuts.raison.paiementHorsApplication' => 'Paiement reçu hors de l\'application : la direction le valide avant qu\'il soit crédité à l\'élève',
 			'comptable.alertes.enseignantsAPayer' => 'Enseignants à payer',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.alertes.contractuelsAEcheance' => 'Contractuels à échéance',
 			'comptable.alertes.infosManquantes' => 'Infos paiement manquantes',
 			'comptable.alertes.payoutEchoue' => 'Payout échoué',
@@ -49939,6 +50149,8 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.supprimee' => 'Méthode supprimée.',
 			'comptable.beneficiaires.recevoir.prefereeChoisie' => 'Méthode préférée mise à jour.',
 			'comptable.beneficiaires.recevoir.erreurAction' => 'Le changement n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.erreurIndisponible' => 'Ce changement n\'est pas encore branché sur le service de paiement. Réessayez plus tard.',
 			'comptable.beneficiaires.recevoir.journalTitre' => 'Historique de mes changements',
 			'comptable.beneficiaires.recevoir.journalVide' => 'Aucun changement enregistré pour l\'instant.',
@@ -49986,8 +50198,6 @@ extension on Traductions {
 			'comptable.contractuels.champJustificatif' => 'Justificatif',
 			'comptable.contractuels.champCentreCout' => 'Centre de coût',
 			'comptable.contractuels.champAuteur' => 'Auteur',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.champApprobateur' => 'Approbateur',
 			'comptable.contractuels.champProfilPaiement' => 'Paiement du bénéficiaire',
 			'comptable.contractuels.champMotifRefus' => 'Motif du refus',
@@ -50453,6 +50663,8 @@ extension on Traductions {
 			'juridique.conditions.s2.blocs.0' => 'Un enfant est inscrit et suivi par un tuteur adulte, qui décide pour lui. Voir le texte Protection des enfants.',
 			'juridique.conditions.s2.blocs.1' => 'Vous donnez des informations exactes et vous gardez vos accès pour vous. On entre dans une séance par son compte, jamais par un lien public.',
 			'juridique.conditions.s3.titre' => '3. Les séances',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.conditions.s3.blocs.0' => 'Les séances ont lieu à heure fixe, avec le même enseignant. Être présent et à l\'heure fait partie de l\'engagement.',
 			'juridique.conditions.s3.blocs.1' => 'Une séance écourtée reste due si l\'élève a été présent assez longtemps. Une séance annulée par l\'académie ou par l\'enseignant est remplacée.',
 			'juridique.conditions.s3.blocs.2' => 'Un contrôleur qualité peut assister aux séances sans être vu, et un cours peut être enregistré. Si l\'enregistrement devient réel, nous vous le disons avant.',
@@ -50500,8 +50712,6 @@ extension on Traductions {
 			'juridique.confidentialite.s1.titre' => '1. Qui est responsable',
 			'juridique.confidentialite.s1.blocs.0' => 'Rewayah Academy Ltd décide pourquoi et comment vos informations sont utilisées. Ses coordonnées sont dans les Mentions légales.',
 			'juridique.confidentialite.s1.representant' => ({required Object nom}) => 'Représentant dans l\'Union européenne : ${nom}.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.confidentialite.s2.titre' => '2. Ce que nous recueillons',
 			'juridique.confidentialite.s2.blocs.0' => '- Pour créer un compte : le nom, l\'adresse de courriel, la langue de l\'interface, le pays de résidence et le fuseau horaire.',
 			'juridique.confidentialite.s2.blocs.1' => '- Pour un élève : la date de naissance, qui sert à choisir la bonne formule et les règles propres aux mineurs.',

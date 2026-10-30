@@ -35,7 +35,9 @@ String libelleCategorie(TypePublicGroupe type) => switch (type) {
 String libelleEnseignantsGenre(GenreClasse genre, int n) => switch (genre) {
   GenreClasse.hommes => t.admin.pilotage.genreHommes(n: n),
   GenreClasse.femmes => t.admin.pilotage.genreFemmes(n: n),
-  GenreClasse.indetermine => t.admin.pilotage.genreIndetermine(n: n),
+  // Une classe mixte accepte tout enseignant, comme une classe sans genre.
+  GenreClasse.indetermine ||
+  GenreClasse.mixte => t.admin.pilotage.genreIndetermine(n: n),
 };
 
 /// « 3 (2 enseignantes, 1 enseignant) » : un total et sa part par genre.

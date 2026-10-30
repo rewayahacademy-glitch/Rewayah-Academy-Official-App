@@ -1,7 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../admin/service_groupes.dart';
 import '../planning/service_planning.dart' show Creneau;
+import 'creation_classe_supabase.dart';
 import 'port_enseignants_classe.dart' show GenreClasse;
 
 /// Le fuseau que le serveur retient quand on ne lui en transmet aucun :
@@ -24,7 +26,12 @@ abstract interface class PortCreationClasse {
   /// Vrai quand le fuseau du creneau est transmis au serveur.
   bool get retientFuseau;
 
-  /// Cree la classe et rend son identifiant.
+  /// Cree la classe et rend son identifiant. [creneau] est le premier
+  /// creneau de la semaine (l'ancre) ; [autresCreneaux], les suivants
+  /// (classe a plusieurs creneaux, decision D2 du 29/10/2026).
+  /// [durees] : la duree en minutes de chaque creneau, dans l'ordre
+  /// ([creneau] puis [autresCreneaux]) ; nulle ou absente, la duree de la
+  /// classe (30/10/2026).
   Future<String> creer({
     required String teacherId,
     required TypePublicGroupe type,
@@ -32,6 +39,8 @@ abstract interface class PortCreationClasse {
     required String libelle,
     required Creneau creneau,
     required int seuilMax,
+    List<Creneau> autresCreneaux = const <Creneau>[],
+    List<int?> durees = const <int?>[],
   });
 }
 
@@ -51,6 +60,8 @@ class CreationClasseParServiceGroupes implements PortCreationClasse {
   @override
   bool get retientFuseau => false;
 
+  /// Un seul creneau : [autresCreneaux] et [durees] ne partent pas avec
+  /// `creer_groupe`.
   @override
   Future<String> creer({
     required String teacherId,
@@ -59,6 +70,8 @@ class CreationClasseParServiceGroupes implements PortCreationClasse {
     required String libelle,
     required Creneau creneau,
     required int seuilMax,
+    List<Creneau> autresCreneaux = const <Creneau>[],
+    List<int?> durees = const <int?>[],
   }) => _service.creer(
     teacherId: teacherId,
     type: type,
@@ -68,9 +81,17 @@ class CreationClasseParServiceGroupes implements PortCreationClasse {
   );
 }
 
-/// La creation employee par l'application.
+/// La creation employee par l'application : `creer_classe_creneaux_admin`
+/// (29/10/2026), qui retient le genre, le fuseau et tous les creneaux.
 final Provider<PortCreationClasse> portCreationClasseProvider =
-    Provider<PortCreationClasse>(
-      (Ref ref) =>
-          CreationClasseParServiceGroupes(ref.watch(serviceGroupesProvider)),
-    );
+    Provider<PortCreationClasse>((Ref ref) {
+      try {
+        return CreationClasseSupabase(Supabase.instance.client);
+      } on Object {
+        // Hors du demarrage applicatif (tests, apercu isole) : l'ancien
+        // chemin, qui dit lui-meme ne retenir ni genre ni fuseau.
+        return CreationClasseParServiceGroupes(
+          ref.watch(serviceGroupesProvider),
+        );
+      }
+    });
