@@ -29,6 +29,7 @@ import 'package:rewayah_academy/core/capacites/port_acces_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_finance_direction.dart';
 import 'package:rewayah_academy/core/capacites/port_mes_finances.dart';
 import 'package:rewayah_academy/core/capacites/port_paiements_foyer.dart';
+import 'package:rewayah_academy/core/capacites/port_politique_famille.dart';
 import 'package:rewayah_academy/core/capacites/port_politiques_commerciales.dart';
 import 'package:rewayah_academy/core/capacites/port_recharge_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_revenus_enseignant.dart';
@@ -346,6 +347,7 @@ List<Override> _adultePage(PortMesFinances? port) => <Override>[
   portPolitiquesCommercialesProvider.overrideWithValue(
     const PolitiquesCommercialesDemo(),
   ),
+  portPolitiqueFamilleProvider.overrideWithValue(const PolitiqueFamilleDemo()),
   if (port != null) portMesFinancesProvider.overrideWithValue(port),
 ];
 
@@ -771,6 +773,9 @@ final List<_Cas> _cas = <_Cas>[
         portPolitiquesCommercialesProvider.overrideWithValue(
           const _PolitiquesEnEchec(),
         ),
+        portPolitiqueFamilleProvider.overrideWithValue(
+          const PolitiqueFamilleDemo(),
+        ),
       ],
     ),
   ),
@@ -783,6 +788,9 @@ final List<_Cas> _cas = <_Cas>[
         portPolitiquesCommercialesProvider.overrideWithValue(
           const _PolitiquesEnEchec(),
         ),
+        portPolitiqueFamilleProvider.overrideWithValue(
+          const PolitiqueFamilleDemo(),
+        ),
       ],
     ),
   ),
@@ -793,6 +801,9 @@ final List<_Cas> _cas = <_Cas>[
       ajouts: <Override>[
         portPolitiquesCommercialesProvider.overrideWithValue(
           const PolitiquesCommercialesIndisponibles(),
+        ),
+        portPolitiqueFamilleProvider.overrideWithValue(
+          const PolitiqueFamilleDemo(),
         ),
       ],
     ),
@@ -1164,6 +1175,9 @@ final List<_Complement> _complements = <_Complement>[
         ajouts: <Override>[
           portPolitiquesCommercialesProvider.overrideWithValue(
             const _PolitiquesEnCours(),
+          ),
+          portPolitiqueFamilleProvider.overrideWithValue(
+            const PolitiqueFamilleDemo(),
           ),
         ],
       ),

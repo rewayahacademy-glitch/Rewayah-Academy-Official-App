@@ -34,6 +34,7 @@ import 'package:rewayah_academy/core/finance/format_montant.dart';
 import 'package:rewayah_academy/core/finance/montant.dart';
 import 'package:rewayah_academy/core/finance/mouvements_profil.dart';
 import 'package:rewayah_academy/core/finance/politique_commerciale.dart';
+import 'package:rewayah_academy/core/finance/politique_famille.dart';
 import 'package:rewayah_academy/core/finance/suivi_paiement.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
@@ -1988,28 +1989,17 @@ void main() {
         'essais se lit « Essai : 1/3 » sans toucher a l ecran', (
       WidgetTester tester,
     ) async {
-      final PolitiqueCommerciale l = DonneesFinanceDemo.politiqueLancement;
-      final PolitiqueCommerciale troisEssais = PolitiqueCommerciale(
+      final PolitiqueFamille l = DonneesFinanceDemo.politiqueFamille;
+      final PolitiqueFamille troisEssais = PolitiqueFamille(
         version: 'recette-3-essais',
-        statut: l.statut,
         dateEffet: l.dateEffet,
         tarifEnfant: l.tarifEnfant,
         tarifAdulte: l.tarifAdulte,
         essaisMax: 3,
         essaiActif: l.essaiActif,
         remisesParRang: l.remisesParRang,
-        baseHoraire: l.baseHoraire,
-        plafondHoraire: l.plafondHoraire,
-        capaciteEnfant: l.capaciteEnfant,
-        capaciteAdulte: l.capaciteAdulte,
-        capaciteDebutant: l.capaciteDebutant,
-        minimumOuverture: l.minimumOuverture,
-        classesObjectif: l.classesObjectif,
-        classesMax: l.classesMax,
-        joursConservationPlace: l.joursConservationPlace,
-        margeReferencePourMille: l.margeReferencePourMille,
         railsActifs: l.railsActifs,
-        allocationInternet: l.allocationInternet,
+        repartition: l.repartition,
       );
       await monterTuteurFi(
         tester,

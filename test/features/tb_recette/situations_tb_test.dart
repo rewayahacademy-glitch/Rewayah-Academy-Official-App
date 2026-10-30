@@ -87,7 +87,7 @@ void main() {
       expect(p.total, DonneesSeanceDemo.support.pages);
       expect(p.page, 1);
       expect(p.ratio, closeTo(1240 / 1754, 1e-9));
-      expect(p.mention, 'Support illustratif');
+      expect(p.mention, 'Document illustratif');
       expect(p.cleImage, isNull);
       expect(p.aLaPage(3).page, 3);
       expect(p.aLaPage(3).ratio, p.ratio);

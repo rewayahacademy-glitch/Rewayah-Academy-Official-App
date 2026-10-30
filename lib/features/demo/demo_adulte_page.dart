@@ -1077,7 +1077,7 @@ class CoquilleAdulteDemo extends StatelessWidget {
                 const PolitiquesCommercialesDemo(),
               ),
               politiqueActiveProvider.overrideWith(
-                (Ref _) async => DonneesFinanceDemo.politiqueLancement,
+                (Ref _) async => DonneesFinanceDemo.politiqueFamille,
               ),
             ],
             // Forfait famille du second adulte rattache (EA-8, EA-BR-22) et

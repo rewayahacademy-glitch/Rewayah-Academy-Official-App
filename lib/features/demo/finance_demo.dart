@@ -33,6 +33,7 @@ import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_finance_direction.dart';
 import '../../core/capacites/port_mes_finances.dart';
 import '../../core/capacites/port_paiements_foyer.dart';
+import '../../core/capacites/port_politique_famille.dart';
 import '../../core/capacites/port_politiques_commerciales.dart';
 import '../../core/capacites/port_recharge_foyer.dart';
 import '../../core/capacites/port_revenus_enseignant.dart';
@@ -41,6 +42,7 @@ import '../../core/finance/format_montant.dart';
 import '../../core/finance/montant.dart';
 import '../../core/finance/mouvements_profil.dart';
 import '../../core/finance/politique_commerciale.dart';
+import '../../core/finance/politique_famille.dart';
 import '../../core/finance/suivi_paiement.dart';
 
 /// Les six jeux du foyer de demonstration (guide §8 F2).
@@ -221,6 +223,41 @@ abstract final class DonneesFinanceDemo {
     bourseDureeMois: 6,
     cumulMaxPourMille: 250,
     jourSuspension: 4,
+  );
+
+  /// Ce que la famille lit de [politiqueLancement] (TRANSPARENCE) : sans
+  /// paie, marge ni budget, avec la repartition publiee pour la v2.0.0 par la
+  /// migration 20261031100000 (memes pour mille, somme 1000).
+  static final PolitiqueFamille politiqueFamille = PolitiqueFamille(
+    version: politiqueLancement.version,
+    dateEffet: politiqueLancement.dateEffet,
+    tarifEnfant: politiqueLancement.tarifEnfant,
+    tarifAdulte: politiqueLancement.tarifAdulte,
+    essaiActif: politiqueLancement.essaiActif,
+    essaisMax: politiqueLancement.essaisMax,
+    remisesParRang: politiqueLancement.remisesParRang,
+    railsActifs: politiqueLancement.railsActifs,
+    repartition: RepartitionPaiement(
+      politiqueVersion: politiqueLancement.version,
+      // La date d'effet de la v2.0.0 en base (1er novembre 2026).
+      dateEffet: DateTime(2026, 11),
+      baseElevesEnfants: 50,
+      baseElevesAdultes: 50,
+      postes: const <PartPoste>[
+        (poste: PosteRepartition.enseignant, pourMille: 470),
+        (poste: PosteRepartition.fraisCarteChange, pourMille: 50),
+        (poste: PosteRepartition.fraisEnvoiPaie, pourMille: 11),
+        (poste: PosteRepartition.visioconference, pourMille: 25),
+        (poste: PosteRepartition.applicationHebergement, pourMille: 48),
+        (poste: PosteRepartition.emails, pourMille: 3),
+        (poste: PosteRepartition.stockage, pourMille: 1),
+        (poste: PosteRepartition.comptabilite, pourMille: 25),
+        (poste: PosteRepartition.developpement, pourMille: 100),
+        (poste: PosteRepartition.administration, pourMille: 83),
+        (poste: PosteRepartition.impotSocietes, pourMille: 35),
+        (poste: PosteRepartition.benefice, pourMille: 149),
+      ],
+    ),
   );
 
   /// Le brouillon de la version suivante (FI-11b) : les memes valeurs que la
@@ -1833,6 +1870,15 @@ class MonAccesFinanceDemo implements PortMonAcces {
 }
 
 /// Les politiques commerciales en demonstration (FI-BR-01, FI-BR-02).
+/// La politique vue d'une famille, en demonstration.
+class PolitiqueFamilleDemo implements PortPolitiqueFamille {
+  /// Cree le double.
+  const PolitiqueFamilleDemo();
+
+  @override
+  Future<PolitiqueFamille> lire() async => DonneesFinanceDemo.politiqueFamille;
+}
+
 class PolitiquesCommercialesDemo implements PortPolitiquesCommerciales {
   /// Cree le double.
   const PolitiquesCommercialesDemo();
