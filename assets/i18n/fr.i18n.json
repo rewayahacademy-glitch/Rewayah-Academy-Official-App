@@ -6682,6 +6682,11 @@
       "avec": "Avec {prenom}",
       "dansMinutes": "Dans {minutes} min",
       "dansHeures": "Dans {heures} h {minutes}",
+      "demainA": "Demain à {heure}",
+      "dansJours(param=jours)": {
+        "one": "Dans {jours} jour",
+        "other": "Dans {jours} jours"
+      },
       "imminent": "C'est presque l'heure",
       "aucunCours": "Pas de cours aujourd'hui",
       "aucunCoursDetail": "Ton enseignant prépare le prochain.",
@@ -7138,6 +7143,17 @@
       "eleveUn": "1 élève",
       "prochaine": "Prochaine séance\u00a0: {jour} à {heure}",
       "sansProchaine": "Aucune séance prévue",
+      "quand": "{jour} {heure} · {reste}",
+      "reste": {
+        "imminent": "maintenant",
+        "minutes": "dans {minutes} min",
+        "heures": "dans {heures} h {minutes}",
+        "demain": "demain",
+        "jours(param=jours)": {
+          "one": "dans {jours} jour",
+          "other": "dans {jours} jours"
+        }
+      },
       "remplacement": "Remplacement",
       "rappelCahier": "Un cahier de transmission reste à valider",
       "cahierAValider": "Cahier de transmission à valider",
@@ -8062,6 +8078,11 @@
       "temps": {
         "dansMinutes": "Cours dans {minutes} min",
         "dansHeures": "Cours dans {heures} h {minutes}",
+        "demainA": "Cours demain à {heure}",
+        "dansJours(param=jours)": {
+          "one": "Cours dans {jours} jour",
+          "other": "Cours dans {jours} jours"
+        },
         "imminent": "Cours imminent",
         "salleOuverte": "Salle ouverte · {reste}",
         "salleOuverteCourt": "Salle ouverte",

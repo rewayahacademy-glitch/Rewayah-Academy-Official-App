@@ -923,6 +923,41 @@ void main() {
       expect(find.text(t.enseignant.journee.preparerSeance), findsNothing);
     });
 
+    testWidgets('pas de bouton a T-21, le bouton a T-20 pile : le minuteur '
+        'vise la bascule, pas la minute suivante', (WidgetTester tester) async {
+      // Mes classes (directeur, 30/10/2026). Cours a 17:30 (_anNour), salle
+      // ouverte a 17:10. Monte a 17:09:20 : l'ancien battement d'une minute,
+      // non aligne, ne voyait 17:10 qu'a 17:10:20.
+      final DateTime ouverture = _anNour().debut.subtract(
+        const Duration(minutes: 20),
+      );
+      DateTime maintenant = ouverture.subtract(const Duration(minutes: 21));
+      _fenetre(tester, const Size(390, 2400));
+      await tester.pumpWidget(
+        hote(
+          const JourneePage(),
+          surcharges: _surcharges(
+            horloge: () => maintenant,
+            enseignant: FauxServiceEnseignant()
+              ..seancesRendues = <SeanceEnseignant>[_anNour()],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      // T-21 : rien.
+      expect(find.text(t.enseignant.journee.rejoindreSalle), findsNothing);
+      // 17:09:20, la minute suivante : toujours rien.
+      maintenant = ouverture.subtract(const Duration(seconds: 40));
+      await tester.pump(const Duration(minutes: 1));
+      await tester.pump();
+      expect(find.text(t.enseignant.journee.rejoindreSalle), findsNothing);
+      // 40 s plus tard, T-20 pile : le bouton.
+      maintenant = ouverture;
+      await tester.pump(const Duration(seconds: 40));
+      await tester.pump();
+      expect(find.text(t.enseignant.journee.rejoindreSalle), findsOneWidget);
+    });
+
     final List<(String, Size, double, Brightness)>
     vues = <(String, Size, double, Brightness)>[
       ('320 px, texte x1, clair', const Size(320, 2400), 1, Brightness.light),
@@ -1652,5 +1687,4 @@ class _CahiersEnPanne extends FauxServiceEnseignant {
   @override
   Future<List<CahierEnRetard>> cahiersEnRetard() async =>
       throw StateError('lecture des cahiers en retard impossible');
-
 }

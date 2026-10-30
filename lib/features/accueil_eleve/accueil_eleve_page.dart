@@ -433,7 +433,7 @@ class _CoursAVenir extends StatelessWidget {
         AudioLabel(cle: ClesAudio.eleveAccueilProchainCours, surface: paire),
         Ecart.vMd,
         Text(
-          _compteARebours(reste),
+          _compteARebours(reste, seance.debut.toLocal()),
           style: paire.applyTo(textes.displayMedium ?? const TextStyle()),
         ),
         Ecart.vSm,
@@ -917,27 +917,22 @@ class _PulsationEtat extends State<_Pulsation>
 
 /// Le temps restant avant le debut, dit a un enfant.
 ///
-/// Meme forme que le minuteur de `ENS-02`, avec les libelles de l'eleve : les
-/// deux ecrans ne s'adressent pas a la meme personne, et « Dans 25 min » tutoye
-/// ici ce qu'il vouvoie la-bas.
-String _compteARebours(Duration reste) {
-  final int minutes = LibellesGroupe.minutesAvant(reste);
-  if (minutes <= 0) {
-    return t.eleve.accueil.imminent;
-  }
-  // DUREE-INSECABLE-1 : la duree ne se scinde jamais sur deux lignes.
-  if (minutes < Duration.minutesPerHour) {
-    return LibellesGroupe.insecable(
-      t.eleve.accueil.dansMinutes(minutes: '$minutes'),
+/// Le formateur de `ENS-02` ([LibellesGroupe.compteAReboursAvec]), avec les
+/// libelles de l'eleve : les deux ecrans ne s'adressent pas a la meme
+/// personne, et « Dans 25 min » tutoie ici ce qu'il vouvoie la-bas.
+String _compteARebours(Duration reste, DateTime debut) =>
+    LibellesGroupe.compteAReboursAvec(
+      reste,
+      debut: debut,
+      textes: (
+        imminent: () => t.eleve.accueil.imminent,
+        minutes: (int m) => t.eleve.accueil.dansMinutes(minutes: '$m'),
+        heures: (int h, String m) =>
+            t.eleve.accueil.dansHeures(heures: '$h', minutes: m),
+        demain: (String heure) => t.eleve.accueil.demainA(heure: heure),
+        jours: (int j) => t.eleve.accueil.dansJours(jours: j),
+      ),
     );
-  }
-  return LibellesGroupe.insecable(
-    t.eleve.accueil.dansHeures(
-      heures: '${minutes ~/ Duration.minutesPerHour}',
-      minutes: (minutes % Duration.minutesPerHour).toString().padLeft(2, '0'),
-    ),
-  );
-}
 
 /// Le nombre de jours civils entre deux instants.
 ///

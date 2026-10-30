@@ -1415,6 +1415,15 @@
       "avec": "مع ⁨{prenom}⁩",
       "dansMinutes": "بعد ⁨{minutes}⁩ د",
       "dansHeures": "بعد ⁨{heures}⁩ س ⁨{minutes}⁩ د",
+      "demainA": "غدًا الساعة ⁨{heure}⁩",
+      "dansJours(param=jours)": {
+        "zero": "اليوم",
+        "one": "بعد يوم واحد",
+        "two": "بعد يومين",
+        "few": "بعد ⁨{jours}⁩ أيام",
+        "many": "بعد ⁨{jours}⁩ يومًا",
+        "other": "بعد ⁨{jours}⁩ يوم"
+      },
       "imminent": "حان الوقت تقريبًا",
       "aucunCours": "لا دروس اليوم",
       "aucunCoursDetail": "معلمك يحضّر الدرس القادم.",
@@ -1642,6 +1651,21 @@
       },
       "prochaine": "الحصة القادمة: ⁨{jour}⁩ الساعة ⁨{heure}⁩",
       "sansProchaine": "لا حصة مقررة",
+      "quand": "⁨{jour}⁩ ⁨{heure}⁩ · ⁨{reste}⁩",
+      "reste": {
+        "imminent": "الآن",
+        "minutes": "بعد ⁨{minutes}⁩ د",
+        "heures": "بعد ⁨{heures}⁩ س ⁨{minutes}⁩ د",
+        "demain": "غدًا",
+        "jours(param=jours)": {
+          "zero": "اليوم",
+          "one": "بعد يوم واحد",
+          "two": "بعد يومين",
+          "few": "بعد ⁨{jours}⁩ أيام",
+          "many": "بعد ⁨{jours}⁩ يومًا",
+          "other": "بعد ⁨{jours}⁩ يوم"
+        }
+      },
       "remplacement": "استخلاف",
       "rappelCahier": "دفتر متابعة ينتظر التأكيد",
       "cahierAValider": "دفتر المتابعة بانتظار التأكيد"
@@ -2549,6 +2573,15 @@
       "temps": {
         "dansMinutes": "الدرس بعد ⁨{minutes}⁩ د",
         "dansHeures": "الدرس بعد ⁨{heures}⁩ س ⁨{minutes}⁩ د",
+        "demainA": "الدرس غدًا الساعة ⁨{heure}⁩",
+        "dansJours(param=jours)": {
+          "zero": "الدرس اليوم",
+          "one": "الدرس بعد يوم واحد",
+          "two": "الدرس بعد يومين",
+          "few": "الدرس بعد ⁨{jours}⁩ أيام",
+          "many": "الدرس بعد ⁨{jours}⁩ يومًا",
+          "other": "الدرس بعد ⁨{jours}⁩ يوم"
+        },
         "imminent": "الدرس وشيك",
         "salleOuverte": "القاعة مفتوحة · ⁨{reste}⁩",
         "salleOuverteCourt": "القاعة مفتوحة",

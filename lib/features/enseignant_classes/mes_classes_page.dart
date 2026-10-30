@@ -9,23 +9,33 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/controle/service_controle.dart' show graceApresFin;
 import '../../core/domain/enums.dart';
+import '../../core/enseignant/cta_seance.dart';
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/service_enseignant.dart';
+import '../../core/i18n/dates_appareil.dart';
 import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/cadence_seance.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/video/pre_vol.dart' show seuilOuvertureSalle;
+import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/point_rappel.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../com_messages/entree_messages_contexte.dart';
-import '../journee/journee_page.dart' show maintenantJourneeProvider;
+import '../journee/journee_page.dart'
+    show entrerEnSalle, maintenantJourneeProvider;
 
 /// Ce que `mes_groupes_v` ne porte pas encore d'une Classe : son niveau, sa
 /// langue, et le fait que l'enseignant l'assure en remplacement.
@@ -62,7 +72,7 @@ class ClasseListee {
   /// Cree la ligne.
   const ClasseListee({
     required this.groupe,
-    this.prochaine,
+    this.seance,
     this.detail = const DetailClasse(),
     this.cahierAValider = false,
   });
@@ -70,8 +80,11 @@ class ClasseListee {
   /// Le groupe, tel que `mes_groupes_v` le rend.
   final GroupeEnseignant groupe;
 
-  /// Le debut de la prochaine seance, ou nul.
-  final DateTime? prochaine;
+  /// La seance en cours ou la prochaine, ou nulle.
+  final SeanceEnseignant? seance;
+
+  /// Le debut de [seance], ou nul.
+  DateTime? get prochaine => seance?.debut;
 
   /// Niveau, langue, remplacement.
   final DetailClasse detail;
@@ -95,7 +108,7 @@ List<ClasseListee> classesTriees({
   required Map<String, DetailClasse> details,
   required DateTime maintenant,
 }) {
-  final Map<String, DateTime> prochaines = <String, DateTime>{};
+  final Map<String, SeanceEnseignant> prochaines = <String, SeanceEnseignant>{};
   for (final SeanceEnseignant s in seances) {
     final String? id = s.groupeId;
     if (id == null) continue;
@@ -104,8 +117,8 @@ List<ClasseListee> classesTriees({
             s.statut == StatutSeance.enCours) &&
         s.fin.isAfter(maintenant);
     if (!aVenir) continue;
-    final DateTime? deja = prochaines[id];
-    if (deja == null || s.debut.isBefore(deja)) prochaines[id] = s.debut;
+    final SeanceEnseignant? deja = prochaines[id];
+    if (deja == null || s.debut.isBefore(deja.debut)) prochaines[id] = s;
   }
   final Set<String?> aValider = <String?>{
     for (final CahierEnRetard c in cahiers) c.groupeId,
@@ -115,7 +128,7 @@ List<ClasseListee> classesTriees({
     for (final GroupeEnseignant g in groupes)
       ClasseListee(
         groupe: g,
-        prochaine: prochaines[g.id],
+        seance: prochaines[g.id],
         detail: details[g.id] ?? const DetailClasse(),
         cahierAValider: aValider.contains(g.id),
       ),
@@ -176,32 +189,71 @@ class MesClassesPage extends ConsumerWidget {
     } else {
       // Seances et cahiers sont des precisions : s'ils manquent, la liste
       // reste lisible, sans prochaine seance ni point de rappel.
-      final List<ClasseListee> lignes = classesTriees(
-        groupes: groupes.requireValue,
-        seances:
-            ref.watch(seancesEnseignantProvider).value ??
-            const <SeanceEnseignant>[],
-        cahiers:
-            ref.watch(cahiersEnRetardProvider).value ??
-            const <CahierEnRetard>[],
-        details: ref.watch(detailsClassesProvider),
-        maintenant: ref.watch(maintenantJourneeProvider)(),
+      final List<SeanceEnseignant> seances =
+          ref.watch(seancesEnseignantProvider).value ??
+          const <SeanceEnseignant>[];
+      final List<CahierEnRetard> cahiers =
+          ref.watch(cahiersEnRetardProvider).value ?? const <CahierEnRetard>[];
+      final Map<String, DetailClasse> details = ref.watch(
+        detailsClassesProvider,
       );
       final void Function(String) ouvrir =
           onOuvrirClasse ??
           // `push` : le retour de l'Espace Classe se referme sur Mes classes
           // (R1).
           (String id) => GoRouter.of(context).push(Routes.groupePour(id));
-      corps = GroupeReglages(
-        lignes: <LigneRubrique>[
-          for (final ClasseListee l in lignes)
-            _ligne(
-              l,
-              (ouvrable?.call(l.groupe.id) ?? true)
-                  ? () => ouvrir(l.groupe.id)
-                  : null,
-            ),
+      VoidCallback? appui(ClasseListee l) =>
+          (ouvrable?.call(l.groupe.id) ?? true)
+          ? () => ouvrir(l.groupe.id)
+          : null;
+      // Mes classes (directeur, 30/10/2026) : l'ordre se recalcule a chaque
+      // bascule (ouverture a T-20, debut, fin) et a chaque minute, sans
+      // recharger.
+      corps = CadenceSeance(
+        lire: ref.watch(maintenantJourneeProvider),
+        instants: <DateTime>[
+          for (final SeanceEnseignant s in seances)
+            ...basculesSeance(s.debut, s.fin),
         ],
+        constructeur: (DateTime maintenant) {
+          final List<ClasseListee> lignes = classesTriees(
+            groupes: groupes.requireValue,
+            seances: seances,
+            cahiers: cahiers,
+            details: details,
+            maintenant: maintenant,
+          );
+          // La Classe en cours ou la plus proche, seule mise en avant ; les
+          // autres suivent dans l'ordre de leur prochaine seance.
+          final ClasseListee? une =
+              lignes.isNotEmpty && lignes.first.seance != null
+              ? lignes.first
+              : null;
+          final List<ClasseListee> autres = une == null
+              ? lignes
+              : lignes.sublist(1);
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              if (une != null)
+                ClasseALaUne(
+                  key: const ValueKey<String>('classes-a-la-une'),
+                  classe: une,
+                  maintenant: maintenant,
+                  onOuvrir: appui(une),
+                ),
+              if (une != null && autres.isNotEmpty) Ecart.vSection,
+              if (autres.isNotEmpty)
+                GroupeReglages(
+                  lignes: <LigneRubrique>[
+                    for (final ClasseListee l in autres)
+                      _ligne(l, maintenant, appui(l)),
+                  ],
+                ),
+            ],
+          );
+        },
       );
     }
 
@@ -231,54 +283,159 @@ class MesClassesPage extends ConsumerWidget {
   }
 }
 
-/// Une Classe, une ligne : son nom en titre, puis « niveau · langue ·
-/// effectif » et la prochaine seance en texte doux. En fin de ligne, seulement
-/// les exceptions : le point de rappel d'un cahier non valide (K-45) et la
-/// pastille « Remplacement » (E12). Toute la ligne ouvre la Classe.
-LigneRubrique _ligne(ClasseListee l, VoidCallback? onPress) {
-  final int? niveau = l.detail.niveau;
-  final String? langue = l.detail.langue;
-  final int n = l.groupe.nbMembres;
-  // COUPE-MOTS-2 : chaque ligne de la legende dans un isolat a sens detecte
-  // (U+2068 ... U+2069). En arabe, un libelle encore en francais (repli sur
-  // la langue de base) qui commence par un chiffre se retournait : « 3
-  // élèves » se lisait « élèves 3 ». La ligne entiere, et non chaque segment :
-  // isolee segment par segment, une legende qui passe a la ligne a 320 px se
-  // lisait dans le desordre (« · Niveau 2 / 3 · Français / élèves »).
-  final String contexte = isolerSens(
-    <String>[
-      if (niveau != null) t.enseignant.classes.niveau(niveau: '$niveau'),
-      if (langue != null && langue.trim().isNotEmpty) langue.trim(),
-      if (n == 1)
-        t.enseignant.classes.eleveUn
-      else
-        t.enseignant.classes.eleves(nombre: n),
-    ].join(' · '),
-  );
-  final DateTime? p = l.prochaine;
-  final String quand = isolerSens(
-    p == null
-        ? t.enseignant.classes.sansProchaine
-        : t.enseignant.classes.prochaine(
-            jour: t.disponibilites.joursLongs[p.weekday - 1],
-            heure:
-                '${p.hour.toString().padLeft(2, '0')}:'
-                '${p.minute.toString().padLeft(2, '0')}',
-          ),
-  );
+/// L'etat du bouton d'une Classe a [maintenant] (CTA-FIN-1, `ctaSeance`) :
+/// le seuil d'ouverture est [seuilOuvertureSalle], la source unique.
+CtaSeance? _cta(ClasseListee l, DateTime maintenant) {
+  final SeanceEnseignant? s = l.seance;
+  return s == null
+      ? null
+      : ctaDeSeance(
+          s,
+          maintenant,
+          fenetreAcces: seuilOuvertureSalle,
+          graceApresFin: graceApresFin,
+        );
+}
 
+/// La prochaine seance en clair : « jeudi 18:00 · dans 6 jours ».
+String _quand(ClasseListee l, DateTime maintenant) {
+  final DateTime? p = l.prochaine;
+  if (p == null) return t.enseignant.classes.sansProchaine;
+  final TextesCompteARebours mots = (
+    imminent: () => t.enseignant.classes.reste.imminent,
+    minutes: (int m) => t.enseignant.classes.reste.minutes(minutes: m),
+    heures: (int h, String m) =>
+        t.enseignant.classes.reste.heures(heures: h, minutes: m),
+    demain: (String _) => t.enseignant.classes.reste.demain,
+    jours: (int j) => t.enseignant.classes.reste.jours(jours: j),
+  );
+  return t.enseignant.classes.quand(
+    jour: t.disponibilites.joursLongs[p.weekday - 1],
+    heure: heureDeLAppareil(p),
+    reste: LibellesGroupe.compteAReboursAvec(
+      p.difference(maintenant),
+      debut: p,
+      textes: mots,
+    ),
+  );
+}
+
+/// « 3 élèves ».
+String _effectif(ClasseListee l) => l.groupe.nbMembres == 1
+    ? t.enseignant.classes.eleveUn
+    : t.enseignant.classes.eleves(nombre: l.groupe.nbMembres);
+
+/// Une Classe, une ligne (Mes classes, 30/10/2026) : son nom, sa prochaine
+/// seance (« jeudi 18:00 · dans 6 jours ») et son effectif. En fin de ligne,
+/// seulement les exceptions : « En direct », le cahier a valider (K-45) et
+/// « Remplacement » (E12). Le niveau et la langue sont dans la Classe. Toute
+/// la ligne ouvre la Classe.
+LigneRubrique _ligne(
+  ClasseListee l,
+  DateTime maintenant,
+  VoidCallback? onPress,
+) {
+  final bool enDirect = _cta(l, maintenant)?.enDirect ?? false;
+  // COUPE-MOTS-2 : chaque ligne de la legende dans un isolat a sens detecte.
   return LigneRubrique(
     libelle: l.groupe.libelle,
     icone: AppIcons.classes,
-    legende: '$contexte\n$quand',
+    legende:
+        '${isolerSens(enDirect ? _effectif(l) : _quand(l, maintenant))}'
+        '${enDirect ? '' : '\n${isolerSens(_effectif(l))}'}',
     onPress: onPress,
-    marque: l.cahierAValider || l.detail.remplacement
+    marque: enDirect || l.cahierAValider || l.detail.remplacement
         ? MarquesClasse(
+            enDirect: enDirect,
             cahierAValider: l.cahierAValider,
             remplacement: l.detail.remplacement,
           )
         : null,
   );
+}
+
+/// La Classe en cours ou la plus proche, en tete et mise en avant : une
+/// carte a elle (K-55, separee de la liste par un ecart), avec « Rejoindre la
+/// salle » seulement quand la salle est ouverte (CTA-FIN-1). C'est le seul
+/// bouton plein de l'ecran (K-56) ; avant l'ouverture, la carte n'en a pas.
+class ClasseALaUne extends StatelessWidget {
+  /// Cree la carte.
+  const ClasseALaUne({
+    required this.classe,
+    required this.maintenant,
+    super.key,
+    this.onOuvrir,
+  });
+
+  /// La Classe.
+  final ClasseListee classe;
+
+  /// L'heure de l'ecran.
+  final DateTime maintenant;
+
+  /// Ouvre la Classe ; `null` pour une Classe sans destination.
+  final VoidCallback? onOuvrir;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    final AppPalette palette = AppPalette.of(context);
+    final CtaSeance? cta = _cta(classe, maintenant);
+    final bool enDirect = cta?.enDirect ?? false;
+    final SeanceEnseignant? seance = classe.seance;
+    final String groupeId = classe.groupe.id;
+    final bool rejoindre =
+        cta?.etat == EtatCtaSeance.rejoindre && seance != null;
+    return AppCard(
+      dominante: true,
+      onPress: onOuvrir,
+      lien: onOuvrir != null,
+      actions: rejoindre
+          ? ActionPrincipale(
+              key: const ValueKey<String>('classes-rejoindre'),
+              libelle: t.enseignant.journee.rejoindreSalle,
+              libelleSemantique: t.enseignant.journee.rejoindreSalleLecteur(
+                classe: classe.groupe.libelle,
+              ),
+              pleineLargeur: true,
+              onPress: () =>
+                  entrerEnSalle(GoRouter.of(context), seance.id, groupeId),
+            )
+          : null,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          // Lecon 8 : « An-Nour » ne se coupe jamais a son tiret.
+          TexteSansCoupure(classe.groupe.libelle, style: textes.titleMedium),
+          Ecart.vXs,
+          if (enDirect)
+            const PastilleEtatSeance(etat: EtatPastilleSeance.enDirect)
+          else
+            Text(
+              isolerSens(_quand(classe, maintenant)),
+              style: palette.inkMuted.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+          Ecart.vXs,
+          Text(
+            isolerSens(_effectif(classe)),
+            style: palette.inkMuted.applyTo(
+              textes.bodyMedium ?? const TextStyle(),
+            ),
+          ),
+          if (classe.cahierAValider || classe.detail.remplacement) ...<Widget>[
+            Ecart.vSm,
+            MarquesClasse(
+              cahierAValider: classe.cahierAValider,
+              remplacement: classe.detail.remplacement,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
 }
 
 /// Les marques d'une ligne de Mes Classes : le rappel « Cahier de
@@ -290,7 +447,11 @@ class MarquesClasse extends StatelessWidget {
     required this.cahierAValider,
     required this.remplacement,
     super.key,
+    this.enDirect = false,
   });
+
+  /// La seance de la Classe se tient (« En direct », ON-AIR-1).
+  final bool enDirect;
 
   /// Un cahier de la Classe attend sa validation (K-45).
   final bool cahierAValider;
@@ -309,6 +470,7 @@ class MarquesClasse extends StatelessWidget {
     runSpacing: AppSpacing.xs,
     crossAxisAlignment: WrapCrossAlignment.center,
     children: <Widget>[
+      if (enDirect) const PastilleEtatSeance(etat: EtatPastilleSeance.enDirect),
       if (cahierAValider) const _CahierAValider(),
       if (remplacement)
         StatusPill(

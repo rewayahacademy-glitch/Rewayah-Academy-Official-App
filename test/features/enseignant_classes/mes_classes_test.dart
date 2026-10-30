@@ -10,6 +10,7 @@ import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
+import 'package:rewayah_academy/core/widgets/pastille_etat_seance.dart';
 import 'package:rewayah_academy/core/widgets/point_rappel.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/com_messages/entree_messages_contexte.dart';
@@ -20,6 +21,7 @@ import 'package:rewayah_academy/features/journee/journee_page.dart'
     show maintenantJourneeProvider;
 
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 
 void _fenetre(WidgetTester tester, Size taille) {
@@ -293,6 +295,154 @@ void main() {
             );
           });
         }
+      }
+    }
+  });
+
+  // Mes classes (directeur, 30/10/2026) : la Classe en cours ou la plus
+  // proche en tete, seule mise en avant ; « Rejoindre la salle » a T-20 pile,
+  // sans recharger ; « En direct » a T0 ; l'ordre suit l'heure.
+  group('Mes classes 30/10 : la Classe a la une', () {
+    final DateTime t0 = DateTime(2026, 11, 2, 18);
+    List<GroupeEnseignant> groupes() => <GroupeEnseignant>[
+      for (final GroupeEnseignant g in DonneesEnseignantDemo.groupes().take(2))
+        g,
+    ];
+    List<SeanceEnseignant> seances(List<GroupeEnseignant> gs) =>
+        <SeanceEnseignant>[
+          SeanceEnseignant(
+            id: 'sa',
+            debut: t0,
+            fin: t0.add(const Duration(minutes: 45)),
+            statut: StatutSeance.planifiee,
+            nbParticipants: 4,
+            cahierDepose: false,
+            groupeId: gs[0].id,
+          ),
+          SeanceEnseignant(
+            id: 'sb',
+            debut: t0.add(const Duration(hours: 2)),
+            fin: t0.add(const Duration(hours: 2, minutes: 45)),
+            statut: StatutSeance.planifiee,
+            nbParticipants: 3,
+            cahierDepose: false,
+            groupeId: gs[1].id,
+          ),
+        ];
+
+    Future<void> monter(
+      WidgetTester tester,
+      DateTime Function() horloge, {
+      double largeur = 390,
+      double echelle = 1,
+    }) async {
+      _fenetre(tester, Size(largeur, 1600));
+      tester.platformDispatcher.textScaleFactorTestValue = echelle;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      final List<GroupeEnseignant> gs = groupes();
+      await tester.pumpWidget(
+        hote(
+          const MesClassesPage(),
+          surcharges: <Override>[
+            maintenantJourneeProvider.overrideWithValue(horloge),
+            groupesEnseignantProvider.overrideWith((Ref _) async => gs),
+            seancesEnseignantProvider.overrideWith(
+              (Ref _) async => seances(gs),
+            ),
+            cahiersEnRetardProvider.overrideWith(
+              (Ref _) async => const <CahierEnRetard>[],
+            ),
+          ],
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+    }
+
+    final Finder rejoindre = find.byKey(
+      const ValueKey<String>('classes-rejoindre'),
+    );
+    final Finder une = find.byKey(const ValueKey<String>('classes-a-la-une'));
+
+    testWidgets('pas de bouton a T-21, le bouton a T-20, En direct a T0, '
+        'sans recharger', (WidgetTester tester) async {
+      DateTime maintenant = t0.subtract(const Duration(minutes: 21));
+      await monter(tester, () => maintenant);
+      final String nomA = groupes()[0].libelle;
+      expect(
+        find.descendant(of: une, matching: find.text(nomA)),
+        findsOneWidget,
+      );
+      expect(rejoindre, findsNothing);
+      // La minute passe : T-20, la salle ouvre.
+      maintenant = t0.subtract(const Duration(minutes: 20));
+      await tester.pump(const Duration(minutes: 1));
+      expect(rejoindre, findsOneWidget);
+      expect(find.byType(PastilleEtatSeance), findsNothing);
+      verifierUnSeulBoutonPlein(tester);
+      // T0 : « En direct », le bouton reste.
+      maintenant = t0;
+      await tester.pump(const Duration(minutes: 20));
+      expect(rejoindre, findsOneWidget);
+      expect(
+        find.descendant(of: une, matching: find.byType(PastilleEtatSeance)),
+        findsOneWidget,
+      );
+      // Apres la fin et la grace : plus de bouton, l'autre Classe passe en
+      // tete, sans recharger.
+      maintenant = t0.add(const Duration(minutes: 61));
+      await tester.pump(const Duration(minutes: 61));
+      expect(rejoindre, findsNothing);
+      expect(
+        find.descendant(of: une, matching: find.text(groupes()[1].libelle)),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('a une seconde pres : le minuteur vise la bascule, pas la '
+        'minute suivante', (WidgetTester tester) async {
+      // Monte a T-20 min 40 s : le battement d'une minute non aligne n'aurait
+      // vu T-20 qu'a T-19 min 40 s.
+      DateTime maintenant = t0.subtract(
+        const Duration(minutes: 20, seconds: 40),
+      );
+      await monter(tester, () => maintenant);
+      expect(rejoindre, findsNothing);
+      maintenant = t0.subtract(const Duration(minutes: 20));
+      await tester.pump(const Duration(seconds: 40));
+      expect(rejoindre, findsOneWidget);
+    });
+
+    testWidgets('la ligne : « jour heure · dans … », l effectif', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, () => t0.subtract(const Duration(days: 6)));
+      String brut(String s) => s
+          .replaceAll(RegExp('[\u2066-\u2069\u00A0]'), ' ')
+          .replaceAll(RegExp(' +'), ' ');
+      final Iterable<String> textes = tester
+          .widgetList<Text>(find.byType(Text))
+          .map((Text w) => brut(w.data ?? ''));
+      expect(textes.join('|'), contains('lundi 18:00 · dans 6 jours'));
+      expect(textes.join('|'), contains('lundi 20:00 · dans 6 jours'));
+      expect(textes.join('|'), contains('3 élèves'));
+    });
+
+    for (final double largeur in <double>[320, 1440]) {
+      for (final double echelle in <double>[1, 2]) {
+        testWidgets('a $largeur px, texte a ${(echelle * 100).round()} % : '
+            'un seul bouton plein, rien de coupe', (WidgetTester tester) async {
+          await monter(
+            tester,
+            () => t0.subtract(const Duration(minutes: 5)),
+            largeur: largeur,
+            echelle: echelle,
+          );
+          expect(tester.takeException(), isNull);
+          expect(rejoindre, findsOneWidget);
+          verifierUnSeulBoutonPlein(tester);
+          verifierEcranSansMotCoupe(tester);
+        });
       }
     }
   });

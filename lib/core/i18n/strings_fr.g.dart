@@ -12162,6 +12162,15 @@ class Traductions$eleve$accueil$fr {
 	/// fr: 'Dans {heures} h {minutes}'
 	String dansHeures({required Object heures, required Object minutes}) => 'Dans ${heures} h ${minutes}';
 
+	/// fr: 'Demain à {heure}'
+	String demainA({required Object heure}) => 'Demain à ${heure}';
+
+	/// fr: '(one) {Dans {jours} jour} (other) {Dans {jours} jours}'
+	String dansJours({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours,
+		one: 'Dans ${jours} jour',
+		other: 'Dans ${jours} jours',
+	);
+
 	/// fr: 'C'est presque l'heure'
 	String get imminent => 'C\'est presque l\'heure';
 
@@ -13112,6 +13121,11 @@ class Traductions$enseignant$classes$fr {
 
 	/// fr: 'Aucune séance prévue'
 	String get sansProchaine => 'Aucune séance prévue';
+
+	/// fr: '{jour} {heure} · {reste}'
+	String quand({required Object jour, required Object heure, required Object reste}) => '${jour} ${heure} · ${reste}';
+
+	late final Traductions$enseignant$classes$reste$fr reste = Traductions$enseignant$classes$reste$fr.internal(_root);
 
 	/// fr: 'Remplacement'
 	String get remplacement => 'Remplacement';
@@ -26955,6 +26969,33 @@ class Traductions$classe$cartes$feuille$fr {
 	late final Traductions$classe$cartes$feuille$defauts$fr defauts = Traductions$classe$cartes$feuille$defauts$fr.internal(_root);
 }
 
+// Path: enseignant.classes.reste
+class Traductions$enseignant$classes$reste$fr {
+	Traductions$enseignant$classes$reste$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'maintenant'
+	String get imminent => 'maintenant';
+
+	/// fr: 'dans {minutes} min'
+	String minutes({required Object minutes}) => 'dans ${minutes} min';
+
+	/// fr: 'dans {heures} h {minutes}'
+	String heures({required Object heures, required Object minutes}) => 'dans ${heures} h ${minutes}';
+
+	/// fr: 'demain'
+	String get demain => 'demain';
+
+	/// fr: '(one) {dans {jours} jour} (other) {dans {jours} jours}'
+	String jours({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours,
+		one: 'dans ${jours} jour',
+		other: 'dans ${jours} jours',
+	);
+}
+
 // Path: enseignant.signalement.categories
 class Traductions$enseignant$signalement$categories$fr {
 	Traductions$enseignant$signalement$categories$fr.internal(this._root);
@@ -27216,6 +27257,15 @@ class Traductions$tc$groupe$temps$fr {
 
 	/// fr: 'Cours dans {heures} h {minutes}'
 	String dansHeures({required Object heures, required Object minutes}) => 'Cours dans ${heures} h ${minutes}';
+
+	/// fr: 'Cours demain à {heure}'
+	String demainA({required Object heure}) => 'Cours demain à ${heure}';
+
+	/// fr: '(one) {Cours dans {jours} jour} (other) {Cours dans {jours} jours}'
+	String dansJours({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours,
+		one: 'Cours dans ${jours} jour',
+		other: 'Cours dans ${jours} jours',
+	);
 
 	/// fr: 'Cours imminent'
 	String get imminent => 'Cours imminent';
@@ -46095,6 +46145,8 @@ extension on Traductions {
 			'eleve.accueil.avec' => ({required Object prenom}) => 'Avec ${prenom}',
 			'eleve.accueil.dansMinutes' => ({required Object minutes}) => 'Dans ${minutes} min',
 			'eleve.accueil.dansHeures' => ({required Object heures, required Object minutes}) => 'Dans ${heures} h ${minutes}',
+			'eleve.accueil.demainA' => ({required Object heure}) => 'Demain à ${heure}',
+			'eleve.accueil.dansJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Dans ${jours} jour', other: 'Dans ${jours} jours', ), 
 			'eleve.accueil.imminent' => 'C\'est presque l\'heure',
 			'eleve.accueil.aucunCours' => 'Pas de cours aujourd\'hui',
 			'eleve.accueil.aucunCoursDetail' => 'Ton enseignant prépare le prochain.',
@@ -46386,10 +46438,10 @@ extension on Traductions {
 			'classe.pageCatalogue.etat.listeAttente' => 'Liste d\'attente',
 			'classe.pageCatalogue.choisir' => 'Choisir cette classe',
 			'classe.pageCatalogue.rejoindreAttente' => 'Rejoindre la liste d\'attente',
-			'classe.pageCatalogue.precisionsTitre' => 'Avant de choisir',
-			'classe.pageCatalogue.precisionEnseignant' => 'Une classe garde le même enseignant pour toutes ses séances.',
 			_ => null,
 		} ?? switch (path) {
+			'classe.pageCatalogue.precisionsTitre' => 'Avant de choisir',
+			'classe.pageCatalogue.precisionEnseignant' => 'Une classe garde le même enseignant pour toutes ses séances.',
 			'classe.pageCatalogue.precisionPlaces' => 'Les places affichées sont celles de l\'académie au moment de la lecture.',
 			'classe.pageCatalogue.precisionReserve' => 'Rien n\'est réservé avant votre confirmation.',
 			'classe.pageCatalogue.confirmerTitre' => 'Confirmer la classe',
@@ -46477,6 +46529,12 @@ extension on Traductions {
 			'enseignant.classes.eleveUn' => '1 élève',
 			'enseignant.classes.prochaine' => ({required Object jour, required Object heure}) => 'Prochaine séance : ${jour} à ${heure}',
 			'enseignant.classes.sansProchaine' => 'Aucune séance prévue',
+			'enseignant.classes.quand' => ({required Object jour, required Object heure, required Object reste}) => '${jour} ${heure} · ${reste}',
+			'enseignant.classes.reste.imminent' => 'maintenant',
+			'enseignant.classes.reste.minutes' => ({required Object minutes}) => 'dans ${minutes} min',
+			'enseignant.classes.reste.heures' => ({required Object heures, required Object minutes}) => 'dans ${heures} h ${minutes}',
+			'enseignant.classes.reste.demain' => 'demain',
+			'enseignant.classes.reste.jours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'dans ${jours} jour', other: 'dans ${jours} jours', ), 
 			'enseignant.classes.remplacement' => 'Remplacement',
 			'enseignant.classes.rappelCahier' => 'Un cahier de transmission reste à valider',
 			'enseignant.classes.cahierAValider' => 'Cahier de transmission à valider',
@@ -46894,6 +46952,8 @@ extension on Traductions {
 			'enseignant.creneaux.limiteDetail' => 'Votre charge actuelle ne permet pas de réserver une Classe supplémentaire.',
 			'enseignant.creneaux.aucuneClasse' => 'Aucune Classe compatible pour le moment',
 			'enseignant.creneaux.aucuneClasseDetail' => 'Modifiez vos disponibilités si votre emploi du temps a changé.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.creneaux.reserver' => 'Réserver cette Classe',
 			'enseignant.creneaux.demandeTransmise' => 'Votre demande a été transmise.',
 			'enseignant.creneaux.demandeTransmiseDetail' => 'Elle apparaîtra dans vos Classes après confirmation.',
@@ -46902,8 +46962,6 @@ extension on Traductions {
 			'enseignant.creneaux.revenir' => 'Revenir',
 			'enseignant.creneaux.cleNiveau' => 'Niveau',
 			'enseignant.creneaux.cleLangue' => 'Langue',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.cleRecurrence' => 'Récurrence',
 			'enseignant.creneaux.cleFuseau' => 'Fuseau de référence',
 			'enseignant.creneaux.cleHeureLocale' => 'Heure locale',
@@ -47302,6 +47360,8 @@ extension on Traductions {
 			'tc.groupe.cours.coursEtNiveau' => ({required Object cours, required Object niveau}) => '${cours} · ${niveau}',
 			'tc.groupe.temps.dansMinutes' => ({required Object minutes}) => 'Cours dans ${minutes} min',
 			'tc.groupe.temps.dansHeures' => ({required Object heures, required Object minutes}) => 'Cours dans ${heures} h ${minutes}',
+			'tc.groupe.temps.demainA' => ({required Object heure}) => 'Cours demain à ${heure}',
+			'tc.groupe.temps.dansJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Cours dans ${jours} jour', other: 'Cours dans ${jours} jours', ), 
 			'tc.groupe.temps.imminent' => 'Cours imminent',
 			'tc.groupe.temps.salleOuverte' => ({required Object reste}) => 'Salle ouverte · ${reste}',
 			'tc.groupe.temps.salleOuverteCourt' => 'Salle ouverte',
@@ -47406,6 +47466,8 @@ extension on Traductions {
 			'tc.bibliotheque.actif.version' => ({required Object numero}) => 'Version ${numero}',
 			'tc.bibliotheque.actif.page' => ({required Object page}) => 'Page ${page}',
 			'tc.bibliotheque.actif.ouvrirFiche' => 'Ouvrir la fiche du support',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.actif.ouvrirCoran' => 'Ouvrir dans le lecteur du Coran',
 			'tc.bibliotheque.actif.retire' => ({required Object titre}) => '« ${titre} » a été retiré',
 			'tc.bibliotheque.actif.retireDetail' => 'Votre enseignant a retiré ce support de la séance. Il n\'est plus accessible.',
@@ -47416,8 +47478,6 @@ extension on Traductions {
 			'tc.coran.modes.versets' => ({required Object debut, required Object fin}) => 'v. ${debut} à ${fin}',
 			'tc.coran.modes.versetsEntre' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
 			'tc.coran.mushaf.coteDroite' => 'Page de droite',
-			_ => null,
-		} ?? switch (path) {
 			'tc.coran.mushaf.coteGauche' => 'Page de gauche',
 			'tc.coran.mushaf.ouverture' => ({required Object droite, required Object gauche}) => 'Ouverture, pages ${droite} et ${gauche}',
 			'tc.coran.mushaf.page15.creditMiseEnPage' => 'Mise en page : KFGQPC, quran.ws (CC BY 4.0)',
@@ -47920,6 +47980,8 @@ extension on Traductions {
 			'adulte.famille.place.ajouterConjointe' => 'Ajouter une conjointe',
 			'adulte.famille.place.ajouterConjoint' => 'Ajouter un conjoint',
 			'adulte.famille.place.inviterConjointe' => 'Invitez votre conjointe à rejoindre Rewayah avec son propre compte.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.famille.place.inviterConjoint' => 'Invitez votre conjoint à rejoindre Rewayah avec son propre compte.',
 			'adulte.famille.place.invitationEnvoyee' => 'Invitation envoyée',
 			'adulte.famille.place.maConjointe' => ({required Object prenom}) => '${prenom}, votre conjointe',
@@ -47930,8 +47992,6 @@ extension on Traductions {
 			'adulte.famille.place.nouvelleInvitation' => ({required Object date}) => 'Nouvelle invitation possible à partir du ${date}',
 			'adulte.famille.place.envoyeeA' => ({required Object courriel}) => 'Envoyée à ${courriel}',
 			'adulte.famille.place.expiree' => 'L\'invitation précédente a expiré. Vous pouvez en envoyer une nouvelle.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.famille.place.annulee' => 'L\'invitation a été annulée et ne peut plus être acceptée. Vous pouvez en envoyer une nouvelle.',
 			'adulte.invitation.titreElle' => 'Inviter ma conjointe',
 			'adulte.invitation.titreLui' => 'Inviter mon conjoint',
@@ -48434,6 +48494,8 @@ extension on Traductions {
 			'argent.acces.reactiveTuteurSansDate' => ({required Object prenom}) => '${prenom} peut de nouveau rejoindre ses séances.',
 			'argent.acces.reactiveAdulte' => ({required Object date}) => 'Vous pouvez de nouveau rejoindre vos séances depuis le ${date}.',
 			'argent.acces.reactiveAdulteSansDate' => 'Vous pouvez de nouveau rejoindre vos séances.',
+			_ => null,
+		} ?? switch (path) {
 			'argent.acces.suspenduPaiementTuteur' => ({required Object prenom}) => 'Le paiement du mois n\'est pas reçu. ${prenom} ne peut plus rejoindre ses séances. Son compte et ses contenus restent accessibles.',
 			'argent.acces.suspenduPaiementAdulte' => 'Le paiement du mois n\'est pas reçu. Vous ne pouvez plus rejoindre vos séances. Votre compte et vos contenus restent accessibles.',
 			'argent.acces.pastilleSuspendu' => 'Suspendu',
@@ -48444,8 +48506,6 @@ extension on Traductions {
 			'identiteProfil.lecteurEnfant' => ({required Object prenom}) => '${prenom}, profil enfant',
 			'identiteProfil.lecteurAdulte' => ({required Object prenom}) => '${prenom}, profil adulte',
 			'identiteProfil.lecteurAvecClasse' => ({required Object profil, required Object classe}) => '${profil}, ${classe}',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.composants.lecture.pieceJointe' => ({required Object nom}) => 'Pièce jointe : ${nom}',
 			'com.socle.composants.lecture.vocal' => ({required Object duree}) => 'Message vocal de ${duree}',
 			'com.socle.composants.lecture.vocalSansDuree' => 'Message vocal',
@@ -48948,6 +49008,8 @@ extension on Traductions {
 			'com.studio.brouillons.detail' => 'Les messages commencés dans un canal et pas encore envoyés. Ils restent sur cet appareil le temps de la session, sans synchronisation.',
 			'com.studio.brouillons.dansCanal' => ({required Object nom}) => 'Brouillon dans ${nom}',
 			'com.studio.brouillons.canalInconnu' => 'Brouillon dans un canal',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.brouillons.canalIndisponible' => 'Brouillon dans un canal qui n\'est plus disponible',
 			'com.studio.brouillons.modifie' => ({required Object moment}) => 'Modifié le ${moment}',
 			'com.studio.brouillons.reprendre' => ({required Object nom}) => 'Reprendre le brouillon dans ${nom}',
@@ -48958,8 +49020,6 @@ extension on Traductions {
 			'com.studio.sousTitre' => 'Espace de travail de l\'équipe',
 			'com.studio.navigation.aujourdhui' => _root.com.socle.lexique.aujourdhui,
 			'com.studio.navigation.brouillons' => 'Brouillons',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.navigation.canaux' => 'Canaux',
 			'com.studio.navigation.enregistres' => 'Éléments enregistrés',
 			'com.studio.choisirTitre' => 'Choisissez un canal',
@@ -49462,6 +49522,8 @@ extension on Traductions {
 			'comptable.statuts.raison.fournisseurIndisponible' => 'Fournisseur indisponible',
 			'comptable.statuts.raison.fondsInsuffisants' => 'Fonds insuffisants',
 			'comptable.statuts.raison.doublonPotentiel' => 'Doublon potentiel',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.raison.nonApprouvee' => 'Obligation non approuvée',
 			'comptable.statuts.raison.capaciteAbsente' => 'Capacité absente',
 			'comptable.statuts.raison.delegationsSuspendues' => 'Délégations suspendues par la direction',
@@ -49472,8 +49534,6 @@ extension on Traductions {
 			'comptable.statuts.raison.plafondExceptionDepasse' => 'Au-dessus du plafond de cette délégation',
 			'comptable.statuts.raison.paiementHorsApplication' => 'Paiement reçu hors de l\'application : la direction le valide avant qu\'il soit crédité à l\'élève',
 			'comptable.alertes.enseignantsAPayer' => 'Enseignants à payer',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.alertes.contractuelsAEcheance' => 'Contractuels à échéance',
 			'comptable.alertes.infosManquantes' => 'Infos paiement manquantes',
 			'comptable.alertes.payoutEchoue' => 'Payout échoué',
@@ -49976,6 +50036,8 @@ extension on Traductions {
 			'comptable.contractuels.montantDefini' => 'Montant défini à la création, figé après approbation.',
 			'comptable.contractuels.montantFige' => 'Montant figé à l\'approbation : il ne se modifie plus.',
 			'comptable.contractuels.montantTitre' => 'Montant',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.sectionLignes' => 'Détail du montant',
 			'comptable.contractuels.sectionInfos' => 'Informations',
 			'comptable.contractuels.sectionHistorique' => 'Historique de l\'obligation',
@@ -49986,8 +50048,6 @@ extension on Traductions {
 			'comptable.contractuels.champJustificatif' => 'Justificatif',
 			'comptable.contractuels.champCentreCout' => 'Centre de coût',
 			'comptable.contractuels.champAuteur' => 'Auteur',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.champApprobateur' => 'Approbateur',
 			'comptable.contractuels.champProfilPaiement' => 'Paiement du bénéficiaire',
 			'comptable.contractuels.champMotifRefus' => 'Motif du refus',
@@ -50490,6 +50550,8 @@ extension on Traductions {
 			'juridique.annulation.s4.blocs.2' => 'Si le paiement n\'arrive toujours pas, l\'accès aux séances est suspendu. La place est gardée quelque temps.',
 			'juridique.annulation.s4.blocs.3' => 'Ensuite, la place est libérée pour la liste d\'attente. Le retour reste possible sans frais, dans une nouvelle Classe.',
 			'juridique.annulation.s4.blocs.4' => 'Les dates exactes sont celles de la politique tarifaire en vigueur (page Tarifs).',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.annulation.s5.titre' => '5. Passage à la formule adulte',
 			'juridique.annulation.s5.blocs.0' => 'Un élève qui atteint 18 ans passe à la formule adulte au renouvellement suivant. Le parent est prévenu à l\'avance.',
 			'juridique.annulation.s6.titre' => '6. Faire une demande',
@@ -50500,8 +50562,6 @@ extension on Traductions {
 			'juridique.confidentialite.s1.titre' => '1. Qui est responsable',
 			'juridique.confidentialite.s1.blocs.0' => 'Rewayah Academy Ltd décide pourquoi et comment vos informations sont utilisées. Ses coordonnées sont dans les Mentions légales.',
 			'juridique.confidentialite.s1.representant' => ({required Object nom}) => 'Représentant dans l\'Union européenne : ${nom}.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.confidentialite.s2.titre' => '2. Ce que nous recueillons',
 			'juridique.confidentialite.s2.blocs.0' => '- Pour créer un compte : le nom, l\'adresse de courriel, la langue de l\'interface, le pays de résidence et le fuseau horaire.',
 			'juridique.confidentialite.s2.blocs.1' => '- Pour un élève : la date de naissance, qui sert à choisir la bonne formule et les règles propres aux mineurs.',

@@ -1,3 +1,4 @@
+import '../i18n/dates_appareil.dart';
 import '../i18n/strings.g.dart';
 import '../tc_horloge/session_clock_vm.dart';
 import 'group_summary_vm.dart';
@@ -321,22 +322,64 @@ abstract final class LibellesGroupe {
 
   /// Le compte a rebours avant le debut, en clair.
   ///
-  /// La coupure a une heure et le remplissage des minutes suivent
-  /// `_compteARebours()` de `accueil_eleve_page.dart` : deux ecrans qui
-  /// n'arrondiraient pas pareil feraient douter de l'heure du cours.
-  static String compteARebours(Duration reste) {
+  /// **Un seul formateur** pour les trois comptes a rebours du produit
+  /// (Classe, Accueil famille, Accueil eleve) : seuls leurs mots changent
+  /// ([TextesCompteARebours]). L'unite suit l'approche (directeur, 30/10) :
+  /// « Dans 6 jours », « Demain à 18:00 », « Dans 3 h 05 », « Dans 12 min »,
+  /// puis « imminent ». Les jours se comptent en dates civiles depuis
+  /// [debut] (l'heure locale du cours) ; sans [debut], une duree d'un jour ou
+  /// plus se dit en jours entiers.
+  static String compteARebours(Duration reste, {DateTime? debut}) =>
+      compteAReboursAvec(reste, debut: debut, textes: textesClasse);
+
+  /// Les mots du compte a rebours d'une Classe (« Cours dans 12 min »).
+  static final TextesCompteARebours textesClasse = (
+    imminent: () => t.tc.groupe.temps.imminent,
+    minutes: (int m) => t.tc.groupe.temps.dansMinutes(minutes: m),
+    heures: (int h, String m) =>
+        t.tc.groupe.temps.dansHeures(heures: h, minutes: m),
+    demain: (String heure) => t.tc.groupe.temps.demainA(heure: heure),
+    jours: (int j) => t.tc.groupe.temps.dansJours(jours: j),
+  );
+
+  /// Le compte a rebours de [compteARebours], avec d'autres mots.
+  static String compteAReboursAvec(
+    Duration reste, {
+    required TextesCompteARebours textes,
+    DateTime? debut,
+  }) {
     final int minutes = minutesAvant(reste);
     if (minutes <= 0) {
-      return imminent;
+      return textes.imminent();
     }
+    // DUREE-INSECABLE-1 : la duree ne se scinde jamais sur deux lignes.
     if (minutes < Duration.minutesPerHour) {
-      return dansMinutes(minutes);
+      return insecable(textes.minutes(minutes));
     }
-    return dansHeures(
-      heures: minutes ~/ Duration.minutesPerHour,
-      minutes: minutes % Duration.minutesPerHour,
-    );
+    final int jours = debut == null
+        ? reste.inDays
+        : _joursCivils(debut.subtract(reste), debut);
+    if (jours <= 0) {
+      return insecable(
+        textes.heures(
+          minutes ~/ Duration.minutesPerHour,
+          (minutes % Duration.minutesPerHour).toString().padLeft(2, '0'),
+        ),
+      );
+    }
+    if (jours == 1 && debut != null) {
+      return insecable(textes.demain(heureDeLAppareil(debut)));
+    }
+    return insecable(textes.jours(jours));
   }
+
+  /// Les jours civils entre deux instants locaux, reposes en UTC : la nuit
+  /// d'un changement d'heure ne fait pas un jour de moins.
+  static int _joursCivils(DateTime de, DateTime a) => DateTime.utc(
+    a.year,
+    a.month,
+    a.day,
+  ).difference(DateTime.utc(de.year, de.month, de.day)).inDays;
 
   /// Le temps restant avant la fin, en clair.
   static String tempsRestant(Duration reste) {
@@ -394,7 +437,9 @@ abstract final class LibellesGroupe {
     final Duration? restant = horloge.restant;
     return switch (horloge.phase) {
       PhaseSeance.avantFenetre =>
-        restant == null ? prochainCours : compteARebours(restant),
+        restant == null
+            ? prochainCours
+            : compteARebours(restant, debut: horloge.debutUtc.toLocal()),
       PhaseSeance.salleOuverte => salleOuverte(
         restant == null ? salleOuverteCourt : compteARebours(restant),
       ),
@@ -409,3 +454,13 @@ abstract final class LibellesGroupe {
     };
   }
 }
+
+/// Les mots d'un compte a rebours (voir [LibellesGroupe.compteARebours]) :
+/// l'Accueil eleve tutoie, la Classe dit « Cours dans ».
+typedef TextesCompteARebours = ({
+  String Function() imminent,
+  String Function(int minutes) minutes,
+  String Function(int heures, String minutes) heures,
+  String Function(String heure) demain,
+  String Function(int jours) jours,
+});
