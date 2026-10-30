@@ -275,7 +275,9 @@ void main() {
       expect(_page, findsNothing);
       expect(_consigne, findsOneWidget);
       expect(
-        find.text('Choisissez un support ou écrivez au tableau.'),
+        find.text(
+          'Choisissez un document dans la bibliothèque ou écrivez au tableau.',
+        ),
         findsOneWidget,
       );
     });

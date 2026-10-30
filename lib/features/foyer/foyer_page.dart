@@ -423,7 +423,10 @@ class _RangeeBureau extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          if (avecVue) ...<Widget>[const VueFinanciereFoyer(), Ecart.vSection],
+          if (avecVue) ...<Widget>[
+            VueFinanciereFoyer(onNosPrix: () => aller(Routes.tuteurFoyerPrix)),
+            Ecart.vSection,
+          ],
           if (avecTransactions) ...<Widget>[transactions, Ecart.vSection],
           annexes,
         ],
@@ -433,7 +436,12 @@ class _RangeeBureau extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         if (avecVue) ...<Widget>[
-          const Expanded(flex: 2, child: VueFinanciereFoyer()),
+          Expanded(
+            flex: 2,
+            child: VueFinanciereFoyer(
+              onNosPrix: () => aller(Routes.tuteurFoyerPrix),
+            ),
+          ),
           Ecart.hXxl,
         ],
         if (avecTransactions) ...<Widget>[

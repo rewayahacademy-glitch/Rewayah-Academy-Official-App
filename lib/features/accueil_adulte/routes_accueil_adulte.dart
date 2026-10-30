@@ -18,6 +18,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
+import '../foyer/nos_prix_page.dart';
 import '../mon_espace_adulte/mes_finances_page.dart';
 import '../suivi_famille/suivi_famille_page.dart';
 import '../tc_catalogue/routes_tc_b.dart' show RoutesTcB;
@@ -96,11 +97,18 @@ List<GoRoute> routesAccueilAdulte() => <GoRoute>[
           GoRouter.of(contexte).go(Routes.rechargePour(<String>[profilId])),
       onMouvements: () =>
           GoRouter.of(contexte).go(Routes.eleveFinancesMouvements),
+      onNosPrix: () => GoRouter.of(contexte).go(Routes.eleveFinancesPrix),
     ),
     routes: <RouteBase>[
       GoRoute(
         path: 'mouvements',
         builder: (BuildContext contexte, GoRouterState _) => MesMouvementsPage(
+          onRetour: () => GoRouter.of(contexte).go(Routes.eleveFinances),
+        ),
+      ),
+      GoRoute(
+        path: 'prix',
+        builder: (BuildContext contexte, GoRouterState _) => NosPrixPage(
           onRetour: () => GoRouter.of(contexte).go(Routes.eleveFinances),
         ),
       ),

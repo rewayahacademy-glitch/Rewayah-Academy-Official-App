@@ -12,11 +12,14 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../finance/montant.dart';
 import '../finance/politique_commerciale.dart';
+import '../finance/politique_famille.dart';
+import 'port_politique_famille.dart';
 import 'port_politiques_commerciales.dart';
 import 'rpc_finance_supabase.dart';
 
 const String _lecture = 'FI-BR-01';
 const String _versions = 'FI-BR-02';
+const String _famille = 'TRANSPARENCE';
 
 /// Les politiques commerciales servies par Supabase.
 class PolitiquesCommercialesSupabase implements PortPolitiquesCommerciales {
@@ -330,3 +333,86 @@ Map<String, Object?> politiqueVersJson(PolitiqueCommerciale p) =>
 
 Map<String, Object?>? _montantFacultatif(Montant? m) =>
     m == null ? null : _montantVersJson(m);
+
+/// La politique lue par une famille (`politique_commerciale_famille`,
+/// migration 20261031100000) : sans paie, marge ni budget.
+class PolitiqueFamilleSupabase implements PortPolitiqueFamille {
+  /// Cree l'adaptateur sur le client de l'application.
+  PolitiqueFamilleSupabase(SupabaseClient client)
+    : _appel = appelRpcSupabase(client);
+
+  /// Cree l'adaptateur sur un appel injecte (tests).
+  PolitiqueFamilleSupabase.avecAppel(this._appel);
+
+  final AppelRpc _appel;
+
+  @override
+  Future<PolitiqueFamille> lire() async => politiqueFamilleJson(
+    await appelerFinance(_appel, 'politique_commerciale_famille', _famille),
+  );
+}
+
+const Map<String, PosteRepartition> _postes = <String, PosteRepartition>{
+  'enseignant': PosteRepartition.enseignant,
+  'frais_carte_change': PosteRepartition.fraisCarteChange,
+  'frais_envoi_paie': PosteRepartition.fraisEnvoiPaie,
+  'visioconference': PosteRepartition.visioconference,
+  'application_hebergement': PosteRepartition.applicationHebergement,
+  'emails': PosteRepartition.emails,
+  'stockage': PosteRepartition.stockage,
+  'comptabilite': PosteRepartition.comptabilite,
+  'developpement': PosteRepartition.developpement,
+  'administration': PosteRepartition.administration,
+  'impot_societes': PosteRepartition.impotSocietes,
+  'benefice': PosteRepartition.benefice,
+};
+
+/// La politique d'une famille, au format rendu par le serveur. Une
+/// repartition dont la somme n'est pas 1000 est refusee : la page ne montre
+/// jamais un total faux.
+PolitiqueFamille politiqueFamilleJson(Object? brut) {
+  final Map<String, dynamic> j = objetJson(brut, 'politique');
+  final Object? r = j['repartition'];
+  return PolitiqueFamille(
+    version: texteJson(j, 'version'),
+    dateEffet: dateJson(j['dateEffet'], 'dateEffet'),
+    tarifEnfant: montantJson(j['tarifEnfant'], 'tarifEnfant'),
+    tarifAdulte: montantJson(j['tarifAdulte'], 'tarifAdulte'),
+    essaiActif: booleenJson(j, 'essaiActif'),
+    essaisMax: entierJson(j, 'essaisMax'),
+    remisesParRang: <RemiseRang>[
+      for (final Object? x in listeJson(j['remisesParRang'], 'remisesParRang'))
+        _remiseRang(objetJson(x, 'remise')),
+    ],
+    railsActifs: <RailPaiement>{
+      for (final Object? x in listeJson(j['railsActifs'], 'railsActifs'))
+        _rails[x] ?? (throw FormatException('rail inconnu: $x')),
+    },
+    repartition: r == null
+        ? null
+        : _repartitionJson(objetJson(r, 'repartition')),
+  );
+}
+
+RepartitionPaiement _repartitionJson(Map<String, dynamic> r) {
+  final List<PartPoste> postes = <PartPoste>[
+    for (final Object? x in listeJson(r['postes'], 'postes'))
+      (
+        poste:
+            _postes[objetJson(x, 'poste')['poste']] ??
+            (throw FormatException('poste inconnu: $x')),
+        pourMille: entierJson(objetJson(x, 'poste'), 'pourMille'),
+      ),
+  ];
+  final int somme = postes.fold(0, (int s, PartPoste p) => s + p.pourMille);
+  if (somme != 1000) {
+    throw FormatException('repartition : somme $somme au lieu de 1000');
+  }
+  return RepartitionPaiement(
+    politiqueVersion: texteJson(r, 'politiqueVersion'),
+    dateEffet: dateJson(r['dateEffet'], 'dateEffet'),
+    baseElevesEnfants: entierJson(r, 'baseElevesEnfants'),
+    baseElevesAdultes: entierJson(r, 'baseElevesAdultes'),
+    postes: postes,
+  );
+}

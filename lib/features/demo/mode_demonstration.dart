@@ -34,6 +34,7 @@ import '../../core/capacites/port_creation_classe.dart';
 import '../../core/capacites/port_enseignants_classe.dart';
 import '../../core/capacites/port_finance_direction.dart';
 import '../../core/capacites/port_paiements_foyer.dart';
+import '../../core/capacites/port_politique_famille.dart';
 import '../../core/capacites/port_politique_revue_kyc.dart';
 import '../../core/capacites/port_politiques_commerciales.dart';
 import '../../core/capacites/port_recharge_foyer.dart';
@@ -223,6 +224,9 @@ List<Override> surchargesDemoTuteur({
       ),
       portPolitiquesCommercialesProvider.overrideWithValue(
         const PolitiquesCommercialesDemo(),
+      ),
+      portPolitiqueFamilleProvider.overrideWithValue(
+        const PolitiqueFamilleDemo(),
       ),
       portRechargeFoyerProvider.overrideWithValue(
         RechargeFoyerFinanceDemo(jeu),

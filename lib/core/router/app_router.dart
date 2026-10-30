@@ -202,6 +202,7 @@ import '../../features/foyer/fiche_eleve_page.dart';
 import '../../features/foyer/finances_foyer.dart' show financesFoyerProvider;
 import '../../features/foyer/foyer_page.dart';
 import '../../features/foyer/invitation_conjoint.dart';
+import '../../features/foyer/nos_prix_page.dart';
 import '../../features/inscription/etapes/genre_etape.dart';
 import '../../features/inscription/etapes/identite_etape.dart';
 import '../../features/inscription/etapes/recapitulatif_etape.dart';
@@ -997,6 +998,18 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     path: 'appareils',
                     pageBuilder: glissee(
                       (GoRouterState _) => const AppareilsPage(),
+                    ),
+                  ),
+                  // TRANSPARENCE (30/10/2026) : avant `:eleveId`.
+                  GoRoute(
+                    path: 'prix',
+                    pageBuilder: glissee(
+                      (GoRouterState _) => Builder(
+                        builder: (BuildContext context) => NosPrixPage(
+                          onRetour: () =>
+                              GoRouter.of(context).go(Routes.tuteurFoyer),
+                        ),
+                      ),
                     ),
                   ),
                   GoRoute(

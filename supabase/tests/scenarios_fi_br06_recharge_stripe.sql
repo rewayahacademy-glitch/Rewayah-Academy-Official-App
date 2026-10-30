@@ -15,6 +15,8 @@ BEGIN;
 -- FAC-E-01 : ce scenario eprouve la politique v1 ; la v2 (en vigueur le
 -- 1er novembre 2026) est retiree le temps du scenario, annule a la fin.
 ALTER TABLE public.politiques_commerciales DISABLE TRIGGER politiques_commerciales_immuable;
+-- TRANSPARENCE (31/10) : sa repartition s'en va avec elle.
+DELETE FROM public.repartitions_paiement WHERE politique_version = 'v2.0.0';
 DELETE FROM public.politiques_commerciales WHERE version = 'v2.0.0';
 ALTER TABLE public.politiques_commerciales ENABLE TRIGGER politiques_commerciales_immuable;
 

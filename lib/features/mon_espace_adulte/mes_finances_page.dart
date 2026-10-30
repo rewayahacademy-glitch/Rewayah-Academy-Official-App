@@ -26,7 +26,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/capacites/port_mes_finances.dart';
 import '../../core/finance/finances_profil.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/identite_profil.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../foyer/fiche/finances_page.dart';
 import '../foyer/fiche/mouvements_page.dart';
@@ -40,6 +42,7 @@ class MesFinancesPage extends ConsumerWidget {
     required this.onRecharger,
     required this.onMouvements,
     super.key,
+    this.onNosPrix,
   });
 
   /// Le retour vers Mon espace.
@@ -51,34 +54,52 @@ class MesFinancesPage extends ConsumerWidget {
   /// Ouvre mes mouvements.
   final VoidCallback onMouvements;
 
+  /// Ouvre « Nos prix, en toute transparence » (TRANSPARENCE, 30/10/2026) ;
+  /// sans lui, aucun lien.
+  final VoidCallback? onNosPrix;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return PageShell(
       // La page d'arrivee porte le nom de la ligne tapee (EA-4c).
       titre: t.adulte.monEspace.paiements,
       onRetour: onRetour,
-      child: EtatsFinancesProfil(
-        lecture: ref.watch(mesFinancesProvider),
-        onRelire: () => ref.invalidate(mesFinancesProvider),
-        textes: (
-          indisponibleTitre: t.adulte.finances.indisponibleTitre,
-          indisponiblePhrase: t.adulte.finances.indisponiblePhrase,
-          erreurTitre: t.adulte.finances.erreurTitre,
-          videTitre: t.adulte.finances.videTitre,
-          videPhrase: t.adulte.finances.videPhrase,
-        ),
-        construire: (FinancesProfil finance) => VueFinancesProfil(
-          finance: finance,
-          avatar: PhotoEleve(
-            prenom: finance.prenom,
-            cleAvatar: finance.cleAvatar,
-            diametre: TailleIdentite.entete.diametre,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          EtatsFinancesProfil(
+            lecture: ref.watch(mesFinancesProvider),
+            onRelire: () => ref.invalidate(mesFinancesProvider),
+            textes: (
+              indisponibleTitre: t.adulte.finances.indisponibleTitre,
+              indisponiblePhrase: t.adulte.finances.indisponiblePhrase,
+              erreurTitre: t.adulte.finances.erreurTitre,
+              videTitre: t.adulte.finances.videTitre,
+              videPhrase: t.adulte.finances.videPhrase,
+            ),
+            construire: (FinancesProfil finance) => VueFinancesProfil(
+              finance: finance,
+              avatar: PhotoEleve(
+                prenom: finance.prenom,
+                cleAvatar: finance.cleAvatar,
+                diametre: TailleIdentite.entete.diametre,
+              ),
+              libelleRecharger: t.adulte.paiements.recharger,
+              onRecharger: () => onRecharger(finance.profilId),
+              semantiqueMouvements: t.adulte.finances.voirMouvementsSemantique,
+              onMouvements: onMouvements,
+            ),
           ),
-          libelleRecharger: t.adulte.paiements.recharger,
-          onRecharger: () => onRecharger(finance.profilId),
-          semantiqueMouvements: t.adulte.finances.voirMouvementsSemantique,
-          onMouvements: onMouvements,
-        ),
+          if (onNosPrix case final VoidCallback ouvrir) ...<Widget>[
+            Ecart.vXl,
+            LienFleche(
+              alignerEnDebut: true,
+              libelle: t.argent.transparence.lien,
+              onPress: ouvrir,
+            ),
+          ],
+        ],
       ),
     );
   }

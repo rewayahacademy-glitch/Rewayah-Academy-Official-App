@@ -18,6 +18,7 @@ import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/port_accents_profils.dart';
 import 'package:rewayah_academy/core/capacites/port_paiements_foyer.dart';
+import 'package:rewayah_academy/core/capacites/port_politique_famille.dart';
 import 'package:rewayah_academy/core/capacites/port_politiques_commerciales.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/finances_profil.dart';
@@ -141,6 +142,9 @@ Future<GoRouter> _monter(
           ),
           portPolitiquesCommercialesProvider.overrideWithValue(
             const PolitiquesCommercialesDemo(),
+          ),
+          portPolitiqueFamilleProvider.overrideWithValue(
+            const PolitiqueFamilleDemo(),
           ),
         ],
       ],

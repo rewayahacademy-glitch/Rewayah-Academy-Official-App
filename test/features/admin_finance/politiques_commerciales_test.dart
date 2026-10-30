@@ -32,6 +32,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
+import 'package:rewayah_academy/core/capacites/port_politique_famille.dart';
 import 'package:rewayah_academy/core/capacites/port_politiques_commerciales.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/format_montant.dart';
@@ -274,6 +275,7 @@ _Port _avecCeBrouillon(PolitiqueCommerciale brouillon) =>
 
 List<Override> _avec(PortPolitiquesCommerciales port) => <Override>[
   portPolitiquesCommercialesProvider.overrideWithValue(port),
+  portPolitiqueFamilleProvider.overrideWithValue(const PolitiqueFamilleDemo()),
 ];
 
 void _taille(WidgetTester tester, Size taille) {

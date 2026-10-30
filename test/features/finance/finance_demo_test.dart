@@ -17,6 +17,7 @@ import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/port_acces_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_finance_direction.dart';
 import 'package:rewayah_academy/core/capacites/port_paiements_foyer.dart';
+import 'package:rewayah_academy/core/capacites/port_politique_famille.dart';
 import 'package:rewayah_academy/core/capacites/port_politiques_commerciales.dart';
 import 'package:rewayah_academy/core/capacites/port_recharge_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_revenus_enseignant.dart';
@@ -767,6 +768,9 @@ void main() {
             ),
             portPolitiquesCommercialesProvider.overrideWithValue(
               const PolitiquesCommercialesDemo(),
+            ),
+            portPolitiqueFamilleProvider.overrideWithValue(
+              const PolitiqueFamilleDemo(),
             ),
             portFinanceDirectionProvider.overrideWithValue(
               const FinanceDirectionDemo(),
