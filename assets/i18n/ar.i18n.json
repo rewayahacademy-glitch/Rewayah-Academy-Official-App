@@ -432,6 +432,24 @@
     },
     "demarrage": {
       "ouverture": "جارٍ فتح Rewayah"
+    },
+    "listes": {
+      "actions": "الإجراءات",
+      "actionsDe": "الإجراءات: ⁨{objet}⁩",
+      "cocherPage": "تحديد الصفحة",
+      "cocherLigne": "تحديد ⁨{objet}⁩",
+      "trierPar": "الترتيب حسب ⁨{colonne}⁩",
+      "trierParCroissant": "الترتيب حسب ⁨{colonne}⁩ (تصاعدي حاليًا)",
+      "trierParDecroissant": "الترتيب حسب ⁨{colonne}⁩ (تنازلي حاليًا)",
+      "tranche": "⁦⁨{debut}⁩-⁨{fin}⁩⁩ من ⁨{total}⁩",
+      "trancheLue": "الأسطر من ⁨{debut}⁩ إلى ⁨{fin}⁩ من أصل ⁨{total}⁩",
+      "precedente": "الصفحة السابقة",
+      "suivante": "الصفحة التالية",
+      "taillePage": "الأسطر في كل صفحة",
+      "parPage": "⁨{n}⁩ في كل صفحة",
+      "deselectionner": "إلغاء التحديد",
+      "retirerFiltre": "إزالة المرشح: ⁨{filtre}⁩",
+      "toutEffacer": "مسح الكل"
     }
   },
   "miseAJour": {

@@ -2890,7 +2890,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       EtatGalerie(
         'seul',
         (BuildContext _) => const _SousMaterial(
-          child: MenuActions(actions: _actionsExemple, tooltip: 'Actions'),
+          child: MenuActions(actions: _actionsExemple, objet: 'Amina Bah'),
         ),
       ),
       // Son contexte d'usage reel : colle en bout d'une ligne de liste, ou il
@@ -2901,7 +2901,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           child: Row(
             children: <Widget>[
               Expanded(child: Text('Amina Bah')),
-              MenuActions(actions: _actionsExemple, tooltip: 'Actions'),
+              MenuActions(actions: _actionsExemple, objet: 'Amina Bah'),
             ],
           ),
         ),

@@ -207,6 +207,24 @@
     "recherche": {
       "effacer": "Effacer la recherche",
       "fermer": "Fermer la recherche"
+    },
+    "listes": {
+      "actions": "Actions",
+      "actionsDe": "Actions : {objet}",
+      "cocherPage": "Cocher la page",
+      "cocherLigne": "Cocher {objet}",
+      "trierPar": "Trier par {colonne}",
+      "trierParCroissant": "Trier par {colonne} (actuellement croissant)",
+      "trierParDecroissant": "Trier par {colonne} (actuellement décroissant)",
+      "tranche": "{debut}-{fin} sur {total}",
+      "trancheLue": "Lignes {debut} à {fin} sur {total}",
+      "precedente": "Page précédente",
+      "suivante": "Page suivante",
+      "taillePage": "Lignes par page",
+      "parPage": "{n} par page",
+      "deselectionner": "Désélectionner",
+      "retirerFiltre": "Retirer le filtre : {filtre}",
+      "toutEffacer": "Tout effacer"
     }
   },
   "miseAJour": {

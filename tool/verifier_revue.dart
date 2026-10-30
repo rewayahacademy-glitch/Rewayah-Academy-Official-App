@@ -133,6 +133,7 @@ void main(List<String> arguments) {
     'avatar-taille',
     'onglets-defilants',
     'wrap-filtres',
+    'case-recomposee',
   };
   final String? filtre = arguments
       .where((String a) => a.startsWith('--regle='))
@@ -189,6 +190,9 @@ void main(List<String> arguments) {
   }
   if (regles.contains('wrap-filtres')) {
     violations.addAll(_wrapsDeFiltres());
+  }
+  if (regles.contains('case-recomposee')) {
+    violations.addAll(_casesRecomposees());
   }
   if (regles.contains('bouton-recompose')) {
     violations.addAll(_boutonsRecomposes());
@@ -499,6 +503,52 @@ List<Violation> _wrapsDeFiltres() {
           ),
         );
       }
+    }
+  }
+  return v;
+}
+
+/// LISTES-1 (23/10/2026) : une case a cocher est `CaseACocher`
+/// (`lib/core/widgets/case_a_cocher.dart`), jamais un `Checkbox` ou un
+/// `CheckboxListTile` de Material recompose dans une fonctionnalite : ils n'ont
+/// ni la cible du mode d'interface, ni l'anneau de focus du produit, ni l'etat
+/// partiel.
+///
+/// Exceptions **datees du 23/10/2026** : les sites qui existaient avant la case
+/// partagee, non migres (ecrans hors du lot des listes). Le nombre autorise par
+/// fichier ne monte jamais ; on retire la ligne quand le site est migre. Un
+/// fichier absent de cette liste n'a droit a aucun `Checkbox`.
+const Map<String, int> _casesMaterielAutorisees = <String, int>{
+  'lib/features/admin_pedagogie_bibliotheque/attribution/attribution_page.dart':
+      2,
+  'lib/features/admin_pedagogie_bibliotheque/import/import_page.dart': 1,
+  'lib/features/admin_pedagogie_bibliotheque/publication/publication_page.dart':
+      2,
+  'lib/features/comptable/paiements/ligne_obligation.dart': 1,
+  'lib/features/consentements/texte_observation.dart': 1,
+  'lib/features/foyer/recharge_foyer.dart': 1,
+};
+
+List<Violation> _casesRecomposees() {
+  final List<Violation> v = <Violation>[];
+  final RegExp materiel = RegExp(r'\b(Checkbox|CheckboxListTile)\s*\(');
+  for (final File f in _sourcesFeatures()) {
+    final String chemin = f.path.replaceAll('\\', '/');
+    final String t = _sansCommentaires(f);
+    int rang = 0;
+    final int permis = _casesMaterielAutorisees[chemin] ?? 0;
+    for (final RegExpMatch m in materiel.allMatches(t)) {
+      if (++rang <= permis) {
+        continue;
+      }
+      v.add(
+        Violation(
+          chemin,
+          _ligneDe(t, m.start),
+          'case-recomposee',
+          '${m.group(1)} de Material : CaseACocher (LISTES-1)',
+        ),
+      );
     }
   }
   return v;
