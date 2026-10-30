@@ -3434,8 +3434,8 @@ class Traductions$admissions$fr {
 	/// fr: 'Un nom, une adresse e‑mail ou une référence.'
 	String get rechercherAide => 'Un nom, une adresse e‑mail ou une référence.';
 
-	/// fr: 'Les demandes ne se lisent pas pour le moment. Vérifiez la connexion, puis réessayez.'
-	String get lectureErreur => 'Les demandes ne se lisent pas pour le moment. Vérifiez la connexion, puis réessayez.';
+	/// fr: 'Les demandes ne se lisent pas pour le moment. Réessayez dans un instant.'
+	String get lectureErreur => 'Les demandes ne se lisent pas pour le moment. Réessayez dans un instant.';
 
 	/// fr: 'Aucune demande pour le moment.'
 	String get vide => 'Aucune demande pour le moment.';
@@ -3452,11 +3452,11 @@ class Traductions$admissions$fr {
 	/// fr: 'Page {n} sur {total}'
 	String pageSur({required Object n, required Object total}) => 'Page ${n} sur ${total}';
 
-	/// fr: 'Demande de {nom}'
-	String feuilleTitre({required Object nom}) => 'Demande de ${nom}';
+	/// fr: 'Demande {deNom}'
+	String feuilleTitre({required Object deNom}) => 'Demande ${deNom}';
 
-	/// fr: 'Ouvrir la demande de {nom}'
-	String ouvrir({required Object nom}) => 'Ouvrir la demande de ${nom}';
+	/// fr: 'Ouvrir la demande {deNom}'
+	String ouvrir({required Object deNom}) => 'Ouvrir la demande ${deNom}';
 
 	/// fr: 'Reçue le'
 	String get recueLe => 'Reçue le';
@@ -3478,11 +3478,11 @@ class Traductions$admissions$fr {
 
 	late final Traductions$admissions$etat$fr etat = Traductions$admissions$etat$fr.internal(_root);
 
-	/// fr: 'Accepter la demande de {nom}'
-	String accepter({required Object nom}) => 'Accepter la demande de ${nom}';
+	/// fr: 'Accepter la demande {deNom}'
+	String accepter({required Object deNom}) => 'Accepter la demande ${deNom}';
 
 	/// fr: 'Son compte s'ouvre et un e‑mail « Votre demande est acceptée » part tout de suite. Les profils des enfants se créent à sa première connexion, avec les réponses de la demande.'
-	String get accepterConsequence => 'Son compte s\'ouvre et un e‑mail « Votre demande est acceptée » part tout de suite. Les profils des enfants se créent à sa première connexion, avec les réponses de la demande.';
+	String get accepterConsequence => 'Son compte s\'ouvre et un e‑mail « Votre demande est acceptée » part tout de suite. Les profils des enfants se créent à sa première connexion, avec les réponses de la demande.';
 
 	/// fr: 'Demander des précisions'
 	String get demanderPrecisions => 'Demander des précisions';
@@ -3496,11 +3496,11 @@ class Traductions$admissions$fr {
 	/// fr: 'Choisissez la phrase que la personne recevra, puis écrivez le motif pour la direction. La personne ne voit jamais le motif.'
 	String get refuserContexte => 'Choisissez la phrase que la personne recevra, puis écrivez le motif pour la direction. La personne ne voit jamais le motif.';
 
-	/// fr: 'Refuser la demande de {nom} ?'
-	String refuserQuestion({required Object nom}) => 'Refuser la demande de ${nom} ?';
+	/// fr: 'Refuser la demande {deNom} ?'
+	String refuserQuestion({required Object deNom}) => 'Refuser la demande ${deNom} ?';
 
 	/// fr: 'La personne reçoit un e‑mail « Nous ne pouvons pas donner suite ». Le refus s'annule pendant sept jours.'
-	String get refuserConsequence => 'La personne reçoit un e‑mail « Nous ne pouvons pas donner suite ». Le refus s\'annule pendant sept jours.';
+	String get refuserConsequence => 'La personne reçoit un e‑mail « Nous ne pouvons pas donner suite ». Le refus s\'annule pendant sept jours.';
 
 	/// fr: 'Motif, pour la direction'
 	String get motifInterne => 'Motif, pour la direction';
@@ -3509,7 +3509,7 @@ class Traductions$admissions$fr {
 	String get motifInterneAide => 'Il reste dans le journal de la demande.';
 
 	/// fr: 'La demande passe « à compléter ». La personne reçoit votre message par e‑mail et le retrouve sur sa page d'attente.'
-	String get precisionsContexte => 'La demande passe « à compléter ». La personne reçoit votre message par e‑mail et le retrouve sur sa page d\'attente.';
+	String get precisionsContexte => 'La demande passe « à compléter ». La personne reçoit votre message par e‑mail et le retrouve sur sa page d\'attente.';
 
 	/// fr: 'Ce qui manque'
 	String get precisionsMessage => 'Ce qui manque';
@@ -3536,19 +3536,19 @@ class Traductions$admissions$fr {
 	String get annulerRefus => 'Annuler le refus';
 
 	/// fr: 'Le refus s'annule pendant sept jours : la demande revient « à traiter ». La personne ne reçoit pas d'e‑mail.'
-	String get annulerRefusDetail => 'Le refus s\'annule pendant sept jours : la demande revient « à traiter ». La personne ne reçoit pas d\'e‑mail.';
+	String get annulerRefusDetail => 'Le refus s\'annule pendant sept jours : la demande revient « à traiter ». La personne ne reçoit pas d\'e‑mail.';
 
-	/// fr: 'L'acceptation de la demande de {nom} est annulée.'
-	String faitAcceptationAnnulee({required Object nom}) => 'L\'acceptation de la demande de ${nom} est annulée.';
+	/// fr: 'L'acceptation de la demande {deNom} est annulée.'
+	String faitAcceptationAnnulee({required Object deNom}) => 'L\'acceptation de la demande ${deNom} est annulée.';
 
 	/// fr: 'Son compte repasse en attente tout de suite.'
 	String get annulerAcceptationConsequence => 'Son compte repasse en attente tout de suite.';
 
-	/// fr: 'Annuler l'acceptation de {nom} ?'
-	String annulerAcceptationQuestion({required Object nom}) => 'Annuler l\'acceptation de ${nom} ?';
+	/// fr: 'Annuler l'acceptation {deNom} ?'
+	String annulerAcceptationQuestion({required Object deNom}) => 'Annuler l\'acceptation ${deNom} ?';
 
 	/// fr: 'L'acceptation s'annule pendant sept jours, tant qu'aucun enfant de la demande n'est dans une classe. La demande revient « à traiter » et le compte repasse en attente ; les profils des enfants sont mis de côté, jamais effacés. La personne ne reçoit pas d'e‑mail : écrivez-lui si besoin.'
-	String get annulerAcceptationDetail => 'L\'acceptation s\'annule pendant sept jours, tant qu\'aucun enfant de la demande n\'est dans une classe. La demande revient « à traiter » et le compte repasse en attente ; les profils des enfants sont mis de côté, jamais effacés. La personne ne reçoit pas d\'e‑mail : écrivez-lui si besoin.';
+	String get annulerAcceptationDetail => 'L\'acceptation s\'annule pendant sept jours, tant qu\'aucun enfant de la demande n\'est dans une classe. La demande revient « à traiter » et le compte repasse en attente ; les profils des enfants sont mis de côté, jamais effacés. La personne ne reçoit pas d\'e‑mail : écrivez-lui si besoin.';
 
 	/// fr: 'Annuler l'acceptation'
 	String get annulerAcceptation => 'Annuler l\'acceptation';
@@ -3568,17 +3568,17 @@ class Traductions$admissions$fr {
 	/// fr: 'Écrivez un sujet et un message.'
 	String get manqueContact => 'Écrivez un sujet et un message.';
 
-	/// fr: 'Hors ligne : rien n'est parti. Réessayez quand la connexion revient.'
-	String get horsLigne => 'Hors ligne : rien n\'est parti. Réessayez quand la connexion revient.';
+	/// fr: 'Rien n'est parti. Réessayez dans un instant.'
+	String get horsLigne => 'Rien n\'est parti. Réessayez dans un instant.';
 
-	/// fr: 'Le geste n'a pas abouti. Vérifiez la connexion, puis réessayez.'
-	String get erreur => 'Le geste n\'a pas abouti. Vérifiez la connexion, puis réessayez.';
+	/// fr: 'Le geste n'a pas abouti. Rien n'est confirmé. Réessayez dans un instant.'
+	String get erreur => 'Le geste n\'a pas abouti. Rien n\'est confirmé. Réessayez dans un instant.';
 
-	/// fr: 'La demande de {nom} est acceptée ; l'e‑mail est en route.'
-	String faitAcceptee({required Object nom}) => 'La demande de ${nom} est acceptée ; l\'e‑mail est en route.';
+	/// fr: 'La demande {deNom} est acceptée ; l'e‑mail est en route.'
+	String faitAcceptee({required Object deNom}) => 'La demande ${deNom} est acceptée ; l\'e‑mail est en route.';
 
-	/// fr: 'La demande de {nom} est refusée ; l'e‑mail est en route.'
-	String faitRefusee({required Object nom}) => 'La demande de ${nom} est refusée ; l\'e‑mail est en route.';
+	/// fr: 'La demande {deNom} est refusée ; l'e‑mail est en route.'
+	String faitRefusee({required Object deNom}) => 'La demande ${deNom} est refusée ; l\'e‑mail est en route.';
 
 	/// fr: 'Les précisions sont demandées à {nom} ; l'e‑mail est en route.'
 	String faitPrecisions({required Object nom}) => 'Les précisions sont demandées à ${nom} ; l\'e‑mail est en route.';
@@ -3586,8 +3586,8 @@ class Traductions$admissions$fr {
 	/// fr: 'Le message à {nom} est en route.'
 	String faitContact({required Object nom}) => 'Le message à ${nom} est en route.';
 
-	/// fr: 'Le refus de la demande de {nom} est annulé.'
-	String faitRefusAnnule({required Object nom}) => 'Le refus de la demande de ${nom} est annulé.';
+	/// fr: 'Le refus de la demande {deNom} est annulé.'
+	String faitRefusAnnule({required Object deNom}) => 'Le refus de la demande ${deNom} est annulé.';
 
 	late final Traductions$admissions$refus$fr refus = Traductions$admissions$refus$fr.internal(_root);
 	late final Traductions$admissions$modeles$fr modeles = Traductions$admissions$modeles$fr.internal(_root);
@@ -20160,25 +20160,25 @@ class Traductions$admissions$modeles$fr {
 	String get general => 'Sans précision';
 
 	/// fr: '« Nous ne pouvons pas donner suite à votre demande pour le moment. »'
-	String get generalPhrase => '« Nous ne pouvons pas donner suite à votre demande pour le moment. »';
+	String get generalPhrase => '« Nous ne pouvons pas donner suite à votre demande pour le moment. »';
 
 	/// fr: 'Nos classes ne répondent pas à la demande'
 	String get besoins => 'Nos classes ne répondent pas à la demande';
 
 	/// fr: '« Nos classes ne répondent pas encore à ce que vous cherchez. »'
-	String get besoinsPhrase => '« Nos classes ne répondent pas encore à ce que vous cherchez. »';
+	String get besoinsPhrase => '« Nos classes ne répondent pas encore à ce que vous cherchez. »';
 
 	/// fr: 'Niveau pas encore proposé'
 	String get niveau => 'Niveau pas encore proposé';
 
 	/// fr: '« Le niveau demandé n'est pas encore proposé. »'
-	String get niveauPhrase => '« Le niveau demandé n\'est pas encore proposé. »';
+	String get niveauPhrase => '« Le niveau demandé n\'est pas encore proposé. »';
 
 	/// fr: 'Pas de réponse'
 	String get sansReponse => 'Pas de réponse';
 
 	/// fr: '« Nous n'avons pas reçu de réponse à notre dernier message. »'
-	String get sansReponsePhrase => '« Nous n\'avons pas reçu de réponse à notre dernier message. »';
+	String get sansReponsePhrase => '« Nous n\'avons pas reçu de réponse à notre dernier message. »';
 }
 
 // Path: commun.etats.chargementProlonge
@@ -51133,14 +51133,14 @@ extension on Traductions {
 			'admissions.aTraiter' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, zero: 'Aucune demande à traiter', one: '${n} demande à traiter', other: '${n} demandes à traiter', ), 
 			'admissions.rechercher' => 'Rechercher',
 			'admissions.rechercherAide' => 'Un nom, une adresse e‑mail ou une référence.',
-			'admissions.lectureErreur' => 'Les demandes ne se lisent pas pour le moment. Vérifiez la connexion, puis réessayez.',
+			'admissions.lectureErreur' => 'Les demandes ne se lisent pas pour le moment. Réessayez dans un instant.',
 			'admissions.vide' => 'Aucune demande pour le moment.',
 			'admissions.videRecherche' => 'Aucune demande ne correspond à cette recherche.',
 			'admissions.pagePrecedente' => 'Page précédente',
 			'admissions.pageSuivante' => 'Page suivante',
 			'admissions.pageSur' => ({required Object n, required Object total}) => 'Page ${n} sur ${total}',
-			'admissions.feuilleTitre' => ({required Object nom}) => 'Demande de ${nom}',
-			'admissions.ouvrir' => ({required Object nom}) => 'Ouvrir la demande de ${nom}',
+			'admissions.feuilleTitre' => ({required Object deNom}) => 'Demande ${deNom}',
+			'admissions.ouvrir' => ({required Object deNom}) => 'Ouvrir la demande ${deNom}',
 			'admissions.recueLe' => 'Reçue le',
 			'admissions.reference' => 'Référence',
 			'admissions.courriel' => 'Adresse e‑mail',
@@ -51152,17 +51152,17 @@ extension on Traductions {
 			'admissions.etat.acceptee' => 'Acceptée',
 			'admissions.etat.refusee' => 'Refusée',
 			'admissions.etat.retiree' => 'Retirée',
-			'admissions.accepter' => ({required Object nom}) => 'Accepter la demande de ${nom}',
-			'admissions.accepterConsequence' => 'Son compte s\'ouvre et un e‑mail « Votre demande est acceptée » part tout de suite. Les profils des enfants se créent à sa première connexion, avec les réponses de la demande.',
+			'admissions.accepter' => ({required Object deNom}) => 'Accepter la demande ${deNom}',
+			'admissions.accepterConsequence' => 'Son compte s\'ouvre et un e‑mail « Votre demande est acceptée » part tout de suite. Les profils des enfants se créent à sa première connexion, avec les réponses de la demande.',
 			'admissions.demanderPrecisions' => 'Demander des précisions',
 			'admissions.contacter' => ({required Object nom}) => 'Écrire à ${nom}',
 			'admissions.refuser' => 'Refuser la demande',
 			'admissions.refuserContexte' => 'Choisissez la phrase que la personne recevra, puis écrivez le motif pour la direction. La personne ne voit jamais le motif.',
-			'admissions.refuserQuestion' => ({required Object nom}) => 'Refuser la demande de ${nom} ?',
-			'admissions.refuserConsequence' => 'La personne reçoit un e‑mail « Nous ne pouvons pas donner suite ». Le refus s\'annule pendant sept jours.',
+			'admissions.refuserQuestion' => ({required Object deNom}) => 'Refuser la demande ${deNom} ?',
+			'admissions.refuserConsequence' => 'La personne reçoit un e‑mail « Nous ne pouvons pas donner suite ». Le refus s\'annule pendant sept jours.',
 			'admissions.motifInterne' => 'Motif, pour la direction',
 			'admissions.motifInterneAide' => 'Il reste dans le journal de la demande.',
-			'admissions.precisionsContexte' => 'La demande passe « à compléter ». La personne reçoit votre message par e‑mail et le retrouve sur sa page d\'attente.',
+			'admissions.precisionsContexte' => 'La demande passe « à compléter ». La personne reçoit votre message par e‑mail et le retrouve sur sa page d\'attente.',
 			'admissions.precisionsMessage' => 'Ce qui manque',
 			'admissions.precisionsAide' => 'Une ou deux phrases, en mots simples.',
 			'admissions.precisionsEnvoyer' => 'Envoyer la demande de précisions',
@@ -51171,24 +51171,24 @@ extension on Traductions {
 			'admissions.contactMessage' => 'Message',
 			'admissions.contactEnvoyer' => 'Envoyer le message',
 			'admissions.annulerRefus' => 'Annuler le refus',
-			'admissions.annulerRefusDetail' => 'Le refus s\'annule pendant sept jours : la demande revient « à traiter ». La personne ne reçoit pas d\'e‑mail.',
-			'admissions.faitAcceptationAnnulee' => ({required Object nom}) => 'L\'acceptation de la demande de ${nom} est annulée.',
+			'admissions.annulerRefusDetail' => 'Le refus s\'annule pendant sept jours : la demande revient « à traiter ». La personne ne reçoit pas d\'e‑mail.',
+			'admissions.faitAcceptationAnnulee' => ({required Object deNom}) => 'L\'acceptation de la demande ${deNom} est annulée.',
 			'admissions.annulerAcceptationConsequence' => 'Son compte repasse en attente tout de suite.',
-			'admissions.annulerAcceptationQuestion' => ({required Object nom}) => 'Annuler l\'acceptation de ${nom} ?',
-			'admissions.annulerAcceptationDetail' => 'L\'acceptation s\'annule pendant sept jours, tant qu\'aucun enfant de la demande n\'est dans une classe. La demande revient « à traiter » et le compte repasse en attente ; les profils des enfants sont mis de côté, jamais effacés. La personne ne reçoit pas d\'e‑mail : écrivez-lui si besoin.',
+			'admissions.annulerAcceptationQuestion' => ({required Object deNom}) => 'Annuler l\'acceptation ${deNom} ?',
+			'admissions.annulerAcceptationDetail' => 'L\'acceptation s\'annule pendant sept jours, tant qu\'aucun enfant de la demande n\'est dans une classe. La demande revient « à traiter » et le compte repasse en attente ; les profils des enfants sont mis de côté, jamais effacés. La personne ne reçoit pas d\'e‑mail : écrivez-lui si besoin.',
 			'admissions.annulerAcceptation' => 'Annuler l\'acceptation',
 			'admissions.retour' => 'Revenir à la demande',
 			'admissions.manqueModele' => 'Choisissez la phrase que la personne recevra.',
 			'admissions.manqueMotif' => 'Écrivez le motif : il reste dans le journal de la demande.',
 			'admissions.manqueMessage' => 'Écrivez ce qui manque.',
 			'admissions.manqueContact' => 'Écrivez un sujet et un message.',
-			'admissions.horsLigne' => 'Hors ligne : rien n\'est parti. Réessayez quand la connexion revient.',
-			'admissions.erreur' => 'Le geste n\'a pas abouti. Vérifiez la connexion, puis réessayez.',
-			'admissions.faitAcceptee' => ({required Object nom}) => 'La demande de ${nom} est acceptée ; l\'e‑mail est en route.',
-			'admissions.faitRefusee' => ({required Object nom}) => 'La demande de ${nom} est refusée ; l\'e‑mail est en route.',
+			'admissions.horsLigne' => 'Rien n\'est parti. Réessayez dans un instant.',
+			'admissions.erreur' => 'Le geste n\'a pas abouti. Rien n\'est confirmé. Réessayez dans un instant.',
+			'admissions.faitAcceptee' => ({required Object deNom}) => 'La demande ${deNom} est acceptée ; l\'e‑mail est en route.',
+			'admissions.faitRefusee' => ({required Object deNom}) => 'La demande ${deNom} est refusée ; l\'e‑mail est en route.',
 			'admissions.faitPrecisions' => ({required Object nom}) => 'Les précisions sont demandées à ${nom} ; l\'e‑mail est en route.',
 			'admissions.faitContact' => ({required Object nom}) => 'Le message à ${nom} est en route.',
-			'admissions.faitRefusAnnule' => ({required Object nom}) => 'Le refus de la demande de ${nom} est annulé.',
+			'admissions.faitRefusAnnule' => ({required Object deNom}) => 'Le refus de la demande ${deNom} est annulé.',
 			'admissions.refus.dejaTraitee' => 'Cette demande vient d\'être traitée par une autre personne de la direction. La liste est relue.',
 			'admissions.refus.transitionInterdite' => 'Ce geste ne vaut plus pour cette demande (son état a changé, ou le délai de sept jours est passé).',
 			'admissions.refus.motifRequis' => 'Un motif est nécessaire pour ce geste.',
@@ -51196,13 +51196,13 @@ extension on Traductions {
 			'admissions.refus.enfantEnClasse' => 'Un enfant de cette demande est déjà dans une classe : l\'acceptation ne s\'annule plus.',
 			'admissions.refus.autre' => 'Le serveur a refusé ce geste. Rouvrez la demande pour voir son état.',
 			'admissions.modeles.general' => 'Sans précision',
-			'admissions.modeles.generalPhrase' => '« Nous ne pouvons pas donner suite à votre demande pour le moment. »',
+			'admissions.modeles.generalPhrase' => '« Nous ne pouvons pas donner suite à votre demande pour le moment. »',
 			'admissions.modeles.besoins' => 'Nos classes ne répondent pas à la demande',
-			'admissions.modeles.besoinsPhrase' => '« Nos classes ne répondent pas encore à ce que vous cherchez. »',
+			'admissions.modeles.besoinsPhrase' => '« Nos classes ne répondent pas encore à ce que vous cherchez. »',
 			'admissions.modeles.niveau' => 'Niveau pas encore proposé',
-			'admissions.modeles.niveauPhrase' => '« Le niveau demandé n\'est pas encore proposé. »',
+			'admissions.modeles.niveauPhrase' => '« Le niveau demandé n\'est pas encore proposé. »',
 			'admissions.modeles.sansReponse' => 'Pas de réponse',
-			'admissions.modeles.sansReponsePhrase' => '« Nous n\'avons pas reçu de réponse à notre dernier message. »',
+			'admissions.modeles.sansReponsePhrase' => '« Nous n\'avons pas reçu de réponse à notre dernier message. »',
 			_ => null,
 		};
 	}

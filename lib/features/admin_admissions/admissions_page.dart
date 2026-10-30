@@ -15,6 +15,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../core/admin/admin_domaine.dart';
 import '../../core/admission/port_admissions_direction.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/offres/offre_horaire.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -272,7 +273,7 @@ class _AdmissionsPageState extends ConsumerState<AdmissionsPage> {
     unawaited(
       AppBottomSheet.ouvrir<void>(
         context,
-        titre: t.admissions.feuilleTitre(nom: d.nom),
+        titre: t.admissions.feuilleTitre(deNom: deDevant(d.nom)),
         constructeur: (BuildContext _) =>
             FeuilleDemandeAdmission(demande: d, onFait: _relire),
       ),
@@ -296,7 +297,7 @@ class _CarteDemande extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     return AppCard(
       onPress: onPress,
-      libelleSemantique: a.ouvrir(nom: demande.nom),
+      libelleSemantique: a.ouvrir(deNom: deDevant(demande.nom)),
       entete: OverflowBar(
         alignment: MainAxisAlignment.spaceBetween,
         overflowAlignment: OverflowBarAlignment.start,
@@ -421,8 +422,8 @@ class _FeuilleDemandeAdmissionState
       final bool oui = await ConfirmDestructive.demander(
         context,
         question: refus
-            ? a.refuserQuestion(nom: d.nom)
-            : a.annulerAcceptationQuestion(nom: d.nom),
+            ? a.refuserQuestion(deNom: deDevant(d.nom))
+            : a.annulerAcceptationQuestion(deNom: deDevant(d.nom)),
         consequence: refus
             ? a.refuserConsequence
             : a.annulerAcceptationConsequence,
@@ -445,10 +446,10 @@ class _FeuilleDemandeAdmissionState
       switch (v) {
         case _Vue.resume:
           await port.accepter(d, cle: _cle(v));
-          _fait = a.faitAcceptee(nom: d.nom);
+          _fait = a.faitAcceptee(deNom: deDevant(d.nom));
         case _Vue.refuser:
           await port.refuser(d, motif: motif, modele: _modele!, cle: _cle(v));
-          _fait = a.faitRefusee(nom: d.nom);
+          _fait = a.faitRefusee(deNom: deDevant(d.nom));
         case _Vue.precisions:
           await port.demanderPrecisions(d, message: message, cle: _cle(v));
           _fait = a.faitPrecisions(nom: d.nom);
@@ -457,10 +458,10 @@ class _FeuilleDemandeAdmissionState
           _fait = a.faitContact(nom: d.nom);
         case _Vue.annuler:
           await port.annulerRefus(d, motif: motif, cle: _cle(v));
-          _fait = a.faitRefusAnnule(nom: d.nom);
+          _fait = a.faitRefusAnnule(deNom: deDevant(d.nom));
         case _Vue.annulerAcceptation:
           await port.annulerAcceptation(d, motif: motif, cle: _cle(v));
-          _fait = a.faitAcceptationAnnulee(nom: d.nom);
+          _fait = a.faitAcceptationAnnulee(deNom: deDevant(d.nom));
       }
       _cles.remove(v);
       if (v != _Vue.contacter) _gesteFait = true;
@@ -541,7 +542,7 @@ class _FeuilleDemandeAdmissionState
           else if (traitable) ...<Widget>[
             _plein(
               key: const ValueKey<String>('admission-accepter'),
-              libelle: a.accepter(nom: d.nom),
+              libelle: a.accepter(deNom: deDevant(d.nom)),
               enCours: _envoi,
               onPress: () => _envoyer(_Vue.resume),
             ),

@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admission/port_admissions_direction.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
@@ -300,7 +301,10 @@ void main() {
       await _toucher(tester, 'admission-accepter');
       expect(p.gestes, <String>['accepter:c1']);
       expect(p.lectures, greaterThan(avant));
-      expect(find.text(a.faitAcceptee(nom: 'Awa Bah')), findsOneWidget);
+      expect(
+        find.text(a.faitAcceptee(deNom: deDevant('Awa Bah'))),
+        findsOneWidget,
+      );
       expect(
         find.byKey(const ValueKey<String>('admission-accepter')),
         findsNothing,
@@ -328,12 +332,18 @@ void main() {
       await laisser(tester);
       await _toucher(tester, 'admission-refuser-envoyer');
       // La confirmation, avant tout envoi.
-      expect(find.text(a.refuserQuestion(nom: 'Awa Bah')), findsOneWidget);
+      expect(
+        find.text(a.refuserQuestion(deNom: deDevant('Awa Bah'))),
+        findsOneWidget,
+      );
       expect(p.gestes, isEmpty);
       await tester.tap(find.text(a.refuser).last);
       await laisser(tester);
       expect(p.gestes, <String>['refuser:c1:refus_niveau:Niveau avancé']);
-      expect(find.text(a.faitRefusee(nom: 'Awa Bah')), findsOneWidget);
+      expect(
+        find.text(a.faitRefusee(deNom: deDevant('Awa Bah'))),
+        findsOneWidget,
+      );
     });
 
     testWidgets('precisions : le message est exige puis envoye', (
@@ -393,7 +403,10 @@ void main() {
       await laisser(tester);
       await _toucher(tester, 'admission-annuler-envoyer');
       expect(p.gestes, <String>['annuler:c1:Erreur de lecture']);
-      expect(find.text(a.faitRefusAnnule(nom: 'Awa Bah')), findsOneWidget);
+      expect(
+        find.text(a.faitRefusAnnule(deNom: deDevant('Awa Bah'))),
+        findsOneWidget,
+      );
     });
 
     testWidgets('acceptation recente : l annulation, motif et confirmation', (
@@ -420,7 +433,7 @@ void main() {
       await laisser(tester);
       await _toucher(tester, 'admission-annuler-acceptation-envoyer');
       expect(
-        find.text(a.annulerAcceptationQuestion(nom: 'Awa Bah')),
+        find.text(a.annulerAcceptationQuestion(deNom: deDevant('Awa Bah'))),
         findsOneWidget,
       );
       expect(p.gestes, isEmpty);
@@ -428,7 +441,7 @@ void main() {
       await laisser(tester);
       expect(p.gestes, <String>['annuler-acceptation:c1:Erreur de famille']);
       expect(
-        find.text(a.faitAcceptationAnnulee(nom: 'Awa Bah')),
+        find.text(a.faitAcceptationAnnulee(deNom: deDevant('Awa Bah'))),
         findsOneWidget,
       );
     });
@@ -521,7 +534,10 @@ void main() {
       await _ouvrir(tester);
       await _toucher(tester, 'admission-accepter');
       expect(find.text(a.erreur), findsOneWidget);
-      expect(find.text(a.faitAcceptee(nom: 'Awa Bah')), findsNothing);
+      expect(
+        find.text(a.faitAcceptee(deNom: deDevant('Awa Bah'))),
+        findsNothing,
+      );
     });
   });
 
