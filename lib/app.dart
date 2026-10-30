@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'core/accessibilite/mode_accessibilite.dart';
 import 'core/domain/enums.dart';
 import 'core/fraicheur/avis_ephemere.dart';
+import 'core/fraicheur/relecture_page.dart';
 import 'core/fraicheur/veille_fraicheur.dart';
 import 'core/i18n/strings.g.dart';
 import 'core/preferences/preferences_locales.dart';
@@ -106,7 +107,13 @@ class RewayahApp extends ConsumerWidget {
                 const BandeauAvisEphemere(),
                 if (observation != null)
                   BandeauObservation(observation: observation),
-                Expanded(child: rendu ?? const SizedBox.shrink()),
+                // R3 (30/10/2026) : tirer pour rafraichir (`PageShell`) et
+                // relire au retour sur un onglet ou dans l'application.
+                Expanded(
+                  child: RelectureGenerale(
+                    child: rendu ?? const SizedBox.shrink(),
+                  ),
+                ),
               ],
             ),
           ),

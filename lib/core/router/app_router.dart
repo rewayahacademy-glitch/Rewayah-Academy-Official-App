@@ -250,6 +250,7 @@ import '../config/env.dart';
 import '../domain/enums.dart';
 import '../dossier/resignature_contrat.dart';
 import '../finance/montant.dart';
+import '../fraicheur/relecture_page.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../mouvement/transitions.dart';
@@ -3008,6 +3009,11 @@ class _CoquilleNavigation extends ConsumerWidget {
         if (index >= navigationShell.route.branches.length) {
           GoRouter.of(context).go(destination);
           return;
+        }
+        // R3 (30/10/2026) : revenir sur un onglet relit ses donnees (au plus
+        // toutes les 10 s, `intervalleRelectureAutomatique`).
+        if (index != navigationShell.currentIndex) {
+          RelecturePage.auRetourDe(context)?.call();
         }
         navigationShell.goBranch(
           index,
