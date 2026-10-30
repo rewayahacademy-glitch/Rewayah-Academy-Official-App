@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/misc.dart' show StreamProviderFamily;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../observabilite/journal_dev.dart';
+import '../session/session_controleur.dart';
 
 /// Les quatorze etats de presence de la Bible section 29.1, plus l'inconnu.
 ///
@@ -285,7 +286,12 @@ presenceSeanceProvider =
       // le web, `extra` perdu) demandait la presence avec un identifiant vide
       // toutes les 20 s (`session_id=eq.`, 400 22P02). Sans seance, aucun
       // appel et aucune minuterie : la presence est inconnue, sans plus.
-      if (seanceId.trim().isEmpty) {
+      // R9 (30/10/2026) : liee a la personne connectee. A la deconnexion la
+      // presence est refaite, la minuterie de l'ancienne est annulee, et sans
+      // personne aucune lecture ne part (`presence_seance_v` en 401, 0,8 s
+      // apres la sortie de l'enseignant pendant l'essai K4).
+      final String? personne = surveillerPersonneConnectee(ref);
+      if (seanceId.trim().isEmpty || personne == null) {
         return Stream<List<PresenceParticipant>?>.value(null);
       }
       final ServicePresence service = ref.watch(servicePresenceProvider);

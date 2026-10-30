@@ -33,8 +33,11 @@ final FutureProvider<IdentiteTitulaire> identiteTitulaireProvider =
 
 /// L'acces de chaque profil eleve du foyer.
 final FutureProvider<List<AccesBeneficiaire>> accesFoyerProvider =
-    FutureProvider<List<AccesBeneficiaire>>((Ref ref) {
-      surveillerPersonneConnectee(ref);
+    FutureProvider<List<AccesBeneficiaire>>((Ref ref) async {
+      // R9 : apres la deconnexion, aucun appel (`acces_du_foyer` en 401).
+      if (surveillerPersonneConnectee(ref) == null) {
+        return const <AccesBeneficiaire>[];
+      }
       return ref.watch(portAccesFoyerProvider).acces();
     });
 

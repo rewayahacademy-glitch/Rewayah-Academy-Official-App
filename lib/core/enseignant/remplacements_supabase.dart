@@ -11,6 +11,8 @@
 // et par compatibilite cote serveur ; il se relit tant que l'ecran ecoute (la
 // table des remplacements n'est publiee a aucun client).
 
+import 'dart:async';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
@@ -89,6 +91,45 @@ class ReponseRemplacementSupabase implements ReponseRemplacement {
 /// L'intervalle de relecture du tableau commun, tant que l'ecran l'ecoute.
 const Duration intervalleOffresRemplacement = Duration(seconds: 30);
 
+/// [charger] tout de suite, puis toutes les [intervalle], tant que le flux est
+/// ecoute. Une erreur est emise et termine le flux, comme avant.
+///
+/// R9 (30/10/2026) : **une minuterie annulable, et non une boucle `async*`
+/// sur `Stream.periodic`.** Annulee, la boucle n'apprenait l'annulation qu'a
+/// son `yield` suivant, donc APRES une lecture de plus : un appel
+/// `offres_remplacement` partait jusqu'a 30 s apres la deconnexion, et
+/// revenait en 401 (23 s apres la sortie de l'enseignant pendant l'essai K4
+/// du 24/10). Meme convention que `presenceSeanceProvider`.
+Stream<T> relectureCadencee<T>(
+  Duration intervalle,
+  Future<T> Function() charger,
+) {
+  Timer? minuterie;
+  late final StreamController<T> sortie;
+
+  Future<void> lire() async {
+    try {
+      final T valeur = await charger();
+      if (!sortie.isClosed) sortie.add(valeur);
+    } on Object catch (erreur, pile) {
+      minuterie?.cancel();
+      if (!sortie.isClosed) {
+        sortie.addError(erreur, pile);
+        unawaited(sortie.close());
+      }
+    }
+  }
+
+  sortie = StreamController<T>(
+    onListen: () {
+      unawaited(lire());
+      minuterie = Timer.periodic(intervalle, (Timer _) => unawaited(lire()));
+    },
+    onCancel: () => minuterie?.cancel(),
+  );
+  return sortie.stream;
+}
+
 /// Le tableau commun des remplacements servi par Supabase.
 class RemplacementsSupabase implements PortRemplacements {
   /// Cree l'adaptateur sur le client de l'application.
@@ -97,14 +138,8 @@ class RemplacementsSupabase implements PortRemplacements {
   final SupabaseClient _client;
 
   @override
-  Stream<List<OffreCommune>> suivre() async* {
-    yield await _charger();
-    await for (final void _ in Stream<void>.periodic(
-      intervalleOffresRemplacement,
-    )) {
-      yield await _charger();
-    }
-  }
+  Stream<List<OffreCommune>> suivre() =>
+      relectureCadencee(intervalleOffresRemplacement, _charger);
 
   Future<List<OffreCommune>> _charger() async {
     final Object? brut = await _client.rpc<Object?>('offres_remplacement');

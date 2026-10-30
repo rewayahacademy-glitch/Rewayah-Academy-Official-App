@@ -28,6 +28,7 @@ library;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../session/session_controleur.dart';
 import 'absence_remplacement.dart';
 
 /// Ou en est une offre, pour l'enseignant qui la lit (rendu par le serveur).
@@ -84,10 +85,15 @@ final Provider<PortRemplacements?> portRemplacementsProvider =
     Provider<PortRemplacements?>((Ref _) => null);
 
 /// Les offres du tableau commun. Sans port, aucune offre.
+///
+/// R9 (30/10/2026) : liee a la personne connectee. A la deconnexion le flux
+/// est refait, l'ancien abonnement (relecture toutes les 30 s) est coupe, et
+/// sans personne aucune offre n'est lue (`offres_remplacement` en 401).
 final StreamProvider<List<OffreCommune>> offresCommunesProvider =
     StreamProvider<List<OffreCommune>>((Ref ref) {
+      final String? personne = surveillerPersonneConnectee(ref);
       final PortRemplacements? port = ref.watch(portRemplacementsProvider);
-      if (port == null) {
+      if (personne == null || port == null) {
         return Stream<List<OffreCommune>>.value(const <OffreCommune>[]);
       }
       return port.suivre();
