@@ -49,6 +49,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/video/livekit_session_provider.dart';
+import '../../core/video/politique_camera.dart';
 import '../../core/video/pre_vol.dart';
 import '../../core/video/repli_audio.dart';
 import '../../core/video/service_video.dart';
@@ -206,6 +207,13 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   bool _sansMicro = false;
   AccesSalle? _acces;
   CauseImpasse? _impasse;
+
+  /// K4 n° 13 : la relecture periodique de la politique de camera de
+  /// l'eleve, armee une fois la salle ouverte ([_armerVeilleCamera]).
+  Timer? _veilleCamera;
+
+  /// Une relecture est en cours : la suivante attend.
+  bool _relectureCamera = false;
   EtatSalle _etatMoteur = EtatSalle.absent;
 
   /// Vrai des que la salle s'est ouverte a cette entree.
@@ -358,6 +366,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     unawaited(_sEtats?.cancel());
     unawaited(_sParticipants?.cancel());
     unawaited(_sQualite?.cancel());
+    _veilleCamera?.cancel();
     unawaited(_synchro?.liberer());
     // Quitter au demontage, quelle que soit la raison du demontage : un retour
     // navigateur, une redirection, un billet expire. Sans cela, une salle
@@ -373,6 +382,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// l'une est muette sans savoir pourquoi. Verifier le micro pendant que l'on
   /// est encore seul devant son ecran coute une seconde et evite cela.
   Future<void> _entrer() async {
+    _veilleCamera?.cancel();
+    _veilleCamera = null;
     setState(() {
       _impasse = null;
       _aEteConnecte = false;
@@ -451,6 +462,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
 
     try {
       await _moteur.rejoindre(acces);
+      _armerVeilleCamera(acces);
     } catch (erreur) {
       // Le moteur a deja pose son etat d'echec et tout libere ; il ne reste
       // qu'a nommer la cause pour l'usager. Aucun detail technique ne remonte
@@ -459,6 +471,64 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       if (mounted) {
         setState(() => _impasse = CauseImpasse.reseau);
       }
+    }
+  }
+
+  /// K4 n° 13 (pilote, 30/10/2026) : le jeton d'un eleve fige sa camera a
+  /// l'entree. Si son tuteur l'ouvre ou la ferme pendant la seance, la salle
+  /// le voit a la relecture suivante, redemande un jeton (la base reste seule
+  /// juge) et rentre avec lui ; le micro ouvert le reste.
+  void _armerVeilleCamera(AccesSalle acces) {
+    _veilleCamera?.cancel();
+    _veilleCamera = null;
+    if (acces.role != 'student') {
+      return;
+    }
+    _veilleCamera = Timer.periodic(
+      intervallePolitiqueCamera,
+      (Timer _) => unawaited(_relireCamera()),
+    );
+  }
+
+  Future<void> _relireCamera() async {
+    final AccesSalle? courant = _acces;
+    final String? eleve = widget.eleveId ?? ref.read(sessionProvider).profileId;
+    if (_relectureCamera || courant == null || eleve == null || !mounted) {
+      return;
+    }
+    _relectureCamera = true;
+    try {
+      final bool? autorisee = await ref
+          .read(politiqueCameraProvider)
+          .cameraAutorisee(eleve);
+      if (!mounted ||
+          !identical(_acces, courant) ||
+          !jetonCameraPerime(courant, cameraAutorisee: autorisee)) {
+        return;
+      }
+      final AccesSalle neuf = await ref
+          .read(serviceVideoProvider)
+          .acces(widget.seanceId, eleveId: widget.eleveId);
+      if (!mounted ||
+          !identical(_acces, courant) ||
+          neuf.capacites.peutPublierVideo ==
+              courant.capacites.peutPublierVideo) {
+        return;
+      }
+      final bool microOuvert = _participants.any(
+        (ParticipantSalle p) => p.estLocal && p.micro,
+      );
+      setState(() => _acces = neuf);
+      // `rejoindre` ferme l'ancienne salle avant d'ouvrir la nouvelle.
+      await _moteur.rejoindre(neuf);
+      if (microOuvert && mounted) {
+        await _moteur.reglerMicro(actif: true);
+      }
+    } catch (erreur) {
+      // Une relecture manquee n'arrete pas la seance : la suivante reessaie.
+      journalDev('politique de camera non relue : $erreur');
+    } finally {
+      _relectureCamera = false;
     }
   }
 
@@ -537,6 +607,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // les deux cas ; seule cette ecriture distingue une sortie volontaire d'une
     // perte de reseau. Annoncer apres s'etre deconnecte laisserait le webhook
     // arriver le premier et inscrire une deconnexion.
+    _veilleCamera?.cancel();
+    _veilleCamera = null;
     await ref.read(serviceVideoProvider).annoncerSortie(widget.seanceId);
     await _moteur.quitter();
     unawaited(_synchro?.liberer());
