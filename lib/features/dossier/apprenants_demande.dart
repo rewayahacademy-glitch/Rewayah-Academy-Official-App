@@ -35,3 +35,54 @@ final FutureProvider<List<ApprenantDemande>> apprenantsDemandeProvider =
       (Ref ref) => ref.watch(lectureApprenantsDemandeProvider)(),
       retry: (int _, Object _) => null,
     );
+
+/// Ou en est la demande d'admission, vue par la personne (admission, lot C).
+enum IssueDemandeFamille {
+  /// La direction ne l'a pas encore decidee.
+  enCours,
+
+  /// La direction demande une precision.
+  aCompleter,
+
+  /// La direction ne peut pas y donner suite.
+  refusee,
+}
+
+/// La demande de la personne : son issue, et la precision demandee.
+typedef DemandeFamille = ({IssueDemandeFamille issue, String? precisions});
+
+/// Lit `ma_demande_admission` ; `null` sans demande.
+typedef LectureDemandeFamille = Future<DemandeFamille?> Function();
+
+Future<DemandeFamille?> _lireDemande() async {
+  final Object? r = await Supabase.instance.client.rpc<Object?>(
+    'ma_demande_admission',
+  );
+  if (r is! Map<String, dynamic>) {
+    return null;
+  }
+  final String? precisions = r['precisions'] as String?;
+  return (
+    issue: r['issue'] == 'refusee'
+        ? IssueDemandeFamille.refusee
+        : r['etat'] == 'a_completer'
+        ? IssueDemandeFamille.aCompleter
+        : IssueDemandeFamille.enCours,
+    precisions: precisions == null || precisions.trim().isEmpty
+        ? null
+        : precisions.trim(),
+  );
+}
+
+/// La lecture de la demande ; surchargee par les tests.
+final Provider<LectureDemandeFamille> lectureDemandeFamilleProvider =
+    Provider<LectureDemandeFamille>((Ref _) => _lireDemande);
+
+/// La demande du compte connecte. Une lecture en echec ne se relance pas : la
+/// page d'attente dit alors « Votre demande est en cours », qui reste vrai
+/// tant que rien d'autre n'est lu.
+final FutureProvider<DemandeFamille?> demandeFamilleProvider =
+    FutureProvider<DemandeFamille?>(
+      (Ref ref) => ref.watch(lectureDemandeFamilleProvider)(),
+      retry: (int _, Object _) => null,
+    );

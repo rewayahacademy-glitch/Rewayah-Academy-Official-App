@@ -105,6 +105,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$juridique$fr juridique = Traductions$juridique$fr.internal(_root);
 	late final Traductions$avis$fr avis = Traductions$avis$fr.internal(_root);
 	late final Traductions$courriels$fr courriels = Traductions$courriels$fr.internal(_root);
+	late final Traductions$admissions$fr admissions = Traductions$admissions$fr.internal(_root);
 }
 
 // Path: commun
@@ -639,6 +640,24 @@ class Traductions$attente$fr {
 
 	/// fr: 'Votre demande porte sur : {liste}.'
 	String demandePour({required Object liste}) => 'Votre demande porte sur : ${liste}.';
+
+	/// fr: 'Nous ne pouvons pas donner suite'
+	String get demandeRefuseeTitre => 'Nous ne pouvons pas donner suite';
+
+	/// fr: 'La direction a lu votre demande et ne peut pas y donner suite pour le moment.'
+	String get demandeRefuseeMessage => 'La direction a lu votre demande et ne peut pas y donner suite pour le moment.';
+
+	/// fr: 'L'e‑mail que nous vous avons envoyé vous en dit la raison. Vous pouvez y répondre pour toute question.'
+	String get demandeRefuseeDetail => 'L\'e‑mail que nous vous avons envoyé vous en dit la raison. Vous pouvez y répondre pour toute question.';
+
+	/// fr: 'Il nous manque une information'
+	String get precisionsTitre => 'Il nous manque une information';
+
+	/// fr: 'Pour étudier votre demande, la direction a besoin d'une précision :'
+	String get precisionsMessage => 'Pour étudier votre demande, la direction a besoin d\'une précision :';
+
+	/// fr: 'Répondez simplement à l'e‑mail que nous vous avons envoyé. La direction reprend votre demande dès votre réponse.'
+	String get precisionsReponse => 'Répondez simplement à l\'e‑mail que nous vous avons envoyé. La direction reprend votre demande dès votre réponse.';
 
 	/// fr: 'Actualiser'
 	String get actualiserCompte => 'Actualiser';
@@ -3377,6 +3396,201 @@ class Traductions$courriels$fr {
 
 	// Translations
 	late final Traductions$courriels$admin$fr admin = Traductions$courriels$admin$fr.internal(_root);
+}
+
+// Path: admissions
+class Traductions$admissions$fr {
+	Traductions$admissions$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Demandes'
+	String get titre => 'Demandes';
+
+	/// fr: 'Les demandes d'admission des familles et des élèves adultes. Personne n'entre sans la décision de la direction.'
+	String get sousTitre => 'Les demandes d\'admission des familles et des élèves adultes. Personne n\'entre sans la décision de la direction.';
+
+	/// fr: 'Population'
+	String get population => 'Population';
+
+	/// fr: 'Familles'
+	String get familles => 'Familles';
+
+	/// fr: 'Élèves adultes'
+	String get elevesAdultes => 'Élèves adultes';
+
+	/// fr: '(zero) {Aucune demande à traiter} (one) {{n} demande à traiter} (other) {{n} demandes à traiter}'
+	String aTraiter({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		zero: 'Aucune demande à traiter',
+		one: '${n} demande à traiter',
+		other: '${n} demandes à traiter',
+	);
+
+	/// fr: 'Rechercher'
+	String get rechercher => 'Rechercher';
+
+	/// fr: 'Un nom, une adresse e‑mail ou une référence.'
+	String get rechercherAide => 'Un nom, une adresse e‑mail ou une référence.';
+
+	/// fr: 'Les demandes ne se lisent pas pour le moment. Réessayez dans un instant.'
+	String get lectureErreur => 'Les demandes ne se lisent pas pour le moment. Réessayez dans un instant.';
+
+	/// fr: 'Aucune demande pour le moment.'
+	String get vide => 'Aucune demande pour le moment.';
+
+	/// fr: 'Aucune demande ne correspond à cette recherche.'
+	String get videRecherche => 'Aucune demande ne correspond à cette recherche.';
+
+	/// fr: 'Page précédente'
+	String get pagePrecedente => 'Page précédente';
+
+	/// fr: 'Page suivante'
+	String get pageSuivante => 'Page suivante';
+
+	/// fr: 'Page {n} sur {total}'
+	String pageSur({required Object n, required Object total}) => 'Page ${n} sur ${total}';
+
+	/// fr: 'Demande {deNom}'
+	String feuilleTitre({required Object deNom}) => 'Demande ${deNom}';
+
+	/// fr: 'Ouvrir la demande {deNom}'
+	String ouvrir({required Object deNom}) => 'Ouvrir la demande ${deNom}';
+
+	/// fr: 'Reçue le'
+	String get recueLe => 'Reçue le';
+
+	/// fr: 'Référence'
+	String get reference => 'Référence';
+
+	/// fr: 'Adresse e‑mail'
+	String get courriel => 'Adresse e‑mail';
+
+	/// fr: 'État'
+	String get etatLibelle => 'État';
+
+	/// fr: '{prenom}, pour lui-même ou elle-même'
+	String titulaire({required Object prenom}) => '${prenom}, pour lui-même ou elle-même';
+
+	/// fr: '{prenom}, {age} ans'
+	String enfant({required Object prenom, required Object age}) => '${prenom}, ${age} ans';
+
+	late final Traductions$admissions$etat$fr etat = Traductions$admissions$etat$fr.internal(_root);
+
+	/// fr: 'Accepter la demande {deNom}'
+	String accepter({required Object deNom}) => 'Accepter la demande ${deNom}';
+
+	/// fr: 'Son compte s'ouvre et un e‑mail « Votre demande est acceptée » part tout de suite. Les profils des enfants se créent à sa première connexion, avec les réponses de la demande.'
+	String get accepterConsequence => 'Son compte s\'ouvre et un e‑mail « Votre demande est acceptée » part tout de suite. Les profils des enfants se créent à sa première connexion, avec les réponses de la demande.';
+
+	/// fr: 'Demander des précisions'
+	String get demanderPrecisions => 'Demander des précisions';
+
+	/// fr: 'Écrire à {nom}'
+	String contacter({required Object nom}) => 'Écrire à ${nom}';
+
+	/// fr: 'Refuser la demande'
+	String get refuser => 'Refuser la demande';
+
+	/// fr: 'Choisissez la phrase que la personne recevra, puis écrivez le motif pour la direction. La personne ne voit jamais le motif.'
+	String get refuserContexte => 'Choisissez la phrase que la personne recevra, puis écrivez le motif pour la direction. La personne ne voit jamais le motif.';
+
+	/// fr: 'Refuser la demande {deNom} ?'
+	String refuserQuestion({required Object deNom}) => 'Refuser la demande ${deNom} ?';
+
+	/// fr: 'La personne reçoit un e‑mail « Nous ne pouvons pas donner suite ». Le refus s'annule pendant sept jours.'
+	String get refuserConsequence => 'La personne reçoit un e‑mail « Nous ne pouvons pas donner suite ». Le refus s\'annule pendant sept jours.';
+
+	/// fr: 'Motif, pour la direction'
+	String get motifInterne => 'Motif, pour la direction';
+
+	/// fr: 'Il reste dans le journal de la demande.'
+	String get motifInterneAide => 'Il reste dans le journal de la demande.';
+
+	/// fr: 'La demande passe « à compléter ». La personne reçoit votre message par e‑mail et le retrouve sur sa page d'attente.'
+	String get precisionsContexte => 'La demande passe « à compléter ». La personne reçoit votre message par e‑mail et le retrouve sur sa page d\'attente.';
+
+	/// fr: 'Ce qui manque'
+	String get precisionsMessage => 'Ce qui manque';
+
+	/// fr: 'Une ou deux phrases, en mots simples.'
+	String get precisionsAide => 'Une ou deux phrases, en mots simples.';
+
+	/// fr: 'Envoyer la demande de précisions'
+	String get precisionsEnvoyer => 'Envoyer la demande de précisions';
+
+	/// fr: 'Un message libre, envoyé par e‑mail. La demande ne change pas.'
+	String get contactContexte => 'Un message libre, envoyé par e‑mail. La demande ne change pas.';
+
+	/// fr: 'Sujet'
+	String get contactSujet => 'Sujet';
+
+	/// fr: 'Message'
+	String get contactMessage => 'Message';
+
+	/// fr: 'Envoyer le message'
+	String get contactEnvoyer => 'Envoyer le message';
+
+	/// fr: 'Annuler le refus'
+	String get annulerRefus => 'Annuler le refus';
+
+	/// fr: 'Le refus s'annule pendant sept jours : la demande revient « à traiter ». La personne ne reçoit pas d'e‑mail.'
+	String get annulerRefusDetail => 'Le refus s\'annule pendant sept jours : la demande revient « à traiter ». La personne ne reçoit pas d\'e‑mail.';
+
+	/// fr: 'L'acceptation de la demande {deNom} est annulée.'
+	String faitAcceptationAnnulee({required Object deNom}) => 'L\'acceptation de la demande ${deNom} est annulée.';
+
+	/// fr: 'Son compte repasse en attente tout de suite.'
+	String get annulerAcceptationConsequence => 'Son compte repasse en attente tout de suite.';
+
+	/// fr: 'Annuler l'acceptation {deNom} ?'
+	String annulerAcceptationQuestion({required Object deNom}) => 'Annuler l\'acceptation ${deNom} ?';
+
+	/// fr: 'L'acceptation s'annule pendant sept jours, tant qu'aucun enfant de la demande n'est dans une classe. La demande revient « à traiter » et le compte repasse en attente ; les profils des enfants sont mis de côté, jamais effacés. La personne ne reçoit pas d'e‑mail : écrivez-lui si besoin.'
+	String get annulerAcceptationDetail => 'L\'acceptation s\'annule pendant sept jours, tant qu\'aucun enfant de la demande n\'est dans une classe. La demande revient « à traiter » et le compte repasse en attente ; les profils des enfants sont mis de côté, jamais effacés. La personne ne reçoit pas d\'e‑mail : écrivez-lui si besoin.';
+
+	/// fr: 'Annuler l'acceptation'
+	String get annulerAcceptation => 'Annuler l\'acceptation';
+
+	/// fr: 'Revenir à la demande'
+	String get retour => 'Revenir à la demande';
+
+	/// fr: 'Choisissez la phrase que la personne recevra.'
+	String get manqueModele => 'Choisissez la phrase que la personne recevra.';
+
+	/// fr: 'Écrivez le motif : il reste dans le journal de la demande.'
+	String get manqueMotif => 'Écrivez le motif : il reste dans le journal de la demande.';
+
+	/// fr: 'Écrivez ce qui manque.'
+	String get manqueMessage => 'Écrivez ce qui manque.';
+
+	/// fr: 'Écrivez un sujet et un message.'
+	String get manqueContact => 'Écrivez un sujet et un message.';
+
+	/// fr: 'Rien n'est parti. Réessayez dans un instant.'
+	String get horsLigne => 'Rien n\'est parti. Réessayez dans un instant.';
+
+	/// fr: 'Le geste n'a pas abouti. Rien n'est confirmé. Réessayez dans un instant.'
+	String get erreur => 'Le geste n\'a pas abouti. Rien n\'est confirmé. Réessayez dans un instant.';
+
+	/// fr: 'La demande {deNom} est acceptée ; l'e‑mail est en route.'
+	String faitAcceptee({required Object deNom}) => 'La demande ${deNom} est acceptée ; l\'e‑mail est en route.';
+
+	/// fr: 'La demande {deNom} est refusée ; l'e‑mail est en route.'
+	String faitRefusee({required Object deNom}) => 'La demande ${deNom} est refusée ; l\'e‑mail est en route.';
+
+	/// fr: 'Les précisions sont demandées à {nom} ; l'e‑mail est en route.'
+	String faitPrecisions({required Object nom}) => 'Les précisions sont demandées à ${nom} ; l\'e‑mail est en route.';
+
+	/// fr: 'Le message à {nom} est en route.'
+	String faitContact({required Object nom}) => 'Le message à ${nom} est en route.';
+
+	/// fr: 'Le refus de la demande {deNom} est annulé.'
+	String faitRefusAnnule({required Object deNom}) => 'Le refus de la demande ${deNom} est annulé.';
+
+	late final Traductions$admissions$refus$fr refus = Traductions$admissions$refus$fr.internal(_root);
+	late final Traductions$admissions$modeles$fr modeles = Traductions$admissions$modeles$fr.internal(_root);
 }
 
 // Path: commun.formats
@@ -19882,6 +20096,90 @@ class Traductions$courriels$admin$fr {
 	late final Traductions$courriels$admin$ecrire$fr ecrire = Traductions$courriels$admin$ecrire$fr.internal(_root);
 	late final Traductions$courriels$admin$file$fr file = Traductions$courriels$admin$file$fr.internal(_root);
 	late final Traductions$courriels$admin$adresses$fr adresses = Traductions$courriels$admin$adresses$fr.internal(_root);
+}
+
+// Path: admissions.etat
+class Traductions$admissions$etat$fr {
+	Traductions$admissions$etat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À traiter'
+	String get aTraiter => 'À traiter';
+
+	/// fr: 'À compléter'
+	String get aCompleter => 'À compléter';
+
+	/// fr: 'Acceptée'
+	String get acceptee => 'Acceptée';
+
+	/// fr: 'Refusée'
+	String get refusee => 'Refusée';
+
+	/// fr: 'Retirée'
+	String get retiree => 'Retirée';
+}
+
+// Path: admissions.refus
+class Traductions$admissions$refus$fr {
+	Traductions$admissions$refus$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Cette demande vient d'être traitée par une autre personne de la direction. La liste est relue.'
+	String get dejaTraitee => 'Cette demande vient d\'être traitée par une autre personne de la direction. La liste est relue.';
+
+	/// fr: 'Ce geste ne vaut plus pour cette demande (son état a changé, ou le délai de sept jours est passé).'
+	String get transitionInterdite => 'Ce geste ne vaut plus pour cette demande (son état a changé, ou le délai de sept jours est passé).';
+
+	/// fr: 'Un motif est nécessaire pour ce geste.'
+	String get motifRequis => 'Un motif est nécessaire pour ce geste.';
+
+	/// fr: 'L'adresse e‑mail de cette personne n'est pas connue : aucun message ne peut partir.'
+	String get adresseInconnue => 'L\'adresse e‑mail de cette personne n\'est pas connue : aucun message ne peut partir.';
+
+	/// fr: 'Un enfant de cette demande est déjà dans une classe : l'acceptation ne s'annule plus.'
+	String get enfantEnClasse => 'Un enfant de cette demande est déjà dans une classe : l\'acceptation ne s\'annule plus.';
+
+	/// fr: 'Le serveur a refusé ce geste. Rouvrez la demande pour voir son état.'
+	String get autre => 'Le serveur a refusé ce geste. Rouvrez la demande pour voir son état.';
+}
+
+// Path: admissions.modeles
+class Traductions$admissions$modeles$fr {
+	Traductions$admissions$modeles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Sans précision'
+	String get general => 'Sans précision';
+
+	/// fr: '« Nous ne pouvons pas donner suite à votre demande pour le moment. »'
+	String get generalPhrase => '« Nous ne pouvons pas donner suite à votre demande pour le moment. »';
+
+	/// fr: 'Nos classes ne répondent pas à la demande'
+	String get besoins => 'Nos classes ne répondent pas à la demande';
+
+	/// fr: '« Nos classes ne répondent pas encore à ce que vous cherchez. »'
+	String get besoinsPhrase => '« Nos classes ne répondent pas encore à ce que vous cherchez. »';
+
+	/// fr: 'Niveau pas encore proposé'
+	String get niveau => 'Niveau pas encore proposé';
+
+	/// fr: '« Le niveau demandé n'est pas encore proposé. »'
+	String get niveauPhrase => '« Le niveau demandé n\'est pas encore proposé. »';
+
+	/// fr: 'Pas de réponse'
+	String get sansReponse => 'Pas de réponse';
+
+	/// fr: '« Nous n'avons pas reçu de réponse à notre dernier message. »'
+	String get sansReponsePhrase => '« Nous n\'avons pas reçu de réponse à notre dernier message. »';
 }
 
 // Path: commun.etats.chargementProlonge
@@ -41578,6 +41876,12 @@ extension on Traductions {
 			'attente.demandeMessage' => 'La direction lit chaque demande avant d\'ouvrir un compte.',
 			'attente.demandeDetail' => 'Vous n\'avez rien à envoyer. Nous vous écrivons à votre adresse e-mail dès que la direction a répondu.',
 			'attente.demandePour' => ({required Object liste}) => 'Votre demande porte sur : ${liste}.',
+			'attente.demandeRefuseeTitre' => 'Nous ne pouvons pas donner suite',
+			'attente.demandeRefuseeMessage' => 'La direction a lu votre demande et ne peut pas y donner suite pour le moment.',
+			'attente.demandeRefuseeDetail' => 'L\'e‑mail que nous vous avons envoyé vous en dit la raison. Vous pouvez y répondre pour toute question.',
+			'attente.precisionsTitre' => 'Il nous manque une information',
+			'attente.precisionsMessage' => 'Pour étudier votre demande, la direction a besoin d\'une précision :',
+			'attente.precisionsReponse' => 'Répondez simplement à l\'e‑mail que nous vous avons envoyé. La direction reprend votre demande dès votre réponse.',
 			'attente.actualiserCompte' => 'Actualiser',
 			'attente.lireEtAccepter' => 'Lire et accepter nos conditions',
 			'attente.nosConditions' => 'Nos conditions, à lire et à accepter',
@@ -41919,14 +42223,14 @@ extension on Traductions {
 			'consentement.comment.visitesSansDuree' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Une visite courte par séance.', other: '${n} visites courtes par séance.', ), 
 			'consentement.comment.parParent' => 'Ce nombre vaut pour chaque parent, que la séance réunisse un ou plusieurs de ses enfants.',
 			'consentement.comment.ecourtee' => 'Une visite quittée avant la fin est comptée : il ne reste alors que la suivante, jusqu\'à la dernière.',
+			_ => null,
+		} ?? switch (path) {
 			'consentement.comment.ecouter' => 'Vous entendez l\'enseignant et les élèves qui prennent la parole, y compris votre enfant.',
 			'consentement.comment.sansMicro' => 'Votre micro et votre caméra restent désactivés pendant la visite.',
 			'consentement.comment.valeursIndisponibles' => 'Le nombre de visites et leur durée s\'affichent depuis la classe de votre enfant, selon les règles de sa classe.',
 			'consentement.comment.fermee' => 'Les visites d\'observation ne sont pas ouvertes pour cette classe.',
 			'consentement.compte.intro' => 'L\'académie a ajouté à ses conditions un paragraphe sur les visites des parents. Rien n\'est considéré comme accepté tant que vous ne l\'avez pas fait.',
 			'consentement.compte.accepteLe' => ({required Object date}) => 'Vous avez accepté ces modalités le ${date}.',
-			_ => null,
-		} ?? switch (path) {
 			'consentement.compte.merci' => 'Merci, votre accord est enregistré.',
 			'consentement.compte.chargement' => 'Lecture de vos accords',
 			'consentement.compte.erreur' => 'Vos accords ne s\'affichent pas pour le moment.',
@@ -42433,14 +42737,14 @@ extension on Traductions {
 			'eleveConnexion.refus.inconnuTitre' => 'Code non reconnu',
 			'eleveConnexion.refus.inconnu' => 'Ce code n\'existe pas, ou un code plus récent l\'a remplacé. Vérifiez-le, ou affichez un nouveau code sur l\'appareil du tuteur.',
 			'eleveConnexion.refus.expireTitre' => 'Code expiré',
+			_ => null,
+		} ?? switch (path) {
 			'eleveConnexion.refus.expire' => 'Ce code n\'est plus valable. Affichez un nouveau code sur l\'appareil du tuteur.',
 			'eleveConnexion.refus.dejaUtiliseTitre' => 'Code déjà utilisé',
 			'eleveConnexion.refus.dejaUtilise' => 'Ce code a déjà servi à connecter un appareil. Affichez un nouveau code sur l\'appareil du tuteur.',
 			'eleveConnexion.refus.revoqueTitre' => 'Appareil retiré',
 			'eleveConnexion.refus.revoque' => 'Le tuteur a retiré cet appareil. Demandez-lui d\'afficher un nouveau code.',
 			'eleveConnexion.refus.plafondTitre' => 'Limite d\'appareils atteinte',
-			_ => null,
-		} ?? switch (path) {
 			'eleveConnexion.refus.plafond' => 'Ce profil élève a atteint le nombre d\'appareils autorisés. Le tuteur peut en retirer un dans Foyer, puis afficher un nouveau code.',
 			'eleveConnexion.refus.tropDEssaisTitre' => 'Trop d\'essais',
 			'eleveConnexion.refus.tropDEssais' => 'Patientez un instant avant de réessayer.',
@@ -42947,14 +43251,14 @@ extension on Traductions {
 			'recrutement.parcours.q.publics.titre' => 'Quels élèves pouvez-vous enseigner ?',
 			'recrutement.parcours.q.publics.explication' => 'Choisissez les tranches d\'âge auxquelles vous êtes à l\'aise d\'enseigner. Il n\'y a pas de mauvaise réponse : vous pouvez en choisir une seule, ou plusieurs.',
 			'recrutement.parcours.q.publics.court' => 'Publics',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.publics.options.o_6_9.libelle' => 'Des enfants de 6 à 9 ans',
 			'recrutement.parcours.q.publics.options.o_6_9.description' => 'Ils commencent par le livre de lecture de Rewayah, lettre par lettre, jusqu\'à la chadda. Viennent ensuite les premières sourates courtes, les paroles de la prière et les ablutions.',
 			'recrutement.parcours.q.publics.options.o_6_9.explication' => 'Des Classes de 5 enfants au plus (4 pour des débutants), trois séances d\'une heure par semaine. Les ablutions et la prière se montrent en pratique, avec des illustrations.',
 			'recrutement.parcours.q.publics.options.o_6_9.exemple' => 'une Classe d\'enfants de huit ans, le lundi, le mercredi et le vendredi.',
 			'recrutement.parcours.q.publics.options.o_10_13.libelle' => 'Des enfants de 10 à 13 ans',
 			'recrutement.parcours.q.publics.options.o_10_13.description' => 'Même départ avec le livre de lecture, et Al-Fatiha dès la première semaine, parce qu\'à cet âge l\'enfant doit prier.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.publics.options.o_10_13.explication' => 'Des Classes de 5 enfants au plus (4 pour des débutants), trois séances d\'une heure par semaine.',
 			'recrutement.parcours.q.publics.options.o_10_13.exemple' => 'une Classe d\'élèves de douze ans, trois fois par semaine.',
 			'recrutement.parcours.q.publics.options.o_14_17.libelle' => 'Des adolescents de 14 à 17 ans',
@@ -43461,14 +43765,14 @@ extension on Traductions {
 			'admin.candidatures.controles.causes.engagement' => 'Un engagement d\'enseignant est déjà en cours',
 			'admin.candidatures.controles.causes.nonPublie' => 'Le cadre n\'est pas encore publié',
 			'admin.candidatures.controles.causes.nonAccepte' => 'La personne ne l\'a pas encore accepté',
+			_ => null,
+		} ?? switch (path) {
 			'admin.candidatures.controles.causes.questionnaireAbsent' => 'Aucun questionnaire n\'est publié',
 			'admin.candidatures.controles.causes.absent' => 'Aucune réponse envoyée',
 			'admin.candidatures.controles.causes.perime' => 'Réponses données à une ancienne version',
 			'admin.candidatures.controles.causes.incomplet' => 'Des réponses manquent',
 			'admin.candidatures.controles.causes.inconnue' => 'Cause non précisée',
 			'admin.candidatures.historique.auteur.direction' => 'La direction',
-			_ => null,
-		} ?? switch (path) {
 			'admin.candidatures.historique.auteur.personne' => 'La personne',
 			'admin.candidatures.historique.auteur.automatique' => 'Automatique',
 			'admin.candidatures.historique.types.creee' => 'Candidature créée',
@@ -43975,14 +44279,14 @@ extension on Traductions {
 			'admin.groupes.cahiers.lectureSeule' => 'Lecture seule',
 			'admin.groupes.cahiers.evaluation' => 'Évaluation de l\'enseignant pour cet élève',
 			'admin.groupes.cahiers.aucuneEvaluation' => 'Aucune évaluation n\'a été enregistrée pour cet élève.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.cahiers.detailsInternes' => 'Détails internes',
 			'admin.groupes.cahiers.interne' => 'Interne, jamais montré à la famille',
 			'admin.groupes.cahiers.aucunInterne' => 'Aucun détail interne n\'a été enregistré.',
 			'admin.groupes.cahiers.apercu' => 'Voir l\'aperçu familial',
 			'admin.groupes.cahiers.nonValide' => 'Le cahier n\'est pas encore validé.',
 			'admin.groupes.cahiers.corrigeLe' => ({required Object date}) => 'Corrigé le ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.cahiers.enseignant' => 'Enseignant',
 			'admin.groupes.cahiers.seanceDu' => ({required Object date}) => 'Séance du ${date}',
 			'admin.groupes.cahiers.rubriqueTravail' => 'Travail à préparer',
@@ -44489,14 +44793,14 @@ extension on Traductions {
 			'admin.progression.depuisAujourdhui' => 'Aujourd\'hui',
 			'admin.progression.depuisUnJour' => '1 jour',
 			'admin.progression.typeBlocage' => 'Blocage',
+			_ => null,
+		} ?? switch (path) {
 			'admin.progression.typeDerogation' => 'Dérogation',
 			'admin.progression.actionPoserBlocage' => 'Poser un blocage',
 			'admin.progression.actionPoserDerogation' => 'Poser une dérogation',
 			'admin.progression.actionCloreException' => 'Clore l\'exception',
 			'admin.progression.actionPromouvoir' => 'Changer de niveau',
 			'admin.progression.poserExceptionTitre' => ({required Object type, required Object eleve}) => '${type} pour ${eleve}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.progression.poserExceptionEnvoyer' => 'Poser l\'exception',
 			'admin.progression.poserExceptionErreur' => ({required Object message}) => 'La pose n\'a pas abouti : ${message}',
 			'admin.progression.clorerExceptionTitre' => ({required Object deEleve}) => 'Clore l\'exception ${deEleve}',
@@ -45003,14 +45307,14 @@ extension on Traductions {
 			'admin.finance.pol.sectionClassesDetail' => 'La taille des classes et le seuil pour en ouvrir une.',
 			'admin.finance.pol.capaciteEnfant' => 'Capacité d\'une classe d\'enfants',
 			'admin.finance.pol.capaciteEnfantDetail' => 'Le nombre de sièges prévus ; il sert aussi au taux horaire de l\'enseignant.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.capaciteAdulte' => 'Capacité d\'une classe d\'adultes',
 			'admin.finance.pol.capaciteAdulteDetail' => 'Le nombre de sièges prévus dans une classe d\'adultes.',
 			'admin.finance.pol.capaciteDebutant' => 'Capacité d\'une classe de débutants',
 			'admin.finance.pol.capaciteDebutantDetail' => 'Plus petite, pour suivre chaque débutant de près.',
 			'admin.finance.pol.minimum' => 'Minimum d\'ouverture',
 			'admin.finance.pol.minimumDetail' => 'En dessous, une classe ne s\'ouvre pas et la direction en est alertée.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.paiement' => 'Paiement',
 			'admin.finance.pol.paiementDetail' => 'Le moyen de paiement et le délai de conservation d\'une place.',
 			'admin.finance.pol.railWeb' => 'Paiement web (Stripe)',
@@ -45517,14 +45821,14 @@ extension on Traductions {
 			'admin.bibliotheque.fiche.actions.verifier' => 'Vérifier et publier',
 			'admin.bibliotheque.fiche.actions.nouvelleVersion' => 'Créer une nouvelle version',
 			'admin.bibliotheque.fiche.actions.completerDroits' => 'Compléter les droits',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.fiche.actions.associer' => 'Associer aux classes',
 			'admin.bibliotheque.fiche.actions.retirer' => 'Retirer du catalogue',
 			'admin.bibliotheque.fiche.nouvelleVersionOk' => 'Nouvelle version créée en brouillon.',
 			'admin.bibliotheque.fiche.nouvelleVersionEchec' => 'La nouvelle version n\'a pas pu être confirmée. Réessayez.',
 			'admin.bibliotheque.fiche.version.publieeLe' => ({required Object date}) => 'Publiée le ${date}',
 			'admin.bibliotheque.fiche.version.empreinte' => ({required Object valeur}) => 'Empreinte ${valeur}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.fiche.version.sansFichier' => 'Sans fichier',
 			'admin.bibliotheque.fiche.droitsChamps.revue' => 'Revue des droits',
 			'admin.bibliotheque.fiche.droitsChamps.source' => 'Source',
@@ -46031,14 +46335,14 @@ extension on Traductions {
 			'compte.tuteur.pageInformations.fuseauIndisponible' => 'Non chargé',
 			'compte.tuteur.pageInformations.note' => 'Ces informations sont tenues par l\'académie. Elles ne se modifient pas encore depuis l\'application.',
 			'compte.tuteur.pageSecurite.titre' => 'Connexion et sécurité',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pageSecurite.sousTitre' => 'Comment vous accédez à votre compte.',
 			'compte.tuteur.pageSecurite.methode' => 'Méthode de connexion',
 			'compte.tuteur.pageSecurite.adresse' => 'Adresse de connexion',
 			'compte.tuteur.pageSecurite.appareils' => 'Les appareils connectés à votre compte ne sont pas encore listés dans l\'application.',
 			'compte.tuteur.pageSecurite.deconnexion' => 'Pour fermer la session de cet appareil, utilisez « Se déconnecter » en bas de Mon compte.',
 			'compte.tuteur.pageAcces.titre' => 'Accès des profils élèves',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageAcces.sousTitre' => 'Le statut de l\'accès de chaque profil élève.',
 			'compte.tuteur.pageAcces.sansEcheance' => 'Sans date de fin',
 			'compte.tuteur.pageAcces.jusqua' => ({required Object date}) => 'Ouvert jusqu\'au ${date}',
@@ -46545,14 +46849,14 @@ extension on Traductions {
 			'classe.observation.motif.seanceNonCommencee' => 'L\'observation ouvre quand la séance commence.',
 			'classe.observation.motif.seanceTerminee' => 'La séance est terminée.',
 			'classe.observation.motif.seanceNonTenue' => 'Cette séance n\'a pas lieu : il n\'y a rien à observer.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.observation.motif.horsFenetre' => 'La salle n\'est pas ouverte à cette heure.',
 			'classe.observation.motif.observationDesactivee' => 'L\'observation est fermée pour cette classe.',
 			'classe.observation.motif.lienAbsent' => 'Aucun élève de votre foyer n\'est rattaché à cette séance.',
 			'classe.observation.motif.enfantAbsent' => ({required Object dePrenom}) => 'L\'observation attend l\'arrivée ${dePrenom}.',
 			'classe.observation.motif.presenceEnVerification' => ({required Object dePrenom}) => 'La présence ${dePrenom} est en cours de vérification.',
 			'classe.observation.motif.visiteDejaOuverte' => 'Une visite est déjà ouverte, sur cet appareil ou sur un autre.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.observation.motif.garantieServeurAbsente' => 'L\'observation des séances n\'est pas encore ouverte.',
 			'classe.observation.motif.reseau' => 'La disponibilité de l\'observation n\'a pas pu être vérifiée.',
 			'classe.observation.motif.capaciteAbsente' => 'L\'observation ne peut pas s\'ouvrir pour cette séance.',
@@ -47059,14 +47363,14 @@ extension on Traductions {
 			'enseignant.profil.videDetail' => 'Ce compte n\'a pas de profil enseignant. Seule l\'académie peut en créer un.',
 			'enseignant.profil.horsLigne' => 'Rien ne peut être modifié ici pour l\'instant.',
 			'enseignant.profil.modifierPays' => 'Modifier le pays',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.modifierLangues' => 'Modifier les langues',
 			'enseignant.profil.paysConsigne' => 'Choisissez le pays où vous vivez. S\'il n\'est pas dans la liste, touchez « Autre ».',
 			'enseignant.profil.paysDuFuseau' => 'D\'après votre fuseau horaire',
 			'enseignant.profil.paysRequis' => 'Choisissez un pays, ou écrivez-le dans « Autre ».',
 			'enseignant.profil.languesConsigne' => 'Cochez les langues dans lesquelles vous pouvez enseigner.',
 			'enseignant.profil.langueDejaDeclaree' => 'Déjà déclarée dans votre profil',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.profil.languesRequises' => 'Cochez au moins une langue.',
 			'enseignant.profil.languesErreur' => 'La liste des langues n\'a pas pu être lue',
 			'enseignant.profil.languesErreurDetail' => 'Vos langues actuelles ne changent pas. Réessayez dans un instant.',
@@ -47573,14 +47877,14 @@ extension on Traductions {
 			'tc.bibliotheque.offline.enCours' => 'Téléchargement',
 			'tc.bibliotheque.offline.enCache' => 'En cache',
 			'tc.bibliotheque.offline.telecharge' => 'Téléchargé',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.offline.indisponible' => 'Hors ligne indisponible',
 			'tc.bibliotheque.type.quran' => 'Coran',
 			'tc.bibliotheque.type.texteStructure' => 'Texte',
 			'tc.bibliotheque.type.pdf' => 'PDF',
 			'tc.bibliotheque.type.image' => 'Image',
 			'tc.bibliotheque.type.lecon' => 'Leçon',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.detail.titre' => 'Support',
 			'tc.bibliotheque.detail.capacites' => 'Ce que ce support permet',
 			'tc.bibliotheque.detail.niveaux' => 'Niveaux',
@@ -48087,14 +48391,14 @@ extension on Traductions {
 			'adulte.recharge.resultat.perimePhrase' => 'Le délai de paiement de cette commande est dépassé. Aucun solde n\'a été crédité. Recommencez la recharge pour obtenir une nouvelle commande.',
 			'adulte.recharge.resultat.recommencer' => 'Recommencer la recharge',
 			'adulte.recharge.resultat.actualiser' => 'Actualiser',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.recharge.resultat.horsLigne' => 'L\'état affiché peut avoir changé depuis : actualisez dès que la lecture est de nouveau possible.',
 			'adulte.recharge.resultat.videTitre' => 'Aucun paiement à suivre',
 			'adulte.recharge.resultat.videPhrase' => 'Cette adresse ne désigne aucune commande. Revenez aux paiements du foyer pour retrouver vos recharges.',
 			'adulte.recharge.resultat.indisponibleTitre' => 'Suivi du paiement pas encore disponible',
 			'adulte.recharge.resultat.indisponiblePhrase' => 'L\'état des paiements n\'est pas encore disponible dans l\'application. Aucun paiement n\'a été effectué ici.',
 			'adulte.recharge.resultat.lectureEchecTitre' => 'L\'état du paiement n\'a pas pu être lu.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.recharge.resultat.lectureEchecPhrase' => 'Le paiement n\'est pas annulé pour autant. Ne payez pas une seconde fois : réessayez la lecture.',
 			'adulte.recharge.source.avantPaiement' => 'En attente du paiement',
 			'adulte.recharge.source.motifs.paiementRefuse' => 'Le paiement a été refusé par la banque ou la carte. Rien n\'a été prélevé.',
@@ -48601,14 +48905,14 @@ extension on Traductions {
 			'alertes.indisponibleTitre' => 'Les alertes ne sont pas encore disponibles',
 			'alertes.indisponiblePhrase' => 'Les alertes urgentes s\'afficheront ici, en tête, dès que leur source sera ouverte.',
 			'alertes.erreurTitre' => 'Les alertes n\'ont pas pu être lues',
+			_ => null,
+		} ?? switch (path) {
 			'alertes.sansDonnees' => 'Les alertes n\'ont pas pu être lues',
 			'alertes.cloche' => 'Alertes',
 			'alertes.clocheUneUrgente' => 'Alertes, une urgente',
 			'alertes.clocheUrgentes' => ({required Object nombre}) => 'Alertes, ${nombre} urgentes',
 			'argent.etat.finance' => 'Financé',
 			'argent.etat.essai' => 'Essai',
-			_ => null,
-		} ?? switch (path) {
 			'argent.etat.essaiCompte' => ({required Object n, required Object max}) => 'Essai : ${n}/${max}',
 			'argent.etat.manque' => 'À financer',
 			'argent.etat.enConfirmation' => 'En confirmation',
@@ -49115,14 +49419,14 @@ extension on Traductions {
 			'com.studio.aujourdhui.titre' => _root.com.socle.lexique.aujourdhui,
 			'com.studio.aujourdhui.sousTitre' => 'Ce qui mérite votre attention dans Le Studio',
 			'com.studio.aujourdhui.indicateurs.titre' => 'Indicateurs d\'attention',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.aujourdhui.indicateurs.aTraiter' => _root.com.socle.lexique.aTraiter,
 			'com.studio.aujourdhui.indicateurs.mentions' => 'Mentions et réponses',
 			'com.studio.aujourdhui.indicateurs.decisions' => 'Décisions en attente',
 			'com.studio.aujourdhui.indicateurs.nonLus' => 'Non lus',
 			'com.studio.aujourdhui.blocs.aTraiter' => 'À traiter aujourd\'hui',
 			'com.studio.aujourdhui.blocs.mentions' => 'Mentions et réponses',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.aujourdhui.blocs.decisions' => 'Décisions en attente',
 			'com.studio.aujourdhui.blocs.echeances' => 'Échéances proches',
 			'com.studio.aujourdhui.blocs.activite' => 'Activité récente',
@@ -49629,14 +49933,14 @@ extension on Traductions {
 			'comptable.statuts.rapprochement.aVerifier' => 'À vérifier',
 			'comptable.statuts.rapprochement.rapproche' => 'Rapproché',
 			'comptable.statuts.rapprochement.conflit' => 'Conflit',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.rapprochement.sansCorrespondance' => 'Sans correspondance',
 			'comptable.statuts.rapprochement.doublonPotentiel' => 'Doublon potentiel',
 			'comptable.statuts.profil.aucunMoyen' => 'Aucun moyen',
 			'comptable.statuts.profil.incomplet' => 'Incomplet',
 			'comptable.statuts.profil.enVerification' => 'En vérification',
 			'comptable.statuts.profil.verifie' => 'Vérifié',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.statuts.profil.suspendu' => 'Suspendu',
 			'comptable.statuts.profil.actionRequise' => 'Action requise',
 			'comptable.statuts.profil.invitationEnvoyee' => 'Invitation envoyée',
@@ -50143,14 +50447,14 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.continuerSaisie' => 'Continuer vers la saisie sécurisée',
 			'comptable.beneficiaires.recevoir.typeRequis' => 'Choisissez un type de méthode pour continuer.',
 			'comptable.beneficiaires.recevoir.aucunType' => 'Aucun type de méthode n\'est proposé pour l\'instant. Contactez l\'académie pour en ouvrir un.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.verificationAnnoncee' => 'Tout changement est vérifié avant le prochain versement.',
 			'comptable.beneficiaires.recevoir.ajoutee' => 'Méthode ajoutée : elle est en cours de vérification.',
 			'comptable.beneficiaires.recevoir.remplacee' => 'Nouvelle méthode enregistrée : elle est en cours de vérification.',
 			'comptable.beneficiaires.recevoir.supprimee' => 'Méthode supprimée.',
 			'comptable.beneficiaires.recevoir.prefereeChoisie' => 'Méthode préférée mise à jour.',
 			'comptable.beneficiaires.recevoir.erreurAction' => 'Le changement n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.erreurIndisponible' => 'Ce changement n\'est pas encore branché sur le service de paiement. Réessayez plus tard.',
 			'comptable.beneficiaires.recevoir.journalTitre' => 'Historique de mes changements',
 			'comptable.beneficiaires.recevoir.journalVide' => 'Aucun changement enregistré pour l\'instant.',
@@ -50657,14 +50961,14 @@ extension on Traductions {
 			'juridique.conditions.intro' => 'Ces conditions s\'appliquent dès que vous créez un compte ou que vous inscrivez un élève. Lisez-les en entier, elles sont courtes.',
 			'juridique.conditions.s1.titre' => '1. Le service',
 			'juridique.conditions.s1.blocs.0' => 'Rewayah Academy propose des cours de Coran en visio. Chaque élève est placé dans une Classe : un petit nombre d\'élèves, un horaire récurrent et un enseignant attitré.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.conditions.s1.blocs.1' => 'Il y a deux formules : la formule enfant, de 6 à 17 ans, et la formule adulte, à partir de 18 ans. Aucun mineur n\'est placé dans une Classe d\'adultes.',
 			'juridique.conditions.s1.blocs.2' => 'Une Classe ouvre quand assez d\'élèves sont inscrits. Avant, vous êtes en liste d\'attente et rien n\'est facturé.',
 			'juridique.conditions.s2.titre' => '2. Compte et accès',
 			'juridique.conditions.s2.blocs.0' => 'Un enfant est inscrit et suivi par un tuteur adulte, qui décide pour lui. Voir le texte Protection des enfants.',
 			'juridique.conditions.s2.blocs.1' => 'Vous donnez des informations exactes et vous gardez vos accès pour vous. On entre dans une séance par son compte, jamais par un lien public.',
 			'juridique.conditions.s3.titre' => '3. Les séances',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.conditions.s3.blocs.0' => 'Les séances ont lieu à heure fixe, avec le même enseignant. Être présent et à l\'heure fait partie de l\'engagement.',
 			'juridique.conditions.s3.blocs.1' => 'Une séance écourtée reste due si l\'élève a été présent assez longtemps. Une séance annulée par l\'académie ou par l\'enseignant est remplacée.',
 			'juridique.conditions.s3.blocs.2' => 'Un contrôleur qualité peut assister aux séances sans être vu, et un cours peut être enregistré. Si l\'enregistrement devient réel, nous vous le disons avant.',
@@ -51031,6 +51335,84 @@ extension on Traductions {
 			'courriels.admin.adresses.vide' => 'Aucune catégorie pour le moment.',
 			'courriels.admin.adresses.erreur' => 'Les adresses d\'envoi n\'ont pas pu être chargées. Réessayez.',
 			'courriels.admin.adresses.sansDonnees' => 'Les adresses d\'envoi n\'ont pas pu être chargées',
+			'admissions.titre' => 'Demandes',
+			'admissions.sousTitre' => 'Les demandes d\'admission des familles et des élèves adultes. Personne n\'entre sans la décision de la direction.',
+			'admissions.population' => 'Population',
+			'admissions.familles' => 'Familles',
+			'admissions.elevesAdultes' => 'Élèves adultes',
+			'admissions.aTraiter' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, zero: 'Aucune demande à traiter', one: '${n} demande à traiter', other: '${n} demandes à traiter', ), 
+			'admissions.rechercher' => 'Rechercher',
+			'admissions.rechercherAide' => 'Un nom, une adresse e‑mail ou une référence.',
+			'admissions.lectureErreur' => 'Les demandes ne se lisent pas pour le moment. Réessayez dans un instant.',
+			'admissions.vide' => 'Aucune demande pour le moment.',
+			'admissions.videRecherche' => 'Aucune demande ne correspond à cette recherche.',
+			'admissions.pagePrecedente' => 'Page précédente',
+			'admissions.pageSuivante' => 'Page suivante',
+			'admissions.pageSur' => ({required Object n, required Object total}) => 'Page ${n} sur ${total}',
+			'admissions.feuilleTitre' => ({required Object deNom}) => 'Demande ${deNom}',
+			'admissions.ouvrir' => ({required Object deNom}) => 'Ouvrir la demande ${deNom}',
+			'admissions.recueLe' => 'Reçue le',
+			'admissions.reference' => 'Référence',
+			'admissions.courriel' => 'Adresse e‑mail',
+			'admissions.etatLibelle' => 'État',
+			'admissions.titulaire' => ({required Object prenom}) => '${prenom}, pour lui-même ou elle-même',
+			'admissions.enfant' => ({required Object prenom, required Object age}) => '${prenom}, ${age} ans',
+			'admissions.etat.aTraiter' => 'À traiter',
+			'admissions.etat.aCompleter' => 'À compléter',
+			'admissions.etat.acceptee' => 'Acceptée',
+			'admissions.etat.refusee' => 'Refusée',
+			'admissions.etat.retiree' => 'Retirée',
+			'admissions.accepter' => ({required Object deNom}) => 'Accepter la demande ${deNom}',
+			'admissions.accepterConsequence' => 'Son compte s\'ouvre et un e‑mail « Votre demande est acceptée » part tout de suite. Les profils des enfants se créent à sa première connexion, avec les réponses de la demande.',
+			'admissions.demanderPrecisions' => 'Demander des précisions',
+			'admissions.contacter' => ({required Object nom}) => 'Écrire à ${nom}',
+			'admissions.refuser' => 'Refuser la demande',
+			'admissions.refuserContexte' => 'Choisissez la phrase que la personne recevra, puis écrivez le motif pour la direction. La personne ne voit jamais le motif.',
+			'admissions.refuserQuestion' => ({required Object deNom}) => 'Refuser la demande ${deNom} ?',
+			'admissions.refuserConsequence' => 'La personne reçoit un e‑mail « Nous ne pouvons pas donner suite ». Le refus s\'annule pendant sept jours.',
+			'admissions.motifInterne' => 'Motif, pour la direction',
+			'admissions.motifInterneAide' => 'Il reste dans le journal de la demande.',
+			'admissions.precisionsContexte' => 'La demande passe « à compléter ». La personne reçoit votre message par e‑mail et le retrouve sur sa page d\'attente.',
+			'admissions.precisionsMessage' => 'Ce qui manque',
+			'admissions.precisionsAide' => 'Une ou deux phrases, en mots simples.',
+			'admissions.precisionsEnvoyer' => 'Envoyer la demande de précisions',
+			'admissions.contactContexte' => 'Un message libre, envoyé par e‑mail. La demande ne change pas.',
+			'admissions.contactSujet' => 'Sujet',
+			'admissions.contactMessage' => 'Message',
+			'admissions.contactEnvoyer' => 'Envoyer le message',
+			'admissions.annulerRefus' => 'Annuler le refus',
+			'admissions.annulerRefusDetail' => 'Le refus s\'annule pendant sept jours : la demande revient « à traiter ». La personne ne reçoit pas d\'e‑mail.',
+			'admissions.faitAcceptationAnnulee' => ({required Object deNom}) => 'L\'acceptation de la demande ${deNom} est annulée.',
+			'admissions.annulerAcceptationConsequence' => 'Son compte repasse en attente tout de suite.',
+			'admissions.annulerAcceptationQuestion' => ({required Object deNom}) => 'Annuler l\'acceptation ${deNom} ?',
+			'admissions.annulerAcceptationDetail' => 'L\'acceptation s\'annule pendant sept jours, tant qu\'aucun enfant de la demande n\'est dans une classe. La demande revient « à traiter » et le compte repasse en attente ; les profils des enfants sont mis de côté, jamais effacés. La personne ne reçoit pas d\'e‑mail : écrivez-lui si besoin.',
+			'admissions.annulerAcceptation' => 'Annuler l\'acceptation',
+			'admissions.retour' => 'Revenir à la demande',
+			'admissions.manqueModele' => 'Choisissez la phrase que la personne recevra.',
+			'admissions.manqueMotif' => 'Écrivez le motif : il reste dans le journal de la demande.',
+			'admissions.manqueMessage' => 'Écrivez ce qui manque.',
+			'admissions.manqueContact' => 'Écrivez un sujet et un message.',
+			'admissions.horsLigne' => 'Rien n\'est parti. Réessayez dans un instant.',
+			'admissions.erreur' => 'Le geste n\'a pas abouti. Rien n\'est confirmé. Réessayez dans un instant.',
+			'admissions.faitAcceptee' => ({required Object deNom}) => 'La demande ${deNom} est acceptée ; l\'e‑mail est en route.',
+			'admissions.faitRefusee' => ({required Object deNom}) => 'La demande ${deNom} est refusée ; l\'e‑mail est en route.',
+			'admissions.faitPrecisions' => ({required Object nom}) => 'Les précisions sont demandées à ${nom} ; l\'e‑mail est en route.',
+			'admissions.faitContact' => ({required Object nom}) => 'Le message à ${nom} est en route.',
+			'admissions.faitRefusAnnule' => ({required Object deNom}) => 'Le refus de la demande ${deNom} est annulé.',
+			'admissions.refus.dejaTraitee' => 'Cette demande vient d\'être traitée par une autre personne de la direction. La liste est relue.',
+			'admissions.refus.transitionInterdite' => 'Ce geste ne vaut plus pour cette demande (son état a changé, ou le délai de sept jours est passé).',
+			'admissions.refus.motifRequis' => 'Un motif est nécessaire pour ce geste.',
+			'admissions.refus.adresseInconnue' => 'L\'adresse e‑mail de cette personne n\'est pas connue : aucun message ne peut partir.',
+			'admissions.refus.enfantEnClasse' => 'Un enfant de cette demande est déjà dans une classe : l\'acceptation ne s\'annule plus.',
+			'admissions.refus.autre' => 'Le serveur a refusé ce geste. Rouvrez la demande pour voir son état.',
+			'admissions.modeles.general' => 'Sans précision',
+			'admissions.modeles.generalPhrase' => '« Nous ne pouvons pas donner suite à votre demande pour le moment. »',
+			'admissions.modeles.besoins' => 'Nos classes ne répondent pas à la demande',
+			'admissions.modeles.besoinsPhrase' => '« Nos classes ne répondent pas encore à ce que vous cherchez. »',
+			'admissions.modeles.niveau' => 'Niveau pas encore proposé',
+			'admissions.modeles.niveauPhrase' => '« Le niveau demandé n\'est pas encore proposé. »',
+			'admissions.modeles.sansReponse' => 'Pas de réponse',
+			'admissions.modeles.sansReponsePhrase' => '« Nous n\'avons pas reçu de réponse à notre dernier message. »',
 			_ => null,
 		};
 	}

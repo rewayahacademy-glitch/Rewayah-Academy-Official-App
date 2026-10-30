@@ -17,7 +17,8 @@ const EVENEMENTS = ['demande_recue', 'classe_validee', 'enseignant_affecte', 'de
   'seance_annulee', 'seance_deplacee', 'enseignante_absente', 'classe_supprimee']
 
 Deno.test('chaque evenement de notification a son modele', () => {
-  for (const e of [...EVENEMENTS, 'invitation_foyer', 'lien_inscription', 'attente_candidat', 'admission_recue', 'message_libre', 'nouvelles']) {
+  for (const e of [...EVENEMENTS, 'invitation_foyer', 'lien_inscription', 'attente_candidat', 'admission_recue',
+    'admission_acceptee', 'admission_refusee', 'admission_precisions', 'message_libre', 'nouvelles']) {
     assert(modelesConnus.includes(e), e)
   }
 })
