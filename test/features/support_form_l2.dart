@@ -3,6 +3,7 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:rewayah_academy/core/admin/personnes_proposables.dart';
 import 'package:rewayah_academy/core/admin/service_comptes.dart';
 import 'package:rewayah_academy/core/admin/service_evaluations.dart';
 import 'package:rewayah_academy/core/admin/service_groupes.dart';
@@ -13,6 +14,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart'
     show Creneau;
 import 'package:rewayah_academy/core/widgets/champ_date.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_personne.dart';
 
 final DateTime _inscrit = DateTime(2026, 9, 1, 10);
 
@@ -78,6 +80,26 @@ final List<CompteAdmin> comptesFormL2 = <CompteAdmin>[
 ];
 
 /// Une lecture des comptes en memoire, qui peut echouer [echecs] fois.
+/// D5 : le double de `eleves_proposables_classe`, tire des memes comptes que
+/// [FauxComptesFormL2] (les eleves actifs, sans adulte titulaire). Retient
+/// les classes lues.
+class FauxElevesProposablesFormL2 implements LecteurElevesProposables {
+  /// Cree le double.
+  FauxElevesProposablesFormL2(this.comptes);
+
+  /// Les comptes dont on tire les eleves.
+  final List<CompteAdmin> comptes;
+
+  /// Les classes lues, dans l'ordre.
+  final List<String> classesLues = <String>[];
+
+  @override
+  Future<List<PersonneProposee>> pourClasse(String groupeId) async {
+    classesLues.add(groupeId);
+    return personnesProposablesDepuis(comptes, AppRole.student);
+  }
+}
+
 class FauxComptesFormL2 implements ServiceComptes {
   /// Cree le double.
   FauxComptesFormL2(this.rendus, {this.echecs = 0});
@@ -343,6 +365,9 @@ List<Override> surchargesFormL2({
   // Horloge fixe : les bornes du calendrier de date (FORM-L4) en dependent.
   horlogeFormulairesProvider.overrideWithValue(() => aujourdhuiFormL2),
   serviceComptesProvider.overrideWithValue(comptes),
+  lecteurElevesProposablesProvider.overrideWithValue(
+    FauxElevesProposablesFormL2(comptes.rendus),
+  ),
   serviceGroupesProvider.overrideWithValue(groupes ?? FauxGroupesFormL2()),
   serviceEvaluationsProvider.overrideWithValue(
     evaluations ?? FauxEvaluationsFormL2(),
