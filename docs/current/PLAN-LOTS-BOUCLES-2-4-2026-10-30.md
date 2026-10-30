@@ -35,15 +35,23 @@ pilote fusionne, applique les migrations et tient ce tableau à jour.
 
 | Ordre | Agent 1 (seul sur l'i18n) | Agent 2 |
 |---|---|---|
+| 0 (prioritaire, après TRANSPARENCE) | **LISTES** : porter sur `main` le socle LISTES-1 et la refonte de Comptes depuis la PR 50 ; toute liste nouvelle ou touchée ensuite l'utilise ; les 30 listes recensées restent la feuille de route | (suite de sa file) |
 | 1 | TRANSPARENCE : `politique_commerciale_famille`, page des prix en pourcentages, « Bibliothèque » dans la salle | RELIQUATS-B2 : R9, D5 (adulte élève), D2 (e-mail d'enseignant validé), R3 ; retirer Communauté du menu tant qu'elle n'est pas branchée |
-| 2 | B3 : écran « Réponses importées » (toutes les candidatures, nombre jamais écrit en dur : il en arrive chaque jour ; tri, filtre, sélection, « retenu ») sur `lister_formulaires_importes` ; invitation nominative d'un retenu ; `prevenir_par_courriel` limité aux retenus | B2.1 : les pré-inscriptions deviennent foyers, comptes de tuteur, profils d'élèves et matricules, par une fonction serveur appelée à la confirmation de l'import (idempotente, essai à blanc inchangé) |
+| 2 | **CANDIDATURES** (après LISTES) : porter depuis la PR 50 la liste et la fiche des candidatures, l'import et « Prévenir », puis l'écran « Réponses importées » (toutes les candidatures, nombre jamais écrit en dur : il en arrive chaque jour ; tri, filtre, sélection, « retenu ») sur `lister_formulaires_importes` ; invitation nominative d'un retenu ; `prevenir_par_courriel` limité aux retenus | B2.1 : les pré-inscriptions deviennent foyers, comptes de tuteur, profils d'élèves et matricules, par une fonction serveur appelée à la confirmation de l'import (idempotente, essai à blanc inchangé) |
 | 3 | B2.3 : « Séance tenue sur Meet : marquer présents » en un geste pour l'enseignant | B2.4 : les cinq définitions (actif, à jour, régulier, à surveiller, ponctuel), l'enseignant de chaque élève et l'emploi du temps, calculés par le serveur ; écran de la direction |
 | 4 | Communauté : tables, RLS, RPC, adaptateurs ; règle « pas en cours » côté serveur ; mesure agrégée des heures d'affluence | B2.5 : relevé mensuel de la paie par enseignant pour la direction ; B4 : émission des factures le 1er par cron, commentaire faux de `main.dart:341` |
 
 ## Décisions du pilote prises pour ce plan
 
-- **PR 50** : on ne la rebase pas. Ce dont la Boucle 3 a besoin est refait sur `main` (file 1,
-  ordre 2), et la PR 50 sera fermée ensuite, après inventaire de ce qu'elle seule contient.
+- **PR 50 : décision corrigée le 30/10 sur remarque du directeur.** Elle contient seule le lot
+  de refonte des listes **LISTES-1** (23/10, `DECISION-LISTES-2026-10-23.md`, socle partagé :
+  `DataCollection` dense, `CaseACocher`, `BarreSelection.compacte`, `MenuActions` opaque,
+  `RangeeFiltres`, `FiltresActifs`, `PiedDeListe`, pays avec drapeau ; Comptes et Candidatures
+  refondues ; inventaire des 30 listes). Rien de cela n'est sur `main`. On ne refait pas ce
+  travail : on le **porte sur `main`** en premier, car tous les lots suivants affichent des
+  listes (candidatures, tableau de la direction, paie, présences). La PR 50 entière (577
+  fichiers) ne se fusionne pas telle quelle : le portage se fait en deux lots, LISTES puis
+  CANDIDATURES, puis la PR 50 est fermée.
 - **Paiement** : paiement mensuel par la famille sur Stripe Checkout, avec les relances
   existantes (J-7, J-3, J-1). Pas d'abonnement automatique pour l'instant.
 - **Après le paiement**, la direction place l'élève dans sa classe (geste existant). Le
