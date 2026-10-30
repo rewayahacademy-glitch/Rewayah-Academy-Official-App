@@ -190,6 +190,16 @@ declare
     'inscrire_candidat(text,text,text,gender,text,text,text)',
     'inscrire_comptable_invite(text,text,text,gender)',
     'inscrire_titulaire(text,text,text,gender,text,boolean,jsonb)',
+    -- ADMISSION lot C (30/10) : gestes de la direction sur les familles et
+    -- les eleves adultes (direction active seulement), et le lien d'un enfant
+    -- de la demande a son profil (le titulaire, sur sa demande confirmee).
+    'accepter_admission(uuid,integer,text)',
+    'refuser_admission(uuid,text,text,integer,text)',
+    'annuler_refus_admission(uuid,text,integer,text)',
+    'annuler_admission(uuid,text,integer,text)',
+    'demander_precisions_admission(uuid,text,integer,text)',
+    'contacter_admission(uuid,text,text,text)',
+    'lier_apprenant_profil(uuid,uuid)',
     'inscrire_enseignant_invite(text,text,text,gender)',
     -- CAND-L2A2 (22/10) : infirmation d'un moyen de paiement declare (transition 25), direction active de son cote (moteur, motif).
     'infirmer_moyen_paiement_candidat(uuid,text,text,text,integer,text)',

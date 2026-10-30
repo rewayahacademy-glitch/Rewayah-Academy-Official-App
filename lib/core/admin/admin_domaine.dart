@@ -292,6 +292,9 @@ List<({String libelle, String chemin})> ongletsPersonnes() =>
         libelle: t.admin.suppressions.onglet,
         chemin: Routes.adminPersonnesSuppressions,
       ),
+      // Admission, lot C : les demandes d'admission, en dernier pour ne pas
+      // decaler les index des autres onglets.
+      (libelle: t.admissions.titre, chemin: Routes.adminPersonnesAdmissions),
     ];
 
 /// Les deux fonctions pairs du domaine Securite et audit : le Journal et

@@ -1060,6 +1060,12 @@ class _Traductions$attente$ar extends Traductions$attente$fr {
 	@override String get demandeMessage => 'تقرأ الإدارة كل طلب قبل فتح أي حساب.';
 	@override String get demandeDetail => 'ليس عليك إرسال أي شيء. سنكتب إليك على بريدك الإلكتروني فور رد الإدارة.';
 	@override String demandePour({required Object liste}) => 'يخص طلبك: ⁨${liste}⁩.';
+	@override String get demandeRefuseeTitre => 'لا يمكننا متابعة طلبك';
+	@override String get demandeRefuseeMessage => 'قرأت الإدارة طلبك ولا يمكنها متابعته في الوقت الحالي.';
+	@override String get demandeRefuseeDetail => 'الرسالة التي أرسلناها إليك تذكر السبب. يمكنك الرد عليها لأي سؤال.';
+	@override String get precisionsTitre => 'تنقصنا معلومة';
+	@override String get precisionsMessage => 'لدراسة طلبك، تحتاج الإدارة إلى توضيح:';
+	@override String get precisionsReponse => 'يكفي أن تردّ على الرسالة التي أرسلناها إليك. تستأنف الإدارة دراسة طلبك فور ردّك.';
 	@override String get actualiserCompte => 'تحديث';
 	@override String get lireEtAccepter => 'قراءة شروطنا وقبولها';
 	@override String get nosConditions => 'يلزم قراءة الشروط والموافقة عليها';
@@ -25908,6 +25914,12 @@ extension on TraductionsAr {
 			'attente.demandePour' => ({required Object liste}) => 'يخص طلبك: ⁨${liste}⁩.',
 			_ => null,
 		} ?? switch (path) {
+			'attente.demandeRefuseeTitre' => 'لا يمكننا متابعة طلبك',
+			'attente.demandeRefuseeMessage' => 'قرأت الإدارة طلبك ولا يمكنها متابعته في الوقت الحالي.',
+			'attente.demandeRefuseeDetail' => 'الرسالة التي أرسلناها إليك تذكر السبب. يمكنك الرد عليها لأي سؤال.',
+			'attente.precisionsTitre' => 'تنقصنا معلومة',
+			'attente.precisionsMessage' => 'لدراسة طلبك، تحتاج الإدارة إلى توضيح:',
+			'attente.precisionsReponse' => 'يكفي أن تردّ على الرسالة التي أرسلناها إليك. تستأنف الإدارة دراسة طلبك فور ردّك.',
 			'attente.actualiserCompte' => 'تحديث',
 			'attente.lireEtAccepter' => 'قراءة شروطنا وقبولها',
 			'attente.nosConditions' => 'يلزم قراءة الشروط والموافقة عليها',
@@ -26414,14 +26426,14 @@ extension on TraductionsAr {
 			'adulte.demo.etats.doubleSoumission' => 'أُرسل الإجراء نفسه مرتين.',
 			'adulte.demo.etats.notificationDansLApplication' => 'تعذّر إرسال الإشعار إلى الهاتف، ويبقى ظاهرًا في التطبيق.',
 			'adulte.demo.etats.emancipation' => 'استقلال طالب بلغ سن الرشد: غير مبني في هذه المرحلة.',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.titre' => 'ملفات للاعتماد',
 			'dossiers.sousTitre' => 'ادرس الملفات الجاهزة لاتخاذ قرار.',
 			'dossiers.aucun' => 'لا ملف ينتظر الاعتماد.',
 			'dossiers.aucunDetail' => 'ستظهر الملفات الجديدة هنا حين تصبح جاهزة.',
 			'dossiers.file.chargement' => 'جارٍ تحميل الملفات…',
 			'dossiers.file.erreur' => 'تعذّر تحميل الملفات.',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.file.horsLigne' => 'أنت غير متصل. لا يمكن تحديث الملفات.',
 			'dossiers.file.accesRefuse' => 'ليس لديك إذن بالوصول إلى الملفات المطلوب اعتمادها.',
 			'dossiers.file.actualisation' => 'جارٍ تحديث الملفات…',
@@ -26928,14 +26940,14 @@ extension on TraductionsAr {
 			'suiviDemandes.joursChoisis' => 'الأيام المختارة',
 			'suiviDemandes.heureChoisie' => 'الساعة المختارة',
 			'suiviDemandes.joursEt' => ({required Object debut, required Object dernier}) => '⁨${debut}⁩ و⁨${dernier}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.heureFuseau' => ({required Object heure, required Object deVille}) => '⁨${heure}⁩، بتوقيت ⁨${deVille}⁩',
 			'suiviDemandes.creneauxChoisis' => 'الأيام والساعات المختارة',
 			'suiviDemandes.jourHeure' => ({required Object jour, required Object heure}) => '⁨${jour}⁩ ⁨${heure}⁩',
 			'suiviDemandes.fuseauChoisi' => 'المنطقة الزمنية',
 			'suiviDemandes.fuseauValeur' => ({required Object deVille}) => 'بتوقيت ⁨${deVille}⁩',
 			'suiviDemandes.etapes.envoyee' => 'تم إرسال الطلب',
-			_ => null,
-		} ?? switch (path) {
 			'suiviDemandes.etapes.listeAttente' => 'في قائمة الانتظار',
 			'suiviDemandes.etapes.classeValidee' => 'تم اعتماد الفصل',
 			'suiviDemandes.etapes.enseignantAffecte' => 'تم تعيين المعلم',
@@ -27442,14 +27454,14 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.experienceDebutants.options.non.description' => 'لم تعلّم مبتدئين من قبل.',
 			'recrutement.parcours.q.experienceDebutants.options.non.explication' => 'يمكنك مع ذلك إرسال طلب ترشحك.',
 			'recrutement.parcours.q.experienceDebutants.options.non.exemple' => 'علّمت فقط طلابًا يجيدون القراءة من قبل.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.fuseauIana.titre' => 'منطقتك الزمنية',
 			'recrutement.parcours.q.fuseauIana.explication' => 'أوقات تفرّغك بتوقيت مكان إقامتك. لذلك يجب أن يكون الوقت صحيحًا.',
 			'recrutement.parcours.q.fuseauIana.court' => 'المنطقة الزمنية',
 			'recrutement.parcours.q.disponibilitesDeclarees.titre' => 'ما الأيام التي تستطيع التدريس فيها؟',
 			'recrutement.parcours.q.disponibilitesDeclarees.explication' => 'يُعقد الفصل ثلاث مرات في الأسبوع، في الأيام نفسها وفي الساعة نفسها. المس الأيام التي تستطيع التدريس فيها، أو استعمل اختصارًا.',
 			'recrutement.parcours.q.disponibilitesDeclarees.court' => 'أوقات التفرّغ',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.disponibilitesDeclarees.heures.titre' => ({required Object jour}) => 'في أي ساعة تستطيع أن تبدأ يوم ⁨${jour}⁩؟',
 			'recrutement.parcours.q.disponibilitesDeclarees.heures.explication' => 'اختر كل الساعات التي تستطيع أن تبدأ فيها درسًا. تُحسب نهاية الدرس لك.',
 			'recrutement.parcours.q.disponibilitesDeclarees.heures.suite' => 'ستقول بعد ذلك إن كان الأمر نفسه في الأيام الأخرى.',
@@ -27956,14 +27968,14 @@ extension on TraductionsAr {
 			'avis.admin.statut.enAttente' => 'قيد الانتظار',
 			'avis.admin.statut.publie' => 'منشور',
 			'avis.admin.statut.refuse' => 'مرفوض',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.statut.retire' => 'مسحوب',
 			'avis.admin.filtre.tous' => 'الكل',
 			'avis.admin.filtre.enAttente' => 'قيد الانتظار',
 			'avis.admin.filtre.publie' => 'المنشورة',
 			'avis.admin.filtre.refuse' => 'المرفوضة',
 			'avis.admin.filtre.retire' => 'المسحوبة',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.attente' => ({required Object n}) => 'آراء قيد الانتظار: ⁨${n}⁩',
 			'avis.admin.vide' => 'لا توجد آراء في هذه القائمة.',
 			'avis.admin.erreur' => 'تعذّر تحميل الآراء. أعد المحاولة.',

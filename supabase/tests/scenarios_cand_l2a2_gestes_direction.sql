@@ -333,7 +333,9 @@ BEGIN
   PERFORM pg_temp.vrai((SELECT count(*) FROM private.candidature_lot_secret) = 1
     AND (SELECT length(secret) >= 64 FROM private.candidature_lot_secret),
     'la cle des jetons de lot : une ligne engendree par la base, 64 signes au moins');
-  PERFORM pg_temp.vrai((SELECT count(*) FROM private.candidature_gestes_regles) = 26,
+  -- Les regles de l'admission (lot C, gestes *_admission) ont leur scenario.
+  PERFORM pg_temp.vrai((SELECT count(*) FROM private.candidature_gestes_regles
+                         WHERE geste NOT LIKE '%admission') = 26,
     'la table des regles de CAND-L2A1 est inchangee (vingt-six variantes)');
 END $f86$;
 
