@@ -5,9 +5,9 @@
 // La repartition de chaque paiement d'un eleve, **en pourcentages seulement** :
 // aucun montant de charge, aucune paie horaire. Les parts viennent du serveur
 // (`politique_commerciale_famille`, table versionnee `repartitions_paiement`) ;
-// aucune n'est ecrite ici. Puis trois paragraphes fixes : pourquoi pas les
-// magasins d'applications, les prix peuvent augmenter, les montants exacts se
-// demandent a l'administration.
+// aucune n'est ecrite ici. Puis quatre paragraphes fixes : pourquoi pas les
+// magasins d'applications, les taxes, les prix peuvent augmenter, pourquoi
+// des pourcentages et non des montants.
 //
 // Etats : chargement, contenu, vide (aucune repartition publiee), erreur, hors
 // ligne, et production sans source (`CapaciteIndisponible`).
@@ -224,6 +224,10 @@ class _Contenu extends StatelessWidget {
         titre(t.argent.transparence.magasinsTitre),
         Ecart.vXs,
         Text(t.argent.transparence.magasinsPhrase, style: corps),
+        Ecart.vXxl,
+        titre(t.argent.transparence.taxesTitre),
+        Ecart.vXs,
+        Text(t.argent.transparence.taxesPhrase, style: corps),
         Ecart.vXxl,
         titre(t.argent.transparence.hausseTitre),
         Ecart.vXs,

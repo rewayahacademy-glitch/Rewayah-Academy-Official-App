@@ -8444,10 +8444,12 @@ class _Traductions$argent$transparence$ar extends Traductions$argent$transparenc
 	@override String estimation({required Object enfants, required Object adultes}) => 'هذه النسب تقدير، محسوب على أساس ⁨${enfants}⁩ طفلًا و⁨${adultes}⁩ بالغًا، كلٌّ منهم بالسعر الكامل وحاضر في كل حصة. وتُراجَع مع كل إصدار جديد للأسعار.';
 	@override String get magasinsTitre => 'لماذا لا يوجد التطبيق على App Store ولا على Google Play';
 	@override String get magasinsPhrase => 'تأخذ هذه المتاجر من 15 إلى 30 ٪ من كل دفعة. ولا تستطيع الأكاديمية تحمّل هذه الرسوم دون رفع أسعارها. لذلك يتم الدفع عبر الويب.';
+	@override String get taxesTitre => 'الضرائب';
+	@override String get taxesPhrase => 'أسعارنا دون احتساب الضرائب. وضريبة بلدكم، حين تكون مستحقة، تُضاف إلى الدفعة وتعود كاملة إلى الدولة: وهي غير واردة في هذا التوزيع.';
 	@override String get hausseTitre => 'قد ترتفع الأسعار';
-	@override String get haussePhrase => 'تعتمد أسعارنا على كلفة الخدمات التي نستعملها وعلى التضخم. وإذا ارتفعت هذه الكلفة، فستضطر الأكاديمية إلى تعديل أسعارها، وستُعلمكم بذلك مسبقًا.';
+	@override String get haussePhrase => 'تعتمد أسعارنا على كلفة الخدمات التي نستعملها وعلى التضخم. وإذا ارتفعت هذه الكلفة، فستضطر الأكاديمية إلى تعديل أسعارها. وستُعلمكم بذلك قبل الدفعة التالية، ويمكنكم التوقف إذا لم يناسبكم السعر الجديد.';
 	@override String get montantsTitre => 'المبالغ الدقيقة';
-	@override String get montantsPhrase => 'لا تعرض هذه الصفحة إلا النسب المئوية. ولمعرفة المبالغ الدقيقة، اطلبوها من الإدارة.';
+	@override String get montantsPhrase => 'لا تعرض هذه الصفحة إلا النسب المئوية: فالمبالغ تتغير كل شهر بحسب عدد الطلاب.';
 	@override String get indisponibleTitre => 'تعذّرت قراءة توزيع الأسعار';
 	@override String get indisponiblePhrase => 'سيُعرض هنا حين يصبح متاحًا.';
 	@override String get erreurTitre => 'لم نتمكن من قراءة توزيع الأسعار';
@@ -28105,10 +28107,12 @@ extension on TraductionsAr {
 			'argent.transparence.estimation' => ({required Object enfants, required Object adultes}) => 'هذه النسب تقدير، محسوب على أساس ⁨${enfants}⁩ طفلًا و⁨${adultes}⁩ بالغًا، كلٌّ منهم بالسعر الكامل وحاضر في كل حصة. وتُراجَع مع كل إصدار جديد للأسعار.',
 			'argent.transparence.magasinsTitre' => 'لماذا لا يوجد التطبيق على App Store ولا على Google Play',
 			'argent.transparence.magasinsPhrase' => 'تأخذ هذه المتاجر من 15 إلى 30 ٪ من كل دفعة. ولا تستطيع الأكاديمية تحمّل هذه الرسوم دون رفع أسعارها. لذلك يتم الدفع عبر الويب.',
+			'argent.transparence.taxesTitre' => 'الضرائب',
+			'argent.transparence.taxesPhrase' => 'أسعارنا دون احتساب الضرائب. وضريبة بلدكم، حين تكون مستحقة، تُضاف إلى الدفعة وتعود كاملة إلى الدولة: وهي غير واردة في هذا التوزيع.',
 			'argent.transparence.hausseTitre' => 'قد ترتفع الأسعار',
-			'argent.transparence.haussePhrase' => 'تعتمد أسعارنا على كلفة الخدمات التي نستعملها وعلى التضخم. وإذا ارتفعت هذه الكلفة، فستضطر الأكاديمية إلى تعديل أسعارها، وستُعلمكم بذلك مسبقًا.',
+			'argent.transparence.haussePhrase' => 'تعتمد أسعارنا على كلفة الخدمات التي نستعملها وعلى التضخم. وإذا ارتفعت هذه الكلفة، فستضطر الأكاديمية إلى تعديل أسعارها. وستُعلمكم بذلك قبل الدفعة التالية، ويمكنكم التوقف إذا لم يناسبكم السعر الجديد.',
 			'argent.transparence.montantsTitre' => 'المبالغ الدقيقة',
-			'argent.transparence.montantsPhrase' => 'لا تعرض هذه الصفحة إلا النسب المئوية. ولمعرفة المبالغ الدقيقة، اطلبوها من الإدارة.',
+			'argent.transparence.montantsPhrase' => 'لا تعرض هذه الصفحة إلا النسب المئوية: فالمبالغ تتغير كل شهر بحسب عدد الطلاب.',
 			'argent.transparence.indisponibleTitre' => 'تعذّرت قراءة توزيع الأسعار',
 			'argent.transparence.indisponiblePhrase' => 'سيُعرض هنا حين يصبح متاحًا.',
 			'argent.transparence.erreurTitre' => 'لم نتمكن من قراءة توزيع الأسعار',
@@ -28264,10 +28268,10 @@ extension on TraductionsAr {
 			'juridique.cookies.s4.blocs.0' => 'عندما يتعطل التطبيق قد يُرسَل تقرير تقني إلى خدمة تتبّع الأخطاء. وهو لا يحتوي على لقطة شاشة ولا اسم ولا هوية.',
 			'juridique.cookies.s5.titre' => '٥. التحكم بها',
 			'juridique.cookies.s5.blocs.0' => 'يمكنكم مسح بيانات الموقع من إعدادات متصفحكم، أو تسجيل الخروج من الحساب. وعندئذٍ ستسجّلون الدخول من جديد وتعيدون ضبط تفضيلات العرض.',
-			'juridique.cookies.s6.titre' => '٦. خدمات أطراف ثالثة',
-			'juridique.cookies.s6.blocs.0' => 'إذا غادرتم أكاديمية رواية إلى خدمة أخرى، مثل الدفع، فإن تلك الخدمة تطبّق قواعدها الخاصة.',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.cookies.s6.titre' => '٦. خدمات أطراف ثالثة',
+			'juridique.cookies.s6.blocs.0' => 'إذا غادرتم أكاديمية رواية إلى خدمة أخرى، مثل الدفع، فإن تلك الخدمة تطبّق قواعدها الخاصة.',
 			'juridique.enfants.titre' => 'حماية الأطفال',
 			'juridique.enfants.resume' => 'كيف نحمي الطلاب القاصرين.',
 			'juridique.enfants.intro' => 'يتابع الطلاب القاصرون دروسهم تحت مسؤولية شخص بالغ. هذه هي القواعد التي نطبّقها، وهذه طريقة إخبارنا بأي قلق.',

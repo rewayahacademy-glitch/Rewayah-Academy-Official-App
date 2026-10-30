@@ -6692,5 +6692,7 @@
   "salle.seance.supports": "Bibliotheque (directeur, 30/10/2026) : DECISION-BIBLIOTHEQUE-ET-RESTES-2026-10-30.md §1.1, le mot Support disparait des textes visibles ; conteneur Bibliotheque, piece affichee document",
   "salle.seance.demo.etats.supports": "Bibliotheque (directeur, 30/10/2026) : DECISION-BIBLIOTHEQUE-ET-RESTES-2026-10-30.md §1.1, le mot Support disparait des textes visibles ; conteneur Bibliotheque, piece affichee document",
   "salle.visiteControle.agrandir": "Bibliotheque (directeur, 30/10/2026) : DECISION-BIBLIOTHEQUE-ET-RESTES-2026-10-30.md §1.1, le mot Support disparait des textes visibles ; conteneur Bibliotheque, piece affichee document",
-  "salle.visiteControle.reduire": "Bibliotheque (directeur, 30/10/2026) : DECISION-BIBLIOTHEQUE-ET-RESTES-2026-10-30.md §1.1, le mot Support disparait des textes visibles ; conteneur Bibliotheque, piece affichee document"
+  "salle.visiteControle.reduire": "Bibliotheque (directeur, 30/10/2026) : DECISION-BIBLIOTHEQUE-ET-RESTES-2026-10-30.md §1.1, le mot Support disparait des textes visibles ; conteneur Bibliotheque, piece affichee document",
+  "argent.transparence.taxesTitre": "TRANSPARENCE (pilote, relecture comptable et juridique de la PR 82, 30/10/2026) : prix hors taxes, la taxe du pays revient a l'Etat et ne figure pas dans la repartition",
+  "argent.transparence.taxesPhrase": "TRANSPARENCE (pilote, relecture comptable et juridique de la PR 82, 30/10/2026) : prix hors taxes, la taxe du pays revient a l'Etat et ne figure pas dans la repartition"
 }

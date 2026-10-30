@@ -17745,17 +17745,23 @@ class Traductions$argent$transparence$fr {
 	/// fr: 'Ces magasins prennent de 15 à 30 % de chaque paiement. L'académie ne peut pas supporter ces frais sans augmenter ses prix. Le paiement se fait donc sur le web.'
 	String get magasinsPhrase => 'Ces magasins prennent de 15 à 30 % de chaque paiement. L\'académie ne peut pas supporter ces frais sans augmenter ses prix. Le paiement se fait donc sur le web.';
 
+	/// fr: 'Les taxes'
+	String get taxesTitre => 'Les taxes';
+
+	/// fr: 'Nos prix sont hors taxes. La taxe de votre pays, quand elle est due, s'ajoute au paiement et revient entièrement à l'État : elle ne figure pas dans cette répartition.'
+	String get taxesPhrase => 'Nos prix sont hors taxes. La taxe de votre pays, quand elle est due, s\'ajoute au paiement et revient entièrement à l\'État : elle ne figure pas dans cette répartition.';
+
 	/// fr: 'Les prix peuvent augmenter'
 	String get hausseTitre => 'Les prix peuvent augmenter';
 
-	/// fr: 'Nos prix dépendent du coût des services que nous utilisons et de l'inflation. Si ces coûts augmentent, l'académie devra ajuster ses prix. Elle vous préviendra à l'avance.'
-	String get haussePhrase => 'Nos prix dépendent du coût des services que nous utilisons et de l\'inflation. Si ces coûts augmentent, l\'académie devra ajuster ses prix. Elle vous préviendra à l\'avance.';
+	/// fr: 'Nos prix dépendent du coût des services que nous utilisons et de l'inflation. Si ces coûts augmentent, l'académie devra ajuster ses prix. Elle vous préviendra avant le paiement suivant, et vous pourrez arrêter si le nouveau prix ne vous convient pas.'
+	String get haussePhrase => 'Nos prix dépendent du coût des services que nous utilisons et de l\'inflation. Si ces coûts augmentent, l\'académie devra ajuster ses prix. Elle vous préviendra avant le paiement suivant, et vous pourrez arrêter si le nouveau prix ne vous convient pas.';
 
 	/// fr: 'Les montants exacts'
 	String get montantsTitre => 'Les montants exacts';
 
-	/// fr: 'Cette page ne donne que des pourcentages. Pour connaître les montants exacts, demandez-les à l'administration.'
-	String get montantsPhrase => 'Cette page ne donne que des pourcentages. Pour connaître les montants exacts, demandez-les à l\'administration.';
+	/// fr: 'Cette page ne donne que des pourcentages : les montants changent chaque mois avec le nombre d'élèves.'
+	String get montantsPhrase => 'Cette page ne donne que des pourcentages : les montants changent chaque mois avec le nombre d\'élèves.';
 
 	/// fr: 'La répartition des prix ne peut pas être lue'
 	String get indisponibleTitre => 'La répartition des prix ne peut pas être lue';
@@ -49118,10 +49124,12 @@ extension on Traductions {
 			'argent.transparence.estimation' => ({required Object enfants, required Object adultes}) => 'Ces pourcentages sont une estimation, calculée pour ${enfants} enfants et ${adultes} adultes, chacun au plein tarif et présent à chaque séance. Ils sont revus à chaque nouvelle version des prix.',
 			'argent.transparence.magasinsTitre' => 'Pourquoi l\'application n\'est pas sur l\'App Store ni sur Google Play',
 			'argent.transparence.magasinsPhrase' => 'Ces magasins prennent de 15 à 30 % de chaque paiement. L\'académie ne peut pas supporter ces frais sans augmenter ses prix. Le paiement se fait donc sur le web.',
+			'argent.transparence.taxesTitre' => 'Les taxes',
+			'argent.transparence.taxesPhrase' => 'Nos prix sont hors taxes. La taxe de votre pays, quand elle est due, s\'ajoute au paiement et revient entièrement à l\'État : elle ne figure pas dans cette répartition.',
 			'argent.transparence.hausseTitre' => 'Les prix peuvent augmenter',
-			'argent.transparence.haussePhrase' => 'Nos prix dépendent du coût des services que nous utilisons et de l\'inflation. Si ces coûts augmentent, l\'académie devra ajuster ses prix. Elle vous préviendra à l\'avance.',
+			'argent.transparence.haussePhrase' => 'Nos prix dépendent du coût des services que nous utilisons et de l\'inflation. Si ces coûts augmentent, l\'académie devra ajuster ses prix. Elle vous préviendra avant le paiement suivant, et vous pourrez arrêter si le nouveau prix ne vous convient pas.',
 			'argent.transparence.montantsTitre' => 'Les montants exacts',
-			'argent.transparence.montantsPhrase' => 'Cette page ne donne que des pourcentages. Pour connaître les montants exacts, demandez-les à l\'administration.',
+			'argent.transparence.montantsPhrase' => 'Cette page ne donne que des pourcentages : les montants changent chaque mois avec le nombre d\'élèves.',
 			'argent.transparence.indisponibleTitre' => 'La répartition des prix ne peut pas être lue',
 			'argent.transparence.indisponiblePhrase' => 'Elle sera affichée ici dès qu\'elle sera disponible.',
 			'argent.transparence.erreurTitre' => 'La répartition des prix n\'a pas pu être lue',
@@ -49590,10 +49598,10 @@ extension on Traductions {
 			'com.communaute.demo.f.fonctionSoi' => 'Enseignant, Classe Al-Fatiha',
 			'com.communaute.demo.f.prenomSoi' => 'Ibrahim',
 			'com.communaute.demo.f.samira' => 'Samira Belkacem',
-			'com.communaute.demo.f.fonctionSamira' => 'Enseignante, Classe An-Nour',
-			'com.communaute.demo.f.nour' => 'Nour El Idrissi',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.demo.f.fonctionSamira' => 'Enseignante, Classe An-Nour',
+			'com.communaute.demo.f.nour' => 'Nour El Idrissi',
 			'com.communaute.demo.f.fonctionNour' => 'Enseignante, Classe Al-Fajr',
 			'com.communaute.demo.f.yasmine' => 'Yasmine Haddad',
 			'com.communaute.demo.f.fonctionYasmine' => 'Enseignante, Classe Al-Badr',
@@ -50104,10 +50112,10 @@ extension on Traductions {
 			'comptable.commun.aucuneAllocation' => 'Aucune allocation enregistrée',
 			'comptable.commun.destination' => 'Destination',
 			'comptable.commun.destinationMasquee' => ({required Object type, required Object suffixe}) => '${type} •••• ${suffixe}',
-			'comptable.commun.destinationMasqueeLecteur' => ({required Object type, required Object suffixe}) => '${type}, numéro masqué, se termine par ${suffixe}',
-			'comptable.commun.destinationAucune' => 'Aucune méthode de paiement',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.commun.destinationMasqueeLecteur' => ({required Object type, required Object suffixe}) => '${type}, numéro masqué, se termine par ${suffixe}',
+			'comptable.commun.destinationAucune' => 'Aucune méthode de paiement',
 			'comptable.commun.paysDevise' => ({required Object pays, required Object devise}) => '${pays} · ${devise}',
 			'comptable.commun.verification' => 'Vérification',
 			'comptable.commun.activiteInitiateurDate' => ({required Object initiateur, required Object date}) => '${initiateur} · ${date}',
@@ -50618,10 +50626,10 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.aucuneAction' => 'Aucune action n\'est ouverte sur ce profil : il est à jour.',
 			'comptable.beneficiaires.profil.filTitre' => 'Fil « Profil de paiement »',
 			'comptable.beneficiaires.profil.relanceRefusee' => ({required Object nom}) => 'Aucun fil « Profil de paiement » ne peut être ouvert avec ${nom} : Rewayah ne l\'autorise pas pour ce bénéficiaire. Demandez plutôt une mise à jour, ou signalez-le à la direction.',
-			'comptable.beneficiaires.profil.messageModele' => 'Vos informations de paiement doivent être complétées avant votre prochain versement. Vous pouvez les ajouter depuis votre espace personnel.',
-			'comptable.beneficiaires.profil.miseAJourDemandee' => ({required Object nom}) => 'Demande de mise à jour enregistrée pour ${nom}.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.profil.messageModele' => 'Vos informations de paiement doivent être complétées avant votre prochain versement. Vous pouvez les ajouter depuis votre espace personnel.',
+			'comptable.beneficiaires.profil.miseAJourDemandee' => ({required Object nom}) => 'Demande de mise à jour enregistrée pour ${nom}.',
 			'comptable.beneficiaires.profil.suspendus' => ({required Object nom}) => 'Paiements de ${nom} suspendus : aucun versement ne part tant qu\'ils ne sont pas repris.',
 			'comptable.beneficiaires.profil.repris' => ({required Object nom}) => 'Paiements de ${nom} repris.',
 			'comptable.beneficiaires.profil.erreurAction' => 'L\'action n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
@@ -51132,10 +51140,10 @@ extension on Traductions {
 			'sansDonnees.encaissements' => 'Les encaissements n\'ont pas pu être chargés',
 			'sansDonnees.tresorerie' => 'La trésorerie n\'a pas pu être chargée',
 			'sansDonnees.obligation' => 'Cette obligation n\'a pas pu être chargée',
-			'sansDonnees.contractuels' => 'Les contractuels n\'ont pas pu être chargés',
-			'sansDonnees.reserve' => 'La politique de réserve n\'a pas pu être chargée',
 			_ => null,
 		} ?? switch (path) {
+			'sansDonnees.contractuels' => 'Les contractuels n\'ont pas pu être chargés',
+			'sansDonnees.reserve' => 'La politique de réserve n\'a pas pu être chargée',
 			'sansDonnees.vueGlobale' => 'La vue d\'ensemble des finances n\'a pas pu être chargée',
 			'sansDonnees.beneficiaires' => 'Les bénéficiaires n\'ont pas pu être chargés',
 			'sansDonnees.profilPaiement' => 'Ce profil de paiement n\'a pas pu être chargé',

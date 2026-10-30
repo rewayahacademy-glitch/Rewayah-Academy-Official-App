@@ -90,6 +90,7 @@ void main() {
       findsOneWidget,
     );
     expect(find.text(t.argent.transparence.magasinsPhrase), findsOneWidget);
+    expect(find.text(t.argent.transparence.taxesPhrase), findsOneWidget);
     expect(find.text(t.argent.transparence.haussePhrase), findsOneWidget);
     expect(find.text(t.argent.transparence.montantsPhrase), findsOneWidget);
     // Aucun montant : ni dollar, ni prix, dans toute la page.
