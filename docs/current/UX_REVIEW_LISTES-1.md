@@ -55,7 +55,7 @@ Une relecture des pages web reste à faire ; aucune conclusion ci-dessous n'en d
 ### 6. Comptes : une vue par rôle (directeur, 30/10/2026)
 
 - **Règle utile.** ONGLETS-1 (`lib/CLAUDE.md`, `SelecteurSection`) : jusqu'à quatre sections, contrôle segmenté si tout tient, sinon menu ; Nielsen, « correspondance avec le monde réel » et « reconnaissance plutôt que rappel » (les populations que la direction gère sont nommées, pas un filtre de rôle à deviner) ; LISTES-1 §3.1 (environ 10 lignes à 1440 x 900).
-- **Conclusion : conforme.** Quatre vues comptées ; au bureau, le choix de la vue et la recherche partagent la rangée d'en-tête (la table garde 9 lignes entières à 1440 x 900 avec les polices de test, 10 visibles à 1366 x 768 en capture) ; au téléphone, le choix passe en menu « Élèves (28) » quand les quatre libellés ne tiennent pas.
+- **Conclusion : conforme.** Quatre vues comptées ; au bureau, le choix de la vue et la recherche partagent la rangée d'en-tête (la table garde 9 lignes entières à 1440 x 900 avec les polices de test, mesure du test ; 8 lignes entières à 1366 x 768 sur la capture Élèves, vraies polices) ; au téléphone, le choix passe en menu « Élèves (28) » quand les quatre libellés ne tiennent pas.
 - **Modification.** `comptes_page.dart`, `liste_comptes.dart` ; captures `docs/captures/2026-10-31-listes/`.
 
 ## Relecture adverse du 23/10/2026 (lot 6)
