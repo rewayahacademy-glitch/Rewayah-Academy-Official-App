@@ -66,3 +66,35 @@ Base de calcul choisie par le pilote : 100 élèves, moitié enfants et moitié 
 | R9 (401 après la déconnexion) | Correction par un agent, petite PR | maintenant (lot RELIQUATS-B2) |
 | Staging (une semaine de migrations en retard) | On le remet à jour une fois, par une page à coller, quand le directeur est devant un ordinateur ; ensuite chaque migration y passe avant la production | au prochain passage du directeur devant un ordinateur |
 | Mot « Support » dans la salle | Remplacé par « Bibliothèque » (§1) | maintenant (lot TRANSPARENCE) |
+
+## 4. La communauté (demande du directeur, 30/10 ; forme choisie par le pilote)
+
+Demande du directeur : l'application étudie les heures où les gens se connectent le plus, et
+leur offre à ces heures un chat en communauté, pour leur donner des raisons de rester fidèles.
+Celui qui participe ne doit pas être en cours.
+
+Choix du pilote, que le directeur peut changer après essai :
+
+1. **D'abord la mesure.** Le serveur compte les connexions par heure et par jour de la
+   semaine, en agrégat seulement (aucune heure de connexion d'une personne n'est montrée à
+   qui que ce soit). La direction voit les heures d'affluence.
+2. **Des salons ouverts aux heures d'affluence**, avec une heure d'ouverture et une heure de
+   fermeture. Un salon par public :
+   - adultes hommes ;
+   - adultes femmes ;
+   - parents et tuteurs.
+
+   C'est la même séparation que les classes adultes.
+3. **Aucun enfant dans un chat ouvert.** Un mineur ne voit pas les salons. Protection des
+   mineurs d'abord ; un espace des enfants, s'il existe un jour, sera animé par un enseignant.
+4. **Pas en cours** : le serveur refuse l'entrée et l'envoi à une personne inscrite à une
+   séance dont la porte est ouverte ou qui est en cours. Ce n'est jamais vérifié par l'écran
+   seul.
+5. **Sécurité** :
+   - texte seul au départ : ni photo, ni lien, ni message privé entre membres ;
+   - signalement d'un message, et masquage par la direction ;
+   - règles de conduite acceptées à la première entrée ;
+   - historique gardé un temps limité.
+6. **Ordre** : après les lots TRANSPARENCE et RELIQUATS-B2 (deux agents au plus). La mesure
+   des heures part en premier, car il faut quelques jours de données avant de choisir les
+   heures des salons.
