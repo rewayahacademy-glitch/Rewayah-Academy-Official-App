@@ -194,7 +194,9 @@ void main() {
             of: find.byType(DataCollection<CompteAdmin>),
             matching: find.byType(AppCard),
           );
-          expect(cartes, findsNWidgets(5));
+          // Comptes par role (30/10/2026) : la vue Enseignants s'ouvre (deux
+          // enseignants attendent) et montre les trois enseignants du jeu.
+          expect(cartes, findsNWidgets(3));
           final List<double> titres = <double>[];
           final List<double> secondaires = <double>[];
           for (final Element carte in cartes.evaluate()) {

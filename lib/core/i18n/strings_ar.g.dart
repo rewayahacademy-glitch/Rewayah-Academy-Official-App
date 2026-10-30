@@ -5163,6 +5163,54 @@ class _Traductions$admin$comptes$ar extends Traductions$admin$comptes$fr {
 		many: '⁨${jours}⁩ يومًا',
 		other: '⁨${jours}⁩ يوم',
 	);
+	@override String get recherche => 'البحث عن حساب';
+	@override String get filtreEtat => 'الحالة';
+	@override String get filtreTousLesEtats => 'كل الحالات';
+	@override String compteur({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا حساب',
+		one: 'حساب واحد',
+		two: 'حسابان',
+		few: '⁨${n}⁩ حسابات',
+		many: '⁨${n}⁩ حسابًا',
+		other: '⁨${n}⁩ حساب',
+	);
+	@override String filtreActifEtat({required Object valeur}) => 'الحالة: ⁨${valeur}⁩';
+	@override String filtreActifRecherche({required Object texte}) => 'البحث: ⁨${texte}⁩';
+	@override String get actionOuvrirDossier => 'فتح ملف الهوية';
+	@override String get plafondTitre => 'قد تكون القائمة ناقصة';
+	@override String plafondMessage({required Object nombre}) => 'يعيد الخادم على الأكثر ⁨${nombre}⁩ حسابًا، والقائمة تبلغ هذا العدد: قد تغيب أحدث التسجيلات.';
+	@override String get rechercheAideEleves => 'الاسم أو المعرّف أو الفصل أو وليّ الأمر';
+	@override String get rechercheAide => 'الاسم أو المعرّف';
+	@override String get vues => 'الأشخاص المعروضون';
+	@override String get vueEleves => 'الطلاب';
+	@override String get vueFamilles => 'العائلات';
+	@override String get vueEnseignants => 'المعلمون';
+	@override String get vueDirection => 'الإدارة';
+	@override String vueNombre({required Object vue, required Object n}) => '⁨${vue}⁩ (⁨${n}⁩)';
+	@override String get colonneTranche => 'العمر';
+	@override String get trancheEnfant => 'طفل';
+	@override String get trancheAdulte => 'بالغ';
+	@override String get trancheInconnue => 'غير محدد';
+	@override String get colonneClasse => 'الفصل';
+	@override String get classeAucune => 'بلا فصل';
+	@override String classeEtAutres({required num n, required Object classe}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: '⁨${classe}⁩',
+		one: '⁨${classe}⁩ وفصل آخر',
+		two: '⁨${classe}⁩ وفصلان آخران',
+		few: '⁨${classe}⁩ و⁨${n}⁩ فصول أخرى',
+		many: '⁨${classe}⁩ و⁨${n}⁩ فصلًا آخر',
+		other: '⁨${classe}⁩ و⁨${n}⁩ فصل آخر',
+	);
+	@override String get colonneTuteur => 'وليّ الأمر';
+	@override String get tuteurAucun => 'بلا وليّ أمر';
+	@override String get colonneElevesRattaches => 'الطلاب التابعون';
+	@override String get videEleves => 'لا يوجد طالب مسجّل حاليًا';
+	@override String get videFamilles => 'لا توجد عائلة مسجّلة حاليًا';
+	@override String get videEnseignants => 'لا يوجد معلم مسجّل حاليًا';
+	@override String get videDirection => 'لا يوجد حساب للإدارة';
+	@override String get videDetail => 'ستظهر التسجيلات الجديدة هنا.';
+	@override String get detailsAbsentsTitre => 'عمر الطلاب وفصولهم وأولياء أمورهم غير معروضة';
+	@override String get detailsAbsentsMessage => 'لا يقدّم الخادم هذه المعلومات بعد: تحديثه غير مثبّت. يبقى الطلاب منفصلين عن أولياء الأمور. أعد تحميل الصفحة بعد تثبيت التحديث.';
 }
 
 // Path: admin.agents
@@ -24177,6 +24225,40 @@ extension on TraductionsAr {
 			'admin.comptes.attendAujourdhui' => 'اليوم',
 			'admin.comptes.attendUnJour' => 'يوم واحد',
 			'admin.comptes.attendJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'اليوم', one: 'يوم واحد', two: 'يومان', few: '⁨${jours}⁩ أيام', many: '⁨${jours}⁩ يومًا', other: '⁨${jours}⁩ يوم', ), 
+			'admin.comptes.recherche' => 'البحث عن حساب',
+			'admin.comptes.filtreEtat' => 'الحالة',
+			'admin.comptes.filtreTousLesEtats' => 'كل الحالات',
+			'admin.comptes.compteur' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا حساب', one: 'حساب واحد', two: 'حسابان', few: '⁨${n}⁩ حسابات', many: '⁨${n}⁩ حسابًا', other: '⁨${n}⁩ حساب', ), 
+			'admin.comptes.filtreActifEtat' => ({required Object valeur}) => 'الحالة: ⁨${valeur}⁩',
+			'admin.comptes.filtreActifRecherche' => ({required Object texte}) => 'البحث: ⁨${texte}⁩',
+			'admin.comptes.actionOuvrirDossier' => 'فتح ملف الهوية',
+			'admin.comptes.plafondTitre' => 'قد تكون القائمة ناقصة',
+			'admin.comptes.plafondMessage' => ({required Object nombre}) => 'يعيد الخادم على الأكثر ⁨${nombre}⁩ حسابًا، والقائمة تبلغ هذا العدد: قد تغيب أحدث التسجيلات.',
+			'admin.comptes.rechercheAideEleves' => 'الاسم أو المعرّف أو الفصل أو وليّ الأمر',
+			'admin.comptes.rechercheAide' => 'الاسم أو المعرّف',
+			'admin.comptes.vues' => 'الأشخاص المعروضون',
+			'admin.comptes.vueEleves' => 'الطلاب',
+			'admin.comptes.vueFamilles' => 'العائلات',
+			'admin.comptes.vueEnseignants' => 'المعلمون',
+			'admin.comptes.vueDirection' => 'الإدارة',
+			'admin.comptes.vueNombre' => ({required Object vue, required Object n}) => '⁨${vue}⁩ (⁨${n}⁩)',
+			'admin.comptes.colonneTranche' => 'العمر',
+			'admin.comptes.trancheEnfant' => 'طفل',
+			'admin.comptes.trancheAdulte' => 'بالغ',
+			'admin.comptes.trancheInconnue' => 'غير محدد',
+			'admin.comptes.colonneClasse' => 'الفصل',
+			'admin.comptes.classeAucune' => 'بلا فصل',
+			'admin.comptes.classeEtAutres' => ({required num n, required Object classe}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${classe}⁩', one: '⁨${classe}⁩ وفصل آخر', two: '⁨${classe}⁩ وفصلان آخران', few: '⁨${classe}⁩ و⁨${n}⁩ فصول أخرى', many: '⁨${classe}⁩ و⁨${n}⁩ فصلًا آخر', other: '⁨${classe}⁩ و⁨${n}⁩ فصل آخر', ), 
+			'admin.comptes.colonneTuteur' => 'وليّ الأمر',
+			'admin.comptes.tuteurAucun' => 'بلا وليّ أمر',
+			'admin.comptes.colonneElevesRattaches' => 'الطلاب التابعون',
+			'admin.comptes.videEleves' => 'لا يوجد طالب مسجّل حاليًا',
+			'admin.comptes.videFamilles' => 'لا توجد عائلة مسجّلة حاليًا',
+			'admin.comptes.videEnseignants' => 'لا يوجد معلم مسجّل حاليًا',
+			'admin.comptes.videDirection' => 'لا يوجد حساب للإدارة',
+			'admin.comptes.videDetail' => 'ستظهر التسجيلات الجديدة هنا.',
+			'admin.comptes.detailsAbsentsTitre' => 'عمر الطلاب وفصولهم وأولياء أمورهم غير معروضة',
+			'admin.comptes.detailsAbsentsMessage' => 'لا يقدّم الخادم هذه المعلومات بعد: تحديثه غير مثبّت. يبقى الطلاب منفصلين عن أولياء الأمور. أعد تحميل الصفحة بعد تثبيت التحديث.',
 			'admin.agents.titre' => 'وصول الوكلاء الآليين',
 			'admin.agents.intro' => 'يسمح الرمز لوكيل آلي بفتح التطبيق وقراءة ما يقرؤه شخص فيه. لا يستطيع كتابة شيء ولا إلغاء شيء ولا تعديل شيء: قاعدة البيانات تمنعه، لا الواجهة.',
 			'admin.agents.emettre' => 'إصدار رمز',
@@ -24606,6 +24688,8 @@ extension on TraductionsAr {
 			'admin.bibliotheque.catalogue.segments.aVerifier' => 'بحاجة إلى مراجعة',
 			'admin.bibliotheque.catalogue.segments.publies' => 'المنشورة',
 			'admin.bibliotheque.catalogue.segments.retires' => 'المسحوبة',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.catalogue.segments.droitsExpires' => 'حقوق منتهية',
 			'admin.bibliotheque.catalogue.filtres.type' => 'النوع',
 			'admin.bibliotheque.catalogue.filtres.niveau' => 'المستوى',
@@ -24640,8 +24724,6 @@ extension on TraductionsAr {
 			'admin.bibliotheque.fiche.sections.historique' => 'السجل',
 			'admin.bibliotheque.fiche.afficherSection' => ({required Object nom}) => 'إظهار قسم ⁨${nom}⁩',
 			'admin.bibliotheque.fiche.masquerSection' => ({required Object nom}) => 'إخفاء قسم ⁨${nom}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.fiche.apercuAucunFichier' => 'لا يوجد ملف مودَع لهذا الإصدار.',
 			'admin.bibliotheque.fiche.apercuFichier' => 'يوجد ملف مودَع. يُفحص عرضه في خطوة «التحقق والنشر».',
 			'admin.bibliotheque.fiche.apercuPublie' => 'إصدار منشور: المحتوى مثبّت.',
@@ -25120,6 +25202,8 @@ extension on TraductionsAr {
 			'comptable.paiements.compteur' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, one: 'دفعة واحدة', two: 'دفعتان', few: '${n} دفعات', other: '${n} دفعة', ), 
 			'comptable.paiements.actions.voir' => 'عرض',
 			'comptable.paiements.actions.payer' => 'دفع',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.actions.demanderValidation' => 'طلب المصادقة',
 			'comptable.paiements.actions.relancer' => 'تذكير',
 			'comptable.paiements.actions.signalerEcart' => 'الإبلاغ عن فرق',
@@ -25154,8 +25238,6 @@ extension on TraductionsAr {
 			'comptable.paiements.detail.historique' => 'السجل',
 			'comptable.paiements.detail.historiqueVide' => 'لا توجد عملية مسجلة لهذه الدفعة.',
 			'comptable.paiements.detail.encart' => 'لا يستطيع المحاسب تعديل المبلغ ولا بيانات الدفع الخاصة بالمستفيد.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.detail.alerteMethodeRecente' => ({required Object date}) => 'عُدّلت وسيلة الدفع في ${date}: تلزم مصادقة إضافية قبل أي دفع.',
 			'comptable.paiements.detail.alerteLieeOperateur' => 'المستفيد مرتبط بالمنفِّذ: تلزم مصادقة إضافية قبل أي دفع.',
 			'comptable.paiements.detail.alerteEchec' => 'فشل آخر إرسال لدى مزوّد الدفع. تحقق من وسيلة الدفع قبل محاولة جديدة.',
@@ -25634,6 +25716,8 @@ extension on TraductionsAr {
 			'comptable.direction.reservePanneau.montantCible' => 'المبلغ المستهدف',
 			'comptable.direction.reservePanneau.montantCibleDetail' => 'المبلغ الذي يجب أن يبلغه الاحتياطي الاستراتيجي.',
 			'comptable.direction.reservePanneau.nombreMois' => 'عدد أشهر التغطية',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.reservePanneau.nombreMoisDetail' => 'كم شهرًا من المصاريف الأساسية يجب أن يغطي الاحتياطي.',
 			'comptable.direction.reservePanneau.alimentationTitre' => 'التغذية التلقائية',
 			'comptable.direction.reservePanneau.alimentationDetail' => 'كيف يمتلئ الاحتياطي دون تدخل من المحاسب.',
@@ -25668,8 +25752,6 @@ extension on TraductionsAr {
 			'comptable.direction.delegationPanneau.intro' => 'تحدد مرة واحدة ما يستطيع المحاسب تنفيذه وحده. وكل ما عدا ذلك يعود إليك.',
 			'comptable.direction.delegationPanneau.pouvoirsTitre' => 'ما يستطيع المحاسب فعله وحده',
 			'comptable.direction.delegationPanneau.paiementsStandards' => 'دفع المدفوعات العادية',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.paiementsStandardsDetail' => 'الدفعة بالمبلغ المحسوب، نحو وسيلة متحقَّق منها، تُرسَل دون مصادقة يومية.',
 			'comptable.direction.delegationPanneau.remboursement' => 'تنفيذ استرداد عادي',
 			'comptable.direction.delegationPanneau.remboursementDetail' => 'الاسترداد المطابق للقاعدة يُنفَّذ دون مصادقة.',
@@ -26148,6 +26230,8 @@ extension on TraductionsAr {
 			'appareils.emetteur.valableJusqua' => ({required Object heure}) => 'صالح حتى ⁨${heure}⁩',
 			'appareils.emetteur.restant' => ({required Object temps}) => 'بقي ⁨${temps}⁩',
 			'appareils.emetteur.sortie' => ({required Object heure}) => 'مغادرة هذه الشاشة لا تلغي الرمز: يبقى صالحًا حتى ⁨${heure}⁩.',
+			_ => null,
+		} ?? switch (path) {
 			'appareils.emetteur.suiviIndisponible' => 'لا تستطيع هذه الشاشة تأكيد الربط. تحقّق على جهاز الطالب.',
 			'appareils.emetteur.preparation' => 'جارٍ تحضير الرمز',
 			'appareils.emetteur.verification.titre' => 'جارٍ التحقق من الرمز',
@@ -26182,8 +26266,6 @@ extension on TraductionsAr {
 			'connexion.courrielIndice' => 'name@example.com',
 			'connexion.motDePasseDemo' => 'كلمة مرور العرض التجريبي',
 			'connexion.envoyerLien' => 'استلام الرابط',
-			_ => null,
-		} ?? switch (path) {
 			'connexion.entrerDemo' => 'الدخول إلى العرض التجريبي',
 			'connexion.introDemo' => 'وضع العرض التجريبي: لن يُرسل أي رابط. ستدخل مباشرة دون بريد إلكتروني.',
 			'connexion.essayerDemo' => 'تجربة العرض التجريبي',
@@ -26662,6 +26744,8 @@ extension on TraductionsAr {
 			'adulte.sortie.notificationRetiree' => ({required Object dePrenom}) => 'أُزلتِ من باقة أسرة ⁨${dePrenom}⁩.',
 			'adulte.sortie.notificationRetire' => ({required Object dePrenom}) => 'أُزلتَ من باقة أسرة ⁨${dePrenom}⁩.',
 			'adulte.sortie.delaiTitre' => 'دعوة جديدة غير متاحة',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.sortie.delaiPhrase' => ({required Object date}) => 'يمكن تقديم طلب جديد ابتداءً من ⁨${date}⁩. ثم يجب أن تعتمده الإدارة.',
 			'adulte.sortie.pourquoi' => 'لماذا هذا الانتظار؟',
 			'adulte.sortie.pourquoiPhrase' => 'يضمن هذا الإجراء أمان الأسر وحسن إدارة وصول الأطفال.',
@@ -26696,8 +26780,6 @@ extension on TraductionsAr {
 			'adulte.reprise.etats.attenteAdministration' => 'بانتظار الإدارة',
 			'adulte.reprise.etats.validee' => 'معتمَد',
 			'adulte.reprise.etats.refusee' => 'مرفوض',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.reprise.phrases.deposee' => 'أُبلغ صاحب حساب الأسرة. ستدرس الإدارة الطلب.',
 			'adulte.reprise.phrases.examenLe' => ({required Object date}) => 'دون رد من صاحب الحساب، يمكن للإدارة دراسته ابتداءً من ⁨${date}⁩.',
 			'adulte.reprise.phrases.refuseeParTitulaire' => 'رفض صاحب حساب الأسرة هذا الطلب. الإدارة على علم. لا تُنقل أي صلاحية من صلاحيات الأسرة.',
@@ -27176,6 +27258,8 @@ extension on TraductionsAr {
 			'controleur.echanges.champLibelle' => 'الرد على الإدارة',
 			'controleur.echanges.envoyer' => 'إرسال',
 			'controleur.echanges.champVide' => 'اكتب رسالة لتتمكن من إرسالها.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.echanges.enCours' => 'جارٍ الإرسال.',
 			'controleur.echanges.envoye' => 'أُرسل.',
 			'controleur.echanges.echec' => 'لم يُؤكَّد الإرسال: لم يستجب الاتصال أو الخادم. نصك محفوظ هنا؛ أعد المحاولة بعد لحظة. إن استمرت المشكلة، راسل الإدارة.',
@@ -27210,8 +27294,6 @@ extension on TraductionsAr {
 			'controleur.controle.indisponible' => 'هذه الزيارة لم تعد مقترحة: أُلغيت الحصة أو أُسندت إلى مراقب آخر.',
 			'controleur.controle.attente' => 'تُفتح المراقبة بمجرد أن تصبح الحصة مباشرة.',
 			'controleur.controle.dejaEnCours' => 'مراقبة جارية بالفعل في هذا الفصل.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.controle.dejaEnCoursAide' => 'مراقبة واحدة في كل مرة لكل فصل. اختر حصة أخرى، أو عد لاحقًا: يمكنك البدء حين تنتهي هذه المراقبة.',
 			'controleur.controle.incognito' => 'لا يُعلَن عن حضورك في الوقت الفعلي.',
 			'controleur.controle.horaire' => ({required Object debut, required Object fin}) => '⁨${debut}⁩ إلى ⁨${fin}⁩',
@@ -27690,6 +27772,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.recap.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا أيام في الأسبوع', one: 'يوم واحد في الأسبوع', two: 'يومان في الأسبوع', few: '⁨${n}⁩ أيام في الأسبوع', many: '⁨${n}⁩ يومًا في الأسبوع', other: '⁨${n}⁩ يومًا في الأسبوع', ), 
 			'recrutement.parcours.q.langueMaternelle.titre' => 'ما لغتك الأم؟',
 			'recrutement.parcours.q.langueMaternelle.explication' => 'هي اللغة التي تتكلمها منذ طفولتك. هذا السؤال اختياري: يمكنك المتابعة دون إجابة.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.langueMaternelle.court' => 'اللغة الأم',
 			'recrutement.parcours.q.languesExplication.titre' => 'بأي لغات تستطيع الشرح والتصحيح؟',
 			'recrutement.parcours.q.languesExplication.explication' => 'اختر كل اللغات التي تستطيع بها شرح قاعدة لطالب وتصحيح أخطائه، دون حد لعددها. يختار الطالب أو وليّ أمره لغته عند التسجيل، وتُسند إليه الأكاديمية معلّمًا يتكلمها: كلما زادت اللغات التي تتقنها زادت الفصول التي قد تُدرّس فيها. العربية ليست لغة دروس، لذلك ليست في هذه القائمة.',
@@ -27724,8 +27808,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique.description' => 'تلتزم بأحكام النطق حين تقرأ.',
 			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique.explication' => 'يُتحقق من قراءتك أثناء المقابلة.',
 			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique.exemple' => 'تمدّ الحروف وتنطقها كما تقتضي أحكام التجويد.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_enseigne.libelle' => 'أطبّق التجويد وأعرف كيف أعلّمه',
 			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_enseigne.description' => 'تلتزم بالأحكام وتعرف شرحها لطالب.',
 			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_enseigne.explication' => 'يُتحقق من قراءتك أثناء المقابلة.',
@@ -28204,6 +28286,8 @@ extension on TraductionsAr {
 			'juridique.cookies.titre' => 'ملفات تعريف الارتباط',
 			'juridique.cookies.resume' => 'ما يحتفظ به التطبيق والموقع على جهازكم.',
 			'juridique.cookies.intro' => 'يحتفظ التطبيق والموقع بالقليل على جهازكم. هذا هو.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.cookies.s1.titre' => '١. ما هي',
 			'juridique.cookies.s1.blocs.0' => 'ملف تعريف الارتباط أو البيان المحلي عنصر صغير يحتفظ به متصفحكم أو جهازكم. وهو يساعد الخدمة على التعرّف عليكم أو على تذكّر إعداد.',
 			'juridique.cookies.s2.titre' => '٢. ما يحتفظ به التطبيق',
@@ -28238,8 +28322,6 @@ extension on TraductionsAr {
 			'juridique.enfants.s4.titre' => '٤. معلومات الطفل',
 			'juridique.enfants.s4.blocs.0' => 'معلومات الطفل ليست عامة ولا تظهر للأسر الأخرى.',
 			'juridique.enfants.s4.blocs.1' => 'الرمز الشخصي للطالب يبقى على جهازه.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.enfants.s4.blocs.2' => 'انظروا أيضًا نص الخصوصية.',
 			'juridique.enfants.s5.titre' => '٥. إخبارنا بقلق',
 			'juridique.enfants.s5.blocs.0' => 'إذا أقلقكم أمر فاكتبوا لنا. قولوا ما رأيتم ومتى وفي أي فصل.',

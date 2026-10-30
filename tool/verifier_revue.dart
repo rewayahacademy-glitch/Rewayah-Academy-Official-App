@@ -524,6 +524,9 @@ const Map<String, int> _casesMaterielAutorisees = <String, int>{
   'lib/features/admin_pedagogie_bibliotheque/import/import_page.dart': 1,
   'lib/features/admin_pedagogie_bibliotheque/publication/publication_page.dart':
       2,
+  // Candidatures : migree dans la PR 50, portee sur main au lot suivant
+  // (pilote, 30/10/2026). La ligne part avec ce lot.
+  'lib/features/admin_candidatures/ligne_candidature.dart': 1,
   'lib/features/comptable/paiements/ligne_obligation.dart': 1,
   'lib/features/consentements/texte_observation.dart': 1,
   'lib/features/foyer/recharge_foyer.dart': 1,

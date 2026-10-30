@@ -65,6 +65,16 @@ class CompteAdmin {
     required this.aEnseignant,
     required this.enfantsDuFoyer,
     this.paysEnseignant,
+    this.detailsServis = false,
+    this.tranche,
+    this.classeId,
+    this.classeLibelle,
+    this.classeNumero,
+    this.classesActives = 0,
+    this.tuteurId,
+    this.tuteurPrenom,
+    this.tuteurNom,
+    this.admissionATraiter = false,
   });
 
   /// Lit une ligne rendue par `comptes_admin()`.
@@ -92,6 +102,22 @@ class CompteAdmin {
       enfantsDuFoyer: entier('enfants_du_foyer'),
       // ENS-PAYS-1 : lu des que `comptes_admin()` le rend (BR-1), nul avant.
       paysEnseignant: json['teacher_country'] as String?,
+      // LISTES (30/10) : rendus par `comptes_admin_par_role()` seulement. Sa
+      // presence se lit sur une colonne qu'elle rend toujours.
+      detailsServis: json.containsKey('admission_a_traiter'),
+      tranche: switch (json['tranche_age']) {
+        'enfant' => TrancheAge.enfant,
+        'adulte' => TrancheAge.adulte,
+        _ => null,
+      },
+      classeId: json['classe_id'] as String?,
+      classeLibelle: json['classe_libelle'] as String?,
+      classeNumero: (json['classe_numero'] as num?)?.toInt(),
+      classesActives: entier('classes_actives'),
+      tuteurId: json['tuteur_id'] as String?,
+      tuteurPrenom: json['tuteur_prenom'] as String?,
+      tuteurNom: json['tuteur_nom'] as String?,
+      admissionATraiter: json['admission_a_traiter'] as bool? ?? false,
     );
   }
 
@@ -140,6 +166,49 @@ class CompteAdmin {
   /// Le nombre d'enfants du foyer de ce compte.
   final int enfantsDuFoyer;
 
+  /// Vrai quand la ligne vient de `comptes_admin_par_role()` : tranche,
+  /// classe, tuteur et demande d'admission sont alors lus. Faux quand le
+  /// serveur n'a que `comptes_admin()` : ces champs sont inconnus, pas vides.
+  final bool detailsServis;
+
+  /// La tranche d'age d'un eleve. Nulle hors eleve ou quand elle n'est pas lue.
+  final TrancheAge? tranche;
+
+  /// La classe active d'un eleve (la plus ancienne s'il en a plusieurs).
+  final String? classeId;
+
+  /// Le nom de cette classe.
+  final String? classeLibelle;
+
+  /// Son numero dans sa famille de classes (R16), pour la distinguer.
+  final int? classeNumero;
+
+  /// Le nombre de classes actives de l'eleve.
+  final int classesActives;
+
+  /// Le tuteur dont depend un eleve.
+  final String? tuteurId;
+
+  /// Son prenom, nul sous masquage d'identite.
+  final String? tuteurPrenom;
+
+  /// Son nom, nul dans les memes conditions.
+  final String? tuteurNom;
+
+  /// Vrai quand ce compte porte une demande d'admission recue, encore a
+  /// traiter (famille ou eleve adulte, DECISION-ADMISSION du 27/10).
+  final bool admissionATraiter;
+
+  /// Le nom du tuteur : nul quand l'eleve n'en a pas ou que son identite est
+  /// masquee.
+  String? get tuteurLibelle {
+    final String complet = <String?>[
+      tuteurPrenom,
+      tuteurNom,
+    ].whereType<String>().join(' ').trim();
+    return complet.isEmpty ? null : complet;
+  }
+
   /// Ce qui s'affiche pour nommer la personne.
   ///
   /// L'identifiant immuable sert de repli, jamais une chaine vide : une ligne
@@ -157,8 +226,12 @@ class CompteAdmin {
   /// Seul un enseignant en attente attend une decision (K-47) : la
   /// verification d'identite et la validation ne concernent que lui. Un tuteur
   /// `pending_kyc` ne depose rien et n'attend aucune validation.
+  ///
+  /// Depuis l'admission (27/10), une famille ou un eleve adulte dont la
+  /// demande est recue et encore a traiter attend aussi une decision.
   bool get attendUneDecision =>
-      etat == AccountStatus.pendingKyc && role == AppRole.teacher;
+      (etat == AccountStatus.pendingKyc && role == AppRole.teacher) ||
+      admissionATraiter;
 
   /// Vrai quand l'acces provisoire est echu : la meme definition que le
   /// compteur « Acces echus » du Centre de commande (compte provisoire dont
@@ -176,6 +249,23 @@ class CompteAdmin {
       maintenant.difference(inscritLe).inDays;
 }
 
+/// La tranche d'age d'un eleve, lue sur son type (`student_type`), jamais sur
+/// une date de naissance.
+enum TrancheAge {
+  /// Un enfant (moins de 18 ans).
+  enfant,
+
+  /// Un adulte autonome.
+  adulte,
+}
+
+/// Le nombre de lignes au-dela duquel le serveur coupe sans le dire
+/// (`max_rows = 1000`, `supabase/config.toml` ; la valeur distante n'est pas
+/// connue). La lecture des comptes n'a ni page ni total : quand la liste recue
+/// atteint ce nombre, elle est peut-etre tronquee, et les inscriptions les
+/// plus recentes sont les premieres a manquer (tri par anciennete croissante).
+const int plafondComptesServeur = 1000;
+
 /// La lecture des comptes par l'administration.
 abstract interface class ServiceComptes {
   /// Tous les comptes, ce qui attend une decision d'abord.
@@ -191,9 +281,16 @@ class ServiceComptesSupabase implements ServiceComptes {
 
   @override
   Future<List<CompteAdmin>> comptes() async {
-    final List<dynamic> reponse = await _client.rpc<List<dynamic>>(
-      'comptes_admin',
-    );
+    List<dynamic> reponse;
+    try {
+      reponse = await _client.rpc<List<dynamic>>('comptes_admin_par_role');
+    } on PostgrestException catch (e) {
+      // Tant que la migration 20261101100000 n'est pas installee, la fonction
+      // n'existe pas (PGRST202) : on lit l'ancienne, et l'ecran dit ce qui
+      // manque. Toute autre erreur remonte telle quelle.
+      if (e.code != 'PGRST202') rethrow;
+      reponse = await _client.rpc<List<dynamic>>('comptes_admin');
+    }
     return reponse
         .map(
           (dynamic ligne) =>
