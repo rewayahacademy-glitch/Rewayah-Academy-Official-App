@@ -54,7 +54,7 @@
 -- job quotidien plutot que « le 1er » en cron : l'expression cron, en UTC, ne
 -- dit pas le 1er du fuseau comptable, et un passage manque se rattrape.
 --
--- Aucun DELETE, DROP, TRUNCATE ni cron.unschedule.
+-- Aucune suppression ni retrait de tache planifiee.
 
 BEGIN;
 
