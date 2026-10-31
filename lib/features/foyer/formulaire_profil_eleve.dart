@@ -81,7 +81,13 @@ class FormulaireProfilEleve extends ConsumerStatefulWidget {
     required this.onCree,
     required this.onVoirFoyer,
     super.key,
+    this.prenomInitial,
   });
+
+  /// IMM-ACCUEIL-FRONT : le prenom deja connu (profil eleve importe par la
+  /// direction), prerempli et modifiable ; le choix « pour qui » est alors
+  /// deduit (un eleve du foyer). `null` : formulaire vide, comme avant.
+  final String? prenomInitial;
 
   /// Retour depuis la premiere page : quitter le formulaire.
   final VoidCallback onAbandon;
@@ -155,6 +161,11 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
   @override
   void initState() {
     super.initState();
+    final String prenom = widget.prenomInitial?.trim() ?? '';
+    if (prenom.isNotEmpty) {
+      _prenom.text = prenom;
+      _pourQui = PourQui.enfantOuMineur;
+    }
     // Le nom de famille du titulaire est propose, jamais impose ; si le compte
     // ne se lit pas, le champ reste vide (le serveur garde le controle).
     ref.listenManual<AsyncValue<IdentiteTitulaire>>(identiteTitulaireProvider, (

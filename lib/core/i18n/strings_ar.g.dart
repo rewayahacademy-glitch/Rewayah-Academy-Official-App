@@ -99,6 +99,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$avis$ar avis = _Traductions$avis$ar._(_root);
 	@override late final _Traductions$courriels$ar courriels = _Traductions$courriels$ar._(_root);
 	@override late final _Traductions$admissions$ar admissions = _Traductions$admissions$ar._(_root);
+	@override late final _Traductions$accueilInscrits$ar accueilInscrits = _Traductions$accueilInscrits$ar._(_root);
 }
 
 // Path: notifications
@@ -1797,6 +1798,30 @@ class _Traductions$admissions$ar extends Traductions$admissions$fr {
 	@override String faitRefusAnnule({required Object deNom}) => 'أُلغي رفض طلب ⁨${deNom}⁩.';
 	@override late final _Traductions$admissions$refus$ar refus = _Traductions$admissions$refus$ar._(_root);
 	@override late final _Traductions$admissions$modeles$ar modeles = _Traductions$admissions$modeles$ar._(_root);
+}
+
+// Path: accueilInscrits
+class _Traductions$accueilInscrits$ar extends Traductions$accueilInscrits$fr {
+	_Traductions$accueilInscrits$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'نحن نعرفكم بالفعل';
+	@override String get phrase => 'تم استرجاع تسجيلكم. لا داعي لإعادة إدخال كل شيء.';
+	@override String get motTitre => 'كلمة من الإدارة';
+	@override String get elevesTitre => 'أبناؤكم المسجلون مسبقًا';
+	@override String get elevesPhrase => 'الاسم الأول مكتوب مسبقًا. يبقى تحديد العمر.';
+	@override String get aJour => 'مكتمل';
+	@override String get aCompleter => 'يحتاج إلى إكمال';
+	@override String ajouterProfil({required Object dePrenom}) => 'إضافة الملف الدراسي لـ ⁨${dePrenom}⁩';
+	@override String get plusTard => 'يمكنكم القيام بذلك لاحقًا أيضًا، من صفحة الأسرة.';
+	@override String get sansEleve => 'لم يُسترجع أي ملف دراسي لأسرتكم. يمكنكم إضافة ملف من صفحة الأسرة.';
+	@override String get finirCompte => 'تبقى بعض الأسئلة لإتمام حسابكم.';
+	@override String get continuer => 'متابعة';
+	@override String get echecTitre => 'تعذر التحقق من تسجيلكم';
+	@override String get echecPhrase => 'السبب المحتمل: انقطع الاتصال بالخادم (غير مؤكد). أعيدوا المحاولة بعد قليل: لا يُنشأ أي شيء مرتين.';
+	@override String get sansDonnees => 'التحقق من تسجيلكم';
 }
 
 // Path: notifications.evenements
@@ -28785,6 +28810,21 @@ extension on TraductionsAr {
 			'admissions.modeles.niveauPhrase' => '«المستوى المطلوب غير متاح بعد.»',
 			'admissions.modeles.sansReponse' => 'لا رد',
 			'admissions.modeles.sansReponsePhrase' => '«لم نتلق ردًا على رسالتنا الأخيرة.»',
+			'accueilInscrits.titre' => 'نحن نعرفكم بالفعل',
+			'accueilInscrits.phrase' => 'تم استرجاع تسجيلكم. لا داعي لإعادة إدخال كل شيء.',
+			'accueilInscrits.motTitre' => 'كلمة من الإدارة',
+			'accueilInscrits.elevesTitre' => 'أبناؤكم المسجلون مسبقًا',
+			'accueilInscrits.elevesPhrase' => 'الاسم الأول مكتوب مسبقًا. يبقى تحديد العمر.',
+			'accueilInscrits.aJour' => 'مكتمل',
+			'accueilInscrits.aCompleter' => 'يحتاج إلى إكمال',
+			'accueilInscrits.ajouterProfil' => ({required Object dePrenom}) => 'إضافة الملف الدراسي لـ ⁨${dePrenom}⁩',
+			'accueilInscrits.plusTard' => 'يمكنكم القيام بذلك لاحقًا أيضًا، من صفحة الأسرة.',
+			'accueilInscrits.sansEleve' => 'لم يُسترجع أي ملف دراسي لأسرتكم. يمكنكم إضافة ملف من صفحة الأسرة.',
+			'accueilInscrits.finirCompte' => 'تبقى بعض الأسئلة لإتمام حسابكم.',
+			'accueilInscrits.continuer' => 'متابعة',
+			'accueilInscrits.echecTitre' => 'تعذر التحقق من تسجيلكم',
+			'accueilInscrits.echecPhrase' => 'السبب المحتمل: انقطع الاتصال بالخادم (غير مؤكد). أعيدوا المحاولة بعد قليل: لا يُنشأ أي شيء مرتين.',
+			'accueilInscrits.sansDonnees' => 'التحقق من تسجيلكم',
 			_ => null,
 		};
 	}
