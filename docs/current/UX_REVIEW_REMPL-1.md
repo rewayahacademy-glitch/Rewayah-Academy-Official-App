@@ -62,3 +62,24 @@ remplacant is null returning`), qui rend `acceptee` ou `dejaPrise` et refuse une
 invisible pour l'appelant comme `dejaPrise` ; diffusion temps réel de la prise aux autres
 enseignants ; la séance assurée entre dans la paie après validation de fin de mois (calcul
 serveur).
+
+## Côté direction (31/10/2026, finir REMPL-1)
+
+Demande du directeur relayée par le pilote le 31/10 : raccorder `designer_remplacant_admin`
+là où la direction voit déjà les séances, et montrer les remplacements par enseignant. Aucun
+nouvel écran : tout vit dans le **Planning** de la direction (`features/admin_planning`).
+Serveur : `20261102400000_remplacements_direction.sql`.
+
+| Proposition | Règle et source | Conclusion | Conséquence dans l'écran |
+| :--- | :--- | :--- | :--- |
+| Le geste part de la ligne de la séance | LISTES-1 (`DECISION-LISTES-2026-10-23.md`) : actions d'une ligne par `MenuActions` ; Fitts (l'action près de l'objet) | conforme | Menu « … » de la ligne, une entrée « Désigner un remplaçant pour cette séance de … » ; absent sur une séance passée, annulée ou déjà remplacée (jamais grisé) |
+| R12, libre à l'heure exacte | `DECISION-CLASSES-SIMULTANEES-2026-10-10.md` R12 (règle stricte) | conforme | La feuille ne liste que ce que rend `remplacants_possibles_seance` ; le serveur rejuge à l'envoi (`RemplacantOccupe` : phrase, liste relue) |
+| R12, genre souple sur choix explicite | R12 ; K-58 (la conséquence se dit avant le choix) | ajustée | L'enseignant de l'autre genre reste visible, après les autres, avec sa mention ; une fois choisi, une phrase le dit et le bouton devient « Désigner ce remplaçant malgré le genre » ; le serveur trace `choix_hors_genre` |
+| Un seul bouton plein | K-56 | conforme | `BasDeFeuille` seul ; hors ligne, une phrase à sa place |
+| Bilan sans seuil | consigne du pilote (« la décision reste à la direction ») ; Nielsen n° 1 | conforme | Section « Remplacements de la semaine » sous les jours, une ligne par titulaire et par classe, trois nombres ; aucune couleur d'alerte, aucun classement de « mauvais » enseignant |
+| Échec | K-59 | conforme | Échec du bilan : `EtatSysteme` avec « Réessayer » ; échec de la liste : celui de `SelecteurPersonne` |
+
+Limite à signaler : confier une classe qui a déjà un enseignant à un autre enseignant n'a
+**aucune RPC** (`affecter_enseignant_classe_c11bis` rend `deja_affecte`). Le bilan mène à la
+page Classes (« Voir les classes »), sans geste de réaffectation : décision du directeur à
+prendre avant de l'écrire.
