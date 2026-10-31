@@ -15,8 +15,8 @@ import 'package:rewayah_academy/core/tc_classe/port_session_persistante.dart';
 import 'package:rewayah_academy/core/tc_classe/session_persistante.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
-import 'package:rewayah_academy/core/widgets/barre_seance_en_direct.dart';
 import 'package:rewayah_academy/core/widgets/bouton_icone.dart';
+import 'package:rewayah_academy/features/salle_seance/barre_seance_en_direct.dart';
 
 import '../../support/harnais.dart';
 

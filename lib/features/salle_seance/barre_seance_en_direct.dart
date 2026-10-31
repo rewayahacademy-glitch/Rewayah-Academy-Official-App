@@ -5,21 +5,21 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../i18n/strings.g.dart';
-import '../icons/app_icons.dart';
-import '../observabilite/journal_dev.dart';
-import '../router/billet_salle.dart';
-import '../router/routes.dart';
-import '../tc_classe/port_session_persistante.dart';
-import '../tc_classe/session_persistante.dart';
-import '../theme/app_color_pair.dart';
-import '../theme/app_palette.dart';
-import '../theme/app_spacing.dart';
-import '../video/livekit_session_provider.dart';
-import '../video/video_session_provider.dart';
-import 'bouton_icone.dart';
-import 'lien_fleche.dart';
-import 'pastille_etat_seance.dart';
+import '../../core/i18n/strings.g.dart';
+import '../../core/icons/app_icons.dart';
+import '../../core/observabilite/journal_dev.dart';
+import '../../core/router/billet_salle.dart';
+import '../../core/router/routes.dart';
+import '../../core/tc_classe/port_session_persistante.dart';
+import '../../core/tc_classe/session_persistante.dart';
+import '../../core/theme/app_color_pair.dart';
+import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_spacing.dart';
+import '../../core/video/livekit_session_provider.dart';
+import '../../core/video/video_session_provider.dart';
+import '../../core/widgets/bouton_icone.dart';
+import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
 
 /// La barre « Seance toujours en direct » (directeur, 31/10/2026).
 ///

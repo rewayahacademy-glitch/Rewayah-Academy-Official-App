@@ -17,7 +17,7 @@ import 'core/theme/app_palette.dart';
 import 'core/theme/app_theme.dart';
 import 'core/version/bandeau_nouvelle_version.dart';
 import 'core/widgets/bandeau_observation.dart';
-import 'core/widgets/barre_seance_en_direct.dart';
+import 'features/salle_seance/barre_seance_en_direct.dart';
 
 /// Racine de l'application.
 ///
