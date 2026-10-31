@@ -50,6 +50,8 @@ Aucune migration de rattrapage de l'enregistrement sans décision du directeur.
 
 - **CI** : 30 scénarios sur 154 rejoués par `ci.yml` (présence aux minutes, cahier hebdomadaire et remplacements n'y sont pas) ; la pile locale rejoue tout, c'est elle la preuve. Élargir la CI : décision du directeur (`.github/`).
 - **Cahier du remplaçant** : le remplaçant ne peut déposer aucun cahier (prouvé en local le 31/10) ; lot autorisé après la PR 106, règle par défaut « le remplaçant seul dépose, le titulaire lit ».
+- **Minutes connectées sans sortie (lot PRESENCE, 20261102900000)** : si l'enseignant entre sans jamais sortir, `private.pai_minutes_enseignant` ferme l'intervalle à `finance_ended_at`, posé par la clôture automatique. Une séance d'1 h peut ainsi compter 1799 minutes (relevé local du 31/10, scénario ses_cloture_auto cas 4). La paie reste juste, car elle est plafonnée à la durée prévue, mais les minutes affichées à la famille et à la direction sont fausses. Correction proposée : borner à la fin prévue plus la grâce. Elle sera faite par une nouvelle migration, jamais en modifiant la migration appliquée.
+- **`scenarios_fac_e_paie_par_eleve`** échoue sur `main` (« pending trigger events »), hors des 30 scénarios rejoués par la CI.
 
 - **F1** : les aperçus Vercel écrivent dans la base de production (même `SUPABASE_URL`).
 - **F2** : la base staging est en retard depuis le 23/10.
