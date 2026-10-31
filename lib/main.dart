@@ -40,6 +40,7 @@ import 'core/capacites/identite_titulaire_supabase.dart';
 import 'core/capacites/langues_communication_supabase.dart';
 import 'core/capacites/mes_donnees_supabase.dart';
 import 'core/capacites/mes_finances_supabase.dart';
+import 'core/capacites/obligations_payables_supabase.dart';
 import 'core/capacites/paiements_foyer_supabase.dart';
 import 'core/capacites/paiements_saisis_supabase.dart';
 import 'core/capacites/partage_pedagogique_supabase.dart';
@@ -53,6 +54,7 @@ import 'core/capacites/port_identite_titulaire.dart';
 import 'core/capacites/port_langues_communication.dart';
 import 'core/capacites/port_mes_donnees.dart';
 import 'core/capacites/port_mes_finances.dart';
+import 'core/capacites/port_obligations_payables.dart';
 import 'core/capacites/port_paiements_foyer.dart';
 import 'core/capacites/port_paiements_saisis.dart';
 import 'core/capacites/port_partage_pedagogique.dart'
@@ -385,6 +387,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portPaiementsSaisisProvider.overrideWithValue(
     PaiementsSaisisSupabase(Supabase.instance.client),
+  ),
+  // Paie des enseignants par mois (B2.5, migration 20261102200000) : lecture
+  // seule, direction et comptabilite ; montants arretes par le serveur.
+  portObligationsPayablesProvider.overrideWithValue(
+    ObligationsPayablesSupabase(Supabase.instance.client),
   ),
   // Validations de la direction (FAC-D-01, migration 20261018090000) : un
   // paiement saisi par la comptabilite est credite apres validation.
