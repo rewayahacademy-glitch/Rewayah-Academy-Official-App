@@ -57,7 +57,12 @@ LIVEKIT_CLOUD_API_KEY=devkey
 LIVEKIT_CLOUD_API_SECRET=secret_e2e_local_livekit_0123456789abcdef
 LIVEKIT_CLOUD_WS_URL=ws://${PASSERELLE}:7880
 LIVEKIT_SELFHOST_WS_URL=ws://${PASSERELLE}:7880
-COURRIEL_TRANSPORT=journal
+COURRIEL_TRANSPORT=smtp
+SMTP_HOTE=${PASSERELLE}
+SMTP_PORT=4650
+SMTP_UTILISATEUR=e2e-local
+SMTP_MOT_DE_PASSE=e2e-local
+COURRIELS_ENVOI_SECRET=e2e_local_courriels_secret_0123456789
 DENO_TLS_CA_STORE=mozilla,system
 STUDENT_EMAIL_DOMAIN=eleves.example.com
 APP_ORIGINES=${APP}
@@ -73,6 +78,21 @@ ENV
   pkill -f "tool/e2e/relais_https.mjs" 2>/dev/null || true
   (nohup node "$DEPOT/tool/e2e/relais_https.mjs" "$TRAVAIL/cert.pem" "$TRAVAIL/cle.pem" 54331 \
      > "$TRAVAIL/relais.log" 2>&1 < /dev/null &)
+  # E-mails de l'application vers Mailpit : le transport parle en TLS implicite
+  # avec identifiants ; un relais SMTPS local (autorite locale) les passe a Mailpit.
+  MAILPIT_IP=$(docker inspect supabase_inbucket_rewayah-e2e -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}')
+  if [ ! -f "$TRAVAIL/smtp_chaine.pem" ]; then
+    (cd "$TRAVAIL" && openssl req -x509 -newkey rsa:2048 -nodes -days 30 -subj "/CN=E2E CA locale" -keyout smtp_ca_cle.pem -out smtp_ca.pem 2>/dev/null \
+      && openssl req -newkey rsa:2048 -nodes -subj "/CN=${PASSERELLE}" -keyout smtp_cle.pem -out smtp.csr 2>/dev/null \
+      && printf "basicConstraints=CA:FALSE\nsubjectAltName=IP:${PASSERELLE}\nextendedKeyUsage=serverAuth\n" > smtp_ext.cnf \
+      && openssl x509 -req -in smtp.csr -CA smtp_ca.pem -CAkey smtp_ca_cle.pem -CAcreateserial -days 30 -extfile smtp_ext.cnf -out smtp_cert.pem 2>/dev/null \
+      && cat smtp_cert.pem smtp_ca.pem > smtp_chaine.pem)
+  fi
+  cp "$TRAVAIL/smtp_ca.pem" "$TRAVAIL/supabase/functions/_ca/smtp.crt"
+  (setsid nohup node "$DEPOT/tool/e2e/relais_smtps.mjs" "$TRAVAIL/smtp_chaine.pem" "$TRAVAIL/smtp_cle.pem" \
+     "${PASSERELLE}:4650" "${MAILPIT_IP}:1025" > "$TRAVAIL/relais_smtp.log" 2>&1 < /dev/null &)
+  psql "$DB_URL" -qc "select vault.create_secret('http://supabase_kong_rewayah-e2e:8000/functions/v1/courriels-envoi','courriels_envoi_url') where not exists (select 1 from vault.secrets where name='courriels_envoi_url');
+    select vault.create_secret('e2e_local_courriels_secret_0123456789','courriels_envoi_secret') where not exists (select 1 from vault.secrets where name='courriels_envoi_secret');" >/dev/null
   pkill -f "supabase@2.122.0 functions serve" 2>/dev/null || true
   (cd "$TRAVAIL" && setsid nohup $SUPA functions serve --env-file "$TRAVAIL/fonctions.env" \
      > "$TRAVAIL/fonctions.log" 2>&1 < /dev/null &)
@@ -81,7 +101,7 @@ ENV
   # le proxy de l'environnement : il doit faire confiance a son certificat.
   if [ -f /root/.ccr/ca-bundle.crt ]; then
     docker exec supabase_edge_runtime_rewayah-e2e sh -c \
-      "cat $TRAVAIL/supabase/functions/_ca/ca.crt >> /etc/ssl/certs/ca-certificates.crt"
+      "cat $TRAVAIL/supabase/functions/_ca/ca.crt $TRAVAIL/supabase/functions/_ca/smtp.crt >> /etc/ssl/certs/ca-certificates.crt"
   fi
   echo "Pile prete : API $API_URL ; Mailpit $MAILPIT_URL ; LiveKit ws://${PASSERELLE}:7880 ; app $APP"
 }

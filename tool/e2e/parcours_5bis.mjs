@@ -76,6 +76,17 @@ try {
   await allerOnglet(t.page, 'Foyer', '/tuteur/foyer', p.dire);
   await cliquer(t.page, /^Appareils du foyer/, { pause: 2000 });
   await cliquer(t.page, new RegExp(`^${FAMILLE.enfant}`), { pause: 2000 });
+  // Les passages precedents ont relie des appareils : le tuteur les retire
+  // (« Retirer … »), comme le propose l'ecran une fois la limite atteinte.
+  // Le bouton « Retirer » est fondu dans la ligne de l'appareil (pas de noeud
+  // propre) : on le touche a sa position (390 x 780 : x 311, y 220), puis on confirme.
+  for (let k = 0; k < 6 && await trouver(t.page, /^Navigateur web Connecté/, { delai: 2000, role: 'button' }); k++) {
+    await t.page.mouse.click(311, 220); await t.page.waitForTimeout(1500);
+    const ok = await trouver(t.page, /^(Retirer|Confirmer|Oui)/, { delai: 2500, role: 'button' });
+    p.dire(`  retrait d'un appareil : ${ok ? ((await ok.getAttribute('aria-label')) ?? 'confirmation') : 'pas de confirmation'}`);
+    if (ok) { await ok.click(); await t.page.waitForTimeout(2500); } else break;
+  }
+  await p.capture(t, 'appareils');
   await cliquer(t.page, /^Connecter un appareil$/, { pause: 4000 });
   if (await trouverTexte(t.page, /Un code est déjà valable/, 2000)) {
     // Le bouton « Générer un nouveau code » est fondu dans le groupe du message
@@ -121,16 +132,19 @@ try {
   p.dire(`Appareil de l'enfant : ${e.page.url()} ; ${(await libelles(e.page)).slice(0, 10).join(' | ')}`);
   // Un code personnel peut etre demande a la premiere ouverture.
   for (let k = 0; k < 4; k++) {
-    const pin = await trouverTexte(e.page, /(code personnel|Choisissez un code|Confirmez)/i, 2000);
+    const pin = await trouverTexte(e.page, /(code personnel|Choisissez un code|Confirmez|Entre-le encore)/i, 2000);
     if (!pin) break;
     p.dire(`  ${pin}`);
     // Les touches du clavier n'ont pas de nom lisible : position sur 390 x 780
     // (colonne du milieu : 2, 5, 8, 0).
-    for (const y of [447, 526, 605, 685]) { await e.page.mouse.click(195, y); await e.page.waitForTimeout(350); }
+    // Le second ecran (« Entre-le encore une fois ») n'a pas de sous-titre :
+    // la grille remonte.
+    const ys = /Entre-le encore/.test(pin) ? [400, 480, 558, 637] : [447, 526, 605, 685];
+    for (const y of ys) { await e.page.mouse.click(195, y); await e.page.waitForTimeout(350); }
     await e.page.waitForTimeout(2500); await activerSemantique(e.page);
     await p.capture(e, `code_personnel_${k}`);
   }
-  if (await trouverTexte(e.page, /Choisis ton code personnel|Confirme ton code/, 1500)) throw new Error('appareil de l\'enfant : le code personnel n\'a pas pu etre choisi');
+  if (await trouverTexte(e.page, /Choisis ton code personnel|Confirme ton code|Entre-le encore/, 1500)) throw new Error('appareil de l\'enfant : le code personnel n\'a pas pu etre choisi');
   const accueil = await trouverTexte(e.page, new RegExp(`${nom}|Rejoindre|Prochaine`), 10000);
   if (!accueil) throw new Error(`appareil de l'enfant apres le code : pas d'Accueil de l'eleve ; ecran : ${(await libelles(e.page)).slice(0, 15).join(' | ')}`);
 
@@ -142,7 +156,12 @@ try {
   }
   const ens = await p.contexte('enseignante');
   await connecterParLien(ens.page, profCourriel);
-  const r = await trouver(ens.page, new RegExp(`^Rejoindre la salle de la Classe ${nom}`), { delai: 15000 });
+  let r = await trouver(ens.page, new RegExp(`^Rejoindre la salle de la Classe ${nom}`), { delai: 10000 });
+  if (!r) {
+    p.dire('  ECART (FN-001) : « Aujourd\'hui » garde la seance precedente ; passage par l\'onglet Classes');
+    await allerOnglet(ens.page, 'Classes', '/enseignant/classes', p.dire);
+    r = await trouver(ens.page, new RegExp(`^Rejoindre la salle de la Classe ${nom}`), { delai: 10000 });
+  }
   if (!r) throw new Error(`enseignante : pas de « Rejoindre la salle de la Classe ${nom} » ; ecran : ${(await libelles(ens.page)).slice(0, 15).join(' | ')}`);
   await r.click(); await ens.page.waitForTimeout(6000);
   await cliquer(ens.page, /^Allumer la caméra/, { pause: 1500 });

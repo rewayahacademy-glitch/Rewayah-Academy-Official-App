@@ -89,7 +89,7 @@ try {
     if (!dernieres) throw new Error(`eleve adulte, Accueil apres la seance : pas de « Dernières séances » ; ecran : ${(await libelles(a.page)).slice(0, 25).join(' | ')}`);
     await cliquer(a.page, /^Voir tout/, { pause: 3000 });
     await p.capture(a, 'dernieres_seances');
-    const ligne = await trouverTexte(a.page, new RegExp(`${classe.nom}|Présent|Partiel|Absent|min`), 10000);
+    const ligne = await trouverTexte(a.page, new RegExp(`${classe.nom}|Présent|Partiel|Absent|\\d{1,2}:\\d{2} à \\d{1,2}:\\d{2}`), 10000);
     p.dire(`« Voir tout » : ${ligne ?? '-'}`);
     if (!ligne) throw new Error(`eleve adulte, « Voir tout » : aucune seance passee affichee ; ecran : ${(await libelles(a.page)).slice(0, 20).join(' | ')}`);
   }
