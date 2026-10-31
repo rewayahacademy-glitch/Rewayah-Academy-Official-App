@@ -120,7 +120,10 @@ class MoteurRemplacements implements MoteurRechercheDomaine {
     final List<OffreCommune> offres = await port.suivre().first;
     final List<ResultatRecherche> trouves = <ResultatRecherche>[
       for (final OffreCommune o in offres)
-        if (o.etat != EtatOffreCommune.priseParUnCollegue &&
+        // A3 : la preparation (pre-alerte, pret) n'est pas une offre a
+        // assurer ; seules l'offre ouverte et la sienne se cherchent.
+        if ((o.etat == EtatOffreCommune.ouverte ||
+                o.etat == EtatOffreCommune.priseParMoi) &&
             correspondTousLesTermes(
               normaliserPourRecherche(o.offre.classeDistincte),
               cle,

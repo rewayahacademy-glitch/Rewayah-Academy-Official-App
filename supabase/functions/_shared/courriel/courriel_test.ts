@@ -14,7 +14,10 @@ const EVENEMENTS = ['demande_recue', 'classe_validee', 'enseignant_affecte', 'de
   'controle_mission_non_controlee', 'classe_changee', 'paiement_relance', 'acces_suspendu_paiement',
   'acces_retabli_paiement',
   'classe_creee', 'enseignant_change', 'eleve_inscrit', 'eleve_retire', 'creneau_change',
-  'seance_annulee', 'seance_deplacee', 'enseignante_absente', 'classe_supprimee']
+  'seance_annulee', 'seance_deplacee', 'enseignante_absente', 'classe_supprimee',
+  // A3 (31/10/2026, migration 20261102500000).
+  'remplacement_avertissement', 'remplacement_pre_alerte', 'remplacement_inutile',
+  'titulaire_en_retard', 'remplacant_arrive']
 
 Deno.test('chaque evenement de notification a son modele', () => {
   for (const e of [...EVENEMENTS, 'invitation_foyer', 'lien_inscription', 'attente_candidat', 'admission_recue',
