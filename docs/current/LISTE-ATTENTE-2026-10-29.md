@@ -1,5 +1,7 @@
 # Liste d'attente, 29/10/2026
 
+Chaque sujet porte maintenant un numéro du registre ; le registre fait foi. (`UX-CONSTATS.md` : lignes 1, 5 à 10 → FN-012 à FN-018 ; ligne 4 → UX-002 ; lignes 2 et 3 ne sont pas des constats.)
+
 Demande du pilote du 29/10/2026 : une liste pour plus tard. **Rien n'est à lancer** ; chaque ligne attend une décision datée du directeur avant de devenir un lot.
 
 | # | Sujet | Ce que l'on sait au 29/10 |
