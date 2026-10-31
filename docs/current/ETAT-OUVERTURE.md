@@ -42,7 +42,7 @@ n'est pas expliqué.
 | `20261012114000_f86_observation_entry_guard` | non | oui (garde présente) | appliquée, non enregistrée |
 | `20261012140000_kyc_controller_storage_policy_retired` | non | oui (politique `kyc_lecture_admin` absente) | appliquée, non enregistrée |
 | `20261027120000_notifications_classes_seances` | non | oui (7 fonctions, 6 déclencheurs, contrainte à jour) | appliquée, non enregistrée |
-| `remplacement_auto` (PR 98, pas encore sur `main`) | non (collée par le directeur dans l'éditeur SQL) | oui (vérifié le 31/10 après collage) | appliquée, non enregistrée |
+| `remplacement_auto` (PR 98, pas encore sur `main`) | non (collée par le directeur dans l'éditeur SQL) | oui : table présente, tâche planifiée active, 55 passages réussis (relu par l'ancien pilote le 31/10) | appliquée, non enregistrée |
 
 Aucune migration de rattrapage de l'enregistrement sans décision du directeur.
 
