@@ -16,7 +16,7 @@ sert le besoin du lot ; ne rien dupliquer. On branche au besoin, lot par lot, ja
 | `lib/core/tc_classe/session_persistante.dart`, `port_session_persistante.dart` (*vérifié*) | La séance vit hors de l'écran de la salle ; barre compacte sur tous les écrans | **Lot suivant** (séance en arrière-plan). Remplace la question de `core/router/garde_sortie_salle.dart`. Ses commentaires emploient « Cours en cours », mot interdit (`mots-rewayah`) : à renommer |
 | `lib/features/salle_seance/portee_outils_salle.dart` | Portée des outils par salle : sans elle, l'état des outils peut passer d'une séance à l'autre | Même lot |
 | `lib/features/salle_seance/signalement_seance.dart` | « Signaler un besoin » depuis la salle | À juger avec le lot ; doublon possible de `ouvrirSignalement` (`fiche_groupe/fiche_eleve_enseignant.dart`) |
-| `portLayoutMushafProvider` (`lib/core/tc_coran/layout_lignes_indisponible.dart`, *vérifié*) | Page de Médine en 15 lignes : active seulement derrière `MUSHAF_15L` (développement, galerie) ; en production, composition approchée | À brancher plus tard : le Coran marche, lacune de mise en page (directeur, 31/10/2026) |
+| `portLayoutMushafProvider` (`lib/core/tc_coran/layout_lignes_indisponible.dart`, *vérifié*) | Page de Médine en 15 lignes | **Déjà branchée** : `Env.mushaf15L` vaut vrai par défaut depuis le 16/10/2026 (`lib/core/config/env.dart`). Ligne corrigée le 31/10 : le premier relevé la disait inactive en production, c'était faux |
 | `portCartesClasseProvider` (`tc_espace_groupe/feuille_carte_classe`) | Cartes de Classe | Bouchon en production |
 | `tc_etat_partage` (service, réducteur, `portEtatPartageProvider`) | État partagé persistant | La salle a son propre adaptateur LiveKit ; seuls types et codec servent. À ne pas rebrancher sans besoin |
 | `tc_flux_academique/`, `tc_parcours/port_post_cours.dart` et voisins | Après-cours, retour éclair, fiche élève | Doublon du cahier de transmission (`features/cahier`). Ne pas brancher ; suppression à proposer au directeur |
@@ -57,5 +57,10 @@ démonstration et de test. On n'y touche pas.
 
 1. Séance en arrière-plan (`session_persistante`, `portee_outils_salle`).
 2. Écrans de l'élève adulte.
-3. Le reste au besoin, lot par lot, dont la page du Coran en 15 lignes (le Coran marche en
-   production ; la mise en page exacte est une lacune à traiter après, directeur, 31/10/2026).
+3. Le reste au besoin, lot par lot.
+
+## Lacunes signalées par le directeur, à traiter après (31/10/2026)
+
+- Coran (Mushaf) : impossible de changer de page en glissant le doigt ; d'autres lacunes non
+  encore listées. Le Coran marche ; ce n'est pas urgent. Le lot qui s'en chargera part de
+  l'existant (`lib/core/tc_coran/`, `BarrePrecedentSuivant`) et n'en recrée rien.
