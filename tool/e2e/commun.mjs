@@ -72,6 +72,12 @@ export async function parcours(nom, dossierCaptures) {
         if (fs.existsSync(f)) return route.fulfill({ path: f, contentType: TYPES[path.extname(f)] });
         return route.abort();
       }
+      // Les fonctions Edge locales signent des URL sur l'adresse interne de la
+      // pile (http://kong:8000) ; en production c'est l'URL publique. On la
+      // ramene sur l'API locale.
+      if (u.hostname === 'kong') {
+        return route.continue({ url: u.href.replace(`${u.protocol}//${u.host}`, API) });
+      }
       if (u.hostname === '127.0.0.1' || u.hostname === 'localhost' || /^172\.\d+\.\d+\.\d+$/.test(u.hostname)) {
         return route.continue();
       }

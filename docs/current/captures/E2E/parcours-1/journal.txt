@@ -1,0 +1,12 @@
+== Parcours 1 : la direction valide un enseignant : 2026-10-31T21:08:26.710Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Invitation : D9VH-XE93-ZRHA pour e2e-candidate-10312108@example.com
+  ECART : apres le lien, « Pour qui créez-vous ce compte ? » revient ; « J'ai un code d'invitation » a toucher de nouveau
+Candidate : flt-semantics:Votre dossier est en cours de vérification
+Dossier : Ouvrir le dossier d'E2E Candidate Enseignante10312108
+E2E Candidate Enseignante10312108
+En cours de vérification
+31/10/2026 à 21:09 (UTC)
+Piece : images aucune <img> ; pas de message d'echec
+Direction : « flt-semantics:Dossier validé. » ; compte en base : active
+Enseignante : http://127.0.0.1:8090/#/enseignant/journee ; « group:Aujourd'hui »
+== Parcours 1 : la direction valide un enseignant : vert
