@@ -4350,6 +4350,7 @@ class _Traductions$admin$finance$ar extends Traductions$admin$finance$fr {
 	// Translations
 	@override String get aValider => 'للمصادقة';
 	@override String get paiements => 'المدفوعات';
+	@override String get paieEnseignants => 'أجور المعلمين';
 	@override late final _Traductions$admin$finance$pol$ar pol = _Traductions$admin$finance$pol$ar._(_root);
 	@override late final _Traductions$admin$finance$pai$ar pai = _Traductions$admin$finance$pai$ar._(_root);
 	@override late final _Traductions$admin$finance$fac$ar fac = _Traductions$admin$finance$fac$ar._(_root);
@@ -23464,6 +23465,7 @@ extension on TraductionsAr {
 			'admin.importInscriptions.sansDonnees' => 'استيراد التسجيلات',
 			'admin.finance.aValider' => 'للمصادقة',
 			'admin.finance.paiements' => 'المدفوعات',
+			'admin.finance.paieEnseignants' => 'أجور المعلمين',
 			'admin.finance.pol.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ دقيقة', one: 'دقيقة واحدة', two: 'دقيقتان', few: '⁨${n}⁩ دقائق', many: '⁨${n}⁩ دقيقة', other: '⁨${n}⁩ دقيقة', ), 
 			'admin.finance.pol.mois' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ شهر', one: 'شهر واحد', two: 'شهران', few: '⁨${n}⁩ أشهر', many: '⁨${n}⁩ شهرًا', other: '⁨${n}⁩ شهر', ), 
 			'admin.finance.pol.prepaiementTrimestriel' => 'ثلاثة أشهر تُدفع مقدّمًا',
@@ -23772,9 +23774,9 @@ extension on TraductionsAr {
 			'admin.groupes.cloturerEnvoyer' => 'إغلاق',
 			'admin.groupes.cloturerErreur' => ({required Object message}) => 'لم يكتمل الإغلاق: ⁨${message}⁩',
 			'admin.groupes.journalisation' => 'يُدوَّن كل إنشاء وإضافة وإزالة وإغلاق في سجل التدقيق.',
-			'admin.groupes.observationTitre' => ({required Object libelle}) => 'المتابعة: ⁨${libelle}⁩',
 			_ => null,
 		} ?? switch (path) {
+			'admin.groupes.observationTitre' => ({required Object libelle}) => 'المتابعة: ⁨${libelle}⁩',
 			'admin.groupes.observationErreur' => 'تعذّر حفظ الإعداد.',
 			'admin.groupes.observationCapaciteAbsente' => 'هذا التثبيت لا يملك بعد تحديث الخادم الذي يتطلبه هذا الإعداد (الترحيل 0036). إعادة المحاولة لن تغيّر شيئًا: يجب تطبيقه أولًا على قاعدة البيانات.',
 			'admin.groupes.cahiers.lien' => 'عرض دفاتر الفصل',
@@ -24286,9 +24288,9 @@ extension on TraductionsAr {
 			'admin.suppressions.etat.annulee' => 'ملغاة',
 			'admin.suppressions.etat.traitee' => 'تمت معالجتها',
 			'admin.suppressions.matricule' => 'رقم التسجيل',
-			'admin.suppressions.role' => 'الدور',
 			_ => null,
 		} ?? switch (path) {
+			'admin.suppressions.role' => 'الدور',
 			'admin.suppressions.motif' => 'السبب',
 			'admin.suppressions.demandeeLe' => 'طُلب في',
 			'admin.suppressions.annuleeLe' => 'أُلغي في',
@@ -24800,9 +24802,9 @@ extension on TraductionsAr {
 			'admin.bibliotheque.libelles.visibilite.groupeAssigne' => 'الفصول المسندة',
 			'admin.bibliotheque.libelles.visibilite.enseignantSeul' => 'للمعلم فقط',
 			'admin.bibliotheque.libelles.visibilite.admin' => 'للإدارة فقط',
-			'admin.bibliotheque.libelles.langue.fr' => 'الفرنسية',
 			_ => null,
 		} ?? switch (path) {
+			'admin.bibliotheque.libelles.langue.fr' => 'الفرنسية',
 			'admin.bibliotheque.libelles.langue.ar' => 'العربية',
 			'admin.bibliotheque.libelles.langue.en' => 'الإنجليزية',
 			'admin.bibliotheque.libelles.usage.application' => 'داخل التطبيق',
@@ -25314,9 +25316,9 @@ extension on TraductionsAr {
 			'comptable.paiements.filtres.retard' => 'متأخرة',
 			'comptable.paiements.filtres.classe' => 'الفصل',
 			'comptable.paiements.filtres.toutesClasses' => 'كل الفصول',
-			'comptable.paiements.filtres.periode' => 'الفترة',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.paiements.filtres.periode' => 'الفترة',
 			'comptable.paiements.filtres.toutesPeriodes' => 'كل الفترات',
 			'comptable.paiements.filtres.effacer' => 'مسح عوامل التصفية',
 			'comptable.paiements.colonnes.beneficiaire' => 'المستفيد',
@@ -25828,9 +25830,9 @@ extension on TraductionsAr {
 			'comptable.direction.historique' => 'سجل الإصدارات',
 			'comptable.direction.historiqueVide' => 'لا يوجد إصدار قبل هذا.',
 			'comptable.direction.etatActuel' => 'الحالة الحالية للاحتياطي',
-			'comptable.direction.suffixeMois' => 'أشهر',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.direction.suffixeMois' => 'أشهر',
 			'comptable.direction.suffixeJours' => 'أيام',
 			'comptable.direction.suffixePourcent' => '%',
 			'comptable.direction.erreurNombre' => 'أدخل عددًا صحيحًا أكبر من صفر.',
@@ -26342,9 +26344,9 @@ extension on TraductionsAr {
 			'appareils.plateforme.windows' => 'حاسوب',
 			'appareils.plateforme.inconnue' => 'جهاز',
 			'appareils.retrait.question' => 'إزالة هذا الجهاز؟',
-			'appareils.retrait.consequence' => ({required Object appareil, required Object dePrenom}) => 'لن يستطيع ⁨${appareil}⁩ الاتصال بملف ⁨${dePrenom}⁩. إن كان متصلًا الآن، يبقى كذلك حتى انقطاعه التالي.',
 			_ => null,
 		} ?? switch (path) {
+			'appareils.retrait.consequence' => ({required Object appareil, required Object dePrenom}) => 'لن يستطيع ⁨${appareil}⁩ الاتصال بملف ⁨${dePrenom}⁩. إن كان متصلًا الآن، يبقى كذلك حتى انقطاعه التالي.',
 			'appareils.retrait.confirmer' => 'إزالة الجهاز',
 			'appareils.retrait.enCours' => 'جارٍ الإزالة',
 			'appareils.retrait.reussi' => 'أُزيل الجهاز. إن كان متصلًا الآن، يبقى كذلك حتى انقطاعه التالي.',
@@ -26856,9 +26858,9 @@ extension on TraductionsAr {
 			'adulte.sortie.retirerConsequence' => 'لن يُحذف حسابه ولا دروسه ولا سجله ولا رصيده.',
 			'adulte.sortie.placePhrase' => ({required Object prenom}) => '⁨${prenom}⁩ جزء من باقة أسرتك، بحسابه الخاص.',
 			'adulte.sortie.quitter' => 'مغادرة باقة الأسرة',
-			'adulte.sortie.quitterQuestion' => 'مغادرة باقة الأسرة؟',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.sortie.quitterQuestion' => 'مغادرة باقة الأسرة؟',
 			'adulte.sortie.quitterConfirmer' => 'مغادرة الباقة',
 			'adulte.sortie.quitterConsequence' => 'يبقى حسابك ودروسك وسجلك ورصيدك متاحة. ينتهي الربط بباقة الأسرة.',
 			'adulte.sortie.forfaitPhrase' => ({required Object dePrenom}) => 'أنت جزء من باقة أسرة ⁨${dePrenom}⁩.',
@@ -27370,9 +27372,9 @@ extension on TraductionsAr {
 			'controleur.observation.cleTexte' => 'الملاحظة',
 			'controleur.observation.sansTexte' => 'لا نص',
 			'controleur.observation.echec' => 'لم يُؤكَّد الإرسال: لم يستجب الاتصال أو الخادم. نصك محفوظ هنا؛ أعد المحاولة بعد لحظة. إن استمرت المشكلة، راسل الإدارة.',
-			'controleur.echanges.titre' => 'المراسلات',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.echanges.titre' => 'المراسلات',
 			'controleur.echanges.titreFil' => ({required Object classe, required Object date}) => '⁨${classe}⁩ · ⁨${date}⁩',
 			'controleur.echanges.derniereActivite' => ({required Object date}) => 'آخر نشاط: ⁨${date}⁩',
 			'controleur.echanges.reponseRecue' => 'وصل رد',
@@ -27884,9 +27886,9 @@ extension on TraductionsAr {
 			'recrutement.parcours.creneaux.troisSeances' => 'يُعقد الفصل ثلاث مرات في الأسبوع، في الأيام نفسها وفي الساعة نفسها.',
 			'recrutement.parcours.creneaux.durees' => ({required Object enfants, required Object adultes}) => 'مدة درس الأطفال ⁨${enfants}⁩، ومدة درس الكبار ⁨${adultes}⁩.',
 			'recrutement.parcours.creneaux.enseigneEnfants' => ({required Object duree, required Object intervalles}) => 'درس الأطفال (⁨${duree}⁩): تُدرّس ⁨${intervalles}⁩.',
-			'recrutement.parcours.creneaux.enseigneAdultes' => ({required Object duree, required Object intervalles}) => 'درس الكبار (⁨${duree}⁩): تُدرّس ⁨${intervalles}⁩.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.creneaux.enseigneAdultes' => ({required Object duree, required Object intervalles}) => 'درس الكبار (⁨${duree}⁩): تُدرّس ⁨${intervalles}⁩.',
 			'recrutement.parcours.creneaux.heuresChoisies' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم تُختر أي ساعة بدء', one: 'ساعة بدء واحدة مختارة', two: 'ساعتا بدء مختارتان', few: '⁨${n}⁩ ساعات بدء مختارة', many: '⁨${n}⁩ ساعة بدء مختارة', other: '⁨${n}⁩ ساعة بدء مختارة', ), 
 			'recrutement.parcours.creneaux.debutsDuJour' => ({required Object heures}) => 'ساعات البدء الممكنة: ⁧${heures}⁩.',
 			'recrutement.parcours.creneaux.separateurListe' => '، ',
@@ -28398,9 +28400,9 @@ extension on TraductionsAr {
 			'juridique.annulation.s4.titre' => '٤. تأخر الدفع',
 			'juridique.annulation.s4.blocs.0' => 'قبل التجديد تصلكم تذكيرات تلقائية.',
 			'juridique.annulation.s4.blocs.1' => 'بعد تاريخ التجديد تُطبَّق مهلة سماح قصيرة: يتابع الطالب دروسه ويظهر المبلغ غير المدفوع عند وليّ الأمر.',
-			'juridique.annulation.s4.blocs.2' => 'إذا لم يصل الدفع بعد ذلك يُعلَّق الدخول إلى الحصص، ويُحفظ المقعد لبعض الوقت.',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.annulation.s4.blocs.2' => 'إذا لم يصل الدفع بعد ذلك يُعلَّق الدخول إلى الحصص، ويُحفظ المقعد لبعض الوقت.',
 			'juridique.annulation.s4.blocs.3' => 'بعد ذلك يُفرَج عن المقعد لقائمة الانتظار. وتبقى العودة ممكنة دون رسوم في فصل جديد.',
 			'juridique.annulation.s4.blocs.4' => 'التواريخ الدقيقة هي المعتمدة في سياسة الأسعار المعمول بها (صفحة الأسعار).',
 			'juridique.annulation.s5.titre' => '٥. الانتقال إلى صيغة الكبار',

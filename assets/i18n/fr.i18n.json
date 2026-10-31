@@ -5384,6 +5384,7 @@
       "reserveDelegation": "Réserve et délégation",
       "aValider": "À valider",
       "paiements": "Paiements",
+      "paieEnseignants": "Paie des enseignants",
       "pai": {
         "sousTitre": "Un paiement reçu hors de l'application (virement, espèces) s'enregistre ici, pour un élève. Son mois est alors facturé, puis réglé si le paiement le couvre. Saisi par la comptabilité, il est crédité après la validation de la direction.",
         "aRegulariser": "À régulariser",

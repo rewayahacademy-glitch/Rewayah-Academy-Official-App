@@ -4850,6 +4850,7 @@
     "finance": {
       "aValider": "للمصادقة",
       "paiements": "المدفوعات",
+      "paieEnseignants": "أجور المعلمين",
       "pol": {
         "minutes": {
           "zero": "⁨{n}⁩ دقيقة",

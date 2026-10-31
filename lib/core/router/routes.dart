@@ -1052,6 +1052,21 @@ abstract final class Routes {
   /// l'application, attribue a un eleve.
   static const String adminFinancePaiements = '/admin/finance/paiements';
 
+  /// Le sixieme onglet du domaine Finance de la direction : « Paie des
+  /// enseignants » (directeur, 31/10/2026 : la direction voit la paie avec
+  /// son compte). Meme ecran et meme source que les paiements a effectuer du
+  /// Comptable, dans l'espace de la direction.
+  static const String adminFinancePaie = '/admin/finance/paie';
+
+  /// Le detail d'une ligne de la paie des enseignants, dans l'espace de la
+  /// direction (jamais sous `/comptable`).
+  static const String adminFinancePaieObligation =
+      '/admin/finance/paie/obligation';
+
+  /// Le detail de l'obligation [obligationId] dans la Finance de la direction.
+  static String adminFinancePaieObligationPour(String obligationId) =>
+      '$adminFinancePaieObligation/$obligationId';
+
   /// La coquille du Comptable en demonstration : `?ecran=...&montants=...`.
   /// Enregistree seulement hors production (`environnementAutoriseDemo`).
   static const String demoComptable = '/demo/comptable';

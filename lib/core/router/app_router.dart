@@ -2244,6 +2244,38 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
+      // Paie des enseignants (directeur, 31/10/2026 : la direction voit la
+      // paie avec son compte) : le sixieme onglet, et son detail, dans
+      // l'espace de la direction, jamais sous `/comptable`.
+      GoRoute(
+        path: Routes.adminFinancePaie,
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
+          domaine: AdminDomaine.finance,
+          child: PageDifferee(
+            cle: 'd_finance_page',
+            charger: d_finance_page.loadLibrary,
+            construire: () => d_finance_page.FinancePage(
+              onglet: d_finance_page.OngletFinance.paie,
+            ),
+          ),
+        ),
+        routes: <RouteBase>[
+          GoRoute(
+            path: 'obligation/:obligationId',
+            builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
+              domaine: AdminDomaine.finance,
+              child: PageDifferee(
+                cle: 'd_detail_paiement_page',
+                charger: d_detail_paiement_page.loadLibrary,
+                construire: () =>
+                    d_detail_paiement_page.DetailPaiementPage.direction(
+                      obligationId: _parametre(etat, 'obligationId'),
+                    ),
+              ),
+            ),
+          ),
+        ],
+      ),
       // Domaine Configuration : la racine redirige vers Regles, sa fonction
       // primaire -- meme mecanique que Pedagogie plus haut. Academie, Classe
       // en ligne, Notifications et Localisation n'ont pas de route : aucune
