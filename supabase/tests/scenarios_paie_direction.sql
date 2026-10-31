@@ -139,6 +139,16 @@ VALUES ('d2500000-0000-4000-8000-000000000505', 'remplacement_designe_admin',
         'd2500000-0000-4000-8000-0000000000b1', 'd2500000-0000-4000-8000-0000000000b2',
         'd2500000-0000-4000-8000-0000000000a1', gen_random_uuid());
 
+-- CAHIER-HEBDOMADAIRE (20261103000000) : le cahier de la semaine, depose
+-- sur s1, couvre les trois eleves pour toutes les seances de la semaine ;
+-- sans lui la paie serait en attente (verifie par scenarios_cahier_hebdomadaire).
+INSERT INTO public.lesson_reports(session_id, idempotency_key, content, author_profile_id)
+VALUES ('d2500000-0000-4000-8000-000000000501', 'pd-cahier-semaine',
+        '{"version": 1, "eleves": [{"student_id": "d2500000-0000-4000-8000-0000000000e1"},
+          {"student_id": "d2500000-0000-4000-8000-0000000000e2"},
+          {"student_id": "d2500000-0000-4000-8000-0000000000e3"}]}'::jsonb,
+        'd2500000-0000-4000-8000-0000000000b1');
+
 CREATE TEMP TABLE avant AS SELECT count(*) AS n FROM public.tresorerie_mouvements;
 GRANT SELECT ON avant TO authenticated;
 -- Ce que la tresorerie a ecrit pour les seances du scenario, sans enseignant.

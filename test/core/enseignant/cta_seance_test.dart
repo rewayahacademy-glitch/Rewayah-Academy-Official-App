@@ -334,4 +334,50 @@ void main() {
       },
     );
   });
+  group('cahier hebdomadaire (31/10/2026)', () {
+    test('semaine deja couverte : plus de Remplir le cahier, '
+        'ni de cahier en attente', () {
+      final SeanceEnseignant s = SeanceEnseignant.depuisJson(<String, dynamic>{
+        'session_id': 's',
+        'started_at': _debut.toUtc().toIso8601String(),
+        'ended_at': _fin.toUtc().toIso8601String(),
+        'status': 'ended',
+        'cahier_depose': false,
+        'cahier_semaine_depose': true,
+      });
+      expect(s.cahierDepose, isFalse);
+      expect(s.cahierAJour, isTrue);
+      expect(s.attendSonCahier, isFalse);
+      expect(
+        ctaDeSeance(
+          s,
+          DateTime(2026, 9, 28, 19),
+          fenetreAcces: _fenetre,
+          graceApresFin: _grace,
+        ).etat,
+        EtatCtaSeance.voirCahier,
+      );
+    });
+
+    test('semaine non couverte : Remplir le cahier, obligatoire', () {
+      final SeanceEnseignant s = SeanceEnseignant.depuisJson(<String, dynamic>{
+        'session_id': 's',
+        'started_at': _debut.toUtc().toIso8601String(),
+        'ended_at': _fin.toUtc().toIso8601String(),
+        'status': 'ended',
+        'cahier_depose': false,
+        'cahier_semaine_depose': false,
+      });
+      expect(s.attendSonCahier, isTrue);
+      expect(
+        ctaDeSeance(
+          s,
+          DateTime(2026, 9, 28, 19),
+          fenetreAcces: _fenetre,
+          graceApresFin: _grace,
+        ).etat,
+        EtatCtaSeance.remplirCahier,
+      );
+    });
+  });
 }

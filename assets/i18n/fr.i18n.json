@@ -7467,7 +7467,7 @@
       "rejoindreSalleLecteur": "Rejoindre la salle de la Classe {classe}",
       "remplirCahier": "Remplir le cahier de transmission",
       "remplirCahierLecteur": "Remplir le cahier de transmission de la Classe {classe}",
-      "cahierObligatoire": "Obligatoire\u00a0: le cahier de transmission {classe} se remplit à la fin de chaque séance.",
+      "cahierObligatoire": "Obligatoire\u00a0: le cahier de transmission {classe} se remplit une fois par semaine pour chaque élève.",
       "voirCahier": "Voir le cahier de transmission {classe}",
       "voirCahierLecteur": "Voir le cahier de transmission de la Classe {classe}",
       "voirClasse": "Voir la Classe",
