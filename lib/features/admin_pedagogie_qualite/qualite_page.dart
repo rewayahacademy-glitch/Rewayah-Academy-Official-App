@@ -243,7 +243,7 @@ class _GroupeAnomalies extends StatelessWidget {
           rendu: (BuildContext _, AnomalieQualite a) =>
               a.controleStatut == StatutControleQualite.ouvert
               ? MenuActions(
-                  tooltip: a.personneLibelle,
+                  objet: a.personneLibelle,
                   actions: <EntreeAction>[
                     EntreeAction(
                       libelle: t.admin.qualite.actionTraiter,

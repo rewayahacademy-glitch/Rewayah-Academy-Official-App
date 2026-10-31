@@ -222,7 +222,7 @@ class _Corps extends StatelessWidget {
                   rendu: (BuildContext _, EvaluationAdmin e) =>
                       e.statut == StatutEvaluation.planifiee
                       ? MenuActions(
-                          tooltip: e.eleveLibelle,
+                          objet: e.eleveLibelle,
                           actions: <EntreeAction>[
                             EntreeAction(
                               libelle:

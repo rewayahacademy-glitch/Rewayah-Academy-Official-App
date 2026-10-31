@@ -59,7 +59,18 @@ import 'menu_filtre.dart';
 /// donnees de l'ecran (classes, roles, types d'evenement).
 class RangeeFiltres extends StatefulWidget {
   /// Cree la rangee.
-  const RangeeFiltres({required this.filtres, this.replier = true, super.key});
+  const RangeeFiltres({
+    required this.filtres,
+    this.replier = true,
+    this.visiblesMax = RenduRangeeFiltres.puces,
+    super.key,
+  });
+
+  /// Le nombre de puces montrees au plus avant « Plus » (3 par defaut,
+  /// LISTES-1). Une liste dont la barre de commandes ne garde que les deux
+  /// filtres les plus employes en passe 2 : tous les autres restent dans la
+  /// feuille « Plus ». Jamais en dessous de 1.
+  final int visiblesMax;
 
   /// Les puces, dans l'ordre de lecture.
   final List<Widget> filtres;
@@ -409,6 +420,7 @@ class _RangeeFiltresState extends State<RangeeFiltres> {
                     comptes: comptes,
                     largeurMax: largeurMax,
                     replier: widget.replier,
+                    visiblesMax: widget.visiblesMax,
                     surVisibles: _annoncerVisibles,
                     children: <Widget>[
                       for (int i = 0; i < widget.filtres.length; i++)
@@ -731,9 +743,13 @@ class _RangeeAdaptative extends MultiChildRenderObjectWidget {
     required this.comptes,
     required this.largeurMax,
     required this.replier,
+    required this.visiblesMax,
     required this.surVisibles,
     required super.children,
   });
+
+  /// Le nombre de puces montrees au plus.
+  final int visiblesMax;
 
   /// Le nombre de puces (les enfants suivants sont les variantes de « Plus »).
   final int nbPuces;
@@ -763,6 +779,7 @@ class _RangeeAdaptative extends MultiChildRenderObjectWidget {
     surVisibles,
     Directionality.of(context),
     replier,
+    visiblesMax,
   );
 
   @override
@@ -774,6 +791,7 @@ class _RangeeAdaptative extends MultiChildRenderObjectWidget {
       ..largeurMax = largeurMax
       ..surVisibles = surVisibles
       ..replier = replier
+      ..visiblesMax = visiblesMax
       ..sens = Directionality.of(context);
   }
 }
@@ -800,7 +818,15 @@ class RenduRangeeFiltres extends RenderBox
     this.surVisibles,
     this._sens,
     this._replier,
+    this._visiblesMax,
   );
+
+  int _visiblesMax;
+  set visiblesMax(int v) {
+    if (v == _visiblesMax) return;
+    _visiblesMax = v;
+    markNeedsLayout();
+  }
 
   /// Le nombre de puces montrees au plus : trois, puis « Plus ».
   static const int puces = 3;
@@ -886,7 +912,7 @@ class RenduRangeeFiltres extends RenderBox
     }
 
     ({int k, int variante}) dernierRecours = (k: 1, variante: -1);
-    for (int k = math.min(puces, n); k >= 1; k--) {
+    for (int k = math.min(math.max(1, _visiblesMax), n); k >= 1; k--) {
       if (k == n) {
         // Toutes les puces, sans « Plus » : il suffit qu'elles tiennent.
         if (largeurDe(k) <= _largeurMax + 0.5) return (k: k, variante: -1);

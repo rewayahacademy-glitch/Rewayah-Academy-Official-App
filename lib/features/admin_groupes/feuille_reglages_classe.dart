@@ -266,7 +266,7 @@ class _FeuilleReglagesClasseEtat extends ConsumerState<FeuilleReglagesClasse> {
                 LigneRubrique(
                   libelle: libelleCreneauClasse(c),
                   controle: MenuActions(
-                    tooltip: libelleCreneauClasse(c),
+                    objet: libelleCreneauClasse(c),
                     actions: <EntreeAction>[
                       EntreeAction(
                         libelle: r.modifierCreneau,

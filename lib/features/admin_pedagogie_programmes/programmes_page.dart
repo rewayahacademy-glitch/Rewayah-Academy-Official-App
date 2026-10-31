@@ -395,7 +395,7 @@ class _Niveaux extends ConsumerWidget {
                 texte: (NiveauProgramme _) => '',
                 rendreMemeSiTexteVide: true,
                 rendu: (BuildContext _, NiveauProgramme n) => MenuActions(
-                  tooltip: n.nomHumain,
+                  objet: n.nomHumain,
                   actions: <EntreeAction>[
                     EntreeAction(
                       libelle: t.admin.programmes.modifierNiveau,

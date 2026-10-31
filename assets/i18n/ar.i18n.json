@@ -432,6 +432,24 @@
     },
     "demarrage": {
       "ouverture": "جارٍ فتح Rewayah"
+    },
+    "listes": {
+      "actions": "الإجراءات",
+      "actionsDe": "الإجراءات: ⁨{objet}⁩",
+      "cocherPage": "تحديد الصفحة",
+      "cocherLigne": "تحديد ⁨{objet}⁩",
+      "trierPar": "الترتيب حسب ⁨{colonne}⁩",
+      "trierParCroissant": "الترتيب حسب ⁨{colonne}⁩ (تصاعدي حاليًا)",
+      "trierParDecroissant": "الترتيب حسب ⁨{colonne}⁩ (تنازلي حاليًا)",
+      "tranche": "⁦⁨{debut}⁩-⁨{fin}⁩⁩ من ⁨{total}⁩",
+      "trancheLue": "الأسطر من ⁨{debut}⁩ إلى ⁨{fin}⁩ من أصل ⁨{total}⁩",
+      "precedente": "الصفحة السابقة",
+      "suivante": "الصفحة التالية",
+      "taillePage": "الأسطر في كل صفحة",
+      "parPage": "⁨{n}⁩ في كل صفحة",
+      "deselectionner": "إلغاء التحديد",
+      "retirerFiltre": "إزالة المرشح: ⁨{filtre}⁩",
+      "toutEffacer": "مسح الكل"
     }
   },
   "miseAJour": {
@@ -5929,7 +5947,55 @@
         "few": "⁨{jours}⁩ أيام",
         "many": "⁨{jours}⁩ يومًا",
         "other": "⁨{jours}⁩ يوم"
-      }
+      },
+      "recherche": "البحث عن حساب",
+      "filtreEtat": "الحالة",
+      "filtreTousLesEtats": "كل الحالات",
+      "compteur(param=n)": {
+        "zero": "لا حساب",
+        "one": "حساب واحد",
+        "two": "حسابان",
+        "few": "⁨{n}⁩ حسابات",
+        "many": "⁨{n}⁩ حسابًا",
+        "other": "⁨{n}⁩ حساب"
+      },
+      "filtreActifEtat": "الحالة: ⁨{valeur}⁩",
+      "filtreActifRecherche": "البحث: ⁨{texte}⁩",
+      "actionOuvrirDossier": "فتح ملف الهوية",
+      "plafondTitre": "قد تكون القائمة ناقصة",
+      "plafondMessage": "يعيد الخادم على الأكثر ⁨{nombre}⁩ حسابًا، والقائمة تبلغ هذا العدد: قد تغيب أحدث التسجيلات.",
+      "rechercheAideEleves": "الاسم أو المعرّف أو الفصل أو وليّ الأمر",
+      "rechercheAide": "الاسم أو المعرّف",
+      "vues": "الأشخاص المعروضون",
+      "vueEleves": "الطلاب",
+      "vueFamilles": "العائلات",
+      "vueEnseignants": "المعلمون",
+      "vueDirection": "الإدارة",
+      "vueNombre": "⁨{vue}⁩ (⁨{n}⁩)",
+      "colonneTranche": "العمر",
+      "trancheEnfant": "طفل",
+      "trancheAdulte": "بالغ",
+      "trancheInconnue": "غير محدد",
+      "colonneClasse": "الفصل",
+      "classeAucune": "بلا فصل",
+      "classeEtAutres(param=n)": {
+        "zero": "⁨{classe}⁩",
+        "one": "⁨{classe}⁩ وفصل آخر",
+        "two": "⁨{classe}⁩ وفصلان آخران",
+        "few": "⁨{classe}⁩ و⁨{n}⁩ فصول أخرى",
+        "many": "⁨{classe}⁩ و⁨{n}⁩ فصلًا آخر",
+        "other": "⁨{classe}⁩ و⁨{n}⁩ فصل آخر"
+      },
+      "colonneTuteur": "وليّ الأمر",
+      "tuteurAucun": "بلا وليّ أمر",
+      "colonneElevesRattaches": "الطلاب التابعون",
+      "videEleves": "لا يوجد طالب مسجّل حاليًا",
+      "videFamilles": "لا توجد عائلة مسجّلة حاليًا",
+      "videEnseignants": "لا يوجد معلم مسجّل حاليًا",
+      "videDirection": "لا يوجد حساب للإدارة",
+      "videDetail": "ستظهر التسجيلات الجديدة هنا.",
+      "detailsAbsentsTitre": "عمر الطلاب وفصولهم وأولياء أمورهم غير معروضة",
+      "detailsAbsentsMessage": "لا يقدّم الخادم هذه المعلومات بعد: تحديثه غير مثبّت. يبقى الطلاب منفصلين عن أولياء الأمور. أعد تحميل الصفحة بعد تثبيت التحديث."
     },
     "agents": {
       "titre": "وصول الوكلاء الآليين",
