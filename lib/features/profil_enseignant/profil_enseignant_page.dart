@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/communications/libelles_communication_slang.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -42,12 +43,19 @@ import 'photo_publique.dart';
 
 /// Le nom public de l'enseignant, avec son titre Sayyid ou Sayyida (R18, E16).
 ///
-/// Le modele [ProfilEnseignant] ne porte pas encore le titre : la
-/// demonstration fixe ce nom, la production le branchera a BR-1. Rien n'est
-/// calcule cote client ; sans valeur, l'en-tete garde le prenom.
-final Provider<String?> nomPublicEnseignantProvider = Provider<String?>(
-  (Ref _) => null,
-);
+/// Tri du 31/10/2026 : le titre est lu par le profil (`teacher_profiles.titre`,
+/// 0030) ; le nom se compose avec les libelles deja traduits des
+/// Communications. Sans titre, `null` : l'en-tete garde le prenom.
+final Provider<String?> nomPublicEnseignantProvider = Provider<String?>((
+  Ref ref,
+) {
+  final ProfilEnseignant? profil = ref.watch(profilEnseignantProvider).value;
+  if (profil == null || profil.titre == null) return null;
+  return const LibellesCommunicationSlang().enseignant(
+    prenom: profil.prenom,
+    titre: profil.titre,
+  );
+});
 
 /// `ENS-05` : qui suis-je pour l'academie, et ou regle-je ce qui m'appartient.
 ///
