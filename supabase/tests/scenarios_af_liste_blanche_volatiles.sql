@@ -134,6 +134,8 @@ declare
     'deposer_reprise_foyer(uuid)',
     'deposer_student_concern(text,uuid,uuid,text,text,text)',
     'designer_remplacant_admin(uuid,uuid,uuid)',
+    -- Remplacements direction (31/10) : R12, libre a l'heure exacte, genre souple sur choix explicite trace ; direction active.
+    'designer_remplacant_admin(uuid,uuid,uuid,boolean)',
     'dossiers_en_attente()',
     'effacer_etat_partage(uuid)',
     'eleves_sans_enseignant()',
