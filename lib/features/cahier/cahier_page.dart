@@ -1337,9 +1337,11 @@ class _FeuilleAjusterCahierState extends State<FeuilleAjusterCahier> {
   ///
   /// Elle part **dans le cahier**, pas dans une seconde ecriture : le contenu du
   /// cahier porte le motif, la file hors ligne porte la cle, et une seule
-  /// ecriture atteint la base. L'application de l'exception a
-  /// `session_presence_override` demande un adaptateur serveur qui n'existe pas
-  /// encore (`CONTRACT_REQUEST_C.md`) ; l'ecrire ici ferait deux chemins vers la
+  /// ecriture atteint la base. Le serveur en tire lui-meme l'exception, dans la
+  /// meme transaction : le declencheur `lesson_reports_appliquer_exceptions`
+  /// (migration 20261103200000) l'ecrit dans `session_presence_override`
+  /// (`corrigee_manuel`), que lisent la presence au temps reel, l'historique de
+  /// la famille et la paie. L'ecrire aussi d'ici ferait deux chemins vers la
   /// meme decision.
   void _consigner(PresenceCorrectionCommande commande) =>
       setState(() => _motifException = commande.motif);
