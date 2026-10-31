@@ -84,8 +84,10 @@ reste possible.
   « élève autonome » : `/eleve` le renvoie toujours vers `/eleve/adulte`
   (`lib/core/router/redirection.dart:325`), dont la lecture rend toujours « indisponible »
   (`lib/features/accueil_adulte/accueil_adulte_page.dart:125`). Son onglet Profil ouvre le compte
-  du tuteur (`redirection.dart:264`). Le repli simple (lui montrer l'Accueil standard, branché) est
-  un choix de produit : décision du directeur.
+  du tuteur (`redirection.dart:264`). **En cours, autre lot** (pilote, 31/10) : les écrans de
+  l'élève adulte (`accueilAdulteProvider`, `maClasseAdulteProvider`,
+  `historiqueSeancesAdulteProvider`) et l'ouverture de la séance au jeton sont pris par un autre
+  agent ; ce tri n'y touche pas.
 - **La famille ne peut pas écrire de message** : elle lit, mais la capacité « écrire » n'a aucune
   source serveur (`lib/core/communications/capacites_communication.dart:113`).
 - **Réaffecter une classe qui a déjà un enseignant** : aucune RPC (`affecter_enseignant_classe_c11bis`
@@ -277,8 +279,8 @@ par celles d'usage quotidien :
 
 ### Ce qui reste listé, pas fait (serveur à écrire, plus d'une journée, ou décision)
 
-- Accueil de l'élève adulte (adaptateur composite, ou choix de produit), Ma classe adulte, Mes
-  séances passées de l'adulte, Mon espace adulte.
+- **En cours, autre lot** : accueil de l'élève adulte, Ma classe adulte, Mes séances passées de
+  l'adulte, et l'ouverture de la séance au jeton. Mon espace adulte reste à écrire (serveur absent).
 - Second adulte du foyer (inviter, état de la place, accepter, reprise du foyer) : un lot cohérent
   sur 0053, 0098 et 0099, routes et adaptateurs à écrire.
 - Écrire un message côté famille (une petite fonction serveur de capacités).
