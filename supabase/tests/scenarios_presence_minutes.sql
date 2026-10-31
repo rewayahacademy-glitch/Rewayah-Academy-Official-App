@@ -10,6 +10,10 @@
 --   2. le seuil est un reglage : a 80 %, e1 passe en presence partielle ;
 --   3. paie : presents et partiels payes (4), l'absent non ; une absence
 --      excusee par la direction sort de la paie ;
+--   3 bis. duree payee = minutes connectees de l'enseignante, jamais
+--      finance_started_at (pose plus tot par la PR #100) : s2, enseignante
+--      connectee 30 min sur 60 (sous les 45 dues), payee 30 min ; s3, sans
+--      connexion de l'enseignante, part a la direction ;
 --   4. lecture : le tuteur voit son foyer, l'eleve sa ligne, anon rien ;
 --   5. le calcul reste au serveur.
 -- Tout est annule a la fin.
@@ -86,7 +90,15 @@ INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, week
 INSERT INTO public.sessions(id, teacher_id, started_at, ended_at, status, groupe_id)
 VALUES (pg_temp.u('51'), pg_temp.u('b1'),
         pg_temp.mois() + interval '10 days 9 hours',
-        pg_temp.mois() + interval '10 days 10 hours', 'planned', pg_temp.u('c1'));
+        pg_temp.mois() + interval '10 days 10 hours', 'planned', pg_temp.u('c1')),
+       (pg_temp.u('52'), pg_temp.u('b1'),
+        pg_temp.mois() + interval '11 days 9 hours',
+        pg_temp.mois() + interval '11 days 10 hours', 'planned', pg_temp.u('c1')),
+       (pg_temp.u('53'), pg_temp.u('b1'),
+        pg_temp.mois() + interval '12 days 9 hours',
+        pg_temp.mois() + interval '12 days 10 hours', 'planned', pg_temp.u('c1'));
+INSERT INTO public.session_participants(session_id, profile_id, role)
+VALUES (pg_temp.u('52'), pg_temp.u('e1'), 'student'), (pg_temp.u('53'), pg_temp.u('e1'), 'student');
 INSERT INTO public.session_participants(session_id, profile_id, role, entered_at)
 SELECT pg_temp.u('51'), pg_temp.u(x), 'student'::public.participant_role,
        CASE WHEN x = 'e5' THEN pg_temp.mois() + interval '10 days 9 hours' END
@@ -99,15 +111,26 @@ SELECT pg_temp.u('51'), pg_temp.u(x.e), x.t::public.session_event_type,
                ('e2','joined',5,'livekit_webhook'), ('e2','joined',10,'livekit_webhook'),
                ('e2','left',20,'livekit_webhook'),
                ('e3','joined',-5,'livekit_webhook'), ('e3','left',2,'user_action'),
-               ('e5','joined',30,'livekit_webhook')) AS x(e, t, m, src);
+               ('e5','joined',30,'livekit_webhook'),
+               -- L'enseignante, toute la seance.
+               ('b1','joined',-3,'livekit_webhook'), ('b1','left',60,'user_action')) AS x(e, t, m, src);
+-- s2 : l'enseignante et e1 connectees de 0 a 30 ; s3 : e1 seule.
+INSERT INTO public.session_events(session_id, profile_id, event_type, server_ts, source)
+SELECT pg_temp.u(x.s), pg_temp.u(x.e), x.t::public.session_event_type,
+       s.started_at + x.m * interval '1 minute', 'livekit_webhook'
+  FROM (VALUES ('52','b1','joined',0), ('52','b1','left',30), ('52','e1','joined',0), ('52','e1','left',30),
+               ('53','e1','joined',0)) AS x(s, e, t, m)
+  JOIN public.sessions s ON s.id = pg_temp.u(x.s);
 
 -- Cloture : 60 minutes tenues, puis « ended » qui declenche la paie.
 ALTER TABLE public.sessions DISABLE TRIGGER sessions_tresorerie_timestamps;
-UPDATE public.sessions SET status = 'preflight' WHERE id = pg_temp.u('51');
-UPDATE public.sessions SET status = 'in_progress' WHERE id = pg_temp.u('51');
+UPDATE public.sessions SET status = 'preflight' WHERE id IN (pg_temp.u('51'), pg_temp.u('52'), pg_temp.u('53'));
+UPDATE public.sessions SET status = 'in_progress' WHERE id IN (pg_temp.u('51'), pg_temp.u('52'), pg_temp.u('53'));
+-- finance_started_at 20 min avant l'heure (jeton de l'enseignante, PR #100) :
+-- il ne doit plus rien changer a la duree payee.
 UPDATE public.sessions s
-   SET finance_started_at = s.started_at, finance_ended_at = s.ended_at, status = 'ended'
- WHERE s.id = pg_temp.u('51');
+   SET finance_started_at = s.started_at - interval '20 minutes', finance_ended_at = s.ended_at, status = 'ended'
+ WHERE s.id IN (pg_temp.u('51'), pg_temp.u('52'), pg_temp.u('53'));
 ALTER TABLE public.sessions ENABLE TRIGGER sessions_tresorerie_timestamps;
 
 -- ------------------------------------------------------------------
@@ -151,6 +174,18 @@ SELECT pg_temp.vrai((SELECT m.montant_minor FROM public.tresorerie_mouvements m
                         AND m.regle = 'remuneration_due' AND m.coffre = 'paie_a_decaisser' AND m.sens = 'entree')
                     = 4 * (private.fac_politique_au(pg_temp.mois())).taux_eleve_heure_enfant_mineur,
   'paie ecrite a la cloture : taux enfant x 4 eleves x 1 h');
+SELECT pg_temp.vrai(private.pai_minutes_enseignant(pg_temp.u('51')) = 60,
+  'duree tenue : 60 min connectees (arrivee 3 min avant l''heure bornee au debut), pas 80 depuis finance_started_at');
+SELECT pg_temp.vrai(private.pai_minutes_enseignant(pg_temp.u('52')) = 30
+  AND (SELECT m.montant_minor FROM public.tresorerie_mouvements m
+        WHERE m.source_type = 'prestation' AND m.source_id = pg_temp.u('52')::text
+          AND m.regle = 'remuneration_due' AND m.coffre = 'paie_a_decaisser' AND m.sens = 'entree')
+      = round((private.fac_politique_au(pg_temp.mois())).taux_eleve_heure_enfant_mineur * 30 / 60.0),
+  'enseignante connectee 30 min sur 60 (sous les 45 dues) : payee 30 min pour 1 eleve');
+SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.tresorerie_mouvements m WHERE m.source_id = pg_temp.u('53')::text)
+  AND EXISTS (SELECT 1 FROM public.tresorerie_a_reprendre q
+               WHERE q.source_id = pg_temp.u('53')::text AND q.raison = 'duree_indeterminee'),
+  'aucune connexion de l''enseignante : rien n''est paye, la seance part a la direction');
 INSERT INTO public.session_presence_override(session_id, profile_id, etat, motif, decide_par)
 VALUES (pg_temp.u('51'), pg_temp.u('e3'), 'excusee', 'absence prevenue', pg_temp.u('a1'));
 SELECT pg_temp.vrai((SELECT statut = 'excusee' FROM pg_temp.t('e3'))
