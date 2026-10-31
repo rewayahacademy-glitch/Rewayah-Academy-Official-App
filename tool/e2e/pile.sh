@@ -74,7 +74,7 @@ ENV
   (nohup node "$DEPOT/tool/e2e/relais_https.mjs" "$TRAVAIL/cert.pem" "$TRAVAIL/cle.pem" 54331 \
      > "$TRAVAIL/relais.log" 2>&1 < /dev/null &)
   pkill -f "supabase@2.122.0 functions serve" 2>/dev/null || true
-  (cd "$TRAVAIL" && nohup $SUPA functions serve --env-file "$TRAVAIL/fonctions.env" \
+  (cd "$TRAVAIL" && setsid nohup $SUPA functions serve --env-file "$TRAVAIL/fonctions.env" \
      > "$TRAVAIL/fonctions.log" 2>&1 < /dev/null &)
   sleep 12
   # Le conteneur des fonctions telecharge ses modules (jsr.io, npm) a travers

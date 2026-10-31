@@ -336,6 +336,8 @@ export async function connecterParLien(page, courriel) {
   await ouvrir(page, '/');
   const deja = await trouver(page, "J'ai déjà un compte", { delai: 6000 });
   if (deja) { await deja.click(); await page.waitForTimeout(1000); }
+  // Session encore ouverte dans ce navigateur : rien a faire.
+  if (!(await page.locator('input[autocomplete=email], input[inputmode=email]').count())) return;
   const depuis = Date.now();
   await taper(page, 'input[autocomplete=email], input[inputmode=email]', courriel);
   await cliquer(page, /^Recevoir le lien/, { pause: 2000 });

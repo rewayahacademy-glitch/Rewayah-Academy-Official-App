@@ -23,15 +23,16 @@ function local(fuseau, date) {
 }
 
 /// Rend { fuseau, jour (libelle), heure, debut (Date UTC), attente (min) }.
-export function horaireProche({ delaiMin = 3, delaiMax = 20, maintenant = new Date() } = {}) {
+export function horaireProche({ delaiMin = 3, delaiMax = 20, maintenant = new Date(), pasAvant = null, fuseaux = FUSEAUX } = {}) {
   let meilleur = null;
-  for (const fuseau of FUSEAUX) {
+  for (const fuseau of fuseaux) {
     const l = local(fuseau, maintenant);
     const attente = 60 - l.minute - maintenant.getUTCSeconds() / 60;
     const prochain = new Date(maintenant.getTime() + attente * 60000);
     const lp = local(fuseau, prochain);
     if (lp.minute !== 0 || lp.heure < 6 || lp.heure > 21) continue;
     if (attente < delaiMin || attente > delaiMax) continue;
+    if (pasAvant && prochain < pasAvant) continue;
     if (!meilleur || attente < meilleur.attente) {
       meilleur = { fuseau, jour: JOURS[lp.jour], jourIndex: lp.jour, heure: lp.heure,
         debut: prochain, attente: Math.round(attente) };
