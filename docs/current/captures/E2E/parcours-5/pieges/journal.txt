@@ -1,0 +1,11 @@
+== Parcours 5 : pieges : 2026-10-31T23:50:24.927Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+[5.1] non joué : le script a echoue : locator.getAttribute: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for getByRole('button', { name: /^Retourner dans la salle/ }).first()[22m
+
+[5.2] vert : apres rechargement : http://127.0.0.1:8090/#/enseignant/journee ; « h2:Aujourd'hui / flt-semantics:Dimanche 1 novembre / flt-semantics:Prochaine séance »
+[5.3] rouge : deux onglets : aucun des deux ne dit que la salle est ouverte ailleurs
+[5.4] rouge : micro refuse par le navigateur puis « Ouvrir le micro » : aucun message (le micro semble simplement ne pas s'ouvrir)
+[5.5] rouge : pas de « Rejoindre » ; aucune phrase sur l'ouverture de la salle
+[5.6] rouge : le tuteur quitte puis ne trouve rien pour revenir ; de nouveau en salle : false
+== Parcours 5 : pieges : joué
