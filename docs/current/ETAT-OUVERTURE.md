@@ -24,9 +24,10 @@ recette en production** : la dernière colonne ne se remplit que quand le direct
 | PR | Objet | Parcours servi | État |
 |---|---|---|---|
 | 98 | Remplacement automatique de l'enseignant absent | hors ligne (déjà commencé) | fusionnée le 31/10 ; fonction courriels-envoi redéployée par deploy.yml (version 12) |
-| 100 | Séance ouverte par le jeton vidéo | 5 | rejeu demandé par-dessus la 98, puis migration et fusion |
+| 100 | Séance ouverte par le jeton vidéo | 5 | rejouée par-dessus la 98 (a985822cf) ; attend la CI, puis migration et fusion |
 | 103 | Cahier hebdomadaire | 6 | fusionnée le 31/10, migration posée et vérifiée en production |
 | 104 | Confier une classe à un autre enseignant | 2 | fusionnée le 31/10, migration posée et vérifiée en production |
+| 106 | L'exception du cahier corrige la présence | 6 | fusionnée le 31/10 (480a19ca3) ; migration posée en production, corps identique au fichier (md5), déclencheur présent, fonction fermée à authenticated |
 | 95 | Factures le 1er, relances | 7 | retenue jusqu'au 04/11 |
 
 ## Écart entre les migrations du dépôt et la production
@@ -49,7 +50,7 @@ Aucune migration de rattrapage de l'enregistrement sans décision du directeur.
 ## Dette en attente (on ne la règle pas maintenant)
 
 - **CI** : 30 scénarios sur 154 rejoués par `ci.yml` (présence aux minutes, cahier hebdomadaire et remplacements n'y sont pas) ; la pile locale rejoue tout, c'est elle la preuve. Élargir la CI : décision du directeur (`.github/`).
-- **Cahier du remplaçant** : le remplaçant ne peut déposer aucun cahier (prouvé en local le 31/10) ; lot autorisé après la PR 106, règle par défaut « le remplaçant seul dépose, le titulaire lit ».
+- **Cahier du remplaçant** : le remplaçant ne peut déposer aucun cahier (prouvé en local le 31/10) ; PR 106 fusionnée, lot lancé, règle par défaut « le remplaçant seul dépose, le titulaire lit ».
 - **Minutes connectées sans sortie (lot PRESENCE, 20261102900000)** : si l'enseignant entre sans jamais sortir, `private.pai_minutes_enseignant` ferme l'intervalle à `finance_ended_at`, posé par la clôture automatique. Une séance d'1 h peut ainsi compter 1799 minutes (relevé local du 31/10, scénario ses_cloture_auto cas 4). La paie reste juste, car elle est plafonnée à la durée prévue, mais les minutes affichées à la famille et à la direction sont fausses. Correction proposée : borner à la fin prévue plus la grâce. Elle sera faite par une nouvelle migration, jamais en modifiant la migration appliquée.
 - **`scenarios_fac_e_paie_par_eleve`** échoue sur `main` (« pending trigger events »), hors des 30 scénarios rejoués par la CI.
 
