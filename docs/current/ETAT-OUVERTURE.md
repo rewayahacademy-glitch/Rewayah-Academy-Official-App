@@ -23,8 +23,8 @@ recette en production** : la dernière colonne ne se remplit que quand le direct
 
 | PR | Objet | Parcours servi | État |
 |---|---|---|---|
-| 98 | Remplacement automatique de l'enseignant absent | hors ligne (déjà commencé) | migration posée en production, CI en cours |
-| 100 | Séance ouverte par le jeton vidéo | 5 | après 98 |
+| 98 | Remplacement automatique de l'enseignant absent | hors ligne (déjà commencé) | fusionnée le 31/10 ; fonction courriels-envoi redéployée par deploy.yml (version 12) |
+| 100 | Séance ouverte par le jeton vidéo | 5 | rejeu demandé par-dessus la 98, puis migration et fusion |
 | 103 | Cahier hebdomadaire | 6 | fusionnée le 31/10, migration posée et vérifiée en production |
 | 104 | Confier une classe à un autre enseignant | 2 | fusionnée le 31/10, migration posée et vérifiée en production |
 | 95 | Factures le 1er, relances | 7 | retenue jusqu'au 04/11 |
