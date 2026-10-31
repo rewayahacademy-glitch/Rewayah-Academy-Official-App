@@ -265,7 +265,7 @@ await piege('1.18', async () => {
   const erreur = await trouverTexte(d.page, /(déjà décidé|erreur|n'a pas)[^|]*/i, 1500);
   noter('1.18', decisions === '1' && !erreur ? 'vert' : 'rouge', `${decisions} decision(s) journalisee(s) ; ${erreur ? `message « ${erreur} »` : 'aucun message d\'erreur'}`);
 });
-noter('1.7', 'rouge', 'joué en exploration (31/10 20:56 UTC) : apres le lien, « Je m\'inscris pour moi » mene au parcours famille jusqu\'a « Votre demande est en cours », sans rappel du code d\'invitation ni retour vers l\'inscription enseignante (UX-011)');
+noter('1.7', 'rouge', 'joué en exploration (31/10 20:56 UTC) : apres le lien, « Je m\'inscris pour moi » mene au parcours famille jusqu\'a « Votre demande est en cours », sans rappel du code d\'invitation ni retour vers l\'inscription enseignante (UX-013)');
 noter('1.19', 'non joué', 'refuser exige un motif et retire l\'acces : a jouer sur un dossier dedie');
 noter('1.20', 'non joué', 'lecture faite sur les captures, voir le bilan');
 noter('1.21', 'non joué', 'parcours candidate au telephone : a jouer');
