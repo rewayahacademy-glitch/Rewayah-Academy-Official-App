@@ -28,7 +28,7 @@ recette en production** : la dernière colonne ne se remplit que quand le direct
 | 103 | Cahier hebdomadaire | 6 | fusionnée le 31/10, migration posée et vérifiée en production |
 | 104 | Confier une classe à un autre enseignant | 2 | fusionnée le 31/10, migration posée et vérifiée en production |
 | 106 | L'exception du cahier corrige la présence | 6 | fusionnée le 31/10 (480a19ca3) ; migration posée en production, corps identique au fichier (md5), déclencheur présent, fonction fermée à authenticated |
-| 108 | Le remplaçant dépose le cahier (FN-002) | 6 | CI verte, relue par le pilote ; migration 20261103300000 à poser au matin, après relecture des politiques et des corps de production ; règle par défaut à confirmer par le directeur |
+| 108 | Le remplaçant dépose le cahier (FN-002) | 6 | CI verte, relue par le pilote ; ouvre aussi une quatrième porte, hors des trois annoncées : `etat_presence` admet l'enseignant effectif comme 5e chemin (sans cela le brouillon du remplaçant restait refusé) ; ne fusionne pas avant la réponse du directeur sur la règle ; migration 20261103300000 à poser au matin, après relecture des politiques et des corps de production ; règle par défaut à confirmer par le directeur |
 | 95 | Factures le 1er, relances | 7 | retenue jusqu'au 04/11 |
 
 ## Écart entre les migrations du dépôt et la production
