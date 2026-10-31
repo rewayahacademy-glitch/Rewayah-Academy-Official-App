@@ -146,8 +146,20 @@ class LiveKitSessionProvider implements VideoSessionProvider {
   @override
   Stream<EtatSalle> get etats => _etats.stream;
 
+  /// La derniere liste publiee, rendue a tout nouvel abonne.
+  List<ParticipantSalle>? _derniersParticipants;
+
   @override
-  Stream<List<ParticipantSalle>> get participants => _participants.stream;
+  Stream<List<ParticipantSalle>> get participants async* {
+    // Meme regle que [contenusPresentes] (31/10/2026) : la salle rouverte
+    // depuis la barre « Seance toujours en direct » doit retrouver qui est
+    // la et si son micro est ouvert, sans attendre le prochain evenement.
+    final List<ParticipantSalle>? derniers = _derniersParticipants;
+    if (derniers != null) {
+      yield derniers;
+    }
+    yield* _participants.stream;
+  }
 
   @override
   Stream<QualiteLien> get qualite => _qualite.stream;
@@ -277,11 +289,12 @@ class LiveKitSessionProvider implements VideoSessionProvider {
           'salle': _acces?.nomSalle,
           'raison': raison?.name ?? 'inconnue',
         });
-        _poser(
-          raison == lk.DisconnectReason.clientInitiated
-              ? EtatSalle.absent
-              : EtatSalle.echec,
-        );
+        _poser(switch (raison) {
+          lk.DisconnectReason.clientInitiated => EtatSalle.absent,
+          // 30/10/2026 : l'enseignant a fait sortir ce participant.
+          lk.DisconnectReason.participantRemoved => EtatSalle.retire,
+          _ => EtatSalle.echec,
+        });
         _publierParticipants();
       })
       ..on<lk.ParticipantConnectedEvent>((_) => _publierParticipants())
@@ -589,6 +602,7 @@ class LiveKitSessionProvider implements VideoSessionProvider {
       for (final lk.RemoteParticipant autre in salle.remoteParticipants.values)
         _traduire(autre, local: false),
     ];
+    _derniersParticipants = liste;
     _participants.add(liste);
   }
 
@@ -730,6 +744,7 @@ class LiveKitSessionProvider implements VideoSessionProvider {
     }
 
     _acces = null;
+    _derniersParticipants = null;
     _repli.remettre();
     _cameraAvantDegradation = false;
     // Le refus de camera ne vaut que pour la seance ou il a eu lieu (revue de

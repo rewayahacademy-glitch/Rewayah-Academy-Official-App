@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
+import '../comptable/paiements/espace_paiements.dart';
+import '../comptable/paiements/paiements_page.dart' as paie;
 import 'a_valider/a_valider_page.dart';
 import 'paiements/paiements_page.dart';
 import 'politiques_commerciales.dart';
@@ -29,6 +31,13 @@ enum OngletFinance {
   /// Paiements (`/admin/finance/paiements`, passation du 17/10/2026 point 3,
   /// FAC-C-01) : un paiement recu hors de l'application, attribue a un eleve.
   paiements,
+
+  /// Paie des enseignants (`/admin/finance/paie`, directeur, 31/10/2026 :
+  /// la direction voit la paie avec son compte). Le meme ecran et la meme
+  /// source que les paiements a effectuer du Comptable
+  /// ([paie.PaiementsAEffectuerPage], `releve_paie_mensuel`), dans l'espace
+  /// de la direction.
+  paie,
 }
 
 /// Le domaine Finance de la direction (FI-1b) : quatre onglets, dans la vraie
@@ -70,16 +79,28 @@ class FinancePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<({String libelle, String chemin})> liste =
         onglets ?? ongletsFinance();
+    final Widget? corps = switch (onglet) {
+      OngletFinance.vueGlobale => const VueGlobaleFinanceBloc(),
+      OngletFinance.politiques => const PolitiquesCommercialesBloc(),
+      OngletFinance.reserveDelegation => const ReserveDelegationPage(),
+      OngletFinance.aValider => const AValiderBloc(),
+      OngletFinance.paiements => const PaiementsBloc(),
+      // La page porte sa propre coquille (filtres, selection, bascule des
+      // montants) : elle recoit les onglets de la Finance.
+      OngletFinance.paie => null,
+    };
+    if (corps == null) {
+      return paie.PaiementsAEffectuerPage(
+        espace: EspacePaiements.direction(
+          onglets: liste,
+          indexOnglet: onglet.index,
+        ),
+      );
+    }
     return PageShell(
       titre: liste[onglet.index].libelle,
       entete: SousNavigationDomaine(onglets: liste, indexActif: onglet.index),
-      child: switch (onglet) {
-        OngletFinance.vueGlobale => const VueGlobaleFinanceBloc(),
-        OngletFinance.politiques => const PolitiquesCommercialesBloc(),
-        OngletFinance.reserveDelegation => const ReserveDelegationPage(),
-        OngletFinance.aValider => const AValiderBloc(),
-        OngletFinance.paiements => const PaiementsBloc(),
-      },
+      child: corps,
     );
   }
 }

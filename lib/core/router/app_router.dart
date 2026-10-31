@@ -10,6 +10,7 @@ import '../../features/accueil_adulte/accueil_adulte_page.dart'
 import '../../features/accueil_adulte/routes_accueil_adulte.dart';
 import '../../features/accueil_eleve/accueil_eleve_selon_presentation.dart';
 import '../../features/accueil_famille/accueil_famille_page.dart';
+import '../../features/accueil_inscrits/accueil_inscrits_page.dart';
 import '../../features/admin_acces_agents/acces_agents_page.dart'
     deferred as d_acces_agents_page;
 import '../../features/admin_admissions/admissions_page.dart'
@@ -230,6 +231,7 @@ import '../../features/remplacements/remplacements_page.dart';
 import '../../features/revenus_enseignant/revenus_enseignant_page.dart';
 import '../../features/revue_groupe/revue_groupe_page.dart';
 import '../../features/salle/salle_page.dart' deferred as d_salle_page;
+import '../../features/salle_seance/portee_outils_salle.dart';
 import '../../features/suivi_demandes/changement_classe_page.dart';
 import '../../features/suivi_eleve/suivi_eleve_page.dart';
 import '../../features/suivi_famille/suivi_famille_page.dart';
@@ -254,6 +256,7 @@ import '../finance/montant.dart';
 import '../fraicheur/relecture_page.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
+import '../import_inscriptions/accueil_inscrits.dart';
 import '../mouvement/transitions.dart';
 import '../recherche/controleur_recherche.dart';
 import '../recherche/modeles_recherche.dart';
@@ -377,6 +380,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
     rafraichisseur.declencher();
   });
 
+  // IMM-ACCUEIL-FRONT : l'accueil des inscrits se decide apres la
+  // reclamation ; le routeur se reveille quand il change.
+  ref.listen<bool>(accueilInscritsEnAttenteProvider, (bool? _, bool _) {
+    rafraichisseur.declencher();
+  });
+
   // Q-2 = a : la nouvelle signature du contrat enseignant se lit apres la
   // session (acceptations) ; le routeur se reveille quand elle change.
   ref.listen<bool>(resignatureContratEnseignantProvider, (bool? _, bool _) {
@@ -408,6 +417,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         retour: etat.uri.queryParameters['retour'],
         resignatureContrat: ref.read(resignatureContratEnseignantProvider),
         atterrissageAdulte: ref.read(atterrissageAdulteProvider),
+        accueilInscrits: ref.read(accueilInscritsEnAttenteProvider),
       );
     },
     // Un chemin qu'aucune route ne sert : une page d'etat dans la charte, qui
@@ -851,6 +861,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 ),
                 routes: <RouteBase>[
                   GoRoute(
+                    path: 'inscription-reprise',
+                    pageBuilder: glissee(
+                      (GoRouterState _) => const AccueilInscritsPage(),
+                    ),
+                  ),
+                  GoRoute(
                     path: 'notifications',
                     pageBuilder: glissee(
                       (GoRouterState _) => const NotificationsPage(),
@@ -992,7 +1008,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                       (GoRouterState etat) =>
                           etat.uri.queryParameters['pour'] == 'moi'
                           ? const CreerMonProfilIndisponible()
-                          : const AjouterEnfantPage(),
+                          : AjouterEnfantPage(
+                              depuisAccueilInscrits:
+                                  etat.extra is AjoutDepuisAccueilInscrits
+                                  ? etat.extra! as AjoutDepuisAccueilInscrits
+                                  : null,
+                            ),
                     ),
                   ),
                   GoRoute(
@@ -2223,6 +2244,38 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
+      // Paie des enseignants (directeur, 31/10/2026 : la direction voit la
+      // paie avec son compte) : le sixieme onglet, et son detail, dans
+      // l'espace de la direction, jamais sous `/comptable`.
+      GoRoute(
+        path: Routes.adminFinancePaie,
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
+          domaine: AdminDomaine.finance,
+          child: PageDifferee(
+            cle: 'd_finance_page',
+            charger: d_finance_page.loadLibrary,
+            construire: () => d_finance_page.FinancePage(
+              onglet: d_finance_page.OngletFinance.paie,
+            ),
+          ),
+        ),
+        routes: <RouteBase>[
+          GoRoute(
+            path: 'obligation/:obligationId',
+            builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
+              domaine: AdminDomaine.finance,
+              child: PageDifferee(
+                cle: 'd_detail_paiement_page',
+                charger: d_detail_paiement_page.loadLibrary,
+                construire: () =>
+                    d_detail_paiement_page.DetailPaiementPage.direction(
+                      obligationId: _parametre(etat, 'obligationId'),
+                    ),
+              ),
+            ),
+          ),
+        ],
+      ),
       // Domaine Configuration : la racine redirige vers Regles, sa fonction
       // primaire -- meme mecanique que Pedagogie plus haut. Academie, Classe
       // en ligne, Notifications et Localisation n'ont pas de route : aucune
@@ -2658,18 +2711,29 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // plutot que de lever.
       GoRoute(
         path: Routes.salle,
+        // Le retour du telephone ou du navigateur quitte l'ecran sans
+        // question, et l'appel continue (directeur, 31/10/2026) : la salle
+        // l'a confie a `controleurSessionProvider`, la barre « Seance
+        // toujours en direct » le montre ailleurs.
         builder: (BuildContext contexte, GoRouterState etat) {
           final BilletSalle? billet = etat.extra is BilletSalle
               ? etat.extra! as BilletSalle
               : null;
-          final Widget salle = PageDifferee(
-            cle: 'd_salle_page',
-            charger: d_salle_page.loadLibrary,
-            construire: () => d_salle_page.SallePage(
-              seanceId: billet?.sessionId ?? '',
-              preparation: billet?.preparation ?? false,
-              groupeId: billet?.groupeId,
-              eleveId: billet?.eleveId,
+          // Les outils d'ecriture, l'historique d'Annuler et la marque « non
+          // partage » appartiennent a CETTE salle (`PorteeOutilsSalle`, TB-RC) :
+          // une autre seance ne s'ouvre jamais avec Ecrire arme par la
+          // precedente (branche le 31/10/2026, avec la seance en arriere-plan).
+          final Widget salle = PorteeOutilsSalle(
+            child: PageDifferee(
+              cle: 'd_salle_page',
+              charger: d_salle_page.loadLibrary,
+              construire: () => d_salle_page.SallePage(
+                seanceId: billet?.sessionId ?? '',
+                preparation: billet?.preparation ?? false,
+                groupeId: billet?.groupeId,
+                eleveId: billet?.eleveId,
+                interfaceGuidee: billet?.interfaceGuidee ?? false,
+              ),
             ),
           );
           // D6 : l'enfant qui rejoint depuis l'appareil de son tuteur retrouve

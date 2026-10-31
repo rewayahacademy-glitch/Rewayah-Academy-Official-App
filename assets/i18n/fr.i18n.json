@@ -746,6 +746,21 @@
     "connexion": "Connexion au cours",
     "reconnexionCourt": "Reconnexion",
     "perdue": "La connexion au cours est perdue",
+    "retire": "Votre enseignant vous a fait sortir du cours",
+    "rappelRecuDetail": "Regardez l'écran et écoutez votre enseignant.",
+    "retireDetail": "Vous pourrez revenir quand votre enseignant vous aura réadmis. Touchez alors «\u00a0Réessayer\u00a0».",
+    "gestes": {
+      "menu": "Gestes pour {prenom}",
+      "couperMicro": "Couper le micro {dePrenom}",
+      "couperCamera": "Couper la caméra {dePrenom}",
+      "faireSortir": "Faire sortir {prenom} du cours",
+      "confirmerSortie": "Faire sortir {prenom} du cours\u00a0?",
+      "consequenceSortie": "{prenom} quitte la salle et ne revient dans ce cours que si vous le réadmettez.",
+      "echec": "Le geste n'a pas abouti. Réessayez dans un instant.",
+      "sortis": "Sortis du cours",
+      "readmettre": "Réadmettre {prenom}",
+      "sortisErreur": "La liste des élèves sortis du cours n'a pas pu être lue. Réessayez dans un instant."
+    },
     "seulEnseignant": "Votre professeur n'est pas encore arrivé",
     "seulEnseignantDetail": "Restez sur cet écran\u00a0: la séance commence dès que votre enseignant entre.",
     "attenteDe": "En attente {deNom}",
@@ -5369,6 +5384,7 @@
       "reserveDelegation": "Réserve et délégation",
       "aValider": "À valider",
       "paiements": "Paiements",
+      "paieEnseignants": "Paie des enseignants",
       "pai": {
         "sousTitre": "Un paiement reçu hors de l'application (virement, espèces) s'enregistre ici, pour un élève. Son mois est alors facturé, puis réglé si le paiement le couvre. Saisi par la comptabilité, il est crédité après la validation de la direction.",
         "aRegulariser": "À régulariser",
@@ -5449,7 +5465,37 @@
       "statutTerminee": "Terminée",
       "statutIncident": "Incident technique",
       "statutEnseignantAbsent": "Enseignant absent",
-      "statutEleveAbsent": "Élève absent"
+      "statutEleveAbsent": "Élève absent",
+      "remplacement": {
+        "absenceSansRemplacant": "Absence déclarée par l'enseignant, sans remplaçant",
+        "remplacePar": "Remplacé par {nom}",
+        "remplaceParHorsGenre": "Remplacé par {nom}, hors du genre de la classe (choix de la direction)",
+        "action": "Désigner un remplaçant pour cette séance {deClasse}",
+        "titre": "Remplaçant pour la séance {deClasse}",
+        "quand": "{jour}, {horaire}",
+        "contexte": "Seuls les enseignants libres à l'heure exacte de la séance sont proposés. Ceux du genre de la classe passent en premier.",
+        "mentionLibre": "Libre à cette heure",
+        "mentionHorsGenre": "Libre à cette heure, mais pas du genre de la classe\u00a0: à choisir seulement si personne d'autre ne convient",
+        "avertissementHorsGenre": "Vous choisissez un enseignant qui n'est pas du genre de la classe. Ce choix est enregistré au nom de la direction.",
+        "confirmer": "Désigner ce remplaçant",
+        "confirmerHorsGenre": "Désigner ce remplaçant malgré le genre",
+        "horsLigne": "Connexion absente\u00a0: la désignation se fera une fois l'appareil reconnecté.",
+        "choixManquant": "Choisissez l'enseignant qui assurera la séance.",
+        "aucun": "Aucun enseignant n'est libre à l'heure exacte de cette séance.",
+        "designe": "{nom} assure cette séance. Le remplacement apparaît dans le planning.",
+        "refusOccupe": "Cet enseignant n'est plus libre à l'heure de la séance\u00a0: la liste a été relue. Choisissez un autre enseignant.",
+        "refusIncompatible": "Ce remplacement n'a pas été accepté\u00a0: le compte de cet enseignant ne le permet pas. Choisissez un autre enseignant.",
+        "refusDejaPris": "Cette séance a déjà un remplaçant\u00a0: rien n'a été changé.",
+        "refusSeance": "Cette séance n'est plus à venir\u00a0: rien n'a été changé.",
+        "erreur": "La désignation n'est pas confirmée\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+        "bilanTitre": "Remplacements de la semaine",
+        "bilanContexte": "Par enseignant titulaire et par classe. Confier la classe à un autre enseignant reste une décision de la direction.",
+        "bilanVide": "Aucune absence d'enseignant cette semaine.",
+        "bilanLigne": "{titulaire} · {classe}",
+        "bilanDetail": "Séances concernées\u00a0: {seances} · remplacées\u00a0: {remplacees} · sans remplaçant\u00a0: {sans}",
+        "bilanErreur": "Les remplacements de la semaine n'ont pas pu être lus\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+        "voirClasses": "Voir les classes"
+      }
     },
     "incidents": {
       "titre": "Incidents des 24 dernières heures",
@@ -12820,5 +12866,22 @@
       "sansReponse": "Pas de réponse",
       "sansReponsePhrase": "« Nous n'avons pas reçu de réponse à notre dernier message. »"
     }
+  },
+  "accueilInscrits": {
+    "titre": "Nous vous connaissons déjà",
+    "phrase": "Votre inscription a été reprise. Vous n'avez pas à tout ressaisir.",
+    "motTitre": "Un mot de la direction",
+    "elevesTitre": "Vos enfants déjà inscrits",
+    "elevesPhrase": "Leur prénom est déjà rempli. Il reste à indiquer leur âge.",
+    "aJour": "À jour",
+    "aCompleter": "À compléter",
+    "ajouterProfil": "Ajouter le profil élève {dePrenom}",
+    "plusTard": "Vous pourrez aussi le faire plus tard, depuis le Foyer.",
+    "sansEleve": "Aucun profil élève n'a été repris pour votre famille. Vous pourrez en ajouter un depuis le Foyer.",
+    "finirCompte": "Il reste quelques questions pour finir votre compte.",
+    "continuer": "Continuer",
+    "echecTitre": "Votre inscription n'a pas pu être vérifiée",
+    "echecPhrase": "Cause probable\u00a0: la connexion au serveur s'est interrompue (non confirmé). Réessayez dans un instant\u00a0: rien n'est créé en double.",
+    "sansDonnees": "La vérification de votre inscription"
   }
 }

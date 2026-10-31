@@ -134,6 +134,8 @@ declare
     'deposer_reprise_foyer(uuid)',
     'deposer_student_concern(text,uuid,uuid,text,text,text)',
     'designer_remplacant_admin(uuid,uuid,uuid)',
+    -- Remplacements direction (31/10) : R12, libre a l'heure exacte, genre souple sur choix explicite trace ; direction active.
+    'designer_remplacant_admin(uuid,uuid,uuid,boolean)',
     'dossiers_en_attente()',
     'effacer_etat_partage(uuid)',
     'eleves_sans_enseignant()',
@@ -257,6 +259,8 @@ declare
     'publier_version_programme(uuid,text)',
     'quitter_salle(uuid)',
     'read_kyc_documents()',
+    -- Salle en groupe (30/10) : l'enseignant effectif readmet un eleve sorti (garde positive, compte valide).
+    'readmettre_eleve_salle(uuid,uuid)',
     'rech_d1_curseur_creer(text,text,text,uuid,bigint)',
     'rech_d1_curseur_lire(uuid,text,text,bigint)',
     'rech_d1_rechercher_classes(text,uuid,integer)',

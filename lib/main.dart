@@ -23,6 +23,8 @@ import 'core/admin/port_fusion_classes.dart';
 import 'core/admin/port_incidents_seances.dart';
 import 'core/admin/port_pilotage.dart';
 import 'core/admin/port_planning_direction.dart';
+import 'core/admin/port_remplacements_direction.dart';
+import 'core/admin/remplacements_direction_supabase.dart';
 import 'core/agent/amorce_agent.dart';
 import 'core/agent/session_agent.dart';
 import 'core/candidature/autres_competences_supabase.dart';
@@ -40,6 +42,7 @@ import 'core/capacites/identite_titulaire_supabase.dart';
 import 'core/capacites/langues_communication_supabase.dart';
 import 'core/capacites/mes_donnees_supabase.dart';
 import 'core/capacites/mes_finances_supabase.dart';
+import 'core/capacites/obligations_payables_supabase.dart';
 import 'core/capacites/paiements_foyer_supabase.dart';
 import 'core/capacites/paiements_saisis_supabase.dart';
 import 'core/capacites/partage_pedagogique_supabase.dart';
@@ -53,6 +56,7 @@ import 'core/capacites/port_identite_titulaire.dart';
 import 'core/capacites/port_langues_communication.dart';
 import 'core/capacites/port_mes_donnees.dart';
 import 'core/capacites/port_mes_finances.dart';
+import 'core/capacites/port_obligations_payables.dart';
 import 'core/capacites/port_paiements_foyer.dart';
 import 'core/capacites/port_paiements_saisis.dart';
 import 'core/capacites/port_partage_pedagogique.dart'
@@ -98,6 +102,8 @@ import 'core/identite/matricule_supabase.dart';
 import 'core/identite/port_matricule.dart';
 import 'core/import_inscriptions/import_inscriptions_supabase.dart';
 import 'core/import_inscriptions/port_import_inscriptions.dart';
+import 'core/import_inscriptions/port_reclamation_preinscription.dart';
+import 'core/import_inscriptions/reclamation_preinscription_supabase.dart';
 import 'core/observabilite/journal_dev.dart';
 import 'core/observabilite/supervision.dart';
 import 'core/offres/demandes_suivi_supabase.dart';
@@ -182,6 +188,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portPlanningDirectionProvider.overrideWithValue(
     PlanningDirectionSupabase(Supabase.instance.client),
+  ),
+  // Remplacements de la direction (R12) : designation d'un remplacant depuis
+  // le planning, et bilan de la semaine par titulaire et par classe.
+  portRemplacementsDirectionProvider.overrideWithValue(
+    RemplacementsDirectionSupabase(Supabase.instance.client),
   ),
   portReprisesAdminProvider.overrideWithValue(
     ReprisesAdminSupabase(Supabase.instance.client),
@@ -386,6 +397,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   portPaiementsSaisisProvider.overrideWithValue(
     PaiementsSaisisSupabase(Supabase.instance.client),
   ),
+  // Paie des enseignants par mois (B2.5, migration 20261102200000) : lecture
+  // seule, direction et comptabilite ; montants arretes par le serveur.
+  portObligationsPayablesProvider.overrideWithValue(
+    ObligationsPayablesSupabase(Supabase.instance.client),
+  ),
   // Validations de la direction (FAC-D-01, migration 20261018090000) : un
   // paiement saisi par la comptabilite est credite apres validation.
   portValidationsFinanceProvider.overrideWithValue(
@@ -442,6 +458,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portCapaciteEleveProvider.overrideWithValue(
     PortCapaciteEleveSupabase(Supabase.instance.client),
+  ),
+  // IMM-ACCUEIL-FRONT : une famille deja inscrite par la direction est
+  // reconnue apres la preuve de son adresse (reclamer_preinscription_apres_preuve).
+  portReclamationPreinscriptionProvider.overrideWithValue(
+    ReclamationPreinscriptionSupabase(Supabase.instance.client),
   ),
   // Salle et parcours : annotations persistantes, retour de comprehension et
   // signalements, sous RLS et RPC bornees au groupe.

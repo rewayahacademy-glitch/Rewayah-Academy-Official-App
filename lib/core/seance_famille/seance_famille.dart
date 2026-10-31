@@ -21,7 +21,7 @@ enum EtatSeanceFamille {
   enDirect,
 
   /// Apres la fin prevue, seance encore ouverte : **jamais de compte a
-  /// rebours**, et jamais le libelle « Cours en cours ».
+  /// rebours**, et jamais le libelle « Seance toujours en direct ».
   prolongee,
 
   /// Seance tenue et close.

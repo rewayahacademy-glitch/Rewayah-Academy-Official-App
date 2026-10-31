@@ -112,10 +112,14 @@ simples), avec l'ordre et les consignes rappelés dans la conversation. Détail 
 
 ## État du code à connaître
 
-- Lots Teaching Core D, F, H (`lib/core/tc_realtime`, `tc_etat_partage`, `tc_outils`,
-  `tc_parcours`, `lib/features/tc_dock`, `tc_flux_academique`) : **présents et testés,
-  non branchés depuis `main`**. Ils se raccordent dans `/salle`. Ne pas les supprimer,
-  ne pas les dupliquer.
+- **Code présent mais non branché : `docs/current/INVENTAIRE-NON-BRANCHE-2026-10-31.md`.**
+  Tout lot le lit d'abord et cherche dans le dépôt ce qui fait déjà la chose avant d'écrire
+  une ligne ; son bilan dit ce qui a été réutilisé, et ce qui a été écarté et pourquoi.
+  Lots Teaching Core D, F, H : l'essentiel est raccordé à `/salle` (relevé du 31/10) ;
+  restent non branchés `session_persistante`, `portee_outils_salle`, une partie de
+  `tc_etat_partage`, `tc_flux_academique`, `tc_dock` (voir l'inventaire). Ne pas les
+  dupliquer ; un module en double d'un module branché ne se supprime qu'avec l'accord du
+  directeur.
 - Une seule salle : `/salle` (`features/salle`, atteinte par les quatre rôles). L'ancienne
   `/tc/classe` (`features/tc_classe_live`) est supprimée depuis le 17/10/2026
   (`DECISION-ENTREE-2026-10-17.md`) ; sa fiche pédagogique de séance vit dans

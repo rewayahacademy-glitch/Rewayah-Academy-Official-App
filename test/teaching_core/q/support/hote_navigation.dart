@@ -62,7 +62,7 @@ class PorteurSession extends InheritedWidget {
       oldWidget.session != session;
 }
 
-/// La barre compacte « Cours en cours », visible partout pendant une seance.
+/// La barre compacte « Seance toujours en direct », visible partout pendant une seance.
 class BarreCoursEnCours extends StatelessWidget {
   /// Cree la barre.
   const BarreCoursEnCours({super.key});
@@ -74,7 +74,7 @@ class BarreCoursEnCours extends StatelessWidget {
     return Semantics(
       container: true,
       child: Text(
-        'Cours en cours - ${session.libelleGroupe}',
+        'Seance toujours en direct - ${session.libelleGroupe}',
         key: const Key('barre-cours-en-cours'),
       ),
     );

@@ -626,16 +626,21 @@ void main() {
         );
         // Q-2 = a : `/enseignant/contrat` ne s'ouvre qu'a l'enseignant qui
         // doit signer de nouveau ; cet etat compte comme une session de plus.
+        // IMM-ACCUEIL-FRONT : `/tuteur/inscription-reprise` ne s'ouvre qu'a la
+        // famille deja inscrite dont l'accueil attend ; un etat de plus aussi.
         final bool atteint = sessions.any(
           (SessionState s) => <bool>[false, true].any(
-            (bool resignature) =>
-                deciderRedirection(
-                  session: s,
-                  cheminDemande: chemin,
-                  maintenant: maintenant,
-                  resignatureContrat: resignature,
-                ) ==
-                null,
+            (bool resignature) => <bool>[false, true].any(
+              (bool accueilInscrits) =>
+                  deciderRedirection(
+                    session: s,
+                    cheminDemande: chemin,
+                    maintenant: maintenant,
+                    resignatureContrat: resignature,
+                    accueilInscrits: accueilInscrits,
+                  ) ==
+                  null,
+            ),
           ),
         );
         expect(atteint, isTrue, reason: '$modele : aucune session n y entre');

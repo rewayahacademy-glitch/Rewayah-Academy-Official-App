@@ -17,7 +17,7 @@ enum PhaseSeance {
   /// Connecte avant T0 : etat d'attente, **aucun temps academique consomme**.
   attenteAvantT0,
 
-  /// De T0 a la fin prevue : « Cours en cours ».
+  /// De T0 a la fin prevue : « Seance toujours en direct ».
   enCours,
 
   /// Apres la fin prevue, seance encore ouverte : « Cours toujours en cours ».

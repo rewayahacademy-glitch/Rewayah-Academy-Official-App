@@ -426,11 +426,13 @@ void main() {
       expect(find.byType(FinancePage), findsOneWidget);
       expect(find.byType(ReserveDelegationPage), findsOneWidget);
       // Troisieme onglet ; « A valider » (CPT-VAL-1) vient en quatrieme,
-      // « Paiements » (FAC-C-01) en cinquieme.
-      expect(ongletsFinance(), hasLength(5));
+      // « Paiements » (FAC-C-01) en cinquieme, « Paie des enseignants »
+      // (directeur, 31/10/2026) en sixieme.
+      expect(ongletsFinance(), hasLength(6));
       expect(ongletsFinance()[2].chemin, Routes.adminFinanceReserveDelegation);
       expect(ongletsFinance()[3].chemin, Routes.adminFinanceAValider);
-      expect(ongletsFinance().last.chemin, Routes.adminFinancePaiements);
+      expect(ongletsFinance()[4].chemin, Routes.adminFinancePaiements);
+      expect(ongletsFinance().last.chemin, Routes.adminFinancePaie);
       expect(find.text(t.admin.finance.reserveDelegation), findsWidgets);
     });
 

@@ -254,6 +254,12 @@ jobs:
       - name: Scenarios B2.1 import foyers
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_b2_1_import_foyers.sql
+      - name: Scenarios listes des comptes par role
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_listes_comptes.sql
+      - name: Scenarios cours du moment par classe
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_cours_du_moment.sql
 
   edge-r2:
     name: Fonctions Edge -- stockage R2 (Deno)
