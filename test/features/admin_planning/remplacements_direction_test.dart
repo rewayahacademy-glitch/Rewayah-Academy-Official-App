@@ -57,9 +57,13 @@ class _Planning implements PortPlanningDirection {
 }
 
 class _Remplacements implements PortRemplacementsDirection {
-  _Remplacements({this.refus});
+  _Remplacements({this.refus, this.refusReaffectation});
 
   final ResultatDesignation? refus;
+  final ResultatReaffectation? refusReaffectation;
+  final List<({String groupe, String enseignant})> reaffectations =
+      <({String groupe, String enseignant})>[];
+  int lecturesReaffectation = 0;
   final List<({String seance, String remplacant, bool horsGenre})> envois =
       <({String seance, String remplacant, bool horsGenre})>[];
   int lecturesPossibles = 0;
@@ -124,6 +128,30 @@ class _Remplacements implements PortRemplacementsDirection {
     ));
     return refus ?? ResultatDesignation.designe;
   }
+
+  @override
+  Future<List<RemplacantPossible>> possiblesReaffectation(
+    String groupeId,
+  ) async {
+    lecturesReaffectation++;
+    return const <RemplacantPossible>[
+      RemplacantPossible(
+        id: 'e-repreneur',
+        nom: 'Repreneur C',
+        identifiant: 'ENS-RC-1',
+        genreCompatible: true,
+      ),
+    ];
+  }
+
+  @override
+  Future<ResultatReaffectation> reaffecter({
+    required String groupeId,
+    required String enseignantId,
+  }) async {
+    reaffectations.add((groupe: groupeId, enseignant: enseignantId));
+    return refusReaffectation ?? ResultatReaffectation.reaffecte;
+  }
 }
 
 Future<void> _monter(
@@ -175,6 +203,18 @@ Future<void> _ouvrirFeuille(WidgetTester tester) async {
   await tester.tap(
     find.text(t.admin.planning.remplacement.action(deClasse: deDevant('Alif'))),
   );
+  await _laisser(tester);
+}
+
+Future<void> _ouvrirReaffectation(WidgetTester tester) async {
+  final Finder ligne = find.text(
+    t.admin.planning.remplacement.bilanLigne(
+      titulaire: 'Titulaire A',
+      classe: 'Alif',
+    ),
+  );
+  await tester.ensureVisible(ligne);
+  await tester.tap(ligne);
   await _laisser(tester);
 }
 
@@ -341,5 +381,77 @@ void main() {
       findsOneWidget,
     );
     expect(tester.takeException(), isNull);
+  });
+
+  group('REAFFECTER-CLASSE : la direction retire la classe', () {
+    test('traduit les refus du serveur, jamais un autre message', () {
+      expect(
+        resultatReaffectationDepuisErreur('EnseignantOccupe'),
+        ResultatReaffectation.occupe,
+      );
+      expect(
+        resultatReaffectationDepuisErreur('EnseignantIncompatible'),
+        ResultatReaffectation.incompatible,
+      );
+      expect(
+        resultatReaffectationDepuisErreur('ClasseIndisponible'),
+        ResultatReaffectation.classeIndisponible,
+      );
+      expect(resultatReaffectationDepuisErreur('autre chose'), isNull);
+    });
+
+    testWidgets('la ligne du bilan ouvre la feuille ; la consequence est '
+        'dite avant le choix ; la classe part au repreneur', (
+      WidgetTester tester,
+    ) async {
+      final _Remplacements port = _Remplacements();
+      await _monter(tester, port: port);
+      await _ouvrirReaffectation(tester);
+      expect(
+        find.byKey(const ValueKey<String>('feuille-reaffectation')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(r.reaffecter.consequence(titulaire: 'Titulaire A')),
+        findsOneWidget,
+      );
+      verifierUnSeulBoutonPlein(tester);
+      await _choisir(tester, 'Repreneur C');
+      await _confirmer(tester, r.reaffecter.confirmer);
+      expect(port.reaffectations.single.groupe, 'g-1');
+      expect(port.reaffectations.single.enseignant, 'e-repreneur');
+      expect(find.text(r.reaffecter.fait(nom: 'Repreneur C')), findsOneWidget);
+    });
+
+    testWidgets('un refus du serveur se dit en phrase, la liste est relue', (
+      WidgetTester tester,
+    ) async {
+      final _Remplacements port = _Remplacements(
+        refusReaffectation: ResultatReaffectation.occupe,
+      );
+      await _monter(tester, port: port);
+      await _ouvrirReaffectation(tester);
+      final int avant = port.lecturesReaffectation;
+      await _choisir(tester, 'Repreneur C');
+      await _confirmer(tester, r.reaffecter.confirmer);
+      expect(find.text(r.reaffecter.refusOccupe), findsOneWidget);
+      expect(port.lecturesReaffectation, greaterThan(avant));
+    });
+
+    testWidgets('320 px, texte a 200 % : la feuille s\'ouvre sans '
+        'debordement', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        port: _Remplacements(),
+        taille: const Size(320, 2400),
+        echelle: 2,
+      );
+      await _ouvrirReaffectation(tester);
+      expect(
+        find.byKey(const ValueKey<String>('feuille-reaffectation')),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    });
   });
 }

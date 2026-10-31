@@ -148,6 +148,25 @@ enum ResultatDesignation {
   seanceIndisponible,
 }
 
+/// La reponse du serveur a une reaffectation de Classe
+/// (`reaffecter_enseignant_classe`, migration 20261103100000).
+enum ResultatReaffectation {
+  /// La Classe et ses seances a venir sont confiees au nouvel enseignant.
+  reaffecte,
+
+  /// Cet enseignant assure deja la Classe : rien n'a change.
+  dejaEnPlace,
+
+  /// Il n'est pas libre aux horaires de la Classe.
+  occupe,
+
+  /// Il ne peut pas la reprendre (compte, langue, genre du public, plafond).
+  incompatible,
+
+  /// La Classe n'est plus active ou n'a plus d'enseignant.
+  classeIndisponible,
+}
+
 /// Le port des remplacements de la direction.
 abstract interface class PortRemplacementsDirection {
   /// Le bilan des seances qui commencent entre [debut] et [fin].
@@ -162,6 +181,17 @@ abstract interface class PortRemplacementsDirection {
     required String seanceId,
     required String remplacantId,
     required bool horsGenre,
+  });
+
+  /// Les enseignants qui peuvent reprendre la Classe [groupeId] (le serveur
+  /// applique les regles de l'affectation, unicite a l'heure comprise).
+  Future<List<RemplacantPossible>> possiblesReaffectation(String groupeId);
+
+  /// Retire la Classe a son enseignant et la confie a [enseignantId], pour
+  /// les seances a venir.
+  Future<ResultatReaffectation> reaffecter({
+    required String groupeId,
+    required String enseignantId,
   });
 }
 
@@ -202,4 +232,22 @@ remplacantsPossiblesProvider =
         );
       }
       return port.possibles(seanceId);
+    }, retry: (int _, Object _) => null);
+
+/// Les enseignants qui peuvent reprendre une Classe.
+final FutureProviderFamily<List<RemplacantPossible>, String>
+enseignantsReaffectationProvider =
+    FutureProvider.family<List<RemplacantPossible>, String>((
+      Ref ref,
+      String groupeId,
+    ) {
+      final PortRemplacementsDirection? port = ref.watch(
+        portRemplacementsDirectionProvider,
+      );
+      if (port == null) {
+        return Future<List<RemplacantPossible>>.value(
+          const <RemplacantPossible>[],
+        );
+      }
+      return port.possiblesReaffectation(groupeId);
     }, retry: (int _, Object _) => null);

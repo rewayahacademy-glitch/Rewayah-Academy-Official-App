@@ -5494,7 +5494,22 @@
         "bilanLigne": "{titulaire} · {classe}",
         "bilanDetail": "Séances concernées\u00a0: {seances} · remplacées\u00a0: {remplacees} · sans remplaçant\u00a0: {sans}",
         "bilanErreur": "Les remplacements de la semaine n'ont pas pu être lus\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
-        "voirClasses": "Voir les classes"
+        "voirClasses": "Voir les classes",
+        "reaffecter": {
+          "titre": "Confier la classe {classe} à un autre enseignant",
+          "consequence": "{titulaire} n'assurera plus cette classe. Les séances à venir passent à l'enseignant choisi\u00a0; les séances passées et leur paie ne changent pas. Les deux enseignants et les familles de la classe sont prévenus.",
+          "mention": "Libre aux horaires de la classe",
+          "aucun": "Aucun autre enseignant ne peut reprendre cette classe à ses horaires. Vérifiez les comptes et les classes des enseignants, puis rouvrez cette feuille.",
+          "confirmer": "Confier la classe à cet enseignant",
+          "choixManquant": "Choisissez l'enseignant qui reprendra la classe.",
+          "horsLigne": "Connexion absente\u00a0: la décision se prendra une fois l'appareil reconnecté.",
+          "fait": "{nom} assure désormais cette classe. Les séances à venir lui sont confiées.",
+          "dejaEnPlace": "{nom} assure déjà cette classe\u00a0: rien n'a été changé.",
+          "refusOccupe": "Cet enseignant n'est plus libre aux horaires de la classe\u00a0: la liste a été relue. Choisissez un autre enseignant.",
+          "refusIncompatible": "Cet enseignant ne peut pas reprendre cette classe (compte, langue, public ou nombre de classes)\u00a0: la liste a été relue. Choisissez un autre enseignant.",
+          "refusClasse": "Cette classe n'est plus active ou n'a plus d'enseignant\u00a0: rien n'a été changé.",
+          "erreur": "La décision n'est pas confirmée\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant."
+        }
       }
     },
     "incidents": {
