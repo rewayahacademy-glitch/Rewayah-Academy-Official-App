@@ -17,7 +17,9 @@ const cellules = lignes[i].split('|').map((c) => c.trim());
 // | # | Parcours | Test | Cause | Dernier passage | Captures |
 const nett = (s) => s.replace(/\|/g, '/').replace(/\s+/g, ' ').trim();
 cellules[3] = v.verdict === 'vert' ? 'vert (local)' : 'rouge (local)';
-cellules[4] = nett([v.verdict === 'vert' ? '' : v.cause, complement].filter(Boolean).join(' ; '));
+// Sans complement, un passage vert garde la note deja ecrite (ecarts releves).
+const note = complement || (v.verdict === 'vert' ? cellules[4] : '');
+cellules[4] = nett([v.verdict === 'vert' ? '' : v.cause, note].filter(Boolean).join(' ; '));
 cellules[5] = `${v.fin.slice(0, 16).replace('T', ' ')} UTC`;
 cellules[6] = `[parcours-${n}](captures/E2E/parcours-${n}/)`;
 lignes[i] = `| ${cellules.slice(1, 7).join(' | ')} |`;

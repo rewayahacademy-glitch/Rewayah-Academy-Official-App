@@ -5,7 +5,7 @@ Tout tourne sur une pile locale : rien n'écrit en production.
 ```
 tool/e2e/pile.sh            # Supabase local (CLI 2.122), Mailpit, fonctions Edge, LiveKit --dev, build web, serveur 8090
 tool/e2e/amorcer.sh         # direction + enseignant validé, en SQL local (seuls comptes hors interface)
-node tool/e2e/parcours_2.mjs  # puis 3, 4, 5 (dans cet ordre : 4 et 5 réutilisent les données de 2 et 3), puis 1, 6, 8
+tool/e2e/enchainer.sh       # 2, 3, 4, 5, 1, 8 (étapes 1-2) dans l'ordre des données ; puis 6 et « parcours_8.mjs --apres » après la clôture des séances
 node tool/e2e/etat.mjs <n>    # reporte le verdict dans docs/current/ETAT-OUVERTURE.md
 ```
 

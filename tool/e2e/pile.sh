@@ -122,6 +122,6 @@ case "${1:-tout}" in
   construire) construire ;;
   servir) servir ;;
   arreter) arreter ;;
-  tout) demarrer; construire; servir ;;
+  tout) demarrer; "$DEPOT/tool/e2e/amorcer.sh"; construire; servir ;;
   *) echo "usage : $0 [demarrer|construire|servir|arreter]"; exit 2 ;;
 esac
