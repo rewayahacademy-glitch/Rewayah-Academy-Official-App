@@ -25,7 +25,7 @@ bouton-grise|lib/features/profil_enseignant/profil_enseignant_page.dart|onPress:
 bouton-grise|lib/features/profil_enseignant/profil_enseignant_page.dart|onPress: widget.horsLigne ? null : () => unawaited( _editer<String>( titre: t.enseignant.profil.modifierPays, feuille: () => FeuillePays( paysDeclare: profil.pays, fuseau: fuseau.value, ), ecrire: (String pays) => _service.declarer(pays: pays), ), )
 bouton-grise|lib/features/recherche/ecran/ecran_recherche.dart|onPress: cheminPourCible(r.cible, espace) == null ? null : () => onOuvrir(r)
 bouton-grise|lib/features/recrutement/signature_contrat_page.dart|onPress: signable ? () => unawaited(_signer(contrat)) : null
-bouton-grise|lib/features/revue_groupe/revue_groupe_page.dart|onPress: membre == null ? null : () => ouvrirFicheEleve( context, EleveFiche( membre: membre, classe: classe, projection: ref.read( projectionElevesProvider(groupeId), )[membre.studentId], ), )
+bouton-grise|lib/features/revue_groupe/revue_groupe_page.dart|onPress: membre == null ? null : () => ouvrirFicheEleve( context, EleveFiche( membre: membre, classe: classe, groupeId: groupeId, projection: ref.read( projectionElevesProvider(groupeId), )[membre.studentId], ), )
 bouton-grise|lib/features/salle/preparation_enseignant.dart|onPress: peutEntrer ? widget.onEntrer : null
 bouton-grise|lib/features/salle/salle_page.dart|onPress: enSalle ? () => unawaited(onCamera(cameraOuverte)) : null
 bouton-grise|lib/features/salle/salle_page.dart|onPress: enSalle ? () => unawaited(onMicro(microOuvert)) : null

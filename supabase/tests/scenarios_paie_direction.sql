@@ -118,6 +118,23 @@ SELECT ('d2500000-0000-4000-8000-00000000050' || x.s)::uuid, ('d2500000-0000-400
   FROM (VALUES ('1','e1'),('1','e2'),('2','e1'),('4','e1'),('5','e1')) AS x(s, e)
   JOIN public.sessions s ON s.id = ('d2500000-0000-4000-8000-00000000050' || x.s)::uuid;
 
+-- La remplacante designee par la direction pour s5 (B-09), avant la
+-- seance : c'est sa connexion qui fait la duree payee.
+INSERT INTO public.remplacements_seance(session_id, evenement, enseignant_titulaire_id, enseignant_remplacant_id,
+                                        acteur_id, cle_idempotence)
+VALUES ('d2500000-0000-4000-8000-000000000505', 'remplacement_designe_admin',
+        'd2500000-0000-4000-8000-0000000000b1', 'd2500000-0000-4000-8000-0000000000b2',
+        'd2500000-0000-4000-8000-0000000000a1', gen_random_uuid());
+-- PRESENCE-MINUTES (20261102900000) : la duree payee est celle ou
+-- l'enseignante effective etait connectee : 60 min pour s1, s3 (b1) et s5
+-- (b2, la remplacante).
+INSERT INTO public.session_events(session_id, profile_id, event_type, server_ts, source)
+SELECT s.id, ('d2500000-0000-4000-8000-0000000000' || x.b)::uuid, x.t::public.session_event_type,
+       s.started_at + x.m * interval '1 minute', 'livekit_webhook'
+  FROM (VALUES ('1','b1','joined',0),('1','b1','left',60),('3','b1','joined',0),('3','b1','left',60),
+               ('5','b2','joined',0),('5','b2','left',60)) AS x(s, b, t, m)
+  JOIN public.sessions s ON s.id = ('d2500000-0000-4000-8000-00000000050' || x.s)::uuid;
+
 ALTER TABLE public.sessions DISABLE TRIGGER sessions_tresorerie_timestamps;
 UPDATE public.sessions SET status = 'preflight'
  WHERE id::text LIKE 'd2500000-0000-4000-8000-00000000050%' AND id <> 'd2500000-0000-4000-8000-000000000502';
@@ -132,12 +149,6 @@ UPDATE public.sessions s
 ALTER TABLE public.sessions ENABLE TRIGGER sessions_tresorerie_timestamps;
 -- s2 annulee par l'academie.
 UPDATE public.sessions SET status = 'canceled' WHERE id = 'd2500000-0000-4000-8000-000000000502';
--- La remplacante designee par la direction pour s5 (B-09).
-INSERT INTO public.remplacements_seance(session_id, evenement, enseignant_titulaire_id, enseignant_remplacant_id,
-                                        acteur_id, cle_idempotence)
-VALUES ('d2500000-0000-4000-8000-000000000505', 'remplacement_designe_admin',
-        'd2500000-0000-4000-8000-0000000000b1', 'd2500000-0000-4000-8000-0000000000b2',
-        'd2500000-0000-4000-8000-0000000000a1', gen_random_uuid());
 
 -- CAHIER-HEBDOMADAIRE (20261103000000) : le cahier de la semaine, depose
 -- sur s1, couvre les trois eleves pour toutes les seances de la semaine ;

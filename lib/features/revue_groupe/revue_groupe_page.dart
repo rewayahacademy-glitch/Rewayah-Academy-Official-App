@@ -235,6 +235,7 @@ class _Liste extends ConsumerWidget {
               EleveFiche(
                 membre: membre,
                 classe: classe,
+                groupeId: groupeId,
                 projection: ref.read(
                   projectionElevesProvider(groupeId),
                 )[membre.studentId],
