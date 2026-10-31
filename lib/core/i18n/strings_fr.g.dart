@@ -14167,8 +14167,8 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Remplir le cahier de transmission de la Classe {classe}'
 	String remplirCahierLecteur({required Object classe}) => 'Remplir le cahier de transmission de la Classe ${classe}';
 
-	/// fr: 'Obligatoire : le cahier de transmission {classe} se remplit à la fin de chaque séance.'
-	String cahierObligatoire({required Object classe}) => 'Obligatoire : le cahier de transmission ${classe} se remplit à la fin de chaque séance.';
+	/// fr: 'Obligatoire : le cahier de transmission {classe} se remplit une fois par semaine pour chaque élève.'
+	String cahierObligatoire({required Object classe}) => 'Obligatoire : le cahier de transmission ${classe} se remplit une fois par semaine pour chaque élève.';
 
 	/// fr: 'Voir le cahier de transmission {classe}'
 	String voirCahier({required Object classe}) => 'Voir le cahier de transmission ${classe}';
@@ -26597,6 +26597,8 @@ class Traductions$admin$planning$remplacement$fr {
 
 	/// fr: 'Voir les classes'
 	String get voirClasses => 'Voir les classes';
+
+	late final Traductions$admin$planning$remplacement$reaffecter$fr reaffecter = Traductions$admin$planning$remplacement$reaffecter$fr.internal(_root);
 }
 
 // Path: admin.fusion.motif
@@ -37828,6 +37830,54 @@ class Traductions$admin$finance$vue$alerte$fr {
 	String get ouvrirClasses => 'Ouvrir les classes';
 }
 
+// Path: admin.planning.remplacement.reaffecter
+class Traductions$admin$planning$remplacement$reaffecter$fr {
+	Traductions$admin$planning$remplacement$reaffecter$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Confier la classe {classe} à un autre enseignant'
+	String titre({required Object classe}) => 'Confier la classe ${classe} à un autre enseignant';
+
+	/// fr: '{titulaire} n'assurera plus cette classe. Les séances à venir passent à l'enseignant choisi ; les séances passées et leur paie ne changent pas. Les deux enseignants et les familles de la classe sont prévenus.'
+	String consequence({required Object titulaire}) => '${titulaire} n\'assurera plus cette classe. Les séances à venir passent à l\'enseignant choisi ; les séances passées et leur paie ne changent pas. Les deux enseignants et les familles de la classe sont prévenus.';
+
+	/// fr: 'Libre aux horaires de la classe'
+	String get mention => 'Libre aux horaires de la classe';
+
+	/// fr: 'Aucun autre enseignant ne peut reprendre cette classe à ses horaires. Vérifiez les comptes et les classes des enseignants, puis rouvrez cette feuille.'
+	String get aucun => 'Aucun autre enseignant ne peut reprendre cette classe à ses horaires. Vérifiez les comptes et les classes des enseignants, puis rouvrez cette feuille.';
+
+	/// fr: 'Confier la classe à cet enseignant'
+	String get confirmer => 'Confier la classe à cet enseignant';
+
+	/// fr: 'Choisissez l'enseignant qui reprendra la classe.'
+	String get choixManquant => 'Choisissez l\'enseignant qui reprendra la classe.';
+
+	/// fr: 'Connexion absente : la décision se prendra une fois l'appareil reconnecté.'
+	String get horsLigne => 'Connexion absente : la décision se prendra une fois l\'appareil reconnecté.';
+
+	/// fr: '{nom} assure désormais cette classe. Les séances à venir lui sont confiées.'
+	String fait({required Object nom}) => '${nom} assure désormais cette classe. Les séances à venir lui sont confiées.';
+
+	/// fr: '{nom} assure déjà cette classe : rien n'a été changé.'
+	String dejaEnPlace({required Object nom}) => '${nom} assure déjà cette classe : rien n\'a été changé.';
+
+	/// fr: 'Cet enseignant n'est plus libre aux horaires de la classe : la liste a été relue. Choisissez un autre enseignant.'
+	String get refusOccupe => 'Cet enseignant n\'est plus libre aux horaires de la classe : la liste a été relue. Choisissez un autre enseignant.';
+
+	/// fr: 'Cet enseignant ne peut pas reprendre cette classe (compte, langue, public ou nombre de classes) : la liste a été relue. Choisissez un autre enseignant.'
+	String get refusIncompatible => 'Cet enseignant ne peut pas reprendre cette classe (compte, langue, public ou nombre de classes) : la liste a été relue. Choisissez un autre enseignant.';
+
+	/// fr: 'Cette classe n'est plus active ou n'a plus d'enseignant : rien n'a été changé.'
+	String get refusClasse => 'Cette classe n\'est plus active ou n\'a plus d\'enseignant : rien n\'a été changé.';
+
+	/// fr: 'La décision n'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'La décision n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+}
+
 // Path: admin.bibliotheque.libelles.type
 class Traductions$admin$bibliotheque$libelles$type$fr {
 	Traductions$admin$bibliotheque$libelles$type$fr.internal(this._root);
@@ -46212,6 +46262,19 @@ extension on Traductions {
 			'admin.planning.remplacement.bilanDetail' => ({required Object seances, required Object remplacees, required Object sans}) => 'Séances concernées : ${seances} · remplacées : ${remplacees} · sans remplaçant : ${sans}',
 			'admin.planning.remplacement.bilanErreur' => 'Les remplacements de la semaine n\'ont pas pu être lus : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'admin.planning.remplacement.voirClasses' => 'Voir les classes',
+			'admin.planning.remplacement.reaffecter.titre' => ({required Object classe}) => 'Confier la classe ${classe} à un autre enseignant',
+			'admin.planning.remplacement.reaffecter.consequence' => ({required Object titulaire}) => '${titulaire} n\'assurera plus cette classe. Les séances à venir passent à l\'enseignant choisi ; les séances passées et leur paie ne changent pas. Les deux enseignants et les familles de la classe sont prévenus.',
+			'admin.planning.remplacement.reaffecter.mention' => 'Libre aux horaires de la classe',
+			'admin.planning.remplacement.reaffecter.aucun' => 'Aucun autre enseignant ne peut reprendre cette classe à ses horaires. Vérifiez les comptes et les classes des enseignants, puis rouvrez cette feuille.',
+			'admin.planning.remplacement.reaffecter.confirmer' => 'Confier la classe à cet enseignant',
+			'admin.planning.remplacement.reaffecter.choixManquant' => 'Choisissez l\'enseignant qui reprendra la classe.',
+			'admin.planning.remplacement.reaffecter.horsLigne' => 'Connexion absente : la décision se prendra une fois l\'appareil reconnecté.',
+			'admin.planning.remplacement.reaffecter.fait' => ({required Object nom}) => '${nom} assure désormais cette classe. Les séances à venir lui sont confiées.',
+			'admin.planning.remplacement.reaffecter.dejaEnPlace' => ({required Object nom}) => '${nom} assure déjà cette classe : rien n\'a été changé.',
+			'admin.planning.remplacement.reaffecter.refusOccupe' => 'Cet enseignant n\'est plus libre aux horaires de la classe : la liste a été relue. Choisissez un autre enseignant.',
+			'admin.planning.remplacement.reaffecter.refusIncompatible' => 'Cet enseignant ne peut pas reprendre cette classe (compte, langue, public ou nombre de classes) : la liste a été relue. Choisissez un autre enseignant.',
+			'admin.planning.remplacement.reaffecter.refusClasse' => 'Cette classe n\'est plus active ou n\'a plus d\'enseignant : rien n\'a été changé.',
+			'admin.planning.remplacement.reaffecter.erreur' => 'La décision n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'admin.incidents.titre' => 'Incidents des 24 dernières heures',
 			'admin.incidents.sousTitre' => 'Les séances passées en incident technique, enseignant absent ou élève absent depuis 24 heures : ce que compte la tuile « Incidents (24 h) ».',
 			'admin.incidents.liste' => 'Séances en incident',
@@ -46428,6 +46491,8 @@ extension on Traductions {
 			'admin.bibliotheque.indisponibleTitre' => 'Bibliothèque pas encore ouverte',
 			'admin.bibliotheque.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
 			'admin.bibliotheque.sansDonnees' => 'le catalogue',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.ficheTitre' => 'Support',
 			'admin.bibliotheque.retourCatalogue' => 'Retour au catalogue',
 			'admin.bibliotheque.introuvable' => 'Ce support n\'existe pas ou n\'est pas accessible.',
@@ -46441,8 +46506,6 @@ extension on Traductions {
 			'admin.bibliotheque.libelles.version.archivee' => 'Archivé',
 			'admin.bibliotheque.libelles.version.retire' => 'Retiré',
 			'admin.bibliotheque.libelles.version.numero' => ({required Object numero}) => 'Version ${numero}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.libelles.version.aucune' => 'Aucune version',
 			'admin.bibliotheque.libelles.droits.aVerifier' => 'À vérifier',
 			'admin.bibliotheque.libelles.droits.approuve' => 'Approuvé',
@@ -46942,6 +47005,8 @@ extension on Traductions {
 			'compte.langueCourriels.retour.echec' => 'Le changement n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Réessayez ; votre langue précédente reste en place tant qu\'il n\'est pas confirmé.',
 			'compte.langueCourriels.retour.horsLigne' => 'Rien n\'est enregistré : le réseau est absent. Réessayez dès son retour.',
 			'compte.langueCourriels.erreurLangues' => 'Les langues n\'ont pas pu être chargées. Réessayez.',
+			_ => null,
+		} ?? switch (path) {
 			'compte.langueCourriels.sansDonnees' => 'Les langues n\'ont pas pu être chargées',
 			'compte.langueCourriels.vide' => 'Aucune langue n\'est proposée pour le moment. Vos e-mails et vos messages restent en français.',
 			'compte.langueCourriels.indisponibleTitre' => 'Choix de la langue indisponible',
@@ -46955,8 +47020,6 @@ extension on Traductions {
 			'compte.notificationsCours' => 'Cours',
 			'compte.notificationsCoursDetail' => 'Rappels avant vos cours',
 			'compte.notificationsFoyer' => 'Foyer',
-			_ => null,
-		} ?? switch (path) {
 			'compte.notificationsFoyerDetail' => 'Activité des profils de votre foyer',
 			'compte.notificationsEtat' => 'Les notifications dépendent aussi des réglages de votre appareil et de votre navigateur.',
 			'compte.coursDonnees' => 'Cours et données',
@@ -47456,6 +47519,8 @@ extension on Traductions {
 			'tuteur.accueil.enRechercheSansDate' => ({required Object prenom}) => 'Un enseignant prendra ${prenom} en charge parmi les heures proposées.',
 			'tuteur.accueil.sansCreneau' => ({required Object prenom}) => 'Aucune heure proposée pour ${prenom}',
 			'tuteur.accueil.sansCreneauDetail' => ({required Object prenom}) => 'Sans créneau, aucun enseignant ne peut prendre ${prenom} en charge.',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.poserDesHeures' => 'Proposer des heures',
 			'tuteur.accueil.annulee' => ({required Object heure}) => 'Le cours de ${heure} n\'aura pas lieu',
 			'tuteur.accueil.motifAnnulee' => 'Séance annulée',
@@ -47469,8 +47534,6 @@ extension on Traductions {
 			'tuteur.accueil.blocReglagesDetail' => 'Photo, caméra et affichage, enfant par enfant.',
 			'tuteur.accueil.blocGroupesDetail' => 'La classe, l\'enseignant et le prochain cours de chaque enfant.',
 			'tuteur.accueil.acces' => 'Accès',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.aucunEnfant' => 'Aucun enfant dans le foyer',
 			'tuteur.accueil.aucunEnfantDetail' => 'Ajoutez votre premier enfant pour commencer.',
 			'tuteur.accueil.erreur' => 'Le foyer n\'a pas pu être lu en entier. Réessayez dans un instant.',
@@ -47877,7 +47940,7 @@ extension on Traductions {
 			'enseignant.journee.rejoindreSalleLecteur' => ({required Object classe}) => 'Rejoindre la salle de la Classe ${classe}',
 			'enseignant.journee.remplirCahier' => 'Remplir le cahier de transmission',
 			'enseignant.journee.remplirCahierLecteur' => ({required Object classe}) => 'Remplir le cahier de transmission de la Classe ${classe}',
-			'enseignant.journee.cahierObligatoire' => ({required Object classe}) => 'Obligatoire : le cahier de transmission ${classe} se remplit à la fin de chaque séance.',
+			'enseignant.journee.cahierObligatoire' => ({required Object classe}) => 'Obligatoire : le cahier de transmission ${classe} se remplit une fois par semaine pour chaque élève.',
 			'enseignant.journee.voirCahier' => ({required Object classe}) => 'Voir le cahier de transmission ${classe}',
 			'enseignant.journee.voirCahierLecteur' => ({required Object classe}) => 'Voir le cahier de transmission de la Classe ${classe}',
 			'enseignant.journee.voirClasse' => 'Voir la Classe',
@@ -47970,6 +48033,8 @@ extension on Traductions {
 			'enseignant.cahier.erreurDetail' => 'Réessayez, ou déposez le cahier de transmission sans le constat.',
 			'enseignant.cahier.echecEnvoi' => 'L\'envoi n\'a pas été confirmé. Vérifiez avant de réessayer.',
 			'enseignant.cahier.dejaDepose' => 'Le cahier de transmission de cette séance est déjà déposé.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.dejaDeposeDetail' => 'Un cahier de transmission ne se dépose qu\'une fois, et il ne se supprime pas d\'ici.',
 			'enseignant.cahier.depose' => 'Cahier de transmission enregistré',
 			'enseignant.cahier.deposeDetail' => 'L\'académie l\'a reçu.',
@@ -47983,8 +48048,6 @@ extension on Traductions {
 			'enseignant.cahier.pointPhonetique' => 'Point de prononciation',
 			'enseignant.cahier.pointPhonetiqueDetail' => 'Une paire, pas un bilan. Laissez vide s\'il n\'y a rien à dire.',
 			'enseignant.cahier.pointPhonetiqueNote' => 'Point de prononciation noté',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.objectif' => ({required Object deEleve}) => 'Objectif ${deEleve}',
 			'enseignant.cahier.objectifDetail' => ({required Object queEleve}) => 'Ce ${queEleve} doit atteindre, dans le cadre du programme de l\'académie.',
 			'enseignant.cahier.travailMaison' => ({required Object deEleve}) => 'Devoir ${deEleve}',
@@ -48484,6 +48547,8 @@ extension on Traductions {
 			'controleur.echanges.enCours' => 'Envoi en cours.',
 			'controleur.echanges.envoye' => 'Envoyé.',
 			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.echanges.reessayer' => 'Réessayer',
 			'controleur.echanges.nouveauMessage' => ({required Object deAuteur, required Object texte}) => 'Nouveau message ${deAuteur} : ${texte}',
 			'controleur.echanges.contexteCompact' => ({required Object heure}) => 'Contexte joint à vos messages : séance de ${heure}',
@@ -48497,8 +48562,6 @@ extension on Traductions {
 			'controleur.demo.etatDejaControlee' => 'Classe déjà contrôlée',
 			'controleur.demo.espaces' => 'Espaces et accès',
 			'controleur.demo.espacesIntro' => 'Le même compte, plusieurs espaces : Enseignant ou Admin passent en Contrôle par Compte, puis Espaces.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.demo.enseignantControle' => 'Enseignant-Contrôleur, espace Contrôle',
 			'controleur.demo.enseignantPrincipal' => 'Enseignant-Contrôleur, espace Enseignant',
 			'controleur.demo.adminControle' => 'Admin-Contrôleur, espace Contrôle',
@@ -48998,6 +49061,8 @@ extension on Traductions {
 			'tc.parcours.signalement.categorieValeur.technique' => 'Technique',
 			'tc.parcours.signalement.categorieValeur.changement' => 'Changement',
 			'tc.parcours.signalement.categorieValeur.securiteEnfant' => 'Sécurité d\'un enfant',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',
 			'tc.parcours.signalement.interne' => 'Note interne',
 			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
@@ -49011,8 +49076,6 @@ extension on Traductions {
 			'tc.parcours.postCours.titre' => 'Après le cours',
 			'tc.parcours.postCours.duree' => ({required Object minutes}) => 'Durée réelle ${minutes} min',
 			'tc.parcours.postCours.exceptions' => 'À confirmer',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.postCours.toutEstNominal' => 'Rien ne demande votre attention.',
 			'tc.parcours.postCours.reprise' => 'Reprise proposée',
 			'tc.parcours.postCours.repriseInconnue' => 'Aucune position de reprise connue pour cette séance.',
@@ -49512,6 +49575,8 @@ extension on Traductions {
 			'suiviFamille.toutFait' => 'Toutes les étapes sont franchies.',
 			'suiviFamille.voirSuivi' => 'Voir le suivi',
 			'suiviFamille.vide' => 'Aucune demande pour le moment.',
+			_ => null,
+		} ?? switch (path) {
 			'suiviFamille.faireDemande' => 'Faire une demande',
 			'suiviFamille.erreur' => 'Le suivi n\'a pas pu être chargé. Réessayez.',
 			'suiviFamille.sansDonnees' => 'vos demandes',
@@ -49525,8 +49590,6 @@ extension on Traductions {
 			'suiviFamille.etapes.enseignantAffecte' => 'Enseignant affecté',
 			'suiviFamille.etapes.eleveIntegre' => 'Élève intégré',
 			'suiviFamille.etapes.premiereSeance' => 'Première séance',
-			_ => null,
-		} ?? switch (path) {
 			'suiviFamille.etats.fait' => 'Fait',
 			'suiviFamille.etats.enCours' => 'En cours',
 			'suiviFamille.etats.aVenir' => 'À venir',
@@ -50026,6 +50089,8 @@ extension on Traductions {
 			'com.vocal.demo.recu' => 'Message vocal reçu',
 			'com.vocal.demo.repondre' => 'Répondre dans la conversation',
 			'com.vocal.demo.envoyes' => 'Messages vocaux envoyés',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.demo.auteurEnseignante' => 'Sayyida Mariam, enseignante',
 			'com.vocal.demo.auteurParent' => 'Ahmed, parent d\'Adam',
 			'com.vocal.demo.messageRecu' => 'Bonjour, voici mes remarques sur la récitation de cette semaine.',
@@ -50039,8 +50104,6 @@ extension on Traductions {
 			'com.communaute.garde.titreBlocage' => 'Publication bloquée',
 			'com.communaute.garde.motif' => ({required Object motif}) => 'Motif : ${motif}',
 			'com.communaute.garde.liensTitre' => 'Liens de la publication',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.garde.consigneBlocage' => 'Modifiez la publication, puis publiez-la de nouveau.',
 			'com.communaute.garde.panne' => 'La vérification de ce contenu n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Rien n\'a été publié ; réessayez dans un instant.',
 			'com.communaute.garde.reponse.avertissement' => 'Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l\'offre avant de l\'envoyer.',
@@ -50540,6 +50603,8 @@ extension on Traductions {
 			'com.annonces.demoPublication.extraitVente' => 'Je propose des cours particuliers payants le week-end, écrivez-moi.',
 			'com.annonces.demoPublication.signalementHorsSujet' => 'Réponse sous « Organiser une révision collective »',
 			'com.annonces.section' => 'Annonces de la Classe',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.annonce' => 'Annonce',
 			'com.annonces.publier' => 'Publier une annonce',
 			'com.annonces.videPublier' => 'Aucune annonce pour cette Classe. Publiez la première pour toute la Classe.',
@@ -50553,8 +50618,6 @@ extension on Traductions {
 			'com.annonces.carteSemantique' => ({required Object classe, required Object titre}) => 'Annonce de ${classe} : ${titre}',
 			'com.annonces.introuvableTitre' => 'Cette annonce n\'est plus disponible',
 			'com.annonces.introuvablePhrase' => 'Elle a peut-être été retirée de la Classe. Revenez à vos notifications.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demo.detail' => 'Démonstration hors production : données fictives, rien n\'est envoyé.',
 			'com.annonces.demo.choisirRole' => 'Choisissez le rôle à montrer',
 			'com.annonces.demo.roles.tuteur' => 'Famille',
@@ -51054,6 +51117,8 @@ extension on Traductions {
 			'comptable.encaissements.colFamille' => 'Famille',
 			'comptable.encaissements.colReference' => 'Référence',
 			'comptable.encaissements.colBrut' => 'Brut',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.colFrais' => 'Frais',
 			'comptable.encaissements.colNet' => 'Net',
 			'comptable.encaissements.colMoyen' => 'Moyen',
@@ -51067,8 +51132,6 @@ extension on Traductions {
 			'comptable.encaissements.voirTous' => 'Voir tous les encaissements',
 			'comptable.encaissements.ouvrirDetailLecteur' => ({required Object famille}) => 'Ouvrir le détail de l\'encaissement de ${famille}',
 			'comptable.encaissements.fermerDetail' => 'Fermer le détail',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.brut' => 'Montant brut',
 			'comptable.encaissements.frais' => 'Frais du prestataire',
 			'comptable.encaissements.net' => 'Net reçu',
@@ -51568,6 +51631,8 @@ extension on Traductions {
 			'comptable.direction.delegation' => 'Délégation financière',
 			'comptable.demo.titre' => 'Démonstration Comptable',
 			'comptable.demo.mention' => 'Données fictives, aucun paiement, aucun envoi.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.demo.intro' => 'Choisissez un écran du Comptable. Les montants sont masqués par défaut ; la variante « montants affichés » les révèle pour la durée de la page.',
 			'comptable.demo.montantsMasques' => 'Montants masqués',
 			'comptable.demo.montantsAffiches' => 'Montants affichés',
@@ -51581,8 +51646,6 @@ extension on Traductions {
 			'presentationTuteur.ligne' => ({required Object prenom}) => '${prenom} demande la présentation standard.',
 			'presentationTuteur.demandeeLe' => ({required Object date, required Object heure}) => 'Demandé le ${date} à ${heure}',
 			'presentationTuteur.accepter' => 'Accepter',
-			_ => null,
-		} ?? switch (path) {
 			'presentationTuteur.refuser' => 'Refuser',
 			'presentationTuteur.acceptee' => ({required Object prenom}) => 'Présentation standard activée pour ${prenom}.',
 			'presentationTuteur.refusee' => ({required Object dePrenom}) => 'Demande ${dePrenom} refusée.',
@@ -52082,6 +52145,8 @@ extension on Traductions {
 			'courriels.admin.file.statut.envoye' => 'Envoyé',
 			'courriels.admin.file.statut.echec' => 'Non envoyé',
 			'courriels.admin.file.statut.annule' => 'Annulé',
+			_ => null,
+		} ?? switch (path) {
 			'courriels.admin.file.origine.auto' => 'Automatique',
 			'courriels.admin.file.origine.manuel' => 'Manuel',
 			'courriels.admin.file.messageAuto' => 'Message automatique',
@@ -52095,8 +52160,6 @@ extension on Traductions {
 			'courriels.admin.file.champs.langue' => 'Langue',
 			'courriels.admin.file.actualiser' => 'Actualiser',
 			'courriels.admin.file.reessayer' => 'Remettre en file',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.file.vide' => 'Aucun e-mail dans cette liste.',
 			'courriels.admin.file.erreur' => 'Les envois n\'ont pas pu être chargés. Réessayez.',
 			'courriels.admin.file.sansDonnees' => 'Les envois n\'ont pas pu être chargés',

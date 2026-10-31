@@ -24,9 +24,10 @@
 // ou se trouve l'invitation recue par le second adulte (EA-7) ; le centre de
 // notifications de l'eleve adulte reste a EA-8.
 //
-// Le seul provider propre a l'ecran, [accueilAdulteProvider], n'a aucune
-// source serveur : il rend `CapaciteIndisponible` (EA-BR-04), la
-// demonstration le surcharge (K-28).
+// Le seul provider propre a l'ecran, [accueilAdulteProvider], lit le port
+// de l'eleve adulte (`port_espace_adulte.dart`), branche sur le serveur par
+// `lib/main.dart` ; sans adaptateur il rend `CapaciteIndisponible`
+// (EA-BR-04). La demonstration le surcharge (K-28).
 //
 // DASH-EA-PROD : l'ecran a une route reelle, `/eleve/adulte`
 // (`routes_accueil_adulte.dart`), choisie par la capacite
@@ -40,7 +41,6 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart';
@@ -68,6 +68,7 @@ import '../acces_finance/carte_acces_finance.dart';
 import '../tc_espace_groupe/emplacements_groupe.dart';
 import '../tc_espace_groupe/espace_groupe_page.dart'
     show LecteurGroupe, LectureGroupe;
+import 'port_espace_adulte.dart';
 
 /// Une seance passee, telle que le serveur la rendrait : la seance, sa date
 /// deja rendue, et l'absence seule (une presence est l'etat normal et ne
@@ -119,14 +120,16 @@ class AccueilAdulteVM {
   final int? notificationsNonLues;
 }
 
-/// L'accueil de l'eleve adulte. **Aucune source serveur a ce jour**
-/// (EA-BR-04) : `CapaciteIndisponible`, que `BlocAsynchrone` dit comme tel,
+/// L'accueil de l'eleve adulte, lu par [portEspaceAdulteProvider]
+/// (`espace_eleve_adulte`, `seances_passees_eleve_adulte`, migration
+/// 20261102700000). Sans adaptateur, ou pour un compte qui n'est pas eleve
+/// autonome : `CapaciteIndisponible`, que `BlocAsynchrone` dit comme tel,
 /// sans « Reessayer ». La demonstration le surcharge.
 final FutureProvider<AccueilAdulteVM> accueilAdulteProvider =
     FutureProvider<AccueilAdulteVM>(
-      (Ref _) => Future<AccueilAdulteVM>.error(
-        const CapaciteIndisponible('accueil_eleve_adulte'),
-      ),
+      (Ref ref) => ref
+          .watch(portEspaceAdulteProvider)
+          .accueil(limite: AccueilAdultePage.limite),
       // Aucune relance automatique (Riverpod 3) : une capacite absente ne
       // revient pas en insistant ; « Reessayer » relit a la demande.
       retry: (int _, Object _) => null,
