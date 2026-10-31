@@ -48,5 +48,8 @@ Aucune migration de rattrapage de l'enregistrement sans décision du directeur.
 
 ## Dette en attente (on ne la règle pas maintenant)
 
+- **CI** : 30 scénarios sur 154 rejoués par `ci.yml` (présence aux minutes, cahier hebdomadaire et remplacements n'y sont pas) ; la pile locale rejoue tout, c'est elle la preuve. Élargir la CI : décision du directeur (`.github/`).
+- **Cahier du remplaçant** : le remplaçant ne peut déposer aucun cahier (prouvé en local le 31/10) ; lot autorisé après la PR 106, règle par défaut « le remplaçant seul dépose, le titulaire lit ».
+
 - **F1** : les aperçus Vercel écrivent dans la base de production (même `SUPABASE_URL`).
 - **F2** : la base staging est en retard depuis le 23/10.
