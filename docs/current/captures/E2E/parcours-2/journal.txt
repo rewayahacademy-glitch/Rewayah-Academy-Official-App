@@ -1,0 +1,10 @@
+== Parcours 2 : la direction cree une classe a plusieurs seances : 2026-10-31T20:07:11.923Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Horaire : Dimanche 10 h (Pacific/Chatham), debut 2026-10-31T20:15:00.924Z ; second creneau Mardi 10 h ; nom « E2E Classe enfants 10312007 »
+Creneaux ouverts par le formulaire : 3
+Liste des classes : button:Classe : E2E Classe enfants 10312007 · n° 3 Enseignant : E2E Enseignant Valide Public : Enfants Créneau : dimanche 10h Membres : 0 / 5 Active
+Base locale : active|E2E Enseignant|Pacific/Chatham|2:10,7:10 ; 8 seance(s), premiere 2026-10-31 20:15:00+00
+  ECART : onglet « Classes » absent de l'arbre d'accessibilite ; ouvert par l'adresse /enseignant/classes
+Enseignant, onglet Classes : group:Classes Rejoindre la salle de la Classe E2E Classe enfants 10312007
+Prochaine seance attendue : « samedi 21:15 »
+Prochaine seance affichee : a:E2E Classe enfants 10312007 samedi 21:15 · dans 7 min 0 élève
+== Parcours 2 : la direction cree une classe a plusieurs seances : vert
