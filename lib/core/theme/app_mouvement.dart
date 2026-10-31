@@ -94,6 +94,16 @@ abstract final class AppMouvement {
   /// Temps d'affichage d'un retour local, avant sa disparition.
   static const Duration retourLocalMaintien = Duration(seconds: 3);
 
+  /// Rappel discret recu (30/10/2026) : « Le professeur vous appelle » reste
+  /// lisible ce temps, puis s'efface.
+  static const Duration rappelRecuMaintien = Duration(seconds: 5);
+
+  /// Rappel discret recu : la vibration courte, quand l'appareil la permet.
+  static const Duration vibrationRappel = Duration(milliseconds: 200);
+
+  /// Rappel discret recu : le son doux, court, quand l'appareil le permet.
+  static const Duration sonRappel = Duration(milliseconds: 250);
+
   /// Delai avant qu'un squelette de chargement apparaisse.
   ///
   /// **Sous ce delai, on n'affiche rien du tout** : un squelette qui clignote

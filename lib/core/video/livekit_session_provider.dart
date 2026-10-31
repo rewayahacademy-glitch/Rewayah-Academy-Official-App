@@ -277,11 +277,12 @@ class LiveKitSessionProvider implements VideoSessionProvider {
           'salle': _acces?.nomSalle,
           'raison': raison?.name ?? 'inconnue',
         });
-        _poser(
-          raison == lk.DisconnectReason.clientInitiated
-              ? EtatSalle.absent
-              : EtatSalle.echec,
-        );
+        _poser(switch (raison) {
+          lk.DisconnectReason.clientInitiated => EtatSalle.absent,
+          // 30/10/2026 : l'enseignant a fait sortir ce participant.
+          lk.DisconnectReason.participantRemoved => EtatSalle.retire,
+          _ => EtatSalle.echec,
+        });
         _publierParticipants();
       })
       ..on<lk.ParticipantConnectedEvent>((_) => _publierParticipants())

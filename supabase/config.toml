@@ -513,3 +513,8 @@ enabled = true
 
 [functions.regroupements-pages]
 verify_jwt = true
+
+# Salle en groupe (30/10/2026) : gestes de l'enseignant sur un eleve ;
+# l'appelant est lu dans son jeton Supabase.
+[functions.salle-gestes]
+verify_jwt = true

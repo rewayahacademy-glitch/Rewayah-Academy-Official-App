@@ -257,6 +257,8 @@ declare
     'publier_version_programme(uuid,text)',
     'quitter_salle(uuid)',
     'read_kyc_documents()',
+    -- Salle en groupe (30/10) : l'enseignant effectif readmet un eleve sorti (garde positive, compte valide).
+    'readmettre_eleve_salle(uuid,uuid)',
     'rech_d1_curseur_creer(text,text,text,uuid,bigint)',
     'rech_d1_curseur_lire(uuid,text,text,bigint)',
     'rech_d1_rechercher_classes(text,uuid,integer)',

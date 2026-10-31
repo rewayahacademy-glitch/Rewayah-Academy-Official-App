@@ -35,6 +35,7 @@ class CapacitesSalle {
     required this.peutPublierDonnees,
     required this.peutRecevoir,
     required this.invisible,
+    this.peutModerer = false,
   });
 
   /// Lit les capacites rendues par `create-room-token`.
@@ -45,6 +46,7 @@ class CapacitesSalle {
         peutPublierDonnees: json['can_publish_data'] as bool? ?? false,
         peutRecevoir: json['can_subscribe'] as bool? ?? true,
         invisible: json['hidden'] as bool? ?? false,
+        peutModerer: json['can_moderate'] as bool? ?? false,
       );
 
   /// Le participant peut publier au moins sa voix.
@@ -64,6 +66,11 @@ class CapacitesSalle {
   /// Il n'apparait dans la liste de personne. C'est `CTR-02`, l'observation
   /// invisible, et elle est appliquee par le serveur.
   final bool invisible;
+
+  /// Il peut couper le micro ou la camera d'un eleve, le faire sortir et le
+  /// readmettre (30/10/2026). Reserve a l'enseignant effectif de la seance ;
+  /// la fonction `salle-gestes` le reverifie en base a chaque geste.
+  final bool peutModerer;
 }
 
 /// Le droit d'entrer dans une salle, tel que le backend l'a emis.
@@ -167,6 +174,10 @@ enum EtatSalle {
 
   /// La connexion n'a pas pu etre retablie.
   echec,
+
+  /// L'enseignant a fait sortir ce participant de la salle (30/10/2026) :
+  /// le serveur l'a retire, et ne lui rend un jeton qu'apres readmission.
+  retire,
 }
 
 /// La qualite du lien, telle que LiveKit la rapporte.

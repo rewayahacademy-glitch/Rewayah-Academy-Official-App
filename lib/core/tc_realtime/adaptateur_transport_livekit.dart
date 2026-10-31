@@ -100,7 +100,7 @@ class AdaptateurTransportLiveKit implements PortTransportDonnees {
     EtatSalle.instable => EtatTransport.ouvert,
     EtatSalle.reconnexion => EtatTransport.interrompu,
     EtatSalle.retabli => EtatTransport.retabli,
-    EtatSalle.echec => EtatTransport.absent,
+    EtatSalle.echec || EtatSalle.retire => EtatTransport.absent,
   };
 
   @override
@@ -116,7 +116,8 @@ class AdaptateurTransportLiveKit implements PortTransportDonnees {
       throw const EchecTransport(MotifEchecTransport.droitRefuse);
     }
     if (_moteur.etatCourant == EtatSalle.absent ||
-        _moteur.etatCourant == EtatSalle.echec) {
+        _moteur.etatCourant == EtatSalle.echec ||
+        _moteur.etatCourant == EtatSalle.retire) {
       throw const EchecTransport(MotifEchecTransport.horsSalle);
     }
     try {

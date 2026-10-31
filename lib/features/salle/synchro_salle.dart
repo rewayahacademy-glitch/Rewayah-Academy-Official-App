@@ -14,6 +14,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart' show Offset;
 
 import '../../core/observabilite/journal_dev.dart';
+import '../../core/tc_classe/port_rappel_discret.dart';
 import '../../core/tc_outils/annotation_layer.dart';
 import '../../core/tc_outils/evenements_outils.dart';
 import '../../core/tc_outils/port_annotations.dart';
@@ -21,6 +22,7 @@ import '../../core/tc_outils/reception_outils.dart';
 import '../../core/tc_realtime/adaptateur_transport_livekit.dart';
 import '../../core/tc_realtime/port_realtime_pedagogique.dart';
 import '../../core/tc_realtime/service_realtime_pedagogique.dart';
+import '../../core/tc_realtime/types_message.dart';
 import '../../core/video/video_session_provider.dart';
 
 /// S1 : le type du message du pointeur de l'enseignant (point normalise de
@@ -31,6 +33,33 @@ const String typePointeurSalle = 'tc.salle.pointeur';
 /// S0.3 : le type du message qui ouvre ou ferme le tableau blanc pour la
 /// classe (canal fiable).
 const String typeTableauSalle = 'tc.salle.tableau';
+
+/// Salle en groupe (30/10/2026) : le type du message qui donne la parole a
+/// un eleve, ou la reprend (canal fiable). La charge porte le profil de
+/// l'eleve, qui est son identite dans la salle, et son prenom.
+const String typeParoleSalle = 'tc.salle.parole';
+
+/// L'eleve qui a la parole, tel que la classe le recoit.
+@immutable
+class ParoleSalle {
+  /// Cree une parole.
+  const ParoleSalle({required this.profilId, required this.prenom});
+
+  /// Son profil, qui est son identite dans la salle.
+  final String profilId;
+
+  /// Son prenom, dit par l'enseignant.
+  final String prenom;
+
+  @override
+  bool operator ==(Object other) =>
+      other is ParoleSalle &&
+      other.profilId == profilId &&
+      other.prenom == prenom;
+
+  @override
+  int get hashCode => Object.hash(profilId, prenom);
+}
 
 /// Les pieces de la synchronisation d'une seance, creees a l'entree dans la
 /// salle et liberees a la sortie.
@@ -87,13 +116,16 @@ class SynchroSalle {
     _abonnementPointeur = _realtime
         .messagesEphemeres(sessionId)
         .listen(_recevoirPointeur, onError: (Object _) {});
-    _abonnementTableau = _realtime
-        .messagesFiables(sessionId)
-        .listen(_recevoirTableau, onError: (Object _) {});
+    _abonnementTableau = _realtime.messagesFiables(sessionId).listen((
+      MessagePedagogique m,
+    ) {
+      _recevoirTableau(m);
+      _recevoirParole(m);
+      _recevoirRappel(m);
+    }, onError: (Object _) {});
     if (_peutDiffuser) {
       _abonnementPage = moteur.contenusPresentes.listen(
-        (ContenuPresente page) =>
-            _pagePresentee = page.estRetire ? null : page,
+        (ContenuPresente page) => _pagePresentee = page.estRetire ? null : page,
         onError: (Object _) {},
       );
       _abonnementArrivees = moteur.participants.listen(
@@ -148,6 +180,7 @@ class SynchroSalle {
       );
     }
     if (_tableauDiffuse) diffuserTableau(ouvert: true);
+    if (parole.value case final ParoleSalle p) diffuserParole(p);
     for (final AnnotationLayer couche in depot.couches.toList()) {
       for (final TraitVectoriel trait in couche.traits) {
         diffuser!(
@@ -192,6 +225,86 @@ class SynchroSalle {
             canal: CanalFiabilite.fiable,
           )
           .catchError((Object e) => journalDev('tableau non diffuse : $e')),
+    );
+  }
+
+  /// Salle en groupe (30/10/2026) : l'eleve qui a la parole, chez tous
+  /// (l'enseignant le pose, la classe le recoit), ou `null`.
+  final ValueNotifier<ParoleSalle?> parole = ValueNotifier<ParoleSalle?>(null);
+
+  void _recevoirParole(MessagePedagogique message) {
+    if (message.type != typeParoleSalle ||
+        message.emetteurProfilId == profilLocalId) {
+      return;
+    }
+    final Object? profil = message.charge['profil'];
+    final Object? prenom = message.charge['prenom'];
+    parole.value = profil is String && profil.isNotEmpty
+        ? ParoleSalle(profilId: profil, prenom: prenom is String ? prenom : '')
+        : null;
+  }
+
+  /// Donne la parole a un eleve pour toute la classe, ou la reprend avec
+  /// `null` (enseignant). Rien n'est coupe chez les autres.
+  void diffuserParole(ParoleSalle? eleve) {
+    if (!_peutDiffuser) return;
+    parole.value = eleve;
+    unawaited(
+      _realtime
+          .emettre(
+            MessagePedagogique(
+              type: typeParoleSalle,
+              sessionId: sessionId,
+              emetteurProfilId: profilLocalId,
+              charge: eleve == null
+                  ? const <String, dynamic>{}
+                  : <String, dynamic>{
+                      'profil': eleve.profilId,
+                      'prenom': eleve.prenom,
+                    },
+              emisLeUtc: DateTime.now().toUtc(),
+            ),
+            canal: CanalFiabilite.fiable,
+          )
+          .catchError((Object e) => journalDev('parole non diffusee : $e')),
+    );
+  }
+
+  /// Le rappel discret (30/10/2026) : le nombre de rappels recus par cet
+  /// appareil. Le paquet est adresse au seul eleve vise (`emettreCible`) :
+  /// le recevoir, c'est etre appele. Aucun accuse ne repart.
+  final ValueNotifier<int> rappelsRecus = ValueNotifier<int>(0);
+
+  void _recevoirRappel(MessagePedagogique message) {
+    if (message.type != typeRappelDiscret ||
+        message.emetteurProfilId == profilLocalId ||
+        academyIdDeCharge(message) == null) {
+      return;
+    }
+    rappelsRecus.value++;
+  }
+
+  /// Appelle discretement l'eleve [academyId], dont l'identite dans la salle
+  /// est [profilCible] : un paquet fiable adresse a lui seul. Leve
+  /// [EchecRappel] quand le jeton n'a pas le canal ; une erreur d'envoi
+  /// remonte telle quelle (la cadence la nomme). Le cooldown reste celui de
+  /// `RappelDiscretCadence`.
+  Future<void> emettreRappel({
+    required String academyId,
+    required String profilCible,
+  }) async {
+    if (!_peutDiffuser) {
+      throw const EchecRappel(MotifEchecRappel.droitRefuse);
+    }
+    await _realtime.emettreCible(
+      messageRappelDiscret(
+        sessionId: sessionId,
+        emetteurProfilId: profilLocalId,
+        academyId: academyId,
+        maintenantUtc: DateTime.now(),
+      ),
+      destinataireProfilId: profilCible,
+      canal: CanalFiabilite.fiable,
     );
   }
 
@@ -273,6 +386,8 @@ class SynchroSalle {
     await _abonnementArrivees?.cancel();
     pointeurDistant.dispose();
     tableauOuvert.dispose();
+    parole.dispose();
+    rappelsRecus.dispose();
     await _reception.liberer();
     await _transport.liberer();
   }

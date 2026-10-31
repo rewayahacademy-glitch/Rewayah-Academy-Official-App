@@ -12,7 +12,12 @@
 // Un jeton fabrique de memoire marche le jour ou on l'ecrit et casse a la
 // montee de version suivante, sans prevenir.
 
-import { AccessToken, TrackSource, WebhookReceiver } from 'npm:livekit-server-sdk@2.13.1'
+import {
+  AccessToken,
+  RoomServiceClient,
+  TrackSource,
+  WebhookReceiver,
+} from 'npm:livekit-server-sdk@2.13.1'
 
 /// Les deux fournisseurs coexistent (decision de l'operateur du 12 septembre
 /// 2026 : Cloud pour eprouver, self-host pour encaisser, jamais Cloud seul).
@@ -149,4 +154,57 @@ export async function verifierWebhook(
   }
 
   throw derniereErreur
+}
+
+/// La route d'un geste de l'enseignant, rendue par `autoriser_geste_salle()`.
+export interface RouteGeste {
+  provider: Fournisseur
+  ws_url: string
+  room_name: string
+  identity: string
+}
+
+/// Ce que l'API serveur LiveKit sait faire a un participant, pour la salle.
+export type GesteSalle = 'couper_micro' | 'couper_camera' | 'faire_sortir'
+
+/// Le client de l'API serveur d'une salle : la meme adresse que celle des
+/// participants, en HTTP(S) au lieu de WebSocket.
+function serviceSalle(route: RouteGeste): RoomServiceClient {
+  const { cle, secret } = trousseau(route.provider)
+  const hote = route.ws_url.replace(/^wss:/, 'https:').replace(/^ws:/, 'http:')
+  return new RoomServiceClient(hote, cle, secret)
+}
+
+/// Applique un geste deja autorise et journalise par la base.
+///
+/// **Cette fonction ne decide rien non plus** : `autoriser_geste_salle()` a
+/// verifie l'enseignant effectif, la cible et la salle ouverte. Rend `false`
+/// quand il n'y avait rien a faire (piste non publiee, participant deja
+/// parti) : ce n'est pas une erreur.
+export async function appliquerGeste(route: RouteGeste, geste: GesteSalle): Promise<boolean> {
+  const service = serviceSalle(route)
+  if (geste === 'faire_sortir') {
+    try {
+      await service.removeParticipant(route.room_name, route.identity)
+      return true
+    } catch (e) {
+      // Deja parti : la sortie, elle, est enregistree en base et le jeton
+      // suivant sera refuse.
+      if (String((e as Error).message).toLowerCase().includes('not found')) return false
+      throw e
+    }
+  }
+  const source = geste === 'couper_micro' ? TrackSource.MICROPHONE : TrackSource.CAMERA
+  let participant
+  try {
+    participant = await service.getParticipant(route.room_name, route.identity)
+  } catch (e) {
+    if (String((e as Error).message).toLowerCase().includes('not found')) return false
+    throw e
+  }
+  const pistes = participant.tracks.filter((p) => p.source === source && !p.muted)
+  for (const piste of pistes) {
+    await service.mutePublishedTrack(route.room_name, route.identity, piste.sid, true)
+  }
+  return pistes.length > 0
 }

@@ -92,7 +92,11 @@ enum CauseImpasse {
   /// La salle etait ouverte, puis la connexion est perdue pour de bon
   /// (deconnexion definitive, lot salle 3, audit reseau du 25/10/2026). Se
   /// reessaie avec un nouveau jeton, comme « Retourner dans la salle ».
-  connexionPerdue;
+  connexionPerdue,
+
+  /// L'enseignant a fait sortir cet eleve de la salle (30/10/2026). Se
+  /// reessaie : le serveur rend un jeton des que l'enseignant l'a readmis.
+  retire;
 
   /// Traduit le refus du backend en ce que l'usager peut comprendre.
   static CauseImpasse depuis(MotifRefusSalle motif) => switch (motif) {
@@ -105,7 +109,10 @@ enum CauseImpasse {
   /// Vrai quand reessayer a un sens. Un refus d'acces n'en a pas : l'heure
   /// n'aura pas change, et un bouton qui echoue deux fois use la confiance.
   bool get seReessaye =>
-      this == materiel || this == reseau || this == connexionPerdue;
+      this == materiel ||
+      this == reseau ||
+      this == connexionPerdue ||
+      this == retire;
 }
 
 /// Ou en est l'entree en salle.
@@ -167,6 +174,7 @@ class VueSalle {
     required this.dominant,
     required this.autres,
     required this.qualite,
+    this.peutModerer = false,
   });
 
   /// Calcule la vue a partir de tout ce que l'ecran observe.
@@ -198,7 +206,7 @@ class VueSalle {
         EtatSalle.instable => PhaseSalle.instable,
         EtatSalle.reconnexion => PhaseSalle.reconnexion,
         EtatSalle.retabli => PhaseSalle.retabli,
-        EtatSalle.echec => PhaseSalle.refus,
+        EtatSalle.echec || EtatSalle.retire => PhaseSalle.refus,
         EtatSalle.absent || EtatSalle.connexion => PhaseSalle.connexion,
       };
     }
@@ -224,6 +232,7 @@ class VueSalle {
       peutParler: capacites?.peutPublier ?? false,
       peutMontrer: capacites?.peutPublierVideo ?? false,
       peutPresenter: capacites?.peutPublierDonnees ?? false,
+      peutModerer: capacites?.peutModerer ?? false,
       invisible: invisible,
       moi: moi,
       dominant: dominant,
@@ -302,6 +311,10 @@ class VueSalle {
   /// Elle est derivee en booleen plutot que d'ouvrir l'`AccesSalle` -- donc le
   /// jeton signe -- a toutes les features (`CONTRACT_REQUEST_B` §1).
   final bool peutPresenter;
+
+  /// Salle en groupe (30/10/2026) : couper le micro ou la camera d'un eleve,
+  /// le faire sortir, le readmettre (`can_moderate` du jeton).
+  final bool peutModerer;
 
   /// Personne ne voit ce participant, et il ne se voit pas lui-meme.
   final bool invisible;
