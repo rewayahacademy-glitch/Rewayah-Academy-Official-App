@@ -158,7 +158,7 @@ try {
   await connecterParLien(ens.page, profCourriel);
   let r = await trouver(ens.page, new RegExp(`^Rejoindre la salle de la Classe ${nom}`), { delai: 10000 });
   if (!r) {
-    p.dire('  ECART (FN-001) : « Aujourd\'hui » garde la seance precedente ; passage par l\'onglet Classes');
+    p.dire('  ECART (FN-006) : « Aujourd\'hui » garde la seance precedente ; passage par l\'onglet Classes');
     await allerOnglet(ens.page, 'Classes', '/enseignant/classes', p.dire);
     r = await trouver(ens.page, new RegExp(`^Rejoindre la salle de la Classe ${nom}`), { delai: 10000 });
   }

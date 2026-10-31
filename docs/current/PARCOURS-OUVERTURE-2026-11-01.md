@@ -56,9 +56,10 @@ Preuve lue : `decider_dossier` et la fonction `piece-identite-acces` présentes 
 Qui : direction (ordinateur), puis enseignant. Comptes : direction, enseignant actif.
 
 1. Opérations, onglet « Classes », « Nouvelle classe ».
-2. Choisir le public, le genre, l'enseignant. « Ajouter un créneau » : un jour et une heure.
-   Pour tester la salle le jour même, **une heure dans l'heure qui vient**. Ajouter un second
-   créneau pour avoir plusieurs séances par semaine.
+2. Choisir le public, le genre, l'enseignant. Le formulaire propose déjà trois créneaux
+   (relevé du robot, 31/10) : donner à chacun un jour et une heure. Pour tester la salle le jour
+   même, **une heure dans l'heure qui vient**. Plusieurs créneaux donnent plusieurs séances par
+   semaine.
 3. « Créer la classe ». La classe apparaît, active, avec son enseignant.
 4. Enseignant : onglet « Classes » : la classe et sa prochaine séance.
 
@@ -72,6 +73,8 @@ adresses e-mail** à vous.
 1. Téléphone : « Créer un compte ». Choisir « J'inscris mon enfant » (famille) ou « Je m'inscris
    pour moi » (adulte).
 2. Ouvrir le lien reçu par e-mail, remplir nom et genre, « Envoyer ma demande ».
+   L'écran propose ensuite « Lire et accepter nos conditions » : l'ouvrir, lire, accepter
+   (étape relevée par le robot le 31/10, absente de la première version du carnet).
 3. L'écran dit « Votre demande est en cours » et ce que la demande contient.
 4. Direction : Personnes, onglet « Demandes », liste « Familles » ou « Élèves adultes ».
    « Accepter la demande … ».
