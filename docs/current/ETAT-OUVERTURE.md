@@ -25,8 +25,8 @@ recette en production** : la dernière colonne ne se remplit que quand le direct
 |---|---|---|---|
 | 98 | Remplacement automatique de l'enseignant absent | hors ligne (déjà commencé) | migration posée en production, CI en cours |
 | 100 | Séance ouverte par le jeton vidéo | 5 | après 98 |
-| 103 | Cahier hebdomadaire | 6 | CI en cours |
-| 104 | Confier une classe à un autre enseignant | 2 | après 103 |
+| 103 | Cahier hebdomadaire | 6 | fusionnée le 31/10, migration posée et vérifiée en production |
+| 104 | Confier une classe à un autre enseignant | 2 | fusionnée le 31/10, migration posée et vérifiée en production |
 | 95 | Factures le 1er, relances | 7 | retenue jusqu'au 04/11 |
 
 ## Écart entre les migrations du dépôt et la production
