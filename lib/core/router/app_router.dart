@@ -271,7 +271,6 @@ import '../widgets/nav_shell.dart';
 import '../widgets/page_shell.dart';
 import 'billet_salle.dart';
 import 'etats_routeur.dart';
-import 'garde_sortie_salle.dart';
 import 'page_differee.dart';
 import 'redirection.dart';
 import 'routes.dart';
@@ -2659,9 +2658,10 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // plutot que de lever.
       GoRoute(
         path: Routes.salle,
-        // Le retour du telephone ou du navigateur ne coupe plus l'appel : la
-        // salle demande d'abord « Quitter le cours ? » (30/10/2026).
-        onExit: GardeSortieSalle.instance.autoriserSortie,
+        // Le retour du telephone ou du navigateur quitte l'ecran sans
+        // question, et l'appel continue (directeur, 31/10/2026) : la salle
+        // l'a confie a `controleurSessionProvider`, la barre « Seance
+        // toujours en direct » le montre ailleurs.
         builder: (BuildContext contexte, GoRouterState etat) {
           final BilletSalle? billet = etat.extra is BilletSalle
               ? etat.extra! as BilletSalle
@@ -2674,6 +2674,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               preparation: billet?.preparation ?? false,
               groupeId: billet?.groupeId,
               eleveId: billet?.eleveId,
+              interfaceGuidee: billet?.interfaceGuidee ?? false,
             ),
           );
           // D6 : l'enfant qui rejoint depuis l'appareil de son tuteur retrouve

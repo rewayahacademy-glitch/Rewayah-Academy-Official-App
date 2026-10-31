@@ -26,17 +26,18 @@ import '../../core/presence/vue_presence.dart';
 import '../../core/profil/service_profil_enseignant.dart'
     show ProfilEnseignant, profilEnseignantParIdProvider;
 import '../../core/reseau/service_reseau.dart';
-import '../../core/router/garde_sortie_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import '../../core/tc_bibliotheque/couverture_ressource.dart';
 import '../../core/tc_classe/controleur_recitation.dart';
 import '../../core/tc_classe/port_rappel_discret.dart';
+import '../../core/tc_classe/port_session_persistante.dart';
 import '../../core/tc_classe/rappel_discret.dart'
     show RelaisRappelSalle, portRappelDiscretProvider;
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_classe/roster_enseignant.dart';
+import '../../core/tc_classe/session_persistante.dart';
 import '../../core/tc_classe/teacher_student_projection.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/port_groupes.dart';
@@ -152,6 +153,7 @@ class SallePage extends ConsumerStatefulWidget {
     this.preparation = false,
     this.groupeId,
     this.eleveId,
+    this.interfaceGuidee = false,
     this.cheminCompteRenduControle = Routes.controleurCompteRendu,
   });
 
@@ -161,6 +163,10 @@ class SallePage extends ConsumerStatefulWidget {
   /// L'eleve qui rejoint la salle depuis l'appareil de son tuteur (D6), lu
   /// dans le billet ; `null` quand la personne connectee entre pour elle-meme.
   final String? eleveId;
+
+  /// Vrai quand la salle s'ouvre dans l'Interface guidee de [eleveId] : la
+  /// barre « Seance toujours en direct » le redit au retour.
+  final bool interfaceGuidee;
 
   /// La sortie du controleur (CTR-02 vers CTR-03, P-CTR-03 point 12). La
   /// demonstration la redirige vers son compte rendu fictif.
@@ -192,6 +198,12 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// apres que le conteneur a commence a se defaire, et c'est precisement la
   /// que la liberation des pistes doit encore fonctionner.
   late final VideoSessionProvider _moteur = ref.read(moteurSalleProvider);
+
+  /// Le proprietaire de l'appel hors de l'ecran (31/10/2026) : la salle lui
+  /// confie l'appel ouvert, et le retour arriere ne coupe plus rien.
+  late final ControleurSessionPersistante _session = ref.read(
+    controleurSessionProvider,
+  );
 
   StreamSubscription<EtatSalle>? _sEtats;
   StreamSubscription<List<ParticipantSalle>>? _sParticipants;
@@ -242,14 +254,6 @@ class _SallePageEtat extends ConsumerState<SallePage> {
 
   /// L'eleve sorti de la salle (CLV-09).
   IssueSeance? _sortieEleve;
-
-  /// Point 4 (30/10/2026) : la sortie volontaire est en cours ; le retour
-  /// du telephone ou du navigateur ne pose plus de question.
-  bool _sortieEnCours = false;
-
-  /// La salle telle qu'elle etait au dernier rendu, pour la question du
-  /// retour (`GardeSortieSalle`).
-  VueSalle? _vueCourante;
 
   /// Salle en groupe (30/10/2026) : le dernier geste sur un eleve qui n'a
   /// pas abouti, dit dans le panneau Eleves, ou `null`.
@@ -415,16 +419,57 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     _enPreparation =
         widget.preparation &&
         (role == null || _suitLesCours(session0) || role == AppRole.teacher);
-    GardeSortieSalle.instance.inscrire(_demanderSortie);
     RelaisRappelSalle.inscrire(_envoyerRappel);
-    if (!_enPreparation) {
+    if (_session.tient(widget.seanceId)) {
+      // Retour par la barre « Seance toujours en direct » : le meme appel,
+      // sans pre-vol, sans jeton, sans reconnexion.
+      _reprendre();
+    } else if (!_enPreparation) {
       unawaited(_entrer());
     }
   }
 
+  /// La salle rouverte sur l'appel confie a `controleurSessionProvider`.
+  void _reprendre() {
+    final AccesSalle? acces = _session.etatCourant.acces;
+    _enPreparation = false;
+    _materielPret = true;
+    _acces = acces;
+    _aEteConnecte = true;
+    _etatMoteur = _moteur.etatCourant;
+    if (acces != null) {
+      _armerVeilleCamera(acces);
+    }
+  }
+
+  /// Confie l'appel ouvert au proprietaire applicatif (31/10/2026) : des
+  /// lors, quitter l'ecran ne le coupe plus, et la barre le montre ailleurs.
+  void _confier(AccesSalle acces) {
+    _session.adopter(
+      cours: SessionEnCours(
+        sessionId: widget.seanceId,
+        groupeId: widget.groupeId ?? '',
+        libelleGroupe: '',
+        eleveId: widget.eleveId,
+        interfaceGuidee: widget.interfaceGuidee,
+      ),
+      acces: acces,
+    );
+  }
+
+  /// La sortie de l'appel : par le controleur quand il le tient (annonce,
+  /// puis deconnexion, la barre se ferme), sinon directement.
+  Future<void> _quitterAppel() async {
+    if (_session.tient(widget.seanceId)) {
+      await _session.quitter();
+      return;
+    }
+    await ref.read(serviceVideoProvider).annoncerSortie(widget.seanceId);
+    await _moteur.quitter();
+  }
+
   @override
   void dispose() {
-    GardeSortieSalle.instance.retirer(_demanderSortie);
     RelaisRappelSalle.retirer(_envoyerRappel);
     _finRappel?.cancel();
     unawaited(_sEtats?.cancel());
@@ -432,10 +477,14 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     unawaited(_sQualite?.cancel());
     _veilleCamera?.cancel();
     unawaited(_synchro?.liberer());
-    // Quitter au demontage, quelle que soit la raison du demontage : un retour
-    // navigateur, une redirection, un billet expire. Sans cela, une salle
-    // fermee a l'ecran continuerait a publier un micro ouvert.
-    unawaited(_moteur.quitter());
+    // Directeur, 31/10/2026 : un appel ouvert et confie continue hors de
+    // l'ecran (retour arriere, autre ecran), comme un appel telephonique ; la
+    // barre « Seance toujours en direct » le montre partout. Seule une salle
+    // qui n'a pas d'appel confie (preparation, entree inachevee, impasse) se
+    // ferme avec l'ecran, pour ne jamais laisser un micro ouvert sans barre.
+    if (!_session.tient(widget.seanceId)) {
+      unawaited(_moteur.quitter());
+    }
     super.dispose();
   }
 
@@ -448,7 +497,6 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   Future<void> _entrer() async {
     _veilleCamera?.cancel();
     _veilleCamera = null;
-    _sortieEnCours = false;
     setState(() {
       _impasse = null;
       _aEteConnecte = false;
@@ -476,6 +524,12 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // `DetailPreCours.aucun`) ; c'est le jeton qui dit ensuite s'il parlera
     // (l'administration visible, elle, a le micro et repasse par le pre-vol).
     // Un compte illisible reste traite comme qui parle : le repli est ferme.
+    // Une autre seance encore en direct se ferme d'abord, par la sortie
+    // volontaire habituelle : un seul appel a la fois.
+    if (_session.etatCourant.cours != null &&
+        !_session.tient(widget.seanceId)) {
+      await _session.quitter();
+    }
     final AppRole? compte = await _roleDuCompte();
     if (!mounted) {
       return;
@@ -527,6 +581,13 @@ class _SallePageEtat extends ConsumerState<SallePage> {
 
     try {
       await _moteur.rejoindre(acces);
+      if (!mounted) {
+        // L'ecran est parti pendant l'entree : rien n'a ete confie, rien ne
+        // doit rester ouvert.
+        await _moteur.quitter();
+        return;
+      }
+      _confier(acces);
       _armerVeilleCamera(acces);
     } catch (erreur) {
       // Le moteur a deja pose son etat d'echec et tout libere ; il ne reste
@@ -586,6 +647,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       setState(() => _acces = neuf);
       // `rejoindre` ferme l'ancienne salle avant d'ouvrir la nouvelle.
       await _moteur.rejoindre(neuf);
+      if (mounted) _confier(neuf);
       if (microOuvert && mounted) {
         await _moteur.reglerMicro(actif: true);
       }
@@ -647,8 +709,6 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     if (!accepte || !mounted) {
       return;
     }
-    _sortieEnCours = true;
-
     // Le cours a-t-il eu lieu ? La reponse se lit maintenant, pas apres.
     final bool versLeCahier =
         vue.role == RoleSalle.enseignant && vue.dansLaSalle;
@@ -675,8 +735,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // arriver le premier et inscrire une deconnexion.
     _veilleCamera?.cancel();
     _veilleCamera = null;
-    await ref.read(serviceVideoProvider).annoncerSortie(widget.seanceId);
-    await _moteur.quitter();
+    await _quitterAppel();
     unawaited(_synchro?.liberer());
     _synchro = null;
     if (!mounted) {
@@ -705,9 +764,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// Elle mene au compte rendu (CTR-03) ; sa transmission automatique au
   /// depart vient avec CT-4.
   Future<void> _quitterControle() async {
-    _sortieEnCours = true;
-    await ref.read(serviceVideoProvider).annoncerSortie(widget.seanceId);
-    await _moteur.quitter();
+    await _quitterAppel();
     if (!mounted) {
       return;
     }
@@ -716,27 +773,6 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     GoRouter.of(
       context,
     ).go(adresseCompteRendu(widget.cheminCompteRenduControle, widget.seanceId));
-  }
-
-  /// Point 4 (consigne du pilote du 30/10/2026) : le retour du telephone
-  /// (Android) ou du navigateur (PWA) ne coupe plus l'appel. Tant que l'on
-  /// est dans l'appel, il pose la question de « Quitter » ([_quitter]) et la
-  /// route reste ; la sortie acceptee suit le chemin habituel (annonce,
-  /// deconnexion, cahier ou ecran de fin). Hors de l'appel (preparation,
-  /// impasse, fin), le retour part sans question.
-  Future<bool> _demanderSortie() async {
-    final VueSalle? vue = _vueCourante;
-    final bool dansLAppel = switch (_etatMoteur) {
-      EtatSalle.connexion ||
-      EtatSalle.connecte ||
-      EtatSalle.instable ||
-      EtatSalle.reconnexion ||
-      EtatSalle.retabli => true,
-      EtatSalle.absent || EtatSalle.echec || EtatSalle.retire => false,
-    };
-    if (_sortieEnCours || !mounted || vue == null || !dansLAppel) return true;
-    unawaited(_quitter(vue));
-    return false;
   }
 
   /// Salle en groupe (30/10/2026) : le geste de l'enseignant sur un eleve
@@ -898,6 +934,17 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// « Retour a la Classe » de CLV-09 (eleve standard, matrice section 5) :
   /// l'espace des Classes de l'eleve (`/tc/groupes`, CLV-01 partiel), et non
   /// l'accueil. La guidee garde « Retour a l'accueil » et sa racine.
+  /// La fleche de la salle pendant l'appel (31/10/2026) : l'ecran d'ou l'on
+  /// vient, sans question et sans couper l'appel (`_session` le tient).
+  void _quitterLEcran() {
+    final String? groupe = widget.groupeId;
+    if (ref.read(sessionProvider).role == AppRole.teacher && groupe != null) {
+      GoRouter.of(context).go(Routes.groupePour(groupe));
+      return;
+    }
+    _rentrer();
+  }
+
   void _retourClasse() {
     if (AppMetriques.of(context).mode == InterfaceMode.enfant) {
       _rentrer();
@@ -1138,6 +1185,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     final ParticipantSalle? moi = vue.moi;
     final int? page = presentee?.page;
     final ActionsSeance actions = ActionsSeance(
+      // Directeur, 31/10/2026 : la fleche quitte l'ecran, pas l'appel ; la
+      // barre « Seance toujours en direct » y ramene.
+      onRetour: _quitterLEcran,
       // Le dock de la salle de seance confirme deja la sortie
       // (`confirmerQuitterSeance`) : une seule question.
       onQuitter: () => unawaited(_quitter(vue, confirme: true)),
@@ -1674,7 +1724,6 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       qualite: _qualite,
       impasse: _impasse,
     );
-    _vueCourante = vue;
     final bool enImpasse = vue.phase == PhaseSalle.refus;
     // SALLE-ENCRE-1 : les textes de la salle prennent l'encre du registre
     // `salle` (celle que `PageImmersive` pose en fond) pour TOUS les roles,

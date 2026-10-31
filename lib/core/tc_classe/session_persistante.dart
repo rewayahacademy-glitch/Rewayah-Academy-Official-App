@@ -28,6 +28,7 @@ class EtatSessionPersistante {
     this.materielPret = false,
     this.acces,
     this.refus,
+    this.lienPerdu = false,
   });
 
   /// Aucun cours, aucune entree en route.
@@ -69,6 +70,11 @@ class EtatSessionPersistante {
   /// Le refus du backend, quand il y en a eu un.
   final MotifRefusSalle? refus;
 
+  /// Vrai quand le moteur a perdu le lien et que LiveKit le retablit
+  /// (`EtatSalle.reconnexion`) : la barre le dit au lieu de promettre une
+  /// seance qui s'entend encore.
+  final bool lienPerdu;
+
   /// Vrai quand une salle est rejointe pour cette seance.
   bool estOuvertePour(String sessionId) => cours?.sessionId == sessionId;
 
@@ -83,7 +89,20 @@ class EtatSessionPersistante {
     materielPret: materielPret,
     acces: acces,
     refus: refus,
+    lienPerdu: lienPerdu,
   );
+
+  /// Le meme etat, avec un autre lien.
+  EtatSessionPersistante avecLien({required bool perdu}) =>
+      EtatSessionPersistante(
+        cours: cours,
+        enArrierePlan: enArrierePlan,
+        retourDeSuspension: retourDeSuspension,
+        materielPret: materielPret,
+        acces: acces,
+        refus: refus,
+        lienPerdu: perdu,
+      );
 
   @override
   bool operator ==(Object other) =>
@@ -93,7 +112,8 @@ class EtatSessionPersistante {
       other.retourDeSuspension == retourDeSuspension &&
       other.materielPret == materielPret &&
       identical(other.acces, acces) &&
-      other.refus == refus;
+      other.refus == refus &&
+      other.lienPerdu == lienPerdu;
 
   @override
   int get hashCode => Object.hash(
@@ -103,6 +123,7 @@ class EtatSessionPersistante {
     materielPret,
     acces,
     refus,
+    lienPerdu,
   );
 }
 
@@ -120,9 +141,19 @@ class EtatSessionPersistante {
 /// disait, alors `_SallePageEtat.dispose()` le disait a sa place -- ce qui
 /// revient a couper le cours des qu'on regarde ailleurs.
 ///
-/// **Ce controleur n'appelle `quitter()` sur le moteur qu'en un seul endroit**,
-/// dans [quitter], et [quitter] n'est atteint que par un geste explicite. C'est
-/// verifiable d'un `grep` sur ce fichier.
+/// **Ce controleur n'appelle `quitter()` sur le moteur qu'en deux endroits** :
+/// dans [quitter], atteint seulement par un geste explicite, et dans
+/// [_fermerApresFin], quand le moteur dit que l'appel est deja fini (seance
+/// close par le serveur, lien perdu pour de bon, participant retire) : il ne
+/// reste alors qu'a liberer le micro. C'est verifiable d'un `grep` sur ce
+/// fichier.
+///
+/// Branche a `/salle` le 31/10/2026 (directeur : l'enseignant quitte l'ecran
+/// de la salle et continue d'entendre l'eleve, comme dans un appel) : la
+/// salle entre par son propre chemin (pre-vol selon le role, jeton de
+/// l'eleve D6), puis confie l'appel ouvert a ce controleur par [adopter].
+/// La barre « Seance toujours en direct » (`BarreSeanceEnDirect`) le lit sur
+/// tous les autres ecrans.
 ///
 /// Passage en arriere-plan : rien n'est coupe. La machine de reconnexion du
 /// moteur existe deja (`EtatSalle.reconnexion`, `retabli`, `echec`), et c'est
@@ -146,7 +177,10 @@ class ControleurSessionPersistante
     if (observeLeCycleDeVie) {
       WidgetsBinding.instance.addObserver(this);
     }
+    _suiviMoteur = _moteur.etats.listen(_moteurDit);
   }
+
+  StreamSubscription<EtatSalle>? _suiviMoteur;
 
   final VideoSessionProvider _moteur;
   final ServiceVideo _serviceVideo;
@@ -191,7 +225,7 @@ class ControleurSessionPersistante
   /// devant son ecran coute une seconde et evite cela.
   ///
   /// **Un second appel pour la meme seance ne fait rien**, et c'est ce qui rend
-  /// le retour depuis la barre « Cours en cours » instantane : on ne redemande
+  /// le retour depuis la barre « Seance toujours en direct » instantane : on ne redemande
   /// pas de jeton, et surtout on ne rejoint pas une seconde fois -- ce serait
   /// une seconde `Room`, donc exactement ce que le socle interdit.
   ///
@@ -263,17 +297,65 @@ class ControleurSessionPersistante
         return;
       }
 
-      _poser(
-        EtatSessionPersistante(
-          cours: cours,
-          enArrierePlan: _etat.enArrierePlan,
-          materielPret: true,
-          acces: acces,
-        ),
-      );
+      adopter(cours: cours, acces: acces);
     } finally {
       _ouvertureEnCours = false;
     }
+  }
+
+  /// Prend en charge un appel que la salle vient d'ouvrir elle-meme.
+  ///
+  /// La salle a son propre chemin d'entree (pre-vol selon le role, jeton de
+  /// l'eleve qui rejoint depuis l'appareil de son tuteur) : le recopier ici
+  /// ferait deux entrees qui divergeraient. Elle rejoint, puis confie l'appel.
+  /// Des cet instant, quitter l'ecran de la salle ne coupe plus rien.
+  void adopter({required SessionEnCours cours, required AccesSalle acces}) {
+    _poser(
+      EtatSessionPersistante(
+        cours: cours,
+        enArrierePlan: _etat.enArrierePlan,
+        materielPret: true,
+        acces: acces,
+        lienPerdu: _moteur.etatCourant == EtatSalle.reconnexion,
+      ),
+    );
+  }
+
+  /// Vrai quand l'appel de [sessionId] est ouvert et confie a ce controleur.
+  bool tient(String sessionId) => _dejaEnSalle(sessionId);
+
+  /// Ce que dit le moteur, tant qu'un appel est confie.
+  ///
+  /// **Un seul abonnement, ici, pour toute l'application** : quand l'ecran
+  /// de la salle n'est plus monte, personne d'autre n'ecoute le moteur, et
+  /// la barre doit pourtant se fermer quand l'appel finit.
+  void _moteurDit(EtatSalle etat) {
+    if (_etat.cours == null) {
+      return;
+    }
+    switch (etat) {
+      case EtatSalle.connecte || EtatSalle.retabli:
+        confirmerLien();
+        if (_etat.lienPerdu) _poser(_etat.avecLien(perdu: false));
+      case EtatSalle.instable:
+        if (_etat.lienPerdu) _poser(_etat.avecLien(perdu: false));
+      case EtatSalle.reconnexion:
+        if (!_etat.lienPerdu) _poser(_etat.avecLien(perdu: true));
+      case EtatSalle.echec || EtatSalle.retire:
+        unawaited(_fermerApresFin());
+      // `absent` ne vient que de nos propres `quitter()` (le moteur cesse
+      // d'ecouter la salle avant de la fermer) : une nouvelle entree, ou
+      // une sortie deja faite ici. `connexion` precede `connecte`.
+      case EtatSalle.absent || EtatSalle.connexion:
+        break;
+    }
+  }
+
+  /// L'appel est fini sans geste de l'usager : la barre se ferme, et le
+  /// micro est libere. Aucune annonce de sortie : elle n'a pas ete voulue.
+  Future<void> _fermerApresFin() async {
+    _poser(EtatSessionPersistante(enArrierePlan: _etat.enArrierePlan));
+    await _moteur.quitter();
   }
 
   bool _dejaEnSalle(String sessionId) =>
@@ -298,6 +380,7 @@ class ControleurSessionPersistante
         materielPret: _etat.materielPret,
         acces: _etat.acces,
         refus: _etat.refus,
+        lienPerdu: _etat.lienPerdu,
       ),
     );
   }
@@ -350,10 +433,8 @@ class ControleurSessionPersistante
 
   /// Le moteur a reconfirme le lien : le doute du retour tombe.
   ///
-  /// Appele par la Classe Live quand `EtatSalle.connecte` ou
-  /// `EtatSalle.retabli` arrive. **Le controleur ne s'abonne pas lui-meme aux
-  /// etats du moteur** : ce serait un second abonnement a cote de celui de
-  /// l'ecran, donc deux lectures d'une meme verite.
+  /// Appele par [_moteurDit] quand `EtatSalle.connecte` ou
+  /// `EtatSalle.retabli` arrive pour un appel confie.
   void confirmerLien() {
     if (!_etat.retourDeSuspension) {
       return;
@@ -382,14 +463,16 @@ class ControleurSessionPersistante
     if (observeLeCycleDeVie) {
       WidgetsBinding.instance.removeObserver(this);
     }
+    unawaited(_suiviMoteur?.cancel());
+    _suiviMoteur = null;
     unawaited(_sortie.close());
   }
 }
 
-/// Le proprietaire du cours en cours, pour toute l'application.
+/// Le proprietaire de la seance en direct, pour toute l'application.
 ///
 /// **Un seul, racine, comme `moteurSalleProvider`.** Deux controleurs donneraient
-/// deux barres « Cours en cours » qui se contrediraient.
+/// deux barres « Seance toujours en direct » qui se contrediraient.
 final Provider<ControleurSessionPersistante> controleurSessionProvider =
     Provider<ControleurSessionPersistante>((Ref ref) {
       final ControleurSessionPersistante controleur =

@@ -143,7 +143,7 @@ void main() {
       expect(moteur.etatCourant, EtatSalle.connecte);
     });
 
-    testWidgets('la barre « Cours en cours » reste visible pendant tout cela', (
+    testWidgets('la barre « Seance toujours en direct » reste visible pendant tout cela', (
       WidgetTester tester,
     ) async {
       await monter(tester, <LibraryResource>[]);

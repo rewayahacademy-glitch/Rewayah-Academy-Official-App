@@ -113,7 +113,7 @@ void main() {
     );
   });
 
-  group('Classes : le cours en cours sans seance', () {
+  group('Classes : le cours de l heure sans seance', () {
     final GroupeEnseignant demo = DonneesEnseignantDemo.groupes().first;
     final GroupeEnseignant garcons = GroupeEnseignant(
       id: 'g-garcons',

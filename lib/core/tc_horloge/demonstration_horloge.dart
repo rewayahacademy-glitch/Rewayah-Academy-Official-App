@@ -38,7 +38,7 @@ abstract final class GroupesDemonstration {
   /// Deja connecte avant T0 : attente, aucun temps academique consomme.
   static const String alIhsan = 'demo-groupe-al-ihsan';
 
-  /// Cours en cours : compte a rebours descendant du temps restant.
+  /// Seance en direct : compte a rebours descendant du temps restant.
   static const String alBaqara = 'demo-groupe-al-baqara';
 
   /// Prolongation : « Cours toujours en cours », aucun nombre negatif.
