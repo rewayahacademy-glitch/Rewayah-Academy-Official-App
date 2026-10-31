@@ -26,8 +26,9 @@ class EleveADiagnostiquer {
         prenom: json['student_prenom'] as String?,
         nom: json['student_nom'] as String?,
         inscritDepuis:
-            DateTime.tryParse(json['inscrit_depuis'] as String? ?? '')
-                ?.toLocal() ??
+            DateTime.tryParse(
+              json['inscrit_depuis'] as String? ?? '',
+            )?.toLocal() ??
             DateTime.now(),
       );
 

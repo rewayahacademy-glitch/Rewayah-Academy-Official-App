@@ -160,29 +160,32 @@ List<({String libelle, String chemin})> ciblesRechercheAdmin({
 /// suivi la dependance au programme : Programmes d'abord, Qualite en
 /// dernier). Consommee par `SousNavigationDomaine` dans chacun des cinq
 /// ecrans.
-List<({String libelle, String chemin})>
-ongletsPedagogie() => <({String libelle, String chemin})>[
-  (
-    libelle: t.admin.diagnostics.titre,
-    chemin: Routes.adminPedagogieDiagnostics,
-  ),
-  (
-    libelle: t.admin.progression.titre,
-    chemin: Routes.adminPedagogieProgression,
-  ),
-  (
-    libelle: t.admin.evaluations.titre,
-    chemin: Routes.adminPedagogieEvaluations,
-  ),
-  (libelle: t.admin.programmes.titre, chemin: Routes.adminPedagogieProgrammes),
-  // CAP29-0 : la bibliotheque est la 6e fonction de Pedagogie, apres
-  // Programmes et avant Qualite (aucun neuvieme domaine).
-  (
-    libelle: t.admin.bibliotheque.titre,
-    chemin: Routes.adminPedagogieBibliotheque,
-  ),
-  (libelle: t.admin.qualite.titre, chemin: Routes.adminPedagogieQualite),
-];
+List<({String libelle, String chemin})> ongletsPedagogie() =>
+    <({String libelle, String chemin})>[
+      (
+        libelle: t.admin.diagnostics.titre,
+        chemin: Routes.adminPedagogieDiagnostics,
+      ),
+      (
+        libelle: t.admin.progression.titre,
+        chemin: Routes.adminPedagogieProgression,
+      ),
+      (
+        libelle: t.admin.evaluations.titre,
+        chemin: Routes.adminPedagogieEvaluations,
+      ),
+      (
+        libelle: t.admin.programmes.titre,
+        chemin: Routes.adminPedagogieProgrammes,
+      ),
+      // CAP29-0 : la bibliotheque est la 6e fonction de Pedagogie, apres
+      // Programmes et avant Qualite (aucun neuvieme domaine).
+      (
+        libelle: t.admin.bibliotheque.titre,
+        chemin: Routes.adminPedagogieBibliotheque,
+      ),
+      (libelle: t.admin.qualite.titre, chemin: Routes.adminPedagogieQualite),
+    ];
 
 /// Les quatre fonctions pairs du domaine Finance, dans l'ordre du guide
 /// Finance V4 §2 et des maquettes 09 et 10 : Vue globale, puis Politiques
@@ -277,7 +280,10 @@ List<({String libelle, String chemin})> ongletsPersonnes() =>
         chemin: Routes.adminPersonnesCandidatures,
       ),
       // BACK-FRONT-REPRISE-1 : la file des reprises de foyer.
-      (libelle: t.reprisesAdmin.onglet, chemin: Routes.adminPersonnesReprises),
+      (
+        libelle: t.reprisesAdmin.onglet,
+        chemin: Routes.adminPersonnesReprises,
+      ),
       // IMM-ACCUEIL-FRONT : l'import des inscriptions actuelles.
       (
         libelle: t.admin.importInscriptions.onglet,
@@ -301,17 +307,23 @@ List<({String libelle, String chemin})> ongletsPersonnes() =>
 /// Consommee par `SousNavigationDomaine` dans l'en-tete des deux ecrans : le
 /// Journal (lot E, `journal_page.dart`) et l'historique des observations (lot
 /// E, `observations_admin_page.dart`).
-List<({String libelle, String chemin})>
-ongletsSecurite() => <({String libelle, String chemin})>[
-  (libelle: t.admin.journal.titre, chemin: Routes.adminSecuriteAuditJournal),
-  (
-    libelle: t.admin.observations.titre,
-    chemin: Routes.adminSecuriteAuditObservations,
-  ),
-  // ECHELLE-CTRL-DIRECT-1 : le tirage des controles (regles et
-  // historique), la direction seule.
-  (libelle: t.admin.tirage.titre, chemin: Routes.adminSecuriteAuditTirages),
-];
+List<({String libelle, String chemin})> ongletsSecurite() =>
+    <({String libelle, String chemin})>[
+      (
+        libelle: t.admin.journal.titre,
+        chemin: Routes.adminSecuriteAuditJournal,
+      ),
+      (
+        libelle: t.admin.observations.titre,
+        chemin: Routes.adminSecuriteAuditObservations,
+      ),
+      // ECHELLE-CTRL-DIRECT-1 : le tirage des controles (regles et
+      // historique), la direction seule.
+      (
+        libelle: t.admin.tirage.titre,
+        chemin: Routes.adminSecuriteAuditTirages,
+      ),
+    ];
 
 /// Les trois onglets pairs de l'Administration des communications, sous
 /// Operations (QUESTIONS Q4) : Annonces, Moderation, Messages, dans cet
