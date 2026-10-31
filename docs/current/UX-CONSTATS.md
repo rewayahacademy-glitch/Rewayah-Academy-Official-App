@@ -12,7 +12,7 @@ Règles pour que rien ne se perde :
 - Aucune pull request ne retire une ligne de ce fichier.
 - L'ancien pilote vérifie chaque matin qu'aucun constat n'a disparu ni n'a été fermé sans capture.
 
-Classe : Manquant · Mal placé · Doublon · Taille · Non branché · Cassé · Texte · Conforme.
+Classe : Manquant · Mal placé · Doublon · Taille · Non branché · Cassé · Texte · Interprétation · Détour · Conforme.
 Gravité : Bloquant (objectif impossible) · Gênant (possible mais difficile) · Finition.
 Code : statut (absent, non routé, non branché, cassé, mal placé) et `fichier:ligne` probable.
 
