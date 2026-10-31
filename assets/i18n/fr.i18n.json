@@ -12820,5 +12820,22 @@
       "sansReponse": "Pas de réponse",
       "sansReponsePhrase": "« Nous n'avons pas reçu de réponse à notre dernier message. »"
     }
+  },
+  "accueilInscrits": {
+    "titre": "Nous vous connaissons déjà",
+    "phrase": "Votre inscription a été reprise. Vous n'avez pas à tout ressaisir.",
+    "motTitre": "Un mot de la direction",
+    "elevesTitre": "Vos enfants déjà inscrits",
+    "elevesPhrase": "Leur prénom est déjà rempli. Il reste à indiquer leur âge.",
+    "aJour": "À jour",
+    "aCompleter": "À compléter",
+    "ajouterProfil": "Ajouter le profil élève de {prenom}",
+    "plusTard": "Vous pourrez aussi le faire plus tard, depuis le Foyer.",
+    "sansEleve": "Aucun profil élève n'a été repris pour votre famille. Vous pourrez en ajouter un depuis le Foyer.",
+    "finirCompte": "Il reste quelques questions pour finir votre compte.",
+    "continuer": "Continuer",
+    "echecTitre": "Votre inscription n'a pas pu être vérifiée",
+    "echecPhrase": "Le serveur n'a pas répondu comme prévu. Réessayez dans un instant\u00a0: rien n'est créé en double.",
+    "sansDonnees": "La vérification de votre inscription"
   }
 }

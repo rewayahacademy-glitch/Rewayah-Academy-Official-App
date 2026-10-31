@@ -106,6 +106,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$avis$fr avis = Traductions$avis$fr.internal(_root);
 	late final Traductions$courriels$fr courriels = Traductions$courriels$fr.internal(_root);
 	late final Traductions$admissions$fr admissions = Traductions$admissions$fr.internal(_root);
+	late final Traductions$accueilInscrits$fr accueilInscrits = Traductions$accueilInscrits$fr.internal(_root);
 }
 
 // Path: commun
@@ -3593,6 +3594,60 @@ class Traductions$admissions$fr {
 
 	late final Traductions$admissions$refus$fr refus = Traductions$admissions$refus$fr.internal(_root);
 	late final Traductions$admissions$modeles$fr modeles = Traductions$admissions$modeles$fr.internal(_root);
+}
+
+// Path: accueilInscrits
+class Traductions$accueilInscrits$fr {
+	Traductions$accueilInscrits$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nous vous connaissons déjà'
+	String get titre => 'Nous vous connaissons déjà';
+
+	/// fr: 'Votre inscription a été reprise. Vous n'avez pas à tout ressaisir.'
+	String get phrase => 'Votre inscription a été reprise. Vous n\'avez pas à tout ressaisir.';
+
+	/// fr: 'Un mot de la direction'
+	String get motTitre => 'Un mot de la direction';
+
+	/// fr: 'Vos enfants déjà inscrits'
+	String get elevesTitre => 'Vos enfants déjà inscrits';
+
+	/// fr: 'Leur prénom est déjà rempli. Il reste à indiquer leur âge.'
+	String get elevesPhrase => 'Leur prénom est déjà rempli. Il reste à indiquer leur âge.';
+
+	/// fr: 'À jour'
+	String get aJour => 'À jour';
+
+	/// fr: 'À compléter'
+	String get aCompleter => 'À compléter';
+
+	/// fr: 'Ajouter le profil élève de {prenom}'
+	String ajouterProfil({required Object prenom}) => 'Ajouter le profil élève de ${prenom}';
+
+	/// fr: 'Vous pourrez aussi le faire plus tard, depuis le Foyer.'
+	String get plusTard => 'Vous pourrez aussi le faire plus tard, depuis le Foyer.';
+
+	/// fr: 'Aucun profil élève n'a été repris pour votre famille. Vous pourrez en ajouter un depuis le Foyer.'
+	String get sansEleve => 'Aucun profil élève n\'a été repris pour votre famille. Vous pourrez en ajouter un depuis le Foyer.';
+
+	/// fr: 'Il reste quelques questions pour finir votre compte.'
+	String get finirCompte => 'Il reste quelques questions pour finir votre compte.';
+
+	/// fr: 'Continuer'
+	String get continuer => 'Continuer';
+
+	/// fr: 'Votre inscription n'a pas pu être vérifiée'
+	String get echecTitre => 'Votre inscription n\'a pas pu être vérifiée';
+
+	/// fr: 'Le serveur n'a pas répondu comme prévu. Réessayez dans un instant : rien n'est créé en double.'
+	String get echecPhrase => 'Le serveur n\'a pas répondu comme prévu. Réessayez dans un instant : rien n\'est créé en double.';
+
+	/// fr: 'La vérification de votre inscription'
+	String get sansDonnees => 'La vérification de votre inscription';
 }
 
 // Path: commun.formats
@@ -51867,6 +51922,21 @@ extension on Traductions {
 			'admissions.modeles.niveauPhrase' => '« Le niveau demandé n\'est pas encore proposé. »',
 			'admissions.modeles.sansReponse' => 'Pas de réponse',
 			'admissions.modeles.sansReponsePhrase' => '« Nous n\'avons pas reçu de réponse à notre dernier message. »',
+			'accueilInscrits.titre' => 'Nous vous connaissons déjà',
+			'accueilInscrits.phrase' => 'Votre inscription a été reprise. Vous n\'avez pas à tout ressaisir.',
+			'accueilInscrits.motTitre' => 'Un mot de la direction',
+			'accueilInscrits.elevesTitre' => 'Vos enfants déjà inscrits',
+			'accueilInscrits.elevesPhrase' => 'Leur prénom est déjà rempli. Il reste à indiquer leur âge.',
+			'accueilInscrits.aJour' => 'À jour',
+			'accueilInscrits.aCompleter' => 'À compléter',
+			'accueilInscrits.ajouterProfil' => ({required Object prenom}) => 'Ajouter le profil élève de ${prenom}',
+			'accueilInscrits.plusTard' => 'Vous pourrez aussi le faire plus tard, depuis le Foyer.',
+			'accueilInscrits.sansEleve' => 'Aucun profil élève n\'a été repris pour votre famille. Vous pourrez en ajouter un depuis le Foyer.',
+			'accueilInscrits.finirCompte' => 'Il reste quelques questions pour finir votre compte.',
+			'accueilInscrits.continuer' => 'Continuer',
+			'accueilInscrits.echecTitre' => 'Votre inscription n\'a pas pu être vérifiée',
+			'accueilInscrits.echecPhrase' => 'Le serveur n\'a pas répondu comme prévu. Réessayez dans un instant : rien n\'est créé en double.',
+			'accueilInscrits.sansDonnees' => 'La vérification de votre inscription',
 			_ => null,
 		};
 	}

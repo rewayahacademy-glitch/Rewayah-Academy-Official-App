@@ -98,6 +98,8 @@ import 'core/identite/matricule_supabase.dart';
 import 'core/identite/port_matricule.dart';
 import 'core/import_inscriptions/import_inscriptions_supabase.dart';
 import 'core/import_inscriptions/port_import_inscriptions.dart';
+import 'core/import_inscriptions/port_reclamation_preinscription.dart';
+import 'core/import_inscriptions/reclamation_preinscription_supabase.dart';
 import 'core/observabilite/journal_dev.dart';
 import 'core/observabilite/supervision.dart';
 import 'core/offres/demandes_suivi_supabase.dart';
@@ -442,6 +444,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portCapaciteEleveProvider.overrideWithValue(
     PortCapaciteEleveSupabase(Supabase.instance.client),
+  ),
+  // IMM-ACCUEIL-FRONT : une famille deja inscrite par la direction est
+  // reconnue apres la preuve de son adresse (reclamer_preinscription_apres_preuve).
+  portReclamationPreinscriptionProvider.overrideWithValue(
+    ReclamationPreinscriptionSupabase(Supabase.instance.client),
   ),
   // Salle et parcours : annotations persistantes, retour de comprehension et
   // signalements, sous RLS et RPC bornees au groupe.

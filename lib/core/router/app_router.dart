@@ -10,6 +10,7 @@ import '../../features/accueil_adulte/accueil_adulte_page.dart'
 import '../../features/accueil_adulte/routes_accueil_adulte.dart';
 import '../../features/accueil_eleve/accueil_eleve_selon_presentation.dart';
 import '../../features/accueil_famille/accueil_famille_page.dart';
+import '../../features/accueil_inscrits/accueil_inscrits_page.dart';
 import '../../features/admin_acces_agents/acces_agents_page.dart'
     deferred as d_acces_agents_page;
 import '../../features/admin_admissions/admissions_page.dart'
@@ -254,6 +255,7 @@ import '../finance/montant.dart';
 import '../fraicheur/relecture_page.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
+import '../import_inscriptions/accueil_inscrits.dart';
 import '../mouvement/transitions.dart';
 import '../recherche/controleur_recherche.dart';
 import '../recherche/modeles_recherche.dart';
@@ -377,6 +379,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
     rafraichisseur.declencher();
   });
 
+  // IMM-ACCUEIL-FRONT : l'accueil des inscrits se decide apres la
+  // reclamation ; le routeur se reveille quand il change.
+  ref.listen<bool>(accueilInscritsEnAttenteProvider, (bool? _, bool _) {
+    rafraichisseur.declencher();
+  });
+
   // Q-2 = a : la nouvelle signature du contrat enseignant se lit apres la
   // session (acceptations) ; le routeur se reveille quand elle change.
   ref.listen<bool>(resignatureContratEnseignantProvider, (bool? _, bool _) {
@@ -408,6 +416,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         retour: etat.uri.queryParameters['retour'],
         resignatureContrat: ref.read(resignatureContratEnseignantProvider),
         atterrissageAdulte: ref.read(atterrissageAdulteProvider),
+        accueilInscrits: ref.read(accueilInscritsEnAttenteProvider),
       );
     },
     // Un chemin qu'aucune route ne sert : une page d'etat dans la charte, qui
@@ -851,6 +860,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 ),
                 routes: <RouteBase>[
                   GoRoute(
+                    path: 'inscription-reprise',
+                    pageBuilder: glissee(
+                      (GoRouterState _) => const AccueilInscritsPage(),
+                    ),
+                  ),
+                  GoRoute(
                     path: 'notifications',
                     pageBuilder: glissee(
                       (GoRouterState _) => const NotificationsPage(),
@@ -992,7 +1007,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                       (GoRouterState etat) =>
                           etat.uri.queryParameters['pour'] == 'moi'
                           ? const CreerMonProfilIndisponible()
-                          : const AjouterEnfantPage(),
+                          : AjouterEnfantPage(
+                              depuisAccueilInscrits:
+                                  etat.extra is AjoutDepuisAccueilInscrits
+                                  ? etat.extra! as AjoutDepuisAccueilInscrits
+                                  : null,
+                            ),
                     ),
                   ),
                   GoRoute(

@@ -45,6 +45,7 @@ String? deciderRedirection({
   String environnement = Env.environnement,
   bool resignatureContrat = false,
   bool atterrissageAdulte = false,
+  bool accueilInscrits = false,
 }) {
   // La salle de demonstration passe sans session hors production : donnees
   // fictives, aucun appel serveur (K-28). En production, la route n'existe
@@ -234,12 +235,23 @@ String? deciderRedirection({
           _dansLeSousArbre(cheminDemande, Routes.inscription) ||
           _dansLeSousArbre(cheminDemande, Routes.agentEntree) ||
           _dansLeSousArbre(cheminDemande, Routes.attente)) {
+        // IMM-ACCUEIL-FRONT : une famille deja inscrite, dont la
+        // pre-inscription vient d'etre reprise, voit d'abord son accueil.
+        if (accueilInscrits && role == AppRole.guardian) {
+          return Routes.tuteurInscriptionReprise;
+        }
         if (cheminDemande == Routes.connexion) {
           final String? reprise = _reprise(session, retour, maintenant);
           if (reprise != null) {
             return reprise;
           }
         }
+        return racine;
+      }
+
+      // L'accueil des inscrits n'a rien a montrer hors de ce moment.
+      if (cheminDemande == Routes.tuteurInscriptionReprise &&
+          !accueilInscrits) {
         return racine;
       }
 
