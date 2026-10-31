@@ -4,6 +4,8 @@
 --   EA1  l'adulte lit son prenom et SA Classe, jamais celle de son enfant ;
 --   EA2  il lit son historique, le plus recent d'abord, avec son absence ;
 --        ni seance future ni seance annulee ; pagination par `p_avant` ;
+--        une seance remplacee rend l'enseignant qui a fait le cours (le
+--        remplacant), jamais le titulaire absent ;
 --   EA3  il ne lit ni les seances d'une autre Classe, ni celles de son
 --        enfant, ni celles d'un autre adulte ;
 --   EA4  il lit les prenoms de sa Classe, sa propre photo seule ;
@@ -19,6 +21,7 @@ begin;
 
 insert into auth.users (id, email) values
   ('ea000000-0000-4000-8000-000000000001', 'ea-ens@example.test'),
+  ('ea000000-0000-4000-8000-000000000002', 'ea-remplacant@example.test'),
   ('ea000000-0000-4000-8000-0000000000a1', 'ea-a1@example.test'),
   ('ea000000-0000-4000-8000-0000000000a2', 'ea-a2@example.test'),
   ('ea000000-0000-4000-8000-0000000000a3', 'ea-a3@example.test'),
@@ -42,6 +45,8 @@ insert into public.profiles
 values
   ('ea000000-0000-4000-8000-000000000001', 'TEACH-EA-000001', 'teacher',
    null, 'Hakim', 'Test', 'provisional_active', 'male'),
+  ('ea000000-0000-4000-8000-000000000002', 'TEACH-EA-000002', 'teacher',
+   null, 'Rachid', 'Test', 'provisional_active', 'male'),
   ('ea000000-0000-4000-8000-0000000000a1', 'GUARD-EA-0000A1', 'guardian',
    'ea00ffff-0000-4000-8000-000000000001', 'Karim', 'Test', 'active', 'male'),
   ('ea000000-0000-4000-8000-0000000000a2', 'GUARD-EA-0000A2', 'guardian',
@@ -109,6 +114,18 @@ insert into public.session_participants (session_id, profile_id, role) values
   ('ea00a000-0000-4000-8000-000000000004', 'ea000000-0000-4000-8000-0000000000a1', 'student'),
   ('ea00a000-0000-4000-8000-000000000005', 'ea000000-0000-4000-8000-0000000000a2', 'student'),
   ('ea00a000-0000-4000-8000-000000000006', 'ea000000-0000-4000-8000-0000000000c1', 'student');
+
+insert into public.teacher_profiles (profile_id, kyc_status) values
+  ('ea000000-0000-4000-8000-000000000001', 'approved'),
+  ('ea000000-0000-4000-8000-000000000002', 'approved');
+
+-- s2 a ete faite par un remplacant (Rachid), pas par le titulaire (Hakim).
+insert into public.remplacements_seance
+  (session_id, evenement, enseignant_titulaire_id, enseignant_remplacant_id, acteur_id, cle_idempotence)
+values
+  ('ea00a000-0000-4000-8000-000000000002', 'remplacement_pris',
+   'ea000000-0000-4000-8000-000000000001', 'ea000000-0000-4000-8000-000000000002',
+   'ea000000-0000-4000-8000-000000000002', 'ea00e000-0000-4000-8000-000000000001');
 
 -- a1 est entre dans s1, pas dans s2.
 insert into public.session_events (session_id, profile_id, event_type, server_ts, source)
@@ -190,7 +207,16 @@ begin
                       || '/' || pg_catalog.date_part('isodow', (now() - interval '2 days') at time zone 'Europe/Paris')::integer then
     raise exception 'EA ROUGE EA2 : date rendue hors du fuseau du foyer';
   end if;
-  raise notice 'EA OK EA2 : historique, absence, pagination, date dans le fuseau du foyer';
+  if (select h.teacher_first_name || '/' || h.teacher_id
+        from public.seances_passees_eleve_adulte() h
+       where h.session_id = 'ea00a000-0000-4000-8000-000000000002')
+     is distinct from 'Rachid/ea000000-0000-4000-8000-000000000002'
+     or (select h.teacher_first_name from public.seances_passees_eleve_adulte() h
+          where h.session_id = 'ea00a000-0000-4000-8000-000000000001')
+     is distinct from 'Hakim' then
+    raise exception 'EA ROUGE EA2 : la seance remplacee ne rend pas le remplacant';
+  end if;
+  raise notice 'EA OK EA2 : historique, absence, pagination, date dans le fuseau du foyer, remplacant rendu';
 
   select pg_catalog.count(*) into v_n from public.seances_passees_eleve_adulte(100, null) h
    where h.session_id in ('ea00a000-0000-4000-8000-000000000005',

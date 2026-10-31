@@ -85,7 +85,7 @@ as $function$
     s.ended_at,
     s.status,
     s.groupe_id,
-    s.teacher_id,
+    coalesce(private.c29_enseignant_effectif_session(s.id), s.teacher_id),
     t.first_name,
     s.status = 'student_absent'
       or public.etat_presence(s.id, auth.uid()) = 'absente',
@@ -93,7 +93,11 @@ as $function$
     pg_catalog.to_char(s.started_at at time zone public.mon_fuseau(), 'YYYY-MM-DD')
   from public.session_participants sp
   join public.sessions s on s.id = sp.session_id and s.deleted_at is null
-  left join public.profiles t on t.id = s.teacher_id and t.deleted_at is null
+  -- L'enseignant qui a fait le cours : le remplacant apres un remplacement,
+  -- jamais le titulaire absent.
+  left join public.profiles t
+    on t.id = coalesce(private.c29_enseignant_effectif_session(s.id), s.teacher_id)
+   and t.deleted_at is null
   where public.ma_capacite_eleve()
     and sp.profile_id = auth.uid()
     and sp.role = 'student'
