@@ -169,6 +169,15 @@ export async function trouver(page, nom, { delai = 20000, exact = false, role } 
         if (await l.nth(i).isVisible().catch(() => false)) return l.nth(i);
       }
     }
+    // Les liens de Flutter sont des <a> sans href (aucun role « link » implicite).
+    if (!role || role === 'link') {
+      const ancres = page.locator('a[aria-label]');
+      const k = await ancres.count();
+      for (let i = 0; i < k; i++) {
+        const nomA = ((await ancres.nth(i).getAttribute('aria-label')) ?? '').replace(/[\u2068\u2069]/g, '').replace(/\s+/g, ' ').trim();
+        if (motif.test(nomA) && await ancres.nth(i).isVisible().catch(() => false)) return ancres.nth(i);
+      }
+    }
     if (!role) {
       // Repli : le noeud le plus profond qui porte le texte (jamais un conteneur).
       const l = page.locator('flt-semantics').filter({ hasText: motif })

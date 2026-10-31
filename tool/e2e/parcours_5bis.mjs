@@ -35,13 +35,24 @@ try {
   const tz = sql(`select string_agg(distinct g.timezone_iana, ',') from public.groupes g
     where g.ended_at is null and g.teacher_id = (select id from auth.users where email = '${profCourriel}')`);
   const fuseaux = tz ? tz.split(',') : undefined;
-  let h = horaireProche({ delaiMax: 75, pasAvant, fuseaux });
-  while (!h) { await new Promise((r) => setTimeout(r, 60000)); h = horaireProche({ delaiMax: 75, pasAvant, fuseaux }); }
-  sql(`update public.teacher_profiles set timezone_iana = '${h.fuseau}' where profile_id = (select id from auth.users where email = '${profCourriel}')`);
-  const nom = `E2E Classe mixte ${new Date().toISOString().slice(5, 16).replace(/[-T:]/g, '')}`;
-  p.dire(`Enseignante ${profNom} (${profCourriel}) ; classe « ${nom} » ${h.jour} ${h.heure} h (${h.fuseau}), debut ${h.debut.toISOString()}`);
+  let h; let nom;
+  const reprise = process.env.E2E_CLASSE_5BIS;
+  if (reprise) {
+    const r = sql(`select g.timezone_iana || '|' || min(s.started_at) from public.groupes g join public.sessions s on s.groupe_id = g.id
+      where g.libelle = '${reprise}' and g.ended_at is null and s.ended_at > now() and s.deleted_at is null group by g.timezone_iana`);
+    const [fz, debut] = r.split('|');
+    h = { fuseau: fz, debut: new Date(debut), jour: '-', heure: '-' };
+    nom = reprise;
+  } else {
+    h = horaireProche({ delaiMax: 75, pasAvant, fuseaux });
+    while (!h) { await new Promise((r) => setTimeout(r, 60000)); h = horaireProche({ delaiMax: 75, pasAvant, fuseaux }); }
+    sql(`update public.teacher_profiles set timezone_iana = '${h.fuseau}' where profile_id = (select id from auth.users where email = '${profCourriel}')`);
+    nom = `E2E Classe mixte ${new Date().toISOString().slice(5, 16).replace(/[-T:]/g, '')}`;
+  }
+  p.dire(`Enseignant ${profNom} (${profCourriel}) ; classe « ${nom} » ${h.jour} ${h.heure} h (${h.fuseau}), debut ${h.debut.toISOString()}${reprise ? ' (reprise)' : ''}`);
 
   // Preparation : la direction cree la classe et y place l'enfant.
+  if (!reprise) {
   const d = await p.contexte('direction');
   await connecter(d.page, COMPTES.direction);
   await ouvrirClasses(d.page);
@@ -57,6 +68,7 @@ try {
     creneaux: [{ jour: h.jour, heure: h.heure }], nom });
   await ajouterEleve(p, d, { classe: nom, eleve: FAMILLE.enfant });
   await d.ctx.close();
+  }
 
   // 1. Le tuteur affiche le code de l'appareil de l'enfant.
   const t = await p.contexte('tuteur', { telephone: true });
@@ -112,11 +124,14 @@ try {
     const pin = await trouverTexte(e.page, /(code personnel|Choisissez un code|Confirmez)/i, 2000);
     if (!pin) break;
     p.dire(`  ${pin}`);
-    for (const ch of '2580') { const b = await trouver(e.page, new RegExp(`^${ch}$`), { delai: 1500, role: 'button' }); if (b) await b.click(); else await e.page.keyboard.type(ch); await e.page.waitForTimeout(250); }
+    // Les touches du clavier n'ont pas de nom lisible : position sur 390 x 780
+    // (colonne du milieu : 2, 5, 8, 0).
+    for (const y of [447, 526, 605, 685]) { await e.page.mouse.click(195, y); await e.page.waitForTimeout(350); }
     await e.page.waitForTimeout(2500); await activerSemantique(e.page);
     await p.capture(e, `code_personnel_${k}`);
   }
-  const accueil = await trouverTexte(e.page, new RegExp(`${FAMILLE.enfant}|${nom}|Rejoindre|Prochaine`), 10000);
+  if (await trouverTexte(e.page, /Choisis ton code personnel|Confirme ton code/, 1500)) throw new Error('appareil de l\'enfant : le code personnel n\'a pas pu etre choisi');
+  const accueil = await trouverTexte(e.page, new RegExp(`${nom}|Rejoindre|Prochaine`), 10000);
   if (!accueil) throw new Error(`appareil de l'enfant apres le code : pas d'Accueil de l'eleve ; ecran : ${(await libelles(e.page)).slice(0, 15).join(' | ')}`);
 
   // 3. Attente de l'ouverture (20 min avant), l'enseignante entre.
