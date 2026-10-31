@@ -43,6 +43,12 @@
 --    l'enseignant effectif, pas sur `finance_started_at` ; ce fichier ne
 --    change rien a la paie.
 --
+-- Correction d'un commentaire de 20261102500000 (deja appliquee, donc non
+-- modifiee) : son en-tete dit qu'une seance est ouverte des qu'un jeton est
+-- delivre, « par exemple a un eleve ». C'est faux : seul le jeton de
+-- l'enseignant effectif ouvre la seance, et seulement a partir de
+-- `started_at` (point 1 ci-dessus). Le SQL de 20261102500000 n'en depend pas.
+--
 -- Aucun mot de suppression dans ce fichier. Chaque corps est remplace a
 -- l'identique ailleurs ; chaque bloc refuse de continuer s'il ne trouve pas
 -- son point d'ancrage exactement une fois. Les droits ne changent pas.
