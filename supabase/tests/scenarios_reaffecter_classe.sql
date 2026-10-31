@@ -69,8 +69,11 @@ BEGIN
   RAISE NOTICE 'RCL OK : l''affectation d''une Classe servie repond toujours deja_affecte';
 
   -- 2. Les enseignants possibles.
+  -- Les seules enseignantes du scenario (une base rejouee peut en porter
+  -- d'autres, venues de migrations de donnees).
   IF (SELECT pg_catalog.array_agg(e.enseignant_id::text ORDER BY e.enseignant_id)
-        FROM public.enseignants_pour_reaffectation(v_a) e)
+        FROM public.enseignants_pour_reaffectation(v_a) e
+       WHERE e.enseignant_id::text LIKE 'c8000000%')
      IS DISTINCT FROM ARRAY['c8000000-0000-4000-8000-0000000000b2'] THEN
     RAISE EXCEPTION 'RCL ROUGE : possibles = %', (SELECT pg_catalog.array_agg(e.nom)
       FROM public.enseignants_pour_reaffectation(v_a) e);
