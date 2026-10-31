@@ -346,7 +346,7 @@ class Traductions$salle$fr {
 	String get rappelRecuDetail => 'Regardez l\'écran et écoutez votre enseignant.';
 
 	/// fr: 'Vous pourrez revenir quand votre enseignant vous aura réadmis. Touchez alors « Réessayer ».'
-	String get retireDetail => 'Vous pourrez revenir quand votre enseignant vous aura réadmis. Touchez alors « Réessayer ».';
+	String get retireDetail => 'Vous pourrez revenir quand votre enseignant vous aura réadmis. Touchez alors « Réessayer ».';
 
 	late final Traductions$salle$gestes$fr gestes = Traductions$salle$gestes$fr.internal(_root);
 
@@ -4533,11 +4533,11 @@ class Traductions$salle$gestes$fr {
 	/// fr: 'Gestes pour {prenom}'
 	String menu({required Object prenom}) => 'Gestes pour ${prenom}';
 
-	/// fr: 'Couper le micro de {prenom}'
-	String couperMicro({required Object prenom}) => 'Couper le micro de ${prenom}';
+	/// fr: 'Couper le micro {dePrenom}'
+	String couperMicro({required Object dePrenom}) => 'Couper le micro ${dePrenom}';
 
-	/// fr: 'Couper la caméra de {prenom}'
-	String couperCamera({required Object prenom}) => 'Couper la caméra de ${prenom}';
+	/// fr: 'Couper la caméra {dePrenom}'
+	String couperCamera({required Object dePrenom}) => 'Couper la caméra ${dePrenom}';
 
 	/// fr: 'Faire sortir {prenom} du cours'
 	String faireSortir({required Object prenom}) => 'Faire sortir ${prenom} du cours';
@@ -4548,8 +4548,8 @@ class Traductions$salle$gestes$fr {
 	/// fr: '{prenom} quitte la salle et ne revient dans ce cours que si vous le réadmettez.'
 	String consequenceSortie({required Object prenom}) => '${prenom} quitte la salle et ne revient dans ce cours que si vous le réadmettez.';
 
-	/// fr: 'Le geste n'a pas abouti. Vérifiez la connexion, puis réessayez.'
-	String get echec => 'Le geste n\'a pas abouti. Vérifiez la connexion, puis réessayez.';
+	/// fr: 'Le geste n'a pas abouti. Réessayez dans un instant.'
+	String get echec => 'Le geste n\'a pas abouti. Réessayez dans un instant.';
 
 	/// fr: 'Sortis du cours'
 	String get sortis => 'Sortis du cours';
@@ -4557,8 +4557,8 @@ class Traductions$salle$gestes$fr {
 	/// fr: 'Réadmettre {prenom}'
 	String readmettre({required Object prenom}) => 'Réadmettre ${prenom}';
 
-	/// fr: 'La liste des élèves sortis du cours ne se lit pas. Vérifiez la connexion, puis réessayez.'
-	String get sortisErreur => 'La liste des élèves sortis du cours ne se lit pas. Vérifiez la connexion, puis réessayez.';
+	/// fr: 'La liste des élèves sortis du cours n'a pas pu être lue. Réessayez dans un instant.'
+	String get sortisErreur => 'La liste des élèves sortis du cours n\'a pas pu être lue. Réessayez dans un instant.';
 }
 
 // Path: salle.visiteControle
@@ -42006,17 +42006,17 @@ extension on Traductions {
 			'salle.perdue' => 'La connexion au cours est perdue',
 			'salle.retire' => 'Votre enseignant vous a fait sortir du cours',
 			'salle.rappelRecuDetail' => 'Regardez l\'écran et écoutez votre enseignant.',
-			'salle.retireDetail' => 'Vous pourrez revenir quand votre enseignant vous aura réadmis. Touchez alors « Réessayer ».',
+			'salle.retireDetail' => 'Vous pourrez revenir quand votre enseignant vous aura réadmis. Touchez alors « Réessayer ».',
 			'salle.gestes.menu' => ({required Object prenom}) => 'Gestes pour ${prenom}',
-			'salle.gestes.couperMicro' => ({required Object prenom}) => 'Couper le micro de ${prenom}',
-			'salle.gestes.couperCamera' => ({required Object prenom}) => 'Couper la caméra de ${prenom}',
+			'salle.gestes.couperMicro' => ({required Object dePrenom}) => 'Couper le micro ${dePrenom}',
+			'salle.gestes.couperCamera' => ({required Object dePrenom}) => 'Couper la caméra ${dePrenom}',
 			'salle.gestes.faireSortir' => ({required Object prenom}) => 'Faire sortir ${prenom} du cours',
 			'salle.gestes.confirmerSortie' => ({required Object prenom}) => 'Faire sortir ${prenom} du cours ?',
 			'salle.gestes.consequenceSortie' => ({required Object prenom}) => '${prenom} quitte la salle et ne revient dans ce cours que si vous le réadmettez.',
-			'salle.gestes.echec' => 'Le geste n\'a pas abouti. Vérifiez la connexion, puis réessayez.',
+			'salle.gestes.echec' => 'Le geste n\'a pas abouti. Réessayez dans un instant.',
 			'salle.gestes.sortis' => 'Sortis du cours',
 			'salle.gestes.readmettre' => ({required Object prenom}) => 'Réadmettre ${prenom}',
-			'salle.gestes.sortisErreur' => 'La liste des élèves sortis du cours ne se lit pas. Vérifiez la connexion, puis réessayez.',
+			'salle.gestes.sortisErreur' => 'La liste des élèves sortis du cours n\'a pas pu être lue. Réessayez dans un instant.',
 			'salle.seulEnseignant' => 'Votre professeur n\'est pas encore arrivé',
 			'salle.seulEnseignantDetail' => 'Restez sur cet écran : la séance commence dès que votre enseignant entre.',
 			'salle.attenteDe' => ({required Object deNom}) => 'En attente ${deNom}',

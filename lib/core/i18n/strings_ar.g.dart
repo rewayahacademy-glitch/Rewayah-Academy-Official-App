@@ -2880,16 +2880,16 @@ class _Traductions$salle$gestes$ar extends Traductions$salle$gestes$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String menu({required Object prenom}) => 'إجراءات خاصة بـ${prenom}';
-	@override String couperMicro({required Object prenom}) => 'إغلاق ميكروفون ${prenom}';
-	@override String couperCamera({required Object prenom}) => 'إغلاق كاميرا ${prenom}';
-	@override String faireSortir({required Object prenom}) => 'إخراج ${prenom} من الدرس';
-	@override String confirmerSortie({required Object prenom}) => 'إخراج ${prenom} من الدرس؟';
-	@override String consequenceSortie({required Object prenom}) => 'يغادر ${prenom} القاعة ولا يعود إلى هذا الدرس إلا إذا أعدت قبوله.';
-	@override String get echec => 'لم يتم الإجراء. تحقق من الاتصال، ثم أعد المحاولة.';
+	@override String menu({required Object prenom}) => 'إجراءات خاصة بـ⁨${prenom}⁩';
+	@override String couperMicro({required Object dePrenom}) => 'إغلاق ميكروفون ⁨${dePrenom}⁩';
+	@override String couperCamera({required Object dePrenom}) => 'إغلاق كاميرا ⁨${dePrenom}⁩';
+	@override String faireSortir({required Object prenom}) => 'إخراج ⁨${prenom}⁩ من الدرس';
+	@override String confirmerSortie({required Object prenom}) => 'إخراج ⁨${prenom}⁩ من الدرس؟';
+	@override String consequenceSortie({required Object prenom}) => 'يغادر ⁨${prenom}⁩ القاعة ولا يعود إلى هذا الدرس إلا إذا أعدت قبوله.';
+	@override String get echec => 'لم يتم الإجراء. أعد المحاولة بعد لحظة.';
 	@override String get sortis => 'الخارجون من الدرس';
-	@override String readmettre({required Object prenom}) => 'إعادة قبول ${prenom}';
-	@override String get sortisErreur => 'تعذرت قراءة قائمة الطلاب الخارجين من الدرس. تحقق من الاتصال، ثم أعد المحاولة.';
+	@override String readmettre({required Object prenom}) => 'إعادة قبول ⁨${prenom}⁩';
+	@override String get sortisErreur => 'تعذرت قراءة قائمة الطلاب الخارجين من الدرس. أعد المحاولة بعد لحظة.';
 }
 
 // Path: salle.visiteControle
@@ -20596,16 +20596,16 @@ extension on TraductionsAr {
 			'salle.retire' => 'أخرجك معلمك من الدرس',
 			'salle.rappelRecuDetail' => 'انظر إلى الشاشة واستمع إلى معلمك.',
 			'salle.retireDetail' => 'يمكنك العودة بعد أن يعيد معلمك قبولك. اضغط حينها «إعادة المحاولة».',
-			'salle.gestes.menu' => ({required Object prenom}) => 'إجراءات خاصة بـ${prenom}',
-			'salle.gestes.couperMicro' => ({required Object prenom}) => 'إغلاق ميكروفون ${prenom}',
-			'salle.gestes.couperCamera' => ({required Object prenom}) => 'إغلاق كاميرا ${prenom}',
-			'salle.gestes.faireSortir' => ({required Object prenom}) => 'إخراج ${prenom} من الدرس',
-			'salle.gestes.confirmerSortie' => ({required Object prenom}) => 'إخراج ${prenom} من الدرس؟',
-			'salle.gestes.consequenceSortie' => ({required Object prenom}) => 'يغادر ${prenom} القاعة ولا يعود إلى هذا الدرس إلا إذا أعدت قبوله.',
-			'salle.gestes.echec' => 'لم يتم الإجراء. تحقق من الاتصال، ثم أعد المحاولة.',
+			'salle.gestes.menu' => ({required Object prenom}) => 'إجراءات خاصة بـ⁨${prenom}⁩',
+			'salle.gestes.couperMicro' => ({required Object dePrenom}) => 'إغلاق ميكروفون ⁨${dePrenom}⁩',
+			'salle.gestes.couperCamera' => ({required Object dePrenom}) => 'إغلاق كاميرا ⁨${dePrenom}⁩',
+			'salle.gestes.faireSortir' => ({required Object prenom}) => 'إخراج ⁨${prenom}⁩ من الدرس',
+			'salle.gestes.confirmerSortie' => ({required Object prenom}) => 'إخراج ⁨${prenom}⁩ من الدرس؟',
+			'salle.gestes.consequenceSortie' => ({required Object prenom}) => 'يغادر ⁨${prenom}⁩ القاعة ولا يعود إلى هذا الدرس إلا إذا أعدت قبوله.',
+			'salle.gestes.echec' => 'لم يتم الإجراء. أعد المحاولة بعد لحظة.',
 			'salle.gestes.sortis' => 'الخارجون من الدرس',
-			'salle.gestes.readmettre' => ({required Object prenom}) => 'إعادة قبول ${prenom}',
-			'salle.gestes.sortisErreur' => 'تعذرت قراءة قائمة الطلاب الخارجين من الدرس. تحقق من الاتصال، ثم أعد المحاولة.',
+			'salle.gestes.readmettre' => ({required Object prenom}) => 'إعادة قبول ⁨${prenom}⁩',
+			'salle.gestes.sortisErreur' => 'تعذرت قراءة قائمة الطلاب الخارجين من الدرس. أعد المحاولة بعد لحظة.',
 			'salle.seulEnseignant' => 'لم يصل معلمك بعد',
 			'salle.seulEnseignantDetail' => 'ابقَ على هذه الشاشة: تبدأ الحصة فور دخول معلمك.',
 			'salle.attenteDe' => ({required Object deNom}) => 'في انتظار ⁨${deNom}⁩',

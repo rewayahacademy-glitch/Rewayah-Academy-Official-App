@@ -1590,11 +1590,11 @@ void main() {
       await tester.pumpAndSettle();
       // Le micro ouvert se coupe ; la camera eteinte ne se propose pas.
       expect(
-        find.text(t.salle.gestes.couperMicro(prenom: 'Yusuf')),
+        find.text(t.salle.gestes.couperMicro(dePrenom: 'de Yusuf')),
         findsOneWidget,
       );
       expect(
-        find.text(t.salle.gestes.couperCamera(prenom: 'Yusuf')),
+        find.text(t.salle.gestes.couperCamera(dePrenom: 'de Yusuf')),
         findsNothing,
       );
       await tester.tap(find.text(t.salle.gestes.faireSortir(prenom: 'Yusuf')));

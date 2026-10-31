@@ -851,12 +851,16 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           ),
         if (p.micro)
           EntreeAction(
-            libelle: t.salle.gestes.couperMicro(prenom: p.nom),
+            libelle: t.salle.gestes.couperMicro(
+              dePrenom: deDevant(p.nom, cle: 'salle.gestes.couperMicro'),
+            ),
             onChoix: () => unawaited(_geste(p, GesteSalle.couperMicro)),
           ),
         if (p.camera)
           EntreeAction(
-            libelle: t.salle.gestes.couperCamera(prenom: p.nom),
+            libelle: t.salle.gestes.couperCamera(
+              dePrenom: deDevant(p.nom, cle: 'salle.gestes.couperCamera'),
+            ),
             onChoix: () => unawaited(_geste(p, GesteSalle.couperCamera)),
           ),
         EntreeAction(
