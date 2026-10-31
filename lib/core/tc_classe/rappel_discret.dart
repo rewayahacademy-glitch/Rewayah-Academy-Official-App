@@ -1,4 +1,4 @@
-﻿import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'port_rappel_discret.dart';
 
@@ -19,11 +19,12 @@ import 'port_rappel_discret.dart';
 /// Leve pour signaler un echec. **Ne rend rien** : un transport qui rendrait un
 /// accuse ferait naitre la boucle de notifications que la spec interdit.
 ///
-/// TC-Z-SUIVI : `t.tc.classe.rappel.recu` (« Le professeur vous appelle »,
-/// lu par l'eleve qui recoit le rappel) n'est encore affiche par aucun ecran --
-/// ce fichier ne construit que le cote emetteur.
-typedef TransportRappel =
-    Future<void> Function({required String sessionId, required String academyId});
+/// 30/10/2026 : `t.tc.classe.rappel.recu` (« Le professeur vous appelle »)
+/// est affiche par `/salle` chez l'eleve qui recoit le rappel.
+typedef TransportRappel = Future<void> Function({
+  required String sessionId,
+  required String academyId,
+});
 
 /// Le transport par defaut : **aucun**.
 ///
@@ -35,6 +36,41 @@ Future<void> transportRappelAbsent({
   required String sessionId,
   required String academyId,
 }) => Future<void>.error(const EchecRappel(MotifEchecRappel.transport));
+
+/// Salle en groupe (consigne du pilote du 30/10/2026) : le transport de la
+/// salle ouverte, inscrit par `/salle` tant que sa synchronisation vit (envoi
+/// cible sur le canal de donnees de l'enseignant), retire a la sortie.
+///
+/// Un registre et non une surcharge de provider : le cooldown vit dans
+/// [portRappelDiscretProvider], au niveau du compte, et doit survivre a la
+/// salle ; seul le transport change de main.
+final class RelaisRappelSalle {
+  RelaisRappelSalle._();
+
+  /// Le transport de la salle ouverte, ou `null` hors salle.
+  static TransportRappel? _actif;
+
+  /// La salle inscrit son transport.
+  static void inscrire(TransportRappel transport) => _actif = transport;
+
+  /// La salle retire son transport, et seulement le sien.
+  static void retirer(TransportRappel transport) {
+    if (identical(_actif, transport)) _actif = null;
+  }
+}
+
+/// Le transport par le relais : celui de la salle ouverte, sinon
+/// [transportRappelAbsent], qui le dit.
+Future<void> transportRappelRelais({
+  required String sessionId,
+  required String academyId,
+}) {
+  final TransportRappel? actif = RelaisRappelSalle._actif;
+  if (actif == null) {
+    return transportRappelAbsent(sessionId: sessionId, academyId: academyId);
+  }
+  return actif(sessionId: sessionId, academyId: academyId);
+}
 
 /// Combien de temps un eleve reste a l'abri d'un second rappel.
 ///
@@ -123,9 +159,10 @@ class RappelDiscretCadence implements PortRappelDiscret {
 
 /// Le rappel discret employe par l'application.
 ///
-/// Le transport reste [transportRappelAbsent] tant qu'Agent Z n'a pas branche
-/// `PortRealtimePedagogique.emettreCible` : l'action existe, elle est cadencee,
-/// et elle **dit** qu'elle n'aboutit pas. C'est la difference entre un lot
-/// partiel declare et un lot qui ment.
+/// 30/10/2026 : le transport est celui de la salle ouverte
+/// ([transportRappelRelais], `emettreCible` sur le canal de donnees de
+/// l'enseignant) ; hors salle, l'action dit toujours qu'elle n'aboutit pas.
 final Provider<PortRappelDiscret> portRappelDiscretProvider =
-    Provider<PortRappelDiscret>((Ref ref) => RappelDiscretCadence());
+    Provider<PortRappelDiscret>(
+      (Ref ref) => RappelDiscretCadence(transport: transportRappelRelais),
+    );

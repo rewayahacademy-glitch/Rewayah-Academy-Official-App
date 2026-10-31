@@ -1164,7 +1164,12 @@ class FauxMoteurSalle implements VideoSessionProvider {
     donneesPubliees.add(
       PaquetDonnees(sujet: sujet, charge: charge, fiable: fiable),
     );
+    destinatairesPublies.add(destinataires);
   }
+
+  /// Les destinataires de chaque paquet publie, dans le meme ordre que
+  /// [donneesPubliees] ; vide : toute la salle.
+  final List<List<String>> destinatairesPublies = <List<String>>[];
 
   @override
   EtatSalle get etatCourant => _etat;

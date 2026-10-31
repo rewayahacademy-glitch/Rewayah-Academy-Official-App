@@ -79,7 +79,7 @@ class VuePresentation {
       EtatSalle.instable => PhasePresentation.instable,
       EtatSalle.reconnexion => PhasePresentation.reconnexion,
       EtatSalle.retabli => PhasePresentation.retabli,
-      EtatSalle.echec => PhasePresentation.echec,
+      EtatSalle.echec || EtatSalle.retire => PhasePresentation.echec,
     },
     contenu: contenu,
     peutPresenter: peutPresenter,
