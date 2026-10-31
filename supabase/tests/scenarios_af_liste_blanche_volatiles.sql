@@ -136,6 +136,8 @@ declare
     'designer_remplacant_admin(uuid,uuid,uuid)',
     -- Remplacements direction (31/10) : R12, libre a l'heure exacte, genre souple sur choix explicite trace ; direction active.
     'designer_remplacant_admin(uuid,uuid,uuid,boolean)',
+    -- A3 (31/10) : un enseignant actif candidat se declare pret pendant la pre-alerte ; le premier gagne.
+    'se_declarer_pret_remplacement(uuid)',
     'dossiers_en_attente()',
     'effacer_etat_partage(uuid)',
     'eleves_sans_enseignant()',

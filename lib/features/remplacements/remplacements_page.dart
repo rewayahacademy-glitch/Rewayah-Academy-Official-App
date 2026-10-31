@@ -71,6 +71,15 @@ String titreRemplacementUrgent(DateTime debut) {
   );
 }
 
+/// « Remplacement en préparation : mardi 29 septembre 18:00 » (A3).
+String titreRemplacementPreparation(DateTime debut) {
+  final String date = dateLisible(debut);
+  return t.enseignant.remplacements.preparationTitre(
+    jour: date.isEmpty ? date : date[0].toLowerCase() + date.substring(1),
+    heure: hhmmAbsence(debut),
+  );
+}
+
 /// L'ecran « Remplacements ».
 class RemplacementsPage extends ConsumerStatefulWidget {
   /// Cree l'ecran.
@@ -93,6 +102,43 @@ class _RemplacementsPageEtat extends ConsumerState<RemplacementsPage> {
 
   /// La derniere acceptation confirmee, pour le dire une fois.
   String? _derniereAcceptee;
+
+  /// A3 : les preparations ou un collegue s'est declare pret juste avant
+  /// l'enseignant, d'apres la reponse du serveur a SON « Je suis pret ».
+  final Set<String> _pretAvantMoi = <String>{};
+
+  /// A3 : « Je suis pret » sur une preparation deja close.
+  final Set<String> _preparationClose = <String>{};
+
+  Future<void> _pret(PortPretRemplacement port, OffreRemplacement offre) async {
+    final String id = offre.seanceId;
+    setState(() {
+      _enCours.add(id);
+      _sansReponse.remove(id);
+    });
+    ResultatPret? reponse;
+    try {
+      reponse = await port.seDeclarerPret(id);
+    } on Object {
+      reponse = null;
+    }
+    if (!mounted) return;
+    setState(() {
+      _enCours.remove(id);
+      switch (reponse) {
+        case null:
+          _sansReponse.add(id);
+        case ResultatPret.dejaRetenu:
+          _pretAvantMoi.add(id);
+        case ResultatPret.fermee:
+          _preparationClose.add(id);
+        case ResultatPret.retenu:
+          break;
+      }
+    });
+    // Le serveur dit ce qui est retenu : le tableau se relit.
+    if (reponse != null) ref.invalidate(offresCommunesProvider);
+  }
 
   Future<void> _prendre(PortRemplacements port, OffreRemplacement offre) async {
     final String id = offre.seanceId;
@@ -148,6 +194,9 @@ class _RemplacementsPageEtat extends ConsumerState<RemplacementsPage> {
       remplacementsConfirmesProvider,
     );
     final PortRemplacements? port = ref.watch(portRemplacementsProvider);
+    final PortPretRemplacement? portPret = ref.watch(
+      portPretRemplacementProvider,
+    );
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     void relire() => ref.invalidate(offresCommunesProvider);
 
@@ -194,8 +243,12 @@ class _RemplacementsPageEtat extends ConsumerState<RemplacementsPage> {
                     phrase: t.enseignant.remplacements.erreur,
                     onAction: reessayer,
                   ),
-            construire: (List<OffreCommune> lues) =>
-                _contenu(lues, confirmes: confirmes, port: port),
+            construire: (List<OffreCommune> lues) => _contenu(
+              lues,
+              confirmes: confirmes,
+              port: port,
+              portPret: portPret,
+            ),
           ),
         ),
       ),
@@ -206,6 +259,7 @@ class _RemplacementsPageEtat extends ConsumerState<RemplacementsPage> {
     List<OffreCommune> lues, {
     required List<OffreRemplacement> confirmes,
     required PortRemplacements? port,
+    required PortPretRemplacement? portPret,
   }) {
     final Set<String> miennes = <String>{
       for (final OffreRemplacement o in confirmes) o.seanceId,
@@ -213,8 +267,28 @@ class _RemplacementsPageEtat extends ConsumerState<RemplacementsPage> {
     final List<OffreRemplacement> ouvertes = <OffreRemplacement>[];
     final List<OffreRemplacement> prisesParMoi = <OffreRemplacement>[];
     final List<OffreRemplacement> prises = <OffreRemplacement>[];
+    // A3 : la preparation d'un remplacement (titulaire pas encore entre).
+    final List<OffreRemplacement> preparations = <OffreRemplacement>[];
+    final List<OffreRemplacement> pretsMiens = <OffreRemplacement>[];
+    final List<OffreRemplacement> pretsCollegues = <OffreRemplacement>[];
     for (final OffreCommune c in lues) {
       final String id = c.offre.seanceId;
+      if (c.etat == EtatOffreCommune.preparation) {
+        if (_pretAvantMoi.contains(id)) {
+          pretsCollegues.add(c.offre);
+        } else {
+          preparations.add(c.offre);
+        }
+        continue;
+      }
+      if (c.etat == EtatOffreCommune.pretParMoi) {
+        pretsMiens.add(c.offre);
+        continue;
+      }
+      if (c.etat == EtatOffreCommune.pretParUnCollegue) {
+        pretsCollegues.add(c.offre);
+        continue;
+      }
       if (c.etat == EtatOffreCommune.priseParMoi) {
         if (!miennes.contains(id)) prisesParMoi.add(c.offre);
       } else if (miennes.contains(id)) {
@@ -231,7 +305,10 @@ class _RemplacementsPageEtat extends ConsumerState<RemplacementsPage> {
     if (ouvertes.isEmpty &&
         prisesParMoi.isEmpty &&
         prises.isEmpty &&
-        confirmes.isEmpty) {
+        confirmes.isEmpty &&
+        preparations.isEmpty &&
+        pretsMiens.isEmpty &&
+        pretsCollegues.isEmpty) {
       return EmptyState(
         key: const ValueKey<String>('remplacements-vide'),
         message: t.enseignant.journee.remplacementsVide,
@@ -263,6 +340,45 @@ class _RemplacementsPageEtat extends ConsumerState<RemplacementsPage> {
               ),
           ],
         ),
+      // A3 : apres l'urgence, la preparation. Le bouton plein reste a la
+      // premiere offre ouverte ; sans offre ouverte, a la premiere
+      // preparation (K-56).
+      if (preparations.isNotEmpty)
+        PileCartes(
+          key: const ValueKey<String>('remplacements-preparation'),
+          children: <Widget>[
+            for (final (int i, OffreRemplacement o) in trierRemplacements(
+              preparations,
+            ).indexed)
+              _CarteUrgente(
+                offre: o,
+                preparation: true,
+                principale: ouvertes.isEmpty && i == 0,
+                enCours: _enCours.contains(o.seanceId),
+                sansReponse: _sansReponse.contains(o.seanceId),
+                close: _preparationClose.contains(o.seanceId),
+                // Sans port, ou preparation close : pas de bouton (jamais
+                // grise), la phrase dit pourquoi.
+                onPrendre:
+                    portPret == null || _preparationClose.contains(o.seanceId)
+                    ? null
+                    : () => _pret(portPret, o),
+              ),
+          ],
+        ),
+      if (pretsMiens.isNotEmpty)
+        _Section(
+          titre: t.enseignant.remplacements.pretTitre,
+          cartes: <Widget>[
+            for (final OffreRemplacement o in trierRemplacements(pretsMiens))
+              _CartePrise(
+                offre: o,
+                avantMoi: false,
+                pastille: t.enseignant.remplacements.pretPastille,
+                phrase: t.enseignant.remplacements.pretPhrase,
+              ),
+          ],
+        ),
       if (vosRemplacements.isNotEmpty)
         _Section(
           titre: t.enseignant.remplacements.vosRemplacements,
@@ -278,7 +394,7 @@ class _RemplacementsPageEtat extends ConsumerState<RemplacementsPage> {
               CarteRemplacement(offre: o, date: dateLisible(o.debut)),
           ],
         ),
-      if (prises.isNotEmpty)
+      if (prises.isNotEmpty || pretsCollegues.isNotEmpty)
         _Section(
           titre: t.enseignant.remplacements.prisTitre,
           cartes: <Widget>[
@@ -286,6 +402,17 @@ class _RemplacementsPageEtat extends ConsumerState<RemplacementsPage> {
               _CartePrise(
                 offre: o,
                 avantMoi: _priseAvantMoi.contains(o.seanceId),
+              ),
+            for (final OffreRemplacement o in trierRemplacements(
+              pretsCollegues,
+            ))
+              _CartePrise(
+                offre: o,
+                avantMoi: false,
+                pastille: t.enseignant.remplacements.pretCollegue,
+                phrase: _pretAvantMoi.contains(o.seanceId)
+                    ? t.enseignant.remplacements.pretAvantVous
+                    : null,
               ),
           ],
         ),
@@ -343,6 +470,8 @@ class _Section extends StatelessWidget {
 class _CarteUrgente extends StatelessWidget {
   const _CarteUrgente({
     required this.offre,
+    this.preparation = false,
+    this.close = false,
     required this.principale,
     required this.enCours,
     required this.sansReponse,
@@ -350,6 +479,13 @@ class _CarteUrgente extends StatelessWidget {
   });
 
   final OffreRemplacement offre;
+
+  /// A3 : vrai pour une preparation (« Je suis prêt ») au lieu d'une offre
+  /// ouverte (« Assurer ce remplacement »).
+  final bool preparation;
+
+  /// A3 : la preparation est close (reponse du serveur) : une phrase le dit.
+  final bool close;
 
   /// Vrai pour la plus proche : son bouton est le seul plein de l'ecran.
   final bool principale;
@@ -387,7 +523,9 @@ class _CarteUrgente extends StatelessWidget {
             child: Semantics(
               header: true,
               child: TexteSansCoupure(
-                titreRemplacementUrgent(offre.debut),
+                preparation
+                    ? titreRemplacementPreparation(offre.debut)
+                    : titreRemplacementUrgent(offre.debut),
                 style: paire.applyTo(textes.titleMedium ?? const TextStyle()),
               ),
             ),
@@ -397,8 +535,14 @@ class _CarteUrgente extends StatelessWidget {
       actions: prendre == null
           ? null
           : ActionPrincipale(
-              key: ValueKey<String>('remplacement-prendre-${offre.seanceId}'),
-              libelle: t.enseignant.journee.remplacement.assurer,
+              key: ValueKey<String>(
+                preparation
+                    ? 'remplacement-pret-${offre.seanceId}'
+                    : 'remplacement-prendre-${offre.seanceId}',
+              ),
+              libelle: preparation
+                  ? t.enseignant.remplacements.jeSuisPret
+                  : t.enseignant.journee.remplacement.assurer,
               niveau: principale
                   ? NiveauAction.principale
                   : NiveauAction.secondaire,
@@ -410,7 +554,9 @@ class _CarteUrgente extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Text(
-            t.enseignant.remplacements.urgentPhrase,
+            preparation
+                ? t.enseignant.remplacements.preparationPhrase
+                : t.enseignant.remplacements.urgentPhrase,
             style: paire.applyTo(textes.bodyMedium ?? const TextStyle()),
           ),
           Ecart.vLg,
@@ -418,12 +564,14 @@ class _CarteUrgente extends StatelessWidget {
             if (i > 0) Ecart.vSm,
             lignes[i],
           ],
-          if (sansReponse) ...<Widget>[
+          if (sansReponse || close) ...<Widget>[
             Ecart.vLg,
             Semantics(
               liveRegion: true,
               child: Text(
-                t.enseignant.journee.absence.echec,
+                close
+                    ? t.enseignant.remplacements.preparationClose
+                    : t.enseignant.journee.absence.echec,
                 key: ValueKey<String>(
                   'remplacement-sans-reponse-${offre.seanceId}',
                 ),
@@ -439,7 +587,18 @@ class _CarteUrgente extends StatelessWidget {
 
 /// Une offre qu'un collegue a prise : la pastille le dit, sans bouton.
 class _CartePrise extends StatelessWidget {
-  const _CartePrise({required this.offre, required this.avantMoi});
+  const _CartePrise({
+    required this.offre,
+    required this.avantMoi,
+    this.pastille,
+    this.phrase,
+  });
+
+  /// A3 : la pastille a la place de « Pris par un collègue ».
+  final String? pastille;
+
+  /// A3 : une phrase sous le titre (pret retenu, collegue pret avant).
+  final String? phrase;
 
   final OffreRemplacement offre;
 
@@ -471,7 +630,7 @@ class _CartePrise extends StatelessWidget {
             ),
           ),
           StatusPill(
-            libelle: t.enseignant.remplacements.prisPastille,
+            libelle: pastille ?? t.enseignant.remplacements.prisPastille,
             ton: TonEtat.neutre,
           ),
         ],
@@ -480,11 +639,11 @@ class _CartePrise extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          if (avantMoi) ...<Widget>[
+          if (avantMoi || phrase != null) ...<Widget>[
             Semantics(
               liveRegion: true,
               child: Text(
-                t.enseignant.remplacements.prisAvantVous,
+                phrase ?? t.enseignant.remplacements.prisAvantVous,
                 key: ValueKey<String>(
                   'remplacement-pris-avant-vous-${offre.seanceId}',
                 ),

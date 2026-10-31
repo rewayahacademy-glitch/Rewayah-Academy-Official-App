@@ -53,6 +53,12 @@ const Set<String> evenementsNotificationConnus = <String>{
   'seance_deplacee',
   'enseignante_absente',
   'classe_supprimee',
+  // A3 (31/10/2026, migration 20261102500000) : le titulaire pas entre.
+  'remplacement_avertissement',
+  'remplacement_pre_alerte',
+  'remplacement_inutile',
+  'titulaire_en_retard',
+  'remplacant_arrive',
 };
 
 const Set<String> _destinationsAutorisees = <String>{
@@ -67,6 +73,8 @@ const Set<String> _destinationsAutorisees = <String>{
   '/tuteur',
   '/enseignant/classes',
   '/enseignant/journee',
+  // A3 : le planning de la direction (titulaire en retard).
+  '/admin/operations/planning',
 };
 
 /// La classe d'un eleve du foyer, et son planning : `/tuteur/classes/<uuid>`
@@ -267,6 +275,8 @@ Map<String, dynamic> _parametresAffichables(Map<dynamic, dynamic> bruts) {
     'debut_local',
     'motif',
     'portee',
+    // A3 : le delai laisse au titulaire pour entrer, en minutes (reglage).
+    'minutes',
   };
   final Map<String, dynamic> valeurs = <String, dynamic>{};
   for (final MapEntry<dynamic, dynamic> entree in bruts.entries) {
@@ -293,10 +303,15 @@ TypeNotification _typePour(String evenement) => switch (evenement) {
   'classe_supprimee' => TypeNotification.changementPlanning,
   'seance_annulee' ||
   'seance_deplacee' ||
-  'enseignante_absente' => TypeNotification.changementSeance,
+  'enseignante_absente' ||
+  'remplacement_avertissement' ||
+  'titulaire_en_retard' ||
+  'remplacant_arrive' => TypeNotification.changementSeance,
   'demande_close' => TypeNotification.decisionDossier,
   'remplacement_propose' ||
-  'remplacement_pris' => TypeNotification.remplacement,
+  'remplacement_pris' ||
+  'remplacement_pre_alerte' ||
+  'remplacement_inutile' => TypeNotification.remplacement,
   'demande_presentation' => TypeNotification.messageMetier,
   'controle_mission_attribuee' => TypeNotification.mission,
   'controle_mission_non_controlee' => TypeNotification.evenementOperationnel,
