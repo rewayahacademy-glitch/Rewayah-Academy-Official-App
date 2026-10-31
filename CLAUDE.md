@@ -95,8 +95,9 @@ dart run tool/verifier_jetons.dart
 ```
 
 Côté base, sur un Postgres nu, ce que rejoue `.github/workflows/ci.yml` :
-`supabase/tests/stub_auth.sql`, puis toutes les migrations, puis les scénarios
-`supabase/tests/scenarios_*.sql`. Les migrations sont appliquées en production hors CI
+`supabase/tests/stub_auth.sql`, puis toutes les migrations, puis **une partie seulement** des
+scénarios `supabase/tests/scenarios_*.sql` (30 sur 154 au 31/10/2026, nommés un par un dans
+`ci.yml`) ; la pile locale de `tool/e2e/` les rejoue tous. Les migrations sont appliquées en production hors CI
 (voir `deploy.yml`) ; la base distante enregistre des versions horodatées, pas la
 numérotation `00xx` du dépôt.
 
