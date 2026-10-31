@@ -38,13 +38,10 @@
 --    La paie ne compte que `ended` et `tech_failure` : une telle seance
 --    n'est jamais payee.
 --
--- 3. Ce que ce fichier ne fait PAS, dit ici : le temps paye
---    (`finance_started_at`) est toujours pose par le declencheur de
---    tresorerie `x217_marquer_temps_session` au passage en `in_progress`.
---    Le passage par le jeton le pose donc a l'heure du jeton (jamais avant
---    `started_at`). Le lot PRESENCE (minutes reellement connectees, decision
---    du 31/10 dans 08) n'existe pas encore ; changer ce declencheur est hors
---    de cette PR (paie).
+-- 3. La paie ne part ni du statut ni du jeton : depuis 20261102900000 (lot
+--    PRESENCE), elle se calcule sur les minutes reellement connectees de
+--    l'enseignant effectif, pas sur `finance_started_at` ; ce fichier ne
+--    change rien a la paie.
 --
 -- Aucun mot de suppression dans ce fichier. Chaque corps est remplace a
 -- l'identique ailleurs ; chaque bloc refuse de continuer s'il ne trouve pas

@@ -17,6 +17,9 @@
 --       rien ne change d'etat (decision du pilote, 31/10) ;
 --   J10 apres une arrivee de l'enseignant, `in_progress` -> `teacher_absent`
 --       est refuse par la machine d'etats ;
+--   J11 le titulaire ecarte a T+8 par l'absence automatique (A3,
+--       20261102500000) ne recoit pas de jeton et n'ouvre rien ; le
+--       remplacant ouvre la seance par son jeton ;
 --   J9  la cloture : ouverte par le jeton sans arrivee -> `teacher_absent`,
 --       jamais `tech_failure`, rien a payer ; ouverte avec arrivee -> `ended`.
 --
@@ -31,7 +34,9 @@ insert into auth.users (id, email) values
   ('1e700000-0000-4000-8000-000000000003', 'jt-t3@example.test'),
   ('1e700000-0000-4000-8000-000000000004', 'jt-r@example.test'),
   ('1e700000-0000-4000-8000-000000000005', 'jt-eleve@example.test'),
-  ('1e700000-0000-4000-8000-000000000006', 'jt-t6@example.test');
+  ('1e700000-0000-4000-8000-000000000006', 'jt-t6@example.test'),
+  ('1e700000-0000-4000-8000-000000000007', 'jt-t7@example.test'),
+  ('1e700000-0000-4000-8000-000000000008', 'jt-t8@example.test');
 
 insert into public.households (id, timezone) values
   ('1e70ffff-0000-4000-8000-000000000001', 'Europe/Paris');
@@ -44,6 +49,8 @@ values
   ('1e700000-0000-4000-8000-000000000003', 'TEACH-JT-000003', 'teacher', null, 'Yusuf', 'Test', 'provisional_active', 'male'),
   ('1e700000-0000-4000-8000-000000000004', 'TEACH-JT-000004', 'teacher', null, 'Rachid', 'Test', 'provisional_active', 'male'),
   ('1e700000-0000-4000-8000-000000000006', 'TEACH-JT-000006', 'teacher', null, 'Anas', 'Test', 'provisional_active', 'male'),
+  ('1e700000-0000-4000-8000-000000000007', 'TEACH-JT-000007', 'teacher', null, 'Idris', 'Test', 'provisional_active', 'male'),
+  ('1e700000-0000-4000-8000-000000000008', 'TEACH-JT-000008', 'teacher', null, 'Zakaria', 'Test', 'provisional_active', 'male'),
   ('1e700000-0000-4000-8000-000000000005', 'STUD-JT-000005', 'student',
    '1e70ffff-0000-4000-8000-000000000001', 'Yanis', 'Test', 'active', 'male');
 
@@ -52,7 +59,15 @@ insert into public.teacher_profiles (profile_id, kyc_status) values
   ('1e700000-0000-4000-8000-000000000002', 'approved'),
   ('1e700000-0000-4000-8000-000000000003', 'approved'),
   ('1e700000-0000-4000-8000-000000000004', 'approved'),
-  ('1e700000-0000-4000-8000-000000000006', 'approved');
+  ('1e700000-0000-4000-8000-000000000006', 'approved'),
+  ('1e700000-0000-4000-8000-000000000007', 'approved'),
+  ('1e700000-0000-4000-8000-000000000008', 'approved');
+
+-- La classe de f (l'absence automatique ne lit que les seances d'une classe).
+insert into public.groupes
+  (id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana)
+values ('1e70c000-0000-4000-8000-000000000007', '1e700000-0000-4000-8000-000000000007',
+        'adulte', 6, 'JT Classe F', 1, 6, 'Europe/Paris');
 
 insert into public.student_profiles (profile_id, student_type, interface_mode, camera_policy)
 values ('1e700000-0000-4000-8000-000000000005', 'minor', 'standard', 'forbidden');
@@ -61,7 +76,8 @@ values ('1e700000-0000-4000-8000-000000000005', 'minor', 'standard', 'forbidden'
 -- b : t2, commencee il y a 2 min (J4) ;
 -- c : t3, remplace par r, commencee il y a 1 min (J5, J9) ;
 -- d : t1, dans 3 jours, salle ouverte en avance (J7) ;
--- e : t6, dans 10 min, salle deja ouverte (J8).
+-- e : t6, dans 10 min, salle deja ouverte (J8) ;
+-- f : t7, commencee il y a 9 min, titulaire jamais entre (J11).
 insert into public.sessions (id, teacher_id, started_at, ended_at, status, join_opens_at)
 values
   ('1e70a000-0000-4000-8000-00000000000a', '1e700000-0000-4000-8000-000000000001',
@@ -74,6 +90,11 @@ values
    now() + interval '10 minutes', now() + interval '70 minutes', 'planned', null),
   ('1e70a000-0000-4000-8000-00000000000d', '1e700000-0000-4000-8000-000000000001',
    now() + interval '3 days', now() + interval '3 days 1 hour', 'planned', now() - interval '1 hour');
+
+insert into public.sessions (id, teacher_id, groupe_id, started_at, ended_at, status)
+values ('1e70a000-0000-4000-8000-00000000000f', '1e700000-0000-4000-8000-000000000007',
+        '1e70c000-0000-4000-8000-000000000007',
+        now() - interval '9 minutes', now() + interval '51 minutes', 'planned');
 
 insert into public.session_participants (session_id, profile_id, role) values
   ('1e70a000-0000-4000-8000-00000000000a', '1e700000-0000-4000-8000-000000000005', 'student');
@@ -232,6 +253,44 @@ begin
   raise notice 'JT OK J8 : avant l''heure, le jeton ne change rien';
 end $$;
 
+-- J11 : titulaire ecarte a T+8, puis remplacant.
+do $$
+declare
+  v_passage jsonb;
+begin
+  v_passage := private.remplacement_auto_passer(now());
+  if not private.remplacement_titulaire_ecarte('1e70a000-0000-4000-8000-00000000000f',
+                                               '1e700000-0000-4000-8000-000000000007') then
+    raise exception 'JT ROUGE J11 : absence automatique non posee (%)', v_passage;
+  end if;
+  begin
+    perform pg_temp.jeton('1e70a000-0000-4000-8000-00000000000f',
+                          '1e700000-0000-4000-8000-000000000007');
+    raise exception 'JT ROUGE J11 : le titulaire ecarte a obtenu un jeton';
+  exception when insufficient_privilege then
+    null;
+  end;
+  if pg_temp.statut('1e70a000-0000-4000-8000-00000000000f') <> 'planned'
+     or pg_temp.debut_paye('1e70a000-0000-4000-8000-00000000000f') is not null then
+    raise exception 'JT ROUGE J11 : le titulaire ecarte a ouvert la seance (%)',
+      pg_temp.statut('1e70a000-0000-4000-8000-00000000000f');
+  end if;
+  insert into public.remplacements_seance
+    (session_id, evenement, enseignant_titulaire_id, enseignant_remplacant_id, acteur_id, cle_idempotence)
+  values ('1e70a000-0000-4000-8000-00000000000f', 'remplacement_pris',
+          '1e700000-0000-4000-8000-000000000007', '1e700000-0000-4000-8000-000000000008',
+          '1e700000-0000-4000-8000-000000000008', '1e70e000-0000-4000-8000-000000000011');
+  if pg_temp.jeton('1e70a000-0000-4000-8000-00000000000f',
+                   '1e700000-0000-4000-8000-000000000008')->>'role' <> 'teacher' then
+    raise exception 'JT ROUGE J11 : le remplacant n''a pas de jeton enseignant';
+  end if;
+  if pg_temp.statut('1e70a000-0000-4000-8000-00000000000f') <> 'in_progress' then
+    raise exception 'JT ROUGE J11 : le jeton du remplacant n''a pas ouvert la seance (%)',
+      pg_temp.statut('1e70a000-0000-4000-8000-00000000000f');
+  end if;
+  raise notice 'JT OK J11 : titulaire ecarte a T+8 sans jeton ni ouverture, le remplacant ouvre';
+end $$;
+
 -- J10 : l'enseignant de a est entre (J3) : pas d'absence possible.
 do $$
 begin
@@ -274,4 +333,4 @@ end $$;
 
 rollback;
 
-select 'scenarios_seance_ouverte_jeton : 10 controles verts' as resultat;
+select 'scenarios_seance_ouverte_jeton : 11 controles verts' as resultat;
