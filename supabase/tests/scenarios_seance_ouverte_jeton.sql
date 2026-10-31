@@ -12,7 +12,13 @@
 --       remplacant ouvre ;
 --   J6  le jeton d'un eleve n'ouvre rien ;
 --   J7  une salle ouverte en avance (`join_opens_at` avancee) delivre le
---       jeton, mais n'ouvre pas la seance hors de la fenetre normale.
+--       jeton, mais n'ouvre pas la seance ;
+--   J8  dans la fenetre d'entree mais avant l'heure : le jeton est delivre,
+--       rien ne change d'etat (decision du pilote, 31/10) ;
+--   J10 apres une arrivee de l'enseignant, `in_progress` -> `teacher_absent`
+--       est refuse par la machine d'etats ;
+--   J9  la cloture : ouverte par le jeton sans arrivee -> `teacher_absent`,
+--       jamais `tech_failure`, rien a payer ; ouverte avec arrivee -> `ended`.
 --
 -- Se rejoue sur un Postgres nu, apres stub_auth.sql et toutes les
 -- migrations. Tout est annule a la fin. Un echec leve 'JT ROUGE : ...'.
@@ -24,7 +30,8 @@ insert into auth.users (id, email) values
   ('1e700000-0000-4000-8000-000000000002', 'jt-t2@example.test'),
   ('1e700000-0000-4000-8000-000000000003', 'jt-t3@example.test'),
   ('1e700000-0000-4000-8000-000000000004', 'jt-r@example.test'),
-  ('1e700000-0000-4000-8000-000000000005', 'jt-eleve@example.test');
+  ('1e700000-0000-4000-8000-000000000005', 'jt-eleve@example.test'),
+  ('1e700000-0000-4000-8000-000000000006', 'jt-t6@example.test');
 
 insert into public.households (id, timezone) values
   ('1e70ffff-0000-4000-8000-000000000001', 'Europe/Paris');
@@ -36,6 +43,7 @@ values
   ('1e700000-0000-4000-8000-000000000002', 'TEACH-JT-000002', 'teacher', null, 'Ilyas', 'Test', 'provisional_active', 'male'),
   ('1e700000-0000-4000-8000-000000000003', 'TEACH-JT-000003', 'teacher', null, 'Yusuf', 'Test', 'provisional_active', 'male'),
   ('1e700000-0000-4000-8000-000000000004', 'TEACH-JT-000004', 'teacher', null, 'Rachid', 'Test', 'provisional_active', 'male'),
+  ('1e700000-0000-4000-8000-000000000006', 'TEACH-JT-000006', 'teacher', null, 'Anas', 'Test', 'provisional_active', 'male'),
   ('1e700000-0000-4000-8000-000000000005', 'STUD-JT-000005', 'student',
    '1e70ffff-0000-4000-8000-000000000001', 'Yanis', 'Test', 'active', 'male');
 
@@ -43,15 +51,17 @@ insert into public.teacher_profiles (profile_id, kyc_status) values
   ('1e700000-0000-4000-8000-000000000001', 'approved'),
   ('1e700000-0000-4000-8000-000000000002', 'approved'),
   ('1e700000-0000-4000-8000-000000000003', 'approved'),
-  ('1e700000-0000-4000-8000-000000000004', 'approved');
+  ('1e700000-0000-4000-8000-000000000004', 'approved'),
+  ('1e700000-0000-4000-8000-000000000006', 'approved');
 
 insert into public.student_profiles (profile_id, student_type, interface_mode, camera_policy)
 values ('1e700000-0000-4000-8000-000000000005', 'minor', 'standard', 'forbidden');
 
 -- a : t1, commencee il y a 2 min (J1, J2, J3, J6) ;
 -- b : t2, commencee il y a 2 min (J4) ;
--- c : t3, remplace par r, commence dans 5 min (J5) ;
--- d : t1, dans 3 jours, salle ouverte en avance (J7).
+-- c : t3, remplace par r, commencee il y a 1 min (J5, J9) ;
+-- d : t1, dans 3 jours, salle ouverte en avance (J7) ;
+-- e : t6, dans 10 min, salle deja ouverte (J8).
 insert into public.sessions (id, teacher_id, started_at, ended_at, status, join_opens_at)
 values
   ('1e70a000-0000-4000-8000-00000000000a', '1e700000-0000-4000-8000-000000000001',
@@ -59,7 +69,9 @@ values
   ('1e70a000-0000-4000-8000-00000000000b', '1e700000-0000-4000-8000-000000000002',
    now() - interval '2 minutes', now() + interval '58 minutes', 'planned', null),
   ('1e70a000-0000-4000-8000-00000000000c', '1e700000-0000-4000-8000-000000000003',
-   now() + interval '5 minutes', now() + interval '65 minutes', 'planned', null),
+   now() - interval '1 minute', now() + interval '59 minutes', 'planned', null),
+  ('1e70a000-0000-4000-8000-00000000000e', '1e700000-0000-4000-8000-000000000006',
+   now() + interval '10 minutes', now() + interval '70 minutes', 'planned', null),
   ('1e70a000-0000-4000-8000-00000000000d', '1e700000-0000-4000-8000-000000000001',
    now() + interval '3 days', now() + interval '3 days 1 hour', 'planned', now() - interval '1 hour');
 
@@ -205,6 +217,61 @@ begin
   raise notice 'JT OK J7 : jamais d''ouverture hors de la fenetre normale';
 end $$;
 
+-- J8 : dans la fenetre d'entree, avant l'heure.
+do $$
+begin
+  if pg_temp.jeton('1e70a000-0000-4000-8000-00000000000e',
+                   '1e700000-0000-4000-8000-000000000006')->>'role' <> 'teacher' then
+    raise exception 'JT ROUGE J8 : jeton non delivre dans la fenetre d''entree';
+  end if;
+  if pg_temp.statut('1e70a000-0000-4000-8000-00000000000e') <> 'planned'
+     or pg_temp.debut_paye('1e70a000-0000-4000-8000-00000000000e') is not null then
+    raise exception 'JT ROUGE J8 : la seance a change d''etat avant l''heure (%)',
+      pg_temp.statut('1e70a000-0000-4000-8000-00000000000e');
+  end if;
+  raise notice 'JT OK J8 : avant l''heure, le jeton ne change rien';
+end $$;
+
+-- J10 : l'enseignant de a est entre (J3) : pas d'absence possible.
+do $$
+begin
+  begin
+    update public.sessions set status = 'teacher_absent'
+     where id = '1e70a000-0000-4000-8000-00000000000a';
+    raise exception 'JT ROUGE J10 : absence posee apres l''arrivee de l''enseignant';
+  exception when raise_exception then
+    if sqlerrm not like 'transition de session non autoris%' then raise; end if;
+  end;
+  raise notice 'JT OK J10 : apres une arrivee, l''absence est refusee';
+end $$;
+
+-- J9 : cloture trois heures plus tard.
+do $$
+declare
+  v_bilan jsonb;
+begin
+  v_bilan := private.ses_cloturer_seances_echues(now() + interval '3 hours');
+  if pg_temp.statut('1e70a000-0000-4000-8000-00000000000c') <> 'teacher_absent' then
+    raise exception 'JT ROUGE J9 : ouverte par le jeton sans arrivee, lu % au lieu de teacher_absent',
+      pg_temp.statut('1e70a000-0000-4000-8000-00000000000c');
+  end if;
+  if exists (select 1 from public.tresorerie_mouvements m
+              where m.source_type = 'prestation'
+                and m.source_id = '1e70a000-0000-4000-8000-00000000000c') then
+    raise exception 'JT ROUGE J9 : une seance sans enseignant a ete payee';
+  end if;
+  if pg_temp.statut('1e70a000-0000-4000-8000-00000000000a') <> 'ended'
+     or pg_temp.statut('1e70a000-0000-4000-8000-00000000000b') <> 'ended' then
+    raise exception 'JT ROUGE J9 : seance tenue mal close (%, %)',
+      pg_temp.statut('1e70a000-0000-4000-8000-00000000000a'),
+      pg_temp.statut('1e70a000-0000-4000-8000-00000000000b');
+  end if;
+  if (v_bilan->>'tech_failure')::int <> 0 then
+    raise exception 'JT ROUGE J9 : la cloture a produit tech_failure : %', v_bilan;
+  end if;
+  raise notice 'JT OK J9 : jeton sans arrivee -> teacher_absent, rien a payer ; arrivee -> ended';
+end $$;
+
 rollback;
 
-select 'scenarios_seance_ouverte_jeton : 7 controles verts' as resultat;
+select 'scenarios_seance_ouverte_jeton : 10 controles verts' as resultat;
