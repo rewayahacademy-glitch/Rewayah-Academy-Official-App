@@ -38,11 +38,15 @@ import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dar
 import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart'
     show PointNormalise;
 import 'package:rewayah_academy/core/tc_outils/port_annotations.dart';
+import 'package:rewayah_academy/core/tc_realtime/codec_message_pedagogique.dart';
+import 'package:rewayah_academy/core/tc_realtime/types_message.dart';
 import 'package:rewayah_academy/core/theme/app_gabarit.dart';
+import 'package:rewayah_academy/core/theme/app_mouvement.dart';
 import 'package:rewayah_academy/core/video/gestes_salle.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
+import 'package:rewayah_academy/core/video/signal_rappel.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
@@ -164,8 +168,10 @@ List<Override> _surcharges({
   List<AnnonceObservation> annonces = const <AnnonceObservation>[],
   List<GroupeEnseignant> groupesEnseignant = const <GroupeEnseignant>[],
   FauxGestesSalle? gestes,
+  SignalRappel? signalRappel,
 }) => <Override>[
   portGestesSalleProvider.overrideWithValue(gestes ?? FauxGestesSalle()),
+  signalRappelProvider.overrideWithValue(signalRappel ?? () {}),
   sourceSessionProvider.overrideWithValue(FausseSourceSession(_session(role))),
   servicePreVolProvider.overrideWithValue(preVol),
   serviceVideoProvider.overrideWithValue(video),
@@ -1653,6 +1659,50 @@ void main() {
       await tester.tap(find.text(t.commun.reessayer));
       await tester.pumpAndSettle();
       expect(video.demandes, hasLength(2));
+    });
+
+    testWidgets('rappel discret recu : l eleve lit « Le professeur vous '
+        'appelle », son appareil est sollicite, puis le message s efface', (
+      WidgetTester tester,
+    ) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      int signaux = 0;
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+          signalRappel: () => signaux++,
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      await tester.pumpAndSettle();
+      expect(find.text(t.tc.classe.rappel.recu), findsNothing);
+
+      moteur.recevoirDonnees(
+        PaquetDonnees(
+          sujet: sujetProtocolePedagogique,
+          charge: messageVersOctets(
+            messageRappelDiscret(
+              sessionId: _seance,
+              emetteurProfilId: 't1',
+              academyId: 'ID-p1',
+              maintenantUtc: DateTime.now(),
+            ),
+          ),
+          fiable: true,
+          emetteurIdentite: 't1',
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+      expect(find.text(t.tc.classe.rappel.recu), findsOneWidget);
+      expect(signaux, 1);
+
+      await tester.pump(AppMouvement.rappelRecuMaintien);
+      await tester.pumpAndSettle();
+      expect(find.text(t.tc.classe.rappel.recu), findsNothing);
     });
 
     testWidgets('point 4 : le retour du telephone dans l appel demande '

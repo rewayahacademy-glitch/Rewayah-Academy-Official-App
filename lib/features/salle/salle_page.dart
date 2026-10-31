@@ -32,8 +32,9 @@ import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import '../../core/tc_bibliotheque/couverture_ressource.dart';
 import '../../core/tc_classe/controleur_recitation.dart';
+import '../../core/tc_classe/port_rappel_discret.dart';
 import '../../core/tc_classe/rappel_discret.dart'
-    show portRappelDiscretProvider;
+    show RelaisRappelSalle, portRappelDiscretProvider;
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_classe/roster_enseignant.dart';
 import '../../core/tc_classe/teacher_student_projection.dart';
@@ -46,6 +47,7 @@ import '../../core/tc_outils/port_annotations.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
+import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
@@ -55,10 +57,12 @@ import '../../core/video/politique_camera.dart';
 import '../../core/video/pre_vol.dart';
 import '../../core/video/repli_audio.dart';
 import '../../core/video/service_video.dart';
+import '../../core/video/signal_rappel.dart';
 import '../../core/video/video_session_provider.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/avatar_nom.dart';
+import '../../core/widgets/bandeau_attention.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/commande_salle.dart';
@@ -293,7 +297,40 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     neuve.parole.addListener(() {
       if (mounted) setState(() {});
     });
+    // Rappel discret (30/10/2026) : l'eleve appele le lit, et son appareil
+    // vibre ou sonne quand il le permet.
+    neuve.rappelsRecus.addListener(_rappelRecu);
     return _synchro = neuve;
+  }
+
+  /// Rappel discret : « Le professeur vous appelle » est affiche jusqu'a ce
+  /// moment, ou `null`.
+  bool _rappelAffiche = false;
+  Timer? _finRappel;
+
+  void _rappelRecu() {
+    if (!mounted) return;
+    ref.read(signalRappelProvider)();
+    _finRappel?.cancel();
+    _finRappel = Timer(AppMouvement.rappelRecuMaintien, () {
+      if (mounted) setState(() => _rappelAffiche = false);
+    });
+    setState(() => _rappelAffiche = true);
+  }
+
+  /// Le transport du rappel discret pendant que cette salle vit
+  /// (`RelaisRappelSalle`) : un paquet adresse au seul eleve vise, sur le
+  /// canal de donnees de l'enseignant. Le cooldown reste celui du port.
+  Future<void> _envoyerRappel({
+    required String sessionId,
+    required String academyId,
+  }) async {
+    final SynchroSalle? synchro = _synchro;
+    final String? profil = _profilDe(academyId);
+    if (synchro == null || profil == null || sessionId != widget.seanceId) {
+      throw const EchecRappel(MotifEchecRappel.transport);
+    }
+    await synchro.emettreRappel(academyId: academyId, profilCible: profil);
   }
 
   /// D14 (S0) : le dernier refus d'allumer la camera, tel que le navigateur
@@ -379,6 +416,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         widget.preparation &&
         (role == null || _suitLesCours(session0) || role == AppRole.teacher);
     GardeSortieSalle.instance.inscrire(_demanderSortie);
+    RelaisRappelSalle.inscrire(_envoyerRappel);
     if (!_enPreparation) {
       unawaited(_entrer());
     }
@@ -387,6 +425,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   @override
   void dispose() {
     GardeSortieSalle.instance.retirer(_demanderSortie);
+    RelaisRappelSalle.retirer(_envoyerRappel);
+    _finRappel?.cancel();
     unawaited(_sEtats?.cancel());
     unawaited(_sParticipants?.cancel());
     unawaited(_sQualite?.cancel());
@@ -1247,7 +1287,16 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             )
           : null,
       // D14 : effacee des que la camera publie.
-      alerte: (moi?.camera ?? false) || _erreurCameraFermee
+      // Rappel discret : chez l'eleve appele, en tete, avant toute autre
+      // alerte (une alerte urgente va toujours en tete).
+      alerte: !enseignant && _rappelAffiche
+          ? BandeauAttention(
+              key: const ValueKey<String>('rappel-recu'),
+              titre: t.tc.classe.rappel.recu,
+              message: t.salle.rappelRecuDetail,
+              ton: TonEtat.accent,
+            )
+          : (moi?.camera ?? false) || _erreurCameraFermee
           ? null
           : _cameraAbsente
           ? _ErreurCamera(

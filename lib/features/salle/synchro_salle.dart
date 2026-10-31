@@ -14,6 +14,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart' show Offset;
 
 import '../../core/observabilite/journal_dev.dart';
+import '../../core/tc_classe/port_rappel_discret.dart';
 import '../../core/tc_outils/annotation_layer.dart';
 import '../../core/tc_outils/evenements_outils.dart';
 import '../../core/tc_outils/port_annotations.dart';
@@ -21,6 +22,7 @@ import '../../core/tc_outils/reception_outils.dart';
 import '../../core/tc_realtime/adaptateur_transport_livekit.dart';
 import '../../core/tc_realtime/port_realtime_pedagogique.dart';
 import '../../core/tc_realtime/service_realtime_pedagogique.dart';
+import '../../core/tc_realtime/types_message.dart';
 import '../../core/video/video_session_provider.dart';
 
 /// S1 : le type du message du pointeur de l'enseignant (point normalise de
@@ -119,6 +121,7 @@ class SynchroSalle {
     ) {
       _recevoirTableau(m);
       _recevoirParole(m);
+      _recevoirRappel(m);
     }, onError: (Object _) {});
     if (_peutDiffuser) {
       _abonnementPage = moteur.contenusPresentes.listen(
@@ -267,6 +270,44 @@ class SynchroSalle {
     );
   }
 
+  /// Le rappel discret (30/10/2026) : le nombre de rappels recus par cet
+  /// appareil. Le paquet est adresse au seul eleve vise (`emettreCible`) :
+  /// le recevoir, c'est etre appele. Aucun accuse ne repart.
+  final ValueNotifier<int> rappelsRecus = ValueNotifier<int>(0);
+
+  void _recevoirRappel(MessagePedagogique message) {
+    if (message.type != typeRappelDiscret ||
+        message.emetteurProfilId == profilLocalId ||
+        academyIdDeCharge(message) == null) {
+      return;
+    }
+    rappelsRecus.value++;
+  }
+
+  /// Appelle discretement l'eleve [academyId], dont l'identite dans la salle
+  /// est [profilCible] : un paquet fiable adresse a lui seul. Leve
+  /// [EchecRappel] quand le jeton n'a pas le canal ; une erreur d'envoi
+  /// remonte telle quelle (la cadence la nomme). Le cooldown reste celui de
+  /// `RappelDiscretCadence`.
+  Future<void> emettreRappel({
+    required String academyId,
+    required String profilCible,
+  }) async {
+    if (!_peutDiffuser) {
+      throw const EchecRappel(MotifEchecRappel.droitRefuse);
+    }
+    await _realtime.emettreCible(
+      messageRappelDiscret(
+        sessionId: sessionId,
+        emetteurProfilId: profilLocalId,
+        academyId: academyId,
+        maintenantUtc: DateTime.now(),
+      ),
+      destinataireProfilId: profilCible,
+      canal: CanalFiabilite.fiable,
+    );
+  }
+
   /// Le profil de cet appareil.
   final String profilLocalId;
 
@@ -346,6 +387,7 @@ class SynchroSalle {
     pointeurDistant.dispose();
     tableauOuvert.dispose();
     parole.dispose();
+    rappelsRecus.dispose();
     await _reception.liberer();
     await _transport.liberer();
   }

@@ -217,9 +217,11 @@ Finder _fleche(String cle) => find.byKey(ValueKey<String>(cle));
 
 void main() {
   group('La vue de presentation, sans monter d ecran', () {
-    test('les sept etats du moteur donnent six phases distinctes', () {
+    test('les huit etats du moteur donnent six phases distinctes', () {
       // Les cinq etats du protocole -- connecte, instable, reconnexion,
-      // retabli, echec -- plus l'attente d'entree. Chacun doit se distinguer :
+      // retabli, echec -- plus l'attente d'entree, et la sortie decidee par
+      // l'enseignant (30/10/2026), qui ne presente plus rien comme un echec.
+      // Chacun doit se distinguer :
       // deux etats qui retomberaient sur la meme phase se diraient par le meme
       // mot, et l'enseignant ne saurait pas si sa page est partie.
       final Map<EtatSalle, PhasePresentation> attendu =
@@ -231,6 +233,7 @@ void main() {
             EtatSalle.reconnexion: PhasePresentation.reconnexion,
             EtatSalle.retabli: PhasePresentation.retabli,
             EtatSalle.echec: PhasePresentation.echec,
+            EtatSalle.retire: PhasePresentation.echec,
           };
 
       for (final MapEntry<EtatSalle, PhasePresentation> cas

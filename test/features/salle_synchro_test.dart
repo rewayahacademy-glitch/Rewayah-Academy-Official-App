@@ -1,12 +1,17 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
+import 'package:rewayah_academy/core/tc_classe/port_rappel_discret.dart';
+import 'package:rewayah_academy/core/tc_classe/rappel_discret.dart';
 import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart';
 import 'package:rewayah_academy/core/tc_outils/evenements_outils.dart';
 import 'package:rewayah_academy/core/tc_outils/port_annotations.dart';
 import 'package:rewayah_academy/core/tc_outils/reception_outils.dart';
+import 'package:rewayah_academy/core/tc_realtime/codec_message_pedagogique.dart';
+import 'package:rewayah_academy/core/tc_realtime/port_realtime_pedagogique.dart';
 import 'package:rewayah_academy/core/tc_realtime/port_transport_donnees.dart';
 import 'package:rewayah_academy/core/tc_realtime/service_realtime_pedagogique.dart';
 import 'package:rewayah_academy/core/tc_realtime/transport_memoire.dart';
+import 'package:rewayah_academy/core/tc_realtime/types_message.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/features/salle/synchro_salle.dart';
 
@@ -349,6 +354,107 @@ void main() {
     await pumpEventQueue();
     expect(moteurEleve.donneesPubliees.length, avant);
     expect(eleve.parole.value, isNull);
+  });
+
+  test('rappel discret, emetteur : par le port et la salle ouverte, un '
+      'paquet fiable adresse au seul eleve vise ; le cooldown tient', () async {
+    final FauxMoteurSalle moteur = FauxMoteurSalle();
+    await moteur.rejoindre(accesSalle('teacher'));
+    final SynchroSalle enseignant = SynchroSalle(
+      moteur: moteur,
+      acces: accesSalle('teacher'),
+      sessionId: _seance,
+      profilLocalId: 't1',
+    );
+    addTearDown(enseignant.liberer);
+    Future<void> transport({
+      required String sessionId,
+      required String academyId,
+    }) => enseignant.emettreRappel(academyId: academyId, profilCible: 'e2');
+    RelaisRappelSalle.inscrire(transport);
+    addTearDown(() => RelaisRappelSalle.retirer(transport));
+    final RappelDiscretCadence port = RappelDiscretCadence(
+      transport: transportRappelRelais,
+    );
+
+    await port.rappeler(sessionId: _seance, academyId: 'RA-26-0002');
+    expect(moteur.donneesPubliees, hasLength(1));
+    expect(moteur.donneesPubliees.single.fiable, isTrue);
+    expect(moteur.destinatairesPublies.single, <String>['e2']);
+    final MessagePedagogique envoye = messageDepuisOctets(
+      moteur.donneesPubliees.single.charge,
+    )!;
+    expect(envoye.type, typeRappelDiscret);
+    expect(academyIdDeCharge(envoye), 'RA-26-0002');
+
+    // Le cooldown existant : un second appel immediat ne part pas.
+    await expectLater(
+      port.rappeler(sessionId: _seance, academyId: 'RA-26-0002'),
+      throwsA(
+        isA<EchecRappel>().having(
+          (EchecRappel e) => e.motif,
+          'motif',
+          MotifEchecRappel.cooldown,
+        ),
+      ),
+    );
+    expect(moteur.donneesPubliees, hasLength(1));
+
+    // Hors salle, le relais dit qu'il n'aboutit pas.
+    RelaisRappelSalle.retirer(transport);
+    await expectLater(
+      port.rappeler(sessionId: _seance, academyId: 'RA-26-0003'),
+      throwsA(isA<EchecRappel>()),
+    );
+  });
+
+  test('rappel discret, recepteur : l eleve compte le rappel recu, ignore '
+      'les autres paquets et le sien', () async {
+    final FauxMoteurSalle moteur = FauxMoteurSalle();
+    await moteur.rejoindre(accesSalle('student'));
+    final SynchroSalle eleve = SynchroSalle(
+      moteur: moteur,
+      acces: accesSalle('student'),
+      sessionId: _seance,
+      profilLocalId: 'e2',
+    );
+    addTearDown(eleve.liberer);
+    void recevoir(MessagePedagogique message) => moteur.recevoirDonnees(
+      PaquetDonnees(
+        sujet: sujetProtocolePedagogique,
+        charge: messageVersOctets(message),
+        fiable: true,
+        emetteurIdentite: 't1',
+      ),
+    );
+
+    recevoir(
+      messageEleveActif(
+        sessionId: _seance,
+        emetteurProfilId: 't1',
+        academyId: 'RA-26-0002',
+        maintenantUtc: DateTime.utc(2026, 10, 30, 20),
+      ),
+    );
+    await pumpEventQueue();
+    expect(eleve.rappelsRecus.value, 0);
+
+    recevoir(
+      messageRappelDiscret(
+        sessionId: _seance,
+        emetteurProfilId: 't1',
+        academyId: 'RA-26-0002',
+        maintenantUtc: DateTime.utc(2026, 10, 30, 20),
+      ),
+    );
+    await pumpEventQueue();
+    expect(eleve.rappelsRecus.value, 1);
+
+    // L'eleve n'a pas le canal : il n'appelle personne.
+    await expectLater(
+      eleve.emettreRappel(academyId: 'RA-26-0001', profilCible: 'e1'),
+      throwsA(isA<EchecRappel>()),
+    );
   });
 
   test('rejeu : un eleve qui entre apres la page, le tableau et un trait '

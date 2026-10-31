@@ -6706,5 +6706,6 @@
   "salle.gestes.echec": "Salle en groupe (consigne du pilote du 30/10/2026, points 1 et 2) : le directeur accueille des groupes de 2 a 5 eleves ; l'enseignant coupe le micro ou la camera d'un eleve, le fait sortir de la salle et le readmet",
   "salle.gestes.sortis": "Salle en groupe (consigne du pilote du 30/10/2026, points 1 et 2) : le directeur accueille des groupes de 2 a 5 eleves ; l'enseignant coupe le micro ou la camera d'un eleve, le fait sortir de la salle et le readmet",
   "salle.gestes.readmettre": "Salle en groupe (consigne du pilote du 30/10/2026, points 1 et 2) : le directeur accueille des groupes de 2 a 5 eleves ; l'enseignant coupe le micro ou la camera d'un eleve, le fait sortir de la salle et le readmet",
-  "salle.gestes.sortisErreur": "Salle en groupe (consigne du pilote du 30/10/2026, points 1 et 2) : le directeur accueille des groupes de 2 a 5 eleves ; l'enseignant coupe le micro ou la camera d'un eleve, le fait sortir de la salle et le readmet"
+  "salle.gestes.sortisErreur": "Salle en groupe (consigne du pilote du 30/10/2026, points 1 et 2) : le directeur accueille des groupes de 2 a 5 eleves ; l'enseignant coupe le micro ou la camera d'un eleve, le fait sortir de la salle et le readmet",
+  "salle.rappelRecuDetail": "Rappel discret (consigne du pilote du 30/10/2026, constat du directeur : le rappel ne faisait rien chez l'eleve) : la phrase sous « Le professeur vous appelle »"
 }
