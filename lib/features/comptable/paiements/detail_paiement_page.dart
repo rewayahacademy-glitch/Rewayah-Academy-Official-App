@@ -27,7 +27,6 @@ import '../../../core/comptable/statuts_comptable.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/reseau/service_reseau.dart';
-import '../../../core/router/routes.dart';
 import '../../../core/theme/app_gabarit.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -51,6 +50,7 @@ import '../../../core/widgets/skeleton.dart';
 import '../../../core/widgets/status_pill.dart';
 import '../validation/suivi_validation.dart';
 import 'confirmation/confirmation_payout.dart';
+import 'espace_paiements.dart';
 import 'ligne_obligation.dart';
 import 'paiements_donnees.dart';
 import 'signaler_ecart.dart';
@@ -58,7 +58,23 @@ import 'signaler_ecart.dart';
 /// Le detail d'une obligation payable, sous l'onglet « A effectuer ».
 class DetailPaiementPage extends ConsumerStatefulWidget {
   /// Cree la page pour l'obligation [obligationId] (segment d'adresse).
-  const DetailPaiementPage({required this.obligationId, super.key});
+  const DetailPaiementPage({
+    required this.obligationId,
+    this.espace,
+    super.key,
+  });
+
+  /// Le detail dans la Finance de la direction (`/admin/finance/paie`) :
+  /// retour vers sa liste, aucun lien vers les pages du Comptable.
+  factory DetailPaiementPage.direction({required String obligationId}) =>
+      DetailPaiementPage(
+        obligationId: obligationId,
+        espace: EspacePaiements.direction(),
+      );
+
+  /// L'espace de la page : celui du Comptable par defaut, ou la Finance de
+  /// la direction. Il donne le retour et le lien vers le profil.
+  final EspacePaiements? espace;
 
   /// L'obligation.
   final String obligationId;
@@ -112,6 +128,8 @@ class _DetailPaiementPageState extends ConsumerState<DetailPaiementPage> {
   @override
   Widget build(BuildContext context) {
     final p = t.comptable.paiements;
+    final EspacePaiements espace = widget.espace ?? EspacePaiements.comptable();
+    final String Function(String)? beneficiaire = espace.beneficiaire;
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final AsyncValue<ObligationPayable> valeur = ref.watch(
       obligationPayableProvider(widget.obligationId),
@@ -119,7 +137,7 @@ class _DetailPaiementPageState extends ConsumerState<DetailPaiementPage> {
     return PageShell(
       titre: p.detailTitre,
       sousTitre: p.detailSousTitre,
-      onRetour: () => retourComptable(context, Routes.comptablePaiements),
+      onRetour: () => retourComptable(context, espace.liste),
       actionsEntete: const <Widget>[BasculeMontants(avecEtat: true)],
       child: BlocAsynchrone<ObligationPayable>(
         valeur: valeur,
@@ -135,8 +153,9 @@ class _DetailPaiementPageState extends ConsumerState<DetailPaiementPage> {
           onSignaler: o.permissions.permet(ActionFinance.signalerEcart)
               ? () => _signaler(o)
               : null,
-          onVoirProfil: () =>
-              context.push(Routes.comptableBeneficiairePour(o.beneficiaire.id)),
+          onVoirProfil: beneficiaire == null
+              ? null
+              : () => context.push(beneficiaire(o.beneficiaire.id)),
         ),
       ),
     );
@@ -176,7 +195,10 @@ class _Contenu extends StatelessWidget {
   final bool horsLigne;
   final VoidCallback onPayer;
   final VoidCallback? onSignaler;
-  final VoidCallback onVoirProfil;
+
+  /// Ouvre le profil du beneficiaire, ou `null` sans page de profil dans
+  /// l'espace (la direction) : le lien n'est pas rendu.
+  final VoidCallback? onVoirProfil;
 
   @override
   Widget build(BuildContext context) {
@@ -246,7 +268,7 @@ class _Contenu extends StatelessWidget {
 }
 
 /// Les alertes rendues par la source, en phrases (§31 « alertes »).
-List<Widget> _alertes(ObligationPayable o, VoidCallback onVoirProfil) {
+List<Widget> _alertes(ObligationPayable o, VoidCallback? onVoirProfil) {
   final d = t.comptable.paiements.detail;
   final RaisonBlocage? raison = raisonSansPaiement(o);
   final DateTime? modification = o.destination?.derniereModification;
@@ -278,11 +300,13 @@ List<Widget> _alertes(ObligationPayable o, VoidCallback onVoirProfil) {
       BandeauAttention(
         titre: libelleRaisonBlocage(RaisonBlocage.infosManquantes),
         message: d.alerteInfos,
-        action: LienFleche(
-          libelle: t.comptable.paiements.actions.voirProfil,
-          legende: true,
-          onPress: onVoirProfil,
-        ),
+        action: onVoirProfil == null
+            ? null
+            : LienFleche(
+                libelle: t.comptable.paiements.actions.voirProfil,
+                legende: true,
+                onPress: onVoirProfil,
+              ),
       ),
     if (raison != null &&
         raison != RaisonBlocage.autoPaiement &&
@@ -396,7 +420,7 @@ class _ActionPrincipaleDetail extends StatelessWidget {
   final ObligationPayable obligation;
   final bool horsLigne;
   final VoidCallback onPayer;
-  final VoidCallback onVoirProfil;
+  final VoidCallback? onVoirProfil;
 
   @override
   Widget build(BuildContext context) {
@@ -420,10 +444,12 @@ class _ActionPrincipaleDetail extends StatelessWidget {
           onPress: onPayer,
         );
       case ActionLigne.relancer:
+        final VoidCallback? voirProfil = onVoirProfil;
+        if (voirProfil == null) return const SizedBox.shrink();
         return ActionPrincipale(
           libelle: p.actions.relancer,
           niveau: NiveauAction.secondaire,
-          onPress: onVoirProfil,
+          onPress: voirProfil,
         );
       case ActionLigne.voir:
         // La raison est deja dite par l'alerte rendue en tete (R-FIN-15).

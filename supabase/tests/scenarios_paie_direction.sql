@@ -1,14 +1,17 @@
 -- B2.5 PAIE-DIRECTION (02/11/2026) : le releve mensuel de la paie des
 -- enseignants, lu par la direction et la comptabilite. Migration
--- 20261102200000.
+-- 20261102200000, puis PAIE-REMPLACANT, migration 20261102300000.
 --   1. classe d'enfants de 3 eleves, 2 presents sur une seance d'une heure :
 --      montant = 2 x taux horaire enfant LU EN BASE (politique en vigueur) ;
 --   2. une seance annulee n'est jamais comptee ;
 --   3. une seance sans eleve present est tenue, a paie nulle ;
 --   4. une panne sans decision est « en attente », jamais payee ;
---   5. seance remplacee : la regle existante paie l'enseignant de la seance
---      (`sessions.teacher_id`, le titulaire), le releve suit cette regle ;
---   6. le detail par seance redit les memes montants ;
+--   5. seance remplacee (regle du directeur, systeme des astreintes : « Paie
+--      seance affectee au remplacant ») : la paie va a la remplacante, le
+--      titulaire ne la voit plus, le total du mois ne change pas (aucune
+--      double paie) ;
+--   6. le detail par seance redit les memes montants, filtre sur
+--      l'enseignant effectif ; les revenus de chaque enseignante aussi ;
 --   7. la comptabilite lit ; un enseignant, un eleve, un tuteur et anon ne
 --      lisent rien ;
 --   8. rien n'est ecrit par la lecture ; la lecture brute reste au serveur.
@@ -138,6 +141,12 @@ VALUES ('d2500000-0000-4000-8000-000000000505', 'remplacement_designe_admin',
 
 CREATE TEMP TABLE avant AS SELECT count(*) AS n FROM public.tresorerie_mouvements;
 GRANT SELECT ON avant TO authenticated;
+-- Ce que la tresorerie a ecrit pour les seances du scenario, sans enseignant.
+CREATE TEMP TABLE ecrit AS
+SELECT coalesce(sum(m.montant_minor), 0)::bigint AS n FROM public.tresorerie_mouvements m
+ WHERE m.regle = 'remuneration_due' AND m.coffre = 'paie_a_decaisser' AND m.sens = 'entree'
+   AND m.source_id LIKE 'd2500000-0000-4000-8000-00000000050%';
+GRANT SELECT ON ecrit TO authenticated;
 
 -- ------------------------------------------------------------------
 -- 1 a 5. Le releve de la direction
@@ -149,33 +158,49 @@ CREATE TEMP TABLE b1 AS
 SELECT e FROM r, jsonb_array_elements(r.j -> 'enseignants') e
  WHERE e ->> 'enseignantId' = 'd2500000-0000-4000-8000-0000000000b1';
 
-SELECT pg_temp.vrai((SELECT e #>> '{montant,mineur}' FROM b1)::bigint = 3 * (SELECT enfant FROM taux),
-  'releve : s1 (2 presents x 1 h) + s5 (1 present x 1 h) = 3 x taux enfant lu en base');
+CREATE TEMP TABLE b2 AS
+SELECT e FROM r, jsonb_array_elements(r.j -> 'enseignants') e
+ WHERE e ->> 'enseignantId' = 'd2500000-0000-4000-8000-0000000000b2';
+
+SELECT pg_temp.vrai((SELECT e #>> '{montant,mineur}' FROM b1)::bigint = 2 * (SELECT enfant FROM taux),
+  'releve : la titulaire est payee de s1 seule (2 presents x 1 h = 2 x taux enfant lu en base)');
 SELECT pg_temp.vrai((SELECT e #>> '{montant,devise}' FROM b1) = (SELECT devise FROM taux)
   AND (SELECT j ->> 'devise' FROM r) = (SELECT devise FROM taux),
   'releve : devise de la politique');
-SELECT pg_temp.vrai((SELECT (e ->> 'seancesTenues')::int FROM b1) = 3,
-  'releve : trois seances tenues (s1, s3 sans eleve present, s5), l''annulee n''est pas comptee');
+SELECT pg_temp.vrai((SELECT (e ->> 'seancesTenues')::int FROM b1) = 2,
+  'releve : deux seances tenues par la titulaire (s1, s3 sans eleve present), ni l''annulee ni la remplacee');
 SELECT pg_temp.vrai((SELECT (e ->> 'seancesEnAttente')::int FROM b1) = 1,
   'releve : la panne sans decision est en attente');
-SELECT pg_temp.vrai((SELECT (e ->> 'minutes')::int FROM b1) = 180
-  AND (SELECT (e ->> 'minutesEleves')::int FROM b1) = 180,
-  'releve : 180 minutes tenues, 180 minutes-eleves (2 x 60 + 0 + 1 x 60)');
+SELECT pg_temp.vrai((SELECT (e ->> 'minutes')::int FROM b1) = 120
+  AND (SELECT (e ->> 'minutesEleves')::int FROM b1) = 120,
+  'releve : 120 minutes tenues, 120 minutes-eleves (2 x 60 + 0)');
 SELECT pg_temp.vrai((SELECT e ->> 'prenom' FROM b1) = 'Maryam' AND (SELECT e ->> 'nom' FROM b1) = 'Bah'
   AND (SELECT e -> 'classes' FROM b1) = '["An-Nour PD"]'::jsonb,
   'releve : prenom, nom et Classes de l''enseignante');
-SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM r, jsonb_array_elements(r.j -> 'enseignants') e
-                                 WHERE e ->> 'enseignantId' = 'd2500000-0000-4000-8000-0000000000b2'),
-  'remplacement : la regle existante paie l''enseignante de la seance (titulaire), pas la remplacante');
+SELECT pg_temp.vrai((SELECT e #>> '{montant,mineur}' FROM b2)::bigint = (SELECT enfant FROM taux)
+  AND (SELECT (e ->> 'seancesTenues')::int FROM b2) = 1
+  AND (SELECT (e ->> 'minutes')::int FROM b2) = 60
+  AND (SELECT e ->> 'prenom' FROM b2) = 'Hawa'
+  AND (SELECT e -> 'classes' FROM b2) = '["An-Nour PD"]'::jsonb,
+  'remplacement : la remplacante est payee de s5 (1 present x 1 h), dans la Classe de la titulaire');
+SELECT pg_temp.vrai((SELECT e #>> '{montant,mineur}' FROM b1)::bigint
+                    + (SELECT e #>> '{montant,mineur}' FROM b2)::bigint = 3 * (SELECT enfant FROM taux)
+  AND (SELECT e #>> '{montant,mineur}' FROM b1)::bigint
+      + (SELECT e #>> '{montant,mineur}' FROM b2)::bigint = (SELECT n FROM ecrit),
+  'remplacement : le total ne change pas, egal a ce que la tresorerie a ecrit (aucune double paie)');
 SELECT pg_temp.vrai((SELECT (j #>> '{total,mineur}')::bigint FROM r)
-                    >= 3 * (SELECT enfant FROM taux),
-  'releve : le total contient la paie de l''enseignante');
+                    = (SELECT coalesce(sum((e #>> '{montant,mineur}')::bigint), 0)
+                         FROM r, jsonb_array_elements(r.j -> 'enseignants') e),
+  'releve : le total est la somme des lignes, chaque seance comptee une fois');
 
 -- 6. Le detail par seance
 CREATE TEMP TABLE d AS
 SELECT public.releve_paie_seances(pg_temp.mois(), 'd2500000-0000-4000-8000-0000000000b1') AS j;
-SELECT pg_temp.vrai(jsonb_array_length((SELECT j -> 'seances' FROM d)) = 4,
-  'detail : quatre seances (l''annulee absente)');
+SELECT pg_temp.vrai(jsonb_array_length((SELECT j -> 'seances' FROM d)) = 3,
+  'detail : trois seances chez la titulaire (ni l''annulee, ni la remplacee)');
+SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM d, jsonb_array_elements(d.j -> 'seances') s
+                                 WHERE s ->> 'seanceId' = 'd2500000-0000-4000-8000-000000000505'),
+  'remplacement : la titulaire ne voit plus la seance remplacee');
 SELECT pg_temp.vrai((SELECT (s #>> '{montant,mineur}')::bigint FROM d, jsonb_array_elements(d.j -> 'seances') s
                       WHERE s ->> 'seanceId' = 'd2500000-0000-4000-8000-000000000501') = 2 * (SELECT enfant FROM taux)
   AND (SELECT (s ->> 'elevesPresents')::int * 10 + (s ->> 'elevesInscrits')::int
@@ -192,9 +217,36 @@ SELECT pg_temp.vrai((SELECT s -> 'montant' FROM d, jsonb_array_elements(d.j -> '
   'detail : la panne est en attente, sans montant');
 SELECT pg_temp.vrai((SELECT j #>> '{total,mineur}' FROM d) = (SELECT e #>> '{montant,mineur}' FROM b1),
   'detail : meme total que le releve');
-SELECT pg_temp.vrai(jsonb_array_length(public.releve_paie_seances(pg_temp.mois(),
-                      'd2500000-0000-4000-8000-0000000000b2') -> 'seances') = 0,
-  'detail : la remplacante n''a aucune seance payee');
+CREATE TEMP TABLE d2 AS
+SELECT public.releve_paie_seances(pg_temp.mois(), 'd2500000-0000-4000-8000-0000000000b2') AS j;
+SELECT pg_temp.vrai(jsonb_array_length((SELECT j -> 'seances' FROM d2)) = 1
+  AND (SELECT s ->> 'seanceId' FROM d2, jsonb_array_elements(d2.j -> 'seances') s)
+      = 'd2500000-0000-4000-8000-000000000505'
+  AND (SELECT (s #>> '{montant,mineur}')::bigint FROM d2, jsonb_array_elements(d2.j -> 'seances') s)
+      = (SELECT enfant FROM taux)
+  AND (SELECT j #>> '{total,mineur}' FROM d2) = (SELECT e #>> '{montant,mineur}' FROM b2),
+  'detail : la remplacante voit s5 et sa paie, meme total que le releve');
+RESET ROLE;
+
+-- 6 bis. Les revenus de chaque enseignante (`mes_revenus_enseignant`)
+SELECT pg_temp.qui('d2500000-0000-4000-8000-0000000000b2', 'teacher');
+SET LOCAL ROLE authenticated;
+CREATE TEMP TABLE rv2 AS SELECT public.mes_revenus_enseignant(NULL) AS j;
+SELECT pg_temp.vrai((SELECT (j #>> '{totalEstime,mineur}')::bigint FROM rv2) = (SELECT enfant FROM taux)
+  AND jsonb_array_length((SELECT j -> 'classes' FROM rv2)) = 1
+  AND (SELECT (j #>> '{classes,0,enRemplacement}')::boolean FROM rv2)
+  AND (SELECT (j #>> '{classes,0,minutesAssurees}')::int FROM rv2) = 60,
+  'revenus : la remplacante voit sa paie de s5, marquee en remplacement');
+SELECT pg_temp.vrai(public.mes_revenus_mois_disponibles() ->> 0 = to_char(pg_temp.mois(), 'YYYY-MM-DD'),
+  'revenus : le mois de la seance remplacee est disponible pour la remplacante');
+RESET ROLE;
+SELECT pg_temp.qui('d2500000-0000-4000-8000-0000000000b1', 'teacher');
+SET LOCAL ROLE authenticated;
+CREATE TEMP TABLE rv1 AS SELECT public.mes_revenus_enseignant(NULL) AS j;
+SELECT pg_temp.vrai((SELECT (j #>> '{totalEstime,mineur}')::bigint FROM rv1) = 2 * (SELECT enfant FROM taux)
+  AND NOT (SELECT (j #>> '{classes,0,enRemplacement}')::boolean FROM rv1)
+  AND (SELECT (j #>> '{classes,0,minutesAssurees}')::int FROM rv1) = 60,
+  'revenus : la titulaire ne voit plus la paie de la seance remplacee (s1 seule ; s3 sans eleve present n''ecrit aucune paie)');
 RESET ROLE;
 
 -- 7. Qui lit

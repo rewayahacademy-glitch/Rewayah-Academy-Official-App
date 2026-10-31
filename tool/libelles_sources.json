@@ -6761,5 +6761,6 @@
   "commun.listes.trancheLue": "mission du directeur du 23/10/2026 (refonte UX des listes administratives, regle LISTES-1), lot 1 socle partage : voix du lecteur d'ecran pour le pied de liste",
   "commun.listes.trierPar": "mission du directeur du 23/10/2026 (refonte UX des listes administratives, regle LISTES-1), lot 1 socle partage : nom accessible d'un en-tete de colonne triable",
   "commun.listes.trierParCroissant": "mission du directeur du 23/10/2026 (refonte UX des listes administratives, regle LISTES-1), lot 1 socle partage : nom accessible d'un en-tete de colonne triable, tri croissant en cours",
-  "commun.listes.trierParDecroissant": "mission du directeur du 23/10/2026 (refonte UX des listes administratives, regle LISTES-1), lot 1 socle partage : nom accessible d'un en-tete de colonne triable, tri decroissant en cours"
+  "commun.listes.trierParDecroissant": "mission du directeur du 23/10/2026 (refonte UX des listes administratives, regle LISTES-1), lot 1 socle partage : nom accessible d'un en-tete de colonne triable, tri decroissant en cours",
+  "admin.finance.paieEnseignants": "directeur, 31/10/2026 : la direction voit la paie avec son compte"
 }

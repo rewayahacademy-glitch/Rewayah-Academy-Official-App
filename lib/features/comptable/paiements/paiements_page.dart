@@ -25,11 +25,9 @@ import 'package:go_router/go_router.dart';
 import '../../../core/capacites/capacite_indisponible.dart';
 import '../../../core/capacites/port_export_rapports.dart';
 import '../../../core/capacites/port_obligations_payables.dart';
-import '../../../core/comptable/navigation_comptable.dart';
 import '../../../core/comptable/statuts_comptable.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/reseau/service_reseau.dart';
-import '../../../core/router/routes.dart';
 import '../../../core/theme/app_gabarit.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -49,6 +47,7 @@ import '../../../core/widgets/skeleton.dart';
 import '../../../core/widgets/sous_navigation_domaine.dart';
 import '../graphiques/action_export.dart';
 import 'confirmation/confirmation_payout.dart';
+import 'espace_paiements.dart';
 import 'ligne_obligation.dart';
 import 'paiements_donnees.dart';
 
@@ -63,7 +62,13 @@ class PaiementsAEffectuerPage extends ConsumerStatefulWidget {
     this.filtre,
     this.type,
     this.classe,
+    this.espace,
   });
+
+  /// L'espace de la page : celui du Comptable par defaut, ou la Finance de
+  /// la direction (« Paie des enseignants », directeur, 31/10/2026). Il
+  /// donne les onglets, le titre et les adresses des liens.
+  final EspacePaiements? espace;
 
   /// Le filtre d'etat, brut.
   final String? filtre;
@@ -139,11 +144,20 @@ class _PaiementsAEffectuerPageState
     _periode = null;
   });
 
-  void _ouvrir(ObligationPayable o) =>
-      context.push(Routes.comptablePaiementObligationPour(o.id));
+  EspacePaiements get _espace => widget.espace ?? EspacePaiements.comptable();
 
-  void _relancer(ObligationPayable o) =>
-      context.push(Routes.comptableBeneficiairePour(o.beneficiaire.id));
+  void _ouvrir(ObligationPayable o) => context.push(_espace.detail(o.id));
+
+  /// Le profil du beneficiaire quand l'espace en a un ; sinon le detail, qui
+  /// dit ce qui manque (la direction n'a pas les pages du Comptable).
+  void _relancer(ObligationPayable o) {
+    final String Function(String)? beneficiaire = _espace.beneficiaire;
+    context.push(
+      beneficiaire == null
+          ? _espace.detail(o.id)
+          : beneficiaire(o.beneficiaire.id),
+    );
+  }
 
   void _basculer(ObligationPayable o, bool retenue) => setState(() {
     if (retenue) {
@@ -184,6 +198,7 @@ class _PaiementsAEffectuerPageState
   @override
   Widget build(BuildContext context) {
     final p = t.comptable.paiements;
+    final EspacePaiements espace = _espace;
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final bool bureau = AppGabarit.de(context) == Gabarit.desktop;
     final AsyncValue<List<ObligationPayable>> valeur = ref.watch(
@@ -259,11 +274,11 @@ class _PaiementsAEffectuerPageState
     );
 
     return PageShell(
-      titre: p.titre,
+      titre: espace.titre,
       sousTitre: p.sousTitre,
       entete: SousNavigationDomaine(
-        onglets: ongletsPaiementsComptable(),
-        indexActif: 0,
+        onglets: espace.onglets,
+        indexActif: espace.indexOnglet,
       ),
       actionsEntete: const <Widget>[BasculeMontants(avecEtat: true)],
       // Au bureau, le tableau defile lui-meme sous son en-tete de colonnes ;
