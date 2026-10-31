@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'roster_classe_vm.dart';
 
-/// La file de recitation du cours en cours.
+/// La file de recitation de la seance en direct.
 ///
 /// **Un seul controleur, non parametre par seance, et c'est exact** : il n'y a
 /// qu'une salle connectee a la fois -- `moteurSalleProvider` est un Provider
@@ -35,7 +35,8 @@ class ControleurRecitation extends Notifier<FileRecitation> {
   void arreter() => state = state.sansActif;
 
   /// Remplace la file d'attente, sans toucher a qui recite.
-  void poserLaFile(List<String> academyIds) => state = state.avecFile(academyIds);
+  void poserLaFile(List<String> academyIds) =>
+      state = state.avecFile(academyIds);
 
   /// Oublie tout. Appele a la sortie du cours, jamais a la sortie d'un ecran.
   void reinitialiser() => state = FileRecitation.vide;

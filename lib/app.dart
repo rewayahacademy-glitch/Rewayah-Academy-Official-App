@@ -17,6 +17,7 @@ import 'core/theme/app_palette.dart';
 import 'core/theme/app_theme.dart';
 import 'core/version/bandeau_nouvelle_version.dart';
 import 'core/widgets/bandeau_observation.dart';
+import 'features/salle_seance/barre_seance_en_direct.dart';
 
 /// Racine de l'application.
 ///
@@ -109,9 +110,14 @@ class RewayahApp extends ConsumerWidget {
                   BandeauObservation(observation: observation),
                 // R3 (30/10/2026) : tirer pour rafraichir (`PageShell`) et
                 // relire au retour sur un onglet ou dans l'application.
+                // Directeur, 31/10/2026 : « Seance toujours en direct » sur
+                // tous les ecrans hors de la salle, tant que l'appel continue.
                 Expanded(
-                  child: RelectureGenerale(
-                    child: rendu ?? const SizedBox.shrink(),
+                  child: BarreSeanceEnDirect(
+                    routeur: routeur,
+                    child: RelectureGenerale(
+                      child: rendu ?? const SizedBox.shrink(),
+                    ),
                   ),
                 ),
               ],

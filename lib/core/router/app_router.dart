@@ -231,6 +231,7 @@ import '../../features/remplacements/remplacements_page.dart';
 import '../../features/revenus_enseignant/revenus_enseignant_page.dart';
 import '../../features/revue_groupe/revue_groupe_page.dart';
 import '../../features/salle/salle_page.dart' deferred as d_salle_page;
+import '../../features/salle_seance/portee_outils_salle.dart';
 import '../../features/suivi_demandes/changement_classe_page.dart';
 import '../../features/suivi_eleve/suivi_eleve_page.dart';
 import '../../features/suivi_famille/suivi_famille_page.dart';
@@ -273,7 +274,6 @@ import '../widgets/nav_shell.dart';
 import '../widgets/page_shell.dart';
 import 'billet_salle.dart';
 import 'etats_routeur.dart';
-import 'garde_sortie_salle.dart';
 import 'page_differee.dart';
 import 'redirection.dart';
 import 'routes.dart';
@@ -2711,21 +2711,29 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // plutot que de lever.
       GoRoute(
         path: Routes.salle,
-        // Le retour du telephone ou du navigateur ne coupe plus l'appel : la
-        // salle demande d'abord « Quitter le cours ? » (30/10/2026).
-        onExit: GardeSortieSalle.instance.autoriserSortie,
+        // Le retour du telephone ou du navigateur quitte l'ecran sans
+        // question, et l'appel continue (directeur, 31/10/2026) : la salle
+        // l'a confie a `controleurSessionProvider`, la barre « Seance
+        // toujours en direct » le montre ailleurs.
         builder: (BuildContext contexte, GoRouterState etat) {
           final BilletSalle? billet = etat.extra is BilletSalle
               ? etat.extra! as BilletSalle
               : null;
-          final Widget salle = PageDifferee(
-            cle: 'd_salle_page',
-            charger: d_salle_page.loadLibrary,
-            construire: () => d_salle_page.SallePage(
-              seanceId: billet?.sessionId ?? '',
-              preparation: billet?.preparation ?? false,
-              groupeId: billet?.groupeId,
-              eleveId: billet?.eleveId,
+          // Les outils d'ecriture, l'historique d'Annuler et la marque « non
+          // partage » appartiennent a CETTE salle (`PorteeOutilsSalle`, TB-RC) :
+          // une autre seance ne s'ouvre jamais avec Ecrire arme par la
+          // precedente (branche le 31/10/2026, avec la seance en arriere-plan).
+          final Widget salle = PorteeOutilsSalle(
+            child: PageDifferee(
+              cle: 'd_salle_page',
+              charger: d_salle_page.loadLibrary,
+              construire: () => d_salle_page.SallePage(
+                seanceId: billet?.sessionId ?? '',
+                preparation: billet?.preparation ?? false,
+                groupeId: billet?.groupeId,
+                eleveId: billet?.eleveId,
+                interfaceGuidee: billet?.interfaceGuidee ?? false,
+              ),
             ),
           );
           // D6 : l'enfant qui rejoint depuis l'appareil de son tuteur retrouve

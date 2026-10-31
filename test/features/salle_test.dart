@@ -23,7 +23,6 @@ import 'package:rewayah_academy/core/planning/service_planning.dart'
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/profil/service_profil_enseignant.dart'
     show ProfilEnseignant, profilEnseignantParIdProvider;
-import 'package:rewayah_academy/core/router/garde_sortie_salle.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
@@ -258,8 +257,6 @@ Future<void> _monterSalle(
       routes: <RouteBase>[
         GoRoute(
           path: Routes.salle,
-          // Comme le vrai routeur : le retour passe par la salle.
-          onExit: GardeSortieSalle.instance.autoriserSortie,
           builder: (BuildContext _, GoRouterState _) =>
               SallePage(seanceId: _seance, groupeId: groupeId),
         ),
@@ -1705,10 +1702,9 @@ void main() {
       expect(find.text(t.tc.classe.rappel.recu), findsNothing);
     });
 
-    testWidgets('point 4 : le retour du telephone dans l appel demande '
-        'avant de quitter ; « Annuler » garde l appel', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('31/10/2026 : le retour du telephone ou du navigateur quitte '
+        'l ecran sans question, l appel continue, et la salle se rouvre '
+        'sur le meme appel', (WidgetTester tester) async {
       final FauxMoteurSalle moteur = FauxMoteurSalle();
       final FauxServiceVideo video = FauxServiceVideo(
         acces0: _acces('student'),
@@ -1724,22 +1720,31 @@ void main() {
       moteur.poser(EtatSalle.connecte);
       await tester.pumpAndSettle();
       final int departs = moteur.departs;
+      final int entrees = video.demandes.length;
 
-      await tester.binding.handlePopRoute();
-      await tester.pumpAndSettle();
-      expect(find.text(t.salle.confirmerSortie), findsWidgets);
-      await tester.tap(find.text(t.commun.annuler));
-      await tester.pumpAndSettle();
-      expect(moteur.departs, departs, reason: 'l appel continue');
-      expect(video.sorties, isEmpty);
-      expect(find.byType(SallePage), findsOneWidget);
+      // Trois retours de suite (navigateur), trois retours dans la salle.
+      for (int i = 0; i < 3; i++) {
+        await tester.binding.handlePushRoute(Routes.eleve);
+        await tester.pumpAndSettle();
+        expect(find.text(t.salle.confirmerSortie), findsNothing);
+        expect(find.byType(SallePage), findsNothing);
+        expect(moteur.departs, departs, reason: 'l appel continue');
+        expect(video.sorties, isEmpty);
 
-      // Le retour du navigateur, puis « Quitter le cours » : la sortie
-      // volontaire habituelle (annonce, puis deconnexion).
-      await tester.binding.handlePushRoute(Routes.eleve);
+        await tester.binding.handlePushRoute(Routes.salle);
+        await tester.pumpAndSettle();
+        expect(find.byType(SallePage), findsOneWidget);
+        expect(
+          video.demandes.length,
+          entrees,
+          reason: 'aucun nouveau jeton : le meme appel, sans reconnexion',
+        );
+      }
+
+      // La sortie volontaire, elle, annonce puis deconnecte.
+      await tester.tap(_commande(t.salle.seance.sortir));
       await tester.pumpAndSettle();
-      expect(find.text(t.salle.confirmerSortie), findsWidgets);
-      await tester.tap(find.text(t.salle.quitterLeCours).last);
+      await tester.tap(find.text(t.salle.quitter).last);
       await tester.pumpAndSettle();
       expect(video.sorties, <String>[_seance]);
       expect(moteur.departs, greaterThan(departs));

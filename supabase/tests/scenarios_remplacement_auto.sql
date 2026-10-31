@@ -84,11 +84,14 @@ $fixture_contrats$;
 INSERT INTO public.groupes
  (id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana, genre_public, created_at)
 VALUES
- ('a3000000-0000-0000-0000-000000000101','a3000000-0000-0000-0000-000000000001','enfant',5,'A3 classe 1',1,18,'Europe/Paris','hommes', now() - interval '1 day'),
- ('a3000000-0000-0000-0000-000000000102','a3000000-0000-0000-0000-000000000002','enfant',5,'A3 classe 2',1,18,'Europe/Paris','hommes', now() - interval '1 day'),
- ('a3000000-0000-0000-0000-000000000103','a3000000-0000-0000-0000-000000000003','enfant',5,'A3 classe 3',1,18,'Europe/Paris','hommes', now() - interval '1 day');
+ ('a3000000-0000-0000-0000-000000000101','a3000000-0000-0000-0000-000000000001','enfant',5,'A3 classe 1',extract(isodow FROM (now() AT TIME ZONE 'Europe/Paris') + interval '3 days')::int,18,'Europe/Paris','hommes', now() - interval '1 day'),
+ ('a3000000-0000-0000-0000-000000000102','a3000000-0000-0000-0000-000000000002','enfant',5,'A3 classe 2',extract(isodow FROM (now() AT TIME ZONE 'Europe/Paris') + interval '3 days')::int,18,'Europe/Paris','hommes', now() - interval '1 day'),
+ ('a3000000-0000-0000-0000-000000000103','a3000000-0000-0000-0000-000000000003','enfant',5,'A3 classe 3',extract(isodow FROM (now() AT TIME ZONE 'Europe/Paris') + interval '3 days')::int,18,'Europe/Paris','hommes', now() - interval '1 day');
 INSERT INTO public.groupe_membres (groupe_id, student_id, joined_at)
 VALUES ('a3000000-0000-0000-0000-000000000101','a3000000-0000-0000-0000-000000000012', now() - interval '1 day');
+-- Le jour des classes est celui de dans trois jours : les seances que leur
+-- creation genere ne chevauchent jamais les seances d'essai, posees autour
+-- de maintenant (sessions_no_teacher_overlap).
 -- S1 a commence il y a 4 min, S2 il y a 11 min, S3 il y a 5 min.
 INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type, groupe_id) VALUES
  ('a3000000-0000-0000-0000-000000000201','a3000000-0000-0000-0000-000000000001', now() - interval '4 minutes',  now() + interval '41 minutes', 'planned','standard','a3000000-0000-0000-0000-000000000101'),

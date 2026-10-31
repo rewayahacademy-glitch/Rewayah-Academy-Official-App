@@ -97,7 +97,7 @@ void main() {
       expect(annonce.gestes, isEmpty);
     });
 
-    testWidgets('la barre « Cours en cours » suit sur chaque ecran', (
+    testWidgets('la barre « Seance toujours en direct » suit sur chaque ecran', (
       WidgetTester tester,
     ) async {
       final GoRouter routeur = routeurDeTest();
@@ -114,7 +114,7 @@ void main() {
           findsOneWidget,
           reason: 'pas de retour possible depuis $destination',
         );
-        expect(find.text('Cours en cours - Les Lanternes'), findsOneWidget);
+        expect(find.text('Seance toujours en direct - Les Lanternes'), findsOneWidget);
       }
     });
   });
