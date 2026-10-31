@@ -15,6 +15,12 @@
 --     seance ; verifie seulement comme borne (avertissement < perte < objectif).
 -- Ces valeurs attendent la confirmation ecrite du directeur.
 --
+-- Statuts pris en compte : planned, preflight et in_progress. Une seance est
+-- ouverte (in_progress) des qu'un jeton est delivre, par exemple a un eleve
+-- entre avant le titulaire (lot ELEVE-ADULTE, 20261102800000) : elle doit
+-- quand meme recevoir l'avertissement, la pre-alerte, l'absence automatique,
+-- et rester visible et prenable dans le tableau des remplacements.
+--
 -- Existant reutilise : remplacements_seance (append-only) et ses
 -- declencheurs (enseignants : remplacement_propose / remplacement_pris ;
 -- familles : private.notifier_classe_remplacements, etendu ici a la seance
@@ -215,7 +221,7 @@ BEGIN
   END IF;
   IF v_session.id IS NULL
      OR v_session.deleted_at IS NOT NULL
-     OR v_session.status NOT IN ('planned', 'preflight')
+     OR v_session.status NOT IN ('planned', 'preflight', 'in_progress')
      OR v_session.ended_at <= pg_catalog.now()
      OR NOT EXISTS (SELECT 1 FROM public.remplacements_preparation p
                      WHERE p.session_id = p_session_id AND p.evenement = 'pre_alerte')
@@ -278,7 +284,7 @@ BEGIN
         WHERE r.session_id = s.id
         ORDER BY r.cree_le DESC, r.id DESC LIMIT 1
       ) dernier
-      WHERE s.deleted_at IS NULL AND s.status IN ('planned', 'preflight')
+      WHERE s.deleted_at IS NULL AND s.status IN ('planned', 'preflight', 'in_progress')
         AND s.ended_at > pg_catalog.now()
         AND dernier.enseignant_titulaire_id <> v_moi
         AND (dernier.enseignant_remplacant_id = v_moi
@@ -296,7 +302,7 @@ BEGIN
       JOIN public.remplacements_preparation pa ON pa.session_id = s.id AND pa.evenement = 'pre_alerte'
       LEFT JOIN public.remplacements_preparation pret ON pret.session_id = s.id AND pret.evenement = 'pret'
       LEFT JOIN app_private.classes_numerotees() n ON n.groupe_id = g.id
-      WHERE s.deleted_at IS NULL AND s.status IN ('planned', 'preflight')
+      WHERE s.deleted_at IS NULL AND s.status IN ('planned', 'preflight', 'in_progress')
         AND s.ended_at > pg_catalog.now()
         AND NOT EXISTS (SELECT 1 FROM public.remplacements_preparation x
                          WHERE x.session_id = s.id AND x.evenement = 'remplacement_inutile')
@@ -334,9 +340,10 @@ BEGIN
   END IF;
   SELECT * INTO v_session FROM public.sessions WHERE id = p_session_id FOR UPDATE;
   -- A3 (31/10/2026) : une absence reste a prendre jusqu'a la fin prevue de
-  -- la seance, seance prevue ou en preparation.
+  -- la seance, seance prevue, en preparation ou deja ouverte
+  -- (un eleve peut entrer avant le titulaire : in_progress, lot ELEVE-ADULTE).
   IF NOT FOUND OR v_session.deleted_at IS NOT NULL
-     OR v_session.status NOT IN ('planned', 'preflight')
+     OR v_session.status NOT IN ('planned', 'preflight', 'in_progress')
      OR v_session.ended_at <= pg_catalog.now() OR v_session.groupe_id IS NULL THEN
     RETURN jsonb_build_object('etat', 'dejaPrise');
   END IF;
@@ -646,7 +653,7 @@ BEGIN
     SELECT s.id, s.teacher_id, s.groupe_id
       FROM public.sessions s
       JOIN public.groupes g ON g.id = s.groupe_id AND g.ended_at IS NULL
-     WHERE s.deleted_at IS NULL AND s.status IN ('planned', 'preflight')
+     WHERE s.deleted_at IS NULL AND s.status IN ('planned', 'preflight', 'in_progress')
        AND s.teacher_id IS NOT NULL
        AND s.started_at + pg_catalog.make_interval(mins => v_avert) <= p_maintenant
        AND s.started_at + pg_catalog.make_interval(mins => v_perte) > p_maintenant
@@ -726,7 +733,7 @@ BEGIN
     SELECT s.id, s.teacher_id
       FROM public.sessions s
       JOIN public.groupes g ON g.id = s.groupe_id AND g.ended_at IS NULL
-     WHERE s.deleted_at IS NULL AND s.status IN ('planned', 'preflight')
+     WHERE s.deleted_at IS NULL AND s.status IN ('planned', 'preflight', 'in_progress')
        AND s.teacher_id IS NOT NULL
        AND s.started_at + pg_catalog.make_interval(mins => v_perte) <= p_maintenant
        AND s.ended_at > p_maintenant
@@ -794,9 +801,9 @@ END;
 $planification$;
 
 COMMENT ON FUNCTION public.prendre_remplacement(uuid, uuid) IS
-  'A3 (31/10/2026) : premier enseignant actif compatible gagne atomiquement, jusqu''a la fin prevue de la seance. F86: signature=public.prendre_remplacement(uuid,uuid); md5_functiondef=5a8744a1f05033d3faaf7a9b0a782e44; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path="".';
+  'A3 (31/10/2026) : premier enseignant actif compatible gagne atomiquement, jusqu''a la fin prevue de la seance. F86: signature=public.prendre_remplacement(uuid,uuid); md5_functiondef=df6e9cda94bc8e4fd5273bc233964566; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path="".';
 COMMENT ON FUNCTION public.offres_remplacement() IS
-  'A3 (31/10/2026) : preparation (pre-alerte, pret) puis offres, jusqu''a la fin prevue. F86: signature=public.offres_remplacement(); md5_functiondef=a0d883a41d5b117029b2db435c7e4bf8; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path="".';
+  'A3 (31/10/2026) : preparation (pre-alerte, pret) puis offres, jusqu''a la fin prevue. F86: signature=public.offres_remplacement(); md5_functiondef=162076c82836e610692c5ad6c0de44e5; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path="".';
 COMMENT ON FUNCTION public.se_declarer_pret_remplacement(uuid) IS
   'A3 (31/10/2026) : enseignant actif candidat (compatible, libre a l''heure) se declare pret pendant la pre-alerte ; le premier gagne (index unique, verrou par seance). guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path="".';
 

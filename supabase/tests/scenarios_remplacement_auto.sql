@@ -1,6 +1,7 @@
 -- A3 (20261102500000) : remplacer un titulaire qui n'est pas entre.
 -- Prouve : minutes 3, 8 et 11 ; le premier pret gagne ; aucune annulation ;
--- le retour du titulaire avant T+8 (remplacement inutile).
+-- le retour du titulaire avant T+8 (remplacement inutile) ; une seance deja
+-- ouverte (in_progress, un eleve entre avant le titulaire) suit le meme deroule.
 -- Rejeu : stub_auth.sql, toutes les migrations, puis ce fichier (ROLLBACK).
 BEGIN;
 -- Les declencheurs des familles sont differes a la validation : on les veut
@@ -41,7 +42,7 @@ SELECT pg_temp.vrai(
 -- d'hommes : pas candidate) ; P et S, tuteur et eleve de la classe de T1 ; A
 -- la direction.
 INSERT INTO auth.users (id, email) VALUES
- ('a3000000-0000-0000-0000-000000000001','a3-t1@test.invalid'), ('a3000000-0000-0000-0000-000000000002','a3-t2@test.invalid'), ('a3000000-0000-0000-0000-000000000003','a3-t3@test.invalid'),
+ ('a3000000-0000-0000-0000-000000000001','a3-t1@test.invalid'), ('a3000000-0000-0000-0000-000000000002','a3-t2@test.invalid'), ('a3000000-0000-0000-0000-000000000003','a3-t3@test.invalid'), ('a3000000-0000-0000-0000-000000000004','a3-t4@test.invalid'),
  ('a3000000-0000-0000-0000-000000000009','a3-r1@test.invalid'), ('a3000000-0000-0000-0000-000000000008','a3-r2@test.invalid'), ('a3000000-0000-0000-0000-000000000007','a3-f@test.invalid'),
  ('a3000000-0000-0000-0000-000000000011','a3-p@test.invalid'), ('a3000000-0000-0000-0000-000000000012','a3-s@test.invalid'), ('a3000000-0000-0000-0000-000000000013','a3-a@test.invalid');
 INSERT INTO public.households (id, timezone) VALUES ('a3000000-0000-0000-0000-000000000301','Europe/Paris');
@@ -51,6 +52,7 @@ VALUES
  ('a3000000-0000-0000-0000-000000000001','A3-T1','teacher',NULL,'Titulaire','Un','provisional_active','male'),
  ('a3000000-0000-0000-0000-000000000002','A3-T2','teacher',NULL,'Titulaire','Deux','provisional_active','male'),
  ('a3000000-0000-0000-0000-000000000003','A3-T3','teacher',NULL,'Titulaire','Trois','provisional_active','male'),
+ ('a3000000-0000-0000-0000-000000000004','A3-T4','teacher',NULL,'Titulaire','Quatre','provisional_active','male'),
  ('a3000000-0000-0000-0000-000000000009','A3-R1','teacher',NULL,'Pret','Un','provisional_active','male'),
  ('a3000000-0000-0000-0000-000000000008','A3-R2','teacher',NULL,'Pret','Deux','provisional_active','male'),
  ('a3000000-0000-0000-0000-000000000007','A3-F','teacher',NULL,'Enseignante','F','provisional_active','female'),
@@ -86,7 +88,8 @@ INSERT INTO public.groupes
 VALUES
  ('a3000000-0000-0000-0000-000000000101','a3000000-0000-0000-0000-000000000001','enfant',5,'A3 classe 1',extract(isodow FROM (now() AT TIME ZONE 'Europe/Paris') + interval '3 days')::int,18,'Europe/Paris','hommes', now() - interval '1 day'),
  ('a3000000-0000-0000-0000-000000000102','a3000000-0000-0000-0000-000000000002','enfant',5,'A3 classe 2',extract(isodow FROM (now() AT TIME ZONE 'Europe/Paris') + interval '3 days')::int,18,'Europe/Paris','hommes', now() - interval '1 day'),
- ('a3000000-0000-0000-0000-000000000103','a3000000-0000-0000-0000-000000000003','enfant',5,'A3 classe 3',extract(isodow FROM (now() AT TIME ZONE 'Europe/Paris') + interval '3 days')::int,18,'Europe/Paris','hommes', now() - interval '1 day');
+ ('a3000000-0000-0000-0000-000000000103','a3000000-0000-0000-0000-000000000003','enfant',5,'A3 classe 3',extract(isodow FROM (now() AT TIME ZONE 'Europe/Paris') + interval '3 days')::int,18,'Europe/Paris','hommes', now() - interval '1 day'),
+ ('a3000000-0000-0000-0000-000000000104','a3000000-0000-0000-0000-000000000004','enfant',5,'A3 classe 4',extract(isodow FROM (now() AT TIME ZONE 'Europe/Paris') + interval '3 days')::int,18,'Europe/Paris','hommes', now() - interval '1 day');
 INSERT INTO public.groupe_membres (groupe_id, student_id, joined_at)
 VALUES ('a3000000-0000-0000-0000-000000000101','a3000000-0000-0000-0000-000000000012', now() - interval '1 day');
 -- Le jour des classes est celui de dans trois jours : les seances que leur
@@ -96,7 +99,11 @@ VALUES ('a3000000-0000-0000-0000-000000000101','a3000000-0000-0000-0000-00000000
 INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type, groupe_id) VALUES
  ('a3000000-0000-0000-0000-000000000201','a3000000-0000-0000-0000-000000000001', now() - interval '4 minutes',  now() + interval '41 minutes', 'planned','standard','a3000000-0000-0000-0000-000000000101'),
  ('a3000000-0000-0000-0000-000000000202','a3000000-0000-0000-0000-000000000002', now() - interval '11 minutes', now() + interval '34 minutes', 'planned','standard','a3000000-0000-0000-0000-000000000102'),
- ('a3000000-0000-0000-0000-000000000203','a3000000-0000-0000-0000-000000000003', now() - interval '5 minutes',  now() + interval '40 minutes', 'planned','standard','a3000000-0000-0000-0000-000000000103');
+ ('a3000000-0000-0000-0000-000000000203','a3000000-0000-0000-0000-000000000003', now() - interval '5 minutes',  now() + interval '40 minutes', 'planned','standard','a3000000-0000-0000-0000-000000000103'),
+ ('a3000000-0000-0000-0000-000000000204','a3000000-0000-0000-0000-000000000004', now() - interval '4 minutes',  now() + interval '41 minutes', 'planned','standard','a3000000-0000-0000-0000-000000000104');
+-- S4 : un eleve est entre avant le titulaire, la seance est ouverte (in_progress).
+UPDATE public.sessions SET status = 'preflight' WHERE id = 'a3000000-0000-0000-0000-000000000204';
+UPDATE public.sessions SET status = 'in_progress' WHERE id = 'a3000000-0000-0000-0000-000000000204';
 
 -- Minute 2 de S1 : rien encore pour S1.
 SELECT private.remplacement_auto_passer(pg_temp.debut('a3000000-0000-0000-0000-000000000201') + interval '2 minutes');
@@ -120,6 +127,10 @@ SELECT pg_temp.vrai(pg_temp.notifie('a3000000-0000-0000-0000-000000000009', 'rem
   'minute 3 : pre-alerte aux seuls candidats');
 SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.remplacements_seance WHERE session_id = 'a3000000-0000-0000-0000-000000000201'),
   'minute 3 : pas encore d''absence');
+SELECT pg_temp.vrai(EXISTS (SELECT 1 FROM public.remplacements_preparation
+                             WHERE session_id = 'a3000000-0000-0000-0000-000000000204' AND evenement = 'pre_alerte')
+  AND pg_temp.notifie('a3000000-0000-0000-0000-000000000004', 'remplacement_avertissement', 'a3000000-0000-0000-0000-000000000204'),
+  'seance deja ouverte (in_progress) : minute 3, avertissement et pre-alerte quand meme');
 
 -- Le premier pret gagne.
 SELECT pg_temp.en_tant_que('a3000000-0000-0000-0000-000000000009');
@@ -165,6 +176,18 @@ SELECT pg_temp.vrai(EXISTS (SELECT 1 FROM public.remplacements_seance
   'minute 8 : absence automatique, acteur = titulaire, origine auto');
 SELECT pg_temp.vrai(private.c29_enseignant_effectif_session('a3000000-0000-0000-0000-000000000201') = 'a3000000-0000-0000-0000-000000000009',
   'minute 8 : le pret devient l''enseignant effectif');
+SELECT pg_temp.vrai(EXISTS (SELECT 1 FROM public.remplacements_seance
+                             WHERE session_id = 'a3000000-0000-0000-0000-000000000204' AND evenement = 'absence_declaree' AND origine = 'auto'),
+  'seance deja ouverte (in_progress) : minute 8, absence automatique quand meme');
+SELECT pg_temp.en_tant_que('a3000000-0000-0000-0000-000000000009');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(EXISTS (SELECT 1 FROM jsonb_array_elements(public.offres_remplacement()) e
+                             WHERE e->>'seance_id' = 'a3000000-0000-0000-0000-000000000204' AND e->>'etat' = 'ouverte')
+  AND public.prendre_remplacement('a3000000-0000-0000-0000-000000000204','a3000000-0000-0000-0000-000000000904')->>'etat' = 'acceptee',
+  'seance deja ouverte (in_progress) : l''offre se voit et se prend');
+RESET ROLE;
+SELECT set_config('request.jwt.claim.sub','',true); SELECT set_config('request.jwt.claims','',true);
+SELECT set_config('test.uid','',true); SELECT set_config('test.jwt','',true);
 SELECT pg_temp.vrai(pg_temp.notifie('a3000000-0000-0000-0000-000000000012', 'titulaire_en_retard', 'a3000000-0000-0000-0000-000000000201')
   AND pg_temp.notifie('a3000000-0000-0000-0000-000000000011', 'titulaire_en_retard', 'a3000000-0000-0000-0000-000000000201')
   AND pg_temp.notifie('a3000000-0000-0000-0000-000000000013', 'titulaire_en_retard', 'a3000000-0000-0000-0000-000000000201'),
@@ -210,7 +233,8 @@ SELECT pg_temp.vrai(private.c29_enseignant_effectif_session('a3000000-0000-0000-
 -- Aucune annulation, meme apres la fin prevue.
 SELECT private.remplacement_auto_passer(clock_timestamp() + interval '2 hours');
 SELECT pg_temp.vrai((SELECT bool_and(status = 'planned') FROM public.sessions
-                      WHERE id IN ('a3000000-0000-0000-0000-000000000201','a3000000-0000-0000-0000-000000000202','a3000000-0000-0000-0000-000000000203')),
+                      WHERE id IN ('a3000000-0000-0000-0000-000000000201','a3000000-0000-0000-0000-000000000202','a3000000-0000-0000-0000-000000000203'))
+  AND (SELECT status FROM public.sessions WHERE id = 'a3000000-0000-0000-0000-000000000204') = 'in_progress',
   'aucune seance annulee par le remplacement automatique');
 
 -- Droits.
