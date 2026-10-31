@@ -99,8 +99,18 @@ class AccueilInscritsControleur extends Notifier<EtatAccueilInscrits> {
       (String? avant, String? apres) {
         if (avant != apres) {
           _compte = null;
-          state = const AccueilNonDemande();
-          unawaited(reclamerSiBesoin());
+          // Hors de la construction en cours : la session change parfois
+          // pendant qu'un ecran se construit, et un provider ne s'y modifie
+          // pas.
+          scheduleMicrotask(() {
+            if (!ref.mounted || _compte != null) {
+              return;
+            }
+            if (state is! AccueilNonDemande) {
+              state = const AccueilNonDemande();
+            }
+            unawaited(reclamerSiBesoin());
+          });
         }
       },
     );
@@ -110,7 +120,11 @@ class AccueilInscritsControleur extends Notifier<EtatAccueilInscrits> {
       sessionProvider.select((SessionState s) => s.porte),
       (PorteAcces? _, PorteAcces porte) {
         if (porte == PorteAcces.inscription) {
-          unawaited(reclamerSiBesoin());
+          scheduleMicrotask(() {
+            if (ref.mounted) {
+              unawaited(reclamerSiBesoin());
+            }
+          });
         }
       },
     );

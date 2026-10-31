@@ -18,6 +18,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/appairage/service_appairage.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/import_inscriptions/accueil_inscrits.dart';
 import '../../core/import_inscriptions/port_reclamation_preinscription.dart';
@@ -220,7 +221,9 @@ class VueAccueilInscrits extends StatelessWidget {
     }
     return SettingRow(
       key: eleveKey(p.id),
-      title: t.accueilInscrits.ajouterProfil(prenom: p.prenom),
+      title: t.accueilInscrits.ajouterProfil(
+        dePrenom: deDevant(p.prenom, cle: 'accueilInscrits.ajouterProfil'),
+      ),
       value: t.accueilInscrits.aCompleter,
       lien: true,
       onPress: () => ajouter(p),

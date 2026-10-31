@@ -3625,8 +3625,8 @@ class Traductions$accueilInscrits$fr {
 	/// fr: 'À compléter'
 	String get aCompleter => 'À compléter';
 
-	/// fr: 'Ajouter le profil élève de {prenom}'
-	String ajouterProfil({required Object prenom}) => 'Ajouter le profil élève de ${prenom}';
+	/// fr: 'Ajouter le profil élève {dePrenom}'
+	String ajouterProfil({required Object dePrenom}) => 'Ajouter le profil élève ${dePrenom}';
 
 	/// fr: 'Vous pourrez aussi le faire plus tard, depuis le Foyer.'
 	String get plusTard => 'Vous pourrez aussi le faire plus tard, depuis le Foyer.';
@@ -3643,8 +3643,8 @@ class Traductions$accueilInscrits$fr {
 	/// fr: 'Votre inscription n'a pas pu être vérifiée'
 	String get echecTitre => 'Votre inscription n\'a pas pu être vérifiée';
 
-	/// fr: 'Le serveur n'a pas répondu comme prévu. Réessayez dans un instant : rien n'est créé en double.'
-	String get echecPhrase => 'Le serveur n\'a pas répondu comme prévu. Réessayez dans un instant : rien n\'est créé en double.';
+	/// fr: 'Cause probable : la connexion au serveur s'est interrompue (non confirmé). Réessayez dans un instant : rien n'est créé en double.'
+	String get echecPhrase => 'Cause probable : la connexion au serveur s\'est interrompue (non confirmé). Réessayez dans un instant : rien n\'est créé en double.';
 
 	/// fr: 'La vérification de votre inscription'
 	String get sansDonnees => 'La vérification de votre inscription';
@@ -51929,13 +51929,13 @@ extension on Traductions {
 			'accueilInscrits.elevesPhrase' => 'Leur prénom est déjà rempli. Il reste à indiquer leur âge.',
 			'accueilInscrits.aJour' => 'À jour',
 			'accueilInscrits.aCompleter' => 'À compléter',
-			'accueilInscrits.ajouterProfil' => ({required Object prenom}) => 'Ajouter le profil élève de ${prenom}',
+			'accueilInscrits.ajouterProfil' => ({required Object dePrenom}) => 'Ajouter le profil élève ${dePrenom}',
 			'accueilInscrits.plusTard' => 'Vous pourrez aussi le faire plus tard, depuis le Foyer.',
 			'accueilInscrits.sansEleve' => 'Aucun profil élève n\'a été repris pour votre famille. Vous pourrez en ajouter un depuis le Foyer.',
 			'accueilInscrits.finirCompte' => 'Il reste quelques questions pour finir votre compte.',
 			'accueilInscrits.continuer' => 'Continuer',
 			'accueilInscrits.echecTitre' => 'Votre inscription n\'a pas pu être vérifiée',
-			'accueilInscrits.echecPhrase' => 'Le serveur n\'a pas répondu comme prévu. Réessayez dans un instant : rien n\'est créé en double.',
+			'accueilInscrits.echecPhrase' => 'Cause probable : la connexion au serveur s\'est interrompue (non confirmé). Réessayez dans un instant : rien n\'est créé en double.',
 			'accueilInscrits.sansDonnees' => 'La vérification de votre inscription',
 			_ => null,
 		};

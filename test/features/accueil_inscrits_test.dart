@@ -175,11 +175,11 @@ void main() {
       expect(find.text(t.accueilInscrits.titre), findsWidgets);
       expect(find.text(_famille.motAccueil!), findsOneWidget);
       expect(
-        find.text(t.accueilInscrits.ajouterProfil(prenom: 'Yasmine')),
+        find.text(t.accueilInscrits.ajouterProfil(dePrenom: 'de Yasmine')),
         findsOneWidget,
       );
       expect(
-        find.text(t.accueilInscrits.ajouterProfil(prenom: 'Adam')),
+        find.text(t.accueilInscrits.ajouterProfil(dePrenom: "d'Adam")),
         findsOneWidget,
       );
       // Le tuteur lui-meme n'est pas un profil eleve a ajouter.
@@ -220,7 +220,7 @@ void main() {
       expect(find.text('Yasmine'), findsOneWidget);
       expect(find.text(t.accueilInscrits.aJour), findsOneWidget);
       expect(
-        find.text(t.accueilInscrits.ajouterProfil(prenom: 'Adam')),
+        find.text(t.accueilInscrits.ajouterProfil(dePrenom: "d'Adam")),
         findsOneWidget,
       );
     });
@@ -236,7 +236,7 @@ void main() {
         port: _Port(() async => _famille),
       );
       final Finder ligne = find.text(
-        t.accueilInscrits.ajouterProfil(prenom: 'Yasmine'),
+        t.accueilInscrits.ajouterProfil(dePrenom: 'de Yasmine'),
       );
       await tester.ensureVisible(ligne);
       await stabiliser(tester);

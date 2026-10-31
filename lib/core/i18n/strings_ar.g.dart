@@ -1810,13 +1810,13 @@ class _Traductions$accueilInscrits$ar extends Traductions$accueilInscrits$fr {
 	@override String get elevesPhrase => 'الاسم الأول مكتوب مسبقًا. يبقى تحديد العمر.';
 	@override String get aJour => 'مكتمل';
 	@override String get aCompleter => 'يحتاج إلى إكمال';
-	@override String ajouterProfil({required Object prenom}) => 'إضافة الملف الدراسي لـ ${prenom}';
+	@override String ajouterProfil({required Object dePrenom}) => 'إضافة الملف الدراسي لـ ⁨${dePrenom}⁩';
 	@override String get plusTard => 'يمكنكم القيام بذلك لاحقًا أيضًا، من صفحة الأسرة.';
 	@override String get sansEleve => 'لم يُسترجع أي ملف دراسي لأسرتكم. يمكنكم إضافة ملف من صفحة الأسرة.';
 	@override String get finirCompte => 'تبقى بعض الأسئلة لإتمام حسابكم.';
 	@override String get continuer => 'متابعة';
 	@override String get echecTitre => 'تعذر التحقق من تسجيلكم';
-	@override String get echecPhrase => 'لم يستجب الخادم كما هو متوقع. أعيدوا المحاولة بعد قليل: لا يُنشأ أي شيء مرتين.';
+	@override String get echecPhrase => 'السبب المحتمل: انقطع الاتصال بالخادم (غير مؤكد). أعيدوا المحاولة بعد قليل: لا يُنشأ أي شيء مرتين.';
 	@override String get sansDonnees => 'التحقق من تسجيلكم';
 }
 
@@ -28781,13 +28781,13 @@ extension on TraductionsAr {
 			'accueilInscrits.elevesPhrase' => 'الاسم الأول مكتوب مسبقًا. يبقى تحديد العمر.',
 			'accueilInscrits.aJour' => 'مكتمل',
 			'accueilInscrits.aCompleter' => 'يحتاج إلى إكمال',
-			'accueilInscrits.ajouterProfil' => ({required Object prenom}) => 'إضافة الملف الدراسي لـ ${prenom}',
+			'accueilInscrits.ajouterProfil' => ({required Object dePrenom}) => 'إضافة الملف الدراسي لـ ⁨${dePrenom}⁩',
 			'accueilInscrits.plusTard' => 'يمكنكم القيام بذلك لاحقًا أيضًا، من صفحة الأسرة.',
 			'accueilInscrits.sansEleve' => 'لم يُسترجع أي ملف دراسي لأسرتكم. يمكنكم إضافة ملف من صفحة الأسرة.',
 			'accueilInscrits.finirCompte' => 'تبقى بعض الأسئلة لإتمام حسابكم.',
 			'accueilInscrits.continuer' => 'متابعة',
 			'accueilInscrits.echecTitre' => 'تعذر التحقق من تسجيلكم',
-			'accueilInscrits.echecPhrase' => 'لم يستجب الخادم كما هو متوقع. أعيدوا المحاولة بعد قليل: لا يُنشأ أي شيء مرتين.',
+			'accueilInscrits.echecPhrase' => 'السبب المحتمل: انقطع الاتصال بالخادم (غير مؤكد). أعيدوا المحاولة بعد قليل: لا يُنشأ أي شيء مرتين.',
 			'accueilInscrits.sansDonnees' => 'التحقق من تسجيلكم',
 			_ => null,
 		};
