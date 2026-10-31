@@ -6822,5 +6822,9 @@
   "enseignant.remplacements.pretPhrase": "Directeur, 31/10/2026 (relaye par le pilote) : titulaire pas entre dans la salle, avertissement, pre-alerte, enseignant pret, absence automatique, on n'annule pas (amendement de R12)",
   "enseignant.remplacements.pretCollegue": "Directeur, 31/10/2026 (relaye par le pilote) : titulaire pas entre dans la salle, avertissement, pre-alerte, enseignant pret, absence automatique, on n'annule pas (amendement de R12)",
   "enseignant.remplacements.pretAvantVous": "Directeur, 31/10/2026 (relaye par le pilote) : titulaire pas entre dans la salle, avertissement, pre-alerte, enseignant pret, absence automatique, on n'annule pas (amendement de R12)",
-  "enseignant.remplacements.preparationClose": "Directeur, 31/10/2026 (relaye par le pilote) : titulaire pas entre dans la salle, avertissement, pre-alerte, enseignant pret, absence automatique, on n'annule pas (amendement de R12)"
+  "enseignant.remplacements.preparationClose": "Directeur, 31/10/2026 (relaye par le pilote) : titulaire pas entre dans la salle, avertissement, pre-alerte, enseignant pret, absence automatique, on n'annule pas (amendement de R12)",
+  "historique.seance.sortie": "Decision du 31/10/2026 (08 §5 bis, PR 97), presence au temps reel : « La famille voit l'arrivee, la sortie et le total des minutes » ; presence partielle = plus de zero et moins de la moitie de la duree prevue",
+  "historique.seance.tempsPresence": "Decision du 31/10/2026 (08 §5 bis, PR 97), presence au temps reel : « La famille voit l'arrivee, la sortie et le total des minutes » ; presence partielle = plus de zero et moins de la moitie de la duree prevue",
+  "historique.seance.minutesSur": "Decision du 31/10/2026 (08 §5 bis, PR 97), presence au temps reel : « La famille voit l'arrivee, la sortie et le total des minutes » ; presence partielle = plus de zero et moins de la moitie de la duree prevue",
+  "historique.seance.presencePartielle": "Decision du 31/10/2026 (08 §5 bis, PR 97), presence au temps reel : « La famille voit l'arrivee, la sortie et le total des minutes » ; presence partielle = plus de zero et moins de la moitie de la duree prevue"
 }

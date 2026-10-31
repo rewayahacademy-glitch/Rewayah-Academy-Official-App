@@ -20,6 +20,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/capacites/port_catalogue_classes.dart'
+    show catalogueClassesOuvert, portCatalogueClassesProvider;
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -147,6 +149,13 @@ class SuiviFamillePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    // Tri du 31/10/2026 : catalogue ferme (production), l'accueil porte le
+    // parcours de chaque profil eleve (`BlocParcours`).
+    final String? demander =
+        chemins.demander == Routes.tuteurClassesCatalogue &&
+            !catalogueClassesOuvert(ref.watch(portCatalogueClassesProvider))
+        ? Routes.tuteurAccueil
+        : chemins.demander;
     return PageShell(
       titre: t.suiviFamille.titre,
       sousTitre: t.suiviFamille.contexte,
@@ -163,12 +172,12 @@ class SuiviFamillePage extends ConsumerWidget {
               key: const ValueKey<String>('suivi-famille-vide'),
               message: t.suiviFamille.vide,
               icone: AppIcons.creneaux,
-              libelleAction: chemins.demander == null
+              libelleAction: demander == null
                   ? null
                   : t.suiviFamille.faireDemande,
-              onAction: chemins.demander == null
+              onAction: demander == null
                   ? null
-                  : () => GoRouter.maybeOf(context)?.go(chemins.demander!),
+                  : () => GoRouter.maybeOf(context)?.go(demander),
             ),
             construire: (List<FriseDemande> lues) => PileCartes(
               key: const ValueKey<String>('suivi-famille-contenu'),
