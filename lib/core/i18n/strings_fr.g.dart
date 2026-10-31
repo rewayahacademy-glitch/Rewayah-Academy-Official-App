@@ -26546,6 +26546,8 @@ class Traductions$admin$planning$remplacement$fr {
 
 	/// fr: 'Voir les classes'
 	String get voirClasses => 'Voir les classes';
+
+	late final Traductions$admin$planning$remplacement$reaffecter$fr reaffecter = Traductions$admin$planning$remplacement$reaffecter$fr.internal(_root);
 }
 
 // Path: admin.fusion.motif
@@ -37777,6 +37779,54 @@ class Traductions$admin$finance$vue$alerte$fr {
 	String get ouvrirClasses => 'Ouvrir les classes';
 }
 
+// Path: admin.planning.remplacement.reaffecter
+class Traductions$admin$planning$remplacement$reaffecter$fr {
+	Traductions$admin$planning$remplacement$reaffecter$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Confier la classe {classe} à un autre enseignant'
+	String titre({required Object classe}) => 'Confier la classe ${classe} à un autre enseignant';
+
+	/// fr: '{titulaire} n'assurera plus cette classe. Les séances à venir passent à l'enseignant choisi ; les séances passées et leur paie ne changent pas. Les deux enseignants et les familles de la classe sont prévenus.'
+	String consequence({required Object titulaire}) => '${titulaire} n\'assurera plus cette classe. Les séances à venir passent à l\'enseignant choisi ; les séances passées et leur paie ne changent pas. Les deux enseignants et les familles de la classe sont prévenus.';
+
+	/// fr: 'Libre aux horaires de la classe'
+	String get mention => 'Libre aux horaires de la classe';
+
+	/// fr: 'Aucun autre enseignant ne peut reprendre cette classe à ses horaires. Vérifiez les comptes et les classes des enseignants, puis rouvrez cette feuille.'
+	String get aucun => 'Aucun autre enseignant ne peut reprendre cette classe à ses horaires. Vérifiez les comptes et les classes des enseignants, puis rouvrez cette feuille.';
+
+	/// fr: 'Confier la classe à cet enseignant'
+	String get confirmer => 'Confier la classe à cet enseignant';
+
+	/// fr: 'Choisissez l'enseignant qui reprendra la classe.'
+	String get choixManquant => 'Choisissez l\'enseignant qui reprendra la classe.';
+
+	/// fr: 'Connexion absente : la décision se prendra une fois l'appareil reconnecté.'
+	String get horsLigne => 'Connexion absente : la décision se prendra une fois l\'appareil reconnecté.';
+
+	/// fr: '{nom} assure désormais cette classe. Les séances à venir lui sont confiées.'
+	String fait({required Object nom}) => '${nom} assure désormais cette classe. Les séances à venir lui sont confiées.';
+
+	/// fr: '{nom} assure déjà cette classe : rien n'a été changé.'
+	String dejaEnPlace({required Object nom}) => '${nom} assure déjà cette classe : rien n\'a été changé.';
+
+	/// fr: 'Cet enseignant n'est plus libre aux horaires de la classe : la liste a été relue. Choisissez un autre enseignant.'
+	String get refusOccupe => 'Cet enseignant n\'est plus libre aux horaires de la classe : la liste a été relue. Choisissez un autre enseignant.';
+
+	/// fr: 'Cet enseignant ne peut pas reprendre cette classe (compte, langue, public ou nombre de classes) : la liste a été relue. Choisissez un autre enseignant.'
+	String get refusIncompatible => 'Cet enseignant ne peut pas reprendre cette classe (compte, langue, public ou nombre de classes) : la liste a été relue. Choisissez un autre enseignant.';
+
+	/// fr: 'Cette classe n'est plus active ou n'a plus d'enseignant : rien n'a été changé.'
+	String get refusClasse => 'Cette classe n\'est plus active ou n\'a plus d\'enseignant : rien n\'a été changé.';
+
+	/// fr: 'La décision n'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'La décision n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+}
+
 // Path: admin.bibliotheque.libelles.type
 class Traductions$admin$bibliotheque$libelles$type$fr {
 	Traductions$admin$bibliotheque$libelles$type$fr.internal(this._root);
@@ -46161,6 +46211,19 @@ extension on Traductions {
 			'admin.planning.remplacement.bilanDetail' => ({required Object seances, required Object remplacees, required Object sans}) => 'Séances concernées : ${seances} · remplacées : ${remplacees} · sans remplaçant : ${sans}',
 			'admin.planning.remplacement.bilanErreur' => 'Les remplacements de la semaine n\'ont pas pu être lus : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'admin.planning.remplacement.voirClasses' => 'Voir les classes',
+			'admin.planning.remplacement.reaffecter.titre' => ({required Object classe}) => 'Confier la classe ${classe} à un autre enseignant',
+			'admin.planning.remplacement.reaffecter.consequence' => ({required Object titulaire}) => '${titulaire} n\'assurera plus cette classe. Les séances à venir passent à l\'enseignant choisi ; les séances passées et leur paie ne changent pas. Les deux enseignants et les familles de la classe sont prévenus.',
+			'admin.planning.remplacement.reaffecter.mention' => 'Libre aux horaires de la classe',
+			'admin.planning.remplacement.reaffecter.aucun' => 'Aucun autre enseignant ne peut reprendre cette classe à ses horaires. Vérifiez les comptes et les classes des enseignants, puis rouvrez cette feuille.',
+			'admin.planning.remplacement.reaffecter.confirmer' => 'Confier la classe à cet enseignant',
+			'admin.planning.remplacement.reaffecter.choixManquant' => 'Choisissez l\'enseignant qui reprendra la classe.',
+			'admin.planning.remplacement.reaffecter.horsLigne' => 'Connexion absente : la décision se prendra une fois l\'appareil reconnecté.',
+			'admin.planning.remplacement.reaffecter.fait' => ({required Object nom}) => '${nom} assure désormais cette classe. Les séances à venir lui sont confiées.',
+			'admin.planning.remplacement.reaffecter.dejaEnPlace' => ({required Object nom}) => '${nom} assure déjà cette classe : rien n\'a été changé.',
+			'admin.planning.remplacement.reaffecter.refusOccupe' => 'Cet enseignant n\'est plus libre aux horaires de la classe : la liste a été relue. Choisissez un autre enseignant.',
+			'admin.planning.remplacement.reaffecter.refusIncompatible' => 'Cet enseignant ne peut pas reprendre cette classe (compte, langue, public ou nombre de classes) : la liste a été relue. Choisissez un autre enseignant.',
+			'admin.planning.remplacement.reaffecter.refusClasse' => 'Cette classe n\'est plus active ou n\'a plus d\'enseignant : rien n\'a été changé.',
+			'admin.planning.remplacement.reaffecter.erreur' => 'La décision n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'admin.incidents.titre' => 'Incidents des 24 dernières heures',
 			'admin.incidents.sousTitre' => 'Les séances passées en incident technique, enseignant absent ou élève absent depuis 24 heures : ce que compte la tuile « Incidents (24 h) ».',
 			'admin.incidents.liste' => 'Séances en incident',
@@ -46377,6 +46440,8 @@ extension on Traductions {
 			'admin.bibliotheque.indisponibleTitre' => 'Bibliothèque pas encore ouverte',
 			'admin.bibliotheque.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
 			'admin.bibliotheque.sansDonnees' => 'le catalogue',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.ficheTitre' => 'Support',
 			'admin.bibliotheque.retourCatalogue' => 'Retour au catalogue',
 			'admin.bibliotheque.introuvable' => 'Ce support n\'existe pas ou n\'est pas accessible.',
@@ -46390,8 +46455,6 @@ extension on Traductions {
 			'admin.bibliotheque.libelles.version.archivee' => 'Archivé',
 			'admin.bibliotheque.libelles.version.retire' => 'Retiré',
 			'admin.bibliotheque.libelles.version.numero' => ({required Object numero}) => 'Version ${numero}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.libelles.version.aucune' => 'Aucune version',
 			'admin.bibliotheque.libelles.droits.aVerifier' => 'À vérifier',
 			'admin.bibliotheque.libelles.droits.approuve' => 'Approuvé',
@@ -46891,6 +46954,8 @@ extension on Traductions {
 			'compte.langueCourriels.retour.echec' => 'Le changement n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Réessayez ; votre langue précédente reste en place tant qu\'il n\'est pas confirmé.',
 			'compte.langueCourriels.retour.horsLigne' => 'Rien n\'est enregistré : le réseau est absent. Réessayez dès son retour.',
 			'compte.langueCourriels.erreurLangues' => 'Les langues n\'ont pas pu être chargées. Réessayez.',
+			_ => null,
+		} ?? switch (path) {
 			'compte.langueCourriels.sansDonnees' => 'Les langues n\'ont pas pu être chargées',
 			'compte.langueCourriels.vide' => 'Aucune langue n\'est proposée pour le moment. Vos e-mails et vos messages restent en français.',
 			'compte.langueCourriels.indisponibleTitre' => 'Choix de la langue indisponible',
@@ -46904,8 +46969,6 @@ extension on Traductions {
 			'compte.notificationsCours' => 'Cours',
 			'compte.notificationsCoursDetail' => 'Rappels avant vos cours',
 			'compte.notificationsFoyer' => 'Foyer',
-			_ => null,
-		} ?? switch (path) {
 			'compte.notificationsFoyerDetail' => 'Activité des profils de votre foyer',
 			'compte.notificationsEtat' => 'Les notifications dépendent aussi des réglages de votre appareil et de votre navigateur.',
 			'compte.coursDonnees' => 'Cours et données',
@@ -47405,6 +47468,8 @@ extension on Traductions {
 			'tuteur.accueil.proposeApres' => ({required Object jour, required Object heure}) => 'Prochain cours ${jour} à ${heure}',
 			'tuteur.accueil.proposeAucun' => 'Un nouveau cours vous sera proposé.',
 			'tuteur.accueil.gererLeFoyer' => 'Gérer le foyer',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.blocAppareils' => 'Appareils du foyer',
 			'tuteur.accueil.blocAppareilsDetail' => 'Ajouter un appareil, ou en retirer un.',
 			'tuteur.accueil.blocReglages' => 'Réglages par enfant',
@@ -47418,8 +47483,6 @@ extension on Traductions {
 			'tuteur.reglages.intro' => 'Ces réglages s\'appliquent à la séance suivante, jamais pendant un cours.',
 			'tuteur.reglages.photo' => 'Photo',
 			'tuteur.reglages.photoAucune' => ({required Object prenom}) => '${prenom} n\'a pas encore de photo. Elle reste visible du seul foyer.',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.reglages.photoPresente' => ({required Object dePrenom}) => 'La photo ${dePrenom} reste visible du seul foyer, jamais de son enseignant ni des autres élèves.',
 			'tuteur.reglages.photoAjouter' => 'Ajouter une photo',
 			'tuteur.reglages.photoChanger' => 'Changer la photo',
@@ -47919,6 +47982,8 @@ extension on Traductions {
 			'enseignant.cahier.objectif' => ({required Object deEleve}) => 'Objectif ${deEleve}',
 			'enseignant.cahier.objectifDetail' => ({required Object queEleve}) => 'Ce ${queEleve} doit atteindre, dans le cadre du programme de l\'académie.',
 			'enseignant.cahier.travailMaison' => ({required Object deEleve}) => 'Devoir ${deEleve}',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.travailMaisonDetail' => 'Ajustez la suggestion, ou laissez-la telle quelle.',
 			'enseignant.cahier.travailMaisonSaisi' => 'Vous avez déjà noté ce devoir. Modifiez-le ou laissez-le tel quel.',
 			'enseignant.cahier.suite' => ({required Object eleve}) => 'La suite pour ${eleve}',
@@ -47932,8 +47997,6 @@ extension on Traductions {
 			'enseignant.cahier.makhrajSinSad' => 'Sîn / Sâd (س / ص)',
 			'enseignant.cahier.makhrajTaTah' => 'Tâ / Tâ emphatique (ت / ط)',
 			'enseignant.cahier.makhrajDhalZay' => 'Dhâl / Zây (ذ / ز)',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.makhrajHaHah' => 'Hâ / Hâ\' (ه / ح)',
 			'enseignant.cahier.exceptionTitre' => 'Signaler une exception',
 			'enseignant.cahier.exceptionCorriger' => 'Corriger la présence',
@@ -48433,6 +48496,8 @@ extension on Traductions {
 			'controleur.demo.enseignantControle' => 'Enseignant-Contrôleur, espace Contrôle',
 			'controleur.demo.enseignantPrincipal' => 'Enseignant-Contrôleur, espace Enseignant',
 			'controleur.demo.adminControle' => 'Admin-Contrôleur, espace Contrôle',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.demo.adminPrincipal' => 'Admin-Contrôleur, espace Admin',
 			'controleur.demo.missionEnCours' => 'Visite en cours, retour à l\'espace principal',
 			'controleur.demo.accesRevoque' => 'Accès révoqué pendant la navigation',
@@ -48446,8 +48511,6 @@ extension on Traductions {
 			'controleur.controle.commencer' => 'Commencer le contrôle',
 			'controleur.controle.vide' => 'Aucun contrôle n\'est à réaliser pour le moment.',
 			'controleur.controle.videAide' => 'Rewayah vous proposera une Classe à observer lorsqu\'une séance compatible sera disponible.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.controle.indisponible' => 'Cette visite n\'est plus proposée : la séance a été annulée ou confiée à un autre contrôleur.',
 			'controleur.controle.attente' => 'Le contrôle s\'ouvrira dès que la séance sera en direct.',
 			'controleur.controle.dejaEnCours' => 'Un contrôle est déjà en cours dans cette classe.',
@@ -48947,6 +49010,8 @@ extension on Traductions {
 			'tc.parcours.postCours.toutEstNominal' => 'Rien ne demande votre attention.',
 			'tc.parcours.postCours.reprise' => 'Reprise proposée',
 			'tc.parcours.postCours.repriseInconnue' => 'Aucune position de reprise connue pour cette séance.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.postCours.travail' => 'Travail proposé',
 			'tc.parcours.postCours.travailAucun' => 'Aucun travail proposé pour l\'instant.',
 			'tc.parcours.postCours.valider' => 'Valider',
@@ -48960,8 +49025,6 @@ extension on Traductions {
 			'adulte.accueil.salutation' => ({required Object prenom}) => 'Bonjour ${prenom}',
 			'adulte.accueil.prochaineSeance' => 'Prochaine séance',
 			'adulte.accueil.parcours' => 'Mon parcours',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.accueil.dernieresSeances' => 'Dernières séances',
 			'adulte.accueil.ressources' => 'Ressources de la classe',
 			'adulte.accueil.absence' => 'Absence',
@@ -49461,6 +49524,8 @@ extension on Traductions {
 			'suiviFamille.etats.fait' => 'Fait',
 			'suiviFamille.etats.enCours' => 'En cours',
 			'suiviFamille.etats.aVenir' => 'À venir',
+			_ => null,
+		} ?? switch (path) {
 			'suiviFamille.motif.classesPleines' => 'Toutes les classes de ce créneau sont complètes. Vous serez prévenu dès qu\'une place se libère.',
 			'suiviFamille.motif.aucunEnseignantLibre' => 'Aucun enseignant n\'est libre sur ce créneau pour le moment. Vous serez prévenu dès que ce changera.',
 			'suiviFamille.motif.inconnu' => 'Votre demande est en attente. Vous serez prévenu dès qu\'elle avance.',
@@ -49474,8 +49539,6 @@ extension on Traductions {
 			'suiviFamille.notification.dejaEnClasse' => ({required Object dePrenom}) => 'Demande ${dePrenom} : élève déjà en classe, demande classée',
 			'suiviFamille.etapeSurTotal' => ({required Object n, required Object total, required Object etape}) => 'Étape ${n} sur ${total} : ${etape}',
 			'suiviFamille.close.etat' => 'Demande close',
-			_ => null,
-		} ?? switch (path) {
 			'suiviFamille.close.suite' => ({required Object prenom}) => 'Vous pouvez choisir un autre créneau pour ${prenom}.',
 			'suiviFamille.close.suiteSansChoix' => 'Rien d\'autre à faire de votre côté.',
 			'suiviFamille.close.choisirAutre' => ({required Object prenom}) => 'Choisir un autre créneau pour ${prenom}',
@@ -49975,6 +50038,8 @@ extension on Traductions {
 			'com.communaute.garde.consigneBlocage' => 'Modifiez la publication, puis publiez-la de nouveau.',
 			'com.communaute.garde.panne' => 'La vérification de ce contenu n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Rien n\'a été publié ; réessayez dans un instant.',
 			'com.communaute.garde.reponse.avertissement' => 'Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l\'offre avant de l\'envoyer.',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.garde.reponse.liensTitre' => 'Liens de la réponse',
 			'com.communaute.garde.reponse.consigneBlocage' => 'Modifiez la réponse, puis envoyez-la de nouveau.',
 			'com.communaute.lien.interne' => 'Lien interne Rewayah',
@@ -49988,8 +50053,6 @@ extension on Traductions {
 			'com.communaute.videTitre' => 'Aucune publication',
 			'com.communaute.rechercheVideTitre' => 'Aucun résultat',
 			'com.communaute.rechercheVide' => 'Aucune publication ne correspond à votre recherche. Essayez un autre mot.',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.videToutes' => 'Aucune publication pour le moment.',
 			'com.communaute.flux.ouvrir' => ({required Object titre}) => 'Ouvrir la publication ${titre}',
 			'com.communaute.flux.reponseUne' => '1 réponse',
@@ -50489,6 +50552,8 @@ extension on Traductions {
 			'com.annonces.demo.detail' => 'Démonstration hors production : données fictives, rien n\'est envoyé.',
 			'com.annonces.demo.choisirRole' => 'Choisissez le rôle à montrer',
 			'com.annonces.demo.roles.tuteur' => 'Famille',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demo.roles.enseignant' => 'Enseignant',
 			'com.annonces.demo.roles.adulte' => 'Élève adulte',
 			'com.annonces.demo.roles.admin' => 'Direction',
@@ -50502,8 +50567,6 @@ extension on Traductions {
 			'com.annonces.demo.f.adminStudioAssigne' => 'Studio : la relecture du support de Tajwid vous est assignée',
 			'com.annonces.demo.f.adminStudioInterne' => 'Annonce interne de l\'équipe Studio : réunion d\'équipe jeudi à 18 h',
 			'com.annonces.demo.f.adminStudioContexte' => 'Studio : un support est prêt pour la Classe An-Nour',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demo.f.annonceNourTitre' => 'Récitation de fin de trimestre devant les familles',
 			'com.annonces.demo.f.annonceNourTexte' => 'Chères familles, la Classe An-Nour présentera sa récitation de fin de trimestre le samedi 14 décembre à 10 h, en visio. Chaque élève récitera la sourate travaillée ce trimestre. Merci de prévoir une connexion stable et un endroit calme. Les élèves qui le souhaitent peuvent répéter pendant la séance du mercredi précédent. Les familles peuvent assister en silence, micro coupé. Un compte rendu sera partagé après la séance.',
 			'com.annonces.demo.f.annonceFajrTitre' => 'Révision avant l\'évaluation de jeudi',
@@ -51003,6 +51066,8 @@ extension on Traductions {
 			'comptable.encaissements.brut' => 'Montant brut',
 			'comptable.encaissements.frais' => 'Frais du prestataire',
 			'comptable.encaissements.net' => 'Net reçu',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.fraisSource' => 'Frais et change communiqués par le prestataire, jamais recalculés ici.',
 			'comptable.encaissements.reference' => 'Référence',
 			'comptable.encaissements.prestataire' => 'Prestataire',
@@ -51016,8 +51081,6 @@ extension on Traductions {
 			'comptable.encaissements.rapprochement' => 'Rapprochement',
 			'comptable.encaissements.rapprochementAucun' => 'Pas encore rapproché',
 			'comptable.encaissements.ouvrirRapprochement' => 'Ouvrir le rapprochement',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.confirmeNote' => '« Confirmé » s\'affiche seulement après la confirmation du prestataire.',
 			'comptable.encaissements.enAttenteNote' => 'En attente de la confirmation du prestataire : rien n\'est encore acquis.',
 			'comptable.encaissements.journal' => 'Journal de l\'encaissement',
@@ -51517,6 +51580,8 @@ extension on Traductions {
 			'presentationTuteur.refuser' => 'Refuser',
 			'presentationTuteur.acceptee' => ({required Object prenom}) => 'Présentation standard activée pour ${prenom}.',
 			'presentationTuteur.refusee' => ({required Object dePrenom}) => 'Demande ${dePrenom} refusée.',
+			_ => null,
+		} ?? switch (path) {
 			'presentationTuteur.echecReponse' => 'Votre réponse n\'a pas pu être confirmée. La demande reste en attente : réessayez.',
 			'presentationTuteur.vide' => 'Aucune demande de présentation en attente.',
 			'presentationTuteur.erreur' => 'Les demandes n\'ont pas pu être chargées. Réessayez.',
@@ -51530,8 +51595,6 @@ extension on Traductions {
 			'reprisesAdmin.demandeur' => 'Demandeur',
 			'reprisesAdmin.foyer' => 'Foyer',
 			'reprisesAdmin.deposeeLe' => 'Déposée le',
-			_ => null,
-		} ?? switch (path) {
 			'reprisesAdmin.etat.aExaminer' => 'À examiner',
 			'reprisesAdmin.etat.refuseeParTitulaire' => 'Refusée par le titulaire',
 			'reprisesAdmin.examenLe' => ({required Object date}) => 'Examen possible à partir du ${date}.',
@@ -52031,6 +52094,8 @@ extension on Traductions {
 			'courriels.admin.file.vide' => 'Aucun e-mail dans cette liste.',
 			'courriels.admin.file.erreur' => 'Les envois n\'ont pas pu être chargés. Réessayez.',
 			'courriels.admin.file.sansDonnees' => 'Les envois n\'ont pas pu être chargés',
+			_ => null,
+		} ?? switch (path) {
 			'courriels.admin.file.retour.relance' => 'Remis en file. Envoi dans la minute.',
 			'courriels.admin.file.retour.introuvable' => 'Cet e-mail n\'est plus à relancer. La liste est mise à jour.',
 			'courriels.admin.file.retour.echec' => 'La remise en file n\'est pas confirmée. La liste est relue : vérifiez l\'état de l\'e-mail avant de recommencer.',
@@ -52044,8 +52109,6 @@ extension on Traductions {
 			'courriels.admin.adresses.essentielle' => 'Lié au service, sans désinscription',
 			'courriels.admin.adresses.facultative' => 'Avec lien de désinscription',
 			'courriels.admin.adresses.active' => 'Active',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.adresses.coupee' => 'Coupée',
 			'courriels.admin.adresses.vide' => 'Aucune catégorie pour le moment.',
 			'courriels.admin.adresses.erreur' => 'Les adresses d\'envoi n\'ont pas pu être chargées. Réessayez.',
