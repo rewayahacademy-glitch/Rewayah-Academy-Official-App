@@ -42,6 +42,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
+import 'feuille_reaffectation.dart';
 import 'feuille_remplacant.dart';
 import 'ligne_seance_direction.dart';
 import 'planning_libelles.dart';
@@ -305,6 +306,17 @@ class _BilanRemplacements extends StatelessWidget {
                     seances: '${l.seances}',
                     remplacees: '${l.remplacees}',
                     sans: '${l.sansRemplacant}',
+                  ),
+                  // REAFFECTER-CLASSE (31/10) : la direction peut retirer la
+                  // classe et la confier a un autre enseignant.
+                  lien: true,
+                  onPress: () => ouvrirReaffectationClasse(
+                    context,
+                    l,
+                    classe: nomClasseDistinct(
+                      l.classe,
+                      numero: l.numeroDansFamille,
+                    ),
                   ),
                 ),
             ],

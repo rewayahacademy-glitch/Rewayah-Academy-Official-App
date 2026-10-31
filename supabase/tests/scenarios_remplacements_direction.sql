@@ -47,7 +47,10 @@ END
 $fixture_contrats$;
 
 -- Classe d'hommes du titulaire ; classe de l'enseignant occupe, au meme
--- instant que la seance 201.
+-- instant que la seance 201. Les seances d'essai tombent a 03:00 UTC : la
+-- creation d'une classe genere ses propres seances (lundi 18 h, Paris), et
+-- une seance d'essai posee a l'heure courante pouvait les chevaucher selon
+-- l'heure du rejeu (sessions_no_teacher_overlap).
 INSERT INTO public.groupes
  (id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana, genre_public)
 VALUES
@@ -56,17 +59,17 @@ VALUES
 INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type, groupe_id)
 VALUES
  ('d1200000-0000-0000-0000-000000000201','d1200000-0000-0000-0000-000000000001',
-  date_trunc('hour', clock_timestamp()) + interval '2 days', date_trunc('hour', clock_timestamp()) + interval '2 days 1 hour',
+  (date_trunc('day', clock_timestamp() AT TIME ZONE 'UTC') AT TIME ZONE 'UTC' + interval '3 hours') + interval '2 days', (date_trunc('day', clock_timestamp() AT TIME ZONE 'UTC') AT TIME ZONE 'UTC' + interval '3 hours') + interval '2 days 1 hour',
   'planned','standard','d1200000-0000-0000-0000-000000000101'),
  ('d1200000-0000-0000-0000-000000000202','d1200000-0000-0000-0000-000000000001',
-  date_trunc('hour', clock_timestamp()) + interval '3 days', date_trunc('hour', clock_timestamp()) + interval '3 days 1 hour',
+  (date_trunc('day', clock_timestamp() AT TIME ZONE 'UTC') AT TIME ZONE 'UTC' + interval '3 hours') + interval '3 days', (date_trunc('day', clock_timestamp() AT TIME ZONE 'UTC') AT TIME ZONE 'UTC' + interval '3 hours') + interval '3 days 1 hour',
   'planned','standard','d1200000-0000-0000-0000-000000000101'),
  ('d1200000-0000-0000-0000-000000000203','d1200000-0000-0000-0000-000000000001',
-  date_trunc('hour', clock_timestamp()) + interval '4 days', date_trunc('hour', clock_timestamp()) + interval '4 days 1 hour',
+  (date_trunc('day', clock_timestamp() AT TIME ZONE 'UTC') AT TIME ZONE 'UTC' + interval '3 hours') + interval '4 days', (date_trunc('day', clock_timestamp() AT TIME ZONE 'UTC') AT TIME ZONE 'UTC' + interval '3 hours') + interval '4 days 1 hour',
   'planned','standard','d1200000-0000-0000-0000-000000000101'),
  -- Chevauche la seance 201 d'une demi-heure : l'enseignant occupe n'est pas libre.
  ('d1200000-0000-0000-0000-000000000204','d1200000-0000-0000-0000-000000000003',
-  date_trunc('hour', clock_timestamp()) + interval '2 days 30 minutes', date_trunc('hour', clock_timestamp()) + interval '2 days 90 minutes',
+  (date_trunc('day', clock_timestamp() AT TIME ZONE 'UTC') AT TIME ZONE 'UTC' + interval '3 hours') + interval '2 days 30 minutes', (date_trunc('day', clock_timestamp() AT TIME ZONE 'UTC') AT TIME ZONE 'UTC' + interval '3 hours') + interval '2 days 90 minutes',
   'planned','standard','d1200000-0000-0000-0000-000000000102');
 
 -- Droits : anon n'a aucun EXECUTE ; authenticated oui.

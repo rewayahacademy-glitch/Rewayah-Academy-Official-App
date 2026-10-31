@@ -7,17 +7,15 @@
 // indisponible sans), `EmptyState` (vide subi), `EtatSysteme` (hors ligne)
 // et la liste des seances passees de l'Accueil (`ListeSeancesPassees`).
 //
-// Le provider [historiqueSeancesAdulteProvider] n'a aucune source serveur
-// avant BR-1 : il rend `CapaciteIndisponible`, que la page dit comme tel
-// (D10 : rien d'invente). La demonstration le surcharge (K-28). La source
-// est le prolongement d'EA-BR-06 (les trois dernieres seances) a tout
-// l'historique de la Classe de l'eleve : DASH-BR-01 (registre
-// `DASH_STRATEGIE.md` §5 bis, a reporter dans `EA-BR.md`).
+// Le provider [historiqueSeancesAdulteProvider] lit le port de l'eleve
+// adulte (`port_espace_adulte.dart`), branche par `lib/main.dart` : toutes
+// les seances tenues de l'eleve, par pages serveur. Sans adaptateur, il rend
+// `CapaciteIndisponible`, que la page dit comme tel (D10 : rien d'invente).
+// La demonstration le surcharge (K-28).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
@@ -27,16 +25,16 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import 'accueil_adulte_page.dart';
+import 'port_espace_adulte.dart';
 
-/// Les seances passees de la Classe de l'eleve adulte connecte, les plus
-/// recentes d'abord, date deja rendue, absence de l'eleve seule. **Aucune
-/// source serveur a ce jour** : `CapaciteIndisponible`. La demonstration le
-/// surcharge.
+/// Les seances passees de l'eleve adulte connecte, les plus recentes
+/// d'abord, date rendue dans son fuseau, absence de l'eleve seule. Lues par
+/// [portEspaceAdulteProvider] (`seances_passees_eleve_adulte`, migration
+/// 20261102700000) ; sans adaptateur : `CapaciteIndisponible`. La
+/// demonstration le surcharge.
 final FutureProvider<List<SeancePasseeAdulte>> historiqueSeancesAdulteProvider =
     FutureProvider<List<SeancePasseeAdulte>>(
-      (Ref _) => Future<List<SeancePasseeAdulte>>.error(
-        const CapaciteIndisponible('historique_seances_eleve_adulte'),
-      ),
+      (Ref ref) => ref.watch(portEspaceAdulteProvider).historique(),
       // Aucune relance automatique (Riverpod 3) : une capacite absente ne
       // revient pas en insistant ; « Reessayer » relit a la demande.
       retry: (int _, Object _) => null,

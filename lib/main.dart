@@ -150,6 +150,8 @@ import 'core/tc_parcours/signalement_supabase.dart';
 import 'core/theme/app_delais.dart';
 import 'core/theme/polices_differees.dart';
 import 'features/_dev/playground/playground_racine.dart';
+import 'features/accueil_adulte/espace_adulte_supabase.dart';
+import 'features/accueil_adulte/port_espace_adulte.dart';
 import 'features/bienvenue_enseignant/prerequis_enseignant_supabase.dart';
 import 'features/com_annonces/annonces_supabase.dart';
 import 'features/com_annonces/port_annonces.dart';
@@ -175,6 +177,11 @@ import 'features/foyer/invitation_conjoint_supabase.dart';
 List<Override> _surchargesAppReelle() => <Override>[
   portClassesFoyerProvider.overrideWithValue(
     ClassesFoyerSupabase(Supabase.instance.client),
+  ),
+  // Ecrans de l'eleve adulte (Accueil, Ma classe, historique), migration
+  // 20261102700000 : la porte est serveur (`ma_capacite_eleve()`).
+  portEspaceAdulteProvider.overrideWithValue(
+    EspaceAdulteSupabase(Supabase.instance.client),
   ),
   // Fraicheur (27/10/2026) : la veille Realtime des classes et des seances.
   portVeilleProvider.overrideWithValue(
@@ -434,6 +441,10 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   // Tableau commun des remplacements (REMPL-1), filtre par le serveur.
   portRemplacementsProvider.overrideWithValue(
+    RemplacementsSupabase(Supabase.instance.client),
+  ),
+  // A3 : « Je suis pret » pendant la pre-alerte (meme adaptateur).
+  portPretRemplacementProvider.overrideWithValue(
     RemplacementsSupabase(Supabase.instance.client),
   ),
   // Prerequis de l'enseignant (ENS-01), calcules par le serveur.

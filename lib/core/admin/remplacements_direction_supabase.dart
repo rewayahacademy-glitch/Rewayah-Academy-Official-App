@@ -1,6 +1,8 @@
 // L'adaptateur Supabase des remplacements de la direction, sur les RPC
 // `remplacements_direction`, `remplacants_possibles_seance` et
-// `designer_remplacant_admin` (migration 20261102400000). Le serveur decide de
+// `designer_remplacant_admin` (migration 20261102400000), puis
+// `enseignants_pour_reaffectation` et `reaffecter_enseignant_classe`
+// (migration 20261103100000). Le serveur decide de
 // tout ; l'adaptateur traduit ses reponses, il ne calcule rien.
 
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -55,6 +57,15 @@ ResultatDesignation? resultatDesignationDepuisErreur(String message) =>
       'RemplacantIncompatible' => ResultatDesignation.incompatible,
       'RemplacementDejaPris' => ResultatDesignation.dejaPris,
       'SeanceIndisponible' => ResultatDesignation.seanceIndisponible,
+      _ => null,
+    };
+
+/// Le resultat d'une reaffectation, d'apres le message d'erreur du serveur.
+ResultatReaffectation? resultatReaffectationDepuisErreur(String message) =>
+    switch (message) {
+      'EnseignantOccupe' => ResultatReaffectation.occupe,
+      'EnseignantIncompatible' => ResultatReaffectation.incompatible,
+      'ClasseIndisponible' => ResultatReaffectation.classeIndisponible,
       _ => null,
     };
 
@@ -122,6 +133,55 @@ class RemplacementsDirectionSupabase implements PortRemplacementsDirection {
       throw const FormatException('Réponse de désignation inconnue');
     } on PostgrestException catch (e) {
       final ResultatDesignation? connu = resultatDesignationDepuisErreur(
+        e.message,
+      );
+      if (connu != null) return connu;
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<RemplacantPossible>> possiblesReaffectation(
+    String groupeId,
+  ) async {
+    final Object? reponse = await _client.rpc<Object?>(
+      'enseignants_pour_reaffectation',
+      params: <String, dynamic>{'p_groupe_id': groupeId},
+    );
+    return <RemplacantPossible>[
+      if (reponse is List)
+        for (final dynamic l in reponse)
+          if (l is Map)
+            RemplacantPossible(
+              id: '${l['enseignant_id']}',
+              nom: l['nom'] as String? ?? '',
+              identifiant: l['identifiant'] as String? ?? '',
+              // Le serveur n'a rendu que des enseignants du genre du public.
+              genreCompatible: true,
+            ),
+    ];
+  }
+
+  @override
+  Future<ResultatReaffectation> reaffecter({
+    required String groupeId,
+    required String enseignantId,
+  }) async {
+    try {
+      final Object? reponse = await _client.rpc<Object?>(
+        'reaffecter_enseignant_classe',
+        params: <String, dynamic>{
+          'p_groupe_id': groupeId,
+          'p_enseignant_id': enseignantId,
+        },
+      );
+      return switch (reponse is Map ? reponse['etat'] : null) {
+        'reaffecte' => ResultatReaffectation.reaffecte,
+        'deja_en_place' => ResultatReaffectation.dejaEnPlace,
+        _ => throw const FormatException('Réponse de réaffectation inconnue'),
+      };
+    } on PostgrestException catch (e) {
+      final ResultatReaffectation? connu = resultatReaffectationDepuisErreur(
         e.message,
       );
       if (connu != null) return connu;
