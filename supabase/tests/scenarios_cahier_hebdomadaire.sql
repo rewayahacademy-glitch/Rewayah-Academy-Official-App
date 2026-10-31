@@ -94,6 +94,12 @@ INSERT INTO public.session_events(session_id, profile_id, event_type, server_ts,
 SELECT sp.session_id, sp.profile_id, 'joined', s.started_at + interval '1 minute', 'livekit_webhook'
   FROM public.session_participants sp JOIN public.sessions s ON s.id = sp.session_id
  WHERE sp.session_id::text LIKE 'c4000000%';
+-- PRESENCE-MINUTES (20261102900000) : la duree payee est celle ou
+-- l'enseignante etait connectee, ici toute l'heure.
+INSERT INTO public.session_events(session_id, profile_id, event_type, server_ts, source)
+SELECT s.id, pg_temp.u('b1'), x.t::public.session_event_type, s.started_at + x.m * interval '1 minute', 'livekit_webhook'
+  FROM public.sessions s, (VALUES ('joined', 0), ('left', 60)) AS x(t, m)
+ WHERE s.id::text LIKE 'c4000000%';
 
 ALTER TABLE public.sessions DISABLE TRIGGER sessions_tresorerie_timestamps;
 UPDATE public.sessions SET status = 'preflight' WHERE id::text LIKE 'c4000000%';

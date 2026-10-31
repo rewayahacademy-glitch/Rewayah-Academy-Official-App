@@ -38,8 +38,11 @@
 --   4. `private.pai_releve_seances` (releve de paie de la direction) : une
 --      seance payee dont la semaine n'a pas son cahier passe « en attente »,
 --      son montant sort du total a verser tant que le cahier manque. Corps
---      repris de PAIE-REMPLACANT (20261102300000), seuls `montant` et
---      `en_attente` changent.
+--      repris de la definition de PRODUCTION apres PRESENCE-MINUTES
+--      (20261102900000, md5 c213e628... relu en production le 31/10, duree
+--      = minutes connectees de l'enseignant effectif) ; seuls `montant` et
+--      `en_attente` changent (et le `;` parasite en tete de corps laisse par
+--      20261102900000 disparait).
 BEGIN;
 
 -- ---------------------------------------------------------------------------
@@ -195,9 +198,10 @@ SET search_path = ''
 AS $function$
   SELECT s.id, coalesce(private.c29_enseignant_effectif_session(s.id), s.teacher_id),
          s.groupe_id, s.started_at,
-         greatest(0, coalesce(pg_catalog.floor(extract(epoch FROM
-           (coalesce(q.decision_fin, s.finance_ended_at)
-            - coalesce(q.decision_debut, s.finance_started_at))) / 60)::bigint, 0)),
+         CASE WHEN q.decision_debut IS NOT NULL
+              THEN greatest(0, coalesce(pg_catalog.floor(extract(epoch FROM
+                     (q.decision_fin - q.decision_debut)) / 60)::bigint, 0))
+              ELSE coalesce(private.pai_minutes_enseignant(s.id), 0)::bigint END,
          private.pai_eleves_presents(s.id),
          (SELECT count(DISTINCT sp.profile_id)::integer FROM public.session_participants sp
            WHERE sp.session_id = s.id AND sp.role = 'student' AND sp.deleted_at IS NULL),
