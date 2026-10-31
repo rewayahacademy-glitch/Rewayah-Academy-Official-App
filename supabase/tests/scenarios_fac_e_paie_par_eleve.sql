@@ -13,6 +13,9 @@
 -- Le scenario met la v2 en vigueur ce mois-ci ; tout est annule a la fin.
 \o /dev/null
 BEGIN;
+-- Les notifications de seance (20261027120000) sont un declencheur differe :
+-- immediat ici, sinon ALTER TABLE sessions refuse les evenements en attente.
+SET CONSTRAINTS ALL IMMEDIATE;
 
 ALTER TABLE public.politiques_commerciales DISABLE TRIGGER politiques_commerciales_immuable;
 UPDATE public.politiques_commerciales
