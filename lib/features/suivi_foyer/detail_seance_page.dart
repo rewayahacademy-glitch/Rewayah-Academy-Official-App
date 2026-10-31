@@ -10,6 +10,7 @@ import '../../core/presence/service_presence.dart';
 import '../../core/router/routes.dart';
 import '../../core/suivi/service_suivi.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
@@ -141,9 +142,13 @@ class _Contenu extends ConsumerWidget {
       maintenant: seance.fin,
     ).lignes.single;
     final StatutHistorique statut = statutDe(ligne);
-    final DateTime? arrivee = ligne.montrePresence
-        ? _entree(presences, seance)
+    final PresenceParticipant? mienne = ligne.montrePresence
+        ? _ligneEleve(presences, seance)
         : null;
+    final DateTime? arrivee = mienne?.entreLe;
+    final DateTime? sortie = mienne?.sortieLe;
+    final int? minutes = mienne?.minutesConnectees;
+    final int? prevues = mienne?.minutesPrevues;
     final String? phrase = switch (statut) {
       StatutHistorique.verification => t.historique.seance.verificationPhrase,
       StatutHistorique.nonTenu => t.historique.seance.nonTenuPhrase,
@@ -231,6 +236,32 @@ class _Contenu extends ConsumerWidget {
               valeur: heureMinute(arrivee),
               chiffres: true,
             ),
+          // PRESENCE-MINUTES (31/10/2026) : sortie et minutes reellement
+          // connectees, calculees par le serveur. Une presence partielle se
+          // dit en mots, jamais par la seule couleur.
+          if (arrivee != null && sortie != null)
+            LigneCleValeur(
+              cle: t.historique.seance.sortie,
+              valeur: heureMinute(sortie),
+              chiffres: true,
+            ),
+          if (minutes != null && prevues != null && arrivee != null)
+            LigneCleValeur(
+              cle: t.historique.seance.tempsPresence,
+              valeur: LibellesGroupe.valeurSeule(
+                t.historique.seance.minutesSur(
+                  minutes: minutes,
+                  prevues: prevues,
+                ),
+              ),
+              chiffres: true,
+              complement: mienne?.presenceTemps == PresenceTemps.partielle
+                  ? StatusPill(
+                      libelle: t.historique.seance.presencePartielle,
+                      ton: TonEtat.avertissement,
+                    )
+                  : null,
+            ),
           if (seance.minutesInterruption > 0)
             LigneCleValeur(
               cle: t.historique.seance.interruption,
@@ -267,11 +298,14 @@ class _Contenu extends ConsumerWidget {
     );
   }
 
-  static DateTime? _entree(List<PresenceParticipant>? lignes, Seance seance) {
+  static PresenceParticipant? _ligneEleve(
+    List<PresenceParticipant>? lignes,
+    Seance seance,
+  ) {
     for (final PresenceParticipant p
         in lignes ?? const <PresenceParticipant>[]) {
       if (p.seanceId == seance.id && p.profilId == seance.eleveId) {
-        return p.entreLe;
+        return p;
       }
     }
     return null;

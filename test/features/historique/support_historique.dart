@@ -73,6 +73,9 @@ PresenceParticipant presenceFictive(
   EleveDuFoyer eleve = FoyersFictifs.a1,
   Duration? arriveeApres,
   bool consolide = false,
+  Duration? sortieApres,
+  int? minutes,
+  PresenceTemps presenceTemps = PresenceTemps.inconnue,
 }) => PresenceParticipant(
   seanceId: seance.id,
   profilId: eleve.id,
@@ -83,6 +86,10 @@ PresenceParticipant presenceFictive(
   consolide: consolide,
   entreLe: arriveeApres == null ? null : seance.debut.add(arriveeApres),
   debutSeance: seance.debut,
+  sortieLe: sortieApres == null ? null : seance.debut.add(sortieApres),
+  minutesConnectees: minutes,
+  minutesPrevues: minutes == null ? null : seance.duree.inMinutes,
+  presenceTemps: presenceTemps,
 );
 
 /// Le jeu de seances du foyer A : cinq seances de A1 (tous les sorts), une
@@ -118,6 +125,10 @@ final List<PresenceParticipant> presencesFoyerA = <PresenceParticipant>[
     seancesFoyerA[2],
     EtatPresence.deconnectee,
     arriveeApres: const Duration(minutes: 2),
+    // PRESENCE-MINUTES : coupee a 18:25, 23 minutes sur 60.
+    sortieApres: const Duration(minutes: 25),
+    minutes: 23,
+    presenceTemps: PresenceTemps.partielle,
   ),
   presenceFictive(
     seancesFoyerA[5],

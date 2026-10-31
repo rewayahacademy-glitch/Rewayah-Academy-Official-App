@@ -12216,6 +12216,18 @@ class Traductions$historique$seance$fr {
 	/// fr: 'Arrivée'
 	String get arrivee => 'Arrivée';
 
+	/// fr: 'Sortie'
+	String get sortie => 'Sortie';
+
+	/// fr: 'Temps de présence'
+	String get tempsPresence => 'Temps de présence';
+
+	/// fr: '{minutes} min sur {prevues}'
+	String minutesSur({required Object minutes, required Object prevues}) => '${minutes} min sur ${prevues}';
+
+	/// fr: 'Présence partielle'
+	String get presencePartielle => 'Présence partielle';
+
 	/// fr: 'Interruption'
 	String get interruption => 'Interruption';
 
@@ -47119,6 +47131,10 @@ extension on Traductions {
 			'historique.seance.enseignant' => 'Enseignant',
 			'historique.seance.presence' => 'Présence',
 			'historique.seance.arrivee' => 'Arrivée',
+			'historique.seance.sortie' => 'Sortie',
+			'historique.seance.tempsPresence' => 'Temps de présence',
+			'historique.seance.minutesSur' => ({required Object minutes, required Object prevues}) => '${minutes} min sur ${prevues}',
+			'historique.seance.presencePartielle' => 'Présence partielle',
 			'historique.seance.interruption' => 'Interruption',
 			'historique.seance.verificationPhrase' => 'La présence n\'est pas encore confirmée pour cette séance.',
 			'historique.seance.nonTenuPhrase' => 'La séance n\'a pas eu lieu : ce n\'est pas le fait de l\'élève.',
@@ -47402,12 +47418,12 @@ extension on Traductions {
 			'tuteur.reglages.intro' => 'Ces réglages s\'appliquent à la séance suivante, jamais pendant un cours.',
 			'tuteur.reglages.photo' => 'Photo',
 			'tuteur.reglages.photoAucune' => ({required Object prenom}) => '${prenom} n\'a pas encore de photo. Elle reste visible du seul foyer.',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.reglages.photoPresente' => ({required Object dePrenom}) => 'La photo ${dePrenom} reste visible du seul foyer, jamais de son enseignant ni des autres élèves.',
 			'tuteur.reglages.photoAjouter' => 'Ajouter une photo',
 			'tuteur.reglages.photoChanger' => 'Changer la photo',
 			'tuteur.reglages.photoTropLourde' => ({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Reprenez-la en qualité plus basse.',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.reglages.camera' => 'Caméra',
 			'tuteur.reglages.cameraAutorisee' => ({required Object prenom}) => '${prenom} peut allumer sa caméra pendant le cours.',
 			'tuteur.reglages.cameraInterdite' => ({required Object prenom}) => 'Le bouton caméra n\'apparaîtra pas pour ${prenom}.',
@@ -47916,12 +47932,12 @@ extension on Traductions {
 			'enseignant.cahier.makhrajSinSad' => 'Sîn / Sâd (س / ص)',
 			'enseignant.cahier.makhrajTaTah' => 'Tâ / Tâ emphatique (ت / ط)',
 			'enseignant.cahier.makhrajDhalZay' => 'Dhâl / Zây (ذ / ز)',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.makhrajHaHah' => 'Hâ / Hâ\' (ه / ح)',
 			'enseignant.cahier.exceptionTitre' => 'Signaler une exception',
 			'enseignant.cahier.exceptionCorriger' => 'Corriger la présence',
 			'enseignant.cahier.exceptionExcuser' => 'Excuser l\'absence',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.exceptionConfirmation' => 'Confirmer l\'exception',
 			'enseignant.cahier.exceptionMotif' => 'Motif',
 			'enseignant.cahier.exceptionMotifRequis' => 'Le motif est obligatoire.',
@@ -48430,12 +48446,12 @@ extension on Traductions {
 			'controleur.controle.commencer' => 'Commencer le contrôle',
 			'controleur.controle.vide' => 'Aucun contrôle n\'est à réaliser pour le moment.',
 			'controleur.controle.videAide' => 'Rewayah vous proposera une Classe à observer lorsqu\'une séance compatible sera disponible.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.controle.indisponible' => 'Cette visite n\'est plus proposée : la séance a été annulée ou confiée à un autre contrôleur.',
 			'controleur.controle.attente' => 'Le contrôle s\'ouvrira dès que la séance sera en direct.',
 			'controleur.controle.dejaEnCours' => 'Un contrôle est déjà en cours dans cette classe.',
 			'controleur.controle.dejaEnCoursAide' => 'Un seul contrôle à la fois par classe. Choisissez une autre séance, ou revenez plus tard : vous pourrez commencer quand ce contrôle sera terminé.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.controle.incognito' => 'Votre présence n\'est pas annoncée en temps réel.',
 			'controleur.controle.horaire' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
 			'controleur.controle.duree' => ({required Object minutes}) => '${minutes} min prévues',
@@ -48944,12 +48960,12 @@ extension on Traductions {
 			'adulte.accueil.salutation' => ({required Object prenom}) => 'Bonjour ${prenom}',
 			'adulte.accueil.prochaineSeance' => 'Prochaine séance',
 			'adulte.accueil.parcours' => 'Mon parcours',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.accueil.dernieresSeances' => 'Dernières séances',
 			'adulte.accueil.ressources' => 'Ressources de la classe',
 			'adulte.accueil.absence' => 'Absence',
 			'adulte.accueil.aucuneClasse' => 'Aucune classe pour le moment.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.accueil.aucuneClasseDetail' => 'Votre prochaine séance s\'affichera ici dès que votre classe sera ouverte.',
 			'adulte.accueil.financesPhrase' => 'Votre solde, votre période financée et votre mensualité.',
 			'adulte.accueil.sansDonnees' => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées',
@@ -49458,12 +49474,12 @@ extension on Traductions {
 			'suiviFamille.notification.dejaEnClasse' => ({required Object dePrenom}) => 'Demande ${dePrenom} : élève déjà en classe, demande classée',
 			'suiviFamille.etapeSurTotal' => ({required Object n, required Object total, required Object etape}) => 'Étape ${n} sur ${total} : ${etape}',
 			'suiviFamille.close.etat' => 'Demande close',
+			_ => null,
+		} ?? switch (path) {
 			'suiviFamille.close.suite' => ({required Object prenom}) => 'Vous pouvez choisir un autre créneau pour ${prenom}.',
 			'suiviFamille.close.suiteSansChoix' => 'Rien d\'autre à faire de votre côté.',
 			'suiviFamille.close.choisirAutre' => ({required Object prenom}) => 'Choisir un autre créneau pour ${prenom}',
 			'suiviFamille.close.motif.retraitFamille' => 'Vous avez retiré cette demande.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviFamille.close.motif.offreRetiree' => 'Ce créneau n\'est plus proposé.',
 			'suiviFamille.close.motif.classeNonConstituee' => 'La classe de ce créneau n\'a pas pu être constituée.',
 			'suiviFamille.close.motif.refusDirection' => 'La direction n\'a pas retenu cette demande.',
@@ -49972,12 +49988,12 @@ extension on Traductions {
 			'com.communaute.videTitre' => 'Aucune publication',
 			'com.communaute.rechercheVideTitre' => 'Aucun résultat',
 			'com.communaute.rechercheVide' => 'Aucune publication ne correspond à votre recherche. Essayez un autre mot.',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.videToutes' => 'Aucune publication pour le moment.',
 			'com.communaute.flux.ouvrir' => ({required Object titre}) => 'Ouvrir la publication ${titre}',
 			'com.communaute.flux.reponseUne' => '1 réponse',
 			'com.communaute.flux.reponses' => ({required Object nombre}) => '${nombre} réponses',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.flux.aucuneReponse' => 'Aucune réponse',
 			'com.communaute.flux.categorie' => ({required Object categorie}) => 'Catégorie ${categorie}',
 			'com.communaute.recherche.ouvrir' => 'Rechercher une publication',
@@ -50486,12 +50502,12 @@ extension on Traductions {
 			'com.annonces.demo.f.adminStudioAssigne' => 'Studio : la relecture du support de Tajwid vous est assignée',
 			'com.annonces.demo.f.adminStudioInterne' => 'Annonce interne de l\'équipe Studio : réunion d\'équipe jeudi à 18 h',
 			'com.annonces.demo.f.adminStudioContexte' => 'Studio : un support est prêt pour la Classe An-Nour',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demo.f.annonceNourTitre' => 'Récitation de fin de trimestre devant les familles',
 			'com.annonces.demo.f.annonceNourTexte' => 'Chères familles, la Classe An-Nour présentera sa récitation de fin de trimestre le samedi 14 décembre à 10 h, en visio. Chaque élève récitera la sourate travaillée ce trimestre. Merci de prévoir une connexion stable et un endroit calme. Les élèves qui le souhaitent peuvent répéter pendant la séance du mercredi précédent. Les familles peuvent assister en silence, micro coupé. Un compte rendu sera partagé après la séance.',
 			'com.annonces.demo.f.annonceFajrTitre' => 'Révision avant l\'évaluation de jeudi',
 			'com.annonces.demo.f.annonceFajrTexte' => 'Révisez les dix derniers versets de la sourate Al-Mulk avant jeudi.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demo.f.tuteurUrgent' => 'La séance de ce soir est annulée',
 			'com.annonces.demo.f.tuteurUrgentTexte' => 'L\'enseignante est absente ce soir. La séance est reportée à jeudi, même heure. Vous n\'avez rien à faire.',
 			'com.annonces.demo.f.tuteurReponse' => 'Réponse attendue : accord pour la récitation de Yasmine',
@@ -51000,12 +51016,12 @@ extension on Traductions {
 			'comptable.encaissements.rapprochement' => 'Rapprochement',
 			'comptable.encaissements.rapprochementAucun' => 'Pas encore rapproché',
 			'comptable.encaissements.ouvrirRapprochement' => 'Ouvrir le rapprochement',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.confirmeNote' => '« Confirmé » s\'affiche seulement après la confirmation du prestataire.',
 			'comptable.encaissements.enAttenteNote' => 'En attente de la confirmation du prestataire : rien n\'est encore acquis.',
 			'comptable.encaissements.journal' => 'Journal de l\'encaissement',
 			'comptable.encaissements.journalVide' => 'Aucune opération enregistrée pour cet encaissement.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.rap.vueTransactions' => 'À rapprocher',
 			'comptable.encaissements.rap.vueRemboursements' => 'Remboursements',
 			'comptable.encaissements.rap.natPaiementAttendu' => 'Paiement attendu',
@@ -51514,12 +51530,12 @@ extension on Traductions {
 			'reprisesAdmin.demandeur' => 'Demandeur',
 			'reprisesAdmin.foyer' => 'Foyer',
 			'reprisesAdmin.deposeeLe' => 'Déposée le',
+			_ => null,
+		} ?? switch (path) {
 			'reprisesAdmin.etat.aExaminer' => 'À examiner',
 			'reprisesAdmin.etat.refuseeParTitulaire' => 'Refusée par le titulaire',
 			'reprisesAdmin.examenLe' => ({required Object date}) => 'Examen possible à partir du ${date}.',
 			'reprisesAdmin.refuseeInfo' => 'Le titulaire a refusé cette demande. Aucune décision n\'est attendue.',
-			_ => null,
-		} ?? switch (path) {
 			'reprisesAdmin.valider' => 'Valider la reprise',
 			'reprisesAdmin.refuser' => 'Refuser la reprise',
 			'reprisesAdmin.validerQuestion' => ({required Object prenom}) => 'Valider la reprise du foyer par ${prenom} ?',
@@ -52028,12 +52044,12 @@ extension on Traductions {
 			'courriels.admin.adresses.essentielle' => 'Lié au service, sans désinscription',
 			'courriels.admin.adresses.facultative' => 'Avec lien de désinscription',
 			'courriels.admin.adresses.active' => 'Active',
+			_ => null,
+		} ?? switch (path) {
 			'courriels.admin.adresses.coupee' => 'Coupée',
 			'courriels.admin.adresses.vide' => 'Aucune catégorie pour le moment.',
 			'courriels.admin.adresses.erreur' => 'Les adresses d\'envoi n\'ont pas pu être chargées. Réessayez.',
 			'courriels.admin.adresses.sansDonnees' => 'Les adresses d\'envoi n\'ont pas pu être chargées',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.titre' => 'Demandes',
 			'admissions.sousTitre' => 'Les demandes d\'admission des familles et des élèves adultes. Personne n\'entre sans la décision de la direction.',
 			'admissions.population' => 'Population',
