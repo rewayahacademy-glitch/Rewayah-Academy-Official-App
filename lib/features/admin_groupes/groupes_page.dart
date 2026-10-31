@@ -585,7 +585,7 @@ class _Inspecteur extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 MenuActions(
-                  tooltip: classe.nom,
+                  objet: classe.nom,
                   actions: <EntreeAction>[
                     EntreeAction(
                       libelle: t.admin.groupes.actionModifierSeuil,
@@ -786,7 +786,7 @@ class _Corps extends StatelessWidget {
           rendreMemeSiTexteVide: true,
           rendu: (BuildContext contexte, ClasseListee c) => c.groupe.actif
               ? MenuActions(
-                  tooltip: c.nom,
+                  objet: c.nom,
                   actions: <EntreeAction>[
                     EntreeAction(
                       libelle: t.admin.groupes.actionAjouter,
@@ -1710,7 +1710,7 @@ class _FeuilleDetail extends ConsumerWidget {
                           contentPadding: EdgeInsets.zero,
                           title: Text(membre.libelle),
                           trailing: MenuActions(
-                            tooltip: membre.libelle,
+                            objet: membre.libelle,
                             actions: <EntreeAction>[
                               EntreeAction(
                                 libelle: t.admin.groupes.actionRetirer,

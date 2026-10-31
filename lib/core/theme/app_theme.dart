@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../domain/enums.dart';
 import 'app_metriques.dart';
+import 'app_mouvement.dart';
 import 'app_palette.dart';
 import 'app_radius.dart';
 import 'app_spacing.dart';
 import 'app_typography.dart';
+import 'forme_filet_ombre.dart';
 
 /// Existing application adapter. No service/provider is consulted by the theme.
 abstract final class AppTheme {
@@ -166,6 +168,49 @@ abstract final class AppTheme {
         modalElevation: 0,
         shape: const RoundedRectangleBorder(
           borderRadius: AppRadius.arrondiFeuille,
+        ),
+      ),
+      // LISTES-1 (23/10/2026). Sans ces deux themes, Material posait ses
+      // defauts : une infobulle gris 700 a 90 % (blanche a 90 % en sombre,
+      // rayon 4, attente nulle) que `PopupMenuButton` colle sur tout
+      // declencheur, et un menu `surfaceSunken` a rayon 4 et ombre noire,
+      // contraste 1,015:1 contre le fond de page. C'est le « petit panneau
+      // sombre et transparent » vu au clic sur le bouton d'action.
+      //
+      // Infobulle : opaque (surface inverse), rayon des pastilles, corps
+      // `labelMedium`. Elle attend [AppMouvement.plafond] avant de paraitre
+      // (jeton existant, aucun jeton ajoute) : un clic n'en montre jamais, un
+      // survol qui s'arrete, si.
+      tooltipTheme: TooltipThemeData(
+        decoration: BoxDecoration(
+          color: palette.surfaceInverse.background,
+          borderRadius: AppRadius.arrondiXs,
+        ),
+        textStyle: palette.surfaceInverse.applyTo(
+          texte.labelMedium ?? const TextStyle(),
+        ),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm,
+        ),
+        waitDuration: AppMouvement.plafond,
+        showDuration: AppMouvement.retourLocalMaintien,
+      ),
+      // Menu : la surface des dialogues, le filet et l'ombre des jetons
+      // ([FormeFiletEtOmbre], la forme que `MenuFiltre` portait seul), sans
+      // l'elevation de Material.
+      popupMenuTheme: PopupMenuThemeData(
+        color: palette.surfaceOverlay.background,
+        elevation: 0,
+        shape: FormeFiletEtOmbre.menu(palette),
+        menuPadding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+        position: PopupMenuPosition.under,
+        labelTextStyle: WidgetStateProperty.resolveWith(
+          (Set<WidgetState> etats) =>
+              (etats.contains(WidgetState.disabled)
+                      ? palette.inkMuted
+                      : palette.inkStrong)
+                  .applyTo(texte.labelLarge ?? const TextStyle()),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(

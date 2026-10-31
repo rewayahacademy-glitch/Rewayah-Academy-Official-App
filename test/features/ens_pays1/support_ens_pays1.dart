@@ -251,7 +251,9 @@ List<EcranPays> ecransPays() => <EcranPays>[
   EcranPays(
     role: 'admin',
     nom: 'admin_comptes',
-    construire: () => const ComptesPage(),
+    // Comptes par role (30/10/2026) : les enseignants sont dans leur vue.
+    construire: () =>
+        const ComptesPage(requete: <String, String>{'vue': 'enseignants'}),
     surcharges: <Override>[
       serviceComptesProvider.overrideWithValue(
         _Comptes(<CompteAdmin>[

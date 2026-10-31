@@ -344,7 +344,10 @@ List<CasFiltres1> casFiltres1() => <CasFiltres1>[
       _reseau(),
       serviceComptesProvider.overrideWithValue(_Comptes()),
     ],
-    auMoins: 5,
+    // Comptes par role (directeur, 30/10/2026) : les roles sont des vues
+    // (`SelecteurSection`, ONGLETS-1), plus des puces ; la rangee ne garde
+    // que les filtres de la vue (etat, acces echus).
+    auMoins: 1,
   ),
   (
     nom: 'Journal (ADM-04)',

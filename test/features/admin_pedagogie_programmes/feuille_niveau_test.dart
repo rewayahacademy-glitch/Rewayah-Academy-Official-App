@@ -6,6 +6,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/champ_etiquete.dart';
 import 'package:rewayah_academy/core/widgets/choix_nombre.dart';
 import 'package:rewayah_academy/core/widgets/filter_pill.dart';
+import 'package:rewayah_academy/core/widgets/menu_actions.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_programmes/programmes_page.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
@@ -385,7 +386,12 @@ void main() {
   ) async {
     final _Faux service = _Faux();
     await _ouvrir(tester, service, const Size(390, 844));
-    await tester.tap(find.byTooltip('Lettres'));
+    // Le declencheur n'a plus d'infobulle (LISTES-1) : il se trouve par son objet.
+    await tester.tap(
+      find.byWidgetPredicate(
+        (Widget w) => w is MenuActions && (w.objet ?? '').contains('Lettres'),
+      ),
+    );
     await tester.pumpAndSettle();
     await tester.tap(find.text(t.admin.programmes.modifierNiveau));
     await tester.pumpAndSettle();

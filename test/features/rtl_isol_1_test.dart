@@ -56,6 +56,23 @@ const String _pdi = '\u2069';
 class _Comptes implements ServiceComptes {
   @override
   Future<List<CompteAdmin>> comptes() async => <CompteAdmin>[
+    // Un eleve lu sans la lecture par role : la vue Eleves dit, par un
+    // bandeau, ce qui manque (LISTES, 30/10/2026).
+    CompteAdmin(
+      profilId: 'STUDENT-LS-000004',
+      identifiant: 'STUDENT-LS-000004',
+      prenom: 'Lina',
+      nom: 'Sow',
+      role: AppRole.student,
+      etat: AccountStatus.active,
+      inscritLe: DateTime(2026, 9, 1),
+      accesJusquAu: null,
+      foyerId: null,
+      piece: EtatPiece.aucune,
+      contrats: 0,
+      aEnseignant: false,
+      enfantsDuFoyer: 0,
+    ),
     CompteAdmin(
       profilId: 'GUARDIAN-FB-000003',
       identifiant: 'GUARDIAN-FB-000003',
@@ -70,6 +87,22 @@ class _Comptes implements ServiceComptes {
       contrats: 1,
       aEnseignant: true,
       enfantsDuFoyer: 2,
+    ),
+    // Un enseignant en attente depuis cinq jours : la synthese l'annonce.
+    CompteAdmin(
+      profilId: 'TEACHER-AS-000001',
+      identifiant: 'TEACHER-AS-000001',
+      prenom: 'Aicha',
+      nom: 'Sow',
+      role: AppRole.teacher,
+      etat: AccountStatus.pendingKyc,
+      inscritLe: DateTime.now().subtract(const Duration(days: 5)),
+      accesJusquAu: null,
+      foyerId: null,
+      piece: EtatPiece.aucune,
+      contrats: 0,
+      aEnseignant: false,
+      enfantsDuFoyer: 0,
     ),
   ];
 }
@@ -407,8 +440,7 @@ void main() {
       // Le nombre arabe est isole par la traduction (reunion du 10/10).
       final RegExpMatch? duree = RegExp(
         '(\\d+)$_pdi?\\s*$heure\\s*$_fsi?(\\d+)',
-      )
-          .firstMatch(p.text.toPlainText());
+      ).firstMatch(p.text.toPlainText());
       expect(duree, isNotNull, reason: p.text.toPlainText());
       final TextDirection sensDuree = arabe
           ? TextDirection.rtl
@@ -497,7 +529,13 @@ void main() {
       _aDroiteDe(tester, marque: 'tajwid', precedent: 'tajwid', suivant: '.');
     });
 
-    testWidgets('Comptes : l introduction garde son point ($cas)', (
+    // LISTES-3 : la page n'a plus de paragraphe d'introduction ; la phrase de
+    // synthese qui annonce une personne en attente la remplace (meme garde : son
+    // point suit son dernier mot dans le sens de la phrase).
+    // LISTES-2 (30/10/2026) : plus de phrase de synthese au-dessus de la
+    // liste (une puce « En attente » la remplace) ; la garde porte sur la
+    // phrase qui reste, celle du bandeau de la vue Eleves.
+    testWidgets('Comptes : la phrase du bandeau garde son point ($cas)', (
       WidgetTester tester,
     ) async {
       await _monter(
@@ -506,24 +544,27 @@ void main() {
         () => ProviderScope(
           overrides: <Override>[
             serviceComptesProvider.overrideWithValue(_Comptes()),
+            // La lecture elle-meme dans la portee imbriquee : sinon elle vit
+            // dans la racine, avec le vrai service.
+            comptesProvider.overrideWith(
+              (Ref ref) => ref.watch(serviceComptesProvider).comptes(),
+            ),
             serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
           ],
-          child: const ComptesPage(),
+          child: const ComptesPage(requete: <String, String>{'vue': 'eleves'}),
         ),
       );
-      final String intro = t.admin.comptes.intro;
-      expect(intro, endsWith('.'));
-      final String dernier = intro
-          .substring(0, intro.length - 1)
+      final String phrase = t.admin.comptes.detailsAbsentsMessage;
+      expect(phrase, endsWith('.'));
+      final String dernier = phrase
+          .substring(0, phrase.length - 1)
           .split(' ')
           .last;
-      // Traduite en arabe depuis la reunion de la ligne arabe (10/10) : le
-      // point suit le dernier mot dans le sens de la phrase.
       _suit(
-        _paragraphe(tester, intro.split(' ').take(3).join(' ')),
+        _paragraphe(tester, phrase.split(' ').take(3).join(' ')),
         precedent: dernier,
         suivant: '.',
-        sens: sensDuTexte(intro) ?? TextDirection.ltr,
+        sens: sensDuTexte(phrase) ?? TextDirection.ltr,
       );
     });
 
