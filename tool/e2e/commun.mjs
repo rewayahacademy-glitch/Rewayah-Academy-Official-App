@@ -44,8 +44,12 @@ const TYPES = { '.js': 'text/javascript', '.wasm': 'application/wasm', '.mjs': '
 /// un journal d'etapes. `fin()` ecrit le verdict et rend le code de sortie.
 export async function parcours(nom, dossierCaptures) {
   const sortie = path.join(DEPOT, 'docs/current/captures/E2E', dossierCaptures);
-  fs.rmSync(sortie, { recursive: true, force: true });
+  // On ne retire que les captures et le journal du passage precedent : les
+  // fichiers ecrits a la main (pieges.md) restent.
   fs.mkdirSync(sortie, { recursive: true });
+  for (const f of fs.readdirSync(sortie)) {
+    if (/\.png$|^journal\.txt$|^verdict\.json$/.test(f)) fs.rmSync(path.join(sortie, f));
+  }
   const navigateur = await chromium.launch({
     args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream',
       '--autoplay-policy=no-user-gesture-required'],

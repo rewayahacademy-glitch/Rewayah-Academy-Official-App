@@ -55,13 +55,19 @@ try {
   await p.capture(e, 'cahier_ouvert');
   p.dire(`Cahier : ${(await libelles(e.page)).filter((x) => /^(input|textarea|radio|checkbox|button)/.test(x)).join(' | ').slice(0, 1500)}`);
 
-  // 3. Remplir : chaque champ libre, et un choix par groupe s'il en faut.
-  for (const c of await e.page.locator('textarea, input[type=text], input:not([type])').all()) {
+  // 3. Remplir : « Où la Classe s'est arrêtée » (obligatoire) : sourate et verset.
+  await cliquer(e.page, /^Où la Classe s'est arrêtée/, { pause: 2500 });
+  await cliquer(e.page, /^109\. Al-Kaafiroon/, { role: 'radio', pause: 1500 });
+  await cliquer(e.page, /^6$/, { role: 'button', pause: 800 });
+  await p.capture(e, 'position_choisie');
+  await cliquer(e.page, /^Retenir cette position$/, { pause: 2500 });
+  // Champs libres eventuels.
+  for (const c of await e.page.locator('textarea').all()) {
     const nom = (await c.getAttribute('aria-label')) ?? '';
-    if (/rechercher/i.test(nom)) continue;
     await c.click({ force: true }); await e.page.keyboard.press('Control+A');
-    await e.page.keyboard.type(`E2E : ${nom.split('\n')[0].slice(0, 40)} - travail de lecture, lettres revues.`, { delay: 5 });
+    await e.page.keyboard.type(`E2E : lettres revues, lecture lente.`, { delay: 5 });
     await e.page.waitForTimeout(200);
+    p.dire(`  saisi dans « ${nom.split('\n')[0]} »`);
   }
   await p.capture(e, 'cahier_rempli');
   const valider = await trouver(e.page, /^Valider le cahier de transmission/, { delai: 5000, role: 'button' });
@@ -75,7 +81,7 @@ try {
   const erreur = await trouverTexte(e.page, /(manque|obligatoire|n'est pas|impossible|réessayez)[^|]*/i, 1500);
   const cahier = sql(`select count(*) || ' rapport(s)' from public.lesson_reports where session_id = '${seance}'`);
   p.dire(`Apres validation : ${erreur ?? 'aucun message d\'erreur'} ; cahier en base : ${cahier || '-'}`);
-  const fini = await trouverTexte(e.page, /(validé|déposé|envoyé|Tous vos cahiers de transmission sont terminés)[^|]*/i, 8000);
+  const fini = await trouverTexte(e.page, /(enregistré|validé|déposé|envoyé|Tous vos cahiers de transmission sont terminés)[^|]*/i, 8000);
   p.dire(`Ecran : ${fini ?? '-'}`);
   if (!fini) throw new Error(`cahier : apres « Valider le cahier de transmission », pas de confirmation (${erreur ?? 'aucun message'})`);
   code = await p.fin('vert');

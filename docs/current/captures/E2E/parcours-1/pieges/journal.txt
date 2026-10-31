@@ -1,0 +1,32 @@
+== Parcours 1 : pieges : 2026-10-31T21:40:34.259Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+[1.1] vert : invitation « flt-semantics:Invitation créée. Transmettez ce code à l'enseignant : 4F28-VW8W-8ZPJ » ; code verifie avec l'adresse en minuscules : « flt-semantics:Invitation valide jusqu'au Samedi 14 novembre. »
+[1.2] vert : « flt-semantics:Un compte existe déjà pour cette adresse : aucune invitation n'est nécessaire. »
+[1.3] vert : 1 invitation(s) en base ; message « flt-semantics:Invitation créée. Transmettez ce code à l'enseignant : G2VB-FRVF-DC4T »
+Invitations : e2e-p1-cand-mvwxfa1s1@example.com TJSM-NWH7-S4GR ; e2e-p1-autre-mvwxfjfp2@example.com 5GQR-F3NV-EB9A
+[1.5] vert : code faux : « flt-semantics:Code non reconnu. flt-semantics:Vérifiez le code, puis saisissez-le de nouveau. »
+[1.6] vert : code d'une autre adresse : « flt-semantics:Code non reconnu. flt-semantics:Vérifiez le code, puis saisissez-le de nouveau. »
+[1.4] rouge : code en minuscules avec espaces : « flt-semantics:Code non reconnu. flt-semantics:Vérifiez le code, puis saisissez-le de nouveau. »
+[1.10] vert : « Continuer » a vide : « flt-semantics:Cette réponse est nécessaire pour continuer. » ; http://127.0.0.1:8090/#/inscription/identite
+[1.9] vert : prenom de 76 caracteres et nom en arabe : acceptes
+[1.8] rouge : apres rechargement : http://127.0.0.1:8090/#/inscription/usage ; prenom vide ; ecran : flt-semantics:Étape 1 sur 4 | flt-semantics:Pour qui créez-vous ce compte ? | flt-semantics:Vous êtes enseignant ? L'académie vous invite par courriel.
+[1.13] rouge : signature « Quelqu'un d'autre » acceptee sans un mot (nom du compte : E2E Candidate Pieges)
+[1.11] non joué : le script a echoue : locator.click: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for getByRole('button', { name: /^Envoyer ma pièce$/ }).first()[22m
+[2m    - locator resolved to <flt-semantics role="button" aria-disabled="true" id="
+[1.12] rouge : un PDF qui n'est pas une image est accepte comme piece d'identite
+[1.14] vert : autre appareil, le lendemain : « flt-semantics:Votre dossier »
+  [lien-deux-fois] erreur de page : Error
+[1.15] rouge : lien deja utilise, ouvert de nouveau : http://127.0.0.1:8090/?error=access_denied&error_code=otp_expired&error_description=Email+link+is+invalid+or+has+expired#error=access_denied&error_code=otp_expired&error_description=Email+link+is+invalid+or+has+expired&sb= ; flt-semantics:Le lien est peut-être incomplet, ou la page n'existe plus. | button:Se connecter
+[1.16] vert : « flt-semantics:Ce dossier n'est pas encore prêt à être validé. »
+[1.17] vert : cases inactives tant que la piece n'a pas ete ouverte
+[1.18] non joué : le script a echoue : locator.click: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for getByRole('checkbox', { name: /^La pièce est lisible/ }).first()[22m
+[2m    - locator resolved to <flt-semantics role="checkbox" disabled="true" ar
+[1.7] rouge : joué en exploration (31/10 20:56 UTC) : apres le lien, « Je m'inscris pour moi » mene au parcours famille jusqu'a « Votre demande est en cours », sans rappel du code d'invitation ni retour vers l'inscription enseignante (UX-011)
+[1.19] non joué : refuser exige un motif et retire l'acces : a jouer sur un dossier dedie
+[1.20] non joué : lecture faite sur les captures, voir le bilan
+[1.21] non joué : parcours candidate au telephone : a jouer
+[1.22] non joué : direction au telephone : a jouer
+== Parcours 1 : pieges : joué
