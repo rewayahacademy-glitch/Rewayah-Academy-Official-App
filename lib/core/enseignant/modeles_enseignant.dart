@@ -714,7 +714,9 @@ class DecisionEleve {
   /// Vrai quand l'enseignant confirme ce que la base a deduit. C'est le defaut.
   final bool confirme;
 
-  /// Le motif, quand l'enseignant signale une exception.
+  /// Le motif, quand l'enseignant signale une exception. Au depot du cahier,
+  /// le serveur l'applique a la presence de l'eleve (`corrigee_manuel`,
+  /// migration 20261103200000).
   final String? motifException;
 
   /// Un point de prononciation utile, consigne dans `makharij_findings`.
