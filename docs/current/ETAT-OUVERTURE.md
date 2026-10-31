@@ -53,6 +53,7 @@ Aucune migration de rattrapage de l'enregistrement sans décision du directeur.
 - **Cahier du remplaçant** : le remplaçant ne peut déposer aucun cahier (prouvé en local le 31/10) ; PR 106 fusionnée, lot lancé, règle par défaut « le remplaçant seul dépose, le titulaire lit ».
 - **Minutes connectées sans sortie (lot PRESENCE, 20261102900000)** : si l'enseignant entre sans jamais sortir, `private.pai_minutes_enseignant` ferme l'intervalle à `finance_ended_at`, posé par la clôture automatique. Une séance d'1 h peut ainsi compter 1799 minutes (relevé local du 31/10, scénario ses_cloture_auto cas 4). La paie reste juste, car elle est plafonnée à la durée prévue, mais les minutes affichées à la famille et à la direction sont fausses. Correction proposée : borner à la fin prévue plus la grâce. Elle sera faite par une nouvelle migration, jamais en modifiant la migration appliquée.
 - **`scenarios_fac_e_paie_par_eleve`** échoue sur `main` (« pending trigger events »), hors des 30 scénarios rejoués par la CI.
+- **Séances qui s'enchaînent (relevé E2E local, 31/10 21:24)** : pour un même enseignant, Aujourd'hui garde la séance précédente « Séance en direct · Temps prévu écoulé » jusqu'à la clôture automatique (fin plus 30 min). L'écran ne propose pas la suivante ; seul l'onglet Classes le fait. « Quitter et ouvrir le cahier » laisse la séance en in_progress. Bloquant pour l'ouverture. Lot à lancer après la PR 100.
 
 - **F1** : les aperçus Vercel écrivent dans la base de production (même `SUPABASE_URL`).
 - **F2** : la base staging est en retard depuis le 23/10.
