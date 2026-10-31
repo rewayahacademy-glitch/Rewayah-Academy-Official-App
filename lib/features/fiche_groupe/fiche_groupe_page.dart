@@ -448,6 +448,7 @@ class _CorpsState extends ConsumerState<_Corps> {
         return EleveFiche(
           membre: m,
           classe: groupe.libelle,
+          groupeId: groupe.id,
           projection: ref.read(projectionElevesProvider(groupe.id))[id],
         );
       }

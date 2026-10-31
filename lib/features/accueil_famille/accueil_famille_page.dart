@@ -10,6 +10,8 @@ import 'package:go_router/go_router.dart';
 import '../../core/admission/profils_demande.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/appairage/service_avatar.dart';
+import '../../core/capacites/port_catalogue_classes.dart'
+    show catalogueClassesOuvert, portCatalogueClassesProvider;
 import '../../core/capacites/port_classes_foyer.dart';
 import '../../core/domain/enums.dart';
 import '../../core/foyer/selection_eleve.dart';
@@ -228,6 +230,9 @@ class _Contenu extends ConsumerWidget {
       onAjouter: () => routeur.go(Routes.tuteurAjouterEnfant),
     );
 
+    final bool catalogueOuvert = catalogueClassesOuvert(
+      ref.watch(portCatalogueClassesProvider),
+    );
     final bool sansClasse =
         classe.hasValue &&
         classe.value == null &&
@@ -254,12 +259,17 @@ class _Contenu extends ConsumerWidget {
             phrase: t.tuteur.accueil.sansClassePhrase(
               quePrenom: queDevant(profil.prenom),
             ),
-            libelleAction: t.classe.catalogue,
+            // Tri du 31/10/2026 : catalogue ferme (production), le parcours.
+            libelleAction: catalogueOuvert
+                ? t.classe.catalogue
+                : t.parcours.voirHoraires,
             onAction: () => routeur.go(
-              Uri(
-                path: Routes.tuteurClassesCatalogue,
-                queryParameters: <String, String>{'eleve': eleveId},
-              ).toString(),
+              catalogueOuvert
+                  ? Uri(
+                      path: Routes.tuteurClassesCatalogue,
+                      queryParameters: <String, String>{'eleve': eleveId},
+                    ).toString()
+                  : Routes.parcoursPour(eleveId),
             ),
           ),
         ],
