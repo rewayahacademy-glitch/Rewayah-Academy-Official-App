@@ -83,3 +83,17 @@ Limite à signaler : confier une classe qui a déjà un enseignant à un autre e
 **aucune RPC** (`affecter_enseignant_classe_c11bis` rend `deja_affecte`). Le bilan mène à la
 page Classes (« Voir les classes »), sans geste de réaffectation : décision du directeur à
 prendre avant de l'écrire.
+
+## Préparation d'un remplacement (A3, 31/10/2026)
+
+Décision du directeur du 31/10 (amendement de R12) : avertissement du titulaire à T+3, pré-alerte
+aux enseignants compatibles et libres, premier prêt retenu, absence automatique à T+8, on
+n'annule pas. Aucun nouvel écran : le tableau des remplacements existant porte la préparation.
+
+| Proposition | Règle et source | Conclusion | Conséquence dans l'écran |
+| :--- | :--- | :--- | :--- |
+| La préparation après l'urgence | ALERTE-1 (l'urgence en tête) | conforme | Une offre ouverte (titulaire déjà absent) reste au-dessus ; la préparation vient juste après, même carte d'alerte |
+| Un seul bouton plein | K-56 | conforme | Plein sur la première offre ouverte, sinon sur la première préparation ; « Je suis prêt » en secondaire ailleurs |
+| Premier prêt, premier servi | règle serveur (index unique, verrou par séance) ; Nielsen n° 1 | conforme | Réponse « déjà retenu » : carte « Un collègue est prêt » et sa phrase ; « close » : phrase dans la carte, plus de bouton (jamais grisé) |
+| Ce qui suit l'engagement se dit avant | K-58 | conforme | La phrase de la carte dit que la séance est confiée au premier prêt si le titulaire n'entre pas à temps |
+| Message aux familles dans la salle d'attente | demande du pilote | **bloqué** | La salle (`features/salle`, `features/salle_seance`) est la zone d'un autre lot : le message passe par la notification et l'e-mail |

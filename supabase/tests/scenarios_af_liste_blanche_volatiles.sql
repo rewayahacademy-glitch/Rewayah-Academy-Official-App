@@ -136,6 +136,8 @@ declare
     'designer_remplacant_admin(uuid,uuid,uuid)',
     -- Remplacements direction (31/10) : R12, libre a l'heure exacte, genre souple sur choix explicite trace ; direction active.
     'designer_remplacant_admin(uuid,uuid,uuid,boolean)',
+    -- A3 (31/10) : un enseignant actif candidat se declare pret pendant la pre-alerte ; le premier gagne.
+    'se_declarer_pret_remplacement(uuid)',
     'dossiers_en_attente()',
     'effacer_etat_partage(uuid)',
     'eleves_sans_enseignant()',
@@ -148,6 +150,8 @@ declare
     'enregistrer_resultat_evaluation(uuid,text,text)',
     'enregistrer_resume_seance(uuid,uuid,text,uuid,boolean)',
     -- CAND-L6 (21/10) : referentiel de paiement, direction ou comptabilite, compte valide.
+    -- REAFFECTER-CLASSE (31/10) : la direction retire une Classe a son enseignant (verifier_affectation_enseignant, verrou par enseignant) ; direction active.
+    'enseignants_pour_reaffectation(uuid)',
     'enregistrer_ligne_referentiel_paiement(uuid,text,text,text,text,text,text,text,date,text,integer,text)',
     -- CAND-AUTRES (22/10) : les autres competences du candidat, titulaire d'une candidature enseignant au compte valide (apres l'envoi de la Salle d'examen, version attendue, cle d'idempotence ; aucune garde de role).
     'enregistrer_autres_competences(jsonb,text,text,boolean,integer,text)',
@@ -260,6 +264,8 @@ declare
     'quitter_salle(uuid)',
     'read_kyc_documents()',
     -- Salle en groupe (30/10) : l'enseignant effectif readmet un eleve sorti (garde positive, compte valide).
+    -- REAFFECTER-CLASSE (31/10) : direction active, seances futures, journal enseignant_reaffecte_classe.
+    'reaffecter_enseignant_classe(uuid,uuid,text)',
     'readmettre_eleve_salle(uuid,uuid)',
     'rech_d1_curseur_creer(text,text,text,uuid,bigint)',
     'rech_d1_curseur_lire(uuid,text,text,bigint)',
