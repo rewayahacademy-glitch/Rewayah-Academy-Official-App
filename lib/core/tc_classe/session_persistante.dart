@@ -324,6 +324,13 @@ class ControleurSessionPersistante
   /// Vrai quand l'appel de [sessionId] est ouvert et confie a ce controleur.
   bool tient(String sessionId) => _dejaEnSalle(sessionId);
 
+  /// Vrai quand ce controleur pilote [moteur].
+  ///
+  /// Une demonstration ou un test qui surcharge le moteur dans une portee
+  /// imbriquee a un autre moteur que ce controleur racine : la salle ne lui
+  /// confie alors rien, et garde son ancienne regle (l'ecran ferme l'appel).
+  bool pilote(VideoSessionProvider moteur) => identical(moteur, _moteur);
+
   /// Ce que dit le moteur, tant qu'un appel est confie.
   ///
   /// **Un seul abonnement, ici, pour toute l'application** : quand l'ecran
@@ -478,7 +485,10 @@ final Provider<ControleurSessionPersistante> controleurSessionProvider =
       final ControleurSessionPersistante controleur =
           ControleurSessionPersistante(
             ref.watch(moteurSalleProvider),
-            ref.watch(serviceVideoProvider),
+            // Lu au moment d'ouvrir ou de quitter, jamais a la construction :
+            // la barre lit ce controleur sur tous les ecrans, et le service
+            // video reel ouvre Supabase (31/10/2026).
+            _ServiceVideoDiffere(() => ref.read(serviceVideoProvider)),
           );
       ref.onDispose(controleur.liberer);
       return controleur;
@@ -506,4 +516,23 @@ Stream<EtatSessionPersistante> _avecCourant(
 ) async* {
   yield controleur.etatCourant;
   yield* controleur.etats;
+}
+
+/// Le service video, resolu a chaque appel plutot qu'a la construction.
+class _ServiceVideoDiffere implements ServiceVideo {
+  _ServiceVideoDiffere(this._lire);
+
+  final ServiceVideo Function() _lire;
+
+  @override
+  Future<AccesSalle> acces(String seanceId, {String? eleveId}) =>
+      _lire().acces(seanceId, eleveId: eleveId);
+
+  @override
+  Future<void> observerEnControle(String seanceId) =>
+      _lire().observerEnControle(seanceId);
+
+  @override
+  Future<void> annoncerSortie(String seanceId) =>
+      _lire().annoncerSortie(seanceId);
 }

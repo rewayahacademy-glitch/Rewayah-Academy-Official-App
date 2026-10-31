@@ -205,6 +205,14 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     controleurSessionProvider,
   );
 
+  /// Vrai quand le controleur de session pilote le moteur de cette salle :
+  /// toujours en production ; pas dans une demonstration qui surcharge le
+  /// moteur sous la racine.
+  late final bool _confiable = _session.pilote(_moteur);
+
+  /// L'appel de cette seance est confie au controleur.
+  bool get _tenu => _confiable && _session.tient(widget.seanceId);
+
   StreamSubscription<EtatSalle>? _sEtats;
   StreamSubscription<List<ParticipantSalle>>? _sParticipants;
   StreamSubscription<QualiteLien>? _sQualite;
@@ -420,7 +428,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         widget.preparation &&
         (role == null || _suitLesCours(session0) || role == AppRole.teacher);
     RelaisRappelSalle.inscrire(_envoyerRappel);
-    if (_session.tient(widget.seanceId)) {
+    if (_tenu) {
       // Retour par la barre « Seance toujours en direct » : le meme appel,
       // sans pre-vol, sans jeton, sans reconnexion.
       _reprendre();
@@ -445,6 +453,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// Confie l'appel ouvert au proprietaire applicatif (31/10/2026) : des
   /// lors, quitter l'ecran ne le coupe plus, et la barre le montre ailleurs.
   void _confier(AccesSalle acces) {
+    if (!_confiable) return;
     _session.adopter(
       cours: SessionEnCours(
         sessionId: widget.seanceId,
@@ -460,7 +469,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// La sortie de l'appel : par le controleur quand il le tient (annonce,
   /// puis deconnexion, la barre se ferme), sinon directement.
   Future<void> _quitterAppel() async {
-    if (_session.tient(widget.seanceId)) {
+    if (_tenu) {
       await _session.quitter();
       return;
     }
@@ -482,7 +491,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // barre « Seance toujours en direct » le montre partout. Seule une salle
     // qui n'a pas d'appel confie (preparation, entree inachevee, impasse) se
     // ferme avec l'ecran, pour ne jamais laisser un micro ouvert sans barre.
-    if (!_session.tient(widget.seanceId)) {
+    if (!_tenu) {
       unawaited(_moteur.quitter());
     }
     super.dispose();
@@ -526,7 +535,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // Un compte illisible reste traite comme qui parle : le repli est ferme.
     // Une autre seance encore en direct se ferme d'abord, par la sortie
     // volontaire habituelle : un seul appel a la fois.
-    if (_session.etatCourant.cours != null &&
+    if (_confiable &&
+        _session.etatCourant.cours != null &&
         !_session.tient(widget.seanceId)) {
       await _session.quitter();
     }
