@@ -35,7 +35,7 @@ try {
   const nomAdultes = classe.nom.replace('enfants', 'adultes');
   await creerClasse(p, d, { public: 'Adultes', genre: 'Hommes|Garçons', enseignant: 'E2E Enseignant Valide',
     creneaux: [{ jour: classe.jour, heure: heureAdultes }], nom: nomAdultes });
-  await ajouterEleve(p, d, { classe: nomAdultes, eleve: ADULTE.prenom });
+  await ajouterEleve(p, d, { classe: nomAdultes, eleve: `${ADULTE.prenom} ${ADULTE.nom}` });
   fs.writeFileSync(path.join(TRAVAIL, 'classe_adultes.json'), JSON.stringify({ nom: nomAdultes, heure: heureAdultes,
     jour: classe.jour, fuseau: classe.fuseau, debut: new Date(classe.debut.getTime() + (heureAdultes - classe.heure) * 3600000) }, null, 2));
 

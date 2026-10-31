@@ -1,25 +1,25 @@
-== Parcours 3 : une famille et un eleve adulte s'inscrivent, la direction les accepte : 2026-10-31T20:32:29.018Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
-E-mail recu : « Confirmez votre adresse e-mail » ; lien http://127.0.0.1:54321/auth/v1/verify?token=pkce_cdb88ccb21a2e3920a3b08b3d2e7d6e5d23d58c3e...
+== Parcours 3 : une famille et un eleve adulte s'inscrivent, la direction les accepte : 2026-10-31T23:31:32.874Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+E-mail recu : « Confirmez votre adresse e-mail » ; lien http://127.0.0.1:54321/auth/v1/verify?token=pkce_47ecaf695239d711e84642800b49cffc2501993f4...
 Apres le lien : http://127.0.0.1:8090/#/inscription/identite
   identite 0 : flt-semantics:Étape 1 sur 3 | flt-semantics:Comment vous appelez-vous ? | input:Prénom | input:Nom | button:Continuer | button:Se déconnecter
   identite 1 : button:Retour | flt-semantics:Étape 2 sur 3 | flt-semantics:Vous êtes | radio:Un homme. Si vous suivez des cours, l'académie en tient compte pour former les classes et choisir l'enseignant. | radio:Une femme. Si vous suivez des cours, l'académie en tient compte pour former les classes et choisir l'enseignante. | button:Continuer | button:Se déconnecter
-  identite 2 : button:Retour | flt-semantics:Étape 3 sur 3 | flt-semantics:Voici ce que nous avons compris | button:Type de compte J'inscris mon enfant Modifier | button:Vos propres cours Pas de cours pour vous Modifier | button:Yanis10312032, 9 ans Nous commençons par les lettres Modifier | button:Langue du cours francais Modifier | button:Nom E2E Parent Famille10312032 Modifier | button:Genre Un homme Modifier
+  identite 2 : button:Retour | flt-semantics:Étape 3 sur 3 | flt-semantics:Voici ce que nous avons compris | button:Type de compte J'inscris mon enfant Modifier | button:Vos propres cours Pas de cours pour vous Modifier | button:Yanis10312331, 9 ans Nous commençons par les lettres Modifier | button:Langue du cours francais Modifier | button:Nom E2E Parent Famille10312331 Modifier | button:Genre Un homme Modifier
   ECART : « Lire et accepter nos conditions » avant l'etat de la demande
   accords 0 : button:Retour | checkbox:J'ai lu et compris ce que je dois savoir. | checkbox:J'accepte ces modalités pour mon enfant | button:Suivant
-e2e-famille-10312032@example.com : flt-semantics:Votre demande est en cours
-E-mail recu : « Confirmez votre adresse e-mail » ; lien http://127.0.0.1:54321/auth/v1/verify?token=pkce_bccaa7f05e1c6556be9a8b73218ed0457b8e5d106...
+e2e-famille-10312331@example.com : flt-semantics:Votre demande est en cours
+E-mail recu : « Confirmez votre adresse e-mail » ; lien http://127.0.0.1:54321/auth/v1/verify?token=pkce_1d9090a2fe26e83f2fd3539ab99d72b69f0b2c73e...
 Apres le lien : http://127.0.0.1:8090/#/inscription/identite
   identite 0 : flt-semantics:Étape 1 sur 3 | flt-semantics:Comment vous appelez-vous ? | input:Prénom | input:Nom | button:Continuer | button:Se déconnecter
   identite 1 : button:Retour | flt-semantics:Étape 2 sur 3 | flt-semantics:Vous êtes | radio:Un homme. Si vous suivez des cours, l'académie en tient compte pour former les classes et choisir l'enseignant. | radio:Une femme. Si vous suivez des cours, l'académie en tient compte pour former les classes et choisir l'enseignante. | button:Continuer | button:Se déconnecter
-  identite 2 : button:Retour | flt-semantics:Étape 3 sur 3 | flt-semantics:Voici ce que nous avons compris | button:Type de compte Je m'inscris pour moi Modifier | button:Vous Nous commençons par les lettres Modifier | button:Langue du cours francais Modifier | button:Nom E2E Adulte Apprenant10312032 Modifier | button:Genre Un homme Modifier | button:Envoyer ma demande | button:Se déconnecter
+  identite 2 : button:Retour | flt-semantics:Étape 3 sur 3 | flt-semantics:Voici ce que nous avons compris | button:Type de compte Je m'inscris pour moi Modifier | button:Vous Nous commençons par les lettres Modifier | button:Langue du cours francais Modifier | button:Nom E2E Adulte Apprenant10312331 Modifier | button:Genre Un homme Modifier | button:Envoyer ma demande | button:Se déconnecter
   ECART : « Lire et accepter nos conditions » avant l'etat de la demande
   accords 0 : button:Retour | checkbox:J'ai lu et compris ce que je dois savoir. | checkbox:J'accepte ces modalités | button:Suivant
-e2e-adulte-10312032@example.com : flt-semantics:Votre demande est en cours
-Direction : Accepter la demande d'E2E Parent Famille10312032
-  apres acceptation : flt-semantics:Demande d'E2E Parent Famille10312032 | h2:Demande d'E2E Parent Famille10312032 | flt-semantics:La demande d'E2E Parent Famille10312032 est acceptée ; l'e‑mail est en route.
-Direction : Accepter la demande d'E2E Adulte Apprenant10312032
-  apres acceptation : flt-semantics:Demande d'E2E Adulte Apprenant10312032 | h2:Demande d'E2E Adulte Apprenant10312032 | flt-semantics:La demande d'E2E Adulte Apprenant10312032 est acceptée ; l'e‑mail est en route.
-Base locale apres acceptation : e2e-famille-10312032@example.com=active/guardian ; e2e-adulte-10312032@example.com=active/guardian
-Famille, Accueil : button:Yanis10312032, Aucune séance
+e2e-adulte-10312331@example.com : flt-semantics:Votre demande est en cours
+Direction : Accepter la demande d'E2E Parent Famille10312331
+  apres acceptation : flt-semantics:Demande d'E2E Parent Famille10312331 | h2:Demande d'E2E Parent Famille10312331 | flt-semantics:La demande d'E2E Parent Famille10312331 est acceptée ; l'e‑mail est en route.
+Direction : Accepter la demande d'E2E Adulte Apprenant10312331
+  apres acceptation : flt-semantics:Demande d'E2E Adulte Apprenant10312331 | h2:Demande d'E2E Adulte Apprenant10312331 | flt-semantics:La demande d'E2E Adulte Apprenant10312331 est acceptée ; l'e‑mail est en route.
+Base locale apres acceptation : e2e-famille-10312331@example.com=active/guardian ; e2e-adulte-10312331@example.com=active/guardian
+Famille, Accueil : button:Yanis10312331, Aucune séance
 Profils eleves du foyer de la famille en base : 1
 == Parcours 3 : une famille et un eleve adulte s'inscrivent, la direction les accepte : vert

@@ -1,7 +1,7 @@
 {
   "parcours": "Parcours 4 : la direction place un eleve dans une classe",
-  "verdict": "vert",
-  "cause": "",
-  "debut": "2026-10-31T20:39:04.874Z",
-  "fin": "2026-10-31T20:40:51.178Z"
+  "verdict": "rouge",
+  "cause": "« Ajouter un élève » refuse : flt-semantics:L'ajout n'a pas abouti : cet eleve appartient deja a un groupe actif, code: P0001, details: Bad Request, hint: null)",
+  "debut": "2026-10-31T23:34:49.176Z",
+  "fin": "2026-10-31T23:35:54.687Z"
 }

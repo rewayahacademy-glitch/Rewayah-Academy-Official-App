@@ -294,6 +294,8 @@ export function nettoyerClassesE2E() {
   const admin = sql(`select id from auth.users where email = '${COMPTES.direction}'`);
   sql(`update public.sessions set deleted_at = now()
        where deleted_at is null and groupe_id in (select id from public.groupes where libelle like 'E2E %' and ended_at is null)`);
+  sql(`update public.groupe_membres set left_at = now(), left_by = '${admin}', left_reason = 'E2E : nettoyage avant passage'
+       where left_at is null and groupe_id in (select id from public.groupes where libelle like 'E2E %' and ended_at is null)`);
   sql(`update public.groupes set ended_at = now(), ended_by = '${admin}', end_reason = 'E2E : nettoyage avant passage'
        where libelle like 'E2E %' and ended_at is null`);
 }
