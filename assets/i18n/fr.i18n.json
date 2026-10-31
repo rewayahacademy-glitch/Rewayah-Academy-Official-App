@@ -7384,6 +7384,8 @@
       "minuteurHeures": "Dans {heures} h {minutes}",
       "minuteurMinutes": "Dans {minutes} min",
       "minuteurImminent": "Ça commence",
+      "minuteurDemain": "Demain à {heure}",
+      "minuteurJours(param=jours)": {"one": "Dans {jours} jour", "other": "Dans {jours} jours"},
       "jusqua": "Jusqu'à {heure}",
       "unAutreJour": "{jour}, à {heure}",
       "lancementPlusTard": "Le lancement s'ouvre dix minutes avant l'heure du cours.",

@@ -4,6 +4,8 @@
 // « + Nouvelle classe » (E18) : le tri suffit, et l'enseignant ne cree rien
 // d'administratif.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -20,6 +22,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_groupe/rejoindre_classe.dart';
 import '../../core/tc_horloge/cadence_seance.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -401,8 +404,19 @@ class ClasseALaUne extends StatelessWidget {
                 classe: classe.groupe.libelle,
               ),
               pleineLargeur: true,
-              onPress: () =>
-                  entrerEnSalle(GoRouter.of(context), seance.id, groupeId),
+              onPress: () {
+                final GoRouter routeur = GoRouter.of(context);
+                // Le cours du moment sans seance en base : le concierge la
+                // cree, puis l'enseignant entre avec elle (30/10/2026).
+                unawaited(
+                  rejoindreClasse(
+                    context,
+                    groupeId: groupeId,
+                    sessionId: seance.aCreer ? null : seance.id,
+                    entrer: (String id) => entrerEnSalle(routeur, id, groupeId),
+                  ),
+                );
+              },
             )
           : null,
       child: Column(

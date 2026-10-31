@@ -13817,6 +13817,15 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Ça commence'
 	String get minuteurImminent => 'Ça commence';
 
+	/// fr: 'Demain à {heure}'
+	String minuteurDemain({required Object heure}) => 'Demain à ${heure}';
+
+	/// fr: '(one) {Dans {jours} jour} (other) {Dans {jours} jours}'
+	String minuteurJours({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours,
+		one: 'Dans ${jours} jour',
+		other: 'Dans ${jours} jours',
+	);
+
 	/// fr: 'Jusqu'à {heure}'
 	String jusqua({required Object heure}) => 'Jusqu\'à ${heure}';
 
@@ -47482,6 +47491,8 @@ extension on Traductions {
 			'enseignant.journee.minuteurHeures' => ({required Object heures, required Object minutes}) => 'Dans ${heures} h ${minutes}',
 			'enseignant.journee.minuteurMinutes' => ({required Object minutes}) => 'Dans ${minutes} min',
 			'enseignant.journee.minuteurImminent' => 'Ça commence',
+			'enseignant.journee.minuteurDemain' => ({required Object heure}) => 'Demain à ${heure}',
+			'enseignant.journee.minuteurJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Dans ${jours} jour', other: 'Dans ${jours} jours', ), 
 			'enseignant.journee.jusqua' => ({required Object heure}) => 'Jusqu\'à ${heure}',
 			'enseignant.journee.unAutreJour' => ({required Object jour, required Object heure}) => '${jour}, à ${heure}',
 			'enseignant.journee.lancementPlusTard' => 'Le lancement s\'ouvre dix minutes avant l\'heure du cours.',
@@ -47706,10 +47717,10 @@ extension on Traductions {
 			'enseignant.cahier.repriseRecherche' => 'Chercher une sourate par son nom ou son numéro',
 			'enseignant.cahier.repriseSourate' => ({required Object numero, required Object nom}) => '${numero}. ${nom}',
 			'enseignant.cahier.repriseVersets' => ({required Object n}) => '${n} versets',
-			'enseignant.cahier.repriseRestantes' => ({required Object n}) => 'Encore ${n} sourates : précisez la recherche.',
-			'enseignant.cahier.repriseVerset' => 'Verset',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.cahier.repriseRestantes' => ({required Object n}) => 'Encore ${n} sourates : précisez la recherche.',
+			'enseignant.cahier.repriseVerset' => 'Verset',
 			'enseignant.cahier.repriseVersetBornes' => ({required Object n}) => 'Entre 1 et ${n}',
 			'enseignant.cahier.repriseRetenir' => 'Retenir cette position',
 			'enseignant.cahier.repriseIncomplete' => 'Choisissez la sourate puis le verset.',
@@ -48220,10 +48231,10 @@ extension on Traductions {
 			'tc.groupe.temps.dansMinutes' => ({required Object minutes}) => 'Cours dans ${minutes} min',
 			'tc.groupe.temps.dansHeures' => ({required Object heures, required Object minutes}) => 'Cours dans ${heures} h ${minutes}',
 			'tc.groupe.temps.demainA' => ({required Object heure}) => 'Cours demain à ${heure}',
-			'tc.groupe.temps.dansJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Cours dans ${jours} jour', other: 'Cours dans ${jours} jours', ), 
-			'tc.groupe.temps.imminent' => 'Cours imminent',
 			_ => null,
 		} ?? switch (path) {
+			'tc.groupe.temps.dansJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Cours dans ${jours} jour', other: 'Cours dans ${jours} jours', ), 
+			'tc.groupe.temps.imminent' => 'Cours imminent',
 			'tc.groupe.temps.salleOuverte' => ({required Object reste}) => 'Salle ouverte · ${reste}',
 			'tc.groupe.temps.salleOuverteCourt' => 'Salle ouverte',
 			'tc.groupe.temps.attente' => 'Vous êtes dans la salle. Le cours n\'a pas encore commencé.',
@@ -48734,10 +48745,10 @@ extension on Traductions {
 			'adulte.recharge.indisponibleTitre' => 'Recharge pas encore disponible',
 			'adulte.recharge.indisponiblePhrase' => 'La recharge n\'est pas encore disponible dans l\'application. Aucun paiement n\'est possible ici pour l\'instant.',
 			'adulte.recharge.verificationEchecTitre' => 'La vérification n\'a pas abouti.',
-			'adulte.recharge.verificationEchecPhrase' => 'Vos choix sont conservés. Vous pouvez réessayer.',
-			'adulte.recharge.recapitulatif' => 'Récapitulatif par profil',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.recharge.verificationEchecPhrase' => 'Vos choix sont conservés. Vous pouvez réessayer.',
+			'adulte.recharge.recapitulatif' => 'Récapitulatif par profil',
 			'adulte.recharge.montantPaye' => 'Montant payé',
 			'adulte.recharge.soldeAttribue' => 'Solde attribué',
 			'adulte.recharge.statut' => 'Statut de l\'attribution',
@@ -49248,10 +49259,10 @@ extension on Traductions {
 			'suiviDemandes.enseignant' => 'Enseignant',
 			'suiviDemandes.personnaliseNotice' => 'Ce créneau ne s\'ouvrira que si d\'autres élèves le choisissent et remplissent la classe.',
 			'suiviDemandes.close.retiree' => 'Demande retirée',
-			'suiviDemandes.close.nonRetenue' => 'Demande non retenue',
-			'suiviDemandes.close.close' => 'Demande close',
 			_ => null,
 		} ?? switch (path) {
+			'suiviDemandes.close.nonRetenue' => 'Demande non retenue',
+			'suiviDemandes.close.close' => 'Demande close',
 			'suiviDemandes.close.motif.retraitFamille' => 'Vous avez retiré cette demande.',
 			'suiviDemandes.close.motif.offreRetiree' => 'L\'académie a retiré ce créneau de ses offres.',
 			'suiviDemandes.close.motif.classeNonConstituee' => 'La classe de ce créneau n\'a pas pu être constituée.',
@@ -49762,10 +49773,10 @@ extension on Traductions {
 			'com.communaute.signalement.motifManquant' => 'Choisissez un motif pour envoyer le signalement.',
 			'com.communaute.composer.nouvelle' => 'Nouvelle publication',
 			'com.communaute.composer.contexte' => 'Partagez une question, une méthode ou une ressource utile à l\'enseignement.',
-			'com.communaute.composer.categorie' => 'Catégorie',
-			'com.communaute.composer.categorieManquante' => 'Choisissez une catégorie pour publier.',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.composer.categorie' => 'Catégorie',
+			'com.communaute.composer.categorieManquante' => 'Choisissez une catégorie pour publier.',
 			'com.communaute.composer.champTitre' => 'Titre',
 			'com.communaute.composer.aideTitre' => 'Le sujet en quelques mots',
 			'com.communaute.composer.titreManquant' => 'Écrivez un titre pour publier.',
@@ -50276,10 +50287,10 @@ extension on Traductions {
 			'comptable.graphiques.legendeEntrees' => 'Entrées',
 			'comptable.graphiques.legendeSorties' => 'Sorties',
 			'comptable.graphiques.legendeEncaissements' => 'Encaissements',
-			'comptable.graphiques.legendeDecaissements' => 'Décaissements',
-			'comptable.graphiques.legendeDetenue' => 'Trésorerie détenue',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.graphiques.legendeDecaissements' => 'Décaissements',
+			'comptable.graphiques.legendeDetenue' => 'Trésorerie détenue',
 			'comptable.graphiques.kpiTitre' => 'Entrées et sorties',
 			'comptable.graphiques.kpiEntrees' => 'Entrées',
 			'comptable.graphiques.kpiSorties' => 'Sorties',
@@ -50790,10 +50801,10 @@ extension on Traductions {
 			'comptable.encaissements.rap.executer' => 'Exécuter le remboursement',
 			'comptable.encaissements.rap.executerLecteur' => ({required Object beneficiaire}) => 'Exécuter le remboursement de ${beneficiaire}',
 			'comptable.encaissements.rap.executerTitre' => 'Exécuter ce remboursement ?',
-			'comptable.encaissements.rap.executerPhrase' => 'Le montant et les conditions viennent de la politique Finance. Le prestataire confirmera l\'exécution.',
-			'comptable.encaissements.rap.remboursementsVideTitre' => 'Aucun remboursement ni avoir en cours.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.encaissements.rap.executerPhrase' => 'Le montant et les conditions viennent de la politique Finance. Le prestataire confirmera l\'exécution.',
+			'comptable.encaissements.rap.remboursementsVideTitre' => 'Aucun remboursement ni avoir en cours.',
 			'comptable.encaissements.rap.journalRemboursement' => 'Journal du remboursement',
 			'comptable.encaissements.rap.journalRemboursementVide' => 'Aucune opération enregistrée pour ce remboursement.',
 			'comptable.encaissements.rap.erreurEnvoiTitre' => 'Opération incertaine',
@@ -51304,10 +51315,10 @@ extension on Traductions {
 			'recherche.domaines.finances' => 'Finances',
 			'recherche.domaines.fils' => 'Fils de discussion',
 			'recherche.domaines.remplacements' => 'Remplacements',
-			'recherche.voirDavantage' => 'Voir davantage',
-			'recherche.pageSuivante' => 'Chargement de résultats supplémentaires…',
 			_ => null,
 		} ?? switch (path) {
+			'recherche.voirDavantage' => 'Voir davantage',
+			'recherche.pageSuivante' => 'Chargement de résultats supplémentaires…',
 			'recherche.pageEnEchec' => 'Les résultats suivants n\'ont pas pu être chargés.',
 			'recherche.etats.vide.titre' => 'Aucun résultat pour cette recherche.',
 			'recherche.etats.vide.phrase' => 'Essayez un autre mot ou un filtre.',
@@ -51818,10 +51829,10 @@ extension on Traductions {
 			'admissions.precisionsAide' => 'Une ou deux phrases, en mots simples.',
 			'admissions.precisionsEnvoyer' => 'Envoyer la demande de précisions',
 			'admissions.contactContexte' => 'Un message libre, envoyé par e‑mail. La demande ne change pas.',
-			'admissions.contactSujet' => 'Sujet',
-			'admissions.contactMessage' => 'Message',
 			_ => null,
 		} ?? switch (path) {
+			'admissions.contactSujet' => 'Sujet',
+			'admissions.contactMessage' => 'Message',
 			'admissions.contactEnvoyer' => 'Envoyer le message',
 			'admissions.annulerRefus' => 'Annuler le refus',
 			'admissions.annulerRefusDetail' => 'Le refus s\'annule pendant sept jours : la demande revient « à traiter ». La personne ne reçoit pas d\'e‑mail.',

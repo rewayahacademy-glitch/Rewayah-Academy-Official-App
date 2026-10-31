@@ -87,7 +87,34 @@ class Seance {
     required this.enseignantIdentifiant,
     this.minutesInterruption = 0,
     this.enseignantPays,
+    this.groupeId,
+    this.aCreer = false,
   });
+
+  /// Lit une ligne de `cours_du_moment_mes_classes()` dont la seance n'existe
+  /// pas encore (`session_id` nul) : le cours du moment d'une Classe de
+  /// l'eleve (defaut du 30/10/2026, `core/planning/cours_du_moment.dart`).
+  ///
+  /// Debut et fin viennent de l'horloge du serveur. L'identifiant est un
+  /// repere local, unique par Classe, qui ne part jamais au serveur : le
+  /// concierge cree la seance a l'appui sur « Rejoindre ».
+  factory Seance.coursSansSeance(Map<String, dynamic> json) {
+    final String groupe = json['groupe_id'] as String;
+    return Seance(
+      id: 'cours-sans-seance:$groupe',
+      debut: _instant(json, 'debut_utc'),
+      fin: _instant(json, 'fin_prevue_utc'),
+      statut: StatutSeance.planifiee,
+      eleveId: '',
+      elevePrenom: '',
+      eleveIdentifiant: '',
+      enseignantId: json['teacher_id'] as String? ?? '',
+      enseignantPrenom: json['teacher_first_name'] as String? ?? '',
+      enseignantIdentifiant: '',
+      groupeId: groupe,
+      aCreer: true,
+    );
+  }
 
   /// Lit une ligne de la vue.
   ///
@@ -173,6 +200,14 @@ class Seance {
   /// Le pays declare par l'enseignant (ENS-PAYS-1). `null` quand il n'est
   /// pas declare ou tant que la vue ne l'expose pas : rien ne s'affiche.
   final String? enseignantPays;
+
+  /// La Classe, connue seulement d'un [Seance.coursSansSeance] :
+  /// `mes_seances_v` ne la porte pas.
+  final String? groupeId;
+
+  /// Vrai quand la seance n'existe pas encore en base ([id] n'est alors qu'un
+  /// repere local) : « Rejoindre » passe par le concierge, qui la cree.
+  final bool aCreer;
 
   /// La duree prevue.
   Duration get duree => fin.difference(debut);

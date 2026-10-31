@@ -145,7 +145,8 @@ CtaSeance ctaDeSeance(
 /// 4. a defaut de seance a venir, la derniere seance du jour dont le cahier
 ///    est depose (« Voir le cahier »).
 ///
-/// Une seance annulee n'est jamais retenue.
+/// Une seance annulee n'est jamais retenue, ni un cours sans seance en base
+/// ([SeanceEnseignant.aCreer]) dont le temps est ecoule.
 SeanceEnseignant? seanceDeLaCarte(
   List<SeanceEnseignant> seances,
   DateTime maintenant, {
@@ -156,7 +157,10 @@ SeanceEnseignant? seanceDeLaCarte(
       <SeanceEnseignant>[
         for (final SeanceEnseignant s in seances)
           if (!(s.statut?.estAnnulee ?? false) &&
-              s.statut != StatutSeance.enseignantAbsent)
+              s.statut != StatutSeance.enseignantAbsent &&
+              // Un cours sans seance en base, fini sans que personne n'y
+              // entre, n'a ni cahier ni salle : il quitte la carte.
+              !(s.aCreer && !maintenant.isBefore(s.fin.add(graceApresFin))))
             s,
       ]..sort(
         (SeanceEnseignant a, SeanceEnseignant b) => a.debut.compareTo(b.debut),

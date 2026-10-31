@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../planning/cours_du_moment.dart';
 import 'modeles_enseignant.dart';
 
 /// Ce que le role Enseignant lit et ecrit.
@@ -72,7 +73,10 @@ class ServiceEnseignantSupabase implements ServiceEnseignant {
         .from('mes_seances_enseignant_v')
         .select()
         .order('started_at');
-    return lignes.map(SeanceEnseignant.depuisJson).toList(growable: false);
+    return avecCoursSansSeance(
+      lignes.map(SeanceEnseignant.depuisJson).toList(growable: false),
+      await lireCoursDuMoment(_client),
+    );
   }
 
   @override
@@ -164,6 +168,36 @@ class ServiceEnseignantSupabase implements ServiceEnseignant {
       }
     }
   }
+}
+
+/// Ajoute aux [seances] le cours du moment des Classes qui n'a pas encore de
+/// seance en base.
+///
+/// [coursDuMoment] : les lignes de `cours_du_moment_mes_classes()`, une par
+/// Classe. Une ligne qui porte un `session_id` est deja dans [seances] ; une
+/// ligne sans `session_id` devient un [SeanceEnseignant.coursSansSeance], sauf
+/// si une seance de la meme Classe commence deja au meme instant. Le resultat
+/// reste trie par debut.
+List<SeanceEnseignant> avecCoursSansSeance(
+  List<SeanceEnseignant> seances,
+  List<Map<String, dynamic>> coursDuMoment,
+) {
+  final List<SeanceEnseignant> ajouts = <SeanceEnseignant>[
+    for (final Map<String, dynamic> ligne in coursDuMoment)
+      if (estCoursSansSeance(ligne)) SeanceEnseignant.coursSansSeance(ligne),
+  ];
+  final List<SeanceEnseignant> nouveaux = <SeanceEnseignant>[
+    for (final SeanceEnseignant a in ajouts)
+      if (!seances.any(
+        (SeanceEnseignant s) =>
+            s.groupeId == a.groupeId && s.debut.isAtSameMomentAs(a.debut),
+      ))
+        a,
+  ];
+  if (nouveaux.isEmpty) return seances;
+  return <SeanceEnseignant>[...seances, ...nouveaux]..sort(
+    (SeanceEnseignant a, SeanceEnseignant b) => a.debut.compareTo(b.debut),
+  );
 }
 
 /// Le service du role Enseignant employe par l'application.

@@ -3,6 +3,8 @@
 // l'ecran AFFICHE change. Le choix se lit dans la presentation du profil
 // (`modeAccessibiliteActifProvider`), jamais dans un role.
 
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -11,6 +13,7 @@ import '../../core/accessibilite/mode_accessibilite.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
+import '../../core/tc_groupe/rejoindre_classe.dart';
 import '../acces_finance/acces_finance.dart';
 import 'accueil_accessibilite.dart';
 import 'accueil_eleve_page.dart';
@@ -44,19 +47,24 @@ class AccueilEleveSelonPresentation extends ConsumerWidget {
       onRejoindreEspace: acces.enLecture
           ? null
           : (GroupHomeVM espace) {
-              final String? seance = espace.identite.horloge?.sessionId;
-              // Sans seance materialisee, l'entree se fait depuis Ma classe.
-              if (seance == null) {
-                aller(Routes.eleveSuivi);
-                return;
-              }
-              GoRouter.of(context).go(
-                Routes.salle,
-                // Le billet passe par `extra`, jamais par l'URL (ADR-005).
-                extra: BilletSalle(
-                  sessionId: seance,
-                  emisA: DateTime.now(),
+              final GoRouter routeur = GoRouter.of(context);
+              // Sans seance en base (Classe nee pendant son creneau, defaut
+              // du 30/10/2026), le concierge la cree ; un refus se dit sous
+              // le bouton (K-59).
+              unawaited(
+                rejoindreClasse(
+                  context,
                   groupeId: espace.identite.groupeId,
+                  sessionId: espace.identite.horloge?.sessionId,
+                  entrer: (String seance) => routeur.go(
+                    Routes.salle,
+                    // Le billet passe par `extra`, jamais par l'URL (ADR-005).
+                    extra: BilletSalle(
+                      sessionId: seance,
+                      emisA: DateTime.now(),
+                      groupeId: espace.identite.groupeId,
+                    ),
+                  ),
                 ),
               );
             },
