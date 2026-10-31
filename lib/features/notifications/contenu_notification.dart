@@ -110,6 +110,22 @@ NotificationContenu contenuNotificationPour(
       quand == null
           ? evenements.enseignanteAbsente
           : evenements.enseignanteAbsenteQuand(quand: quand),
+    // A3 (31/10/2026) : le titulaire n'est pas entre dans la salle.
+    'remplacement_avertissement' => switch (int.tryParse(
+      '${params['minutes'] ?? ''}',
+    )) {
+      final int minutes => evenements.remplacementAvertissementMinutes(
+        minutes: minutes,
+      ),
+      null => evenements.remplacementAvertissement,
+    },
+    'remplacement_pre_alerte' => evenements.remplacementPreAlerte,
+    'remplacement_inutile' => evenements.remplacementInutile,
+    'titulaire_en_retard' =>
+      portee == 'direction'
+          ? evenements.titulaireEnRetardDirection
+          : evenements.titulaireEnRetard,
+    'remplacant_arrive' => evenements.remplacantArrive,
     'classe_supprimee' => selonPortee(
       soi: evenements.classeSupprimeeSoi,
       foyer: evenements.classeSupprimeeFoyer,

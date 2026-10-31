@@ -443,6 +443,10 @@ List<Override> _surchargesAppReelle() => <Override>[
   portRemplacementsProvider.overrideWithValue(
     RemplacementsSupabase(Supabase.instance.client),
   ),
+  // A3 : « Je suis pret » pendant la pre-alerte (meme adaptateur).
+  portPretRemplacementProvider.overrideWithValue(
+    RemplacementsSupabase(Supabase.instance.client),
+  ),
   // Prerequis de l'enseignant (ENS-01), calcules par le serveur.
   surchargePrerequisEnseignant(),
   // Famille et titulaire : progression d'un eleve, profil eleve du
