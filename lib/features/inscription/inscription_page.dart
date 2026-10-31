@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/import_inscriptions/accueil_inscrits.dart';
+import '../../core/import_inscriptions/port_reclamation_preinscription.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/deconnexion.dart';
 import '../../core/theme/app_gabarit.dart';
@@ -13,6 +15,8 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/page_etape.dart';
+import '../../core/widgets/page_shell.dart';
+import '../accueil_inscrits/accueil_inscrits_page.dart';
 import 'brouillon_inscription.dart';
 import 'etapes/usage_etape.dart';
 import 'questionnaire/questionnaire_inscription.dart';
@@ -33,6 +37,8 @@ class InscriptionPage extends ConsumerStatefulWidget {
 }
 
 class _InscriptionPageState extends ConsumerState<InscriptionPage> {
+  bool _parcoursOuvert = false;
+
   @override
   void initState() {
     super.initState();
@@ -42,35 +48,84 @@ class _InscriptionPageState extends ConsumerState<InscriptionPage> {
       if (!mounted) {
         return;
       }
-      // Admission, lot B : « Pour qui » a sa reponse dans le questionnaire
-      // pose avant le compte ; l'inscription la reprend.
-      final UsageInscription? usageQuestionnaire = ref
-          .read(questionnaireInscriptionProvider)
-          .usage;
-      if (usageQuestionnaire != null &&
-          ref.read(brouillonInscriptionProvider).usage == null) {
-        ref
-            .read(brouillonInscriptionProvider.notifier)
-            .choisirUsage(usageQuestionnaire);
+      // IMM-ACCUEIL-FRONT : une famille deja inscrite par la direction est
+      // reconnue avant toute question (une seule fois par compte ; le
+      // serveur ne regarde l'import qu'apres la preuve de l'adresse). Sans
+      // pre-inscription, le parcours habituel s'ouvre, inchange.
+      if (!ref.read(portReclamationPreinscriptionProvider).disponible) {
+        _ouvrirParcours();
+        return;
       }
-      final BrouillonInscription brouillon = ref.read(
-        brouillonInscriptionProvider,
-      );
-      // Un titulaire dont le questionnaire n'est pas fini le reprend d'abord.
-      final String manquante =
-          brouillon.titulaire &&
-              !brouillon.profilCree &&
-              !ref.read(questionnaireInscriptionProvider).complet
-          ? Routes.commencer
-          : brouillon.premiereEtapeManquante;
-      if (manquante != Routes.inscriptionUsage) {
-        context.go(manquante);
-      }
+      ref.listenManual<EtatAccueilInscrits>(accueilInscritsProvider, (
+        EtatAccueilInscrits? _,
+        EtatAccueilInscrits etat,
+      ) {
+        if (_parcoursLibre(etat)) {
+          _ouvrirParcours();
+        }
+      }, fireImmediately: true);
+      unawaited(ref.read(accueilInscritsProvider.notifier).reclamerSiBesoin());
     });
   }
 
+  /// Vrai quand rien ne retient plus le parcours habituel.
+  static bool _parcoursLibre(EtatAccueilInscrits etat) =>
+      etat is AccueilSansInscription || (etat is AccueilConnu && etat.vu);
+
+  void _ouvrirParcours() {
+    if (_parcoursOuvert || !mounted) {
+      return;
+    }
+    _parcoursOuvert = true;
+    // Admission, lot B : « Pour qui » a sa reponse dans le questionnaire
+    // pose avant le compte ; l'inscription la reprend.
+    final UsageInscription? usageQuestionnaire = ref
+        .read(questionnaireInscriptionProvider)
+        .usage;
+    if (usageQuestionnaire != null &&
+        ref.read(brouillonInscriptionProvider).usage == null) {
+      ref
+          .read(brouillonInscriptionProvider.notifier)
+          .choisirUsage(usageQuestionnaire);
+    }
+    final BrouillonInscription brouillon = ref.read(
+      brouillonInscriptionProvider,
+    );
+    // Un titulaire dont le questionnaire n'est pas fini le reprend d'abord.
+    final String manquante =
+        brouillon.titulaire &&
+            !brouillon.profilCree &&
+            !ref.read(questionnaireInscriptionProvider).complet
+        ? Routes.commencer
+        : brouillon.premiereEtapeManquante;
+    if (manquante != Routes.inscriptionUsage) {
+      context.go(manquante);
+    }
+  }
+
   @override
-  Widget build(BuildContext context) => const UsageEtape();
+  Widget build(BuildContext context) {
+    // Sans serveur de reclamation (tests, demonstration) : le parcours
+    // habituel, sans attente.
+    if (!ref.watch(portReclamationPreinscriptionProvider).disponible) {
+      return const UsageEtape();
+    }
+    final EtatAccueilInscrits etat = ref.watch(accueilInscritsProvider);
+    if (_parcoursLibre(etat)) {
+      return const UsageEtape();
+    }
+    // La reprise n'a pas cree de profil (porte toujours `inscription`) : le
+    // mot de la direction, puis les questions habituelles.
+    if (etat is AccueilConnu && etat.pret) {
+      return VueAccueilInscrits(
+        reclamation: etat.reclamation,
+        onContinuer: ref.read(accueilInscritsProvider.notifier).marquerVu,
+      );
+    }
+    // Aucun titre tant qu'on ne sait pas : rien ne dit a une personne
+    // inconnue qu'on la connait (§5.2).
+    return PageShell(child: EtatReclamationVue(etat: etat));
+  }
 }
 
 /// Renvoie a la premiere etape sans reponse quand une etape est ouverte trop

@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/router/routes.dart';
+import '../accueil_inscrits/accueil_inscrits_page.dart';
 import '../foyer/formulaire_profil_eleve.dart';
 
 /// L'ajout d'un profil eleve (`/tuteur/foyer/ajouter`), ouvert depuis le
@@ -20,13 +21,28 @@ import '../foyer/formulaire_profil_eleve.dart';
 /// (ADR-009), jamais ici : le seuil est un reglage d'academie.
 class AjouterEnfantPage extends StatelessWidget {
   /// Cree l'ecran d'ajout.
-  const AjouterEnfantPage({super.key});
+  const AjouterEnfantPage({super.key, this.depuisAccueilInscrits});
+
+  /// IMM-ACCUEIL-FRONT : l'ajout part de l'accueil d'une famille deja
+  /// inscrite. Le prenom importe est prerempli, et la fin (ou l'abandon)
+  /// ramene a cet accueil.
+  final AjoutDepuisAccueilInscrits? depuisAccueilInscrits;
 
   @override
   Widget build(BuildContext context) {
     // Le routeur se lit au geste, pas au montage : l'ecran se rend aussi
     // hors routeur (preuve RTL et 200 %, `test/accessibilite`).
     void aller(String chemin) => GoRouter.of(context).go(chemin);
+    final AjoutDepuisAccueilInscrits? accueil = depuisAccueilInscrits;
+    if (accueil != null) {
+      void revenir() => aller(Routes.tuteurInscriptionReprise);
+      return FormulaireProfilEleve(
+        prenomInitial: accueil.prenom,
+        onAbandon: revenir,
+        onVoirFoyer: () => aller(Routes.tuteurFoyer),
+        onCree: (String? _) => revenir(),
+      );
+    }
     return FormulaireProfilEleve(
       onAbandon: () => aller(Routes.tuteurFoyer),
       onVoirFoyer: () => aller(Routes.tuteurFoyer),

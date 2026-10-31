@@ -196,6 +196,11 @@ abstract final class Routes {
   /// (contrainte R2).
   static const String tuteurAccueilAlias = '/tuteur/accueil';
 
+  /// IMM-ACCUEIL-FRONT : l'accueil d'une famille deja inscrite, montre une
+  /// fois apres la reprise de sa pre-inscription (mot personnel de la
+  /// direction, profils eleves importes a ajouter). Page de l'Accueil.
+  static const String tuteurInscriptionReprise = '/tuteur/inscription-reprise';
+
   /// Le Foyer, deuxieme destination du tuteur.
   static const String tuteurFoyer = '/tuteur/foyer';
 
