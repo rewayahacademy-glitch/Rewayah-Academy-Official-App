@@ -26511,8 +26511,8 @@ class Traductions$admin$planning$remplacement$fr {
 	/// fr: 'Cette séance n'est plus à venir : rien n'a été changé.'
 	String get refusSeance => 'Cette séance n\'est plus à venir : rien n\'a été changé.';
 
-	/// fr: 'La désignation n'est pas confirmée : le serveur n'a pas répondu. Réessayez dans un instant.'
-	String get erreur => 'La désignation n\'est pas confirmée : le serveur n\'a pas répondu. Réessayez dans un instant.';
+	/// fr: 'La désignation n'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'La désignation n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 
 	/// fr: 'Remplacements de la semaine'
 	String get bilanTitre => 'Remplacements de la semaine';
@@ -26529,8 +26529,8 @@ class Traductions$admin$planning$remplacement$fr {
 	/// fr: 'Séances concernées : {seances} · remplacées : {remplacees} · sans remplaçant : {sans}'
 	String bilanDetail({required Object seances, required Object remplacees, required Object sans}) => 'Séances concernées : ${seances} · remplacées : ${remplacees} · sans remplaçant : ${sans}';
 
-	/// fr: 'Les remplacements de la semaine n'ont pas pu être lus : le serveur n'a pas répondu. Réessayez dans un instant.'
-	String get bilanErreur => 'Les remplacements de la semaine n\'ont pas pu être lus : le serveur n\'a pas répondu. Réessayez dans un instant.';
+	/// fr: 'Les remplacements de la semaine n'ont pas pu être lus : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get bilanErreur => 'Les remplacements de la semaine n\'ont pas pu être lus : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 
 	/// fr: 'Voir les classes'
 	String get voirClasses => 'Voir les classes';
@@ -46141,13 +46141,13 @@ extension on Traductions {
 			'admin.planning.remplacement.refusIncompatible' => 'Ce remplacement n\'a pas été accepté : le compte de cet enseignant ne le permet pas. Choisissez un autre enseignant.',
 			'admin.planning.remplacement.refusDejaPris' => 'Cette séance a déjà un remplaçant : rien n\'a été changé.',
 			'admin.planning.remplacement.refusSeance' => 'Cette séance n\'est plus à venir : rien n\'a été changé.',
-			'admin.planning.remplacement.erreur' => 'La désignation n\'est pas confirmée : le serveur n\'a pas répondu. Réessayez dans un instant.',
+			'admin.planning.remplacement.erreur' => 'La désignation n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'admin.planning.remplacement.bilanTitre' => 'Remplacements de la semaine',
 			'admin.planning.remplacement.bilanContexte' => 'Par enseignant titulaire et par classe. Confier la classe à un autre enseignant reste une décision de la direction.',
 			'admin.planning.remplacement.bilanVide' => 'Aucune absence d\'enseignant cette semaine.',
 			'admin.planning.remplacement.bilanLigne' => ({required Object titulaire, required Object classe}) => '${titulaire} · ${classe}',
 			'admin.planning.remplacement.bilanDetail' => ({required Object seances, required Object remplacees, required Object sans}) => 'Séances concernées : ${seances} · remplacées : ${remplacees} · sans remplaçant : ${sans}',
-			'admin.planning.remplacement.bilanErreur' => 'Les remplacements de la semaine n\'ont pas pu être lus : le serveur n\'a pas répondu. Réessayez dans un instant.',
+			'admin.planning.remplacement.bilanErreur' => 'Les remplacements de la semaine n\'ont pas pu être lus : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'admin.planning.remplacement.voirClasses' => 'Voir les classes',
 			'admin.incidents.titre' => 'Incidents des 24 dernières heures',
 			'admin.incidents.sousTitre' => 'Les séances passées en incident technique, enseignant absent ou élève absent depuis 24 heures : ce que compte la tuile « Incidents (24 h) ».',

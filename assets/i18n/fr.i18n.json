@@ -5487,13 +5487,13 @@
         "refusIncompatible": "Ce remplacement n'a pas été accepté\u00a0: le compte de cet enseignant ne le permet pas. Choisissez un autre enseignant.",
         "refusDejaPris": "Cette séance a déjà un remplaçant\u00a0: rien n'a été changé.",
         "refusSeance": "Cette séance n'est plus à venir\u00a0: rien n'a été changé.",
-        "erreur": "La désignation n'est pas confirmée\u00a0: le serveur n'a pas répondu. Réessayez dans un instant.",
+        "erreur": "La désignation n'est pas confirmée\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
         "bilanTitre": "Remplacements de la semaine",
         "bilanContexte": "Par enseignant titulaire et par classe. Confier la classe à un autre enseignant reste une décision de la direction.",
         "bilanVide": "Aucune absence d'enseignant cette semaine.",
         "bilanLigne": "{titulaire} · {classe}",
         "bilanDetail": "Séances concernées\u00a0: {seances} · remplacées\u00a0: {remplacees} · sans remplaçant\u00a0: {sans}",
-        "bilanErreur": "Les remplacements de la semaine n'ont pas pu être lus\u00a0: le serveur n'a pas répondu. Réessayez dans un instant.",
+        "bilanErreur": "Les remplacements de la semaine n'ont pas pu être lus\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
         "voirClasses": "Voir les classes"
       }
     },
