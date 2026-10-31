@@ -24,10 +24,11 @@ recette en production** : la dernière colonne ne se remplit que quand le direct
 | PR | Objet | Parcours servi | État |
 |---|---|---|---|
 | 98 | Remplacement automatique de l'enseignant absent | hors ligne (déjà commencé) | fusionnée le 31/10 ; fonction courriels-envoi redéployée par deploy.yml (version 12) |
-| 100 | Séance ouverte par le jeton vidéo | 5 | rejouée par-dessus la 98 (a985822cf) ; attend la CI, puis migration et fusion |
+| 100 | Séance ouverte par le jeton vidéo | 5 | rejouée par-dessus la 98 (a985822cf), 21/21 et 11/11 en local ; migration et fusion au matin (aucun appel Supabase la nuit) |
 | 103 | Cahier hebdomadaire | 6 | fusionnée le 31/10, migration posée et vérifiée en production |
 | 104 | Confier une classe à un autre enseignant | 2 | fusionnée le 31/10, migration posée et vérifiée en production |
 | 106 | L'exception du cahier corrige la présence | 6 | fusionnée le 31/10 (480a19ca3) ; migration posée en production, corps identique au fichier (md5), déclencheur présent, fonction fermée à authenticated |
+| 108 | Le remplaçant dépose le cahier (FN-002) | 6 | CI verte, relue par le pilote ; migration 20261103300000 à poser au matin, après relecture des politiques et des corps de production ; règle par défaut à confirmer par le directeur |
 | 95 | Factures le 1er, relances | 7 | retenue jusqu'au 04/11 |
 
 ## Écart entre les migrations du dépôt et la production
