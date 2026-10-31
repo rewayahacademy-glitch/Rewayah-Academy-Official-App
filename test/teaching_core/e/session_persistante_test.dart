@@ -1,9 +1,10 @@
-﻿import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/tc_classe/port_session_persistante.dart';
 import 'package:rewayah_academy/core/tc_classe/session_persistante.dart';
 import 'package:rewayah_academy/core/tc_horloge/session_clock_vm.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
+import 'package:rewayah_academy/core/video/video_session_provider.dart';
 
 import 'faux/faux_classe.dart';
 
@@ -54,6 +55,49 @@ void main() {
     );
   }
 
+  group('branchement a /salle (31/10/2026)', () {
+    test('la salle confie l appel ouvert : il est tenu, sans second jeton', () {
+      final _Banc t = monter();
+
+      t.controleur.adopter(cours: cours, acces: accesDe('teacher'));
+
+      expect(t.controleur.tient('s1'), isTrue);
+      expect(t.controleur.tient('s2'), isFalse);
+      expect(t.video.demandes, isEmpty);
+      expect(t.moteur.departs, 0);
+    });
+
+    test('la fin par le serveur ferme la barre et libere le micro, sans '
+        'annonce de sortie', () async {
+      final _Banc t = monter();
+      t.controleur.adopter(cours: cours, acces: accesDe('teacher'));
+
+      t.moteur.poser(EtatSalle.echec);
+      await Future<void>.delayed(Duration.zero);
+
+      expect(t.controleur.etatCourant.cours, isNull);
+      expect(t.moteur.departs, 1);
+      expect(t.video.sorties, isEmpty);
+    });
+
+    test(
+      'le lien perdu se dit, et tombe quand le moteur se retablit',
+      () async {
+        final _Banc t = monter();
+        t.controleur.adopter(cours: cours, acces: accesDe('teacher'));
+
+        t.moteur.poser(EtatSalle.reconnexion);
+        await Future<void>.delayed(Duration.zero);
+        expect(t.controleur.etatCourant.lienPerdu, isTrue);
+
+        t.moteur.poser(EtatSalle.retabli);
+        await Future<void>.delayed(Duration.zero);
+        expect(t.controleur.etatCourant.lienPerdu, isFalse);
+        expect(t.controleur.etatCourant.cours, cours);
+      },
+    );
+  });
+
   group('entree', () {
     test('les trois temps, dans l ordre : materiel, jeton, salle', () async {
       final _Banc t = monter();
@@ -90,17 +134,20 @@ void main() {
       expect(t.controleur.etatCourant.cours, isNull);
     });
 
-    test('un moteur qui echoue nomme le reseau, sans detail technique', () async {
-      final _Banc t = monter(erreurEntree: StateError('ICE failed'));
+    test(
+      'un moteur qui echoue nomme le reseau, sans detail technique',
+      () async {
+        final _Banc t = monter(erreurEntree: StateError('ICE failed'));
 
-      await t.controleur.ouvrir(cours: cours, preVol: t.preVol.verifier);
+        await t.controleur.ouvrir(cours: cours, preVol: t.preVol.verifier);
 
-      expect(t.controleur.etatCourant.refus, MotifRefusSalle.reseau);
-      expect(t.controleur.etatCourant.cours, isNull);
-    });
+        expect(t.controleur.etatCourant.refus, MotifRefusSalle.reseau);
+        expect(t.controleur.etatCourant.cours, isNull);
+      },
+    );
 
     test('un second appel ne rejoint pas une seconde fois', () async {
-      // **C'est le retour instantane depuis la barre « Cours en cours ».** Une
+      // **C'est le retour instantane depuis la barre « Seance toujours en direct ».** Une
       // seconde entree redemanderait un jeton et ouvrirait une seconde `Room`,
       // ce que le socle interdit.
       final _Banc t = monter();
@@ -203,20 +250,23 @@ void main() {
   });
 
   group('projection sur le contrat', () {
-    test('sans horloge, le port rend un SessionEnCours a horloge nulle', () async {
-      // `SessionEnCours.horloge` est nullable depuis l'amendement §3 de
-      // TC_CONTRACT_REQUEST_E.md : l'horloge serveur n'existe pas encore, et
-      // fabriquer une horloge locale resterait interdit, mais taire tout le
-      // cours privait la barre « Cours en cours » de tout retour possible.
-      final _Banc t = monter();
+    test(
+      'sans horloge, le port rend un SessionEnCours a horloge nulle',
+      () async {
+        // `SessionEnCours.horloge` est nullable depuis l'amendement §3 de
+        // TC_CONTRACT_REQUEST_E.md : l'horloge serveur n'existe pas encore, et
+        // fabriquer une horloge locale resterait interdit, mais taire tout le
+        // cours privait la barre « Seance toujours en direct » de tout retour possible.
+        final _Banc t = monter();
 
-      await t.controleur.ouvrir(cours: cours, preVol: t.preVol.verifier);
+        await t.controleur.ouvrir(cours: cours, preVol: t.preVol.verifier);
 
-      expect(t.controleur.etatCourant.cours, isNotNull);
-      final SessionEnCours? rendu = await t.controleur.courante();
-      expect(rendu, isNotNull);
-      expect(rendu!.horloge, isNull);
-    });
+        expect(t.controleur.etatCourant.cours, isNotNull);
+        final SessionEnCours? rendu = await t.controleur.courante();
+        expect(rendu, isNotNull);
+        expect(rendu!.horloge, isNull);
+      },
+    );
 
     test('avec horloge, le port rend un SessionEnCours', () async {
       final _Banc t = monter();

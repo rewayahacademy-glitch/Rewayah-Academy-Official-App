@@ -418,7 +418,7 @@ class TableauLibre {
 /// La rubrique d'un support dans le panneau Supports (CLV-08). Ordre repris
 /// de `VueCatalogue` (Bibliotheque en classe) : continuer, recents, groupe.
 enum RubriqueSupport {
-  /// « Reprendre » : le support du cours en cours, avec « Ouvrir ».
+  /// « Reprendre » : le support de la seance en direct, avec « Ouvrir ».
   reprendre,
 
   /// « Recents ».

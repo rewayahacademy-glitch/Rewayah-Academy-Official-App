@@ -160,7 +160,7 @@ class SessionEnCoursDouble {
   /// Le groupe.
   final String groupeId;
 
-  /// Le libelle affiche dans la barre compacte « Cours en cours ».
+  /// Le libelle affiche dans la barre compacte « Seance toujours en direct ».
   final String libelleGroupe;
 }
 

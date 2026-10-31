@@ -2,18 +2,20 @@ import 'package:flutter/foundation.dart';
 
 import '../tc_horloge/session_clock_vm.dart';
 
-/// Le cours en cours, independamment de l'ecran affiche.
+/// La seance en direct, independamment de l'ecran affiche.
 ///
-/// C'est ce que lit la barre compacte « Cours en cours » : de quoi nommer le
+/// C'est ce que lit la barre compacte « Seance toujours en direct » : de quoi nommer le
 /// groupe, dire le temps restant, et y revenir d'un geste.
 @immutable
 class SessionEnCours {
-  /// Declare un cours en cours.
+  /// Declare une seance en direct.
   const SessionEnCours({
     required this.sessionId,
     required this.groupeId,
     required this.libelleGroupe,
     this.horloge,
+    this.eleveId,
+    this.interfaceGuidee = false,
   });
 
   /// La seance ouverte.
@@ -25,13 +27,21 @@ class SessionEnCours {
   /// Le nom familier du groupe.
   final String libelleGroupe;
 
+  /// L'eleve entre depuis l'appareil de son tuteur (D6), ou `null` : il
+  /// faut le redire au retour par la barre, sans quoi le jeton redemande
+  /// serait celui du tuteur.
+  final String? eleveId;
+
+  /// Vrai quand la salle s'ouvre dans l'Interface guidee de [eleveId].
+  final bool interfaceGuidee;
+
   /// L'horloge de la seance, pour le temps restant.
   ///
   /// **Nullable depuis l'amendement §3 de `TC_CONTRACT_REQUEST_E.md`.**
   /// `maintenantServeurUtc()` (Agent A, CONTRACTS section 3) n'existe pas
   /// encore en base : un cours peut donc etre ouvert, la salle connectee, et
   /// l'horloge indisponible. Fabriquer une horloge locale serait l'invariant 9
-  /// interdit ; taire tout le cours priverait la barre « Cours en cours » de
+  /// interdit ; taire tout le cours priverait la barre « Seance toujours en direct » de
   /// tout retour possible. `null` se rend donc sans le temps restant, jamais
   /// en cachant le cours lui-meme.
   final SessionClockVM? horloge;
@@ -42,6 +52,8 @@ class SessionEnCours {
     groupeId: groupeId,
     libelleGroupe: libelleGroupe,
     horloge: nouvelle,
+    eleveId: eleveId,
+    interfaceGuidee: interfaceGuidee,
   );
 
   @override
@@ -50,10 +62,19 @@ class SessionEnCours {
       other.sessionId == sessionId &&
       other.groupeId == groupeId &&
       other.libelleGroupe == libelleGroupe &&
-      other.horloge == horloge;
+      other.horloge == horloge &&
+      other.eleveId == eleveId &&
+      other.interfaceGuidee == interfaceGuidee;
 
   @override
-  int get hashCode => Object.hash(sessionId, groupeId, libelleGroupe, horloge);
+  int get hashCode => Object.hash(
+    sessionId,
+    groupeId,
+    libelleGroupe,
+    horloge,
+    eleveId,
+    interfaceGuidee,
+  );
 }
 
 /// La session live, au niveau **applicatif**.
@@ -70,10 +91,10 @@ class SessionEnCours {
 /// donc unique pour l'application. Ce qui manquait etait un proprietaire du
 /// cycle de vie au-dessus des ecrans -- c'est ce port.
 abstract class PortSessionPersistante {
-  /// Le cours en cours, ou `null`. Emet a chaque changement.
+  /// La seance en direct, ou `null`. Emet a chaque changement.
   Stream<SessionEnCours?> suivre();
 
-  /// Le cours en cours a cet instant, sans attendre le flux.
+  /// La seance en direct a cet instant, sans attendre le flux.
   Future<SessionEnCours?> courante();
 
   /// Sortie **volontaire**.
