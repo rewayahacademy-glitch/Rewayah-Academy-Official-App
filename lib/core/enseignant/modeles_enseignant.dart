@@ -44,6 +44,7 @@ class SeanceEnseignant {
     this.seuilMax,
     this.minutesInterruption = 0,
     this.aCreer = false,
+    this.cahierSemaineDepose = false,
   });
 
   /// Lit une ligne de `cours_du_moment_mes_classes()` dont la seance n'existe
@@ -89,6 +90,10 @@ class SeanceEnseignant {
         statut: StatutSeance.depuisSql(json['status'] as String?),
         nbParticipants: (json['nb_participants'] as num?)?.toInt() ?? 0,
         cahierDepose: json['cahier_depose'] as bool? ?? false,
+        cahierSemaineDepose:
+            json['cahier_semaine_depose'] as bool? ??
+            json['cahier_depose'] as bool? ??
+            false,
         groupeId: json['groupe_id'] as String?,
         groupeLibelle: json['groupe_libelle'] as String?,
         typePublic: json['type_public'] == null
@@ -116,8 +121,17 @@ class SeanceEnseignant {
   /// Le nombre d'eleves attendus.
   final int nbParticipants;
 
-  /// Vrai quand le cahier de transmission a deja ete depose.
+  /// Vrai quand le cahier de transmission de CETTE seance a ete depose.
   final bool cahierDepose;
+
+  /// Vrai quand chaque eleve de la seance figure deja dans un cahier de la
+  /// Classe cette semaine (fuseau de la Classe). Decide par le serveur
+  /// (`private.cahier_semaine_couvert`, decision du 31/10/2026 : un cahier
+  /// par eleve et par semaine).
+  final bool cahierSemaineDepose;
+
+  /// Vrai quand plus aucun cahier n'est du pour cette seance.
+  bool get cahierAJour => cahierDepose || cahierSemaineDepose;
 
   /// Le groupe dont cette seance est la reunion. Nul pour un cours individuel.
   final String? groupeId;
@@ -165,7 +179,7 @@ class SeanceEnseignant {
 
   /// Vrai quand la seance est terminee et attend son cahier.
   bool get attendSonCahier =>
-      !cahierDepose &&
+      !cahierAJour &&
       (statut == StatutSeance.terminee ||
           statut == StatutSeance.eleveAbsent ||
           statut == StatutSeance.incidentTechnique);
