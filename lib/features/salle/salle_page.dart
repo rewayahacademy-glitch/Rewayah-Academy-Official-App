@@ -835,7 +835,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     }
     return MenuActions(
       points: true,
-      tooltip: t.salle.gestes.menu(prenom: p.nom),
+      libelle: t.salle.gestes.menu(prenom: p.nom),
       actions: <EntreeAction>[
         if (recite)
           EntreeAction(

@@ -11,6 +11,7 @@ import '../../core/admission/profils_demande.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/appairage/service_avatar.dart';
 import '../../core/capacites/port_classes_foyer.dart';
+import '../../core/domain/enums.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
@@ -20,6 +21,7 @@ import '../../core/router/routes.dart';
 import '../../core/seance_famille/port_seances_famille.dart';
 import '../../core/seance_famille/seance_famille.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
+import '../../core/tc_groupe/group_summary_vm.dart' show EnseignantVM;
 import '../../core/tc_horloge/horloge_vivante.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/tc_parcours/port_travail_a_venir.dart';
@@ -271,22 +273,6 @@ class _Contenu extends ConsumerWidget {
         !appareils.hasError &&
         aucunAppareilPret(appareils.requireValue, eleveId);
 
-    final String? cleAvatar = profil.cleAvatar;
-    final Widget carte = CarteClasseSeance(
-      profil: profil,
-      urlPhotoEleve: cleAvatar == null
-          ? null
-          : ref.watch(avatarUrlProvider(cleAvatar)).value,
-      classe: classe,
-      seance: prochaine,
-      maintenantServeurUtc: maintenantServeurUtc,
-      compact: compact,
-      onVoirClasse: (String id) =>
-          routeur.go(Routes.classePour(id, eleveId: eleveId)),
-      onReessayerClasse: () => ref.invalidate(classeDeLEleveProvider(eleveId)),
-      onReessayerSeance: () => ref.invalidate(prochaineSeanceProvider(eleveId)),
-    );
-
     // D6 et R8 (24/10/2026) : salle ouverte ou seance en direct, la tache
     // immediate est d'y entrer ; le bouton prend la place du blocage en tete
     // (un seul bouton plein, jamais un bouton dans la carte-lien).
@@ -305,6 +291,37 @@ class _Contenu extends ConsumerWidget {
     final SessionClockVM? horlogeClasse = groupeId == null || rejoindre
         ? null
         : ref.watch(horlogeClasseVivanteProvider(groupeId)).value;
+    // Defaut du 30/10/2026 : le cours du moment d'une Classe sans seance en
+    // base (nee pendant son creneau) passe avant la prochaine seance creee,
+    // celle de la semaine suivante ; la carte le dit, l'horloge du serveur
+    // donne ses bornes.
+    final SeanceFamille? coursDuMoment = coursSansSeanceAvant(
+      horlogeClasse,
+      prochaine: prochaine.value,
+      eleveId: eleveId,
+      groupeId: groupeId,
+      enseignant: classe.value?.classe.enseignant,
+    );
+    final AsyncValue<SeanceFamille?> seanceAffichee = coursDuMoment == null
+        ? prochaine
+        : AsyncValue<SeanceFamille?>.data(coursDuMoment);
+
+    final String? cleAvatar = profil.cleAvatar;
+    final Widget carte = CarteClasseSeance(
+      profil: profil,
+      urlPhotoEleve: cleAvatar == null
+          ? null
+          : ref.watch(avatarUrlProvider(cleAvatar)).value,
+      classe: classe,
+      seance: seanceAffichee,
+      maintenantServeurUtc: maintenantServeurUtc,
+      compact: compact,
+      onVoirClasse: (String id) =>
+          routeur.go(Routes.classePour(id, eleveId: eleveId)),
+      onReessayerClasse: () => ref.invalidate(classeDeLEleveProvider(eleveId)),
+      onReessayerSeance: () => ref.invalidate(prochaineSeanceProvider(eleveId)),
+    );
+
     final Widget? bandeau = rejoindre
         ? AppCard(
             key: AccueilFamillePage.rejoindreKey,
@@ -492,4 +509,49 @@ class _Contenu extends ConsumerWidget {
       annulee: affichage.etatPastille == EtatPastilleSeance.annulee,
     );
   }
+}
+
+/// Le cours du moment d'une Classe, tire de son horloge ([horloge], lue sur
+/// le serveur par `horloge_classe`), quand sa seance n'existe pas encore et
+/// qu'il passe avant [prochaine] (defaut du 30/10/2026). `null` sinon : la
+/// carte garde la prochaine seance creee.
+///
+/// La seance rendue n'a pas d'identifiant (`seanceId` vide) : la carte ne
+/// fait que l'afficher ; « Rejoindre » passe par l'horloge et le concierge
+/// (`BoutonRejoindreClasseAvecEleve`).
+SeanceFamille? coursSansSeanceAvant(
+  SessionClockVM? horloge, {
+  required SeanceFamille? prochaine,
+  required String eleveId,
+  required String? groupeId,
+  EnseignantVM? enseignant,
+}) {
+  if (horloge == null || horloge.sessionId != null) return null;
+  if (prochaine != null && !horloge.debutUtc.isBefore(prochaine.debutUtc)) {
+    return null;
+  }
+  return SeanceFamille(
+    seanceId: '',
+    eleveId: eleveId,
+    groupeId: groupeId,
+    debutUtc: horloge.debutUtc,
+    finPrevueUtc: horloge.finPrevueUtc,
+    statutServeur: StatutSeance.planifiee,
+    fenetre: FenetreSeance(
+      debutUtc: horloge.debutUtc,
+      finPrevueUtc: horloge.finPrevueUtc,
+      fenetreAcces: horloge.fenetreAcces,
+      graceApresFin: horloge.graceApresFin,
+    ),
+    heureFoyer: horloge.horlogeUtilisateur,
+    heureGroupe: horloge.horlogeContrepartie,
+    enseignant:
+        prochaine?.enseignant ??
+        EnseignantSeance(
+          prenom: enseignant?.nomAffichage ?? '',
+          titre: enseignant?.titre,
+          clePhoto: enseignant?.photoUrlOuCle,
+          pays: enseignant?.pays,
+        ),
+  );
 }

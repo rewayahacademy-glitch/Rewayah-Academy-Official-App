@@ -241,7 +241,7 @@ class _LigneReponse extends StatelessWidget {
               Ecart.hSm,
               MenuActions(
                 points: true,
-                tooltip: r.menu(nom: reponse.auteur.nomAffiche),
+                libelle: r.menu(nom: reponse.auteur.nomAffiche),
                 actions: <EntreeAction>[
                   EntreeAction(libelle: r.signaler, onChoix: signaler),
                 ],

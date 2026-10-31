@@ -207,7 +207,7 @@ class _Corps extends StatelessWidget {
                 texte: (EleveProgression _) => '',
                 rendreMemeSiTexteVide: true,
                 rendu: (BuildContext _, EleveProgression e) => MenuActions(
-                  tooltip: e.libelle,
+                  objet: e.libelle,
                   actions: <EntreeAction>[
                     if (e.exceptionActiveId == null) ...<EntreeAction>[
                       EntreeAction(

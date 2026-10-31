@@ -2013,6 +2013,9 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             charger: d_comptes_page.loadLibrary,
             construire: () => d_comptes_page.ComptesPage(
               echusSeulement: etat.uri.queryParameters['filtre'] == 'echus',
+              // LISTES (30/10) : vue, etat et tri dans l'adresse (retour
+              // arriere, lien partage).
+              requete: etat.uri.queryParameters,
             ),
           ),
         ),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,6 +10,7 @@ import '../../core/fraicheur/relectures_accueil.dart';
 import '../../core/i18n/cle_audio.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/planning/cours_du_moment.dart';
 import '../../core/planning/journee.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/priere/horaires_priere.dart';
@@ -18,6 +21,7 @@ import '../../core/reseau/service_reseau.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_groupe/rejoindre_classe.dart';
 import '../../core/tc_horloge/cadence_seance.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_metriques.dart';
@@ -173,12 +177,21 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage>
   @override
   Widget build(BuildContext context) {
     final AsyncValue<List<Seance>> seances = ref.watch(seancesProvider);
+    // Defaut du 30/10/2026 : le cours du moment d'une Classe dont la seance
+    // n'existe pas encore (Classe nee pendant son creneau). Une lecture
+    // absente ou en echec n'ajoute rien : les seances deja creees restent.
+    final List<Map<String, dynamic>> coursDuMoment =
+        ref.watch(coursDuMomentProvider).value ??
+        const <Map<String, dynamic>>[];
     // Le compte a rebours se lit en minutes, comme celui de `ENS-02` ; les
     // bascules (ouverture de la salle a T-20, debut, fin) se voient a
     // l'instant exact, sans recharger : un seul minuteur, rearme sur la
     // prochaine (`CadenceSeanceEtat`).
     suivreBascules(<DateTime>[
-      for (final Seance s in seances.value ?? const <Seance>[])
+      for (final Seance s in avecCoursSansSeanceEleve(
+        seances.value ?? const <Seance>[],
+        coursDuMoment,
+      ))
         ...basculesSeance(s.debut, s.fin),
     ]);
     final DateTime maintenant = maintenantCadence;
@@ -199,7 +212,10 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage>
       return const PageShell(child: Skeleton.liste(lignes: 2));
     }
 
-    final List<Seance> toutes = seances.value ?? const <Seance>[];
+    final List<Seance> toutes = avecCoursSansSeanceEleve(
+      seances.value ?? const <Seance>[],
+      coursDuMoment,
+    );
     final Seance? prochain = prochainCours(toutes, maintenant);
     final Seance? annulee = seanceAnnuleeDuJour(toutes, maintenant);
     final EtatAccueilEleve etat = etatAccueilEleve(
@@ -255,7 +271,9 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage>
     // programmee avant la seance connue et a son debut (aucune minuterie
     // fixe, decision du directeur du 29/10/2026).
     return RelecturesAccueil(
-      relire: () => ref.invalidate(seancesProvider),
+      relire: () => ref
+        ..invalidate(seancesProvider)
+        ..invalidate(coursDuMomentProvider),
       instants: prochain == null
           ? const <DateTime>[]
           : <DateTime>[...basculesSeance(prochain.debut, prochain.fin).take(3)],
@@ -485,16 +503,32 @@ class _CoursAVenir extends StatelessWidget {
             joignable: joignable,
             accesEnLecture: accesEnLecture,
             paire: paire,
-            onRejoindre: () => GoRouter.of(context).go(
-              Routes.salle,
-              // Le billet passe par `extra`, jamais par l'URL (ADR-005).
-              extra: BilletSalle(sessionId: seance.id, emisA: DateTime.now()),
-            ),
+            onRejoindre: () => _entrerEnSalle(context, seance),
           ),
         ],
       ],
     );
   }
+}
+
+/// Entre dans la salle du cours [seance]. Le billet passe par `extra`, jamais
+/// par l'URL (ADR-005). Un cours sans seance en base (defaut du 30/10/2026)
+/// passe d'abord par le concierge, qui la cree ; un refus se dit sous le
+/// bouton (K-59).
+void _entrerEnSalle(BuildContext context, Seance seance) {
+  final GoRouter routeur = GoRouter.of(context);
+  void entrer(String id) => routeur.go(
+    Routes.salle,
+    extra: BilletSalle(sessionId: id, emisA: DateTime.now()),
+  );
+  final String? groupe = seance.groupeId;
+  if (!seance.aCreer || groupe == null) {
+    entrer(seance.id);
+    return;
+  }
+  unawaited(
+    rejoindreClasse(context, groupeId: groupe, sessionId: null, entrer: entrer),
+  );
 }
 
 /// Le cours commence, avec ou sans reseau pour y entrer.
@@ -566,11 +600,7 @@ class _CoursEnDirect extends StatelessWidget {
             joignable: joignable,
             accesEnLecture: accesEnLecture,
             paire: paire,
-            onRejoindre: () => GoRouter.of(context).go(
-              Routes.salle,
-              // Le billet passe par `extra`, jamais par l'URL (ADR-005).
-              extra: BilletSalle(sessionId: seance.id, emisA: DateTime.now()),
-            ),
+            onRejoindre: () => _entrerEnSalle(context, seance),
           ),
           if (!joignable && !accesEnLecture) ...<Widget>[
             Ecart.vSm,

@@ -64,7 +64,8 @@ void main() {
       'aucun « Modifier les coordonnees »', (WidgetTester tester) async {
     await tester.pumpWidget(
       hote(
-        const ComptesPage(),
+        // Comptes par role (30/10/2026) : l'enseignant est dans sa vue.
+        const ComptesPage(requete: <String, String>{'vue': 'enseignants'}),
         surcharges: <Override>[
           serviceComptesProvider.overrideWithValue(_Comptes()),
           serviceReseauProvider.overrideWithValue(FauxServiceReseau()),

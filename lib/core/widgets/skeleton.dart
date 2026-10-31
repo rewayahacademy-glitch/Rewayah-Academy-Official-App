@@ -24,6 +24,12 @@ import '../theme/app_spacing.dart';
 /// d'attente, c'est la forme de ce qui arrive**
 /// (`04-systeme-mouvement.md` section 4). La seule zone qui pulse dans ce
 /// produit est le bloc « cours dans moins de 5 minutes » d'`ELV-02`.
+///
+/// Pour une liste d'administration, [Skeleton.tableDense] pose ses barres au pas
+/// des lignes d'une table dense.
+///
+/// Regle LISTES-1 : `docs/current/DECISION-LISTES-2026-10-23.md`
+/// (List-first, human-first).
 class Skeleton extends StatefulWidget {
   /// Cree un bloc unique, d'une hauteur donnee.
   const Skeleton({
@@ -32,7 +38,8 @@ class Skeleton extends StatefulWidget {
     this.largeur,
     this.differe = true,
   }) : lignes = 1,
-       fractionDerniere = 1;
+       fractionDerniere = 1,
+       tableDense = false;
 
   /// Cree la forme d'un paragraphe : [lignes] lignes, la derniere plus courte.
   ///
@@ -41,19 +48,22 @@ class Skeleton extends StatefulWidget {
   const Skeleton.texte({this.lignes = 3, super.key, this.differe = true})
     : hauteur = AppSpacing.md,
       largeur = null,
-      fractionDerniere = 0.6;
+      fractionDerniere = 0.6,
+      tableDense = false;
 
   /// Cree la forme d'une liste de cartes.
   const Skeleton.liste({this.lignes = 3, super.key, this.differe = true})
     : hauteur = AppSpacing.respiration,
       largeur = null,
-      fractionDerniere = 1;
+      fractionDerniere = 1,
+      tableDense = false;
 
   /// Cree la forme d'une carte d'eleve (ChildCard / Bento).
   const Skeleton.carteEleve({this.lignes = 2, super.key, this.differe = true})
     : hauteur = 112.0,
       largeur = null,
-      fractionDerniere = 1;
+      fractionDerniere = 1,
+      tableDense = false;
 
   /// Cree la forme d'une tuile Bento de taille personnalisee.
   const Skeleton.tuileBento({
@@ -62,13 +72,31 @@ class Skeleton extends StatefulWidget {
     super.key,
     this.differe = true,
   }) : lignes = 1,
-       fractionDerniere = 1;
+       fractionDerniere = 1,
+       tableDense = false;
+
+  /// Cree la forme d'une **table dense** : [lignes] barres, une par ligne de
+  /// table, au pas d'une ligne de [DataCollection] (une cible tactile du mode
+  /// plus sa marge d'anneau, 56 en standard, 80 en Interface guidee).
+  ///
+  /// Le squelette a la forme de ce qui arrive : dix lignes de table y tiennent
+  /// dans la meme hauteur que dix vraies lignes, et le contenu ne saute pas au
+  /// moment ou il remplace le squelette (LISTES-1).
+  const Skeleton.tableDense({this.lignes = 10, super.key, this.differe = true})
+    : hauteur = AppSpacing.lg,
+      largeur = null,
+      fractionDerniere = 1,
+      tableDense = true;
 
   /// Cree la forme d'une ligne de calendrier / timeline.
-  const Skeleton.ligneTimeline({this.lignes = 3, super.key, this.differe = true})
-    : hauteur = AppSpacing.xxl,
-      largeur = null,
-      fractionDerniere = 1;
+  const Skeleton.ligneTimeline({
+    this.lignes = 3,
+    super.key,
+    this.differe = true,
+  }) : hauteur = AppSpacing.xxl,
+       largeur = null,
+       fractionDerniere = 1,
+       tableDense = false;
 
   /// La hauteur d'un bloc.
   final double hauteur;
@@ -81,6 +109,10 @@ class Skeleton extends StatefulWidget {
 
   /// La largeur du dernier bloc, en fraction de la largeur disponible.
   final double fractionDerniere;
+
+  /// Vrai : les blocs sont poses au pas d'une ligne de table dense, pas au
+  /// pas d'un paragraphe ([Skeleton.tableDense]).
+  final bool tableDense;
 
   /// Faux pour afficher immediatement, sans le delai de 200 ms.
   ///
@@ -124,6 +156,12 @@ class _SkeletonState extends State<Skeleton> {
 
     final AppPalette palette = AppPalette.of(context);
     final AppMetriques metriques = AppMetriques.of(context);
+    // Entre deux blocs : un paragraphe respire d'un pas moyen ; une table
+    // dense se pose au pas de ses lignes (cible tactile du mode + 8), pour que
+    // le contenu qui arrive ne decale rien.
+    final double ecart = widget.tableDense
+        ? metriques.cibleTactile + AppSpacing.sm - widget.hauteur
+        : AppSpacing.md;
 
     // Le squelette est exclu de l'arbre semantique : un lecteur d'ecran n'a
     // rien a annoncer d'une forme vide. C'est l'ecran qui annonce son
@@ -136,7 +174,7 @@ class _SkeletonState extends State<Skeleton> {
           for (int i = 0; i < widget.lignes; i++)
             Padding(
               padding: EdgeInsets.only(
-                bottom: i == widget.lignes - 1 ? 0 : AppSpacing.md,
+                bottom: i == widget.lignes - 1 ? 0 : ecart,
               ),
               child: FractionallySizedBox(
                 alignment: AlignmentDirectional.centerStart,

@@ -65,6 +65,7 @@ import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_groupe/rejoindre_classe.dart';
 import '../../core/tc_horloge/cadence_seance.dart';
 import '../../core/tc_horloge/emplacement_entree.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
@@ -274,8 +275,9 @@ class _Corps extends ConsumerWidget {
 
     // Les alertes utiles : ce qui change ce que l'enseignant fait aujourd'hui.
     // Toutes sont calculees ; la tuile en montre deux, la page les autres.
+    // Un cours sans seance en base n'a pas encore de presence a lire.
     final List<String> alertes =
-        dominant != null && dominant.enCoursA(maintenant)
+        dominant != null && !dominant.aCreer && dominant.enCoursA(maintenant)
         ? alertesPresence(
             ref.watch(presenceSeanceProvider(dominant.id)).value ??
                 const <PresenceParticipant>[],
@@ -862,6 +864,7 @@ class _CarteProchaineSeance extends ConsumerWidget {
               if (declaration != null &&
                   absence == null &&
                   !enCours &&
+                  !cours.aCreer &&
                   cours.statut == StatutSeance.planifiee &&
                   cours.debut.isAfter(maintenant)) ...<Widget>[
                 Ecart.vSm,
@@ -932,7 +935,19 @@ class _CarteProchaineSeance extends ConsumerWidget {
       return;
     }
     if (emplacement.libelle == t.enseignant.journee.rejoindreSalle) {
-      entrerEnSalle(routeur, cours.id, idGroupe);
+      if (!cours.aCreer) {
+        entrerEnSalle(routeur, cours.id, idGroupe);
+        return;
+      }
+      // Le cours du moment n'a pas encore de seance : le concierge la cree,
+      // puis l'enseignant entre avec elle (defaut du 30/10/2026).
+      await rejoindreClasse(
+        context,
+        groupeId: idGroupe,
+        sessionId: null,
+        entrer: (String seance) => entrerEnSalle(routeur, seance, idGroupe),
+      );
+      if (context.mounted) ref.invalidate(seancesEnseignantProvider);
       return;
     }
     // `push` : le retour de l'Espace Classe se referme sur Aujourd'hui (R1).
@@ -1196,7 +1211,9 @@ class ListeAlertesPage extends ConsumerWidget {
       final List<SeanceEnseignant> toutes = seances.requireValue;
       final SeanceEnseignant? dominant = _seanceDominante(toutes, maintenant);
       final SeanceEnseignant? enDirect =
-          dominant != null && dominant.enCoursA(maintenant) ? dominant : null;
+          dominant != null && !dominant.aCreer && dominant.enCoursA(maintenant)
+          ? dominant
+          : null;
       final AsyncValue<List<PresenceParticipant>?>? presence = enDirect == null
           ? null
           : ref.watch(presenceSeanceProvider(enDirect.id));

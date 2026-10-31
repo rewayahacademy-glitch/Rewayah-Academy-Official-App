@@ -207,6 +207,24 @@
     "recherche": {
       "effacer": "Effacer la recherche",
       "fermer": "Fermer la recherche"
+    },
+    "listes": {
+      "actions": "Actions",
+      "actionsDe": "Actions : {objet}",
+      "cocherPage": "Cocher la page",
+      "cocherLigne": "Cocher {objet}",
+      "trierPar": "Trier par {colonne}",
+      "trierParCroissant": "Trier par {colonne} (actuellement croissant)",
+      "trierParDecroissant": "Trier par {colonne} (actuellement décroissant)",
+      "tranche": "{debut}-{fin} sur {total}",
+      "trancheLue": "Lignes {debut} à {fin} sur {total}",
+      "precedente": "Page précédente",
+      "suivante": "Page suivante",
+      "taillePage": "Lignes par page",
+      "parPage": "{n} par page",
+      "deselectionner": "Désélectionner",
+      "retirerFiltre": "Retirer le filtre : {filtre}",
+      "toutEffacer": "Tout effacer"
     }
   },
   "miseAJour": {
@@ -4926,7 +4944,47 @@
       "attendJours(param=jours)": {
         "one": "{jours} jour",
         "other": "{jours} jours"
-      }
+      },
+      "recherche": "Rechercher un compte",
+      "filtreEtat": "État",
+      "filtreTousLesEtats": "Tous les états",
+      "compteur(param=n)": {
+        "one": "{n} compte",
+        "other": "{n} comptes"
+      },
+      "filtreActifEtat": "État : {valeur}",
+      "filtreActifRecherche": "Recherche : {texte}",
+      "actionOuvrirDossier": "Ouvrir le dossier d'identité",
+      "plafondTitre": "La liste est peut-être incomplète",
+      "plafondMessage": "Le serveur rend au plus {nombre} comptes, et la liste en compte autant : les inscriptions les plus récentes peuvent manquer.",
+      "rechercheAideEleves": "Nom, identifiant, classe ou tuteur",
+      "rechercheAide": "Nom ou identifiant",
+      "vues": "Personnes affichées",
+      "vueEleves": "Élèves",
+      "vueFamilles": "Familles",
+      "vueEnseignants": "Enseignants",
+      "vueDirection": "Direction",
+      "vueNombre": "{vue} ({n})",
+      "colonneTranche": "Âge",
+      "trancheEnfant": "Enfant",
+      "trancheAdulte": "Adulte",
+      "trancheInconnue": "Non renseigné",
+      "colonneClasse": "Classe",
+      "classeAucune": "Sans classe",
+      "classeEtAutres(param=n)": {
+        "one": "{classe} et {n} autre",
+        "other": "{classe} et {n} autres"
+      },
+      "colonneTuteur": "Tuteur",
+      "tuteurAucun": "Aucun tuteur",
+      "colonneElevesRattaches": "Élèves rattachés",
+      "videEleves": "Aucun élève inscrit pour l'instant",
+      "videFamilles": "Aucune famille inscrite pour l'instant",
+      "videEnseignants": "Aucun enseignant inscrit pour l'instant",
+      "videDirection": "Aucun compte de la direction",
+      "videDetail": "Les nouvelles inscriptions apparaîtront ici.",
+      "detailsAbsentsTitre": "Âge, classe et tuteur des élèves non affichés",
+      "detailsAbsentsMessage": "Le serveur ne donne pas encore ces informations : sa mise à jour n'est pas installée. Les élèves restent bien séparés des tuteurs. Rechargez la page une fois la mise à jour installée."
     },
     "agents": {
       "titre": "Accès des agents IA",
@@ -7341,6 +7399,8 @@
       "minuteurHeures": "Dans {heures} h {minutes}",
       "minuteurMinutes": "Dans {minutes} min",
       "minuteurImminent": "Ça commence",
+      "minuteurDemain": "Demain à {heure}",
+      "minuteurJours(param=jours)": {"one": "Dans {jours} jour", "other": "Dans {jours} jours"},
       "jusqua": "Jusqu'à {heure}",
       "unAutreJour": "{jour}, à {heure}",
       "lancementPlusTard": "Le lancement s'ouvre dix minutes avant l'heure du cours.",
