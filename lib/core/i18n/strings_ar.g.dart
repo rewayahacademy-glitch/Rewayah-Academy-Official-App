@@ -5490,6 +5490,7 @@ class _Traductions$admin$planning$ar extends Traductions$admin$planning$fr {
 	@override String get statutIncident => 'عطل تقني';
 	@override String get statutEnseignantAbsent => 'المعلم غائب';
 	@override String get statutEleveAbsent => 'الطالب غائب';
+	@override late final _Traductions$admin$planning$remplacement$ar remplacement = _Traductions$admin$planning$remplacement$ar._(_root);
 }
 
 // Path: admin.incidents
@@ -13244,6 +13245,43 @@ class _Traductions$admin$regroupements$liste$ar extends Traductions$admin$regrou
 	@override String get precedente => 'الصفحة السابقة من الطلبات المجمّعة';
 	@override String get suivante => 'الصفحة التالية من الطلبات المجمّعة';
 	@override String resume({required Object debut, required Object fin, required Object total}) => 'الطلبات المجمّعة من ⁨${debut}⁩ إلى ⁨${fin}⁩ من أصل ⁨${total}⁩';
+}
+
+// Path: admin.planning.remplacement
+class _Traductions$admin$planning$remplacement$ar extends Traductions$admin$planning$remplacement$fr {
+	_Traductions$admin$planning$remplacement$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get absenceSansRemplacant => 'أعلن المعلم غيابه، ولا يوجد بديل';
+	@override String remplacePar({required Object nom}) => 'يحل محله ⁨${nom}⁩';
+	@override String remplaceParHorsGenre({required Object nom}) => 'يحل محله ⁨${nom}⁩، من غير جنس الفصل (اختيار الإدارة)';
+	@override String action({required Object deClasse}) => 'تعيين بديل لهذه الحصة من ⁨${deClasse}⁩';
+	@override String titre({required Object deClasse}) => 'بديل لحصة ⁨${deClasse}⁩';
+	@override String quand({required Object jour, required Object horaire}) => '⁨${jour}⁩، ⁨${horaire}⁩';
+	@override String get contexte => 'لا يُقترح إلا المعلمون المتفرغون في الساعة نفسها للحصة. ويأتي أولًا من هم من جنس الفصل.';
+	@override String get mentionLibre => 'متفرغ في هذه الساعة';
+	@override String get mentionHorsGenre => 'متفرغ في هذه الساعة، لكنه ليس من جنس الفصل: لا يُختار إلا إذا لم يناسب أحد غيره';
+	@override String get avertissementHorsGenre => 'أنتم تختارون معلمًا ليس من جنس الفصل. يُسجَّل هذا الاختيار باسم الإدارة.';
+	@override String get confirmer => 'تعيين هذا البديل';
+	@override String get confirmerHorsGenre => 'تعيين هذا البديل رغم الجنس';
+	@override String get horsLigne => 'لا يوجد اتصال: سيتم التعيين حين يعود الاتصال بالجهاز.';
+	@override String get choixManquant => 'اختاروا المعلم الذي سيتولى الحصة.';
+	@override String get aucun => 'لا يوجد معلم متفرغ في الساعة نفسها لهذه الحصة.';
+	@override String designe({required Object nom}) => '⁨${nom}⁩ يتولى هذه الحصة. يظهر الاستبدال في الجدول.';
+	@override String get refusOccupe => 'لم يعد هذا المعلم متفرغًا في ساعة الحصة: أُعيدت قراءة القائمة. اختاروا معلمًا آخر.';
+	@override String get refusIncompatible => 'لم يُقبل هذا الاستبدال: حساب هذا المعلم لا يسمح به. اختاروا معلمًا آخر.';
+	@override String get refusDejaPris => 'لهذه الحصة بديل بالفعل: لم يتغير شيء.';
+	@override String get refusSeance => 'لم تعد هذه الحصة قادمة: لم يتغير شيء.';
+	@override String get erreur => 'لم يتأكد التعيين: قد لا يكون الطلب قد وصل إلى أكاديمية الرواية. أعيدوا المحاولة بعد لحظة.';
+	@override String get bilanTitre => 'استبدالات الأسبوع';
+	@override String get bilanContexte => 'حسب المعلم الأصلي وحسب الفصل. يبقى إسناد الفصل إلى معلم آخر قرارًا للإدارة.';
+	@override String get bilanVide => 'لا غياب لأي معلم هذا الأسبوع.';
+	@override String bilanLigne({required Object titulaire, required Object classe}) => '⁨${titulaire}⁩ · ⁨${classe}⁩';
+	@override String bilanDetail({required Object seances, required Object remplacees, required Object sans}) => 'الحصص المعنية: ⁨${seances}⁩ · المستبدلة: ⁨${remplacees}⁩ · دون بديل: ⁨${sans}⁩';
+	@override String get bilanErreur => 'تعذرت قراءة استبدالات الأسبوع: قد لا يكون الطلب قد وصل إلى أكاديمية الرواية. أعيدوا المحاولة بعد لحظة.';
+	@override String get voirClasses => 'عرض الفصول';
 }
 
 // Path: admin.fusion.motif
@@ -24571,6 +24609,34 @@ extension on TraductionsAr {
 			'admin.planning.statutIncident' => 'عطل تقني',
 			'admin.planning.statutEnseignantAbsent' => 'المعلم غائب',
 			'admin.planning.statutEleveAbsent' => 'الطالب غائب',
+			'admin.planning.remplacement.absenceSansRemplacant' => 'أعلن المعلم غيابه، ولا يوجد بديل',
+			'admin.planning.remplacement.remplacePar' => ({required Object nom}) => 'يحل محله ⁨${nom}⁩',
+			'admin.planning.remplacement.remplaceParHorsGenre' => ({required Object nom}) => 'يحل محله ⁨${nom}⁩، من غير جنس الفصل (اختيار الإدارة)',
+			'admin.planning.remplacement.action' => ({required Object deClasse}) => 'تعيين بديل لهذه الحصة من ⁨${deClasse}⁩',
+			'admin.planning.remplacement.titre' => ({required Object deClasse}) => 'بديل لحصة ⁨${deClasse}⁩',
+			'admin.planning.remplacement.quand' => ({required Object jour, required Object horaire}) => '⁨${jour}⁩، ⁨${horaire}⁩',
+			'admin.planning.remplacement.contexte' => 'لا يُقترح إلا المعلمون المتفرغون في الساعة نفسها للحصة. ويأتي أولًا من هم من جنس الفصل.',
+			'admin.planning.remplacement.mentionLibre' => 'متفرغ في هذه الساعة',
+			'admin.planning.remplacement.mentionHorsGenre' => 'متفرغ في هذه الساعة، لكنه ليس من جنس الفصل: لا يُختار إلا إذا لم يناسب أحد غيره',
+			'admin.planning.remplacement.avertissementHorsGenre' => 'أنتم تختارون معلمًا ليس من جنس الفصل. يُسجَّل هذا الاختيار باسم الإدارة.',
+			'admin.planning.remplacement.confirmer' => 'تعيين هذا البديل',
+			'admin.planning.remplacement.confirmerHorsGenre' => 'تعيين هذا البديل رغم الجنس',
+			'admin.planning.remplacement.horsLigne' => 'لا يوجد اتصال: سيتم التعيين حين يعود الاتصال بالجهاز.',
+			'admin.planning.remplacement.choixManquant' => 'اختاروا المعلم الذي سيتولى الحصة.',
+			'admin.planning.remplacement.aucun' => 'لا يوجد معلم متفرغ في الساعة نفسها لهذه الحصة.',
+			'admin.planning.remplacement.designe' => ({required Object nom}) => '⁨${nom}⁩ يتولى هذه الحصة. يظهر الاستبدال في الجدول.',
+			'admin.planning.remplacement.refusOccupe' => 'لم يعد هذا المعلم متفرغًا في ساعة الحصة: أُعيدت قراءة القائمة. اختاروا معلمًا آخر.',
+			'admin.planning.remplacement.refusIncompatible' => 'لم يُقبل هذا الاستبدال: حساب هذا المعلم لا يسمح به. اختاروا معلمًا آخر.',
+			'admin.planning.remplacement.refusDejaPris' => 'لهذه الحصة بديل بالفعل: لم يتغير شيء.',
+			'admin.planning.remplacement.refusSeance' => 'لم تعد هذه الحصة قادمة: لم يتغير شيء.',
+			'admin.planning.remplacement.erreur' => 'لم يتأكد التعيين: قد لا يكون الطلب قد وصل إلى أكاديمية الرواية. أعيدوا المحاولة بعد لحظة.',
+			'admin.planning.remplacement.bilanTitre' => 'استبدالات الأسبوع',
+			'admin.planning.remplacement.bilanContexte' => 'حسب المعلم الأصلي وحسب الفصل. يبقى إسناد الفصل إلى معلم آخر قرارًا للإدارة.',
+			'admin.planning.remplacement.bilanVide' => 'لا غياب لأي معلم هذا الأسبوع.',
+			'admin.planning.remplacement.bilanLigne' => ({required Object titulaire, required Object classe}) => '⁨${titulaire}⁩ · ⁨${classe}⁩',
+			'admin.planning.remplacement.bilanDetail' => ({required Object seances, required Object remplacees, required Object sans}) => 'الحصص المعنية: ⁨${seances}⁩ · المستبدلة: ⁨${remplacees}⁩ · دون بديل: ⁨${sans}⁩',
+			'admin.planning.remplacement.bilanErreur' => 'تعذرت قراءة استبدالات الأسبوع: قد لا يكون الطلب قد وصل إلى أكاديمية الرواية. أعيدوا المحاولة بعد لحظة.',
+			'admin.planning.remplacement.voirClasses' => 'عرض الفصول',
 			'admin.incidents.titre' => 'حوادث آخر 24 ساعة',
 			'admin.incidents.sousTitre' => 'الحصص التي صارت عطلًا تقنيًا أو غياب معلم أو غياب طالب منذ 24 ساعة: هذا ما تعدّه بطاقة «حوادث (24 س)».',
 			'admin.incidents.liste' => 'حصص بها حادث',
@@ -24778,6 +24844,8 @@ extension on TraductionsAr {
 			'admin.tirage.resume' => ({required Object debut, required Object fin, required Object total}) => 'القرعات من ⁨${debut}⁩ إلى ⁨${fin}⁩ من أصل ⁨${total}⁩',
 			'admin.bibliotheque.titre' => 'المكتبة',
 			'admin.bibliotheque.intro' => 'المواد التعليمية: إيداعها، ومراجعة حقوقها، ونشر إصدار منها، وإسنادها إلى الفصول.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.brouillonAlerte' => 'المسودة لا تمنح أي وصول للطلاب ولا للمعلمين.',
 			'admin.bibliotheque.ajouter' => 'إضافة مادة',
 			'admin.bibliotheque.vide' => 'لا توجد مواد',
@@ -24806,8 +24874,6 @@ extension on TraductionsAr {
 			'admin.bibliotheque.libelles.droits.refuse' => 'مرفوض',
 			'admin.bibliotheque.libelles.droits.expire' => 'منتهي الصلاحية',
 			'admin.bibliotheque.libelles.visibilite.publique' => 'عامة',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.libelles.visibilite.inscrits' => 'المسجّلون',
 			'admin.bibliotheque.libelles.visibilite.groupeAssigne' => 'الفصول المسندة',
 			'admin.bibliotheque.libelles.visibilite.enseignantSeul' => 'للمعلم فقط',
@@ -25292,6 +25358,8 @@ extension on TraductionsAr {
 			'comptable.paiements.confirmation.confirmerLot' => ({required num n, required Object montants}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, one: 'تأكيد الدفعة الجاهزة بمبلغ ${montants}', two: 'تأكيد الدفعتين الجاهزتين: ${montants}', few: 'تأكيد ${n} دفعات جاهزة: ${montants}', other: 'تأكيد ${n} دفعة جاهزة: ${montants}', ), 
 			'comptable.paiements.confirmation.demanderValidation' => 'طلب المصادقة',
 			'comptable.paiements.confirmation.annuler' => 'إلغاء',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.confirmation.fermer' => 'إغلاق',
 			'comptable.paiements.confirmation.soumisTitre' => 'أُرسلت إلى مزوّد الدفع',
 			'comptable.paiements.confirmation.soumisPhrase' => 'الدفعة المُرسَلة لم تُستلَم بعد: حالتها تأتي من متابعة مزوّد الدفع. حدّث المتابعة لترى تقدمها.',
@@ -25320,8 +25388,6 @@ extension on TraductionsAr {
 			'comptable.paiements.filtres.prets' => 'جاهزة',
 			'comptable.paiements.filtres.infos' => 'معلومات ناقصة',
 			'comptable.paiements.filtres.verification' => 'التحقق',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.filtres.validation' => 'المصادقة',
 			'comptable.paiements.filtres.retard' => 'متأخرة',
 			'comptable.paiements.filtres.classe' => 'الفصل',
@@ -25806,6 +25872,8 @@ extension on TraductionsAr {
 			'comptable.validation.motifs.autre' => 'آخر',
 			'comptable.validation.motifAutreChamp' => 'حدّد السبب',
 			'comptable.validation.erreurMotif' => 'اختر سببًا للرفض.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.validation.erreurMotifAutre' => 'حدّد السبب للرفض.',
 			'comptable.validation.decisionValidee' => 'سُجّل قرارك: تمت المصادقة على الطلب.',
 			'comptable.validation.decisionRefusee' => 'سُجّل قرارك: رُفض الطلب، مع سببه.',
@@ -25834,8 +25902,6 @@ extension on TraductionsAr {
 			'comptable.direction.corrigezChamps' => 'صحّح الحقول المشار إليها للتسجيل.',
 			'comptable.direction.enregistree' => 'سُجّل الإصدار الجديد.',
 			'comptable.direction.erreurEnregistrement' => 'لا نعلم إن كان هذا الإصدار قد سُجّل. أعد قراءة الإصدار الساري، ثم أعد المحاولة.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.enregistrementIndisponible' => 'التسجيل غير متاح بعد. أعد المحاولة لاحقًا.',
 			'comptable.direction.historique' => 'سجل الإصدارات',
 			'comptable.direction.historiqueVide' => 'لا يوجد إصدار قبل هذا.',
@@ -26320,6 +26386,8 @@ extension on TraductionsAr {
 			'appareils.titre' => 'الأجهزة',
 			'appareils.foyer.titre' => 'أجهزة الأسرة',
 			'appareils.foyer.phrase' => 'لكل ملف طالب أجهزته. المس ملفًا لترى أجهزته، أو تزيل أحدها، أو تربط جهازًا جديدًا.',
+			_ => null,
+		} ?? switch (path) {
 			'appareils.foyer.groupeProfils' => 'ملفات الطلاب',
 			'appareils.foyer.aucunAppareil' => 'لا جهاز مربوط',
 			'appareils.foyer.unAppareil' => ({required Object nom}) => 'جهاز واحد مربوط: ⁨${nom}⁩',
@@ -26348,8 +26416,6 @@ extension on TraductionsAr {
 			'appareils.eleve.retrait' => 'الجهاز المُزال لا يستطيع إعادة الاتصال. إن كان متصلًا الآن، يبقى كذلك حتى انقطاعه التالي.',
 			'appareils.plateforme.android' => 'هاتف أو جهاز لوحي Android',
 			'appareils.plateforme.ios' => 'iPhone أو iPad',
-			_ => null,
-		} ?? switch (path) {
 			'appareils.plateforme.web' => 'متصفح ويب',
 			'appareils.plateforme.windows' => 'حاسوب',
 			'appareils.plateforme.inconnue' => 'جهاز',
@@ -26834,6 +26900,8 @@ extension on TraductionsAr {
 			'adulte.acceptation.vous' => ({required Object dePrenom}) => 'دروس ⁨${dePrenom}⁩ وتقدمه ورسائله، وكذلك أطفال الأسرة. لن تستطيع إضافة طفل، ولا دعوة أحد، ولا تعديل الأسرة.',
 			'adulte.acceptation.autresTitre' => 'من يرى أيضًا',
 			'adulte.acceptation.autres' => 'معلمك لا يرى شيئًا من أسرتك. يرى فريق الأكاديمية الربط، لإدارته واعتماده عند الحاجة.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.acceptation.dureeTitre' => 'إلى متى',
 			'adulte.acceptation.duree' => ({required Object quePrenom}) => 'يستمر الربط حتى تغادر باقة الأسرة، أو ينهيه ⁨${quePrenom}⁩.',
 			'adulte.acceptation.conservation' => ({required Object duree}) => 'نحتفظ بأثر الربط ⁨${duree}⁩.',
@@ -26862,8 +26930,6 @@ extension on TraductionsAr {
 			'adulte.sortie.retirerElle' => 'إزالة زوجتي',
 			'adulte.sortie.retirerLui' => 'إزالة زوجي',
 			'adulte.sortie.retirerQuestionElle' => 'إزالة زوجتي؟',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.sortie.retirerQuestionLui' => 'إزالة زوجي؟',
 			'adulte.sortie.retirerConsequence' => 'لن يُحذف حسابه ولا دروسه ولا سجله ولا رصيده.',
 			'adulte.sortie.placePhrase' => ({required Object prenom}) => '⁨${prenom}⁩ جزء من باقة أسرتك، بحسابه الخاص.',
@@ -27348,6 +27414,8 @@ extension on TraductionsAr {
 			'controleur.observation.gestionClasse' => 'إدارة الفصل',
 			'controleur.observation.gestionClasseAide' => 'حين يتعلق الأمر بتنظيم الحصة: الوقت، التعليمات، السير',
 			'controleur.observation.respectCadre' => 'احترام الإطار',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.observation.respectCadreAide' => 'حين يتعلق الأمر بقواعد الأكاديمية والحصة',
 			'controleur.observation.climat' => 'السلوك / الجو العام',
 			'controleur.observation.climatAide' => 'حين يتعلق الأمر بسلوك الفصل أو جوه العام',
@@ -27376,8 +27444,6 @@ extension on TraductionsAr {
 			'controleur.observation.questionRecap' => 'راجع ملاحظتك قبل الإرسال.',
 			'controleur.observation.cleNature' => 'الطبيعة',
 			'controleur.observation.cleDomaine' => 'المجال',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.observation.clePersonne' => 'الشخص المعني',
 			'controleur.observation.cleTexte' => 'الملاحظة',
 			'controleur.observation.sansTexte' => 'لا نص',
@@ -27862,6 +27928,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.fuseau.choisirExplication' => 'تحدّد منطقتك الزمنية. ستظهر ساعات مقابلتك بتوقيت هذه المنطقة.',
 			'recrutement.parcours.fuseau.recherche' => 'البحث عن مدينة',
 			'recrutement.parcours.fuseau.rechercheAide' => 'اسم المدينة',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.fuseau.aucune' => 'لا توجد مدينة مطابقة.',
 			'recrutement.parcours.fuseau.autre' => 'مدينة أخرى',
 			'recrutement.parcours.fuseau.retour' => 'العودة إلى الاقتراح',
@@ -27890,8 +27958,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.creneaux.raccourciMjs' => 'الثلاثاء والخميس والسبت',
 			'recrutement.parcours.creneaux.raccourciFinDeSemaine' => 'نهاية الأسبوع',
 			'recrutement.parcours.creneaux.raccourcisAide' => 'يختار الاختصار عدة أيام دفعة واحدة. يمكنك بعد ذلك إضافة أيام أو حذفها.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.creneaux.moinsDeTrois' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'يُعقد الفصل ثلاث مرات في الأسبوع، في الأيام نفسها: فكّر في اختيار ثلاثة أيام على الأقل.', one: 'اخترت يومًا واحدًا فقط. يُعقد الفصل ثلاث مرات في الأسبوع، في الأيام نفسها: فكّر في اختيار ثلاثة أيام على الأقل.', two: 'اخترت يومين. يُعقد الفصل ثلاث مرات في الأسبوع، في الأيام نفسها: فكّر في اختيار ثلاثة أيام على الأقل.', few: 'اخترت ⁨${n}⁩ أيام. يُعقد الفصل ثلاث مرات في الأسبوع، في الأيام نفسها: فكّر في اختيار ثلاثة أيام على الأقل.', many: 'اخترت ⁨${n}⁩ يومًا. يُعقد الفصل ثلاث مرات في الأسبوع، في الأيام نفسها: فكّر في اختيار ثلاثة أيام على الأقل.', other: 'اخترت ⁨${n}⁩ يومًا. يُعقد الفصل ثلاث مرات في الأسبوع، في الأيام نفسها: فكّر في اختيار ثلاثة أيام على الأقل.', ), 
 			'recrutement.parcours.creneaux.troisSeances' => 'يُعقد الفصل ثلاث مرات في الأسبوع، في الأيام نفسها وفي الساعة نفسها.',
 			'recrutement.parcours.creneaux.durees' => ({required Object enfants, required Object adultes}) => 'مدة درس الأطفال ⁨${enfants}⁩، ومدة درس الكبار ⁨${adultes}⁩.',
@@ -28376,6 +28442,8 @@ extension on TraductionsAr {
 			'juridique.conditions.s3.titre' => '٣. الحصص',
 			'juridique.conditions.s3.blocs.0' => 'تُعقد الحصص في موعد ثابت مع المعلم نفسه. والحضور في الوقت جزء من الالتزام.',
 			'juridique.conditions.s3.blocs.1' => 'تبقى الحصة المختصرة مستحقة إذا حضر الطالب مدة كافية. أما الحصة التي تلغيها الأكاديمية أو المعلم فتُعوَّض.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.conditions.s3.blocs.2' => 'قد يحضر مراقب الجودة الحصص دون أن يراه أحد، وقد يُسجَّل الدرس. وإذا صار التسجيل فعليًا فسنخبركم قبل ذلك.',
 			'juridique.conditions.s3.blocs.3' => 'يمكن لوليّ الأمر أن يتابع حصة ابنه بصمت.',
 			'juridique.conditions.s4.titre' => '٤. الأسعار والدفع',
@@ -28404,8 +28472,6 @@ extension on TraductionsAr {
 			'juridique.annulation.s3.titre' => '٣. الغياب والحصص الملغاة',
 			'juridique.annulation.s3.blocs.0' => 'المقعد الذي فاتَ لا يُسترد ثمنه: فهو محجوز للطالب في فصل ثابت.',
 			'juridique.annulation.s3.blocs.1' => 'الحصة التي تلغيها الأكاديمية أو المعلم تُعوَّض.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.annulation.s3.blocs.2' => 'إذا لم يُفتح الفصل لقلة المسجّلين فلا يُفوتَر أي مبلغ.',
 			'juridique.annulation.s4.titre' => '٤. تأخر الدفع',
 			'juridique.annulation.s4.blocs.0' => 'قبل التجديد تصلكم تذكيرات تلقائية.',

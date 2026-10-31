@@ -23,6 +23,8 @@ import 'core/admin/port_fusion_classes.dart';
 import 'core/admin/port_incidents_seances.dart';
 import 'core/admin/port_pilotage.dart';
 import 'core/admin/port_planning_direction.dart';
+import 'core/admin/port_remplacements_direction.dart';
+import 'core/admin/remplacements_direction_supabase.dart';
 import 'core/agent/amorce_agent.dart';
 import 'core/agent/session_agent.dart';
 import 'core/candidature/autres_competences_supabase.dart';
@@ -186,6 +188,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portPlanningDirectionProvider.overrideWithValue(
     PlanningDirectionSupabase(Supabase.instance.client),
+  ),
+  // Remplacements de la direction (R12) : designation d'un remplacant depuis
+  // le planning, et bilan de la semaine par titulaire et par classe.
+  portRemplacementsDirectionProvider.overrideWithValue(
+    RemplacementsDirectionSupabase(Supabase.instance.client),
   ),
   portReprisesAdminProvider.overrideWithValue(
     ReprisesAdminSupabase(Supabase.instance.client),
