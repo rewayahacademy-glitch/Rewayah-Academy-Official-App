@@ -84,7 +84,17 @@ class PageShell extends StatelessWidget {
     this.fond,
     this.bordABord = false,
     this.teteAvecLaListe = false,
+    this.listeBureau = false,
   });
+
+  /// LISTES-3 (directeur, 01/11/2026 : « le contenu prend toute la page parce
+  /// que la page est faite pour », `DECISION-LISTES-2026-10-23.md`
+  /// §5 quater) : vrai, **au bureau**, la liste prend toute la largeur de la
+  /// zone de contenu (les gouttieres restent) au lieu d'etre bornee a
+  /// [AppPage.largeurMaxContenu]. A toutes les largeurs, elle n'a pas de
+  /// retour vers l'Accueil : la barre laterale de la coquille (le tiroir au
+  /// telephone) est la navigation. Opt-in, adopte liste par liste.
+  final bool listeBureau;
 
   /// LISTES-2 (directeur, 30/10/2026 : « tout ce qui n'est pas important ne
   /// doit pas apparaitre en permanence a l'ecran ; l'en-tete ne reste pas fixe
@@ -192,9 +202,15 @@ class PageShell extends StatelessWidget {
       ...actionsEntete,
       if (actionsCoquille) ...ActionsEnteteCoquille.de(context),
     ];
+    // LISTES-3 : une liste de la coquille n'a pas de retour ; la barre
+    // laterale (au telephone, le tiroir) est la navigation (§5 quater, pilote
+    // du 01/11/2026 : « Classes est dans AdminShell, sans onRetour »).
+    final bool sansRetourDeCoquille = listeBureau;
     final VoidCallback? retour =
         onRetour ??
-        (actionsCoquille ? ActionsEnteteCoquille.retourDe(context) : null);
+        (actionsCoquille && !sansRetourDeCoquille
+            ? ActionsEnteteCoquille.retourDe(context)
+            : null);
     final bool enteteRiche =
         retour != null ||
         sousTitre != null ||
@@ -384,6 +400,7 @@ class PageShell extends StatelessWidget {
               child: _Colonne(
                 gouttiere: gabarit.gouttiere,
                 bordABord: bordABord,
+                pleineLargeur: listeBureau && gabarit == Gabarit.desktop,
                 // AD-11 (1.4.10) : sur une vue tres basse (1280x1024 a
                 // 400 %, soit 256 de haut), la tete fixe ne laisse plus de
                 // place au corps et deborde ; la page defilante fait alors
@@ -1799,11 +1816,15 @@ class _Colonne extends StatelessWidget {
     required this.gouttiere,
     required this.child,
     this.bordABord = false,
+    this.pleineLargeur = false,
   });
 
   final double gouttiere;
   final Widget child;
   final bool bordABord;
+
+  /// LISTES-3 ([PageShell.listeBureau]) : aucune largeur maximale.
+  final bool pleineLargeur;
 
   @override
   Widget build(BuildContext context) {
@@ -1813,7 +1834,9 @@ class _Colonne extends StatelessWidget {
     return Align(
       alignment: AlignmentDirectional.topCenter,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: AppPage.largeurMaxContenu),
+        constraints: BoxConstraints(
+          maxWidth: pleineLargeur ? double.infinity : AppPage.largeurMaxContenu,
+        ),
         child: Padding(
           // Directionnel : en arabe, la gouttiere de debut est a droite.
           padding: EdgeInsetsDirectional.symmetric(horizontal: gouttiere),

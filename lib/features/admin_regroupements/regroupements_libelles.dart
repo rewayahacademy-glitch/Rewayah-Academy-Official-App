@@ -222,9 +222,20 @@ String libelleDecoupage(DecoupageClasses d) {
 /// C11BIS-AFFECTATION : la phrase d'un refus du serveur a la confirmation de
 /// l'enseignant, une par motif. Le texte SQL n'est jamais montre ; un motif
 /// inconnu donne la phrase generique.
-String libelleRefusAffectation(MotifRefusAffectation motif) {
+///
+/// FN-113 : pour le maximum de Classes, [actives] et [maximum] viennent du
+/// DETAIL du serveur ; sans eux, la phrase sans nombre.
+String libelleRefusAffectation(
+  MotifRefusAffectation motif, {
+  int? actives,
+  int? maximum,
+}) {
   final r = t.admin.regroupements.refusAffectation;
   return switch (motif) {
+    MotifRefusAffectation.plafondClasses =>
+      actives != null && maximum != null
+          ? r.plafondClasses(n: actives, maximum: maximum)
+          : r.plafondClassesSansNombre,
     MotifRefusAffectation.reservee => r.reservee,
     MotifRefusAffectation.classeIndisponible => r.classeIndisponible,
     MotifRefusAffectation.enseignantIndisponible => r.enseignantIndisponible,

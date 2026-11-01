@@ -67,9 +67,12 @@ export async function parcours(nom, dossierCaptures) {
   const dire = (m) => { console.log(m); journal.push(m); };
   dire(`== ${nom} : ${debut.toISOString()} ; Chromium ${navigateur.version()} ; ${APP}`);
 
-  async function contexte(role, { telephone = false } = {}) {
+  // `vue` (L1 des listes, 01/11/2026) : une taille d'ecran precise (1440 x
+  // 900) ; `sombre` : le theme sombre du systeme. Sans eux, comme avant.
+  async function contexte(role, { telephone = false, vue = null, sombre = false } = {}) {
     const ctx = await navigateur.newContext({
-      viewport: telephone ? { width: 390, height: 780 } : { width: 1200, height: 760 },
+      viewport: vue ?? (telephone ? { width: 390, height: 780 } : { width: 1200, height: 760 }),
+      colorScheme: sombre ? 'dark' : 'light',
       deviceScaleFactor: 1,
       locale: 'fr-FR',
       timezoneId: 'Europe/Paris',

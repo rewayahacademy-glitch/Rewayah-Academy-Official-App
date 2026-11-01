@@ -134,6 +134,7 @@ void main(List<String> arguments) {
     'onglets-defilants',
     'wrap-filtres',
     'case-recomposee',
+    'cadre-defilant',
   };
   final String? filtre = arguments
       .where((String a) => a.startsWith('--regle='))
@@ -193,6 +194,9 @@ void main(List<String> arguments) {
   }
   if (regles.contains('case-recomposee')) {
     violations.addAll(_casesRecomposees());
+  }
+  if (regles.contains('cadre-defilant')) {
+    violations.addAll(_cadresDefilants());
   }
   if (regles.contains('bouton-recompose')) {
     violations.addAll(_boutonsRecomposes());
@@ -550,6 +554,100 @@ List<Violation> _casesRecomposees() {
           _ligneDe(t, m.start),
           'case-recomposee',
           '${m.group(1)} de Material : CaseACocher (LISTES-1)',
+        ),
+      );
+    }
+  }
+  return v;
+}
+
+/// DECISION-DEFILEMENT-2026-11-01 (directeur, sans date de fin) : aucun
+/// contenu ne defile dans un cadre de hauteur fixe a l'interieur d'une page ;
+/// la liste est la page, une seule barre de defilement par ecran.
+///
+/// Detecteur : un `SizedBox`, un `ConstrainedBox`, un `Container` ou un
+/// `LimitedBox` dont les arguments fixent une hauteur (`height:`,
+/// `maxHeight:`) et contiennent un defilement vertical (`ListView`,
+/// `GridView`, `SingleChildScrollView`, `CustomScrollView`, `Scrollbar`,
+/// `HtmlElementView`), sauf horizontal (`Axis.horizontal`) ou qui ne defile
+/// pas (`NeverScrollableScrollPhysics`). Seule exception admise sans decision :
+/// ce qui ne defile pas du tout (la page du Coran, la video).
+///
+/// **Contenu tiers** (`HtmlElementView`, un iframe : paiement Stripe) : la
+/// molette et le doigt poses sur lui ne parviennent pas a Flutter, donc un
+/// cadre a la hauteur du contenu ne ferait pas defiler la page. La parade
+/// n'est pas de l'agrandir : un contenu tiers plus haut que l'ecran devient un
+/// element natif plein ecran, dont le defilement est celui de la page (PR
+/// 120, constat du garde-cap du 01/11/2026).
+///
+/// Socle **date du 01/11/2026** : les sites qui existaient a l'adoption de la
+/// regle (lot L1 des listes). Le nombre permis par fichier ne monte jamais ;
+/// on retire la ligne quand le site est corrige dans la refonte des listes.
+/// Un fichier absent de cette liste n'a droit a aucun cadre defilant.
+const Map<String, int> _cadresDefilantsSocle = <String, int>{
+  // Le bandeau d'alerte de la coquille, borne a la moitie de la hauteur.
+  'lib/core/widgets/admin_shell.dart': 1,
+  // Le compositeur d'un fil (champ de saisie qui grandit puis defile).
+  'lib/core/widgets/fil_discussion.dart': 1,
+  // Les dialogues d'observation (liste dans une boite bornee).
+  'lib/features/admin_observations/observations_admin_page.dart': 1,
+  // L'enregistrement vocal (apercu borne a une fraction de l'ecran).
+  'lib/features/com_vocal/composer_vocal.dart': 1,
+  // La salle : tiroirs et panneaux bornes a une fraction de l'ecran.
+  'lib/features/salle_seance/salle_seance.dart': 3,
+  'lib/features/salle_seance/telephone_plein_ecran.dart': 1,
+};
+
+List<Violation> _cadresDefilants() {
+  final List<Violation> v = <Violation>[];
+  final RegExp boite = RegExp(
+    r'\b(SizedBox|ConstrainedBox|Container|LimitedBox)\s*\(',
+  );
+  final RegExp hauteur = RegExp(r'\b(height|maxHeight)\s*:');
+  final RegExp defilement = RegExp(
+    r'\b(ListView(?:\.builder|\.separated|\.custom)?|GridView(?:\.builder|\.count|\.extent)?|SingleChildScrollView|CustomScrollView|Scrollbar|RawScrollbar|HtmlElementView)\s*\(',
+  );
+  for (final File f in _sourcesLib()) {
+    final String chemin = f.path.replaceAll('\\', '/');
+    final String t = _sansCommentaires(f);
+    int rang = 0;
+    final int permis = _cadresDefilantsSocle[chemin] ?? 0;
+    for (final RegExpMatch m in boite.allMatches(t)) {
+      final int ouvre = t.indexOf('(', m.start);
+      final int ferme = _fermante(t, ouvre);
+      if (ferme < 0) continue;
+      final String args = t.substring(ouvre, ferme);
+      // La hauteur doit etre celle de la boite, pas d'un descendant : elle
+      // precede le premier enfant.
+      final int enfant = args.indexOf(RegExp(r'\bchild\s*:'));
+      final String propres = enfant < 0 ? args : args.substring(0, enfant);
+      if (!hauteur.hasMatch(propres)) continue;
+      bool trouve = false;
+      for (final RegExpMatch d in defilement.allMatches(args)) {
+        final int o = args.indexOf('(', d.start);
+        final int fd = _fermante(args, o);
+        final String a = fd < 0 ? '' : args.substring(o, fd);
+        if (a.contains('Axis.horizontal') ||
+            a.contains('NeverScrollableScrollPhysics')) {
+          continue;
+        }
+        trouve = true;
+        break;
+      }
+      if (!trouve) continue;
+      if (++rang <= permis) continue;
+      v.add(
+        Violation(
+          chemin,
+          _ligneDe(t, m.start),
+          'cadre-defilant',
+          args.contains('HtmlElementView')
+              ? '${m.group(1)} de hauteur fixe autour d\'un contenu tiers : '
+                    'element natif plein ecran, dont le defilement est celui '
+                    'de la page (PR 120), jamais un cadre a la hauteur du '
+                    'contenu (DECISION-DEFILEMENT-2026-11-01)'
+              : '${m.group(1)} de hauteur fixe autour d\'un defilement : la '
+                    'liste est la page (DECISION-DEFILEMENT-2026-11-01)',
         ),
       );
     }
@@ -1413,16 +1511,13 @@ bool _estGriseSeul(String e) {
     return false;
   }
   final bool grise =
-      RegExp(r'\?\s*null\s*:').hasMatch(e) ||
-      RegExp(r':\s*null$').hasMatch(e);
+      RegExp(r'\?\s*null\s*:').hasMatch(e) || RegExp(r':\s*null$').hasMatch(e);
   if (!grise) {
     return false;
   }
   final String? condition = conditionTernaire(e);
   return condition == null ||
-      !_conditionEnvoiSeule.hasMatch(
-        condition.replaceAll(RegExp(r'\s+'), ' '),
-      );
+      !_conditionEnvoiSeule.hasMatch(condition.replaceAll(RegExp(r'\s+'), ' '));
 }
 
 /// Les boutons d'action dont `onPress`, `onPressed` ou `onTap` vaut `null`
@@ -1542,12 +1637,13 @@ Map<String, Set<String>> relaisAction(Map<String, String> sources) {
         }
         final String appelant = _appelantDe(texte, m.start);
         final bool versAction =
-            const <String>{'onPress', 'onPressed', 'onTap'}.contains(
-              m.group(1),
-            ) &&
+            const <String>{
+              'onPress',
+              'onPressed',
+              'onTap',
+            }.contains(m.group(1)) &&
             _widgetAction.hasMatch(appelant);
-        final bool versRelais =
-            relais[appelant]?.contains(m.group(1)) ?? false;
+        final bool versRelais = relais[appelant]?.contains(m.group(1)) ?? false;
         if (!versAction && !versRelais) {
           continue;
         }

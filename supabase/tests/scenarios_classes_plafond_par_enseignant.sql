@@ -567,7 +567,7 @@ RESET ROLE;
 -- liste SET nomme teacher_id, a n'importe quelle place) : trois, toutes derriere
 -- le predicat. Une quatrieme fait echouer ce controle, pour etre relue.
 SELECT pg_temp.vrai(
-  (SELECT array_agg(p.oid::regprocedure::text ORDER BY p.oid::regprocedure::text)
+  (SELECT array_agg(p.oid::regprocedure::text ORDER BY p.oid::regprocedure::text COLLATE "C")
      FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
     WHERE n.nspname NOT IN ('pg_catalog', 'information_schema') AND p.prokind = 'f'
       AND p.prosrc ~* 'update\s+(only\s+)?(public\.)?groupes\y' AND p.prosrc ~* '(set|,)\s*teacher_id\s*=') =
@@ -575,10 +575,16 @@ SELECT pg_temp.vrai(
   -- relue : meme predicat que creer_groupe, avant l'affectation.
   ARRAY['affecter_enseignant_classe(uuid,uuid)', 'affecter_enseignant_classe_c11bis(uuid,uuid)',
         'creer_classe_creneaux_admin(uuid,text,text,smallint,text,jsonb,text,smallint)',
-        'creer_groupe(uuid,text,text,smallint,smallint,smallint,text,smallint)'],
-  '(j) quatre fonctions seulement ecrivent groupes.teacher_id (affecter_enseignant_classe, sa version c11bis, creer_groupe a 8 arguments, creer_classe_creneaux_admin)');
+        'creer_groupe(uuid,text,text,smallint,smallint,smallint,text,smallint)',
+  -- 31/10/2026 (PR 104) : reaffecter_enseignant_classe, relue le 01/11 (L1) :
+  -- app_private.verifier_affectation_enseignant (dont le maximum de
+  -- Classes) avant l'ecriture, par private.verifier_reaffectation.
+        'reaffecter_enseignant_classe(uuid,uuid,text)'],
+  '(j) cinq fonctions seulement ecrivent groupes.teacher_id (affecter_enseignant_classe, sa version c11bis, creer_groupe a 8 arguments, creer_classe_creneaux_admin, reaffecter_enseignant_classe)');
 SELECT pg_temp.vrai(
-  (SELECT bool_and(p.prosrc ~* 'verifier_affectation_enseignant')
+  -- reaffecter_enseignant_classe y passe par private.verifier_reaffectation,
+  -- qui appelle app_private.verifier_affectation_enseignant (relu le 01/11).
+  (SELECT bool_and(p.prosrc ~* '(verifier_affectation_enseignant|verifier_reaffectation)')
      FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
     WHERE n.nspname NOT IN ('pg_catalog', 'information_schema') AND p.prokind = 'f'
       AND p.prosrc ~* 'update\s+(only\s+)?(public\.)?groupes\y' AND p.prosrc ~* '(set|,)\s*teacher_id\s*='),
@@ -588,7 +594,7 @@ SELECT pg_temp.vrai(
 -- pose un enseignant sans predicat : elle n'est executable par personne ; les
 -- deux autres inserent une classe SANS enseignant.
 SELECT pg_temp.vrai(
-  (SELECT array_agg(p.oid::regprocedure::text ORDER BY p.oid::regprocedure::text)
+  (SELECT array_agg(p.oid::regprocedure::text ORDER BY p.oid::regprocedure::text COLLATE "C")
      FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
     WHERE n.nspname NOT IN ('pg_catalog', 'information_schema') AND p.prokind = 'f'
       AND p.prosrc ~* 'insert\s+into\s+(public\.)?groupes\s*\(') =

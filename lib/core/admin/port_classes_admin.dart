@@ -151,7 +151,14 @@ class FiltreClasses {
     this.genre,
     this.enseignantId,
     this.remplissage,
+    this.ouvertes = false,
   });
+
+  /// L1 (directeur, 01/11/2026, `DECISION-LISTES-2026-10-23.md` §5 quater) :
+  /// vrai et [etat] nul, la liste ne montre que les classes **ouvertes**
+  /// (actives et en attente d'enseignant) ; « Cloturees » reste un filtre.
+  /// Sans effet quand [etat] est choisi. Rien n'est efface.
+  final bool ouvertes;
 
   /// L'identifiant d'enseignant qui designe les classes sans enseignant.
   static const String sansEnseignant = '';
@@ -195,6 +202,7 @@ class FiltreClasses {
     GenreClasse? Function()? genre,
     String? Function()? enseignantId,
     RemplissageClasse? Function()? remplissage,
+    bool? ouvertes,
   }) => FiltreClasses(
     texte: texte ?? this.texte,
     type: type == null ? this.type : type(),
@@ -205,7 +213,13 @@ class FiltreClasses {
     genre: genre == null ? this.genre : genre(),
     enseignantId: enseignantId == null ? this.enseignantId : enseignantId(),
     remplissage: remplissage == null ? this.remplissage : remplissage(),
+    ouvertes: ouvertes ?? this.ouvertes,
   );
+
+  /// Vrai quand l'etat [e] passe l'axe d'etat : l'etat choisi, sinon les classes
+  /// ouvertes ([ouvertes]), sinon toutes.
+  bool passeEtat(EtatClasseListee e) =>
+      etat != null ? e == etat : !ouvertes || e != EtatClasseListee.cloturee;
 
   @override
   bool operator ==(Object other) =>
@@ -218,7 +232,8 @@ class FiltreClasses {
       other.fuseau == fuseau &&
       other.genre == genre &&
       other.enseignantId == enseignantId &&
-      other.remplissage == remplissage;
+      other.remplissage == remplissage &&
+      other.ouvertes == ouvertes;
 
   @override
   int get hashCode => Object.hash(
@@ -231,6 +246,7 @@ class FiltreClasses {
     genre,
     enseignantId,
     remplissage,
+    ouvertes,
   );
 }
 
@@ -348,7 +364,7 @@ abstract interface class PortClassesAdmin {
 bool _passe(ClasseListee c, FiltreClasses f, {bool avecEtat = true}) {
   final GroupeAdmin g = c.groupe;
   if (f.type != null && g.type != f.type) return false;
-  if (avecEtat && f.etat != null && c.etat != f.etat) return false;
+  if (avecEtat && !f.passeEtat(c.etat)) return false;
   if (f.jour != null && g.creneau.jour != f.jour) return false;
   if (f.heure != null && g.creneau.heure != f.heure) return false;
   if (f.fuseau != null && c.fuseau != f.fuseau) return false;
@@ -391,11 +407,7 @@ PageClasses paginerClasses(
       .where((ClasseListee c) => _passe(c, filtre, avecEtat: false))
       .toList(growable: false);
   final List<ClasseListee> retenues =
-      autresAxes
-          .where(
-            (ClasseListee c) => filtre.etat == null || c.etat == filtre.etat,
-          )
-          .toList()
+      autresAxes.where((ClasseListee c) => filtre.passeEtat(c.etat)).toList()
         ..sort((ClasseListee a, ClasseListee b) {
           final int nom = a.groupe.libelle.compareTo(b.groupe.libelle);
           if (nom != 0) return nom;

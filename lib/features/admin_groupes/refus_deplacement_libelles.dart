@@ -19,9 +19,20 @@ import '../../core/offres/affectation_refusee.dart';
 String phraseRefusSeuil() => t.admin.groupes.refusDeplacement.seuil;
 
 /// La phrase du refus de deplacement [motif].
-String phraseRefusDeplacement(MotifRefusAffectation motif) {
+///
+/// FN-113 : pour le maximum de Classes, [actives] et [maximum] viennent du
+/// DETAIL du serveur ; sans eux, la phrase sans nombre.
+String phraseRefusDeplacement(
+  MotifRefusAffectation motif, {
+  int? actives,
+  int? maximum,
+}) {
   final r = t.admin.groupes.refusDeplacement;
   return switch (motif) {
+    MotifRefusAffectation.plafondClasses =>
+      actives != null && maximum != null
+          ? r.plafondClasses(n: actives, maximum: maximum)
+          : r.plafondClassesSansNombre,
     MotifRefusAffectation.enseignantIndisponible => r.enseignantIndisponible,
     MotifRefusAffectation.genreIncompatible => r.genreIncompatible,
     MotifRefusAffectation.plafond => r.plafond,

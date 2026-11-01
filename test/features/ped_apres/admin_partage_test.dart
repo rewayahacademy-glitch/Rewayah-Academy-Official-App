@@ -24,6 +24,7 @@ import 'package:rewayah_academy/core/planning/service_planning.dart'
     show Creneau;
 import 'package:rewayah_academy/core/reseau/service_reseau.dart'
     show horsLigneProvider;
+import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
@@ -36,6 +37,7 @@ import 'package:rewayah_academy/features/classe_tuteur/contexte_classe.dart'
 import '../../fixtures/ped_apres/faux_partage_pedagogique.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
+import '../../support/routes_classes_admin.dart';
 
 final p = t.admin.groupes.partage;
 
@@ -612,7 +614,10 @@ void main() {
       await tester.tap(_action(p.publier));
       await tester.pumpAndSettle();
       // La confirmation dit la portee et ne promet rien de plus.
-      expect(find.text(p.confirmerPublier(dePrenom: deDevant('Yusuf'))), findsWidgets);
+      expect(
+        find.text(p.confirmerPublier(dePrenom: deDevant('Yusuf'))),
+        findsWidgets,
+      );
       expect(find.text(p.consequencePublier), findsOneWidget);
       await tester.tap(find.text(p.publier).last);
       await tester.pumpAndSettle();
@@ -829,7 +834,7 @@ void main() {
   });
 
   group('Integration : la fiche de classe de la direction', () {
-    testWidgets('l inspecteur de bureau porte le groupe de partage', (
+    testWidgets('au bureau, la fiche-page porte le groupe de partage', (
       WidgetTester tester,
     ) async {
       tester.view.physicalSize = const Size(1440, 1400);
@@ -837,8 +842,9 @@ void main() {
       addTearDown(tester.view.reset);
       final FauxPartagePedagogique serveur = _serveur();
       await tester.pumpWidget(
-        hote(
-          const GroupesPage(),
+        hoteRoutant(
+          depart: Routes.adminOperationsGroupes,
+          routes: routesClassesAdmin(),
           surcharges: <Override>[
             serviceGroupesProvider.overrideWithValue(_Groupes()),
             ..._surcharges(serveur),
@@ -848,10 +854,11 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Classe An-Nour').first);
       await tester.pumpAndSettle();
-      expect(find.byKey(GroupesPage.cleInspecteur), findsOneWidget);
+      // L1 (01/11/2026) : la fiche est une page (l'inspecteur est retire).
+      expect(find.byKey(FicheClasseAdminPage.cleFiche), findsOneWidget);
       expect(
         find.descendant(
-          of: find.byKey(GroupesPage.cleInspecteur),
+          of: find.byKey(FicheClasseAdminPage.cleFiche),
           matching: find.text(p.titre),
         ),
         findsOneWidget,
@@ -860,15 +867,16 @@ void main() {
       verifierUnSeulBoutonPlein(tester);
     });
 
-    testWidgets('sur telephone : la feuille de detail porte le meme groupe', (
+    testWidgets('sur telephone : la meme fiche-page porte le meme groupe', (
       WidgetTester tester,
     ) async {
       tester.view.physicalSize = const Size(390, 1600);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
       await tester.pumpWidget(
-        hote(
-          const GroupesPage(),
+        hoteRoutant(
+          depart: Routes.adminOperationsGroupes,
+          routes: routesClassesAdmin(),
           surcharges: <Override>[
             serviceGroupesProvider.overrideWithValue(_Groupes()),
             ..._surcharges(_serveur()),
@@ -882,7 +890,8 @@ void main() {
       expect(find.byType(Switch), findsOneWidget);
       expect(find.text(t.admin.groupes.cahiers.lien), findsOneWidget);
       // L'observation existante et le partage sont deux reglages distincts.
-      expect(find.text(t.admin.groupes.detailMembres), findsOneWidget);
+      // La fiche-page dit aussi « Membres » dans ses informations generales.
+      expect(find.text(t.admin.groupes.detailMembres), findsWidgets);
     });
   });
 

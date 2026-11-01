@@ -120,7 +120,9 @@ class ActionPrincipale extends StatelessWidget {
   /// Registre doux d'un [NiveauAction.destructive] : pilule sur le fond doux
   /// d'alerte (`washAlert`) au lieu du texte nu. **Jamais un aplat rouge** : la
   /// paire douce garde l'encre lisible. Reserve a la sortie volontaire d'une
-  /// salle (maquette M4, D1). Ignore pour les autres niveaux.
+  /// salle (maquette M4, D1) et, depuis le 01/11/2026 (constat du directeur,
+  /// pilote), a la cloture d'une classe : un geste qui ne s'annule pas doit se
+  /// lire actif, jamais comme un bouton grise. Ignore pour les autres niveaux.
   final bool doux;
 
   /// Le libelle du bouton. **Un verbe et son objet** : « Poser un creneau »,
