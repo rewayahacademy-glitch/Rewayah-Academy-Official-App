@@ -580,12 +580,15 @@ class _SansListe extends StatelessWidget {
   final Widget tete;
   final Widget child;
 
-  // Comme Comptes : sans preneur, `PageShell` fait defiler sa propre tete
-  // avec ce corps.
+  // Sans preneur, `PageShell` fait defiler sa propre tete avec ce corps ; le
+  // corps defile aussi quand il ne tient pas (320 a 360 px, texte x2) : ce
+  // n'est pas un cadre de hauteur fixe, c'est le reste de la page.
   @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: <Widget>[tete, child],
+  Widget build(BuildContext context) => SingleChildScrollView(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[tete, child],
+    ),
   );
 }
 
