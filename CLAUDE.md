@@ -92,7 +92,12 @@ dart run build_runner build --delete-conflicting-outputs
 dart analyze --fatal-infos
 flutter test
 dart run tool/verifier_jetons.dart
+dart run tool/verifier_branchement.dart
 ```
+
+`verifier_branchement` (décision du 01/11/2026, `docs/current/DECISION-BRANCHEMENT-2026-11-01.md`) :
+aucun fichier de `lib/` sans chemin depuis `lib/main.dart`, hors `tool/branchement_tolere.txt`, qui
+ne fait que rétrécir. Pas de capture `docs/current/captures/E2E/<lot>/`, pas de fusion (R3).
 
 Côté base, sur un Postgres nu, ce que rejoue `.github/workflows/ci.yml` :
 `supabase/tests/stub_auth.sql`, puis toutes les migrations, puis les scénarios

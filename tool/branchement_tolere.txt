@@ -1,0 +1,63 @@
+# Fichiers de lib/ que l'application n'atteint pas depuis lib/main.dart, tolérés
+# pour un temps (décision du directeur du 01/11/2026,
+# docs/current/DECISION-BRANCHEMENT-2026-11-01.md, règles R1 et R2).
+#
+# Vérifié par : dart run tool/verifier_branchement.dart
+# Une ligne par fichier : chemin | issue | échéance (JJ/MM/AAAA).
+# Issue : « branché à l'étape X » ou « supprimé le JJ/MM ». Pas de « plus tard ».
+# Cette liste ne fait que rétrécir : une ligne retirée ne revient jamais, une ligne
+# ajoutée fait échouer la vérification, et le plafond baisse avec chaque retrait.
+# Les suppressions sont des PROPOSITIONS du pilote : seul le directeur décide de
+# supprimer, sur la liste précise. Premier relevé : 01/11/2026, main f710324 + 428b162.
+# plafond: 50
+
+lib/core/accessibilite/port_demande_presentation.dart                                                      | supprimé le 08/11 (aucun usage, hors boucle 1) | 08/11/2026
+lib/core/capacites/acces_foyer_depuis_eleves.dart                                                          | supprimé le 08/11 (aucun usage, hors boucle 1) | 08/11/2026
+lib/core/capacites/avis_demonstration.dart                                                                 | supprimé le 08/11 (données de démonstration : à déplacer sous lib/features/demo/) | 08/11/2026
+lib/core/capacites/courriels_demonstration.dart                                                            | supprimé le 08/11 (données de démonstration : à déplacer sous lib/features/demo/) | 08/11/2026
+lib/core/capacites/langues_communication_demonstration.dart                                                | supprimé le 08/11 (données de démonstration : à déplacer sous lib/features/demo/) | 08/11/2026
+lib/core/capacites/port_capacite_payout.dart                                                               | supprimé le 08/11 (aucun usage, hors boucle 1) | 08/11/2026
+lib/core/capacites/port_preferences_persistantes.dart                                                      | supprimé le 08/11 (aucun usage, hors boucle 1) | 08/11/2026
+lib/core/capacites/port_resume_seance_famille.dart                                                         | supprimé le 08/11 (aucun usage, hors boucle 1) | 08/11/2026
+lib/core/identite/matricule_demo.dart                                                                      | supprimé le 08/11 (données de démonstration : à déplacer sous lib/features/demo/) | 08/11/2026
+lib/core/offres/port_demandes_horaires.dart                                                                | supprimé le 08/11 (aucun usage, hors boucle 1) | 08/11/2026
+lib/core/recherche/corpus_demo_recherche.dart                                                              | supprimé le 08/11 (données de démonstration : à déplacer sous lib/features/demo/) | 08/11/2026
+lib/core/recherche/moteur_recherche_demo.dart                                                              | supprimé le 08/11 (données de démonstration : à déplacer sous lib/features/demo/) | 08/11/2026
+lib/core/recherche/moteurs_demo_recherche.dart                                                             | supprimé le 08/11 (données de démonstration : à déplacer sous lib/features/demo/) | 08/11/2026
+lib/core/recherche/normalisation_recherche.dart                                                            | supprimé le 08/11 (moteurs de recherche hors boucle 1, à décider par le directeur) | 08/11/2026
+lib/core/router/ecran_a_construire.dart                                                                    | supprimé le 08/11 (aucun usage, hors boucle 1) | 08/11/2026
+lib/core/tc_horloge/duree_academique.dart                                                                  | supprimé le 08/11 (aucun usage, hors boucle 1) | 08/11/2026
+lib/core/tc_observation/capacites_observateur.dart                                                         | supprimé le 08/11 (aucun usage, hors boucle 1) | 08/11/2026
+lib/core/tc_parcours/feedback_memoire.dart                                                                 | supprimé le 08/11 (doublon d'un module branché, inventaire du 31/10) | 08/11/2026
+lib/core/tc_parcours/port_post_cours.dart                                                                  | supprimé le 08/11 (doublon d'un module branché, inventaire du 31/10) | 08/11/2026
+lib/core/tc_parcours/post_cours_vm.dart                                                                    | supprimé le 08/11 (doublon d'un module branché, inventaire du 31/10) | 08/11/2026
+lib/core/tc_parcours/rotation_feedback.dart                                                                | supprimé le 08/11 (doublon d'un module branché, inventaire du 31/10) | 08/11/2026
+lib/core/tc_realtime/transport_memoire.dart                                                                | supprimé le 08/11 (aucun usage, hors boucle 1) | 08/11/2026
+lib/core/widgets/child_card.dart                                                                           | supprimé le 08/11 (aucun usage, hors boucle 1) | 08/11/2026
+lib/features/accueil_eleve/mon_espace_accessibilite.dart                                                   | branché à l'étape 3 (élève adulte, FN-112) | 15/11/2026
+lib/features/compte/soldes_foyer.dart                                                                      | supprimé le 08/11 (aucun usage, hors boucle 1) | 08/11/2026
+lib/features/mon_espace_adulte/mon_espace_adulte_page.dart                                                 | branché à l'étape 3 (élève adulte, FN-112) | 15/11/2026
+lib/features/recherche/domaines/classes_supports/moteur_classes_groupes.dart                               | supprimé le 08/11 (moteurs de recherche hors boucle 1, à décider par le directeur) | 08/11/2026
+lib/features/recherche/domaines/classes_supports/moteur_supports_catalogue.dart                            | supprimé le 08/11 (moteurs de recherche hors boucle 1, à décider par le directeur) | 08/11/2026
+lib/features/recherche/domaines/classes_supports/moteurs_classes_supports.dart                             | supprimé le 08/11 (moteurs de recherche hors boucle 1, à décider par le directeur) | 08/11/2026
+lib/features/recherche/domaines/classes_supports/pagination_domaine.dart                                   | supprimé le 08/11 (moteurs de recherche hors boucle 1, à décider par le directeur) | 08/11/2026
+lib/features/recherche/domaines/enseignants_pedagogie_controle/moteur_controle_mission.dart                | supprimé le 08/11 (moteurs de recherche hors boucle 1, à décider par le directeur) | 08/11/2026
+lib/features/recherche/domaines/enseignants_pedagogie_controle/moteurs_enseignants.dart                    | supprimé le 08/11 (moteurs de recherche hors boucle 1, à décider par le directeur) | 08/11/2026
+lib/features/recherche/domaines/enseignants_pedagogie_controle/moteurs_enseignants_pedagogie_controle.dart | supprimé le 08/11 (moteurs de recherche hors boucle 1, à décider par le directeur) | 08/11/2026
+lib/features/recherche/domaines/familles_eleves/moteur_personnes.dart                                      | supprimé le 08/11 (moteurs de recherche hors boucle 1, à décider par le directeur) | 08/11/2026
+lib/features/recherche/domaines/familles_eleves/moteurs_familles_eleves.dart                               | supprimé le 08/11 (moteurs de recherche hors boucle 1, à décider par le directeur) | 08/11/2026
+lib/features/recherche/domaines/familles_eleves/port_resolution_ra.dart                                    | supprimé le 08/11 (moteurs de recherche hors boucle 1, à décider par le directeur) | 08/11/2026
+lib/features/recherche/domaines/familles_eleves/resolution_ra_demo.dart                                    | supprimé le 08/11 (données de démonstration : à déplacer sous lib/features/demo/) | 08/11/2026
+lib/features/recherche/domaines/finance_communications/moteur_fils.dart                                    | supprimé le 08/11 (moteurs de recherche hors boucle 1, à décider par le directeur) | 08/11/2026
+lib/features/recherche/domaines/finance_communications/moteur_finances.dart                                | supprimé le 08/11 (moteurs de recherche hors boucle 1, à décider par le directeur) | 08/11/2026
+lib/features/recherche/domaines/finance_communications/moteurs_finance_communications.dart                 | supprimé le 08/11 (moteurs de recherche hors boucle 1, à décider par le directeur) | 08/11/2026
+lib/features/salle_seance/signalement_seance.dart                                                          | supprimé le 08/11 (doublon de ouvrirSignalement, inventaire du 31/10) | 08/11/2026
+lib/features/tc_catalogue/class_library_picker.dart                                                        | supprimé le 08/11 (doublon d'un module branché, inventaire du 31/10) | 08/11/2026
+lib/features/tc_catalogue/support_actif/presenter_port.dart                                                | supprimé le 08/11 (doublon d'un module branché, inventaire du 31/10) | 08/11/2026
+lib/features/tc_catalogue/support_actif/support_actif_classe.dart                                          | supprimé le 08/11 (doublon d'un module branché, inventaire du 31/10) | 08/11/2026
+lib/features/tc_dock/puce_intention.dart                                                                   | supprimé le 08/11 (doublon d'un module branché, inventaire du 31/10) | 08/11/2026
+lib/features/tc_dock/teaching_dock.dart                                                                    | supprimé le 08/11 (doublon d'un module branché, inventaire du 31/10) | 08/11/2026
+lib/features/tc_flux_academique/bloc_avant_prochain_cours.dart                                             | supprimé le 08/11 (doublon d'un module branché, inventaire du 31/10) | 08/11/2026
+lib/features/tc_flux_academique/carte_feedback_seance.dart                                                 | supprimé le 08/11 (doublon d'un module branché, inventaire du 31/10) | 08/11/2026
+lib/features/tc_flux_academique/feuille_signalement.dart                                                   | supprimé le 08/11 (doublon d'un module branché, inventaire du 31/10) | 08/11/2026
+lib/features/tc_flux_academique/panneau_post_cours.dart                                                    | supprimé le 08/11 (doublon d'un module branché, inventaire du 31/10) | 08/11/2026
