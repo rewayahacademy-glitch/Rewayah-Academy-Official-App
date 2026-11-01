@@ -9,22 +9,29 @@
 // au lieu d'appeler Stripe (pas de cle secrete de test sur ce banc). Le
 // webhook et le credit ne sont PAS joues ici.
 //
-// Usage : E2E_PROXY=... E2E_STRIPE_PK=pk_test_... node tool/e2e/paiement_integre.mjs <succes|refus|etats>
-//   succes : carte 4242 4242 4242 4242 ; refus : carte 4000 0000 0000 9995 ;
+// Usage : E2E_PROXY=... E2E_STRIPE_PK=pk_test_... node tool/e2e/paiement_integre.mjs <scenario> [etiquette]
+//   succes : paiement accepte (E2E_CARTE, 4242 4242 4242 4242 par defaut) ;
+//   3ds    : paiement accepte apres l'authentification de la banque (4000 0025 0000 3155) ;
+//   refus  : carte refusee (E2E_CARTE : 9995 fonds insuffisants, 0002 refus, 0069 expiree) ;
 //   etats  : erreur (Stripe.js bloque) puis hors ligne.
+// [etiquette] nomme le dossier des captures (par defaut, le scenario).
 import fs from 'node:fs';
 import path from 'node:path';
 import { parcours, connecterParLien, trouver, trouverTexte, libelles, activerSemantique,
   amenerEnVue, APP, TRAVAIL } from './commun.mjs';
 
 const scenario = process.argv[2] ?? 'succes';
-if (!['succes', 'refus', 'etats'].includes(scenario)) throw new Error(`scenario inconnu : ${scenario}`);
+const etiquette = process.argv[3] ?? scenario;
+if (!['succes', '3ds', 'refus', 'etats'].includes(scenario)) throw new Error(`scenario inconnu : ${scenario}`);
+const CARTES = { succes: '4242424242424242', '3ds': '4000002500003155', refus: '4000000000009995' };
+const carteChoisie = (process.env.E2E_CARTE ?? CARTES[scenario] ?? '').replace(/\s/g, '');
+const reussite = scenario === 'succes' || scenario === '3ds';
 const pk = process.env.E2E_STRIPE_PK ?? '';
 if (scenario !== 'etats' && !pk.startsWith('pk_test_')) throw new Error('refus : E2E_STRIPE_PK doit etre une cle publiable de TEST');
 
 const STRIPE = /(^|\.)(stripe\.com|stripe\.network|stripecdn\.com)$/;
 const { FAMILLE } = JSON.parse(fs.readFileSync(path.join(TRAVAIL, 'comptes_parcours3.json'), 'utf8'));
-const p = await parcours(`Paiement dans l'application : ${scenario}`, `paiement-dans-app/${scenario}`);
+const p = await parcours(`Paiement dans l'application : ${etiquette}`, `paiement-dans-app/${etiquette}`);
 const echecs = [];
 let code = 1;
 
@@ -82,24 +89,42 @@ try {
     p.dire(`Formulaire Stripe monte dans ${f.page.url()}`);
     const remplir = async (sel, v) => { const e = cadre.locator(sel).first(); if (await e.count()) await e.fill(v); };
     await remplir('input[name="email"], #email', 'e2e-famille@example.com');
-    await carte.fill(scenario === 'succes' ? '4242424242424242' : '4000000000009995');
+    p.dire(`Carte de test : ${carteChoisie.slice(0, 4)} … ${carteChoisie.slice(-4)}`);
+    await carte.fill(carteChoisie);
     await remplir('input[name="cardExpiry"], #cardExpiry', '12 / 34');
     await remplir('input[name="cardCvc"], #cardCvc', '123');
     await remplir('input[name="billingName"], #billingName', 'E2E Famille');
     await remplir('input[name="billingPostalCode"], #billingPostalCode', '10001');
     await p.capture(f, 'formulaire_rempli');
-    await cadre.locator('button[type="submit"], .SubmitButton').first().click();
+    // Le bouton de Stripe est plus bas dans la page : Entree dans le dernier
+    // champ rempli valide le formulaire, comme au clavier.
+    const dernier = cadre.locator('input[name="billingName"], #billingName').first();
+    if (await dernier.count()) await dernier.press('Enter');
+    else await carte.press('Enter');
+    if (scenario === '3ds') {
+      // La banque demande une confirmation : fenetre de test de Stripe,
+      // « Complete » (ou « Terminer »).
+      await f.page.waitForTimeout(8000);
+      await p.capture(f, 'authentification_banque');
+      let fait = false;
+      for (const fr of f.page.frames()) {
+        const b = fr.locator('button:has-text("Complete"), button:has-text("Terminer"), button:has-text("Valider"), #test-source-authorize-3ds');
+        if (await b.count().catch(() => 0)) { await b.first().click().catch(() => {}); fait = true; break; }
+      }
+      p.dire(`Authentification de test : ${fait ? 'confirmee' : 'bouton introuvable'}`);
+      if (!fait) echecs.push('authentification 3-D Secure : bouton de confirmation introuvable');
+    }
     await f.page.waitForTimeout(12000); await activerSemantique(f.page);
-    await p.capture(f, scenario === 'succes' ? 'apres_paiement' : 'carte_refusee');
+    await p.capture(f, reussite ? 'apres_paiement' : 'carte_refusee');
     const apres = f.page.url();
     p.dire(`Apres validation : ${apres}`);
     if (!apres.startsWith(APP)) echecs.push(`l'application a ete quittee : ${apres}`);
-    if (scenario === 'succes') {
+    if (reussite) {
       const etat = await trouverTexte(f.page, /Paiement (en cours de confirmation|confirmé)[^|]*/, 20000);
       p.dire(`Etat relu : ${etat ?? '-'} (webhook non joue sur ce banc : « en cours de confirmation » attendu)`);
       if (!etat) echecs.push('apres le paiement, l\'etat de la commande ne s\'affiche pas');
     } else {
-      const refus = await cadre.locator('text=/refus|declined/i').first().textContent({ timeout: 15000 }).catch(() => null);
+      const refus = await cadre.locator('text=/refus|declined|insuffisant|insufficient|expir/i').first().textContent({ timeout: 15000 }).catch(() => null);
       p.dire(`Refus affiche par Stripe : ${refus ?? '-'}`);
       if (!refus) echecs.push('aucun message de refus dans le formulaire');
     }
