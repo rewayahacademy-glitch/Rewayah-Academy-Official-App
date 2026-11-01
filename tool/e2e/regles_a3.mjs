@@ -63,14 +63,16 @@ sql(`update public.app_config set value = '9' where key = 'remplacement.debut_re
 q.dire(`Une autre direction a change les delais : ${lire()}`);
 await (await trouver(d.page, /^Enregistrer/, { delai: 5000 })).click();
 await d.page.waitForTimeout(3000); await activerSemantique(d.page);
-const refus = await trouverTexte(d.page, /la perte de la seance doit venir avant le remplacant[^|]*/, 10000);
+const refus = await trouverTexte(d.page, /L'ordre des délais n'est plus respecté[^|]*/, 10000);
+const brut = await trouverTexte(d.page, /code: 22023|hint: null|doit venir avant/, 1000);
 await q.capture(d, 'refus_ordre_serveur');
 q.dire(`Refus affiche : ${refus ?? 'aucun'} ; base : ${lire()}`);
 
 const manque = [!aide && 'phrase « relevez d abord l objectif »',
   plusRestant && '« Augmenter » present a la borne',
   !/perte_acces_minutes=10/.test(apres) && 'perte non enregistree a 10',
-  !refus && 'refus du serveur non affiche'].filter(Boolean);
+  !refus && 'refus du serveur non affiche',
+  brut && 'message brut du serveur encore affiche'].filter(Boolean);
 await d.ctx.close();
 // Retour aux valeurs par defaut, dans l'ordre que le serveur accepte.
 sql(`update public.app_config set value = '3' where key = 'remplacement.avertissement_minutes'`);
