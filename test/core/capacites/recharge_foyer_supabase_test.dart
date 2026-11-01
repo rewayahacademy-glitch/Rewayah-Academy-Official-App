@@ -10,6 +10,7 @@ import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/port_recharge_foyer.dart';
 import 'package:rewayah_academy/core/capacites/recharge_foyer_supabase.dart';
 import 'package:rewayah_academy/core/finance/format_montant.dart';
+import 'package:rewayah_academy/core/finance/formulaire_paiement.dart';
 import 'package:rewayah_academy/core/finance/montant.dart';
 import 'package:rewayah_academy/core/finance/politique_commerciale.dart';
 import 'package:rewayah_academy/core/finance/suivi_paiement.dart';
@@ -191,6 +192,41 @@ void main() {
       expect(pages, isEmpty);
     },
   );
+
+  test('payer, formulaire integre : aucune page externe, le formulaire est '
+      'garde pour la page de resultat, puis oublie', () async {
+    final List<Uri> pages = <Uri>[];
+    final RechargeFoyerSupabase port = _port(
+      fonction: <String, dynamic>{
+        'commandeId': 'c1',
+        'url': null,
+        'secretClient': 'cs_test_1_secret_x',
+        'clePublique': 'pk_test_x',
+      },
+      pages: pages,
+    );
+    final String commande = await port.payer(recapitulatifId: 'r1', cle: 'k1');
+    expect(commande, 'c1');
+    expect(pages, isEmpty);
+    final FormulairePaiement? f = port.formulairePour('c1');
+    expect(f?.clePublique, 'pk_test_x');
+    expect(f?.secretClient, 'cs_test_1_secret_x');
+    expect(port.formulairePour('autre'), isNull);
+    port.oublierFormulaire('c1');
+    expect(port.formulairePour('c1'), isNull);
+  });
+
+  test('payer, repli sur la page hebergee : aucun formulaire garde', () async {
+    final RechargeFoyerSupabase port = _port(
+      fonction: <String, dynamic>{
+        'commandeId': 'c1',
+        'url': 'https://checkout.stripe.com/c/pay/cs_test_1',
+      },
+      pages: <Uri>[],
+    );
+    await port.payer(recapitulatifId: 'r1', cle: 'k1');
+    expect(port.formulairePour('c1'), isNull);
+  });
 
   test('payer sans Stripe configure : capacite indisponible', () async {
     await expectLater(
