@@ -1,0 +1,6 @@
+== FN-112 : l eleve adulte recharge sa page et reste sur son accueil : 2026-11-01T23:06:21.275Z ; Chromium 141.0.7390.37 ; http://127.0.0.1:8090
+adulte avant : http://127.0.0.1:8090/#/eleve/adulte ; flt-semantics:Bonjour E2E Adulte | button:Notifications, 3 non lues | h2:Bonjour E2E Adulte
+adulte, rechargement 1 : http://127.0.0.1:8090/#/eleve/adulte ; texte:Bonjour E2E Adulte
+adulte, rechargement 2 : http://127.0.0.1:8090/#/eleve/adulte ; texte:Bonjour E2E Adulte
+tuteur : http://127.0.0.1:8090/#/tuteur puis rechargement : http://127.0.0.1:8090/#/tuteur ; flt-semantics:Accueil | h2:Accueil | button:Notifications, 2 non lues
+== FN-112 : l eleve adulte recharge sa page et reste sur son accueil : vert : l adulte recharge deux fois et reste sur son accueil ; le tuteur aussi

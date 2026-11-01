@@ -41,6 +41,19 @@ class _PortLent implements PortCapaciteEleve {
   Future<CapaciteEleve> lire(String profileId) => reponse.future;
 }
 
+/// Un port qui garde chaque lecture en attente : le test choisit l'ordre des
+/// reponses, comme le reseau au rechargement.
+class _PortOrdonne implements PortCapaciteEleve {
+  final List<Completer<CapaciteEleve>> lectures = <Completer<CapaciteEleve>>[];
+
+  @override
+  Future<CapaciteEleve> lire(String profileId) {
+    final Completer<CapaciteEleve> c = Completer<CapaciteEleve>();
+    lectures.add(c);
+    return c.future;
+  }
+}
+
 /// Monte l'application sur `/eleve/adulte` avec une session encore en
 /// chargement, comme un navigateur qui recharge cette adresse.
 Future<(GoRouter, SourcePilotee)> _recharger(
@@ -95,10 +108,9 @@ Future<(GoRouter, SourcePilotee)> _recharger(
 void main() {
   group('decision du routeur (fonction pure)', () {
     SessionState adulte({required bool autonome, required bool enLecture}) =>
-        sessionActive(AppRole.guardian).copyWith(
-          eleveAutonome: autonome,
-          capaciteEleveEnLecture: enLecture,
-        );
+        sessionActive(
+          AppRole.guardian,
+        ).copyWith(eleveAutonome: autonome, capaciteEleveEnLecture: enLecture);
     String? decider(SessionState s, String chemin) => deciderRedirection(
       session: s,
       cheminDemande: chemin,
@@ -213,5 +225,44 @@ void main() {
     await Future<void>.delayed(Duration.zero);
     expect(c.read(sessionProvider).capaciteEleveEnLecture, isFalse);
     expect(c.read(sessionProvider).eleveAutonome, isTrue);
+  });
+
+  test('rechargement : une lecture perimee (compte pas encore actif) qui '
+      'revient apres la bonne ne l\'ecrase pas', () async {
+    // Banc local, 01/11 : l'adulte qui recharge /#/eleve/adulte arrivait sur
+    // « acces refuse ». La premiere lecture part avant que le compte soit
+    // actif et rend « pas eleve » ; elle revient APRES celle du compte actif.
+    final SourcePilotee source = SourcePilotee();
+    final _PortOrdonne port = _PortOrdonne();
+    final ProviderContainer c = ProviderContainer(
+      overrides: <Override>[
+        sourceSessionProvider.overrideWithValue(source),
+        portCapaciteEleveProvider.overrideWithValue(port),
+      ],
+    );
+    addTearDown(c.dispose);
+    c.listen(sessionProvider, (_, _) {});
+    await Future<void>.delayed(Duration.zero);
+
+    final SessionState actif = sessionActive(AppRole.guardian);
+    source.emettre(actif.copyWith(accountStatus: AccountStatus.pendingKyc));
+    await Future<void>.delayed(Duration.zero);
+    source.emettre(actif);
+    await Future<void>.delayed(Duration.zero);
+    expect(port.lectures, hasLength(2));
+    // Compte actif, lecture en cours : le routeur attend.
+    expect(c.read(sessionProvider).capaciteEleveEnLecture, isTrue);
+
+    port.lectures[1].complete(const EleveAutonome());
+    await Future<void>.delayed(Duration.zero);
+    await Future<void>.delayed(Duration.zero);
+    expect(c.read(sessionProvider).eleveAutonome, isTrue);
+    expect(c.read(sessionProvider).capaciteEleveEnLecture, isFalse);
+
+    port.lectures[0].complete(const PasEleve());
+    await Future<void>.delayed(Duration.zero);
+    await Future<void>.delayed(Duration.zero);
+    expect(c.read(sessionProvider).eleveAutonome, isTrue);
+    expect(c.read(sessionProvider).capaciteEleveEnLecture, isFalse);
   });
 }
