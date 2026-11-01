@@ -23,7 +23,10 @@ try {
   await connecter(d.page, COMPTES.direction);
   await ouvrirClasses(d.page);
   await p.capture(d, 'classes');
-  await ajouterEleve(p, d, { classe: classe.nom, eleve: FAMILLE.enfant });
+  const deja = sql(`select count(*) from public.groupe_membres gm join public.groupes g on g.id = gm.groupe_id
+    join public.profiles e on e.id = gm.student_id where g.libelle = '${classe.nom}' and e.first_name = '${FAMILLE.enfant}' and gm.left_at is null`);
+  if (deja !== '0') p.dire(`  ${FAMILLE.enfant} est deja dans « ${classe.nom} » (passage precedent) : ajout non rejoue`);
+  else await ajouterEleve(p, d, { classe: classe.nom, eleve: FAMILLE.enfant });
   const membres = sql(`select count(*) from public.groupe_membres gm join public.groupes g on g.id = gm.groupe_id
     join public.profiles e on e.id = gm.student_id where g.libelle = '${classe.nom}' and e.first_name = '${FAMILLE.enfant}'`);
   p.dire(`Base locale : ${membres} placement de ${FAMILLE.enfant} dans « ${classe.nom} »`);
@@ -33,8 +36,12 @@ try {
   // (et servir au parcours 8).
   const heureAdultes = classe.heure < 21 ? classe.heure + 1 : classe.heure - 1;
   const nomAdultes = classe.nom.replace('enfants', 'adultes');
-  await creerClasse(p, d, { public: 'Adultes', genre: 'Hommes|Garçons', enseignant: 'E2E Enseignant Valide',
-    creneaux: [{ jour: classe.jour, heure: heureAdultes }], nom: nomAdultes });
+  if (sql(`select count(*) from public.groupes where libelle = '${nomAdultes}' and ended_at is null`) !== '0') {
+    p.dire(`  « ${nomAdultes} » existe deja (passage precedent) : creation non rejouee`);
+  } else {
+    await creerClasse(p, d, { public: 'Adultes', genre: 'Hommes|Garçons', enseignant: 'E2E Enseignant Valide',
+      creneaux: [{ jour: classe.jour, heure: heureAdultes }], nom: nomAdultes });
+  }
   await ajouterEleve(p, d, { classe: nomAdultes, eleve: `${ADULTE.prenom} ${ADULTE.nom}` });
   fs.writeFileSync(path.join(TRAVAIL, 'classe_adultes.json'), JSON.stringify({ nom: nomAdultes, heure: heureAdultes,
     jour: classe.jour, fuseau: classe.fuseau, debut: new Date(classe.debut.getTime() + (heureAdultes - classe.heure) * 3600000) }, null, 2));
