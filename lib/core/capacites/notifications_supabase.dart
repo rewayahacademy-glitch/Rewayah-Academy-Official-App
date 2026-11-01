@@ -61,6 +61,9 @@ const Set<String> evenementsNotificationConnus = <String>{
   'remplacement_inutile',
   'titulaire_en_retard',
   'remplacant_arrive',
+  // FN-028 (01/11/2026, migration 20261103600000) : la fin de seance,
+  // application seulement.
+  'seance_terminee',
 };
 
 const Set<String> _destinationsAutorisees = <String>{
@@ -279,14 +282,28 @@ Map<String, dynamic> _parametresAffichables(Map<dynamic, dynamic> bruts) {
     'portee',
     // A3 : le delai laisse au titulaire pour entrer, en minutes (reglage).
     'minutes',
+    // FN-028 : la fin de seance. Le nom de la Classe et le Travail a
+    // preparer (texte de l'enseignant, seulement si la regle de partage
+    // l'ouvre) ; jamais un identifiant.
+    'classe',
+    'travail',
+    'travail_etat',
   };
+  // FN-028 : des comptes et un drapeau, jamais un identifiant.
+  const Set<String> clesNombres = <String>{'presents', 'inscrits'};
+  const Set<String> clesDrapeaux = <String>{'cahier_depose'};
   final Map<String, dynamic> valeurs = <String, dynamic>{};
   for (final MapEntry<dynamic, dynamic> entree in bruts.entries) {
-    if (entree.key is String &&
-        clesAutorisees.contains(entree.key) &&
-        entree.value is String) {
-      final String valeur = (entree.value as String).trim();
-      if (valeur.isNotEmpty) valeurs[entree.key as String] = valeur;
+    final Object? cle = entree.key;
+    final Object? brut = entree.value;
+    if (cle is! String) continue;
+    if (clesAutorisees.contains(cle) && brut is String) {
+      final String valeur = brut.trim();
+      if (valeur.isNotEmpty) valeurs[cle] = valeur;
+    } else if (clesNombres.contains(cle) && brut is int && brut >= 0) {
+      valeurs[cle] = brut;
+    } else if (clesDrapeaux.contains(cle) && brut is bool) {
+      valeurs[cle] = brut;
     }
   }
   return Map<String, dynamic>.unmodifiable(valeurs);

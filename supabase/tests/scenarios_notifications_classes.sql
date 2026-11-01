@@ -489,7 +489,9 @@ SET CONSTRAINTS ALL DEFERRED;
 
 -- ------------------------------------------------------------------
 -- 8. Un courriel par notification, une fois, jamais a un compte enfant
---    (ligne 15, mecanisme du 23/10).
+--    (ligne 15, mecanisme du 23/10). Amende par la decision du directeur du
+--    01/11/2026 (DECISION-NOTIFICATIONS-COURRIEL, FN-028) : un evenement
+--    « application seulement » pour sa portee n'ecrit aucun courriel.
 -- ------------------------------------------------------------------
 SELECT pg_temp.vrai(
   NOT EXISTS (
@@ -497,7 +499,9 @@ SELECT pg_temp.vrai(
      WHERE n.destinataire IN (SELECT id FROM public.profiles WHERE immutable_id LIKE 'F27B-%')
        AND n.destinataire <> 'f27b0000-0000-0000-0000-000000000012'
        AND (SELECT pg_catalog.count(*) FROM public.courriels_sortants c
-             WHERE c.cle_idempotence = 'notification:' || n.id::text) <> 1)
+             WHERE c.cle_idempotence = 'notification:' || n.id::text)
+           <> CASE WHEN private.notification_avec_courriel(n.evenement, n.params ->> 'portee')
+                   THEN 1 ELSE 0 END)
   AND NOT EXISTS (
     SELECT 1 FROM public.courriels_sortants c
       JOIN public.notifications n ON c.cle_idempotence = 'notification:' || n.id::text
