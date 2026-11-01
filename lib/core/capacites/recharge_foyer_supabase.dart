@@ -6,10 +6,13 @@
 //   total et nouveaux soldes arrivent arretes par le serveur (FI6) ; ici, ils
 //   se formatent, rien ne s'additionne.
 // - Payer : la fonction `recharge-payer` cree la commande (meme cle, meme
-//   commande) et rend l'adresse de la page Stripe, que l'application ouvre.
-//   Le retour de Stripe ramene a la page de resultat, qui relit l'etat :
-//   **jamais un succes au retour du navigateur** (FI9). Seul le webhook
-//   signe credite.
+//   commande). Depuis le 01/11/2026 (directeur : « le paiement doit se faire
+//   sur l'app, pas de sortir ailleurs »), elle rend le secret client et la
+//   cle publiable : le formulaire de Stripe se monte dans la page de
+//   resultat ([SourceFormulairePaiement]). Repli : l'adresse de la page
+//   Stripe, que l'application ouvre ; le retour ramene a la page de
+//   resultat. Dans les deux cas, la page relit l'etat : **jamais un succes
+//   au retour du navigateur** (FI9). Seul le webhook signe credite.
 // - Sans cle Stripe configuree sur le serveur (503) ou sans fonction
 //   deployee (404) : `CapaciteIndisponible`, l'ecran dit « Paiement pas
 //   encore disponible ».
@@ -17,6 +20,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../finance/format_montant.dart';
+import '../finance/formulaire_paiement.dart';
 import '../finance/montant.dart';
 import '../finance/politique_commerciale.dart';
 import '../finance/suivi_paiement.dart';
@@ -33,7 +37,8 @@ const String _dependance = 'FI-BR-06';
 typedef AppelPaiement = Future<Object?> Function(Map<String, dynamic> corps);
 
 /// La recharge servie par Supabase et Stripe.
-class RechargeFoyerSupabase implements PortRechargeFoyer {
+class RechargeFoyerSupabase
+    implements PortRechargeFoyer, SourceFormulairePaiement {
   /// Cree l'adaptateur sur le client de l'application. [adresseRetour] rend
   /// l'adresse de la page de resultat, la marque [marqueCommande] a la place
   /// de la commande ; [ouvrirPage] ouvre la page du prestataire.
@@ -68,6 +73,18 @@ class RechargeFoyerSupabase implements PortRechargeFoyer {
 
   /// Ouvre la page du prestataire.
   final void Function(Uri page) ouvrirPage;
+
+  /// Le formulaire integre de chaque commande ouverte dans cette session de
+  /// l'application ; une application rechargee n'en garde aucun.
+  final Map<String, FormulairePaiement> _formulaires =
+      <String, FormulairePaiement>{};
+
+  @override
+  FormulairePaiement? formulairePour(String commandeId) =>
+      _formulaires[commandeId];
+
+  @override
+  void oublierFormulaire(String commandeId) => _formulaires.remove(commandeId);
 
   static AppelPaiement _appelFonction(SupabaseClient client) =>
       (Map<String, dynamic> corps) async {
@@ -136,8 +153,21 @@ class RechargeFoyerSupabase implements PortRechargeFoyer {
       'paiement',
     );
     final String commande = texteJson(j, 'commandeId');
+    final String? secretClient = texteNullableJson(j, 'secretClient');
+    final String? clePublique = texteNullableJson(j, 'clePublique');
+    if (secretClient != null && clePublique != null) {
+      // Le formulaire se montera dans la page de resultat : on reste dans
+      // l'application.
+      _formulaires[commande] = FormulairePaiement(
+        clePublique: clePublique,
+        secretClient: secretClient,
+      );
+      return commande;
+    }
+    _formulaires.remove(commande);
     final String? page = texteNullableJson(j, 'url');
-    // La page du prestataire s'ouvre ; la page de resultat relira l'etat.
+    // Repli : la page du prestataire s'ouvre ; la page de resultat relira
+    // l'etat.
     if (page != null) ouvrirPage(Uri.parse(page));
     return commande;
   }

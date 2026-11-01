@@ -221,6 +221,7 @@ class _FeuilleClasseRegroupementEtat
     });
     ResultatAffectation? resultat;
     MotifRefusAffectation? refus;
+    AffectationRefusee? refusDetail;
     try {
       resultat = await port.affecterEnseignant(
         classeId: classe.classeId,
@@ -230,6 +231,7 @@ class _FeuilleClasseRegroupementEtat
       // Le serveur a repondu non (C11BIS-AFFECTATION) : une phrase par motif,
       // jamais son texte, et pas « la reponse n'est pas arrivee ».
       refus = e.motif;
+      refusDetail = e;
     } on Object {
       // Sans reponse, rien n'est suppose (D5) : « non confirme ».
       resultat = null;
@@ -239,7 +241,11 @@ class _FeuilleClasseRegroupementEtat
     setState(() {
       _envoi = false;
       if (motif != null) {
-        _message = libelleRefusAffectation(motif);
+        _message = libelleRefusAffectation(
+          motif,
+          actives: refusDetail?.actives,
+          maximum: refusDetail?.maximum,
+        );
       } else if (resultat == null) {
         _message = t.admin.regroupements.affectationNonConfirmee;
       } else {

@@ -8,6 +8,10 @@
 // Secrets (jamais dans le depot, jamais au client) :
 //   STRIPE_SECRET_KEY      cle secrete du compte (sk_test_... ou sk_live_...)
 //   STRIPE_WEBHOOK_SECRET  secret de signature de l'endpoint (whsec_...)
+//   STRIPE_PUBLISHABLE_KEY cle publiable du meme compte et du meme mode
+//                          (pk_test_... ou pk_live_...) : sans elle, ou d'un
+//                          autre mode que la cle secrete, le paiement reste
+//                          sur la page hebergee de Stripe (repli).
 //   APP_ORIGINES           origines autorisees pour le retour, separees par
 //                          des virgules (https://app.exemple.org,...)
 
@@ -42,6 +46,13 @@ export interface LignePaiement {
 
 /// Les parametres de la session Checkout : une ligne par profil, la
 /// commande en metadonnees (relue par le webhook).
+///
+/// [integre] (decision du directeur du 01/11/2026 : « le paiement doit se
+/// faire sur l'app, pas de sortir ailleurs ») : le formulaire de Stripe se
+/// monte dans la page de l'application (`ui_mode: embedded_page`). Une carte
+/// se paie sans quitter l'application (`redirect_on_completion:
+/// if_required`) ; seul un moyen qui exige une banque externe ramene ensuite
+/// a [retour]. Sans [integre], la page hebergee de Stripe (repli).
 export function parametresSession(p: {
   commandeId: string
   reference: string
@@ -50,11 +61,10 @@ export function parametresSession(p: {
   retour: string
   libelle: (prenom: string) => string
   expireA: number
+  integre?: boolean
 }): Stripe.Checkout.SessionCreateParams {
-  return {
+  const commun: Stripe.Checkout.SessionCreateParams = {
     mode: 'payment',
-    success_url: p.retour,
-    cancel_url: p.retour,
     client_reference_id: p.commandeId,
     metadata: { commande: p.commandeId, reference: p.reference },
     payment_intent_data: { metadata: { commande: p.commandeId }, description: p.reference },
@@ -68,6 +78,19 @@ export function parametresSession(p: {
       },
     })),
   }
+  if (p.integre) {
+    return { ...commun, ui_mode: 'embedded_page', redirect_on_completion: 'if_required', return_url: p.retour }
+  }
+  return { ...commun, success_url: p.retour, cancel_url: p.retour }
+}
+
+/// Une session ouverte : son adresse (page hebergee) ou son secret client
+/// (formulaire integre), l'un ou l'autre.
+export interface SessionOuverte {
+  id: string
+  url: string | null
+  secretClient: string | null
+  environnement: 'test' | 'live'
 }
 
 /// Ouvre la session Checkout ; [idempotence] rend un second appel pour la
@@ -76,10 +99,39 @@ export async function creerSession(
   stripe: Stripe,
   parametres: Stripe.Checkout.SessionCreateParams,
   idempotence: string,
-): Promise<{ id: string; url: string; environnement: 'test' | 'live' }> {
+): Promise<SessionOuverte> {
   const session = await stripe.checkout.sessions.create(parametres, { idempotencyKey: idempotence })
-  if (!session.url) throw new Error('session sans adresse')
-  return { id: session.id, url: session.url, environnement: session.livemode ? 'live' : 'test' }
+  const integre = parametres.ui_mode === 'embedded_page'
+  if (integre ? !session.client_secret : !session.url) throw new Error('session incomplete')
+  return {
+    id: session.id,
+    url: integre ? null : session.url,
+    secretClient: integre ? session.client_secret : null,
+    environnement: session.livemode ? 'live' : 'test',
+  }
+}
+
+/// La marque qu'une session integree laisse dans `url_paiement` : aucune
+/// adresse n'existe pour elle, la commande garde l'identifiant de la session,
+/// que la reprise relit chez Stripe pour rendre son secret client. Aucune
+/// migration : la colonne garde son sens, « ou reprendre ce paiement ».
+export const MARQUE_INTEGRE = 'stripe-integre:'
+
+/// L'identifiant de session d'une reprise integree, ou `null` (adresse d'une
+/// page hebergee).
+export function sessionIntegree(urlPaiement: string): string | null {
+  if (!urlPaiement.startsWith(MARQUE_INTEGRE)) return null
+  const id = urlPaiement.slice(MARQUE_INTEGRE.length)
+  return /^cs_(test|live)_[A-Za-z0-9]+$/.test(id) ? id : null
+}
+
+/// Vrai quand le formulaire integre peut s'ouvrir : une cle publiable du meme
+/// mode que la cle secrete (test avec test, reel avec reel).
+export function formulaireIntegrePossible(cleSecrete: string, clePublique: string | undefined): boolean {
+  const mode = (cle: string, prefixes: string[]) => prefixes.find((x) => cle.startsWith(x))?.split('_')[1]
+  const secret = mode(cleSecrete, ['sk_test_', 'sk_live_', 'rk_test_', 'rk_live_'])
+  const publique = mode(clePublique ?? '', ['pk_test_', 'pk_live_'])
+  return secret !== undefined && secret === publique
 }
 
 /// Vrai quand [adresse] a pour origine l'une des origines autorisees.

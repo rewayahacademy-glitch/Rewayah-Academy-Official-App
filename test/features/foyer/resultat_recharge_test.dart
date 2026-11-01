@@ -22,6 +22,8 @@ import 'package:rewayah_academy/core/capacites/port_recharge_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/finances_profil.dart';
 import 'package:rewayah_academy/core/finance/format_montant.dart';
+import 'package:rewayah_academy/core/finance/formulaire_paiement.dart';
+import 'package:rewayah_academy/core/finance/formulaire_stripe.dart';
 import 'package:rewayah_academy/core/finance/montant.dart';
 import 'package:rewayah_academy/core/finance/politique_commerciale.dart';
 import 'package:rewayah_academy/core/finance/suivi_paiement.dart';
@@ -100,6 +102,31 @@ class _PortEtat extends RechargeFoyerFinanceDemo {
         ),
       ],
     );
+  }
+}
+
+/// Un port qui garde le formulaire integre d'une commande, comme
+/// l'adaptateur Supabase quand le serveur rend un secret client.
+class _PortFormulaire extends _PortEtat implements SourceFormulairePaiement {
+  _PortFormulaire() : super(EtatPaiement.attenteConfirmation);
+
+  final Map<String, FormulairePaiement> formulaires =
+      <String, FormulairePaiement>{
+        'c1': const FormulairePaiement(
+          clePublique: 'pk_test_rewayah',
+          secretClient: 'cs_test_rewayah_secret',
+        ),
+      };
+  final List<String> oublies = <String>[];
+
+  @override
+  FormulairePaiement? formulairePour(String commandeId) =>
+      formulaires[commandeId];
+
+  @override
+  void oublierFormulaire(String commandeId) {
+    oublies.add(commandeId);
+    formulaires.remove(commandeId);
   }
 }
 
@@ -844,6 +871,96 @@ void main() {
         }
       }
     }
+  });
+
+  group('paiement dans l application (directeur, 01/11/2026)', () {
+    final r = t.adulte.recharge.resultat;
+
+    testWidgets('formulaire garde : il se monte dans la page, aucun etat '
+        'deduit, aucun succes, la sortie sans payer reste la', (
+      WidgetTester tester,
+    ) async {
+      final _PortFormulaire port = _PortFormulaire();
+      await _monter(tester, depart: c1, port: port);
+      expect(find.text(r.formulaireTitre), findsOneWidget);
+      expect(find.text(r.formulairePhrase), findsOneWidget);
+      final FormulaireStripe formulaire = tester.widget(
+        find.byType(FormulaireStripe),
+      );
+      expect(formulaire.formulaire.clePublique, 'pk_test_rewayah');
+      expect(formulaire.formulaire.secretClient, 'cs_test_rewayah_secret');
+      expect(find.byKey(ResultatRechargePage.sansPayerKey), findsOneWidget);
+      expect(
+        find.byKey(
+          ResultatRechargePage.etatKey(EtatPaiement.attenteConfirmation),
+        ),
+        findsNothing,
+      );
+      expect(port.lectures, 0);
+      _aucunSucces();
+    });
+
+    testWidgets('paiement passe dans le formulaire : il s efface, l etat se '
+        'relit chez la source, jamais deduit', (WidgetTester tester) async {
+      final _PortFormulaire port = _PortFormulaire();
+      await _monter(tester, depart: c1, port: port);
+      tester
+          .widget<FormulaireStripe>(find.byType(FormulaireStripe))
+          .onTermine();
+      await stabiliser(tester);
+      expect(port.oublies, <String>['c1']);
+      expect(find.byType(FormulaireStripe), findsNothing);
+      expect(port.lectures, greaterThan(0));
+      expect(
+        find.byKey(
+          ResultatRechargePage.etatKey(EtatPaiement.attenteConfirmation),
+        ),
+        findsOneWidget,
+      );
+      _aucunSucces();
+    });
+
+    testWidgets('formulaire qui ne se monte pas : son echec, puis Reessayer '
+        'remonte un formulaire neuf', (WidgetTester tester) async {
+      final _PortFormulaire port = _PortFormulaire();
+      await _monter(tester, depart: c1, port: port);
+      tester.widget<FormulaireStripe>(find.byType(FormulaireStripe)).onEchec();
+      await stabiliser(tester);
+      expect(find.text(r.formulaireEchecTitre), findsOneWidget);
+      expect(find.text(r.formulaireEchecPhrase), findsOneWidget);
+      expect(find.byType(FormulaireStripe), findsNothing);
+      final EtatSysteme echec = tester.widget(find.byType(EtatSysteme));
+      echec.onAction!();
+      await stabiliser(tester);
+      expect(find.byType(FormulaireStripe), findsOneWidget);
+      expect(find.text(r.formulaireEchecTitre), findsNothing);
+    });
+
+    testWidgets('hors ligne : l etat hors ligne, aucun formulaire', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        depart: c1,
+        port: _PortFormulaire(),
+        horsLigne: true,
+      );
+      expect(find.byType(FormulaireStripe), findsNothing);
+      final EtatSysteme etat = tester.widget(find.byType(EtatSysteme));
+      expect(etat.nature, NatureEtat.horsLigne);
+    });
+
+    testWidgets('« Revenir aux soldes sans payer » quitte le resultat', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await _monter(
+        tester,
+        depart: c1,
+        port: _PortFormulaire(),
+      );
+      await _taper(tester, find.byKey(ResultatRechargePage.sansPayerKey));
+      expect(_lieu(routeur).toString(), isNot(contains('commande=c1')));
+    });
   });
 }
 

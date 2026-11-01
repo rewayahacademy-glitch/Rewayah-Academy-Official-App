@@ -90,6 +90,34 @@ Capture de l'écran Comptes au téléphone, mot du directeur : « Sur ce profil,
 6. **Adoption liste par liste** (`DESIGN-GOV` §4 bis.8) : mode opt-in des composants partagés, `PageShell(teteAvecLaListe: true)`, `DataCollection(prendTeteDePage: true, tete: ..., densiteTelephone: true)`, `ColonneDonnees(ligneDense: false)`. Comptes l'adopte le 30/10 ; Candidatures sera la suivante. Les autres pages ne changent pas.
 7. **Mesures (Comptes, 30/10, vraies polices, `test/capture/listes_comptes_vues_capture_test.dart`)** : 390 x 844, première ligne à y = 192, 9 lignes entières (Élèves), 10 (Familles, Enseignants) ; 1440 x 900, première ligne à y = 204, 14 lignes entières (Élèves, Familles), 12 (Enseignants, menu de 56) ; 1366 x 768, y = 204, 11 lignes (10 en Enseignants).
 
+## 5 quater. Des listes de bureau, la liste est la page (directeur, 01/11/2026)
+
+**Source : directeur, 01/11/2026, mot pour mot.** Sur Opérations › Classes : « maintenant, il faut masquer les classes clôturées. qu'est-ce qui empêcherait d'avoir une liste comme sur l'image ? … le contenu prend toute la page parce que la page est faite pour, le reste c'est du secondaire, on le voit pas partout. en plus sur ordinateur les menus doivent être pour ordinateur et non pour mobile. » Et, plus tôt le même jour : « je t'interdis de bricoler la page morceau par morceau. les specs des listes existent déjà… le contenu change, mais le style doit rester le même ; épuré, et surtout peu d'éléments qui ne sont utiles qu'une seule fois, comme ces filtres et les en-têtes. » Il veut la refonte de **toutes** les listes ; il a été averti que cela sort de la Boucle 1. Va avec `DECISION-DEFILEMENT-2026-11-01.md` (aucun contenu ne défile dans un cadre de hauteur fixe ; une seule barre de défilement par écran).
+
+La référence est une maquette tiers (page « Employees » de bureau), décrite par le garde-cap et **non déposée** (vrais visages). On n'en prend que la **disposition** : couleurs, polices et rayons restent nos jetons (`verifier_jetons`), aucun dégradé, aucune marque tierce.
+
+1. **Au bureau (1200 px et plus), le contenu d'une liste prend toute la largeur** de la zone de contenu, gouttières gardées : `AppPage.largeurMaxContenu` (1200) ne borne plus une liste. Amende la règle implicite de largeur bornée de §3.
+2. **La liste vit dans `AdminShell`**, barre latérale visible, **sans flèche de retour**, à toutes les largeurs : la barre latérale (le tiroir au téléphone) est la navigation (pilote, 01/11/2026, relecture de la PR 122 : aucune règle écrite n'impose ce retour ; §5 ter.2 le mentionne sans l'exiger).
+3. **Une seule tête, réduite** : le titre (ou la sous-navigation qui en tient lieu, §5 ter.2), une **icône filtre** dans un petit carré et **une seule action** pleine. Aucune phrase d'explication permanente (l'introduction de Classes est retirée).
+4. **Filtres repliés derrière l'icône** : au bureau, recherche et filtres se déplient en panneau (toutes les puces visibles, passant à la ligne, sans « Plus » ni défilement horizontal) qui défile avec la liste. Panneau replié, les filtres retenus restent dits en puces retirables (`FiltresActifs`, « Tout effacer ») : rien n'est caché sans le dire. **Amende §3.3** (une rangée de recherche, filtres et « Plus » au bureau ; puces des filtres actifs toujours visibles) et **§5 ter.3** (la rangée de commandes au bureau). Au téléphone, §5 ter.3 reste.
+5. **Lignes en cartes** : au bureau, chaque ligne est une carte claire arrondie (rayon `AppRadius.xs`, 8), séparée de la suivante par 8 px, sans filet ni cadre de tableau ; les en-têtes de colonnes sont discrets (petites lettres, encre atténuée, fond de la page), seuls collés, avec le chevron de tri existant (`TriColonne`) quand l'écran trie. Première colonne : cercle de 32 px (`AvatarNom`, `AppAvatar.petit`), le nom sur une ligne (la colonne prend la largeur qu'il faut ; un nom trop long passe à la ligne entre ses mots, jamais tronqué, COUPE-MOTS), l'état dessous dans la même pastille qu'au téléphone ; les autres colonnes en texte simple. La cible de 48 px (§3.4) est gardée : une ligne avec menu et pastille mesure 60 px.
+6. **Menus de bureau** : menus contextuels ancrés (`MenuActions`, `MenuFiltre`, menu de `menu_commun.dart`), jamais de feuille du bas ni de boîte au milieu de l'écran. **Une fiche est une page** de la coquille, empilée au-dessus de la liste, qui défile comme une page ; au retour, recherche, filtres, page et position sont gardés (§3.8). L'inspecteur de bureau de Classes (AD-X, 336 px qui défilaient dans leur propre cadre) est retiré (pilote, 01/11/2026, 16:45 UTC).
+7. **Téléphone** : le comportement de §5 ter reste (tête et filtres qui défilent avec la liste, lignes denses) ; l'action de création flotte en bas au bord de fin, disque plein de 48 px (`BoutonIcone`, forme `appel`, ton `ouvert` : aucun composant nouveau), et la liste garde la place de ce disque sous son pied.
+8. **Mode opt-in des composants partagés**, adopté liste par liste, comme §5 ter.6 : `PageShell(listeBureau: true)` (pleine largeur au bureau, pas de retour à toutes les largeurs), `DataCollection(lignesCartes: true)` (dans le rendu par tranches), `RangeeFiltres(enPanneau: true)` et `RangeeFiltres.bascule(...)`. Aucun composant concurrent. Les autres pages ne changent pas.
+9. **Classes l'adopte le 01/11/2026 (lot L1)** : vue par défaut **Ouvertes** (actives et en attente d'enseignant), « Clôturées » et « Toutes les classes » restent des filtres ; rien n'est effacé en base (`classes_admin_page` reçoit `p_etat = 'ouvertes'`, migration `20261103800000_classes_admin_ouvertes.sql`). Pied de liste commun (`PiedDeListe`, « 25 par page » dit, taille imposée par le serveur).
+10. **Mesures (Classes, 01/11/2026, vraies polices, coque comprise, `test/capture/listes_classes_capture_test.dart`, démonstration de 630 classes)** :
+
+| Vue | Avant (main du 01/11) | Après (L1) |
+| :--- | :--- | :--- |
+| 1440 x 900 | première ligne à y = 368, 8 lignes entières | y = 112, **11 lignes entières** (lignes de 60, nom et pastille d'état) |
+| 1366 x 768 | y = 368, 6 lignes | y = 112, **9 lignes** |
+| 390 x 844 | y = 532, 1 ligne, **deux** défilements verticaux | y = 284, **6 lignes**, un seul défilement |
+| 1440 x 900, texte x2 | non mesuré | y = 132, 6 lignes |
+
+Une seule barre de défilement, celle de la page, vérifiée sur chaque capture (nombre de défilements verticaux qui débordent = 1), y compris après défilement : seules la barre de l'application et la rangée d'en-têtes restent en haut.
+
+11. **Garde automatique** : `dart run tool/verifier_revue.dart --regle=cadre-defilant` refuse une boîte de hauteur fixe (`SizedBox`, `ConstrainedBox`, `Container`, `LimitedBox` avec `height` ou `maxHeight`) autour d'un défilement vertical. Socle daté du 01/11/2026, qui ne peut que baisser : 8 sites dans 6 fichiers (`admin_shell.dart` 1, `fil_discussion.dart` 1, `observations_admin_page.dart` 1, `composer_vocal.dart` 1, `salle_seance.dart` 3, `telephone_plein_ecran.dart` 1). La règle n'est pas encore dans la CI : la ligne de `ci.yml` est donnée au directeur (zone interdite aux agents). **Exception des contenus tiers** (`HtmlElementView`, iframe) : la molette et le doigt posés sur eux ne parviennent pas à Flutter ; la garde ne pousse donc pas vers un cadre à la hauteur du contenu : un contenu tiers plus haut que l'écran devient un élément natif plein écran, dont le défilement est celui de la page (PR 120, constat du garde-cap du 01/11/2026). Le message de la règle le dit.
+
 ## 6. Limites serveur (frontend seulement : non corrigées)
 
 - `lister_candidatures` : page de 50 en dur ; pas de `version` dans la ligne ; 2 alertes sur 4 non servies et aucune clé de filtre « alerte » ; audit à chaque lecture. Colonne Date non triable en croissant.
@@ -113,7 +141,7 @@ Détail et défauts : l'inventaire du lot 4 (`5-inventaire-traitement.md`, copi�
 | 5 | Candidatures | refondue | taille de page serveur |
 | 6 | Invitations | inchangée | formulaire replié, `MenuActions` pour « Révoquer » |
 | 7 | Espace de traitement | inchangée | recherche client, compteur |
-| 8 | Classes | corrigée (menu) | `PiedDeListe`, `FiltresActifs` |
+| 8 | Classes | refondue (L1, §5 quater, 01/11/2026) : pleine largeur, cartes, filtres repliés, vue Ouvertes, fiche-page | 27 autres listes par lots de 4 à 6 |
 | 9 | Regroupements | inchangée | table au bureau (la carte porte « Créer la classe ») |
 | 10 | Pilotage | bénéficie du socle | en-tête compact |
 | 11 | Journal d'audit | bénéficie du socle | recherche serveur à demander |
@@ -149,6 +177,7 @@ Non migrés vers `CaseACocher` : 8 `Checkbox` ou `CheckboxListTile` dans `lib/fe
 | Comptes (élèves, tuteurs) | oui | oui | oui | non | non |
 | Comptes séparé par rôle (30/10) et `comptes_admin_par_role()` | oui | oui | oui (tests Flutter, scénario SQL sur Postgres 16 neuf) | non | non |
 | Tête qui défile avec la liste, lignes denses (§5 ter, Comptes seulement) | oui | oui | oui (tests Flutter, captures et mesures) | non | non |
+| Listes de bureau (§5 quater, Classes seulement) et garde `cadre-defilant` | oui | oui | oui (tests Flutter, captures et mesures, scénario SQL) | non | non |
 | Autres listes (menus migrés, recherche de Progression) | oui | oui | oui | non | non |
 | Listes non traitées (§7, « inchangée ») | oui | non | non | non | non |
 
