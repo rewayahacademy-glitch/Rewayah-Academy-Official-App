@@ -253,7 +253,6 @@ class _Corps extends StatelessWidget {
               aide: t.admin.regles.remplacementBornesAvertissement(
                 min: m(0),
                 max: m(perte - 1),
-                perte: m(perte),
               ),
             ),
             ligne(
@@ -266,8 +265,6 @@ class _Corps extends StatelessWidget {
               aide: t.admin.regles.remplacementBornesPerte(
                 min: m(avertissement + 1),
                 max: m(objectif - 1),
-                avertissement: m(avertissement),
-                objectif: m(objectif),
               ),
             ),
             ligne(
@@ -279,8 +276,6 @@ class _Corps extends StatelessWidget {
               max: _delaiRemplacementMax,
               aide: t.admin.regles.remplacementBornesObjectif(
                 min: m(perte + 1),
-                max: m(_delaiRemplacementMax),
-                perte: m(perte),
               ),
             ),
           ],

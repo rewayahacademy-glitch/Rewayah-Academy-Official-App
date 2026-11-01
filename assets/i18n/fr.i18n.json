@@ -4547,9 +4547,9 @@
       "remplacementPerteDetail": "L'enseignant est noté absent et ne peut plus rejoindre la séance de ce jour. Un enseignant qui s'est proposé le remplace, et les familles sont prévenues.",
       "remplacementObjectif": "Remplaçant dans la salle",
       "remplacementObjectifDetail": "L'objectif\u00a0: le remplaçant a rejoint la salle.",
-      "remplacementBornesAvertissement": "Entre {min} et {max} après le début, avant la perte de la séance ({perte}).",
-      "remplacementBornesPerte": "Entre {min} et {max} après le début\u00a0: après l'avertissement ({avertissement}) et avant le remplaçant dans la salle ({objectif}).",
-      "remplacementBornesObjectif": "Entre {min} et {max} après le début, après la perte de la séance ({perte})."
+      "remplacementBornesAvertissement": "Entre {min} et {max} après le début. Pour aller au-delà de {max}, relevez d'abord la perte de la séance.",
+      "remplacementBornesPerte": "Entre {min} et {max} après le début. Pour descendre sous {min}, baissez d'abord l'avertissement. Pour aller au-delà de {max}, relevez d'abord l'objectif.",
+      "remplacementBornesObjectif": "Au moins {min} après le début. Pour descendre sous {min}, baissez d'abord la perte de la séance."
     },
     "fonctionnalites": {
       "titre": "Fonctionnalités",

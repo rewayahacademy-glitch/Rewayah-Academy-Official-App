@@ -9267,14 +9267,14 @@ class Traductions$admin$regles$fr {
 	/// fr: 'L'objectif : le remplaçant a rejoint la salle.'
 	String get remplacementObjectifDetail => 'L\'objectif : le remplaçant a rejoint la salle.';
 
-	/// fr: 'Entre {min} et {max} après le début, avant la perte de la séance ({perte}).'
-	String remplacementBornesAvertissement({required Object min, required Object max, required Object perte}) => 'Entre ${min} et ${max} après le début, avant la perte de la séance (${perte}).';
+	/// fr: 'Entre {min} et {max} après le début. Pour aller au-delà de {max}, relevez d'abord la perte de la séance.'
+	String remplacementBornesAvertissement({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début. Pour aller au-delà de ${max}, relevez d\'abord la perte de la séance.';
 
-	/// fr: 'Entre {min} et {max} après le début : après l'avertissement ({avertissement}) et avant le remplaçant dans la salle ({objectif}).'
-	String remplacementBornesPerte({required Object min, required Object max, required Object avertissement, required Object objectif}) => 'Entre ${min} et ${max} après le début : après l\'avertissement (${avertissement}) et avant le remplaçant dans la salle (${objectif}).';
+	/// fr: 'Entre {min} et {max} après le début. Pour descendre sous {min}, baissez d'abord l'avertissement. Pour aller au-delà de {max}, relevez d'abord l'objectif.'
+	String remplacementBornesPerte({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début. Pour descendre sous ${min}, baissez d\'abord l\'avertissement. Pour aller au-delà de ${max}, relevez d\'abord l\'objectif.';
 
-	/// fr: 'Entre {min} et {max} après le début, après la perte de la séance ({perte}).'
-	String remplacementBornesObjectif({required Object min, required Object max, required Object perte}) => 'Entre ${min} et ${max} après le début, après la perte de la séance (${perte}).';
+	/// fr: 'Au moins {min} après le début. Pour descendre sous {min}, baissez d'abord la perte de la séance.'
+	String remplacementBornesObjectif({required Object min}) => 'Au moins ${min} après le début. Pour descendre sous ${min}, baissez d\'abord la perte de la séance.';
 }
 
 // Path: admin.fonctionnalites
@@ -45559,9 +45559,9 @@ extension on Traductions {
 			'admin.regles.remplacementPerteDetail' => 'L\'enseignant est noté absent et ne peut plus rejoindre la séance de ce jour. Un enseignant qui s\'est proposé le remplace, et les familles sont prévenues.',
 			'admin.regles.remplacementObjectif' => 'Remplaçant dans la salle',
 			'admin.regles.remplacementObjectifDetail' => 'L\'objectif : le remplaçant a rejoint la salle.',
-			'admin.regles.remplacementBornesAvertissement' => ({required Object min, required Object max, required Object perte}) => 'Entre ${min} et ${max} après le début, avant la perte de la séance (${perte}).',
-			'admin.regles.remplacementBornesPerte' => ({required Object min, required Object max, required Object avertissement, required Object objectif}) => 'Entre ${min} et ${max} après le début : après l\'avertissement (${avertissement}) et avant le remplaçant dans la salle (${objectif}).',
-			'admin.regles.remplacementBornesObjectif' => ({required Object min, required Object max, required Object perte}) => 'Entre ${min} et ${max} après le début, après la perte de la séance (${perte}).',
+			'admin.regles.remplacementBornesAvertissement' => ({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début. Pour aller au-delà de ${max}, relevez d\'abord la perte de la séance.',
+			'admin.regles.remplacementBornesPerte' => ({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début. Pour descendre sous ${min}, baissez d\'abord l\'avertissement. Pour aller au-delà de ${max}, relevez d\'abord l\'objectif.',
+			'admin.regles.remplacementBornesObjectif' => ({required Object min}) => 'Au moins ${min} après le début. Pour descendre sous ${min}, baissez d\'abord la perte de la séance.',
 			'admin.fonctionnalites.titre' => 'Fonctionnalités',
 			'admin.fonctionnalites.intro' => 'Les fonctionnalités qui changent le comportement de toute la plateforme.',
 			'admin.fonctionnalites.erreur' => 'Les fonctionnalités n\'ont pas pu être lues. Réessayez dans un instant.',

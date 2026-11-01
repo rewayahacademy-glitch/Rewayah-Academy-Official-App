@@ -5599,9 +5599,9 @@
       "remplacementPerteDetail": "يُسجَّل المعلّم غائبًا ولا يمكنه الانضمام إلى حصة هذا اليوم. ويعوّضه معلّم تقدّم لذلك، وتُبلَّغ الأسر.",
       "remplacementObjectif": "البديل في القاعة",
       "remplacementObjectifDetail": "الهدف: أن يكون المعلّم البديل قد انضم إلى القاعة.",
-      "remplacementBornesAvertissement": "بين {min} و{max} بعد البداية، قبل فقدان الحصة ({perte}).",
-      "remplacementBornesPerte": "بين {min} و{max} بعد البداية: بعد التنبيه ({avertissement}) وقبل وصول البديل إلى القاعة ({objectif}).",
-      "remplacementBornesObjectif": "بين {min} و{max} بعد البداية، بعد فقدان الحصة ({perte})."
+      "remplacementBornesAvertissement": "بين {min} و{max} بعد البداية. لتتجاوز {max}، ارفع أولًا موعد فقدان الحصة.",
+      "remplacementBornesPerte": "بين {min} و{max} بعد البداية. لتنزل عن {min}، اخفض أولًا موعد التنبيه. ولتتجاوز {max}، ارفع أولًا الهدف.",
+      "remplacementBornesObjectif": "{min} على الأقل بعد البداية. لتنزل عن {min}، اخفض أولًا موعد فقدان الحصة."
     },
     "fonctionnalites": {
       "titre": "الوظائف",

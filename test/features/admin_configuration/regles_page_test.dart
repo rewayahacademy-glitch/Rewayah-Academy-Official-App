@@ -266,8 +266,16 @@ void main() {
         final _Config config = _Config(_toutesLesCles());
         await _monter(tester, config);
         await ouvrir(tester, t.admin.regles.remplacementPerte);
-        // La feuille dit pourquoi ces bornes : apres 3, avant 11.
-        expect(find.textContaining('après l\'avertissement'), findsOneWidget);
+        // La feuille dit les bornes et comment aller au-dela, sans detour :
+        // relever d'abord l'objectif (11), baisser d'abord l'avertissement (3).
+        expect(
+          find.textContaining('relevez d\'abord l\'objectif'),
+          findsOneWidget,
+        );
+        expect(
+          find.textContaining('baissez d\'abord l\'avertissement'),
+          findsOneWidget,
+        );
         // Monter jusqu'a la borne : le « + » disparait a 10, jamais 11.
         for (int i = 0; i < 2; i++) {
           await tester.tap(find.byKey(ChoixNombre.clePlus));
