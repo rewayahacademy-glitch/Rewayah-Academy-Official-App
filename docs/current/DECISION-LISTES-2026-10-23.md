@@ -2,6 +2,8 @@
 
 **Directeur, 23/10/2026.** Point de départ : la page Candidatures, où 684 px séparaient le haut de l'écran de la première ligne et où 2 lignes seulement étaient visibles à 1440 x 900, alors que l'académie reçoit environ 600 personnes en quelques jours et que le volume grandira. La demande vaut pour toute l'application. Ce document est la **source canonique unique** de la règle ; les autres fichiers y renvoient, sans la recopier.
 
+> **01/11/2026, prévaut sur ce document** : aucune liste ne défile dans un cadre de hauteur fixe ; la liste est la page (`DECISION-DEFILEMENT-2026-11-01.md`).
+
 ## 1. La règle (texte du directeur, mot pour mot)
 
 > Dans toute vue de gestion fondée sur une liste, le contenu métier occupe la priorité visuelle et spatiale. Les commandes doivent être regroupées, les détails secondaires accessibles à la demande et les actions courantes réalisables efficacement. Les listes longues doivent être conçues pour les volumes réels et futurs, pas uniquement pour quelques données de démonstration.
