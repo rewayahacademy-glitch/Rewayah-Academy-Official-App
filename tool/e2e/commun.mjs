@@ -50,9 +50,16 @@ export async function parcours(nom, dossierCaptures) {
   for (const f of fs.readdirSync(sortie)) {
     if (/\.png$|^journal\.txt$|^verdict\.json$/.test(f)) fs.rmSync(path.join(sortie, f));
   }
+  // E2E_PROXY : seul le parcours du paiement integre sort vers Stripe (mode
+  // test) ; le proxy de l'environnement sert alors, la pile locale non.
+  // Drapeaux de Chromium et non l'option `proxy` de Playwright : celle-ci
+  // ajoute `<-loopback>` et enverrait la pile locale au proxy.
   const navigateur = await chromium.launch({
     args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream',
-      '--autoplay-policy=no-user-gesture-required'],
+      '--autoplay-policy=no-user-gesture-required',
+      ...(process.env.E2E_PROXY
+        ? [`--proxy-server=${process.env.E2E_PROXY}`, '--proxy-bypass-list=127.0.0.1;localhost;kong;172.*']
+        : [])],
   });
   let n = 0;
   const journal = [];

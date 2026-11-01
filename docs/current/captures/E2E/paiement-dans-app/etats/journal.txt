@@ -1,0 +1,6 @@
+== Paiement dans l'application : etats : 2026-11-01T18:12:27.403Z ; Chromium 141.0.7390.37 ; http://127.0.0.1:8090
+Apres « Payer » : http://127.0.0.1:8090/#/tuteur/foyer/recharge/result?commande=7a6856c2-9a7c-46cb-99e3-65245d41dcbb
+Titre : group:Payez ici, sans quitter l'application
+Erreur : button:Le formulaire de paiement ne s'est pas affiché. Réessayez dans un instant. Rien n'a été payé par ce formulaire. Réessayer
+Hors ligne : flt-semantics:Pas de réseau. Ce qui est déjà affiché reste consultable. | flt-semantics:Vous êtes hors ligne Vérifiez votre connexion. Ce qui est déjà affiché reste consultable. | group:Navigation principale | button:Accueil | button:Foyer | button:Historique | button:Compte
+== Paiement dans l'application : etats : vert

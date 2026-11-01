@@ -30207,6 +30207,21 @@ class Traductions$adulte$recharge$resultat$fr {
 
 	// Translations
 
+	/// fr: 'Payez ici, sans quitter l'application'
+	String get formulaireTitre => 'Payez ici, sans quitter l\'application';
+
+	/// fr: 'Saisissez vos coordonnées de paiement ci-dessous. Les soldes changent seulement après la confirmation du paiement.'
+	String get formulairePhrase => 'Saisissez vos coordonnées de paiement ci-dessous. Les soldes changent seulement après la confirmation du paiement.';
+
+	/// fr: 'Le formulaire de paiement ne s'est pas affiché.'
+	String get formulaireEchecTitre => 'Le formulaire de paiement ne s\'est pas affiché.';
+
+	/// fr: 'Réessayez dans un instant. Rien n'a été payé par ce formulaire.'
+	String get formulaireEchecPhrase => 'Réessayez dans un instant. Rien n\'a été payé par ce formulaire.';
+
+	/// fr: 'Revenir aux soldes sans payer'
+	String get formulaireSansPayer => 'Revenir aux soldes sans payer';
+
 	/// fr: 'Paiement en préparation'
 	String get preparationTitre => 'Paiement en préparation';
 
@@ -49241,6 +49256,11 @@ extension on Traductions {
 			'adulte.recharge.regularisationDe' => ({required Object prenom, required Object message}) => '${prenom} : ${message}',
 			'adulte.recharge.commandeRendue' => 'Le paiement est envoyé. Ne payez pas une seconde fois : suivez son état.',
 			'adulte.recharge.suivrePaiement' => 'Suivre le paiement',
+			'adulte.recharge.resultat.formulaireTitre' => 'Payez ici, sans quitter l\'application',
+			'adulte.recharge.resultat.formulairePhrase' => 'Saisissez vos coordonnées de paiement ci-dessous. Les soldes changent seulement après la confirmation du paiement.',
+			'adulte.recharge.resultat.formulaireEchecTitre' => 'Le formulaire de paiement ne s\'est pas affiché.',
+			'adulte.recharge.resultat.formulaireEchecPhrase' => 'Réessayez dans un instant. Rien n\'a été payé par ce formulaire.',
+			'adulte.recharge.resultat.formulaireSansPayer' => 'Revenir aux soldes sans payer',
 			'adulte.recharge.resultat.preparationTitre' => 'Paiement en préparation',
 			'adulte.recharge.resultat.preparationPhrase' => 'Vérifiez la répartition avant de payer.',
 			'adulte.recharge.resultat.attenteTitre' => 'Paiement en cours de confirmation',
@@ -49627,13 +49647,13 @@ extension on Traductions {
 			'motifs.presenceExcusee.conge' => 'Jour férié ou congé',
 			'motifs.presenceExcusee.familiale' => 'Raison familiale',
 			'motifs.signalement.pedagogique.renforcement' => 'Un renforcement est conseillé sur la leçon en cours.',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.signalement.pedagogique.revision' => 'Un peu de révision à la maison aidera avant le prochain cours.',
 			'motifs.signalement.pedagogique.regularite' => 'La régularité du travail à la maison fera la différence.',
 			'motifs.signalement.pedagogique.echange' => 'Un échange avec l\'académie est proposé.',
 			'motifs.signalement.presence.absences' => 'Plusieurs absences récentes : la régularité aide à progresser.',
 			'motifs.signalement.presence.retards' => 'Arrivées en retard lors des dernières séances.',
-			_ => null,
-		} ?? switch (path) {
 			'motifs.signalement.presence.prevenir' => 'Merci de prévenir l\'académie en cas d\'absence.',
 			'motifs.signalement.technique.son' => 'Le son ou la connexion a gêné le cours.',
 			'motifs.signalement.technique.essai' => 'Un essai de l\'appareil avant le cours est conseillé.',
@@ -50141,13 +50161,13 @@ extension on Traductions {
 			'com.vocal.lecteur.libelle' => ({required Object duree}) => 'Message vocal, ${duree}',
 			'com.vocal.lecteur.ecouter' => 'Écouter',
 			'com.vocal.lecteur.pause' => 'Pause',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.lecteur.reprendre' => 'Reprendre',
 			'com.vocal.lecteur.reecouter' => 'Réécouter',
 			'com.vocal.lecteur.nonEcoute' => 'Pas encore écouté',
 			'com.vocal.lecteur.lecture' => 'Lecture en cours',
 			'com.vocal.lecteur.enPause' => 'Lecture en pause',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.lecteur.fin' => 'Écouté en entier',
 			'com.vocal.lecteur.position' => ({required Object position, required Object duree}) => '${position} sur ${duree}',
 			'com.vocal.lecteur.indisponible' => 'La lecture n\'est pas encore disponible ici. Le message reste dans la conversation : revenez plus tard pour l\'écouter.',
@@ -50655,13 +50675,13 @@ extension on Traductions {
 			'com.annonces.demoPublication.lienPublier' => 'Publier une annonce pour une Classe (enseignant)',
 			'com.annonces.demoPublication.toutes' => 'Toute l\'académie',
 			'com.annonces.demoPublication.familles' => 'Familles',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demoPublication.enseignants' => 'Enseignants',
 			'com.annonces.demoPublication.eleves' => 'Élèves',
 			'com.annonces.demoPublication.controleurs' => 'Contrôleurs',
 			'com.annonces.demoPublication.direction' => 'Direction',
 			'com.annonces.demoPublication.audiencesDirection' => 'Toute l\'académie, un public ou une Classe',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demoPublication.audiencesEnseignant' => 'Sa Classe seulement',
 			'com.annonces.demoPublication.vacancesTitre' => 'Calendrier des vacances d\'hiver',
 			'com.annonces.demoPublication.vacancesTexte' => 'Les cours s\'arrêtent du 21 décembre au 5 janvier. Les séances reprennent le lundi 6 janvier aux horaires habituels.',
@@ -51169,13 +51189,13 @@ extension on Traductions {
 			'comptable.tresorerie.transfert.refusTitre' => 'Mouvement refusé par la source',
 			'comptable.tresorerie.transfert.refusPhrase' => ({required Object raison}) => 'Raison : ${raison}. Rien n\'a été déplacé.',
 			'comptable.tresorerie.transfert.erreurEnvoiTitre' => 'Réponse non reçue',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.transfert.erreurEnvoi' => 'La réponse n\'est pas arrivée. Consultez l\'historique avant de réessayer : le même mouvement ne sera jamais compté deux fois.',
 			'comptable.tresorerie.transfert.indisponible' => 'Les mouvements entre coffres ne sont pas encore reliés au serveur. Rien n\'a été déplacé.',
 			'comptable.tresorerie.transfert.aucunCouple' => 'Aucun mouvement n\'est permis par la politique pour votre compte.',
 			'comptable.tresorerie.titre' => 'Trésorerie et coffres',
 			'comptable.tresorerie.sousTitre' => 'La Trésorerie libre est le seul chiffre dépensable.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.alimenter' => 'Alimenter la Réserve stratégique',
 			'comptable.tresorerie.erreurPartielle' => 'Une partie de la page n\'a pas pu être lue : le reste est à jour. Réessayez pour compléter.',
 			'comptable.tresorerie.erreurPartielleAction' => 'Réessayer',
@@ -51683,13 +51703,13 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.exceptionExclureAucun' => 'Aucun autre bénéficiaire à exclure.',
 			'comptable.direction.delegationPanneau.exceptionRetirerExclu' => ({required Object nom}) => 'Retirer ${nom} des exclus',
 			'comptable.direction.delegationPanneau.exceptionGarder' => 'Garder l\'exception',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.exceptionRetirer' => 'Retirer cette exception',
 			'comptable.direction.delegationPanneau.exceptionRetirerPhrase' => 'La délégation retrouve la politique générale. Rien n\'est enregistré avant « Enregistrer ».',
 			'comptable.direction.delegationPanneau.sensiblesTitre' => 'Toujours sensible',
 			'comptable.direction.delegationPanneau.sensiblesDetail' => 'Ces cinq cas demandent toujours une validation supplémentaire, quels que soient les réglages ci-dessus. Le premier paiement et les coordonnées récentes se règlent plus haut.',
 			'comptable.direction.delegationPanneau.sensibleHorsSeuil' => 'Montant hors seuil',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.sensibleHorsSeuilDetail' => 'Un paiement au-dessus des plafonds fixés plus haut.',
 			'comptable.direction.delegationPanneau.sensibleHorsCycle' => 'Paiement hors cycle',
 			'comptable.direction.delegationPanneau.sensibleHorsCycleDetail' => 'Un paiement qui ne suit pas la période de paie habituelle.',
@@ -52197,13 +52217,13 @@ extension on Traductions {
 			'courriels.admin.ecrire.sansDonneesCategories' => 'Les catégories n\'ont pas pu être chargées',
 			'courriels.admin.ecrire.pasDeCategorie' => 'Aucune catégorie n\'est active : impossible d\'écrire pour le moment.',
 			'courriels.admin.ecrire.champ.adresse' => 'Entrez une adresse e-mail valide.',
+			_ => null,
+		} ?? switch (path) {
 			'courriels.admin.ecrire.champ.categorie' => 'Choisissez une catégorie.',
 			'courriels.admin.ecrire.champ.sujet' => 'Donnez un sujet de 1 à 120 caractères.',
 			'courriels.admin.ecrire.champ.corps' => 'Écrivez un message de 1 à 5000 caractères.',
 			'courriels.admin.ecrire.champ.destinataireExclu' => 'Cette personne ne peut pas recevoir cet e-mail : compte d\'enfant ou désinscription.',
 			'courriels.admin.ecrire.retour.misEnFile' => 'Envoi dans la minute. Suivez-le dans la liste des envois.',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.ecrire.retour.voir' => 'Voir les envois',
 			'courriels.admin.ecrire.retour.refus' => 'Seule la direction connectée peut écrire un e-mail.',
 			'courriels.admin.ecrire.retour.echec' => 'L\'envoi n\'est pas confirmé. Regardez la liste des envois avant de recommencer : le même e-mail ne sera pas mis en file deux fois.',

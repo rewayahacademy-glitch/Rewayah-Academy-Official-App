@@ -9026,6 +9026,13 @@
         "annuel": "⁨{montant}⁩ مقابل 12 شهرًا، تُدفع مقدّمًا"
       },
       "revenirPaiements": "العودة إلى مدفوعات الأسرة",
+      "resultat": {
+        "formulaireTitre": "ادفع هنا دون مغادرة التطبيق",
+        "formulairePhrase": "أدخل بيانات الدفع أدناه. لا تتغيّر الأرصدة إلا بعد تأكيد الدفع.",
+        "formulaireEchecTitre": "لم يظهر نموذج الدفع.",
+        "formulaireEchecPhrase": "أعد المحاولة بعد قليل. لم يُدفع أي مبلغ عبر هذا النموذج.",
+        "formulaireSansPayer": "العودة إلى الأرصدة دون دفع"
+      },
       "source": {
         "avantPaiement": "بانتظار الدفع",
         "motifs": {

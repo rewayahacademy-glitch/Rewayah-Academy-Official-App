@@ -1,0 +1,13 @@
+== Paiement dans l'application : verification-banque : 2026-11-01T18:11:03.295Z ; Chromium 141.0.7390.37 ; http://127.0.0.1:8090
+Apres « Payer » : http://127.0.0.1:8090/#/tuteur/foyer/recharge/result?commande=a4bf35b3-3f92-49a5-aa90-024c67b13f33
+Titre : Payez ici, sans quitter l'application
+Formulaire Stripe monte dans http://127.0.0.1:8090/#/tuteur/foyer/recharge/result?commande=a4bf35b3-3f92-49a5-aa90-024c67b13f33
+Carte de test : 4000 … 3155
+  [tuteur] console : Refused to load the image 'data:image/png;base64,iVBORw0KGgo=' because it violates the following Content Security Policy directive: "img-src 'self'".
+
+Authentification de test : confirmee
+  [tuteur] console : Refused to load the image 'data:image/png;base64,iVBORw0KGgo=' because it violates the following Content Security Policy directive: "img-src 'self'".
+
+Apres validation : http://127.0.0.1:8090/#/tuteur/foyer/recharge/result?commande=a4bf35b3-3f92-49a5-aa90-024c67b13f33
+Etat relu : group:Paiement en cours de confirmation Le prestataire de paiement n'a pas encore confirmé. Les soldes ne changent qu'après sa confirmation. Ne payez pas une seconde  (webhook non joue sur ce banc : « en cours de confirmation » attendu)
+== Paiement dans l'application : verification-banque : vert
