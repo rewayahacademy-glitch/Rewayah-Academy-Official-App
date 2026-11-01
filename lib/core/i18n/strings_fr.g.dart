@@ -10543,6 +10543,9 @@ class Traductions$admin$comptes$fr {
 	/// fr: 'Ouvrir le dossier d'identité'
 	String get actionOuvrirDossier => 'Ouvrir le dossier d\'identité';
 
+	/// fr: 'Voir la demande'
+	String get actionVoirDemande => 'Voir la demande';
+
 	/// fr: 'La liste est peut-être incomplète'
 	String get plafondTitre => 'La liste est peut-être incomplète';
 
@@ -45920,6 +45923,7 @@ extension on Traductions {
 			'admin.comptes.filtreActifEtat' => ({required Object valeur}) => 'État : ${valeur}',
 			'admin.comptes.filtreActifRecherche' => ({required Object texte}) => 'Recherche : ${texte}',
 			'admin.comptes.actionOuvrirDossier' => 'Ouvrir le dossier d\'identité',
+			'admin.comptes.actionVoirDemande' => 'Voir la demande',
 			'admin.comptes.plafondTitre' => 'La liste est peut-être incomplète',
 			'admin.comptes.plafondMessage' => ({required Object nombre}) => 'Le serveur rend au plus ${nombre} comptes, et la liste en compte autant : les inscriptions les plus récentes peuvent manquer.',
 			'admin.comptes.rechercheAideEleves' => 'Nom, identifiant, classe ou tuteur',
@@ -46105,9 +46109,9 @@ extension on Traductions {
 			'admin.finance.pol.eleves' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève', other: '${n} élèves', ), 
 			'admin.finance.pol.seances' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} séance', other: '${n} séances', ), 
 			'admin.finance.pol.classes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} classe', other: '${n} classes', ), 
-			'admin.finance.pol.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} jour', other: '${n} jours', ), 
 			_ => null,
 		} ?? switch (path) {
+			'admin.finance.pol.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} jour', other: '${n} jours', ), 
 			'admin.finance.pol.uniteEleves' => 'élèves',
 			'admin.finance.pol.uniteSeances' => 'séances',
 			'admin.finance.pol.uniteClasses' => 'classes',
@@ -46619,9 +46623,9 @@ extension on Traductions {
 			'admin.tirage.statutControlee' => 'Contrôlée',
 			'admin.tirage.statutNonControlee' => 'Non contrôlée',
 			'admin.tirage.statutDejaControlee' => 'Déjà contrôlée par un autre',
-			'admin.tirage.rapportEnvoye' => 'Rapport envoyé à l\'administration',
 			_ => null,
 		} ?? switch (path) {
+			'admin.tirage.rapportEnvoye' => 'Rapport envoyé à l\'administration',
 			'admin.tirage.critereAleatoire' => 'Au hasard',
 			'admin.tirage.criterePonderation' => 'Selon le poids',
 			'admin.tirage.critereCible' => 'Cible',
@@ -47133,9 +47137,9 @@ extension on Traductions {
 			'compte.themeSysteme' => 'Système',
 			'compte.themeSystemeDetail' => 'Suit le réglage de votre appareil',
 			'compte.themeClair' => 'Clair',
-			'compte.themeClairDetail' => 'Fond clair, quel que soit le réglage de votre appareil',
 			_ => null,
 		} ?? switch (path) {
+			'compte.themeClairDetail' => 'Fond clair, quel que soit le réglage de votre appareil',
 			'compte.themeSombre' => 'Sombre',
 			'compte.themeSombreDetail' => 'Fond sombre, quel que soit le réglage de votre appareil',
 			'compte.accessibilite' => 'Accessibilité',
@@ -47647,9 +47651,9 @@ extension on Traductions {
 			'tuteur.accueil.travailIndisponible' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
 			'tuteur.accueil.travailIllisible' => 'Le travail à préparer n\'a pas pu être lu.',
 			'tuteur.accueil.rienAPreparer' => 'Rien à préparer pour l\'instant',
-			'tuteur.accueil.derniereSeance' => 'Dernière séance',
 			_ => null,
 		} ?? switch (path) {
+			'tuteur.accueil.derniereSeance' => 'Dernière séance',
 			'tuteur.accueil.voirHistorique' => 'Voir l\'historique',
 			'tuteur.accueil.detailsSeance' => 'Détails de la séance',
 			'tuteur.accueil.aucuneDerniere' => 'Aucune séance passée pour l\'instant',
@@ -48161,9 +48165,9 @@ extension on Traductions {
 			'enseignant.salle.presenterSourate' => ({required Object deSourate}) => 'Présenter le début ${deSourate}',
 			'enseignant.salle.sourateDetail' => ({required Object numero, required Object versets}) => 'Sourate ${numero} · ${versets} versets',
 			'enseignant.salle.souratesIndisponibles' => 'La liste des sourates n\'a pas pu être lue',
-			'enseignant.salle.souratesIndisponiblesDetail' => 'Ce que votre Classe voit n\'a pas changé. Réessayez.',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.salle.souratesIndisponiblesDetail' => 'Ce que votre Classe voit n\'a pas changé. Réessayez.',
 			'enseignant.salle.pageIndisponible' => 'Cette page n\'a pas pu être lue',
 			'enseignant.salle.pageIndisponibleDetail' => 'Le texte n\'est pas arrivé jusqu\'ici. Votre Classe voit toujours la page présentée.',
 			'enseignant.salle.corpusAbsent' => 'Le texte du Coran n\'est pas installé',
@@ -48675,9 +48679,9 @@ extension on Traductions {
 			'controleur.observation.rosterIndisponible' => 'La liste des élèves présents n\'est pas reçue. Réessayez, ou choisissez « Classe entière » ou « Aucun participant précis ». Vos autres réponses sont gardées.',
 			'controleur.observation.rosterVide' => 'Aucun élève présent n\'apparaît dans la liste de cette visite. Choisissez « Classe entière » ou « Aucun participant précis ».',
 			'controleur.observation.questionTexte' => 'Qu\'avez-vous observé ?',
-			'controleur.observation.texteObligatoire' => 'Votre texte est nécessaire pour cette observation.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.observation.texteObligatoire' => 'Votre texte est nécessaire pour cette observation.',
 			'controleur.observation.texteFacultatif' => 'Ce texte est facultatif.',
 			'controleur.observation.libelleTexte' => 'Votre remarque',
 			'controleur.observation.aideTexte' => 'Décrivez seulement ce que vous avez observé.',
@@ -49189,9 +49193,9 @@ extension on Traductions {
 			'tc.parcours.plage.pages' => ({required Object premiere, required Object derniere}) => 'Pages ${premiere} à ${derniere}',
 			'tc.parcours.plage.pageUnique' => ({required Object premiere}) => 'Page ${premiere}',
 			'tc.parcours.plage.section' => ({required Object section}) => 'Section ${section}',
-			'tc.parcours.plage.ressource' => 'Tout le support',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.plage.ressource' => 'Tout le support',
 			'tc.parcours.feedback.cours.intitule' => 'Comment était le cours aujourd\'hui ?',
 			'tc.parcours.feedback.cours.difficile' => 'Difficile',
 			'tc.parcours.feedback.cours.bien' => 'Bien',
@@ -49703,9 +49707,9 @@ extension on Traductions {
 			'motifs.placement.debutant' => 'Débutant : parcours de base',
 			'motifs.placement.lecture' => 'Niveau constaté à la lecture',
 			'motifs.placement.declaratif' => 'Pré-diagnostic déclaratif confirmé',
-			'motifs.placement.procheNiveau' => 'Classe la plus proche du niveau évalué',
 			_ => null,
 		} ?? switch (path) {
+			'motifs.placement.procheNiveau' => 'Classe la plus proche du niveau évalué',
 			'motifs.placement.provisoire' => 'Placement provisoire, à réévaluer',
 			'motifs.refusDossier.illisible' => 'Pièce d\'identité illisible',
 			'motifs.refusDossier.expiree' => 'Pièce d\'identité expirée',
@@ -50217,9 +50221,9 @@ extension on Traductions {
 			'com.vocal.composer.preEcouteAide' => 'Écoutez votre message avant de l\'envoyer. Rien ne part sans votre accord.',
 			'com.vocal.composer.duree' => ({required Object duree}) => 'Durée : ${duree}',
 			'com.vocal.composer.actionPause' => 'Pause',
-			'com.vocal.composer.actionReprendre' => 'Reprendre',
 			_ => null,
 		} ?? switch (path) {
+			'com.vocal.composer.actionReprendre' => 'Reprendre',
 			'com.vocal.composer.actionArreter' => 'Arrêter',
 			'com.vocal.composer.actionSupprimer' => 'Supprimer',
 			'com.vocal.composer.actionEnvoyer' => 'Envoyer',
@@ -50731,9 +50735,9 @@ extension on Traductions {
 			'com.annonces.administration.moderation.sansAction' => 'Aucune action de modération ne vous est ouverte sur ce contenu.',
 			'com.annonces.administration.moderation.sansSanction' => 'Aucune sanction de compte n\'est appliquée automatiquement.',
 			'com.annonces.administration.moderation.politique' => 'Politique anti-promotion',
-			'com.annonces.administration.moderation.ouvrirSemantique' => ({required Object objet, required Object motif}) => 'Examiner ${objet}, motif ${motif}',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.administration.moderation.ouvrirSemantique' => ({required Object objet, required Object motif}) => 'Examiner ${objet}, motif ${motif}',
 			'com.annonces.administration.moderation.regleMotif.publicite' => 'La publicité n\'est pas autorisée dans la Communauté enseignants.',
 			'com.annonces.administration.moderation.regleMotif.lienAffilie' => 'Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.',
 			'com.annonces.administration.moderation.regleMotif.vente' => 'La vente de produits ou de services n\'est pas autorisée dans cet espace.',
@@ -51245,9 +51249,9 @@ extension on Traductions {
 			'comptable.tresorerie.transfert.montantAide' => ({required Object devise}) => 'En unités entières, ${devise}.',
 			'comptable.tresorerie.transfert.montantPropose' => 'Montant proposé par la politique',
 			'comptable.tresorerie.transfert.utiliserPropose' => 'Utiliser le montant proposé',
-			'comptable.tresorerie.transfert.erreurMontant' => 'Saisissez un montant entier supérieur à zéro.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.tresorerie.transfert.erreurMontant' => 'Saisissez un montant entier supérieur à zéro.',
 			'comptable.tresorerie.transfert.verifier' => 'Vérifier le mouvement',
 			'comptable.tresorerie.transfert.recapPhrase' => 'Vérifiez le montant exact avant d\'envoyer.',
 			'comptable.tresorerie.transfert.de' => 'De',
@@ -51759,9 +51763,9 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.exceptionsDetail' => 'Réglages propres à une délégation. Un plafond d\'exception est toujours plus bas que celui de la politique générale, jamais plus haut.',
 			'comptable.direction.delegationPanneau.exceptionsVide' => 'Aucune exception : la politique générale s\'applique à toutes les délégations.',
 			'comptable.direction.delegationPanneau.exceptionAjouter' => 'Ajouter une exception',
-			'comptable.direction.delegationPanneau.exceptionModifier' => ({required Object libelle}) => 'Modifier l\'exception de ${libelle}',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.direction.delegationPanneau.exceptionModifier' => ({required Object libelle}) => 'Modifier l\'exception de ${libelle}',
 			'comptable.direction.delegationPanneau.exceptionLibelleDefaut' => 'Délégation du Comptable',
 			'comptable.direction.delegationPanneau.exceptionCoffres' => 'Coffres autorisés',
 			'comptable.direction.delegationPanneau.exceptionCoffresAucun' => 'Aucun coffre autorisé',
@@ -52273,9 +52277,9 @@ extension on Traductions {
 			'courriels.admin.indisponibleTitre' => 'E-mails indisponibles',
 			'courriels.admin.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
 			'courriels.admin.ecrire.titre' => 'Nouvel e-mail',
-			'courriels.admin.ecrire.intro' => 'L\'e-mail est mis en file, puis part de l\'adresse de sa catégorie, dans la minute. Il n\'est envoyé que lorsque la liste des envois affiche Envoyé.',
 			_ => null,
 		} ?? switch (path) {
+			'courriels.admin.ecrire.intro' => 'L\'e-mail est mis en file, puis part de l\'adresse de sa catégorie, dans la minute. Il n\'est envoyé que lorsque la liste des envois affiche Envoyé.',
 			'courriels.admin.ecrire.adresse' => 'Adresse du destinataire',
 			'courriels.admin.ecrire.adresseAide' => 'Une seule adresse. Un compte d\'enfant ne reçoit jamais d\'e-mail.',
 			'courriels.admin.ecrire.categorie' => 'Catégorie',

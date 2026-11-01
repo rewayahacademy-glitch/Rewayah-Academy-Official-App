@@ -5307,6 +5307,7 @@ class _Traductions$admin$comptes$ar extends Traductions$admin$comptes$fr {
 	@override String filtreActifEtat({required Object valeur}) => 'الحالة: ⁨${valeur}⁩';
 	@override String filtreActifRecherche({required Object texte}) => 'البحث: ⁨${texte}⁩';
 	@override String get actionOuvrirDossier => 'فتح ملف الهوية';
+	@override String get actionVoirDemande => 'عرض الطلب';
 	@override String get plafondTitre => 'قد تكون القائمة ناقصة';
 	@override String plafondMessage({required Object nombre}) => 'يعيد الخادم على الأكثر ⁨${nombre}⁩ حسابًا، والقائمة تبلغ هذا العدد: قد تغيب أحدث التسجيلات.';
 	@override String get rechercheAideEleves => 'الاسم أو المعرّف أو الفصل أو وليّ الأمر';
@@ -24602,6 +24603,7 @@ extension on TraductionsAr {
 			'admin.comptes.filtreActifEtat' => ({required Object valeur}) => 'الحالة: ⁨${valeur}⁩',
 			'admin.comptes.filtreActifRecherche' => ({required Object texte}) => 'البحث: ⁨${texte}⁩',
 			'admin.comptes.actionOuvrirDossier' => 'فتح ملف الهوية',
+			'admin.comptes.actionVoirDemande' => 'عرض الطلب',
 			'admin.comptes.plafondTitre' => 'قد تكون القائمة ناقصة',
 			'admin.comptes.plafondMessage' => ({required Object nombre}) => 'يعيد الخادم على الأكثر ⁨${nombre}⁩ حسابًا، والقائمة تبلغ هذا العدد: قد تغيب أحدث التسجيلات.',
 			'admin.comptes.rechercheAideEleves' => 'الاسم أو المعرّف أو الفصل أو وليّ الأمر',
@@ -24994,9 +24996,9 @@ extension on TraductionsAr {
 			'admin.tirage.critereEnseignantsRecents' => 'معلمون التحقوا حديثًا',
 			'admin.tirage.critereClassesSignalees' => 'فصول أُبلغ عنها للإدارة',
 			'admin.tirage.critereHeuresDePointe' => 'ساعات الذروة',
-			'admin.tirage.niveauAucun' => 'بلا وزن',
 			_ => null,
 		} ?? switch (path) {
+			'admin.tirage.niveauAucun' => 'بلا وزن',
 			'admin.tirage.niveauNormal' => 'وزن عادي',
 			'admin.tirage.niveauFort' => 'وزن قوي',
 			'admin.tirage.ciblesTitre' => 'فصول أو معلمون مستهدفون',
@@ -25508,9 +25510,9 @@ extension on TraductionsAr {
 			'comptable.aujourdhui.echeancesVide' => 'لا توجد مواعيد استحقاق قريبة.',
 			'comptable.aujourdhui.encaissementsVide' => 'لا توجد مقبوضات حديثة.',
 			'comptable.aujourdhui.activiteVide' => 'لا يوجد نشاط حديث.',
-			'comptable.aujourdhui.prestatairesVide' => 'لا يوجد مزوّد دفع مفعّل.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.aujourdhui.prestatairesVide' => 'لا يوجد مزوّد دفع مفعّل.',
 			'comptable.aujourdhui.prestatairesVideDetail' => 'ستنطلق المدفوعات الصادرة عندما تفعّل الإدارة مزوّد دفع.',
 			'comptable.aujourdhui.accesPaiements' => 'عرض المدفوعات للتنفيذ',
 			'comptable.aujourdhui.accesContractuels' => 'إدارة التزامات المتعاقدين',
@@ -26022,9 +26024,9 @@ extension on TraductionsAr {
 			'comptable.contractuels.champObjet' => 'موضوع الالتزام',
 			'comptable.contractuels.aideObjet' => 'مثلًا: الفاتورة رقم 024',
 			'comptable.contractuels.champRefJustificatif' => 'مرجع المستند المؤيِّد (اختياري)',
-			'comptable.contractuels.champMontantSaisi' => 'المبلغ',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.contractuels.champMontantSaisi' => 'المبلغ',
 			'comptable.contractuels.aideMontant' => 'يُدخل مرة واحدة: لا يُعدَّل بعد الاعتماد.',
 			'comptable.contractuels.creer' => 'إنشاء الالتزام',
 			'comptable.contractuels.horsLigneCreation' => 'أنت غير متصل. أعد الاتصال لإنشاء الالتزام.',
@@ -26536,9 +26538,9 @@ extension on TraductionsAr {
 			'eleveConnexion.saisie.valider' => 'ربط الجهاز',
 			'eleveConnexion.saisie.scanner' => 'مسح رمز QR',
 			'eleveConnexion.saisie.horsLigne' => 'لا اتصال بالإنترنت. يمكن التحقق من الرمز عند عودة الشبكة.',
-			'eleveConnexion.lecteur.titre' => 'مسح رمز QR',
 			_ => null,
 		} ?? switch (path) {
+			'eleveConnexion.lecteur.titre' => 'مسح رمز QR',
 			'eleveConnexion.lecteur.consigne' => 'وجّه الكاميرا نحو رمز QR المعروض على جهاز وليّ الأمر.',
 			'eleveConnexion.lecteur.demarrage' => 'اسمح بالكاميرا إن طلب الجهاز ذلك.',
 			'eleveConnexion.lecteur.libelleApercu' => 'عرض الكاميرا',
@@ -27050,9 +27052,9 @@ extension on TraductionsAr {
 			'adulte.famille.indisponiblePhrase' => 'ستظهر أسرتك أو باقة أسرتك هنا بمجرد إتاحتها.',
 			'adulte.famille.place.ajouterConjointe' => 'إضافة زوجة',
 			'adulte.famille.place.ajouterConjoint' => 'إضافة زوج',
-			'adulte.famille.place.inviterConjointe' => 'ادعُ زوجتك للانضمام إلى Rewayah بحسابها الخاص.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.famille.place.inviterConjointe' => 'ادعُ زوجتك للانضمام إلى Rewayah بحسابها الخاص.',
 			'adulte.famille.place.inviterConjoint' => 'ادعُ زوجك للانضمام إلى Rewayah بحسابه الخاص.',
 			'adulte.famille.place.invitationEnvoyee' => 'أُرسلت الدعوة',
 			'adulte.famille.place.maConjointe' => ({required Object prenom}) => '⁨${prenom}⁩، زوجتك',
@@ -27564,9 +27566,9 @@ extension on TraductionsAr {
 			'controleur.complement.questionRecap' => 'راجع قبل الإرسال',
 			'controleur.complement.cleRapport' => 'التقرير الأصلي',
 			'controleur.complement.rapportInchange' => ({required Object classe, required Object date}) => '⁨${classe}⁩ · ⁨${date}⁩، دون تغيير',
-			'controleur.complement.cleMotif' => 'السبب',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.complement.cleMotif' => 'السبب',
 			'controleur.complement.sansMotif' => 'لا سبب',
 			'controleur.complement.cleTexte' => 'التكملة',
 			'controleur.complement.envoyer' => 'إرسال التكملة',
@@ -28078,9 +28080,9 @@ extension on TraductionsAr {
 			'recrutement.parcours.presentation.p2.visio.titre' => 'عبر الفيديو، داخل التطبيق',
 			'recrutement.parcours.presentation.p2.visio.texte' => 'تُعطى الدروس عبر مكالمة فيديو، داخل تطبيق أكاديمية الرواية.',
 			'recrutement.parcours.presentation.p2.remuneration.titre' => 'راتب موضَّح',
-			'recrutement.parcours.presentation.p2.remuneration.texte' => 'راتبك جزء من السعر الذي يدفعه كل طالب حاضر. يُشرح لك بالنسبة المئوية قبل إرسال طلب ترشحك.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.presentation.p2.remuneration.texte' => 'راتبك جزء من السعر الذي يدفعه كل طالب حاضر. يُشرح لك بالنسبة المئوية قبل إرسال طلب ترشحك.',
 			'recrutement.parcours.presentation.p3.titre' => 'كيف يجري طلب ترشحك',
 			'recrutement.parcours.presentation.p3.intro' => 'ثلاث مراحل، داخل التطبيق.',
 			'recrutement.parcours.presentation.p3.examen.titre' => 'قاعة الامتحان',
@@ -28592,9 +28594,9 @@ extension on TraductionsAr {
 			'argent.transparence.postes.impotSocietes' => 'ضريبة الشركات',
 			'argent.transparence.postes.benefice' => 'ربح الأكاديمية',
 			'argent.transparence.posteSemantique' => ({required Object poste, required Object part}) => '⁨${poste}⁩: ⁨${part}⁩ من دفعة الطالب',
-			'argent.transparence.estimation' => ({required Object enfants, required Object adultes}) => 'هذه النسب تقدير، محسوب على أساس ⁨${enfants}⁩ طفلًا و⁨${adultes}⁩ بالغًا، كلٌّ منهم بالسعر الكامل وحاضر في كل حصة. وتُراجَع مع كل إصدار جديد للأسعار.',
 			_ => null,
 		} ?? switch (path) {
+			'argent.transparence.estimation' => ({required Object enfants, required Object adultes}) => 'هذه النسب تقدير، محسوب على أساس ⁨${enfants}⁩ طفلًا و⁨${adultes}⁩ بالغًا، كلٌّ منهم بالسعر الكامل وحاضر في كل حصة. وتُراجَع مع كل إصدار جديد للأسعار.',
 			'argent.transparence.magasinsTitre' => 'لماذا لا يوجد التطبيق على App Store ولا على Google Play',
 			'argent.transparence.magasinsPhrase' => 'تأخذ هذه المتاجر من 15 إلى 30 ٪ من كل دفعة. ولا تستطيع الأكاديمية تحمّل هذه الرسوم دون رفع أسعارها. لذلك يتم الدفع عبر الويب.',
 			'argent.transparence.taxesTitre' => 'الضرائب',
@@ -29106,9 +29108,9 @@ extension on TraductionsAr {
 			'accueilInscrits.phrase' => 'تم استرجاع تسجيلكم. لا داعي لإعادة إدخال كل شيء.',
 			'accueilInscrits.motTitre' => 'كلمة من الإدارة',
 			'accueilInscrits.elevesTitre' => 'أبناؤكم المسجلون مسبقًا',
-			'accueilInscrits.elevesPhrase' => 'الاسم الأول مكتوب مسبقًا. يبقى تحديد العمر.',
 			_ => null,
 		} ?? switch (path) {
+			'accueilInscrits.elevesPhrase' => 'الاسم الأول مكتوب مسبقًا. يبقى تحديد العمر.',
 			'accueilInscrits.aJour' => 'مكتمل',
 			'accueilInscrits.aCompleter' => 'يحتاج إلى إكمال',
 			'accueilInscrits.ajouterProfil' => ({required Object dePrenom}) => 'إضافة الملف الدراسي لـ ⁨${dePrenom}⁩',

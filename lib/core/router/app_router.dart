@@ -247,6 +247,8 @@ import '../../features/tc_mushaf/routes_tc_c.dart';
 import '../../features/tc_observation_ui/routes_tc_g.dart';
 import '../admin/admin_domaine.dart';
 import '../admin/port_classes_admin.dart' as classes_admin show ClasseListee;
+import '../admission/port_admissions_direction.dart'
+    show DemandeAdmissionAOuvrir;
 import '../alertes/port_alertes.dart';
 import '../candidature/modeles_candidatures_direction.dart'
     show LigneCandidature;
@@ -1920,12 +1922,18 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // Admission, lot C : les demandes d'admission.
       GoRoute(
         path: Routes.adminPersonnesAdmissions,
-        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
           child: PageDifferee(
             cle: 'd_admissions_page',
             charger: d_admissions_page.loadLibrary,
-            construire: () => d_admissions_page.AdmissionsPage(),
+            // L2 des listes : « Voir la demande » depuis Comptes passe la
+            // demande a montrer en `extra`, jamais dans l'adresse.
+            construire: () => d_admissions_page.AdmissionsPage(
+              ouvrir: etat.extra is DemandeAdmissionAOuvrir
+                  ? etat.extra! as DemandeAdmissionAOuvrir
+                  : null,
+            ),
           ),
         ),
       ),
