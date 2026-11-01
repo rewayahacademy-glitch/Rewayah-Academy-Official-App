@@ -3,7 +3,16 @@
 // (`generateTestHeaderStringAsync`), jamais a la main.
 
 import { assertEquals, assertRejects } from 'jsr:@std/assert@1'
-import { clientStripe, parametresSession, retourAutorise, Stripe, verifierEvenement } from './stripe.ts'
+import {
+  clientStripe,
+  formulaireIntegrePossible,
+  MARQUE_INTEGRE,
+  parametresSession,
+  retourAutorise,
+  sessionIntegree,
+  Stripe,
+  verifierEvenement,
+} from './stripe.ts'
 import { parametres } from '../stripe-webhook/index.ts'
 
 const SECRET = 'whsec_test_rewayah'
@@ -85,4 +94,43 @@ Deno.test('retour : seulement vers une origine autorisee', () => {
   assertEquals(retourAutorise('https://pirate.test/#/x', 'https://app.test'), false)
   assertEquals(retourAutorise('pas une adresse', 'https://app.test'), false)
   assertEquals(retourAutorise('https://app.test/', undefined), false)
+})
+
+Deno.test('formulaire integre : embedded_page, retour seulement si un moyen l exige, aucune page hebergee', () => {
+  const p = parametresSession({
+    commandeId: 'c1',
+    reference: 'RWY-ABCD1234',
+    devise: 'USD',
+    lignes: [{ prenom: 'Bilal', mineur: 5000 }],
+    retour: 'https://app.test/#/r?commande=c1',
+    libelle: (prenom) => `Rewayah Academy · ${prenom}`,
+    expireA: 1,
+    integre: true,
+  })
+  assertEquals(p.ui_mode, 'embedded_page')
+  assertEquals(p.redirect_on_completion, 'if_required')
+  assertEquals(p.return_url, 'https://app.test/#/r?commande=c1')
+  assertEquals(p.success_url, undefined)
+  assertEquals(p.cancel_url, undefined)
+  assertEquals(p.metadata?.commande, 'c1')
+  assertEquals(p.line_items?.[0].price_data?.unit_amount, 5000)
+})
+
+Deno.test('formulaire integre possible : cle publiable du meme mode que la cle secrete', () => {
+  assertEquals(formulaireIntegrePossible('sk_live_x', 'pk_live_y'), true)
+  assertEquals(formulaireIntegrePossible('sk_test_x', 'pk_test_y'), true)
+  assertEquals(formulaireIntegrePossible('rk_live_x', 'pk_live_y'), true)
+  assertEquals(formulaireIntegrePossible('sk_live_x', 'pk_test_y'), false)
+  assertEquals(formulaireIntegrePossible('sk_test_x', 'pk_live_y'), false)
+  assertEquals(formulaireIntegrePossible('sk_live_x', undefined), false)
+  assertEquals(formulaireIntegrePossible('sk_live_x', ''), false)
+  assertEquals(formulaireIntegrePossible('sk_live_x', 'sk_live_x'), false)
+})
+
+Deno.test('reprise integree : seul un identifiant de session marque se relit', () => {
+  assertEquals(sessionIntegree(`${MARQUE_INTEGRE}cs_live_a1B2`), 'cs_live_a1B2')
+  assertEquals(sessionIntegree(`${MARQUE_INTEGRE}cs_test_a1B2`), 'cs_test_a1B2')
+  assertEquals(sessionIntegree('https://checkout.stripe.com/c/pay/cs_live_a1B2'), null)
+  assertEquals(sessionIntegree(`${MARQUE_INTEGRE}cs_live_a1B2/../x`), null)
+  assertEquals(sessionIntegree(`${MARQUE_INTEGRE}`), null)
 })

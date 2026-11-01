@@ -30,6 +30,14 @@
 // `Skeleton`, `LienFleche`, `ActionPrincipale`, et les briques privees de
 // cette bibliotheque (titre de groupe, note, carte, actions, colonne, focus).
 //
+// Paiement dans l'application (directeur, 01/11/2026 : « le paiement doit
+// se faire sur l'app, pas de sortir ailleurs ») : tant que la source garde
+// le formulaire de la commande ([SourceFormulairePaiement]), la page le
+// monte (`FormulaireStripe`) au lieu de l'etat. Paiement passe dans le
+// formulaire : il s'efface et l'etat se relit, rien n'est conclu ici. Le
+// formulaire qui ne se monte pas a son echec et « Reessayer » ; hors ligne,
+// l'etat hors ligne ; « Revenir aux soldes sans payer » reste toujours la.
+//
 // **Aucun chiffre calcule ici** (FI6) : total, parts et nouveaux soldes
 // viennent du port.
 
@@ -43,6 +51,18 @@ final suiviRechargeProvider = FutureProvider.autoDispose
           ref.watch(portRechargeFoyerProvider).suivre(commandeId),
       retry: (int retryCount, Object error) => null,
     );
+
+/// Le formulaire integre de [commandeId], tant que la source le garde.
+final formulairePaiementProvider = Provider.autoDispose
+    .family<FormulairePaiement?, String>((Ref ref, String commandeId) {
+      final PortRechargeFoyer port = ref.watch(portRechargeFoyerProvider);
+      return switch (port) {
+        final SourceFormulairePaiement source => source.formulairePour(
+          commandeId,
+        ),
+        _ => null,
+      };
+    });
 
 /// Le resultat de la commande [commandeId].
 class ResultatRechargePage extends ConsumerWidget {
@@ -96,6 +116,12 @@ class ResultatRechargePage extends ConsumerWidget {
   /// Le retour aux paiements du foyer.
   static const Key revenirKey = Key('resultat.revenir');
 
+  /// Le formulaire de paiement monte dans la page.
+  static const Key formulaireKey = Key('resultat.formulaire');
+
+  /// « Revenir aux soldes sans payer », sous le formulaire.
+  static const Key sansPayerKey = Key('resultat.sansPayer');
+
   /// La ligne d'un profil dans la repartition.
   static Key allocationDe(String profil) => Key('resultat.allocation.$profil');
 
@@ -112,6 +138,15 @@ class ResultatRechargePage extends ConsumerWidget {
         libelleAction: t.adulte.recharge.resultat.retourSoldes,
         onAction: onRevenir,
       );
+    } else if (ref.watch(formulairePaiementProvider(commandeId))
+        case final FormulairePaiement formulaire) {
+      corps = horsLigne
+          ? const EtatSysteme(nature: NatureEtat.horsLigne)
+          : _PaiementIntegre(
+              commandeId: commandeId,
+              formulaire: formulaire,
+              onRevenir: onRevenir,
+            );
     } else {
       final AsyncValue<SuiviPaiement> lecture = ref.watch(
         suiviRechargeProvider(commandeId),
@@ -159,6 +194,101 @@ class ResultatRechargePage extends ConsumerWidget {
         if (!fait) onRevenir();
       },
       child: PageShell(actionsCoquille: false, child: _Colonne(child: corps)),
+    );
+  }
+}
+
+/// Le formulaire de Stripe dans la page : payer sans quitter l'application.
+class _PaiementIntegre extends ConsumerStatefulWidget {
+  const _PaiementIntegre({
+    required this.commandeId,
+    required this.formulaire,
+    required this.onRevenir,
+  });
+
+  final String commandeId;
+  final FormulairePaiement formulaire;
+  final VoidCallback onRevenir;
+
+  @override
+  ConsumerState<_PaiementIntegre> createState() => _PaiementIntegreState();
+}
+
+class _PaiementIntegreState extends ConsumerState<_PaiementIntegre> {
+  /// Le formulaire n'a pas pu se monter.
+  bool _echec = false;
+
+  /// Chaque nouvel essai remonte un formulaire neuf.
+  int _essai = 0;
+
+  void _termine() {
+    // Le formulaire a fini : l'etat se relit chez la source (FI9), jamais
+    // deduit ici.
+    final PortRechargeFoyer port = ref.read(portRechargeFoyerProvider);
+    if (port case final SourceFormulairePaiement source) {
+      source.oublierFormulaire(widget.commandeId);
+    }
+    ref
+      ..invalidate(formulairePaiementProvider(widget.commandeId))
+      ..invalidate(suiviRechargeProvider(widget.commandeId));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final r = t.adulte.recharge.resultat;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Semantics(
+          header: true,
+          child: Text(
+            r.formulaireTitre,
+            style: palette.inkStrong.applyTo(
+              textes.titleMedium ?? const TextStyle(),
+            ),
+          ),
+        ),
+        Ecart.vSm,
+        Text(
+          r.formulairePhrase,
+          style: palette.inkMuted.applyTo(
+            textes.bodyMedium ?? const TextStyle(),
+          ),
+        ),
+        Ecart.vLg,
+        if (_echec)
+          EtatSysteme(
+            nature: NatureEtat.echecServeur,
+            titre: r.formulaireEchecTitre,
+            phrase: r.formulaireEchecPhrase,
+            onAction: () => setState(() {
+              _echec = false;
+              _essai++;
+            }),
+          )
+        else
+          FormulaireStripe(
+            key: ValueKey<String>(
+              '${ResultatRechargePage.formulaireKey}$_essai',
+            ),
+            formulaire: widget.formulaire,
+            onTermine: _termine,
+            onEchec: () {
+              if (mounted) setState(() => _echec = true);
+            },
+          ),
+        Ecart.vLg,
+        Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: LienFleche(
+            key: ResultatRechargePage.sansPayerKey,
+            libelle: r.formulaireSansPayer,
+            onPress: widget.onRevenir,
+          ),
+        ),
+      ],
     );
   }
 }

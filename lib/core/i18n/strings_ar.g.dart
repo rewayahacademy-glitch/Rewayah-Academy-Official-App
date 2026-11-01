@@ -7262,6 +7262,7 @@ class _Traductions$adulte$recharge$ar extends Traductions$adulte$recharge$fr {
 	@override String get paiementIndisponiblePhrase => 'لم يُجرَ أي دفع. الدفع عبر الإنترنت غير مفتوح في التطبيق بعد.';
 	@override late final _Traductions$adulte$recharge$formules$ar formules = _Traductions$adulte$recharge$formules$ar._(_root);
 	@override String get revenirPaiements => 'العودة إلى مدفوعات الأسرة';
+	@override late final _Traductions$adulte$recharge$resultat$ar resultat = _Traductions$adulte$recharge$resultat$ar._(_root);
 	@override late final _Traductions$adulte$recharge$source$ar source = _Traductions$adulte$recharge$source$ar._(_root);
 }
 
@@ -14603,6 +14604,20 @@ class _Traductions$adulte$recharge$formules$ar extends Traductions$adulte$rechar
 	// Translations
 	@override String trimestriel({required Object montant}) => '⁨${montant}⁩ مقابل 3 أشهر، تُدفع مقدّمًا';
 	@override String annuel({required Object montant}) => '⁨${montant}⁩ مقابل 12 شهرًا، تُدفع مقدّمًا';
+}
+
+// Path: adulte.recharge.resultat
+class _Traductions$adulte$recharge$resultat$ar extends Traductions$adulte$recharge$resultat$fr {
+	_Traductions$adulte$recharge$resultat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get formulaireTitre => 'ادفع هنا دون مغادرة التطبيق';
+	@override String get formulairePhrase => 'أدخل بيانات الدفع أدناه. لا تتغيّر الأرصدة إلا بعد تأكيد الدفع.';
+	@override String get formulaireEchecTitre => 'لم يظهر نموذج الدفع.';
+	@override String get formulaireEchecPhrase => 'تحقّق من اتصالك ثم أعد المحاولة. لم يُدفع أي مبلغ عبر هذا النموذج.';
+	@override String get formulaireSansPayer => 'العودة إلى الأرصدة دون دفع';
 }
 
 // Path: adulte.recharge.source
@@ -26912,6 +26927,11 @@ extension on TraductionsAr {
 			'adulte.recharge.formules.trimestriel' => ({required Object montant}) => '⁨${montant}⁩ مقابل 3 أشهر، تُدفع مقدّمًا',
 			'adulte.recharge.formules.annuel' => ({required Object montant}) => '⁨${montant}⁩ مقابل 12 شهرًا، تُدفع مقدّمًا',
 			'adulte.recharge.revenirPaiements' => 'العودة إلى مدفوعات الأسرة',
+			'adulte.recharge.resultat.formulaireTitre' => 'ادفع هنا دون مغادرة التطبيق',
+			'adulte.recharge.resultat.formulairePhrase' => 'أدخل بيانات الدفع أدناه. لا تتغيّر الأرصدة إلا بعد تأكيد الدفع.',
+			'adulte.recharge.resultat.formulaireEchecTitre' => 'لم يظهر نموذج الدفع.',
+			'adulte.recharge.resultat.formulaireEchecPhrase' => 'تحقّق من اتصالك ثم أعد المحاولة. لم يُدفع أي مبلغ عبر هذا النموذج.',
+			'adulte.recharge.resultat.formulaireSansPayer' => 'العودة إلى الأرصدة دون دفع',
 			'adulte.recharge.source.avantPaiement' => 'بانتظار الدفع',
 			'adulte.recharge.source.motifs.paiementRefuse' => 'رفض البنك أو البطاقة الدفع. لم يُقتطع أي مبلغ.',
 			'adulte.recharge.source.motifs.montantIncoherent' => 'المبلغ المستلم لا يطابق الشحن. لم يُضف شيء إلى الرصيد: الإدارة تتحقق مع مزوّد الدفع.',
@@ -26975,13 +26995,13 @@ extension on TraductionsAr {
 			'adulte.invitation.courrielInvalide' => 'تحقّق من البريد الإلكتروني: يجب أن يشبه ⁦name@mail.com⁩.',
 			'adulte.invitation.verifier' => 'متابعة',
 			'adulte.invitation.verifierTitre' => 'المراجعة والإرسال',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.invitation.verifierPhrase' => 'أعد قراءة هذه المعلومات. ستُرسل الدعوة إلى هذا العنوان.',
 			'adulte.invitation.nonRenseigne' => 'غير محدد',
 			'adulte.invitation.modifier' => 'تعديل',
 			'adulte.invitation.envoyer' => 'إرسال الدعوة',
 			'adulte.invitation.horsLigne' => 'أنت غير متصل. لم يُرسل شيء. يمكنك إرسال الدعوة بنفسك عند عودة الاتصال.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.invitation.echecTitre' => 'لم يُؤكَّد الإرسال.',
 			'adulte.invitation.echecPhrase' => 'تحقّق قبل إعادة المحاولة. معلوماتك محفوظة.',
 			'adulte.invitation.refusTitre' => 'لا يمكن إرسال هذه الدعوة',
@@ -27489,13 +27509,13 @@ extension on TraductionsAr {
 			'controleur.compteRendu.cleReconnexions' => 'إعادات الاتصال',
 			'controleur.compteRendu.question' => 'هل لديك ما تبلغ عنه؟',
 			'controleur.compteRendu.contexte' => 'يُضاف ردك إلى السجل التلقائي للحصة: الساعات، الحاضرون، إعادات الاتصال.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.compteRendu.rienASignaler' => 'لا شيء يُذكر',
 			'controleur.compteRendu.rienASignalerAide' => 'حين جرت الحصة بشكل عادي · يُرسل التقرير بإجراء واحد؛ ويمكنك إضافة تكملة بعد ذلك',
 			'controleur.compteRendu.ajouterObservation' => 'إضافة ملاحظة',
 			'controleur.compteRendu.ajouterObservationAide' => 'حين تريد تدوين ما رأيته · بعض الأسئلة القصيرة، واحد في كل مرة',
 			'controleur.compteRendu.pointImportant' => 'الإبلاغ عن نقطة مهمة',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.compteRendu.pointImportantAide' => 'حين يتطلب ما رأيته انتباه الإدارة · سيُطلب نصك',
 			'controleur.compteRendu.envoyer' => 'إرسال التقرير',
 			'controleur.compteRendu.plusTard' => 'لاحقًا',
@@ -28003,13 +28023,13 @@ extension on TraductionsAr {
 			'recrutement.parcours.langues.bn' => 'البنغالية',
 			'recrutement.parcours.langues.fa' => 'الفارسية',
 			'recrutement.parcours.langues.id' => 'الإندونيسية',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.langues.so' => 'الصومالية',
 			'recrutement.parcours.langues.hi' => 'الهندية',
 			'recrutement.parcours.langues.uz' => 'الأوزبكية',
 			'recrutement.parcours.langues.tr' => 'التركية',
 			'recrutement.parcours.langues.de' => 'الألمانية',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.langues.pt' => 'البرتغالية',
 			'recrutement.parcours.langues.ru' => 'الروسية',
 			'recrutement.parcours.langues.autre' => 'لغة أخرى',
@@ -28517,13 +28537,13 @@ extension on TraductionsAr {
 			'juridique.quoi.hebergeur' => 'المستضيف القانوني وبياناته',
 			'juridique.quoi.lieuxHebergement' => 'البلدان التي تُستضاف فيها المعلومات',
 			'juridique.quoi.dureesConservation' => 'مدة الاحتفاظ بكل نوع من المعلومات',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.quoi.droitApplicable' => 'القانون المطبّق والجهة القضائية المختصة',
 			'juridique.quoi.confirmationConseil' => 'مراجعة مستشار قانوني، بما فيها حق العدول',
 			'juridique.quoi.remboursementModalites' => 'وسيلة الاسترداد ومدته',
 			'juridique.quoi.responsableEnfants' => 'المسؤول عن حماية الأطفال',
 			'juridique.valeurs.hebergeur' => 'قاعدة البيانات وتسجيل الدخول إلى الحسابات: Supabase Inc. (supabase.com). التطبيق والصفحات الإلكترونية: Vercel Inc. (vercel.com). اسم النطاق: Cloudflare, Inc. (cloudflare.com).',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.valeurs.lieuxHebergement' => 'تُستضاف قاعدة البيانات في أيرلندا، داخل الاتحاد الأوروبي. وقد تعالج جهات أخرى بعض المعلومات خارج المملكة المتحدة، وتلتزم هذه العمليات بقواعد الحماية التي ينص عليها القانون.',
 			'juridique.valeurs.dureesConservation' => 'الحساب والملف الشخصي: ما دام الحساب قائمًا. بعد طلب الحذف ومهلة تفكير مدتها 14 يومًا، يُمحى الاسم والبريد الإلكتروني وبيانات التواصل. الفواتير والمدفوعات: 6 سنوات، كما يفرض قانون المحاسبة في المملكة المتحدة. وثيقة هوية المعلم: 90 يومًا على الأكثر بعد التحقق منها. الرسائل: ما دام الحساب قائمًا، وبعد الحذف يصبح كاتبها مجهول الهوية.',
 			'juridique.valeurs.droitApplicable' => 'قانون إنجلترا وويلز، ومحاكم إنجلترا وويلز. وإذا كنتم مستهلكين، فتبقى لكم حماية القواعد الآمرة في بلد إقامتكم.',

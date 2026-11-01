@@ -30168,6 +30168,21 @@ class Traductions$adulte$recharge$resultat$fr {
 
 	// Translations
 
+	/// fr: 'Payez ici, sans quitter l'application'
+	String get formulaireTitre => 'Payez ici, sans quitter l\'application';
+
+	/// fr: 'Saisissez vos coordonnées de paiement ci-dessous. Les soldes changent seulement après la confirmation du paiement.'
+	String get formulairePhrase => 'Saisissez vos coordonnées de paiement ci-dessous. Les soldes changent seulement après la confirmation du paiement.';
+
+	/// fr: 'Le formulaire de paiement ne s'est pas affiché.'
+	String get formulaireEchecTitre => 'Le formulaire de paiement ne s\'est pas affiché.';
+
+	/// fr: 'Vérifiez votre connexion, puis réessayez. Rien n'a été payé par ce formulaire.'
+	String get formulaireEchecPhrase => 'Vérifiez votre connexion, puis réessayez. Rien n\'a été payé par ce formulaire.';
+
+	/// fr: 'Revenir aux soldes sans payer'
+	String get formulaireSansPayer => 'Revenir aux soldes sans payer';
+
 	/// fr: 'Paiement en préparation'
 	String get preparationTitre => 'Paiement en préparation';
 
@@ -49190,6 +49205,11 @@ extension on Traductions {
 			'adulte.recharge.regularisationDe' => ({required Object prenom, required Object message}) => '${prenom} : ${message}',
 			'adulte.recharge.commandeRendue' => 'Le paiement est envoyé. Ne payez pas une seconde fois : suivez son état.',
 			'adulte.recharge.suivrePaiement' => 'Suivre le paiement',
+			'adulte.recharge.resultat.formulaireTitre' => 'Payez ici, sans quitter l\'application',
+			'adulte.recharge.resultat.formulairePhrase' => 'Saisissez vos coordonnées de paiement ci-dessous. Les soldes changent seulement après la confirmation du paiement.',
+			'adulte.recharge.resultat.formulaireEchecTitre' => 'Le formulaire de paiement ne s\'est pas affiché.',
+			'adulte.recharge.resultat.formulaireEchecPhrase' => 'Vérifiez votre connexion, puis réessayez. Rien n\'a été payé par ce formulaire.',
+			'adulte.recharge.resultat.formulaireSansPayer' => 'Revenir aux soldes sans payer',
 			'adulte.recharge.resultat.preparationTitre' => 'Paiement en préparation',
 			'adulte.recharge.resultat.preparationPhrase' => 'Vérifiez la répartition avant de payer.',
 			'adulte.recharge.resultat.attenteTitre' => 'Paiement en cours de confirmation',
@@ -49588,13 +49608,13 @@ extension on Traductions {
 			'motifs.signalement.changement.classe' => 'Un changement de classe est à l\'étude.',
 			'motifs.signalement.changement.niveau' => 'Le niveau de la classe ne semble plus adapté.',
 			'motifs.signalement.changement.suite' => 'L\'académie reviendra vers vous pour en parler.',
+			_ => null,
+		} ?? switch (path) {
 			'suiviFamille.titre' => 'Suivi des demandes',
 			'suiviFamille.contexte' => 'Chaque demande avance étape par étape. Vous êtes prévenu à chaque passage.',
 			'suiviFamille.carteTitre' => ({required Object dePrenom}) => 'Demande ${dePrenom}',
 			'suiviFamille.detailTitre' => ({required Object dePrenom}) => 'Suivi de la demande ${dePrenom}',
 			'suiviFamille.etapeCourante' => ({required Object etape}) => 'Étape en cours : ${etape}',
-			_ => null,
-		} ?? switch (path) {
 			'suiviFamille.toutFait' => 'Toutes les étapes sont franchies.',
 			'suiviFamille.voirSuivi' => 'Voir le suivi',
 			'suiviFamille.vide' => 'Aucune demande pour le moment.',
@@ -50102,13 +50122,13 @@ extension on Traductions {
 			'com.vocal.lecteur.erreurLectureAction' => 'Réessayer',
 			'com.vocal.demo.contexte' => 'Démonstration du message vocal : aucun microphone réel n\'est utilisé, l\'enregistrement est simulé.',
 			'com.vocal.demo.situations' => 'Situations de démonstration',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.demo.autorise' => 'Micro autorisé',
 			'com.vocal.demo.aDemander' => 'À demander',
 			'com.vocal.demo.refuse' => 'Micro refusé',
 			'com.vocal.demo.nonConfirme' => 'Non confirmé',
 			'com.vocal.demo.indisponible' => 'Indisponible',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.demo.recu' => 'Message vocal reçu',
 			'com.vocal.demo.repondre' => 'Répondre dans la conversation',
 			'com.vocal.demo.envoyes' => 'Messages vocaux envoyés',
@@ -50616,13 +50636,13 @@ extension on Traductions {
 			'com.annonces.demoPublication.reunionTexte' => 'La réunion pédagogique de jeudi commence à 18 h, en visio. L\'ordre du jour est dans Le Studio.',
 			'com.annonces.demoPublication.recitationTitre' => 'Récitation de fin de trimestre',
 			'com.annonces.demoPublication.recitationTexte' => 'La Classe An-Nour présentera sa récitation de fin de trimestre samedi à 10 h, en visio.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demoPublication.rentreeTitre' => 'Reprise des cours après les vacances',
 			'com.annonces.demoPublication.rentreeTexte' => 'Les séances reprennent le lundi 6 janvier aux horaires habituels.',
 			'com.annonces.demoPublication.signalementAffilie' => 'Publication « Fiches de tajwid à imprimer »',
 			'com.annonces.demoPublication.extraitAffilie' => 'Retrouvez mes fiches avec ce lien partenaire, remise de 20 % avec mon code.',
 			'com.annonces.demoPublication.signalementVente' => 'Publication « Cours particuliers disponibles »',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demoPublication.extraitVente' => 'Je propose des cours particuliers payants le week-end, écrivez-moi.',
 			'com.annonces.demoPublication.signalementHorsSujet' => 'Réponse sous « Organiser une révision collective »',
 			'com.annonces.section' => 'Annonces de la Classe',
@@ -51130,13 +51150,13 @@ extension on Traductions {
 			'comptable.encaissements.filtreConfirmes' => 'Confirmés',
 			'comptable.encaissements.filtreEnAttente' => 'En attente',
 			'comptable.encaissements.filtreEchoues' => 'Échoués',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.filtreRembourses' => 'Remboursés',
 			'comptable.encaissements.filtreContestes' => 'Contestés',
 			'comptable.encaissements.filtreARapprocher' => 'À rapprocher',
 			'comptable.encaissements.recherche' => 'Rechercher une famille ou une référence',
 			'comptable.encaissements.colDate' => 'Date',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.colFamille' => 'Famille',
 			'comptable.encaissements.colReference' => 'Référence',
 			'comptable.encaissements.colBrut' => 'Brut',
@@ -51644,13 +51664,13 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.sensibleLieOperateurDetail' => 'Un paiement vers une personne liée à l\'opérateur de paiement.',
 			'comptable.direction.delegationPanneau.sensibleFournisseur' => 'Fournisseur indisponible',
 			'comptable.direction.delegationPanneau.sensibleFournisseurDetail' => 'Un paiement dont le fournisseur de paiement est indisponible.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.sensibleManuelle' => 'Obligation manuelle non approuvée',
 			'comptable.direction.delegationPanneau.sensibleManuelleDetail' => 'Une obligation saisie à la main et pas encore approuvée.',
 			'comptable.direction.titre' => 'Réserve et délégation',
 			'comptable.direction.sousTitre' => 'La politique de la Réserve stratégique et ce que le Comptable peut exécuter seul.',
 			'comptable.direction.reserve' => 'Politique de la Réserve stratégique',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegation' => 'Délégation financière',
 			'comptable.demo.titre' => 'Démonstration Comptable',
 			'comptable.demo.mention' => 'Données fictives, aucun paiement, aucun envoi.',
@@ -52158,13 +52178,13 @@ extension on Traductions {
 			'courriels.admin.file.filtre.tous' => 'Tous',
 			'courriels.admin.file.filtre.enAttente' => 'En file',
 			'courriels.admin.file.filtre.envoi' => 'En cours d\'envoi',
+			_ => null,
+		} ?? switch (path) {
 			'courriels.admin.file.filtre.envoye' => 'Envoyés',
 			'courriels.admin.file.filtre.echec' => 'Non envoyés',
 			'courriels.admin.file.filtre.annule' => 'Annulés',
 			'courriels.admin.file.statut.enAttente' => 'En file',
 			'courriels.admin.file.statut.envoi' => 'En cours d\'envoi',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.file.statut.envoye' => 'Envoyé',
 			'courriels.admin.file.statut.echec' => 'Non envoyé',
 			'courriels.admin.file.statut.annule' => 'Annulé',

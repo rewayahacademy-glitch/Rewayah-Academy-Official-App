@@ -35,6 +35,8 @@ import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/capacites/port_recharge_foyer.dart';
 import '../../core/finance/finances_profil.dart';
 import '../../core/finance/format_montant.dart';
+import '../../core/finance/formulaire_paiement.dart';
+import '../../core/finance/formulaire_stripe.dart';
 import '../../core/finance/montant.dart';
 import '../../core/finance/politique_commerciale.dart';
 import '../../core/finance/suivi_paiement.dart';
