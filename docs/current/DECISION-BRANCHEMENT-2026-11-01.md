@@ -63,10 +63,15 @@ Premier relevé, le 01/11/2026 (sur `main` après les PR 100 et 108) : **50 fich
 
 - 2 sont branchés à l'étape 3 de la Boucle 1, pour l'élève adulte (FN-112), au plus tard le
   15/11/2026.
-- 48 sont **proposés à la suppression** pour le 08/11/2026. Ce sont :
+- 14 sont branchés à l'étape « Listes », après la Boucle 1. Ce sont les moteurs de recherche par
+  domaine : la recherche de toute vue de gestion est exigée par
+  `DECISION-LISTES-2026-10-23.md`. Ces moteurs ne doublonnent rien : l'écran de recherche est
+  branché, mais `moteursRechercheProvider` est vide en production et l'écran dit « Recherche
+  indisponible pour le moment. » (`lib/core/recherche/port_recherche.dart`). Leur échéance, le
+  30/11/2026, est **proposée par le pilote** : la Boucle 1 n'a pas de date de fin écrite.
+- 34 sont **proposés à la suppression** pour le 08/11/2026. Ce sont :
   - des doublons de modules branchés (inventaire du 31/10) ;
-  - les moteurs de recherche par domaine, hors de la boucle ;
-  - des données de démonstration rangées hors de `features/demo` ;
+  - des données de démonstration rangées hors de `features/demo`, à y déplacer ;
   - des interfaces sans usage.
 
   **Seul le directeur décide** d'une suppression, sur la liste précise du fichier. S'il en garde
