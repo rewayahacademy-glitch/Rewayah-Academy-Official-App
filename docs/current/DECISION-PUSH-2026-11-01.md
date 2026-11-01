@@ -21,15 +21,23 @@ dans Flutter.
 
 ### Push : oui (urgent seulement)
 
-| Événement | Portée |
-|---|---|
-| `seance_annulee` | toutes |
-| `seance_deplacee` | toutes |
-| `enseignante_absente` | toutes |
-| `remplacement_propose`, `remplacement_pris` | toutes |
-| `creneau_change` | toutes |
+Règle de tri : une notification est urgente quand elle sert à quelqu'un qui doit agir dans la
+minute. Urgente, elle part en push ; sinon, elle reste dans l'application.
 
-Tout le reste : pas de push. En particulier `seance_terminee` : ni courriel ni push.
+| Événement | Portée | Raison |
+|---|---|---|
+| `seance_annulee` | toutes | la famille ne doit pas se connecter pour rien |
+| `seance_deplacee` | toutes | la famille doit changer d'heure |
+| `enseignante_absente` | toutes | la famille doit savoir avant de se connecter |
+| `remplacement_propose`, `remplacement_pris` | toutes | un enseignant doit prendre la séance |
+| `remplacement_designe_admin` | l'enseignant désigné, le foyer | l'enseignant désigné doit se préparer ; même logique que pour le courriel |
+| `creneau_change` | toutes | la famille doit changer d'heure |
+| `titulaire_en_retard` | `direction` seulement | la direction doit trouver un remplaçant dans la minute ; la classe, déjà dans la salle, le lit dans l'application |
+
+Pas de push pour :
+- `remplacant_arrive` : les présents sont déjà dans la salle et n'ont rien à faire ;
+- `seance_terminee` : ni courriel ni push ;
+- tout le reste.
 
 ## 3. Comment (le lot)
 
