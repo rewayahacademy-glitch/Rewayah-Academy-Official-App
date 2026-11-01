@@ -357,7 +357,9 @@ List<Override> _surchargesAppReelle() => <Override>[
   // Finance hors administration (BF1, migrations 20261017160000 et
   // 20261017160100) : revenus de l'enseignant connecte, finances de l'eleve
   // adulte sur son profil, finance et paiements du foyer pour le titulaire.
-  // La recharge reste indisponible : aucun prestataire de paiement reel.
+  // La recharge par Stripe est branchee plus bas (portRechargeFoyerProvider).
+  // Tant que STRIPE_SECRET_KEY manque sur le serveur, `recharge-payer` rend
+  // 503 et l'ecran dit « Paiement pas encore disponible ».
   portRevenusEnseignantProvider.overrideWithValue(
     RevenusEnseignantSupabase(Supabase.instance.client),
   ),
