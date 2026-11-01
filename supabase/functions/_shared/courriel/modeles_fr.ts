@@ -7,7 +7,7 @@
 // l'application, ou l'information vit derriere la connexion.
 
 import { APP } from './gabarit.ts'
-import { avisDans, bonjour, dateLongue, type Donnees, type Fabrique, type LangueEcrite, libre, PAROLE_FR } from './outils.ts'
+import { avisDans, bonjour, dateLongue, type Donnees, type Fabrique, type LangueEcrite, libre, PAROLE_FR, montantLisible } from './outils.ts'
 
 export const RAISON: Record<string, string> = {
   compte: 'Vous recevez cet e-mail parce qu’il concerne votre compte Rewayah Academy.',
@@ -165,6 +165,13 @@ export const MODELES: Record<string, Fabrique> = {
     'Régler le paiement', '/tuteur/foyer/recharge'),
   acces_retabli_paiement: (d) => avis(d, 'L’accès est rétabli', 'L’accès est rétabli',
     'Le paiement est reçu : l’accès à la classe est rétabli.', 'Ouvrir l’application', '/tuteur/foyer/recharge'),
+  paiement_recu: (d) => {
+    const m = montantLisible(d)
+    return avis(d, 'Le paiement est reçu', 'Le paiement est reçu',
+      m === null ? 'Le paiement est reçu. Le solde est à jour dans l’application.'
+        : `Le paiement de ${m} est reçu. Le solde est à jour dans l’application.`,
+      'Ouvrir l’application', '/tuteur/foyer/recharge')
+  },
   invitation_foyer: (d) => {
     const qui = typeof d.invite_par === 'string' && d.invite_par.trim() ? d.invite_par.trim() : 'Un membre de votre famille'
     const fin = dateLongue(d.expire_le)

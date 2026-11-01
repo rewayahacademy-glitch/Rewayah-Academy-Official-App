@@ -6773,6 +6773,7 @@
       "paiementRelance": "Un paiement arrive à échéance. Il se règle dans Paiements.",
       "accesSuspenduPaiement": "Un accès est suspendu\u00a0: le paiement du mois n'est pas reçu.",
       "accesRetabliPaiement": "L'accès est rétabli\u00a0: le paiement est reçu.",
+      "paiementRecu": "Le paiement est reçu. Le solde est à jour.",
       "enseignantAffecteSoi": "Un enseignant a été affecté à votre classe.",
       "enseignantAffecteClasse": "Une classe vous est confiée.",
       "remplacementPrisQuand": "La séance du {quand} sera assurée par un enseignant remplaçant.",

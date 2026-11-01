@@ -17,7 +17,24 @@ const EVENEMENTS = ['demande_recue', 'classe_validee', 'enseignant_affecte', 'de
   'seance_annulee', 'seance_deplacee', 'enseignante_absente', 'classe_supprimee',
   // A3 (31/10/2026, migration 20261102500000).
   'remplacement_avertissement', 'remplacement_pre_alerte', 'remplacement_inutile',
-  'titulaire_en_retard', 'remplacant_arrive']
+  'titulaire_en_retard', 'remplacant_arrive',
+  // Parcours 7 (03/11/2026, migration 20261103400000).
+  'paiement_recu']
+
+Deno.test('paiement recu : le montant est ecrit dans la devise de la commande, ou tu quand il manque', () => {
+  const avec = contenuPour({ modele: 'paiement_recu', categorie: 'facturation', essentielle: true,
+    donnees: { prenom: 'Amina', montant_mineur: 16500, devise: 'USD' } })
+  const texte = avec.blocs.map((b) => b.type === 'texte' ? b.texte : '').join(' ')
+  assert(/165,00/.test(texte) && /\$/.test(texte), texte)
+  assert(!/confirmé/i.test(texte), texte)
+  const anglais = contenuPour({ modele: 'paiement_recu', categorie: 'facturation', essentielle: true,
+    donnees: { montant_mineur: 16500, devise: 'USD' } }, 'en')
+  assert(anglais.blocs.some((b) => b.type === 'texte' && b.texte.includes('$165.00')), JSON.stringify(anglais.blocs))
+  for (const donnees of [{}, { montant_mineur: 'abc', devise: 'USD' }, { montant_mineur: 100, devise: 'nope' }]) {
+    const sans = contenuPour({ modele: 'paiement_recu', categorie: 'facturation', essentielle: true, donnees })
+    assert(sans.blocs.some((b) => b.type === 'texte' && b.texte.startsWith('Le paiement est reçu.')), JSON.stringify(donnees))
+  }
+})
 
 Deno.test('chaque evenement de notification a son modele', () => {
   for (const e of [...EVENEMENTS, 'invitation_foyer', 'lien_inscription', 'attente_candidat', 'admission_recue',

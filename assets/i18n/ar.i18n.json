@@ -14,6 +14,7 @@
       "paiementRelance": "يحين موعد دفعة قريبًا. يمكنك سدادها من صفحة المدفوعات.",
       "accesSuspenduPaiement": "تم تعليق الوصول: لم تُستلم دفعة هذا الشهر.",
       "accesRetabliPaiement": "أُعيد الوصول: تم استلام الدفعة.",
+      "paiementRecu": "وصلت الدفعة. الرصيد محدَّث.",
       "enseignantAffecteSoi": "تم تعيين معلم لفصلك.",
       "enseignantAffecteClasse": "أُسند إليك فصل.",
       "remplacementPrisQuand": "سيتولى معلم بديل حصة ⁨{quand}⁩.",

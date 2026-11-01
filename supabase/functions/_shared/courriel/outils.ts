@@ -72,6 +72,21 @@ export function dateLongue(v: unknown, locale = 'fr-FR'): string | null {
     .format(t)
 }
 
+/// « 165,00 $US » : le montant d'une commande (`montant_mineur`, en centimes,
+/// et `devise` ISO), ecrit dans la langue du destinataire. Nul quand les
+/// donnees manquent ou sont illisibles : le modele ecrit alors sans montant.
+export function montantLisible(d: Donnees, locale = 'fr-FR'): string | null {
+  const m = d.montant_mineur
+  const devise = d.devise
+  if (typeof m !== 'number' || !Number.isFinite(m)) return null
+  if (typeof devise !== 'string' || !/^[A-Za-z]{3}$/.test(devise)) return null
+  try {
+    return new Intl.NumberFormat(locale, { style: 'currency', currency: devise.toUpperCase() }).format(m / 100)
+  } catch {
+    return null
+  }
+}
+
 /// Un message court qui renvoie vers l'application, dans la langue de `p`.
 export function avisDans(p: Parole) {
   return (
