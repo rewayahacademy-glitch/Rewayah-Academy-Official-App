@@ -1,0 +1,13 @@
+== Parcours 6 : pieges : 2026-11-01T03:16:25.225Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Seance de « E2E Classe adultes 10312330 » : ended
+[6.1] vert : message : « flt-semantics:Obligatoire »
+[6.2] non joué : le script a echoue : locator.click: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for locator('textarea').first()[22m
+
+[6.3] non joué : le script a echoue : locator.click: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for locator('textarea').first()[22m
+
+[6.4] vert : apres double clic : aucune erreur affichee ; lignes de cahier en base : 0
+== Parcours 6 : pieges : joué

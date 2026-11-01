@@ -1,0 +1,8 @@
+== Parcours 8 : l'eleve adulte suit sa classe : 2026-10-31T23:56:40.228Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Classe « E2E Classe adultes 10312330 », debut 2026-11-01T01:00:00.791Z ; adulte E2E Adulte Apprenant10312331
+Accueil : « flt-semantics:Bonjour E2E Adulte » ; classe « flt-semantics:E2E Classe adultes 10312330 Sayyid E2E Enseignant 1 élève sur 6 places »
+Attente de l'ouverture de la salle
+Attente du debut de la seance (2026-11-01T01:00:00.791Z)
+  ECART : « Aujourd'hui » ne propose pas la salle de E2E Classe adultes 10312330 (la seance precedente reste « en direct · temps prévu écoulé ») ; passage par l'onglet Classes
+  ECART : onglet « Classes » absent de l'arbre d'accessibilite ; ouvert par l'adresse /enseignant/classes
+== Parcours 8 : l'eleve adulte suit sa classe : rouge : eleve adulte : pas de « Rejoindre » sur l'Accueil, salle ouverte ; ecran : group:Vous n'avez pas accès à cette page | h2:Vous n'avez pas accès à cette page | flt-semantics:Ce contenu n'est pas ouvert à votre compte. | button:Retour à l'accueil

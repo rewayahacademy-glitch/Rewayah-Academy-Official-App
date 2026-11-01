@@ -1,0 +1,5 @@
+== FN-112 : rechargement simple : 2026-11-01T02:19:18.428Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+adulte : http://127.0.0.1:8090/#/eleve/adulte puis rechargement : http://127.0.0.1:8090/#/acces-refuse ; group:Vous n'avez pas accès à cette page | h2:Vous n'avez pas accès à cette page
+adulte : apres « Retour à l'accueil » : http://127.0.0.1:8090/#/eleve/adulte ; flt-semantics:Bonjour E2E Adulte | button:Notifications, une non lue
+tuteur : http://127.0.0.1:8090/#/tuteur puis rechargement : http://127.0.0.1:8090/#/tuteur ; flt-semantics:Accueil | h2:Accueil
+== FN-112 : rechargement simple : joué

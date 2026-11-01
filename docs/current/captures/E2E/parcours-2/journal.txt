@@ -1,0 +1,10 @@
+== Parcours 2 : la direction cree une classe a plusieurs seances : 2026-10-31T23:30:13.790Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Horaire : Dimanche 13 h (Pacific/Auckland), debut 2026-11-01T00:00:00.791Z ; second creneau Mardi 13 h ; nom « E2E Classe enfants 10312330 »
+Creneaux ouverts par le formulaire : 3
+Liste des classes : button:Classe : E2E Classe enfants 10312330 · n° 1 Enseignant : E2E Enseignant Valide Public : Enfants Créneau : dimanche 13h Membres : 0 / 5 Active
+Base locale : active|E2E Enseignant|Pacific/Auckland|2:13,7:13 ; 8 seance(s), premiere 2026-11-01 00:00:00+00
+  ECART : onglet « Classes » absent de l'arbre d'accessibilite ; ouvert par l'adresse /enseignant/classes
+Enseignant, onglet Classes : group:Classes E2E Classe enfants 10312330 dimanche 01:00 · dans 29 min 0 élève
+Prochaine seance attendue : « dimanche 01:00 »
+Prochaine seance affichee : group:Classes E2E Classe enfants 10312330 dimanche 01:00 · dans 29 min 0 élève
+== Parcours 2 : la direction cree une classe a plusieurs seances : vert

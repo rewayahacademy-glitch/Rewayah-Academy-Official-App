@@ -1,0 +1,7 @@
+{
+  "parcours": "Parcours 8 : l'eleve adulte suit sa classe",
+  "verdict": "rouge",
+  "cause": "eleve adulte : pas de « Rejoindre » sur l'Accueil, salle ouverte ; ecran : group:Vous n'avez pas accès à cette page | h2:Vous n'avez pas accès à cette page | flt-semantics:Ce contenu n'est pas ouvert à votre compte. | button:Retour à l'accueil",
+  "debut": "2026-10-31T23:56:40.228Z",
+  "fin": "2026-11-01T01:01:35.766Z"
+}
