@@ -202,7 +202,10 @@
     "filtres": {
       "plus": "Plus",
       "plusAvec": "Plus, {n}",
-      "titreFeuille": "Autres filtres"
+      "titreFeuille": "Autres filtres",
+      "bouton": "Filtres",
+      "boutonAvec": "Filtres, {n}",
+      "axeValeur": "{axe}\u00a0: {valeur}"
     },
     "recherche": {
       "effacer": "Effacer la recherche",
@@ -3891,6 +3894,7 @@
         "rechercheLibelle": "Rechercher une classe",
         "rechercheAide": "Nom, code ou enseignant",
         "filtreAttente": "En attente d'enseignant",
+        "filtreOuvertes": "Ouvertes",
         "filtreJour": "Jour",
         "filtreTousJours": "Tous les jours",
         "filtreHeure": "Heure",

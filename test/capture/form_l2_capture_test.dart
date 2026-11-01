@@ -38,7 +38,7 @@ Future<void> _ouvrir(
   await stabiliser(tester);
   switch (feuille) {
     case _Feuille.creation:
-      await tester.tap(find.text(t.admin.groupes.creer).first);
+      await tester.tap(find.byKey(GroupesPage.cleCreer));
     case _Feuille.ajout:
       await tester.tap(find.byType(MenuActions).first);
       await stabiliser(tester);

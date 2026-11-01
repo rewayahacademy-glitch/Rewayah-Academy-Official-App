@@ -216,7 +216,7 @@ Future<void> _ouvrir(
   addTearDown(tester.view.reset);
   await tester.pumpWidget(_hote(surcharges, theme: theme, echelle: echelle));
   await tester.pumpAndSettle();
-  await _presser(tester, find.text(t.admin.groupes.creer).first);
+  await _presser(tester, find.byKey(GroupesPage.cleCreer));
 }
 
 Finder _cle(String cle) => find.byKey(ValueKey<String>(cle));
@@ -832,7 +832,7 @@ void main() {
       expect(creees.genreDe(id), GenreClasse.femmes);
 
       // Reouverture : meme creneau, l'enseignante est prise.
-      await _presser(tester, find.text(t.admin.groupes.creer).first);
+      await _presser(tester, find.byKey(GroupesPage.cleCreer));
       await _presser(tester, _cle('classe-genre-femmes'));
       await _presser(tester, _cle('classe-jour-1'));
       await _heure(tester, 17);

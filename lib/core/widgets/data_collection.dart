@@ -256,7 +256,18 @@ class DataCollection<T> extends StatelessWidget {
     this.tete,
     this.prendTeteDePage = false,
     this.densiteTelephone = false,
+    this.lignesCartes = false,
   });
+
+  /// LISTES-3 (directeur, 01/11/2026, `DECISION-LISTES-2026-10-23.md`
+  /// §5 quater) : vrai, **au bureau**, chaque ligne du tableau est une carte
+  /// claire arrondie (rayon `AppRadius.xs`), separee de la suivante par un
+  /// petit espace (`AppSpacing.sm`), sans filet ni cadre de tableau ; la
+  /// rangee d'en-tetes, discrete (petites lettres, encre attenuee, fond de la
+  /// page), reste seule collee. Ne vaut que dans le rendu par tranches
+  /// ([tete] ou [prendTeteDePage]) ; sous le seuil du tableau, rien ne change
+  /// (§5 ter). Opt-in, adopte liste par liste.
+  final bool lignesCartes;
 
   /// LISTES-2 (directeur, 30/10/2026) : ce qui precede les lignes et
   /// **defile avec elles** (choix de vue, filtres, recherche, synthese), au
@@ -766,6 +777,7 @@ class _EnTeteTableau<T> extends StatelessWidget {
     required this.selection,
     required this.lignes,
     required this.mise,
+    this.discret = false,
   });
 
   final List<ColonneDonnees<T>> colonnes;
@@ -773,11 +785,17 @@ class _EnTeteTableau<T> extends StatelessWidget {
   final List<T> lignes;
   final _MiseEnPage mise;
 
+  /// LISTES-3 ([DataCollection.lignesCartes]) : petites lettres, fond de la
+  /// page, aucun filet.
+  final bool discret;
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
+    final TextTheme textesTheme = Theme.of(context).textTheme;
     final TextStyle style = palette.inkMuted.applyTo(
-      Theme.of(context).textTheme.labelMedium ?? const TextStyle(),
+      (discret ? textesTheme.labelSmall : textesTheme.labelMedium) ??
+          const TextStyle(),
     );
     final bool triable = colonnes.any((ColonneDonnees<T> c) => c.tri != null);
     // Une commande (case, titre triable) est une cible : l'en-tete en a au moins
@@ -812,10 +830,12 @@ class _EnTeteTableau<T> extends StatelessWidget {
     return DecoratedBox(
       // Aucun arrondi ici : le `ClipRRect` du bloc s'en charge, et l'en-tete se
       // contente d'etre le seul plan enfonce du tableau.
-      decoration: BoxDecoration(
-        color: palette.surfaceSunken.background,
-        border: Border(bottom: palette.borderHairline.asBorderSide()),
-      ),
+      decoration: discret
+          ? BoxDecoration(color: palette.surfaceCanvas.background)
+          : BoxDecoration(
+              color: palette.surfaceSunken.background,
+              border: Border(bottom: palette.borderHairline.asBorderSide()),
+            ),
       child: Stack(
         fit: StackFit.passthrough,
         children: <Widget>[
@@ -953,12 +973,17 @@ class _LigneTableau<T> extends StatelessWidget {
     this.selectionnee,
     this.selection,
     this.actionsLigne,
+    this.enCarte = false,
   });
 
   final List<ColonneDonnees<T>> colonnes;
   final T ligne;
   final _MiseEnPage mise;
   final void Function(T ligne)? onSelectionner;
+
+  /// LISTES-3 ([DataCollection.lignesCartes]) : la ligne est une carte, sans
+  /// filet de bas ; la carte qui l'enveloppe porte le fond et l'arrondi.
+  final bool enCarte;
 
   /// Nul quand le tableau n'a pas de selection : la ligne ne porte alors
   /// aucun etat `selected` (ni vrai ni faux) dans l'arbre semantique.
@@ -1106,7 +1131,9 @@ class _LigneTableau<T> extends StatelessWidget {
             )
           : BoxDecoration(
               color: cochee ? palette.washAccent.background : null,
-              border: Border(bottom: palette.borderHairline.asBorderSide()),
+              border: enCarte
+                  ? null
+                  : Border(bottom: palette.borderHairline.asBorderSide()),
             ),
       child: corps,
     );
@@ -1611,7 +1638,54 @@ class _CollectionParTranchesEtat<T> extends State<_CollectionParTranches<T>> {
             mise: mise,
           ),
         );
-        if (tableau) {
+        if (tableau && c.lignesCartes) {
+          // LISTES-3 : des cartes espacees, sans cadre de tableau ; les
+          // en-tetes discrets restent seuls colles.
+          tranches.addAll(<Widget>[
+            PinnedHeaderSliver(
+              child: _EnTeteTableau<T>(
+                colonnes: c.colonnes,
+                selection: c.selection,
+                lignes: c.lignes,
+                mise: mise,
+                discret: true,
+              ),
+            ),
+            SliverList.separated(
+              itemCount: c.lignes.length,
+              separatorBuilder: (BuildContext _, int _) => Ecart.vSm,
+              itemBuilder: (BuildContext ctx, int i) => KeyedSubtree(
+                key: c.cle?.call(c.lignes[i]),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: palette.surfaceRaised.background,
+                    borderRadius: AppRadius.arrondiXs,
+                  ),
+                  child: ClipRRect(
+                    borderRadius: AppRadius.arrondiXs,
+                    child: _LigneTableau<T>(
+                      colonnes: c.colonnes,
+                      ligne: c.lignes[i],
+                      onSelectionner: c.onSelectionner,
+                      selectionnee: c.estSelectionnee?.call(c.lignes[i]),
+                      selection: c.selection,
+                      actionsLigne: c.actionsLigne,
+                      mise: mise,
+                      enCarte: true,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            if (c.piedCollant != null)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: AppSpacing.md),
+                  child: c.piedCollant,
+                ),
+              ),
+          ]);
+        } else if (tableau) {
           tranches.add(
             DecoratedSliver(
               decoration: cadre,

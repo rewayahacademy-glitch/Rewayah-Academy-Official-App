@@ -297,7 +297,10 @@
     "filtres": {
       "plus": "المزيد",
       "plusAvec": "المزيد، ⁨{n}⁩",
-      "titreFeuille": "مرشحات أخرى"
+      "titreFeuille": "مرشحات أخرى",
+      "bouton": "المرشحات",
+      "boutonAvec": "المرشحات، \u2068{n}\u2069",
+      "axeValeur": "\u2068{axe}\u2069: \u2068{valeur}\u2069"
     },
     "recherche": {
       "effacer": "مسح البحث",
@@ -5441,6 +5444,7 @@
         "rechercheLibelle": "البحث عن فصل",
         "rechercheAide": "الاسم أو الرمز أو المعلم",
         "filtreAttente": "في انتظار معلم",
+        "filtreOuvertes": "المفتوحة",
         "filtreJour": "اليوم",
         "filtreTousJours": "كل الأيام",
         "filtreHeure": "الساعة",

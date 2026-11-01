@@ -2209,6 +2209,9 @@ class _Traductions$commun$filtres$ar extends Traductions$commun$filtres$fr {
 	@override String get plus => 'المزيد';
 	@override String plusAvec({required Object n}) => 'المزيد، ⁨${n}⁩';
 	@override String get titreFeuille => 'مرشحات أخرى';
+	@override String get bouton => 'المرشحات';
+	@override String boutonAvec({required Object n}) => 'المرشحات، ⁨${n}⁩';
+	@override String axeValeur({required Object axe, required Object valeur}) => '⁨${axe}⁩: ⁨${valeur}⁩';
 }
 
 // Path: commun.recherche
@@ -13194,6 +13197,7 @@ class _Traductions$admin$groupes$liste$ar extends Traductions$admin$groupes$list
 	@override String get rechercheLibelle => 'البحث عن فصل';
 	@override String get rechercheAide => 'الاسم أو الرمز أو المعلم';
 	@override String get filtreAttente => 'في انتظار معلم';
+	@override String get filtreOuvertes => 'المفتوحة';
 	@override String get filtreJour => 'اليوم';
 	@override String get filtreTousJours => 'كل الأيام';
 	@override String get filtreHeure => 'الساعة';
@@ -20055,6 +20059,9 @@ extension on TraductionsAr {
 			'commun.filtres.plus' => 'المزيد',
 			'commun.filtres.plusAvec' => ({required Object n}) => 'المزيد، ⁨${n}⁩',
 			'commun.filtres.titreFeuille' => 'مرشحات أخرى',
+			'commun.filtres.bouton' => 'المرشحات',
+			'commun.filtres.boutonAvec' => ({required Object n}) => 'المرشحات، ⁨${n}⁩',
+			'commun.filtres.axeValeur' => ({required Object axe, required Object valeur}) => '⁨${axe}⁩: ⁨${valeur}⁩',
 			'commun.recherche.effacer' => 'مسح البحث',
 			'commun.recherche.fermer' => 'إغلاق البحث',
 			'commun.sections.page' => 'أقسام الصفحة',
@@ -20328,11 +20335,11 @@ extension on TraductionsAr {
 			'classe.historique' => 'السجل',
 			'classe.sousTitre' => ({required Object prenom, required Object enseignant}) => '⁨${prenom}⁩ · ⁨${enseignant}⁩',
 			'classe.indisponiblePhrase' => 'تفاصيل الفصل غير متاحة هنا بعد.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.introuvableTitre' => 'هذا الفصل غير مفتوح لهذا الملف',
 			'classe.introuvablePhrase' => 'ربما انتهى، أو يخص طالبًا آخر في الأسرة.',
 			'classe.disparue' => 'هذا الفصل لم يعد موجودًا.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.seance.aucune' => 'لا حصة مقررة',
 			'classe.seance.aucuneDetail' => ({required Object dePrenom}) => 'ستظهر هنا الحصة القادمة لـ⁨${dePrenom}⁩ بمجرد جدولتها.',
 			'classe.seance.illisible' => 'تعذّرت قراءة الحصة القادمة.',
@@ -20842,11 +20849,11 @@ extension on TraductionsAr {
 			'salle.seance.demo.tb.per01' => 'PER-01 المشاركون والأذونات',
 			'salle.seance.demo.tb.dlg01' => 'DLG-01 مسح ملاحظات الصفحة',
 			'salle.seance.demo.tb.err01' => 'ERR-01 انقطعت المزامنة',
+			_ => null,
+		} ?? switch (path) {
 			'salle.seance.demo.tb.err02' => 'ERR-02 استعادة السبورة',
 			'salle.seance.demo.tb.err03' => 'ERR-03 فشل الحفظ',
 			'salle.seance.demo.tb.end01' => 'END-01 مغادرة الحصة',
-			_ => null,
-		} ?? switch (path) {
 			'salle.seance.demo.tb.supportArrive' => 'المستند في الطريق',
 			'salle.seance.demo.tb.ressourceIndisponible' => 'المورد غير متاح',
 			'salle.seance.demo.tb.autorisationEcrire' => 'إذن بالكتابة',
@@ -21356,11 +21363,11 @@ extension on TraductionsAr {
 			'enseignant.cahier.exceptionHorsLigne' => 'دون شبكة، لا يمكن تأكيد استثناء. أما دفتر المتابعة فيُرسل على كل حال.',
 			'enseignant.cahier.aValider' => 'للتأكيد',
 			'enseignant.cahier.statutPresents' => ({required Object nombre}) => 'الحاضرون ⁨${nombre}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.statutAbsents' => ({required Object nombre}) => 'الغائبون ⁨${nombre}⁩',
 			'enseignant.cahier.statutEnRetard' => ({required Object nombre}) => 'المتأخرون ⁨${nombre}⁩',
 			'enseignant.cahier.performance' => 'الأداء',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.faiblesses' => 'نقاط الضعف',
 			'enseignant.cahier.niveauARevoir' => 'للمراجعة',
 			'enseignant.cahier.niveauEnProgres' => 'في تقدم',
@@ -21870,11 +21877,11 @@ extension on TraductionsAr {
 			'nav.tuteur.suivi' => 'المتابعة',
 			'nav.tuteur.historique' => 'السجل',
 			'nav.tuteur.compte' => 'الحساب',
+			_ => null,
+		} ?? switch (path) {
 			'nav.enseignant.journee' => 'اليوم',
 			'nav.enseignant.classes' => 'الفصول',
 			'nav.enseignant.creneaux' => 'أوقات التوفر',
-			_ => null,
-		} ?? switch (path) {
 			'nav.enseignant.profil' => 'الملف الشخصي',
 			'nav.controleur.planning' => 'الجدول',
 			'nav.controleur.controle' => 'المراقبة',
@@ -22384,11 +22391,11 @@ extension on TraductionsAr {
 			'tc.parcours.postCours.repriseInconnue' => 'لا موضع استئناف معروف لهذه الحصة.',
 			'tc.parcours.postCours.travail' => 'العمل المقترح',
 			'tc.parcours.postCours.travailAucun' => 'لا عمل مقترح حتى الآن.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.postCours.valider' => 'تأكيد',
 			'tc.parcours.postCours.enFile' => 'تم الحفظ. سيُرسل بمجرد عودة الشبكة.',
 			'tc.parcours.postCours.envoye' => 'أُغلق الدرس.',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.composants.lecture.pieceJointe' => ({required Object nom}) => 'مرفق: ${nom}',
 			'com.socle.composants.lecture.vocal' => ({required Object duree}) => 'رسالة صوتية مدتها ${duree}',
 			'com.socle.composants.lecture.vocalSansDuree' => 'رسالة صوتية',
@@ -22898,11 +22905,11 @@ extension on TraductionsAr {
 			'com.studio.brouillons.vide' => 'ستظهر هنا أي رسالة بدأتها في قناة ولم تُرسل بعد.',
 			'com.studio.brouillons.tous' => ({required Object nombre}) => 'عرض كل المسودات (${nombre})',
 			'com.studio.brouillons.restaure' => 'استُعيدت المسودة. يمكنك متابعة رسالتك.',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.sousTitre' => 'مساحة عمل الفريق',
 			'com.studio.navigation.aujourdhui' => _root.com.socle.lexique.aujourdhui,
 			'com.studio.navigation.brouillons' => 'المسودات',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.navigation.canaux' => 'القنوات',
 			'com.studio.navigation.enregistres' => 'العناصر المحفوظة',
 			'com.studio.choisirTitre' => 'اختر قناة',
@@ -23412,11 +23419,11 @@ extension on TraductionsAr {
 			'admin.candidatures.detail.talents.disponibilite' => 'مدى التوفر لمهمة',
 			'admin.candidatures.detail.talents.accord' => 'الموافقة على التواصل',
 			'admin.candidatures.detail.talents.accordDonne' => ({required Object date}) => 'مُنحت في ⁨${date}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'admin.candidatures.detail.talents.accordAbsent' => 'لم تُمنح: لا تُقترح أي مهمة',
 			'admin.candidatures.detail.talents.misesAJour' => ({required Object date}) => 'آخر تحديث في ⁨${date}⁩.',
 			'admin.candidatures.controles.noms.compteConforme' => 'الحساب مطابق',
-			_ => null,
-		} ?? switch (path) {
 			'admin.candidatures.controles.noms.cadreReligieux' => 'الإطار الديني والتربوي مقبول',
 			'admin.candidatures.controles.noms.questionnaireComplet' => 'الاستبيان مكتمل بنسخته الحالية',
 			'admin.candidatures.controles.noms.inconnu' => 'فحص من الخادم',
@@ -23926,11 +23933,11 @@ extension on TraductionsAr {
 			'admin.groupes.actionRetirer' => 'إزالة',
 			'admin.groupes.actionModifierSeuil' => 'تعديل الحد',
 			'admin.groupes.actionObservation' => 'إعدادات المتابعة',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.actionCloturer' => 'إغلاق الفصل',
 			'admin.groupes.actionAjouterCreneau' => 'إضافة موعد',
 			'admin.groupes.creneau.titre' => ({required Object deLibelle}) => 'موعد جديد ⁨${deLibelle}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.creneau.contexte' => 'يوم وساعة إضافيان كل أسبوع للفصل نفسه. تُنشأ حصص الأسابيع الأربعة القادمة فورًا.',
 			'admin.groupes.creneau.fuseau' => 'الساعة بحسب المنطقة الزمنية للفصل.',
 			'admin.groupes.creneau.envoyer' => 'إضافة هذا الموعد',
@@ -24079,6 +24086,7 @@ extension on TraductionsAr {
 			'admin.groupes.liste.rechercheLibelle' => 'البحث عن فصل',
 			'admin.groupes.liste.rechercheAide' => 'الاسم أو الرمز أو المعلم',
 			'admin.groupes.liste.filtreAttente' => 'في انتظار معلم',
+			'admin.groupes.liste.filtreOuvertes' => 'المفتوحة',
 			'admin.groupes.liste.filtreJour' => 'اليوم',
 			'admin.groupes.liste.filtreTousJours' => 'كل الأيام',
 			'admin.groupes.liste.filtreHeure' => 'الساعة',
@@ -24439,12 +24447,12 @@ extension on TraductionsAr {
 			'admin.observations.colonneEleve' => 'الطالب',
 			'admin.observations.colonneClasse' => 'الفصل',
 			'admin.observations.colonneEntree' => 'الدخول',
+			_ => null,
+		} ?? switch (path) {
 			'admin.observations.colonneSortie' => 'الخروج',
 			'admin.observations.colonneDuree' => 'المدة',
 			'admin.observations.colonneStatut' => 'الحالة',
 			'admin.observations.terminee' => 'منتهية',
-			_ => null,
-		} ?? switch (path) {
 			'admin.observations.ouverte' => 'الخروج غير مسجَّل',
 			'admin.observations.sortieAbsente' => 'غير مسجَّل',
 			'admin.observations.dureeNonConfirmee' => 'غير مؤكَّدة',
@@ -24953,12 +24961,12 @@ extension on TraductionsAr {
 			'admin.tirage.retirerCible' => ({required Object libelle}) => 'إزالة ⁨${libelle}⁩',
 			'admin.tirage.ajouterCible' => 'إضافة هدف',
 			'admin.tirage.ajouterTitre' => 'إضافة هدف',
+			_ => null,
+		} ?? switch (path) {
 			'admin.tirage.ajouterContexte' => 'اختاروا الفصل أو المعلم الذي يُسحب أولًا. يُضاف الهدف إلى القواعد ثم تحفظونها.',
 			'admin.tirage.ajouterChoix' => 'الفصل أو المعلم المستهدف',
 			'admin.tirage.ajouterConfirmer' => 'إضافة هذا الهدف',
 			'admin.tirage.manqueCible' => 'ينقص الهدف: اختاروه من القائمة.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.tirage.aucunCandidat' => 'لا فصل ولا معلم يمكن استهدافه',
 			'admin.tirage.aucunCandidatDetail' => 'كل الفصول والمعلمين مستهدفون بالفعل أو لا توجد حصص بعد.',
 			'admin.tirage.erreurCandidats' => 'تعذّرت قراءة قائمة الأهداف. أعيدوا المحاولة بعد قليل.',
@@ -25467,12 +25475,12 @@ extension on TraductionsAr {
 			'comptable.aujourdhui.titre' => 'اليوم',
 			'comptable.aujourdhui.sousTitre' => 'ماذا عليّ أن أفعل الآن؟',
 			'comptable.aujourdhui.attention' => 'للمعالجة والتنبيهات',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.aujourdhui.aTraiter' => 'للمعالجة اليوم',
 			'comptable.aujourdhui.aTraiterHorsPaiements' => 'مهام أخرى',
 			'comptable.aujourdhui.alertes' => 'التنبيهات',
 			'comptable.aujourdhui.echeances' => 'مواعيد استحقاق قريبة',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.aujourdhui.prestataires' => 'مزوّدو الدفع',
 			'comptable.aujourdhui.activiteRecente' => 'النشاط الحديث',
 			'comptable.aujourdhui.accesRapides' => 'وصول سريع',
@@ -25981,12 +25989,12 @@ extension on TraductionsAr {
 			'comptable.contractuels.creationIndisponible' => 'لا يستطيع حسابك إنشاء التزام.',
 			'comptable.contractuels.retourListe' => 'العودة إلى المتعاقدين',
 			'comptable.contractuels.titre' => 'المتعاقدون والالتزامات',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.sousTitre' => 'تُحدَّد المبالغ عند إنشاء الالتزام، وتُثبَّت بعد الاعتماد.',
 			'comptable.contractuels.nouvelle' => 'التزام جديد',
 			'comptable.contractuels.detailTitre' => 'الالتزام',
 			'comptable.validation.sousTitre' => 'طلبات المحاسب التي تنتظر قرار شخص مخوَّل آخر. صاحب الطلب لا يصادق أبدًا على طلبه.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.validation.aDecider' => 'للبتّ',
 			'comptable.validation.decidees' => 'بُتّ فيها مؤخرًا',
 			'comptable.validation.videTitre' => 'لا شيء للمصادقة',
@@ -26495,12 +26503,12 @@ extension on TraductionsAr {
 			'eleveConnexion.lecteur.verificationPhrase' => 'الكاميرا متوقفة أثناء التحقق.',
 			'eleveConnexion.lecteur.refuseeTitre' => 'الكاميرا غير مسموح بها',
 			'eleveConnexion.lecteur.refuseePhrase' => 'لقراءة رمز QR، اسمح بالكاميرا. يمكنك أيضًا إدخال الرمز المعروض تحت رمز QR.',
+			_ => null,
+		} ?? switch (path) {
 			'eleveConnexion.lecteur.refuseeAction' => 'السماح بالكاميرا',
 			'eleveConnexion.lecteur.refuseeDurablementTitre' => 'الكاميرا محظورة',
 			'eleveConnexion.lecteur.refuseeDurablementPhrase' => 'ما زالت الكاميرا مرفوضة لـRewayah. اسمح بها في إعدادات الجهاز أو المتصفح، أو أدخل الرمز.',
 			'eleveConnexion.lecteur.occupeeTitre' => 'الكاميرا مشغولة',
-			_ => null,
-		} ?? switch (path) {
 			'eleveConnexion.lecteur.occupeePhrase' => 'تطبيق آخر يستخدم الكاميرا. أغلقه ثم أعد المحاولة، أو أدخل الرمز.',
 			'eleveConnexion.lecteur.absenteTitre' => 'لا كاميرا',
 			'eleveConnexion.lecteur.absentePhrase' => 'لا كاميرا متاحة على هذا الجهاز. أدخل الرمز المعروض تحت رمز QR.',
@@ -27009,12 +27017,12 @@ extension on TraductionsAr {
 			'adulte.invitation.enteteLui' => 'حساب شخصي له',
 			'adulte.invitation.phraseElle' => 'ستستخدم زوجتك حسابها الخاص. لن تستطيع إدارة أسرتك ولا ملفات الطلاب التي أنشأتها.',
 			'adulte.invitation.phraseLui' => 'سيستخدم زوجك حسابه الخاص. لن يستطيع إدارة أسرتك ولا ملفات الطلاب التي أنشأتها.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.invitation.prenom' => 'الاسم',
 			'adulte.invitation.nom' => 'اللقب',
 			'adulte.invitation.nomAide' => 'اختياري.',
 			'adulte.invitation.courriel' => 'البريد الإلكتروني',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.invitation.courrielAideElle' => 'سيُستخدم البريد الإلكتروني لإرسال دعوة الانضمام إلى Rewayah إلى زوجتك.',
 			'adulte.invitation.courrielAideLui' => 'سيُستخدم البريد الإلكتروني لإرسال دعوة الانضمام إلى Rewayah إلى زوجك.',
 			'adulte.invitation.prenomRequis' => 'أدخل الاسم.',
@@ -27523,12 +27531,12 @@ extension on TraductionsAr {
 			'controleur.compteRendu.faitsChargement' => 'جارٍ قراءة السجل التلقائي للحصة: الساعات، الطلاب الحاضرون، إعادة الاتصال.',
 			'controleur.compteRendu.faitsAbsents' => 'السجل التلقائي للحصة (الساعات، الطلاب الحاضرون، إعادة الاتصال) لم يصل بعد: انتهت الحصة للتو أو انقطع الاتصال. يمكنك الرد دونه؛ وسيُرفق بالتقرير بمجرد وصوله.',
 			'controleur.compteRendu.cleHoraire' => 'الموعد المقرر',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.compteRendu.horaire' => ({required Object debut, required Object fin}) => '⁨${debut}⁩ إلى ⁨${fin}⁩',
 			'controleur.compteRendu.cleDebutReel' => 'البداية الفعلية',
 			'controleur.compteRendu.debutRetard' => ({required Object heure, required Object minutes}) => '⁨${heure}⁩، تأخر ⁨${minutes}⁩ د',
 			'controleur.compteRendu.debutALHeure' => ({required Object heure}) => '⁨${heure}⁩، في الموعد',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.compteRendu.cleFin' => 'النهاية',
 			'controleur.compteRendu.enCours' => 'جارية',
 			'controleur.compteRendu.clePresents' => 'الطلاب الحاضرون',
@@ -28037,12 +28045,12 @@ extension on TraductionsAr {
 			'recrutement.parcours.langues.bm' => 'البامبارا',
 			'recrutement.parcours.langues.snk' => 'السونينكي',
 			'recrutement.parcours.langues.mnk' => 'الماندينكا',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.langues.francais' => 'الفرنسية',
 			'recrutement.parcours.langues.english' => 'الإنجليزية',
 			'recrutement.parcours.langues.ar' => 'العربية',
 			'recrutement.parcours.langues.ps' => 'البشتو',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.langues.ur' => 'الأردية',
 			'recrutement.parcours.langues.om' => 'الأورومو',
 			'recrutement.parcours.langues.am' => 'الأمهرية',
@@ -28551,12 +28559,12 @@ extension on TraductionsAr {
 			'argent.acces.suspenduPaiementTuteur' => ({required Object prenom}) => 'لم تُستلم دفعة هذا الشهر. تعذّر انضمام ⁨${prenom}⁩ إلى الحصص. يبقى الحساب والمحتويات متاحة.',
 			'argent.acces.suspenduPaiementAdulte' => 'لم تُستلم دفعة هذا الشهر. لا يمكنك الانضمام إلى حصصك الآن. يبقى حسابك ومحتوياتك متاحة.',
 			'juridique.titre' => 'المعلومات القانونية',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.intro' => 'النصوص التي تنظّم الخدمة. يمكن قراءتها دون تسجيل الدخول.',
 			'juridique.version' => ({required Object version, required Object date}) => 'الإصدار ⁨${version}⁩، نص ⁨${date}⁩',
 			'juridique.contact' => ({required Object contact}) => 'لأي سؤال، اكتبوا إلى ⁨${contact}⁩.',
 			'juridique.lire' => 'قراءة',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.coord.societe' => 'الشركة: Rewayah Academy Ltd',
 			'juridique.coord.numero' => 'رقم التسجيل: 16624644، إنجلترا وويلز',
 			'juridique.coord.adresse' => 'المقر: 71-75 Shelton Street, Covent Garden, London WC2H 9JQ، المملكة المتحدة',

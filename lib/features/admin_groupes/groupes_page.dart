@@ -25,12 +25,10 @@ import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart' show horsLigneProvider;
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
-import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
-import '../../core/widgets/app_card.dart';
-import '../../core/widgets/barre_precedent_suivant.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/champ_etiquete.dart';
 import '../../core/widgets/champ_recherche.dart';
@@ -44,6 +42,8 @@ import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pays_enseignant.dart';
+import '../../core/widgets/pied_de_liste.dart';
+import '../../core/widgets/puce_filtre_actif.dart';
 import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/selecteur_motif.dart';
 import '../../core/widgets/selecteur_personne.dart';
@@ -84,15 +84,9 @@ class GroupesPage extends ConsumerStatefulWidget {
   /// Vrai : le filtre d'etat part sur « En attente d'enseignant ».
   final bool attenteInitiale;
 
-  /// Largeur de l'inspecteur (AD-X) : celle de la file du contrat D.
-  static const double largeurInspecteur = 336;
-
-  /// En dessous, le tableau n'aurait plus la place de ses colonnes : la
-  /// ligne s'ouvre en feuille, comme sur telephone.
-  static const double largeurTableauMin = 600;
-
-  /// L'inspecteur de la classe choisie.
-  static const Key cleInspecteur = ValueKey<String>('adm09-inspecteur');
+  /// « Nouvelle classe » : le bouton de tete au bureau, le disque flottant au
+  /// telephone (une seule des deux formes est rendue).
+  static const Key cleCreer = ValueKey<String>('classes-creer');
 
   @override
   ConsumerState<GroupesPage> createState() => _GroupesPageEtat();
@@ -103,7 +97,16 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
   /// genre, enseignant.
   late FiltreClasses _filtre = widget.attenteInitiale
       ? const FiltreClasses(etat: EtatClasseListee.attenteEnseignant)
-      : const FiltreClasses();
+      : _parDefaut;
+
+  /// L1 (directeur, 01/11/2026 : « il faut masquer les classes cloturees ») :
+  /// la liste s'ouvre sur les classes ouvertes, actives et en attente
+  /// d'enseignant ; « Cloturees » et « Toutes les classes » restent des
+  /// filtres. Rien n'est efface (`DECISION-LISTES-2026-10-23.md` §5 quater).
+  static const FiltreClasses _parDefaut = FiltreClasses(ouvertes: true);
+
+  /// LISTES-3 : au bureau, le panneau des filtres est deplie.
+  bool _filtresOuverts = false;
 
   /// La page courante, a partir de 1. Revient a 1 a chaque changement de
   /// filtre.
@@ -112,9 +115,6 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
   /// La derniere page lue : ses compteurs et ses valeurs de filtre restent
   /// affiches pendant qu'une autre page se charge.
   PageClasses? _derniere;
-
-  /// La classe ouverte dans l'inspecteur (bureau), par son identifiant.
-  String? _choisie;
 
   final TextEditingController _recherche = TextEditingController();
 
@@ -155,7 +155,6 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
     final RequeteClasses requete = RequeteClasses(filtre: _filtre, page: _page);
     final AsyncValue<PageClasses> lecture = ref.watch(
       pageClassesAdminProvider(requete),
@@ -167,6 +166,7 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
     final l = t.admin.groupes.liste;
 
     final Widget creer = ActionPrincipale(
+      key: GroupesPage.cleCreer,
       libelle: t.admin.groupes.creer,
       pleineLargeur: false,
       onPress: () => _ouvrirCreation(context, ref),
@@ -175,154 +175,163 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
     // FILTRES-1 : une seule rangee de puces et de menus, qui defile quand
     // elle ne tient pas (porte par JONCTION-LIGNES-1 sur les onglets d'etat
     // d'AD-X). R17 : etat, public, jour, heure, fuseau, genre, enseignant.
-    final Widget filtres = RangeeFiltres(
-      filtres: <Widget>[
-        FilterPill(
-          libelle: t.admin.groupes.filtreToutes,
-          compteur: reference?.toutesEtats,
-          retenue: _filtre.etat == null,
-          onPress: () => _filtrer(_filtre.avec(etat: () => null)),
+    final List<Widget> puces = <Widget>[
+      FilterPill(
+        key: const ValueKey<String>('classes-filtre-ouvertes'),
+        libelle: l.filtreOuvertes,
+        compteur: reference == null
+            ? null
+            : (compte(EtatClasseListee.active) ?? 0) +
+                  (compte(EtatClasseListee.attenteEnseignant) ?? 0),
+        retenue: _filtre.etat == null && _filtre.ouvertes,
+        onPress: () => _filtrer(_filtre.avec(etat: () => null, ouvertes: true)),
+      ),
+      FilterPill(
+        libelle: t.admin.groupes.filtreActives,
+        compteur: compte(EtatClasseListee.active),
+        retenue: _filtre.etat == EtatClasseListee.active,
+        onPress: () => _filtrer(
+          _filtre.avec(etat: () => EtatClasseListee.active, ouvertes: false),
         ),
-        FilterPill(
-          libelle: t.admin.groupes.filtreActives,
-          compteur: compte(EtatClasseListee.active),
-          retenue: _filtre.etat == EtatClasseListee.active,
-          onPress: () =>
-              _filtrer(_filtre.avec(etat: () => EtatClasseListee.active)),
-        ),
-        FilterPill(
-          key: const ValueKey<String>('classes-filtre-attente'),
-          libelle: l.filtreAttente,
-          compteur: compte(EtatClasseListee.attenteEnseignant),
-          retenue: _filtre.etat == EtatClasseListee.attenteEnseignant,
-          onPress: () => _filtrer(
-            _filtre.avec(etat: () => EtatClasseListee.attenteEnseignant),
+      ),
+      FilterPill(
+        key: const ValueKey<String>('classes-filtre-attente'),
+        libelle: l.filtreAttente,
+        compteur: compte(EtatClasseListee.attenteEnseignant),
+        retenue: _filtre.etat == EtatClasseListee.attenteEnseignant,
+        onPress: () => _filtrer(
+          _filtre.avec(
+            etat: () => EtatClasseListee.attenteEnseignant,
+            ouvertes: false,
           ),
         ),
-        FilterPill(
-          libelle: t.admin.groupes.filtreCloturees,
-          compteur: compte(EtatClasseListee.cloturee),
-          retenue: _filtre.etat == EtatClasseListee.cloturee,
-          onPress: () =>
-              _filtrer(_filtre.avec(etat: () => EtatClasseListee.cloturee)),
+      ),
+      FilterPill(
+        key: const ValueKey<String>('classes-filtre-cloturees'),
+        libelle: t.admin.groupes.filtreCloturees,
+        compteur: compte(EtatClasseListee.cloturee),
+        retenue: _filtre.etat == EtatClasseListee.cloturee,
+        onPress: () => _filtrer(
+          _filtre.avec(etat: () => EtatClasseListee.cloturee, ouvertes: false),
         ),
-        MenuFiltre<TypePublicGroupe>(
-          libelle: t.admin.groupes.filtrePublic,
-          valeur: _filtre.type,
-          entrees: <EntreeFiltre<TypePublicGroupe>>[
+      ),
+      FilterPill(
+        key: const ValueKey<String>('classes-filtre-toutes'),
+        libelle: t.admin.groupes.filtreToutes,
+        compteur: reference?.toutesEtats,
+        retenue: _filtre.etat == null && !_filtre.ouvertes,
+        onPress: () =>
+            _filtrer(_filtre.avec(etat: () => null, ouvertes: false)),
+      ),
+      MenuFiltre<TypePublicGroupe>(
+        libelle: t.admin.groupes.filtrePublic,
+        valeur: _filtre.type,
+        entrees: <EntreeFiltre<TypePublicGroupe>>[
+          EntreeFiltre<TypePublicGroupe>(
+            valeur: null,
+            libelle: t.admin.groupes.filtreTousTypes,
+          ),
+          for (final TypePublicGroupe valeur in TypePublicGroupe.values)
             EntreeFiltre<TypePublicGroupe>(
-              valeur: null,
-              libelle: t.admin.groupes.filtreTousTypes,
+              valeur: valeur,
+              libelle: _nomType(valeur),
             ),
-            for (final TypePublicGroupe valeur in TypePublicGroupe.values)
-              EntreeFiltre<TypePublicGroupe>(
-                valeur: valeur,
-                libelle: _nomType(valeur),
-              ),
-          ],
-          onChoix: (TypePublicGroupe? type) =>
-              _filtrer(_filtre.avec(type: () => type)),
-        ),
-        MenuFiltre<int>(
-          key: const ValueKey<String>('classes-filtre-jour'),
-          libelle: l.filtreJour,
-          valeur: _filtre.jour,
-          entrees: <EntreeFiltre<int>>[
-            EntreeFiltre<int>(valeur: null, libelle: l.filtreTousJours),
-            for (final int jour in reference?.jours ?? const <int>[])
-              EntreeFiltre<int>(valeur: jour, libelle: jourCapitalise(jour)),
-          ],
-          onChoix: (int? jour) => _filtrer(_filtre.avec(jour: () => jour)),
-        ),
-        MenuFiltre<int>(
-          key: const ValueKey<String>('classes-filtre-heure'),
-          libelle: l.filtreHeure,
-          valeur: _filtre.heure,
-          entrees: <EntreeFiltre<int>>[
-            EntreeFiltre<int>(valeur: null, libelle: l.filtreToutesHeures),
-            for (final int heure in reference?.heures ?? const <int>[])
-              EntreeFiltre<int>(valeur: heure, libelle: _heure(heure)),
-          ],
-          onChoix: (int? heure) => _filtrer(_filtre.avec(heure: () => heure)),
-        ),
-        MenuFiltre<String>(
-          key: const ValueKey<String>('classes-filtre-fuseau'),
-          libelle: l.filtreFuseau,
-          valeur: _filtre.fuseau,
-          entrees: <EntreeFiltre<String>>[
-            EntreeFiltre<String>(valeur: null, libelle: l.filtreTousFuseaux),
-            for (final String fuseau in reference?.fuseaux ?? const <String>[])
-              EntreeFiltre<String>(
-                valeur: fuseau,
-                libelle: villeDuFuseauLibelle(fuseau),
-              ),
-          ],
-          onChoix: (String? fuseau) =>
-              _filtrer(_filtre.avec(fuseau: () => fuseau)),
-        ),
-        MenuFiltre<GenreClasse>(
-          key: const ValueKey<String>('classes-filtre-genre'),
-          libelle: l.filtreGenre,
-          valeur: _filtre.genre,
-          entrees: <EntreeFiltre<GenreClasse>>[
+        ],
+        onChoix: (TypePublicGroupe? type) =>
+            _filtrer(_filtre.avec(type: () => type)),
+      ),
+      MenuFiltre<int>(
+        key: const ValueKey<String>('classes-filtre-jour'),
+        libelle: l.filtreJour,
+        valeur: _filtre.jour,
+        entrees: <EntreeFiltre<int>>[
+          EntreeFiltre<int>(valeur: null, libelle: l.filtreTousJours),
+          for (final int jour in reference?.jours ?? const <int>[])
+            EntreeFiltre<int>(valeur: jour, libelle: jourCapitalise(jour)),
+        ],
+        onChoix: (int? jour) => _filtrer(_filtre.avec(jour: () => jour)),
+      ),
+      MenuFiltre<int>(
+        key: const ValueKey<String>('classes-filtre-heure'),
+        libelle: l.filtreHeure,
+        valeur: _filtre.heure,
+        entrees: <EntreeFiltre<int>>[
+          EntreeFiltre<int>(valeur: null, libelle: l.filtreToutesHeures),
+          for (final int heure in reference?.heures ?? const <int>[])
+            EntreeFiltre<int>(valeur: heure, libelle: _heure(heure)),
+        ],
+        onChoix: (int? heure) => _filtrer(_filtre.avec(heure: () => heure)),
+      ),
+      MenuFiltre<String>(
+        key: const ValueKey<String>('classes-filtre-fuseau'),
+        libelle: l.filtreFuseau,
+        valeur: _filtre.fuseau,
+        entrees: <EntreeFiltre<String>>[
+          EntreeFiltre<String>(valeur: null, libelle: l.filtreTousFuseaux),
+          for (final String fuseau in reference?.fuseaux ?? const <String>[])
+            EntreeFiltre<String>(
+              valeur: fuseau,
+              libelle: villeDuFuseauLibelle(fuseau),
+            ),
+        ],
+        onChoix: (String? fuseau) =>
+            _filtrer(_filtre.avec(fuseau: () => fuseau)),
+      ),
+      MenuFiltre<GenreClasse>(
+        key: const ValueKey<String>('classes-filtre-genre'),
+        libelle: l.filtreGenre,
+        valeur: _filtre.genre,
+        entrees: <EntreeFiltre<GenreClasse>>[
+          EntreeFiltre<GenreClasse>(valeur: null, libelle: l.filtreTousGenres),
+          for (final GenreClasse genre
+              in reference?.genres ?? const <GenreClasse>[])
             EntreeFiltre<GenreClasse>(
-              valeur: null,
-              libelle: l.filtreTousGenres,
+              valeur: genre,
+              libelle: _genre(genre, _filtre.type),
             ),
-            for (final GenreClasse genre
-                in reference?.genres ?? const <GenreClasse>[])
-              EntreeFiltre<GenreClasse>(
-                valeur: genre,
-                libelle: _genre(genre, _filtre.type),
-              ),
-          ],
-          onChoix: (GenreClasse? genre) =>
-              _filtrer(_filtre.avec(genre: () => genre)),
-        ),
-        MenuFiltre<RemplissageClasse>(
-          key: const ValueKey<String>('classes-filtre-remplissage'),
-          libelle: l.filtreRemplissage,
-          valeur: _filtre.remplissage,
-          entrees: <EntreeFiltre<RemplissageClasse>>[
-            EntreeFiltre<RemplissageClasse>(
-              valeur: null,
-              libelle: l.filtreTousRemplissages,
-            ),
-            EntreeFiltre<RemplissageClasse>(
-              valeur: RemplissageClasse.pleine,
-              libelle: l.remplissagePleines,
-            ),
-            EntreeFiltre<RemplissageClasse>(
-              valeur: RemplissageClasse.avecPlaces,
-              libelle: l.remplissagePlaces,
-            ),
-          ],
-          onChoix: (RemplissageClasse? remplissage) =>
-              _filtrer(_filtre.avec(remplissage: () => remplissage)),
-        ),
-        MenuFiltre<String>(
-          key: const ValueKey<String>('classes-filtre-enseignant'),
-          libelle: l.filtreEnseignant,
-          valeur: _filtre.enseignantId,
-          entrees: <EntreeFiltre<String>>[
-            EntreeFiltre<String>(
-              valeur: null,
-              libelle: l.filtreTousEnseignants,
-            ),
-            // R7 : les classes sans enseignant se retrouvent d'un geste.
-            EntreeFiltre<String>(
-              valeur: FiltreClasses.sansEnseignant,
-              libelle: l.sansEnseignant,
-            ),
-            for (final EnseignantFiltre e
-                in reference?.enseignants ?? const <EnseignantFiltre>[])
-              EntreeFiltre<String>(valeur: e.id, libelle: e.libelle),
-          ],
-          onChoix: (String? id) =>
-              _filtrer(_filtre.avec(enseignantId: () => id)),
-        ),
-      ],
-    );
+        ],
+        onChoix: (GenreClasse? genre) =>
+            _filtrer(_filtre.avec(genre: () => genre)),
+      ),
+      MenuFiltre<RemplissageClasse>(
+        key: const ValueKey<String>('classes-filtre-remplissage'),
+        libelle: l.filtreRemplissage,
+        valeur: _filtre.remplissage,
+        entrees: <EntreeFiltre<RemplissageClasse>>[
+          EntreeFiltre<RemplissageClasse>(
+            valeur: null,
+            libelle: l.filtreTousRemplissages,
+          ),
+          EntreeFiltre<RemplissageClasse>(
+            valeur: RemplissageClasse.pleine,
+            libelle: l.remplissagePleines,
+          ),
+          EntreeFiltre<RemplissageClasse>(
+            valeur: RemplissageClasse.avecPlaces,
+            libelle: l.remplissagePlaces,
+          ),
+        ],
+        onChoix: (RemplissageClasse? remplissage) =>
+            _filtrer(_filtre.avec(remplissage: () => remplissage)),
+      ),
+      MenuFiltre<String>(
+        key: const ValueKey<String>('classes-filtre-enseignant'),
+        libelle: l.filtreEnseignant,
+        valeur: _filtre.enseignantId,
+        entrees: <EntreeFiltre<String>>[
+          EntreeFiltre<String>(valeur: null, libelle: l.filtreTousEnseignants),
+          // R7 : les classes sans enseignant se retrouvent d'un geste.
+          EntreeFiltre<String>(
+            valeur: FiltreClasses.sansEnseignant,
+            libelle: l.sansEnseignant,
+          ),
+          for (final EnseignantFiltre e
+              in reference?.enseignants ?? const <EnseignantFiltre>[])
+            EntreeFiltre<String>(valeur: e.id, libelle: e.libelle),
+        ],
+        onChoix: (String? id) => _filtrer(_filtre.avec(enseignantId: () => id)),
+      ),
+    ];
     final Widget recherche = ChampRecherche(
       cleChamp: const ValueKey<String>('classes-recherche'),
       controleur: _recherche,
@@ -331,178 +340,345 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
       onChange: _chercher,
     );
 
-    return PageShell(
+    final List<FiltreActif> actifs = _filtresActifs(reference);
+    // LISTES-3 (bureau) : le titre, l'icone des filtres et UNE action en
+    // tete ; les filtres et la recherche en panneau replie, qui defile avec
+    // la liste. Au telephone, §5 ter : la recherche et la rangee de filtres
+    // defilent avec la liste, et « Nouvelle classe » flotte en bas.
+    final Widget tete = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        if (!bureau) ...<Widget>[
+          recherche,
+          Ecart.vMd,
+          RangeeFiltres(filtres: puces),
+          Ecart.vLg,
+        ] else if (_filtresOuverts) ...<Widget>[
+          recherche,
+          Ecart.vMd,
+          RangeeFiltres(
+            key: const ValueKey<String>('classes-panneau-filtres'),
+            enPanneau: true,
+            filtres: puces,
+          ),
+          Ecart.vLg,
+        ] else if (actifs.isNotEmpty) ...<Widget>[
+          FiltresActifs(
+            filtres: actifs,
+            onToutEffacer: () {
+              _recherche.clear();
+              _filtrer(_parDefaut);
+            },
+          ),
+          Ecart.vLg,
+        ],
+      ],
+    );
+
+    final Widget page = PageShell(
       titre: t.admin.groupes.titre,
       // AD-X : la sous-navigation Operations, Espace de traitement et
-      // Classes (`ongletsOperations()`).
+      // Classes (`ongletsOperations()`), qui tient lieu de titre (§5 ter.2).
       entete: SousNavigationDomaine(
         onglets: ongletsOperations(),
         indexActif: 1,
       ),
+      // LISTES-2 et LISTES-3 : la tete defile avec la liste, qui prend toute
+      // la largeur au bureau, sans retour (la barre laterale navigue).
+      teteAvecLaListe: true,
+      listeBureau: true,
+      actionsEntete: <Widget>[
+        if (bureau) ...<Widget>[
+          RangeeFiltres.bascule(
+            key: const ValueKey<String>('classes-bascule-filtres'),
+            ouverts: _filtresOuverts,
+            retenus: actifs.length,
+            onBasculer: () =>
+                setState(() => _filtresOuverts = !_filtresOuverts),
+          ),
+          creer,
+        ],
+      ],
+      // `DataCollection` porte le defilement de la page (une seule barre).
       defilante: false,
-      // FILTRES-1b : une colonne de corps qui dit a `PageShell` la hauteur
-      // qui lui manque : a 320 px texte x2, la page defile au lieu de
-      // deborder, et la liste garde au moins une ligne lisible.
       child: ColonneCorps(
-        minimumEtire: DataCollection.minimumLisible(context),
         children: <Widget>[
-          Text(t.admin.groupes.intro, style: textes.bodyMedium),
-          Ecart.vLg,
-          // AD-X (ADMIN-SHELL-03) : la recherche, et « Creer » au bord de
-          // fin de la meme rangee sur bureau ; au-dessus sur telephone.
-          if (bureau)
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Expanded(child: recherche),
-                Ecart.hLg,
-                creer,
-              ],
-            )
-          else ...<Widget>[creer, Ecart.vLg, recherche],
-          Ecart.vMd,
-          filtres,
-          Ecart.vXl,
-          switch (lecture) {
-            AsyncValue<PageClasses>(hasValue: true) => Expanded(
-              child: LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints contraintes) {
-                  final PageClasses page = lecture.requireValue;
-                  // L'inspecteur : bureau, texte sous 200 %, et la place d'un
-                  // tableau a cote des 336 du panneau.
-                  final bool inspecteur =
-                      bureau &&
-                      MediaQuery.textScalerOf(context).scale(1) < 2 &&
-                      contraintes.maxWidth >=
-                          GroupesPage.largeurInspecteur +
-                              AppSpacing.xxl +
-                              GroupesPage.largeurTableauMin;
-                  final ClasseListee? choisie = inspecteur
-                      ? page.lignes
-                            .where((ClasseListee c) => c.id == _choisie)
-                            .firstOrNull
-                      : null;
-                  final Widget corps = _Corps(
-                    page: page,
-                    choisie: choisie?.id,
-                    onPage: (int numero) => setState(() => _page = numero),
-                    onSelectionner: (ClasseListee classe) => inspecteur
-                        ? setState(() => _choisie = classe.id)
-                        : _ouvrirDetail(
-                            context,
-                            ref,
-                            classe.groupe,
-                            nom: classe.nom,
-                          ),
-                    onAjouter: (ClasseListee c) =>
-                        _ouvrirAjout(context, ref, c.groupe, nom: c.nom),
-                    onModifierSeuil: (ClasseListee c) => _ouvrirModifierSeuil(
-                      context,
-                      ref,
-                      c.groupe,
-                      nom: c.nom,
+          Expanded(
+            child: switch (lecture) {
+              AsyncValue<PageClasses>(hasValue: true) => _Corps(
+                page: lecture.requireValue,
+                tete: tete,
+                onPage: (int numero) => setState(() => _page = numero),
+                // L1 : la fiche est une page, au-dessus de la liste qui
+                // reste empilee (recherche, filtres, page, position gardes).
+                onSelectionner: (ClasseListee classe) => GoRouter.of(context)
+                    .push(
+                      Routes.adminOperationsGroupePour(classe.id),
+                      extra: classe,
                     ),
-                    // D2 et D1 (29/10/2026) : creneaux de la semaine (ajout,
-                    // modification, retrait) et genre de la classe.
-                    onAjouterCreneau: (ClasseListee c) => ouvrirReglagesClasse(
-                      context,
-                      ref,
-                      c.groupe,
-                      nom: c.nom,
-                      genre: c.genre,
-                    ),
-                    onObservation: (ClasseListee c) =>
-                        _ouvrirObservation(context, ref, c.groupe, nom: c.nom),
-                    onCloturer: (ClasseListee c) =>
-                        _ouvrirCloture(context, ref, c.groupe, nom: c.nom),
-                  );
-                  if (choisie == null) {
-                    return corps;
-                  }
-                  final GroupeAdmin groupe = choisie.groupe;
-                  final String nom = choisie.nom;
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Expanded(child: corps),
-                      Ecart.hXxl,
-                      SizedBox(
-                        width: GroupesPage.largeurInspecteur,
-                        child: SingleChildScrollView(
-                          key: ValueKey<String>('inspecteur-${choisie.id}'),
-                          child: _Inspecteur(
-                            key: GroupesPage.cleInspecteur,
-                            classe: choisie,
-                            onFermer: () => setState(() => _choisie = null),
-                            onRetirer: (String studentId, String prenom) =>
-                                _ouvrirRetrait(
-                                  context,
-                                  ref,
-                                  groupe,
-                                  studentId,
-                                  prenom,
-                                  nom: nom,
-                                ),
-                            onAjouter: () =>
-                                _ouvrirAjout(context, ref, groupe, nom: nom),
-                            onModifierSeuil: () => _ouvrirModifierSeuil(
-                              context,
-                              ref,
-                              groupe,
-                              nom: nom,
-                            ),
-                            onAjouterCreneau: () => ouvrirReglagesClasse(
-                              context,
-                              ref,
-                              groupe,
-                              nom: nom,
-                              genre: choisie.genre,
-                            ),
-                            onObservation: () => _ouvrirObservation(
-                              context,
-                              ref,
-                              groupe,
-                              nom: nom,
-                            ),
-                            onCloturer: () =>
-                                _ouvrirCloture(context, ref, groupe, nom: nom),
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
+                onAjouter: (ClasseListee c) =>
+                    _ouvrirAjout(context, ref, c.groupe, nom: c.nom),
+                onModifierSeuil: (ClasseListee c) =>
+                    _ouvrirModifierSeuil(context, ref, c.groupe, nom: c.nom),
+                // D2 et D1 (29/10/2026) : creneaux de la semaine (ajout,
+                // modification, retrait) et genre de la classe.
+                onAjouterCreneau: (ClasseListee c) => ouvrirReglagesClasse(
+                  context,
+                  ref,
+                  c.groupe,
+                  nom: c.nom,
+                  genre: c.genre,
+                ),
+                onObservation: (ClasseListee c) =>
+                    _ouvrirObservation(context, ref, c.groupe, nom: c.nom),
+                onCloturer: (ClasseListee c) =>
+                    _ouvrirCloture(context, ref, c.groupe, nom: c.nom),
               ),
-            ),
-            _ when sansDonneesHorsLigne(lecture, horsLigne: horsLigne) =>
-              EtatSansDonnees(
-                key: const ValueKey<String>('classes-sans-donnees'),
-                quoi: t.admin.groupes.sansDonnees,
-                onAction: _relire,
+              _ when sansDonneesHorsLigne(lecture, horsLigne: horsLigne) =>
+                _SansListe(
+                  tete: tete,
+                  child: EtatSansDonnees(
+                    key: const ValueKey<String>('classes-sans-donnees'),
+                    quoi: t.admin.groupes.sansDonnees,
+                    onAction: _relire,
+                  ),
+                ),
+              AsyncValue<PageClasses>(hasError: true) => _SansListe(
+                tete: tete,
+                child: EmptyState(
+                  message: t.admin.groupes.erreur,
+                  icone: AppIcons.avertissement,
+                  libelleAction: t.commun.reessayer,
+                  onAction: _relire,
+                ),
               ),
-            AsyncValue<PageClasses>(hasError: true) => EmptyState(
-              message: t.admin.groupes.erreur,
-              icone: AppIcons.avertissement,
-              libelleAction: t.commun.reessayer,
-              onAction: _relire,
-            ),
-            _ => const Skeleton.liste(lignes: 5),
-          },
+              _ => _SansListe(
+                tete: tete,
+                child: const Skeleton.tableDense(lignes: 8),
+              ),
+            },
+          ),
         ],
       ),
+    );
+    if (bureau) return page;
+    // Au telephone, « Nouvelle classe » flotte en bas, au bord de fin : un
+    // disque plein de 48 (le standard des commandes d'appel, sans nouveau
+    // composant), au-dessus de la liste qui defile.
+    return Stack(
+      children: <Widget>[
+        page,
+        PositionedDirectional(
+          end: AppSpacing.lg,
+          bottom: AppSpacing.lg,
+          child: SafeArea(
+            child: BoutonIcone(
+              // Une seule des deux formes est rendue : meme cle.
+              key: GroupesPage.cleCreer,
+              icone: AppIcons.ajouter,
+              forme: FormeBoutonIcone.appel,
+              tonAppel: TonAppel.ouvert,
+              libelle: t.admin.groupes.creer,
+              onPress: () => _ouvrirCreation(context, ref),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// LISTES-3 : les filtres retenus, quand le panneau est replie (bureau) :
+  /// rien n'est cache sans le dire. La vue par defaut (classes ouvertes)
+  /// n'en est pas un.
+  List<FiltreActif> _filtresActifs(PageClasses? reference) {
+    final l = t.admin.groupes.liste;
+    String axe(String a, String v) =>
+        t.commun.filtres.axeValeur(axe: a, valeur: v);
+    final FiltreClasses f = _filtre;
+    return <FiltreActif>[
+      if (f.texte.trim().isNotEmpty)
+        FiltreActif(
+          libelle: axe(l.rechercheLibelle, f.texte.trim()),
+          onRetirer: () {
+            _recherche.clear();
+            _filtrer(f.avec(texte: ''));
+          },
+        ),
+      if (f.etat != null || !f.ouvertes)
+        FiltreActif(
+          libelle: axe(t.admin.groupes.colonneEtat, switch (f.etat) {
+            null => t.admin.groupes.filtreToutes,
+            EtatClasseListee.active => t.admin.groupes.filtreActives,
+            EtatClasseListee.attenteEnseignant => l.filtreAttente,
+            EtatClasseListee.cloturee => t.admin.groupes.filtreCloturees,
+          }),
+          onRetirer: () => _filtrer(f.avec(etat: () => null, ouvertes: true)),
+        ),
+      if (f.type case final TypePublicGroupe type)
+        FiltreActif(
+          libelle: axe(t.admin.groupes.filtrePublic, _nomType(type)),
+          onRetirer: () => _filtrer(f.avec(type: () => null)),
+        ),
+      if (f.jour case final int jour)
+        FiltreActif(
+          libelle: axe(l.filtreJour, jourCapitalise(jour)),
+          onRetirer: () => _filtrer(f.avec(jour: () => null)),
+        ),
+      if (f.heure case final int heure)
+        FiltreActif(
+          libelle: axe(l.filtreHeure, _heure(heure)),
+          onRetirer: () => _filtrer(f.avec(heure: () => null)),
+        ),
+      if (f.fuseau case final String fuseau)
+        FiltreActif(
+          libelle: axe(l.filtreFuseau, villeDuFuseauLibelle(fuseau)),
+          onRetirer: () => _filtrer(f.avec(fuseau: () => null)),
+        ),
+      if (f.genre case final GenreClasse genre)
+        FiltreActif(
+          libelle: axe(l.filtreGenre, _genre(genre, f.type)),
+          onRetirer: () => _filtrer(f.avec(genre: () => null)),
+        ),
+      if (f.remplissage case final RemplissageClasse remplissage)
+        FiltreActif(
+          libelle: axe(l.filtreRemplissage, switch (remplissage) {
+            RemplissageClasse.pleine => l.remplissagePleines,
+            RemplissageClasse.avecPlaces => l.remplissagePlaces,
+          }),
+          onRetirer: () => _filtrer(f.avec(remplissage: () => null)),
+        ),
+      if (f.enseignantId case final String id)
+        FiltreActif(
+          libelle: axe(
+            l.filtreEnseignant,
+            id == FiltreClasses.sansEnseignant
+                ? l.sansEnseignant
+                : reference?.enseignants
+                          .where((EnseignantFiltre e) => e.id == id)
+                          .firstOrNull
+                          ?.libelle ??
+                      l.filtreEnseignant,
+          ),
+          onRetirer: () => _filtrer(f.avec(enseignantId: () => null)),
+        ),
+    ];
+  }
+}
+
+/// LISTES-2 : sans liste (chargement, echec, sans donnees), la tete de la
+/// page et ce qui tient lieu de liste defilent ensemble, dans le seul
+/// defilement de la page.
+class _SansListe extends StatelessWidget {
+  const _SansListe({required this.tete, required this.child});
+
+  final Widget tete;
+  final Widget child;
+
+  // Comme Comptes : sans preneur, `PageShell` fait defiler sa propre tete
+  // avec ce corps.
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: <Widget>[tete, child],
+  );
+}
+
+/// La fiche d'une classe (L1, directeur, 01/11/2026) : **une page** de la
+/// coquille, au-dessus de la liste, qui defile comme une page
+/// (`DECISION-DEFILEMENT-2026-11-01` : une fiche ne defile jamais dans une
+/// boite au milieu de l'ecran). Elle remplace l'inspecteur de bureau (AD-X,
+/// ADMIN-SHELL-03) et la feuille de telephone, avec le meme contenu : etat,
+/// « Informations generales », partage, cahiers, eleves (« Retirer »), puis les
+/// actions qui agissent sur la classe. Aucune confirmation n'est remplacee :
+/// ajout, seuil, observation et cloture ouvrent leurs feuilles, motif compris.
+///
+/// Au retour, la liste est restee empilee dessous : recherche, filtres, page
+/// et position sont gardes (`DECISION-LISTES-2026-10-23.md` §3.8).
+class FicheClasseAdminPage extends ConsumerWidget {
+  /// Cree la fiche de la classe [groupeId] ; [classe] : la ligne de la liste
+  /// quand on vient d'elle (sinon, la classe est relue).
+  const FicheClasseAdminPage({required this.groupeId, this.classe, super.key});
+
+  /// L'identifiant de la classe.
+  final String groupeId;
+
+  /// La ligne de la liste, quand on vient d'elle.
+  final ClasseListee? classe;
+
+  /// La cle du corps de la fiche.
+  static const Key cleFiche = ValueKey<String>('classe-fiche');
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ClasseListee? connue = classe;
+    final AsyncValue<List<GroupeAdmin>> groupes = connue == null
+        ? ref.watch(groupesProvider)
+        : const AsyncValue<List<GroupeAdmin>>.data(<GroupeAdmin>[]);
+    final GroupeAdmin? relu = groupes.value
+        ?.where((GroupeAdmin g) => g.id == groupeId)
+        .firstOrNull;
+    final ClasseListee? fiche =
+        connue ??
+        (relu == null
+            ? null
+            : ClasseListee(
+                groupe: relu,
+                sansEnseignant: relu.teacherId.isEmpty,
+              ));
+    final GoRouter routeur = GoRouter.of(context);
+
+    return PageShell(
+      titre: fiche?.nom ?? t.admin.groupes.titre,
+      onRetour: routeur.canPop()
+          ? routeur.pop
+          : () => routeur.go(Routes.adminOperationsGroupes),
+      child: switch (fiche) {
+        final ClasseListee c => _CorpsFiche(
+          key: cleFiche,
+          classe: c,
+          onRetirer: (String studentId, String prenom) => _ouvrirRetrait(
+            context,
+            ref,
+            c.groupe,
+            studentId,
+            prenom,
+            nom: c.nom,
+          ),
+          onAjouter: () => _ouvrirAjout(context, ref, c.groupe, nom: c.nom),
+          onModifierSeuil: () =>
+              _ouvrirModifierSeuil(context, ref, c.groupe, nom: c.nom),
+          onAjouterCreneau: () => ouvrirReglagesClasse(
+            context,
+            ref,
+            c.groupe,
+            nom: c.nom,
+            genre: c.genre,
+          ),
+          onObservation: () =>
+              _ouvrirObservation(context, ref, c.groupe, nom: c.nom),
+          onCloturer: () => _ouvrirCloture(context, ref, c.groupe, nom: c.nom),
+        ),
+        null when groupes.hasError => EmptyState(
+          message: t.admin.groupes.erreur,
+          icone: AppIcons.avertissement,
+          libelleAction: t.commun.reessayer,
+          onAction: () => ref.invalidate(groupesProvider),
+        ),
+        null when groupes.hasValue => EmptyState(
+          message: t.admin.groupes.aucunAvecCeFiltre,
+          icone: AppIcons.rienAAfficher,
+        ),
+        null => const Skeleton.liste(lignes: 4),
+      },
     );
   }
 }
 
-/// L'inspecteur d'une classe (AD-X, image ADMIN-SHELL-03), au bord de fin du
-/// tableau sur bureau : nom et etat ; « Informations generales » ; les
-/// eleves (la vraie liste des membres, « Retirer » conserve) ; les actions.
-/// Il ne remplace aucune confirmation : ajout, seuil, observation et cloture
-/// ouvrent leurs feuilles, motif compris.
-class _Inspecteur extends StatelessWidget {
-  const _Inspecteur({
+/// Le corps de la fiche d'une classe ([FicheClasseAdminPage]).
+class _CorpsFiche extends StatelessWidget {
+  const _CorpsFiche({
     required this.classe,
-    required this.onFermer,
     required this.onRetirer,
     required this.onAjouter,
     required this.onModifierSeuil,
@@ -513,7 +689,6 @@ class _Inspecteur extends StatelessWidget {
   });
 
   final ClasseListee classe;
-  final VoidCallback onFermer;
   final void Function(String studentId, String prenom) onRetirer;
   final VoidCallback onAjouter;
   final VoidCallback onModifierSeuil;
@@ -526,104 +701,84 @@ class _Inspecteur extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
-    return AppCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: _PastilleEtat(etat: classe.etat),
+        ),
+        Ecart.vXxl,
+        Text(t.admin.groupes.inspecteurInfos, style: textes.titleMedium),
+        Ecart.vSm,
+        LigneCleValeur(
+          cle: t.admin.groupes.colonneEnseignant,
+          valeur: classe.enseignant ?? t.admin.groupes.liste.sansEnseignant,
+        ),
+        Ecart.vMd,
+        LigneCleValeur(
+          cle: t.admin.groupes.colonneType,
+          valeur: _nomType(groupe.type),
+        ),
+        Ecart.vMd,
+        LigneCleValeur(
+          cle: t.admin.groupes.colonneCreneau,
+          valeur: _creneau(groupe),
+        ),
+        Ecart.vMd,
+        LigneCleValeur(
+          cle: t.admin.groupes.colonneMembres,
+          valeur: t.admin.groupes.membresSur(
+            actifs: '${groupe.nombreMembres}',
+            seuil: '${groupe.seuilMax}',
+          ),
+          chiffres: true,
+        ),
+        Ecart.vXxl,
+        _FeuilleDetail(groupe: groupe, onRetirer: onRetirer),
+        if (groupe.actif) ...<Widget>[
+          // Les eleves, 16, puis les actions qui agissent sur la classe.
+          Ecart.vLg,
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
-              Expanded(
-                child: Semantics(
-                  header: true,
-                  child: Text(classe.nom, style: textes.titleLarge),
-                ),
+              MenuActions(
+                objet: classe.nom,
+                actions: <EntreeAction>[
+                  EntreeAction(
+                    libelle: t.admin.groupes.actionModifierSeuil,
+                    onChoix: onModifierSeuil,
+                  ),
+                  EntreeAction(
+                    libelle: t.admin.groupes.reglagesClasse.action,
+                    onChoix: onAjouterCreneau,
+                  ),
+                  EntreeAction(
+                    libelle: t.admin.groupes.actionObservation,
+                    onChoix: onObservation,
+                  ),
+                  ..._actionsFusion(context, classe),
+                  EntreeAction(
+                    libelle: t.admin.groupes.actionCloturer,
+                    destructif: true,
+                    onChoix: onCloturer,
+                  ),
+                ],
               ),
               Ecart.hSm,
-              BoutonIcone(
-                icone: AppIcons.fermer,
-                libelle: t.admin.groupes.inspecteurFermer,
-                onPress: onFermer,
+              Flexible(
+                child: ActionPrincipale(
+                  libelle: t.admin.groupes.actionAjouter,
+                  niveau: NiveauAction.secondaire,
+                  pleineLargeur: false,
+                  onPress: onAjouter,
+                ),
               ),
             ],
           ),
-          Ecart.vSm,
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: _PastilleEtat(etat: classe.etat),
-          ),
-          Ecart.vXxl,
-          Text(t.admin.groupes.inspecteurInfos, style: textes.titleMedium),
-          Ecart.vSm,
-          LigneCleValeur(
-            cle: t.admin.groupes.colonneEnseignant,
-            valeur: classe.enseignant ?? t.admin.groupes.liste.sansEnseignant,
-          ),
-          Ecart.vMd,
-          LigneCleValeur(
-            cle: t.admin.groupes.colonneType,
-            valeur: _nomType(groupe.type),
-          ),
-          Ecart.vMd,
-          LigneCleValeur(
-            cle: t.admin.groupes.colonneCreneau,
-            valeur: _creneau(groupe),
-          ),
-          Ecart.vMd,
-          LigneCleValeur(
-            cle: t.admin.groupes.colonneMembres,
-            valeur: t.admin.groupes.membresSur(
-              actifs: '${groupe.nombreMembres}',
-              seuil: '${groupe.seuilMax}',
-            ),
-            chiffres: true,
-          ),
-          Ecart.vXxl,
-          _FeuilleDetail(groupe: groupe, onRetirer: onRetirer),
-          if (groupe.actif) ...<Widget>[
-            // Les eleves, 16, puis les actions qui agissent sur la classe.
-            Ecart.vLg,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                MenuActions(
-                  objet: classe.nom,
-                  actions: <EntreeAction>[
-                    EntreeAction(
-                      libelle: t.admin.groupes.actionModifierSeuil,
-                      onChoix: onModifierSeuil,
-                    ),
-                    EntreeAction(
-                      libelle: t.admin.groupes.reglagesClasse.action,
-                      onChoix: onAjouterCreneau,
-                    ),
-                    EntreeAction(
-                      libelle: t.admin.groupes.actionObservation,
-                      onChoix: onObservation,
-                    ),
-                    ..._actionsFusion(context, classe),
-                    EntreeAction(
-                      libelle: t.admin.groupes.actionCloturer,
-                      destructif: true,
-                      onChoix: onCloturer,
-                    ),
-                  ],
-                ),
-                Ecart.hSm,
-                Flexible(
-                  child: ActionPrincipale(
-                    libelle: t.admin.groupes.actionAjouter,
-                    niveau: NiveauAction.secondaire,
-                    pleineLargeur: false,
-                    onPress: onAjouter,
-                  ),
-                ),
-              ],
-            ),
-          ],
         ],
-      ),
+      ],
     );
   }
 }
@@ -633,7 +788,7 @@ class _Inspecteur extends StatelessWidget {
 class _Corps extends StatelessWidget {
   const _Corps({
     required this.page,
-    required this.choisie,
+    required this.tete,
     required this.onPage,
     required this.onSelectionner,
     required this.onAjouter,
@@ -644,7 +799,9 @@ class _Corps extends StatelessWidget {
   });
 
   final PageClasses page;
-  final String? choisie;
+
+  /// Ce qui defile avec les lignes (recherche, filtres) : LISTES-2.
+  final Widget tete;
   final ValueChanged<int> onPage;
   final void Function(ClasseListee classe) onSelectionner;
   final void Function(ClasseListee classe) onAjouter;
@@ -657,67 +814,83 @@ class _Corps extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<ClasseListee> visibles = page.lignes;
     final l = t.admin.groupes.liste;
+    final bool bureau = DataCollection.enTableau(context);
 
     if (visibles.isEmpty) {
       final bool aucune = page.totalSansFiltre == 0;
-      return EmptyState(
-        message: aucune
-            ? t.admin.groupes.aucun
-            : t.admin.groupes.aucunAvecCeFiltre,
-        invitation: aucune
-            ? t.admin.groupes.aucunDetail
-            : t.admin.groupes.aucunAvecCeFiltreDetail,
-        registre: RegistreVide.subi,
-        icone: AppIcons.rienAAfficher,
+      return _SansListe(
+        tete: tete,
+        child: EmptyState(
+          message: aucune
+              ? t.admin.groupes.aucun
+              : t.admin.groupes.aucunAvecCeFiltre,
+          invitation: aucune
+              ? t.admin.groupes.aucunDetail
+              : t.admin.groupes.aucunAvecCeFiltreDetail,
+          registre: RegistreVide.subi,
+          icone: AppIcons.rienAAfficher,
+        ),
       );
     }
-    final String position = t.commun.formats.pageSur(
-      page: '${page.page}',
-      total: '${page.pages}',
-    );
     return DataCollection<ClasseListee>(
-      estSelectionnee: choisie == null
-          ? null
-          : (ClasseListee c) => c.id == choisie,
+      key: ValueKey<String>('classes-table-${page.page}'),
+      // LISTES-2 et LISTES-3 (§5 quater) : la tete de la page et les filtres
+      // defilent avec les lignes ; au bureau, des cartes espacees sous des
+      // en-tetes discrets ; au telephone, des lignes denses.
+      prendTeteDePage: true,
+      tete: tete,
+      densiteTelephone: true,
+      lignesCartes: true,
       lignes: visibles,
       cle: (ClasseListee c) => ValueKey<String>(c.id),
       onSelectionner: onSelectionner,
-      // R17 : la position dans la liste, puis la navigation de page (les
-      // fleches disparaissent aux bornes, NAV-FLECHES-1).
-      piedDePage: Column(
+      // Au telephone, la place du bouton flottant sous le pied : rien ne
+      // reste cache sous lui en bas de liste.
+      piedDePage: bureau
+          ? null
+          : const SizedBox(height: AppTouchTarget.standard + AppSpacing.lg),
+      // R17 : la position dans la liste et la navigation de page ; la taille
+      // de page est celle du serveur, dite et non proposee.
+      piedCollant: PiedDeListe(
         key: const ValueKey<String>('classes-pagination'),
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Ecart.vLg,
-          TexteSansCoupure(
-            l.resume(
-              debut: '${page.debut}',
-              fin: '${page.fin}',
-              total: '${page.total}',
-            ),
-            key: const ValueKey<String>('classes-resume'),
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          if (page.pages > 1) ...<Widget>[
-            Ecart.vSm,
-            BarrePrecedentSuivant(
-              position: position,
-              positionSemantique: l.positionSemantique(
-                page: '${page.page}',
-                total: '${page.pages}',
-              ),
-              libellePrecedent: l.precedente,
-              libelleSuivant: l.suivante,
-              onPrecedent: page.page > 1 ? () => onPage(page.page - 1) : null,
-              onSuivant: page.page < page.pages
-                  ? () => onPage(page.page + 1)
-                  : null,
-            ),
-          ],
-        ],
+        debut: page.debut,
+        fin: page.fin,
+        total: page.total,
+        onPrecedent: page.page > 1 ? () => onPage(page.page - 1) : null,
+        onSuivant: page.page < page.pages ? () => onPage(page.page + 1) : null,
+        mention: t.commun.listes.parPage(n: '${page.taille}'),
       ),
+      actionsLigne: (BuildContext contexte, ClasseListee c) => c.groupe.actif
+          ? MenuActions(
+              objet: c.nom,
+              actions: <EntreeAction>[
+                EntreeAction(
+                  libelle: t.admin.groupes.actionAjouter,
+                  onChoix: () => onAjouter(c),
+                ),
+                EntreeAction(
+                  libelle: t.admin.groupes.actionModifierSeuil,
+                  onChoix: () => onModifierSeuil(c),
+                ),
+                EntreeAction(
+                  libelle: t.admin.groupes.reglagesClasse.action,
+                  onChoix: () => onAjouterCreneau(c),
+                ),
+                EntreeAction(
+                  libelle: t.admin.groupes.actionObservation,
+                  onChoix: () => onObservation(c),
+                ),
+                ..._actionsFusion(contexte, c),
+                EntreeAction(
+                  libelle: t.admin.groupes.actionCloturer,
+                  destructif: true,
+                  onChoix: () => onCloturer(c),
+                ),
+              ],
+            )
+          // Une classe cloturee n'a plus d'actions ; la colonne garde sa
+          // largeur (`DataCollection.actionsLigne`).
+          : const SizedBox.shrink(),
       colonnes: <ColonneDonnees<ClasseListee>>[
         ColonneDonnees<ClasseListee>(
           titre: t.admin.groupes.colonneGroupe,
@@ -728,6 +901,16 @@ class _Corps extends StatelessWidget {
           flex: 3,
           // R16 : numero dans la famille de classes, code ou enseignant.
           texte: (ClasseListee c) => c.nom,
+          // LISTES-3 (bureau) : le cercle, le nom, l'etat en petit dessous.
+          rendu: bureau
+              ? (BuildContext _, ClasseListee c) => AvatarNom.enLigne(
+                  // Les initiales du nom de la classe, sans son numero.
+                  prenom: c.groupe.libelle,
+                  nom: c.nom,
+                  diametre: AppAvatar.petit,
+                  role: _libelleEtat(c.etat),
+                )
+              : null,
         ),
         ColonneDonnees<ClasseListee>(
           titre: t.admin.groupes.colonneEnseignant,
@@ -770,60 +953,15 @@ class _Corps extends StatelessWidget {
             seuil: '${c.groupe.seuilMax}',
           ),
         ),
-        ColonneDonnees<ClasseListee>(
-          titre: t.admin.groupes.colonneEtat,
-          flex: 3,
-          texte: (ClasseListee c) => _libelleEtat(c.etat),
-          rendu: (BuildContext _, ClasseListee c) =>
-              _PastilleEtat(etat: c.etat),
-        ),
-        ColonneDonnees<ClasseListee>(
-          titre: '',
-          role: RoleColonne.aPart,
-          flex: 0,
-          // Vide a dessein : un menu d'actions n'a rien a dire en
-          // texte. `rendreMemeSiTexteVide` fait rendre `rendu` quand
-          // meme, sans faire disparaitre la cellule comme le ferait
-          // un texte vide par defaut.
-          texte: (ClasseListee _) => '',
-          rendreMemeSiTexteVide: true,
-          rendu: (BuildContext contexte, ClasseListee c) => c.groupe.actif
-              ? MenuActions(
-                  objet: c.nom,
-                  actions: <EntreeAction>[
-                    EntreeAction(
-                      libelle: t.admin.groupes.actionAjouter,
-                      onChoix: () => onAjouter(c),
-                    ),
-                    EntreeAction(
-                      libelle: t.admin.groupes.actionModifierSeuil,
-                      onChoix: () => onModifierSeuil(c),
-                    ),
-                    EntreeAction(
-                      libelle: t.admin.groupes.reglagesClasse.action,
-                      onChoix: () => onAjouterCreneau(c),
-                    ),
-                    EntreeAction(
-                      libelle: t.admin.groupes.actionObservation,
-                      onChoix: () => onObservation(c),
-                    ),
-                    ..._actionsFusion(contexte, c),
-                    EntreeAction(
-                      libelle: t.admin.groupes.actionCloturer,
-                      destructif: true,
-                      onChoix: () => onCloturer(c),
-                    ),
-                  ],
-                )
-              // Une classe cloturee n'a plus d'actions. En tableau, sa
-              // cellule garde la largeur du menu (sa cible tactile) : sans
-              // elle, la colonne sans flex retrecit et decale la ligne.
-              : DataCollection.enTableau(contexte)
-              ? SizedBox.square(
-                  dimension: AppMetriques.of(contexte).cibleTactile,
-                )
-              : const SizedBox.shrink(),
-        ),
+        // Au bureau, l'etat est sous le nom (LISTES-3).
+        if (!bureau)
+          ColonneDonnees<ClasseListee>(
+            titre: t.admin.groupes.colonneEtat,
+            flex: 3,
+            texte: (ClasseListee c) => _libelleEtat(c.etat),
+            rendu: (BuildContext _, ClasseListee c) =>
+                _PastilleEtat(etat: c.etat),
+          ),
       ],
     );
   }
@@ -928,23 +1066,6 @@ void _ouvrirCreation(BuildContext context, WidgetRef ref) {
         // reouverture de la feuille).
         ref.invalidate(enseignantsDuPortProvider);
       },
-    ),
-  );
-}
-
-void _ouvrirDetail(
-  BuildContext context,
-  WidgetRef ref,
-  GroupeAdmin groupe, {
-  String? nom,
-}) {
-  AppBottomSheet.ouvrir<void>(
-    context,
-    titre: t.admin.groupes.detailTitre(libelle: nom ?? groupe.libelle),
-    constructeur: (BuildContext contexte) => _FeuilleDetail(
-      groupe: groupe,
-      onRetirer: (String studentId, String prenom) =>
-          _ouvrirRetrait(context, ref, groupe, studentId, prenom, nom: nom),
     ),
   );
 }

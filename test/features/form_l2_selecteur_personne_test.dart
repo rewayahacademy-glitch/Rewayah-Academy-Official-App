@@ -47,7 +47,7 @@ Future<void> _monter(
 
 Future<void> _ouvrirCreation(WidgetTester tester, List<Override> s) async {
   await _monter(tester, const GroupesPage(), s);
-  await _presser(tester, find.text(t.admin.groupes.creer).first);
+  await _presser(tester, find.byKey(GroupesPage.cleCreer));
 }
 
 Finder _carte(String id) => find.byKey(ValueKey<String>('personne-$id'));
