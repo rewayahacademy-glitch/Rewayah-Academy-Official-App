@@ -994,13 +994,24 @@
       "titre": "حصة مباشرة",
       "titreGuidee": "حصتي",
       "ligne": "⁨{debut}⁩ · ⁨{fin}⁩",
-      "minutesRestantes": "الوقت المتبقي: ⁨{minutes}⁩ د",
+      "minutesRestantes(plural, param=minutes)": {
+        "one": "الوقت المتبقي: ⁨{minutes}⁩ د",
+        "other": "الوقت المتبقي: ⁨{minutes}⁩ د"
+      },
       "sePoursuit": "الحصة مستمرة.",
       "chrono": {
         "ecoule": "مضى\u00a0⁨{temps}⁩",
         "restant": "تبقّى\u00a0⁨{temps}⁩",
         "tempsPrevuEcoule": "انقضى الوقت المقرّر",
-        "annonce": "الحصة: مضى ⁨{ecoule}⁩ د وتبقّى ⁨{restant}⁩ د.",
+        "annonce": "الحصة: {ecoule} و{restant}.",
+        "minutesEcoulees(plural, param=minutes)": {
+          "one": "مضى ⁨{minutes}⁩ د",
+          "other": "مضى ⁨{minutes}⁩ د"
+        },
+        "minutesRestantes(plural, param=minutes)": {
+          "one": "تبقّى ⁨{minutes}⁩ د",
+          "other": "تبقّى ⁨{minutes}⁩ د"
+        },
         "annoncePrevuEcoule": "انقضى الوقت المقرّر."
       },
       "pause": {

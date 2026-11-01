@@ -82,6 +82,11 @@ Future<void> _poser(
 String _texte(WidgetTester tester) =>
     tester.widget<Text>(find.byKey(ChronoSalle.cleTexte)).data!;
 
+String _annonce(WidgetTester tester) => tester
+    .getSemantics(find.byKey(ChronoSalle.cleAnnonce))
+    .label
+    .replaceAll('\u00a0', ' ');
+
 void main() {
   tearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
 
@@ -101,6 +106,30 @@ void main() {
       expect(_texte(tester), contains('restant'));
     });
   }
+
+  // Revue du pilote (PR 113) : l'annonce du lecteur d'ecran s'accorde.
+  testWidgets('annonce : 1 min au singulier, 2 min au pluriel', (
+    WidgetTester tester,
+  ) async {
+    await _poser(
+      tester,
+      maintenant: _t0.add(const Duration(minutes: 1, seconds: 10)),
+    );
+    expect(_annonce(tester), contains('1 min écoulée,'));
+    await _poser(
+      tester,
+      maintenant: _t0.add(const Duration(minutes: 2, seconds: 10)),
+    );
+    expect(_annonce(tester), contains('2 min écoulées,'));
+    await _poser(tester, maintenant: _t0.add(const Duration(minutes: 58)));
+    expect(_annonce(tester), contains('2 min restantes.'));
+    await _poser(
+      tester,
+      maintenant: _t0.add(const Duration(minutes: 59, seconds: 10)),
+    );
+    expect(_annonce(tester), contains('1 min restante.'));
+    expect(_annonce(tester), isNot(contains('restantes')));
+  });
 
   testWidgets('apres la fin prevue : « Temps prévu écoulé »', (
     WidgetTester tester,

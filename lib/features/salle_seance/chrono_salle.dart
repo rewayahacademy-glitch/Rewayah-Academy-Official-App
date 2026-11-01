@@ -275,9 +275,13 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
     final String annonce = chrono.prevuEcoule
         ? d.chrono.annoncePrevuEcoule
         : LibellesGroupe.insecable(
+            // Pluriel slang (« 1 min restante », « 2 min restantes ») :
+            // l'annonce est lue a chaque seance depuis FN-023.
             d.chrono.annonce(
-              ecoule: chrono.minutesEcoulees,
-              restant: chrono.minutesRestantes,
+              ecoule: d.chrono.minutesEcoulees(minutes: chrono.minutesEcoulees),
+              restant: d.chrono.minutesRestantes(
+                minutes: chrono.minutesRestantes,
+              ),
             ),
           );
     final TextStyle chiffres = widget.style.copyWith(
