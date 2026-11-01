@@ -1029,6 +1029,8 @@ class _Traductions$connexion$ar extends Traductions$connexion$fr {
 	@override String get probleme => 'انتهت صلاحية الرابط أو لم يصل؟';
 	@override late final _Traductions$connexion$recuperation$ar recuperation = _Traductions$connexion$recuperation$ar._(_root);
 	@override late final _Traductions$connexion$feuilleAppareil$ar feuilleAppareil = _Traductions$connexion$feuilleAppareil$ar._(_root);
+	@override String get sessionTermineeTitre => 'تم تسجيل خروجك';
+	@override String get sessionTermineePhrase => 'انتهت جلستك: هذا الحساب، أو حساب آخر، سُجّل دخوله في مكان آخر، في هذا المتصفح أو على جهاز آخر. سجّل الدخول من جديد هنا. لاستعمال حسابين في الوقت نفسه، افتح الثاني في نافذة تصفّح خاصة أو على جهاز آخر.';
 	@override String get modeConnexion => 'لدي حساب';
 	@override String get modeCreation => 'إنشاء حساب';
 	@override String get titreCreation => 'أنشئ حسابك';
@@ -26715,6 +26717,8 @@ extension on TraductionsAr {
 			'connexion.feuilleAppareil.plafond' => 'عدد الأجهزة لكل طالب محدود. إن بلغت الحد، أزل أحدها من «الأسرة»، «أجهزة الأسرة».',
 			'connexion.feuilleAppareil.saisir' => 'إدخال الرمز',
 			'connexion.feuilleAppareil.fermer' => 'إغلاق',
+			'connexion.sessionTermineeTitre' => 'تم تسجيل خروجك',
+			'connexion.sessionTermineePhrase' => 'انتهت جلستك: هذا الحساب، أو حساب آخر، سُجّل دخوله في مكان آخر، في هذا المتصفح أو على جهاز آخر. سجّل الدخول من جديد هنا. لاستعمال حسابين في الوقت نفسه، افتح الثاني في نافذة تصفّح خاصة أو على جهاز آخر.',
 			'connexion.modeConnexion' => 'لدي حساب',
 			'connexion.modeCreation' => 'إنشاء حساب',
 			'connexion.titreCreation' => 'أنشئ حسابك',
@@ -27046,10 +27050,10 @@ extension on TraductionsAr {
 			'adulte.famille.place.ajouterConjoint' => 'إضافة زوج',
 			'adulte.famille.place.inviterConjointe' => 'ادعُ زوجتك للانضمام إلى Rewayah بحسابها الخاص.',
 			'adulte.famille.place.inviterConjoint' => 'ادعُ زوجك للانضمام إلى Rewayah بحسابه الخاص.',
-			'adulte.famille.place.invitationEnvoyee' => 'أُرسلت الدعوة',
-			'adulte.famille.place.maConjointe' => ({required Object prenom}) => '⁨${prenom}⁩، زوجتك',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.famille.place.invitationEnvoyee' => 'أُرسلت الدعوة',
+			'adulte.famille.place.maConjointe' => ({required Object prenom}) => '⁨${prenom}⁩، زوجتك',
 			'adulte.famille.place.monConjoint' => ({required Object prenom}) => '⁨${prenom}⁩، زوجك',
 			'adulte.famille.place.validationEnAttente' => 'بانتظار الاعتماد الإداري',
 			'adulte.famille.place.validationRefusee' => 'رفضت الإدارة الاعتماد',
@@ -27560,10 +27564,10 @@ extension on TraductionsAr {
 			'controleur.complement.rapportInchange' => ({required Object classe, required Object date}) => '⁨${classe}⁩ · ⁨${date}⁩، دون تغيير',
 			'controleur.complement.cleMotif' => 'السبب',
 			'controleur.complement.sansMotif' => 'لا سبب',
-			'controleur.complement.cleTexte' => 'التكملة',
-			'controleur.complement.envoyer' => 'إرسال التكملة',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.complement.cleTexte' => 'التكملة',
+			'controleur.complement.envoyer' => 'إرسال التكملة',
 			'controleur.complement.echec' => 'لم يُؤكَّد الإرسال: لم يستجب الاتصال أو الخادم. نصك محفوظ هنا، أعد المحاولة بعد لحظة. يبقى التقرير الأصلي سليمًا.',
 			'controleur.complement.envoyeTitre' => 'أُضيفت التكملة',
 			'controleur.complement.envoyePhrase' => 'تظهر تحت التقرير الأصلي، الذي يبقى دون تغيير.',
@@ -28074,10 +28078,10 @@ extension on TraductionsAr {
 			'recrutement.parcours.presentation.p2.remuneration.titre' => 'راتب موضَّح',
 			'recrutement.parcours.presentation.p2.remuneration.texte' => 'راتبك جزء من السعر الذي يدفعه كل طالب حاضر. يُشرح لك بالنسبة المئوية قبل إرسال طلب ترشحك.',
 			'recrutement.parcours.presentation.p3.titre' => 'كيف يجري طلب ترشحك',
-			'recrutement.parcours.presentation.p3.intro' => 'ثلاث مراحل، داخل التطبيق.',
-			'recrutement.parcours.presentation.p3.examen.titre' => 'قاعة الامتحان',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.presentation.p3.intro' => 'ثلاث مراحل، داخل التطبيق.',
+			'recrutement.parcours.presentation.p3.examen.titre' => 'قاعة الامتحان',
 			'recrutement.parcours.presentation.p3.examen.texte' => 'تجيب عن أسئلة هذا المسار ثم ترسل طلب ترشحك. تقرأ الإدارة إجاباتك.',
 			'recrutement.parcours.presentation.p3.entretien.titre' => 'المقابلة عبر الفيديو',
 			'recrutement.parcours.presentation.p3.entretien.texte' => 'إذا اعتُمد طلب ترشحك للمرحلة التالية، تستقبلك الإدارة عبر الفيديو، داخل التطبيق.',
@@ -28588,10 +28592,10 @@ extension on TraductionsAr {
 			'argent.transparence.posteSemantique' => ({required Object poste, required Object part}) => '⁨${poste}⁩: ⁨${part}⁩ من دفعة الطالب',
 			'argent.transparence.estimation' => ({required Object enfants, required Object adultes}) => 'هذه النسب تقدير، محسوب على أساس ⁨${enfants}⁩ طفلًا و⁨${adultes}⁩ بالغًا، كلٌّ منهم بالسعر الكامل وحاضر في كل حصة. وتُراجَع مع كل إصدار جديد للأسعار.',
 			'argent.transparence.magasinsTitre' => 'لماذا لا يوجد التطبيق على App Store ولا على Google Play',
-			'argent.transparence.magasinsPhrase' => 'تأخذ هذه المتاجر من 15 إلى 30 ٪ من كل دفعة. ولا تستطيع الأكاديمية تحمّل هذه الرسوم دون رفع أسعارها. لذلك يتم الدفع عبر الويب.',
-			'argent.transparence.taxesTitre' => 'الضرائب',
 			_ => null,
 		} ?? switch (path) {
+			'argent.transparence.magasinsPhrase' => 'تأخذ هذه المتاجر من 15 إلى 30 ٪ من كل دفعة. ولا تستطيع الأكاديمية تحمّل هذه الرسوم دون رفع أسعارها. لذلك يتم الدفع عبر الويب.',
+			'argent.transparence.taxesTitre' => 'الضرائب',
 			'argent.transparence.taxesPhrase' => 'أسعارنا دون احتساب الضرائب. وضريبة بلدكم، حين تكون مستحقة، تُضاف إلى الدفعة وتعود كاملة إلى الدولة: وهي غير واردة في هذا التوزيع.',
 			'argent.transparence.hausseTitre' => 'قد ترتفع الأسعار',
 			'argent.transparence.haussePhrase' => 'تعتمد أسعارنا على كلفة الخدمات التي نستعملها وعلى التضخم. وإذا ارتفعت هذه الكلفة، فستضطر الأكاديمية إلى تعديل أسعارها. وستُعلمكم بذلك قبل الدفعة التالية، ويمكنكم التوقف إذا لم يناسبكم السعر الجديد.',
@@ -29102,10 +29106,10 @@ extension on TraductionsAr {
 			'accueilInscrits.elevesTitre' => 'أبناؤكم المسجلون مسبقًا',
 			'accueilInscrits.elevesPhrase' => 'الاسم الأول مكتوب مسبقًا. يبقى تحديد العمر.',
 			'accueilInscrits.aJour' => 'مكتمل',
-			'accueilInscrits.aCompleter' => 'يحتاج إلى إكمال',
-			'accueilInscrits.ajouterProfil' => ({required Object dePrenom}) => 'إضافة الملف الدراسي لـ ⁨${dePrenom}⁩',
 			_ => null,
 		} ?? switch (path) {
+			'accueilInscrits.aCompleter' => 'يحتاج إلى إكمال',
+			'accueilInscrits.ajouterProfil' => ({required Object dePrenom}) => 'إضافة الملف الدراسي لـ ⁨${dePrenom}⁩',
 			'accueilInscrits.plusTard' => 'يمكنكم القيام بذلك لاحقًا أيضًا، من صفحة الأسرة.',
 			'accueilInscrits.sansEleve' => 'لم يُسترجع أي ملف دراسي لأسرتكم. يمكنكم إضافة ملف من صفحة الأسرة.',
 			'accueilInscrits.finirCompte' => 'تبقى بعض الأسئلة لإتمام حسابكم.',

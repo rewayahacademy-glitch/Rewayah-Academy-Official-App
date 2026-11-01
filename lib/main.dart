@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // Riverpod 3 a sorti `Override` de l'export principal.
 import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
@@ -126,9 +127,11 @@ import 'core/recrutement/port_signature_contrat.dart';
 import 'core/recrutement/port_statuts_signature.dart';
 import 'core/recrutement/port_statuts_signature_supabase.dart';
 import 'core/router/routes.dart';
+import 'core/session/client_http_garde.dart';
 import 'core/session/port_capacite_eleve.dart';
 import 'core/session/port_capacite_eleve_supabase.dart';
 import 'core/session/session_controleur.dart';
+import 'core/session/source_session.dart' show terminerSessionRefusee;
 import 'core/session/source_session_agent.dart';
 import 'core/tc_bibliotheque/port_support_actif.dart';
 import 'core/tc_bibliotheque/support_actif_supabase.dart';
@@ -635,6 +638,12 @@ Future<void> _initialiserSupabase() async {
     await Supabase.initialize(
       url: Env.supabaseUrl,
       publishableKey: Env.supabaseAnonKey,
+      // Une session finie cote serveur ramene a « Se connecter » (prod du
+      // 01/11/2026 : 401 en boucle, ecran sans issue).
+      httpClient: ClientHttpGarde(
+        http.Client(),
+        surJetonRefuse: terminerSessionRefusee,
+      ),
     ).timeout(AppDelais.demarrageMax);
   } on TimeoutException {
     journalDev('Supabase.initialize depasse le delai du demarrage.');

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../domain/enums.dart';
@@ -25,6 +26,15 @@ abstract interface class SourceSession {
   Future<void> rafraichir();
 }
 
+/// Vrai quand la derniere session a ete terminee parce que le serveur la
+/// refusait (souvent : le meme compte, ou un autre, ouvert ailleurs dans ce
+/// navigateur ou sur un autre appareil). L'ecran « Se connecter » le dit
+/// clairement (demande du directeur du 01/11/2026), puis l'oublie a la
+/// connexion suivante.
+final ValueNotifier<bool> sessionTermineeParLeServeur = ValueNotifier<bool>(
+  false,
+);
+
 /// La source reelle : Supabase.
 class SourceSessionSupabase implements SourceSession {
   /// Cree la source a partir d'un client Supabase.
@@ -49,7 +59,10 @@ class SourceSessionSupabase implements SourceSession {
     await _client.auth.refreshSession().timeout(AppDelais.demarrageMax);
   }
 
-  Future<SessionState> _resoudre(Session? session) async {
+  Future<SessionState> _resoudre(
+    Session? session, {
+    bool reprise = false,
+  }) async {
     if (session == null) {
       return const SessionState.deconnecte();
     }
@@ -64,7 +77,37 @@ class SourceSessionSupabase implements SourceSession {
     // `profiles_self_select`.
     final _ProfilLu profil = await _lireProfil(profileId);
 
+    // Session coupee cote serveur (jeton refuse : prod du 01/11/2026, 18:09
+    // UTC, rafale de 401 et ecran « La connexion prend plus de temps que
+    // prevu » sans issue). On redemande un jeton une fois ; s'il est refuse
+    // aussi, la session est finie : deconnexion locale, l'application revient
+    // a « Se connecter » au lieu de tourner en rond.
+    if (profil.jetonRefuse) {
+      if (!reprise) {
+        try {
+          final AuthResponse r = await _client.auth.refreshSession().timeout(
+            AppDelais.demarrageMax,
+          );
+          if (r.session != null) {
+            return await _resoudre(r.session, reprise: true);
+          }
+        } on Object {
+          // Rafraichissement refuse ou sans reponse : la session est finie.
+        }
+      }
+      sessionTermineeParLeServeur.value = true;
+      try {
+        await _client.auth.signOut(scope: SignOutScope.local);
+      } on Object {
+        // La session locale est effacee meme si le serveur ne repond pas.
+      }
+      return const SessionState.deconnecte();
+    }
+
     final AppRole? role = AppRole.depuisSql(claims.role);
+    if (profil.lecture == LectureProfil.presente) {
+      sessionTermineeParLeServeur.value = false;
+    }
 
     return SessionState(
       resolue: true,
@@ -120,7 +163,15 @@ class SourceSessionSupabase implements SourceSession {
         InterfaceMode.depuisSql(mode),
         LectureProfil.presente,
       );
-    } on PostgrestException {
+    } on PostgrestException catch (e) {
+      if (jetonRefuse(e)) {
+        return const _ProfilLu(
+          null,
+          InterfaceMode.standard,
+          LectureProfil.echouee,
+          jetonRefuse: true,
+        );
+      }
       // Lecture refusee ou indisponible. **Ne se confond pas avec l'absence** :
       // un echec ferme sur le portail d'attente, une absence ouvre
       // l'inscription. Les melanger laisserait un compte suspendu s'en
@@ -151,9 +202,52 @@ class SourceSessionSupabase implements SourceSession {
 }
 
 class _ProfilLu {
-  const _ProfilLu(this.statut, this.mode, this.lecture);
+  const _ProfilLu(
+    this.statut,
+    this.mode,
+    this.lecture, {
+    this.jetonRefuse = false,
+  });
 
   final AccountStatus? statut;
   final InterfaceMode mode;
   final LectureProfil lecture;
+
+  /// Le serveur a refuse le jeton lui-meme (expire, revoque, invalide).
+  final bool jetonRefuse;
+}
+
+/// Vrai quand PostgREST refuse le JETON (et non la lecture) : JWT expire,
+/// invalide ou revoque (codes PGRST301 a PGRST303, statut 401). Une policy
+/// qui refuse une ligne rend 42501 ou 403 : ce n'est pas une fin de session.
+bool jetonRefuse(PostgrestException e) {
+  final String code = e.code ?? '';
+  if (code == 'PGRST301' || code == 'PGRST302' || code == 'PGRST303') {
+    return true;
+  }
+  final String texte = '${e.message} ${e.details ?? ''}'.toLowerCase();
+  return texte.contains('jwt') &&
+      (texte.contains('expired') || texte.contains('invalid'));
+}
+
+/// La session que le serveur refuse : un nouveau jeton une fois, sinon fin de
+/// session locale. `onAuthStateChange` publie alors la deconnexion et le
+/// routeur ramene a « Se connecter » (prod du 01/11/2026 : 401 en boucle).
+Future<void> terminerSessionRefusee() async {
+  final GoTrueClient auth = Supabase.instance.client.auth;
+  if (auth.currentSession == null) return;
+  try {
+    final AuthResponse r = await auth.refreshSession().timeout(
+      AppDelais.demarrageMax,
+    );
+    if (r.session != null) return;
+  } on Object {
+    // Rafraichissement refuse ou sans reponse : la session est finie.
+  }
+  sessionTermineeParLeServeur.value = true;
+  try {
+    await auth.signOut(scope: SignOutScope.local);
+  } on Object {
+    // La session locale est effacee meme si le serveur ne repond pas.
+  }
 }
