@@ -1,0 +1,4 @@
+== Parcours 6 : piege 6.2 (adultes) : 2026-11-01T03:19:10.410Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+[6.2] aucun avertissement au Retour ; position retrouvee a la reouverture : non
+Cahier des adultes : group:Cahier de transmission d'E2E Classe adultes 10312330 Cahier de transmission enregistré
+== Parcours 6 : piege 6.2 (adultes) : joué
