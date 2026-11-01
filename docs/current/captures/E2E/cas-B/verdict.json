@@ -1,0 +1,7 @@
+{
+  "parcours": "Cas B",
+  "verdict": "rouge",
+  "cause": "Cas B : l'etape d'identite ne dit pas « votre nom a vous, le parent » (lu : « flt-semantics:Étape 1 sur 3 / flt-semantics:Comment vous appelez-vous ? ») ; Cas B : trois personnes « E2E Bilal CasB10312232 » dans le foyer (le parent et deux profils eleves) sans aucun avertissement : E2E Bilal CasB10312232 (guardian) ; E2E Bilal CasB10312232 (student/minor) ; E2E Bilal CasB10312232 (student/minor) ; E2E Bil CasB10312232 (student/minor)",
+  "debut": "2026-10-31T22:32:58.975Z",
+  "fin": "2026-10-31T22:35:25.886Z"
+}

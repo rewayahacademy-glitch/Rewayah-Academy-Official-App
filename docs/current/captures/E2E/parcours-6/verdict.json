@@ -1,0 +1,8 @@
+{
+  "parcours": "Parcours 6 : presence et cahier",
+  "verdict": "vert",
+  "cause": "",
+  "debut": "2026-10-31T21:48:24.686Z",
+  "fin": "2026-10-31T21:49:12.099Z",
+  "note": "Passage du 31/10 21:48 UTC : le cahier a ete enregistre (capture 05 « Cahier de transmission enregistre. L'academie l'a recu. », 1 lesson_report en base) ; le script concluait rouge parce que son motif de confirmation n'incluait pas « enregistre ». Motif corrige ; le prochain passage complet rejoue tout."
+}

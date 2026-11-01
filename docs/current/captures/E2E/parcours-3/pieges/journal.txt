@@ -1,0 +1,11 @@
+== Parcours 3 : pieges : 2026-10-31T23:35:58.564Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+[3.2] rouge : « 5 ans » accepte sans un mot au questionnaire, alors que l'ajout de profil exige 6 ans au minimum
+[3.6] vert : avant : http://127.0.0.1:8090/#/commencer?etape=niveau-0 ; apres rechargement : http://127.0.0.1:8090/#/commencer?etape=niveau-0 ; « flt-semantics:Étape 5 sur 9 / flt-semantics:Où en est E2E Piegemvx1hug5 aujourd'hui ? / flt-semantics:Votre réponse oriente les premières propositions. Elle ne fixe pas le niveau officiel : celui-ci est attribué par l'académie après un échange avec un enseignant »
+[3.3] vert : adresse avec majuscules et espaces : lien recu (adresse normalisee)
+  [autre-appareil] erreur de page : Error
+  autre appareil : http://127.0.0.1:8090/?code=bfc1c7db-9dac-4fed-9fde-602814a25499#/connexion ; flt-semantics:Se connecter | flt-semantics:Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre. | button:J'ai déjà un compte | button:Créer un compte | flt-semantics:Votre adresse électronique | flt-semantics:Mot de passe de démonstration
+[3.1] rouge : lien ouvert sur un autre appareil : les reponses du questionnaire (enfant, age, niveau) ne suivent pas ; recapitulatif : vide, sans un mot pour l'expliquer
+[3.4] non joué : pas de « Envoyer ma demande » sur cet appareil (voir 3.1)
+[3.5] vert : retour arriere : about:blank ; «  »
+[3.7] non joué : lecture faite sur les captures, voir le bilan
+== Parcours 3 : pieges : joué
