@@ -40,8 +40,20 @@ try {
   await p.capture(d, 'fiche_cloturer_en_dernier');
   let confirme = false;
   let confirmationVisible = false;
+  let messageSansMotif = false;
   if (bouton) {
     await bouton.click(); await d.page.waitForTimeout(1500);
+    // Constat du directeur (01/11/2026) : sans motif, rien ne part ; le
+    // message doit se voir juste au-dessus du bouton, et le focus aller sur
+    // les motifs. Aucun motif n'est choisi a sa place.
+    await cliquer(d.page, /^Clôturer$/, { role: 'button', pause: 1500 });
+    await activerSemantique(d.page);
+    const sansMotif = await lus(d.page, 80);
+    messageSansMotif = /Il manque le motif/.test(sansMotif)
+      && sql(`select ended_at is null from public.groupes where id = '${id}'`) === 't';
+    const focus = await d.page.evaluate(() => document.activeElement?.getAttribute('aria-label') ?? document.activeElement?.textContent ?? '');
+    p.dire(`Sans motif : message=${/Il manque le motif/.test(sansMotif)} ; rien en base=${messageSansMotif} ; focus sur « ${focus.trim().slice(0, 60)} »`);
+    await p.capture(d, 'sans_motif_message_et_focus');
     await cliquer(d.page, /^Fin du cycle de la classe$/);
     // Le bouton de confirmation est-il visible sans defiler ?
     const envoyer = await trouver(d.page, /^Clôturer$/, { role: 'button', delai: 5000 });
@@ -62,7 +74,7 @@ try {
   const disparue = !apres.includes(nom);
   await p.capture(d, 'liste_apres_vue_ouvertes');
 
-  const verdicts = { presente, bouton: !!bouton, confirmationVisible, confirme, disparue };
+  const verdicts = { presente, bouton: !!bouton, messageSansMotif, confirmationVisible, confirme, disparue };
   p.dire(`Verdicts : ${JSON.stringify(verdicts)}`);
   const ok = Object.values(verdicts).every(Boolean);
   code = await p.fin(ok ? 'vert' : 'rouge', ok ? '' : JSON.stringify(verdicts));

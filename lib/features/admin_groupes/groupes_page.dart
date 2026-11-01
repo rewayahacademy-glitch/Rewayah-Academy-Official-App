@@ -805,6 +805,8 @@ class _CorpsFiche extends StatelessWidget {
               key: FicheClasseAdminPage.cleCloturer,
               libelle: t.admin.groupes.actionCloturer,
               niveau: NiveauAction.destructive,
+              // Pleine (pilule d'alerte douce), jamais un simple texte.
+              doux: true,
               pleineLargeur: false,
               onPress: onCloturer,
             ),
@@ -1221,6 +1223,7 @@ void _ouvrirCloture(
           .read(serviceGroupesProvider)
           .cloturer(groupeId: groupe.id, motif: motif),
       messageErreur: t.admin.groupes.cloturerErreur,
+      destructif: true,
       onSucces: () {
         ref
           ..invalidate(groupesProvider)
@@ -2150,7 +2153,14 @@ class _FeuilleMotif extends StatefulWidget {
     required this.messageErreur,
     required this.onSucces,
     this.detail,
+    this.destructif = false,
   });
+
+  /// Vrai pour un geste qui ne s'annule pas (la cloture) : le bouton prend
+  /// l'apparence pleine d'une action destructive active (pilule sur le fond
+  /// doux d'alerte, `ActionPrincipale.doux`), jamais le violet pale qu'on
+  /// prenait pour un bouton grise (constat du directeur, 01/11/2026).
+  final bool destructif;
 
   /// Les motifs proposes en puces (FORM-L1), « Autre » en dernier.
   final List<String> motifs;
@@ -2166,6 +2176,10 @@ class _FeuilleMotif extends StatefulWidget {
 
 class _FeuilleMotifEtat extends State<_FeuilleMotif> {
   final TextEditingController _motif = TextEditingController();
+
+  /// Pour ramener le focus sur les motifs quand il en manque un.
+  final GlobalKey<SelecteurMotifEtat> _cleMotifs =
+      GlobalKey<SelecteurMotifEtat>();
   bool _envoi = false;
   bool _motifManquant = false;
   String? _erreur;
@@ -2180,6 +2194,10 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
     // Bouton jamais grise (K-56) : sans motif, on dit ce qui manque.
     if (_motif.text.trim().isEmpty) {
       setState(() => _motifManquant = true);
+      // Le focus va sur la liste des motifs (constat du 01/11/2026 : le
+      // message passait inapercu et la boite etait refermee). Aucun motif
+      // n'est choisi a la place de la personne.
+      _cleMotifs.currentState?.focaliser();
       return;
     }
     setState(() {
@@ -2210,24 +2228,32 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
           t.admin.groupes.motifRequis,
           style: Theme.of(context).textTheme.bodySmall,
         ),
+        // Une erreur du serveur se dit avant les motifs : le message « il
+        // manque le motif » reste toujours juste au-dessus du bouton.
+        if (_erreur != null) ...<Widget>[
+          Ecart.vSm,
+          Text(
+            _erreur!,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
+        ],
         Ecart.vSm,
         SelecteurMotif(
+          key: _cleMotifs,
           motifs: widget.motifs,
           controleur: _motif,
           libelleChamp: t.admin.groupes.champMotif,
           erreur: _motifManquant ? t.formulaire.motif.manque : null,
           onChange: (String _) => setState(() => _motifManquant = false),
         ),
-        if (_erreur != null) ...<Widget>[
-          Ecart.vMd,
-          Text(
-            _erreur!,
-            style: TextStyle(color: Theme.of(context).colorScheme.error),
-          ),
-        ],
         Ecart.vLg,
         ActionPrincipale(
+          key: const ValueKey<String>('feuille-motif-envoyer'),
           libelle: widget.libelleEnvoyer,
+          niveau: widget.destructif
+              ? NiveauAction.destructive
+              : NiveauAction.principale,
+          doux: widget.destructif,
           enCours: _envoi,
           onPress: _envoyer,
         ),

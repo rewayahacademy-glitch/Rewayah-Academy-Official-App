@@ -27,6 +27,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/data_collection.dart';
 import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/features/admin_groupes/groupes_page.dart';
 
 import '../../support/garde_interface.dart';
@@ -276,6 +277,43 @@ void main() {
     expect(find.byKey(FicheClasseAdminPage.cleFiche), findsNothing);
     expect(find.text('Classe Al-Furqan'), findsOneWidget);
     expect(find.text('Classe An-Nour'), findsNothing);
+  });
+
+  testWidgets('cloture sans motif : rien ne part, le message est juste '
+      'au-dessus du bouton, le focus va sur les motifs', (
+    WidgetTester tester,
+  ) async {
+    final _Groupes service = _Groupes();
+    await _monter(tester, const Size(1366, 768), service: service);
+    await tester.tap(find.text('Classe An-Nour'));
+    await tester.pumpAndSettle();
+    final Finder cloturer = find.byKey(FicheClasseAdminPage.cleCloturer);
+    await tester.ensureVisible(cloturer);
+    await tester.tap(cloturer);
+    await tester.pumpAndSettle();
+    final Finder envoyer = find.byKey(
+      const ValueKey<String>('feuille-motif-envoyer'),
+    );
+    // Apparence pleine d'une action destructive active, jamais le violet pale.
+    final ActionPrincipale bouton = tester.widget<ActionPrincipale>(envoyer);
+    expect(bouton.niveau, NiveauAction.destructive);
+    expect(bouton.doux, isTrue);
+    expect(bouton.onPress, isNotNull);
+
+    await tester.tap(envoyer);
+    await tester.pumpAndSettle();
+    expect(service.clotures, isEmpty);
+    final Finder message = find.text(t.formulaire.motif.manque);
+    expect(message, findsOneWidget);
+    // Juste au-dessus du bouton : rien entre les deux.
+    final double ecart =
+        tester.getRect(envoyer).top - tester.getRect(message).bottom;
+    expect(ecart, inInclusiveRange(0, 48));
+    // Le focus est sur la liste des motifs ; aucun motif choisi a sa place.
+    expect(
+      FocusManager.instance.primaryFocus?.debugLabel,
+      SelecteurMotif.focusPremierePuce,
+    );
   });
 
   testWidgets('fiche : membres illisibles, une phrase', (
