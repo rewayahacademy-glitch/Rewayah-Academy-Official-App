@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 import '../i18n/isolat_bidi.dart';
 import '../i18n/strings.g.dart';
@@ -430,6 +431,11 @@ class _ConfigLigneBooleenneEtat extends ConsumerState<ConfigLigneBooleenne> {
 }
 
 String _message(Object erreur) {
+  // Un refus du serveur : son seul message, jamais « code: …, details: Bad
+  // Request, hint: null » (capture R3 de la PR 128, 01/11/2026).
+  if (erreur case PostgrestException(:final String message)) {
+    return message;
+  }
   final String brut = erreur.toString();
   final int deuxPoints = brut.indexOf(': ');
   return deuxPoints >= 0 && deuxPoints + 2 < brut.length

@@ -5601,7 +5601,8 @@
       "remplacementObjectifDetail": "الهدف: أن يكون المعلّم البديل قد انضم إلى القاعة.",
       "remplacementBornesAvertissement": "بين {min} و{max} بعد البداية. لتتجاوز {max}، ارفع أولًا موعد فقدان الحصة.",
       "remplacementBornesPerte": "بين {min} و{max} بعد البداية. لتنزل عن {min}، اخفض أولًا موعد التنبيه. ولتتجاوز {max}، ارفع أولًا الهدف.",
-      "remplacementBornesObjectif": "{min} على الأقل بعد البداية. لتنزل عن {min}، اخفض أولًا موعد فقدان الحصة."
+      "remplacementBornesObjectif": "{min} على الأقل بعد البداية. لتنزل عن {min}، اخفض أولًا موعد فقدان الحصة.",
+      "remplacementOrdreRefuse": "لم يعد ترتيب المهل محترمًا: تغيّر إعداد آخر في الأثناء. أغلق هذه النافذة، ثم أعد فتح السطر لترى القيم المحدّثة."
     },
     "fonctionnalites": {
       "titre": "الوظائف",

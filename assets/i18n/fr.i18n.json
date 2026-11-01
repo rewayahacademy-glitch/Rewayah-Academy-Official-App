@@ -4549,7 +4549,8 @@
       "remplacementObjectifDetail": "L'objectif\u00a0: le remplaçant a rejoint la salle.",
       "remplacementBornesAvertissement": "Entre {min} et {max} après le début. Pour aller au-delà de {max}, relevez d'abord la perte de la séance.",
       "remplacementBornesPerte": "Entre {min} et {max} après le début. Pour descendre sous {min}, baissez d'abord l'avertissement. Pour aller au-delà de {max}, relevez d'abord l'objectif.",
-      "remplacementBornesObjectif": "Au moins {min} après le début. Pour descendre sous {min}, baissez d'abord la perte de la séance."
+      "remplacementBornesObjectif": "Au moins {min} après le début. Pour descendre sous {min}, baissez d'abord la perte de la séance.",
+      "remplacementOrdreRefuse": "L'ordre des délais n'est plus respecté\u00a0: un autre réglage a changé entre-temps. Fermez cette fenêtre, puis rouvrez la ligne pour voir les valeurs à jour."
     },
     "fonctionnalites": {
       "titre": "Fonctionnalités",

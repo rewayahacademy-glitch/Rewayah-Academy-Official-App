@@ -228,7 +228,12 @@ class _Corps extends StatelessWidget {
       champValeur: t.admin.regles.champValeur,
       envoyer: t.admin.regles.envoyer,
       valeurInvalide: t.admin.regles.valeurInvalide,
-      erreurEcriture: erreurEcriture,
+      // Le refus d'ordre du serveur (20261104200000) se dit en mots simples :
+      // un autre reglage a change pendant que la feuille etait ouverte.
+      erreurEcriture: (String message) =>
+          message.contains('delais de remplacement')
+          ? t.admin.regles.remplacementOrdreRefuse
+          : erreurEcriture(message),
       onEcrit: onEcrit,
     );
     final TextTheme textes = Theme.of(context).textTheme;

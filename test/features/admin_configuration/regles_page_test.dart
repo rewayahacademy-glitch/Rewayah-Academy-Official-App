@@ -303,7 +303,8 @@ void main() {
     ) async {
       final _Config config = _Config(_toutesLesCles())
         ..erreurEcriture = Exception(
-          'la perte d acces doit venir apres l avertissement',
+          'delais de remplacement : la perte de la seance doit venir avant '
+          'le remplacant dans la salle (perte 12 min, objectif 11 min)',
         );
       await _monter(tester, config);
       await ouvrir(tester, t.admin.regles.remplacementObjectif);
@@ -311,7 +312,9 @@ void main() {
       await tester.pump();
       await tester.tap(find.text(t.admin.regles.envoyer));
       await tester.pumpAndSettle();
-      expect(find.textContaining('doit venir apres'), findsOneWidget);
+      // Le refus d'ordre se dit en mots simples, jamais le message brut.
+      expect(find.text(t.admin.regles.remplacementOrdreRefuse), findsOneWidget);
+      expect(find.textContaining('doit venir avant'), findsNothing);
       expect(config.ecritures, isEmpty);
     });
   });
