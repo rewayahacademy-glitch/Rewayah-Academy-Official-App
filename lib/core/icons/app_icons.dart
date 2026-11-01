@@ -362,6 +362,13 @@ abstract final class AppIcons {
     IconData(0xe4f6, fontFamily: _actif),
   );
 
+  /// Filtres d'une liste (LISTES-3, 01/11/2026) : Phosphor `funnel-simple`
+  /// (0xe268, releve dans `phosphor_flutter` 2.1.0).
+  static const AppIcon filtrer = AppIcon._(
+    IconData(0xe268, fontFamily: _repos),
+    IconData(0xe268, fontFamily: _actif),
+  );
+
   /// Ajout.
   static const AppIcon ajouter = AppIcon._(
     IconData(0xe3d4, fontFamily: _repos),

@@ -23,6 +23,7 @@ import 'package:rewayah_academy/core/reseau/etat_sans_donnees.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart'
     show horsLigneProvider;
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
+import 'package:rewayah_academy/core/widgets/pied_de_liste.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_groupes/groupes_page.dart';
 import 'package:rewayah_academy/features/demo/classes_admin_demo.dart';
@@ -31,7 +32,6 @@ import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
-import '../../support/rangee_plus.dart';
 
 List<ClasseListee> _tout() => <ClasseListee>[...familleDemo(), ...volumeDemo()];
 
@@ -229,16 +229,18 @@ void main() {
       final ClassesAdminDemo port = ClassesAdminDemo(classes: _tout());
       // Assez haut pour que les 25 lignes et le pied de liste soient poses.
       await _monter(tester, port: port, taille: const Size(1440, 4000));
-      expect(
-        find.text(
-          t.admin.groupes.liste.resume(debut: '1', fin: '25', total: '630'),
-        ),
-        findsOneWidget,
-      );
-      expect(
-        find.text(t.commun.formats.pageSur(page: '1', total: '26')),
-        findsOneWidget,
-      );
+      // L1 (01/11/2026) : la vue par defaut montre les classes ouvertes
+      // (actives et en attente d'enseignant), rien n'est efface.
+      final int ouvertes = paginerClasses(
+        _tout(),
+        const FiltreClasses(ouvertes: true),
+        page: 1,
+        taille: taillePageClasses,
+      ).total;
+      expect(ouvertes, lessThan(630));
+      PiedDeListe pied() =>
+          tester.widget<PiedDeListe>(find.byType(PiedDeListe));
+      expect((pied().debut, pied().fin, pied().total), (1, 25, ouvertes));
 
       // Page suivante.
       final Finder suivante = _cle('nav-suivant');
@@ -248,22 +250,18 @@ void main() {
       await tester.ensureVisible(suivante.first);
       await tester.tap(suivante.first);
       await tester.pumpAndSettle();
-      expect(
-        find.text(
-          t.admin.groupes.liste.resume(debut: '26', fin: '50', total: '630'),
-        ),
-        findsOneWidget,
-      );
+      expect((pied().debut, pied().fin), (26, 50));
 
+      // Au bureau, recherche et filtres sont replies derriere l'icone.
+      await tester.tap(_cle('classes-bascule-filtres'));
+      await tester.pumpAndSettle();
+      await tester.tap(_cle('classes-filtre-toutes'));
+      await tester.pumpAndSettle();
+      expect(pied().total, 630);
       // Recherche : la famille de 30, sur deux pages, 30 noms distincts.
       await tester.enterText(_cle('classes-recherche'), libelleFamilleDemo);
       await tester.pumpAndSettle();
-      expect(
-        find.text(
-          t.admin.groupes.liste.resume(debut: '1', fin: '25', total: '30'),
-        ),
-        findsOneWidget,
-      );
+      expect((pied().debut, pied().fin, pied().total), (1, 25, 30));
       for (int n = 1; n <= 25; n++) {
         expect(
           find.text('$libelleFamilleDemo · n° $n'),
@@ -273,19 +271,14 @@ void main() {
       }
 
       // « En attente d'enseignant » : les classes sans enseignant.
-      // L4-07 : selon la place, « En attente » est dans la rangee ou sous
-      // « Plus ».
-      await toucherFiltre(tester, _cle('classes-filtre-attente'));
-      expect(
-        find.text(
-          t.admin.groupes.liste.resume(debut: '1', fin: '3', total: '3'),
-        ),
-        findsOneWidget,
-      );
+      await tester.tap(_cle('classes-filtre-attente'));
+      await tester.pumpAndSettle();
+      expect((pied().debut, pied().fin, pied().total), (1, 3, 3));
       for (final int n in numerosSansEnseignantDemo) {
         expect(find.text('$libelleFamilleDemo · n° $n'), findsOneWidget);
       }
       expect(find.text(t.admin.groupes.liste.sansEnseignant), findsWidgets);
+      // Au bureau, l'etat se lit sous le nom.
       expect(find.text(t.admin.groupes.liste.etatAttente), findsWidgets);
       verifierUnSeulBoutonPlein(tester);
       await tester.pumpWidget(const SizedBox());
@@ -349,6 +342,8 @@ void main() {
         'frappe', (WidgetTester tester) async {
       final ClassesAdminDemo port = ClassesAdminDemo(classes: _tout());
       await _monter(tester, port: port);
+      await tester.tap(_cle('classes-bascule-filtres'));
+      await tester.pumpAndSettle();
       final int avant = port.pagesDemandees;
       for (final String texte in <String>['a', 'am', 'ama']) {
         await tester.enterText(_cle('classes-recherche'), texte);
@@ -371,6 +366,8 @@ void main() {
       await tester.pumpWidget(const SizedBox());
 
       await _monter(tester, port: ClassesAdminDemo(classes: _tout()));
+      await tester.tap(_cle('classes-bascule-filtres'));
+      await tester.pumpAndSettle();
       await tester.enterText(_cle('classes-recherche'), 'zzz');
       await tester.pumpAndSettle();
       expect(find.text(t.admin.groupes.aucunAvecCeFiltre), findsOneWidget);

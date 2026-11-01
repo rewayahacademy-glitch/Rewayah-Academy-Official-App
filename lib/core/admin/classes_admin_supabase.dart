@@ -47,7 +47,11 @@ Map<String, dynamic> parametresClassesAdmin(
     'p_taille': taille,
     if (texte.isNotEmpty) 'p_texte': texte,
     if (filtre.type != null) 'p_type': filtre.type!.valeurSql,
-    if (filtre.etat != null) 'p_etat': _etatSql(filtre.etat!),
+    if (filtre.etat != null)
+      'p_etat': _etatSql(filtre.etat!)
+    // L1 (01/11/2026) : migration 20261103800000.
+    else if (filtre.ouvertes)
+      'p_etat': 'ouvertes',
     if (filtre.jour != null) 'p_jour': filtre.jour,
     if (filtre.heure != null) 'p_heure': filtre.heure,
     if (filtre.fuseau != null) 'p_fuseau': filtre.fuseau,

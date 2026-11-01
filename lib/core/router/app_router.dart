@@ -246,6 +246,7 @@ import '../../features/tc_mushaf/mushaf_page.dart' deferred as d_mushaf_page;
 import '../../features/tc_mushaf/routes_tc_c.dart';
 import '../../features/tc_observation_ui/routes_tc_g.dart';
 import '../admin/admin_domaine.dart';
+import '../admin/port_classes_admin.dart' as classes_admin show ClasseListee;
 import '../alertes/port_alertes.dart';
 import '../candidature/modeles_candidatures_direction.dart'
     show LigneCandidature;
@@ -1700,6 +1701,26 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             ),
           ),
         ),
+        // L1 (01/11/2026) : la fiche d'une classe, empilee au-dessus de la
+        // liste, qui garde son etat au retour.
+        routes: <RouteBase>[
+          GoRoute(
+            path: ':groupeId',
+            builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
+              domaine: AdminDomaine.operations,
+              child: PageDifferee(
+                cle: 'd_groupes_page',
+                charger: d_groupes_page.loadLibrary,
+                construire: () => d_groupes_page.FicheClasseAdminPage(
+                  groupeId: etat.pathParameters['groupeId']!,
+                  classe: etat.extra is classes_admin.ClasseListee
+                      ? etat.extra! as classes_admin.ClasseListee
+                      : null,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       // ECHELLE-ADM-PILOTAGE-1 : le tableau de pilotage par horaire, atteint
       // depuis l'Accueil (raccourci « Pilotage des horaires »).

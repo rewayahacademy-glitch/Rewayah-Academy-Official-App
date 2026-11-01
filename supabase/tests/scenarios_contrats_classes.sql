@@ -298,6 +298,15 @@ BEGIN
   PERFORM pg_temp.vrai((v ->> 'total')::int = 1
     AND v -> 'compteurs' = '{"active": 3, "attente_enseignant": 3, "cloturee": 1}'::jsonb,
     'filtre d''etat : les compteurs gardent les autres etats');
+  -- L1 (directeur, 01/11/2026) : « ouvertes » = actives et en attente
+  -- d'enseignant, la vue par defaut de la direction ; rien n'est efface.
+  v := public.classes_admin_page(p_etat => 'ouvertes');
+  PERFORM pg_temp.vrai((v ->> 'total')::int = 6
+    AND pg_temp.ligne(v, 'cc000000-0000-4000-8000-0000000000c3') IS NOT NULL
+    AND NOT EXISTS (SELECT 1 FROM jsonb_array_elements(v -> 'lignes') x WHERE NOT (x ->> 'actif')::boolean)
+    AND v -> 'compteurs' = '{"active": 3, "attente_enseignant": 3, "cloturee": 1}'::jsonb
+    AND (v ->> 'total_sans_filtre')::int = 7,
+    'filtre « ouvertes » : 6 classes, aucune cloturee, compteurs inchanges');
   v := public.classes_admin_page(p_enseignant_id => 'cc000000-0000-4000-8000-0000000000b2');
   PERFORM pg_temp.vrai((v ->> 'total')::int = 2, 'filtre par enseignant');
   v := public.classes_admin_page(p_remplissage => 'pleine');
@@ -485,8 +494,8 @@ SELECT pg_temp.refus($$UPDATE public.classe_mouvements SET nombre = 9$$, '55000'
 
 DO $fin$
 BEGIN
-  IF current_setting('test.n')::int <> 74 THEN
-    RAISE EXCEPTION 'ROUGE : % controles executes, 74 attendus', current_setting('test.n');
+  IF current_setting('test.n')::int <> 75 THEN
+    RAISE EXCEPTION 'ROUGE : % controles executes, 75 attendus', current_setting('test.n');
   END IF;
   RAISE NOTICE 'CONTRATS classes : % controles verts', current_setting('test.n');
 END $fin$;
