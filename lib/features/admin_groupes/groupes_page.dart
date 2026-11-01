@@ -614,6 +614,9 @@ class FicheClasseAdminPage extends ConsumerWidget {
   /// La cle du corps de la fiche.
   static const Key cleFiche = ValueKey<String>('classe-fiche');
 
+  /// « Clôturer la classe », en dernier dans la fiche.
+  static const Key cleCloturer = ValueKey<String>('classe-fiche-cloturer');
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ClasseListee? connue = classe;
@@ -662,7 +665,21 @@ class FicheClasseAdminPage extends ConsumerWidget {
           ),
           onObservation: () =>
               _ouvrirObservation(context, ref, c.groupe, nom: c.nom),
-          onCloturer: () => _ouvrirCloture(context, ref, c.groupe, nom: c.nom),
+          // La classe close quitte la vue Ouvertes : retour a la liste,
+          // relue.
+          onCloturer: () => _ouvrirCloture(
+            context,
+            ref,
+            c.groupe,
+            nom: c.nom,
+            apres: () => WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (routeur.canPop()) {
+                routeur.pop();
+              } else {
+                routeur.go(Routes.adminOperationsGroupes);
+              }
+            }),
+          ),
         ),
         null when groupes.hasError => EmptyState(
           message: t.admin.groupes.erreur,
@@ -764,11 +781,6 @@ class _CorpsFiche extends StatelessWidget {
                     onChoix: onObservation,
                   ),
                   ..._actionsFusion(context, classe),
-                  EntreeAction(
-                    libelle: t.admin.groupes.actionCloturer,
-                    destructif: true,
-                    onChoix: onCloturer,
-                  ),
                 ],
               ),
               Ecart.hSm,
@@ -781,6 +793,21 @@ class _CorpsFiche extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+          // Constat du directeur (01/11/2026) : « Clôturer la classe » ne se
+          // trouvait pas, range dans le menu. Il est ici en dernier, a part,
+          // destructif, avec la meme confirmation (motif) et le meme appel
+          // (`cloturer_groupe`) que le menu de la ligne.
+          Ecart.vXxl,
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: ActionPrincipale(
+              key: FicheClasseAdminPage.cleCloturer,
+              libelle: t.admin.groupes.actionCloturer,
+              niveau: NiveauAction.destructive,
+              pleineLargeur: false,
+              onPress: onCloturer,
+            ),
           ),
         ],
       ],
@@ -1181,6 +1208,7 @@ void _ouvrirCloture(
   WidgetRef ref,
   GroupeAdmin groupe, {
   String? nom,
+  VoidCallback? apres,
 }) {
   AppBottomSheet.ouvrir<void>(
     context,
@@ -1193,9 +1221,12 @@ void _ouvrirCloture(
           .read(serviceGroupesProvider)
           .cloturer(groupeId: groupe.id, motif: motif),
       messageErreur: t.admin.groupes.cloturerErreur,
-      onSucces: () => ref
-        ..invalidate(groupesProvider)
-        ..invalidate(pageClassesAdminProvider),
+      onSucces: () {
+        ref
+          ..invalidate(groupesProvider)
+          ..invalidate(pageClassesAdminProvider);
+        apres?.call();
+      },
     ),
   );
 }

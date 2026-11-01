@@ -19,10 +19,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/admin/port_classes_admin.dart';
 import 'package:rewayah_academy/core/admin/service_groupes.dart';
+import 'package:rewayah_academy/core/formulaires/motifs_proposes.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart'
     show Creneau;
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/data_collection.dart';
 import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
 import 'package:rewayah_academy/features/admin_groupes/groupes_page.dart';
@@ -53,9 +55,12 @@ GroupeAdmin _g(
 class _Groupes implements ServiceGroupes {
   Object? erreurMembres;
 
+  /// Les classes cloturees pendant le test (le serveur les rend inactives).
+  final List<String> clotures = <String>[];
+
   @override
   Future<List<GroupeAdmin>> groupes() async => <GroupeAdmin>[
-    _g('a', 'Classe An-Nour'),
+    _g('a', 'Classe An-Nour', actif: !clotures.contains('a')),
     _g('b', 'Classe Al-Furqan', type: TypePublicGroupe.adulte),
     _g('c', 'Classe As-Sabr', actif: false),
   ];
@@ -113,7 +118,7 @@ class _Groupes implements ServiceGroupes {
   Future<void> cloturer({
     required String groupeId,
     required String motif,
-  }) async {}
+  }) async => clotures.add(groupeId);
 }
 
 class _GroupesVides extends _Groupes {
@@ -240,6 +245,38 @@ void main() {
       expect(find.text('Classe An-Nour'), findsNothing);
     },
   );
+
+  testWidgets('fiche : « Clôturer la classe » en dernier ; la classe quitte '
+      'la vue Ouvertes', (WidgetTester tester) async {
+    final _Groupes service = _Groupes();
+    await _monter(tester, const Size(1440, 900), service: service);
+    await tester.tap(find.text('Classe An-Nour'));
+    await tester.pumpAndSettle();
+    final Finder cloturer = find.byKey(FicheClasseAdminPage.cleCloturer);
+    expect(cloturer, findsOneWidget);
+    // En dernier dans la fiche : sous « Ajouter un élève ».
+    expect(
+      tester.getRect(cloturer).top,
+      greaterThan(
+        tester.getRect(find.text(t.admin.groupes.actionAjouter).last).bottom,
+      ),
+    );
+    await tester.ensureVisible(cloturer);
+    await tester.tap(cloturer);
+    await tester.pumpAndSettle();
+    // La confirmation existante : un motif, puis l'envoi.
+    await tester.tap(find.text(MotifsProposes.clotureClasse().first));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.widgetWithText(ActionPrincipale, t.admin.groupes.cloturerEnvoyer),
+    );
+    await tester.pumpAndSettle();
+    expect(service.clotures, <String>['a']);
+    // Retour a la liste relue : la classe close n'est plus dans les ouvertes.
+    expect(find.byKey(FicheClasseAdminPage.cleFiche), findsNothing);
+    expect(find.text('Classe Al-Furqan'), findsOneWidget);
+    expect(find.text('Classe An-Nour'), findsNothing);
+  });
 
   testWidgets('fiche : membres illisibles, une phrase', (
     WidgetTester tester,
