@@ -24,7 +24,7 @@ const scenario = process.argv[2] ?? 'succes';
 const etiquette = process.argv[3] ?? scenario;
 if (!['succes', '3ds', 'refus', 'etats'].includes(scenario)) throw new Error(`scenario inconnu : ${scenario}`);
 const CARTES = { succes: '4242424242424242', '3ds': '4000002500003155', refus: '4000000000009995' };
-const carteChoisie = (process.env.E2E_CARTE ?? CARTES[scenario] ?? '').replace(/\s/g, '');
+const carteChoisie = (process.env.E2E_CARTE || CARTES[scenario] || '').split(',')[0].replace(/\s/g, '');
 const reussite = scenario === 'succes' || scenario === '3ds';
 const pk = process.env.E2E_STRIPE_PK ?? '';
 if (scenario !== 'etats' && !pk.startsWith('pk_test_')) throw new Error('refus : E2E_STRIPE_PK doit etre une cle publiable de TEST');
@@ -98,6 +98,10 @@ try {
     await remplir('input[name="cardCvc"], #cardCvc', '123');
     await remplir('input[name="billingName"], #billingName', 'E2E Famille');
     await remplir('input[name="billingPostalCode"], #billingPostalCode', '10001');
+    // « Enregistrer mes informations avec Link » est coche d'office par
+    // Stripe et demande alors un telephone : une famille peut le decocher.
+    const link = cadre.getByRole('checkbox', { name: /Link/ }).first();
+    if (await link.count() && await link.isChecked().catch(() => false)) await link.uncheck().catch(() => {});
     await p.capture(f, 'formulaire_rempli');
     // Le bouton de Stripe est plus bas : c'est la PAGE de paiement qui
     // defile (regle du 01/11), jusqu'au bouton, puis on le presse.
@@ -109,18 +113,25 @@ try {
     if (scenario === '3ds') {
       // La banque demande une confirmation : fenetre de test de Stripe,
       // « Complete » (ou « Terminer »).
-      await f.page.waitForTimeout(8000);
-      await p.capture(f, 'authentification_banque');
+      // La fenetre de test de la banque arrive dans un cadre imbrique : on la
+      // cherche jusqu'a 40 s, puis on confirme.
       let fait = false;
-      for (const fr of f.page.frames()) {
-        const b = fr.locator('button:has-text("Complete"), button:has-text("Terminer"), button:has-text("Valider"), #test-source-authorize-3ds');
-        if (await b.count().catch(() => 0)) { await b.first().click().catch(() => {}); fait = true; break; }
+      for (let essai = 0; essai < 20 && !fait; essai++) {
+        await f.page.waitForTimeout(2000);
+        for (const fr of f.page.frames()) {
+          const b = fr.locator('button, a[role=button]').filter({ hasText: /complete|terminer|autoriser|authorize|confirmer/i });
+          if (await b.count().catch(() => 0)) {
+            await p.capture(f, 'authentification_banque');
+            await b.first().click().catch(() => {});
+            fait = true; break;
+          }
+        }
       }
       p.dire(`Authentification de test : ${fait ? 'confirmee' : 'bouton introuvable'}`);
       if (!fait) echecs.push('authentification 3-D Secure : bouton de confirmation introuvable');
     }
     await f.page.waitForTimeout(12000); await activerSemantique(f.page);
-    await p.capture(f, reussite ? 'apres_paiement' : 'carte_refusee');
+    if (reussite) await p.capture(f, 'apres_paiement');
     const apres = f.page.url();
     p.dire(`Apres validation : ${apres}`);
     if (!apres.startsWith(APP)) echecs.push(`l'application a ete quittee : ${apres}`);
@@ -129,9 +140,24 @@ try {
       p.dire(`Etat relu : ${etat ?? '-'} (webhook non joue sur ce banc : « en cours de confirmation » attendu)`);
       if (!etat) echecs.push('apres le paiement, l\'etat de la commande ne s\'affiche pas');
     } else {
-      const refus = await cadre.locator('text=/refus|declined|insuffisant|insufficient|expir/i').first().textContent({ timeout: 15000 }).catch(() => null);
-      p.dire(`Refus affiche par Stripe : ${refus ?? '-'}`);
-      if (!refus) echecs.push('aucun message de refus dans le formulaire');
+      // E2E_CARTE peut nommer plusieurs cartes refusees (virgules) : chacune
+      // est essayee dans le meme formulaire, qui reste ouvert apres un refus.
+      const cartes = (process.env.E2E_CARTE || CARTES.refus).split(',').map((c) => c.replace(/\s/g, ''));
+      for (let i = 0; i < cartes.length; i++) {
+        if (i > 0) {
+          await carte.fill(cartes[i]);
+          await bouton.scrollIntoViewIfNeeded();
+          await bouton.click();
+          await f.page.waitForTimeout(10000);
+        }
+        const message = cadre.locator('text=/refus|declined|insuffisant|insufficient|expir|incorrect/i').first();
+        await message.scrollIntoViewIfNeeded().catch(() => {});
+        const refus = await message.textContent({ timeout: 15000 }).catch(() => null);
+        await p.capture(f, `carte_refusee_${cartes[i].slice(-4)}`);
+        p.dire(`Carte ${cartes[i].slice(0, 4)} … ${cartes[i].slice(-4)} : refus affiche par Stripe : ${refus ?? '-'}`);
+        if (!refus) echecs.push(`carte ${cartes[i].slice(-4)} : aucun message de refus`);
+        if (!f.page.url().startsWith(APP)) echecs.push(`l'application a ete quittee : ${f.page.url()}`);
+      }
     }
   }
   code = await p.fin(echecs.length ? 'rouge' : 'vert', echecs.join(' ; '));
