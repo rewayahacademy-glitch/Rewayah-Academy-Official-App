@@ -57,6 +57,21 @@
       "classeSupprimeeSoi": "أُغلق فصلك.",
       "classeSupprimeeFoyer": "أُغلق فصل أحد طلاب أسرتك.",
       "classeSupprimeeClasse": "أُغلق أحد فصولك.",
+      "seanceTerminee": "انتهت إحدى الحصص.",
+      "seanceTermineeDe": "انتهت حصة ⁨{classe}⁩ في ⁨{quand}⁩.",
+      "seanceTermineeTravail": "ما يجب تحضيره: ⁨{travail}⁩",
+      "seanceTermineeAucunTravail": "لا شيء يجب تحضيره.",
+      "seanceTermineePresents(plural, param=n)": {
+        "zero": "الطلاب الحاضرون: ⁨{n}⁩ من أصل ⁨{total}⁩.",
+        "one": "الطلاب الحاضرون: ⁨{n}⁩ من أصل ⁨{total}⁩.",
+        "two": "الطلاب الحاضرون: ⁨{n}⁩ من أصل ⁨{total}⁩.",
+        "few": "الطلاب الحاضرون: ⁨{n}⁩ من أصل ⁨{total}⁩.",
+        "many": "الطلاب الحاضرون: ⁨{n}⁩ من أصل ⁨{total}⁩.",
+        "other": "الطلاب الحاضرون: ⁨{n}⁩ من أصل ⁨{total}⁩."
+      },
+      "seanceTermineeCahierAttend": "دفتر المتابعة بانتظار معلوماتك.",
+      "seanceTermineeCahierDepose": "أُودع دفتر المتابعة، شكرًا.",
+      "seanceTermineePhrases": "⁨{premiere}⁩ ⁨{suite}⁩",
       "inconnu": "يحتاج هذا الإشعار إلى نسخة أحدث من التطبيق. أعد تحميل الصفحة لقراءته."
     },
     "titre": "الإشعارات",

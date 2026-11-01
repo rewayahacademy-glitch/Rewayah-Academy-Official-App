@@ -133,9 +133,60 @@ NotificationContenu contenuNotificationPour(
       classe: evenements.classeSupprimeeClasse,
       sinon: evenements.classeSupprimee,
     ),
+    // FN-028 (01/11/2026) : l'avis de fin de seance, application seulement.
+    'seance_terminee' => texteSeanceTerminee(params, portee, quand),
     // Un evenement que cette version ne connait pas : dit, jamais perdu, et
     // la phrase dit quoi faire (K-59).
     _ => evenements.inconnu,
   };
   return NotificationContenu(titre: titre);
+}
+
+/// FN-028 : le texte de l'avis de fin de seance, d'apres ce que le serveur a
+/// pose. Enseignant (portee « classe ») : les presents sur les inscrits, puis
+/// le cahier (a remplir, ou depose). Eleve et tuteur : le Travail a preparer
+/// seulement si la regle de partage l'ouvre (`travail_etat` « partage ») ;
+/// « Aucun travail a preparer. » seulement si le cahier, partage, n'en porte
+/// pas (« aucun ») ; sinon rien n'est dit du travail.
+String texteSeanceTerminee(
+  Map<String, dynamic> params,
+  String portee,
+  String? quand,
+) {
+  final evenements = t.notifications.evenements;
+  final Object? brutClasse = params['classe'];
+  final String? classe = brutClasse is String && brutClasse.trim().isNotEmpty
+      ? brutClasse.trim()
+      : null;
+  final String premiere = classe != null && quand != null
+      ? evenements.seanceTermineeDe(classe: classe, quand: quand)
+      : evenements.seanceTerminee;
+  String? suite;
+  if (portee == 'classe') {
+    final int? presents = int.tryParse('${params['presents'] ?? ''}');
+    final int? inscrits = int.tryParse('${params['inscrits'] ?? ''}');
+    final String cahier = params['cahier_depose'] == true
+        ? evenements.seanceTermineeCahierDepose
+        : evenements.seanceTermineeCahierAttend;
+    suite = presents == null || inscrits == null
+        ? cahier
+        : evenements.seanceTermineePhrases(
+            premiere: evenements.seanceTermineePresents(
+              n: presents,
+              total: inscrits,
+            ),
+            suite: cahier,
+          );
+  } else {
+    final Object? travail = params['travail'];
+    suite = switch (params['travail_etat']) {
+      'partage' when travail is String && travail.trim().isNotEmpty =>
+        evenements.seanceTermineeTravail(travail: travail.trim()),
+      'aucun' => evenements.seanceTermineeAucunTravail,
+      _ => null,
+    };
+  }
+  return suite == null
+      ? premiere
+      : evenements.seanceTermineePhrases(premiere: premiere, suite: suite);
 }
