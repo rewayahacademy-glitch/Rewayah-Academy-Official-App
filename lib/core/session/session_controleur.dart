@@ -67,6 +67,13 @@ class SessionControleur extends Notifier<SessionState> {
   bool _demoActive = false;
   final Map<String, bool> _autonomes = <String, bool>{};
 
+  /// Les profils dont la capacite a ete lue avec un compte actif. Une lecture
+  /// faite pendant l'attente rend toujours faux (`ma_capacite_eleve` exige un
+  /// compte valide) : elle ne vaut pas reponse definitive (FN-112, prod du
+  /// 01/11/2026 : l'eleve adulte accepte restait sur l'accueil du tuteur,
+  /// « Aucun profil eleve pour l'instant »).
+  final Set<String> _lusCompteActif = <String>{};
+
   @override
   SessionState build() {
     final SourceSession source = ref.watch(sourceSessionProvider);
@@ -118,14 +125,21 @@ class SessionControleur extends Notifier<SessionState> {
       eleveAutonome: profil != null && (_autonomes[profil] ?? false),
       capaciteEleveEnLecture: profil != null && !_autonomes.containsKey(profil),
     );
-    if (profil == null || _autonomes.containsKey(profil)) {
+    if (profil == null) {
       return;
     }
-    _autonomes[profil] = false;
-    unawaited(_lireCapacite(profil));
+    final bool actif = etat.porte == PorteAcces.actif;
+    final bool dejaSu =
+        _autonomes.containsKey(profil) &&
+        (!actif || _lusCompteActif.contains(profil));
+    if (dejaSu) {
+      return;
+    }
+    _autonomes[profil] = _autonomes[profil] ?? false;
+    unawaited(_lireCapacite(profil, compteActif: actif));
   }
 
-  Future<void> _lireCapacite(String profil) async {
+  Future<void> _lireCapacite(String profil, {required bool compteActif}) async {
     CapaciteEleve capacite;
     try {
       capacite = await ref.read(portCapaciteEleveProvider).lire(profil);
@@ -134,6 +148,9 @@ class SessionControleur extends Notifier<SessionState> {
     }
     final bool autonome = capacite is EleveAutonome;
     _autonomes[profil] = autonome;
+    if (compteActif && capacite is! CapaciteInconnue) {
+      _lusCompteActif.add(profil);
+    }
     if (ref.mounted && state.profileId == profil) {
       state = state.copyWith(
         eleveAutonome: autonome,
