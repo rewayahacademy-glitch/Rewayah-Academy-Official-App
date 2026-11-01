@@ -11,9 +11,12 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/marque/logo_google.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
+import '../../core/session/source_session.dart'
+    show sessionTermineeParLeServeur;
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/bandeau_attention.dart';
 import '../../core/widgets/controle_segmente.dart';
 import '../demo/mode_demonstration.dart';
 import '../demo/racine_demonstrable.dart';
@@ -438,6 +441,22 @@ class _Saisie extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        // Demande du directeur (01/11/2026) : une session coupee par le
+        // serveur (deux connexions, un autre compte ouvert ici) se dit.
+        ValueListenableBuilder<bool>(
+          valueListenable: sessionTermineeParLeServeur,
+          builder: (BuildContext _, bool terminee, Widget? _) => terminee
+              ? Padding(
+                  padding: const EdgeInsetsDirectional.only(
+                    bottom: AppSpacing.lg,
+                  ),
+                  child: BandeauAttention(
+                    titre: t.connexion.sessionTermineeTitre,
+                    message: t.connexion.sessionTermineePhrase,
+                  ),
+                )
+              : const SizedBox.shrink(),
+        ),
         Text(
           creation ? t.connexion.titreCreation : t.connexion.titre,
           style: textes.headlineMedium,

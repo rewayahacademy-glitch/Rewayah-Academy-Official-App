@@ -921,6 +921,8 @@
   },
   "connexion": {
     "titre": "Se connecter",
+    "sessionTermineeTitre": "Vous avez été déconnecté",
+    "sessionTermineePhrase": "Votre session a pris fin : ce compte, ou un autre, s'est connecté ailleurs, dans ce navigateur ou sur un autre appareil. Reconnectez-vous ici. Pour utiliser deux comptes en même temps, ouvrez le second dans une fenêtre de navigation privée ou sur un autre appareil.",
     "modeConnexion": "J'ai déjà un compte",
     "modeCreation": "Créer un compte",
     "titreCreation": "Créer votre compte",

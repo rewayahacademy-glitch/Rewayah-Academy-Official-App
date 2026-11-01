@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../domain/enums.dart';
@@ -24,6 +25,15 @@ abstract interface class SourceSession {
   /// juste inscrit resterait sans role jusqu'a sa prochaine connexion.
   Future<void> rafraichir();
 }
+
+/// Vrai quand la derniere session a ete terminee parce que le serveur la
+/// refusait (souvent : le meme compte, ou un autre, ouvert ailleurs dans ce
+/// navigateur ou sur un autre appareil). L'ecran « Se connecter » le dit
+/// clairement (demande du directeur du 01/11/2026), puis l'oublie a la
+/// connexion suivante.
+final ValueNotifier<bool> sessionTermineeParLeServeur = ValueNotifier<bool>(
+  false,
+);
 
 /// La source reelle : Supabase.
 class SourceSessionSupabase implements SourceSession {
@@ -85,6 +95,7 @@ class SourceSessionSupabase implements SourceSession {
           // Rafraichissement refuse ou sans reponse : la session est finie.
         }
       }
+      sessionTermineeParLeServeur.value = true;
       try {
         await _client.auth.signOut(scope: SignOutScope.local);
       } on Object {
@@ -94,6 +105,9 @@ class SourceSessionSupabase implements SourceSession {
     }
 
     final AppRole? role = AppRole.depuisSql(claims.role);
+    if (profil.lecture == LectureProfil.presente) {
+      sessionTermineeParLeServeur.value = false;
+    }
 
     return SessionState(
       resolue: true,
@@ -230,6 +244,7 @@ Future<void> terminerSessionRefusee() async {
   } on Object {
     // Rafraichissement refuse ou sans reponse : la session est finie.
   }
+  sessionTermineeParLeServeur.value = true;
   try {
     await auth.signOut(scope: SignOutScope.local);
   } on Object {
