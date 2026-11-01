@@ -72,6 +72,7 @@ NotificationContenu contenuNotificationPour(
     'paiement_relance' => evenements.paiementRelance,
     'acces_suspendu_paiement' => evenements.accesSuspenduPaiement,
     'acces_retabli_paiement' => evenements.accesRetabliPaiement,
+    'paiement_recu' => evenements.paiementRecu,
     // Fiche du 27/10, ligne 11.
     'classe_creee' => selonPortee(
       soi: evenements.classeCreeeSoi,

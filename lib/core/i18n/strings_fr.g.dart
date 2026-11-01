@@ -12405,6 +12405,9 @@ class Traductions$notifications$evenements$fr {
 	/// fr: 'L'accès est rétabli : le paiement est reçu.'
 	String get accesRetabliPaiement => 'L\'accès est rétabli : le paiement est reçu.';
 
+	/// fr: 'Le paiement est reçu. Le solde est à jour.'
+	String get paiementRecu => 'Le paiement est reçu. Le solde est à jour.';
+
 	/// fr: 'Un enseignant a été affecté à votre classe.'
 	String get enseignantAffecteSoi => 'Un enseignant a été affecté à votre classe.';
 
@@ -47316,6 +47319,7 @@ extension on Traductions {
 			'notifications.evenements.paiementRelance' => 'Un paiement arrive à échéance. Il se règle dans Paiements.',
 			'notifications.evenements.accesSuspenduPaiement' => 'Un accès est suspendu : le paiement du mois n\'est pas reçu.',
 			'notifications.evenements.accesRetabliPaiement' => 'L\'accès est rétabli : le paiement est reçu.',
+			'notifications.evenements.paiementRecu' => 'Le paiement est reçu. Le solde est à jour.',
 			'notifications.evenements.enseignantAffecteSoi' => 'Un enseignant a été affecté à votre classe.',
 			'notifications.evenements.enseignantAffecteClasse' => 'Une classe vous est confiée.',
 			'notifications.evenements.remplacementPrisQuand' => ({required Object quand}) => 'La séance du ${quand} sera assurée par un enseignant remplaçant.',
@@ -47533,9 +47537,9 @@ extension on Traductions {
 			'tuteur.accueil.aucunCoursPrevuDetail' => 'Les cours de la semaine sont préparés à l\'avance. Celui-ci apparaîtra ici.',
 			'tuteur.accueil.enRecherche' => 'En recherche d\'un enseignant',
 			'tuteur.accueil.enRechercheDepuis' => ({required Object date}) => 'Demande déposée le ${date}',
-			'tuteur.accueil.enRechercheSansDate' => ({required Object prenom}) => 'Un enseignant prendra ${prenom} en charge parmi les heures proposées.',
 			_ => null,
 		} ?? switch (path) {
+			'tuteur.accueil.enRechercheSansDate' => ({required Object prenom}) => 'Un enseignant prendra ${prenom} en charge parmi les heures proposées.',
 			'tuteur.accueil.sansCreneau' => ({required Object prenom}) => 'Aucune heure proposée pour ${prenom}',
 			'tuteur.accueil.sansCreneauDetail' => ({required Object prenom}) => 'Sans créneau, aucun enseignant ne peut prendre ${prenom} en charge.',
 			'tuteur.accueil.poserDesHeures' => 'Proposer des heures',
@@ -48047,9 +48051,9 @@ extension on Traductions {
 			'enseignant.cahier.introuvable' => 'Séance introuvable',
 			'enseignant.cahier.introuvableDetail' => 'Cette séance n\'est pas l\'une des vôtres, ou le lien est incomplet. Revenez à votre journée pour choisir une séance.',
 			'enseignant.cahier.erreur' => 'Le constat n\'a pas pu être lu.',
-			'enseignant.cahier.erreurDetail' => 'Réessayez, ou déposez le cahier de transmission sans le constat.',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.cahier.erreurDetail' => 'Réessayez, ou déposez le cahier de transmission sans le constat.',
 			'enseignant.cahier.echecEnvoi' => 'L\'envoi n\'a pas été confirmé. Vérifiez avant de réessayer.',
 			'enseignant.cahier.dejaDepose' => 'Le cahier de transmission de cette séance est déjà déposé.',
 			'enseignant.cahier.dejaDeposeDetail' => 'Un cahier de transmission ne se dépose qu\'une fois, et il ne se supprime pas d\'ici.',
@@ -48561,9 +48565,9 @@ extension on Traductions {
 			'controleur.echanges.champLibelle' => 'Répondre à l\'administration',
 			'controleur.echanges.envoyer' => 'Envoyer',
 			'controleur.echanges.champVide' => 'Écrivez un message pour pouvoir l\'envoyer.',
-			'controleur.echanges.enCours' => 'Envoi en cours.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.echanges.enCours' => 'Envoi en cours.',
 			'controleur.echanges.envoye' => 'Envoyé.',
 			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.reessayer' => 'Réessayer',
@@ -49075,9 +49079,9 @@ extension on Traductions {
 			'tc.parcours.signalement.categorie' => 'De quoi s\'agit-il ?',
 			'tc.parcours.signalement.categorieValeur.pedagogique' => 'Pédagogique',
 			'tc.parcours.signalement.categorieValeur.presence' => 'Présence',
-			'tc.parcours.signalement.categorieValeur.technique' => 'Technique',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.signalement.categorieValeur.technique' => 'Technique',
 			'tc.parcours.signalement.categorieValeur.changement' => 'Changement',
 			'tc.parcours.signalement.categorieValeur.securiteEnfant' => 'Sécurité d\'un enfant',
 			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',
@@ -49589,9 +49593,9 @@ extension on Traductions {
 			'suiviFamille.carteTitre' => ({required Object dePrenom}) => 'Demande ${dePrenom}',
 			'suiviFamille.detailTitre' => ({required Object dePrenom}) => 'Suivi de la demande ${dePrenom}',
 			'suiviFamille.etapeCourante' => ({required Object etape}) => 'Étape en cours : ${etape}',
-			'suiviFamille.toutFait' => 'Toutes les étapes sont franchies.',
 			_ => null,
 		} ?? switch (path) {
+			'suiviFamille.toutFait' => 'Toutes les étapes sont franchies.',
 			'suiviFamille.voirSuivi' => 'Voir le suivi',
 			'suiviFamille.vide' => 'Aucune demande pour le moment.',
 			'suiviFamille.faireDemande' => 'Faire une demande',
@@ -50103,9 +50107,9 @@ extension on Traductions {
 			'com.vocal.demo.refuse' => 'Micro refusé',
 			'com.vocal.demo.nonConfirme' => 'Non confirmé',
 			'com.vocal.demo.indisponible' => 'Indisponible',
-			'com.vocal.demo.recu' => 'Message vocal reçu',
 			_ => null,
 		} ?? switch (path) {
+			'com.vocal.demo.recu' => 'Message vocal reçu',
 			'com.vocal.demo.repondre' => 'Répondre dans la conversation',
 			'com.vocal.demo.envoyes' => 'Messages vocaux envoyés',
 			'com.vocal.demo.auteurEnseignante' => 'Sayyida Mariam, enseignante',
@@ -50617,9 +50621,9 @@ extension on Traductions {
 			'com.annonces.demoPublication.signalementAffilie' => 'Publication « Fiches de tajwid à imprimer »',
 			'com.annonces.demoPublication.extraitAffilie' => 'Retrouvez mes fiches avec ce lien partenaire, remise de 20 % avec mon code.',
 			'com.annonces.demoPublication.signalementVente' => 'Publication « Cours particuliers disponibles »',
-			'com.annonces.demoPublication.extraitVente' => 'Je propose des cours particuliers payants le week-end, écrivez-moi.',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.demoPublication.extraitVente' => 'Je propose des cours particuliers payants le week-end, écrivez-moi.',
 			'com.annonces.demoPublication.signalementHorsSujet' => 'Réponse sous « Organiser une révision collective »',
 			'com.annonces.section' => 'Annonces de la Classe',
 			'com.annonces.annonce' => 'Annonce',
@@ -51131,9 +51135,9 @@ extension on Traductions {
 			'comptable.encaissements.filtreARapprocher' => 'À rapprocher',
 			'comptable.encaissements.recherche' => 'Rechercher une famille ou une référence',
 			'comptable.encaissements.colDate' => 'Date',
-			'comptable.encaissements.colFamille' => 'Famille',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.encaissements.colFamille' => 'Famille',
 			'comptable.encaissements.colReference' => 'Référence',
 			'comptable.encaissements.colBrut' => 'Brut',
 			'comptable.encaissements.colFrais' => 'Frais',
@@ -51645,9 +51649,9 @@ extension on Traductions {
 			'comptable.direction.titre' => 'Réserve et délégation',
 			'comptable.direction.sousTitre' => 'La politique de la Réserve stratégique et ce que le Comptable peut exécuter seul.',
 			'comptable.direction.reserve' => 'Politique de la Réserve stratégique',
-			'comptable.direction.delegation' => 'Délégation financière',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.direction.delegation' => 'Délégation financière',
 			'comptable.demo.titre' => 'Démonstration Comptable',
 			'comptable.demo.mention' => 'Données fictives, aucun paiement, aucun envoi.',
 			'comptable.demo.intro' => 'Choisissez un écran du Comptable. Les montants sont masqués par défaut ; la variante « montants affichés » les révèle pour la durée de la page.',
@@ -52159,9 +52163,9 @@ extension on Traductions {
 			'courriels.admin.file.filtre.annule' => 'Annulés',
 			'courriels.admin.file.statut.enAttente' => 'En file',
 			'courriels.admin.file.statut.envoi' => 'En cours d\'envoi',
-			'courriels.admin.file.statut.envoye' => 'Envoyé',
 			_ => null,
 		} ?? switch (path) {
+			'courriels.admin.file.statut.envoye' => 'Envoyé',
 			'courriels.admin.file.statut.echec' => 'Non envoyé',
 			'courriels.admin.file.statut.annule' => 'Annulé',
 			'courriels.admin.file.origine.auto' => 'Automatique',

@@ -216,6 +216,33 @@ SELECT pg_temp.vrai(current_setting('test.s1')::jsonb ->> 'etat' = 'completed'
 RESET ROLE;
 SELECT pg_temp.vrai(EXISTS (SELECT 1 FROM public.audit_logs WHERE action = 'recharge_creditee'),
   'credit : inscrit au journal');
+-- Parcours 7 (03/11/2026, migration 20261103400000) : la famille est prevenue
+-- une fois par destinataire, pas une fois par profil credite, et l'e-mail de
+-- facturation part avec le montant de la commande.
+SELECT pg_temp.vrai((SELECT count(*) FROM public.notifications
+                      WHERE evenement = 'paiement_recu'
+                        AND destinataire = 'f6000000-0000-4000-8000-0000000000d1') = 1
+  AND (SELECT (params ->> 'montant_mineur')::bigint FROM public.notifications
+        WHERE evenement = 'paiement_recu' AND destinataire = 'f6000000-0000-4000-8000-0000000000d1')
+      = 3 * current_setting('test.tarif')::bigint
+  AND (SELECT params ->> 'devise' FROM public.notifications
+        WHERE evenement = 'paiement_recu' AND destinataire = 'f6000000-0000-4000-8000-0000000000d1')
+      = current_setting('test.devise')
+  AND (SELECT destination FROM public.notifications
+        WHERE evenement = 'paiement_recu' AND destinataire = 'f6000000-0000-4000-8000-0000000000d1')
+      = '/tuteur/foyer/recharge',
+  'paiement recu : une seule notification au tuteur, avec le montant et la devise');
+SELECT pg_temp.vrai((SELECT count(*) FROM public.notifications WHERE evenement = 'paiement_recu')
+  = (SELECT count(DISTINCT destinataire) FROM public.notifications WHERE evenement = 'paiement_recu'),
+  'paiement recu : jamais deux notifications au meme destinataire');
+SELECT pg_temp.vrai((SELECT count(*) FROM public.courriels_sortants
+                      WHERE modele = 'paiement_recu' AND categorie = 'facturation'
+                        AND destinataire_adresse = 'f6-tit@test.invalid'
+                        AND destinataire_profil = 'f6000000-0000-4000-8000-0000000000d1'
+                        AND cle_idempotence LIKE 'notification:%'
+                        AND (donnees ->> 'montant_mineur')::bigint = 3 * current_setting('test.tarif')::bigint
+                        AND donnees ->> 'devise' = current_setting('test.devise')) = 1,
+  'paiement recu : un e-mail de facturation au tuteur, avec le montant');
 
 -- ------------------------------------------------------------------
 -- 5. Echecs : montant incoherent, refus, expiration
