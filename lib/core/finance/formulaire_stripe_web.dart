@@ -82,13 +82,41 @@ class FormulaireStripe extends StatefulWidget {
 
 class _FormulaireStripeState extends State<FormulaireStripe> {
   JSObject? _checkout;
+  JSObject? _observateur;
   bool _monte = false;
   bool _ferme = false;
+
+  /// La hauteur du formulaire, suivie de son contenu : jamais un cadre qui
+  /// defile (DECISION-DEFILEMENT-2026-11-01 : la page defile, elle seule).
+  double _hauteur = _hauteurAvantMontage;
+
+  static const double _hauteurAvantMontage = 320;
+
+  /// Suit la hauteur du cadre que Stripe insere et la donne au widget.
+  void _suivreHauteur(JSObject conteneur) {
+    final JSObject? cadre = conteneur['firstElementChild'] as JSObject?;
+    final JSFunction? constructeur =
+        globalContext['ResizeObserver'] as JSFunction?;
+    if (cadre == null || constructeur == null) return;
+    void mesurer() {
+      final double h = (cadre['scrollHeight']! as JSNumber).toDartDouble;
+      if (!_ferme && mounted && h > 0 && h != _hauteur) {
+        setState(() => _hauteur = h);
+      }
+    }
+
+    final JSObject observateur = constructeur.callAsConstructor<JSObject>(
+      ((JSAny _, JSAny _) => mesurer()).toJS,
+    );
+    observateur.callMethod<JSAny?>('observe'.toJS, cadre);
+    _observateur = observateur;
+    mesurer();
+  }
 
   Future<void> _monter(Object element) async {
     final JSObject conteneur = element as JSObject;
     (conteneur['style']! as JSObject)
-      ..['overflowY'] = 'auto'.toJS
+      ..['overflow'] = 'hidden'.toJS
       ..['width'] = '100%'.toJS
       ..['height'] = '100%'.toJS;
     try {
@@ -122,6 +150,7 @@ class _FormulaireStripeState extends State<FormulaireStripe> {
       }
       _checkout = checkout;
       checkout.callMethod<JSAny?>('mount'.toJS, conteneur);
+      _suivreHauteur(conteneur);
       if (mounted) setState(() => _monte = true);
     } on Object {
       if (!_ferme) widget.onEchec();
@@ -131,6 +160,8 @@ class _FormulaireStripeState extends State<FormulaireStripe> {
   @override
   void dispose() {
     _ferme = true;
+    _observateur?.callMethod<JSAny?>('disconnect'.toJS);
+    _observateur = null;
     // Stripe n'admet qu'un formulaire a la fois : il se detruit avec l'ecran.
     _checkout?.callMethod<JSAny?>('destroy'.toJS);
     _checkout = null;
@@ -138,26 +169,19 @@ class _FormulaireStripeState extends State<FormulaireStripe> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    // Le formulaire defile dans son propre cadre, haut d'au moins une carte
-    // et d'au plus l'ecran.
-    final double hauteur = (MediaQuery.sizeOf(context).height * 0.75).clamp(
-      460,
-      820,
-    );
-    return SizedBox(
-      height: hauteur,
-      child: Stack(
-        children: <Widget>[
-          Positioned.fill(
-            child: HtmlElementView.fromTagName(
-              tagName: 'div',
-              onElementCreated: _monter,
-            ),
+  Widget build(BuildContext context) => SizedBox(
+    // La hauteur du contenu de Stripe : la page defile, pas ce cadre.
+    height: _hauteur,
+    child: Stack(
+      children: <Widget>[
+        Positioned.fill(
+          child: HtmlElementView.fromTagName(
+            tagName: 'div',
+            onElementCreated: _monter,
           ),
-          if (!_monte) const Skeleton.liste(),
-        ],
-      ),
-    );
-  }
+        ),
+        if (!_monte) const Skeleton.liste(),
+      ],
+    ),
+  );
 }
