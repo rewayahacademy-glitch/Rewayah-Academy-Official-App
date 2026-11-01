@@ -2858,7 +2858,11 @@ class _Traductions$salle$seance$ar extends Traductions$salle$seance$fr {
 	@override String get titreGuidee => 'حصتي';
 	@override String ligne({required Object debut, required Object fin}) => '⁨${debut}⁩ · ⁨${fin}⁩';
 	@override String minutesRestantes({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(minutes,
+		zero: 'الوقت المتبقي: ⁨${minutes}⁩ د',
 		one: 'الوقت المتبقي: ⁨${minutes}⁩ د',
+		two: 'الوقت المتبقي: ⁨${minutes}⁩ د',
+		few: 'الوقت المتبقي: ⁨${minutes}⁩ د',
+		many: 'الوقت المتبقي: ⁨${minutes}⁩ د',
 		other: 'الوقت المتبقي: ⁨${minutes}⁩ د',
 	);
 	@override String get sePoursuit => 'الحصة مستمرة.';
@@ -9288,13 +9292,21 @@ class _Traductions$salle$seance$chrono$ar extends Traductions$salle$seance$chron
 	@override String ecoule({required Object temps}) => 'مضى ⁨${temps}⁩';
 	@override String restant({required Object temps}) => 'تبقّى ⁨${temps}⁩';
 	@override String get tempsPrevuEcoule => 'انقضى الوقت المقرّر';
-	@override String annonce({required Object ecoule, required Object restant}) => 'الحصة: ${ecoule} و${restant}.';
+	@override String annonce({required Object ecoule, required Object restant}) => 'الحصة: ⁨${ecoule}⁩ و⁨${restant}⁩.';
 	@override String minutesEcoulees({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(minutes,
+		zero: 'مضى ⁨${minutes}⁩ د',
 		one: 'مضى ⁨${minutes}⁩ د',
+		two: 'مضى ⁨${minutes}⁩ د',
+		few: 'مضى ⁨${minutes}⁩ د',
+		many: 'مضى ⁨${minutes}⁩ د',
 		other: 'مضى ⁨${minutes}⁩ د',
 	);
 	@override String minutesRestantes({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(minutes,
+		zero: 'تبقّى ⁨${minutes}⁩ د',
 		one: 'تبقّى ⁨${minutes}⁩ د',
+		two: 'تبقّى ⁨${minutes}⁩ د',
+		few: 'تبقّى ⁨${minutes}⁩ د',
+		many: 'تبقّى ⁨${minutes}⁩ د',
 		other: 'تبقّى ⁨${minutes}⁩ د',
 	);
 	@override String get annoncePrevuEcoule => 'انقضى الوقت المقرّر.';
@@ -20538,14 +20550,14 @@ extension on TraductionsAr {
 			'salle.seance.titre' => 'حصة مباشرة',
 			'salle.seance.titreGuidee' => 'حصتي',
 			'salle.seance.ligne' => ({required Object debut, required Object fin}) => '⁨${debut}⁩ · ⁨${fin}⁩',
-			'salle.seance.minutesRestantes' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(minutes, one: 'الوقت المتبقي: ⁨${minutes}⁩ د', other: 'الوقت المتبقي: ⁨${minutes}⁩ د', ), 
+			'salle.seance.minutesRestantes' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(minutes, zero: 'الوقت المتبقي: ⁨${minutes}⁩ د', one: 'الوقت المتبقي: ⁨${minutes}⁩ د', two: 'الوقت المتبقي: ⁨${minutes}⁩ د', few: 'الوقت المتبقي: ⁨${minutes}⁩ د', many: 'الوقت المتبقي: ⁨${minutes}⁩ د', other: 'الوقت المتبقي: ⁨${minutes}⁩ د', ), 
 			'salle.seance.sePoursuit' => 'الحصة مستمرة.',
 			'salle.seance.chrono.ecoule' => ({required Object temps}) => 'مضى ⁨${temps}⁩',
 			'salle.seance.chrono.restant' => ({required Object temps}) => 'تبقّى ⁨${temps}⁩',
 			'salle.seance.chrono.tempsPrevuEcoule' => 'انقضى الوقت المقرّر',
-			'salle.seance.chrono.annonce' => ({required Object ecoule, required Object restant}) => 'الحصة: ${ecoule} و${restant}.',
-			'salle.seance.chrono.minutesEcoulees' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(minutes, one: 'مضى ⁨${minutes}⁩ د', other: 'مضى ⁨${minutes}⁩ د', ), 
-			'salle.seance.chrono.minutesRestantes' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(minutes, one: 'تبقّى ⁨${minutes}⁩ د', other: 'تبقّى ⁨${minutes}⁩ د', ), 
+			'salle.seance.chrono.annonce' => ({required Object ecoule, required Object restant}) => 'الحصة: ⁨${ecoule}⁩ و⁨${restant}⁩.',
+			'salle.seance.chrono.minutesEcoulees' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(minutes, zero: 'مضى ⁨${minutes}⁩ د', one: 'مضى ⁨${minutes}⁩ د', two: 'مضى ⁨${minutes}⁩ د', few: 'مضى ⁨${minutes}⁩ د', many: 'مضى ⁨${minutes}⁩ د', other: 'مضى ⁨${minutes}⁩ د', ), 
+			'salle.seance.chrono.minutesRestantes' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(minutes, zero: 'تبقّى ⁨${minutes}⁩ د', one: 'تبقّى ⁨${minutes}⁩ د', two: 'تبقّى ⁨${minutes}⁩ د', few: 'تبقّى ⁨${minutes}⁩ د', many: 'تبقّى ⁨${minutes}⁩ د', other: 'تبقّى ⁨${minutes}⁩ د', ), 
 			'salle.seance.chrono.annoncePrevuEcoule' => 'انقضى الوقت المقرّر.',
 			'salle.seance.pause.dans' => ({required Object minutes}) => 'استراحة بعد ⁨${minutes}⁩ د',
 			'salle.seance.pause.prevue' => 'استراحة مقرّرة',
