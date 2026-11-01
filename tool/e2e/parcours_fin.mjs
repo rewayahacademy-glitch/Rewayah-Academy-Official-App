@@ -5,6 +5,7 @@
 // motif de refus de re-entree), le temps restant affiche en salle, les notifications.
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import { parcours, connecter, connecterParLien, trouver, trouverTexte, libelles, sql,
   activerSemantique, COMPTES, TRAVAIL } from './commun.mjs';
 const etiquette = process.argv[2] ?? 'fin';
@@ -18,6 +19,14 @@ if (etiquette === 'chrono') {
   // faudrait attendre une heure et demie) ; aucun texte n'est lu ailleurs que
   // dans l'application.
   process.exit(await chrono());
+}
+if (etiquette === 'refus') {
+  // FN-024 et FN-025 (etape 2) : meme debut que « chrono », puis la seance est
+  // close en SQL (comme la cloture automatique ou « Quitter et ouvrir le
+  // cahier ») et la salle LiveKit locale supprimee : la connexion tombe. Le
+  // client redemande le jeton ; le serveur repond avec son motif. Puis l'eleve
+  // tente de rentrer (rechargement) : le refus dit pourquoi, avec l'heure.
+  process.exit(await chrono({ refus: true }));
 }
 const p = await parcours(`Fin de seance (${etiquette})`, `parcours-fin/${etiquette}`);
 const etat = sql(`select s.status || ' ; prevue ' || to_char(s.started_at,'HH24:MI') || '-' || to_char(s.ended_at,'HH24:MI') || ' UTC ; maintenant ' || to_char(now() at time zone 'utc','HH24:MI') from public.sessions s join public.groupes g on g.id = s.groupe_id
@@ -49,14 +58,16 @@ await role('enseignant', (pg) => connecter(pg, COMPTES.enseignant), new RegExp(`
 p.dire(`Seance (fin du script) : ${sql(`select s.status from public.sessions s join public.groupes g on g.id = s.groupe_id where g.libelle = '${classe.nom}' and s.deleted_at is null and s.started_at < now() order by s.started_at desc limit 1`)}`);
 await p.fin('joué');
 
-async function chrono() {
-  const q = await parcours('Fin de seance, etape 1 : chrono du temps restant en salle', 'fin-seance-chrono');
+async function chrono({ refus = false } = {}) {
+  const q = refus
+    ? await parcours('Fin de seance, etape 2 : seance terminee annoncee, refus motive', 'fin-seance-refus')
+    : await parcours('Fin de seance, etape 1 : chrono du temps restant en salle', 'fin-seance-chrono');
   const groupe = `(select id from public.groupes where libelle = '${classe.nom}' and ended_at is null limit 1)`;
   const seance = sql(`select id from public.sessions where groupe_id = ${groupe} and deleted_at is null
     and status in ('planned','preflight','in_progress') order by abs(extract(epoch from started_at - now())) limit 1`);
   if (!seance) return q.fin('rouge', `aucune seance materialisee pour ${classe.nom}`);
-  sql(`update public.sessions set started_at = now() - interval '57 minutes', ended_at = now() + interval '3 minutes',
-    join_opens_at = now() - interval '77 minutes' where id = '${seance}'`);
+  sql(`update public.sessions set started_at = now() - interval '7 minutes', ended_at = now() + interval '3 minutes',
+    join_opens_at = now() - interval '27 minutes' where id = '${seance}'`);
   const fin = Date.parse(sql(`select to_char(ended_at at time zone 'utc','YYYY-MM-DD"T"HH24:MI:SS"Z"') from public.sessions where id = '${seance}'`));
   q.dire(`Seance ${seance} : ${sql(`select status || ' ; ' || to_char(started_at at time zone 'utc','HH24:MI:SS') || '-' || to_char(ended_at at time zone 'utc','HH24:MI:SS') || ' UTC' from public.sessions where id = '${seance}'`)}`);
   const MOTIF_RESTANT = /min restantes|restant/;
@@ -103,5 +114,57 @@ async function chrono() {
     q.dire(`${x.role}, ${new Date().toISOString()}, apres la fin prevue : ${apres[x.role] ?? 'rien'}`);
   }
   const manque = acteurs.filter((x) => !avant[x.role] || !apres[x.role]).map((x) => x.role);
-  return q.fin(manque.length ? 'rouge' : 'vert', manque.length ? `chrono absent ou fige pour : ${manque.join(', ')}` : '');
+  if (!refus || manque.length) {
+    return q.fin(manque.length ? 'rouge' : 'vert', manque.length ? `chrono absent ou fige pour : ${manque.join(', ')}` : '');
+  }
+  return finAnnoncee(q, seance, e, a);
+}
+
+/// Jeton LiveKit d'administration de la pile LOCALE (cle de dev de pile.sh).
+function jetonAdminLivekit() {
+  const b64 = (o) => Buffer.from(JSON.stringify(o)).toString('base64url');
+  const maintenant = Math.floor(Date.now() / 1000);
+  const corps = `${b64({ alg: 'HS256', typ: 'JWT' })}.${b64({ iss: 'devkey', nbf: maintenant - 10, exp: maintenant + 300, video: { roomCreate: true, roomAdmin: true, roomList: true } })}`;
+  const signature = crypto.createHmac('sha256', 'secret_e2e_local_livekit_0123456789abcdef').update(corps).digest('base64url');
+  return `${corps}.${signature}`;
+}
+
+async function finAnnoncee(q, seance, e, a) {
+  // La seance se clot (statut serveur), puis la salle LiveKit disparait.
+  sql(`update public.sessions set status = 'ended' where id = '${seance}' and status = 'in_progress'`);
+  // Le nom de salle n'est pas en base : la pile locale n'a que cette salle
+  // ouverte ; on la lit chez LiveKit.
+  const livekit = (methode, corps) => fetch(`http://127.0.0.1:7880/twirp/livekit.RoomService/${methode}`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${jetonAdminLivekit()}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(corps),
+  });
+  const salles = ((await (await livekit('ListRooms', {})).json()).rooms ?? []).map((x) => x.name);
+  const salle = salles.join(', ');
+  const heureFin = sql(`select to_char(ended_at at time zone 'Europe/Paris','HH24:MI') from public.sessions where id = '${seance}'`);
+  q.dire(`Seance close en base (${sql(`select status from public.sessions where id = '${seance}'`)}), fin ${heureFin} (Europe/Paris) ; salle LiveKit « ${salle} » supprimee`);
+  for (const nom of salles) {
+    const r = await livekit('DeleteRoom', { room: nom });
+    q.dire(`DeleteRoom ${nom} : HTTP ${r.status}`);
+  }
+  await e.page.waitForTimeout(10000);
+  // FN-024 : l'ecran de fin, annonce par le serveur, avec l'heure de fin.
+  await activerSemantique(a.page);
+  const finEleve = await trouverTexte(a.page, new RegExp(`terminée à ${heureFin}`), 15000);
+  await q.capture(a, 'seance_terminee_annoncee');
+  q.dire(`adulte, ${new Date().toISOString()}, apres la fermeture : ${finEleve ?? (await libelles(a.page)).slice(0, 12).join(' | ')}`);
+  await activerSemantique(e.page);
+  const finEns = await trouverTexte(e.page, /cahier de transmission/i, 15000);
+  await q.capture(e, 'fin_de_seance_cahier');
+  q.dire(`enseignant, ${new Date().toISOString()}, apres la fermeture : ${finEns ?? (await libelles(e.page)).slice(0, 12).join(' | ')}`);
+  // FN-025 : l'enseignant tente de retourner dans la salle (le chemin reel
+  // apres la fin ; la salle s'ouvre par un billet en memoire, pas par son
+  // adresse) ; le refus dit pourquoi, avec l'heure du serveur.
+  const retourner = await trouver(e.page, /^Retourner dans la salle/, { delai: 8000 });
+  if (retourner) { await retourner.click(); await e.page.waitForTimeout(9000); await activerSemantique(e.page); }
+  const refusEns = await trouverTexte(e.page, new RegExp(`terminée à ${heureFin}\\. La salle a fermé peu après`), 20000);
+  await q.capture(e, 'reentree_refusee_motif');
+  q.dire(`enseignant, ${new Date().toISOString()}, « Retourner dans la salle » ${retourner ? 'touche' : 'absent'} : ${refusEns ?? (await libelles(e.page)).slice(0, 12).join(' | ')}`);
+  const manque = [!finEleve && 'ecran de fin de l eleve', !finEns && 'ecran de fin de l enseignant', !refusEns && 'motif du refus'].filter(Boolean);
+  return q.fin(manque.length ? 'rouge' : 'vert', manque.join(', '));
 }

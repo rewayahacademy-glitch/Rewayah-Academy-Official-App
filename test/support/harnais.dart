@@ -971,13 +971,16 @@ class FauxServicePreVol implements ServicePreVol {
 /// Un service d'acces a la salle en memoire.
 class FauxServiceVideo implements ServiceVideo {
   /// Cree le faux.
-  FauxServiceVideo({this.acces0, this.motifARefuser});
+  FauxServiceVideo({this.acces0, this.motifARefuser, this.detailARefuser});
 
   /// L'acces rendu. Nul et sans motif signifie « rien ne repond ».
   AccesSalle? acces0;
 
   /// Le refus a lever, s'il y en a un.
   MotifRefusSalle? motifARefuser;
+
+  /// FN-025 : le motif que le serveur joint au refus, s'il en donne un.
+  DetailRefusSalle? detailARefuser;
 
   /// Les seances pour lesquelles un acces a ete demande.
   final List<String> demandes = <String>[];
@@ -1012,7 +1015,7 @@ class FauxServiceVideo implements ServiceVideo {
     demandes.add(seanceId);
     final MotifRefusSalle? motif = motifARefuser;
     if (motif != null) {
-      throw EchecSalle(motif);
+      throw EchecSalle(motif, detail: detailARefuser);
     }
     final AccesSalle? rendu = acces0;
     if (rendu == null) {

@@ -47,10 +47,15 @@ class ResultatSeance extends StatelessWidget {
     required this.onRetour,
     this.onRevenir,
     this.onAccueil,
+    this.heureFin,
     super.key,
   });
 
   final IssueSeance issue;
+
+  /// FN-024 : l'heure de fin servie par le serveur (« 18:00 »), dite avec
+  /// « Séance terminée » ; `null` : la phrase sans heure.
+  final String? heureFin;
 
   /// Retour a la Classe (standard) ou a l'accueil (guidee).
   final VoidCallback onRetour;
@@ -86,7 +91,10 @@ class ResultatSeance extends StatelessWidget {
     final String? phrase = guidee
         ? null
         : switch (issue) {
-            IssueSeance.terminee => t.salle.fin.phrase,
+            IssueSeance.terminee =>
+              heureFin == null
+                  ? t.salle.fin.phrase
+                  : t.salle.fin.phraseHeure(heure: heureFin!),
             IssueSeance.quittee => t.salle.fin.quittePhrase,
             // S l.673 : un titre seul, aucune phrase.
             IssueSeance.accesRetire => null,

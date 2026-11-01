@@ -33,6 +33,7 @@ import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
 import 'package:rewayah_academy/core/tc_coran/moteur_mushaf.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/port_groupes.dart';
+import 'package:rewayah_academy/core/tc_horloge/chrono_seance.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
 import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart'
     show PointNormalise;
@@ -55,8 +56,10 @@ import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_enseignant/page_coran_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_outils_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/bornes_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart'
     show DeclencheurCommandes;
+import 'package:rewayah_academy/features/salle_seance/depuis_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/ecriture_seance.dart'
     show diffusionEcritureProvider;
 import 'package:rewayah_academy/features/salle_seance/media_salle.dart';
@@ -726,6 +729,90 @@ void main() {
       await tester.pumpAndSettle();
       expect(video.demandes, hasLength(2), reason: 'un nouveau jeton');
       expect(find.text(t.salle.perdue), findsNothing);
+    });
+
+    testWidgets('FN-024 : connexion perdue apres la fin prevue ; le serveur '
+        'dit la seance terminee : « Seance terminee » et son heure', (
+      WidgetTester tester,
+    ) async {
+      final DateTime fin = DateTime.now().toUtc().subtract(
+        const Duration(minutes: 20),
+      );
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      final FauxServiceVideo video = FauxServiceVideo(
+        acces0: _acces('student'),
+      );
+      await _monterSalle(
+        tester,
+        surcharges: <Override>[
+          ..._surcharges(
+            video: video,
+            moteur: moteur,
+            preVol: FauxServicePreVol(),
+          ),
+          bornesSalleProvider.overrideWith(
+            (Ref _, CleBornesSalle _) => BornesChrono(
+              debutUtc: fin.subtract(const Duration(hours: 1)),
+              finPrevueUtc: fin,
+            ),
+          ),
+        ],
+      );
+      moteur.poser(EtatSalle.connecte);
+      await tester.pumpAndSettle();
+      // La salle a ferme : le serveur refuse le jeton, avec son motif.
+      video
+        ..motifARefuser = MotifRefusSalle.acces
+        ..detailARefuser = DetailRefusSalle(
+          motif: MotifServeurSalle.terminee,
+          finUtc: fin,
+          graceMinutes: 15,
+        );
+      moteur.poser(EtatSalle.echec);
+      await tester.pumpAndSettle();
+      expect(video.demandes, hasLength(2), reason: 'le jeton redemande');
+      expect(find.byType(ResultatSeance), findsOneWidget);
+      expect(find.text(t.salle.fin.titre), findsOneWidget);
+      expect(
+        find.text(t.salle.fin.phraseHeure(heure: DepuisSalle.heure(fin))),
+        findsOneWidget,
+      );
+      expect(find.text(t.salle.perdue), findsNothing);
+    });
+
+    testWidgets('FN-024 : connexion perdue avant la fin prevue : rien '
+        'n est redemande, « connexion perdue » reste', (
+      WidgetTester tester,
+    ) async {
+      final DateTime fin = DateTime.now().toUtc().add(
+        const Duration(minutes: 20),
+      );
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      final FauxServiceVideo video = FauxServiceVideo(
+        acces0: _acces('student'),
+      );
+      await _monterSalle(
+        tester,
+        surcharges: <Override>[
+          ..._surcharges(
+            video: video,
+            moteur: moteur,
+            preVol: FauxServicePreVol(),
+          ),
+          bornesSalleProvider.overrideWith(
+            (Ref _, CleBornesSalle _) => BornesChrono(
+              debutUtc: fin.subtract(const Duration(hours: 1)),
+              finPrevueUtc: fin,
+            ),
+          ),
+        ],
+      );
+      moteur.poser(EtatSalle.connecte);
+      await tester.pumpAndSettle();
+      moteur.poser(EtatSalle.echec);
+      await tester.pumpAndSettle();
+      expect(video.demandes, hasLength(1));
+      expect(find.text(t.salle.perdue), findsOneWidget);
     });
 
     testWidgets('Lot salle 3 (reseau) : un echec avant toute ouverture reste '
@@ -1500,6 +1587,73 @@ void main() {
 
       expect(find.text(t.salle.refusAcces), findsOneWidget);
       expect(find.text(t.commun.reessayer), findsNothing);
+    });
+
+    // FN-025 (lot « Fin de seance », etape 2) : a qui avait droit a la salle,
+    // le serveur dit pourquoi elle est fermee, avec ses heures.
+    final DateTime finServeur = DateTime.utc(2026, 11, 1, 18);
+    final DateTime ouvertureServeur = DateTime.utc(2026, 11, 2, 16, 40);
+    for (final (DetailRefusSalle detail, String titre, String phrase) cas
+        in <(DetailRefusSalle, String, String)>[
+          (
+            DetailRefusSalle(
+              motif: MotifServeurSalle.terminee,
+              finUtc: finServeur,
+              graceMinutes: 15,
+            ),
+            t.salle.fin.titre,
+            t.salle.refusTerminee(heure: DepuisSalle.heure(finServeur)),
+          ),
+          (
+            DetailRefusSalle(
+              motif: MotifServeurSalle.pasEncoreOuverte,
+              ouvertureUtc: ouvertureServeur,
+            ),
+            t.salle.refusAcces,
+            t.salle.refusPasEncoreOuverte(
+              heure: DepuisSalle.heure(ouvertureServeur),
+            ),
+          ),
+          (
+            const DetailRefusSalle(motif: MotifServeurSalle.annulee),
+            t.salle.refusAcces,
+            t.salle.refusAnnulee,
+          ),
+        ]) {
+      testWidgets('FN-025 : refus ${cas.$1.motif.name} : le motif et '
+          'l heure du serveur', (WidgetTester tester) async {
+        await _monterSalle(
+          tester,
+          surcharges: _surcharges(
+            video: FauxServiceVideo(
+              motifARefuser: MotifRefusSalle.acces,
+              detailARefuser: cas.$1,
+            ),
+            moteur: FauxMoteurSalle(),
+            preVol: FauxServicePreVol(),
+          ),
+        );
+        expect(find.text(cas.$2), findsOneWidget);
+        expect(find.text(cas.$3), findsOneWidget);
+        expect(find.text(t.salle.refusAccesDetail), findsNothing);
+        // Un refus ne se reessaye pas : l'heure n'aura pas change.
+        expect(find.text(t.commun.reessayer), findsNothing);
+      });
+    }
+
+    testWidgets('FN-025 : sans motif du serveur, le refus reste generique', (
+      WidgetTester tester,
+    ) async {
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(motifARefuser: MotifRefusSalle.acces),
+          moteur: FauxMoteurSalle(),
+          preVol: FauxServicePreVol(),
+        ),
+      );
+      expect(find.text(t.salle.refusAcces), findsOneWidget);
+      expect(find.text(t.salle.refusAccesDetail), findsOneWidget);
     });
 
     testWidgets('un echec de connexion se reessaye, et relance le pre-vol', (

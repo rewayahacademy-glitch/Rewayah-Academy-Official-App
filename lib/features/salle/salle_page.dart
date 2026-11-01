@@ -41,6 +41,7 @@ import '../../core/tc_classe/session_persistante.dart';
 import '../../core/tc_classe/teacher_student_projection.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/port_groupes.dart';
+import '../../core/tc_horloge/chrono_seance.dart' show BornesChrono;
 import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/tc_outils/etat_outils.dart';
 import '../../core/tc_outils/operations_personnelles.dart';
@@ -264,6 +265,16 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// L'eleve sorti de la salle (CLV-09).
   IssueSeance? _sortieEleve;
 
+  /// FN-024 : l'heure de fin servie par le serveur, dite par l'ecran de fin
+  /// de l'eleve (« La seance s'est terminee a 18:00. »).
+  String? _heureFinServeur;
+
+  /// FN-025 : le motif du dernier refus d'acces, quand le serveur l'a donne.
+  DetailRefusSalle? _detailRefus;
+
+  /// FN-024 : une seule verification de fin a la fois.
+  bool _verificationFin = false;
+
   /// Salle en groupe (30/10/2026) : le dernier geste sur un eleve qui n'a
   /// pas abouti, dit dans le panneau Eleves, ou `null`.
   String? _echecGeste;
@@ -390,6 +401,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             _aEteConnecte = true;
           } else if (etat == EtatSalle.echec && _aEteConnecte) {
             _impasse = CauseImpasse.connexionPerdue;
+            // FN-024 : la connexion est tombee ; le serveur dit-il que la
+            // seance est finie ?
+            unawaited(Future<void>.microtask(_verifierFin));
           } else if (etat == EtatSalle.retire) {
             // 30/10/2026 : l'enseignant a fait sortir cet eleve.
             _impasse = CauseImpasse.retire;
@@ -509,6 +523,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     _veilleCamera = null;
     setState(() {
       _impasse = null;
+      _detailRefus = null;
       _aEteConnecte = false;
       // Revue de la PR 59 : une nouvelle entree relit le materiel ; une
       // camera branchee entre-temps ne fait plus dire « aucune camera ».
@@ -568,7 +583,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           .acces(widget.seanceId, eleveId: widget.eleveId);
     } on EchecSalle catch (echec) {
       if (mounted) {
-        setState(() => _impasse = CauseImpasse.depuis(echec.motif));
+        setState(() {
+          _impasse = CauseImpasse.depuis(echec.motif);
+          _detailRefus = echec.detail;
+        });
       }
       return;
     }
@@ -608,6 +626,85 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       if (mounted) {
         setState(() => _impasse = CauseImpasse.reseau);
       }
+    }
+  }
+
+  /// FN-024 (arbitrage du pilote du 01/11/2026) : la connexion est tombee
+  /// apres la fin prevue. Le client redemande le jeton ; si le serveur
+  /// repond que la seance est finie (`motif_refus_salle`), l'ecran le dit,
+  /// avec l'heure de fin du serveur : « Seance terminee » pour l'eleve,
+  /// l'ecran de fin et le cahier pour l'enseignant. Sinon (salle encore
+  /// ouverte, refus generique, reseau), l'impasse « connexion perdue » reste,
+  /// avec son « Reessayer ».
+  ///
+  /// Seulement apres la fin prevue connue (bornes du chrono, FN-023) : une
+  /// coupure en pleine seance n'est pas une fin, et sans bornes rien n'est
+  /// suppose ; « Reessayer » dira alors le motif du serveur (FN-025).
+  Future<void> _verifierFin() async {
+    if (_verificationFin || !mounted) return;
+    final AccesSalle? acces = _acces;
+    final RoleSalle role = RoleSalle.depuis(acces?.role);
+    if (role != RoleSalle.eleve && role != RoleSalle.enseignant) return;
+    final BornesChrono? bornes = ref.read(
+      bornesSalleProvider((
+        seanceId: widget.seanceId,
+        groupeId: widget.groupeId,
+        enseignant: role == RoleSalle.enseignant,
+      )),
+    );
+    if (bornes == null ||
+        DateTime.now().toUtc().isBefore(bornes.finPrevueUtc)) {
+      return;
+    }
+    _verificationFin = true;
+    try {
+      await ref
+          .read(serviceVideoProvider)
+          .acces(widget.seanceId, eleveId: widget.eleveId);
+      // Un jeton : la salle est encore ouverte, « Reessayer » y ramene.
+    } on EchecSalle catch (echec) {
+      final DetailRefusSalle? detail = echec.detail;
+      if (!mounted ||
+          detail == null ||
+          detail.motif == MotifServeurSalle.pasEncoreOuverte ||
+          _impasse != CauseImpasse.connexionPerdue) {
+        return;
+      }
+      final DateTime? fin = detail.motif == MotifServeurSalle.terminee
+          ? detail.finUtc
+          : null;
+      final String? heure = fin == null ? null : DepuisSalle.heure(fin);
+      if (role == RoleSalle.eleve) {
+        setState(() {
+          _heureFinServeur = heure;
+          _sortieEleve = IssueSeance.terminee;
+        });
+        return;
+      }
+      // L'enseignant : l'ecran de fin (CLV-10), puis le cahier, comme apres
+      // « Quitter » ; l'heure est celle du serveur.
+      final VueSeance? vue = DepuisSalle.vue(
+        salle: VueSalle.depuis(
+          materielPret: _materielPret,
+          acces: acces,
+          etatMoteur: _etatMoteur,
+          participants: _participants,
+          qualite: _qualite,
+          impasse: null,
+        ),
+        mode: AppMetriques.of(context).mode,
+        presence: ref.read(presenceSeanceProvider(widget.seanceId)).value,
+        monProfil: ref.read(sessionProvider).profileId,
+        fin: FinSeance(
+          heureFin: heure ?? DepuisSalle.heure(DateTime.now()),
+          cahierACompleter: true,
+        ),
+      );
+      if (vue != null) setState(() => _finEnseignant = vue);
+    } catch (erreur) {
+      journalDev('verification de fin impossible : $erreur');
+    } finally {
+      _verificationFin = false;
     }
   }
 
@@ -1693,6 +1790,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       }
       return ResultatSeance(
         issue: sortie,
+        heureFin: _heureFinServeur,
         onRetour: _retourClasse,
         // Lot salle 2 : apres « Quitter », revenir par le meme chemin que
         // l'entree (pre-vol, jeton, salle).
@@ -1947,6 +2045,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       child: enImpasse
           ? _Impasse(
               cause: vue.cause,
+              detail: _detailRefus,
               onReessayer: _entrer,
               onRentrer: _rentrer,
             )
@@ -4177,9 +4276,33 @@ class _Impasse extends StatelessWidget {
     required this.cause,
     required this.onReessayer,
     required this.onRentrer,
+    this.detail,
   });
 
   final CauseImpasse cause;
+
+  /// FN-025 : le motif servi par le serveur a qui avait droit a la salle.
+  final DetailRefusSalle? detail;
+
+  /// FN-025 : le refus dit sa raison et l'heure du serveur, quand le serveur
+  /// les donne ; sinon le refus generique.
+  static (String, String) _ditAcces(DetailRefusSalle? detail) {
+    final DateTime? fin = detail?.finUtc;
+    final DateTime? ouverture = detail?.ouvertureUtc;
+    return switch (detail?.motif) {
+      MotifServeurSalle.terminee when fin != null => (
+        t.salle.fin.titre,
+        t.salle.refusTerminee(heure: DepuisSalle.heure(fin)),
+      ),
+      MotifServeurSalle.pasEncoreOuverte when ouverture != null => (
+        t.salle.refusAcces,
+        t.salle.refusPasEncoreOuverte(heure: DepuisSalle.heure(ouverture)),
+      ),
+      MotifServeurSalle.annulee => (t.salle.refusAcces, t.salle.refusAnnulee),
+      _ => (t.salle.refusAcces, t.salle.refusAccesDetail),
+    };
+  }
+
   final Future<void> Function() onReessayer;
   final VoidCallback onRentrer;
 
@@ -4195,7 +4318,7 @@ class _Impasse extends StatelessWidget {
         t.salle.refusMateriel,
         t.salle.refusMaterielDetail,
       ),
-      CauseImpasse.acces => (t.salle.refusAcces, t.salle.refusAccesDetail),
+      CauseImpasse.acces => _ditAcces(detail),
       CauseImpasse.configuration => (
         t.salle.refusConfiguration,
         t.salle.refusConfigurationDetail,
