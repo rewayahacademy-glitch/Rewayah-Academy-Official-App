@@ -68,10 +68,17 @@ SELECT pg_temp.vrai((SELECT count(*) = 1 AND bool_and(categorie = 'inscription' 
                        AND destinataire_adresse = 'tutrice@test.invalid' AND donnees->>'prenom' = 'Khadija'
                        AND statut = 'en_attente' AND origine = 'auto')
                        FROM public.courriels_sortants), '1 notification mise en file, adresse normalisee, prenom joint');
+-- FN-114a (directeur, 01/11/2026 16:12 UTC) : enseignant_affecte n'est pas
+-- dans la liste blanche, il reste dans l'application ; creneau_change y est
+-- (urgent) et part de la categorie « classes ».
 INSERT INTO public.notifications(destinataire, evenement, destination)
 VALUES ('c0e10000-0000-4000-8000-0000000000b1', 'enseignant_affecte', '/tuteur/demandes');
-SELECT pg_temp.vrai((SELECT categorie FROM public.courriels_sortants WHERE modele = 'enseignant_affecte') = 'classes',
-                    '1 enseignant affecte : categorie classes');
+SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.courriels_sortants WHERE modele = 'enseignant_affecte'),
+                    '1 enseignant affecte : application seulement, aucun e-mail');
+INSERT INTO public.notifications(destinataire, evenement, destination)
+VALUES ('c0e10000-0000-4000-8000-0000000000b1', 'creneau_change', '/tuteur/demandes');
+SELECT pg_temp.vrai((SELECT categorie FROM public.courriels_sortants WHERE modele = 'creneau_change') = 'classes',
+                    '1 creneau change : categorie classes');
 INSERT INTO public.notifications(destinataire, evenement, params, destination)
 VALUES ('c0e10000-0000-4000-8000-0000000000b1', 'paiement_relance', '{"jours_avant": 3}', '/tuteur/foyer/recharge');
 SELECT pg_temp.vrai((SELECT s.categorie = 'facturation' AND (s.donnees->>'jours_avant')::int = 3
