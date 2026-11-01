@@ -17,6 +17,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
+import '../../core/session/session_state.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../foyer/nos_prix_page.dart';
 import '../mon_espace_adulte/mes_finances_page.dart';
@@ -35,8 +36,13 @@ String? redirectionAccueilEleve({required bool capaciteAccueilAdulte}) =>
 /// part ailleurs pour le compte « eleve autonome » (C-24, EA-ROLE-1), a
 /// l'accueil de l'eleve pour tout autre compte. La capacite decide, jamais le
 /// role : un compte eleve sans elle (un enfant) n'y entre pas. Fonction pure.
-String? redirectionFinancesAdulte({required bool eleveAutonome}) =>
-    eleveAutonome ? null : Routes.eleve;
+///
+/// Tant que la capacite est en lecture ([enLecture], rechargement de la
+/// page, FN-112), rien n'est decide : la lecture reveille le routeur.
+String? redirectionFinancesAdulte({
+  required bool eleveAutonome,
+  bool enLecture = false,
+}) => eleveAutonome || enLecture ? null : Routes.eleve;
 
 /// Les routes : l'Accueil adulte, l'historique de ses seances, le suivi de
 /// ses demandes et ses finances.
@@ -83,12 +89,7 @@ List<GoRoute> routesAccueilAdulte() => <GoRoute>[
   GoRoute(
     path: Routes.eleveFinances,
     redirect: (BuildContext contexte, GoRouterState _) =>
-        redirectionFinancesAdulte(
-          eleveAutonome: ProviderScope.containerOf(
-            contexte,
-            listen: false,
-          ).read(sessionProvider).eleveAutonome,
-        ),
+        _redirectionFinances(contexte),
     builder: (BuildContext contexte, GoRouterState _) => MesFinancesPage(
       onRetour: () => GoRouter.of(contexte).go(Routes.eleveAdulte),
       // LE moteur de recharge du foyer, son seul profil coche (guide, section 4) :
@@ -115,3 +116,14 @@ List<GoRoute> routesAccueilAdulte() => <GoRoute>[
     ],
   ),
 ];
+
+String? _redirectionFinances(BuildContext contexte) {
+  final SessionState session = ProviderScope.containerOf(
+    contexte,
+    listen: false,
+  ).read(sessionProvider);
+  return redirectionFinancesAdulte(
+    eleveAutonome: session.eleveAutonome,
+    enLecture: session.capaciteEleveEnLecture,
+  );
+}

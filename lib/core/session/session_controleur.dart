@@ -116,6 +116,7 @@ class SessionControleur extends Notifier<SessionState> {
     final String? profil = etat.profileId;
     state = etat.copyWith(
       eleveAutonome: profil != null && (_autonomes[profil] ?? false),
+      capaciteEleveEnLecture: profil != null && !_autonomes.containsKey(profil),
     );
     if (profil == null || _autonomes.containsKey(profil)) {
       return;
@@ -134,7 +135,10 @@ class SessionControleur extends Notifier<SessionState> {
     final bool autonome = capacite is EleveAutonome;
     _autonomes[profil] = autonome;
     if (ref.mounted && state.profileId == profil) {
-      state = state.copyWith(eleveAutonome: autonome);
+      state = state.copyWith(
+        eleveAutonome: autonome,
+        capaciteEleveEnLecture: false,
+      );
     }
   }
 
