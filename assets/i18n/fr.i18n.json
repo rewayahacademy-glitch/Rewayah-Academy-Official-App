@@ -711,6 +711,7 @@
     "fin": {
       "titre": "Séance terminée",
       "phrase": "Vous pouvez retrouver votre travail dans votre Classe.",
+      "phraseHeure": "La séance s'est terminée à {heure}. Vous pouvez retrouver votre travail dans votre Classe.",
       "retourClasse": "Retour à la Classe",
       "quitteTitre": "Vous avez quitté la séance.",
       "quittePhrase": "Vous pourrez revenir tant qu'elle reste ouverte.",
@@ -783,6 +784,9 @@
     "seulObservationDetail": "Le cours n'a pas commencé, ou il est déjà terminé.",
     "refusAcces": "Ce cours ne vous est pas ouvert en ce moment",
     "refusAccesDetail": "La salle s'ouvre peu avant l'heure du cours, et se ferme peu après sa fin.",
+    "refusTerminee": "La séance s'est terminée à {heure}. La salle a fermé peu après.",
+    "refusPasEncoreOuverte": "La salle ouvrira à {heure}.",
+    "refusAnnulee": "Cette séance est annulée.",
     "refusConfiguration": "La salle n'est pas encore disponible",
     "refusConfigurationDetail": "Ce n'est pas votre appareil\u00a0: le service de visioconférence n'est pas branché. L'équipe le sait.",
     "refusReseau": "La salle n'a pas pu s'ouvrir",
