@@ -1991,7 +1991,10 @@ class _LigneDense<T> extends StatelessWidget {
               top: 0,
               bottom: 0,
               width: mise.largeurActions,
-              child: Center(child: menu),
+              // Un noeud a part, comme la ligne de table : sans lui, le
+              // libelle de la pastille remontait dans le menu (« En attente
+              // Actions : … », lu par le robot a 390, L2 du 01/11/2026).
+              child: Center(child: Semantics(container: true, child: menu)),
             ),
         ],
       ),

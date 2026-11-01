@@ -152,10 +152,11 @@ Future<void> _monter(
   double largeur = 390,
   double echelle = 1,
   TextDirection? direction,
+  DemandeAdmissionAOuvrir? ouvrir,
 }) => monterRecrutement(
   tester,
   chemin: '/admin/personnes/demandes',
-  ecran: (_) => const AdmissionsPage(),
+  ecran: (_) => AdmissionsPage(ouvrir: ouvrir),
   autres: <String>[
     '/admin/personnes/dossiers',
     '/admin/personnes/comptes',
@@ -237,6 +238,50 @@ void main() {
       expect(p.recherches.last, 'Zzz');
       expect(find.text(a.videRecherche), findsOneWidget);
     });
+  });
+
+  // L2 (01/11/2026) : « Voir la demande » d'une ligne « En attente » de
+  // Comptes ouvre la bonne liste, deja cherchee sur cette personne.
+  testWidgets('ouverte depuis Comptes : population et recherche', (
+    tester,
+  ) async {
+    final _Port p = _port(
+      adultes: <DemandeAdmission>[
+        _demande(id: 'c2', nom: 'Karim Diallo'),
+        _demande(id: 'c3', nom: 'Salma Kone'),
+      ],
+    );
+    await _monter(
+      tester,
+      p,
+      ouvrir: (
+        population: PopulationAdmission.eleveAdulte,
+        recherche: 'Karim Diallo',
+      ),
+    );
+    expect(p.recherches.first, 'Karim Diallo');
+    expect(find.text('Karim Diallo'), findsWidgets);
+    expect(find.text('Salma Kone'), findsNothing);
+    expect(find.text('Awa Bah'), findsNothing);
+  });
+
+  testWidgets('ouverte depuis Comptes, mauvaise liste : essaie l autre', (
+    tester,
+  ) async {
+    // Un parent qui suit aussi des cours, sans enfant encore inscrit : Comptes
+    // le croit eleve adulte, sa demande est dans « Familles ».
+    final _Port p = _port();
+    await _monter(
+      tester,
+      p,
+      ouvrir: (
+        population: PopulationAdmission.eleveAdulte,
+        recherche: 'Awa Bah',
+      ),
+    );
+    expect(find.text('Awa Bah'), findsWidgets);
+    expect(p.recherches, everyElement('Awa Bah'));
+    expect(p.lectures, 2);
   });
 
   group('etats', () {

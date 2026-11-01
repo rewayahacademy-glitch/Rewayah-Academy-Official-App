@@ -4993,6 +4993,7 @@
       "filtreActifEtat": "État : {valeur}",
       "filtreActifRecherche": "Recherche : {texte}",
       "actionOuvrirDossier": "Ouvrir le dossier d'identité",
+      "actionVoirDemande": "Voir la demande",
       "plafondTitre": "La liste est peut-être incomplète",
       "plafondMessage": "Le serveur rend au plus {nombre} comptes, et la liste en compte autant : les inscriptions les plus récentes peuvent manquer.",
       "rechercheAideEleves": "Nom, identifiant, classe ou tuteur",
