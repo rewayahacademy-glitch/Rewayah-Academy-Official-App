@@ -64,6 +64,8 @@ Texte intégral et seul faisant foi : `docs/current/DESIGN-GOV-2026-09-26.md` (c
 
 Textes complets : consignes K-54 à K-59 du tableau ; table des preuves : `docs/current/REVUE-DIRECTEUR-2026-10.md`. Ces règles s'ajoutent aux autres et valent pour tous les rôles. Chaque correction se fait dans le **composant partagé**, jamais écran par écran.
 
+- **Défilement (directeur, 01/11/2026, sans date de fin).** **Interdit partout** : un contenu qui défile dans un cadre de hauteur fixe (`SizedBox`/`ConstrainedBox` de hauteur fixe ou `Expanded` sous un en-tête épais autour d'un `ListView`, d'un `SingleChildScrollView`, d'un `Scrollbar`, d'une table ou d'un `HtmlElementView`). La liste est la page : une seule barre de défilement par écran, celle de la page ; titre, filtres et aide défilent avec elle. Texte complet : `docs/current/DECISION-DEFILEMENT-2026-11-01.md`.
+
 - **K-54 Boutons centrés.** Le contenu d'un bouton (libellé, icône) est centré horizontalement et verticalement, ligne à ligne s'il passe à la ligne. Un bouton ne déborde jamais de l'écran ni de sa carte. **Jamais de bouton recomposé dans un écran** : un `Pressable` qui peint lui-même un fond autour d'un `Text` ou d'une `Icon`, un `Pressable` dont l'enfant est un `Text` nu, un `InkWell` / `GestureDetector` qui réagit au toucher, un bouton ou une puce Material (`ChoiceChip`, `PopupMenuButton`...) sont refusés. Le composant du core qui convient, sinon on l'ajoute au core (centrage fait une fois, dans le composant) :
   - un verbe et son objet : `ActionPrincipale` (`pleineLargeur: false` donne la largeur du contenu, jamais celle du parent ; `doux` : pilule d'alerte douce de la sortie d'une salle) ;
   - un mot qui mène ailleurs : `LienFleche` (cible de 48, `libelleSemantique`, `encre` pour la salle) ;

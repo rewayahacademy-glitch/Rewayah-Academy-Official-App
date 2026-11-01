@@ -6827,6 +6827,17 @@
       "classeSupprimeeSoi": "Votre classe est fermée.",
       "classeSupprimeeFoyer": "La classe d'un élève de votre foyer est fermée.",
       "classeSupprimeeClasse": "Une de vos classes est fermée.",
+      "seanceTerminee": "Une séance est terminée.",
+      "seanceTermineeDe": "La séance {deClasse} du {quand} est terminée.",
+      "seanceTermineeTravail": "Travail à préparer\u00a0: {travail}",
+      "seanceTermineeAucunTravail": "Aucun travail à préparer.",
+      "seanceTermineePresents(plural, param=n)": {
+        "one": "{n} élève présent sur {total}.",
+        "other": "{n} élèves présents sur {total}."
+      },
+      "seanceTermineeCahierAttend": "Le cahier de transmission attend vos informations.",
+      "seanceTermineeCahierDepose": "Cahier déposé, merci.",
+      "seanceTermineePhrases": "{premiere} {suite}",
       "inconnu": "Cette notification demande une version plus récente de l'application. Rechargez la page pour la lire."
     },
     "filtres": {

@@ -7,7 +7,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { parcours, connecter, connecterParLien, trouver, trouverTexte, libelles, sql,
-  activerSemantique, COMPTES, TRAVAIL } from './commun.mjs';
+  activerSemantique, APP, COMPTES, TRAVAIL } from './commun.mjs';
 const etiquette = process.argv[2] ?? 'fin';
 const classe = JSON.parse(fs.readFileSync(path.join(TRAVAIL, 'classe_adultes.json'), 'utf8'));
 const { ADULTE } = JSON.parse(fs.readFileSync(path.join(TRAVAIL, 'comptes_parcours3.json'), 'utf8'));
@@ -19,6 +19,12 @@ if (etiquette === 'chrono') {
   // faudrait attendre une heure et demie) ; aucun texte n'est lu ailleurs que
   // dans l'application.
   process.exit(await chrono());
+}
+if (etiquette === 'avis') {
+  // FN-028 (etape 3) : meme debut que « chrono », puis la seance est close et
+  // le cahier depose (SQL local : le geste du cahier est joue par le parcours
+  // 6) ; l'enseignant et l'eleve adulte lisent leur avis dans l'application.
+  process.exit(await chrono({ avis: true }));
 }
 if (etiquette === 'refus') {
   // FN-024 et FN-025 (etape 2) : meme debut que « chrono », puis la seance est
@@ -58,8 +64,10 @@ await role('enseignant', (pg) => connecter(pg, COMPTES.enseignant), new RegExp(`
 p.dire(`Seance (fin du script) : ${sql(`select s.status from public.sessions s join public.groupes g on g.id = s.groupe_id where g.libelle = '${classe.nom}' and s.deleted_at is null and s.started_at < now() order by s.started_at desc limit 1`)}`);
 await p.fin('joué');
 
-async function chrono({ refus = false } = {}) {
-  const q = refus
+async function chrono({ refus = false, avis = false } = {}) {
+  const q = avis
+    ? await parcours('Fin de seance, etape 3 : avis de fin de seance dans l application', 'fin-seance-avis')
+    : refus
     ? await parcours('Fin de seance, etape 2 : seance terminee annoncee, refus motive', 'fin-seance-refus')
     : await parcours('Fin de seance, etape 1 : chrono du temps restant en salle', 'fin-seance-chrono');
   const groupe = `(select id from public.groupes where libelle = '${classe.nom}' and ended_at is null limit 1)`;
@@ -114,6 +122,7 @@ async function chrono({ refus = false } = {}) {
     q.dire(`${x.role}, ${new Date().toISOString()}, apres la fin prevue : ${apres[x.role] ?? 'rien'}`);
   }
   const manque = acteurs.filter((x) => !avant[x.role] || !apres[x.role]).map((x) => x.role);
+  if (avis && !manque.length) return finAvis(q, seance, e, a);
   if (!refus || manque.length) {
     return q.fin(manque.length ? 'rouge' : 'vert', manque.length ? `chrono absent ou fige pour : ${manque.join(', ')}` : '');
   }
@@ -167,4 +176,33 @@ async function finAnnoncee(q, seance, e, a) {
   q.dire(`enseignant, ${new Date().toISOString()}, « Retourner dans la salle » ${retourner ? 'touche' : 'absent'} : ${refusEns ?? (await libelles(e.page)).slice(0, 12).join(' | ')}`);
   const manque = [!finEleve && 'ecran de fin de l eleve', !finEns && 'ecran de fin de l enseignant', !refusEns && 'motif du refus'].filter(Boolean);
   return q.fin(manque.length ? 'rouge' : 'vert', manque.join(', '));
+}
+
+async function finAvis(q, seance, e, a) {
+  const prof = sql(`select coalesce(private.c29_enseignant_effectif_session(id), teacher_id) from public.sessions where id = '${seance}'`);
+  const eleve = sql(`select profile_id from public.session_participants where session_id = '${seance}' and role = 'student' and deleted_at is null limit 1`);
+  // La cloture (comme la tache automatique ou « Quitter et ouvrir le cahier »).
+  sql(`update public.sessions set status = 'ended' where id = '${seance}' and status = 'in_progress'`);
+  q.dire(`Seance close : ${sql(`select status from public.sessions where id = '${seance}'`)}`);
+  // Le cahier, avec un Travail a preparer pour l'eleve adulte.
+  sql(`insert into public.lesson_reports (session_id, idempotency_key, content, author_profile_id)
+       values ('${seance}', 'e2e-fn028-${Date.now()}',
+               jsonb_build_object('eleves', jsonb_build_array(jsonb_build_object(
+                 'student_id', '${eleve}', 'confirme', true, 'travail_maison', 'Réviser la page 5'))),
+               '${prof}')`);
+  q.dire(`Avis en base : ${sql(`select string_agg(n.params ->> 'portee' || '=' || coalesce(n.params ->> 'travail_etat', 'presents ' || (n.params ->> 'presents') || '/' || (n.params ->> 'inscrits')), ' ; ') from public.notifications n where n.evenement = 'seance_terminee' and n.params ->> 'session_id' = '${seance}'`)}`);
+  q.dire(`Courriels seance_terminee : ${sql(`select count(*) from public.courriels_sortants where modele = 'seance_terminee'`)}`);
+  const lus = {};
+  for (const x of [e, a]) {
+    await x.page.goto(APP + '/');
+    await x.page.waitForTimeout(6000); await activerSemantique(x.page);
+    const cloche = await trouver(x.page, /^Notifications/, { delai: 10000 });
+    if (cloche) { await cloche.click(); await x.page.waitForTimeout(4000); await activerSemantique(x.page); }
+    lus[x.role] = await trouverTexte(x.page, /est terminée/, 15000);
+    await q.capture(x, 'avis_fin_de_seance');
+    q.dire(`${x.role}, ${new Date().toISOString()}, notifications ${cloche ? 'ouvertes' : 'introuvables'} : ${lus[x.role] ?? (await libelles(x.page)).slice(0, 12).join(' | ')}`);
+  }
+  const attendu = { enseignant: /présents? sur .*Cahier déposé, merci\.|présents? sur .*cahier de transmission attend/, adulte: /Travail à préparer\s*:\s*Réviser la page 5/ };
+  const manque = ['enseignant', 'adulte'].filter((r) => !lus[r] || !attendu[r].test(lus[r].replace(/\u00a0/g, ' ')));
+  return q.fin(manque.length ? 'rouge' : 'vert', manque.length ? `avis absent ou incomplet pour : ${manque.join(', ')}` : '');
 }
