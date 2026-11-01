@@ -162,4 +162,154 @@ void main() {
       },
     );
   });
+
+  // FN-028 (01/11/2026) : l'avis de fin de seance.
+  group('seance_terminee', () {
+    const Map<String, dynamic> base = <String, dynamic>{
+      'classe': 'Classe Al-Fajr',
+      'debut_local': '2026-11-01T18:00:00',
+    };
+    String titre(Map<String, dynamic> params) => contenuNotificationPour(
+      'seance_terminee',
+      <String, dynamic>{...base, ...params},
+    ).titre.replaceAll('\u00a0', ' ');
+
+    test(
+      'enseignant : presents au pluriel slang, 0, 1 et 2, FR et AR',
+      () async {
+        final Map<AppLocale, List<String>> attendus = <AppLocale, List<String>>{
+          AppLocale.fr: <String>[
+            '0 élève présent sur 3.',
+            '1 élève présent sur 3.',
+            '2 élèves présents sur 3.',
+          ],
+          AppLocale.ar: <String>[
+            'الطلاب الحاضرون: \u20680\u2069 من أصل \u20683\u2069.',
+            'الطلاب الحاضرون: \u20681\u2069 من أصل \u20683\u2069.',
+            'الطلاب الحاضرون: \u20682\u2069 من أصل \u20683\u2069.',
+          ],
+        };
+        for (final MapEntry<AppLocale, List<String>> e in attendus.entries) {
+          await LocaleSettings.setLocale(e.key);
+          for (int n = 0; n <= 2; n++) {
+            final String texte = titre(<String, dynamic>{
+              'portee': 'classe',
+              'presents': n,
+              'inscrits': 3,
+              'cahier_depose': false,
+            });
+            expect(texte, contains(e.value[n]), reason: '${e.key} $n');
+            expect(
+              texte,
+              contains(t.notifications.evenements.seanceTermineeCahierAttend),
+            );
+          }
+        }
+      },
+    );
+
+    test('enseignant : cahier deja depose', () {
+      final String texte = titre(<String, dynamic>{
+        'portee': 'classe',
+        'presents': 2,
+        'inscrits': 2,
+        'cahier_depose': true,
+      });
+      expect(
+        texte,
+        'La séance de Classe Al-Fajr du ${quandDepuis(base)!.replaceAll('\u00a0', ' ')} '
+        'est terminée. 2 élèves présents sur 2. Cahier déposé, merci.',
+      );
+    });
+
+    test('eleve et tuteur : le Travail a preparer selon le partage', () {
+      for (final String portee in <String>['soi', 'foyer']) {
+        final String partage = titre(<String, dynamic>{
+          'portee': portee,
+          'travail_etat': 'partage',
+          'travail': 'Réviser la page 5',
+        });
+        expect(partage, endsWith('Travail à préparer : Réviser la page 5'));
+        final String aucun = titre(<String, dynamic>{
+          'portee': portee,
+          'travail_etat': 'aucun',
+        });
+        expect(aucun, endsWith('Aucun travail à préparer.'));
+        // Partage ferme : rien n'est dit du travail, jamais « aucun ».
+        final String ferme = titre(<String, dynamic>{
+          'portee': portee,
+          'travail_etat': 'non_partage',
+        });
+        expect(ferme, endsWith('est terminée.'));
+        expect(ferme, isNot(contains('travail')));
+        expect(ferme, isNot(contains('Travail')));
+      }
+    });
+
+    test('la ligne du serveur passe le filtre : nom de la Classe, comptes, '
+        'cahier, travail ; jamais un identifiant', () {
+      final NotificationTuteur enseignant = notificationDepuis(
+        _ligne(
+          'seance_terminee',
+          destination: '/enseignant/journee',
+          params: <String, dynamic>{
+            'groupe_id': '00000000-0000-0000-0000-000000000001',
+            'session_id': '00000000-0000-0000-0000-000000000002',
+            'portee': 'classe',
+            'classe': 'Classe Al-Fajr',
+            'debut_local': '2026-11-01T18:00:00',
+            'presents': 1,
+            'inscrits': 1,
+            'cahier_depose': true,
+          },
+        ),
+        titrePour: contenuNotificationPour,
+      );
+      final String titreEnseignant = enseignant.titre.replaceAll('\u00a0', ' ');
+      expect(titreEnseignant, contains('Classe Al-Fajr'));
+      expect(titreEnseignant, contains('1 élève présent sur 1.'));
+      expect(titreEnseignant, endsWith('Cahier déposé, merci.'));
+      expect(titreEnseignant, isNot(contains('0000')));
+
+      final NotificationTuteur eleve = notificationDepuis(
+        _ligne(
+          'seance_terminee',
+          params: <String, dynamic>{
+            'session_id': '00000000-0000-0000-0000-000000000002',
+            'portee': 'soi',
+            'classe': 'Classe Al-Fajr',
+            'debut_local': '2026-11-01T18:00:00',
+            'travail_etat': 'partage',
+            'travail': 'Réviser la page 5',
+          },
+        ),
+        titrePour: contenuNotificationPour,
+      );
+      expect(
+        eleve.titre.replaceAll('\u00a0', ' '),
+        endsWith('Travail à préparer : Réviser la page 5'),
+      );
+    });
+
+    test('elision devant un nom de Classe qui commence par une voyelle', () {
+      final String texte = contenuNotificationPour(
+        'seance_terminee',
+        const <String, dynamic>{
+          'portee': 'soi',
+          'classe': 'Al-Fajr',
+          'debut_local': '2026-11-01T18:00:00',
+        },
+      ).titre;
+      expect(texte, startsWith("La séance d'Al-Fajr du "));
+    });
+
+    test('sans classe ni heure : la phrase generale, jamais un code', () {
+      final String texte = contenuNotificationPour(
+        'seance_terminee',
+        const <String, dynamic>{'portee': 'soi'},
+      ).titre;
+      expect(texte, t.notifications.evenements.seanceTerminee);
+      expect(texte, isNot(contains('seance_terminee')));
+    });
+  });
 }
