@@ -573,6 +573,13 @@ List<Violation> _casesRecomposees() {
 /// pas (`NeverScrollableScrollPhysics`). Seule exception admise sans decision :
 /// ce qui ne defile pas du tout (la page du Coran, la video).
 ///
+/// **Contenu tiers** (`HtmlElementView`, un iframe : paiement Stripe) : la
+/// molette et le doigt poses sur lui ne parviennent pas a Flutter, donc un
+/// cadre a la hauteur du contenu ne ferait pas defiler la page. La parade
+/// n'est pas de l'agrandir : un contenu tiers plus haut que l'ecran devient un
+/// element natif plein ecran, dont le defilement est celui de la page (PR
+/// 120, constat du garde-cap du 01/11/2026).
+///
 /// Socle **date du 01/11/2026** : les sites qui existaient a l'adoption de la
 /// regle (lot L1 des listes). Le nombre permis par fichier ne monte jamais ;
 /// on retire la ligne quand le site est corrige dans la refonte des listes.
@@ -634,8 +641,13 @@ List<Violation> _cadresDefilants() {
           chemin,
           _ligneDe(t, m.start),
           'cadre-defilant',
-          '${m.group(1)} de hauteur fixe autour d\'un defilement : la liste '
-              'est la page (DECISION-DEFILEMENT-2026-11-01)',
+          args.contains('HtmlElementView')
+              ? '${m.group(1)} de hauteur fixe autour d\'un contenu tiers : '
+                    'element natif plein ecran, dont le defilement est celui '
+                    'de la page (PR 120), jamais un cadre a la hauteur du '
+                    'contenu (DECISION-DEFILEMENT-2026-11-01)'
+              : '${m.group(1)} de hauteur fixe autour d\'un defilement : la '
+                    'liste est la page (DECISION-DEFILEMENT-2026-11-01)',
         ),
       );
     }

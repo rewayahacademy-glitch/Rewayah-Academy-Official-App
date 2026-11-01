@@ -493,8 +493,8 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
   /// n'en est pas un.
   List<FiltreActif> _filtresActifs(PageClasses? reference) {
     final l = t.admin.groupes.liste;
-    String axe(String a, String v) =>
-        t.commun.filtres.axeValeur(axe: a, valeur: v);
+    String axe(String nomAxe, String valeurRetenue) =>
+        t.commun.filtres.axeValeur(axe: nomAxe, valeur: valeurRetenue);
     final FiltreClasses f = _filtre;
     return <FiltreActif>[
       if (f.texte.trim().isNotEmpty)
@@ -554,16 +554,21 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
             l.filtreEnseignant,
             id == FiltreClasses.sansEnseignant
                 ? l.sansEnseignant
-                : reference?.enseignants
-                          .where((EnseignantFiltre e) => e.id == id)
-                          .firstOrNull
-                          ?.libelle ??
-                      l.filtreEnseignant,
+                : _nomEnseignant(reference, id) ?? l.filtreEnseignant,
           ),
           onRetirer: () => _filtrer(f.avec(enseignantId: () => null)),
         ),
     ];
   }
+}
+
+/// Le nom d'un enseignant du filtre, par son identifiant.
+String? _nomEnseignant(PageClasses? page, String id) {
+  for (final (id: String cle, libelle: String nom)
+      in page?.enseignants ?? const <EnseignantFiltre>[]) {
+    if (cle == id) return nom;
+  }
+  return null;
 }
 
 /// LISTES-2 : sans liste (chargement, echec, sans donnees), la tete de la
