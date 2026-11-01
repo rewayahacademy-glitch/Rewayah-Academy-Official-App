@@ -114,6 +114,11 @@ construire() {
   # (la cle anon JWT locale porte iss=supabase-demo, refusee par Env).
   flutter pub get >/dev/null
   dart run slang >/dev/null
+  # Decision R1 du 01/11 (DECISION-BRANCHEMENT-2026-11-01.md) : on ne joue pas
+  # les parcours sur du code non branche hors de la liste toleree.
+  if ! dart run tool/verifier_branchement.dart; then
+    echo "verifier_branchement : echec (regle R1), build E2E arrete"; exit 1
+  fi
   flutter build web --release \
     --dart-define=SUPABASE_URL="https://127.0.0.1:54331" \
     --dart-define=SUPABASE_ANON_KEY="$PUBLISHABLE_KEY" \
