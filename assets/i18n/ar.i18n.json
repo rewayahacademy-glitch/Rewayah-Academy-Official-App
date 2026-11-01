@@ -995,13 +995,36 @@
       "titre": "حصة مباشرة",
       "titreGuidee": "حصتي",
       "ligne": "⁨{debut}⁩ · ⁨{fin}⁩",
-      "minutesRestantes": "الوقت المتبقي: ⁨{minutes}⁩ د",
+      "minutesRestantes(plural, param=minutes)": {
+        "zero": "الوقت المتبقي: ⁨{minutes}⁩ د",
+        "one": "الوقت المتبقي: ⁨{minutes}⁩ د",
+        "two": "الوقت المتبقي: ⁨{minutes}⁩ د",
+        "few": "الوقت المتبقي: ⁨{minutes}⁩ د",
+        "many": "الوقت المتبقي: ⁨{minutes}⁩ د",
+        "other": "الوقت المتبقي: ⁨{minutes}⁩ د"
+      },
       "sePoursuit": "الحصة مستمرة.",
       "chrono": {
         "ecoule": "مضى\u00a0⁨{temps}⁩",
         "restant": "تبقّى\u00a0⁨{temps}⁩",
         "tempsPrevuEcoule": "انقضى الوقت المقرّر",
-        "annonce": "الحصة: مضى ⁨{ecoule}⁩ د وتبقّى ⁨{restant}⁩ د.",
+        "annonce": "الحصة: ⁨{ecoule}⁩ و⁨{restant}⁩.",
+        "minutesEcoulees(plural, param=minutes)": {
+          "zero": "مضى ⁨{minutes}⁩ د",
+          "one": "مضى ⁨{minutes}⁩ د",
+          "two": "مضى ⁨{minutes}⁩ د",
+          "few": "مضى ⁨{minutes}⁩ د",
+          "many": "مضى ⁨{minutes}⁩ د",
+          "other": "مضى ⁨{minutes}⁩ د"
+        },
+        "minutesRestantes(plural, param=minutes)": {
+          "zero": "تبقّى ⁨{minutes}⁩ د",
+          "one": "تبقّى ⁨{minutes}⁩ د",
+          "two": "تبقّى ⁨{minutes}⁩ د",
+          "few": "تبقّى ⁨{minutes}⁩ د",
+          "many": "تبقّى ⁨{minutes}⁩ د",
+          "other": "تبقّى ⁨{minutes}⁩ د"
+        },
         "annoncePrevuEcoule": "انقضى الوقت المقرّر."
       },
       "pause": {
@@ -1379,7 +1402,7 @@
     "seulObservation": "لم يدخل أحد هذه القاعة بعد",
     "seulObservationDetail": "لم يبدأ الدرس، أو انتهى بالفعل.",
     "refusAcces": "هذا الدرس غير مفتوح لك الآن",
-    "refusAccesDetail": "تُفتح القاعة قبل موعد الدرس بعشر دقائق، وتُغلق بعد نهايته بربع ساعة.",
+    "refusAccesDetail": "تُفتح القاعة قبل موعد الدرس بقليل، وتُغلق بعد نهايته بقليل.",
     "refusConfiguration": "القاعة غير متاحة بعد",
     "refusConfigurationDetail": "المشكلة ليست في جهازك: خدمة مكالمات الفيديو غير موصولة. الفريق على علم بذلك.",
     "refusReseau": "لم تستجب القاعة",

@@ -52,8 +52,14 @@ class ChronoSalle extends StatefulWidget {
     this.connexion = ConnexionSeance.enLigne,
     this.pause,
     this.onPause,
+    this.garderCouleur = false,
     super.key,
   });
+
+  /// FN-023 : dans la pilule d'etat, le chrono garde l'encre de la pilule
+  /// (couche sombre du telephone, pilule translucide) au lieu de l'encre
+  /// discrete de l'en-tete, pour garder son contraste.
+  final bool garderCouleur;
 
   /// LIVE-PAUSE-01 : la pause programmee de la seance, ou `null`.
   final PauseSeance? pause;
@@ -269,16 +275,21 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
     final String annonce = chrono.prevuEcoule
         ? d.chrono.annoncePrevuEcoule
         : LibellesGroupe.insecable(
+            // Pluriel slang (« 1 min restante », « 2 min restantes ») :
+            // l'annonce est lue a chaque seance depuis FN-023.
             d.chrono.annonce(
-              ecoule: chrono.minutesEcoulees,
-              restant: chrono.minutesRestantes,
+              ecoule: d.chrono.minutesEcoulees(minutes: chrono.minutesEcoulees),
+              restant: d.chrono.minutesRestantes(
+                minutes: chrono.minutesRestantes,
+              ),
             ),
           );
-    final TextStyle style = AppPalette.of(context).inkMuted.applyTo(
-      widget.style.copyWith(
-        fontFeatures: const <FontFeature>[FontFeature.tabularFigures()],
-      ),
+    final TextStyle chiffres = widget.style.copyWith(
+      fontFeatures: const <FontFeature>[FontFeature.tabularFigures()],
     );
+    final TextStyle style = widget.garderCouleur
+        ? chiffres
+        : AppPalette.of(context).inkMuted.applyTo(chiffres);
     final PauseSeance? p = widget.pause;
     final ({String texte, String annonce})? pause = _direPause(chrono);
     final VoidCallback? commande = widget.onPause;
