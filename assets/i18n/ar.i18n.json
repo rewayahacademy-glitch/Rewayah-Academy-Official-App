@@ -1336,6 +1336,7 @@
     "fin": {
       "titre": "انتهت الحصة",
       "phrase": "تجد عملك في فصلك.",
+      "phraseHeure": "انتهت الحصة في ⁨{heure}⁩. تجد عملك في فصلك.",
       "retourClasse": "العودة إلى الفصل",
       "quitteTitre": "غادرت الحصة.",
       "quittePhrase": "يمكنك العودة ما دامت مفتوحة.",
@@ -1402,6 +1403,9 @@
     "seulObservationDetail": "لم يبدأ الدرس، أو انتهى بالفعل.",
     "refusAcces": "هذا الدرس غير مفتوح لك الآن",
     "refusAccesDetail": "تُفتح القاعة قبل موعد الدرس بقليل، وتُغلق بعد نهايته بقليل.",
+    "refusTerminee": "انتهت الحصة في ⁨{heure}⁩، وأُغلقت القاعة بعدها بقليل.",
+    "refusPasEncoreOuverte": "تُفتح القاعة في ⁨{heure}⁩.",
+    "refusAnnulee": "أُلغيت هذه الحصة.",
     "refusConfiguration": "القاعة غير متاحة بعد",
     "refusConfigurationDetail": "المشكلة ليست في جهازك: خدمة مكالمات الفيديو غير موصولة. الفريق على علم بذلك.",
     "refusReseau": "لم تستجب القاعة",

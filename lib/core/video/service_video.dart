@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -6,10 +7,11 @@ import 'video_session_provider.dart';
 
 /// Pourquoi une salle refuse d'ouvrir.
 ///
-/// Le backend, lui, ne distingue pas : il repond « acces a la salle refuse »
-/// sans dire si la seance existe, si elle a commence, ou si l'appelant est
-/// simplement en avance -- un participant qui tente une salle qui n'est pas la
-/// sienne n'a pas a l'apprendre. Cette enumeration ne sert donc qu'a separer ce
+/// Le backend ne distingue pas pour qui n'a pas droit a la salle : il repond
+/// « acces a la salle refuse » sans dire si la seance existe, si elle a
+/// commence, ou si l'appelant est simplement en avance -- un appelant qui
+/// tente une salle qui n'est pas la sienne n'a pas a l'apprendre. A qui y a
+/// droit, il ajoute un motif (FN-025, [DetailRefusSalle]). Cette enumeration ne sert donc qu'a separer ce
 /// que le client PEUT distinguer sans rien reveler : un refus, une panne de
 /// configuration, et une coupure reseau.
 enum MotifRefusSalle {
@@ -26,16 +28,92 @@ enum MotifRefusSalle {
   reseau,
 }
 
+/// FN-025 : pourquoi la salle est fermee, quand le serveur le dit.
+///
+/// Le serveur ne le dit qu'a qui pouvait entrer (participant, enseignant
+/// effectif, tuteur d'un eleve inscrit : `motif_refus_salle`) ; a tout autre
+/// appelant, le refus reste generique et aucun detail n'arrive ici.
+enum MotifServeurSalle {
+  /// Avant l'ouverture de la salle.
+  pasEncoreOuverte,
+
+  /// La seance est close, ou la salle a ferme apres la fin.
+  terminee,
+
+  /// La seance est annulee.
+  annulee,
+}
+
+/// FN-025 : le motif d'un refus et les heures du serveur qui l'accompagnent.
+@immutable
+class DetailRefusSalle {
+  /// Cree le detail.
+  const DetailRefusSalle({
+    required this.motif,
+    this.finUtc,
+    this.ouvertureUtc,
+    this.graceMinutes,
+  });
+
+  /// Lit le corps du 403 de `create-room-token`, ou `null` sans motif connu
+  /// (refus generique, ou forme inattendue) : rien n'est invente.
+  static DetailRefusSalle? depuis(Object? details) {
+    if (details is! Map) return null;
+    final MotifServeurSalle? motif = switch (details['motif']) {
+      'pas_encore_ouverte' => MotifServeurSalle.pasEncoreOuverte,
+      'terminee' => MotifServeurSalle.terminee,
+      'annulee' => MotifServeurSalle.annulee,
+      _ => null,
+    };
+    if (motif == null) return null;
+    DateTime? instant(Object? v) =>
+        v is String ? DateTime.tryParse(v)?.toUtc() : null;
+    final Object? grace = details['grace_minutes'];
+    return DetailRefusSalle(
+      motif: motif,
+      finUtc: instant(details['fin_utc']),
+      ouvertureUtc: instant(details['ouverture_utc']),
+      graceMinutes: grace is int && grace >= 0 ? grace : null,
+    );
+  }
+
+  /// Le motif.
+  final MotifServeurSalle motif;
+
+  /// La fin prevue de la seance, du serveur.
+  final DateTime? finUtc;
+
+  /// L'ouverture de la salle, du serveur.
+  final DateTime? ouvertureUtc;
+
+  /// La grace apres la fin (`grace_after_end_minutes`), du serveur.
+  final int? graceMinutes;
+
+  @override
+  bool operator ==(Object other) =>
+      other is DetailRefusSalle &&
+      other.motif == motif &&
+      other.finUtc == finUtc &&
+      other.ouvertureUtc == ouvertureUtc &&
+      other.graceMinutes == graceMinutes;
+
+  @override
+  int get hashCode => Object.hash(motif, finUtc, ouvertureUtc, graceMinutes);
+}
+
 /// L'echec d'une entree en salle.
 class EchecSalle implements Exception {
   /// Cree un echec.
-  const EchecSalle(this.motif);
+  const EchecSalle(this.motif, {this.detail});
 
   /// Ce qui a empeche l'entree.
   final MotifRefusSalle motif;
 
+  /// FN-025 : le motif du serveur, seulement s'il l'a donne.
+  final DetailRefusSalle? detail;
+
   @override
-  String toString() => 'EchecSalle($motif)';
+  String toString() => 'EchecSalle($motif, ${detail?.motif})';
 }
 
 /// L'acces a la salle, l'inscription des temoins, et la sortie volontaire.
@@ -85,7 +163,13 @@ class ServiceVideoSupabase implements ServiceVideo {
         body: <String, dynamic>{'session_id': seanceId, 'eleve_id': ?eleveId},
       );
     } on FunctionException catch (e) {
-      throw EchecSalle(_motifDe(e.status, e.details));
+      final MotifRefusSalle motif = _motifDe(e.status, e.details);
+      throw EchecSalle(
+        motif,
+        detail: motif == MotifRefusSalle.acces
+            ? DetailRefusSalle.depuis(e.details)
+            : null,
+      );
     } catch (_) {
       throw const EchecSalle(MotifRefusSalle.reseau);
     }
