@@ -10,9 +10,21 @@ import '../../core/admin/creation_classe_refusee.dart';
 import '../../core/i18n/strings.g.dart';
 
 /// La phrase du refus [motif].
-String phraseRefusCreationClasse(MotifRefusCreationClasse motif) {
+///
+/// FN-113 : pour le maximum de Classes, [actives] et [maximum] viennent du
+/// DETAIL du serveur ; sans eux, la phrase sans nombre.
+String phraseRefusCreationClasse(
+  MotifRefusCreationClasse motif, {
+  int? actives,
+  int? maximum,
+}) {
   final r = t.admin.groupes.refusCreation;
   return switch (motif) {
+    MotifRefusCreationClasse.plafondClasses =>
+      actives != null && maximum != null
+          ? r.plafondClasses(n: actives, maximum: maximum)
+          : r.plafondClassesSansNombre,
+    MotifRefusCreationClasse.creneaux => r.creneaux,
     MotifRefusCreationClasse.reservee => r.reservee,
     MotifRefusCreationClasse.compteEnseignant => r.compteEnseignant,
     MotifRefusCreationClasse.enseignantNonEligible => r.enseignantNonEligible,

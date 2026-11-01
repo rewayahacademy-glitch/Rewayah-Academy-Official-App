@@ -3942,6 +3942,13 @@
         "plafond": "La classe n'est pas créée\u00a0: elle dépasserait le plafond d'heures par semaine de cette personne. Choisissez une autre personne dans la liste.",
         "chevauchementClasse": "La classe n'est pas créée\u00a0: cette personne a déjà une classe ou un élève à la même heure. Changez de créneau ou choisissez une autre personne dans la liste.",
         "chevauchementSeance": "La classe n'est pas créée\u00a0: cette personne a déjà une séance prévue à la même heure. Changez de créneau ou choisissez une autre personne dans la liste.",
+        "plafondClasses(plural, param=n)": {
+          "one": "La classe n'est pas créée\u00a0: cet enseignant tient déjà {n} classe active, pour un maximum de {maximum}. Clôturez une de ses classes, ou relevez le maximum dans les Règles.",
+          "other": "La classe n'est pas créée\u00a0: cet enseignant tient déjà {n} classes actives, pour un maximum de {maximum}. Clôturez une de ses classes, ou relevez le maximum dans les Règles."
+        },
+        "plafondClassesSansNombre": "La classe n'est pas créée\u00a0: cet enseignant tient déjà le nombre maximum de classes actives. Clôturez une de ses classes, ou relevez le maximum dans les Règles.",
+        "creneaux": "La classe n'est pas créée\u00a0: un créneau est incomplet ou en double. Vérifiez les créneaux de la semaine, puis pressez de nouveau.",
+        "releverMaximum": "Relever le maximum dans les Règles",
         "inconnu": "La classe n'est pas créée\u00a0: le serveur a refusé ces choix. Vérifiez l'enseignant et le créneau, puis pressez de nouveau."
       },
       "detailTitre": "Classe {libelle}",
@@ -4029,6 +4036,11 @@
         "nonDisponible": "L'horaire n'est pas changé\u00a0: l'enseignant n'a pas déclaré toutes les heures de ce cours, de son début à sa fin. Choisissez un autre horaire.",
         "chevauchementClasse": "L'horaire n'est pas changé\u00a0: l'enseignant a déjà une classe ou un élève à ce moment. Choisissez un autre horaire.",
         "chevauchementSeance": "L'horaire n'est pas changé\u00a0: une séance est déjà prévue à ce moment, pour l'enseignant (dans cette classe à son ancien horaire ou dans une autre classe). Choisissez un autre horaire.",
+        "plafondClasses(plural, param=n)": {
+          "one": "L'horaire n'est pas changé\u00a0: l'enseignant tient déjà {n} classe active, pour un maximum de {maximum}. Clôturez une de ses classes, ou relevez le maximum dans les Règles.",
+          "other": "L'horaire n'est pas changé\u00a0: l'enseignant tient déjà {n} classes actives, pour un maximum de {maximum}. Clôturez une de ses classes, ou relevez le maximum dans les Règles."
+        },
+        "plafondClassesSansNombre": "L'horaire n'est pas changé\u00a0: l'enseignant tient déjà le nombre maximum de classes actives. Clôturez une de ses classes, ou relevez le maximum dans les Règles.",
         "inconnu": "L'horaire n'est pas changé\u00a0: le serveur a refusé ce choix. Vérifiez l'enseignant et l'horaire, puis pressez de nouveau.",
         "seuil": "Le seuil n'est pas changé\u00a0: l'horaire de cette classe affiché ici n'est plus valable pour son enseignant. Actualisez la liste, puis recommencez."
       },
@@ -4385,6 +4397,11 @@
         "nonDisponible": "L'enseignant n'est pas confirmé\u00a0: ses disponibilités ne couvrent pas tous les créneaux de la classe. Choisissez une autre personne.",
         "chevauchementClasse": "L'enseignant n'est pas confirmé\u00a0: cette personne a déjà une classe ou un élève à la même heure. Choisissez une autre personne.",
         "chevauchementSeance": "L'enseignant n'est pas confirmé\u00a0: cette personne a déjà une séance prévue à la même heure. Choisissez une autre personne.",
+        "plafondClasses(plural, param=n)": {
+          "one": "L'enseignant n'est pas confirmé\u00a0: il tient déjà {n} classe active, pour un maximum de {maximum}. Clôturez une de ses classes, ou relevez le maximum dans les Règles. Sinon, choisissez une autre personne.",
+          "other": "L'enseignant n'est pas confirmé\u00a0: il tient déjà {n} classes actives, pour un maximum de {maximum}. Clôturez une de ses classes, ou relevez le maximum dans les Règles. Sinon, choisissez une autre personne."
+        },
+        "plafondClassesSansNombre": "L'enseignant n'est pas confirmé\u00a0: il tient déjà le nombre maximum de classes actives. Clôturez une de ses classes, ou relevez le maximum dans les Règles. Sinon, choisissez une autre personne.",
         "inconnu": "L'enseignant n'est pas confirmé. Choisissez-en un autre."
       },
       "dejaAffecte": "Un autre membre de la direction a déjà confirmé l'enseignant de cette classe\u00a0: votre choix ne remplace pas le sien.",

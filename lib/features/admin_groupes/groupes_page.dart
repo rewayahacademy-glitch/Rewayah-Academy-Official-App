@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/admin_domaine.dart';
@@ -22,6 +23,7 @@ import '../../core/offres/affectation_refusee.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart' show horsLigneProvider;
+import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_spacing.dart';
@@ -36,6 +38,7 @@ import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/menu_filtre.dart';
@@ -1130,6 +1133,10 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
   bool _envoi = false;
   String? _erreur;
 
+  /// FN-113 : le dernier refus est le maximum de Classes de l'enseignant ;
+  /// la feuille propose alors d'ouvrir les Regles.
+  bool _plafondClasses = false;
+
   @override
   void dispose() {
     _nom.dispose();
@@ -1234,6 +1241,7 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
     setState(() {
       _envoi = true;
       _erreur = null;
+      _plafondClasses = false;
     });
     try {
       await ref
@@ -1261,7 +1269,15 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
       // CAND-Q15 : le serveur a refuse l'enseignant ou le creneau. Une phrase
       // par motif, jamais le texte SQL ; la feuille garde les choix.
       if (mounted) {
-        setState(() => _erreur = phraseRefusCreationClasse(refus.motif));
+        setState(() {
+          _erreur = phraseRefusCreationClasse(
+            refus.motif,
+            actives: refus.actives,
+            maximum: refus.maximum,
+          );
+          _plafondClasses =
+              refus.motif == MotifRefusCreationClasse.plafondClasses;
+        });
       }
     } catch (erreur) {
       if (mounted) {
@@ -1589,6 +1605,19 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
         if (_erreur case final String erreur) ...<Widget>[
           Ecart.vMd,
           MessageAlerte(erreur),
+          // FN-113 : le maximum de Classes se releve dans les Regles.
+          if (_plafondClasses) ...<Widget>[
+            Ecart.vSm,
+            LienFleche(
+              key: const ValueKey<String>('classe-refus-regles'),
+              libelle: t.admin.groupes.refusCreation.releverMaximum,
+              onPress: () {
+                final GoRouter routeur = GoRouter.of(context);
+                Navigator.of(context).pop();
+                routeur.go(Routes.adminConfigurationRegles);
+              },
+            ),
+          ],
         ],
         Ecart.vXxl,
         BasDeFeuille(

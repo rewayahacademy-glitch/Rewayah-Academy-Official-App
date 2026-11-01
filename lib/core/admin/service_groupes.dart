@@ -315,7 +315,7 @@ class ServiceGroupesSupabase implements ServiceGroupes {
         message: e.message,
       );
       if (motif == null) rethrow;
-      throw AffectationRefusee(motif);
+      throw AffectationRefusee.depuis(motif, e.details);
     }
   }
 

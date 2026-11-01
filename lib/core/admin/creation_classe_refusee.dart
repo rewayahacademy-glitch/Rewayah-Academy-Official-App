@@ -18,6 +18,8 @@ library;
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
+import 'plafond_classes.dart';
+
 /// Pourquoi le serveur a refuse de creer la classe.
 enum MotifRefusCreationClasse {
   /// La personne connectee ne peut pas creer de classe (garde de la
@@ -44,6 +46,15 @@ enum MotifRefusCreationClasse {
   /// L'enseignant a deja une seance ponctuelle au meme instant.
   chevauchementSeance,
 
+  /// FN-113 : l'enseignant tient deja le nombre maximum de Classes actives
+  /// (`plafond_classes_atteint`, reglage `enseignant.classes_max`, migration
+  /// 20261022000200). Le DETAIL du serveur donne les deux nombres.
+  plafondClasses,
+
+  /// FN-113 : les creneaux envoyes sont refuses (`CreneauxInvalides`,
+  /// `CreneauxEnDouble`, SQLSTATE 22023).
+  creneaux,
+
   /// Un refus que le client ne connait pas : phrase generique.
   inconnu,
 }
@@ -52,11 +63,20 @@ enum MotifRefusCreationClasse {
 @immutable
 class CreationClasseRefusee implements Exception {
   /// Cree le refus.
-  const CreationClasseRefusee(this.motif);
+  const CreationClasseRefusee(this.motif, {this.actives, this.maximum});
 
   /// Le motif, ferme. L'ecran le met en mots ; le texte du serveur n'est pas
   /// garde.
   final MotifRefusCreationClasse motif;
+
+  /// FN-113 : pour [MotifRefusCreationClasse.plafondClasses], le nombre de
+  /// Classes actives de l'enseignant, lu dans le DETAIL du serveur ; `null`
+  /// s'il ne s'y lit pas (rien n'est invente).
+  final int? actives;
+
+  /// FN-113 : le maximum fixe dans les Regles, lu dans le DETAIL ; `null`
+  /// s'il ne s'y lit pas.
+  final int? maximum;
 
   @override
   String toString() => 'CreationClasseRefusee(${motif.name})';
@@ -66,25 +86,27 @@ class CreationClasseRefusee implements Exception {
 /// d'affectation (`0082`, repris par `20261021210200`), avec leur motif. Le
 /// prefixe suffit, et deux messages portent un accent que le serveur ecrit
 /// tel quel : on compare sans eux.
-const List<(String, MotifRefusCreationClasse)> _prefixes =
-    <(String, MotifRefusCreationClasse)>[
-      ('creation de groupe reservee', MotifRefusCreationClasse.reservee),
-      ('cet enseignant n', MotifRefusCreationClasse.compteEnseignant),
-      (
-        'enseignant indisponible',
-        MotifRefusCreationClasse.enseignantNonEligible,
-      ),
-      (
-        'enseignant incompatible avec le public',
-        MotifRefusCreationClasse.genreIncompatible,
-      ),
-      ('plafond horaire enseignant', MotifRefusCreationClasse.plafond),
-      (
-        'chevauchement avec une classe',
-        MotifRefusCreationClasse.chevauchementClasse,
-      ),
-      ('chevauchement avec une s', MotifRefusCreationClasse.chevauchementSeance),
-    ];
+const List<(String, MotifRefusCreationClasse)>
+_prefixes = <(String, MotifRefusCreationClasse)>[
+  ('creation de groupe reservee', MotifRefusCreationClasse.reservee),
+  ('cet enseignant n', MotifRefusCreationClasse.compteEnseignant),
+  ('enseignant indisponible', MotifRefusCreationClasse.enseignantNonEligible),
+  (
+    'enseignant incompatible avec le public',
+    MotifRefusCreationClasse.genreIncompatible,
+  ),
+  ('plafond horaire enseignant', MotifRefusCreationClasse.plafond),
+  (
+    'chevauchement avec une classe',
+    MotifRefusCreationClasse.chevauchementClasse,
+  ),
+  ('chevauchement avec une s', MotifRefusCreationClasse.chevauchementSeance),
+  // FN-113 : codes leves par creer_classe_creneaux_admin et le predicat
+  // d'affectation, jusqu'ici rendus par la phrase generique.
+  (messagePlafondClasses, MotifRefusCreationClasse.plafondClasses),
+  ('creneauxinvalides', MotifRefusCreationClasse.creneaux),
+  ('creneauxendouble', MotifRefusCreationClasse.creneaux),
+];
 
 /// Le motif d'un refus serveur, d'apres son SQLSTATE ([code]) et son
 /// [message]. Fonction pure : aucune phrase ici, et le message n'est jamais
@@ -108,8 +130,20 @@ Future<T> traduireRefusCreationClasse<T>(Future<T> Function() appel) async {
   try {
     return await appel();
   } on PostgrestException catch (e) {
-    throw CreationClasseRefusee(
-      motifRefusCreationClasse(code: e.code, message: e.message),
+    final MotifRefusCreationClasse motif = motifRefusCreationClasse(
+      code: e.code,
+      message: e.message,
     );
+    if (motif == MotifRefusCreationClasse.plafondClasses) {
+      final ({int? actives, int? maximum}) n = nombresPlafondClasses(
+        e.details?.toString(),
+      );
+      throw CreationClasseRefusee(
+        motif,
+        actives: n.actives,
+        maximum: n.maximum,
+      );
+    }
+    throw CreationClasseRefusee(motif);
   }
 }

@@ -1,0 +1,7 @@
+== FN-113 : maximum de classes atteint a la creation d une classe : 2026-11-01T16:09:20.843Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Enseignant de test : 2 classe(s) active(s) ; maximum avant le test : 3
+Maximum abaisse a 2 (classes actives de l'enseignant) avant « Créer la classe »
+Message lu : flt-semantics:La classe n'est pas créée : cet enseignant tient déjà 2 classes actives, pour un maximum de 2. Clôturez une de ses classes, ou relevez le maximum dans les Règle
+Lien vers les Règles : present
+Apres le lien : /#/admin/configuration/regles
+== FN-113 : maximum de classes atteint a la creation d une classe : vert
