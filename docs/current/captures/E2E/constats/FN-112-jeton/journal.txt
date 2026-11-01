@@ -1,0 +1,6 @@
+== FN-112 : jeton renouvele : 2026-11-01T02:17:11.960Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Claims d'origine : {"role":"authenticated","app_metadata":{"authorization_version":2,"household_id":"9905d0c5-253e-407e-9656-129a9bd280ed","provider":"email","providers":["email"],"role":"guardian"},"aal":"aal1","amr":[{"method":"magiclink","timestamp":1793499446}],"session_id":"oui","autres":"aal,amr,app_metadata,aud,email,exp,iat,is_anonymous,iss,phone,role,session_id,sub,tranche_age,user_metadata"}
+Claims renouveles : {"role":"authenticated","app_metadata":{"authorization_version":2,"household_id":"9905d0c5-253e-407e-9656-129a9bd280ed","provider":"email","providers":["email"],"role":"guardian"},"aal":"aal1","amr":[{"method":"magiclink","timestamp":1793499446}],"session_id":"oui","autres":"aal,amr,app_metadata,aud,email,exp,iat,is_anonymous,iss,phone,role,session_id,sub,tranche_age,user_metadata"}
+Apres rechargement avec le jeton renouvele : http://127.0.0.1:8090/#/acces-refuse ; group:Vous n'avez pas accès à cette page | h2:Vous n'avez pas accès à cette page | flt-semantics:Ce contenu n'est pas ouvert à votre compte.
+Apres ouverture de la racine : http://127.0.0.1:8090/#/eleve/adulte ; flt-semantics:Bonjour E2E Adulte | button:Notifications, une non lue | h2:Bonjour E2E Adulte
+== FN-112 : jeton renouvele : joué
