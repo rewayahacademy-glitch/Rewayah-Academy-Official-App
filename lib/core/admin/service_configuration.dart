@@ -112,10 +112,33 @@ const List<String> clesRegles = <String>[
   // 22/10/2026, migration 20261022000200_classes_plafond_par_enseignant.sql) :
   // 3 par defaut, de 1 a 80. Un serveur d'avant ce lot ne la rend pas.
   cleClassesParEnseignant,
+  // L'enseignant qui n'a pas rejoint la salle (regle A3, migration
+  // 20261102500000_remplacement_auto.sql) : trois minutes comptees depuis le
+  // debut de la seance, dans cet ordre strict. Reglables ici sur demande du
+  // directeur du 01/11/2026. Un serveur d'avant A3 ne les rend pas.
+  ...clesRemplacement,
 ];
 
 /// La cle du reglage « Classes au plus par enseignant ».
 const String cleClassesParEnseignant = 'enseignant.classes_max';
+
+/// A3 : l'enseignant est prevenu qu'il va perdre la seance (3 par defaut).
+const String cleRemplacementAvertissement =
+    'remplacement.avertissement_minutes';
+
+/// A3 : l'enseignant est note absent et perd la seance du jour (8 par defaut).
+const String cleRemplacementPerteAcces = 'remplacement.perte_acces_minutes';
+
+/// A3 : l'objectif, le remplacant est dans la salle (11 par defaut).
+const String cleRemplacementObjectif = 'remplacement.debut_remplacant_minutes';
+
+/// Les trois reglages A3, dans l'ordre que le serveur exige :
+/// avertissement < perte de la seance < objectif.
+const List<String> clesRemplacement = <String>[
+  cleRemplacementAvertissement,
+  cleRemplacementPerteAcces,
+  cleRemplacementObjectif,
+];
 
 /// Les cles du domaine Configuration > Fonctionnalites.
 const List<String> clesFonctionnalites = <String>[

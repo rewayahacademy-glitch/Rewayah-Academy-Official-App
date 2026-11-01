@@ -9242,6 +9242,39 @@ class Traductions$admin$regles$fr {
 
 	/// fr: 'Le nombre de Classes qu'un enseignant peut tenir en même temps. Une Classe close et un remplacement ponctuel ne comptent pas. Une baisse ne retire aucune Classe déjà tenue. Dans leur questionnaire, les candidats choisissent de 1 jusqu'à ce nombre.'
 	String get classesParEnseignantDetail => 'Le nombre de Classes qu\'un enseignant peut tenir en même temps. Une Classe close et un remplacement ponctuel ne comptent pas. Une baisse ne retire aucune Classe déjà tenue. Dans leur questionnaire, les candidats choisissent de 1 jusqu\'à ce nombre.';
+
+	/// fr: 'Quand l'enseignant n'a pas rejoint la salle'
+	String get remplacementSection => 'Quand l\'enseignant n\'a pas rejoint la salle';
+
+	/// fr: 'Les minutes comptent depuis l'heure du début de la séance. Chaque étape vient après la précédente.'
+	String get remplacementIntro => 'Les minutes comptent depuis l\'heure du début de la séance. Chaque étape vient après la précédente.';
+
+	/// fr: 'Avertissement de l'enseignant'
+	String get remplacementAvertissement => 'Avertissement de l\'enseignant';
+
+	/// fr: 'L'enseignant est prévenu qu'il va perdre la séance. Les enseignants libres peuvent se proposer pour le remplacer.'
+	String get remplacementAvertissementDetail => 'L\'enseignant est prévenu qu\'il va perdre la séance. Les enseignants libres peuvent se proposer pour le remplacer.';
+
+	/// fr: 'Perte de la séance'
+	String get remplacementPerte => 'Perte de la séance';
+
+	/// fr: 'L'enseignant est noté absent et ne peut plus rejoindre la séance de ce jour. Un enseignant qui s'est proposé le remplace, et les familles sont prévenues.'
+	String get remplacementPerteDetail => 'L\'enseignant est noté absent et ne peut plus rejoindre la séance de ce jour. Un enseignant qui s\'est proposé le remplace, et les familles sont prévenues.';
+
+	/// fr: 'Remplaçant dans la salle'
+	String get remplacementObjectif => 'Remplaçant dans la salle';
+
+	/// fr: 'L'objectif : le remplaçant a rejoint la salle.'
+	String get remplacementObjectifDetail => 'L\'objectif : le remplaçant a rejoint la salle.';
+
+	/// fr: 'Entre {min} et {max} après le début, avant la perte de la séance ({perte}).'
+	String remplacementBornesAvertissement({required Object min, required Object max, required Object perte}) => 'Entre ${min} et ${max} après le début, avant la perte de la séance (${perte}).';
+
+	/// fr: 'Entre {min} et {max} après le début : après l'avertissement ({avertissement}) et avant le remplaçant dans la salle ({objectif}).'
+	String remplacementBornesPerte({required Object min, required Object max, required Object avertissement, required Object objectif}) => 'Entre ${min} et ${max} après le début : après l\'avertissement (${avertissement}) et avant le remplaçant dans la salle (${objectif}).';
+
+	/// fr: 'Entre {min} et {max} après le début, après la perte de la séance ({perte}).'
+	String remplacementBornesObjectif({required Object min, required Object max, required Object perte}) => 'Entre ${min} et ${max} après le début, après la perte de la séance (${perte}).';
 }
 
 // Path: admin.fonctionnalites
@@ -45518,6 +45551,17 @@ extension on Traductions {
 			'admin.regles.uniteNombre' => ({required Object n}) => '${n}',
 			'admin.regles.classesParEnseignant' => 'Classes au plus par enseignant',
 			'admin.regles.classesParEnseignantDetail' => 'Le nombre de Classes qu\'un enseignant peut tenir en même temps. Une Classe close et un remplacement ponctuel ne comptent pas. Une baisse ne retire aucune Classe déjà tenue. Dans leur questionnaire, les candidats choisissent de 1 jusqu\'à ce nombre.',
+			'admin.regles.remplacementSection' => 'Quand l\'enseignant n\'a pas rejoint la salle',
+			'admin.regles.remplacementIntro' => 'Les minutes comptent depuis l\'heure du début de la séance. Chaque étape vient après la précédente.',
+			'admin.regles.remplacementAvertissement' => 'Avertissement de l\'enseignant',
+			'admin.regles.remplacementAvertissementDetail' => 'L\'enseignant est prévenu qu\'il va perdre la séance. Les enseignants libres peuvent se proposer pour le remplacer.',
+			'admin.regles.remplacementPerte' => 'Perte de la séance',
+			'admin.regles.remplacementPerteDetail' => 'L\'enseignant est noté absent et ne peut plus rejoindre la séance de ce jour. Un enseignant qui s\'est proposé le remplace, et les familles sont prévenues.',
+			'admin.regles.remplacementObjectif' => 'Remplaçant dans la salle',
+			'admin.regles.remplacementObjectifDetail' => 'L\'objectif : le remplaçant a rejoint la salle.',
+			'admin.regles.remplacementBornesAvertissement' => ({required Object min, required Object max, required Object perte}) => 'Entre ${min} et ${max} après le début, avant la perte de la séance (${perte}).',
+			'admin.regles.remplacementBornesPerte' => ({required Object min, required Object max, required Object avertissement, required Object objectif}) => 'Entre ${min} et ${max} après le début : après l\'avertissement (${avertissement}) et avant le remplaçant dans la salle (${objectif}).',
+			'admin.regles.remplacementBornesObjectif' => ({required Object min, required Object max, required Object perte}) => 'Entre ${min} et ${max} après le début, après la perte de la séance (${perte}).',
 			'admin.fonctionnalites.titre' => 'Fonctionnalités',
 			'admin.fonctionnalites.intro' => 'Les fonctionnalités qui changent le comportement de toute la plateforme.',
 			'admin.fonctionnalites.erreur' => 'Les fonctionnalités n\'ont pas pu être lues. Réessayez dans un instant.',
@@ -45575,6 +45619,8 @@ extension on Traductions {
 			'admin.evaluations.aucuneDetail' => 'Planifiez une première évaluation pour un élève déjà diagnostiqué.',
 			'admin.evaluations.aucuneAvecCeFiltre' => 'Aucune évaluation avec ce filtre',
 			'admin.evaluations.aucuneAvecCeFiltreDetail' => 'Changez de filtre pour voir les autres évaluations.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.evaluations.filtreToutes' => 'Toutes',
 			'admin.evaluations.filtrePlanifiees' => 'Planifiées',
 			'admin.evaluations.filtreRealisees' => 'Réalisées',
@@ -45586,8 +45632,6 @@ extension on Traductions {
 			'admin.evaluations.colonneDatePrevue' => 'Prévue le',
 			'admin.evaluations.colonneStatut' => 'Statut',
 			'admin.evaluations.colonneResultat' => 'Résultat',
-			_ => null,
-		} ?? switch (path) {
 			'admin.evaluations.typeInitiale' => 'Initiale',
 			'admin.evaluations.typePeriodique' => 'Périodique',
 			'admin.evaluations.typeReevaluation' => 'Réévaluation',
@@ -46089,6 +46133,8 @@ extension on Traductions {
 			'admin.finance.pol.erreurTarif' => 'Un tarif nul rendrait le cours gratuit : saisissez un montant supérieur à 0.',
 			'admin.finance.pol.erreurPlafond' => ({required Object base}) => 'Le plafond est sous la base garantie (${base}) : le taux baisserait quand la classe se remplit. Saisissez au moins la base.',
 			'admin.finance.pol.erreurClassesMax' => ({required Object objectif}) => 'Le maximum est sous l\'objectif (${objectif}) : saisissez au moins l\'objectif.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.erreurMinimum' => ({required Object capacite}) => 'Le minimum dépasse la plus petite classe (${capacite}) : elle ne pourrait jamais ouvrir. Saisissez au plus cette capacité.',
 			'admin.finance.pol.erreurRemise' => ({required Object tarif}) => 'La remise dépasse le tarif (${tarif}) : la mensualité deviendrait négative. Saisissez au plus ce montant.',
 			'admin.finance.pol.parHeure' => ({required Object montant}) => '${montant} / h',
@@ -46100,8 +46146,6 @@ extension on Traductions {
 			'admin.finance.pol.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} jour', other: '${n} jours', ), 
 			'admin.finance.pol.uniteEleves' => 'élèves',
 			'admin.finance.pol.uniteSeances' => 'séances',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.uniteClasses' => 'classes',
 			'admin.finance.pol.uniteJours' => 'jours',
 			'admin.finance.pol.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} minute', other: '${n} minutes', ), 
@@ -46603,6 +46647,8 @@ extension on Traductions {
 			'admin.tirage.colonneQuand' => 'Tirée le',
 			'admin.tirage.colonneClasse' => 'Classe',
 			'admin.tirage.colonneEnseignant' => 'Enseignant',
+			_ => null,
+		} ?? switch (path) {
 			'admin.tirage.colonneControleur' => 'Contrôleur',
 			'admin.tirage.colonneCritere' => 'Tirage',
 			'admin.tirage.colonneStatut' => 'Mission',
@@ -46614,8 +46660,6 @@ extension on Traductions {
 			'admin.tirage.rapportEnvoye' => 'Rapport envoyé à l\'administration',
 			'admin.tirage.critereAleatoire' => 'Au hasard',
 			'admin.tirage.criterePonderation' => 'Selon le poids',
-			_ => null,
-		} ?? switch (path) {
 			'admin.tirage.critereCible' => 'Cible',
 			'admin.tirage.vide' => 'Aucun tirage pour le moment',
 			'admin.tirage.videDetail' => 'Les tirages apparaîtront ici dès que des séances seront en direct.',
@@ -47117,6 +47161,8 @@ extension on Traductions {
 			'compte.fuseau' => 'Fuseau horaire',
 			'compte.academie' => 'Académie',
 			'compte.securite' => 'Sécurité',
+			_ => null,
+		} ?? switch (path) {
 			'compte.statut' => 'Statut',
 			'compte.reglagesTitre' => 'Réglages',
 			'compte.reglagesIntro' => 'Ces préférences restent sur cet appareil et s\'appliquent tout de suite.',
@@ -47128,8 +47174,6 @@ extension on Traductions {
 			'compte.themeClairDetail' => 'Fond clair, quel que soit le réglage de votre appareil',
 			'compte.themeSombre' => 'Sombre',
 			'compte.themeSombreDetail' => 'Fond sombre, quel que soit le réglage de votre appareil',
-			_ => null,
-		} ?? switch (path) {
 			'compte.accessibilite' => 'Accessibilité',
 			'compte.animations' => 'Réduire les animations',
 			'compte.animationsDetail' => 'Limite les mouvements à l\'écran',
@@ -47631,6 +47675,8 @@ extension on Traductions {
 			'tuteur.accueil.foyerVidePhrase' => 'Ajoutez un profil élève pour choisir une classe et suivre ses séances.',
 			'tuteur.accueil.ajouterProfil' => 'Ajouter un profil élève',
 			'tuteur.accueil.profilsIllisibles' => 'Les profils du foyer n\'ont pas pu être lus.',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.blocageAppareilTitre' => ({required Object prenom}) => 'Aucun appareil prêt pour ${prenom}',
 			'tuteur.accueil.blocageAppareilPhrase' => ({required Object prenom}) => 'Sans appareil connecté, ${prenom} ne pourra pas entrer en classe.',
 			'tuteur.accueil.connecterAppareil' => 'Connecter un appareil',
@@ -47642,8 +47688,6 @@ extension on Traductions {
 			'tuteur.accueil.derniereSeance' => 'Dernière séance',
 			'tuteur.accueil.voirHistorique' => 'Voir l\'historique',
 			'tuteur.accueil.detailsSeance' => 'Détails de la séance',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.aucuneDerniere' => 'Aucune séance passée pour l\'instant',
 			'tuteur.accueil.derniereIllisible' => 'La dernière séance n\'a pas pu être lue.',
 			'tuteur.accueil.dateEtDuree' => ({required Object date, required Object duree}) => '${date} · ${duree}',
@@ -48145,6 +48189,8 @@ extension on Traductions {
 			'enseignant.salle.attenteSalle' => 'Vous n\'êtes pas encore dans la salle',
 			'enseignant.salle.attenteSalleDetail' => 'Les commandes de présentation s\'ouvrent dès que le cours est connecté.',
 			'enseignant.salle.lienFaibleDetail' => 'le tour de page peut arriver en retard chez votre Classe',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.salle.presentationConservee' => 'la page présentée est conservée, elle repartira au retour du lien',
 			'enseignant.salle.presentationSuspendue' => 'présentation suspendue',
 			'enseignant.salle.precedente' => 'Présenter la page précédente',
@@ -48156,8 +48202,6 @@ extension on Traductions {
 			'enseignant.salle.souratesIndisponiblesDetail' => 'Ce que votre Classe voit n\'a pas changé. Réessayez.',
 			'enseignant.salle.pageIndisponible' => 'Cette page n\'a pas pu être lue',
 			'enseignant.salle.pageIndisponibleDetail' => 'Le texte n\'est pas arrivé jusqu\'ici. Votre Classe voit toujours la page présentée.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.salle.corpusAbsent' => 'Le texte du Coran n\'est pas installé',
 			'enseignant.salle.corpusAbsentDetail' => 'Il n\'y a rien à présenter.',
 			'enseignant.salle.echecPresentation' => 'Ce verset n\'a pas pu être situé dans le mushaf. Rien n\'a été envoyé à votre Classe.',
@@ -48659,6 +48703,8 @@ extension on Traductions {
 			'controleur.observation.classeEntiere' => 'Classe entière',
 			'controleur.observation.classeEntiereAide' => 'Quand elle porte sur l\'ensemble des élèves présents',
 			'controleur.observation.elevePrecis' => 'Élève précis',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.observation.elevePrecisAide' => 'Quand un seul élève est concerné · vous le choisissez dans la liste, par son prénom et l\'initiale de son nom',
 			'controleur.observation.aucun' => 'Aucun participant précis',
 			'controleur.observation.aucunAide' => 'Quand elle ne vise personne en particulier, par exemple le déroulement',
@@ -48670,8 +48716,6 @@ extension on Traductions {
 			'controleur.observation.texteObligatoire' => 'Votre texte est nécessaire pour cette observation.',
 			'controleur.observation.texteFacultatif' => 'Ce texte est facultatif.',
 			'controleur.observation.libelleTexte' => 'Votre remarque',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.observation.aideTexte' => 'Décrivez seulement ce que vous avez observé.',
 			'controleur.observation.texteRequis' => 'Écrivez ce que vous avez observé pour continuer.',
 			'controleur.observation.questionRecap' => 'Vérifiez votre observation avant l\'envoi.',
@@ -49173,6 +49217,8 @@ extension on Traductions {
 			'tc.parcours.intention.apprendre' => 'À apprendre',
 			'tc.parcours.intention.revoir' => 'À revoir',
 			'tc.parcours.intention.renforcer' => 'À renforcer',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.intention.entretenir' => 'À entretenir',
 			'tc.parcours.intention.evaluation' => 'Pour l\'évaluation',
 			'tc.parcours.plage.versets' => ({required Object sourate, required Object premier, required Object dernier}) => 'Sourate ${sourate}, versets ${premier} à ${dernier}',
@@ -49184,8 +49230,6 @@ extension on Traductions {
 			'tc.parcours.plage.ressource' => 'Tout le support',
 			'tc.parcours.feedback.cours.intitule' => 'Comment était le cours aujourd\'hui ?',
 			'tc.parcours.feedback.cours.difficile' => 'Difficile',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.feedback.cours.bien' => 'Bien',
 			'tc.parcours.feedback.cours.tresBien' => 'Très bien',
 			'tc.parcours.feedback.comprehension.intitule' => 'Avez-vous compris ce qui a été travaillé ?',
@@ -49687,6 +49731,8 @@ extension on Traductions {
 			'motifs.derogation.aucuneClasse' => 'Aucune classe appropriée',
 			'motifs.derogation.avance' => 'Progression plus rapide que la classe',
 			'motifs.derogation.enseignant' => 'Décision de l\'enseignant',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.derogation.direction' => 'Accord de la direction pédagogique',
 			'motifs.cloreException.stables' => 'Prérequis désormais stables',
 			'motifs.cloreException.classe' => 'Élève placé dans une classe adaptée',
@@ -49698,8 +49744,6 @@ extension on Traductions {
 			'motifs.placement.procheNiveau' => 'Classe la plus proche du niveau évalué',
 			'motifs.placement.provisoire' => 'Placement provisoire, à réévaluer',
 			'motifs.refusDossier.illisible' => 'Pièce d\'identité illisible',
-			_ => null,
-		} ?? switch (path) {
 			'motifs.refusDossier.expiree' => 'Pièce d\'identité expirée',
 			'motifs.refusDossier.nom' => 'Nom différent de celui du compte',
 			'motifs.refusDossier.nonTransmise' => 'Pièce requise non transmise',
@@ -50201,6 +50245,8 @@ extension on Traductions {
 			'com.vocal.composer.fermer' => 'Fermer',
 			'com.vocal.composer.enregistrement' => 'Enregistrement en cours',
 			'com.vocal.composer.pause' => 'Enregistrement en pause',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.composer.reprise' => 'Enregistrement repris',
 			'com.vocal.composer.limiteProche' => ({required Object seuil, required Object max}) => 'Moins de ${seuil} avant la limite de ${max}',
 			'com.vocal.composer.limiteAtteinte' => ({required Object max}) => 'Durée maximale atteinte (${max}). Écoutez votre message, puis envoyez-le ou supprimez-le.',
@@ -50212,8 +50258,6 @@ extension on Traductions {
 			'com.vocal.composer.actionReprendre' => 'Reprendre',
 			'com.vocal.composer.actionArreter' => 'Arrêter',
 			'com.vocal.composer.actionSupprimer' => 'Supprimer',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.composer.actionEnvoyer' => 'Envoyer',
 			'com.vocal.composer.confirmerTitre' => 'Supprimer ce message vocal ?',
 			'com.vocal.composer.confirmerPhrase' => 'Il sera effacé de cet appareil. Cette action est définitive.',
@@ -50715,6 +50759,8 @@ extension on Traductions {
 			'com.annonces.administration.moderation.horsLigne' => 'Vous êtes hors ligne. La file de modération ne peut pas être actualisée.',
 			'com.annonces.administration.moderation.indisponible' => 'La modération n\'est pas encore disponible. Revenez plus tard.',
 			'com.annonces.administration.moderation.videTitre' => 'Aucun contenu à examiner',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.administration.moderation.vide' => 'Les signalements de la Communauté enseignants arrivent ici.',
 			'com.annonces.administration.moderation.refuseTitre' => 'File réservée à la modération',
 			'com.annonces.administration.moderation.refuse' => 'Seules les personnes chargées de la modération voient cette file.',
@@ -50726,8 +50772,6 @@ extension on Traductions {
 			'com.annonces.administration.moderation.ouvrirSemantique' => ({required Object objet, required Object motif}) => 'Examiner ${objet}, motif ${motif}',
 			'com.annonces.administration.moderation.regleMotif.publicite' => 'La publicité n\'est pas autorisée dans la Communauté enseignants.',
 			'com.annonces.administration.moderation.regleMotif.lienAffilie' => 'Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.administration.moderation.regleMotif.vente' => 'La vente de produits ou de services n\'est pas autorisée dans cet espace.',
 			'com.annonces.administration.moderation.regleMotif.sollicitation' => 'La sollicitation commerciale n\'est pas autorisée dans cet espace.',
 			'com.annonces.administration.moderation.regles.titre' => 'Partage pédagogique uniquement',
@@ -51229,6 +51273,8 @@ extension on Traductions {
 			'comptable.tresorerie.historiquePhrase' => 'Chaque mouvement est journalisé ; rien ne s\'y modifie.',
 			'comptable.tresorerie.historiqueVide' => 'Aucun mouvement entre coffres enregistré.',
 			'comptable.tresorerie.transfert.titre' => 'Mouvement entre coffres',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.transfert.choix' => 'Mouvement permis par la politique',
 			'comptable.tresorerie.transfert.couple' => ({required Object origine, required Object destination}) => '${origine} → ${destination}',
 			'comptable.tresorerie.transfert.delegable' => 'Vers une protection : exécuté selon votre délégation.',
@@ -51240,8 +51286,6 @@ extension on Traductions {
 			'comptable.tresorerie.transfert.erreurMontant' => 'Saisissez un montant entier supérieur à zéro.',
 			'comptable.tresorerie.transfert.verifier' => 'Vérifier le mouvement',
 			'comptable.tresorerie.transfert.recapPhrase' => 'Vérifiez le montant exact avant d\'envoyer.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.transfert.de' => 'De',
 			'comptable.tresorerie.transfert.vers' => 'Vers',
 			'comptable.tresorerie.transfert.confirmer' => 'Confirmer le mouvement',
@@ -51743,6 +51787,8 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.sortieAnnulerNom' => ({required Object beneficiaire}) => 'Annuler la sortie de ${beneficiaire}',
 			'comptable.direction.delegationPanneau.sortieAnnulerTitre' => 'Annuler cette sortie ?',
 			'comptable.direction.delegationPanneau.sortieAnnulerPhrase' => ({required Object beneficiaire}) => 'La sortie de ${beneficiaire} ne partira pas. L\'annulation est inscrite au journal.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.sortieAnnulerConfirmer' => 'Annuler la sortie',
 			'comptable.direction.delegationPanneau.sortieGarder' => 'Garder la sortie',
 			'comptable.direction.delegationPanneau.sortieAnnulee' => 'Sortie annulée.',
@@ -51754,8 +51800,6 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.exceptionModifier' => ({required Object libelle}) => 'Modifier l\'exception de ${libelle}',
 			'comptable.direction.delegationPanneau.exceptionLibelleDefaut' => 'Délégation du Comptable',
 			'comptable.direction.delegationPanneau.exceptionCoffres' => 'Coffres autorisés',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.exceptionCoffresAucun' => 'Aucun coffre autorisé',
 			'comptable.direction.delegationPanneau.exceptionExclus' => 'Bénéficiaires exclus',
 			'comptable.direction.delegationPanneau.exceptionExclusAucun' => 'Aucun bénéficiaire exclu',
@@ -52257,6 +52301,8 @@ extension on Traductions {
 			'courriels.admin.sousTitre' => 'Écrivez à une personne et suivez les e-mails qui partent de l\'académie.',
 			'courriels.admin.outil' => 'E-mails',
 			'courriels.admin.outilDetail' => 'Écrire un e-mail, suivre les envois, voir les adresses d\'envoi',
+			_ => null,
+		} ?? switch (path) {
 			'courriels.admin.sections.libelle' => 'Sections des e-mails',
 			'courriels.admin.sections.ecrire' => 'Écrire',
 			'courriels.admin.sections.file' => 'Envois',
@@ -52268,8 +52314,6 @@ extension on Traductions {
 			'courriels.admin.ecrire.intro' => 'L\'e-mail est mis en file, puis part de l\'adresse de sa catégorie, dans la minute. Il n\'est envoyé que lorsque la liste des envois affiche Envoyé.',
 			'courriels.admin.ecrire.adresse' => 'Adresse du destinataire',
 			'courriels.admin.ecrire.adresseAide' => 'Une seule adresse. Un compte d\'enfant ne reçoit jamais d\'e-mail.',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.ecrire.categorie' => 'Catégorie',
 			'courriels.admin.ecrire.categorieAide' => 'Elle décide de l\'adresse d\'envoi et de la boîte qui reçoit les réponses.',
 			'courriels.admin.ecrire.partDe' => ({required Object adresse}) => 'Part de ${adresse}',

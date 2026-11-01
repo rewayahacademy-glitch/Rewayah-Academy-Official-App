@@ -10,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admin/service_configuration.dart';
 import 'package:rewayah_academy/core/capacites/port_politique_revue_kyc.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/widgets/choix_nombre.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_configuration_regles/regles_page.dart';
 
@@ -50,7 +51,10 @@ class _Config implements ServiceConfiguration {
   }
 }
 
-Map<String, Object?> _toutesLesCles({int? classesMax = 3}) => <String, Object?>{
+Map<String, Object?> _toutesLesCles({
+  int? classesMax = 3,
+  Map<String, Object?>? remplacement = _a3,
+}) => <String, Object?>{
   'absence_threshold_minutes': 5,
   'session_duration_minutes': 60,
   'session_paid_minimum_minutes': 45,
@@ -62,6 +66,13 @@ Map<String, Object?> _toutesLesCles({int? classesMax = 3}) => <String, Object?>{
   'max_devices_per_student': 2,
   'max_concurrent_sessions_per_profile': 1,
   'enseignant.classes_max': ?classesMax,
+  ...?remplacement,
+};
+
+const Map<String, Object?> _a3 = <String, Object?>{
+  'remplacement.avertissement_minutes': 3,
+  'remplacement.perte_acces_minutes': 8,
+  'remplacement.debut_remplacant_minutes': 11,
 };
 
 Future<void> _monter(
@@ -90,7 +101,8 @@ void main() {
   testWidgets('chargement : un squelette, aucune ligne', (
     WidgetTester tester,
   ) async {
-    final _Config config = _Config(_toutesLesCles())..attente = Completer<void>();
+    final _Config config = _Config(_toutesLesCles())
+      ..attente = Completer<void>();
     tester.view.physicalSize = const Size(390, 900);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -206,5 +218,93 @@ void main() {
     await tester.pump();
     expect(titre, findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+
+  group('A3 : quand l enseignant n a pas rejoint la salle', () {
+    Future<void> ouvrir(WidgetTester tester, String titre) async {
+      final Finder f = find.text(titre);
+      await tester.ensureVisible(f);
+      await tester.pump();
+      await tester.tap(f);
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('la section montre les trois delais, en minutes', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, _Config(_toutesLesCles()));
+      final Finder section = find.text(t.admin.regles.remplacementSection);
+      await tester.ensureVisible(section);
+      await tester.pump();
+      expect(section, findsOneWidget);
+      expect(find.text(t.admin.regles.remplacementIntro), findsOneWidget);
+      expect(
+        find.text(t.admin.regles.remplacementAvertissement),
+        findsOneWidget,
+      );
+      expect(find.text(t.admin.regles.remplacementPerte), findsOneWidget);
+      expect(find.text(t.admin.regles.remplacementObjectif), findsOneWidget);
+      expect(find.textContaining('8'), findsWidgets);
+      expect(clesRemplacement, <String>[
+        'remplacement.avertissement_minutes',
+        'remplacement.perte_acces_minutes',
+        'remplacement.debut_remplacant_minutes',
+      ]);
+    });
+
+    testWidgets('un serveur sans A3 : la section n est pas montree', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, _Config(_toutesLesCles(remplacement: null)));
+      expect(find.text(t.admin.regles.remplacementSection), findsNothing);
+      expect(find.text(t.admin.regles.classesParEnseignant), findsOneWidget);
+    });
+
+    testWidgets(
+      'la perte de la seance ne se choisit qu entre les deux autres delais',
+      (WidgetTester tester) async {
+        final _Config config = _Config(_toutesLesCles());
+        await _monter(tester, config);
+        await ouvrir(tester, t.admin.regles.remplacementPerte);
+        // La feuille dit pourquoi ces bornes : apres 3, avant 11.
+        expect(find.textContaining('après l\'avertissement'), findsOneWidget);
+        // Monter jusqu'a la borne : le « + » disparait a 10, jamais 11.
+        for (int i = 0; i < 2; i++) {
+          await tester.tap(find.byKey(ChoixNombre.clePlus));
+          await tester.pump();
+        }
+        expect(find.byKey(ChoixNombre.clePlus), findsNothing);
+        // Descendre jusqu'a la borne basse : le « - » disparait a 4.
+        for (int i = 0; i < 6; i++) {
+          await tester.tap(find.byKey(ChoixNombre.cleMoins));
+          await tester.pump();
+        }
+        expect(find.byKey(ChoixNombre.cleMoins), findsNothing);
+        await tester.tap(find.byKey(ChoixNombre.clePlus));
+        await tester.pump();
+        await tester.tap(find.text(t.admin.regles.envoyer));
+        await tester.pumpAndSettle();
+        expect(config.ecritures, <(String, Object)>[
+          ('remplacement.perte_acces_minutes', 5),
+        ]);
+      },
+    );
+
+    testWidgets('un refus du serveur sur l ordre se dit, rien ne change', (
+      WidgetTester tester,
+    ) async {
+      final _Config config = _Config(_toutesLesCles())
+        ..erreurEcriture = Exception(
+          'la perte d acces doit venir apres l avertissement',
+        );
+      await _monter(tester, config);
+      await ouvrir(tester, t.admin.regles.remplacementObjectif);
+      await tester.tap(find.byKey(ChoixNombre.clePlus));
+      await tester.pump();
+      await tester.tap(find.text(t.admin.regles.envoyer));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('doit venir apres'), findsOneWidget);
+      expect(config.ecritures, isEmpty);
+    });
   });
 }

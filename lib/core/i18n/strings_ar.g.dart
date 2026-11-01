@@ -4754,6 +4754,17 @@ class _Traductions$admin$regles$ar extends Traductions$admin$regles$fr {
 	@override String uniteNombre({required Object n}) => '⁨${n}⁩';
 	@override String get classesParEnseignant => 'الحد الأقصى للفصول لكل معلّم';
 	@override String get classesParEnseignantDetail => 'عدد الفصول التي يستطيع المعلّم تولّيها في آنٍ واحد. لا يُحتسب الفصل المغلق ولا التعويض المؤقت. لا يؤدي خفض الحد إلى سحب أي فصل يتولاه المعلّم بالفعل. يختار المرشحون في استبيانهم من 1 إلى هذا العدد.';
+	@override String get remplacementSection => 'عندما لا ينضم المعلّم إلى القاعة';
+	@override String get remplacementIntro => 'تُحسب الدقائق من وقت بداية الحصة. وتأتي كل مرحلة بعد التي قبلها.';
+	@override String get remplacementAvertissement => 'تنبيه المعلّم';
+	@override String get remplacementAvertissementDetail => 'يُنبَّه المعلّم إلى أنه سيفقد الحصة. ويمكن للمعلّمين المتاحين أن يتقدّموا لتعويضه.';
+	@override String get remplacementPerte => 'فقدان الحصة';
+	@override String get remplacementPerteDetail => 'يُسجَّل المعلّم غائبًا ولا يمكنه الانضمام إلى حصة هذا اليوم. ويعوّضه معلّم تقدّم لذلك، وتُبلَّغ الأسر.';
+	@override String get remplacementObjectif => 'البديل في القاعة';
+	@override String get remplacementObjectifDetail => 'الهدف: أن يكون المعلّم البديل قد انضم إلى القاعة.';
+	@override String remplacementBornesAvertissement({required Object min, required Object max, required Object perte}) => 'بين ${min} و${max} بعد البداية، قبل فقدان الحصة (${perte}).';
+	@override String remplacementBornesPerte({required Object min, required Object max, required Object avertissement, required Object objectif}) => 'بين ${min} و${max} بعد البداية: بعد التنبيه (${avertissement}) وقبل وصول البديل إلى القاعة (${objectif}).';
+	@override String remplacementBornesObjectif({required Object min, required Object max, required Object perte}) => 'بين ${min} و${max} بعد البداية، بعد فقدان الحصة (${perte}).';
 }
 
 // Path: admin.fonctionnalites
@@ -24223,6 +24234,17 @@ extension on TraductionsAr {
 			'admin.regles.uniteNombre' => ({required Object n}) => '⁨${n}⁩',
 			'admin.regles.classesParEnseignant' => 'الحد الأقصى للفصول لكل معلّم',
 			'admin.regles.classesParEnseignantDetail' => 'عدد الفصول التي يستطيع المعلّم تولّيها في آنٍ واحد. لا يُحتسب الفصل المغلق ولا التعويض المؤقت. لا يؤدي خفض الحد إلى سحب أي فصل يتولاه المعلّم بالفعل. يختار المرشحون في استبيانهم من 1 إلى هذا العدد.',
+			'admin.regles.remplacementSection' => 'عندما لا ينضم المعلّم إلى القاعة',
+			'admin.regles.remplacementIntro' => 'تُحسب الدقائق من وقت بداية الحصة. وتأتي كل مرحلة بعد التي قبلها.',
+			'admin.regles.remplacementAvertissement' => 'تنبيه المعلّم',
+			'admin.regles.remplacementAvertissementDetail' => 'يُنبَّه المعلّم إلى أنه سيفقد الحصة. ويمكن للمعلّمين المتاحين أن يتقدّموا لتعويضه.',
+			'admin.regles.remplacementPerte' => 'فقدان الحصة',
+			'admin.regles.remplacementPerteDetail' => 'يُسجَّل المعلّم غائبًا ولا يمكنه الانضمام إلى حصة هذا اليوم. ويعوّضه معلّم تقدّم لذلك، وتُبلَّغ الأسر.',
+			'admin.regles.remplacementObjectif' => 'البديل في القاعة',
+			'admin.regles.remplacementObjectifDetail' => 'الهدف: أن يكون المعلّم البديل قد انضم إلى القاعة.',
+			'admin.regles.remplacementBornesAvertissement' => ({required Object min, required Object max, required Object perte}) => 'بين ${min} و${max} بعد البداية، قبل فقدان الحصة (${perte}).',
+			'admin.regles.remplacementBornesPerte' => ({required Object min, required Object max, required Object avertissement, required Object objectif}) => 'بين ${min} و${max} بعد البداية: بعد التنبيه (${avertissement}) وقبل وصول البديل إلى القاعة (${objectif}).',
+			'admin.regles.remplacementBornesObjectif' => ({required Object min, required Object max, required Object perte}) => 'بين ${min} و${max} بعد البداية، بعد فقدان الحصة (${perte}).',
 			'admin.fonctionnalites.titre' => 'الوظائف',
 			'admin.fonctionnalites.intro' => 'الوظائف التي تغيّر سلوك المنصة كلها.',
 			'admin.fonctionnalites.erreur' => 'تعذّرت قراءة الوظائف. أعد المحاولة بعد لحظة.',
@@ -24468,6 +24490,8 @@ extension on TraductionsAr {
 			'admin.observations.titre' => 'المتابعات',
 			'admin.observations.titrePage' => 'سجل المتابعات',
 			'admin.observations.sousTitre' => 'الإدارة',
+			_ => null,
+		} ?? switch (path) {
 			'admin.observations.recherche' => 'البحث عن وليّ أمر أو طالب',
 			'admin.observations.rechercheCourte' => 'أدخل حرفين على الأقل.',
 			'admin.observations.rechercheAucune' => 'لا وليّ أمر ولا طالب بهذا الاسم.',
@@ -24479,8 +24503,6 @@ extension on TraductionsAr {
 			'admin.observations.retirerFiltre' => ({required Object filtre}) => 'إزالة المعيار ⁨${filtre}⁩',
 			'admin.observations.classe' => 'الفصل',
 			'admin.observations.toutesClasses' => 'كل الفصول',
-			_ => null,
-		} ?? switch (path) {
 			'admin.observations.periode' => 'الفترة',
 			'admin.observations.statut' => 'الحالة',
 			'admin.observations.tousStatuts' => 'كل الحالات',
@@ -24982,6 +25004,8 @@ extension on TraductionsAr {
 			'admin.tirage.aucuneVersion' => 'لم تُسجَّل أي قاعدة بعد.',
 			'admin.tirage.zeroPhrase' => 'مع القيمة 0، لا تُسحب أي حصة للمراقبة.',
 			'admin.tirage.nombreInvalide' => 'أدخل عددًا صحيحًا من 0 إلى 50، أو اختر إحدى القيم المقترحة.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.tirage.frequenceAutreChamp' => 'عدد',
 			'admin.tirage.enregistreesVersion' => ({required Object n}) => 'سُجّلت القواعد، النسخة ⁨${n}⁩. تسري على السحوب القادمة.',
 			'admin.tirage.missionsParSemaine' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا مهمة في الأسبوع', one: 'مهمة واحدة في الأسبوع', two: 'مهمتان في الأسبوع', few: '⁨${n}⁩ مهام في الأسبوع', many: '⁨${n}⁩ مهمة في الأسبوع', other: '⁨${n}⁩ مهمة في الأسبوع', ), 
@@ -24993,8 +25017,6 @@ extension on TraductionsAr {
 			'admin.tirage.niveauAucun' => 'بلا وزن',
 			'admin.tirage.niveauNormal' => 'وزن عادي',
 			'admin.tirage.niveauFort' => 'وزن قوي',
-			_ => null,
-		} ?? switch (path) {
 			'admin.tirage.ciblesTitre' => 'فصول أو معلمون مستهدفون',
 			'admin.tirage.ciblesDetail' => 'يُسحب الهدف أولًا عندما تكون حصته مباشرة. لا يُعلَن أبدًا للمراقب ولا للمعلم.',
 			'admin.tirage.aucuneCible' => 'لا هدف: لكل الحصص المباشرة الفرص نفسها، بحسب الوزن.',
@@ -25496,6 +25518,8 @@ extension on TraductionsAr {
 			'comptable.aujourdhui.elementDepuis' => ({required Object date}) => 'قيد الانتظار منذ ${date}',
 			'comptable.aujourdhui.aTraiterVide' => 'لا شيء للمعالجة اليوم.',
 			'comptable.aujourdhui.aTraiterVideDetail' => 'ستظهر هنا المدفوعات والتذكيرات والمطابقات المطلوبة.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.aujourdhui.alertesVide' => 'لا توجد تنبيهات حاليًا.',
 			'comptable.aujourdhui.alertesResume' => ({required Object n}) => 'تنبيهات للمراقبة: ${n}',
 			'comptable.aujourdhui.paiementsAEffectuer' => 'مدفوعات للتنفيذ',
@@ -25507,8 +25531,6 @@ extension on TraductionsAr {
 			'comptable.aujourdhui.prestatairesVide' => 'لا يوجد مزوّد دفع مفعّل.',
 			'comptable.aujourdhui.prestatairesVideDetail' => 'ستنطلق المدفوعات الصادرة عندما تفعّل الإدارة مزوّد دفع.',
 			'comptable.aujourdhui.accesPaiements' => 'عرض المدفوعات للتنفيذ',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.aujourdhui.accesContractuels' => 'إدارة التزامات المتعاقدين',
 			'comptable.aujourdhui.accesEncaissements' => 'عرض المقبوضات',
 			'comptable.aujourdhui.accesTresorerie' => 'عرض الخزينة والصناديق',
@@ -26010,6 +26032,8 @@ extension on TraductionsAr {
 			'comptable.contractuels.erreurApprobation' => 'لا نعلم إن كان الاعتماد قد سُجّل. حدّث الالتزام قبل إعادة المحاولة.',
 			'comptable.contractuels.erreurInvitation' => 'لا نعلم إن كانت الدعوة قد أُعيد إرسالها. حدّث الالتزام قبل إعادة المحاولة.',
 			'comptable.contractuels.formIntro' => 'المستفيد والاستحقاق ومركز التكلفة مقترحة: غيّرها عند الحاجة، ثم أدخل الموضوع والمبلغ.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.beneficiaireExterne' => 'مستفيد خارجي جديد',
 			'comptable.contractuels.beneficiaireExterneAide' => 'يتلقى دعوة آمنة ليُدخل وسيلة الدفع بنفسه.',
 			'comptable.contractuels.champNomExterne' => 'اسم المستفيد الخارجي',
@@ -26021,8 +26045,6 @@ extension on TraductionsAr {
 			'comptable.contractuels.champMontantSaisi' => 'المبلغ',
 			'comptable.contractuels.aideMontant' => 'يُدخل مرة واحدة: لا يُعدَّل بعد الاعتماد.',
 			'comptable.contractuels.creer' => 'إنشاء الالتزام',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.horsLigneCreation' => 'أنت غير متصل. أعد الاتصال لإنشاء الالتزام.',
 			'comptable.contractuels.erreurObjet' => 'أدخل موضوع الالتزام.',
 			'comptable.contractuels.erreurMontant' => 'أدخل مبلغًا أكبر من صفر، مثلًا 350 أو 350,50.',
@@ -26524,6 +26546,8 @@ extension on TraductionsAr {
 			'eleveConnexion.pin.changerProfil' => 'تغيير الملف',
 			'eleveConnexion.pin.oublie' => 'نسيت الرمز؟',
 			'eleveConnexion.pin.oubliePhrase' => 'اطلب من وليّ الأمر عرض رمز جديد على جهازه، ثم أدخله هنا. ستختار حينها رمزًا شخصيًا جديدًا.',
+			_ => null,
+		} ?? switch (path) {
 			'eleveConnexion.pin.oublieAction' => 'إدخال رمز جديد',
 			'eleveConnexion.saisie.titre' => 'ربط هذا الجهاز',
 			'eleveConnexion.saisie.phrase' => 'أدخل الرمز المكوَّن من ستة أحرف المعروض تحت رمز QR، على جهاز وليّ الأمر.',
@@ -26535,8 +26559,6 @@ extension on TraductionsAr {
 			'eleveConnexion.lecteur.titre' => 'مسح رمز QR',
 			'eleveConnexion.lecteur.consigne' => 'وجّه الكاميرا نحو رمز QR المعروض على جهاز وليّ الأمر.',
 			'eleveConnexion.lecteur.demarrage' => 'اسمح بالكاميرا إن طلب الجهاز ذلك.',
-			_ => null,
-		} ?? switch (path) {
 			'eleveConnexion.lecteur.libelleApercu' => 'عرض الكاميرا',
 			'eleveConnexion.lecteur.contenuInvalide' => 'رمز QR هذا ليس رمز ربط من Rewayah. وجّه الكاميرا نحو الرمز الذي يعرضه وليّ الأمر.',
 			'eleveConnexion.lecteur.saisir' => 'إدخال الرمز',
@@ -27038,6 +27060,8 @@ extension on TraductionsAr {
 			'adulte.famille.aProposForfait' => 'عن باقة الأسرة',
 			'adulte.famille.aProposForfaitPhrase' => 'تضم باقة الأسرة صاحب الحساب، وزوجًا أو زوجة بالغًا، والأطفال أو المراهقين الذين في رعاية صاحب الحساب. يحتفظ كل بالغ بحسابه الخاص.',
 			'adulte.famille.profilNonCreeTitre' => 'عرض تجريبي: لم يُنشأ أي ملف',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.famille.profilNonCreePhrase' => 'في العرض التجريبي، لا يُرسل شيء. تبقى «أسرتي» كما كانت.',
 			'adulte.famille.profilNonCreePhraseSeul' => 'في العرض التجريبي، لا يُرسل شيء. تبقى مساحتك كطالب كما كانت.',
 			'adulte.famille.monProfilIndisponibleTitre' => 'غير متاح بعد',
@@ -27049,8 +27073,6 @@ extension on TraductionsAr {
 			'adulte.famille.place.inviterConjointe' => 'ادعُ زوجتك للانضمام إلى Rewayah بحسابها الخاص.',
 			'adulte.famille.place.inviterConjoint' => 'ادعُ زوجك للانضمام إلى Rewayah بحسابه الخاص.',
 			'adulte.famille.place.invitationEnvoyee' => 'أُرسلت الدعوة',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.famille.place.maConjointe' => ({required Object prenom}) => '⁨${prenom}⁩، زوجتك',
 			'adulte.famille.place.monConjoint' => ({required Object prenom}) => '⁨${prenom}⁩، زوجك',
 			'adulte.famille.place.validationEnAttente' => 'بانتظار الاعتماد الإداري',
@@ -27552,6 +27574,8 @@ extension on TraductionsAr {
 			'controleur.complement.correctionAide' => 'حين تكون معلومة في التقرير غير دقيقة · يبقى الأصل مقروءًا، ويظهر التصحيح تحته',
 			'controleur.complement.faitNouveau' => 'معلومة جديدة',
 			'controleur.complement.faitNouveauAide' => 'حين تعرفها بعد الزيارة · تحمل تاريخ يوم الإضافة',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.complement.questionTexte' => 'ماذا تضيف إلى التقرير؟',
 			'controleur.complement.texteObligatoire' => 'إلزامي: ما لاحظته، في جمل قليلة.',
 			'controleur.complement.libelleTexte' => 'التكملة',
@@ -27563,8 +27587,6 @@ extension on TraductionsAr {
 			'controleur.complement.cleMotif' => 'السبب',
 			'controleur.complement.sansMotif' => 'لا سبب',
 			'controleur.complement.cleTexte' => 'التكملة',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.complement.envoyer' => 'إرسال التكملة',
 			'controleur.complement.echec' => 'لم يُؤكَّد الإرسال: لم يستجب الاتصال أو الخادم. نصك محفوظ هنا، أعد المحاولة بعد لحظة. يبقى التقرير الأصلي سليمًا.',
 			'controleur.complement.envoyeTitre' => 'أُضيفت التكملة',
@@ -28066,6 +28088,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.presentation.p1.separation.titre' => 'فصل بين النساء والرجال',
 			'recrutement.parcours.presentation.p1.separation.texte' => 'يتابع طلب ترشح المرأة موظفو الإدارة من جهة النساء، ويتابع طلب ترشح الرجل موظفو الإدارة من جهة الرجال.',
 			'recrutement.parcours.presentation.p2.titre' => 'ما الذي يفعله المعلم؟',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.presentation.p2.intro' => 'تُدرّس عبر الفيديو، في فصل يبقى هو نفسه.',
 			'recrutement.parcours.presentation.p2.classe.titre' => 'فصل ثابت',
 			'recrutement.parcours.presentation.p2.classe.texte' => 'تدرّس الفصل نفسه على المدى الطويل، مع الطلاب أنفسهم.',
@@ -28077,8 +28101,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.presentation.p2.remuneration.texte' => 'راتبك جزء من السعر الذي يدفعه كل طالب حاضر. يُشرح لك بالنسبة المئوية قبل إرسال طلب ترشحك.',
 			'recrutement.parcours.presentation.p3.titre' => 'كيف يجري طلب ترشحك',
 			'recrutement.parcours.presentation.p3.intro' => 'ثلاث مراحل، داخل التطبيق.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.presentation.p3.examen.titre' => 'قاعة الامتحان',
 			'recrutement.parcours.presentation.p3.examen.texte' => 'تجيب عن أسئلة هذا المسار ثم ترسل طلب ترشحك. تقرأ الإدارة إجاباتك.',
 			'recrutement.parcours.presentation.p3.entretien.titre' => 'المقابلة عبر الفيديو',
@@ -28580,6 +28602,8 @@ extension on TraductionsAr {
 			'argent.transparence.postes.fraisEnvoiPaie' => 'رسوم إرسال أجور المعلّمين',
 			'argent.transparence.postes.visioconference' => 'الاتصال المرئي',
 			'argent.transparence.postes.applicationHebergement' => 'التطبيق والاستضافة',
+			_ => null,
+		} ?? switch (path) {
 			'argent.transparence.postes.emails' => 'البريد الإلكتروني',
 			'argent.transparence.postes.stockage' => 'تخزين الملفات',
 			'argent.transparence.postes.comptabilite' => 'المحاسبة',
@@ -28591,8 +28615,6 @@ extension on TraductionsAr {
 			'argent.transparence.estimation' => ({required Object enfants, required Object adultes}) => 'هذه النسب تقدير، محسوب على أساس ⁨${enfants}⁩ طفلًا و⁨${adultes}⁩ بالغًا، كلٌّ منهم بالسعر الكامل وحاضر في كل حصة. وتُراجَع مع كل إصدار جديد للأسعار.',
 			'argent.transparence.magasinsTitre' => 'لماذا لا يوجد التطبيق على App Store ولا على Google Play',
 			'argent.transparence.magasinsPhrase' => 'تأخذ هذه المتاجر من 15 إلى 30 ٪ من كل دفعة. ولا تستطيع الأكاديمية تحمّل هذه الرسوم دون رفع أسعارها. لذلك يتم الدفع عبر الويب.',
-			_ => null,
-		} ?? switch (path) {
 			'argent.transparence.taxesTitre' => 'الضرائب',
 			'argent.transparence.taxesPhrase' => 'أسعارنا دون احتساب الضرائب. وضريبة بلدكم، حين تكون مستحقة، تُضاف إلى الدفعة وتعود كاملة إلى الدولة: وهي غير واردة في هذا التوزيع.',
 			'argent.transparence.hausseTitre' => 'قد ترتفع الأسعار',
@@ -29094,6 +29116,8 @@ extension on TraductionsAr {
 			'admissions.modeles.generalPhrase' => '«لا يمكننا متابعة طلبك في الوقت الحالي.»',
 			'admissions.modeles.besoins' => 'فصولنا لا تلبي الطلب',
 			'admissions.modeles.besoinsPhrase' => '«فصولنا لا تلبي بعد ما تبحث عنه.»',
+			_ => null,
+		} ?? switch (path) {
 			'admissions.modeles.niveau' => 'المستوى غير متاح بعد',
 			'admissions.modeles.niveauPhrase' => '«المستوى المطلوب غير متاح بعد.»',
 			'admissions.modeles.sansReponse' => 'لا رد',
@@ -29105,8 +29129,6 @@ extension on TraductionsAr {
 			'accueilInscrits.elevesPhrase' => 'الاسم الأول مكتوب مسبقًا. يبقى تحديد العمر.',
 			'accueilInscrits.aJour' => 'مكتمل',
 			'accueilInscrits.aCompleter' => 'يحتاج إلى إكمال',
-			_ => null,
-		} ?? switch (path) {
 			'accueilInscrits.ajouterProfil' => ({required Object dePrenom}) => 'إضافة الملف الدراسي لـ ⁨${dePrenom}⁩',
 			'accueilInscrits.plusTard' => 'يمكنكم القيام بذلك لاحقًا أيضًا، من صفحة الأسرة.',
 			'accueilInscrits.sansEleve' => 'لم يُسترجع أي ملف دراسي لأسرتكم. يمكنكم إضافة ملف من صفحة الأسرة.',
