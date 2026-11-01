@@ -1892,7 +1892,7 @@ class _Traductions$notifications$evenements$ar extends Traductions$notifications
 	@override String get classeSupprimeeFoyer => 'أُغلق فصل أحد طلاب أسرتك.';
 	@override String get classeSupprimeeClasse => 'أُغلق أحد فصولك.';
 	@override String get seanceTerminee => 'انتهت إحدى الحصص.';
-	@override String seanceTermineeDe({required Object classe, required Object quand}) => 'انتهت حصة ⁨${classe}⁩ في ⁨${quand}⁩.';
+	@override String seanceTermineeDe({required Object deClasse, required Object quand}) => 'انتهت حصة ⁨${deClasse}⁩ في ⁨${quand}⁩.';
 	@override String seanceTermineeTravail({required Object travail}) => 'ما يجب تحضيره: ⁨${travail}⁩';
 	@override String get seanceTermineeAucunTravail => 'لا شيء يجب تحضيره.';
 	@override String seanceTermineePresents({required num n, required Object total}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
@@ -19855,7 +19855,7 @@ extension on TraductionsAr {
 			'notifications.evenements.classeSupprimeeFoyer' => 'أُغلق فصل أحد طلاب أسرتك.',
 			'notifications.evenements.classeSupprimeeClasse' => 'أُغلق أحد فصولك.',
 			'notifications.evenements.seanceTerminee' => 'انتهت إحدى الحصص.',
-			'notifications.evenements.seanceTermineeDe' => ({required Object classe, required Object quand}) => 'انتهت حصة ⁨${classe}⁩ في ⁨${quand}⁩.',
+			'notifications.evenements.seanceTermineeDe' => ({required Object deClasse, required Object quand}) => 'انتهت حصة ⁨${deClasse}⁩ في ⁨${quand}⁩.',
 			'notifications.evenements.seanceTermineeTravail' => ({required Object travail}) => 'ما يجب تحضيره: ⁨${travail}⁩',
 			'notifications.evenements.seanceTermineeAucunTravail' => 'لا شيء يجب تحضيره.',
 			'notifications.evenements.seanceTermineePresents' => ({required num n, required Object total}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'الطلاب الحاضرون: ⁨${n}⁩ من أصل ⁨${total}⁩.', one: 'الطلاب الحاضرون: ⁨${n}⁩ من أصل ⁨${total}⁩.', two: 'الطلاب الحاضرون: ⁨${n}⁩ من أصل ⁨${total}⁩.', few: 'الطلاب الحاضرون: ⁨${n}⁩ من أصل ⁨${total}⁩.', many: 'الطلاب الحاضرون: ⁨${n}⁩ من أصل ⁨${total}⁩.', other: 'الطلاب الحاضرون: ⁨${n}⁩ من أصل ⁨${total}⁩.', ), 

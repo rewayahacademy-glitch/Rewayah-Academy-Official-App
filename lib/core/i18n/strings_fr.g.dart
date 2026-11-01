@@ -12531,8 +12531,8 @@ class Traductions$notifications$evenements$fr {
 	/// fr: 'Une séance est terminée.'
 	String get seanceTerminee => 'Une séance est terminée.';
 
-	/// fr: 'La séance de {classe} du {quand} est terminée.'
-	String seanceTermineeDe({required Object classe, required Object quand}) => 'La séance de ${classe} du ${quand} est terminée.';
+	/// fr: 'La séance {deClasse} du {quand} est terminée.'
+	String seanceTermineeDe({required Object deClasse, required Object quand}) => 'La séance ${deClasse} du ${quand} est terminée.';
 
 	/// fr: 'Travail à préparer : {travail}'
 	String seanceTermineeTravail({required Object travail}) => 'Travail à préparer : ${travail}';
@@ -47399,7 +47399,7 @@ extension on Traductions {
 			'notifications.evenements.classeSupprimeeFoyer' => 'La classe d\'un élève de votre foyer est fermée.',
 			'notifications.evenements.classeSupprimeeClasse' => 'Une de vos classes est fermée.',
 			'notifications.evenements.seanceTerminee' => 'Une séance est terminée.',
-			'notifications.evenements.seanceTermineeDe' => ({required Object classe, required Object quand}) => 'La séance de ${classe} du ${quand} est terminée.',
+			'notifications.evenements.seanceTermineeDe' => ({required Object deClasse, required Object quand}) => 'La séance ${deClasse} du ${quand} est terminée.',
 			'notifications.evenements.seanceTermineeTravail' => ({required Object travail}) => 'Travail à préparer : ${travail}',
 			'notifications.evenements.seanceTermineeAucunTravail' => 'Aucun travail à préparer.',
 			'notifications.evenements.seanceTermineePresents' => ({required num n, required Object total}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève présent sur ${total}.', other: '${n} élèves présents sur ${total}.', ), 

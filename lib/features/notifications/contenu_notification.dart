@@ -8,6 +8,7 @@
 // l'application) a un titre de repli lisible : la page ne plante jamais.
 
 import '../../core/capacites/notifications_supabase.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../suivi_foyer/filtres_historique.dart'
     show dateLongueHistorique, heureMinute;
@@ -159,7 +160,14 @@ String texteSeanceTerminee(
       ? brutClasse.trim()
       : null;
   final String premiere = classe != null && quand != null
-      ? evenements.seanceTermineeDe(classe: classe, quand: quand)
+      ? evenements.seanceTermineeDe(
+          // « de » ou « d' » devant le nom de la Classe (elision.dart).
+          deClasse: deDevant(
+            classe,
+            cle: 'notifications.evenements.seanceTermineeDe',
+          ),
+          quand: quand,
+        )
       : evenements.seanceTerminee;
   String? suite;
   if (portee == 'classe') {

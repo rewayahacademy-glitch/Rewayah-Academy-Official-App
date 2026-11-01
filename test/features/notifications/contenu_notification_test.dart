@@ -291,6 +291,18 @@ void main() {
       );
     });
 
+    test('elision devant un nom de Classe qui commence par une voyelle', () {
+      final String texte = contenuNotificationPour(
+        'seance_terminee',
+        const <String, dynamic>{
+          'portee': 'soi',
+          'classe': 'Al-Fajr',
+          'debut_local': '2026-11-01T18:00:00',
+        },
+      ).titre;
+      expect(texte, startsWith("La séance d'Al-Fajr du "));
+    });
+
     test('sans classe ni heure : la phrase generale, jamais un code', () {
       final String texte = contenuNotificationPour(
         'seance_terminee',

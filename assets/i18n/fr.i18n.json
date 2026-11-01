@@ -6828,7 +6828,7 @@
       "classeSupprimeeFoyer": "La classe d'un élève de votre foyer est fermée.",
       "classeSupprimeeClasse": "Une de vos classes est fermée.",
       "seanceTerminee": "Une séance est terminée.",
-      "seanceTermineeDe": "La séance de {classe} du {quand} est terminée.",
+      "seanceTermineeDe": "La séance {deClasse} du {quand} est terminée.",
       "seanceTermineeTravail": "Travail à préparer\u00a0: {travail}",
       "seanceTermineeAucunTravail": "Aucun travail à préparer.",
       "seanceTermineePresents(plural, param=n)": {

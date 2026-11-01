@@ -58,7 +58,7 @@
       "classeSupprimeeFoyer": "أُغلق فصل أحد طلاب أسرتك.",
       "classeSupprimeeClasse": "أُغلق أحد فصولك.",
       "seanceTerminee": "انتهت إحدى الحصص.",
-      "seanceTermineeDe": "انتهت حصة ⁨{classe}⁩ في ⁨{quand}⁩.",
+      "seanceTermineeDe": "انتهت حصة ⁨{deClasse}⁩ في ⁨{quand}⁩.",
       "seanceTermineeTravail": "ما يجب تحضيره: ⁨{travail}⁩",
       "seanceTermineeAucunTravail": "لا شيء يجب تحضيره.",
       "seanceTermineePresents(plural, param=n)": {
