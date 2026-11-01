@@ -4762,9 +4762,9 @@ class _Traductions$admin$regles$ar extends Traductions$admin$regles$fr {
 	@override String get remplacementPerteDetail => 'يُسجَّل المعلّم غائبًا ولا يمكنه الانضمام إلى حصة هذا اليوم. ويعوّضه معلّم تقدّم لذلك، وتُبلَّغ الأسر.';
 	@override String get remplacementObjectif => 'البديل في القاعة';
 	@override String get remplacementObjectifDetail => 'الهدف: أن يكون المعلّم البديل قد انضم إلى القاعة.';
-	@override String remplacementBornesAvertissement({required Object min, required Object max}) => 'بين ${min} و${max} بعد البداية. لتتجاوز ${max}، ارفع أولًا موعد فقدان الحصة.';
-	@override String remplacementBornesPerte({required Object min, required Object max}) => 'بين ${min} و${max} بعد البداية. لتنزل عن ${min}، اخفض أولًا موعد التنبيه. ولتتجاوز ${max}، ارفع أولًا الهدف.';
-	@override String remplacementBornesObjectif({required Object min}) => '${min} على الأقل بعد البداية. لتنزل عن ${min}، اخفض أولًا موعد فقدان الحصة.';
+	@override String remplacementBornesAvertissement({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية. لتتجاوز ⁨${max}⁩، ارفع أولًا موعد فقدان الحصة.';
+	@override String remplacementBornesPerte({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية. لتنزل عن ⁨${min}⁩، اخفض أولًا موعد التنبيه. ولتتجاوز ⁨${max}⁩، ارفع أولًا الهدف.';
+	@override String remplacementBornesObjectif({required Object min}) => '⁨${min}⁩ على الأقل بعد البداية. لتنزل عن ⁨${min}⁩، اخفض أولًا موعد فقدان الحصة.';
 	@override String get remplacementOrdreRefuse => 'لم يعد ترتيب المهل محترمًا: تغيّر إعداد آخر في الأثناء. أغلق هذه النافذة، ثم أعد فتح السطر لترى القيم المحدّثة.';
 }
 
@@ -24243,9 +24243,9 @@ extension on TraductionsAr {
 			'admin.regles.remplacementPerteDetail' => 'يُسجَّل المعلّم غائبًا ولا يمكنه الانضمام إلى حصة هذا اليوم. ويعوّضه معلّم تقدّم لذلك، وتُبلَّغ الأسر.',
 			'admin.regles.remplacementObjectif' => 'البديل في القاعة',
 			'admin.regles.remplacementObjectifDetail' => 'الهدف: أن يكون المعلّم البديل قد انضم إلى القاعة.',
-			'admin.regles.remplacementBornesAvertissement' => ({required Object min, required Object max}) => 'بين ${min} و${max} بعد البداية. لتتجاوز ${max}، ارفع أولًا موعد فقدان الحصة.',
-			'admin.regles.remplacementBornesPerte' => ({required Object min, required Object max}) => 'بين ${min} و${max} بعد البداية. لتنزل عن ${min}، اخفض أولًا موعد التنبيه. ولتتجاوز ${max}، ارفع أولًا الهدف.',
-			'admin.regles.remplacementBornesObjectif' => ({required Object min}) => '${min} على الأقل بعد البداية. لتنزل عن ${min}، اخفض أولًا موعد فقدان الحصة.',
+			'admin.regles.remplacementBornesAvertissement' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية. لتتجاوز ⁨${max}⁩، ارفع أولًا موعد فقدان الحصة.',
+			'admin.regles.remplacementBornesPerte' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية. لتنزل عن ⁨${min}⁩، اخفض أولًا موعد التنبيه. ولتتجاوز ⁨${max}⁩، ارفع أولًا الهدف.',
+			'admin.regles.remplacementBornesObjectif' => ({required Object min}) => '⁨${min}⁩ على الأقل بعد البداية. لتنزل عن ⁨${min}⁩، اخفض أولًا موعد فقدان الحصة.',
 			'admin.regles.remplacementOrdreRefuse' => 'لم يعد ترتيب المهل محترمًا: تغيّر إعداد آخر في الأثناء. أغلق هذه النافذة، ثم أعد فتح السطر لترى القيم المحدّثة.',
 			'admin.fonctionnalites.titre' => 'الوظائف',
 			'admin.fonctionnalites.intro' => 'الوظائف التي تغيّر سلوك المنصة كلها.',
