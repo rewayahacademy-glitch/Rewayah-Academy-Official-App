@@ -1,0 +1,9 @@
+== Parcours 7, suite : e-mail et notification « paiement reçu » : 2026-11-01T05:40:00Z ; PR 116 ; branche claude/admiring-brown-r6ai72-paiement-recu (431ac955a)
+Ce qui est prouvé ici : le rendu du modèle d'e-mail `paiement_recu` (fr, ar, en) par le code de `supabase/functions/_shared/courriel/` (contenuPour + composer), montant 165,00 $US, lien /tuteur/foyer/recharge. Captures 640 px par Chromium (Playwright), texte brut à côté.
+Ce qui est prouvé en local (Postgres 16 nu, même ordre que ci.yml) : `scenarios_fi_br06_recharge_stripe.sql` : après `checkout.session.completed`, une notification `paiement_recu` par destinataire (montant, devise, destination), aucun doublon, une ligne `courriels_sortants` modèle `paiement_recu`, catégorie facturation, adresse du titulaire. 25 tests Deno de `_shared/courriel/` verts.
+Ce qui n'est PAS prouvé : aucun paiement réel, aucun envoi réel (ni Mailpit, ni Resend), rien en production. La migration 20261103400000 n'est pas appliquée en production à cette date.
+Mots : « Le paiement est reçu » ; jamais « paiement confirmé » ; pas de tiret long.
+Capture 01 : e-mail fr, sujet « Le paiement est reçu », bouton « Ouvrir l’application ».
+Capture 02 : e-mail ar, sujet « وصلت الدفعة », sens droite à gauche.
+courriel_en.txt : version anglaise, « The payment has been received », $165.00.
+== Parcours 7, suite : vert en local : rendu et scénario SQL ; reste à prouver par un vrai paiement du directeur après fusion et migration.

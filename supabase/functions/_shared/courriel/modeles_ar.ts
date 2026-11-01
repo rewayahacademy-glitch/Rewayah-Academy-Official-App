@@ -5,7 +5,7 @@
 // Chiffres latins, comme dans l'application ; dates en `ar-u-nu-latn`.
 
 import { APP } from './gabarit.ts'
-import { avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole } from './outils.ts'
+import { avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole, montantLisible } from './outils.ts'
 import { quandSeance } from './modeles_fr.ts'
 
 const PAROLE: Parole = {
@@ -150,6 +150,13 @@ const MODELES: Record<string, Fabrique> = {
     'تسديد الدفعة', '/tuteur/foyer/recharge'),
   acces_retabli_paiement: (d) => avis(d, 'أُعيد الوصول', 'أُعيد الوصول',
     'وصلت الدفعة، وأُعيد الوصول إلى الفصل.', 'فتح التطبيق', '/tuteur/foyer/recharge'),
+  paiement_recu: (d) => {
+    const m = montantLisible(d, PAROLE.locale)
+    return avis(d, 'وصلت الدفعة', 'وصلت الدفعة',
+      m === null ? 'وصلت الدفعة. الرصيد محدَّث في التطبيق.'
+        : `وصلت دفعة بقيمة ${m}. الرصيد محدَّث في التطبيق.`,
+      'فتح التطبيق', '/tuteur/foyer/recharge')
+  },
   invitation_foyer: (d) => {
     const qui = typeof d.invite_par === 'string' && d.invite_par.trim() ? d.invite_par.trim() : 'أحد أفراد أسرتك'
     const fin = dateLongue(d.expire_le, PAROLE.locale)

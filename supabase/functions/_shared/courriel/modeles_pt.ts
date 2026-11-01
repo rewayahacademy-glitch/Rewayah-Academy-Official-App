@@ -3,7 +3,7 @@
 // memes boutons. Competence `mots-rewayah`.
 
 import { APP } from './gabarit.ts'
-import { avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole } from './outils.ts'
+import { avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole, montantLisible } from './outils.ts'
 import { quandSeance } from './modeles_fr.ts'
 
 const PAROLE: Parole = {
@@ -121,6 +121,13 @@ const MODELES: Record<string, Fabrique> = {
     'Efetuar o pagamento', '/tuteur/foyer/recharge'),
   acces_retabli_paiement: (d) => avis(d, 'O acesso foi restabelecido', 'O acesso foi restabelecido',
     'O pagamento foi recebido: o acesso à turma foi restabelecido.', 'Abrir a aplicação', '/tuteur/foyer/recharge'),
+  paiement_recu: (d) => {
+    const m = montantLisible(d, PAROLE.locale)
+    return avis(d, 'O pagamento foi recebido', 'O pagamento foi recebido',
+      m === null ? 'O pagamento foi recebido. O saldo está atualizado na aplicação.'
+        : `O pagamento de ${m} foi recebido. O saldo está atualizado na aplicação.`,
+      'Abrir a aplicação', '/tuteur/foyer/recharge')
+  },
   invitation_foyer: (d) => {
     const qui = typeof d.invite_par === 'string' && d.invite_par.trim() ? d.invite_par.trim() : 'Um membro da sua família'
     const fin = dateLongue(d.expire_le, PAROLE.locale)
