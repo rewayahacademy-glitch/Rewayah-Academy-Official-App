@@ -328,7 +328,13 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
 
     return PageShell(
       titre: t.admin.comptes.titre,
-      entete: SousNavigationDomaine(onglets: ongletsPersonnes(), indexActif: 1),
+      // §5 quater.10 bis : en menu, la sous-navigation prend la largeur de
+      // son contenu, pas toute la rangee (pilote, relecture de la PR 126).
+      entete: SousNavigationDomaine(
+        onglets: ongletsPersonnes(),
+        indexActif: 1,
+        menuAuContenu: true,
+      ),
       // LISTES-2 (directeur, 30/10/2026) : la tete de la page (retour,
       // « Comptes ▾ », actions) defile avec la liste, qui la prend
       // (`DataCollection.prendTeteDePage`). Rien de fixe au-dessus des

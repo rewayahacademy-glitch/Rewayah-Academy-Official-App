@@ -27,8 +27,12 @@ class SousNavigationDomaine extends StatelessWidget {
   const SousNavigationDomaine({
     required this.onglets,
     required this.indexActif,
+    this.menuAuContenu = false,
     super.key,
   });
+
+  /// Opt-in : en menu, la largeur de son contenu (`SelecteurSection`).
+  final bool menuAuContenu;
 
   /// Les fonctions du domaine, dans l'ordre d'affichage impose.
   final List<({String libelle, String chemin})> onglets;
@@ -40,6 +44,7 @@ class SousNavigationDomaine extends StatelessWidget {
   Widget build(BuildContext context) {
     return SelecteurSection<int>(
       libelle: t.commun.sections.page,
+      menuAuContenu: menuAuContenu,
       valeur: indexActif,
       sections: <Segment<int>>[
         for (int i = 0; i < onglets.length; i++)

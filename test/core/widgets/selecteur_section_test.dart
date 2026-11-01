@@ -46,6 +46,7 @@ Future<List<int>> _monter(
   double echelleTexte = 1,
   Brightness luminosite = Brightness.light,
   TextDirection direction = TextDirection.ltr,
+  bool menuAuContenu = false,
 }) async {
   fixerVue(tester, Size(largeur, 800));
   final List<int> choix = <int>[];
@@ -67,6 +68,7 @@ Future<List<int>> _monter(
                       Segment<int>(valeur: i, libelle: libelles[i]),
                   ],
                   onChange: choix.add,
+                  menuAuContenu: menuAuContenu,
                 ),
               ),
             ),
@@ -299,6 +301,33 @@ void main() {
       expect(find.byType(MenuFiltre<int>), findsOneWidget);
       expect(find.byType(ControleSegmente<int>), findsNothing);
     });
+  });
+
+  // Relecture du pilote (PR 126) : opt-in, le menu prend la largeur de son
+  // plus long libelle, au debut de la rangee ; sans l'option, toute la rangee.
+  group('menuAuContenu', () {
+    for (final double echelle in <double>[1, 2]) {
+      testWidgets('1440 px, huit sections, texte x$echelle', (
+        WidgetTester tester,
+      ) async {
+        await _monter(tester, _huit, largeur: 1440, echelleTexte: echelle);
+        final double pleine = tester
+            .getRect(find.byType(MenuFiltre<int>))
+            .width;
+        await _monter(
+          tester,
+          _huit,
+          largeur: 1440,
+          echelleTexte: echelle,
+          menuAuContenu: true,
+        );
+        final Rect court = tester.getRect(find.byType(MenuFiltre<int>));
+        expect(court.width, lessThan(pleine / 2));
+        expect(court.left, 16);
+        _sansDefilementHorizontal(tester);
+        expect(tester.takeException(), isNull);
+      });
+    }
   });
 
   group('texte agrandi : jamais de debordement, jamais de defilement', () {
