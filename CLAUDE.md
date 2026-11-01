@@ -92,11 +92,17 @@ dart run build_runner build --delete-conflicting-outputs
 dart analyze --fatal-infos
 flutter test
 dart run tool/verifier_jetons.dart
+dart run tool/verifier_branchement.dart
 ```
 
+`verifier_branchement` (décision du 01/11/2026, `docs/current/DECISION-BRANCHEMENT-2026-11-01.md`) :
+aucun fichier de `lib/` sans chemin depuis `lib/main.dart`, hors `tool/branchement_tolere.txt`, qui
+ne fait que rétrécir. Pas de capture `docs/current/captures/E2E/<lot>/`, pas de fusion (R3).
+
 Côté base, sur un Postgres nu, ce que rejoue `.github/workflows/ci.yml` :
-`supabase/tests/stub_auth.sql`, puis toutes les migrations, puis les scénarios
-`supabase/tests/scenarios_*.sql`. Les migrations sont appliquées en production hors CI
+`supabase/tests/stub_auth.sql`, puis toutes les migrations, puis **une partie seulement** des
+scénarios `supabase/tests/scenarios_*.sql` (30 sur 154 au 31/10/2026, nommés un par un dans
+`ci.yml`) ; la pile locale de `tool/e2e/` les rejoue tous. Les migrations sont appliquées en production hors CI
 (voir `deploy.yml`) ; la base distante enregistre des versions horodatées, pas la
 numérotation `00xx` du dépôt.
 

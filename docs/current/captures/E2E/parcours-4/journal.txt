@@ -1,0 +1,5 @@
+== Parcours 4 : la direction place un eleve dans une classe : 2026-10-31T23:34:49.176Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Classe du parcours 2 : « E2E Classe enfants 10312330 » (Dimanche 13 h, Pacific/Auckland) ; enfant Yanis10312331 ; adulte E2E Adulte Apprenant10312331
+Base locale : 1 placement de Yanis10312331 dans « E2E Classe enfants 10312330 »
+Creneaux ouverts par le formulaire : 3
+== Parcours 4 : la direction place un eleve dans une classe : rouge : « Ajouter un élève » refuse : flt-semantics:L'ajout n'a pas abouti : cet eleve appartient deja a un groupe actif, code: P0001, details: Bad Request, hint: null)

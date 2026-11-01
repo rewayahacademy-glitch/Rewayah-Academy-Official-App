@@ -1,0 +1,17 @@
+== Revue UX aux deux largeurs : 2026-10-31T23:43:03.165Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+famille_accueil (ordinateur) : http://127.0.0.1:8090/#/tuteur ; etendue du contenu {"gauche":288,"droite":1408,"largeur":1120}
+adulte_accueil (ordinateur) : http://127.0.0.1:8090/#/eleve/adulte ; etendue du contenu {"gauche":288,"droite":1408,"largeur":1120}
+enseignant_aujourdhui (ordinateur) : http://127.0.0.1:8090/#/enseignant/journee ; etendue du contenu {"gauche":288,"droite":1408,"largeur":1120}
+  ECART : onglet « Classes » absent de l'arbre d'accessibilite ; ouvert par l'adresse /enseignant/classes
+enseignant_classes (ordinateur) : http://127.0.0.1:8090/#/enseignant/classes ; etendue du contenu {"gauche":288,"droite":1408,"largeur":1120}
+salle_enseignant (ordinateur) : http://127.0.0.1:8090/#/salle ; etendue du contenu {"gauche":288,"droite":1416,"largeur":1128}
+salle_tuteur (ordinateur) : http://127.0.0.1:8090/#/tuteur ; etendue du contenu {"gauche":640,"droite":800,"largeur":160}
+direction_classes (ordinateur) : http://127.0.0.1:8090/#/admin/operations/classes ; etendue du contenu {"gauche":520,"droite":920,"largeur":400}
+famille_accueil (telephone) : http://127.0.0.1:8090/#/tuteur ; etendue du contenu {"gauche":285,"droite":378,"largeur":93}
+adulte_accueil (telephone) : http://127.0.0.1:8090/#/eleve/adulte ; etendue du contenu {"gauche":303,"droite":378,"largeur":75}
+enseignant_aujourdhui (telephone) : http://127.0.0.1:8090/#/enseignant/journee ; etendue du contenu {"gauche":312,"droite":378,"largeur":66}
+enseignant_classes (telephone) : http://127.0.0.1:8090/#/enseignant/classes ; etendue du contenu {"gauche":312,"droite":378,"largeur":66}
+salle_enseignant (telephone) : http://127.0.0.1:8090/#/salle ; etendue du contenu {"gauche":297,"droite":353,"largeur":56}
+salle_tuteur (telephone) : http://127.0.0.1:8090/#/tuteur ; etendue du contenu null
+direction_classes (telephone) : http://127.0.0.1:8090/#/admin/operations/classes ; etendue du contenu null
+== Revue UX aux deux largeurs : joué

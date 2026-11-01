@@ -1,0 +1,10 @@
+== Finance : paie, factures, revenus : 2026-10-31T23:28:11.737Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+CONSTAT : Finance › Vue globale : « flt-semantics:Pas encore disponible Cette fonction n'est pas encore ouverte. »
+Paie : checkbox:Sélectionner le paiement de E2E Enseignant Valide Bénéficiaire : E2E Enseignant Valide Type : Enseignant Période / objet : Octobre 2026 0 $ Destination : Aucune | checkbox:Sélectionner le paiement de E2E Enseignant Valide Bénéficiaire : E2E Enseignant Valide Type : Enseignant Période / objet : Novembre 2026 0 $ Destination : Aucun
+CONSTAT : Paie › détail : « group:Détail du paiement E2E Enseignant Valide Demander validation Nous n'avons pas pu lire l'état de la demande de validation. Réessayez dans un instant. Réessayer »
+Detail : flt-semantics:0 $ | flt-semantics:Source : En attente | flt-semantics:E2E Classe enfants 10312007 | flt-semantics:0 $ | flt-semantics:0 $ | flt-semantics:Classes E2E Classe enfants 10312007
+Factures en base : E2E Adulte (autonomous) 2026-11-01 6500 ; Yanis10312032 (minor) 2026-11-01 5500
+Revenus : mois proposes : novembre 2026
+CONSTAT : Revenus estimés : seul « novembre 2026 » est proposé ; octobre, mois des séances données, n'est pas consultable
+Constats : 3
+== Finance : paie, factures, revenus : rouge : Finance › Vue globale : « flt-semantics:Pas encore disponible Cette fonction n'est pas encore ouverte. » ; Paie › détail : « group:Détail du paiement E2E Enseignant Valide Demander validation Nous n'avons pas pu lire l'état de la demande de validation. Réessayez dans un instant. Réessayer » ; Revenus estimés : seul « novembre 2026 » est proposé ; octobre, mois des séances données, n'est pas consultable
