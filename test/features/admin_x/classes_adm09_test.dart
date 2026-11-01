@@ -309,6 +309,12 @@ void main() {
     final double ecart =
         tester.getRect(envoyer).top - tester.getRect(message).bottom;
     expect(ecart, inInclusiveRange(0, 48));
+    // Le filet d'alerte autour des motifs : apres un clic, l'anneau de focus
+    // ne se peint pas ; c'est lui qui montre ou agir.
+    final DecoratedBox cadre = tester.widget<DecoratedBox>(
+      find.byKey(const ValueKey<String>('feuille-motif-cadre')),
+    );
+    expect((cadre.decoration as BoxDecoration).border, isNotNull);
     // Le focus est sur la liste des motifs ; aucun motif choisi a sa place.
     expect(
       FocusManager.instance.primaryFocus?.debugLabel,

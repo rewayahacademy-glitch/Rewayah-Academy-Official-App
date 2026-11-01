@@ -47,13 +47,14 @@ try {
     // message doit se voir juste au-dessus du bouton, et le focus aller sur
     // les motifs. Aucun motif n'est choisi a sa place.
     await cliquer(d.page, /^Clôturer$/, { role: 'button', pause: 1500 });
-    await activerSemantique(d.page);
+    // La capture d'abord : activer l'arbre d'accessibilite est un clic, qui
+    // changerait le mode du focus.
+    await p.capture(d, 'sans_motif_message_et_focus');
     const sansMotif = await lus(d.page, 80);
     messageSansMotif = /Il manque le motif/.test(sansMotif)
       && sql(`select ended_at is null from public.groupes where id = '${id}'`) === 't';
     const focus = await d.page.evaluate(() => document.activeElement?.getAttribute('aria-label') ?? document.activeElement?.textContent ?? '');
     p.dire(`Sans motif : message=${/Il manque le motif/.test(sansMotif)} ; rien en base=${messageSansMotif} ; focus sur « ${focus.trim().slice(0, 60)} »`);
-    await p.capture(d, 'sans_motif_message_et_focus');
     await cliquer(d.page, /^Fin du cycle de la classe$/);
     // Le bouton de confirmation est-il visible sans defiler ?
     const envoyer = await trouver(d.page, /^Clôturer$/, { role: 'button', delai: 5000 });

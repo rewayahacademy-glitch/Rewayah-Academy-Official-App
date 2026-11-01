@@ -91,9 +91,9 @@ class PageShell extends StatelessWidget {
   /// que la page est faite pour », `DECISION-LISTES-2026-10-23.md`
   /// §5 quater) : vrai, **au bureau**, la liste prend toute la largeur de la
   /// zone de contenu (les gouttieres restent) au lieu d'etre bornee a
-  /// [AppPage.largeurMaxContenu], et elle n'a pas de retour vers l'Accueil
-  /// (la barre laterale de la coquille est la navigation). Opt-in, adopte
-  /// liste par liste ; sans effet sous le seuil du bureau.
+  /// [AppPage.largeurMaxContenu]. A toutes les largeurs, elle n'a pas de
+  /// retour vers l'Accueil : la barre laterale de la coquille (le tiroir au
+  /// telephone) est la navigation. Opt-in, adopte liste par liste.
   final bool listeBureau;
 
   /// LISTES-2 (directeur, 30/10/2026 : « tout ce qui n'est pas important ne
@@ -202,10 +202,10 @@ class PageShell extends StatelessWidget {
       ...actionsEntete,
       if (actionsCoquille) ...ActionsEnteteCoquille.de(context),
     ];
-    // LISTES-3 : au bureau, une liste de la coquille n'a pas de retour ; la
-    // barre laterale est la navigation (§5 quater). Au telephone, rien ne
-    // change.
-    final bool sansRetourDeCoquille = listeBureau && gabarit == Gabarit.desktop;
+    // LISTES-3 : une liste de la coquille n'a pas de retour ; la barre
+    // laterale (au telephone, le tiroir) est la navigation (§5 quater, pilote
+    // du 01/11/2026 : « Classes est dans AdminShell, sans onRetour »).
+    final bool sansRetourDeCoquille = listeBureau;
     final VoidCallback? retour =
         onRetour ??
         (actionsCoquille && !sansRetourDeCoquille

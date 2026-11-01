@@ -25,6 +25,8 @@ import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart' show horsLigneProvider;
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
@@ -43,6 +45,7 @@ import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pays_enseignant.dart';
 import '../../core/widgets/pied_de_liste.dart';
+import '../../core/widgets/pressable.dart';
 import '../../core/widgets/puce_filtre_actif.dart';
 import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/selecteur_motif.dart';
@@ -932,10 +935,11 @@ class _Corps extends StatelessWidget {
         ColonneDonnees<ClasseListee>(
           titre: t.admin.groupes.colonneGroupe,
           role: RoleColonne.identifiante,
-          // Largeurs en demi-parts : la classe 3, l'etat 3 (« Cloturee »
-          // tient sur une ligne dans sa pastille, inspecteur ouvert a
-          // 1440), les autres 2.
-          flex: 3,
+          // Largeurs en demi-parts. Au bureau (LISTES-3), la classe prend 5 :
+          // son nom tient sur une ligne (pilote, 01/11/2026), les membres 1 ;
+          // sinon, la classe 3, l'etat 3, les autres 2. Un nom trop long passe
+          // a la ligne entre ses mots, jamais tronque (COUPE-MOTS).
+          flex: bureau ? 5 : 3,
           // R16 : numero dans la famille de classes, code ou enseignant.
           texte: (ClasseListee c) => c.nom,
           // LISTES-3 (bureau) : le cercle, le nom, l'etat en petit dessous.
@@ -945,7 +949,8 @@ class _Corps extends StatelessWidget {
                   prenom: c.groupe.libelle,
                   nom: c.nom,
                   diametre: AppAvatar.petit,
-                  role: _libelleEtat(c.etat),
+                  // La meme pastille d'etat qu'au telephone.
+                  roleWidget: _PastilleEtat(etat: c.etat),
                 )
               : null,
         ),
@@ -983,7 +988,7 @@ class _Corps extends StatelessWidget {
         ),
         ColonneDonnees<ClasseListee>(
           titre: t.admin.groupes.colonneMembres,
-          flex: 2,
+          flex: bureau ? 1 : 2,
           tabulaire: true,
           texte: (ClasseListee c) => t.admin.groupes.membresSur(
             actifs: '${c.groupe.nombreMembres}',
@@ -2241,13 +2246,34 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
           ),
         ],
         Ecart.vSm,
-        SelecteurMotif(
-          key: _cleMotifs,
-          motifs: widget.motifs,
-          controleur: _motif,
-          libelleChamp: t.admin.groupes.champMotif,
-          erreur: _motifManquant ? t.formulaire.motif.manque : null,
-          onChange: (String _) => setState(() => _motifManquant = false),
+        // Motif manquant : la liste des motifs est entouree d'un filet
+        // d'alerte, en plus du message et du focus. L'anneau de focus ne se
+        // peint qu'au clavier ; apres un clic, c'est ce filet qui montre ou
+        // agir (pilote, 01/11/2026).
+        DecoratedBox(
+          key: const ValueKey<String>('feuille-motif-cadre'),
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.arrondiSm,
+            border: _motifManquant
+                ? Border.fromBorderSide(
+                    AppPalette.of(context).inkAlert
+                        .asBorderSide(width: Pressable.epaisseurFocus),
+                  )
+                : null,
+          ),
+          child: Padding(
+            padding: _motifManquant
+                ? const EdgeInsets.all(AppSpacing.sm)
+                : EdgeInsets.zero,
+            child: SelecteurMotif(
+              key: _cleMotifs,
+              motifs: widget.motifs,
+              controleur: _motif,
+              libelleChamp: t.admin.groupes.champMotif,
+              erreur: _motifManquant ? t.formulaire.motif.manque : null,
+              onChange: (String _) => setState(() => _motifManquant = false),
+            ),
+          ),
         ),
         Ecart.vLg,
         ActionPrincipale(

@@ -13,9 +13,9 @@ défilements verticaux qui débordent) :
 
 | Vue | Mesure |
 | :--- | :--- |
-| 1440 x 900 clair, sombre, arabe | y = 112, 12 lignes, 1 défilement |
-| 1366 x 768 | y = 112, 10 lignes, 1 défilement |
-| 1440 x 900 texte x2 | y = 180, 6 lignes, 1 défilement |
+| 1440 x 900 clair, sombre, arabe | y = 112, 11 lignes de 60, 1 défilement |
+| 1366 x 768 | y = 112, 9 lignes, 1 défilement |
+| 1440 x 900 texte x2 | y = 132, 6 lignes, 1 défilement |
 | 390 x 844 clair, sombre | y = 284, 6 lignes, 1 défilement |
 | 390 x 844 arabe | y = 286, 7 lignes, 1 défilement |
 | 390 x 844 texte x2 | y = 462, 1 ligne, 1 défilement |
