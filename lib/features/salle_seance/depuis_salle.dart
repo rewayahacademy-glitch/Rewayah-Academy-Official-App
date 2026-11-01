@@ -12,6 +12,7 @@ import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
+import '../../core/tc_horloge/chrono_seance.dart' show BornesChrono;
 import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/video/video_session_provider.dart'
     show ParticipantSalle, QualiteLien;
@@ -38,6 +39,7 @@ abstract final class DepuisSalle {
     bool videoSuspendue = false,
     String? nomEnseignantConnu,
     TitreEnseignant? titreEnseignant,
+    BornesChrono? chrono,
   }) {
     final RoleSeance? role = RoleSeance.resoudre(salle.role, mode);
     if (role == null) return null;
@@ -90,6 +92,9 @@ abstract final class DepuisSalle {
       initialesEnseignant: initiales(nomEnseignant),
       titreEnseignant: titreEnseignant,
       prenomEleve: prenomEleve,
+      // FN-023 : T0 et la fin prevue servies par le serveur
+      // (`bornesSalleProvider`), ou `null` : pas de chrono, rien d'invente.
+      chrono: chrono,
       connexion: connexionDe(salle.phase, qualite: salle.qualite),
       // Une impasse n'est pas une salle : rien n'y est enregistre.
       enregistrementConfirme: salle.phase != PhaseSalle.refus,

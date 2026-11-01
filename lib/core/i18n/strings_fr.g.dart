@@ -382,8 +382,8 @@ class Traductions$salle$fr {
 	/// fr: 'Ce cours ne vous est pas ouvert en ce moment'
 	String get refusAcces => 'Ce cours ne vous est pas ouvert en ce moment';
 
-	/// fr: 'La salle s'ouvre dix minutes avant l'heure du cours, et se ferme un quart d'heure après sa fin.'
-	String get refusAccesDetail => 'La salle s\'ouvre dix minutes avant l\'heure du cours, et se ferme un quart d\'heure après sa fin.';
+	/// fr: 'La salle s'ouvre peu avant l'heure du cours, et se ferme peu après sa fin.'
+	String get refusAccesDetail => 'La salle s\'ouvre peu avant l\'heure du cours, et se ferme peu après sa fin.';
 
 	/// fr: 'La salle n'est pas encore disponible'
 	String get refusConfiguration => 'La salle n\'est pas encore disponible';
@@ -42484,7 +42484,7 @@ extension on Traductions {
 			'salle.seulObservation' => 'Personne n\'est encore entré dans cette salle',
 			'salle.seulObservationDetail' => 'Le cours n\'a pas commencé, ou il est déjà terminé.',
 			'salle.refusAcces' => 'Ce cours ne vous est pas ouvert en ce moment',
-			'salle.refusAccesDetail' => 'La salle s\'ouvre dix minutes avant l\'heure du cours, et se ferme un quart d\'heure après sa fin.',
+			'salle.refusAccesDetail' => 'La salle s\'ouvre peu avant l\'heure du cours, et se ferme peu après sa fin.',
 			'salle.refusConfiguration' => 'La salle n\'est pas encore disponible',
 			'salle.refusConfigurationDetail' => 'Ce n\'est pas votre appareil : le service de visioconférence n\'est pas branché. L\'équipe le sait.',
 			'salle.refusReseau' => 'La salle n\'a pas pu s\'ouvrir',

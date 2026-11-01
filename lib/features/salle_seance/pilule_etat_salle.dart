@@ -4,6 +4,7 @@ import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import 'chrono_salle.dart';
 import 'mention_seance.dart';
 import 'vue_seance.dart';
 
@@ -18,8 +19,16 @@ class PiluleEtatSalle extends StatelessWidget {
     this.cle = const ValueKey<String>('pilule-etat-salle'),
     this.aLaLigne = false,
     this.surface,
+    this.avecChrono = false,
     super.key,
   });
+
+  /// FN-023 : la pilule porte aussi le chrono du temps restant
+  /// (LIVE-CHRONO-01), quand la vue a ses bornes. Les salles du 26/10
+  /// (ordinateur, telephone de l'enseignant, plein ecran) n'ont pas d'autre
+  /// en-tete ; l'ancien `ChromeSeance` rend son chrono lui-meme et laisse
+  /// ce drapeau a faux.
+  final bool avecChrono;
 
   /// La surface ou la ligne se pose (la couche sombre du profil, pilote C4) ;
   /// `null` : la pilule translucide de la salle.
@@ -54,6 +63,55 @@ class PiluleEtatSalle extends StatelessWidget {
                 .pastille(),
       ),
     );
+    final Widget? chrono = avecChrono && vue.voitChrono
+        ? ChronoSalle(
+            bornes: vue.chrono!,
+            connexion: vue.connexion,
+            pause: vue.pause,
+            style: style,
+            garderCouleur: true,
+          )
+        : null;
+    final Widget ligne = aLaLigne
+        ? Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+            child: Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.xs,
+              children: <Widget>[
+                point,
+                Text(vue.texteConnexion, style: style),
+                if (vue.texteMention != null) ...<Widget>[
+                  Text('\u00b7', style: style),
+                  MentionSeance(vue: vue, lienSousLaLigne: false),
+                ],
+              ],
+            ),
+          )
+        : Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              point,
+              Ecart.hSm,
+              // Lot salle 3 : la phrase du repli audio peut passer sur deux
+              // lignes, jamais coupee ni debordante.
+              Flexible(child: Text(vue.texteConnexion, style: style)),
+              if (vue.texteMention != null) ...<Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xs,
+                  ),
+                  child: Text('\u00b7', style: style),
+                ),
+                // La phrase entiere, jamais coupee (ADR-011) ; aucun lien
+                // dessous, la mention elle-meme ouvre la lecture.
+                Flexible(
+                  child: MentionSeance(vue: vue, lienSousLaLigne: false),
+                ),
+              ],
+            ],
+          );
     return ConstrainedBox(
       constraints: BoxConstraints(
         maxWidth: largeurMax,
@@ -62,49 +120,34 @@ class PiluleEtatSalle extends StatelessWidget {
       child: DecoratedBox(
         key: cle,
         decoration: fond.decoration(
-          borderRadius: aLaLigne ? AppRadius.arrondiMd : AppRadius.arrondiFull,
+          borderRadius: aLaLigne || chrono != null
+              ? AppRadius.arrondiMd
+              : AppRadius.arrondiFull,
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-          child: aLaLigne
-              ? Padding(
-                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-                  child: Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    spacing: AppSpacing.sm,
-                    runSpacing: AppSpacing.xs,
+          // FN-023 : le chrono sur sa propre ligne, sous l'etat, aligne sur
+          // le texte (apres le point) : il ne se casse jamais au milieu.
+          child: chrono == null
+              ? ligne
+              : Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: aLaLigne ? 0 : AppSpacing.sm,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      point,
-                      Text(vue.texteConnexion, style: style),
-                      if (vue.texteMention != null) ...<Widget>[
-                        Text('\u00b7', style: style),
-                        MentionSeance(vue: vue, lienSousLaLigne: false),
-                      ],
+                      ligne,
+                      Padding(
+                        padding: EdgeInsetsDirectional.only(
+                          start: AppSpacing.lg,
+                          bottom: aLaLigne ? AppSpacing.sm : 0,
+                        ),
+                        child: chrono,
+                      ),
                     ],
                   ),
-                )
-              : Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    point,
-                    Ecart.hSm,
-                    // Lot salle 3 : la phrase du repli audio peut passer sur deux
-                    // lignes, jamais coupee ni debordante.
-                    Flexible(child: Text(vue.texteConnexion, style: style)),
-                    if (vue.texteMention != null) ...<Widget>[
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.xs,
-                        ),
-                        child: Text('\u00b7', style: style),
-                      ),
-                      // La phrase entiere, jamais coupee (ADR-011) ; aucun lien
-                      // dessous, la mention elle-meme ouvre la lecture.
-                      Flexible(
-                        child: MentionSeance(vue: vue, lienSousLaLigne: false),
-                      ),
-                    ],
-                  ],
                 ),
         ),
       ),

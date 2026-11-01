@@ -395,7 +395,7 @@ class _Traductions$salle$ar extends Traductions$salle$fr {
 	@override String get seulObservation => 'لم يدخل أحد هذه القاعة بعد';
 	@override String get seulObservationDetail => 'لم يبدأ الدرس، أو انتهى بالفعل.';
 	@override String get refusAcces => 'هذا الدرس غير مفتوح لك الآن';
-	@override String get refusAccesDetail => 'تُفتح القاعة قبل موعد الدرس بعشر دقائق، وتُغلق بعد نهايته بربع ساعة.';
+	@override String get refusAccesDetail => 'تُفتح القاعة قبل موعد الدرس بقليل، وتُغلق بعد نهايته بقليل.';
 	@override String get refusConfiguration => 'القاعة غير متاحة بعد';
 	@override String get refusConfigurationDetail => 'المشكلة ليست في جهازك: خدمة مكالمات الفيديو غير موصولة. الفريق على علم بذلك.';
 	@override String get refusReseau => 'لم تستجب القاعة';
@@ -20850,7 +20850,7 @@ extension on TraductionsAr {
 			'salle.seulObservation' => 'لم يدخل أحد هذه القاعة بعد',
 			'salle.seulObservationDetail' => 'لم يبدأ الدرس، أو انتهى بالفعل.',
 			'salle.refusAcces' => 'هذا الدرس غير مفتوح لك الآن',
-			'salle.refusAccesDetail' => 'تُفتح القاعة قبل موعد الدرس بعشر دقائق، وتُغلق بعد نهايته بربع ساعة.',
+			'salle.refusAccesDetail' => 'تُفتح القاعة قبل موعد الدرس بقليل، وتُغلق بعد نهايته بقليل.',
 			'salle.refusConfiguration' => 'القاعة غير متاحة بعد',
 			'salle.refusConfigurationDetail' => 'المشكلة ليست في جهازك: خدمة مكالمات الفيديو غير موصولة. الفريق على علم بذلك.',
 			'salle.refusReseau' => 'لم تستجب القاعة',

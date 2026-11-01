@@ -368,6 +368,7 @@ class ProfilTelephone extends StatelessWidget {
                 aLaLigne: true,
                 surface: palette.coucheSalle,
                 cle: const ValueKey<String>('ligne-etat-telephone'),
+                avecChrono: true,
               ),
             ),
           ],

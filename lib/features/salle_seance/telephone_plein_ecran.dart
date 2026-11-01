@@ -942,6 +942,7 @@ class _Haut extends StatelessWidget {
             : largeur - 2 * AppSpacing.lg,
       ),
       cle: const ValueKey<String>('ligne-etat-telephone'),
+      avecChrono: true,
     );
     final Widget ligne = presence == null
         ? pilule

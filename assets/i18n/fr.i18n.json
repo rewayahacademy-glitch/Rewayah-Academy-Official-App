@@ -771,7 +771,7 @@
     "seulObservation": "Personne n'est encore entré dans cette salle",
     "seulObservationDetail": "Le cours n'a pas commencé, ou il est déjà terminé.",
     "refusAcces": "Ce cours ne vous est pas ouvert en ce moment",
-    "refusAccesDetail": "La salle s'ouvre dix minutes avant l'heure du cours, et se ferme un quart d'heure après sa fin.",
+    "refusAccesDetail": "La salle s'ouvre peu avant l'heure du cours, et se ferme peu après sa fin.",
     "refusConfiguration": "La salle n'est pas encore disponible",
     "refusConfigurationDetail": "Ce n'est pas votre appareil\u00a0: le service de visioconférence n'est pas branché. L'équipe le sait.",
     "refusReseau": "La salle n'a pas pu s'ouvrir",

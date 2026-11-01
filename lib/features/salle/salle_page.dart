@@ -89,6 +89,7 @@ import '../salle_enseignant/panneau_enseignant.dart';
 import '../salle_enseignant/presentation_coran.dart'
     show contenuPresenteProvider, presentateurCoranProvider;
 import '../salle_seance/actions_seance.dart';
+import '../salle_seance/bornes_salle.dart';
 import '../salle_seance/depuis_salle.dart';
 import '../salle_seance/ecriture_seance.dart'
     show
@@ -1858,6 +1859,15 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             ? null
             : DepuisSalle.pageCoran(presentee.page),
         videoSuspendue: _repliAffiche.videoSuspendue,
+        // FN-023 : le chrono du temps restant, sur les bornes que le serveur
+        // sert deja (seances de l'enseignant ou de l'eleve).
+        chrono: ref.watch(
+          bornesSalleProvider((
+            seanceId: widget.seanceId,
+            groupeId: widget.groupeId,
+            enseignant: vue.role == RoleSalle.enseignant,
+          )),
+        ),
       );
       if (seance != null) {
         return _salleDeSeance(
