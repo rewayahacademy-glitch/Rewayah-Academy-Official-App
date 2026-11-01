@@ -10,6 +10,10 @@ class FormulaireStripe extends StatelessWidget {
     required this.formulaire,
     required this.onTermine,
     required this.onEchec,
+    required this.onRevenir,
+    required this.titre,
+    required this.phrase,
+    required this.libelleRetour,
     super.key,
   });
 
@@ -21,6 +25,14 @@ class FormulaireStripe extends StatelessWidget {
 
   /// Le formulaire n'a pas pu se monter.
   final VoidCallback onEchec;
+
+  /// Revenir aux soldes sans payer.
+  final VoidCallback onRevenir;
+
+  /// Le titre, la phrase et la sortie, deja traduits.
+  final String titre;
+  final String phrase;
+  final String libelleRetour;
 
   @override
   Widget build(BuildContext context) => const SizedBox.shrink();

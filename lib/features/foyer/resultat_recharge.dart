@@ -278,6 +278,10 @@ class _PaiementIntegreState extends ConsumerState<_PaiementIntegre> {
             onEchec: () {
               if (mounted) setState(() => _echec = true);
             },
+            onRevenir: widget.onRevenir,
+            titre: r.formulaireTitre,
+            phrase: r.formulairePhrase,
+            libelleRetour: r.formulaireSansPayer,
           ),
         Ecart.vLg,
         Align(

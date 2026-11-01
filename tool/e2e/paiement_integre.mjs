@@ -66,7 +66,10 @@ try {
   const adresse = f.page.url();
   p.dire(`Apres « Payer » : ${adresse}`);
   if (!adresse.startsWith(APP)) echecs.push(`l'application a ete quittee : ${adresse}`);
-  const titre = await trouverTexte(f.page, /Payez ici, sans quitter l.application/, 8000);
+  // La page de paiement est native (role dialog) quand le formulaire se
+  // monte ; sinon le titre est celui de la page Flutter (etats).
+  const titre = (await f.page.locator('[role=dialog] h1').first().textContent({ timeout: 8000 }).catch(() => null))
+    ?? await trouverTexte(f.page, /Payez ici, sans quitter l.application/, 8000);
   p.dire(`Titre : ${titre ?? '-'}`);
   if (!titre) echecs.push('titre « Payez ici, sans quitter l\'application » absent');
 
@@ -96,11 +99,13 @@ try {
     await remplir('input[name="billingName"], #billingName', 'E2E Famille');
     await remplir('input[name="billingPostalCode"], #billingPostalCode', '10001');
     await p.capture(f, 'formulaire_rempli');
-    // Le bouton de Stripe est plus bas dans la page : Entree dans le dernier
-    // champ rempli valide le formulaire, comme au clavier.
-    const dernier = cadre.locator('input[name="billingName"], #billingName').first();
-    if (await dernier.count()) await dernier.press('Enter');
-    else await carte.press('Enter');
+    // Le bouton de Stripe est plus bas : c'est la PAGE de paiement qui
+    // defile (regle du 01/11), jusqu'au bouton, puis on le presse.
+    const bouton = cadre.locator('button[type="submit"], .SubmitButton').first();
+    await bouton.scrollIntoViewIfNeeded();
+    await f.page.waitForTimeout(800);
+    await p.capture(f, 'page_defilee_jusqu_au_bouton');
+    await bouton.click();
     if (scenario === '3ds') {
       // La banque demande une confirmation : fenetre de test de Stripe,
       // « Complete » (ou « Terminer »).

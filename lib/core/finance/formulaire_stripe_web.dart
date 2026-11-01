@@ -2,9 +2,8 @@ import 'dart:async';
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
-import '../widgets/skeleton.dart';
 import 'formulaire_paiement.dart';
 
 /// Stripe.js, version alignee sur l'API du serveur (`npm:stripe@22.6.2`,
@@ -57,13 +56,27 @@ Future<void> _injecter() {
   return fini.future.timeout(_delaiChargement);
 }
 
-/// Le formulaire de Stripe, monte dans un element de la page.
+/// Le formulaire de Stripe, dans une page de l'application qui defile
+/// d'elle-meme.
+///
+/// Pourquoi une page du navigateur et non un cadre dans l'arbre Flutter : le
+/// moteur de Flutter ne recoit ni la molette ni le doigt poses sur le cadre
+/// de Stripe ; un formulaire plus haut que l'ecran y laissait le bouton de
+/// paiement hors d'atteinte (banc E2E du 01/11/2026). Ici, la page de
+/// paiement est un element natif plein ecran dont le defilement est celui de
+/// la page : une seule barre, celle de la page (DECISION-DEFILEMENT-2026-11-01),
+/// la meme adresse, sans quitter l'application. Le retour du navigateur ferme
+/// l'ecran, donc cette page.
 class FormulaireStripe extends StatefulWidget {
   /// Cree le formulaire.
   const FormulaireStripe({
     required this.formulaire,
     required this.onTermine,
     required this.onEchec,
+    required this.onRevenir,
+    required this.titre,
+    required this.phrase,
+    required this.libelleRetour,
     super.key,
   });
 
@@ -76,49 +89,115 @@ class FormulaireStripe extends StatefulWidget {
   /// Le formulaire n'a pas pu se monter.
   final VoidCallback onEchec;
 
+  /// Revenir aux soldes sans payer.
+  final VoidCallback onRevenir;
+
+  /// Le titre, la phrase et la sortie, deja traduits.
+  final String titre;
+  final String phrase;
+  final String libelleRetour;
+
   @override
   State<FormulaireStripe> createState() => _FormulaireStripeState();
 }
 
 class _FormulaireStripeState extends State<FormulaireStripe> {
   JSObject? _checkout;
-  JSObject? _observateur;
-  bool _monte = false;
+  JSObject? _page;
   bool _ferme = false;
 
-  /// La hauteur du formulaire, suivie de son contenu : jamais un cadre qui
-  /// defile (DECISION-DEFILEMENT-2026-11-01 : la page defile, elle seule).
-  double _hauteur = _hauteurAvantMontage;
-
-  static const double _hauteurAvantMontage = 320;
-
-  /// Suit la hauteur du cadre que Stripe insere et la donne au widget.
-  void _suivreHauteur(JSObject conteneur) {
-    final JSObject? cadre = conteneur['firstElementChild'] as JSObject?;
-    final JSFunction? constructeur =
-        globalContext['ResizeObserver'] as JSFunction?;
-    if (cadre == null || constructeur == null) return;
-    void mesurer() {
-      final double h = (cadre['scrollHeight']! as JSNumber).toDartDouble;
-      if (!_ferme && mounted && h > 0 && h != _hauteur) {
-        setState(() => _hauteur = h);
-      }
-    }
-
-    final JSObject observateur = constructeur.callAsConstructor<JSObject>(
-      ((JSAny _, JSAny _) => mesurer()).toJS,
-    );
-    observateur.callMethod<JSAny?>('observe'.toJS, cadre);
-    _observateur = observateur;
-    mesurer();
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (mounted) unawaited(_ouvrir());
+    });
   }
 
-  Future<void> _monter(Object element) async {
-    final JSObject conteneur = element as JSObject;
-    (conteneur['style']! as JSObject)
-      ..['overflow'] = 'hidden'.toJS
-      ..['width'] = '100%'.toJS
-      ..['height'] = '100%'.toJS;
+  static String _css(Color c) =>
+      '#${(c.toARGB32() & 0xFFFFFF).toRadixString(16).padLeft(6, '0')}';
+
+  Future<void> _ouvrir() async {
+    final ColorScheme couleurs = Theme.of(context).colorScheme;
+    final bool droiteAGauche = Directionality.of(context) == TextDirection.rtl;
+    final JSObject document = globalContext['document']! as JSObject;
+    JSObject element(String balise, String style, [String? texte]) {
+      final JSObject e = document.callMethod<JSObject>(
+        'createElement'.toJS,
+        balise.toJS,
+      );
+      (e['style']! as JSObject)['cssText'] = style.toJS;
+      if (texte != null) e['textContent'] = texte.toJS;
+      return e;
+    }
+
+    final JSObject page = element(
+      'div',
+      'position:fixed;inset:0;z-index:2147483000;overflow-y:auto;'
+          '-webkit-overflow-scrolling:touch;overscroll-behavior:contain;'
+          'background:${_css(couleurs.surface)};'
+          'color:${_css(couleurs.onSurface)};'
+          'font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;',
+    );
+    page
+      ..callMethod<JSAny?>('setAttribute'.toJS, 'role'.toJS, 'dialog'.toJS)
+      ..callMethod<JSAny?>('setAttribute'.toJS, 'aria-modal'.toJS, 'true'.toJS)
+      ..callMethod<JSAny?>(
+        'setAttribute'.toJS,
+        'aria-label'.toJS,
+        widget.titre.toJS,
+      )
+      ..callMethod<JSAny?>(
+        'setAttribute'.toJS,
+        'dir'.toJS,
+        (droiteAGauche ? 'rtl' : 'ltr').toJS,
+      );
+    final JSObject colonne = element(
+      'div',
+      'max-width:640px;margin:0 auto;box-sizing:border-box;'
+          'padding:max(24px,env(safe-area-inset-top)) '
+          'max(16px,env(safe-area-inset-right)) '
+          'max(32px,env(safe-area-inset-bottom)) '
+          'max(16px,env(safe-area-inset-left));',
+    );
+    final JSObject titre = element(
+      'h1',
+      'font-size:20px;font-weight:600;line-height:1.3;margin:0 0 8px;',
+      widget.titre,
+    )..['tabIndex'] = (-1).toJS;
+    final JSObject phrase = element(
+      'p',
+      'font-size:15px;line-height:1.5;margin:0 0 20px;'
+          'color:${_css(couleurs.onSurfaceVariant)};',
+      widget.phrase,
+    );
+    final JSObject zone = element('div', 'min-height:320px;');
+    final JSObject retour = element(
+      'button',
+      'display:block;margin-block-start:24px;margin-inline-start:auto;'
+          'min-height:48px;padding:12px 0;background:none;border:0;'
+          'font:inherit;font-size:15px;font-weight:600;cursor:pointer;'
+          'color:${_css(couleurs.primary)};',
+      widget.libelleRetour,
+    )..['type'] = 'button'.toJS;
+    retour.callMethod<JSAny?>(
+      'addEventListener'.toJS,
+      'click'.toJS,
+      ((JSAny _) {
+        if (!_ferme) widget.onRevenir();
+      }).toJS,
+    );
+    for (final JSObject e in <JSObject>[titre, phrase, zone, retour]) {
+      colonne.callMethod<JSAny?>('appendChild'.toJS, e);
+    }
+    page.callMethod<JSAny?>('appendChild'.toJS, colonne);
+    (document['body']! as JSObject).callMethod<JSAny?>(
+      'appendChild'.toJS,
+      page,
+    );
+    _page = page;
+    titre.callMethod<JSAny?>('focus'.toJS);
+
     try {
       await _chargerStripe();
       if (_ferme) return;
@@ -139,7 +218,9 @@ class _FormulaireStripeState extends State<FormulaireStripe> {
           secret.toJS,
         ).toJS).toJS
         ..['onComplete'] = (() {
-          if (!_ferme) widget.onTermine();
+          if (_ferme) return;
+          _fermerPage();
+          widget.onTermine();
         }).toJS;
       final JSObject checkout = await stripe
           .callMethod<JSPromise<JSObject>>(methode.toJS, options)
@@ -149,39 +230,30 @@ class _FormulaireStripeState extends State<FormulaireStripe> {
         return;
       }
       _checkout = checkout;
-      checkout.callMethod<JSAny?>('mount'.toJS, conteneur);
-      _suivreHauteur(conteneur);
-      if (mounted) setState(() => _monte = true);
+      checkout.callMethod<JSAny?>('mount'.toJS, zone);
     } on Object {
-      if (!_ferme) widget.onEchec();
+      if (_ferme) return;
+      _fermerPage();
+      widget.onEchec();
     }
+  }
+
+  /// Stripe n'admet qu'un formulaire a la fois : il se detruit avec la page.
+  void _fermerPage() {
+    _checkout?.callMethod<JSAny?>('destroy'.toJS);
+    _checkout = null;
+    _page?.callMethod<JSAny?>('remove'.toJS);
+    _page = null;
   }
 
   @override
   void dispose() {
     _ferme = true;
-    _observateur?.callMethod<JSAny?>('disconnect'.toJS);
-    _observateur = null;
-    // Stripe n'admet qu'un formulaire a la fois : il se detruit avec l'ecran.
-    _checkout?.callMethod<JSAny?>('destroy'.toJS);
-    _checkout = null;
+    _fermerPage();
     super.dispose();
   }
 
+  // La page de paiement vit hors de l'arbre Flutter, au-dessus de lui.
   @override
-  Widget build(BuildContext context) => SizedBox(
-    // La hauteur du contenu de Stripe : la page defile, pas ce cadre.
-    height: _hauteur,
-    child: Stack(
-      children: <Widget>[
-        Positioned.fill(
-          child: HtmlElementView.fromTagName(
-            tagName: 'div',
-            onElementCreated: _monter,
-          ),
-        ),
-        if (!_monte) const Skeleton.liste(),
-      ],
-    ),
-  );
+  Widget build(BuildContext context) => const SizedBox.shrink();
 }
