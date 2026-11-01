@@ -5317,6 +5317,7 @@ class _Traductions$admin$comptes$ar extends Traductions$admin$comptes$fr {
 	@override String filtreActifEtat({required Object valeur}) => 'الحالة: ⁨${valeur}⁩';
 	@override String filtreActifRecherche({required Object texte}) => 'البحث: ⁨${texte}⁩';
 	@override String get actionOuvrirDossier => 'فتح ملف الهوية';
+	@override String get actionVoirDemande => 'عرض الطلب';
 	@override String get plafondTitre => 'قد تكون القائمة ناقصة';
 	@override String plafondMessage({required Object nombre}) => 'يعيد الخادم على الأكثر ⁨${nombre}⁩ حسابًا، والقائمة تبلغ هذا العدد: قد تغيب أحدث التسجيلات.';
 	@override String get rechercheAideEleves => 'الاسم أو المعرّف أو الفصل أو وليّ الأمر';
@@ -24622,6 +24623,7 @@ extension on TraductionsAr {
 			'admin.comptes.filtreActifEtat' => ({required Object valeur}) => 'الحالة: ⁨${valeur}⁩',
 			'admin.comptes.filtreActifRecherche' => ({required Object texte}) => 'البحث: ⁨${texte}⁩',
 			'admin.comptes.actionOuvrirDossier' => 'فتح ملف الهوية',
+			'admin.comptes.actionVoirDemande' => 'عرض الطلب',
 			'admin.comptes.plafondTitre' => 'قد تكون القائمة ناقصة',
 			'admin.comptes.plafondMessage' => ({required Object nombre}) => 'يعيد الخادم على الأكثر ⁨${nombre}⁩ حسابًا، والقائمة تبلغ هذا العدد: قد تغيب أحدث التسجيلات.',
 			'admin.comptes.rechercheAideEleves' => 'الاسم أو المعرّف أو الفصل أو وليّ الأمر',
@@ -25004,9 +25006,9 @@ extension on TraductionsAr {
 			'admin.tirage.frequenceDetail' => 'أقصى عدد من المهام يتلقاه المراقب في الأسبوع، من 0 إلى 50. يطبّق الخادم هذا العدد.',
 			'admin.tirage.versionEnVigueur' => ({required Object n}) => 'القواعد السارية: النسخة ⁨${n}⁩',
 			'admin.tirage.aucuneVersion' => 'لم تُسجَّل أي قاعدة بعد.',
-			'admin.tirage.zeroPhrase' => 'مع القيمة 0، لا تُسحب أي حصة للمراقبة.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.tirage.zeroPhrase' => 'مع القيمة 0، لا تُسحب أي حصة للمراقبة.',
 			'admin.tirage.nombreInvalide' => 'أدخل عددًا صحيحًا من 0 إلى 50، أو اختر إحدى القيم المقترحة.',
 			'admin.tirage.frequenceAutreChamp' => 'عدد',
 			'admin.tirage.enregistreesVersion' => ({required Object n}) => 'سُجّلت القواعد، النسخة ⁨${n}⁩. تسري على السحوب القادمة.',
@@ -25518,9 +25520,9 @@ extension on TraductionsAr {
 			'comptable.aujourdhui.attentionSousTitre' => 'ما ينتظر إجراءً منك، ثم المخاطر التي تجب مراقبتها.',
 			'comptable.aujourdhui.elementCompteur' => ({required Object libelle, required Object n}) => '${libelle}: ${n}',
 			'comptable.aujourdhui.elementDepuis' => ({required Object date}) => 'قيد الانتظار منذ ${date}',
-			'comptable.aujourdhui.aTraiterVide' => 'لا شيء للمعالجة اليوم.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.aujourdhui.aTraiterVide' => 'لا شيء للمعالجة اليوم.',
 			'comptable.aujourdhui.aTraiterVideDetail' => 'ستظهر هنا المدفوعات والتذكيرات والمطابقات المطلوبة.',
 			'comptable.aujourdhui.alertesVide' => 'لا توجد تنبيهات حاليًا.',
 			'comptable.aujourdhui.alertesResume' => ({required Object n}) => 'تنبيهات للمراقبة: ${n}',
@@ -26032,9 +26034,9 @@ extension on TraductionsAr {
 			'comptable.contractuels.invitationAide' => 'هذا المستفيد الخارجي يُدخل وسيلة الدفع بنفسه، من دعوته الآمنة.',
 			'comptable.contractuels.invitationRenvoyee' => 'أُعيد إرسال الدعوة',
 			'comptable.contractuels.erreurApprobation' => 'لا نعلم إن كان الاعتماد قد سُجّل. حدّث الالتزام قبل إعادة المحاولة.',
-			'comptable.contractuels.erreurInvitation' => 'لا نعلم إن كانت الدعوة قد أُعيد إرسالها. حدّث الالتزام قبل إعادة المحاولة.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.contractuels.erreurInvitation' => 'لا نعلم إن كانت الدعوة قد أُعيد إرسالها. حدّث الالتزام قبل إعادة المحاولة.',
 			'comptable.contractuels.formIntro' => 'المستفيد والاستحقاق ومركز التكلفة مقترحة: غيّرها عند الحاجة، ثم أدخل الموضوع والمبلغ.',
 			'comptable.contractuels.beneficiaireExterne' => 'مستفيد خارجي جديد',
 			'comptable.contractuels.beneficiaireExterneAide' => 'يتلقى دعوة آمنة ليُدخل وسيلة الدفع بنفسه.',
@@ -26546,9 +26548,9 @@ extension on TraductionsAr {
 			'eleveConnexion.pin.tropDEssais' => 'محاولات كثيرة. انتظر قليلًا قبل إعادة المحاولة.',
 			'eleveConnexion.pin.echec' => 'لم يكتمل الاتصال. أعد المحاولة بعد لحظة.',
 			'eleveConnexion.pin.changerProfil' => 'تغيير الملف',
-			'eleveConnexion.pin.oublie' => 'نسيت الرمز؟',
 			_ => null,
 		} ?? switch (path) {
+			'eleveConnexion.pin.oublie' => 'نسيت الرمز؟',
 			'eleveConnexion.pin.oubliePhrase' => 'اطلب من وليّ الأمر عرض رمز جديد على جهازه، ثم أدخله هنا. ستختار حينها رمزًا شخصيًا جديدًا.',
 			'eleveConnexion.pin.oublieAction' => 'إدخال رمز جديد',
 			'eleveConnexion.saisie.titre' => 'ربط هذا الجهاز',
@@ -27060,9 +27062,9 @@ extension on TraductionsAr {
 			'adulte.famille.titulaire' => 'أنت صاحب حساب الأسرة',
 			'adulte.famille.paiementsFoyer' => 'مدفوعات الأسرة',
 			'adulte.famille.aProposForfait' => 'عن باقة الأسرة',
-			'adulte.famille.aProposForfaitPhrase' => 'تضم باقة الأسرة صاحب الحساب، وزوجًا أو زوجة بالغًا، والأطفال أو المراهقين الذين في رعاية صاحب الحساب. يحتفظ كل بالغ بحسابه الخاص.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.famille.aProposForfaitPhrase' => 'تضم باقة الأسرة صاحب الحساب، وزوجًا أو زوجة بالغًا، والأطفال أو المراهقين الذين في رعاية صاحب الحساب. يحتفظ كل بالغ بحسابه الخاص.',
 			'adulte.famille.profilNonCreeTitre' => 'عرض تجريبي: لم يُنشأ أي ملف',
 			'adulte.famille.profilNonCreePhrase' => 'في العرض التجريبي، لا يُرسل شيء. تبقى «أسرتي» كما كانت.',
 			'adulte.famille.profilNonCreePhraseSeul' => 'في العرض التجريبي، لا يُرسل شيء. تبقى مساحتك كطالب كما كانت.',
@@ -27574,9 +27576,9 @@ extension on TraductionsAr {
 			'controleur.complement.precisionAide' => 'حين تنقص تفصيلة · يكمّل التقرير دون أن يغيّر فيه شيئًا',
 			'controleur.complement.correction' => 'تصحيح',
 			'controleur.complement.correctionAide' => 'حين تكون معلومة في التقرير غير دقيقة · يبقى الأصل مقروءًا، ويظهر التصحيح تحته',
-			'controleur.complement.faitNouveau' => 'معلومة جديدة',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.complement.faitNouveau' => 'معلومة جديدة',
 			'controleur.complement.faitNouveauAide' => 'حين تعرفها بعد الزيارة · تحمل تاريخ يوم الإضافة',
 			'controleur.complement.questionTexte' => 'ماذا تضيف إلى التقرير؟',
 			'controleur.complement.texteObligatoire' => 'إلزامي: ما لاحظته، في جمل قليلة.',
@@ -28088,9 +28090,9 @@ extension on TraductionsAr {
 			'recrutement.parcours.presentation.p1.donnees.titre' => 'بياناتك محميّة',
 			'recrutement.parcours.presentation.p1.donnees.texte' => 'لا يقرأ إجاباتك إلا من يدرس طلب ترشحك في الأكاديمية.',
 			'recrutement.parcours.presentation.p1.separation.titre' => 'فصل بين النساء والرجال',
-			'recrutement.parcours.presentation.p1.separation.texte' => 'يتابع طلب ترشح المرأة موظفو الإدارة من جهة النساء، ويتابع طلب ترشح الرجل موظفو الإدارة من جهة الرجال.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.presentation.p1.separation.texte' => 'يتابع طلب ترشح المرأة موظفو الإدارة من جهة النساء، ويتابع طلب ترشح الرجل موظفو الإدارة من جهة الرجال.',
 			'recrutement.parcours.presentation.p2.titre' => 'ما الذي يفعله المعلم؟',
 			'recrutement.parcours.presentation.p2.intro' => 'تُدرّس عبر الفيديو، في فصل يبقى هو نفسه.',
 			'recrutement.parcours.presentation.p2.classe.titre' => 'فصل ثابت',
@@ -28602,9 +28604,9 @@ extension on TraductionsAr {
 			'argent.transparence.postes.enseignant' => 'معلّم الصف',
 			'argent.transparence.postes.fraisCarteChange' => 'رسوم الدفع بالبطاقة وتحويل العملة',
 			'argent.transparence.postes.fraisEnvoiPaie' => 'رسوم إرسال أجور المعلّمين',
-			'argent.transparence.postes.visioconference' => 'الاتصال المرئي',
 			_ => null,
 		} ?? switch (path) {
+			'argent.transparence.postes.visioconference' => 'الاتصال المرئي',
 			'argent.transparence.postes.applicationHebergement' => 'التطبيق والاستضافة',
 			'argent.transparence.postes.emails' => 'البريد الإلكتروني',
 			'argent.transparence.postes.stockage' => 'تخزين الملفات',
@@ -29116,9 +29118,9 @@ extension on TraductionsAr {
 			'admissions.refus.autre' => 'رفض الخادم هذا الإجراء. أعد فتح الطلب لترى حالته.',
 			'admissions.modeles.general' => 'دون تفصيل',
 			'admissions.modeles.generalPhrase' => '«لا يمكننا متابعة طلبك في الوقت الحالي.»',
-			'admissions.modeles.besoins' => 'فصولنا لا تلبي الطلب',
 			_ => null,
 		} ?? switch (path) {
+			'admissions.modeles.besoins' => 'فصولنا لا تلبي الطلب',
 			'admissions.modeles.besoinsPhrase' => '«فصولنا لا تلبي بعد ما تبحث عنه.»',
 			'admissions.modeles.niveau' => 'المستوى غير متاح بعد',
 			'admissions.modeles.niveauPhrase' => '«المستوى المطلوب غير متاح بعد.»',

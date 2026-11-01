@@ -116,6 +116,16 @@ La référence est une maquette tiers (page « Employees » de bureau), décrite
 
 Une seule barre de défilement, celle de la page, vérifiée sur chaque capture (nombre de défilements verticaux qui débordent = 1), y compris après défilement : seules la barre de l'application et la rangée d'en-têtes restent en haut.
 
+10 bis. **Comptes l'adopte le 01/11/2026 (lot L2, pilote : « même méthode que Classes »)**. Mêmes modes opt-in, aucun composant nouveau. Au bureau : la tête tient sur une rangée (les vues, et la puce « En attente » quand une décision est attendue : LISTES-2 la veut visible, elle reste donc hors du panneau, à côté des vues) ; recherche, filtre « État » et accès échus passent en panneau derrière l'icône de la tête ; l'exception d'état passe sous le nom (même pastille qu'au téléphone) et la colonne « État » quitte le bureau (le tri par état reste servi par l'adresse, `?tri=etat`, sans en-tête). **Une ligne « En attente » porte l'action qui la débloque** : « Voir la demande » ouvre Personnes › Demandes sur la bonne liste (familles ou élèves adultes), déjà cherchée sur le nom de la personne ; le nom passe en `extra`, jamais dans l'adresse (§5.9). La population est déduite du compte (un titulaire qui apprend, sans enfant, est un élève adulte) ; si la première liste ne trouve personne (un parent qui suit aussi des cours, sans enfant encore inscrit), la page essaie l'autre, une fois. Relecture du pilote (PR 126) : le nom prend la largeur qu'il faut (3 demi-parts au bureau, au lieu de 2) ; la taille de page part de 25, comme Classes (§5.3 fixe le choix 25, 50 ou 100, pas la valeur de départ ; le sélecteur reste, §3.7 interdit une taille imposée sans moyen de la changer) ; le menu de ligne est « … » partout (LISTES-1, `MenuActions.points`), Classes y passe aussi (ligne, fiche et membres) ; la sous-navigation de Personnes (7 sous-pages, donc un menu au bureau, ONGLETS-1) prend la largeur de son contenu et non toute la rangée (option (b) du pilote : `SelecteurSection(menuAuContenu: true)`, mode opt-in, relayé par `SousNavigationDomaine`) ; le regroupement des sous-pages reste une question pour le directeur ; un compte actif n'a aucune action, comme avant ce lot (aucune RPC de suspension ni d'export pour élèves et tuteurs, §6). Correction du socle trouvée par le robot à 390 : dans une ligne dense (§5 ter), le libellé de la pastille remontait dans le menu de la ligne (« En attente Actions : … ») ; le menu y est désormais un nœud à part, comme dans la ligne de table. Aucune migration. Mesures (`test/capture/listes_comptes_vues_capture_test.dart`, démonstration) :
+
+| Vue | Avant (main du 01/11) | Après (L2) |
+| :--- | :--- | :--- |
+| 1440 x 900, Élèves | première ligne à y = 204, 14 lignes entières | y = 196, **12 lignes** (cartes de 56 et écart de 8, au lieu de lignes de 56 collées) |
+| 1366 x 768, Élèves | y = 204, 11 lignes | y = 196, **10 lignes** |
+| 390 x 844, Élèves | y = 192, 9 lignes | inchangé (§5 ter reste) |
+
+Les cartes coûtent deux lignes visibles à 1440 et une à 1366 : c'est le prix du rendu commun, dit ici et non caché.
+
 11. **Garde automatique** : `dart run tool/verifier_revue.dart --regle=cadre-defilant` refuse une boîte de hauteur fixe (`SizedBox`, `ConstrainedBox`, `Container`, `LimitedBox` avec `height` ou `maxHeight`) autour d'un défilement vertical. Socle daté du 01/11/2026, qui ne peut que baisser : 8 sites dans 6 fichiers (`admin_shell.dart` 1, `fil_discussion.dart` 1, `observations_admin_page.dart` 1, `composer_vocal.dart` 1, `salle_seance.dart` 3, `telephone_plein_ecran.dart` 1). La règle n'est pas encore dans la CI : la ligne de `ci.yml` est donnée au directeur (zone interdite aux agents). **Exception des contenus tiers** (`HtmlElementView`, iframe) : la molette et le doigt posés sur eux ne parviennent pas à Flutter ; la garde ne pousse donc pas vers un cadre à la hauteur du contenu : un contenu tiers plus haut que l'écran devient un élément natif plein écran, dont le défilement est celui de la page (PR 120, constat du garde-cap du 01/11/2026). Le message de la règle le dit.
 
 ## 6. Limites serveur (frontend seulement : non corrigées)
@@ -134,7 +144,7 @@ Détail et défauts : l'inventaire du lot 4 (`5-inventaire-traitement.md`, copi�
 
 | # | Liste | Statut | Prochaine étape |
 | :-: | :--- | :--- | :--- |
-| 1 | Comptes (élèves, familles, enseignants, direction) | refondue, séparée par rôle (30/10) | contrat serveur paginé et recherché |
+| 1 | Comptes (élèves, familles, enseignants, direction) | refondue, séparée par rôle (30/10) ; listes de bureau (L2, §5 quater.10 bis, 01/11/2026) : pleine largeur, cartes, filtres repliés, « Voir la demande » | contrat serveur paginé et recherché |
 | 2 | Progression | corrigée (recherche, menu) | pagination client, tri d'en-tête, mot « cycles » à arbitrer |
 | 3 | Paiements (à régulariser) | inchangée | recherche client et compteur ; décision du directeur sur toute action groupée |
 | 4 | Dossiers à valider | inchangée | recherche client ; sélection groupée interdite (DEC:24) |
@@ -178,6 +188,7 @@ Non migrés vers `CaseACocher` : 8 `Checkbox` ou `CheckboxListTile` dans `lib/fe
 | Comptes séparé par rôle (30/10) et `comptes_admin_par_role()` | oui | oui | oui (tests Flutter, scénario SQL sur Postgres 16 neuf) | non | non |
 | Tête qui défile avec la liste, lignes denses (§5 ter, Comptes seulement) | oui | oui | oui (tests Flutter, captures et mesures) | non | non |
 | Listes de bureau (§5 quater, Classes seulement) et garde `cadre-defilant` | oui | oui | oui (tests Flutter, captures et mesures, scénario SQL) | non | non |
+| Listes de bureau, Comptes (§5 quater.10 bis) et « Voir la demande » | oui | oui | oui (tests Flutter, captures et mesures, parcours du robot sur la pile locale) | non | non |
 | Autres listes (menus migrés, recherche de Progression) | oui | oui | oui | non | non |
 | Listes non traitées (§7, « inchangée ») | oui | non | non | non | non |
 

@@ -6086,6 +6086,7 @@
       "filtreActifEtat": "الحالة: ⁨{valeur}⁩",
       "filtreActifRecherche": "البحث: ⁨{texte}⁩",
       "actionOuvrirDossier": "فتح ملف الهوية",
+      "actionVoirDemande": "عرض الطلب",
       "plafondTitre": "قد تكون القائمة ناقصة",
       "plafondMessage": "يعيد الخادم على الأكثر ⁨{nombre}⁩ حسابًا، والقائمة تبلغ هذا العدد: قد تغيب أحدث التسجيلات.",
       "rechercheAideEleves": "الاسم أو المعرّف أو الفصل أو وليّ الأمر",

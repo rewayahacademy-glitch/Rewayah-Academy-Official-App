@@ -112,7 +112,12 @@ String ligneApprenant(ApprenantAdmission a) {
 /// « Demandes » : familles et eleves adultes.
 class AdmissionsPage extends ConsumerStatefulWidget {
   /// Cree la page.
-  const AdmissionsPage({super.key});
+  const AdmissionsPage({super.key, this.ouvrir});
+
+  /// L2 des listes : la demande a montrer a l'ouverture (depuis une ligne
+  /// « En attente » de Comptes) : sa population, et le nom cherche. Nul : la
+  /// page s'ouvre comme avant.
+  final DemandeAdmissionAOuvrir? ouvrir;
 
   /// La cle d'une carte, pour les tests.
   static ValueKey<String> cleCarte(String id) =>
@@ -123,10 +128,20 @@ class AdmissionsPage extends ConsumerStatefulWidget {
 }
 
 class _AdmissionsPageState extends ConsumerState<AdmissionsPage> {
-  PopulationAdmission _population = PopulationAdmission.famille;
-  final TextEditingController _recherche = TextEditingController();
-  String _rechercheAppliquee = '';
+  late PopulationAdmission _population =
+      widget.ouvrir?.population ?? PopulationAdmission.famille;
+  late final TextEditingController _recherche = TextEditingController(
+    text: widget.ouvrir?.recherche ?? '',
+  );
+  late String _rechercheAppliquee = widget.ouvrir?.recherche.trim() ?? '';
   int _page = 1;
+
+  /// Ouverte depuis Comptes : la population est deduite du compte (un
+  /// titulaire qui apprend, sans enfant, est un eleve adulte). Un parent qui
+  /// suit aussi des cours et n'a pas encore d'enfant inscrit fait exception :
+  /// si la premiere liste ne trouve personne, la page essaie l'autre, une
+  /// fois.
+  late bool _essaiAutre = widget.ouvrir != null;
 
   @override
   void dispose() {
@@ -148,6 +163,20 @@ class _AdmissionsPageState extends ConsumerState<AdmissionsPage> {
     );
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final PageAdmissions? page = lecture.value;
+    if (_essaiAutre && page != null) {
+      _essaiAutre = false;
+      if (page.total == 0) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          setState(() {
+            _population = _population == PopulationAdmission.famille
+                ? PopulationAdmission.eleveAdulte
+                : PopulationAdmission.famille;
+            _page = 1;
+          });
+        });
+      }
+    }
     return PageShell(
       titre: a.titre,
       sousTitre: a.sousTitre,
@@ -176,6 +205,7 @@ class _AdmissionsPageState extends ConsumerState<AdmissionsPage> {
                 ],
                 valeur: _population,
                 onChange: (PopulationAdmission p) => setState(() {
+                  _essaiAutre = false;
                   _population = p;
                   _page = 1;
                 }),
