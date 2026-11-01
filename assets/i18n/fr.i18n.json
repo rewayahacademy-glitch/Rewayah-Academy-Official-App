@@ -788,7 +788,7 @@
     "refusPasEncoreOuverte": "La salle ouvrira à {heure}.",
     "refusAnnulee": "Cette séance est annulée.",
     "refusAccesPerduTitre": "Vous n'êtes pas entré à temps",
-    "refusAccesPerdu": "Passé le délai d'entrée, la séance de ce jour vous a été retirée : elle compte comme une absence. Vous restez l'enseignant de la classe.",
+    "refusAccesPerdu": "Passé le délai d'entrée, la séance de ce jour vous a été retirée\u00a0: elle compte comme une absence. Vous restez l'enseignant de la classe.",
     "refusConfiguration": "La salle n'est pas encore disponible",
     "refusConfigurationDetail": "Ce n'est pas votre appareil\u00a0: le service de visioconférence n'est pas branché. L'équipe le sait.",
     "refusReseau": "La salle n'a pas pu s'ouvrir",

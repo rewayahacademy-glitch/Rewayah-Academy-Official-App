@@ -398,7 +398,7 @@ class Traductions$salle$fr {
 	String get refusAccesPerduTitre => 'Vous n\'êtes pas entré à temps';
 
 	/// fr: 'Passé le délai d'entrée, la séance de ce jour vous a été retirée : elle compte comme une absence. Vous restez l'enseignant de la classe.'
-	String get refusAccesPerdu => 'Passé le délai d\'entrée, la séance de ce jour vous a été retirée : elle compte comme une absence. Vous restez l\'enseignant de la classe.';
+	String get refusAccesPerdu => 'Passé le délai d\'entrée, la séance de ce jour vous a été retirée : elle compte comme une absence. Vous restez l\'enseignant de la classe.';
 
 	/// fr: 'La salle n'est pas encore disponible'
 	String get refusConfiguration => 'La salle n\'est pas encore disponible';
@@ -42555,7 +42555,7 @@ extension on Traductions {
 			'salle.refusPasEncoreOuverte' => ({required Object heure}) => 'La salle ouvrira à ${heure}.',
 			'salle.refusAnnulee' => 'Cette séance est annulée.',
 			'salle.refusAccesPerduTitre' => 'Vous n\'êtes pas entré à temps',
-			'salle.refusAccesPerdu' => 'Passé le délai d\'entrée, la séance de ce jour vous a été retirée : elle compte comme une absence. Vous restez l\'enseignant de la classe.',
+			'salle.refusAccesPerdu' => 'Passé le délai d\'entrée, la séance de ce jour vous a été retirée : elle compte comme une absence. Vous restez l\'enseignant de la classe.',
 			'salle.refusConfiguration' => 'La salle n\'est pas encore disponible',
 			'salle.refusConfigurationDetail' => 'Ce n\'est pas votre appareil : le service de visioconférence n\'est pas branché. L\'équipe le sait.',
 			'salle.refusReseau' => 'La salle n\'a pas pu s\'ouvrir',
