@@ -9060,7 +9060,7 @@
         "formulaireTitre": "Payez ici, sans quitter l'application",
         "formulairePhrase": "Saisissez vos coordonnées de paiement ci-dessous. Les soldes changent seulement après la confirmation du paiement.",
         "formulaireEchecTitre": "Le formulaire de paiement ne s'est pas affiché.",
-        "formulaireEchecPhrase": "Vérifiez votre connexion, puis réessayez. Rien n'a été payé par ce formulaire.",
+        "formulaireEchecPhrase": "Réessayez dans un instant. Rien n'a été payé par ce formulaire.",
         "formulaireSansPayer": "Revenir aux soldes sans payer",
         "preparationTitre": "Paiement en préparation",
         "preparationPhrase": "Vérifiez la répartition avant de payer.",

@@ -30189,8 +30189,8 @@ class Traductions$adulte$recharge$resultat$fr {
 	/// fr: 'Le formulaire de paiement ne s'est pas affiché.'
 	String get formulaireEchecTitre => 'Le formulaire de paiement ne s\'est pas affiché.';
 
-	/// fr: 'Vérifiez votre connexion, puis réessayez. Rien n'a été payé par ce formulaire.'
-	String get formulaireEchecPhrase => 'Vérifiez votre connexion, puis réessayez. Rien n\'a été payé par ce formulaire.';
+	/// fr: 'Réessayez dans un instant. Rien n'a été payé par ce formulaire.'
+	String get formulaireEchecPhrase => 'Réessayez dans un instant. Rien n\'a été payé par ce formulaire.';
 
 	/// fr: 'Revenir aux soldes sans payer'
 	String get formulaireSansPayer => 'Revenir aux soldes sans payer';
@@ -49224,7 +49224,7 @@ extension on Traductions {
 			'adulte.recharge.resultat.formulaireTitre' => 'Payez ici, sans quitter l\'application',
 			'adulte.recharge.resultat.formulairePhrase' => 'Saisissez vos coordonnées de paiement ci-dessous. Les soldes changent seulement après la confirmation du paiement.',
 			'adulte.recharge.resultat.formulaireEchecTitre' => 'Le formulaire de paiement ne s\'est pas affiché.',
-			'adulte.recharge.resultat.formulaireEchecPhrase' => 'Vérifiez votre connexion, puis réessayez. Rien n\'a été payé par ce formulaire.',
+			'adulte.recharge.resultat.formulaireEchecPhrase' => 'Réessayez dans un instant. Rien n\'a été payé par ce formulaire.',
 			'adulte.recharge.resultat.formulaireSansPayer' => 'Revenir aux soldes sans payer',
 			'adulte.recharge.resultat.preparationTitre' => 'Paiement en préparation',
 			'adulte.recharge.resultat.preparationPhrase' => 'Vérifiez la répartition avant de payer.',

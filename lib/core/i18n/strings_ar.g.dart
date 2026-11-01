@@ -14620,7 +14620,7 @@ class _Traductions$adulte$recharge$resultat$ar extends Traductions$adulte$rechar
 	@override String get formulaireTitre => 'ادفع هنا دون مغادرة التطبيق';
 	@override String get formulairePhrase => 'أدخل بيانات الدفع أدناه. لا تتغيّر الأرصدة إلا بعد تأكيد الدفع.';
 	@override String get formulaireEchecTitre => 'لم يظهر نموذج الدفع.';
-	@override String get formulaireEchecPhrase => 'تحقّق من اتصالك ثم أعد المحاولة. لم يُدفع أي مبلغ عبر هذا النموذج.';
+	@override String get formulaireEchecPhrase => 'أعد المحاولة بعد قليل. لم يُدفع أي مبلغ عبر هذا النموذج.';
 	@override String get formulaireSansPayer => 'العودة إلى الأرصدة دون دفع';
 }
 
@@ -26938,7 +26938,7 @@ extension on TraductionsAr {
 			'adulte.recharge.resultat.formulaireTitre' => 'ادفع هنا دون مغادرة التطبيق',
 			'adulte.recharge.resultat.formulairePhrase' => 'أدخل بيانات الدفع أدناه. لا تتغيّر الأرصدة إلا بعد تأكيد الدفع.',
 			'adulte.recharge.resultat.formulaireEchecTitre' => 'لم يظهر نموذج الدفع.',
-			'adulte.recharge.resultat.formulaireEchecPhrase' => 'تحقّق من اتصالك ثم أعد المحاولة. لم يُدفع أي مبلغ عبر هذا النموذج.',
+			'adulte.recharge.resultat.formulaireEchecPhrase' => 'أعد المحاولة بعد قليل. لم يُدفع أي مبلغ عبر هذا النموذج.',
 			'adulte.recharge.resultat.formulaireSansPayer' => 'العودة إلى الأرصدة دون دفع',
 			'adulte.recharge.source.avantPaiement' => 'بانتظار الدفع',
 			'adulte.recharge.source.motifs.paiementRefuse' => 'رفض البنك أو البطاقة الدفع. لم يُقتطع أي مبلغ.',
