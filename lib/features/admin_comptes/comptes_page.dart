@@ -127,7 +127,9 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
     microseconds: 300 * Duration.microsecondsPerMillisecond,
   );
 
-  int _taillePage = 50;
+  // 25 par defaut, comme Classes (relecture du pilote, PR 126) ; §5.3 fixe
+  // le choix 25, 50 ou 100, pas la valeur de depart.
+  int _taillePage = 25;
 
   /// La vue affichee au dernier rendu (celle que les gestes modifient).
   VueComptes _vue = VueComptes.eleves;
@@ -878,7 +880,9 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
     final ColonneDonnees<CompteAdmin> personne = ColonneDonnees<CompteAdmin>(
       titre: t.admin.comptes.colonnePersonne,
       role: RoleColonne.identifiante,
-      flex: 2,
+      // Au bureau (LISTES-3), le nom prend la largeur qu'il faut pour tenir
+      // sur une ligne, comme Classes (relecture du pilote, PR 126).
+      flex: bureau ? 3 : 2,
       tri: tri(ChampTriComptes.nom),
       texte: (CompteAdmin c) => c.libelle == c.identifiant
           ? identifiantInsecable(c.identifiant)

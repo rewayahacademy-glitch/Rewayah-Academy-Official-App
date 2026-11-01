@@ -839,6 +839,13 @@ void main() {
       }
 
       await allerAuPied();
+      // 25 par defaut, comme Classes (relecture du pilote, PR 126).
+      expect(find.text('1-25 sur 120'), findsOneWidget);
+      await tester.tap(find.byKey(PiedDeListe.cleTaille));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('50 par page').last);
+      await tester.pumpAndSettle();
+      await allerAuPied();
       expect(find.text('1-50 sur 120'), findsOneWidget);
       // Les fleches : la page suivante, puis la derniere.
       await tester.tap(find.bySemanticsLabel('Page suivante'));

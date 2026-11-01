@@ -100,7 +100,16 @@ try {
         await p.capture(c, `${cle}_demandes_sur_la_personne`);
       }
     }
-    verdicts[cle] = { rechercheCachee, panneau, puce: !!puce, ligneVue, action, demandes, cherchee, adultes };
+    // Relecture du pilote (PR 126) : le menu de ligne de Classes est passe
+    // au meme declencheur « ... » ; une capture de Classes a 1440.
+    let classesMenu = true;
+    if (largeur === 1440) {
+      await ouvrir(c.page, '/#/admin/operations/groupes');
+      await c.page.waitForTimeout(2500); await activerSemantique(c.page);
+      classesMenu = !!(await trouver(c.page, /^Actions : /, { delai: 8000 }));
+      await p.capture(c, `${cle}_classes_menu_de_ligne`);
+    }
+    verdicts[cle] = { classesMenu, rechercheCachee, panneau, puce: !!puce, ligneVue, action, demandes, cherchee, adultes };
     p.dire(`${cle} : ${JSON.stringify(verdicts[cle])}`);
   }
 

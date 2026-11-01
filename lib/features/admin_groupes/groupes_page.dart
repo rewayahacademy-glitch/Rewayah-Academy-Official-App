@@ -772,6 +772,8 @@ class _CorpsFiche extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               MenuActions(
+                // LISTES-1 : le menu d'une ligne ou d'un panneau, « ... ».
+                points: true,
                 objet: classe.nom,
                 actions: <EntreeAction>[
                   EntreeAction(
@@ -902,6 +904,8 @@ class _Corps extends StatelessWidget {
       ),
       actionsLigne: (BuildContext contexte, ClasseListee c) => c.groupe.actif
           ? MenuActions(
+              // LISTES-1 : le menu d'une ligne ou d'un panneau, « ... ».
+              points: true,
               objet: c.nom,
               actions: <EntreeAction>[
                 EntreeAction(
@@ -1907,6 +1911,8 @@ class _FeuilleDetail extends ConsumerWidget {
                           contentPadding: EdgeInsets.zero,
                           title: Text(membre.libelle),
                           trailing: MenuActions(
+                            // LISTES-1 : le menu d'une ligne ou d'un panneau, « ... ».
+                            points: true,
                             objet: membre.libelle,
                             actions: <EntreeAction>[
                               EntreeAction(
