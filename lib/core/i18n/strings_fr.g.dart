@@ -775,7 +775,7 @@ class Traductions$connexion$fr {
 	String get sessionTermineeTitre => 'Vous avez été déconnecté';
 
 	/// fr: 'Votre session a pris fin : ce compte, ou un autre, s'est connecté ailleurs, dans ce navigateur ou sur un autre appareil. Reconnectez-vous ici. Pour utiliser deux comptes en même temps, ouvrez le second dans une fenêtre de navigation privée ou sur un autre appareil.'
-	String get sessionTermineePhrase => 'Votre session a pris fin : ce compte, ou un autre, s\'est connecté ailleurs, dans ce navigateur ou sur un autre appareil. Reconnectez-vous ici. Pour utiliser deux comptes en même temps, ouvrez le second dans une fenêtre de navigation privée ou sur un autre appareil.';
+	String get sessionTermineePhrase => 'Votre session a pris fin : ce compte, ou un autre, s\'est connecté ailleurs, dans ce navigateur ou sur un autre appareil. Reconnectez-vous ici. Pour utiliser deux comptes en même temps, ouvrez le second dans une fenêtre de navigation privée ou sur un autre appareil.';
 
 	/// fr: 'J'ai déjà un compte'
 	String get modeConnexion => 'J\'ai déjà un compte';
@@ -42673,7 +42673,7 @@ extension on Traductions {
 			'accords.cadreNonPublie' => 'L\'envoi de votre candidature sera possible quand le cadre religieux et pédagogique sera publié.',
 			'connexion.titre' => 'Se connecter',
 			'connexion.sessionTermineeTitre' => 'Vous avez été déconnecté',
-			'connexion.sessionTermineePhrase' => 'Votre session a pris fin : ce compte, ou un autre, s\'est connecté ailleurs, dans ce navigateur ou sur un autre appareil. Reconnectez-vous ici. Pour utiliser deux comptes en même temps, ouvrez le second dans une fenêtre de navigation privée ou sur un autre appareil.',
+			'connexion.sessionTermineePhrase' => 'Votre session a pris fin : ce compte, ou un autre, s\'est connecté ailleurs, dans ce navigateur ou sur un autre appareil. Reconnectez-vous ici. Pour utiliser deux comptes en même temps, ouvrez le second dans une fenêtre de navigation privée ou sur un autre appareil.',
 			'connexion.modeConnexion' => 'J\'ai déjà un compte',
 			'connexion.modeCreation' => 'Créer un compte',
 			'connexion.titreCreation' => 'Créer votre compte',
