@@ -28,8 +28,6 @@ node tool/e2e/etat.mjs <n>    # reporte le verdict dans docs/current/ETAT-OUVERT
   (`releases_linux.json` de `storage.googleapis.com`), puis `git config --global --add safe.directory /opt/flutter`.
 - **Branchement (règle R1, 01/11)** : `pile.sh construire` lance `dart run tool/verifier_branchement.dart`
   avant le build web et s'arrête s'il échoue (code non branché hors de `tool/branchement_tolere.txt`).
-- **Après un redémarrage de la machine** : relancer `pile.sh demarrer` puis `pile.sh servir` ; les volumes
-  Docker gardent la base (vu le 01/11 à 03:10).
 - **Fonctions Edge** : le conteneur doit faire confiance au certificat du proxy (téléchargement de
   `jsr.io`) et à l'autorité locale du relais SMTPS ; `pile.sh` l'ajoute juste après le démarrage.
   Lancer `functions serve` détaché (`setsid nohup`), sinon il meurt avec la commande qui l'a lancé.
