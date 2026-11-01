@@ -1031,6 +1031,8 @@ class _Traductions$connexion$ar extends Traductions$connexion$fr {
 	@override String get probleme => 'انتهت صلاحية الرابط أو لم يصل؟';
 	@override late final _Traductions$connexion$recuperation$ar recuperation = _Traductions$connexion$recuperation$ar._(_root);
 	@override late final _Traductions$connexion$feuilleAppareil$ar feuilleAppareil = _Traductions$connexion$feuilleAppareil$ar._(_root);
+	@override String get sessionTermineeTitre => 'تم تسجيل خروجك';
+	@override String get sessionTermineePhrase => 'انتهت جلستك: هذا الحساب، أو حساب آخر، سُجّل دخوله في مكان آخر، في هذا المتصفح أو على جهاز آخر. سجّل الدخول من جديد هنا. لاستعمال حسابين في الوقت نفسه، افتح الثاني في نافذة تصفّح خاصة أو على جهاز آخر.';
 	@override String get modeConnexion => 'لدي حساب';
 	@override String get modeCreation => 'إنشاء حساب';
 	@override String get titreCreation => 'أنشئ حسابك';
@@ -26717,6 +26719,8 @@ extension on TraductionsAr {
 			'connexion.feuilleAppareil.plafond' => 'عدد الأجهزة لكل طالب محدود. إن بلغت الحد، أزل أحدها من «الأسرة»، «أجهزة الأسرة».',
 			'connexion.feuilleAppareil.saisir' => 'إدخال الرمز',
 			'connexion.feuilleAppareil.fermer' => 'إغلاق',
+			'connexion.sessionTermineeTitre' => 'تم تسجيل خروجك',
+			'connexion.sessionTermineePhrase' => 'انتهت جلستك: هذا الحساب، أو حساب آخر، سُجّل دخوله في مكان آخر، في هذا المتصفح أو على جهاز آخر. سجّل الدخول من جديد هنا. لاستعمال حسابين في الوقت نفسه، افتح الثاني في نافذة تصفّح خاصة أو على جهاز آخر.',
 			'connexion.modeConnexion' => 'لدي حساب',
 			'connexion.modeCreation' => 'إنشاء حساب',
 			'connexion.titreCreation' => 'أنشئ حسابك',

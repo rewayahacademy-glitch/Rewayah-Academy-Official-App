@@ -1,0 +1,5 @@
+== Session refusee : retour a « Se connecter » : 2026-11-01T19:37:40.870Z ; Chromium 141.0.7390.37 ; http://127.0.0.1:8090
+Connecte : flt-semantics:Accueil | h2:Accueil | button:Notifications
+Jeton altere : true ; sessions effacees dans la base locale
+Bandeau : group:Vous avez été déconnecté Votre session a pris fin : ce compte, ou un autre, s'est connecté ailleurs, dans ce navigateur ou sur un autre appareil. Reconnectez-vo ; ecran : flt-semantics:Se connecter ; http://127.0.0.1:8090/#/connexion?retour=/attente
+== Session refusee : retour a « Se connecter » : vert
