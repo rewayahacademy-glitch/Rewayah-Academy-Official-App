@@ -7,10 +7,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show SemanticsNode;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/admin/service_comptes.dart';
+import 'package:rewayah_academy/core/admission/port_admissions_direction.dart'
+    show PopulationAdmission;
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
@@ -61,6 +64,8 @@ CompteAdmin _c(
   TrancheAge? tranche,
   String? classe,
   String? tuteur,
+  bool admission = false,
+  bool? apprenant,
 }) => CompteAdmin(
   profilId: 'p-$id',
   identifiant: id,
@@ -82,6 +87,8 @@ CompteAdmin _c(
   classesActives: classe == null ? 0 : 1,
   tuteurId: tuteur == null ? null : 't-$tuteur',
   tuteurPrenom: tuteur,
+  admissionATraiter: admission,
+  apprenant: apprenant,
 );
 
 /// Un petit annuaire fictif : deux eleves, deux tuteurs, deux enseignants.
@@ -164,6 +171,21 @@ List<String> _vues(WidgetTester tester) => tester
     .sections
     .map((Segment<VueComptes> s) => s.libelle)
     .toList();
+
+/// LISTES-3 : au bureau, recherche et filtres sont en panneau, derriere
+/// l'icone de la tete ; les tests qui les manipulent l'ouvrent d'abord.
+Future<void> _ouvrirFiltres(WidgetTester tester, {bool attendre = true}) async {
+  final Finder bascule = find.byKey(
+    const ValueKey<String>('comptes-bascule-filtres'),
+  );
+  if (bascule.evaluate().isEmpty) return;
+  await tester.tap(bascule);
+  if (attendre) {
+    await tester.pumpAndSettle();
+  } else {
+    await tester.pump();
+  }
+}
 
 void main() {
   setUpAll(() async {
@@ -320,6 +342,7 @@ void main() {
       } else {
         await tester.pump();
       }
+      await _ouvrirFiltres(tester, attendre: attente == null);
     }
 
     testWidgets('plus de paragraphe avant les commandes', (tester) async {
@@ -1046,6 +1069,7 @@ void main() {
       addTearDown(tester.view.reset);
       await tester.pumpWidget(routant(depart, _annuaire()));
       await tester.pumpAndSettle();
+      await _ouvrirFiltres(tester);
       return GoRouter.of(tester.element(find.byType(ComptesPage)));
     }
 
@@ -1110,6 +1134,190 @@ void main() {
         find.byKey(const ValueKey<String>('comptes-recherche')),
       );
       expect(champ.controller!.text, isEmpty);
+    });
+  });
+
+  group('L2 : tete du bureau et ligne en attente', () {
+    Future<void> monterNu(
+      WidgetTester tester,
+      List<CompteAdmin> comptes,
+    ) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(1440, 900);
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        hote(
+          const ComptesPage(),
+          surcharges: <Override>[
+            serviceComptesProvider.overrideWithValue(_Service(comptes)),
+            serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets(
+      'bureau : les vues seules, filtres en panneau ; « En attente » reste',
+      (tester) async {
+        await monterNu(tester, _annuaire());
+        // Vue de depart : la premiere qui attend une decision (Enseignants).
+        expect(
+          find.byKey(const ValueKey<String>('comptes-recherche')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const ValueKey<String>('comptes-bascule-filtres')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const ValueKey<String>('comptes-attente')),
+          findsOneWidget,
+        );
+        await _ouvrirFiltres(tester);
+        expect(
+          find.byKey(const ValueKey<String>('comptes-recherche')),
+          findsOneWidget,
+        );
+        // La puce n'est pas doublee dans le panneau.
+        expect(
+          find.byKey(const ValueKey<String>('comptes-attente')),
+          findsOneWidget,
+        );
+        await _ouvrirFiltres(tester);
+        expect(
+          find.byKey(const ValueKey<String>('comptes-recherche')),
+          findsNothing,
+        );
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    for (final (String, CompteAdmin, PopulationAdmission) cas
+        in <(String, CompteAdmin, PopulationAdmission)>[
+          (
+            'eleve adulte',
+            _c(
+              'GUARDIAN-KA-000009',
+              prenom: 'Karim',
+              nom: 'Ali',
+              role: AppRole.guardian,
+              etat: AccountStatus.pendingKyc,
+              apprenant: true,
+              admission: true,
+            ),
+            PopulationAdmission.eleveAdulte,
+          ),
+          (
+            'famille',
+            _c(
+              'GUARDIAN-FN-000010',
+              prenom: 'Fatou',
+              nom: 'Ndiaye',
+              role: AppRole.guardian,
+              etat: AccountStatus.pendingKyc,
+              enfants: 2,
+              admission: true,
+            ),
+            PopulationAdmission.famille,
+          ),
+        ]) {
+      testWidgets(
+        '« Voir la demande » (${cas.$1}) ouvre les demandes sur elle',
+        (tester) async {
+          tester.view.devicePixelRatio = 1;
+          tester.view.physicalSize = const Size(1440, 900);
+          addTearDown(tester.view.reset);
+          Object? extra;
+          await tester.pumpWidget(
+            hoteRoutant(
+              depart: '/c',
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/c',
+                  builder: (BuildContext _, GoRouterState etat) =>
+                      ComptesPage(requete: etat.uri.queryParameters),
+                ),
+                GoRoute(
+                  path: Routes.adminPersonnesAdmissions,
+                  builder: (BuildContext _, GoRouterState etat) {
+                    extra = etat.extra;
+                    return const Scaffold(body: Text('demandes'));
+                  },
+                ),
+              ],
+              surcharges: <Override>[
+                serviceComptesProvider.overrideWithValue(
+                  _Service(<CompteAdmin>[cas.$2]),
+                ),
+                serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+              ],
+            ),
+          );
+          await tester.pumpAndSettle();
+          // La ligne dit « En attente » et porte l'action qui la debloque.
+          expect(find.byType(MenuActions), findsOneWidget);
+          await tester.tap(find.byType(MenuActions));
+          await tester.pumpAndSettle();
+          await tester.tap(find.text('Voir la demande'));
+          await tester.pumpAndSettle();
+          expect(find.text('demandes'), findsOneWidget);
+          expect(extra, (population: cas.$3, recherche: cas.$2.libelle));
+        },
+      );
+    }
+
+    testWidgets('telephone : le menu est un noeud a part de la pastille', (
+      tester,
+    ) async {
+      final SemanticsHandle voix = tester.ensureSemantics();
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(390, 844);
+      addTearDown(tester.view.reset);
+      final CompteAdmin c = _c(
+        'GUARDIAN-KA-000009',
+        prenom: 'Karim',
+        nom: 'Ali',
+        role: AppRole.guardian,
+        etat: AccountStatus.pendingKyc,
+        apprenant: true,
+        admission: true,
+      );
+      await tester.pumpWidget(
+        hote(
+          const MediaQuery(
+            data: MediaQueryData(size: Size(390, 844)),
+            child: ComptesPage(),
+          ),
+          surcharges: <Override>[
+            serviceComptesProvider.overrideWithValue(
+              _Service(<CompteAdmin>[c]),
+            ),
+            serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+      // Le menu dit « Actions : Karim Ali », sans rien de la ligne.
+      final SemanticsNode menu = tester.getSemantics(find.byType(MenuActions));
+      expect(menu.label, contains('Karim Ali'));
+      expect(menu.label, isNot(contains('En attente')));
+      // La pastille se lit hors du menu.
+      final SemanticsNode pastille = tester.getSemantics(
+        find.text('En attente'),
+      );
+      expect(pastille.label, contains('En attente'));
+      expect(pastille.label, isNot(contains('Actions')));
+      voix.dispose();
+    });
+
+    testWidgets('une ligne sans decision attendue n a aucune action', (
+      tester,
+    ) async {
+      await monterNu(tester, <CompteAdmin>[
+        _c('STUDENT-LD-000001', prenom: 'Lina', nom: 'Diallo'),
+      ]);
+      expect(find.byType(MenuActions), findsNothing);
     });
   });
 
