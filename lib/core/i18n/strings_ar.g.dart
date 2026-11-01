@@ -399,8 +399,8 @@ class _Traductions$salle$ar extends Traductions$salle$fr {
 	@override String refusTerminee({required Object heure}) => 'انتهت الحصة في ⁨${heure}⁩، وأُغلقت القاعة بعدها بقليل.';
 	@override String refusPasEncoreOuverte({required Object heure}) => 'تُفتح القاعة في ⁨${heure}⁩.';
 	@override String get refusAnnulee => 'أُلغيت هذه الحصة.';
-	@override String get refusAccesPerduTitre => 'لم تدخل في الوقت المحدد';
-	@override String get refusAccesPerdu => 'بعد انقضاء مهلة الدخول، سُحبت منك حصة اليوم وتُحتسب غياباً. وتبقى معلّم هذا الفصل.';
+	@override String get refusAccesPerduTitre => 'لم تنضم إلى القاعة في الوقت المحدد';
+	@override String get refusAccesPerdu => 'بعد انقضاء مهلة الانضمام إلى القاعة، سُحبت منك حصة اليوم وتُحتسب غياباً. وتبقى معلّم هذا الفصل.';
 	@override String get refusConfiguration => 'القاعة غير متاحة بعد';
 	@override String get refusConfigurationDetail => 'المشكلة ليست في جهازك: خدمة مكالمات الفيديو غير موصولة. الفريق على علم بذلك.';
 	@override String get refusReseau => 'لم تستجب القاعة';
@@ -20964,8 +20964,8 @@ extension on TraductionsAr {
 			'salle.refusTerminee' => ({required Object heure}) => 'انتهت الحصة في ⁨${heure}⁩، وأُغلقت القاعة بعدها بقليل.',
 			'salle.refusPasEncoreOuverte' => ({required Object heure}) => 'تُفتح القاعة في ⁨${heure}⁩.',
 			'salle.refusAnnulee' => 'أُلغيت هذه الحصة.',
-			'salle.refusAccesPerduTitre' => 'لم تدخل في الوقت المحدد',
-			'salle.refusAccesPerdu' => 'بعد انقضاء مهلة الدخول، سُحبت منك حصة اليوم وتُحتسب غياباً. وتبقى معلّم هذا الفصل.',
+			'salle.refusAccesPerduTitre' => 'لم تنضم إلى القاعة في الوقت المحدد',
+			'salle.refusAccesPerdu' => 'بعد انقضاء مهلة الانضمام إلى القاعة، سُحبت منك حصة اليوم وتُحتسب غياباً. وتبقى معلّم هذا الفصل.',
 			'salle.refusConfiguration' => 'القاعة غير متاحة بعد',
 			'salle.refusConfigurationDetail' => 'المشكلة ليست في جهازك: خدمة مكالمات الفيديو غير موصولة. الفريق على علم بذلك.',
 			'salle.refusReseau' => 'لم تستجب القاعة',

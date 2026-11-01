@@ -394,11 +394,11 @@ class Traductions$salle$fr {
 	/// fr: 'Cette séance est annulée.'
 	String get refusAnnulee => 'Cette séance est annulée.';
 
-	/// fr: 'Vous n'êtes pas entré à temps'
-	String get refusAccesPerduTitre => 'Vous n\'êtes pas entré à temps';
+	/// fr: 'Vous n'avez pas rejoint la salle à temps'
+	String get refusAccesPerduTitre => 'Vous n\'avez pas rejoint la salle à temps';
 
-	/// fr: 'Passé le délai d'entrée, la séance de ce jour vous a été retirée : elle compte comme une absence. Vous restez l'enseignant de la classe.'
-	String get refusAccesPerdu => 'Passé le délai d\'entrée, la séance de ce jour vous a été retirée : elle compte comme une absence. Vous restez l\'enseignant de la classe.';
+	/// fr: 'Passé le délai pour rejoindre la salle, la séance de ce jour vous a été retirée : elle compte comme une absence. Vous restez l'enseignant de la classe.'
+	String get refusAccesPerdu => 'Passé le délai pour rejoindre la salle, la séance de ce jour vous a été retirée : elle compte comme une absence. Vous restez l\'enseignant de la classe.';
 
 	/// fr: 'La salle n'est pas encore disponible'
 	String get refusConfiguration => 'La salle n\'est pas encore disponible';
@@ -42623,8 +42623,8 @@ extension on Traductions {
 			'salle.refusTerminee' => ({required Object heure}) => 'La séance s\'est terminée à ${heure}. La salle a fermé peu après.',
 			'salle.refusPasEncoreOuverte' => ({required Object heure}) => 'La salle ouvrira à ${heure}.',
 			'salle.refusAnnulee' => 'Cette séance est annulée.',
-			'salle.refusAccesPerduTitre' => 'Vous n\'êtes pas entré à temps',
-			'salle.refusAccesPerdu' => 'Passé le délai d\'entrée, la séance de ce jour vous a été retirée : elle compte comme une absence. Vous restez l\'enseignant de la classe.',
+			'salle.refusAccesPerduTitre' => 'Vous n\'avez pas rejoint la salle à temps',
+			'salle.refusAccesPerdu' => 'Passé le délai pour rejoindre la salle, la séance de ce jour vous a été retirée : elle compte comme une absence. Vous restez l\'enseignant de la classe.',
 			'salle.refusConfiguration' => 'La salle n\'est pas encore disponible',
 			'salle.refusConfigurationDetail' => 'Ce n\'est pas votre appareil : le service de visioconférence n\'est pas branché. L\'équipe le sait.',
 			'salle.refusReseau' => 'La salle n\'a pas pu s\'ouvrir',
