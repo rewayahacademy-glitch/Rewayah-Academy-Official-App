@@ -19,6 +19,7 @@ import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 import '../../../core/capacites/port_tarifs_particuliers.dart';
 import '../../../core/finance/format_montant.dart';
 import '../../../core/finance/montant.dart';
+import '../../../core/i18n/elision.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/reseau/service_reseau.dart';
 import '../../../core/tc_groupe/libelles_tc_groupe.dart';
@@ -360,7 +361,7 @@ class _FeuilleTarifParticulierState
           Text(valeurTarif(r), style: textes.titleMedium ?? const TextStyle()),
           Ecart.vSm,
           Text(
-            p.retirerPhrase(prenom: widget.prenom),
+            p.retirerPhrase(dePrenom: deDevant(widget.prenom)),
             style: palette.inkMuted.applyTo(
               textes.bodyMedium ?? const TextStyle(),
             ),
@@ -467,8 +468,8 @@ class _FeuilleTarifParticulierState
           BandeauAttention(
             titre: _retrait ? p.retireTitre : p.faitTitre,
             message: _retrait
-                ? p.retirerPhrase(prenom: widget.prenom)
-                : p.faitPhrase(prenom: widget.prenom),
+                ? p.retirerPhrase(dePrenom: deDevant(widget.prenom))
+                : p.faitPhrase(dePrenom: deDevant(widget.prenom)),
             ton: TonEtat.succes,
           ),
         ];
@@ -482,7 +483,7 @@ class _FeuilleTarifParticulierState
                 prenom: widget.prenom,
               ),
               MotifRefusTarif.montantTropHaut => p.refusMontant(
-                prenom: widget.prenom,
+                dePrenom: deDevant(widget.prenom),
               ),
               _ => p.refusInvalide,
             },

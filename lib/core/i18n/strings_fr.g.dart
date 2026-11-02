@@ -26595,7 +26595,7 @@ class Traductions$admin$finance$tarifs$fr {
 	String get titre => 'Accès offerts et prix spéciaux';
 
 	/// fr: 'Un accès offert (rien à payer) ou un prix spécial (une réduction ou un prix par mois) s'accorde à un élève jusqu'au mois que vous choisissez, avec sa raison. Ouvrez un élève dans la liste ci-dessous, puis « Accès offert ou prix spécial ». La facture du mois en tient compte.'
-	String get phrase => 'Un accès offert (rien à payer) ou un prix spécial (une réduction ou un prix par mois) s\'accorde à un élève jusqu\'au mois que vous choisissez, avec sa raison. Ouvrez un élève dans la liste ci-dessous, puis « Accès offert ou prix spécial ». La facture du mois en tient compte.';
+	String get phrase => 'Un accès offert (rien à payer) ou un prix spécial (une réduction ou un prix par mois) s\'accorde à un élève jusqu\'au mois que vous choisissez, avec sa raison. Ouvrez un élève dans la liste ci-dessous, puis « Accès offert ou prix spécial ». La facture du mois en tient compte.';
 
 	/// fr: 'Aucun accès offert ni prix spécial pour l'instant.'
 	String get vide => 'Aucun accès offert ni prix spécial pour l\'instant.';
@@ -26648,8 +26648,8 @@ class Traductions$admin$finance$tarifs$fr {
 	/// fr: 'Elle reste dans le journal de la direction.'
 	String get raisonAide => 'Elle reste dans le journal de la direction.';
 
-	/// fr: 'La raison est obligatoire.'
-	String get erreurRaison => 'La raison est obligatoire.';
+	/// fr: 'Écrivez la raison, elle est obligatoire.'
+	String get erreurRaison => 'Écrivez la raison, elle est obligatoire.';
 
 	/// fr: 'Accorder'
 	String get enregistrer => 'Accorder';
@@ -26666,8 +26666,8 @@ class Traductions$admin$finance$tarifs$fr {
 	/// fr: 'C'est accordé'
 	String get faitTitre => 'C\'est accordé';
 
-	/// fr: 'La facture de {prenom} en tient compte à partir de ce mois.'
-	String faitPhrase({required Object prenom}) => 'La facture de ${prenom} en tient compte à partir de ce mois.';
+	/// fr: 'La facture {dePrenom} en tient compte à partir de ce mois.'
+	String faitPhrase({required Object dePrenom}) => 'La facture ${dePrenom} en tient compte à partir de ce mois.';
 
 	/// fr: 'Rien n'a été accordé'
 	String get refusTitre => 'Rien n\'a été accordé';
@@ -26676,13 +26676,13 @@ class Traductions$admin$finance$tarifs$fr {
 	String get refusDroits => 'Seule la direction accorde un accès offert ou un prix spécial.';
 
 	/// fr: 'Une valeur a été refusée : vérifiez la réduction, le mois et la raison.'
-	String get refusInvalide => 'Une valeur a été refusée : vérifiez la réduction, le mois et la raison.';
+	String get refusInvalide => 'Une valeur a été refusée : vérifiez la réduction, le mois et la raison.';
 
 	/// fr: '{prenom} a déjà un accès offert, un prix spécial ou une bourse. Retirez-le d'abord.'
 	String refusDejaActive({required Object prenom}) => '${prenom} a déjà un accès offert, un prix spécial ou une bourse. Retirez-le d\'abord.';
 
-	/// fr: 'Ce prix n'est pas inférieur au prix normal de {prenom}. Entrez un prix plus bas, ou choisissez « Accès offert ».'
-	String refusMontant({required Object prenom}) => 'Ce prix n\'est pas inférieur au prix normal de ${prenom}. Entrez un prix plus bas, ou choisissez « Accès offert ».';
+	/// fr: 'Ce prix n'est pas inférieur au prix normal {dePrenom}. Entrez un prix plus bas, ou choisissez « Accès offert ».'
+	String refusMontant({required Object dePrenom}) => 'Ce prix n\'est pas inférieur au prix normal ${dePrenom}. Entrez un prix plus bas, ou choisissez « Accès offert ».';
 
 	/// fr: 'Réponse non reçue'
 	String get inconnuTitre => 'Réponse non reçue';
@@ -26693,8 +26693,8 @@ class Traductions$admin$finance$tarifs$fr {
 	/// fr: 'Retirer pour {prenom}'
 	String retirerTitre({required Object prenom}) => 'Retirer pour ${prenom}';
 
-	/// fr: 'Les prochaines factures de {prenom} reprendront le prix normal. Les factures déjà émises ne changent pas.'
-	String retirerPhrase({required Object prenom}) => 'Les prochaines factures de ${prenom} reprendront le prix normal. Les factures déjà émises ne changent pas.';
+	/// fr: 'Les prochaines factures {dePrenom} reprendront le prix normal. Les factures déjà émises ne changent pas.'
+	String retirerPhrase({required Object dePrenom}) => 'Les prochaines factures ${dePrenom} reprendront le prix normal. Les factures déjà émises ne changent pas.';
 
 	/// fr: 'Retirer'
 	String get retirer => 'Retirer';
@@ -46510,7 +46510,7 @@ extension on Traductions {
 			'admin.finance.pai.enAttente' => 'En attente de validation',
 			'admin.finance.pai.refusesRecemment' => 'Refusés récemment',
 			'admin.finance.tarifs.titre' => 'Accès offerts et prix spéciaux',
-			'admin.finance.tarifs.phrase' => 'Un accès offert (rien à payer) ou un prix spécial (une réduction ou un prix par mois) s\'accorde à un élève jusqu\'au mois que vous choisissez, avec sa raison. Ouvrez un élève dans la liste ci-dessous, puis « Accès offert ou prix spécial ». La facture du mois en tient compte.',
+			'admin.finance.tarifs.phrase' => 'Un accès offert (rien à payer) ou un prix spécial (une réduction ou un prix par mois) s\'accorde à un élève jusqu\'au mois que vous choisissez, avec sa raison. Ouvrez un élève dans la liste ci-dessous, puis « Accès offert ou prix spécial ». La facture du mois en tient compte.',
 			'admin.finance.tarifs.vide' => 'Aucun accès offert ni prix spécial pour l\'instant.',
 			'admin.finance.tarifs.accorder' => 'Accès offert ou prix spécial',
 			'admin.finance.tarifs.feuilleTitre' => ({required Object prenom}) => 'Accès offert ou prix spécial pour ${prenom}',
@@ -46528,22 +46528,22 @@ extension on Traductions {
 			'admin.finance.tarifs.moisFin' => 'Jusqu\'à la fin de',
 			'admin.finance.tarifs.raison' => 'Raison',
 			'admin.finance.tarifs.raisonAide' => 'Elle reste dans le journal de la direction.',
-			'admin.finance.tarifs.erreurRaison' => 'La raison est obligatoire.',
+			'admin.finance.tarifs.erreurRaison' => 'Écrivez la raison, elle est obligatoire.',
 			'admin.finance.tarifs.enregistrer' => 'Accorder',
 			'admin.finance.tarifs.valeurOffert' => ({required Object mois}) => 'Accès offert jusqu\'à fin ${mois}',
 			'admin.finance.tarifs.valeurPrix' => ({required Object pourcent, required Object mois}) => 'Moins ${pourcent} % jusqu\'à fin ${mois}',
 			'admin.finance.tarifs.valeurMontant' => ({required Object montant, required Object mois}) => '${montant} par mois jusqu\'à fin ${mois}',
 			'admin.finance.tarifs.faitTitre' => 'C\'est accordé',
-			'admin.finance.tarifs.faitPhrase' => ({required Object prenom}) => 'La facture de ${prenom} en tient compte à partir de ce mois.',
+			'admin.finance.tarifs.faitPhrase' => ({required Object dePrenom}) => 'La facture ${dePrenom} en tient compte à partir de ce mois.',
 			'admin.finance.tarifs.refusTitre' => 'Rien n\'a été accordé',
 			'admin.finance.tarifs.refusDroits' => 'Seule la direction accorde un accès offert ou un prix spécial.',
-			'admin.finance.tarifs.refusInvalide' => 'Une valeur a été refusée : vérifiez la réduction, le mois et la raison.',
+			'admin.finance.tarifs.refusInvalide' => 'Une valeur a été refusée : vérifiez la réduction, le mois et la raison.',
 			'admin.finance.tarifs.refusDejaActive' => ({required Object prenom}) => '${prenom} a déjà un accès offert, un prix spécial ou une bourse. Retirez-le d\'abord.',
-			'admin.finance.tarifs.refusMontant' => ({required Object prenom}) => 'Ce prix n\'est pas inférieur au prix normal de ${prenom}. Entrez un prix plus bas, ou choisissez « Accès offert ».',
+			'admin.finance.tarifs.refusMontant' => ({required Object dePrenom}) => 'Ce prix n\'est pas inférieur au prix normal ${dePrenom}. Entrez un prix plus bas, ou choisissez « Accès offert ».',
 			'admin.finance.tarifs.inconnuTitre' => 'Réponse non reçue',
 			'admin.finance.tarifs.inconnuPhrase' => 'Nous ne savons pas si c\'est enregistré. Rouvrez la liste avant de réessayer.',
 			'admin.finance.tarifs.retirerTitre' => ({required Object prenom}) => 'Retirer pour ${prenom}',
-			'admin.finance.tarifs.retirerPhrase' => ({required Object prenom}) => 'Les prochaines factures de ${prenom} reprendront le prix normal. Les factures déjà émises ne changent pas.',
+			'admin.finance.tarifs.retirerPhrase' => ({required Object dePrenom}) => 'Les prochaines factures ${dePrenom} reprendront le prix normal. Les factures déjà émises ne changent pas.',
 			'admin.finance.tarifs.retirer' => 'Retirer',
 			'admin.finance.tarifs.retireTitre' => 'C\'est retiré',
 			'admin.finance.fac.factures' => 'Factures du mois',

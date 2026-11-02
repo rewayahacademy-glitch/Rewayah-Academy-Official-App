@@ -252,7 +252,7 @@ void main() {
     await tester.enterText(_champ(FeuilleTarifParticulier.cleMontant), '55');
     await tester.enterText(_champ(FeuilleTarifParticulier.cleRaison), 'Ancien');
     await _toucher(tester, find.byKey(FeuilleTarifParticulier.cleEnvoyer));
-    expect(find.text(p.refusMontant(prenom: 'Bilal')), findsOneWidget);
+    expect(find.text(p.refusMontant(dePrenom: 'de Bilal')), findsOneWidget);
   });
 
   testWidgets('la liste dit un prix par mois en montant', (

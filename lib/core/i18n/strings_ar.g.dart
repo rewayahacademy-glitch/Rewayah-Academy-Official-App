@@ -12981,22 +12981,22 @@ class _Traductions$admin$finance$tarifs$ar extends Traductions$admin$finance$tar
 	@override String get moisFin => 'حتى نهاية';
 	@override String get raison => 'السبب';
 	@override String get raisonAide => 'يبقى في سجل الإدارة.';
-	@override String get erreurRaison => 'السبب إلزامي.';
+	@override String get erreurRaison => 'اكتبوا السبب، فهو إلزامي.';
 	@override String get enregistrer => 'منح';
 	@override String valeurOffert({required Object mois}) => 'وصول مجاني حتى نهاية ⁨${mois}⁩';
 	@override String valeurPrix({required Object pourcent, required Object mois}) => 'تخفيض ⁨${pourcent}⁩ % حتى نهاية ⁨${mois}⁩';
 	@override String valeurMontant({required Object montant, required Object mois}) => '⁨${montant}⁩ شهريًا حتى نهاية ⁨${mois}⁩';
 	@override String get faitTitre => 'تم المنح';
-	@override String faitPhrase({required Object prenom}) => 'تأخذ فاتورة ⁨${prenom}⁩ ذلك في الحسبان ابتداءً من هذا الشهر.';
+	@override String faitPhrase({required Object dePrenom}) => 'تأخذ فاتورة ⁨${dePrenom}⁩ ذلك في الحسبان ابتداءً من هذا الشهر.';
 	@override String get refusTitre => 'لم يُمنح شيء';
 	@override String get refusDroits => 'الإدارة وحدها تمنح الوصول المجاني أو السعر الخاص.';
 	@override String get refusInvalide => 'رُفضت قيمة: تحققوا من التخفيض والشهر والسبب.';
 	@override String refusDejaActive({required Object prenom}) => 'لدى ⁨${prenom}⁩ بالفعل وصول مجاني أو سعر خاص أو منحة. أزيلوه أولًا.';
-	@override String refusMontant({required Object prenom}) => 'هذا السعر ليس أقل من السعر العادي لـ⁨${prenom}⁩. أدخلوا سعرًا أقل، أو اختاروا «وصول مجاني».';
+	@override String refusMontant({required Object dePrenom}) => 'هذا السعر ليس أقل من السعر العادي لـ⁨${dePrenom}⁩. أدخلوا سعرًا أقل، أو اختاروا «وصول مجاني».';
 	@override String get inconnuTitre => 'لم يصل الرد';
 	@override String get inconnuPhrase => 'لا نعرف إن تم التسجيل. أعيدوا فتح القائمة قبل المحاولة من جديد.';
 	@override String retirerTitre({required Object prenom}) => 'إزالة لـ⁨${prenom}⁩';
-	@override String retirerPhrase({required Object prenom}) => 'ستعود فواتير ⁨${prenom}⁩ القادمة إلى السعر العادي. لا تتغير الفواتير الصادرة.';
+	@override String retirerPhrase({required Object dePrenom}) => 'ستعود فواتير ⁨${dePrenom}⁩ القادمة إلى السعر العادي. لا تتغير الفواتير الصادرة.';
 	@override String get retirer => 'إزالة';
 	@override String get retireTitre => 'تمت الإزالة';
 }
@@ -23932,22 +23932,22 @@ extension on TraductionsAr {
 			'admin.finance.tarifs.moisFin' => 'حتى نهاية',
 			'admin.finance.tarifs.raison' => 'السبب',
 			'admin.finance.tarifs.raisonAide' => 'يبقى في سجل الإدارة.',
-			'admin.finance.tarifs.erreurRaison' => 'السبب إلزامي.',
+			'admin.finance.tarifs.erreurRaison' => 'اكتبوا السبب، فهو إلزامي.',
 			'admin.finance.tarifs.enregistrer' => 'منح',
 			'admin.finance.tarifs.valeurOffert' => ({required Object mois}) => 'وصول مجاني حتى نهاية ⁨${mois}⁩',
 			'admin.finance.tarifs.valeurPrix' => ({required Object pourcent, required Object mois}) => 'تخفيض ⁨${pourcent}⁩ % حتى نهاية ⁨${mois}⁩',
 			'admin.finance.tarifs.valeurMontant' => ({required Object montant, required Object mois}) => '⁨${montant}⁩ شهريًا حتى نهاية ⁨${mois}⁩',
 			'admin.finance.tarifs.faitTitre' => 'تم المنح',
-			'admin.finance.tarifs.faitPhrase' => ({required Object prenom}) => 'تأخذ فاتورة ⁨${prenom}⁩ ذلك في الحسبان ابتداءً من هذا الشهر.',
+			'admin.finance.tarifs.faitPhrase' => ({required Object dePrenom}) => 'تأخذ فاتورة ⁨${dePrenom}⁩ ذلك في الحسبان ابتداءً من هذا الشهر.',
 			'admin.finance.tarifs.refusTitre' => 'لم يُمنح شيء',
 			'admin.finance.tarifs.refusDroits' => 'الإدارة وحدها تمنح الوصول المجاني أو السعر الخاص.',
 			'admin.finance.tarifs.refusInvalide' => 'رُفضت قيمة: تحققوا من التخفيض والشهر والسبب.',
 			'admin.finance.tarifs.refusDejaActive' => ({required Object prenom}) => 'لدى ⁨${prenom}⁩ بالفعل وصول مجاني أو سعر خاص أو منحة. أزيلوه أولًا.',
-			'admin.finance.tarifs.refusMontant' => ({required Object prenom}) => 'هذا السعر ليس أقل من السعر العادي لـ⁨${prenom}⁩. أدخلوا سعرًا أقل، أو اختاروا «وصول مجاني».',
+			'admin.finance.tarifs.refusMontant' => ({required Object dePrenom}) => 'هذا السعر ليس أقل من السعر العادي لـ⁨${dePrenom}⁩. أدخلوا سعرًا أقل، أو اختاروا «وصول مجاني».',
 			'admin.finance.tarifs.inconnuTitre' => 'لم يصل الرد',
 			'admin.finance.tarifs.inconnuPhrase' => 'لا نعرف إن تم التسجيل. أعيدوا فتح القائمة قبل المحاولة من جديد.',
 			'admin.finance.tarifs.retirerTitre' => ({required Object prenom}) => 'إزالة لـ⁨${prenom}⁩',
-			'admin.finance.tarifs.retirerPhrase' => ({required Object prenom}) => 'ستعود فواتير ⁨${prenom}⁩ القادمة إلى السعر العادي. لا تتغير الفواتير الصادرة.',
+			'admin.finance.tarifs.retirerPhrase' => ({required Object dePrenom}) => 'ستعود فواتير ⁨${dePrenom}⁩ القادمة إلى السعر العادي. لا تتغير الفواتير الصادرة.',
 			'admin.finance.tarifs.retirer' => 'إزالة',
 			'admin.finance.tarifs.retireTitre' => 'تمت الإزالة',
 			'admin.finance.fac.factures' => 'فواتير الشهر',
