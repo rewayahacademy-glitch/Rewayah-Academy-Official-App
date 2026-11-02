@@ -148,47 +148,58 @@ void main() {
     });
   });
 
-  group('ligne 14 : ouvrir la page marque tout lu', () {
-    for (final (String depart, AppRole role, _) in accueils) {
-      testWidgets(
-        '$depart : la cloche ouvre le centre du role, tout est marque lu, '
-        'le point disparait (${role.valeurSql})',
-        (WidgetTester tester) async {
-          final _FauxNotifications port = _FauxNotifications(
-            <NotificationTuteur>[_notification('n1'), _notification('n2')],
-          );
-          final GoRouter routeur = await _monter(
-            tester,
-            depart,
-            role,
-            port: port,
-          );
-          expect(_clocheAvecPoint(), findsNothing);
-          final Finder deuxNonLues = find.bySemanticsLabel(
-            t.commun.entete.notificationsNonLues(nombre: 2),
-          );
-          expect(deuxNonLues, findsAtLeastNWidgets(1));
+  // NOTIFS-L6 (pilote, 02/11/2026, regle 2) : ouvrir la page ne marque plus
+  // rien comme lu (la ligne 14 de la fiche du 27/10 le faisait : « Non lues »
+  // etait vide a l'arrivee). « Tout marquer comme lu » le fait, et le point
+  // de la cloche suit.
+  group(
+    'NOTIFS-L6 : ouvrir la page ne marque rien ; Tout marquer comme lu',
+    () {
+      for (final (String depart, AppRole role, _) in accueils) {
+        testWidgets(
+          '$depart : la cloche ouvre le centre du role, les non lues restent ; '
+          '« Tout marquer comme lu » eteint le point (${role.valeurSql})',
+          (WidgetTester tester) async {
+            final _FauxNotifications port = _FauxNotifications(
+              <NotificationTuteur>[_notification('n1'), _notification('n2')],
+            );
+            final GoRouter routeur = await _monter(
+              tester,
+              depart,
+              role,
+              port: port,
+            );
+            final Finder deuxNonLues = find.bySemanticsLabel(
+              t.commun.entete.notificationsNonLues(nombre: 2),
+            );
+            expect(deuxNonLues, findsAtLeastNWidgets(1));
 
-          await tester.tap(deuxNonLues.first);
-          await stabiliser(tester);
+            await tester.tap(deuxNonLues.first);
+            await stabiliser(tester);
 
-          expect(lieu(routeur), Routes.notificationsPour(role));
-          expect(find.byType(NotificationsPage), findsOneWidget);
-          // Le port a marque tout lu une fois, la liste a ete relue.
-          expect(port.marquagesGroupes, 1);
-          expect(port.lectures, greaterThanOrEqualTo(2));
-          // Plus de point : la cloche, active sur sa page, ne dit plus de
-          // non-lus (le titre de la page dit aussi « Notifications » : on
-          // lit la cloche elle-meme).
-          expect(find.bySemanticsLabel(RegExp('non lue')), findsNothing);
-          final ClocheNotifications cloche = tester.widget<ClocheNotifications>(
-            find.byType(ClocheNotifications),
-          );
-          expect(cloche.nonLues, 0);
-          expect(cloche.actif, isTrue);
-          expect(port.rendues.every((NotificationTuteur n) => n.lue), isTrue);
-        },
-      );
-    }
-  });
+            expect(lieu(routeur), Routes.notificationsPour(role));
+            expect(find.byType(NotificationsPage), findsOneWidget);
+            // Rien n'est marque a l'ouverture : les deux restent nouvelles.
+            expect(port.marquagesGroupes, 0);
+            expect(find.byKey(NotificationsPage.cleNouvelles), findsOneWidget);
+            expect(
+              tester
+                  .widget<ClocheNotifications>(find.byType(ClocheNotifications))
+                  .nonLues,
+              2,
+            );
+
+            await tester.tap(find.byKey(NotificationsPage.cleToutLire));
+            await stabiliser(tester);
+            expect(port.marquagesGroupes, 1);
+            final ClocheNotifications cloche = tester
+                .widget<ClocheNotifications>(find.byType(ClocheNotifications));
+            expect(cloche.nonLues, 0);
+            expect(cloche.actif, isTrue);
+            expect(port.rendues.every((NotificationTuteur n) => n.lue), isTrue);
+          },
+        );
+      }
+    },
+  );
 }

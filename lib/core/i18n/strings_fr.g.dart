@@ -2525,6 +2525,36 @@ class Traductions$notifications$fr {
 	/// fr: 'Voir toutes les notifications'
 	String get voirToutes => 'Voir toutes les notifications';
 
+	/// fr: 'À faire'
+	String get sectionAFaire => 'À faire';
+
+	/// fr: 'Nouvelles'
+	String get sectionNouvelles => 'Nouvelles';
+
+	/// fr: 'Plus anciennes'
+	String get sectionPlusAnciennes => 'Plus anciennes';
+
+	/// fr: 'Voir plus'
+	String get voirPlus => 'Voir plus';
+
+	/// fr: 'Les notifications plus anciennes n'ont pas pu être lues.'
+	String get voirPlusErreur => 'Les notifications plus anciennes n\'ont pas pu être lues.';
+
+	/// fr: 'Tout marquer comme lu'
+	String get toutMarquerLu => 'Tout marquer comme lu';
+
+	/// fr: 'Écarter'
+	String get ecarter => 'Écarter';
+
+	/// fr: 'L'écart n'est pas encore confirmé. Réessayez dans un instant.'
+	String get ecartNonConfirme => 'L\'écart n\'est pas encore confirmé. Réessayez dans un instant.';
+
+	/// fr: '(one) {{n} fois} (other) {{n} fois}'
+	String repetitions({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} fois',
+		other: '${n} fois',
+	);
+
 	/// fr: 'Non lue'
 	String get nonLue => 'Non lue';
 
@@ -12581,12 +12611,6 @@ class Traductions$notifications$filtres$fr {
 
 	/// fr: 'Non lues'
 	String get nonLues => 'Non lues';
-
-	/// fr: 'Mentions'
-	String get mentions => 'Mentions';
-
-	/// fr: 'Action requise'
-	String get actionRequise => 'Action requise';
 }
 
 // Path: notifications.detail
@@ -12596,12 +12620,6 @@ class Traductions$notifications$detail$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
-
-	/// fr: 'Choisissez une notification'
-	String get choisirTitre => 'Choisissez une notification';
-
-	/// fr: 'Son détail s'affiche ici, à côté de la liste.'
-	String get choisirPhrase => 'Son détail s\'affiche ici, à côté de la liste.';
 
 	/// fr: 'Reçue le {date} à {heure}'
 	String recue({required Object date, required Object heure}) => 'Reçue le ${date} à ${heure}';
@@ -47505,16 +47523,21 @@ extension on Traductions {
 			'notifications.filtres.libelle' => 'Filtrer les notifications',
 			'notifications.filtres.toutes' => 'Toutes',
 			'notifications.filtres.nonLues' => 'Non lues',
-			'notifications.filtres.mentions' => 'Mentions',
-			'notifications.filtres.actionRequise' => 'Action requise',
 			'notifications.filtreVideTitre' => 'Aucune notification dans ce filtre',
 			'notifications.filtreVidePhrase' => 'Choisissez « Toutes » pour revoir l\'ensemble de vos notifications.',
 			'notifications.voirToutes' => 'Voir toutes les notifications',
+			'notifications.sectionAFaire' => 'À faire',
+			'notifications.sectionNouvelles' => 'Nouvelles',
+			'notifications.sectionPlusAnciennes' => 'Plus anciennes',
+			'notifications.voirPlus' => 'Voir plus',
+			'notifications.voirPlusErreur' => 'Les notifications plus anciennes n\'ont pas pu être lues.',
+			'notifications.toutMarquerLu' => 'Tout marquer comme lu',
+			'notifications.ecarter' => 'Écarter',
+			'notifications.ecartNonConfirme' => 'L\'écart n\'est pas encore confirmé. Réessayez dans un instant.',
+			'notifications.repetitions' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} fois', other: '${n} fois', ), 
 			'notifications.nonLue' => 'Non lue',
 			'notifications.nonLueSemantique' => 'non lue',
 			'notifications.lectureNonConfirmee' => 'La lecture n\'est pas encore confirmée. Réessayez dans un instant.',
-			'notifications.detail.choisirTitre' => 'Choisissez une notification',
-			'notifications.detail.choisirPhrase' => 'Son détail s\'affiche ici, à côté de la liste.',
 			'notifications.detail.recue' => ({required Object date, required Object heure}) => 'Reçue le ${date} à ${heure}',
 			'notifications.detail.ouvrir' => 'Ouvrir la page concernée',
 			'notifications.types.annonceClasse' => 'Annonce de Classe',
@@ -47655,13 +47678,13 @@ extension on Traductions {
 			'tuteur.accueil.travailIllisible' => 'Le travail à préparer n\'a pas pu être lu.',
 			'tuteur.accueil.rienAPreparer' => 'Rien à préparer pour l\'instant',
 			'tuteur.accueil.derniereSeance' => 'Dernière séance',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.voirHistorique' => 'Voir l\'historique',
 			'tuteur.accueil.detailsSeance' => 'Détails de la séance',
 			'tuteur.accueil.aucuneDerniere' => 'Aucune séance passée pour l\'instant',
 			'tuteur.accueil.derniereIllisible' => 'La dernière séance n\'a pas pu être lue.',
 			'tuteur.accueil.dateEtDuree' => ({required Object date, required Object duree}) => '${date} · ${duree}',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.etatCourt.enDirect' => 'En direct',
 			'tuteur.accueil.etatCourt.salleOuverte' => 'Salle ouverte',
 			'tuteur.accueil.etatCourt.dansMinutes' => ({required Object minutes}) => 'Dans ${minutes} min',
@@ -48169,13 +48192,13 @@ extension on Traductions {
 			'enseignant.salle.sourateDetail' => ({required Object numero, required Object versets}) => 'Sourate ${numero} · ${versets} versets',
 			'enseignant.salle.souratesIndisponibles' => 'La liste des sourates n\'a pas pu être lue',
 			'enseignant.salle.souratesIndisponiblesDetail' => 'Ce que votre Classe voit n\'a pas changé. Réessayez.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.salle.pageIndisponible' => 'Cette page n\'a pas pu être lue',
 			'enseignant.salle.pageIndisponibleDetail' => 'Le texte n\'est pas arrivé jusqu\'ici. Votre Classe voit toujours la page présentée.',
 			'enseignant.salle.corpusAbsent' => 'Le texte du Coran n\'est pas installé',
 			'enseignant.salle.corpusAbsentDetail' => 'Il n\'y a rien à présenter.',
 			'enseignant.salle.echecPresentation' => 'Ce verset n\'a pas pu être situé dans le mushaf. Rien n\'a été envoyé à votre Classe.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.salle.sansDroitPresentation' => 'Votre accès à cette séance ne permet pas de présenter un contenu.',
 			'enseignant.cahier.titre' => 'Cahier de transmission',
 			'enseignant.cahier.obligatoire' => 'Obligatoire',
@@ -48683,13 +48706,13 @@ extension on Traductions {
 			'controleur.observation.rosterVide' => 'Aucun élève présent n\'apparaît dans la liste de cette visite. Choisissez « Classe entière » ou « Aucun participant précis ».',
 			'controleur.observation.questionTexte' => 'Qu\'avez-vous observé ?',
 			'controleur.observation.texteObligatoire' => 'Votre texte est nécessaire pour cette observation.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.observation.texteFacultatif' => 'Ce texte est facultatif.',
 			'controleur.observation.libelleTexte' => 'Votre remarque',
 			'controleur.observation.aideTexte' => 'Décrivez seulement ce que vous avez observé.',
 			'controleur.observation.texteRequis' => 'Écrivez ce que vous avez observé pour continuer.',
 			'controleur.observation.questionRecap' => 'Vérifiez votre observation avant l\'envoi.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.observation.cleNature' => 'Nature',
 			'controleur.observation.cleDomaine' => 'Domaine',
 			'controleur.observation.clePersonne' => 'Personne concernée',
@@ -49197,13 +49220,13 @@ extension on Traductions {
 			'tc.parcours.plage.pageUnique' => ({required Object premiere}) => 'Page ${premiere}',
 			'tc.parcours.plage.section' => ({required Object section}) => 'Section ${section}',
 			'tc.parcours.plage.ressource' => 'Tout le support',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.feedback.cours.intitule' => 'Comment était le cours aujourd\'hui ?',
 			'tc.parcours.feedback.cours.difficile' => 'Difficile',
 			'tc.parcours.feedback.cours.bien' => 'Bien',
 			'tc.parcours.feedback.cours.tresBien' => 'Très bien',
 			'tc.parcours.feedback.comprehension.intitule' => 'Avez-vous compris ce qui a été travaillé ?',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.feedback.comprehension.difficile' => 'Pas vraiment',
 			'tc.parcours.feedback.comprehension.bien' => 'Plutôt oui',
 			'tc.parcours.feedback.comprehension.tresBien' => 'Tout à fait',
@@ -49711,13 +49734,13 @@ extension on Traductions {
 			'motifs.cloreException.parErreur' => 'Exception posée par erreur',
 			'motifs.placement.debutant' => 'Débutant : parcours de base',
 			'motifs.placement.lecture' => 'Niveau constaté à la lecture',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.placement.declaratif' => 'Pré-diagnostic déclaratif confirmé',
 			'motifs.placement.procheNiveau' => 'Classe la plus proche du niveau évalué',
 			'motifs.placement.provisoire' => 'Placement provisoire, à réévaluer',
 			'motifs.refusDossier.illisible' => 'Pièce d\'identité illisible',
 			'motifs.refusDossier.expiree' => 'Pièce d\'identité expirée',
-			_ => null,
-		} ?? switch (path) {
 			'motifs.refusDossier.nom' => 'Nom différent de celui du compte',
 			'motifs.refusDossier.nonTransmise' => 'Pièce requise non transmise',
 			'motifs.refusDossier.accord' => 'Accord requis manquant',
@@ -50225,13 +50248,13 @@ extension on Traductions {
 			'com.vocal.composer.preEcoute' => 'Pré-écoute',
 			'com.vocal.composer.preEcouteAide' => 'Écoutez votre message avant de l\'envoyer. Rien ne part sans votre accord.',
 			'com.vocal.composer.duree' => ({required Object duree}) => 'Durée : ${duree}',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.composer.actionPause' => 'Pause',
 			'com.vocal.composer.actionReprendre' => 'Reprendre',
 			'com.vocal.composer.actionArreter' => 'Arrêter',
 			'com.vocal.composer.actionSupprimer' => 'Supprimer',
 			'com.vocal.composer.actionEnvoyer' => 'Envoyer',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.composer.confirmerTitre' => 'Supprimer ce message vocal ?',
 			'com.vocal.composer.confirmerPhrase' => 'Il sera effacé de cet appareil. Cette action est définitive.',
 			'com.vocal.composer.garder' => 'Garder',
@@ -50739,13 +50762,13 @@ extension on Traductions {
 			'com.annonces.administration.moderation.choisir' => 'Choisissez un signalement dans la file pour l\'examiner.',
 			'com.annonces.administration.moderation.sansAction' => 'Aucune action de modération ne vous est ouverte sur ce contenu.',
 			'com.annonces.administration.moderation.sansSanction' => 'Aucune sanction de compte n\'est appliquée automatiquement.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.administration.moderation.politique' => 'Politique anti-promotion',
 			'com.annonces.administration.moderation.ouvrirSemantique' => ({required Object objet, required Object motif}) => 'Examiner ${objet}, motif ${motif}',
 			'com.annonces.administration.moderation.regleMotif.publicite' => 'La publicité n\'est pas autorisée dans la Communauté enseignants.',
 			'com.annonces.administration.moderation.regleMotif.lienAffilie' => 'Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.',
 			'com.annonces.administration.moderation.regleMotif.vente' => 'La vente de produits ou de services n\'est pas autorisée dans cet espace.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.administration.moderation.regleMotif.sollicitation' => 'La sollicitation commerciale n\'est pas autorisée dans cet espace.',
 			'com.annonces.administration.moderation.regles.titre' => 'Partage pédagogique uniquement',
 			'com.annonces.administration.moderation.regles.corps' => 'La Communauté enseignants est réservée aux échanges professionnels entre enseignants.',
@@ -51253,13 +51276,13 @@ extension on Traductions {
 			'comptable.tresorerie.transfert.montant' => 'Montant',
 			'comptable.tresorerie.transfert.montantAide' => ({required Object devise}) => 'En unités entières, ${devise}.',
 			'comptable.tresorerie.transfert.montantPropose' => 'Montant proposé par la politique',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.transfert.utiliserPropose' => 'Utiliser le montant proposé',
 			'comptable.tresorerie.transfert.erreurMontant' => 'Saisissez un montant entier supérieur à zéro.',
 			'comptable.tresorerie.transfert.verifier' => 'Vérifier le mouvement',
 			'comptable.tresorerie.transfert.recapPhrase' => 'Vérifiez le montant exact avant d\'envoyer.',
 			'comptable.tresorerie.transfert.de' => 'De',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.transfert.vers' => 'Vers',
 			'comptable.tresorerie.transfert.confirmer' => 'Confirmer le mouvement',
 			'comptable.tresorerie.transfert.demanderValidation' => 'Demander la validation',
@@ -51767,13 +51790,13 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.exceptionsTitre' => 'Exceptions',
 			'comptable.direction.delegationPanneau.exceptionsDetail' => 'Réglages propres à une délégation. Un plafond d\'exception est toujours plus bas que celui de la politique générale, jamais plus haut.',
 			'comptable.direction.delegationPanneau.exceptionsVide' => 'Aucune exception : la politique générale s\'applique à toutes les délégations.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.exceptionAjouter' => 'Ajouter une exception',
 			'comptable.direction.delegationPanneau.exceptionModifier' => ({required Object libelle}) => 'Modifier l\'exception de ${libelle}',
 			'comptable.direction.delegationPanneau.exceptionLibelleDefaut' => 'Délégation du Comptable',
 			'comptable.direction.delegationPanneau.exceptionCoffres' => 'Coffres autorisés',
 			'comptable.direction.delegationPanneau.exceptionCoffresAucun' => 'Aucun coffre autorisé',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.exceptionExclus' => 'Bénéficiaires exclus',
 			'comptable.direction.delegationPanneau.exceptionExclusAucun' => 'Aucun bénéficiaire exclu',
 			'comptable.direction.delegationPanneau.exceptionPlafond' => 'Plafond par transaction',
@@ -52281,13 +52304,13 @@ extension on Traductions {
 			'courriels.admin.outil' => 'E-mails',
 			'courriels.admin.outilDetail' => 'Écrire un e-mail, suivre les envois, voir les adresses d\'envoi',
 			'courriels.admin.sections.libelle' => 'Sections des e-mails',
+			_ => null,
+		} ?? switch (path) {
 			'courriels.admin.sections.ecrire' => 'Écrire',
 			'courriels.admin.sections.file' => 'Envois',
 			'courriels.admin.sections.adresses' => 'Adresses d\'envoi',
 			'courriels.admin.refuse' => 'Seule la direction connectée écrit et suit les e-mails. Reconnectez-vous avec le bon compte, puis réessayez.',
 			'courriels.admin.indisponibleTitre' => 'E-mails indisponibles',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
 			'courriels.admin.ecrire.titre' => 'Nouvel e-mail',
 			'courriels.admin.ecrire.intro' => 'L\'e-mail est mis en file, puis part de l\'adresse de sa catégorie, dans la minute. Il n\'est envoyé que lorsque la liste des envois affiche Envoyé.',
