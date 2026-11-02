@@ -20843,8 +20843,8 @@ class Traductions$i1$familles$fr {
 	/// fr: 'L'envoi n'est pas confirmé. Actualisez la liste avant de recommencer.'
 	String get erreurEnvoi => 'L\'envoi n\'est pas confirmé. Actualisez la liste avant de recommencer.';
 
-	/// fr: 'Pas de connexion : rien n'est parti. Réessayez dans un instant.'
-	String get horsLigne => 'Pas de connexion : rien n\'est parti. Réessayez dans un instant.';
+	/// fr: 'L'invitation n'est pas partie. Réessayez dans un instant.'
+	String get horsLigne => 'L\'invitation n\'est pas partie. Réessayez dans un instant.';
 
 	/// fr: 'Seule la direction peut envoyer ces invitations. Reconnectez-vous avec un compte de la direction.'
 	String get nonAutorise => 'Seule la direction peut envoyer ces invitations. Reconnectez-vous avec un compte de la direction.';
@@ -52891,7 +52891,7 @@ extension on Traductions {
 			'i1.familles.toutesEnFile' => ({required Object n}) => 'Les invitations partent. Nombre de familles : ${n}.',
 			'i1.familles.nombreChange' => 'La liste a changé depuis votre confirmation : rien n\'est parti. Relisez-la, puis confirmez de nouveau.',
 			'i1.familles.erreurEnvoi' => 'L\'envoi n\'est pas confirmé. Actualisez la liste avant de recommencer.',
-			'i1.familles.horsLigne' => 'Pas de connexion : rien n\'est parti. Réessayez dans un instant.',
+			'i1.familles.horsLigne' => 'L\'invitation n\'est pas partie. Réessayez dans un instant.',
 			'i1.familles.nonAutorise' => 'Seule la direction peut envoyer ces invitations. Reconnectez-vous avec un compte de la direction.',
 			'i1.familles.vide' => 'Aucune famille importée à inviter',
 			'i1.familles.videDetail' => 'Importez les inscriptions actuelles : chaque famille confirmée apparaît ici.',

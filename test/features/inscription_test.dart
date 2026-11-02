@@ -370,7 +370,14 @@ void main() {
       await _monter(tester);
       retenirInvitationEnCours(code: 'ABCD-EFGH-JKMN');
       await _taper(tester, find.byKey(const Key('inscription-deconnexion')));
-      await tester.pumpAndSettle();
+      // La deconnexion vide la base locale (vraie asynchronie) : on lui laisse
+      // le temps reel de finir, borne, avant de verifier (T1 : aucun hasard).
+      for (int i = 0; i < 40 && lireInvitationEnCours() != null; i++) {
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 50)),
+        );
+        await tester.pump();
+      }
       expect(lireInvitationEnCours(), isNull);
     });
   });

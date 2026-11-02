@@ -9087,7 +9087,7 @@ class _Traductions$i1$familles$ar extends Traductions$i1$familles$fr {
 	@override String toutesEnFile({required Object n}) => 'تُرسَل الدعوات. عدد الأسر: ⁨${n}⁩.';
 	@override String get nombreChange => 'تغيّرت القائمة منذ تأكيدك: لم يُرسَل شيء. راجعها، ثم أكّد من جديد.';
 	@override String get erreurEnvoi => 'لم يتأكد الإرسال. حدّث القائمة قبل أن تعيد المحاولة.';
-	@override String get horsLigne => 'لا يوجد اتصال: لم يُرسَل شيء. أعد المحاولة بعد قليل.';
+	@override String get horsLigne => 'لم تُرسَل الدعوة. أعد المحاولة بعد قليل.';
 	@override String get nonAutorise => 'لا ترسل هذه الدعوات إلا الإدارة. سجّل الدخول من جديد بحساب الإدارة.';
 	@override String get vide => 'لا توجد أسرة مستوردة تنتظر الدعوة';
 	@override String get videDetail => 'استورد التسجيلات الحالية: تظهر هنا كل أسرة مؤكَّدة.';
@@ -29482,7 +29482,7 @@ extension on TraductionsAr {
 			'i1.familles.toutesEnFile' => ({required Object n}) => 'تُرسَل الدعوات. عدد الأسر: ⁨${n}⁩.',
 			'i1.familles.nombreChange' => 'تغيّرت القائمة منذ تأكيدك: لم يُرسَل شيء. راجعها، ثم أكّد من جديد.',
 			'i1.familles.erreurEnvoi' => 'لم يتأكد الإرسال. حدّث القائمة قبل أن تعيد المحاولة.',
-			'i1.familles.horsLigne' => 'لا يوجد اتصال: لم يُرسَل شيء. أعد المحاولة بعد قليل.',
+			'i1.familles.horsLigne' => 'لم تُرسَل الدعوة. أعد المحاولة بعد قليل.',
 			'i1.familles.nonAutorise' => 'لا ترسل هذه الدعوات إلا الإدارة. سجّل الدخول من جديد بحساب الإدارة.',
 			'i1.familles.vide' => 'لا توجد أسرة مستوردة تنتظر الدعوة',
 			'i1.familles.videDetail' => 'استورد التسجيلات الحالية: تظهر هنا كل أسرة مؤكَّدة.',
