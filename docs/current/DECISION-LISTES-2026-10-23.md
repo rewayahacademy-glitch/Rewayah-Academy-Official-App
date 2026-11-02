@@ -133,6 +133,11 @@ Les cartes coûtent deux lignes visibles à 1440 et une à 1366 : c'est le prix 
    - **Corrections trouvées par le robot** : la liste paginée ne se relisait pas après une création (avec le port de pages, celui de la production, la ligne restait « Prête » jusqu'au rechargement ; défaut antérieur, `pageRegroupementsAdminProvider` est maintenant invalidé) ; le bouton se fondait dans la ligne pour le lecteur d'écran (mode opt-in `ColonneDonnees.action`) ; dans une carte, le nœud du menu couvrait toute la carte (le menu y est maintenant un nœud à part, comme dans les autres rendus).
    - **Mesures** (`test/capture/listes_regroupements_capture_test.dart`, démonstration) : avant, première carte à y ≈ 337 et une seule carte visible à 1440 ; après, y = 128, **10 lignes** à 1440, **8** à 1366 ; au téléphone, 2 cartes (194 de haut) ; une seule barre de défilement partout.
 
+10 quater. **L'Espace de traitement l'adopte le 02/11/2026 (lot L4, pilote : même méthode, sans nouvel accord)**. Mêmes modes opt-in, aucune migration, un seul texte nouveau (« Depuis »).
+   - **Le maître-détail est retiré**, comme l'inspecteur de Classes (§5 quater.6) : la file de 336 et le détail de 728 défilaient chacun dans son cadre (DECISION-DEFILEMENT-2026-11-01 : une seule barre par écran). Le détail ne portait que des informations et un bouton vers l'écran de décision : les informations passent en colonnes, et **la ligne ouvre directement l'écran de décision** (la file des dossiers, le dossier par `extra` ; la file des demandes). Aucune décision ici, comme avant.
+   - **Colonnes** : « Personne concernée » (le nom, sa nature dessous, la pastille de pièce quand le serveur dit « aucune » ou « hors de portée »), « Demandée par », « Pièce d'identité » (« Déposée, à vérifier » ; colonne rendue s'il y a un dossier), « Motif invoqué » (colonne rendue s'il y a une demande), « Depuis » (« Aujourd'hui · 14:05 », « Hier · 09:12 », sinon « 31 oct. · 22:32 » : les groupes de jour d'avant, dits dans la ligne). Retirés : le sous-titre (§5 quater.3), le compteur (le pied le dit), les titres de groupe (dits dans « Depuis »), la phrase « Suivi du traitement » (un texte d'attente : rien n'y est branché).
+   - **Mesures** (`test/capture/listes_traitement_capture_test.dart`, démonstration) : avant, file à y ≈ 316, environ 7 lignes à côté du détail à 1440 ; après, y = 108, **11 lignes** à 1440, **9** à 1366, 7 au téléphone ; une seule barre de défilement partout.
+
 11. **Garde automatique** : `dart run tool/verifier_revue.dart --regle=cadre-defilant` refuse une boîte de hauteur fixe (`SizedBox`, `ConstrainedBox`, `Container`, `LimitedBox` avec `height` ou `maxHeight`) autour d'un défilement vertical. Socle daté du 01/11/2026, qui ne peut que baisser : 8 sites dans 6 fichiers (`admin_shell.dart` 1, `fil_discussion.dart` 1, `observations_admin_page.dart` 1, `composer_vocal.dart` 1, `salle_seance.dart` 3, `telephone_plein_ecran.dart` 1). La règle n'est pas encore dans la CI : la ligne de `ci.yml` est donnée au directeur (zone interdite aux agents). **Exception des contenus tiers** (`HtmlElementView`, iframe) : la molette et le doigt posés sur eux ne parviennent pas à Flutter ; la garde ne pousse donc pas vers un cadre à la hauteur du contenu : un contenu tiers plus haut que l'écran devient un élément natif plein écran, dont le défilement est celui de la page (PR 120, constat du garde-cap du 01/11/2026). Le message de la règle le dit.
 
 ## 6. Limites serveur (frontend seulement : non corrigées)
@@ -157,7 +162,7 @@ Détail et défauts : l'inventaire du lot 4 (`5-inventaire-traitement.md`, copi�
 | 4 | Dossiers à valider | inchangée | recherche client ; sélection groupée interdite (DEC:24) |
 | 5 | Candidatures | refondue | taille de page serveur |
 | 6 | Invitations | inchangée | formulaire replié, `MenuActions` pour « Révoquer » |
-| 7 | Espace de traitement | inchangée | recherche client, compteur |
+| 7 | Espace de traitement | listes de bureau (L4, §5 quater.10 quater, 02/11/2026) : la liste est la page, la ligne ouvre l'écran de décision, maître-détail retiré | recherche client |
 | 8 | Classes | refondue (L1, §5 quater, 01/11/2026) : pleine largeur, cartes, filtres repliés, vue Ouvertes, fiche-page | 27 autres listes par lots de 4 à 6 |
 | 9 | Regroupements | listes de bureau (L3, §5 quater.10 ter, 01/11/2026) : pleine largeur, lignes-cartes, filtres repliés, « Créer la classe » en action de ligne, « Voir la classe » en menu | rien d'urgent |
 | 10 | Pilotage | bénéficie du socle | en-tête compact |
@@ -197,6 +202,7 @@ Non migrés vers `CaseACocher` : 8 `Checkbox` ou `CheckboxListTile` dans `lib/fe
 | Listes de bureau (§5 quater, Classes seulement) et garde `cadre-defilant` | oui | oui | oui (tests Flutter, captures et mesures, scénario SQL) | non | non |
 | Listes de bureau, Comptes (§5 quater.10 bis) et « Voir la demande » | oui | oui | oui (tests Flutter, captures et mesures, parcours du robot sur la pile locale) | non | non |
 | Listes de bureau, Classes à ouvrir (§5 quater.10 ter) | oui | oui | oui (tests Flutter, captures et mesures, parcours du robot sur la pile locale) | non | non |
+| Listes de bureau, Espace de traitement (§5 quater.10 quater) | oui | oui | oui (tests Flutter, captures et mesures, parcours du robot sur la pile locale) | non | non |
 | Autres listes (menus migrés, recherche de Progression) | oui | oui | oui | non | non |
 | Listes non traitées (§7, « inchangée ») | oui | non | non | non | non |
 

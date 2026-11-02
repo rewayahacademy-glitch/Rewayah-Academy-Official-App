@@ -8225,6 +8225,9 @@ class Traductions$admin$traitement$fr {
 	/// fr: 'Date de la demande'
 	String get cleDateDemande => 'Date de la demande';
 
+	/// fr: 'Depuis'
+	String get colonneDepuis => 'Depuis';
+
 	/// fr: 'Ouvrir la demande pour {nom}'
 	String ouvrirDemande({required Object nom}) => 'Ouvrir la demande pour ${nom}';
 
@@ -45001,6 +45004,7 @@ extension on Traductions {
 			'admin.traitement.cleConcerne' => 'Personne concernée',
 			'admin.traitement.cleParQui' => 'Demandée par',
 			'admin.traitement.cleDateDemande' => 'Date de la demande',
+			'admin.traitement.colonneDepuis' => 'Depuis',
 			'admin.traitement.ouvrirDemande' => ({required Object nom}) => 'Ouvrir la demande pour ${nom}',
 			'admin.traitement.suiviTitre' => 'Suivi du traitement',
 			'admin.traitement.suiviPhrase' => 'L\'assignation, l\'échéance, la priorité, l\'historique et les notes ne sont pas encore branchés : le serveur ne les fournit pas encore. La décision se prend dans le dossier ou la demande, avec ses vérifications.',
@@ -45179,9 +45183,9 @@ extension on Traductions {
 			'admin.groupes.reglagesClasse.faitModifie' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, zero: 'Créneau déplacé : aucune séance à venir créée pour le moment.', one: 'Créneau déplacé : ${n} séance à venir créée.', other: 'Créneau déplacé : ${n} séances à venir créées.', ), 
 			'admin.groupes.reglagesClasse.faitRetire' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, zero: 'Créneau retiré : aucune séance à venir à annuler.', one: 'Créneau retiré : ${n} séance à venir annulée.', other: 'Créneau retiré : ${n} séances à venir annulées.', ), 
 			'admin.groupes.reglagesClasse.dureeContexte' => 'Changer seulement la durée n\'annule aucune séance : les séances à venir de ce créneau la prennent.',
-			'admin.groupes.reglagesClasse.faitDuree' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, zero: 'Durée enregistrée : aucune séance à venir à changer pour le moment.', one: 'Durée enregistrée : ${n} séance à venir la prend.', other: 'Durée enregistrée : ${n} séances à venir la prennent.', ), 
 			_ => null,
 		} ?? switch (path) {
+			'admin.groupes.reglagesClasse.faitDuree' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, zero: 'Durée enregistrée : aucune séance à venir à changer pour le moment.', one: 'Durée enregistrée : ${n} séance à venir la prend.', other: 'Durée enregistrée : ${n} séances à venir la prennent.', ), 
 			'admin.groupes.creneau.titre' => ({required Object deLibelle}) => 'Nouveau créneau ${deLibelle}',
 			'admin.groupes.creneau.contexte' => 'Un jour et une heure de plus, chaque semaine, pour la même Classe. Les séances des quatre prochaines semaines sont créées tout de suite.',
 			'admin.groupes.creneau.fuseau' => 'L\'heure est celle du fuseau horaire de la Classe.',
@@ -45693,9 +45697,9 @@ extension on Traductions {
 			'admin.politiqueRevueKyc.aide' => 'Lorsque cette règle est désactivée, tout membre autorisé à revoir les dossiers peut traiter les dossiers de son périmètre, quel que soit son genre.',
 			'admin.politiqueRevueKyc.echecEnregistrement' => _root.admin.groupes.observationErreur,
 			'admin.evaluations.titre' => 'Évaluations',
-			'admin.evaluations.intro' => 'Ce qui est prévu, ce qui a été passé, et les certifications obtenues.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.evaluations.intro' => 'Ce qui est prévu, ce qui a été passé, et les certifications obtenues.',
 			'admin.evaluations.erreur' => 'Les évaluations n\'ont pas pu être lues. Réessayez dans un instant.',
 			'admin.evaluations.aucune' => 'Aucune évaluation',
 			'admin.evaluations.aucuneDetail' => 'Planifiez une première évaluation pour un élève déjà diagnostiqué.',
@@ -46207,9 +46211,9 @@ extension on Traductions {
 			'admin.finance.pol.differences' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Une valeur diffère de la version active : elle est rappelée sous son champ.', other: '${n} valeurs diffèrent de la version active : chacune est rappelée sous son champ.', ), 
 			'admin.finance.pol.aucuneDifference' => 'Aucune différence avec la version active pour l\'instant : modifiez un champ pour préparer la prochaine version.',
 			'admin.finance.pol.nonEnregistre' => 'Vos modifications restent sur cet écran tant que vous ne le quittez pas : l\'enregistrement d\'un brouillon n\'est pas encore disponible.',
-			'admin.finance.pol.sansBrouillon' => 'Aucun brouillon en cours : les valeurs ci-dessous sont celles qui s\'appliquent aujourd\'hui. Elles ne se modifient que dans un brouillon.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.finance.pol.sansBrouillon' => 'Aucun brouillon en cours : les valeurs ci-dessous sont celles qui s\'appliquent aujourd\'hui. Elles ne se modifient que dans un brouillon.',
 			'admin.finance.pol.versionActiveValeur' => ({required Object valeur}) => 'Version active : ${valeur}',
 			'admin.finance.pol.erreurChamp' => 'Ce champ est vide ou mal saisi : saisissez un nombre entier, sans virgule ni signe.',
 			'admin.finance.pol.erreurCapacite' => 'Une classe compte au moins une place : saisissez 1 ou plus.',
@@ -46721,9 +46725,9 @@ extension on Traductions {
 			'admin.tirage.rechercheAide' => 'Classe, enseignant ou contrôleur',
 			'admin.tirage.filtreTous' => 'Tous',
 			'admin.tirage.filtreAttribuees' => 'Attribuées',
-			'admin.tirage.filtreEnCours' => 'Contrôles en cours',
 			_ => null,
 		} ?? switch (path) {
+			'admin.tirage.filtreEnCours' => 'Contrôles en cours',
 			'admin.tirage.filtreControlees' => 'Contrôlées',
 			'admin.tirage.filtreNonControlees' => 'Non contrôlées',
 			'admin.tirage.filtreDejaControlees' => 'Déjà contrôlées',
@@ -47235,9 +47239,9 @@ extension on Traductions {
 			'compte.deconnexionDetail' => 'Mettre fin à la session sur cet appareil',
 			'compte.identifiant' => 'Identifiant',
 			'compte.nonDisponible' => 'Non disponible',
-			'compte.contact' => 'Contact',
 			_ => null,
 		} ?? switch (path) {
+			'compte.contact' => 'Contact',
 			'compte.contactDetail' => 'Géré par l\'académie',
 			'compte.langue' => 'Langue',
 			'compte.francais' => 'Français',
@@ -47749,9 +47753,9 @@ extension on Traductions {
 			'tuteur.accueil.seanceAnnulee' => 'Cette séance n\'aura pas lieu.',
 			'tuteur.accueil.seanceNonTenue' => 'Cette séance n\'a pas pu se tenir.',
 			'tuteur.accueil.horaireIncertain' => 'Ouverture de la salle non confirmée pour l\'instant',
-			'tuteur.accueil.pastilleAnnulee' => 'Annulée',
 			_ => null,
 		} ?? switch (path) {
+			'tuteur.accueil.pastilleAnnulee' => 'Annulée',
 			'tuteur.accueil.pastilleNonTenue' => 'Non tenue',
 			'tuteur.accueil.pastilleTerminee' => 'Terminée',
 			'tuteur.accueil.aucuneSeance' => 'Aucune séance planifiée',
@@ -48263,9 +48267,9 @@ extension on Traductions {
 			'enseignant.remplacements.prisAvantVous' => 'Un collègue a accepté cette séance juste avant vous. Rien n\'a changé dans votre planning.',
 			'enseignant.remplacements.preparationTitre' => ({required Object jour, required Object heure}) => 'Remplacement en préparation : ${jour} ${heure}',
 			'enseignant.remplacements.preparationPhrase' => 'L\'enseignant de la classe n\'est pas encore dans la salle. Déclarez-vous prêt : si vous êtes le premier et qu\'il n\'entre pas à temps, la séance vous est confiée.',
-			'enseignant.remplacements.jeSuisPret' => 'Je suis prêt',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.remplacements.jeSuisPret' => 'Je suis prêt',
 			'enseignant.remplacements.pretTitre' => 'Vous êtes prêt',
 			'enseignant.remplacements.pretPastille' => 'Retenu',
 			'enseignant.remplacements.pretPhrase' => 'Vous êtes le premier prêt : si l\'enseignant de la classe n\'entre pas à temps, la séance vous est confiée. Restez disponible.',
@@ -48777,9 +48781,9 @@ extension on Traductions {
 			'controleur.observation.pedagogie' => 'Pédagogie',
 			'controleur.observation.pedagogieAide' => 'Quand il s\'agit de l\'enseignement : explications, progression, supports',
 			'controleur.observation.interaction' => 'Interaction avec les élèves',
-			'controleur.observation.interactionAide' => 'Quand il s\'agit des échanges entre l\'enseignant et les élèves',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.observation.interactionAide' => 'Quand il s\'agit des échanges entre l\'enseignant et les élèves',
 			'controleur.observation.gestionClasse' => 'Gestion de la classe',
 			'controleur.observation.gestionClasseAide' => 'Quand il s\'agit de l\'organisation de la séance : temps, consignes, déroulement',
 			'controleur.observation.respectCadre' => 'Respect du cadre',
@@ -49291,9 +49295,9 @@ extension on Traductions {
 			'tc.observation.reglages.augmenter' => 'Augmenter',
 			'tc.observation.reglages.enregistrer' => 'Enregistrer',
 			'tc.observation.reglages.invalideVisites' => 'Au moins une visite par séance.',
-			'tc.observation.reglages.invalideTemps' => 'Au moins trente secondes par séance.',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.reglages.invalideTemps' => 'Au moins trente secondes par séance.',
 			'tc.observation.reglages.valeurHeritee' => ({required Object valeur}) => 'Académie : ${valeur}',
 			'tc.observation.reglages.uniteVisiteUne' => ({required Object n}) => '${n} visite',
 			'tc.observation.reglages.uniteVisites' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} visite', other: '${n} visites', ), 
@@ -49805,9 +49809,9 @@ extension on Traductions {
 			'motifs.cloreSurcharge.termine' => 'Besoin ponctuel terminé',
 			'motifs.cloreSurcharge.famille' => 'Demande de la famille',
 			'motifs.cloreSurcharge.changement' => 'Changement de classe ou d\'enseignant',
-			'motifs.cloreSurcharge.parErreur' => 'Règle posée par erreur',
 			_ => null,
 		} ?? switch (path) {
+			'motifs.cloreSurcharge.parErreur' => 'Règle posée par erreur',
 			'motifs.annulationEvaluation.absenceEleve' => 'Absence de l\'élève',
 			'motifs.annulationEvaluation.absenceEnseignant' => 'Absence de l\'enseignant',
 			'motifs.annulationEvaluation.pasPret' => 'Élève pas encore prêt',
@@ -50319,9 +50323,9 @@ extension on Traductions {
 			'com.messages.demo.f.yasmineMerci' => 'Merci beaucoup pour ces explications.',
 			'com.messages.demo.f.affectation' => 'Votre Classe An-Nour passe au mardi 18 h à partir du mois prochain. Merci de confirmer.',
 			'com.messages.demo.f.khadijaRevision' => 'Pensez à réviser la sourate Al-Mulk pour jeudi.',
-			'com.messages.titre' => _root.com.socle.lexique.messagesMetier,
 			_ => null,
 		} ?? switch (path) {
+			'com.messages.titre' => _root.com.socle.lexique.messagesMetier,
 			'com.messages.vide' => 'Aucune conversation pour le moment.',
 			'com.vocal.composer.libelle' => 'Message vocal',
 			'com.vocal.composer.enregistrer' => 'Enregistrer un message vocal',
@@ -50833,9 +50837,9 @@ extension on Traductions {
 			'com.annonces.administration.matrice.vide' => 'Aucun droit de publication n\'est configuré.',
 			'com.annonces.administration.moderation.titre' => 'File de modération',
 			'com.annonces.administration.moderation.legende' => ({required Object date, required Object heure}) => 'Signalé le ${date} à ${heure}',
-			'com.annonces.administration.moderation.motif' => ({required Object motif}) => 'Motif : ${motif}',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.administration.moderation.motif' => ({required Object motif}) => 'Motif : ${motif}',
 			'com.annonces.administration.moderation.extraitTitre' => 'Contenu signalé',
 			'com.annonces.administration.moderation.extraitAbsent' => 'L\'extrait de ce contenu n\'est pas communiqué.',
 			'com.annonces.administration.moderation.regle' => 'Règle visée',
@@ -51347,9 +51351,9 @@ extension on Traductions {
 			'comptable.tresorerie.retraitSansValidation' => 'La politique n\'exige pas de validation pour un retrait ; il reste traité comme un mouvement sensible.',
 			'comptable.tresorerie.version' => ({required Object version}) => 'Version ${version}',
 			'comptable.tresorerie.versionDepuis' => ({required Object version, required Object date}) => 'Version ${version}, en vigueur depuis le ${date}',
-			'comptable.tresorerie.mouvementsTitre' => 'Mouvements entre coffres',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.tresorerie.mouvementsTitre' => 'Mouvements entre coffres',
 			'comptable.tresorerie.mouvementsPhrase' => 'Vers une protection : selon votre délégation. Sortie d\'un coffre protégé : validation supplémentaire requise.',
 			'comptable.tresorerie.preparerMouvement' => 'Préparer un mouvement',
 			'comptable.tresorerie.retirer' => 'Retirer de la Réserve stratégique',
@@ -51861,9 +51865,9 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.expirationTitre' => 'Expiration',
 			'comptable.direction.delegationPanneau.expirationDetail' => 'Chaque délégation expire et se renouvelle. Passé la date, le Comptable ne peut plus rien exécuter seul.',
 			'comptable.direction.delegationPanneau.expireLe' => ({required Object date}) => 'Expire le ${date}',
-			'comptable.direction.delegationPanneau.expirationInconnue' => 'Date d\'expiration non communiquée',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.direction.delegationPanneau.expirationInconnue' => 'Date d\'expiration non communiquée',
 			'comptable.direction.delegationPanneau.etatActive' => 'Active',
 			'comptable.direction.delegationPanneau.etatSuspendue' => 'Suspendue',
 			'comptable.direction.delegationPanneau.etatExpiree' => 'Expirée',
@@ -52375,9 +52379,9 @@ extension on Traductions {
 			'avis.admin.liens.creePhrase' => 'Copiez ce lien maintenant. Il ne sera plus affiché une fois cet encadré fermé. Si vous le perdez, fermez ce lien et créez un nouveau lien.',
 			'avis.admin.liens.creeAdresse' => 'Adresse du lien',
 			'avis.admin.liens.creeValable' => ({required Object date}) => 'Valable jusqu\'au ${date}.',
-			'avis.admin.liens.copier' => 'Copier le lien',
 			_ => null,
 		} ?? switch (path) {
+			'avis.admin.liens.copier' => 'Copier le lien',
 			'avis.admin.liens.copie' => 'Lien copié.',
 			'avis.admin.liens.creeFermer' => 'J\'ai copié le lien',
 			'avis.admin.liens.etat.ouvert' => 'Ouvert',

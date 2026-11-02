@@ -13,52 +13,51 @@ import '../../core/matching/service_matching.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/action_principale.dart';
-import '../../core/widgets/app_bottom_sheet.dart';
-import '../../core/widgets/app_card.dart';
+import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/filter_pill.dart';
-import '../../core/widgets/groupe_reglages.dart';
-import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pied_de_liste.dart';
+import '../../core/widgets/puce_filtre_actif.dart';
 import '../../core/widgets/rangee_filtres.dart';
-import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
-import '../admin_dossiers/dossiers_page.dart'
-    show ecartFileDetail, largeurDetailDossier, largeurFileDossiers;
-import '../admin_dossiers/textes_dossier.dart';
 import 'elements_a_traiter.dart';
 
-/// `ADM-18` : l'Espace de traitement (AD-X, image ADMIN-SHELL-02).
+/// `ADM-18` : l'Espace de traitement.
 ///
 /// **Une file, deux sources reelles** : les dossiers d'identite en attente et
-/// les demandes en attente, reunis, groupes par jour (Aujourd'hui, Hier,
-/// Cette semaine, Plus ancien) et tries du plus recent au plus ancien par
-/// defaut. Le detail dit qui, quoi, depuis quand, et mene a l'ecran ou la
-/// decision se prend (`ADM-02` pour un dossier, `ADM-06` pour une demande) :
-/// **aucune decision ici**, elle a ses verifications, ses confirmations et
-/// ses controles serveur (docs/current/AD-X_DECOUPAGE.md §2, ecran 2).
+/// les demandes en attente, reunis et tries du plus recent au plus ancien
+/// par defaut. **Aucune decision ici** : une ligne mene a l'ecran ou la
+/// decision se prend (`ADM-02` pour un dossier, `ADM-06` pour une demande),
+/// avec ses verifications, ses confirmations et ses controles serveur
+/// (docs/current/AD-X_DECOUPAGE.md §2, ecran 2).
 ///
-/// A partir de 1088 de largeur utile et sous 200 % de texte, file 336 et
-/// detail 728 cote a cote (contrat D) ; sinon la file seule, le detail en
-/// feuille.
+/// L4 des listes (02/11/2026, DECISION-LISTES §5 quater.10 quater) : la
+/// liste est la page, comme Classes, Comptes et Classes a ouvrir. Le
+/// maitre-detail d'avant (une file de 336 et un detail de 728, chacun son
+/// defilement) est retire (DECISION-DEFILEMENT-2026-11-01 : une seule barre
+/// de defilement par ecran) : ce que le detail disait passe en colonnes, et
+/// la ligne ouvre directement l'ecran de decision, comme le faisait son seul
+/// bouton.
 class TraitementPage extends ConsumerStatefulWidget {
   /// Cree l'Espace de traitement.
   const TraitementPage({super.key, this.horloge = DateTime.now});
 
-  /// D'ou vient l'instant courant : les groupes de temps se comptent en jours,
-  /// et un test cale sur l'horloge de la machine changerait de resultat.
+  /// D'ou vient l'instant courant : « Aujourd'hui » et « Hier » se comptent
+  /// en jours, et un test cale sur l'horloge de la machine changerait de
+  /// resultat.
   final DateTime Function() horloge;
 
-  /// Le panneau de detail, en maitre-detail.
-  static const Key cleDetail = ValueKey<String>('adm18-detail');
-
-  /// La file.
+  /// La liste.
   static const Key cleFile = ValueKey<String>('adm18-file');
+
+  /// La cle d'une ligne.
+  static ValueKey<String> cleLigne(String id) =>
+      ValueKey<String>('adm18-ligne-$id');
 
   @override
   ConsumerState<TraitementPage> createState() => _TraitementPageEtat();
@@ -70,13 +69,25 @@ class _TraitementPageEtat extends ConsumerState<TraitementPage> {
 
   TriFile _tri = TriFile.plusRecent;
 
-  /// L'element choisi, par sa cle.
-  String? _choisi;
+  /// LISTES-3 : au bureau, le panneau des filtres.
+  bool _filtresOuverts = false;
 
   void _relire() {
     ref
       ..invalidate(dossiersEnAttenteProvider)
       ..invalidate(demandesProvider);
+  }
+
+  /// L'ecran ou la decision se prend : le dossier par `extra`, jamais par
+  /// l'adresse (spec l.1933) ; la demande dans la file des demandes.
+  void _ouvrir(ElementATraiter e) {
+    final GoRouter routeur = GoRouter.of(context);
+    final DossierAValider? dossier = e.dossier;
+    if (dossier != null) {
+      routeur.go(Routes.adminPersonnesDossiers, extra: dossier.profilId);
+    } else {
+      routeur.go(Routes.adminOperationsDemandes);
+    }
   }
 
   @override
@@ -85,23 +96,60 @@ class _TraitementPageEtat extends ConsumerState<TraitementPage> {
       dossiersEnAttenteProvider,
     );
     final AsyncValue<List<Demande>> demandes = ref.watch(demandesProvider);
+    final bool bureau = DataCollection.enTableau(context);
+    final List<FiltreActif> actifs = <FiltreActif>[
+      if (_nature case final NatureElement nature)
+        FiltreActif(
+          libelle: switch (nature) {
+            NatureElement.dossier => t.admin.traitement.filtreDossiers,
+            NatureElement.demande => t.admin.traitement.filtreDemandes,
+          },
+          onRetirer: () => setState(() => _nature = null),
+        ),
+      if (_tri == TriFile.plusAncien)
+        FiltreActif(
+          libelle: t.admin.traitement.triAncien,
+          onRetirer: () => setState(() => _tri = TriFile.plusRecent),
+        ),
+    ];
 
     return PageShell(
       titre: t.admin.traitement.titre,
-      sousTitre: t.admin.traitement.sousTitre,
+      // La sous-navigation Operations, Espace de traitement et Classes, qui
+      // tient lieu de titre (§5 ter.2).
       entete: SousNavigationDomaine(
         onglets: ongletsOperations(),
         indexActif: 0,
       ),
+      // LISTES-2 et LISTES-3 : la tete defile avec la liste, qui prend toute
+      // la largeur au bureau, sans retour (la barre laterale navigue).
+      teteAvecLaListe: true,
+      listeBureau: true,
+      actionsEntete: <Widget>[
+        if (bureau)
+          RangeeFiltres.bascule(
+            key: const ValueKey<String>('adm18-bascule-filtres'),
+            ouverts: _filtresOuverts,
+            retenus: actifs.length,
+            onBasculer: () =>
+                setState(() => _filtresOuverts = !_filtresOuverts),
+          ),
+      ],
+      // `DataCollection` porte le defilement de la page (une seule barre).
       defilante: false,
-      child: _corps(context, dossiers, demandes),
+      child: ColonneCorps(
+        children: <Widget>[
+          Expanded(child: _corps(dossiers, demandes, bureau, actifs)),
+        ],
+      ),
     );
   }
 
   Widget _corps(
-    BuildContext context,
     AsyncValue<List<DossierAValider>> dossiers,
     AsyncValue<List<Demande>> demandes,
+    bool bureau,
+    List<FiltreActif> actifs,
   ) {
     // Les getters, jamais le type : Riverpod 3 relance un provider en echec
     // en gardant `hasError` (lib/CLAUDE.md).
@@ -109,18 +157,22 @@ class _TraitementPageEtat extends ConsumerState<TraitementPage> {
     final bool demandesLues = demandes.hasValue;
     if (!dossiersLus && !demandesLues) {
       if (dossiers.hasError && demandes.hasError) {
-        return EmptyState(
-          message: t.admin.traitement.erreur,
-          icone: AppIcons.avertissement,
-          libelleAction: t.commun.reessayer,
-          onAction: _relire,
+        return _SansListe(
+          tete: const SizedBox.shrink(),
+          child: EmptyState(
+            message: t.admin.traitement.erreur,
+            icone: AppIcons.avertissement,
+            libelleAction: t.commun.reessayer,
+            onAction: _relire,
+          ),
         );
       }
-      if (!dossiers.hasError || !demandes.hasError) {
-        // Une source au moins est encore en route : la forme de la file.
-        if (dossiers.isLoading || demandes.isLoading) {
-          return const Skeleton.liste(lignes: 5);
-        }
+      if (dossiers.isLoading || demandes.isLoading) {
+        // Une source au moins est encore en route : la forme de la liste.
+        return const _SansListe(
+          tete: SizedBox.shrink(),
+          child: Skeleton.tableDense(lignes: 6),
+        );
       }
     }
 
@@ -148,412 +200,264 @@ class _TraitementPageEtat extends ConsumerState<TraitementPage> {
       if (demandes.hasError && !demandesLues) t.admin.traitement.erreurDemandes,
     ];
 
-    // FILTRES-1 : une seule rangee de puces, qui defile quand elle ne tient
-    // pas (porte par JONCTION-LIGNES-1).
-    final Widget filtres = RangeeFiltres(
-      filtres: <Widget>[
-        FilterPill(
-          libelle: t.admin.traitement.filtreTous,
-          compteur: tous.length,
-          retenue: _nature == null,
-          onPress: () => setState(() => _nature = null),
-        ),
-        FilterPill(
-          libelle: t.admin.traitement.filtreDossiers,
-          compteur: nbDossiers,
-          retenue: _nature == NatureElement.dossier,
-          onPress: () => setState(() => _nature = NatureElement.dossier),
-        ),
-        FilterPill(
-          libelle: t.admin.traitement.filtreDemandes,
-          compteur: tous.length - nbDossiers,
-          retenue: _nature == NatureElement.demande,
-          onPress: () => setState(() => _nature = NatureElement.demande),
-        ),
-        // Le tri : « Plus recent » est l'ordre par defaut (valeur nulle, le
-        // bouton dit « Trier ») ; « Plus ancien » se lit comme un choix
-        // retenu.
-        MenuFiltre<TriFile>(
-          libelle: t.admin.traitement.tri,
-          valeur: _tri == TriFile.plusAncien ? TriFile.plusAncien : null,
-          entrees: <EntreeFiltre<TriFile>>[
-            EntreeFiltre<TriFile>(
-              valeur: null,
-              libelle: t.admin.traitement.triRecent,
-            ),
-            EntreeFiltre<TriFile>(
-              valeur: TriFile.plusAncien,
-              libelle: t.admin.traitement.triAncien,
-            ),
-          ],
-          onChoix: (TriFile? tri) =>
-              setState(() => _tri = tri ?? TriFile.plusRecent),
-        ),
-      ],
-    );
+    final List<Widget> puces = <Widget>[
+      FilterPill(
+        libelle: t.admin.traitement.filtreTous,
+        compteur: tous.length,
+        retenue: _nature == null,
+        onPress: () => setState(() => _nature = null),
+      ),
+      FilterPill(
+        libelle: t.admin.traitement.filtreDossiers,
+        compteur: nbDossiers,
+        retenue: _nature == NatureElement.dossier,
+        onPress: () => setState(() => _nature = NatureElement.dossier),
+      ),
+      FilterPill(
+        libelle: t.admin.traitement.filtreDemandes,
+        compteur: tous.length - nbDossiers,
+        retenue: _nature == NatureElement.demande,
+        onPress: () => setState(() => _nature = NatureElement.demande),
+      ),
+      // Le tri : « Plus recent » est l'ordre par defaut (valeur nulle, le
+      // bouton dit « Trier ») ; « Plus ancien » se lit comme un choix retenu.
+      MenuFiltre<TriFile>(
+        libelle: t.admin.traitement.tri,
+        valeur: _tri == TriFile.plusAncien ? TriFile.plusAncien : null,
+        entrees: <EntreeFiltre<TriFile>>[
+          EntreeFiltre<TriFile>(
+            valeur: null,
+            libelle: t.admin.traitement.triRecent,
+          ),
+          EntreeFiltre<TriFile>(
+            valeur: TriFile.plusAncien,
+            libelle: t.admin.traitement.triAncien,
+          ),
+        ],
+        onChoix: (TriFile? tri) =>
+            setState(() => _tri = tri ?? TriFile.plusRecent),
+      ),
+    ];
 
-    return Column(
+    // LISTES-3 (bureau) : les filtres en panneau, derriere l'icone ; replie,
+    // les filtres retenus restent dits. Au telephone, §5 ter : la rangee de
+    // filtres defile avec la liste.
+    final Widget tete = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        filtres,
+        if (tous.isNotEmpty)
+          if (!bureau) ...<Widget>[
+            RangeeFiltres(filtres: puces),
+            Ecart.vLg,
+          ] else if (_filtresOuverts) ...<Widget>[
+            RangeeFiltres(
+              key: const ValueKey<String>('adm18-panneau-filtres'),
+              enPanneau: true,
+              filtres: puces,
+            ),
+            Ecart.vLg,
+          ] else if (actifs.isNotEmpty) ...<Widget>[
+            FiltresActifs(
+              filtres: actifs,
+              onToutEffacer: () => setState(() {
+                _nature = null;
+                _tri = TriFile.plusRecent;
+              }),
+            ),
+            Ecart.vLg,
+          ],
         for (final String erreur in erreurs) ...<Widget>[
-          Ecart.vLg,
           EtatSysteme(
             nature: NatureEtat.echecServeur,
             titre: erreur,
             libelleAction: t.commun.reessayer,
             onAction: _relire,
           ),
+          Ecart.vLg,
         ],
-        Ecart.vLg,
-        Expanded(
-          child: LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints contraintes) {
-              final bool maitreDetail =
-                  MediaQuery.textScalerOf(context).scale(1) < 2 &&
-                  contraintes.maxWidth >=
-                      largeurFileDossiers +
-                          ecartFileDetail +
-                          largeurDetailDossier;
-              // Une source en echec et l'autre vide : la file n'est pas
-              // connue, la phrase d'erreur au-dessus parle seule (jamais
-              // « Rien a traiter » sur une lecture manquee).
-              if (tous.isEmpty && erreurs.isNotEmpty) {
-                return const SizedBox.shrink();
-              }
-              if (tous.isEmpty || visibles.isEmpty) {
-                return SingleChildScrollView(
-                  child: EmptyState(
-                    message: tous.isEmpty
-                        ? t.admin.traitement.vide
-                        : t.admin.traitement.videFiltre,
-                    invitation: tous.isEmpty
-                        ? t.admin.traitement.videDetail
-                        : t.admin.traitement.videFiltreDetail,
-                    registre: RegistreVide.subi,
-                    icone: AppIcons.rienAAfficher,
-                  ),
-                );
-              }
-              final ElementATraiter? choisi = maitreDetail
-                  ? (visibles
-                            .where((ElementATraiter e) => e.id == _choisi)
-                            .firstOrNull ??
-                        visibles.first)
-                  : null;
-              final Widget file = SingleChildScrollView(
-                key: const PageStorageKey<String>('adm18-file'),
-                child: _File(
-                  key: TraitementPage.cleFile,
-                  elements: visibles,
-                  maintenant: widget.horloge(),
-                  choisi: choisi?.id,
-                  onChoisir: (ElementATraiter e) {
-                    if (maitreDetail) {
-                      setState(() => _choisi = e.id);
-                    } else {
-                      AppBottomSheet.ouvrir<void>(
-                        context,
-                        titre: _titre(e),
-                        constructeur: (BuildContext _) =>
-                            DetailElement(element: e, avecTitre: false),
-                      );
-                    }
-                  },
-                ),
-              );
-              if (!maitreDetail || choisi == null) {
-                return file;
-              }
-              return FocusTraversalGroup(
-                policy: WidgetOrderTraversalPolicy(),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    SizedBox(width: largeurFileDossiers, child: file),
-                    const SizedBox(width: ecartFileDetail),
-                    SizedBox(
-                      width: largeurDetailDossier,
-                      child: SingleChildScrollView(
-                        key: ValueKey<String>(choisi.id),
-                        child: DetailElement(
-                          key: TraitementPage.cleDetail,
-                          element: choisi,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
+      ],
+    );
+
+    // Une source en echec et l'autre vide : la file n'est pas connue, la
+    // phrase d'erreur parle seule (jamais « Rien a traiter » sur une
+    // lecture manquee).
+    if (tous.isEmpty && erreurs.isNotEmpty) {
+      return _SansListe(tete: tete, child: const SizedBox.shrink());
+    }
+    if (tous.isEmpty || visibles.isEmpty) {
+      return _SansListe(
+        tete: tete,
+        child: EmptyState(
+          message: tous.isEmpty
+              ? t.admin.traitement.vide
+              : t.admin.traitement.videFiltre,
+          invitation: tous.isEmpty
+              ? t.admin.traitement.videDetail
+              : t.admin.traitement.videFiltreDetail,
+          registre: RegistreVide.subi,
+          icone: AppIcons.rienAAfficher,
+        ),
+      );
+    }
+
+    final DateTime maintenant = widget.horloge();
+    final bool avecDossiers = visibles.any(
+      (ElementATraiter e) => e.nature == NatureElement.dossier,
+    );
+    final bool avecDemandes = visibles.any(
+      (ElementATraiter e) => e.nature == NatureElement.demande,
+    );
+    return DataCollection<ElementATraiter>(
+      key: TraitementPage.cleFile,
+      // LISTES-2 et LISTES-3 (§5 quater) : la tete defile avec les lignes ;
+      // au bureau, des cartes sous des en-tetes discrets ; au telephone, des
+      // lignes denses.
+      prendTeteDePage: true,
+      tete: tete,
+      densiteTelephone: true,
+      lignesCartes: true,
+      lignes: visibles,
+      cle: (ElementATraiter e) => TraitementPage.cleLigne(e.id),
+      onSelectionner: _ouvrir,
+      colonnes: <ColonneDonnees<ElementATraiter>>[
+        ColonneDonnees<ElementATraiter>(
+          titre: t.admin.traitement.cleConcerne,
+          role: RoleColonne.identifiante,
+          flex: 3,
+          texte: (ElementATraiter e) => e.nom,
+          // Le nom, sa nature dessous (la legende de la ligne d'avant), et
+          // l'etat de piece que le serveur dit explicitement.
+          rendu: (BuildContext _, ElementATraiter e) => _Identite(element: e),
+        ),
+        ColonneDonnees<ElementATraiter>(
+          titre: t.admin.traitement.cleParQui,
+          flex: 2,
+          texte: _parQui,
+        ),
+        if (avecDossiers)
+          ColonneDonnees<ElementATraiter>(
+            titre: t.admin.traitement.clePiece,
+            flex: 2,
+            texte: _piece,
+          ),
+        if (avecDemandes)
+          ColonneDonnees<ElementATraiter>(
+            titre: t.admin.demandes.motifDemande,
+            flex: 3,
+            texte: (ElementATraiter e) => e.demande?.motif ?? '',
+          ),
+        ColonneDonnees<ElementATraiter>(
+          titre: t.admin.traitement.colonneDepuis,
+          flex: 2,
+          tabulaire: true,
+          texte: (ElementATraiter e) => _depuis(e.depuis, maintenant),
+        ),
+      ],
+      // La file entiere, sans page : les deux lectures sont completes (pas de
+      // taille imposee, rien a proposer).
+      piedCollant: PiedDeListe(
+        key: const ValueKey<String>('adm18-pied'),
+        debut: 1,
+        fin: visibles.length,
+        total: visibles.length,
+      ),
+    );
+  }
+}
+
+/// Sans ligne, pas de liste pour prendre la tete : la page fait defiler sa
+/// tete et ce corps ensemble (jamais un cadre de hauteur fixe).
+class _SansListe extends StatelessWidget {
+  const _SansListe({required this.tete, required this.child});
+
+  final Widget tete;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => SingleChildScrollView(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[tete, child],
+    ),
+  );
+}
+
+/// La cellule d'identite : le nom, sa nature (« Dossier d'identite ·
+/// Enseignant », « Demande · Changement d'enseignant ») et, pour un dossier,
+/// l'etat de piece que le serveur dit explicitement (aucune, hors de
+/// portee) ; aucune pastille « en attente » repetee sur chaque ligne (releve
+/// AD-3R).
+class _Identite extends StatelessWidget {
+  const _Identite({required this.element});
+
+  final ElementATraiter element;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    final AppPalette palette = AppPalette.of(context);
+    final Widget? pastille = switch (element.dossier?.etatPiece) {
+      EtatPiece.aucune => StatusPill(
+        libelle: t.dossiers.sansPiece,
+        ton: TonEtat.neutre,
+      ),
+      EtatPiece.nonVisible => StatusPill(
+        libelle: t.dossiers.pieceNonVisible,
+        ton: TonEtat.avertissement,
+      ),
+      _ => null,
+    };
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Text(element.nom, style: textes.titleSmall),
+        Text(
+          element.precision,
+          style: palette.inkMuted.applyTo(
+            textes.bodySmall ?? const TextStyle(),
           ),
         ),
+        if (pastille != null) ...<Widget>[Ecart.vXs, pastille],
       ],
     );
   }
 }
 
-/// Le titre d'un element : « Dossier de/d'{nom} », « Demande pour {nom} ».
-String _titre(ElementATraiter e) => switch (e.nature) {
-  NatureElement.dossier => titreRevue(e.nom),
-  NatureElement.demande => t.admin.traitement.titreDemande(nom: e.nom),
+/// Qui a demande, avec une majuscule comme les autres cellules (relecture
+/// du pilote, PR 132) : l'enseignant qui a depose son dossier, ou le role de
+/// l'auteur de la demande.
+String _parQui(ElementATraiter e) => switch (e.demande?.roleDemandeur) {
+  _ when e.dossier != null => t.compte.roles.teacher,
+  AppRole.guardian => t.compte.roles.guardian,
+  AppRole.teacher => t.compte.roles.teacher,
+  AppRole.student => t.compte.roles.student,
+  AppRole.admin => t.compte.roles.admin,
+  AppRole.controller => t.compte.roles.controller,
+  _ => t.admin.comptes.roleInconnu,
+};
+
+/// L'etat de la piece d'un dossier : « Deposee, a verifier ». Aucune piece,
+/// ou une piece hors de portee, se disent par la pastille sous le nom (une
+/// seule fois) ; vide pour une demande.
+String _piece(ElementATraiter e) => switch (e.dossier?.etatPiece) {
+  null when e.dossier == null => '',
+  EtatPiece.aucune || EtatPiece.nonVisible => '',
+  _ => t.admin.traitement.pieceAVerifier,
 };
 
 String _deux(int n) => n.toString().padLeft(2, '0');
 
-/// L'instant d'une ligne : l'heure le jour meme, sinon le jour et le mois.
-String _quand(DateTime depuis, DateTime maintenant) =>
-    groupePour(depuis, maintenant) == GroupeTemps.aujourdhui
-    ? '${_deux(depuis.hour)}:${_deux(depuis.minute)}'
-    : '${depuis.day} ${t.historique.moisCourts[depuis.month - 1]}';
-
-/// La file, groupee par jour : un titre de groupe avec son nombre, puis une
-/// carte groupee de lignes (`GroupeReglages`, contenus lies).
-class _File extends StatelessWidget {
-  const _File({
-    required this.elements,
-    required this.maintenant,
-    required this.choisi,
-    required this.onChoisir,
-    super.key,
-  });
-
-  final List<ElementATraiter> elements;
-  final DateTime maintenant;
-  final String? choisi;
-  final void Function(ElementATraiter element) onChoisir;
-
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-    final AppPalette palette = AppPalette.of(context);
-    final Map<GroupeTemps, List<ElementATraiter>> groupes =
-        <GroupeTemps, List<ElementATraiter>>{};
-    for (final ElementATraiter e in elements) {
-      groupes
-          .putIfAbsent(
-            groupePour(e.depuis, maintenant),
-            () => <ElementATraiter>[],
-          )
-          .add(e);
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Semantics(
-          liveRegion: true,
-          child: Text(
-            elements.length == 1
-                ? t.admin.traitement.compteurUn
-                : t.admin.traitement.compteur(n: elements.length),
-            style: textes.titleSmall,
-          ),
-        ),
-        for (final MapEntry<GroupeTemps, List<ElementATraiter>> g
-            in groupes.entries) ...<Widget>[
-          Ecart.vLg,
-          Semantics(
-            header: true,
-            child: Text(
-              '${titreGroupe(g.key)} (${g.value.length})',
-              style: palette.inkMuted.applyTo(
-                textes.labelLarge ?? const TextStyle(),
-              ),
-            ),
-          ),
-          Ecart.vSm,
-          GroupeReglages(
-            lignes: <LigneRubrique>[
-              for (final ElementATraiter e in g.value)
-                LigneRubrique(
-                  libelle: e.nom,
-                  legende: e.precision,
-                  valeur: _quand(e.depuis, maintenant),
-                  selectionnee: choisi == null ? null : e.id == choisi,
-                  pastille: _pastille(e),
-                  pastilleSousLibelle: true,
-                  libelleSemantique: t.admin.traitement.ligneSemantique(
-                    nom: e.nom,
-                    nature: e.precision,
-                    quand: _quand(e.depuis, maintenant),
-                  ),
-                  onPress: () => onChoisir(e),
-                ),
-            ],
-          ),
-        ],
-      ],
-    );
-  }
-}
-
-/// La pastille d'une ligne : seulement l'etat de piece que le serveur dit
-/// explicitement (aucune, hors de portee) ; aucune pastille « en attente »
-/// repetee sur chaque ligne (releve AD-3R, pastille nominale retiree).
-Widget? _pastille(ElementATraiter e) => switch (e.dossier?.etatPiece) {
-  EtatPiece.aucune => StatusPill(
-    libelle: t.dossiers.sansPiece,
-    ton: TonEtat.neutre,
-  ),
-  EtatPiece.nonVisible => StatusPill(
-    libelle: t.dossiers.pieceNonVisible,
-    ton: TonEtat.avertissement,
-  ),
-  _ => null,
-};
-
-/// Le detail d'un element : en-tete, « Informations generales », le bouton
-/// qui mene a l'ecran de decision, puis « Suivi du traitement » (pas encore
-/// branche, AD-X-BR-01 et 02).
-class DetailElement extends StatelessWidget {
-  /// Cree le detail.
-  const DetailElement({
-    required this.element,
-    super.key,
-    this.avecTitre = true,
-  });
-
-  /// L'element montre.
-  final ElementATraiter element;
-
-  /// Faux dans une feuille, qui porte deja le titre.
-  final bool avecTitre;
-
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-    final AppPalette palette = AppPalette.of(context);
-    final DossierAValider? dossier = element.dossier;
-    final Demande? demande = element.demande;
-
-    final List<Widget> lignes = <Widget>[
-      if (dossier != null) ...<Widget>[
-        LigneCleValeur(
-          cle: t.admin.traitement.cleNom,
-          valeur: dossier.nom.isEmpty ? dossier.libelle : dossier.nom,
-        ),
-        if (dossier.prenom.isNotEmpty)
-          LigneCleValeur(
-            cle: t.admin.traitement.clePrenom,
-            valeur: dossier.prenom,
-          ),
-        LigneCleValeur(
-          cle: t.admin.traitement.cleType,
-          valeur: t.admin.journal.roleEnseignant,
-        ),
-        LigneCleValeur(
-          cle: t.admin.traitement.cleDepot,
-          valeur: dateRevue(dossier.deposeLe),
-          chiffres: true,
-        ),
-        LigneCleValeur(
-          cle: t.admin.traitement.clePiece,
-          valeur: switch (dossier.etatPiece) {
-            EtatPiece.aucune => t.dossiers.sansPiece,
-            EtatPiece.nonVisible => t.dossiers.pieceNonVisible,
-            _ => t.admin.traitement.pieceAVerifier,
-          },
-        ),
-      ],
-      if (demande != null) ...<Widget>[
-        LigneCleValeur(
-          cle: t.admin.traitement.cleConcerne,
-          valeur: demande.sujetLibelle,
-        ),
-        LigneCleValeur(
-          cle: t.admin.demandes.reclame,
-          valeur: element.precision,
-        ),
-        LigneCleValeur(
-          cle: t.admin.traitement.cleParQui,
-          valeur: switch (demande.roleDemandeur) {
-            AppRole.guardian => t.admin.demandes.roleGuardian,
-            AppRole.teacher => t.admin.demandes.roleTeacher,
-            AppRole.student => t.admin.demandes.roleStudent,
-            AppRole.admin => t.admin.demandes.roleAdmin,
-            AppRole.controller => t.admin.demandes.roleController,
-            _ => t.admin.demandes.roleInconnu,
-          },
-        ),
-        LigneCleValeur(
-          cle: t.admin.demandes.motifDemande,
-          valeur: demande.motif,
-        ),
-        LigneCleValeur(
-          cle: t.admin.traitement.cleDateDemande,
-          valeur: dateRevue(demande.creeeLe),
-          chiffres: true,
-        ),
-      ],
-    ];
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        if (avecTitre) ...<Widget>[
-          Semantics(
-            header: true,
-            child: Text(_titre(element), style: textes.titleLarge),
-          ),
-          Ecart.vSm,
-          Text(
-            element.precision,
-            style: palette.inkMuted.applyTo(
-              textes.bodyMedium ?? const TextStyle(),
-            ),
-          ),
-          Ecart.vXxxl,
-        ],
-        SectionHeader(titre: t.admin.traitement.infos),
-        Ecart.vSm,
-        AppCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              for (int i = 0; i < lignes.length; i++) ...<Widget>[
-                if (i > 0) Ecart.vMd,
-                lignes[i],
-              ],
-            ],
-          ),
-        ),
-        // L'objet, 16, puis le bouton qui agit dessus, au bord de fin
-        // (contrat B). Le seul bouton plein de l'ecran.
-        Ecart.vLg,
-        Align(
-          alignment: AlignmentDirectional.centerEnd,
-          child: ActionPrincipale(
-            libelle: dossier != null
-                ? ouvrirDossier(element.nom)
-                : t.admin.traitement.ouvrirDemande(nom: element.nom),
-            pleineLargeur: false,
-            onPress: () {
-              final GoRouter routeur = GoRouter.of(context);
-              // Dans la feuille, la fermer d'abord ; en maitre-detail, rien.
-              if (!avecTitre) Navigator.of(context).pop();
-              if (dossier != null) {
-                // Le dossier par `extra`, jamais par l'URL (spec l.1933).
-                routeur.go(
-                  Routes.adminPersonnesDossiers,
-                  extra: dossier.profilId,
-                );
-              } else {
-                routeur.go(Routes.adminOperationsDemandes);
-              }
-            },
-          ),
-        ),
-        Ecart.vXxxl,
-        SectionHeader(titre: t.admin.traitement.suiviTitre),
-        Ecart.vSm,
-        Text(
-          t.admin.traitement.suiviPhrase,
-          style: palette.inkMuted.applyTo(
-            textes.bodyMedium ?? const TextStyle(),
-          ),
-        ),
-      ],
-    );
-  }
+/// Depuis quand l'element attend : « Aujourd'hui · 14:05 », « Hier ·
+/// 09:12 », sinon « 31 oct. · 22:32 » (les groupes de jour d'avant, dits
+/// dans la ligne ; la meme heure que la ligne d'avant).
+String _depuis(DateTime depuis, DateTime maintenant) {
+  final String heure = '${_deux(depuis.hour)}:${_deux(depuis.minute)}';
+  final String jour = switch (groupePour(depuis, maintenant)) {
+    GroupeTemps.aujourdhui => t.admin.traitement.groupeAujourdhui,
+    GroupeTemps.hier => t.admin.traitement.groupeHier,
+    _ => '${depuis.day} ${t.historique.moisCourts[depuis.month - 1]}',
+  };
+  return '$jour · $heure';
 }
