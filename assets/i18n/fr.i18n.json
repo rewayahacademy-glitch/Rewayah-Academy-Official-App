@@ -3802,6 +3802,7 @@
       "cleConcerne": "Personne concernée",
       "cleParQui": "Demandée par",
       "cleDateDemande": "Date de la demande",
+      "colonneDepuis": "Depuis",
       "ouvrirDemande": "Ouvrir la demande pour {nom}",
       "suiviTitre": "Suivi du traitement",
       "suiviPhrase": "L'assignation, l'échéance, la priorité, l'historique et les notes ne sont pas encore branchés\u00a0: le serveur ne les fournit pas encore. La décision se prend dans le dossier ou la demande, avec ses vérifications.",
