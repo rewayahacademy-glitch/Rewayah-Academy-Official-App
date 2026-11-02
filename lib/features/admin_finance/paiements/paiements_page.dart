@@ -45,6 +45,7 @@ import '../../../core/widgets/carte_lignes.dart';
 import '../../../core/widgets/champ_etiquete.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/ligne_cle_valeur.dart';
+import '../../../core/widgets/menu_actions.dart';
 import '../../../core/widgets/section_header.dart';
 import '../../../core/widgets/setting_row.dart';
 import '../../../core/widgets/status_pill.dart';
@@ -53,6 +54,7 @@ import '../a_valider/a_valider_page.dart'
 import '../a_valider/decision_validation.dart' show ouvrirDecisionValidation;
 import '../reserve_delegation/composants_politique.dart' show BlocPolitique;
 import 'factures_mois.dart';
+import 'remboursement_direction.dart';
 import 'tarifs_particuliers.dart';
 
 /// Les eleves que la saisie peut viser, rendus par la source.
@@ -124,6 +126,9 @@ class PaiementsBloc extends ConsumerWidget {
   /// La cle de la ligne d'un eleve.
   static Key cleEleve(String id) => ValueKey<String>('paiements-$id');
 
+  /// La cle du menu « ... » d'un eleve remboursable (FN-115c).
+  static Key cleMenuEleve(String id) => ValueKey<String>('paiements-menu-$id');
+
   /// La cle de la carte d'un paiement saisi a valider ou refuse.
   static Key cleDemande(String id) => ValueKey<String>('paiements-demande-$id');
 
@@ -182,9 +187,31 @@ class _Liste extends ConsumerWidget {
     }
   }
 
+  Future<void> _rembourser(
+    BuildContext context,
+    WidgetRef ref,
+    ElevePourPaiement e,
+  ) async {
+    final bool change = await ouvrirRemboursement(
+      context,
+      profilId: e.profilId,
+      prenom: e.prenom,
+    );
+    if (change) {
+      ref
+        ..invalidate(elevesPourPaiementProvider)
+        ..invalidate(elevesRemboursablesProvider)
+        ..invalidate(paiementsRemboursablesProvider(e.profilId));
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final p = t.admin.finance.pai;
+    // FN-115c : « Rembourser » n'existe que pour un eleve que le serveur dit
+    // remboursable ; une erreur de lecture n'en montre aucun.
+    final Set<String> remboursables =
+        ref.watch(elevesRemboursablesProvider).value ?? const <String>{};
     if (eleves.isEmpty) {
       return EmptyState(
         key: PaiementsBloc.cleVide,
@@ -204,15 +231,11 @@ class _Liste extends ConsumerWidget {
     Widget lignes(List<ElevePourPaiement> liste) => CarteLignes(
       lignes: <Widget>[
         for (final ElevePourPaiement e in liste)
-          SettingRow(
-            key: PaiementsBloc.cleEleve(e.profilId),
-            title: nomElevePaiement(e),
-            description: e.matricule,
-            value: e.resteAPayer.mineur > 0
-                ? formaterMontant(e.resteAPayer)
-                : p.aJourValeur,
-            lien: true,
-            onPress: () => _ouvrir(context, ref, e),
+          _ligne(
+            context,
+            ref,
+            e,
+            remboursable: remboursables.contains(e.profilId),
           ),
       ],
     );
@@ -230,6 +253,53 @@ class _Liste extends ConsumerWidget {
           lignes(aJour),
         ],
       ],
+    );
+  }
+}
+
+extension on _Liste {
+  Widget _ligne(
+    BuildContext context,
+    WidgetRef ref,
+    ElevePourPaiement e, {
+    required bool remboursable,
+  }) {
+    final p = t.admin.finance.pai;
+    final Widget ligne = SettingRow(
+      key: PaiementsBloc.cleEleve(e.profilId),
+      title: nomElevePaiement(e),
+      description: e.matricule,
+      value: e.resteAPayer.mineur > 0
+          ? formaterMontant(e.resteAPayer)
+          : p.aJourValeur,
+      lien: true,
+      onPress: () => _ouvrir(context, ref, e),
+    );
+    if (!remboursable) return ligne;
+    // FN-115c : le menu « ... » en bout de ligne porte « Rembourser » (meme
+    // forme que les lignes « A faire » des notifications). Le fond de la
+    // ligne court sous le menu, pour un filet de carte egal.
+    return ColoredBox(
+      color: AppPalette.of(context).surfaceRaised.background,
+      child: Row(
+        children: <Widget>[
+          Expanded(child: ligne),
+          Padding(
+            padding: const EdgeInsetsDirectional.only(end: AppSpacing.sm),
+            child: MenuActions(
+              key: PaiementsBloc.cleMenuEleve(e.profilId),
+              points: true,
+              objet: nomElevePaiement(e),
+              actions: <EntreeAction>[
+                EntreeAction(
+                  libelle: p.rembourser,
+                  onChoix: () => _rembourser(context, ref, e),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
