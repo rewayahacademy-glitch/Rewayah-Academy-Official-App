@@ -13173,13 +13173,13 @@ class _Traductions$admin$groupes$c1$ar extends Traductions$admin$groupes$c1$fr {
 	@override String quand({required Object jour, required Object heure, required Object deVille}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩، بتوقيت ⁨${deVille}⁩';
 	@override String quandSansVille({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩';
 	@override String jourDate({required Object jour, required Object numero, required Object mois}) => '⁨${jour}⁩ ⁨${numero}⁩ ⁨${mois}⁩';
-	@override String heurePleine({required Object h}) => '⁨${h}⁩:00';
-	@override String heureMinutes({required Object h, required Object mm}) => '⁨${h}⁩:⁨${mm}⁩';
+	@override String heurePleine({required Object h}) => '⁨${h}⁩ تمامًا';
+	@override String heureMinutes({required Object h, required Object mm}) => '⁨${h}⁩ و⁨${mm}⁩';
 	@override String fuseauEnseignant({required Object deVille}) => 'المواعيد بتوقيت ⁨${deVille}⁩، وهو توقيت المعلم.';
 	@override String fuseauDefaut({required Object deVille}) => 'المواعيد بتوقيت ⁨${deVille}⁩، وهو التوقيت المعتمد افتراضيًا.';
 	@override String fuseauNonTransmis({required Object deVille}) => 'المواعيد بتوقيت ⁨${deVille}⁩، وهو التوقيت الذي يعتمده الخادم حاليًا. سيُعتمد توقيت المعلم حين يقبله الخادم.';
 	@override String get abandonQuestion => 'التخلي عن الفصل الجديد؟';
-	@override String get abandonConsequence => 'ستضيع الاختيارات التي أجريتها في هذا النموذج (الجمهور، المعلم، المواعيد، الاسم).';
+	@override String get abandonConsequence => 'ستضيع الاختيارات التي قمت بها في هذا النموذج (الجمهور، المعلم، المواعيد، الاسم).';
 	@override String get abandonConfirmer => 'التخلي عن الفصل الجديد';
 	@override String get abandonContinuer => 'متابعة الإدخال';
 	@override String get eleveDejaEnClasse => 'هذا الطالب موجود بالفعل في فصل نشط. أخرجه أولًا من ذلك الفصل أو انقله، ثم اضغط من جديد.';
@@ -13189,7 +13189,7 @@ class _Traductions$admin$groupes$c1$ar extends Traductions$admin$groupes$c1$fr {
 	@override String get motifManquant => 'السبب ناقص. اختر سببًا، ثم اضغط من جديد.';
 	@override String get reservee => 'لا يملك حسابك صلاحية هذا الإجراء. اطلبه من الإدارة.';
 	@override String get refusInconnu => 'رفض الخادم هذا الإجراء دون ذكر السبب. تحقق من اختياراتك، ثم اضغط من جديد.';
-	@override String get connexion => 'لم يستجب الخادم. تحقق من الاتصال، ثم اضغط من جديد.';
+	@override String get connexion => 'ربما لم يصل الطلب إلى رواية. اضغط من جديد بعد لحظة.';
 }
 
 // Path: admin.groupes.creneau
@@ -24204,13 +24204,13 @@ extension on TraductionsAr {
 			'admin.groupes.c1.quand' => ({required Object jour, required Object heure, required Object deVille}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩، بتوقيت ⁨${deVille}⁩',
 			'admin.groupes.c1.quandSansVille' => ({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩',
 			'admin.groupes.c1.jourDate' => ({required Object jour, required Object numero, required Object mois}) => '⁨${jour}⁩ ⁨${numero}⁩ ⁨${mois}⁩',
-			'admin.groupes.c1.heurePleine' => ({required Object h}) => '⁨${h}⁩:00',
-			'admin.groupes.c1.heureMinutes' => ({required Object h, required Object mm}) => '⁨${h}⁩:⁨${mm}⁩',
+			'admin.groupes.c1.heurePleine' => ({required Object h}) => '⁨${h}⁩ تمامًا',
+			'admin.groupes.c1.heureMinutes' => ({required Object h, required Object mm}) => '⁨${h}⁩ و⁨${mm}⁩',
 			'admin.groupes.c1.fuseauEnseignant' => ({required Object deVille}) => 'المواعيد بتوقيت ⁨${deVille}⁩، وهو توقيت المعلم.',
 			'admin.groupes.c1.fuseauDefaut' => ({required Object deVille}) => 'المواعيد بتوقيت ⁨${deVille}⁩، وهو التوقيت المعتمد افتراضيًا.',
 			'admin.groupes.c1.fuseauNonTransmis' => ({required Object deVille}) => 'المواعيد بتوقيت ⁨${deVille}⁩، وهو التوقيت الذي يعتمده الخادم حاليًا. سيُعتمد توقيت المعلم حين يقبله الخادم.',
 			'admin.groupes.c1.abandonQuestion' => 'التخلي عن الفصل الجديد؟',
-			'admin.groupes.c1.abandonConsequence' => 'ستضيع الاختيارات التي أجريتها في هذا النموذج (الجمهور، المعلم، المواعيد، الاسم).',
+			'admin.groupes.c1.abandonConsequence' => 'ستضيع الاختيارات التي قمت بها في هذا النموذج (الجمهور، المعلم، المواعيد، الاسم).',
 			'admin.groupes.c1.abandonConfirmer' => 'التخلي عن الفصل الجديد',
 			'admin.groupes.c1.abandonContinuer' => 'متابعة الإدخال',
 			'admin.groupes.c1.eleveDejaEnClasse' => 'هذا الطالب موجود بالفعل في فصل نشط. أخرجه أولًا من ذلك الفصل أو انقله، ثم اضغط من جديد.',
@@ -24220,7 +24220,7 @@ extension on TraductionsAr {
 			'admin.groupes.c1.motifManquant' => 'السبب ناقص. اختر سببًا، ثم اضغط من جديد.',
 			'admin.groupes.c1.reservee' => 'لا يملك حسابك صلاحية هذا الإجراء. اطلبه من الإدارة.',
 			'admin.groupes.c1.refusInconnu' => 'رفض الخادم هذا الإجراء دون ذكر السبب. تحقق من اختياراتك، ثم اضغط من جديد.',
-			'admin.groupes.c1.connexion' => 'لم يستجب الخادم. تحقق من الاتصال، ثم اضغط من جديد.',
+			'admin.groupes.c1.connexion' => 'ربما لم يصل الطلب إلى رواية. اضغط من جديد بعد لحظة.',
 			'admin.groupes.detailTitre' => ({required Object libelle}) => 'الفصل ⁨${libelle}⁩',
 			'admin.groupes.detailMembres' => 'الأعضاء',
 			'admin.groupes.detailAucunMembre' => 'لا طالب في هذا الفصل حتى الآن.',

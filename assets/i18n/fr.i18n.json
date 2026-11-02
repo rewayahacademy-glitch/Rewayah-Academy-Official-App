@@ -3964,7 +3964,7 @@
         "motifManquant": "il manque le motif. Choisissez-en un, puis pressez de nouveau.",
         "reservee": "votre compte n'a pas le droit de faire cette action. Demandez-la à la direction.",
         "refusInconnu": "le serveur a refusé cette action sans en dire la raison. Vérifiez vos choix, puis pressez de nouveau.",
-        "connexion": "le serveur n'a pas répondu. Vérifiez la connexion, puis pressez de nouveau."
+        "connexion": "il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Pressez de nouveau dans un instant."
       },
       "detailTitre": "Classe {libelle}",
       "detailMembres": "Membres",

@@ -24667,8 +24667,8 @@ class Traductions$admin$groupes$c1$fr {
 	/// fr: 'le serveur a refusé cette action sans en dire la raison. Vérifiez vos choix, puis pressez de nouveau.'
 	String get refusInconnu => 'le serveur a refusé cette action sans en dire la raison. Vérifiez vos choix, puis pressez de nouveau.';
 
-	/// fr: 'le serveur n'a pas répondu. Vérifiez la connexion, puis pressez de nouveau.'
-	String get connexion => 'le serveur n\'a pas répondu. Vérifiez la connexion, puis pressez de nouveau.';
+	/// fr: 'il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Pressez de nouveau dans un instant.'
+	String get connexion => 'il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Pressez de nouveau dans un instant.';
 }
 
 // Path: admin.groupes.reglagesClasse
@@ -45315,7 +45315,7 @@ extension on Traductions {
 			'admin.groupes.c1.motifManquant' => 'il manque le motif. Choisissez-en un, puis pressez de nouveau.',
 			'admin.groupes.c1.reservee' => 'votre compte n\'a pas le droit de faire cette action. Demandez-la à la direction.',
 			'admin.groupes.c1.refusInconnu' => 'le serveur a refusé cette action sans en dire la raison. Vérifiez vos choix, puis pressez de nouveau.',
-			'admin.groupes.c1.connexion' => 'le serveur n\'a pas répondu. Vérifiez la connexion, puis pressez de nouveau.',
+			'admin.groupes.c1.connexion' => 'il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Pressez de nouveau dans un instant.',
 			'admin.groupes.detailTitre' => ({required Object libelle}) => 'Classe ${libelle}',
 			'admin.groupes.detailMembres' => 'Membres',
 			'admin.groupes.detailAucunMembre' => 'Aucun élève dans cette classe pour l\'instant.',
