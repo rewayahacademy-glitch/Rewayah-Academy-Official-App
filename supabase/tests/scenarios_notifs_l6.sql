@@ -1,4 +1,4 @@
--- NOTIFS-L6 (pilote, 02/11/2026 ; migration 20261104500000) : la section
+-- NOTIFS-L6 (pilote, 02/11/2026 ; migration 20261104700000) : la section
 -- « A faire » des notifications.
 --
 -- Ce que le scenario prouve :
@@ -10,7 +10,14 @@
 --      seance pour tous (pas d'une autre seance) ; litige_clos clot le litige
 --      de la meme commande (pas d'une autre) ;
 --   3. « Ecarter » : le destinataire seul, a l'heure du serveur, sans retour ;
---      geste_requis et geste_fait_le restent hors de sa portee.
+--      geste_requis et geste_fait_le restent hors de sa portee ;
+--   4. (relecture du pilote, PR 137) le declencheur marche quel que soit le
+--      role qui insere : sous service_role et sous authenticated (droit
+--      d'insertion accorde le temps du scenario, annule a la fin : aucun des
+--      deux ne l'a aujourd'hui), et par une RPC reelle appelee par un eleve
+--      (demander_presentation_standard) ; aucune fonction non DEFINER qui
+--      insere dans notifications n'est executable par anon, authenticated ou
+--      service_role hors declencheur.
 --
 -- Base PostgreSQL jetable apres stub_auth.sql et toutes les migrations. Tout
 -- est annule a la fin.
@@ -80,6 +87,16 @@ SELECT pg_temp.id(x.id), x.mat, x.role::public.app_role,
     ('p2', 'L6-ENS-0002', 'teacher', NULL, 'Salma', 'female'),
     ('a1', 'L6-ADM-0001', 'admin', NULL, 'Direction', 'female'))
     AS x(id, mat, role, foyer, prenom, genre);
+UPDATE public.households SET primary_guardian_id = pg_temp.id('t1') WHERE id = pg_temp.id('f1');
+UPDATE public.households SET primary_guardian_id = pg_temp.id('t2') WHERE id = pg_temp.id('f2');
+-- Un eleve mineur du foyer f1, pour la voie RPC du 4.
+INSERT INTO auth.users (id, email) VALUES (pg_temp.id('s1'), 'notifs-l6-s1@test.invalid');
+INSERT INTO public.profiles (id, immutable_id, role, household_id, first_name,
+                             last_name, account_status, gender)
+VALUES (pg_temp.id('s1'), 'L6-ELV-0001', 'student', pg_temp.id('f1'), 'Yanis', 'L6',
+        'active', 'male');
+INSERT INTO public.student_profiles (profile_id, student_type, interface_mode)
+VALUES (pg_temp.id('s1'), 'minor', 'child');
 
 -- 1. geste_requis pose par le serveur.
 DO $$
@@ -201,6 +218,69 @@ BEGIN
     AND pg_catalog.has_column_privilege('authenticated', 'public.notifications',
                                         'ecartee_le', 'UPDATE'),
     'seule ecartee_le (et lu_le) est ouverte au destinataire');
+END $$;
+
+-- 4. Le declencheur sous un autre role que postgres (relecture du pilote).
+-- Ni service_role ni authenticated n'ont le droit d'inserer aujourd'hui :
+-- on le leur accorde le temps du scenario (annule par le ROLLBACK), pour
+-- prouver que geste_requis se pose quand meme. En SECURITY INVOKER, l'appel a
+-- private.notification_geste_requis echouait (EXECUTE retire, schema prive).
+-- Les plans du declencheur, prepares sous postgres aux sections 1 a 3, ont
+-- la fonction SQL deja depliee : sans DISCARD, ils sont reutilises sans
+-- nouveau controle des droits et le test ne prouverait rien (contre-epreuve
+-- faite : en INVOKER, ce scenario restait vert sans cette ligne).
+DISCARD PLANS;
+GRANT INSERT ON public.notifications TO service_role, authenticated;
+GRANT SELECT ON public.notifications TO service_role; -- pour RETURNING
+CREATE POLICY notifs_l6_scenario_insertion ON public.notifications
+  FOR INSERT TO authenticated WITH CHECK (true);
+SET LOCAL ROLE service_role;
+SELECT set_config('test.svc', pg_temp.notifier('t1', 'paiement_relance', '{}'::jsonb,
+  '/tuteur/foyer/recharge')::text, true);
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.id('t2'), 'guardian');
+SET LOCAL ROLE authenticated;
+SELECT set_config('test.auth', pg_temp.notifier('t2', 'paiement_relance', '{}'::jsonb,
+  '/tuteur/foyer/recharge')::text, true);
+RESET ROLE;
+REVOKE INSERT ON public.notifications FROM service_role, authenticated;
+REVOKE SELECT ON public.notifications FROM service_role;
+
+-- La voie reelle : un eleve mineur demande une presentation (RPC DEFINER),
+-- le tuteur principal recoit demande_presentation, « A faire ».
+SELECT pg_temp.qui(pg_temp.id('s1'), 'student');
+SET LOCAL ROLE authenticated;
+SELECT public.demander_presentation_standard();
+RESET ROLE;
+SELECT set_config('request.jwt.claim.sub', '', true);
+SELECT set_config('request.jwt.claims', '', true);
+
+DO $$
+DECLARE v_id uuid; v_fautives text;
+BEGIN
+  PERFORM pg_temp.vrai(pg_temp.etat(current_setting('test.svc')::uuid) = 'a_faire',
+    'insertion sous service_role : geste_requis pose');
+  PERFORM pg_temp.vrai(pg_temp.etat(current_setting('test.auth')::uuid) = 'a_faire',
+    'insertion sous authenticated : geste_requis pose');
+  SELECT id INTO v_id FROM public.notifications
+   WHERE destinataire = pg_temp.id('t1') AND evenement = 'demande_presentation';
+  PERFORM pg_temp.vrai(v_id IS NOT NULL AND pg_temp.etat(v_id) = 'a_faire',
+    'demander_presentation_standard : la demande est « A faire » chez le tuteur');
+
+  -- Aucune fonction non DEFINER qui insere dans notifications n'est appelable
+  -- directement par un role de l'API (hors fonction de declencheur).
+  SELECT string_agg(n.nspname || '.' || p.proname, ', ') INTO v_fautives
+    FROM pg_catalog.pg_proc p
+    JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+   WHERE p.prosrc ~* 'insert\s+into\s+(public\.)?notifications\M'
+     AND NOT p.prosecdef
+     AND n.nspname !~ '^pg_temp'
+     AND p.prorettype <> 'trigger'::regtype
+     AND (pg_catalog.has_function_privilege('anon', p.oid, 'EXECUTE')
+          OR pg_catalog.has_function_privilege('authenticated', p.oid, 'EXECUTE')
+          OR pg_catalog.has_function_privilege('service_role', p.oid, 'EXECUTE'));
+  PERFORM pg_temp.vrai(v_fautives IS NULL,
+    'aucune insertion directe hors DEFINER pour l API : ' || coalesce(v_fautives, 'aucune'));
 END $$;
 
 ROLLBACK;

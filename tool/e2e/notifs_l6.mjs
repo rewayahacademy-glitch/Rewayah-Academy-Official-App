@@ -14,7 +14,7 @@
 //   * « Ecarter » (menu « ... ») pose ecartee_le en base et retire la ligne ;
 //   * « Tout marquer comme lu » vide « Nouvelles » ; « A faire » reste, lue.
 //
-// Prerequis : la migration 20261104500000_notifications_a_faire.sql appliquee
+// Prerequis : la migration 20261104700000_notifications_a_faire.sql appliquee
 // sur la pile LOCALE. Donnees de test : deux comptes neufs a chaque passage
 // (une famille, une direction) ; rien n'est efface. Aucune migration ici.
 // Usage : node tool/e2e/notifs_l6.mjs

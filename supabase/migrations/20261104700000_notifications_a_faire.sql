@@ -57,10 +57,14 @@ ALTER FUNCTION private.notification_geste_requis(text, jsonb) OWNER TO postgres;
 REVOKE ALL ON FUNCTION private.notification_geste_requis(text, jsonb)
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
 
+-- SECURITY DEFINER (relecture du pilote, PR 137) : la fonction appelle
+-- private.notification_geste_requis, fermee a tous ; en INVOKER, toute
+-- insertion par un autre role que postgres (service_role d'une fonction Edge,
+-- fonction INVOKER) echouerait faute d'EXECUTE.
 CREATE OR REPLACE FUNCTION private.notifications_poser_geste()
 RETURNS trigger
 LANGUAGE plpgsql
-SECURITY INVOKER
+SECURITY DEFINER
 SET search_path = ''
 AS $function$
 BEGIN
