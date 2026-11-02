@@ -103,6 +103,17 @@ class NotificationsPage extends ConsumerStatefulWidget {
     'notifications-voir-plus',
   );
 
+  /// La cle de « Voir plus » sous « Nouvelles », pour les tests.
+  static const ValueKey<String> cleVoirPlusNouvelles = ValueKey<String>(
+    'notifications-voir-plus-nouvelles',
+  );
+
+  /// Reprise de NOTIFS-L6 (pilote, 02/11/2026) : « Nouvelles » montre 10
+  /// lignes, puis 10 de plus a chaque « Voir plus ». La source en lit
+  /// jusqu'a 100 : sans cette borne, la direction (50 non lues) retrouvait
+  /// une page sans fin.
+  static const int pasNouvelles = 10;
+
   /// La cle de « Tout marquer comme lu », pour les tests.
   static const ValueKey<String> cleToutLire = ValueKey<String>(
     'notifications-tout-lire',
@@ -252,6 +263,9 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
   /// de nouveau (la page ne montre pas qu'un titre replie). Nul : ce
   /// reglage par defaut ; sinon, le choix de la personne.
   bool? _anciennesOuvertes;
+
+  /// Le nombre de lignes « Nouvelles » montrees.
+  int _nouvellesMontrees = NotificationsPage.pasNouvelles;
 
   /// Le nombre de lignes « Plus anciennes » montrees.
   int _anciennesMontrees = PortPagesNotifications.taillePage;
@@ -640,9 +654,27 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
         CarteLignes(
           key: NotificationsPage.cleNouvelles,
           lignes: <Widget>[
-            for (final GroupeNotifications g in sections.nouvelles) ligne(g),
+            for (final GroupeNotifications g in sections.nouvelles.take(
+              _nouvellesMontrees,
+            ))
+              ligne(g),
           ],
         ),
+        if (sections.nouvelles.length > _nouvellesMontrees) ...<Widget>[
+          Ecart.vMd,
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: ActionPrincipale(
+              key: NotificationsPage.cleVoirPlusNouvelles,
+              libelle: t.notifications.voirPlus,
+              niveau: NiveauAction.secondaire,
+              pleineLargeur: false,
+              onPress: () => setState(
+                () => _nouvellesMontrees += NotificationsPage.pasNouvelles,
+              ),
+            ),
+          ),
+        ],
         Ecart.vXl,
       ],
       if (voirAnciennes && sections.anciennes.isNotEmpty) ...<Widget>[
@@ -838,9 +870,13 @@ class LigneNotification extends StatelessWidget {
     int nombre = 1,
   }) {
     final DateTime quand = notification.date.toLocal();
-    final String? badge = BadgeNonLu.phraseSemantique(
-      indicateurNotification(notification),
-    );
+    final IndicateurAttention? geste = indicateurLigne(notification);
+    final String? badge = geste == null
+        ? null
+        : BadgeNonLu.phraseSemantique(
+            geste,
+            libelleAction: libelleGeste(notification),
+          );
     return <String>[
       t.notifications.ligne(
         titre: notification.titre,
@@ -851,10 +887,42 @@ class LigneNotification extends StatelessWidget {
         libelleTypeNotification(notification.type),
       if (nombre > 1) t.notifications.repetitions(n: nombre),
       if (!notification.lue) t.notifications.nonLueSemantique,
-      // Rien a signaler : le niveau « Information » est dit quand meme, en
-      // toutes lettres (spec section 13.1 : quatre niveaux, chacun dit).
-      badge ?? BadgeNonLu.libelleNiveau(NiveauAttention.information),
+      // Un seul signe (reprise du pilote, 02/11) : le geste attendu sur une
+      // ligne « A faire » ; « Non lue » seul sur une non lue, sans « A
+      // lire » qui le repetait ; « Information » sur une lue, dit en toutes
+      // lettres (spec section 13.1 : chaque niveau est dit).
+      if (badge != null)
+        badge
+      else if (notification.lue)
+        BadgeNonLu.libelleNiveau(NiveauAttention.information),
     ].join(', ');
+  }
+
+  /// Reprise de NOTIFS-L6 (pilote, 02/11/2026) : un seul signe par ligne.
+  /// Le badge n'existe que sur une ligne « A faire », au niveau « action
+  /// requise » (ou « urgent ») ; ailleurs, le mot « Non lue » suffit.
+  static IndicateurAttention? indicateurLigne(NotificationTuteur n) {
+    if (!n.aFaire) return null;
+    return IndicateurAttention(
+      niveau: n.niveau.estAuMoins(NiveauAttention.actionRequise)
+          ? n.niveau
+          : NiveauAttention.actionRequise,
+    );
+  }
+
+  /// Le mot du geste attendu d'une ligne « A faire », selon l'evenement ;
+  /// « A faire » quand l'evenement n'est pas connu (ports de demonstration).
+  static String libelleGeste(NotificationTuteur n) {
+    final mots = t.notifications;
+    return switch (n.evenement) {
+      'paiement_relance' || 'acces_suspendu_paiement' => mots.gesteRecharger,
+      'remplacement_propose' ||
+      'remplacement_pre_alerte' => mots.gestePrendreSeance,
+      'demande_presentation' => mots.gesteRepondre,
+      'controle_mission_attribuee' => mots.gesteObserver,
+      'litige_ouvert' => mots.gesteTraiterContestation,
+      _ => mots.sectionAFaire,
+    };
   }
 
   @override
@@ -890,7 +958,7 @@ class LigneNotification extends StatelessWidget {
       textes.bodySmall ?? const TextStyle(),
     );
     final bool actif = etat != null && (etat.survole || etat.presse);
-    final IndicateurAttention indicateur = indicateurNotification(notification);
+    final IndicateurAttention? indicateur = indicateurLigne(notification);
     final bool avecType = notification.type != TypeNotification.autre;
     final bool nonLue = !notification.lue;
     final bool repetee = nombre > 1;
@@ -952,9 +1020,12 @@ class LigneNotification extends StatelessWidget {
                         style: doux,
                       ),
                     ],
-                    if (indicateur.estVisible) ...<Widget>[
+                    if (indicateur != null) ...<Widget>[
                       Ecart.vSm,
-                      BadgeNonLu(indicateur: indicateur),
+                      BadgeNonLu(
+                        indicateur: indicateur,
+                        libelleAction: libelleGeste(notification),
+                      ),
                     ],
                   ],
                 );

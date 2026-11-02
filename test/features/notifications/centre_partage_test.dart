@@ -202,6 +202,10 @@ void main() {
         lessThan(tester.getTopLeft(_ligne('n-annonce')).dy),
       );
       // Les niveaux sont des MOTS, avec leur icone (jamais la couleur seule).
+      // Reprise du pilote (02/11) : un seul signe. Le badge ne vit que sur
+      // une ligne « A faire » : « Urgent » reste dit, l'action requise dit
+      // le geste (ici « A faire », la demonstration n'a pas d'evenement) ;
+      // une non lue sans geste porte « Non lue » seul, sans badge.
       final b = t.com.socle.composants.badge;
       expect(
         find.descendant(of: _ligne('n-urgent'), matching: find.text(b.urgent)),
@@ -210,21 +214,23 @@ void main() {
       expect(
         find.descendant(
           of: _ligne('n-action'),
-          matching: find.text(b.actionRequise),
+          matching: find.text(t.notifications.sectionAFaire),
         ),
         findsOneWidget,
       );
-      expect(
-        find.descendant(of: _ligne('n-annonce'), matching: find.text(b.aLire)),
-        findsOneWidget,
-      );
-      expect(
-        find.descendant(
-          of: _ligne('n-mention'),
-          matching: find.text(b.mention),
-        ),
-        findsOneWidget,
-      );
+      for (final String id in <String>['n-annonce', 'n-mention']) {
+        expect(
+          find.descendant(of: _ligne(id), matching: find.byType(BadgeNonLu)),
+          findsNothing,
+        );
+        expect(
+          find.descendant(
+            of: _ligne(id),
+            matching: find.textContaining(t.notifications.nonLue),
+          ),
+          findsOneWidget,
+        );
+      }
       // Information lue : aucun badge, aucun « Non lue ».
       expect(
         find.descendant(of: _ligne('n-lue'), matching: find.byType(BadgeNonLu)),
@@ -302,8 +308,8 @@ void main() {
       expect(find.text(t.notifications.filtreVideTitre), findsNothing);
     });
 
-    testWidgets('la ligne dit au lecteur d ecran son type, « non lue », son '
-        'niveau et la mention', (WidgetTester tester) async {
+    testWidgets('la ligne dit au lecteur d ecran son type et « non lue », '
+        'un seul signe', (WidgetTester tester) async {
       final SemanticsHandle semantique = tester.ensureSemantics();
       await _monter(tester);
       final String phrase = LigneNotification.phraseSemantique(
@@ -311,7 +317,8 @@ void main() {
       );
       expect(phrase, contains(t.notifications.types.messageMetier));
       expect(phrase, contains(t.notifications.nonLueSemantique));
-      expect(phrase, contains(t.com.socle.composants.badge.mentionSemantique));
+      // Reprise du pilote (02/11) : « non lue » seul, sans « A lire ».
+      expect(phrase, isNot(contains(t.com.socle.composants.badge.aLire)));
       expect(find.bySemanticsLabel(phrase), findsOneWidget);
       semantique.dispose();
     });
