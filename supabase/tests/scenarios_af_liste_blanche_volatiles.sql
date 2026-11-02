@@ -155,6 +155,9 @@ declare
     'enregistrer_ligne_referentiel_paiement(uuid,text,text,text,text,text,text,text,date,text,integer,text)',
     -- CAND-AUTRES (22/10) : les autres competences du candidat, titulaire d'une candidature enseignant au compte valide (apres l'envoi de la Salle d'examen, version attendue, cle d'idempotence ; aucune garde de role).
     'enregistrer_autres_competences(jsonb,text,text,boolean,integer,text)',
+    -- I1 (02/11) : la direction active envoie l'invitation d'un foyer importe, ou de tous apres confirmation du nombre (garde role ET app_account_valid).
+    'envoyer_invitation_famille_importee(uuid)',
+    'envoyer_invitations_familles_importees(integer)',
     -- CAND-AUTRES (22/10) : le catalogue des competences, ecriture reservee a la direction active (ajout ou modification par version attendue, cle d'idempotence, jamais de suppression ; journal en ajout seul).
     'enregistrer_competence_catalogue(text,text,integer,text,text,boolean,integer,text)',
     -- CAND-L2A1 (22/10) : brouillon de la Salle d'examen, titulaire de la candidature (moteur, version du brouillon, cle).

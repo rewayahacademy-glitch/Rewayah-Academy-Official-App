@@ -196,6 +196,38 @@ const MODELES: Record<string, Fabrique> = {
       ],
     }
   },
+  // I1 (02/11/2026) : memes liens que le francais ; proposition, texte non
+  // valide par le directeur.
+  invitation_enseignant: (d) => {
+    const code = typeof d.code === 'string' && /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(d.code) ? d.code : null
+    const fin = dateLongue(d.expire_le, PAROLE.locale)
+    const lien = `${APP}/connexion?mode=creer&invitation=1${code ? `&code=${code}` : ''}`
+    return {
+      sujet: 'دعوتك للتدريس في Rewayah Academy',
+      apercu: 'تدعوك الإدارة إلى إنشاء حسابك معلّمًا.',
+      titre: 'دُعيت إلى التدريس في Rewayah Academy',
+      blocs: [
+        { type: 'texte', texte: bonjour(d, PAROLE) },
+        { type: 'texte', texte: 'تدعوك إدارة Rewayah Academy إلى إنشاء حسابك معلّمًا.' },
+        ...(code ? [{ type: 'texte', texte: 'رمز دعوتك:' } as const, { type: 'code', code } as const] : []),
+        { type: 'bouton', libelle: 'إنشاء حسابي معلّمًا', href: lien },
+        { type: 'texte', texte: 'أنشئ حسابك بعنوان البريد الإلكتروني هذا: لا يصلح الرمز إلا معه. إن لم يُفتح الزر، فافتح app.rewayahacademy.com، ثم المس «لدي رمز دعوة» وانسخ الرمز.' },
+        { type: 'note', texte: (fin ? `الدعوة صالحة حتى ${fin} ولا تُستعمل إلا مرة واحدة. ` : 'الدعوة لا تُستعمل إلا مرة واحدة. ') + 'لا شيء يُدفع في أي مرحلة. إن لم تكن تنتظر هذه الدعوة، فتجاهل هذه الرسالة.' },
+      ],
+    }
+  },
+  invitation_famille_importee: (d) => ({
+    sujet: 'مساحتك في Rewayah Academy في انتظارك',
+    apercu: 'تسجيلك موجود في التطبيق: سجّل الدخول بعنوان البريد الإلكتروني هذا.',
+    titre: 'تسجيلك موجود في التطبيق',
+    blocs: [
+      { type: 'texte', texte: bonjour(d, PAROLE) },
+      { type: 'texte', texte: 'أنتم مسجّلون في Rewayah Academy. ما يلي يجري في التطبيق: سجّلت الإدارة أسرتكم فيه.' },
+      { type: 'texte', texte: 'سجّل الدخول بعنوان البريد الإلكتروني هذا، وستجد أسرتك دون إعادة إدخال أي شيء.' },
+      { type: 'bouton', libelle: 'فتح مساحتي', href: `${APP}/connexion` },
+      { type: 'note', texte: 'لن نطلب منك كلمة مرور ولا دفعًا عبر رسالة. الرابط يؤدي إلى عنواننا الرسمي app.rewayahacademy.com. إن كنت لا تعرف Rewayah Academy، فتجاهل هذه الرسالة.' },
+    ],
+  }),
   lien_inscription: (d) => {
     const quand = dateLongue(d.date_reponse, PAROLE.locale)
     const nom = typeof d.formulaire === 'string' && d.formulaire.trim() ? ` «${d.formulaire.trim()}»` : ''

@@ -15,6 +15,11 @@
 /// revocation suivent la carte retenue. Le serveur exige la direction en
 /// double verification pour un comptable : son refus se dit tel quel.
 ///
+/// I1 (02/11/2026) : l'invitation d'un enseignant part par e-mail (code et
+/// lien) des sa creation ; une troisieme carte, « Une famille deja inscrite »,
+/// ouvre l'envoi des invitations aux familles importees
+/// ([InvitationsFamilles]), quand son port est servi.
+///
 /// Etats : chargement (`Skeleton` dans `BlocAsynchrone`), contenu, vide
 /// (`EmptyState`), erreur (`EtatSysteme`, « Reessayer »), hors ligne (bandeau
 /// de `PageShell`, `EtatSansDonnees` quand rien n'a pu etre lu), port absent.
@@ -25,6 +30,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/admin/admin_domaine.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/dates_appareil.dart';
 import '../../core/i18n/strings.g.dart';
@@ -33,6 +39,7 @@ import '../../core/recrutement/port_invitations_comptable.dart';
 import '../../core/recrutement/port_invitations_enseignant.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -44,9 +51,12 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/zone_saisie.dart';
 import '../salle_seance/information_controle.dart' show coupuresAdresse;
+import 'familles_importees.dart';
+import 'invitations_familles.dart';
 
 /// Le ton de la pastille d'un etat (jamais la couleur seule : le mot reste).
 TonEtat tonInvitation(EtatInvitation etat) => switch (etat) {
@@ -71,6 +81,10 @@ enum RoleInvite {
 
   /// Un comptable (BF1-03).
   comptable,
+
+  /// Une famille deja inscrite, importee par la direction (I1) : pas de
+  /// saisie, l'envoi des invitations aux familles importees.
+  famille,
 }
 
 /// L'ecran « Inviter un enseignant » (ou un comptable).
@@ -98,6 +112,8 @@ class _InvitationsPageState extends ConsumerState<InvitationsPage> {
   FutureProvider<List<Invitation>> _liste(RoleInvite role) => switch (role) {
     RoleInvite.enseignant => invitationsEnseignantProvider,
     RoleInvite.comptable => invitationsComptableProvider,
+    // La carte des familles n'a pas de liste d'invitations par code.
+    RoleInvite.famille => invitationsEnseignantProvider,
   };
 
   void _choisir(RoleInvite role) {
@@ -122,14 +138,16 @@ class _InvitationsPageState extends ConsumerState<InvitationsPage> {
     String? succes;
     try {
       final Invitation inv = await port.inviter(_email.text.trim());
+      // I1 : l'invitation d'un enseignant part par e-mail des sa creation ;
+      // celle d'un comptable reste a transmettre.
       succes = comptable
           ? r.comptable.creee(code: inv.code)
-          : r.creee(code: inv.code);
+          : t.i1.invitations.creee(code: inv.code, email: inv.email);
       _email.clear();
     } on ErreurInvitation catch (e) {
       erreur = switch (e) {
         EmailInvalide() => r.emailInvalide,
-        DejaInvite() => r.dejaInvite,
+        DejaInvite() => comptable ? r.dejaInvite : t.i1.invitations.dejaInvite,
         CompteExistant() => r.compteExistant,
         // Le serveur exige la direction en double verification (aal2) pour
         // un comptable : le refus le dit, avec quoi faire.
@@ -192,9 +210,11 @@ class _InvitationsPageState extends ConsumerState<InvitationsPage> {
     final PortInvitationsEnseignant? portComptable = ref.watch(
       portInvitationsComptableProvider,
     );
+    final bool avecFamilles = ref.watch(portFamillesImporteesProvider) != null;
     final List<RoleInvite> roles = <RoleInvite>[
       if (portEnseignant != null) RoleInvite.enseignant,
       if (portComptable != null) RoleInvite.comptable,
+      if (avecFamilles && portEnseignant != null) RoleInvite.famille,
     ];
     final RoleInvite? role = roles.isEmpty
         ? null
@@ -202,7 +222,7 @@ class _InvitationsPageState extends ConsumerState<InvitationsPage> {
         ? _role
         : roles.first;
     final PortInvitationsEnseignant? port = switch (role) {
-      RoleInvite.enseignant => portEnseignant,
+      RoleInvite.enseignant || RoleInvite.famille => portEnseignant,
       RoleInvite.comptable => portComptable,
       null => null,
     };
@@ -211,10 +231,15 @@ class _InvitationsPageState extends ConsumerState<InvitationsPage> {
     return PageShell(
       titre: avecComptable ? r.comptable.titrePage : r.titre,
       sousTitre: avecComptable ? r.comptable.sousTitrePage : r.sousTitre,
-      // ADM-20 : l'onglet Invitations a cede son rang aux Candidatures. Cette
-      // page reste atteignable par un lien de la file (CAND-F01) ; elle n'a
-      // plus d'onglet. Le retour de la coquille d'administration (vers
-      // l'Accueil) reste celui de toutes les pages de Personnes.
+      // I1 (02/11/2026, UX-015) : la page reprend sa place dans les sections
+      // de Personnes (elle reste aussi atteignable depuis les Candidatures).
+      entete: SousNavigationDomaine(
+        onglets: ongletsPersonnes(),
+        indexActif: ongletsPersonnes().indexWhere(
+          (({String libelle, String chemin}) o) =>
+              o.chemin == Routes.adminPersonnesInvitations,
+        ),
+      ),
       child: Align(
         alignment: AlignmentDirectional.topStart,
         child: ConstrainedBox(
@@ -269,20 +294,33 @@ class _InvitationsPageState extends ConsumerState<InvitationsPage> {
                   autour: <AppIcon>[AppIcons.classes, AppIcons.livreOuvert],
                 ),
               ),
-              OptionChoix(
-                cle: const ValueKey<String>('invitations-role-comptable'),
-                valeur: RoleInvite.comptable.name,
-                libelle: r.comptable.comptableTitre,
-                explication: r.comptable.comptableExplication,
-                icone: AppIcons.paiements,
-                illustration: const IllustrationChoix(
-                  AppIcons.paiements,
-                  autour: <AppIcon>[
-                    AppIcons.encaissement,
-                    AppIcons.rapprochement,
-                  ],
+              if (roles.contains(RoleInvite.comptable))
+                OptionChoix(
+                  cle: const ValueKey<String>('invitations-role-comptable'),
+                  valeur: RoleInvite.comptable.name,
+                  libelle: r.comptable.comptableTitre,
+                  explication: r.comptable.comptableExplication,
+                  icone: AppIcons.paiements,
+                  illustration: const IllustrationChoix(
+                    AppIcons.paiements,
+                    autour: <AppIcon>[
+                      AppIcons.encaissement,
+                      AppIcons.rapprochement,
+                    ],
+                  ),
                 ),
-              ),
+              if (roles.contains(RoleInvite.famille))
+                OptionChoix(
+                  cle: const ValueKey<String>('invitations-role-famille'),
+                  valeur: RoleInvite.famille.name,
+                  libelle: t.i1.familles.choixTitre,
+                  explication: t.i1.familles.choixExplication,
+                  icone: AppIcons.foyer,
+                  illustration: const IllustrationChoix(
+                    AppIcons.foyer,
+                    autour: <AppIcon>[AppIcons.invitationEnvoyee],
+                  ),
+                ),
             ],
             onChange: (ReponseChoix reponse) {
               for (final RoleInvite x in RoleInvite.values) {
@@ -292,83 +330,93 @@ class _InvitationsPageState extends ConsumerState<InvitationsPage> {
           ),
           Ecart.vSection,
         ],
-        ZoneSaisie(
-          controleur: _email,
-          cleChamp: const ValueKey<String>('invitations-email'),
-          libelle: comptable ? r.comptable.champEmail : r.champEmail,
-          aide: r.aideEmail,
-          majuscules: TextCapitalization.none,
-          actionClavier: TextInputAction.done,
-          onSubmitted: (_) => unawaited(_inviter(port, role)),
-        ),
-        Ecart.vMd,
-        if (_erreur != null || _succes != null)
-          Semantics(
-            liveRegion: true,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: AppSpacing.md),
-              child: Text(
-                _erreur ?? _succes!,
-                key: ValueKey<String>(
-                  _erreur != null ? 'invitations-erreur' : 'invitations-succes',
+        // I1 : la carte des familles n'a ni saisie ni liste de codes.
+        if (role == RoleInvite.famille)
+          const InvitationsFamilles(
+            key: ValueKey<String>('invitations-familles'),
+          )
+        else ...<Widget>[
+          ZoneSaisie(
+            controleur: _email,
+            cleChamp: const ValueKey<String>('invitations-email'),
+            libelle: comptable ? r.comptable.champEmail : r.champEmail,
+            aide: comptable ? r.aideEmail : t.i1.invitations.aideEmail,
+            majuscules: TextCapitalization.none,
+            actionClavier: TextInputAction.done,
+            onSubmitted: (_) => unawaited(_inviter(port, role)),
+          ),
+          Ecart.vMd,
+          if (_erreur != null || _succes != null)
+            Semantics(
+              liveRegion: true,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                child: Text(
+                  _erreur ?? _succes!,
+                  key: ValueKey<String>(
+                    _erreur != null
+                        ? 'invitations-erreur'
+                        : 'invitations-succes',
+                  ),
+                  style: (_erreur != null ? palette.inkAlert : palette.inkMuted)
+                      .applyTo(textes.bodyMedium ?? const TextStyle()),
                 ),
-                style: (_erreur != null ? palette.inkAlert : palette.inkMuted)
-                    .applyTo(textes.bodyMedium ?? const TextStyle()),
               ),
             ),
+          ActionPrincipale(
+            key: const ValueKey<String>('invitations-inviter'),
+            libelle: r.inviter,
+            enCours: _envoi,
+            onPress: _envoi ? null : () => unawaited(_inviter(port, role)),
           ),
-        ActionPrincipale(
-          key: const ValueKey<String>('invitations-inviter'),
-          libelle: r.inviter,
-          enCours: _envoi,
-          onPress: _envoi ? null : () => unawaited(_inviter(port, role)),
-        ),
-        Ecart.vSection,
-        BlocAsynchrone<List<Invitation>>(
-          key: ValueKey<String>('invitations-bloc-${role.name}'),
-          valeur: valeur,
-          squelette: const Skeleton.liste(lignes: 3),
-          onReessayer: () => ref.invalidate(_liste(role)),
-          vide: EmptyState(
-            key: const ValueKey<String>('invitations-vide'),
-            message: comptable ? r.comptable.vide : r.vide,
-            invitation: comptable ? r.comptable.videDetail : r.videDetail,
-            icone: AppIcons.invitationEnvoyee,
+          Ecart.vSection,
+          BlocAsynchrone<List<Invitation>>(
+            key: ValueKey<String>('invitations-bloc-${role.name}'),
+            valeur: valeur,
+            squelette: const Skeleton.liste(lignes: 3),
+            onReessayer: () => ref.invalidate(_liste(role)),
+            vide: EmptyState(
+              key: const ValueKey<String>('invitations-vide'),
+              message: comptable ? r.comptable.vide : r.vide,
+              invitation: comptable ? r.comptable.videDetail : r.videDetail,
+              icone: AppIcons.invitationEnvoyee,
+            ),
+            erreurVersEtat: (Object e, VoidCallback? reessayer) {
+              if (e is CapaciteIndisponible) {
+                return EtatSysteme(
+                  key: const ValueKey<String>('invitations-indisponible'),
+                  nature: NatureEtat.indisponible,
+                  titre: comptable ? r.comptable.liste : r.indisponibleTitre,
+                  phrase: r.indisponiblePhrase,
+                  dependance: e.dependance,
+                );
+              }
+              return horsLigne
+                  ? EtatSansDonnees(
+                      key: const ValueKey<String>('invitations-sans-donnees'),
+                      quoi: r.sansDonnees,
+                      onAction: reessayer,
+                    )
+                  : EtatSysteme(
+                      key: const ValueKey<String>('invitations-erreur-liste'),
+                      nature: NatureEtat.echecServeur,
+                      phrase: r.erreurListe,
+                      onAction: reessayer,
+                    );
+            },
+            construire: (List<Invitation> lues) => GroupeReglages(
+              titre: comptable
+                  ? r.comptable.liste
+                  : roles.length > 1
+                  ? r.indisponibleTitre
+                  : r.liste,
+              lignes: <LigneRubrique>[
+                for (final Invitation i in lues)
+                  _ligne(i, port, role, horsLigne),
+              ],
+            ),
           ),
-          erreurVersEtat: (Object e, VoidCallback? reessayer) {
-            if (e is CapaciteIndisponible) {
-              return EtatSysteme(
-                key: const ValueKey<String>('invitations-indisponible'),
-                nature: NatureEtat.indisponible,
-                titre: comptable ? r.comptable.liste : r.indisponibleTitre,
-                phrase: r.indisponiblePhrase,
-                dependance: e.dependance,
-              );
-            }
-            return horsLigne
-                ? EtatSansDonnees(
-                    key: const ValueKey<String>('invitations-sans-donnees'),
-                    quoi: r.sansDonnees,
-                    onAction: reessayer,
-                  )
-                : EtatSysteme(
-                    key: const ValueKey<String>('invitations-erreur-liste'),
-                    nature: NatureEtat.echecServeur,
-                    phrase: r.erreurListe,
-                    onAction: reessayer,
-                  );
-          },
-          construire: (List<Invitation> lues) => GroupeReglages(
-            titre: comptable
-                ? r.comptable.liste
-                : roles.length > 1
-                ? r.indisponibleTitre
-                : r.liste,
-            lignes: <LigneRubrique>[
-              for (final Invitation i in lues) _ligne(i, port, role, horsLigne),
-            ],
-          ),
-        ),
+        ],
       ],
     );
   }

@@ -107,6 +107,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$courriels$fr courriels = Traductions$courriels$fr.internal(_root);
 	late final Traductions$admissions$fr admissions = Traductions$admissions$fr.internal(_root);
 	late final Traductions$accueilInscrits$fr accueilInscrits = Traductions$accueilInscrits$fr.internal(_root);
+	late final Traductions$i1$fr i1 = Traductions$i1$fr.internal(_root);
 }
 
 // Path: commun
@@ -3698,6 +3699,19 @@ class Traductions$accueilInscrits$fr {
 
 	/// fr: 'La vérification de votre inscription'
 	String get sansDonnees => 'La vérification de votre inscription';
+}
+
+// Path: i1
+class Traductions$i1$fr {
+	Traductions$i1$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$i1$invitations$fr invitations = Traductions$i1$invitations$fr.internal(_root);
+	late final Traductions$i1$familles$fr familles = Traductions$i1$familles$fr.internal(_root);
+	late final Traductions$i1$import$fr import = Traductions$i1$import$fr.internal(_root);
+	late final Traductions$i1$lien$fr lien = Traductions$i1$lien$fr.internal(_root);
 }
 
 // Path: commun.formats
@@ -20738,6 +20752,152 @@ class Traductions$admissions$modeles$fr {
 	String get sansReponsePhrase => '« Nous n\'avons pas reçu de réponse à notre dernier message. »';
 }
 
+// Path: i1.invitations
+class Traductions$i1$invitations$fr {
+	Traductions$i1$invitations$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le code est créé pour cette adresse et part aussitôt par e-mail, avec le lien d'inscription. Vous pouvez aussi le transmettre de votre côté.'
+	String get aideEmail => 'Le code est créé pour cette adresse et part aussitôt par e-mail, avec le lien d\'inscription. Vous pouvez aussi le transmettre de votre côté.';
+
+	/// fr: 'Invitation créée. L'e-mail avec le code {code} part vers {email}.'
+	String creee({required Object code, required Object email}) => 'Invitation créée. L\'e-mail avec le code ${code} part vers ${email}.';
+
+	/// fr: 'Une invitation est déjà active pour cette adresse. Elle est dans la liste ci-dessous ; son e-mail ne repart pas une seconde fois.'
+	String get dejaInvite => 'Une invitation est déjà active pour cette adresse. Elle est dans la liste ci-dessous ; son e-mail ne repart pas une seconde fois.';
+}
+
+// Path: i1.familles
+class Traductions$i1$familles$fr {
+	Traductions$i1$familles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Une famille déjà inscrite'
+	String get choixTitre => 'Une famille déjà inscrite';
+
+	/// fr: 'À choisir pour les familles importées : chacune reçoit un e-mail pour ouvrir son espace, sans rien ressaisir.'
+	String get choixExplication => 'À choisir pour les familles importées : chacune reçoit un e-mail pour ouvrir son espace, sans rien ressaisir.';
+
+	/// fr: 'Familles à inviter'
+	String get titre => 'Familles à inviter';
+
+	/// fr: 'Chaque famille importée reçoit, sur votre geste, un e-mail qui l'invite à se connecter avec son adresse. Rien ne part tout seul.'
+	String get aide => 'Chaque famille importée reçoit, sur votre geste, un e-mail qui l\'invite à se connecter avec son adresse. Rien ne part tout seul.';
+
+	/// fr: 'Personnes : {n}'
+	String personnes({required Object n}) => 'Personnes : ${n}';
+
+	late final Traductions$i1$familles$etat$fr etat = Traductions$i1$familles$etat$fr.internal(_root);
+
+	/// fr: 'Envoyée le {date}'
+	String envoyeeLe({required Object date}) => 'Envoyée le ${date}';
+
+	/// fr: 'Envoyer l'invitation'
+	String get envoyer => 'Envoyer l\'invitation';
+
+	/// fr: 'Envoyer l'invitation à {email}'
+	String envoyerPour({required Object email}) => 'Envoyer l\'invitation à ${email}';
+
+	/// fr: 'Renvoyer l'invitation'
+	String get renvoyer => 'Renvoyer l\'invitation';
+
+	/// fr: 'Renvoyer l'invitation à {email}'
+	String renvoyerPour({required Object email}) => 'Renvoyer l\'invitation à ${email}';
+
+	/// fr: 'Envoyer à toutes les familles ({n})'
+	String envoyerToutes({required Object n}) => 'Envoyer à toutes les familles (${n})';
+
+	/// fr: 'Envoyer l'invitation à {n} familles ?'
+	String toutesQuestion({required Object n}) => 'Envoyer l\'invitation à ${n} familles ?';
+
+	/// fr: 'Chaque famille reçoit un e-mail tout de suite. Un e-mail parti ne se reprend pas.'
+	String get toutesConsequence => 'Chaque famille reçoit un e-mail tout de suite. Un e-mail parti ne se reprend pas.';
+
+	/// fr: 'Envoyer les {n} invitations'
+	String toutesConfirmer({required Object n}) => 'Envoyer les ${n} invitations';
+
+	/// fr: 'L'invitation part vers {email}.'
+	String enFile({required Object email}) => 'L\'invitation part vers ${email}.';
+
+	/// fr: 'Une invitation est déjà partie ou en cours d'envoi vers {email} : rien de plus n'est envoyé.'
+	String dejaEnFile({required Object email}) => 'Une invitation est déjà partie ou en cours d\'envoi vers ${email} : rien de plus n\'est envoyé.';
+
+	/// fr: 'Cette famille a déjà ouvert son espace : rien n'est envoyé.'
+	String get compteCree => 'Cette famille a déjà ouvert son espace : rien n\'est envoyé.';
+
+	/// fr: 'Cette famille n'est plus à inviter. Actualisez la liste.'
+	String get introuvable => 'Cette famille n\'est plus à inviter. Actualisez la liste.';
+
+	/// fr: 'Les invitations partent vers {n} familles.'
+	String toutesEnFile({required Object n}) => 'Les invitations partent vers ${n} familles.';
+
+	/// fr: 'La liste a changé depuis votre confirmation : rien n'est parti. Relisez-la, puis confirmez de nouveau.'
+	String get nombreChange => 'La liste a changé depuis votre confirmation : rien n\'est parti. Relisez-la, puis confirmez de nouveau.';
+
+	/// fr: 'L'envoi n'est pas confirmé. Actualisez la liste avant de recommencer.'
+	String get erreurEnvoi => 'L\'envoi n\'est pas confirmé. Actualisez la liste avant de recommencer.';
+
+	/// fr: 'Pas de connexion : rien n'est parti. Réessayez dans un instant.'
+	String get horsLigne => 'Pas de connexion : rien n\'est parti. Réessayez dans un instant.';
+
+	/// fr: 'Seule la direction peut envoyer ces invitations. Reconnectez-vous avec un compte de la direction.'
+	String get nonAutorise => 'Seule la direction peut envoyer ces invitations. Reconnectez-vous avec un compte de la direction.';
+
+	/// fr: 'Aucune famille importée à inviter'
+	String get vide => 'Aucune famille importée à inviter';
+
+	/// fr: 'Importez les inscriptions actuelles : chaque famille confirmée apparaît ici.'
+	String get videDetail => 'Importez les inscriptions actuelles : chaque famille confirmée apparaît ici.';
+
+	/// fr: 'Toutes les familles ont reçu leur invitation ou ouvert leur espace.'
+	String get toutesEnvoyees => 'Toutes les familles ont reçu leur invitation ou ouvert leur espace.';
+
+	/// fr: 'Les familles importées n'ont pas pu être lues. Réessayez dans un instant.'
+	String get erreurListe => 'Les familles importées n\'ont pas pu être lues. Réessayez dans un instant.';
+
+	/// fr: 'Les familles importées'
+	String get sansDonnees => 'Les familles importées';
+
+	/// fr: 'L'envoi des invitations aux familles n'est pas encore branché sur ce serveur.'
+	String get indisponible => 'L\'envoi des invitations aux familles n\'est pas encore branché sur ce serveur.';
+}
+
+// Path: i1.import
+class Traductions$i1$import$fr {
+	Traductions$i1$import$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Chaque nouvelle famille attend votre invitation. La liste juste en dessous l'envoie à une famille ou à toutes. Rien ne part tout seul.'
+	String get invitationsAide => 'Chaque nouvelle famille attend votre invitation. La liste juste en dessous l\'envoie à une famille ou à toutes. Rien ne part tout seul.';
+}
+
+// Path: i1.lien
+class Traductions$i1$lien$fr {
+	Traductions$i1$lien$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce lien a déjà servi ou a expiré'
+	String get dejaServiTitre => 'Ce lien a déjà servi ou a expiré';
+
+	/// fr: 'Un lien de connexion ne sert qu'une fois, et pour peu de temps. Demandez-en un nouveau : saisissez votre adresse e-mail sur la page de connexion.'
+	String get dejaServiDetail => 'Un lien de connexion ne sert qu\'une fois, et pour peu de temps. Demandez-en un nouveau : saisissez votre adresse e-mail sur la page de connexion.';
+
+	/// fr: 'Recevoir un nouveau lien'
+	String get nouveauLien => 'Recevoir un nouveau lien';
+}
+
 // Path: commun.etats.chargementProlonge
 class Traductions$commun$etats$chargementProlonge$fr {
 	Traductions$commun$etats$chargementProlonge$fr.internal(this._root);
@@ -36382,6 +36542,30 @@ class Traductions$courriels$admin$adresses$fr {
 
 	/// fr: 'Les adresses d'envoi n'ont pas pu être chargées'
 	String get sansDonnees => 'Les adresses d\'envoi n\'ont pas pu être chargées';
+}
+
+// Path: i1.familles.etat
+class Traductions$i1$familles$etat$fr {
+	Traductions$i1$familles$etat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À envoyer'
+	String get aEnvoyer => 'À envoyer';
+
+	/// fr: 'En cours d'envoi'
+	String get enFile => 'En cours d\'envoi';
+
+	/// fr: 'Envoyée'
+	String get envoyee => 'Envoyée';
+
+	/// fr: 'Non partie'
+	String get echec => 'Non partie';
+
+	/// fr: 'Espace ouvert'
+	String get compteCree => 'Espace ouvert';
 }
 
 // Path: salle.preparation.eleve.guidee
@@ -52678,6 +52862,47 @@ extension on Traductions {
 			'accueilInscrits.echecTitre' => 'Votre inscription n\'a pas pu être vérifiée',
 			'accueilInscrits.echecPhrase' => 'Cause probable : la connexion au serveur s\'est interrompue (non confirmé). Réessayez dans un instant : rien n\'est créé en double.',
 			'accueilInscrits.sansDonnees' => 'La vérification de votre inscription',
+			'i1.invitations.aideEmail' => 'Le code est créé pour cette adresse et part aussitôt par e-mail, avec le lien d\'inscription. Vous pouvez aussi le transmettre de votre côté.',
+			'i1.invitations.creee' => ({required Object code, required Object email}) => 'Invitation créée. L\'e-mail avec le code ${code} part vers ${email}.',
+			'i1.invitations.dejaInvite' => 'Une invitation est déjà active pour cette adresse. Elle est dans la liste ci-dessous ; son e-mail ne repart pas une seconde fois.',
+			'i1.familles.choixTitre' => 'Une famille déjà inscrite',
+			'i1.familles.choixExplication' => 'À choisir pour les familles importées : chacune reçoit un e-mail pour ouvrir son espace, sans rien ressaisir.',
+			'i1.familles.titre' => 'Familles à inviter',
+			'i1.familles.aide' => 'Chaque famille importée reçoit, sur votre geste, un e-mail qui l\'invite à se connecter avec son adresse. Rien ne part tout seul.',
+			'i1.familles.personnes' => ({required Object n}) => 'Personnes : ${n}',
+			'i1.familles.etat.aEnvoyer' => 'À envoyer',
+			'i1.familles.etat.enFile' => 'En cours d\'envoi',
+			'i1.familles.etat.envoyee' => 'Envoyée',
+			'i1.familles.etat.echec' => 'Non partie',
+			'i1.familles.etat.compteCree' => 'Espace ouvert',
+			'i1.familles.envoyeeLe' => ({required Object date}) => 'Envoyée le ${date}',
+			'i1.familles.envoyer' => 'Envoyer l\'invitation',
+			'i1.familles.envoyerPour' => ({required Object email}) => 'Envoyer l\'invitation à ${email}',
+			'i1.familles.renvoyer' => 'Renvoyer l\'invitation',
+			'i1.familles.renvoyerPour' => ({required Object email}) => 'Renvoyer l\'invitation à ${email}',
+			'i1.familles.envoyerToutes' => ({required Object n}) => 'Envoyer à toutes les familles (${n})',
+			'i1.familles.toutesQuestion' => ({required Object n}) => 'Envoyer l\'invitation à ${n} familles ?',
+			'i1.familles.toutesConsequence' => 'Chaque famille reçoit un e-mail tout de suite. Un e-mail parti ne se reprend pas.',
+			'i1.familles.toutesConfirmer' => ({required Object n}) => 'Envoyer les ${n} invitations',
+			'i1.familles.enFile' => ({required Object email}) => 'L\'invitation part vers ${email}.',
+			'i1.familles.dejaEnFile' => ({required Object email}) => 'Une invitation est déjà partie ou en cours d\'envoi vers ${email} : rien de plus n\'est envoyé.',
+			'i1.familles.compteCree' => 'Cette famille a déjà ouvert son espace : rien n\'est envoyé.',
+			'i1.familles.introuvable' => 'Cette famille n\'est plus à inviter. Actualisez la liste.',
+			'i1.familles.toutesEnFile' => ({required Object n}) => 'Les invitations partent vers ${n} familles.',
+			'i1.familles.nombreChange' => 'La liste a changé depuis votre confirmation : rien n\'est parti. Relisez-la, puis confirmez de nouveau.',
+			'i1.familles.erreurEnvoi' => 'L\'envoi n\'est pas confirmé. Actualisez la liste avant de recommencer.',
+			'i1.familles.horsLigne' => 'Pas de connexion : rien n\'est parti. Réessayez dans un instant.',
+			'i1.familles.nonAutorise' => 'Seule la direction peut envoyer ces invitations. Reconnectez-vous avec un compte de la direction.',
+			'i1.familles.vide' => 'Aucune famille importée à inviter',
+			'i1.familles.videDetail' => 'Importez les inscriptions actuelles : chaque famille confirmée apparaît ici.',
+			'i1.familles.toutesEnvoyees' => 'Toutes les familles ont reçu leur invitation ou ouvert leur espace.',
+			'i1.familles.erreurListe' => 'Les familles importées n\'ont pas pu être lues. Réessayez dans un instant.',
+			'i1.familles.sansDonnees' => 'Les familles importées',
+			'i1.familles.indisponible' => 'L\'envoi des invitations aux familles n\'est pas encore branché sur ce serveur.',
+			'i1.import.invitationsAide' => 'Chaque nouvelle famille attend votre invitation. La liste juste en dessous l\'envoie à une famille ou à toutes. Rien ne part tout seul.',
+			'i1.lien.dejaServiTitre' => 'Ce lien a déjà servi ou a expiré',
+			'i1.lien.dejaServiDetail' => 'Un lien de connexion ne sert qu\'une fois, et pour peu de temps. Demandez-en un nouveau : saisissez votre adresse e-mail sur la page de connexion.',
+			'i1.lien.nouveauLien' => 'Recevoir un nouveau lien',
 			_ => null,
 		};
 	}

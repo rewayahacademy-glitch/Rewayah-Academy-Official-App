@@ -19,6 +19,7 @@ import '../../core/widgets/page_shell.dart';
 import '../accueil_inscrits/accueil_inscrits_page.dart';
 import 'brouillon_inscription.dart';
 import 'etapes/usage_etape.dart';
+import 'invitation_en_cours.dart';
 import 'questionnaire/questionnaire_inscription.dart';
 
 /// `TUT-00c` : creer son profil, en pages courtes.
@@ -77,6 +78,15 @@ class _InscriptionPageState extends ConsumerState<InscriptionPage> {
       return;
     }
     _parcoursOuvert = true;
+    // I1 (UX-013) : au retour du lien de connexion, une invitation
+    // d'enseignant en cours reprend sur son code, pas sur « Pour qui ».
+    final String? invitation = routeInvitationEnCours(
+      ref.read(brouillonInscriptionProvider),
+    );
+    if (invitation != null) {
+      context.go(invitation);
+      return;
+    }
     // Admission, lot B : « Pour qui » a sa reponse dans le questionnaire
     // pose avant le compte ; l'inscription la reprend.
     final UsageInscription? usageQuestionnaire = ref
@@ -135,14 +145,31 @@ void exigerEtapesPrecedentes(
   BrouillonInscription brouillon,
   String route,
 ) {
-  final String manquante = brouillon.premiereEtapeManquante;
-  if (rangEtape(brouillon, manquante) < rangEtape(brouillon, route)) {
+  final String premiere = brouillon.premiereEtapeManquante;
+  if (rangEtape(brouillon, premiere) < rangEtape(brouillon, route)) {
+    // I1 (UX-017) : apres un rechargement au milieu de l'inscription d'un
+    // enseignant invite, on reprend sur le code (relu et reverifie), pas sur
+    // « Pour qui creez-vous ce compte ? ».
+    final String manquante = premiere == Routes.inscriptionUsage
+        ? routeInvitationEnCours(brouillon) ?? premiere
+        : premiere;
     WidgetsBinding.instance.addPostFrameCallback((Duration _) {
       if (context.mounted) {
         context.go(manquante);
       }
     });
   }
+}
+
+/// I1 (UX-013, UX-017) : l'ecran du code quand une invitation d'enseignant
+/// est en cours sur cet appareil et que le profil n'est pas encore cree ;
+/// `null` sinon (le parcours habituel). Un brouillon d'une autre sorte
+/// (famille, adulte, comptable) n'est jamais detourne.
+String? routeInvitationEnCours(BrouillonInscription brouillon) {
+  if (brouillon.profilCree) return null;
+  final UsageInscription? usage = brouillon.usage;
+  if (usage != null && usage != UsageInscription.enseignant) return null;
+  return lireInvitationEnCours()?.route;
 }
 
 /// Va a l'etape suivante, ou revient au recapitulatif apres « Modifier ».

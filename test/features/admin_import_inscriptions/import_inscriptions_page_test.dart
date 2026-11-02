@@ -532,7 +532,9 @@ void main() {
       expect(find.text(a.resultat.personnesCreees), findsOneWidget);
       expect(find.text(a.resultat.personnesPresentes), findsOneWidget);
       expect(find.text(a.resultat.invitations), findsOneWidget);
-      expect(find.text(a.resultat.invitationsAide), findsOneWidget);
+      // I1 : les familles s'invitent juste sous la carte ; rien ne part seul.
+      expect(find.text(t.i1.import.invitationsAide), findsOneWidget);
+      expect(_cle('import-invitations-familles'), findsOneWidget);
       // Les lignes refusees gardent leur motif.
       expect(
         find.text(

@@ -58,6 +58,7 @@ import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/zone_saisie.dart';
+import '../admin_invitations/invitations_familles.dart';
 import '../salle_seance/information_controle.dart' show coupuresAdresse;
 import 'selecteur_csv.dart';
 
@@ -1088,7 +1089,16 @@ class _ImportInscriptionsPageState
                   ),
                 ],
               ),
-              child: Text(a.resultat.invitationsAide, style: textes.bodyMedium),
+              // I1 (02/11/2026) : les familles s'invitent juste en dessous,
+              // une a la fois ou toutes ; rien ne part tout seul.
+              child: Text(
+                t.i1.import.invitationsAide,
+                style: textes.bodyMedium,
+              ),
+            ),
+            const InvitationsFamilles(
+              key: ValueKey<String>('import-invitations-familles'),
+              avecTitre: false,
             ),
             if (refus.isNotEmpty)
               _listeProblemes(

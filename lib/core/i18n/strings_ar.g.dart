@@ -100,6 +100,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$courriels$ar courriels = _Traductions$courriels$ar._(_root);
 	@override late final _Traductions$admissions$ar admissions = _Traductions$admissions$ar._(_root);
 	@override late final _Traductions$accueilInscrits$ar accueilInscrits = _Traductions$accueilInscrits$ar._(_root);
+	@override late final _Traductions$i1$ar i1 = _Traductions$i1$ar._(_root);
 }
 
 // Path: notifications
@@ -1837,6 +1838,19 @@ class _Traductions$accueilInscrits$ar extends Traductions$accueilInscrits$fr {
 	@override String get echecTitre => 'تعذر التحقق من تسجيلكم';
 	@override String get echecPhrase => 'السبب المحتمل: انقطع الاتصال بالخادم (غير مؤكد). أعيدوا المحاولة بعد قليل: لا يُنشأ أي شيء مرتين.';
 	@override String get sansDonnees => 'التحقق من تسجيلكم';
+}
+
+// Path: i1
+class _Traductions$i1$ar extends Traductions$i1$fr {
+	_Traductions$i1$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$i1$invitations$ar invitations = _Traductions$i1$invitations$ar._(_root);
+	@override late final _Traductions$i1$familles$ar familles = _Traductions$i1$familles$ar._(_root);
+	@override late final _Traductions$i1$import$ar import = _Traductions$i1$import$ar._(_root);
+	@override late final _Traductions$i1$lien$ar lien = _Traductions$i1$lien$ar._(_root);
 }
 
 // Path: notifications.evenements
@@ -9030,6 +9044,79 @@ class _Traductions$admissions$modeles$ar extends Traductions$admissions$modeles$
 	@override String get niveauPhrase => '«المستوى المطلوب غير متاح بعد.»';
 	@override String get sansReponse => 'لا رد';
 	@override String get sansReponsePhrase => '«لم نتلق ردًا على رسالتنا الأخيرة.»';
+}
+
+// Path: i1.invitations
+class _Traductions$i1$invitations$ar extends Traductions$i1$invitations$fr {
+	_Traductions$i1$invitations$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get aideEmail => 'يُنشأ الرمز لهذا العنوان ويُرسَل فورًا بالبريد الإلكتروني مع رابط التسجيل. ويمكنك أيضًا أن تنقله بنفسك.';
+	@override String creee({required Object code, required Object email}) => 'أُنشئت الدعوة. يُرسَل البريد الذي فيه الرمز ⁨${code}⁩ إلى ⁨${email}⁩.';
+	@override String get dejaInvite => 'توجد دعوة سارية لهذا العنوان، وهي في القائمة أدناه؛ ولا يُعاد إرسال بريدها مرة ثانية.';
+}
+
+// Path: i1.familles
+class _Traductions$i1$familles$ar extends Traductions$i1$familles$fr {
+	_Traductions$i1$familles$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get choixTitre => 'أسرة مسجّلة من قبل';
+	@override String get choixExplication => 'اختر هذا للأسر المستوردة: تتلقى كل أسرة بريدًا لفتح مساحتها دون إعادة إدخال أي شيء.';
+	@override String get titre => 'أسر تنتظر الدعوة';
+	@override String get aide => 'تتلقى كل أسرة مستوردة، عندما تطلب ذلك، بريدًا يدعوها إلى تسجيل الدخول بعنوانها. لا شيء يُرسَل من تلقاء نفسه.';
+	@override String personnes({required Object n}) => 'عدد الأفراد: ⁨${n}⁩';
+	@override late final _Traductions$i1$familles$etat$ar etat = _Traductions$i1$familles$etat$ar._(_root);
+	@override String envoyeeLe({required Object date}) => 'أُرسلت في ⁨${date}⁩';
+	@override String get envoyer => 'إرسال الدعوة';
+	@override String envoyerPour({required Object email}) => 'إرسال الدعوة إلى ⁨${email}⁩';
+	@override String get renvoyer => 'إعادة إرسال الدعوة';
+	@override String renvoyerPour({required Object email}) => 'إعادة إرسال الدعوة إلى ⁨${email}⁩';
+	@override String envoyerToutes({required Object n}) => 'الإرسال إلى كل الأسر (⁨${n}⁩)';
+	@override String toutesQuestion({required Object n}) => 'إرسال الدعوة إلى كل الأسر؟ عددها: ⁨${n}⁩';
+	@override String get toutesConsequence => 'تتلقى كل أسرة بريدًا فورًا. والبريد المرسَل لا يُسترجَع.';
+	@override String toutesConfirmer({required Object n}) => 'إرسال الدعوات (⁨${n}⁩)';
+	@override String enFile({required Object email}) => 'تُرسَل الدعوة إلى ⁨${email}⁩.';
+	@override String dejaEnFile({required Object email}) => 'أُرسلت دعوة إلى ⁨${email}⁩ أو هي قيد الإرسال: لا يُرسَل شيء إضافي.';
+	@override String get compteCree => 'فتحت هذه الأسرة مساحتها من قبل: لا يُرسَل شيء.';
+	@override String get introuvable => 'لم تعد هذه الأسرة في انتظار الدعوة. حدّث القائمة.';
+	@override String toutesEnFile({required Object n}) => 'تُرسَل الدعوات. عدد الأسر: ⁨${n}⁩.';
+	@override String get nombreChange => 'تغيّرت القائمة منذ تأكيدك: لم يُرسَل شيء. راجعها، ثم أكّد من جديد.';
+	@override String get erreurEnvoi => 'لم يتأكد الإرسال. حدّث القائمة قبل أن تعيد المحاولة.';
+	@override String get horsLigne => 'لا يوجد اتصال: لم يُرسَل شيء. أعد المحاولة بعد قليل.';
+	@override String get nonAutorise => 'لا ترسل هذه الدعوات إلا الإدارة. سجّل الدخول من جديد بحساب الإدارة.';
+	@override String get vide => 'لا توجد أسرة مستوردة تنتظر الدعوة';
+	@override String get videDetail => 'استورد التسجيلات الحالية: تظهر هنا كل أسرة مؤكَّدة.';
+	@override String get toutesEnvoyees => 'تلقت كل الأسر دعوتها أو فتحت مساحتها.';
+	@override String get erreurListe => 'تعذّرت قراءة الأسر المستوردة. أعد المحاولة بعد قليل.';
+	@override String get sansDonnees => 'الأسر المستوردة';
+	@override String get indisponible => 'إرسال الدعوات إلى الأسر غير موصول بعد بهذا الخادم.';
+}
+
+// Path: i1.import
+class _Traductions$i1$import$ar extends Traductions$i1$import$fr {
+	_Traductions$i1$import$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get invitationsAide => 'كل أسرة جديدة تنتظر دعوتك. القائمة التي تحت هذا مباشرة ترسلها إلى أسرة واحدة أو إلى الجميع. لا شيء يُرسَل من تلقاء نفسه.';
+}
+
+// Path: i1.lien
+class _Traductions$i1$lien$ar extends Traductions$i1$lien$fr {
+	_Traductions$i1$lien$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get dejaServiTitre => 'استُعمل هذا الرابط من قبل أو انتهت صلاحيته';
+	@override String get dejaServiDetail => 'لا يصلح رابط تسجيل الدخول إلا مرة واحدة ولمدة قصيرة. اطلب رابطًا جديدًا: أدخل عنوان بريدك الإلكتروني في صفحة تسجيل الدخول.';
+	@override String get nouveauLien => 'الحصول على رابط جديد';
 }
 
 // Path: commun.etats.chargementProlonge
@@ -16624,6 +16711,20 @@ class _Traductions$courriels$admin$adresses$ar extends Traductions$courriels$adm
 	@override String get vide => 'لا توجد فئات حاليًا.';
 	@override String get erreur => 'تعذّر تحميل عناوين الإرسال. أعد المحاولة.';
 	@override String get sansDonnees => 'تعذّر تحميل عناوين الإرسال';
+}
+
+// Path: i1.familles.etat
+class _Traductions$i1$familles$etat$ar extends Traductions$i1$familles$etat$fr {
+	_Traductions$i1$familles$etat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get aEnvoyer => 'للإرسال';
+	@override String get enFile => 'قيد الإرسال';
+	@override String get envoyee => 'أُرسلت';
+	@override String get echec => 'لم تُرسَل';
+	@override String get compteCree => 'المساحة مفتوحة';
 }
 
 // Path: classe.entree.demo.roles
@@ -29352,6 +29453,47 @@ extension on TraductionsAr {
 			'accueilInscrits.echecTitre' => 'تعذر التحقق من تسجيلكم',
 			'accueilInscrits.echecPhrase' => 'السبب المحتمل: انقطع الاتصال بالخادم (غير مؤكد). أعيدوا المحاولة بعد قليل: لا يُنشأ أي شيء مرتين.',
 			'accueilInscrits.sansDonnees' => 'التحقق من تسجيلكم',
+			'i1.invitations.aideEmail' => 'يُنشأ الرمز لهذا العنوان ويُرسَل فورًا بالبريد الإلكتروني مع رابط التسجيل. ويمكنك أيضًا أن تنقله بنفسك.',
+			'i1.invitations.creee' => ({required Object code, required Object email}) => 'أُنشئت الدعوة. يُرسَل البريد الذي فيه الرمز ⁨${code}⁩ إلى ⁨${email}⁩.',
+			'i1.invitations.dejaInvite' => 'توجد دعوة سارية لهذا العنوان، وهي في القائمة أدناه؛ ولا يُعاد إرسال بريدها مرة ثانية.',
+			'i1.familles.choixTitre' => 'أسرة مسجّلة من قبل',
+			'i1.familles.choixExplication' => 'اختر هذا للأسر المستوردة: تتلقى كل أسرة بريدًا لفتح مساحتها دون إعادة إدخال أي شيء.',
+			'i1.familles.titre' => 'أسر تنتظر الدعوة',
+			'i1.familles.aide' => 'تتلقى كل أسرة مستوردة، عندما تطلب ذلك، بريدًا يدعوها إلى تسجيل الدخول بعنوانها. لا شيء يُرسَل من تلقاء نفسه.',
+			'i1.familles.personnes' => ({required Object n}) => 'عدد الأفراد: ⁨${n}⁩',
+			'i1.familles.etat.aEnvoyer' => 'للإرسال',
+			'i1.familles.etat.enFile' => 'قيد الإرسال',
+			'i1.familles.etat.envoyee' => 'أُرسلت',
+			'i1.familles.etat.echec' => 'لم تُرسَل',
+			'i1.familles.etat.compteCree' => 'المساحة مفتوحة',
+			'i1.familles.envoyeeLe' => ({required Object date}) => 'أُرسلت في ⁨${date}⁩',
+			'i1.familles.envoyer' => 'إرسال الدعوة',
+			'i1.familles.envoyerPour' => ({required Object email}) => 'إرسال الدعوة إلى ⁨${email}⁩',
+			'i1.familles.renvoyer' => 'إعادة إرسال الدعوة',
+			'i1.familles.renvoyerPour' => ({required Object email}) => 'إعادة إرسال الدعوة إلى ⁨${email}⁩',
+			'i1.familles.envoyerToutes' => ({required Object n}) => 'الإرسال إلى كل الأسر (⁨${n}⁩)',
+			'i1.familles.toutesQuestion' => ({required Object n}) => 'إرسال الدعوة إلى كل الأسر؟ عددها: ⁨${n}⁩',
+			'i1.familles.toutesConsequence' => 'تتلقى كل أسرة بريدًا فورًا. والبريد المرسَل لا يُسترجَع.',
+			'i1.familles.toutesConfirmer' => ({required Object n}) => 'إرسال الدعوات (⁨${n}⁩)',
+			'i1.familles.enFile' => ({required Object email}) => 'تُرسَل الدعوة إلى ⁨${email}⁩.',
+			'i1.familles.dejaEnFile' => ({required Object email}) => 'أُرسلت دعوة إلى ⁨${email}⁩ أو هي قيد الإرسال: لا يُرسَل شيء إضافي.',
+			'i1.familles.compteCree' => 'فتحت هذه الأسرة مساحتها من قبل: لا يُرسَل شيء.',
+			'i1.familles.introuvable' => 'لم تعد هذه الأسرة في انتظار الدعوة. حدّث القائمة.',
+			'i1.familles.toutesEnFile' => ({required Object n}) => 'تُرسَل الدعوات. عدد الأسر: ⁨${n}⁩.',
+			'i1.familles.nombreChange' => 'تغيّرت القائمة منذ تأكيدك: لم يُرسَل شيء. راجعها، ثم أكّد من جديد.',
+			'i1.familles.erreurEnvoi' => 'لم يتأكد الإرسال. حدّث القائمة قبل أن تعيد المحاولة.',
+			'i1.familles.horsLigne' => 'لا يوجد اتصال: لم يُرسَل شيء. أعد المحاولة بعد قليل.',
+			'i1.familles.nonAutorise' => 'لا ترسل هذه الدعوات إلا الإدارة. سجّل الدخول من جديد بحساب الإدارة.',
+			'i1.familles.vide' => 'لا توجد أسرة مستوردة تنتظر الدعوة',
+			'i1.familles.videDetail' => 'استورد التسجيلات الحالية: تظهر هنا كل أسرة مؤكَّدة.',
+			'i1.familles.toutesEnvoyees' => 'تلقت كل الأسر دعوتها أو فتحت مساحتها.',
+			'i1.familles.erreurListe' => 'تعذّرت قراءة الأسر المستوردة. أعد المحاولة بعد قليل.',
+			'i1.familles.sansDonnees' => 'الأسر المستوردة',
+			'i1.familles.indisponible' => 'إرسال الدعوات إلى الأسر غير موصول بعد بهذا الخادم.',
+			'i1.import.invitationsAide' => 'كل أسرة جديدة تنتظر دعوتك. القائمة التي تحت هذا مباشرة ترسلها إلى أسرة واحدة أو إلى الجميع. لا شيء يُرسَل من تلقاء نفسه.',
+			'i1.lien.dejaServiTitre' => 'استُعمل هذا الرابط من قبل أو انتهت صلاحيته',
+			'i1.lien.dejaServiDetail' => 'لا يصلح رابط تسجيل الدخول إلا مرة واحدة ولمدة قصيرة. اطلب رابطًا جديدًا: أدخل عنوان بريدك الإلكتروني في صفحة تسجيل الدخول.',
+			'i1.lien.nouveauLien' => 'الحصول على رابط جديد',
 			_ => null,
 		};
 	}
