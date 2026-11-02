@@ -71,6 +71,22 @@ class QuestionnairePage extends ConsumerWidget {
         });
       }
     }
+    if (demandee == null) {
+      // INSCRIPTION-3 (constat du directeur, 01/11) : sans `?etape=`, l'ecran
+      // montre « le premier sans reponse » ; une reponse le deplacait, et un
+      // toucher sur « Pour qui » passait aussitot au prenom, sans etat choisi
+      // ni « Continuer ». L'ecran affiche fixe donc son adresse des
+      // l'ouverture, comme tous les autres : un toucher choisit, « Continuer »
+      // avance. Sans entree d'historique de plus (`Router.neglect`) : le
+      // retour du navigateur ne revient pas sur `/commencer` nu, qui
+      // redirigerait aussitot.
+      final String fixe = adresse(etapes[rang]);
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        if (context.mounted) {
+          Router.neglect(context, () => context.go(fixe));
+        }
+      });
+    }
     final EtapeQuestionnaire etape = etapes[rang];
     final QuestionnaireControleur controleur = ref.read(
       questionnaireInscriptionProvider.notifier,

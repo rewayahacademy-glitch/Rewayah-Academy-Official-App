@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -45,6 +47,9 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
 
   bool _envoi = false;
   String? _erreur;
+
+  /// Le filet de [_actualiserPuisAller], annule a la fermeture.
+  Timer? _filet;
 
   Future<void> _creer() async {
     if (_envoi) {
@@ -114,8 +119,11 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
                   : null,
             );
         ref.read(brouillonInscriptionProvider.notifier).noterProfilCree();
-        // La demande est partie : les reponses quittent l'appareil.
-        ref.read(questionnaireInscriptionProvider.notifier).effacer();
+        // La demande est partie : les reponses quitteront l'appareil a
+        // l'arrivee sur `/attente` ([DepartDemande]). INSCRIPTION-3 : effacees
+        // ici, elles disparaissaient du recapitulatif encore affiche (lignes de
+        // l'enfant et de la langue vides) pendant l'actualisation.
+        ref.read(departDemandeProvider.notifier).commencer();
         ref.read(codeInvitationRetenuProvider.notifier).oublier();
       }
     } on InvitationNonConsommee {
@@ -128,6 +136,7 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
       _echec(t.inscription.erreur);
       return;
     }
+    ref.read(departDemandeProvider.notifier).commencer();
     await _actualiserPuisAller(Routes.attente);
   }
 
@@ -183,18 +192,36 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
   }
 
   Future<void> _actualiserPuisAller(String destination) async {
+    // Lu avant l'attente : l'ecran peut etre remonte pendant l'actualisation,
+    // le drapeau doit retomber quand meme en cas d'echec.
+    final DepartDemande depart = ref.read(departDemandeProvider.notifier);
     try {
       // Le role et le foyer sont injectes dans le jeton par le hook de la base :
       // le jeton emis avant la creation ne les porte pas encore.
       await ref.read(sourceSessionProvider).rafraichir();
     } on Object {
+      depart.finir();
       _echec(t.inscription.erreurActualisation);
       return;
     }
     if (mounted) {
-      setState(() => _envoi = false);
       context.go(destination);
+      // Filet : si l'ecran est encore la bien apres (aucune navigation), le
+      // bouton revient au lieu de tourner sans fin.
+      _filet?.cancel();
+      _filet = Timer(const Duration(seconds: 2), () {
+        if (mounted) {
+          depart.finir();
+          setState(() => _envoi = false);
+        }
+      });
     }
+  }
+
+  @override
+  void dispose() {
+    _filet?.cancel();
+    super.dispose();
   }
 
   /// L'adresse d'une question du questionnaire.
@@ -237,9 +264,16 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
     // appareil, une memoire effacee), on reprend les premieres questions.
     final bool sansQuestionnaire =
         brouillon.titulaire && !brouillon.profilCree && !questionnaire.complet;
+    // INSCRIPTION-3 : le profil cree, la demande part ([DepartDemande]) ;
+    // l'ecran ne propose plus rien et ne dit plus « Reessayer », meme
+    // remonte par l'actualisation de la session (lu sur la pile locale, 229 a
+    // 302 ms apres l'envoi).
+    final bool depart =
+        brouillon.profilCree && ref.watch(departDemandeProvider);
+    final bool enCours = _envoi || depart;
     final String? erreur =
         _erreur ??
-        (brouillon.profilCree && !_envoi
+        (brouillon.profilCree && !enCours
             ? t.inscription.erreurActualisation
             : null);
 
@@ -253,13 +287,13 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
             libelle: t.inscription.modifier,
             niveau: NiveauAction.tertiaire,
             pleineLargeur: false,
-            onPress: _envoi ? null : () => _modifier(route),
+            onPress: enCours ? null : () => _modifier(route),
           );
 
     final bool peutAjouter =
         brouillon.usage == UsageInscription.famille &&
         !brouillon.profilCree &&
-        !_envoi &&
+        !enCours &&
         questionnaire.enfants.length +
                 (questionnaire.titulaireApprend ? 1 : 0) <
             apprenantsMaximum;
@@ -271,7 +305,10 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
       explication: sansQuestionnaire
           ? t.inscription.questionnaire.aucuneReponse
           : null,
-      libelleAction: brouillon.profilCree
+      // INSCRIPTION-3 : pendant l'envoi, l'etiquette ne change pas ; le
+      // profil cree, elle disait « Reessayer » avant meme le depart, alors
+      // que rien n'avait echoue.
+      libelleAction: brouillon.profilCree && !enCours
           ? t.inscription.reessayer
           : sansQuestionnaire
           ? t.commun.continuer
@@ -301,10 +338,10 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
               ),
             )
           : null,
-      onRetour: _envoi || brouillon.profilCree
+      onRetour: enCours || brouillon.profilCree
           ? null
           : () => context.go(Routes.inscriptionGenre),
-      enCours: _envoi,
+      enCours: enCours,
       souscription: erreur == null ? null : ErreurEtape(message: erreur),
       enfant: GroupeReglages(
         lignes: <LigneRubrique>[

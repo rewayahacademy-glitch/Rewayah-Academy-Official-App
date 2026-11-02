@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -9,6 +10,7 @@ import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
 import 'package:rewayah_academy/core/dossier/resignature_contrat.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/offres/offre_horaire.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
@@ -21,6 +23,8 @@ import 'package:rewayah_academy/features/dossier/accords_page.dart';
 import 'package:rewayah_academy/features/dossier/apprenants_demande.dart';
 import 'package:rewayah_academy/features/dossier/attente_page.dart';
 import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart';
+import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_inscription.dart';
+import 'package:rewayah_academy/features/parcours_offres/libelles_parcours.dart';
 import 'package:rewayah_academy/features/partage_offre/tuile_partage.dart';
 import 'package:rewayah_academy/features/talents/tuile_talents.dart';
 
@@ -65,7 +69,45 @@ EtatDossier _etat({
   usage: usage,
 );
 
+/// INSCRIPTION-3 : la demande vient de partir.
+class _DepartEnCours extends DepartDemande {
+  @override
+  bool build() => true;
+}
+
+/// Un questionnaire « pour moi » entierement repondu.
+class _Repondu extends QuestionnaireControleur {
+  @override
+  QuestionnaireInscription build() => const QuestionnaireInscription(
+    usage: UsageInscription.moi,
+    niveauTitulaire: NiveauDeclare.lectureLente,
+    objectif: ObjectifApprentissage.memoriser,
+    moments: <MomentJournee>{MomentJournee.soir},
+    langue: 'francais',
+  );
+}
+
 void main() {
+  testWidgets('INSCRIPTION-3 : arrivee apres la demande, les reponses du '
+      'questionnaire quittent l appareil', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      hote(
+        const AttentePage(),
+        surcharges: <Override>[
+          serviceDossierProvider.overrideWithValue(FauxServiceDossier()),
+          departDemandeProvider.overrideWith(_DepartEnCours.new),
+          questionnaireInscriptionProvider.overrideWith(_Repondu.new),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(AttentePage)),
+    );
+    expect(container.read(questionnaireInscriptionProvider).complet, isFalse);
+    expect(container.read(departDemandeProvider), isFalse);
+  });
+
   // AD-NETTOYAGE-2 (m6, m7, m8, m11).
   group('mise en page du portail d attente', () {
     testWidgets('une seule tete : le titre de la page, pas le mot-marque', (

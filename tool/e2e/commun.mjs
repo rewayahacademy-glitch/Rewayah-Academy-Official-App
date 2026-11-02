@@ -69,12 +69,15 @@ export async function parcours(nom, dossierCaptures) {
 
   // `vue` (L1 des listes, 01/11/2026) : une taille d'ecran precise (1440 x
   // 900) ; `sombre` : le theme sombre du systeme. Sans eux, comme avant.
-  async function contexte(role, { telephone = false, vue = null, sombre = false } = {}) {
+  // `langue` (INSCRIPTION-3, 02/11/2026) : la langue du navigateur, que
+  // l'application suit au demarrage (« ar-SA » pour l'arabe). Sans elle, le
+  // francais, comme avant.
+  async function contexte(role, { telephone = false, vue = null, sombre = false, langue = 'fr-FR' } = {}) {
     const ctx = await navigateur.newContext({
       viewport: vue ?? (telephone ? { width: 390, height: 780 } : { width: 1200, height: 760 }),
       colorScheme: sombre ? 'dark' : 'light',
       deviceScaleFactor: 1,
-      locale: 'fr-FR',
+      locale: langue,
       timezoneId: 'Europe/Paris',
       permissions: ['camera', 'microphone'],
       ignoreHTTPSErrors: true, // relais https local auto-signe
