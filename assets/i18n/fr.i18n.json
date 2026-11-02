@@ -13098,6 +13098,25 @@
     "echecPhrase": "Cause probable\u00a0: la connexion au serveur s'est interrompue (non confirmé). Réessayez dans un instant\u00a0: rien n'est créé en double.",
     "sansDonnees": "La vérification de votre inscription"
   },
+  "n1": {
+    "regles": {
+      "auteurs": {
+        "direction": "Direction",
+        "enseignants": "Enseignants",
+        "familles": "Familles",
+        "eleves": "Élèves",
+        "comptables": "Comptables",
+        "controleurs": "Contrôleurs"
+      },
+      "portee": {
+        "touteAudience": "Toute l'académie, un public ou une Classe",
+        "saClasse": "Sa Classe seulement"
+      }
+    },
+    "alertes": {
+      "signalement": "{categorie}\u00a0: signalement pour l'élève {matricule}. Note interne\u00a0: «\u00a0{note}\u00a0»"
+    }
+  },
   "i1": {
     "invitations": {
       "aideEmail": "Le code est créé pour cette adresse et part aussitôt par e-mail, avec le lien d'inscription. Vous pouvez aussi le transmettre de votre côté.",

@@ -95,6 +95,8 @@ const Map<String, int> _domaines = <String, int>{
   'admissions': 70,
   // IMM-ACCUEIL-FRONT (31/10/2026) : accueil d'une famille deja inscrite.
   'accueilInscrits': 14,
+  // N1 (02/11/2026) : regles de portee des annonces, alertes de signalement.
+  'n1': 8,
   // I1 « Inviter quelqu'un » (02/11/2026).
   'i1': 40,
 };

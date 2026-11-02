@@ -392,7 +392,9 @@ class SignalementBesoin {
 /// aide qui dit qui le lira, et la notice du doc 04 §22.3.
 ///
 /// Sans [envoi] (demonstration, aucun serveur branche : K-28), la
-/// confirmation dit que **rien n'a ete envoye**.
+/// confirmation dit que **rien n'a ete envoye** ; avec [envoi], elle dit que
+/// le signalement est transmis, et seulement une fois le serveur d'accord
+/// (sinon l'erreur et « Reessayer »).
 class SignalerBesoin extends StatefulWidget {
   /// Cree le formulaire.
   const SignalerBesoin({required this.eleve, super.key, this.envoi});
@@ -529,8 +531,11 @@ class _SignalerBesoinState extends State<SignalerBesoin> {
     );
 
     if (_termine) {
-      // Succes honnete : en demonstration, on ne pretend jamais qu'un envoi
-      // reel a eu lieu.
+      // Succes honnete : en demonstration (aucun [envoi]), on ne pretend
+      // jamais qu'un envoi reel a eu lieu ; apres un envoi reel accepte par
+      // le serveur, on dit qu'il est transmis (N1, 02/11/2026 : la feuille
+      // disait « rien n'a été envoyé » apres un vrai envoi).
+      final bool reel = widget.envoi != null;
       return Semantics(
         key: SignalerBesoin.confirmationKey,
         liveRegion: true,
@@ -539,13 +544,17 @@ class _SignalerBesoinState extends State<SignalerBesoin> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              t.enseignant.signalement.demoSucces,
+              reel
+                  ? t.tc.parcours.signalement.envoye
+                  : t.enseignant.signalement.demoSucces,
               style: palette.inkStrong.applyTo(
                 textes.titleMedium ?? const TextStyle(),
               ),
             ),
-            Ecart.vSm,
-            Text(t.enseignant.signalement.demoSuccesDetail, style: doux),
+            if (!reel) ...<Widget>[
+              Ecart.vSm,
+              Text(t.enseignant.signalement.demoSuccesDetail, style: doux),
+            ],
             Ecart.vXl,
             ActionPrincipale(
               libelle: t.enseignant.signalement.fermer,
