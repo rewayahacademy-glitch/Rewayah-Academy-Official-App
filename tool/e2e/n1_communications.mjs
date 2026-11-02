@@ -185,14 +185,13 @@ try {
   await taper(profBureau.page, 'textarea', NOTE);
   await p.capture(profBureau, 'signalement_avant_envoi_1440');
   await cliquer(profBureau.page, /^Envoyer le signalement$/, { pause: 3000 });
-  // CONSTAT (hors zone N1, signale au pilote) : apres un envoi REEL, la
-  // feuille affiche « Démonstration : ce signalement est prêt, mais rien n'a
-  // été envoyé » (fiche_eleve_enseignant.dart, confirmation unique). La ligne
-  // en base prouve l'envoi ; le message a l'ecran est faux.
-  if (await attendreTexte(profBureau.page, "rien n'a été envoyé", 15000)) {
-    p.dire("  CONSTAT : message faux apres envoi reel, « Démonstration : ... rien n'a été envoyé »");
-  }
-  await p.capture(profBureau, 'signalement_confirmation_fausse_1440');
+  // Apres un envoi reel, la feuille dit ce qui est vrai (correctif N1 du
+  // 02/11, fiche_eleve_enseignant.dart) ; jamais le texte de demonstration.
+  verifier(await attendreTexte(profBureau.page, "Signalement transmis à l'administration.", 15000),
+    "enseignant : « Signalement transmis à l'administration. » affiche");
+  verifier(!(await attendreTexte(profBureau.page, "rien n'a été envoyé", 2000)),
+    "enseignant : aucun « Démonstration : rien n'a été envoyé » apres un envoi reel");
+  await montrer(profBureau, "Signalement transmis à l'administration.", 'signalement_transmis_1440');
   verifier(sql(`select prioritaire from public.student_concern where internal_details = '${NOTE}'`) === 't',
     'base : signalement prioritaire enregistre (student_concern)');
 

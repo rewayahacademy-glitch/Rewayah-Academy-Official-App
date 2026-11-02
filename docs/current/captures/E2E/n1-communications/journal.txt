@@ -1,5 +1,5 @@
-== N1 : messages, annonces, alertes : 2026-11-02T16:22:24.509Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
-  amorce : tuteur e2e-n1-tuteur-544510@example.com, classe d461726e-35df-488b-b317-9495ef04fddd, eleve E2E-N1-544510
+== N1 : messages, annonces, alertes : 2026-11-02T17:48:02.856Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+  amorce : tuteur e2e-n1-tuteur-682856@example.com, classe cc6b0964-4d73-4625-9f53-e49a7f0ca317, eleve E2E-N1-682856
 -- 1. tuteur : ecrire a l enseignant depuis la Classe
   OK tuteur : bloc « Échanger sur cette Classe » rendu (capacite ecrire ouverte)
   OK tuteur : son message est affiche dans le fil
@@ -18,7 +18,8 @@
   OK base : annonce enregistree pour toute l academie (com_annonces)
   OK tuteur (390) : l annonce de la direction arrive dans la Classe
 -- 4. enseignant : signaler un besoin, securite d un enfant
-  CONSTAT : message faux apres envoi reel, « Démonstration : ... rien n'a été envoyé »
+  OK enseignant : « Signalement transmis à l'administration. » affiche
+  OK enseignant : aucun « Démonstration : rien n'a été envoyé » apres un envoi reel
   OK base : signalement prioritaire enregistre (student_concern)
 -- 5. direction : alertes urgentes
   OK direction : la note du signalement arrive dans les alertes, sans recharger
