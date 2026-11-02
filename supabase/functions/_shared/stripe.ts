@@ -20,8 +20,56 @@ import Stripe from 'npm:stripe@22.6.2'
 export { Stripe }
 
 /// Le client Stripe, en Fetch (Deno).
+///
+/// FN-115c (pilote, 02/11/2026) : `STRIPE_API_BASE_BANC`, de banc
+/// seulement, envoie les appels a un faux Stripe local (R3). Il n'est suivi
+/// qu'avec une cle de test et une adresse locale ; en production, il n'existe
+/// pas et rien ne change.
 export function clientStripe(cleSecrete: string): Stripe {
-  return new Stripe(cleSecrete, { httpClient: Stripe.createFetchHttpClient() })
+  const banc = adresseBanc(cleSecrete, Deno.env.get('STRIPE_API_BASE_BANC'))
+  return new Stripe(cleSecrete, {
+    httpClient: Stripe.createFetchHttpClient(),
+    ...(banc ?? {}),
+  })
+}
+
+/// L'adresse du faux Stripe de banc, ou `null` : jamais avec une cle live,
+/// jamais hors d'une adresse locale.
+export function adresseBanc(
+  cleSecrete: string,
+  base: string | undefined,
+): { host: string; port: number; protocol: 'http' | 'https' } | null {
+  if (!base || !cleSecrete.startsWith('sk_test_')) return null
+  let u: URL
+  try {
+    u = new URL(base)
+  } catch {
+    return null
+  }
+  const locale = ['127.0.0.1', 'localhost', 'host.docker.internal'].includes(u.hostname)
+  if (!locale || (u.protocol !== 'http:' && u.protocol !== 'https:')) return null
+  const protocol = u.protocol === 'https:' ? 'https' : 'http'
+  return { host: u.hostname, port: Number(u.port || (protocol === 'https' ? 443 : 80)), protocol }
+}
+
+/// FN-115c : les parametres d'un remboursement decide par la direction. La
+/// cle d'idempotence est la demande : deux envois de la meme demande (double
+/// clic, reprise apres coupure) ne font qu'un remboursement chez Stripe.
+export function parametresRemboursementDirection(d: {
+  demandeId: string
+  paiement: string
+  montant: number
+  profil: string
+}): { params: Stripe.RefundCreateParams; cle: string } {
+  return {
+    params: {
+      payment_intent: d.paiement,
+      amount: d.montant,
+      reason: 'requested_by_customer',
+      metadata: { demande: d.demandeId, profil: d.profil },
+    },
+    cle: `remboursement-${d.demandeId}`,
+  }
 }
 
 const fournisseurCrypto = Stripe.createSubtleCryptoProvider()
