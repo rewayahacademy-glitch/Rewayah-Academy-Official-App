@@ -137,4 +137,28 @@ END;
 $client$;
 RESET ROLE;
 
+-- A3 (prod du 01/11/2026) : le titulaire ecarte par l'absence automatique
+-- lit « acces_perdu », jamais « pas_encore_ouverte » ; la salle reste ouverte
+-- a l'eleve, sans motif.
+INSERT INTO public.remplacements_seance
+  (session_id, evenement, enseignant_titulaire_id, acteur_id, cle_idempotence, origine)
+VALUES ('f0250000-0000-0000-0000-000000000131', 'absence_declaree',
+        'f0250000-0000-0000-0000-000000000101', 'f0250000-0000-0000-0000-000000000101',
+        'f0250000-0000-0000-0000-0000000001a3', 'auto');
+DO $a3$
+DECLARE
+  v jsonb := public.motif_refus_salle('f0250000-0000-0000-0000-000000000131',
+                                      'f0250000-0000-0000-0000-000000000101');
+BEGIN
+  IF v ->> 'motif' IS DISTINCT FROM 'acces_perdu' THEN
+    RAISE EXCEPTION 'A3: titulaire ecarte sans motif acces_perdu (%)', v;
+  END IF;
+  -- La salle reste ouverte a l'eleve : aucun motif pour lui.
+  IF public.motif_refus_salle('f0250000-0000-0000-0000-000000000131',
+                              'f0250000-0000-0000-0000-000000000102') IS NOT NULL THEN
+    RAISE EXCEPTION 'A3: un motif de refus pour l''eleve, dont la salle reste ouverte';
+  END IF;
+END;
+$a3$;
+
 ROLLBACK;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 import '../i18n/isolat_bidi.dart';
 import '../i18n/strings.g.dart';
@@ -123,6 +124,9 @@ class ConfigLigneEntiere extends ConsumerWidget {
     required this.onEcrit,
     super.key,
     this.icone = AppIcons.reglages,
+    this.min,
+    this.max,
+    this.aideBornes,
   });
 
   /// Le titre de la ligne.
@@ -158,6 +162,17 @@ class ConfigLigneEntiere extends ConsumerWidget {
   /// L'icone de la ligne.
   final AppIcon icone;
 
+  /// La plus petite valeur admise, quand elle depend d'un autre reglage (les
+  /// delais A3 se suivent) ; nul : 0.
+  final int? min;
+
+  /// La plus grande valeur admise, quand elle depend d'un autre reglage ; nul :
+  /// le plafond a source ecrite de [reglagesEntiersProposes], s'il existe.
+  final int? max;
+
+  /// La phrase sous le titre de la feuille qui dit pourquoi ces bornes.
+  final String? aideBornes;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return SettingRow(
@@ -176,6 +191,9 @@ class ConfigLigneEntiere extends ConsumerWidget {
       constructeur: (BuildContext _) => _FeuilleEntiere(
         valeurInitiale: valeur,
         proposition: reglagesEntiersProposes[cle],
+        min: min,
+        max: max,
+        aideBornes: aideBornes,
         affichage: affichage,
         champValeur: champValeur,
         envoyer: envoyer,
@@ -200,9 +218,15 @@ class _FeuilleEntiere extends StatefulWidget {
     required this.erreurEcriture,
     required this.onEnvoyer,
     required this.onSucces,
+    this.min,
+    this.max,
+    this.aideBornes,
   });
 
   final int valeurInitiale;
+  final int? min;
+  final int? max;
+  final String? aideBornes;
 
   /// Les valeurs proposees ; nul pour une cle sans proposition (champ seul).
   final ReglageEntierPropose? proposition;
@@ -224,22 +248,26 @@ class _FeuilleEntiereEtat extends State<_FeuilleEntiere> {
   String? _erreur;
 
   Future<void> _envoyer() async {
-    final ReglageEntierPropose? p = widget.proposition;
     final int? v = _choisie;
+    final int min = widget.min ?? 0;
     if (v == null || v < 0) {
       setState(() => _erreur = widget.valeurInvalide);
       return;
     }
-    // Seul un plafond a source ecrite refuse une valeur (08/10).
-    if (p?.max case final int max when v > max) {
+    // Seul un plafond a source ecrite refuse une valeur (08/10), ou une borne
+    // tiree d'un autre reglage (delais A3).
+    final int? max = _max;
+    if (v < min || (max != null && v > max)) {
       setState(
         // DUREE-FOND-1 : une valeur ancree pour s'afficher seule
         // (« 30 jours », marque U+200E en tete) perd son ancre au milieu de
         // la phrase.
-        () => _erreur = t.formulaire.entier.horsBornes(
-          min: sansAncre(widget.affichage(0)),
-          max: sansAncre(widget.affichage(max)),
-        ),
+        () => _erreur = max == null
+            ? widget.aideBornes ?? widget.valeurInvalide
+            : t.formulaire.entier.horsBornes(
+                min: sansAncre(widget.affichage(min)),
+                max: sansAncre(widget.affichage(max)),
+              ),
       );
       return;
     }
@@ -258,11 +286,18 @@ class _FeuilleEntiereEtat extends State<_FeuilleEntiere> {
     }
   }
 
+  /// Le plafond en vigueur : celui de la ligne, sinon celui a source ecrite.
+  int? get _max => widget.max ?? widget.proposition?.max;
+
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        if (widget.aideBornes case final String aide) ...<Widget>[
+          Text(aide, style: Theme.of(context).textTheme.bodyMedium),
+          Ecart.vMd,
+        ],
         if (widget.proposition case final ReglageEntierPropose p)
           SelecteurEntier(
             proposees: p.proposees,
@@ -281,6 +316,8 @@ class _FeuilleEntiereEtat extends State<_FeuilleEntiere> {
           ChoixNombre(
             libelle: widget.champValeur,
             valeur: _choisie ?? widget.valeurInitiale,
+            min: widget.min ?? 0,
+            max: _max,
             affichage: widget.affichage,
             libelleMoins: t.choix.diminuer,
             libellePlus: t.choix.augmenter,
@@ -394,6 +431,11 @@ class _ConfigLigneBooleenneEtat extends ConsumerState<ConfigLigneBooleenne> {
 }
 
 String _message(Object erreur) {
+  // Un refus du serveur : son seul message, jamais « code: …, details: Bad
+  // Request, hint: null » (capture R3 de la PR 128, 01/11/2026).
+  if (erreur case PostgrestException(:final String message)) {
+    return message;
+  }
   final String brut = erreur.toString();
   final int deuxPoints = brut.indexOf(': ');
   return deuxPoints >= 0 && deuxPoints + 2 < brut.length

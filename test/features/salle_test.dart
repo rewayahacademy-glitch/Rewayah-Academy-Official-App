@@ -1619,6 +1619,16 @@ void main() {
             t.salle.refusAcces,
             t.salle.refusAnnulee,
           ),
+          // A3 (prod du 01/11/2026) : le titulaire ecarte lit la vraie
+          // raison, jamais « la salle s'ouvre peu avant l'heure du cours ».
+          (
+            DetailRefusSalle(
+              motif: MotifServeurSalle.accesPerdu,
+              finUtc: finServeur,
+            ),
+            t.salle.refusAccesPerduTitre,
+            t.salle.refusAccesPerdu,
+          ),
         ]) {
       testWidgets('FN-025 : refus ${cas.$1.motif.name} : le motif et '
           'l heure du serveur', (WidgetTester tester) async {

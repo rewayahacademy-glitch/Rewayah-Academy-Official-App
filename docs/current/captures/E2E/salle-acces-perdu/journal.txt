@@ -1,0 +1,7 @@
+== Salle : enseignant ecarte par l absence automatique (A3) : 2026-11-01T23:18:48.747Z ; Chromium 141.0.7390.37 ; http://127.0.0.1:8090
+Reglages A3 : remplacement.avertissement_minutes=3 ; remplacement.debut_remplacant_minutes=11 ; remplacement.perte_acces_minutes=8
+Seance fc221d34-c1a8-4600-9e74-33d98491b96a : debut il y a 7 min ; arrivees du titulaire en base : 0
+Passage A3 : {"prises": 0, "erreurs": 0, "absences": 1, "inutiles": 0, "pre_alertes": 0}
+Titulaire ecarte selon le serveur : t
+enseignant, apres « Rejoindre » : http://127.0.0.1:8090/#/salle ; flt-semantics:En direct | flt-semantics:Vous n'avez pas rejoint la salle à temps | flt-semantics:Passé le délai pour rejoindre la salle, la séance de ce jour vous a été retirée : elle compte comme une absence. Vous restez l'enseignant de la classe. | button:Revenir à mon accueil
+== Salle : enseignant ecarte par l absence automatique (A3) : vert : l enseignant ecarte lit « Vous n avez pas rejoint la salle à temps » et la raison

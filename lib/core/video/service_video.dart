@@ -42,6 +42,10 @@ enum MotifServeurSalle {
 
   /// La seance est annulee.
   annulee,
+
+  /// Le titulaire n'est pas entre a temps : la seance de ce jour lui est
+  /// retiree (absence automatique, A3). Il reste l'enseignant de la classe.
+  accesPerdu,
 }
 
 /// FN-025 : le motif d'un refus et les heures du serveur qui l'accompagnent.
@@ -63,6 +67,7 @@ class DetailRefusSalle {
       'pas_encore_ouverte' => MotifServeurSalle.pasEncoreOuverte,
       'terminee' => MotifServeurSalle.terminee,
       'annulee' => MotifServeurSalle.annulee,
+      'acces_perdu' => MotifServeurSalle.accesPerdu,
       _ => null,
     };
     if (motif == null) return null;
