@@ -67,6 +67,7 @@ import 'core/capacites/port_politiques_commerciales.dart';
 import 'core/capacites/port_profil_eleve_titulaire.dart';
 import 'core/capacites/port_progression_famille.dart';
 import 'core/capacites/port_recharge_foyer.dart';
+import 'core/capacites/port_remboursements_direction.dart';
 import 'core/capacites/port_revenus_enseignant.dart';
 import 'core/capacites/port_series_tresorerie.dart';
 import 'core/capacites/port_support.dart';
@@ -76,6 +77,7 @@ import 'core/capacites/port_validations_finance.dart';
 import 'core/capacites/profil_eleve_titulaire_supabase.dart';
 import 'core/capacites/progression_famille_supabase.dart';
 import 'core/capacites/recharge_foyer_supabase.dart';
+import 'core/capacites/remboursements_direction_supabase.dart';
 import 'core/capacites/revenus_enseignant_supabase.dart';
 import 'core/capacites/revue_dossiers_depuis_validation.dart';
 import 'core/capacites/series_tresorerie_supabase.dart';
@@ -413,6 +415,12 @@ List<Override> _surchargesAppReelle() => <Override>[
   // direction (migrations 20261104800000 et 20261104900000).
   portTarifsParticuliersProvider.overrideWithValue(
     TarifsParticuliersSupabase(Supabase.instance.client),
+  ),
+  // « Rembourser » de la direction (FN-115c, migration 20261105100000 et
+  // fonction Edge remboursement-stripe) : montant propose et plafond arretes
+  // par le serveur.
+  portRemboursementsDirectionProvider.overrideWithValue(
+    RemboursementsDirectionSupabase(Supabase.instance.client),
   ),
   // Paie des enseignants par mois (B2.5, migration 20261102200000) : lecture
   // seule, direction et comptabilite ; montants arretes par le serveur.

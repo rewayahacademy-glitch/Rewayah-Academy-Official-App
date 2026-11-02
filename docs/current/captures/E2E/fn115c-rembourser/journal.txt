@@ -1,0 +1,10 @@
+== FN-115c : Rembourser depuis Finance > Paiements : 2026-11-02T15:18:03.816Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Famille e2e-fn115c-tuteur-683816@example.com : eleve Yanis Rembourse683816, commande e49ce736-8ae5-4fd5-bba7-0ed8f3999bcd, paiement pi_banc_683816
+Montant propose par le serveur : 5500 cents
+  fonction Edge sous le jeton du tuteur : 403
+  demandes 1, etat envoyee, remboursement re_banc_3 ; POST /v1/refunds 1 (cles remboursement-2b9b31e1-de90-4ae8-ae61-bc784950ae40)
+  corps envoye : {"payment_intent":"pi_banc_683816","amount":"5500","reason":"requested_by_customer","metadata[demande]":"2b9b31e1-de90-4ae8-ae61-bc784950ae40","metadata[profil]":"b7412c08-2f07-49b0-a6a2-35e550de2e8f"}
+390 : {"menuPresent":true,"feuilleDitLeMontant":true}
+1440 : {"menuPresent":true,"feuilleDitLeMontant":true,"uneSeuleDemande":true,"notee":true,"unSeulRemboursement":true,"formeDeLaRequete":true,"menuDisparuApres":true}
+nonDirectionRefuse : true
+== FN-115c : Rembourser depuis Finance > Paiements : vert
