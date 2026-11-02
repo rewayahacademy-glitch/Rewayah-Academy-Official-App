@@ -21,9 +21,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/notifications_supabase.dart';
 import 'package:rewayah_academy/core/capacites/port_notifications.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/widgets/badge_non_lu.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart'
     show ClocheNotifications;
-import 'package:rewayah_academy/core/widgets/badge_non_lu.dart';
 import 'package:rewayah_academy/core/widgets/menu_actions.dart';
 import 'package:rewayah_academy/features/notifications/contenu_notification.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
