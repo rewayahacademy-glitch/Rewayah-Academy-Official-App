@@ -28,6 +28,8 @@ import 'core/admin/port_remplacements_direction.dart';
 import 'core/admin/remplacements_direction_supabase.dart';
 import 'core/agent/amorce_agent.dart';
 import 'core/agent/session_agent.dart';
+import 'core/alertes/alertes_supabase.dart';
+import 'core/alertes/port_alertes.dart';
 import 'core/candidature/autres_competences_supabase.dart';
 import 'core/candidature/candidatures_direction_supabase.dart';
 import 'core/candidature/ma_candidature_supabase.dart';
@@ -85,6 +87,8 @@ import 'core/capacites/support_supabase.dart';
 import 'core/capacites/suppressions_admin_supabase.dart';
 import 'core/capacites/tarifs_particuliers_supabase.dart';
 import 'core/capacites/validations_finance_supabase.dart';
+import 'core/communications/capacites_communication.dart';
+import 'core/communications/capacites_communication_supabase.dart';
 import 'core/communications/communications_supabase.dart';
 import 'core/communications/libelles_communication_slang.dart';
 import 'core/config/ecran_configuration_absente.dart';
@@ -135,6 +139,7 @@ import 'core/session/client_http_garde.dart';
 import 'core/session/port_capacite_eleve.dart';
 import 'core/session/port_capacite_eleve_supabase.dart';
 import 'core/session/session_controleur.dart';
+import 'core/session/session_state.dart';
 import 'core/session/source_session.dart' show terminerSessionRefusee;
 import 'core/session/source_session_agent.dart';
 import 'core/tc_bibliotheque/port_support_actif.dart';
@@ -159,9 +164,13 @@ import 'core/theme/polices_differees.dart';
 import 'features/_dev/playground/playground_racine.dart';
 import 'features/accueil_adulte/espace_adulte_supabase.dart';
 import 'features/accueil_adulte/port_espace_adulte.dart';
+import 'features/admin_invitations/familles_importees.dart';
+import 'features/admin_invitations/familles_importees_supabase.dart';
 import 'features/bienvenue_enseignant/prerequis_enseignant_supabase.dart';
 import 'features/com_annonces/annonces_supabase.dart';
 import 'features/com_annonces/port_annonces.dart';
+import 'features/com_annonces/port_regles_audience.dart';
+import 'features/com_annonces/regles_audience_supabase.dart';
 import 'features/com_messages/messages_metier_supabase.dart';
 import 'features/com_messages/port_messages_metier.dart';
 import 'features/controleur/echanges_controleur.dart';
@@ -255,6 +264,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portVerificationInvitationProvider.overrideWithValue(
     VerificationInvitationSupabase(Supabase.instance.client),
+  ),
+  // I1 (02/11/2026) : l'invitation des familles importees, sur geste de la
+  // direction (migration 20261105300000).
+  portFamillesImporteesProvider.overrideWithValue(
+    FamillesImporteesSupabase(Supabase.instance.client),
   ),
   // Invitation d'un comptable par la direction (BF1-03, 20261017160200) :
   // ports branches, ecrans d'emission et d'inscription a venir.
@@ -534,7 +548,24 @@ List<Override> _surchargesAppReelle() => <Override>[
       appelRpcSupabase(Supabase.instance.client),
       libelles: const LibellesCommunicationSlang(),
     ),
-  ),
+  ), // N1 (02/11/2026) : capacites Communications (ecrire, publier,
+  // programmer), regles de portee des annonces et alertes de la direction
+  // sur les signalements des enseignants. Relues quand la personne connectee
+  // change : une capacite appartient a un compte, pas a l'appareil.
+  portCapacitesCommunicationsProvider.overrideWith((Ref ref) {
+    ref.watch(sessionProvider.select((SessionState s) => s.profileId));
+    return CapacitesCommunicationsSupabase(
+      appelRpcSupabase(Supabase.instance.client),
+    );
+  }),
+  portReglesAudienceProvider.overrideWith((Ref ref) {
+    ref.watch(sessionProvider.select((SessionState s) => s.profileId));
+    return ReglesAudienceSupabase(appelRpcSupabase(Supabase.instance.client));
+  }),
+  portAlertesProvider.overrideWith((Ref ref) {
+    ref.watch(sessionProvider.select((SessionState s) => s.profileId));
+    return AlertesSupabase(appelRpcSupabase(Supabase.instance.client));
+  }),
 ];
 
 /// Point d'entree unique de l'application.

@@ -41,7 +41,7 @@ Deno.test('paiement recu : le montant est ecrit dans la devise de la commande, o
 Deno.test('chaque evenement de notification a son modele', () => {
   for (const e of [...EVENEMENTS, 'invitation_foyer', 'lien_inscription', 'attente_candidat', 'admission_recue',
     'admission_acceptee', 'admission_refusee', 'admission_precisions', 'compte_enseignant_valide',
-    'message_libre', 'nouvelles']) {
+    'invitation_enseignant', 'invitation_famille_importee', 'message_libre', 'nouvelles']) {
     assert(modelesConnus.includes(e), e)
   }
 })
@@ -406,4 +406,30 @@ Deno.test('FN-115b : remboursement et contestation, montants et frais dans la de
       assert(texte(m, { montant_mineur: 100, devise: 'USD', issue: 'perdu' }, l).length > 20, `${m} ${l}`)
     }
   }
+})
+
+// I1 (02/11/2026) : l'invitation d'un enseignant et celle d'une famille importee.
+Deno.test('invitation_enseignant : code, lien qui garde invitation=1 et le code, echeance', () => {
+  const c = contenuPour({ modele: 'invitation_enseignant', categorie: 'recrutement', essentielle: true,
+    donnees: { code: 'ABCD-EFGH-JKMN', expire_le: '2026-11-16T10:00:00Z' } })
+  const { html, texte } = composer(c)
+  assert(texte.includes('ABCD-EFGH-JKMN'), texte)
+  assert(html.includes('https://app.rewayahacademy.com/connexion?mode=creer&amp;invitation=1&amp;code=ABCD-EFGH-JKMN')
+    || html.includes('https://app.rewayahacademy.com/connexion?mode=creer&invitation=1&code=ABCD-EFGH-JKMN'), html)
+  assert(texte.includes('16 novembre 2026') && texte.includes('ne sert qu’une fois') && texte.includes('Rien à payer'), texte)
+  assert(!/envoyé automatiquement/.test(texte), texte)
+  // Un code mal forme n'entre ni dans le texte ni dans le lien.
+  const mauvais = composer(contenuPour({ modele: 'invitation_enseignant', categorie: 'recrutement', essentielle: true,
+    donnees: { code: '"><script>' } }))
+  assert(!mauvais.html.includes('<script>') && !mauvais.html.includes('code=%22'), mauvais.html)
+  assert(mauvais.html.includes('invitation=1'), mauvais.html)
+})
+
+Deno.test('invitation_famille_importee : connexion avec la meme adresse, aucune donnee de la famille', () => {
+  const c = contenuPour({ modele: 'invitation_famille_importee', categorie: 'inscription', essentielle: true,
+    donnees: {} })
+  const { html, texte } = composer(c)
+  assert(html.includes('https://app.rewayahacademy.com/connexion'), html)
+  assert(texte.includes('cette adresse e-mail') && texte.includes('sans rien ressaisir'), texte)
+  assert(texte.includes('Bonjour,'), texte)
 })
