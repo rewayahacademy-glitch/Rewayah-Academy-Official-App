@@ -30,6 +30,10 @@ void main() {
       DetailRefusSalle.depuis(<String, dynamic>{'motif': 'annulee'})?.motif,
       MotifServeurSalle.annulee,
     );
+    expect(
+      DetailRefusSalle.depuis(<String, dynamic>{'motif': 'acces_perdu'})?.motif,
+      MotifServeurSalle.accesPerdu,
+    );
   });
 
   test('le refus generique, ou une forme inattendue : aucun motif', () {

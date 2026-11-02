@@ -74,6 +74,10 @@ class SessionControleur extends Notifier<SessionState> {
   /// « Aucun profil eleve pour l'instant »).
   final Set<String> _lusCompteActif = <String>{};
 
+  /// Les profils dont une lecture de la capacite, compte actif, a abouti,
+  /// meme en echec (C-24 : un echec refuse, il ne fait pas attendre).
+  final Set<String> _lectureFinieCompteActif = <String>{};
+
   @override
   SessionState build() {
     final SourceSession source = ref.watch(sourceSessionProvider);
@@ -123,6 +127,7 @@ class SessionControleur extends Notifier<SessionState> {
     final String? profil = etat.profileId;
     state = etat.copyWith(
       eleveAutonome: profil != null && (_autonomes[profil] ?? false),
+      capaciteEleveEnLecture: _enLecture(profil, etat),
     );
     if (profil == null) {
       return;
@@ -138,6 +143,14 @@ class SessionControleur extends Notifier<SessionState> {
     unawaited(_lireCapacite(profil, compteActif: actif));
   }
 
+  /// FN-112 (rechargement) : vrai tant que la capacite de ce profil n'a pas
+  /// ete lue avec le compte actif. Le routeur ne decide rien sur `/eleve/*`
+  /// pendant ce temps (C-24 : on n'ouvre ni ne refuse ce qu'on n'a pas lu).
+  bool _enLecture(String? profil, SessionState etat) =>
+      profil != null &&
+      etat.porte == PorteAcces.actif &&
+      !_lectureFinieCompteActif.contains(profil);
+
   Future<void> _lireCapacite(String profil, {required bool compteActif}) async {
     CapaciteEleve capacite;
     try {
@@ -145,13 +158,26 @@ class SessionControleur extends Notifier<SessionState> {
     } on Object {
       capacite = const CapaciteInconnue();
     }
+    // FN-112 (rechargement) : une lecture partie avant que le compte soit
+    // actif (jeton pas encore pret) peut revenir APRES celle du compte actif.
+    // Sa reponse, perimee, n'ecrase jamais la bonne : sans cette garde,
+    // l'adulte qui recharge son accueil etait renvoye a « acces refuse ».
+    if (!compteActif && _lectureFinieCompteActif.contains(profil)) {
+      return;
+    }
     final bool autonome = capacite is EleveAutonome;
     _autonomes[profil] = autonome;
-    if (compteActif && capacite is! CapaciteInconnue) {
-      _lusCompteActif.add(profil);
+    if (compteActif) {
+      _lectureFinieCompteActif.add(profil);
+      if (capacite is! CapaciteInconnue) {
+        _lusCompteActif.add(profil);
+      }
     }
     if (ref.mounted && state.profileId == profil) {
-      state = state.copyWith(eleveAutonome: autonome);
+      state = state.copyWith(
+        eleveAutonome: autonome,
+        capaciteEleveEnLecture: _enLecture(profil, state),
+      );
     }
   }
 

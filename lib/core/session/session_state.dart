@@ -83,6 +83,7 @@ class SessionState {
     this.lectureProfil = LectureProfil.enAttente,
     this.observation,
     this.eleveAutonome = false,
+    this.capaciteEleveEnLecture = false,
     this.mfaRequise = false,
   });
 
@@ -129,6 +130,13 @@ class SessionState {
   /// par defaut et tant que le serveur n'a pas repondu. Un widget lit cette
   /// capacite, jamais `AppRole.student`.
   final bool eleveAutonome;
+
+  /// Vrai tant que la capacite [eleveAutonome] de ce profil n'a pas encore ete
+  /// lue sur le serveur : [eleveAutonome] vaut alors faux sans que ce soit une
+  /// reponse. Le routeur ne refuse rien sur cette base (FN-112, prod du
+  /// 01/11/2026 : l'eleve adulte qui rechargeait `/eleve/adulte` tombait sur
+  /// « acces refuse », la capacite lue juste apres ne l'en sortait plus).
+  final bool capaciteEleveEnLecture;
 
   /// Capacite « seconde etape requise » : le compte doit encore enroler ou
   /// verifier un facteur TOTP avant de naviguer (jeton `aal1` pour un compte
@@ -238,6 +246,7 @@ class SessionState {
     LectureProfil? lectureProfil,
     Observation? observation,
     bool? eleveAutonome,
+    bool? capaciteEleveEnLecture,
     bool? mfaRequise,
   }) {
     return SessionState(
@@ -250,6 +259,8 @@ class SessionState {
       lectureProfil: lectureProfil ?? this.lectureProfil,
       observation: observation ?? this.observation,
       eleveAutonome: eleveAutonome ?? this.eleveAutonome,
+      capaciteEleveEnLecture:
+          capaciteEleveEnLecture ?? this.capaciteEleveEnLecture,
       mfaRequise: mfaRequise ?? this.mfaRequise,
     );
   }
@@ -266,6 +277,7 @@ class SessionState {
       other.lectureProfil == lectureProfil &&
       other.observation == observation &&
       other.eleveAutonome == eleveAutonome &&
+      other.capaciteEleveEnLecture == capaciteEleveEnLecture &&
       other.mfaRequise == mfaRequise;
 
   @override
@@ -279,6 +291,7 @@ class SessionState {
     lectureProfil,
     observation,
     eleveAutonome,
+    capaciteEleveEnLecture,
     mfaRequise,
   );
 }

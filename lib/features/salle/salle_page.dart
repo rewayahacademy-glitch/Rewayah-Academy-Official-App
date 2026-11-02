@@ -4299,6 +4299,10 @@ class _Impasse extends StatelessWidget {
         t.salle.refusPasEncoreOuverte(heure: DepuisSalle.heure(ouverture)),
       ),
       MotifServeurSalle.annulee => (t.salle.refusAcces, t.salle.refusAnnulee),
+      MotifServeurSalle.accesPerdu => (
+        t.salle.refusAccesPerduTitre,
+        t.salle.refusAccesPerdu,
+      ),
       _ => (t.salle.refusAcces, t.salle.refusAccesDetail),
     };
   }

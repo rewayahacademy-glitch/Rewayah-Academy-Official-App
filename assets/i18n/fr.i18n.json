@@ -790,6 +790,8 @@
     "refusTerminee": "La séance s'est terminée à {heure}. La salle a fermé peu après.",
     "refusPasEncoreOuverte": "La salle ouvrira à {heure}.",
     "refusAnnulee": "Cette séance est annulée.",
+    "refusAccesPerduTitre": "Vous n'avez pas rejoint la salle à temps",
+    "refusAccesPerdu": "Passé le délai pour rejoindre la salle, la séance de ce jour vous a été retirée\u00a0: elle compte comme une absence. Vous restez l'enseignant de la classe.",
     "refusConfiguration": "La salle n'est pas encore disponible",
     "refusConfigurationDetail": "Ce n'est pas votre appareil\u00a0: le service de visioconférence n'est pas branché. L'équipe le sait.",
     "refusReseau": "La salle n'a pas pu s'ouvrir",
