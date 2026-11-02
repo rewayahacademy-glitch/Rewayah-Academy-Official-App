@@ -25,6 +25,7 @@ import 'package:rewayah_academy/core/offres/port_regroupements_admin.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/menu_actions.dart';
 import 'package:rewayah_academy/features/admin_regroupements/feuille_classe_regroupement.dart';
 import 'package:rewayah_academy/features/admin_regroupements/regroupements_libelles.dart';
 import 'package:rewayah_academy/features/admin_regroupements/regroupements_page.dart';
@@ -64,8 +65,12 @@ RegroupementDemandes _reg(
   numeroProchaineClasse: numeroProchaineClasse,
 );
 
-Future<void> _monter(WidgetTester tester, PortRegroupementsAdmin port) async {
-  tester.view.physicalSize = const Size(390, 4000);
+Future<void> _monter(
+  WidgetTester tester,
+  PortRegroupementsAdmin port, {
+  Size taille = const Size(390, 4000),
+}) async {
+  tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
@@ -213,7 +218,12 @@ void main() {
             ),
           ),
       ];
-      await _monter(tester, RegroupementsDemo(depart: regs));
+      // L3 : au bureau, les 25 lignes de la page tiennent a l'ecran.
+      await _monter(
+        tester,
+        RegroupementsDemo(depart: regs),
+        taille: const Size(1440, 4000),
+      );
       final List<String> titres = <String>[
         for (int n = 1; n <= 30; n++) 'Garçons, lundi 18 h · n°\u00a0$n',
       ];
@@ -249,6 +259,41 @@ void main() {
     });
   });
 
+  // L3 (01/11/2026) : le menu « ... » d'une classe creee s'ouvre aussi au
+  // telephone (carte), et propose « Voir la classe ».
+  testWidgets('telephone : le menu de la classe creee s ouvre', (
+    WidgetTester tester,
+  ) async {
+    await _monter(
+      tester,
+      RegroupementsDemo(
+        depart: <RegroupementDemandes>[
+          RegroupementDemandes(
+            id: 'r1',
+            public: PublicOffre.enfants,
+            langueCode: 'fr',
+            langueNom: 'Français',
+            fuseau: 'Europe/Paris',
+            occurrences: const <OccurrenceCreneau>[
+              OccurrenceCreneau(jourIso: 1, heure: 18),
+            ],
+            nombreEleves: 5,
+            quota: 5,
+            classe: const ClasseSansEnseignant(
+              classeId: 'c1',
+              libelle: 'Garçons, lundi 18 h',
+              peutAffecterEnseignant: true,
+            ),
+          ),
+        ],
+      ),
+    );
+    await tester.tap(find.byType(MenuActions));
+    await _laisser(tester);
+    expect(find.text(t.admin.regroupements.voirClasse), findsOneWidget);
+    await tester.pumpWidget(const SizedBox());
+  });
+
   group('R3 : « N demandes → M classes possibles »', () {
     test('le nombre de classes vient du serveur quand il le rend', () {
       expect(
@@ -282,6 +327,8 @@ void main() {
             _reg('incomplet', eleves: 3),
           ],
         ),
+        // L3 : au bureau, la colonne « Demandes » a sa cellule.
+        taille: const Size(1440, 4000),
       );
       expect(find.text('12 demandes → 2 classes possibles'), findsOneWidget);
       expect(find.text('3 demandes → aucune classe possible'), findsOneWidget);

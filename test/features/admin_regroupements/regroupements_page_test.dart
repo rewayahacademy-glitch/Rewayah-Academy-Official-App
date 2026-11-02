@@ -338,6 +338,23 @@ Set<String> get _exceptionsRecherche => <String>{
 };
 
 void main() {
+  // L3 (01/11/2026) : le bouton de la ligne est un noeud a part du lecteur
+  // d'ecran, au bureau (tableau) comme au telephone (cartes).
+  for (final double largeur in <double>[1440, 390]) {
+    testWidgets('bouton de ligne : un noeud a part (${largeur.toInt()})', (
+      WidgetTester tester,
+    ) async {
+      final SemanticsHandle voix = tester.ensureSemantics();
+      await _monter(tester, port: RegroupementsDemo(), largeur: largeur);
+      expect(
+        tester.getSemantics(_action(_pret)).label,
+        t.admin.regroupements.creer,
+      );
+      voix.dispose();
+      await _demonter(tester);
+    });
+  }
+
   group('Les etats', () {
     testWidgets('chargement : le squelette, rien d invente', (
       WidgetTester tester,
@@ -353,7 +370,8 @@ void main() {
     testWidgets('contenu : jours, heure, fuseaux, public, langue, eleves', (
       WidgetTester tester,
     ) async {
-      await _monter(tester, port: RegroupementsDemo());
+      // L3 (01/11/2026) : au bureau, chaque information a sa cellule.
+      await _monter(tester, port: RegroupementsDemo(), largeur: 1440);
       expect(_carte(_pret), findsOneWidget);
       expect(find.text('Lundi, mardi, jeudi · 18\u00a0h'), findsOneWidget);
       expect(find.text('18\u00a0h, heure de Paris'), findsOneWidget);
@@ -363,10 +381,10 @@ void main() {
       );
       // Le passage de minuit se dit (« le lendemain »).
       // C-11 bis : jour par jour quand les heures different.
-      // Le titre de la carte et sa ligne « Jours et heures ».
+      // Le titre de la ligne (colonne « Jours et heures »).
       expect(
         find.text('Mardi 20\u00a0h, jeudi 20\u00a0h\u00a030'),
-        findsNWidgets(2),
+        findsOneWidget,
       );
       expect(
         find.text(
@@ -503,6 +521,7 @@ void main() {
             _reg('six', eleves: 6, quota: 7, public: PublicOffre.adultes),
           ],
         ),
+        largeur: 1440,
       );
       expect(_parCle('regroupement-pret-trois'), findsOneWidget);
       expect(_parCle('regroupement-incomplet-six'), findsOneWidget);
@@ -669,7 +688,13 @@ void main() {
       await _laisser(tester);
       Navigator.of(tester.element(find.byType(SelecteurPersonne))).pop();
       await _laisser(tester);
-      expect(_parCle('regroupements-a-finir'), findsOneWidget);
+      // L3 : plus de section ; la ligne dit « Enseignant a confirmer » et
+      // passe en tete de la liste.
+      expect(_parCle('regroupement-a-finir-$_pret'), findsOneWidget);
+      expect(
+        tester.getTopLeft(_carte(_pret)).dy,
+        lessThan(tester.getTopLeft(_carte(_incomplet)).dy),
+      );
       final ActionPrincipale reprendre = tester.widget<ActionPrincipale>(
         _action(_pret),
       );
@@ -1203,17 +1228,19 @@ void main() {
     testWidgets('heures egales : la ligne actuelle, inchangee', (
       WidgetTester tester,
     ) async {
-      await _monter(tester, port: RegroupementsDemo());
-      expect(find.text(t.admin.regroupements.cleJours), findsNWidgets(3));
-      expect(find.text(t.admin.regroupements.cleHeure), findsNWidgets(3));
-      expect(find.text('Lundi, mardi, jeudi'), findsOneWidget);
+      // L3 : une colonne « Heure de reference » (en-tete unique) ; la
+      // ligne a heure commune la dit une fois, avec son fuseau.
+      await _monter(tester, port: RegroupementsDemo(), largeur: 1440);
+      expect(find.text(t.admin.regroupements.cleHeure), findsOneWidget);
+      expect(find.text('Lundi, mardi, jeudi · 18\u00a0h'), findsOneWidget);
+      expect(find.text('18\u00a0h, heure de Paris'), findsOneWidget);
       await _demonter(tester);
     });
 
     testWidgets('heures differentes : jours et heures, puis le fuseau', (
       WidgetTester tester,
     ) async {
-      await _monter(tester, port: RegroupementsDemo());
+      await _monter(tester, port: RegroupementsDemo(), largeur: 1440);
       final Finder ligne = find.byKey(
         const ValueKey<String>('regroupement-jours-heures-$differentes'),
       );
@@ -1225,7 +1252,7 @@ void main() {
         ),
         findsOneWidget,
       );
-      expect(find.text(t.admin.regroupements.cleFuseau), findsOneWidget);
+      // L3 : sans heure commune, la colonne de l'heure dit le fuseau seul.
       expect(find.text('Heure de Los Angeles'), findsOneWidget);
       expect(find.text('20 h, heure de Los Angeles'), findsNothing);
       await _demonter(tester);

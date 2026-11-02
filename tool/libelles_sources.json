@@ -6867,5 +6867,6 @@
   "commun.filtres.boutonAvec": "L1 des listes (01/11/2026) : la meme icone quand des filtres sont retenus, avec leur nombre (le point sur l icone ne se lit pas seul), sur le modele de commun.filtres.plusAvec",
   "admin.groupes.liste.filtreOuvertes": "L1 des listes (01/11/2026), decision du directeur « il faut masquer les classes cloturees » : la vue par defaut de Classes, actives et en attente d enseignant ; Cloturees reste un filtre ; mot simple, oppose de Cloturees",
   "commun.filtres.axeValeur": "L1 des listes (01/11/2026) : la puce d un filtre retenu, panneau replie (FiltresActifs), lisible seule : l axe et la valeur, comme admin.comptes.filtreActifEtat",
-  "admin.comptes.actionVoirDemande": "L2 des listes (01/11/2026), constat du directeur : une ligne « En attente » de Comptes n'avait aucune action ; elle porte celle qui la debloque, vers la page des demandes d'admission (mot repris de comptable.validation.ouvrir)"
+  "admin.comptes.actionVoirDemande": "L2 des listes (01/11/2026), constat du directeur : une ligne « En attente » de Comptes n'avait aucune action ; elle porte celle qui la debloque, vers la page des demandes d'admission (mot repris de comptable.validation.ouvrir)",
+  "admin.regroupements.voirClasse": "L3 des listes (01/11/2026) : menu « … » d'une classe créée depuis un regroupement"
 }

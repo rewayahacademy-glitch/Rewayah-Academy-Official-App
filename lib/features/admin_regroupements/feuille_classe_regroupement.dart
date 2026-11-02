@@ -55,6 +55,8 @@ import '../../core/admin/service_groupes.dart'
 import '../../core/capacites/port_enseignants_classe.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/offres/affectation_refusee.dart';
+import '../../core/offres/page_regroupements.dart'
+    show pageRegroupementsAdminProvider;
 import '../../core/offres/port_regroupements_admin.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
@@ -130,8 +132,14 @@ class _FeuilleClasseRegroupementEtat
 
   /// La liste de la page se relit apres tout changement que le serveur a
   /// confirme (ou refuse parce qu'un autre l'a fait avant).
+  ///
+  /// L3 (01/11/2026) : la liste paginee aussi. Avec le port de pages (la
+  /// production), elle ne depend pas de [regroupementsAdminProvider] : apres
+  /// une creation, la ligne restait « Prete » jusqu'au rechargement (vu par
+  /// le robot sur la pile locale).
   void _relireListe() => ref
     ..invalidate(regroupementsAdminProvider)
+    ..invalidate(pageRegroupementsAdminProvider)
     ..invalidate(pageClassesAdminProvider)
     ..invalidate(pagePilotageProvider);
 
@@ -624,10 +632,19 @@ List<Widget> espacer(List<Widget> lignes) => <Widget>[
 /// refuse avant) ; elle ne promet ni ouverture ni arrivee ulterieure.
 class EtatQuota extends StatelessWidget {
   /// Cree l'etat.
-  const EtatQuota({required this.regroupement, super.key});
+  const EtatQuota({
+    required this.regroupement,
+    this.phraseSiPret = true,
+    super.key,
+  });
 
   /// Le regroupement.
   final RegroupementDemandes regroupement;
+
+  /// Faux dans une ligne de liste (L3, 01/11/2026) : « Prete » se dit par la
+  /// pastille seule ; la phrase « le quota est atteint » la repetait sous
+  /// chaque ligne. La phrase de ce qui manque reste toujours.
+  final bool phraseSiPret;
 
   @override
   Widget build(BuildContext context) {
@@ -648,12 +665,14 @@ class EtatQuota extends StatelessWidget {
           libelle: g.pret ? r.pret : r.incomplete,
           ton: g.pret ? TonEtat.succes : TonEtat.avertissement,
         ),
-        Ecart.vSm,
-        TexteSansCoupure(
-          phrase,
-          key: ValueKey<String>('regroupement-phrase-quota-${g.id}'),
-          style: textes.bodyMedium,
-        ),
+        if (!g.pret || phraseSiPret) ...<Widget>[
+          Ecart.vSm,
+          TexteSansCoupure(
+            phrase,
+            key: ValueKey<String>('regroupement-phrase-quota-${g.id}'),
+            style: textes.bodyMedium,
+          ),
+        ],
       ],
     );
   }

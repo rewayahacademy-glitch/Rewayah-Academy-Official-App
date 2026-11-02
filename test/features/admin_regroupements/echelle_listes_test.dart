@@ -28,6 +28,7 @@ import 'package:rewayah_academy/core/offres/port_regroupements_admin.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/features/admin_regroupements/regroupements_libelles.dart';
 import 'package:rewayah_academy/features/admin_regroupements/regroupements_page.dart';
 import 'package:rewayah_academy/features/demo/regroupements_demo.dart';
@@ -104,6 +105,14 @@ Future<void> _monter(
     ),
   );
   await _laisser(tester);
+  // L3 : au bureau, recherche et filtres sont en panneau, derriere l'icone.
+  final Finder bascule = find.byKey(
+    const ValueKey<String>('regroupements-bascule-filtres'),
+  );
+  if (bascule.evaluate().isNotEmpty) {
+    await tester.tap(bascule);
+    await _laisser(tester);
+  }
 }
 
 Future<void> _laisser(WidgetTester tester) async {
@@ -172,6 +181,53 @@ void main() {
           '1 classe de 5',
         );
       },
+    );
+  });
+
+  // L3 (01/11/2026) : avec le port de pages (la production), la liste se
+  // relit apres une creation ; la ligne restait « Prete » jusqu'au
+  // rechargement (vu par le robot sur la pile locale).
+  testWidgets('port de pages : apres la creation, la ligne attend son '
+      'enseignant sans rechargement', (WidgetTester tester) async {
+    final RegroupementsDemo port = RegroupementsDemo(
+      depart: <RegroupementDemandes>[_reg('r1')],
+    );
+    await _monter(tester, port);
+    expect(
+      find.byKey(const ValueKey<String>('regroupement-pret-r1')),
+      findsOneWidget,
+    );
+    await tester.tap(
+      find.byKey(const ValueKey<String>('regroupement-action-r1')),
+    );
+    await _laisser(tester);
+    final Finder garcons = find.byKey(
+      const ValueKey<String>('regroupement-genre-hommes'),
+    );
+    await tester.ensureVisible(garcons);
+    await tester.tap(garcons);
+    await tester.pump();
+    final Finder creer = find.descendant(
+      of: find.byKey(const ValueKey<String>('regroupement-creer')),
+      matching: find.byType(ActionPrincipale),
+    );
+    await tester.ensureVisible(creer);
+    await tester.tap(creer);
+    await _laisser(tester);
+    expect(port.creationsRecues, 1);
+    Navigator.of(
+      tester.element(
+        find.byKey(const ValueKey<String>('regroupement-feuille-enseignant')),
+      ),
+    ).pop();
+    await _laisser(tester);
+    expect(
+      find.byKey(const ValueKey<String>('regroupement-a-finir-r1')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey<String>('regroupement-pret-r1')),
+      findsNothing,
     );
   });
 
@@ -281,8 +337,16 @@ void main() {
       expect(_cartes(), 25);
       expect(port.pagesDemandees, 1);
       final int pages = (volume.length / 25).ceil();
+      // L3 : le pied commun dit la tranche, et le nombre de pages en lecture.
+      expect(pages, greaterThan(1));
       expect(
-        find.text(t.commun.formats.pageSur(page: '1', total: '$pages')),
+        find.text(
+          t.commun.listes.tranche(
+            debut: '1',
+            fin: '25',
+            total: '${volume.length}',
+          ),
+        ),
         findsOneWidget,
       );
       expect(_cle('nav-precedent'), findsNothing);
@@ -294,7 +358,7 @@ void main() {
       expect(port.pagesDemandees, 2, reason: 'une seule page de plus lue');
       expect(
         find.text(
-          t.admin.regroupements.liste.resume(
+          t.commun.listes.tranche(
             debut: '26',
             fin: '50',
             total: '${volume.length}',
@@ -324,11 +388,7 @@ void main() {
           .length;
       expect(
         find.text(
-          t.admin.regroupements.liste.resume(
-            debut: '1',
-            fin: '25',
-            total: '$nombrePrets',
-          ),
+          t.commun.listes.tranche(debut: '1', fin: '25', total: '$nombrePrets'),
         ),
         findsOneWidget,
       );

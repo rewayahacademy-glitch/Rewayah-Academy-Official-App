@@ -6276,6 +6276,7 @@
         "many": "⁨{n}⁩ طلبًا",
         "other": "⁨{n}⁩ طلب"
       },
+      "voirClasse": "عرض الفصل",
       "classesPossibles": {
         "zero": "لا فصل ممكن",
         "one": "فصل واحد ممكن",
