@@ -86,6 +86,21 @@ class _SourceCapricieuse extends FausseSourceSession {
   }
 }
 
+/// INSCRIPTION-3 : une source dont le rafraichissement reste en attente
+/// jusqu'a ce qu'on le libere ; on voit l'ecran entre la creation du profil et
+/// le depart vers `/attente`.
+class _SourceRetenue extends FausseSourceSession {
+  final Completer<void> _porte = Completer<void>();
+
+  void libere() => _porte.complete();
+
+  @override
+  Future<void> rafraichir() async {
+    rafraichissements++;
+    await _porte.future;
+  }
+}
+
 /// Un dossier dont la creation reste en attente jusqu'a ce qu'on la libere,
 /// pour surprendre un second appui pendant que le premier est encore en vol.
 class _DossierLent extends FauxServiceDossier {
@@ -596,6 +611,53 @@ void main() {
         }
       });
     }
+
+    testWidgets('INSCRIPTION-3 : entre la demande envoyee et le depart, le '
+        'recapitulatif reste tel quel', (WidgetTester tester) async {
+      final _SourceRetenue source = _SourceRetenue();
+      await _monter(
+        tester,
+        source: source,
+        questionnaire: _qFamille(parent: false),
+      );
+      await tester.enterText(
+        find.byKey(const Key('inscription-prenom')),
+        'Karim',
+      );
+      await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah');
+      await _continuer(tester);
+      await _taper(tester, find.text(t.inscription.genreHomme));
+      await _continuer(tester);
+      final Finder enfant = find.text(
+        LibellesGroupe.insecable(
+          t.inscription.questionnaire.ligneEnfant(prenom: 'Yasmine', age: 9),
+        ),
+      );
+      expect(enfant, findsOneWidget);
+
+      await tester.tap(find.text(t.inscription.questionnaire.envoyer));
+      for (int i = 0; i < 5; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      // Le profil est cree, la session s'actualise encore. Avant : le
+      // bouton disait « Reessayer » et les lignes de l'enfant disparaissaient
+      // (questionnaire efface avant le depart).
+      expect(source.rafraichissements, 1);
+      expect(find.text(t.inscription.reessayer), findsNothing);
+      expect(find.text(t.inscription.erreurActualisation), findsNothing);
+      expect(enfant, findsOneWidget);
+
+      source.libere();
+      await tester.pumpAndSettle();
+      expect(find.text('ATTENTE'), findsOneWidget);
+      // La demande est partie ; les reponses quittent l'appareil a
+      // l'arrivee sur la vraie page d'attente (attente_test.dart).
+      expect(
+        ProviderScope.containerOf(tester.element(find.text('ATTENTE')))
+            .read(departDemandeProvider),
+        isTrue,
+      );
+    });
 
     testWidgets('identite : les erreurs se disent sous les champs', (
       WidgetTester tester,

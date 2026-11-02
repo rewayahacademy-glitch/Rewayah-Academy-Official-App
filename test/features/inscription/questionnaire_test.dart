@@ -294,6 +294,38 @@ void main() {
       expect(garde.moments, <MomentJournee>{MomentJournee.soir});
     });
 
+    testWidgets('INSCRIPTION-3 : un toucher sur « Pour qui » choisit la carte '
+        'et reste ; seul « Continuer » avance', (WidgetTester tester) async {
+      final GoRouter routeur = await _monter(tester, Routes.commencer);
+      // L'ecran ouvert sans `?etape=` fixe son adresse des l'ouverture.
+      expect(routeur.state.uri.queryParameters['etape'], 'pourQui');
+      final Finder famille = find.text(t.inscription.usage.familleTitre);
+      await _taper(tester, famille);
+      // Avant : la page passait aussitot au prenom, sans etat choisi.
+      expect(find.text(t.inscription.usage.question), findsOneWidget);
+      expect(
+        find.text(t.inscription.questionnaire.prenomQuestion),
+        findsNothing,
+      );
+      expect(routeur.state.uri.queryParameters['etape'], 'pourQui');
+      // La carte choisie est annoncee comme telle.
+      expect(
+        tester.getSemantics(
+          find.bySemanticsLabel(RegExp('^${t.inscription.usage.familleTitre}')),
+        ),
+        isSemantics(isChecked: true),
+      );
+      // Un second toucher ne saute rien.
+      await _taper(tester, famille);
+      expect(find.text(t.inscription.usage.question), findsOneWidget);
+      await _continuer(tester);
+      expect(
+        find.text(t.inscription.questionnaire.prenomQuestion),
+        findsOneWidget,
+      );
+      expect(routeur.state.uri.queryParameters['etape'], 'prenom-0');
+    });
+
     testWidgets('18 ans ou plus : la phrase dit de s inscrire soi-meme, '
         'aucune avance', (WidgetTester tester) async {
       ecrireMemoireAppareil(
