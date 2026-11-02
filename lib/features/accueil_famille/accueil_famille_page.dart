@@ -37,7 +37,8 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/skeleton.dart';
-import '../acces_finance/acces_finance.dart' show seancesFermeesPour;
+import '../acces_finance/acces_finance.dart'
+    show BandeauPlace, accesEleveProvider, seancesFermeesPour;
 import '../acces_finance/carte_acces_finance.dart';
 import '../classe_tuteur/rejoindre_avec_eleve.dart';
 import '../consentements/consentement_observation_page.dart';
@@ -291,6 +292,10 @@ class _Contenu extends ConsumerWidget {
     // Lot (B), 02/11/2026 : seances fermees (paiement), ni « Rejoindre » ni
     // concierge pour cet enfant.
     final bool accesFerme = seancesFermeesPour(ref, eleveId);
+    final BandeauPlace? bandeauPlace = BandeauPlace.pour(
+      ref.watch(accesEleveProvider(eleveId)).value,
+      prenom: profil.prenom,
+    );
     final bool rejoindre =
         !accesFerme &&
         seanceOuverte != null &&
@@ -358,12 +363,16 @@ class _Contenu extends ConsumerWidget {
               eleve: profil,
             ),
           )
-        : blocage
-        ? BandeauBlocage(
-            prenom: profil.prenom,
-            onConnecter: () => routeur.go(Routes.appairerPour(eleveId)),
-          )
-        : null;
+        // Lot (B), 02/11/2026 : seances fermees pour paiement, la famille lit
+        // pourquoi et peut payer d'ici (bandeau existant, « Payer »).
+        : bandeauPlace ??
+              (blocage
+                  ? BandeauBlocage(
+                      prenom: profil.prenom,
+                      onConnecter: () =>
+                          routeur.go(Routes.appairerPour(eleveId)),
+                    )
+                  : null);
 
     final Widget preparation = ListePreparation(
       travail: travail,
