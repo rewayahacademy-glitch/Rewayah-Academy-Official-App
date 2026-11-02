@@ -13097,5 +13097,58 @@
     "echecTitre": "Votre inscription n'a pas pu être vérifiée",
     "echecPhrase": "Cause probable\u00a0: la connexion au serveur s'est interrompue (non confirmé). Réessayez dans un instant\u00a0: rien n'est créé en double.",
     "sansDonnees": "La vérification de votre inscription"
+  },
+  "i1": {
+    "invitations": {
+      "aideEmail": "Le code est créé pour cette adresse et part aussitôt par e-mail, avec le lien d'inscription. Vous pouvez aussi le transmettre de votre côté.",
+      "creee": "Invitation créée. L'e-mail avec le code {code} part vers {email}.",
+      "dejaInvite": "Une invitation est déjà active pour cette adresse. Elle est dans la liste ci-dessous ; son e-mail ne repart pas une seconde fois."
+    },
+    "familles": {
+      "choixTitre": "Une famille déjà inscrite",
+      "choixExplication": "À choisir pour les familles importées : chacune reçoit un e-mail pour ouvrir son espace, sans rien ressaisir.",
+      "titre": "Familles à inviter",
+      "aide": "Chaque famille importée reçoit, sur votre geste, un e-mail qui l'invite à se connecter avec son adresse. Rien ne part tout seul.",
+      "personnes": "Personnes : {n}",
+      "etat": {
+        "aEnvoyer": "À envoyer",
+        "enFile": "En cours d'envoi",
+        "envoyee": "Envoyée",
+        "echec": "Non partie",
+        "compteCree": "Espace ouvert"
+      },
+      "envoyeeLe": "Envoyée le {date}",
+      "envoyer": "Envoyer l'invitation",
+      "envoyerPour": "Envoyer l'invitation à {email}",
+      "renvoyer": "Renvoyer l'invitation",
+      "renvoyerPour": "Renvoyer l'invitation à {email}",
+      "envoyerToutes": "Envoyer à toutes les familles ({n})",
+      "toutesQuestion": "Envoyer l'invitation à toutes les familles à inviter ? Nombre de familles : {n}.",
+      "toutesConsequence": "Chaque famille reçoit un e-mail tout de suite. Un e-mail parti ne se reprend pas.",
+      "toutesConfirmer": "Oui, envoyer à toutes les familles ({n})",
+      "enFile": "L'invitation part vers {email}.",
+      "dejaEnFile": "Une invitation est déjà partie ou en cours d'envoi vers {email} : rien de plus n'est envoyé.",
+      "compteCree": "Cette famille a déjà ouvert son espace : rien n'est envoyé.",
+      "introuvable": "Cette famille n'est plus à inviter. Actualisez la liste.",
+      "toutesEnFile": "Les invitations partent. Nombre de familles : {n}.",
+      "nombreChange": "La liste a changé depuis votre confirmation : rien n'est parti. Relisez-la, puis confirmez de nouveau.",
+      "erreurEnvoi": "L'envoi n'est pas confirmé. Actualisez la liste avant de recommencer.",
+      "horsLigne": "L'invitation n'est pas partie. Réessayez dans un instant.",
+      "nonAutorise": "Seule la direction peut envoyer ces invitations. Reconnectez-vous avec un compte de la direction.",
+      "vide": "Aucune famille importée à inviter",
+      "videDetail": "Importez les inscriptions actuelles : chaque famille confirmée apparaît ici.",
+      "toutesEnvoyees": "Toutes les familles ont reçu leur invitation ou ouvert leur espace.",
+      "erreurListe": "Les familles importées n'ont pas pu être lues. Réessayez dans un instant.",
+      "sansDonnees": "Les familles importées",
+      "indisponible": "L'envoi des invitations aux familles n'est pas encore branché sur ce serveur."
+    },
+    "import": {
+      "invitationsAide": "Chaque nouvelle famille attend votre invitation. La liste juste en dessous l'envoie à une famille ou à toutes. Rien ne part tout seul."
+    },
+    "lien": {
+      "dejaServiTitre": "Ce lien a déjà servi ou a expiré",
+      "dejaServiDetail": "Un lien de connexion ne sert qu'une fois, et pour peu de temps. Demandez-en un nouveau : saisissez votre adresse e-mail sur la page de connexion.",
+      "nouveauLien": "Recevoir un nouveau lien"
+    }
   }
 }

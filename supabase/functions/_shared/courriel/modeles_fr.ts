@@ -211,6 +211,46 @@ export const MODELES: Record<string, Fabrique> = {
       ],
     }
   },
+  // I1 (02/11/2026) : l'invitation d'un enseignant par la direction
+  // (inviter_enseignant), avec son code et le lien qui le porte. Proposition,
+  // texte non valide par le directeur. Donnees : `code` (AAAA-BBBB-CCCC),
+  // `expire_le` (ISO). Le lien garde `invitation=1` et le code : la creation du
+  // compte s'ouvre sans le questionnaire des familles, et le code est retenu.
+  invitation_enseignant: (d) => {
+    const code = typeof d.code === 'string' && /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(d.code) ? d.code : null
+    const fin = dateLongue(d.expire_le)
+    const lien = `${APP}/connexion?mode=creer&invitation=1${code ? `&code=${code}` : ''}`
+    return {
+      sujet: 'Votre invitation à enseigner à Rewayah Academy',
+      apercu: 'La direction vous invite à créer votre compte enseignant.',
+      titre: 'Vous êtes invité à enseigner à Rewayah Academy',
+      blocs: [
+        { type: 'texte', texte: bonjour(d) },
+        { type: 'texte', texte: 'La direction de Rewayah Academy vous invite à créer votre compte enseignant.' },
+        ...(code ? [{ type: 'texte', texte: 'Votre code d’invitation :' } as const, { type: 'code', code } as const] : []),
+        { type: 'bouton', libelle: 'Créer mon compte enseignant', href: lien },
+        { type: 'texte', texte: 'Créez votre compte avec cette adresse e-mail : le code ne sert qu’avec elle. Si le bouton ne s’ouvre pas, ouvrez app.rewayahacademy.com, touchez « J’ai un code d’invitation » et recopiez le code.' },
+        { type: 'note', texte: (fin ? `L’invitation est valable jusqu’au ${fin} et ne sert qu’une fois. ` : 'L’invitation ne sert qu’une fois. ') + 'Rien à payer, à aucune étape. Si vous n’attendiez pas cette invitation, ignorez ce message.' },
+      ],
+    }
+  },
+  // I1 (02/11/2026) : une famille deja inscrite, importee par la direction
+  // (DECISION-IMMATRICULATION-2026-10-12.md §5), invitee a ouvrir son espace.
+  // Envoye seulement sur un geste de la direction. Proposition, texte non
+  // valide par le directeur. Aucune donnee de la famille n'entre dans le
+  // message : elle la retrouve apres connexion avec cette adresse.
+  invitation_famille_importee: (d) => ({
+    sujet: 'Votre espace Rewayah Academy vous attend',
+    apercu: 'Votre inscription est déjà dans l’application : connectez-vous avec cette adresse e-mail.',
+    titre: 'Votre inscription est déjà dans l’application',
+    blocs: [
+      { type: 'texte', texte: bonjour(d) },
+      { type: 'texte', texte: 'Vous êtes déjà inscrits à Rewayah Academy. La suite se passe dans l’application : la direction y a déjà enregistré votre famille.' },
+      { type: 'texte', texte: 'Connectez-vous avec cette adresse e-mail : vous retrouverez votre foyer sans rien ressaisir.' },
+      { type: 'bouton', libelle: 'Ouvrir mon espace', href: `${APP}/connexion` },
+      { type: 'note', texte: 'Nous ne vous demanderons jamais de mot de passe ni de paiement par message. Le lien mène à notre adresse officielle, app.rewayahacademy.com. Si vous ne connaissez pas Rewayah Academy, ignorez ce message.' },
+    ],
+  }),
   // Candidats inscrits aux formulaires Google, prevenus de creer leur compte
   // (DECISION-CANDIDATURES-2026-10-21.md, « Le message qui previent les inscrits
   // des formulaires Google », regles 1 a 8). Donnees : `date_reponse` (horodatage
@@ -280,6 +320,8 @@ export const TRADUITS_A_L_ENVOI: readonly string[] = [
   'attente_candidat', 'admission_recue', 'admission_acceptee', 'admission_refusee', 'admission_precisions',
   // D2 (30/10/2026) : ecrit en francais et en arabe.
   'compte_enseignant_valide',
+  // I1 (02/11/2026) : ecrits en francais seulement, traduits a l'envoi.
+  'invitation_enseignant', 'invitation_famille_importee',
 ]
 
 export const FRANCAIS: LangueEcrite = {

@@ -20,6 +20,7 @@ import '../../core/widgets/bandeau_attention.dart';
 import '../../core/widgets/controle_segmente.dart';
 import '../demo/mode_demonstration.dart';
 import '../demo/racine_demonstrable.dart';
+import '../inscription/invitation_en_cours.dart';
 import '../inscription/questionnaire/questionnaire_inscription.dart'
     show questionnaireInscriptionProvider;
 import 'coquille_entree.dart';
@@ -160,6 +161,10 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
   void initState() {
     super.initState();
     final Uri retour = widget.urlRetour ?? Uri.base;
+    // I1 (UX-013) : le lien de l'invitation d'un enseignant
+    // (`?mode=creer&invitation=1&code=...`) pose la marque de l'invitation en
+    // cours, que l'inscription reprend au retour du lien de connexion.
+    retenirInvitationDepuisAdresse(retour);
     // Google refuse un nouveau compte quand les inscriptions sont fermees :
     // la phrase se dit ici, la recuperation d'acces n'y peut rien.
     if (inscriptionFermeeDepuisUrlRetour(retour)) {
