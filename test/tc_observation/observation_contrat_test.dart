@@ -201,6 +201,46 @@ void main() {
       expect(_dispo(politique: null), isA<ObservationPossible>());
     });
 
+    test('O1 : interrupteur de l academie ferme, puis ouvert', () {
+      // Ce que rend budget_observation() quand app_config.observation.activee
+      // vaut faux : version `fermee`, aucune visite, entree refusee.
+      const BudgetObservation fermeParLAcademie = BudgetObservation(
+        policyVersion: versionPolitiqueFermee,
+        visitesUtilisees: 0,
+        visitesMax: 0,
+        tempsConsomme: Duration.zero,
+        tempsTotalMax: Duration.zero,
+        restant: Duration.zero,
+        peutEntrer: false,
+        motifRefus: MotifRefusObservation.policyDesactivee,
+      );
+      const GuardianObservationPolicy politiqueFermeeAcademie =
+          GuardianObservationPolicy(
+            policyVersion: versionPolitiqueFermee,
+            source: SourcePolitique.academie,
+            observationActivee: false,
+            maxVisitsPerSession: 0,
+            maxTotalObservationTime: Duration.zero,
+          );
+      // Faux : « pas encore ouverte », jamais « fermee pour cette classe ».
+      expect(
+        _motif(
+          _dispo(budget: fermeParLAcademie, politique: politiqueFermeeAcademie),
+        ),
+        MotifIndisponibilite.garantieServeurAbsente,
+      );
+      expect(
+        _motif(_dispo(budget: fermeParLAcademie, politique: null)),
+        MotifIndisponibilite.garantieServeurAbsente,
+      );
+      expect(
+        _motif(_dispo(budget: fermeParLAcademie, politique: politiqueA2)),
+        MotifIndisponibilite.garantieServeurAbsente,
+      );
+      // Vrai : le serveur rend la politique `a2`, la visite est proposee.
+      expect(_dispo(), isA<ObservationPossible>());
+    });
+
     test('une presence non confirmee est en verification, jamais absente', () {
       final Set<MotifIndisponibilite> vus = <MotifIndisponibilite>{};
       for (final EtatPresence? presence in <EtatPresence?>[

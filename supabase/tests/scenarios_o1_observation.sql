@@ -11,7 +11,8 @@
 -- controle reussi ecrit « O1 OK » ; un echec leve « O1 ROUGE : ... ».
 BEGIN;
 
--- La politique de l'academie : 2 visites, 120 s par visite, 240 s au total.
+-- La politique de l'academie : 2 visites, 120 s par visite, 240 s au total ;
+-- l'interrupteur est ferme puis ouvert au controle (0).
 INSERT INTO public.app_config (key, value) VALUES
   ('observation.activee', 'true'::jsonb),
   ('observation.max_visits_per_session', '2'::jsonb),
@@ -84,6 +85,39 @@ GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA pg_temp TO authenticated;
 
 CREATE TEMP TABLE o1_note (cle text PRIMARY KEY, valeur text);
 GRANT ALL ON o1_note TO authenticated;
+
+-- (0) Interrupteur de l'academie ferme (app_config.observation.activee =
+-- false) : le serveur refuse le tuteur, le budget se dit `fermee` (pas
+-- « fermee pour cette classe »), aucune visite n'est ouverte. Puis on ouvre.
+UPDATE public.app_config SET value = 'false'::jsonb WHERE key = 'observation.activee';
+SELECT pg_temp.etre('01000000-0000-4000-8000-0000000000f1', 'guardian', '01000000-0000-4000-8000-00000000f001');
+SET LOCAL ROLE authenticated;
+DO $o1$
+DECLARE v jsonb;
+BEGIN
+  v := public.entrer_observation('01000000-0000-4000-8000-0000005e55e0', 'guardian_observer');
+  IF coalesce((v->>'autorise')::boolean, true) OR v->>'motif_refus' IS DISTINCT FROM 'policy_desactivee' THEN
+    RAISE EXCEPTION 'O1 ROUGE : interrupteur ferme, le tuteur entre quand meme : %', v;
+  END IF;
+  v := public.budget_observation('01000000-0000-4000-8000-0000005e55e0');
+  IF coalesce((v->>'peut_entrer')::boolean, true) OR v->>'policy_version' IS DISTINCT FROM 'fermee' THEN
+    RAISE EXCEPTION 'O1 ROUGE : interrupteur ferme, budget ouvert ou mal nomme : %', v;
+  END IF;
+  RAISE NOTICE 'O1 OK : (0a) interrupteur ferme : entree refusee (policy_desactivee), politique `fermee`';
+END $o1$;
+RESET ROLE;
+DO $o1$
+BEGIN
+  IF EXISTS (SELECT 1 FROM public.guardian_session_visit
+              WHERE session_id = '01000000-0000-4000-8000-0000005e55e0') THEN
+    RAISE EXCEPTION 'O1 ROUGE : un refus a ouvert une visite';
+  END IF;
+  IF (public.politique_observation_effective('01000000-0000-4000-8000-00000000c1a5')->>'max_visits_per_session')::int <> 0 THEN
+    RAISE EXCEPTION 'O1 ROUGE : interrupteur ferme, la politique garde des visites';
+  END IF;
+  RAISE NOTICE 'O1 OK : (0b) interrupteur ferme : aucune visite ouverte, politique a 0 visite';
+END $o1$;
+UPDATE public.app_config SET value = 'true'::jsonb WHERE key = 'observation.activee';
 
 -- (1) Le tuteur entre ; l'enseignant et SON enfant sont prevenus, personne
 -- d'autre.
@@ -266,5 +300,52 @@ BEGIN
   END IF;
   RAISE NOTICE 'O1 OK : (10) la direction regarde invisible, sans quota, et n''est pas coupee';
 END $o1$;
+
+-- (11) L'interrupteur se referme pendant une visite de tuteur : la coupure
+-- serveur la revoque (revocation_serveur) et rend la sortie LiveKit ; une
+-- nouvelle entree est refusee. Puis on rouvre : le tuteur entre de nouveau.
+SELECT pg_temp.etre('01000000-0000-4000-8000-0000000000f2', 'guardian', '01000000-0000-4000-8000-00000000f002');
+SET LOCAL ROLE authenticated;
+DO $o1$
+DECLARE v jsonb;
+BEGIN
+  v := public.entrer_observation('01000000-0000-4000-8000-0000005e55e0', 'guardian_observer');
+  IF NOT coalesce((v->>'autorise')::boolean, false) THEN
+    RAISE EXCEPTION 'O1 ROUGE : interrupteur ouvert, second tuteur refuse : %', v;
+  END IF;
+END $o1$;
+RESET ROLE;
+UPDATE public.app_config SET value = 'false'::jsonb WHERE key = 'observation.activee';
+DO $o1$
+DECLARE
+  v jsonb;
+  v_ligne public.guardian_session_visit;
+BEGIN
+  v := public.couper_visites_observation_echues('wss://cloud.example.test', 'wss://self.example.test');
+  SELECT * INTO v_ligne FROM public.guardian_session_visit
+   WHERE observateur_profile_id = '01000000-0000-4000-8000-0000000000f2'
+   ORDER BY entered_at DESC LIMIT 1;
+  IF v_ligne.left_at IS NULL OR v_ligne.fin_de_visite <> 'revocation_serveur' THEN
+    RAISE EXCEPTION 'O1 ROUGE : interrupteur referme, visite non revoquee : % / %',
+      v_ligne.left_at, v_ligne.fin_de_visite;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_catalog.jsonb_array_elements(v) e
+                  WHERE e->>'identity' = '01000000-0000-4000-8000-0000000000f2') THEN
+    RAISE EXCEPTION 'O1 ROUGE : la revocation ne rend pas la sortie a faire : %', v;
+  END IF;
+  RAISE NOTICE 'O1 OK : (11a) interrupteur referme : visite ouverte revoquee par le serveur, sortie rendue';
+END $o1$;
+SELECT pg_temp.etre('01000000-0000-4000-8000-0000000000f2', 'guardian', '01000000-0000-4000-8000-00000000f002');
+SET LOCAL ROLE authenticated;
+DO $o1$
+DECLARE v jsonb;
+BEGIN
+  v := public.entrer_observation('01000000-0000-4000-8000-0000005e55e0', 'guardian_observer');
+  IF coalesce((v->>'autorise')::boolean, true) THEN
+    RAISE EXCEPTION 'O1 ROUGE : interrupteur referme, nouvelle entree acceptee : %', v;
+  END IF;
+  RAISE NOTICE 'O1 OK : (11b) interrupteur referme : nouvelle entree refusee';
+END $o1$;
+RESET ROLE;
 
 ROLLBACK;

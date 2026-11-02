@@ -31,6 +31,10 @@
 -- 2. public.annonces_observation : l'enseignant EFFECTIF de la seance (un
 --    remplacant designe) est prevenu, pas seulement le titulaire. Retouche
 --    par ancre (B4).
+-- 2 bis. Interrupteur : app_config.observation.activee pose a faux s'il est
+--    absent (INSERT ... ON CONFLICT DO NOTHING, jamais d'ecrasement) ; une
+--    cle absente ferme ; version de politique `fermee` quand l'academie n'a
+--    pas ouvert. Retouche par ancre de politique_observation_effective.
 -- 3. Tache planifiee `observation-coupure`, chaque minute, sur le modele exact
 --    de `courriels-envoi` (20261023120000) : net.http_post vers l'URL lue au
 --    coffre, l'en-tete secret lu au coffre ; rien ne part s'il n'y a ni visite
@@ -194,17 +198,51 @@ SELECT pg_temp.remplacer('public.annonces_observation(uuid)',
                            coalesce(private.c29_enseignant_effectif_session(p_session_id),
                                     v_seance.teacher_id)) then$b$, 1);
 
--- Empreinte F86 eventuelle de la fonction retouchee.
+-- ------------------------------------------------------------------
+-- 2 bis. L'interrupteur de l'academie, ferme tant que le pilote ne l'ouvre pas
+-- ------------------------------------------------------------------
+-- Seconde barriere (pilote, 02/11/2026) : l'observation reelle des parents ne
+-- s'ouvre que si le serveur le dit, par app_config.observation.activee (la cle
+-- existe depuis 0030 ; elle valait true en production le 02/11). Posee a faux
+-- seulement si elle est absente, sans ecraser une valeur existante. Le pilote
+-- l'ouvre, apres les secrets et un premier passage reussi de la tache
+-- planifiee, par la ligne ecrite en tete de la PR (un UPDATE).
+INSERT INTO public.app_config (key, value)
+VALUES ('observation.activee', 'false'::jsonb)
+ON CONFLICT (key) DO NOTHING;
+
+-- Une cle absente ferme (elle ouvrait), et l'interrupteur de l'academie se dit
+-- par sa propre version de politique, `fermee`, distincte de `desactivee`
+-- (une classe fermee par la direction) : le client ne dit pas « fermee pour
+-- cette classe » quand c'est l'academie qui n'a pas encore ouvert. Tout suit
+-- cette politique : entrer_observation, budget_observation, le jeton video et
+-- la coupure serveur (revocation d'une visite ouverte).
+SELECT pg_temp.remplacer('public.politique_observation_effective(uuid)',
+  $a$if not coalesce((public.get_config('observation.activee', 'true'::jsonb))::boolean, true)
+     or v_source = 'desactivee' then$a$,
+  $b$if not coalesce((public.get_config('observation.activee', 'false'::jsonb))::boolean, false) then
+    v_activee := false;
+    v_max_visites := 0;
+    v_max_secondes := 0;
+    v_max_secondes_visite := null;
+    v_policy_version := 'fermee';
+  elsif v_source = 'desactivee' then$b$, 1);
+
+-- Empreintes F86 eventuelles des fonctions retouchees.
 DO $empreintes$
 DECLARE
-  v_f pg_catalog.regprocedure := 'public.annonces_observation(uuid)'::pg_catalog.regprocedure;
-  v_com text := pg_catalog.obj_description(v_f, 'pg_proc');
+  v_f pg_catalog.regprocedure;
+  v_com text;
 BEGIN
-  IF v_com ~ 'md5_functiondef=[0-9a-f]{32}' THEN
-    EXECUTE pg_catalog.format('COMMENT ON FUNCTION %s IS %L', v_f,
-      pg_catalog.regexp_replace(v_com, 'md5_functiondef=[0-9a-f]{32}',
-        'md5_functiondef=' || pg_catalog.md5(pg_catalog.pg_get_functiondef(v_f))));
-  END IF;
+  FOREACH v_f IN ARRAY ARRAY['public.annonces_observation(uuid)'::pg_catalog.regprocedure,
+                             'public.politique_observation_effective(uuid)'::pg_catalog.regprocedure] LOOP
+    v_com := pg_catalog.obj_description(v_f, 'pg_proc');
+    IF v_com ~ 'md5_functiondef=[0-9a-f]{32}' THEN
+      EXECUTE pg_catalog.format('COMMENT ON FUNCTION %s IS %L', v_f,
+        pg_catalog.regexp_replace(v_com, 'md5_functiondef=[0-9a-f]{32}',
+          'md5_functiondef=' || pg_catalog.md5(pg_catalog.pg_get_functiondef(v_f))));
+    END IF;
+  END LOOP;
 END;
 $empreintes$;
 
@@ -263,6 +301,13 @@ BEGIN
   IF pg_catalog.strpos(pg_catalog.pg_get_functiondef('public.annonces_observation(uuid)'::pg_catalog.regprocedure),
                        'c29_enseignant_effectif_session') = 0 THEN
     RAISE EXCEPTION 'O1 : annonces_observation ignore l''enseignant effectif';
+  END IF;
+  IF pg_catalog.strpos(pg_catalog.pg_get_functiondef('public.politique_observation_effective(uuid)'::pg_catalog.regprocedure),
+                       'v_policy_version := ''fermee''') = 0 THEN
+    RAISE EXCEPTION 'O1 : politique_observation_effective sans interrupteur ferme par defaut';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM public.app_config WHERE key = 'observation.activee') THEN
+    RAISE EXCEPTION 'O1 : cle observation.activee absente';
   END IF;
   -- Requete dynamique : sur un Postgres nu (CI), cron.job n'existe pas et une
   -- requete statique echouerait des l'analyse.

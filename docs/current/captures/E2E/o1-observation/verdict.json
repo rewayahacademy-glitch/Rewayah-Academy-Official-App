@@ -8,6 +8,7 @@
   },
   "verdict": "vert",
   "prouve_ici": [
+    "interrupteur de l academie ferme (app_config.observation.activee = false) : la porte dit Observation pas encore ouverte, aucun bouton, aucune visite en base ; ouvert (la ligne UPDATE du pilote), le parent entre",
     "le parent entre (visite ouverte en base, 2 minutes, 1/2 visite restante)",
     "la visite est coupee par le SERVEUR a 120 s (couper_visites_observation_echues, fin quota_atteint) et l ecran le dit",
     "une seconde visite ecourtee compte ; la troisieme est refusee (Aucune visite restante)",

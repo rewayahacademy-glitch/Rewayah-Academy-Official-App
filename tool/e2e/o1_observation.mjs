@@ -103,10 +103,24 @@ try {
   amorcer();
   const vue = { width: largeur, height: hauteur };
 
-  // 1. Le parent ouvre la porte d'observation et entre.
+  // 0. Interrupteur de l'academie ferme (app_config.observation.activee =
+  // false) : la porte dit « pas encore ouverte » et ne propose rien ; le
+  // serveur refuse l'entree. Puis on l'ouvre (la ligne que posera le pilote).
   const f = await p.contexte('parent', { vue });
   await connecter(f.page, COMPTE.tuteur);
+  sql(`update public.app_config set value = 'false'::jsonb, updated_at = now() where key = 'observation.activee'`);
   await aller(f.page, `/tc/observation/${ID.seance}?classe=${ID.classe}&eleve=${ID.enfant}`);
+  const ferme = await lus(f.page);
+  p.dire(`Interrupteur ferme : ${ferme}`);
+  await p.capture(f, 'interrupteur_ferme');
+  verdicts.interrupteurFerme = /Observation pas encore ouverte/.test(ferme) && !/Observer maintenant/.test(ferme)
+    && visites() === '';
+  sql(`update public.app_config set value = 'true'::jsonb, updated_at = now() where key = 'observation.activee'`);
+  await f.page.reload();
+  await f.page.waitForTimeout(3500);
+  await activerSemantique(f.page);
+
+  // 1. Le parent ouvre la porte d'observation et entre.
   p.dire(`Porte : ${await lus(f.page)}`);
   await p.capture(f, 'porte_observation');
   await cliquer(f.page, /^Observer maintenant$/, { role: 'button', pause: 5000 });
@@ -215,7 +229,7 @@ try {
   await p.capture(d, 'direction_regarde_invisible');
 
   p.dire(`Verdicts : ${JSON.stringify(verdicts)}`);
-  const attendus = ['entree', 'coupeeServeur', 'ecranFinDeVisite', 'secondeEcourteeComptee', 'troisiemeRefusee',
+  const attendus = ['interrupteurFerme', 'entree', 'coupeeServeur', 'ecranFinDeVisite', 'secondeEcourteeComptee', 'troisiemeRefusee',
     'boutonDirection', 'directionInvisible'];
   const ok = attendus.every((k) => verdicts[k] === true);
   code = await p.fin(ok ? 'vert' : 'rouge', ok ? '' : JSON.stringify(verdicts));
