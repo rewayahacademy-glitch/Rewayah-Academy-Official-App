@@ -8808,6 +8808,11 @@
       }
     },
     "observation": {
+      "o1": {
+        "regardeInvisible": "Vous regardez sans être vu\u00a0: ni micro, ni caméra, aucune annonce aux participants.",
+        "videoIndisponible": "La vidéo de la séance n'a pas pu s'ouvrir. Quittez, puis entrez de nouveau dans un instant.",
+        "reconnexion": "Reconnexion à la salle en cours."
+      },
       "entree": {
         "titre": "Observer la séance",
         "tuteurIntro": "Vous pouvez regarder un court moment le cours de votre enfant. Votre micro et votre caméra restent fermés.",

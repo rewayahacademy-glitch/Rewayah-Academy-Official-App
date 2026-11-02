@@ -966,6 +966,8 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
       videoEnfant: vue.mediaEnfantOuvert ? _video(vue.monEnfant) : null,
       budgetIncertain: etat.budgetIncertain,
       videoIndisponible: _salleIndisponible,
+      // O1 : la direction regarde sans etre vue, sans quota de parent.
+      parent: ref.read(sessionProvider).observeEnFamille,
     );
   }
 

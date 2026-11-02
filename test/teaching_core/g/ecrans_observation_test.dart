@@ -197,6 +197,42 @@ void main() {
       expect(find.text(t.tc.observation.visite.sonRecu), findsOneWidget);
     });
 
+    testWidgets('O1 : la direction regarde sans etre vue, sans decompte ni '
+        'texte de parent', (WidgetTester tester) async {
+      final VueObservationTuteur vue = VueObservationTuteur.depuis(
+        participants: <ParticipantSalle>[
+          _personne(identite: 'prof-1', role: 'teacher', camera: true),
+          _personne(identite: 'enfant-1', role: 'student', camera: true),
+        ],
+        enfantProfilId: null,
+        budget: null,
+      );
+
+      await tester.pumpWidget(
+        hoteTcG(
+          SizedBox(
+            height: _hauteurSalle,
+            child: PanneauObservationTuteur(
+              vue: vue,
+              onQuitter: () {},
+              parent: false,
+              videoIndisponible: true,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text(t.tc.observation.o1.regardeInvisible), findsOneWidget);
+      expect(find.text(t.tc.observation.visite.budgetIncertain), findsNothing);
+      expect(find.text(t.tc.observation.visite.monEnfant), findsNothing);
+      expect(
+        find.text(t.tc.observation.visite.videoIndisponible),
+        findsNothing,
+      );
+      expect(find.text(t.tc.observation.o1.videoIndisponible), findsOneWidget);
+      expect(find.text(t.tc.observation.visite.quitter), findsOneWidget);
+    });
+
     testWidgets('un temps restant non confirme se dit', (
       WidgetTester tester,
     ) async {
