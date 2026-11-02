@@ -119,6 +119,9 @@ try {
     v.boutonPret = !!(await boutonDeLigne(c.page, B, /^Créer la classe$/));
     v.pasPretSansBouton = !(await boutonDeLigne(c.page, C, /^Créer la classe$/))
       && /Il manque 3 demandes/.test(l + (await lus(c.page, 200)));
+    // Les boutons au repos : le pointeur hors de la liste (relecture du
+    // pilote : un survol ne doit pas passer pour un autre style).
+    await c.page.mouse.move(2, hauteur - 2); await c.page.waitForTimeout(400);
     await p.capture(c, `${cle}_ouverture`);
 
     if (bureau) {
@@ -159,12 +162,13 @@ try {
       // Secours : un clic sur le fond assombri ferme la feuille, puis Echap.
       await c.page.mouse.click(8, hauteur - 8); await c.page.waitForTimeout(1200);
       await c.page.keyboard.press('Escape'); await c.page.waitForTimeout(1200);
+      await c.page.mouse.move(2, hauteur - 2); await c.page.waitForTimeout(400);
       await p.capture(c, `${cle}_feuille_fermee`);
     }
 
     // La classe creee : « Enseignant a confirmer », et son menu « ... ».
     await activerSemantique(c.page);
-    const menu = await noeudDeLigne(c.page, /^Actions : Garçons, lundi, mercredi 17/);
+    const menu = await noeudDeLigne(c.page, /^Actions : Lundi, mercredi · 17\sh/);
     v.menu = false; v.fiche = largeur !== 1440;
     if (menu) {
       await amenerEnVue(c.page, menu);

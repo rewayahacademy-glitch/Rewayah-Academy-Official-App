@@ -4380,6 +4380,7 @@
       "creer": "Créer la classe",
       "choisirEnseignant": "Choisir l'enseignant",
       "voirClasse": "Voir la classe",
+      "manquentCourt": {"one": "Il manque {n} demande.", "other": "Il manque {n} demandes."},
       "contexte": {
         "one": "L'élève de ces demandes sera intégré à la classe dès sa création. Vous confirmerez ensuite l'enseignant proposé.",
         "other": "Les {n} élèves de ces demandes seront intégrés à la classe dès sa création. Vous confirmerez ensuite l'enseignant proposé."

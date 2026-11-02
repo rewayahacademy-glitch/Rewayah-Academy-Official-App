@@ -225,7 +225,9 @@ void main() {
         taille: const Size(1440, 4000),
       );
       final List<String> titres = <String>[
-        for (int n = 1; n <= 30; n++) 'Garçons, lundi 18 h · n°\u00a0$n',
+        // L3 (relecture du pilote) : le format du regroupement, plus le
+        // numero R16 qui distingue les classes paralleles.
+        for (int n = 1; n <= 30; n++) 'Lundi · 18\u00a0h · n°\u00a0$n',
       ];
       // Les numeros presents a l'ecran, avec leur titre distinct.
       Set<int> presents() {

@@ -634,24 +634,29 @@ class EtatQuota extends StatelessWidget {
   /// Cree l'etat.
   const EtatQuota({
     required this.regroupement,
-    this.phraseSiPret = true,
+    this.enLigne = false,
     super.key,
   });
 
   /// Le regroupement.
   final RegroupementDemandes regroupement;
 
-  /// Faux dans une ligne de liste (L3, 01/11/2026) : « Prete » se dit par la
-  /// pastille seule ; la phrase « le quota est atteint » la repetait sous
-  /// chaque ligne. La phrase de ce qui manque reste toujours.
-  final bool phraseSiPret;
+  /// Vrai dans une ligne de liste (L3, relecture du pilote, 01/11/2026) :
+  /// « Prete » se dit par la pastille seule ; ce qui manque, en une phrase
+  /// courte (« Il manque 3 demandes. »). L'explication longue reste dans la
+  /// feuille.
+  final bool enLigne;
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
     final r = t.admin.regroupements;
     final RegroupementDemandes g = regroupement;
-    final String phrase = g.pret ? r.pretDetail : r.manquent(n: g.manquants);
+    final String phrase = enLigne
+        ? r.manquentCourt(n: g.manquants)
+        : g.pret
+        ? r.pretDetail
+        : r.manquent(n: g.manquants);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -665,7 +670,7 @@ class EtatQuota extends StatelessWidget {
           libelle: g.pret ? r.pret : r.incomplete,
           ton: g.pret ? TonEtat.succes : TonEtat.avertissement,
         ),
-        if (!g.pret || phraseSiPret) ...<Widget>[
+        if (!g.pret || !enLigne) ...<Widget>[
           Ecart.vSm,
           TexteSansCoupure(
             phrase,

@@ -34,6 +34,8 @@ import 'package:go_router/go_router.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/port_classes_admin.dart';
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/capacites/port_enseignants_classe.dart' show GenreClasse;
+import '../../core/classes/nom_classe_distinct.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/i18n/villes_fuseau.dart';
 import '../../core/icons/app_icons.dart';
@@ -59,6 +61,7 @@ import '../../core/widgets/puce_filtre_actif.dart';
 import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../admin_groupes/genre_classe_libelles.dart' show libelleGenreClasse;
 import '../creneaux/plages.dart' show jourCapitalise;
 import 'feuille_classe_regroupement.dart';
 import 'regroupements_libelles.dart';
@@ -512,9 +515,24 @@ class _Corps extends StatelessWidget {
     final ClasseSansEnseignant c => c.peutAffecterEnseignant,
   };
 
+  /// Le titre garde le format du regroupement (« Jours · heure »), avant
+  /// comme apres la creation (relecture du pilote) ; une classe creee y
+  /// ajoute son numero parmi les classes paralleles (R16), et son genre
+  /// passe dans « Public ».
   static String _titre(RegroupementDemandes g) => switch (g.classe) {
     null => libelleCreneau(g),
-    final ClasseSansEnseignant c => nomClasseRegroupee(c),
+    final ClasseSansEnseignant c => nomClasseDistinct(
+      libelleCreneau(g),
+      numero: c.numeroDansFamille,
+      code: c.codeCourt,
+    ),
+  };
+
+  /// « Enfants », « Adultes » ; pour une classe creee, son genre
+  /// (« Garcons », « Femmes »…), qui dit aussi le public.
+  static String _public(RegroupementDemandes g) => switch (g.classe?.genre) {
+    final GenreClasse genre => libelleGenreClasse(genre, typeDe(g.public)),
+    null => nomPublic(g.public),
   };
 
   @override
@@ -533,8 +551,6 @@ class _Corps extends StatelessWidget {
         ),
       );
     }
-    // K-56 : un seul bouton plein, sur la premiere ligne qui en porte un.
-    final String? principal = page.lignes.where(_peutAgir).firstOrNull?.id;
     final bool ailleurs = page.lignes.any(
       (RegroupementDemandes g) => g.autresFuseaux.isNotEmpty,
     );
@@ -577,7 +593,7 @@ class _Corps extends StatelessWidget {
           ),
         ColonneDonnees<RegroupementDemandes>(
           titre: r.clePublic,
-          texte: (RegroupementDemandes g) => nomPublic(g.public),
+          texte: _public,
         ),
         ColonneDonnees<RegroupementDemandes>(
           titre: r.cleLangue,
@@ -612,9 +628,10 @@ class _Corps extends StatelessWidget {
                   libelle: g.classe == null ? r.creer : r.choisirEnseignant,
                   compacte: true,
                   pleineLargeur: false,
-                  niveau: g.id == principal
-                      ? NiveauAction.principale
-                      : NiveauAction.secondaire,
+                  // Un seul style pour toutes les lignes et les deux
+                  // actions (relecture du pilote) : le contour. K-56 : un
+                  // seul bouton plein par ecran, jamais un par ligne.
+                  niveau: NiveauAction.secondaire,
                   onPress: () => onAgir(g),
                 ),
         ),
@@ -678,7 +695,7 @@ class _TitreRegroupement extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         TexteSansCoupure(
-          classe == null ? libelleCreneau(g) : nomClasseRegroupee(classe),
+          _Corps._titre(g),
           // C-11 bis : chaque jour avec son heure quand elles different.
           key: classe == null && !g.heuresToutesEgales
               ? ValueKey<String>('regroupement-jours-heures-${g.id}')
@@ -687,7 +704,7 @@ class _TitreRegroupement extends StatelessWidget {
         ),
         Ecart.vXs,
         if (classe == null)
-          EtatQuota(regroupement: g, phraseSiPret: false)
+          EtatQuota(regroupement: g, enLigne: true)
         else
           StatusPill(
             key: ValueKey<String>('regroupement-a-finir-${g.id}'),

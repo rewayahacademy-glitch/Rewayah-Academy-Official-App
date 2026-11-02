@@ -498,15 +498,17 @@ void main() {
         for (final String id in attendus) tester.getTopLeft(_carte(id)).dy,
       ];
       expect(hauts, orderedEquals(<double>[...hauts]..sort()));
-      // Le seul bouton plein est sur la premiere carte.
+      // L3 (relecture du pilote) : un seul style pour toutes les lignes, le
+      // contour ; aucun bouton plein dans la liste (K-56).
       expect(
         tester.widget<ActionPrincipale>(_action(attendus.first)).niveau,
-        NiveauAction.principale,
+        NiveauAction.secondaire,
       );
       expect(
         tester.widget<ActionPrincipale>(_action(_pret)).niveau,
         NiveauAction.secondaire,
       );
+      verifierUnSeulBoutonPlein(tester, maximum: 0);
       await _demonter(tester);
     });
 
@@ -526,7 +528,11 @@ void main() {
       expect(_parCle('regroupement-pret-trois'), findsOneWidget);
       expect(_parCle('regroupement-incomplet-six'), findsOneWidget);
       expect(find.text('6 demandes → aucune classe possible'), findsOneWidget);
-      expect(find.text(t.admin.regroupements.manquent(n: 1)), findsOneWidget);
+      // L3 : dans la liste, la phrase courte.
+      expect(
+        find.text(t.admin.regroupements.manquentCourt(n: 1)),
+        findsOneWidget,
+      );
       await _demonter(tester);
     });
 
@@ -671,7 +677,11 @@ void main() {
       // meme » ni « d'autres eleves pourront la rejoindre ».
       expect(_action(_incomplet), findsNothing);
       expect(_parCle('regroupement-ferme-$_incomplet'), findsNothing);
-      expect(find.text(t.admin.regroupements.manquent(n: 3)), findsOneWidget);
+      // L3 : dans la liste, la phrase courte.
+      expect(
+        find.text(t.admin.regroupements.manquentCourt(n: 3)),
+        findsOneWidget,
+      );
       expect(find.textContaining('quand même'), findsNothing);
       expect(find.textContaining('rejoindre'), findsNothing);
       expect(port.creationsRecues, 0);
@@ -699,7 +709,7 @@ void main() {
         _action(_pret),
       );
       expect(reprendre.libelle, t.admin.regroupements.choisirEnseignant);
-      expect(reprendre.niveau, NiveauAction.principale);
+      expect(reprendre.niveau, NiveauAction.secondaire);
       await _ouvrir(tester, _pret);
       expect(_parCle('regroupement-feuille-enseignant'), findsOneWidget);
       expect(
@@ -1354,11 +1364,10 @@ void main() {
           expect(tester.takeException(), isNull);
           expect(boutonsDeCarte(), findsNWidgets(3));
 
-          // La premiere prete (la plus nombreuse) porte le seul bouton plein ;
-          // les deux autres, la meme action en niveau secondaire.
+          // L3 : les trois pretes portent la meme action, au meme niveau.
           expect(
             tester.widget<ActionPrincipale>(_action('pr-1')).niveau,
-            NiveauAction.principale,
+            NiveauAction.secondaire,
           );
           expect(
             tester.widget<ActionPrincipale>(_action('pr-2')).niveau,
