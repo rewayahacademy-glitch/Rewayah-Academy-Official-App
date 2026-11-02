@@ -20,6 +20,7 @@ import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/core/widgets/zone_saisie.dart';
+import 'package:rewayah_academy/features/admin_dossiers/dossiers_page.dart';
 import 'package:rewayah_academy/features/admin_dossiers/etat_file_dossiers.dart';
 import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
@@ -86,9 +87,26 @@ Finder _ligne(String debutNom) =>
 
 Future<void> _ouvrir(WidgetTester tester, String prenom) async {
   await _ouvrirDossiers(tester);
-  await tester.ensureVisible(_ligne(prenom));
+  // L5 : la liste construit ses lignes a la demande (une seule barre de
+  // defilement) ; une ligne hors de la vue se fait defiler jusqu'a elle.
+  await tester.scrollUntilVisible(
+    _ligne(prenom),
+    200,
+    scrollable: find
+        .descendant(
+          of: find.byKey(DossiersPage.cleFile),
+          matching: find.byType(Scrollable),
+        )
+        .first,
+  );
   await _stabiliser(tester);
   await tester.tap(_ligne(prenom));
+  await _stabiliser(tester);
+}
+
+/// Le disque retour du dossier ouvert : la liste.
+Future<void> _retourListe(WidgetTester tester) async {
+  await tester.tap(find.bySemanticsLabel(t.commun.retour).first);
   await _stabiliser(tester);
 }
 
@@ -142,7 +160,9 @@ void main() {
     WidgetTester tester,
   ) async {
     await _monter(tester, const Size(1440, 900));
-    await _ouvrirDossiers(tester);
+    // L5 : plus d'ouverture automatique du premier dossier ; la ligne
+    // l'ouvre, en page.
+    await _ouvrir(tester, 'Omar');
     // Omar est selectionne automatiquement (premier de la file).
     expect(find.text("Dossier d'Omar Haddad"), findsOneWidget);
     final List<double> ys = <double>[
@@ -171,7 +191,9 @@ void main() {
     WidgetTester tester,
   ) async {
     await _monter(tester, const Size(1440, 900));
-    await _ouvrirDossiers(tester);
+    // L5 : plus d'ouverture automatique du premier dossier ; la ligne
+    // l'ouvre, en page.
+    await _ouvrir(tester, 'Omar');
     // Valider ferme n'est pas rendu : le lien tient sa place.
     expect(find.text('Valider le dossier'), findsNothing);
     for (final String p in _points) {
@@ -205,7 +227,9 @@ void main() {
     WidgetTester tester,
   ) async {
     await _monter(tester, const Size(1440, 900));
-    await _ouvrirDossiers(tester);
+    // L5 : plus d'ouverture automatique du premier dossier ; la ligne
+    // l'ouvre, en page.
+    await _ouvrir(tester, 'Omar');
     expect(find.text('Refuser le dossier'), findsOneWidget);
     await _taperTexte(tester, 'Refuser le dossier');
     // AD-8 : le motif est dans 02D (dialogue a 1440), plus en ligne.
@@ -277,14 +301,20 @@ void main() {
     WidgetTester tester,
   ) async {
     await _monter(tester, const Size(1440, 900));
-    await _ouvrirDossiers(tester);
+    // L5 : plus d'ouverture automatique du premier dossier ; la ligne
+    // l'ouvre, en page.
+    await _ouvrir(tester, 'Omar');
     await _taperTexte(tester, _points[0]);
     await _taperTexte(tester, _points[1]);
+    // L5 : le dossier est une page ; on revient a la liste pour en ouvrir
+    // un autre.
+    await _retourListe(tester);
     await tester.tap(_ligne('Amina'));
     await _stabiliser(tester);
     for (final String p in _points) {
       expect(_coche(tester, p), isFalse);
     }
+    await _retourListe(tester);
     await tester.tap(_ligne('Omar'));
     await _stabiliser(tester);
     for (final String p in _points) {
@@ -296,7 +326,9 @@ void main() {
     WidgetTester tester,
   ) async {
     await _monter(tester, const Size(1440, 900));
-    await _ouvrirDossiers(tester);
+    // L5 : plus d'ouverture automatique du premier dossier ; la ligne
+    // l'ouvre, en page.
+    await _ouvrir(tester, 'Omar');
     for (final String p in _points) {
       await _taperTexte(tester, p);
     }
@@ -393,7 +425,9 @@ void main() {
     WidgetTester tester,
   ) async {
     await _monter(tester, const Size(1440, 900));
-    await _ouvrirDossiers(tester);
+    // L5 : plus d'ouverture automatique du premier dossier ; la ligne
+    // l'ouvre, en page.
+    await _ouvrir(tester, 'Omar');
     expect(find.text('Valider le dossier'), findsNothing);
     final Rect carte = tester.getRect(find.byType(GroupeReglages).last);
     final Rect lien = tester.getRect(
@@ -472,7 +506,9 @@ void main() {
         horsLigneProvider.overrideWith((Ref ref) => Stream<bool>.value(true)),
       ],
     );
-    await _ouvrirDossiers(tester);
+    // L5 : plus d'ouverture automatique du premier dossier ; la ligne
+    // l'ouvre, en page.
+    await _ouvrir(tester, 'Omar');
     // EA-HL-DOUBLE-1 : le bandeau dit le reseau, la note dit ce qui manque.
     expect(find.text(t.dossiers.revue.etats.horsLigne), findsOneWidget);
     expectHorsLigneUneFois();
@@ -495,12 +531,15 @@ void main() {
         ),
       ],
     );
-    await _ouvrirDossiers(tester);
+    // L5 : plus d'ouverture automatique du premier dossier ; la ligne
+    // l'ouvre, en page.
+    await _ouvrir(tester, 'Omar');
     expect(find.text('Vous n’avez plus accès à ce dossier.'), findsOneWidget);
     expect(find.text('Nom'), findsNothing);
     expect(find.text(_points[0]), findsNothing);
     await _taperTexte(tester, 'Retour aux dossiers');
-    expect(find.text(t.dossiers.file.aucuneSelection), findsOneWidget);
+    // L5 : le retour ramene a la liste, pleine largeur.
+    expect(find.byKey(DossiersPage.cleFile), findsOneWidget);
   });
 
   testWidgets('1440 : chargement, aucune decision dans l arbre', (
@@ -515,7 +554,9 @@ void main() {
         ),
       ],
     );
-    await _ouvrirDossiers(tester);
+    // L5 : plus d'ouverture automatique du premier dossier ; la ligne
+    // l'ouvre, en page.
+    await _ouvrir(tester, 'Omar');
     expect(find.text('Chargement du dossier…'), findsOneWidget);
     expect(find.text('Valider le dossier'), findsNothing);
     expect(find.text('Refuser le dossier'), findsNothing);
