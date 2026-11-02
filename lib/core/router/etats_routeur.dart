@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/connexion/coquille_entree.dart';
 import '../../features/connexion/recuperation_page.dart'
-    show motifDepuisUrlRetour;
+    show MotifRecuperation, cheminRecuperation, motifDepuisUrlRetour;
 import '../domain/enums.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
@@ -60,7 +60,8 @@ class PageIntrouvable extends ConsumerWidget {
     // revient avec `error_code` dans l'adresse (souvent dans le fragment, que
     // le routeur prend pour un chemin) : on dit ce qui s'est passe et quoi
     // faire, au lieu de « page introuvable ».
-    if (motifDepuisUrlRetour(Uri.base) != null) {
+    final MotifRecuperation? motif = motifDepuisUrlRetour(Uri.base);
+    if (motif != null) {
       return PageEtat(
         key: const ValueKey<String>('lien-deja-servi'),
         nature: NatureEtat.introuvable,
@@ -69,7 +70,11 @@ class PageIntrouvable extends ConsumerWidget {
         libelleAction: visiteur
             ? t.i1.lien.nouveauLien
             : t.commun.etats.actions.retourAccueil,
-        onAction: () => GoRouter.of(context).go(destinationAutorisee(session)),
+        // Le visiteur va droit a la recuperation d'acces, qui envoie un
+        // nouveau lien ; un compte connecte retourne a son accueil.
+        onAction: () => GoRouter.of(context).go(
+          visiteur ? cheminRecuperation(motif) : destinationAutorisee(session),
+        ),
       );
     }
     return PageEtat(
