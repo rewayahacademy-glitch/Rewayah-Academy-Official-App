@@ -176,7 +176,13 @@ try {
     const tout = (await libelles(d.page)).filter((x) => /E2E|Actions/i.test(x));
     throw new Error(`ligne de la seance absente ; lignes : ${tout.join(' | ')}`);
   }
-  await ligne.scrollIntoViewIfNeeded().catch(() => {});
+  // Flutter defile a la molette, pas par le DOM : on amene la ligne au milieu.
+  for (let i = 0; i < 30; i++) {
+    const b = await ligne.boundingBox();
+    if (b && b.y > 140 && b.y + b.height < hauteur - 60) break;
+    await d.page.mouse.wheel(0, b && b.y < 140 ? -250 : 250);
+    await d.page.waitForTimeout(350);
+  }
   await d.page.waitForTimeout(500);
   // La ligne fusionne son menu dans un seul noeud accessible, qui capte le
   // clic (constat du robot, a dire au pilote) : on le rend transparent au

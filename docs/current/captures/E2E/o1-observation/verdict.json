@@ -1,0 +1,23 @@
+{
+  "lot": "O1 : ouvrir l observation des parents",
+  "banc": "pile locale tool/e2e (jamais un apercu Vercel, jamais la production)",
+  "robot": "tool/e2e/o1_observation.mjs",
+  "tailles": {
+    "390": "vert",
+    "1440": "vert"
+  },
+  "verdict": "vert",
+  "prouve_ici": [
+    "le parent entre (visite ouverte en base, 2 minutes, 1/2 visite restante)",
+    "la visite est coupee par le SERVEUR a 120 s (couper_visites_observation_echues, fin quota_atteint) et l ecran le dit",
+    "une seconde visite ecourtee compte ; la troisieme est refusee (Aucune visite restante)",
+    "la direction trouve Regarder la salle dans le planning, entre en mode discret (admin_masked), jeton invisible sans publication, aucun texte de parent"
+  ],
+  "non_prouve_ici": [
+    "le parent VOIT la salle : LiveKit n a pas pu demarrer sur le banc (Docker Hub 429), la video est indisponible",
+    "la coupure reelle par LiveKit (removeParticipant) : la fonction Edge observation-coupure n a pas tourne sur le banc ; la coupure en base est prouvee, la sortie LiveKit non",
+    "la tache planifiee chaque minute : appelee a la main ici (meme fonction) ; en production elle attend ses deux secrets au coffre et le secret de la fonction Edge",
+    "le bandeau cote enseignant et cote enfant a l ecran : la salle ne s ouvre pas sans LiveKit ; prouves en base par scenarios_o1_observation.sql (controles 2 a 5)",
+    "la presence de l enfant est posee en SQL local comme le webhook LiveKit l ecrit"
+  ]
+}
