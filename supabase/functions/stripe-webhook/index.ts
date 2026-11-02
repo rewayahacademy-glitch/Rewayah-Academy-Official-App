@@ -96,6 +96,47 @@ export function parametresRemboursement(
   }
 }
 
+/// FN-115c : les identifiants des remboursements d'une charge, le plus
+/// recent d'abord, quand l'evenement les porte (`refunds.data`). Sinon, le
+/// webhook les demande a Stripe.
+export function remboursementsDeLaCharge(evenement: Stripe.Event | Record<string, unknown>): string[] {
+  const objet = ((evenement as Record<string, unknown>).data as { object?: Record<string, unknown> } | undefined)
+    ?.object
+  const liste = (objet?.refunds as { data?: unknown } | undefined)?.data
+  if (!Array.isArray(liste)) return []
+  return liste
+    .map((r) => r as { id?: unknown; created?: unknown })
+    .filter((r) => typeof r.id === 'string')
+    .sort((a, b) => Number(b.created ?? 0) - Number(a.created ?? 0))
+    .map((r) => r.id as string)
+}
+
+/// FN-115c : le profil vise par un remboursement decide dans l'application,
+/// retrouve par l'identifiant du remboursement Stripe (`remboursements_demandes`),
+/// jamais par une metadonnee modifiable chez le prestataire. Nul : un
+/// remboursement fait hors de l'application, rendu au prorata (FN-115b).
+async function profilVise(
+  stripe: Stripe,
+  evenement: Stripe.Event,
+  paiement: string,
+): Promise<{ profil: string; remboursement: string } | null> {
+  let ids = remboursementsDeLaCharge(evenement)
+  if (ids.length === 0) {
+    try {
+      const liste = await stripe.refunds.list({ payment_intent: paiement, limit: 10 })
+      ids = liste.data.sort((a, b) => b.created - a.created).map((r) => r.id)
+    } catch (e) {
+      console.error('remboursements illisibles', { paiement, erreur: (e as Error).message })
+      return null
+    }
+  }
+  for (const id of ids) {
+    const { data } = await clientService().rpc('remboursement_profil_stripe', { p_remboursement: id })
+    if (typeof data === 'string' && data) return { profil: data, remboursement: id }
+  }
+  return null
+}
+
 if (import.meta.main) {
   Deno.serve(async (requete: Request) => {
     if (requete.method !== 'POST') return new Response('methode non autorisee', { status: 405 })
@@ -117,6 +158,11 @@ if (import.meta.main) {
     if (!p && !r) return new Response('ignore', { status: 200 })
     const fonction = p ? 'recharge_evenement_stripe' : 'remboursement_evenement_stripe'
     const parametresAppel = (p ?? r) as Record<string, unknown>
+    let vise: { profil: string; remboursement: string } | null = null
+    if (r && r.p_type === 'charge.refunded') {
+      vise = await profilVise(clientStripe(cle), evenement, String(r.p_paiement))
+      if (vise) parametresAppel.p_profil = vise.profil
+    }
 
     const { data, error } = await clientService().rpc(fonction, parametresAppel)
     if (error) {
@@ -124,6 +170,9 @@ if (import.meta.main) {
       // rien garde de cette tentative (transaction annulee).
       console.error('evenement stripe non traite', { evenement: parametresAppel.p_evenement, erreur: error.message })
       return new Response('reessayer', { status: 500 })
+    }
+    if (vise && (data === 'rembourse' || data === 'rembourse_plafonne' || data === 'deja_rembourse')) {
+      await clientService().rpc('remboursement_solder_stripe', { p_remboursement: vise.remboursement })
     }
     console.log('evenement stripe', { evenement: parametresAppel.p_evenement, type: parametresAppel.p_type, issue: data })
     return new Response('ok', { status: 200 })

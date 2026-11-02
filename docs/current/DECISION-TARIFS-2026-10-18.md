@@ -34,7 +34,30 @@ Ce qui est décidé :
 
 **Opposabilité des frais de contestation** : le point 5 n'est opposable à une famille que si les conditions le lui disent **avant** qu'elle paie. Les textes « Conditions » (section 4) et « Annulation et remboursement » (sections 1, 2, 4 et la nouvelle section 6 « Contester un paiement auprès de sa banque ») le disent depuis le lot FN-115a. La page de paiement y renvoie, juste sous « Payer ».
 
-Ce qui reste à faire, par lots datés : le bouton « Rembourser » de l'écran Finance (FN-115c), et la règle « pas payé : ni séances ni ressources » appliquée aussi aux ressources (lot B ; aujourd'hui la suspension ne ferme que l'entrée en séance). Le site public (`site-public/content/pages.json`) porte encore l'ancien texte « remboursé en entier » : sa mise à jour revient à qui tient `site-public/`.
+Ce qui reste à faire, par lots datés : le bouton « Rembourser » de l'écran Finance (FN-115c, **présent dans le code** depuis le 02/11/2026, voir ci-dessous ; non prouvé en production), et la règle « pas payé : ni séances ni ressources » appliquée aussi aux ressources (lot B ; aujourd'hui la suspension ne ferme que l'entrée en séance). Le site public (`site-public/content/pages.json`) porte encore l'ancien texte « remboursé en entier » : sa mise à jour revient à qui tient `site-public/`.
+
+**FN-115c, « Rembourser » depuis l'écran Finance (pilote, 02/11/2026).** D'abord ce qui n'est pas tranché ou pas prouvé :
+- **La règle de délai attend le directeur** (« 14 jours de rétractation » ou « première semaine »). Le code suit le texte en vigueur, l'arbitrage du pilote du 01/11 ci-dessus : dans le délai, ce qui a été payé moins les séances suivies ; après, une formule payée d'avance rendue sur les mois non commencés, au prix mensuel normal. Tout le calcul tient dans une seule fonction (`private.fn115c_montant_propose`), et le délai est une colonne de la politique (`remboursement_delai_jours`, 7 aujourd'hui) : si le directeur tranche autrement, seul le corps de la fonction ou la politique suivante change.
+- **L'appel au vrai Stripe n'est pas prouvé.** Le robot le remplace par un faux Stripe local, de banc. La preuve réelle sera le premier remboursement du directeur.
+- **Le webhook `charge.refunded` n'est prouvé que par le scénario SQL** : le passage aux écritures, le profil visé et la demande soldée. Sa signature n'est pas testée en local.
+- **Limite connue.** Si deux remboursements de l'application sont en cours en même temps sur le même paiement, le cumul rendu par Stripe va au profil du plus récent. Il n'y a qu'une seule demande en cours par paiement et par élève, mais deux élèves d'une même commande peuvent en avoir chacun une.
+
+Ce qui est fait (migration `20261105100000_fn115c_rembourser.sql`, sans DELETE, DROP ni TRUNCATE ; fonction Edge `remboursement-stripe`) :
+- **Le prix d'une séance suivie** est tiré de la politique en vigueur le jour du paiement : prix mensuel normal, sans remise, divisé par `seances_par_mois` (13 : 5 500 / 13 = 423, 6 500 / 13 = 500, le barème du 18/10). Il n'est jamais écrit en dur.
+  - Les deux colonnes nouvelles de la politique sont posées par `ADD COLUMN` avec un défaut, aussi pour v1.0.0 et v2.0.0, que l'on ne modifie pas autrement : 13 séances, 7 jours.
+- **La direction seule** (admin, compte valide) lit les paiements d'un élève et les élèves remboursables, et confirme. Un tuteur, un comptable et anon sont refusés.
+- **« Rembourser » n'apparaît**, dans le menu « … » de la ligne de l'élève (Finance > Paiements), **que si le serveur dit l'élève remboursable**. Il disparaît quand plus rien n'est à rendre.
+- **La confirmation** est plafonnée au montant proposé et idempotente :
+  - la même clé rend la même demande ;
+  - une demande déjà en cours pour ce paiement et cet élève est rendue telle quelle, sans en créer une seconde ;
+  - un double clic ne crée qu'un remboursement.
+- **La fonction Edge** relit la demande avec le jeton de la personne, jamais un montant venu du client. Elle rembourse chez Stripe avec la clé d'idempotence `remboursement-<demande>` et note l'identifiant du remboursement. Un échec libère le paiement pour une nouvelle demande.
+- **Le webhook** retrouve le profil visé par l'identifiant du remboursement, jamais par une métadonnée modifiable chez le prestataire, et passe `p_profil` à `remboursement_evenement_stripe` (FN-115b). Un remboursement fait hors de l'application reste rendu au prorata.
+- **Preuves :**
+  - `supabase/tests/scenarios_fn115c_rembourser.sql` : vert sur une base neuve, plus de 25 contrôles. Il n'est pas encore dans la CI : la ligne de `ci.yml` est donnée au pilote.
+  - Tests Deno de `_shared/stripe_test.ts` (la CI ne les rejoue pas).
+  - `test/features/admin_finance/remboursement_direction_test.dart`.
+  - Robot `tool/e2e/fn115c_rembourser.mjs` : pile locale et faux Stripe, à 390 et 1440, vert. Il prouve le menu, la feuille et son montant, une seule demande et une seule requête Stripe sur un double clic (clé, payment_intent, montant, profil), l'identifiant noté, le menu disparu ensuite, et le refus de la fonction Edge pour un tuteur (403). Captures : `docs/current/captures/E2E/fn115c-rembourser/`.
 
 ## Décision du directeur du 22/10/2026 : la répartition du paiement, montrée en pourcentages
 
