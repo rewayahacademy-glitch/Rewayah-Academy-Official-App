@@ -1,0 +1,11 @@
+== Lot B : sans paiement, ni seances ni ressources ; une bourse rouvre : 2026-11-02T12:27:37.297Z ; Chromium 141.0.7390.37 ; http://127.0.0.1:8090
+Seance bc62ba7f-49eb-4fe4-becb-4ae0623fab92 ouverte (debut dans 5 min)
+Enfant Yanis11020548 suspendu (facture 28b76de5-a23c-4aed-9b37-f86b79dbd6c9)
+Enseignant : http://127.0.0.1:8090/#/salle
+Suspendu, carte d'acces : group:Accès suspendu Le paiement du mois n'est pas reçu. Yanis11020548 ne peut plus rejoindre ses séances. Son espace reste ouvert pour voir son profil, son historiqu
+Suspendu, Accueil : Rejoindre absent ; texte : texte:Le paiement du mois n'est pas reçu. Yanis11020548 ne peut plus rejoindre ses séances. Son espace reste ouvert pour voir son profil, son hist
+Suspendu, Foyer : Recharger
+Suspendu, Historique : ouvert
+Bourse de 100 % : suspension levee, motif « bourse »
+Retabli, Accueil : Rejoindre
+== Lot B : sans paiement, ni seances ni ressources ; une bourse rouvre : vert : suspendu : ni Rejoindre ni ressources, Foyer et Historique ouverts, Recharger visible ; bourse : rouvert

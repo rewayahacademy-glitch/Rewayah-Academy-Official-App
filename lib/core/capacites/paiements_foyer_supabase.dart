@@ -64,8 +64,9 @@ class PaiementsFoyerSupabase implements PortPaiementsFoyer {
       'finances_foyer',
       'FI-BR-03',
     );
-    // Aucun portefeuille pour ce foyer : la finance n'est pas encore ouverte.
-    if (brut == null) throw const CapaciteIndisponible('FI-BR-03');
+    // Aucun portefeuille pour ce foyer : la finance n'est pas encore ouverte,
+    // mais le foyer peut payer (lot B, UX-025).
+    if (brut == null) throw const FinancesNonOuvertes();
     final Map<String, dynamic> j = objetJson(brut, 'foyer');
     final Map<String, dynamic> s = objetJson(j['synthese'], 'synthese');
     return FinancesFoyer(
