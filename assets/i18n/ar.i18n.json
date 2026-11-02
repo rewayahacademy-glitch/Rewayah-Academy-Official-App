@@ -6355,7 +6355,37 @@
         "resume": "الطلبات المجمّعة من ⁨{debut}⁩ إلى ⁨{fin}⁩ من أصل ⁨{total}⁩"
       }
     },
-    "traitement": {"colonneDepuis": "منذ"},
+    "traitement": {
+      "titre": "مساحة المعالجة",
+      "filtreTous": "الكل",
+      "filtreDossiers": "الملفات",
+      "filtreDemandes": "الطلبات",
+      "tri": "ترتيب",
+      "triRecent": "الأحدث",
+      "triAncien": "الأقدم",
+      "groupeAujourdhui": "اليوم",
+      "groupeHier": "أمس",
+      "groupeSemaine": "هذا الأسبوع",
+      "groupePlusAncien": "أقدم",
+      "natureDossier": "ملف هوية · معلم",
+      "natureReaffectation": "طلب · تغيير المعلم",
+      "naturePlafond": "طلب · الحد الأقصى للطلاب",
+      "natureRegle": "طلب · تغيير قاعدة",
+      "natureDemande": "طلب",
+      "cleDepot": "تاريخ الإيداع",
+      "clePiece": "وثيقة الهوية",
+      "pieceAVerifier": "مودَعة، بانتظار التحقق",
+      "cleConcerne": "الشخص المعني",
+      "cleParQui": "صاحب الطلب",
+      "colonneDepuis": "منذ",
+      "vide": "لا شيء للمعالجة حاليًا",
+      "videDetail": "تصل إلى هنا ملفات الهوية والطلبات المنتظرة فور إيداعها.",
+      "videFiltre": "لا عنصر بهذا المعيار",
+      "videFiltreDetail": "اختر «الكل» لعرض القائمة كاملة.",
+      "erreurDossiers": "تعذّرت قراءة ملفات الهوية: ربما لم يصل الطلب إلى رواية. أعد المحاولة بعد لحظة. تبقى الطلبات معروضة.",
+      "erreurDemandes": "تعذّرت قراءة الطلبات: ربما لم يصل الطلب إلى رواية. أعد المحاولة بعد لحظة. تبقى الملفات معروضة.",
+      "erreur": "تعذّرت قراءة القائمة: ربما لم يصل الطلب إلى رواية. أعد المحاولة بعد لحظة."
+    },
     "planning": {
       "titre": "الجدول",
       "sousTitre": "حصص الأسبوع في جميع الفصول، يومًا بيوم.",
@@ -9392,7 +9422,6 @@
   },
   "dossiers": {
     "titre": "ملفات للاعتماد",
-    "sousTitre": "ادرس الملفات الجاهزة لاتخاذ قرار.",
     "aucun": "لا ملف ينتظر الاعتماد.",
     "aucunDetail": "ستظهر الملفات الجديدة هنا حين تصبح جاهزة.",
     "file": {
@@ -9406,18 +9435,13 @@
       "indisponible": "الاطلاع على الملفات غير متاح الآن.",
       "selectionRetiree": "هذا الملف لم يعد متاحًا في القائمة.",
       "actualiser": "تحديث الملفات",
-      "aucuneSelection": "اختر ملفًا لدراسته.",
       "suivants": "تحميل الملفات التالية",
       "ouvrirDe": "فتح ملف ⁨{nom}⁩",
       "ouvrirElide": "فتح ملف ⁨{nom}⁩",
       "enVerification": "قيد التحقق",
       "sansNom": "ملف دون اسم متاح",
       "legende": "⁨{type}⁩ · ⁨{date}⁩",
-      "dateHeure": "⁨{date}⁩ الساعة ⁨{heure}⁩ (⁨{zone}⁩)",
-      "dateChiffres": "⁨{jour}⁩/⁨{mois}⁩/⁨{annee}⁩",
-      "heureChiffres": "⁨{heures}⁩:⁨{minutes}⁩",
-      "zoneUtc": "UTC",
-      "suivantAnnonce": "الملف التالي: ⁨{nom}⁩"
+      "dateChiffres": "⁨{jour}⁩/⁨{mois}⁩/⁨{annee}⁩"
     },
     "detail": {
       "titreDe": "ملف ⁨{nom}⁩",
@@ -9463,15 +9487,6 @@
         "actualiserDossier": "تحديث الملف",
         "refusNonAutorise": "لا يمكن رفض هذا الملف في حالته الحالية."
       }
-    },
-    "restantUn": "ملف واحد قيد الانتظار",
-    "restants": {
-      "zero": "لا ملف قيد الانتظار",
-      "one": "ملف واحد قيد الانتظار",
-      "two": "ملفان قيد الانتظار",
-      "few": "⁨{n}⁩ ملفات قيد الانتظار",
-      "many": "⁨{n}⁩ ملفًا قيد الانتظار",
-      "other": "⁨{n}⁩ ملف قيد الانتظار"
     },
     "deposeLe": "أُودع في ⁨{date}⁩",
     "inscritAujourdhui": "مسجَّل اليوم",

@@ -15,19 +15,6 @@ import 'etat_file_dossiers.dart';
 import 'file_dossiers.dart';
 import 'revue_dossier.dart';
 
-/// L'etat « Selectionnez un dossier a examiner. » (deux panneaux seulement).
-class AucuneSelection extends StatelessWidget {
-  /// Cree l'etat.
-  const AucuneSelection({super.key});
-
-  @override
-  Widget build(BuildContext context) => EtatSysteme(
-    nature: NatureEtat.aucunResultat,
-    titre: t.dossiers.file.aucuneSelection,
-    phrase: '',
-  );
-}
-
 /// Le detail d'un dossier selectionne (`ADM-02B`, AD-6), lu par le port
 /// (`dossierPourRevueProvider`) : en production l'adaptateur d'AD-5 le
 /// reconstruit depuis le cache deja charge, sans appel serveur de plus.

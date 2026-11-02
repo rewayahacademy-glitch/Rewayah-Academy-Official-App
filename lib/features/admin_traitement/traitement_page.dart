@@ -25,6 +25,7 @@ import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
+import '../admin_dossiers/textes_dossier.dart' show quandDepuis;
 import 'elements_a_traiter.dart';
 
 /// `ADM-18` : l'Espace de traitement.
@@ -351,7 +352,7 @@ class _TraitementPageEtat extends ConsumerState<TraitementPage> {
           titre: t.admin.traitement.colonneDepuis,
           flex: 2,
           tabulaire: true,
-          texte: (ElementATraiter e) => _depuis(e.depuis, maintenant),
+          texte: (ElementATraiter e) => quandDepuis(e.depuis, maintenant),
         ),
       ],
       // La file entiere, sans page : les deux lectures sont completes (pas de
@@ -446,18 +447,3 @@ String _piece(ElementATraiter e) => switch (e.dossier?.etatPiece) {
   EtatPiece.aucune || EtatPiece.nonVisible => '',
   _ => t.admin.traitement.pieceAVerifier,
 };
-
-String _deux(int n) => n.toString().padLeft(2, '0');
-
-/// Depuis quand l'element attend : « Aujourd'hui · 14:05 », « Hier ·
-/// 09:12 », sinon « 31 oct. · 22:32 » (les groupes de jour d'avant, dits
-/// dans la ligne ; la meme heure que la ligne d'avant).
-String _depuis(DateTime depuis, DateTime maintenant) {
-  final String heure = '${_deux(depuis.hour)}:${_deux(depuis.minute)}';
-  final String jour = switch (groupePour(depuis, maintenant)) {
-    GroupeTemps.aujourdhui => t.admin.traitement.groupeAujourdhui,
-    GroupeTemps.hier => t.admin.traitement.groupeHier,
-    _ => '${depuis.day} ${t.historique.moisCourts[depuis.month - 1]}',
-  };
-  return '$jour · $heure';
-}

@@ -13,6 +13,7 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
+import 'package:rewayah_academy/features/admin_dossiers/detail_dossier.dart';
 import 'package:rewayah_academy/features/admin_dossiers/dossiers_page.dart';
 import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
@@ -67,9 +68,8 @@ String _chemin(GoRouter routeur) =>
     routeur.routerDelegate.currentConfiguration.uri.path;
 
 void main() {
-  testWidgets('1440 : Personnes, maitre-detail 336/24/728, selection', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('1440 : Personnes, la liste pleine largeur, la ligne ouvre le '
+      'dossier en page', (WidgetTester tester) async {
     final GoRouter routeur = await _monter(tester, const Size(1440, 900));
     await tester.tap(
       find.descendant(
@@ -80,33 +80,38 @@ void main() {
     await _stabiliser(tester);
     expect(_chemin(routeur), Routes.adminPersonnesDossiers);
 
-    // La 1re ligne est selectionnee automatiquement, sans prendre le focus.
+    // L5 des listes : plus de maitre-detail. Aucun dossier ouvert d'office,
+    // aucune ligne selectionnee, aucune case a cocher (DEC:24), aucun apercu
+    // de la piece dans la liste.
     final Finder premiere = _ligne('Omar');
-    expect(tester.getSemantics(premiere), isSemantics(isSelected: true));
-    // Deux panneaux : aucun « Selectionnez... », le detail du premier.
-    expect(find.text(t.dossiers.file.aucuneSelection), findsNothing);
-    expect(find.text(t.dossiers.verifications), findsOneWidget);
+    expect(premiere, findsOneWidget);
+    expect(tester.getSemantics(premiere), isNot(isSemantics(isSelected: true)));
+    expect(find.text(t.dossiers.verifications), findsNothing);
+    expect(find.text(t.dossiers.revue.voirPiece), findsNothing);
+    expect(find.byType(Checkbox), findsNothing);
+    expect(find.byType(Image), findsNothing);
 
-    // Contrat D a 1440 : barre 288 + padding 32 -> file a x=320, large de
-    // 336 ; ecart 24 -> detail a x=680, large de 728 ; rien en pleine largeur.
-    final Finder fileZone = find.byKey(
-      const PageStorageKey<String>('adm02a-file'),
-    );
-    final Finder detailZone = find.byKey(
-      const ValueKey<String?>(DonneesDossiersDemo.enseignantNominal),
-    );
-    expect(tester.getSize(fileZone).width, largeurFileDossiers);
-    expect(tester.getTopLeft(fileZone).dx, 320);
-    expect(tester.getTopLeft(detailZone).dx, 320 + 336 + ecartFileDetail);
-    expect(tester.getSize(detailZone).width, largeurDetailDossier);
+    // La liste prend toute la largeur utile : barre 288, puis la page.
+    final Finder liste = find.byKey(DossiersPage.cleFile);
+    expect(tester.getSize(liste).width, greaterThan(1000));
 
-    // Taper la 2e ligne : la selection et le detail suivent.
+    // Taper une ligne : le dossier, en page, sur la meme route.
     await tester.tap(_ligne('Amina'));
     await _stabiliser(tester);
-    expect(tester.getSemantics(_ligne('Amina')), isSemantics(isSelected: true));
-    // AD-6 : le detail porte le titre ; nom et prenom sont sur leurs lignes.
-    expect(find.text('Amina Benali'), findsOneWidget);
+    expect(_chemin(routeur), Routes.adminPersonnesDossiers);
+    // AD-6 : le titre de page porte le nom.
     expect(find.text("Dossier d'Amina Benali"), findsOneWidget);
+    expect(find.byKey(DossiersPage.cleFile), findsNothing);
+    expect(
+      tester.getSize(find.byType(DetailDossier)).width,
+      lessThanOrEqualTo(largeurDetailDossier),
+    );
+
+    // Retour : la liste, le focus sur la ligne quittee.
+    await tester.tap(find.bySemanticsLabel(t.commun.entete.retour));
+    await _stabiliser(tester);
+    expect(find.byKey(DossiersPage.cleFile), findsOneWidget);
+    _focusSur(tester, _ligne('Amina'));
   });
 
   testWidgets('1440 : les coches repartent a vide en changeant de dossier', (
@@ -120,9 +125,16 @@ void main() {
       ),
     );
     await _stabiliser(tester);
+    // L5 : le dossier est une page ; on en change par la liste.
+    await tester.tap(_ligne('Omar'));
+    await _stabiliser(tester);
     await _taperTexte(tester, t.dossiers.pointLisible);
     await _stabiliser(tester);
+    await tester.tap(find.bySemanticsLabel(t.commun.entete.retour));
+    await _stabiliser(tester);
     await tester.tap(_ligne('Amina'));
+    await _stabiliser(tester);
+    await tester.tap(find.bySemanticsLabel(t.commun.entete.retour));
     await _stabiliser(tester);
     await tester.tap(_ligne('Omar'));
     await _stabiliser(tester);
@@ -130,7 +142,7 @@ void main() {
     expect(find.text(t.dossiers.approuver), findsNothing);
   });
 
-  testWidgets('1440 : valider passe au dossier suivant', (
+  testWidgets('1440 : valider revient a la liste, le focus au suivant', (
     WidgetTester tester,
   ) async {
     final EtatRevueDemo etat = EtatRevueDemo.initial();
@@ -141,6 +153,8 @@ void main() {
         matching: find.text(AdminDomaine.personnes.libelle),
       ),
     );
+    await _stabiliser(tester);
+    await tester.tap(_ligne('Omar'));
     await _stabiliser(tester);
     for (final String point in <String>[
       t.dossiers.pointLisible,
@@ -160,10 +174,11 @@ void main() {
       etat.dossiers[DonneesDossiersDemo.enseignantNominal]!.statut,
       StatutRevue.valide,
     );
+    // L5 : retour a la liste, le focus sur la ligne suivante (la ligne
+    // decidee a disparu), jamais sur le titre quand un suivant existe.
+    expect(find.byKey(DossiersPage.cleFile), findsOneWidget);
     expect(_ligne('Omar'), findsNothing);
-    expect(tester.getSemantics(_ligne('Amina')), isSemantics(isSelected: true));
-    // FOCUS-1 : avec un suivant, le focus ne va pas au titre (AD-FOCUS-MD
-    // ne vaut que sans dossier suivant) : le suivant est annonce.
+    _focusSur(tester, _ligne('Amina'));
     expect(
       FocusManager.instance.primaryFocus?.debugLabel,
       isNot('adm02a-titre'),
@@ -263,7 +278,6 @@ void main() {
       await _stabiliser(tester);
       expect(_ligne('Omar'), findsOneWidget);
       expect(find.text(t.dossiers.verifications), findsNothing);
-      expect(find.text(t.dossiers.file.aucuneSelection), findsNothing);
       expect(
         tester.getSemantics(_ligne('Omar')),
         isNot(isSemantics(isSelected: true)),
@@ -302,7 +316,7 @@ void main() {
       await _monter(tester, taille);
       await _ouvrirDossiers(tester);
       final Finder pastilles = find.descendant(
-        of: find.byKey(const PageStorageKey<String>('adm02a-file')),
+        of: find.byKey(DossiersPage.cleFile),
         matching: find.byType(StatusPill),
       );
       expect(pastilles, findsWidgets);
@@ -317,16 +331,20 @@ void main() {
       // Sous le nom partout (debuts alignes) ou a cote partout (fins
       // alignees au bord de fin) : jamais un melange.
       expect(debuts.length == 1 || fins.length == 1, isTrue);
+      final Rect nomOmar = tester.getRect(
+        find.descendant(
+          of: find.byKey(DossiersPage.cleFile),
+          matching: find.text('Omar Haddad'),
+        ),
+      );
+      final Rect pastilleOmar = tester.getRect(pastilles.first);
       if (nom == '1440') {
-        // 336 ne suffit pas au nom et a sa pastille : dessous, partout.
+        // L5 : la pastille a sa colonne, « Pièce d'identité », apres le nom.
         expect(debuts, hasLength(1));
-        final Rect nomOmar = tester.getRect(
-          find.descendant(
-            of: find.byKey(const PageStorageKey<String>('adm02a-file')),
-            matching: find.text('Omar Haddad'),
-          ),
-        );
-        final Rect pastilleOmar = tester.getRect(pastilles.first);
+        expect(pastilleOmar.left, greaterThan(nomOmar.right));
+      } else {
+        // Au telephone, sous le nom, partout (a cote, elle ne tenait pas).
+        expect(debuts, hasLength(1));
         expect(pastilleOmar.top, greaterThanOrEqualTo(nomOmar.bottom));
       }
     });
