@@ -1,27 +1,27 @@
-== I1 : inviter quelqu'un (enseignant, familles importees) : 2026-11-02T16:44:01.421Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
-Foyers importes amorces : e2e-i1-famille-a-11021644@example.com, e2e-i1-famille-b-11021644@example.com
+== I1 : inviter quelqu'un (enseignant, familles importees) : 2026-11-02T16:51:47.186Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Foyers importes amorces : e2e-i1-famille-a-11021651@example.com, e2e-i1-famille-b-11021651@example.com
 OK    UX-015 : « Invitations » est dans les sections de Personnes
 OK    UX-015 : la section ouvre la page des invitations (http://127.0.0.1:8090/#/admin/personnes/invitations)
 OK    aide du champ : « textarea:Adresse de courriel de l'enseignant Le code est créé pour cette adresse et part aussitôt par e-mail, avec le lien d'inscription. Vous pouvez aussi le transmettr » ; ancien texte absent
-OK    message : « flt-semantics:Invitation créée. L'e-mail avec le code MRZZ-D9WJ-Y2KN part vers e2e-i1-candidat-11021644@example.com. »
-courriels_sortants (enseignant) : 2b6ad2e4-155a-4003-b45a-abcc9fa9fb29 | recrutement | invitation_enseignant | en_attente | manuel | code=MRZZ-D9WJ-Y2KN
+OK    message : « flt-semantics:Invitation créée. L'e-mail avec le code FVPU-ZKA4-6QW2 part vers e2e-i1-candidat-11021651@example.com. »
+courriels_sortants (enseignant) : 8ba078ef-0d9f-44ac-82d3-4aa8181a50b3 | recrutement | invitation_enseignant | en_attente | manuel | code=FVPU-ZKA4-6QW2
 OK    une seule ligne courriels_sortants pour l'enseignant, avec son code, categorie recrutement
-OK    bouton « Envoyer l'invitation » de e2e-i1-famille-a-11021644@example.com
-OK    message : « flt-semantics:L'invitation part vers e2e-i1-famille-a-11021644@example.com. »
-courriels_sortants (foyer importe A) : 9806984d-6979-45c9-8d92-9f38aa64ed6b | inscription | invitation_famille_importee | en_attente | invitation_famille_importee:bf28ec37-24d5-4bbf-bf39-f11a57125f98:1
+OK    bouton « Envoyer l'invitation » de e2e-i1-famille-a-11021651@example.com
+OK    message : « flt-semantics:L'invitation part vers e2e-i1-famille-a-11021651@example.com. »
+courriels_sortants (foyer importe A) : 3c448778-bd56-4f65-bbf8-21312e25c601 | inscription | invitation_famille_importee | en_attente | invitation_famille_importee:3acc4520-4211-4373-9a19-da923ca5e597:1
 OK    une seule ligne courriels_sortants pour le foyer A, categorie inscription
 OK    rien n'est parti tout seul vers le foyer B
 OK    « Envoyer à toutes les familles » propose, avec le nombre
-OK    confirmation : « flt-semantics:Envoyer l'invitation à 1 familles ? »
-courriels_sortants (foyer importe B) : 04367817-b86f-4d88-a70e-105681bf70b6 | inscription | invitation_famille_importee | en_attente | invitation_famille_importee:88fffa07-e5bb-49b6-b8ef-3bf6d318afd4:1
-OK    envoi a toutes : « flt-semantics:Les invitations partent vers 1 familles. » et une ligne pour le foyer B
+OK    confirmation : « flt-semantics:Envoyer l'invitation à toutes les familles à inviter ? Nombre de familles : 2. »
+courriels_sortants (foyer importe B) : 15a551a1-2d07-40c0-9ec0-5ff5bd612eb6 | inscription | invitation_famille_importee | en_attente | invitation_famille_importee:39827389-4101-4230-841b-9387d526a8de:1
+OK    envoi a toutes : « flt-semantics:Les invitations partent. Nombre de familles : 2. » et une ligne pour le foyer B
 OK    e-mail recu dans Mailpit : « Votre invitation à enseigner à Rewayah Academy »
-OK    le lien de l'e-mail porte invitation=1 et le code : https://app.rewayahacademy.com/connexion?mode=creer&invitation=1&code=MRZZ-D9WJ-Y2KN
+OK    le lien de l'e-mail porte invitation=1 et le code : https://app.rewayahacademy.com/connexion?mode=creer&invitation=1&code=FVPU-ZKA4-6QW2
 courriels_sortants (enseignant) apres l'envoi : envoye
   [candidat] erreur de page : Error
 OK    lien de connexion recu dans Mailpit
-OK    UX-013 : au retour du lien, le code est la et valide (http://127.0.0.1:8090/#/inscription/invitation?code=MRZZ-D9WJ-Y2KN), sans « Pour qui »
-OK    UX-017 : apres le rechargement, le code est garde et valide (http://127.0.0.1:8090/#/inscription/invitation?code=MRZZ-D9WJ-Y2KN)
+OK    UX-013 : au retour du lien, le code est la et valide (http://127.0.0.1:8090/#/inscription/invitation?code=FVPU-ZKA4-6QW2), sans « Pour qui »
+OK    UX-017 : apres le rechargement, le code est garde et valide (http://127.0.0.1:8090/#/inscription/invitation?code=FVPU-ZKA4-6QW2)
 Profil : teacher | pending_kyc ; invitation consommee : true ; ecran : http://127.0.0.1:8090/#/attente
 OK    compte enseignant cree, invitation consommee
 OK    la marque de l'invitation en cours est effacee apres la creation du profil

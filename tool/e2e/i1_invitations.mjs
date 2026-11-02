@@ -114,7 +114,7 @@ try {
   const question = await trouverTexte(d.page, /Envoyer l'invitation à toutes les familles[^|]*/, 5000);
   await p.capture(d, '1440_confirmation_toutes');
   verifier(Boolean(question) && question.includes(String(nombre)), `confirmation : « ${question ?? '-'} »`);
-  await cliquer(d.page, new RegExp(`^Oui, envoyer à toutes les familles \(${nombre}\)`), { pause: 3000 });
+  await cliquer(d.page, new RegExp(`^Oui, envoyer à toutes les familles \\(${nombre}\\)`), { pause: 3000 });
   const parties = await trouverTexte(d.page, /Les invitations partent[^|]*/, 8000);
   await p.capture(d, '1440_toutes_envoyees');
   const ligneB = sql(`select id || ' | ' || categorie || ' | ' || modele || ' | ' || statut || ' | ' || cle_idempotence
