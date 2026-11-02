@@ -56,6 +56,7 @@ import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 import '../admin_fusion/feuilles_fusion.dart';
 import '../creneaux/plages.dart' show jourCapitalise, nommerHeure;
+import '../suivi_demandes/libelles_suivi_demandes.dart' show deFuseau;
 import 'bas_de_feuille.dart';
 import 'cahiers_classe.dart';
 import 'duree_creneau.dart';
@@ -1344,7 +1345,10 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
       return (
         fuseau: fuseauServeurParDefaut,
         phrase: c1.fuseauNonTransmis(
-          ville: villeDuFuseauLibelle(fuseauServeurParDefaut),
+          deVille: deFuseau(
+            fuseauServeurParDefaut,
+            cle: 'admin.groupes.c1.fuseauNonTransmis',
+          ),
         ),
       );
     }
@@ -1353,12 +1357,20 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
         ? (
             fuseau: fuseauServeurParDefaut,
             phrase: c1.fuseauDefaut(
-              ville: villeDuFuseauLibelle(fuseauServeurParDefaut),
+              deVille: deFuseau(
+                fuseauServeurParDefaut,
+                cle: 'admin.groupes.c1.fuseauDefaut',
+              ),
             ),
           )
         : (
             fuseau: propre,
-            phrase: c1.fuseauEnseignant(ville: villeDuFuseauLibelle(propre)),
+            phrase: c1.fuseauEnseignant(
+              deVille: deFuseau(
+                propre,
+                cle: 'admin.groupes.c1.fuseauEnseignant',
+              ),
+            ),
           );
   }
 

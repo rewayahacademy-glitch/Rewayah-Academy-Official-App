@@ -13168,14 +13168,14 @@ class _Traductions$admin$groupes$c1$ar extends Traductions$admin$groupes$c1$fr {
 	@override String seanceNommee({required Object classe, required Object quand}) => 'لم يُنشأ الفصل: لدى هذا الشخص بالفعل حصة من الفصل «⁨${classe}⁩» يوم ⁨${quand}⁩. غيّر الموعد أو اختر شخصًا آخر من القائمة.';
 	@override String seanceDatee({required Object quand}) => 'لم يُنشأ الفصل: لدى هذا الشخص بالفعل حصة مقررة يوم ⁨${quand}⁩. غيّر الموعد أو اختر شخصًا آخر من القائمة.';
 	@override String get creneauxPropres => 'لم يُنشأ الفصل: موعدان من مواعيده يتداخلان، فالأول يتجاوز إلى الذي يليه. باعد بين الموعدين أو قصّر المدة، ثم اضغط من جديد.';
-	@override String quand({required Object jour, required Object heure, required Object ville}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩، بتوقيت ⁨${ville}⁩';
+	@override String quand({required Object jour, required Object heure, required Object deVille}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩، بتوقيت ⁨${deVille}⁩';
 	@override String quandSansVille({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩';
 	@override String jourDate({required Object jour, required Object numero, required Object mois}) => '⁨${jour}⁩ ⁨${numero}⁩ ⁨${mois}⁩';
 	@override String heurePleine({required Object h}) => '⁨${h}⁩:00';
 	@override String heureMinutes({required Object h, required Object mm}) => '⁨${h}⁩:⁨${mm}⁩';
-	@override String fuseauEnseignant({required Object ville}) => 'المواعيد بتوقيت ⁨${ville}⁩، وهو توقيت المعلم.';
-	@override String fuseauDefaut({required Object ville}) => 'المواعيد بتوقيت ⁨${ville}⁩، وهو التوقيت المعتمد افتراضيًا.';
-	@override String fuseauNonTransmis({required Object ville}) => 'المواعيد بتوقيت ⁨${ville}⁩، وهو التوقيت الذي يعتمده الخادم حاليًا. سيُعتمد توقيت المعلم حين يقبله الخادم.';
+	@override String fuseauEnseignant({required Object deVille}) => 'المواعيد بتوقيت ⁨${deVille}⁩، وهو توقيت المعلم.';
+	@override String fuseauDefaut({required Object deVille}) => 'المواعيد بتوقيت ⁨${deVille}⁩، وهو التوقيت المعتمد افتراضيًا.';
+	@override String fuseauNonTransmis({required Object deVille}) => 'المواعيد بتوقيت ⁨${deVille}⁩، وهو التوقيت الذي يعتمده الخادم حاليًا. سيُعتمد توقيت المعلم حين يقبله الخادم.';
 	@override String get abandonQuestion => 'التخلي عن الفصل الجديد؟';
 	@override String get abandonConsequence => 'ستضيع الاختيارات التي أجريتها في هذا النموذج (الجمهور، المعلم، المواعيد، الاسم).';
 	@override String get abandonConfirmer => 'التخلي عن الفصل الجديد';
@@ -24197,14 +24197,14 @@ extension on TraductionsAr {
 			'admin.groupes.c1.seanceNommee' => ({required Object classe, required Object quand}) => 'لم يُنشأ الفصل: لدى هذا الشخص بالفعل حصة من الفصل «⁨${classe}⁩» يوم ⁨${quand}⁩. غيّر الموعد أو اختر شخصًا آخر من القائمة.',
 			'admin.groupes.c1.seanceDatee' => ({required Object quand}) => 'لم يُنشأ الفصل: لدى هذا الشخص بالفعل حصة مقررة يوم ⁨${quand}⁩. غيّر الموعد أو اختر شخصًا آخر من القائمة.',
 			'admin.groupes.c1.creneauxPropres' => 'لم يُنشأ الفصل: موعدان من مواعيده يتداخلان، فالأول يتجاوز إلى الذي يليه. باعد بين الموعدين أو قصّر المدة، ثم اضغط من جديد.',
-			'admin.groupes.c1.quand' => ({required Object jour, required Object heure, required Object ville}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩، بتوقيت ⁨${ville}⁩',
+			'admin.groupes.c1.quand' => ({required Object jour, required Object heure, required Object deVille}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩، بتوقيت ⁨${deVille}⁩',
 			'admin.groupes.c1.quandSansVille' => ({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩',
 			'admin.groupes.c1.jourDate' => ({required Object jour, required Object numero, required Object mois}) => '⁨${jour}⁩ ⁨${numero}⁩ ⁨${mois}⁩',
 			'admin.groupes.c1.heurePleine' => ({required Object h}) => '⁨${h}⁩:00',
 			'admin.groupes.c1.heureMinutes' => ({required Object h, required Object mm}) => '⁨${h}⁩:⁨${mm}⁩',
-			'admin.groupes.c1.fuseauEnseignant' => ({required Object ville}) => 'المواعيد بتوقيت ⁨${ville}⁩، وهو توقيت المعلم.',
-			'admin.groupes.c1.fuseauDefaut' => ({required Object ville}) => 'المواعيد بتوقيت ⁨${ville}⁩، وهو التوقيت المعتمد افتراضيًا.',
-			'admin.groupes.c1.fuseauNonTransmis' => ({required Object ville}) => 'المواعيد بتوقيت ⁨${ville}⁩، وهو التوقيت الذي يعتمده الخادم حاليًا. سيُعتمد توقيت المعلم حين يقبله الخادم.',
+			'admin.groupes.c1.fuseauEnseignant' => ({required Object deVille}) => 'المواعيد بتوقيت ⁨${deVille}⁩، وهو توقيت المعلم.',
+			'admin.groupes.c1.fuseauDefaut' => ({required Object deVille}) => 'المواعيد بتوقيت ⁨${deVille}⁩، وهو التوقيت المعتمد افتراضيًا.',
+			'admin.groupes.c1.fuseauNonTransmis' => ({required Object deVille}) => 'المواعيد بتوقيت ⁨${deVille}⁩، وهو التوقيت الذي يعتمده الخادم حاليًا. سيُعتمد توقيت المعلم حين يقبله الخادم.',
 			'admin.groupes.c1.abandonQuestion' => 'التخلي عن الفصل الجديد؟',
 			'admin.groupes.c1.abandonConsequence' => 'ستضيع الاختيارات التي أجريتها في هذا النموذج (الجمهور، المعلم، المواعيد، الاسم).',
 			'admin.groupes.c1.abandonConfirmer' => 'التخلي عن الفصل الجديد',

@@ -24604,8 +24604,8 @@ class Traductions$admin$groupes$c1$fr {
 	/// fr: 'La classe n'est pas créée : deux de ses créneaux se chevauchent, le premier déborde sur le suivant. Écartez ces créneaux ou raccourcissez la durée, puis pressez de nouveau.'
 	String get creneauxPropres => 'La classe n\'est pas créée : deux de ses créneaux se chevauchent, le premier déborde sur le suivant. Écartez ces créneaux ou raccourcissez la durée, puis pressez de nouveau.';
 
-	/// fr: '{jour} à {heure}, heure de {ville}'
-	String quand({required Object jour, required Object heure, required Object ville}) => '${jour} à ${heure}, heure de ${ville}';
+	/// fr: '{jour} à {heure}, heure {deVille}'
+	String quand({required Object jour, required Object heure, required Object deVille}) => '${jour} à ${heure}, heure ${deVille}';
 
 	/// fr: '{jour} à {heure}'
 	String quandSansVille({required Object jour, required Object heure}) => '${jour} à ${heure}';
@@ -24619,14 +24619,14 @@ class Traductions$admin$groupes$c1$fr {
 	/// fr: '{h} h {mm}'
 	String heureMinutes({required Object h, required Object mm}) => '${h} h ${mm}';
 
-	/// fr: 'Heures à l'heure de {ville}, le fuseau de l'enseignant.'
-	String fuseauEnseignant({required Object ville}) => 'Heures à l\'heure de ${ville}, le fuseau de l\'enseignant.';
+	/// fr: 'Heures à l'heure {deVille}, le fuseau de l'enseignant.'
+	String fuseauEnseignant({required Object deVille}) => 'Heures à l\'heure ${deVille}, le fuseau de l\'enseignant.';
 
-	/// fr: 'Heures à l'heure de {ville}, le fuseau retenu par défaut.'
-	String fuseauDefaut({required Object ville}) => 'Heures à l\'heure de ${ville}, le fuseau retenu par défaut.';
+	/// fr: 'Heures à l'heure {deVille}, le fuseau retenu par défaut.'
+	String fuseauDefaut({required Object deVille}) => 'Heures à l\'heure ${deVille}, le fuseau retenu par défaut.';
 
-	/// fr: 'Heures à l'heure de {ville}, le fuseau que le serveur retient pour l'instant. Le fuseau de l'enseignant sera pris en compte dès que le serveur l'acceptera.'
-	String fuseauNonTransmis({required Object ville}) => 'Heures à l\'heure de ${ville}, le fuseau que le serveur retient pour l\'instant. Le fuseau de l\'enseignant sera pris en compte dès que le serveur l\'acceptera.';
+	/// fr: 'Heures à l'heure {deVille}, le fuseau que le serveur retient pour l'instant. Le fuseau de l'enseignant sera pris en compte dès que le serveur l'acceptera.'
+	String fuseauNonTransmis({required Object deVille}) => 'Heures à l\'heure ${deVille}, le fuseau que le serveur retient pour l\'instant. Le fuseau de l\'enseignant sera pris en compte dès que le serveur l\'acceptera.';
 
 	/// fr: 'Abandonner la nouvelle classe ?'
 	String get abandonQuestion => 'Abandonner la nouvelle classe ?';
@@ -45288,14 +45288,14 @@ extension on Traductions {
 			'admin.groupes.c1.seanceNommee' => ({required Object classe, required Object quand}) => 'La classe n\'est pas créée : cette personne a déjà une séance de la classe « ${classe} » le ${quand}. Changez de créneau ou choisissez une autre personne dans la liste.',
 			'admin.groupes.c1.seanceDatee' => ({required Object quand}) => 'La classe n\'est pas créée : cette personne a déjà une séance prévue le ${quand}. Changez de créneau ou choisissez une autre personne dans la liste.',
 			'admin.groupes.c1.creneauxPropres' => 'La classe n\'est pas créée : deux de ses créneaux se chevauchent, le premier déborde sur le suivant. Écartez ces créneaux ou raccourcissez la durée, puis pressez de nouveau.',
-			'admin.groupes.c1.quand' => ({required Object jour, required Object heure, required Object ville}) => '${jour} à ${heure}, heure de ${ville}',
+			'admin.groupes.c1.quand' => ({required Object jour, required Object heure, required Object deVille}) => '${jour} à ${heure}, heure ${deVille}',
 			'admin.groupes.c1.quandSansVille' => ({required Object jour, required Object heure}) => '${jour} à ${heure}',
 			'admin.groupes.c1.jourDate' => ({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}',
 			'admin.groupes.c1.heurePleine' => ({required Object h}) => '${h} h',
 			'admin.groupes.c1.heureMinutes' => ({required Object h, required Object mm}) => '${h} h ${mm}',
-			'admin.groupes.c1.fuseauEnseignant' => ({required Object ville}) => 'Heures à l\'heure de ${ville}, le fuseau de l\'enseignant.',
-			'admin.groupes.c1.fuseauDefaut' => ({required Object ville}) => 'Heures à l\'heure de ${ville}, le fuseau retenu par défaut.',
-			'admin.groupes.c1.fuseauNonTransmis' => ({required Object ville}) => 'Heures à l\'heure de ${ville}, le fuseau que le serveur retient pour l\'instant. Le fuseau de l\'enseignant sera pris en compte dès que le serveur l\'acceptera.',
+			'admin.groupes.c1.fuseauEnseignant' => ({required Object deVille}) => 'Heures à l\'heure ${deVille}, le fuseau de l\'enseignant.',
+			'admin.groupes.c1.fuseauDefaut' => ({required Object deVille}) => 'Heures à l\'heure ${deVille}, le fuseau retenu par défaut.',
+			'admin.groupes.c1.fuseauNonTransmis' => ({required Object deVille}) => 'Heures à l\'heure ${deVille}, le fuseau que le serveur retient pour l\'instant. Le fuseau de l\'enseignant sera pris en compte dès que le serveur l\'acceptera.',
 			'admin.groupes.c1.abandonQuestion' => 'Abandonner la nouvelle classe ?',
 			'admin.groupes.c1.abandonConsequence' => 'Les choix faits dans ce formulaire (public, enseignant, créneaux, nom) seront perdus.',
 			'admin.groupes.c1.abandonConfirmer' => 'Abandonner la nouvelle classe',

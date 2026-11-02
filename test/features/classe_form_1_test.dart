@@ -37,6 +37,8 @@ import 'package:rewayah_academy/features/admin_groupes/duree_creneau.dart';
 import 'package:rewayah_academy/features/admin_groupes/groupes_page.dart';
 import 'package:rewayah_academy/features/admin_groupes/refus_creation_classe_libelles.dart';
 import 'package:rewayah_academy/features/demo/classe_form_demo.dart';
+import 'package:rewayah_academy/features/suivi_demandes/libelles_suivi_demandes.dart'
+    show deFuseau;
 
 import '../support/aucun_mot_coupe.dart';
 import '../support/garde_interface.dart';
@@ -531,7 +533,10 @@ void main() {
         // C1 (UX-030) : la ville en clair, jamais l'identifiant IANA.
         find.text(
           t.admin.groupes.c1.fuseauEnseignant(
-            ville: villeDuFuseauLibelle(_casablanca),
+            deVille: deFuseau(
+              _casablanca,
+              cle: 'admin.groupes.c1.fuseauEnseignant',
+            ),
           ),
         ),
         findsOneWidget,
@@ -653,7 +658,10 @@ void main() {
       expect(
         find.text(
           t.admin.groupes.c1.fuseauNonTransmis(
-            ville: villeDuFuseauLibelle(fuseauServeurParDefaut),
+            deVille: deFuseau(
+              fuseauServeurParDefaut,
+              cle: 'admin.groupes.c1.fuseauNonTransmis',
+            ),
           ),
         ),
         findsOneWidget,

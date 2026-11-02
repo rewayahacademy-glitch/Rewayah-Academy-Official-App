@@ -12,8 +12,8 @@ library;
 
 import '../../core/admin/creation_classe_refusee.dart';
 import '../../core/i18n/strings.g.dart';
-import '../../core/i18n/villes_fuseau.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../suivi_demandes/libelles_suivi_demandes.dart' show deFuseau;
 
 /// La phrase du refus [motif].
 ///
@@ -59,7 +59,7 @@ String phraseRefusCreationClasse(
 
 /// « lundi à 18 h, heure de Paris », ou « lundi 9 novembre à 18 h 30, heure
 /// de Paris » pour une seance datee. La ville vient du fuseau
-/// ([villeDuFuseauLibelle], jamais l'identifiant IANA brut). Les blancs de
+/// ([deFuseau], jamais l'identifiant IANA brut ; « heure d'Alger »). Les blancs de
 /// l'heure sont insecables.
 String quandConflit(ConflitHoraire conflit) {
   final c1 = t.admin.groupes.c1;
@@ -76,7 +76,11 @@ String quandConflit(ConflitHoraire conflit) {
   final String? fuseau = conflit.fuseau;
   return fuseau == null
       ? c1.quandSansVille(jour: jour, heure: heure)
-      : c1.quand(jour: jour, heure: heure, ville: villeDuFuseauLibelle(fuseau));
+      : c1.quand(
+          jour: jour,
+          heure: heure,
+          deVille: deFuseau(fuseau, cle: 'admin.groupes.c1.quand'),
+        );
 }
 
 /// « lundi 9 novembre » quand [date] (`AAAA-MM-JJ`) se lit ; sinon le jour
