@@ -8,6 +8,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show LogicalKeyboardKey;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -20,6 +21,7 @@ import 'package:rewayah_academy/core/capacites/port_creation_classe.dart';
 import 'package:rewayah_academy/core/capacites/port_enseignants_classe.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/i18n/villes_fuseau.dart';
 import 'package:rewayah_academy/core/offres/affectation_refusee.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart'
     show Creneau;
@@ -33,6 +35,7 @@ import 'package:rewayah_academy/core/widgets/selecteur_personne.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_groupes/duree_creneau.dart';
 import 'package:rewayah_academy/features/admin_groupes/groupes_page.dart';
+import 'package:rewayah_academy/features/admin_groupes/refus_creation_classe_libelles.dart';
 import 'package:rewayah_academy/features/demo/classe_form_demo.dart';
 
 import '../support/aucun_mot_coupe.dart';
@@ -111,9 +114,12 @@ class _PortEnEchec implements PortEnseignantsClasse {
 /// Une creation que le serveur refuse une fois, avec [motif], puis qui
 /// aboutit (CAND-Q15 : `creer_groupe` passe par le predicat d'affectation).
 class _CreationRefusee extends FauxCreationClasse {
-  _CreationRefusee(this.motif);
+  _CreationRefusee(this.motif, {this.conflit});
 
   final MotifRefusCreationClasse motif;
+
+  /// C1 : la classe et l'heure en conflit, comme le DETAIL du serveur.
+  final ConflitHoraire? conflit;
   int refus = 1;
 
   @override
@@ -129,7 +135,7 @@ class _CreationRefusee extends FauxCreationClasse {
   }) async {
     if (refus > 0) {
       refus--;
-      throw CreationClasseRefusee(motif);
+      throw CreationClasseRefusee(motif, conflit: conflit);
     }
     return super.creer(
       teacherId: teacherId,
@@ -248,8 +254,9 @@ Future<void> _heure(WidgetTester tester, int heure) async {
   );
 }
 
-/// D2 (29/10/2026) : la feuille propose trois creneaux par defaut ; ces
-/// tests creent une classe d'un seul creneau, et retirent les deux autres.
+/// D2 (29/10/2026) : la feuille proposait trois creneaux par defaut ; depuis
+/// C1 (UX-003, 02/11/2026) elle s'ouvre sur un seul. Garde au cas ou des
+/// lignes ont ete ajoutees : ces tests creent une classe d'un seul creneau.
 Future<void> _unSeulCreneau(WidgetTester tester) async {
   while (_cle('classe-autre-2-retirer').evaluate().isNotEmpty) {
     await _presser(tester, _cle('classe-autre-2-retirer'));
@@ -521,8 +528,11 @@ void main() {
       await _presser(tester, _cle('classe-genre-hommes'));
       await _presser(tester, _cle('personne-h1'));
       expect(
+        // C1 (UX-030) : la ville en clair, jamais l'identifiant IANA.
         find.text(
-          t.admin.groupes.formulaire.fuseauEnseignant(fuseau: _casablanca),
+          t.admin.groupes.c1.fuseauEnseignant(
+            ville: villeDuFuseauLibelle(_casablanca),
+          ),
         ),
         findsOneWidget,
       );
@@ -558,6 +568,9 @@ void main() {
       await _presser(tester, _cle('personne-h1'));
       await _presser(tester, _cle('classe-libre-4-18'));
       expect(find.text(f.autresCreneauxTitre), findsOneWidget);
+      // C1 (UX-003) : un seul creneau a l'ouverture ; deux lignes ajoutees.
+      await _presser(tester, _cle('classe-ajouter-creneau'));
+      await _presser(tester, _cle('classe-ajouter-creneau'));
       // Les deux lignes vides : le creneau 2 manque.
       await _presser(tester, _envoyer);
       expect(find.text(f.manqueAutreCreneau(n: 2)), findsOneWidget);
@@ -607,6 +620,9 @@ void main() {
         await _presser(tester, find.text(f.heureValeur(heure: '$heure')).last);
       }
 
+      // C1 (UX-003) : les deux creneaux suivants s'ajoutent.
+      await _presser(tester, _cle('classe-ajouter-creneau'));
+      await _presser(tester, _cle('classe-ajouter-creneau'));
       await ligne(2, 1, 18);
       await ligne(3, 6, 10);
       await _presser(tester, _cle('classe-autre-3-duree'));
@@ -636,8 +652,8 @@ void main() {
       await _presser(tester, _cle('personne-h1'));
       expect(
         find.text(
-          t.admin.groupes.formulaire.fuseauNonTransmis(
-            fuseau: fuseauServeurParDefaut,
+          t.admin.groupes.c1.fuseauNonTransmis(
+            ville: villeDuFuseauLibelle(fuseauServeurParDefaut),
           ),
         ),
         findsOneWidget,
@@ -672,9 +688,8 @@ void main() {
 
       expect(
         find.text(
-          t.admin.groupes.creerErreur(
-            message: 'enseignant deja pris a ce creneau',
-          ),
+          // C1 (UX-019) : jamais le texte de l'exception.
+          t.admin.groupes.creerErreur(message: t.admin.groupes.c1.connexion),
         ),
         findsOneWidget,
       );
@@ -920,6 +935,85 @@ void main() {
         expect(creation.creations.single.teacherId, 'f1');
       });
     }
+  });
+
+  group('Lot C1 (02/11/2026)', () {
+    testWidgets('UX-003 : la feuille s\'ouvre sur un seul creneau, et une '
+        'classe d\'un creneau part sans rien retirer', (
+      WidgetTester tester,
+    ) async {
+      final FauxCreationClasse creation = FauxCreationClasse();
+      await _ouvrir(tester, _surcharges(creation: creation));
+      expect(_cle('classe-autre-2-retirer'), findsNothing);
+      expect(_cle('classe-ajouter-creneau'), findsOneWidget);
+      await _presser(tester, _cle('classe-genre-femmes'));
+      await _presser(tester, _cle('personne-f1'));
+      await _presser(tester, _cle('classe-libre-2-17'));
+      await _presser(tester, _envoyer);
+      expect(creation.creations, hasLength(1));
+      expect(creation.autresCreneauxRecus.single, isEmpty);
+    });
+
+    testWidgets('UX-031 : Echap sans saisie ferme ; avec saisie, une '
+        'confirmation, « Continuer la saisie » garde tout, « Abandonner » '
+        'ferme', (WidgetTester tester) async {
+      final c1 = t.admin.groupes.c1;
+      await _ouvrir(tester, _surcharges());
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(_envoyer, findsNothing);
+      expect(find.text(c1.abandonQuestion), findsNothing);
+
+      await _presser(tester, find.byKey(GroupesPage.cleCreer));
+      await _presser(tester, _cle('classe-genre-femmes'));
+      await _presser(tester, _cle('personne-f1'));
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(find.text(c1.abandonConsequence), findsOneWidget);
+      await _presser(tester, find.text(c1.abandonContinuer));
+      expect(_envoyer, findsOneWidget);
+      expect(find.text(c1.abandonConsequence), findsNothing);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      await _presser(tester, find.text(c1.abandonConfirmer).last);
+      expect(_envoyer, findsNothing);
+    });
+
+    testWidgets('UX-020 : le refus de chevauchement nomme la classe, le jour, '
+        'l\'heure et la ville', (WidgetTester tester) async {
+      final _CreationRefusee creation = _CreationRefusee(
+        MotifRefusCreationClasse.chevauchementClasse,
+        conflit: const ConflitHoraire(
+          classe: 'Al-Fajr',
+          jour: 2,
+          heure: 17,
+          fuseau: 'Europe/Paris',
+        ),
+      );
+      await _ouvrir(tester, _surcharges(creation: creation));
+      await _presser(tester, _cle('classe-genre-femmes'));
+      await _presser(tester, _cle('personne-f1'));
+      await _presser(tester, _cle('classe-libre-2-17'));
+      await _presser(tester, _envoyer);
+      final String attendu = t.admin.groupes.c1.classeNommee(
+        classe: 'Al-Fajr',
+        quand: quandConflit(
+          const ConflitHoraire(
+            classe: 'Al-Fajr',
+            jour: 2,
+            heure: 17,
+            fuseau: 'Europe/Paris',
+          ),
+        ),
+      );
+      expect(find.text(attendu), findsOneWidget);
+      expect(attendu, contains('Al-Fajr'));
+      expect(attendu, contains(t.disponibilites.joursLongs[1]));
+      expect(attendu, contains(villeDuFuseauLibelle('Europe/Paris')));
+      expect(attendu, isNot(contains('Europe/Paris')));
+      expect(creation.creations, isEmpty);
+    });
   });
 
   group(

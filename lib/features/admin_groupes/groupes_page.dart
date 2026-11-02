@@ -35,6 +35,7 @@ import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/champ_etiquete.dart';
 import '../../core/widgets/champ_recherche.dart';
 import '../../core/widgets/choice_card_group.dart';
+import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
@@ -63,6 +64,7 @@ import 'feuille_reglages_classe.dart';
 import 'genre_classe_libelles.dart';
 import 'refus_creation_classe_libelles.dart';
 import 'refus_deplacement_libelles.dart';
+import 'refus_serveur_libelles.dart';
 import 'reglage_partage.dart';
 
 /// Operations > Groupes : le noyau du produit depuis le pivot du 19
@@ -1085,17 +1087,9 @@ String _creneau(GroupeAdmin groupe) =>
     '${t.disponibilites.joursLongs[(groupe.creneau.jour - 1).clamp(0, 6)]} '
     '${groupe.creneau.heure}h';
 
-/// Le message metier d'une exception, sans son type.
-///
-/// Les exceptions
-/// Postgrest portent le message metier en clair apres le premier « : ».
-String _message(Object erreur) {
-  final String brut = erreur.toString();
-  final int deuxPoints = brut.indexOf(': ');
-  return deuxPoints >= 0 && deuxPoints + 2 < brut.length
-      ? brut.substring(deuxPoints + 2)
-      : brut;
-}
+/// La phrase d'un echec venu du serveur (C1, UX-019) : jamais le texte brut
+/// de l'exception, ni un code (`P0001`), ni le mot interne « groupe ».
+String _message(Object erreur) => phraseEchecServeurClasse(erreur);
 
 void _ouvrirCreation(BuildContext context, WidgetRef ref) {
   AppBottomSheet.ouvrir<void>(
@@ -1288,14 +1282,11 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
   /// (30/10/2026).
   int? _duree;
 
-  /// D2 (29/10/2026) : les creneaux suivants de la semaine. Trois creneaux
-  /// par defaut, a des jours fixes : le premier, et deux lignes a remplir ou
-  /// a retirer.
+  /// D2 (29/10/2026) : les creneaux suivants de la semaine. C1 (UX-003,
+  /// 02/11/2026) : la feuille s'ouvre sur un seul creneau ; « Ajouter un
+  /// creneau » en pose d'autres, aucune ligne vide n'est imposee.
   final List<({int? jour, int? heure, int? duree})> _autres =
-      <({int? jour, int? heure, int? duree})>[
-        (jour: null, heure: null, duree: null),
-        (jour: null, heure: null, duree: null),
-      ];
+      <({int? jour, int? heure, int? duree})>[];
   late int? _seuil = _seuilParDefaut(_type);
   bool _seuilChoisi = false;
   late final TextEditingController _nom = TextEditingController(
@@ -1347,20 +1338,28 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
     PortCreationClasse creation,
     EnseignantPropose? enseignant,
   ) {
-    final f = t.admin.groupes.formulaire;
+    // C1 (UX-030) : la ville en clair, jamais l'identifiant IANA.
+    final c1 = t.admin.groupes.c1;
     if (!creation.retientFuseau) {
       return (
         fuseau: fuseauServeurParDefaut,
-        phrase: f.fuseauNonTransmis(fuseau: fuseauServeurParDefaut),
+        phrase: c1.fuseauNonTransmis(
+          ville: villeDuFuseauLibelle(fuseauServeurParDefaut),
+        ),
       );
     }
     final String? propre = enseignant?.fuseauIana;
     return propre == null
         ? (
             fuseau: fuseauServeurParDefaut,
-            phrase: f.fuseauDefaut(fuseau: fuseauServeurParDefaut),
+            phrase: c1.fuseauDefaut(
+              ville: villeDuFuseauLibelle(fuseauServeurParDefaut),
+            ),
           )
-        : (fuseau: propre, phrase: f.fuseauEnseignant(fuseau: propre));
+        : (
+            fuseau: propre,
+            phrase: c1.fuseauEnseignant(ville: villeDuFuseauLibelle(propre)),
+          );
   }
 
   /// Le premier champ qui manque, dans l'ordre de la feuille ; nul quand
@@ -1436,7 +1435,10 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
             ],
           );
       widget.onCree();
-      if (mounted) Navigator.of(context).pop();
+      if (mounted) {
+        setState(() => _fermeture = true);
+        Navigator.of(context).pop();
+      }
     } on CreationClasseRefusee catch (refus) {
       // CAND-Q15 : le serveur a refuse l'enseignant ou le creneau. Une phrase
       // par motif, jamais le texte SQL ; la feuille garde les choix.
@@ -1446,6 +1448,7 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
             refus.motif,
             actives: refus.actives,
             maximum: refus.maximum,
+            conflit: refus.conflit,
           );
           _plafondClasses =
               refus.motif == MotifRefusCreationClasse.plafondClasses;
@@ -1527,284 +1530,338 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
           )
         : const AsyncLoading<List<PersonneProposee>>();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        // K-58 : une phrase de contexte ouvre la feuille.
-        TexteSansCoupure(f.contexte, style: textes.bodyMedium),
-        Ecart.vSm,
-        TexteSansCoupure(
-          t.formulaire.legendeObligatoire,
-          style: textes.bodySmall,
-        ),
-        Ecart.vXxl,
+    // C1 (UX-031) : Echap, le voile ou le retour ne perdent jamais une
+    // saisie sans le demander.
+    return PopScope(
+      canPop: !_saisie || _fermeture,
+      onPopInvokedWithResult: (bool fait, Object? _) {
+        if (!fait) unawaited(_demanderAbandon());
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          // K-58 : une phrase de contexte ouvre la feuille.
+          TexteSansCoupure(f.contexte, style: textes.bodyMedium),
+          Ecart.vSm,
+          TexteSansCoupure(
+            t.formulaire.legendeObligatoire,
+            style: textes.bodySmall,
+          ),
+          Ecart.vXxl,
 
-        // 1. Public : choisi, deux cartes qui disent leur consequence.
-        TitreChamp(f.titrePublic, style: textes.titleMedium, obligatoire: true),
-        Ecart.vMd,
-        ChoiceCardGroup(
-          autoriserSaisieLibre: false,
-          valeurInitiale: ReponseChoix(valeurs: <String>{_type.name}),
-          options: <OptionChoix>[
-            OptionChoix(
-              cle: const ValueKey<String>('classe-public-enfant'),
-              valeur: TypePublicGroupe.enfant.name,
-              libelle: t.admin.groupes.typeEnfant,
-              description: f.publicEnfantDetail,
-            ),
-            OptionChoix(
-              cle: const ValueKey<String>('classe-public-adulte'),
-              valeur: TypePublicGroupe.adulte.name,
-              libelle: t.admin.groupes.typeAdulte,
-              description: f.publicAdulteDetail,
-            ),
-          ],
-          onChange: (ReponseChoix r) {
-            final TypePublicGroupe? type = TypePublicGroupe.values
-                .where((TypePublicGroupe v) => r.valeurs.contains(v.name))
-                .firstOrNull;
-            if (type == null) return;
-            _maj(() {
-              _type = type;
-              if (!_seuilChoisi) _seuil = _seuilParDefaut(type);
-            });
-          },
-        ),
-        Ecart.vXs,
-
-        // 2. Genre : choisi, obligatoire, aucune presélection (D1).
-        TitreChamp(f.titreGenre, style: textes.titleMedium, obligatoire: true),
-        Ecart.vMd,
-        ChoiceCardGroup(
-          autoriserSaisieLibre: false,
-          options: <OptionChoix>[
-            // D1 (29/10/2026) : une classe nouvelle a un genre, ou elle est
-            // rendue mixte explicitement ; jamais « non determine ».
-            for (final GenreClasse g in GenreClasse.values)
-              if (g != GenreClasse.indetermine)
-                OptionChoix(
-                  cle: ValueKey<String>('classe-genre-${g.name}'),
-                  valeur: g.name,
-                  libelle: libelleGenreClasse(g, _type),
-                  description: detailGenreClasse(
-                    g,
-                    _type,
-                    genreConnu: genreConnu,
-                  ),
-                ),
-          ],
-          onChange: (ReponseChoix r) {
-            final GenreClasse? genre = GenreClasse.values
-                .where((GenreClasse g) => r.valeurs.contains(g.name))
-                .firstOrNull;
-            _maj(() => _genre = genre);
-          },
-        ),
-        if (!creation.retientGenre) ...<Widget>[
-          TexteSansCoupure(f.genreNonEnregistre, style: textes.bodySmall),
-          Ecart.vXl,
-        ] else
-          Ecart.vXs,
-
-        // 3. Enseignant : choisi dans une liste classee (D2, D4, D5).
-        SelecteurPersonne(
-          sorte: SortePersonne.enseignant,
-          personnes: personnes,
-          choisie: _enseignantId,
-          obligatoire: true,
-          aide: genreConnu && disposConnues
-              ? f.aideEnseignant
-              : f.aideEnseignantSansSource,
-          onChoix: (PersonneProposee p) => _maj(() => _enseignantId = p.id),
-          onReessayer: () {
-            ref.invalidate(enseignantsDuPortProvider(_type));
-            ref.invalidate(comptesProvider);
-          },
-        ),
-        Ecart.vXl,
-
-        // 4. Creneau : choisi, jamais tape (D6).
-        TitreChamp(
-          f.titreCreneau,
-          style: textes.titleMedium,
-          obligatoire: true,
-        ),
-        Ecart.vXs,
-        TexteSansCoupure(f.creneauContexte, style: textes.bodySmall),
-        Ecart.vMd,
-        if (choisi != null) ...<Widget>[
-          ..._creneauxLibres(choisi.enseignant, textes),
-          Ecart.vLg,
-        ],
-        TexteSansCoupure(f.jour, style: textes.labelLarge),
-        Ecart.vSm,
-        // Choix de formulaire, pas un filtre : le jour de la classe a creer.
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: <Widget>[
-            for (int j = 1; j <= 7; j++)
-              FilterPill(
-                key: ValueKey<String>('classe-jour-$j'),
-                libelle: jourCapitalise(j),
-                retenue: _jour == j,
-                onPress: () => _maj(() => _jour = j),
+          // 1. Public : choisi, deux cartes qui disent leur consequence.
+          TitreChamp(
+            f.titrePublic,
+            style: textes.titleMedium,
+            obligatoire: true,
+          ),
+          Ecart.vMd,
+          ChoiceCardGroup(
+            autoriserSaisieLibre: false,
+            valeurInitiale: ReponseChoix(valeurs: <String>{_type.name}),
+            options: <OptionChoix>[
+              OptionChoix(
+                cle: const ValueKey<String>('classe-public-enfant'),
+                valeur: TypePublicGroupe.enfant.name,
+                libelle: t.admin.groupes.typeEnfant,
+                description: f.publicEnfantDetail,
               ),
-          ],
-        ),
-        Ecart.vLg,
-        TexteSansCoupure(f.heure, style: textes.labelLarge),
-        Ecart.vSm,
-        Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: MenuFiltre<int>(
-            key: const ValueKey<String>('classe-heure'),
-            libelle: f.heure,
-            valeur: _heure,
-            entrees: <EntreeFiltre<int>>[
-              for (int h = _heureDebut; h <= _heureFin; h++)
-                EntreeFiltre<int>(
-                  valeur: h,
-                  libelle: LibellesGroupe.insecable(f.heureValeur(heure: '$h')),
-                ),
+              OptionChoix(
+                cle: const ValueKey<String>('classe-public-adulte'),
+                valeur: TypePublicGroupe.adulte.name,
+                libelle: t.admin.groupes.typeAdulte,
+                description: f.publicAdulteDetail,
+              ),
             ],
-            onChoix: (int? h) {
-              if (h != null) _maj(() => _heure = h);
+            onChange: (ReponseChoix r) {
+              final TypePublicGroupe? type = TypePublicGroupe.values
+                  .where((TypePublicGroupe v) => r.valeurs.contains(v.name))
+                  .firstOrNull;
+              if (type == null) return;
+              _maj(() {
+                _type = type;
+                if (!_seuilChoisi) _seuil = _seuilParDefaut(type);
+              });
             },
           ),
-        ),
-        Ecart.vLg,
-        TexteSansCoupure(f.duree, style: textes.labelLarge),
-        Ecart.vXs,
-        TexteSansCoupure(f.dureeContexte, style: textes.bodySmall),
-        Ecart.vSm,
-        Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: MenuDureeCreneau(
-            key: const ValueKey<String>('classe-duree'),
-            duree: _duree,
-            onChoix: (int? d) => _maj(() => _duree = d),
-          ),
-        ),
-        Ecart.vSm,
-        TexteSansCoupure(fuseau.phrase, style: textes.bodySmall),
-        Ecart.vXl,
+          Ecart.vXs,
 
-        // 4 bis. Les autres creneaux de la semaine (D2, 29/10/2026).
-        TitreChamp(f.autresCreneauxTitre, style: textes.titleMedium),
-        Ecart.vXs,
-        TexteSansCoupure(f.autresCreneauxContexte, style: textes.bodySmall),
-        Ecart.vMd,
-        for (int i = 0; i < _autres.length; i++) ...<Widget>[
-          _LigneAutreCreneau(
-            key: ValueKey<String>('classe-autre-creneau-$i'),
-            numero: i + 2,
-            jour: _autres[i].jour,
-            heure: _autres[i].heure,
-            duree: _autres[i].duree,
-            onJour: (int j) => _maj(
-              () => _autres[i] = (
-                jour: j,
-                heure: _autres[i].heure,
-                duree: _autres[i].duree,
-              ),
-            ),
-            onHeure: (int h) => _maj(
-              () => _autres[i] = (
-                jour: _autres[i].jour,
-                heure: h,
-                duree: _autres[i].duree,
-              ),
-            ),
-            onDuree: (int? d) => _maj(
-              () => _autres[i] = (
-                jour: _autres[i].jour,
-                heure: _autres[i].heure,
-                duree: d,
-              ),
-            ),
-            onRetirer: () => _maj(() => _autres.removeAt(i)),
+          // 2. Genre : choisi, obligatoire, aucune presélection (D1).
+          TitreChamp(
+            f.titreGenre,
+            style: textes.titleMedium,
+            obligatoire: true,
+          ),
+          Ecart.vMd,
+          ChoiceCardGroup(
+            autoriserSaisieLibre: false,
+            options: <OptionChoix>[
+              // D1 (29/10/2026) : une classe nouvelle a un genre, ou elle est
+              // rendue mixte explicitement ; jamais « non determine ».
+              for (final GenreClasse g in GenreClasse.values)
+                if (g != GenreClasse.indetermine)
+                  OptionChoix(
+                    cle: ValueKey<String>('classe-genre-${g.name}'),
+                    valeur: g.name,
+                    libelle: libelleGenreClasse(g, _type),
+                    description: detailGenreClasse(
+                      g,
+                      _type,
+                      genreConnu: genreConnu,
+                    ),
+                  ),
+            ],
+            onChange: (ReponseChoix r) {
+              final GenreClasse? genre = GenreClasse.values
+                  .where((GenreClasse g) => r.valeurs.contains(g.name))
+                  .firstOrNull;
+              _maj(() => _genre = genre);
+            },
+          ),
+          if (!creation.retientGenre) ...<Widget>[
+            TexteSansCoupure(f.genreNonEnregistre, style: textes.bodySmall),
+            Ecart.vXl,
+          ] else
+            Ecart.vXs,
+
+          // 3. Enseignant : choisi dans une liste classee (D2, D4, D5).
+          SelecteurPersonne(
+            sorte: SortePersonne.enseignant,
+            personnes: personnes,
+            choisie: _enseignantId,
+            obligatoire: true,
+            aide: genreConnu && disposConnues
+                ? f.aideEnseignant
+                : f.aideEnseignantSansSource,
+            onChoix: (PersonneProposee p) => _maj(() => _enseignantId = p.id),
+            onReessayer: () {
+              ref.invalidate(enseignantsDuPortProvider(_type));
+              ref.invalidate(comptesProvider);
+            },
+          ),
+          Ecart.vXl,
+
+          // 4. Creneau : choisi, jamais tape (D6).
+          TitreChamp(
+            f.titreCreneau,
+            style: textes.titleMedium,
+            obligatoire: true,
+          ),
+          Ecart.vXs,
+          TexteSansCoupure(f.creneauContexte, style: textes.bodySmall),
+          Ecart.vMd,
+          if (choisi != null) ...<Widget>[
+            ..._creneauxLibres(choisi.enseignant, textes),
+            Ecart.vLg,
+          ],
+          TexteSansCoupure(f.jour, style: textes.labelLarge),
+          Ecart.vSm,
+          // Choix de formulaire, pas un filtre : le jour de la classe a creer.
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: <Widget>[
+              for (int j = 1; j <= 7; j++)
+                FilterPill(
+                  key: ValueKey<String>('classe-jour-$j'),
+                  libelle: jourCapitalise(j),
+                  retenue: _jour == j,
+                  onPress: () => _maj(() => _jour = j),
+                ),
+            ],
           ),
           Ecart.vLg,
-        ],
-        if (_autres.length < 6)
+          TexteSansCoupure(f.heure, style: textes.labelLarge),
+          Ecart.vSm,
           Align(
             alignment: AlignmentDirectional.centerStart,
-            child: ActionPrincipale(
-              key: const ValueKey<String>('classe-ajouter-creneau'),
-              libelle: f.ajouterCreneauLigne,
-              niveau: NiveauAction.tertiaire,
-              pleineLargeur: false,
-              onPress: () => _maj(
-                () => _autres.add((jour: null, heure: null, duree: null)),
-              ),
-            ),
-          ),
-        Ecart.vXl,
-
-        // 5. Seuil : deduit puis choisi, 1 a 6 (D7).
-        TitreChamp(f.titreSeuil, style: textes.titleMedium, obligatoire: true),
-        Ecart.vXs,
-        TexteSansCoupure(f.seuilDetail, style: textes.bodySmall),
-        Ecart.vMd,
-        SelecteurEntier(
-          // Repart de la valeur du parent quand le public la change.
-          key: ValueKey<String>('classe-seuil-$_seuil'),
-          proposees: _seuilsProposes,
-          min: 1,
-          max: 6,
-          affichage: (int n) => f.seuilValeur(n: n),
-          valeurInitiale: _seuil,
-          onChange: (int? v) => _maj(() {
-            _seuil = v;
-            _seuilChoisi = true;
-          }),
-        ),
-        Ecart.vXl,
-
-        // 6. Nom : deduit, modifiable ; seul champ tape (D8).
-        ChampEtiquete(
-          key: const ValueKey<String>('classe-nom'),
-          libelle: f.titreNom,
-          controller: _nom,
-          obligatoire: true,
-          aide: f.nomDetail,
-          onChanged: (String texte) => setState(() {
-            _nomSaisi = texte.trim().isNotEmpty && texte != _nomPropose;
-            _erreur = null;
-          }),
-        ),
-        if (_erreur case final String erreur) ...<Widget>[
-          Ecart.vMd,
-          MessageAlerte(erreur),
-          // FN-113 : le maximum de Classes se releve dans les Regles.
-          if (_plafondClasses) ...<Widget>[
-            Ecart.vSm,
-            LienFleche(
-              key: const ValueKey<String>('classe-refus-regles'),
-              libelle: t.admin.groupes.refusCreation.releverMaximum,
-              onPress: () {
-                final GoRouter routeur = GoRouter.of(context);
-                Navigator.of(context).pop();
-                routeur.go(Routes.adminConfigurationRegles);
+            child: MenuFiltre<int>(
+              key: const ValueKey<String>('classe-heure'),
+              libelle: f.heure,
+              valeur: _heure,
+              entrees: <EntreeFiltre<int>>[
+                for (int h = _heureDebut; h <= _heureFin; h++)
+                  EntreeFiltre<int>(
+                    valeur: h,
+                    libelle: LibellesGroupe.insecable(
+                      f.heureValeur(heure: '$h'),
+                    ),
+                  ),
+              ],
+              onChoix: (int? h) {
+                if (h != null) _maj(() => _heure = h);
               },
             ),
+          ),
+          Ecart.vLg,
+          TexteSansCoupure(f.duree, style: textes.labelLarge),
+          Ecart.vXs,
+          TexteSansCoupure(f.dureeContexte, style: textes.bodySmall),
+          Ecart.vSm,
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: MenuDureeCreneau(
+              key: const ValueKey<String>('classe-duree'),
+              duree: _duree,
+              onChoix: (int? d) => _maj(() => _duree = d),
+            ),
+          ),
+          Ecart.vSm,
+          TexteSansCoupure(fuseau.phrase, style: textes.bodySmall),
+          Ecart.vXl,
+
+          // 4 bis. Les autres creneaux de la semaine (D2, 29/10/2026).
+          TitreChamp(f.autresCreneauxTitre, style: textes.titleMedium),
+          Ecart.vXs,
+          TexteSansCoupure(f.autresCreneauxContexte, style: textes.bodySmall),
+          Ecart.vMd,
+          for (int i = 0; i < _autres.length; i++) ...<Widget>[
+            _LigneAutreCreneau(
+              key: ValueKey<String>('classe-autre-creneau-$i'),
+              numero: i + 2,
+              jour: _autres[i].jour,
+              heure: _autres[i].heure,
+              duree: _autres[i].duree,
+              onJour: (int j) => _maj(
+                () => _autres[i] = (
+                  jour: j,
+                  heure: _autres[i].heure,
+                  duree: _autres[i].duree,
+                ),
+              ),
+              onHeure: (int h) => _maj(
+                () => _autres[i] = (
+                  jour: _autres[i].jour,
+                  heure: h,
+                  duree: _autres[i].duree,
+                ),
+              ),
+              onDuree: (int? d) => _maj(
+                () => _autres[i] = (
+                  jour: _autres[i].jour,
+                  heure: _autres[i].heure,
+                  duree: d,
+                ),
+              ),
+              onRetirer: () => _maj(() => _autres.removeAt(i)),
+            ),
+            Ecart.vLg,
           ],
+          if (_autres.length < 6)
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: ActionPrincipale(
+                key: const ValueKey<String>('classe-ajouter-creneau'),
+                libelle: f.ajouterCreneauLigne,
+                niveau: NiveauAction.tertiaire,
+                pleineLargeur: false,
+                onPress: () => _maj(
+                  () => _autres.add((jour: null, heure: null, duree: null)),
+                ),
+              ),
+            ),
+          Ecart.vXl,
+
+          // 5. Seuil : deduit puis choisi, 1 a 6 (D7).
+          TitreChamp(
+            f.titreSeuil,
+            style: textes.titleMedium,
+            obligatoire: true,
+          ),
+          Ecart.vXs,
+          TexteSansCoupure(f.seuilDetail, style: textes.bodySmall),
+          Ecart.vMd,
+          SelecteurEntier(
+            // Repart de la valeur du parent quand le public la change.
+            key: ValueKey<String>('classe-seuil-$_seuil'),
+            proposees: _seuilsProposes,
+            min: 1,
+            max: 6,
+            affichage: (int n) => f.seuilValeur(n: n),
+            valeurInitiale: _seuil,
+            onChange: (int? v) => _maj(() {
+              _seuil = v;
+              _seuilChoisi = true;
+            }),
+          ),
+          Ecart.vXl,
+
+          // 6. Nom : deduit, modifiable ; seul champ tape (D8).
+          ChampEtiquete(
+            key: const ValueKey<String>('classe-nom'),
+            libelle: f.titreNom,
+            controller: _nom,
+            obligatoire: true,
+            aide: f.nomDetail,
+            onChanged: (String texte) => setState(() {
+              _nomSaisi = texte.trim().isNotEmpty && texte != _nomPropose;
+              _erreur = null;
+            }),
+          ),
+          if (_erreur case final String erreur) ...<Widget>[
+            Ecart.vMd,
+            MessageAlerte(erreur),
+            // FN-113 : le maximum de Classes se releve dans les Regles.
+            if (_plafondClasses) ...<Widget>[
+              Ecart.vSm,
+              LienFleche(
+                key: const ValueKey<String>('classe-refus-regles'),
+                libelle: t.admin.groupes.refusCreation.releverMaximum,
+                onPress: () {
+                  final GoRouter routeur = GoRouter.of(context);
+                  Navigator.of(context).pop();
+                  routeur.go(Routes.adminConfigurationRegles);
+                },
+              ),
+            ],
+          ],
+          Ecart.vXxl,
+          BasDeFeuille(
+            libelle: t.admin.groupes.creerEnvoyer,
+            enCours: _envoi,
+            horsLigne: f.horsLigne,
+            onPress: () => _creer(choisi, fuseau.fuseau),
+          ),
+          Ecart.vMd,
+          TexteSansCoupure(
+            t.admin.groupes.journalisation,
+            style: textes.bodySmall,
+          ),
         ],
-        Ecart.vXxl,
-        BasDeFeuille(
-          libelle: t.admin.groupes.creerEnvoyer,
-          enCours: _envoi,
-          horsLigne: f.horsLigne,
-          onPress: () => _creer(choisi, fuseau.fuseau),
-        ),
-        Ecart.vMd,
-        TexteSansCoupure(
-          t.admin.groupes.journalisation,
-          style: textes.bodySmall,
-        ),
-      ],
+      ),
     );
+  }
+
+  /// C1 (UX-031) : vrai des que la feuille porte un choix de la personne ;
+  /// la fermer demande alors une confirmation.
+  bool get _saisie =>
+      _type != TypePublicGroupe.enfant ||
+      _genre != null ||
+      _enseignantId != null ||
+      _jour != null ||
+      _heure != null ||
+      _duree != null ||
+      _autres.isNotEmpty ||
+      _seuilChoisi ||
+      _nomSaisi;
+
+  /// Vrai quand la feuille se ferme d'elle-meme (classe creee, ou abandon
+  /// confirme) : le retour passe alors sans question.
+  bool _fermeture = false;
+
+  /// Demande s'il faut abandonner la saisie, et ferme la feuille si oui.
+  Future<void> _demanderAbandon() async {
+    final c1 = t.admin.groupes.c1;
+    final bool abandon = await ConfirmDestructive.demander(
+      context,
+      question: c1.abandonQuestion,
+      consequence: c1.abandonConsequence,
+      libelleConfirmer: c1.abandonConfirmer,
+      libelleAnnuler: c1.abandonContinuer,
+    );
+    if (!abandon || !mounted) return;
+    setState(() => _fermeture = true);
+    Navigator.of(context).pop();
   }
 
   /// Les creneaux libres de l'enseignant choisi, mis en avant (D6) : une
