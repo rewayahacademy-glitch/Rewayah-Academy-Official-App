@@ -2546,6 +2546,21 @@ class Traductions$notifications$fr {
 	/// fr: 'Écarter'
 	String get ecarter => 'Écarter';
 
+	/// fr: 'Traiter la contestation'
+	String get gesteTraiterContestation => 'Traiter la contestation';
+
+	/// fr: 'Observer la classe'
+	String get gesteObserver => 'Observer la classe';
+
+	/// fr: 'Répondre'
+	String get gesteRepondre => 'Répondre';
+
+	/// fr: 'Prendre la séance'
+	String get gestePrendreSeance => 'Prendre la séance';
+
+	/// fr: 'Recharger'
+	String get gesteRecharger => 'Recharger';
+
 	/// fr: 'L'écart n'est pas encore confirmé. Réessayez dans un instant.'
 	String get ecartNonConfirme => 'L\'écart n\'est pas encore confirmé. Réessayez dans un instant.';
 
@@ -47834,6 +47849,11 @@ extension on Traductions {
 			'notifications.voirPlusErreur' => 'Les notifications plus anciennes n\'ont pas pu être lues.',
 			'notifications.toutMarquerLu' => 'Tout marquer comme lu',
 			'notifications.ecarter' => 'Écarter',
+			'notifications.gesteTraiterContestation' => 'Traiter la contestation',
+			'notifications.gesteObserver' => 'Observer la classe',
+			'notifications.gesteRepondre' => 'Répondre',
+			'notifications.gestePrendreSeance' => 'Prendre la séance',
+			'notifications.gesteRecharger' => 'Recharger',
 			'notifications.ecartNonConfirme' => 'L\'écart n\'est pas encore confirmé. Réessayez dans un instant.',
 			'notifications.repetitions' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} fois', other: '${n} fois', ), 
 			'notifications.nonLue' => 'Non lue',
@@ -47902,13 +47922,13 @@ extension on Traductions {
 			'eleve.accueil.pausePriereDetail' => ({required Object priere, required Object heure}) => '${priere}, vers ${heure}',
 			'eleve.accueil.prochainDansJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Ton prochain cours est dans ${jours} jour.', other: 'Ton prochain cours est dans ${jours} jours.', ), 
 			'eleve.accueil.entreeSePrepare' => 'Ton entrée se prépare. Réessaie dans un instant.',
+			_ => null,
+		} ?? switch (path) {
 			'eleve.coran.titre' => 'Le Coran',
 			'eleve.coran.juz' => ({required Object juz}) => 'Juz ${juz}',
 			'eleve.coran.mecquoise' => 'Révélée à La Mecque',
 			'eleve.coran.medinoise' => 'Révélée à Médine',
 			'eleve.coran.reprendre' => 'Reprendre ta lecture',
-			_ => null,
-		} ?? switch (path) {
 			'eleve.coran.reprendreDetail' => ({required Object page}) => 'Tu en étais page ${page}',
 			'eleve.coran.chargement' => 'Le texte arrive',
 			'eleve.coran.indisponible' => 'Le texte n\'a pas pu être chargé',
@@ -48416,13 +48436,13 @@ extension on Traductions {
 			'enseignant.journee.alertesVide' => 'Aucune alerte utile en ce moment.',
 			'enseignant.journee.alertesSansDonnees' => 'Les alertes de présence n\'ont pas pu être lues',
 			'enseignant.journee.alertesErreur' => 'Les alertes de présence n\'ont pas pu être lues. Réessayez dans un instant.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.journee.voirAutreAlerte' => 'Voir l\'autre alerte',
 			'enseignant.journee.voirAutresAlertes' => ({required Object nombre}) => 'Voir les ${nombre} autres alertes',
 			'enseignant.journee.remplacementsVide' => 'Aucun cours d\'un collègue à assurer pour le moment.',
 			'enseignant.journee.voirTousRemplacements' => ({required Object nombre}) => 'Voir tout : les ${nombre} remplacements confirmés',
 			'enseignant.journee.heure' => 'Heure',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.journee.eleves' => 'Élèves',
 			'enseignant.journee.classe' => 'Classe',
 			'enseignant.journee.classeNommee' => ({required Object classe}) => 'Classe ${classe}',
@@ -48930,13 +48950,13 @@ extension on Traductions {
 			'controleur.compteRendu.provisoire' => 'Cet écran est en préparation.',
 			'controleur.compteRendu.revenir' => 'Revenir au contrôle',
 			'controleur.compteRendu.sousTitre' => ({required Object classe, required Object heure}) => '${classe} · ${heure}',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.compteRendu.faits' => 'Relevé automatique de la séance',
 			'controleur.compteRendu.faitsReplies' => 'Relevé automatique de la séance, replié',
 			'controleur.compteRendu.faitsDeplies' => 'Relevé automatique de la séance, déplié',
 			'controleur.compteRendu.faitsChargement' => 'Lecture du relevé automatique de la séance : heures, élèves présents, reconnexions.',
 			'controleur.compteRendu.faitsAbsents' => 'Le relevé automatique de la séance (heures, élèves présents, reconnexions) n\'est pas encore reçu : la séance vient de se terminer ou la connexion a été coupée. Vous pouvez répondre sans lui ; il sera joint au rapport dès sa réception.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.compteRendu.cleHoraire' => 'Heure prévue',
 			'controleur.compteRendu.horaire' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
 			'controleur.compteRendu.cleDebutReel' => 'Début réel',
@@ -49444,13 +49464,13 @@ extension on Traductions {
 			'tc.observation.visite.restantes' => 'restantes',
 			'tc.observation.visite.decompteLu' => ({required Object duree}) => 'Temps restant : ${duree}',
 			'tc.observation.visite.enDirect' => 'En direct',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.visite.connexion' => 'Connexion',
 			'tc.observation.visite.reconnexion' => 'Reconnexion',
 			'tc.observation.visite.videoCoupee' => 'Vidéo indisponible',
 			'tc.observation.visite.reconnexionDetail' => 'La connexion est interrompue, reconnexion en cours. Votre temps d\'observation continue de s\'écouler.',
 			'tc.observation.visite.sonRecu' => 'Son reçu',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.visite.sonInterrompu' => 'Son interrompu',
 			'tc.observation.visite.agrandir' => 'Agrandir',
 			'tc.observation.visite.reduire' => 'Réduire',
@@ -49958,13 +49978,13 @@ extension on Traductions {
 			'adulte.demo.etats.repriseRefuseeParTitulaire' => 'La demande de reprise a été refusée par le titulaire.',
 			'adulte.demo.etats.repriseSansReponse' => 'Sans réponse dans le délai, la demande attend l\'administration.',
 			'adulte.demo.etats.repriseValidee' => 'La reprise du foyer a été validée.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.demo.etats.repriseRefusee' => 'La reprise du foyer a été refusée.',
 			'adulte.demo.etats.dejaDansUnAutreFoyer' => 'L\'adulte invité fait déjà partie d\'un autre foyer.',
 			'adulte.demo.etats.erreurReseau' => 'Le réseau a coupé pendant une action.',
 			'adulte.demo.etats.doubleSoumission' => 'La même action a été envoyée deux fois.',
 			'adulte.demo.etats.notificationDansLApplication' => 'La notification n\'a pas pu partir sur le téléphone, elle reste visible dans l\'application.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.etats.emancipation' => 'Émancipation d\'un élève devenu adulte : non construite dans cette vague.',
 			'adulte.finances.indisponibleTitre' => 'Vos finances ne sont pas encore disponibles',
 			'adulte.finances.indisponiblePhrase' => 'Votre solde, votre période financée et votre mensualité apparaîtront ici dès que l\'académie les aura publiés. Aucun paiement ne vous est demandé ici.',
@@ -50472,13 +50492,13 @@ extension on Traductions {
 			'com.messages.types.mission' => 'Mission de contrôle',
 			'com.messages.types.remplacement' => 'Remplacement',
 			'com.messages.types.profilPaiement' => 'Profil de paiement',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.types.autre' => 'Autre sujet',
 			'com.messages.panneau.objets' => 'À propos de',
 			'com.messages.panneau.participants' => 'Participants',
 			'com.messages.panneau.fichiers' => _root.com.socle.lexique.fichiersPartages,
 			'com.messages.panneau.ouvrir' => ({required Object objet}) => 'Ouvrir ${objet}',
-			_ => null,
-		} ?? switch (path) {
 			'com.messages.panneau.inaccessible' => 'Ce sujet ne vous est plus ouvert. La conversation reste lisible.',
 			'com.messages.panneau.vous' => 'Vous',
 			'com.messages.fil.lectureSeule' => 'Vous pouvez lire cette conversation. La réponse n\'y est pas ouverte pour vous.',
@@ -50986,13 +51006,13 @@ extension on Traductions {
 			'com.annonces.publieur.quand.maintenantDetail' => 'L\'annonce part dès que la publication est confirmée.',
 			'com.annonces.publieur.quand.creneau' => ({required Object date, required Object heure}) => 'Le ${date} à ${heure}',
 			'com.annonces.publieur.quand.creneauDetail' => 'L\'annonce attend cette date. Vous la retrouvez dans les annonces planifiées.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.publieur.apercu.a' => ({required Object cible}) => 'À : ${cible}',
 			'com.annonces.publieur.apercu.diffusionMaintenant' => 'Diffusion : dès la confirmation',
 			'com.annonces.publieur.apercu.diffusionLe' => ({required Object date, required Object heure}) => 'Diffusion prévue le ${date} à ${heure}',
 			'com.annonces.publieur.continuer' => 'Continuer',
 			'com.annonces.publieur.publier' => 'Publier l\'annonce',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.publieur.programmer' => 'Programmer l\'annonce',
 			'com.annonces.publieur.reessayer' => 'Réessayer la publication',
 			'com.annonces.publieur.terminer' => 'Terminer',
@@ -51500,13 +51520,13 @@ extension on Traductions {
 			'comptable.paiements.detail.alerteInfos' => 'Le bénéficiaire n\'a pas encore de méthode de paiement complète. Relancez-le depuis son profil de paiement.',
 			'comptable.paiements.detail.alerteTitre' => 'À savoir avant de payer',
 			'comptable.paiements.detail.autoPaiementPhrase' => 'Ce paiement vous concerne : une autre personne habilitée le traitera. Personne ne peut exécuter son propre paiement.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.detail.introuvableTitre' => 'Ce paiement est introuvable.',
 			'comptable.paiements.detail.introuvablePhrase' => 'Revenez à la liste des paiements à effectuer pour choisir un autre paiement.',
 			'comptable.paiements.ecart.titre' => 'Signaler un écart',
 			'comptable.paiements.ecart.phrase' => 'Choisissez la ligne et ce qui ne va pas. La correction se fait à la source, puis le montant est recalculé.',
 			'comptable.paiements.ecart.ligne' => 'Ligne concernée',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.ecart.motif' => 'Ce qui ne va pas',
 			'comptable.paiements.ecart.motifs.montantLigne' => 'Le montant de cette ligne ne correspond pas',
 			'comptable.paiements.ecart.motifs.ligneManquante' => 'Une ligne manque (séance, remplacement, bonus)',
@@ -52014,13 +52034,13 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.alimentationReserve' => 'Alimenter la Réserve stratégique',
 			'comptable.direction.delegationPanneau.alimentationReserveDetail' => 'Un mouvement vers la Réserve, conforme à sa politique.',
 			'comptable.direction.delegationPanneau.plafondsTitre' => 'Plafonds',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.plafondsDetail' => 'Au-delà d\'un plafond, le paiement demande votre validation. Laissez vide pour ne fixer aucun plafond.',
 			'comptable.direction.delegationPanneau.plafondTransaction' => 'Plafond par transaction',
 			'comptable.direction.delegationPanneau.plafondTransactionDetail' => 'Le montant maximal d\'un seul paiement.',
 			'comptable.direction.delegationPanneau.plafondLot' => 'Plafond par lot',
 			'comptable.direction.delegationPanneau.plafondLotDetail' => 'Le montant maximal d\'un lot de paiements.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.plafondPeriode' => 'Plafond cumulé par période',
 			'comptable.direction.delegationPanneau.plafondPeriodeDetail' => 'Le total maximal sur la période ; il empêche de contourner un plafond en fractionnant.',
 			'comptable.direction.delegationPanneau.plafondIndice' => 'Aucun plafond',
@@ -52528,13 +52548,13 @@ extension on Traductions {
 			'avis.admin.champs.qualite' => 'Vous êtes',
 			'avis.admin.champs.depose' => 'Déposé le',
 			'avis.admin.champs.accord' => 'Accord de publication',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.champs.motif' => 'Motif',
 			'avis.admin.champs.modere' => 'Décision du',
 			'avis.admin.champs.publie' => 'Publié le',
 			'avis.admin.actions.publier' => 'Publier',
 			'avis.admin.actions.refuser' => 'Refuser',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.actions.retirer' => 'Retirer',
 			'avis.admin.publier.question' => ({required Object deNom}) => 'Publier l\'avis ${deNom} ?',
 			'avis.admin.publier.consequence' => 'L\'avis, le nom affiché, le pays et la date paraîtront sur le site de Rewayah Academy au prochain passage du site. Le texte n\'est pas modifié.',
