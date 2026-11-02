@@ -79,6 +79,24 @@ class RechargeFoyerSupabase
   final Map<String, FormulairePaiement> _formulaires =
       <String, FormulairePaiement>{};
 
+  /// PAY-UX : la demande de paiement de chaque commande ouverte dans cette
+  /// session (recapitulatif et cle), pour redemander un formulaire neuf.
+  final Map<String, ({String recapitulatifId, String cle})> _demandes =
+      <String, ({String recapitulatifId, String cle})>{};
+
+  @override
+  bool peutRouvrir(String commandeId) => _demandes.containsKey(commandeId);
+
+  @override
+  Future<FormulairePaiement?> rouvrirFormulaire(String commandeId) async {
+    final ({String recapitulatifId, String cle})? d = _demandes[commandeId];
+    if (d == null) return null;
+    // La meme cle rend la meme commande ; le serveur ferme l'ancien
+    // formulaire puis en ouvre un neuf (PAY-UX).
+    await payer(recapitulatifId: d.recapitulatifId, cle: d.cle);
+    return _formulaires[commandeId];
+  }
+
   @override
   FormulairePaiement? formulairePour(String commandeId) =>
       _formulaires[commandeId];
@@ -162,6 +180,7 @@ class RechargeFoyerSupabase
       'paiement',
     );
     final String commande = texteJson(j, 'commandeId');
+    _demandes[commande] = (recapitulatifId: recapitulatifId, cle: cle);
     final String? secretClient = texteNullableJson(j, 'secretClient');
     final String? clePublique = texteNullableJson(j, 'clePublique');
     if (secretClient != null && clePublique != null) {

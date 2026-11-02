@@ -63,4 +63,15 @@ abstract interface class SourceFormulairePaiement {
   /// Le formulaire de [commandeId] ne se montre plus (paiement termine dans
   /// le formulaire, ou abandon).
   void oublierFormulaire(String commandeId);
+
+  /// PAY-UX : vrai quand la source sait redemander un formulaire pour
+  /// [commandeId] (la demande de paiement de cette commande est connue).
+  bool peutRouvrir(String commandeId);
+
+  /// PAY-UX (constat du directeur du 02/11/2026 : revenir rouvrait l'ancien
+  /// formulaire, vide) : redemande au serveur un formulaire NEUF pour
+  /// [commandeId]. Le serveur ferme d'abord l'ancien (jamais un formulaire
+  /// deja paye) ; `null` quand il n'y a plus rien a payer. Leve
+  /// [PaiementPrecedentOuvert] quand l'ancien n'a pas pu etre ferme.
+  Future<FormulairePaiement?> rouvrirFormulaire(String commandeId);
 }

@@ -128,6 +128,23 @@ class _PortFormulaire extends _PortEtat implements SourceFormulairePaiement {
     oublies.add(commandeId);
     formulaires.remove(commandeId);
   }
+
+  /// PAY-UX : les formulaires neufs redemandes, et le refus du serveur.
+  int rouvertures = 0;
+  bool refuserRouverture = false;
+
+  @override
+  bool peutRouvrir(String commandeId) => commandeId == 'c1';
+
+  @override
+  Future<FormulairePaiement?> rouvrirFormulaire(String commandeId) async {
+    rouvertures++;
+    if (refuserRouverture) throw const PaiementPrecedentOuvert();
+    return formulaires[commandeId] = FormulairePaiement(
+      clePublique: 'pk_test_rewayah',
+      secretClient: 'cs_test_neuf_${rouvertures}_secret',
+    );
+  }
 }
 
 Future<GoRouter> _monter(
@@ -948,6 +965,47 @@ void main() {
       expect(find.byType(FormulaireStripe), findsNothing);
       final EtatSysteme etat = tester.widget(find.byType(EtatSysteme));
       expect(etat.nature, NatureEtat.horsLigne);
+    });
+
+    // PAY-UX (constat du directeur du 02/11/2026 : revenir rouvrait
+    // l'ancien formulaire, vide).
+    testWidgets('PAY-UX : quitte sans payer, le formulaire est oublie ; au '
+        'retour, « Reprendre le paiement » en demande un neuf', (
+      WidgetTester tester,
+    ) async {
+      final _PortFormulaire port = _PortFormulaire();
+      final GoRouter routeur = await _monter(tester, depart: c1, port: port);
+      await _taper(tester, find.byKey(ResultatRechargePage.sansPayerKey));
+      expect(port.oublies, contains('c1'));
+      routeur.go(c1);
+      await stabiliser(tester);
+      // Aucun ancien formulaire remonte : l'etat, et la reprise.
+      expect(find.byType(FormulaireStripe), findsNothing);
+      expect(find.byKey(ResultatRechargePage.reprendreKey), findsOneWidget);
+      await _taper(tester, find.byKey(ResultatRechargePage.reprendreKey));
+      expect(port.rouvertures, 1);
+      final FormulaireStripe neuf = tester.widget(
+        find.byType(FormulaireStripe),
+      );
+      expect(neuf.formulaire.secretClient, 'cs_test_neuf_1_secret');
+      _aucunSucces();
+    });
+
+    testWidgets('PAY-UX : l ancien formulaire n a pas pu etre ferme : rien '
+        'ne s ouvre, la phrase le dit', (WidgetTester tester) async {
+      final _PortFormulaire port = _PortFormulaire()
+        ..refuserRouverture = true
+        ..formulaires.clear();
+      await _monter(tester, depart: c1, port: port);
+      await _taper(tester, find.byKey(ResultatRechargePage.reprendreKey));
+      expect(port.rouvertures, 1);
+      expect(find.byType(FormulaireStripe), findsNothing);
+      expect(
+        find.byKey(const ValueKey<String>('resultat.reprendre.message')),
+        findsOneWidget,
+      );
+      expect(find.textContaining(t.payUx.precedentOuvertTitre), findsOneWidget);
+      _aucunSucces();
     });
 
     testWidgets('« Revenir aux soldes sans payer » quitte le resultat', (
