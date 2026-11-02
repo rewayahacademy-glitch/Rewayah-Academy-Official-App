@@ -32,3 +32,20 @@ Deno.test('une borne illisible est tue, le motif reste', () => {
     grace_minutes: null,
   })
 })
+
+Deno.test('acces_perdu (A3, PR 124) passe : le titulaire ecarte lit la vraie raison', () => {
+  assertEquals(
+    lireMotifSalle({
+      motif: 'acces_perdu',
+      fin_utc: '2026-11-01T19:00:00+00:00',
+      ouverture_utc: null,
+      grace_minutes: 15,
+    }),
+    {
+      motif: 'acces_perdu',
+      fin_utc: '2026-11-01T19:00:00+00:00',
+      ouverture_utc: null,
+      grace_minutes: 15,
+    },
+  )
+})
