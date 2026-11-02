@@ -7054,6 +7054,7 @@ class _Traductions$inscription$questionnaire$ar extends Traductions$inscription$
 	@override String ans({required Object n}) => '⁨${n}⁩ سنة';
 	@override String get adulte => '18 سنة أو أكثر';
 	@override String get adulteDetail => 'ابتداء من 18 سنة، يسجل كل شخص نفسه، باختيار «أسجل نفسي».';
+	@override String get clavierLettres => 'من لوحة المفاتيح، اضغطوا على حرف الإجابة لاختيارها.';
 	@override String genreQuestion({required Object prenom}) => 'هل ⁨${prenom}⁩ ولد أم بنت؟';
 	@override String get garcon => 'ولد';
 	@override String get fille => 'بنت';
@@ -27187,6 +27188,7 @@ extension on TraductionsAr {
 			'inscription.questionnaire.ans' => ({required Object n}) => '⁨${n}⁩ سنة',
 			'inscription.questionnaire.adulte' => '18 سنة أو أكثر',
 			'inscription.questionnaire.adulteDetail' => 'ابتداء من 18 سنة، يسجل كل شخص نفسه، باختيار «أسجل نفسي».',
+			'inscription.questionnaire.clavierLettres' => 'من لوحة المفاتيح، اضغطوا على حرف الإجابة لاختيارها.',
 			'inscription.questionnaire.genreQuestion' => ({required Object prenom}) => 'هل ⁨${prenom}⁩ ولد أم بنت؟',
 			'inscription.questionnaire.garcon' => 'ولد',
 			'inscription.questionnaire.fille' => 'بنت',
@@ -27323,9 +27325,9 @@ extension on TraductionsAr {
 			'foyer.ajout.pourQui.requis' => 'اختر لمن هذا الملف للمتابعة.',
 			'foyer.ajout.pourQui.indisponible' => 'غير متاح',
 			'foyer.ajout.pourQui.enfantTitre' => 'طفل أو قاصر',
-			'foyer.ajout.pourQui.enfantDescription' => 'ملف مرتبط بأسرتك، تديره نيابة عنه.',
 			_ => null,
 		} ?? switch (path) {
+			'foyer.ajout.pourQui.enfantDescription' => 'ملف مرتبط بأسرتك، تديره نيابة عنه.',
 			'foyer.ajout.pourQui.enfantAttente' => 'ممكن بمجرد فتح وصولك.',
 			'foyer.ajout.pourQui.moiTitre' => 'أنا',
 			'foyer.ajout.pourQui.moiDescription' => 'يسجّل البالغ نفسه من حسابه الخاص.',
@@ -27837,9 +27839,9 @@ extension on TraductionsAr {
 			'contrat.pointControle' => 'يمكن لمراقب جودة أن يحضر درسًا دون أن يُرى. تذكّر القاعة بذلك باستمرار، سواء جرت الزيارة أم لا.',
 			'contrat.pointCoordonnees' => 'لا ترى أبدًا بيانات اتصال أسرة: لا الاسم الكامل، ولا البريد الإلكتروني، ولا الهاتف.',
 			'contrat.lireTexte' => 'قراءة النص كاملًا',
-			'contrat.accepter' => 'قرأت وأوافق',
 			_ => null,
 		} ?? switch (path) {
+			'contrat.accepter' => 'قرأت وأوافق',
 			'contrat.accepteLe' => ({required Object date}) => 'تمت الموافقة في ⁨${date}⁩',
 			'contrat.erreur' => 'لم يكتمل التوقيع. أعد المحاولة بعد لحظة.',
 			'contrat.horsLigne' => 'أنت غير متصل. ستُحفظ موافقتك بمجرد عودة الشبكة، بالضغط من جديد.',
@@ -28351,9 +28353,9 @@ extension on TraductionsAr {
 			'recrutement.salles.prets' => 'قاعة الجاهزين للتدريس',
 			'recrutement.paiement.inconnu' => 'لم تُصرَّح بأي وسيلة لصرف الراتب',
 			'recrutement.paiement.aVerifier' => 'وسيلة صرف الراتب تنتظر تحقق الأكاديمية',
-			'recrutement.paiement.compatible' => 'وسيلة صرف الراتب مؤكَّدة',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.paiement.compatible' => 'وسيلة صرف الراتب مؤكَّدة',
 			'recrutement.paiement.incompatible' => 'لا توجد وسيلة ممكنة لصرف الراتب حاليًا',
 			'recrutement.portail.vousEtesEn' => ({required Object salle}) => 'أنت في ⁨${salle}⁩',
 			'recrutement.portail.aCompleterTitre' => 'طلب ترشحك يحتاج إلى استكمال',
@@ -28865,9 +28867,9 @@ extension on TraductionsAr {
 			'recrutement.talents.c.comptabilite.description' => 'مسك حسابات الأكاديمية.',
 			'recrutement.talents.c.comptabilite.exemple' => 'تسجيل الفواتير، متابعة المدفوعات، إعداد ميزانية ختامية',
 			'recrutement.talents.c.gestion_financiere.libelle' => 'التسيير المالي',
-			'recrutement.talents.c.gestion_financiere.description' => 'متابعة الأموال وتحضير القرارات.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.talents.c.gestion_financiere.description' => 'متابعة الأموال وتحضير القرارات.',
 			'recrutement.talents.c.gestion_financiere.exemple' => 'إعداد ميزانية تقديرية، متابعة السيولة',
 			'recrutement.talents.c.juridique_donnees.libelle' => 'القانون وحماية البيانات',
 			'recrutement.talents.c.juridique_donnees.description' => 'السهر على احترام الأكاديمية للقانون وحمايتها للبيانات الشخصية.',
@@ -29379,9 +29381,9 @@ extension on TraductionsAr {
 			'courriels.admin.ecrire.retour.refus' => 'الإدارة المتصلة وحدها تستطيع كتابة رسالة.',
 			'courriels.admin.ecrire.retour.echec' => 'لم يتأكد الإرسال. انظر قائمة الإرسال قبل أن تحاول من جديد: لن توضع الرسالة نفسها في الطابور مرتين.',
 			'courriels.admin.ecrire.retour.horsLigne' => 'لم يُرسل شيء: الشبكة غير متوفرة. أعد المحاولة عند عودتها.',
-			'courriels.admin.file.filtre.tous' => 'الكل',
 			_ => null,
 		} ?? switch (path) {
+			'courriels.admin.file.filtre.tous' => 'الكل',
 			'courriels.admin.file.filtre.enAttente' => 'في الطابور',
 			'courriels.admin.file.filtre.envoi' => 'قيد الإرسال',
 			'courriels.admin.file.filtre.envoye' => 'المرسلة',

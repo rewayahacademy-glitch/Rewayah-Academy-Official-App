@@ -58,6 +58,7 @@ class CoquilleEntree extends ConsumerStatefulWidget {
     required this.formulaire,
     this.pied = const <Widget>[],
     this.onRetour,
+    this.volet,
     super.key,
   });
 
@@ -70,6 +71,15 @@ class CoquilleEntree extends ConsumerStatefulWidget {
   /// Le retour, quand l'ecran en a un (la recuperation d'acces) : le disque
   /// retour au debut de ligne, en haut.
   final VoidCallback? onRetour;
+
+  /// Mode du questionnaire d'inscription (UX-046, pilote 02/11/2026) : ce que
+  /// le volet de marque porte a la place de la porte, sur la surface de
+  /// marque (`bureau` vrai dans le volet d'ordinateur). Sur ordinateur : le
+  /// logo en haut, puis ce volet centre (la question au debut de ligne, les
+  /// reponses a cote, fiche ONBOARDING §2) ; sur telephone : sous le logo, a
+  /// la place de la porte, avant le formulaire. `null` : la porte, comme a la
+  /// connexion.
+  final Widget Function(bool bureau)? volet;
 
   @override
   ConsumerState<CoquilleEntree> createState() => _CoquilleEntreeState();
@@ -115,7 +125,10 @@ class _CoquilleEntreeState extends ConsumerState<CoquilleEntree> {
                     children: <Widget>[
                       _Tete(onRetour: onRetour),
                       Ecart.vXxl,
-                      Center(child: PorteLumiere.surMarque(depart: _depart)),
+                      if (widget.volet case final Widget Function(bool) v)
+                        v(false)
+                      else
+                        Center(child: PorteLumiere.surMarque(depart: _depart)),
                       Ecart.vXxl,
                       widget.formulaire(false),
                       ...widget.pied,
@@ -146,12 +159,22 @@ class _CoquilleEntreeState extends ConsumerState<CoquilleEntree> {
                           children: <Widget>[
                             const LogoEntree(),
                             Expanded(
-                              child: Center(
-                                child: PorteLumiere.surMarque(
-                                  largeurMax: largeurSceneBureau,
-                                  depart: _depart,
+                              child: switch (widget.volet) {
+                                final Widget Function(bool) v => _Defilant(
+                                  child: ConstrainedBox(
+                                    constraints: const BoxConstraints(
+                                      maxWidth: largeurFormulaireEntree,
+                                    ),
+                                    child: v(true),
+                                  ),
                                 ),
-                              ),
+                                null => Center(
+                                  child: PorteLumiere.surMarque(
+                                    largeurMax: largeurSceneBureau,
+                                    depart: _depart,
+                                  ),
+                                ),
+                              },
                             ),
                           ],
                         ),
