@@ -44,13 +44,24 @@ class _Pastille {
 /// entiere ([phraseSemantique]).
 class BadgeNonLu extends StatelessWidget {
   /// Cree le badge.
-  const BadgeNonLu({required this.indicateur, super.key, this.compact = false});
+  const BadgeNonLu({
+    required this.indicateur,
+    super.key,
+    this.compact = false,
+    this.libelleAction,
+  });
 
   /// Ce que le badge doit dire.
   final IndicateurAttention indicateur;
 
   /// Vrai : une seule pastille visible, la plus pressante.
   final bool compact;
+
+  /// Opt-in (reprise NOTIFS-L6, pilote, 02/11/2026) : le mot du geste
+  /// attendu (« Recharger », « Répondre »...), dit a la place du mot du
+  /// niveau « Action requise » ; « Urgent » reste dit tel quel. `null` : le
+  /// mot du niveau.
+  final String? libelleAction;
 
   /// La cle de la pastille du niveau, pour les tests.
   static const ValueKey<String> cleNiveau = ValueKey<String>('badge-niveau');
@@ -96,11 +107,14 @@ class BadgeNonLu extends StatelessWidget {
 
   /// La phrase entiere lue par le lecteur d'ecran, ou `null` si rien n'est a
   /// dire.
-  static String? phraseSemantique(IndicateurAttention indicateur) {
+  static String? phraseSemantique(
+    IndicateurAttention indicateur, {
+    String? libelleAction,
+  }) {
     if (!indicateur.estVisible) return null;
     final b = t.com.socle.composants.badge;
     final List<String> morceaux = <String>[
-      if (_niveauDit(indicateur)) libelleNiveau(indicateur.niveau),
+      if (_niveauDit(indicateur)) _motNiveau(indicateur.niveau, libelleAction),
       if (indicateur.nonLus == 1)
         b.nonLuUnSemantique
       else if (indicateur.nonLus > 1)
@@ -116,13 +130,21 @@ class BadgeNonLu extends StatelessWidget {
       i.niveau.estAuMoins(NiveauAttention.actionRequise) ||
       (i.niveau == NiveauAttention.aLire && i.nonLus == 0);
 
+  /// Le mot de la pastille du niveau : le geste attendu, quand l'appelant
+  /// le donne et que le niveau demande une action.
+  static String _motNiveau(NiveauAttention niveau, String? action) =>
+      // « Urgent » reste dit en toutes lettres : il passe avant le geste.
+      action != null && niveau == NiveauAttention.actionRequise
+      ? action
+      : libelleNiveau(niveau);
+
   List<_Pastille> _pastilles() {
     final b = t.com.socle.composants.badge;
     final IndicateurAttention i = indicateur;
     return <_Pastille>[
       if (_niveauDit(i))
         _Pastille(
-          libelleNiveau(i.niveau),
+          _motNiveau(i.niveau, libelleAction),
           iconeNiveau(i.niveau),
           tonNiveau(i.niveau),
           'niveau',
@@ -141,7 +163,10 @@ class BadgeNonLu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String? phrase = phraseSemantique(indicateur);
+    final String? phrase = phraseSemantique(
+      indicateur,
+      libelleAction: libelleAction,
+    );
     if (phrase == null) return const SizedBox.shrink();
     final List<_Pastille> toutes = _pastilles();
     final List<_Pastille> vues = compact ? toutes.take(1).toList() : toutes;

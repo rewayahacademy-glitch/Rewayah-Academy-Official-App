@@ -454,6 +454,9 @@ verify_jwt = false
 [functions.recharge-payer]
 verify_jwt = true
 
+[functions.remboursement-stripe]
+verify_jwt = true
+
 [functions.bibliotheque-lecture]
 verify_jwt = true
 

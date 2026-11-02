@@ -12,8 +12,10 @@ import {
   sessionIntegree,
   Stripe,
   verifierEvenement,
+  adresseBanc,
+  parametresRemboursementDirection,
 } from './stripe.ts'
-import { parametres, parametresRemboursement } from '../stripe-webhook/index.ts'
+import { parametres, parametresRemboursement, remboursementsDeLaCharge } from '../stripe-webhook/index.ts'
 
 const SECRET = 'whsec_test_rewayah'
 const stripe = clientStripe('sk_test_rewayah')
@@ -166,4 +168,34 @@ Deno.test('FN-115b : sans paiement ou d un autre type, rien ; le credit reste a 
   assertEquals(parametresRemboursement({ id: 'e', type: 'charge.refunded', data: { object: { amount_refunded: 1 } } }), null)
   assertEquals(parametresRemboursement({ id: 'e', type: 'checkout.session.completed', data: { object: {} } }), null)
   assertEquals(parametres({ id: 'e', type: 'charge.refunded', data: { object: { id: 'ch_1' } } }), null)
+})
+
+// FN-115c (pilote, 02/11/2026).
+Deno.test('remboursement de la direction : payment_intent, montant, cle = la demande', () => {
+  const { params, cle } = parametresRemboursementDirection({
+    demandeId: 'd-1', paiement: 'pi_1', montant: 1000, profil: 'p-1',
+  })
+  assertEquals(params.payment_intent, 'pi_1')
+  assertEquals(params.amount, 1000)
+  assertEquals(params.metadata, { demande: 'd-1', profil: 'p-1' })
+  assertEquals(cle, 'remboursement-d-1')
+})
+
+Deno.test('faux Stripe de banc : cle de test et adresse locale seulement', () => {
+  assertEquals(adresseBanc('sk_test_x', 'http://127.0.0.1:12111'), { host: '127.0.0.1', port: 12111, protocol: 'http' })
+  assertEquals(adresseBanc('sk_test_x', 'http://host.docker.internal:12111')?.host, 'host.docker.internal')
+  assertEquals(adresseBanc('sk_live_x', 'http://127.0.0.1:12111'), null)
+  assertEquals(adresseBanc('sk_test_x', 'https://api.exemple.org'), null)
+  assertEquals(adresseBanc('sk_test_x', undefined), null)
+  assertEquals(adresseBanc('sk_test_x', 'pas une adresse'), null)
+})
+
+Deno.test('charge.refunded : les remboursements portes, le plus recent d abord', () => {
+  const charge = (objet: Record<string, unknown>) =>
+    ({ type: 'charge.refunded', data: { object: objet } }) as unknown as Record<string, unknown>
+  assertEquals(
+    remboursementsDeLaCharge(charge({ refunds: { data: [{ id: 're_a', created: 1 }, { id: 're_b', created: 5 }] } })),
+    ['re_b', 're_a'],
+  )
+  assertEquals(remboursementsDeLaCharge(charge({})), [])
 })
