@@ -6,6 +6,34 @@
 - Valeurs lisibles par un programme : `docs/current/tarifs-2026-10-18.json`. L'application lit ses prix en base (politique commerciale publiée) ; le site public lit ce fichier.
 - Le directeur l'a dit : **c'est le dernier passage sur les tarifs**. Aucun agent ne change une valeur sans nouvelle décision datée.
 
+## Décision du directeur du 01/11/2026 : remboursements, contestations, accès sans paiement (FN-115)
+
+Le directeur l'a dit, le 01/11/2026 :
+
+- « normalement on paye avant de commencer les cours »
+- « quelqu'un qui ne paye pas n'a pas accès aux sessions, ni aux ressources, seulement à son espace pour voir son profil, son historique et éventuellement pouvoir payer »
+- « l'académie ne paye pour personne, ni les frais de remboursement, ni les taxes. on nous paye, pas l'inverse »
+- pour la répartition d'un remboursement partiel et l'origine du remboursement : « à toi de jouer le rôle de comptable/avocat […] dans l'intérêt de tout le monde »
+- puis, sur les sept points ci-dessous : « oui pour les 7 points » (22:24 UTC).
+
+Ce qui est décidé :
+
+1. **Un mois remboursé n'est plus payé.** L'accès aux séances et aux ressources de ce mois s'arrête tout de suite, sans rappels ni délai. Le compte garde son espace : profil, historique, paiement.
+2. **Remboursement partiel d'un paiement qui couvrait plusieurs élèves** : la direction choisit l'élève. On ne rembourse que les séances non suivies ; les séances suivies restent dues.
+3. **Trimestre ou année payés d'avance, puis remboursés** : les mois déjà suivis sont comptés au prix mensuel normal, sans la remise de la formule, et le reste est remboursé. Les mois à venir redeviennent à payer.
+4. **Contestation d'un paiement auprès de la banque** : le prestataire reprend l'argent dès l'ouverture, donc l'accès des élèves concernés est suspendu comme pour un impayé. Il revient de lui-même si l'académie gagne.
+5. **Contestation perdue** : remboursement total, selon le point 1. **Les frais que le prestataire facture pour la contestation sont portés au solde du foyer**, jamais à la charge de l'académie.
+6. **Qui est prévenu** : la famille, par e-mail et dans l'application ; la direction, dans l'application, qui en garde la trace ; l'enseignant, jamais.
+7. **D'où part un remboursement** : de l'écran Finance de l'application. Le serveur y propose le montant juste, selon les points 2 et 3 ; la direction confirme ; l'application rembourse par le prestataire. Un remboursement fait directement chez le prestataire est capté aussi.
+
+**Arbitrage du pilote, même jour**, pour accorder ces points avec les conditions publiques (« première semaine remboursée ») :
+- dans la première semaine, on rembourse ce qui a été payé, moins les séances suivies (point 2) ;
+- après la première semaine, une formule payée d'avance n'est remboursée que sur geste de la direction, avec le calcul du point 3.
+
+**Opposabilité des frais de contestation** : le point 5 n'est opposable à une famille que si les conditions le lui disent **avant** qu'elle paie. Les textes « Conditions » (section 4) et « Annulation et remboursement » (sections 1, 2, 4 et la nouvelle section 6 « Contester un paiement auprès de sa banque ») le disent depuis le lot FN-115a. La page de paiement y renvoie, juste sous « Payer ».
+
+Ce qui reste à faire, par lots datés : le traitement par le serveur des remboursements et des contestations (FN-115b), le bouton « Rembourser » de l'écran Finance (FN-115c), et la règle « pas payé : ni séances ni ressources » appliquée aussi aux ressources (lot B ; aujourd'hui la suspension ne ferme que l'entrée en séance). Le site public (`site-public/content/pages.json`) porte encore l'ancien texte « remboursé en entier » : sa mise à jour revient à qui tient `site-public/`.
+
 ## Décision du directeur du 22/10/2026 : la répartition du paiement, montrée en pourcentages
 
 Le directeur l'a dit, en deux messages du 22/10 :

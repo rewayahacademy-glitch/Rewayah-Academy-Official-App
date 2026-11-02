@@ -7314,6 +7314,8 @@ class _Traductions$adulte$recharge$ar extends Traductions$adulte$recharge$fr {
 	@override String get statut => 'حالة التخصيص';
 	@override String get total => 'المجموع المستحق';
 	@override String payer({required Object montant}) => 'دفع ⁨${montant}⁩';
+	@override String get conditionsRemboursement => 'الاسترداد والاعتراض: اقرأ الشروط';
+	@override String get fraisContestation => 'إذا اعترضتم على دفعة لدى بنككم، تُضاف رسوم الاعتراض إلى رصيد أسرتكم.';
 	@override String get horsLignePayer => 'أنت غير متصل. يمكنك الدفع عند عودة الاتصال.';
 	@override String get paiementEchecTitre => 'لم يُؤكَّد الدفع.';
 	@override String get paiementEchecPhrase => 'تحقّق قبل إعادة المحاولة.';
@@ -8803,6 +8805,7 @@ class _Traductions$juridique$annulation$ar extends Traductions$juridique$annulat
 	@override late final _Traductions$juridique$annulation$s3$ar s3 = _Traductions$juridique$annulation$s3$ar._(_root);
 	@override late final _Traductions$juridique$annulation$s4$ar s4 = _Traductions$juridique$annulation$s4$ar._(_root);
 	@override late final _Traductions$juridique$annulation$s5$ar s5 = _Traductions$juridique$annulation$s5$ar._(_root);
+	@override late final _Traductions$juridique$annulation$litige$ar litige = _Traductions$juridique$annulation$litige$ar._(_root);
 	@override late final _Traductions$juridique$annulation$s6$ar s6 = _Traductions$juridique$annulation$s6$ar._(_root);
 }
 
@@ -15675,7 +15678,8 @@ class _Traductions$juridique$conditions$s4$ar extends Traductions$juridique$cond
 		'الأسعار موجودة في صفحة الأسعار وفي التطبيق عند اختيار الصيغة. وهي بالدولار الأمريكي وبدون ضرائب. وتُضاف الضريبة المستحقة حسب بلدكم عند الدفع.',
 		'يتجدد الاشتراك كل شهر. ويحسب النظام الخصومات على فاتورة الأسرة.',
 		'يتم الدفع عبر مزوّد للدفع.',
-		'لا توجد تجربة مجانية. يُسترد مبلغ الأسبوع الأول إذا لم يناسبكم الدرس.',
+		'لا توجد تجربة مجانية. يُسترد مبلغ الأسبوع الأول إذا لم يناسبكم الدرس، ما عدا الحصص التي حضرها الطالب.',
+		'دون دفع لا يبقى للطالب دخول إلى الحصص ولا إلى الموارد. ويبقى فضاؤه مفتوحًا للاطلاع على ملفه وسجلّه وللدفع.',
 		'للإيقاف أو الاسترداد أو الدفع المتأخر، انظروا نص الإلغاء والاسترداد.',
 	];
 }
@@ -15729,7 +15733,7 @@ class _Traductions$juridique$annulation$s1$ar extends Traductions$juridique$annu
 	@override String get titre => '١. الأسبوع الأول مسترد';
 	@override List<String> get blocs => [
 		'لا توجد تجربة مجانية. وبدلًا منها يُسترد مبلغ الأسبوع الأول إذا لم يناسبكم الدرس.',
-		'يمكنكم التوقف خلال الأسبوع الأول بعد الحصة الأولى، وفق سياسة الأسعار المعمول بها (صفحة الأسعار)، فيُسترد لكم المبلغ كاملًا.',
+		'يمكنكم التوقف خلال الأسبوع الأول بعد الحصة الأولى، وفق سياسة الأسعار المعمول بها (صفحة الأسعار)، فيُسترد لكم ما دفعتم، ما عدا الحصص التي حضرها الطالب.',
 		'بعد هذه المهلة يُستحق الشهر الذي بدأ.',
 	];
 }
@@ -15744,7 +15748,7 @@ class _Traductions$juridique$annulation$s2$ar extends Traductions$juridique$annu
 	@override String get titre => '٢. إيقاف الاشتراك';
 	@override List<String> get blocs => [
 		'يتوقف الاشتراك الشهري في أي وقت دون تبرير. وينتهي بنهاية الشهر الجاري.',
-		'الصيغ المدفوعة مسبقًا، كل ثلاثة أشهر أو كل سنة، لا تُسترد بعد الأسبوع الأول.',
+		'الصيغ المدفوعة مسبقًا، كل ثلاثة أشهر أو كل سنة، لا تُسترد بعد الأسبوع الأول إلا بقرار من الإدارة. وفي هذه الحالة تُحتسب الأشهر التي حضرها الطالب بالسعر الشهري العادي دون خصم الصيغة، ويُسترد الباقي.',
 		'التسجيل في منتصف الشهر لا يدفع إلا ثمن الحصص المتبقية من الشهر.',
 	];
 }
@@ -15775,7 +15779,7 @@ class _Traductions$juridique$annulation$s4$ar extends Traductions$juridique$annu
 	@override List<String> get blocs => [
 		'قبل التجديد تصلكم تذكيرات تلقائية.',
 		'بعد تاريخ التجديد تُطبَّق مهلة سماح قصيرة: يتابع الطالب دروسه ويظهر المبلغ غير المدفوع عند وليّ الأمر.',
-		'إذا لم يصل الدفع بعد ذلك يُعلَّق الدخول إلى الحصص، ويُحفظ المقعد لبعض الوقت.',
+		'إذا لم يصل الدفع بعد ذلك يُعلَّق الدخول إلى الحصص وإلى الموارد. ويبقى الفضاء مفتوحًا للاطلاع على الملف والسجل وللدفع. ويُحفظ المقعد لبعض الوقت.',
 		'بعد ذلك يُفرَج عن المقعد لقائمة الانتظار. وتبقى العودة ممكنة دون رسوم في فصل جديد.',
 		'التواريخ الدقيقة هي المعتمدة في سياسة الأسعار المعمول بها (صفحة الأسعار).',
 	];
@@ -15794,6 +15798,22 @@ class _Traductions$juridique$annulation$s5$ar extends Traductions$juridique$annu
 	];
 }
 
+// Path: juridique.annulation.litige
+class _Traductions$juridique$annulation$litige$ar extends Traductions$juridique$annulation$litige$fr {
+	_Traductions$juridique$annulation$litige$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '٦. الاعتراض على دفعة لدى البنك';
+	@override List<String> get blocs => [
+		'إذا اعترضتم على دفعة لدى بنككم، يسترجع مزوّد الدفع المبلغ من الأكاديمية منذ بداية الفحص. ويُعلَّق عندئذ دخول الطلاب المعنيين طوال مدة الفحص.',
+		'إذا حكم البنك لصالح الأكاديمية، يعود الدخول.',
+		'إذا حكم البنك لصالحكم، تُعامَل الدفعة كاسترداد كامل. وتُضاف إلى رصيد أسرتكم الرسوم التي يفرضها مزوّد الدفع على الأكاديمية بسبب الاعتراض.',
+		'قبل الاعتراض، اكتبوا لنا: طلب الاسترداد لدى الأكاديمية لا يكلّف أي رسوم.',
+	];
+}
+
 // Path: juridique.annulation.s6
 class _Traductions$juridique$annulation$s6$ar extends Traductions$juridique$annulation$s6$fr {
 	_Traductions$juridique$annulation$s6$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -15801,7 +15821,7 @@ class _Traductions$juridique$annulation$s6$ar extends Traductions$juridique$annu
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get titre => '٦. تقديم طلب';
+	@override String get titre => '٧. تقديم طلب';
 	@override List<String> get blocs => [
 		'للإيقاف أو لطلب الاسترداد، اكتبوا لنا مع ذكر اسم الحساب والسبب.',
 	];
@@ -27052,6 +27072,8 @@ extension on TraductionsAr {
 			'adulte.recharge.statut' => 'حالة التخصيص',
 			'adulte.recharge.total' => 'المجموع المستحق',
 			'adulte.recharge.payer' => ({required Object montant}) => 'دفع ⁨${montant}⁩',
+			'adulte.recharge.conditionsRemboursement' => 'الاسترداد والاعتراض: اقرأ الشروط',
+			'adulte.recharge.fraisContestation' => 'إذا اعترضتم على دفعة لدى بنككم، تُضاف رسوم الاعتراض إلى رصيد أسرتكم.',
 			'adulte.recharge.horsLignePayer' => 'أنت غير متصل. يمكنك الدفع عند عودة الاتصال.',
 			'adulte.recharge.paiementEchecTitre' => 'لم يُؤكَّد الدفع.',
 			'adulte.recharge.paiementEchecPhrase' => 'تحقّق قبل إعادة المحاولة.',
@@ -27082,10 +27104,10 @@ extension on TraductionsAr {
 			'adulte.famille.ajouter' => 'إضافة أسرتي',
 			'adulte.famille.ajouterLegende' => 'سجّل أطفالك وادعُ زوجك أو زوجتك للانضمام إلى باقة الأسرة.',
 			'adulte.famille.ajouterPhrase' => 'يمكنك إضافة أطفالك ودعوة زوجك أو زوجتك للانضمام إلى باقة الأسرة. تبقى مساحتك كطالب كما هي.',
-			'adulte.famille.inscrireEnfant' => 'تسجيل طفل',
-			'adulte.famille.maFamille' => 'أسرتي',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.famille.inscrireEnfant' => 'تسجيل طفل',
+			'adulte.famille.maFamille' => 'أسرتي',
 			'adulte.famille.forfaitFamille' => 'باقة الأسرة',
 			'adulte.famille.retourMonEspace' => 'العودة إلى مساحتي',
 			'adulte.famille.titulaire' => 'أنت صاحب حساب الأسرة',
@@ -27596,10 +27618,10 @@ extension on TraductionsAr {
 			'controleur.historique.faitsIndisponibles' => 'السجل التلقائي لهذه الزيارة (الساعات، الطلاب الحاضرون، إعادة الاتصال) لم يصل بعد: انتهت الحصة للتو أو انقطع الاتصال. سيظهر هنا بمجرد وصوله. باقي التقرير موثوق.',
 			'controleur.historique.motif' => ({required Object motif}) => 'السبب: ⁨${motif}⁩',
 			'controleur.historique.ajouterComplement' => 'إضافة تكملة',
-			'controleur.complement.bandeau' => 'ستُضاف هذه التكملة إلى التقرير الموجود.',
-			'controleur.complement.questionMotif' => 'لماذا تضيف هذه التكملة؟',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.complement.bandeau' => 'ستُضاف هذه التكملة إلى التقرير الموجود.',
+			'controleur.complement.questionMotif' => 'لماذا تضيف هذه التكملة؟',
 			'controleur.complement.contexteMotif' => 'اختياري: السبب يساعد الإدارة على قراءة التكملة. التقرير الأصلي لا يتغير.',
 			'controleur.complement.precision' => 'توضيح',
 			'controleur.complement.precisionAide' => 'حين تنقص تفصيلة · يكمّل التقرير دون أن يغيّر فيه شيئًا',
@@ -28110,10 +28132,10 @@ extension on TraductionsAr {
 			'recrutement.parcours.sauvegardeEchec' => 'تعذّر حفظ آخر إجاباتك. تبقى على الشاشة: تابع، وستُرسل مع طلب ترشحك.',
 			'recrutement.parcours.presentation.p1.titre' => 'من هي أكاديمية الرواية؟',
 			'recrutement.parcours.presentation.p1.intro' => 'قبل الأسئلة، إليك ما يجب أن تعرفه عنا.',
-			'recrutement.parcours.presentation.p1.academie.titre' => 'أكاديمية لتعليم القرآن عبر الإنترنت',
-			'recrutement.parcours.presentation.p1.academie.texte' => 'تعلّم أكاديمية الرواية القرآن عن بُعد، في فصول ثابتة، مع معلم مخصّص لكل فصل. وهي تُدرّس منذ 1 مايو 2024.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.presentation.p1.academie.titre' => 'أكاديمية لتعليم القرآن عبر الإنترنت',
+			'recrutement.parcours.presentation.p1.academie.texte' => 'تعلّم أكاديمية الرواية القرآن عن بُعد، في فصول ثابتة، مع معلم مخصّص لكل فصل. وهي تُدرّس منذ 1 مايو 2024.',
 			'recrutement.parcours.presentation.p1.liberte.titre' => 'تبقى حرًّا',
 			'recrutement.parcours.presentation.p1.liberte.texte' => 'ما دمت لم تصبح معلّمًا، يمكنك سحب طلب ترشحك من ملفك.',
 			'recrutement.parcours.presentation.p1.donnees.titre' => 'بياناتك محميّة',
@@ -28624,10 +28646,10 @@ extension on TraductionsAr {
 			'argent.transparence.lien' => 'أسعارنا بكل شفافية',
 			'argent.transparence.intro' => 'هكذا يتوزع كل دفعة يدفعها الطالب، بندًا بندًا، بالنسب المئوية.',
 			'argent.transparence.repartitionTitre' => 'أين تذهب كل دفعة',
-			'argent.transparence.version' => ({required Object date}) => 'تقدير للأسعار المعمول بها ابتداءً من ⁨${date}⁩.',
-			'argent.transparence.part' => ({required Object valeur}) => '⁨${valeur}⁩ ٪',
 			_ => null,
 		} ?? switch (path) {
+			'argent.transparence.version' => ({required Object date}) => 'تقدير للأسعار المعمول بها ابتداءً من ⁨${date}⁩.',
+			'argent.transparence.part' => ({required Object valeur}) => '⁨${valeur}⁩ ٪',
 			'argent.transparence.virgule' => '٫',
 			'argent.transparence.total' => 'المجموع',
 			'argent.transparence.postes.enseignant' => 'معلّم الصف',
@@ -28715,8 +28737,9 @@ extension on TraductionsAr {
 			'juridique.conditions.s4.blocs.0' => 'الأسعار موجودة في صفحة الأسعار وفي التطبيق عند اختيار الصيغة. وهي بالدولار الأمريكي وبدون ضرائب. وتُضاف الضريبة المستحقة حسب بلدكم عند الدفع.',
 			'juridique.conditions.s4.blocs.1' => 'يتجدد الاشتراك كل شهر. ويحسب النظام الخصومات على فاتورة الأسرة.',
 			'juridique.conditions.s4.blocs.2' => 'يتم الدفع عبر مزوّد للدفع.',
-			'juridique.conditions.s4.blocs.3' => 'لا توجد تجربة مجانية. يُسترد مبلغ الأسبوع الأول إذا لم يناسبكم الدرس.',
-			'juridique.conditions.s4.blocs.4' => 'للإيقاف أو الاسترداد أو الدفع المتأخر، انظروا نص الإلغاء والاسترداد.',
+			'juridique.conditions.s4.blocs.3' => 'لا توجد تجربة مجانية. يُسترد مبلغ الأسبوع الأول إذا لم يناسبكم الدرس، ما عدا الحصص التي حضرها الطالب.',
+			'juridique.conditions.s4.blocs.4' => 'دون دفع لا يبقى للطالب دخول إلى الحصص ولا إلى الموارد. ويبقى فضاؤه مفتوحًا للاطلاع على ملفه وسجلّه وللدفع.',
+			'juridique.conditions.s4.blocs.5' => 'للإيقاف أو الاسترداد أو الدفع المتأخر، انظروا نص الإلغاء والاسترداد.',
 			'juridique.conditions.s5.titre' => '٥. الاحترام في الحصة',
 			'juridique.conditions.s5.blocs.0' => 'يتصرف كل واحد باحترام تجاه المعلم والطلاب الآخرين، بكلامه وبسلوكه.',
 			'juridique.conditions.s6.titre' => '٦. معلوماتكم',
@@ -28728,11 +28751,11 @@ extension on TraductionsAr {
 			'juridique.annulation.intro' => 'يمكنكم التوقف متى شئتم. هذا ما يُسترد وما لا يُسترد، وما يحدث إذا لم يصل الدفع.',
 			'juridique.annulation.s1.titre' => '١. الأسبوع الأول مسترد',
 			'juridique.annulation.s1.blocs.0' => 'لا توجد تجربة مجانية. وبدلًا منها يُسترد مبلغ الأسبوع الأول إذا لم يناسبكم الدرس.',
-			'juridique.annulation.s1.blocs.1' => 'يمكنكم التوقف خلال الأسبوع الأول بعد الحصة الأولى، وفق سياسة الأسعار المعمول بها (صفحة الأسعار)، فيُسترد لكم المبلغ كاملًا.',
+			'juridique.annulation.s1.blocs.1' => 'يمكنكم التوقف خلال الأسبوع الأول بعد الحصة الأولى، وفق سياسة الأسعار المعمول بها (صفحة الأسعار)، فيُسترد لكم ما دفعتم، ما عدا الحصص التي حضرها الطالب.',
 			'juridique.annulation.s1.blocs.2' => 'بعد هذه المهلة يُستحق الشهر الذي بدأ.',
 			'juridique.annulation.s2.titre' => '٢. إيقاف الاشتراك',
 			'juridique.annulation.s2.blocs.0' => 'يتوقف الاشتراك الشهري في أي وقت دون تبرير. وينتهي بنهاية الشهر الجاري.',
-			'juridique.annulation.s2.blocs.1' => 'الصيغ المدفوعة مسبقًا، كل ثلاثة أشهر أو كل سنة، لا تُسترد بعد الأسبوع الأول.',
+			'juridique.annulation.s2.blocs.1' => 'الصيغ المدفوعة مسبقًا، كل ثلاثة أشهر أو كل سنة، لا تُسترد بعد الأسبوع الأول إلا بقرار من الإدارة. وفي هذه الحالة تُحتسب الأشهر التي حضرها الطالب بالسعر الشهري العادي دون خصم الصيغة، ويُسترد الباقي.',
 			'juridique.annulation.s2.blocs.2' => 'التسجيل في منتصف الشهر لا يدفع إلا ثمن الحصص المتبقية من الشهر.',
 			'juridique.annulation.s3.titre' => '٣. الغياب والحصص الملغاة',
 			'juridique.annulation.s3.blocs.0' => 'المقعد الذي فاتَ لا يُسترد ثمنه: فهو محجوز للطالب في فصل ثابت.',
@@ -28741,12 +28764,17 @@ extension on TraductionsAr {
 			'juridique.annulation.s4.titre' => '٤. تأخر الدفع',
 			'juridique.annulation.s4.blocs.0' => 'قبل التجديد تصلكم تذكيرات تلقائية.',
 			'juridique.annulation.s4.blocs.1' => 'بعد تاريخ التجديد تُطبَّق مهلة سماح قصيرة: يتابع الطالب دروسه ويظهر المبلغ غير المدفوع عند وليّ الأمر.',
-			'juridique.annulation.s4.blocs.2' => 'إذا لم يصل الدفع بعد ذلك يُعلَّق الدخول إلى الحصص، ويُحفظ المقعد لبعض الوقت.',
+			'juridique.annulation.s4.blocs.2' => 'إذا لم يصل الدفع بعد ذلك يُعلَّق الدخول إلى الحصص وإلى الموارد. ويبقى الفضاء مفتوحًا للاطلاع على الملف والسجل وللدفع. ويُحفظ المقعد لبعض الوقت.',
 			'juridique.annulation.s4.blocs.3' => 'بعد ذلك يُفرَج عن المقعد لقائمة الانتظار. وتبقى العودة ممكنة دون رسوم في فصل جديد.',
 			'juridique.annulation.s4.blocs.4' => 'التواريخ الدقيقة هي المعتمدة في سياسة الأسعار المعمول بها (صفحة الأسعار).',
 			'juridique.annulation.s5.titre' => '٥. الانتقال إلى صيغة الكبار',
 			'juridique.annulation.s5.blocs.0' => 'الطالب الذي يبلغ ١٨ سنة ينتقل إلى صيغة الكبار عند التجديد التالي. ويُخطَر وليّ الأمر مسبقًا.',
-			'juridique.annulation.s6.titre' => '٦. تقديم طلب',
+			'juridique.annulation.litige.titre' => '٦. الاعتراض على دفعة لدى البنك',
+			'juridique.annulation.litige.blocs.0' => 'إذا اعترضتم على دفعة لدى بنككم، يسترجع مزوّد الدفع المبلغ من الأكاديمية منذ بداية الفحص. ويُعلَّق عندئذ دخول الطلاب المعنيين طوال مدة الفحص.',
+			'juridique.annulation.litige.blocs.1' => 'إذا حكم البنك لصالح الأكاديمية، يعود الدخول.',
+			'juridique.annulation.litige.blocs.2' => 'إذا حكم البنك لصالحكم، تُعامَل الدفعة كاسترداد كامل. وتُضاف إلى رصيد أسرتكم الرسوم التي يفرضها مزوّد الدفع على الأكاديمية بسبب الاعتراض.',
+			'juridique.annulation.litige.blocs.3' => 'قبل الاعتراض، اكتبوا لنا: طلب الاسترداد لدى الأكاديمية لا يكلّف أي رسوم.',
+			'juridique.annulation.s6.titre' => '٧. تقديم طلب',
 			'juridique.annulation.s6.blocs.0' => 'للإيقاف أو لطلب الاسترداد، اكتبوا لنا مع ذكر اسم الحساب والسبب.',
 			'juridique.confidentialite.titre' => 'الخصوصية',
 			'juridique.confidentialite.resume' => 'ما المعلومات التي نحتفظ بها، ولماذا، وما هي حقوقكم.',
@@ -29132,6 +29160,8 @@ extension on TraductionsAr {
 			'admissions.manqueContact' => 'اكتب موضوعًا ورسالة.',
 			'admissions.horsLigne' => 'لم يُرسل شيء. أعد المحاولة بعد قليل.',
 			'admissions.erreur' => 'لم يتم الإجراء. لم يُؤكَّد شيء. أعد المحاولة بعد قليل.',
+			_ => null,
+		} ?? switch (path) {
 			'admissions.faitAcceptee' => ({required Object deNom}) => 'قُبل طلب ⁨${deNom}⁩، والرسالة في الطريق.',
 			'admissions.faitRefusee' => ({required Object deNom}) => 'رُفض طلب ⁨${deNom}⁩، والرسالة في الطريق.',
 			'admissions.faitPrecisions' => ({required Object nom}) => 'طُلبت التوضيحات من ⁨${nom}⁩، والرسالة في الطريق.',
@@ -29140,8 +29170,6 @@ extension on TraductionsAr {
 			'admissions.refus.dejaTraitee' => 'عالج شخص آخر من الإدارة هذا الطلب للتو. تُعاد قراءة القائمة.',
 			'admissions.refus.transitionInterdite' => 'لم يعد هذا الإجراء صالحًا لهذا الطلب (تغيرت حالته أو انقضت مهلة الأيام السبعة).',
 			'admissions.refus.motifRequis' => 'يلزم سبب لهذا الإجراء.',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.refus.adresseInconnue' => 'عنوان البريد الإلكتروني لهذا الشخص غير معروف: لا يمكن إرسال أي رسالة.',
 			'admissions.refus.enfantEnClasse' => 'أحد أطفال هذا الطلب في فصل بالفعل: لم يعد إلغاء القبول ممكنًا.',
 			'admissions.refus.autre' => 'رفض الخادم هذا الإجراء. أعد فتح الطلب لترى حالته.',
