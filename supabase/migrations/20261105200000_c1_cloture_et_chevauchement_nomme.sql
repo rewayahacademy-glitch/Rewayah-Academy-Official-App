@@ -12,8 +12,8 @@
 --    venir (started_at > now()) passaient a 'canceled' : la seance en cours
 --    gardait l'enseignant dans sessions_no_teacher_overlap et une nouvelle
 --    classe au meme horaire etait refusee. Le cas 'in_progress' n'est PAS
---    touche (decision du directeur en attente). Rattrapage pour les classes
---    deja closes, dans la meme regle.
+--    touche : D1 du directeur (02/11/2026) : une seance in_progress va a son
+--    terme. Rattrapage pour les classes deja closes, dans la meme regle.
 -- 2. guard_session_state_transition admet 'preflight' -> 'canceled' pour la
 --    seule seance d'une classe close (sans quoi le point 1 leverait
 --    « transition de session non autorisee »). Aucune autre transition ne

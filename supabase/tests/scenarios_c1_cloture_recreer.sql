@@ -137,7 +137,8 @@ BEGIN
   END IF;
   RAISE NOTICE 'C1 OK : (2) la seance ouverte non lancee est annulee par la cloture';
 
-  -- (3) Le cas in_progress n'est pas touche (decision du directeur en attente).
+  -- (3) Le cas in_progress n'est pas touche : D1 du directeur (02/11/2026),
+  -- une seance in_progress va a son terme.
   IF pg_temp.statut((SELECT seance FROM c1_fixture WHERE cle = 'in_progress')) <> 'in_progress' THEN
     RAISE EXCEPTION 'C1 ROUGE : la seance lancee a change de statut';
   END IF;
