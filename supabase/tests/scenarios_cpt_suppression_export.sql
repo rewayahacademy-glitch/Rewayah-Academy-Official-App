@@ -163,7 +163,7 @@ SELECT pg_temp.vrai((SELECT jsonb_array_length(j #> '{foyer,eleves}') = 1
                          AND jsonb_array_length(j -> 'contrats_acceptes') = 1
                     FROM sortie WHERE nom = 'g1'),
   'export tuteur : l''eleve du foyer, ses factures, sa classe, sa seance, sa bourse, le contrat du tuteur');
-SELECT pg_temp.vrai((SELECT NOT (j::text ~ 'EleveDeux|TuteurDeux|CD-ELV-0002|CD-TUT-0002|cd-tut2|Classe CD Deux|f02|EnseignanteDeux')
+SELECT pg_temp.vrai((SELECT NOT (j::text ~ 'EleveDeux|TuteurDeux|CD-ELV-0002|CD-TUT-0002|cd-tut2|Classe CD Deux|cd000000-0000-4000-8000-000000000f02|EnseignanteDeux')
                     FROM sortie WHERE nom = 'g1'),
   'export tuteur : rien d''un autre foyer (ni nom, ni matricule, ni courriel, ni facture, ni classe)');
 SELECT pg_temp.vrai((SELECT NOT (j::text ~ 'JETON-PUSH-SECRET|EMPREINTE-SECRETE|HASH-SECRET-APPAREIL|avatar-secret|IBAN|NOTE-INTERNE|CLE-OBJET|photo-secret')
@@ -188,7 +188,7 @@ SELECT pg_temp.vrai((SELECT j ->> 'perimetre' = 'personne'
                          AND jsonb_array_length(j -> 'documents_identite') = 1
                     FROM sortie WHERE nom = 't2'),
   'export enseignant : son profil, ses disponibilites, son lieu de priere, l''existence de ses coordonnees de paiement');
-SELECT pg_temp.vrai((SELECT NOT (j::text ~ 'IBAN|CLE-OBJET|photo-secret|EleveUn|TuteurUn|CD-ENS-0001|CD-TUT-0001|Classe CD Un|-7.6')
+SELECT pg_temp.vrai((SELECT NOT (j::text ~ 'IBAN|CLE-OBJET|photo-secret|EleveUn|TuteurUn|CD-ENS-0001|CD-TUT-0001|Classe CD Un|: -7\.6[,}]')
                     FROM sortie WHERE nom = 't2'),
   'export enseignant : ni coordonnees bancaires, ni cle de piece, ni rien d''une autre personne');
 

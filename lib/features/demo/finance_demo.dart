@@ -758,6 +758,8 @@ abstract final class DonneesFinanceDemo {
             NatureLigneMensualite.remiseRang ||
             NatureLigneMensualite.prorata ||
             NatureLigneMensualite.bourse ||
+            NatureLigneMensualite.accesOffert ||
+            NatureLigneMensualite.prixSpecial ||
             NatureLigneMensualite.remisePrepaiement => NatureMouvement.remise,
             NatureLigneMensualite.avoir => NatureMouvement.avoir,
           },
