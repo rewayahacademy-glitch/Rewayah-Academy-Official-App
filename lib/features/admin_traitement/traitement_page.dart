@@ -425,16 +425,17 @@ class _Identite extends StatelessWidget {
   }
 }
 
-/// Qui a demande : l'enseignant qui a depose son dossier, ou le role de
+/// Qui a demande, avec une majuscule comme les autres cellules (relecture
+/// du pilote, PR 132) : l'enseignant qui a depose son dossier, ou le role de
 /// l'auteur de la demande.
 String _parQui(ElementATraiter e) => switch (e.demande?.roleDemandeur) {
-  _ when e.dossier != null => t.admin.demandes.roleTeacher,
-  AppRole.guardian => t.admin.demandes.roleGuardian,
-  AppRole.teacher => t.admin.demandes.roleTeacher,
-  AppRole.student => t.admin.demandes.roleStudent,
-  AppRole.admin => t.admin.demandes.roleAdmin,
-  AppRole.controller => t.admin.demandes.roleController,
-  _ => t.admin.demandes.roleInconnu,
+  _ when e.dossier != null => t.compte.roles.teacher,
+  AppRole.guardian => t.compte.roles.guardian,
+  AppRole.teacher => t.compte.roles.teacher,
+  AppRole.student => t.compte.roles.student,
+  AppRole.admin => t.compte.roles.admin,
+  AppRole.controller => t.compte.roles.controller,
+  _ => t.admin.comptes.roleInconnu,
 };
 
 /// L'etat de la piece d'un dossier : « Deposee, a verifier ». Aucune piece,
