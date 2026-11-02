@@ -131,6 +131,7 @@ class NotificationTuteur {
     this.annonceId,
     this.gesteEnAttente = false,
     this.cleRegroupement,
+    this.evenement,
   }) : destination = cheminRetourValide(destination);
 
   /// Identifiant.
@@ -181,6 +182,11 @@ class NotificationTuteur {
   /// identifiant.
   final String? cleRegroupement;
 
+  /// Le code de l'evenement serveur (`paiement_relance`...), pose par
+  /// l'adaptateur ; `null` pour les ports de demonstration. Jamais montre :
+  /// il choisit seulement le mot du geste d'une ligne « A faire ».
+  final String? evenement;
+
   /// Vrai si la notification attend une action : action requise ou urgent.
   bool get demandeAction => niveau.estAuMoins(NiveauAttention.actionRequise);
 
@@ -201,6 +207,7 @@ class NotificationTuteur {
     annonceId: annonceId,
     gesteEnAttente: gesteEnAttente,
     cleRegroupement: cleRegroupement,
+    evenement: evenement,
   );
 }
 

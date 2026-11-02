@@ -413,6 +413,7 @@ NotificationTuteur notificationDepuis(
     lue: lue,
     type: _typePour(evenement),
     gesteEnAttente: gesteEnAttente,
+    evenement: evenement,
     // Meme evenement, meme destination, meme classe (la page y ajoute le
     // jour) : pas exactement « le meme objet », les parametres ne portant
     // aucun identifiant.
