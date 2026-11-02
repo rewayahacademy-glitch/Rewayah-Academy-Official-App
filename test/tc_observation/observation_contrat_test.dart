@@ -74,62 +74,41 @@ void main() {
     },
   );
 
-  group('K4 : interrupteur OBSERVATION_TUTEUR_REELLE', () {
-    test('faux par defaut, et faux hors developpement et staging', () {
-      expect(Env.observationTuteurReelle, isFalse);
-      expect(Env.observationTuteurReelleActive, isFalse);
-      // Liste d'autorisation : production et toute valeur inattendue restent
-      // fermees. `staging` ouvre depuis A-09 (apercu compile avec les cles de
-      // production, recette a quatre roles).
-      for (final String environnement in <String>[
-        'production',
-        'Production',
-        'Staging',
-        '',
-      ]) {
-        expect(
-          Env.observationTuteurReelleSelon(
-            demandee: true,
-            environnement: environnement,
-          ),
-          isFalse,
-          reason: environnement,
-        );
-      }
-      expect(
-        Env.observationTuteurReelleSelon(
-          demandee: true,
-          environnement: 'developpement',
-        ),
-        isTrue,
-      );
-      expect(
-        Env.observationTuteurReelleSelon(
-          demandee: true,
-          environnement: 'staging',
-        ),
-        isTrue,
-      );
-      expect(
-        Env.observationTuteurReelleSelon(
-          demandee: false,
-          environnement: 'developpement',
-        ),
-        isFalse,
-      );
-      expect(
-        Env.observationTuteurReelleSelon(
-          demandee: false,
-          environnement: 'staging',
-        ),
-        isFalse,
-      );
-    });
+  group('K4 puis O1 : le client n ouvre plus rien, le serveur decide', () {
+    // O1 (02/11/2026) : `OBSERVATION_TUTEUR_REELLE` est sans effet ;
+    // l'observation est ouverte cote client dans tout environnement, et le
+    // serveur ferme (politique, quota, seance, acces paye) et coupe la visite
+    // (scenarios_o1_observation.sql).
+    test(
+      'ouverte dans tout environnement, quelle que soit la valeur compilee',
+      () {
+        expect(Env.observationTuteurReelle, isFalse);
+        expect(Env.observationTuteurReelleActive, isTrue);
+        for (final String environnement in <String>[
+          'production',
+          'Production',
+          'staging',
+          'developpement',
+          '',
+        ]) {
+          for (final bool demandee in <bool>[true, false]) {
+            expect(
+              Env.observationTuteurReelleSelon(
+                demandee: demandee,
+                environnement: environnement,
+              ),
+              isTrue,
+              reason: '$environnement / $demandee',
+            );
+          }
+        }
+      },
+    );
 
-    test('les ecrans lisent l interrupteur par son provider, ferme ici', () {
+    test('les ecrans lisent l interrupteur par son provider, ouvert ici', () {
       final ProviderContainer conteneur = ProviderContainer();
       addTearDown(conteneur.dispose);
-      expect(conteneur.read(observationTuteurReelleProvider), isFalse);
+      expect(conteneur.read(observationTuteurReelleProvider), isTrue);
     });
   });
 

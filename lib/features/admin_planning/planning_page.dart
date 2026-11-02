@@ -30,6 +30,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
+import '../../core/session/session_controleur.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/barre_precedent_suivant.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
@@ -42,6 +43,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
+import '../tc_observation_ui/routes_tc_g.dart';
 import 'feuille_reaffectation.dart';
 import 'feuille_remplacant.dart';
 import 'ligne_seance_direction.dart';
@@ -157,6 +159,12 @@ class _PlanningPageEtat extends ConsumerState<PlanningPage> {
               peutDesigner: remplacementsBranches,
               onDesigner: (SeancePlanning s) =>
                   ouvrirDesignationRemplacant(context, ref, s),
+              // O1 (02/11/2026) : la capacite d'observer en direction, lue
+              // dans la session (jamais un role en dur dans l'ecran) ; le
+              // serveur rejuge tout a l'entree (`entrer_observation`).
+              peutRegarder: ref.watch(sessionProvider).observeEnDirection,
+              onRegarder: (SeancePlanning s) =>
+                  context.push(RoutesTcG.versObservation(s.id)),
             ),
           ),
           if (remplacementsBranches) ...<Widget>[
@@ -179,12 +187,32 @@ class _Jours extends StatelessWidget {
     required this.remplacements,
     required this.peutDesigner,
     required this.onDesigner,
+    this.peutRegarder = false,
+    this.onRegarder,
   });
 
   final Map<DateTime, List<SeancePlanning>> jours;
   final Map<String, RemplacementSeanceDirection> remplacements;
   final bool peutDesigner;
   final void Function(SeancePlanning seance) onDesigner;
+
+  /// O1 : la direction peut regarder la salle d'une seance en direct.
+  final bool peutRegarder;
+  final void Function(SeancePlanning seance)? onRegarder;
+
+  /// « Regarder la salle » n'est propose que pendant la seance (salle ouverte
+  /// ou seance commencee, avant sa fin) : un geste qui ne peut pas aboutir
+  /// n'est pas rendu. Le serveur rejuge la fenetre a l'entree.
+  bool _regardable(SeancePlanning s, DateTime maintenant) =>
+      peutRegarder &&
+      onRegarder != null &&
+      (s.statut == StatutSeance.enCours ||
+          s.statut == StatutSeance.preflight ||
+          (s.statut == StatutSeance.planifiee &&
+              !maintenant.isBefore(s.debut) &&
+              maintenant.isBefore(
+                s.debut.add(Duration(minutes: s.dureeMinutes)),
+              )));
 
   /// Le geste est propose sur une seance prevue, a venir, pas encore
   /// remplacee ; le serveur rejuge tout a l'envoi.
@@ -228,6 +256,16 @@ class _Jours extends StatelessWidget {
                       statut: s.statut,
                       mot: libelleStatutPlanning(s.statut),
                       actions: <EntreeAction>[
+                        if (_regardable(s, DateTime.now()))
+                          EntreeAction(
+                            libelle: t.admin.planning.o1.regarder(
+                              deClasse: deDevant(
+                                s.classe,
+                                cle: 'admin.planning.o1.regarder',
+                              ),
+                            ),
+                            onChoix: () => onRegarder!(s),
+                          ),
                         if (_designable(s))
                           EntreeAction(
                             libelle: t.admin.planning.remplacement.action(

@@ -5573,6 +5573,9 @@
       }
     },
     "planning": {
+      "o1": {
+        "regarder": "Regarder la salle {deClasse}"
+      },
       "titre": "Planning",
       "sousTitre": "Les séances de la semaine, toutes classes confondues, jour par jour.",
       "semaine": "Semaine du {date}",
