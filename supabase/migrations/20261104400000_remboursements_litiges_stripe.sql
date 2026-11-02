@@ -343,6 +343,28 @@ END;
 $function$;
 
 -- ---------------------------------------------------------------------------
+-- 4 bis. Le reste a payer compte la dette du profil.
+-- ---------------------------------------------------------------------------
+-- Les frais d'une contestation perdue vont au solde du profil (point 5 du
+-- directeur). Le corps de 20261017172000_fac_c_01_paiements_saisis.sql ne
+-- comptait qu'un solde POSITIF : avec 15 USD de frais, la page de paiement
+-- proposait le mois seul (55 USD), la famille payait, et l'acces restait
+-- suspendu (vu sur le banc local le 02/11/2026). Desormais un solde negatif
+-- s'ajoute aux mois a financer : le montant propose et suggere couvre la
+-- dette, et le paiement rouvre l'acces. Solde positif : inchange.
+CREATE OR REPLACE FUNCTION private.fac_reste_a_payer(p_profil uuid)
+RETURNS bigint
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+  SELECT greatest(coalesce((SELECT sum(f.total_mineur) FROM public.factures_mensuelles f
+                             WHERE f.profile_id = p_profil AND f.statut = 'a_financer'), 0)
+                  - private.fac_solde_profil(p_profil), 0)::bigint;
+$function$;
+
+-- ---------------------------------------------------------------------------
 -- 5. L'evenement Stripe : remboursement ou contestation.
 -- ---------------------------------------------------------------------------
 -- Appelee par la fonction Edge stripe-webhook, signature verifiee. Parametres :
@@ -551,6 +573,10 @@ BEGIN
   IF pg_catalog.strpos(pg_catalog.pg_get_functiondef(
        'private.fac_facture_figee()'::regprocedure), 'fac.reouverture') = 0 THEN
     RAISE EXCEPTION 'FN-115b : fac_facture_figee sans la reouverture';
+  END IF;
+  IF pg_catalog.strpos(pg_catalog.pg_get_functiondef(
+       'private.fac_reste_a_payer(uuid)'::regprocedure), 'greatest(private') > 0 THEN
+    RAISE EXCEPTION 'FN-115b : fac_reste_a_payer ignore encore la dette du profil';
   END IF;
 END;
 $postflight$;

@@ -84,6 +84,8 @@ const Set<String> _destinationsAutorisees = <String>{
   '/enseignant/journee',
   // A3 : le planning de la direction (titulaire en retard).
   '/admin/operations/planning',
+  // FN-115b : la finance de la direction (remboursements, contestations).
+  '/admin/finance',
 };
 
 /// La classe d'un eleve du foyer, et son planning : `/tuteur/classes/<uuid>`
@@ -292,6 +294,11 @@ Map<String, dynamic> _parametresAffichables(Map<dynamic, dynamic> bruts) {
     'classe',
     'travail',
     'travail_etat',
+    // FN-115b : la cause d'une suspension (remboursement, litige) et l'issue
+    // d'une contestation (gagne, perdu). Des mots, jamais un montant ni un
+    // identifiant.
+    'cause',
+    'issue',
   };
   // FN-028 : des comptes et un drapeau, jamais un identifiant.
   const Set<String> clesNombres = <String>{'presents', 'inscrits'};

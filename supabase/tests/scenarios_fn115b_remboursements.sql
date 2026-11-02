@@ -300,6 +300,21 @@ SELECT pg_temp.vrai(pg_temp.solde('e5') = -1500 AND pg_temp.suspendu('e5') AND (
 SELECT pg_temp.vrai(EXISTS (SELECT 1 FROM public.notifications WHERE evenement = 'litige_clos'
                              AND params ->> 'issue' = 'perdu' AND (params ->> 'frais_mineur')::bigint = 1500),
   '6 : la famille lit l''issue et les frais');
+-- Les frais se payent : la page propose le mois ET la dette, et ce paiement
+-- rouvre l'acces (avant le 02/11, seul le mois etait propose : l'acces restait
+-- suspendu apres paiement).
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.qui(pg_temp.id('e5'), 'guardian', pg_temp.id('f3'));
+SELECT set_config('test.du5', (SELECT (x -> 'montantSuggere' ->> 'mineur')
+  FROM jsonb_array_elements(public.recharge_beneficiaires()) x WHERE x ->> 'id' = pg_temp.id('e5')::text), true);
+RESET ROLE;
+SELECT pg_temp.vrai(current_setting('test.du5')::bigint = current_setting('test.m5')::bigint + 1500,
+  '6 : le montant suggere couvre le mois et les 15 USD de frais');
+SELECT pg_temp.payer('e5', 'f3', jsonb_build_array(
+  jsonb_build_object('profilId', pg_temp.id('e5'), 'mineur', current_setting('test.du5')::bigint, 'devise', 'USD')),
+  '00a006', 'pi_fb_6');
+SELECT pg_temp.vrai(NOT pg_temp.suspendu('e5') AND (pg_temp.fac('e5')).statut = 'financee' AND pg_temp.solde('e5') = 0,
+  '6 : payer le montant suggere finance le mois, solde la dette et rouvre l''acces');
 
 -- ------------------------------------------------------------------
 -- 7. Paiement inconnu ; droits
@@ -320,8 +335,8 @@ SELECT pg_temp.vrai((SELECT count(*) FROM public.remboursements_paiement) = 0
   '7 : une famille ne lit pas les tables des remboursements et des contestations');
 RESET ROLE;
 
-SELECT pg_temp.vrai(coalesce(nullif(current_setting('test.n', true), ''), '0')::int >= 28,
-  'au moins 28 controles ont passe (29 avec celui-ci)');
+SELECT pg_temp.vrai(coalesce(nullif(current_setting('test.n', true), ''), '0')::int >= 30,
+  'au moins 30 controles ont passe (31 avec celui-ci)');
 \o
 SELECT 'FN-115b : scenarios verts' AS resultat;
 ROLLBACK;
