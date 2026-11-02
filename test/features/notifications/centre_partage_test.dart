@@ -157,9 +157,16 @@ Future<void> _toucher(WidgetTester tester, Finder cible) async {
   await stabiliser(tester);
 }
 
-/// Les quatre libelles de filtre, lisibles a l'ecran : en ligne, ou dans la
+/// Ouvre « Plus anciennes », repliees quand une priorite est au-dessus
+/// (NOTIFS-L6, regle 3).
+Future<void> _ouvrirAnciennes(WidgetTester tester) async {
+  await _toucher(tester, find.byKey(NotificationsPage.cleAnciennes));
+}
+
+/// Les trois libelles de filtre (NOTIFS-L6 : « Mentions » retire, « Action
+/// requise » devenu « A faire »), lisibles a l'ecran : en ligne, ou dans la
 /// liste du menu ouvert.
-Future<void> _verifierQuatreFiltres(WidgetTester tester) async {
+Future<void> _verifierFiltres(WidgetTester tester) async {
   final f = t.notifications.filtres;
   final Finder menu = find.descendant(
     of: find.byKey(NotificationsPage.cleFiltres),
@@ -171,9 +178,8 @@ Future<void> _verifierQuatreFiltres(WidgetTester tester) async {
   }
   for (final String libelle in <String>[
     f.toutes,
+    t.notifications.sectionAFaire,
     f.nonLues,
-    f.mentions,
-    f.actionRequise,
   ]) {
     expect(find.text(libelle), findsWidgets, reason: libelle);
   }
@@ -185,11 +191,11 @@ Future<void> _verifierQuatreFiltres(WidgetTester tester) async {
 
 void main() {
   group('Centre partage : filtres et niveaux', () {
-    testWidgets('390 : quatre filtres visibles, l urgence en tete, chaque '
+    testWidgets('390 : trois filtres, « A faire » en tete, chaque '
         'niveau dit par un mot', (WidgetTester tester) async {
       await _monter(tester);
       expect(find.byType(SelecteurSection<FiltreNotifications>), findsOne);
-      await _verifierQuatreFiltres(tester);
+      await _verifierFiltres(tester);
       // L'urgence non lue passe avant l'annonce, pourtant plus recente.
       expect(
         tester.getTopLeft(_ligne('n-urgent')).dy,
@@ -252,31 +258,30 @@ void main() {
       await _monter(tester);
       final f = t.notifications.filtres;
 
+      // « Non lues » : la section « Nouvelles », sans « A faire ».
       await _filtrer(tester, f.nonLues);
-      for (final String id in <String>[
-        'n-annonce',
-        'n-urgent',
-        'n-action',
-        'n-mention',
-      ]) {
+      for (final String id in <String>['n-annonce', 'n-mention']) {
         expect(_ligne(id), findsOneWidget, reason: id);
       }
-      expect(_ligne('n-lue'), findsNothing);
+      for (final String id in <String>['n-urgent', 'n-action', 'n-lue']) {
+        expect(_ligne(id), findsNothing, reason: id);
+      }
 
-      await _filtrer(tester, f.mentions);
-      expect(_ligne('n-mention'), findsOneWidget);
-      expect(_ligne('n-annonce'), findsNothing);
-      expect(_ligne('n-urgent'), findsNothing);
-
-      // Action requise : l'action requise et l'urgence, rien d'autre.
-      await _filtrer(tester, f.actionRequise);
+      // « A faire » : l'action requise et l'urgence, rien d'autre.
+      await _filtrer(tester, t.notifications.sectionAFaire);
       expect(_ligne('n-action'), findsOneWidget);
       expect(_ligne('n-urgent'), findsOneWidget);
       expect(_ligne('n-annonce'), findsNothing);
       expect(_ligne('n-mention'), findsNothing);
       expect(_ligne('n-lue'), findsNothing);
 
+      // « Toutes » : les trois sections ; les plus anciennes repliees sous
+      // les priorites, puis ouvertes d'un geste.
       await _filtrer(tester, f.toutes);
+      expect(find.byKey(NotificationsPage.cleAFaire), findsOneWidget);
+      expect(find.byKey(NotificationsPage.cleNouvelles), findsOneWidget);
+      expect(_ligne('n-lue'), findsNothing);
+      await _ouvrirAnciennes(tester);
       expect(_ligne('n-lue'), findsOneWidget);
     });
 
@@ -289,7 +294,7 @@ void main() {
           NotificationTuteur(id: 'seule', titre: 'Lue', date: _maintenant),
         ],
       );
-      await _filtrer(tester, t.notifications.filtres.mentions);
+      await _filtrer(tester, t.notifications.sectionAFaire);
       expect(find.text(t.notifications.filtreVideTitre), findsOneWidget);
       expect(_ligne('seule'), findsNothing);
       await _toucher(tester, find.text(t.notifications.voirToutes));
@@ -317,6 +322,7 @@ void main() {
         'aucun badge n est rendu', (WidgetTester tester) async {
       final SemanticsHandle semantique = tester.ensureSemantics();
       await _monter(tester);
+      await _ouvrirAnciennes(tester);
       final NotificationTuteur lue = _catalogue().firstWhere(
         (NotificationTuteur n) => n.id == 'n-lue',
       );
@@ -335,11 +341,23 @@ void main() {
       semantique.dispose();
     });
 
-    testWidgets('1440 : le detail ecrit « Information » en texte neutre, '
-        'sans pastille', (WidgetTester tester) async {
-      await _monter(tester, taille: const Size(1440, 900));
-      await _toucher(tester, _ligne('n-lue'));
-      final Finder detail = find.byKey(NotificationsPage.cleDetail);
+    testWidgets('1440 : le detail, en page, ecrit « Information » en texte '
+        'neutre, sans pastille', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        taille: const Size(1440, 900),
+        notifications: <NotificationTuteur>[
+          ..._catalogue(),
+          NotificationTuteur(
+            id: 'n-info',
+            titre: 'Information sans lien',
+            date: _maintenant.subtract(const Duration(days: 4)),
+          ),
+        ],
+      );
+      await _ouvrirAnciennes(tester);
+      await _toucher(tester, _ligne('n-info'));
+      final Finder detail = find.byType(DetailNotification);
       final Finder typeNiveau = find.descendant(
         of: detail,
         matching: find.byKey(DetailNotification.cleTypeNiveau),
@@ -354,13 +372,24 @@ void main() {
         findsNothing,
       );
       // Une urgence garde son badge, et « Information » n'est pas ecrit.
+      await _toucher(tester, find.byType(DisqueRetour));
       await _toucher(tester, _ligne('n-urgent'));
       expect(
-        find.descendant(of: detail, matching: find.byType(BadgeNonLu)),
+        find.descendant(
+          of: find.byType(DetailNotification),
+          matching: find.byType(BadgeNonLu),
+        ),
         findsOneWidget,
       );
       expect(
-        tester.widget<Text>(typeNiveau).data,
+        tester
+            .widget<Text>(
+              find.descendant(
+                of: find.byType(DetailNotification),
+                matching: find.byKey(DetailNotification.cleTypeNiveau),
+              ),
+            )
+            .data,
         isNot(contains(t.com.socle.composants.badge.information)),
       );
     });
@@ -377,8 +406,9 @@ void main() {
       expect(annonces.lues, isEmpty);
       expect(find.text(t.notifications.lectureNonConfirmee), findsOneWidget);
       await _toucher(tester, find.byType(DisqueRetour));
-      // La lecture de la notification est enregistree : la liste relue ne
-      // la dit plus « Non lue ».
+      // La lecture de la notification est enregistree : la liste relue la
+      // range dans les plus anciennes, sans « Non lue ».
+      await _ouvrirAnciennes(tester);
       expect(
         find.descendant(
           of: _ligne('n-annonce'),
@@ -446,8 +476,8 @@ void main() {
       await _monter(tester);
       await _toucher(tester, _ligne('n-urgent'));
       await _toucher(tester, find.byType(DisqueRetour));
-      // L'urgence lue reste dite (niveau qui demande quelque chose), mais
-      // elle n'est plus « Non lue » et ne passe plus avant l'annonce.
+      // L'urgence lue reste dans « A faire » (elle demande toujours quelque
+      // chose : la lecture ne l'efface pas), sans « Non lue ».
       expect(
         find.descendant(
           of: _ligne('n-urgent'),
@@ -463,8 +493,8 @@ void main() {
         findsOneWidget,
       );
       expect(
-        tester.getTopLeft(_ligne('n-annonce')).dy,
-        lessThan(tester.getTopLeft(_ligne('n-urgent')).dy),
+        tester.getTopLeft(_ligne('n-urgent')).dy,
+        lessThan(tester.getTopLeft(_ligne('n-annonce')).dy),
       );
     });
 
@@ -499,7 +529,6 @@ void main() {
       WidgetTester tester,
     ) async {
       await _monter(tester, taille: const Size(768, 1024));
-      expect(find.byKey(NotificationsPage.cleDetail), findsNothing);
       await _toucher(tester, _ligne('n-annonce'));
       expect(find.byType(CarteAnnonceClasse), findsOneWidget);
       expect(_ligne('n-urgent'), findsNothing);
@@ -507,69 +536,31 @@ void main() {
     });
   });
 
-  group('Centre partage : ordinateur, liste et detail', () {
-    testWidgets('1440 : liste et detail cote a cote, dans la coquille du '
-        'role ; le detail suit la ligne choisie', (WidgetTester tester) async {
+  // NOTIFS-L6 (regle du 01/11 : une seule barre de defilement) : plus de
+  // detail a cote de la liste, a aucune largeur.
+  group('Centre partage : ordinateur, la liste est la page', () {
+    testWidgets('1440 : la liste seule, dans la coquille du role ; le detail '
+        's ouvre en page, la destination directement', (
+      WidgetTester tester,
+    ) async {
       final (:GoRouter routeur, notifications: _, annonces: _) = await _monter(
         tester,
         taille: const Size(1440, 900),
       );
       expect(find.byType(NavShell), findsOneWidget);
-      final Finder detail = find.byKey(NotificationsPage.cleDetail);
-      final Finder liste = find.byKey(NotificationsPage.cleListe);
-      expect(detail, findsOneWidget);
-      expect(
-        find.descendant(
-          of: detail,
-          matching: find.text(t.notifications.detail.choisirTitre),
-        ),
-        findsOneWidget,
-      );
-      // Cote a cote : le detail commence apres la fin de la liste.
-      expect(
-        tester.getTopLeft(detail).dx,
-        greaterThan(tester.getTopRight(liste).dx),
-      );
+      expect(find.byKey(NotificationsPage.cleListe), findsOneWidget);
+      expect(find.byType(DetailNotification), findsNothing);
 
       await _toucher(tester, _ligne('n-annonce'));
       expect(lieu(routeur), Routes.tuteurNotifications);
-      expect(
-        find.descendant(of: detail, matching: find.byType(CarteAnnonceClasse)),
-        findsOneWidget,
-      );
-      // La liste reste visible a cote.
+      expect(find.byType(CarteAnnonceClasse), findsOneWidget);
+      expect(_ligne('n-urgent'), findsNothing);
+      await _toucher(tester, find.byType(DisqueRetour));
       expect(_ligne('n-urgent'), findsOneWidget);
 
-      // Une notification a destination s'ouvre aussi en detail, avec son
-      // lien ; le lien mene a la page concernee.
       await _toucher(tester, _ligne('n-mention'));
-      expect(
-        find.descendant(
-          of: detail,
-          matching: find.text('Nouveau message de l’enseignante'),
-        ),
-        findsOneWidget,
-      );
-      await _toucher(tester, find.byKey(DetailNotification.cleOuvrir));
       expect(lieu(routeur), Routes.tuteurSuivi);
       expect(tester.takeException(), isNull);
-    });
-
-    testWidgets('1440 : la ligne choisie est annoncee « selectionnee »', (
-      WidgetTester tester,
-    ) async {
-      final SemanticsHandle semantique = tester.ensureSemantics();
-      await _monter(tester, taille: const Size(1440, 900));
-      await _toucher(tester, _ligne('n-urgent'));
-      expect(
-        tester.widget<LigneNotification>(_ligne('n-urgent')).selectionnee,
-        isTrue,
-      );
-      expect(
-        tester.widget<LigneNotification>(_ligne('n-annonce')).selectionnee,
-        isFalse,
-      );
-      semantique.dispose();
     });
   });
 
@@ -588,12 +579,13 @@ void main() {
           Directionality.of(tester.element(find.byType(NotificationsPage))),
           TextDirection.rtl,
         );
-        // Titre, filtre courant et type en arabe ; les quatre filtres aussi.
+        // Titre, filtre courant et type en arabe ; les trois filtres aussi.
         expect(find.text('الإشعارات'), findsWidgets);
         expect(find.text('الكل'), findsWidgets);
         expect(find.textContaining('إعلان الفصل'), findsWidgets);
-        await _verifierQuatreFiltres(tester);
+        await _verifierFiltres(tester);
         expect(t.notifications.filtres.nonLues, 'غير المقروءة');
+        await _ouvrirAnciennes(tester);
         // La date est au debut de la ligne : en RTL, a droite du filet, et
         // le titre a sa gauche.
         final Finder ligne = _ligne('n-lue');

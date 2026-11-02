@@ -469,3 +469,26 @@ questionnaireInscriptionProvider =
     NotifierProvider<QuestionnaireControleur, QuestionnaireInscription>(
       QuestionnaireControleur.new,
     );
+
+/// INSCRIPTION-3 (constat du directeur, 01/11/2026) : vrai entre la demande
+/// envoyee (profil cree) et l'arrivee sur `/attente`.
+///
+/// Garde hors de l'ecran du recapitulatif, que le rafraichissement de la
+/// session peut remonter avec un etat neuf : il disait alors « Reessayer »
+/// une fraction de seconde, alors que rien n'avait echoue. A l'arrivee sur
+/// `/attente`, les reponses du questionnaire quittent l'appareil
+/// ([QuestionnaireControleur.effacer]) et le drapeau retombe.
+class DepartDemande extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  /// La demande est partie : l'ecran ne propose plus rien jusqu'au depart.
+  void commencer() => state = true;
+
+  /// Arrivee sur `/attente`, ou actualisation en echec.
+  void finir() => state = false;
+}
+
+/// Le depart en cours de la demande ([DepartDemande]).
+final NotifierProvider<DepartDemande, bool> departDemandeProvider =
+    NotifierProvider<DepartDemande, bool>(DepartDemande.new);

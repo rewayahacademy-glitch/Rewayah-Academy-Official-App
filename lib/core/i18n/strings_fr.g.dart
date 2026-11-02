@@ -2525,6 +2525,36 @@ class Traductions$notifications$fr {
 	/// fr: 'Voir toutes les notifications'
 	String get voirToutes => 'Voir toutes les notifications';
 
+	/// fr: 'À faire'
+	String get sectionAFaire => 'À faire';
+
+	/// fr: 'Nouvelles'
+	String get sectionNouvelles => 'Nouvelles';
+
+	/// fr: 'Plus anciennes'
+	String get sectionPlusAnciennes => 'Plus anciennes';
+
+	/// fr: 'Voir plus'
+	String get voirPlus => 'Voir plus';
+
+	/// fr: 'Les notifications plus anciennes n'ont pas pu être lues.'
+	String get voirPlusErreur => 'Les notifications plus anciennes n\'ont pas pu être lues.';
+
+	/// fr: 'Tout marquer comme lu'
+	String get toutMarquerLu => 'Tout marquer comme lu';
+
+	/// fr: 'Écarter'
+	String get ecarter => 'Écarter';
+
+	/// fr: 'L'écart n'est pas encore confirmé. Réessayez dans un instant.'
+	String get ecartNonConfirme => 'L\'écart n\'est pas encore confirmé. Réessayez dans un instant.';
+
+	/// fr: '(one) {{n} fois} (other) {{n} fois}'
+	String repetitions({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} fois',
+		other: '${n} fois',
+	);
+
 	/// fr: 'Non lue'
 	String get nonLue => 'Non lue';
 
@@ -12615,12 +12645,6 @@ class Traductions$notifications$filtres$fr {
 
 	/// fr: 'Non lues'
 	String get nonLues => 'Non lues';
-
-	/// fr: 'Mentions'
-	String get mentions => 'Mentions';
-
-	/// fr: 'Action requise'
-	String get actionRequise => 'Action requise';
 }
 
 // Path: notifications.detail
@@ -12630,12 +12654,6 @@ class Traductions$notifications$detail$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
-
-	/// fr: 'Choisissez une notification'
-	String get choisirTitre => 'Choisissez une notification';
-
-	/// fr: 'Son détail s'affiche ici, à côté de la liste.'
-	String get choisirPhrase => 'Son détail s\'affiche ici, à côté de la liste.';
 
 	/// fr: 'Reçue le {date} à {heure}'
 	String recue({required Object date, required Object heure}) => 'Reçue le ${date} à ${heure}';
@@ -47707,16 +47725,21 @@ extension on Traductions {
 			'notifications.filtres.libelle' => 'Filtrer les notifications',
 			'notifications.filtres.toutes' => 'Toutes',
 			'notifications.filtres.nonLues' => 'Non lues',
-			'notifications.filtres.mentions' => 'Mentions',
-			'notifications.filtres.actionRequise' => 'Action requise',
 			'notifications.filtreVideTitre' => 'Aucune notification dans ce filtre',
 			'notifications.filtreVidePhrase' => 'Choisissez « Toutes » pour revoir l\'ensemble de vos notifications.',
 			'notifications.voirToutes' => 'Voir toutes les notifications',
+			'notifications.sectionAFaire' => 'À faire',
+			'notifications.sectionNouvelles' => 'Nouvelles',
+			'notifications.sectionPlusAnciennes' => 'Plus anciennes',
+			'notifications.voirPlus' => 'Voir plus',
+			'notifications.voirPlusErreur' => 'Les notifications plus anciennes n\'ont pas pu être lues.',
+			'notifications.toutMarquerLu' => 'Tout marquer comme lu',
+			'notifications.ecarter' => 'Écarter',
+			'notifications.ecartNonConfirme' => 'L\'écart n\'est pas encore confirmé. Réessayez dans un instant.',
+			'notifications.repetitions' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} fois', other: '${n} fois', ), 
 			'notifications.nonLue' => 'Non lue',
 			'notifications.nonLueSemantique' => 'non lue',
 			'notifications.lectureNonConfirmee' => 'La lecture n\'est pas encore confirmée. Réessayez dans un instant.',
-			'notifications.detail.choisirTitre' => 'Choisissez une notification',
-			'notifications.detail.choisirPhrase' => 'Son détail s\'affiche ici, à côté de la liste.',
 			'notifications.detail.recue' => ({required Object date, required Object heure}) => 'Reçue le ${date} à ${heure}',
 			'notifications.detail.ouvrir' => 'Ouvrir la page concernée',
 			'notifications.types.annonceClasse' => 'Annonce de Classe',
@@ -47809,13 +47832,13 @@ extension on Traductions {
 			'eleve.suivi.colonneEtat' => 'Présence',
 			'eleve.suivi.cours' => 'Cours de Coran',
 			'eleve.suivi.moi' => 'Ma présence',
+			_ => null,
+		} ?? switch (path) {
 			'eleve.suivi.aujourdhui' => ({required Object heure}) => 'Aujourd\'hui, ${heure}',
 			'eleve.suivi.hier' => ({required Object heure}) => 'Hier, ${heure}',
 			'eleve.suivi.date' => ({required Object date, required Object heure}) => '${date}, ${heure}',
 			'eleve.suivi.annule' => 'Cours annulé',
 			'eleve.suivi.nonTenu' => 'Cours non tenu',
-			_ => null,
-		} ?? switch (path) {
 			'eleve.suivi.vide' => 'Aucun cours pour l\'instant',
 			'eleve.suivi.videDetail' => 'Vos cours s\'afficheront ici, du plus récent au plus ancien, avec votre présence.',
 			'eleve.suivi.erreur' => 'Le suivi n\'a pas pu être lu. Réessayez dans un instant.',
@@ -48323,13 +48346,13 @@ extension on Traductions {
 			'enseignant.journee.absence.cleDate' => 'Date',
 			'enseignant.journee.absence.notice' => 'Votre affectation à la Classe reste inchangée.',
 			'enseignant.journee.absence.declarer' => 'Déclarer mon absence',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.journee.absence.echec' => 'La demande n\'a pas abouti. Réessayez dans un instant.',
 			'enseignant.journee.absence.etats.enregistree' => 'Absence enregistrée',
 			'enseignant.journee.absence.etats.recherche' => 'Recherche d\'un remplaçant',
 			'enseignant.journee.absence.etats.remplacantConfirme' => 'Remplaçant confirmé',
 			'enseignant.journee.absence.etats.aucunRemplacant' => 'Aucun remplaçant confirmé',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.journee.absence.etats.seanceAnnulee' => 'Séance annulée',
 			'enseignant.journee.absence.etats.demandeAnnulee' => 'Demande annulée',
 			'enseignant.journee.remplacement.titre' => 'Assurer ce remplacement ?',
@@ -48837,13 +48860,13 @@ extension on Traductions {
 			'controleur.compteRendu.echec' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.compteRendu.echecRien' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre choix reste sélectionné ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.compteRendu.envoyeTitre' => 'Compte rendu envoyé',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.compteRendu.envoyePhrase' => 'Il est transmis à l\'administration. Pour y revenir, ouvrez-le dans l\'Historique et choisissez « Ajouter un complément ».',
 			'controleur.compteRendu.ecrireAdmin' => 'Écrire à l\'administration',
 			'controleur.compteRendu.visiteEnCours' => 'Transmission de la visite à l\'administration en cours.',
 			'controleur.compteRendu.visiteTransmise' => 'La visite et son relevé automatique sont transmis à l\'administration.',
 			'controleur.compteRendu.visiteEchec' => 'La transmission de la visite n\'est pas confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez ; le relevé de la visite reste enregistré sur le serveur.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.compteRendu.aTerminer' => 'Compte rendu à terminer',
 			'controleur.compteRendu.reprendre' => 'Reprendre le compte rendu',
 			'controleur.compteRendu.visiteInconnue' => 'Ce compte rendu ne peut plus être repris ici.',
@@ -49351,13 +49374,13 @@ extension on Traductions {
 			'tc.observation.resultat.continueSansPrenom' => 'La séance continue.',
 			'tc.observation.resultat.resteUne' => ({required Object duree}) => 'Il vous reste une visite de ${duree}. Revenez plus tard pour l\'écouter.',
 			'tc.observation.resultat.restent' => ({required num n, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il vous reste ${n} visite de ${duree}. Revenez plus tard pour l\'écouter.', other: 'Il vous reste ${n} visites de ${duree}. Revenez plus tard pour l\'écouter.', ), 
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.resultat.resteUneSansDuree' => 'Il vous reste une visite. Revenez plus tard pour l\'écouter.',
 			'tc.observation.resultat.restentSansDuree' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il vous reste ${n} visite. Revenez plus tard pour l\'écouter.', other: 'Il vous reste ${n} visites. Revenez plus tard pour l\'écouter.', ), 
 			'tc.observation.resultat.aucune' => 'Vous avez utilisé vos visites pour cette séance. Vous pourrez observer la prochaine séance.',
 			'tc.observation.resultat.prochaineSeance' => 'Vous pourrez observer la prochaine séance.',
 			'tc.observation.resultat.verification' => 'Vérification de vos visites restantes',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.resultat.inconnues' => 'Vos visites restantes n\'ont pas pu être vérifiées. Elles le seront de nouveau dans la classe.',
 			'tc.observation.resultat.voirObservations' => 'Voir mes observations',
 			'tc.observation.annonce.tuteurObserve' => ({required Object dePrenomEnfant}) => 'Tuteur ${dePrenomEnfant} observe',
@@ -49865,13 +49888,13 @@ extension on Traductions {
 			'motifs.ajoutEleve.diagnostic' => 'Placement après diagnostic',
 			'motifs.ajoutEleve.attente' => 'Sortie de la liste d\'attente',
 			'motifs.ajoutEleve.transfert' => 'Transfert depuis une autre classe',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.ajoutEleve.famille' => 'Demande de la famille',
 			'motifs.retraitEleve.famille' => 'Demande de la famille',
 			'motifs.retraitEleve.transfert' => 'Transfert vers une autre classe',
 			'motifs.retraitEleve.ecartNiveau' => 'Écart de niveau durable',
 			'motifs.retraitEleve.finInscription' => 'Fin de l\'inscription',
-			_ => null,
-		} ?? switch (path) {
 			'motifs.clotureClasse.finCycle' => 'Fin du cycle de la classe',
 			'motifs.clotureClasse.remplissage' => 'Faible remplissage',
 			'motifs.clotureClasse.transfert' => 'Élèves transférés dans d\'autres classes',
@@ -50379,13 +50402,13 @@ extension on Traductions {
 			'com.messages.demo.f.administration' => 'Administration',
 			'com.messages.demo.f.directionRewayah' => 'Direction de Rewayah',
 			'com.messages.demo.f.rachid' => 'M. Rachid',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.demo.f.controleurPedagogique' => 'Contrôleur pédagogique',
 			'com.messages.demo.f.youssef' => 'Youssef',
 			'com.messages.demo.f.enseignantFajr' => 'Enseignant de la Classe Al-Fajr',
 			'com.messages.demo.f.khadija' => 'Khadija',
 			'com.messages.demo.f.eleveFajr' => 'Élève de la Classe Al-Fajr',
-			_ => null,
-		} ?? switch (path) {
 			'com.messages.demo.f.adam' => 'Adam',
 			'com.messages.demo.f.yasmine' => 'Yasmine',
 			'com.messages.demo.f.yusuf' => 'Yusuf',
@@ -50893,13 +50916,13 @@ extension on Traductions {
 			'com.annonces.administration.indicateurs.planifiees' => 'Annonces planifiées',
 			'com.annonces.administration.indicateurs.moderation' => 'Contenus en modération',
 			'com.annonces.administration.indicateurs.regles' => 'Droits de publication',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.administration.indicateurs.indisponible' => ({required Object libelle}) => '${libelle} : pas encore disponible',
 			'com.annonces.administration.indicateurs.echec' => ({required Object libelle}) => '${libelle} : non chargé. Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah : rechargez la page.',
 			'com.annonces.administration.indicateurs.reserve' => ({required Object libelle}) => '${libelle} : réservé aux personnes chargées de la modération',
 			'com.annonces.administration.publiees.titre' => 'Annonces publiées',
 			'com.annonces.administration.publiees.vide' => 'Aucune annonce publiée sur la période.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.administration.publiees.pastille' => 'Publiée',
 			'com.annonces.administration.publiees.legende' => ({required Object cible, required Object date, required Object heure}) => '${cible} · le ${date} à ${heure}',
 			'com.annonces.administration.planifiees.titre' => 'Annonces planifiées',
@@ -51407,13 +51430,13 @@ extension on Traductions {
 			'comptable.tresorerie.descriptions.fondsClientsEngages' => 'Argent encaissé, lié à des prestations pas encore acquises.',
 			'comptable.tresorerie.descriptions.paieADecaisser' => 'Rémunérations déjà calculées et dues.',
 			'comptable.tresorerie.descriptions.chargesEssentielles' => 'Infrastructure, abonnements indispensables, fonctions fixes.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.descriptions.taxesObligations' => 'Provision pour les obligations fiscales, sociales ou réglementaires.',
 			'comptable.tresorerie.descriptions.reserveStrategique' => 'Coffre de continuité et de sécurité.',
 			'comptable.tresorerie.descriptions.enTransit' => 'Argent engagé dans une opération pas encore confirmée.',
 			'comptable.tresorerie.descriptions.tresorerieLibre' => 'Ce qui reste réellement disponible après les allocations protégées.',
 			'comptable.tresorerie.politiqueTitre' => 'Politique de la Réserve stratégique',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.politiquePhrase' => 'Fixée par la direction. Vous l\'appliquez, vous ne la modifiez pas.',
 			'comptable.tresorerie.alimentationAuto' => 'Alimentation automatique',
 			'comptable.tresorerie.regle.desactivee' => 'Désactivée',
@@ -51921,13 +51944,13 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.suspendreDetail' => 'Le Comptable ne peut plus rien exécuter seul, tout de suite : chaque opération repasse par la direction.',
 			'comptable.direction.delegationPanneau.suspendreAction' => 'Suspendre toutes les délégations',
 			'comptable.direction.delegationPanneau.suspendreConfirmerTitre' => 'Suspendre toutes les délégations ?',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.suspendreConfirmerPhrase' => 'L\'effet est immédiat : aucune opération du Comptable ne partira sans votre validation. La suspension est inscrite au journal.',
 			'comptable.direction.delegationPanneau.suspendreConfirmer' => 'Suspendre',
 			'comptable.direction.delegationPanneau.suspendreGarder' => 'Garder les délégations',
 			'comptable.direction.delegationPanneau.reactiverTitre' => 'Réactiver les délégations',
 			'comptable.direction.delegationPanneau.reactiverDetail' => 'Les délégations sont suspendues. Les lever est un acte de la direction, avec une raison écrite.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.reactiverAction' => 'Réactiver les délégations',
 			'comptable.direction.delegationPanneau.reactiverPhrase' => 'Le Comptable pourra de nouveau agir dans les limites de la politique. Une délégation expirée n\'est jamais rétablie : il faudra la renouveler. Les sorties annulées restent annulées. La réactivation est inscrite au journal.',
 			'comptable.direction.delegationPanneau.reactiverRaison' => 'Raison de la réactivation',
@@ -52435,13 +52458,13 @@ extension on Traductions {
 			'avis.admin.retour.publie' => 'L\'avis est publié.',
 			'avis.admin.retour.refuse' => 'L\'avis est refusé.',
 			'avis.admin.retour.retire' => 'L\'avis est retiré.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.retour.etatChange' => 'Cet avis n\'est plus dans l\'état attendu. La liste est mise à jour.',
 			'avis.admin.retour.introuvable' => 'Cet avis n\'existe plus. La liste est mise à jour.',
 			'avis.admin.retour.motifManque' => 'Le motif manque. Choisissez-en un.',
 			'avis.admin.retour.refus' => 'Seule la direction connectée peut décider d\'un avis.',
 			'avis.admin.retour.echec' => 'La décision n\'a pas pu être confirmée. La liste est relue : vérifiez l\'état de l\'avis avant de recommencer.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.retour.horsLigne' => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.',
 			'avis.admin.liens.creerTitre' => 'Créer un lien',
 			'avis.admin.liens.creerIntro' => 'Un lien ouvre le formulaire d\'avis, sans compte ni connexion. Donnez-lui un nom pour le reconnaître.',

@@ -93,19 +93,24 @@
     "filtres": {
       "libelle": "تصفية الإشعارات",
       "toutes": "الكل",
-      "nonLues": "غير المقروءة",
-      "mentions": "الإشارات",
-      "actionRequise": "إجراء مطلوب"
+      "nonLues": "غير المقروءة"
     },
     "filtreVideTitre": "لا توجد إشعارات في هذا التصنيف",
     "filtreVidePhrase": "اختر «الكل» لرؤية جميع إشعاراتك من جديد.",
     "voirToutes": "عرض كل الإشعارات",
+    "sectionAFaire": "مطلوب منك",
+    "sectionNouvelles": "جديدة",
+    "sectionPlusAnciennes": "الأقدم",
+    "voirPlus": "عرض المزيد",
+    "voirPlusErreur": "تعذّرت قراءة الإشعارات الأقدم.",
+    "toutMarquerLu": "تعليم الكل كمقروء",
+    "ecarter": "استبعاد",
+    "ecartNonConfirme": "لم يُؤكَّد الاستبعاد بعد. أعد المحاولة بعد لحظة.",
+    "repetitions": {"zero": "\u2068{n}\u2069 مرة", "one": "مرة واحدة", "two": "مرتان", "few": "\u2068{n}\u2069 مرات", "many": "\u2068{n}\u2069 مرة", "other": "\u2068{n}\u2069 مرة"},
     "nonLue": "غير مقروء",
     "nonLueSemantique": "غير مقروء",
     "lectureNonConfirmee": "لم تُؤكَّد القراءة بعد. أعد المحاولة بعد قليل.",
     "detail": {
-      "choisirTitre": "اختر إشعارًا",
-      "choisirPhrase": "تظهر تفاصيله هنا، بجانب القائمة.",
       "recue": "وصل يوم ⁨{date}⁩ الساعة ⁨{heure}⁩",
       "ouvrir": "فتح الصفحة المعنية"
     },

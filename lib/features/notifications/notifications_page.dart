@@ -14,17 +14,17 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
-import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
-import '../../core/widgets/app_card.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/badge_non_lu.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/controle_segmente.dart' show Segment;
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/local_feedback.dart';
+import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/selecteur_section.dart';
@@ -83,9 +83,29 @@ class NotificationsPage extends ConsumerStatefulWidget {
     'notifications-filtres',
   );
 
-  /// La cle de la colonne de detail (ordinateur), pour les tests.
-  static const ValueKey<String> cleDetail = ValueKey<String>(
-    'notifications-detail',
+  /// La cle de la section « A faire », pour les tests.
+  static const ValueKey<String> cleAFaire = ValueKey<String>(
+    'notifications-a-faire',
+  );
+
+  /// La cle de la section « Nouvelles », pour les tests.
+  static const ValueKey<String> cleNouvelles = ValueKey<String>(
+    'notifications-nouvelles',
+  );
+
+  /// La cle du titre repliable « Plus anciennes », pour les tests.
+  static const ValueKey<String> cleAnciennes = ValueKey<String>(
+    'notifications-anciennes',
+  );
+
+  /// La cle de « Voir plus », pour les tests.
+  static const ValueKey<String> cleVoirPlus = ValueKey<String>(
+    'notifications-voir-plus',
+  );
+
+  /// La cle de « Tout marquer comme lu », pour les tests.
+  static const ValueKey<String> cleToutLire = ValueKey<String>(
+    'notifications-tout-lire',
   );
 
   /// La cle de la liste, pour les tests.
@@ -97,84 +117,164 @@ class NotificationsPage extends ConsumerStatefulWidget {
   ConsumerState<NotificationsPage> createState() => _NotificationsPageState();
 }
 
-/// Les filtres du centre (spec section 13.1).
+/// Les filtres du centre : un seul selecteur (NOTIFS-L6, pilote, 02/11/2026).
+///
+/// « Mentions » est retire : aucune source ne le remplit. « Action requise »
+/// devient « A faire », qui lit le geste en attente du serveur.
 enum FiltreNotifications {
-  /// Toutes les notifications.
+  /// Les trois sections.
   toutes,
 
-  /// Celles que la personne n'a pas lues.
-  nonLues,
+  /// « A faire » seulement.
+  aFaire,
 
-  /// Celles qui la mentionnent.
-  mentions,
-
-  /// Celles qui attendent une action (action requise ou urgent).
-  actionRequise;
-
-  /// Vrai si [n] passe ce filtre.
-  bool retient(NotificationTuteur n) => switch (this) {
-    FiltreNotifications.toutes => true,
-    FiltreNotifications.nonLues => !n.lue,
-    FiltreNotifications.mentions => n.mention,
-    FiltreNotifications.actionRequise => n.demandeAction,
-  };
+  /// « Nouvelles » seulement : les non lues.
+  nonLues;
 
   /// Le libelle du filtre.
   String get libelle {
     final f = t.notifications.filtres;
     return switch (this) {
       FiltreNotifications.toutes => f.toutes,
+      FiltreNotifications.aFaire => t.notifications.sectionAFaire,
       FiltreNotifications.nonLues => f.nonLues,
-      FiltreNotifications.mentions => f.mentions,
-      FiltreNotifications.actionRequise => f.actionRequise,
     };
   }
 }
 
-/// L'ordre d'affichage : les urgences non lues en tete, le reste dans
-/// l'ordre du port (le plus recent d'abord), jamais retrie autrement.
-List<NotificationTuteur> ordreNotifications(List<NotificationTuteur> liste) {
-  bool enTete(NotificationTuteur n) =>
-      !n.lue && n.niveau == NiveauAttention.urgent;
-  return <NotificationTuteur>[
-    ...liste.where(enTete),
-    ...liste.where((NotificationTuteur n) => !enTete(n)),
-  ];
+/// Une ligne de la page : une notification, ou les repetitions d'un meme
+/// evenement le meme jour (NOTIFS-L6, regle 4), la plus recente en tete.
+@immutable
+class GroupeNotifications {
+  /// Cree un groupe, [membres] du plus recent au plus ancien.
+  const GroupeNotifications(this.membres);
+
+  /// Les notifications du groupe, la plus recente d'abord.
+  final List<NotificationTuteur> membres;
+
+  /// Celle qui se montre et s'ouvre.
+  NotificationTuteur get tete => membres.first;
+
+  /// Le nombre de repetitions.
+  int get nombre => membres.length;
 }
 
-/// Vrai si la largeur recue tient la liste et le detail cote a cote.
-bool listeEtDetail(double largeur) => largeur >= AppGabarit.seuilEtendu;
+/// Les trois sections de la page (NOTIFS-L6) : « A faire » (un geste en
+/// attente, lue ou non, jamais effacee par la seule ouverture), « Nouvelles »
+/// (non lues), « Plus anciennes » (lues).
+@immutable
+class SectionsNotifications {
+  /// Cree les sections.
+  const SectionsNotifications({
+    required this.aFaire,
+    required this.nouvelles,
+    required this.anciennes,
+  });
+
+  /// Repartit [toutes] (deja dedoublonnees) dans les trois sections.
+  factory SectionsNotifications.depuis(List<NotificationTuteur> toutes) {
+    List<NotificationTuteur> trier(Iterable<NotificationTuteur> l) => l.toList()
+      ..sort(
+        (NotificationTuteur a, NotificationTuteur b) =>
+            b.date.compareTo(a.date),
+      );
+    final List<NotificationTuteur> aFaire = trier(
+      toutes.where((NotificationTuteur n) => n.aFaire),
+    );
+    // Les urgences en tete de « A faire » (`lib/CLAUDE.md`).
+    final List<NotificationTuteur> urgentes = <NotificationTuteur>[
+      ...aFaire.where(
+        (NotificationTuteur n) => n.niveau == NiveauAttention.urgent,
+      ),
+      ...aFaire.where(
+        (NotificationTuteur n) => n.niveau != NiveauAttention.urgent,
+      ),
+    ];
+    return SectionsNotifications(
+      aFaire: regrouperNotifications(urgentes),
+      nouvelles: regrouperNotifications(
+        trier(toutes.where((NotificationTuteur n) => !n.aFaire && !n.lue)),
+      ),
+      anciennes: regrouperNotifications(
+        trier(toutes.where((NotificationTuteur n) => !n.aFaire && n.lue)),
+      ),
+    );
+  }
+
+  /// « A faire ».
+  final List<GroupeNotifications> aFaire;
+
+  /// « Nouvelles ».
+  final List<GroupeNotifications> nouvelles;
+
+  /// « Plus anciennes ».
+  final List<GroupeNotifications> anciennes;
+
+  /// Vrai s'il n'y a rien du tout.
+  bool get vide => aFaire.isEmpty && nouvelles.isEmpty && anciennes.isEmpty;
+}
+
+/// Regroupe les repetitions d'un meme evenement le meme jour (heure de
+/// l'appareil) : meme [NotificationTuteur.cleRegroupement] et meme jour.
+/// L'ordre est celui de la premiere apparition. Sans cle, jamais regroupee.
+/// Ce n'est pas exactement « le meme objet » : les parametres ne portent
+/// volontairement aucun identifiant (pilote, Q2).
+List<GroupeNotifications> regrouperNotifications(
+  List<NotificationTuteur> liste,
+) {
+  final Map<String, List<NotificationTuteur>> parCle =
+      <String, List<NotificationTuteur>>{};
+  for (final NotificationTuteur n in liste) {
+    final String? cle = n.cleRegroupement;
+    final DateTime jour = n.date.toLocal();
+    final String cleLigne = cle == null
+        ? 'seule|${n.id}'
+        : '$cle|${jour.year}-${jour.month}-${jour.day}';
+    (parCle[cleLigne] ??= <NotificationTuteur>[]).add(n);
+  }
+  return <GroupeNotifications>[
+    for (final List<NotificationTuteur> membres in parCle.values)
+      GroupeNotifications(List<NotificationTuteur>.unmodifiable(membres)),
+  ];
+}
 
 class _NotificationsPageState extends ConsumerState<NotificationsPage> {
   FiltreNotifications _filtre = FiltreNotifications.toutes;
 
-  /// La notification ouverte en detail, par son identifiant.
+  /// La notification ouverte en detail (en page), par son identifiant.
   String? _selection;
 
-  /// Vrai quand la derniere mise en page tenait la liste et le detail cote a
-  /// cote. Lu au toucher seulement (retour, ouverture), jamais pour peindre.
-  bool _deuxPanneaux = false;
-
-  /// Le retour local d'une lecture non confirmee.
+  /// Le retour local d'une lecture ou d'un ecart non confirme.
   String? _retour;
 
-  bool get _detailSeul => _selection != null && !_deuxPanneaux;
+  /// « Plus anciennes » : repliees par defaut quand une priorite est
+  /// au-dessus (regle 3) ; ouvertes d'office quand il n'y a rien a faire ni
+  /// de nouveau (la page ne montre pas qu'un titre replie). Nul : ce
+  /// reglage par defaut ; sinon, le choix de la personne.
+  bool? _anciennesOuvertes;
 
-  @override
-  void initState() {
-    super.initState();
-    // Ligne 14 de la fiche du 27/10 : ouvrir la page marque lues toutes les
-    // notifications de la personne ; la liste est relue ensuite, et le point
-    // disparait sur les autres appareils par la veille Realtime.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) unawaited(_marquerToutesLues());
-    });
-  }
+  /// Le nombre de lignes « Plus anciennes » montrees.
+  int _anciennesMontrees = PortPagesNotifications.taillePage;
+
+  /// Les lues lues en plus, page par page (« Voir plus »).
+  final List<NotificationTuteur> _plus = <NotificationTuteur>[];
+
+  /// Vrai quand le serveur n'a plus de lues plus anciennes.
+  bool _finLues = false;
+
+  /// Une page de lues en cours de lecture.
+  bool _chargePlus = false;
+
+  bool get _detailOuvert => _selection != null;
+
+  // NOTIFS-L6 (regle 2) : ouvrir la page ne marque plus rien comme lu (la
+  // fiche du 27/10, ligne 14, le faisait : « Non lues » et « Action requise »
+  // etaient vides a l'arrivee). Une notification devient lue quand on
+  // l'ouvre, ou par « Tout marquer comme lu ».
 
   /// Marque lues toutes les notifications non lues, si le port le sait
   /// (`PortLectureGroupeeNotifications`), puis relit la liste. Rien n'est
-  /// suppose : sans ce port ou sans source, rien ne change ; un echec garde
-  /// les notifications non lues et le dit.
+  /// suppose : un echec garde les notifications non lues et le dit.
   Future<void> _marquerToutesLues() async {
     final PortNotifications port = ref.read(notificationsPagePortProvider);
     if (port is! PortLectureGroupeeNotifications) return;
@@ -193,8 +293,28 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     ref.invalidate(notificationsTuteurProvider);
   }
 
+  /// Ecarte une notification « A faire » (`PortEcartNotifications`), puis
+  /// relit la liste ; un echec la garde et le dit.
+  Future<void> _ecarter(GroupeNotifications g) async {
+    final PortNotifications port = ref.read(notificationsPagePortProvider);
+    if (port is! PortEcartNotifications) return;
+    final PortEcartNotifications ecart = port as PortEcartNotifications;
+    try {
+      for (final NotificationTuteur n in g.membres) {
+        await ecart.ecarter(n.id);
+      }
+    } on Object {
+      if (!mounted) return;
+      setState(() => _retour = t.notifications.ecartNonConfirme);
+      return;
+    }
+    if (!mounted) return;
+    setState(() => _retour = null);
+    ref.invalidate(notificationsTuteurProvider);
+  }
+
   void _retourPage() {
-    if (_detailSeul) {
+    if (_detailOuvert) {
       setState(() => _selection = null);
       return;
     }
@@ -206,25 +326,31 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     }
   }
 
-  /// Vrai si la notification s'ouvre en detail sur telephone : une
-  /// annonce, ou toute notification sans destination. Le detail dit au
-  /// moins le titre, la date, le type et le niveau : aucune ligne n'est
-  /// inerte (revue COM-R, R-06).
+  /// Vrai si la notification s'ouvre en detail, en page : une annonce, ou
+  /// toute notification sans destination (regle du 01/11 : plus de detail a
+  /// cote de la liste).
   static bool _aUnDetail(NotificationTuteur n) =>
       n.annonceId != null || n.destination == null;
 
-  /// L'action d'une ligne : son detail, ou sa destination. Toute ligne est
-  /// une cible (R-06).
-  VoidCallback _actionLigne(NotificationTuteur n, {required bool deux}) {
+  /// L'action d'une ligne : son detail en page, ou sa destination. Les
+  /// repetitions regroupees sont toutes marquees lues.
+  VoidCallback _actionLigne(GroupeNotifications g) {
+    final NotificationTuteur n = g.tete;
     final String? destination = n.destination;
-    if (deux || _aUnDetail(n) || destination == null) {
+    void lire() {
+      for (final NotificationTuteur m in g.membres) {
+        unawaited(_marquerLue(m));
+      }
+    }
+
+    if (_aUnDetail(n) || destination == null) {
       return () {
-        unawaited(_marquerLue(n));
+        lire();
         setState(() => _selection = n.id);
       };
     }
     return () {
-      unawaited(_marquerLue(n));
+      lire();
       GoRouter.of(context).go(destination);
     };
   }
@@ -274,6 +400,47 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     );
   }
 
+  /// « Voir plus » : 20 lignes « Plus anciennes » de plus ; quand toutes les
+  /// lues deja lues sont montrees, la page suivante est demandee au serveur
+  /// (`PortPagesNotifications`), jamais une lecture sans fin.
+  Future<void> _voirPlus(
+    SectionsNotifications sections,
+    DateTime? avant,
+  ) async {
+    final int montrees = _anciennesMontrees;
+    setState(() => _anciennesMontrees += PortPagesNotifications.taillePage);
+    if (montrees + PortPagesNotifications.taillePage <=
+            sections.anciennes.length ||
+        _finLues ||
+        avant == null) {
+      return;
+    }
+    final PortNotifications port = ref.read(notificationsPagePortProvider);
+    if (port is! PortPagesNotifications) {
+      setState(() => _finLues = true);
+      return;
+    }
+    final PortPagesNotifications pages = port as PortPagesNotifications;
+    setState(() => _chargePlus = true);
+    try {
+      final List<NotificationTuteur> lues = await pages.lues(avant: avant);
+      if (!mounted) return;
+      setState(() {
+        _plus.addAll(lues);
+        _finLues = lues.length < PortPagesNotifications.taillePage;
+        _chargePlus = false;
+        _retour = null;
+      });
+    } on Object {
+      if (!mounted) return;
+      setState(() {
+        _chargePlus = false;
+        _anciennesMontrees = montrees;
+        _retour = t.notifications.voirPlusErreur;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final AsyncValue<List<NotificationTuteur>> valeur = ref.watch(
@@ -281,10 +448,10 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     );
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     return PopScope(
-      // Telephone, detail ouvert : le retour systeme ramene a la liste.
-      canPop: !_detailSeul,
+      // Detail ouvert : le retour systeme ramene a la liste.
+      canPop: !_detailOuvert,
       onPopInvokedWithResult: (bool sorti, Object? _) {
-        if (!sorti && _detailSeul) setState(() => _selection = null);
+        if (!sorti && _detailOuvert) setState(() => _selection = null);
       },
       child: PageShell(
         // D-FUS-3 : seul le bandeau hors ligne des Communications.
@@ -324,30 +491,27 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                     phrase: t.notifications.videPhrase,
                   ),
                 ),
-                construire: (List<NotificationTuteur> liste) => LayoutBuilder(
-                  builder: (BuildContext context, BoxConstraints c) {
-                    final bool deux = listeEtDetail(c.maxWidth);
-                    _deuxPanneaux = deux;
-                    return _centre(context, ordreNotifications(liste), deux);
-                  },
-                ),
+                construire: (List<NotificationTuteur> liste) =>
+                    _centre(context, liste),
               ),
       ),
     );
   }
 
-  Widget _centre(
-    BuildContext context,
-    List<NotificationTuteur> liste,
-    bool deux,
-  ) {
-    final NotificationTuteur? choisie = liste
+  Widget _centre(BuildContext context, List<NotificationTuteur> liste) {
+    // La tete du port et les pages lues en plus, sans doublon.
+    final Map<String, NotificationTuteur> parId = <String, NotificationTuteur>{
+      for (final NotificationTuteur n in _plus) n.id: n,
+      for (final NotificationTuteur n in liste) n.id: n,
+    };
+    final List<NotificationTuteur> toutes = parId.values.toList();
+    final NotificationTuteur? choisie = toutes
         .where((NotificationTuteur n) => n.id == _selection)
         .firstOrNull;
     final String? retour = _retour;
 
-    // Telephone, detail ouvert : une surface a la fois.
-    if (!deux && choisie != null) {
+    // Le detail, en page (plus de detail a cote de la liste).
+    if (choisie != null) {
       return ColonneHistorique(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -363,111 +527,223 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
       );
     }
 
-    final List<NotificationTuteur> retenues = liste
-        .where(_filtre.retient)
-        .toList();
+    final SectionsNotifications sections = SectionsNotifications.depuis(toutes);
     final DateTime maintenant = ref.watch(horlogeNotificationsProvider)();
-    final Widget filtres = SelecteurSection<FiltreNotifications>(
-      key: NotificationsPage.cleFiltres,
-      libelle: t.notifications.filtres.libelle,
-      sections: <Segment<FiltreNotifications>>[
-        for (final FiltreNotifications f in FiltreNotifications.values)
-          Segment<FiltreNotifications>(valeur: f, libelle: f.libelle),
-      ],
-      valeur: _filtre,
-      onChange: (FiltreNotifications f) => setState(() => _filtre = f),
-    );
-    final Widget liste0 = KeyedSubtree(
-      key: NotificationsPage.cleListe,
-      child: retenues.isEmpty
-          ? EtatSysteme(
-              nature: NatureEtat.aucunResultat,
-              titre: t.notifications.filtreVideTitre,
-              phrase: t.notifications.filtreVidePhrase,
-              libelleAction: t.notifications.voirToutes,
-              onAction: () =>
-                  setState(() => _filtre = FiltreNotifications.toutes),
-            )
-          : CarteLignes(
-              lignes: <Widget>[
-                for (final NotificationTuteur n in retenues)
-                  LigneNotification(
-                    key: ValueKey<String>('notification-${n.id}'),
-                    notification: n,
-                    maintenant: maintenant,
-                    selectionnee: deux && n.id == _selection,
-                    onPress: _actionLigne(n, deux: deux),
-                  ),
-              ],
-            ),
-    );
-    final Widget pied = NoteHistorique(t.historique.fuseauListe);
+    final PortNotifications port = ref.watch(notificationsPagePortProvider);
+    final bool peutEcarter = port is PortEcartNotifications;
+    final bool peutToutLire = port is PortLectureGroupeeNotifications;
+    final DateTime? plusAncienneLue = toutes
+        .where((NotificationTuteur n) => n.lue)
+        .map((NotificationTuteur n) => n.date)
+        .fold<DateTime?>(
+          null,
+          (DateTime? m, DateTime d) => m == null || d.isBefore(m) ? d : m,
+        );
+    final bool aSuiteServeur = port is PortPagesNotifications && !_finLues;
+    final TextTheme textes = Theme.of(context).textTheme;
 
-    if (!deux) {
-      return ColonneHistorique(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
+    Widget ligne(GroupeNotifications g, {bool ecartable = false}) {
+      final Widget l = LigneNotification(
+        key: ValueKey<String>('notification-${g.tete.id}'),
+        notification: g.tete,
+        nombre: g.nombre,
+        maintenant: maintenant,
+        onPress: _actionLigne(g),
+      );
+      if (!ecartable) return l;
+      // LISTES-1 : le menu « ... » en bout de ligne porte « Ecarter ». Le
+      // fond de la ligne court sous le menu : sans lui, le filet de la carte
+      // changeait de teinte a l'aplomb du « ... » (capture R3, 1440).
+      return ColoredBox(
+        color: AppPalette.of(context).surfaceRaised.background,
+        child: Row(
           children: <Widget>[
-            filtres,
-            Ecart.vLg,
-            liste0,
-            if (retour != null) ...<Widget>[
-              Ecart.vSm,
-              LocalFeedback(message: retour),
-            ],
-            Ecart.vMd,
-            pied,
+            Expanded(child: l),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(end: AppSpacing.sm),
+              child: MenuActions(
+                key: ValueKey<String>('notification-menu-${g.tete.id}'),
+                points: true,
+                objet: g.tete.titre,
+                actions: <EntreeAction>[
+                  EntreeAction(
+                    libelle: t.notifications.ecarter,
+                    onChoix: () => unawaited(_ecarter(g)),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       );
     }
 
-    // Ordinateur : la liste et le detail, cote a cote (spec section 18).
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Align(alignment: AlignmentDirectional.centerStart, child: filtres),
-        Ecart.vLg,
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              flex: 3,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
+    // Le titre au debut, l'action au bord de fin ; a l'etroit (390, texte
+    // agrandi), l'action passe dessous, toujours au bord de fin.
+    Widget titreSection(String titre, {Widget? action}) {
+      final Widget texte = Semantics(
+        header: true,
+        child: TexteSansCoupure(
+          titre,
+          style: textes.titleMedium ?? const TextStyle(),
+        ),
+      );
+      if (action == null) return texte;
+      return OverflowBar(
+        alignment: MainAxisAlignment.spaceBetween,
+        overflowAlignment: OverflowBarAlignment.end,
+        spacing: AppSpacing.sm,
+        children: <Widget>[texte, action],
+      );
+    }
+
+    final bool anciennesOuvertes =
+        _anciennesOuvertes ??
+        (sections.aFaire.isEmpty && sections.nouvelles.isEmpty);
+    final bool voirAFaire = _filtre != FiltreNotifications.nonLues;
+    final bool voirNouvelles = _filtre != FiltreNotifications.aFaire;
+    final bool voirAnciennes = _filtre == FiltreNotifications.toutes;
+    final bool rienDansLeFiltre =
+        (!voirAFaire || sections.aFaire.isEmpty) &&
+        (!voirNouvelles || sections.nouvelles.isEmpty) &&
+        (!voirAnciennes || sections.anciennes.isEmpty);
+
+    final List<Widget> blocs = <Widget>[
+      if (voirAFaire && sections.aFaire.isNotEmpty) ...<Widget>[
+        titreSection(t.notifications.sectionAFaire),
+        Ecart.vSm,
+        CarteLignes(
+          key: NotificationsPage.cleAFaire,
+          lignes: <Widget>[
+            for (final GroupeNotifications g in sections.aFaire)
+              ligne(g, ecartable: peutEcarter),
+          ],
+        ),
+        Ecart.vXl,
+      ],
+      if (voirNouvelles && sections.nouvelles.isNotEmpty) ...<Widget>[
+        titreSection(
+          t.notifications.sectionNouvelles,
+          action: peutToutLire
+              ? IntrinsicWidth(
+                  child: ActionPrincipale(
+                    key: NotificationsPage.cleToutLire,
+                    libelle: t.notifications.toutMarquerLu,
+                    niveau: NiveauAction.tertiaire,
+                    pleineLargeur: false,
+                    onPress: () => unawaited(_marquerToutesLues()),
+                  ),
+                )
+              : null,
+        ),
+        Ecart.vSm,
+        CarteLignes(
+          key: NotificationsPage.cleNouvelles,
+          lignes: <Widget>[
+            for (final GroupeNotifications g in sections.nouvelles) ligne(g),
+          ],
+        ),
+        Ecart.vXl,
+      ],
+      if (voirAnciennes && sections.anciennes.isNotEmpty) ...<Widget>[
+        // Repliees par defaut (regle 3) : le titre est le bouton.
+        Semantics(
+          button: true,
+          expanded: anciennesOuvertes,
+          child: Pressable(
+            key: NotificationsPage.cleAnciennes,
+            onPress: () =>
+                setState(() => _anciennesOuvertes = !anciennesOuvertes),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+              child: Row(
                 children: <Widget>[
-                  liste0,
-                  if (retour != null) ...<Widget>[
-                    Ecart.vSm,
-                    LocalFeedback(message: retour),
-                  ],
-                  Ecart.vMd,
-                  pied,
+                  Expanded(
+                    child: TexteSansCoupure(
+                      t.notifications.sectionPlusAnciennes,
+                      style: textes.titleMedium ?? const TextStyle(),
+                    ),
+                  ),
+                  Icon(
+                    anciennesOuvertes
+                        ? AppIcons.replier.repos
+                        : AppIcons.suiteEnBas.repos,
+                  ),
                 ],
               ),
             ),
-            Ecart.hXxl,
-            Expanded(
-              flex: 2,
-              child: KeyedSubtree(
-                key: NotificationsPage.cleDetail,
-                child: choisie == null
-                    ? AppCard(
-                        child: EtatSysteme(
-                          nature: NatureEtat.aucunResultat,
-                          titre: t.notifications.detail.choisirTitre,
-                          phrase: t.notifications.detail.choisirPhrase,
-                        ),
-                      )
-                    : _detail(context, choisie),
+          ),
+        ),
+        if (anciennesOuvertes) ...<Widget>[
+          Ecart.vSm,
+          CarteLignes(
+            lignes: <Widget>[
+              for (final GroupeNotifications g in sections.anciennes.take(
+                _anciennesMontrees,
+              ))
+                ligne(g),
+            ],
+          ),
+          if (sections.anciennes.length > _anciennesMontrees ||
+              aSuiteServeur) ...<Widget>[
+            Ecart.vMd,
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: ActionPrincipale(
+                key: NotificationsPage.cleVoirPlus,
+                libelle: t.notifications.voirPlus,
+                niveau: NiveauAction.secondaire,
+                pleineLargeur: false,
+                enCours: _chargePlus,
+                onPress: () => unawaited(_voirPlus(sections, plusAncienneLue)),
               ),
             ),
           ],
-        ),
+        ],
       ],
+    ];
+
+    return ColonneHistorique(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          SelecteurSection<FiltreNotifications>(
+            key: NotificationsPage.cleFiltres,
+            libelle: t.notifications.filtres.libelle,
+            sections: <Segment<FiltreNotifications>>[
+              for (final FiltreNotifications f in FiltreNotifications.values)
+                Segment<FiltreNotifications>(valeur: f, libelle: f.libelle),
+            ],
+            valeur: _filtre,
+            onChange: (FiltreNotifications f) => setState(() => _filtre = f),
+          ),
+          Ecart.vLg,
+          if (retour != null) ...<Widget>[
+            LocalFeedback(message: retour),
+            Ecart.vSm,
+          ],
+          KeyedSubtree(
+            key: NotificationsPage.cleListe,
+            child: rienDansLeFiltre
+                ? EtatSysteme(
+                    nature: NatureEtat.aucunResultat,
+                    titre: t.notifications.filtreVideTitre,
+                    phrase: t.notifications.filtreVidePhrase,
+                    libelleAction: t.notifications.voirToutes,
+                    onAction: () =>
+                        setState(() => _filtre = FiltreNotifications.toutes),
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: blocs,
+                  ),
+          ),
+          Ecart.vMd,
+          NoteHistorique(t.historique.fuseauListe),
+        ],
+      ),
     );
   }
 
@@ -520,10 +796,15 @@ class LigneNotification extends StatelessWidget {
     required this.maintenant,
     super.key,
     this.selectionnee = false,
+    this.nombre = 1,
   });
 
   /// La notification.
   final NotificationTuteur notification;
+
+  /// NOTIFS-L6 : le nombre de repetitions du meme evenement le meme jour
+  /// que la ligne represente (« 3 fois »). 1 : une seule.
+  final int nombre;
 
   /// L'instant de reference de la date compacte (sans l'annee en cours),
   /// lu par la page dans [horlogeNotificationsProvider] : jamais l'heure de
@@ -552,7 +833,10 @@ class LigneNotification extends StatelessWidget {
 
   /// La phrase lue par le lecteur d'ecran : titre, date, type, non lue,
   /// niveau (« Information » compris) et mention.
-  static String phraseSemantique(NotificationTuteur notification) {
+  static String phraseSemantique(
+    NotificationTuteur notification, {
+    int nombre = 1,
+  }) {
     final DateTime quand = notification.date.toLocal();
     final String? badge = BadgeNonLu.phraseSemantique(
       indicateurNotification(notification),
@@ -565,6 +849,7 @@ class LigneNotification extends StatelessWidget {
       ),
       if (notification.type != TypeNotification.autre)
         libelleTypeNotification(notification.type),
+      if (nombre > 1) t.notifications.repetitions(n: nombre),
       if (!notification.lue) t.notifications.nonLueSemantique,
       // Rien a signaler : le niveau « Information » est dit quand meme, en
       // toutes lettres (spec section 13.1 : quatre niveaux, chacun dit).
@@ -574,7 +859,7 @@ class LigneNotification extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String semantique = phraseSemantique(notification);
+    final String semantique = phraseSemantique(notification, nombre: nombre);
     if (onPress == null) {
       return Semantics(
         label: semantique,
@@ -608,6 +893,7 @@ class LigneNotification extends StatelessWidget {
     final IndicateurAttention indicateur = indicateurNotification(notification);
     final bool avecType = notification.type != TypeNotification.autre;
     final bool nonLue = !notification.lue;
+    final bool repetee = nombre > 1;
     return ColoredBox(
       color: actif || selectionnee
           ? Color.alphaBlend(
@@ -654,12 +940,13 @@ class LigneNotification extends StatelessWidget {
                               textes.bodyMedium ?? const TextStyle(),
                             ),
                     ),
-                    if (avecType || nonLue) ...<Widget>[
+                    if (avecType || nonLue || repetee) ...<Widget>[
                       Ecart.vXs,
                       TexteSansCoupure(
                         <String>[
                           if (avecType)
                             libelleTypeNotification(notification.type),
+                          if (repetee) t.notifications.repetitions(n: nombre),
                           if (nonLue) t.notifications.nonLue,
                         ].join(' · '),
                         style: doux,
