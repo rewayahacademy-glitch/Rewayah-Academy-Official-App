@@ -12193,5 +12193,24 @@
     "echecTitre": "تعذر التحقق من تسجيلكم",
     "echecPhrase": "السبب المحتمل: انقطع الاتصال بالخادم (غير مؤكد). أعيدوا المحاولة بعد قليل: لا يُنشأ أي شيء مرتين.",
     "sansDonnees": "التحقق من تسجيلكم"
+  },
+  "n1": {
+    "regles": {
+      "auteurs": {
+        "direction": "الإدارة",
+        "enseignants": "المعلمون",
+        "familles": "الأسر",
+        "eleves": "الطلاب",
+        "comptables": "المحاسبون",
+        "controleurs": "المراقبون"
+      },
+      "portee": {
+        "touteAudience": "الأكاديمية كلها، أو جمهور، أو فصل",
+        "saClasse": "فصله فقط"
+      }
+    },
+    "alertes": {
+      "signalement": "\u2068{categorie}\u2069: بلاغ بشأن الطالب \u2068{matricule}\u2069. ملاحظة داخلية: «\u2068{note}\u2069»"
+    }
   }
 }

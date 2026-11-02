@@ -95,6 +95,8 @@ const Map<String, int> _domaines = <String, int>{
   'admissions': 70,
   // IMM-ACCUEIL-FRONT (31/10/2026) : accueil d'une famille deja inscrite.
   'accueilInscrits': 14,
+  // N1 (02/11/2026) : regles de portee des annonces, alertes de signalement.
+  'n1': 8,
 };
 
 /// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) :
