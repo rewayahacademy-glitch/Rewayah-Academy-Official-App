@@ -148,6 +148,37 @@ les copie dans chaque consigne d'agent, et un agent qui en enfreint une voit sa 
   4. le dossier de captures ;
   5. les échecs de test connus.
 
+### Ajouts du garde-cap (relecture du 02/11)
+
+- **G1. Aucune nouvelle visio** (directeur, 02/11) :
+  - la seule visio est `/salle` ;
+  - brancher une visio veut dire ajouter un type de séance, un rôle de participant, une garde dans
+    `autoriser_jeton_video` et un bouton qui ouvre `/salle` ;
+  - pour un entretien ou une réunion, la portée des outils déjà branchée
+    (`portee_outils_salle.dart`) cache le Coran, le tableau, les crayons, la bibliothèque, le chrono,
+    la présence, le cahier et la fiche ;
+  - un agent qui écrit un autre module vidéo est arrêté.
+- **G2. `dart format` seulement sur les fichiers touchés.** Un `dart format lib test` en reformate 177.
+- **G3. Garde-fous des textes avant la PR.**
+  - Commande : `flutter test --no-pub test/garde test/core/i18n test/tool/garde_fous_test.dart`.
+  - Ils vérifient :
+    - les espaces insécables avant « : » et dans « » ;
+    - l'élision avec `{dePrenom}` ou `deDevant` ;
+    - les erreurs qui disent quoi faire ;
+    - les durées avec `LibellesGroupe.insecable`.
+- **G4. La suite complète dure environ 55 minutes.** On la lance avec `--no-pub` et on vérifie
+  d'abord l'espace disque.
+- **G5. Les robots E2E ne tournent jamais sur un aperçu Vercel**, parce que les aperçus parlent à la
+  base de production. Ils tournent sur le banc local seulement.
+- **G6. Le garde refuse toute commande shell qui contient l'identifiant de la production.** Un fichier
+  qui doit le contenir s'écrit avec l'outil Write.
+- **G7. Avant de prendre un numéro de migration, vérifier `main` et toutes les branches ouvertes.**
+- **G8. `app_router.dart` est partagé.** Un lot met ses routes dans son propre `routes_<lot>.dart` et ne
+  touche le routeur que d'une ligne d'inclusion.
+- **G9. Sur le banc, une facture émise ne s'efface pas** (`fac_facture_figee`) : on l'annule.
+- **G10. Une seule page à coller par livraison, faite par le pilote seul.**
+- **G11. Avec le directeur, toujours en français, en mots simples, la vérité d'abord.**
+
 ### Pilote
 
 - **P1. Avant chaque fusion**, le pilote :
