@@ -107,6 +107,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$courriels$fr courriels = Traductions$courriels$fr.internal(_root);
 	late final Traductions$admissions$fr admissions = Traductions$admissions$fr.internal(_root);
 	late final Traductions$accueilInscrits$fr accueilInscrits = Traductions$accueilInscrits$fr.internal(_root);
+	late final Traductions$n1$fr n1 = Traductions$n1$fr.internal(_root);
 }
 
 // Path: commun
@@ -3698,6 +3699,17 @@ class Traductions$accueilInscrits$fr {
 
 	/// fr: 'La vérification de votre inscription'
 	String get sansDonnees => 'La vérification de votre inscription';
+}
+
+// Path: n1
+class Traductions$n1$fr {
+	Traductions$n1$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$n1$regles$fr regles = Traductions$n1$regles$fr.internal(_root);
+	late final Traductions$n1$alertes$fr alertes = Traductions$n1$alertes$fr.internal(_root);
 }
 
 // Path: commun.formats
@@ -20738,6 +20750,29 @@ class Traductions$admissions$modeles$fr {
 	String get sansReponsePhrase => '« Nous n\'avons pas reçu de réponse à notre dernier message. »';
 }
 
+// Path: n1.regles
+class Traductions$n1$regles$fr {
+	Traductions$n1$regles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$n1$regles$auteurs$fr auteurs = Traductions$n1$regles$auteurs$fr.internal(_root);
+	late final Traductions$n1$regles$portee$fr portee = Traductions$n1$regles$portee$fr.internal(_root);
+}
+
+// Path: n1.alertes
+class Traductions$n1$alertes$fr {
+	Traductions$n1$alertes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{categorie} : signalement pour l'élève {matricule}. Note interne : « {note} »'
+	String signalement({required Object categorie, required Object matricule, required Object note}) => '${categorie} : signalement pour l\'élève ${matricule}. Note interne : « ${note} »';
+}
+
 // Path: commun.etats.chargementProlonge
 class Traductions$commun$etats$chargementProlonge$fr {
 	Traductions$commun$etats$chargementProlonge$fr.internal(this._root);
@@ -36382,6 +36417,48 @@ class Traductions$courriels$admin$adresses$fr {
 
 	/// fr: 'Les adresses d'envoi n'ont pas pu être chargées'
 	String get sansDonnees => 'Les adresses d\'envoi n\'ont pas pu être chargées';
+}
+
+// Path: n1.regles.auteurs
+class Traductions$n1$regles$auteurs$fr {
+	Traductions$n1$regles$auteurs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Direction'
+	String get direction => 'Direction';
+
+	/// fr: 'Enseignants'
+	String get enseignants => 'Enseignants';
+
+	/// fr: 'Familles'
+	String get familles => 'Familles';
+
+	/// fr: 'Élèves'
+	String get eleves => 'Élèves';
+
+	/// fr: 'Comptables'
+	String get comptables => 'Comptables';
+
+	/// fr: 'Contrôleurs'
+	String get controleurs => 'Contrôleurs';
+}
+
+// Path: n1.regles.portee
+class Traductions$n1$regles$portee$fr {
+	Traductions$n1$regles$portee$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Toute l'académie, un public ou une Classe'
+	String get touteAudience => 'Toute l\'académie, un public ou une Classe';
+
+	/// fr: 'Sa Classe seulement'
+	String get saClasse => 'Sa Classe seulement';
 }
 
 // Path: salle.preparation.eleve.guidee
@@ -52678,6 +52755,15 @@ extension on Traductions {
 			'accueilInscrits.echecTitre' => 'Votre inscription n\'a pas pu être vérifiée',
 			'accueilInscrits.echecPhrase' => 'Cause probable : la connexion au serveur s\'est interrompue (non confirmé). Réessayez dans un instant : rien n\'est créé en double.',
 			'accueilInscrits.sansDonnees' => 'La vérification de votre inscription',
+			'n1.regles.auteurs.direction' => 'Direction',
+			'n1.regles.auteurs.enseignants' => 'Enseignants',
+			'n1.regles.auteurs.familles' => 'Familles',
+			'n1.regles.auteurs.eleves' => 'Élèves',
+			'n1.regles.auteurs.comptables' => 'Comptables',
+			'n1.regles.auteurs.controleurs' => 'Contrôleurs',
+			'n1.regles.portee.touteAudience' => 'Toute l\'académie, un public ou une Classe',
+			'n1.regles.portee.saClasse' => 'Sa Classe seulement',
+			'n1.alertes.signalement' => ({required Object categorie, required Object matricule, required Object note}) => '${categorie} : signalement pour l\'élève ${matricule}. Note interne : « ${note} »',
 			_ => null,
 		};
 	}

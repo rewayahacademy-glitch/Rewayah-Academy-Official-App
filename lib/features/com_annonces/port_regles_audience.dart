@@ -7,9 +7,10 @@
 // : c'est la regle de l'ecole, montree pour etre relue.
 //
 // **Aucune ligne inventee depuis la maquette** (correction obligatoire de
-// COM-W04) : le port de production est neutre, il leve
+// COM-W04) : le port par defaut est neutre, il leve
 // `CapaciteIndisponible('COM-BR-11')` et l'ecran dit « pas encore
-// disponible ». Les lignes de demonstration (spec section 13.4, rien de plus)
+// disponible ». Depuis N1 (02/11/2026), `main.dart` le remplace par
+// `ReglesAudienceSupabase` (`com_regles_audience`, migration 20261105400000). Les lignes de demonstration (spec section 13.4, rien de plus)
 // vivent dans `lib/features/demo/communications/com_annonces_demo.dart` et
 // portent `demonstration: true`, que l'ecran dit en clair.
 
@@ -83,7 +84,7 @@ class ReglesAudienceIndisponibles implements PortReglesAudience {
   Future<ReglesAudience> regles() => Future<ReglesAudience>.error(manque);
 }
 
-/// Le port employe par l'application : neutre en production.
+/// Le port par defaut, neutre ; `main.dart` le remplace (N1).
 final Provider<PortReglesAudience> portReglesAudienceProvider =
     Provider<PortReglesAudience>(
       (Ref ref) => const ReglesAudienceIndisponibles(),
