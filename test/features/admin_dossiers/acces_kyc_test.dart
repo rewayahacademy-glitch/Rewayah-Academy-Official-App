@@ -91,6 +91,10 @@ Future<void> _monter(
     ),
   );
   await _stabiliser(tester);
+  // L5 des listes : la liste est la page, aucun dossier ouvert d'office ;
+  // la premiere ligne ouvre le dossier d'Omar, en page.
+  await tester.tap(find.bySemanticsLabel(RegExp("^Ouvrir le dossier d'Omar")));
+  await _stabiliser(tester);
 }
 
 void main() {

@@ -159,7 +159,6 @@ const Set<String> _latins = <String>{
   'eleve.coran.sourceLien',
   'connexion.courrielIndice',
   'compte.tuteur.securite.methodeGoogle',
-  'dossiers.file.zoneUtc',
   'agent.jetonExemple',
   // Raison sociale et adresse du siege : noms propres, gardes en latin.
   'juridique.coord.societe',

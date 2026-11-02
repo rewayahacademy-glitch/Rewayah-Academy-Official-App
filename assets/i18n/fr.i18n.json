@@ -3065,7 +3065,6 @@
   },
   "dossiers": {
     "titre": "Dossiers à valider",
-    "sousTitre": "Examinez les dossiers prêts pour une décision.",
     "aucun": "Aucun dossier n'attend de validation.",
     "aucunDetail": "Les nouveaux dossiers apparaîtront ici lorsqu'ils seront prêts.",
     "file": {
@@ -3079,18 +3078,13 @@
       "indisponible": "La consultation des dossiers est indisponible pour le moment.",
       "selectionRetiree": "Ce dossier n’est plus disponible dans la file.",
       "actualiser": "Actualiser les dossiers",
-      "aucuneSelection": "Sélectionnez un dossier à examiner.",
       "suivants": "Charger les dossiers suivants",
       "ouvrirDe": "Ouvrir le dossier de {nom}",
       "ouvrirElide": "Ouvrir le dossier d'{nom}",
       "enVerification": "En cours de vérification",
       "sansNom": "Dossier sans nom disponible",
       "legende": "{type} · {date}",
-      "dateHeure": "{date} à {heure} ({zone})",
-      "dateChiffres": "{jour}/{mois}/{annee}",
-      "heureChiffres": "{heures}:{minutes}",
-      "zoneUtc": "UTC",
-      "suivantAnnonce": "Dossier suivant\u00a0: {nom}"
+      "dateChiffres": "{jour}/{mois}/{annee}"
     },
     "detail": {
       "titreDe": "Dossier de {nom}",
@@ -3136,11 +3130,6 @@
         "actualiserDossier": "Actualiser le dossier",
         "refusNonAutorise": "Ce dossier ne peut pas être refusé dans son état actuel."
       }
-    },
-    "restantUn": "1 dossier en attente",
-    "restants": {
-      "one": "{n} dossier en attente",
-      "other": "{n} dossiers en attente"
     },
     "deposeLe": "Déposé le {date}",
     "inscritAujourdhui": "Inscrit aujourd'hui",
@@ -3772,9 +3761,6 @@
     },
     "traitement": {
       "titre": "Espace de traitement",
-      "sousTitre": "Examinez les éléments en attente dans Rewayah, puis ouvrez chacun là où il se traite.",
-      "compteurUn": "1 élément en attente",
-      "compteur": "{n} éléments en attente",
       "filtreTous": "Tous",
       "filtreDossiers": "Dossiers",
       "filtreDemandes": "Demandes",
@@ -3790,22 +3776,12 @@
       "naturePlafond": "Demande · Plafond d'élèves",
       "natureRegle": "Demande · Changement de règle",
       "natureDemande": "Demande",
-      "titreDemande": "Demande pour {nom}",
-      "ligneSemantique": "{nom}, {nature}, {quand}",
-      "infos": "Informations générales",
-      "cleNom": "Nom",
-      "clePrenom": "Prénom",
-      "cleType": "Type de dossier",
       "cleDepot": "Date de dépôt",
       "clePiece": "Pièce d'identité",
       "pieceAVerifier": "Déposée, à vérifier",
       "cleConcerne": "Personne concernée",
       "cleParQui": "Demandée par",
-      "cleDateDemande": "Date de la demande",
       "colonneDepuis": "Depuis",
-      "ouvrirDemande": "Ouvrir la demande pour {nom}",
-      "suiviTitre": "Suivi du traitement",
-      "suiviPhrase": "L'assignation, l'échéance, la priorité, l'historique et les notes ne sont pas encore branchés\u00a0: le serveur ne les fournit pas encore. La décision se prend dans le dossier ou la demande, avec ses vérifications.",
       "vide": "Rien à traiter pour le moment",
       "videDetail": "Les dossiers d'identité et les demandes en attente arrivent ici, dès leur dépôt.",
       "videFiltre": "Aucun élément avec ce filtre",

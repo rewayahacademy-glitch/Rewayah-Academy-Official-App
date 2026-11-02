@@ -258,6 +258,7 @@ class DataCollection<T> extends StatelessWidget {
     this.onSelectionner,
     this.defileAvecLaPage = false,
     this.estSelectionnee,
+    this.auFocus,
     this.defileSeule = true,
     this.selection,
     this.actionsLigne,
@@ -333,6 +334,12 @@ class DataCollection<T> extends StatelessWidget {
   /// choisie se marque par le fond, un contour et `Semantics(selected)`,
   /// jamais par la couleur seule ; en cartes, par `AppCard.selectionnee`.
   final bool Function(T ligne)? estSelectionnee;
+
+  /// La ligne qui prend le focus a sa construction (retour d'un detail ouvert
+  /// depuis elle, ou ligne suivante apres une decision), ou `null` : aucune.
+  /// En tableau et en lignes denses seulement ; une carte repliee (tablette,
+  /// texte agrandi) ne le prend pas.
+  final bool Function(T ligne)? auFocus;
 
   /// Vrai quand la collection se rend en tableau (desktop), faux quand elle
   /// se replie en cartes. Le seul endroit qui compare le gabarit : une page
@@ -609,6 +616,7 @@ class DataCollection<T> extends StatelessWidget {
         selection: selection,
         actionsLigne: actionsLigne,
         mise: mise,
+        autofocus: auFocus?.call(ligne) ?? false,
       ),
     );
 
@@ -984,12 +992,16 @@ class _LigneTableau<T> extends StatelessWidget {
     this.selection,
     this.actionsLigne,
     this.enCarte = false,
+    this.autofocus = false,
   });
 
   final List<ColonneDonnees<T>> colonnes;
   final T ligne;
   final _MiseEnPage mise;
   final void Function(T ligne)? onSelectionner;
+
+  /// [DataCollection.auFocus].
+  final bool autofocus;
 
   /// LISTES-3 ([DataCollection.lignesCartes]) : la ligne est une carte, sans
   /// filet de bas ; la carte qui l'enveloppe porte le fond et l'arrondi.
@@ -1056,6 +1068,7 @@ class _LigneTableau<T> extends StatelessWidget {
         ? contenu(null)
         : Pressable.selon(
             onPress: () => onSelectionner!(ligne),
+            autofocus: autofocus,
             respecterCibleTactile: false,
             constructeur: (BuildContext _, EtatPression etat) => contenu(
               etat.presse
@@ -1694,6 +1707,7 @@ class _CollectionParTranchesEtat<T> extends State<_CollectionParTranches<T>> {
             selection: c.selection,
             actionsLigne: c.actionsLigne,
             mise: mise,
+            autofocus: c.auFocus?.call(c.lignes[i]) ?? false,
           ),
         );
         if (tableau && c.lignesCartes) {
@@ -1730,6 +1744,7 @@ class _CollectionParTranchesEtat<T> extends State<_CollectionParTranches<T>> {
                       actionsLigne: c.actionsLigne,
                       mise: mise,
                       enCarte: true,
+                      autofocus: c.auFocus?.call(c.lignes[i]) ?? false,
                     ),
                   ),
                 ),
@@ -1794,6 +1809,7 @@ class _CollectionParTranchesEtat<T> extends State<_CollectionParTranches<T>> {
                       selection: c.selection,
                       actionsLigne: c.actionsLigne,
                       mise: mise,
+                      autofocus: c.auFocus?.call(c.lignes[i]) ?? false,
                     ),
                   ),
                 ),
@@ -1862,11 +1878,15 @@ class _LigneDense<T> extends StatelessWidget {
     this.onSelectionner,
     this.selection,
     this.actionsLigne,
+    this.autofocus = false,
   });
 
   final List<ColonneDonnees<T>> colonnes;
   final T ligne;
   final bool premiere;
+
+  /// [DataCollection.auFocus].
+  final bool autofocus;
   final _MiseEnPage mise;
   final void Function(T ligne)? onSelectionner;
   final SelectionCollection<T>? selection;
@@ -1937,45 +1957,52 @@ class _LigneDense<T> extends StatelessWidget {
     final bool pastillesDessous =
         MediaQuery.textScalerOf(context).scale(1) > 1.3;
 
-    final Widget texte = MergeSemantics(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          // Le titre se rend comme celui d'une carte (meme taille pour
-          // toutes les lignes ; un identifiant seul qui ne tient pas passe en
-          // sous-titre, entier : COUPE-MOTS-FOND-1).
-          if (titre != null)
-            titre.rendu?.call(context, ligne) ??
-                _TitreCarte<T>(colonne: titre, ligne: ligne),
-          // L'essentiel seulement (`ColonneDonnees.ligneDense`), pour tenir
-          // sur une ligne ; jamais tronque ni coupe dans un mot (COUPE-MOTS) :
-          // la ligne passe a la ligne quand elle ne tient pas. Le rendu riche
-          // (le pays et son drapeau) la precede, entier.
-          if (riches.isNotEmpty || resume.isNotEmpty)
-            Wrap(
-              spacing: AppSpacing.sm,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: <Widget>[
-                for (final ColonneDonnees<T> c in riches)
-                  c.rendu!(context, ligne),
-                if (resume.isNotEmpty)
-                  _TexteCollection(
-                    resume,
-                    style: palette.inkMuted.applyTo(
-                      textes.bodySmall ?? const TextStyle(),
-                    ),
+    // Le texte de la ligne, en un seul libelle. Avec une case ou un menu, un
+    // noeud a part, pour qu'ils restent des noeuds distincts ; sans eux, la
+    // fusion enveloppe la ligne pressable entiere (plus bas) : le bouton
+    // porte lui-meme le libelle (un bouton sans libelle sinon : AD-11, cibles
+    // et libelles, 320 px).
+    final bool texteAPart = selection != null || menu != null;
+    final Widget colonneTexte = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        // Le titre se rend comme celui d'une carte (meme taille pour
+        // toutes les lignes ; un identifiant seul qui ne tient pas passe en
+        // sous-titre, entier : COUPE-MOTS-FOND-1).
+        if (titre != null)
+          titre.rendu?.call(context, ligne) ??
+              _TitreCarte<T>(colonne: titre, ligne: ligne),
+        // L'essentiel seulement (`ColonneDonnees.ligneDense`), pour tenir
+        // sur une ligne ; jamais tronque ni coupe dans un mot (COUPE-MOTS) :
+        // la ligne passe a la ligne quand elle ne tient pas. Le rendu riche
+        // (le pays et son drapeau) la precede, entier.
+        if (riches.isNotEmpty || resume.isNotEmpty)
+          Wrap(
+            spacing: AppSpacing.sm,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: <Widget>[
+              for (final ColonneDonnees<T> c in riches)
+                c.rendu!(context, ligne),
+              if (resume.isNotEmpty)
+                _TexteCollection(
+                  resume,
+                  style: palette.inkMuted.applyTo(
+                    textes.bodySmall ?? const TextStyle(),
                   ),
-              ],
-            ),
-          if (pastillesDessous)
-            for (final ColonneDonnees<T> c in pastilles) ...<Widget>[
-              Ecart.vXs,
-              c.rendu!(context, ligne),
+                ),
             ],
-        ],
-      ),
+          ),
+        if (pastillesDessous)
+          for (final ColonneDonnees<T> c in pastilles) ...<Widget>[
+            Ecart.vXs,
+            c.rendu!(context, ligne),
+          ],
+      ],
     );
+    final Widget texte = texteAPart
+        ? MergeSemantics(child: colonneTexte)
+        : colonneTexte;
 
     Widget contenu(Color? fond) {
       final Widget rangee = ConstrainedBox(
@@ -2002,10 +2029,11 @@ class _LigneDense<T> extends StatelessWidget {
       return fond == null ? rangee : ColoredBox(color: fond, child: rangee);
     }
 
-    final Widget laLigne = onSelectionner == null
+    final Widget pressable = onSelectionner == null
         ? contenu(null)
         : Pressable.selon(
             onPress: () => onSelectionner!(ligne),
+            autofocus: autofocus,
             respecterCibleTactile: false,
             constructeur: (BuildContext _, EtatPression etat) => contenu(
               etat.presse
@@ -2015,6 +2043,9 @@ class _LigneDense<T> extends StatelessWidget {
                   : null,
             ),
           );
+    final Widget laLigne = texteAPart
+        ? pressable
+        : MergeSemantics(child: pressable);
 
     return DecoratedBox(
       decoration: BoxDecoration(

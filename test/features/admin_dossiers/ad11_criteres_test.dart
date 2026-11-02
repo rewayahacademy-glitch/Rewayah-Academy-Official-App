@@ -37,6 +37,7 @@ import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
+import 'package:rewayah_academy/features/admin_dossiers/dossiers_page.dart';
 import 'package:rewayah_academy/features/admin_dossiers/etat_file_dossiers.dart';
 import 'package:rewayah_academy/features/admin_dossiers/textes_dossier.dart';
 import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
@@ -217,13 +218,29 @@ List<String> _peinture(WidgetTester tester, Finder ligne) {
     of: find.ancestor(of: ligne, matching: find.byType(Material)).first,
     matching: find.byType(DecoratedBox),
   );
-  final Rect zone = tester.getRect(ligne);
+  // L5 : la ligne de la liste est une rangee de colonnes ; son nom n'en
+  // est qu'une cellule. La zone est celle de la rangee pressable, et le
+  // calque de survol y est pose par un ColoredBox.
+  final Finder rangee = find.ancestor(
+    of: ligne,
+    matching: find.byType(Pressable),
+  );
+  final Rect zone = tester.getRect(
+    rangee.evaluate().isEmpty ? ligne : rangee.first,
+  );
+  final Finder calques = find.descendant(
+    of: find.ancestor(of: ligne, matching: find.byType(Material)).first,
+    matching: find.byType(ColoredBox),
+  );
+  bool dedans(Element e) =>
+      e.renderObject is RenderBox &&
+      (e.renderObject! as RenderBox).hasSize &&
+      zone.inflate(4).contains(tester.getCenter(find.byWidget(e.widget)));
   return <String>[
     for (final Element e in decors.evaluate())
-      if (e.renderObject is RenderBox &&
-          (e.renderObject! as RenderBox).hasSize &&
-          zone.inflate(4).contains(tester.getCenter(find.byWidget(e.widget))))
-        '${(e.widget as DecoratedBox).decoration}',
+      if (dedans(e)) '${(e.widget as DecoratedBox).decoration}',
+    for (final Element e in calques.evaluate())
+      if (dedans(e)) '${(e.widget as ColoredBox).color}',
   ];
 }
 
@@ -312,7 +329,9 @@ void main() {
       await _stab(tester);
       expect(_chemin(routeur), Routes.adminPersonnesDossiers);
 
-      // Decision reussie depuis la revue (Omar, selectionne d'office).
+      // Decision reussie depuis la revue (L5 : Omar, ouvert par sa ligne).
+      await tester.tap(_ligne('Omar'));
+      await _stab(tester);
       for (final String p in <String>[
         t.dossiers.pointLisible,
         t.dossiers.pointNom,
@@ -385,6 +404,9 @@ void main() {
         ..introuvables.add(DonneesDossiersDemo.enseignantNominal);
       await _monter(tester, const Size(1440, 900), etat: etat, port: port);
       await _barre(tester, AdminDomaine.personnes);
+      // L5 : le dossier s'ouvre par sa ligne.
+      await tester.tap(_ligne('Omar'));
+      await _stab(tester);
       expect(find.text(t.dossiers.file.selectionRetiree), findsOneWidget);
       await _capture(tester, 'ad11_02A_selection_retiree_1440');
       // L'action du message relit la file et retire la selection.
@@ -530,7 +552,7 @@ void _suite() {
         );
         await _barre(tester, AdminDomaine.personnes);
         final Finder pills = find.descendant(
-          of: find.byKey(const PageStorageKey<String>('adm02a-file')),
+          of: find.byKey(DossiersPage.cleFile),
           matching: find.byType(StatusPill),
         );
         expect(pills, findsWidgets);

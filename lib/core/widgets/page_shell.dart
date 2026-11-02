@@ -236,8 +236,17 @@ class PageShell extends StatelessWidget {
         // LISTES-2 : la sous-navigation tient lieu de titre, sur la rangee du
         // retour et des actions de la coquille.
         if (gabarit == Gabarit.mobile) Ecart.vSm else Ecart.vLg,
+        // Le titre reste le point de retour du focus ([focusTitre]) : une
+        // decision qui vide une file le lui rend (AD-FOCUS-MD, L5).
         if (titre != null)
-          Semantics(header: true, label: titre, child: const SizedBox.shrink()),
+          titreFocalisable(
+            focusTitre,
+            Semantics(
+              header: true,
+              label: titre,
+              child: const SizedBox.shrink(),
+            ),
+          ),
         // Texte agrandi ou Interface guidee sur telephone : la liste
         // deroulante n'aurait plus la place de son mot ; elle passe sous la
         // rangee du retour et des actions, jamais rognee.

@@ -204,8 +204,6 @@ void main() {
       // qu'une ligne (AD-BR-01), la plus ancienne gardee.
       expect(find.text('Dossier de Moussa Barry'), findsOneWidget);
       expect(find.textContaining('Aissatou'), findsNothing);
-      // En production, le total n'est pas garanti : aucun compteur (Q16).
-      expect(find.text(t.dossiers.restants(n: 2)), findsNothing);
     });
 
     testWidgets(

@@ -215,7 +215,7 @@ void main() {
     expect(_chemin(routeur), Routes.compte);
   });
 
-  testWidgets('Retour : present hors Accueil, mene a /admin', (
+  testWidgets('Dossiers : liste sans retour, la barre ramene a /admin', (
     WidgetTester tester,
   ) async {
     final GoRouter routeur = await _monter(
@@ -233,12 +233,20 @@ void main() {
     );
     await _stabiliser(tester);
     expect(_chemin(routeur), Routes.adminPersonnesDossiers);
-    await tester.tap(find.byType(DisqueRetour));
+    // L5 (LISTES-3) : la liste des dossiers est une liste de la coquille,
+    // sans retour ; la barre laterale navigue.
+    expect(find.byType(DisqueRetour), findsNothing);
+    await tester.tap(
+      _dans(
+        AdminShell.barreLateraleKey,
+        find.text(AdminDomaine.accueil.libelle),
+      ),
+    );
     await _stabiliser(tester);
     expect(_chemin(routeur), Routes.admin);
   });
 
-  testWidgets('Personnes : titre, sous-titre et onglet Comptes', (
+  testWidgets('Personnes : la liste des dossiers et l onglet Comptes', (
     WidgetTester tester,
   ) async {
     final GoRouter routeur = await _monter(
@@ -246,7 +254,8 @@ void main() {
       const Size(1440, 900),
       Routes.adminPersonnesDossiers,
     );
-    expect(find.text(t.dossiers.sousTitre), findsOneWidget);
+    // L5 des listes : plus de sous-titre (§5 quater.3), la liste est la page.
+    expect(find.text(t.dossiers.file.actualiser), findsOneWidget);
 
     // Cinq fonctions sous Personnes depuis IMM-ACCUEIL-FRONT : le selecteur
     // devient un menu quand elles ne tiennent plus en ligne.
@@ -288,10 +297,8 @@ void main() {
     Finder titreCommencantPar(String prenom) => find.byWidgetPredicate(
       (Widget w) => w is Text && (w.data?.startsWith('$prenom ') ?? false),
     );
-    // AD-5/AD-6 : a 1440, maitre-detail. Le nom de la 2e ligne figure dans
-    // la file, et le detail porte « Dossier de/d'{nom} » ; le premier n'est
-    // que dans la file. La ligne ouverte est annoncee selectionnee.
-    expect(titreCommencantPar(second), findsOneWidget);
+    // L5 des listes : le dossier s'ouvre en page, titre « Dossier de/d'{nom} »
+    // de la 2e ligne ; la liste (et le premier) n'est plus a cote.
     expect(
       find.byWidgetPredicate(
         (Widget w) =>
@@ -300,13 +307,7 @@ void main() {
       ),
       findsOneWidget,
     );
-    expect(titreCommencantPar(premier), findsOneWidget);
-    expect(
-      tester.getSemantics(
-        find.bySemanticsLabel(RegExp('^Ouvrir le dossier d.?.?$second ')),
-      ),
-      isSemantics(isSelected: true),
-    );
+    expect(titreCommencantPar(premier), findsNothing);
     expect(
       find.byWidgetPredicate(
         (Widget w) => w is Text && (w.data?.startsWith('DEMO-D') ?? false),
