@@ -19,7 +19,9 @@ const EVENEMENTS = ['demande_recue', 'classe_validee', 'enseignant_affecte', 'de
   'remplacement_avertissement', 'remplacement_pre_alerte', 'remplacement_inutile',
   'titulaire_en_retard', 'remplacant_arrive',
   // Parcours 7 (03/11/2026, migration 20261103400000).
-  'paiement_recu']
+  'paiement_recu',
+  // FN-115b (02/11/2026, migration 20261104300000).
+  'remboursement_effectue', 'litige_ouvert', 'litige_clos']
 
 Deno.test('paiement recu : le montant est ecrit dans la devise de la commande, ou tu quand il manque', () => {
   const avec = contenuPour({ modele: 'paiement_recu', categorie: 'facturation', essentielle: true,
@@ -386,4 +388,22 @@ Deno.test('les autres modeles gardent le gabarit de marque et leurs en-tetes de 
   assertEquals(h['List-Unsubscribe-Post'], 'List-Unsubscribe=One-Click')
   // Essentiel : jamais de lien en un clic.
   assertEquals(lienUnClic({ essentielle: true, jeton: 'j2', base: 'https://x/fn' }), undefined)
+})
+
+Deno.test('FN-115b : remboursement et contestation, montants et frais dans la devise, issue dite', () => {
+  const texte = (m: string, donnees: Record<string, unknown>, langue?: string) =>
+    contenuPour({ modele: m, categorie: 'facturation', essentielle: true, donnees }, langue as never)
+      .blocs.map((b) => b.type === 'texte' ? b.texte : '').join(' ')
+  assert(/30,00/.test(texte('remboursement_effectue', { montant_mineur: 3000, devise: 'USD' })))
+  assert(/suspendu/.test(texte('litige_ouvert', { montant_mineur: 5500, devise: 'USD' })))
+  const perdu = texte('litige_clos', { issue: 'perdu', frais_mineur: 1500, devise: 'USD' })
+  assert(/15,00/.test(perdu) && /solde du foyer/.test(perdu), perdu)
+  const gagne = texte('litige_clos', { issue: 'gagne', devise: 'USD' })
+  assert(/raison à l’académie/.test(gagne) && !/frais/.test(gagne), gagne)
+  assert(/\$15\.00/.test(texte('litige_clos', { issue: 'perdu', frais_mineur: 1500, devise: 'USD' }, 'en')))
+  for (const l of ['en', 'es', 'pt', 'ar']) {
+    for (const m of ['remboursement_effectue', 'litige_ouvert', 'litige_clos']) {
+      assert(texte(m, { montant_mineur: 100, devise: 'USD', issue: 'perdu' }, l).length > 20, `${m} ${l}`)
+    }
+  }
 })

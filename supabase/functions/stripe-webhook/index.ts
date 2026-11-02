@@ -45,6 +45,57 @@ export function parametres(evenement: Stripe.Event | Record<string, unknown>): R
   }
 }
 
+/// FN-115b : les remboursements et contestations (directeur, 01/11/2026). Le
+/// directeur les ajoute aux evenements de son webhook Stripe.
+export const TYPES_REMBOURSEMENT = new Set([
+  'charge.refunded',
+  'charge.dispute.created',
+  'charge.dispute.closed',
+])
+
+/// Les parametres de `remboursement_evenement_stripe` lus dans un evenement :
+/// - `charge.refunded` (objet charge) : le CUMUL rembourse (`amount_refunded`) ;
+/// - `charge.dispute.*` (objet dispute) : montant conteste, identifiant,
+///   statut, et frais du prestataire (somme des `fee` des transactions de la
+///   contestation), lus seulement a la cloture.
+/// Le paiement est le `payment_intent`, que la commande garde depuis le credit.
+export function parametresRemboursement(
+  evenement: Stripe.Event | Record<string, unknown>,
+): Record<string, unknown> | null {
+  const e = evenement as Record<string, unknown>
+  const type = String(e.type ?? '')
+  const objet = (e.data as { object?: Record<string, unknown> } | undefined)?.object
+  if (!TYPES_REMBOURSEMENT.has(type) || !objet) return null
+  const pi = objet.payment_intent
+  const paiement = typeof pi === 'string' ? pi : (pi as { id?: unknown } | null)?.id
+  if (typeof paiement !== 'string') return null
+  const base = {
+    p_evenement: String(e.id),
+    p_type: type,
+    p_environnement: e.livemode === true ? 'live' : 'test',
+    p_paiement: paiement,
+    p_devise: typeof objet.currency === 'string' ? objet.currency : null,
+  }
+  if (type === 'charge.refunded') {
+    return {
+      ...base,
+      p_montant: typeof objet.amount_refunded === 'number' ? objet.amount_refunded : null,
+    }
+  }
+  const transactions = Array.isArray(objet.balance_transactions) ? objet.balance_transactions : []
+  const frais = transactions.reduce(
+    (somme: number, t: unknown) => somme + (typeof (t as { fee?: unknown }).fee === 'number' ? (t as { fee: number }).fee : 0),
+    0,
+  )
+  return {
+    ...base,
+    p_montant: typeof objet.amount === 'number' ? objet.amount : null,
+    p_litige: typeof objet.id === 'string' ? objet.id : null,
+    p_statut: typeof objet.status === 'string' ? objet.status : null,
+    p_frais: type === 'charge.dispute.closed' ? frais : null,
+  }
+}
+
 if (import.meta.main) {
   Deno.serve(async (requete: Request) => {
     if (requete.method !== 'POST') return new Response('methode non autorisee', { status: 405 })
@@ -62,16 +113,19 @@ if (import.meta.main) {
     }
 
     const p = parametres(evenement)
-    if (!p) return new Response('ignore', { status: 200 })
+    const r = p ? null : parametresRemboursement(evenement)
+    if (!p && !r) return new Response('ignore', { status: 200 })
+    const fonction = p ? 'recharge_evenement_stripe' : 'remboursement_evenement_stripe'
+    const parametresAppel = (p ?? r) as Record<string, unknown>
 
-    const { data, error } = await clientService().rpc('recharge_evenement_stripe', p)
+    const { data, error } = await clientService().rpc(fonction, parametresAppel)
     if (error) {
       // Une panne de la base : Stripe renverra l'evenement, et la base n'a
       // rien garde de cette tentative (transaction annulee).
-      console.error('evenement stripe non traite', { evenement: p.p_evenement, erreur: error.message })
+      console.error('evenement stripe non traite', { evenement: parametresAppel.p_evenement, erreur: error.message })
       return new Response('reessayer', { status: 500 })
     }
-    console.log('evenement stripe', { evenement: p.p_evenement, type: p.p_type, issue: data })
+    console.log('evenement stripe', { evenement: parametresAppel.p_evenement, type: parametresAppel.p_type, issue: data })
     return new Response('ok', { status: 200 })
   })
 }
