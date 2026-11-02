@@ -22,6 +22,7 @@ import '../../parcours_offres/libelles_parcours.dart' show libelleNiveau;
 import '../brouillon_inscription.dart';
 import '../code_comptable_retenu.dart';
 import '../inscription_page.dart';
+import '../invitation_en_cours.dart';
 import '../questionnaire/questionnaire_inscription.dart';
 import '../questionnaire/questionnaire_page.dart';
 
@@ -125,11 +126,14 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
         // l'enfant et de la langue vides) pendant l'actualisation.
         ref.read(departDemandeProvider.notifier).commencer();
         ref.read(codeInvitationRetenuProvider.notifier).oublier();
+        // I1 : le profil existe, l'invitation n'est plus en cours.
+        oublierInvitationEnCours();
       }
     } on InvitationNonConsommee {
       // Aucun profil n'a ete cree : le code est oublie, le candidat en
       // demande un nouveau (K-59 : ce qui manque, pourquoi, quoi faire).
       ref.read(codeInvitationRetenuProvider.notifier).oublier();
+      oublierInvitationEnCours();
       _echec(t.inscription.erreurInvitation);
       return;
     } on Object {

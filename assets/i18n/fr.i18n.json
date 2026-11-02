@@ -3938,6 +3938,34 @@
         "releverMaximum": "Relever le maximum dans les Règles",
         "inconnu": "La classe n'est pas créée\u00a0: le serveur a refusé ces choix. Vérifiez l'enseignant et le créneau, puis pressez de nouveau."
       },
+      "c1": {
+        "autresCreneauxContexte": "Une classe se réunit d'ordinaire trois fois par semaine, à des jours fixes. Ajoutez une ligne par autre jour de cours\u00a0; aucune date à saisir.",
+        "prisNommee": "{nom} enseigne déjà la classe «\u00a0{classe}\u00a0» le {quand}\u00a0: changez de créneau ou choisissez une autre personne dans la liste.",
+        "classeNommee": "La classe n'est pas créée\u00a0: cette personne enseigne déjà la classe «\u00a0{classe}\u00a0» le {quand}. Changez de créneau ou choisissez une autre personne dans la liste.",
+        "seanceNommee": "La classe n'est pas créée\u00a0: cette personne a déjà une séance de la classe «\u00a0{classe}\u00a0» le {quand}. Changez de créneau ou choisissez une autre personne dans la liste.",
+        "seanceDatee": "La classe n'est pas créée\u00a0: cette personne a déjà une séance prévue le {quand}. Changez de créneau ou choisissez une autre personne dans la liste.",
+        "creneauxPropres": "La classe n'est pas créée\u00a0: deux de ses créneaux se chevauchent, le premier déborde sur le suivant. Écartez ces créneaux ou raccourcissez la durée, puis pressez de nouveau.",
+        "quand": "{jour} à {heure}, heure {deVille}",
+        "quandSansVille": "{jour} à {heure}",
+        "jourDate": "{jour} {numero} {mois}",
+        "heurePleine": "{h}\u00a0h",
+        "heureMinutes": "{h}\u00a0h\u00a0{mm}",
+        "fuseauEnseignant": "Heures à l'heure {deVille}, le fuseau de l'enseignant.",
+        "fuseauDefaut": "Heures à l'heure {deVille}, le fuseau retenu par défaut.",
+        "fuseauNonTransmis": "Heures à l'heure {deVille}, le fuseau que le serveur retient pour l'instant. Le fuseau de l'enseignant sera pris en compte dès que le serveur l'acceptera.",
+        "abandonQuestion": "Abandonner la nouvelle classe\u00a0?",
+        "abandonConsequence": "Les choix faits dans ce formulaire (public, enseignant, créneaux, nom) seront perdus.",
+        "abandonConfirmer": "Abandonner la nouvelle classe",
+        "abandonContinuer": "Continuer la saisie",
+        "eleveDejaEnClasse": "cet élève est déjà dans une classe active. Retirez-le d'abord de cette classe, ou transférez-le, puis pressez de nouveau.",
+        "eleveInvalide": "le compte de cet élève n'existe plus ou n'est pas actif. Choisissez un autre élève dans la liste.",
+        "eleveNonMembre": "cet élève n'est déjà plus dans cette classe. Rechargez la liste pour voir ses membres.",
+        "classeDejaClose": "cette classe est déjà clôturée. Rechargez la liste des classes.",
+        "motifManquant": "il manque le motif. Choisissez-en un, puis pressez de nouveau.",
+        "reservee": "votre compte n'a pas le droit de faire cette action. Demandez-la à la direction.",
+        "refusInconnu": "le serveur a refusé cette action sans en dire la raison. Vérifiez vos choix, puis pressez de nouveau.",
+        "connexion": "il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Pressez de nouveau dans un instant."
+      },
       "detailTitre": "Classe {libelle}",
       "detailMembres": "Membres",
       "detailAucunMembre": "Aucun élève dans cette classe pour l'instant.",
@@ -13087,6 +13115,59 @@
     },
     "alertes": {
       "signalement": "{categorie}\u00a0: signalement pour l'élève {matricule}. Note interne\u00a0: «\u00a0{note}\u00a0»"
+    }
+  },
+  "i1": {
+    "invitations": {
+      "aideEmail": "Le code est créé pour cette adresse et part aussitôt par e-mail, avec le lien d'inscription. Vous pouvez aussi le transmettre de votre côté.",
+      "creee": "Invitation créée. L'e-mail avec le code {code} part vers {email}.",
+      "dejaInvite": "Une invitation est déjà active pour cette adresse. Elle est dans la liste ci-dessous ; son e-mail ne repart pas une seconde fois."
+    },
+    "familles": {
+      "choixTitre": "Une famille déjà inscrite",
+      "choixExplication": "À choisir pour les familles importées : chacune reçoit un e-mail pour ouvrir son espace, sans rien ressaisir.",
+      "titre": "Familles à inviter",
+      "aide": "Chaque famille importée reçoit, sur votre geste, un e-mail qui l'invite à se connecter avec son adresse. Rien ne part tout seul.",
+      "personnes": "Personnes : {n}",
+      "etat": {
+        "aEnvoyer": "À envoyer",
+        "enFile": "En cours d'envoi",
+        "envoyee": "Envoyée",
+        "echec": "Non partie",
+        "compteCree": "Espace ouvert"
+      },
+      "envoyeeLe": "Envoyée le {date}",
+      "envoyer": "Envoyer l'invitation",
+      "envoyerPour": "Envoyer l'invitation à {email}",
+      "renvoyer": "Renvoyer l'invitation",
+      "renvoyerPour": "Renvoyer l'invitation à {email}",
+      "envoyerToutes": "Envoyer à toutes les familles ({n})",
+      "toutesQuestion": "Envoyer l'invitation à toutes les familles à inviter ? Nombre de familles : {n}.",
+      "toutesConsequence": "Chaque famille reçoit un e-mail tout de suite. Un e-mail parti ne se reprend pas.",
+      "toutesConfirmer": "Oui, envoyer à toutes les familles ({n})",
+      "enFile": "L'invitation part vers {email}.",
+      "dejaEnFile": "Une invitation est déjà partie ou en cours d'envoi vers {email} : rien de plus n'est envoyé.",
+      "compteCree": "Cette famille a déjà ouvert son espace : rien n'est envoyé.",
+      "introuvable": "Cette famille n'est plus à inviter. Actualisez la liste.",
+      "toutesEnFile": "Les invitations partent. Nombre de familles : {n}.",
+      "nombreChange": "La liste a changé depuis votre confirmation : rien n'est parti. Relisez-la, puis confirmez de nouveau.",
+      "erreurEnvoi": "L'envoi n'est pas confirmé. Actualisez la liste avant de recommencer.",
+      "horsLigne": "L'invitation n'est pas partie. Réessayez dans un instant.",
+      "nonAutorise": "Seule la direction peut envoyer ces invitations. Reconnectez-vous avec un compte de la direction.",
+      "vide": "Aucune famille importée à inviter",
+      "videDetail": "Importez les inscriptions actuelles : chaque famille confirmée apparaît ici.",
+      "toutesEnvoyees": "Toutes les familles ont reçu leur invitation ou ouvert leur espace.",
+      "erreurListe": "Les familles importées n'ont pas pu être lues. Réessayez dans un instant.",
+      "sansDonnees": "Les familles importées",
+      "indisponible": "L'envoi des invitations aux familles n'est pas encore branché sur ce serveur."
+    },
+    "import": {
+      "invitationsAide": "Chaque nouvelle famille attend votre invitation. La liste juste en dessous l'envoie à une famille ou à toutes. Rien ne part tout seul."
+    },
+    "lien": {
+      "dejaServiTitre": "Ce lien a déjà servi ou a expiré",
+      "dejaServiDetail": "Un lien de connexion ne sert qu'une fois, et pour peu de temps. Demandez-en un nouveau : saisissez votre adresse e-mail sur la page de connexion.",
+      "nouveauLien": "Recevoir un nouveau lien"
     }
   }
 }

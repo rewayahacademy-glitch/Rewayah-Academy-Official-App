@@ -26,7 +26,13 @@ Ce qui est décidé :
 6. **Qui est prévenu** : la famille, par e-mail et dans l'application ; la direction, dans l'application, qui en garde la trace ; l'enseignant, jamais.
 7. **D'où part un remboursement** : de l'écran Finance de l'application. Le serveur y propose le montant juste, selon les points 2 et 3 ; la direction confirme ; l'application rembourse par le prestataire. Un remboursement fait directement chez le prestataire est capté aussi.
 
-**Arbitrage du pilote, même jour**, pour accorder ces points avec les conditions publiques (« première semaine remboursée ») :
+**Décision du directeur, 02/11/2026 (remplace l'arbitrage du pilote ci-dessous)**, après comparaison avec la loi européenne (directive 2011/83/UE : 14 jours de rétractation pour un service à distance, la part déjà fournie restant due) et avec les pratiques d'Anthropic, Google et Microsoft. Réponse : « oui pour le remboursement, et cela doit être mentionné sur tout le projet » :
+- **pendant le délai de rétractation** (14 jours à compter du paiement), la famille est remboursée de ce qu'elle a payé, moins les séances déjà suivies ;
+- **ensuite, arrêter reste un droit, jamais un geste** : une formule payée d'avance (trimestre, année) est remboursée du reste, une fois les mois commencés comptés au prix mensuel normal, sans la remise de la formule (point 3) ;
+- **rien en dur** : le délai est la valeur `remboursement_delai_jours` de la politique en vigueur, réglée par la direction (14), et les textes l'affichent depuis la politique ;
+- **partout** : conditions et page « Annulation et remboursement » de l'application (fr, ar), site public, e-mails, fiche FN-115c, documents de `docs/current/`. « Première semaine » et « sauf geste de la direction » disparaissent.
+
+~~**Arbitrage du pilote, même jour**, pour accorder ces points avec les conditions publiques (« première semaine remboursée ») :~~ (caduc depuis le 02/11/2026)
 - dans la première semaine, on rembourse ce qui a été payé, moins les séances suivies (point 2) ;
 - après la première semaine, une formule payée d'avance n'est remboursée que sur geste de la direction, avec le calcul du point 3.
 

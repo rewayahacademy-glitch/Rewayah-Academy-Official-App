@@ -35,6 +35,7 @@ import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/champ_etiquete.dart';
 import '../../core/widgets/champ_recherche.dart';
 import '../../core/widgets/choice_card_group.dart';
+import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
@@ -55,6 +56,7 @@ import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 import '../admin_fusion/feuilles_fusion.dart';
 import '../creneaux/plages.dart' show jourCapitalise, nommerHeure;
+import '../suivi_demandes/libelles_suivi_demandes.dart' show deFuseau;
 import 'bas_de_feuille.dart';
 import 'cahiers_classe.dart';
 import 'duree_creneau.dart';
@@ -63,6 +65,7 @@ import 'feuille_reglages_classe.dart';
 import 'genre_classe_libelles.dart';
 import 'refus_creation_classe_libelles.dart';
 import 'refus_deplacement_libelles.dart';
+import 'refus_serveur_libelles.dart';
 import 'reglage_partage.dart';
 
 /// Operations > Groupes : le noyau du produit depuis le pivot du 19
@@ -1085,17 +1088,9 @@ String _creneau(GroupeAdmin groupe) =>
     '${t.disponibilites.joursLongs[(groupe.creneau.jour - 1).clamp(0, 6)]} '
     '${groupe.creneau.heure}h';
 
-/// Le message metier d'une exception, sans son type.
-///
-/// Les exceptions
-/// Postgrest portent le message metier en clair apres le premier « : ».
-String _message(Object erreur) {
-  final String brut = erreur.toString();
-  final int deuxPoints = brut.indexOf(': ');
-  return deuxPoints >= 0 && deuxPoints + 2 < brut.length
-      ? brut.substring(deuxPoints + 2)
-      : brut;
-}
+/// La phrase d'un echec venu du serveur (C1, UX-019) : jamais le texte brut
+/// de l'exception, ni un code (`P0001`), ni le mot interne « groupe ».
+String _message(Object erreur) => phraseEchecServeurClasse(erreur);
 
 void _ouvrirCreation(BuildContext context, WidgetRef ref) {
   AppBottomSheet.ouvrir<void>(
@@ -1239,7 +1234,11 @@ void _ouvrirCloture(
       onSucces: () {
         ref
           ..invalidate(groupesProvider)
-          ..invalidate(pageClassesAdminProvider);
+          ..invalidate(pageClassesAdminProvider)
+          // C1 (02/11/2026) : la classe close libere les creneaux de son
+          // enseignant ; sans cela, « Nouvelle classe » le disait encore
+          // « deja en classe a ce creneau » jusqu'au rechargement de la page.
+          ..invalidate(enseignantsDuPortProvider);
         apres?.call();
       },
     ),
@@ -1288,14 +1287,11 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
   /// (30/10/2026).
   int? _duree;
 
-  /// D2 (29/10/2026) : les creneaux suivants de la semaine. Trois creneaux
-  /// par defaut, a des jours fixes : le premier, et deux lignes a remplir ou
-  /// a retirer.
+  /// D2 (29/10/2026) : les creneaux suivants de la semaine. C1 (UX-003,
+  /// 02/11/2026) : la feuille s'ouvre sur un seul creneau ; « Ajouter un
+  /// creneau » en pose d'autres, aucune ligne vide n'est imposee.
   final List<({int? jour, int? heure, int? duree})> _autres =
-      <({int? jour, int? heure, int? duree})>[
-        (jour: null, heure: null, duree: null),
-        (jour: null, heure: null, duree: null),
-      ];
+      <({int? jour, int? heure, int? duree})>[];
   late int? _seuil = _seuilParDefaut(_type);
   bool _seuilChoisi = false;
   late final TextEditingController _nom = TextEditingController(
@@ -1347,20 +1343,39 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
     PortCreationClasse creation,
     EnseignantPropose? enseignant,
   ) {
-    final f = t.admin.groupes.formulaire;
+    // C1 (UX-030) : la ville en clair, jamais l'identifiant IANA.
+    final c1 = t.admin.groupes.c1;
     if (!creation.retientFuseau) {
       return (
         fuseau: fuseauServeurParDefaut,
-        phrase: f.fuseauNonTransmis(fuseau: fuseauServeurParDefaut),
+        phrase: c1.fuseauNonTransmis(
+          deVille: deFuseau(
+            fuseauServeurParDefaut,
+            cle: 'admin.groupes.c1.fuseauNonTransmis',
+          ),
+        ),
       );
     }
     final String? propre = enseignant?.fuseauIana;
     return propre == null
         ? (
             fuseau: fuseauServeurParDefaut,
-            phrase: f.fuseauDefaut(fuseau: fuseauServeurParDefaut),
+            phrase: c1.fuseauDefaut(
+              deVille: deFuseau(
+                fuseauServeurParDefaut,
+                cle: 'admin.groupes.c1.fuseauDefaut',
+              ),
+            ),
           )
-        : (fuseau: propre, phrase: f.fuseauEnseignant(fuseau: propre));
+        : (
+            fuseau: propre,
+            phrase: c1.fuseauEnseignant(
+              deVille: deFuseau(
+                propre,
+                cle: 'admin.groupes.c1.fuseauEnseignant',
+              ),
+            ),
+          );
   }
 
   /// Le premier champ qui manque, dans l'ordre de la feuille ; nul quand
@@ -1387,11 +1402,44 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
     }
     if (choisi == null) return f.manqueListeEnseignants;
     if (!choisi.choisissable) {
+      final String? classe = _classePrise(choisi);
+      if (classe != null) {
+        // C1 (UX-020) : la classe qui occupe deja ce creneau, nommee.
+        return t.admin.groupes.c1.prisNommee(
+          nom: choisi.enseignant.libelle,
+          classe: classe,
+          quand: quandConflit(ConflitHoraire(jour: _jour!, heure: _heure!)),
+        );
+      }
       return manqueEnseignantClasse(choisi, genre, _type);
     }
     if (_seuil == null) return f.manqueSeuil;
     if (_nom.text.trim().isEmpty) return f.manqueNom;
     return null;
+  }
+
+  /// C1 (UX-020) : le nom de la classe active de [choisi] au creneau choisi,
+  /// lu dans la liste des classes deja chargee ; nul si l'enseignant n'est
+  /// pas « pris » a ce creneau ou si la liste ne la montre pas (rien n'est
+  /// invente, la phrase d'avant reste).
+  String? _classePrise(EnseignantClasse choisi) {
+    if (!choisi.pris ||
+        choisi.genreInconnu ||
+        choisi.genreCompatible == false) {
+      return null;
+    }
+    final List<GroupeAdmin>? groupes = ref.read(groupesProvider).value;
+    return groupes
+        ?.where(
+          (GroupeAdmin g) =>
+              g.actif &&
+              g.teacherId == choisi.enseignant.id &&
+              g.creneau.jour == _jour &&
+              g.creneau.heure == _heure,
+        )
+        .map((GroupeAdmin g) => g.libelle)
+        .where((String l) => l.trim().isNotEmpty)
+        .firstOrNull;
   }
 
   Future<void> _creer(EnseignantClasse? choisi, String fuseau) async {
@@ -1436,7 +1484,10 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
             ],
           );
       widget.onCree();
-      if (mounted) Navigator.of(context).pop();
+      if (mounted) {
+        setState(() => _fermeture = true);
+        Navigator.of(context).pop();
+      }
     } on CreationClasseRefusee catch (refus) {
       // CAND-Q15 : le serveur a refuse l'enseignant ou le creneau. Une phrase
       // par motif, jamais le texte SQL ; la feuille garde les choix.
@@ -1446,6 +1497,7 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
             refus.motif,
             actives: refus.actives,
             maximum: refus.maximum,
+            conflit: refus.conflit,
           );
           _plafondClasses =
               refus.motif == MotifRefusCreationClasse.plafondClasses;
@@ -1468,6 +1520,9 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
     final TextTheme textes = Theme.of(context).textTheme;
     final f = t.admin.groupes.formulaire;
     final PortCreationClasse creation = ref.watch(portCreationClasseProvider);
+    // C1 (UX-020) : la liste des classes, pour nommer celle qui occupe deja
+    // le creneau de l'enseignant choisi.
+    ref.watch(groupesProvider);
     final AsyncValue<List<EnseignantPropose>> source = ref.watch(
       enseignantsPourClasseProvider(_type),
     );
@@ -1527,7 +1582,7 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
           )
         : const AsyncLoading<List<PersonneProposee>>();
 
-    return Column(
+    final Widget contenu = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         // K-58 : une phrase de contexte ouvre la feuille.
@@ -1693,7 +1748,11 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
         // 4 bis. Les autres creneaux de la semaine (D2, 29/10/2026).
         TitreChamp(f.autresCreneauxTitre, style: textes.titleMedium),
         Ecart.vXs,
-        TexteSansCoupure(f.autresCreneauxContexte, style: textes.bodySmall),
+        // C1 (UX-003) : la phrase suit la feuille a un seul creneau.
+        TexteSansCoupure(
+          t.admin.groupes.c1.autresCreneauxContexte,
+          style: textes.bodySmall,
+        ),
         Ecart.vMd,
         for (int i = 0; i < _autres.length; i++) ...<Widget>[
           _LigneAutreCreneau(
@@ -1805,6 +1864,48 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
         ),
       ],
     );
+
+    // C1 (UX-031) : Echap, le voile ou le retour ne perdent jamais une
+    // saisie sans le demander.
+    return PopScope(
+      canPop: !_saisie || _fermeture,
+      onPopInvokedWithResult: (bool fait, Object? _) {
+        if (!fait) unawaited(_demanderAbandon());
+      },
+      child: contenu,
+    );
+  }
+
+  /// C1 (UX-031) : vrai des que la feuille porte un choix de la personne ;
+  /// la fermer demande alors une confirmation.
+  bool get _saisie =>
+      _type != TypePublicGroupe.enfant ||
+      _genre != null ||
+      _enseignantId != null ||
+      _jour != null ||
+      _heure != null ||
+      _duree != null ||
+      _autres.isNotEmpty ||
+      _seuilChoisi ||
+      _nomSaisi;
+
+  /// Vrai quand la feuille se ferme d'elle-meme (classe creee, ou abandon
+  /// confirme) : le retour passe alors sans question.
+  bool _fermeture = false;
+
+  /// Demande s'il faut abandonner la saisie, et ferme la feuille si oui.
+  Future<void> _demanderAbandon() async {
+    final c1 = t.admin.groupes.c1;
+    final bool abandon = await ConfirmDestructive.demander(
+      context,
+      question: c1.abandonQuestion,
+      consequence: c1.abandonConsequence,
+      libelleConfirmer: c1.abandonConfirmer,
+      libelleAnnuler: c1.abandonContinuer,
+    );
+    if (!abandon || !mounted) return;
+    setState(() => _fermeture = true);
+    Navigator.of(context).pop();
   }
 
   /// Les creneaux libres de l'enseignant choisi, mis en avant (D6) : une
