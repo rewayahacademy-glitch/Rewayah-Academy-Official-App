@@ -6891,5 +6891,7 @@
   "notifications.evenements.litigeClosDirection": "FN-115b (directeur, 01/11/2026) : remboursements et contestations, « oui pour les 7 points » ; famille prevenue par e-mail et application, direction par l'application (DECISION-TARIFS-2026-10-18.md, section du 01/11/2026).",
 "adulte.recharge.conditionsRemboursement": "FN-115 (directeur, 01/11/2026) : remboursements et contestations, « oui pour les 7 points » ; DECISION-TARIFS-2026-10-18.md, section du 01/11/2026 (opposabilite des frais de contestation : conditions lues avant de payer).",
   "adulte.recharge.fraisContestation": "FN-115 (directeur, 01/11/2026) : remboursements et contestations, « oui pour les 7 points » ; DECISION-TARIFS-2026-10-18.md, section du 01/11/2026 (opposabilite des frais de contestation : conditions lues avant de payer).",
-  "juridique.annulation.litige.titre": "FN-115 (directeur, 01/11/2026) : remboursements et contestations, « oui pour les 7 points » ; DECISION-TARIFS-2026-10-18.md, section du 01/11/2026 (opposabilite des frais de contestation : conditions lues avant de payer)."
+  "juridique.annulation.litige.titre": "FN-115 (directeur, 01/11/2026) : remboursements et contestations, « oui pour les 7 points » ; DECISION-TARIFS-2026-10-18.md, section du 01/11/2026 (opposabilite des frais de contestation : conditions lues avant de payer).",
+  "admin.regroupements.voirClasse": "L3 des listes (01/11/2026) : menu « … » d'une classe créée depuis un regroupement",
+  "admin.regroupements.manquentCourt": "L3 des listes, relecture du pilote (01/11/2026) : une ligne incomplete dit ce qui manque en une phrase courte ; l'explication longue reste dans la feuille"
 }

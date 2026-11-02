@@ -56,7 +56,17 @@ class ColonneDonnees<T> {
     this.rendreMemeSiTexteVide = false,
     this.tri,
     this.ligneDense = true,
+    this.action = false,
   });
+
+  /// L3 des listes (01/11/2026), mode opt-in : la colonne porte l'action
+  /// principale de la ligne (un bouton, rendu par [rendu]). Elle reste un
+  /// noeud a part du lecteur d'ecran : au tableau, sa cellule est une
+  /// frontiere ; en carte, elle se pose apres les informations, hors de leur
+  /// regroupement (sans cela, le bouton se fondait dans la carte et ne
+  /// s'atteignait plus seul). Faux par defaut : les autres listes ne changent
+  /// pas.
+  final bool action;
 
   /// LISTES-2 : faux, la colonne n'entre pas dans la ligne secondaire d'une
   /// ligne dense de telephone ([DataCollection.densiteTelephone]) ; elle reste
@@ -1163,10 +1173,14 @@ class _Cellule<T> extends StatelessWidget {
       // Au debut de la cellule, a sa largeur naturelle : une pastille posee sans
       // cet alignement s'etirait sur toute la colonne (138 a 164 points) et
       // devenait une barre (LISTES-1, relecture visuelle K-04).
-      return Align(
+      final Widget cellule = Align(
         alignment: AlignmentDirectional.centerStart,
         child: rendu(context, ligne),
       );
+      // [ColonneDonnees.action] : un noeud a part, jamais fondu dans la ligne.
+      return colonne.action
+          ? Semantics(container: true, child: cellule)
+          : cellule;
     }
     // DUREE-INSECABLE-5 : la valeur suit le titre de la colonne dans le
     // libelle parle ; une valeur ancree pour s'afficher seule (« 12 jours »,
@@ -1214,12 +1228,18 @@ class _Carte<T> extends StatelessWidget {
     // nombre : le resume ci-dessous lit des colonnes qui portent deja ce titre.
     final Iterable<ColonneDonnees<T>> pastilles = colonnes.where(
       (ColonneDonnees<T> c) =>
-          c.role == RoleColonne.secondaire && c.rendu != null,
+          c.role == RoleColonne.secondaire && c.rendu != null && !c.action,
     );
+    // [ColonneDonnees.action] : les boutons de la carte, hors du regroupement
+    // des informations ; une action sans objet sur cette ligne n'est pas posee.
+    final List<ColonneDonnees<T>> actionsCarte = <ColonneDonnees<T>>[
+      for (final ColonneDonnees<T> c in colonnes)
+        if (c.action && c.rendu != null && c.texte(ligne).isNotEmpty) c,
+    ];
     final Iterable<ColonneDonnees<T>> secondaires = colonnes
         .where(
           (ColonneDonnees<T> c) =>
-              c.role == RoleColonne.secondaire && c.rendu == null,
+              c.role == RoleColonne.secondaire && c.rendu == null && !c.action,
         )
         .map(_avecTitreDuNombre<T>);
     final Iterable<ColonneDonnees<T>> aPart = colonnes.where(
@@ -1284,51 +1304,82 @@ class _Carte<T> extends StatelessWidget {
 
     // La carte entiere se lit comme un seul element : sans ce regroupement, un
     // lecteur d'ecran enoncerait quatre fragments sans lien entre eux.
-    final Widget carte = MergeSemantics(
-      child: AppCard(
-        selectionnee: selectionnee || cochee,
-        onPress: onSelectionner == null ? null : () => onSelectionner!(ligne),
-        marge: commandes ? _margeCarteCommandes : null,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            if (enTeteCarte != null) ...<Widget>[enTeteCarte, Ecart.vSm],
-            if (pastilles.isNotEmpty) ...<Widget>[
-              Wrap(
-                spacing: AppSpacing.sm,
-                runSpacing: AppSpacing.xs,
-                children: <Widget>[
-                  for (final ColonneDonnees<T> c in pastilles)
-                    c.rendu!(context, ligne),
-                ],
-              ),
-              if (resume.isNotEmpty) Ecart.vSm,
+    final Widget informations = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        if (enTeteCarte != null) ...<Widget>[enTeteCarte, Ecart.vSm],
+        if (pastilles.isNotEmpty) ...<Widget>[
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.xs,
+            children: <Widget>[
+              for (final ColonneDonnees<T> c in pastilles)
+                c.rendu!(context, ligne),
             ],
-            if (resume.isNotEmpty)
-              _TexteCollection(
-                resume,
-                style: palette.inkMuted.applyTo(
-                  textes.bodySmall ?? const TextStyle(),
-                ),
-              ),
-            for (final ColonneDonnees<T> colonne in aPart)
-              if (colonne.rendreMemeSiTexteVide ||
-                  colonne.texte(ligne).isNotEmpty) ...<Widget>[
-                Ecart.vSm,
-                colonne.rendu?.call(context, ligne) ??
-                    _TexteCollection(
-                      colonne.texte(ligne),
-                      style: palette.inkMuted.applyTo(
-                        AppTypography.tabulaire(
-                          textes.bodySmall ?? const TextStyle(),
-                        ),
-                      ),
+          ),
+          if (resume.isNotEmpty) Ecart.vSm,
+        ],
+        if (resume.isNotEmpty)
+          _TexteCollection(
+            resume,
+            style: palette.inkMuted.applyTo(
+              textes.bodySmall ?? const TextStyle(),
+            ),
+          ),
+        for (final ColonneDonnees<T> colonne in aPart)
+          if (colonne.rendreMemeSiTexteVide ||
+              colonne.texte(ligne).isNotEmpty) ...<Widget>[
+            Ecart.vSm,
+            colonne.rendu?.call(context, ligne) ??
+                _TexteCollection(
+                  colonne.texte(ligne),
+                  style: palette.inkMuted.applyTo(
+                    AppTypography.tabulaire(
+                      textes.bodySmall ?? const TextStyle(),
                     ),
-              ],
+                  ),
+                ),
           ],
-        ),
-      ),
+      ],
     );
+    final Widget carte = actionsCarte.isEmpty
+        ? MergeSemantics(
+            child: AppCard(
+              selectionnee: selectionnee || cochee,
+              onPress: onSelectionner == null
+                  ? null
+                  : () => onSelectionner!(ligne),
+              marge: commandes ? _margeCarteCommandes : null,
+              child: informations,
+            ),
+          )
+        // Les informations restent un seul element ; chaque bouton est le
+        // sien (ColonneDonnees.action).
+        : AppCard(
+            selectionnee: selectionnee || cochee,
+            onPress: onSelectionner == null
+                ? null
+                : () => onSelectionner!(ligne),
+            marge: commandes ? _margeCarteCommandes : null,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                MergeSemantics(child: informations),
+                Ecart.vMd,
+                Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.xs,
+                  children: <Widget>[
+                    for (final ColonneDonnees<T> c in actionsCarte)
+                      Semantics(
+                        container: true,
+                        child: c.rendu!(context, ligne),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          );
 
     if (!commandes) return carte;
 
@@ -1350,8 +1401,15 @@ class _Carte<T> extends StatelessWidget {
               onChange: (bool _) => selection!.onBasculer(ligne),
             ),
           ),
+        // Un noeud a part, comme dans la ligne de tableau et la ligne dense :
+        // sans lui, le noeud du menu couvrait toute la carte, et un toucher
+        // en son centre tombait sur la carte (lu par le robot a 390, L3).
         if (menu != null)
-          PositionedDirectional(end: decalage, top: decalage, child: menu),
+          PositionedDirectional(
+            end: decalage,
+            top: decalage,
+            child: Semantics(container: true, child: menu),
+          ),
       ],
     );
   }
