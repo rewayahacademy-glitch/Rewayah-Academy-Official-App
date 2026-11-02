@@ -135,6 +135,34 @@ void main() {
       );
     });
 
+    test('FN-115b : garde la cause, l issue et la page Finance', () {
+      Map<String, dynamic>? lus;
+      final NotificationTuteur notification = notificationDepuis(
+        _row(
+          evenement: 'litige_clos',
+          destination: '/admin/finance',
+          params: <String, dynamic>{
+            'cause': 'litige',
+            'issue': 'gagne',
+            'portee': 'direction',
+            'commande_id': 'identifiant-interne',
+            'montant_mineur': 5500,
+          },
+        ),
+        titrePour: (String _, Map<String, dynamic> params) {
+          lus = params;
+          return const NotificationContenu(titre: 'Contestation close');
+        },
+      );
+
+      expect(lus, <String, dynamic>{
+        'cause': 'litige',
+        'issue': 'gagne',
+        'portee': 'direction',
+      });
+      expect(notification.destination, '/admin/finance');
+    });
+
     test('drops destinations outside the table allowlist', () {
       final NotificationTuteur notification = notificationDepuis(
         _row(destination: 'https://example.invalid'),

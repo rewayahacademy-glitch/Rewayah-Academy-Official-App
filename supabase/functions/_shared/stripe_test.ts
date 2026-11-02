@@ -13,7 +13,7 @@ import {
   Stripe,
   verifierEvenement,
 } from './stripe.ts'
-import { parametres } from '../stripe-webhook/index.ts'
+import { parametres, parametresRemboursement } from '../stripe-webhook/index.ts'
 
 const SECRET = 'whsec_test_rewayah'
 const stripe = clientStripe('sk_test_rewayah')
@@ -133,4 +133,37 @@ Deno.test('reprise integree : seul un identifiant de session marque se relit', (
   assertEquals(sessionIntegree('https://checkout.stripe.com/c/pay/cs_live_a1B2'), null)
   assertEquals(sessionIntegree(`${MARQUE_INTEGRE}cs_live_a1B2/../x`), null)
   assertEquals(sessionIntegree(`${MARQUE_INTEGRE}`), null)
+})
+
+Deno.test('FN-115b : remboursement, le cumul rembourse et le paiement', () => {
+  assertEquals(parametresRemboursement({
+    id: 'evt_r', type: 'charge.refunded', livemode: false,
+    data: { object: { id: 'ch_1', payment_intent: 'pi_1', amount_refunded: 4000, currency: 'usd' } },
+  }), {
+    p_evenement: 'evt_r', p_type: 'charge.refunded', p_environnement: 'test', p_paiement: 'pi_1',
+    p_devise: 'usd', p_montant: 4000,
+  })
+})
+
+Deno.test('FN-115b : contestation ouverte puis perdue, frais lus a la cloture seulement', () => {
+  const objet = {
+    id: 'du_1', payment_intent: 'pi_2', amount: 5500, currency: 'usd', status: 'needs_response',
+    balance_transactions: [{ fee: 1500 }, { fee: 0 }],
+  }
+  assertEquals(parametresRemboursement({ id: 'evt_d1', type: 'charge.dispute.created', livemode: true, data: { object: objet } }), {
+    p_evenement: 'evt_d1', p_type: 'charge.dispute.created', p_environnement: 'live', p_paiement: 'pi_2',
+    p_devise: 'usd', p_montant: 5500, p_litige: 'du_1', p_statut: 'needs_response', p_frais: null,
+  })
+  assertEquals(
+    parametresRemboursement({
+      id: 'evt_d2', type: 'charge.dispute.closed', livemode: true, data: { object: { ...objet, status: 'lost' } },
+    })?.p_frais,
+    1500,
+  )
+})
+
+Deno.test('FN-115b : sans paiement ou d un autre type, rien ; le credit reste a son chemin', () => {
+  assertEquals(parametresRemboursement({ id: 'e', type: 'charge.refunded', data: { object: { amount_refunded: 1 } } }), null)
+  assertEquals(parametresRemboursement({ id: 'e', type: 'checkout.session.completed', data: { object: {} } }), null)
+  assertEquals(parametres({ id: 'e', type: 'charge.refunded', data: { object: { id: 'ch_1' } } }), null)
 })
