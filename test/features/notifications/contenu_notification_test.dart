@@ -312,4 +312,89 @@ void main() {
       expect(texte, isNot(contains('seance_terminee')));
     });
   });
+
+  group('FN-115b : remboursement et contestation', () {
+    test('la famille et la direction ne lisent pas la meme phrase', () {
+      final e = t.notifications.evenements;
+      expect(
+        contenuNotificationPour(
+          'remboursement_effectue',
+          const <String, dynamic>{'portee': 'foyer'},
+        ).titre,
+        e.remboursementEffectue,
+      );
+      expect(
+        contenuNotificationPour(
+          'remboursement_effectue',
+          const <String, dynamic>{'portee': 'direction'},
+        ).titre,
+        e.remboursementEffectueDirection,
+      );
+      expect(
+        contenuNotificationPour('litige_ouvert', const <String, dynamic>{
+          'portee': 'foyer',
+        }).titre,
+        e.litigeOuvert,
+      );
+      expect(
+        contenuNotificationPour('litige_ouvert', const <String, dynamic>{
+          'portee': 'direction',
+        }).titre,
+        e.litigeOuvertDirection,
+      );
+    });
+
+    test('la cloture dit l issue a la famille', () {
+      final e = t.notifications.evenements;
+      expect(
+        contenuNotificationPour('litige_clos', const <String, dynamic>{
+          'portee': 'foyer',
+          'issue': 'gagne',
+        }).titre,
+        e.litigeClosGagne,
+      );
+      expect(
+        contenuNotificationPour('litige_clos', const <String, dynamic>{
+          'portee': 'foyer',
+          'issue': 'perdu',
+        }).titre,
+        e.litigeClosPerdu,
+      );
+      expect(
+        contenuNotificationPour('litige_clos', const <String, dynamic>{
+          'portee': 'direction',
+          'issue': 'perdu',
+        }).titre,
+        e.litigeClosDirection,
+      );
+    });
+
+    test(
+      'une suspension dit sa cause : remboursement, contestation ou impaye',
+      () {
+        final e = t.notifications.evenements;
+        expect(
+          contenuNotificationPour(
+            'acces_suspendu_paiement',
+            const <String, dynamic>{'cause': 'remboursement'},
+          ).titre,
+          e.accesSuspenduRemboursement,
+        );
+        expect(
+          contenuNotificationPour(
+            'acces_suspendu_paiement',
+            const <String, dynamic>{'cause': 'litige'},
+          ).titre,
+          e.accesSuspenduLitige,
+        );
+        expect(
+          contenuNotificationPour(
+            'acces_suspendu_paiement',
+            const <String, dynamic>{},
+          ).titre,
+          e.accesSuspenduPaiement,
+        );
+      },
+    );
+  });
 }

@@ -71,9 +71,29 @@ NotificationContenu contenuNotificationPour(
     'controle_mission_non_controlee' => evenements.controleMissionNonControlee,
     'classe_changee' => evenements.classeChangee,
     'paiement_relance' => evenements.paiementRelance,
-    'acces_suspendu_paiement' => evenements.accesSuspenduPaiement,
+    // FN-115b : la suspension dit sa cause quand ce n'est pas un impaye.
+    'acces_suspendu_paiement' => switch (params['cause']) {
+      'remboursement' => evenements.accesSuspenduRemboursement,
+      'litige' => evenements.accesSuspenduLitige,
+      _ => evenements.accesSuspenduPaiement,
+    },
     'acces_retabli_paiement' => evenements.accesRetabliPaiement,
     'paiement_recu' => evenements.paiementRecu,
+    // FN-115b : la famille et la direction ne lisent pas la meme phrase.
+    'remboursement_effectue' =>
+      portee == 'direction'
+          ? evenements.remboursementEffectueDirection
+          : evenements.remboursementEffectue,
+    'litige_ouvert' =>
+      portee == 'direction'
+          ? evenements.litigeOuvertDirection
+          : evenements.litigeOuvert,
+    'litige_clos' =>
+      portee == 'direction'
+          ? evenements.litigeClosDirection
+          : params['issue'] == 'gagne'
+          ? evenements.litigeClosGagne
+          : evenements.litigeClosPerdu,
     // Fiche du 27/10, ligne 11.
     'classe_creee' => selonPortee(
       soi: evenements.classeCreeeSoi,

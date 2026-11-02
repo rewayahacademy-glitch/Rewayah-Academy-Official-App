@@ -128,6 +128,29 @@ const MODELES: Record<string, Fabrique> = {
         : `O pagamento de ${m} foi recebido. O saldo está atualizado na aplicação.`,
       'Abrir a aplicação', '/tuteur/foyer/recharge')
   },
+  // FN-115b (02/11/2026) : remboursement et contestation d'un paiement.
+  remboursement_effectue: (d) => {
+    const m = montantLisible(d, PAROLE.locale)
+    return avis(d, 'Foi feito um reembolso', 'Foi feito um reembolso',
+      m === null ? 'Foi feito um reembolso no meio de pagamento utilizado. O saldo está atualizado na aplicação.'
+        : `Foi feito um reembolso de ${m} no meio de pagamento utilizado. O saldo está atualizado na aplicação.`,
+      'Abrir a aplicação', '/tuteur/foyer/recharge')
+  },
+  litige_ouvert: (d) => {
+    const m = montantLisible(d, PAROLE.locale)
+    return avis(d, 'Um pagamento está contestado junto do banco', 'Um pagamento está contestado',
+      m === null ? 'Um pagamento está contestado junto do banco. Durante a análise, os alunos em causa não têm acesso às sessões nem aos recursos. Se for um erro, escreva-nos.'
+        : `Um pagamento de ${m} está contestado junto do banco. Durante a análise, os alunos em causa não têm acesso às sessões nem aos recursos. Se for um erro, escreva-nos.`,
+      'Abrir a aplicação', '/tuteur/foyer/recharge')
+  },
+  litige_clos: (d) => {
+    const f = montantLisible({ montant_mineur: d.frais_mineur, devise: d.devise }, PAROLE.locale)
+    return avis(d, 'A contestação está encerrada', 'A contestação está encerrada',
+      d.issue === 'gagne' ? 'O banco deu razão à academia: o pagamento é restabelecido e o acesso volta assim que o mês estiver novamente pago.'
+        : f === null ? 'O banco deu-lhe razão: o pagamento é tratado como um reembolso total. As despesas da contestação são acrescentadas ao saldo da família.'
+        : `O banco deu-lhe razão: o pagamento é tratado como um reembolso total. As despesas da contestação (${f}) são acrescentadas ao saldo da família.`,
+      'Abrir a aplicação', '/tuteur/foyer/recharge')
+  },
   invitation_foyer: (d) => {
     const qui = typeof d.invite_par === 'string' && d.invite_par.trim() ? d.invite_par.trim() : 'Um membro da sua família'
     const fin = dateLongue(d.expire_le, PAROLE.locale)

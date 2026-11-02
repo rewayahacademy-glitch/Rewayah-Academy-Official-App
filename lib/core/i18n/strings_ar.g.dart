@@ -1853,6 +1853,15 @@ class _Traductions$notifications$evenements$ar extends Traductions$notifications
 	@override String get accesSuspenduPaiement => 'تم تعليق الوصول: لم تُستلم دفعة هذا الشهر.';
 	@override String get accesRetabliPaiement => 'أُعيد الوصول: تم استلام الدفعة.';
 	@override String get paiementRecu => 'وصلت الدفعة. الرصيد محدَّث.';
+	@override String get accesSuspenduRemboursement => 'عُلِّق دخول: استُرد مبلغ دفعة، فلم يعد الشهر مدفوعًا.';
+	@override String get accesSuspenduLitige => 'عُلِّق دخول: دفعة معترَض عليها لدى البنك.';
+	@override String get remboursementEffectue => 'تمّ الاسترداد. الرصيد محدَّث.';
+	@override String get remboursementEffectueDirection => 'تمّ استرداد مبلغ لأسرة.';
+	@override String get litigeOuvert => 'دفعة معترَض عليها لدى البنك. يُعلَّق الدخول طوال مدة الفحص.';
+	@override String get litigeOuvertDirection => 'أسرة تعترض على دفعة لدى بنكها.';
+	@override String get litigeClosGagne => 'أُغلق الاعتراض: حكم البنك لصالح الأكاديمية.';
+	@override String get litigeClosPerdu => 'أُغلق الاعتراض: استُردت الدفعة، وتُضاف الرسوم إلى رصيد الأسرة.';
+	@override String get litigeClosDirection => 'أُغلق اعتراض على دفعة.';
 	@override String get enseignantAffecteSoi => 'تم تعيين معلم لفصلك.';
 	@override String get enseignantAffecteClasse => 'أُسند إليك فصل.';
 	@override String remplacementPrisQuand({required Object quand}) => 'سيتولى معلم بديل حصة ⁨${quand}⁩.';
@@ -19913,6 +19922,15 @@ extension on TraductionsAr {
 			'notifications.evenements.accesSuspenduPaiement' => 'تم تعليق الوصول: لم تُستلم دفعة هذا الشهر.',
 			'notifications.evenements.accesRetabliPaiement' => 'أُعيد الوصول: تم استلام الدفعة.',
 			'notifications.evenements.paiementRecu' => 'وصلت الدفعة. الرصيد محدَّث.',
+			'notifications.evenements.accesSuspenduRemboursement' => 'عُلِّق دخول: استُرد مبلغ دفعة، فلم يعد الشهر مدفوعًا.',
+			'notifications.evenements.accesSuspenduLitige' => 'عُلِّق دخول: دفعة معترَض عليها لدى البنك.',
+			'notifications.evenements.remboursementEffectue' => 'تمّ الاسترداد. الرصيد محدَّث.',
+			'notifications.evenements.remboursementEffectueDirection' => 'تمّ استرداد مبلغ لأسرة.',
+			'notifications.evenements.litigeOuvert' => 'دفعة معترَض عليها لدى البنك. يُعلَّق الدخول طوال مدة الفحص.',
+			'notifications.evenements.litigeOuvertDirection' => 'أسرة تعترض على دفعة لدى بنكها.',
+			'notifications.evenements.litigeClosGagne' => 'أُغلق الاعتراض: حكم البنك لصالح الأكاديمية.',
+			'notifications.evenements.litigeClosPerdu' => 'أُغلق الاعتراض: استُردت الدفعة، وتُضاف الرسوم إلى رصيد الأسرة.',
+			'notifications.evenements.litigeClosDirection' => 'أُغلق اعتراض على دفعة.',
 			'notifications.evenements.enseignantAffecteSoi' => 'تم تعيين معلم لفصلك.',
 			'notifications.evenements.enseignantAffecteClasse' => 'أُسند إليك فصل.',
 			'notifications.evenements.remplacementPrisQuand' => ({required Object quand}) => 'سيتولى معلم بديل حصة ⁨${quand}⁩.',
@@ -20402,6 +20420,8 @@ extension on TraductionsAr {
 			'classe.entree.demo.etats.indisponible' => 'المعلومة غير متاحة',
 			'classe.entree.demo.etats.changementHeure' => 'تغيير التوقيت',
 			'classe.entree.demo.formeBouton' => 'الشكل: زر',
+			_ => null,
+		} ?? switch (path) {
 			'classe.entree.demo.formeLigne' => 'الشكل: سطر حالة',
 			'classe.entree.demo.lecteur' => ({required Object texte}) => 'قارئ الشاشة: ⁨${texte}⁩',
 			'classe.entree.demo.annonce' => ({required Object texte}) => 'الإعلان: ⁨${texte}⁩',
@@ -20411,8 +20431,6 @@ extension on TraductionsAr {
 			'classe.entree.indisponibleInvitation' => 'ربما لم يصل الطلب إلى رواية. أعد المحاولة بعد لحظة.',
 			'classe.catalogue' => 'اختيار فصل',
 			'classe.planning' => 'الجدول',
-			_ => null,
-		} ?? switch (path) {
 			'classe.travail' => 'قبل الدرس القادم',
 			'classe.ressources' => 'المكتبة',
 			'classe.progression' => 'التقدم',
@@ -20916,6 +20934,8 @@ extension on TraductionsAr {
 			'salle.seance.demo.tb.ped01' => 'PED-01 سبورة حرة، دون مستند',
 			'salle.seance.demo.tb.ped02' => 'PED-02 المستند وحده',
 			'salle.seance.demo.tb.ped03' => 'PED-03 المستند مع الملاحظات',
+			_ => null,
+		} ?? switch (path) {
 			'salle.seance.demo.tb.ped04' => 'PED-04 السبورة، المستند مخفي',
 			'salle.seance.demo.tb.ui01' => 'UI-01 عرض مضغوط',
 			'salle.seance.demo.tb.ui02' => 'UI-02 قاعة موسَّعة',
@@ -20925,8 +20945,6 @@ extension on TraductionsAr {
 			'salle.seance.demo.tb.ctx02' => 'CTX-02 معلومات المراقبة',
 			'salle.seance.demo.tb.cmd01' => 'CMD-01 عناصر التحكم',
 			'salle.seance.demo.tb.cmd02' => 'CMD-02 اللون والسُّمك',
-			_ => null,
-		} ?? switch (path) {
 			'salle.seance.demo.tb.cmd03' => 'CMD-03 الكتابة جارية',
 			'salle.seance.demo.tb.lib01' => 'LIB-01 المكتبة',
 			'salle.seance.demo.tb.lib02' => 'LIB-02 معاينة خاصة',
@@ -21430,6 +21448,8 @@ extension on TraductionsAr {
 			'enseignant.cahier.suiteRenforcer' => 'التثبيت',
 			'enseignant.cahier.suspendreNouveau' => 'إيقاف الجديد',
 			'enseignant.cahier.devoirPrecedent' => ({required Object devoir}) => 'الواجب السابق: ⁨${devoir}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.devoirPlage' => ({required Object sourate, required Object debut, required Object fin}) => 'مراجعة سورة ⁨${sourate}⁩، الآيات ⁨${debut}⁩ إلى ⁨${fin}⁩.',
 			'enseignant.cahier.suspendreNouveauDetail' => 'تستمر المراجعة، ولا يُضاف شيء جديد لهذا الطالب.',
 			'enseignant.cahier.position' => ({required Object sourate, required Object verset}) => 'القراءة: سورة ⁨${sourate}⁩، الآية ⁨${verset}⁩',
@@ -21439,8 +21459,6 @@ extension on TraductionsAr {
 			'enseignant.cahier.makhrajHaHah' => 'الهاء / الحاء (ه / ح)',
 			'enseignant.cahier.exceptionTitre' => 'الإبلاغ عن استثناء',
 			'enseignant.cahier.exceptionCorriger' => 'تصحيح الحضور',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.exceptionExcuser' => 'تبرير الغياب',
 			'enseignant.cahier.exceptionConfirmation' => 'تأكيد الاستثناء',
 			'enseignant.cahier.exceptionMotif' => 'السبب',
@@ -21944,6 +21962,8 @@ extension on TraductionsAr {
 			'tuteur.reglages.modeStandard' => ({required Object prenom}) => 'عرض عادي: يقرأ ⁨${prenom}⁩ شاشته.',
 			'tuteur.reglages.modePasserEnfant' => ({required Object prenom}) => 'نقل ⁨${prenom}⁩ إلى العرض الكبير',
 			'tuteur.reglages.modePasserStandard' => ({required Object prenom}) => 'نقل ⁨${prenom}⁩ إلى العرض العادي',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.reglages.aucunEnfant' => 'لا طفل في الأسرة',
 			'tuteur.reglages.aucunEnfantDetail' => 'أضف طفلًا لتتمكن من ضبط عرضه وكاميرته.',
 			'tuteur.reglages.erreur' => ({required Object message}) => 'لم يكتمل الحفظ: ⁨${message}⁩',
@@ -21953,8 +21973,6 @@ extension on TraductionsAr {
 			'nav.eleve.monEspace' => 'مساحتي',
 			'nav.eleve.suivi' => 'المتابعة',
 			'nav.eleve.compte' => 'الحساب',
-			_ => null,
-		} ?? switch (path) {
 			'nav.eleve.aujourdhui' => 'اليوم',
 			'nav.eleve.apprendre' => 'التعلم',
 			'nav.eleve.profil' => 'الملف الشخصي',
@@ -22458,6 +22476,8 @@ extension on TraductionsAr {
 			'tc.parcours.signalement.categorieValeur.presence' => 'الحضور',
 			'tc.parcours.signalement.categorieValeur.technique' => 'تقني',
 			'tc.parcours.signalement.categorieValeur.changement' => 'تغيير',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.signalement.categorieValeur.securiteEnfant' => 'سلامة طفل',
 			'tc.parcours.signalement.categorieValeur.autre' => 'آخر',
 			'tc.parcours.signalement.interne' => 'ملاحظة داخلية',
@@ -22467,8 +22487,6 @@ extension on TraductionsAr {
 			'tc.parcours.signalement.contexte' => ({required Object eleve}) => 'بخصوص ⁨${eleve}⁩. الحصة والفصل واسمك مرفقة بالفعل.',
 			'tc.parcours.signalement.envoyer' => 'إرسال البلاغ',
 			'tc.parcours.signalement.envoye' => 'أُرسل البلاغ إلى الإدارة.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.signalement.interneRequis' => 'اكتب على الأقل ما يجب أن تعرفه الإدارة.',
 			'tc.parcours.signalement.echec' => 'تعذّر إرسال البلاغ. أعد المحاولة.',
 			'tc.parcours.postCours.titre' => 'بعد الدرس',
@@ -22972,6 +22990,8 @@ extension on TraductionsAr {
 			'com.studio.aujourdhui.modules.communications' => 'إدارة الاتصالات',
 			'com.studio.aujourdhui.acces.messages' => _root.com.socle.lexique.messagesMetier,
 			'com.studio.aujourdhui.acces.messagesDetail' => 'المحادثات مع الأسر والمعلّمين والمراقبين',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.aujourdhui.acces.annonces' => 'الإعلانات',
 			'com.studio.aujourdhui.acces.annoncesDetail' => 'نشر الإعلانات ومتابعتها',
 			'com.studio.aujourdhui.acces.dossiers' => 'ملفات للتصديق',
@@ -22981,8 +23001,6 @@ extension on TraductionsAr {
 			'com.studio.aujourdhui.acces.demandes' => 'طلبات بانتظار القرار',
 			'com.studio.aujourdhui.acces.demandesDetail' => 'طلبات التغيير المنتظرة',
 			'com.studio.brouillons.titre' => 'المسودات',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.brouillons.detail' => 'الرسائل التي بدأتها في قناة ولم تُرسل بعد. تبقى على هذا الجهاز طوال الجلسة، دون مزامنة.',
 			'com.studio.brouillons.dansCanal' => ({required Object nom}) => 'مسودة في ${nom}',
 			'com.studio.brouillons.canalInconnu' => 'مسودة في قناة',
@@ -23486,6 +23504,8 @@ extension on TraductionsAr {
 			'admin.candidatures.detail.titreAbsente' => 'طلب الترشح هذا غير موجود، أو لم يعد موجودًا.',
 			'admin.candidatures.detail.titreLecture' => 'تعذّرت قراءة طلب الترشح.',
 			'admin.candidatures.detail.revenirALaFile' => 'عودوا إلى قائمة طلبات الترشح.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.candidatures.detail.controleLigne' => ({required Object nom, required Object cause}) => '⁨${nom}⁩ (⁨${cause}⁩)',
 			'admin.candidatures.detail.separateurControles' => '، ',
 			'admin.candidatures.detail.groupeJours' => ({required Object jours, required Object heures}) => '⁨${jours}⁩: ⁨${heures}⁩',
@@ -23495,8 +23515,6 @@ extension on TraductionsAr {
 			'admin.candidatures.detail.etatsPiece.validee' => 'مصادَق عليها',
 			'admin.candidatures.detail.controlesVrai' => 'مستوفى',
 			'admin.candidatures.detail.controlesFaux' => 'غير مستوفى',
-			_ => null,
-		} ?? switch (path) {
 			'admin.candidatures.detail.talents.titre' => 'مهارات أخرى',
 			'admin.candidatures.detail.talents.aucune' => 'لم يُجب صاحب الطلب عن «مواهبك الأخرى».',
 			'admin.candidatures.detail.talents.niveaux.debutant' => 'مبتدئ',
@@ -24000,6 +24018,8 @@ extension on TraductionsAr {
 			'admin.groupes.reglagesClasse.retour' => 'العودة إلى المواعيد',
 			'admin.groupes.reglagesClasse.manqueMotif' => 'اكتب السبب: يُحفظ مع الحصص الملغاة.',
 			'admin.groupes.reglagesClasse.manqueGenre' => 'اختر جنس الفصل.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.reglagesClasse.refusDernier' => 'يبقى للفصل موعد واحد على الأقل: أضف موعدًا آخر قبل إزالة هذا الموعد.',
 			'admin.groupes.reglagesClasse.refusExistant' => 'لهذا الفصل هذا الموعد مسبقًا: اختر يومًا آخر أو ساعة أخرى.',
 			'admin.groupes.reglagesClasse.refusIntrouvable' => 'تغيّر هذا الموعد مسبقًا: عُد إلى المواعيد لترى القائمة المحدَّثة.',
@@ -24009,8 +24029,6 @@ extension on TraductionsAr {
 			'admin.groupes.reglagesClasse.horsLigne' => 'يمكن إرسال التغيير عند عودة الاتصال. تبقى اختياراتك معروضة.',
 			'admin.groupes.reglagesClasse.faitGenre' => 'سُجِّل جنس الفصل.',
 			'admin.groupes.reglagesClasse.faitModifie' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'سُجِّل الموعد: لم تُنشأ أي حصة قادمة في الوقت الحالي.', one: 'سُجِّل الموعد. عدد الحصص القادمة المُنشأة: ⁨${n}⁩', two: 'سُجِّل الموعد. عدد الحصص القادمة المُنشأة: ⁨${n}⁩', few: 'سُجِّل الموعد. عدد الحصص القادمة المُنشأة: ⁨${n}⁩', many: 'سُجِّل الموعد. عدد الحصص القادمة المُنشأة: ⁨${n}⁩', other: 'سُجِّل الموعد. عدد الحصص القادمة المُنشأة: ⁨${n}⁩', ), 
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.reglagesClasse.faitRetire' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'أُزيل الموعد: لا حصة قادمة لإلغائها.', one: 'أُزيل الموعد. عدد الحصص القادمة الملغاة: ⁨${n}⁩', two: 'أُزيل الموعد. عدد الحصص القادمة الملغاة: ⁨${n}⁩', few: 'أُزيل الموعد. عدد الحصص القادمة الملغاة: ⁨${n}⁩', many: 'أُزيل الموعد. عدد الحصص القادمة الملغاة: ⁨${n}⁩', other: 'أُزيل الموعد. عدد الحصص القادمة الملغاة: ⁨${n}⁩', ), 
 			'admin.groupes.reglagesClasse.dureeContexte' => 'تغيير المدة وحدها لا يلغي أي حصة: تأخذها الحصص القادمة لهذا الموعد.',
 			'admin.groupes.reglagesClasse.faitDuree' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'سُجِّلت المدة: لا حصة قادمة لتغييرها في الوقت الحالي.', one: 'سُجِّلت المدة. عدد الحصص القادمة التي تأخذها: ⁨${n}⁩', two: 'سُجِّلت المدة. عدد الحصص القادمة التي تأخذها: ⁨${n}⁩', few: 'سُجِّلت المدة. عدد الحصص القادمة التي تأخذها: ⁨${n}⁩', many: 'سُجِّلت المدة. عدد الحصص القادمة التي تأخذها: ⁨${n}⁩', other: 'سُجِّلت المدة. عدد الحصص القادمة التي تأخذها: ⁨${n}⁩', ), 
@@ -24514,6 +24532,8 @@ extension on TraductionsAr {
 			'admin.journal.vide' => 'لا حدث مسجَّل',
 			'admin.journal.videDetail' => 'ستُدوَّن هنا كل قراءة لملف، وكل قرار، وكل إسناد.',
 			'admin.journal.videFiltre' => 'لا حدث مطابق',
+			_ => null,
+		} ?? switch (path) {
 			'admin.journal.videFiltreDetail' => 'وسّع الفترة، أو خفّف أحد المعايير.',
 			'admin.journal.effacerFiltres' => 'مسح المعايير',
 			'admin.journal.erreur' => 'تعذّرت قراءة السجل. أعد المحاولة بعد لحظة.',
@@ -24523,8 +24543,6 @@ extension on TraductionsAr {
 			'admin.journal.evenements.observationEntree' => 'بدأت زيارة متابعة',
 			'admin.journal.evenements.observationSortie' => 'انتهت زيارة متابعة',
 			'admin.journal.evenements.observationPolitiqueGroupeModifiee' => 'عُدِّلت قواعد متابعة الفصل',
-			_ => null,
-		} ?? switch (path) {
 			'admin.observations.titre' => 'المتابعات',
 			'admin.observations.titrePage' => 'سجل المتابعات',
 			'admin.observations.sousTitre' => 'الإدارة',
@@ -25028,6 +25046,8 @@ extension on TraductionsAr {
 			'admin.fusion.evenementTransfertSortant' => ({required Object prenom, required Object autre}) => 'نُقل ⁨${prenom}⁩ إلى ⁨${autre}⁩',
 			'admin.fusion.evenementTransfertEntrant' => ({required Object prenom, required Object autre}) => 'نُقل ⁨${prenom}⁩ من ⁨${autre}⁩',
 			'admin.tirage.titre' => 'قرعة المراقبة',
+			_ => null,
+		} ?? switch (path) {
 			'admin.tirage.sousTitre' => 'يسحب الخادم بالقرعة الحصة التي يتلقاها كل مراقب. تحدد الإدارة القواعد، ولا يختار المراقب فصله أبدًا.',
 			'admin.tirage.sansDonnees' => 'تعذّر تحميل القرعات',
 			'admin.tirage.erreur' => 'تعذّرت قراءة القرعات: ربما لم تصل القراءة إلى رواية. أعيدوا المحاولة بعد قليل.',
@@ -25037,8 +25057,6 @@ extension on TraductionsAr {
 			'admin.tirage.reservePhrase' => 'ليس لحسابكم حق الاطلاع على القرعات: هي مخصصة للإدارة حتى لا يستطيع أحد توقع من سيُراقَب. إن احتجتم إلى ذلك فاطلبوا الإذن من الإدارة.',
 			'admin.tirage.reglesTitre' => 'قواعد القرعة',
 			'admin.tirage.reglesIntro' => 'تُطبَّق هذه القواعد على القرعات القادمة. المهام الموزعة لا تتغير. كل تسجيل ينشئ نسخة جديدة؛ تُحفظ النسخ السابقة ولا تتغير أبدًا، وتُسجَّل كل نسخة في سجل التدقيق.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.tirage.frequenceTitre' => 'التواتر',
 			'admin.tirage.frequenceDetail' => 'أقصى عدد من المهام يتلقاه المراقب في الأسبوع، من 0 إلى 50. يطبّق الخادم هذا العدد.',
 			'admin.tirage.versionEnVigueur' => ({required Object n}) => 'القواعد السارية: النسخة ⁨${n}⁩',
@@ -25542,6 +25560,8 @@ extension on TraductionsAr {
 			'comptable.statuts.raison.paiementHorsApplication' => 'دفعة وصلت خارج التطبيق: تصادق عليها الإدارة قبل إضافتها إلى رصيد الطالب',
 			'comptable.alertes.enseignantsAPayer' => 'معلمون للدفع',
 			'comptable.alertes.contractuelsAEcheance' => 'متعاقدون حان موعد استحقاقهم',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.alertes.infosManquantes' => 'معلومات الدفع ناقصة',
 			'comptable.alertes.payoutEchoue' => 'فشل صرف دفعة',
 			'comptable.alertes.paiementFamilleEchoue' => 'فشل دفع أسرة',
@@ -25551,8 +25571,6 @@ extension on TraductionsAr {
 			'comptable.alertes.soldePrestataireInsuffisant' => 'رصيد مزوّد الدفع غير كافٍ',
 			'comptable.alertes.methodeModifieeRecemment' => 'وسيلة دفع عُدّلت مؤخرًا',
 			'comptable.alertes.doublonPotentiel' => 'تكرار محتمل',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.alertes.validationRequise' => 'تلزم مصادقة إضافية',
 			'comptable.aujourdhui.attentionSousTitre' => 'ما ينتظر إجراءً منك، ثم المخاطر التي تجب مراقبتها.',
 			'comptable.aujourdhui.elementCompteur' => ({required Object libelle, required Object n}) => '${libelle}: ${n}',
@@ -26056,6 +26074,8 @@ extension on TraductionsAr {
 			'comptable.contractuels.champCentreCout' => 'مركز التكلفة',
 			'comptable.contractuels.champAuteur' => 'المُنشئ',
 			'comptable.contractuels.champApprobateur' => 'المعتمِد',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.champProfilPaiement' => 'دفع المستفيد',
 			'comptable.contractuels.champMotifRefus' => 'سبب الرفض',
 			'comptable.contractuels.aucunJustificatif' => 'لا يوجد مستند مؤيِّد مرفق',
@@ -26065,8 +26085,6 @@ extension on TraductionsAr {
 			'comptable.contractuels.ligneValidation' => ({required Object validation}) => 'المصادقة: ${validation}',
 			'comptable.contractuels.payerAide' => 'يُفتح الدفع في تفاصيل الدفعة، بالمبلغ الدقيق.',
 			'comptable.contractuels.approuverAide' => 'بعد الاعتماد، يُثبَّت المبلغ ويصبح الالتزام قابلًا للدفع.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.renvoyerInvitation' => 'إعادة إرسال الدعوة',
 			'comptable.contractuels.invitationAide' => 'هذا المستفيد الخارجي يُدخل وسيلة الدفع بنفسه، من دعوته الآمنة.',
 			'comptable.contractuels.invitationRenvoyee' => 'أُعيد إرسال الدعوة',
@@ -26570,6 +26588,8 @@ extension on TraductionsAr {
 			'eleveConnexion.profils.profilLibelle' => ({required Object quePrenom}) => 'المتابعة باسم ⁨${quePrenom}⁩',
 			'eleveConnexion.profils.videTitre' => 'لا ملف على هذا الجهاز',
 			'eleveConnexion.profils.vide' => 'لاستخدام هذا الجهاز، يجب أن يعرض وليّ الأمر رمزًا جديدًا على جهازه.',
+			_ => null,
+		} ?? switch (path) {
 			'eleveConnexion.profils.videAction' => 'إدخال رمز',
 			'eleveConnexion.profils.retire' => ({required Object prenom}) => 'أُزيل هذا الجهاز لـ⁨${prenom}⁩. اطلب من وليّ الأمر إعادة ربطه برمز جديد.',
 			'eleveConnexion.profils.jetonAbsent' => ({required Object dePrenom}) => 'لم يعد هذا الجهاز يجد اتصال ⁨${dePrenom}⁩. اطلب من وليّ الأمر عرض رمز جديد، ثم أدخله هنا.',
@@ -26579,8 +26599,6 @@ extension on TraductionsAr {
 			'eleveConnexion.pin.confirmer' => 'أدخله مرة أخرى',
 			'eleveConnexion.pin.different' => 'الرمزان غير متطابقين. اختر رمزك من جديد.',
 			'eleveConnexion.pin.ouverture' => 'جارٍ الاتصال',
-			_ => null,
-		} ?? switch (path) {
 			'eleveConnexion.pin.horsLigne' => 'لا اتصال بالإنترنت. رمزك صحيح: أعد المحاولة عند عودة الإنترنت.',
 			'eleveConnexion.pin.tropDEssais' => 'محاولات كثيرة. انتظر قليلًا قبل إعادة المحاولة.',
 			'eleveConnexion.pin.echec' => 'لم يكتمل الاتصال. أعد المحاولة بعد لحظة.',
@@ -27084,6 +27102,8 @@ extension on TraductionsAr {
 			'adulte.paiements.recapitulatif' => ({required Object valeur}) => 'ملخص الأسرة: ⁨${valeur}⁩. يبقى كل رصيد خاصًا بمستفيده.',
 			'adulte.paiements.bientotEpuise' => 'على وشك النفاد',
 			'adulte.paiements.inactif' => 'غير نشط',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.paiements.historique' => 'سجل المدفوعات',
 			'adulte.paiements.soldesIndisponiblesTitre' => 'الأرصدة غير قابلة للاطلاع بعد',
 			'adulte.paiements.soldesIndisponiblesPhrase' => 'رصيد كل مستفيد غير متاح في التطبيق بعد. لا شحن ممكن هنا الآن.',
@@ -27093,8 +27113,6 @@ extension on TraductionsAr {
 			'adulte.famille.ajouterLegende' => 'سجّل أطفالك وادعُ زوجك أو زوجتك للانضمام إلى باقة الأسرة.',
 			'adulte.famille.ajouterPhrase' => 'يمكنك إضافة أطفالك ودعوة زوجك أو زوجتك للانضمام إلى باقة الأسرة. تبقى مساحتك كطالب كما هي.',
 			'adulte.famille.inscrireEnfant' => 'تسجيل طفل',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.famille.maFamille' => 'أسرتي',
 			'adulte.famille.forfaitFamille' => 'باقة الأسرة',
 			'adulte.famille.retourMonEspace' => 'العودة إلى مساحتي',
@@ -27598,6 +27616,8 @@ extension on TraductionsAr {
 			'controleur.historique.sectionEchanges' => 'المراسلات مع الإدارة',
 			'controleur.historique.cleClasse' => 'الفصل',
 			'controleur.historique.cleEnseignant' => 'المعلم',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.historique.cleDate' => 'التاريخ',
 			'controleur.historique.cleDuree' => 'مدة المتابعة',
 			'controleur.historique.cleElevesPresents' => 'الحاضرون',
@@ -27607,8 +27627,6 @@ extension on TraductionsAr {
 			'controleur.historique.motif' => ({required Object motif}) => 'السبب: ⁨${motif}⁩',
 			'controleur.historique.ajouterComplement' => 'إضافة تكملة',
 			'controleur.complement.bandeau' => 'ستُضاف هذه التكملة إلى التقرير الموجود.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.complement.questionMotif' => 'لماذا تضيف هذه التكملة؟',
 			'controleur.complement.contexteMotif' => 'اختياري: السبب يساعد الإدارة على قراءة التكملة. التقرير الأصلي لا يتغير.',
 			'controleur.complement.precision' => 'توضيح',
@@ -28112,6 +28130,8 @@ extension on TraductionsAr {
 			'recrutement.questionnaire.plagesChevauchent' => 'تتداخل أوقات تفرّغك في اليوم نفسه. راجعها ثم أعد إرسال طلب ترشحك.',
 			'recrutement.parcours.choisir' => 'اختر إجابة للمتابعة.',
 			'recrutement.parcours.choisirPlusieurs' => 'اختر إجابة واحدة على الأقل للمتابعة.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.trop' => ({required num max}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(max, zero: 'اختر ⁨${max}⁩ إجابات على الأكثر.', one: 'اختر إجابة واحدة فقط.', two: 'اختر إجابتين على الأكثر.', few: 'اختر ⁨${max}⁩ إجابات على الأكثر.', many: 'اختر ⁨${max}⁩ إجابة على الأكثر.', other: 'اختر ⁨${max}⁩ إجابة على الأكثر.', ), 
 			'recrutement.parcours.aucune' => 'لا شيء',
 			'recrutement.parcours.oui' => 'نعم',
@@ -28121,8 +28141,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.presentation.p1.titre' => 'من هي أكاديمية الرواية؟',
 			'recrutement.parcours.presentation.p1.intro' => 'قبل الأسئلة، إليك ما يجب أن تعرفه عنا.',
 			'recrutement.parcours.presentation.p1.academie.titre' => 'أكاديمية لتعليم القرآن عبر الإنترنت',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.presentation.p1.academie.texte' => 'تعلّم أكاديمية الرواية القرآن عن بُعد، في فصول ثابتة، مع معلم مخصّص لكل فصل. وهي تُدرّس منذ 1 مايو 2024.',
 			'recrutement.parcours.presentation.p1.liberte.titre' => 'تبقى حرًّا',
 			'recrutement.parcours.presentation.p1.liberte.texte' => 'ما دمت لم تصبح معلّمًا، يمكنك سحب طلب ترشحك من ملفك.',
@@ -28626,6 +28644,8 @@ extension on TraductionsAr {
 			'sansDonnees.tresorerie' => 'تعذّر تحميل الخزينة',
 			'sansDonnees.obligation' => 'تعذّر تحميل هذا الالتزام',
 			'sansDonnees.contractuels' => 'تعذّر تحميل المتعاقدين',
+			_ => null,
+		} ?? switch (path) {
 			'sansDonnees.reserve' => 'تعذّر تحميل سياسة الاحتياطي',
 			'sansDonnees.vueGlobale' => 'تعذّر تحميل النظرة العامة على المالية',
 			'sansDonnees.beneficiaires' => 'تعذّر تحميل المستفيدين',
@@ -28635,8 +28655,6 @@ extension on TraductionsAr {
 			'argent.transparence.intro' => 'هكذا يتوزع كل دفعة يدفعها الطالب، بندًا بندًا، بالنسب المئوية.',
 			'argent.transparence.repartitionTitre' => 'أين تذهب كل دفعة',
 			'argent.transparence.version' => ({required Object date}) => 'تقدير للأسعار المعمول بها ابتداءً من ⁨${date}⁩.',
-			_ => null,
-		} ?? switch (path) {
 			'argent.transparence.part' => ({required Object valeur}) => '⁨${valeur}⁩ ٪',
 			'argent.transparence.virgule' => '٫',
 			'argent.transparence.total' => 'المجموع',
@@ -29140,6 +29158,8 @@ extension on TraductionsAr {
 			'admissions.annulerAcceptationConsequence' => 'يعود حسابه إلى الانتظار فورًا.',
 			'admissions.annulerAcceptationQuestion' => ({required Object deNom}) => 'إلغاء قبول ⁨${deNom}⁩؟',
 			'admissions.annulerAcceptationDetail' => 'يمكن إلغاء القبول خلال سبعة أيام، ما دام لم يدخل أي طفل من الطلب فصلًا. يعود الطلب «للمعالجة» ويعود الحساب إلى الانتظار، وتُنحّى ملفات الأطفال دون حذفها أبدًا. لا يتلقى الشخص أي رسالة: اكتب إليه عند الحاجة.',
+			_ => null,
+		} ?? switch (path) {
 			'admissions.annulerAcceptation' => 'إلغاء القبول',
 			'admissions.retour' => 'العودة إلى الطلب',
 			'admissions.manqueModele' => 'اختر الجملة التي سيتلقاها الشخص.',
@@ -29149,8 +29169,6 @@ extension on TraductionsAr {
 			'admissions.horsLigne' => 'لم يُرسل شيء. أعد المحاولة بعد قليل.',
 			'admissions.erreur' => 'لم يتم الإجراء. لم يُؤكَّد شيء. أعد المحاولة بعد قليل.',
 			'admissions.faitAcceptee' => ({required Object deNom}) => 'قُبل طلب ⁨${deNom}⁩، والرسالة في الطريق.',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.faitRefusee' => ({required Object deNom}) => 'رُفض طلب ⁨${deNom}⁩، والرسالة في الطريق.',
 			'admissions.faitPrecisions' => ({required Object nom}) => 'طُلبت التوضيحات من ⁨${nom}⁩، والرسالة في الطريق.',
 			'admissions.faitContact' => ({required Object nom}) => 'الرسالة إلى ⁨${nom}⁩ في الطريق.',

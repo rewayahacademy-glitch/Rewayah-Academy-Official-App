@@ -127,6 +127,29 @@ const MODELES: Record<string, Fabrique> = {
         : `The payment of ${m} has been received. The balance is up to date in the app.`,
       'Open the app', '/tuteur/foyer/recharge')
   },
+  // FN-115b (02/11/2026) : remboursement et contestation d'un paiement.
+  remboursement_effectue: (d) => {
+    const m = montantLisible(d, PAROLE.locale)
+    return avis(d, 'A refund has been made', 'A refund has been made',
+      m === null ? 'A refund has been made to the payment method used. The balance is up to date in the app.'
+        : `A refund of ${m} has been made to the payment method used. The balance is up to date in the app.`,
+      'Open the app', '/tuteur/foyer/recharge')
+  },
+  litige_ouvert: (d) => {
+    const m = montantLisible(d, PAROLE.locale)
+    return avis(d, 'A payment is disputed with the bank', 'A payment is disputed',
+      m === null ? 'A payment is disputed with the bank. During the review, the students concerned cannot access sessions or resources. If this is a mistake, write to us.'
+        : `A payment of ${m} is disputed with the bank. During the review, the students concerned cannot access sessions or resources. If this is a mistake, write to us.`,
+      'Open the app', '/tuteur/foyer/recharge')
+  },
+  litige_clos: (d) => {
+    const f = montantLisible({ montant_mineur: d.frais_mineur, devise: d.devise }, PAROLE.locale)
+    return avis(d, 'The dispute is closed', 'The dispute is closed',
+      d.issue === 'gagne' ? 'The bank ruled in favour of the academy: the payment is restored and access returns once the month is paid again.'
+        : f === null ? 'The bank ruled in your favour: the payment is treated as a full refund. The dispute fees are added to the household balance.'
+        : `The bank ruled in your favour: the payment is treated as a full refund. The dispute fees (${f}) are added to the household balance.`,
+      'Open the app', '/tuteur/foyer/recharge')
+  },
   invitation_foyer: (d) => {
     const qui = typeof d.invite_par === 'string' && d.invite_par.trim() ? d.invite_par.trim() : 'A member of your family'
     const fin = dateLongue(d.expire_le, PAROLE.locale)

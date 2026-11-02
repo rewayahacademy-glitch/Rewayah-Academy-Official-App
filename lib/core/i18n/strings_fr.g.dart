@@ -12489,6 +12489,33 @@ class Traductions$notifications$evenements$fr {
 	/// fr: 'Le paiement est reçu. Le solde est à jour.'
 	String get paiementRecu => 'Le paiement est reçu. Le solde est à jour.';
 
+	/// fr: 'Un accès est suspendu : un paiement a été remboursé, le mois n'est plus payé.'
+	String get accesSuspenduRemboursement => 'Un accès est suspendu : un paiement a été remboursé, le mois n\'est plus payé.';
+
+	/// fr: 'Un accès est suspendu : un paiement est contesté auprès de la banque.'
+	String get accesSuspenduLitige => 'Un accès est suspendu : un paiement est contesté auprès de la banque.';
+
+	/// fr: 'Un remboursement est fait. Le solde est à jour.'
+	String get remboursementEffectue => 'Un remboursement est fait. Le solde est à jour.';
+
+	/// fr: 'Un remboursement a été fait à une famille.'
+	String get remboursementEffectueDirection => 'Un remboursement a été fait à une famille.';
+
+	/// fr: 'Un paiement est contesté auprès de la banque. L'accès est suspendu pendant l'examen.'
+	String get litigeOuvert => 'Un paiement est contesté auprès de la banque. L\'accès est suspendu pendant l\'examen.';
+
+	/// fr: 'Une famille conteste un paiement auprès de sa banque.'
+	String get litigeOuvertDirection => 'Une famille conteste un paiement auprès de sa banque.';
+
+	/// fr: 'La contestation est close : la banque a donné raison à l'académie.'
+	String get litigeClosGagne => 'La contestation est close : la banque a donné raison à l\'académie.';
+
+	/// fr: 'La contestation est close : le paiement est remboursé, les frais vont au solde du foyer.'
+	String get litigeClosPerdu => 'La contestation est close : le paiement est remboursé, les frais vont au solde du foyer.';
+
+	/// fr: 'Une contestation de paiement est close.'
+	String get litigeClosDirection => 'Une contestation de paiement est close.';
+
 	/// fr: 'Un enseignant a été affecté à votre classe.'
 	String get enseignantAffecteSoi => 'Un enseignant a été affecté à votre classe.';
 
@@ -47541,6 +47568,15 @@ extension on Traductions {
 			'notifications.evenements.accesSuspenduPaiement' => 'Un accès est suspendu : le paiement du mois n\'est pas reçu.',
 			'notifications.evenements.accesRetabliPaiement' => 'L\'accès est rétabli : le paiement est reçu.',
 			'notifications.evenements.paiementRecu' => 'Le paiement est reçu. Le solde est à jour.',
+			'notifications.evenements.accesSuspenduRemboursement' => 'Un accès est suspendu : un paiement a été remboursé, le mois n\'est plus payé.',
+			'notifications.evenements.accesSuspenduLitige' => 'Un accès est suspendu : un paiement est contesté auprès de la banque.',
+			'notifications.evenements.remboursementEffectue' => 'Un remboursement est fait. Le solde est à jour.',
+			'notifications.evenements.remboursementEffectueDirection' => 'Un remboursement a été fait à une famille.',
+			'notifications.evenements.litigeOuvert' => 'Un paiement est contesté auprès de la banque. L\'accès est suspendu pendant l\'examen.',
+			'notifications.evenements.litigeOuvertDirection' => 'Une famille conteste un paiement auprès de sa banque.',
+			'notifications.evenements.litigeClosGagne' => 'La contestation est close : la banque a donné raison à l\'académie.',
+			'notifications.evenements.litigeClosPerdu' => 'La contestation est close : le paiement est remboursé, les frais vont au solde du foyer.',
+			'notifications.evenements.litigeClosDirection' => 'Une contestation de paiement est close.',
 			'notifications.evenements.enseignantAffecteSoi' => 'Un enseignant a été affecté à votre classe.',
 			'notifications.evenements.enseignantAffecteClasse' => 'Une classe vous est confiée.',
 			'notifications.evenements.remplacementPrisQuand' => ({required Object quand}) => 'La séance du ${quand} sera assurée par un enseignant remplaçant.',
@@ -47714,6 +47750,8 @@ extension on Traductions {
 			'tuteur.accueil.seanceNonTenue' => 'Cette séance n\'a pas pu se tenir.',
 			'tuteur.accueil.horaireIncertain' => 'Ouverture de la salle non confirmée pour l\'instant',
 			'tuteur.accueil.pastilleAnnulee' => 'Annulée',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.pastilleNonTenue' => 'Non tenue',
 			'tuteur.accueil.pastilleTerminee' => 'Terminée',
 			'tuteur.accueil.aucuneSeance' => 'Aucune séance planifiée',
@@ -47723,8 +47761,6 @@ extension on Traductions {
 			'tuteur.accueil.classeIllisible' => 'La classe n\'a pas pu être lue.',
 			'tuteur.accueil.sansClasseTitre' => ({required Object prenom}) => 'Aucune classe pour ${prenom}',
 			'tuteur.accueil.sansClassePhrase' => ({required Object quePrenom}) => 'Choisissez une classe pour ${quePrenom} puisse commencer les cours.',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.financesTitre' => ({required Object dePrenom}) => 'Finances ${dePrenom}',
 			'tuteur.accueil.financesPhrase' => 'Solde, prochain débit et ce qu\'il reste à financer.',
 			'tuteur.accueil.foyerVideTitre' => 'Aucun profil élève pour l\'instant',
@@ -48228,6 +48264,8 @@ extension on Traductions {
 			'enseignant.remplacements.preparationTitre' => ({required Object jour, required Object heure}) => 'Remplacement en préparation : ${jour} ${heure}',
 			'enseignant.remplacements.preparationPhrase' => 'L\'enseignant de la classe n\'est pas encore dans la salle. Déclarez-vous prêt : si vous êtes le premier et qu\'il n\'entre pas à temps, la séance vous est confiée.',
 			'enseignant.remplacements.jeSuisPret' => 'Je suis prêt',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.remplacements.pretTitre' => 'Vous êtes prêt',
 			'enseignant.remplacements.pretPastille' => 'Retenu',
 			'enseignant.remplacements.pretPhrase' => 'Vous êtes le premier prêt : si l\'enseignant de la classe n\'entre pas à temps, la séance vous est confiée. Restez disponible.',
@@ -48237,8 +48275,6 @@ extension on Traductions {
 			'enseignant.remplacements.acceptee' => 'C\'est confirmé : vous assurez cette séance. Elle s\'ajoute à vos remplacements.',
 			'enseignant.remplacements.erreur' => 'Les remplacements à assurer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'enseignant.remplacements.sansDonnees' => 'Les remplacements à assurer n\'ont pas pu être chargés',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.salle.reference' => ({required Object page, required Object total, required Object reference}) => 'Présenté : page ${page} sur ${total} · ${reference}',
 			'enseignant.salle.rien' => 'Rien n\'est présenté',
 			'enseignant.salle.rienInvitation' => 'Ouvrez le Coran pour montrer une page à votre Classe.',
@@ -48742,6 +48778,8 @@ extension on Traductions {
 			'controleur.observation.pedagogieAide' => 'Quand il s\'agit de l\'enseignement : explications, progression, supports',
 			'controleur.observation.interaction' => 'Interaction avec les élèves',
 			'controleur.observation.interactionAide' => 'Quand il s\'agit des échanges entre l\'enseignant et les élèves',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.observation.gestionClasse' => 'Gestion de la classe',
 			'controleur.observation.gestionClasseAide' => 'Quand il s\'agit de l\'organisation de la séance : temps, consignes, déroulement',
 			'controleur.observation.respectCadre' => 'Respect du cadre',
@@ -48751,8 +48789,6 @@ extension on Traductions {
 			'controleur.observation.autre' => 'Autre',
 			'controleur.observation.autreAide' => 'Quand aucun autre domaine ne convient · précisez-le dans votre texte',
 			'controleur.observation.questionPersonne' => 'Qui est concerné ?',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.observation.contextePersonne' => 'Indiquez qui l\'observation concerne. Un élève se choisit dans la liste de la Classe, par son prénom et l\'initiale de son nom.',
 			'controleur.observation.enseignant' => 'Enseignant',
 			'controleur.observation.enseignantAide' => 'Quand l\'observation porte sur l\'enseignant de la séance',
@@ -49256,6 +49292,8 @@ extension on Traductions {
 			'tc.observation.reglages.enregistrer' => 'Enregistrer',
 			'tc.observation.reglages.invalideVisites' => 'Au moins une visite par séance.',
 			'tc.observation.reglages.invalideTemps' => 'Au moins trente secondes par séance.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.reglages.valeurHeritee' => ({required Object valeur}) => 'Académie : ${valeur}',
 			'tc.observation.reglages.uniteVisiteUne' => ({required Object n}) => '${n} visite',
 			'tc.observation.reglages.uniteVisites' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} visite', other: '${n} visites', ), 
@@ -49265,8 +49303,6 @@ extension on Traductions {
 			'tc.parcours.avant.rien' => 'Rien à préparer pour le prochain cours.',
 			'tc.parcours.avant.rienDetail' => 'Votre enseignant proposera le travail à la fin de la prochaine séance.',
 			'tc.parcours.avant.nonBranche' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.avant.nonBrancheDetail' => 'Cela ne veut pas dire qu\'il n\'y a rien à préparer : cet écran ne sait pas encore le lire.',
 			'tc.parcours.avant.reprendre' => 'Reprendre le cours',
 			'tc.parcours.avant.reprendreDepuis' => ({required Object position}) => 'Reprendre le cours à ${position}',
@@ -49770,6 +49806,8 @@ extension on Traductions {
 			'motifs.cloreSurcharge.famille' => 'Demande de la famille',
 			'motifs.cloreSurcharge.changement' => 'Changement de classe ou d\'enseignant',
 			'motifs.cloreSurcharge.parErreur' => 'Règle posée par erreur',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.annulationEvaluation.absenceEleve' => 'Absence de l\'élève',
 			'motifs.annulationEvaluation.absenceEnseignant' => 'Absence de l\'enseignant',
 			'motifs.annulationEvaluation.pasPret' => 'Élève pas encore prêt',
@@ -49779,8 +49817,6 @@ extension on Traductions {
 			'motifs.changementNiveau.stable' => 'Unité acquise et stable',
 			'motifs.changementNiveau.enseignant' => 'Décision de l\'enseignant',
 			'motifs.changementNiveau.reevaluation' => 'Réévaluation demandée par la famille',
-			_ => null,
-		} ?? switch (path) {
 			'motifs.changementNiveau.placement' => 'Correction du niveau de placement',
 			'motifs.blocage.prerequis' => 'Prérequis pas encore stables',
 			'motifs.blocage.renforcement' => 'Renforcement nécessaire avant d\'avancer',
@@ -50284,6 +50320,8 @@ extension on Traductions {
 			'com.messages.demo.f.affectation' => 'Votre Classe An-Nour passe au mardi 18 h à partir du mois prochain. Merci de confirmer.',
 			'com.messages.demo.f.khadijaRevision' => 'Pensez à réviser la sourate Al-Mulk pour jeudi.',
 			'com.messages.titre' => _root.com.socle.lexique.messagesMetier,
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.vide' => 'Aucune conversation pour le moment.',
 			'com.vocal.composer.libelle' => 'Message vocal',
 			'com.vocal.composer.enregistrer' => 'Enregistrer un message vocal',
@@ -50293,8 +50331,6 @@ extension on Traductions {
 			'com.vocal.composer.erreurDemarrage' => 'Impossible de démarrer l\'enregistrement. Vérifiez que le microphone n\'est pas utilisé par une autre application, puis réessayez.',
 			'com.vocal.composer.erreurInterrompu' => 'L\'enregistrement s\'est interrompu. Vérifiez le microphone, puis recommencez.',
 			'com.vocal.composer.permissionTitre' => 'Le microphone est nécessaire',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.composer.permissionPhrase' => 'Rewayah a besoin du microphone pour enregistrer votre message vocal. Rien ne part sans votre accord.',
 			'com.vocal.composer.autoriser' => 'Autoriser le microphone',
 			'com.vocal.composer.annuler' => 'Annuler',
@@ -50798,6 +50834,8 @@ extension on Traductions {
 			'com.annonces.administration.moderation.titre' => 'File de modération',
 			'com.annonces.administration.moderation.legende' => ({required Object date, required Object heure}) => 'Signalé le ${date} à ${heure}',
 			'com.annonces.administration.moderation.motif' => ({required Object motif}) => 'Motif : ${motif}',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.administration.moderation.extraitTitre' => 'Contenu signalé',
 			'com.annonces.administration.moderation.extraitAbsent' => 'L\'extrait de ce contenu n\'est pas communiqué.',
 			'com.annonces.administration.moderation.regle' => 'Règle visée',
@@ -50807,8 +50845,6 @@ extension on Traductions {
 			'com.annonces.administration.moderation.rejeter' => 'Rejeter le signalement',
 			'com.annonces.administration.moderation.contexte' => 'Ouvrir le contexte',
 			'com.annonces.administration.moderation.masque' => 'Masqué',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.administration.moderation.approuve' => 'Approuvé',
 			'com.annonces.administration.moderation.rejete' => 'Signalement rejeté',
 			'com.annonces.administration.moderation.restaure' => 'Restauré',
@@ -51312,6 +51348,8 @@ extension on Traductions {
 			'comptable.tresorerie.version' => ({required Object version}) => 'Version ${version}',
 			'comptable.tresorerie.versionDepuis' => ({required Object version, required Object date}) => 'Version ${version}, en vigueur depuis le ${date}',
 			'comptable.tresorerie.mouvementsTitre' => 'Mouvements entre coffres',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.mouvementsPhrase' => 'Vers une protection : selon votre délégation. Sortie d\'un coffre protégé : validation supplémentaire requise.',
 			'comptable.tresorerie.preparerMouvement' => 'Préparer un mouvement',
 			'comptable.tresorerie.retirer' => 'Retirer de la Réserve stratégique',
@@ -51321,8 +51359,6 @@ extension on Traductions {
 			'comptable.tresorerie.mouvementsHorsLigne' => 'Les mouvements entre coffres reprendront dès que l\'envoi est de nouveau possible.',
 			'comptable.tresorerie.interdits' => 'Fonds clients engagés et Taxes & obligations ne financent jamais une dépense ordinaire ; une allocation passée ne se modifie pas.',
 			'comptable.tresorerie.previsionTitre' => 'Prévision',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.previsionPhrase' => 'Entrées et sorties attendues, par date.',
 			'comptable.tresorerie.previsionVide' => 'Aucune entrée ni sortie attendue pour l\'instant.',
 			'comptable.tresorerie.entree' => 'Entrée',
@@ -51826,6 +51862,8 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.expirationDetail' => 'Chaque délégation expire et se renouvelle. Passé la date, le Comptable ne peut plus rien exécuter seul.',
 			'comptable.direction.delegationPanneau.expireLe' => ({required Object date}) => 'Expire le ${date}',
 			'comptable.direction.delegationPanneau.expirationInconnue' => 'Date d\'expiration non communiquée',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.etatActive' => 'Active',
 			'comptable.direction.delegationPanneau.etatSuspendue' => 'Suspendue',
 			'comptable.direction.delegationPanneau.etatExpiree' => 'Expirée',
@@ -51835,8 +51873,6 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.renouvelerEchec' => 'Le renouvellement n\'est pas confirmé : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Vérifiez la date d\'expiration avant de réessayer.',
 			'comptable.direction.delegationPanneau.sortiesTitre' => 'Sorties en attente',
 			'comptable.direction.delegationPanneau.sortiesDetail' => 'Une sortie au-dessus du plafond par transaction attend un délai de sécurité avant de partir. Vous pouvez l\'annuler d\'ici là.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.sortiesDelai' => ({required Object heures}) => 'Délai de sécurité : ${heures} h',
 			'comptable.direction.delegationPanneau.sortiesVide' => 'Aucune sortie en attente.',
 			'comptable.direction.delegationPanneau.sortiesErreur' => 'Les sorties en attente n\'ont pas pu être lues : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
@@ -52340,6 +52376,8 @@ extension on Traductions {
 			'avis.admin.liens.creeAdresse' => 'Adresse du lien',
 			'avis.admin.liens.creeValable' => ({required Object date}) => 'Valable jusqu\'au ${date}.',
 			'avis.admin.liens.copier' => 'Copier le lien',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.liens.copie' => 'Lien copié.',
 			'avis.admin.liens.creeFermer' => 'J\'ai copié le lien',
 			'avis.admin.liens.etat.ouvert' => 'Ouvert',
@@ -52349,8 +52387,6 @@ extension on Traductions {
 			'avis.admin.liens.recus' => ({required Object recus, required Object max}) => 'Avis reçus : ${recus} sur ${max}',
 			'avis.admin.liens.fin' => ({required Object date}) => 'Fin le ${date}',
 			'avis.admin.liens.cree' => ({required Object date}) => 'Créé le ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.liens.fermer' => 'Fermer le lien',
 			'avis.admin.liens.fermerQuestion' => ({required Object nom}) => 'Fermer le lien « ${nom} » ?',
 			'avis.admin.liens.fermerConsequence' => 'Les personnes qui ouvriront ce lien verront qu\'il est fermé et ne pourront plus envoyer d\'avis. Les avis déjà reçus restent. Un lien fermé ne se rouvre pas.',

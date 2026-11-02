@@ -172,6 +172,29 @@ export const MODELES: Record<string, Fabrique> = {
         : `Le paiement de ${m} est reçu. Le solde est à jour dans l’application.`,
       'Ouvrir l’application', '/tuteur/foyer/recharge')
   },
+  // FN-115b (02/11/2026) : remboursement et contestation d'un paiement.
+  remboursement_effectue: (d) => {
+    const m = montantLisible(d)
+    return avis(d, 'Un remboursement est fait', 'Un remboursement est fait',
+      m === null ? 'Un remboursement est fait sur le moyen de paiement utilisé. Le solde est à jour dans l’application.'
+        : `Un remboursement de ${m} est fait sur le moyen de paiement utilisé. Le solde est à jour dans l’application.`,
+      'Ouvrir l’application', '/tuteur/foyer/recharge')
+  },
+  litige_ouvert: (d) => {
+    const m = montantLisible(d)
+    return avis(d, 'Un paiement est contesté auprès de la banque', 'Un paiement est contesté',
+      m === null ? 'Un paiement est contesté auprès de la banque. Pendant l’examen, l’accès des élèves concernés aux séances et aux ressources est suspendu. Si c’est une erreur, écrivez-nous.'
+        : `Un paiement de ${m} est contesté auprès de la banque. Pendant l’examen, l’accès des élèves concernés aux séances et aux ressources est suspendu. Si c’est une erreur, écrivez-nous.`,
+      'Ouvrir l’application', '/tuteur/foyer/recharge')
+  },
+  litige_clos: (d) => {
+    const f = montantLisible({ montant_mineur: d.frais_mineur, devise: d.devise })
+    return avis(d, 'La contestation est close', 'La contestation est close',
+      d.issue === 'gagne' ? 'La banque a donné raison à l’académie\u00a0: le paiement est rétabli et l’accès revient dès que le mois est de nouveau payé.'
+        : f === null ? 'La banque vous a donné raison\u00a0: le paiement est traité comme un remboursement total. Les frais de la contestation sont ajoutés au solde du foyer.'
+        : `La banque vous a donné raison\u00a0: le paiement est traité comme un remboursement total. Les frais de la contestation (${f}) sont ajoutés au solde du foyer.`,
+      'Ouvrir l’application', '/tuteur/foyer/recharge')
+  },
   invitation_foyer: (d) => {
     const qui = typeof d.invite_par === 'string' && d.invite_par.trim() ? d.invite_par.trim() : 'Un membre de votre famille'
     const fin = dateLongue(d.expire_le)
