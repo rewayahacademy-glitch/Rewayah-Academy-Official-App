@@ -71,6 +71,7 @@ import 'core/capacites/port_revenus_enseignant.dart';
 import 'core/capacites/port_series_tresorerie.dart';
 import 'core/capacites/port_support.dart';
 import 'core/capacites/port_suppressions_admin.dart';
+import 'core/capacites/port_tarifs_particuliers.dart';
 import 'core/capacites/port_validations_finance.dart';
 import 'core/capacites/profil_eleve_titulaire_supabase.dart';
 import 'core/capacites/progression_famille_supabase.dart';
@@ -80,6 +81,7 @@ import 'core/capacites/revue_dossiers_depuis_validation.dart';
 import 'core/capacites/series_tresorerie_supabase.dart';
 import 'core/capacites/support_supabase.dart';
 import 'core/capacites/suppressions_admin_supabase.dart';
+import 'core/capacites/tarifs_particuliers_supabase.dart';
 import 'core/capacites/validations_finance_supabase.dart';
 import 'core/communications/communications_supabase.dart';
 import 'core/communications/libelles_communication_slang.dart';
@@ -406,6 +408,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portPaiementsSaisisProvider.overrideWithValue(
     PaiementsSaisisSupabase(Supabase.instance.client),
+  ),
+  // Lot (A), 02/11/2026 : acces offerts et prix speciaux, saisis par la
+  // direction (migration 20261104700000).
+  portTarifsParticuliersProvider.overrideWithValue(
+    TarifsParticuliersSupabase(Supabase.instance.client),
   ),
   // Paie des enseignants par mois (B2.5, migration 20261102200000) : lecture
   // seule, direction et comptabilite ; montants arretes par le serveur.
