@@ -23,6 +23,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/port_paiements_saisis.dart';
+import 'package:rewayah_academy/core/capacites/port_tarifs_particuliers.dart';
 import 'package:rewayah_academy/core/capacites/port_validations_finance.dart';
 import 'package:rewayah_academy/core/capacites/rpc_finance_supabase.dart';
 import 'package:rewayah_academy/core/comptable/modeles_comptable.dart';
@@ -188,6 +189,29 @@ DemandeValidation _demande(String id, EtatDemandeValidation etat) =>
       ),
     );
 
+class _SansRemise implements PortTarifsParticuliers {
+  const _SansRemise();
+
+  @override
+  Future<List<TarifParticulier>> liste() async => const <TarifParticulier>[];
+
+  @override
+  Future<void> accorder({
+    required String profilId,
+    required NatureTarif nature,
+    required DateTime moisFin,
+    required String motif,
+    int? pourMille,
+    Montant? montant,
+  }) async {}
+
+  @override
+  Future<void> retirer({
+    required String profilId,
+    required String motif,
+  }) async {}
+}
+
 Widget _hote(
   PortPaiementsSaisis port, {
   PortValidationsFinance? validations,
@@ -201,6 +225,9 @@ Widget _hote(
     horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(horsLigne)),
     sansPersonneConnectee(),
     portPaiementsSaisisProvider.overrideWithValue(port),
+    // Lot (A) : le bloc des remises a sa propre source, ici vide, pour que
+    // les etats de la liste des eleves restent seuls a l'ecran.
+    portTarifsParticuliersProvider.overrideWithValue(const _SansRemise()),
     if (validations != null)
       portValidationsFinanceProvider.overrideWithValue(validations),
   ],

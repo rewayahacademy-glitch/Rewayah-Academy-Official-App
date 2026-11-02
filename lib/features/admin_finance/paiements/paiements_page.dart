@@ -53,6 +53,7 @@ import '../a_valider/a_valider_page.dart'
 import '../a_valider/decision_validation.dart' show ouvrirDecisionValidation;
 import '../reserve_delegation/composants_politique.dart' show BlocPolitique;
 import 'factures_mois.dart';
+import 'tarifs_particuliers.dart';
 
 /// Les eleves que la saisie peut viser, rendus par la source.
 final FutureProvider<List<ElevePourPaiement>> elevesPourPaiementProvider =
@@ -148,6 +149,9 @@ class PaiementsBloc extends ConsumerWidget {
         BlocFacturesMois(
           onEmises: () => ref.invalidate(elevesPourPaiementProvider),
         ),
+        Ecart.vSection,
+        // Lot (A), 02/11/2026 : les acces offerts et prix speciaux actifs.
+        const BlocTarifsParticuliers(),
         Ecart.vSection,
         const _PaiementsAValider(),
         BlocPolitique<List<ElevePourPaiement>>(
@@ -312,14 +316,31 @@ Future<bool> ouvrirSaisiePaiement(
     context,
     listen: false,
   );
+  bool tarif = false;
   final bool? change = await AppBottomSheet.ouvrir<bool>(
     context,
     titre: t.admin.finance.pai.feuilleTitre(prenom: eleve.prenom),
-    constructeur: (BuildContext _) => UncontrolledProviderScope(
+    constructeur: (BuildContext feuille) => UncontrolledProviderScope(
       container: portee,
-      child: FeuillePaiement(eleve: eleve),
+      child: FeuillePaiement(
+        eleve: eleve,
+        // Lot (A) : la fiche se ferme, celle de l'acces offert ou du prix
+        // special s'ouvre pour le meme eleve.
+        onTarif: () {
+          tarif = true;
+          Navigator.of(feuille).pop(false);
+        },
+      ),
     ),
   );
+  if (tarif && context.mounted) {
+    return ouvrirTarifParticulier(
+      context,
+      profilId: eleve.profilId,
+      prenom: eleve.prenom,
+      devise: eleve.resteAPayer.devise,
+    );
+  }
   return change ?? false;
 }
 
@@ -328,10 +349,17 @@ enum _Phase { saisie, envoi, faite, refusee, inconnue }
 /// Le contenu de la fiche de saisie d'un paiement.
 class FeuillePaiement extends ConsumerStatefulWidget {
   /// Cree la fiche.
-  const FeuillePaiement({required this.eleve, super.key});
+  const FeuillePaiement({required this.eleve, super.key, this.onTarif});
 
   /// L'eleve vise.
   final ElevePourPaiement eleve;
+
+  /// Lot (A) : ouvre « Accès offert ou prix spécial » pour cet eleve ; nul,
+  /// l'action n'est pas proposee.
+  final VoidCallback? onTarif;
+
+  /// La cle de l'action « Accès offert ou prix spécial ».
+  static const Key cleTarif = ValueKey<String>('paiement-tarif');
 
   /// La cle du champ du montant.
   static const Key cleMontant = ValueKey<String>('paiement-montant');
@@ -585,6 +613,17 @@ class _FeuillePaiementState extends ConsumerState<FeuillePaiement> {
         ),
       );
     } else {
+      final VoidCallback? onTarif = widget.onTarif;
+      if (onTarif != null && _phase == _Phase.saisie) {
+        boutons.add(
+          ActionPrincipale(
+            key: FeuillePaiement.cleTarif,
+            libelle: t.admin.finance.tarifs.accorder,
+            niveau: NiveauAction.secondaire,
+            onPress: onTarif,
+          ),
+        );
+      }
       boutons
         ..add(
           ActionPrincipale(
