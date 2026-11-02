@@ -551,25 +551,30 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
         onPress: _actionLigne(g),
       );
       if (!ecartable) return l;
-      // LISTES-1 : le menu « ... » en bout de ligne porte « Ecarter ».
-      return Row(
-        children: <Widget>[
-          Expanded(child: l),
-          Padding(
-            padding: const EdgeInsetsDirectional.only(end: AppSpacing.sm),
-            child: MenuActions(
-              key: ValueKey<String>('notification-menu-${g.tete.id}'),
-              points: true,
-              objet: g.tete.titre,
-              actions: <EntreeAction>[
-                EntreeAction(
-                  libelle: t.notifications.ecarter,
-                  onChoix: () => unawaited(_ecarter(g)),
-                ),
-              ],
+      // LISTES-1 : le menu « ... » en bout de ligne porte « Ecarter ». Le
+      // fond de la ligne court sous le menu : sans lui, le filet de la carte
+      // changeait de teinte a l'aplomb du « ... » (capture R3, 1440).
+      return ColoredBox(
+        color: AppPalette.of(context).surfaceRaised.background,
+        child: Row(
+          children: <Widget>[
+            Expanded(child: l),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(end: AppSpacing.sm),
+              child: MenuActions(
+                key: ValueKey<String>('notification-menu-${g.tete.id}'),
+                points: true,
+                objet: g.tete.titre,
+                actions: <EntreeAction>[
+                  EntreeAction(
+                    libelle: t.notifications.ecarter,
+                    onChoix: () => unawaited(_ecarter(g)),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       );
     }
 
