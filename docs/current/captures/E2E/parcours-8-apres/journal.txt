@@ -1,6 +1,6 @@
-== Parcours 8 : l'eleve adulte suit sa classe : 2026-11-01T03:18:08.269Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
-Classe « E2E Classe adultes 10312330 », debut 2026-11-01T01:00:00.791Z ; adulte E2E Adulte Apprenant10312331
-Accueil : « flt-semantics:Bonjour E2E Adulte » ; classe « flt-semantics:E2E Classe adultes 10312330 Sayyid E2E Enseignant 1 élève sur 6 places »
+== Parcours 8 : l'eleve adulte suit sa classe : 2026-11-02T05:45:09.868Z ; Chromium 141.0.7390.37 ; http://127.0.0.1:8090
+Classe « E2E Classe adultes 11012202 », debut 2026-11-01T23:15:00.915Z ; adulte E2E Adulte Apprenant11012203
+Accueil : « flt-semantics:Bonjour E2E Adulte » ; classe « flt-semantics:E2E Classe adultes 11012202 Sayyid E2E Enseignant 1 élève sur 6 places »
 « Dernières séances » : flt-semantics:Dernières séances
-« Voir tout » : flt-semantics:Dimanche 1 novembre 02:00 à 03:30
+« Voir tout » : flt-semantics:Lundi 2 novembre 05:06 à 06:06
 == Parcours 8 : l'eleve adulte suit sa classe : vert
