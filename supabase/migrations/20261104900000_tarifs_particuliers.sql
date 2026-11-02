@@ -1,6 +1,6 @@
 -- Lot (A), fichier 2 sur 2 (02/11/2026) : « Accès offert » et « Prix spécial »,
 -- accordes par la direction, eleve par eleve, avec une raison et un mois de fin
--- obligatoires. Le fichier 1 (20261104700000) rend pour_mille facultatif.
+-- obligatoires. Le fichier 1 (20261104800000) rend pour_mille facultatif.
 --
 -- Demande du directeur (02/11) : « certains ne vont pas payer, on doit pouvoir
 -- les donner acces ; certains ont des prix speciaux, nos eleves actuels [...]

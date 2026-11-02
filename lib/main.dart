@@ -410,7 +410,7 @@ List<Override> _surchargesAppReelle() => <Override>[
     PaiementsSaisisSupabase(Supabase.instance.client),
   ),
   // Lot (A), 02/11/2026 : acces offerts et prix speciaux, saisis par la
-  // direction (migration 20261104700000).
+  // direction (migrations 20261104800000 et 20261104900000).
   portTarifsParticuliersProvider.overrideWithValue(
     TarifsParticuliersSupabase(Supabase.instance.client),
   ),

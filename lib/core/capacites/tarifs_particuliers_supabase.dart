@@ -1,5 +1,5 @@
 // Lot (A), 02/11/2026 : les remises particulieres servies par les RPC de la
-// migration 20261104800000 (`accorder_tarif_particulier`, `bourses_lister`)
+// migration 20261104900000 (`accorder_tarif_particulier`, `bourses_lister`)
 // et de FAC-E-01 (`retirer_bourse`). **Aucun calcul** : le serveur verifie
 // les droits et les valeurs ; un refus (42501, 22023, BO002, BO003) devient
 // [RefusTarif], rien n'a ete enregistre.
