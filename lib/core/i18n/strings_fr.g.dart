@@ -109,6 +109,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$accueilInscrits$fr accueilInscrits = Traductions$accueilInscrits$fr.internal(_root);
 	late final Traductions$n1$fr n1 = Traductions$n1$fr.internal(_root);
 	late final Traductions$i1$fr i1 = Traductions$i1$fr.internal(_root);
+	late final Traductions$a3bis$fr a3bis = Traductions$a3bis$fr.internal(_root);
 }
 
 // Path: commun
@@ -3739,6 +3740,16 @@ class Traductions$i1$fr {
 	late final Traductions$i1$familles$fr familles = Traductions$i1$familles$fr.internal(_root);
 	late final Traductions$i1$import$fr import = Traductions$i1$import$fr.internal(_root);
 	late final Traductions$i1$lien$fr lien = Traductions$i1$lien$fr.internal(_root);
+}
+
+// Path: a3bis
+class Traductions$a3bis$fr {
+	Traductions$a3bis$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$a3bis$regles$fr regles = Traductions$a3bis$regles$fr.internal(_root);
 }
 
 // Path: commun.formats
@@ -20947,6 +20958,39 @@ class Traductions$i1$lien$fr {
 
 	/// fr: 'Recevoir un nouveau lien'
 	String get nouveauLien => 'Recevoir un nouveau lien';
+}
+
+// Path: a3bis.regles
+class Traductions$a3bis$regles$fr {
+	Traductions$a3bis$regles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Si un enseignant s'est proposé, il remplace l'enseignant, qui ne peut plus rejoindre la séance de ce jour, et les familles sont prévenues. Si personne ne s'est proposé, l'enseignant peut encore entrer : la séance reste ouverte au remplacement jusqu'à sa fin.'
+	String get perteDetail => 'Si un enseignant s\'est proposé, il remplace l\'enseignant, qui ne peut plus rejoindre la séance de ce jour, et les familles sont prévenues. Si personne ne s\'est proposé, l\'enseignant peut encore entrer : la séance reste ouverte au remplacement jusqu\'à sa fin.';
+
+	/// fr: 'Alerte de la direction'
+	String get alerteDirection => 'Alerte de la direction';
+
+	/// fr: 'Si ni l'enseignant ni un remplaçant n'a rejoint la salle, la direction reçoit un e-mail, une seule fois par séance.'
+	String get alerteDirectionDetail => 'Si ni l\'enseignant ni un remplaçant n\'a rejoint la salle, la direction reçoit un e-mail, une seule fois par séance.';
+
+	/// fr: 'L'enseignant est prévenu qu'il risque de perdre la séance. Les enseignants libres peuvent se proposer pour le remplacer.'
+	String get avertissementDetail => 'L\'enseignant est prévenu qu\'il risque de perdre la séance. Les enseignants libres peuvent se proposer pour le remplacer.';
+
+	/// fr: 'Séance créée tard'
+	String get seanceTardive => 'Séance créée tard';
+
+	/// fr: 'Une séance créée moins de ce délai avant son début n'est jamais retirée à l'enseignant automatiquement. L'alerte de la direction part quand même.'
+	String get seanceTardiveDetail => 'Une séance créée moins de ce délai avant son début n\'est jamais retirée à l\'enseignant automatiquement. L\'alerte de la direction part quand même.';
+
+	/// fr: 'Entre {min} et {max} après le début.'
+	String bornesAlerte({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début.';
+
+	/// fr: 'Entre {min} et {max} avant le début.'
+	String bornesTardive({required Object min, required Object max}) => 'Entre ${min} et ${max} avant le début.';
 }
 
 // Path: commun.etats.chargementProlonge
@@ -53222,6 +53266,14 @@ extension on Traductions {
 			'i1.lien.dejaServiTitre' => 'Ce lien a déjà servi ou a expiré',
 			'i1.lien.dejaServiDetail' => 'Un lien de connexion ne sert qu\'une fois, et pour peu de temps. Demandez-en un nouveau : saisissez votre adresse e-mail sur la page de connexion.',
 			'i1.lien.nouveauLien' => 'Recevoir un nouveau lien',
+			'a3bis.regles.perteDetail' => 'Si un enseignant s\'est proposé, il remplace l\'enseignant, qui ne peut plus rejoindre la séance de ce jour, et les familles sont prévenues. Si personne ne s\'est proposé, l\'enseignant peut encore entrer : la séance reste ouverte au remplacement jusqu\'à sa fin.',
+			'a3bis.regles.alerteDirection' => 'Alerte de la direction',
+			'a3bis.regles.alerteDirectionDetail' => 'Si ni l\'enseignant ni un remplaçant n\'a rejoint la salle, la direction reçoit un e-mail, une seule fois par séance.',
+			'a3bis.regles.avertissementDetail' => 'L\'enseignant est prévenu qu\'il risque de perdre la séance. Les enseignants libres peuvent se proposer pour le remplacer.',
+			'a3bis.regles.seanceTardive' => 'Séance créée tard',
+			'a3bis.regles.seanceTardiveDetail' => 'Une séance créée moins de ce délai avant son début n\'est jamais retirée à l\'enseignant automatiquement. L\'alerte de la direction part quand même.',
+			'a3bis.regles.bornesAlerte' => ({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début.',
+			'a3bis.regles.bornesTardive' => ({required Object min, required Object max}) => 'Entre ${min} et ${max} avant le début.',
 			_ => null,
 		};
 	}

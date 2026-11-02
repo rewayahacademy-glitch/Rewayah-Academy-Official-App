@@ -102,6 +102,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$accueilInscrits$ar accueilInscrits = _Traductions$accueilInscrits$ar._(_root);
 	@override late final _Traductions$n1$ar n1 = _Traductions$n1$ar._(_root);
 	@override late final _Traductions$i1$ar i1 = _Traductions$i1$ar._(_root);
+	@override late final _Traductions$a3bis$ar a3bis = _Traductions$a3bis$ar._(_root);
 }
 
 // Path: notifications
@@ -1868,6 +1869,16 @@ class _Traductions$i1$ar extends Traductions$i1$fr {
 	@override late final _Traductions$i1$familles$ar familles = _Traductions$i1$familles$ar._(_root);
 	@override late final _Traductions$i1$import$ar import = _Traductions$i1$import$ar._(_root);
 	@override late final _Traductions$i1$lien$ar lien = _Traductions$i1$lien$ar._(_root);
+}
+
+// Path: a3bis
+class _Traductions$a3bis$ar extends Traductions$a3bis$fr {
+	_Traductions$a3bis$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$a3bis$regles$ar regles = _Traductions$a3bis$regles$ar._(_root);
 }
 
 // Path: notifications.evenements
@@ -9156,6 +9167,23 @@ class _Traductions$i1$lien$ar extends Traductions$i1$lien$fr {
 	@override String get dejaServiTitre => 'استُعمل هذا الرابط من قبل أو انتهت صلاحيته';
 	@override String get dejaServiDetail => 'لا يصلح رابط تسجيل الدخول إلا مرة واحدة ولمدة قصيرة. اطلب رابطًا جديدًا: أدخل عنوان بريدك الإلكتروني في صفحة تسجيل الدخول.';
 	@override String get nouveauLien => 'الحصول على رابط جديد';
+}
+
+// Path: a3bis.regles
+class _Traductions$a3bis$regles$ar extends Traductions$a3bis$regles$fr {
+	_Traductions$a3bis$regles$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get perteDetail => 'إذا تقدّم معلم، فإنه يحل محل المعلم الذي لا يعود بإمكانه دخول حصة هذا اليوم، وتُبلَّغ الأسر. وإذا لم يتقدّم أحد، فلا يزال بإمكان المعلم الدخول: تبقى الحصة مفتوحة للاستبدال حتى نهايتها.';
+	@override String get alerteDirection => 'تنبيه الإدارة';
+	@override String get alerteDirectionDetail => 'إذا لم يدخل المعلم ولا بديل القاعة، تتلقى الإدارة بريدًا إلكترونيًا، مرة واحدة لكل حصة.';
+	@override String get avertissementDetail => 'يُنبَّه المعلم إلى أنه قد يفقد الحصة. ويمكن للمعلمين المتاحين التقدّم لاستبداله.';
+	@override String get seanceTardive => 'حصة أُنشئت متأخرة';
+	@override String get seanceTardiveDetail => 'الحصة التي أُنشئت قبل بدايتها بأقل من هذه المدة لا تُسحب من المعلم تلقائيًا أبدًا. ومع ذلك يُرسَل تنبيه الإدارة.';
+	@override String bornesAlerte({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية.';
+	@override String bornesTardive({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ قبل البداية.';
 }
 
 // Path: commun.etats.chargementProlonge
@@ -29689,6 +29717,14 @@ extension on TraductionsAr {
 			'i1.lien.dejaServiTitre' => 'استُعمل هذا الرابط من قبل أو انتهت صلاحيته',
 			'i1.lien.dejaServiDetail' => 'لا يصلح رابط تسجيل الدخول إلا مرة واحدة ولمدة قصيرة. اطلب رابطًا جديدًا: أدخل عنوان بريدك الإلكتروني في صفحة تسجيل الدخول.',
 			'i1.lien.nouveauLien' => 'الحصول على رابط جديد',
+			'a3bis.regles.perteDetail' => 'إذا تقدّم معلم، فإنه يحل محل المعلم الذي لا يعود بإمكانه دخول حصة هذا اليوم، وتُبلَّغ الأسر. وإذا لم يتقدّم أحد، فلا يزال بإمكان المعلم الدخول: تبقى الحصة مفتوحة للاستبدال حتى نهايتها.',
+			'a3bis.regles.alerteDirection' => 'تنبيه الإدارة',
+			'a3bis.regles.alerteDirectionDetail' => 'إذا لم يدخل المعلم ولا بديل القاعة، تتلقى الإدارة بريدًا إلكترونيًا، مرة واحدة لكل حصة.',
+			'a3bis.regles.avertissementDetail' => 'يُنبَّه المعلم إلى أنه قد يفقد الحصة. ويمكن للمعلمين المتاحين التقدّم لاستبداله.',
+			'a3bis.regles.seanceTardive' => 'حصة أُنشئت متأخرة',
+			'a3bis.regles.seanceTardiveDetail' => 'الحصة التي أُنشئت قبل بدايتها بأقل من هذه المدة لا تُسحب من المعلم تلقائيًا أبدًا. ومع ذلك يُرسَل تنبيه الإدارة.',
+			'a3bis.regles.bornesAlerte' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية.',
+			'a3bis.regles.bornesTardive' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ قبل البداية.',
 			_ => null,
 		};
 	}

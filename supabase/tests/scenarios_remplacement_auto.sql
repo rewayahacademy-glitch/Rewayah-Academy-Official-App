@@ -101,6 +101,9 @@ INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, sessi
  ('a3000000-0000-0000-0000-000000000202','a3000000-0000-0000-0000-000000000002', now() - interval '11 minutes', now() + interval '34 minutes', 'planned','standard','a3000000-0000-0000-0000-000000000102'),
  ('a3000000-0000-0000-0000-000000000203','a3000000-0000-0000-0000-000000000003', now() - interval '5 minutes',  now() + interval '40 minutes', 'planned','standard','a3000000-0000-0000-0000-000000000103'),
  ('a3000000-0000-0000-0000-000000000204','a3000000-0000-0000-0000-000000000004', now() - interval '4 minutes',  now() + interval '41 minutes', 'planned','standard','a3000000-0000-0000-0000-000000000104');
+-- A3-bis (20261105700000) : des seances creees la veille, pas « creees tard ».
+UPDATE public.sessions SET created_at = now() - interval '1 day'
+ WHERE id::text LIKE 'a3000000-0000-0000-0000-0000000002%';
 -- S4 : un eleve est entre avant le titulaire, la seance est ouverte (in_progress).
 UPDATE public.sessions SET status = 'preflight' WHERE id = 'a3000000-0000-0000-0000-000000000204';
 UPDATE public.sessions SET status = 'in_progress' WHERE id = 'a3000000-0000-0000-0000-000000000204';
@@ -109,7 +112,13 @@ UPDATE public.sessions SET status = 'in_progress' WHERE id = 'a3000000-0000-0000
 SELECT private.remplacement_auto_passer(pg_temp.debut('a3000000-0000-0000-0000-000000000201') + interval '2 minutes');
 SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.remplacements_preparation WHERE session_id = 'a3000000-0000-0000-0000-000000000201'),
   'minute 2 : aucune pre-alerte');
--- Le meme passage a vu S3 a sa minute 3 et S2 a sa minute 9 (S2 sans pre-alerte : passage manque).
+-- Le meme passage a vu S3 a sa minute 3 et S2 a sa minute 9 : depuis A3-bis
+-- (20261105700000), la pre-alerte vaut jusqu'a la fin prevue ; S2 la recoit,
+-- mais sans avertissement du titulaire (T+perte est passe).
+SELECT pg_temp.vrai(EXISTS (SELECT 1 FROM public.remplacements_preparation
+                             WHERE session_id = 'a3000000-0000-0000-0000-000000000202' AND evenement = 'pre_alerte')
+  AND NOT pg_temp.notifie('a3000000-0000-0000-0000-000000000002', 'remplacement_avertissement', 'a3000000-0000-0000-0000-000000000202'),
+  'A3-bis : S2 a sa minute 9 recoit la pre-alerte, sans avertissement du titulaire');
 
 -- Minute 3 de S1 : avertissement du titulaire, pre-alerte aux candidats.
 SELECT private.remplacement_auto_passer(pg_temp.debut('a3000000-0000-0000-0000-000000000201') + interval '3 minutes');
@@ -176,15 +185,16 @@ SELECT pg_temp.vrai(EXISTS (SELECT 1 FROM public.remplacements_seance
   'minute 8 : absence automatique, acteur = titulaire, origine auto');
 SELECT pg_temp.vrai(private.c29_enseignant_effectif_session('a3000000-0000-0000-0000-000000000201') = 'a3000000-0000-0000-0000-000000000009',
   'minute 8 : le pret devient l''enseignant effectif');
-SELECT pg_temp.vrai(EXISTS (SELECT 1 FROM public.remplacements_seance
-                             WHERE session_id = 'a3000000-0000-0000-0000-000000000204' AND evenement = 'absence_declaree' AND origine = 'auto'),
-  'seance deja ouverte (in_progress) : minute 8, absence automatique quand meme');
-SELECT pg_temp.en_tant_que('a3000000-0000-0000-0000-000000000009');
+-- A3-bis (20261105700000) : sans enseignant pret, rien n'est pose.
+SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.remplacements_seance
+                                 WHERE session_id = 'a3000000-0000-0000-0000-000000000204')
+  AND NOT private.remplacement_titulaire_ecarte('a3000000-0000-0000-0000-000000000204', 'a3000000-0000-0000-0000-000000000004'),
+  'A3-bis, seance deja ouverte (in_progress) sans pret : minute 8, le titulaire n''est pas ecarte');
+SELECT pg_temp.en_tant_que('a3000000-0000-0000-0000-000000000008');
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(EXISTS (SELECT 1 FROM jsonb_array_elements(public.offres_remplacement()) e
-                             WHERE e->>'seance_id' = 'a3000000-0000-0000-0000-000000000204' AND e->>'etat' = 'ouverte')
-  AND public.prendre_remplacement('a3000000-0000-0000-0000-000000000204','a3000000-0000-0000-0000-000000000904')->>'etat' = 'acceptee',
-  'seance deja ouverte (in_progress) : l''offre se voit et se prend');
+                             WHERE e->>'seance_id' = 'a3000000-0000-0000-0000-000000000204' AND e->>'etat' = 'preparation'),
+  'A3-bis, seance deja ouverte : elle reste ouverte au remplacement (preparation)');
 RESET ROLE;
 SELECT set_config('request.jwt.claim.sub','',true); SELECT set_config('request.jwt.claims','',true);
 SELECT set_config('test.uid','',true); SELECT set_config('test.jwt','',true);
@@ -202,31 +212,36 @@ BEGIN
     RAISE EXCEPTION 'ROUGE : le titulaire ecarte a recu un jeton';
   EXCEPTION WHEN insufficient_privilege THEN NULL;
   END;
-  BEGIN
-    PERFORM public.autoriser_jeton_video('a3000000-0000-0000-0000-000000000202', 'a3000000-0000-0000-0000-000000000002', 'wss://a', 'wss://b');
-    RAISE EXCEPTION 'ROUGE : le titulaire de S2 (absence automatique, offre ouverte) a recu un jeton';
-  EXCEPTION WHEN insufficient_privilege THEN NULL;
-  END;
-  RAISE NOTICE 'OK minute 8 : les titulaires ecartes n''ont plus de jeton';
+  RAISE NOTICE 'OK minute 8 : le titulaire ecarte (remplacant pret) n''a plus de jeton';
 END;
 $jeton$;
 SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.remplacements_seance WHERE session_id = 'a3000000-0000-0000-0000-000000000203')
   AND NOT private.remplacement_titulaire_ecarte('a3000000-0000-0000-0000-000000000203', 'a3000000-0000-0000-0000-000000000003'),
   'retour avant T+8 : ni absence ni perte d''acces pour T3');
 
--- Minute 11 de S2 (sans pret) : l'offre est ouverte, la prise passe.
+-- Minute 11 de S2 (sans pret) : A3-bis, le titulaire n'est pas ecarte ; R2 se
+-- declare pret, et le passage suivant le prend (absence et prise ensemble).
 SELECT pg_temp.vrai(clock_timestamp() - pg_temp.debut('a3000000-0000-0000-0000-000000000202') >= interval '11 minutes',
   'S2 est bien a sa minute 11');
+SELECT pg_temp.vrai(NOT private.remplacement_titulaire_ecarte('a3000000-0000-0000-0000-000000000202', 'a3000000-0000-0000-0000-000000000002'),
+  'A3-bis, minute 11 de S2 sans pret : le titulaire n''est pas ecarte');
 SELECT pg_temp.en_tant_que('a3000000-0000-0000-0000-000000000008');
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(EXISTS (SELECT 1 FROM jsonb_array_elements(public.offres_remplacement()) e
-                             WHERE e->>'seance_id' = 'a3000000-0000-0000-0000-000000000202' AND e->>'etat' = 'ouverte'),
-  'minute 11 : offre ouverte pour S2');
-SELECT pg_temp.vrai(public.prendre_remplacement('a3000000-0000-0000-0000-000000000202','a3000000-0000-0000-0000-000000000901')->>'etat' = 'acceptee',
-  'minute 11 : R2 prend S2');
+                             WHERE e->>'seance_id' = 'a3000000-0000-0000-0000-000000000202' AND e->>'etat' = 'preparation'),
+  'minute 11 : S2 reste ouverte au remplacement (preparation)');
+SELECT pg_temp.vrai(public.se_declarer_pret_remplacement('a3000000-0000-0000-0000-000000000202')->>'etat' = 'retenu',
+  'minute 11 : R2 se declare pret pour S2');
 RESET ROLE;
 SELECT set_config('request.jwt.claim.sub','',true); SELECT set_config('request.jwt.claims','',true);
 SELECT set_config('test.uid','',true); SELECT set_config('test.jwt','',true);
+SELECT private.remplacement_auto_passer(clock_timestamp());
+SELECT pg_temp.vrai(EXISTS (SELECT 1 FROM public.remplacements_seance
+                             WHERE session_id = 'a3000000-0000-0000-0000-000000000202' AND evenement = 'absence_declaree' AND origine = 'auto')
+  AND EXISTS (SELECT 1 FROM public.remplacements_seance
+               WHERE session_id = 'a3000000-0000-0000-0000-000000000202' AND evenement = 'remplacement_pris'
+                 AND enseignant_remplacant_id = 'a3000000-0000-0000-0000-000000000008'),
+  'passage suivant : absence et prise par R2, ensemble');
 SELECT pg_temp.vrai(private.c29_enseignant_effectif_session('a3000000-0000-0000-0000-000000000202') = 'a3000000-0000-0000-0000-000000000008',
   'minute 11 : R2 est l''enseignant effectif de S2');
 

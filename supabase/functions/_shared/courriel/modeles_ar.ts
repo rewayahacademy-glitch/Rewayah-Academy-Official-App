@@ -122,6 +122,15 @@ const MODELES: Record<string, Fabrique> = {
   titulaire_en_retard: (d) => avis(d, 'المعلم الأصلي متأخر', 'المعلم الأصلي متأخر',
     d.portee === 'direction' ? 'معلم أصلي لم يدخل قاعته. يجري البحث عن بديل.' : 'تبحث الأكاديمية عن بديل: ابقوا في القاعة.',
     'فتح التطبيق', '/tuteur'),
+  // A3-bis (02/11/2026).
+  remplacement_personne_en_salle: (d) => {
+    const quand = quandSeance(d, 'ar', 'الساعة')
+    const classe = typeof d.classe === 'string' ? ` للفصل ${d.classe}` : ''
+    const ens = typeof d.enseignant === 'string' ? ` معلم الفصل: ${d.enseignant}.` : ''
+    return avis(d, 'لا أحد في القاعة', 'لا أحد في القاعة',
+      `لم يدخل المعلم ولا بديل القاعة${classe}${quand ? `، حصة ${quand}` : ''}.${ens} ابحثوا عن بديل أو أبلغوا الأسر.`,
+      'عرض الجدول', '/admin/operations/planning')
+  },
   remplacant_arrive: (d) => avis(d, 'بديل في الطريق', 'بديل في الطريق',
     'بديل في الطريق: ابقوا في القاعة.',
     'فتح التطبيق', '/tuteur'),

@@ -13169,5 +13169,17 @@
       "dejaServiDetail": "Un lien de connexion ne sert qu'une fois, et pour peu de temps. Demandez-en un nouveau : saisissez votre adresse e-mail sur la page de connexion.",
       "nouveauLien": "Recevoir un nouveau lien"
     }
+  },
+  "a3bis": {
+    "regles": {
+      "perteDetail": "Si un enseignant s'est proposé, il remplace l'enseignant, qui ne peut plus rejoindre la séance de ce jour, et les familles sont prévenues. Si personne ne s'est proposé, l'enseignant peut encore entrer\u00a0: la séance reste ouverte au remplacement jusqu'à sa fin.",
+      "alerteDirection": "Alerte de la direction",
+      "alerteDirectionDetail": "Si ni l'enseignant ni un remplaçant n'a rejoint la salle, la direction reçoit un e-mail, une seule fois par séance.",
+      "avertissementDetail": "L'enseignant est prévenu qu'il risque de perdre la séance. Les enseignants libres peuvent se proposer pour le remplacer.",
+      "seanceTardive": "Séance créée tard",
+      "seanceTardiveDetail": "Une séance créée moins de ce délai avant son début n'est jamais retirée à l'enseignant automatiquement. L'alerte de la direction part quand même.",
+      "bornesAlerte": "Entre {min} et {max} après le début.",
+      "bornesTardive": "Entre {min} et {max} avant le début."
+    }
   }
 }

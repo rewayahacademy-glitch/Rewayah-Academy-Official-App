@@ -92,6 +92,15 @@ const MODELES: Record<string, Fabrique> = {
   titulaire_en_retard: (d) => avis(d, 'El profesor titular llega tarde', 'El profesor titular llega tarde',
     d.portee === 'direction' ? 'Un profesor titular no ha entrado en su sala. Se busca un reemplazo.' : 'La academia busca un reemplazo: quédense en la sala.',
     'Abrir la aplicación', '/tuteur'),
+  // A3-bis (02/11/2026).
+  remplacement_personne_en_salle: (d) => {
+    const quand = quandSeance(d, 'es-ES', 'a las')
+    const classe = typeof d.classe === 'string' ? ` de la clase ${d.classe}` : ''
+    const ens = typeof d.enseignant === 'string' ? ` Profesor de la clase: ${d.enseignant}.` : ''
+    return avis(d, 'No hay nadie en la sala', 'No hay nadie en la sala',
+      `Ni el profesor ni un sustituto ha entrado en la sala${classe}${quand ? `, sesión del ${quand}` : ''}.${ens} Busque un sustituto o avise a las familias.`,
+      'Ver el calendario', '/admin/operations/planning')
+  },
   remplacant_arrive: (d) => avis(d, 'Llega un profesor de reemplazo', 'Llega un profesor de reemplazo',
     'Llega un profesor de reemplazo: quédense en la sala.',
     'Abrir la aplicación', '/tuteur'),

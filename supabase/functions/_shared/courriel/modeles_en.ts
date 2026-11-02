@@ -92,6 +92,15 @@ const MODELES: Record<string, Fabrique> = {
   titulaire_en_retard: (d) => avis(d, 'The class teacher is late', 'The class teacher is late',
     d.portee === 'direction' ? 'A class teacher has not entered their room. A replacement is being sought.' : 'The academy is looking for a replacement: stay in the room.',
     'Open the app', '/tuteur'),
+  // A3-bis (02/11/2026).
+  remplacement_personne_en_salle: (d) => {
+    const quand = quandSeance(d, 'en-GB', 'at')
+    const classe = typeof d.classe === 'string' ? ` of the class ${d.classe}` : ''
+    const ens = typeof d.enseignant === 'string' ? ` Class teacher: ${d.enseignant}.` : ''
+    return avis(d, 'Nobody is in the room', 'Nobody is in the room',
+      `Neither the teacher nor a replacement has joined the room${classe}${quand ? `, session of ${quand}` : ''}.${ens} Find a replacement or inform the families.`,
+      'See the schedule', '/admin/operations/planning')
+  },
   remplacant_arrive: (d) => avis(d, 'A replacement teacher is on the way', 'A replacement teacher is on the way',
     'A replacement teacher is on the way: stay in the room.',
     'Open the app', '/tuteur'),

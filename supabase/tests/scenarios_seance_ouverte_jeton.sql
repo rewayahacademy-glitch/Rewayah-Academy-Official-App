@@ -253,14 +253,26 @@ begin
   raise notice 'JT OK J8 : avant l''heure, le jeton ne change rien';
 end $$;
 
--- J11 : titulaire ecarte a T+8, puis remplacant.
+-- J11 : titulaire ecarte a T+8, puis remplacant. Depuis A3-bis
+-- (20261105700000), le titulaire n'est ecarte que si un remplacant est pret :
+-- l'enseignant 8 s'est declare pret pendant la pre-alerte ; la seance a ete
+-- creee la veille (pas « creee tard »).
+update public.sessions set created_at = now() - interval '1 day'
+ where id = '1e70a000-0000-4000-8000-00000000000f';
+insert into public.remplacements_preparation (session_id, evenement) values
+  ('1e70a000-0000-4000-8000-00000000000f', 'pre_alerte');
+insert into public.remplacements_preparation (session_id, evenement, enseignant_id) values
+  ('1e70a000-0000-4000-8000-00000000000f', 'pret', '1e700000-0000-4000-8000-000000000008');
 do $$
 declare
   v_passage jsonb;
 begin
   v_passage := private.remplacement_auto_passer(now());
-  if not private.remplacement_titulaire_ecarte('1e70a000-0000-4000-8000-00000000000f',
-                                               '1e700000-0000-4000-8000-000000000007') then
+  -- A3-bis : absence et prise posees ensemble ; le titulaire est ecarte par
+  -- la prise (c29), le refus du jeton ci-dessous le prouve.
+  if not exists (select 1 from public.remplacements_seance
+                  where session_id = '1e70a000-0000-4000-8000-00000000000f'
+                    and evenement = 'absence_declaree' and origine = 'auto') then
     raise exception 'JT ROUGE J11 : absence automatique non posee (%)', v_passage;
   end if;
   begin
@@ -275,11 +287,13 @@ begin
     raise exception 'JT ROUGE J11 : le titulaire ecarte a ouvert la seance (%)',
       pg_temp.statut('1e70a000-0000-4000-8000-00000000000f');
   end if;
-  insert into public.remplacements_seance
-    (session_id, evenement, enseignant_titulaire_id, enseignant_remplacant_id, acteur_id, cle_idempotence)
-  values ('1e70a000-0000-4000-8000-00000000000f', 'remplacement_pris',
-          '1e700000-0000-4000-8000-000000000007', '1e700000-0000-4000-8000-000000000008',
-          '1e700000-0000-4000-8000-000000000008', '1e70e000-0000-4000-8000-000000000011');
+  -- A3-bis : la prise par l'enseignant pret est posee par le meme passage.
+  if not exists (select 1 from public.remplacements_seance
+                  where session_id = '1e70a000-0000-4000-8000-00000000000f'
+                    and evenement = 'remplacement_pris'
+                    and enseignant_remplacant_id = '1e700000-0000-4000-8000-000000000008') then
+    raise exception 'JT ROUGE J11 : la prise par l''enseignant pret n''est pas posee (%)', v_passage;
+  end if;
   if pg_temp.jeton('1e70a000-0000-4000-8000-00000000000f',
                    '1e700000-0000-4000-8000-000000000008')->>'role' <> 'teacher' then
     raise exception 'JT ROUGE J11 : le remplacant n''a pas de jeton enseignant';

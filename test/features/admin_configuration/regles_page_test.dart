@@ -318,4 +318,77 @@ void main() {
       expect(config.ecritures, isEmpty);
     });
   });
+
+  // A3-bis (02/11/2026) : l'alerte a la direction et la seance creee tard.
+  group('A3-bis : alerte de la direction et seance creee tard', () {
+    const Map<String, Object?> a3bis = <String, Object?>{
+      ..._a3,
+      'remplacement.alerte_direction_minutes': 3,
+      'remplacement.seance_tardive_minutes': 15,
+    };
+
+    testWidgets('les deux lignes se montrent avec leur valeur', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        _Config(_toutesLesCles(remplacement: a3bis)),
+        taille: const Size(1440, 2400),
+      );
+      expect(find.text(t.a3bis.regles.alerteDirection), findsOneWidget);
+      expect(find.text(t.a3bis.regles.alerteDirectionDetail), findsOneWidget);
+      expect(find.text(t.a3bis.regles.seanceTardive), findsOneWidget);
+      expect(find.text(t.a3bis.regles.seanceTardiveDetail), findsOneWidget);
+      expect(clesRemplacementA3bis, <String>[
+        'remplacement.alerte_direction_minutes',
+        'remplacement.seance_tardive_minutes',
+      ]);
+      expect(clesRegles, containsAll(clesRemplacementA3bis));
+    });
+
+    testWidgets('la perte de la seance dit la regle A3-bis, plus l ancienne', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        _Config(_toutesLesCles(remplacement: a3bis)),
+        taille: const Size(1440, 2400),
+      );
+      expect(find.text(t.a3bis.regles.perteDetail), findsOneWidget);
+      expect(find.text(t.admin.regles.remplacementPerteDetail), findsNothing);
+    });
+
+    testWidgets(
+      'un serveur d avant A3-bis : les deux lignes ne se montrent pas',
+      (WidgetTester tester) async {
+        await _monter(
+          tester,
+          _Config(_toutesLesCles()),
+          taille: const Size(1440, 2400),
+        );
+        expect(find.text(t.admin.regles.remplacementSection), findsOneWidget);
+        expect(find.text(t.a3bis.regles.alerteDirection), findsNothing);
+        expect(find.text(t.a3bis.regles.seanceTardive), findsNothing);
+      },
+    );
+
+    testWidgets('modifier l alerte l ecrit sous sa cle', (
+      WidgetTester tester,
+    ) async {
+      final _Config config = _Config(_toutesLesCles(remplacement: a3bis));
+      await _monter(tester, config, taille: const Size(1440, 2400));
+      final Finder f = find.text(t.a3bis.regles.alerteDirection);
+      await tester.ensureVisible(f);
+      await tester.pump();
+      await tester.tap(f);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(ChoixNombre.clePlus));
+      await tester.pump();
+      await tester.tap(find.text(t.admin.regles.envoyer));
+      await tester.pumpAndSettle();
+      expect(config.ecritures, <(String, Object)>[
+        ('remplacement.alerte_direction_minutes', 4),
+      ]);
+    });
+  });
 }
