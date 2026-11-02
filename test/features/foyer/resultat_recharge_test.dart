@@ -982,6 +982,9 @@ void main() {
       // Aucun ancien formulaire remonte : l'etat, et la reprise.
       expect(find.byType(FormulaireStripe), findsNothing);
       expect(find.byKey(ResultatRechargePage.reprendreKey), findsOneWidget);
+      // T3 : jamais « Ne payez pas une seconde fois » a cote de la reprise.
+      expect(find.text(t.payUx.repriseTitre), findsOneWidget);
+      expect(find.text(r.attenteBandeauTitre), findsNothing);
       await _taper(tester, find.byKey(ResultatRechargePage.reprendreKey));
       expect(port.rouvertures, 1);
       final FormulaireStripe neuf = tester.widget(

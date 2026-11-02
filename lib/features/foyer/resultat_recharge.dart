@@ -432,7 +432,25 @@ class _ContenuResultat extends ConsumerWidget {
             onPress: onActualiser,
           )
         : null;
+    // PAY-UX : une commande qui attend encore le prestataire, quittee sans
+    // payer, se reprend par un formulaire NEUF (le serveur ferme l'ancien).
+    final PortRechargeFoyer port = ref.watch(portRechargeFoyerProvider);
+    final bool rouvrable =
+        etat == EtatPaiement.attenteConfirmation &&
+        !horsLigne &&
+        port is SourceFormulairePaiement &&
+        (port as SourceFormulairePaiement).peutRouvrir(suivi.commandeId);
     final Widget? bandeau = switch (etat) {
+      // PAY-UX (T3) : quand la reprise est offerte, le bandeau ne dit pas
+      // « Ne payez pas une seconde fois » a cote de « Reprendre le paiement » :
+      // il dit pourquoi reprendre est sur.
+      EtatPaiement.attenteConfirmation when rouvrable => BandeauAttention(
+        key: ResultatRechargePage.bandeauKey,
+        ton: TonEtat.accent,
+        titre: t.payUx.repriseTitre,
+        message: t.payUx.reprisePhrase,
+        action: actualiser,
+      ),
       EtatPaiement.attenteConfirmation => BandeauAttention(
         key: ResultatRechargePage.bandeauKey,
         ton: TonEtat.accent,
@@ -510,14 +528,6 @@ class _ContenuResultat extends ConsumerWidget {
           ),
           _ => null,
         };
-    // PAY-UX : une commande qui attend encore le prestataire, quittee sans
-    // payer, se reprend par un formulaire NEUF (le serveur ferme l'ancien).
-    final PortRechargeFoyer port = ref.watch(portRechargeFoyerProvider);
-    final bool rouvrable =
-        etat == EtatPaiement.attenteConfirmation &&
-        !horsLigne &&
-        port is SourceFormulairePaiement &&
-        (port as SourceFormulairePaiement).peutRouvrir(suivi.commandeId);
     final Widget actions = _Actions(
       secondaire: rouvrable
           ? _ReprendrePaiement(commandeId: suivi.commandeId)

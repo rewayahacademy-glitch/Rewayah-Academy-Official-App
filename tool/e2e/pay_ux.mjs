@@ -86,10 +86,31 @@ async function avecFauxStripeJs(acteur) {
   });
 }
 
+/// La premiere ligne d'une requete (psql ajoute « INSERT 0 1 » apres un RETURNING).
+const un = (requete) => sql(requete).split('\n')[0].trim();
+
+// Une seule classe par passage (le meme enseignant ne peut pas avoir deux
+// classes au meme horaire) : un creneau libre, essaye au hasard.
+let classe = null;
+function classeDuPassage() {
+  if (classe) return classe;
+  const prof = un(`select id from public.profiles where role = 'teacher' and account_status = 'active' order by created_at limit 1`);
+  for (let essai = 0; essai < 20 && !classe; essai++) {
+    const jour = 1 + Math.floor(Math.random() * 7);
+    const heure = 6 + Math.floor(Math.random() * 15);
+    try {
+      classe = un(`insert into public.groupes (teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana)
+         values ('${prof}', 'enfant', 5, 'E2E PayUx ${tampon}', ${jour}, ${heure}, 'Europe/Paris') returning id`);
+    } catch { /* creneau pris : un autre */ }
+  }
+  if (!classe) throw new Error('aucun creneau libre pour la classe de test');
+  return classe;
+}
+
 // Une famille de test (base LOCALE) : un titulaire, un enfant dans une classe.
 function amorcerFamille(suffixe) {
   const courriel = `e2e-payux-${tampon}-${suffixe}@example.com`;
-  const id = sql(`with u as (
+  const id = un(`with u as (
       insert into auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
         raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, recovery_token,
         email_change_token_new, email_change)
@@ -101,18 +122,15 @@ function amorcerFamille(suffixe) {
       select gen_random_uuid(), u.id, u.id::text, jsonb_build_object('sub', u.id::text, 'email', '${courriel}', 'email_verified', true),
              'email', now(), now(), now() from u returning user_id)
     select id from u`);
-  const foyer = sql(`insert into public.households (timezone) values ('Europe/Paris') returning id`);
-  const enfant = sql(`select gen_random_uuid()`);
+  const foyer = un(`insert into public.households (timezone) values ('Europe/Paris') returning id`);
+  const enfant = un(`select gen_random_uuid()`);
   sql(`insert into auth.users (id, email) values ('${enfant}', 'e2e-payux-enfant-${tampon}-${suffixe}@example.com')`);
   sql(`insert into public.profiles (id, immutable_id, role, household_id, first_name, last_name, account_status, gender) values
        ('${id}', 'E2E-PAYUX-T-${tampon}${suffixe}', 'guardian', '${foyer}', 'E2E Parent', 'PayUx', 'active', 'female'),
        ('${enfant}', 'E2E-PAYUX-E-${tampon}${suffixe}', 'student', '${foyer}', 'H', 'PayUx', 'active', 'male')`);
   sql(`update public.households set primary_guardian_id = '${id}' where id = '${foyer}'`);
   sql(`insert into public.student_profiles (profile_id, student_type, interface_mode) values ('${enfant}', 'minor', 'standard')`);
-  const prof = sql(`select id from public.profiles where role = 'teacher' and account_status = 'active' order by created_at limit 1`);
-  const groupe = sql(`insert into public.groupes (teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana)
-       values ('${prof}', 'enfant', 5, 'E2E PayUx ${tampon}${suffixe}', 2, 17, 'Europe/Paris') returning id`);
-  sql(`insert into public.groupe_membres (groupe_id, student_id, joined_at) values ('${groupe}', '${enfant}', now() - interval '20 days')`);
+  sql(`insert into public.groupe_membres (groupe_id, student_id, joined_at) values ('${classeDuPassage()}', '${enfant}', now() - interval '20 days')`);
   return { courriel, id };
 }
 
@@ -144,7 +162,8 @@ const commandeDe = (titulaire) => sql(`select id || '|' || session_prestataire |
   where titulaire = '${titulaire}' order by cree_le desc limit 1`).split('|');
 
 async function revenirSansPayer(acteur) {
-  await acteur.page.getByRole('button', { name: /Revenir aux soldes sans payer/ }).first().click({ timeout: 5000 });
+  // Le bouton natif de la page du formulaire (au-dessus de l'arbre Flutter).
+  await acteur.page.locator('[role=dialog][aria-modal=true] button').last().click({ timeout: 5000 });
   await acteur.page.waitForTimeout(2500);
 }
 

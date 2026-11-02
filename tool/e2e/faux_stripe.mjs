@@ -77,7 +77,8 @@ http.createServer((req, res) => {
     if (u.pathname === '/v1/checkout/sessions' && req.method === 'POST') {
       if (cle && parCle.has(cle)) return repondre(res, 200, parCle.get(cle));
       n += 1;
-      const id = `cs_test_banc_${lancement}_${n}`;
+      // Forme des vrais identifiants (cs_test_ puis lettres et chiffres).
+      const id = `cs_test_banc${lancement}x${n}`;
       const session = {
         id,
         object: 'checkout.session',

@@ -7024,5 +7024,7 @@
   "payUx.rassurance": "PAY-UX (pilote, 02/11/2026 ; constats du directeur en production sur la page de paiement)",
   "payUx.precedentOuvertTitre": "PAY-UX (pilote, 02/11/2026 ; constats du directeur en production sur la page de paiement)",
   "payUx.precedentOuvertPhrase": "PAY-UX (pilote, 02/11/2026 ; constats du directeur en production sur la page de paiement)",
-  "payUx.reprendre": "PAY-UX (pilote, 02/11/2026 ; constats du directeur en production sur la page de paiement)"
+  "payUx.reprendre": "PAY-UX (pilote, 02/11/2026 ; constats du directeur en production sur la page de paiement)",
+  "payUx.repriseTitre": "PAY-UX (pilote, 02/11/2026 ; constats du directeur en production sur la page de paiement)",
+  "payUx.reprisePhrase": "PAY-UX (pilote, 02/11/2026 ; constats du directeur en production sur la page de paiement)"
 }
