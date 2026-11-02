@@ -1,0 +1,8 @@
+== PAY-UX : la page de paiement des familles (mesure x5) : 2026-11-02T22:16:52.017Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+mesure 1 : 1141 ms du toucher de « Payer » au formulaire monte
+mesure 2 : 228 ms du toucher de « Payer » au formulaire monte
+mesure 3 : 211 ms du toucher de « Payer » au formulaire monte
+mesure 4 : 191 ms du toucher de « Payer » au formulaire monte
+mesure 5 : 194 ms du toucher de « Payer » au formulaire monte
+MESURE : mediane 211 ms (1141, 228, 211, 191, 194) ; Stripe.js servi en 800 ms
+== PAY-UX : la page de paiement des familles (mesure x5) : vert : mesure : mediane 211 ms

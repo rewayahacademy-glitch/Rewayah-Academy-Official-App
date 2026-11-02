@@ -1,17 +1,18 @@
-== PAY-UX : la page de paiement des familles : 2026-11-02T22:09:31.030Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
-formulaire monte en 388 ms apres « Payer » (Stripe.js precharge, servi en 800 ms)
-faux Stripe : creation recharge-c71a26aa-1afb-43ac-a168-f5ce9b1c1c92-integre-v2 ; fond #ffffff ; nom Rewayah Academy ; ligne « Mensualité de novembre 2026 »
+== PAY-UX : la page de paiement des familles : 2026-11-02T22:18:44.475Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+formulaire monte en 220 ms apres « Payer » (Stripe.js precharge, servi en 800 ms)
+faux Stripe : creation recharge-d73b287a-6159-457e-93bd-c9fc1fc50be9-integre-v2 ; fond #ffffff ; nom Rewayah Academy ; ligne « Mensualité de novembre 2026 »
 OK    la ligne dit ce qu on paie (« Mensualite de ... »), sans prenom
 OK    nom affiche par Stripe : Rewayah Academy
 OK    fond du formulaire demande a Stripe (#ffffff) = fond de la page (rgb(255, 255, 255)) : aucun cadre
 OK    ligne rassurante sous le formulaire : « Le paiement est traité par Stripe. Les données de votre carte vont directement chez Stripe : Rewayah Academy ne les voit pas et ne les garde pas. »
 OK    au retour : « Reprendre le paiement », et aucun ancien formulaire remonte
-reprise : GET /v1/checkout/sessions/cs_test_bancmvzswzh9x7 ; POST /v1/checkout/sessions/cs_test_bancmvzswzh9x7/expire [stripe-node-retry-2f269915-8823-4a21-90f0-134272c3ac41] ; POST /v1/checkout/sessions [recharge-c71a26aa-1afb-43ac-a168-f5ce9b1c1c92-integre-apres-cs_test_bancmvzswzh9x7] ; GET /v1/checkout/sessions/cs_test_bancmvzswzh9x8
+reprise : GET /v1/checkout/sessions/cs_test_bancmvzswzh9x23 ; POST /v1/checkout/sessions/cs_test_bancmvzswzh9x23/expire [stripe-node-retry-2b9be4f3-c093-4024-88f0-b39b19a279cc] ; POST /v1/checkout/sessions [recharge-d73b287a-6159-457e-93bd-c9fc1fc50be9-integre-apres-cs_test_bancmvzswzh9x23] ; GET /v1/checkout/sessions/cs_test_bancmvzswzh9x24
 OK    nouveau depart : ancienne session expiree, puis une seule nouvelle, avec sa propre cle
-OK    la commande porte la nouvelle session (cs_test_bancmvzswzh9x8), celle du formulaire monte
+OK    la commande porte la nouvelle session (cs_test_bancmvzswzh9x24), celle du formulaire monte
 OK    une seule commande
-session payee : GET /v1/checkout/sessions/cs_test_bancmvzswzh9x8
+session payee : GET /v1/checkout/sessions/cs_test_bancmvzswzh9x24
 OK    session payee : ni expiration, ni nouvelle session, aucun formulaire ; la page relit l etat
 OK    expiration refusee : aucune nouvelle session, la commande garde la sienne, phrase « flt-semantics:Le paiement commencé tout à l'heure n'a pas pu être fermé. Rien n'est payé deux fois et aucun nouveau formulaire ne s'ouvre. Réessayez dans un instant : si ce p »
 OK    theme sombre : meme fond clair que le formulaire (rgb(255, 255, 255))
-== PAY-UX : la page de paiement des familles : vert : 11 verifications vertes ; formulaire monte en 388 ms
+OK    390, theme sombre : « Reprendre le paiement » present
+== PAY-UX : la page de paiement des familles : vert : 12 verifications vertes ; formulaire monte en 220 ms
