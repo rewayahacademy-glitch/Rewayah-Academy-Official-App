@@ -183,6 +183,12 @@ les copie dans chaque consigne d'agent, et un agent qui en enfreint une voit sa 
 - **G9. Sur le banc, une facture émise ne s'efface pas** (`fac_facture_figee`) : on l'annule.
 - **G10. Une seule page à coller par livraison, faite par le pilote seul.**
 - **G11. Avec le directeur, toujours en français, en mots simples, la vérité d'abord.**
+- **G12. Une décision écrite ne se repose jamais au directeur.**
+  - Avant toute question, chercher dans `08` §5 bis, dans `REGISTRE-RECONCILIATION-2026-10-14.md` et
+    dans les compétences.
+  - Si un doute subsiste, citer la ligne trouvée et demander seulement ce qui manque.
+  - *Erreur évitée :* le 02/11, on lui a reposé l'observation de la salle par le parent, fixée le
+    31/10 dans `08` : deux visites par séance, deux minutes au plus chacune.
 
 ### Pilote
 
