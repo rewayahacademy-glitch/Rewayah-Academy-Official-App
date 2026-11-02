@@ -148,8 +148,10 @@ class _Actions extends StatelessWidget {
     this.annulerParDefaut = false,
   });
 
-  /// Mode du remboursement (directeur, 02/11/2026) : « Annuler » a le focus
-  /// des l'ouverture ; Entree au clavier renonce, jamais ne confirme.
+  /// Mode du remboursement : « Annuler » a le focus des l'ouverture ; Entree
+  /// au clavier renonce, jamais ne confirme. Garde-fou demande par le
+  /// directeur le 02/11/2026 contre un remboursement par accident ; la seconde
+  /// fenetre est un choix du pilote.
   final bool annulerParDefaut;
 
   final String libelleConfirmer;

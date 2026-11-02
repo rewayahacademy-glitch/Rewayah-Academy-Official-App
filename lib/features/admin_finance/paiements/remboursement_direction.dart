@@ -130,8 +130,9 @@ class _FeuilleRemboursementState extends ConsumerState<FeuilleRemboursement> {
 
   Future<void> _rembourser(PaiementRemboursable paiement) async {
     if (_phase == _Phase.envoi || _question) return;
-    // Seconde confirmation (directeur, 02/11/2026) : rien ne part sans
-    // « Oui, rembourser ». « Annuler » a le focus ; Echap ou un clic a cote
+    // Seconde confirmation : garde-fou demande par le directeur le
+    // 02/11/2026 contre un remboursement par accident ; la seconde fenetre
+    // est un choix du pilote. Rien ne part sans « Oui, rembourser ». « Annuler » a le focus ; Echap ou un clic a cote
     // renoncent. Une demande deja confirmee (reprise apres une coupure) ne
     // se redemande pas : elle repart telle quelle.
     if (_demande == null) {
