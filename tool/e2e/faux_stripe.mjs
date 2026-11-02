@@ -21,6 +21,7 @@ const journal = [];
 const parCle = new Map();
 const remboursements = [];
 let n = 0;
+const lancement = Date.now().toString(36);
 
 function repondre(res, statut, corps) {
   res.writeHead(statut, { 'Content-Type': 'application/json' });
@@ -43,7 +44,9 @@ http.createServer((req, res) => {
       if (cle && parCle.has(cle)) return repondre(res, 200, parCle.get(cle));
       n += 1;
       const r = {
-        id: `re_banc_${n}`,
+        // Unique d'un lancement a l'autre : la base de banc garde les
+        // identifiants des passages precedents (cle unique).
+        id: `re_banc_${lancement}_${n}`,
         object: 'refund',
         amount: Number(corps.amount),
         currency: 'usd',
