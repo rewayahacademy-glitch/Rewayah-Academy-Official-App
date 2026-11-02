@@ -31,10 +31,11 @@
 -- 2. public.annonces_observation : l'enseignant EFFECTIF de la seance (un
 --    remplacant designe) est prevenu, pas seulement le titulaire. Retouche
 --    par ancre (B4).
--- 2 bis. Interrupteur : app_config.observation.activee pose a faux s'il est
---    absent (INSERT ... ON CONFLICT DO NOTHING, jamais d'ecrasement) ; une
---    cle absente ferme ; version de politique `fermee` quand l'academie n'a
---    pas ouvert. Retouche par ancre de politique_observation_effective.
+-- 2 bis. Interrupteur : cle neuve app_config.observation.ouverture_parents,
+--    posee a faux (INSERT ... ON CONFLICT DO NOTHING, jamais d'ecrasement) ;
+--    le parent n'entre que si elle ET observation.activee valent vrai ; une
+--    cle absente ferme ; version de politique `fermee`. Retouche par ancre
+--    de politique_observation_effective.
 -- 3. Tache planifiee `observation-coupure`, chaque minute, sur le modele exact
 --    de `courriels-envoi` (20261023120000) : net.http_post vers l'URL lue au
 --    coffre, l'en-tete secret lu au coffre ; rien ne part s'il n'y a ni visite
@@ -199,34 +200,38 @@ SELECT pg_temp.remplacer('public.annonces_observation(uuid)',
                                     v_seance.teacher_id)) then$b$, 1);
 
 -- ------------------------------------------------------------------
--- 2 bis. L'interrupteur de l'academie, ferme tant que le pilote ne l'ouvre pas
+-- 2 bis. L'ouverture aux parents, fermee tant que le pilote ne l'ouvre pas
 -- ------------------------------------------------------------------
 -- Seconde barriere (pilote, 02/11/2026) : l'observation reelle des parents ne
--- s'ouvre que si le serveur le dit, par app_config.observation.activee (la cle
--- existe depuis 0030 ; elle valait true en production le 02/11). Posee a faux
--- seulement si elle est absente, sans ecraser une valeur existante. Le pilote
--- l'ouvre, apres les secrets et un premier passage reussi de la tache
--- planifiee, par la ligne ecrite en tete de la PR (un UPDATE).
+-- s'ouvre que si le serveur le dit, par une cle neuve
+-- app_config.observation.ouverture_parents, posee a faux par cette migration
+-- (sans ecraser une valeur existante). Le reglage du directeur,
+-- observation.activee (true en production le 02/11), n'est pas touche : le
+-- parent n'entre que si les DEUX valent vrai. Le pilote ouvre la cle neuve
+-- apres les secrets et un premier passage reussi de la tache planifiee, par
+-- la ligne ecrite en tete de la PR (un UPDATE).
 INSERT INTO public.app_config (key, value)
-VALUES ('observation.activee', 'false'::jsonb)
+VALUES ('observation.ouverture_parents', 'false'::jsonb)
 ON CONFLICT (key) DO NOTHING;
 
--- Une cle absente ferme (elle ouvrait), et l'interrupteur de l'academie se dit
--- par sa propre version de politique, `fermee`, distincte de `desactivee`
--- (une classe fermee par la direction) : le client ne dit pas « fermee pour
--- cette classe » quand c'est l'academie qui n'a pas encore ouvert. Tout suit
--- cette politique : entrer_observation, budget_observation, le jeton video et
--- la coupure serveur (revocation d'une visite ouverte).
+-- Une cle absente ferme. L'ouverture aux parents fermee se dit par sa propre
+-- version de politique, `fermee`, distincte de `desactivee` (le directeur ou
+-- la direction d'une classe a ferme) : le client dit « pas encore ouverte ».
+-- Tout ce qui lit la politique pour un parent suit : entrer_observation,
+-- budget_observation, le jeton video et la coupure serveur (une visite ouverte
+-- est revoquee). La direction n'est pas concernee : la politique ne borne que
+-- guardian_observer (0033, 0037 ; 01_PRODUIT_ET_PARCOURS, observation).
 SELECT pg_temp.remplacer('public.politique_observation_effective(uuid)',
   $a$if not coalesce((public.get_config('observation.activee', 'true'::jsonb))::boolean, true)
      or v_source = 'desactivee' then$a$,
-  $b$if not coalesce((public.get_config('observation.activee', 'false'::jsonb))::boolean, false) then
+  $b$if not coalesce((public.get_config('observation.ouverture_parents', 'false'::jsonb))::boolean, false) then
     v_activee := false;
     v_max_visites := 0;
     v_max_secondes := 0;
     v_max_secondes_visite := null;
     v_policy_version := 'fermee';
-  elsif v_source = 'desactivee' then$b$, 1);
+  elsif not coalesce((public.get_config('observation.activee', 'true'::jsonb))::boolean, true)
+     or v_source = 'desactivee' then$b$, 1);
 
 -- Empreintes F86 eventuelles des fonctions retouchees.
 DO $empreintes$
@@ -303,11 +308,11 @@ BEGIN
     RAISE EXCEPTION 'O1 : annonces_observation ignore l''enseignant effectif';
   END IF;
   IF pg_catalog.strpos(pg_catalog.pg_get_functiondef('public.politique_observation_effective(uuid)'::pg_catalog.regprocedure),
-                       'v_policy_version := ''fermee''') = 0 THEN
-    RAISE EXCEPTION 'O1 : politique_observation_effective sans interrupteur ferme par defaut';
+                       'observation.ouverture_parents') = 0 THEN
+    RAISE EXCEPTION 'O1 : politique_observation_effective ignore l''ouverture aux parents';
   END IF;
-  IF NOT EXISTS (SELECT 1 FROM public.app_config WHERE key = 'observation.activee') THEN
-    RAISE EXCEPTION 'O1 : cle observation.activee absente';
+  IF NOT EXISTS (SELECT 1 FROM public.app_config WHERE key = 'observation.ouverture_parents') THEN
+    RAISE EXCEPTION 'O1 : cle observation.ouverture_parents absente';
   END IF;
   -- Requete dynamique : sur un Postgres nu (CI), cron.job n'existe pas et une
   -- requete statique echouerait des l'analyse.

@@ -201,9 +201,10 @@ void main() {
       expect(_dispo(politique: null), isA<ObservationPossible>());
     });
 
-    test('O1 : interrupteur de l academie ferme, puis ouvert', () {
-      // Ce que rend budget_observation() quand app_config.observation.activee
-      // vaut faux : version `fermee`, aucune visite, entree refusee.
+    test('O1 : ouverture aux parents fermee, puis ouverte', () {
+      // Ce que rend budget_observation() quand
+      // app_config.observation.ouverture_parents vaut faux : version
+      // `fermee`, aucune visite, entree refusee.
       const BudgetObservation fermeParLAcademie = BudgetObservation(
         policyVersion: versionPolitiqueFermee,
         visitesUtilisees: 0,

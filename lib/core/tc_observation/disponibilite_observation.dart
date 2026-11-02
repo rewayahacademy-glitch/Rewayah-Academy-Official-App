@@ -51,8 +51,8 @@ enum MotifIndisponibilite {
   /// Une visite de cet observateur est deja ouverte (DB-OBS-06).
   visiteDejaOuverte,
 
-  /// L'observation reelle n'est pas encore ouverte : l'interrupteur de
-  /// l'academie est ferme en base (`app_config.observation.activee`, version
+  /// L'observation reelle n'est pas encore ouverte : l'ouverture aux parents
+  /// est fermee en base (`app_config.observation.ouverture_parents`, version
   /// de politique [versionPolitiqueFermee], lot O1), ou le client tourne en
   /// demonstration.
   garantieServeurAbsente,
@@ -162,7 +162,7 @@ DisponibiliteObservation disponibiliteObservation({
   if (budget == null) {
     return const ObservationIndisponible(MotifIndisponibilite.capaciteAbsente);
   }
-  // L'interrupteur de l'academie (O1) : le serveur dit `fermee`, l'ecran dit
+  // L'ouverture aux parents (O1) : le serveur dit `fermee`, l'ecran dit
   // « pas encore ouverte », jamais « fermee pour cette classe ».
   if (budget.policyVersion == versionPolitiqueFermee ||
       politique?.policyVersion == versionPolitiqueFermee) {

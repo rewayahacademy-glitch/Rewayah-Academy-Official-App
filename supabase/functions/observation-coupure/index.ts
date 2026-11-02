@@ -13,7 +13,7 @@
 //    deja parti n'est pas une erreur.
 
 import { clientService, json, refus } from '../_shared/clients.ts'
-import { lireSorties, porteOuverte } from '../_shared/coupure_observation.ts'
+import { estAbsent, lireSorties, porteOuverte } from '../_shared/coupure_observation.ts'
 import { appliquerGeste, urlDe, videoConfiguree } from '../_shared/livekit.ts'
 
 Deno.serve(async (req) => {
@@ -43,8 +43,13 @@ Deno.serve(async (req) => {
       if (await appliquerGeste(s, 'faire_sortir')) sortis++
       else absents++
     } catch (e) {
-      console.error('sortie impossible', { visite: s.visite_id, erreur: (e as Error).message })
-      echecs.push(s.visite_id)
+      const message = String((e as Error).message)
+      if (estAbsent(message)) {
+        absents++
+      } else {
+        console.error('sortie impossible', { visite: s.visite_id, erreur: message })
+        echecs.push(s.visite_id)
+      }
     }
   }
   return json({ coupures: sorties.length, sortis, absents, echecs: echecs.length })

@@ -5,7 +5,7 @@
 // deno test --allow-env --allow-net supabase/functions/_shared/coupure_observation_test.ts
 
 import { assert, assertEquals, assertFalse } from 'jsr:@std/assert@1'
-import { egal, lireSorties, porteOuverte } from './coupure_observation.ts'
+import { egal, estAbsent, lireSorties, porteOuverte } from './coupure_observation.ts'
 import { signerJeton } from './livekit.ts'
 
 Deno.test('la porte est fermee sans secret configure, ouverte avec le bon seulement', () => {
@@ -68,4 +68,12 @@ Deno.test('le jeton d\'un parent qui regarde ne publie rien et reste invisible',
   // La duree vient de la base (restant du budget) : au plus 120 s ici.
   const maintenant = Math.floor(Date.now() / 1000)
   assert((c.exp as number) - maintenant <= 121, `exp trop lointain : ${JSON.stringify(c)}`)
+})
+
+Deno.test('un participant deja parti est absent, pas un echec', () => {
+  // Message rendu par LiveKit sur le banc local (O1, 02/11/2026).
+  assert(estAbsent('participant does not exist'))
+  assert(estAbsent('requested room not found'))
+  assertFalse(estAbsent('permissions denied'))
+  assertFalse(estAbsent('connect ECONNREFUSED'))
 })

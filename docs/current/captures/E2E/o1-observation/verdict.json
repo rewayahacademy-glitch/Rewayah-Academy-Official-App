@@ -1,24 +1,30 @@
 {
   "lot": "O1 : ouvrir l observation des parents",
-  "banc": "pile locale tool/e2e (jamais un apercu Vercel, jamais la production)",
-  "robot": "tool/e2e/o1_observation.mjs",
+  "banc": "pile locale tool/e2e (jamais un apercu Vercel, jamais la production) ; secrets de la coupure generes sur le banc, hors depot",
+  "robots": {
+    "tool/e2e/o1_observation.mjs": "390 et 1440",
+    "tool/e2e/o1_livekit.mjs": "1440, LiveKit local"
+  },
   "tailles": {
     "390": "vert",
-    "1440": "vert"
+    "1440": "vert",
+    "livekit": "vert"
   },
   "verdict": "vert",
   "prouve_ici": [
-    "interrupteur de l academie ferme (app_config.observation.activee = false) : la porte dit Observation pas encore ouverte, aucun bouton, aucune visite en base ; ouvert (la ligne UPDATE du pilote), le parent entre",
+    "ouverture aux parents fermee (app_config.observation.ouverture_parents = false, comme la migration la pose) : la porte dit Observation pas encore ouverte, aucun bouton, aucune visite en base ; ouverte (la ligne UPDATE du pilote), le parent entre",
     "le parent entre (visite ouverte en base, 2 minutes, 1/2 visite restante)",
-    "la visite est coupee par le SERVEUR a 120 s (couper_visites_observation_echues, fin quota_atteint) et l ecran le dit",
+    "le parent VOIT la salle : image de la camera (factice) de l enseignant et son recu ; LiveKit le compte invisible, sans droit de publier, sans aucune piste (livekit/02)",
+    "le bandeau de l enseignant dit Un parent observe cette seance (livekit/03)",
+    "la VRAIE tache planifiee observation-coupure (pg_cron, chaque minute) appelle la fonction Edge, qui fait sortir le parent de la salle LiveKit : RemoveParticipant au journal du serveur LiveKit, participant absent de la liste apres, aucun retour ; visite close en base a 120 s (quota_atteint) ; le parent avait ses appels RPC coupes, il ne pouvait pas se fermer seul (livekit/04, journal)",
     "une seconde visite ecourtee compte ; la troisieme est refusee (Aucune visite restante)",
     "la direction trouve Regarder la salle dans le planning, entre en mode discret (admin_masked), jeton invisible sans publication, aucun texte de parent"
   ],
   "non_prouve_ici": [
-    "le parent VOIT la salle : LiveKit n a pas pu demarrer sur le banc (Docker Hub 429), la video est indisponible",
-    "la coupure reelle par LiveKit (removeParticipant) : la fonction Edge observation-coupure n a pas tourne sur le banc ; la coupure en base est prouvee, la sortie LiveKit non",
-    "la tache planifiee chaque minute : appelee a la main ici (meme fonction) ; en production elle attend ses deux secrets au coffre et le secret de la fonction Edge",
-    "le bandeau cote enseignant et cote enfant a l ecran : la salle ne s ouvre pas sans LiveKit ; prouves en base par scenarios_o1_observation.sql (controles 2 a 5)",
-    "la presence de l enfant est posee en SQL local comme le webhook LiveKit l ecrit"
+    "rien de tout cela en production : secrets, deploiement de la fonction Edge et premier passage de la tache restent a faire et a constater par le directeur",
+    "l ecran du parent apres une sortie par le serveur quand ses appels RPC sont coupes (cas force du robot) : il reste sur Connexion avec un decompte ; avec ses appels, l ecran de fin Duree de visite atteinte arrive en 5 s (o1_observation, 390 et 1440)",
+    "le bandeau cote enfant a l ecran : l enfant n entre pas dans la salle ici ; prouve en base par scenarios_o1_observation.sql (controles 3 et 4)",
+    "la presence de l enfant est posee en SQL local comme le webhook LiveKit l ecrit",
+    "la visite est vieillie a la main (entered_at) pour ne pas attendre 2 minutes ; le jeton du parent restait donc valide apres la sortie, et il n est pas revenu"
   ]
 }

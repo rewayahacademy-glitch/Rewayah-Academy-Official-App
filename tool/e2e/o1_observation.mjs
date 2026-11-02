@@ -11,10 +11,11 @@
 //      enfant non ;
 //   5. la direction regarde, invisible, depuis le planning.
 //
-// LiveKit n'a pas pu etre lance sur ce banc (Docker Hub, 429) : la video
-// n'est pas montree, et la sortie reelle d'un participant (removeParticipant)
-// n'est pas prouvee ici. Donnees fictives (prefixe E2E), comptes neufs a chaque
-// passage ; rien n'est efface. Usage : node tool/e2e/o1_observation.mjs
+// La video (le parent voit la salle) et la sortie reelle par la tache
+// planifiee (removeParticipant) sont prouvees par tool/e2e/o1_livekit.mjs ;
+// ce robot appelle la coupure a la main. Donnees fictives (prefixe E2E),
+// comptes neufs a chaque passage ; rien n'est efface.
+// Usage : node tool/e2e/o1_observation.mjs
 import { parcours, connecter, cliquer, trouver, trouverTexte, libelles, ouvrir,
   activerSemantique, taper, sql, nettoyerClassesE2E, COMPTES, MDP } from './commun.mjs';
 
@@ -103,19 +104,19 @@ try {
   amorcer();
   const vue = { width: largeur, height: hauteur };
 
-  // 0. Interrupteur de l'academie ferme (app_config.observation.activee =
-  // false) : la porte dit « pas encore ouverte » et ne propose rien ; le
-  // serveur refuse l'entree. Puis on l'ouvre (la ligne que posera le pilote).
+  // 0. Ouverture aux parents fermee (app_config.observation.ouverture_parents
+  // = false, comme la migration la pose) : la porte dit « pas encore
+  // ouverte » et ne propose rien. Puis on l'ouvre (la ligne du pilote).
   const f = await p.contexte('parent', { vue });
   await connecter(f.page, COMPTE.tuteur);
-  sql(`update public.app_config set value = 'false'::jsonb, updated_at = now() where key = 'observation.activee'`);
+  sql(`update public.app_config set value = 'false'::jsonb, updated_at = now() where key = 'observation.ouverture_parents'`);
   await aller(f.page, `/tc/observation/${ID.seance}?classe=${ID.classe}&eleve=${ID.enfant}`);
   const ferme = await lus(f.page);
   p.dire(`Interrupteur ferme : ${ferme}`);
   await p.capture(f, 'interrupteur_ferme');
   verdicts.interrupteurFerme = /Observation pas encore ouverte/.test(ferme) && !/Observer maintenant/.test(ferme)
     && visites() === '';
-  sql(`update public.app_config set value = 'true'::jsonb, updated_at = now() where key = 'observation.activee'`);
+  sql(`update public.app_config set value = 'true'::jsonb, updated_at = now() where key = 'observation.ouverture_parents'`);
   await f.page.reload();
   await f.page.waitForTimeout(3500);
   await activerSemantique(f.page);

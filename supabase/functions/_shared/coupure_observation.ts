@@ -26,6 +26,14 @@ export function porteOuverte(entete: string | null, attendu: string | undefined)
   return egal(entete ?? '', attendu)
 }
 
+/// Vrai quand LiveKit dit que le participant n'est plus la (deja sorti, salle
+/// fermee) : une sortie sans objet, pas un echec. LiveKit le dit de deux
+/// facons ; `appliquerGeste` ne reconnait que « not found », et le banc local
+/// (O1, 02/11) a montre « participant does not exist ».
+export function estAbsent(message: string): boolean {
+  return /not found|does not exist/i.test(message)
+}
+
 /// Une sortie a faire : la route LiveKit du participant a ejecter.
 export interface SortieObservation extends RouteGeste {
   visite_id: string
