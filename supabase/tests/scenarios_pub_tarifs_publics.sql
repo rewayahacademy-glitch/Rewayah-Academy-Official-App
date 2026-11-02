@@ -104,7 +104,9 @@ SELECT pg_temp.vrai(NOT EXISTS (
      'tarifEnfantMineur','tarifAdulteMineur','essaiActif','essaisMax','remisesFoyer','aPartirDuRang',
      'pourMille','montantMineur','prepaiement','trimestrielPourMille','annuelPourMille',
      'parrainageCreditMineur','bourse','dureeMois','cumulMaxPourMille','classes','tailleEnfant',
-     'tailleAdulte','ouvertureMinimum')),
+     'tailleAdulte','ouvertureMinimum',
+     -- REMB-14 (02/11/2026) : le delai de retractation, public par decision.
+     'remboursementDelaiJours')),
   'liste blanche : aucune cle hors liste');
 SELECT pg_temp.vrai(NOT EXISTS (
   SELECT 1 FROM (SELECT j::text AS t FROM pub_a UNION ALL SELECT j::text FROM pub_b) x

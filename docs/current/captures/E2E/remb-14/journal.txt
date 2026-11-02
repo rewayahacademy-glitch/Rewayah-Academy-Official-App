@@ -1,0 +1,12 @@
+== REMB-14 : delai de retractation lu dans la politique : 2026-11-02T23:30:56.799Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Politique du banc : delai 7 jours
+[1440_clair] delai 7 : flt-semantics:Le délai de rétractation est de 7 jours à compter du paiement, selon la politique tarifaire en vigueur (page Tarifs).
+[1440_clair] apres le delai : flt-semantics:Après le délai de rétractation, arrêter une formule payée d'avance, au trimestre ou à l'année, reste un droit. Les mois commencés sont comptés au prix mensuel n
+[390_sombre] delai 7 : flt-semantics:Le délai de rétractation est de 7 jours à compter du paiement, selon la politique tarifaire en vigueur (page Tarifs).
+[390_sombre] apres le delai : flt-semantics:Après le délai de rétractation, arrêter une formule payée d'avance, au trimestre ou à l'année, reste un droit. Les mois commencés sont comptés au prix mensuel n
+[1440_clair] delai 14 : flt-semantics:Le délai de rétractation est de 14 jours à compter du paiement, selon la politique tarifaire en vigueur (page Tarifs).
+[1440_sombre] delai 14 : flt-semantics:Le délai de rétractation est de 14 jours à compter du paiement, selon la politique tarifaire en vigueur (page Tarifs).
+[390_clair] delai 14 : flt-semantics:Le délai de rétractation est de 14 jours à compter du paiement, selon la politique tarifaire en vigueur (page Tarifs).
+[390_ar] delai 14 : flt-semantics:مهلة التراجع 14 يومًا من يوم الدفع، وفق سياسة الأسعار المعمول بها (صفحة الأسعار).
+Politique du banc remise a 7 jours
+== REMB-14 : delai de retractation lu dans la politique : vert : le texte dit le delai de la politique (7, puis 14 sans nouveau build), en fr et en ar ; « premiere semaine » et « geste de la direction » absents
