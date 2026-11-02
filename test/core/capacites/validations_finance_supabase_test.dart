@@ -89,6 +89,29 @@ ValidationsFinanceSupabase _port(Object? reponse) =>
     );
 
 void main() {
+  test(
+    'FN-109 : une ligne de paie (id compose) ne part jamais en p_objet',
+    () async {
+      final List<String> appels = <String>[];
+      final ValidationsFinanceSupabase port =
+          ValidationsFinanceSupabase.avecAppel((
+            String f,
+            Map<String, dynamic>? p,
+          ) async {
+            appels.add(f);
+            // Le serveur refuserait : p_objet est un uuid (22P02).
+            throw const FormatException('invalid input syntax for type uuid');
+          });
+      final List<DemandeValidation> liste = await port.demandes(
+        const FiltreDemandesValidation(
+          objetId: 'fd000000-0000-4000-8000-0000000000a1_2026-10-01',
+        ),
+      );
+      expect(liste, isEmpty);
+      expect(appels, isEmpty);
+    },
+  );
+
   test('lister : les parametres du filtre, la demande decodee', () async {
     final List<(String, Map<String, dynamic>?)> appels =
         <(String, Map<String, dynamic>?)>[];
@@ -104,14 +127,14 @@ void main() {
       const FiltreDemandesValidation(
         etat: EtatDemandeValidation.enAttente,
         nature: NatureDemandeValidation.paiementRecu,
-        objetId: 'e1',
+        objetId: 'fd000000-0000-4000-8000-0000000000e1',
       ),
     );
     expect(appels.single.$1, 'finance_validations_lister');
     expect(appels.single.$2, <String, dynamic>{
       'p_etat': 'en_attente',
       'p_nature': 'paiement_recu',
-      'p_objet': 'e1',
+      'p_objet': 'fd000000-0000-4000-8000-0000000000e1',
     });
     expect(liste, hasLength(2));
     final DemandeValidation d = liste.first;
