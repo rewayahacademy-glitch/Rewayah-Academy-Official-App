@@ -6,7 +6,7 @@
 // 02/11), le passe a 14 (la decision) sur la base LOCALE, verifie que le texte
 // suit, puis remet 7. « Premiere semaine » et « sauf geste de la direction »
 // ne doivent plus se lire nulle part dans le texte.
-import { parcours, ouvrir, trouver, trouverTexte, amenerEnVue, activerSemantique, sql } from './commun.mjs';
+import { parcours, ouvrir, trouver, trouverTexte, amenerEnVue, activerSemantique, sql, connecter, COMPTES } from './commun.mjs';
 
 const p = await parcours('REMB-14 : delai de retractation lu dans la politique', 'remb-14');
 const manque = [];
@@ -87,10 +87,63 @@ try {
   if (toutAr.includes('الأسبوع الأول')) manque.push('arabe : « الأسبوع الأول » encore lu');
   await p.capture(ar, '390_ar_delai_14');
   for (const a of [bureau, tel, bureau14, bureauSombre, telClair, ar]) await a.ctx.close();
+
+  // 4. La direction : Finance > Politique commerciale, le champ du delai,
+  // prerempli avec la valeur en vigueur (7), puis « Publier la version ».
+  // La publication exige la double verification (aal2), que l'application ne
+  // propose qu'au controleur : le refus du serveur est attendu et montre.
+  regler(7);
+  for (const [nom, options] of [['1440_clair', { vue: { width: 1440, height: 900 } }],
+                                ['390_sombre', { telephone: true, sombre: true }]]) {
+    const dir = await p.contexte('direction', options);
+    await connecter(dir.page, COMPTES.direction);
+    // Une premiere connexion juste apres l'amorce peut etre refusee : un essai
+    // de plus, comme le ferait la personne.
+    if (await dir.page.locator('input[type=password]').count()) {
+      p.dire(`[${nom}] connexion refusee une fois, nouvel essai`);
+      await connecter(dir.page, COMPTES.direction);
+    }
+    await ouvrir(dir.page, '/#/admin/finance/politiques');
+    await dir.page.waitForTimeout(5000);
+    await activerSemantique(dir.page);
+    const champ = await trouver(dir.page, /Délai de rétractation/, { delai: 15000, role: 'textbox' });
+    if (!champ) { manque.push(`${nom} : champ « Délai de rétractation » absent`); await p.capture(dir, `${nom}_politique_sans_champ`); await dir.ctx.close(); continue; }
+    await amenerEnVue(dir.page, champ);
+    await dir.page.waitForTimeout(600);
+    await p.capture(dir, `${nom}_champ_delai_7`);
+    // Le champ de Flutter ne porte sa valeur que dans la zone de saisie qui
+    // recoit le focus.
+    await champ.click();
+    await dir.page.waitForTimeout(500);
+    const saisie = dir.page.locator('input:focus, textarea:focus').first();
+    const valeur = await saisie.inputValue().catch(() => null);
+    p.dire(`[${nom}] champ du delai prerempli : ${valeur}`);
+    if (valeur !== '7') manque.push(`${nom} : champ prerempli a « ${valeur} » au lieu de 7`);
+    await saisie.fill('14');
+    await dir.page.waitForTimeout(800);
+    await p.capture(dir, `${nom}_champ_delai_14`);
+    const publier = await trouver(dir.page, /^Publier la version/, { delai: 8000, role: 'button' });
+    if (publier) {
+      await amenerEnVue(dir.page, publier);
+      await publier.click();
+      await dir.page.waitForTimeout(2500);
+      await activerSemantique(dir.page);
+      // Une confirmation peut preceder l'envoi.
+      const confirmer = await trouver(dir.page, /^Publier/, { delai: 3000, role: 'button' });
+      if (confirmer) { await confirmer.click().catch(() => {}); await dir.page.waitForTimeout(3000); await activerSemantique(dir.page); }
+      const refus = await trouverTexte(dir.page, /Publication refusée|double vérification/, 10000);
+      p.dire(`[${nom}] publication en aal1 : ${refus ?? 'aucun refus lu'}`);
+      if (!refus) manque.push(`${nom} : refus de la publication en aal1 non affiche`);
+      const dejaPubliee = sql(`select count(*) from public.politiques_commerciales where remboursement_delai_jours = 14`);
+      if (dejaPubliee !== '0') manque.push(`${nom} : une version a ete publiee sans double verification`);
+      await p.capture(dir, `${nom}_publication_refusee_aal1`);
+    } else manque.push(`${nom} : bouton « Publier la version » absent`);
+    await dir.ctx.close();
+  }
 } finally {
   regler(Number(avant) || 7);
   p.dire(`Politique du banc remise a ${sql(`select public.tarifs_publics()#>>'{courante,remboursementDelaiJours}'`)} jours`);
 }
 process.exit(manque.length
   ? await p.fin('rouge', `manque : ${manque.join(' ; ')}`)
-  : await p.fin('vert', 'le texte dit le delai de la politique (7, puis 14 sans nouveau build), en fr et en ar ; « premiere semaine » et « geste de la direction » absents'));
+  : await p.fin('vert', 'le texte dit le delai de la politique (7, puis 14 sans nouveau build), en fr et en ar ; « premiere semaine » et « geste de la direction » absents ; le champ de la direction se preremplit (7) ; la publication sans double verification est refusee (bloquant connu, non prouvee par l interface)'));
