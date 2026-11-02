@@ -45,6 +45,10 @@ const Set<String> evenementsNotificationConnus = <String>{
   'acces_retabli_paiement',
   // Paiement recu par Stripe (parcours 7, migration 20261103400000).
   'paiement_recu',
+  // Remboursement et contestation d'un paiement (FN-115b, 20261104300000).
+  'remboursement_effectue',
+  'litige_ouvert',
+  'litige_clos',
   // Fiche « Fraicheur et notifications » du 27/10/2026, ligne 11.
   'classe_creee',
   'enseignant_change',
@@ -80,6 +84,8 @@ const Set<String> _destinationsAutorisees = <String>{
   '/enseignant/journee',
   // A3 : le planning de la direction (titulaire en retard).
   '/admin/operations/planning',
+  // FN-115b : la finance de la direction (remboursements, contestations).
+  '/admin/finance',
 };
 
 /// La classe d'un eleve du foyer, et son planning : `/tuteur/classes/<uuid>`
@@ -288,6 +294,11 @@ Map<String, dynamic> _parametresAffichables(Map<dynamic, dynamic> bruts) {
     'classe',
     'travail',
     'travail_etat',
+    // FN-115b : la cause d'une suspension (remboursement, litige) et l'issue
+    // d'une contestation (gagne, perdu). Des mots, jamais un montant ni un
+    // identifiant.
+    'cause',
+    'issue',
   };
   // FN-028 : des comptes et un drapeau, jamais un identifiant.
   const Set<String> clesNombres = <String>{'presents', 'inscrits'};
@@ -337,6 +348,9 @@ TypeNotification _typePour(String evenement) => switch (evenement) {
   'paiement_relance' ||
   'acces_suspendu_paiement' ||
   'acces_retabli_paiement' ||
-  'paiement_recu' => TypeNotification.accesFinance,
+  'paiement_recu' ||
+  'remboursement_effectue' ||
+  'litige_ouvert' ||
+  'litige_clos' => TypeNotification.accesFinance,
   _ => TypeNotification.autre,
 };

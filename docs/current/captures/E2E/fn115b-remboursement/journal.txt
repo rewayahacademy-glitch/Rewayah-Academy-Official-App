@@ -1,0 +1,13 @@
+== FN-115b : remboursement et contestation, lus par la famille et la direction : 2026-11-02T03:08:08.198Z ; Chromium 141.0.7390.37 ; http://127.0.0.1:8090
+Paiement 1 : commande 2a3ac7f4-f4a1-4509-8d4b-b1dbdf92c546, 8500 centimes, webhook 200 ok
+Apres paiement 1 : financee ; suspendu : false
+charge.refunded : 200 ok ; a_financer ; suspendu : true
+Famille : button:Un remboursement est fait. Le solde est à jour., le lundi 2 novembre 2026 à 04:08, Accès et paiements, Information | button:Un accès est suspendu : un paiement a été remboursé, le mois n'est plus payé., le lundi 2 novembre 2026 à 04:08, Accès et paiements, Information ; lignes de remboursement : 1
+E-mail : Un remboursement est fait
+Paiement 2 : commande ade8da8a-c103-4989-92d3-e62968c0baa0, 8500 centimes, webhook 200 ok
+Apres paiement 2 : financee ; suspendu : false
+charge.dispute.created : 200 ok ; a_financer ; suspendu : true
+charge.dispute.closed (perdu, 15 USD de frais) : 200 ok ; litige perdu ; frais 1500 ; a_financer ; suspendu : true
+Famille : button:Un paiement est contesté auprès de la banque. L'accès est suspendu pendant l'examen., le lundi 2 novembre 2026 à 04:09, Accès et paiements, Information | button:La contestation est close : le paiement est remboursé, les frais vont au solde du foyer., le lundi 2 novembre 2026 à 04:09, Accès et paiements, Information
+Direction : button:Un remboursement a été fait à une famille., le lundi 2 novembre 2026 à 04:08, Accès et paiements, Information | button:Une famille conteste un paiement auprès de sa banque., le lundi 2 novembre 2026 à 04:09, Accès et paiements, Information | button:Une contestation de paiement est close., le lundi 2 novembre 2026 à 04:09, Accès et paiements, Information
+== FN-115b : remboursement et contestation, lus par la famille et la direction : vert : remboursement et contestation perdue : mois rouvert, acces suspendu, famille et direction prevenues, e-mail recu

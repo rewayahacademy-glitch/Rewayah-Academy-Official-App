@@ -30,9 +30,11 @@ Ce qui est décidé :
 - dans la première semaine, on rembourse ce qui a été payé, moins les séances suivies (point 2) ;
 - après la première semaine, une formule payée d'avance n'est remboursée que sur geste de la direction, avec le calcul du point 3.
 
+**À qui vont les frais d'une contestation perdue** (pilote, 02/11/2026, FN-115b) : le solde se tient par profil d'élève. Les frais vont donc au **plus ancien bénéficiaire de la commande contestée** (le premier profil de la commande, rang 1), jamais à un enfant pris au hasard, jamais à l'académie. Ils apparaissent comme une ligne d'ajustement négative à son solde, que le paiement suivant du foyer couvre.
+
 **Opposabilité des frais de contestation** : le point 5 n'est opposable à une famille que si les conditions le lui disent **avant** qu'elle paie. Les textes « Conditions » (section 4) et « Annulation et remboursement » (sections 1, 2, 4 et la nouvelle section 6 « Contester un paiement auprès de sa banque ») le disent depuis le lot FN-115a. La page de paiement y renvoie, juste sous « Payer ».
 
-Ce qui reste à faire, par lots datés : le traitement par le serveur des remboursements et des contestations (FN-115b), le bouton « Rembourser » de l'écran Finance (FN-115c), et la règle « pas payé : ni séances ni ressources » appliquée aussi aux ressources (lot B ; aujourd'hui la suspension ne ferme que l'entrée en séance). Le site public (`site-public/content/pages.json`) porte encore l'ancien texte « remboursé en entier » : sa mise à jour revient à qui tient `site-public/`.
+Ce qui reste à faire, par lots datés : le bouton « Rembourser » de l'écran Finance (FN-115c), et la règle « pas payé : ni séances ni ressources » appliquée aussi aux ressources (lot B ; aujourd'hui la suspension ne ferme que l'entrée en séance). Le site public (`site-public/content/pages.json`) porte encore l'ancien texte « remboursé en entier » : sa mise à jour revient à qui tient `site-public/`.
 
 ## Décision du directeur du 22/10/2026 : la répartition du paiement, montrée en pourcentages
 
