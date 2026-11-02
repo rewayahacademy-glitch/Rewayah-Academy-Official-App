@@ -157,6 +157,29 @@ const MODELES: Record<string, Fabrique> = {
         : `وصلت دفعة بقيمة ${m}. الرصيد محدَّث في التطبيق.`,
       'فتح التطبيق', '/tuteur/foyer/recharge')
   },
+  // FN-115b (02/11/2026) : remboursement et contestation d'un paiement.
+  remboursement_effectue: (d) => {
+    const m = montantLisible(d, PAROLE.locale)
+    return avis(d, 'تمّ استرداد مبلغ', 'تمّ استرداد مبلغ',
+      m === null ? 'تمّ الاسترداد إلى وسيلة الدفع المستعملة. الرصيد محدَّث في التطبيق.'
+        : `تمّ استرداد ${m} إلى وسيلة الدفع المستعملة. الرصيد محدَّث في التطبيق.`,
+      'فتح التطبيق', '/tuteur/foyer/recharge')
+  },
+  litige_ouvert: (d) => {
+    const m = montantLisible(d, PAROLE.locale)
+    return avis(d, 'دفعة معترَض عليها لدى البنك', 'دفعة معترَض عليها',
+      m === null ? 'دفعة معترَض عليها لدى البنك. طوال مدة الفحص، يُعلَّق دخول الطلاب المعنيين إلى الحصص والموارد. إذا كان ذلك خطأ، فاكتبوا لنا.'
+        : `دفعة بقيمة ${m} معترَض عليها لدى البنك. طوال مدة الفحص، يُعلَّق دخول الطلاب المعنيين إلى الحصص والموارد. إذا كان ذلك خطأ، فاكتبوا لنا.`,
+      'فتح التطبيق', '/tuteur/foyer/recharge')
+  },
+  litige_clos: (d) => {
+    const f = montantLisible({ montant_mineur: d.frais_mineur, devise: d.devise }, PAROLE.locale)
+    return avis(d, 'أُغلق الاعتراض', 'أُغلق الاعتراض',
+      d.issue === 'gagne' ? 'حكم البنك لصالح الأكاديمية: أُعيدت الدفعة، ويعود الدخول متى دُفع الشهر من جديد.'
+        : f === null ? 'حكم البنك لصالحكم: تُعامَل الدفعة كاسترداد كامل. وتُضاف رسوم الاعتراض إلى رصيد الأسرة.'
+        : `حكم البنك لصالحكم: تُعامَل الدفعة كاسترداد كامل. وتُضاف رسوم الاعتراض (${f}) إلى رصيد الأسرة.`,
+      'فتح التطبيق', '/tuteur/foyer/recharge')
+  },
   invitation_foyer: (d) => {
     const qui = typeof d.invite_par === 'string' && d.invite_par.trim() ? d.invite_par.trim() : 'أحد أفراد أسرتك'
     const fin = dateLongue(d.expire_le, PAROLE.locale)

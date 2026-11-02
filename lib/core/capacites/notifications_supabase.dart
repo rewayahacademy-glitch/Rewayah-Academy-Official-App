@@ -45,6 +45,10 @@ const Set<String> evenementsNotificationConnus = <String>{
   'acces_retabli_paiement',
   // Paiement recu par Stripe (parcours 7, migration 20261103400000).
   'paiement_recu',
+  // Remboursement et contestation d'un paiement (FN-115b, 20261104300000).
+  'remboursement_effectue',
+  'litige_ouvert',
+  'litige_clos',
   // Fiche « Fraicheur et notifications » du 27/10/2026, ligne 11.
   'classe_creee',
   'enseignant_change',
@@ -337,6 +341,9 @@ TypeNotification _typePour(String evenement) => switch (evenement) {
   'paiement_relance' ||
   'acces_suspendu_paiement' ||
   'acces_retabli_paiement' ||
-  'paiement_recu' => TypeNotification.accesFinance,
+  'paiement_recu' ||
+  'remboursement_effectue' ||
+  'litige_ouvert' ||
+  'litige_clos' => TypeNotification.accesFinance,
   _ => TypeNotification.autre,
 };
