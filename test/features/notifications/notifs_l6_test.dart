@@ -23,6 +23,7 @@ import 'package:rewayah_academy/core/capacites/port_notifications.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart'
     show ClocheNotifications;
+import 'package:rewayah_academy/core/widgets/badge_non_lu.dart';
 import 'package:rewayah_academy/core/widgets/menu_actions.dart';
 import 'package:rewayah_academy/features/notifications/contenu_notification.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
@@ -99,6 +100,7 @@ NotificationTuteur _n(
   bool geste = false,
   String? cle,
   String titre = 'Une classe vient d\'être créée.',
+  String? evenement,
 }) => NotificationTuteur(
   id: id,
   titre: titre,
@@ -107,6 +109,7 @@ NotificationTuteur _n(
   niveau: lue ? NiveauAttention.information : NiveauAttention.aLire,
   gesteEnAttente: geste,
   cleRegroupement: cle,
+  evenement: evenement,
 );
 
 Finder _ligne(String id) => find.byKey(ValueKey<String>('notification-$id'));
@@ -274,6 +277,95 @@ void main() {
       expect(find.byKey(NotificationsPage.cleAFaire), findsNothing);
     });
   });
+
+  group(
+    'NOTIFS-L6, reprise du pilote (02/11) : 10 nouvelles et un seul signe',
+    () {
+      testWidgets('« Nouvelles » : 10 lignes, puis 10 de plus', (
+        WidgetTester tester,
+      ) async {
+        final _Source source = _Source(<NotificationTuteur>[
+          for (int i = 0; i < 25; i++)
+            _n('n$i', ilYa: Duration(hours: i + 1), lue: false),
+        ]);
+        await _ouvrirCentre(tester, source, taille: const Size(1440, 900));
+        expect(_ligne('n9'), findsOneWidget);
+        expect(_ligne('n10'), findsNothing);
+        await _toucher(
+          tester,
+          find.byKey(NotificationsPage.cleVoirPlusNouvelles),
+        );
+        expect(_ligne('n19'), findsOneWidget);
+        expect(_ligne('n20'), findsNothing);
+        await _toucher(
+          tester,
+          find.byKey(NotificationsPage.cleVoirPlusNouvelles),
+        );
+        expect(_ligne('n24'), findsOneWidget);
+        expect(
+          find.byKey(NotificationsPage.cleVoirPlusNouvelles),
+          findsNothing,
+        );
+      });
+
+      testWidgets('le badge ne vit que sur « A faire », avec le mot du geste ; '
+          '« Non lue » seul ailleurs', (WidgetTester tester) async {
+        final _Source source = _Source(<NotificationTuteur>[
+          _n(
+            'relance',
+            ilYa: const Duration(minutes: 5),
+            lue: false,
+            geste: true,
+            evenement: 'paiement_relance',
+          ),
+          _n('nouvelle', ilYa: const Duration(hours: 1), lue: false),
+        ]);
+        await _ouvrirCentre(tester, source);
+        expect(
+          find.descendant(
+            of: _ligne('relance'),
+            matching: find.text(t.notifications.gesteRecharger),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: _ligne('nouvelle'),
+            matching: find.byType(BadgeNonLu),
+          ),
+          findsNothing,
+        );
+        expect(
+          find.descendant(
+            of: _ligne('nouvelle'),
+            matching: find.textContaining(t.notifications.nonLue),
+          ),
+          findsOneWidget,
+        );
+        // Le lecteur d'ecran entend aussi un seul signe.
+        final String phrase = LigneNotification.phraseSemantique(
+          source.tete.last,
+        );
+        expect(phrase, contains(t.notifications.nonLueSemantique));
+        expect(phrase, isNot(contains(t.com.socle.composants.badge.aLire)));
+      });
+
+      test('le mot du geste, par evenement', () {
+        String mot(String e) => LigneNotification.libelleGeste(
+          _n('x', ilYa: Duration.zero, geste: true, evenement: e),
+        );
+        final m = t.notifications;
+        expect(mot('paiement_relance'), m.gesteRecharger);
+        expect(mot('acces_suspendu_paiement'), m.gesteRecharger);
+        expect(mot('remplacement_propose'), m.gestePrendreSeance);
+        expect(mot('remplacement_pre_alerte'), m.gestePrendreSeance);
+        expect(mot('demande_presentation'), m.gesteRepondre);
+        expect(mot('controle_mission_attribuee'), m.gesteObserver);
+        expect(mot('litige_ouvert'), m.gesteTraiterContestation);
+        expect(mot('classe_creee'), m.sectionAFaire);
+      });
+    },
+  );
 
   group('NOTIFS-L6 : l adaptateur Supabase', () {
     Map<String, dynamic> ligne({
