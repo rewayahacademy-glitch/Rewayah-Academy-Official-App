@@ -12,6 +12,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -197,6 +198,12 @@ Future<void> _ouvrirFeuille(WidgetTester tester) async {
   await tester.pumpAndSettle();
 }
 
+/// La seconde confirmation (directeur, 02/11/2026) : « Oui, rembourser ».
+Future<void> _oui(WidgetTester tester) async {
+  await tester.tap(find.text(t.admin.finance.pai.rembOui));
+  await tester.pumpAndSettle();
+}
+
 void main() {
   testWidgets(
     'le menu « Rembourser » n existe que pour un eleve remboursable',
@@ -234,8 +241,20 @@ void main() {
       findsOneWidget,
     );
     final Finder bouton = find.byKey(FeuilleRemboursement.cleConfirmer);
+    // Un double appui rapide : le second tombe a cote de la seconde
+    // confirmation, qui se ferme comme « Annuler » ; rien ne part.
     await tester.tap(bouton);
     await tester.pump();
+    await tester.tap(bouton, warnIfMissed: false);
+    await tester.pumpAndSettle();
+    expect(find.text(p.rembOui), findsNothing);
+    expect(port.cles, isEmpty);
+    await tester.tap(bouton);
+    await tester.pumpAndSettle();
+    expect(find.text(p.rembOui), findsOneWidget);
+    await tester.tap(find.text(p.rembOui));
+    await tester.pump();
+    // Pendant l'envoi, le bouton ne repart pas.
     await tester.tap(bouton, warnIfMissed: false);
     await tester.pump();
     attente.complete('d1');
@@ -255,9 +274,12 @@ void main() {
     await _ouvrirFeuille(tester);
     await tester.tap(find.byKey(FeuilleRemboursement.cleConfirmer));
     await tester.pumpAndSettle();
+    await _oui(tester);
     expect(find.text(t.admin.finance.pai.rembErreur), findsOneWidget);
     await tester.tap(find.byKey(FeuilleRemboursement.cleConfirmer));
     await tester.pumpAndSettle();
+    // La demande deja confirmee repart sans seconde question.
+    expect(find.text(t.admin.finance.pai.rembOui), findsNothing);
     // Une seule confirmation (la demande est gardee), deux envois de la
     // meme demande (idempotents chez le prestataire).
     expect(port.cles, hasLength(1));
@@ -275,7 +297,57 @@ void main() {
     await _ouvrirFeuille(tester);
     await tester.tap(find.byKey(FeuilleRemboursement.cleConfirmer));
     await tester.pumpAndSettle();
+    await _oui(tester);
     expect(find.text(t.admin.finance.pai.rembRefusePhrase), findsOneWidget);
+  });
+
+  testWidgets('sans « Oui, rembourser », aucun appel au serveur : Annuler '
+      '(focus par defaut), Echap, clic a cote', (WidgetTester tester) async {
+    final _Remboursements port = _Remboursements();
+    await _monter(tester, _hote(_Port(), remboursements: port));
+    await _ouvrirFeuille(tester);
+    final p = t.admin.finance.pai;
+    final Finder bouton = find.byKey(FeuilleRemboursement.cleConfirmer);
+
+    // La question dit le montant et le prenom reels, puis la phrase.
+    await tester.tap(bouton);
+    await tester.pumpAndSettle();
+    expect(
+      find.text(
+        p.rembQuestion(
+          montant: formaterMontant(const Montant(4654, 'USD')),
+          prenom: 'Bilal',
+        ),
+      ),
+      findsWidgets,
+    );
+    expect(find.text(p.rembSansRetour), findsOneWidget);
+    // « Annuler » a le focus des l'ouverture.
+    final BuildContext? focus = FocusManager.instance.primaryFocus?.context;
+    expect(focus, isNotNull);
+    expect(
+      find.descendant(
+        of: find.byWidget(focus!.widget),
+        matching: find.text(t.commun.annuler),
+      ),
+      findsOneWidget,
+    );
+    await tester.tap(find.text(t.commun.annuler).last);
+    await tester.pumpAndSettle();
+
+    await tester.tap(bouton);
+    await tester.pumpAndSettle();
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+
+    await tester.tap(bouton);
+    await tester.pumpAndSettle();
+    await tester.tapAt(const Offset(4, 4));
+    await tester.pumpAndSettle();
+
+    expect(find.text(p.rembOui), findsNothing);
+    expect(port.cles, isEmpty);
+    expect(port.envois, isEmpty);
   });
 
   test('adaptateur : decode le paiement et le detail du serveur ; envoie la '

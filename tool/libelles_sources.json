@@ -6945,5 +6945,8 @@
   "admin.finance.pai.rembRefusePhrase": "FN-115c (pilote, 02/11/2026) : Rembourser depuis Finance > Paiements, montant propose par le serveur (decision du directeur du 01/11/2026, points 2, 3, 7)",
   "admin.finance.pai.rembErreur": "FN-115c (pilote, 02/11/2026) : Rembourser depuis Finance > Paiements, montant propose par le serveur (decision du directeur du 01/11/2026, points 2, 3, 7)",
   "admin.finance.pai.rembAucun": "FN-115c (pilote, 02/11/2026) : Rembourser depuis Finance > Paiements, montant propose par le serveur (decision du directeur du 01/11/2026, points 2, 3, 7)",
-  "admin.finance.pai.rembChargement": "FN-115c (pilote, 02/11/2026) : Rembourser depuis Finance > Paiements, montant propose par le serveur (decision du directeur du 01/11/2026, points 2, 3, 7)"
+  "admin.finance.pai.rembChargement": "FN-115c (pilote, 02/11/2026) : Rembourser depuis Finance > Paiements, montant propose par le serveur (decision du directeur du 01/11/2026, points 2, 3, 7)",
+  "admin.finance.pai.rembQuestion": "FN-115c (directeur, par le pilote, 02/11/2026) : seconde confirmation avant tout remboursement",
+  "admin.finance.pai.rembSansRetour": "FN-115c (directeur, par le pilote, 02/11/2026) : seconde confirmation avant tout remboursement",
+  "admin.finance.pai.rembOui": "FN-115c (directeur, par le pilote, 02/11/2026) : seconde confirmation avant tout remboursement"
 }

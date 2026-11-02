@@ -26,7 +26,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { parcours, connecter, trouver, ouvrir, activerSemantique, amenerEnVue,
-  sql, API, DEPOT, MDP, COMPTES } from './commun.mjs';
+  libelles, cliquer, sql, API, DEPOT, MDP, COMPTES } from './commun.mjs';
 
 const p = await parcours('FN-115c : Rembourser depuis Finance > Paiements', 'fn115c-rembourser');
 let code = 1;
@@ -166,9 +166,28 @@ try {
     await p.capture(c, `${largeur}_3_feuille`);
     const bouton = await trouver(c.page, /^\s*Rembourser\s.+/, { delai: 8000, role: 'button' });
     v.feuilleDitLeMontant = Boolean(bouton);
+    // Seconde confirmation (directeur, 02/11) : la fenetre dit le montant et
+    // le prenom reels ; rien ne part sans « Oui, rembourser ».
+    const fenetre = async () => {
+      await bouton.click(); await c.page.waitForTimeout(1500); await activerSemantique(c.page);
+      const l = sans((await libelles(c.page)).join(' | '));
+      const question = sans(P.rembQuestion).replace('{montant}', '').replace('{prenom}', '').split(/\s+/)[0];
+      return l.includes(sans(P.rembSansRetour)) && l.includes(P.rembOui) && l.includes('Yanis')
+        && l.includes(question) && /\$/.test(l);
+    };
+    if (largeur === 390 && bouton) {
+      v.fenetreDitMontantEtPrenom = await fenetre();
+      await p.capture(c, `${largeur}_3b_confirmation`);
+      await cliquer(c.page, new RegExp(`^${FR.commun.annuler}$`), { role: 'button', pause: 1200 });
+      v.annulerRienNePart = sql(`select count(*) from public.remboursements_demandes where commande_id = '${f.commande}'`) === '0';
+    }
     if (largeur === 1440 && bouton) {
-      // Double clic : une seule demande, un seul remboursement.
-      await bouton.click(); await bouton.click({ force: true }).catch(() => {});
+      v.fenetreDitMontantEtPrenom = await fenetre();
+      await p.capture(c, `${largeur}_3b_confirmation`);
+      // Double clic sur « Oui, rembourser » : une seule demande, un seul
+      // remboursement.
+      const oui = await trouver(c.page, new RegExp(`^${P.rembOui}$`), { delai: 4000, role: 'button' });
+      await oui.click(); await oui.click({ force: true }).catch(() => {});
       await c.page.waitForTimeout(6000);
       await activerSemantique(c.page);
       await p.capture(c, `${largeur}_4_envoye`);

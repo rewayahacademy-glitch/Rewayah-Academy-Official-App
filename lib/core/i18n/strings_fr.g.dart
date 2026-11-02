@@ -26567,6 +26567,15 @@ class Traductions$admin$finance$pai$fr {
 	/// fr: 'Rembourser {montant}'
 	String rembConfirmer({required Object montant}) => 'Rembourser ${montant}';
 
+	/// fr: 'Oui, rembourser'
+	String get rembOui => 'Oui, rembourser';
+
+	/// fr: 'L'argent part chez le prestataire de paiement, et ce remboursement ne s'annule pas.'
+	String get rembSansRetour => 'L\'argent part chez le prestataire de paiement, et ce remboursement ne s\'annule pas.';
+
+	/// fr: 'Rembourser {montant} à {prenom} ?'
+	String rembQuestion({required Object montant, required Object prenom}) => 'Rembourser ${montant} à ${prenom} ?';
+
 	/// fr: 'Rien à rendre sur ce paiement.'
 	String get rembRien => 'Rien à rendre sur ce paiement.';
 
@@ -46582,6 +46591,9 @@ extension on Traductions {
 			'admin.finance.pai.rembEnvoyePhrase' => 'Il apparaîtra au solde de l\'élève quand le prestataire de paiement l\'aura confirmé.',
 			'admin.finance.pai.rembEnvoyeTitre' => 'Remboursement envoyé',
 			'admin.finance.pai.rembConfirmer' => ({required Object montant}) => 'Rembourser ${montant}',
+			'admin.finance.pai.rembOui' => 'Oui, rembourser',
+			'admin.finance.pai.rembSansRetour' => 'L\'argent part chez le prestataire de paiement, et ce remboursement ne s\'annule pas.',
+			'admin.finance.pai.rembQuestion' => ({required Object montant, required Object prenom}) => 'Rembourser ${montant} à ${prenom} ?',
 			'admin.finance.pai.rembRien' => 'Rien à rendre sur ce paiement.',
 			'admin.finance.pai.rembReglePrepaiement' => 'Formule payée d\'avance : les mois commencés sont dus au prix mensuel normal, sans remise ; le reste est rendu.',
 			'admin.finance.pai.rembRegleDelai' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Payé il y a moins d\'un jour : on rend ce qui a été payé, moins les séances suivies.', other: 'Payé il y a moins de ${jours} jours : on rend ce qui a été payé, moins les séances suivies.', ), 
@@ -46867,11 +46879,11 @@ extension on Traductions {
 			'admin.tirage.reglesIntro' => 'Ces règles s\'appliquent aux prochains tirages. Les missions déjà attribuées ne changent pas. Chaque enregistrement crée une nouvelle version ; les anciennes sont conservées et ne se modifient jamais, et chacune est inscrite au journal d\'audit.',
 			'admin.tirage.frequenceTitre' => 'Fréquence',
 			'admin.tirage.frequenceDetail' => 'Le nombre de missions qu\'un contrôleur reçoit par semaine, au plus : de 0 à 50. Le serveur applique ce nombre.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.tirage.versionEnVigueur' => ({required Object n}) => 'Règles en vigueur : version ${n}',
 			'admin.tirage.aucuneVersion' => 'Aucune règle n\'est encore enregistrée.',
 			'admin.tirage.zeroPhrase' => 'Avec 0, aucune séance n\'est tirée pour contrôle.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.tirage.nombreInvalide' => 'Entrez un nombre entier de 0 à 50, ou choisissez une des valeurs proposées.',
 			'admin.tirage.frequenceAutreChamp' => 'Nombre',
 			'admin.tirage.enregistreesVersion' => ({required Object n}) => 'Règles enregistrées, version ${n}. Elles s\'appliquent aux prochains tirages.',
@@ -47381,11 +47393,11 @@ extension on Traductions {
 			'compte.donnees.suppression.titre' => 'Supprimer mon compte',
 			'compte.donnees.suppression.intro' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'La direction étudie votre demande après un délai de réflexion de ${n} jour. Vous pouvez l\'annuler pendant ce temps.', other: 'La direction étudie votre demande après un délai de réflexion de ${n} jours. Vous pouvez l\'annuler pendant ce temps.', ), 
 			'compte.donnees.suppression.effacement' => 'Une fois la demande traitée, votre nom, vos coordonnées et votre photo sont effacés. Vous ne pouvez plus vous connecter.',
+			_ => null,
+		} ?? switch (path) {
 			'compte.donnees.suppression.conservation' => 'Les factures et les paiements sont conservés pour la comptabilité. Votre matricule n\'est jamais réattribué.',
 			'compte.donnees.suppression.aucuneDemande' => 'Aucune demande de suppression en cours.',
 			'compte.donnees.suppression.soldeTitre' => 'Un solde reste à régler',
-			_ => null,
-		} ?? switch (path) {
 			'compte.donnees.suppression.soldeDetail' => ({required Object montant}) => 'Il reste ${montant} à payer. Vous pouvez demander la suppression, mais ce solde reste dû.',
 			'compte.donnees.suppression.seancesTitre' => 'Des séances sont encore prévues',
 			'compte.donnees.suppression.seancesDetail' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} séance est prévue. La direction doit l\'annuler ou la confier à une autre personne avant de supprimer votre compte.', other: '${n} séances sont prévues. La direction doit les annuler ou les confier à une autre personne avant de supprimer votre compte.', ), 
@@ -47895,11 +47907,11 @@ extension on Traductions {
 			'eleve.coran.mecquoise' => 'Révélée à La Mecque',
 			'eleve.coran.medinoise' => 'Révélée à Médine',
 			'eleve.coran.reprendre' => 'Reprendre ta lecture',
+			_ => null,
+		} ?? switch (path) {
 			'eleve.coran.reprendreDetail' => ({required Object page}) => 'Tu en étais page ${page}',
 			'eleve.coran.chargement' => 'Le texte arrive',
 			'eleve.coran.indisponible' => 'Le texte n\'a pas pu être chargé',
-			_ => null,
-		} ?? switch (path) {
 			'eleve.coran.indisponibleDetail' => 'Dès que le réseau revient, ta page se rouvre ici.',
 			'eleve.coran.reessayer' => 'Réessayer',
 			'eleve.coran.absent' => 'Cette page est vide',
@@ -48409,11 +48421,11 @@ extension on Traductions {
 			'enseignant.journee.remplacementsVide' => 'Aucun cours d\'un collègue à assurer pour le moment.',
 			'enseignant.journee.voirTousRemplacements' => ({required Object nombre}) => 'Voir tout : les ${nombre} remplacements confirmés',
 			'enseignant.journee.heure' => 'Heure',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.journee.eleves' => 'Élèves',
 			'enseignant.journee.classe' => 'Classe',
 			'enseignant.journee.classeNommee' => ({required Object classe}) => 'Classe ${classe}',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.journee.preparerSeance' => 'Préparer la séance',
 			'enseignant.journee.preparerSeanceLecteur' => ({required Object classe}) => 'Préparer la séance ${classe}',
 			'enseignant.journee.derniereSeance' => 'Dernière séance',
@@ -48923,11 +48935,11 @@ extension on Traductions {
 			'controleur.compteRendu.faitsDeplies' => 'Relevé automatique de la séance, déplié',
 			'controleur.compteRendu.faitsChargement' => 'Lecture du relevé automatique de la séance : heures, élèves présents, reconnexions.',
 			'controleur.compteRendu.faitsAbsents' => 'Le relevé automatique de la séance (heures, élèves présents, reconnexions) n\'est pas encore reçu : la séance vient de se terminer ou la connexion a été coupée. Vous pouvez répondre sans lui ; il sera joint au rapport dès sa réception.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.compteRendu.cleHoraire' => 'Heure prévue',
 			'controleur.compteRendu.horaire' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
 			'controleur.compteRendu.cleDebutReel' => 'Début réel',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.compteRendu.debutRetard' => ({required Object heure, required Object minutes}) => '${heure}, ${minutes} min de retard',
 			'controleur.compteRendu.debutALHeure' => ({required Object heure}) => '${heure}, à l\'heure',
 			'controleur.compteRendu.cleFin' => 'Fin',
@@ -49437,11 +49449,11 @@ extension on Traductions {
 			'tc.observation.visite.videoCoupee' => 'Vidéo indisponible',
 			'tc.observation.visite.reconnexionDetail' => 'La connexion est interrompue, reconnexion en cours. Votre temps d\'observation continue de s\'écouler.',
 			'tc.observation.visite.sonRecu' => 'Son reçu',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.visite.sonInterrompu' => 'Son interrompu',
 			'tc.observation.visite.agrandir' => 'Agrandir',
 			'tc.observation.visite.reduire' => 'Réduire',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.visite.cameraFermee' => 'Caméra fermée',
 			'tc.observation.visite.pasEncoreLa' => 'Pas encore dans la salle',
 			'tc.observation.visite.parle' => ({required Object nom}) => '${nom} parle',
@@ -49951,11 +49963,11 @@ extension on Traductions {
 			'adulte.demo.etats.erreurReseau' => 'Le réseau a coupé pendant une action.',
 			'adulte.demo.etats.doubleSoumission' => 'La même action a été envoyée deux fois.',
 			'adulte.demo.etats.notificationDansLApplication' => 'La notification n\'a pas pu partir sur le téléphone, elle reste visible dans l\'application.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.demo.etats.emancipation' => 'Émancipation d\'un élève devenu adulte : non construite dans cette vague.',
 			'adulte.finances.indisponibleTitre' => 'Vos finances ne sont pas encore disponibles',
 			'adulte.finances.indisponiblePhrase' => 'Votre solde, votre période financée et votre mensualité apparaîtront ici dès que l\'académie les aura publiés. Aucun paiement ne vous est demandé ici.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.finances.erreurTitre' => 'Vos finances ne peuvent pas être lues',
 			'adulte.finances.videTitre' => 'Aucune finance enregistrée',
 			'adulte.finances.videPhrase' => 'Aucun solde ni aucune mensualité n\'est encore rendu pour votre profil. Ils apparaîtront ici après votre inscription à une classe.',
@@ -50465,11 +50477,11 @@ extension on Traductions {
 			'com.messages.panneau.participants' => 'Participants',
 			'com.messages.panneau.fichiers' => _root.com.socle.lexique.fichiersPartages,
 			'com.messages.panneau.ouvrir' => ({required Object objet}) => 'Ouvrir ${objet}',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.panneau.inaccessible' => 'Ce sujet ne vous est plus ouvert. La conversation reste lisible.',
 			'com.messages.panneau.vous' => 'Vous',
 			'com.messages.fil.lectureSeule' => 'Vous pouvez lire cette conversation. La réponse n\'y est pas ouverte pour vous.',
-			_ => null,
-		} ?? switch (path) {
 			'com.messages.demo.choisirRole' => 'Choisissez le point de vue de cette démonstration.',
 			'com.messages.demo.roles.tuteur' => 'Famille',
 			'com.messages.demo.roles.enseignant' => 'Enseignant',
@@ -50979,11 +50991,11 @@ extension on Traductions {
 			'com.annonces.publieur.apercu.diffusionLe' => ({required Object date, required Object heure}) => 'Diffusion prévue le ${date} à ${heure}',
 			'com.annonces.publieur.continuer' => 'Continuer',
 			'com.annonces.publieur.publier' => 'Publier l\'annonce',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.publieur.programmer' => 'Programmer l\'annonce',
 			'com.annonces.publieur.reessayer' => 'Réessayer la publication',
 			'com.annonces.publieur.terminer' => 'Terminer',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.publieur.manqueContenu' => 'Écrivez un titre et un texte pour continuer.',
 			'com.annonces.publieur.manqueAudience' => 'Choisissez les destinataires pour continuer.',
 			'com.annonces.publieur.enCours' => 'Publication en cours. Attendez la confirmation.',
@@ -51493,11 +51505,11 @@ extension on Traductions {
 			'comptable.paiements.ecart.titre' => 'Signaler un écart',
 			'comptable.paiements.ecart.phrase' => 'Choisissez la ligne et ce qui ne va pas. La correction se fait à la source, puis le montant est recalculé.',
 			'comptable.paiements.ecart.ligne' => 'Ligne concernée',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.ecart.motif' => 'Ce qui ne va pas',
 			'comptable.paiements.ecart.motifs.montantLigne' => 'Le montant de cette ligne ne correspond pas',
 			'comptable.paiements.ecart.motifs.ligneManquante' => 'Une ligne manque (séance, remplacement, bonus)',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.ecart.motifs.ligneEnTrop' => 'Cette ligne ne devrait pas être là',
 			'comptable.paiements.ecart.motifs.sourceErronee' => 'La source citée n\'est pas la bonne',
 			'comptable.paiements.ecart.envoyer' => 'Envoyer le signalement',
@@ -52007,11 +52019,11 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.plafondTransactionDetail' => 'Le montant maximal d\'un seul paiement.',
 			'comptable.direction.delegationPanneau.plafondLot' => 'Plafond par lot',
 			'comptable.direction.delegationPanneau.plafondLotDetail' => 'Le montant maximal d\'un lot de paiements.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.plafondPeriode' => 'Plafond cumulé par période',
 			'comptable.direction.delegationPanneau.plafondPeriodeDetail' => 'Le total maximal sur la période ; il empêche de contourner un plafond en fractionnant.',
 			'comptable.direction.delegationPanneau.plafondIndice' => 'Aucun plafond',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.validationsTitre' => 'Quand une seconde validation est exigée',
 			'comptable.direction.delegationPanneau.retraitReserve' => 'Retrait de la Réserve stratégique',
 			'comptable.direction.delegationPanneau.retraitReserveDetail' => 'Interdit au Comptable sans validation.',
@@ -52521,11 +52533,11 @@ extension on Traductions {
 			'avis.admin.champs.publie' => 'Publié le',
 			'avis.admin.actions.publier' => 'Publier',
 			'avis.admin.actions.refuser' => 'Refuser',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.actions.retirer' => 'Retirer',
 			'avis.admin.publier.question' => ({required Object deNom}) => 'Publier l\'avis ${deNom} ?',
 			'avis.admin.publier.consequence' => 'L\'avis, le nom affiché, le pays et la date paraîtront sur le site de Rewayah Academy au prochain passage du site. Le texte n\'est pas modifié.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.publier.action' => 'Publier l\'avis',
 			'avis.admin.publier.rester' => 'Ne rien changer',
 			'avis.admin.refuser.titre' => ({required Object deNom}) => 'Refuser l\'avis ${deNom}',

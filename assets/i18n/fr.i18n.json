@@ -5445,6 +5445,9 @@
         "rembEnvoyePhrase": "Il apparaîtra au solde de l'élève quand le prestataire de paiement l'aura confirmé.",
         "rembEnvoyeTitre": "Remboursement envoyé",
         "rembConfirmer": "Rembourser {montant}",
+        "rembOui": "Oui, rembourser",
+        "rembSansRetour": "L'argent part chez le prestataire de paiement, et ce remboursement ne s'annule pas.",
+        "rembQuestion": "Rembourser {montant} à {prenom}\u00a0?",
         "rembRien": "Rien à rendre sur ce paiement.",
         "rembReglePrepaiement": "Formule payée d'avance\u00a0: les mois commencés sont dus au prix mensuel normal, sans remise\u00a0; le reste est rendu.",
         "rembRegleDelai(param=jours)": {

@@ -5029,6 +5029,9 @@
         "rembEnvoyePhrase": "سيظهر في رصيد الطالب عندما يؤكده مزوّد الدفع.",
         "rembEnvoyeTitre": "أُرسل الاسترداد",
         "rembConfirmer": "استرداد \u2068{montant}\u2069",
+        "rembOui": "نعم، استرداد المبلغ",
+        "rembSansRetour": "يُرسَل المبلغ إلى مزوّد الدفع، ولا يمكن إلغاء هذا الاسترداد.",
+        "rembQuestion": "استرداد \u2068{montant}\u2069 لصالح \u2068{prenom}\u2069؟",
         "rembRien": "لا شيء يُرد من هذه الدفعة.",
         "rembReglePrepaiement": "صيغة مدفوعة مسبقًا: الأشهر التي بدأت مستحقة بالسعر الشهري العادي دون خصم، ويُرد الباقي.",
         "rembRegleDelai(param=jours)": {

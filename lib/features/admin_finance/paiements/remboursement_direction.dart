@@ -30,6 +30,7 @@ import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/app_bottom_sheet.dart';
 import '../../../core/widgets/bandeau_attention.dart';
 import '../../../core/widgets/choice_card_group.dart';
+import '../../../core/widgets/confirm_destructive.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/ligne_cle_valeur.dart';
 import '../../../core/widgets/status_pill.dart';
@@ -71,7 +72,7 @@ Future<bool> ouvrirRemboursement(
     titre: t.admin.finance.pai.rembTitre(prenom: prenom),
     constructeur: (BuildContext _) => UncontrolledProviderScope(
       container: portee,
-      child: FeuilleRemboursement(profilId: profilId),
+      child: FeuilleRemboursement(profilId: profilId, prenom: prenom),
     ),
   );
   return change ?? false;
@@ -82,10 +83,17 @@ enum _Phase { choix, envoi, envoye, refuse, inconnue }
 /// Le contenu de la feuille « Rembourser ».
 class FeuilleRemboursement extends ConsumerStatefulWidget {
   /// Cree la feuille.
-  const FeuilleRemboursement({required this.profilId, super.key});
+  const FeuilleRemboursement({
+    required this.profilId,
+    required this.prenom,
+    super.key,
+  });
 
   /// L'eleve vise.
   final String profilId;
+
+  /// Son prenom, dit dans la seconde confirmation.
+  final String prenom;
 
   /// La cle du bouton qui rembourse.
   static const Key cleConfirmer = ValueKey<String>('remboursement-confirmer');
@@ -116,8 +124,32 @@ class _FeuilleRemboursementState extends ConsumerState<FeuilleRemboursement> {
   _Phase _phase = _Phase.choix;
   bool _change = false;
 
+  /// Vrai pendant que la seconde confirmation est ouverte : un double appui
+  /// n'en ouvre pas une deuxieme.
+  bool _question = false;
+
   Future<void> _rembourser(PaiementRemboursable paiement) async {
-    if (_phase == _Phase.envoi) return;
+    if (_phase == _Phase.envoi || _question) return;
+    // Seconde confirmation (directeur, 02/11/2026) : rien ne part sans
+    // « Oui, rembourser ». « Annuler » a le focus ; Echap ou un clic a cote
+    // renoncent. Une demande deja confirmee (reprise apres une coupure) ne
+    // se redemande pas : elle repart telle quelle.
+    if (_demande == null) {
+      final p = t.admin.finance.pai;
+      _question = true;
+      final bool oui = await ConfirmDestructive.demander(
+        context,
+        question: p.rembQuestion(
+          montant: formaterMontant(paiement.propose),
+          prenom: widget.prenom,
+        ),
+        consequence: p.rembSansRetour,
+        libelleConfirmer: p.rembOui,
+        annulerParDefaut: true,
+      );
+      _question = false;
+      if (!oui || !mounted) return;
+    }
     setState(() => _phase = _Phase.envoi);
     final PortRemboursementsDirection port = ref.read(
       portRemboursementsDirectionProvider,
