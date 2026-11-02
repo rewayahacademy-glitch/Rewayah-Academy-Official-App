@@ -294,7 +294,58 @@ SELECT pg_temp.vrai((pg_temp.propose(current_setting('test.c2')::uuid, 'e1') ->>
   AND current_setting('test.m1')::bigint * 3 > current_setting('test.t1')::bigint,
   '5 : le prix mensuel compte est sans la remise du trimestre');
 
-SELECT pg_temp.vrai(coalesce(nullif(current_setting('test.n', true), ''), '0')::int >= 8,
+-- ------------------------------------------------------------------
+-- 6. La direction publie une nouvelle version (cassee depuis FN-115c)
+-- ------------------------------------------------------------------
+-- La copie de la derniere version, en JSON, telle que l'ecran la relit.
+SELECT set_config('test.pol', (SELECT private.fac_politique_json(p, 'publiee')::text
+   FROM public.politiques_commerciales p ORDER BY p.date_effet DESC LIMIT 1), true);
+SELECT pg_temp.vrai((current_setting('test.pol')::jsonb ->> 'remboursementDelaiJours')::int = 14,
+  '6 : le JSON de la politique porte le delai (relu par l''ecran)');
+CREATE FUNCTION pg_temp.publier(p_version text, p_jours int, p_jour_effet int) RETURNS jsonb
+LANGUAGE plpgsql AS $$
+DECLARE v jsonb := current_setting('test.pol')::jsonb;
+BEGIN
+  v := jsonb_set(jsonb_set(v, '{version}', to_jsonb(p_version)), '{dateEffet}',
+                 to_jsonb((current_date + p_jour_effet)::text));
+  v := CASE WHEN p_jours IS NULL THEN v - 'remboursementDelaiJours'
+            ELSE jsonb_set(v, '{remboursementDelaiJours}', to_jsonb(p_jours)) END;
+  RETURN public.publier_politique_commerciale(v);
+END $$;
+GRANT EXECUTE ON FUNCTION pg_temp.publier(text, int, int) TO authenticated;
+CREATE FUNCTION pg_temp.qui_aal2(p_id uuid) RETURNS void LANGUAGE plpgsql AS $$
+DECLARE v_jwt text := '{"aal":"aal2","app_metadata":{"role":"admin"}}';
+BEGIN
+  PERFORM set_config('request.jwt.claim.sub', p_id::text, true);
+  PERFORM set_config('test.uid', p_id::text, true);
+  PERFORM set_config('request.jwt.claims', v_jwt, true);
+  PERFORM set_config('test.jwt', v_jwt, true);
+END $$;
+GRANT EXECUTE ON FUNCTION pg_temp.qui_aal2(uuid) TO authenticated;
+SELECT set_config('test.vsuiv', private.fac_version_suivante(
+  (SELECT version FROM public.politiques_commerciales ORDER BY date_effet DESC LIMIT 1)), true);
+SELECT pg_temp.qui_aal2(pg_temp.id('a1'));
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.refus(format('SELECT pg_temp.publier(%L, 99, 40)', current_setting('test.vsuiv')),
+  '6 : delai hors bornes (99) : refuse');
+-- Sans la cle : la nouvelle version reprend le delai de la precedente.
+-- (La reponse est faite de la ligne d'avant le declencheur : la table fait foi.)
+SELECT pg_temp.vrai((pg_temp.publier(current_setting('test.vsuiv'), NULL, 40) ->> 'version')
+                     = current_setting('test.vsuiv'),
+  '6 : publication sans la cle : publiee (elle echouait depuis FN-115c)');
+RESET ROLE;
+SELECT pg_temp.vrai((SELECT remboursement_delai_jours = 14 AND seances_par_mois = 13
+                       FROM public.politiques_commerciales WHERE version = current_setting('test.vsuiv')),
+  '6 : la version publiee garde le delai et les seances du mois');
+SELECT set_config('test.vsuiv2', private.fac_version_suivante(current_setting('test.vsuiv')), true);
+SELECT pg_temp.qui_aal2(pg_temp.id('a1'));
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai((pg_temp.publier(current_setting('test.vsuiv2'), 21, 50)
+                     ->> 'remboursementDelaiJours')::int = 21,
+  '6 : la direction publie un autre delai (21)');
+RESET ROLE;
+
+SELECT pg_temp.vrai(coalesce(nullif(current_setting('test.n', true), ''), '0')::int >= 13,
   'au moins 8 controles ont passe');
 \o
 SELECT 'REMB-14 : scenarios verts' AS resultat;
