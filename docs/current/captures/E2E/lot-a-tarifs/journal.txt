@@ -1,0 +1,22 @@
+== Lot A : la direction offre l acces ou un prix special : 2026-11-02T13:42:35.855Z ; Chromium 141.0.7390.37 ; http://127.0.0.1:8090
+Seance 9ca5a389-017f-4989-a070-ffe733de4c74 ouverte
+Enfant Yanis11020548 suspendu (facture e1f17cad-892e-4042-b12e-2f17ae7b7dc9) ; facture du mois suivant deja la : 1
+Avant : Rejoindre absent
+Bloc des remises avant : flt-semantics:Aucun accès offert ni prix spécial pour l'instant.
+Ligne de l eleve : (sans libelle)
+Fiche : flt-semantics:Yanis11020548 n'a rien à payer jusqu'à la fin du mois choisi. Son accès s'ouvre tout de suite.
+Acces offert : accorde
+En base : remise « acces_offert 1000 2027-01-01 » ; suspension levee : « bourse »
+Apres : Rejoindre
+Liste : group:Yanis11020548 Famille11020548 Famille aidée par l'académie (banc lot A) Accès offert jusqu'à fin janvier 2027 Yanis11012203 Famille11012203 RA-26-4915 100 $ Yan
+Retrait : fait
+Tarif de l eleve lu dans la politique : 5500 (unites mineures)
+Ligne de l eleve : (sans libelle)
+Prix egal au tarif : group:Rien n'a été accordé Ce prix n'est pas inférieur au prix normal de Yanis11020548. Entrez un prix plus bas, ou choisissez « Accès offert ».
+Ligne de l eleve : (sans libelle)
+Prix par mois : accorde ; liste : group:Yanis11020548 Famille11020548 Inscrit avant novembre 2026 (banc lot A) 40 $ par mois jusqu'à fin janvier 2027 Yanis11012203 Famille11012203 RA-26-4915 100 $ Yan ; base : prix_special - 4000 USD
+Suspensions ouvertes apres le prix par mois : 0 (attendu 0 : rien n'a ete re-suspendu)
+Facture du mois suivant : 4000 prix_special
+Famille 390 : flt-semantics:Prix spécial −15 $
+Famille 1440 : flt-semantics:Prix spécial −15 $
+== Lot A : la direction offre l acces ou un prix special : vert : acces offert : suspension levee, Rejoindre revenu ; retrait ; prix par mois trop haut refuse, 40 $ accorde ; facture du mois suivant a 40 $, la famille lit « Prix spécial »

@@ -10,7 +10,7 @@
 // une facture et une suspension posees en base.
 import fs from 'node:fs';
 import path from 'node:path';
-import { parcours, connecter, connecterParLien, cliquer, ouvrir, trouver, trouverTexte, libelles, saisir, sql,
+import { parcours, connecter, connecterParLien, cliquer, ouvrir, trouver, amenerEnVue, trouverTexte, libelles, saisir, sql,
   activerSemantique, COMPTES, TRAVAIL } from './commun.mjs';
 
 const lire = (f) => JSON.parse(fs.readFileSync(path.join(TRAVAIL, f), 'utf8'));
@@ -46,6 +46,11 @@ p.dire(`Seance ${seance} ouverte`);
 // Le mois de l'enfant n'est pas paye : facture et suspension ; aucune remise.
 // La facture posee vise un mois lointain, pour laisser libre le mois suivant,
 // que la direction emettra depuis l'interface.
+// Les fausses factures posees par les passages precedents des bancs (lots B
+// et A : lignes vides, jamais financees) sont annulees (une facture emise ne
+// se supprime pas) : pile locale.
+sql(`update public.factures_mensuelles set statut = 'annulee', annulee_le = clock_timestamp()
+  where profile_id = '${enfant}' and lignes = '[]'::jsonb and statut = 'a_financer'`);
 sql(`update public.acces_suspensions_paiement set retabli_le = clock_timestamp(), retabli_motif = 'facture_close'
   where profile_id = '${enfant}' and retabli_le is null`);
 sql(`update public.bourses_eleves set retiree_le = clock_timestamp(),
@@ -53,11 +58,11 @@ sql(`update public.bourses_eleves set retiree_le = clock_timestamp(),
   where profile_id = '${enfant}' and retiree_le is null`);
 const facture = sql(`insert into public.factures_mensuelles(profile_id, household_id, mois, politique_version, devise,
   rang_familial, lignes, total_mineur) select p.id, p.household_id, (date_trunc('month', now()) + make_interval(months => 12 + (select count(*)::int from public.factures_mensuelles
-  where profile_id = '${enfant}')))::date,
+  where profile_id = '${enfant}' and statut <> 'annulee')))::date,
   'v2.0.0', 'USD', 1, '[]'::jsonb, 5500 from public.profiles p where p.id = '${enfant}' returning id`).split('\n')[0];
 sql(`insert into public.acces_suspensions_paiement(profile_id, facture_id, jour) values ('${enfant}', '${facture}', current_date)`);
 const suivant = sql(`select to_char(date_trunc('month', now()) + interval '1 month', 'YYYY-MM-DD')`);
-const dejaSuivant = sql(`select count(*) from public.factures_mensuelles where profile_id = '${enfant}' and mois = '${suivant}'`);
+const dejaSuivant = sql(`select count(*) from public.factures_mensuelles where profile_id = '${enfant}' and mois = '${suivant}' and statut <> 'annulee'`);
 p.dire(`Enfant ${FAMILLE.enfant} suspendu (facture ${facture}) ; facture du mois suivant deja la : ${dejaSuivant}`);
 
 // L'enseignant ouvre la salle (sans lui, aucun « Rejoindre », PR 100).
@@ -78,7 +83,14 @@ if (avant) manque.push('« Rejoindre » present alors que l enfant est suspendu 
 
 // La direction : Finance, Paiements.
 const allerPaiements = async (page) => {
-  await cliquer(page, 'Finance Onglet', { pause: 2500 });
+  await activerSemantique(page);
+  // Au telephone, les onglets sont derriere « Menu ».
+  if (!(await trouver(page, 'Finance Onglet', { delai: 4000 }))) {
+    await cliquer(page, /^Menu$/, { pause: 1500 });
+    await cliquer(page, /^Finance/, { pause: 2500 });
+  } else {
+    await cliquer(page, 'Finance Onglet', { pause: 2500 });
+  }
   await cliquer(page, /^Sections de la page/);
   await cliquer(page, /^Paiements$/, { pause: 3000 });
   await activerSemantique(page);
@@ -86,17 +98,45 @@ const allerPaiements = async (page) => {
 // La ligne de l'eleve dans la liste des eleves (pas un autre bloc qui cite son
 // prenom) : son nom, puis son matricule ou ce qui reste a payer.
 const ouvrirEnfant = async (page) => {
-  const motif = new RegExp(`^${echap(FAMILLE.enfant)}[^|]*(RA-|\\$|jour)`);
-  const ligne = await trouver(page, motif, { delai: 10000 });
+  const motif = new RegExp(`^\\s*${echap(FAMILLE.enfant)}\\s.*(RA-|\\$|jour)`);
+  // La ligne est un lien (<a>) de l'arbre d'accessibilite : on la cherche par
+  // son libelle (ou son texte), espaces et retours a la ligne ramenes a un.
+  const index = await page.locator('a').evaluateAll((els, source) => {
+    const m = new RegExp(source);
+    return els.findIndex((el) => m.test(((el.getAttribute('aria-label') || el.textContent) ?? '')
+      .replace(/[\u2068\u2069]/g, '').replace(/\s+/g, ' ')));
+  }, motif.source);
+  const ligne = index >= 0 ? page.locator('a').nth(index) : null;
   if (!ligne) {
     const vus = (await libelles(page)).filter((x) => x.includes(FAMILLE.enfant));
     throw new Error(`ligne de l eleve introuvable ; libelles avec son prenom : ${vus.join(' | ')}`);
   }
   p.dire(`Ligne de l eleve : ${(await ligne.getAttribute('aria-label')) ?? '(sans libelle)'}`);
   await ligne.scrollIntoViewIfNeeded().catch(() => {});
-  await ligne.click();
+  await ligne.click({ timeout: 5000 }).catch(() => ligne.dispatchEvent('click'));
   await page.waitForTimeout(2000);
   await cliquer(page, /^Accès offert ou prix spécial$/, { role: 'button', pause: 2000 });
+  await activerSemantique(page);
+};
+
+// Amene a l'ecran le texte qui suit [motif] avant une capture.
+const montrer = async (page, motif) => {
+  const el = await trouver(page, motif, { delai: 3000 });
+  if (el) { await amenerEnVue(page, el); await page.waitForTimeout(800); }
+};
+
+// Touche le lien (<a> de l'arbre d'accessibilite) dont le libelle suit [motif].
+const toucherLien = async (page, motif) => {
+  const index = await page.locator('a').evaluateAll((els, source) => {
+    const m = new RegExp(source);
+    return els.findIndex((el) => m.test(((el.getAttribute('aria-label') || el.textContent) ?? '')
+      .replace(/[\u2068\u2069]/g, '').replace(/\s+/g, ' ')));
+  }, motif.source);
+  if (index < 0) throw new Error(`lien introuvable : ${motif}`);
+  const l = page.locator('a').nth(index);
+  await l.scrollIntoViewIfNeeded().catch(() => {});
+  await l.click({ timeout: 5000 }).catch(() => l.dispatchEvent('click'));
+  await page.waitForTimeout(2000);
   await activerSemantique(page);
 };
 
@@ -139,13 +179,13 @@ if (!apres) {
 
 // 2. Retrait de l'acces offert, depuis la liste.
 await d.page.reload();
-await d.page.waitForTimeout(4000);
+await d.page.waitForTimeout(6000);
 await allerPaiements(d.page);
 const ligne = await trouverTexte(d.page, /Accès offert jusqu'à fin[^|]*/, 8000);
 await p.capture(d, '1440_liste_acces_offert');
 p.dire(`Liste : ${ligne ?? 'ligne absente'}`);
 if (!ligne) manque.push('la liste ne montre pas l acces offert');
-await cliquer(d.page, /Accès offert jusqu'à fin/, { pause: 2000 });
+await toucherLien(d.page, /Accès offert jusqu'à fin/);
 await saisir(d.page, 'Raison', 'Remplacé par un prix spécial (banc lot A)');
 await cliquer(d.page, /^Retirer$/, { role: 'button', pause: 3000 });
 const retire = await trouverTexte(d.page, /C'est retiré/, 8000);
@@ -178,7 +218,8 @@ await cliquer(d.page, /^Accorder$/, { role: 'button', pause: 3000 });
 const faitPrix = await trouverTexte(d.page, /C'est accordé/, 8000);
 await cliquer(d.page, /^Fermer$/, { role: 'button', pause: 2500 });
 await activerSemantique(d.page);
-const lignePrix = await trouverTexte(d.page, /40,00[^|]*par mois jusqu'à fin[^|]*/, 8000);
+const lignePrix = await trouverTexte(d.page, /40[^|]{0,8}par mois jusqu'à fin[^|]*/, 8000);
+await montrer(d.page, /40[^|]{0,8}par mois jusqu'à fin/);
 await p.capture(d, '1440_liste_prix_par_mois');
 const remisePrix = sql(`select nature || ' ' || coalesce(pour_mille::text, '-') || ' ' || montant_mineur || ' ' || devise
   from public.bourses_eleves where profile_id = '${enfant}' and retiree_le is null`);
@@ -192,15 +233,16 @@ p.dire(`Suspensions ouvertes apres le prix par mois : ${suspendu} (attendu 0 : r
 const dt = await p.contexte('direction', { telephone: true });
 await connecter(dt.page, COMPTES.direction);
 await allerPaiements(dt.page);
-await trouverTexte(dt.page, /40,00[^|]*par mois jusqu'à fin[^|]*/, 8000);
+await trouverTexte(dt.page, /40[^|]{0,8}par mois jusqu'à fin[^|]*/, 8000);
+await montrer(dt.page, /40[^|]{0,8}par mois jusqu'à fin/);
 await p.capture(dt, '390_liste_prix_par_mois');
-await cliquer(dt.page, /40,00[^|]*par mois jusqu'à fin/, { pause: 2000 });
+await toucherLien(dt.page, /40[^|]{0,8}par mois jusqu'à fin/);
 await p.capture(dt, '390_fiche_retrait_prix_par_mois');
 await dt.ctx.close();
 
 // 4. La direction emet les factures du mois suivant ; la famille lit la ligne.
 await d.page.reload();
-await d.page.waitForTimeout(4000);
+await d.page.waitForTimeout(6000);
 await allerPaiements(d.page);
 const moisSuivantMots = sql(`select to_char(date '${suivant}', 'MM')`);
 const NOMS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
@@ -208,7 +250,7 @@ await cliquer(d.page, new RegExp(`Factures d.{0,3}${NOMS[Number(moisSuivantMots)
 await cliquer(d.page, /^Émettre/, { role: 'button', pause: 4000 });
 await p.capture(d, '1440_factures_mois_suivant');
 const facSuivante = sql(`select total_mineur || ' ' || (select l ->> 'remise' from jsonb_array_elements(lignes) l
-  where l ->> 'nature' = 'bourse') from public.factures_mensuelles where profile_id = '${enfant}' and mois = '${suivant}'`);
+  where l ->> 'nature' = 'bourse') from public.factures_mensuelles where profile_id = '${enfant}' and mois = '${suivant}' and statut <> 'annulee'`);
 p.dire(`Facture du mois suivant : ${facSuivante || 'absente'}`);
 if (!/^4000 prix_special$/.test(facSuivante ?? '')) manque.push(`facture du mois suivant inattendue (${facSuivante})`);
 
@@ -225,6 +267,7 @@ for (const [acteur, etiquette] of [[f, '390'], [await p.contexte('famille', { vu
     vu = await trouverTexte(acteur.page, /Prix spécial[^|]*/, 800);
     if (!vu) { await acteur.page.mouse.move(195, 400); await acteur.page.mouse.wheel(0, 300); await acteur.page.waitForTimeout(400); await activerSemantique(acteur.page); }
   }
+  await montrer(acteur.page, /Prix spécial/);
   await p.capture(acteur, `${etiquette}_famille_ligne_prix_special`);
   p.dire(`Famille ${etiquette} : ${vu ?? 'ligne « Prix spécial » absente'}`);
   if (!vu) {
