@@ -77,7 +77,10 @@ CREATE FUNCTION pg_temp.suspendu(p_profil text) RETURNS boolean LANGUAGE sql AS
 CREATE FUNCTION pg_temp.notifs(p_evenement text, p_portee text) RETURNS bigint LANGUAGE sql AS
   $$ SELECT count(*) FROM public.notifications
       WHERE evenement = p_evenement AND params ->> 'portee' = p_portee
-        AND params ->> 'commande_id' IS NOT NULL $$;
+        AND params ->> 'commande_id' IS NOT NULL
+        -- Seulement les destinataires de ce scenario : en CI, d'autres
+        -- scenarios laissent des comptes de direction actifs dans la base.
+        AND destinataire::text LIKE 'fb000000-%' $$;
 CREATE FUNCTION pg_temp.mois_de(p_profil text) RETURNS bigint LANGUAGE sql AS
   $$ SELECT ((x -> 'formules') -> 0 -> 'montant' ->> 'mineur')::bigint
        FROM jsonb_array_elements(public.recharge_beneficiaires()) AS x
