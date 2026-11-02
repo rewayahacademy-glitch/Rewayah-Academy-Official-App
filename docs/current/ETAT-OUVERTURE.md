@@ -37,11 +37,12 @@ recette en production** : la dernière colonne ne se remplit que quand le direct
 | 107 | Pile E2E locale et captures | tous | fusionnée le 01/11 (1bca17a) ; aucun code de l'application |
 | 109 | Branchement (R1, R2, R3) et `verifier_branchement` | tous | fusionnée le 01/11 (b56ec42) ; la CI ne lance pas encore le vérificateur : la ligne de `ci.yml` est remise au directeur par le garde-cap |
 | 111 | Décision : notifications push | hors ligne (après FN-028) | fusionnée le 01/11 (286a9b1) ; documentation seule, aucun code |
+| (B) | Sans paiement, ni séances ni ressources (porte `acces_paye`) ; « Recharger » toujours visible (UX-025) | 7 | en cours (garde-cap), ordre du pilote du 02/11 ; règle du directeur du 01/11 |
 | 95 | Factures le 1er, relances | 7 | retenue jusqu'à (A) en ligne et saisie faite, pilote 02/11 : le lot (A) (accès offert, prix spécial) doit être en ligne et la direction doit avoir saisi les prix spéciaux et accès offerts des inscrits actuels ; la date du 04/11 tombe |
 | 122, 126, 129, 132, 133 | Listes L1 à L5 : Classes, Comptes, Classes à ouvrir, Espace de traitement, Dossiers à valider en liste de bureau | hors ligne d'arrivée | fusionnées du 01/11 au 02/11. Ordre du directeur : `DECISION-LISTES-2026-10-23.md` (23/10 ; Comptes par rôle, 30/10), règle « la liste est la page » (01/11, PR 119), « il faut masquer les classes clôturées » (01/11) |
 | 128 | Les trois délais du remplacement automatique (A3) dans Règles | hors ligne d'arrivée (suite de la PR 98) | fusionnée le 02/11 (5625be89), migration posée en production. Ordre du directeur du 02/11 : « ça devrait être une configuration dans l'administration pour changer ce nombre » |
 | 130 | FN-115a : conditions de remboursement et de contestation, lues avant de payer | 7 | fusionnée le 02/11 (25a84dc8), aucune migration. Ordre du directeur du 01/11 : « oui pour les 7 points » (`DECISION-TARIFS-2026-10-18.md`, section du 01/11) |
-| 131 | FN-115b : remboursements et contestations Stripe traités par le serveur | 7 | verte, non fusionnée. Même ordre (01/11). Attend : fichier 1 collé par le directeur (page de collage), fichier 2 posé par le pilote, fusion, puis trois événements ajoutés au webhook Stripe |
+| 131 | FN-115b : remboursements et contestations Stripe traités par le serveur | 7 | fusionnée le 02/11 (9ffbacf1) ; fichier 1 collé par le directeur, fichier 2 posé par le pilote, tous deux vérifiés en production avant la fusion. En ligne **sous réserve de la preuve du directeur** (un vrai remboursement ou un vrai litige) ; reste à ajouter `charge.refunded`, `charge.dispute.created` et `charge.dispute.closed` au webhook Stripe de production |
 
 ## Écart entre les migrations du dépôt et la production
 
