@@ -129,6 +129,8 @@ class NotificationTuteur {
     this.mention = false,
     this.texte,
     this.annonceId,
+    this.gesteEnAttente = false,
+    this.cleRegroupement,
   }) : destination = cheminRetourValide(destination);
 
   /// Identifiant.
@@ -166,8 +168,25 @@ class NotificationTuteur {
   /// est relue par son propre port.
   final String? annonceId;
 
+  /// NOTIFS-L6 : vrai quand le serveur dit que la notification demande un
+  /// geste (`geste_requis`) que la personne n'a ni fait ni ecarte. Elle reste
+  /// alors dans « A faire », lue ou non ; jamais effacee par la seule
+  /// ouverture de la page.
+  final bool gesteEnAttente;
+
+  /// NOTIFS-L6 : ce qui rapproche les repetitions d'un meme evenement
+  /// (evenement, destination, classe), pose par l'adaptateur ; la page y
+  /// ajoute le jour. `null` : jamais regroupee. Ce n'est pas exactement « le
+  /// meme objet » : les parametres ne portent volontairement aucun
+  /// identifiant.
+  final String? cleRegroupement;
+
   /// Vrai si la notification attend une action : action requise ou urgent.
   bool get demandeAction => niveau.estAuMoins(NiveauAttention.actionRequise);
+
+  /// NOTIFS-L6 : vrai si la notification va dans « A faire » : un geste en
+  /// attente (serveur), ou une action requise (ports de demonstration).
+  bool get aFaire => gesteEnAttente || demandeAction;
 
   /// La meme notification, marquee lue.
   NotificationTuteur marqueeLue() => NotificationTuteur(
@@ -180,6 +199,8 @@ class NotificationTuteur {
     mention: mention,
     texte: texte,
     annonceId: annonceId,
+    gesteEnAttente: gesteEnAttente,
+    cleRegroupement: cleRegroupement,
   );
 }
 
@@ -216,6 +237,31 @@ abstract interface class PortLectureGroupeeNotifications {
   /// Enregistre que la personne a lu toutes ses notifications non lues. Leve
   /// en cas d'echec : rien n'est alors suppose lu.
   Future<void> marquerToutesLues();
+}
+
+/// NOTIFS-L6 : un port qui lit les notifications **lues** page par page, plus
+/// anciennes que [avant] (« Plus anciennes », « Voir plus »). Sa [liste] ne
+/// rend alors que la tete : les non lues, les « A faire » et la premiere page
+/// des lues. Interface separee : un port qui ne la porte pas rend tout par
+/// [PortNotifications.liste], et la page decoupe elle-meme.
+abstract interface class PortPagesNotifications {
+  /// La taille d'une page des lues.
+  static const int taillePage = 20;
+
+  /// Les lues plus anciennes que [avant], la plus recente d'abord, au plus
+  /// [limite]. Moins de [limite] : il n'y en a plus.
+  Future<List<NotificationTuteur>> lues({
+    required DateTime avant,
+    int limite = taillePage,
+  });
+}
+
+/// NOTIFS-L6 : un port qui sait ecarter une notification « A faire » (la
+/// personne ne fera pas le geste ici, ou l'a fait ailleurs). Interface
+/// separee : sans elle, « Ecarter » n'est pas propose.
+abstract interface class PortEcartNotifications {
+  /// Ecarte la notification [id] de « A faire ». Leve en cas d'echec.
+  Future<void> ecarter(String id);
 }
 
 /// Les notifications tant qu'aucune source n'existe (DB-CPT-04) : « Les

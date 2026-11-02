@@ -19,6 +19,7 @@ import 'package:rewayah_academy/features/com_annonces/carte_annonce_classe.dart'
 import 'package:rewayah_academy/features/com_annonces/port_annonces.dart';
 import 'package:rewayah_academy/features/demo/communications/com_annonces_demo.dart';
 import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
+import 'package:rewayah_academy/features/notifications/detail_notification.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 
 import '../../router/support_routeur.dart';
@@ -185,6 +186,17 @@ void main() {
           await _monter(tester, _adresse(role), taille: taille);
           expect(find.byType(ComAnnoncesDemo), findsOneWidget);
           expect(find.byType(NotificationsPage), findsOneWidget);
+          // NOTIFS-L6 : les plus anciennes, repliees sous les priorites,
+          // s'ouvrent d'un geste.
+          final Finder anciennes = find.byKey(NotificationsPage.cleAnciennes);
+          if (anciennes.evaluate().isNotEmpty &&
+              (find.byKey(NotificationsPage.cleAFaire).evaluate().isNotEmpty ||
+                  find
+                      .byKey(NotificationsPage.cleNouvelles)
+                      .evaluate()
+                      .isNotEmpty)) {
+            await _toucher(tester, anciennes);
+          }
           for (final NotificationTuteur n in notificationsDemo(
             role,
             _maintenant,
@@ -259,18 +271,15 @@ void main() {
         ),
         findsOneWidget,
       );
+      // NOTIFS-L6 : une notification a destination l'ouvre directement
+      // (plus de detail a cote de la liste).
       await _toucher(tester, ligne);
-      expect(
-        find.descendant(
-          of: find.byKey(NotificationsPage.cleDetail),
-          matching: find.text(t.com.annonces.demo.f.adminStudioDecision),
-        ),
-        findsOneWidget,
-      );
+      expect(find.byType(NotificationsPage), findsNothing);
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('famille, 1440 : liste et detail cote a cote', (
+    // NOTIFS-L6 : plus de detail a cote de la liste ; il s'ouvre en page.
+    testWidgets('famille, 1440 : le detail s ouvre en page', (
       WidgetTester tester,
     ) async {
       await _monter(
@@ -278,11 +287,11 @@ void main() {
         _adresse(RoleDemoCommunications.tuteur),
         taille: const Size(1440, 900),
       );
-      expect(find.byKey(NotificationsPage.cleDetail), findsOneWidget);
+      expect(find.byType(DetailNotification), findsNothing);
       await _toucher(tester, _ligne('demo-t-urgent'));
       expect(
         find.descendant(
-          of: find.byKey(NotificationsPage.cleDetail),
+          of: find.byType(DetailNotification),
           matching: find.text(t.com.annonces.demo.f.tuteurUrgentTexte),
         ),
         findsOneWidget,

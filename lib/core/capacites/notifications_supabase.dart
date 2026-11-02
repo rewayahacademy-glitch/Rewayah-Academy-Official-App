@@ -106,7 +106,9 @@ class NotificationsSupabase
     implements
         PortNotifications,
         PortLectureNotifications,
-        PortLectureGroupeeNotifications {
+        PortLectureGroupeeNotifications,
+        PortPagesNotifications,
+        PortEcartNotifications {
   /// Crée l'adaptateur avec le client de l'application et le résolveur localisé.
   const NotificationsSupabase(this._client, {required this.contenuPour});
 
@@ -121,20 +123,148 @@ class NotificationsSupabase
     return id;
   }
 
+  /// NOTIFS-L6 : les colonnes de « A faire » (`geste_requis`, `ecartee_le`,
+  /// `geste_fait_le`) n'existent qu'apres la migration du lot. Avant, une
+  /// lecture qui les nomme est refusee (Postgres 42703) : l'adaptateur lit
+  /// alors sans elles, et « A faire » reste vide, comme avant le lot.
+  static bool _avecGestes = true;
+
+  /// Les colonnes lues.
+  static String get _colonnes => _avecGestes
+      ? '$_colonnesBase, geste_requis, ecartee_le, geste_fait_le'
+      : _colonnesBase;
+
+  static const String _colonnesBase =
+      'id, evenement, params, destination, cree_le, lu_le';
+
+  /// Le plafond des non lues lues d'un coup (la cloche compte au plus cela).
+  static const int plafondNonLues = 100;
+
+  /// Le plafond des « A faire » ouvertes lues d'un coup.
+  static const int plafondAFaire = 50;
+
+  /// Vrai si [e] dit qu'une colonne nommee n'existe pas (migration absente).
+  static bool _colonneAbsente(Object e) =>
+      e is PostgrestException &&
+      (e.code == '42703' || (e.message.contains('geste_requis')));
+
+  /// Lance [lecture], et la relance sans les colonnes de « A faire » si la
+  /// base ne les connait pas encore.
+  Future<dynamic> _lire(Future<dynamic> Function() lecture) async {
+    try {
+      return await lecture();
+    } on Object catch (e) {
+      if (!_avecGestes || !_colonneAbsente(e)) rethrow;
+      _avecGestes = false;
+      return lecture();
+    }
+  }
+
+  /// NOTIFS-L6 : la tete seulement, jamais toute la boite : les non lues
+  /// (au plus [plafondNonLues]), les « A faire » ouvertes (au plus
+  /// [plafondAFaire]) et la premiere page des lues. La suite des lues se lit
+  /// par [lues] (« Voir plus »).
   @override
   Future<List<NotificationTuteur>> liste() async {
     final String destinataire = _destinataire;
-    final dynamic rows = await _client
+    PostgrestFilterBuilder<dynamic> base() => _client
         .from('notifications')
-        .select('id, evenement, params, destination, cree_le, lu_le')
-        .eq('destinataire', destinataire)
-        .order('cree_le', ascending: false)
-        .timeout(AppDelais.requeteMax);
+        .select(_colonnes)
+        .eq('destinataire', destinataire);
+    final List<dynamic> nonLues = await _lignes(
+      () => base()
+          .isFilter('lu_le', null)
+          .order('cree_le', ascending: false)
+          .limit(plafondNonLues)
+          .timeout(AppDelais.requeteMax),
+    );
+    final List<dynamic> lues = await _lignes(
+      () => base()
+          .not('lu_le', 'is', null)
+          .order('cree_le', ascending: false)
+          .limit(PortPagesNotifications.taillePage)
+          .timeout(AppDelais.requeteMax),
+    );
+    final List<dynamic> aFaire = _avecGestes
+        ? await _lignes(
+            () => base()
+                .eq('geste_requis', true)
+                .isFilter('ecartee_le', null)
+                .isFilter('geste_fait_le', null)
+                .order('cree_le', ascending: false)
+                .limit(plafondAFaire)
+                .timeout(AppDelais.requeteMax),
+          )
+        : const <dynamic>[];
+    final Map<String, NotificationTuteur> parId = <String, NotificationTuteur>{
+      for (final NotificationTuteur n in notificationsDepuis(<dynamic>[
+        ...aFaire,
+        ...nonLues,
+        ...lues,
+      ], titrePour: contenuPour))
+        n.id: n,
+    };
+    final List<NotificationTuteur> toutes = parId.values.toList()
+      ..sort((NotificationTuteur a, NotificationTuteur b) {
+        final int c = b.date.compareTo(a.date);
+        return c != 0 ? c : b.id.compareTo(a.id);
+      });
+    return List<NotificationTuteur>.unmodifiable(toutes);
+  }
 
+  /// Une lecture qui rend une liste de lignes.
+  Future<List<dynamic>> _lignes(Future<dynamic> Function() lecture) async {
+    final dynamic rows = await _lire(lecture);
     if (rows is! List) {
       throw const FormatException('Réponse notifications invalide.');
     }
+    return rows;
+  }
+
+  @override
+  Future<List<NotificationTuteur>> lues({
+    required DateTime avant,
+    int limite = PortPagesNotifications.taillePage,
+  }) async {
+    final String destinataire = _destinataire;
+    final List<dynamic> rows = await _lignes(
+      () => _client
+          .from('notifications')
+          .select(_colonnes)
+          .eq('destinataire', destinataire)
+          .not('lu_le', 'is', null)
+          .lt('cree_le', avant.toUtc().toIso8601String())
+          .order('cree_le', ascending: false)
+          .limit(limite)
+          .timeout(AppDelais.requeteMax),
+    );
     return notificationsDepuis(rows, titrePour: contenuPour);
+  }
+
+  /// NOTIFS-L6 : « Ecarter » pose `ecartee_le` (droit accorde au
+  /// destinataire par la migration du lot), puis la lit si elle ne l'etait
+  /// pas : une notification ecartee ne revient pas dans « Nouvelles ».
+  @override
+  Future<void> ecarter(String id) async {
+    final String identifiant = id.trim();
+    if (identifiant.isEmpty) {
+      throw ArgumentError.value(id, 'id', 'Identifiant requis.');
+    }
+    final String destinataire = _destinataire;
+    final String maintenant = DateTime.now().toUtc().toIso8601String();
+    await _client
+        .from('notifications')
+        .update(<String, dynamic>{'ecartee_le': maintenant})
+        .eq('id', identifiant)
+        .eq('destinataire', destinataire)
+        .timeout(AppDelais.requeteMax);
+    await _client
+        .from('notifications')
+        .update(<String, dynamic>{'lu_le': maintenant})
+        .eq('id', identifiant)
+        .eq('destinataire', destinataire)
+        .isFilter('lu_le', null)
+        .timeout(AppDelais.requeteMax);
   }
 
   @override
@@ -143,13 +273,15 @@ class NotificationsSupabase
     if (identifiant.isEmpty) return null;
 
     final String destinataire = _destinataire;
-    final dynamic row = await _client
-        .from('notifications')
-        .select('id, evenement, params, destination, cree_le, lu_le')
-        .eq('destinataire', destinataire)
-        .eq('id', identifiant)
-        .maybeSingle()
-        .timeout(AppDelais.requeteMax);
+    final dynamic row = await _lire(
+      () => _client
+          .from('notifications')
+          .select(_colonnes)
+          .eq('destinataire', destinataire)
+          .eq('id', identifiant)
+          .maybeSingle()
+          .timeout(AppDelais.requeteMax),
+    );
     if (row == null) return null;
     if (row is! Map) {
       throw const FormatException('Réponse notification invalide.');
@@ -262,18 +394,30 @@ NotificationTuteur notificationDepuis(
   }
   final String? texte = contenu.texte?.trim();
   final bool lue = luLe != null;
+  // NOTIFS-L6 : « A faire » tant que le geste n'est ni fait ni ecarte.
+  final bool gesteEnAttente =
+      row['geste_requis'] == true &&
+      row['ecartee_le'] == null &&
+      row['geste_fait_le'] == null;
+  final Object? classe = params['classe'];
+  final String? destinationRetenue =
+      destinationNotificationAutorisee(destination) ? destination : null;
 
   return NotificationTuteur(
     id: id,
     titre: titre,
     texte: texte == null || texte.isEmpty ? null : texte,
     date: date.toUtc(),
-    destination: destinationNotificationAutorisee(destination)
-        ? destination
-        : null,
+    destination: destinationRetenue,
     niveau: lue ? NiveauAttention.information : NiveauAttention.aLire,
     lue: lue,
     type: _typePour(evenement),
+    gesteEnAttente: gesteEnAttente,
+    // Meme evenement, meme destination, meme classe (la page y ajoute le
+    // jour) : pas exactement « le meme objet », les parametres ne portant
+    // aucun identifiant.
+    cleRegroupement:
+        '$evenement|${destinationRetenue ?? ''}|${classe is String ? classe : ''}',
   );
 }
 

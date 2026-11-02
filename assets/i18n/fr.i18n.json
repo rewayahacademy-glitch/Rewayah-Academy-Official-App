@@ -6869,19 +6869,24 @@
     "filtres": {
       "libelle": "Filtrer les notifications",
       "toutes": "Toutes",
-      "nonLues": "Non lues",
-      "mentions": "Mentions",
-      "actionRequise": "Action requise"
+      "nonLues": "Non lues"
     },
     "filtreVideTitre": "Aucune notification dans ce filtre",
     "filtreVidePhrase": "Choisissez «\u00a0Toutes\u00a0» pour revoir l'ensemble de vos notifications.",
     "voirToutes": "Voir toutes les notifications",
+    "sectionAFaire": "À faire",
+    "sectionNouvelles": "Nouvelles",
+    "sectionPlusAnciennes": "Plus anciennes",
+    "voirPlus": "Voir plus",
+    "voirPlusErreur": "Les notifications plus anciennes n'ont pas pu être lues.",
+    "toutMarquerLu": "Tout marquer comme lu",
+    "ecarter": "Écarter",
+    "ecartNonConfirme": "L'écart n'est pas encore confirmé. Réessayez dans un instant.",
+    "repetitions": {"one": "{n} fois", "other": "{n} fois"},
     "nonLue": "Non lue",
     "nonLueSemantique": "non lue",
     "lectureNonConfirmee": "La lecture n'est pas encore confirmée. Réessayez dans un instant.",
     "detail": {
-      "choisirTitre": "Choisissez une notification",
-      "choisirPhrase": "Son détail s'affiche ici, à côté de la liste.",
       "recue": "Reçue le {date} à {heure}",
       "ouvrir": "Ouvrir la page concernée"
     },
