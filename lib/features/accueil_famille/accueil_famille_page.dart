@@ -37,6 +37,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/skeleton.dart';
+import '../acces_finance/acces_finance.dart' show seancesFermeesPour;
 import '../acces_finance/carte_acces_finance.dart';
 import '../classe_tuteur/rejoindre_avec_eleve.dart';
 import '../consentements/consentement_observation_page.dart';
@@ -287,7 +288,11 @@ class _Contenu extends ConsumerWidget {
     // immediate est d'y entrer ; le bouton prend la place du blocage en tete
     // (un seul bouton plein, jamais un bouton dans la carte-lien).
     final SeanceFamille? seanceOuverte = prochaine.value;
+    // Lot (B), 02/11/2026 : seances fermees (paiement), ni « Rejoindre » ni
+    // concierge pour cet enfant.
+    final bool accesFerme = seancesFermeesPour(ref, eleveId);
     final bool rejoindre =
+        !accesFerme &&
         seanceOuverte != null &&
         !prochaine.hasError &&
         salleRejoignable(
@@ -341,7 +346,9 @@ class _Contenu extends ConsumerWidget {
               eleve: profil,
             ),
           )
-        : groupeId != null && classeRejoignableSansSeance(horlogeClasse)
+        : !accesFerme &&
+              groupeId != null &&
+              classeRejoignableSansSeance(horlogeClasse)
         ? AppCard(
             key: AccueilFamillePage.rejoindreKey,
             marge: compact ? AppSpacing.lg : AppSpacing.xxl,

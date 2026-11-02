@@ -18321,26 +18321,26 @@ class Traductions$argent$acces$fr {
 	/// fr: 'Nouvelles séances indisponibles'
 	String get seancesFermeesTitre => 'Nouvelles séances indisponibles';
 
-	/// fr: '{prenom} ne peut pas rejoindre de nouvelle séance pour le moment. Son compte et ses contenus restent accessibles.'
-	String seancesFermees({required Object prenom}) => '${prenom} ne peut pas rejoindre de nouvelle séance pour le moment. Son compte et ses contenus restent accessibles.';
+	/// fr: '{prenom} ne peut pas rejoindre de nouvelle séance pour le moment. Son espace reste ouvert pour voir son profil, son historique et payer.'
+	String seancesFermees({required Object prenom}) => '${prenom} ne peut pas rejoindre de nouvelle séance pour le moment. Son espace reste ouvert pour voir son profil, son historique et payer.';
 
-	/// fr: 'Vous ne pouvez pas rejoindre de nouvelle séance pour le moment. Votre compte et vos contenus restent accessibles.'
-	String get adulteSeancesFermees => 'Vous ne pouvez pas rejoindre de nouvelle séance pour le moment. Votre compte et vos contenus restent accessibles.';
+	/// fr: 'Vous ne pouvez pas rejoindre de nouvelle séance pour le moment. Votre espace reste ouvert pour voir votre profil, votre historique et payer.'
+	String get adulteSeancesFermees => 'Vous ne pouvez pas rejoindre de nouvelle séance pour le moment. Votre espace reste ouvert pour voir votre profil, votre historique et payer.';
 
 	/// fr: 'Accès suspendu'
 	String get suspenduTitre => 'Accès suspendu';
 
-	/// fr: 'La place réservée à {prenom} a été libérée le {date}. Son compte et ses contenus restent accessibles.'
-	String suspenduTuteur({required Object prenom, required Object date}) => 'La place réservée à ${prenom} a été libérée le ${date}. Son compte et ses contenus restent accessibles.';
+	/// fr: 'La place réservée à {prenom} a été libérée le {date}. Son espace reste ouvert pour voir son profil, son historique et payer.'
+	String suspenduTuteur({required Object prenom, required Object date}) => 'La place réservée à ${prenom} a été libérée le ${date}. Son espace reste ouvert pour voir son profil, son historique et payer.';
 
-	/// fr: 'La place réservée à {prenom} a été libérée. Son compte et ses contenus restent accessibles.'
-	String suspenduTuteurSansDate({required Object prenom}) => 'La place réservée à ${prenom} a été libérée. Son compte et ses contenus restent accessibles.';
+	/// fr: 'La place réservée à {prenom} a été libérée. Son espace reste ouvert pour voir son profil, son historique et payer.'
+	String suspenduTuteurSansDate({required Object prenom}) => 'La place réservée à ${prenom} a été libérée. Son espace reste ouvert pour voir son profil, son historique et payer.';
 
-	/// fr: 'Votre place a été libérée le {date}. Votre compte et vos contenus restent accessibles.'
-	String suspenduAdulte({required Object date}) => 'Votre place a été libérée le ${date}. Votre compte et vos contenus restent accessibles.';
+	/// fr: 'Votre place a été libérée le {date}. Votre espace reste ouvert pour voir votre profil, votre historique et payer.'
+	String suspenduAdulte({required Object date}) => 'Votre place a été libérée le ${date}. Votre espace reste ouvert pour voir votre profil, votre historique et payer.';
 
-	/// fr: 'Votre place a été libérée. Votre compte et vos contenus restent accessibles.'
-	String get suspenduAdulteSansDate => 'Votre place a été libérée. Votre compte et vos contenus restent accessibles.';
+	/// fr: 'Votre place a été libérée. Votre espace reste ouvert pour voir votre profil, votre historique et payer.'
+	String get suspenduAdulteSansDate => 'Votre place a été libérée. Votre espace reste ouvert pour voir votre profil, votre historique et payer.';
 
 	/// fr: 'Accès réactivé'
 	String get reactiveTitre => 'Accès réactivé';
@@ -18357,11 +18357,11 @@ class Traductions$argent$acces$fr {
 	/// fr: 'Vous pouvez de nouveau rejoindre vos séances.'
 	String get reactiveAdulteSansDate => 'Vous pouvez de nouveau rejoindre vos séances.';
 
-	/// fr: 'Le paiement du mois n'est pas reçu. {prenom} ne peut plus rejoindre ses séances. Son compte et ses contenus restent accessibles.'
-	String suspenduPaiementTuteur({required Object prenom}) => 'Le paiement du mois n\'est pas reçu. ${prenom} ne peut plus rejoindre ses séances. Son compte et ses contenus restent accessibles.';
+	/// fr: 'Le paiement du mois n'est pas reçu. {prenom} ne peut plus rejoindre ses séances. Son espace reste ouvert pour voir son profil, son historique et payer.'
+	String suspenduPaiementTuteur({required Object prenom}) => 'Le paiement du mois n\'est pas reçu. ${prenom} ne peut plus rejoindre ses séances. Son espace reste ouvert pour voir son profil, son historique et payer.';
 
-	/// fr: 'Le paiement du mois n'est pas reçu. Vous ne pouvez plus rejoindre vos séances. Votre compte et vos contenus restent accessibles.'
-	String get suspenduPaiementAdulte => 'Le paiement du mois n\'est pas reçu. Vous ne pouvez plus rejoindre vos séances. Votre compte et vos contenus restent accessibles.';
+	/// fr: 'Le paiement du mois n'est pas reçu. Vous ne pouvez plus rejoindre vos séances. Votre espace reste ouvert pour voir votre profil, votre historique et payer.'
+	String get suspenduPaiementAdulte => 'Le paiement du mois n\'est pas reçu. Vous ne pouvez plus rejoindre vos séances. Votre espace reste ouvert pour voir votre profil, votre historique et payer.';
 
 	/// fr: 'Suspendu'
 	String get pastilleSuspendu => 'Suspendu';
@@ -49955,20 +49955,20 @@ extension on Traductions {
 			'argent.acces.regulariserSansManque' => 'La nouvelle période n\'est pas encore financée.',
 			'argent.acces.placeConservee' => ({required Object date}) => 'Place conservée jusqu\'au ${date}.',
 			'argent.acces.seancesFermeesTitre' => 'Nouvelles séances indisponibles',
-			'argent.acces.seancesFermees' => ({required Object prenom}) => '${prenom} ne peut pas rejoindre de nouvelle séance pour le moment. Son compte et ses contenus restent accessibles.',
-			'argent.acces.adulteSeancesFermees' => 'Vous ne pouvez pas rejoindre de nouvelle séance pour le moment. Votre compte et vos contenus restent accessibles.',
+			'argent.acces.seancesFermees' => ({required Object prenom}) => '${prenom} ne peut pas rejoindre de nouvelle séance pour le moment. Son espace reste ouvert pour voir son profil, son historique et payer.',
+			'argent.acces.adulteSeancesFermees' => 'Vous ne pouvez pas rejoindre de nouvelle séance pour le moment. Votre espace reste ouvert pour voir votre profil, votre historique et payer.',
 			'argent.acces.suspenduTitre' => 'Accès suspendu',
-			'argent.acces.suspenduTuteur' => ({required Object prenom, required Object date}) => 'La place réservée à ${prenom} a été libérée le ${date}. Son compte et ses contenus restent accessibles.',
-			'argent.acces.suspenduTuteurSansDate' => ({required Object prenom}) => 'La place réservée à ${prenom} a été libérée. Son compte et ses contenus restent accessibles.',
-			'argent.acces.suspenduAdulte' => ({required Object date}) => 'Votre place a été libérée le ${date}. Votre compte et vos contenus restent accessibles.',
-			'argent.acces.suspenduAdulteSansDate' => 'Votre place a été libérée. Votre compte et vos contenus restent accessibles.',
+			'argent.acces.suspenduTuteur' => ({required Object prenom, required Object date}) => 'La place réservée à ${prenom} a été libérée le ${date}. Son espace reste ouvert pour voir son profil, son historique et payer.',
+			'argent.acces.suspenduTuteurSansDate' => ({required Object prenom}) => 'La place réservée à ${prenom} a été libérée. Son espace reste ouvert pour voir son profil, son historique et payer.',
+			'argent.acces.suspenduAdulte' => ({required Object date}) => 'Votre place a été libérée le ${date}. Votre espace reste ouvert pour voir votre profil, votre historique et payer.',
+			'argent.acces.suspenduAdulteSansDate' => 'Votre place a été libérée. Votre espace reste ouvert pour voir votre profil, votre historique et payer.',
 			'argent.acces.reactiveTitre' => 'Accès réactivé',
 			'argent.acces.reactiveTuteur' => ({required Object prenom, required Object date}) => '${prenom} peut de nouveau rejoindre ses séances depuis le ${date}.',
 			'argent.acces.reactiveTuteurSansDate' => ({required Object prenom}) => '${prenom} peut de nouveau rejoindre ses séances.',
 			'argent.acces.reactiveAdulte' => ({required Object date}) => 'Vous pouvez de nouveau rejoindre vos séances depuis le ${date}.',
 			'argent.acces.reactiveAdulteSansDate' => 'Vous pouvez de nouveau rejoindre vos séances.',
-			'argent.acces.suspenduPaiementTuteur' => ({required Object prenom}) => 'Le paiement du mois n\'est pas reçu. ${prenom} ne peut plus rejoindre ses séances. Son compte et ses contenus restent accessibles.',
-			'argent.acces.suspenduPaiementAdulte' => 'Le paiement du mois n\'est pas reçu. Vous ne pouvez plus rejoindre vos séances. Votre compte et vos contenus restent accessibles.',
+			'argent.acces.suspenduPaiementTuteur' => ({required Object prenom}) => 'Le paiement du mois n\'est pas reçu. ${prenom} ne peut plus rejoindre ses séances. Son espace reste ouvert pour voir son profil, son historique et payer.',
+			'argent.acces.suspenduPaiementAdulte' => 'Le paiement du mois n\'est pas reçu. Vous ne pouvez plus rejoindre vos séances. Votre espace reste ouvert pour voir votre profil, votre historique et payer.',
 			'argent.acces.pastilleSuspendu' => 'Suspendu',
 			'argent.acces.pastilleReactive' => 'Réactivé',
 			'identiteProfil.age' => ({required Object n}) => '${n} ans',
