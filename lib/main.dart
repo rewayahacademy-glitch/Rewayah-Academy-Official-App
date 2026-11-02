@@ -159,6 +159,8 @@ import 'core/theme/polices_differees.dart';
 import 'features/_dev/playground/playground_racine.dart';
 import 'features/accueil_adulte/espace_adulte_supabase.dart';
 import 'features/accueil_adulte/port_espace_adulte.dart';
+import 'features/admin_invitations/familles_importees.dart';
+import 'features/admin_invitations/familles_importees_supabase.dart';
 import 'features/bienvenue_enseignant/prerequis_enseignant_supabase.dart';
 import 'features/com_annonces/annonces_supabase.dart';
 import 'features/com_annonces/port_annonces.dart';
@@ -255,6 +257,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portVerificationInvitationProvider.overrideWithValue(
     VerificationInvitationSupabase(Supabase.instance.client),
+  ),
+  // I1 (02/11/2026) : l'invitation des familles importees, sur geste de la
+  // direction (migration 20261105300000).
+  portFamillesImporteesProvider.overrideWithValue(
+    FamillesImporteesSupabase(Supabase.instance.client),
   ),
   // Invitation d'un comptable par la direction (BF1-03, 20261017160200) :
   // ports branches, ecrans d'emission et d'inscription a venir.

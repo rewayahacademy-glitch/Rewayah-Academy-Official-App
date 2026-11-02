@@ -24,6 +24,7 @@ import '../../../core/widgets/skeleton.dart';
 import '../../connexion/connexion_page.dart' show parametreModeCreation;
 import '../../parcours_offres/libelles_parcours.dart';
 import '../brouillon_inscription.dart' show UsageInscription;
+import '../invitation_en_cours.dart';
 import 'questionnaire_inscription.dart';
 
 /// `/commencer` : le questionnaire d'inscription, une question par ecran,
@@ -292,15 +293,20 @@ class _EcranQuestionState extends State<_EcranQuestion> {
                 pleineLargeur: false,
                 // Les codes d'invitation (enseignant, comptable) ne passent
                 // pas par le questionnaire : le compte d'abord, puis le code.
-                onPress: () => context.go(
-                  Uri(
-                    path: Routes.connexion,
-                    queryParameters: <String, String>{
-                      'mode': parametreModeCreation,
-                      parametreInvitation: '1',
-                    },
-                  ).toString(),
-                ),
+                onPress: () {
+                  // I1 (UX-013) : l'invitation en cours survit au lien de
+                  // connexion, ouvert souvent dans un autre onglet.
+                  retenirInvitationEnCours();
+                  context.go(
+                    Uri(
+                      path: Routes.connexion,
+                      queryParameters: <String, String>{
+                        'mode': parametreModeCreation,
+                        parametreInvitation: '1',
+                      },
+                    ).toString(),
+                  );
+                },
               ),
             ),
           ],
