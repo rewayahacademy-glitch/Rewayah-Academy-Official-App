@@ -8,7 +8,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { parcours, connecter, connecterParLien, cliquer, trouver, trouverTexte, libelles,
-  sql, COMPTES, TRAVAIL } from './commun.mjs';
+  sql, activerSemantique, COMPTES, TRAVAIL } from './commun.mjs';
 
 const lire = (f) => JSON.parse(fs.readFileSync(path.join(TRAVAIL, f), 'utf8'));
 const p = await parcours('Parcours 5 : tenir la seance (Rejoindre, video, page du Coran)', 'parcours-5');
@@ -69,7 +69,14 @@ try {
 
   // 4. Chacun voit et entend l'autre.
   await e.page.waitForTimeout(6000);
-  const vuParEns = await trouverTexte(e.page, new RegExp(`fiche de ${FAMILLE.enfant}[^|]*`), 15000);
+  // La liste des presents de l'enseignant est relue toutes les 20 s : on attend
+  // au-dela d'une relecture complete (30 s) que l'eleve y passe « Connecté »,
+  // sans contourner la liste (pilote, 02/11/2026).
+  let vuParEns = await trouverTexte(e.page, new RegExp(`fiche de ${FAMILLE.enfant}[^|]*`), 15000);
+  for (const depart = Date.now(); (!vuParEns || /Pas encore connecté/.test(vuParEns)) && Date.now() - depart < 30000;) {
+    await e.page.waitForTimeout(3000); await activerSemantique(e.page);
+    vuParEns = await trouverTexte(e.page, new RegExp(`fiche de ${FAMILLE.enfant}[^|]*`), 3000);
+  }
   const vuParTut = await trouverTexte(t.page, /Sayyid E2E Enseignant[^|]*/, 5000);
   const mEns = await medias(e.page);
   const mTut = await medias(t.page);
