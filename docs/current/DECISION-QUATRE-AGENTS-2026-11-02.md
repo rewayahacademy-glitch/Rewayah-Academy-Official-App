@@ -154,9 +154,14 @@ les copie dans chaque consigne d'agent, et un agent qui en enfreint une voit sa 
   - la seule visio est `/salle` ;
   - brancher une visio veut dire ajouter un type de séance, un rôle de participant, une garde dans
     `autoriser_jeton_video` et un bouton qui ouvre `/salle` ;
-  - pour un entretien ou une réunion, la portée des outils déjà branchée
-    (`portee_outils_salle.dart`) cache le Coran, le tableau, les crayons, la bibliothèque, le chrono,
-    la présence, le cahier et la fiche ;
+  - pour un entretien ou une réunion, on ne cache pas les outils de cours, on ne les construit pas
+    (directeur, 02/11 vers 16:00 : « il faut les supprimer partout sauf là où on en a besoin (les
+    salles de classe) ») :
+    - `/salle` ne construit ni le Coran, ni le tableau, ni l'encre, ni la bibliothèque, ni le
+      cahier, ni la présence, ni la fiche ;
+    - interdits : `Offstage`, `Visibility`, ou tout simple masquage d'un widget construit ;
+    - leur code se charge seulement pour une séance de cours, par `import … deferred as` ;
+    - la preuve compare la taille des morceaux JS chargés en entretien et en cours ;
   - un agent qui écrit un autre module vidéo est arrêté.
 - **G2. `dart format` seulement sur les fichiers touchés.** Un `dart format lib test` en reformate 177.
 - **G3. Garde-fous des textes avant la PR.**
