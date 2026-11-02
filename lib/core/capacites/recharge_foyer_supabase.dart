@@ -97,6 +97,9 @@ class RechargeFoyerSupabase
           if (e.status == 503 || e.status == 404) {
             throw const CapaciteIndisponible(_dependance);
           }
+          // PAY-UX : l'ancien formulaire n'a pas pu etre ferme ; aucune
+          // nouvelle session n'est ouverte.
+          if (e.status == 409) throw const PaiementPrecedentOuvert();
           rethrow;
         }
       };
@@ -149,6 +152,12 @@ class RechargeFoyerSupabase
         'recapitulatifId': recapitulatifId,
         'cle': cle,
         'retour': adresseRetour(),
+        // PAY-UX : le fond de la page du formulaire, que Stripe reprend, et
+        // la langue des lignes de paiement.
+        'fond': fondFormulairePaiement(),
+        'langue': LocaleSettings.instance.currentLocale == AppLocale.ar
+            ? 'ar'
+            : 'fr',
       }),
       'paiement',
     );

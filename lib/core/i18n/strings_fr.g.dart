@@ -108,6 +108,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$admissions$fr admissions = Traductions$admissions$fr.internal(_root);
 	late final Traductions$accueilInscrits$fr accueilInscrits = Traductions$accueilInscrits$fr.internal(_root);
 	late final Traductions$i1$fr i1 = Traductions$i1$fr.internal(_root);
+	late final Traductions$payUx$fr payUx = Traductions$payUx$fr.internal(_root);
 }
 
 // Path: commun
@@ -3727,6 +3728,24 @@ class Traductions$i1$fr {
 	late final Traductions$i1$familles$fr familles = Traductions$i1$familles$fr.internal(_root);
 	late final Traductions$i1$import$fr import = Traductions$i1$import$fr.internal(_root);
 	late final Traductions$i1$lien$fr lien = Traductions$i1$lien$fr.internal(_root);
+}
+
+// Path: payUx
+class Traductions$payUx$fr {
+	Traductions$payUx$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le paiement est traité par Stripe. Les données de votre carte vont directement chez Stripe : Rewayah Academy ne les voit pas et ne les garde pas.'
+	String get rassurance => 'Le paiement est traité par Stripe. Les données de votre carte vont directement chez Stripe : Rewayah Academy ne les voit pas et ne les garde pas.';
+
+	/// fr: 'Le paiement commencé tout à l'heure n'a pas pu être fermé'
+	String get precedentOuvertTitre => 'Le paiement commencé tout à l\'heure n\'a pas pu être fermé';
+
+	/// fr: 'Rien n'est payé deux fois et aucun nouveau formulaire ne s'ouvre. Réessayez dans un instant : si ce paiement vient de passer, il apparaîtra dans vos paiements.'
+	String get precedentOuvertPhrase => 'Rien n\'est payé deux fois et aucun nouveau formulaire ne s\'ouvre. Réessayez dans un instant : si ce paiement vient de passer, il apparaîtra dans vos paiements.';
 }
 
 // Path: commun.formats
@@ -53136,6 +53155,9 @@ extension on Traductions {
 			'i1.lien.dejaServiTitre' => 'Ce lien a déjà servi ou a expiré',
 			'i1.lien.dejaServiDetail' => 'Un lien de connexion ne sert qu\'une fois, et pour peu de temps. Demandez-en un nouveau : saisissez votre adresse e-mail sur la page de connexion.',
 			'i1.lien.nouveauLien' => 'Recevoir un nouveau lien',
+			'payUx.rassurance' => 'Le paiement est traité par Stripe. Les données de votre carte vont directement chez Stripe : Rewayah Academy ne les voit pas et ne les garde pas.',
+			'payUx.precedentOuvertTitre' => 'Le paiement commencé tout à l\'heure n\'a pas pu être fermé',
+			'payUx.precedentOuvertPhrase' => 'Rien n\'est payé deux fois et aucun nouveau formulaire ne s\'ouvre. Réessayez dans un instant : si ce paiement vient de passer, il apparaîtra dans vos paiements.',
 			_ => null,
 		};
 	}
