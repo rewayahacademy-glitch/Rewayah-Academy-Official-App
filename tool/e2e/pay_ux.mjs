@@ -290,6 +290,11 @@ try {
     const [commande3] = commandeDe(f3.id);
     await revenirSansPayer(t3);
     await ouvrirResultat(t3, commande3);
+    await p.capture(t3, '390_sombre_retour_bandeau');
+    const reprendre3 = await trouver(t3.page, /^Reprendre le paiement/, { delai: 8000, role: 'button' });
+    verifier(Boolean(reprendre3), '390, theme sombre : « Reprendre le paiement » present');
+    await amenerEnVue(t3.page, reprendre3);
+    await t3.page.waitForTimeout(600);
     await p.capture(t3, '390_sombre_retour_reprendre');
     const f4 = amorcerFamille('d');
     const t4 = await p.contexte('tuteur', { telephone: true });
