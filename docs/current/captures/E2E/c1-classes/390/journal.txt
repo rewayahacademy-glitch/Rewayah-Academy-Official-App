@@ -1,0 +1,13 @@
+== C1 : creer, cloturer, recreer une classe (390 x 844) : 2026-11-02T16:50:50.381Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Horaire : Lundi 7 h (Pacific/Honolulu), debut 2026-11-02T17:00:00.383Z ; classes {"a":"E2E C1 A 390 1650","b":"E2E C1 B 390 1650","c":"E2E C1 C 390 1650"}
+UX-003 : boutons « Heure » a l'ouverture = 1 ; « Retirer le créneau 2 » absent ; « Ajouter un créneau » present ; phrase : flt-semantics:Une classe se réunit d'ordinaire trois fois par semaine, à des jours fixes. Ajoutez une ligne par autre jour de cours ; aucune date à saisir.
+UX-030 : phrase du fuseau : flt-semantics:Heures à l'heure de Honolulu, le fuseau de l'enseignant.
+UX-031 : Echap -> h2:Abandonner la nouvelle classe ? ; feuille gardee : true
+Classe A en base : active|1 (attendu active|1)
+Seance de A ramenee a maintenant : 5f47975f-d886-4ad6-b6f0-5a55c5bb7719 2026-11-02 16:46:36.290912+00 -> 2026-11-02 18:00:00+00
+UPDATE 1
+FN-103 : A close = true ; seance en cours de A : canceled (attendu canceled)
+Classe B (meme horaire, meme enseignant) en base : active|1 ; ecran : input:Rechercher une classe | button:Ouvertes, 1 | button:Plus | button:Active | flt-semantics:E2E C1 B 390 1650 · n° 7 E2E Enseignant Valide · Enfants · lundi 7h · 0 / 5 | button:Actions : E2E C1 B 390 1650 · n° 7 | flt-semantics:Lignes 1 à 1 sur 1 | button:Nouvelle classe
+UX-020 : refus = flt-semantics:E2E Enseignant Valide enseigne déjà la classe « E2E C1 B 390 1650 » le lundi à 7 h : changez de créneau ou choisissez une autre personne dans la liste. ; C en base : absente
+Verdicts : {"unSeulCreneau":true,"villeEnClair":true,"echapConfirme":true,"classeACreee":true,"seanceAnnulee":true,"classeBAcceptee":true,"refusNomme":true}
+== C1 : creer, cloturer, recreer une classe (390 x 844) : vert

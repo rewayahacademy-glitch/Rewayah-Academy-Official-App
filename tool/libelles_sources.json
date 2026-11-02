@@ -1,4 +1,6 @@
 {
+  "admin.groupes.c1.autresCreneauxContexte": "Lot C1 (02/11/2026), consigne du pilote : UX-003 (la feuille s ouvre sur un seul creneau) ; T3 : la phrase d avant (trois creneaux par defaut, retirez une ligne) contredisait l ecran",
+  "admin.groupes.c1.prisNommee": "Lot C1 (02/11/2026), consigne du pilote : UX-020 (le refus nomme la classe et l heure), aussi quand l ecran voit la collision avant le serveur ; docs/current/UX-CONSTATS.md",
   "admin.groupes.c1.classeNommee": "Lot C1 (02/11/2026), consigne du pilote : UX-019 (aucun code serveur a l ecran), UX-020 (le refus nomme la classe et l heure), UX-030 (la ville en clair), UX-031 (Echap demande confirmation) ; docs/current/UX-CONSTATS.md",
   "admin.groupes.c1.seanceNommee": "Lot C1 (02/11/2026), consigne du pilote : UX-019 (aucun code serveur a l ecran), UX-020 (le refus nomme la classe et l heure), UX-030 (la ville en clair), UX-031 (Echap demande confirmation) ; docs/current/UX-CONSTATS.md",
   "admin.groupes.c1.seanceDatee": "Lot C1 (02/11/2026), consigne du pilote : UX-019 (aucun code serveur a l ecran), UX-020 (le refus nomme la classe et l heure), UX-030 (la ville en clair), UX-031 (Echap demande confirmation) ; docs/current/UX-CONSTATS.md",

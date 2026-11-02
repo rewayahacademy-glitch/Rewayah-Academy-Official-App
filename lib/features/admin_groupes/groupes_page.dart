@@ -1234,7 +1234,11 @@ void _ouvrirCloture(
       onSucces: () {
         ref
           ..invalidate(groupesProvider)
-          ..invalidate(pageClassesAdminProvider);
+          ..invalidate(pageClassesAdminProvider)
+          // C1 (02/11/2026) : la classe close libere les creneaux de son
+          // enseignant ; sans cela, « Nouvelle classe » le disait encore
+          // « deja en classe a ce creneau » jusqu'au rechargement de la page.
+          ..invalidate(enseignantsDuPortProvider);
         apres?.call();
       },
     ),
@@ -1398,11 +1402,44 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
     }
     if (choisi == null) return f.manqueListeEnseignants;
     if (!choisi.choisissable) {
+      final String? classe = _classePrise(choisi);
+      if (classe != null) {
+        // C1 (UX-020) : la classe qui occupe deja ce creneau, nommee.
+        return t.admin.groupes.c1.prisNommee(
+          nom: choisi.enseignant.libelle,
+          classe: classe,
+          quand: quandConflit(ConflitHoraire(jour: _jour!, heure: _heure!)),
+        );
+      }
       return manqueEnseignantClasse(choisi, genre, _type);
     }
     if (_seuil == null) return f.manqueSeuil;
     if (_nom.text.trim().isEmpty) return f.manqueNom;
     return null;
+  }
+
+  /// C1 (UX-020) : le nom de la classe active de [choisi] au creneau choisi,
+  /// lu dans la liste des classes deja chargee ; nul si l'enseignant n'est
+  /// pas « pris » a ce creneau ou si la liste ne la montre pas (rien n'est
+  /// invente, la phrase d'avant reste).
+  String? _classePrise(EnseignantClasse choisi) {
+    if (!choisi.pris ||
+        choisi.genreInconnu ||
+        choisi.genreCompatible == false) {
+      return null;
+    }
+    final List<GroupeAdmin>? groupes = ref.read(groupesProvider).value;
+    return groupes
+        ?.where(
+          (GroupeAdmin g) =>
+              g.actif &&
+              g.teacherId == choisi.enseignant.id &&
+              g.creneau.jour == _jour &&
+              g.creneau.heure == _heure,
+        )
+        .map((GroupeAdmin g) => g.libelle)
+        .where((String l) => l.trim().isNotEmpty)
+        .firstOrNull;
   }
 
   Future<void> _creer(EnseignantClasse? choisi, String fuseau) async {
@@ -1483,6 +1520,9 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
     final TextTheme textes = Theme.of(context).textTheme;
     final f = t.admin.groupes.formulaire;
     final PortCreationClasse creation = ref.watch(portCreationClasseProvider);
+    // C1 (UX-020) : la liste des classes, pour nommer celle qui occupe deja
+    // le creneau de l'enseignant choisi.
+    ref.watch(groupesProvider);
     final AsyncValue<List<EnseignantPropose>> source = ref.watch(
       enseignantsPourClasseProvider(_type),
     );
@@ -1725,7 +1765,11 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
           // 4 bis. Les autres creneaux de la semaine (D2, 29/10/2026).
           TitreChamp(f.autresCreneauxTitre, style: textes.titleMedium),
           Ecart.vXs,
-          TexteSansCoupure(f.autresCreneauxContexte, style: textes.bodySmall),
+          // C1 (UX-003) : la phrase suit la feuille a un seul creneau.
+          TexteSansCoupure(
+            t.admin.groupes.c1.autresCreneauxContexte,
+            style: textes.bodySmall,
+          ),
           Ecart.vMd,
           for (int i = 0; i < _autres.length; i++) ...<Widget>[
             _LigneAutreCreneau(

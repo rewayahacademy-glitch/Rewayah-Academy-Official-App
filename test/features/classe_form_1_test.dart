@@ -20,6 +20,7 @@ import 'package:rewayah_academy/core/admin/service_groupes.dart';
 import 'package:rewayah_academy/core/capacites/port_creation_classe.dart';
 import 'package:rewayah_academy/core/capacites/port_enseignants_classe.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/formulaires/motifs_proposes.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/i18n/villes_fuseau.dart';
 import 'package:rewayah_academy/core/offres/affectation_refusee.dart';
@@ -158,6 +159,42 @@ List<String> _ids(List<EnseignantClasse> l) => <String>[
 
 EnseignantClasse _de(List<EnseignantClasse> l, String id) =>
     l.firstWhere((EnseignantClasse e) => e.enseignant.id == id);
+
+/// C1 : une classe active de Hamza Sow (h2) le mercredi a 18 h.
+class _GroupesAvecAlAsr extends FauxGroupesFormL2 {
+  @override
+  Future<List<GroupeAdmin>> groupes() async => <GroupeAdmin>[
+    groupeFormL2(),
+    const GroupeAdmin(
+      id: 'g-al-asr',
+      libelle: 'Al-Asr',
+      type: TypePublicGroupe.adulte,
+      seuilMax: 6,
+      teacherId: 'h2',
+      teacherIdentifiant: 'ENS-H2',
+      teacherPrenom: 'Hamza',
+      teacherNom: 'Sow',
+      creneau: Creneau(jour: 3, heure: 18, fuseau: 'Europe/Paris'),
+      nombreMembres: 1,
+      actif: true,
+    ),
+  ];
+}
+
+/// C1 : un port des enseignants qui compte ses lectures.
+class _EnseignantsComptes extends FauxEnseignantsClasse {
+  _EnseignantsComptes(super.rendus);
+
+  int lectures = 0;
+
+  @override
+  Future<List<EnseignantPropose>> pourClasse({
+    required TypePublicGroupe public,
+  }) {
+    lectures++;
+    return super.pourClasse(public: public);
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Montage de la vraie feuille.
@@ -986,6 +1023,54 @@ void main() {
       await tester.pumpAndSettle();
       await _presser(tester, find.text(c1.abandonConfirmer).last);
       expect(_envoyer, findsNothing);
+    });
+
+    testWidgets('cloturer une classe relit les enseignants : leurs creneaux '
+        'pris changent, la feuille ne dit plus « deja en classe »', (
+      WidgetTester tester,
+    ) async {
+      final _EnseignantsComptes port = _EnseignantsComptes(_enseignants);
+      await _ouvrir(tester, _surcharges(port: port));
+      expect(port.lectures, 1);
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+
+      await _presser(tester, find.byType(MenuActions).first);
+      await _presser(tester, find.text(t.admin.groupes.actionCloturer).last);
+      await _presser(tester, find.text(MotifsProposes.clotureClasse().first));
+      await _presser(
+        tester,
+        find.widgetWithText(ActionPrincipale, t.admin.groupes.cloturerEnvoyer),
+      );
+      await _presser(tester, find.byKey(GroupesPage.cleCreer));
+      expect(port.lectures, 2);
+    });
+
+    testWidgets('UX-020 : l\'ecran voit la collision avant le serveur et '
+        'nomme la classe qui occupe deja le creneau', (
+      WidgetTester tester,
+    ) async {
+      final FauxCreationClasse creation = FauxCreationClasse();
+      await _ouvrir(
+        tester,
+        _surcharges(creation: creation, groupes: _GroupesAvecAlAsr()),
+      );
+      await _presser(tester, _cle('classe-genre-hommes'));
+      await _presser(tester, _cle('personne-h2'));
+      await _presser(tester, _cle('classe-jour-3'));
+      await _heure(tester, 18);
+      await _presser(tester, _envoyer);
+      expect(
+        find.text(
+          t.admin.groupes.c1.prisNommee(
+            nom: 'Hamza Sow',
+            classe: 'Al-Asr',
+            quand: quandConflit(const ConflitHoraire(jour: 3, heure: 18)),
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(creation.creations, isEmpty);
     });
 
     testWidgets('UX-020 : le refus de chevauchement nomme la classe, le jour, '

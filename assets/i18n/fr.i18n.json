@@ -3939,6 +3939,8 @@
         "inconnu": "La classe n'est pas créée\u00a0: le serveur a refusé ces choix. Vérifiez l'enseignant et le créneau, puis pressez de nouveau."
       },
       "c1": {
+        "autresCreneauxContexte": "Une classe se réunit d'ordinaire trois fois par semaine, à des jours fixes. Ajoutez une ligne par autre jour de cours\u00a0; aucune date à saisir.",
+        "prisNommee": "{nom} enseigne déjà la classe «\u00a0{classe}\u00a0» le {quand}\u00a0: changez de créneau ou choisissez une autre personne dans la liste.",
         "classeNommee": "La classe n'est pas créée\u00a0: cette personne enseigne déjà la classe «\u00a0{classe}\u00a0» le {quand}. Changez de créneau ou choisissez une autre personne dans la liste.",
         "seanceNommee": "La classe n'est pas créée\u00a0: cette personne a déjà une séance de la classe «\u00a0{classe}\u00a0» le {quand}. Changez de créneau ou choisissez une autre personne dans la liste.",
         "seanceDatee": "La classe n'est pas créée\u00a0: cette personne a déjà une séance prévue le {quand}. Changez de créneau ou choisissez une autre personne dans la liste.",
