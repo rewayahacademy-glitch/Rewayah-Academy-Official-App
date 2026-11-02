@@ -175,7 +175,8 @@ final FutureProvider<List<Invitation>> invitationsEnseignantProvider =
 /// `ServiceDossier.creerProfil` le recoit (parametre `codeInvitation`, C-14)
 /// et le serveur le consomme avec la creation du profil
 /// (`inscrire_enseignant_invite`, RACCORDEMENT-1016). Jamais journalise.
-/// Ce provider vit en memoire ; I1 (pilote, 02/11/2026) : le code d'un
+/// Ce provider vit en memoire ; I1 (reglage technique accepte par le pilote
+/// le 02/11/2026, non tranche par le directeur) : le code d'un
 /// enseignant (le code seulement : ni adresse, ni nom, ni role) reste aussi
 /// dans le navigateur au plus 2 jours (`invitation_en_cours.dart`, par
 /// `memoire_appareil`), efface a la creation du profil, au retour volontaire

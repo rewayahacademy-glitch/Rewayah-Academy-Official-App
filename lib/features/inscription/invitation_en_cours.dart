@@ -10,7 +10,8 @@
 /// (`/inscription/invitation?code=...`) au lieu de « Pour qui creez-vous ce
 /// compte ? ».
 ///
-/// **Regle (pilote, 02/11/2026, choix a)** : le code d'invitation reste dans
+/// **Reglage technique, accepte par le pilote le 02/11/2026** (le directeur
+/// ne l'a pas tranche) : le code d'invitation reste dans
 /// le navigateur au plus 2 jours ([dureeInvitationEnCours]), par
 /// `memoire_appareil` (le `localStorage`, rien de nouveau). On garde le code
 /// seulement, et l'heure de la marque : ni adresse, ni nom, ni role. Le
