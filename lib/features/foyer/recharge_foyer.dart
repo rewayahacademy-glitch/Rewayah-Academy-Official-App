@@ -121,6 +121,12 @@ class RechargeFoyerPage extends ConsumerStatefulWidget {
   /// « Payer {total} ».
   static const Key payerKey = Key('recharge.payer');
 
+  /// Le lien vers les conditions de remboursement et de contestation (FN-115).
+  static const Key conditionsKey = Key('recharge.conditions');
+
+  /// La phrase sur les frais d'une contestation bancaire (FN-115).
+  static const Key fraisContestationKey = Key('recharge.fraisContestation');
+
   /// « Suivre le paiement », une fois la commande rendue.
   static const Key suivreKey = Key('recharge.suivre');
 
@@ -1128,6 +1134,28 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
               enCours: commande == null && (_paiementEnCours || _verifEnCours),
               pleineLargeur: false,
             ),
+          ),
+        ],
+        // FN-115 (directeur, 01/11/2026) : la famille lit les conditions de
+        // remboursement et de contestation AVANT de payer, juste sous « Payer » ; sans cela, les
+        // frais d'une contestation ne lui sont pas opposables.
+        if (commande == null && !arrete) ...<Widget>[
+          Ecart.vLg,
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: LienFleche(
+              key: RechargeFoyerPage.conditionsKey,
+              libelle: t.adulte.recharge.conditionsRemboursement,
+              onPress: () =>
+                  GoRouter.of(context).push(TexteJuridique.annulation.chemin),
+            ),
+          ),
+          // La phrase qui rend les frais de contestation opposables : lue
+          // avant de payer, sans avoir a ouvrir le texte (pilote, 02/11).
+          Ecart.vSm,
+          _Note(
+            key: RechargeFoyerPage.fraisContestationKey,
+            texte: t.adulte.recharge.fraisContestation,
           ),
         ],
       ],

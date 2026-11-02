@@ -27,6 +27,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
@@ -78,6 +79,7 @@ import '../acces_finance/acces_finance.dart'
     show aRegulariser, messageRegularisation;
 import '../compte/donnees_compte.dart'
     show dateLongue, identiteTitulaireProvider;
+import '../juridique/textes_juridiques.dart' show TexteJuridique;
 import 'finances_foyer.dart'
     show financesFoyerProvider, politiqueActiveProvider;
 import 'ligne_membre.dart' show dateEcheance;
