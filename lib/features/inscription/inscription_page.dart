@@ -274,7 +274,12 @@ class CoquilleEtape extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
-    void deconnecter() => unawaited(seDeconnecter(context, ref));
+    // I1 : une deconnexion efface aussi l'invitation en cours sur l'appareil.
+    void deconnecter() => unawaited(
+      seDeconnecter(context, ref).then((bool sortie) {
+        if (sortie) oublierInvitationEnCours();
+      }),
+    );
 
     final BrouillonInscription brouillon = ref.watch(
       brouillonInscriptionProvider,

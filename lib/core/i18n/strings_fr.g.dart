@@ -20813,14 +20813,14 @@ class Traductions$i1$familles$fr {
 	/// fr: 'Envoyer à toutes les familles ({n})'
 	String envoyerToutes({required Object n}) => 'Envoyer à toutes les familles (${n})';
 
-	/// fr: 'Envoyer l'invitation à {n} familles ?'
-	String toutesQuestion({required Object n}) => 'Envoyer l\'invitation à ${n} familles ?';
+	/// fr: 'Envoyer l'invitation à toutes les familles à inviter ? Nombre de familles : {n}.'
+	String toutesQuestion({required Object n}) => 'Envoyer l\'invitation à toutes les familles à inviter ? Nombre de familles : ${n}.';
 
 	/// fr: 'Chaque famille reçoit un e-mail tout de suite. Un e-mail parti ne se reprend pas.'
 	String get toutesConsequence => 'Chaque famille reçoit un e-mail tout de suite. Un e-mail parti ne se reprend pas.';
 
-	/// fr: 'Envoyer les {n} invitations'
-	String toutesConfirmer({required Object n}) => 'Envoyer les ${n} invitations';
+	/// fr: 'Oui, envoyer à toutes les familles ({n})'
+	String toutesConfirmer({required Object n}) => 'Oui, envoyer à toutes les familles (${n})';
 
 	/// fr: 'L'invitation part vers {email}.'
 	String enFile({required Object email}) => 'L\'invitation part vers ${email}.';
@@ -20834,8 +20834,8 @@ class Traductions$i1$familles$fr {
 	/// fr: 'Cette famille n'est plus à inviter. Actualisez la liste.'
 	String get introuvable => 'Cette famille n\'est plus à inviter. Actualisez la liste.';
 
-	/// fr: 'Les invitations partent vers {n} familles.'
-	String toutesEnFile({required Object n}) => 'Les invitations partent vers ${n} familles.';
+	/// fr: 'Les invitations partent. Nombre de familles : {n}.'
+	String toutesEnFile({required Object n}) => 'Les invitations partent. Nombre de familles : ${n}.';
 
 	/// fr: 'La liste a changé depuis votre confirmation : rien n'est parti. Relisez-la, puis confirmez de nouveau.'
 	String get nombreChange => 'La liste a changé depuis votre confirmation : rien n\'est parti. Relisez-la, puis confirmez de nouveau.';
@@ -52881,14 +52881,14 @@ extension on Traductions {
 			'i1.familles.renvoyer' => 'Renvoyer l\'invitation',
 			'i1.familles.renvoyerPour' => ({required Object email}) => 'Renvoyer l\'invitation à ${email}',
 			'i1.familles.envoyerToutes' => ({required Object n}) => 'Envoyer à toutes les familles (${n})',
-			'i1.familles.toutesQuestion' => ({required Object n}) => 'Envoyer l\'invitation à ${n} familles ?',
+			'i1.familles.toutesQuestion' => ({required Object n}) => 'Envoyer l\'invitation à toutes les familles à inviter ? Nombre de familles : ${n}.',
 			'i1.familles.toutesConsequence' => 'Chaque famille reçoit un e-mail tout de suite. Un e-mail parti ne se reprend pas.',
-			'i1.familles.toutesConfirmer' => ({required Object n}) => 'Envoyer les ${n} invitations',
+			'i1.familles.toutesConfirmer' => ({required Object n}) => 'Oui, envoyer à toutes les familles (${n})',
 			'i1.familles.enFile' => ({required Object email}) => 'L\'invitation part vers ${email}.',
 			'i1.familles.dejaEnFile' => ({required Object email}) => 'Une invitation est déjà partie ou en cours d\'envoi vers ${email} : rien de plus n\'est envoyé.',
 			'i1.familles.compteCree' => 'Cette famille a déjà ouvert son espace : rien n\'est envoyé.',
 			'i1.familles.introuvable' => 'Cette famille n\'est plus à inviter. Actualisez la liste.',
-			'i1.familles.toutesEnFile' => ({required Object n}) => 'Les invitations partent vers ${n} familles.',
+			'i1.familles.toutesEnFile' => ({required Object n}) => 'Les invitations partent. Nombre de familles : ${n}.',
 			'i1.familles.nombreChange' => 'La liste a changé depuis votre confirmation : rien n\'est parti. Relisez-la, puis confirmez de nouveau.',
 			'i1.familles.erreurEnvoi' => 'L\'envoi n\'est pas confirmé. Actualisez la liste avant de recommencer.',
 			'i1.familles.horsLigne' => 'Pas de connexion : rien n\'est parti. Réessayez dans un instant.',

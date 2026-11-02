@@ -84,9 +84,14 @@ try {
 
   // 3. Familles importees : une par son bouton, l'autre par « toutes ».
   await cliquer(d.page, /^Une famille déjà inscrite/, { pause: 2500 });
+  // La liste est sous les cartes : la page defile jusqu'a elle.
+  await d.page.mouse.move(800, 600);
+  await d.page.mouse.wheel(0, 900);
+  await d.page.waitForTimeout(1500);
   await p.capture(d, '1440_familles_a_inviter');
   const idA = sql(`select id from private.preinscription_households where email_normalise = '${FAM[0]}'`);
-  const boutonA = await trouver(d.page, new RegExp(`^Envoyer l'invitation à ${FAM[0].replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`), { delai: 8000 });
+  const boutonA = await trouver(d.page, new RegExp(`Envoyer l'invitation à ${FAM[0].replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`), { delai: 8000 });
+  if (!boutonA) p.dire(`  libelles : ${(await libelles(d.page)).filter((x) => /Envoyer|famille-a/.test(x)).join(' | ')}`);
   verifier(Boolean(boutonA), `bouton « Envoyer l'invitation » de ${FAM[0]}`);
   await boutonA.click();
   await d.page.waitForTimeout(2500);
@@ -106,11 +111,11 @@ try {
   const nombre = Number((await toutes.getAttribute('aria-label') ?? (await toutes.textContent()) ?? '').match(/\((\d+)\)/)?.[1]);
   await toutes.click();
   await d.page.waitForTimeout(1500);
-  const question = await trouverTexte(d.page, /Envoyer l'invitation à \d+ familles[^|]*/, 5000);
+  const question = await trouverTexte(d.page, /Envoyer l'invitation à toutes les familles[^|]*/, 5000);
   await p.capture(d, '1440_confirmation_toutes');
   verifier(Boolean(question) && question.includes(String(nombre)), `confirmation : « ${question ?? '-'} »`);
-  await cliquer(d.page, new RegExp(`^Envoyer les ${nombre} invitations`), { pause: 3000 });
-  const parties = await trouverTexte(d.page, /Les invitations partent vers[^|]*/, 8000);
+  await cliquer(d.page, new RegExp(`^Oui, envoyer à toutes les familles \(${nombre}\)`), { pause: 3000 });
+  const parties = await trouverTexte(d.page, /Les invitations partent[^|]*/, 8000);
   await p.capture(d, '1440_toutes_envoyees');
   const ligneB = sql(`select id || ' | ' || categorie || ' | ' || modele || ' | ' || statut || ' | ' || cle_idempotence
                         from public.courriels_sortants where modele = 'invitation_famille_importee' and destinataire_adresse = '${FAM[1]}'`);
@@ -120,10 +125,13 @@ try {
   // La liste des familles a 390.
   const d390 = await p.contexte('direction', { telephone: true });
   await connecter(d390.page, COMPTES.direction);
-  await ouvrir(d390.page, '/admin/personnes/invitations');
+  await ouvrir(d390.page, '/#/admin/personnes/invitations');
   await d390.page.waitForTimeout(2500);
   await activerSemantique(d390.page);
   await cliquer(d390.page, /^Une famille déjà inscrite/, { pause: 2500 });
+  await d390.page.mouse.move(200, 500);
+  await d390.page.mouse.wheel(0, 1400);
+  await d390.page.waitForTimeout(1500);
   const ligneFamille = await trouver(d390.page, /^Envoyée|^En cours d'envoi/, { delai: 5000 });
   if (ligneFamille) await ligneFamille.scrollIntoViewIfNeeded().catch(() => {});
   await p.capture(d390, '390_familles_apres_envoi');
@@ -148,6 +156,8 @@ try {
   await cliquer(c.page, /^Recevoir le lien/, { pause: 2000 });
   const recu = await dernierLien(CAND.courriel, depuis);
   verifier(Boolean(recu?.lien), 'lien de connexion recu dans Mailpit');
+  // Comme depuis une messagerie : le lien s'ouvre dans un NOUVEL onglet.
+  c.page = await c.ctx.newPage();
   await c.page.goto(recu.lien);
   await c.page.waitForTimeout(7000);
   await activerSemantique(c.page);

@@ -9079,7 +9079,7 @@ class _Traductions$i1$familles$ar extends Traductions$i1$familles$fr {
 	@override String envoyerToutes({required Object n}) => 'الإرسال إلى كل الأسر (⁨${n}⁩)';
 	@override String toutesQuestion({required Object n}) => 'إرسال الدعوة إلى كل الأسر؟ عددها: ⁨${n}⁩';
 	@override String get toutesConsequence => 'تتلقى كل أسرة بريدًا فورًا. والبريد المرسَل لا يُسترجَع.';
-	@override String toutesConfirmer({required Object n}) => 'إرسال الدعوات (⁨${n}⁩)';
+	@override String toutesConfirmer({required Object n}) => 'نعم، الإرسال إلى كل الأسر (⁨${n}⁩)';
 	@override String enFile({required Object email}) => 'تُرسَل الدعوة إلى ⁨${email}⁩.';
 	@override String dejaEnFile({required Object email}) => 'أُرسلت دعوة إلى ⁨${email}⁩ أو هي قيد الإرسال: لا يُرسَل شيء إضافي.';
 	@override String get compteCree => 'فتحت هذه الأسرة مساحتها من قبل: لا يُرسَل شيء.';
@@ -29474,7 +29474,7 @@ extension on TraductionsAr {
 			'i1.familles.envoyerToutes' => ({required Object n}) => 'الإرسال إلى كل الأسر (⁨${n}⁩)',
 			'i1.familles.toutesQuestion' => ({required Object n}) => 'إرسال الدعوة إلى كل الأسر؟ عددها: ⁨${n}⁩',
 			'i1.familles.toutesConsequence' => 'تتلقى كل أسرة بريدًا فورًا. والبريد المرسَل لا يُسترجَع.',
-			'i1.familles.toutesConfirmer' => ({required Object n}) => 'إرسال الدعوات (⁨${n}⁩)',
+			'i1.familles.toutesConfirmer' => ({required Object n}) => 'نعم، الإرسال إلى كل الأسر (⁨${n}⁩)',
 			'i1.familles.enFile' => ({required Object email}) => 'تُرسَل الدعوة إلى ⁨${email}⁩.',
 			'i1.familles.dejaEnFile' => ({required Object email}) => 'أُرسلت دعوة إلى ⁨${email}⁩ أو هي قيد الإرسال: لا يُرسَل شيء إضافي.',
 			'i1.familles.compteCree' => 'فتحت هذه الأسرة مساحتها من قبل: لا يُرسَل شيء.',

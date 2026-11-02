@@ -31,6 +31,7 @@ import 'package:rewayah_academy/features/inscription/etapes/identite_etape.dart'
 import 'package:rewayah_academy/features/inscription/etapes/recapitulatif_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/usage_etape.dart';
 import 'package:rewayah_academy/features/inscription/inscription_page.dart';
+import 'package:rewayah_academy/features/inscription/invitation_en_cours.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_inscription.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_page.dart';
 import 'package:rewayah_academy/features/parcours_offres/libelles_parcours.dart';
@@ -330,6 +331,37 @@ Future<void> _jusquAuRecap(WidgetTester tester) async {
 }
 
 void main() {
+  // I1 (02/11/2026, UX-013, UX-017) : l'invitation d'enseignant en cours.
+  group('I1 : invitation en cours', () {
+    tearDown(oublierInvitationEnCours);
+
+    testWidgets('au retour du lien, l\'inscription reprend sur le code', (
+      WidgetTester tester,
+    ) async {
+      retenirInvitationEnCours(code: 'ABCD-EFGH-JKMN');
+      await _monter(tester);
+      expect(find.text('CODE-INVITATION'), findsOneWidget);
+      expect(find.text(t.inscription.usage.question), findsNothing);
+    });
+
+    testWidgets('sans invitation en cours, « Pour qui » comme avant', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester);
+      expect(find.text(t.inscription.usage.question), findsOneWidget);
+    });
+
+    testWidgets('« Se deconnecter » efface l\'invitation en cours', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester);
+      retenirInvitationEnCours(code: 'ABCD-EFGH-JKMN');
+      await _taper(tester, find.byKey(const Key('inscription-deconnexion')));
+      await tester.pumpAndSettle();
+      expect(lireInvitationEnCours(), isNull);
+    });
+  });
+
   group('LA-2 : inscription par etapes', () {
     testWidgets('usage : deux cartes aux textes du mandat, sans « Autre », '
         'sans preselection', (WidgetTester tester) async {
