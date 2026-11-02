@@ -1,11 +1,12 @@
 // Lot (A), 02/11/2026 : les remises particulieres servies par les RPC de la
-// migration 20261104700000 (`accorder_tarif_particulier`, `bourses_lister`)
+// migration 20261104800000 (`accorder_tarif_particulier`, `bourses_lister`)
 // et de FAC-E-01 (`retirer_bourse`). **Aucun calcul** : le serveur verifie
-// les droits et les valeurs ; un refus (42501, 22023, BO002) devient
+// les droits et les valeurs ; un refus (42501, 22023, BO002, BO003) devient
 // [RefusTarif], rien n'a ete enregistre.
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../finance/montant.dart';
 import 'port_tarifs_particuliers.dart';
 import 'rpc_finance_supabase.dart';
 
@@ -38,6 +39,7 @@ class TarifsParticuliersSupabase implements PortTarifsParticuliers {
     required DateTime moisFin,
     required String motif,
     int? pourMille,
+    Montant? montant,
   }) => _ecrire('accorder_tarif_particulier', <String, dynamic>{
     'p_profil': profilId,
     'p_nature': switch (nature) {
@@ -50,6 +52,7 @@ class TarifsParticuliersSupabase implements PortTarifsParticuliers {
       ),
     },
     'p_pour_mille': pourMille,
+    'p_montant_mineur': montant?.mineur,
     'p_mois_fin': _jour(moisFin),
     'p_motif': motif,
   });
@@ -69,6 +72,7 @@ class TarifsParticuliersSupabase implements PortTarifsParticuliers {
         '42501' => MotifRefusTarif.droits,
         '22023' || 'P0002' => MotifRefusTarif.invalide,
         'BO002' => MotifRefusTarif.dejaActive,
+        'BO003' => MotifRefusTarif.montantTropHaut,
         _ => null,
       };
       if (motif == null) rethrow;
@@ -94,7 +98,8 @@ TarifParticulier tarifParticulierJson(Object? brut) {
       'prix_special' => NatureTarif.prixSpecial,
       _ => NatureTarif.bourse,
     },
-    pourMille: entierJson(j, 'pourMille'),
+    pourMille: j['pourMille'] == null ? null : entierJson(j, 'pourMille'),
+    montantMensuel: montantNullableJson(j['montantMensuel'], 'montantMensuel'),
     moisFin: dateJson(j['moisFin'], 'moisFin'),
     motif: texteJson(j, 'motif'),
   );

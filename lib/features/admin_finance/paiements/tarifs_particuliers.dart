@@ -4,8 +4,8 @@
 // Demande du directeur (02/11) : certains eleves ne paient pas et gardent
 // l'acces, d'autres ont un prix special (les inscrits actuels) ; « coder en
 // dur sera catastrophique ». La direction saisit tout ici, eleve par eleve :
-// la nature, la reduction (prix special), le dernier mois couvert et la
-// raison. L'ecran ne calcule rien : le serveur verifie, la facture du mois
+// la nature, la reduction ou le prix par mois hors taxes (prix special), le
+// dernier mois couvert et la raison. L'ecran ne calcule rien : le serveur verifie, la facture du mois
 // applique la remise (ligne « bourse » existante).
 //
 // Deux gestes : accorder (depuis la fiche de paiement d'un eleve, ou la
@@ -17,8 +17,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 
 import '../../../core/capacites/port_tarifs_particuliers.dart';
+import '../../../core/finance/format_montant.dart';
+import '../../../core/finance/montant.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/reseau/service_reseau.dart';
+import '../../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
@@ -32,6 +35,7 @@ import '../../../core/widgets/selecteur_mois.dart';
 import '../../../core/widgets/setting_row.dart';
 import '../../../core/widgets/status_pill.dart';
 import '../reserve_delegation/composants_politique.dart' show BlocPolitique;
+import 'paiements_page.dart' show mineurDepuisSaisie;
 
 /// Les remises actives, rendues par la source.
 final FutureProvider<List<TarifParticulier>> tarifsParticuliersProvider =
@@ -42,14 +46,25 @@ final FutureProvider<List<TarifParticulier>> tarifsParticuliersProvider =
     );
 
 /// La valeur d'une remise : « Accès offert jusqu'à fin janvier 2027 »,
-/// « Moins 35 % jusqu'à fin janvier 2027 ».
+/// « Moins 35 % jusqu'à fin janvier 2027 », « 40,00 $ par mois jusqu'à fin
+/// janvier 2027 ».
 String valeurTarif(TarifParticulier r) {
   final String mois = SelecteurMois.enMots(r.moisFin);
-  return r.nature == NatureTarif.accesOffert || r.pourMille >= 1000
+  final Montant? montant = r.montantMensuel;
+  final int pourMille = r.pourMille ?? 0;
+  if (montant != null) {
+    return t.admin.finance.tarifs.valeurMontant(
+      montant: formaterMontant(montant),
+      mois: mois,
+    );
+  }
+  return r.nature == NatureTarif.accesOffert || pourMille >= 1000
       ? t.admin.finance.tarifs.valeurOffert(mois: mois)
-      : t.admin.finance.tarifs.valeurPrix(
-          pourcent: _pourcent(r.pourMille),
-          mois: mois,
+      : LibellesGroupe.insecable(
+          t.admin.finance.tarifs.valeurPrix(
+            pourcent: _pourcent(pourMille),
+            mois: mois,
+          ),
         );
 }
 
@@ -142,11 +157,13 @@ class BlocTarifsParticuliers extends ConsumerWidget {
 }
 
 /// Ouvre la fiche « Accès offert ou prix spécial » pour un eleve ; rend vrai
-/// si la liste des remises est a relire.
+/// si la liste des remises est a relire. [devise] : celle des factures de
+/// l'eleve, pour un prix special en montant.
 Future<bool> ouvrirTarifParticulier(
   BuildContext context, {
   required String profilId,
   required String prenom,
+  required String devise,
 }) async {
   final ProviderContainer portee = ProviderScope.containerOf(
     context,
@@ -157,7 +174,11 @@ Future<bool> ouvrirTarifParticulier(
     titre: t.admin.finance.tarifs.feuilleTitre(prenom: prenom),
     constructeur: (BuildContext _) => UncontrolledProviderScope(
       container: portee,
-      child: FeuilleTarifParticulier(profilId: profilId, prenom: prenom),
+      child: FeuilleTarifParticulier(
+        profilId: profilId,
+        prenom: prenom,
+        devise: devise,
+      ),
     ),
   );
   if (change ?? false) portee.invalidate(tarifsParticuliersProvider);
@@ -190,12 +211,22 @@ Future<bool> ouvrirRetraitTarif(
 
 enum _Phase { saisie, envoi, faite, refusee, inconnue }
 
+/// Comment se dit un prix special.
+enum FormePrix {
+  /// Une reduction en pourcentage du prix normal.
+  pourcentage,
+
+  /// Le prix du mois, hors taxes.
+  montant,
+}
+
 /// La fiche : accorder (sans [retrait]) ou retirer (avec [retrait]).
 class FeuilleTarifParticulier extends ConsumerStatefulWidget {
   /// Cree la fiche.
   const FeuilleTarifParticulier({
     required this.profilId,
     required this.prenom,
+    this.devise,
     this.retrait,
     super.key,
   });
@@ -206,8 +237,15 @@ class FeuilleTarifParticulier extends ConsumerStatefulWidget {
   /// Son prenom.
   final String prenom;
 
+  /// La devise des factures de l'eleve ; nulle : le prix special ne se dit
+  /// qu'en pourcentage.
+  final String? devise;
+
   /// La remise a retirer ; nulle : la fiche accorde.
   final TarifParticulier? retrait;
+
+  /// La cle du champ du prix par mois.
+  static const Key cleMontant = ValueKey<String>('tarif-montant');
 
   /// La cle du champ de la reduction.
   static const Key cleReduction = ValueKey<String>('tarif-reduction');
@@ -226,6 +264,9 @@ class FeuilleTarifParticulier extends ConsumerStatefulWidget {
 class _FeuilleTarifParticulierState
     extends ConsumerState<FeuilleTarifParticulier> {
   final TextEditingController _reduction = TextEditingController();
+  final TextEditingController _montant = TextEditingController();
+  FormePrix _forme = FormePrix.pourcentage;
+  String? _erreurMontant;
   final TextEditingController _raison = TextEditingController();
   late final List<DateTime> _mois = moisDeFin(DateTime.now());
   NatureTarif _nature = NatureTarif.accesOffert;
@@ -240,6 +281,7 @@ class _FeuilleTarifParticulierState
   @override
   void dispose() {
     _reduction.dispose();
+    _montant.dispose();
     _raison.dispose();
     super.dispose();
   }
@@ -248,17 +290,28 @@ class _FeuilleTarifParticulierState
     if (_phase == _Phase.envoi) return;
     final p = t.admin.finance.tarifs;
     final String raison = _raison.text.trim();
-    final int? pourMille = _nature == NatureTarif.prixSpecial
+    final bool prix = !_retrait && _nature == NatureTarif.prixSpecial;
+    final String? devise = widget.devise;
+    final bool enMontant =
+        prix && _forme == FormePrix.montant && devise != null;
+    final int? pourMille = prix && !enMontant
         ? pourMilleDepuisSaisie(_reduction.text)
+        : null;
+    final int? mineur = enMontant
+        ? mineurDepuisSaisie(_montant.text, devise)
         : null;
     setState(() {
       _erreurRaison = raison.isEmpty ? p.erreurRaison : null;
-      _erreurReduction =
-          !_retrait && _nature == NatureTarif.prixSpecial && pourMille == null
+      _erreurReduction = prix && !enMontant && pourMille == null
           ? p.erreurReduction
           : null;
+      _erreurMontant = enMontant && mineur == null ? p.erreurMontant : null;
     });
-    if (_erreurRaison != null || _erreurReduction != null) return;
+    if (_erreurRaison != null ||
+        _erreurReduction != null ||
+        _erreurMontant != null) {
+      return;
+    }
     setState(() => _phase = _Phase.envoi);
     final PortTarifsParticuliers port = ref.read(
       portTarifsParticuliersProvider,
@@ -273,6 +326,9 @@ class _FeuilleTarifParticulierState
           moisFin: _moisFin,
           motif: raison,
           pourMille: pourMille,
+          montant: mineur == null || devise == null
+              ? null
+              : Montant(mineur, devise),
         );
       }
       if (!mounted) return;
@@ -334,15 +390,45 @@ class _FeuilleTarifParticulierState
                 textes.bodyMedium ?? const TextStyle(),
               ),
             )
-          else
-            ChampEtiquete(
-              key: FeuilleTarifParticulier.cleReduction,
-              libelle: p.reduction,
-              controller: _reduction,
-              keyboardType: TextInputType.number,
-              obligatoire: true,
-              aide: _erreurReduction ?? p.reductionAide,
-            ),
+          else ...<Widget>[
+            if (widget.devise != null) ...<Widget>[
+              ControleSegmente<FormePrix>(
+                segments: <Segment<FormePrix>>[
+                  Segment<FormePrix>(
+                    valeur: FormePrix.pourcentage,
+                    libelle: p.choixPourcentage,
+                  ),
+                  Segment<FormePrix>(
+                    valeur: FormePrix.montant,
+                    libelle: p.choixMontant,
+                  ),
+                ],
+                valeur: _forme,
+                onChange: (FormePrix f) => setState(() => _forme = f),
+              ),
+              Ecart.vLg,
+            ],
+            if (_forme == FormePrix.montant && widget.devise != null)
+              ChampEtiquete(
+                key: FeuilleTarifParticulier.cleMontant,
+                libelle: p.montant(devise: widget.devise!),
+                controller: _montant,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                obligatoire: true,
+                aide: _erreurMontant ?? p.montantAide,
+              )
+            else
+              ChampEtiquete(
+                key: FeuilleTarifParticulier.cleReduction,
+                libelle: p.reduction,
+                controller: _reduction,
+                keyboardType: TextInputType.number,
+                obligatoire: true,
+                aide: _erreurReduction ?? p.reductionAide,
+              ),
+          ],
           Ecart.vLg,
           Text(p.moisFin, style: textes.titleSmall ?? const TextStyle()),
           Ecart.vSm,
@@ -393,6 +479,9 @@ class _FeuilleTarifParticulierState
             message: switch (_refus) {
               MotifRefusTarif.droits => p.refusDroits,
               MotifRefusTarif.dejaActive => p.refusDejaActive(
+                prenom: widget.prenom,
+              ),
+              MotifRefusTarif.montantTropHaut => p.refusMontant(
                 prenom: widget.prenom,
               ),
               _ => p.refusInvalide,

@@ -11,6 +11,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../finance/montant.dart';
 import 'capacite_indisponible.dart';
 
 /// La nature d'une remise active.
@@ -22,7 +23,8 @@ enum NatureTarif {
   /// Acces offert : 100 %, jusqu'au mois choisi.
   accesOffert,
 
-  /// Prix special : la reduction choisie, jusqu'au mois choisi.
+  /// Prix special : la reduction ou le prix mensuel choisis, jusqu'au mois
+  /// choisi.
   prixSpecial,
 }
 
@@ -34,9 +36,10 @@ class TarifParticulier {
     required this.profilId,
     required this.prenom,
     required this.nature,
-    required this.pourMille,
     required this.moisFin,
     required this.motif,
+    this.pourMille,
+    this.montantMensuel,
     this.nom,
     this.matricule,
   });
@@ -56,8 +59,12 @@ class TarifParticulier {
   /// La nature de la remise.
   final NatureTarif nature;
 
-  /// La reduction, en pour mille du tarif (1000 pour un acces offert).
-  final int pourMille;
+  /// La reduction, en pour mille du tarif (1000 pour un acces offert) ;
+  /// nulle pour un prix special en montant.
+  final int? pourMille;
+
+  /// Le prix du mois hors taxes d'un prix special en montant ; nul sinon.
+  final Montant? montantMensuel;
 
   /// Le dernier mois couvert (premier jour du mois).
   final DateTime moisFin;
@@ -76,6 +83,9 @@ enum MotifRefusTarif {
 
   /// L'eleve a deja une remise active : la retirer d'abord.
   dejaActive,
+
+  /// Le prix mensuel n'est pas inferieur au prix normal de l'eleve.
+  montantTropHaut,
 }
 
 /// Le refus du serveur.
@@ -95,14 +105,17 @@ abstract interface class PortTarifsParticuliers {
   /// Les remises actives.
   Future<List<TarifParticulier>> liste();
 
-  /// Accorde a [profilId] un acces offert ([pourMille] ignore) ou un prix
-  /// special ([pourMille] de 1 a 999) jusqu'a [moisFin], pour [motif].
+  /// Accorde a [profilId] un acces offert ([pourMille] et [montant]
+  /// ignores) ou un prix special (exactement un de [pourMille], de 1 a 999,
+  /// et [montant], le prix du mois hors taxes) jusqu'a [moisFin], pour
+  /// [motif].
   Future<void> accorder({
     required String profilId,
     required NatureTarif nature,
     required DateTime moisFin,
     required String motif,
     int? pourMille,
+    Montant? montant,
   });
 
   /// Retire la remise active de [profilId], pour [motif].
@@ -127,6 +140,7 @@ class TarifsParticuliersIndisponibles implements PortTarifsParticuliers {
     required DateTime moisFin,
     required String motif,
     int? pourMille,
+    Montant? montant,
   }) => Future<void>.error(const CapaciteIndisponible('FAC-E-01'));
 
   @override

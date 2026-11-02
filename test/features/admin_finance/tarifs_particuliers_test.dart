@@ -69,6 +69,7 @@ class _Tarifs implements PortTarifsParticuliers {
     required DateTime moisFin,
     required String motif,
     int? pourMille,
+    Montant? montant,
   }) async {
     envois.add(<String, Object?>{
       'profil': profilId,
@@ -76,6 +77,7 @@ class _Tarifs implements PortTarifsParticuliers {
       'moisFin': moisFin,
       'motif': motif,
       'pourMille': pourMille,
+      'montant': montant,
     });
     final MotifRefusTarif? r = refus;
     if (r != null) throw RefusTarif(r);
@@ -210,6 +212,69 @@ void main() {
     expect(find.text(p.faitTitre), findsOneWidget);
   });
 
+  testWidgets('prix special en prix par mois : le montant hors taxes part '
+      'en unites mineures, dans la devise de l eleve', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(900, 2400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final _Tarifs tarifs = _Tarifs();
+    await tester.pumpWidget(_hote(tarifs));
+    await tester.pumpAndSettle();
+    await _ouvrirTarifBilal(tester);
+    await _toucher(tester, find.text(p.choixPrix));
+    await _toucher(tester, find.text(p.choixMontant));
+    expect(find.byKey(FeuilleTarifParticulier.cleReduction), findsNothing);
+    await tester.enterText(_champ(FeuilleTarifParticulier.cleMontant), '0');
+    await tester.enterText(_champ(FeuilleTarifParticulier.cleRaison), 'Ancien');
+    await _toucher(tester, find.byKey(FeuilleTarifParticulier.cleEnvoyer));
+    expect(find.text(p.erreurMontant), findsOneWidget);
+    expect(tarifs.envois, isEmpty);
+    await tester.enterText(_champ(FeuilleTarifParticulier.cleMontant), '42,50');
+    await _toucher(tester, find.byKey(FeuilleTarifParticulier.cleEnvoyer));
+    expect(tarifs.envois.single['pourMille'], isNull);
+    expect(tarifs.envois.single['montant'], const Montant(4250, 'USD'));
+    expect(find.text(p.faitTitre), findsOneWidget);
+  });
+
+  testWidgets('prix par mois egal ou superieur au prix normal : le refus le '
+      'dit', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(900, 2400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final _Tarifs tarifs = _Tarifs(refus: MotifRefusTarif.montantTropHaut);
+    await tester.pumpWidget(_hote(tarifs));
+    await tester.pumpAndSettle();
+    await _ouvrirTarifBilal(tester);
+    await _toucher(tester, find.text(p.choixPrix));
+    await _toucher(tester, find.text(p.choixMontant));
+    await tester.enterText(_champ(FeuilleTarifParticulier.cleMontant), '55');
+    await tester.enterText(_champ(FeuilleTarifParticulier.cleRaison), 'Ancien');
+    await _toucher(tester, find.byKey(FeuilleTarifParticulier.cleEnvoyer));
+    expect(find.text(p.refusMontant(prenom: 'Bilal')), findsOneWidget);
+  });
+
+  testWidgets('la liste dit un prix par mois en montant', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(900, 2400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final TarifParticulier r = TarifParticulier(
+      profilId: 'e3',
+      prenom: 'Salma',
+      nature: NatureTarif.prixSpecial,
+      montantMensuel: const Montant(4000, 'USD'),
+      moisFin: DateTime(2027, 6),
+      motif: 'Inscrite avant novembre 2026',
+    );
+    await tester.pumpWidget(_hote(_Tarifs(remises: <TarifParticulier>[r])));
+    await tester.pumpAndSettle();
+    expect(find.text(valeurTarif(r)), findsOneWidget);
+    expect(valeurTarif(r), contains('40'));
+  });
+
   testWidgets('acces offert : aucune reduction a saisir ; remise deja active, '
       'le refus le dit', (WidgetTester tester) async {
     tester.view.physicalSize = const Size(900, 2400);
@@ -287,6 +352,7 @@ void main() {
                   'nom': 'F1',
                   'matricule': 'RA-26-1203',
                   'pourMille': 350,
+                  'montantMensuel': null,
                   'moisDebut': '2026-11-01',
                   'moisFin': '2027-01-01',
                   'motif': 'Inscrite avant',
@@ -311,9 +377,30 @@ void main() {
         'p_profil': 'e2',
         'p_nature': 'acces_offert',
         'p_pour_mille': null,
+        'p_montant_mineur': null,
         'p_mois_fin': '2027-03-01',
         'p_motif': 'Aide',
       });
+      await port.accorder(
+        profilId: 'e3',
+        nature: NatureTarif.prixSpecial,
+        moisFin: DateTime(2027, 6),
+        motif: 'Ancien',
+        montant: const Montant(4000, 'USD'),
+      );
+      expect(appels.last.$2?['p_montant_mineur'], 4000);
+      expect(appels.last.$2?['p_pour_mille'], isNull);
+      final TarifParticulier m = tarifParticulierJson(<String, dynamic>{
+        'profilId': 'e3',
+        'prenom': 'Salma',
+        'pourMille': null,
+        'montantMensuel': <String, dynamic>{'mineur': 4000, 'devise': 'USD'},
+        'moisFin': '2027-06-01',
+        'motif': 'Ancien',
+        'nature': 'prix_special',
+      });
+      expect(m.pourMille, isNull);
+      expect(m.montantMensuel, const Montant(4000, 'USD'));
     });
 
     test('un refus du serveur devient RefusTarif', () async {
@@ -324,6 +411,7 @@ void main() {
             ('42501', MotifRefusTarif.droits),
             ('22023', MotifRefusTarif.invalide),
             ('BO002', MotifRefusTarif.dejaActive),
+            ('BO003', MotifRefusTarif.montantTropHaut),
           ]) {
         final TarifsParticuliersSupabase port =
             TarifsParticuliersSupabase.avecAppel(

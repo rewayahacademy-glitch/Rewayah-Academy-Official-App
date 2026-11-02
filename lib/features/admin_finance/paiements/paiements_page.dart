@@ -338,6 +338,7 @@ Future<bool> ouvrirSaisiePaiement(
       context,
       profilId: eleve.profilId,
       prenom: eleve.prenom,
+      devise: eleve.resteAPayer.devise,
     );
   }
   return change ?? false;
