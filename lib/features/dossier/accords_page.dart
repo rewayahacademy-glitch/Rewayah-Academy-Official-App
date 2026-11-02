@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/signaler_manque.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/domain/enums.dart';
 import '../../core/dossier/etat_dossier.dart';
@@ -21,6 +22,7 @@ import '../../core/recrutement/port_signature_contrat.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_gabarit.dart';
+import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -101,9 +103,14 @@ enum _Envoi {
 /// texte A3 n'est affiche qu'une fois : les conditions du tuteur le reprennent,
 /// sa case le couvre.
 ///
-/// Un seul bouton « Suivant », **inactif tant qu'une case manque** : cette
-/// regle remplace BOUTONS-GRISES-1 pour les accords. On ne passe donc jamais
-/// sans consentir, et la page ne renvoie jamais en arriere pour cocher.
+/// Un seul bouton « Suivant », **toujours actif** (UX-047, pilote du
+/// 02/11/2026, qui remplace la regle du 17/10 pour les accords) : touche
+/// alors qu'une case manque, il n'envoie rien ; la page descend en douceur
+/// jusqu'a la premiere case non cochee (sans animation si l'appareil reduit
+/// les animations), la carte et son texte passent en rouge, « Cochez cette
+/// case pour continuer » s'affiche sous elle, le lecteur d'ecran l'annonce et
+/// le focus va a la case. On ne passe donc jamais sans consentir, et le
+/// defilement n'est jamais bloque.
 ///
 /// L'envoi : le service n'enregistre qu'une acceptation a la fois
 /// ([ServiceDossier.accepterContrat]) ; les acceptations partent dans l'ordre
@@ -127,9 +134,24 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
   String? _erreur;
   String? _erreurNom;
 
+  /// UX-047 : la case signalee apres « Suivant », jusqu'a ce qu'on la coche.
+  _Case? _manquante;
+
+  /// Le focus et la position de chaque case, pour y mener.
+  final Map<_Case, FocusNode> _focus = <_Case, FocusNode>{
+    for (final _Case c in _Case.values) c: FocusNode(),
+  };
+  final Map<_Case, GlobalKey> _places = <_Case, GlobalKey>{
+    for (final _Case c in _Case.values)
+      c: GlobalKey(debugLabel: 'accords-case-${c.name}'),
+  };
+
   @override
   void dispose() {
     _nom.dispose();
+    for (final FocusNode f in _focus.values) {
+      f.dispose();
+    }
     super.dispose();
   }
 
@@ -138,7 +160,42 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
   void _cocher(_Case c, bool v) => setState(() {
     _cochees[c] = v;
     _erreur = null;
+    if (v && _manquante == c) {
+      _manquante = null;
+    }
   });
+
+  /// La phrase sous la case [c] quand elle est la case signalee.
+  String? _phraseManque(_Case c) =>
+      _manquante == c ? t.accords.caseManquante : null;
+
+  /// La case [c] avec sa place, pour y descendre.
+  Widget _place(_Case c, Widget enfant) =>
+      KeyedSubtree(key: _places[c], child: enfant);
+
+  /// UX-047 : « Suivant » touche avec une case non cochee. Rien ne part ; la
+  /// premiere case qui manque est signalee, la page y descend et le focus y
+  /// va.
+  void _signalerManque(List<_Case> requises) {
+    final _Case premiere = requises.firstWhere((_Case c) => !_cochee(c));
+    setState(() => _manquante = premiere);
+    final bool sansAnimation = MediaQuery.disableAnimationsOf(context);
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      final BuildContext? ou = _places[premiere]?.currentContext;
+      if (!mounted || ou == null) {
+        return;
+      }
+      unawaited(
+        Scrollable.ensureVisible(
+          ou,
+          alignment: 0.3,
+          duration: sansAnimation ? Duration.zero : AppMouvement.plafond,
+          curve: AppMouvement.entree,
+        ),
+      );
+      signalerManque(context, t.accords.caseManquante, champ: _focus[premiere]);
+    });
+  }
 
   /// La variante des visites des parents, lue dans `?pour=`.
   VarianteObservation _variante() {
@@ -253,8 +310,6 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
         (contratLu != null && empreinteConforme(contratLu.contrat));
     final bool rienAFaire =
         !accuseAFaire && !contratAFaire && !codeConduiteAFaire;
-    final bool pret =
-        !rienAFaire && restantes == 0 && !nomManque && serveurLisible;
 
     final ContratEtSignature? aSigner = nomRequis ? contratLu : null;
     final bool pieceAFournir =
@@ -267,7 +322,7 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
           child: Text(t.accords.dejaAcceptes, style: textes.titleMedium),
         )
       else ...<Widget>[
-        Text(t.accords.intro, style: textes.bodyMedium),
+        Text(t.accords.introCases, style: textes.bodyMedium),
         Ecart.vXxl,
         // 1. Ce que vous devez savoir : le texte A3 (E1), une seule fois.
         _Section(
@@ -277,12 +332,17 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
               paragraphes: enseignant ? paragraphesE1() : paragraphesA3(),
             ),
             Ecart.vXl,
-            CaseAccordTexte(
-              libelle: t.accords.caseSavoir,
-              cochee: !accuseAFaire || _cochee(_Case.savoir),
-              onChanged: !accuseAFaire || _envoi
-                  ? null
-                  : (bool v) => _cocher(_Case.savoir, v),
+            _place(
+              _Case.savoir,
+              CaseAccordTexte(
+                libelle: t.accords.caseSavoir,
+                cochee: !accuseAFaire || _cochee(_Case.savoir),
+                focusNode: _focus[_Case.savoir],
+                erreur: _phraseManque(_Case.savoir),
+                onChanged: !accuseAFaire || _envoi
+                    ? null
+                    : (bool v) => _cocher(_Case.savoir, v),
+              ),
             ),
           ],
         ),
@@ -294,12 +354,17 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
             children: <Widget>[
               TexteObservation(variante: _variante()),
               Ecart.vXl,
-              CaseAccordObservation(
-                variante: _variante(),
-                cochee: _cochee(_Case.observation),
-                onChanged: _envoi
-                    ? null
-                    : (bool v) => _cocher(_Case.observation, v),
+              _place(
+                _Case.observation,
+                CaseAccordObservation(
+                  variante: _variante(),
+                  cochee: _cochee(_Case.observation),
+                  focusNode: _focus[_Case.observation],
+                  erreur: _phraseManque(_Case.observation),
+                  onChanged: _envoi
+                      ? null
+                      : (bool v) => _cocher(_Case.observation, v),
+                ),
               ),
             ],
           ),
@@ -342,21 +407,31 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
                 ),
               ],
               Ecart.vXl,
-              CaseAccordTexte(
-                libelle: t.accords.caseContrat,
-                cochee: _cochee(_Case.contrat),
-                onChanged: _envoi
-                    ? null
-                    : (bool v) => _cocher(_Case.contrat, v),
+              _place(
+                _Case.contrat,
+                CaseAccordTexte(
+                  libelle: t.accords.caseContrat,
+                  cochee: _cochee(_Case.contrat),
+                  focusNode: _focus[_Case.contrat],
+                  erreur: _phraseManque(_Case.contrat),
+                  onChanged: _envoi
+                      ? null
+                      : (bool v) => _cocher(_Case.contrat, v),
+                ),
               ),
               if (!ancienContrat) ...<Widget>[
                 Ecart.vMd,
-                CaseAccordTexte(
-                  libelle: t.contrat.clauseControle.caseReligion,
-                  cochee: _cochee(_Case.religion),
-                  onChanged: _envoi
-                      ? null
-                      : (bool v) => _cocher(_Case.religion, v),
+                _place(
+                  _Case.religion,
+                  CaseAccordTexte(
+                    libelle: t.contrat.clauseControle.caseReligion,
+                    cochee: _cochee(_Case.religion),
+                    focusNode: _focus[_Case.religion],
+                    erreur: _phraseManque(_Case.religion),
+                    onChanged: _envoi
+                        ? null
+                        : (bool v) => _cocher(_Case.religion, v),
+                  ),
                 ),
               ],
             ],
@@ -381,12 +456,17 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
             children: <Widget>[
               const TexteCodeConduite(),
               Ecart.vXl,
-              CaseAccordTexte(
-                libelle: t.codeConduite.caseAccord,
-                cochee: _cochee(_Case.codeConduite),
-                onChanged: _envoi
-                    ? null
-                    : (bool v) => _cocher(_Case.codeConduite, v),
+              _place(
+                _Case.codeConduite,
+                CaseAccordTexte(
+                  libelle: t.codeConduite.caseAccord,
+                  cochee: _cochee(_Case.codeConduite),
+                  focusNode: _focus[_Case.codeConduite],
+                  erreur: _phraseManque(_Case.codeConduite),
+                  onChanged: _envoi
+                      ? null
+                      : (bool v) => _cocher(_Case.codeConduite, v),
+                ),
               ),
             ],
           ),
@@ -417,35 +497,37 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
               ),
             ),
             Ecart.vMd,
-          ] else if (!rienAFaire) ...<Widget>[
-            Semantics(
-              liveRegion: true,
-              child: Text(
-                restantes > 0
-                    ? t.accords.reste(n: restantes)
-                    : nomManque
-                    ? t.recrutement.signature.nomVide
-                    : t.accords.toutCoche,
-                key: const ValueKey<String>('accords-reste'),
-                textAlign: TextAlign.center,
-                style: palette.inkMuted.applyTo(
-                  textes.bodyMedium ?? const TextStyle(),
-                ),
-              ),
-            ),
-            Ecart.vMd,
           ],
-          // Inactif tant qu'une case manque (DECISION-ENTREE du 17/10/2026,
-          // qui remplace BOUTONS-GRISES-1 pour les accords).
+          // UX-047 : plus de phrase generale (« Il reste un accord a
+          // cocher ») ; la case qui manque se signale sous elle-meme.
+          // Toujours actif (UX-047) : sans tout coche, il signale la case
+          // qui manque ; un contrat illisible, il le redit. Pendant l'envoi,
+          // `enCours` retient les appuis.
           ActionPrincipale(
             key: const ValueKey<String>('accords-suivant'),
             libelle: rienAFaire ? t.commun.continuer : t.accords.suivant,
             enCours: _envoi,
             fleche: true,
+            // Toujours actif (UX-047) : il se voit actif, en aplat plein ; la
+            // pilule lilas se lisait comme eteinte (UX-046).
+            affirmee: true,
             onPress: rienAFaire
                 ? () => _suite(pieceAFournir: pieceAFournir)
-                : pret && !_envoi
-                ? () => unawaited(
+                : !serveurLisible
+                ? () => signalerManque(
+                    context,
+                    t.recrutement.signature.texteAltere,
+                  )
+                : restantes > 0
+                ? () => _signalerManque(requises)
+                : nomManque
+                ? () {
+                    setState(
+                      () => _erreurNom = t.recrutement.signature.nomVide,
+                    );
+                    signalerManque(context, t.recrutement.signature.nomVide);
+                  }
+                : () => unawaited(
                     _envoyer(
                       accuse: accuseAFaire,
                       contrat: contratAFaire && !serveur,
@@ -456,8 +538,7 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
                       resignature: resignature,
                       pieceAFournir: pieceAFournir,
                     ),
-                  )
-                : null,
+                  ),
           ),
         ],
       ),
@@ -543,12 +624,17 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
           onChanged: (_) => setState(() => _erreurNom = null),
         ),
         Ecart.vMd,
-        CaseAccordTexte(
-          libelle: r.accuse,
-          cochee: _cochee(_Case.contratServeur),
-          onChanged: _envoi
-              ? null
-              : (bool v) => _cocher(_Case.contratServeur, v),
+        _place(
+          _Case.contratServeur,
+          CaseAccordTexte(
+            libelle: r.accuse,
+            cochee: _cochee(_Case.contratServeur),
+            focusNode: _focus[_Case.contratServeur],
+            erreur: _phraseManque(_Case.contratServeur),
+            onChanged: _envoi
+                ? null
+                : (bool v) => _cocher(_Case.contratServeur, v),
+          ),
         ),
       ],
     );

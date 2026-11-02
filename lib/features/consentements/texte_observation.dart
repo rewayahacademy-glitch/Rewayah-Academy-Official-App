@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/groupe_reglages.dart';
@@ -73,11 +75,15 @@ class CaseAccordObservation extends StatelessWidget {
     required this.onChanged,
     super.key,
     this.focusNode,
+    this.erreur,
   });
 
   /// Le noeud de focus de la case : il y revient quand l'accord manque
   /// (BOUTONS-GRISES-1).
   final FocusNode? focusNode;
+
+  /// La phrase d'une case qui manque ([CaseAccordTexte.erreur]).
+  final String? erreur;
 
   /// La variante du libelle.
   final VarianteObservation variante;
@@ -96,6 +102,7 @@ class CaseAccordObservation extends StatelessWidget {
     cochee: cochee,
     onChanged: onChanged,
     focusNode: focusNode,
+    erreur: erreur,
   );
 }
 
@@ -111,11 +118,18 @@ class CaseAccordTexte extends StatelessWidget {
     required this.onChanged,
     super.key,
     this.focusNode,
+    this.erreur,
   });
 
   /// Le noeud de focus de la case : il y revient quand l'accord manque
   /// (BOUTONS-GRISES-1).
   final FocusNode? focusNode;
+
+  /// Mode de la page des accords (UX-047, pilote 02/11/2026) : non nul quand
+  /// « Suivant » a ete touche alors que cette case manque. La carte, sa case
+  /// et son texte passent a l'encre d'alerte et la phrase s'affiche sous la
+  /// carte ; elle disparait des que la case est cochee.
+  final String? erreur;
 
   /// Le texte de l'accord, mot pour mot.
   final String libelle;
@@ -128,6 +142,40 @@ class CaseAccordTexte extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String? manque = cochee ? null : erreur;
+    final Widget carte = _carte(context, alerte: manque != null);
+    if (manque == null) {
+      return carte;
+    }
+    final AppPalette palette = AppPalette.of(context);
+    // Le contour d'alerte, pose par-dessus la carte : le filet de la carte
+    // reste celui de son etat, la couleur dit ce qui manque.
+    final Widget cerclee = DecoratedBox(
+      position: DecorationPosition.foreground,
+      decoration: BoxDecoration(
+        borderRadius: AppRadius.arrondiMd,
+        border: Border.fromBorderSide(palette.inkAlert.asBorderSide(width: 2)),
+      ),
+      child: carte,
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        cerclee,
+        Ecart.vSm,
+        Text(
+          manque,
+          key: const ValueKey<String>('case-accord-manque'),
+          style: palette.inkAlert.applyTo(
+            Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _carte(BuildContext context, {required bool alerte}) {
+    final AppPalette palette = AppPalette.of(context);
     final ValueChanged<bool>? geste = onChanged;
     // E1 (demande du directeur du 17/10) : la carte entiere est la cible. Un
     // appui n'importe ou sur la carte, marge comprise, coche ou decoche :
@@ -147,6 +195,8 @@ class CaseAccordTexte extends StatelessWidget {
       checked: cochee,
       child: AppCard(
         selectionnee: cochee,
+        // UX-047 : la case qui manque se voit en rouge, contour et texte.
+        surface: alerte ? palette.washAlert : null,
         focusNode: focusNode,
         libelleSemantique: libelle,
         onPress: geste == null ? null : () => geste(!cochee),
@@ -166,6 +216,7 @@ class CaseAccordTexte extends StatelessWidget {
                     // la carte se presse ; c'est la carte qui agit.
                     child: Checkbox(
                       value: cochee,
+                      isError: alerte,
                       onChanged: geste == null ? null : (bool? _) {},
                     ),
                   ),
@@ -182,7 +233,12 @@ class CaseAccordTexte extends StatelessWidget {
                   excluding: geste != null,
                   child: Text(
                     libelle,
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    style: alerte
+                        ? palette.inkAlert.applyTo(
+                            Theme.of(context).textTheme.bodyLarge ??
+                                const TextStyle(),
+                          )
+                        : Theme.of(context).textTheme.bodyLarge,
                   ),
                 ),
               ),
