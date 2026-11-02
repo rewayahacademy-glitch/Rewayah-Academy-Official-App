@@ -1,0 +1,6 @@
+== FN-115a : conditions de remboursement et de contestation, lues avant de payer : 2026-11-02T02:16:25.857Z ; Chromium 141.0.7390.37 ; http://127.0.0.1:8090
+Recharge : « Payer » present ; lien null
+Phrase des frais sur la page de paiement : oui
+Texte : http://127.0.0.1:8090/#/tuteur/foyer/recharge ; premiere semaine : texte:Vous pouvez arrêter pendant la première semaine qui suit la première séance, selon la politique tarifaire en vigueur (page Tarifs). Vous ête ; contestation : h2:6. Contester un paiement auprès de sa banque ; frais : oui ; sans paiement : oui
+Ecran : flt-semantics:Annulation et remboursement | button:Retour | h2:Annulation et remboursement | group:1. Première semaine remboursée 2. Arrêter l'abonnement 3. Absences et séances annulées 4. Paiement en retard 5. Passage à la formule adulte 6. Contester un paie | flt-semantics:Version 2026-11-v1, texte du 2 novembre 2026 | flt-semantics:Vous pouvez arrêter quand vous voulez. Voici ce qui est remboursé, ce qui ne l'est pas, et ce qui se passe si un paiement n'arrive pas.
+== FN-115a : conditions de remboursement et de contestation, lues avant de payer : vert : le lien sous « Payer » ouvre les conditions : premiere semaine, acces sans paiement, contestation

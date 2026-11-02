@@ -95,10 +95,13 @@ enum TexteJuridique {
 /// (`docs/orchestration/site-public/juridique-2026-10-18.json`).
 abstract final class VersionsJuridiques {
   /// La version affichee.
-  static const String version = '2026-10-v1';
+  /// 2026-11-v1 (02/11/2026, FN-115a) : remboursement sauf les seances
+  /// suivies, contestation bancaire, acces sans paiement. Le site public garde
+  /// 2026-10-v1 tant que `site-public/` n'est pas mis a jour.
+  static const String version = '2026-11-v1';
 
   /// La date du texte.
-  static final DateTime date = DateTime(2026, 10, 18);
+  static final DateTime date = DateTime(2026, 11, 2);
 }
 
 /// Ce que seule la direction peut donner.
@@ -257,6 +260,9 @@ List<SectionPolitique> sectionsJuridiques(
         (titre: j.s3.titre, blocs: j.s3.blocs),
         (titre: j.s4.titre, blocs: j.s4.blocs),
         (titre: j.s5.titre, blocs: j.s5.blocs),
+        // FN-115 (directeur, 01/11/2026) : la contestation d'un paiement
+        // aupres de la banque, avant « Faire une demande ».
+        (titre: j.litige.titre, blocs: j.litige.blocs),
         (
           titre: j.s6.titre,
           blocs: plus(j.s6.blocs, <String>[

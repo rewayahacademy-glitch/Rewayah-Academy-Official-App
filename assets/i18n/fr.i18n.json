@@ -9103,6 +9103,8 @@
       "moyen": "Moyen de paiement",
       "raisonMontant": "Choisissez un montant pour chaque profil sélectionné.",
       "payerSeul": "Payer",
+      "conditionsRemboursement": "Remboursement et contestation\u00a0: lire les conditions",
+      "fraisContestation": "Si vous contestez un paiement auprès de votre banque, les frais de la contestation sont ajoutés au solde de votre foyer.",
       "ajouter": "Ajouter {prenom} à la recharge",
       "regularisationDe": "{prenom}\u00a0: {message}",
       "commandeRendue": "Le paiement est envoyé. Ne payez pas une seconde fois\u00a0: suivez son état.",
@@ -12317,7 +12319,8 @@
           "Les prix figurent sur la page Tarifs et dans l'application, au moment de choisir une formule. Ils sont en dollars américains et hors taxes. La taxe due selon votre pays est ajoutée au paiement.",
           "L'abonnement se renouvelle chaque mois. Les remises sont calculées par le système sur la facture du foyer.",
           "Le paiement passe par un prestataire de paiement.",
-          "Il n'y a pas d'essai gratuit. La première semaine est remboursée si le cours ne convient pas.",
+          "Il n'y a pas d'essai gratuit. La première semaine est remboursée si le cours ne convient pas, sauf les séances déjà suivies.",
+          "Sans paiement, l'élève n'a plus accès aux séances ni aux ressources. Son espace reste ouvert pour voir son profil, son historique et payer.",
           "Pour arrêter, être remboursé ou payer en retard, voir le texte Annulation et remboursement."
         ]
       },
@@ -12348,7 +12351,7 @@
         "titre": "1. Première semaine remboursée",
         "blocs": [
           "Il n'y a pas d'essai gratuit. À la place, la première semaine est remboursée si le cours ne convient pas.",
-          "Vous pouvez arrêter pendant la première semaine qui suit la première séance, selon la politique tarifaire en vigueur (page Tarifs). Vous êtes alors remboursé en entier.",
+          "Vous pouvez arrêter pendant la première semaine qui suit la première séance, selon la politique tarifaire en vigueur (page Tarifs). Vous êtes alors remboursé de ce que vous avez payé, sauf les séances déjà suivies.",
           "Après ce délai, le mois commencé est dû."
         ]
       },
@@ -12356,7 +12359,7 @@
         "titre": "2. Arrêter l'abonnement",
         "blocs": [
           "L'abonnement mensuel s'arrête à tout moment, sans justification. Il prend fin à la fin du mois en cours.",
-          "Les formules payées d'avance, au trimestre ou à l'année, ne sont pas remboursées après la première semaine.",
+          "Les formules payées d'avance, au trimestre ou à l'année, ne sont plus remboursées après la première semaine, sauf geste de la direction. Dans ce cas, les mois déjà suivis sont comptés au prix mensuel normal, sans la remise de la formule, et le reste est remboursé.",
           "Une inscription en cours de mois paie seulement les séances restantes du mois."
         ]
       },
@@ -12373,7 +12376,7 @@
         "blocs": [
           "Avant le renouvellement, vous recevez des rappels automatiques.",
           "Après la date de renouvellement, un court délai de grâce s'applique\u00a0: l'élève suit ses cours et l'impayé s'affiche chez le tuteur.",
-          "Si le paiement n'arrive toujours pas, l'accès aux séances est suspendu. La place est gardée quelque temps.",
+          "Si le paiement n'arrive toujours pas, l'accès aux séances et aux ressources est suspendu. L'espace reste ouvert pour voir le profil, l'historique et payer. La place est gardée quelque temps.",
           "Ensuite, la place est libérée pour la liste d'attente. Le retour reste possible sans frais, dans une nouvelle Classe.",
           "Les dates exactes sont celles de la politique tarifaire en vigueur (page Tarifs)."
         ]
@@ -12384,8 +12387,17 @@
           "Un élève qui atteint 18 ans passe à la formule adulte au renouvellement suivant. Le parent est prévenu à l'avance."
         ]
       },
+      "litige": {
+        "titre": "6. Contester un paiement auprès de sa banque",
+        "blocs": [
+          "Si vous contestez un paiement auprès de votre banque, le prestataire de paiement reprend l'argent à l'académie dès le début de l'examen. L'accès des élèves concernés est alors suspendu pendant l'examen.",
+          "Si la banque donne raison à l'académie, l'accès revient.",
+          "Si la banque vous donne raison, le paiement est traité comme un remboursement total. Les frais que le prestataire de paiement facture à l'académie pour la contestation sont ajoutés au solde de votre foyer.",
+          "Avant de contester, écrivez-nous\u00a0: une demande de remboursement auprès de l'académie ne coûte rien."
+        ]
+      },
       "s6": {
-        "titre": "6. Faire une demande",
+        "titre": "7. Faire une demande",
         "blocs": [
           "Pour arrêter ou demander un remboursement, écrivez-nous en donnant le nom du compte et la raison."
         ]
