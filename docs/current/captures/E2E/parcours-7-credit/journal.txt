@@ -1,0 +1,5 @@
+== Parcours 7, fin : paiement confirme, la famille le lit : 2026-11-02T08:47:36.105Z ; Chromium 141.0.7390.37 ; http://127.0.0.1:8090
+Notification : button:Le paiement est reçu. Le solde est à jour., le lundi 2 novembre 2026 à 09:46, Accès et paiements, Information
+Recharge : checkbox:Yanis11020548 Solde actuel : 6,88 $ ; flt-semantics:Recharge | button:Retour | h2:Recharge | flt-semantics:Cochez le profil, puis choisissez le montant. | group:Profil à recharger Récapitulatif par profil Moyen de paiement | h2:Profil à recharger
+E-mail : Le paiement est reçu
+== Parcours 7, fin : paiement confirme, la famille le lit : vert : paiement confirme : notification, solde et e-mail
