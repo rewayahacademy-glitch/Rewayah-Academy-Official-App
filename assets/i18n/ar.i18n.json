@@ -6346,6 +6346,7 @@
         "resume": "الطلبات المجمّعة من ⁨{debut}⁩ إلى ⁨{fin}⁩ من أصل ⁨{total}⁩"
       }
     },
+    "traitement": {"colonneDepuis": "منذ"},
     "planning": {
       "titre": "الجدول",
       "sousTitre": "حصص الأسبوع في جميع الفصول، يومًا بيوم.",
