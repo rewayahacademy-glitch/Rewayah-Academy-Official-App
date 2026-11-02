@@ -10,13 +10,16 @@
 /// (`/inscription/invitation?code=...`) au lieu de « Pour qui creez-vous ce
 /// compte ? ».
 ///
-/// Ce qui est garde : le fait qu'une invitation est en cours, et le code
-/// recopie s'il est connu. Le code n'est pas un secret de session : il ne sert
-/// qu'une fois, avec l'adresse a laquelle il a ete emis, et le serveur le
-/// verifie a nouveau (la verification de l'ecran ne sert qu'a l'affichage).
-/// La marque s'efface quand le profil est cree, quand la personne revient
-/// volontairement a « Pour qui creez-vous ce compte ? », et d'elle-meme apres
-/// [dureeInvitationEnCours].
+/// **Regle (pilote, 02/11/2026, choix a)** : le code d'invitation reste dans
+/// le navigateur au plus 2 jours ([dureeInvitationEnCours]), par
+/// `memoire_appareil` (le `localStorage`, rien de nouveau). On garde le code
+/// seulement, et l'heure de la marque : ni adresse, ni nom, ni role. Le
+/// serveur le reverifie a chaque usage (la verification de l'ecran ne sert
+/// qu'a l'affichage ; il ne sert qu'une fois, avec l'adresse a laquelle il a
+/// ete emis). Il s'efface a la creation du profil (`recapitulatif_etape`), au
+/// retour volontaire a « Pour qui creez-vous ce compte ? »
+/// (`invitation_candidat_page`), a la deconnexion (`inscription_page`) et de
+/// lui-meme apres 2 jours ; chaque effacement a son test.
 library;
 
 import 'dart:convert';

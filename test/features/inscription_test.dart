@@ -351,6 +351,19 @@ void main() {
       expect(find.text(t.inscription.usage.question), findsOneWidget);
     });
 
+    testWidgets('la creation du profil enseignant efface l\'invitation', (
+      WidgetTester tester,
+    ) async {
+      final (FauxServiceDossier dossier, _) = await _monter(
+        tester,
+        codeRetenu: 'ABCD-EFGH-JKMN',
+      );
+      retenirInvitationEnCours(code: 'ABCD-EFGH-JKMN');
+      await _enseignantJusquALaCreation(tester);
+      expect(dossier.profilsCrees.single.role, AppRole.teacher);
+      expect(lireInvitationEnCours(), isNull);
+    });
+
     testWidgets('« Se deconnecter » efface l\'invitation en cours', (
       WidgetTester tester,
     ) async {
