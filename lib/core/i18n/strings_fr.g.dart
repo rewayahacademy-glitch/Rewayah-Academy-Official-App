@@ -16752,6 +16752,12 @@ class Traductions$adulte$recharge$fr {
 	/// fr: 'Payer'
 	String get payerSeul => 'Payer';
 
+	/// fr: 'Remboursement et contestation : lire les conditions'
+	String get conditionsRemboursement => 'Remboursement et contestation : lire les conditions';
+
+	/// fr: 'Si vous contestez un paiement auprès de votre banque, les frais de la contestation sont ajoutés au solde de votre foyer.'
+	String get fraisContestation => 'Si vous contestez un paiement auprès de votre banque, les frais de la contestation sont ajoutés au solde de votre foyer.';
+
 	/// fr: 'Ajouter {prenom} à la recharge'
 	String ajouter({required Object prenom}) => 'Ajouter ${prenom} à la recharge';
 
@@ -20445,6 +20451,7 @@ class Traductions$juridique$annulation$fr {
 	late final Traductions$juridique$annulation$s3$fr s3 = Traductions$juridique$annulation$s3$fr.internal(_root);
 	late final Traductions$juridique$annulation$s4$fr s4 = Traductions$juridique$annulation$s4$fr.internal(_root);
 	late final Traductions$juridique$annulation$s5$fr s5 = Traductions$juridique$annulation$s5$fr.internal(_root);
+	late final Traductions$juridique$annulation$litige$fr litige = Traductions$juridique$annulation$litige$fr.internal(_root);
 	late final Traductions$juridique$annulation$s6$fr s6 = Traductions$juridique$annulation$s6$fr.internal(_root);
 }
 
@@ -34985,7 +34992,8 @@ class Traductions$juridique$conditions$s4$fr {
 		'Les prix figurent sur la page Tarifs et dans l\'application, au moment de choisir une formule. Ils sont en dollars américains et hors taxes. La taxe due selon votre pays est ajoutée au paiement.',
 		'L\'abonnement se renouvelle chaque mois. Les remises sont calculées par le système sur la facture du foyer.',
 		'Le paiement passe par un prestataire de paiement.',
-		'Il n\'y a pas d\'essai gratuit. La première semaine est remboursée si le cours ne convient pas.',
+		'Il n\'y a pas d\'essai gratuit. La première semaine est remboursée si le cours ne convient pas, sauf les séances déjà suivies.',
+		'Sans paiement, l\'élève n\'a plus accès aux séances ni aux ressources. Son espace reste ouvert pour voir son profil, son historique et payer.',
 		'Pour arrêter, être remboursé ou payer en retard, voir le texte Annulation et remboursement.',
 	];
 }
@@ -35051,7 +35059,7 @@ class Traductions$juridique$annulation$s1$fr {
 
 	List<String> get blocs => [
 		'Il n\'y a pas d\'essai gratuit. À la place, la première semaine est remboursée si le cours ne convient pas.',
-		'Vous pouvez arrêter pendant la première semaine qui suit la première séance, selon la politique tarifaire en vigueur (page Tarifs). Vous êtes alors remboursé en entier.',
+		'Vous pouvez arrêter pendant la première semaine qui suit la première séance, selon la politique tarifaire en vigueur (page Tarifs). Vous êtes alors remboursé de ce que vous avez payé, sauf les séances déjà suivies.',
 		'Après ce délai, le mois commencé est dû.',
 	];
 }
@@ -35069,7 +35077,7 @@ class Traductions$juridique$annulation$s2$fr {
 
 	List<String> get blocs => [
 		'L\'abonnement mensuel s\'arrête à tout moment, sans justification. Il prend fin à la fin du mois en cours.',
-		'Les formules payées d\'avance, au trimestre ou à l\'année, ne sont pas remboursées après la première semaine.',
+		'Les formules payées d\'avance, au trimestre ou à l\'année, ne sont plus remboursées après la première semaine, sauf geste de la direction. Dans ce cas, les mois déjà suivis sont comptés au prix mensuel normal, sans la remise de la formule, et le reste est remboursé.',
 		'Une inscription en cours de mois paie seulement les séances restantes du mois.',
 	];
 }
@@ -35106,7 +35114,7 @@ class Traductions$juridique$annulation$s4$fr {
 	List<String> get blocs => [
 		'Avant le renouvellement, vous recevez des rappels automatiques.',
 		'Après la date de renouvellement, un court délai de grâce s\'applique : l\'élève suit ses cours et l\'impayé s\'affiche chez le tuteur.',
-		'Si le paiement n\'arrive toujours pas, l\'accès aux séances est suspendu. La place est gardée quelque temps.',
+		'Si le paiement n\'arrive toujours pas, l\'accès aux séances et aux ressources est suspendu. L\'espace reste ouvert pour voir le profil, l\'historique et payer. La place est gardée quelque temps.',
 		'Ensuite, la place est libérée pour la liste d\'attente. Le retour reste possible sans frais, dans une nouvelle Classe.',
 		'Les dates exactes sont celles de la politique tarifaire en vigueur (page Tarifs).',
 	];
@@ -35128,6 +35136,25 @@ class Traductions$juridique$annulation$s5$fr {
 	];
 }
 
+// Path: juridique.annulation.litige
+class Traductions$juridique$annulation$litige$fr {
+	Traductions$juridique$annulation$litige$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '6. Contester un paiement auprès de sa banque'
+	String get titre => '6. Contester un paiement auprès de sa banque';
+
+	List<String> get blocs => [
+		'Si vous contestez un paiement auprès de votre banque, le prestataire de paiement reprend l\'argent à l\'académie dès le début de l\'examen. L\'accès des élèves concernés est alors suspendu pendant l\'examen.',
+		'Si la banque donne raison à l\'académie, l\'accès revient.',
+		'Si la banque vous donne raison, le paiement est traité comme un remboursement total. Les frais que le prestataire de paiement facture à l\'académie pour la contestation sont ajoutés au solde de votre foyer.',
+		'Avant de contester, écrivez-nous : une demande de remboursement auprès de l\'académie ne coûte rien.',
+	];
+}
+
 // Path: juridique.annulation.s6
 class Traductions$juridique$annulation$s6$fr {
 	Traductions$juridique$annulation$s6$fr.internal(this._root);
@@ -35136,8 +35163,8 @@ class Traductions$juridique$annulation$s6$fr {
 
 	// Translations
 
-	/// fr: '6. Faire une demande'
-	String get titre => '6. Faire une demande';
+	/// fr: '7. Faire une demande'
+	String get titre => '7. Faire une demande';
 
 	List<String> get blocs => [
 		'Pour arrêter ou demander un remboursement, écrivez-nous en donnant le nom du compte et la raison.',
@@ -49413,6 +49440,8 @@ extension on Traductions {
 			'adulte.recharge.moyen' => 'Moyen de paiement',
 			'adulte.recharge.raisonMontant' => 'Choisissez un montant pour chaque profil sélectionné.',
 			'adulte.recharge.payerSeul' => 'Payer',
+			'adulte.recharge.conditionsRemboursement' => 'Remboursement et contestation : lire les conditions',
+			'adulte.recharge.fraisContestation' => 'Si vous contestez un paiement auprès de votre banque, les frais de la contestation sont ajoutés au solde de votre foyer.',
 			'adulte.recharge.ajouter' => ({required Object prenom}) => 'Ajouter ${prenom} à la recharge',
 			'adulte.recharge.regularisationDe' => ({required Object prenom, required Object message}) => '${prenom} : ${message}',
 			'adulte.recharge.commandeRendue' => 'Le paiement est envoyé. Ne payez pas une seconde fois : suivez son état.',
@@ -49768,10 +49797,10 @@ extension on Traductions {
 			'motifs.cloreSurcharge.parErreur' => 'Règle posée par erreur',
 			'motifs.annulationEvaluation.absenceEleve' => 'Absence de l\'élève',
 			'motifs.annulationEvaluation.absenceEnseignant' => 'Absence de l\'enseignant',
-			'motifs.annulationEvaluation.pasPret' => 'Élève pas encore prêt',
-			'motifs.annulationEvaluation.report' => 'Report à une autre date',
 			_ => null,
 		} ?? switch (path) {
+			'motifs.annulationEvaluation.pasPret' => 'Élève pas encore prêt',
+			'motifs.annulationEvaluation.report' => 'Report à une autre date',
 			'motifs.annulationEvaluation.parErreur' => 'Évaluation planifiée par erreur',
 			'motifs.changementNiveau.reussie' => 'Évaluation réussie',
 			'motifs.changementNiveau.stable' => 'Unité acquise et stable',
@@ -50282,10 +50311,10 @@ extension on Traductions {
 			'com.messages.titre' => _root.com.socle.lexique.messagesMetier,
 			'com.messages.vide' => 'Aucune conversation pour le moment.',
 			'com.vocal.composer.libelle' => 'Message vocal',
-			'com.vocal.composer.enregistrer' => 'Enregistrer un message vocal',
-			'com.vocal.composer.indisponible' => 'Le message vocal n\'est pas encore disponible ici. Écrivez votre message dans le champ ci-dessus.',
 			_ => null,
 		} ?? switch (path) {
+			'com.vocal.composer.enregistrer' => 'Enregistrer un message vocal',
+			'com.vocal.composer.indisponible' => 'Le message vocal n\'est pas encore disponible ici. Écrivez votre message dans le champ ci-dessus.',
 			'com.vocal.composer.erreurVerificationTitre' => 'Impossible de vérifier le microphone.',
 			'com.vocal.composer.erreurVerificationAction' => 'Réessayer',
 			'com.vocal.composer.erreurDemarrage' => 'Impossible de démarrer l\'enregistrement. Vérifiez que le microphone n\'est pas utilisé par une autre application, puis réessayez.',
@@ -50796,10 +50825,10 @@ extension on Traductions {
 			'com.annonces.administration.moderation.motif' => ({required Object motif}) => 'Motif : ${motif}',
 			'com.annonces.administration.moderation.extraitTitre' => 'Contenu signalé',
 			'com.annonces.administration.moderation.extraitAbsent' => 'L\'extrait de ce contenu n\'est pas communiqué.',
-			'com.annonces.administration.moderation.regle' => 'Règle visée',
-			'com.annonces.administration.moderation.approuver' => 'Approuver après examen',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.administration.moderation.regle' => 'Règle visée',
+			'com.annonces.administration.moderation.approuver' => 'Approuver après examen',
 			'com.annonces.administration.moderation.masquer' => 'Masquer le contenu',
 			'com.annonces.administration.moderation.restaurer' => 'Restaurer le contenu',
 			'com.annonces.administration.moderation.rejeter' => 'Rejeter le signalement',
@@ -51310,10 +51339,10 @@ extension on Traductions {
 			'comptable.tresorerie.mouvementsTitre' => 'Mouvements entre coffres',
 			'comptable.tresorerie.mouvementsPhrase' => 'Vers une protection : selon votre délégation. Sortie d\'un coffre protégé : validation supplémentaire requise.',
 			'comptable.tresorerie.preparerMouvement' => 'Préparer un mouvement',
-			'comptable.tresorerie.retirer' => 'Retirer de la Réserve stratégique',
-			'comptable.tresorerie.retraitBloque' => ({required Object raison}) => 'Retrait de la Réserve stratégique : ${raison}.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.tresorerie.retirer' => 'Retirer de la Réserve stratégique',
+			'comptable.tresorerie.retraitBloque' => ({required Object raison}) => 'Retrait de la Réserve stratégique : ${raison}.',
 			'comptable.tresorerie.alimenterBloque' => ({required Object raison}) => 'Alimentation de la Réserve stratégique : ${raison}.',
 			'comptable.tresorerie.aucunMouvement' => 'Aucun mouvement entre coffres n\'est permis à votre compte par la politique.',
 			'comptable.tresorerie.mouvementsHorsLigne' => 'Les mouvements entre coffres reprendront dès que l\'envoi est de nouveau possible.',
@@ -51824,10 +51853,10 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.expirationInconnue' => 'Date d\'expiration non communiquée',
 			'comptable.direction.delegationPanneau.etatActive' => 'Active',
 			'comptable.direction.delegationPanneau.etatSuspendue' => 'Suspendue',
-			'comptable.direction.delegationPanneau.etatExpiree' => 'Expirée',
-			'comptable.direction.delegationPanneau.renouvelablePour' => ({required Object jours}) => 'Renouvelable pour ${jours} jours',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.direction.delegationPanneau.etatExpiree' => 'Expirée',
+			'comptable.direction.delegationPanneau.renouvelablePour' => ({required Object jours}) => 'Renouvelable pour ${jours} jours',
 			'comptable.direction.delegationPanneau.renouveler' => 'Renouveler la délégation',
 			'comptable.direction.delegationPanneau.renouvelee' => 'Délégation renouvelée.',
 			'comptable.direction.delegationPanneau.renouvelerEchec' => 'Le renouvellement n\'est pas confirmé : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Vérifiez la date d\'expiration avant de réessayer.',
@@ -52073,8 +52102,9 @@ extension on Traductions {
 			'juridique.conditions.s4.blocs.0' => 'Les prix figurent sur la page Tarifs et dans l\'application, au moment de choisir une formule. Ils sont en dollars américains et hors taxes. La taxe due selon votre pays est ajoutée au paiement.',
 			'juridique.conditions.s4.blocs.1' => 'L\'abonnement se renouvelle chaque mois. Les remises sont calculées par le système sur la facture du foyer.',
 			'juridique.conditions.s4.blocs.2' => 'Le paiement passe par un prestataire de paiement.',
-			'juridique.conditions.s4.blocs.3' => 'Il n\'y a pas d\'essai gratuit. La première semaine est remboursée si le cours ne convient pas.',
-			'juridique.conditions.s4.blocs.4' => 'Pour arrêter, être remboursé ou payer en retard, voir le texte Annulation et remboursement.',
+			'juridique.conditions.s4.blocs.3' => 'Il n\'y a pas d\'essai gratuit. La première semaine est remboursée si le cours ne convient pas, sauf les séances déjà suivies.',
+			'juridique.conditions.s4.blocs.4' => 'Sans paiement, l\'élève n\'a plus accès aux séances ni aux ressources. Son espace reste ouvert pour voir son profil, son historique et payer.',
+			'juridique.conditions.s4.blocs.5' => 'Pour arrêter, être remboursé ou payer en retard, voir le texte Annulation et remboursement.',
 			'juridique.conditions.s5.titre' => '5. Respect en séance',
 			'juridique.conditions.s5.blocs.0' => 'Chacun se comporte avec respect envers l\'enseignant et les autres élèves, par ses mots comme par ses gestes.',
 			'juridique.conditions.s6.titre' => '6. Vos informations',
@@ -52086,11 +52116,11 @@ extension on Traductions {
 			'juridique.annulation.intro' => 'Vous pouvez arrêter quand vous voulez. Voici ce qui est remboursé, ce qui ne l\'est pas, et ce qui se passe si un paiement n\'arrive pas.',
 			'juridique.annulation.s1.titre' => '1. Première semaine remboursée',
 			'juridique.annulation.s1.blocs.0' => 'Il n\'y a pas d\'essai gratuit. À la place, la première semaine est remboursée si le cours ne convient pas.',
-			'juridique.annulation.s1.blocs.1' => 'Vous pouvez arrêter pendant la première semaine qui suit la première séance, selon la politique tarifaire en vigueur (page Tarifs). Vous êtes alors remboursé en entier.',
+			'juridique.annulation.s1.blocs.1' => 'Vous pouvez arrêter pendant la première semaine qui suit la première séance, selon la politique tarifaire en vigueur (page Tarifs). Vous êtes alors remboursé de ce que vous avez payé, sauf les séances déjà suivies.',
 			'juridique.annulation.s1.blocs.2' => 'Après ce délai, le mois commencé est dû.',
 			'juridique.annulation.s2.titre' => '2. Arrêter l\'abonnement',
 			'juridique.annulation.s2.blocs.0' => 'L\'abonnement mensuel s\'arrête à tout moment, sans justification. Il prend fin à la fin du mois en cours.',
-			'juridique.annulation.s2.blocs.1' => 'Les formules payées d\'avance, au trimestre ou à l\'année, ne sont pas remboursées après la première semaine.',
+			'juridique.annulation.s2.blocs.1' => 'Les formules payées d\'avance, au trimestre ou à l\'année, ne sont plus remboursées après la première semaine, sauf geste de la direction. Dans ce cas, les mois déjà suivis sont comptés au prix mensuel normal, sans la remise de la formule, et le reste est remboursé.',
 			'juridique.annulation.s2.blocs.2' => 'Une inscription en cours de mois paie seulement les séances restantes du mois.',
 			'juridique.annulation.s3.titre' => '3. Absences et séances annulées',
 			'juridique.annulation.s3.blocs.0' => 'Une place manquée n\'est pas remboursée : elle est réservée pour l\'élève dans une Classe fixe.',
@@ -52099,12 +52129,17 @@ extension on Traductions {
 			'juridique.annulation.s4.titre' => '4. Paiement en retard',
 			'juridique.annulation.s4.blocs.0' => 'Avant le renouvellement, vous recevez des rappels automatiques.',
 			'juridique.annulation.s4.blocs.1' => 'Après la date de renouvellement, un court délai de grâce s\'applique : l\'élève suit ses cours et l\'impayé s\'affiche chez le tuteur.',
-			'juridique.annulation.s4.blocs.2' => 'Si le paiement n\'arrive toujours pas, l\'accès aux séances est suspendu. La place est gardée quelque temps.',
+			'juridique.annulation.s4.blocs.2' => 'Si le paiement n\'arrive toujours pas, l\'accès aux séances et aux ressources est suspendu. L\'espace reste ouvert pour voir le profil, l\'historique et payer. La place est gardée quelque temps.',
 			'juridique.annulation.s4.blocs.3' => 'Ensuite, la place est libérée pour la liste d\'attente. Le retour reste possible sans frais, dans une nouvelle Classe.',
 			'juridique.annulation.s4.blocs.4' => 'Les dates exactes sont celles de la politique tarifaire en vigueur (page Tarifs).',
 			'juridique.annulation.s5.titre' => '5. Passage à la formule adulte',
 			'juridique.annulation.s5.blocs.0' => 'Un élève qui atteint 18 ans passe à la formule adulte au renouvellement suivant. Le parent est prévenu à l\'avance.',
-			'juridique.annulation.s6.titre' => '6. Faire une demande',
+			'juridique.annulation.litige.titre' => '6. Contester un paiement auprès de sa banque',
+			'juridique.annulation.litige.blocs.0' => 'Si vous contestez un paiement auprès de votre banque, le prestataire de paiement reprend l\'argent à l\'académie dès le début de l\'examen. L\'accès des élèves concernés est alors suspendu pendant l\'examen.',
+			'juridique.annulation.litige.blocs.1' => 'Si la banque donne raison à l\'académie, l\'accès revient.',
+			'juridique.annulation.litige.blocs.2' => 'Si la banque vous donne raison, le paiement est traité comme un remboursement total. Les frais que le prestataire de paiement facture à l\'académie pour la contestation sont ajoutés au solde de votre foyer.',
+			'juridique.annulation.litige.blocs.3' => 'Avant de contester, écrivez-nous : une demande de remboursement auprès de l\'académie ne coûte rien.',
+			'juridique.annulation.s6.titre' => '7. Faire une demande',
 			'juridique.annulation.s6.blocs.0' => 'Pour arrêter ou demander un remboursement, écrivez-nous en donnant le nom du compte et la raison.',
 			'juridique.confidentialite.titre' => 'Confidentialité',
 			'juridique.confidentialite.resume' => 'Quelles informations nous gardons, pourquoi, et vos droits.',
@@ -52332,6 +52367,8 @@ extension on Traductions {
 			'avis.admin.liens.copier' => 'Copier le lien',
 			'avis.admin.liens.copie' => 'Lien copié.',
 			'avis.admin.liens.creeFermer' => 'J\'ai copié le lien',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.liens.etat.ouvert' => 'Ouvert',
 			'avis.admin.liens.etat.ferme' => 'Fermé',
 			'avis.admin.liens.etat.expire' => 'Expiré',
@@ -52340,8 +52377,6 @@ extension on Traductions {
 			'avis.admin.liens.fin' => ({required Object date}) => 'Fin le ${date}',
 			'avis.admin.liens.cree' => ({required Object date}) => 'Créé le ${date}',
 			'avis.admin.liens.fermer' => 'Fermer le lien',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.liens.fermerQuestion' => ({required Object nom}) => 'Fermer le lien « ${nom} » ?',
 			'avis.admin.liens.fermerConsequence' => 'Les personnes qui ouvriront ce lien verront qu\'il est fermé et ne pourront plus envoyer d\'avis. Les avis déjà reçus restent. Un lien fermé ne se rouvre pas.',
 			'avis.admin.liens.fermerAction' => 'Fermer le lien',
