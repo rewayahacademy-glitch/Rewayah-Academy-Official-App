@@ -1000,6 +1000,7 @@
       "prenomQuestion": "Comment s'appelle votre enfant ?",
       "prenomRaison": "Son prénom suffit. Vous pourrez inscrire d'autres enfants à la fin.",
       "ageQuestion": "Quel âge a {prenom} ?",
+      "ageMinimum": "L'âge minimum est de {min}\u00a0ans.",
       "ans": "{n} ans",
       "adulte": "18 ans ou plus",
       "adulteDetail": "À partir de 18 ans, chacun s'inscrit lui-même, avec « Je m'inscris pour moi ».",

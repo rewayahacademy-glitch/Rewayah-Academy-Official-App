@@ -19,6 +19,8 @@ import 'package:rewayah_academy/core/capacites/port_identite_titulaire.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/foyer/port_creation_profil_eleve.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/offres/offre_horaire.dart';
+import 'package:rewayah_academy/core/offres/service_offres.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
@@ -33,13 +35,14 @@ import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/appareils/ajouter_enfant_page.dart';
 import 'package:rewayah_academy/features/compte/donnees_compte.dart'
     show identiteTitulaireProvider;
-import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 import 'package:rewayah_academy/features/foyer/formulaire_profil_eleve.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
+import 'package:rewayah_academy/features/parcours_offres/parcours_offres_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show FunctionException;
 
 import '../../fixtures/tuteur/faux_creation_profil_eleve.dart';
 import '../../fixtures/tuteur/foyers.dart';
+import '../../parcours/faux_service_offres.dart';
 import '../../router/support_routeur.dart';
 import '../../support/annonces.dart';
 import '../../support/harnais.dart';
@@ -90,6 +93,7 @@ Future<GoRouter> _monter(
   List<Override> autres = const <Override>[],
   Size taille = const Size(390, 844),
   FausseSourceSession? source,
+  FauxServiceOffres? offres,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -101,6 +105,7 @@ Future<GoRouter> _monter(
         ...surchargesRouteur(
           source ?? FausseSourceSession(sessionActive(AppRole.guardian)),
           appairage: appairage,
+          offres: offres,
         ),
         horlogeFoyerProvider.overrideWithValue(() => DateTime(2026, 9, 24, 12)),
         ...autres,
@@ -196,13 +201,14 @@ void main() {
         await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
 
         // Un seul envoi, nettoye des espaces ; la relecture du foyer designe
-        // le profil cree et sa fiche s'ouvre.
+        // le profil cree et son Parcours s'ouvre (NIV1 : questions, puis
+        // horaires), plus sa fiche.
         expect(service.enfantsCrees, hasLength(1));
         expect(service.enfantsCrees.single.prenom, 'Nouvel eleve');
         expect(service.enfantsCrees.single.nom, 'Fictif');
         expect(service.enfantsCrees.single.age, 9);
-        expect(lieu(routeur), Routes.ficheElevePour('foyer-a-nouveau-1'));
-        expect(find.byType(FicheElevePage), findsOneWidget);
+        expect(lieu(routeur), Routes.parcoursPour('foyer-a-nouveau-1'));
+        expect(find.byType(ParcoursOffresPage), findsOneWidget);
         expect(tester.takeException(), isNull);
       },
     );
@@ -479,12 +485,51 @@ void main() {
       service.erreurAJeter = null;
       await _toucher(tester, find.text(t.foyer.ajout.incertaine.reessayer));
       expect(service.enfantsCrees, hasLength(1));
-      expect(lieu(routeur), Routes.ficheElevePour('foyer-a-nouveau-1'));
+      expect(lieu(routeur), Routes.parcoursPour('foyer-a-nouveau-1'));
     });
 
     testWidgets(
-      'reponse perdue mais profil ecrit : la relecture le retrouve, la fiche '
-      's ouvre',
+      'NIV1 : la liste des parcours lue avant la creation est relue, le '
+      'Parcours du profil cree le trouve',
+      (WidgetTester tester) async {
+        final FauxServiceOffres offres = FauxServiceOffres();
+        final GoRouter routeur = await _monter(
+          tester,
+          appairage: _AppairageCreant(),
+          offres: offres,
+        );
+        // La liste est lue (et gardee) avant la creation, sans le profil.
+        final ProviderContainer conteneur = ProviderScope.containerOf(
+          tester.element(find.byType(MaterialApp)),
+        );
+        expect(await conteneur.read(parcoursFoyerProvider.future), isEmpty);
+        offres.parcoursRendu = const <ParcoursApprenant>[
+          ParcoursApprenant(
+            eleveId: 'foyer-a-nouveau-1',
+            prenom: 'Nouvel eleve',
+            diagnostic: StatutDiagnostic.aPlanifier,
+            cohorteCode: 'enfant_8_10',
+          ),
+        ];
+        await _ouvrirAjout(tester);
+        await _choisirEnfantPuisSuivant(tester);
+        await _remplir(tester);
+        await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
+
+        expect(lieu(routeur), Routes.parcoursPour('foyer-a-nouveau-1'));
+        expect(find.text(t.parcours.introuvableTitre), findsNothing);
+        // L'age est connu (tranche posee par le serveur) : il n'est pas
+        // redemande.
+        expect(
+          find.text(t.parcours.ageQuestion(prenom: 'Nouvel eleve')),
+          findsNothing,
+        );
+      },
+    );
+
+    testWidgets(
+      'reponse perdue mais profil ecrit : la relecture le retrouve, son '
+      'Parcours s ouvre',
       (WidgetTester tester) async {
         final _AppairageCreant service = _AppairageCreant()
           ..jeterApresEcriture = Exception('coupure');
@@ -495,7 +540,7 @@ void main() {
         await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
 
         expect(find.text(t.foyer.ajout.incertaine.titre), findsNothing);
-        expect(lieu(routeur), Routes.ficheElevePour('foyer-a-nouveau-1'));
+        expect(lieu(routeur), Routes.parcoursPour('foyer-a-nouveau-1'));
       },
     );
 

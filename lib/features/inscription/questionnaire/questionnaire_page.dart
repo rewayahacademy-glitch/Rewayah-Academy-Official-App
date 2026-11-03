@@ -415,7 +415,8 @@ class _EcranQuestionState extends ConsumerState<_EcranQuestion> {
     ),
     SorteEtape.age => (
       t.inscription.questionnaire.ageQuestion(prenom: _prenomEnfant),
-      null,
+      // UX-032 : la regle se dit au moment du choix (K-58).
+      t.inscription.questionnaire.ageMinimum(min: ageMinimum),
     ),
     SorteEtape.genre => (
       t.inscription.questionnaire.genreQuestion(prenom: _prenomEnfant),
