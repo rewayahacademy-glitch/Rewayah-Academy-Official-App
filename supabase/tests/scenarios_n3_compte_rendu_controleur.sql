@@ -1,5 +1,5 @@
 -- N3, D3 (03/11/2026) : la mission du controleur et l'envoi de son compte
--- rendu (migration 20261105800000), sous `authenticated`.
+-- rendu (migration 20261107800000), sous `authenticated`.
 --   1. la mission rend ce que l'ecran affiche (Classe, prenom de
 --      l'enseignant, eleves attendus, etat de la seance) ;
 --   2. avant « Commencer le controle », aucun compte rendu ;

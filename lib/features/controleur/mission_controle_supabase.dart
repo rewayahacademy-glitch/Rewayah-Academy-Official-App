@@ -3,7 +3,7 @@
 //
 //   ma_mission_controle()            la mission actionnable (ou `{}`), avec ce
 //                                    que l'ecran « Controle » affiche
-//                                    (migration 20261105800000) ;
+//                                    (migration 20261107800000) ;
 //   demarrer_mission_controle(uuid)  la visite commence : mission `en_cours`,
 //                                    controleur inscrit dans la seance.
 //

@@ -1,5 +1,5 @@
 // N3, D3 (03/11/2026) : l'envoi du compte rendu du controleur, par
-// `controleur_envoyer_compte_rendu` (migration 20261105800000).
+// `controleur_envoyer_compte_rendu` (migration 20261107800000).
 //
 //   transmettreVisite : la visite part des la sortie de la salle, sans
 //                       reponse (decision C2 du 27/09/2026) ;

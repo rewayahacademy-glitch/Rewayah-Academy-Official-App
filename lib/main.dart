@@ -483,7 +483,7 @@ List<Override> _surchargesAppReelle() => <Override>[
     HistoriqueControleurSupabase(Supabase.instance.client),
   ),
   // N3, D3 : la mission du controleur et l'envoi de son compte rendu
-  // (migration 20261105800000).
+  // (migration 20261107800000).
   portMissionControleProvider.overrideWithValue(
     MissionControleSupabase(Supabase.instance.client),
   ),
