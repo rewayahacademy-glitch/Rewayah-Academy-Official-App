@@ -16,6 +16,13 @@ const Duration _delaiChargement = Duration(seconds: 20);
 
 Future<void>? _chargement;
 
+/// PAY-UX : charge Stripe.js en avance (ouverture de la recharge), sans
+/// attendre ni rien dire ; le formulaire le retrouvera deja la. Un echec se
+/// retente a l'ouverture du formulaire, qui le dit alors.
+void prechargerStripe() {
+  unawaited(_chargerStripe().then<void>((_) {}, onError: (Object _) {}));
+}
+
 /// Charge Stripe.js une seule fois ; un echec se retente au prochain appel.
 Future<void> _chargerStripe() {
   if (globalContext.has('Stripe')) return Future<void>.value();
@@ -77,6 +84,7 @@ class FormulaireStripe extends StatefulWidget {
     required this.titre,
     required this.phrase,
     required this.libelleRetour,
+    required this.rassurance,
     super.key,
   });
 
@@ -96,6 +104,10 @@ class FormulaireStripe extends StatefulWidget {
   final String titre;
   final String phrase;
   final String libelleRetour;
+
+  /// PAY-UX : la ligne sous le formulaire (le paiement est traite par
+  /// Stripe ; Rewayah ne voit ni ne garde le numero de carte), deja traduite.
+  final String rassurance;
 
   @override
   State<FormulaireStripe> createState() => _FormulaireStripeState();
@@ -118,7 +130,9 @@ class _FormulaireStripeState extends State<FormulaireStripe> {
       '#${(c.toARGB32() & 0xFFFFFF).toRadixString(16).padLeft(6, '0')}';
 
   Future<void> _ouvrir() async {
-    final ColorScheme couleurs = Theme.of(context).colorScheme;
+    // PAY-UX : le fond clair du formulaire, dans tous les themes ; le
+    // serveur a donne le meme fond au formulaire de Stripe (plus de cadre).
+    final ColorScheme couleurs = couleursFormulairePaiement();
     final bool droiteAGauche = Directionality.of(context) == TextDirection.rtl;
     final JSObject document = globalContext['document']! as JSObject;
     JSObject element(String balise, String style, [String? texte]) {
@@ -172,6 +186,12 @@ class _FormulaireStripeState extends State<FormulaireStripe> {
       widget.phrase,
     );
     final JSObject zone = element('div', 'min-height:320px;');
+    final JSObject rassurance = element(
+      'p',
+      'font-size:14px;line-height:1.5;margin:16px 0 0;'
+          'color:${_css(couleurs.onSurfaceVariant)};',
+      widget.rassurance,
+    )..['id'] = 'paiement-rassurance'.toJS;
     final JSObject retour = element(
       'button',
       'display:block;margin-block-start:24px;margin-inline-start:auto;'
@@ -187,7 +207,13 @@ class _FormulaireStripeState extends State<FormulaireStripe> {
         if (!_ferme) widget.onRevenir();
       }).toJS,
     );
-    for (final JSObject e in <JSObject>[titre, phrase, zone, retour]) {
+    for (final JSObject e in <JSObject>[
+      titre,
+      phrase,
+      zone,
+      rassurance,
+      retour,
+    ]) {
       colonne.callMethod<JSAny?>('appendChild'.toJS, e);
     }
     page.callMethod<JSAny?>('appendChild'.toJS, colonne);

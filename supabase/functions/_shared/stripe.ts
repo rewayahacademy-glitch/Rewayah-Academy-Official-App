@@ -90,6 +90,47 @@ export function verifierEvenement(
 export interface LignePaiement {
   prenom: string
   mineur: number
+  /// PAY-UX (migration 20261105900000) : la formule de la part (`libre`,
+  /// `mois`, `trimestriel`, `annuel`) et le mois de facturation
+  /// (AAAA-MM-01). Absents d'une base d'avant ce lot.
+  formule?: string
+  mois?: string
+}
+
+const MOIS_FR = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre',
+  'octobre', 'novembre', 'décembre']
+const MOIS_AR = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر',
+  'أكتوبر', 'نوفمبر', 'ديسمبر']
+
+/// PAY-UX (constat du directeur du 02/11/2026 : « Rewayah Academy · H ») : le
+/// nom d'une ligne chez Stripe dit seulement ce qu'on paie, jamais un
+/// prenom ; le montant est affiche par Stripe a cote. Le mois vient du
+/// serveur (`private.fac_mois_courant()`), jamais de l'horloge de la fonction.
+export function nomLigne(l: LignePaiement, langue = 'fr'): string {
+  const m = typeof l.mois === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(l.mois)
+    ? { an: l.mois.slice(0, 4), i: Number(l.mois.slice(5, 7)) - 1 }
+    : null
+  const ar = langue === 'ar'
+  switch (l.formule) {
+    case 'mois':
+      if (m && m.i >= 0 && m.i < 12) {
+        if (ar) return `رسوم شهر ${MOIS_AR[m.i]} ${m.an}`
+        const mois = MOIS_FR[m.i]
+        return `Mensualité ${/^[aeiouyâàéèêëîïôûù]/i.test(mois) ? 'd’' : 'de '}${mois} ${m.an}`
+      }
+      return ar ? 'رسوم الشهر' : 'Mensualité'
+    case 'trimestriel':
+      return ar ? 'ثلاثة أشهر مدفوعة مسبقًا' : 'Trois mois payés d’avance'
+    case 'annuel':
+      return ar ? 'سنة مدفوعة مسبقًا' : 'Une année payée d’avance'
+    default:
+      return ar ? 'رسوم الدروس' : 'Paiement des cours'
+  }
+}
+
+/// Une couleur de fond acceptee pour le formulaire (« #RRGGBB »), sinon `null`.
+export function couleurFond(v: unknown): string | null {
+  return typeof v === 'string' && /^#[0-9a-fA-F]{6}$/.test(v) ? v.toLowerCase() : null
 }
 
 /// Les parametres de la session Checkout : une ligne par profil, la
@@ -107,9 +148,14 @@ export function parametresSession(p: {
   devise: string
   lignes: LignePaiement[]
   retour: string
-  libelle: (prenom: string) => string
+  libelle: (ligne: LignePaiement) => string
   expireA: number
   integre?: boolean
+  /// PAY-UX : le fond de la page de l'application autour du formulaire ; le
+  /// formulaire integre prend le meme (`branding_settings.background_color`),
+  /// sans cadre d'une autre couleur. Le CSS de la page ne traverse pas
+  /// l'iframe de Stripe : seul ce reglage (ou celui du tableau de bord) agit.
+  fond?: string | null
 }): Stripe.Checkout.SessionCreateParams {
   const commun: Stripe.Checkout.SessionCreateParams = {
     mode: 'payment',
@@ -122,12 +168,19 @@ export function parametresSession(p: {
       price_data: {
         currency: p.devise.toLowerCase(),
         unit_amount: l.mineur,
-        product_data: { name: p.libelle(l.prenom) },
+        product_data: { name: p.libelle(l) },
       },
     })),
   }
   if (p.integre) {
-    return { ...commun, ui_mode: 'embedded_page', redirect_on_completion: 'if_required', return_url: p.retour }
+    const fond = couleurFond(p.fond)
+    return {
+      ...commun,
+      ui_mode: 'embedded_page',
+      redirect_on_completion: 'if_required',
+      return_url: p.retour,
+      branding_settings: { display_name: 'Rewayah Academy', ...(fond ? { background_color: fond } : {}) },
+    }
   }
   return { ...commun, success_url: p.retour, cancel_url: p.retour }
 }
@@ -192,4 +245,24 @@ export function retourAutorise(adresse: string, origines: string | undefined): b
   }
   const liste = (origines ?? '').split(',').map((o) => o.trim()).filter((o) => o.length > 0)
   return liste.some((o) => url.origin === o)
+}
+
+/// PAY-UX : ce qu'un nouveau depart fait d'une session integree deja notee
+/// sur la commande. `payee` : la session est `complete`, rien n'est expire ni
+/// cree. `remplacer` : la session etait ouverte et vient d'etre expiree chez
+/// Stripe, ou elle l'etait deja ; une nouvelle peut etre creee. Une
+/// expiration refusee leve l'erreur : l'appelant ne cree alors rien.
+export interface SessionsCheckout {
+  retrieve(id: string): Promise<{ status: string | null }>
+  expire(id: string): Promise<unknown>
+}
+
+export async function fermerAncienneSession(
+  sessions: SessionsCheckout,
+  sessionId: string,
+): Promise<'payee' | 'remplacer'> {
+  const session = await sessions.retrieve(sessionId)
+  if (session.status === 'complete') return 'payee'
+  if (session.status === 'open') await sessions.expire(sessionId)
+  return 'remplacer'
 }

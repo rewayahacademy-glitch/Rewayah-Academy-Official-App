@@ -8,6 +8,35 @@
 // Ni l'un ni l'autre n'est un secret du compte : la cle publiable est faite
 // pour le navigateur, et le secret client ne sert qu'a payer CETTE session.
 // Rien n'est conclu ici : seul le webhook signe credite (FI9).
+//
+// PAY-UX (constats du directeur du 02/11/2026) : la page du formulaire a
+// toujours le meme fond clair, quel que soit le theme, et le serveur donne ce
+// meme fond au formulaire de Stripe (`branding_settings.background_color`) :
+// plus de cadre d'une autre couleur autour du formulaire (le CSS de la page
+// ne traverse pas l'iframe de Stripe).
+
+import 'package:flutter/material.dart';
+
+import '../domain/enums.dart';
+import '../theme/app_theme.dart';
+
+/// Le fond de la page du formulaire de paiement : la surface du theme clair,
+/// dans tous les modes (le formulaire de Stripe a son propre fond, reglable
+/// seulement a la creation de la session).
+ColorScheme couleursFormulairePaiement() =>
+    AppTheme.pour(InterfaceMode.standard, Brightness.light).colorScheme;
+
+/// Ce fond en « #RRGGBB », tel que le serveur le pose sur la session.
+String fondFormulairePaiement() =>
+    '#${(couleursFormulairePaiement().surface.toARGB32() & 0xFFFFFF).toRadixString(16).padLeft(6, '0')}';
+
+/// Le serveur n'a pas pu fermer le formulaire ouvert avant ce nouveau depart
+/// (session deja payee a l'instant, ou prestataire injoignable) : aucune
+/// nouvelle session n'est ouverte, rien n'est paye deux fois.
+class PaiementPrecedentOuvert implements Exception {
+  /// Cree l'erreur.
+  const PaiementPrecedentOuvert();
+}
 
 /// Ce qu'il faut pour monter le formulaire de Stripe d'une commande.
 class FormulairePaiement {
@@ -34,4 +63,15 @@ abstract interface class SourceFormulairePaiement {
   /// Le formulaire de [commandeId] ne se montre plus (paiement termine dans
   /// le formulaire, ou abandon).
   void oublierFormulaire(String commandeId);
+
+  /// PAY-UX : vrai quand la source sait redemander un formulaire pour
+  /// [commandeId] (la demande de paiement de cette commande est connue).
+  bool peutRouvrir(String commandeId);
+
+  /// PAY-UX (constat du directeur du 02/11/2026 : revenir rouvrait l'ancien
+  /// formulaire, vide) : redemande au serveur un formulaire NEUF pour
+  /// [commandeId]. Le serveur ferme d'abord l'ancien (jamais un formulaire
+  /// deja paye) ; `null` quand il n'y a plus rien a payer. Leve
+  /// [PaiementPrecedentOuvert] quand l'ancien n'a pas pu etre ferme.
+  Future<FormulairePaiement?> rouvrirFormulaire(String commandeId);
 }

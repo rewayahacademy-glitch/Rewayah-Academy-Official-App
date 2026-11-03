@@ -1,0 +1,6 @@
+== UX-047 : la case qui manque est signalee sous elle : 2026-11-02T17:31:14.256Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+1440 : {"pasDePhraseGenerale":true,"suivantSignale":true,"focusSurLaCase":true,"phraseEnVue":true,"secondeCaseSignalee":true}
+390 : {"pasDePhraseGenerale":true,"suivantSignale":true,"focusSurLaCase":true,"phraseEnVue":true,"secondeCaseSignalee":true}
+1440_ar : {"pasDePhraseGenerale":true,"suivantSignale":true,"focusSurLaCase":true,"phraseEnVue":true,"secondeCaseSignalee":true}
+390_ar : {"pasDePhraseGenerale":true,"suivantSignale":true,"focusSurLaCase":true,"phraseEnVue":true,"secondeCaseSignalee":true}
+== UX-047 : la case qui manque est signalee sous elle : vert

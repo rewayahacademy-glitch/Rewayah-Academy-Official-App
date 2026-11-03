@@ -120,7 +120,10 @@ class _DiagnosticsPageEtat extends ConsumerState<DiagnosticsPage> {
         valeur: versionActive,
         squelette: const Skeleton.liste(lignes: 4),
         titreEchec: t.admin.diagnostics.erreur,
-        onReessayer: () => ref.invalidate(versionActiveProgrammeProvider),
+        // RECHARGE-1 (03/11/2026) : la source, sans nouvelle tentative
+        // automatique, garde son erreur ; invalider le seul derive la
+        // relisait telle quelle. La source relue, le derive suit.
+        onReessayer: () => ref.invalidate(versionsProgrammeProvider),
         vide: EmptyState(
           message: t.admin.diagnostics.aucunProgramme,
           invitation: t.admin.diagnostics.aucunProgrammeDetail,

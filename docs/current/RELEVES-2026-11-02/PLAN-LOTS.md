@@ -197,3 +197,48 @@ L'inventaire du 31/10 est périmé sur trois points, déjà branchés : la séan
 - D8. Les noms des trois salles (examen ; vérification et entretien ; prêts à enseigner) sont-ils validés ?
 - D9. Le tuteur peut-il observer une séance en direct (le code existe, il est coupé en production) ?
 - A3-bis : oui ou non (en attente).
+
+## 7. Ordre unique de la file (garde-cap et pilote, 03/11/2026, 00:51 UTC)
+
+Remplace tout ordre antérieur. Chaque agent libéré prend le premier lot de la liste dont la zone est libre.
+Numéros de migration : table des réservations du garde-cap (2026110510 à 2026110650).
+
+| # | Lot | Taille | Condition |
+|---|---|---|---|
+| 1 | TXT-1 : « Messages métier », « francais » brut, « État inconnu » (UX-001, 005, 012) | S | en cours |
+| 2 | RECHARGE-1 : écran « hors ligne » qui ne revient jamais, « Réessayer » sans effet ; morceaux différés d'une ancienne version ; inventaire de tous les « Réessayer » ; FN-013 rattaché (directeur, 03/11) | S/M | en cours, C1, `claude/recharge-1` |
+| 3 | SNT : séance non tenue à T+30, report et rattrapage (directeur, 03/11) | M | après la fusion d'A3-bis |
+| 4 | D1-bis : traiter un signalement (examiner, transmettre, clore) | M | |
+| 5 | D1-ter : la famille lit ce qui lui est transmis (carte dans la fiche de l'enfant, plus une notification) ; `concern_famille_v` n'est lue par aucun écran aujourd'hui. Emplacement « proposé » : l'Historique de la fiche de l'enfant (SM-51), modifiable ; jamais de résumé pour la sécurité d'un enfant | S/M | après D1-bis, zone foyer, à coordonner avec N2 |
+| 6 | N2 : foyer et élève adulte (E1, FA5, FA1-FA3), puis NIV1 (niveau demandé une fois, UX-032), même agent | M + M | |
+| 7 | ADM-UX (UX-006, 007, 014) | S | |
+| 8 | N3 : pause programmée, mission du contrôleur, photo de l'enseignant | M | |
+| 9 | CAHIER-UX (UX-028, 041 ; UX-029 vérifié d'abord en lecture) | S | |
+| 10 | N4 : Bibliothèque, coffre R2 de la pièce, publication des évaluations, interface standard, Interface guidée | L | r2-selftest lu avant |
+| 11 | FN-SERVEUR (FN-106 et 107 d'abord, puis FN-003, 019, 104) | M | |
+| 12 | Double vérification à la publication de la politique commerciale (aal2) | M | après REMB-14 |
+| 13 | A11Y-1 (UX-004, 010, 021, 027) | S/M | |
+| 14 | Captures des trois salles (noms côté candidat du 02/11) | S | |
+| 15 | SALLE-UX (UX-011, 033, 034, 038 à 040, 042, 043) | M | après O1 |
+| 16 | FOYER-UX (UX-009, 023, 024), plus le numéro de version en bas du Profil (directeur, 03/11, registre 08) | S/M | après N2 et NIV1 |
+| 17 | M1 : liste des doublons à supprimer, soumise au directeur | S | rien n'est supprimé sans son « oui » |
+| 18 | COURRIELS-UX (UX-026, FN-108) | M | après A3-bis et SNT |
+| 19 | Scénarios SQL rouges (FN-004, 005, 020, 021, bf1_finance_backend ; `scenarios_af_liste_blanche_volatiles.sql`, rouge sur main pour `accorder_tarif_particulier`, `ajouter_creneau_classe_admin`, `remboursement_confirmer`, `seance_a_rejoindre`, plus les 3 lignes de D1-bis) | M | |
+| 20 | V1 puis V2 : entretien et réunion dans `/salle`, sans les outils de cours | L + L | |
+| 21 | FN-DIVERS, un point par lot : FN-102, FN-101, FN-018, puis FN-111, FN-027 (FN-013 rattaché à RECHARGE-1) | S, puis M | |
+
+En cours hors de cette liste : O1 (secrets du directeur avant ouverture), PAY-UX puis REMB-14, A3-bis.
+CI : 4 lots de tests en parallèle, environ 15 minutes au lieu de 55, depuis main c4aee81c (PR 155, fusionnée par le directeur le 03/11 à 01:32 UTC) ; preuve du rouge en cours (PR 159, branche jetable, jamais fusionnée).
+Estimation : environ 14 jours-agent, soit 3 jours et demi à 4 agents ; avec la fusion une à une comme goulot, 4 à 5 jours.
+
+## 8. Règles de vitesse (garde-cap et pilote, 03/11/2026 ; directeur informé, sauf contre-ordre)
+
+- **4 agents.** Une hausse seulement si le débit de fusion mesuré sur 24 h dépasse la production des agents, et si aucun signal d'arrêt ne s'est allumé : dérapage confirmé, deux CI rouges de suite sur main, moins de lots fusionnés que lancés, code non branché ou module en double livré.
+- **Questions :** aucune question bloquante pour ce qui est réversible ; on cherche d'abord dans les décisions écrites (G12), sinon un réglage « proposé », modifiable par la direction. L'argent, la sécurité, les données personnelles et la loi : une seule question groupée au directeur.
+- **Tests :** l'agent lance les tests de son domaine et G3 ; la CI à 4 lots fait le reste. Exception : un lot qui touche `lib/core/`, le routeur ou les fournisseurs partagés lance la suite complète avant de pousser.
+- **Lots S** d'une même zone groupés en une seule PR.
+- **R3 :** deux captures du geste qui compte (téléphone, bureau), prises dans la vraie application ; le verdict du robot reste obligatoire.
+- **En-cours :** au plus une PR ouverte non fusionnée par agent.
+- **Fusion :** un lot sans texte nouveau passe dès qu'il est vert ; les lots avec texte passent un par un.
+- **À faire avant toute hausse :** `verifier_branchement` et la présence des captures R3 dans `ci.yml` (collage du directeur, page du pilote) ; lot outil `libelles_sources.json` sans conflit (S).
+- **Les 17 chantiers sans serveur** (finance du comptable, communauté, recherche, B3.3, salle 3, CAND-04, B2.4, etc.) commencent après la file du §7, pas en parallèle.

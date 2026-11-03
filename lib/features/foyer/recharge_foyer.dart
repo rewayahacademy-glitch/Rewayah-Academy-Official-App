@@ -55,7 +55,7 @@
 part of 'invitation_conjoint.dart';
 
 /// Ce que l'ecran dit apres une verification ou un paiement manques.
-enum _EchecRecharge { reseau, indisponible }
+enum _EchecRecharge { reseau, indisponible, precedentOuvert }
 
 /// La recharge du foyer, pour le titulaire seulement.
 class RechargeFoyerPage extends ConsumerStatefulWidget {
@@ -177,6 +177,9 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
   @override
   void initState() {
     super.initState();
+    // PAY-UX (lenteur constatee par le directeur, 02/11/2026) : Stripe.js se
+    // charge pendant que la famille choisit les montants, plus apres « Payer ».
+    prechargerStripe();
     _selection.addAll(widget.preselection);
     // Les beneficiaires deja lus : le recapitulatif de la selection
     // d'ouverture part une fois, de lui-meme. Sinon, leur lecture le
@@ -377,6 +380,8 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
           .payer(recapitulatifId: recapitulatif.id, cle: _cle);
     } on CapaciteIndisponible {
       echec = _EchecRecharge.indisponible;
+    } on PaiementPrecedentOuvert {
+      echec = _EchecRecharge.precedentOuvert;
     } on Object {
       echec = _EchecRecharge.reseau;
     }
@@ -970,7 +975,7 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
         : t.adulte.recharge.raisonMontant;
     final Widget? echecVerif = switch (_echecVerif) {
       // Une lecture manquee : rien n'a ete paye, les choix restent.
-      _EchecRecharge.reseau => EtatSysteme(
+      _EchecRecharge.reseau || _EchecRecharge.precedentOuvert => EtatSysteme(
         nature: NatureEtat.echecServeur,
         titre: t.adulte.recharge.verificationEchecTitre,
         phrase: t.adulte.recharge.verificationEchecPhrase,
@@ -991,6 +996,14 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
         nature: NatureEtat.echecServeur,
         titre: t.adulte.recharge.paiementEchecTitre,
         phrase: t.adulte.recharge.paiementEchecPhrase,
+      ),
+      // PAY-UX : le formulaire ouvert avant n'a pas pu etre ferme ; rien
+      // n'est paye deux fois, aucun nouveau formulaire ne s'ouvre.
+      (_EchecRecharge.precedentOuvert, _) => EtatSysteme(
+        key: const ValueKey<String>('recharge-precedent-ouvert'),
+        nature: NatureEtat.echecServeur,
+        titre: t.payUx.precedentOuvertTitre,
+        phrase: t.payUx.precedentOuvertPhrase,
       ),
       // L'etat honnete (F13) : aucun paiement, jamais « reussi ».
       (_EchecRecharge.indisponible, _) => EtatSysteme(
