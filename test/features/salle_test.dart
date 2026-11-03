@@ -1646,6 +1646,15 @@ void main() {
             t.a3bis.salle.remplacantEntreTitre,
             t.a3bis.salle.remplacantEntre,
           ),
+          // SNT (03/11/2026) : la seance n'a pas ete tenue, elle est reportee.
+          (
+            DetailRefusSalle(
+              motif: MotifServeurSalle.seanceReportee,
+              finUtc: finServeur,
+            ),
+            t.snt.salle.reporteeTitre,
+            t.snt.salle.reportee,
+          ),
         ]) {
       testWidgets('FN-025 : refus ${cas.$1.motif.name} : le motif et '
           'l heure du serveur', (WidgetTester tester) async {

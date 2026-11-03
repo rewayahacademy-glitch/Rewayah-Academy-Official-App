@@ -4312,6 +4312,11 @@ class _Impasse extends StatelessWidget {
         t.a3bis.salle.remplacantEntreTitre,
         t.a3bis.salle.remplacantEntre,
       ),
+      // SNT (03/11/2026) : la seance n'a pas ete tenue, elle est reportee.
+      MotifServeurSalle.seanceReportee => (
+        t.snt.salle.reporteeTitre,
+        t.snt.salle.reportee,
+      ),
       _ => (t.salle.refusAcces, t.salle.refusAccesDetail),
     };
   }

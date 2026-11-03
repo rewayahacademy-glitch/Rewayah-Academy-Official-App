@@ -42,6 +42,7 @@ Sources : les décisions du directeur (annexe 10 du dossier maître, spécificat
 | Le geste attendu, sur le badge d'une notification « À faire » (pilote, 02/11/2026) : Recharger · Prendre la séance · Répondre · Observer la classe · Traiter la contestation | « À lire » sur une ligne qui demande un geste ; deux signes (badge et « Non lue ») pour dire la même chose |
 | Nos prix, en toute transparence (répartition du paiement en pourcentages, jamais en montants ; 30/10/2026) | grille de coûts, détail des charges |
 | Messages (la page des conversations de chacun ; directeur, 31/10/2026, UX-001) | Messages métier, messages de l'académie quand « Messages » suffit |
+| Séance reportée · Nouvelle date à venir (aux familles, à l'élève, à l'enseignant) ; Fixer la nouvelle date (geste de la direction) : une séance où aucun enseignant n'a rejoint la salle à T+30 (directeur, 03/11/2026, lot SNT) | rattrapage, séance rattrapée, cours de rattrapage offert, séance remboursée ; « rattraper » reste à l'élève seul (§3) |
 | Présence pas encore connue (une présence que l'application n'a pas pu lire ; jamais une absence, invariant J3 ; TXT-1, 02/11/2026) | État inconnu |
 | Traiter le signalement · Examiner · Transmettre · Clore ; « Message pour la famille » (ce que la direction écrit et transmet) ; « Note de l'enseignant » (lue par la direction seulement) ; en arabe, « Clore » se dit « إغلاق البلاغ », jamais « إغلاق » seul, qui est « Fermer » (D1-bis, 03/11/2026) | résumé famille, détails internes, clôturer, archiver |
 

@@ -128,6 +128,11 @@ NotificationContenu contenuNotificationPour(
       quand == null
           ? evenements.seanceDeplacee
           : evenements.seanceDeplaceeQuand(quand: quand),
+    // SNT (03/11/2026) : aucun enseignant n'a rejoint la salle a temps.
+    'seance_reportee' =>
+      quand == null
+          ? t.snt.notifications.seanceReportee
+          : t.snt.notifications.seanceReporteeQuand(quand: quand),
     'enseignante_absente' =>
       quand == null
           ? evenements.enseignanteAbsente
