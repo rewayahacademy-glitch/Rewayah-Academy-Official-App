@@ -362,6 +362,91 @@ export async function objetExiste(
   throw new ErreurStockageR2('signature', domaine, 'verification impossible')
 }
 
+/// La tete d'un objet : au plus `longueur` octets, et le type de contenu signe.
+export interface EnteteObjet {
+  readonly octets: Uint8Array
+  readonly typeContenu: string | null
+}
+
+/// Lit AU PLUS les `longueur` premiers octets d'un objet (16 par defaut).
+///
+/// A la difference d'`objetExiste`, cette lecture fait transiter des octets
+/// par le serveur. C'est voulu et borne (decision de la direction du
+/// 03/11/2026, option a) : la confirmation d'une piece d'identite compare ces
+/// octets au type signe, puis les oublie. Ils ne sont ni conserves, ni
+/// journalises, ni renvoyes ; la valeur rendue ne sort pas de l'appelant.
+///
+/// La requete est un GET avec `Range: bytes=0-<longueur-1>`. Si R2 ignorait la
+/// plage et rendait l'objet entier, le flux est coupe des que `longueur`
+/// octets sont lus : le reste n'est jamais telecharge.
+///
+/// Rend `null` quand l'objet n'existe pas (404) ou qu'il est vide (416, plage
+/// impossible a satisfaire).
+export async function lireEnteteObjet(
+  domaine: DomaineStockage,
+  cle: string,
+  longueur = 16,
+  env?: LecteurEnvironnement,
+): Promise<EnteteObjet | null> {
+  if (!Number.isInteger(longueur) || longueur < 1 || longueur > 16) {
+    throw new ErreurStockageR2('validation', domaine, 'longueur de lecture hors bornes')
+  }
+  const { config, aws } = clientDe(domaine, env)
+  const url = urlObjet(config, cle)
+
+  let reponse: Response
+  try {
+    reponse = await aws.fetch(url.toString(), {
+      method: 'GET',
+      headers: { Range: `bytes=0-${longueur - 1}` },
+    })
+  } catch (e) {
+    console.error('lecture de tete d objet impossible', {
+      domaine,
+      classe: (e as Error)?.name ?? 'inconnue',
+    })
+    throw new ErreurStockageR2('signature', domaine, 'verification impossible')
+  }
+
+  if (reponse.status === 404 || reponse.status === 416) {
+    await reponse.body?.cancel()
+    return null
+  }
+  if (reponse.status !== 206 && reponse.status !== 200) {
+    await reponse.body?.cancel()
+    console.error('lecture de tete d objet : reponse inattendue', {
+      domaine,
+      statut: reponse.status,
+    })
+    throw new ErreurStockageR2('signature', domaine, 'verification impossible')
+  }
+
+  const octets = new Uint8Array(longueur)
+  let lus = 0
+  const lecteur = reponse.body?.getReader()
+  if (lecteur) {
+    try {
+      while (lus < longueur) {
+        const { done, value } = await lecteur.read()
+        if (done || !value) break
+        const pris = Math.min(value.length, longueur - lus)
+        octets.set(value.subarray(0, pris), lus)
+        lus += pris
+      }
+    } finally {
+      await lecteur.cancel().catch(() => {})
+    }
+  }
+
+  if (lus === 0) {
+    return null
+  }
+  return {
+    octets: octets.subarray(0, lus),
+    typeContenu: reponse.headers.get('content-type'),
+  }
+}
+
 // ============================================================
 // Observabilite
 // ============================================================
