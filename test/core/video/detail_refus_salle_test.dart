@@ -45,6 +45,12 @@ void main() {
           ?.motif,
       MotifServeurSalle.remplacantEntre,
     );
+    // SNT (03/11/2026) : la seance non tenue est reportee.
+    expect(
+      DetailRefusSalle.depuis(<String, dynamic>{'motif': 'seance_reportee'})
+          ?.motif,
+      MotifServeurSalle.seanceReportee,
+    );
   });
 
   test('le refus generique, ou une forme inattendue : aucun motif', () {

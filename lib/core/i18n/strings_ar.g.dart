@@ -103,6 +103,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$alertes$ar alertes = _Traductions$alertes$ar._(_root);
 	@override late final _Traductions$n1$ar n1 = _Traductions$n1$ar._(_root);
 	@override late final _Traductions$i1$ar i1 = _Traductions$i1$ar._(_root);
+	@override late final _Traductions$snt$ar snt = _Traductions$snt$ar._(_root);
 	@override late final _Traductions$a3bis$ar a3bis = _Traductions$a3bis$ar._(_root);
 	@override late final _Traductions$payUx$ar payUx = _Traductions$payUx$ar._(_root);
 }
@@ -1884,6 +1885,19 @@ class _Traductions$i1$ar extends Traductions$i1$fr {
 	@override late final _Traductions$i1$familles$ar familles = _Traductions$i1$familles$ar._(_root);
 	@override late final _Traductions$i1$import$ar import = _Traductions$i1$import$ar._(_root);
 	@override late final _Traductions$i1$lien$ar lien = _Traductions$i1$lien$ar._(_root);
+}
+
+// Path: snt
+class _Traductions$snt$ar extends Traductions$snt$fr {
+	_Traductions$snt$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$snt$regles$ar regles = _Traductions$snt$regles$ar._(_root);
+	@override late final _Traductions$snt$notifications$ar notifications = _Traductions$snt$notifications$ar._(_root);
+	@override late final _Traductions$snt$salle$ar salle = _Traductions$snt$salle$ar._(_root);
+	@override late final _Traductions$snt$planning$ar planning = _Traductions$snt$planning$ar._(_root);
 }
 
 // Path: a3bis
@@ -9284,6 +9298,76 @@ class _Traductions$i1$lien$ar extends Traductions$i1$lien$fr {
 	@override String get dejaServiTitre => 'استُعمل هذا الرابط من قبل أو انتهت صلاحيته';
 	@override String get dejaServiDetail => 'لا يصلح رابط تسجيل الدخول إلا مرة واحدة ولمدة قصيرة. اطلب رابطًا جديدًا: أدخل عنوان بريدك الإلكتروني في صفحة تسجيل الدخول.';
 	@override String get nouveauLien => 'الحصول على رابط جديد';
+}
+
+// Path: snt.regles
+class _Traductions$snt$regles$ar extends Traductions$snt$regles$fr {
+	_Traductions$snt$regles$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get nonTenue => 'حصة لم تُعقد';
+	@override String get nonTenueDetail => 'إذا لم ينضمّ أي معلم إلى القاعة عند هذه المدة، تؤجَّل الحصة: يُبلَّغ الفصل وتحدّد الإدارة الموعد الجديد في الجدول.';
+	@override String bornesNonTenue({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية.';
+	@override String bornesObjectif({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية. لتجاوز ⁨${max}⁩، مدّدوا أولًا مدة الحصة التي لم تُعقد.';
+}
+
+// Path: snt.notifications
+class _Traductions$snt$notifications$ar extends Traductions$snt$notifications$fr {
+	_Traductions$snt$notifications$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get seanceReportee => 'لم تُعقد إحدى الحصص: لقد أُجّلت. الموعد الجديد قريبًا.';
+	@override String seanceReporteeQuand({required Object quand}) => 'لم تُعقد حصة ⁨${quand}⁩: لقد أُجّلت. الموعد الجديد قريبًا.';
+}
+
+// Path: snt.salle
+class _Traductions$snt$salle$ar extends Traductions$snt$salle$fr {
+	_Traductions$snt$salle$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get reporteeTitre => 'حصة مؤجلة';
+	@override String get reportee => 'لم ينضمّ أي معلم إلى القاعة في الوقت: أُجّلت الحصة. الموعد الجديد قريبًا، وسيُبلَّغ به الفصل.';
+}
+
+// Path: snt.planning
+class _Traductions$snt$planning$ar extends Traductions$snt$planning$fr {
+	_Traductions$snt$planning$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get section => 'حصص مؤجلة';
+	@override String get intro => 'لم ينضمّ أي معلم إلى القاعة في الوقت. حدّدوا الموعد الجديد لكل حصة: ستُعقد مع معلم الفصل.';
+	@override String ligne({required Object classe}) => 'حصة مؤجلة للفصل ⁨${classe}⁩';
+	@override String ligneQuand({required Object quand}) => 'كانت مقرّرة ⁨${quand}⁩';
+	@override String get fixer => 'تحديد الموعد الجديد';
+	@override String get erreurLecture => 'تعذّرت قراءة الحصص المؤجلة: قد لا يكون الطلب قد وصل إلى أكاديمية الرواية. أعيدوا المحاولة بعد لحظة.';
+	@override String get feuilleTitre => 'تحديد الموعد الجديد';
+	@override String feuilleSeance({required Object classe, required Object quand}) => 'الفصل ⁨${classe}⁩، حصة كانت مقرّرة ⁨${quand}⁩';
+	@override String feuilleContexte({required Object enseignant, required Object minutes}) => 'تُعقد الحصة الجديدة مع ⁨${enseignant}⁩، معلم الفصل، ومدتها ⁨${minutes}⁩ د مثل الحصة المؤجلة. يُبلَّغ الفصل بالموعد الجديد.';
+	@override String feuilleContexteSansNom({required Object minutes}) => 'تُعقد الحصة الجديدة مع معلم الفصل ومدتها ⁨${minutes}⁩ د مثل الحصة المؤجلة. يُبلَّغ الفصل بالموعد الجديد.';
+	@override String get jour => 'يوم الحصة الجديدة';
+	@override String get heure => 'الساعة';
+	@override String get heureAppareil => 'بتوقيت هذا الجهاز.';
+	@override String quand({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩';
+	@override String get choixManquant => 'اختاروا يوم الحصة الجديدة وساعتها.';
+	@override String get confirmer => 'تحديد هذا الموعد';
+	@override String get horsLigne => 'لا يوجد اتصال: يُحدَّد الموعد حين يعود الاتصال بالجهاز.';
+	@override String fixee({required Object quand}) => 'حُدّد الموعد الجديد: ⁨${quand}⁩. أُبلغ الفصل.';
+	@override String get refusChevauchement => 'لم يُحدَّد الموعد: لدى المعلم حصة في هذا الوقت. اختاروا ساعة أو يومًا آخر.';
+	@override String refusChevauchementNomme({required Object classe, required Object quand}) => 'لم يُحدَّد الموعد: لدى المعلم حصة للفصل ⁨${classe}⁩ ⁨${quand}⁩. اختاروا ساعة أو يومًا آخر.';
+	@override String refusChevauchementDate({required Object quand}) => 'لم يُحدَّد الموعد: لدى المعلم حصة ⁨${quand}⁩. اختاروا ساعة أو يومًا آخر.';
+	@override String get refusDatePassee => 'لم يُحدَّد الموعد: هذا الوقت مضى. اختاروا يومًا وساعة قادمين.';
+	@override String get refusDejaFixee => 'الموعد الجديد لهذه الحصة محدّد من قبل، ربما من جهاز آخر. أغلقوا هذه النافذة: الحصة في الجدول.';
+	@override String get refusClasseClose => 'لم يُحدَّد الموعد: الفصل مغلق ولا يمكن جدولة أي حصة فيه.';
+	@override String get refusNonAutorisee => 'لم يُحدَّد الموعد: هذا الحساب لا يحدّد المواعيد. ادخلوا بحساب من الإدارة.';
+	@override String get erreur => 'لم يتأكد الموعد: قد لا يكون الطلب قد وصل إلى أكاديمية الرواية. أعيدوا المحاولة بعد لحظة.';
 }
 
 // Path: a3bis.salle
@@ -30017,6 +30101,40 @@ extension on TraductionsAr {
 			'i1.lien.dejaServiTitre' => 'استُعمل هذا الرابط من قبل أو انتهت صلاحيته',
 			'i1.lien.dejaServiDetail' => 'لا يصلح رابط تسجيل الدخول إلا مرة واحدة ولمدة قصيرة. اطلب رابطًا جديدًا: أدخل عنوان بريدك الإلكتروني في صفحة تسجيل الدخول.',
 			'i1.lien.nouveauLien' => 'الحصول على رابط جديد',
+			'snt.regles.nonTenue' => 'حصة لم تُعقد',
+			'snt.regles.nonTenueDetail' => 'إذا لم ينضمّ أي معلم إلى القاعة عند هذه المدة، تؤجَّل الحصة: يُبلَّغ الفصل وتحدّد الإدارة الموعد الجديد في الجدول.',
+			'snt.regles.bornesNonTenue' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية.',
+			'snt.regles.bornesObjectif' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية. لتجاوز ⁨${max}⁩، مدّدوا أولًا مدة الحصة التي لم تُعقد.',
+			'snt.notifications.seanceReportee' => 'لم تُعقد إحدى الحصص: لقد أُجّلت. الموعد الجديد قريبًا.',
+			'snt.notifications.seanceReporteeQuand' => ({required Object quand}) => 'لم تُعقد حصة ⁨${quand}⁩: لقد أُجّلت. الموعد الجديد قريبًا.',
+			'snt.salle.reporteeTitre' => 'حصة مؤجلة',
+			'snt.salle.reportee' => 'لم ينضمّ أي معلم إلى القاعة في الوقت: أُجّلت الحصة. الموعد الجديد قريبًا، وسيُبلَّغ به الفصل.',
+			'snt.planning.section' => 'حصص مؤجلة',
+			'snt.planning.intro' => 'لم ينضمّ أي معلم إلى القاعة في الوقت. حدّدوا الموعد الجديد لكل حصة: ستُعقد مع معلم الفصل.',
+			'snt.planning.ligne' => ({required Object classe}) => 'حصة مؤجلة للفصل ⁨${classe}⁩',
+			'snt.planning.ligneQuand' => ({required Object quand}) => 'كانت مقرّرة ⁨${quand}⁩',
+			'snt.planning.fixer' => 'تحديد الموعد الجديد',
+			'snt.planning.erreurLecture' => 'تعذّرت قراءة الحصص المؤجلة: قد لا يكون الطلب قد وصل إلى أكاديمية الرواية. أعيدوا المحاولة بعد لحظة.',
+			'snt.planning.feuilleTitre' => 'تحديد الموعد الجديد',
+			'snt.planning.feuilleSeance' => ({required Object classe, required Object quand}) => 'الفصل ⁨${classe}⁩، حصة كانت مقرّرة ⁨${quand}⁩',
+			'snt.planning.feuilleContexte' => ({required Object enseignant, required Object minutes}) => 'تُعقد الحصة الجديدة مع ⁨${enseignant}⁩، معلم الفصل، ومدتها ⁨${minutes}⁩ د مثل الحصة المؤجلة. يُبلَّغ الفصل بالموعد الجديد.',
+			'snt.planning.feuilleContexteSansNom' => ({required Object minutes}) => 'تُعقد الحصة الجديدة مع معلم الفصل ومدتها ⁨${minutes}⁩ د مثل الحصة المؤجلة. يُبلَّغ الفصل بالموعد الجديد.',
+			'snt.planning.jour' => 'يوم الحصة الجديدة',
+			'snt.planning.heure' => 'الساعة',
+			'snt.planning.heureAppareil' => 'بتوقيت هذا الجهاز.',
+			'snt.planning.quand' => ({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩',
+			'snt.planning.choixManquant' => 'اختاروا يوم الحصة الجديدة وساعتها.',
+			'snt.planning.confirmer' => 'تحديد هذا الموعد',
+			'snt.planning.horsLigne' => 'لا يوجد اتصال: يُحدَّد الموعد حين يعود الاتصال بالجهاز.',
+			'snt.planning.fixee' => ({required Object quand}) => 'حُدّد الموعد الجديد: ⁨${quand}⁩. أُبلغ الفصل.',
+			'snt.planning.refusChevauchement' => 'لم يُحدَّد الموعد: لدى المعلم حصة في هذا الوقت. اختاروا ساعة أو يومًا آخر.',
+			'snt.planning.refusChevauchementNomme' => ({required Object classe, required Object quand}) => 'لم يُحدَّد الموعد: لدى المعلم حصة للفصل ⁨${classe}⁩ ⁨${quand}⁩. اختاروا ساعة أو يومًا آخر.',
+			'snt.planning.refusChevauchementDate' => ({required Object quand}) => 'لم يُحدَّد الموعد: لدى المعلم حصة ⁨${quand}⁩. اختاروا ساعة أو يومًا آخر.',
+			'snt.planning.refusDatePassee' => 'لم يُحدَّد الموعد: هذا الوقت مضى. اختاروا يومًا وساعة قادمين.',
+			'snt.planning.refusDejaFixee' => 'الموعد الجديد لهذه الحصة محدّد من قبل، ربما من جهاز آخر. أغلقوا هذه النافذة: الحصة في الجدول.',
+			'snt.planning.refusClasseClose' => 'لم يُحدَّد الموعد: الفصل مغلق ولا يمكن جدولة أي حصة فيه.',
+			'snt.planning.refusNonAutorisee' => 'لم يُحدَّد الموعد: هذا الحساب لا يحدّد المواعيد. ادخلوا بحساب من الإدارة.',
+			'snt.planning.erreur' => 'لم يتأكد الموعد: قد لا يكون الطلب قد وصل إلى أكاديمية الرواية. أعيدوا المحاولة بعد لحظة.',
 			'a3bis.salle.titulaireEntreTitre' => 'وصل معلم الفصل',
 			'a3bis.salle.titulaireEntre' => 'دخل معلم الفصل القاعة أولًا: لم يعد الاستبدال ضروريًا. شكرًا لاستعدادكم.',
 			'a3bis.salle.remplacantEntreTitre' => 'أخذ بديل الفصل',

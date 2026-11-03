@@ -13269,6 +13269,50 @@
       "nouveauLien": "Recevoir un nouveau lien"
     }
   },
+  "snt": {
+    "regles": {
+      "nonTenue": "Séance non tenue",
+      "nonTenueDetail": "Si aucun enseignant n'a rejoint la salle à ce délai, la séance est reportée\u00a0: la classe est prévenue et la direction fixe la nouvelle date dans le planning.",
+      "bornesNonTenue": "Entre {min} et {max} après le début.",
+      "bornesObjectif": "Entre {min} et {max} après le début. Pour aller au-delà de {max}, allongez d'abord la séance non tenue."
+    },
+    "notifications": {
+      "seanceReportee": "Une séance n'a pas eu lieu\u00a0: elle est reportée. Nouvelle date à venir.",
+      "seanceReporteeQuand": "La séance du {quand} n'a pas eu lieu\u00a0: elle est reportée. Nouvelle date à venir."
+    },
+    "salle": {
+      "reporteeTitre": "Séance reportée",
+      "reportee": "Aucun enseignant n'a rejoint la salle à temps\u00a0: la séance est reportée. Nouvelle date à venir, la classe en sera prévenue."
+    },
+    "planning": {
+      "section": "Séances reportées",
+      "intro": "Aucun enseignant n'a rejoint la salle à temps. Fixez la nouvelle date de chaque séance\u00a0: elle se tiendra avec l'enseignant de la classe.",
+      "ligne": "Séance reportée de la classe {classe}",
+      "ligneQuand": "Prévue le {quand}",
+      "fixer": "Fixer la nouvelle date",
+      "erreurLecture": "Les séances reportées n'ont pas pu être lues\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "feuilleTitre": "Fixer la nouvelle date",
+      "feuilleSeance": "Classe {classe}, séance prévue le {quand}",
+      "feuilleContexte": "La nouvelle séance se tient avec {enseignant}, l'enseignant de la classe, et dure {minutes}\u00a0minutes, comme la séance reportée. La classe est prévenue de la nouvelle date.",
+      "feuilleContexteSansNom": "La nouvelle séance se tient avec l'enseignant de la classe et dure {minutes}\u00a0minutes, comme la séance reportée. La classe est prévenue de la nouvelle date.",
+      "jour": "Jour de la nouvelle séance",
+      "heure": "Heure",
+      "heureAppareil": "À l'heure de cet appareil.",
+      "quand": "{jour} à {heure}",
+      "choixManquant": "Choisissez le jour et l'heure de la nouvelle séance.",
+      "confirmer": "Fixer cette date",
+      "horsLigne": "Connexion absente\u00a0: la date sera fixée une fois l'appareil reconnecté.",
+      "fixee": "Nouvelle date fixée\u00a0: {quand}. La classe est prévenue.",
+      "refusChevauchement": "La date n'est pas fixée\u00a0: l'enseignant a déjà une séance à ce moment. Choisissez une autre heure ou un autre jour.",
+      "refusChevauchementNomme": "La date n'est pas fixée\u00a0: l'enseignant a déjà une séance de la classe {classe} le {quand}. Choisissez une autre heure ou un autre jour.",
+      "refusChevauchementDate": "La date n'est pas fixée\u00a0: l'enseignant a déjà une séance le {quand}. Choisissez une autre heure ou un autre jour.",
+      "refusDatePassee": "La date n'est pas fixée\u00a0: ce moment est déjà passé. Choisissez un jour et une heure à venir.",
+      "refusDejaFixee": "La nouvelle date de cette séance est déjà fixée, peut-être depuis un autre appareil. Fermez cette fenêtre\u00a0: la séance est dans le planning.",
+      "refusClasseClose": "La date n'est pas fixée\u00a0: la classe est close. Aucune séance ne peut plus y être prévue.",
+      "refusNonAutorisee": "La date n'est pas fixée\u00a0: ce compte ne peut pas fixer de date. Connectez-vous avec un compte de la direction.",
+      "erreur": "La date n'est pas confirmée\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant."
+    }
+  },
   "a3bis": {
     "salle": {
       "titulaireEntreTitre": "L'enseignant de la classe est arrivé",

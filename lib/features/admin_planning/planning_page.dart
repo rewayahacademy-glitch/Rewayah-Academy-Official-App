@@ -21,6 +21,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/port_planning_direction.dart';
 import '../../core/admin/port_remplacements_direction.dart';
+import '../../core/admin/port_seances_reportees.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/classes/nom_classe_distinct.dart';
 import '../../core/domain/enums.dart' show StatutSeance;
@@ -48,6 +49,7 @@ import 'feuille_reaffectation.dart';
 import 'feuille_remplacant.dart';
 import 'ligne_seance_direction.dart';
 import 'planning_libelles.dart';
+import 'section_seances_reportees.dart';
 
 /// L'ecran « Planning ».
 class PlanningPage extends ConsumerStatefulWidget {
@@ -75,7 +77,8 @@ class _PlanningPageEtat extends ConsumerState<PlanningPage> {
 
   void _relire() => ref
     ..invalidate(planningSemaineProvider)
-    ..invalidate(remplacementsSemaineProvider);
+    ..invalidate(remplacementsSemaineProvider)
+    ..invalidate(seancesReporteesProvider);
 
   @override
   Widget build(BuildContext context) {
@@ -96,6 +99,9 @@ class _PlanningPageEtat extends ConsumerState<PlanningPage> {
       sousTitre: l.sousTitre,
       child: ColonneCorps(
         children: <Widget>[
+          // SNT (03/11/2026) : les seances reportees, un geste attendu, en
+          // tete ; rien quand il n'y en a pas.
+          const SectionSeancesReportees(),
           BarrePrecedentSuivant(
             key: const ValueKey<String>('planning-navigation'),
             position: semaine,

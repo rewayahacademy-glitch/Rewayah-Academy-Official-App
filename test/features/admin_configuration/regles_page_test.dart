@@ -391,4 +391,62 @@ void main() {
       ]);
     });
   });
+
+  // SNT (03/11/2026) : la seance non tenue, reportee.
+  group('SNT : seance non tenue', () {
+    const Map<String, Object?> snt = <String, Object?>{
+      ..._a3,
+      'remplacement.alerte_direction_minutes': 3,
+      'remplacement.seance_tardive_minutes': 15,
+      'remplacement.seance_non_tenue_minutes': 30,
+    };
+
+    testWidgets('la ligne se montre avec sa valeur et ses bornes', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        _Config(_toutesLesCles(remplacement: snt)),
+        taille: const Size(1440, 2400),
+      );
+      expect(find.text(t.snt.regles.nonTenue), findsOneWidget);
+      expect(find.text(t.snt.regles.nonTenueDetail), findsOneWidget);
+      expect(clesRegles, contains(cleRemplacementSeanceNonTenue));
+      expect(
+        cleRemplacementSeanceNonTenue,
+        'remplacement.seance_non_tenue_minutes',
+      );
+    });
+
+    testWidgets('un serveur d avant SNT : la ligne ne se montre pas', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        _Config(_toutesLesCles()),
+        taille: const Size(1440, 2400),
+      );
+      expect(find.text(t.admin.regles.remplacementSection), findsOneWidget);
+      expect(find.text(t.snt.regles.nonTenue), findsNothing);
+    });
+
+    testWidgets('modifier la seance non tenue l ecrit sous sa cle', (
+      WidgetTester tester,
+    ) async {
+      final _Config config = _Config(_toutesLesCles(remplacement: snt));
+      await _monter(tester, config, taille: const Size(1440, 2400));
+      final Finder f = find.text(t.snt.regles.nonTenue);
+      await tester.ensureVisible(f);
+      await tester.pump();
+      await tester.tap(f);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(ChoixNombre.clePlus));
+      await tester.pump();
+      await tester.tap(find.text(t.admin.regles.envoyer));
+      await tester.pumpAndSettle();
+      expect(config.ecritures, <(String, Object)>[
+        ('remplacement.seance_non_tenue_minutes', 31),
+      ]);
+    });
+  });
 }
