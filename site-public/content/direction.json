@@ -303,6 +303,24 @@
       "image": "adulte-homme",
       "cote": "droite",
       "champ": "blanc"
+    },
+    "/fr/articles/choisir-un-cours-de-coran-en-ligne": {
+      "gabarit": "lecture",
+      "image": "petite-classe",
+      "cote": "droite",
+      "champ": "blanc"
+    },
+    "/fr/articles/enfant-fatigue-assiduite": {
+      "gabarit": "lecture",
+      "image": "gros-plan-famille",
+      "cote": "gauche",
+      "champ": "blanc"
+    },
+    "/fr/autres-chemins": {
+      "gabarit": "lecture",
+      "image": "halqa-cercle",
+      "cote": "droite",
+      "champ": "blanc"
     }
   }
 }

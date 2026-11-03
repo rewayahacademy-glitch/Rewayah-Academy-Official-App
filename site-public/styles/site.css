@@ -918,26 +918,27 @@ li, dd { text-wrap: wrap; }
    sont des calques de fond tamises, pour que le texte garde la priorite. Les calques vivent dans le contexte
    d'empilement du pied (isolation), ne recoivent jamais le pointeur, et la carte n'a ni nom ni frontiere
    (carte_monde.py). Les teintes sont celles des jetons du pied (--sur-pied, --sur-pied-doux). */
-.site-footer { background: var(--pied); color: var(--sur-pied); padding: var(--e-16) var(--marge) var(--e-8); position: relative; overflow: hidden; isolation: isolate; }
+.site-footer { background: var(--pied); color: var(--sur-pied); padding: var(--e-16) var(--marge) var(--e-8); position: relative; }
 /* Rideau : la page glisse et decouvre le pied de page, deja en place dessous. Aucun mouvement ajoute,
    seulement l'ordre des couches ; reserve aux ecrans ou le pied tient en entier. */
 @media (min-width: 840px) and (min-height: 820px) {
   .site-main { position: relative; z-index: 1; background: var(--fond); }
   .site-footer { position: sticky; bottom: 0; z-index: 0; }
 }
-.pied-carte { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none;
+.pied-calques { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.pied-carte { position: absolute; inset: 0; pointer-events: none;
   -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%);
   mask-image: linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%); }
 .pied-carte__points { position: absolute; left: 50%; top: 52%; translate: -50% -50%; width: max(104%, 1180px); aspect-ratio: 170 / 83; background: var(--sur-pied-doux); opacity: .26;
   -webkit-mask: url('carte-monde-points.svg') center / 100% 100% no-repeat; mask: url('carte-monde-points.svg') center / 100% 100% no-repeat; }
-.pied-symbole { position: absolute; z-index: -1; pointer-events: none; left: 38%; top: 50%; translate: -50% -50%; height: 150%; aspect-ratio: 743 / 734; background: var(--sur-pied); opacity: .05;
+.pied-symbole { position: absolute; pointer-events: none; left: 38%; top: 50%; translate: -50% -50%; height: 150%; aspect-ratio: 743 / 734; background: var(--sur-pied); opacity: .05;
   -webkit-mask: url('symbole-contour-white.svg') center / contain no-repeat; mask: url('symbole-contour-white.svg') center / contain no-repeat; }
 @media (max-width: 599px) {
   .pied-carte { -webkit-mask-image: linear-gradient(to bottom, transparent 0, transparent 34%, #000 66%, #000 84%, transparent 100%); mask-image: linear-gradient(to bottom, transparent 0, transparent 34%, #000 66%, #000 84%, transparent 100%); }
   .pied-carte__points { width: 190%; top: 72%; opacity: .26; }
   .pied-symbole { left: 50%; top: 62%; height: 100%; opacity: .045; }
 }
-@media print, (forced-colors: active) { .pied-carte, .pied-symbole { display: none; } }
+@media print, (forced-colors: active) { .pied-calques { display: none; } }
 .site-footer__inner { position: relative; z-index: 1; max-width: var(--contenu); margin-inline: auto; display: grid; gap: var(--e-6); font-size: var(--t-petit); }
 .site-footer .brand img { width: 180px; }
 .footer-identity { display: grid; gap: var(--e-4); align-content: start; justify-items: start; }
@@ -2600,19 +2601,31 @@ li, dd { text-wrap: wrap; }
 }
 
 
-/* === Jonctions douces entre les bandes de couleur (directeur, 03/11/2026) =====================================
-   Chaque bande pleine (prune, lavande, bande d'appel, pied de page) avait des bords francs : un violet qui s'arrete net sur un
-   fond sombre. Une seule regle pour toutes : la bande fond dans ce qui l'entoure, en haut et en bas, sur --jonction
-   de hauteur. Le fond de la bande va de transparent a sa couleur : dessous, on voit la page violette. Deux bandes qui se
-   suivent (lavande puis prune) passent donc par le violet de la page, au lieu d'un saut de 0,81 de luminance.
-   La zone fondue est toujours dans le padding de la bande (--jonction ne depasse jamais --respire) : aucun texte
-   n'est jamais pose sur une partie transparente. Aucune teinte nouvelle : #25113F et #EEE6FA sont deja celles des bandes. */
-:root { --jonction: clamp(48px, 7vw, 112px); }
-[data-ambiance="violet"] :is(.panneau, .fond--prune, .appel--sombre, .site-footer) { --bande-couleur: #25113F; }
-[data-ambiance="violet"] :is(.fond--lavande, .appel--centre) { --bande-couleur: #EEE6FA; }
-[data-ambiance="violet"] :is(.panneau, .fond--prune, .fond--lavande, .appel--centre, .appel--sombre, .site-footer) {
-  background: linear-gradient(to bottom, transparent 0, var(--bande-couleur) var(--jonction), var(--bande-couleur) calc(100% - var(--jonction)), transparent 100%); }
-/* Le pied de page n'a rien dessous : il fond seulement par le haut, et reste plein jusqu'en bas. */
-[data-ambiance="violet"] .site-footer { background: linear-gradient(to bottom, transparent 0, var(--bande-couleur) var(--jonction), var(--bande-couleur) 100%); }
-@media print { [data-ambiance="violet"] :is(.panneau, .fond--prune, .fond--lavande, .appel--centre, .appel--sombre, .site-footer) { background: var(--bande-couleur); } }
-
+/* === Jonctions entre les bandes de couleur, version 2 (directeur, 03/11/2026) ===================================
+   « Ca reste tres fort » : la premiere version fondait sur ~100 px. Ici la transition est tres large (200 a 400 px) et
+   adoucie en S (smoothstep : depart et arrivee sans cassure, la ou une rampe lineaire se voit comme une bande). Une seule regle.
+   - Bandes sombres (prune, panneau, pied de page) : un fondu EXTERIEUR, de transparent a leur couleur, pose DERRIERE le contenu
+     (z-index -1, la page n'est pas un contexte d'empilement) : il peut etre aussi large qu'on veut sans rien recouvrir ni ajouter
+     de vide ; le texte blanc voisin ne fait que gagner en contraste en s'approchant du sombre. Les fonds pleins voisins
+     (lavande) le recouvrent : un fond clair n'est jamais teinte.
+   - Bandes lavande (claires) : un fondu INTERIEUR, avec le padding qui va avec : un fondu clair derriere du texte blanc le
+     rendrait illisible. Deux bandes qui se suivent passent ainsi par le violet de la page.
+   Aucune teinte nouvelle (#25113F et #EEE6FA sont celles des bandes), aucun contenu sur une zone transparente. */
+:root { --jonction: clamp(200px, 26vw, 400px); --jonction-interne: clamp(120px, 14vw, 220px); }
+[data-ambiance="violet"] :is(.panneau, .fond--prune, .appel--sombre, .site-footer) {
+  position: relative; --bande-couleur: #25113F; --fondu: transparent 0%, color-mix(in srgb, var(--bande-couleur) 2.8%, transparent) 10%, color-mix(in srgb, var(--bande-couleur) 10.4%, transparent) 20%, color-mix(in srgb, var(--bande-couleur) 21.6%, transparent) 30%, color-mix(in srgb, var(--bande-couleur) 35.2%, transparent) 40%, color-mix(in srgb, var(--bande-couleur) 50%, transparent) 50%, color-mix(in srgb, var(--bande-couleur) 64.8%, transparent) 60%, color-mix(in srgb, var(--bande-couleur) 78.4%, transparent) 70%, color-mix(in srgb, var(--bande-couleur) 89.6%, transparent) 80%, color-mix(in srgb, var(--bande-couleur) 97.2%, transparent) 90%, var(--bande-couleur) 100%; }
+[data-ambiance="violet"] .site-footer { z-index: auto; }
+[data-ambiance="violet"] :is(.panneau, .fond--prune, .appel--sombre, .site-footer)::before,
+[data-ambiance="violet"] :is(.panneau, .fond--prune, .appel--sombre)::after {
+  content: ''; position: absolute; z-index: -1; left: 0; right: 0; height: var(--jonction); pointer-events: none; }
+[data-ambiance="violet"] :is(.panneau, .fond--prune, .appel--sombre, .site-footer)::before { bottom: 100%; background: linear-gradient(to bottom, var(--fondu)); }
+[data-ambiance="violet"] :is(.panneau, .fond--prune, .appel--sombre)::after { top: 100%; background: linear-gradient(to top, var(--fondu)); }
+[data-ambiance="violet"] :is(.fond--lavande, .appel--centre) {
+  --bande-couleur: #EEE6FA;
+  background: linear-gradient(to bottom, transparent 0, color-mix(in srgb, var(--bande-couleur) 2.8%, transparent) calc(var(--jonction-interne) * 0.1), color-mix(in srgb, var(--bande-couleur) 10.4%, transparent) calc(var(--jonction-interne) * 0.2), color-mix(in srgb, var(--bande-couleur) 21.6%, transparent) calc(var(--jonction-interne) * 0.3), color-mix(in srgb, var(--bande-couleur) 35.2%, transparent) calc(var(--jonction-interne) * 0.4), color-mix(in srgb, var(--bande-couleur) 50%, transparent) calc(var(--jonction-interne) * 0.5), color-mix(in srgb, var(--bande-couleur) 64.8%, transparent) calc(var(--jonction-interne) * 0.6), color-mix(in srgb, var(--bande-couleur) 78.4%, transparent) calc(var(--jonction-interne) * 0.7), color-mix(in srgb, var(--bande-couleur) 89.6%, transparent) calc(var(--jonction-interne) * 0.8), color-mix(in srgb, var(--bande-couleur) 97.2%, transparent) calc(var(--jonction-interne) * 0.9), var(--bande-couleur) var(--jonction-interne), var(--bande-couleur) calc(100% - var(--jonction-interne)), color-mix(in srgb, var(--bande-couleur) 97.2%, transparent) calc(100% - var(--jonction-interne) * 0.9), color-mix(in srgb, var(--bande-couleur) 89.6%, transparent) calc(100% - var(--jonction-interne) * 0.8), color-mix(in srgb, var(--bande-couleur) 78.4%, transparent) calc(100% - var(--jonction-interne) * 0.7), color-mix(in srgb, var(--bande-couleur) 64.8%, transparent) calc(100% - var(--jonction-interne) * 0.6), color-mix(in srgb, var(--bande-couleur) 50%, transparent) calc(100% - var(--jonction-interne) * 0.5), color-mix(in srgb, var(--bande-couleur) 35.2%, transparent) calc(100% - var(--jonction-interne) * 0.4), color-mix(in srgb, var(--bande-couleur) 21.6%, transparent) calc(100% - var(--jonction-interne) * 0.3), color-mix(in srgb, var(--bande-couleur) 10.4%, transparent) calc(100% - var(--jonction-interne) * 0.2), color-mix(in srgb, var(--bande-couleur) 2.8%, transparent) calc(100% - var(--jonction-interne) * 0.1), transparent 100%); }
+[data-ambiance="violet"] .fond--lavande { padding-top: max(0px, calc(var(--jonction-interne) - var(--respire))); padding-bottom: max(var(--respire), var(--jonction-interne)); }
+[data-ambiance="violet"] .appel--centre { padding-block: max(var(--respire), var(--jonction-interne)); }
+@media print {
+  [data-ambiance="violet"] :is(.panneau, .fond--prune, .appel--sombre, .site-footer)::before, [data-ambiance="violet"] :is(.panneau, .fond--prune, .appel--sombre)::after { display: none; }
+  [data-ambiance="violet"] :is(.fond--lavande, .appel--centre) { background: var(--bande-couleur); }
+}

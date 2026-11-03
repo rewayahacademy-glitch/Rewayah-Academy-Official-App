@@ -419,7 +419,10 @@ class ProductionSiteQA(unittest.TestCase):
     def test_pages_pretes_indexees_pages_vides_non(self) -> None:
         attendues = {r for r, p in self.pages.items() if p["status"] == "ready" and p.get("indexable", True)} - {"/fr/avis"}
         self.assertIn("/fr/tarifs", attendues)
-        self.assertNotIn("/fr/articles", attendues)
+        # /fr/articles etait hors de l'index tant qu'il annoncait « Aucun article » ; il y entre avec ses deux premiers articles.
+        self.assertIn("/fr/articles", attendues)
+        self.assertIn("/fr/articles/choisir-un-cours-de-coran-en-ligne", attendues)
+        self.assertIn("/fr/articles/enfant-fatigue-assiduite", attendues)
         for route in self.pages:
             with self.subTest(route=route):
                 parser = PageParser()

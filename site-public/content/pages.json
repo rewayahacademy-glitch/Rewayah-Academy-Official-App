@@ -571,16 +571,25 @@
     },
     "/fr/articles": {
       "title": "Conseils et articles | Rewayah Academy",
-      "description": "Articles pédagogiques et réponses pratiques publiés par Rewayah Academy.",
+      "description": "Articles pour les familles qui apprennent le Coran à distance : choisir un cours, tenir l’assiduité. Chaque article indique ses sources.",
       "h1": "Articles et repères pour apprendre",
       "intro": "Un article ne paraît ici qu’après sa relecture par l’académie.",
       "sections": [
         {
           "id": "catalogue",
-          "title": "Les articles à venir",
+          "title": "Les articles",
           "paragraphs": [
-            "Aucun article n’est encore publié.",
             "Chaque article indique ses sources."
+          ],
+          "links": [
+            {
+              "label": "Cours de Coran en ligne : comment choisir sans se tromper",
+              "href": "/fr/articles/choisir-un-cours-de-coran-en-ligne"
+            },
+            {
+              "label": "Mon enfant est fatigué : comment garder l’assiduité sans conflit",
+              "href": "/fr/articles/enfant-fatigue-assiduite"
+            }
           ]
         },
         {
@@ -601,6 +610,10 @@
             {
               "label": "Comment ça marche",
               "href": "/fr/comment-ca-marche"
+            },
+            {
+              "label": "Autres chemins pour apprendre le Coran",
+              "href": "/fr/autres-chemins"
             }
           ]
         }
@@ -609,7 +622,337 @@
         "label": "Consulter l'aide",
         "href": "/fr/aide"
       },
-      "indexable": false,
+      "indexable": true,
+      "status": "ready"
+    },
+    "/fr/articles/choisir-un-cours-de-coran-en-ligne": {
+      "title": "Cours de Coran en ligne : comment choisir | Rewayah Academy",
+      "description": "Le présentiel d’abord quand c’est possible. Sinon, voici les critères et les questions à poser avant d’inscrire votre enfant à un cours de Coran en ligne.",
+      "h1": "Cours de Coran en ligne : comment choisir sans se tromper",
+      "intro": "Vous cherchez un cours de Coran et rien ne convient près de chez vous : pas d’enseignant disponible, des horaires impossibles, une école trop loin. Voici comment choisir un cours en ligne avec sérieux, et ce qu’il faut demander avant de vous inscrire.",
+      "date": "2026-11-03",
+      "sections": [
+        {
+          "id": "pres-de-chez-vous",
+          "title": "Si vous le pouvez, commencez près de chez vous",
+          "paragraphs": [
+            "Rien ne remplace une salle, une mosquée, un enseignant que l’enfant croise et que la famille connaît. Si vous avez près de chez vous un bon enseignement du Coran, en présence, choisissez-le d’abord.",
+            "Un cours en ligne est une solution pour les familles pour qui ce n’est pas possible. Nous l’écrivons nous-mêmes parce que c’est vrai, et parce qu’une famille bien informée choisit mieux.",
+            "Les critères ci-dessous valent dans les deux cas : un enseignant dont on connaît le parcours, une classe stable, un suivi régulier."
+          ],
+          "links": [
+            {
+              "label": "Autres chemins pour apprendre le Coran",
+              "href": "/fr/autres-chemins"
+            }
+          ]
+        },
+        {
+          "id": "en-ligne",
+          "title": "Ce que permet un cours en ligne, et ce qu’il ne remplace pas",
+          "points": [
+            "Il permet d’apprendre sans déplacement, à un horaire fixe, avec un enseignant que l’on n’aurait pas trouvé près de chez soi.",
+            "Il permet au parent d’être dans la maison, présent sans être dans la classe.",
+            "Il ne remplace pas la vie d’une communauté : la mosquée, les amis, les fêtes. Gardez-la à côté, même si le cours est en ligne.",
+            "Il demande un coin calme, un appareil qui fonctionne et une connexion stable. Ces conditions sont simples, mais elles comptent."
+          ]
+        },
+        {
+          "id": "criteres",
+          "title": "Sept critères qui comptent vraiment",
+          "paragraphs": [
+            "Un bon cours se reconnaît à ce qu’il organise, pas à ce qu’il promet."
+          ],
+          "points": [
+            "**Un enseignant attitré.** La même personne à chaque séance : elle connaît les erreurs de l’élève et suit sa progression.",
+            "**Une petite classe stable.** Les mêmes élèves, une classe où chacun est entendu. Les élèves s’encouragent sans se comparer.",
+            "**Un horaire fixe, qui revient chaque semaine.** L’assiduité se construit sur un rituel.",
+            "**Un programme par étapes, avec des dates limites et des évaluations.** On sait où en est l’élève, et quand l’étape doit être terminée.",
+            "**Un suivi visible.** Ce qui a été fait en séance, et le travail à préparer avant le prochain cours.",
+            "**Un cadre de sécurité clair.** Le parent peut observer, les règles de conduite sont écrites, et l’on vous dit ce que devient l’image de votre enfant.",
+            "**Des conditions écrites : prix, paiement, annulation, remboursement.** Rien ne doit se découvrir après l’inscription."
+          ]
+        },
+        {
+          "id": "questions",
+          "title": "Les questions à poser avant de vous inscrire",
+          "paragraphs": [
+            "Posez-les par écrit. Une académie sérieuse y répond sans difficulté."
+          ],
+          "points": [
+            "Qui sera l’enseignant de mon enfant, et restera-t-il le même ?",
+            "Combien d’élèves dans la classe, et la classe change-t-elle en cours d’année ?",
+            "À quel horaire, et que se passe-t-il si l’enseignant est absent ?",
+            "Comment serai-je informé des progrès de mon enfant ?",
+            "Puis-je assister à une séance ?",
+            "Quel est le programme, étape par étape, et combien de temps prévoit-il ?",
+            "Quelles sont les conditions de paiement, d’annulation et de remboursement ?",
+            "Qui peut me répondre, et comment le joindre ?"
+          ]
+        },
+        {
+          "id": "alertes",
+          "title": "Les signaux qui doivent vous faire hésiter",
+          "points": [
+            "Une promesse de résultat rapide ou assuré : « votre enfant lira en un mois ».",
+            "Une pression pour payer tout de suite.",
+            "Des prix ou des conditions introuvables par écrit.",
+            "Un enseignant différent à chaque séance, ou des classes qui changent sans cesse.",
+            "Un titre ou une autorisation d’enseigner mis en avant, sans que l’on sache à quel parcours il se rattache. Demandez-le.",
+            "Personne de réel à qui parler."
+          ]
+        },
+        {
+          "id": "chez-rewayah",
+          "title": "Comment Rewayah répond à ces critères",
+          "paragraphs": [
+            "Rewayah Academy enseigne le Coran en ligne depuis le 1er mai 2024. Nous sommes une académie jeune, et nous préférons le dire.",
+            "Chaque élève suit trois séances par semaine, à heure fixe, avec le même enseignant, dans une petite classe. Le parent peut entrer dans la séance en observateur silencieux, deux minutes par séance, et reçoit chaque fin de semaine le compte rendu de l’enseignant dans l’application.",
+            "Les détails, les prix et les conditions sont publiés. Vous pouvez nous poser vos questions par écrit."
+          ],
+          "links": [
+            {
+              "label": "Les cours",
+              "href": "/fr/cours"
+            },
+            {
+              "label": "Les tarifs",
+              "href": "/fr/tarifs"
+            },
+            {
+              "label": "Les conditions",
+              "href": "/fr/legal/conditions"
+            },
+            {
+              "label": "Nous contacter",
+              "href": "/fr/contact"
+            }
+          ]
+        },
+        {
+          "id": "sources",
+          "title": "Sources",
+          "paragraphs": [
+            "Cet article ne cite aucune étude : il propose des critères de bon sens, à vérifier par vous-même. Les faits sur Rewayah viennent de nos pages Cours, Tarifs et Conditions, publiées sur ce site."
+          ]
+        }
+      ],
+      "cta": {
+        "label": "Découvrir les cours",
+        "href": "/fr/cours"
+      },
+      "indexable": true,
+      "status": "ready"
+    },
+    "/fr/articles/enfant-fatigue-assiduite": {
+      "title": "Enfant fatigué : l’assiduité au Coran | Rewayah Academy",
+      "description": "Séances régulières, préparation courte, parent présent sans corriger : des gestes simples pour aider votre enfant à tenir, avec fermeté et bienveillance.",
+      "h1": "Mon enfant est fatigué : comment garder l’assiduité sans conflit",
+      "intro": "Trois séances par semaine, après l’école, c’est exigeant. Un enfant fatigué n’est pas un enfant qui refuse. Voici comment l’aider à tenir, avec fermeté et avec bienveillance.",
+      "date": "2026-11-03",
+      "sections": [
+        {
+          "id": "distinguer",
+          "title": "Fatigue, ennui ou refus : distinguer avant d’agir",
+          "points": [
+            "**La fatigue.** Les yeux piquent, l’attention tombe en fin de séance, mais l’enfant veut y aller. Regardez le sommeil, le repas, le moment de la journée.",
+            "**L’ennui.** Il sait déjà, ou il ne comprend pas. Parlez-en à l’enseignant : le niveau est-il juste ?",
+            "**Le refus.** Il dit non avant d’essayer. Cherchez la cause : la peur de se tromper devant les autres, un conflit à la maison autour de la séance. Écoutez avant de répondre."
+          ],
+          "paragraphs": [
+            "Si la fatigue dure, dépasse l’apprentissage ou s’accompagne d’angoisse, parlez-en à un professionnel de santé. Aucune méthode ne remplace cet avis."
+          ]
+        },
+        {
+          "id": "regularite",
+          "title": "La régularité vaut mieux que la durée",
+          "paragraphs": [
+            "Les travaux sur l’apprentissage montrent, en général, que répartir son travail dans le temps aide à mieux retenir que le concentrer en une seule fois. Une préparation courte, souvent, vaut mieux qu’une longue préparation la veille de la séance.",
+            "Ces travaux placent aussi parmi les méthodes les plus utiles le fait de se tester sur ce que l’on vient d’apprendre. Demandez à votre enfant de vous réciter, sans regarder, ce qu’il sait déjà.",
+            "Ces études portent sur l’apprentissage en général, pas sur le Coran. Prenez-les comme une indication, pas comme une règle."
+          ]
+        },
+        {
+          "id": "gestes",
+          "title": "Cinq gestes qui aident",
+          "points": [
+            "**Un rituel.** Même moment, même place, même matériel. On ne négocie pas la séance : on ajuste la préparation.",
+            "**La veille.** Préparez ce qu’il faut et vérifiez la connexion avant l’heure, pour que la séance commence dans le calme.",
+            "**Une préparation courte.** Le travail à préparer avant le prochain cours, sans en rajouter. Mieux vaut peu, et chaque jour.",
+            "**Une écoute sans correction.** Votre rôle n’est pas d’être l’enseignant. Écoutez, encouragez, demandez-lui de vous réciter. Les corrections reviennent à l’enseignant.",
+            "**Une petite victoire, nommée.** Une sourate terminée, une étape validée, une lecture sans hésiter : dites-le, simplement."
+          ]
+        },
+        {
+          "id": "eviter",
+          "title": "Ce qu’il vaut mieux éviter",
+          "points": [
+            "Comparer votre enfant à ses frères, à ses sœurs ou aux autres élèves.",
+            "Utiliser le Coran comme une punition, ou menacer de le retirer.",
+            "Reprendre ses erreurs devant la classe ou devant l’enseignant.",
+            "Crier juste avant la séance : il arrive tendu, et la séance en souffre.",
+            "Laisser tout le travail à préparer pour la veille de la séance."
+          ]
+        },
+        {
+          "id": "en-parler",
+          "title": "Quand en parler à l’enseignant ou à la direction",
+          "paragraphs": [
+            "Parlez-en dès que la fatigue ou le refus dure plus de quelques semaines, ou dès que votre enfant dit qu’il a peur de la séance. Décrivez ce que vous observez, avec des faits, et demandez un point.",
+            "Chez Rewayah, vous pouvez écrire à l’assistance, qui vous répond par écrit."
+          ],
+          "links": [
+            {
+              "label": "L’aide et les questions fréquentes",
+              "href": "/fr/aide"
+            },
+            {
+              "label": "Nous contacter",
+              "href": "/fr/contact"
+            }
+          ]
+        },
+        {
+          "id": "sources",
+          "title": "Sources",
+          "paragraphs": [
+            "Ces références sont des travaux de recherche sur l’apprentissage en général. Ils ne portent pas sur le Coran."
+          ],
+          "links": [
+            {
+              "label": "Cepeda et coll., 2006 : Distributed practice in verbal recall tasks, Psychological Bulletin",
+              "href": "https://doi.org/10.1037/0033-2909.132.3.354"
+            },
+            {
+              "label": "Dunlosky et coll., 2013 : Improving students’ learning with effective learning techniques, Psychological Science in the Public Interest",
+              "href": "https://doi.org/10.1177/1529100612453266"
+            }
+          ]
+        }
+      ],
+      "cta": {
+        "label": "Découvrir les cours",
+        "href": "/fr/cours"
+      },
+      "indexable": true,
+      "status": "ready"
+    },
+    "/fr/autres-chemins": {
+      "title": "Autres chemins pour apprendre le Coran | Rewayah Academy",
+      "description": "Le présentiel d’abord quand c’est possible. D’autres sites à connaître, décrits d’après ce qu’ils disent d’eux-mêmes, sans classement ni contrepartie.",
+      "h1": "Autres chemins pour apprendre le Coran",
+      "intro": "Rewayah n’est pas le seul chemin, et ce n’est pas toujours le premier à choisir. Si un bon enseignement en présence existe près de chez vous, commencez par lui. Voici d’autres voies, décrites d’après ce que chaque site dit de lui-même.",
+      "sections": [
+        {
+          "id": "present-d-abord",
+          "title": "Le présentiel d’abord",
+          "paragraphs": [
+            "Une salle, une mosquée, un enseignant que l’on croise : rien ne remplace cela. Si cet enseignement existe près de chez vous et vous convient, choisissez-le.",
+            "Rewayah existe pour les familles pour qui ce n’est pas possible : loin d’une école coranique, ou sans enseignant disponible au bon horaire."
+          ],
+          "links": [
+            {
+              "label": "Cours de Coran en ligne : comment choisir sans se tromper",
+              "href": "/fr/articles/choisir-un-cours-de-coran-en-ligne"
+            }
+          ]
+        },
+        {
+          "id": "individuel",
+          "title": "Les cours individuels, en ligne",
+          "paragraphs": [
+            "Un enseignant pour un élève : le rythme s’adapte à l’élève. Les deux sites ci-dessous sont en arabe d’abord, avec des versions dans d’autres langues."
+          ],
+          "points": [
+            "**Noor Elbayan Academy.** Cours individuels en direct, pour tous les âges. Le site est en arabe, avec des versions en français et en anglais.",
+            "**Quran Web Learning.** Cours individuels de Coran et d’arabe, pour les enfants et les adultes, avec des enseignantes pour les programmes destinés aux femmes. Le site existe en arabe, en anglais, en français et en allemand."
+          ],
+          "links": [
+            {
+              "label": "noorelbayanacademy.com",
+              "href": "https://noorelbayanacademy.com"
+            },
+            {
+              "label": "quranweblearning.com",
+              "href": "https://quranweblearning.com"
+            }
+          ]
+        },
+        {
+          "id": "instituts-en-ligne",
+          "title": "Les instituts en ligne, en français",
+          "paragraphs": [
+            "Un programme, des enseignants qui parlent français, des cours en visioconférence."
+          ],
+          "points": [
+            "**Institut Al Rayhan.** Cours d’arabe et de Coran en ligne, en individuel ou en groupe, pour les hommes, les femmes et les enfants dès 6 ans.",
+            "**Institut As-Sahaba.** Cours de langue arabe et de Coran en visioconférence, en individuel, en binôme ou en groupe, avec des enseignants qui parlent français et arabe, pensés pour les non-arabophones."
+          ],
+          "links": [
+            {
+              "label": "institutalrayhan.com",
+              "href": "https://institutalrayhan.com"
+            },
+            {
+              "label": "institut-assahaba.com",
+              "href": "https://institut-assahaba.com"
+            }
+          ]
+        },
+        {
+          "id": "seul",
+          "title": "Pour travailler seul",
+          "paragraphs": [
+            "Des outils pour réviser ou mémoriser entre les séances, ou en complément d’un enseignement."
+          ],
+          "points": [
+            "**House of Quran.** Des outils en ligne pour la récitation mot à mot et la mémorisation, utilisables sans installation. L’interface existe en anglais, en arabe, en néerlandais et en français."
+          ],
+          "links": [
+            {
+              "label": "houseofquran.com",
+              "href": "https://houseofquran.com"
+            }
+          ]
+        },
+        {
+          "id": "notre-maniere",
+          "title": "Notre manière",
+          "paragraphs": [
+            "Une classe chez Rewayah, c’est un enseignant attitré, un horaire fixe et quelques élèves qui avancent ensemble. Ils s’encouragent sans se comparer. La récitation se reçoit de vive voix, de l’enseignant à l’élève : c’est le principe d’at-talaqqî.",
+            "Cette manière convient à beaucoup de familles, pas à toutes. Un cours individuel, un institut ou un outil à utiliser seul peut mieux répondre à votre situation. Posez vos questions avant de choisir."
+          ],
+          "links": [
+            {
+              "label": "Les cours de Rewayah",
+              "href": "/fr/cours"
+            },
+            {
+              "label": "Comment ça marche",
+              "href": "/fr/comment-ca-marche"
+            }
+          ]
+        },
+        {
+          "id": "comment-ecrit",
+          "title": "Comment cette page est écrite",
+          "paragraphs": [
+            "Chaque description reprend ce que le site dit de lui-même, consulté le 3 novembre 2026. Les sites sont rangés par format, puis par ordre alphabétique : aucun classement, aucun prix, aucune contrepartie. Nous ne demandons aucun lien en retour.",
+            "Une description est inexacte, ou un site a changé ? Écrivez-nous, nous corrigeons."
+          ],
+          "links": [
+            {
+              "label": "Nous contacter",
+              "href": "/fr/contact"
+            }
+          ]
+        }
+      ],
+      "cta": {
+        "label": "Découvrir les cours",
+        "href": "/fr/cours"
+      },
+      "indexable": true,
       "status": "ready"
     },
     "/fr/aide": {

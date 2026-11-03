@@ -191,6 +191,11 @@ def load_content() -> tuple[dict[str, dict], dict]:
         for section in page["sections"]:
             if not isinstance(section, dict) or not section.get("title"):
                 raise ValueError(f"Section without title: {route}")
+        if route.startswith("/fr/articles/"):
+            # Un article est date : le balisage et le plan du site disent quand il a ete publie (jamais une date inventee).
+            if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(page.get("date", ""))):
+                raise ValueError(f"Article without a publication date (AAAA-MM-JJ): {route}")
+            date.fromisoformat(page["date"])
         validate_link(page["cta"]["href"], pages)
         for section in page["sections"]:
             for link in section.get("links", []):
@@ -419,8 +424,16 @@ def masquer_courriels(page: str) -> str:
     return COURRIEL.sub(r'\1<span class="arobase"></span>\2\3', MAILTO.sub(lien, page))
 
 
+def texte_riche(value: str) -> str:
+    """texte_html, plus la mise en valeur « **debut de point.** » (balise strong), pour les listes que l'on parcourt vite
+    (les articles). Une paire non fermee est une erreur de contenu : le build s'arrete plutot que d'afficher des asterisques."""
+    if value.count("**") % 2:
+        raise ValueError(f"Mise en valeur ** non fermee : {value[:60]}")
+    return re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", texte_html(value), flags=re.S)
+
+
 def paragraphes(section: dict) -> str:
-    return "".join(f"<p>{texte_html(p)}</p>" for p in section.get("paragraphs", []))
+    return "".join(f"<p>{texte_riche(p)}</p>" for p in section.get("paragraphs", []))
 
 
 def points_liste(section: dict) -> str:
@@ -428,7 +441,7 @@ def points_liste(section: dict) -> str:
     if not points:
         return ""
     return ('<ul class="points">' + "".join(
-        f'<li><span class="puce" aria-hidden="true"></span><span>{texte_html(p)}</span></li>' for p in points) + "</ul>")
+        f'<li><span class="puce" aria-hidden="true"></span><span>{texte_riche(p)}</span></li>' for p in points) + "</ul>")
 
 
 def liens_section(section: dict) -> str:
@@ -1255,24 +1268,31 @@ def donnees_structurees(origin: str) -> str:
             + json.dumps(donnees, ensure_ascii=False).replace("</", "<\\/") + "</script>")
 
 
-def fil_ariane(route: str, page: dict, origin: str) -> str:
+def fil_ariane(route: str, page: dict, origin: str, image: str = "") -> str:
     """Fil d'Ariane (accueil, puis la page) pour les pages interieures : Google l'affiche sous le titre, surtout sur
-    telephone. Jamais sur /fr/avis : aucun balisage schema.org n'accompagne les avis (decision du 19/10/2026)."""
+    telephone. Jamais sur /fr/avis : aucun balisage schema.org n'accompagne les avis (decision du 19/10/2026).
+    Un article porte en plus son balisage Article : l'auteur est l'academie (aucun enseignant n'a approuve de signature),
+    la date est celle du fichier de contenu."""
     if route in ("/fr/", "/fr/avis"):
         return ""
     base = origin.rstrip("/")
     noms = {href: label for label, href in (*NAV, *FOOTER)}
     noms.update({"/fr/comment-ca-marche": "Comment ça marche", "/fr/academie": "L’académie", "/fr/aide": "Aide",
                  "/fr/recrutement": "Recrutement", "/fr/contact": "Contact"})
-    nom = noms.get(route) or page["h1"]
-    donnees = {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-            {"@type": "ListItem", "position": 1, "name": "Accueil", "item": base + "/fr/"},
-            {"@type": "ListItem", "position": 2, "name": nom, "item": base + route},
-        ],
-    }
+    article = route.startswith("/fr/articles/")
+    chemin = [("Accueil", base + "/fr/")] + ([("Articles", base + "/fr/articles")] if article else []) + [
+        (page["h1"] if article else noms.get(route) or page["h1"], base + route)]
+    fil = {"@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": i, "name": nom, "item": url} for i, (nom, url) in enumerate(chemin, 1)]}
+    if article:
+        organisation = {"@type": "Organization", "name": "Rewayah Academy", "url": base + "/fr/"}
+        donnees = {"@context": "https://schema.org", "@graph": [fil, {
+            "@type": "Article", "headline": page["h1"], "description": page["description"], "inLanguage": "fr",
+            "datePublished": page["date"], "dateModified": page["date"], "image": [image],
+            "mainEntityOfPage": {"@type": "WebPage", "@id": base + route},
+            "author": organisation, "publisher": organisation}]}
+    else:
+        donnees = {"@context": "https://schema.org", **fil}
     return ('<script type="application/ld+json">'
             + json.dumps(donnees, ensure_ascii=False).replace("</", "<\\/") + "</script>")
 
@@ -1371,18 +1391,19 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
     largeur_partage = image_largeurs(images, image_partage)[-1]
     source_partage = images["images"][image_partage]
     hauteur_partage = round(largeur_partage * source_partage["hauteur"] / source_partage["largeur"])
+    url_image_partage = origin.rstrip("/") + ASSETS + "/scene-" + image_partage + "-" + str(largeur_partage) + ".webp"
     meta_partage = (
         f'<meta property="og:type" content="website"><meta property="og:site_name" content="Rewayah Academy">'
         f'<meta property="og:locale" content="fr_FR"><meta property="og:title" content="{esc(page["title"])}">'
         f'<meta property="og:description" content="{esc(page["description"])}"><meta property="og:url" content="{esc(canonical)}">'
-        f'<meta property="og:image" content="{esc(origin.rstrip("/") + ASSETS + "/scene-" + image_partage + "-" + str(largeur_partage) + ".webp")}">'
+        f'<meta property="og:image" content="{esc(url_image_partage)}">'
         f'<meta property="og:image:type" content="image/webp">'
         f'<meta property="og:image:width" content="{largeur_partage}">'
         f'<meta property="og:image:height" content="{hauteur_partage}">'
         f'<meta property="og:image:alt" content="{esc(images["images"][image_partage]["alt"])}">'
         '<meta name="twitter:card" content="summary_large_image">'
     )
-    jsonld = donnees_structurees(origin) if route == "/fr/" else fil_ariane(route, page, origin)
+    jsonld = donnees_structurees(origin) if route == "/fr/" else fil_ariane(route, page, origin, url_image_partage)
     ambiance = direction.get("ambiance", "clair")
     if ambiance == "violet":
         tete_couleurs = ('<meta name="color-scheme" content="dark">\n'
@@ -1428,7 +1449,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
     {main}
   </main>
   {simulator}
-  <footer class="site-footer"><div class="pied-carte" aria-hidden="true"><span class="pied-carte__points"></span></div><span class="pied-symbole" aria-hidden="true"></span><div class="site-footer__inner">
+  <footer class="site-footer"><div class="pied-calques" aria-hidden="true"><div class="pied-carte"><span class="pied-carte__points"></span></div><span class="pied-symbole"></span></div><div class="site-footer__inner">
      <div class="footer-identity"><a class="brand" href="/fr/" aria-label="Rewayah Academy, accueil"><img src="{ASSETS}/logo-horizontal-white.svg" width="1027" height="287" alt=""></a><p class="pied-accroche">{esc(PIED_ACCROCHE)}</p></div>
     <details class="pied-volet pied-volet--liens" open><summary class="footer-title">Découvrir</summary><nav aria-label="Découvrir Rewayah"><ul>{discovery_links}</ul></nav></details>
     <details class="pied-volet pied-volet--legal" open><summary class="footer-title">Informations légales</summary><div class="pied-legal"><nav class="footer-legal" aria-label="Navigation légale"><ul>{footer_links}</ul></nav>
@@ -1491,10 +1512,11 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
     for route in pages:
         if not output_file(output, route).exists():
             raise AssertionError(f"Route was not built: {route}")
-    sitemap_urls = [origin.rstrip("/") + route for route, page in pages.items()
+    sitemap_urls = [(origin.rstrip("/") + route, page.get("date")) for route, page in pages.items()
                     if page_indexee(route, page, allow_indexing, avis)]
     sitemap = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + ''.join(
-        f'<url><loc>{esc(url)}</loc></url>' for url in sitemap_urls) + '</urlset>'
+        f'<url><loc>{esc(url)}</loc>' + (f'<lastmod>{esc(date_mise_a_jour)}</lastmod>' if date_mise_a_jour else '') + '</url>'
+        for url, date_mise_a_jour in sitemap_urls) + '</urlset>'
     (output / "sitemap.xml").write_text(sitemap, encoding="utf-8")
     (output / "robots.txt").write_text(
         f"User-agent: *\n{'Allow: /' if allow_indexing else 'Disallow: /'}\n"
