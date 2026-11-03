@@ -3749,6 +3749,7 @@ class Traductions$a3bis$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$a3bis$notifications$fr notifications = Traductions$a3bis$notifications$fr.internal(_root);
 	late final Traductions$a3bis$regles$fr regles = Traductions$a3bis$regles$fr.internal(_root);
 }
 
@@ -20958,6 +20959,24 @@ class Traductions$i1$lien$fr {
 
 	/// fr: 'Recevoir un nouveau lien'
 	String get nouveauLien => 'Recevoir un nouveau lien';
+}
+
+// Path: a3bis.notifications
+class Traductions$a3bis$notifications$fr {
+	Traductions$a3bis$notifications$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vous n'êtes pas encore dans la salle. Entrez vite : si un enseignant s'est proposé pour vous remplacer, vous perdez l'accès à la séance de ce jour.'
+	String get avertissement => 'Vous n\'êtes pas encore dans la salle. Entrez vite : si un enseignant s\'est proposé pour vous remplacer, vous perdez l\'accès à la séance de ce jour.';
+
+	/// fr: '(one) {Vous n'êtes pas encore dans la salle. Entrez dans la minute : passé ce délai, si un enseignant s'est proposé pour vous remplacer, vous perdez l'accès à la séance de ce jour.} (other) {Vous n'êtes pas encore dans la salle. Entrez dans les {minutes} minutes : passé ce délai, si un enseignant s'est proposé pour vous remplacer, vous perdez l'accès à la séance de ce jour.}'
+	String avertissementMinutes({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(minutes,
+		one: 'Vous n\'êtes pas encore dans la salle. Entrez dans la minute : passé ce délai, si un enseignant s\'est proposé pour vous remplacer, vous perdez l\'accès à la séance de ce jour.',
+		other: 'Vous n\'êtes pas encore dans la salle. Entrez dans les ${minutes} minutes : passé ce délai, si un enseignant s\'est proposé pour vous remplacer, vous perdez l\'accès à la séance de ce jour.',
+	);
 }
 
 // Path: a3bis.regles
@@ -53266,6 +53285,8 @@ extension on Traductions {
 			'i1.lien.dejaServiTitre' => 'Ce lien a déjà servi ou a expiré',
 			'i1.lien.dejaServiDetail' => 'Un lien de connexion ne sert qu\'une fois, et pour peu de temps. Demandez-en un nouveau : saisissez votre adresse e-mail sur la page de connexion.',
 			'i1.lien.nouveauLien' => 'Recevoir un nouveau lien',
+			'a3bis.notifications.avertissement' => 'Vous n\'êtes pas encore dans la salle. Entrez vite : si un enseignant s\'est proposé pour vous remplacer, vous perdez l\'accès à la séance de ce jour.',
+			'a3bis.notifications.avertissementMinutes' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(minutes, one: 'Vous n\'êtes pas encore dans la salle. Entrez dans la minute : passé ce délai, si un enseignant s\'est proposé pour vous remplacer, vous perdez l\'accès à la séance de ce jour.', other: 'Vous n\'êtes pas encore dans la salle. Entrez dans les ${minutes} minutes : passé ce délai, si un enseignant s\'est proposé pour vous remplacer, vous perdez l\'accès à la séance de ce jour.', ), 
 			'a3bis.regles.perteDetail' => 'Si un enseignant s\'est proposé, il remplace l\'enseignant, qui ne peut plus rejoindre la séance de ce jour, et les familles sont prévenues. Si personne ne s\'est proposé, l\'enseignant peut encore entrer : la séance reste ouverte au remplacement jusqu\'à sa fin.',
 			'a3bis.regles.alerteDirection' => 'Alerte de la direction',
 			'a3bis.regles.alerteDirectionDetail' => 'Si ni l\'enseignant ni un remplaçant n\'a rejoint la salle, la direction reçoit un e-mail, une seule fois par séance.',

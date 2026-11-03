@@ -111,7 +111,7 @@ const MODELES: Record<string, Fabrique> = {
   },
   // A3 (31/10/2026) : le titulaire n’est pas entré dans la salle.
   remplacement_avertissement: (d) => avis(d, 'لستم في القاعة بعد', 'لستم في القاعة بعد',
-    (typeof d.minutes === 'string' ? `ادخلوا خلال ${d.minutes} دقائق` : 'ادخلوا بسرعة') + ': وإلا فقدتم الوصول إلى حصة اليوم.',
+    (typeof d.minutes === 'string' ? `ادخلوا خلال ${d.minutes} دقائق` : 'ادخلوا بسرعة') + ': بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.',
     'عرض يومي', '/enseignant/journee'),
   remplacement_pre_alerte: (d) => avis(d, 'يجري التحضير لاستبدال', 'يجري التحضير لاستبدال',
     'أحد المعلمين لم يدخل قاعته بعد. أعلنوا استعدادكم في صفحة الاستبدالات.',

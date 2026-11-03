@@ -126,7 +126,7 @@ export const MODELES: Record<string, Fabrique> = {
   },
   // A3 (31/10/2026) : le titulaire n’est pas entré dans la salle.
   remplacement_avertissement: (d) => avis(d, 'Vous n’êtes pas encore dans la salle', 'Vous n’êtes pas encore dans la salle',
-    (typeof d.minutes === 'string' ? `Entrez dans les ${d.minutes} minutes` : 'Entrez vite') + ' : sans cela, vous perdez l’accès à la séance de ce jour.',
+    (typeof d.minutes === 'string' ? `Entrez dans les ${d.minutes} minutes` : 'Entrez vite') + ' : passé ce délai, si un enseignant s’est proposé pour vous remplacer, vous perdez l’accès à la séance de ce jour.',
     'Voir ma journée', '/enseignant/journee'),
   remplacement_pre_alerte: (d) => avis(d, 'Un remplacement se prépare', 'Un remplacement se prépare',
     'Un enseignant n’est pas encore dans sa salle. Déclarez-vous prêt dans Remplacements.',

@@ -82,7 +82,7 @@ const MODELES: Record<string, Fabrique> = {
   },
   // A3 (31/10/2026) : le titulaire n’est pas entré dans la salle.
   remplacement_avertissement: (d) => avis(d, 'Ainda não está na sala', 'Ainda não está na sala',
-    (typeof d.minutes === 'string' ? `Entre nos próximos ${d.minutes} minutos` : 'Entre o quanto antes') + ': caso contrário, perde o acesso à sessão de hoje.',
+    (typeof d.minutes === 'string' ? `Entre nos próximos ${d.minutes} minutos` : 'Entre o quanto antes') + ': depois desse prazo, se um professor se tiver oferecido para o substituir, perde o acesso à sessão de hoje.',
     'Ver o meu dia', '/enseignant/journee'),
   remplacement_pre_alerte: (d) => avis(d, 'Está a preparar-se uma substituição', 'Está a preparar-se uma substituição',
     'Um professor ainda não está na sua sala. Indique que está pronto em Substituições.',

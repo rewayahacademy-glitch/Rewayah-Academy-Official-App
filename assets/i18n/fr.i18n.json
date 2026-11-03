@@ -13171,6 +13171,13 @@
     }
   },
   "a3bis": {
+    "notifications": {
+      "avertissement": "Vous n'êtes pas encore dans la salle. Entrez vite\u00a0: si un enseignant s'est proposé pour vous remplacer, vous perdez l'accès à la séance de ce jour.",
+      "avertissementMinutes(param=minutes)": {
+        "one": "Vous n'êtes pas encore dans la salle. Entrez dans la minute\u00a0: passé ce délai, si un enseignant s'est proposé pour vous remplacer, vous perdez l'accès à la séance de ce jour.",
+        "other": "Vous n'êtes pas encore dans la salle. Entrez dans les {minutes} minutes\u00a0: passé ce délai, si un enseignant s'est proposé pour vous remplacer, vous perdez l'accès à la séance de ce jour."
+      }
+    },
     "regles": {
       "perteDetail": "Si un enseignant s'est proposé, il remplace l'enseignant, qui ne peut plus rejoindre la séance de ce jour, et les familles sont prévenues. Si personne ne s'est proposé, l'enseignant peut encore entrer\u00a0: la séance reste ouverte au remplacement jusqu'à sa fin.",
       "alerteDirection": "Alerte de la direction",
