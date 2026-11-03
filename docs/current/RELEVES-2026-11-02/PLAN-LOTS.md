@@ -425,3 +425,45 @@ Le directeur avait raison : l'essentiel existe, il manque la donnée ou le branc
   - dans la fiche enfant du tuteur (`fiche_eleve_page.dart:549-601`), une ligne « Supprimer ce profil » ;
   - la restauration se fait depuis Personnes > Suppressions.
 
+## 13. Fiche ANTI-ROBOT : un contrôle « je ne suis pas un robot » aux portes ouvertes (garde-cap, 03/11/2026 vers 20:00 UTC)
+
+Mot du directeur, 03/11 vers 19:55 : « Oui pour la sécurité ». C'est sa réponse à la proposition d'ajouter Cloudflare Turnstile et des plafonds d'envoi. Le contrôle était noté « ouvert, pour plus tard » dans `DECISION-DOMAINE-2026-10-23.md` §4. Il est décidé désormais.
+
+### Constat (lecture sur main e2a25bf45)
+
+- Le site et l'application sont des fichiers fixes chez Vercel. La protection contre la saturation est automatique, sur tous les plans. Aucune règle de pare-feu personnalisée n'est posée, et ce n'est pas nécessaire.
+- Le DNS est chez Cloudflare, sans le proxy : les enregistrements A pointent directement sur Vercel. On ne change rien.
+- Les portes ouvertes à un robot sont chez Supabase, appelé directement par le navigateur :
+  - la connexion par lien e-mail (`signInWithOtp`, qui crée aussi le compte) ;
+  - la connexion par mot de passe (`signInWithPassword`), dans `lib/core/auth/service_auth.dart:56-60`.
+  Un robot peut y créer des comptes et faire envoyer des e-mails en masse.
+- Déjà fermés :
+  - le formulaire d'avis, ouvert seulement par un lien de la direction (`DECISION-AVIS`) ;
+  - les webhooks signés (Stripe, LiveKit) ;
+  - les fonctions publiques en lecture seule (tarifs, langues).
+- Aucune politique de sécurité des contenus (CSP) dans `vercel.json` ni dans `web/index.html`. Le script de Turnstile se charge donc sans toucher à la zone du directeur.
+
+### ANTI-ROBOT (M, `lib/` + `web/index.html` + une migration de réglage ; numéro 20261109000000)
+
+- **Client :**
+  - le widget Turnstile en mode « géré », presque invisible, devant l'envoi du lien de connexion et la connexion par mot de passe ;
+  - le jeton passe à Supabase par `captchaToken` ;
+  - le script `challenges.cloudflare.com/turnstile` se charge dans `web/index.html`, par `dart:js_interop` et `dart:ui_web` du SDK, sans nouveau paquet (`pubspec.yaml` est gelé) ;
+  - les états chargement, erreur et hors ligne sont présents, avec des textes FR/AR passés par `mots-rewayah`. En cas d'échec : « La vérification n'a pas abouti. Réessayez. », sans jamais parler de robot à une famille.
+- **Rien en dur :**
+  - la clé publique du site est un réglage de la console, `securite.turnstile_cle_site`, lu sans compte par une fonction publique en lecture seule ;
+  - réglage vide = contrôle absent côté client. C'est ce qui permet de livrer le client AVANT d'activer le contrôle.
+  - La clé secrète ne va jamais dans le dépôt : le directeur la pose dans Supabase.
+- **Ordre obligatoire, sinon plus personne ne peut se connecter :**
+  1. fusion et déploiement du client, avec le réglage vide ;
+  2. le directeur crée le widget Turnstile dans Cloudflare (noms d'hôte `app.rewayahacademy.com` et `rewayahacademy.com`) ;
+  3. le directeur colle la clé publique dans la console, puis vérifie qu'il se connecte ;
+  4. le directeur colle la clé secrète dans Supabase (Authentication, protection contre les attaques) et active le captcha ;
+  5. le pilote vérifie une connexion réelle. En cas d'échec, désactiver le captcha dans Supabase rétablit tout à l'instant.
+  Le pilote fait une seule page pour ces gestes.
+- **Aperçus Vercel :** la clé de test publique de Cloudflare, qui passe toujours, puisque les aperçus visent la même base.
+- **Plafonds :** relevé des fonctions Edge qui envoient un e-mail ou écrivent sans compte. Chacune a un plafond par adresse et par heure, réglable dans la console. Celles qui n'en ont pas en reçoivent un. La liste va dans la PR.
+- **Données personnelles :** Cloudflare traite l'adresse IP et des signaux du navigateur. La phrase de la politique de confidentialité est proposée dans la PR, et le directeur la valide avant la mise en production. Pas de cookie de suivi publicitaire.
+- **Hors périmètre :** pare-feu personnalisé Vercel, proxy Cloudflare, plan payant.
+- **R3 :** la connexion par lien et la connexion par mot de passe à 390 et à 1440, avec le réglage vide (aucun widget) et avec la clé de test (widget présent).
+
