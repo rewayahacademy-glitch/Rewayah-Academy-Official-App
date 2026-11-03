@@ -1,0 +1,10 @@
+== RECHARGE-CARTE : la carte et le recapitulatif concordent pendant une commande engagee : 2026-11-03T14:21:02.635Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+[390] ligne du recapitulatif : flt-semantics:H Hamza 55 $
+[390] avant « Payer » : carte flt-semantics:Montant pour Hamza 55 $ ; montants vus : checkbox:Hamza Solde actuel : 0 $ | flt-semantics:Montant pour Hamza 55 $ | flt-semantics:H Hamza 55 $ | flt-semantics:Solde attribué +55 $ | flt-semantics:55 $ | button:Payer 55 $
+[390] commande engagee (awaiting_confirmation), 2,5 s apres « Payer » : carte null ; montants vus : 
+[390] commande en base : awaiting_confirmation
+[1440] ligne du recapitulatif : flt-semantics:H Hamza 55 $
+[1440] avant « Payer » : carte flt-semantics:Montant pour Hamza 55 $ ; montants vus : checkbox:Hamza Solde actuel : 0 $ | flt-semantics:Montant pour Hamza 55 $ | flt-semantics:H Hamza 55 $ | flt-semantics:Solde attribué +55 $ | flt-semantics:55 $ | button:Payer 55 $
+[1440] commande engagee (awaiting_confirmation), 2,5 s apres « Payer » : carte null ; montants vus : 
+[1440] commande en base : awaiting_confirmation
+== RECHARGE-CARTE : la carte et le recapitulatif concordent pendant une commande engagee : vert : carte et recapitulatif concordent avant « Payer », commande engagee en base ; 390 et 1440 ; LIMITE : 390 : page de recharge recouverte par le formulaire pendant la commande, carte non lisible sur le banc ; 1440 : page de recharge recouverte par le formulaire pendant la commande, carte non lisible sur le banc

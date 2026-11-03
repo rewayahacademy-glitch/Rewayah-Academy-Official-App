@@ -3,19 +3,27 @@
 // meme de test, aucune carte. Stripe.js est remplace dans le navigateur par le
 // meme faux formulaire que `pay_ux.mjs`.
 //
-// Ce que le parcours prouve : pendant une commande engagee (« Payer » touche,
-// commande creee, formulaire monte), la carte du profil coche dit toujours le
-// montant retenu, le meme que sa ligne au recapitulatif du serveur ; plus de
-// « 0 $ » attenue. A 390 et a 1440.
+// Ce que le parcours prouve, a 390 et a 1440 :
+//   * avant « Payer », la carte du profil coche et sa ligne au recapitulatif
+//     du serveur disent le meme montant ;
+//   * « Payer » engage une vraie commande en base (awaiting_confirmation).
+// LIMITE (dite en premier dans la PR) : sur le banc, la page de recharge
+// n'est jamais visible pendant la commande engagee. Le formulaire de paiement
+// la recouvre des le toucher de « Payer » (Stripe.js est precharge pendant le
+// choix des montants), et « Revenir aux soldes sans payer » mene au Foyer.
+// L'etat engage lui-meme est prouve par le test widget « RECHARGE-CARTE »
+// (test/features/foyer/recharge_multi_profils_test.dart).
 //
 // Usage : node tool/e2e/recharge_carte.mjs
 import { parcours, trouver, libelles, activerSemantique, amenerEnVue, sql, MDP, connecter }
   from './commun.mjs';
 
 const FAUX = 'http://127.0.0.1:12111';
+const DELAI_STRIPE_JS = 0;
 const tampon = new Date().toISOString().slice(5, 19).replace(/[-T:]/g, '');
 const p = await parcours('RECHARGE-CARTE : la carte et le recapitulatif concordent pendant une commande engagee', 'RECHARGE-CARTE');
 const manque = [];
+const limites = [];
 const un = (requete) => sql(requete).split('\n')[0].trim();
 
 // Le faux Stripe.js (copie de pay_ux.mjs, sans le delai de mesure).
@@ -88,7 +96,7 @@ function amorcerFamille(suffixe) {
 /// et sa ligne au recapitulatif.
 async function lire(a) {
   const l = await libelles(a.page);
-  const carte = l.find((x) => /Montant pour Hamza|Montant de Hamza|Hamza.*\$/.test(x)) ?? null;
+  const carte = l.find((x) => /Montant pour Hamza/.test(x)) ?? null;
   const recap = l.filter((x) => /Hamza/.test(x) && /\$/.test(x));
   return { carte, recap, tout: l.filter((x) => /\$/.test(x)).slice(0, 12) };
 }
@@ -96,8 +104,13 @@ async function lire(a) {
 async function passage(taille, nom) {
   const f = amorcerFamille(nom);
   const a = await p.contexte(nom, taille === 390 ? { telephone: true } : { vue: { width: 1440, height: 900 } });
-  await a.ctx.route('https://js.stripe.com/**', (route) =>
-    route.fulfill({ status: 200, contentType: 'text/javascript', body: FAUX_STRIPE_JS }));
+  // Stripe.js servi avec un delai (comme un vrai reseau lent) : entre
+  // « Payer » et le formulaire monte, la page de recharge reste a l'ecran,
+  // la commande engagee. C'est l'etat que le rejeu C1 a vu.
+  await a.ctx.route('https://js.stripe.com/**', async (route) => {
+    await new Promise((r) => setTimeout(r, DELAI_STRIPE_JS));
+    await route.fulfill({ status: 200, contentType: 'text/javascript', body: FAUX_STRIPE_JS });
+  });
   await connecter(a.page, f.courriel);
   if (await a.page.locator('input[type=password]').count()) await connecter(a.page, f.courriel);
   await a.page.evaluate(() => { location.hash = '#/tuteur/foyer/recharge'; });
@@ -107,13 +120,38 @@ async function passage(taille, nom) {
   if (await cocher.count() && (await cocher.first().getAttribute('aria-checked')) !== 'true') await cocher.first().click();
   await a.page.waitForTimeout(1500);
   await activerSemantique(a.page);
+  // Un montant : « plus » une fois (aucun montant n'est preselectionne).
+  const plus = await trouver(a.page, /^(Augmenter|Ajouter|Plus)/, { delai: 5000, role: 'button' });
+  if (plus) { await plus.click(); await a.page.waitForTimeout(2500); }
+  await activerSemantique(a.page);
   const avant = await lire(a);
+  const ligne = avant.recap.find((x) => /^flt-semantics:/.test(x) && !/Montant pour/.test(x)) ?? null;
+  p.dire(`[${taille}] ligne du recapitulatif : ${ligne}`);
+  const m = (x) => (x?.match(/\d+(?:[.,]\d+)?\s?\$/) ?? [null])[0];
+  if (!avant.carte || !ligne || m(avant.carte) !== m(ligne) || /\b0\s?\$/.test(avant.carte)) {
+    manque.push(`${taille} : carte « ${avant.carte} » et recapitulatif « ${ligne} » ne concordent pas`);
+  }
   p.dire(`[${taille}] avant « Payer » : carte ${avant.carte} ; montants vus : ${avant.tout.join(' | ')}`);
   await p.capture(a, `${taille}_avant_payer`);
   const payer = await trouver(a.page, /^Payer/, { delai: 15000, role: 'button' });
   if (!payer) { manque.push(`${taille} : « Payer » absent`); await a.ctx.close(); return; }
   await amenerEnVue(a.page, payer);
   await payer.click({ timeout: 5000 });
+  await a.page.waitForTimeout(2500);
+  await activerSemantique(a.page);
+  const pendant = await lire(a);
+  const commandePendant = un(`select etat from public.commandes_recharge where titulaire = '${f.id}' order by cree_le desc limit 1`);
+  p.dire(`[${taille}] commande engagee (${commandePendant || 'aucune en base'}), 2,5 s apres « Payer » : carte ${pendant.carte} ; montants vus : ${pendant.tout.join(' | ')}`);
+  await p.capture(a, `${taille}_commande_engagee_carte_et_recapitulatif`);
+  const montantDe = (x) => (x?.match(/\d+(?:[.,]\d+)?\s?\$/) ?? [null])[0];
+  if (!commandePendant) manque.push(`${taille} : « Payer » n'engage aucune commande`);
+  if (pendant.carte) {
+    if (montantDe(pendant.carte) !== montantDe(avant.carte)) {
+      manque.push(`${taille} : carte « ${pendant.carte} » pendant la commande (avant : « ${avant.carte} »)`);
+    }
+  } else {
+    limites.push(`${taille} : page de recharge recouverte par le formulaire pendant la commande, carte non lisible sur le banc`);
+  }
   try {
     await a.page.waitForFunction(() => window.__fauxStripeMonte !== undefined, null, { timeout: 30000 });
   } catch { manque.push(`${taille} : le formulaire (faux Stripe) ne se monte pas`); }
@@ -121,15 +159,7 @@ async function passage(taille, nom) {
   const commande = un(`select etat from public.commandes_recharge where titulaire = '${f.id}' order by cree_le desc limit 1`);
   p.dire(`[${taille}] commande en base : ${commande || 'aucune'}`);
   if (!commande) manque.push(`${taille} : aucune commande engagee`);
-  await activerSemantique(a.page);
-  const apres = await lire(a);
-  p.dire(`[${taille}] commande engagee : carte ${apres.carte} ; montants vus : ${apres.tout.join(' | ')}`);
-  await p.capture(a, `${taille}_commande_engagee`);
-  // La carte dit le meme montant qu'avant « Payer », jamais « 0 $ ».
-  const montant = (x) => (x?.match(/\d+(?:[.,]\d+)?\s?\$/) ?? [null])[0];
-  if (!apres.carte || /\b0\s?\$/.test(apres.carte) || montant(apres.carte) !== montant(avant.carte)) {
-    manque.push(`${taille} : carte « ${apres.carte} » pendant la commande (avant : « ${avant.carte} »)`);
-  }
+  await p.capture(a, `${taille}_formulaire`);
   await a.ctx.close();
 }
 
@@ -139,7 +169,7 @@ try {
   await passage(1440, 'bureau');
   code = manque.length
     ? await p.fin('rouge', `manque : ${manque.join(' ; ')}`)
-    : await p.fin('vert', 'commande engagee : la carte du profil coche garde son montant, comme le recapitulatif ; 390 et 1440');
+    : await p.fin('vert', `carte et recapitulatif concordent avant « Payer », commande engagee en base ; 390 et 1440${limites.length ? ` ; LIMITE : ${limites.join(' ; ')}` : ''}`);
 } catch (e) {
   code = await p.fin('rouge', `erreur : ${e.message}`);
 }

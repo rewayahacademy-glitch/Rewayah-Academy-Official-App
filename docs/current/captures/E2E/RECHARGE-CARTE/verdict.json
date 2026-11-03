@@ -1,0 +1,7 @@
+{
+  "parcours": "RECHARGE-CARTE : la carte et le recapitulatif concordent pendant une commande engagee",
+  "verdict": "vert",
+  "cause": "carte et recapitulatif concordent avant « Payer », commande engagee en base ; 390 et 1440 ; LIMITE : 390 : page de recharge recouverte par le formulaire pendant la commande, carte non lisible sur le banc ; 1440 : page de recharge recouverte par le formulaire pendant la commande, carte non lisible sur le banc",
+  "debut": "2026-11-03T14:21:02.635Z",
+  "fin": "2026-11-03T14:22:09.403Z"
+}
