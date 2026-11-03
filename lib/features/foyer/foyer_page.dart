@@ -35,6 +35,7 @@ import '../../core/widgets/skeleton.dart';
 import '../compte/compte_tuteur_page.dart' show CarteIdentiteCompte;
 import '../compte/donnees_compte.dart' show identiteTitulaireProvider;
 import 'finances_foyer.dart';
+import 'foyer_second_adulte.dart';
 import 'ligne_membre.dart';
 import 'photo_eleve.dart';
 import 'place_adulte.dart';
@@ -302,6 +303,9 @@ class FoyerPage extends ConsumerWidget {
           ),
           Ecart.vSection,
         ],
+        // N2 (FA1, FA3) : inviter (titulaire) ou demander la reprise (second
+        // adulte), selon `mon_role_foyer()`.
+        LignesSecondAdulte(aller: aller),
         KeyedSubtree(
           key: appareilsKey,
           child: GroupeReglages(
@@ -367,6 +371,8 @@ class FoyerPage extends ConsumerWidget {
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
+                // N2 : ce qui attend une reponse, en tete (alerte d'abord).
+                AlertesSecondAdulte(aller: aller),
                 membres,
                 Ecart.vSection,
                 _RangeeBureau(
@@ -379,7 +385,13 @@ class FoyerPage extends ConsumerWidget {
             )
           : Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[membres, Ecart.vSection, annexes],
+              children: <Widget>[
+                // N2 : ce qui attend une reponse, en tete (alerte d'abord).
+                AlertesSecondAdulte(aller: aller),
+                membres,
+                Ecart.vSection,
+                annexes,
+              ],
             ),
     );
   }

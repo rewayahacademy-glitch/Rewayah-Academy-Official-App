@@ -204,6 +204,7 @@ import '../../features/foyer/finances_foyer.dart' show financesFoyerProvider;
 import '../../features/foyer/foyer_page.dart';
 import '../../features/foyer/invitation_conjoint.dart';
 import '../../features/foyer/nos_prix_page.dart';
+import '../../features/foyer/routes_n2_foyer_adulte.dart';
 import '../../features/inscription/etapes/genre_etape.dart';
 import '../../features/inscription/etapes/identite_etape.dart';
 import '../../features/inscription/etapes/recapitulatif_etape.dart';
@@ -762,6 +763,9 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                   construire: () => d_mushaf_page.MushafPage(),
                 ),
               ),
+              // N2 (E1) : Ma classe de l'eleve adulte, sous Apprendre. Apres le
+              // Coran : la premiere route d'une branche est sa destination.
+              ...routesN2Apprendre(),
             ],
           ),
         ],
@@ -1003,6 +1007,8 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 path: Routes.tuteurFoyer,
                 pageBuilder: glissee((GoRouterState _) => const FoyerPage()),
                 routes: <RouteBase>[
+                  // N2 (FA1 a FA3) : le second adulte du foyer.
+                  ...routesN2Foyer(),
                   GoRoute(
                     path: 'ajouter',
                     // `?pour=moi` : le profil eleve du titulaire lui-meme

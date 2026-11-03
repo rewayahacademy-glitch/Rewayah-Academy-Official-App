@@ -33,6 +33,10 @@ import 'package:rewayah_academy/features/appareils/appareils_page.dart';
 import 'package:rewayah_academy/features/foyer/creer_mon_profil_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
+import 'package:rewayah_academy/features/foyer/foyer_second_adulte.dart';
+import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
+import 'package:rewayah_academy/features/foyer/role_foyer.dart';
+import 'package:rewayah_academy/features/foyer/routes_n2_foyer_adulte.dart';
 
 import '../../fixtures/tuteur/faux_capacites.dart';
 import '../../fixtures/tuteur/faux_classes_foyer.dart';
@@ -295,6 +299,161 @@ void main() {
 
       expect(find.byKey(CreerMonProfilPage.creeKey), findsOneWidget);
       expect(port.essais, 2);
+    });
+  });
+
+  group('N2 : le second adulte du foyer', () {
+    Override role(RoleFoyer r, {bool? femme}) => roleFoyerProvider.overrideWith(
+      (Ref _) async => RoleFoyerLu(role: r, femme: femme),
+    );
+
+    testWidgets('titulaire homme : « Inviter ma conjointe », la page en forme '
+        'feminine', (WidgetTester tester) async {
+      final GoRouter routeur = await _monter(
+        tester,
+        appairage: _foyerA(),
+        autres: <Override>[role(RoleFoyer.titulaire, femme: false)],
+      );
+      await _ouvrirFoyerParLaBarre(tester);
+      expect(find.byKey(LignesSecondAdulte.inviterKey), findsOneWidget);
+      expect(find.text(t.adulte.invitation.titreElle), findsOneWidget);
+      expect(find.byKey(LignesSecondAdulte.repriseKey), findsNothing);
+
+      await _toucher(tester, find.text(t.adulte.invitation.titreElle));
+
+      expect(lieu(routeur), RoutesN2.foyerInviter);
+      expect(find.byType(InviterConjointPage), findsOneWidget);
+      expect(
+        tester
+            .widget<InviterConjointPage>(find.byType(InviterConjointPage))
+            .placeFeminine,
+        isTrue,
+      );
+    });
+
+    testWidgets('genre non enregistre : « Inviter un second adulte », forme '
+        'neutre, jamais devinee', (WidgetTester tester) async {
+      final GoRouter routeur = await _monter(
+        tester,
+        appairage: _foyerA(),
+        autres: <Override>[role(RoleFoyer.titulaire)],
+      );
+      await _ouvrirFoyerParLaBarre(tester);
+      expect(find.text(t.adulte.invitation.titreNeutre), findsOneWidget);
+      expect(find.text(t.adulte.invitation.titreElle), findsNothing);
+      expect(find.text(t.adulte.invitation.titreLui), findsNothing);
+
+      await _toucher(tester, find.text(t.adulte.invitation.titreNeutre));
+
+      expect(lieu(routeur), RoutesN2.foyerInviter);
+      expect(find.text(t.adulte.invitation.phraseNeutre), findsOneWidget);
+    });
+
+    testWidgets('second adulte : « Demander la reprise du foyer » ouvre la '
+        'demande', (WidgetTester tester) async {
+      final GoRouter routeur = await _monter(
+        tester,
+        appairage: _foyerA(),
+        autres: <Override>[
+          role(RoleFoyer.secondAdulte, femme: true),
+          repriseFoyerProvider.overrideWith(
+            (Ref _) async => const RepriseAucune(),
+          ),
+        ],
+      );
+      await _ouvrirFoyerParLaBarre(tester);
+      expect(find.byKey(LignesSecondAdulte.repriseKey), findsOneWidget);
+      expect(find.byKey(LignesSecondAdulte.inviterKey), findsNothing);
+
+      await _toucher(tester, find.text(t.foyer.n2.demanderReprise));
+
+      expect(lieu(routeur), RoutesN2.foyerReprise);
+      expect(find.byType(RepriseFoyerPage), findsOneWidget);
+    });
+
+    testWidgets('sans role lu : aucune ligne', (WidgetTester tester) async {
+      await _monter(tester, appairage: _foyerA());
+      await _ouvrirFoyerParLaBarre(tester);
+      expect(find.byKey(LignesSecondAdulte.inviterKey), findsNothing);
+      expect(find.byKey(LignesSecondAdulte.repriseKey), findsNothing);
+      expect(find.byKey(AlertesSecondAdulte.invitationKey), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('invitation a repondre : la carte en tete du Foyer ouvre '
+        'l invitation', (WidgetTester tester) async {
+      final GoRouter routeur = await _monter(
+        tester,
+        appairage: _foyerA(),
+        autres: <Override>[
+          invitationRecueProvider.overrideWith(
+            (Ref _) async => const InvitationARepondre(
+              prenomTitulaire: 'Amina',
+              titulaireFeminin: true,
+            ),
+          ),
+        ],
+      );
+      await _ouvrirFoyerParLaBarre(tester);
+      expect(find.byKey(AlertesSecondAdulte.invitationKey), findsOneWidget);
+      expect(
+        find.text(t.adulte.acceptation.notification(prenom: 'Amina')),
+        findsOneWidget,
+      );
+      // En tete : au-dessus des profils eleves.
+      expect(
+        tester.getTopLeft(find.byKey(AlertesSecondAdulte.invitationKey)).dy,
+        lessThan(tester.getTopLeft(find.byKey(FoyerPage.membresKey)).dy),
+      );
+
+      await _toucher(tester, find.text(t.foyer.n2.invitationRecueVoir));
+
+      expect(lieu(routeur), RoutesN2.foyerInvitation);
+      expect(find.byType(InvitationRecuePage), findsOneWidget);
+    });
+
+    testWidgets('invitation a repondre : la carte en tete de l accueil, meme '
+        'foyer vide', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        appairage: _foyerA(),
+        autres: <Override>[
+          invitationRecueProvider.overrideWith(
+            (Ref _) async => const InvitationARepondre(
+              prenomTitulaire: 'Amina',
+              titulaireFeminin: true,
+            ),
+          ),
+          demandeRepriseRecueProvider.overrideWith(
+            (Ref _) async => const RepriseARefuser(),
+          ),
+        ],
+      );
+      expect(find.byKey(AlertesSecondAdulte.invitationKey), findsOneWidget);
+      // La reprise se lit au Foyer seulement (Q3).
+      expect(find.byKey(AlertesSecondAdulte.repriseKey), findsNothing);
+    });
+
+    testWidgets('demande de reprise a refuser : la carte du titulaire ouvre la '
+        'decision', (WidgetTester tester) async {
+      final GoRouter routeur = await _monter(
+        tester,
+        appairage: _foyerA(),
+        autres: <Override>[
+          role(RoleFoyer.titulaire, femme: true),
+          demandeRepriseRecueProvider.overrideWith(
+            (Ref _) async => const RepriseARefuser(),
+          ),
+        ],
+      );
+      await _ouvrirFoyerParLaBarre(tester);
+      expect(find.byKey(AlertesSecondAdulte.repriseKey), findsOneWidget);
+      expect(find.text(t.adulte.reprise.titulaire.ligne), findsOneWidget);
+
+      await _toucher(tester, find.text(t.foyer.n2.repriseATraiterVoir));
+
+      expect(lieu(routeur), RoutesN2.foyerRepriseTitulaire);
+      expect(find.byType(RepriseTitulairePage), findsOneWidget);
     });
   });
 

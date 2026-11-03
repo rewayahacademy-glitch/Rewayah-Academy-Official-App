@@ -1530,6 +1530,13 @@
     "appareilsFoyer": "Appareils du foyer",
     "appareilsFoyerLegende": "Connecter un appareil, voir ceux qui sont reliés, en retirer un",
     "creerMonProfil": "Créer mon profil élève",
+    "n2": {
+      "invitationRecueMessage": "Lisez l'invitation, puis acceptez-la ou refusez-la.",
+      "invitationRecueVoir": "Voir l'invitation",
+      "repriseATraiterVoir": "Voir la demande de reprise",
+      "demanderReprise": "Demander la reprise du foyer",
+      "demanderRepriseLegende": "Si le titulaire du foyer est décédé"
+    },
     "monProfil": {
       "titre": "Créer mon profil élève",
       "indisponibleTitre": "Pas encore possible",
@@ -9335,6 +9342,11 @@
       "courriel": "Adresse e-mail",
       "courrielAideElle": "L'adresse e-mail sera utilisée pour envoyer à votre conjointe l'invitation à rejoindre Rewayah.",
       "courrielAideLui": "L'adresse e-mail sera utilisée pour envoyer à votre conjoint l'invitation à rejoindre Rewayah.",
+      "titreNeutre": "Inviter un second adulte",
+      "enteteNeutre": "Un compte personnel pour cette personne",
+      "phraseNeutre": "Cette personne utilisera son propre compte. Elle ne pourra pas gérer votre foyer ni les profils élèves que vous avez créés.",
+      "courrielAideNeutre": "L'adresse e-mail sera utilisée pour envoyer à cette personne l'invitation à rejoindre Rewayah.",
+      "refusPhraseFoyer": "Rien n'a été envoyé. Une invitation est peut-être déjà en cours pour votre foyer, ou cette adresse ne peut pas le rejoindre. Vérifiez l'adresse, puis revenez au foyer.",
       "prenomRequis": "Indiquez son prénom.",
       "courrielRequis": "Indiquez son adresse e-mail.",
       "courrielInvalide": "Vérifiez l'adresse e‑mail\u00a0: elle doit ressembler à nom@exemple.com.",
