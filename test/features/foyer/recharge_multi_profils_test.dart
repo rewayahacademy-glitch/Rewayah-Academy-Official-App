@@ -241,6 +241,20 @@ class _PortLent extends RechargeFoyerFinanceDemo {
   }
 }
 
+/// Un port dont le paiement ne repond pas : la commande reste engagee
+/// (« En attente du paiement »), les choix figes (RECHARGE-CARTE).
+class _PortPaiementSuspendu extends RechargeFoyerFinanceDemo {
+  _PortPaiementSuspendu() : super(JeuFoyerFinance.tousFinances);
+
+  final Completer<String> verrou = Completer<String>();
+
+  @override
+  Future<String> payer({
+    required String recapitulatifId,
+    required String cle,
+  }) => verrou.future;
+}
+
 /// Une politique qui liste aussi les rails de magasin : l'ecran ne les rend
 /// jamais (guide §1.6).
 class _PolitiqueTousRails implements PortPolitiquesCommerciales {
@@ -630,6 +644,36 @@ void main() {
       ),
     );
     expect(routeur.state.uri.path, Routes.tuteurFoyer);
+  });
+
+  testWidgets('RECHARGE-CARTE : commande engagee, la carte d un profil coche '
+      'garde le montant retenu, en lecture seule, comme le recapitulatif', (
+    WidgetTester tester,
+  ) async {
+    final _PortPaiementSuspendu port = _PortPaiementSuspendu();
+    await _monter(tester, port: port);
+    await _cocher(tester, _mariam);
+    await _plus(tester, _mariam, 1);
+    final String dix = formaterMontant(DonneesFinanceDemo.usd(10));
+    expect(_montantAffiche(tester, _mariam), dix);
+    await _taper(tester, find.byKey(RechargeFoyerPage.payerKey));
+
+    // La commande est engagee : la carte de Mariam (cochee) dit toujours
+    // 10 $, comme sa ligne au recapitulatif, sans « moins » ni « plus ».
+    expect(_montantAffiche(tester, _mariam), dix);
+    expect(
+      _dans(RechargeFoyerPage.ligneDe(_mariam), find.text(dix)),
+      findsOneWidget,
+    );
+    expect(find.byKey(RechargeFoyerPage.moinsDe(_mariam)), findsNothing);
+    expect(find.byKey(RechargeFoyerPage.plusDe(_mariam)), findsNothing);
+    // Un profil non coche reste a 0 attenue.
+    expect(
+      _montantAffiche(tester, _ibrahim),
+      formaterMontant(const Montant(0, 'USD')),
+    );
+    port.verrou.complete('commande-test');
+    await stabiliser(tester);
   });
 
   testWidgets('recapitulatif en cours : « Payer » attend ; une reponse '
