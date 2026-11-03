@@ -1,0 +1,23 @@
+== ADM-UX (apres) : Personnes > Demandes (recherche, fermeture, etat apres acceptation) : 2026-11-03T09:36:39.400Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+1440_clair : personne de test Karima Essai599401 (0bb7ed87-ed94-4410-9c14-44a50cd7ea75)
+1440_clair, UX-007 : saisi au clavier « Karima Essai599401 », le champ contient « Karima Essai599401 »
+1440_clair, UX-014 : boite ouverte true, fermee par Echap true
+1440_clair, UX-006 : base « confirmee / en_cours » ; ecran apres Accepter : flt-semantics:Demande de Karima Essai599401 | h2:Demande de Karima Essai599401 | button:Fermer | flt-semantics:La demande de Karima Essai599401 est acceptée ; l'e‑mail est en route. | flt-semantics:État Acceptée | flt-semantics:Reçue le Mardi 3 novembre | flt-semantics:Référence CAND-00013 | flt-semantics:Adresse e‑mail e2e.admux.599401@exemple.test
+1440_clair, UX-014 : « Fermer » present true, boite fermee par la croix true
+1440_sombre : personne de test Karima Essai654297 (5e4f104a-3951-4274-ab94-23772b4d77fd)
+1440_sombre, UX-007 : saisi au clavier « Karima Essai654297 », le champ contient « Karima Essai654297 »
+1440_sombre, UX-014 : boite ouverte true, fermee par Echap true
+1440_sombre, UX-006 : base « confirmee / en_cours » ; ecran apres Accepter : flt-semantics:Demande de Karima Essai654297 | h2:Demande de Karima Essai654297 | button:Fermer | flt-semantics:La demande de Karima Essai654297 est acceptée ; l'e‑mail est en route. | flt-semantics:État Acceptée | flt-semantics:Reçue le Mardi 3 novembre | flt-semantics:Référence CAND-00014 | flt-semantics:Adresse e‑mail e2e.admux.654297@exemple.test
+1440_sombre, UX-014 : « Fermer » present true, boite fermee par la croix true
+390_clair : personne de test Karima Essai708659 (05be1023-34b0-42eb-8920-2f3573d57650)
+390_clair, UX-007 : saisi au clavier « Karima Essai708659 », le champ contient « Karima Essai708659 »
+390_clair, UX-014 : boite ouverte true, fermee par Echap true
+390_clair, UX-006 : base « confirmee / en_cours » ; ecran apres Accepter : flt-semantics:Boîte de dialogue | h2:Demande de Karima Essai708659 | button:Fermer | flt-semantics:La demande de Karima Essai708659 est acceptée ; l'e‑mail est en route. | flt-semantics:État Acceptée | flt-semantics:Reçue le Mardi 3 novembre | flt-semantics:Référence CAND-00015 | flt-semantics:Adresse e‑mail e2e.admux.708659@exemple.test
+390_clair, UX-014 : « Fermer » present true, boite fermee par la croix true
+390_sombre : personne de test Karima Essai759759 (5a716559-5fd1-4a69-b657-5be6eca42ad5)
+390_sombre, UX-007 : saisi au clavier « Karima Essai759759 », le champ contient « Karima Essai759759 »
+390_sombre, UX-014 : boite ouverte true, fermee par Echap true
+390_sombre, UX-006 : base « confirmee / en_cours » ; ecran apres Accepter : flt-semantics:Boîte de dialogue | h2:Demande de Karima Essai759759 | button:Fermer | flt-semantics:La demande de Karima Essai759759 est acceptée ; l'e‑mail est en route. | flt-semantics:État Acceptée | flt-semantics:Reçue le Mardi 3 novembre | flt-semantics:Référence CAND-00016 | flt-semantics:Adresse e‑mail e2e.admux.759759@exemple.test
+390_sombre, UX-014 : « Fermer » present true, boite fermee par la croix true
+Verdicts : {"1440_clair_ux007":true,"1440_clair_ux006":true,"1440_clair_ux014":true,"1440_sombre_ux007":true,"1440_sombre_ux006":true,"1440_sombre_ux014":true,"390_clair_ux007":true,"390_clair_ux006":true,"390_clair_ux014":true,"390_sombre_ux007":true,"390_sombre_ux006":true,"390_sombre_ux014":true}
+== ADM-UX (apres) : Personnes > Demandes (recherche, fermeture, etat apres acceptation) : vert
