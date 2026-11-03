@@ -18,6 +18,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/page_differee.dart';
 import 'package:rewayah_academy/core/theme/app_delais.dart';
+import 'package:rewayah_academy/core/version/nouvelle_version.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 
 import '../support/hote_theme.dart';
@@ -29,16 +30,35 @@ Widget _page(
   Future<void> Function() charger, {
   VoidCallback? recharger,
   Stream<bool>? reseau,
+  List<String?>? versions,
 }) => hoteTheme(
-  PageDifferee(
-    cle: cle,
-    charger: charger,
-    construire: () => const SizedBox(key: _ecran),
-    recharger: recharger ?? () {},
+  // Comme `app.dart` (BandeauNouvelleVersion) : la surveillance de la version
+  // tourne des l'ouverture, et lit la version du demarrage.
+  Consumer(
+    builder: (BuildContext _, WidgetRef ref, Widget? enfant) {
+      if (versions != null) ref.watch(nouvelleVersionProvider);
+      return enfant!;
+    },
+    child: PageDifferee(
+      cle: cle,
+      charger: charger,
+      construire: () => const SizedBox(key: _ecran),
+      recharger: recharger ?? () {},
+    ),
   ),
   defilant: false,
   surcharges: <Override>[
     if (reseau != null) horsLigneProvider.overrideWith((Ref _) => reseau),
+    // CHARGEMENT (03/11/2026) : les versions servies, lues dans l'ordre (la
+    // premiere au demarrage), la derniere ensuite.
+    if (versions != null) ...<Override>[
+      surveillanceVersionActiveProvider.overrideWithValue(true),
+      lecteurVersionProvider.overrideWithValue(() async {
+        final String? v = versions.first;
+        if (versions.length > 1) versions.removeAt(0);
+        return v;
+      }),
+    ],
   ],
 );
 
@@ -126,18 +146,54 @@ void main() {
     var rechargements = 0;
     var appels = 0;
     await tester.pumpWidget(
-      _page('essai-f', () async {
-        appels++;
-        throw Exception(_refusDart2js);
-      }, recharger: () => rechargements++),
+      _page(
+        'essai-f',
+        () async {
+          appels++;
+          // Apres la lecture de la version du demarrage.
+          await Future<void>.delayed(Duration.zero);
+          throw Exception(_refusDart2js);
+        },
+        recharger: () => rechargements++,
+        versions: <String?>['0.2.0+1#"a"', '0.2.0+1#"b"'],
+      ),
     );
-    await tester.pump();
+    for (var i = 0; i < 6; i++) {
+      await tester.pump(const Duration(seconds: 1));
+    }
     expect(_etat(NatureEtat.horsLigne), findsNothing);
     expect(find.text(t.miseAJour.prete), findsOneWidget);
     expect(find.text(t.commun.etats.actions.reessayer), findsNothing);
     await tester.tap(find.text(t.miseAJour.recharger));
     expect(rechargements, 1);
     expect(appels, 1, reason: 'Reessayer rejouerait le meme refus');
+  });
+
+  testWidgets('« not loaded » sans nouvelle version servie : jamais '
+      '« nouvelle version », un echec ordinaire avec Recharger', (
+    WidgetTester tester,
+  ) async {
+    // CHARGEMENT (directeur, 03/11/2026) : « Nouvelle mise a jour » seulement
+    // si une nouvelle version est reellement detectee.
+    var rechargements = 0;
+    await tester.pumpWidget(
+      _page(
+        'essai-f2',
+        () async {
+          await Future<void>.delayed(Duration.zero);
+          throw Exception(_refusDart2js);
+        },
+        recharger: () => rechargements++,
+        versions: <String?>['0.2.0+1#"a"'],
+      ),
+    );
+    for (var i = 0; i < 6; i++) {
+      await tester.pump(const Duration(seconds: 1));
+    }
+    expect(find.text(t.miseAJour.prete), findsNothing);
+    expect(_etat(NatureEtat.horsLigne), findsNothing);
+    await tester.tap(find.text(t.miseAJour.recharger));
+    expect(rechargements, 1);
   });
 
   testWidgets('hors ligne : hors ligne, puis l ecran revient seul au retour '

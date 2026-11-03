@@ -47,7 +47,11 @@ class _AuthEnEchec implements ServiceAuth {
   Future<void> connexionGoogle() async {}
 
   @override
-  Future<void> connexionMotDePasse(String courriel, String motDePasse) async {}
+  Future<void> connexionMotDePasse(
+    String courriel,
+    String motDePasse, {
+    String? jetonControle,
+  }) async {}
 
   @override
   Future<void> deconnexion() async {
@@ -56,7 +60,7 @@ class _AuthEnEchec implements ServiceAuth {
   }
 
   @override
-  Future<void> envoyerLienCourriel(String courriel) async {}
+  Future<void> envoyerLienCourriel(String courriel, {String? jetonControle}) async {}
 }
 
 ProviderContainer _conteneur(WidgetTester tester) =>

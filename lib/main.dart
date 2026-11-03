@@ -32,6 +32,8 @@ import 'core/agent/amorce_agent.dart';
 import 'core/agent/session_agent.dart';
 import 'core/alertes/alertes_supabase.dart';
 import 'core/alertes/port_alertes.dart';
+import 'core/auth/anti_robot.dart';
+import 'core/auth/anti_robot_supabase.dart';
 import 'core/candidature/autres_competences_supabase.dart';
 import 'core/candidature/candidatures_direction_supabase.dart';
 import 'core/candidature/ma_candidature_supabase.dart';
@@ -209,6 +211,11 @@ import 'features/foyer/role_foyer_supabase.dart';
 /// comportement par defaut ; ce branchement se fait ici et nulle part
 /// ailleurs.
 List<Override> _surchargesAppReelle() => <Override>[
+  // ANTI-ROBOT (03/11/2026) : la cle PUBLIQUE du controle Turnstile, lue sans
+  // compte (migration 20261109000000) ; reglage vide : aucun controle.
+  portCleTurnstileProvider.overrideWithValue(
+    CleTurnstileSupabase(Supabase.instance.client),
+  ),
   portClassesFoyerProvider.overrideWithValue(
     ClassesFoyerSupabase(Supabase.instance.client),
   ),
