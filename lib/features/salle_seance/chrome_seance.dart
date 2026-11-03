@@ -351,6 +351,7 @@ class _Large extends StatelessWidget {
                         connexion: vue.connexion,
                         pause: vue.pause,
                         onPause: actions.onPause,
+                        echecPause: vue.echecPause,
                         style: theme.textTheme.bodyLarge ?? const TextStyle(),
                       ),
                     _Connexion(vue: vue),
@@ -417,6 +418,7 @@ class _Etroit extends StatelessWidget {
             connexion: vue.connexion,
             pause: vue.pause,
             onPause: actions.onPause,
+            echecPause: vue.echecPause,
             style: theme.textTheme.bodyMedium ?? const TextStyle(),
           )
         : null;

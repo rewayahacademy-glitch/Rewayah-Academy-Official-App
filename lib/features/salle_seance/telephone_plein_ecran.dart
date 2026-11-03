@@ -34,7 +34,6 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
-import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../tc_mushaf/fleches_page_mushaf.dart';
 import '../tc_mushaf/page_madina_15.dart' show ratioHauteurPageMadina15;
@@ -352,18 +351,16 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                           Positioned.fill(
                             child: KeyedSubtree(
                               key: const ValueKey<String>('telephone-scene'),
-                              child: laScene,
+                              // « Ouvrir le Coran » est pose par la scene,
+                              // jamais par-dessus sa phrase d'attente.
+                              child: actionScene == null
+                                  ? laScene
+                                  : ActionSousLaScene(
+                                      action: actionScene,
+                                      child: laScene,
+                                    ),
                             ),
                           ),
-                          if (actionScene != null)
-                            Center(
-                              child: ActionPrincipale(
-                                key: const ValueKey<String>('action-scene'),
-                                libelle: actionScene.libelle,
-                                pleineLargeur: false,
-                                onPress: actionScene.onPress,
-                              ),
-                            ),
                         ],
                       ),
                     )
@@ -439,7 +436,11 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
           final Widget laCapsule = _profil
               ? KeyedSubtree(
                   key: _cleProfil,
-                  child: ProfilTelephone(vue: vue, onReduire: _replier),
+                  child: ProfilTelephone(
+                    vue: vue,
+                    onReduire: _replier,
+                    onPause: actions.onPause,
+                  ),
                 )
               : Center(
                   child: CapsuleVideoTelephone(
@@ -943,6 +944,7 @@ class _Haut extends StatelessWidget {
       ),
       cle: const ValueKey<String>('ligne-etat-telephone'),
       avecChrono: true,
+      onPause: actions.onPause,
     );
     final Widget ligne = presence == null
         ? pilule

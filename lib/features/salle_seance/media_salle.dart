@@ -9,6 +9,7 @@
 
 import 'package:flutter/widgets.dart';
 
+import '../../core/widgets/action_principale.dart';
 import 'panneau_bibliotheque_salle.dart' show SupportBibliotheque;
 import 'vue_seance.dart';
 
@@ -153,4 +154,43 @@ class PorteeMediaSalle extends InheritedWidget {
   // a chaque reconstruction de `/salle`.
   @override
   bool updateShouldNotify(PorteeMediaSalle ancien) => true;
+}
+
+/// N3 (03/11/2026, constat du rejeu a 390) : au telephone, l'action de la
+/// scene (« Ouvrir le Coran ») est posee PAR la scene elle-meme, sous la
+/// phrase d'attente quand personne n'est la, au centre de la video sinon,
+/// au lieu d'etre centree par-dessus la phrase d'attente (« aucun element ne
+/// recouvre un contenu a lire »). Seul le telephone plein ecran la fournit ;
+/// l'ordinateur pose son action a part (`zone_support.dart`).
+class ActionSousLaScene extends InheritedWidget {
+  const ActionSousLaScene({
+    required this.action,
+    required super.child,
+    super.key,
+  });
+
+  /// L'action, son libelle et son geste.
+  final ({String libelle, VoidCallback onPress}) action;
+
+  /// La cle du bouton (tests, captures).
+  static const Key cleBouton = ValueKey<String>('action-scene');
+
+  /// Le seul bouton plein de la scene, pour [action] (K-56) : le meme, que
+  /// la scene le pose sous la phrase d'attente ou au centre de la video.
+  static Widget bouton(({String libelle, VoidCallback onPress}) action) =>
+      ActionPrincipale(
+        key: cleBouton,
+        libelle: action.libelle,
+        pleineLargeur: false,
+        onPress: action.onPress,
+      );
+
+  /// L'action fournie au-dessus de [context], ou `null`.
+  static ({String libelle, VoidCallback onPress})? de(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<ActionSousLaScene>()?.action;
+
+  @override
+  bool updateShouldNotify(ActionSousLaScene ancien) =>
+      ancien.action.libelle != action.libelle ||
+      ancien.action.onPress != action.onPress;
 }

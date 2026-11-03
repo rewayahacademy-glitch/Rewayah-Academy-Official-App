@@ -425,7 +425,8 @@
         "annonceEnCours": "Pause en cours, reprise à {heure}.",
         "recapTitre": "Pause",
         "recapPrise": "Pause prise, {minutes} min",
-        "recapNonPrise": "Pause prévue, non prise"
+        "recapNonPrise": "Pause prévue, non prise",
+        "echec": "La pause n'est pas confirmée\u00a0: la demande n'est peut-être pas parvenue jusqu'à Rewayah. Réessayez."
       },
       "enLigne": "En ligne",
       "reconnexion": "Reconnexion",
