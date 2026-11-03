@@ -1,0 +1,20 @@
+== SUPPRIMER écrans : supprimer, restaurer, profil d'un enfant : 2026-11-03T21:27:15.187Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Amorce : famille Karima Suppr235187 (e2e.suppr.karima.235187@example.com), enfants {"Adam":"acf609d8-fd47-4a81-a710-01b6106f643b","Sara":"170bad84-74c2-4060-aa35-021376325f7d"}
+Amorce : famille Samira Suppr235187 (e2e.suppr.samira.235187@example.com), enfants {"Lina":"a78f5345-33ca-4a95-bed3-e6d57e933703"}
+[direction] session aal2 posée par l'API locale (facteur TOTP enrôlé par le robot)
+[direction] case de Adam Suppr235187 : noeud 48 x 48
+[direction] case de Sara Suppr235187 : noeud 48 x 48
+[direction] barre « 2 comptes choisis » : vu
+[direction] confirmation avec le nombre : vu
+[direction] résultat « 2 comptes sont supprimés » : vu
+Base locale : 2 retrait(s) en cours pour Adam et Sara
+[direction] phrase de contexte de la section : vu
+[direction] résultat de la restauration : vu
+Base locale : Adam active|true
+[tuteur] confirmation du tuteur : vu
+Base locale : Lina supprimée = t
+[direction] session aal2 posée par l'API locale (facteur TOTP enrôlé par le robot)
+[direction] case de Adam Suppr235187 : noeud 358 x 74
+[direction] barre « 1 compte choisi » (390) : vu
+[direction] retrait de Lina « Un tuteur » : vu
+== SUPPRIMER écrans : supprimer, restaurer, profil d'un enfant : vert

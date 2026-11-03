@@ -63,13 +63,24 @@ async function auth(chemin, corps, jeton) {
 /// Une session aal2 de la direction, par l'API locale (enrôlement TOTP).
 async function sessionDirectionAal2() {
   const s1 = await auth('/token?grant_type=password', { email: COMPTES.direction, password: MDP });
-  const f = await auth('/factors', { factor_type: 'totp', friendly_name: `e2e-${tampon}-${Math.random()}` }, s1.access_token);
-  const ch = await auth(`/factors/${f.id}/challenge`, {}, s1.access_token);
-  return auth(`/factors/${f.id}/verify`, { challenge_id: ch.id, code: totp(f.totp.secret) }, s1.access_token);
+  // Un facteur deja verifie (passage precedent, base LOCALE) sert de nouveau :
+  // en enroler un second demanderait deja aal2.
+  const deja = un(`select f.id || '|' || f.secret from auth.mfa_factors f join auth.users u on u.id = f.user_id
+    where u.email = '${COMPTES.direction}' and f.factor_type = 'totp' and f.status = 'verified'
+    order by f.created_at limit 1`);
+  let id; let secret;
+  if (deja) {
+    [id, secret] = deja.split('|');
+  } else {
+    const f = await auth('/factors', { factor_type: 'totp', friendly_name: `e2e-${tampon}` }, s1.access_token);
+    id = f.id; secret = f.totp.secret;
+  }
+  const ch = await auth(`/factors/${id}/challenge`, {}, s1.access_token);
+  return auth(`/factors/${id}/verify`, { challenge_id: ch.id, code: totp(secret) }, s1.access_token);
 }
 
-/// Une famille admise, par le vrai chemin (inscrire_titulaire puis
-/// accepter_admission), avec un mot de passe pour se connecter.
+/// Une famille en SQL local (comme fn115c_rembourser.mjs) : un tuteur qui se
+/// connecte par mot de passe, ses enfants mineurs, actifs.
 function famille(prenom, enfants) {
   const courriel = `e2e.suppr.${prenom.toLowerCase()}.${tampon}@example.com`;
   const id = un(`with u as (
@@ -85,40 +96,33 @@ function famille(prenom, enfants) {
            'email', now(), now(), now() from u returning user_id)
   select id from u`);
   const nom = `Suppr${tampon}`;
-  const apprenants = JSON.stringify(enfants.map((e) => ({ prenom: e, age: 9, genre: 'female',
-    niveau: 'lecture_lente', objectif: 'devenir_fluide', moments: ['soir'], langue: 'francais' })));
-  sql(`begin;
-    select set_config('request.jwt.claim.sub', '${id}', true);
-    select set_config('request.jwt.claims', '{"sub":"${id}","role":"authenticated"}', true);
-    set local role authenticated;
-    select (public.inscrire_titulaire('famille', '${prenom}', '${nom}', 'female', 'Europe/Paris', false,
-      '${apprenants}'::jsonb)).id;
-    commit;`);
-  const direction = un(`select id from auth.users where email = '${COMPTES.direction}'`);
-  const [candId, version] = un(`select c.id || '|' || c.version from public.candidatures c where c.profile_id = '${id}'`).split('|');
-  sql(`begin;
-    select set_config('request.jwt.claim.sub', '${direction}', true);
-    select set_config('request.jwt.claims', '{"sub":"${direction}","role":"authenticated","app_metadata":{"role":"admin"}}', true);
-    set local role authenticated;
-    select public.accepter_admission('${candId}', ${version}, 'e2e-suppr-${tampon}');
-    commit;`);
-  const enfantsIds = Object.fromEntries(sql(`select e.first_name || '|' || e.id from public.profiles e
-      join public.profiles t on t.household_id = e.household_id
-     where t.id = '${id}' and e.role = 'student' and e.deleted_at is null`)
-    .split('\n').filter(Boolean).map((l) => l.trim().split('|')));
-  p.dire(`Amorce : famille ${prenom} ${nom} (${courriel}), enfants ${JSON.stringify(enfantsIds)}`);
-  return { id, courriel, nom, enfants: enfantsIds };
+  const ids = {};
+  let lignes = `insert into public.households (id, timezone) values ('${id}', 'Europe/Paris');
+    insert into public.profiles (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
+    values ('${id}', 'E2E-SUP-${prenom.slice(0, 3).toUpperCase()}-${tampon}', 'guardian', '${id}', '${prenom}', '${nom}', 'active', 'female');
+    update public.households set primary_guardian_id = '${id}' where id = '${id}';`;
+  for (const e of enfants) {
+    const eid = un('select gen_random_uuid()');
+    ids[e] = eid;
+    lignes += `insert into auth.users (id, email) values ('${eid}', 'e2e.suppr.${e.toLowerCase()}.${tampon}@example.com');
+      insert into public.profiles (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
+      values ('${eid}', 'E2E-SUP-${e.slice(0, 3).toUpperCase()}-${tampon}', 'student', '${id}', '${e}', '${nom}', 'active', 'female');
+      insert into public.student_profiles (profile_id, student_type, interface_mode) values ('${eid}', 'minor', 'standard');`;
+  }
+  sql(`begin; ${lignes} commit;`);
+  p.dire(`Amorce : famille ${prenom} ${nom} (${courriel}), enfants ${JSON.stringify(ids)}`);
+  return { id, courriel, nom, enfants: ids };
 }
 
 async function directionAal2(options) {
   const session = await sessionDirectionAal2();
   const a = await p.contexte('direction', options);
-  // Le client Supabase du web garde sa session dans le localStorage
-  // (shared_preferences : préfixe « flutter. », valeur encodée en JSON).
+  // Le client Supabase du web garde sa session dans le localStorage, sous
+  // « sb-<hote>-auth-token » (relevé sur la pile locale le 03/11).
   await a.ctx.addInitScript((s) => {
-    window.localStorage.setItem('flutter.sb-127-auth-token', JSON.stringify(JSON.stringify(s)));
+    window.localStorage.setItem('sb-127-auth-token', JSON.stringify(s));
   }, session);
-  p.dire(`[direction] session aal2 posée par l'API locale (facteur TOTP enrôlé par le robot)`);
+  p.dire(`[direction] session aal2 posée par l'API locale (facteur TOTP enrôlé ou réutilisé par le robot, base locale)`);
   return a;
 }
 
@@ -136,6 +140,20 @@ async function toucher(a, motif, quoi, options = {}) {
   await a.page.waitForTimeout(options.pause ?? 2500);
   await activerSemantique(a.page);
   return true;
+}
+
+/// Coche la case d'un compte : un toucher sur la case elle-meme (au debut de
+/// la ligne), comme un doigt ; le noeud d'accessibilite de la case peut
+/// couvrir toute la ligne dense du telephone (journal ecrit).
+async function cocher(a, nom) {
+  const e = await trouver(a.page, new RegExp(`^Cocher ${nom}`), { delai: 12000, role: 'checkbox' });
+  if (!e) { manque.push(`${a.role} : case de ${nom} absente`); return; }
+  await amenerEnVue(a.page, e);
+  const b = await e.boundingBox();
+  p.dire(`[${a.role}] case de ${nom} : noeud ${Math.round(b.width)} x ${Math.round(b.height)}`);
+  await a.page.mouse.click(b.x + Math.min(24, b.width / 2), b.y + b.height / 2);
+  await a.page.waitForTimeout(1500);
+  await activerSemantique(a.page);
 }
 
 async function voir(a, motif, quoi) {
@@ -157,8 +175,8 @@ try {
   const d = await directionAal2({ vue: { width: 1440, height: 900 } });
   await aller(d, '/admin/personnes/comptes?vue=eleves');
   await p.capture(d, '1440_comptes_cases');
-  await toucher(d, new RegExp(`^Cocher ${adam}`), `case de ${adam}`, { role: 'checkbox', pause: 1200 });
-  await toucher(d, new RegExp(`^Cocher ${sara}`), `case de ${sara}`, { role: 'checkbox', pause: 1200 });
+  await cocher(d, adam);
+  await cocher(d, sara);
   await voir(d, /2 comptes choisis/, 'barre « 2 comptes choisis »');
   await p.capture(d, '1440_comptes_deux_choisis');
   await toucher(d, /^Supprimer 2 comptes$/, '« Supprimer 2 comptes »', { role: 'button' });
@@ -177,14 +195,15 @@ try {
   // 2. Personnes > Suppressions, « Comptes supprimés », restaurer Adam.
   await aller(d, '/admin/personnes/suppressions');
   await toucher(d, /^Comptes supprimés$/, 'section « Comptes supprimés »', { pause: 4000 });
-  await voir(d, /sans remettre l.élève dans ses classes/, 'phrase « sans remettre l\'élève dans ses classes »');
+  // Le relevé des libellés coupe un noeud à 160 signes : le début de la phrase.
+  await voir(d, /Les comptes supprimés par la direction ou par un tuteur/, 'phrase de contexte de la section');
   await p.capture(d, '1440_comptes_supprimes');
   await toucher(d, new RegExp(`^Restaurer le compte de ${adam}`), `« Restaurer le compte de ${adam} »`, { role: 'button', pause: 5000 });
   await voir(d, new RegExp(`Le compte de ${adam} est restauré`), 'résultat de la restauration');
   await p.capture(d, '1440_restaure');
   const etat = un(`select account_status || '|' || (deleted_at is null) from public.profiles where id = '${f1.enfants.Adam}'`);
   p.dire(`Base locale : Adam ${etat}`);
-  if (!etat.endsWith('|t')) manque.push(`base : Adam pas restauré (${etat})`);
+  if (!/\|(t|true)$/.test(etat)) manque.push(`base : Adam pas restauré (${etat})`);
   await d.ctx.close();
 
   // 3. Le tuteur supprime le profil de Lina (390, sombre), puis à 1440.
@@ -200,13 +219,13 @@ try {
   await p.capture(t, '390_sombre_foyer_apres');
   const lina = un(`select (deleted_at is not null) from public.profiles where id = '${f2.enfants.Lina}'`);
   p.dire(`Base locale : Lina supprimée = ${lina}`);
-  if (lina !== 't') manque.push('base : Lina pas supprimée');
+  if (!/^(t|true)$/.test(lina)) manque.push('base : Lina pas supprimée');
   await t.ctx.close();
 
   // 4. La direction, au téléphone en sombre : la sélection et le retrait du tuteur.
   const d2 = await directionAal2({ vue: { width: 390, height: 844 }, sombre: true });
   await aller(d2, '/admin/personnes/comptes?vue=eleves');
-  await toucher(d2, new RegExp(`^Cocher ${adam}`), `case de ${adam} (390)`, { role: 'checkbox', pause: 1500 });
+  await cocher(d2, adam);
   await voir(d2, /1 compte choisi/, 'barre « 1 compte choisi » (390)');
   await p.capture(d2, '390_sombre_comptes_un_choisi');
   await aller(d2, '/admin/personnes/suppressions');
