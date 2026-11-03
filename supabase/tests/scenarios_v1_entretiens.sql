@@ -1,4 +1,5 @@
--- V1-a (20261107700000, 20261108000000 et 20261108000001) : la visio
+-- V1-a (20261107700000, 20261108000000 et 20261108000001) et V1-a-bis
+-- (20261109100000, le super-admin des deux cotes) : la visio
 -- d'entretien, plusieurs intervieweurs, fondateurs comptes, cote impose.
 -- Prouve :
 --   0. aucun inscrit n'emploie le role `intervieweur` avant ce lot ; les
@@ -136,11 +137,16 @@ BEGIN
 END
 $fixture_t2$;
 INSERT INTO private.super_admin_kyc (profile_id) VALUES ('7e100000-0000-4000-8000-0000000000b2');
+INSERT INTO auth.users (id, email) VALUES ('7e100000-0000-4000-8000-0000000000c3', 'v1-cf3@test.invalid');
+INSERT INTO public.profiles (id, immutable_id, role, household_id, first_name, last_name, account_status, gender) VALUES
+ ('7e100000-0000-4000-8000-0000000000c3', 'RA-26-7111', 'teacher', NULL, 'Zaynab', 'V1', 'pending_kyc', 'female');
 INSERT INTO public.candidatures (id, type_code, profile_id, genre, nom_complet, etape, etat, issue, source) VALUES
  ('7e100000-0000-4000-8000-000000000101', 'enseignant', '7e100000-0000-4000-8000-0000000000c1', 'female',
   'Fixture V1 un', 'verifications', 'entretien_a_planifier', 'en_cours', 'lien_public'),
  ('7e100000-0000-4000-8000-000000000102', 'enseignant', '7e100000-0000-4000-8000-0000000000c2', 'female',
-  'Fixture V1 deux', 'verifications', 'entretien_a_planifier', 'en_cours', 'lien_public');
+  'Fixture V1 deux', 'verifications', 'entretien_a_planifier', 'en_cours', 'lien_public'),
+ ('7e100000-0000-4000-8000-000000000103', 'enseignant', '7e100000-0000-4000-8000-0000000000c3', 'female',
+  'Fixture V1 trois', 'verifications', 'entretien_a_planifier', 'en_cours', 'lien_public');
 
 -- ===========================================================================
 -- 1. Les fondateurs et le personnel
@@ -318,6 +324,80 @@ SELECT set_config('v1.seance2', (SELECT session_id::text FROM public.entretiens
                                    WHERE candidature_id = '7e100000-0000-4000-8000-000000000102'), true);
 
 -- ===========================================================================
+-- 2 bis. V1-a-bis (20261109100000), directeur, 03/11 vers 20:30 : le super-admin (homme) agit des deux
+-- cotes ; une direction homme non super-admin, non ; un participant homme sur
+-- une candidate, jamais (CAND-Q07)
+-- ===========================================================================
+SET LOCAL ROLE authenticated;
+DO $super_admin$
+DECLARE
+  v_r jsonb;
+  v_seance uuid;
+  v_ids uuid[];
+BEGIN
+  PERFORM pg_temp.en_tant_que('7e100000-0000-4000-8000-0000000000b1', 'admin');
+  v_r := public.planifier_entretien('7e100000-0000-4000-8000-000000000103', now() + interval '1 day', 45,
+           ARRAY['7e100000-0000-4000-8000-0000000000a2', '7e100000-0000-4000-8000-0000000000d2']::uuid[], 1, 'v1-cle-sa-h1');
+  PERFORM pg_temp.vrai(v_r ? 'erreur' AND NOT v_r ? 'entretien',
+    '2 bis. direction homme non super-admin sur une candidate : refuse : ' || (v_r ->> 'erreur'));
+  BEGIN
+    PERFORM public.personnel_pour_entretien('7e100000-0000-4000-8000-000000000103');
+    RAISE EXCEPTION 'ROUGE : 2 bis. une direction homme a lu le personnel d''une candidate';
+  EXCEPTION WHEN insufficient_privilege THEN
+    RAISE NOTICE 'OK 2 bis. la liste du personnel d''une candidate est refusee a une direction homme non super-admin';
+  END;
+
+  PERFORM pg_temp.en_tant_que('7e100000-0000-4000-8000-0000000000b2', 'admin');
+  SELECT pg_catalog.array_agg(profile_id ORDER BY profile_id) INTO v_ids
+    FROM public.personnel_pour_entretien('7e100000-0000-4000-8000-000000000103') WHERE profile_id::text LIKE '7e100000-%';
+  PERFORM pg_temp.vrai(v_ids = ARRAY['7e100000-0000-4000-8000-0000000000a1', '7e100000-0000-4000-8000-0000000000a2',
+                                     '7e100000-0000-4000-8000-0000000000b2', '7e100000-0000-4000-8000-0000000000d2']::uuid[],
+    '2 bis. le super-admin lit le personnel du cote de la candidate (et lui-meme), pas celui de son cote : ' || v_ids::text);
+  v_r := public.planifier_entretien('7e100000-0000-4000-8000-000000000103', now() + interval '1 day', 45,
+           ARRAY['7e100000-0000-4000-8000-0000000000a2', '7e100000-0000-4000-8000-0000000000b1']::uuid[], 1, 'v1-cle-sa-hp');
+  PERFORM pg_temp.vrai(v_r ->> 'erreur' = 'participant_autre_cote',
+    '2 bis. meme pour le super-admin, un participant homme sur une candidate est refuse (CAND-Q07)');
+  v_r := public.planifier_entretien('7e100000-0000-4000-8000-000000000103', now() + interval '1 day', 45,
+           ARRAY['7e100000-0000-4000-8000-0000000000a2', '7e100000-0000-4000-8000-0000000000d2']::uuid[], 1, 'v1-cle-sa');
+  PERFORM pg_temp.vrai(v_r -> 'entretien' ? 'sessionId',
+    '2 bis. le super-admin (homme) planifie l''entretien d''une candidate : ' || coalesce(v_r::text, 'null'));
+  v_seance := (v_r -> 'entretien' ->> 'sessionId')::uuid;
+  PERFORM pg_temp.vrai(public.ajouter_participant_entretien(v_seance, '7e100000-0000-4000-8000-0000000000b1')
+                       ->> 'erreur' = 'participant_autre_cote',
+    '2 bis. le super-admin n''ajoute pas un homme a l''entretien d''une candidate');
+  PERFORM pg_temp.vrai(NOT public.ajouter_participant_entretien(v_seance, '7e100000-0000-4000-8000-0000000000a1') ? 'erreur',
+    '2 bis. le super-admin ajoute une participante');
+  PERFORM pg_temp.vrai((SELECT count(*) FROM public.mes_entretiens() WHERE session_id = v_seance) = 1,
+    '2 bis. le super-admin voit l''entretien de l''autre cote');
+  v_r := public.consigner_entretien(v_seance, 'annule', 'Reporte par la direction.',
+           pg_temp.version_cand('7e100000-0000-4000-8000-000000000103'), 'v1-cle-sa-annule');
+  PERFORM pg_temp.vrai(NOT v_r ? 'erreur', '2 bis. le super-admin consigne l''issue : ' || v_r::text);
+  PERFORM set_config('v1.seance_sa', v_seance::text, true);
+END
+$super_admin$;
+RESET ROLE;
+SELECT pg_temp.vrai(
+  (SELECT pg_catalog.array_agg(a.payload ->> 'geste' ORDER BY a.id) FROM public.audit_logs a
+    WHERE a.action = 'super_admin_hors_cote' AND a.row_id = current_setting('v1.seance_sa')
+      AND a.actor = '7e100000-0000-4000-8000-0000000000b2' AND a.payload ->> 'mention' = 'super-admin hors côté')
+  = ARRAY['planifier_entretien', 'ajouter_participant', 'consigner_entretien_non_tenu'],
+  '2 bis. chaque geste du super-admin hors de son cote est au journal sensible (« super-admin hors côté »)');
+SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.audit_logs a WHERE a.action = 'super_admin_hors_cote'
+                                  AND a.actor <> '7e100000-0000-4000-8000-0000000000b2'
+                                  AND a.row_id IN (current_setting('v1.seance'), current_setting('v1.seance_sa'))),
+  '2 bis. une direction de son cote n''ecrit rien au journal hors cote');
+-- Exception desactivee : le super-admin redevient une direction de son cote.
+UPDATE public.app_config SET value = 'false'::jsonb WHERE key = 'kyc_exception_super_admin';
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.en_tant_que('7e100000-0000-4000-8000-0000000000b2', 'admin');
+SELECT pg_temp.vrai(public.planifier_entretien('7e100000-0000-4000-8000-000000000103', now() + interval '2 days', 45,
+         ARRAY['7e100000-0000-4000-8000-0000000000a2', '7e100000-0000-4000-8000-0000000000d2']::uuid[],
+         pg_temp.version_cand('7e100000-0000-4000-8000-000000000103'), 'v1-cle-sa-off') ? 'erreur',
+  '2 bis. exception desactivee : le super-admin ne planifie plus de l''autre cote');
+RESET ROLE;
+UPDATE public.app_config SET value = 'true'::jsonb WHERE key = 'kyc_exception_super_admin';
+
+-- ===========================================================================
 -- 3. Ajouter, retirer
 -- ===========================================================================
 SET LOCAL ROLE authenticated;
@@ -493,7 +573,7 @@ BEGIN
   PERFORM pg_temp.en_tant_que('7e100000-0000-4000-8000-0000000000b1', 'admin');
   PERFORM pg_temp.vrai((SELECT count(*) FROM public.mes_entretiens()) = 0, '7. mes_entretiens : rien de l''autre cote');
   PERFORM pg_temp.en_tant_que('7e100000-0000-4000-8000-0000000000a1', 'admin');
-  PERFORM pg_temp.vrai((SELECT count(*) FROM public.mes_entretiens()) = 2, '7. mes_entretiens : les deux de son cote');
+  PERFORM pg_temp.vrai((SELECT count(*) FROM public.mes_entretiens()) = 3, '7. mes_entretiens : les trois de son cote');
   BEGIN
     PERFORM pg_temp.vrai((SELECT count(*) FROM public.entretiens) + (SELECT count(*) FROM public.entretien_participants)
                          + (SELECT count(*) FROM public.entretien_comptes_rendus) + (SELECT count(*) FROM public.personnel_fondateurs) = 0,
