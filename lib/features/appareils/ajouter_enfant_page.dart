@@ -13,8 +13,8 @@ import '../foyer/formulaire_profil_eleve.dart';
 /// section 6) ; il ne fait que relier le formulaire a la navigation :
 ///
 /// - quitter ramene au Foyer, par son adresse ;
-/// - un profil cree ouvre sa fiche quand la relecture du foyer l'a retrouve,
-///   sinon le Foyer, ou il apparait ;
+/// - un profil cree ouvre son Parcours (questions puis horaires, NIV1) quand
+///   la relecture du foyer l'a retrouve, sinon le Foyer, ou il apparait ;
 /// - « Voir le foyer » apres une reponse perdue ramene au Foyer.
 ///
 /// L'age reste derive **en base** vers l'affichage et la camera de depart
@@ -46,8 +46,13 @@ class AjouterEnfantPage extends StatelessWidget {
     return FormulaireProfilEleve(
       onAbandon: () => aller(Routes.tuteurFoyer),
       onVoirFoyer: () => aller(Routes.tuteurFoyer),
+      // NIV1 (pilote, 03/11/2026, option a) : le profil cree ouvre tout de
+      // suite son Parcours, qui saute l'age (cohorte deja posee par
+      // `creer_profil_enfant`), pose langue, niveau et objectif une seule
+      // fois, puis montre les horaires. Plus de questions cachees dans les
+      // reglages de la fiche.
       onCree: (String? eleveId) => aller(
-        eleveId == null ? Routes.tuteurFoyer : Routes.ficheElevePour(eleveId),
+        eleveId == null ? Routes.tuteurFoyer : Routes.parcoursPour(eleveId),
       ),
     );
   }

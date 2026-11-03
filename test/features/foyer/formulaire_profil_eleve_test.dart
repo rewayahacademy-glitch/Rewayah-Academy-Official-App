@@ -33,9 +33,9 @@ import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/appareils/ajouter_enfant_page.dart';
 import 'package:rewayah_academy/features/compte/donnees_compte.dart'
     show identiteTitulaireProvider;
-import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 import 'package:rewayah_academy/features/foyer/formulaire_profil_eleve.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
+import 'package:rewayah_academy/features/parcours_offres/parcours_offres_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show FunctionException;
 
 import '../../fixtures/tuteur/faux_creation_profil_eleve.dart';
@@ -196,13 +196,14 @@ void main() {
         await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
 
         // Un seul envoi, nettoye des espaces ; la relecture du foyer designe
-        // le profil cree et sa fiche s'ouvre.
+        // le profil cree et son Parcours s'ouvre (NIV1 : questions, puis
+        // horaires), plus sa fiche.
         expect(service.enfantsCrees, hasLength(1));
         expect(service.enfantsCrees.single.prenom, 'Nouvel eleve');
         expect(service.enfantsCrees.single.nom, 'Fictif');
         expect(service.enfantsCrees.single.age, 9);
-        expect(lieu(routeur), Routes.ficheElevePour('foyer-a-nouveau-1'));
-        expect(find.byType(FicheElevePage), findsOneWidget);
+        expect(lieu(routeur), Routes.parcoursPour('foyer-a-nouveau-1'));
+        expect(find.byType(ParcoursOffresPage), findsOneWidget);
         expect(tester.takeException(), isNull);
       },
     );
@@ -479,12 +480,12 @@ void main() {
       service.erreurAJeter = null;
       await _toucher(tester, find.text(t.foyer.ajout.incertaine.reessayer));
       expect(service.enfantsCrees, hasLength(1));
-      expect(lieu(routeur), Routes.ficheElevePour('foyer-a-nouveau-1'));
+      expect(lieu(routeur), Routes.parcoursPour('foyer-a-nouveau-1'));
     });
 
     testWidgets(
-      'reponse perdue mais profil ecrit : la relecture le retrouve, la fiche '
-      's ouvre',
+      'reponse perdue mais profil ecrit : la relecture le retrouve, son '
+      'Parcours s ouvre',
       (WidgetTester tester) async {
         final _AppairageCreant service = _AppairageCreant()
           ..jeterApresEcriture = Exception('coupure');
@@ -495,7 +496,7 @@ void main() {
         await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
 
         expect(find.text(t.foyer.ajout.incertaine.titre), findsNothing);
-        expect(lieu(routeur), Routes.ficheElevePour('foyer-a-nouveau-1'));
+        expect(lieu(routeur), Routes.parcoursPour('foyer-a-nouveau-1'));
       },
     );
 
