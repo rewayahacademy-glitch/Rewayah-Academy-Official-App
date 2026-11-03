@@ -8,7 +8,7 @@
 // La piece d'un enseignant est relue par un membre du meme genre : la direction
 // de test est une femme, la candidate aussi.
 import { parcours, ouvrir, connecter, cliquer, trouver, trouverTexte, libelles, taper,
-  dernierLien, activerSemantique, sql, COMPTES, DEPOT } from './commun.mjs';
+  dernierLien, activerSemantique, sql, COMPTES, DEPOT, ongletDirection } from './commun.mjs';
 import path from 'node:path';
 
 const tampon = new Date().toISOString().slice(5, 16).replace(/[-T:]/g, '');
@@ -17,7 +17,7 @@ const PIECE = path.join(DEPOT, 'tool/e2e/piece_factice.png');
 const p = await parcours('Parcours 1 : la direction valide un enseignant', 'parcours-1');
 
 async function ouvrirSection(page, section) {
-  await cliquer(page, 'Personnes Onglet');
+  await ongletDirection(page, 'Personnes');
   await cliquer(page, /^Sections de la page/);
   await cliquer(page, new RegExp(`^${section}`), { pause: 2000 });
 }
@@ -33,8 +33,12 @@ try {
   await taper(d.page, 'textarea, input[aria-label^="Adresse de courriel"]', CAND.courriel);
   await cliquer(d.page, /^Créer l'invitation$/, { pause: 2500 });
   await p.capture(d, 'invitation_creee');
-  const message = await trouverTexte(d.page, /Transmettez ce code[^|]*/, 10000);
-  const invitation = message?.match(/:\s*([A-Z0-9]{4}(?:-[A-Z0-9]{4})+)/)?.[1];
+  // Le message a change avec les invitations par e-mail (« Invitation créée.
+  // L'e-mail avec le code XXXX‑XXXX‑XXXX part vers … ») ; le code s'ecrit avec
+  // des tirets insecables, ramenes au tiret simple pour la saisie.
+  const message = await trouverTexte(d.page, /Transmettez ce code[^|]*|Invitation créée[^|]*/, 10000);
+  const invitation = message?.match(/([A-Z0-9]{4}(?:[-\u2010\u2011\u2013][A-Z0-9]{4})+)/)?.[1]
+    ?.replace(/[\u2010\u2011\u2013]/g, '-');
   if (!invitation) throw new Error(`preparation : pas de code d'invitation affiche (${message})`);
   p.dire(`Invitation : ${invitation} pour ${CAND.courriel}`);
 

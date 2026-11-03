@@ -54,6 +54,16 @@ NotificationContenu contenuNotificationPour(
   final String titre = switch (evenement) {
     'demande_recue' => evenements.demandeRecue,
     'demande_presentation' => evenements.demandePresentation,
+    // D1-ter (03/11/2026) : le prenom de l'eleve, jamais le message lui-meme.
+    'message_academie_eleve' => switch ((
+      portee,
+      '${params['prenom'] ?? ''}'.trim(),
+    )) {
+      ('soi', _) => t.d1ter.notifications.messageSoi,
+      (_, final String prenom) when prenom.isNotEmpty =>
+        t.d1ter.notifications.messageEnfant(prenom: prenom),
+      _ => t.d1ter.notifications.message,
+    },
     'classe_validee' => evenements.classeValidee,
     'enseignant_affecte' => selonPortee(
       soi: evenements.enseignantAffecteSoi,

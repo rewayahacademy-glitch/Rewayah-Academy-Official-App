@@ -1,0 +1,5 @@
+== ADM-UX-bis (apres) : Echap ferme la boite apres « Accepter » : 2026-11-03T13:40:31.696Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+1440 : focus apres « Accepter » = FLT-SEMANTICS:La demande de Karima Bis231696 est acceptée ; l'e‑mail est e ; boite fermee par Echap = true
+390 : focus apres « Accepter » = FLT-SEMANTICS:La demande de Karima Bis276489 est acceptée ; l'e‑mail est e ; boite fermee par Echap = true
+Verdicts : {"390":true,"1440":true}
+== ADM-UX-bis (apres) : Echap ferme la boite apres « Accepter » : vert

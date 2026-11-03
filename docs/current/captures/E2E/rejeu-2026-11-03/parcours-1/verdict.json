@@ -1,0 +1,19 @@
+{
+  "rejeu": "REJEU-E2E du 03/11/2026",
+  "code": "main 8635304d",
+  "banc": "pile locale tool/e2e, jamais la production ni un apercu Vercel",
+  "recette_prod": "non faite : rien n'est fait sans la preuve du directeur en production",
+  "parcours": "1 : la direction valide un enseignant",
+  "verdict": "vert",
+  "tailles": {
+    "1440": "vert (10:57 UTC)",
+    "390": "vert (11:00 UTC)"
+  },
+  "rouges_du_robot": [
+    "message de creation d'invitation change (« Invitation créée. L'e-mail avec le code … part vers … », tirets insecables), ecran change par IMM-ACCUEIL-FRONT 2e2b7ba5 ; robot adapte (tool/e2e/parcours_1.mjs)",
+    "au telephone, les onglets de la direction sont derriere « Menu » ; robot adapte (tool/e2e/commun.mjs, ongletDirection)"
+  ],
+  "non_prouve": [
+    "les pieges du parcours 1 (pieges_1.mjs) ne sont pas rejoues ici"
+  ]
+}

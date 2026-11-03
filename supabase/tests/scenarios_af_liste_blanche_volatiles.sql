@@ -133,6 +133,9 @@ declare
     'demarrer_mission_controle(uuid)',
     'deposer_reprise_foyer(uuid)',
     'deposer_student_concern(text,uuid,uuid,text,text,text)',
+    -- PHOTOS-1 (03/11) : chaque adulte au compte valide pose sa photo ; le tuteur actif celle de son enfant mineur (garde role ET app_account_valid).
+    'poser_ma_photo(text)',
+    'poser_photo_eleve(uuid,text)',
     -- D1-bis (03/11) : la direction active traite un signalement (examiner, rediger le message pour la famille, clore) ; garde role ET app_account_valid, journal a chaque geste.
     'examiner_student_concern(uuid)',
     'rediger_resume_student_concern(uuid,text)',

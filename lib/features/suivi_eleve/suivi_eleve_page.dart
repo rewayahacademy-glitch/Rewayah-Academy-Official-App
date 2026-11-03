@@ -18,6 +18,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/pays_enseignant.dart';
 import '../../core/widgets/skeleton.dart';
+import '../suivi_foyer/carte_messages_academie.dart';
 import '../suivi_foyer/vue_suivi_foyer.dart';
 
 /// Le suivi de l'eleve : une lecture de la meme projection que `TUT-06`.
@@ -64,7 +65,9 @@ class _SuiviElevePageEtat extends ConsumerState<SuiviElevePage> {
 
   @override
   Widget build(BuildContext context) {
-    final AsyncValue<List<Seance>> seances = ref.watch(seancesDeMonSuiviProvider);
+    final AsyncValue<List<Seance>> seances = ref.watch(
+      seancesDeMonSuiviProvider,
+    );
     final AsyncValue<List<PresenceParticipant>?> presences = ref.watch(
       presenceDuSuiviProvider,
     );
@@ -152,6 +155,10 @@ class _Corps extends StatelessWidget {
         : null;
 
     return DataCollection<LigneSuivi>(
+      // D1-ter (03/11/2026) : « Messages de l'académie » de l'eleve qui lit,
+      // s'il y en a ; le serveur ne rend rien a un mineur. Defile avec la
+      // liste.
+      tete: const CarteMessagesAcademie(),
       lignes: vue.lignes,
       cle: (LigneSuivi ligne) => ValueKey<String>(ligne.seance.id),
       colonnes: _colonnesSuiviEleve(

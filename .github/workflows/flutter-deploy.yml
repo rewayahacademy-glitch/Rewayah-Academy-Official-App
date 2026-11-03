@@ -31,6 +31,17 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+    paths:
+      - 'lib/**'
+      - 'web/**'
+      - 'assets/**'
+      - 'site-public/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - 'build.yaml'
+      - 'slang.yaml'
+      - 'vercel.json'
+      - '.github/workflows/flutter-deploy.yml'
   workflow_dispatch:
 
 # Deux poussees rapprochees deployaient deux bundles dans un ordre non garanti.

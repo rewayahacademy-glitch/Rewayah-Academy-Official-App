@@ -4,7 +4,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { parcours, connecter, cliquer, trouver, trouverTexte, libelles, taper, sql, nettoyerClassesE2E, allerOnglet,
-  COMPTES, TRAVAIL } from './commun.mjs';
+  COMPTES, TRAVAIL, ongletDirection } from './commun.mjs';
 import { horaireProche, autreJour } from './horaire.mjs';
 
 const echap = (x) => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -25,7 +25,7 @@ try {
   const d = await p.contexte('direction');
   await connecter(d.page, COMPTES.direction);
   await p.capture(d, 'accueil');
-  await cliquer(d.page, 'Opérations Onglet');
+  await ongletDirection(d.page, 'Opérations');
   await cliquer(d.page, /^Classes$/);
   await p.capture(d, 'classes');
   await cliquer(d.page, 'Nouvelle classe');
@@ -41,10 +41,16 @@ try {
   await d.page.waitForTimeout(700);
   await cliquer(d.page, new RegExp(`^${h.heure} h$`), { role: 'menuitem' });
   await p.capture(d, 'creneau_1');
-  // Le formulaire ouvre trois creneaux (le premier et deux lignes « a remplir
-  // ou a retirer », D2 du 29/10) : on remplit le 2e et on retire le 3e.
-  const nb = await d.page.getByRole('button', { name: /^Heure/ }).count();
+  // Le formulaire ouvrait trois creneaux (D2 du 29/10) ; depuis C1 (UX-003,
+  // 02/11) il s'ouvre sur un seul : « Ajouter un créneau » ouvre le second.
+  let nb = await d.page.getByRole('button', { name: /^Heure/ }).count();
   p.dire(`Creneaux ouverts par le formulaire : ${nb}`);
+  if (nb < 2) {
+    await cliquer(d.page, /^Ajouter un créneau$/);
+    await d.page.waitForTimeout(700);
+    nb = await d.page.getByRole('button', { name: /^Heure/ }).count();
+    p.dire(`Apres « Ajouter un créneau » : ${nb} creneaux`);
+  }
   await d.page.getByRole('button', { name: new RegExp(`^${jour2}$`) }).nth(1).click();
   await d.page.waitForTimeout(500);
   await d.page.getByRole('button', { name: /^Heure/ }).nth(1).click();
