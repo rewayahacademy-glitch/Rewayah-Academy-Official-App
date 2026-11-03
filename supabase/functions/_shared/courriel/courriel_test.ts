@@ -5,6 +5,7 @@ import { contenuPour, modelesConnus } from './modeles.ts'
 import { htmlAuth, LANGUES_AUTH, MODELES_AUTH, MODELES_AUTH_LANGUES } from './auth_modeles.ts'
 import { FRANCAIS, LANGUES } from './modeles.ts'
 import { TRADUITS_A_L_ENVOI } from './modeles_fr.ts'
+import { VILLES_FUSEAU_AR, VILLES_FUSEAU_FR, villeDuFuseau } from './villes_fuseau.ts'
 
 // Les evenements de la contrainte notifications_evenement_check (etat au
 // 27/10/2026 : les treize du 23/10 et les neuf de la fiche « Fraicheur et
@@ -440,9 +441,9 @@ Deno.test('invitation_famille_importee : connexion avec la meme adresse, aucune 
 // (migration 20261108100000) arrive dans le texte de chaque langue.
 const CLASSE_UX = { classe: 'Les bases, lundi 18 h', fuseau: 'Europe/Paris',
   debut_local: '2026-11-22T10:00:00', prochaine_local: '2026-11-09T18:00:00' }
+// UX-030 : la ville du fuseau, la meme que dans l'application.
 const ZONE: Record<string, string> = {
-  fr: 'heure d’Europe centrale', en: 'Central European Time', ar: 'توقيت وسط أوروبا',
-  es: 'hora de Europa central', pt: 'Hora da Europa Central' }
+  fr: 'heure de Paris', en: 'Paris time', ar: 'بتوقيت باريس', es: 'hora de Paris', pt: 'hora de Paris' }
 const ux = (modele: string, langue: string, donnees: Record<string, unknown>) =>
   composer(rendre({ modele, categorie: 'classes', essentielle: false, donnees: { prenom: 'Samira', ...CLASSE_UX, ...donnees } }, langue).contenu)
 
@@ -496,4 +497,21 @@ Deno.test('UX-026 : en arabe, le nom latin de la classe et les prenoms sont isol
   const { texte } = ux('seance_annulee', 'ar', { portee: 'foyer', eleves: ['Lina'] })
   assert(texte.includes('«\u2068Les bases, lundi 18 h\u2069»'), texte)
   assert(texte.includes('\u2068Lina\u2069'), texte)
+})
+
+Deno.test('UX-030 : les villes des fuseaux sont celles de l application (commun.fuseaux, fr et ar)', async () => {
+  const cle = (iana: string) => iana.split(/[/_]/).filter(Boolean)
+    .map((m, i) => i === 0 ? m.toLowerCase() : m[0].toUpperCase() + m.slice(1).toLowerCase()).join('')
+  for (const [langue, table] of [['fr', VILLES_FUSEAU_FR], ['ar', VILLES_FUSEAU_AR]] as const) {
+    const json = JSON.parse(await Deno.readTextFile(new URL(`../../../../assets/i18n/${langue}.i18n.json`, import.meta.url)))
+    const app: Record<string, string> = json.commun.fuseaux
+    const serveur = Object.fromEntries(Object.entries(table).map(([iana, ville]) => [cle(iana), ville]))
+    assertEquals(serveur, app, `${langue} : la table du serveur s ecarte de celle de l application`)
+  }
+  // Hors de la table, comme dans l'application : le dernier segment, isole en arabe.
+  assertEquals(villeDuFuseau('America/St_Johns', 'fr'), 'St Johns')
+  assertEquals(villeDuFuseau('America/St_Johns', 'ar'), '\u2068St Johns\u2069')
+  assertEquals(villeDuFuseau('pas un fuseau', 'fr'), null)
+  assert(ux('seance_annulee', 'fr', { portee: 'foyer', fuseau: 'America/Toronto' }).texte.includes('10:00 (heure de Toronto)'))
+  assert(ux('seance_annulee', 'ar', { portee: 'foyer', fuseau: 'Africa/Casablanca' }).texte.includes('10:00 (بتوقيت الدار البيضاء)'))
 })

@@ -4,7 +4,10 @@
 // Vocabulaire : competence `mots-rewayah` (classe, la direction, ferme et
 // bienveillant, jamais « paiement confirme » sans preuve). Un e-mail ne porte
 // jamais de detail sensible : il dit qu'il y a du nouveau et ouvre
-// l'application, ou l'information vit derriere la connexion.
+// l'application, ou l'information vit derriere la connexion. « Detail
+// sensible » vise le contenu d'un signalement ou la sante, pas le prenom de
+// l'enfant envoye a sa propre famille (UX-026, garde-cap et pilote, 03/11/2026).
+// Pour la securite d'un enfant, aucun e-mail, jamais.
 
 import { APP } from './gabarit.ts'
 import { avec, avisDans, bonjour, dateLongue, type Donnees, type Fabrique, type LangueEcrite, libre, PAROLE_FR, montantLisible,

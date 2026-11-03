@@ -6,6 +6,7 @@
 // reference : ses parametres par defaut redonnent exactement ses textes.
 
 import { APP, type Bloc, type Contenu, paragraphes } from './gabarit.ts'
+import { villeDuFuseau } from './villes_fuseau.ts'
 
 export type Donnees = Record<string, unknown>
 export type Fabrique = (d: Donnees) => Omit<Contenu, 'raison'>
@@ -87,19 +88,22 @@ export function montantLisible(d: Donnees, locale = 'fr-FR'): string | null {
   }
 }
 
-/// COURRIELS-UX (UX-026, 03/11/2026) : le nom du fuseau IANA `fuseau` dans
-/// la langue du destinataire (« heure d’Europe centrale », « توقيت وسط أوروبا »),
-/// tel qu'Intl le donne ; nul quand le fuseau manque ou est inconnu.
-export function nomFuseau(d: Donnees, locale = 'fr-FR'): string | null {
-  const z = d.fuseau
-  if (typeof z !== 'string' || !/^[A-Za-z_]+(\/[A-Za-z0-9_+-]+)*$/.test(z)) return null
-  try {
-    const nom = new Intl.DateTimeFormat(locale, { timeZone: z, timeZoneName: 'longGeneric' })
-      .formatToParts(new Date()).find((p) => p.type === 'timeZoneName')?.value
-    return nom && nom.trim() ? nom.trim() : null
-  } catch {
-    return null
-  }
+/// COURRIELS-UX (UX-026, UX-030, 03/11/2026) : « heure de Paris » : la ville du
+/// fuseau `fuseau`, la meme que dans l'application (`villes_fuseau.ts`), dans
+/// la langue de `locale` ; nul quand le fuseau manque ou est illisible.
+const HEURE_DE: Record<string, (ville: string) => string> = {
+  fr: (v) => `heure de ${v}`,
+  en: (v) => `${v} time`,
+  ar: (v) => `بتوقيت ${v}`,
+  es: (v) => `hora de ${v}`,
+  pt: (v) => `hora de ${v}`,
+}
+
+export function heureDeLaVille(d: Donnees, locale = 'fr-FR'): string | null {
+  const langue = locale.slice(0, 2).toLowerCase()
+  const ville = villeDuFuseau(d.fuseau, langue)
+  if (!ville) return null
+  return (HEURE_DE[langue] ?? HEURE_DE.fr)(ville)
 }
 
 /// Le nom de la classe (`classe`, pose par le serveur), ou nul.
@@ -131,15 +135,15 @@ export interface Precisions {
 }
 
 /// La date et l'heure locales d'une cle (`debut_local` ou `prochaine_local`,
-/// « AAAA-MM-JJTHH:MM:SS », deja dans le fuseau du destinataire), suivies du
-/// nom de ce fuseau entre parentheses quand le serveur le donne (UX-026) :
-/// « 6 novembre 2026 à 18:00 (heure d’Europe centrale) ». Nul sans date.
+/// « AAAA-MM-JJTHH:MM:SS », deja dans le fuseau du destinataire), suivies de
+/// la ville de ce fuseau entre parentheses quand le serveur le donne (UX-026,
+/// UX-030) : « 6 novembre 2026 à 18:00 (heure de Paris) ». Nul sans date.
 export function quandLocal(d: Donnees, cle: string, locale = 'fr-FR', a = 'à'): string | null {
   const v = d[cle]
   if (typeof v !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(v)) return null
   const jour = dateLongue(v.slice(0, 10), locale)
   if (!jour) return null
-  const zone = nomFuseau(d, locale)
+  const zone = heureDeLaVille(d, locale)
   return `${jour} ${a} ${v.slice(11, 16)}${zone ? ` (${zone})` : ''}`
 }
 
