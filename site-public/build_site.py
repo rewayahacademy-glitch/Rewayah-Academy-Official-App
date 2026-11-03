@@ -204,7 +204,32 @@ def load_content() -> tuple[dict[str, dict], dict]:
         for section in page["sections"]:
             for link in section.get("links", []):
                 validate_link(link["href"], pages)
+            valider_citations_arabes(route, section)
     return pages, site
+
+
+ARABE = re.compile(r"[\u0600-\u06FF\u0750-\u077F\u0870-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]")
+LATIN = re.compile(r"[A-Za-z\u00C0-\u024F]")
+
+
+def valider_citations_arabes(route: str, section: dict) -> None:
+    """Un bloc arabe n'existe que dans un article, apres un paragraphe qui existe, avec sa legende en francais ; son texte
+    est de l'arabe et rien d'autre (une lettre latine y signalerait un collage rate)."""
+    blocs = section.get("citations_arabes", [])
+    if blocs and not route.startswith("/fr/articles/"):
+        raise ValueError(f"Arabic citation outside an article: {route}")
+    for bloc in blocs:
+        if bloc.get("genre") not in GENRES_CITATION or not isinstance(bloc.get("apres"), int):
+            raise ValueError(f"Arabic citation without genre or position: {route}#{section.get('id')}")
+        if not 0 <= bloc["apres"] < len(section.get("paragraphs", [])):
+            raise ValueError(f"Arabic citation after a missing paragraph: {route}#{section.get('id')}")
+        textes = [v["texte"] for v in bloc.get("versets", [])] if bloc["genre"] == "coran" else [bloc.get("texte", "")]
+        if bloc["genre"] == "coran" and not all(re.fullmatch(r"\d{1,3}:\d{1,3}", v.get("cle", "")) for v in bloc.get("versets", [])):
+            raise ValueError(f"Quran citation without verse keys: {route}#{section.get('id')}")
+        if not textes or any(not ARABE.search(t) or LATIN.search(t) for t in textes):
+            raise ValueError(f"Arabic citation that is not Arabic text: {route}#{section.get('id')}")
+        if not bloc.get("legende") or ARABE.search(bloc["legende"]):
+            raise ValueError(f"Arabic citation without a French caption: {route}#{section.get('id')}")
 
 
 def load_direction(pages: dict[str, dict]) -> tuple[dict, dict]:
@@ -392,6 +417,9 @@ def texte_html(value: str) -> str:
     d'exclamation ; un petit mot se lie au mot qui le suit et un nombre a son unite (« de 3 à 5 élèves ») ; le
     dernier mot ne reste pas seul sur sa ligne ; un nom comme Az-Zalzalah ne se coupe pas a son trait d'union."""
     fin = re.sub(r" ([:;?!])", "\u00a0\\1", value)
+    # « n° 1829 a » (numero d'un hadith) ne se coupe ni apres « n° », ni avant la lettre qui suit le numero.
+    fin = re.sub(r"(?<!\w)n° (\d+)(?: ([a-z])(?!\w))?",
+                 lambda m: "n°\u00a0" + m.group(1) + (f"\u00a0{m.group(2)}" if m.group(2) else ""), fin)
     fin = PETITS_MOTS_TEXTE.sub(lambda m: m.group(1) + "\u00a0", fin)
     # Une adresse e-mail garde sa place a la ligne : elle ne se colle pas au mot qui la precede.
     fin = re.sub(r"\u00a0(?=\S*@)", " ", fin)
@@ -439,6 +467,33 @@ def texte_riche(value: str) -> str:
 # Les articles publies, du plus recent au plus ancien : remplie par build() avant le rendu, lue par la section
 # generee « articles » du hub (/fr/articles). Un nouvel article y entre seul, sans retouche du hub.
 _ARTICLES: list[tuple[str, dict]] = []
+# Parution programmee (directeur, 03/11/2026 : « une publication automatique separee par 2 jours minimum ») : la date d'un
+# article est celui de sa parution. La construction de production ne publie pas un article date apres le jour de la
+# construction (ni sa page, ni sa carte, ni sa place dans le plan du site, ni les liens qui y menent) ; un apercu le montre,
+# marque « à paraître », pour la relecture. Remplie par build().
+_A_PARAITRE: set[str] = set()
+
+
+def article_a_paraitre(route: str, page: dict, jour: date) -> bool:
+    return route.startswith("/fr/articles/") and date.fromisoformat(page["date"]) > jour
+
+
+def sans_articles_a_paraitre(pages: dict[str, dict], retires: set[str]) -> dict[str, dict]:
+    """Les pages publiees ce jour-la : les articles a paraitre retires, et chaque lien qui y menait avec eux."""
+    publiees = {}
+    for route, page in pages.items():
+        if route in retires:
+            continue
+        if any(l["href"] in retires for s in page["sections"] for l in s.get("links", [])):
+            page = {**page, "sections": [{**s, "links": [l for l in s["links"] if l["href"] not in retires]}
+                                         if s.get("links") else s for s in page["sections"]]}
+        publiees[route] = page
+    return publiees
+
+
+def date_de_parution(route: str, page: dict) -> str:
+    quand = esc(avis_mod.fmt_date(page["date"]))
+    return f"À paraître le {quand}" if route in _A_PARAITRE else f"Publié le {quand}"
 
 
 def temps_de_lecture(page: dict) -> int:
@@ -449,14 +504,14 @@ def temps_de_lecture(page: dict) -> int:
     return max(1, -(-mots // 200))
 
 
-def signature_article(page: dict) -> str:
+def signature_article(page: dict, route: str = "") -> str:
     """Sous le titre d'un article : qui l'a ecrit (lien vers sa presentation), quand, et combien de temps il demande."""
     auteur = page.get("auteur")
     if not auteur:
         return ""
     return (f'<p class="article-signature"><span>Par <a href="{esc(auteur["href"])}">{esc(auteur["nom"])}</a>, {esc(auteur["role"])}</span>'
-            f'<span class="article-signature__meta"><time datetime="{esc(page["date"])}">Publié le {esc(avis_mod.fmt_date(page["date"]))}</time>'
-            f' · Lecture : {temps_de_lecture(page)}\u00a0min</span></p>')
+            f'<span class="article-signature__meta"><time datetime="{esc(page["date"])}">{date_de_parution(route, page)}</time>'
+            f' · Lecture : {temps_de_lecture(page)} min</span></p>')
 
 
 def liste_articles() -> str:
@@ -465,13 +520,41 @@ def liste_articles() -> str:
     cartes = "".join(
         f'<li class="article-carte"><h3><a href="{esc(route)}">{titre_html(page["h1"])}</a></h3>'
         f'<p>{texte_html(page["description"])}</p>'
-        f'<p class="article-carte__meta">{esc(page["auteur"]["nom"])} · {esc(avis_mod.fmt_date(page["date"]))} · '
-        f'{temps_de_lecture(page)}\u00a0min</p></li>' for route, page in _ARTICLES)
+        f'<p class="article-carte__meta">{esc(page["auteur"]["nom"])} · '
+        f'{date_de_parution(route, page) if route in _A_PARAITRE else esc(avis_mod.fmt_date(page["date"]))} · '
+        f'{temps_de_lecture(page)} min</p></li>' for route, page in _ARTICLES)
     return f'<ul class="articles-liste" data-revele-enfants>{cartes}</ul>'
 
 
+# Citations en arabe des articles (directeur, 03/11/2026 : « là on a besoin de l'arabe, donc il le faut », exception datee
+# au registre M-29, qui garde l'arabe hors des pages francaises partout ailleurs). Le Coran s'ecrit dans le texte du Complexe
+# du Roi Fahd (KFGQPC UthmanicHafs v3.0, celui du Mushaf de l'application), un hadith dans Uthman Taha Naskh du meme
+# editeur ; chacun suit, en bloc, le paragraphe qui le cite en francais.
+CHIFFRES_ARABES = "٠١٢٣٤٥٦٧٨٩"
+GENRES_CITATION = ("coran", "hadith")
+
+
+def chiffres_arabes(nombre: int) -> str:
+    return "".join(CHIFFRES_ARABES[int(c)] for c in str(nombre))
+
+
+def citation_arabe(bloc: dict) -> str:
+    if bloc["genre"] == "coran":
+        # La rosace du numero, comme dans le Mushaf de l'application (RosaceVerset) : un repere, muet pour un lecteur d'ecran.
+        texte = " ".join(f'{esc(v["texte"])} <span class="rosace" aria-hidden="true">'
+                         f'{chiffres_arabes(int(v["cle"].split(":")[1]))}</span>' for v in bloc["versets"])
+    else:
+        texte = esc(bloc["texte"])
+    return (f'<figure class="citation-arabe citation-arabe--{bloc["genre"]}"><blockquote lang="ar" dir="rtl"><p>{texte}</p>'
+            f'</blockquote><figcaption>{texte_html(bloc["legende"])}</figcaption></figure>')
+
+
 def paragraphes(section: dict) -> str:
-    return "".join(f"<p>{texte_riche(p)}</p>" for p in section.get("paragraphs", []))
+    blocs: dict[int, list[dict]] = {}
+    for bloc in section.get("citations_arabes", []):
+        blocs.setdefault(bloc["apres"], []).append(bloc)
+    return "".join(f"<p>{texte_riche(p)}</p>" + "".join(citation_arabe(b) for b in blocs.get(i, []))
+                   for i, p in enumerate(section.get("paragraphs", [])))
 
 
 def points_liste(section: dict) -> str:
@@ -895,7 +978,7 @@ def blocs_prix(tarifs: dict) -> str:
 
 def hero_interieur(route: str, page: dict, reglage: dict, images: dict, cta: str, status: str,
                    tarifs: dict | None = None, today: date | None = None) -> str:
-    intro = signature_article(page) + (f'<p class="hero-intro">{texte_html(page["intro"])}</p>' if page.get("intro") else "")
+    intro = signature_article(page, route) + (f'<p class="hero-intro">{texte_html(page["intro"])}</p>' if page.get("intro") else "")
     haut = reglage.get("haut")
     titre_long = (" entete-page__texte--long" if len(page["h1"]) > 22 else "") + (" entete-page__texte--tres-long" if len(page["h1"]) > 33 else "")
     texte = (f'<div class="entete-page__texte{titre_long}" data-lignes><h1>{titre_html(page["h1"])}</h1>'
@@ -1342,9 +1425,11 @@ def fil_ariane(route: str, page: dict, origin: str, image: str = "") -> str:
 
 def page_indexee(route: str, page: dict, allow_indexing: bool, avis: dict | None) -> bool:
     """Production seulement, page prete et indexable ; une page vide ne s'offre pas aux moteurs (les avis tant
-    qu'aucun n'est publie)."""
+    qu'aucun n'est publie, le hub des articles tant qu'aucun n'est paru)."""
     if not (allow_indexing and page.get("status") == "ready" and page.get("indexable", True)):
         return False
+    if route == "/fr/articles":
+        return any(r not in _A_PARAITRE for r, _ in _ARTICLES)
     return route != "/fr/avis" or bool(avis and avis.get("nombre"))
 
 
@@ -1505,11 +1590,19 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
 
 
 COPIED_ASSETS = {".svg", ".png", ".webp", ".woff2", ".txt"}
+# Les polices des citations arabes des articles : les fichiers du Complexe du Roi Fahd (KFGQPC) que l'application emploie
+# deja (assets/fonts du depot), copies octet pour octet avec leur licence. Celle-ci permet d'utiliser, de copier et de
+# distribuer, jamais de modifier : ni sous-ensemble, ni conversion en woff2.
+POLICES_CITATIONS = ("UthmanicHafs-v-3.0.ttf", "LICENSE-UthmanicHafs.txt",
+                     "UthmanTahaNaskh-Regular.otf", "LICENSE-UthmanTahaNaskh.txt")
+POLICES_DEPOT = ROOT.parent / "assets" / "fonts"
 
 
 def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None = None,
-          env: dict[str, str] | None = None, today: date | None = None, avis: dict | None = None) -> None:
-    """allow_indexing : la construction de production seulement (voir main) ; un apercu reste noindex."""
+          env: dict[str, str] | None = None, today: date | None = None, avis: dict | None = None,
+          parution: date | None = None) -> None:
+    """allow_indexing : la construction de production seulement (voir main) ; un apercu reste noindex.
+    parution : le jour qui decide quels articles sont parus (par defaut today, sinon le jour de la construction)."""
     if tarifs is None:
         # Lecture a la construction seulement : le HTML produit ne contient ni adresse ni cle.
         tarifs, _origine = tarifs_mod.charger_tarifs(env=env)
@@ -1521,10 +1614,21 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
     if parsed.scheme != "https" or not parsed.netloc or parsed.path not in ("", "/"):
         raise ValueError("Canonical origin must be an HTTPS origin")
     pages, site = load_content()
+    contenu = pages  # tout le contenu, articles a paraitre compris : la direction artistique les connait deja
+    # Parution programmee : en production, un article date apres le jour de la construction n'existe pas encore (sa page,
+    # sa carte du hub, sa place dans le plan du site et les liens qui y menent attendent la premiere construction de ce
+    # jour-la) ; un apercu le garde, marque « à paraître ». Le jour est celui du serveur de construction (UTC).
+    jour = parution or today or date.today()
+    a_paraitre = {r for r, p in pages.items() if article_a_paraitre(r, p, jour)}
+    if allow_indexing:
+        pages = sans_articles_a_paraitre(pages, a_paraitre)
+        a_paraitre = set()
+    _A_PARAITRE.clear()
+    _A_PARAITRE.update(a_paraitre)
     # Le hub liste les articles du plus recent au plus ancien (a date egale : l'ordre du fichier de contenu).
     _ARTICLES[:] = sorted(((r, p) for r, p in pages.items() if r.startswith("/fr/articles/")),
                           key=lambda article: article[1]["date"], reverse=True)
-    direction, images = load_direction(pages)
+    direction, images = load_direction(contenu)
     # Le mot du directeur (page Academie) : l'accueil en reprend une phrase, signee, a cote de sa photo.
     mot = next((s for p in pages.values() for s in p["sections"] if s.get("citation")), None)
     # Les deux autres fondateurs (page Academie), avec leur portrait : l'accueil les montre a cote du directeur.
@@ -1546,6 +1650,7 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
                 allowed = COPIED_ASSETS if source_dir.name == "assets" else {".css", ".js"}
                 if source.is_file() and source.suffix.lower() in allowed:
                     sources.append(source)
+    sources += [POLICES_DEPOT / nom for nom in POLICES_CITATIONS]
     # Un dossier de sortie reutilise ne garde pas un fichier retire (illustration re-exportee, police supprimee).
     publies = {source.name for source in sources}
     for ancien in assets_out.iterdir():

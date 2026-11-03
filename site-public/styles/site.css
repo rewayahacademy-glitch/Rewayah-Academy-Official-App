@@ -42,6 +42,26 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+/* Citations arabes des articles (directeur, 03/11/2026) : les deux polices du Complexe du Roi Fahd, servies telles quelles
+   avec leur licence (ni sous-ensemble ni conversion : la licence l'interdit). Seules les pages qui les emploient les
+   telechargent. Le Coran dans le texte du Mushaf de l'application, un hadith dans le naskh du meme editeur. */
+@font-face {
+  font-family: 'KFGQPC Hafs';
+  src: url('../assets/UthmanicHafs-v-3.0.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-08FF, U+FB50-FDFF, U+FE70-FEFF;
+}
+@font-face {
+  font-family: 'KFGQPC Uthman Taha Naskh';
+  src: url('../assets/UthmanTahaNaskh-Regular.otf') format('opentype');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+FB50-FDFF, U+FE70-FEFF;
+}
+
 /*
  * Jetons. Toutes les couleurs viennent de lib/core/theme/app_palette.dart (M-16),
  * les rayons de app_radius.dart, les ombres de app_elevation.dart (M-24), les
@@ -90,6 +110,8 @@
   --police-titre: 'DM Sans', system-ui, sans-serif;
   --police-corps: 'Plus Jakarta Sans', system-ui, sans-serif;
   --police-arabe-ornement: 'Reem Kufi', sans-serif;
+  --police-coran: 'KFGQPC Hafs', 'Noto Naskh Arabic', serif;
+  --police-arabe-texte: 'KFGQPC Uthman Taha Naskh', 'Noto Naskh Arabic', serif;
   /* Mouvement (app_mouvement) */
   --mv-retour: 100ms;
   --mv-micro: 120ms;
@@ -2632,6 +2654,15 @@ li, dd { text-wrap: wrap; }
 
 
 /* === Articles (directeur, 03/11/2026) : signature sous le titre, liste du hub en cartes ===================== */
+/* Citation arabe d'un article : le texte original suit le paragraphe qui le cite en francais. Un filet d'accent a son
+   debut (a droite, sens de l'arabe), l'arabe grand et aere pour ses voyelles, la legende en francais, discrete. */
+.citation-arabe { margin: var(--e-6) 0 var(--e-8); padding: var(--e-5) var(--e-5) var(--e-4); border-radius: var(--r-md); border-inline-end: 3px solid var(--marque); background: var(--avant); }
+.citation-arabe blockquote { margin: 0; text-align: right; color: var(--encre); }
+.citation-arabe blockquote p { margin: 0; font-family: var(--police-coran); font-size: clamp(25px, 1.1vw + 20px, 32px); line-height: 2.05; letter-spacing: 0; word-spacing: .06em; }
+.citation-arabe--hadith blockquote p { font-family: var(--police-arabe-texte); font-size: clamp(23px, .9vw + 19px, 29px); line-height: 1.95; }
+.citation-arabe .rosace { display: inline-grid; place-items: center; min-width: 1.5em; height: 1.5em; padding-inline: .1em; border: 1.5px solid var(--marque); border-radius: var(--r-full); color: var(--encre-accent); font-size: .62em; line-height: 1; vertical-align: .18em; }
+.citation-arabe figcaption { margin-top: var(--e-3); font-size: 16px; color: var(--encre-douce); }
+.lecture__section .citation-arabe + p { margin-top: 0; }
 .article-signature { display: grid; gap: var(--e-1); margin: 0 0 var(--e-5); font-size: var(--t-petit); color: var(--encre-douce); max-width: 46ch; }
 .article-signature a { color: var(--encre); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
 .article-signature__meta { font-size: 16px; }

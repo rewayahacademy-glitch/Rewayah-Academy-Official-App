@@ -8,6 +8,7 @@ import json
 import re
 import shutil
 import unittest
+from datetime import date
 from pathlib import Path
 
 
@@ -152,6 +153,9 @@ class GeneratedSiteQA(unittest.TestCase):
                 "dm-sans-OFL.txt",
                 "plus-jakarta-sans-OFL.txt",
                 "reem-kufi-OFL.txt",
+                # Citations arabes des articles (directeur, 03/11/2026) : les polices du Complexe du Roi Fahd, copiees telles
+                # quelles depuis assets/fonts du depot, avec leur licence.
+                *BUILDER_MODULE.POLICES_CITATIONS,
                 # COURRIELS-1 : logo et ornement des e-mails (PNG, les messageries ne rendent pas le SVG).
                 "courriel-logo-violet.png",
                 "courriel-ornement-violet.png",
@@ -254,10 +258,15 @@ class GeneratedSiteQA(unittest.TestCase):
         # L'arabe attend le site en arabe (registre M-29) : sur les pages francaises, seules les lettres des arches de Cours
         # (et le nom arabe de l'academie dans les donnees structurees, M-27, qui ne s'affiche pas). Les textes
         # alternatifs comptent : un lecteur d'ecran les lit. Toutes les plages de l'arabe, formes de presentation comprises.
+        # Exception datee (directeur, 03/11/2026 : \u00AB la on a besoin de l'arabe, donc il le faut \u00BB) : dans un article, le
+        # texte original d'un verset ou d'un hadith cite, dans son bloc (lang="ar"), et nulle part ailleurs.
         arabe = re.compile(r"[\u0600-\u06FF\u0750-\u077F\u0870-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]")
+        bloc_citation = r'<figure class="citation-arabe citation-arabe--(?:coran|hadith)"><blockquote lang="ar" dir="rtl">.*?</blockquote>'
         for route in self.pages:
             source = re.sub(r'<span class="parcours__arabe"[^>]*>(?:<span[^>]*>[^<]*</span>|[^<])*</span>|<script type="application/ld\+json">.*?</script>', "",
                             self.page_file(route).read_text(encoding="utf-8"), flags=re.S)
+            if route.startswith("/fr/articles/"):
+                source = re.sub(bloc_citation, "", source, flags=re.S)
             with self.subTest(route=route):
                 self.assertIsNone(arabe.search(source))
 
@@ -317,10 +326,15 @@ class GeneratedSiteQA(unittest.TestCase):
 
     def test_bundle_gate_covers_every_local_font_requested_by_css(self) -> None:
         css = (SITE / "styles" / "site.css").read_text(encoding="utf-8")
-        fonts = set(re.findall(r"\.\./assets/([a-z0-9-]+\.woff2)", css))
+        fonts = set(re.findall(r"\.\./assets/([A-Za-z0-9.-]+\.(?:woff2|ttf|otf))", css))
         workflow = (SITE.parent / ".github" / "workflows" / "flutter-deploy.yml").read_text(encoding="utf-8")
-        self.assertEqual(len(fonts), 4)
-        for font in fonts:
+        # Les polices des citations arabes (03/11/2026) ne servent que les articles ; leur presence dans la sortie est
+        # verifiee par tests/test_articles.py (octet pour octet). Leur ajout a la garde du workflow (zone du pilote) est
+        # demande dans docs/current/SITE-REFONTE-2026-11-03.md ; d'ici la, elles ne sont pas dans la liste du workflow.
+        citations = {nom for nom in BUILDER_MODULE.POLICES_CITATIONS if not nom.endswith(".txt")}
+        self.assertEqual(fonts & citations, citations)
+        self.assertEqual(len(fonts - citations), 4)
+        for font in fonts - citations:
             self.assertIn(f"fr/assets/{font}", workflow)
 
     def test_vercel_rewrites_cover_emitted_routes_and_leave_unknown_fr_to_404(self) -> None:
@@ -402,8 +416,10 @@ class ProductionSiteQA(unittest.TestCase):
         shutil.rmtree(cls.output, ignore_errors=True)
         cls.output.mkdir(parents=True)
         shutil.copy(SITE.parent / "web" / "vercel.json", cls.output / "vercel.json")
-        BUILDER_MODULE.build(cls.output, cls.origine, True, env={})
         cls.pages = json.loads(CONTENT.read_text(encoding="utf-8"))["pages"]
+        # Apres la derniere parution programmee : tous les articles sont parus (la parution a sa date : test_articles.py).
+        parution = max(date.fromisoformat(p["date"]) for r, p in cls.pages.items() if r.startswith("/fr/articles/"))
+        BUILDER_MODULE.build(cls.output, cls.origine, True, env={}, parution=parution)
         cls.config = json.loads((cls.output / "vercel.json").read_text(encoding="utf-8"))
 
     @classmethod

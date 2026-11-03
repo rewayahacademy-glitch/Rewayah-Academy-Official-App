@@ -20,10 +20,13 @@ correction groupée après la première relecture du directeur.
 | SEO technique | `build_site.py` | présent dans le code : dimensions de l'image de partage, fil d'Ariane, balisage `Article`, date de mise à jour au plan du site pour les articles |
 | **Quatre articles signés du directeur** (troisième relecture : valeur et service d'abord) | `content/pages.json`, `content/direction.json`, `build_site.py` | présent dans le code ; chaque verset et chaque hadith vérifiés (§6) ; relecture du directeur à faire avant fusion |
 | **Page « Autres chemins pour apprendre le Coran »** | `content/pages.json` | présent dans le code, 5 sites lus sur 6 (voir §4) |
+| **Texte arabe de chaque verset et de chaque hadith cité** (quatrième message : « on a besoin de l'arabe ») | `build_site.py`, `content/pages.json`, `styles/site.css` | présent dans le code ; 17 versets identiques, lettre pour lettre, aux données du Mushaf de l'application ; 11 extraits de hadiths retrouvés mot pour mot dans le texte complet des recueils ; captures bureau et mobile |
+| **Parution programmée, deux jours d'écart au moins** | `build_site.py`, `content/pages.json` | présent dans le code ; 5, 8, 11 et 14 novembre ; testé localement à chaque date ; **automatique seulement si la production se reconstruit ces jours-là** (§7, point 6) |
 
-Testé localement : 110 tests `python3 -m unittest discover -s site-public/tests` (80 au départ, 30 ajoutés), et 92 vues (23 routes à 360, 390, 768 et
-1440 px) sans débordement horizontal, sans ressource en erreur, sans erreur JavaScript. Testé sur staging : l'aperçu de la PR 187 a servi le premier
-commit ; le second n'est pas encore vu. Déployé : non.
+Testé localement : 120 tests `python3 -m unittest discover -s site-public/tests` (80 au départ, 40 ajoutés), et 92 vues (23 routes à 360, 390, 768 et
+1440 px) sans débordement horizontal, sans ressource en erreur, sans erreur JavaScript, refaites sur ce commit (blocs arabes et polices compris ;
+captures des blocs arabes à 390 et 1366 px). Testé sur staging : l'aperçu de la PR 187 a servi les deux premiers commits ; les suivants
+ne sont pas encore vus. Déployé : non.
 
 ## 2. Décisions du directeur le 03/11 (écrites ici pour la mémoire du dépôt)
 
@@ -36,6 +39,9 @@ commit ; le second n'est pas encore vu. Déployé : non.
   d'autres existent et renvoient à la page « Autres chemins » (dont la manière de citer est validée) ; ils donnent de la valeur avant de parler de
   Rewayah (langage éducatif, profondeur spirituelle, historique et sociale, peu de listes) ; deux articles de plus : apprendre seul sans maître, et
   le pouvoir du groupe (avec le fonctionnement des classes de Rewayah) ; « n'invente rien ».
+- **Quatrième message (03/11, soir)** : « Là on a besoin de l'arabe, donc il le faut » : exception datée au registre M-29, **dans les articles
+  seulement**, pour le texte original des versets et des hadiths cités. Et « si tous les articles sont publiés le même jour, à la même heure et par le
+  même auteur, ça ne va pas marcher » : publication automatique séparée de deux jours au moins.
 
 ## 3. Choix de l'agent, modifiables en une ligne
 
@@ -45,11 +51,24 @@ commit ; le second n'est pas encore vu. Déployé : non.
 - **Pas de mesure d'audience ajoutée.** Elle exige d'activer Vercel Web Analytics (geste du directeur) et de dire la mesure dans la politique de confidentialité
   (texte juridique). Google Analytics et Microsoft Clarity restent déconseillés (consentement exigé en France ; sessions enregistrées sur un site pour des familles).
   Tant qu'elle n'existe pas, aucune donnée de trafic n'est lisible : seule la Search Console compte les impressions.
-- **Auteur des articles : le directeur** (signature sous le titre, lien vers « Le mot du directeur », balisage `Person`). Date : 2026-11-03.
+- **Auteur des articles : le directeur** (signature sous le titre, lien vers « Le mot du directeur », balisage `Person`), comme il l'a demandé. Un seul
+  auteur, réel et présenté, n'est pas un défaut pour les moteurs ; un auteur inventé en serait un. Signer du nom d'un autre fondateur demanderait son accord.
+- **Parution** : jeudi 5 novembre (enfant), dimanche 8 (seul sans maître), mercredi 11 (groupe), samedi 14 (enfant fatigué) : deux par semaine, en
+  alternant les publics. La date est le jour de parution ; avant elle, la production ne contient ni la page, ni sa carte, ni sa place dans le plan du site,
+  ni aucun lien qui y mène, et le hub reste hors de l'index tant qu'aucun article n'est paru. Un aperçu montre tout, marqué « À paraître le … ».
+  Le jour est celui du serveur de construction (UTC). Pas d'heure : la date seule est publiée, comme avant.
 - **« Occident »** est employé, comme le directeur l'a demandé, avec « et partout où les musulmans vivent en minorité » pour ne pas exclure les
   familles qui vivent ailleurs. La règle de marque vise les noms de pays et de continents ; « Occident » n'en est pas un.
-- **Pas d'écriture arabe sur les pages françaises** (registre M-29, test existant) : l'eulogie s'écrit « (paix et bénédictions sur lui) », à chaque
-  mention ; les mots arabes s'écrivent en lettres latines (qalb, kalb).
+- **L'arabe, depuis le quatrième message** : chaque citation française d'un verset ou d'un hadith est suivie, en bloc, de son texte arabe (`lang="ar"`,
+  `dir="rtl"`, légende en français). Versets : texte KFGQPC UthmanicHafs v3.0 du paquet `@quran.ws/text` 0.1.0, celui du Mushaf de l'application,
+  avec ses signes de pause et le numéro en rosace (chiffres arabo-indiens) ; un extrait français est suivi du verset entier, signalé. Hadiths : seule la
+  parole citée, sans la chaîne de transmission, dans la forme exacte du jeu public hadith-api (copie des textes de sunnah.com). Hors de ces blocs, le
+  français reste français : l'eulogie s'écrit toujours « (paix et bénédictions sur lui) » et qalb, kalb en lettres latines (lisibles par tous les lecteurs
+  d'écran). Le test M-29 garde l'arabe hors de toutes les autres pages et hors du texte français des articles.
+- **Polices de l'arabe** : les deux fichiers du Complexe du Roi Fahd déjà dans `assets/fonts` (UthmanicHafs pour le Coran, Uthman Taha Naskh pour les
+  hadiths, tous deux dans la charte), copiés **tels quels** avec leur licence : elle permet d'utiliser, de copier et de distribuer, jamais de modifier,
+  donc ni sous-ensemble ni woff2. Coût : 294 Ko et 161 Ko, chargés par les seuls articles, une fois pour toutes (cache). Noto Sans Arabic (libre, réductible)
+  a été écartée : un hadith en linéale à côté d'un verset en naskh se voyait.
 - **Citations** : un extrait de verset n'est accepté que s'il est mot pour mot dans le texte vérifié (sinon le script s'arrête) ; un hadith est cité
   dans la traduction publiée par HadeethEnc quand elle existe, sinon dans une traduction du sens, signalée comme telle. Script :
   `articles_v3.py` (hors dépôt, dans le dossier de travail de la session), qui lit `sources_verifiees.json`.
@@ -74,8 +93,14 @@ commit ; le second n'est pas encore vu. Déployé : non.
 4. **`le-coran.com` n'est pas cité.** Son site a répondu 403 à la lecture automatique ; contourner ce blocage n'est pas permis, donc rien n'est vérifié. Il peut entrer après
    une lecture par une personne (le test `test_seuls_les_sites_lus_sont_cites` le garde : il faut le modifier volontairement).
 5. **Deux formules de la demande sont interdites par la marque** : « la meilleure alternative » (jamais « le meilleur ») et « les coûts les plus bas possibles »
-   (superlatif que rien ne prouve ; un institut cité demande des prix très bas en groupe, d'après son site). « Occident » est écarté (nom de région).
+   (superlatif que rien ne prouve ; un institut cité demande des prix très bas en groupe, d'après son site). « Occident » avait d'abord été écarté
+   (nom de région) ; le directeur l'a demandé à la troisième relecture, il est employé (§3).
 6. **Le pied de page avait été compacté** après une revue de trois jurés ; la demande du 03/11 l'emporte.
+7. **Erreur de l'agent sur les avis, corrigée.** J'avais écrit au directeur que `/fr/avis` était hors de l'index : c'était vrai de ma construction
+   locale (sans base, zéro avis), faux en production. Vérifié le 03/11 : la production sert `/fr/avis` en `index,follow` et la met dans son plan du
+   site, parce que sa construction lit les avis publiés dans la base (`avis_publics()`) et y a trouvé les deux avis de test. L'indexation ne « sait »
+   rien d'autre : elle compte, à chaque construction, les avis publiés. Quand le directeur les aura supprimés, la construction suivante de la
+   production remettra `/fr/avis` en `noindex` et la retirera du plan du site, sans intervention. D'ici là, Google peut l'indexer.
 
 ## 5. Ce qui n'est PAS fait
 
@@ -83,7 +108,9 @@ commit ; le second n'est pas encore vu. Déployé : non.
 - **Refonte des animations** au-delà des cartes, des boutons et des liens du pied.
 - **Hub : 4 articles** (2 réécrits, 2 nouveaux). Les autres sujets du plan sont à écrire un par un, signés et relus ; aucun n'est publié en série.
 - **Mesure d'audience** (voir §3).
-- **Rendu vérifié sur l'aperçu Vercel du second commit** : non ; seules mes captures locales existent.
+- **Rendu vérifié sur l'aperçu Vercel des derniers commits** : non ; seules mes captures locales existent.
+- **Construction automatique les jours de parution** : non. Elle touche `.github/workflows/flutter-deploy.yml`, zone interdite aux agents (§7, point 6).
+- **Registre de marque M-29** : l'exception datée du 03/11 est écrite ici et dans les tests, pas encore au registre (`docs/current/marque/`), hors de ma zone.
 
 ## 6. Sources des articles (vérifiées le 03/11/2026)
 
@@ -98,14 +125,23 @@ le hadith « l'homme suit la religion de son ami » est dit **hasan** ; la premi
 en ligne de Hamidullah (54:17 : « médiation », « Y a-t- il ») sont corrigées et signalées dans la section Sources de l'article. L'article sur la fatigue
 cite aussi Cepeda 2006 et Dunlosky 2013 (Crossref), en disant qu'ils ne portent pas sur le Coran.
 
+**Texte arabe** (ajouté le 03/11, soir). Versets : `@quran.ws/text` 0.1.0, `data/hafs.json` (SHA-256 `31186b3a…2568`, la même empreinte que
+`lib/core/tc_coran/donnees/LISEZMOI.md`), signes de pause rattachés comme le fait `tool/generer_layout_madina_15.dart` ; le test
+`test_les_versets_sont_ceux_du_mushaf_de_l_application` compare chaque verset aux fichiers générés de l'application. Hadiths : extraits retrouvés dans
+le texte arabe complet (chaîne comprise) d'al-Bukhârî 5027, 893, 6, 5000, 4999, 69, 2101, de Muslim 798 a, 783 b, 2699 a et d'Abû Dâwûd 4833 ; la
+source écrit la chadda avant la voyelle, la forme publiée est celle de la source. Le hadith du vendeur de musc, évoqué sans guillemets, reçoit
+l'arabe de la comparaison seule (al-Bukhârî 2101, signalé « extrait »).
+
 **Faits sur Rewayah** dans les articles : seulement ceux que le site publie déjà (classes de 3 à 5 enfants de 6 à 17 ans, trois séances d'une heure ;
 classes de 3 à 6 adultes, trois séances d'1 h 30 ; ouverture dès trois inscrits ; observation du parent, deux minutes ; compte rendu de fin de semaine ;
 les étapes des bases).
 
 ## 6 bis. Pages non indexées (question du directeur, 03/11)
 
-En production, 20 pages sur 23 sont indexables, dont `/fr/contact`, les pages légales et les articles. Non indexées, volontairement : `/fr/avis`
-tant qu'aucun avis n'est publié (elle s'indexe d'elle-même au premier avis), la page 404, et `/fr/courriels/desinscription`. Deux domaines entiers
+En production, toutes les pages prêtes sont indexables, dont `/fr/contact` (et les adresses qu'elle donne, écrites de façon illisible pour les robots
+collecteurs, pas pour les moteurs), les pages légales et les articles parus. Non indexées, volontairement : `/fr/avis` tant qu'aucun avis n'est publié
+(**correction, §4 point 7** : elle est indexée en ce moment, à cause des deux avis de test), `/fr/articles` tant qu'aucun article n'est paru, la page 404,
+et `/fr/courriels/desinscription`. Deux domaines entiers
 répondent `noindex` : `app.rewayahacademy.com` (l'application, ses écrans de connexion) et `rewayah-academy.vercel.app` (copie technique du site, qui
 ferait doublon). Les aperçus des PR sont toujours `noindex`. C'est ce que signale la Search Console le 26/10 : pas une panne.
 
@@ -116,6 +152,16 @@ ferait doublon). Les aperçus des PR sont toujours `noindex`. C'est ce que signa
 3. Activer Vercel Web Analytics, avec le texte de confidentialité correspondant ?
 4. Vercel : le plan Pro règle la saturation des déploiements (le pilote l'a déjà proposé).
 5. Lancer la passe mobile et les animations après cette tranche ?
+6. **Pour le pilote : rendre la parution vraiment automatique.** Le site ne se reconstruit en production qu'à une poussée sur `main` (ou à un
+   lancement manuel). Un article daté du 8 paraît donc à la première construction de production du 8 ou après. Trois voies, au choix du pilote ou du
+   directeur : (a) ajouter à `flutter-deploy.yml` un déclencheur `schedule` (par exemple `cron: '17 4 * * *'`, 04 h 17 UTC chaque jour ; la règle
+   « cible » du workflow traite déjà un `schedule` sur `main` comme la production) ; (b) le restreindre aux jours de parution
+   (`cron: '17 4 5,8,11,14 11 *'`) ; (c) sans changer le workflow, le directeur lance « Run workflow » sur `main` dans GitHub Actions ces jours-là.
+   La voie (a) redéploie chaque jour le même bundle (application comprise) : une construction et un déploiement Vercel par jour.
+7. **Pour le pilote : la garde du workflow.** `flutter-deploy.yml` vérifie, après la construction, la présence de quatre polices du site. Ajouter
+   `fr/assets/UthmanicHafs-v-3.0.ttf` et `fr/assets/UthmanTahaNaskh-Regular.otf` à cette liste (le test du site le dit, et vérifie déjà les fichiers octet
+   pour octet).
+8. **Pour le pilote : registre de marque M-29.** Y inscrire l'exception datée du 03/11 (arabe des citations, dans les articles seulement).
 
 ## 8. Vérifier
 
@@ -124,3 +170,6 @@ python3 -m unittest discover -s site-public/tests
 python3 -I site-public/carte_monde.py chemin/vers/ne_110m_land.geojson   # régénère assets/carte-monde-points.svg (identique)
 python3 site-public/build_site.py --output /tmp/site && cd /tmp/site && python3 -m http.server 8770
 ```
+
+Un aperçu (sans `--allow-indexing`) montre les quatre articles, marqués « À paraître le … » avant leur date. La production du jour J ne publie que
+ceux dont la date est passée ; `tests/test_articles.py` (classe `Parution`) le vérifie à chaque date.

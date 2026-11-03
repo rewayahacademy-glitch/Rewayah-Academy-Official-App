@@ -628,6 +628,35 @@
           "paragraphs": [
             "La révélation du Coran commence par un ordre de lire. Les premiers versets descendus sur le Prophète (paix et bénédictions sur lui) ouvrent la sourate Al-‘Alaq : « Lis, au nom de ton Seigneur qui a créé, qui a créé l’homme d’une adhérence. Lis! Ton Seigneur est le Très Noble, qui a enseigné par la plume [le calame], a enseigné à l’homme ce qu’il ne savait pas » (Coran 96:1-5, traduction de Muhammad Hamidullah).",
             "Le hadith de ‘Â’isha, rapporté par al-Bukhârî au tout début de son recueil (n° 3, et n° 4953 pour le passage entier), raconte que la révélation a commencé par ces versets ; un autre récit, rapporté lui aussi par al-Bukhârî (n° 4922), mentionne le début de la sourate Al-Muddaththir. Le message s’ouvre donc sur la lecture, le savoir et la plume. Apprendre à un enfant à lire le Coran, c’est le faire entrer dans cette histoire par sa première porte."
+          ],
+          "citations_arabes": [
+            {
+              "apres": 0,
+              "genre": "coran",
+              "versets": [
+                {
+                  "cle": "96:1",
+                  "texte": "ٱقۡرَأۡ بِٱسۡمِ رَبِّكَ ٱلَّذِي خَلَقَ"
+                },
+                {
+                  "cle": "96:2",
+                  "texte": "خَلَقَ ٱلۡإِنسَٰنَ مِنۡ عَلَقٍ"
+                },
+                {
+                  "cle": "96:3",
+                  "texte": "ٱقۡرَأۡ وَرَبُّكَ ٱلۡأَكۡرَمُ"
+                },
+                {
+                  "cle": "96:4",
+                  "texte": "ٱلَّذِي عَلَّمَ بِٱلۡقَلَمِ"
+                },
+                {
+                  "cle": "96:5",
+                  "texte": "عَلَّمَ ٱلۡإِنسَٰنَ مَا لَمۡ يَعۡلَمۡ"
+                }
+              ],
+              "legende": "Coran 96:1-5, texte arabe du Mushaf de Médine (Complexe du Roi Fahd)"
+            }
           ]
         },
         {
@@ -637,6 +666,31 @@
             "Le Coran s’adresse directement aux croyants à propos de leur famille : « Ô vous qui avez cru ! Préservez vos personnes et vos familles, d’un Feu dont le combustible sera les gens et les pierres … » (Coran 66:6, extrait, traduction de Muhammad Hamidullah).",
             "Le Prophète (paix et bénédictions sur lui) a résumé cette responsabilité dans une image simple : « Chacun de vous est un berger, et chacun de vous est responsable de son troupeau » (rapporté par al-Bukhârî, n° 893, et Muslim, n° 1829 a ; traduction du sens). Le parent n’a pas à tout enseigner lui-même. Mais c’est à lui de veiller à ce que son enfant apprenne, auprès de qui, et avec quelle régularité.",
             "Cette responsabilité est aussi une chance. Le Prophète (paix et bénédictions sur lui) a dit : « Le meilleur d’entre vous est celui qui a appris le Coran et l’a enseigné » (rapporté par al-Bukhârî, n° 5027 ; traduction publiée par HadeethEnc). Le parent qui fait apprendre le Coran à son enfant, et qui l’apprend parfois en même temps que lui, entre dans cette parole."
+          ],
+          "citations_arabes": [
+            {
+              "apres": 0,
+              "genre": "coran",
+              "versets": [
+                {
+                  "cle": "66:6",
+                  "texte": "يَٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُواْ قُوٓاْ أَنفُسَكُمۡ وَأَهۡلِيكُمۡ نَارࣰا وَقُودُهَا ٱلنَّاسُ وَٱلۡحِجَارَةُ عَلَيۡهَا مَلَٰٓئِكَةٌ غِلَاظࣱ شِدَادࣱ لَّا يَعۡصُونَ ٱللَّهَ مَآ أَمَرَهُمۡ وَيَفۡعَلُونَ مَا يُؤۡمَرُونَ"
+                }
+              ],
+              "legende": "Coran 66:6, verset entier, texte arabe du Mushaf de Médine (Complexe du Roi Fahd)"
+            },
+            {
+              "apres": 1,
+              "genre": "hadith",
+              "texte": "كُلُّكُمْ رَاعٍ، وَكُلُّكُمْ مَسْئُولٌ عَنْ رَعِيَّتِهِ",
+              "legende": "Texte arabe : Ṣaḥîḥ al-Bukhârî, n° 893, extrait"
+            },
+            {
+              "apres": 2,
+              "genre": "hadith",
+              "texte": "خَيْرُكُمْ مَنْ تَعَلَّمَ الْقُرْآنَ وَعَلَّمَهُ",
+              "legende": "Texte arabe : Ṣaḥîḥ al-Bukhârî, n° 5027"
+            }
           ]
         },
         {
@@ -701,7 +755,8 @@
           "id": "sources",
           "title": "Sources",
           "paragraphs": [
-            "Les versets sont cités dans la traduction de Muhammad Hamidullah, telle que la publie quran.com. Les hadiths sont cités avec leur recueil et leur numéro (numérotation de sunnah.com) ; leur texte est la traduction publiée par HadeethEnc quand elle existe, sinon une traduction du sens, signalée comme telle."
+            "Les versets sont cités dans la traduction de Muhammad Hamidullah, telle que la publie quran.com. Les hadiths sont cités avec leur recueil et leur numéro (numérotation de sunnah.com) ; leur texte est la traduction publiée par HadeethEnc quand elle existe, sinon une traduction du sens, signalée comme telle.",
+            "Le texte arabe des versets est celui du Mushaf de Médine, publié par le Complexe du Roi Fahd pour l’impression du noble Coran, avec ses signes de pause. Celui des hadiths est le texte des recueils tel que le donne sunnah.com, repris par le jeu de données public hadith-api ; seule la parole citée est reproduite, sans sa chaîne de transmission."
           ],
           "links": [
             {
@@ -747,7 +802,7 @@
           ]
         }
       ],
-      "date": "2026-11-03",
+      "date": "2026-11-05",
       "auteur": {
         "nom": "Abdoulaye Mouhidine Sow",
         "role": "directeur et fondateur de Rewayah Academy",
@@ -782,6 +837,25 @@
             "La tradition offre ici un réconfort précieux. Le Prophète (paix et bénédictions sur lui) a dit : « Celui qui récite le Coran avec habileté sera avec les nobles et vertueux anges scribes ; et celui qui le récite en butant, et pour qui c’est difficile, aura deux récompenses » (rapporté par Muslim, n° 798 a ; en des termes proches par al-Bukhârî, n° 4937 ; traduction du sens).",
             "Cette parole change le regard. L’effort de l’enfant qui bute sur les lettres n’est pas un retard : il est récompensé. Dites-le à votre enfant, avec des mots simples. Et dites-le-vous aussi : votre patience fait partie de ce travail.",
             "Le Coran lui-même le répète quatre fois dans la sourate Al-Qamar : « En effet, Nous avons rendu le Coran facile pour la méditation. Y a-t-il quelqu’un pour réfléchir ? » (Coran 54:17, traduction de Muhammad Hamidullah)."
+          ],
+          "citations_arabes": [
+            {
+              "apres": 0,
+              "genre": "hadith",
+              "texte": "الْمَاهِرُ بِالْقُرْآنِ مَعَ السَّفَرَةِ الْكِرَامِ الْبَرَرَةِ وَالَّذِي يَقْرَأُ الْقُرْآنَ وَيَتَتَعْتَعُ فِيهِ وَهُوَ عَلَيْهِ شَاقٌّ لَهُ أَجْرَانِ",
+              "legende": "Texte arabe : Ṣaḥîḥ Muslim, n° 798 a"
+            },
+            {
+              "apres": 2,
+              "genre": "coran",
+              "versets": [
+                {
+                  "cle": "54:17",
+                  "texte": "وَلَقَدۡ يَسَّرۡنَا ٱلۡقُرۡءَانَ لِلذِّكۡرِ فَهَلۡ مِن مُّدَّكِرࣲ"
+                }
+              ],
+              "legende": "Coran 54:17, texte arabe du Mushaf de Médine (Complexe du Roi Fahd)"
+            }
           ]
         },
         {
@@ -791,6 +865,14 @@
             "Le Prophète (paix et bénédictions sur lui) a dit : « Les œuvres les plus aimées d’Allah sont celles que l’on accomplit avec constance, même si elles sont peu nombreuses » (rapporté par al-Bukhârî, n° 6464, et Muslim, n° 783 b ; traduction du sens). Cette parole vaut pour l’apprentissage du Coran comme pour toutes les œuvres : peu, mais chaque jour.",
             "La recherche sur l’apprentissage va dans le même sens. Les travaux qui comparent les méthodes montrent, en général, que répartir son travail dans le temps aide à mieux retenir que le concentrer en une seule fois ; ils placent aussi parmi les méthodes les plus utiles le fait de se tester sur ce que l’on vient d’apprendre. Demandez à votre enfant de vous réciter, sans regarder, ce qu’il sait déjà.",
             "Ces études portent sur l’apprentissage en général, pas sur le Coran : prenez-les comme une indication, pas comme une règle."
+          ],
+          "citations_arabes": [
+            {
+              "apres": 0,
+              "genre": "hadith",
+              "texte": "أَحَبُّ الأَعْمَالِ إِلَى اللَّهِ تَعَالَى أَدْوَمُهَا وَإِنْ قَلَّ",
+              "legende": "Texte arabe : Ṣaḥîḥ Muslim, n° 783 b"
+            }
           ]
         },
         {
@@ -808,6 +890,14 @@
           "paragraphs": [
             "Ne comparez pas votre enfant à ses frères et sœurs, ni aux autres élèves. N’utilisez jamais le Coran comme une punition, et ne menacez pas de le retirer : l’enfant ne doit pas associer le Livre à la peur. Évitez de reprendre ses erreurs devant la classe ou devant l’enseignant, et de crier juste avant la séance.",
             "La consigne du Prophète (paix et bénédictions sur lui) résume cette attitude : « Facilitez et ne rendez pas difficile ! Annoncez de bonnes nouvelles et ne faites pas fuir ! » (rapporté par al-Bukhârî, n° 69 ; traduction publiée par HadeethEnc)."
+          ],
+          "citations_arabes": [
+            {
+              "apres": 1,
+              "genre": "hadith",
+              "texte": "يَسِّرُوا وَلاَ تُعَسِّرُوا، وَبَشِّرُوا وَلاَ تُنَفِّرُوا",
+              "legende": "Texte arabe : Ṣaḥîḥ al-Bukhârî, n° 69"
+            }
           ]
         },
         {
@@ -832,6 +922,7 @@
           "title": "Sources",
           "paragraphs": [
             "Les versets sont cités dans la traduction de Muhammad Hamidullah, telle que la publie quran.com. Les hadiths sont cités avec leur recueil et leur numéro (numérotation de sunnah.com) ; leur texte est la traduction publiée par HadeethEnc quand elle existe, sinon une traduction du sens, signalée comme telle.",
+            "Le texte arabe des versets est celui du Mushaf de Médine, publié par le Complexe du Roi Fahd pour l’impression du noble Coran, avec ses signes de pause. Celui des hadiths est le texte des recueils tel que le donne sunnah.com, repris par le jeu de données public hadith-api ; seule la parole citée est reproduite, sans sa chaîne de transmission.",
             "En 54:17, l’édition en ligne porte « médiation » et « Y a-t- il » : deux coquilles, corrigées ici ; la note de la même édition écrit bien « méditation ».",
             "Les deux travaux de recherche cités portent sur l’apprentissage en général. Ils ne portent pas sur le Coran."
           ],
@@ -875,7 +966,7 @@
           ]
         }
       ],
-      "date": "2026-11-03",
+      "date": "2026-11-14",
       "auteur": {
         "nom": "Abdoulaye Mouhidine Sow",
         "role": "directeur et fondateur de Rewayah Academy",
@@ -901,6 +992,45 @@
             "Le Prophète (paix et bénédictions sur lui) lui-même a reçu le Coran par l’écoute. Allah lui dit : « Ne remue pas ta langue pour hâter sa récitation : Son rassemblement (dans ton cœur et sa fixation dans ta mémoire) Nous incombent, ainsi que la façon de le réciter. Quand donc Nous le récitons, suis sa récitation » (Coran 75:16-18, traduction de Muhammad Hamidullah).",
             "Chaque Ramadan, il l’étudiait avec l’ange Jibrîl, comme le rapporte Ibn ‘Abbâs : « Jibrîl le rencontrait chaque nuit du Ramadan et étudiait avec lui le Coran » (rapporté par al-Bukhârî, n° 6 ; traduction du sens). Celui qui a reçu le Coran avait donc, lui aussi, quelqu’un avec qui l’étudier.",
             "Les compagnons ont suivi ce modèle. ‘Abd Allâh ibn Mas‘ûd disait : « Par Allah, j’ai appris de la bouche même du Messager d’Allah (paix et bénédictions sur lui) soixante-dix et quelques sourates » (rapporté par al-Bukhârî, n° 5000 ; traduction du sens). Et le Prophète (paix et bénédictions sur lui) orientait ceux qui voulaient apprendre vers des maîtres précis ; ‘Abd Allâh ibn ‘Amr rapporte qu’il disait : « Prenez le Coran de quatre : de ‘Abd Allâh ibn Mas‘ûd, de Sâlim, de Mu‘âdh et d’Ubayy ibn Ka‘b » (rapporté par al-Bukhârî, n° 4999 ; traduction du sens)."
+          ],
+          "citations_arabes": [
+            {
+              "apres": 0,
+              "genre": "coran",
+              "versets": [
+                {
+                  "cle": "75:16",
+                  "texte": "لَا تُحَرِّكۡ بِهِۦ لِسَانَكَ لِتَعۡجَلَ بِهِۦٓ"
+                },
+                {
+                  "cle": "75:17",
+                  "texte": "إِنَّ عَلَيۡنَا جَمۡعَهُۥ وَقُرۡءَانَهُۥ"
+                },
+                {
+                  "cle": "75:18",
+                  "texte": "فَإِذَا قَرَأۡنَٰهُ فَٱتَّبِعۡ قُرۡءَانَهُۥ"
+                }
+              ],
+              "legende": "Coran 75:16-18, texte arabe du Mushaf de Médine (Complexe du Roi Fahd)"
+            },
+            {
+              "apres": 1,
+              "genre": "hadith",
+              "texte": "كَانَ يَلْقَاهُ فِي كُلِّ لَيْلَةٍ مِنْ رَمَضَانَ فَيُدَارِسُهُ الْقُرْآنَ",
+              "legende": "Texte arabe : Ṣaḥîḥ al-Bukhârî, n° 6, extrait"
+            },
+            {
+              "apres": 2,
+              "genre": "hadith",
+              "texte": "وَاللَّهِ لَقَدْ أَخَذْتُ مِنْ فِي رَسُولِ اللَّهِ صلى الله عليه وسلم بِضْعًا وَسَبْعِينَ سُورَةً",
+              "legende": "Texte arabe : Ṣaḥîḥ al-Bukhârî, n° 5000, extrait"
+            },
+            {
+              "apres": 2,
+              "genre": "hadith",
+              "texte": "خُذُوا الْقُرْآنَ مِنْ أَرْبَعَةٍ مِنْ عَبْدِ اللَّهِ بْنِ مَسْعُودٍ وَسَالِمٍ وَمُعَاذٍ وَأُبَىِّ بْنِ كَعْبٍ",
+              "legende": "Texte arabe : Ṣaḥîḥ al-Bukhârî, n° 4999"
+            }
           ]
         },
         {
@@ -910,6 +1040,41 @@
             "Le Coran décrit ainsi la mission du Prophète (paix et bénédictions sur lui) : « C’est Lui qui a envoyé à des gens sans Livre (les Arabes) un Messager des leurs qui leur récite Ses versets, les purifie et leur enseigne le Livre et la Sagesse … » (Coran 62:2, extrait, traduction de Muhammad Hamidullah). Réciter, purifier, enseigner : la transmission n’est pas seulement un texte que l’on reçoit, c’est une personne qui récite devant vous, qui vous écoute et qui vous reprend.",
             "Le Coran demande aussi une récitation posée : « … Et récite le Coran, lentement et clairement » (Coran 73:4, extrait, traduction de Muhammad Hamidullah). Cette manière de réciter ne s’apprend pas en lisant des règles ; elle s’entend, s’imite et se corrige.",
             "Et quand on ne sait pas, le Coran indique la voie : « … Demandez donc aux gens du rappel si vous ne savez pas » (Coran 16:43, extrait, traduction de Muhammad Hamidullah)."
+          ],
+          "citations_arabes": [
+            {
+              "apres": 0,
+              "genre": "coran",
+              "versets": [
+                {
+                  "cle": "62:2",
+                  "texte": "هُوَ ٱلَّذِي بَعَثَ فِي ٱلۡأُمِّيِّـۧنَ رَسُولࣰا مِّنۡهُمۡ يَتۡلُواْ عَلَيۡهِمۡ ءَايَٰتِهِۦ وَيُزَكِّيهِمۡ وَيُعَلِّمُهُمُ ٱلۡكِتَٰبَ وَٱلۡحِكۡمَةَ وَإِن كَانُواْ مِن قَبۡلُ لَفِي ضَلَٰلࣲ مُّبِينࣲ"
+                }
+              ],
+              "legende": "Coran 62:2, verset entier, texte arabe du Mushaf de Médine (Complexe du Roi Fahd)"
+            },
+            {
+              "apres": 1,
+              "genre": "coran",
+              "versets": [
+                {
+                  "cle": "73:4",
+                  "texte": "أَوۡ زِدۡ عَلَيۡهِ وَرَتِّلِ ٱلۡقُرۡءَانَ تَرۡتِيلًا"
+                }
+              ],
+              "legende": "Coran 73:4, verset entier, texte arabe du Mushaf de Médine (Complexe du Roi Fahd)"
+            },
+            {
+              "apres": 2,
+              "genre": "coran",
+              "versets": [
+                {
+                  "cle": "16:43",
+                  "texte": "وَمَآ أَرۡسَلۡنَا مِن قَبۡلِكَ إِلَّا رِجَالࣰا نُّوحِيٓ إِلَيۡهِمۡۖ فَسۡـَٔلُوٓاْ أَهۡلَ ٱلذِّكۡرِ إِن كُنتُمۡ لَا تَعۡلَمُونَ"
+                }
+              ],
+              "legende": "Coran 16:43, verset entier, texte arabe du Mushaf de Médine (Complexe du Roi Fahd)"
+            }
           ]
         },
         {
@@ -935,6 +1100,14 @@
           "paragraphs": [
             "Il ne s’agit pas de décourager celui qui lit seul. Le Prophète (paix et bénédictions sur lui) a promis une double récompense à celui qui récite avec peine : « Celui qui récite le Coran avec habileté sera avec les nobles et vertueux anges scribes ; et celui qui le récite en butant, et pour qui c’est difficile, aura deux récompenses » (rapporté par Muslim, n° 798 a ; en des termes proches par al-Bukhârî, n° 4937 ; traduction du sens). La lecture personnelle, la révision, l’écoute : tout cela est bon.",
             "Ce qui est risqué, c’est d’apprendre sans jamais être entendu par quelqu’un qui sait. La réponse n’est pas de tout arrêter, mais de faire entendre sa récitation, régulièrement, à un enseignant."
+          ],
+          "citations_arabes": [
+            {
+              "apres": 0,
+              "genre": "hadith",
+              "texte": "الْمَاهِرُ بِالْقُرْآنِ مَعَ السَّفَرَةِ الْكِرَامِ الْبَرَرَةِ وَالَّذِي يَقْرَأُ الْقُرْآنَ وَيَتَتَعْتَعُ فِيهِ وَهُوَ عَلَيْهِ شَاقٌّ لَهُ أَجْرَانِ",
+              "legende": "Texte arabe : Ṣaḥîḥ Muslim, n° 798 a"
+            }
           ]
         },
         {
@@ -960,7 +1133,8 @@
           "id": "sources",
           "title": "Sources",
           "paragraphs": [
-            "Les versets sont cités dans la traduction de Muhammad Hamidullah, telle que la publie quran.com. Les hadiths sont cités avec leur recueil et leur numéro (numérotation de sunnah.com) ; leur texte est la traduction publiée par HadeethEnc quand elle existe, sinon une traduction du sens, signalée comme telle."
+            "Les versets sont cités dans la traduction de Muhammad Hamidullah, telle que la publie quran.com. Les hadiths sont cités avec leur recueil et leur numéro (numérotation de sunnah.com) ; leur texte est la traduction publiée par HadeethEnc quand elle existe, sinon une traduction du sens, signalée comme telle.",
+            "Le texte arabe des versets est celui du Mushaf de Médine, publié par le Complexe du Roi Fahd pour l’impression du noble Coran, avec ses signes de pause. Celui des hadiths est le texte des recueils tel que le donne sunnah.com, repris par le jeu de données public hadith-api ; seule la parole citée est reproduite, sans sa chaîne de transmission."
           ],
           "links": [
             {
@@ -1018,7 +1192,7 @@
           ]
         }
       ],
-      "date": "2026-11-03",
+      "date": "2026-11-08",
       "auteur": {
         "nom": "Abdoulaye Mouhidine Sow",
         "role": "directeur et fondateur de Rewayah Academy",
@@ -1043,6 +1217,14 @@
           "paragraphs": [
             "Le Coran se lit aujourd’hui en quelques secondes sur un écran, avec de nombreuses récitations et traductions. Les cours, les conférences et les explications abondent. Cette abondance est une grâce ; elle n’a pas rendu les gens plus instruits pour autant. Avoir accès à un savoir ne veut pas dire l’acquérir.",
             "Ce qui manque le plus souvent n’est pas le contenu, mais la constance. Le Prophète (paix et bénédictions sur lui) a dit : « Les œuvres les plus aimées d’Allah sont celles que l’on accomplit avec constance, même si elles sont peu nombreuses » (rapporté par al-Bukhârî, n° 6464, et Muslim, n° 783 b ; traduction du sens). Cette parole dit bien ce qui compte quand on apprend : non pas l’élan d’un soir, mais ce que l’on fait encore six mois plus tard."
+          ],
+          "citations_arabes": [
+            {
+              "apres": 1,
+              "genre": "hadith",
+              "texte": "أَحَبُّ الأَعْمَالِ إِلَى اللَّهِ تَعَالَى أَدْوَمُهَا وَإِنْ قَلَّ",
+              "legende": "Texte arabe : Ṣaḥîḥ Muslim, n° 783 b"
+            }
           ]
         },
         {
@@ -1060,6 +1242,48 @@
             "Se réunir autour du Coran est une pratique que la tradition honore particulièrement. Le Prophète (paix et bénédictions sur lui) a dit : « Il n’est pas de groupe de gens qui se réunissent dans l’une des demeures d’Allah afin d’y réciter le Livre d’Allah et de l’étudier ensemble sans que la sérénité ne descende sur eux, la miséricorde ne les couvre, les Anges ne les entourent et Allah ne les mentionne auprès de ceux qui sont auprès de Lui » (rapporté par Muslim, n° 2699 a ; traduction publiée par HadeethEnc).",
             "Le Coran invite aussi à choisir ses compagnons : « Fais preuve de patience [en restant] avec ceux qui invoquent leur Seigneur matin et soir, désirant Sa Face … » (Coran 18:28, extrait, traduction de Muhammad Hamidullah). Le Prophète (paix et bénédictions sur lui) a comparé le bon compagnon au vendeur de musc et le mauvais au forgeron (rapporté par al-Bukhârî, n° 2101 ; voir aussi al-Bukhârî, n° 5534, et Muslim, n° 2628). Et il a averti : « L’homme suit la religion de son ami intime ; que chacun de vous regarde donc qui il prend pour ami » (rapporté par Abû Dâwûd, n° 4833, et at-Tirmidhî, n° 2378 ; hadith jugé hasan ; traduction du sens).",
             "Le groupe n’est donc pas seulement un moyen commode d’apprendre. Il fait partie de la manière dont la tradition conçoit le savoir : on apprend avec d’autres, et l’on s’entraide, comme le Coran y invite : « … Entraidez-vous dans la bonté et la piété et ne vous entraidez pas dans le péché et la transgression … » (Coran 5:2, extrait, traduction de Muhammad Hamidullah)."
+          ],
+          "citations_arabes": [
+            {
+              "apres": 0,
+              "genre": "hadith",
+              "texte": "مَا اجْتَمَعَ قَوْمٌ فِي بَيْتٍ مِنْ بُيُوتِ اللَّهِ يَتْلُونَ كِتَابَ اللَّهِ وَيَتَدَارَسُونَهُ بَيْنَهُمْ إِلاَّ نَزَلَتْ عَلَيْهِمُ السَّكِينَةُ وَغَشِيَتْهُمُ الرَّحْمَةُ وَحَفَّتْهُمُ الْمَلاَئِكَةُ وَذَكَرَهُمُ اللَّهُ فِيمَنْ عِنْدَهُ",
+              "legende": "Texte arabe : Ṣaḥîḥ Muslim, n° 2699 a, extrait"
+            },
+            {
+              "apres": 1,
+              "genre": "coran",
+              "versets": [
+                {
+                  "cle": "18:28",
+                  "texte": "وَٱصۡبِرۡ نَفۡسَكَ مَعَ ٱلَّذِينَ يَدۡعُونَ رَبَّهُم بِٱلۡغَدَوٰةِ وَٱلۡعَشِيِّ يُرِيدُونَ وَجۡهَهُۥۖ وَلَا تَعۡدُ عَيۡنَاكَ عَنۡهُمۡ تُرِيدُ زِينَةَ ٱلۡحَيَوٰةِ ٱلدُّنۡيَاۖ وَلَا تُطِعۡ مَنۡ أَغۡفَلۡنَا قَلۡبَهُۥ عَن ذِكۡرِنَا وَٱتَّبَعَ هَوَىٰهُ وَكَانَ أَمۡرُهُۥ فُرُطࣰا"
+                }
+              ],
+              "legende": "Coran 18:28, verset entier, texte arabe du Mushaf de Médine (Complexe du Roi Fahd)"
+            },
+            {
+              "apres": 1,
+              "genre": "hadith",
+              "texte": "مَثَلُ الْجَلِيسِ الصَّالِحِ وَالْجَلِيسِ السَّوْءِ كَمَثَلِ صَاحِبِ الْمِسْكِ، وَكِيرِ الْحَدَّادِ",
+              "legende": "Texte arabe : Ṣaḥîḥ al-Bukhârî, n° 2101, extrait"
+            },
+            {
+              "apres": 1,
+              "genre": "hadith",
+              "texte": "الرَّجُلُ عَلَى دِينِ خَلِيلِهِ فَلْيَنْظُرْ أَحَدُكُمْ مَنْ يُخَالِلُ",
+              "legende": "Texte arabe : Sunan Abî Dâwûd, n° 4833"
+            },
+            {
+              "apres": 2,
+              "genre": "coran",
+              "versets": [
+                {
+                  "cle": "5:2",
+                  "texte": "يَٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُواْ لَا تُحِلُّواْ شَعَٰٓئِرَ ٱللَّهِ وَلَا ٱلشَّهۡرَ ٱلۡحَرَامَ وَلَا ٱلۡهَدۡيَ وَلَا ٱلۡقَلَٰٓئِدَ وَلَآ ءَآمِّينَ ٱلۡبَيۡتَ ٱلۡحَرَامَ يَبۡتَغُونَ فَضۡلࣰا مِّن رَّبِّهِمۡ وَرِضۡوَٰنࣰاۚ وَإِذَا حَلَلۡتُمۡ فَٱصۡطَادُواْۚ وَلَا يَجۡرِمَنَّكُمۡ شَنَـَٔانُ قَوۡمٍ أَن صَدُّوكُمۡ عَنِ ٱلۡمَسۡجِدِ ٱلۡحَرَامِ أَن تَعۡتَدُواْۘ وَتَعَاوَنُواْ عَلَى ٱلۡبِرِّ وَٱلتَّقۡوَىٰۖ وَلَا تَعَاوَنُواْ عَلَى ٱلۡإِثۡمِ وَٱلۡعُدۡوَٰنِۚ وَٱتَّقُواْ ٱللَّهَۖ إِنَّ ٱللَّهَ شَدِيدُ ٱلۡعِقَابِ"
+                }
+              ],
+              "legende": "Coran 5:2, verset entier, texte arabe du Mushaf de Médine (Complexe du Roi Fahd)"
+            }
           ]
         },
         {
@@ -1069,6 +1293,30 @@
             "Tous les groupes ne portent pas. Un groupe qui se retrouve sans objectif, sans horaire et sans enseignant finit souvent par se disperser. Ce qui fait la force d’une classe, c’est un but commun, un rendez-vous fixe, et quelqu’un qui guide et qui corrige.",
             "L’émulation y a toute sa place. Le Coran le dit sans détour : « … Rivalisez donc dans les bonnes œuvres … » (Coran 2:148, extrait, traduction de Muhammad Hamidullah). Et, à propos des délices promis aux croyants : « … Que ceux qui la convoitent entrent en compétition [pour l’acquérir] » (Coran 83:26, extrait, traduction de Muhammad Hamidullah). Rivaliser dans le bien, ce n’est pas se comparer pour se rabaisser ; c’est se tirer les uns les autres vers le haut.",
             "La taille compte aussi. Trop grand, le groupe laisse chacun disparaître ; trop petit, il dépend d’une seule absence. Une petite classe permet à chaque élève de réciter, d’être entendu et d’être corrigé à chaque séance."
+          ],
+          "citations_arabes": [
+            {
+              "apres": 1,
+              "genre": "coran",
+              "versets": [
+                {
+                  "cle": "2:148",
+                  "texte": "وَلِكُلࣲّ وِجۡهَةٌ هُوَ مُوَلِّيهَاۖ فَٱسۡتَبِقُواْ ٱلۡخَيۡرَٰتِۚ أَيۡنَ مَا تَكُونُواْ يَأۡتِ بِكُمُ ٱللَّهُ جَمِيعًاۚ إِنَّ ٱللَّهَ عَلَىٰ كُلِّ شَيۡءࣲ قَدِيرࣱ"
+                }
+              ],
+              "legende": "Coran 2:148, verset entier, texte arabe du Mushaf de Médine (Complexe du Roi Fahd)"
+            },
+            {
+              "apres": 1,
+              "genre": "coran",
+              "versets": [
+                {
+                  "cle": "83:26",
+                  "texte": "خِتَٰمُهُۥ مِسۡكࣱۚ وَفِي ذَٰلِكَ فَلۡيَتَنَافَسِ ٱلۡمُتَنَٰفِسُونَ"
+                }
+              ],
+              "legende": "Coran 83:26, verset entier, texte arabe du Mushaf de Médine (Complexe du Roi Fahd)"
+            }
           ]
         },
         {
@@ -1103,7 +1351,8 @@
           "id": "sources",
           "title": "Sources",
           "paragraphs": [
-            "Les versets sont cités dans la traduction de Muhammad Hamidullah, telle que la publie quran.com. Les hadiths sont cités avec leur recueil et leur numéro (numérotation de sunnah.com) ; leur texte est la traduction publiée par HadeethEnc quand elle existe, sinon une traduction du sens, signalée comme telle."
+            "Les versets sont cités dans la traduction de Muhammad Hamidullah, telle que la publie quran.com. Les hadiths sont cités avec leur recueil et leur numéro (numérotation de sunnah.com) ; leur texte est la traduction publiée par HadeethEnc quand elle existe, sinon une traduction du sens, signalée comme telle.",
+            "Le texte arabe des versets est celui du Mushaf de Médine, publié par le Complexe du Roi Fahd pour l’impression du noble Coran, avec ses signes de pause. Celui des hadiths est le texte des recueils tel que le donne sunnah.com, repris par le jeu de données public hadith-api ; seule la parole citée est reproduite, sans sa chaîne de transmission."
           ],
           "links": [
             {
@@ -1149,7 +1398,7 @@
           ]
         }
       ],
-      "date": "2026-11-03",
+      "date": "2026-11-11",
       "auteur": {
         "nom": "Abdoulaye Mouhidine Sow",
         "role": "directeur et fondateur de Rewayah Academy",

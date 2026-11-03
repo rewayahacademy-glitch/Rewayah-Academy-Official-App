@@ -32,6 +32,8 @@ def _charger(nom: str):
 
 BUILDER = _charger("build_site")
 PAGES = json.loads((SITE / "content" / "pages.json").read_text(encoding="utf-8"))["pages"]
+# Le jour ou tous les articles sont parus : les tests du contenu publie se placent apres la derniere parution.
+DERNIERE_PARUTION = max(date.fromisoformat(PAGES[r]["date"]) for r in ROUTES)
 
 
 def texte(page: dict) -> str:
@@ -122,7 +124,8 @@ class Contenu(unittest.TestCase):
 class Page(unittest.TestCase):
     def construire(self, indexer: bool) -> None:
         shutil.rmtree(OUTPUT, ignore_errors=True)
-        BUILDER.build(OUTPUT, "https://rewayahacademy.com", indexer, env={}, today=date(2026, 11, 3))
+        BUILDER.build(OUTPUT, "https://rewayahacademy.com", indexer, env={}, today=date(2026, 11, 3),
+                      parution=DERNIERE_PARUTION)
 
     def tearDown(self) -> None:
         shutil.rmtree(OUTPUT, ignore_errors=True)
@@ -172,6 +175,163 @@ class Page(unittest.TestCase):
         with self.assertRaises(ValueError):
             BUILDER.texte_riche("**ouvert sans fin")
         self.assertEqual(BUILDER.texte_riche("**a** b"), "<strong>a</strong> b")
+
+
+ARABE = re.compile(r"[؀-ۿݐ-ݿࡰ-ࣿﭐ-﷿ﹰ-﻿]")
+
+
+def par_date() -> list[str]:
+    return sorted(ROUTES, key=lambda r: PAGES[r]["date"])
+
+
+class Parution(unittest.TestCase):
+    """Directeur, 03/11/2026 : « une publication automatique separee par 2 jours minimum ». Un article parait a sa date,
+    a la premiere construction de production de ce jour-la ; avant, il n'existe pas en production."""
+
+    def construire(self, indexer: bool, jour: date) -> None:
+        shutil.rmtree(OUTPUT, ignore_errors=True)
+        BUILDER.build(OUTPUT, "https://rewayahacademy.com", indexer, env={}, today=date(2026, 11, 3), parution=jour)
+
+    def tearDown(self) -> None:
+        shutil.rmtree(OUTPUT, ignore_errors=True)
+
+    def html(self, route: str) -> str:
+        return (OUTPUT / f"{route.lstrip('/')}.html").read_text(encoding="utf-8")
+
+    def test_deux_jours_au_moins_entre_deux_parutions(self) -> None:
+        jours = [date.fromisoformat(PAGES[r]["date"]) for r in par_date()]
+        for avant, apres in zip(jours, jours[1:]):
+            self.assertGreaterEqual((apres - avant).days, 2, (avant, apres))
+
+    def test_la_production_ne_publie_que_les_articles_parus(self) -> None:
+        ordre = par_date()
+        jour = date.fromisoformat(PAGES[ordre[1]]["date"])
+        self.construire(True, jour)
+        parus, a_venir = ordre[:2], ordre[2:]
+        for route in parus:
+            self.assertIn('content="index,follow"', self.html(route))
+        for route in a_venir:
+            self.assertFalse((OUTPUT / f"{route.lstrip('/')}.html").exists(), route)
+        plan = (OUTPUT / "sitemap.xml").read_text(encoding="utf-8")
+        hub = self.html("/fr/articles")
+        # La configuration d'aiguillage que le build ecrit dans sa sortie (lue ici, jamais ecrite).
+        config = (OUTPUT / "vercel.json").read_text(encoding="utf-8")
+        self.assertEqual(hub.count('class="article-carte"'), len(parus))
+        for route in a_venir:
+            self.assertNotIn(route, plan)
+            self.assertNotIn(route, config)
+            # Aucun lien ne mene a un article qui n'est pas encore paru : ni depuis un autre article, ni depuis une autre page.
+            for fichier in OUTPUT.rglob("*.html"):
+                self.assertNotIn(f'href="{route}"', fichier.read_text(encoding="utf-8"), fichier.name)
+        self.assertNotIn("À paraître", hub)
+
+    def test_avant_la_premiere_parution_le_hub_reste_hors_de_l_index(self) -> None:
+        premier = date.fromisoformat(PAGES[par_date()[0]]["date"])
+        self.construire(True, date.fromordinal(premier.toordinal() - 1))
+        hub = self.html("/fr/articles")
+        self.assertIn("Aucun article n’est encore publié.", hub)
+        self.assertIn('content="noindex,follow"', hub)
+        self.assertNotIn("/fr/articles</loc>", (OUTPUT / "sitemap.xml").read_text(encoding="utf-8"))
+        self.assertFalse((OUTPUT / "fr" / "articles").exists())
+
+    def test_un_apercu_montre_les_articles_a_paraitre_pour_la_relecture(self) -> None:
+        premier = date.fromisoformat(PAGES[par_date()[0]]["date"])
+        self.construire(False, date.fromordinal(premier.toordinal() - 1))
+        for route in ROUTES:
+            html = self.html(route)
+            self.assertIn("À paraître le ", html)
+            self.assertIn('content="noindex,nofollow"', html)
+        self.assertEqual(self.html("/fr/articles").count("À paraître le "), len(ROUTES))
+
+
+def segments_du_mushaf() -> dict[str, str]:
+    """Le texte de chaque verset dans les donnees du Mushaf de l'application (KFGQPC UthmanicHafs v3.0, signes de pause
+    compris), tel que tool/generer_layout_madina_15.dart l'a ecrit : segments « sourate:verset:drapeaux:texte »."""
+    dart = "".join(f.read_text(encoding="utf-8") for f in
+                   sorted((SITE.parent / "lib" / "core" / "tc_coran" / "donnees").glob("layout_madina_15_p*.g.dart")))
+    morceaux: dict[str, list[str]] = {}
+    for sourate, verset, _drapeaux, texte_verset in re.findall(r"(\d+):(\d+):(\d):([^¦\\']*)", dart):
+        morceaux.setdefault(f"{sourate}:{verset}", []).append(texte_verset)
+    return {cle: " ".join(t) for cle, t in morceaux.items()}
+
+
+class Arabe(unittest.TestCase):
+    """Directeur, 03/11/2026 : « là on a besoin de l'arabe, donc il le faut ». Chaque verset et chaque hadith cite en francais
+    est suivi de son texte arabe ; le Coran est celui du Mushaf de l'application, mot pour mot."""
+
+    def blocs(self, route: str):
+        for section in PAGES[route]["sections"]:
+            for bloc in section.get("citations_arabes", []):
+                yield section, bloc
+
+    def test_chaque_citation_francaise_a_son_arabe_et_reciproquement(self) -> None:
+        for route in ROUTES:
+            for section in PAGES[route]["sections"]:
+                if section["id"] == "sources":
+                    continue
+                for i, paragraphe in enumerate(section.get("paragraphs", [])):
+                    blocs = [b for b in section.get("citations_arabes", []) if b["apres"] == i]
+                    versets = re.findall(r"\(Coran (\d+:\d+(?:-\d+)?)", paragraphe)
+                    hadiths = re.findall(r"\((rapporté par [^;)]+)", paragraphe)
+                    with self.subTest(route=route, section=section["id"], paragraphe=i):
+                        self.assertEqual([b["legende"].split(",")[0].removeprefix("Coran ") for b in blocs if b["genre"] == "coran"], versets)
+                        self.assertEqual(len([b for b in blocs if b["genre"] == "hadith"]), len(hadiths))
+                        for bloc in [b for b in blocs if b["genre"] == "hadith"]:
+                            # Le numero de la legende arabe est l'un de ceux que le francais cite.
+                            numero = re.search(r"n° (\d+(?: [a-z])?)", bloc["legende"]).group(1)
+                            self.assertIn(f"n° {numero}", paragraphe)
+
+    def test_les_versets_sont_ceux_du_mushaf_de_l_application(self) -> None:
+        mushaf = segments_du_mushaf()
+        self.assertEqual(len(mushaf), 6236)
+        vus = 0
+        for route in ROUTES:
+            for _section, bloc in self.blocs(route):
+                for verset in bloc.get("versets", []):
+                    with self.subTest(route=route, verset=verset["cle"]):
+                        self.assertEqual(verset["texte"], mushaf[verset["cle"]])
+                        vus += 1
+        self.assertGreaterEqual(vus, 17)
+
+    def test_l_arabe_reste_dans_ses_blocs_et_le_francais_reste_francais(self) -> None:
+        for route in ROUTES:
+            with self.subTest(route=route):
+                self.assertIsNone(ARABE.search(texte(PAGES[route])))
+                for _section, bloc in self.blocs(route):
+                    self.assertIsNone(ARABE.search(bloc["legende"]))
+
+    def test_le_rendu_porte_la_langue_le_sens_et_la_rosace(self) -> None:
+        shutil.rmtree(OUTPUT, ignore_errors=True)
+        try:
+            BUILDER.build(OUTPUT, "https://rewayahacademy.com", False, env={}, today=date(2026, 11, 3))
+            html = (OUTPUT / f"{ROUTES[0].lstrip('/')}.html").read_text(encoding="utf-8")
+            self.assertIn('<figure class="citation-arabe citation-arabe--coran"><blockquote lang="ar" dir="rtl">', html)
+            self.assertIn('<span class="rosace" aria-hidden="true">٥</span>', html)  # 96:5, en chiffres arabo-indiens
+            self.assertIn('citation-arabe--hadith', html)
+        finally:
+            shutil.rmtree(OUTPUT, ignore_errors=True)
+
+    def test_les_polices_du_complexe_du_roi_fahd_sont_copiees_telles_quelles(self) -> None:
+        import hashlib
+        shutil.rmtree(OUTPUT, ignore_errors=True)
+        try:
+            BUILDER.build(OUTPUT, "https://rewayahacademy.com", False, env={}, today=date(2026, 11, 3))
+            for nom in BUILDER.POLICES_CITATIONS:
+                with self.subTest(nom=nom):
+                    self.assertEqual((OUTPUT / "fr" / "assets" / nom).read_bytes(), (BUILDER.POLICES_DEPOT / nom).read_bytes())
+            # L'empreinte publiee par le paquet @quran.ws/text 0.1.0 pour UthmanicHafs-v-3.0.ttf (fichier du KFGQPC).
+            self.assertEqual(hashlib.sha256((OUTPUT / "fr" / "assets" / "UthmanicHafs-v-3.0.ttf").read_bytes()).hexdigest(),
+                             "5c47602425fb4190327ab9e1a2e8ed2f53dceaf595d8ccc29ac32b8b209ad398")
+        finally:
+            shutil.rmtree(OUTPUT, ignore_errors=True)
+
+    def test_un_bloc_arabe_hors_d_un_article_arrete_le_build(self) -> None:
+        with self.assertRaisesRegex(ValueError, "outside an article"):
+            BUILDER.valider_citations_arabes("/fr/cours", {"paragraphs": ["x"], "citations_arabes": [
+                {"apres": 0, "genre": "hadith", "texte": "خَيْرُكُمْ", "legende": "Texte arabe"}]})
+        with self.assertRaisesRegex(ValueError, "not Arabic"):
+            BUILDER.valider_citations_arabes(ROUTES[0], {"paragraphs": ["x"], "citations_arabes": [
+                {"apres": 0, "genre": "hadith", "texte": "Le meilleur", "legende": "Texte arabe"}]})
 
 
 AUTRES_CHEMINS = "/fr/autres-chemins"
