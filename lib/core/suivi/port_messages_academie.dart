@@ -2,7 +2,7 @@
 /// direction a transmis a la famille (ou a l'eleve adulte) apres le
 /// signalement d'un enseignant.
 ///
-/// Le serveur decide de tout (`concern_famille_v`, migration 20261106600000) :
+/// Le serveur decide de tout (`concern_famille_v`, migration 20261107200000) :
 /// seulement ce qui a ete transmis, le resume ecrit pour la famille et jamais
 /// la note interne, jamais la securite d'un enfant, et seulement pour un
 /// tuteur du foyer, son titulaire ou l'eleve adulte lui-meme ; un mineur ne

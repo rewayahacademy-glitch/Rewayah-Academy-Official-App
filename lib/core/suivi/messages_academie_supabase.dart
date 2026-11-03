@@ -1,5 +1,5 @@
 // D1-ter (03/11/2026) : l'adaptateur Supabase des messages de l'academie, sur
-// la vue `concern_famille_v` (migration 20261106600000, lecture seule). La RLS
+// la vue `concern_famille_v` (migration 20261107200000, lecture seule). La RLS
 // et le filtre de la vue decident ; l'adaptateur ne fait que lire.
 
 import 'package:supabase_flutter/supabase_flutter.dart';

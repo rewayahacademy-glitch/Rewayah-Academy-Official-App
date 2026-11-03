@@ -2,37 +2,25 @@
 --
 -- Fichier SANS mot d'effacement (B5) : le pilote l'installe. Additif (B6).
 --
--- 1. `public.concern_famille_v` (D1-bis, 20261106200000, fondee sur
---    `transmis_le`) gagne une colonne, `student_id`, en DERNIERE position
---    (CREATE OR REPLACE VIEW n'admet qu'un ajout en fin). Sans elle, l'ecran ne
---    peut pas ranger un message sous l'enfant qu'il concerne quand le foyer en
---    compte plusieurs. Le filtre ne change pas : transmis, avec un message pour
---    la famille, jamais « securite d'un enfant », et seulement pour le foyer de
---    l'eleve ou l'eleve lui-meme.
--- 2. FAILLE CORRIGEE (constatee le 03/11 sur Postgres 17 nu, toutes les
---    migrations) : la vue, sur une seule table, est modifiable automatiquement
---    par PostgreSQL ; `authenticated` y avait tous les droits d'ecriture, et la
---    vue s'execute avec les droits de son proprietaire (contourne la RLS de
---    `student_concern`). Un tuteur pouvait reecrire, par la vue, le message que
---    la direction lui avait transmis. Desormais : tous les droits retires, puis
---    la seule lecture rendue a `authenticated`. C'etait la seule vue
---    modifiable de `public` (information_schema.views, is_updatable).
+-- Pose sur le correctif 20261107100000 (D1-bis : vue en lecture seule et
+-- fermee aux mineurs), qui doit etre installe avant ce fichier.
 --
--- 3. FUITE AUX MINEURS CORRIGEE : `public.est_du_foyer(id)` est vrai pour tout
---    profil du foyer, l'enfant connecte compris ; il lisait ses messages et
---    ceux de ses freres et soeurs. La vue n'admet plus que trois lecteurs :
---    un tuteur du foyer de l'eleve (role du jeton), le titulaire du foyer
---    (`households.primary_guardian_id`), et l'eleve lui-meme s'il est adulte
---    (`student_profiles.student_type = 'autonomous'`). Un mineur ne lit rien :
---    le resume est ecrit pour la famille, pas pour l'enfant (garde-cap, 03/11).
--- 4. `public.transmettre_student_concern` (meme signature) previent, apres la
+-- 1. `public.concern_famille_v` gagne une colonne, `student_id`, en DERNIERE
+--    position (CREATE OR REPLACE VIEW n'admet qu'un ajout en fin, et garde les
+--    droits en place). Sans elle, l'ecran ne peut pas ranger un message sous
+--    l'enfant qu'il concerne quand le foyer en compte plusieurs. Le filtre est
+--    celui du correctif, inchange : transmis, avec un message pour la famille,
+--    jamais « securite d'un enfant » ; un tuteur du foyer, le titulaire du
+--    foyer, ou l'eleve adulte lui-meme ; jamais un mineur. Le postflight
+--    verifie que la vue reste en lecture seule.
+-- 2. `public.transmettre_student_concern` (meme signature) previent, apres la
 --    transmission, un seul destinataire choisi ici, jamais par le client : le
 --    titulaire du foyer (cible `tuteur_du_mineur`, vers `/tuteur/suivi`) ou
 --    l'eleve adulte (cible `eleve_adulte`, vers `/eleve/suivi`). Evenement
 --    `message_academie_eleve` ; params : l'eleve et son prenom, JAMAIS le
 --    resume. Application seulement (DECISION-NOTIFICATIONS-COURRIEL du 01/11 :
 --    aucun e-mail par defaut). L'evenement et les deux destinations entrent
---    dans les contraintes par 20261106600001 (B5), a installer AVANT ce
+--    dans les contraintes par 20261107200001 (B5), a installer AVANT ce
 --    fichier ; ce fichier n'insere aucune notification a l'installation.
 --
 -- Securite d'un enfant : rien du tout pour la famille, ni carte, ni resume, ni
@@ -69,9 +57,6 @@ SELECT c.id, c.categorie, c.family_summary, c.transmis_le, c.transmis_a,
          AND EXISTS (SELECT 1 FROM public.student_profiles sp
                       WHERE sp.profile_id = c.student_id AND sp.deleted_at IS NULL
                         AND sp.student_type = 'autonomous')));
-
-REVOKE ALL ON public.concern_famille_v FROM PUBLIC, anon, authenticated, agent_ro;
-GRANT SELECT ON public.concern_famille_v TO authenticated;
 
 CREATE OR REPLACE FUNCTION pg_temp.remplacer(p_f pg_catalog.regprocedure, p_avant text, p_apres text, p_n integer)
 RETURNS void
@@ -136,7 +121,9 @@ BEGIN
                  WHERE g.table_schema = 'public' AND g.table_name = 'concern_famille_v'
                    AND g.grantee = 'authenticated' AND g.privilege_type <> 'SELECT')
      OR pg_catalog.has_table_privilege('anon', 'public.concern_famille_v', 'SELECT')
-     OR pg_catalog.has_table_privilege('agent_ro', 'public.concern_famille_v', 'SELECT') THEN
+     OR NOT EXISTS (SELECT 1 FROM pg_catalog.pg_class c
+                     WHERE c.oid = 'public.concern_famille_v'::regclass
+                       AND c.reloptions @> ARRAY['security_barrier=true']) THEN
     RAISE EXCEPTION 'D1-ter : droits de concern_famille_v invalides';
   END IF;
   IF pg_catalog.strpos(v_def, 'autonomous') = 0 OR pg_catalog.strpos(v_def, 'primary_guardian_id') = 0 THEN
@@ -154,7 +141,10 @@ BEGIN
          WHERE c.conrelid = 'public.notifications'::regclass
            AND c.conname = 'notifications_evenement_check'),
        '''message_academie_eleve''') = 0 THEN
-    RAISE WARNING 'D1-ter : notifications_evenement_check ne connait pas message_academie_eleve ; installer 20261106600001';
+    -- Sur une base neuve, 20261107200001 passe APRES ce fichier : un simple
+    -- avis, jamais une erreur ; c'est le postflight de 20261107200001 qui
+    -- verifie les deux contraintes.
+    RAISE NOTICE 'D1-ter : notifications_evenement_check ne connait pas encore message_academie_eleve (20261107200001 a installer)';
   END IF;
 END;
 $postflight$;

@@ -16,7 +16,7 @@
 //      rend rien (lecture en base sous son jeton).
 // Chaque etape verifie le texte a l'ecran ou la ligne en base.
 //
-// Prerequis : migrations 20261106600001 puis 20261106600000 appliquees sur la
+// Prerequis : migrations 20261107200001 puis 20261107200000 appliquees sur la
 // pile LOCALE (tool/e2e/pile.sh), comptes amorces (tool/e2e/amorcer.sh).
 // Donnees : un foyer, deux enfants, un eleve adulte, une classe et des seances
 // neufs a chaque passage ; rien n'est efface. Usage : node tool/e2e/d1ter.mjs

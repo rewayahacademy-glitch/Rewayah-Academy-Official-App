@@ -5,9 +5,9 @@
 -- contraintes, notifications_evenement_check et notifications_destination_check
 -- (pour chacune, DROP CONSTRAINT IF EXISTS puis ADD), et un postflight. Sans
 -- BEGIN ni COMMIT de premier niveau (consigne du pilote, 03/11). Le directeur
--- le colle dans l'editeur SQL, AVANT 20261106600000_d1ter_famille_lit_transmis.sql
+-- le colle dans l'editeur SQL, AVANT 20261107200000_d1ter_famille_lit_transmis.sql
 -- (qui le verifie en postflight et previent s'il manque) ; la CI les applique
--- dans l'ordre des noms, ce qui est sans effet : 20261106600000 n'insere
+-- dans l'ordre des noms, ce qui est sans effet : 20261107200000 n'insere
 -- aucune notification a l'installation.
 --
 -- Les listes : celles de la derniere definition du depot pour chacune

@@ -1,4 +1,4 @@
--- D1-ter (20261106600000, 20261106600001) : la famille lit ce qui lui est
+-- D1-ter (20261107200000, 20261107200001) : la famille lit ce qui lui est
 -- transmis.
 -- Prouve, en authenticated :
 --   1. le tuteur lit le message transmis sur son enfant, rangé sous l'enfant

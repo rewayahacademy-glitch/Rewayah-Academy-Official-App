@@ -71,7 +71,7 @@ const Set<String> evenementsNotificationConnus = <String>{
   // SNT (03/11/2026, migrations 20261106500000 et 20261106500001) : la
   // seance non tenue, reportee.
   'seance_reportee',
-  // D1-ter (03/11/2026, migrations 20261106600000 et 20261106600001) : la
+  // D1-ter (03/11/2026, migrations 20261107200000 et 20261107200001) : la
   // direction a transmis un message sur l'eleve.
   'message_academie_eleve',
 };
