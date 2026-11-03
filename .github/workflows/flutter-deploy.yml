@@ -29,6 +29,17 @@ name: Flutter Web → Vercel
 on:
   push:
     branches: [main]
+    paths:
+      - 'lib/**'
+      - 'web/**'
+      - 'assets/**'
+      - 'site-public/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - 'build.yaml'
+      - 'slang.yaml'
+      - 'vercel.json'
+      - '.github/workflows/flutter-deploy.yml'
   pull_request:
     branches: [main]
     paths:
