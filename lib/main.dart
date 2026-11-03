@@ -151,6 +151,8 @@ import 'core/session/source_session.dart' show terminerSessionRefusee;
 import 'core/session/source_session_agent.dart';
 import 'core/suivi/messages_academie_supabase.dart';
 import 'core/suivi/port_messages_academie.dart';
+import 'core/tc_bibliotheque/catalogue_supabase.dart';
+import 'core/tc_bibliotheque/donnees_catalogue.dart';
 import 'core/tc_bibliotheque/port_support_actif.dart';
 import 'core/tc_bibliotheque/support_actif_supabase.dart';
 import 'core/tc_etat_partage/etat_partage_supabase.dart';
@@ -274,6 +276,13 @@ List<Override> _surchargesAppReelle() => <Override>[
   // publication, attribution, retrait).
   portBibliothequeAdminProvider.overrideWithValue(
     BibliothequeAdminSupabase(Supabase.instance.client),
+  ),
+  // Bibliotheque du lecteur (N4, migration 20261108200000) : le catalogue,
+  // les recents et la reprise lus au serveur, qui rejoue la regle de lecture
+  // de `library_resource` et l'acces paye ; les supports d'une classe par
+  // `ressources_du_groupe`. Remplace le catalogue local vide.
+  portCatalogueProvider.overrideWithValue(
+    CatalogueSupabase(Supabase.instance.client),
   ),
   // Classes de la direction (CONTRATS-MANQUANTS) : liste paginee et
   // numerotee (R16, R17), fusion et transfert (R9, R10), pilotage par

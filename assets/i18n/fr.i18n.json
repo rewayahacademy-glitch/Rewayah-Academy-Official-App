@@ -1399,6 +1399,8 @@
     "envoiEnCours": "Envoi en cours",
     "deposee": "Pièce reçue",
     "erreur": "L'envoi n'a pas abouti. Réessayez dans un instant.",
+    "erreurFormat": "Ce fichier n'a pas été accepté\u00a0: seules les photos JPEG, PNG, HEIC ou WebP et les fichiers PDF le sont. Choisissez une autre photo de votre pièce.",
+    "erreurReseau": "L'envoi n'a pas abouti\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Touchez «\u00a0Envoyer ma pièce\u00a0» à nouveau dans un instant.",
     "tropVolumineux": "Cette photo dépasse {taille} Mo. Reprenez-la en qualité plus basse.",
     "manqueType": "Choisissez d'abord la pièce que vous déposez.",
     "manquePhoto": "Choisissez d'abord la photo de votre pièce."

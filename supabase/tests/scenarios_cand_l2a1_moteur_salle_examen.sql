@@ -1716,8 +1716,9 @@ SELECT pg_temp.vrai((SELECT string_agg(DISTINCT transition::text, ',' ORDER BY t
     = '12,15,16,17,18,19,20,21,23,25,7'
   AND (SELECT string_agg(geste, ',' ORDER BY geste) FROM private.candidature_gestes_regles WHERE pause <> 'interdite' AND geste NOT LIKE '%admission')
     = 'lever_pause,refuser,retirer'
+  -- V1-b (03/11) : le candidat planifie aussi son entretien, en reservant un creneau.
   AND (SELECT string_agg(geste, ',' ORDER BY geste) FROM private.candidature_gestes_regles WHERE 'candidat' = ANY (auteurs) AND geste NOT LIKE '%admission')
-    = 'enregistrer_reponses,envoyer_reponses,retirer'
+    = 'enregistrer_reponses,envoyer_reponses,planifier_entretien,retirer'
   AND NOT EXISTS (SELECT 1 FROM private.candidature_gestes_regles WHERE 'candidat' = ANY (motif_requis)),
   'regles : motif exige ou la section 4.2 le dit (7, 12, 15, 16, 17 direction, 18 pose, 19, 20, 21, 23, 25) ; en pause seuls lever, refuser, retirer');
 
@@ -1810,7 +1811,9 @@ BEGIN
         'L2-9 : ' || r.geste || ' permis pendant une pause');
     END IF;
   END LOOP;
-  PERFORM pg_temp.vrai(v_n = 26, 'L2-9 : les vingt-six variantes de la table des regles');
+  -- 27 depuis V1-b (03/11) : planifier_entretien variante 2, auteur candidat
+  -- (un controle de plus dans la boucle : 418 au total).
+  PERFORM pg_temp.vrai(v_n = 27, 'L2-9 : les vingt-sept variantes de la table des regles');
 END $l2_9$;
 
 -- Un geste de la direction de bout en bout par le moteur (c10) : refus avec
@@ -2320,8 +2323,8 @@ SELECT pg_temp.vrai(pg_temp.lu('cond3') = '{"disponible": false}'::jsonb
 
 DO $fin$
 BEGIN
-  IF current_setting('test.n')::int <> 417 THEN
-    RAISE EXCEPTION 'CAND-L2A1 ROUGE : % controles executes, 417 attendus', current_setting('test.n');
+  IF current_setting('test.n')::int <> 418 THEN
+    RAISE EXCEPTION 'CAND-L2A1 ROUGE : % controles executes, 418 attendus', current_setting('test.n');
   END IF;
   RAISE NOTICE 'CAND-L2A1 : % controles verts', current_setting('test.n');
 END $fin$;
