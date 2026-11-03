@@ -7273,8 +7273,8 @@ class _Traductions$foyer$monProfil$ar extends Traductions$foyer$monProfil$fr {
 	@override String get consequence => 'لا يتغير حسابك كولي أمر: تحتفظ بأسرتك وبالملفات الطلابية لأبنائك.';
 	@override String get creer => 'إنشاء ملفي كطالب';
 	@override String get reessayer => 'إعادة محاولة إنشاء ملفي كطالب';
-	@override String get nonConfirme => 'لم يتأكد إنشاء ملفك كطالب: لم يرد الخادم. أعد المحاولة بعد قليل؛ وإن كان ملفك موجودًا فلن يُنشأ مرتين.';
-	@override String get horsLigne => 'دون اتصال بالشبكة لا يمكن إنشاء ملفك كطالب. عد إلى هذه الصفحة بعد عودة الاتصال.';
+	@override String get nonConfirme => 'لم يتأكد إنشاء ملفك كطالب: ربما لم يصل الطلب إلى رواية. أعد المحاولة بعد قليل؛ وإن كان ملفك موجودًا فلن يُنشأ مرتين.';
+	@override String get horsLigne => 'أنت غير متصل. لم يُنشأ شيء. يمكنك إنشاء ملفك كطالب بنفسك عند عودة الاتصال.';
 	@override String get sansDonnees => 'تعذر التحقق من ملفك كطالب';
 	@override String get creeTitre => 'تم إنشاء ملفك كطالب';
 	@override String get creePhrase => 'لا يتغير حسابك كولي أمر. تحتفظ بأسرتك وبالملفات الطلابية لأبنائك.';
@@ -27513,8 +27513,8 @@ extension on TraductionsAr {
 			'foyer.monProfil.consequence' => 'لا يتغير حسابك كولي أمر: تحتفظ بأسرتك وبالملفات الطلابية لأبنائك.',
 			'foyer.monProfil.creer' => 'إنشاء ملفي كطالب',
 			'foyer.monProfil.reessayer' => 'إعادة محاولة إنشاء ملفي كطالب',
-			'foyer.monProfil.nonConfirme' => 'لم يتأكد إنشاء ملفك كطالب: لم يرد الخادم. أعد المحاولة بعد قليل؛ وإن كان ملفك موجودًا فلن يُنشأ مرتين.',
-			'foyer.monProfil.horsLigne' => 'دون اتصال بالشبكة لا يمكن إنشاء ملفك كطالب. عد إلى هذه الصفحة بعد عودة الاتصال.',
+			'foyer.monProfil.nonConfirme' => 'لم يتأكد إنشاء ملفك كطالب: ربما لم يصل الطلب إلى رواية. أعد المحاولة بعد قليل؛ وإن كان ملفك موجودًا فلن يُنشأ مرتين.',
+			'foyer.monProfil.horsLigne' => 'أنت غير متصل. لم يُنشأ شيء. يمكنك إنشاء ملفك كطالب بنفسك عند عودة الاتصال.',
 			'foyer.monProfil.sansDonnees' => 'تعذر التحقق من ملفك كطالب',
 			'foyer.monProfil.creeTitre' => 'تم إنشاء ملفك كطالب',
 			'foyer.monProfil.creePhrase' => 'لا يتغير حسابك كولي أمر. تحتفظ بأسرتك وبالملفات الطلابية لأبنائك.',

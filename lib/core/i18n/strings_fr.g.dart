@@ -5893,11 +5893,11 @@ class Traductions$foyer$monProfil$fr {
 	/// fr: 'Réessayer de créer mon profil élève'
 	String get reessayer => 'Réessayer de créer mon profil élève';
 
-	/// fr: 'La création de votre profil élève n'est pas confirmée : le serveur n'a pas répondu. Réessayez dans un instant ; si votre profil existe déjà, rien n'est créé en double.'
-	String get nonConfirme => 'La création de votre profil élève n\'est pas confirmée : le serveur n\'a pas répondu. Réessayez dans un instant ; si votre profil existe déjà, rien n\'est créé en double.';
+	/// fr: 'La création de votre profil élève n'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant ; si votre profil existe déjà, rien n'est créé en double.'
+	String get nonConfirme => 'La création de votre profil élève n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant ; si votre profil existe déjà, rien n\'est créé en double.';
 
-	/// fr: 'Sans réseau, votre profil élève ne peut pas être créé. Revenez sur cette page une fois la connexion rétablie.'
-	String get horsLigne => 'Sans réseau, votre profil élève ne peut pas être créé. Revenez sur cette page une fois la connexion rétablie.';
+	/// fr: 'Rien n'est créé. Vous pourrez créer votre profil élève vous-même quand la connexion sera revenue.'
+	String get horsLigne => 'Rien n\'est créé. Vous pourrez créer votre profil élève vous-même quand la connexion sera revenue.';
 
 	/// fr: 'Votre profil élève n'a pas pu être vérifié'
 	String get sansDonnees => 'Votre profil élève n\'a pas pu être vérifié';
@@ -43975,8 +43975,8 @@ extension on Traductions {
 			'foyer.monProfil.consequence' => 'Votre compte de tuteur ne change pas : vous gardez votre foyer et les profils élèves de vos enfants.',
 			'foyer.monProfil.creer' => 'Créer mon profil élève',
 			'foyer.monProfil.reessayer' => 'Réessayer de créer mon profil élève',
-			'foyer.monProfil.nonConfirme' => 'La création de votre profil élève n\'est pas confirmée : le serveur n\'a pas répondu. Réessayez dans un instant ; si votre profil existe déjà, rien n\'est créé en double.',
-			'foyer.monProfil.horsLigne' => 'Sans réseau, votre profil élève ne peut pas être créé. Revenez sur cette page une fois la connexion rétablie.',
+			'foyer.monProfil.nonConfirme' => 'La création de votre profil élève n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant ; si votre profil existe déjà, rien n\'est créé en double.',
+			'foyer.monProfil.horsLigne' => 'Rien n\'est créé. Vous pourrez créer votre profil élève vous-même quand la connexion sera revenue.',
 			'foyer.monProfil.sansDonnees' => 'Votre profil élève n\'a pas pu être vérifié',
 			'foyer.monProfil.creeTitre' => 'Votre profil élève est créé',
 			'foyer.monProfil.creePhrase' => 'Votre compte de tuteur ne change pas. Vous gardez votre foyer et les profils élèves de vos enfants.',
