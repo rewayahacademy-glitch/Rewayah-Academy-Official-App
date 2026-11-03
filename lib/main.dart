@@ -73,6 +73,7 @@ import 'core/capacites/port_profil_eleve_titulaire.dart';
 import 'core/capacites/port_progression_famille.dart';
 import 'core/capacites/port_recharge_foyer.dart';
 import 'core/capacites/port_remboursements_direction.dart';
+import 'core/capacites/port_retraits_comptes.dart';
 import 'core/capacites/port_revenus_enseignant.dart';
 import 'core/capacites/port_series_tresorerie.dart';
 import 'core/capacites/port_support.dart';
@@ -83,6 +84,7 @@ import 'core/capacites/profil_eleve_titulaire_supabase.dart';
 import 'core/capacites/progression_famille_supabase.dart';
 import 'core/capacites/recharge_foyer_supabase.dart';
 import 'core/capacites/remboursements_direction_supabase.dart';
+import 'core/capacites/retraits_comptes_supabase.dart';
 import 'core/capacites/revenus_enseignant_supabase.dart';
 import 'core/capacites/revue_dossiers_depuis_validation.dart';
 import 'core/capacites/series_tresorerie_supabase.dart';
@@ -385,6 +387,12 @@ List<Override> _surchargesAppReelle() => <Override>[
   // Les demandes de suppression de compte, cote direction (meme migration).
   portSuppressionsAdminProvider.overrideWithValue(
     SuppressionsAdminSupabase(Supabase.instance.client),
+  ),
+  // Les retraits de comptes : la direction retire et restaure, le tuteur
+  // supprime le profil d'un enfant (SUPPRIMER, migrations 20261108600000 et
+  // 20261108900000).
+  portRetraitsComptesProvider.overrideWithValue(
+    RetraitsComptesSupabase(Supabase.instance.client),
   ),
   // Les avis des familles : formulaire public et moderation de la direction.
   portAvisProvider.overrideWithValue(AvisSupabase(Supabase.instance.client)),
