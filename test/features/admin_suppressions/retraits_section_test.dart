@@ -53,7 +53,7 @@ class _Port implements PortRetraitsComptes {
 
   /// Les pages par etat ; la seconde page est rendue quand un curseur vient.
   Map<EtatRetraits, List<PageRetraits>> pages;
-  Object? erreur;
+  Exception? erreur;
   List<ResultatRestauration> Function(List<String>)? restauration;
   final List<(EtatRetraits, CurseurRetraits?)> lectures =
       <(EtatRetraits, CurseurRetraits?)>[];
@@ -65,7 +65,7 @@ class _Port implements PortRetraitsComptes {
     CurseurRetraits? apres,
   }) async {
     lectures.add((etat, apres));
-    final Object? e = erreur;
+    final Exception? e = erreur;
     if (e != null) throw e;
     final List<PageRetraits> p =
         pages[etat] ??
