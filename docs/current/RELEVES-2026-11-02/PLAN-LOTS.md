@@ -248,6 +248,9 @@ Estimation : environ 14 jours-agent, soit 3 jours et demi à 4 agents ; avec la 
 - **En-cours :** au plus une PR ouverte non fusionnée par agent.
 - **Fusion :** un lot sans texte nouveau passe dès qu'il est vert ; les lots avec texte passent un par un.
 - **À faire avant toute hausse :** `verifier_branchement` et la présence des captures R3 dans `ci.yml` (collage du directeur, page du pilote) ; lot outil `libelles_sources.json` sans conflit (S).
+- **Fiche tenue (03/11, 19:45) :** une fiche du garde-cap avec un « exige » non tenu bloque la fusion. Le garde-cap relit chaque PR serveur contre sa fiche avant le feu vert.
+- **Numéros plus bas (03/11, 19:23, corrigé à 20:05) :** un numéro réservé plus bas que la dernière migration de main est accepté si la CI est verte et si aucun objet n'est commun avec les migrations installées après lui. Cela se vérifie contre la **production** au moment de l'installation, pas contre main. Sinon, on renumérote.
+- **Fonction déjà retouchée (pilote, 03/11, 20:04) :** une migration qui remplace une fonction déjà retouchée par un autre lot le fait par ancres, ou elle est préflightée contre le prosrc de production. Une CI verte ne le prouve pas, car l'ordre des fichiers diffère de l'ordre d'installation. Cas réel : V1-a recopiait `capacites_candidatures` et aurait éteint « Valider la pièce » posé par salle 3. Le préflight l'a arrêtée. La relecture du garde-cap compte chaque `CREATE OR REPLACE` d'une fonction existante.
 - **Les 17 chantiers sans serveur** (finance du comptable, communauté, recherche, B3.3, salle 3, CAND-04, B2.4, etc.) commencent après la file du §7, pas en parallèle.
 
 ## 9. Fiche NIV1 : le niveau demandé une seule fois (garde-cap, 02/11/2026 vers 18:15 UTC ; acceptée par le pilote à 18:19)
