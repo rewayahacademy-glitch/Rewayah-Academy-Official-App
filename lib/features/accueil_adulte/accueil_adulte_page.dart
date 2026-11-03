@@ -59,6 +59,7 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/entete_page.dart';
 import '../../core/widgets/grille_bento.dart';
 import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
@@ -175,6 +176,7 @@ class AccueilAdultePage extends ConsumerWidget {
     this.onRejoindre,
     this.onVoirRessources,
     this.onVoirDernieresSeances,
+    this.onVoirMaClasse,
     this.onMesFinances,
   });
 
@@ -200,11 +202,18 @@ class AccueilAdultePage extends ConsumerWidget {
   /// Ouvre la Bibliotheque de la Classe.
   final void Function(String groupeId)? onVoirRessources;
 
+  /// Ouvre Ma classe (N2, E1 : `/eleve/adulte/classe`). Sans destination,
+  /// pas de lien.
+  final VoidCallback? onVoirMaClasse;
+
   /// Le nombre de dernieres seances et de ressources montrees.
   static const int limite = 3;
 
   /// La cle du bloc « rien a afficher » hors ligne (EA-HL-DOUBLE-1).
   static const Key sansDonneesKey = Key('adulte.accueil.sansDonnees');
+
+  /// Le lien « Voir ma classe » (N2, E1).
+  static const Key voirMaClasseKey = Key('adulte.accueil.voirMaClasse');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -269,6 +278,7 @@ class AccueilAdultePage extends ConsumerWidget {
                   onRejoindre: onRejoindre,
                   onVoirRessources: onVoirRessources,
                   onVoirDernieresSeances: onVoirDernieresSeances,
+                  onVoirMaClasse: onVoirMaClasse,
                 ),
               ),
       ),
@@ -351,12 +361,17 @@ class _Corps extends StatelessWidget {
     this.onRejoindre,
     this.onVoirRessources,
     this.onVoirDernieresSeances,
+    this.onVoirMaClasse,
   });
 
   final AccueilAdulteVM vue;
   final ({bool ferme, bool enLecture}) acces;
   final void Function(GroupSummaryVM groupe)? onRejoindre;
   final void Function(String groupeId)? onVoirRessources;
+
+  /// Ouvre Ma classe (N2, E1 : `/eleve/adulte/classe`). Sans destination,
+  /// pas de lien.
+  final VoidCallback? onVoirMaClasse;
   final VoidCallback? onVoirDernieresSeances;
 
   @override
@@ -385,6 +400,7 @@ class _Corps extends StatelessWidget {
         onRejoindre: onRejoindre,
         onVoirRessources: onVoirRessources,
         onVoirDernieresSeances: onVoirDernieresSeances,
+        onVoirMaClasse: onVoirMaClasse,
       ),
     );
   }
@@ -399,6 +415,7 @@ class _Sections extends StatelessWidget {
     this.onRejoindre,
     this.onVoirRessources,
     this.onVoirDernieresSeances,
+    this.onVoirMaClasse,
   });
 
   final AccueilAdulteVM vue;
@@ -407,6 +424,10 @@ class _Sections extends StatelessWidget {
   final ({bool ferme, bool enLecture}) acces;
   final void Function(GroupSummaryVM groupe)? onRejoindre;
   final void Function(String groupeId)? onVoirRessources;
+
+  /// Ouvre Ma classe (N2, E1 : `/eleve/adulte/classe`). Sans destination,
+  /// pas de lien.
+  final VoidCallback? onVoirMaClasse;
   final VoidCallback? onVoirDernieresSeances;
 
   @override
@@ -429,6 +450,18 @@ class _Sections extends StatelessWidget {
         accesFerme: acces.ferme,
         accesEnLecture: acces.enLecture,
       ),
+      // N2 (E1) : Ma classe, en lien sous la carte de la Classe.
+      if (onVoirMaClasse != null) ...<Widget>[
+        Ecart.vMd,
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: LienFleche(
+            key: AccueilAdultePage.voirMaClasseKey,
+            libelle: t.accessibilite.accueil.voirMaClasse,
+            onPress: onVoirMaClasse,
+          ),
+        ),
+      ],
     ];
 
     // Seulement ce que les donnees demandent : sans action, pas de section.

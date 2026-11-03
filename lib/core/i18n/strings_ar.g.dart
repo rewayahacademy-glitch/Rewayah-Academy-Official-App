@@ -1233,6 +1233,7 @@ class _Traductions$foyer$ar extends Traductions$foyer$fr {
 	@override String get appareilsFoyer => 'أجهزة الأسرة';
 	@override String get appareilsFoyerLegende => 'ربط جهاز، عرض الأجهزة المربوطة، إزالة أحدها';
 	@override String get creerMonProfil => 'إنشاء ملفي كطالب';
+	@override late final _Traductions$foyer$n2$ar n2 = _Traductions$foyer$n2$ar._(_root);
 	@override late final _Traductions$foyer$monProfil$ar monProfil = _Traductions$foyer$monProfil$ar._(_root);
 	@override late final _Traductions$foyer$ajout$ar ajout = _Traductions$foyer$ajout$ar._(_root);
 	@override late final _Traductions$foyer$finances$ar finances = _Traductions$foyer$finances$ar._(_root);
@@ -7271,6 +7272,20 @@ class _Traductions$foyer$membre$ar extends Traductions$foyer$membre$fr {
 	@override String date({required Object jour, required Object mois, required Object annee}) => '⁨${jour}⁩ ⁨${mois}⁩ ⁨${annee}⁩';
 }
 
+// Path: foyer.n2
+class _Traductions$foyer$n2$ar extends Traductions$foyer$n2$fr {
+	_Traductions$foyer$n2$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get invitationRecueMessage => 'اقرأ الدعوة ثم اقبلها أو ارفضها.';
+	@override String get invitationRecueVoir => 'عرض الدعوة';
+	@override String get repriseATraiterVoir => 'عرض طلب الاستلام';
+	@override String get demanderReprise => 'طلب استلام الأسرة';
+	@override String get demanderRepriseLegende => 'إذا توفي صاحب حساب الأسرة';
+}
+
 // Path: foyer.monProfil
 class _Traductions$foyer$monProfil$ar extends Traductions$foyer$monProfil$fr {
 	_Traductions$foyer$monProfil$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -7281,6 +7296,17 @@ class _Traductions$foyer$monProfil$ar extends Traductions$foyer$monProfil$fr {
 	@override String get titre => 'إنشاء ملفي كطالب';
 	@override String get indisponibleTitre => 'غير ممكن بعد';
 	@override String get indisponiblePhrase => 'متابعة الدروس بنفسك بملفك الخاص كطالب ستُقترح قريبًا. يبقى حسابك كوليّ أمر كما هو.';
+	@override String get intro => 'بملفك كطالب الخاص يمكنك أن تتابع الدروس بنفسك، في فصل للكبار.';
+	@override String get consequence => 'لا يتغير حسابك كولي أمر: تحتفظ بأسرتك وبالملفات الطلابية لأبنائك.';
+	@override String get creer => 'إنشاء ملفي كطالب';
+	@override String get reessayer => 'إعادة محاولة إنشاء ملفي كطالب';
+	@override String get nonConfirme => 'لم يتأكد إنشاء ملفك كطالب: ربما لم يصل الطلب إلى رواية. أعد المحاولة بعد قليل؛ وإن كان ملفك موجودًا فلن يُنشأ مرتين.';
+	@override String get horsLigne => 'أنت غير متصل. لم يُنشأ شيء. يمكنك إنشاء ملفك كطالب بنفسك عند عودة الاتصال.';
+	@override String get sansDonnees => 'تعذر التحقق من ملفك كطالب';
+	@override String get creeTitre => 'تم إنشاء ملفك كطالب';
+	@override String get creePhrase => 'لا يتغير حسابك كولي أمر. تحتفظ بأسرتك وبالملفات الطلابية لأبنائك.';
+	@override String get dejaTitre => 'لديك ملف طلابي بالفعل';
+	@override String get dejaPhrase => 'ملفك كطالب موجود بالفعل: لا شيء لإنشائه.';
 	@override String get retour => 'العودة إلى الأسرة';
 }
 
@@ -7513,6 +7539,11 @@ class _Traductions$adulte$invitation$ar extends Traductions$adulte$invitation$fr
 	@override String get courriel => 'البريد الإلكتروني';
 	@override String get courrielAideElle => 'سيُستخدم البريد الإلكتروني لإرسال دعوة الانضمام إلى Rewayah إلى زوجتك.';
 	@override String get courrielAideLui => 'سيُستخدم البريد الإلكتروني لإرسال دعوة الانضمام إلى Rewayah إلى زوجك.';
+	@override String get titreNeutre => 'دعوة شخص بالغ ثانٍ';
+	@override String get enteteNeutre => 'حساب شخصي لهذا الشخص';
+	@override String get phraseNeutre => 'سيستخدم هذا الشخص حسابه الخاص. ولن يتمكن من إدارة أسرتك ولا الملفات الطلابية التي أنشأتها.';
+	@override String get courrielAideNeutre => 'سيُستخدم البريد الإلكتروني لإرسال دعوة الانضمام إلى هذا الشخص.';
+	@override String get refusPhraseFoyer => 'لم يُرسل شيء. ربما توجد دعوة جارية لأسرتك، أو لا يمكن لهذا العنوان الانضمام إليها. تحقق من العنوان ثم عد إلى الأسرة.';
 	@override String get prenomRequis => 'أدخل الاسم.';
 	@override String get courrielRequis => 'أدخل البريد الإلكتروني.';
 	@override String get courrielInvalide => 'تحقّق من البريد الإلكتروني: يجب أن يشبه ⁦name@mail.com⁩.';
@@ -27663,9 +27694,25 @@ extension on TraductionsAr {
 			'foyer.appareilsFoyer' => 'أجهزة الأسرة',
 			'foyer.appareilsFoyerLegende' => 'ربط جهاز، عرض الأجهزة المربوطة، إزالة أحدها',
 			'foyer.creerMonProfil' => 'إنشاء ملفي كطالب',
+			'foyer.n2.invitationRecueMessage' => 'اقرأ الدعوة ثم اقبلها أو ارفضها.',
+			'foyer.n2.invitationRecueVoir' => 'عرض الدعوة',
+			'foyer.n2.repriseATraiterVoir' => 'عرض طلب الاستلام',
+			'foyer.n2.demanderReprise' => 'طلب استلام الأسرة',
+			'foyer.n2.demanderRepriseLegende' => 'إذا توفي صاحب حساب الأسرة',
 			'foyer.monProfil.titre' => 'إنشاء ملفي كطالب',
 			'foyer.monProfil.indisponibleTitre' => 'غير ممكن بعد',
 			'foyer.monProfil.indisponiblePhrase' => 'متابعة الدروس بنفسك بملفك الخاص كطالب ستُقترح قريبًا. يبقى حسابك كوليّ أمر كما هو.',
+			'foyer.monProfil.intro' => 'بملفك كطالب الخاص يمكنك أن تتابع الدروس بنفسك، في فصل للكبار.',
+			'foyer.monProfil.consequence' => 'لا يتغير حسابك كولي أمر: تحتفظ بأسرتك وبالملفات الطلابية لأبنائك.',
+			'foyer.monProfil.creer' => 'إنشاء ملفي كطالب',
+			'foyer.monProfil.reessayer' => 'إعادة محاولة إنشاء ملفي كطالب',
+			'foyer.monProfil.nonConfirme' => 'لم يتأكد إنشاء ملفك كطالب: ربما لم يصل الطلب إلى رواية. أعد المحاولة بعد قليل؛ وإن كان ملفك موجودًا فلن يُنشأ مرتين.',
+			'foyer.monProfil.horsLigne' => 'أنت غير متصل. لم يُنشأ شيء. يمكنك إنشاء ملفك كطالب بنفسك عند عودة الاتصال.',
+			'foyer.monProfil.sansDonnees' => 'تعذر التحقق من ملفك كطالب',
+			'foyer.monProfil.creeTitre' => 'تم إنشاء ملفك كطالب',
+			'foyer.monProfil.creePhrase' => 'لا يتغير حسابك كولي أمر. تحتفظ بأسرتك وبالملفات الطلابية لأبنائك.',
+			'foyer.monProfil.dejaTitre' => 'لديك ملف طلابي بالفعل',
+			'foyer.monProfil.dejaPhrase' => 'ملفك كطالب موجود بالفعل: لا شيء لإنشائه.',
 			'foyer.monProfil.retour' => 'العودة إلى الأسرة',
 			'foyer.ajout.suivant' => 'التالي',
 			'foyer.ajout.creer' => 'إنشاء الملف',
@@ -27828,6 +27875,11 @@ extension on TraductionsAr {
 			'adulte.invitation.courriel' => 'البريد الإلكتروني',
 			'adulte.invitation.courrielAideElle' => 'سيُستخدم البريد الإلكتروني لإرسال دعوة الانضمام إلى Rewayah إلى زوجتك.',
 			'adulte.invitation.courrielAideLui' => 'سيُستخدم البريد الإلكتروني لإرسال دعوة الانضمام إلى Rewayah إلى زوجك.',
+			'adulte.invitation.titreNeutre' => 'دعوة شخص بالغ ثانٍ',
+			'adulte.invitation.enteteNeutre' => 'حساب شخصي لهذا الشخص',
+			'adulte.invitation.phraseNeutre' => 'سيستخدم هذا الشخص حسابه الخاص. ولن يتمكن من إدارة أسرتك ولا الملفات الطلابية التي أنشأتها.',
+			'adulte.invitation.courrielAideNeutre' => 'سيُستخدم البريد الإلكتروني لإرسال دعوة الانضمام إلى هذا الشخص.',
+			'adulte.invitation.refusPhraseFoyer' => 'لم يُرسل شيء. ربما توجد دعوة جارية لأسرتك، أو لا يمكن لهذا العنوان الانضمام إليها. تحقق من العنوان ثم عد إلى الأسرة.',
 			'adulte.invitation.prenomRequis' => 'أدخل الاسم.',
 			'adulte.invitation.courrielRequis' => 'أدخل البريد الإلكتروني.',
 			'adulte.invitation.courrielInvalide' => 'تحقّق من البريد الإلكتروني: يجب أن يشبه ⁦name@mail.com⁩.',
@@ -28127,6 +28179,8 @@ extension on TraductionsAr {
 			'dossiers.validation.erreur' => 'تعذّر اعتماد الملف.',
 			'dossiers.validation.horsLigne' => 'أنت غير متصل. لم يُرسل الاعتماد.',
 			'dossiers.validation.inconnu' => 'نتيجة الاعتماد غير مؤكَّدة بعد.',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.validation.plusPret' => 'هذا الملف لم يعد جاهزًا للاعتماد.',
 			'dossiers.validation.interdit' => 'لم يعد بإمكانك اعتماد هذا الملف.',
 			'dossiers.validation.succes' => 'اعتُمد الملف.',
@@ -28148,8 +28202,6 @@ extension on TraductionsAr {
 			'kyc.explicationAutre' => 'وثيقة أخرى صادرة عن جهة إدارية، تحمل صورتك واسمك.',
 			'kyc.exempleAutre' => 'رخصة قيادة أو بطاقة قنصلية',
 			'kyc.choisirFichier' => 'اختيار الصورة',
-			_ => null,
-		} ?? switch (path) {
 			'kyc.fichierChoisi' => 'الصورة جاهزة للإرسال',
 			'kyc.envoyer' => 'إرسال وثيقتي',
 			'kyc.envoiEnCours' => 'جارٍ الإرسال',
@@ -28641,6 +28693,8 @@ extension on TraductionsAr {
 			'recherche.pageEnEchec' => 'تعذّر تحميل النتائج التالية.',
 			'recherche.etats.vide.titre' => 'لا نتائج لهذا البحث.',
 			'recherche.etats.vide.phrase' => 'جرّب كلمة أخرى أو عامل تصفية.',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.etats.vide.action' => 'تعديل البحث',
 			'recherche.etats.domaineIndisponible.titre' => 'البحث في هذا المجال غير متاح.',
 			'recherche.etats.domaineIndisponible.phrase' => 'تبقى الفئات الأخرى قابلة للاطلاع.',
@@ -28662,8 +28716,6 @@ extension on TraductionsAr {
 			'recherche.tout' => 'الكل',
 			'recherche.filtres' => 'مجالات البحث',
 			'recherche.limite' => 'تقتصر النتائج على ما تتيحه مساحتك.',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.guide.titre' => 'البحث عن مادة',
 			'recherche.guide.initial.titre' => 'البحث عن مادة',
 			'recherche.guide.initial.phrase' => 'اكتب كلمة لتجد إحدى موادك.',
@@ -29155,6 +29207,8 @@ extension on TraductionsAr {
 			'recrutement.talents.intro.usage.titre' => 'ماذا نفعل بإجاباتك',
 			'recrutement.talents.intro.usage.texte' => 'تُستعمل إجاباتك فقط لاقتراح مهمة عليك في الأكاديمية. تقرؤها الإدارة وحدها.',
 			'recrutement.talents.intro.liberte.titre' => 'القرار بيدك',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.talents.intro.liberte.texte' => 'يمكنك تعديل إجاباتك أو سحبها متى شئت، وسحب الموافقة التي تتيح التواصل معك.',
 			'recrutement.talents.intro.missions.titre' => 'لكل مهمة شروطها',
 			'recrutement.talents.intro.missions.texte' => 'تعرضها عليك الأكاديمية عندما تتواصل معك. هذه الصفحة لا تَعِد بأي مهمة.',
@@ -29176,8 +29230,6 @@ extension on TraductionsAr {
 			'recrutement.talents.c.reseaux_sociaux.libelle' => 'إدارة وسائل التواصل الاجتماعي',
 			'recrutement.talents.c.reseaux_sociaux.description' => 'إدارة حسابات الأكاديمية على وسائل التواصل الاجتماعي.',
 			'recrutement.talents.c.reseaux_sociaux.exemple' => 'النشر كل أسبوع والرد على الرسائل والتعليقات',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.c.relations_publiques.libelle' => 'العلاقات العامة والشراكات',
 			'recrutement.talents.c.relations_publiques.description' => 'التعريف بالأكاديمية لدى من يستطيع دعمها.',
 			'recrutement.talents.c.relations_publiques.exemple' => 'عرض الأكاديمية على مسجد أو جمعية أو وسيلة إعلام',
@@ -29669,6 +29721,8 @@ extension on TraductionsAr {
 			'avis.admin.liens.maxAide' => '200 افتراضيًا و2000 على الأكثر.',
 			'avis.admin.liens.maxErreur' => 'اكتب عددًا من الآراء من 1 إلى 2000.',
 			'avis.admin.liens.creer' => 'إنشاء الرابط',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.liens.echecCreation' => 'لم يتأكد إنشاء الرابط. انظر قائمة الروابط قبل أن تحاول من جديد.',
 			'avis.admin.liens.creeTitre' => 'تم إنشاء الرابط',
 			'avis.admin.liens.creePhrase' => 'انسخ هذا الرابط الآن. لن يظهر مرة أخرى بعد إغلاق هذا الإطار. إذا فقدته فأغلق هذا الرابط وأنشئ رابطًا آخر.',
@@ -29690,8 +29744,6 @@ extension on TraductionsAr {
 			'avis.admin.liens.fermerAction' => 'إغلاق الرابط',
 			'avis.admin.liens.fermerRester' => 'عدم تغيير شيء',
 			'avis.admin.liens.fermeOk' => 'تم إغلاق الرابط.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.liens.fermeEchec' => 'لم يتأكد الإغلاق. أُعيدت قراءة القائمة: تحقق من حالة الرابط.',
 			'avis.admin.liens.vide' => 'لا توجد روابط حتى الآن. أنشئ رابطًا لجمع الآراء.',
 			'avis.admin.liens.erreur' => 'تعذّر تحميل الروابط. أعد المحاولة.',
