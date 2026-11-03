@@ -19,6 +19,7 @@ import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import 'carte_messages_academie.dart';
 import 'composants_historique.dart';
 import 'donnees_historique.dart';
 import 'filtres_historique.dart';
@@ -153,7 +154,7 @@ class _Corps extends ConsumerWidget {
       );
     }
 
-    return BlocAsynchrone<List<Seance>>(
+    final Widget seances = BlocAsynchrone<List<Seance>>(
       valeur: ref.watch(seancesDuSuiviProvider),
       squelette: const Skeleton.liste(lignes: 4),
       onReessayer: () => ref
@@ -167,6 +168,16 @@ class _Corps extends ConsumerWidget {
         filtres: filtres,
         onFiltres: onFiltres,
       ),
+    );
+    // D1-ter (03/11/2026) : les messages de l'academie sur l'enfant choisi,
+    // en tete, s'il y en a (emplacement propose, SM-51).
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        CarteMessagesAcademie(eleveId: retenu.eleveId, prenom: retenu.prenom),
+        seances,
+      ],
     );
   }
 }
