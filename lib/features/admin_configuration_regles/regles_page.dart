@@ -250,7 +250,9 @@ class _Corps extends StatelessWidget {
           lignes: <Widget>[
             ligne(
               titre: t.admin.regles.remplacementAvertissement,
-              description: t.admin.regles.remplacementAvertissementDetail,
+              // A3-bis : l'enseignant ne perd la seance que si un remplacant
+              // est pret ; « risque de perdre ».
+              description: t.a3bis.regles.avertissementDetail,
               cle: cleRemplacementAvertissement,
               valeur: avertissement,
               min: 0,
@@ -262,7 +264,9 @@ class _Corps extends StatelessWidget {
             ),
             ligne(
               titre: t.admin.regles.remplacementPerte,
-              description: t.admin.regles.remplacementPerteDetail,
+              // A3-bis : l'enseignant n'est ecarte que si un remplacant est
+              // pret ; l'ancien texte disait l'inverse.
+              description: t.a3bis.regles.perteDetail,
               cle: cleRemplacementPerteAcces,
               valeur: perte,
               min: avertissement + 1,
@@ -283,6 +287,34 @@ class _Corps extends StatelessWidget {
                 min: m(perte + 1),
               ),
             ),
+            // A3-bis : un serveur d'avant ce lot ne rend pas ces deux cles ;
+            // les lignes ne sont alors pas montrees.
+            if (!absentes.contains(cleRemplacementAlerteDirection))
+              ligne(
+                titre: t.a3bis.regles.alerteDirection,
+                description: t.a3bis.regles.alerteDirectionDetail,
+                cle: cleRemplacementAlerteDirection,
+                valeur: v[cleRemplacementAlerteDirection]!,
+                min: 0,
+                max: _delaiRemplacementMax,
+                aide: t.a3bis.regles.bornesAlerte(
+                  min: m(0),
+                  max: m(_delaiRemplacementMax),
+                ),
+              ),
+            if (!absentes.contains(cleRemplacementSeanceTardive))
+              ligne(
+                titre: t.a3bis.regles.seanceTardive,
+                description: t.a3bis.regles.seanceTardiveDetail,
+                cle: cleRemplacementSeanceTardive,
+                valeur: v[cleRemplacementSeanceTardive]!,
+                min: 0,
+                max: _delaiRemplacementMax,
+                aide: t.a3bis.regles.bornesTardive(
+                  min: m(0),
+                  max: m(_delaiRemplacementMax),
+                ),
+              ),
           ],
         ),
       ],

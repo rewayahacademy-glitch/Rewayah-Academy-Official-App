@@ -13198,6 +13198,31 @@
       "nouveauLien": "Recevoir un nouveau lien"
     }
   },
+  "a3bis": {
+    "salle": {
+      "titulaireEntreTitre": "L'enseignant de la classe est arrivé",
+      "titulaireEntre": "L'enseignant de la classe a rejoint la salle le premier\u00a0: le remplacement n'est plus nécessaire. Merci d'avoir été prêt.",
+      "remplacantEntreTitre": "Un remplaçant a pris la classe",
+      "remplacantEntre": "Le remplaçant qui a pris la classe a rejoint la salle le premier\u00a0: la séance de ce jour vous est retirée. Vous restez l'enseignant de la classe."
+    },
+    "notifications": {
+      "avertissement": "Vous n'êtes pas encore dans la salle. Entrez vite\u00a0: si un enseignant s'est proposé pour vous remplacer, vous perdez l'accès à la séance de ce jour.",
+      "avertissementMinutes(param=minutes)": {
+        "one": "Vous n'êtes pas encore dans la salle. Entrez dans la minute\u00a0: passé ce délai, si un enseignant s'est proposé pour vous remplacer, vous perdez l'accès à la séance de ce jour.",
+        "other": "Vous n'êtes pas encore dans la salle. Entrez dans les {minutes} minutes\u00a0: passé ce délai, si un enseignant s'est proposé pour vous remplacer, vous perdez l'accès à la séance de ce jour."
+      }
+    },
+    "regles": {
+      "perteDetail": "Si un enseignant s'est proposé, il remplace l'enseignant, qui ne peut plus rejoindre la séance de ce jour, et les familles sont prévenues. Si personne ne s'est proposé, l'enseignant peut encore entrer\u00a0: la séance reste ouverte au remplacement jusqu'à sa fin.",
+      "alerteDirection": "Alerte de la direction",
+      "alerteDirectionDetail": "Si ni l'enseignant ni un remplaçant n'a rejoint la salle, la direction reçoit un e-mail, une seule fois par séance.",
+      "avertissementDetail": "L'enseignant est prévenu qu'il risque de perdre la séance. Les enseignants libres peuvent se proposer pour le remplacer.",
+      "seanceTardive": "Séance créée tard",
+      "seanceTardiveDetail": "Une séance créée moins de ce délai avant son début n'est jamais retirée à l'enseignant automatiquement. L'alerte de la direction part quand même.",
+      "bornesAlerte": "Entre {min} et {max} après le début.",
+      "bornesTardive": "Entre {min} et {max} avant le début."
+    }
+  },
   "payUx": {
     "repriseTitre": "Vous avez quitté le formulaire sans payer ?",
     "reprisePhrase": "Reprenez le paiement : un formulaire neuf s'ouvre. Si le paiement était déjà passé, rien n'est payé deux fois ; actualisez pour voir son état.",

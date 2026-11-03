@@ -1629,6 +1629,23 @@ void main() {
             t.salle.refusAccesPerduTitre,
             t.salle.refusAccesPerdu,
           ),
+          // A3-bis (03/11/2026) : le refus dit qui est entre le premier.
+          (
+            DetailRefusSalle(
+              motif: MotifServeurSalle.titulaireEntre,
+              finUtc: finServeur,
+            ),
+            t.a3bis.salle.titulaireEntreTitre,
+            t.a3bis.salle.titulaireEntre,
+          ),
+          (
+            DetailRefusSalle(
+              motif: MotifServeurSalle.remplacantEntre,
+              finUtc: finServeur,
+            ),
+            t.a3bis.salle.remplacantEntreTitre,
+            t.a3bis.salle.remplacantEntre,
+          ),
         ]) {
       testWidgets('FN-025 : refus ${cas.$1.motif.name} : le motif et '
           'l heure du serveur', (WidgetTester tester) async {

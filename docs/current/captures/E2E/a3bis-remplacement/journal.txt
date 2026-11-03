@@ -1,0 +1,21 @@
+== A3-bis : remplacement sans perte de seance : 2026-11-02T23:19:32.909Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+  OK base : reglages 3 et 15 poses par la migration
+-- 1. page Regles, bureau puis telephone
+  OK 1440 : « Alerte de la direction » affiche
+  OK 1440 : « Séance créée tard » affiche
+  OK 1440 : la perte de la seance dit la regle A3-bis
+  OK 1440 : l'ancien texte de la perte a disparu
+  OK 1440 : l'alerte ne promet pas d'avis dans l'application (e-mail seul)
+  OK 1440 : l'avertissement dit « risque de perdre »
+  OK 390 : « Alerte de la direction » affiche
+  OK 390 : « Séance créée tard » affiche
+  OK 390 : la perte de la seance dit la regle A3-bis
+  OK 390 : l'ancien texte de la perte a disparu
+  OK 390 : l'alerte ne promet pas d'avis dans l'application (e-mail seul)
+  OK 390 : l'avertissement dit « risque de perdre »
+-- 2. banc : seance sans personne dans la salle
+  courriels_sortants : remplacement_personne_en_salle | classes | e2e-direction@example.com | a3bis-alerte:eb6e9d67-1b17-4213-a276-79067bc8cb6c:0528b95c-1526-4aa3-9bff-40f1323fc0a5 | en_attente | {"classe": "E2E A3bis 572910", "enseignant": "E2E Enseignant Valide", "session_id": "eb6e9d67-1b17-4213-a276-79067bc8cb6c", "debut_local": "2026-11-03T00:16:30"}
+  OK base : une ligne courriels_sortants « remplacement_personne_en_salle » pour la direction
+  OK base : une seule ligne apres trois passages
+  OK base : sans remplacant pret, aucune absence posee, le titulaire garde la seance
+== A3-bis : remplacement sans perte de seance : vert
