@@ -206,14 +206,32 @@ CREATE FUNCTION pg_temp.propose(p_commande uuid, p_profil text) RETURNS jsonb LA
 CREATE FUNCTION pg_temp.montant(p_commande uuid, p_profil text) RETURNS bigint LANGUAGE sql AS
   $$ SELECT (pg_temp.propose(p_commande, p_profil) ->> 'montant_mineur')::bigint $$;
 -- Une seance suivie par l'eleve, apres le paiement.
+-- Une seance suivie, future, d'une heure. Le creneau part de now() + p_n
+-- heures et avance d'heure en heure tant qu'une seance de b1 le chevauche
+-- (sessions_no_teacher_overlap) : sans cela, les seances generees par les
+-- classes de b1 faisaient echouer le scenario a certaines heures de la
+-- semaine (le mardi vers 11:30-14:30 UTC pour p_n = 30). Le test ne compte
+-- que des seances suivies distinctes : leur heure exacte ne prouve rien.
 CREATE FUNCTION pg_temp.seance_suivie(p_eleve text, p_n int) RETURNS void LANGUAGE plpgsql AS $$
-DECLARE v_s uuid;
+DECLARE
+  v_s uuid;
+  v_debut timestamptz := now() + make_interval(hours => p_n);
+  v_pas int := 0;
 BEGIN
+  WHILE EXISTS (SELECT 1 FROM public.sessions s
+                 WHERE s.teacher_id = pg_temp.id('b1')
+                   AND tstzrange(s.started_at, s.ended_at) && tstzrange(v_debut, v_debut + interval '1 hour')) LOOP
+    v_pas := v_pas + 1;
+    IF v_pas > 200 THEN
+      RAISE EXCEPTION 'seance_suivie : aucun creneau libre pour b1 en 200 heures';
+    END IF;
+    v_debut := v_debut + interval '1 hour';
+  END LOOP;
   INSERT INTO public.sessions(teacher_id, started_at, ended_at)
-  VALUES (pg_temp.id('b1'), now() + make_interval(hours => p_n), now() + make_interval(hours => p_n, mins => 60))
+  VALUES (pg_temp.id('b1'), v_debut, v_debut + interval '1 hour')
   RETURNING id INTO v_s;
   INSERT INTO public.session_participants(session_id, profile_id, role, entered_at)
-  VALUES (v_s, pg_temp.id(p_eleve), 'student', now() + make_interval(hours => p_n));
+  VALUES (v_s, pg_temp.id(p_eleve), 'student', v_debut);
 END $$;
 
 
