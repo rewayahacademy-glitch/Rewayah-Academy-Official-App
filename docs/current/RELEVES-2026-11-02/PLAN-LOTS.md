@@ -229,3 +229,15 @@ Numéros de migration : table des réservations du garde-cap (2026110510 à 2026
 En cours hors de cette liste : O1 (secrets du directeur avant ouverture), PAY-UX puis REMB-14, A3-bis.
 CI : 4 lots de tests en parallèle, environ 15 minutes au lieu de 55, depuis main c4aee81c (PR 155, fusionnée par le directeur le 03/11 à 01:32 UTC) ; preuve du rouge en cours (PR 159, branche jetable, jamais fusionnée).
 Estimation : environ 14 jours-agent, soit 3 jours et demi à 4 agents ; avec la fusion une à une comme goulot, 4 à 5 jours.
+
+## 8. Règles de vitesse (garde-cap et pilote, 03/11/2026 ; directeur informé, sauf contre-ordre)
+
+- **4 agents.** Une hausse seulement si le débit de fusion mesuré sur 24 h dépasse la production des agents, et si aucun signal d'arrêt ne s'est allumé : dérapage confirmé, deux CI rouges de suite sur main, moins de lots fusionnés que lancés, code non branché ou module en double livré.
+- **Questions :** aucune question bloquante pour ce qui est réversible ; on cherche d'abord dans les décisions écrites (G12), sinon un réglage « proposé », modifiable par la direction. L'argent, la sécurité, les données personnelles et la loi : une seule question groupée au directeur.
+- **Tests :** l'agent lance les tests de son domaine et G3 ; la CI à 4 lots fait le reste. Exception : un lot qui touche `lib/core/`, le routeur ou les fournisseurs partagés lance la suite complète avant de pousser.
+- **Lots S** d'une même zone groupés en une seule PR.
+- **R3 :** deux captures du geste qui compte (téléphone, bureau), prises dans la vraie application ; le verdict du robot reste obligatoire.
+- **En-cours :** au plus une PR ouverte non fusionnée par agent.
+- **Fusion :** un lot sans texte nouveau passe dès qu'il est vert ; les lots avec texte passent un par un.
+- **À faire avant toute hausse :** `verifier_branchement` et la présence des captures R3 dans `ci.yml` (collage du directeur, page du pilote) ; lot outil `libelles_sources.json` sans conflit (S).
+- **Les 17 chantiers sans serveur** (finance du comptable, communauté, recherche, B3.3, salle 3, CAND-04, B2.4, etc.) commencent après la file du §7, pas en parallèle.
