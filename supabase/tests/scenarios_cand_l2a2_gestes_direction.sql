@@ -406,10 +406,10 @@ SELECT pg_temp.vrai(pg_temp.lu('cap_a1') @> '{"peutLire": true, "peutDecider": t
     "confirmerMoyenPaiement": true, "infirmerMoyenPaiement": true, "mettreEnPause": true, "leverPause": true,
     "refuser": true, "consignerRetrait": true, "rouvrir": true, "definirResponsable": true, "agirEnLot": true,
     "inviter": false, "consignerPrevenu": true, "garderPourSuivi": true, "rattacher": true,
-    "planifierEntretien": false, "consignerEntretien": false, "pieceACorriger": false, "validerPiece": false,
+    "planifierEntretien": false, "consignerEntretien": false, "pieceACorriger": false, "validerPiece": true,
     "restreindre": false, "leverRestriction": false, "noterIndisponibilite": false,
     "leverIndisponibilite": false}'::jsonb,
-  'direction homme : decide de son cote ; une capacite par geste, vraie pour les seuls gestes que le serveur sait faire (CAND-L3 : prevenu, garder pour suivi et rattacher le sont desormais)');
+  'direction homme : decide de son cote ; une capacite par geste, vraie pour les seuls gestes que le serveur sait faire (CAND-L3 : prevenu, garder pour suivi et rattacher le sont desormais ; salle 3 du 03/11 : valider la piece)');
 SELECT pg_temp.vrai(pg_temp.lu('cap_a1') -> 'listes' = '{
     "modelesRefus": ["refus_general", "refus_niveau", "refus_besoins", "refus_sans_reponse"],
     "modelesPause": ["pause_attente_besoin", "pause_attente_informations", "pause_demande_candidat", "pause_general"],
