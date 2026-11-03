@@ -912,6 +912,8 @@
   "accords": {
     "titre": "Nos conditions",
     "intro": "Lisez chaque texte, puis cochez la case qui le suit. Le bouton «\u00a0Suivant\u00a0» s'active quand tout est coché.",
+    "caseManquante": "Cochez cette case pour continuer.",
+    "introCases": "Lisez chaque texte, puis cochez la case qui le suit.",
     "caseSavoir": "J'ai lu et compris ce que je dois savoir.",
     "sectionContrat": "Votre contrat",
     "caseContrat": "J'ai lu et j'accepte mon contrat, visites de contrôle comprises.",
@@ -992,6 +994,7 @@
       "ans": "{n} ans",
       "adulte": "18 ans ou plus",
       "adulteDetail": "À partir de 18 ans, chacun s'inscrit lui-même, avec « Je m'inscris pour moi ».",
+      "clavierLettres": "Au clavier, appuyez sur la lettre d'une réponse pour la choisir.",
       "genreQuestion": "{prenom} est…",
       "garcon": "Un garçon",
       "fille": "Une fille",
@@ -13097,6 +13100,25 @@
     "echecTitre": "Votre inscription n'a pas pu être vérifiée",
     "echecPhrase": "Cause probable\u00a0: la connexion au serveur s'est interrompue (non confirmé). Réessayez dans un instant\u00a0: rien n'est créé en double.",
     "sansDonnees": "La vérification de votre inscription"
+  },
+  "n1": {
+    "regles": {
+      "auteurs": {
+        "direction": "Direction",
+        "enseignants": "Enseignants",
+        "familles": "Familles",
+        "eleves": "Élèves",
+        "comptables": "Comptables",
+        "controleurs": "Contrôleurs"
+      },
+      "portee": {
+        "touteAudience": "Toute l'académie, un public ou une Classe",
+        "saClasse": "Sa Classe seulement"
+      }
+    },
+    "alertes": {
+      "signalement": "{categorie}\u00a0: signalement pour l'élève {matricule}. Note interne\u00a0: «\u00a0{note}\u00a0»"
+    }
   },
   "i1": {
     "invitations": {
