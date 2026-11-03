@@ -7,7 +7,7 @@
 --
 -- 1. `public.concern_famille_v` gagne une colonne, `student_id`, en DERNIERE
 --    position (CREATE OR REPLACE VIEW n'admet qu'un ajout en fin, et garde les
---    droits en place). Sans elle, l'ecran ne peut pas ranger un message sous
+--    droits en place, rejoues ici par un REVOKE et un GRANT idempotents). Sans elle, l'ecran ne peut pas ranger un message sous
 --    l'enfant qu'il concerne quand le foyer en compte plusieurs. Le filtre est
 --    celui du correctif, inchange : transmis, avec un message pour la famille,
 --    jamais « securite d'un enfant » ; un tuteur du foyer, le titulaire du
@@ -57,6 +57,18 @@ SELECT c.id, c.categorie, c.family_summary, c.transmis_le, c.transmis_a,
          AND EXISTS (SELECT 1 FROM public.student_profiles sp
                       WHERE sp.profile_id = c.student_id AND sp.deleted_at IS NULL
                         AND sp.student_type = 'autonomous')));
+
+-- Les droits, rejoues apres le CREATE OR REPLACE (idempotents, ceux du
+-- correctif 20261107100000) : lecture seule pour authenticated.
+REVOKE ALL ON public.concern_famille_v FROM PUBLIC, anon, authenticated;
+DO $agent_ro$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = 'agent_ro') THEN
+    EXECUTE 'REVOKE ALL ON public.concern_famille_v FROM agent_ro';
+  END IF;
+END;
+$agent_ro$;
+GRANT SELECT ON public.concern_famille_v TO authenticated;
 
 CREATE OR REPLACE FUNCTION pg_temp.remplacer(p_f pg_catalog.regprocedure, p_avant text, p_apres text, p_n integer)
 RETURNS void
