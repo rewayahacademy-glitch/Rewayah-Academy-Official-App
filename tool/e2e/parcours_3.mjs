@@ -6,7 +6,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { parcours, ouvrir, connecter, cliquer, trouver, trouverTexte, libelles, taper,
-  activerSemantique, sql, COMPTES, MAILPIT, TRAVAIL } from './commun.mjs';
+  activerSemantique, sql, COMPTES, MAILPIT, TRAVAIL, ongletDirection } from './commun.mjs';
 
 const tampon = new Date().toISOString().slice(5, 16).replace(/[-T:]/g, '');
 const FAMILLE = { courriel: `e2e-famille-${tampon}@example.com`, enfant: `Yanis${tampon}`,
@@ -20,7 +20,9 @@ async function questionnaire(a, reponses) {
   for (let k = 0; k < 14; k++) {
     if (a.page.url().includes('/connexion')) return;
     const l = await libelles(a.page);
-    const question = l.filter((x) => x.startsWith('flt-semantics:')).slice(0, 2).join(' / ');
+    // Depuis le compteur « Étape N sur 9 », la question n'est plus dans les
+    // deux premiers libelles : on lit les titres et les quatre premiers.
+    const question = l.filter((x) => x.startsWith('flt-semantics:') || x.startsWith('h2:')).slice(0, 4).join(' / ');
     const regle = reponses.find((r) => r.q.test(question));
     if (!regle) throw new Error(`questionnaire : question imprevue « ${question} »`);
     if (regle.saisie) await taper(a.page, 'input', regle.saisie);
@@ -150,7 +152,7 @@ try {
   // 4. Direction : Personnes, onglet « Demandes », « Accepter la demande … ».
   const d = await p.contexte('direction');
   await connecter(d.page, COMPTES.direction);
-  await cliquer(d.page, 'Personnes Onglet');
+  await ongletDirection(d.page, 'Personnes');
   await cliquer(d.page, /^Sections de la page/);
   await cliquer(d.page, /^Demandes/);
   await p.capture(d, 'demandes');
@@ -173,10 +175,15 @@ try {
     await d.page.keyboard.press('Escape');
     await d.page.waitForTimeout(1000);
     if (await trouver(d.page, /^Demande d.E2E/, { delai: 800 })) {
-      await d.page.mouse.click(1150, 700);
-      await d.page.waitForTimeout(1500);
+      // REJEU-E2E (03/11) : apres le geste, le focus tombe sur la page et Echap
+      // ne ferme plus la boite (defaut signale, non corrige) ; la croix
+      // « Fermer » (ADM-UX) la ferme, au bureau comme au telephone.
+      p.dire('  ECART : Echap sans effet apres « Accepter » (focus perdu) ; fermeture par la croix « Fermer »');
+      const fermer = await trouver(d.page, /^Fermer$/, { delai: 2000 });
+      if (fermer) { await fermer.click(); await d.page.waitForTimeout(1500); }
+      else { await d.page.mouse.click(1150, 700); await d.page.waitForTimeout(1500); }
     }
-    if (await trouver(d.page, /^Demande d.E2E/, { delai: 800 })) p.dire('  ECART : la boite de la demande ne se ferme ni par Echap ni par un toucher dehors');
+    if (await trouver(d.page, /^Demande d.E2E/, { delai: 800 })) p.dire('  ECART : la boite de la demande ne se ferme ni par Echap, ni par « Fermer », ni par un toucher dehors');
   }
   const etats = sql(`select string_agg(u.email || '=' || p.account_status || '/' || p.role, ' ; ')
     from auth.users u join public.profiles p on p.id = u.id where u.email in ('${FAMILLE.courriel}', '${ADULTE.courriel}')`);
