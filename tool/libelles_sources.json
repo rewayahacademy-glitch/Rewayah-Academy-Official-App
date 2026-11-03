@@ -1,4 +1,8 @@
 {
+  "tc.observation.o1.regardeInvisible": "Lot O1 (02/11/2026), consigne du pilote : la direction regarde sans etre vue (est_observateur_masque), sans quota de parent ; aucun texte de parent (\u00ab votre enfant \u00bb, \u00ab votre temps \u00bb) chez elle (T3)",
+  "tc.observation.o1.videoIndisponible": "Lot O1 (02/11/2026), consigne du pilote : la direction regarde sans etre vue (est_observateur_masque), sans quota de parent ; aucun texte de parent (\u00ab votre enfant \u00bb, \u00ab votre temps \u00bb) chez elle (T3)",
+  "tc.observation.o1.reconnexion": "Lot O1 (02/11/2026), consigne du pilote : la direction regarde sans etre vue (est_observateur_masque), sans quota de parent ; aucun texte de parent (\u00ab votre enfant \u00bb, \u00ab votre temps \u00bb) chez elle (T3)",
+  "admin.planning.o1.regarder": "Lot O1 (02/11/2026), consigne du pilote : la direction a un bouton « Regarder la salle », elle regarde sans etre vue (est_observateur_masque) ; objet nomme (libelle-ambigu)",
   "admin.groupes.c1.autresCreneauxContexte": "Lot C1 (02/11/2026), consigne du pilote : UX-003 (la feuille s ouvre sur un seul creneau) ; T3 : la phrase d avant (trois creneaux par defaut, retirez une ligne) contredisait l ecran",
   "admin.groupes.c1.prisNommee": "Lot C1 (02/11/2026), consigne du pilote : UX-020 (le refus nomme la classe et l heure), aussi quand l ecran voit la collision avant le serveur ; docs/current/UX-CONSTATS.md",
   "admin.groupes.c1.classeNommee": "Lot C1 (02/11/2026), consigne du pilote : UX-019 (aucun code serveur a l ecran), UX-020 (le refus nomme la classe et l heure), UX-030 (la ville en clair), UX-031 (Echap demande confirmation) ; docs/current/UX-CONSTATS.md",

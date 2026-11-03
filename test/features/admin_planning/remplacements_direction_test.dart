@@ -24,10 +24,12 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/admin_planning/planning_page.dart';
 
 import '../../support/garde_interface.dart' show verifierUnSeulBoutonPlein;
+import 'session_direction.dart';
 
 final DateTime _lundi = lundiDe(DateTime.now().add(const Duration(days: 14)));
 final DateTime _debut = DateTime(_lundi.year, _lundi.month, _lundi.day + 1, 18);
@@ -169,6 +171,7 @@ Future<void> _monter(
         portPlanningDirectionProvider.overrideWithValue(_Planning()),
         portRemplacementsDirectionProvider.overrideWithValue(port),
         horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(false)),
+        sessionProvider.overrideWith(SessionPlanning.new),
       ],
       child: TranslationProvider(
         child: MaterialApp(

@@ -49,6 +49,13 @@ enum MotifRefusObservation {
   }
 }
 
+/// La version de politique que rend le serveur quand l'ouverture aux parents
+/// (`app_config.observation.ouverture_parents`) est fermee (lot O1, migration
+/// 20261105500000) : l'observation des parents n'est pas encore ouverte, pour
+/// aucune classe. Distincte de `desactivee`, une observation fermee par le
+/// directeur ou pour une classe.
+const String versionPolitiqueFermee = 'fermee';
+
 /// Ce qu'il reste a un observateur pour une seance donnee.
 ///
 /// **Verite serveur, jamais un calcul local.** Chaque champ arrive du serveur

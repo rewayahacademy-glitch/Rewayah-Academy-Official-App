@@ -185,6 +185,48 @@ void main() {
       expect(visites.sorties, <String>[_seance]);
     });
 
+    test(
+      'O1 : la visite close par le serveur (coupure a la duree de la '
+      'politique) se termine, meme s\'il reste du temps pour une suivante',
+      () async {
+        await entrer();
+        // Le serveur a clos la visite : plus de visite ouverte, et le temps
+        // annonce est celui d'une visite suivante (120 s), pas de celle-ci.
+        await serveurAnnonce(
+          unBudget(
+            restant: const Duration(seconds: 120),
+            total: const Duration(seconds: 240),
+            visitesMax: 2,
+          ),
+        );
+
+        expect(moteur.etat.phase, PhaseVisite.terminee);
+        expect(moteur.etat.fin, FinDeVisite.quotaAtteint);
+      },
+    );
+
+    test('O1 : la visite de la direction n\'est pas bornee par le budget '
+        'des tuteurs', () async {
+      await entrer(role: RoleObservateur.adminIncognito);
+      await serveurAnnonce(unBudget(restant: Duration.zero, peutEntrer: false));
+
+      expect(moteur.etat.phase, PhaseVisite.enVisite);
+    });
+
+    test('tant que la visite est ouverte en base, elle continue', () async {
+      await entrer();
+      await serveurAnnonce(
+        unBudget(
+          restant: const Duration(seconds: 100),
+          total: const Duration(seconds: 240),
+          visitesMax: 2,
+          visiteEnCours: true,
+        ),
+      );
+
+      expect(moteur.etat.phase, PhaseVisite.enVisite);
+    });
+
     test('meme une horloge reculee ne survit pas a la borne serveur', () async {
       await entrer();
       horloge.reculer(const Duration(hours: 1));
