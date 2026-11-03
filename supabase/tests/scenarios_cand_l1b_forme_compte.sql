@@ -769,6 +769,9 @@ SELECT pg_temp.refus($$UPDATE public.teacher_student_assignments SET teacher_id 
 -- La branche du type de seance : une seance 'entretien' (forme de L4,
 -- simulee ici en levant la CHECK du type le temps du controle) changee en
 -- seance de cours.
+-- Rang 19 (03/11) : les declencheurs differes des notifications de classe
+-- (notifications_classe_*) en attente interdisent l'ALTER ; on les vide d'abord.
+SET CONSTRAINTS ALL IMMEDIATE;
 ALTER TABLE public.sessions DROP CONSTRAINT sessions_session_type_check;
 INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type)
 VALUES ('cb1b0000-0000-4000-8000-000000000204', 'cb1b0000-0000-4000-8000-0000000000c1',
@@ -777,6 +780,9 @@ SELECT pg_temp.refus($$UPDATE public.sessions SET session_type = 'standard'
   WHERE id = 'cb1b0000-0000-4000-8000-000000000204'$$,
   '23514', 'compte_candidat_non_affectable', 'A : sa seance d''entretien changee en seance de cours : refusee');
 DELETE FROM public.sessions WHERE id = 'cb1b0000-0000-4000-8000-000000000204';
+-- Rang 19 (03/11) : les declencheurs differes des notifications de classe
+-- (notifications_classe_*) en attente interdisent l'ALTER ; on les vide d'abord.
+SET CONSTRAINTS ALL IMMEDIATE;
 ALTER TABLE public.sessions ADD CONSTRAINT sessions_session_type_check
   CHECK (session_type = ANY (ARRAY['standard'::text, 'child'::text]));
 

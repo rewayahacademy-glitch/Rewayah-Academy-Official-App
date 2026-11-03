@@ -1837,6 +1837,22 @@ void main() {
         );
         return;
       }
+      // Rang 19 (03/11/2026) : la base et la pointe peuvent etre presentes
+      // dans un clone peu profond (recuperees une a une) sans l'histoire qui
+      // les relie a HEAD ; « merge-base --is-ancestor » y echoue a tort. La
+      // CI clone en entier et joue la comparaison.
+      final ProcessResult peuProfond = Process.runSync('git', <String>[
+        'rev-parse',
+        '--is-shallow-repository',
+      ]);
+      if ((peuProfond.stdout as String).trim() == 'true') {
+        markTestSkipped(
+          'Clone a historique peu profond : la voie Finance ne peut pas etre '
+          'situee dans l\'histoire de HEAD ici (git fetch --unshallow pour la '
+          'jouer).',
+        );
+        return;
+      }
       // Les commits de la voie (de sa base a sa pointe), puis le travail en
       // cours (index et arbre).
       final ({int code, String fichiers, String erreur}) voie =
