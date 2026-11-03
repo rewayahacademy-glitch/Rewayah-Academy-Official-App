@@ -1,0 +1,16 @@
+== DEFIL-FEUILLE-bis (apres) : 2026-11-03T18:43:21.871Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+  amorce : classe « E2E Defil-bis Al-Huda 401872 » (2b79b457-b05c-4028-997f-d83d473b2d21), eleve Yasmine
+  OK 1440 : l'eleve est dans la fiche de la Classe
+  OK 1440 : « Signaler un besoin » est ouvert
+  1440 : {"hauteur":900,"titreAvant":{"haut":88,"bas":124},"envoiAvant":{"haut":1130,"bas":1182},"titreApres":{"haut":-218,"bas":-182},"envoiApres":{"haut":824,"bas":876}}
+  OK 1440 : en faisant defiler la seule barre, le bouton d'envoi est atteint
+  OK 1440 : le titre defile avec le contenu
+  OK 1440 : rien n'est envoye
+  OK 390 : l'eleve est dans la fiche de la Classe
+  OK 390 : « Signaler un besoin » est ouvert
+  390 : {"hauteur":844,"titreAvant":{"haut":36,"bas":72},"envoiAvant":{"haut":1378,"bas":1430},"titreApres":{"haut":-566,"bas":-530},"envoiApres":{"haut":776,"bas":828}}
+  OK 390 : en faisant defiler la seule barre, le bouton d'envoi est atteint
+  OK 390 : le titre defile avec le contenu
+  OK 390 : rien n'est envoye
+Releves : {"390":{"hauteur":844,"titreAvant":{"haut":36,"bas":72},"envoiAvant":{"haut":1378,"bas":1430},"titreApres":{"haut":-566,"bas":-530},"envoiApres":{"haut":776,"bas":828}},"1440":{"hauteur":900,"titreAvant":{"haut":88,"bas":124},"envoiAvant":{"haut":1130,"bas":1182},"titreApres":{"haut":-218,"bas":-182},"envoiApres":{"haut":824,"bas":876}}}
+== DEFIL-FEUILLE-bis (apres) : vert
