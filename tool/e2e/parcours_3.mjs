@@ -20,7 +20,9 @@ async function questionnaire(a, reponses) {
   for (let k = 0; k < 14; k++) {
     if (a.page.url().includes('/connexion')) return;
     const l = await libelles(a.page);
-    const question = l.filter((x) => x.startsWith('flt-semantics:')).slice(0, 2).join(' / ');
+    // Depuis le compteur « Étape N sur 9 », la question n'est plus dans les
+    // deux premiers libelles : on lit les titres et les quatre premiers.
+    const question = l.filter((x) => x.startsWith('flt-semantics:') || x.startsWith('h2:')).slice(0, 4).join(' / ');
     const regle = reponses.find((r) => r.q.test(question));
     if (!regle) throw new Error(`questionnaire : question imprevue « ${question} »`);
     if (regle.saisie) await taper(a.page, 'input', regle.saisie);

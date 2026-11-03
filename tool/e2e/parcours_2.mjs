@@ -41,10 +41,16 @@ try {
   await d.page.waitForTimeout(700);
   await cliquer(d.page, new RegExp(`^${h.heure} h$`), { role: 'menuitem' });
   await p.capture(d, 'creneau_1');
-  // Le formulaire ouvre trois creneaux (le premier et deux lignes « a remplir
-  // ou a retirer », D2 du 29/10) : on remplit le 2e et on retire le 3e.
-  const nb = await d.page.getByRole('button', { name: /^Heure/ }).count();
+  // Le formulaire ouvrait trois creneaux (D2 du 29/10) ; depuis C1 (UX-003,
+  // 02/11) il s'ouvre sur un seul : « Ajouter un créneau » ouvre le second.
+  let nb = await d.page.getByRole('button', { name: /^Heure/ }).count();
   p.dire(`Creneaux ouverts par le formulaire : ${nb}`);
+  if (nb < 2) {
+    await cliquer(d.page, /^Ajouter un créneau$/);
+    await d.page.waitForTimeout(700);
+    nb = await d.page.getByRole('button', { name: /^Heure/ }).count();
+    p.dire(`Apres « Ajouter un créneau » : ${nb} creneaux`);
+  }
   await d.page.getByRole('button', { name: new RegExp(`^${jour2}$`) }).nth(1).click();
   await d.page.waitForTimeout(500);
   await d.page.getByRole('button', { name: /^Heure/ }).nth(1).click();

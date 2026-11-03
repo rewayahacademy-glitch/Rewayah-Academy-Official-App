@@ -1,0 +1,11 @@
+== Parcours 2 : la direction cree une classe a plusieurs seances : 2026-11-03T10:40:48.987Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Horaire : Mardi 6 h (America/New_York), debut 2026-11-03T11:00:00.987Z ; second creneau Jeudi 6 h ; nom « E2E Classe enfants 11031040 »
+Creneaux ouverts par le formulaire : 1
+Apres « Ajouter un créneau » : 2 creneaux
+Liste des classes : button:E2E Classe enfants 11031040 · n° 1 Active Enseignant : E2E Enseignant Valide Public : Enfants Créneau : mardi 6h Membres : 0 / 5
+Base locale : active|E2E Enseignant|America/New_York|2:6,4:6 ; 8 seance(s), premiere 2026-11-03 11:00:00+00
+  ECART : onglet « Classes » absent de l'arbre d'accessibilite ; ouvert par l'adresse /enseignant/classes
+Enseignant, onglet Classes : group:Rejoindre la salle de la Classe E2E Classe enfants 11031040
+Prochaine seance attendue : « mardi 12:00 »
+Prochaine seance affichee : a:E2E Classe enfants 11031040 mardi 12:00 · dans 19 min 0 élève
+== Parcours 2 : la direction cree une classe a plusieurs seances : vert
