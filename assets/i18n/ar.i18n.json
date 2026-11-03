@@ -12261,6 +12261,56 @@
     "echecPhrase": "السبب المحتمل: انقطع الاتصال بالخادم (غير مؤكد). أعيدوا المحاولة بعد قليل: لا يُنشأ أي شيء مرتين.",
     "sansDonnees": "التحقق من تسجيلكم"
   },
+  "alertes": {
+    "traitement": {
+      "titre": "معالجة البلاغ",
+      "categorie": "الفئة",
+      "eleve": "الطالب",
+      "recu": "وصل",
+      "statut": "حالته",
+      "statutValeur": {
+        "aExaminer": "للفحص",
+        "enExamen": "قيد الفحص",
+        "transmis": "أُحيلت الرسالة"
+      },
+      "note": "ملاحظة المعلم",
+      "noteAide": "لا تقرؤها إلا الإدارة.",
+      "securitePhrase": "لا تقرأ الأسرة ولا المعلم هذا البلاغ، ولا يُحال إلى أحد.",
+      "message": "رسالة إلى الأسرة",
+      "messageAide": "مكتوبة إلى \u2068{cible}\u2069. ملاحظة المعلم لا تُرسل أبدًا.",
+      "messageManque": "اكتب الرسالة إلى الأسرة قبل إحالتها.",
+      "cibleTuteur": "وليّ أمر الطالب",
+      "cibleAdulte": "الطالب",
+      "pasEncoreAffiche": "لا تعرض أي شاشة من شاشات الأسرة هذه الرسالة بعد.",
+      "motif": "سبب الإغلاق",
+      "motifRequisAide": "إلزامي لهذا البلاغ. لا تقرؤه إلا الإدارة.",
+      "motifFacultatifAide": "اختياري. لا تقرؤه إلا الإدارة.",
+      "motifManque": "اكتب سبب الإغلاق.",
+      "examiner": "فحص",
+      "transmettre": "إحالة",
+      "clore": "إغلاق البلاغ",
+      "transmettreQuestionTuteur": "إحالة هذه الرسالة إلى وليّ أمر الطالب؟",
+      "transmettreQuestionAdulte": "إحالة هذه الرسالة إلى الطالب؟",
+      "transmettreConsequence": "لا يمكن التراجع عن الإحالة. ولا تعرضها أي شاشة من شاشات الأسرة بعد.",
+      "transmettreOui": "نعم، إحالة",
+      "cloreQuestion": "إغلاق هذا البلاغ؟",
+      "cloreConsequence": "يخرج من التنبيهات، ولا يُعاد فتح بلاغ مغلق.",
+      "cloreOui": "نعم، إغلاق البلاغ",
+      "faitExamenTitre": "البلاغ قيد الفحص",
+      "faitExamenPhrase": "يبقى في التنبيهات حتى إغلاقه.",
+      "faitTransmisTitre": "سُجِّلت الرسالة",
+      "faitTransmisPhrase": "سُجِّلت إلى \u2068{cible}\u2069. ولا تعرضها أي شاشة من شاشات الأسرة بعد.",
+      "faitClosTitre": "أُغلق البلاغ",
+      "faitClosPhrase": "خرج من التنبيهات.",
+      "refuseTitre": "تغيّر هذا البلاغ",
+      "refusePhrase": "أُعيدت قراءة التنبيهات.",
+      "erreurTitre": "لم يتم الإجراء",
+      "erreurPhrase": "تحقّق من الاتصال، ثم أعد المحاولة.",
+      "indisponibleTitre": "المعالجة غير متاحة",
+      "indisponiblePhrase": "معالجة البلاغات غير متاحة بعد.",
+      "horsLigne": "غير متصل: تعود الإجراءات مع عودة الاتصال."
+    }
+  },
   "n1": {
     "regles": {
       "auteurs": {
