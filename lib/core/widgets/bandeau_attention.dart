@@ -80,6 +80,11 @@ class BandeauAttention extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Semantics(
+                      // Noeud propre : sans `container`, le drapeau d'en-tete
+                      // remonte au noeud du bandeau, qui devient un titre
+                      // entier, et le lien ([action]) n'est plus un bouton
+                      // atteignable sur le web (N2, 03/11/2026).
+                      container: true,
                       header: true,
                       // R8-03 : entre les mots, jamais dans un mot
                       // (« temporaire / ment »).
@@ -97,7 +102,12 @@ class BandeauAttention extends StatelessWidget {
                         textes.bodyMedium ?? const TextStyle(),
                       ),
                     ),
-                    if (action case final Widget a) ...<Widget>[Ecart.vSm, a],
+                    if (action case final Widget a) ...<Widget>[
+                      Ecart.vSm,
+                      // Noeud propre : le lien est un bouton a part, nomme
+                      // par son seul libelle, jamais fondu dans le bandeau.
+                      Semantics(container: true, child: a),
+                    ],
                   ],
                 ),
               ),

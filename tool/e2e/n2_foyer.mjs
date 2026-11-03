@@ -94,7 +94,11 @@ async function toucher(a, motif, role = undefined) {
   const e = await trouver(a.page, motif, { delai: 10000, role });
   if (!e) { manque.push(`${a.role} : ${motif} introuvable`); return false; }
   await amenerEnVue(a.page, e);
-  await e.click();
+  // Un noeud de semantique de repli est recouvert par la vue Flutter, qui
+  // recoit de toute facon le pointeur : clic de souris au centre du noeud.
+  const b = await e.boundingBox();
+  if (b) await a.page.mouse.click(b.x + b.width / 2, b.y + Math.min(b.height, 48) / 2);
+  else await e.click();
   await a.page.waitForTimeout(3000);
   await activerSemantique(a.page);
   return true;
