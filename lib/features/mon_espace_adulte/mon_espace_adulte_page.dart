@@ -276,9 +276,15 @@ class MonEspaceAdultePage extends ConsumerWidget {
               ),
               role: t.adulte.monEspace.role,
               pastilleEtatNormal: false,
+              // PHOTOS-2a : la photo de l'eleve adulte, lue au serveur, et
+              // « Changer ma photo » (poser_ma_photo).
+              maPhoto: true,
               photo: (double diametre) => PhotoEleve(
                 prenom: lue.prenom,
                 cleAvatar: vue?.cleAvatar,
+                personneId: ref.watch(
+                  sessionProvider.select((SessionState e) => e.profileId),
+                ),
                 diametre: diametre,
               ),
             ),

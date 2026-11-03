@@ -9,7 +9,8 @@
 --   6. un mineur d'une autre famille, hors de la Classe, ne voit rien ;
 -- et : la photo d'un tuteur (colonne nouvelle), celle de la direction, celle
 -- d'un enseignant, une cle hors de son dossier refusee, une ecriture directe
--- refusee, l'effacement a l'anonymisation.
+-- refusee, l'effacement a l'anonymisation ; et (PHOTOS-2a) la cle de photo
+-- d'un eleve n'est plus ecrite en direct par un client.
 -- Tout est dans une transaction annulee : aucune donnee ne reste.
 begin;
 
@@ -393,5 +394,34 @@ begin
   end if;
 end
 $sources$;
+
+-- ===========================================================================
+-- 10. PHOTOS-2a (20261107400000) : la photo d'un eleve ne s'ecrit plus en
+--     direct ; les deux reglages du foyer, si
+-- ===========================================================================
+set local role authenticated;
+do $direct$
+declare
+  v_n integer;
+begin
+  perform pg_temp.etre('f0700000-0000-0000-0000-000000000003', 'guardian');
+  begin
+    update public.student_profiles
+       set avatar_storage_key = 'f0700000-0000-0000-0000-000000000004/direct.jpg'
+     where profile_id = 'f0700000-0000-0000-0000-000000000004';
+    raise exception 'PH10: un tuteur a ecrit la cle de photo en direct';
+  exception when insufficient_privilege then
+    null;
+  end;
+  update public.student_profiles
+     set interface_mode = interface_mode
+   where profile_id = 'f0700000-0000-0000-0000-000000000004';
+  get diagnostics v_n = row_count;
+  if v_n <> 1 then
+    raise exception 'PH10: le tuteur ne regle plus l''interface de son enfant';
+  end if;
+end
+$direct$;
+reset role;
 
 rollback;

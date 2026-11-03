@@ -10,6 +10,7 @@ import '../../core/domain/enums.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/photos/photos_personnes.dart';
 import '../../core/preferences/preferences_locales.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/deconnexion.dart';
@@ -19,13 +20,16 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar_nom.dart';
+import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/selecteur_theme.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
+import '../foyer/photo_eleve.dart';
 import '../paiements_recus/rubrique_recevoir_paiements.dart';
 import '../salle_seance/libelles_salle_b.dart';
 import 'espaces_compte.dart';
@@ -69,6 +73,21 @@ class ComptePage extends ConsumerWidget {
                 // IMM-FRONT-1 : le matricule, pour tout role, sous le nom.
                 if (projection.profileId case final String profileId)
                   LigneMatricule(profileId: profileId),
+                // PHOTOS-2a : « Changer ma photo », pour qui le serveur dit
+                // qu'il peut la poser (un adulte au compte valide).
+                if (projection.profileId case final String moi
+                    when ref.watch(peutPoserMaPhotoProvider).value ??
+                        false) ...<Widget>[
+                  Ecart.vSm,
+                  LienFleche(
+                    libelle: t.compte.tuteur.identite.maPhotoOuvrir,
+                    onPress: () => ouvrirMaPhoto(
+                      context,
+                      personneId: moi,
+                      prenom: projection.libelleRole,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -593,6 +612,15 @@ class _EnteteCompte extends StatelessWidget {
       prenom: projection.libelleRole,
       role: projection.statut,
       diametre: AppAvatar.grand,
+      // PHOTOS-2a : la photo de la personne connectee, lue au serveur ; les
+      // initiales sans photo.
+      avatar: projection.profileId == null
+          ? null
+          : AvatarTile(
+              prenom: projection.libelleRole,
+              personneId: projection.profileId,
+              diametre: AppAvatar.grand,
+            ),
       ecart: AppSpacing.xl,
       styleNom: Theme.of(context).textTheme.headlineSmall,
       styleRole: Theme.of(context).textTheme.bodyMedium,

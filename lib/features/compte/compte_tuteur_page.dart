@@ -24,9 +24,12 @@ import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/raccourci_tactile.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../foyer/photo_eleve.dart';
 import 'carte_rubriques.dart';
 import 'donnees_compte.dart';
 import 'ligne_matricule.dart';
@@ -102,6 +105,7 @@ class _Hub extends ConsumerWidget {
         profileId: ref.watch(
           sessionProvider.select((SessionState e) => e.profileId),
         ),
+        maPhoto: true,
       ),
     );
 
@@ -326,11 +330,17 @@ class CarteIdentiteCompte extends StatelessWidget {
     this.photo,
     this.pastilleEtatNormal = true,
     this.profileId,
+    this.maPhoto = false,
     super.key,
   });
 
   /// Le profil dont le matricule se lit sous le nom ; `null` : aucune ligne.
   final String? profileId;
+
+  /// PHOTOS-2a (mode a la demande) : la photo de la personne connectee
+  /// ([profileId]), lue au serveur, et « Changer ma photo » sous le nom.
+  /// Sans effet sans [profileId] ; un [photo] donne garde la priorite.
+  final bool maPhoto;
 
   /// Vrai (defaut, Compte du tuteur) : la pastille dit aussi l'etat normal
   /// (« Compte valide »). Faux (Mon espace de l'eleve adulte, E12) : la
@@ -358,6 +368,12 @@ class CarteIdentiteCompte extends StatelessWidget {
     final ({String libelle, bool valide})? lu = statutAffiche(identite.statut);
     final ({String libelle, bool valide})? statut =
         lu != null && lu.valide && !pastilleEtatNormal ? null : lu;
+    final String? moi = maPhoto ? profileId : null;
+    void changerPhoto() {
+      if (moi != null) {
+        ouvrirMaPhoto(context, personneId: moi, prenom: identite.prenom);
+      }
+    }
 
     return SurfaceCarte(
       child: Padding(
@@ -375,7 +391,20 @@ class CarteIdentiteCompte extends StatelessWidget {
                 nom: nom ?? t.compte.tuteur.identite.nomInconnu,
                 role: role ?? t.compte.roles.guardian,
                 diametre: diametre,
-                avatar: photo?.call(diametre),
+                avatar: switch ((photo?.call(diametre), moi)) {
+                  (final Widget p, null) => p,
+                  (final Widget? p, final String id) => RaccourciTactile(
+                    onPress: changerPhoto,
+                    child:
+                        p ??
+                        AvatarTile(
+                          prenom: nom ?? '',
+                          personneId: id,
+                          diametre: diametre,
+                        ),
+                  ),
+                  (null, null) => null,
+                },
                 ecart: AppSpacing.lg,
                 styleNom: palette.inkStrong.applyTo(
                   textes.titleLarge ?? const TextStyle(),
@@ -387,6 +416,16 @@ class CarteIdentiteCompte extends StatelessWidget {
             ),
             // IMM-FRONT-1 : le matricule sous le nom (le Compte le passe).
             if (profileId case final String id) LigneMatricule(profileId: id),
+            if (moi != null) ...<Widget>[
+              Ecart.vSm,
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: LienFleche(
+                  libelle: t.compte.tuteur.identite.maPhotoOuvrir,
+                  onPress: changerPhoto,
+                ),
+              ),
+            ],
             if (statut != null) ...<Widget>[
               Ecart.vSm,
               Align(

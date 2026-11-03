@@ -2353,7 +2353,9 @@
         "courrielAbsent": "عنوان الدخول غير متوفر",
         "connexionLien": "الدخول برابط يصل بالبريد الإلكتروني",
         "connexionGoogle": "الدخول بحساب Google",
-        "connexionInconnue": "طريقة الدخول غير محددة"
+        "connexionInconnue": "طريقة الدخول غير محددة",
+        "maPhotoTitre": "صورتي",
+        "maPhotoOuvrir": "تغيير صورتي"
       },
       "acces": {
         "titre": "الوصول والمدفوعات",
@@ -8402,6 +8404,7 @@
       "ageNote": "العمر وتاريخ الميلاد غير مسجلين في الملف بعد.",
       "photo": "الصورة",
       "photoLegende": "صورة لوجه ⁨{dePrenom}⁩. ليست وثيقة هوية.",
+      "photoLegendeMoi": "صورة لوجهك. ليست وثيقة هوية.",
       "photoAucune": "لا صورة بعد",
       "photoPresente": "الصورة محفوظة",
       "choisir": "اختيار صورة",

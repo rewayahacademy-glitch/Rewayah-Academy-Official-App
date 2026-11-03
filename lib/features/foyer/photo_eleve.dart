@@ -6,10 +6,12 @@ import '../../core/appairage/service_avatar.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/photos/photos_personnes.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/raccourci_tactile.dart';
@@ -27,7 +29,13 @@ class PhotoEleve extends ConsumerWidget {
     required this.cleAvatar,
     super.key,
     this.diametre,
+    this.personneId,
   });
+
+  /// PHOTOS-2a (mode a la demande) : l'identifiant de profil de l'eleve. Donne,
+  /// la photo est lue au serveur (`photoPersonneProvider`), selon ses regles
+  /// (K-44), et [cleAvatar] ne sert plus.
+  final String? personneId;
 
   /// Le prenom, source des initiales de repli.
   final String prenom;
@@ -40,12 +48,36 @@ class PhotoEleve extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (personneId case final String id) {
+      return AvatarTile(prenom: prenom, personneId: id, diametre: diametre);
+    }
     final String? cle = cleAvatar;
     final String? url = cle == null
         ? null
         : ref.watch(avatarUrlProvider(cle)).value;
     return AvatarTile(prenom: prenom, urlSignee: url, diametre: diametre);
   }
+}
+
+/// PHOTOS-2a : ouvre « Ma photo » en feuille (dialogue sur bureau), pour la
+/// personne connectee.
+///
+/// La feuille vit dans l'overlay du `Navigator`, hors du `ProviderScope` de
+/// l'appelant : elle recoit donc son conteneur (comme `ouvrirPhotoPublique`).
+Future<void> ouvrirMaPhoto(
+  BuildContext context, {
+  required String personneId,
+  required String prenom,
+}) {
+  final ProviderContainer conteneur = ProviderScope.containerOf(context);
+  return AppBottomSheet.ouvrir<void>(
+    context,
+    titre: t.compte.tuteur.identite.maPhotoTitre,
+    constructeur: (BuildContext _) => UncontrolledProviderScope(
+      container: conteneur,
+      child: EditeurPhotoEleve.moi(personneId: personneId, prenom: prenom),
+    ),
+  );
 }
 
 /// Ou en est l'envoi d'une photo.
@@ -79,10 +111,27 @@ enum _Phase {
 /// (`service_avatar.dart`).
 class EditeurPhotoEleve extends ConsumerStatefulWidget {
   /// Cree l'editeur.
-  const EditeurPhotoEleve({required this.profil, super.key});
+  const EditeurPhotoEleve({required ProfilEleveFoyer this.profil, super.key})
+    : personneId = null,
+      prenom = null;
 
-  /// Le profil dont on change la photo.
-  final ProfilEleveFoyer profil;
+  /// PHOTOS-2a (mode a la demande) : la photo de la personne connectee, pour
+  /// tout adulte (tuteur, eleve adulte, direction). Elle se pose par
+  /// `poser_ma_photo`, dans le seau que le serveur rend pour cette personne.
+  const EditeurPhotoEleve.moi({
+    required String this.personneId,
+    required String this.prenom,
+    super.key,
+  }) : profil = null;
+
+  /// Le profil dont on change la photo ; `null` en mode « ma photo ».
+  final ProfilEleveFoyer? profil;
+
+  /// L'identifiant de la personne connectee, en mode « ma photo ».
+  final String? personneId;
+
+  /// Son prenom, source des initiales, en mode « ma photo ».
+  final String? prenom;
 
   /// L'action « Choisir une photo » ou « Changer la photo ».
   static const Key choisirKey = Key('photoEleve.choisir');
@@ -107,7 +156,29 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
   String? _refus;
   bool _succes = false;
 
-  ProfilEleveFoyer get _profil => widget.profil;
+  bool get _moi => widget.profil == null;
+
+  String get _id => widget.profil?.eleveId ?? widget.personneId!;
+
+  String get _prenom => widget.profil?.prenom ?? widget.prenom!;
+
+  /// En mode « ma photo », la photo vient du serveur ; sinon de la vue du
+  /// foyer.
+  bool _aUnePhoto() => _moi
+      ? ref.watch(photoPersonneProvider(_id)).value != null
+      : widget.profil?.cleAvatar != null;
+
+  /// Le fichier de la personne connectee, dans son seau (`avatars`, ou
+  /// `photos_enseignants` pour un enseignant) : celui que le serveur rend.
+  Future<String> _televerserMoi(PhotoEnfant photo) async {
+    final SourcePhoto? source = await ref.read(lotPhotosProvider).source(_id);
+    if (source == null) {
+      throw StateError('source de photo inconnue');
+    }
+    return ref
+        .read(portPhotosProvider)
+        .televerser(personneId: _id, seau: source.seau, photo: photo);
+  }
 
   Future<void> _choisir() async {
     setState(() {
@@ -162,9 +233,11 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
     if (cle == null) {
       setState(() => _phase = _Phase.envoi);
       try {
-        cle = await ref
-            .read(serviceAvatarProvider)
-            .televerser(eleveId: _profil.eleveId, photo: photo);
+        cle = _moi
+            ? await _televerserMoi(photo)
+            : await ref
+                  .read(serviceAvatarProvider)
+                  .televerser(eleveId: _id, photo: photo);
       } on Object {
         if (mounted) {
           setState(() => _phase = _Phase.echecEnvoi);
@@ -177,10 +250,16 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
       return;
     }
     setState(() => _phase = _Phase.enregistrement);
+    // PHOTOS-2a : la cle se pose par la porte nommee du serveur, qui verifie
+    // le foyer, l'age et le dossier ; plus jamais par une ecriture directe
+    // (droit ferme, migration 20261107400000).
+    final PortPhotos port = ref.read(portPhotosProvider);
     try {
-      await ref
-          .read(serviceAppairageProvider)
-          .majReglages(eleveId: _profil.eleveId, cleAvatar: cle);
+      if (_moi) {
+        await port.poserMaPhoto(cle);
+      } else {
+        await port.poserPhotoEleve(_id, cle);
+      }
     } on Object {
       if (mounted) {
         setState(() => _phase = _Phase.echecEnregistrement);
@@ -189,9 +268,8 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
     }
     // La photo remplacee ne doit plus etre servie par l'URL precedente ; le
     // foyer relu porte la nouvelle cle.
-    ref
-      ..invalidate(avatarUrlProvider)
-      ..invalidate(elevesDuFoyerProvider);
+    relirePhoto(ref, _id);
+    ref.invalidate(elevesDuFoyerProvider);
     if (mounted) {
       setState(() {
         _photo = null;
@@ -221,11 +299,17 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
         // dessous reste le controle du clavier et du lecteur d'ecran.
         : RaccourciTactile(
             onPress: enCours ? null : _choisir,
-            child: PhotoEleve(
-              prenom: _profil.prenom,
-              cleAvatar: _profil.cleAvatar,
-              diametre: AppAvatar.grand,
-            ),
+            child: _moi
+                ? AvatarTile(
+                    prenom: _prenom,
+                    personneId: _id,
+                    diametre: AppAvatar.grand,
+                  )
+                : PhotoEleve(
+                    prenom: _prenom,
+                    cleAvatar: widget.profil?.cleAvatar,
+                    diametre: AppAvatar.grand,
+                  ),
           );
 
     return Column(
@@ -244,7 +328,7 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
                   Text(
                     avecApercu
                         ? t.ficheEleve.informations.apercuTitre
-                        : _profil.cleAvatar == null
+                        : !_aUnePhoto()
                         ? t.ficheEleve.informations.photoAucune
                         : t.ficheEleve.informations.photoPresente,
                     style: palette.inkStrong.applyTo(
@@ -255,8 +339,10 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
                   Text(
                     avecApercu
                         ? t.ficheEleve.informations.apercuPhrase
+                        : _moi
+                        ? t.ficheEleve.informations.photoLegendeMoi
                         : t.ficheEleve.informations.photoLegende(
-                            dePrenom: deDevant(_profil.prenom),
+                            dePrenom: deDevant(_prenom),
                           ),
                     style: attenue,
                   ),
@@ -365,7 +451,7 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
             alignment: AlignmentDirectional.centerStart,
             child: LienFleche(
               key: EditeurPhotoEleve.choisirKey,
-              libelle: _profil.cleAvatar == null
+              libelle: !_aUnePhoto()
                   ? t.ficheEleve.informations.choisir
                   : t.ficheEleve.informations.changer,
               onPress: _choisir,

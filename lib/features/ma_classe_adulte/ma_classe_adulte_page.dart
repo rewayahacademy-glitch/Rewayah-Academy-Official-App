@@ -294,6 +294,7 @@ class _Sections extends StatelessWidget {
                       child: PhotoEleve(
                         prenom: p.prenom,
                         cleAvatar: p.cleAvatar,
+                        personneId: p.id,
                         diametre: MaClasseAdultePage.diametrePhoto,
                       ),
                     ),

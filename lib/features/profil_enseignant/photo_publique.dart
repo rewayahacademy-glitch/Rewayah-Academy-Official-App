@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/appairage/service_avatar.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/photos/photos_personnes.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/theme/app_palette.dart';
@@ -32,11 +33,15 @@ import '../tc_mes_groupes/photo_enseignant.dart';
 @immutable
 class PhotoChoisie {
   /// Cree la photo choisie.
-  const PhotoChoisie({this.octets});
+  const PhotoChoisie({this.octets, this.nomFichier});
 
   /// Le contenu du fichier. Nul en demonstration : l'apercu retombe alors sur
   /// les initiales, comme toutes les photos de demonstration non livrees.
   final Uint8List? octets;
+
+  /// PHOTOS-2a : le nom du fichier choisi, source de son type ; nul en
+  /// demonstration.
+  final String? nomFichier;
 }
 
 /// Le choix d'une photo sur l'appareil.
@@ -59,7 +64,9 @@ class _ChoixNatif implements ChoixPhotoPublique {
   @override
   Future<PhotoChoisie?> choisir() async {
     final PhotoEnfant? photo = await _selecteur.choisirPhoto();
-    return photo == null ? null : PhotoChoisie(octets: photo.octets);
+    return photo == null
+        ? null
+        : PhotoChoisie(octets: photo.octets, nomFichier: photo.nomFichier);
   }
 }
 
@@ -69,6 +76,51 @@ class _EnvoiNonBranche implements EnvoiPhotoPublique {
   @override
   Future<String> envoyer(PhotoChoisie photo) =>
       Future<String>.error(UnsupportedError('photo publique : BR-1'));
+}
+
+/// PHOTOS-2a : l'envoi branche sur le serveur. Le fichier va dans le seau
+/// que le serveur rend pour l'enseignant connecte (`photos_enseignants`,
+/// dossier = son identifiant), puis `poser_ma_photo` l'enregistre sur son
+/// profil : la meme photo partout ou il apparait.
+class EnvoiPhotoPubliqueServeur implements EnvoiPhotoPublique {
+  /// Cree l'envoi pour [personneId], la personne connectee.
+  const EnvoiPhotoPubliqueServeur({
+    required this.port,
+    required this.lot,
+    required this.personneId,
+  });
+
+  /// Les photos du serveur.
+  final PortPhotos port;
+
+  /// La lecture groupee, qui dit le seau de la personne.
+  final LotPhotos lot;
+
+  /// La personne connectee ; `null` hors session.
+  final String? personneId;
+
+  @override
+  Future<String> envoyer(PhotoChoisie photo) async {
+    final String? moi = personneId;
+    final Uint8List? octets = photo.octets;
+    if (moi == null || octets == null) {
+      throw StateError('photo sans compte ou sans fichier');
+    }
+    final SourcePhoto? source = await lot.source(moi);
+    if (source == null) {
+      throw StateError('source de photo inconnue');
+    }
+    final String cle = await port.televerser(
+      personneId: moi,
+      seau: source.seau,
+      photo: PhotoEnfant(
+        octets: octets,
+        nomFichier: photo.nomFichier ?? 'photo.jpg',
+      ),
+    );
+    await port.poserMaPhoto(cle);
+    return cle;
+  }
 }
 
 /// Le choix de photo employe par l'application : le selecteur natif.
@@ -116,6 +168,21 @@ Future<void> ouvrirPhotoPublique(
   );
 }
 
+/// PHOTOS-2a : l'identifiant de l'enseignant connecte, dont la photo
+/// publique se lit au serveur. Nul par defaut (demonstration, tests) : le
+/// portrait reste alors celui de la session locale. `main.dart` le branche
+/// sur la session.
+final Provider<String?> enseignantPhotoPubliqueProvider = Provider<String?>(
+  (Ref ref) => null,
+);
+
+/// PHOTOS-2a : l'URL de la photo de l'enseignant connecte, lue au serveur
+/// (`photoPersonneProvider`) ; nulle sans compte, sans photo ou hors service.
+String? urlMaPhotoPublique(WidgetRef ref) {
+  final String? moi = ref.watch(enseignantPhotoPubliqueProvider);
+  return moi == null ? null : ref.watch(photoPersonneProvider(moi)).value;
+}
+
 /// Le portrait public de l'enseignant : la photo, ou l'etat « photo a
 /// fournir » de [PhotoEnseignant].
 class PortraitPublic extends StatelessWidget {
@@ -125,7 +192,12 @@ class PortraitPublic extends StatelessWidget {
     required this.cle,
     super.key,
     this.diametre,
+    this.urlSignee,
   });
+
+  /// PHOTOS-2a : l'URL signee de la photo, lue au serveur ; la photo est
+  /// alors montree, meme avant tout envoi de cette session.
+  final String? urlSignee;
 
   /// Le prenom, source des initiales de repli.
   final String prenom;
@@ -137,18 +209,22 @@ class PortraitPublic extends StatelessWidget {
   final double? diametre;
 
   @override
-  Widget build(BuildContext context) => Semantics(
-    label: cle == null ? null : t.enseignant.photo.alternatif,
-    child: PhotoEnseignant(
-      enseignant: EnseignantVM(
-        enseignantId: '',
-        titre: TitreEnseignant.sayyid,
-        nomAffichage: prenom,
-        photoUrlOuCle: cle,
+  Widget build(BuildContext context) {
+    final String? cleOuUrl = cle ?? urlSignee;
+    return Semantics(
+      label: cleOuUrl == null ? null : t.enseignant.photo.alternatif,
+      child: PhotoEnseignant(
+        enseignant: EnseignantVM(
+          enseignantId: '',
+          titre: TitreEnseignant.sayyid,
+          nomAffichage: prenom,
+          photoUrlOuCle: cleOuUrl,
+        ),
+        urlSignee: urlSignee,
+        diametre: diametre,
       ),
-      diametre: diametre,
-    ),
-  );
+    );
+  }
 }
 
 enum _Phase { repos, apercu, envoi, echec }
@@ -232,6 +308,8 @@ class _EditeurPhotoPubliqueState extends ConsumerState<EditeurPhotoPublique> {
     }
     // Le succes ne s'affiche que sur reponse (UX_REVIEW_04 ligne ENS-05A c).
     ref.read(photoPubliqueProvider.notifier).confirmer(cle);
+    final String? moi = ref.read(enseignantPhotoPubliqueProvider);
+    if (moi != null) relirePhoto(ref, moi);
     if (mounted) {
       setState(() {
         _photo = null;
@@ -252,7 +330,8 @@ class _EditeurPhotoPubliqueState extends ConsumerState<EditeurPhotoPublique> {
       textes.bodyMedium ?? const TextStyle(),
     );
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
-    final String? cle = ref.watch(photoPubliqueProvider);
+    final String? url = urlMaPhotoPublique(ref);
+    final String? cle = ref.watch(photoPubliqueProvider) ?? url;
     final PhotoChoisie? photo = _photo;
     final bool avecApercu = photo != null && _phase != _Phase.repos;
 
@@ -265,6 +344,7 @@ class _EditeurPhotoPubliqueState extends ConsumerState<EditeurPhotoPublique> {
             child: PortraitPublic(
               prenom: widget.prenom,
               cle: cle,
+              urlSignee: url,
               diametre: _diametre,
             ),
           );

@@ -1679,6 +1679,7 @@
       "ageNote": "L'âge et la date de naissance ne sont pas encore enregistrés sur le profil.",
       "photo": "Photo",
       "photoLegende": "Une photo du visage {dePrenom}. Ce n'est pas une pièce d'identité.",
+      "photoLegendeMoi": "Une photo de votre visage. Ce n'est pas une pièce d'identité.",
       "photoAucune": "Pas encore de photo",
       "photoPresente": "Photo enregistrée",
       "choisir": "Choisir une photo",
@@ -6640,7 +6641,9 @@
         "courrielAbsent": "Adresse de connexion non communiquée",
         "connexionLien": "Connexion par lien reçu par courriel",
         "connexionGoogle": "Connexion avec Google",
-        "connexionInconnue": "Méthode de connexion non précisée"
+        "connexionInconnue": "Méthode de connexion non précisée",
+        "maPhotoTitre": "Ma photo",
+        "maPhotoOuvrir": "Changer ma photo"
       },
       "acces": {
         "titre": "Accès et paiements",

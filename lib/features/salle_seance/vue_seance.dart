@@ -132,7 +132,12 @@ class EleveSeance {
     this.id,
     this.cleAvatar,
     this.peutEcrire = false,
+    this.profilId,
   });
+
+  /// PHOTOS-2a : l'identifiant de profil, quand la salle le connait ; la photo
+  /// se lit alors au serveur, selon ses regles (K-44). Jamais rendu a l'ecran.
+  final String? profilId;
 
   /// L'enseignant l'a autorise a ecrire sur le support ou le tableau (plan
   /// V2 §4.3, §12, TB15). Faux par defaut : ecrire demande une autorisation

@@ -219,7 +219,8 @@ class _Entete extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final TextTheme textes = Theme.of(context).textTheme;
-    final String? cle = ref.watch(photoPubliqueProvider);
+    final String? url = urlMaPhotoPublique(ref);
+    final String? cle = ref.watch(photoPubliqueProvider) ?? url;
     void choisir() =>
         unawaited(ouvrirPhotoPublique(context, prenom: profil.prenom));
 
@@ -230,6 +231,7 @@ class _Entete extends ConsumerWidget {
           profil: profil,
           nomPublic: ref.watch(nomPublicEnseignantProvider),
           cle: cle,
+          url: url,
           textes: textes,
           onPhoto: choisir,
         ),
@@ -254,11 +256,15 @@ class _Identite extends StatelessWidget {
     required this.cle,
     required this.textes,
     required this.onPhoto,
+    this.url,
   });
 
   final ProfilEnseignant profil;
   final String? nomPublic;
   final String? cle;
+
+  /// PHOTOS-2a : l'URL signee de la photo, lue au serveur.
+  final String? url;
   final TextTheme textes;
 
   /// Ouvre le choix de la photo (toucher la photo, comme le lien).
@@ -274,6 +280,7 @@ class _Identite extends StatelessWidget {
           child: PortraitPublic(
             prenom: profil.prenom,
             cle: cle,
+            urlSignee: url,
             diametre: AppSpacing.respiration + AppSpacing.xxxl,
           ),
         ),

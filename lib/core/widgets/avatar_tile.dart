@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../photos/photos_personnes.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
@@ -50,6 +52,7 @@ class AvatarTile extends StatelessWidget {
     super.key,
     this.urlSignee,
     this.diametre,
+    this.personneId,
   });
 
   /// Le prenom, source des initiales de repli.
@@ -61,6 +64,38 @@ class AvatarTile extends StatelessWidget {
   /// Diametre de la tuile, pris dans [AppAvatar]. Par defaut [AppAvatar.moyen] :
   /// un avatar est un petit cercle, jamais deux fois la cible tactile du mode
   /// (une tuile de 144 debordait de son cadre dans la salle).
+  final double? diametre;
+
+  /// PHOTOS-2a (mode a la demande) : l'identifiant de profil de la personne.
+  /// Donne, et sans [urlSignee], la tuile lit sa photo par
+  /// `photoPersonneProvider` : la meme photo partout, selon les droits du
+  /// serveur ; sans droit ou sans photo, les initiales.
+  final String? personneId;
+
+  @override
+  Widget build(BuildContext context) {
+    final String? id = personneId;
+    if (id != null && (urlSignee == null || urlSignee!.isEmpty)) {
+      return _AvatarDePersonne(
+        personneId: id,
+        prenom: prenom,
+        diametre: diametre,
+      );
+    }
+    return _Tuile(prenom: prenom, urlSignee: urlSignee, diametre: diametre);
+  }
+}
+
+/// Le dessin de la tuile : la photo, ou les initiales en repli.
+class _Tuile extends StatelessWidget {
+  const _Tuile({
+    required this.prenom,
+    required this.urlSignee,
+    required this.diametre,
+  });
+
+  final String prenom;
+  final String? urlSignee;
   final double? diametre;
 
   @override
@@ -108,6 +143,27 @@ class AvatarTile extends StatelessWidget {
       ),
     );
   }
+}
+
+/// La tuile d'une personne, lue par son identifiant.
+class _AvatarDePersonne extends ConsumerWidget {
+  const _AvatarDePersonne({
+    required this.personneId,
+    required this.prenom,
+    required this.diametre,
+  });
+
+  final String personneId;
+  final String prenom;
+  final double? diametre;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => _Tuile(
+    prenom: prenom,
+    diametre: diametre,
+    // Lue par `value` : tant qu'elle manque, les initiales (ADR-012).
+    urlSignee: ref.watch(photoPersonneProvider(personneId)).value,
+  );
 }
 
 class _Initiales extends StatelessWidget {

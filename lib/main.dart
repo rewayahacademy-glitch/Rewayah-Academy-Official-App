@@ -130,6 +130,8 @@ import 'core/offres/regroupements_c11bis_supabase.dart';
 import 'core/offres/regroupements_pages_supabase.dart';
 import 'core/partage_offre/genre_partageur_supabase.dart';
 import 'core/partage_offre/port_genre_partageur.dart';
+import 'core/photos/photos_personnes.dart';
+import 'core/photos/photos_supabase.dart';
 import 'core/recrutement/invitations_comptable_supabase.dart';
 import 'core/recrutement/invitations_enseignant_supabase.dart';
 import 'core/recrutement/port_invitations_comptable.dart';
@@ -190,6 +192,7 @@ import 'features/foyer/reponse_invitation_supabase.dart';
 import 'features/foyer/reprise_foyer_supabase.dart';
 import 'features/foyer/role_foyer.dart';
 import 'features/foyer/role_foyer_supabase.dart';
+import 'features/profil_enseignant/photo_publique.dart';
 
 /// Les surcharges de l'application reelle (jamais le mode demonstration) :
 /// le port des classes du foyer bascule sur l'adaptateur Supabase des que le
@@ -611,6 +614,27 @@ List<Override> _surchargesAppReelle() => <Override>[
     ref.watch(sessionProvider.select((SessionState s) => s.profileId));
     return AlertesSupabase(appelRpcSupabase(Supabase.instance.client));
   }),
+  // PHOTOS-2a : une photo par personne, lue par photos_personnes. Relue a
+  // chaque changement de compte : un autre appelant n'a pas les memes droits.
+  portPhotosProvider.overrideWith((Ref ref) {
+    ref.watch(sessionProvider.select((SessionState s) => s.profileId));
+    return PhotosSupabase(Supabase.instance.client);
+  }),
+  // PHOTOS-2a : la photo publique de l'enseignant connecte, lue et envoyee
+  // au serveur.
+  enseignantPhotoPubliqueProvider.overrideWith(
+    (Ref ref) =>
+        ref.watch(sessionProvider.select((SessionState s) => s.profileId)),
+  ),
+  envoiPhotoPubliqueProvider.overrideWith(
+    (Ref ref) => EnvoiPhotoPubliqueServeur(
+      port: ref.watch(portPhotosProvider),
+      lot: ref.watch(lotPhotosProvider),
+      personneId: ref.watch(
+        sessionProvider.select((SessionState s) => s.profileId),
+      ),
+    ),
+  ),
 ];
 
 /// Point d'entree unique de l'application.

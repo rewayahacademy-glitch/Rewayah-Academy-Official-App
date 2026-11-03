@@ -26,6 +26,7 @@ import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/offres/offre_horaire.dart';
 import 'package:rewayah_academy/core/offres/service_offres.dart';
+import 'package:rewayah_academy/core/photos/photos_personnes.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
@@ -60,6 +61,7 @@ import '../../fixtures/tuteur/foyers.dart';
 import '../../parcours/faux_service_offres.dart';
 import '../../router/support_routeur.dart';
 import '../../support/aucun_mot_coupe.dart' hide motsCoupes;
+import '../../support/faux_photos.dart';
 import '../../support/harnais.dart';
 import '../../support/hors_ligne_une_fois.dart';
 import '../../support/mots_coupes.dart';
@@ -95,6 +97,27 @@ class _AppairagePilote extends FauxServiceAppairage {
 
 _AppairagePilote _foyerA() =>
     _AppairagePilote()..elevesRendus = FoyersFictifs.foyerA;
+
+/// PHOTOS-2a : le serveur de photos du foyer A. Une pose reussie ecrit la
+/// cle que la vue du foyer relit, comme `poser_photo_eleve` en base ; le
+/// client, lui, n'ecrit plus jamais la colonne (droit ferme, 20261107400000).
+FauxPhotos _photosDe(_AppairagePilote appairage) => FauxPhotos(
+  surPose: (String id, String? cle) => appairage.elevesRendus = <EleveDuFoyer>[
+    for (final EleveDuFoyer e in appairage.elevesRendus)
+      if (e.id != id)
+        e
+      else
+        EleveDuFoyer(
+          id: e.id,
+          prenom: e.prenom,
+          identifiantImmuable: e.identifiantImmuable,
+          mode: e.mode,
+          camera: e.camera,
+          cleAvatar: cle,
+          finAcces: e.finAcces,
+        ),
+  ],
+);
 
 /// Un selecteur de photos qui leve (permission refusee, fichier illisible).
 class _SelecteurQuiLeve implements SelecteurPhoto {
@@ -401,16 +424,20 @@ void main() {
   });
 
   group('Informations et photo', () {
+    late FauxPhotos photos;
+
     Future<(GoRouter, FauxServiceAvatar, _AppairagePilote)> monterPhoto(
       WidgetTester tester, {
       PhotoEnfant? photo,
       bool horsLigne = false,
     }) async {
       final _AppairagePilote appairage = _foyerA();
+      photos = _photosDe(appairage);
       final GoRouter routeur = await _monter(
         tester,
         appairage: appairage,
         autres: <Override>[
+          portPhotosProvider.overrideWithValue(photos),
           selecteurPhotoProvider.overrideWithValue(
             FauxSelecteurPhoto(
               photo ?? PhotoEnfant(octets: _png, nomFichier: 'visage.png'),
@@ -457,10 +484,11 @@ void main() {
       expect(avatar.depots, hasLength(1));
       expect(avatar.depots.single.eleveId, a1);
       expect(avatar.depots.single.photo.typeMime, 'image/png');
-      expect(appairage.reglagesEcrits.single.cleAvatar, isNotNull);
-      // La seule colonne touchee est celle de la photo.
-      expect(appairage.reglagesEcrits.single.mode, isNull);
-      expect(appairage.reglagesEcrits.single.camera, isNull);
+      // PHOTOS-2a : la cle se pose par `poser_photo_eleve`, jamais par une
+      // ecriture directe du client (droit ferme, 20261107400000).
+      expect(photos.posesEleve.single.eleveId, a1);
+      expect(photos.posesEleve.single.cle, '$a1/1.png');
+      expect(appairage.reglagesEcrits, isEmpty);
       expect(find.text(t.ficheEleve.informations.succes), findsOneWidget);
       expect(
         find.text(t.ficheEleve.informations.photoPresente),
@@ -508,13 +536,13 @@ void main() {
       await _toucher(tester, find.byKey(EditeurPhotoEleve.choisirKey));
       await _toucher(tester, find.byKey(EditeurPhotoEleve.envoyerKey));
       expect(find.text(t.ficheEleve.informations.echecEnvoi), findsOneWidget);
-      expect(appairage.reglagesEcrits, isEmpty);
+      expect(photos.posesEleve, isEmpty);
       expect(find.byKey(EditeurPhotoEleve.apercuKey), findsOneWidget);
 
       avatar.erreurAJeter = null;
       await _toucher(tester, find.byKey(EditeurPhotoEleve.reprendreKey));
       expect(avatar.depots, hasLength(1));
-      expect(appairage.reglagesEcrits, hasLength(1));
+      expect(photos.posesEleve, hasLength(1));
       expect(find.text(t.ficheEleve.informations.succes), findsOneWidget);
     });
 
@@ -522,7 +550,7 @@ void main() {
         'renvoye', (WidgetTester tester) async {
       final (_, FauxServiceAvatar avatar, _AppairagePilote appairage) =
           await monterPhoto(tester);
-      appairage.erreurAJeter = Exception('refus');
+      photos.erreurPose = Exception('refus');
 
       await _toucher(tester, find.byKey(EditeurPhotoEleve.choisirKey));
       await _toucher(tester, find.byKey(EditeurPhotoEleve.envoyerKey));
@@ -532,12 +560,12 @@ void main() {
       );
       expect(avatar.depots, hasLength(1));
 
-      appairage.erreurAJeter = null;
+      photos.erreurPose = null;
       await _toucher(tester, find.byKey(EditeurPhotoEleve.reprendreKey));
       expect(avatar.depots, hasLength(1), reason: 'aucun second envoi');
-      expect(appairage.reglagesEcrits, hasLength(1));
+      expect(photos.posesEleve, hasLength(1));
       expect(
-        appairage.reglagesEcrits.single.cleAvatar,
+        photos.posesEleve.single.cle,
         '$a1/1.png',
         reason: 'la cle du premier envoi',
       );

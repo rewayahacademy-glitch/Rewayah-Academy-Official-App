@@ -114,6 +114,7 @@ abstract final class DepuisSalle {
                   EleveSeance(
                     prenom: p.nom,
                     statut: StatutEleveSeance.connecte,
+                    profilId: p.identite,
                   ),
             ]
           : enseignant
@@ -128,6 +129,7 @@ abstract final class DepuisSalle {
                     id: p.identifiantImmuable.isEmpty
                         ? null
                         : p.identifiantImmuable,
+                    profilId: p.profilId.isEmpty ? null : p.profilId,
                   ),
             ]
           : const <EleveSeance>[],

@@ -901,6 +901,8 @@ LigneRubrique _ligneMembre(
       child: PhotoEleve(
         prenom: membre.libelle,
         cleAvatar: projection?.cleAvatar,
+        // PHOTOS-2a : la photo lue au serveur, la meme que partout.
+        personneId: membre.studentId,
         diametre: AppAvatar.petit,
       ),
     ),

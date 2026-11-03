@@ -21,6 +21,7 @@ import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/observabilite/journal_dev.dart';
+import '../../core/photos/photos_personnes.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/presence/vue_presence.dart';
 import '../../core/profil/service_profil_enseignant.dart'
@@ -1509,7 +1510,19 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           ? null
           : (enseignant ? moi : vue.dominant)?.clePhotoEnseignant) {
         final String cle => ref.watch(photoEnseignantUrlProvider(cle)).value,
-        null => null,
+        // PHOTOS-2a : sans cle d'enseignant, la photo de la personne de la
+        // vignette, lue au serveur selon ses regles (K-44).
+        null => switch (identiteVignetteRecitant(
+              enseignant: enseignant,
+              parole: parole,
+              moi: moi,
+            )
+            ? parole!.profilId
+            : (enseignant ? moi : vue.dominant)?.identite) {
+          final String id when id.isNotEmpty =>
+            ref.watch(photoPersonneProvider(id)).value,
+          _ => null,
+        },
       },
       // L'enseignant garde les etats de lecture de son panneau (page
       // indisponible, texte non installe) ; l'eleve lit la page (D9).
@@ -1559,6 +1572,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           id: e.id,
           cleAvatar: e.cleAvatar,
           peutEcrire: e.peutEcrire,
+          profilId: e.profilId,
           fiche: ficheDeSeance(p),
         ),
         null when e.id != null => EleveSeance(
@@ -1567,6 +1581,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           id: e.id,
           cleAvatar: e.cleAvatar,
           peutEcrire: e.peutEcrire,
+          profilId: e.profilId,
           fiche: const FicheEleveSeance(
             niveau: '',
             objectifActuel: '',
@@ -3684,8 +3699,13 @@ class _Cadre extends ConsumerWidget {
     // Directeur, 26/10/2026 : la photo du profil quand l'annuaire en a la
     // cle ; sinon le cercle des initiales.
     final String? cle = participant.clePhotoEnseignant;
+    // PHOTOS-2a : sans cle d'enseignant, la photo de la personne, lue au
+    // serveur selon ses regles (K-44 : un camarade de la Classe, dans sa
+    // propre session) ; les initiales sinon.
     final String? photo = cle == null
-        ? null
+        ? (participant.identite.isEmpty
+              ? null
+              : ref.watch(photoPersonneProvider(participant.identite)).value)
         : ref.watch(photoEnseignantUrlProvider(cle)).value;
     final Widget? gestes = menu;
     return DecoratedBox(
