@@ -1,0 +1,30 @@
+{
+  "lot": "RECHARGE-1 : un ecran charge a la demande ne dit plus hors ligne a tort, et revient",
+  "banc": "pile locale tool/e2e (jamais un apercu Vercel, jamais la production) ; serveur du robot sur 8090, bascule de la build A a la build B, index.html pour un fichier absent (comme la reecriture de Vercel)",
+  "robot": "tool/e2e/recharge_1.mjs",
+  "builds": "avant : A = main e31b629d, B = A + une cle de widget changee dans le planning (non commitee) ; apres : A2 = ce lot, B2 = A2 + la meme retouche",
+  "avant": {
+    "1440": "joue",
+    "390": "joue",
+    "constat": "deploiement : Vous etes hors ligne alors que le reseau marche, Reessayer sans effet (le morceau 38 est demande 4 fois a chaque essai) ; morceau bloque : hors ligne a tort, Reessayer marche une fois debloque ; reseau retabli : l ecran ne revient pas seul ; bandeau FN-013 absent"
+  },
+  "apres": {
+    "1440": "vert",
+    "390": "vert"
+  },
+  "prouve_ici": [
+    "cause : apres un deploiement, la page ouverte recoit les morceaux de la nouvelle version ; dart2js les refuse (not loaded), chaque Reessayer rejouait le refus",
+    "un echec de chargement en ligne ne dit jamais hors ligne",
+    "deploiement : Une nouvelle version de l application est prete, Recharger, le planning revient",
+    "morceau bloque puis debloque : Cet ecran ne s est pas ouvert, Reessayer, le planning revient",
+    "reseau coupe puis retabli : Vous etes hors ligne, puis le planning revient sans geste",
+    "bandeau FN-013 : affiche apres le deploiement alors que version.json est identique (empreinte par l ETag de main.dart.js)"
+  ],
+  "non_prouve_ici": [
+    "rien en production : le directeur le constatera apres fusion et un deploiement suivant",
+    "Vercel envoie bien un ETag pour main.dart.js : suppose (comportement documente des fichiers statiques), non mesure ; sans ETag, le bandeau reste muet comme avant, l ecran differe, lui, ne depend pas du bandeau",
+    "le retour au premier plan est simule (visibilitychange) : le navigateur sans ecran ne masque pas l onglet",
+    "accueil de l eleve en Interface guidee : correction du Reessayer non testee"
+  ],
+  "inventaire": "INVENTAIRE-REESSAYER.md"
+}

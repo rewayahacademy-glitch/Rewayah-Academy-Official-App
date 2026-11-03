@@ -163,9 +163,12 @@ void main() {
 
   testWidgets('diagnostics : 8 s expliquee, 20 s recuperable', (tester) async {
     final _Lectures l = _Lectures();
+    // RECHARGE-1 (03/11/2026) : la source est remplacee, pas le derive.
+    // Remplacer `versionActiveProgrammeProvider` cachait que « Reessayer »
+    // n'invalidait que le derive, qui relisait l'erreur gardee de la source.
     await _monterPage(tester, const DiagnosticsPage(), <Override>[
-      versionActiveProgrammeProvider.overrideWith(
-        (Ref _) => l.sansReponse<VersionProgramme?>(),
+      versionsProgrammeProvider.overrideWith(
+        (Ref _) => l.sansReponse<List<VersionProgramme>>(),
       ),
       diagnosticsATraiterProvider.overrideWith(
         (Ref _) => l.sansReponse<List<EleveADiagnostiquer>>(),

@@ -118,9 +118,16 @@ class PageCoranSalle extends ConsumerWidget {
         invitation: t.salle.coran.indisponibleDetail,
         icone: AppIcons.rienAAfficher,
         libelleAction: t.commun.reessayer,
+        // RECHARGE-1 (03/11/2026) : la page se calcule a partir de quatre
+        // lectures ; une source en echec restait en echec si on n'invalidait
+        // que la page. On relit tout.
         onAction: () {
           ref
             ..invalidate(policeMushafDisponibleProvider)
+            ..invalidate(pageCorpusProvider(numero))
+            ..invalidate(layoutPageProvider(numero))
+            ..invalidate(souratesCoranProvider)
+            ..invalidate(disponibiliteLayoutProvider)
             ..invalidate(pageMushafProvider(numero));
         },
         encre: salle,

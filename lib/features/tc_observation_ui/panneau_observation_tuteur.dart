@@ -58,6 +58,7 @@ class PanneauObservationTuteur extends StatefulWidget {
     this.videoEnfant,
     this.budgetIncertain = false,
     this.videoIndisponible = false,
+    this.parent = true,
   });
 
   /// Ce qui est expose au tuteur.
@@ -98,6 +99,12 @@ class PanneauObservationTuteur extends StatefulWidget {
   /// « Quitter » empecherait le tuteur de la refermer.
   final bool videoIndisponible;
 
+  /// Vrai pour un parent (le cas d'origine). Faux pour la direction qui
+  /// regarde sans etre vue (O1, 02/11/2026) : ni decompte (aucun quota cote
+  /// serveur), ni vignette « Votre enfant », ni « votre temps continue de
+  /// s'ecouler » ; une ligne dit qu'elle regarde sans etre vue.
+  final bool parent;
+
   @override
   State<PanneauObservationTuteur> createState() =>
       _PanneauObservationTuteurEtat();
@@ -126,10 +133,16 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
         onQuitter: widget.onQuitter,
         large: large,
       );
-      final Widget bandeau = BandeauDecompteVisite(
-        budget: vue.budget,
-        budgetIncertain: widget.budgetIncertain,
-      );
+      final Widget bandeau = widget.parent
+          ? BandeauDecompteVisite(
+              budget: vue.budget,
+              budgetIncertain: widget.budgetIncertain,
+            )
+          : TexteSansCoupure(
+              t.tc.observation.o1.regardeInvisible,
+              key: const ValueKey<String>('observation-direction-invisible'),
+              style: Theme.of(context).textTheme.bodyMedium,
+            );
 
       // PAGESHELL-200-1b : les colonnes de la salle disent a `PageShell` ce
       // qui leur manque. A 200 % sous une tete qui defile (320x568, telephone
@@ -220,8 +233,10 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
                   Row(
                     children: <Widget>[
                       Expanded(child: _vignetteEnseignant()),
-                      Ecart.hMd,
-                      Expanded(child: _vignetteEnfant()),
+                      if (widget.parent) ...<Widget>[
+                        Ecart.hMd,
+                        Expanded(child: _vignetteEnfant()),
+                      ],
                     ],
                   ),
                 ],
@@ -251,8 +266,10 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     _vignetteEnseignant(),
-                    Ecart.vMd,
-                    _vignetteEnfant(),
+                    if (widget.parent) ...<Widget>[
+                      Ecart.vMd,
+                      _vignetteEnfant(),
+                    ],
                   ],
                 ),
               ),
@@ -306,10 +323,11 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
     final String? sousTitre =
         widget.sousTitre ??
         _joindre(widget.vue.monEnfant?.nom, widget.vue.enseignant?.nom);
+    final o1 = t.tc.observation.o1;
     final String? detail = widget.videoIndisponible
-        ? v.videoIndisponible
+        ? (widget.parent ? v.videoIndisponible : o1.videoIndisponible)
         : widget.etatSalle == EtatSalle.reconnexion
-        ? v.reconnexionDetail
+        ? (widget.parent ? v.reconnexionDetail : o1.reconnexion)
         : null;
 
     return Column(
