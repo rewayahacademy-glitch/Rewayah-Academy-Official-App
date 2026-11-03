@@ -1,9 +1,9 @@
-== SUPPRIMER écrans : supprimer, restaurer, profil d'un enfant : 2026-11-03T21:27:15.187Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
-Amorce : famille Karima Suppr235187 (e2e.suppr.karima.235187@example.com), enfants {"Adam":"acf609d8-fd47-4a81-a710-01b6106f643b","Sara":"170bad84-74c2-4060-aa35-021376325f7d"}
-Amorce : famille Samira Suppr235187 (e2e.suppr.samira.235187@example.com), enfants {"Lina":"a78f5345-33ca-4a95-bed3-e6d57e933703"}
-[direction] session aal2 posée par l'API locale (facteur TOTP enrôlé par le robot)
-[direction] case de Adam Suppr235187 : noeud 48 x 48
-[direction] case de Sara Suppr235187 : noeud 48 x 48
+== SUPPRIMER écrans : supprimer, restaurer, profil d'un enfant : 2026-11-03T22:53:40.586Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Amorce : famille Karima Suppr420587 (e2e.suppr.karima.420587@example.com), enfants {"Adam":"91230d4e-d678-499c-ac8b-d4cc9a799d30","Sara":"a64ea17c-3cdd-4975-9b9d-c9f20fcdaa05"}
+Amorce : famille Samira Suppr420587 (e2e.suppr.samira.420587@example.com), enfants {"Lina":"4a9097f2-7347-49fb-a8c9-7801a8acabf9"}
+[direction] session aal2 posée par l'API locale (facteur TOTP enrôlé ou réutilisé par le robot, base locale)
+[direction] case de Adam Suppr420587 : noeud 48 x 48
+[direction] case de Sara Suppr420587 : noeud 48 x 48
 [direction] barre « 2 comptes choisis » : vu
 [direction] confirmation avec le nombre : vu
 [direction] résultat « 2 comptes sont supprimés » : vu
@@ -13,8 +13,8 @@ Base locale : 2 retrait(s) en cours pour Adam et Sara
 Base locale : Adam active|true
 [tuteur] confirmation du tuteur : vu
 Base locale : Lina supprimée = t
-[direction] session aal2 posée par l'API locale (facteur TOTP enrôlé par le robot)
-[direction] case de Adam Suppr235187 : noeud 358 x 74
+[direction] session aal2 posée par l'API locale (facteur TOTP enrôlé ou réutilisé par le robot, base locale)
+[direction] case de Adam Suppr420587 : noeud 358 x 74
 [direction] barre « 1 compte choisi » (390) : vu
 [direction] retrait de Lina « Un tuteur » : vu
 == SUPPRIMER écrans : supprimer, restaurer, profil d'un enfant : vert
