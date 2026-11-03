@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/domain/enums.dart';
+import '../../../core/foyer/profil_eleve_brouillon.dart';
 import '../../../core/observabilite/journal_dev.dart';
 import '../../../core/offres/offre_horaire.dart';
 import '../../parcours_offres/libelles_parcours.dart' show MomentJournee;
@@ -71,9 +72,11 @@ class EnfantQuestionnaire {
       );
 }
 
-/// L'age le plus jeune propose : celui de la premiere cohorte
-/// (`cohortes_age`, `enfant_5_7`).
-const int ageMinimum = 5;
+/// L'age le plus jeune propose : 6 ans (decision du 13/10/2026, enfant de 6 a
+/// 17 ans dans DECISION-TARIFS-2026-10-18). Lu dans la seule source partagee
+/// avec l'ajout d'un profil eleve ([BornesAge.clientActuelle]) ;
+/// `creer_profil_enfant()` refuse moins de 6 ans (UX-032, NIV1).
+final int ageMinimum = BornesAge.clientActuelle.min;
 
 /// L'age le plus grand d'un enfant ; a 18 ans, on s'inscrit soi-meme.
 const int ageMaximum = 17;
