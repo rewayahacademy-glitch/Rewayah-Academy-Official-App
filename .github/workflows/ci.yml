@@ -228,6 +228,10 @@ jobs:
       - name: Scenario SQL NIV1 (niveau demande une seule fois)
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_niv1_niveau_une_fois.sql
+        
+      - name: Scenario SQL NIV1 reprise (profils existants)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_niv1_reprise_profils.sql
 
 
         
