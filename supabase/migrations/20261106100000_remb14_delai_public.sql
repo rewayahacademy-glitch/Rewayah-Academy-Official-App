@@ -30,6 +30,19 @@
 --   4. fac_politique_lue lit la cle facultative `remboursementDelaiJours`
 --      (0 a 60) et fac_politique_json l'ecrit : la direction peut publier le
 --      delai decide.
+--   5. decision du directeur du 02/11/2026 (« Migration, puis code ») : la
+--      version v2.1.0, copie de toutes les colonnes de v2.0.0 avec
+--      remboursement_delai_jours = 14, est inseree ici, publiee_par NULL comme
+--      v1.0.0 et v2.0.0. Sa date d'effet est le jour de l'installation :
+--      la version en vigueur un jour donne est celle de plus grande
+--      date_effet <= ce jour (private.fac_politique_au), et « aujourd'hui »
+--      est private.fac_aujourdhui() (fuseau comptable). v2.1.0 est donc en
+--      vigueur des l'installation ; un paiement d'un jour precedent garde la
+--      politique de son jour (fn115c_montant_propose lit la politique du jour
+--      du paiement), les factures du mois en cours (politique du 1er) aussi.
+--      Les prix sont ceux de v2.0.0 : rien d'autre ne change. Idempotent :
+--      ON CONFLICT DO NOTHING, et rien n'est insere si une version a deja la
+--      date du jour ou une date posterieure.
 --
 -- FICHIER SANS EFFACEMENT (regle B5). Migration additive (B6) : une cle de
 -- plus dans tarifs_publics(), les lecteurs actuels l'ignorent.
@@ -118,11 +131,44 @@ $b$'jourSuspension', p.jour_suspension,
     -- REMB-14 : le delai de retractation, en jours a compter du paiement.
     'remboursementDelaiJours', p.remboursement_delai_jours);$b$);
 
--- 5. Le commentaire de la colonne dit la regle decidee.
+-- 5. v2.1.0 : le delai de 14 jours, en vigueur des l'installation.
+INSERT INTO public.politiques_commerciales
+SELECT (pg_catalog.jsonb_populate_record(NULL::public.politiques_commerciales,
+          pg_catalog.to_jsonb(p) || pg_catalog.jsonb_build_object(
+            'version', 'v2.1.0',
+            'date_effet', private.fac_aujourdhui(),
+            'remboursement_delai_jours', 14,
+            'publiee_par', NULL,
+            'publiee_le', pg_catalog.clock_timestamp()))).*
+  FROM public.politiques_commerciales p
+ WHERE p.version = 'v2.0.0'
+   AND private.fac_aujourdhui() > (SELECT max(q.date_effet) FROM public.politiques_commerciales q)
+ON CONFLICT DO NOTHING;
+-- Les deux tables lues par version de politique suivent : sans elles, la
+-- part de l'enseignant (private.cand_part_enseignant_*, lue par version) se
+-- lirait NULL et la repartition montree aux familles resterait celle de
+-- v2.0.0. Memes valeurs que v2.0.0 (memes prix).
+INSERT INTO public.politique_part_enseignant
+  (politique_version, part_enfant_pour_mille, part_adulte_pour_mille, decision_ref)
+SELECT 'v2.1.0', x.part_enfant_pour_mille, x.part_adulte_pour_mille,
+       pg_catalog.left(x.decision_ref || ' ; reprise pour v2.1.0 (REMB-14, decision du directeur du 02/11/2026)', 300)
+  FROM public.politique_part_enseignant x
+ WHERE x.politique_version = 'v2.0.0'
+   AND EXISTS (SELECT 1 FROM public.politiques_commerciales p WHERE p.version = 'v2.1.0')
+ON CONFLICT DO NOTHING;
+INSERT INTO public.repartitions_paiement
+  (politique_version, base_eleves_enfants, base_eleves_adultes, postes)
+SELECT 'v2.1.0', r.base_eleves_enfants, r.base_eleves_adultes, r.postes
+  FROM public.repartitions_paiement r
+ WHERE r.politique_version = 'v2.0.0'
+   AND EXISTS (SELECT 1 FROM public.politiques_commerciales p WHERE p.version = 'v2.1.0')
+ON CONFLICT DO NOTHING;
+
+-- 6. Le commentaire de la colonne dit la regle decidee.
 COMMENT ON COLUMN public.politiques_commerciales.remboursement_delai_jours IS
   'Delai de retractation, en jours a compter du paiement (decision du directeur du 02/11/2026, 14 jours) : pendant ce delai, on rembourse ce qui a ete paye moins les seances suivies ; ensuite, une formule payee d''avance est remboursee du reste, mois commences au prix mensuel normal. Publie par tarifs_publics().';
 
--- 6. Postflight.
+-- 7. Postflight.
 DO $postflight$
 DECLARE
   v_com text;
@@ -159,6 +205,33 @@ BEGIN
   IF pg_catalog.has_function_privilege('authenticated', 'private.remb14_politique_herite()', 'EXECUTE')
      OR pg_catalog.has_function_privilege('anon', 'private.remb14_politique_herite()', 'EXECUTE') THEN
     RAISE EXCEPTION 'REMB-14 : declencheur d''heritage ouvert';
+  END IF;
+  -- La version en vigueur (v2.1.0, ou une version publiee plus tard) porte
+  -- le delai decide, avec les prix de v2.0.0 pour v2.1.0.
+  IF EXISTS (SELECT 1 FROM public.politiques_commerciales WHERE version = 'v2.0.0')
+     AND (private.fac_politique_au(private.fac_aujourdhui())).version = 'v2.1.0'
+     AND (private.fac_politique_au(private.fac_aujourdhui())).remboursement_delai_jours <> 14 THEN
+    RAISE EXCEPTION 'REMB-14 : v2.1.0 en vigueur sans le delai de 14 jours';
+  END IF;
+  IF EXISTS (SELECT 1 FROM public.politiques_commerciales WHERE version = 'v2.0.0')
+     AND NOT EXISTS (SELECT 1 FROM public.politiques_commerciales WHERE version = 'v2.1.0') THEN
+    RAISE EXCEPTION 'REMB-14 : v2.1.0 non inseree (une version occupe deja la date du jour ou une date posterieure)';
+  END IF;
+  IF EXISTS (
+    SELECT 1 FROM public.politiques_commerciales a, public.politiques_commerciales b
+     WHERE a.version = 'v2.0.0' AND b.version = 'v2.1.0'
+       AND (pg_catalog.to_jsonb(a) - ARRAY['version','date_effet','remboursement_delai_jours','publiee_par','publiee_le'])
+           IS DISTINCT FROM
+           (pg_catalog.to_jsonb(b) - ARRAY['version','date_effet','remboursement_delai_jours','publiee_par','publiee_le'])) THEN
+    RAISE EXCEPTION 'REMB-14 : v2.1.0 differe de v2.0.0 hors version, date, delai et publication';
+  END IF;
+  IF EXISTS (SELECT 1 FROM public.politique_part_enseignant WHERE politique_version = 'v2.0.0')
+     AND NOT EXISTS (SELECT 1 FROM public.politique_part_enseignant WHERE politique_version = 'v2.1.0') THEN
+    RAISE EXCEPTION 'REMB-14 : part de l''enseignant absente pour v2.1.0';
+  END IF;
+  IF EXISTS (SELECT 1 FROM public.repartitions_paiement WHERE politique_version = 'v2.0.0')
+     AND NOT EXISTS (SELECT 1 FROM public.repartitions_paiement WHERE politique_version = 'v2.1.0') THEN
+    RAISE EXCEPTION 'REMB-14 : repartition du paiement absente pour v2.1.0';
   END IF;
   v_com := pg_catalog.obj_description(f, 'pg_proc');
   IF v_com LIKE '%md5_functiondef=%'

@@ -18,6 +18,33 @@
 \o /dev/null
 BEGIN;
 
+-- 0. Decision du directeur du 02/11/2026 : apres la migration, la version en
+-- vigueur est v2.1.0, delai de 14 jours, copie de v2.0.0, publiee_par NULL.
+DO $v21$
+DECLARE
+  v public.politiques_commerciales := private.fac_politique_au(private.fac_aujourdhui());
+BEGIN
+  IF v.version IS DISTINCT FROM 'v2.1.0' OR v.remboursement_delai_jours IS DISTINCT FROM 14
+     OR v.publiee_par IS NOT NULL OR v.date_effet IS DISTINCT FROM private.fac_aujourdhui() THEN
+    RAISE EXCEPTION 'REMB-14 ROUGE : 0 : version en vigueur % (delai %, date %), attendu v2.1.0, 14 jours, du jour',
+      v.version, v.remboursement_delai_jours, v.date_effet;
+  END IF;
+  IF (SELECT tarif_enfant_mineur || '/' || tarif_adulte_mineur || '/' || remboursement_delai_jours
+        FROM public.politiques_commerciales WHERE version = 'v2.0.0') IS DISTINCT FROM
+     (v.tarif_enfant_mineur || '/' || v.tarif_adulte_mineur || '/7') THEN
+    RAISE EXCEPTION 'REMB-14 ROUGE : 0 : v2.1.0 ne garde pas les prix de v2.0.0, ou v2.0.0 a change';
+  END IF;
+  IF (public.tarifs_publics() #>> '{courante,remboursementDelaiJours}')::int IS DISTINCT FROM 14 THEN
+    RAISE EXCEPTION 'REMB-14 ROUGE : 0 : tarifs_publics() ne dit pas 14 jours';
+  END IF;
+  -- Sans retroactivite : un paiement de la veille garde la politique de son jour.
+  IF (private.fac_politique_au(private.fac_aujourdhui() - 1)).version IS DISTINCT FROM 'v2.0.0' THEN
+    RAISE EXCEPTION 'REMB-14 ROUGE : 0 : la veille n''est plus sous v2.0.0';
+  END IF;
+  RAISE NOTICE 'OK 0 : v2.1.0 en vigueur, 14 jours, prix de v2.0.0 ; la veille reste sous v2.0.0';
+END;
+$v21$;
+
 ALTER TABLE public.politiques_commerciales DISABLE TRIGGER politiques_commerciales_immuable;
 UPDATE public.politiques_commerciales
    SET date_effet = (date_trunc('month', (now() AT TIME ZONE 'Europe/Paris')::date) - interval '6 months')::date
