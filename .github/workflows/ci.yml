@@ -381,17 +381,60 @@ jobs:
   # « Flutter (web) » garde son nom : il ne passe au vert que si les quatre lots
   # de tests ET le build sont verts. `always()` : un job saute compterait comme
   # reussi dans une protection de branche ; celui-ci echoue a la place.
+  # Captures R3 (directeur, 01/11/2026, DECISION-BRANCHEMENT-2026-11-01.md) :
+  # pas de capture docs/current/captures/E2E/<lot>/, pas de fusion. Une PR vers
+  # main qui change lib/ (hors code genere *.g.dart) doit ajouter ou modifier au
+  # moins un fichier de captures. HEAD est le commit de fusion de la PR : son
+  # premier parent est la base, d'ou fetch-depth 2.
+  captures-r3:
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+    name: Captures R3 quand lib/ change
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Une capture E2E accompagne tout changement de lib/
+        shell: bash
+        run: |
+          changes="$(git diff --name-only HEAD^1 HEAD)"
+          lib="$(printf '%s\n' "$changes" | grep -E '^lib/' | grep -vE '\.g\.dart$' || true)"
+          captures="$(printf '%s\n' "$changes" | grep -E '^docs/current/captures/E2E/[^/]+/.+' || true)"
+          if [ -z "$lib" ]; then
+            echo "Aucun changement dans lib/ : rien a exiger."
+            exit 0
+          fi
+          if [ -z "$captures" ]; then
+            echo "Cette PR change lib/ sans aucune capture sous docs/current/captures/E2E/<lot>/ :"
+            printf '%s\n' "$lib"
+            echo "Regle R3 du directeur (01/11/2026) : pas de capture, pas de fusion."
+            exit 1
+          fi
+          echo "Captures presentes :"
+          printf '%s\n' "$captures"
+
+  # « Flutter (web) » garde son nom : il ne passe au vert que si les quatre lots
+  # de tests, le build (avec le branchement) ET, sur une PR, les captures R3
+  # sont verts. `always()` : un job saute compterait comme reussi dans une
+  # protection de branche ; celui-ci echoue a la place. Les captures ne sont
+  # exigees que sur une PR : sautees ailleurs (Run workflow), elles passent.
   flutter:
     if: always() && (github.event_name != 'pull_request' || github.base_ref == 'main')
-    needs: [flutter-tests, flutter-build]
+    needs: [flutter-tests, flutter-build, captures-r3]
     name: Flutter (web)
     runs-on: ubuntu-latest
     steps:
-      - name: Tests et build Flutter verts
+      - name: Tests, build, branchement et captures verts
         shell: bash
         run: |
-          echo "tests : ${{ needs.flutter-tests.result }} ; build : ${{ needs.flutter-build.result }}"
-          [ "${{ needs.flutter-tests.result }}" = "success" ] && [ "${{ needs.flutter-build.result }}" = "success" ]
+          t="${{ needs.flutter-tests.result }}"; b="${{ needs.flutter-build.result }}"; c="${{ needs.captures-r3.result }}"
+          echo "tests : $t ; build : $b ; captures : $c"
+          [ "$t" = "success" ] && [ "$b" = "success" ] || exit 1
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            [ "$c" = "success" ]
+          else
+            [ "$c" = "success" ] || [ "$c" = "skipped" ]
+          fi
 
   flutter-build:
     # Les PR backend vers ccr exécutent les migrations/scénarios et Edge; les builds Flutter restent sur les PR main et les lancements manuels.
@@ -433,6 +476,13 @@ jobs:
       # absence d'onTap nu, zero emoji, API de PermanentNotice, routeur unique.
       - name: Verifie les invariants de l'etape 2
         run: dart run tool/verifier_jetons.dart
+
+      # Branchement (directeur, 01/11/2026, DECISION-BRANCHEMENT-2026-11-01.md) :
+      # aucun fichier de lib/ sans chemin depuis lib/main.dart, hors
+      # tool/branchement_tolere.txt, qui ne fait que retrecir. Dart pur.
+      - name: Verifie que tout le code de lib/ est branche
+        if: matrix.target == 'web'
+        run: dart run tool/verifier_branchement.dart
 
       # Revue directeur 01-02/10/2026 (K-54 a K-59) : cartes collees, bouton
       # recompose, libelle ambigu, mot interne, erreur sans action. Le socle
