@@ -33,8 +33,12 @@ try {
   await taper(d.page, 'textarea, input[aria-label^="Adresse de courriel"]', CAND.courriel);
   await cliquer(d.page, /^Créer l'invitation$/, { pause: 2500 });
   await p.capture(d, 'invitation_creee');
-  const message = await trouverTexte(d.page, /Transmettez ce code[^|]*/, 10000);
-  const invitation = message?.match(/:\s*([A-Z0-9]{4}(?:-[A-Z0-9]{4})+)/)?.[1];
+  // Le message a change avec les invitations par e-mail (« Invitation créée.
+  // L'e-mail avec le code XXXX‑XXXX‑XXXX part vers … ») ; le code s'ecrit avec
+  // des tirets insecables, ramenes au tiret simple pour la saisie.
+  const message = await trouverTexte(d.page, /Transmettez ce code[^|]*|Invitation créée[^|]*/, 10000);
+  const invitation = message?.match(/([A-Z0-9]{4}(?:[-\u2010\u2011\u2013][A-Z0-9]{4})+)/)?.[1]
+    ?.replace(/[\u2010\u2011\u2013]/g, '-');
   if (!invitation) throw new Error(`preparation : pas de code d'invitation affiche (${message})`);
   p.dire(`Invitation : ${invitation} pour ${CAND.courriel}`);
 
