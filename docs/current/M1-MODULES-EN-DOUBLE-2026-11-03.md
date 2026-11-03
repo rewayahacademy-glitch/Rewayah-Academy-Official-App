@@ -183,3 +183,14 @@ Le retrait ne cause pas de problème dans le dépôt, à trois conditions :
 
 Une lecture seule de la production reste à faire avant le B5 : elle dira si ces fonctions sont
 encore appelées.
+
+#### Constat en production, 03/11/2026
+
+Le pilote a fait une lecture seule de la production.
+
+- `pg_stat_user_functions` ne donne rien : le suivi des fonctions est coupé (`track_functions = none`).
+- Le pilote a donc lu les journaux de l'API. Sur les dernières 24 h, ils comptent 2 259 requêtes,
+  dont 1 090 appels RPC, et **aucun** appel à `presenter_support`, `support_actif` ou
+  `support_actif_capacites`.
+- Ce constat ne couvre que 24 h, la fenêtre maximale des journaux. Le pilote le refera juste avant
+  le fichier B5 du lot M1-A8.
