@@ -314,20 +314,21 @@ class _AppBottomSheetEtat extends State<AppBottomSheet> {
     super.dispose();
   }
 
-  /// Relit le debordement apres la mise en page. Hysteresis sans va-et-vient :
-  /// on passe a « deborde » quand le contenu depasse dans la mise en page
-  /// courte (croix dans le titre) ; on n'en revient que s'il tient dans la
-  /// mise en page longue (barre de la croix en plus), ou il a moins de place.
+  /// Relit le debordement apres la mise en page. Le passage est a sens
+  /// unique : une fois que le contenu a deborde, la croix reste dans la barre
+  /// fine jusqu'a la fermeture. Sans cela, un titre long pouvait osciller :
+  /// sorti du titre, la croix lui rend de la largeur, il tient sur moins de
+  /// lignes, le contenu tient de nouveau, la croix y revient, et ainsi de
+  /// suite.
   void _mesurer() {
-    if (!mounted || !_defilement.hasClients) return;
+    if (_deborde || !mounted || !_defilement.hasClients) return;
     final ScrollPosition position = _defilement.position;
     if (!position.hasContentDimensions) return;
-    final bool deborde = position.maxScrollExtent > 0;
-    if (deborde != _deborde) setState(() => _deborde = deborde);
+    if (position.maxScrollExtent > 0) setState(() => _deborde = true);
   }
 
   void _mesurerApres() {
-    if (widget.libelleFermer == null) return;
+    if (_deborde || widget.libelleFermer == null) return;
     WidgetsBinding.instance.addPostFrameCallback((_) => _mesurer());
   }
 
