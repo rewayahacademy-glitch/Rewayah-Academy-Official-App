@@ -45,7 +45,18 @@ export async function ajouterEleve(p, acteur, { classe, eleve, motif = 'Demande 
   await cliquer(page, new RegExp(`^Actions : ${classe}`));
   await cliquer(page, /^Ajouter un élève$/, { role: 'menuitem', pause: 1500 });
   await p.capture(acteur, 'ajouter_un_eleve');
-  const choix = await trouver(page, new RegExp(`^${eleve}`), { role: 'radio', delai: 10000 });
+  let choix = await trouver(page, new RegExp(`^${eleve}`), { role: 'radio', delai: 10000 });
+  if (!choix) {
+    // Pile chargee (plus d'eleves que la boite n'en montre) : on cherche par
+    // le champ de la boite, comme la direction le ferait (REJEU-E2E, 03/11).
+    const champ = await trouver(page, /^Chercher un élève/, { role: 'textbox', delai: 3000 });
+    if (champ) {
+      await champ.click();
+      await page.keyboard.type(eleve.split(' ')[0], { delay: 30 });
+      await page.waitForTimeout(1500);
+      choix = await trouver(page, new RegExp(`^${eleve}`), { role: 'radio', delai: 5000 });
+    }
+  }
   if (!choix) {
     throw new Error(`« Ajouter un élève » : ${eleve} absent de la liste ; proposes : ${(await libelles(page)).filter((x) => x.startsWith('radio:')).join(' | ') || 'aucun'}`);
   }
