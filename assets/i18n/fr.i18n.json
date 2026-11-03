@@ -68,6 +68,12 @@
       "autresPlusieurs": "{n} autres personnes correspondent\u00a0: précisez la recherche pour les voir."
     },
     "etats": {
+      "recharge1": {
+        "ouvertureTitre": "Cet écran ne s'est pas ouvert",
+        "ouverturePhrase": "Son chargement a été interrompu. Réessayez\u00a0; si cela se répète, rechargez la page.",
+        "repetePhrase": "Le chargement a de nouveau été interrompu. Rechargez la page pour ouvrir cet écran\u00a0: vous restez connecté.",
+        "versionPhrase": "Rechargez la page pour ouvrir cet écran\u00a0: vous restez connecté."
+      },
       "branchementServeur": "Disponible au branchement serveur",
       "chargementProlonge": {
         "titre": "La connexion prend plus de temps que prévu",
@@ -737,6 +743,9 @@
         "cahierACompleter": "Cahier de transmission à compléter",
         "ouvrirCahier": "Ouvrir le cahier de transmission",
         "revenirJournee": "Revenir à ma journée",
+        "recharge1": {
+          "erreurCahier": "Le cahier de transmission ne s'ouvre pas depuis cet écran. Revenez à votre journée\u00a0: vous le remplirez depuis la carte de la séance."
+        },
         "erreurCahier": "Le cahier de transmission ne peut pas être ouvert pour le moment. Réessayez dans un instant."
       }
     },

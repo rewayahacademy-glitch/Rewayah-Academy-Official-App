@@ -89,6 +89,7 @@ Future<GoRouter> _monter(
   required ServiceAppairage appairage,
   List<Override> autres = const <Override>[],
   Size taille = const Size(390, 844),
+  FausseSourceSession? source,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -98,7 +99,7 @@ Future<GoRouter> _monter(
     ProviderScope(
       overrides: <Override>[
         ...surchargesRouteur(
-          FausseSourceSession(sessionActive(AppRole.guardian)),
+          source ?? FausseSourceSession(sessionActive(AppRole.guardian)),
           appairage: appairage,
         ),
         horlogeFoyerProvider.overrideWithValue(() => DateTime(2026, 9, 24, 12)),
@@ -655,6 +656,30 @@ void main() {
         expect(find.byType(DisqueRetour), findsOneWidget);
       });
     }
+
+    // RECHARGE-1 (03/11/2026) : « Reessayer » n'invalidait qu'un provider
+    // qui relisait la session deja en memoire ; il redemande la session.
+    testWidgets('session illisible : Reessayer redemande la session', (
+      WidgetTester tester,
+    ) async {
+      final FausseSourceSession source = FausseSourceSession(
+        sessionActive(AppRole.guardian),
+      );
+      await _monter(
+        tester,
+        appairage: _AppairageCreant(),
+        source: source,
+        autres: <Override>[porteAjoutProfilProvider.overrideWithValue(null)],
+      );
+      await _ouvrirAjout(tester);
+      expect(
+        find.byKey(FormulaireProfilEleve.porteIllisibleKey),
+        findsOneWidget,
+      );
+      final int avant = source.rafraichissements;
+      await _toucher(tester, find.text(t.commun.etats.actions.reessayer));
+      expect(source.rafraichissements, avant + 1);
+    });
 
     testWidgets('vocabulaire : aucun libelle interdit sur les deux pages', (
       WidgetTester tester,

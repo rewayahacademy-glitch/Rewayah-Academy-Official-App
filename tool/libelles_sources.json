@@ -7031,5 +7031,10 @@
   "notifications.gesteObserver": "Pilote, 02/11/2026 : reprise de NOTIFS-L6, le badge d'une ligne A faire dit le geste attendu",
   "notifications.gesteTraiterContestation": "Pilote, 02/11/2026 : reprise de NOTIFS-L6, le badge d'une ligne A faire dit le geste attendu",
   "accords.introCases": "UX-047 (pilote, 02/11/2026) : page des accords, « Suivant » reste actif ; la case qui manque est signalée sous elle",
-  "accords.caseManquante": "UX-047 (pilote, 02/11/2026) : page des accords, « Suivant » reste actif ; la case qui manque est signalée sous elle"
+  "accords.caseManquante": "UX-047 (pilote, 02/11/2026) : page des accords, « Suivant » reste actif ; la case qui manque est signalée sous elle",
+  "commun.etats.recharge1.ouvertureTitre": "Lot RECHARGE-1 (03/11/2026), consigne du pilote : un ecran charge a la demande ne dit jamais hors ligne quand le reseau marche ; apres un deploiement, Recharger (mot decide, mots-rewayah) ; K-59 : ce qui manque, la cause, quoi faire",
+  "commun.etats.recharge1.ouverturePhrase": "Lot RECHARGE-1 (03/11/2026), consigne du pilote : un ecran charge a la demande ne dit jamais hors ligne quand le reseau marche ; apres un deploiement, Recharger (mot decide, mots-rewayah) ; K-59 : ce qui manque, la cause, quoi faire",
+  "commun.etats.recharge1.repetePhrase": "Lot RECHARGE-1 (03/11/2026), consigne du pilote : un ecran charge a la demande ne dit jamais hors ligne quand le reseau marche ; apres un deploiement, Recharger (mot decide, mots-rewayah) ; K-59 : ce qui manque, la cause, quoi faire",
+  "commun.etats.recharge1.versionPhrase": "Lot RECHARGE-1 (03/11/2026), consigne du pilote : un ecran charge a la demande ne dit jamais hors ligne quand le reseau marche ; apres un deploiement, Recharger (mot decide, mots-rewayah) ; K-59 : ce qui manque, la cause, quoi faire",
+  "salle.fin.enseignant.recharge1.erreurCahier": "Lot RECHARGE-1 (03/11/2026), inventaire des Reessayer : celui de la fin de seance refaisait la meme recherche de route, sans effet ; la phrase dit ou le cahier se remplit (CTA-FIN-1, carte de la Journee) ; K-59"
 }
