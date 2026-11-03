@@ -13172,5 +13172,13 @@
       "dejaServiDetail": "Un lien de connexion ne sert qu'une fois, et pour peu de temps. Demandez-en un nouveau : saisissez votre adresse e-mail sur la page de connexion.",
       "nouveauLien": "Recevoir un nouveau lien"
     }
+  },
+  "payUx": {
+    "repriseTitre": "Vous avez quitté le formulaire sans payer ?",
+    "reprisePhrase": "Reprenez le paiement : un formulaire neuf s'ouvre. Si le paiement était déjà passé, rien n'est payé deux fois ; actualisez pour voir son état.",
+    "reprendre": "Reprendre le paiement",
+    "rassurance": "Le paiement est traité par Stripe. Les données de votre carte vont directement chez Stripe : Rewayah Academy ne les voit pas et ne les garde pas.",
+    "precedentOuvertTitre": "Le paiement commencé tout à l'heure n'a pas pu être fermé",
+    "precedentOuvertPhrase": "Rien n'est payé deux fois et aucun nouveau formulaire ne s'ouvre. Réessayez dans un instant : si ce paiement vient de passer, il apparaîtra dans vos paiements."
   }
 }

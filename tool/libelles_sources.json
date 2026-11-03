@@ -7032,5 +7032,11 @@
   "notifications.gesteTraiterContestation": "Pilote, 02/11/2026 : reprise de NOTIFS-L6, le badge d'une ligne A faire dit le geste attendu",
   "inscription.questionnaire.clavierLettres": "UX-046 (pilote, 02/11/2026) : questionnaire d'inscription, lettres A, B, C au clavier sur ordinateur (fiche ONBOARDING-2026-10-29 §2)",
   "accords.introCases": "UX-047 (pilote, 02/11/2026) : page des accords, « Suivant » reste actif ; la case qui manque est signalée sous elle",
-  "accords.caseManquante": "UX-047 (pilote, 02/11/2026) : page des accords, « Suivant » reste actif ; la case qui manque est signalée sous elle"
+  "accords.caseManquante": "UX-047 (pilote, 02/11/2026) : page des accords, « Suivant » reste actif ; la case qui manque est signalée sous elle",
+  "payUx.rassurance": "PAY-UX (pilote, 02/11/2026 ; constats du directeur en production sur la page de paiement)",
+  "payUx.precedentOuvertTitre": "PAY-UX (pilote, 02/11/2026 ; constats du directeur en production sur la page de paiement)",
+  "payUx.precedentOuvertPhrase": "PAY-UX (pilote, 02/11/2026 ; constats du directeur en production sur la page de paiement)",
+  "payUx.reprendre": "PAY-UX (pilote, 02/11/2026 ; constats du directeur en production sur la page de paiement)",
+  "payUx.repriseTitre": "PAY-UX (pilote, 02/11/2026 ; constats du directeur en production sur la page de paiement)",
+  "payUx.reprisePhrase": "PAY-UX (pilote, 02/11/2026 ; constats du directeur en production sur la page de paiement)"
 }
