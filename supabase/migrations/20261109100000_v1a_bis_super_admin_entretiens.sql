@@ -26,19 +26,29 @@
 --     CAND-L2A2 (aucune RPC publique dont le nom contient « candidature » en
 --     dehors des cinq lectures du lot, pour ne pas doubler etat_dossier()).
 --
--- Le moteur ne leve sa borne de genre pour le super-admin que pour les
--- gestes d'entretien (planifier_entretien, consigner_entretien_tenu,
--- consigner_entretien_non_tenu). « Les gestes de la candidature qui y
--- menent » n'ont pas de liste decidee : ils restent de son cote tant
--- qu'aucune decision ne les nomme (private.entretien_gestes_super_admin).
+-- Precision de garde-cap (03/11, 20:40) : la question posee au directeur a
+-- 20:22 disait « Vous pouvez aussi agir du cote des femmes (planifier
+-- l'entretien, decider) », et le registre 08 (PR 203) ecrit « entretiens et
+-- gestes de candidature ». Le moteur des candidatures leve donc sa borne de
+-- genre pour le super-admin sur TOUS les gestes de la direction : decider,
+-- verifier, « Valider la piece » (salle 3), et les gestes d'entretien. Le
+-- moteur ecrit lui-meme chaque geste hors cote au journal sensible.
+-- `capacites_candidatures` n'a rien a changer : `peutDecider` (v_decider)
+-- est deja vrai pour le super-admin, direction active de genre connu.
+-- Restent bornes, faute d'une decision qui les nomme (dit au pilote) :
+-- les gestes en lot (`apercu_lot_candidats`, `executer_lot_candidats` :
+-- le super-admin agit candidature par candidature), et
+-- `garder_formulaire_pour_suivi`, geste sur un formulaire importe, hors du
+-- moteur.
 --
 -- Fonctions existantes retouchees : toutes par ancres comptees sur le corps
 -- en vigueur (chaque ancre une fois et une seule, sinon la migration
 -- s'arrete), aucune recopie entiere :
---   private.entretien_direction_de_son_cote, public.planifier_entretien,
+--   private.entretien_direction_de_son_cote,
 --   public.ajouter_participant_entretien, public.retirer_participant_entretien,
---   public.consigner_entretien, public.mes_entretiens,
---   private.candidature_geste_ouvrir.
+--   public.mes_entretiens, private.candidature_geste_ouvrir.
+-- planifier_entretien et consigner_entretien ne sont pas retouchees : elles
+-- passent par le moteur, qui ecrit le journal.
 -- public.lire_entretien n'est pas retouchee : elle passe deja par
 -- private.entretien_direction_de_son_cote.
 --
@@ -61,17 +71,6 @@ AS $function$
     OR coalesce(public.kyc_super_admin_exception_active(), false));
 $function$;
 
--- Les gestes du moteur que le super-admin fait hors de son cote : ceux des
--- entretiens seulement.
-CREATE FUNCTION private.entretien_gestes_super_admin()
-RETURNS text[]
-LANGUAGE sql
-IMMUTABLE
-SET search_path = ''
-AS $function$
-  SELECT ARRAY['planifier_entretien', 'consigner_entretien_tenu', 'consigner_entretien_non_tenu']::text[];
-$function$;
-
 -- Le journal sensible d'un geste d'entretien hors du genre de son auteur.
 CREATE FUNCTION private.entretien_journal_hors_cote(p_genre public.gender, p_geste text, p_ref uuid)
 RETURNS void
@@ -90,7 +89,6 @@ END;
 $function$;
 
 REVOKE ALL ON FUNCTION private.entretien_peut_agir(public.gender) FROM PUBLIC, anon, authenticated;
-REVOKE ALL ON FUNCTION private.entretien_gestes_super_admin() FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION private.entretien_journal_hors_cote(public.gender, text, uuid) FROM PUBLIC, anon, authenticated;
 
 -- ---------------------------------------------------------------------------
@@ -154,19 +152,13 @@ SELECT pg_temp.retoucher('private.entretien_direction_de_son_cote(uuid)',
   $a$   WHERE e.session_id = p_session AND c.genre = v_genre;$a$,
   $a$   WHERE e.session_id = p_session AND private.entretien_peut_agir(c.genre);$a$);
 
--- 3.2 Planifier : journal hors cote (la borne du moteur est levee en 3.7).
-SELECT pg_temp.retoucher('public.planifier_entretien(uuid,timestamptz,integer,uuid[],integer,text)',
-  $a$  PERFORM private.candidature_geste_appliquer(p_candidature, 'planifier_entretien',$a$,
-  $a$  PERFORM private.entretien_journal_hors_cote(v_c.genre, 'planifier_entretien', v_seance);
-  PERFORM private.candidature_geste_appliquer(p_candidature, 'planifier_entretien',$a$);
-
--- 3.3 Ajouter un participant : journal hors cote.
+-- 3.2 Ajouter un participant : journal hors cote.
 SELECT pg_temp.retoucher('public.ajouter_participant_entretien(uuid,uuid)',
   $a$  RETURN pg_catalog.jsonb_build_object('sessionId', p_session, 'ajoute', p_profil);$a$,
   $a$  PERFORM private.entretien_journal_hors_cote(v_genre, 'ajouter_participant', p_session);
   RETURN pg_catalog.jsonb_build_object('sessionId', p_session, 'ajoute', p_profil);$a$);
 
--- 3.4 Retirer un participant : journal hors cote.
+-- 3.3 Retirer un participant : journal hors cote.
 SELECT pg_temp.retoucher('public.retirer_participant_entretien(uuid,uuid)',
   $a$  RETURN pg_catalog.jsonb_build_object('sessionId', p_session, 'retire', p_profil);$a$,
   $a$  PERFORM private.entretien_journal_hors_cote(
@@ -174,31 +166,30 @@ SELECT pg_temp.retoucher('public.retirer_participant_entretien(uuid,uuid)',
     'retirer_participant', p_session);
   RETURN pg_catalog.jsonb_build_object('sessionId', p_session, 'retire', p_profil);$a$);
 
--- 3.5 Consigner : journal hors cote.
-SELECT pg_temp.retoucher('public.consigner_entretien(uuid,text,text,integer,text)',
-  $a$  PERFORM private.candidature_geste_appliquer(v_e.candidature_id, v_geste,$a$,
-  $a$  PERFORM private.entretien_journal_hors_cote(
-    (SELECT c.genre FROM public.candidatures c WHERE c.id = v_e.candidature_id), v_geste, p_session);
-  PERFORM private.candidature_geste_appliquer(v_e.candidature_id, v_geste,$a$);
-
--- 3.6 Mes entretiens : le super-admin voit les deux cotes.
+-- 3.4 Mes entretiens : le super-admin voit les deux cotes.
 SELECT pg_temp.retoucher('public.mes_entretiens(integer)',
   $a$       AND ((v_genre IS NOT NULL AND c.genre = v_genre)$a$,
   $a$       AND ((v_genre IS NOT NULL AND private.entretien_peut_agir(c.genre))$a$);
 
--- 3.7 Le moteur : la borne de genre (L2A1, retouchee par le lot C du 30/10)
--- est levee pour le super-admin, pour les seuls gestes d'entretien.
+-- 3.5 Le moteur : la borne de genre (L2A1, retouchee par le lot C du 30/10)
+-- est levee pour le super-admin, sur tous les gestes de la direction ; le
+-- geste hors cote est ecrit au journal sensible. Une direction qui n'est pas
+-- super-admin reste bornee.
 SELECT pg_temp.retoucher('private.candidature_geste_ouvrir(uuid,text,text,uuid,integer,text,text,text)',
   $a$  IF p_categorie = 'direction' AND v_c.genre IS DISTINCT FROM v_genre AND v_c.type_code NOT IN ('famille', 'eleve_adulte') THEN
     RETURN private.cand_hors_portee(v_c.id, v_lecteur, 'geste:' || p_geste);
   END IF;$a$,
   $a$  IF p_categorie = 'direction' AND v_c.genre IS DISTINCT FROM v_genre AND v_c.type_code NOT IN ('famille', 'eleve_adulte')
-     -- V1-a-bis : le super-admin de 0088 (exception active) fait les gestes
-     -- d'entretien des deux cotes ; le geste est ecrit au journal sensible
-     -- par la fonction d'entretien qui l'appelle.
-     AND NOT (p_geste = ANY (private.entretien_gestes_super_admin())
-              AND coalesce(public.kyc_super_admin_exception_active(), false)) THEN
+     -- V1-a-bis : le super-admin de 0088 (exception active) agit des deux
+     -- cotes (directeur, 03/11 vers 20:30).
+     AND NOT coalesce(public.kyc_super_admin_exception_active(), false) THEN
     RETURN private.cand_hors_portee(v_c.id, v_lecteur, 'geste:' || p_geste);
+  END IF;
+  IF p_categorie = 'direction' AND v_c.genre IS DISTINCT FROM v_genre AND v_c.type_code NOT IN ('famille', 'eleve_adulte') THEN
+    -- Seul le super-admin arrive ici : le geste hors cote est au journal.
+    PERFORM public.log_sensitive_access('super_admin_hors_cote', 'candidatures', v_c.id::text,
+      pg_catalog.jsonb_build_object('geste', p_geste, 'mention', 'super-admin hors côté',
+                                    'genreCandidature', v_c.genre));
   END IF;$a$);
 
 -- ---------------------------------------------------------------------------
@@ -209,7 +200,7 @@ DECLARE
   v_f text;
   v_def text;
 BEGIN
-  -- Chaque retouche est la.
+  -- Chaque retouche est la (cinq fonctions, toutes par ancres).
   FOREACH v_f IN ARRAY ARRAY[
       'private.entretien_direction_de_son_cote(uuid)', 'public.mes_entretiens(integer)'] LOOP
     IF pg_catalog.pg_get_functiondef(v_f::regprocedure) !~ 'entretien_peut_agir' THEN
@@ -217,16 +208,15 @@ BEGIN
     END IF;
   END LOOP;
   FOREACH v_f IN ARRAY ARRAY[
-      'public.planifier_entretien(uuid,timestamptz,integer,uuid[],integer,text)',
-      'public.ajouter_participant_entretien(uuid,uuid)', 'public.retirer_participant_entretien(uuid,uuid)',
-      'public.consigner_entretien(uuid,text,text,integer,text)'] LOOP
+      'public.ajouter_participant_entretien(uuid,uuid)', 'public.retirer_participant_entretien(uuid,uuid)'] LOOP
     IF pg_catalog.pg_get_functiondef(v_f::regprocedure) !~ 'entretien_journal_hors_cote' THEN
       RAISE EXCEPTION 'V1-a-bis : % sans le journal hors cote', v_f;
     END IF;
   END LOOP;
   v_def := pg_catalog.pg_get_functiondef(
     'private.candidature_geste_ouvrir(uuid,text,text,uuid,integer,text,text,text)'::regprocedure);
-  IF v_def !~ 'entretien_gestes_super_admin' OR v_def !~ 'famille'', ''eleve_adulte' THEN
+  IF v_def !~ 'kyc_super_admin_exception_active' OR v_def !~ 'super_admin_hors_cote'
+     OR v_def !~ 'famille'', ''eleve_adulte' THEN
     RAISE EXCEPTION 'V1-a-bis : la borne de genre du moteur n''a pas son exception, ou le lot C est defait';
   END IF;
   -- La salle 3 (20261108300000) et V1-a (20261108000001) ne sont jamais defaites.
@@ -245,7 +235,7 @@ BEGIN
     RAISE EXCEPTION 'V1-a-bis : droits inattendus sur personnel_pour_entretien';
   END IF;
   FOREACH v_f IN ARRAY ARRAY['private.entretien_peut_agir(public.gender)',
-      'private.entretien_gestes_super_admin()', 'private.entretien_journal_hors_cote(public.gender,text,uuid)'] LOOP
+      'private.entretien_journal_hors_cote(public.gender,text,uuid)'] LOOP
     IF pg_catalog.has_function_privilege('authenticated', v_f, 'EXECUTE')
        OR pg_catalog.has_function_privilege('anon', v_f, 'EXECUTE') THEN
       RAISE EXCEPTION 'V1-a-bis : % executable par un client', v_f;

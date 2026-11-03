@@ -376,16 +376,40 @@ BEGIN
 END
 $super_admin$;
 RESET ROLE;
+-- Decider la candidature d'une femme (garde-cap, 03/11 20:40 : tous les
+-- gestes de la direction) : la mettre en pause.
+SET LOCAL ROLE authenticated;
+DO $decider$
+DECLARE
+  v_r jsonb;
+BEGIN
+  PERFORM pg_temp.en_tant_que('7e100000-0000-4000-8000-0000000000b1', 'admin');
+  v_r := public.mettre_en_pause_candidat('7e100000-0000-4000-8000-000000000103', 'Pause de test.', 'pause_general',
+           NULL, pg_temp.version_cand('7e100000-0000-4000-8000-000000000103'), 'v1-cle-pause-h1');
+  PERFORM pg_temp.vrai(v_r ? 'erreur' OR v_r IS NULL OR NOT v_r ? 'candidature',
+    '2 bis. direction homme non super-admin : ne decide pas la candidature d''une femme : ' || coalesce(v_r::text, 'null'));
+  PERFORM pg_temp.en_tant_que('7e100000-0000-4000-8000-0000000000b2', 'admin');
+  v_r := public.mettre_en_pause_candidat('7e100000-0000-4000-8000-000000000103', 'Pause de test.', 'pause_general',
+           NULL, pg_temp.version_cand('7e100000-0000-4000-8000-000000000103'), 'v1-cle-pause-sa');
+  PERFORM pg_temp.vrai(NOT v_r ? 'erreur',
+    '2 bis. le super-admin (homme) decide la candidature d''une femme (mise en pause) : ' || coalesce(v_r::text, 'null'));
+END
+$decider$;
+RESET ROLE;
+SELECT pg_temp.vrai((SELECT pause_modele FROM public.candidatures WHERE id = '7e100000-0000-4000-8000-000000000103') = 'pause_general',
+  '2 bis. la pause du super-admin est posee');
 SELECT pg_temp.vrai(
   (SELECT pg_catalog.array_agg(a.payload ->> 'geste' ORDER BY a.id) FROM public.audit_logs a
-    WHERE a.action = 'super_admin_hors_cote' AND a.row_id = current_setting('v1.seance_sa')
+    WHERE a.action = 'super_admin_hors_cote'
       AND a.actor = '7e100000-0000-4000-8000-0000000000b2' AND a.payload ->> 'mention' = 'super-admin hors côté')
-  = ARRAY['planifier_entretien', 'ajouter_participant', 'consigner_entretien_non_tenu'],
-  '2 bis. chaque geste du super-admin hors de son cote est au journal sensible (« super-admin hors côté »)');
+  -- planifier_entretien deux fois : la tentative avec un participant homme,
+  -- refusee apres l'ouverture du geste par le moteur, est tracee aussi.
+  = ARRAY['planifier_entretien', 'planifier_entretien', 'ajouter_participant', 'consigner_entretien_non_tenu',
+          'mettre_en_pause'],
+  '2 bis. chaque geste (ou tentative) du super-admin hors de son cote est au journal sensible (« super-admin hors côté »)');
 SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.audit_logs a WHERE a.action = 'super_admin_hors_cote'
-                                  AND a.actor <> '7e100000-0000-4000-8000-0000000000b2'
-                                  AND a.row_id IN (current_setting('v1.seance'), current_setting('v1.seance_sa'))),
-  '2 bis. une direction de son cote n''ecrit rien au journal hors cote');
+                                  AND a.actor <> '7e100000-0000-4000-8000-0000000000b2'),
+  '2 bis. une direction de son cote, ou refusee, n''ecrit rien au journal hors cote');
 -- Exception desactivee : le super-admin redevient une direction de son cote.
 UPDATE public.app_config SET value = 'false'::jsonb WHERE key = 'kyc_exception_super_admin';
 SET LOCAL ROLE authenticated;
