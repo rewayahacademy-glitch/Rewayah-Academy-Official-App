@@ -5,7 +5,8 @@
 //   1. (1440, clair) l'enseignant ecrit un signalement « Pedagogique » depuis
 //      la fiche d'un eleve ; la direction l'ouvre dans ses alertes, l'examine,
 //      ecrit le message pour la famille, le transmet (seconde confirmation),
-//      le clot sans motif (facultatif hors securite), et il sort de la file ;
+//      le clot avec un motif (obligatoire partout : reglage installe avec
+//      toutes les categories), et il sort de la file ;
 //   2. (390, sombre) un signalement « Securite d'un enfant » : ni message ni
 //      transmission ; « Clore » sans motif dit ce qui manque et rien ne part ;
 //      avec le motif, il est clos et sort de la file ;
@@ -29,6 +30,8 @@ const NOTE2 = `Yasmine semble inquiète en arrivant en classe (${n}).`;
 const NOTE3 = `Connexion coupée trois fois pendant la séance (${n}).`;
 const MESSAGE = 'Nous reprendrons la lecture avec Yasmine cette semaine.';
 const MOTIF = 'Pris en charge par la direction avec la famille.';
+const MOTIF1 = 'Reprise de la lecture prévue avec la famille.';
+const MOTIF3 = 'Connexion rétablie, rien à suivre.';
 const ID = {};
 
 function verifier(condition, message) {
@@ -168,13 +171,15 @@ try {
     'base : journal du message et de la transmission');
   await p.capture(dir, '1440_clair_5_transmis');
 
+  await saisir(dir.page, 'Motif de la clôture', MOTIF1);
   await cliquer(dir.page, /^Clore$/, { pause: 1500 });
   verifier(await attendreTexte(dir.page, 'Clore ce signalement', 8000), 'seconde confirmation de la cloture');
   await p.capture(dir, '1440_clair_6_confirmer_cloture');
   await cliquer(dir.page, /^Oui, clore$/, { pause: 3000 });
   verifier(await attendreTexte(dir.page, 'Signalement clos', 10000), 'feuille : « Signalement clos »');
   verifier(statut(ID.s1) === 'clos', 'base : statut clos');
-  verifier(journal(ID.s1, 'student_concern_clos') === '1', 'base : journal de la cloture');
+  verifier(sql(`select payload ->> 'motif' from public.audit_logs where row_id = '${ID.s1}' and action = 'student_concern_clos'`) === MOTIF1,
+    'base : journal de la cloture, avec son motif');
   await p.capture(dir, '1440_clair_7_clos');
   await cliquer(dir.page, /^Fermer$/, { pause: 2000 });
   verifier(!(await attendreTexte(dir.page, NOTE1, 3000)), 'direction : le signalement clos est sorti de la file');
@@ -223,6 +228,7 @@ try {
   verifier(await attendreTexte(dirAr.page, 'البلاغ قيد الفحص', 10000), 'feuille (ar) : « البلاغ قيد الفحص »');
   verifier(statut(ID.s3) === 'en_examen', 'base : examine en arabe');
   await p.capture(dirAr, '1440_sombre_ar_2_en_examen');
+  await saisir(dirAr.page, 'سبب الإغلاق', MOTIF3);
   await cliquer(dirAr.page, /^إغلاق البلاغ$/, { pause: 1500 });
   await cliquer(dirAr.page, /^نعم، إغلاق البلاغ$/, { pause: 3000 });
   verifier(statut(ID.s3) === 'clos', 'base : clos en arabe');

@@ -3,7 +3,8 @@
 --   2. l'ordre est tenu : ouvert -> en_examen ; ouvert ou en_examen ->
 --      transmis ; tout statut -> clos ; rien apres clos ;
 --   3. la file rend, par ligne, ce que la direction peut faire ;
---   4. le motif de cloture suit le reglage (propose : securite d'un enfant) ;
+--   4. le motif de cloture suit le reglage (installe avec toutes les
+--      categories : motif obligatoire partout ; la direction peut reduire) ;
 --   5. chaque changement ecrit le journal ;
 --   6. la famille garde ce qui lui a ete transmis apres la cloture.
 -- Base PostgreSQL jetable apres rejeu des migrations.
@@ -175,7 +176,7 @@ begin
   if v_ligne ->> 'cible' <> 'tuteur_du_mineur'
      or (v_ligne ->> 'peut_transmettre')::boolean
      or not (v_ligne ->> 'peut_rediger')::boolean
-     or (v_ligne ->> 'motif_cloture_requis')::boolean
+     or not (v_ligne ->> 'motif_cloture_requis')::boolean
      or v_ligne ->> 'statut' <> 'ouvert' then
     raise exception 'D1B: capacites du signalement pedagogique fausses: %', v_ligne;
   end if;
@@ -267,11 +268,18 @@ begin
     if sqlerrm <> 'seul un signalement ouvert passe en examen' then raise; end if;
   end;
 
-  -- Clore un signalement transmis, sans motif : permis hors securite.
-  perform public.clore_student_concern(v_pedago, null);
+  -- Clore un signalement transmis : le motif est exige partout (reglage
+  -- installe avec toutes les categories).
+  begin
+    perform public.clore_student_concern(v_pedago, null);
+    raise exception 'D1B: signalement pedagogique clos sans motif';
+  exception when raise_exception then
+    if sqlerrm <> 'motif de cloture requis' then raise; end if;
+  end;
+  perform public.clore_student_concern(v_pedago, 'D1B motif pedagogique');
 
   -- Clore un signalement ouvert qui a un message, puis la transmission est refusee.
-  perform public.clore_student_concern(v_presence);
+  perform public.clore_student_concern(v_presence, 'D1B motif presence');
   begin
     perform public.transmettre_student_concern(v_presence, 'tuteur_du_mineur');
     raise exception 'D1B: signalement clos transmis';
@@ -337,6 +345,15 @@ begin
      and row_id = (select id::text from d1b_ids where nom = 'securite');
   if v_motif is distinct from 'D1B motif securite' then
     raise exception 'D1B: motif absent du journal (%)', v_motif;
+  end if;
+
+  -- Le reglage est installe avec toutes les categories.
+  if (select pg_catalog.jsonb_array_length(value) from public.app_config
+       where key = 'signalements.motif_cloture_obligatoire')
+     <> pg_catalog.array_length(pg_catalog.enum_range(NULL::public.concern_category), 1)
+     or not (select value ? 'securite_enfant' and value ? 'pedagogique' from public.app_config
+              where key = 'signalements.motif_cloture_obligatoire') then
+    raise exception 'D1B: le reglage installe ne couvre pas toutes les categories';
   end if;
 
   -- Le reglage refuse une categorie inconnue ou en double.

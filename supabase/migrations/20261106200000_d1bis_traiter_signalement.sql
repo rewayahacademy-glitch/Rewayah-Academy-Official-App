@@ -10,8 +10,10 @@
 -- Ce que fait cette migration, en ajout seulement :
 --
 -- 1. Un reglage `signalements.motif_cloture_obligatoire` : la liste des
---    categories dont la cloture exige un motif. Valeur PROPOSEE, en attente du
---    directeur : ["securite_enfant"]. Valide par un declencheur.
+--    categories dont la cloture exige un motif. Installe avec TOUTES les
+--    categories (pilote, 03/11/2026, valide : un motif court est obligatoire
+--    pour clore, quel que soit le signalement) ; la direction peut reduire la
+--    liste. Valide par un declencheur.
 -- 2. `examiner_student_concern(id)` : ouvert vers en_examen.
 -- 3. `rediger_resume_student_concern(id, resume)` : le resume pour la famille,
 --    jamais pour un signalement de securite d'un enfant, jamais apres
@@ -25,12 +27,28 @@
 --    peut faire (capacites calculees ici, jamais deduites d'un role cote
 --    application).
 -- 7. `concern_famille_v` : la famille garde ce qui lui a ete transmis apres
---    la cloture (filtre sur `transmis_le`, plus sur le statut). Memes colonnes.
+--    la cloture (filtre sur `transmis_le`, plus sur le statut ; regle publiee
+--    au registre 08, sans colonne clos_le). Memes colonnes.
 --
 -- Ordre des etapes : ouvert -> en_examen ; ouvert ou en_examen -> transmis ;
 -- ouvert, en_examen ou transmis -> clos ; rien apres clos. Toute autre
 -- transition est refusee. Chaque changement ecrit `log_sensitive_access`.
 -- Toutes les fonctions sont reservees a un admin au compte valide.
+--
+-- Securite d'un enfant : decision du directeur du 03/11/2026 (vers 03:40
+-- UTC), « Direction seule » : la direction examine et clot seule un
+-- signalement « securite d'un enfant », sans le responsable de la protection,
+-- avec le motif obligatoire garde au journal. Il ne se transmet toujours pas.
+--
+-- Lecteurs de `concern_famille_v` (recensement B1, 03/11/2026) : aucun ecran
+-- ni fonction de l'application (`lib/`), aucune fonction Edge ; seuls les
+-- scenarios `scenarios_pe_protection_enfants` et
+-- `scenarios_d1bis_traiter_signalement`. Le message transmis n'est donc lu
+-- par aucune famille tant qu'un ecran ne lit pas cette vue (lot a part).
+--
+-- Effet de bord connu, non traite ici : le poids des controles C29
+-- (20261011220000) ne compte que les signalements « ouvert » ; un signalement
+-- passe en examen n'y compte plus.
 --
 -- Aucune suppression de ligne, d'objet ni de colonne.
 BEGIN;
@@ -38,8 +56,9 @@ BEGIN;
 -- ---------------------------------------------------------------------------
 -- 1. Reglage : categories dont la cloture exige un motif
 -- ---------------------------------------------------------------------------
-INSERT INTO public.app_config (key, value) VALUES
-  ('signalements.motif_cloture_obligatoire', '["securite_enfant"]'::jsonb)
+INSERT INTO public.app_config (key, value)
+SELECT 'signalements.motif_cloture_obligatoire',
+       pg_catalog.to_jsonb(pg_catalog.enum_range(NULL::public.concern_category)::text[])
 ON CONFLICT (key) DO NOTHING;
 
 -- La valeur est une liste de categories connues, sans doublon.

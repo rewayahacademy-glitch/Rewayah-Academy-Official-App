@@ -1,5 +1,5 @@
-== D1-bis : traiter un signalement : 2026-11-03T04:31:58.050Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
-  amorce : classe 5f60853d-c5a9-479f-a9c0-68e9301ab921, eleve RA-26-8474
+== D1-bis : traiter un signalement : 2026-11-03T04:42:02.533Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+  amorce : classe 26ddbb40-9538-4e13-abdb-bbf76ead51bb, eleve RA-26-5115
 -- 1. pedagogique, 1440 clair
   OK enseignant : signalement envoye (Yasmine ne suit plus la lectur...)
   OK base : signalement enregistre (student_concern)
@@ -16,7 +16,7 @@
   OK seconde confirmation de la cloture
   OK feuille : « Signalement clos »
   OK base : statut clos
-  OK base : journal de la cloture
+  OK base : journal de la cloture, avec son motif
   OK direction : le signalement clos est sorti de la file
 -- 2. securite d un enfant, 390 sombre
   OK enseignant : signalement envoye (Yasmine semble inquiète en arr...)
