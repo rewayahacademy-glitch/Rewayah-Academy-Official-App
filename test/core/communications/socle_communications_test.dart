@@ -566,7 +566,7 @@ void main() {
         ],
         <String>[
           'Messages',
-          'Messages métier',
+          'Messages',
           'Communauté enseignants',
           'Le Studio',
           "Aujourd'hui",

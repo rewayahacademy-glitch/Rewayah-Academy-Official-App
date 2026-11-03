@@ -18,3 +18,18 @@
 | Récapitulatif avant l'envoi, chaque ligne avec « Modifier » | Baymard (relecture avant soumission) ; Nielsen n°3 | Contrôle et retour arrière | Conforme | `GroupeReglages`, « Ajouter un autre profil élève », « Envoyer ma demande » | Modifier un enfant repasse par ses quatre écrans, puis revient |
 | Réponses gardées si le lien s'ouvre dans un autre onglet | Baymard (ne jamais perdre une saisie) | Pas de ressaisie | Conforme | `localStorage` sur le web, effacé à l'envoi | Sur un autre appareil, la famille reprend les questions (dit au récapitulatif) |
 | Ordinateur, deux volets et lettres A, B, C au clavier (fiche §2) | Fiche §2 ; WCAG 2.1.1 | Tout au clavier | Non fait | La colonne de `PageEtape` reste centrée ; le clavier passe par Tab et Entrée | À faire, lot suivant |
+
+## UX-046 (ONBOARDING-FIN, pilote, 02/11/2026)
+
+- **Cadre** : constat UX-046 du directeur (01/11, aucun changement de style visible), ordre du pilote du 02/11 ; UX-047 (page des accords) est livré à part, PR 148, fiche du 29/10 §2, `DECISION-QUATRE-AGENTS-2026-11-02.md`.
+- **Sources** : Material 3 (chips de choix, une action principale, fenêtre « expanded » dès 840), Apple HIG (Onboarding), Baymard (une question par écran, erreurs à côté du champ), WCAG 2.2 AA (2.1.1 clavier), Nielsen n°9. **Non reconsultées en ligne le 02/11** : les règles citées sont celles déjà relevées dans les revues du dépôt.
+- **Limite §4.3** : aucune ligne ne change une permission, un état serveur ni une règle de consentement.
+- **Composants** : `CoquilleEntree` (nouveau mode `volet`), `ChoiceCardGroup` (nouveau mode `lettres`, dont la marque `LettreChoix`), `FilterPill` (sa place `apercu`, existante), `RangeeEtape`, `ActionPrincipale(affirmee)`, `ChampEntree`, `LienEntree`. Aucun composant nouveau hors ces modes ; aucune couleur ni valeur d'espacement nouvelle.
+
+| Proposition | Source | Règle utile | Conclusion | Modification | Écart |
+|---|---|---|---|---|---|
+| Même habillage que la connexion | Fiche §2 (« comme la connexion ») ; décisions du 25/10 sur l'entrée | Un parcours d'entrée, un habillage | Conforme | `CoquilleEntree(volet:)` : sur ordinateur, la marque au début de ligne porte l'étape et la question, le parchemin porte les réponses ; sur téléphone, une page sur la marque, logo en haut | La porte de la connexion n'est pas reprise dans le questionnaire : la question prend sa place |
+| Deux volets dès 840, question au début de ligne | Fiche §2 ; Material 3 (expanded) | Lire la question pendant qu'on répond | Conforme | Le seuil est celui de la connexion (`AppGabarit.seuilEtendu`, en largeur utile) | Aucun |
+| Lettres A, B, C au clavier | Fiche §2 ; WCAG 2.1.1 | Choisir sans souris | Conforme | La lettre est dessinée devant chaque réponse (ordinateur seulement), une phrase le dit sous la question ; une touche de commande ou une saisie en cours n'est jamais prise | Le prénom n'a pas de lettres (champ de saisie) ; sur un clavier en disposition arabe, les touches donnent des lettres arabes, qui ne sont pas prises : seules A, B, C latines choisissent |
+| Puces pour les réponses courtes ; cartes légères pour niveau et objectif | Fiche §2 ; Material 3 (chips) | Un geste par réponse courte | Conforme | Âge, genre, « vous aussi », langue, moments en `FilterPill` ; « Pour qui », niveau, objectif en cartes de liste sans illustration | « Pour qui » garde des cartes : son explication aide (« Votre profil élève est créé avec votre compte ») |
+| « Continuer » plein | Constat du directeur (lilas pâle lu comme éteint) ; Material 3 | Une action principale qui se voit active | Conforme | `ActionPrincipale(affirmee: true)`, comme « Recevoir le lien » : violet sur le parchemin, blanc sur la marque | Aucun |

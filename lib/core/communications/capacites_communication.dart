@@ -14,12 +14,13 @@
 // serveur refuse quand meme (COM-BR-A01).
 //
 // **Source unique** : [capacitesCommunicationProvider], lu par toutes les
-// voies. En production, le port est neutre ([CapacitesCommunicationsIndisponibles]) :
+// voies. Par defaut, le port est neutre ([CapacitesCommunicationsIndisponibles]) :
 // il leve `CapaciteIndisponible('COM-BR-16')`, comme tout port COM neutre
-// (COM-BR-A09), et le provider rend alors l'ensemble ferme. Tout est donc
-// ferme par defaut ; seules la demonstration et les tests ouvrent quelque
-// chose, par surcharge de [portCapacitesCommunicationsProvider] avec
-// [CapacitesCommunicationsFixes], jamais dans `main.dart`.
+// (COM-BR-A09), et le provider rend alors l'ensemble ferme. Depuis N1
+// (02/11/2026), l'application reelle surcharge le port dans `main.dart` par
+// `CapacitesCommunicationsSupabase` (`com_mes_capacites`, migration
+// 20261105400000) ; la demonstration et les tests le surchargent par
+// [CapacitesCommunicationsFixes].
 //
 // Une capacite liee a un objet (ecrire dans CE fil, parametres de CE canal)
 // est aussi portee par l'objet rendu, sur le modele de
@@ -57,8 +58,7 @@ class CapacitesCommunication {
     Set<CapaciteCommunication> capacites = const <CapaciteCommunication>{},
   ]) : capacites = Set<CapaciteCommunication>.unmodifiable(capacites);
 
-  /// Tout ferme : la valeur par defaut, et celle de la production tant que
-  /// COM-BR-16 n'a pas de contrat.
+  /// Tout ferme : la valeur par defaut, et celle d'un refus du serveur.
   static final CapacitesCommunication aucune = CapacitesCommunication();
 
   /// Les capacites ouvertes.
@@ -108,7 +108,8 @@ class CapacitesCommunicationsFixes implements PortCapacitesCommunications {
       Future<CapacitesCommunication>.value(CapacitesCommunication(ouvertes));
 }
 
-/// Le port employe par l'application : neutre en production.
+/// Le port par defaut, neutre ; `main.dart` le remplace par l'adaptateur
+/// Supabase (N1).
 final Provider<PortCapacitesCommunications>
 portCapacitesCommunicationsProvider = Provider<PortCapacitesCommunications>(
   (Ref ref) => const CapacitesCommunicationsIndisponibles(),

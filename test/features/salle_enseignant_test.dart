@@ -56,8 +56,12 @@ class _FauxCoran implements ServiceCoran {
   @override
   Future<List<Sourate>?> sourates() async => catalogue;
 
+  /// Les lectures de page demandees (RECHARGE-1 : « Reessayer » relit).
+  int lecturesPage = 0;
+
   @override
   Future<PageCoran?> page(int numero) async {
+    lecturesPage++;
     if (delai > Duration.zero) {
       await Future<void>.delayed(delai);
     }
@@ -456,6 +460,28 @@ void main() {
         find.textContaining('texte du verset 2:255', findRichText: true),
         findsNothing,
       );
+    });
+
+    // RECHARGE-1 (03/11/2026) : « Reessayer » n'invalidait que la page
+    // calculee ; ses sources (corpus, mise en page, sourates) restaient en
+    // cache. Il les relit.
+    testWidgets('page indisponible : Reessayer relit la page du corpus', (
+      WidgetTester tester,
+    ) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await moteur.rejoindre(_acces());
+      final _FauxCoran coran = _corpus();
+      await _monter(
+        tester,
+        surcharges: _surcharges(moteur: moteur, coran: coran),
+      );
+      moteur.publierContenu(_contenu());
+      await tester.pumpAndSettle();
+      expect(find.byKey(PageCoranSalle.cleIndisponible), findsOneWidget);
+      final int avant = coran.lecturesPage;
+      await tester.tap(find.text(t.commun.reessayer));
+      await tester.pumpAndSettle();
+      expect(coran.lecturesPage, greaterThan(avant));
     });
 
     testWidgets('precedent et suivant sont au premier niveau, et publient', (

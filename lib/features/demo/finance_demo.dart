@@ -223,6 +223,8 @@ abstract final class DonneesFinanceDemo {
     bourseDureeMois: 6,
     cumulMaxPourMille: 250,
     jourSuspension: 4,
+    // REMB-14 : le delai de retractation en vigueur au 02/11/2026.
+    remboursementDelaiJours: 7,
   );
 
   /// Ce que la famille lit de [politiqueLancement] (TRANSPARENCE) : sans
@@ -302,6 +304,8 @@ abstract final class DonneesFinanceDemo {
     bourseDureeMois: politiqueLancement.bourseDureeMois,
     cumulMaxPourMille: politiqueLancement.cumulMaxPourMille,
     jourSuspension: politiqueLancement.jourSuspension,
+    // REMB-14 : le delai decide par le directeur le 02/11/2026.
+    remboursementDelaiJours: 14,
   );
 
   /// Ce qu'il manque a un profil a regulariser pour financer son mois, dans
