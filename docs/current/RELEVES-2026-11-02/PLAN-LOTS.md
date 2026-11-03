@@ -215,10 +215,11 @@ Numéros de migration : table des réservations du garde-cap (2026110510 à 2026
 | 7 bis | DEFIL-FEUILLE : une boîte ou une feuille trop haute devient l'écran, une seule barre de défilement (fiche §10 ; constat de C1 au rejeu du 03/11) | S/M | prochain agent libre ; suite complète (lib/core) |
 | 7 ter | RECHARGE-CARTE : pendant une commande en attente de paiement, la carte du profil affiche « 0 $ » alors que le récapitulatif du serveur dit 55 $ (`lib/features/foyer/recharge_foyer.dart:869`). La carte garde en lecture seule le montant retenu par le serveur, sans calcul côté Flutter. Constat du rejeu du 03/11, parcours 7 | S | premier agent libre après DEFIL-FEUILLE ; sans migration ; R3 : carte et récapitulatif concordants, 390 et 1440 |
 | 7 quater | PHOTOS-1 : une seule photo par personne, tous les rôles (serveur) (fiche §11, demande du directeur du 03/11) | M | premier agent libre après RECHARGE-CARTE ; migration 20261107300000 |
-| 7 quinquies | PHOTOS-2a : le fournisseur unique, l'envoi pour chaque rôle, la fermeture du droit client de 0005 sur `avatar_storage_key` (migration 20261107400000), les écrans de la preuve (tuteur, appareil de l'enfant, enseignant, camarade, direction) (fiche §11) | M-L | après PHOTOS-1 (en production) |
-| 7 sexies | PHOTOS-2b : le reste des écrans (cahier, cartes, espace de classe, messages, communauté) | M | après PHOTOS-2a |
+| 7 quinquies | PHOTOS-2a : le fournisseur unique, l'envoi pour chaque rôle, la fermeture du droit client de 0005 sur `avatar_storage_key` (migration 20261107900000), les écrans de la preuve (tuteur, appareil de l'enfant, enseignant, camarade, direction) (fiche §11) | M-L | après PHOTOS-1 (en production) |
+| 7 sexies | PHOTOS-2b : le reste des écrans (cahier, cartes, espace de classe, messages, communauté), plus deux défauts relevés en R3 : la vignette du camarade nommée « Participant » en salle, et le Compte de l'enfant qui affiche « Élève » au lieu de son prénom | M | après PHOTOS-2a |
+| 7 septies | DEFIL-FEUILLE-bis : « Signaler un besoin » défile encore dans une boîte à 1440 (forme dialogue) ; R3 sur « Signaler un besoin » et les deux écrans de la PR 177 | S | Fin de séance |
 | 7 bis-a | ADM-UX-bis : Échap ne fermait plus la boîte de Personnes > Demandes après « Accepter » (focus perdu quand le bouton disparaît) ; focus sur la phrase « … est acceptée » (constat du rejeu du 03/11) | S | C1, PR 179 ; sans migration |
-| 8 | N3 : pause programmée, mission du contrôleur (la photo de l'enseignant passe dans PHOTOS, 03/11) | M | C1, migration 20261105800000 |
+| 8 | N3 : pause programmée, mission du contrôleur (la photo de l'enseignant passe dans PHOTOS, 03/11) | M | C1, migration 20261107800000 (renumérotée : toute migration nouvelle prend un numéro au-dessus de la dernière installée) |
 | 9 | CAHIER-UX (UX-028, 041 ; UX-029 vérifié d'abord en lecture) | S | |
 | 10 | N4 : Bibliothèque, coffre R2 de la pièce, publication des évaluations, interface standard, Interface guidée | L | r2-selftest lu avant |
 | 11 | FN-SERVEUR (FN-106 et 107 d'abord, puis FN-003, 019, 104) | M | |
@@ -350,4 +351,43 @@ Demande du directeur (03/11) : « pour les photos il faut penser à les synchron
 6. **Hors du lot** :
    - la compression côté serveur (question ouverte de l'ADR-012, archivée) ;
    - la suppression des anciens fichiers, qui suit M1 et le « oui » du directeur.
+
+## 12. Fiches DRAPEAUX, FUSEAUX et SUPPRIMER (demandes du directeur, 03/11/2026 vers 17:50 UTC)
+
+Mots du directeur : « ajoute aussi les drapeau des pays des enseignants (demandé depuis le début, mais pas appliqué, c'est été codé en plus, je le sais). et aussi le fuseau horaire qui est une pagaille pas possible actuellement (et pourtant j'avais demandé que chacun voit son fuseau et celui de son interlocuteur: exemple, 08h chez vous (paris), et 06h chez "Sayyid/sayda" (C.Ivoire) et vice versa; avec de belles animations en directs si possible, et que cela soit syncronisé partout où nécessaire. il est actuellement impossible de supprimer quelque chose surtout un profil, et pourtant on devra supprimer la plupart des profils de tests actuellement, mais y'a pas moins depuis l'interface. »
+
+Pour chaque lot, l'agent cherche d'abord dans le dépôt ce qui fait déjà la chose (INVENTAIRE-NON-BRANCHE), réutilise, et dit dans son bilan ce qui a été repris ou écarté.
+
+### DRAPEAUX (S, `lib/`, groupé avec FOYER-UX, rang 16)
+
+- Le drapeau du pays de l'enseignant s'affiche à côté de son nom partout où une famille ou un élève le voit : cartes de classe, Accueil, fiche de la classe, salle.
+- Il reprend le composant de drapeau qui existe déjà (cité par le directeur comme « codé ») et la donnée du pays de l'enseignant déjà lue par la direction (`comptes_admin_par_role`, pays d'un enseignant). Aucun drapeau nouveau dessiné.
+- Le pays seul, jamais une adresse ni une ville.
+
+### FUSEAUX (M-L, `lib/` et serveur si besoin)
+
+- Partout où une heure concerne deux personnes (famille et enseignant, enseignant et classe, direction et personne), on affiche les deux heures, la sienne d'abord : « 08:00 chez vous (Paris) · 06:00 chez Sayyid Nom (Côte d'Ivoire) », et l'inverse pour l'autre. « Sayyid » ou « Sayyida », selon le profil enregistré, jamais déduit du nom.
+- **Un seul composant** d'heure double, lu partout : séance du jour, cartes, planning, salle, notifications à l'écran, e-mails (avec COURRIELS-UX, même règle de ville qu'UX-030). Plus aucun calcul de fuseau dispersé.
+- Les sources :
+  - `timezone_iana` du profil (`0005:401`) pour chaque personne ;
+  - le fuseau de la classe pour la séance ;
+  - le stockage reste en IANA et en UTC (`02_ARCHITECTURE` §7) ;
+  - la ville en clair, comme UX-030 ;
+  - le pays par le drapeau (DRAPEAUX).
+- Animation en direct (l'horloge avance), sobre, et coupée si l'appareil demande moins d'animations (`DESIGN-GOV`, `03_DESIGN_SYSTEM`).
+- Le relevé d'abord : la liste de chaque écran qui affiche une heure, avec sa source actuelle. C'est la « pagaille » à corriger, jointe à la PR.
+- R3 : la même séance vue par un tuteur à Paris et par un enseignant à Abidjan, à 390 et à 1440, plus un changement d'heure d'été.
+
+### SUPPRIMER (M, serveur puis `lib/`)
+
+- **La direction** supprime un compte ou un profil depuis Personnes, un à un ou **par sélection** (DECISION-LISTES, sélection et actions de masse) : c'est le moyen de retirer les profils de test.
+- **Le tuteur** supprime le profil d'un enfant de son foyer, ou demande la suppression de son propre compte (`demander_suppression_compte`, `20261018150000`, déjà là).
+- **Côté serveur :**
+  - une suppression est d'abord un **retrait** : accès coupé, profil masqué partout, journal sensible ;
+  - puis une anonymisation au délai de conservation réglable (CAND-Q21, modèle existant) ;
+  - un profil qui porte des paiements ou des factures n'est jamais effacé : il est retiré et anonymisé, et les écritures comptables restent (obligation légale) ;
+  - confirmation à l'écran, avec le nombre de profils touchés ;
+  - réversible pendant le délai de conservation.
+- Pas de bouton « tout supprimer ».
+- Les migrations prennent des numéros au-dessus de la dernière installée. Une migration dont le texte contient DELETE suit la règle du collage par le directeur.
 

@@ -50,6 +50,21 @@
 -- transaction, et annule tout a la fin.
 BEGIN;
 
+-- Rang 19 B (03/11/2026) : ce scenario eprouve la politique v2.0.0 (en vigueur
+-- le 1er novembre 2026). Les versions publiees apres elle (v2.1.0 de REMB14, et
+-- toute autre a venir) rendraient ses conditions « perimees » : elles sont
+-- retirees le temps du scenario, annule par le ROLLBACK final.
+ALTER TABLE public.politiques_commerciales DISABLE TRIGGER politiques_commerciales_immuable;
+ALTER TABLE public.politique_part_enseignant DISABLE TRIGGER politique_part_enseignant_immuable;
+CREATE TEMP TABLE politiques_apres_v2 ON COMMIT DROP AS
+  SELECT p.version FROM public.politiques_commerciales p
+   WHERE p.date_effet > (SELECT q.date_effet FROM public.politiques_commerciales q WHERE q.version = 'v2.0.0');
+DELETE FROM public.repartitions_paiement WHERE politique_version IN (SELECT version FROM politiques_apres_v2);
+DELETE FROM public.politique_part_enseignant WHERE politique_version IN (SELECT version FROM politiques_apres_v2);
+DELETE FROM public.politiques_commerciales WHERE version IN (SELECT version FROM politiques_apres_v2);
+ALTER TABLE public.politique_part_enseignant ENABLE TRIGGER politique_part_enseignant_immuable;
+ALTER TABLE public.politiques_commerciales ENABLE TRIGGER politiques_commerciales_immuable;
+
 CREATE FUNCTION pg_temp.qui(p_id uuid, p_role text, p_aal text DEFAULT 'aal1') RETURNS void
 LANGUAGE plpgsql AS $$
 DECLARE v_jwt text;

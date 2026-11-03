@@ -2,7 +2,8 @@
 // (`modeles_fr.ts`) ; memes liens, memes boutons. Competence `mots-rewayah`.
 
 import { APP } from './gabarit.ts'
-import { avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole, montantLisible } from './outils.ts'
+import { avec, avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole, montantLisible,
+  precisions, type Precisions } from './outils.ts'
 import { quandSeance } from './modeles_fr.ts'
 
 const PAROLE: Parole = {
@@ -13,6 +14,14 @@ const PAROLE: Parole = {
   sujetLibre: 'A message from Rewayah Academy',
   locale: 'en-GB',
 }
+export const PRECISIONS_EN: Precisions = {
+  locale: 'en-GB',
+  a: 'at',
+  classe: (n) => `Class: “${n}”.`,
+  eleves: (n, plusieurs) => plusieurs ? `Students: ${n}.` : `Student: ${n}.`,
+  premiere: (q) => `First session: ${q}.`,
+}
+
 const avis = avisDans(PAROLE)
 
 const RAISON: Record<string, string> = {
@@ -45,15 +54,35 @@ const MODELES: Record<string, Fabrique> = {
     'A student in your household has joined another class, at the same time.',
     'View the details', '/tuteur/demandes'),
   // Fiche of 27/10/2026, line 15: the nine class and session events.
-  classe_creee: (d) => avis(d, 'Your class is created', 'Your class is created',
-    'A class has just been created. Its schedule and its teacher are in the app.',
-    'View the schedule', '/tuteur'),
+  // COURRIELS-UX (UX-026, FN-108) : la classe, l'enfant, la premiere seance et son fuseau.
+  classe_creee: (d) => {
+    if (d.portee === 'classe') {
+      return avis(d, 'A class is created', 'A class is created',
+        avec('A class has just been created.', precisions(d, PRECISIONS_EN, { eleves: false, premiere: true })) + ' Its students and its schedule are in the app.',
+        'View my classes', '/enseignant/classes')
+    }
+    return avis(d, 'Your class is created', 'Your class is created',
+      avec(d.portee === 'foyer' ? 'A class is created for your household.' : 'Your class is created.', precisions(d, PRECISIONS_EN, { premiere: true })) + ' Its teacher and its full schedule are in the app.',
+      'View the schedule', '/tuteur')
+  },
   enseignant_change: (d) => avis(d, 'The class teacher is changing', 'The class teacher is changing',
     'Another teacher is taking the class, at the same time. The name is in the app.',
     'View the class', '/tuteur'),
-  eleve_inscrit: (d) => avis(d, 'A student joins your class', 'A student joins your class',
-    'A student joins your class. The profile is in the app.',
-    'View my classes', '/enseignant/classes'),
+  eleve_inscrit: (d) => {
+    if (d.portee === 'foyer') {
+      return avis(d, 'A class enrolment', 'A class enrolment',
+        avec('A student from your household joins a class.', precisions(d, PRECISIONS_EN, { premiere: true })) + ' Their teacher and full schedule are in the app.',
+        'View the class', '/tuteur')
+    }
+    if (d.portee === 'soi') {
+      return avis(d, 'You join a class', 'You join a class',
+        avec('You join a class.', precisions(d, PRECISIONS_EN, { premiere: true })) + ' Your teacher and your full schedule are in the app.',
+        'View my class', '/eleve')
+    }
+    return avis(d, 'A student joins your class', 'A student joins your class',
+      avec('A student joins your class.', precisions(d, PRECISIONS_EN, { eleves: false })) + ' The profile is in the app.',
+      'View my classes', '/enseignant/classes')
+  },
   eleve_retire: (d) => avis(d, 'A student leaves your class', 'A student leaves your class',
     'A student leaves your class. The updated list is in the app.',
     'View my classes', '/enseignant/classes'),
@@ -63,7 +92,7 @@ const MODELES: Record<string, Fabrique> = {
   seance_annulee: (d) => {
     const quand = quandSeance(d, 'en-GB', 'at')
     return avis(d, 'A session is cancelled', 'A session is cancelled',
-      quand ? `The session of ${quand} is cancelled.` : 'A class session is cancelled.',
+      avec(quand ? `The session of ${quand} is cancelled.` : 'A class session is cancelled.', precisions(d, PRECISIONS_EN)),
       'View the schedule', '/tuteur')
   },
   seance_deplacee: (d) => {
@@ -122,7 +151,7 @@ const MODELES: Record<string, Fabrique> = {
     'A replacement teacher is on the way: stay in the room.',
     'Open the app', '/tuteur'),
   classe_supprimee: (d) => avis(d, 'The class is closed', 'The class is closed',
-    'The class is closed. The management will contact you about what comes next.',
+    avec('The class is closed.', precisions(d, PRECISIONS_EN)) + ' The management will contact you about what comes next.',
     'Open the app', '/tuteur'),
   remplacement_propose: (d) => avis(d, 'A replacement is offered to you', 'A replacement is offered to you',
     'A class replacement is offered to you. Reply in the app so that the class is covered.',

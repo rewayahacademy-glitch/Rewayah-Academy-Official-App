@@ -3,7 +3,8 @@
 // memes boutons. Competence `mots-rewayah`.
 
 import { APP } from './gabarit.ts'
-import { avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole, montantLisible } from './outils.ts'
+import { avec, avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole, montantLisible,
+  precisions, type Precisions } from './outils.ts'
 import { quandSeance } from './modeles_fr.ts'
 
 const PAROLE: Parole = {
@@ -14,6 +15,14 @@ const PAROLE: Parole = {
   sujetLibre: 'Uma mensagem da Rewayah Academy',
   locale: 'pt-PT',
 }
+export const PRECISIONS_PT: Precisions = {
+  locale: 'pt-PT',
+  a: 'às',
+  classe: (n) => `Turma: «${n}».`,
+  eleves: (n, plusieurs) => plusieurs ? `Alunos: ${n}.` : `Aluno: ${n}.`,
+  premiere: (q) => `Primeira sessão: ${q}.`,
+}
+
 const avis = avisDans(PAROLE)
 
 const RAISON: Record<string, string> = {
@@ -46,15 +55,35 @@ const MODELES: Record<string, Fabrique> = {
     'Um aluno do seu agregado familiar passou para outra turma, no mesmo horário.',
     'Ver o detalhe', '/tuteur/demandes'),
   // Ficha de 27/10/2026, linha 15: os nove eventos de turmas e sessões.
-  classe_creee: (d) => avis(d, 'A sua turma está criada', 'A sua turma está criada',
-    'Acaba de ser criada uma turma. O horário e o professor estão na aplicação.',
-    'Ver o horário', '/tuteur'),
+  // COURRIELS-UX (UX-026, FN-108) : la classe, l'enfant, la premiere seance et son fuseau.
+  classe_creee: (d) => {
+    if (d.portee === 'classe') {
+      return avis(d, 'É criada uma turma', 'É criada uma turma',
+        avec('Acaba de ser criada uma turma.', precisions(d, PRECISIONS_PT, { eleves: false, premiere: true })) + ' Os alunos e o horário estão na aplicação.',
+        'Ver as minhas turmas', '/enseignant/classes')
+    }
+    return avis(d, 'A sua turma está criada', 'A sua turma está criada',
+      avec(d.portee === 'foyer' ? 'É criada uma turma para o seu agregado familiar.' : 'A sua turma está criada.', precisions(d, PRECISIONS_PT, { premiere: true })) + ' O professor e todo o horário estão na aplicação.',
+      'Ver o horário', '/tuteur')
+  },
   enseignant_change: (d) => avis(d, 'O professor da turma muda', 'O professor da turma muda',
     'Outro professor assume a turma, no mesmo horário. O nome está na aplicação.',
     'Ver a turma', '/tuteur'),
-  eleve_inscrit: (d) => avis(d, 'Um aluno junta-se à sua turma', 'Um aluno junta-se à sua turma',
-    'Um aluno junta-se à sua turma. A ficha está na aplicação.',
-    'Ver as minhas turmas', '/enseignant/classes'),
+  eleve_inscrit: (d) => {
+    if (d.portee === 'foyer') {
+      return avis(d, 'Uma inscrição numa turma', 'Uma inscrição numa turma',
+        avec('Um aluno do seu agregado familiar junta-se a uma turma.', precisions(d, PRECISIONS_PT, { premiere: true })) + ' O professor e todo o horário estão na aplicação.',
+        'Ver a turma', '/tuteur')
+    }
+    if (d.portee === 'soi') {
+      return avis(d, 'Junta-se a uma turma', 'Junta-se a uma turma',
+        avec('Junta-se a uma turma.', precisions(d, PRECISIONS_PT, { premiere: true })) + ' O seu professor e todo o seu horário estão na aplicação.',
+        'Ver a minha turma', '/eleve')
+    }
+    return avis(d, 'Um aluno junta-se à sua turma', 'Um aluno junta-se à sua turma',
+      avec('Um aluno junta-se à sua turma.', precisions(d, PRECISIONS_PT, { eleves: false })) + ' A ficha está na aplicação.',
+      'Ver as minhas turmas', '/enseignant/classes')
+  },
   eleve_retire: (d) => avis(d, 'Um aluno deixa a sua turma', 'Um aluno deixa a sua turma',
     'Um aluno deixa a sua turma. A lista atualizada está na aplicação.',
     'Ver as minhas turmas', '/enseignant/classes'),
@@ -64,7 +93,7 @@ const MODELES: Record<string, Fabrique> = {
   seance_annulee: (d) => {
     const quand = quandSeance(d, 'pt-PT', 'às')
     return avis(d, 'Uma sessão está anulada', 'Uma sessão está anulada',
-      quand ? `A sessão de ${quand} está anulada.` : 'Uma sessão da turma está anulada.',
+      avec(quand ? `A sessão de ${quand} está anulada.` : 'Uma sessão da turma está anulada.', precisions(d, PRECISIONS_PT)),
       'Ver o planeamento', '/tuteur')
   },
   seance_deplacee: (d) => {
@@ -123,7 +152,7 @@ const MODELES: Record<string, Fabrique> = {
     'Chega um professor substituto: fiquem na sala.',
     'Abrir a aplicação', '/tuteur'),
   classe_supprimee: (d) => avis(d, 'A turma está encerrada', 'A turma está encerrada',
-    'A turma está encerrada. A direção entra em contacto consigo sobre o que se segue.',
+    avec('A turma está encerrada.', precisions(d, PRECISIONS_PT)) + ' A direção entra em contacto consigo sobre o que se segue.',
     'Abrir a aplicação', '/tuteur'),
   remplacement_propose: (d) => avis(d, 'É-lhe proposta uma substituição', 'É-lhe proposta uma substituição',
     'É-lhe proposta a substituição de uma aula. Responda na aplicação para que a turma fique assegurada.',

@@ -1,0 +1,7 @@
+{
+  "parcours": "RECHARGE-CARTE : la carte et le recapitulatif concordent pendant une commande engagee (sans Stripe, chemin du rejeu C1)",
+  "verdict": "vert",
+  "cause": "carte et recapitulatif concordent avant « Payer », commande engagee en base ; 390 et 1440",
+  "debut": "2026-11-03T14:33:05.668Z",
+  "fin": "2026-11-03T14:34:11.937Z"
+}

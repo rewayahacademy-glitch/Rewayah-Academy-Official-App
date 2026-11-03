@@ -47,6 +47,8 @@ declare
     'accorder_tarif_particulier(uuid,text,integer,bigint,date,text)',
     'admin_library_review_rights(uuid,uuid,jsonb,integer)',
     'affecter_enseignant_classe_c11bis(uuid,uuid)',
+    -- Salle 3 (03/11) : l'affectation d'une candidate, lecture de la direction de son cote, journalisee hors portee ; garde positive admin et app_account_valid().
+    'affectation_candidat(uuid)',
     -- CAND-L2A2 (22/10) : admission en Salle de verification (transition 10), direction active de son cote (moteur, controles nommes).
     'admettre_salle_verification(uuid,integer,text)',
     'agent_pre_request()',
@@ -135,6 +137,8 @@ declare
     'demander_upload_bibliotheque(uuid,text,text,text,bigint,text)',
     'demandes_en_attente()',
     'demarrer_mission_controle(uuid)',
+    -- N3 (03/11) : le controleur de la mission joint son compte rendu (aal2, capacite active, visite commencee).
+    'controleur_envoyer_compte_rendu(uuid,text,jsonb,uuid)',
     'deposer_reprise_foyer(uuid)',
     'deposer_student_concern(text,uuid,uuid,text,text,text)',
     -- PHOTOS-1 (03/11) : chaque adulte au compte valide pose sa photo ; le tuteur actif celle de son enfant mineur (garde role ET app_account_valid).
@@ -337,6 +341,8 @@ declare
     'traiter_demande_suppression(uuid)',
     'transferer_eleve(uuid,uuid,uuid,text)',
     'transmettre_student_concern(uuid,text)',
+    -- Salle 3 (03/11) : valider la piece d'une candidate (transition 14), direction active de son cote (moteur, controles nommes, tout ou rien).
+    'valider_piece_candidat(uuid,integer,text)',
     'verifier_chaine_audit(integer)',
     -- COURRIELS-1 et 2 (23/10) : la direction ecrit, relance et regle les
     -- adresses d'envoi (garde is_admin_user en tete) ; chacun regle la langue
@@ -357,7 +363,13 @@ declare
     'avis_deposer(text,text,text,text,date,integer,text,text,boolean)',
     -- SNT (03/11) : la direction fixe la nouvelle date d'une seance reportee
     -- (garde positive app_account_valid() et app_role() = 'admin', celle de C1).
-    'fixer_nouvelle_date_seance(uuid,timestamp with time zone)'
+    'fixer_nouvelle_date_seance(uuid,timestamp with time zone)',
+    -- SUPPRIMER (03/11) : la direction retire une selection de comptes (garde
+    -- positive app_role() = 'admin', app_account_valid() et app_aal() = 'aal2').
+    'direction_supprimer_comptes(uuid[],text,boolean)',
+    -- SUPPRIMER (03/11) : un tuteur retire le profil d'un mineur de son foyer
+    -- (garde positive app_role() = 'guardian' et app_account_valid()).
+    'tuteur_supprimer_profil_enfant(uuid)'
   ];
   -- Ouvertes a anon par choix : la desinscription d'un e-mail et le depot d'un
   -- avis se font sans compte.
