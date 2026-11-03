@@ -145,6 +145,7 @@ Future<(FauxServiceDossier, FausseSourceSession)> _monter(
   PortInscriptionComptable? inscriptionComptable,
   String? codeComptable,
   QuestionnaireInscription questionnaire = const QuestionnaireInscription(),
+  bool languesChargees = true,
 }) async {
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1;
@@ -213,9 +214,13 @@ Future<(FauxServiceDossier, FausseSourceSession)> _monter(
           () => _QuestionnaireRepondu(questionnaire),
         ),
         languesCoursProvider.overrideWith(
-          (_) async => const <LangueCours>[
-            LangueCours(code: 'francais', nom: 'Français'),
-          ],
+          (_) => languesChargees
+              ? Future<List<LangueCours>>.value(const <LangueCours>[
+                  LangueCours(code: 'francais', nom: 'Français'),
+                ])
+              // Le referentiel ne repond jamais (application rouverte sur le
+              // recapitulatif, reseau lent).
+              : Completer<List<LangueCours>>().future,
         ),
         if (codeRetenu != null)
           codeInvitationRetenuProvider.overrideWith(
@@ -718,6 +723,17 @@ void main() {
       await _continuer(tester);
       expect(find.text(t.inscription.champRequis), findsNWidgets(2));
       expect(find.text('1 sur 3'), findsOneWidget);
+    });
+
+    testWidgets('UX-005 : la langue du cours se dit par son nom, meme sans '
+        'referentiel charge', (WidgetTester tester) async {
+      await _monter(tester, questionnaire: _qMoi, languesChargees: false);
+      await _jusquAuRecap(tester);
+      expect(
+        find.text(t.recrutement.parcours.langues.francais),
+        findsOneWidget,
+      );
+      expect(find.text('francais'), findsNothing);
     });
 
     testWidgets('retour 48 dp et « Modifier » ramenent au bon endroit', (

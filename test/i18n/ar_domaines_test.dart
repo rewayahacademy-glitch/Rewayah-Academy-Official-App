@@ -99,6 +99,8 @@ const Map<String, int> _domaines = <String, int>{
   'n1': 8,
   // I1 « Inviter quelqu'un » (02/11/2026).
   'i1': 40,
+  // PAY-UX, la page de paiement (02/11/2026).
+  'payUx': 5,
 };
 
 /// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) :

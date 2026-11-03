@@ -848,7 +848,7 @@
     "confirmationEnAttente": "À confirmer",
     "corrigeeManuel": "Correction manuelle",
     "finalisee": "Définitif",
-    "inconnu": "État inconnu",
+    "inconnu": "Présence pas encore connue",
     "entreeInstant": "en salle à l'instant",
     "entreeMinutes": "en salle depuis {minutes} min",
     "retardMinutes": "{minutes} min après l'heure",
@@ -912,6 +912,8 @@
   "accords": {
     "titre": "Nos conditions",
     "intro": "Lisez chaque texte, puis cochez la case qui le suit. Le bouton «\u00a0Suivant\u00a0» s'active quand tout est coché.",
+    "caseManquante": "Cochez cette case pour continuer.",
+    "introCases": "Lisez chaque texte, puis cochez la case qui le suit.",
     "caseSavoir": "J'ai lu et compris ce que je dois savoir.",
     "sectionContrat": "Votre contrat",
     "caseContrat": "J'ai lu et j'accepte mon contrat, visites de contrôle comprises.",
@@ -992,6 +994,7 @@
       "ans": "{n} ans",
       "adulte": "18 ans ou plus",
       "adulteDetail": "À partir de 18 ans, chacun s'inscrit lui-même, avec « Je m'inscris pour moi ».",
+      "clavierLettres": "Au clavier, appuyez sur la lettre d'une réponse pour la choisir.",
       "genreQuestion": "{prenom} est…",
       "garcon": "Un garçon",
       "fille": "Une fille",
@@ -4977,7 +4980,7 @@
       "etatActif": "Actif",
       "etatProvisoire": "Provisoire",
       "etatSuspendu": "Suspendu",
-      "etatInconnu": "État inconnu",
+      "etatInconnu": "État du compte pas encore connu",
       "etatSansDecision": "Sans décision",
       "roleAdmin": "Administration",
       "roleComptable": "Comptable",
@@ -8744,7 +8747,7 @@
         "places": "{inscrits} / {plafond} places"
       },
       "etat": {
-        "inconnu": "État inconnu",
+        "inconnu": "Présence pas encore connue",
         "attendu": "Attendu",
         "enConnexion": "En connexion",
         "present": "Présent",
@@ -10091,7 +10094,7 @@
       },
       "lexique": {
         "messages": "Messages",
-        "messagesMetier": "Messages métier",
+        "messagesMetier": "Messages",
         "communaute": "Communauté enseignants",
         "studio": "Le Studio",
         "aujourdhui": "Aujourd'hui",
@@ -11713,7 +11716,7 @@
         "journalVide": "Aucune modification enregistrée sur ce profil pour l'instant.",
         "actionsTitre": "Que faire pour ce profil",
         "relancer": "Relancer {nom}",
-        "relancerDetail": "Ouvre le fil «\u00a0Profil de paiement\u00a0» avec un message prérempli, dans les Messages métier.",
+        "relancerDetail": "Ouvre le fil «\u00a0Profil de paiement\u00a0» avec un message prérempli, dans les Messages.",
         "demanderMiseAJour": "Demander une mise à jour à {nom}",
         "suspendre": "Suspendre les paiements de {nom}",
         "reprendre": "Reprendre les paiements de {nom}",
@@ -13177,5 +13180,13 @@
       "dejaServiDetail": "Un lien de connexion ne sert qu'une fois, et pour peu de temps. Demandez-en un nouveau : saisissez votre adresse e-mail sur la page de connexion.",
       "nouveauLien": "Recevoir un nouveau lien"
     }
+  },
+  "payUx": {
+    "repriseTitre": "Vous avez quitté le formulaire sans payer ?",
+    "reprisePhrase": "Reprenez le paiement : un formulaire neuf s'ouvre. Si le paiement était déjà passé, rien n'est payé deux fois ; actualisez pour voir son état.",
+    "reprendre": "Reprendre le paiement",
+    "rassurance": "Le paiement est traité par Stripe. Les données de votre carte vont directement chez Stripe : Rewayah Academy ne les voit pas et ne les garde pas.",
+    "precedentOuvertTitre": "Le paiement commencé tout à l'heure n'a pas pu être fermé",
+    "precedentOuvertPhrase": "Rien n'est payé deux fois et aucun nouveau formulaire ne s'ouvre. Réessayez dans un instant : si ce paiement vient de passer, il apparaîtra dans vos paiements."
   }
 }

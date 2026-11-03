@@ -79,6 +79,24 @@ class RechargeFoyerSupabase
   final Map<String, FormulairePaiement> _formulaires =
       <String, FormulairePaiement>{};
 
+  /// PAY-UX : la demande de paiement de chaque commande ouverte dans cette
+  /// session (recapitulatif et cle), pour redemander un formulaire neuf.
+  final Map<String, ({String recapitulatifId, String cle})> _demandes =
+      <String, ({String recapitulatifId, String cle})>{};
+
+  @override
+  bool peutRouvrir(String commandeId) => _demandes.containsKey(commandeId);
+
+  @override
+  Future<FormulairePaiement?> rouvrirFormulaire(String commandeId) async {
+    final ({String recapitulatifId, String cle})? d = _demandes[commandeId];
+    if (d == null) return null;
+    // La meme cle rend la meme commande ; le serveur ferme l'ancien
+    // formulaire puis en ouvre un neuf (PAY-UX).
+    await payer(recapitulatifId: d.recapitulatifId, cle: d.cle);
+    return _formulaires[commandeId];
+  }
+
   @override
   FormulairePaiement? formulairePour(String commandeId) =>
       _formulaires[commandeId];
@@ -97,6 +115,9 @@ class RechargeFoyerSupabase
           if (e.status == 503 || e.status == 404) {
             throw const CapaciteIndisponible(_dependance);
           }
+          // PAY-UX : l'ancien formulaire n'a pas pu etre ferme ; aucune
+          // nouvelle session n'est ouverte.
+          if (e.status == 409) throw const PaiementPrecedentOuvert();
           rethrow;
         }
       };
@@ -149,10 +170,17 @@ class RechargeFoyerSupabase
         'recapitulatifId': recapitulatifId,
         'cle': cle,
         'retour': adresseRetour(),
+        // PAY-UX : le fond de la page du formulaire, que Stripe reprend, et
+        // la langue des lignes de paiement.
+        'fond': fondFormulairePaiement(),
+        'langue': LocaleSettings.instance.currentLocale == AppLocale.ar
+            ? 'ar'
+            : 'fr',
       }),
       'paiement',
     );
     final String commande = texteJson(j, 'commandeId');
+    _demandes[commande] = (recapitulatifId: recapitulatifId, cle: cle);
     final String? secretClient = texteNullableJson(j, 'secretClient');
     final String? clePublique = texteNullableJson(j, 'clePublique');
     if (secretClient != null && clePublique != null) {
