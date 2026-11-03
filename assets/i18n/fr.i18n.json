@@ -912,6 +912,8 @@
   "accords": {
     "titre": "Nos conditions",
     "intro": "Lisez chaque texte, puis cochez la case qui le suit. Le bouton «\u00a0Suivant\u00a0» s'active quand tout est coché.",
+    "caseManquante": "Cochez cette case pour continuer.",
+    "introCases": "Lisez chaque texte, puis cochez la case qui le suit.",
     "caseSavoir": "J'ai lu et compris ce que je dois savoir.",
     "sectionContrat": "Votre contrat",
     "caseContrat": "J'ai lu et j'accepte mon contrat, visites de contrôle comprises.",
@@ -3938,6 +3940,34 @@
         "creneaux": "La classe n'est pas créée\u00a0: un créneau est incomplet ou en double. Vérifiez les créneaux de la semaine, puis pressez de nouveau.",
         "releverMaximum": "Relever le maximum dans les Règles",
         "inconnu": "La classe n'est pas créée\u00a0: le serveur a refusé ces choix. Vérifiez l'enseignant et le créneau, puis pressez de nouveau."
+      },
+      "c1": {
+        "autresCreneauxContexte": "Une classe se réunit d'ordinaire trois fois par semaine, à des jours fixes. Ajoutez une ligne par autre jour de cours\u00a0; aucune date à saisir.",
+        "prisNommee": "{nom} enseigne déjà la classe «\u00a0{classe}\u00a0» le {quand}\u00a0: changez de créneau ou choisissez une autre personne dans la liste.",
+        "classeNommee": "La classe n'est pas créée\u00a0: cette personne enseigne déjà la classe «\u00a0{classe}\u00a0» le {quand}. Changez de créneau ou choisissez une autre personne dans la liste.",
+        "seanceNommee": "La classe n'est pas créée\u00a0: cette personne a déjà une séance de la classe «\u00a0{classe}\u00a0» le {quand}. Changez de créneau ou choisissez une autre personne dans la liste.",
+        "seanceDatee": "La classe n'est pas créée\u00a0: cette personne a déjà une séance prévue le {quand}. Changez de créneau ou choisissez une autre personne dans la liste.",
+        "creneauxPropres": "La classe n'est pas créée\u00a0: deux de ses créneaux se chevauchent, le premier déborde sur le suivant. Écartez ces créneaux ou raccourcissez la durée, puis pressez de nouveau.",
+        "quand": "{jour} à {heure}, heure {deVille}",
+        "quandSansVille": "{jour} à {heure}",
+        "jourDate": "{jour} {numero} {mois}",
+        "heurePleine": "{h}\u00a0h",
+        "heureMinutes": "{h}\u00a0h\u00a0{mm}",
+        "fuseauEnseignant": "Heures à l'heure {deVille}, le fuseau de l'enseignant.",
+        "fuseauDefaut": "Heures à l'heure {deVille}, le fuseau retenu par défaut.",
+        "fuseauNonTransmis": "Heures à l'heure {deVille}, le fuseau que le serveur retient pour l'instant. Le fuseau de l'enseignant sera pris en compte dès que le serveur l'acceptera.",
+        "abandonQuestion": "Abandonner la nouvelle classe\u00a0?",
+        "abandonConsequence": "Les choix faits dans ce formulaire (public, enseignant, créneaux, nom) seront perdus.",
+        "abandonConfirmer": "Abandonner la nouvelle classe",
+        "abandonContinuer": "Continuer la saisie",
+        "eleveDejaEnClasse": "cet élève est déjà dans une classe active. Retirez-le d'abord de cette classe, ou transférez-le, puis pressez de nouveau.",
+        "eleveInvalide": "le compte de cet élève n'existe plus ou n'est pas actif. Choisissez un autre élève dans la liste.",
+        "eleveNonMembre": "cet élève n'est déjà plus dans cette classe. Rechargez la liste pour voir ses membres.",
+        "classeDejaClose": "cette classe est déjà clôturée. Rechargez la liste des classes.",
+        "motifManquant": "il manque le motif. Choisissez-en un, puis pressez de nouveau.",
+        "reservee": "votre compte n'a pas le droit de faire cette action. Demandez-la à la direction.",
+        "refusInconnu": "le serveur a refusé cette action sans en dire la raison. Vérifiez vos choix, puis pressez de nouveau.",
+        "connexion": "il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Pressez de nouveau dans un instant."
       },
       "detailTitre": "Classe {libelle}",
       "detailMembres": "Membres",
@@ -13070,6 +13100,25 @@
     "echecTitre": "Votre inscription n'a pas pu être vérifiée",
     "echecPhrase": "Cause probable\u00a0: la connexion au serveur s'est interrompue (non confirmé). Réessayez dans un instant\u00a0: rien n'est créé en double.",
     "sansDonnees": "La vérification de votre inscription"
+  },
+  "n1": {
+    "regles": {
+      "auteurs": {
+        "direction": "Direction",
+        "enseignants": "Enseignants",
+        "familles": "Familles",
+        "eleves": "Élèves",
+        "comptables": "Comptables",
+        "controleurs": "Contrôleurs"
+      },
+      "portee": {
+        "touteAudience": "Toute l'académie, un public ou une Classe",
+        "saClasse": "Sa Classe seulement"
+      }
+    },
+    "alertes": {
+      "signalement": "{categorie}\u00a0: signalement pour l'élève {matricule}. Note interne\u00a0: «\u00a0{note}\u00a0»"
+    }
   },
   "i1": {
     "invitations": {

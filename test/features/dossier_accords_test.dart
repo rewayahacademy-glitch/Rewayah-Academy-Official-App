@@ -128,6 +128,14 @@ Finder get _suivant => find.byKey(const ValueKey<String>('accords-suivant'));
 bool _actif(WidgetTester tester) =>
     tester.widget<ActionPrincipale>(_suivant).onPress != null;
 
+/// UX-047 (pilote, 02/11/2026) : « Suivant » reste actif ; touche alors
+/// qu'une case manque, il n'envoie rien et signale la case sous elle.
+Future<void> _signaleUneCase(WidgetTester tester) async {
+  expect(_actif(tester), isTrue);
+  await _appuyerSuivant(tester);
+  expect(find.text(t.accords.caseManquante), findsOneWidget);
+}
+
 Future<void> _cocher(WidgetTester tester, String libelle) async {
   await tester.ensureVisible(find.text(libelle));
   await tester.pumpAndSettle();
@@ -144,29 +152,58 @@ Future<void> _appuyerSuivant(WidgetTester tester) async {
 
 void main() {
   group('Tuteur : une page, une case par texte, un bouton', () {
-    testWidgets('inactif tant qu une case manque, actif quand tout est coche', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('UX-047 : la case qui manque est signalee sous elle, le focus '
+        'y va, et cocher efface la phrase', (WidgetTester tester) async {
       final FauxServiceDossier dossier = FauxServiceDossier()
         ..etatRendu = _etat(AppRole.guardian);
       await _monter(tester, dossier);
-
-      expect(find.byType(CaseAccordTexte), findsNWidgets(2));
-      expect(_actif(tester), isFalse);
-      expect(find.text(t.accords.reste(n: 2)), findsOneWidget);
+      // Plus de phrase generale « Il reste un accord a cocher ».
+      expect(find.text(t.accords.reste(n: 2)), findsNothing);
+      expect(find.text(t.accords.caseManquante), findsNothing);
 
       await _cocher(tester, t.accords.caseSavoir);
-      expect(_actif(tester), isFalse);
-      expect(find.text(t.accords.reste(n: 1)), findsOneWidget);
+      await _appuyerSuivant(tester);
+
+      // La phrase est sous la case des visites, la premiere non cochee.
+      final Finder phrase = find.byKey(
+        const ValueKey<String>('case-accord-manque'),
+      );
+      expect(phrase, findsOneWidget);
+      final Finder carte = find.ancestor(
+        of: find.text(t.consentement.texte.caseResponsable),
+        matching: find.byType(CaseAccordTexte),
+      );
+      expect(find.descendant(of: carte, matching: phrase), findsOneWidget);
+      // Le focus est sur la case qui manque.
+      final FocusNode? focus = FocusManager.instance.primaryFocus;
+      expect(tester.widget<CaseAccordTexte>(carte).focusNode, same(focus));
+      expect(dossier.contratsAcceptes, isEmpty);
 
       await _cocher(tester, t.consentement.texte.caseResponsable);
-      expect(_actif(tester), isTrue);
-      expect(find.text(t.accords.toutCoche), findsOneWidget);
-
-      // Decocher rend le bouton inactif de nouveau.
-      await _cocher(tester, t.accords.caseSavoir);
-      expect(_actif(tester), isFalse);
+      expect(phrase, findsNothing);
     });
+
+    testWidgets(
+      'actif, signale la case qui manque, envoie quand tout est coche',
+      (WidgetTester tester) async {
+        final FauxServiceDossier dossier = FauxServiceDossier()
+          ..etatRendu = _etat(AppRole.guardian);
+        await _monter(tester, dossier);
+
+        expect(find.byType(CaseAccordTexte), findsNWidgets(2));
+        await _signaleUneCase(tester);
+
+        await _cocher(tester, t.accords.caseSavoir);
+        await _signaleUneCase(tester);
+
+        await _cocher(tester, t.consentement.texte.caseResponsable);
+        expect(_actif(tester), isTrue);
+
+        // Decocher rend le bouton inactif de nouveau.
+        await _cocher(tester, t.accords.caseSavoir);
+        await _signaleUneCase(tester);
+      },
+    );
 
     testWidgets('un appui sur le bouton inactif n envoie rien et ne renvoie '
         'nulle part', (WidgetTester tester) async {
@@ -238,7 +275,6 @@ void main() {
       );
       expect(savoir.cochee, isTrue);
       expect(savoir.onChanged, isNull);
-      expect(find.text(t.accords.reste(n: 1)), findsOneWidget);
 
       await _cocher(tester, t.consentement.texte.caseResponsable);
       await _appuyerSuivant(tester);
@@ -349,11 +385,10 @@ void main() {
       expect(find.text(t.contrat.clauseControle.texte), findsOneWidget);
       expect(find.text(t.contrat.politique.lien), findsOneWidget);
       expect(find.byType(CaseAccordTexte), findsNWidgets(3));
-      expect(find.text(t.accords.reste(n: 3)), findsOneWidget);
 
       await _cocher(tester, t.accords.caseSavoir);
       await _cocher(tester, t.accords.caseContrat);
-      expect(_actif(tester), isFalse);
+      await _signaleUneCase(tester);
       await _cocher(tester, t.contrat.clauseControle.caseReligion);
       expect(_actif(tester), isTrue);
 
@@ -387,9 +422,9 @@ void main() {
 
       await _cocher(tester, t.accords.caseSavoir);
       await _cocher(tester, t.recrutement.signature.accuse);
-      // Toutes les cases sont cochees, mais le nom manque : inactif, et la
-      // ligne au-dessus du bouton le dit.
-      expect(_actif(tester), isFalse);
+      // Toutes les cases sont cochees, mais le nom manque : « Suivant »
+      // reste actif (UX-047), n'envoie rien et le champ du nom le dit.
+      await _appuyerSuivant(tester);
       expect(find.text(t.recrutement.signature.nomVide), findsOneWidget);
 
       await tester.enterText(
@@ -430,7 +465,6 @@ void main() {
         expect(find.text(regle), findsOneWidget);
       }
       expect(find.byType(CaseAccordTexte), findsNWidgets(4));
-      expect(find.text(t.accords.reste(n: 4)), findsOneWidget);
       // La section du code suit celle du contrat.
       expect(
         tester.getTopLeft(find.text(t.codeConduite.titre)).dy,
@@ -441,8 +475,7 @@ void main() {
       await _cocher(tester, t.accords.caseContrat);
       await _cocher(tester, t.contrat.clauseControle.caseReligion);
       // Tout est coche sauf le code : inactif, et la ligne le dit.
-      expect(_actif(tester), isFalse);
-      expect(find.text(t.accords.reste(n: 1)), findsOneWidget);
+      await _signaleUneCase(tester);
       await _appuyerSuivant(tester);
       expect(dossier.contratsAcceptes, isEmpty);
 
@@ -486,8 +519,7 @@ void main() {
       );
       expect(savoir.cochee, isTrue);
       expect(savoir.onChanged, isNull);
-      expect(find.text(t.accords.reste(n: 1)), findsOneWidget);
-      expect(_actif(tester), isFalse);
+      await _signaleUneCase(tester);
 
       await _cocher(tester, t.codeConduite.caseAccord);
       expect(_actif(tester), isTrue);
@@ -514,7 +546,7 @@ void main() {
         'Yasmine Haddad',
       );
       await tester.pumpAndSettle();
-      expect(_actif(tester), isFalse);
+      await _signaleUneCase(tester);
       await _cocher(tester, t.codeConduite.caseAccord);
       expect(_actif(tester), isTrue);
 

@@ -138,14 +138,7 @@ void main() {
           find.byKey(const ValueKey<String>('classe-heure')),
         );
         await _presser(tester, find.text('17\u00a0h').last);
-        // D2 (29/10/2026) : trois creneaux par defaut ; cette classe n'en a
-        // qu'un, les deux autres lignes sont retirees.
-        for (int i = 0; i < 2; i++) {
-          await _presser(
-            tester,
-            find.byKey(const ValueKey<String>('classe-autre-2-retirer')),
-          );
-        }
+        // C1 (UX-003, 02/11/2026) : la feuille s'ouvre sur un seul creneau.
         await tester.enterText(_champNom, 'Al-Fajr');
         await _presser(tester, find.text(t.admin.groupes.creerEnvoyer));
 
@@ -309,12 +302,12 @@ void main() {
         await _presser(tester, find.byKey(SelecteurMotif.cleAutre));
         await tester.enterText(
           find.descendant(
-        of: find.ancestor(
-          of: find.text(t.admin.groupes.champMotif),
-          matching: find.byType(ZoneSaisie),
-        ),
-        matching: find.byType(TextField),
-      ),
+            of: find.ancestor(
+              of: find.text(t.admin.groupes.champMotif),
+              matching: find.byType(ZoneSaisie),
+            ),
+            matching: find.byType(TextField),
+          ),
           'Inscription confirmee',
         );
         await _presser(tester, find.text(t.admin.groupes.ajouterEnvoyer));
