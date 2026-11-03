@@ -47,6 +47,8 @@ declare
     'accorder_tarif_particulier(uuid,text,integer,bigint,date,text)',
     'admin_library_review_rights(uuid,uuid,jsonb,integer)',
     'affecter_enseignant_classe_c11bis(uuid,uuid)',
+    -- Salle 3 (03/11) : l'affectation d'une candidate, lecture de la direction de son cote, journalisee hors portee ; garde positive admin et app_account_valid().
+    'affectation_candidat(uuid)',
     -- CAND-L2A2 (22/10) : admission en Salle de verification (transition 10), direction active de son cote (moteur, controles nommes).
     'admettre_salle_verification(uuid,integer,text)',
     'agent_pre_request()',
@@ -337,6 +339,8 @@ declare
     'traiter_demande_suppression(uuid)',
     'transferer_eleve(uuid,uuid,uuid,text)',
     'transmettre_student_concern(uuid,text)',
+    -- Salle 3 (03/11) : valider la piece d'une candidate (transition 14), direction active de son cote (moteur, controles nommes, tout ou rien).
+    'valider_piece_candidat(uuid,integer,text)',
     'verifier_chaine_audit(integer)',
     -- COURRIELS-1 et 2 (23/10) : la direction ecrit, relance et regle les
     -- adresses d'envoi (garde is_admin_user en tete) ; chacun regle la langue
