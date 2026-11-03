@@ -1,6 +1,7 @@
 -- PHOTOS-1 (03/11/2026, PLAN-LOTS §11) : une seule photo par personne, la
 -- meme partout. Joue sous `authenticated`, comme un client.
---   1. le camarade de Classe voit la photo de l'enfant, une autre famille non ;
+--   1. le camarade de Classe voit la photo de l'enfant ; le parent du
+--      camarade non (K-44 stricte, garde-cap 03/11) ; une autre famille non ;
 --   2. l'enseignant voit celles de ses eleves, un autre enseignant non ;
 --   3. l'eleve adulte pose la sienne (dans sa colonne, son dossier) ;
 --   4. le tuteur ne pose pas celle d'un enfant d'un autre foyer ;
@@ -120,7 +121,7 @@ grant execute on function pg_temp.etre(uuid, text), pg_temp.vues(uuid[]),
 set local role authenticated;
 
 -- ===========================================================================
--- 1. Le camarade et son foyer voient Hakim ; une autre famille non
+-- 1. Le camarade voit Hakim ; le parent du camarade non ; une autre famille non
 -- ===========================================================================
 do $camarade$
 declare
@@ -130,9 +131,11 @@ begin
   if pg_temp.vues(v_hakim) <> 1 or pg_temp.fichier_hakim() <> 1 then
     raise exception 'PH1: le camarade Camil ne voit pas Hakim';
   end if;
+  -- K-44 stricte : le parent du camarade ne voit pas la photo, ni par la
+  -- fonction, ni dans le seau.
   perform pg_temp.etre('f0700000-0000-0000-0000-000000000003', 'guardian');
-  if pg_temp.vues(v_hakim) <> 1 or pg_temp.fichier_hakim() <> 1 then
-    raise exception 'PH1: le foyer du camarade ne voit pas Hakim';
+  if pg_temp.vues(v_hakim) <> 0 or pg_temp.fichier_hakim() <> 0 then
+    raise exception 'PH1: le parent du camarade voit Hakim';
   end if;
   perform pg_temp.etre('f0700000-0000-0000-0000-000000000005', 'guardian');
   if pg_temp.vues(v_hakim) <> 0 or pg_temp.fichier_hakim() <> 0 then

@@ -15,8 +15,10 @@
 --
 -- Regles de lecture (§11, ecrites, sans question au directeur) :
 --   * photo d'un eleve : lui-meme, son foyer, ses enseignants, la direction,
---     ses camarades d'une Classe active et leur foyer ; jamais une autre
---     famille hors de la Classe ;
+--     et ses camarades d'une Classe active, chacun dans sa propre session
+--     (lecture stricte de K-44, decision de garde-cap du 03/11/2026) : les
+--     adultes du foyer d'un camarade ne la voient pas ; jamais une autre
+--     famille ;
 --   * photo d'un enseignant : inchangee (lui-meme, la direction, les eleves
 --     de ses Classes et leur foyer) ;
 --   * photo d'un adulte du foyer : lui-meme, son foyer, la direction, les
@@ -28,6 +30,10 @@
 -- Ecriture : chaque adulte pose la sienne (`poser_ma_photo`), le tuteur celle
 -- de ses enfants mineurs (`poser_photo_eleve`). Un eleve mineur ne pose rien,
 -- en Interface guidee ou non.
+--
+-- Reste ouvert, a fermer dans PHOTOS-2 (point obligatoire) : le droit client
+-- sur `student_profiles.avatar_storage_key` (0005), dont l'envoi actuel du
+-- tuteur se sert (majReglages). Le fermer ici casserait cet envoi.
 --
 -- Seau `avatars` : deux politiques en plus, permissives, rien n'est retire :
 -- l'ecriture de chaque adulte dans son propre dossier, et la lecture selon
@@ -186,8 +192,9 @@ AS $function$
       OR l.role = 'admin'
       -- Le foyer de la personne (eleve ou adulte).
       OR (c.household_id IS NOT NULL AND c.household_id = l.household_id)
-      -- Un eleve : ses enseignants, ses camarades d'une Classe active et
-      -- leur foyer.
+      -- Un eleve : ses enseignants, et ses camarades d'une Classe active,
+      -- chacun dans sa propre session (K-44 stricte : pas le foyer du
+      -- camarade).
       OR (c.eleve AND EXISTS (
             SELECT 1
               FROM public.groupe_membres mc
@@ -197,11 +204,8 @@ AS $function$
                     OR EXISTS (
                       SELECT 1
                         FROM public.groupe_membres ml
-                        JOIN public.profiles pl ON pl.id = ml.student_id
                        WHERE ml.groupe_id = g.id AND ml.left_at IS NULL
-                         AND (ml.student_id = l.id
-                              OR (pl.household_id IS NOT NULL
-                                  AND pl.household_id = l.household_id))))))
+                         AND ml.student_id = l.id))))
       -- Un enseignant : les eleves de ses Classes et leur foyer (inchange,
       -- comme `photos_enseignants_lecture`).
       OR (c.enseignant AND EXISTS (
