@@ -214,7 +214,9 @@ Numéros de migration : table des réservations du garde-cap (2026110510 à 2026
 | 7 | ADM-UX (UX-006, 007, 014) | S | |
 | 7 bis | DEFIL-FEUILLE : une boîte ou une feuille trop haute devient l'écran, une seule barre de défilement (fiche §10 ; constat de C1 au rejeu du 03/11) | S/M | prochain agent libre ; suite complète (lib/core) |
 | 7 ter | RECHARGE-CARTE : pendant une commande en attente de paiement, la carte du profil affiche « 0 $ » alors que le récapitulatif du serveur dit 55 $ (`lib/features/foyer/recharge_foyer.dart:869`). La carte garde en lecture seule le montant retenu par le serveur, sans calcul côté Flutter. Constat du rejeu du 03/11, parcours 7 | S | premier agent libre après DEFIL-FEUILLE ; sans migration ; R3 : carte et récapitulatif concordants, 390 et 1440 |
-| 8 | N3 : pause programmée, mission du contrôleur, photo de l'enseignant | M | |
+| 7 quater | PHOTOS-1 : une seule photo par personne, tous les rôles (serveur) (fiche §11, demande du directeur du 03/11) | M | premier agent libre après RECHARGE-CARTE ; migration 20261107300000 |
+| 7 quinquies | PHOTOS-2 : la même photo sur tous les écrans, l'envoi pour chaque rôle (fiche §11) | L | après PHOTOS-1 ; une PR par domaine si plus de 1 500 lignes |
+| 8 | N3 : pause programmée, mission du contrôleur (la photo de l'enseignant passe dans PHOTOS, 03/11) | M | |
 | 9 | CAHIER-UX (UX-028, 041 ; UX-029 vérifié d'abord en lecture) | S | |
 | 10 | N4 : Bibliothèque, coffre R2 de la pièce, publication des évaluations, interface standard, Interface guidée | L | r2-selftest lu avant |
 | 11 | FN-SERVEUR (FN-106 et 107 d'abord, puis FN-003, 019, 104) | M | |
@@ -277,4 +279,71 @@ Correctif, comme les grands systèmes (feuille « grande » d'Apple, boîte plei
 Hors du lot (pas de dispersion) : `SelecteurPersonne` (`selecteur_personne.dart:235`, 6 personnes montrées puis « N autres… » et la recherche). Rien n'y défile dans un cadre, donc la règle du défilement n'est pas touchée ; c'est la ligne 29 de `DECISION-LISTES-2026-10-23.md` (« à suivre avec Comptes »), qui reste à sa place.
 
 Preuves (R3) : « Ajouter un élève » à 1440 et 390, avant et après, avec cinq cartes ou plus visibles en faisant défiler la seule barre de l'écran ; une boîte courte (une confirmation) inchangée à 1440 et 390. Suite complète avant de pousser (`lib/core`). Sans migration. Le bilan de la PR dit « une seule barre de défilement, celle de l'écran ».
+
+## 11. Fiche PHOTOS : une seule photo par personne, la même partout (garde-cap, 03/11/2026, 13:45 UTC)
+
+Demande du directeur (03/11) : « pour les photos il faut penser à les synchroniser partout où elles doivent être, et c'est pour tous les rôles. Actuellement pour un enfant comme Hakim j'ai ajouté sa photo mais qui ne s'affiche pas partout, le parent et l'élève adulte n'ont pas encore de photo qui marche et qui est synchro. »
+
+### Constat (relevé en lecture sur main 2b820d74)
+
+- **Élève (posée par le tuteur)** : seau privé `avatars` et `student_profiles.avatar_storage_key`. Elle s'affiche seulement côté tuteur : accueil famille, Foyer, fiche élève, finances, recharge. Partout ailleurs, on ne voit que les initiales :
+  - sur l'appareil de l'enfant (choix de profil, espaces de l'enfant) ;
+  - dans le compte du tuteur (`compte_tuteur_page.dart:99,516`, `compte_page.dart:592,638,675`) ;
+  - chez l'enseignant (`projectionElevesProvider` vide en production, `preparation_seance.dart:78-82`) ;
+  - dans la salle (`EleveSeance` sans clé, `depuis_salle.dart:114-130`) ;
+  - dans les écrans de la direction.
+- **Élève adulte** : aucun écran d'envoi. La politique du seau exige le rôle tuteur. « Mon espace » lève `CapaciteIndisponible`.
+- **Tuteur, direction** : ni colonne, ni seau, ni écran.
+- **Enseignant** : écran présent (`photo_publique.dart`), mais l'envoi n'est pas branché (`_EnvoiNonBranche`, aucune surcharge dans `main.dart`). Aucun droit client n'écrit `teacher_profiles.photo_storage_key`. La photo s'affiche dans la salle quand la clé existe. Elle ne s'affiche jamais sur la carte de la classe ni dans l'espace de classe.
+- **Cache** : l'URL signée vit 600 s, mais `avatarUrlProvider` et `photoEnseignantUrlProvider` la gardent sans fin (pas d'`autoDispose`). Après un envoi, seuls deux fournisseurs sont relus, si bien que l'ancienne photo reste à certains endroits.
+
+### Règles de lecture appliquées (écrites, aucune question au directeur, G12)
+
+- **Photo d'un élève, mineur ou adulte** : son foyer, ses enseignants, la direction et ses camarades de classe (K-44, tableau du directeur du 09/10, « elle s'affiche chez son enseignant, à l'administration et chez ses camarades de Classe » ; `02_ARCHITECTURE_ET_SECURITE.md` §6, « portraits visibles en classe ; accès restreint »). Jamais une autre famille hors de la classe. L'ADR-012, archivé, est caduc sur ce point. La photo n'est jamais montrée au public.
+- **Photo d'un enseignant** : inchangée (ses élèves et leurs foyers, la direction : `0032_tc_catalogue.sql:642-655`).
+- **Photo d'un adulte du foyer** (titulaire et second adulte) : lui-même, son foyer, la direction et les enseignants des enfants du foyer. Réglage « proposé ». La demande du 03/11 (« tous les rôles », « le parent ») remplace la règle Q4 (« le second adulte : ses initiales, jamais sa photo ») ; le directeur en est informé et peut la rétablir d'un mot.
+- **Photo d'un membre de la direction** : visible des comptes qui voient son nom (messages, annonces, alertes). Réglage « proposé ».
+- **Qui pose la photo** : chaque adulte la sienne, le tuteur celle de ses enfants mineurs, l'élève adulte la sienne. L'enfant en Interface guidée ne la change pas.
+
+### PHOTOS-1 (serveur, M, migration 20261107300000)
+
+1. **Une seule source par personne** : une clé de photo lue par une seule fonction, `photos_personnes(ids uuid[])`. Elle rend, pour chaque personne que l'appelant a le droit de voir selon les règles ci-dessus, la clé et le seau, et rien pour les autres.
+   - Les colonnes existantes (`student_profiles.avatar_storage_key`, `teacher_profiles.photo_storage_key`) restent la vérité pour leur rôle.
+   - Une seule colonne nouvelle pour les comptes qui n'en ont pas (tuteur, direction).
+   - Aucune copie en double d'une même photo.
+2. **Écrire sa photo** : `poser_ma_photo(cle)` pour tout adulte connecté (dont l'élève adulte et l'enseignant, qui remplace l'envoi non branché), et `poser_photo_eleve(eleve, cle)` pour le tuteur. Droit d'écriture du seau dans son propre dossier pour tous les rôles adultes.
+3. **Lecture du seau** : une politique pour les camarades d'une même classe active, en plus de celles du foyer et de la classe (`avatar_lecture_classe`).
+4. **Ordre de la base** :
+   - Si une politique existante doit être remplacée (DROP POLICY), elle part dans un fichier B5, **20261107300001**, collé par le directeur avant 300000.
+   - Sinon, aucun fichier à coller.
+5. **Scénario SQL**, en authenticated :
+   - le camarade voit la photo, une autre famille ne la voit pas ;
+   - l'enseignant voit celles de ses élèves ;
+   - l'élève adulte pose la sienne ;
+   - le tuteur ne pose pas celle d'un autre foyer ;
+   - l'enfant en Interface guidée ne pose rien.
+
+### PHOTOS-2 (écrans, L)
+
+1. **Un seul fournisseur**, `photoPersonneProvider(id)`, lu par `AvatarTile` sur **tous** les écrans du relevé, sans initiales imposées : accueil et appareil de l'enfant, compte du tuteur, Foyer, salle (panneau des élèves, vignettes, capsule), fiche de classe, fiche élève, cahier, cartes de classe, espace de classe, écrans de la direction, messages.
+   - Les initiales restent seulement quand la personne n'a pas de photo, ou quand l'appelant n'a pas le droit de la voir.
+   - Aucun nouveau composant : `AvatarTile`, `PhotoEleve` et `PhotoEnseignant` sont réunis derrière ce fournisseur.
+2. **Envoi pour chaque rôle** :
+   - le tuteur depuis son Compte ;
+   - l'élève adulte depuis son Profil ;
+   - l'enseignant depuis `photo_publique.dart`, branché ;
+   - la direction depuis son compte ;
+   - le tuteur pour un enfant, depuis la fiche élève (déjà là).
+3. **Synchronisation** : après un envoi, toutes les vues de cette personne sont relues. L'URL signée est rafraîchie avant son expiration (`autoDispose` et délai), jamais gardée au-delà de 600 s.
+4. **R3** : Hakim visible avec sa photo :
+   - chez le tuteur ;
+   - sur l'appareil de Hakim ;
+   - chez son enseignant (fiche de classe, salle) ;
+   - chez un camarade ;
+   - chez la direction.
+
+   Et invisible chez une autre famille. Plus la photo du tuteur et de l'élève adulte posée, puis vue à deux endroits. À 1440 et à 390.
+5. **Hors du lot** :
+   - la compression côté serveur (question ouverte de l'ADR-012, archivée) ;
+   - la suppression des anciens fichiers, qui suit M1 et le « oui » du directeur.
 
