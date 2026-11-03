@@ -1,0 +1,14 @@
+== MFA-DIRECTION : activer la double vérification, code demandé au geste : 2026-11-03T23:23:18.230Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Amorce : direction neuve e2e.mfa.198230@example.com (7f572896-3042-4148-bd92-825cb1f41168), facteurs : 0
+[direction] rubrique « Sécurité » dans Compte : vu
+[direction] enrôlement « Activez la double vérification » : vu
+[direction] capture masquée : 1440_enrolement (QR et clé cachés)
+ECART : clé absente de l'arbre d'accessibilité ; lue dans la base locale
+[direction] « La double vérification est activée » : vu
+Base locale : 1 facteur(s) vérifié(s)
+[direction] feuille « Code de vérification » : vu
+[direction] invitation créée après le code : vu
+[direction] capture masquée : 1440_geste_accepte (code d'invitation caché)
+Base locale : 1 invitation(s) pour e2e.compta.198230@example.com
+[direction] 390 : « activée » : vu
+== MFA-DIRECTION : activer la double vérification, code demandé au geste : vert

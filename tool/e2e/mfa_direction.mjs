@@ -80,6 +80,29 @@ async function voir(a, motif, quoi) {
   return ok;
 }
 
+/// Une capture dont le QR et la cle de l'enrolement sont masques.
+let nCapture = 0;
+async function capturerMasque(a, etiquette) {
+  nCapture += 1;
+  const qr = a.page.locator('[aria-label^="Code à scanner"]').first();
+  const b = await qr.boundingBox();
+  if (!b) throw new Error('QR introuvable : capture refusée (aucun secret sans masque)');
+  // La clé s'affiche sous le QR (texte selectionnable, hors de l'arbre
+  // d'accessibilité) : un cache couvre la bande sous le QR, sur la largeur de
+  // la carte.
+  await a.page.evaluate(({ y }) => {
+    const c = document.createElement('div');
+    c.id = 'cache-cle-e2e';
+    Object.assign(c.style, { position: 'fixed', left: '0', right: '0', top: `${y}px`,
+      height: '70px', background: '#444444', zIndex: '2147483647' });
+    document.body.appendChild(c);
+  }, { y: b.y + b.height });
+  const f = `${p.sortie}/00${nCapture}_${a.role}_${etiquette}_masque.png`;
+  await a.page.screenshot({ path: f, mask: [qr], maskColor: '#444444' });
+  await a.page.evaluate(() => document.getElementById('cache-cle-e2e')?.remove());
+  p.dire(`[${a.role}] capture masquée : ${etiquette} (QR et clé cachés)`);
+}
+
 async function saisirCode(a, code) {
   const champ = a.page.locator('input:not([disabled]), textarea:not([disabled])').last();
   await champ.waitFor({ state: 'visible', timeout: 10000 });
@@ -100,9 +123,12 @@ try {
   await d.page.waitForTimeout(3000); await activerSemantique(d.page);
   await voir(d, /Sécurité/, 'rubrique « Sécurité » dans Compte');
   await p.capture(d, '1440_compte_rubrique_securite');
-  await toucher(d, /^Sécurité/, '« Sécurité »', { pause: 5000 });
+  // La ligne de Compte (« Sécurité » et sa légende), pas « Sécurité et audit »
+  // de la navigation.
+  await toucher(d, /^Sécurité\s+(Sécurité\s+)?La double vérification/, 'ligne « Sécurité » de Compte', { pause: 5000 });
   await voir(d, /Activez la double vérification/, 'enrôlement « Activez la double vérification »');
-  await p.capture(d, '1440_enrolement');
+  // Ni QR ni clé dans les captures (pilote, 03/11) : les deux sont masqués.
+  await capturerMasque(d, '1440_enrolement');
   let cle = await d.page.evaluate(() => {
     for (const x of document.querySelectorAll('flt-semantics, [aria-label]')) {
       const t = (x.getAttribute('aria-label') ?? x.textContent ?? '').trim();
@@ -111,6 +137,9 @@ try {
     return null;
   });
   if (!cle) {
+    if (!un(`select count(*) from auth.mfa_factors where user_id = '${dir.id}'`).match(/^[1-9]/)) {
+      throw new Error(`aucun enrôlement commencé ; ${await lus(d.page, 60)}`);
+    }
     cle = un(`select secret from auth.mfa_factors where user_id = '${dir.id}' order by created_at desc limit 1`);
     p.dire('ECART : clé absente de l\'arbre d\'accessibilité ; lue dans la base locale');
   }
@@ -134,6 +163,9 @@ try {
   const champ = await trouver(d2.page, /Adresse de courriel du comptable/, { delai: 10000, role: 'textbox' });
   if (!champ) throw new Error(`champ du comptable absent ; ${await lus(d2.page, 60)}`);
   await amenerEnVue(d2.page, champ); await champ.click();
+  // Le champ prend le focus apres le clic : sans pause, la premiere lettre
+  // se perdait (« 2e.compta… », passage du 03/11).
+  await d2.page.waitForTimeout(800);
   await d2.page.keyboard.type(courrielCompta, { delay: 20 });
   await toucher(d2, /^Créer l'invitation/, '« Créer l\'invitation »', { role: 'button', pause: 4000 });
   await voir(d2, /Code de vérification/, 'feuille « Code de vérification »');
@@ -142,7 +174,16 @@ try {
   await saisirCode(d2, totp(cle));
   await toucher(d2, /^Confirmer le code et continuer$/, '« Confirmer le code et continuer »', { role: 'button', pause: 6000 });
   await voir(d2, /Invitation créée/, 'invitation créée après le code');
-  await p.capture(d2, '1440_geste_accepte');
+  // Le code d'invitation est masqué (pilote : aucun code dans les captures) ;
+  // la base locale prouve l'invitation juste après.
+  {
+    const ligne = d2.page.locator('flt-semantics').filter({ hasText: /Invitation créée/ })
+      .filter({ hasNot: d2.page.locator('flt-semantics').filter({ hasText: /Invitation créée/ }) });
+    if (!(await ligne.count())) throw new Error('ligne « Invitation créée » introuvable : capture refusée');
+    await d2.page.screenshot({ path: `${p.sortie}/04_direction_1440_geste_accepte_masque.png`,
+      mask: [ligne], maskColor: '#444444' });
+    p.dire('[direction] capture masquée : 1440_geste_accepte (code d\'invitation caché)');
+  }
   const invit = un(`select count(*) from public.invitations_comptable where lower(email) = lower('${courrielCompta}')`);
   p.dire(`Base locale : ${invit} invitation(s) pour ${courrielCompta}`);
   if (invit !== '1') manque.push(`base : ${invit} invitation(s)`);
