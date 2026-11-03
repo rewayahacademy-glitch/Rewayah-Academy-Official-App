@@ -1,0 +1,7 @@
+{
+  "parcours": "NIV1 : le niveau demande une seule fois",
+  "verdict": "vert",
+  "cause": "A : enfant venu de la demande, Parcours sur les horaires ; B : enfant ajoute, questions sans l'age puis horaires ; 390 et 1440",
+  "debut": "2026-11-03T11:09:26.404Z",
+  "fin": "2026-11-03T11:13:10.501Z"
+}

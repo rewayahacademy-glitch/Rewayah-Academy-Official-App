@@ -95,6 +95,8 @@ List<Override> surchargesRouteur(
   ServiceAppairage? appairage,
   ServiceSuivi? suivi,
   PortHorlogeSeance horloges = const PortHorlogeMuet(),
+  // NIV1 : un faux des offres fourni par le test (sinon, un faux neuf).
+  ServiceOffres? offres,
 }) => <Override>[
   sourceSessionProvider.overrideWithValue(source),
   serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
@@ -112,7 +114,7 @@ List<Override> surchargesRouteur(
   servicePresenceProvider.overrideWithValue(FauxServicePresence()),
   serviceVideoProvider.overrideWithValue(FauxServiceVideo()),
   serviceAuthProvider.overrideWithValue(FauxServiceAuth()),
-  serviceOffresProvider.overrideWithValue(FauxServiceOffres()),
+  serviceOffresProvider.overrideWithValue(offres ?? FauxServiceOffres()),
   portGroupesProvider.overrideWithValue(
     const FauxPortGroupes(groupes: <Never>[]),
   ),
