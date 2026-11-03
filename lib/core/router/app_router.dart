@@ -190,7 +190,7 @@ import '../../features/eleve_connexion/saisie_code_page.dart';
 import '../../features/eleve_connexion/scanner_page.dart';
 import '../../features/enseignant_classes/mes_classes_page.dart';
 import '../../features/fiche_groupe/fiche_groupe_page.dart';
-import '../../features/foyer/creer_mon_profil_indisponible.dart';
+import '../../features/foyer/creer_mon_profil_page.dart';
 import '../../features/foyer/fiche/acces_page.dart';
 import '../../features/foyer/fiche/camera_page.dart';
 import '../../features/foyer/fiche/couleur_page.dart';
@@ -1005,12 +1005,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 routes: <RouteBase>[
                   GoRoute(
                     path: 'ajouter',
-                    // `?pour=moi` : le profil eleve du titulaire lui-meme,
-                    // indisponible tant que DB-FOY-01 manque (mapping 7.1).
+                    // `?pour=moi` : le profil eleve du titulaire lui-meme
+                    // (N2, FA5 : creer_profil_eleve_titulaire, 0052).
                     pageBuilder: glissee(
                       (GoRouterState etat) =>
                           etat.uri.queryParameters['pour'] == 'moi'
-                          ? const CreerMonProfilIndisponible()
+                          ? const CreerMonProfilPage()
                           : AjouterEnfantPage(
                               depuisAccueilInscrits:
                                   etat.extra is AjoutDepuisAccueilInscrits

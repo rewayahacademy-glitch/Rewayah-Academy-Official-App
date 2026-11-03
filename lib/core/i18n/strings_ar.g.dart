@@ -7254,6 +7254,17 @@ class _Traductions$foyer$monProfil$ar extends Traductions$foyer$monProfil$fr {
 	@override String get titre => 'إنشاء ملفي كطالب';
 	@override String get indisponibleTitre => 'غير ممكن بعد';
 	@override String get indisponiblePhrase => 'متابعة الدروس بنفسك بملفك الخاص كطالب ستُقترح قريبًا. يبقى حسابك كوليّ أمر كما هو.';
+	@override String get intro => 'بملفك الطلابي الخاص يمكنك أن تتابع الدروس بنفسك، في فصل للكبار.';
+	@override String get consequence => 'لا يتغير حسابك كولي أمر: تحتفظ بأسرتك وبالملفات الطلابية لأبنائك.';
+	@override String get creer => 'إنشاء ملفي الطلابي';
+	@override String get reessayer => 'إعادة محاولة إنشاء ملفي الطلابي';
+	@override String get nonConfirme => 'لم يتأكد إنشاء ملفك الطلابي: لم يرد الخادم. أعد المحاولة بعد قليل؛ وإن كان ملفك موجودًا فلن يُنشأ مرتين.';
+	@override String get horsLigne => 'دون اتصال بالشبكة لا يمكن إنشاء ملفك الطلابي. عد إلى هذه الصفحة بعد عودة الاتصال.';
+	@override String get sansDonnees => 'تعذر التحقق من ملفك الطلابي';
+	@override String get creeTitre => 'تم إنشاء ملفك الطلابي';
+	@override String get creePhrase => 'لا يتغير حسابك كولي أمر. تحتفظ بأسرتك وبالملفات الطلابية لأبنائك.';
+	@override String get dejaTitre => 'لديك ملف طلابي بالفعل';
+	@override String get dejaPhrase => 'ملفك الطلابي موجود بالفعل: لا شيء لإنشائه.';
 	@override String get retour => 'العودة إلى الأسرة';
 }
 
@@ -27473,6 +27484,17 @@ extension on TraductionsAr {
 			'foyer.monProfil.titre' => 'إنشاء ملفي كطالب',
 			'foyer.monProfil.indisponibleTitre' => 'غير ممكن بعد',
 			'foyer.monProfil.indisponiblePhrase' => 'متابعة الدروس بنفسك بملفك الخاص كطالب ستُقترح قريبًا. يبقى حسابك كوليّ أمر كما هو.',
+			'foyer.monProfil.intro' => 'بملفك الطلابي الخاص يمكنك أن تتابع الدروس بنفسك، في فصل للكبار.',
+			'foyer.monProfil.consequence' => 'لا يتغير حسابك كولي أمر: تحتفظ بأسرتك وبالملفات الطلابية لأبنائك.',
+			'foyer.monProfil.creer' => 'إنشاء ملفي الطلابي',
+			'foyer.monProfil.reessayer' => 'إعادة محاولة إنشاء ملفي الطلابي',
+			'foyer.monProfil.nonConfirme' => 'لم يتأكد إنشاء ملفك الطلابي: لم يرد الخادم. أعد المحاولة بعد قليل؛ وإن كان ملفك موجودًا فلن يُنشأ مرتين.',
+			'foyer.monProfil.horsLigne' => 'دون اتصال بالشبكة لا يمكن إنشاء ملفك الطلابي. عد إلى هذه الصفحة بعد عودة الاتصال.',
+			'foyer.monProfil.sansDonnees' => 'تعذر التحقق من ملفك الطلابي',
+			'foyer.monProfil.creeTitre' => 'تم إنشاء ملفك الطلابي',
+			'foyer.monProfil.creePhrase' => 'لا يتغير حسابك كولي أمر. تحتفظ بأسرتك وبالملفات الطلابية لأبنائك.',
+			'foyer.monProfil.dejaTitre' => 'لديك ملف طلابي بالفعل',
+			'foyer.monProfil.dejaPhrase' => 'ملفك الطلابي موجود بالفعل: لا شيء لإنشائه.',
 			'foyer.monProfil.retour' => 'العودة إلى الأسرة',
 			'foyer.ajout.suivant' => 'التالي',
 			'foyer.ajout.creer' => 'إنشاء الملف',
@@ -27953,6 +27975,8 @@ extension on TraductionsAr {
 			'kyc.explicationPasseport' => 'جواز سفرك الساري المفعول. صوّر الصفحة التي تحمل صورتك واسمك.',
 			'kyc.explicationTitreSejour' => 'البطاقة التي يمنحها البلد الذي تقيم فيه إن لم تكن من مواطنيه، سارية المفعول.',
 			'kyc.explicationAutre' => 'وثيقة أخرى صادرة عن جهة إدارية، تحمل صورتك واسمك.',
+			_ => null,
+		} ?? switch (path) {
 			'kyc.exempleAutre' => 'رخصة قيادة أو بطاقة قنصلية',
 			'kyc.choisirFichier' => 'اختيار الصورة',
 			'kyc.fichierChoisi' => 'الصورة جاهزة للإرسال',
@@ -27964,8 +27988,6 @@ extension on TraductionsAr {
 			'kyc.manquePhoto' => 'اختر أولًا صورة وثيقتك.',
 			'kyc.manqueType' => 'اختر أولًا الوثيقة التي تودعها.',
 			'protectionEnfants.categorie' => 'سلامة طفل',
-			_ => null,
-		} ?? switch (path) {
 			'protectionEnfants.prioritaireTitre' => 'إبلاغ ذو أولوية',
 			'protectionEnfants.prioritaireDetail' => 'تقرؤه الإدارة والمسؤول عن حماية الأطفال فورًا. لا يراه المعلم المعني ولا الأسر الأخرى أبدًا. لا تُرسل أي رسالة إلى الأسرة.',
 			'protectionEnfants.urgence' => 'في حال وجود خطر داهم، اتصل أولًا بخدمات الطوارئ في بلدك.',
@@ -28467,6 +28489,8 @@ extension on TraductionsAr {
 			'recherche.etats.inaccessible.phrase' => 'تم تحديث نتائجك.',
 			'recherche.etats.inaccessible.action' => 'العودة إلى النتائج',
 			'recherche.tout' => 'الكل',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.filtres' => 'مجالات البحث',
 			'recherche.limite' => 'تقتصر النتائج على ما تتيحه مساحتك.',
 			'recherche.guide.titre' => 'البحث عن مادة',
@@ -28478,8 +28502,6 @@ extension on TraductionsAr {
 			'recherche.contexte.remplacementMien' => 'استبدالك',
 			'recherche.contexte.mission' => 'مهمة مراقبة',
 			'recherche.contexte.missionEnseignant' => ({required Object enseignant}) => 'مهمة مراقبة · ⁨${enseignant}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.contexte.eleveDeClasse' => ({required Object classe}) => 'طالب في فصل ⁨${classe}⁩',
 			'recherche.contexte.enseignantDeClasse' => ({required Object classe}) => 'معلّم فصل ⁨${classe}⁩',
 			'recherche.contexte.personneFoyer' => 'ملف من أسرتك',
@@ -28981,6 +29003,8 @@ extension on TraductionsAr {
 			'recrutement.talents.competences.autreVide' => 'اكتب في بضع كلمات ما هو المجال، أو ألغِ اختيار «مجال آخر».',
 			'recrutement.talents.competences.autreTropLong' => ({required Object max}) => 'نصّك طويل جدًا: ⁨${max}⁩ حرفًا على الأكثر. اختصره.',
 			'recrutement.talents.c.reseaux_sociaux.libelle' => 'إدارة وسائل التواصل الاجتماعي',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.talents.c.reseaux_sociaux.description' => 'إدارة حسابات الأكاديمية على وسائل التواصل الاجتماعي.',
 			'recrutement.talents.c.reseaux_sociaux.exemple' => 'النشر كل أسبوع والرد على الرسائل والتعليقات',
 			'recrutement.talents.c.relations_publiques.libelle' => 'العلاقات العامة والشراكات',
@@ -28992,8 +29016,6 @@ extension on TraductionsAr {
 			'recrutement.talents.c.montage_video.libelle' => 'مونتاج الفيديو والتحريك',
 			'recrutement.talents.c.montage_video.description' => 'مونتاج مقاطع فيديو قصيرة وتحريكها.',
 			'recrutement.talents.c.montage_video.exemple' => 'قصّ فيديو، إضافة ترجمة نصية، تحريك عنوان',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.c.photographie.libelle' => 'التصوير',
 			'recrutement.talents.c.photographie.description' => 'التقاط صور وفيديوهات وتسجيلات صوتية بجودة جيدة.',
 			'recrutement.talents.c.photographie.exemple' => 'تصوير فعالية، تسجيل عرض قصير',
@@ -29495,6 +29517,8 @@ extension on TraductionsAr {
 			'avis.admin.liens.fermerQuestion' => ({required Object nom}) => 'هل تغلق الرابط «⁨${nom}⁩»؟',
 			'avis.admin.liens.fermerConsequence' => 'من يفتح هذا الرابط سيرى أنه مغلق ولن يستطيع إرسال رأي. تبقى الآراء التي وصلت. الرابط المغلق لا يُعاد فتحه.',
 			'avis.admin.liens.fermerAction' => 'إغلاق الرابط',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.liens.fermerRester' => 'عدم تغيير شيء',
 			'avis.admin.liens.fermeOk' => 'تم إغلاق الرابط.',
 			'avis.admin.liens.fermeEchec' => 'لم يتأكد الإغلاق. أُعيدت قراءة القائمة: تحقق من حالة الرابط.',
@@ -29506,8 +29530,6 @@ extension on TraductionsAr {
 			'courriels.admin.outil' => 'البريد الإلكتروني',
 			'courriels.admin.outilDetail' => 'كتابة رسالة، ومتابعة الإرسال، وعرض عناوين الإرسال',
 			'courriels.admin.sections.libelle' => 'أقسام البريد الإلكتروني',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.sections.ecrire' => 'كتابة',
 			'courriels.admin.sections.file' => 'الإرسال',
 			'courriels.admin.sections.adresses' => 'عناوين الإرسال',

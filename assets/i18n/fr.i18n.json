@@ -1534,6 +1534,17 @@
       "titre": "Créer mon profil élève",
       "indisponibleTitre": "Pas encore possible",
       "indisponiblePhrase": "Suivre vous-même les cours avec votre propre profil élève sera proposé prochainement. Votre compte de tuteur reste tel qu'il est.",
+      "intro": "Avec votre propre profil élève, vous pouvez suivre vous-même des cours, dans une Classe d'adultes.",
+      "consequence": "Votre compte de tuteur ne change pas\u00a0: vous gardez votre foyer et les profils élèves de vos enfants.",
+      "creer": "Créer mon profil élève",
+      "reessayer": "Réessayer de créer mon profil élève",
+      "nonConfirme": "La création de votre profil élève n'est pas confirmée\u00a0: le serveur n'a pas répondu. Réessayez dans un instant\u00a0; si votre profil existe déjà, rien n'est créé en double.",
+      "horsLigne": "Sans réseau, votre profil élève ne peut pas être créé. Revenez sur cette page une fois la connexion rétablie.",
+      "sansDonnees": "Votre profil élève n'a pas pu être vérifié",
+      "creeTitre": "Votre profil élève est créé",
+      "creePhrase": "Votre compte de tuteur ne change pas. Vous gardez votre foyer et les profils élèves de vos enfants.",
+      "dejaTitre": "Vous avez déjà votre profil élève",
+      "dejaPhrase": "Votre profil élève existe déjà\u00a0: il n'y a rien à créer.",
       "retour": "Retour au foyer"
     },
     "ajout": {

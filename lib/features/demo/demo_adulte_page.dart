@@ -78,13 +78,16 @@ import '../appareils/liste_appareils_eleve.dart'
 import '../compte/aide_page.dart';
 import '../compte/apparence_page.dart';
 import '../compte/donnees_compte.dart'
-    show identiteTitulaireProvider, paiementsFoyerProvider;
+    show
+        identiteTitulaireProvider,
+        paiementsFoyerProvider,
+        profilEleveTitulaireExisteProvider;
 import '../compte/informations_legales_page.dart';
 import '../compte/informations_page.dart';
 import '../compte/paiements_page.dart';
 import '../compte/preferences_page.dart';
 import '../compte/securite_page.dart';
-import '../foyer/creer_mon_profil_indisponible.dart';
+import '../foyer/creer_mon_profil_page.dart';
 import '../foyer/fiche_eleve_page.dart';
 import '../foyer/finances_foyer.dart'
     show financesFoyerProvider, politiqueActiveProvider;
@@ -1517,9 +1520,8 @@ class CoquilleAdulteDemo extends StatelessWidget {
       ),
       // Mamadou suit deja les cours : la page lui parle en adulte, jamais du
       // « compte de tuteur » (EA-5c, EA-BR-19).
-      EcranDemoAdulte.creerMonProfil => CreerMonProfilIndisponible(
+      EcranDemoAdulte.creerMonProfil => CreerMonProfilPage(
         onRetour: versMaFamille,
-        titulaireAdulte: true,
       ),
       EcranDemoAdulte.ficheEleve => FicheElevePage(
         eleveId: eleve ?? DonneesAdulteDemo.aichaId,
@@ -1612,6 +1614,9 @@ class CoquilleAdulteDemo extends StatelessWidget {
         portCreationProfilEleveProvider.overrideWithValue(
           const _CreationProfilDemo(),
         ),
+        // N2 (FA5) : Mamadou suit deja les cours, il a son profil eleve ; la
+        // page le dit, sans rien creer.
+        profilEleveTitulaireExisteProvider.overrideWith((Ref _) async => true),
         // Ma famille du titulaire (EA-5, EA-BR-14) : son identite par le port
         // du Compte, et la place adulte selon la situation.
         identiteTitulaireProvider.overrideWith(

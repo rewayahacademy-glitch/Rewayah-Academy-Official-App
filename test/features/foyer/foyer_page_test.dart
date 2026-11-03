@@ -14,6 +14,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
+import 'package:rewayah_academy/core/capacites/port_profil_eleve_titulaire.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/offres/offre_horaire.dart';
@@ -29,10 +30,11 @@ import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/appareils/ajouter_enfant_page.dart';
 import 'package:rewayah_academy/features/appareils/appareils_page.dart';
-import 'package:rewayah_academy/features/foyer/creer_mon_profil_indisponible.dart';
+import 'package:rewayah_academy/features/foyer/creer_mon_profil_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 
+import '../../fixtures/tuteur/faux_capacites.dart';
 import '../../fixtures/tuteur/faux_classes_foyer.dart';
 import '../../fixtures/tuteur/foyers.dart';
 import '../../parcours/faux_service_offres.dart';
@@ -215,42 +217,84 @@ void main() {
     });
 
     testWidgets(
-      '« Creer mon profil eleve » dit l indisponibilite, le disque retour '
-      'ramene au Foyer',
+      '« Creer mon profil eleve » (N2, FA5) : la confirmation cree le profil, '
+      'puis « Retour au foyer » ramene au Foyer',
       (WidgetTester tester) async {
-        final GoRouter routeur = await _monter(tester, appairage: _foyerA());
+        final FauxProfilEleveTitulaire port = FauxProfilEleveTitulaire();
+        final GoRouter routeur = await _monter(
+          tester,
+          appairage: _foyerA(),
+          autres: <Override>[
+            portProfilEleveTitulaireProvider.overrideWithValue(port),
+          ],
+        );
         await _ouvrirFoyerParLaBarre(tester);
 
         await _toucher(tester, find.byKey(FoyerPage.monProfilKey));
 
         expect(lieu(routeur), Routes.tuteurAjouterPourMoi);
-        expect(find.byType(CreerMonProfilIndisponible), findsOneWidget);
-        expect(_etat(NatureEtat.indisponible), findsOneWidget);
-        expect(
-          tester.widget<EtatSysteme>(_etat(NatureEtat.indisponible)).dependance,
-          'DB-FOY-01',
-        );
-        expect(find.text(t.foyer.monProfil.indisponibleTitre), findsOneWidget);
-        // Aucun faux succes, aucun code technique a l'ecran.
+        expect(find.byType(CreerMonProfilPage), findsOneWidget);
+        expect(find.text(t.foyer.monProfil.intro), findsOneWidget);
+        expect(find.text(t.foyer.monProfil.consequence), findsOneWidget);
+        // Aucun code technique a l'ecran.
         expect(find.textContaining('DB-FOY'), findsNothing);
 
-        await _toucher(tester, find.byType(DisqueRetour));
+        await _toucher(tester, find.byKey(CreerMonProfilPage.creerKey));
+
+        expect(port.present, isTrue);
+        expect(find.byKey(CreerMonProfilPage.creeKey), findsOneWidget);
+        expect(find.text(t.foyer.monProfil.creeTitre), findsOneWidget);
+
+        await _toucher(tester, find.text(t.foyer.monProfil.retour));
 
         expect(lieu(routeur), Routes.tuteurFoyer);
         expect(find.byType(FoyerPage), findsOneWidget);
       },
     );
 
-    testWidgets('« Retour au foyer » de l ecran indisponible ramene au Foyer', (
-      WidgetTester tester,
-    ) async {
-      final GoRouter routeur = await _monter(tester, appairage: _foyerA());
+    testWidgets('profil deja present : la page le dit, rien n est cree, le '
+        'disque retour ramene au Foyer', (WidgetTester tester) async {
+      final FauxProfilEleveTitulaire port = FauxProfilEleveTitulaire()
+        ..present = true;
+      final GoRouter routeur = await _monter(
+        tester,
+        appairage: _foyerA(),
+        autres: <Override>[
+          portProfilEleveTitulaireProvider.overrideWithValue(port),
+        ],
+      );
       await _ouvrirFoyerParLaBarre(tester);
       await _toucher(tester, find.byKey(FoyerPage.monProfilKey));
 
-      await _toucher(tester, find.text(t.foyer.monProfil.retour));
+      expect(find.byKey(CreerMonProfilPage.dejaKey), findsOneWidget);
+      expect(find.byKey(CreerMonProfilPage.creerKey), findsNothing);
+
+      await _toucher(tester, find.byType(DisqueRetour));
 
       expect(lieu(routeur), Routes.tuteurFoyer);
+    });
+
+    testWidgets('creation non confirmee : la phrase dit quoi faire, '
+        '« Reessayer » cree au second essai', (WidgetTester tester) async {
+      final _ProfilQuiEchoueUneFois port = _ProfilQuiEchoueUneFois();
+      await _monter(
+        tester,
+        appairage: _foyerA(),
+        autres: <Override>[
+          portProfilEleveTitulaireProvider.overrideWithValue(port),
+        ],
+      );
+      await _ouvrirFoyerParLaBarre(tester);
+      await _toucher(tester, find.byKey(FoyerPage.monProfilKey));
+      await _toucher(tester, find.byKey(CreerMonProfilPage.creerKey));
+
+      expect(find.byKey(CreerMonProfilPage.nonConfirmeKey), findsOneWidget);
+      expect(find.text(t.foyer.monProfil.reessayer), findsOneWidget);
+
+      await _toucher(tester, find.byKey(CreerMonProfilPage.creerKey));
+
+      expect(find.byKey(CreerMonProfilPage.creeKey), findsOneWidget);
+      expect(port.essais, 2);
     });
   });
 
@@ -609,4 +653,21 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   });
+}
+
+/// Un port dont la premiere creation perd sa reponse (D5), la seconde aboutit.
+class _ProfilQuiEchoueUneFois implements PortProfilEleveTitulaire {
+  int essais = 0;
+
+  @override
+  Future<bool> existe() async => false;
+
+  @override
+  Future<void> creer() async {
+    essais++;
+    if (essais == 1) throw Exception('reponse perdue');
+  }
+
+  @override
+  Future<void> ouvrirEspaceEleve() async {}
 }

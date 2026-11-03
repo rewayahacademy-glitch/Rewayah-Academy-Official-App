@@ -78,8 +78,8 @@ final FutureProviderFamily<List<ClasseFoyer>, String> classesMembreProvider =
 /// demande », E5), les profils eleves, « Ajouter un profil eleve » sous eux
 /// sur telephone (planche 3.1), puis « Paiements du foyer », les appareils,
 /// et au pied « A propos du forfait famille » (planche 2.1) et « Creer mon
-/// profil eleve » (garde, planche 2.3 G, decision E6 ; il ouvre la page
-/// indisponible existante, DB-FOY-01, EA-BR-19). Sans valeur (le cas du tuteur
+/// profil eleve » (garde, planche 2.3 G, decision E6 ; il ouvre
+/// `CreerMonProfilPage`, N2, FA5). Sans valeur (le cas du tuteur
 /// aujourd'hui, EA-BR-14), rien ne change.
 class FoyerPage extends ConsumerWidget {
   /// Cree la page.
@@ -317,11 +317,10 @@ class FoyerPage extends ConsumerWidget {
           ),
         ),
         // Garde pour le titulaire adulte aussi (planche 2.3 G, decision E6).
-        // Le serveur ne dit pas encore s'il a deja son profil eleve, ni ne
-        // sait le creer (DB-FOY-01, EA-BR-19) : la page dit qu'elle est
-        // indisponible, avec les textes de l'adulte quand l'appelant les
-        // demande (`CreerMonProfilIndisponible.titulaireAdulte`). « A propos du forfait famille » le precede, en lien
-        // d'information au pied de la page (planche 2.1 P, decision E6).
+        // Il ouvre `CreerMonProfilPage` (N2, FA5), qui lit l'existence du
+        // profil et le cree (`creer_profil_eleve_titulaire`, 0052).
+        // « A propos du forfait famille » le precede, en lien d'information
+        // au pied de la page (planche 2.1 P, decision E6).
         Ecart.vXxl,
         if (adulte != null) ...<Widget>[
           Align(
