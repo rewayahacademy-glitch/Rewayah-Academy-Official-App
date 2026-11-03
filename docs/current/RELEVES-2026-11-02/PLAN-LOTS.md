@@ -242,3 +242,19 @@ Estimation : environ 14 jours-agent, soit 3 jours et demi à 4 agents ; avec la 
 - **Fusion :** un lot sans texte nouveau passe dès qu'il est vert ; les lots avec texte passent un par un.
 - **À faire avant toute hausse :** `verifier_branchement` et la présence des captures R3 dans `ci.yml` (collage du directeur, page du pilote) ; lot outil `libelles_sources.json` sans conflit (S).
 - **Les 17 chantiers sans serveur** (finance du comptable, communauté, recherche, B3.3, salle 3, CAND-04, B2.4, etc.) commencent après la file du §7, pas en parallèle.
+
+## 9. Fiche NIV1 : le niveau demandé une seule fois (garde-cap, 02/11/2026 vers 18:15 UTC ; acceptée par le pilote à 18:19)
+
+**Constat du directeur** (02/11, chat, sans capture) : « quand on ajoute un profil (en tant que tuteur) il y a des questions pour déterminer le niveau mais qui ne mènent nulle part (deux types de questionnaires je pense)… c'est lorsque tu rentres dans les paramètres que tu les trouves, et tu peux les zapper ».
+
+**Code relevé** (main 8da94f560) : questionnaire 1, `/commencer` (`inscrire_titulaire` → `candidature_apprenants`, puis `lier_apprenant_profil` copie le niveau dans `student_profiles.niveau_declare`, `admission_lot_c.sql:562-565`) ; questionnaire 2, le « Questionnaire » de `ParcoursOffresPage` (`/tuteur/parcours/:eleveId`), qui repose tout parce que `lier_apprenant_profil` ne pose pas `onboarding_fait_le`.
+
+**Règles écrites** : `programme-rewayah/SKILL.md:21` (le profil répond une fois, à l'inscription) ; `FICHE-ONBOARDING-2026-10-29.md:53` (le Parcours s'ouvre sur les horaires) ; `DECISION-CLASSES-SIMULTANEES-2026-10-10.md:14` (niveau dans la clé de regroupement) ; REGISTRE D0 (diagnostic oral choisi par la direction, 03/11).
+
+**Lot**, sans toucher la zone gardée `parcours_offres` :
+1. `lier_apprenant_profil` pose `onboarding_fait_le` quand niveau, objectif et langue sont repris (le Parcours saute alors les questions sans être modifié ; à vérifier en lecture).
+2. Ajout d'un profil (zone foyer, après N2) : l'enfant sans niveau répond aux mêmes questions dans l'ajout ; enregistrement par `enregistrer_profil_apprentissage` et `onboarding_fait_le` posé.
+3. Le niveau d'un adulte (« pour moi », parent qui suit des cours) quitte la demande vers `student_profiles`.
+4. UX-032 (« 5 ans » accepté), même zone.
+5. Rien à changer dans `parcours_offres` ; sinon, modification de zone gardée portée au directeur.
+6. Migration `20261106000000`. R3 : enfant venu de la demande → Parcours sur les horaires ; enfant ajouté → questions dans l'ajout, puis horaires.
