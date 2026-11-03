@@ -1057,6 +1057,7 @@ class _Traductions$connexion$ar extends Traductions$connexion$fr {
 	@override String get inscriptionFermee => 'التسجيل يتم حاليًا بدعوة فقط. هل قدّمتم ترشحكم للتدريس؟ ستصلكم منا رسالة شخصية عبر البريد الإلكتروني: لا شيء مطلوب منكم. هل أنتم أسرة؟ يُعاد فتح التسجيل قريبًا.';
 	@override String get erreurTropTot => 'أُرسل رابط للتو. انتظر قليلًا قبل طلب رابط آخر.';
 	@override String get horsLigne => 'أنت غير متصل: لا يمكن إرسال الرابط الآن.';
+	@override late final _Traductions$connexion$controle$ar controle = _Traductions$connexion$controle$ar._(_root);
 	@override String get probleme => 'انتهت صلاحية الرابط أو لم يصل؟';
 	@override late final _Traductions$connexion$recuperation$ar recuperation = _Traductions$connexion$recuperation$ar._(_root);
 	@override late final _Traductions$connexion$feuilleAppareil$ar feuilleAppareil = _Traductions$connexion$feuilleAppareil$ar._(_root);
@@ -7084,6 +7085,19 @@ class _Traductions$appareils$emetteur$ar extends Traductions$appareils$emetteur$
 	@override late final _Traductions$appareils$emetteur$dejaActif$ar dejaActif = _Traductions$appareils$emetteur$dejaActif$ar._(_root);
 	@override late final _Traductions$appareils$emetteur$horsLigne$ar horsLigne = _Traductions$appareils$emetteur$horsLigne$ar._(_root);
 	@override late final _Traductions$appareils$emetteur$erreur$ar erreur = _Traductions$appareils$emetteur$erreur$ar._(_root);
+}
+
+// Path: connexion.controle
+class _Traductions$connexion$controle$ar extends Traductions$connexion$controle$fr {
+	_Traductions$connexion$controle$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'التحقق الأمني';
+	@override String get chargement => 'جارٍ التحقق الأمني.';
+	@override String get erreur => 'لم يكتمل التحقق. أعد المحاولة.';
+	@override String get horsLigne => 'لا يمكن إجراء التحقق الآن. أعد المحاولة عند عودة الاتصال.';
 }
 
 // Path: connexion.recuperation
@@ -27601,6 +27615,10 @@ extension on TraductionsAr {
 			'connexion.inscriptionFermee' => 'التسجيل يتم حاليًا بدعوة فقط. هل قدّمتم ترشحكم للتدريس؟ ستصلكم منا رسالة شخصية عبر البريد الإلكتروني: لا شيء مطلوب منكم. هل أنتم أسرة؟ يُعاد فتح التسجيل قريبًا.',
 			'connexion.erreurTropTot' => 'أُرسل رابط للتو. انتظر قليلًا قبل طلب رابط آخر.',
 			'connexion.horsLigne' => 'أنت غير متصل: لا يمكن إرسال الرابط الآن.',
+			'connexion.controle.libelle' => 'التحقق الأمني',
+			'connexion.controle.chargement' => 'جارٍ التحقق الأمني.',
+			'connexion.controle.erreur' => 'لم يكتمل التحقق. أعد المحاولة.',
+			'connexion.controle.horsLigne' => 'لا يمكن إجراء التحقق الآن. أعد المحاولة عند عودة الاتصال.',
 			'connexion.probleme' => 'انتهت صلاحية الرابط أو لم يصل؟',
 			'connexion.recuperation.titre' => 'استعادة الوصول',
 			'connexion.recuperation.intro' => 'لا كلمة مرور لإعادة تعيينها: أدخل عنوانك، ونرسل لك رابط دخول جديدًا.',
@@ -27786,12 +27804,12 @@ extension on TraductionsAr {
 			'consentement.comment.visitesSansDuree' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا زيارة في الحصة.', one: 'زيارة قصيرة واحدة في كل حصة.', two: 'زيارتان قصيرتان في كل حصة.', few: '⁨${n}⁩ زيارات قصيرة في كل حصة.', many: '⁨${n}⁩ زيارةً قصيرة في كل حصة.', other: '⁨${n}⁩ زيارة قصيرة في كل حصة.', ), 
 			'consentement.comment.parParent' => 'يسري هذا العدد على كل وليّ أمر، سواء جمعت الحصة طفلًا واحدًا من أطفاله أو أكثر.',
 			'consentement.comment.ecourtee' => 'الزيارة التي تُغادَر قبل نهايتها تُحتسب: لا يبقى إلا التالية، حتى الأخيرة.',
+			_ => null,
+		} ?? switch (path) {
 			'consentement.comment.ecouter' => 'تسمع المعلم والطلاب الذين يتكلمون، ومنهم طفلك.',
 			'consentement.comment.sansMicro' => 'يبقى الميكروفون والكاميرا معطَّلين أثناء الزيارة.',
 			'consentement.comment.valeursIndisponibles' => 'يظهر عدد الزيارات ومدتها من فصل طفلك، حسب قواعد فصله.',
 			'consentement.comment.fermee' => 'زيارات المتابعة غير مفتوحة لهذا الفصل.',
-			_ => null,
-		} ?? switch (path) {
 			'consentement.compte.intro' => 'أضافت الأكاديمية إلى شروطها فقرة عن زيارات أولياء الأمور. لا يُعدّ شيء مقبولًا ما لم تقبله أنت.',
 			'consentement.compte.accepteLe' => ({required Object date}) => 'قبلت هذه الشروط في ⁨${date}⁩.',
 			'consentement.compte.merci' => 'شكرًا، حُفظت موافقتك.',
@@ -28300,12 +28318,12 @@ extension on TraductionsAr {
 			'dossiers.refus.abandonner' => 'تخلٍّ',
 			'dossiers.validation.titre' => 'اعتماد هذا الملف؟',
 			'dossiers.validation.corpsActivation' => ({required Object nom}) => 'سيُعتمد ملف ⁨${nom}⁩. سيتمكن حسابه من الوصول إلى مساحته.',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.validation.corpsDocumentaire' => ({required Object nom}) => 'سيُعتمد ملف ⁨${nom}⁩. تبقى شروط الوصول الأخرى سارية.',
 			'dossiers.validation.indisponible' => 'الاعتماد غير متاح الآن.',
 			'dossiers.validation.envoi' => 'جارٍ الاعتماد…',
 			'dossiers.validation.erreur' => 'تعذّر اعتماد الملف.',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.validation.horsLigne' => 'أنت غير متصل. لم يُرسل الاعتماد.',
 			'dossiers.validation.inconnu' => 'نتيجة الاعتماد غير مؤكَّدة بعد.',
 			'dossiers.validation.plusPret' => 'هذا الملف لم يعد جاهزًا للاعتماد.',
@@ -28814,12 +28832,12 @@ extension on TraductionsAr {
 			'recherche.domaines.controle' => 'المراقبة',
 			'recherche.domaines.finances' => 'المالية',
 			'recherche.domaines.fils' => 'المحادثات',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.domaines.remplacements' => 'الاستبدالات',
 			'recherche.voirDavantage' => 'عرض المزيد',
 			'recherche.pageSuivante' => 'جارٍ تحميل مزيد من النتائج…',
 			'recherche.pageEnEchec' => 'تعذّر تحميل النتائج التالية.',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.etats.vide.titre' => 'لا نتائج لهذا البحث.',
 			'recherche.etats.vide.phrase' => 'جرّب كلمة أخرى أو عامل تصفية.',
 			'recherche.etats.vide.action' => 'تعديل البحث',
@@ -29328,12 +29346,12 @@ extension on TraductionsAr {
 			'recrutement.talents.tuile.facultatif' => 'اختياري. لا يغيّر ذلك شيئًا في طلب ترشحك للتدريس.',
 			'recrutement.talents.tuile.enregistre' => 'إجاباتك محفوظة. يمكنك تعديلها.',
 			'recrutement.talents.tuile.enregistreClose' => 'إجاباتك محفوظة. يمكنك سحبها.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.talents.intro.texte' => 'تنمو الأكاديمية، وستحتاج إلى من يساعدها في التنظيم ومرافقة الأسر ومسك الحسابات والتعريف بها. إن كان لديك ما تُتقنه غير التدريس فأخبرنا به: سنتواصل معك أولًا قبل نشر أي إعلان.',
 			'recrutement.talents.intro.facultatif.titre' => 'اختياري',
 			'recrutement.talents.intro.facultatif.texte' => 'لا يغيّر ذلك شيئًا في طلب ترشحك للتدريس.',
 			'recrutement.talents.intro.usage.titre' => 'ماذا نفعل بإجاباتك',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.intro.usage.texte' => 'تُستعمل إجاباتك فقط لاقتراح مهمة عليك في الأكاديمية. تقرؤها الإدارة وحدها.',
 			'recrutement.talents.intro.liberte.titre' => 'القرار بيدك',
 			'recrutement.talents.intro.liberte.texte' => 'يمكنك تعديل إجاباتك أو سحبها متى شئت، وسحب الموافقة التي تتيح التواصل معك.',
@@ -29842,12 +29860,12 @@ extension on TraductionsAr {
 			'avis.admin.liens.libelleAide' => 'مثال: أسر أكتوبر 2026.',
 			'avis.admin.liens.libelleErreur' => 'أعطِ الرابط اسمًا.',
 			'avis.admin.liens.jours' => 'المدة بالأيام',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.liens.joursAide' => '90 افتراضيًا و365 على الأكثر.',
 			'avis.admin.liens.joursErreur' => 'اكتب عدد أيام من 1 إلى 365.',
 			'avis.admin.liens.max' => 'الحد الأقصى للآراء',
 			'avis.admin.liens.maxAide' => '200 افتراضيًا و2000 على الأكثر.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.liens.maxErreur' => 'اكتب عددًا من الآراء من 1 إلى 2000.',
 			'avis.admin.liens.creer' => 'إنشاء الرابط',
 			'avis.admin.liens.echecCreation' => 'لم يتأكد إنشاء الرابط. انظر قائمة الروابط قبل أن تحاول من جديد.',

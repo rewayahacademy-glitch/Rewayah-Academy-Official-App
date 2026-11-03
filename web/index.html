@@ -280,6 +280,11 @@
       }
     })();
   </script>
+  <!-- ANTI-ROBOT (03/11/2026, fiche PLAN-LOTS §13) : le controle Cloudflare
+       Turnstile, rendu par l'application seulement quand la cle publique du
+       site est reglee (securite.turnstile_cle_site). Sans cle, le script se
+       charge et ne fait rien. -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

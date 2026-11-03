@@ -7,12 +7,14 @@ import 'package:supabase_flutter/supabase_flutter.dart'
     show AuthException, AuthRetryableFetchException;
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/auth/anti_robot.dart';
 import '../../core/auth/service_auth.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/controle_anti_robot.dart';
 import 'coquille_entree.dart';
 
 /// Pourquoi l'usager arrive sur la recuperation d'acces.
@@ -93,6 +95,10 @@ enum IssueEnvoiLien {
   /// up » coupe) : l'adresse n'a pas de compte et le serveur n'en cree pas.
   inscriptionFermee,
 
+  /// Le controle anti-robot n'a pas abouti : Supabase a refuse le jeton
+  /// (`captcha_failed`), ou l'ecran n'en a pas obtenu (ANTI-ROBOT, 03/11).
+  verificationNonAboutie,
+
   /// Tout autre echec.
   erreur,
 }
@@ -118,6 +124,10 @@ IssueEnvoiLien issueEchecEnvoi(Object erreur) {
     if (estInscriptionFermee(code: code, message: erreur.message)) {
       return IssueEnvoiLien.inscriptionFermee;
     }
+    if (code == 'captcha_failed' ||
+        erreur.message.toLowerCase().contains('captcha')) {
+      return IssueEnvoiLien.verificationNonAboutie;
+    }
     return IssueEnvoiLien.erreur;
   }
   final String texte = erreur.toString();
@@ -134,6 +144,7 @@ String phraseEchecEnvoi(IssueEnvoiLien issue) => switch (issue) {
   IssueEnvoiLien.tropTot => t.connexion.erreurTropTot,
   IssueEnvoiLien.horsLigne => t.connexion.horsLigne,
   IssueEnvoiLien.inscriptionFermee => t.connexion.inscriptionFermee,
+  IssueEnvoiLien.verificationNonAboutie => t.connexion.controle.erreur,
   IssueEnvoiLien.erreur => t.connexion.erreurEnvoi,
 };
 
@@ -171,9 +182,20 @@ class _RecuperationPageState extends ConsumerState<RecuperationPage> {
   String? _erreurChamp;
   String? _erreurEnvoi;
 
+  /// Le controle anti-robot de l'ecran (ANTI-ROBOT, 03/11/2026) : pose
+  /// seulement quand une cle publique est reglee.
+  late final ControleurAntiRobot _controle;
+
+  @override
+  void initState() {
+    super.initState();
+    _controle = ref.read(fabriqueControleurAntiRobotProvider)();
+  }
+
   @override
   void dispose() {
     _courriel.dispose();
+    _controle.dispose();
     super.dispose();
   }
 
@@ -207,8 +229,18 @@ class _RecuperationPageState extends ConsumerState<RecuperationPage> {
       _erreurChamp = null;
       _erreurEnvoi = null;
     });
+    final bool controlePose = ref.read(cleTurnstileProvider).value != null;
     try {
-      await ref.read(serviceAuthProvider).envoyerLienCourriel(_courriel.text);
+      final String? jeton = controlePose
+          ? await _controle.jetonPourEnvoi()
+          : null;
+      if (controlePose && jeton == null) {
+        if (mounted) setState(() => _erreurEnvoi = t.connexion.controle.erreur);
+        return;
+      }
+      await ref
+          .read(serviceAuthProvider)
+          .envoyerLienCourriel(_courriel.text, jetonControle: jeton);
       if (mounted) {
         setState(() {
           _envoye = true;
@@ -222,6 +254,8 @@ class _RecuperationPageState extends ConsumerState<RecuperationPage> {
         );
       }
     } finally {
+      // Le jeton est use : un autre est demande.
+      if (controlePose) _controle.apresEnvoi();
       if (mounted) {
         setState(() => _envoi = false);
       }
@@ -233,6 +267,14 @@ class _RecuperationPageState extends ConsumerState<RecuperationPage> {
   @override
   Widget build(BuildContext context) {
     final MotifRecuperation? motif = _motif(context);
+    final String? cle = ref.watch(cleTurnstileProvider).value;
+    final Widget? controle = cle == null
+        ? null
+        : ControleAntiRobot(
+            cle: cle,
+            controleur: _controle,
+            envoiEnCours: _envoi,
+          );
 
     // Meme habillage que la connexion (parcours d'entree, 25/10/2026, §3 D) ;
     // le retour vers la connexion reste visible a chaque etat.
@@ -241,6 +283,7 @@ class _RecuperationPageState extends ConsumerState<RecuperationPage> {
       formulaire: (bool bureau) => _envoye
           ? _Envoye(
               bureau: bureau,
+              controle: controle,
               courriel: _courriel.text.trim(),
               renvoye: _renvoye,
               envoi: _envoi,
@@ -255,6 +298,7 @@ class _RecuperationPageState extends ConsumerState<RecuperationPage> {
             )
           : _Saisie(
               bureau: bureau,
+              controle: controle,
               motif: motif,
               courriel: _courriel,
               erreurChamp: _erreurChamp,
@@ -290,6 +334,7 @@ class _PhraseErreur extends StatelessWidget {
 class _Saisie extends StatelessWidget {
   const _Saisie({
     required this.bureau,
+    required this.controle,
     required this.motif,
     required this.courriel,
     required this.erreurChamp,
@@ -300,6 +345,9 @@ class _Saisie extends StatelessWidget {
   });
 
   final bool bureau;
+
+  /// Le controle anti-robot, ou nul (aucun controle : l'ecran d'avant).
+  final Widget? controle;
   final MotifRecuperation? motif;
   final TextEditingController courriel;
   final String? erreurChamp;
@@ -367,6 +415,7 @@ class _Saisie extends StatelessWidget {
           Ecart.vMd,
           _PhraseErreur(erreurEnvoi!),
         ],
+        if (controle != null) ...<Widget>[Ecart.vLg, controle!],
         Ecart.vLg,
         BoutonEntree(
           bureau: bureau,
@@ -391,6 +440,7 @@ class _Saisie extends StatelessWidget {
 class _Envoye extends StatelessWidget {
   const _Envoye({
     required this.bureau,
+    required this.controle,
     required this.courriel,
     required this.renvoye,
     required this.envoi,
@@ -401,6 +451,9 @@ class _Envoye extends StatelessWidget {
   });
 
   final bool bureau;
+
+  /// Le controle anti-robot, ou nul (aucun controle : l'ecran d'avant).
+  final Widget? controle;
   final String courriel;
   final bool renvoye;
   final bool envoi;
@@ -438,6 +491,7 @@ class _Envoye extends StatelessWidget {
         Ecart.vMd,
         Text(t.connexion.recuperation.envoyeEncart, style: discret),
         if (erreur != null) ...<Widget>[Ecart.vMd, _PhraseErreur(erreur!)],
+        if (controle != null) ...<Widget>[Ecart.vXxl, controle!],
         Ecart.vXxl,
         BoutonEntree(
           bureau: bureau,

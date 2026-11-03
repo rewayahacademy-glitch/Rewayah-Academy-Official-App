@@ -41,10 +41,14 @@ class _AuthLente implements ServiceAuth {
   Future<void> connexionGoogle() async {}
 
   @override
-  Future<void> connexionMotDePasse(String courriel, String motDePasse) async {}
+  Future<void> connexionMotDePasse(
+    String courriel,
+    String motDePasse, {
+    String? jetonControle,
+  }) async {}
 
   @override
-  Future<void> envoyerLienCourriel(String courriel) async {}
+  Future<void> envoyerLienCourriel(String courriel, {String? jetonControle}) async {}
 }
 
 /// Une authentification dont la fermeture locale echoue.
@@ -56,10 +60,14 @@ class _AuthEnEchec implements ServiceAuth {
   Future<void> connexionGoogle() async {}
 
   @override
-  Future<void> connexionMotDePasse(String courriel, String motDePasse) async {}
+  Future<void> connexionMotDePasse(
+    String courriel,
+    String motDePasse, {
+    String? jetonControle,
+  }) async {}
 
   @override
-  Future<void> envoyerLienCourriel(String courriel) async {}
+  Future<void> envoyerLienCourriel(String courriel, {String? jetonControle}) async {}
 }
 
 /// Un depot de cahiers en memoire.
