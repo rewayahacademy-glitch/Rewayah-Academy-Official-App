@@ -411,6 +411,11 @@ class FeuilleDemandeAdmission extends ConsumerStatefulWidget {
   /// Appele apres un geste accepte par le serveur (la liste se relit).
   final VoidCallback onFait;
 
+  /// La phrase qui dit ce qui a ete fait, apres un geste (tests).
+  static const ValueKey<String> clePhraseFaite = ValueKey<String>(
+    'admission-fait',
+  );
+
   /// Relit la demande au serveur apres un geste (ADM-UX, UX-006) : la boite
   /// dit alors l'etat relu, jamais celui d'avant le geste. Sans elle, ou si la
   /// relecture echoue, la ligne d'etat disparait plutot que de mentir.
@@ -440,8 +445,15 @@ class _FeuilleDemandeAdmissionState
   /// L'etat relu apres un geste ; `null` tant qu'il n'est pas relu.
   EtatDemandeAdmission? _etatRelu;
 
+  /// ADM-UX-bis (03/11/2026, WCAG 2.4.3 et 4.1.3) : apres un geste, le
+  /// bouton qui avait le focus disparait ; le focus va sur la phrase qui dit
+  /// ce qui a ete fait (lue aux lecteurs d'ecran), et reste dans la boite :
+  /// Echap la ferme de nouveau.
+  final FocusNode _focusFait = FocusNode(debugLabel: 'admission-fait');
+
   @override
   void dispose() {
+    _focusFait.dispose();
     _motif.dispose();
     _sujet.dispose();
     _message.dispose();
@@ -535,6 +547,9 @@ class _FeuilleDemandeAdmissionState
       _cles.remove(v);
       if (v != _Vue.contacter) _gesteFait = true;
       if (mounted) setState(() => _vue = _Vue.resume);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _focusFait.requestFocus();
+      });
       final Future<DemandeAdmission?> Function()? relire = widget.relireDemande;
       if (relire == null) {
         widget.onFait();
@@ -594,9 +609,16 @@ class _FeuilleDemandeAdmissionState
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           if (_fait case final String fait) ...<Widget>[
-            Semantics(
-              liveRegion: true,
-              child: Text(fait, style: textes.bodyMedium),
+            Focus(
+              focusNode: _focusFait,
+              child: Semantics(
+                liveRegion: true,
+                child: Text(
+                  fait,
+                  key: FeuilleDemandeAdmission.clePhraseFaite,
+                  style: textes.bodyMedium,
+                ),
+              ),
             ),
             Ecart.vLg,
           ],

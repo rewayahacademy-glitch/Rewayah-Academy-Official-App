@@ -709,4 +709,27 @@ void main() {
       });
     }
   });
+
+  // ADM-UX-bis (03/11/2026) : apres « Accepter », le bouton disparait ; le
+  // focus va sur la phrase faite, et Echap ferme la boite (constat du rejeu
+  // du 03/11 : le focus tombait sur la page, Echap restait sans effet).
+  group('ADM-UX-bis', () {
+    for (final double largeur in <double>[390, 1440]) {
+      testWidgets('Echap ferme la boite apres « Accepter » '
+          '(${largeur.toInt()})', (tester) async {
+        await _monter(tester, _port(), largeur: largeur);
+        await _ouvrir(tester);
+        await _toucher(tester, 'admission-accepter');
+        expect(
+          find.byKey(FeuilleDemandeAdmission.clePhraseFaite),
+          findsOneWidget,
+        );
+        final FocusNode? focus = FocusManager.instance.primaryFocus;
+        expect(focus?.debugLabel, 'admission-fait');
+        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+        await laisser(tester);
+        expect(find.byType(FeuilleDemandeAdmission), findsNothing);
+      });
+    }
+  });
 }

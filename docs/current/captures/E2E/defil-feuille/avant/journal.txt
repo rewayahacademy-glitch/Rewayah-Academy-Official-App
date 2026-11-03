@@ -1,0 +1,13 @@
+== DEFIL-FEUILLE (avant) : 2026-11-03T11:23:09.942Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+  amorce : classe « E2E Defil An-Nour 989942 » ; 200 eleves proposables sur la pile
+  OK au moins six eleves proposables (la liste en montre six)
+  OK 1440 : la classe est dans la liste
+  OK 1440 : la surface « Ajouter un élève » est ouverte
+  1440 : titre 56 puis 56 ; 6 cartes vues : Rayan1 L3E2E15133. RA‑26‑1576 | Rayan1 L3E2E15133. RA‑26‑6463 | Rayan1 L3E2E15133. RA‑26‑3058 | Rayan1 L3E2E16104. RA‑26‑6820 | Rayan1 L3E2E16104. RA‑26‑1851 | Rayan1 L3E2E16104. RA‑26‑8312
+  OK 1440 : la boite courte fermee, rien n'est envoye (classe toujours active)
+  OK 390 : la classe est dans la liste
+  OK 390 : la surface « Ajouter un élève » est ouverte
+  390 : titre 36 puis 36 ; 6 cartes vues : Rayan1 L3E2E15133. RA‑26‑1576 | Rayan1 L3E2E15133. RA‑26‑6463 | Rayan1 L3E2E15133. RA‑26‑3058 | Rayan1 L3E2E16104. RA‑26‑6820 | Rayan1 L3E2E16104. RA‑26‑1851 | Rayan1 L3E2E16104. RA‑26‑8312
+  OK 390 : la boite courte fermee, rien n'est envoye (classe toujours active)
+Releves : {"390":{"titreAvant":36,"titreApres":36,"cartesVues":6},"1440":{"titreAvant":56,"titreApres":56,"cartesVues":6}}
+== DEFIL-FEUILLE (avant) : vert
