@@ -384,3 +384,12 @@ export async function connecterParLien(page, courriel) {
   await page.waitForTimeout(6000);
   await activerSemantique(page);
 }
+
+/// REJEU-E2E (03/11/2026) : un onglet de la direction (« Personnes »,
+/// « Opérations »…). Au bureau il est visible ; au telephone il est derriere
+/// « Menu ». Sans changement au bureau.
+export async function ongletDirection(page, nom) {
+  const visible = await trouver(page, `${nom} Onglet`, { delai: 2000 });
+  if (!visible) await cliquer(page, /^Menu$/, { pause: 1200 });
+  await cliquer(page, `${nom} Onglet`);
+}

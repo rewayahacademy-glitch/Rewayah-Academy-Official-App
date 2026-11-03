@@ -6,7 +6,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { parcours, ouvrir, connecter, cliquer, trouver, trouverTexte, libelles, taper,
-  activerSemantique, sql, COMPTES, MAILPIT, TRAVAIL } from './commun.mjs';
+  activerSemantique, sql, COMPTES, MAILPIT, TRAVAIL, ongletDirection } from './commun.mjs';
 
 const tampon = new Date().toISOString().slice(5, 16).replace(/[-T:]/g, '');
 const FAMILLE = { courriel: `e2e-famille-${tampon}@example.com`, enfant: `Yanis${tampon}`,
@@ -152,7 +152,7 @@ try {
   // 4. Direction : Personnes, onglet « Demandes », « Accepter la demande … ».
   const d = await p.contexte('direction');
   await connecter(d.page, COMPTES.direction);
-  await cliquer(d.page, 'Personnes Onglet');
+  await ongletDirection(d.page, 'Personnes');
   await cliquer(d.page, /^Sections de la page/);
   await cliquer(d.page, /^Demandes/);
   await p.capture(d, 'demandes');

@@ -4,7 +4,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { parcours, connecter, cliquer, trouver, trouverTexte, libelles, taper, sql, nettoyerClassesE2E, allerOnglet,
-  COMPTES, TRAVAIL } from './commun.mjs';
+  COMPTES, TRAVAIL, ongletDirection } from './commun.mjs';
 import { horaireProche, autreJour } from './horaire.mjs';
 
 const echap = (x) => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -25,7 +25,7 @@ try {
   const d = await p.contexte('direction');
   await connecter(d.page, COMPTES.direction);
   await p.capture(d, 'accueil');
-  await cliquer(d.page, 'Opérations Onglet');
+  await ongletDirection(d.page, 'Opérations');
   await cliquer(d.page, /^Classes$/);
   await p.capture(d, 'classes');
   await cliquer(d.page, 'Nouvelle classe');

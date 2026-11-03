@@ -8,7 +8,7 @@
 // La piece d'un enseignant est relue par un membre du meme genre : la direction
 // de test est une femme, la candidate aussi.
 import { parcours, ouvrir, connecter, cliquer, trouver, trouverTexte, libelles, taper,
-  dernierLien, activerSemantique, sql, COMPTES, DEPOT } from './commun.mjs';
+  dernierLien, activerSemantique, sql, COMPTES, DEPOT, ongletDirection } from './commun.mjs';
 import path from 'node:path';
 
 const tampon = new Date().toISOString().slice(5, 16).replace(/[-T:]/g, '');
@@ -17,7 +17,7 @@ const PIECE = path.join(DEPOT, 'tool/e2e/piece_factice.png');
 const p = await parcours('Parcours 1 : la direction valide un enseignant', 'parcours-1');
 
 async function ouvrirSection(page, section) {
-  await cliquer(page, 'Personnes Onglet');
+  await ongletDirection(page, 'Personnes');
   await cliquer(page, /^Sections de la page/);
   await cliquer(page, new RegExp(`^${section}`), { pause: 2000 });
 }

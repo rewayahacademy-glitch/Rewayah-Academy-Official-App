@@ -1,9 +1,9 @@
 // Gestes de la direction sur les classes (Operations, Classes), partages par
 // les parcours 2, 4 et 8.
-import { cliquer, trouver, taper, libelles, trouverTexte } from './commun.mjs';
+import { cliquer, trouver, taper, libelles, trouverTexte, ongletDirection } from './commun.mjs';
 
 export async function ouvrirClasses(page) {
-  await cliquer(page, 'Opérations Onglet');
+  await ongletDirection(page, 'Opérations');
   await cliquer(page, /^Classes$/);
 }
 
