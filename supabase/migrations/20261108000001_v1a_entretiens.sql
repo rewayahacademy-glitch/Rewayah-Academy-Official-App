@@ -945,101 +945,45 @@ $jeton$;
 
 
 -- ---------------------------------------------------------------------------
--- 8. Les capacites des candidatures (copie de la definition en vigueur)
+-- 8. Les capacites des candidatures (retouche par ancrage du corps en vigueur)
 -- ---------------------------------------------------------------------------
-CREATE OR REPLACE FUNCTION public.capacites_candidatures()
-RETURNS jsonb
-LANGUAGE plpgsql
-STABLE
-SECURITY DEFINER
-SET search_path = ''
-AS $function$
+-- Comme le jeton : jamais une copie entiere. La salle 3 (20261108300000) a
+-- deja retouche ce corps en production ('validerPiece', v_decider) ; une copie
+-- l'effacerait. Chaque ancre se trouve une fois et une seule, sinon la
+-- migration s'arrete. Juste dans les deux ordres (8000001 avant ou apres
+-- 8300000) : aucune ancre ne touche validerPiece.
+DO $capacites$
 DECLARE
-  v_admin boolean;
-  v_genre public.gender;
-  v_super boolean;
-  v_contact boolean;
-  v_lire boolean;
-  v_decider boolean;
-  v_aal2 boolean;
-BEGIN
-  IF NOT coalesce(auth.uid() IS NOT NULL, false) THEN
-    RAISE EXCEPTION 'Acces refuse' USING ERRCODE = '42501';
-  END IF;
-  v_admin := coalesce(public.app_role() = 'admin' AND public.app_account_valid(), false);
-  IF v_admin THEN
-    SELECT l.genre, l.super_admin, l.contact INTO v_genre, v_super, v_contact
-    FROM private.cand_lecteur() l;
-  END IF;
-  v_super := v_admin AND coalesce(v_super, false);
-  v_lire := v_admin AND (v_genre IS NOT NULL OR v_super);
-  -- CAND-L2A2 (D13) : un geste ne vaut que de son cote ; l'exception
-  -- super-admin reste une exception de lecture.
-  v_decider := v_admin AND v_genre IS NOT NULL;
-  -- CAND-L3 : l'import des formulaires est celui du super-admin en double verification (aal2, exigee en base).
-  v_aal2 := coalesce(public.app_aal() = 'aal2', false);
-  RETURN pg_catalog.jsonb_build_object(
-    'peutLire', v_lire,
-    'peutVoirContact', v_lire AND coalesce(v_contact, false),
-    'peutLireHorsGenre', v_super,
-    'genreLecteurConnu', v_admin AND v_genre IS NOT NULL,
-    'peutDecider', v_decider,
-    'peutImporter', v_super AND v_aal2,
-    'doubleVerificationRequise', v_super AND NOT v_aal2,
-    'peutMenerEntretien', v_decider,
+  v_def text := pg_catalog.pg_get_functiondef('public.capacites_candidatures()'::pg_catalog.regprocedure);
+  v_retouches text[][] := ARRAY[
+    ARRAY[$a$    'peutMenerEntretien', false,$a$,
+          $a$    'peutMenerEntretien', v_decider,
     -- V1-a : la coche fondateur (direction active), le choix des participants
     -- et la regle en vigueur (NULL : regle desactivee).
     'peutPoserFondateur', v_admin,
     'peutChoisirParticipants', v_decider,
     'fondateursExiges', CASE WHEN v_decider THEN pg_catalog.to_jsonb(private.entretiens_fondateurs_exiges())
-                             ELSE 'null'::jsonb END,
-    'peutEcrireReferentiel', coalesce(private.paiement_gestionnaire(), false),
-    'gestes', pg_catalog.jsonb_build_object(
-      'demanderComplement', v_decider,
-      'cloreComplement', v_decider,
-      'admettreVerifications', v_decider,
-      'confirmerMoyenPaiement', v_decider,
-      'infirmerMoyenPaiement', v_decider,
-      'mettreEnPause', v_decider,
-      'leverPause', v_decider,
-      'refuser', v_decider,
-      'consignerRetrait', v_decider,
-      'rouvrir', v_decider,
-      'definirResponsable', v_decider,
-      'agirEnLot', v_decider,
-      'inviter', false,
-      'consignerPrevenu', v_decider,
-      'garderPourSuivi', v_decider,
-      'rattacher', v_decider,
-      'planifierEntretien', v_decider,
-      'consignerEntretien', v_decider,
-      'pieceACorriger', false,
-      'validerPiece', false,
-      'restreindre', false,
-      'leverRestriction', false,
-      'noterIndisponibilite', false,
-      'leverIndisponibilite', false),
-    'gestesGroupables', CASE WHEN v_decider THEN '["mettreEnPause", "leverPause", "refuser"]'::jsonb
-                             ELSE '[]'::jsonb END,
-    'listes', pg_catalog.jsonb_build_object(
-      'modelesRefus', CASE WHEN v_decider THEN coalesce((
-        SELECT pg_catalog.jsonb_agg(m.code ORDER BY m.rang) FROM private.candidature_modeles_message m
-         WHERE m.usage = 'refus' AND m.actif), '[]'::jsonb) ELSE '[]'::jsonb END,
-      'modelesPause', CASE WHEN v_decider THEN coalesce((
-        SELECT pg_catalog.jsonb_agg(m.code ORDER BY m.rang) FROM private.candidature_modeles_message m
-         WHERE m.usage = 'pause' AND m.actif), '[]'::jsonb) ELSE '[]'::jsonb END,
-      'complementSalleExamen', CASE WHEN v_decider
-        THEN pg_catalog.to_jsonb(private.candidature_complement_codes('prequalification', 'enseignant'))
-        ELSE '[]'::jsonb END,
-      'complementSalleVerification', CASE WHEN v_decider
-        THEN pg_catalog.to_jsonb(private.candidature_complement_codes('verifications', 'enseignant'))
-        ELSE '[]'::jsonb END,
-      'canauxRetrait', CASE WHEN v_decider THEN '["conversation", "courriel"]'::jsonb ELSE '[]'::jsonb END,
-      'codesClotureComplement', CASE WHEN v_decider THEN '["complement_clos"]'::jsonb ELSE '[]'::jsonb END,
-      'canauxPrevenu', CASE WHEN v_decider THEN '["whatsapp"]'::jsonb ELSE '[]'::jsonb END,
-      'modelesPrevenu', CASE WHEN v_decider THEN '["lien_inscription"]'::jsonb ELSE '[]'::jsonb END));
+                             ELSE 'null'::jsonb END,$a$],
+    ARRAY[$a$      'planifierEntretien', false,$a$,
+          $a$      'planifierEntretien', v_decider,$a$],
+    ARRAY[$a$      'consignerEntretien', false,$a$,
+          $a$      'consignerEntretien', v_decider,$a$]
+  ];
+  i integer;
+  v_n integer;
+BEGIN
+  FOR i IN 1 .. pg_catalog.array_length(v_retouches, 1) LOOP
+    v_n := (pg_catalog.length(v_def)
+            - pg_catalog.length(pg_catalog.replace(v_def, v_retouches[i][1], '')))
+           / pg_catalog.length(v_retouches[i][1]);
+    IF v_n <> 1 THEN
+      RAISE EXCEPTION 'capacites_candidatures : ancre % trouvee % fois au lieu de 1, migration a revoir', i, v_n;
+    END IF;
+    v_def := pg_catalog.replace(v_def, v_retouches[i][1], v_retouches[i][2]);
+  END LOOP;
+  EXECUTE v_def;
 END;
-$function$;
+$capacites$;
 
 DO $empreinte$
 DECLARE
@@ -1184,8 +1128,23 @@ BEGIN
      OR pg_catalog.pg_get_functiondef('public.autoriser_jeton_video(uuid,uuid,text,text)'::regprocedure)
           !~ '''candidat'', ''intervieweur'''
      OR pg_catalog.pg_get_functiondef('public.capacites_candidatures()'::regprocedure)
-          !~ 'peutChoisirParticipants' THEN
+          !~ 'peutChoisirParticipants'
+     OR pg_catalog.pg_get_functiondef('public.capacites_candidatures()'::regprocedure)
+          !~ '''planifierEntretien'', v_decider'
+     OR pg_catalog.pg_get_functiondef('public.capacites_candidatures()'::regprocedure)
+          !~ '''consignerEntretien'', v_decider' THEN
     RAISE EXCEPTION 'V1-a : une des trois fonctions retouchees n''a pas son ajout';
+  END IF;
+  -- La salle 3 (20261108300000) n'est jamais defaite : si elle est passee,
+  -- validerPiece suit toujours peutDecider ; sinon il est encore a faux.
+  IF pg_catalog.pg_get_functiondef('public.capacites_candidatures()'::regprocedure)
+       !~ '''validerPiece'', (v_decider|false)' THEN
+    RAISE EXCEPTION 'V1-a : validerPiece a disparu de capacites_candidatures';
+  END IF;
+  IF to_regprocedure('public.affectation_candidat(uuid)') IS NOT NULL
+     AND pg_catalog.pg_get_functiondef('public.capacites_candidatures()'::regprocedure)
+           !~ '''validerPiece'', v_decider' THEN
+    RAISE EXCEPTION 'V1-a : la salle 3 est installee mais validerPiece ne suit plus peutDecider';
   END IF;
   -- Aucune ligne n'emploie encore le nouveau role (il nait avec ce lot).
   IF EXISTS (SELECT 1 FROM public.session_participants sp WHERE sp.role::text = 'intervieweur') THEN

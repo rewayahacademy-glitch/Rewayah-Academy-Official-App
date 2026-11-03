@@ -178,10 +178,15 @@ import 'features/com_annonces/port_regles_audience.dart';
 import 'features/com_annonces/regles_audience_supabase.dart';
 import 'features/com_messages/messages_metier_supabase.dart';
 import 'features/com_messages/port_messages_metier.dart';
+import 'features/controleur/compte_rendu_controle.dart';
+import 'features/controleur/compte_rendu_controle_supabase.dart';
 import 'features/controleur/echanges_controleur.dart';
 import 'features/controleur/echanges_controleur_supabase.dart';
 import 'features/controleur/historique_controleur.dart';
 import 'features/controleur/historique_controleur_supabase.dart';
+import 'features/controleur/mission_controle.dart';
+import 'features/controleur/mission_controle_supabase.dart';
+import 'features/controleur/observation_controle.dart';
 import 'features/demo/dossiers_demo.dart';
 import 'features/demo/mode_demonstration.dart';
 import 'features/demo/racine_demonstrable.dart';
@@ -477,6 +482,31 @@ List<Override> _surchargesAppReelle() => <Override>[
   portHistoriqueProvider.overrideWithValue(
     HistoriqueControleurSupabase(Supabase.instance.client),
   ),
+  // N3, D3 : la mission du controleur et l'envoi de son compte rendu
+  // (migration 20261107800000).
+  portMissionControleProvider.overrideWithValue(
+    MissionControleSupabase(Supabase.instance.client),
+  ),
+  envoiCompteRenduProvider.overrideWithValue(
+    EnvoiCompteRenduSupabase(Supabase.instance.client),
+  ),
+  // Le roster de la visite (CTR-03A) : prenom et initiale, par seance.
+  rosterControleProvider.overrideWith(
+    (Ref _, String seanceId) =>
+        rosterVisiteSupabase(Supabase.instance.client, seanceId),
+  ),
+  // Le releve automatique de la visite (CTR-03) : celui du rapport que le
+  // serveur cree a la fin de la seance (`controleur_lister_rapports`). Avant
+  // la fin, aucun rapport : l'ecran dit que le releve n'est pas encore recu.
+  faitsVisiteProvider.overrideWith((Ref ref, String seanceId) async {
+    final List<RapportControle> rapports = await ref
+        .watch(portHistoriqueProvider)
+        .rapports();
+    for (final RapportControle r in rapports) {
+      if (r.seanceId == seanceId) return r.faits;
+    }
+    return null;
+  }),
   portSupportProvider.overrideWithValue(
     SupportSupabase(Supabase.instance.client),
   ),

@@ -190,6 +190,10 @@ BEGIN
     AND (public.capacites_candidatures() -> 'gestes' ->> 'planifierEntretien')::boolean
     AND (public.capacites_candidatures() -> 'gestes' ->> 'consignerEntretien')::boolean,
     '1. capacites : choisir les participants, poser la coche, 2 fondateurs exiges');
+  -- La salle 3 (20261108300000) n'est jamais defaite par la retouche V1-a.
+  PERFORM pg_temp.vrai(public.capacites_candidatures() -> 'gestes' -> 'validerPiece'
+                       = public.capacites_candidatures() -> 'peutDecider',
+    '1. capacites : validerPiece suit toujours peutDecider (salle 3)');
   PERFORM pg_temp.en_tant_que('7e100000-0000-4000-8000-0000000000d2', 'teacher');
   BEGIN
     PERFORM public.personnel_entretiens();

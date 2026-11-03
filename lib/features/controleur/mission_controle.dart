@@ -3,8 +3,8 @@
 // 27/09/2026, C1 : la visite a lieu SEULEMENT pendant le cours).
 //
 // Le fournisseur par defaut est neutre : aucune mission, aucun appel serveur
-// (K-28). La source reelle (attribution par le serveur, BR-1,
-// `14_controleur/CT-BR.md`) se branche dans `main.dart` et nulle part
+// (K-28). La source reelle (`ma_mission_controle`, N3 D3 :
+// `mission_controle_supabase.dart`) se branche dans `main.dart` et nulle part
 // ailleurs ; la demonstration surcharge ce fournisseur avec
 // `DonneesControleurDemo.mission(etat)`.
 
@@ -48,6 +48,7 @@ class MissionControle {
     this.paysEnseignant,
     this.numeroDansFamille,
     this.codeCourt,
+    this.commencee = false,
   });
 
   /// L'identifiant de la mission, qui nomme son fil d'echanges (un seul fil
@@ -93,9 +94,44 @@ class MissionControle {
 
   /// La duree prevue.
   Duration get dureePrevue => finPrevue.difference(debut);
+
+  /// Vrai si le controleur a deja commence cette visite (mission `en_cours`
+  /// au serveur) : y revenir ne la recommence pas.
+  final bool commencee;
 }
 
-/// La mission du controleur, ou nulle. **Neutre par defaut** : aucune
-/// mission, aucun appel reseau.
+/// Le port de la mission (N3, D3) : la lecture `ma_mission_controle` et le
+/// debut de la visite `demarrer_mission_controle`.
+abstract interface class PortMissionControle {
+  /// La mission actionnable du controleur, ou nulle.
+  Future<MissionControle?> maMission();
+
+  /// Commence la visite de la mission [missionId] : le serveur la passe
+  /// `en_cours` et inscrit le controleur dans la seance. Leve une exception
+  /// si le serveur n'a pas confirme.
+  Future<void> demarrer(String missionId);
+}
+
+/// Sans serveur : aucune mission, et rien ne demarre (K-28).
+class MissionControleNeutre implements PortMissionControle {
+  /// Cree le port neutre.
+  const MissionControleNeutre();
+
+  @override
+  Future<MissionControle?> maMission() async => null;
+
+  @override
+  Future<void> demarrer(String missionId) async =>
+      throw StateError('Aucun serveur branche (BR-1).');
+}
+
+/// Le port de la mission ; neutre par defaut, branche dans `main.dart`.
+final Provider<PortMissionControle> portMissionControleProvider =
+    Provider<PortMissionControle>((Ref _) => const MissionControleNeutre());
+
+/// La mission du controleur, ou nulle, lue par [portMissionControleProvider].
+/// **Neutre par defaut** : aucune mission, aucun appel reseau.
 final FutureProvider<MissionControle?> missionControleProvider =
-    FutureProvider<MissionControle?>((Ref _) async => null);
+    FutureProvider<MissionControle?>(
+      (Ref ref) => ref.watch(portMissionControleProvider).maMission(),
+    );

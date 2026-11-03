@@ -136,25 +136,22 @@ void main() {
     );
   });
 
-  // CTRL-BR-OBS-1 (BR-CT-19) : le chemin PAR DEFAUT de « Commencer » (sans
-  // la redirection de la demonstration) va a /salle avec le billet seul.
-  // Il n'inscrit pas la visite (`observerEnControle`, RPC
-  // `rejoindre_observation`) : a brancher a BR-1, sinon le jeton est refuse
-  // en reel et le passage n'est pas journalise. Ce test fixe l'etat actuel.
-  // A BR-1, inverser : observations == [seanceId] avant /salle, un refus
-  // reste sur CTR-01.
-  testWidgets('chemin par defaut : /salle avec le billet seul, aucune '
-      'inscription de visite avant BR-1 (BR-CT-19)', (
+  // CTRL-BR-OBS-1 (BR-CT-19), puis N3 D3 (03/11/2026) : le chemin PAR
+  // DEFAUT de « Commencer » (sans la redirection de la demonstration)
+  // commence la visite au serveur (`demarrer_mission_controle`), puis va a
+  // /salle avec le billet seul. L'inscription dans la salle
+  // (`rejoindre_observation`) reste celle de la salle : rien ici. Un refus
+  // du serveur reste sur CTR-01 et relit la mission.
+  Future<GoRouter> monterParDefaut(
     WidgetTester tester,
+    MissionControle mission,
+    _FauxPortMission port,
+    FauxServiceVideo video,
+    void Function(BilletSalle?) recevoir,
   ) async {
     tester.view.physicalSize = const Size(390, 844);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    final MissionControle mission = missionDemoControleur(
-      EtatDemoControleur.enDirect,
-    )!;
-    final FauxServiceVideo video = FauxServiceVideo();
-    BilletSalle? recu;
     final GoRouter routeur = GoRouter(
       routes: <RouteBase>[
         GoRoute(
@@ -165,16 +162,17 @@ void main() {
         GoRoute(
           path: Routes.salle,
           builder: (BuildContext _, GoRouterState e) {
-            recu = e.extra is BilletSalle ? e.extra! as BilletSalle : null;
+            recevoir(e.extra is BilletSalle ? e.extra! as BilletSalle : null);
             return const Scaffold(body: Text('salle'));
           },
         ),
       ],
     );
+    port.mission = mission;
     await tester.pumpWidget(
       ProviderScope(
         overrides: <Override>[
-          missionControleProvider.overrideWith((Ref _) async => mission),
+          portMissionControleProvider.overrideWithValue(port),
           serviceVideoProvider.overrideWithValue(video),
         ],
         child: TranslationProvider(
@@ -189,13 +187,54 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+    return routeur;
+  }
+
+  testWidgets('chemin par defaut : la visite commence au serveur, puis '
+      '/salle avec le billet seul (BR-CT-19, N3 D3)', (
+    WidgetTester tester,
+  ) async {
+    final MissionControle mission = missionDemoControleur(
+      EtatDemoControleur.enDirect,
+    )!;
+    final FauxServiceVideo video = FauxServiceVideo();
+    final _FauxPortMission port = _FauxPortMission();
+    BilletSalle? recu;
+    final GoRouter routeur = await monterParDefaut(
+      tester,
+      mission,
+      port,
+      video,
+      (BilletSalle? b) => recu = b,
+    );
     await tester.tap(find.byKey(ControleControleurPage.commencerKey));
     await tester.pumpAndSettle();
+    expect(port.demarrees, <String?>[mission.id]);
     expect(routeur.state.uri.path, Routes.salle);
     // Le billet seul, jamais par l'URL (ADR-005) : aucun parametre de requete.
     expect(routeur.state.uri.queryParameters, isEmpty);
     expect(recu?.sessionId, mission.seanceId);
     expect(video.observations, isEmpty);
+  });
+
+  testWidgets('chemin par defaut : un refus du serveur reste sur CTR-01 et '
+      'relit la mission (N3 D3)', (WidgetTester tester) async {
+    final MissionControle mission = missionDemoControleur(
+      EtatDemoControleur.enDirect,
+    )!;
+    final _FauxPortMission port = _FauxPortMission()..refuser = true;
+    final GoRouter routeur = await monterParDefaut(
+      tester,
+      mission,
+      port,
+      FauxServiceVideo(),
+      (BilletSalle? _) {},
+    );
+    final int lectures = port.lectures;
+    await tester.tap(find.byKey(ControleControleurPage.commencerKey));
+    await tester.pumpAndSettle();
+    expect(routeur.state.uri.path, '/');
+    expect(port.lectures, greaterThan(lectures));
   });
 
   testWidgets('aucun debordement a 800x600, dans chaque situation', (
@@ -235,4 +274,23 @@ void main() {
     expect(e.eleves(n: 1), '1 élève');
     expect(e.eleves(n: 3), '3 élèves');
   });
+}
+
+class _FauxPortMission implements PortMissionControle {
+  MissionControle? mission;
+  bool refuser = false;
+  int lectures = 0;
+  final List<String?> demarrees = <String?>[];
+
+  @override
+  Future<MissionControle?> maMission() async {
+    lectures++;
+    return mission;
+  }
+
+  @override
+  Future<void> demarrer(String missionId) async {
+    if (refuser) throw StateError('refus');
+    demarrees.add(missionId);
+  }
 }

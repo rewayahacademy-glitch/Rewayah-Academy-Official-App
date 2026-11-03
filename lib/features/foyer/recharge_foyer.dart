@@ -824,7 +824,11 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
         ],
       ),
     );
-    final Widget montant = _montantProfil(b, actif: coche && !_engage);
+    final Widget montant = _montantProfil(
+      b,
+      coche: coche,
+      modifiable: coche && !_engage,
+    );
     return KeyedSubtree(
       key: RechargeFoyerPage.profilDe(b.id),
       child: enLigne
@@ -853,23 +857,31 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
     );
   }
 
-  /// Moins, le montant, plus. Desactive (profil non coche) : le montant se
-  /// lit « 0 » attenue, comme la maquette 04, sans bouton. Un bouton qui ne
+  /// Moins, le montant, plus. Profil non coche : le montant se lit « 0 »
+  /// attenue, comme la maquette 04, sans bouton. Profil coche pendant une
+  /// commande engagee ([modifiable] faux) : le montant retenu reste lu, en
+  /// clair, sans bouton ; c'est celui que le recapitulatif du serveur compte
+  /// (RECHARGE-CARTE, 03/11 : la carte disait « 0 $ » quand le
+  /// recapitulatif disait 55 $). Un bouton qui ne
   /// peut pas aboutir n'est jamais grise (K-56) : au premier et au dernier
   /// montant, comme les fleches de `BarrePrecedentSuivant`, il disparait et
   /// sa place reste, pour que le montant ne bouge pas.
-  Widget _montantProfil(BeneficiaireRecharge b, {required bool actif}) {
+  Widget _montantProfil(
+    BeneficiaireRecharge b, {
+    required bool coche,
+    required bool modifiable,
+  }) {
     final List<Montant> proposes = b.montantsProposes;
     final Montant? choisi = _montantDe(b);
     final int i = choisi == null ? -1 : proposes.indexOf(choisi);
     final String? devise = proposes.firstOrNull?.devise;
     final Montant? zero = devise == null ? null : Montant(0, devise);
-    final Montant? affiche = actif ? choisi ?? zero : zero;
+    final Montant? affiche = coche ? choisi ?? zero : zero;
     const Widget place = SizedBox.square(dimension: AppTouchTarget.standard);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        if (actif && choisi != null)
+        if (modifiable && choisi != null)
           BoutonIcone(
             key: RechargeFoyerPage.moinsDe(b.id),
             icone: AppIcons.moins,
@@ -885,7 +897,7 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
             constraints: const BoxConstraints(minWidth: AppSpacing.respiration),
             child: Semantics(
               label: t.adulte.recharge.montantPour(prenom: b.prenom),
-              liveRegion: actif,
+              liveRegion: modifiable,
               child: Center(
                 widthFactor: 1,
                 child: KeyedSubtree(
@@ -895,7 +907,7 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
                     final Montant m => _montantLu(
                       b,
                       m,
-                      attenue: !actif || choisi == null,
+                      attenue: !coche || choisi == null,
                     ),
                   },
                 ),
@@ -903,7 +915,7 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
             ),
           ),
         ),
-        if (actif && i + 1 < proposes.length)
+        if (modifiable && i + 1 < proposes.length)
           BoutonIcone(
             key: RechargeFoyerPage.plusDe(b.id),
             icone: AppIcons.ajouter,
