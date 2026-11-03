@@ -136,9 +136,13 @@ declare
     -- PHOTOS-1 (03/11) : chaque adulte au compte valide pose sa photo ; le tuteur actif celle de son enfant mineur (garde role ET app_account_valid).
     'poser_ma_photo(text)',
     'poser_photo_eleve(uuid,text)',
-    -- V1 (03/11) : la direction active, de son cote, planifie et consigne un entretien (moteur des candidatures : version attendue, cle, journal ; garde role ET app_account_valid).
-    'planifier_entretien(uuid,timestamptz,integer,uuid,integer,text)',
-    'consigner_entretien(uuid,boolean,text,text,integer,text)',
+    -- V1-a (03/11) : la direction active, de son cote, planifie et consigne un entretien (moteur des candidatures : version attendue, cle, journal ; garde role ET app_account_valid), choisit et retire ses participants (cote impose, fondateurs comptes), tient la coche fondateur ; un participant ecrit son compte rendu.
+    'planifier_entretien(uuid,timestamp with time zone,integer,uuid[],integer,text)',
+    'consigner_entretien(uuid,text,text,integer,text)',
+    'ajouter_participant_entretien(uuid,uuid)',
+    'retirer_participant_entretien(uuid,uuid)',
+    'poser_fondateur(uuid,boolean)',
+    'ecrire_compte_rendu_entretien(uuid,text,text,text,text,text[],text)',
     -- D1-bis (03/11) : la direction active traite un signalement (examiner, rediger le message pour la famille, clore) ; garde role ET app_account_valid, journal a chaque geste.
     'examiner_student_concern(uuid)',
     'rediger_resume_student_concern(uuid,text)',
