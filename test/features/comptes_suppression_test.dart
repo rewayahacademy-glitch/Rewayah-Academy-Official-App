@@ -89,6 +89,7 @@ Future<(_Service, _Port)> _monter(
   Size taille = const Size(1440, 900),
   bool horsLigne = false,
   List<CompteAdmin>? comptes,
+  InterfaceMode mode = InterfaceMode.standard,
 }) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = taille;
@@ -108,6 +109,7 @@ Future<(_Service, _Port)> _monter(
           FauxServiceReseau(horsLigneRendu: horsLigne),
         ),
       ],
+      mode: mode,
     ),
   );
   await tester.pumpAndSettle();
@@ -317,4 +319,18 @@ void main() {
       expect(find.textContaining('La sélection est retirée'), findsOneWidget);
     });
   });
+
+  testWidgets(
+    'telephone en Interface guidee : ni case ni suppression (coupe-mots)',
+    (tester) async {
+      await _monter(
+        tester,
+        (List<String> _) async => <ResultatRetrait>[],
+        taille: const Size(390, 844),
+        mode: InterfaceMode.enfant,
+      );
+      expect(find.byType(CaseACocher), findsNothing);
+      expect(find.byType(MenuActions), findsNothing);
+    },
+  );
 }

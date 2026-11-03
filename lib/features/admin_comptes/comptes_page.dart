@@ -549,6 +549,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
         deLaVue.any((CompteAdmin c) => !c.detailsServis);
 
     final bool bureau = DataCollection.enTableau(context);
+    _suppressionOfferte = bureau || !AppMetriques.of(context).estEnfant;
     final int attendent = deLaVue
         .where((CompteAdmin c) => EtatAffiche.de(c) == EtatAffiche.attente)
         .length;
@@ -670,7 +671,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
       // SUPPRIMER (garde-cap, 03/11/2026) : l'operation groupee existe
       // (`direction_supprimer_comptes`), la case aussi (LISTES-1 §5.6). Seule
       // la page visible se coche ; un compte de la direction n'a pas de case.
-      selection: lignesPage.any(_supprimable)
+      selection: lignesPage.any(_supprimableIci)
           ? SelectionCollection<CompteAdmin>(
               estCochee: (CompteAdmin c) => _choisis.containsKey(c.profilId),
               estCochable: _supprimable,
@@ -685,7 +686,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
               onBasculerPage: (bool cocher) => setState(() {
                 _bilan = null;
                 for (final CompteAdmin c in lignesPage) {
-                  if (!_supprimable(c)) continue;
+                  if (!_supprimableIci(c)) continue;
                   if (cocher) {
                     _choisis[c.profilId] = c;
                   } else {
@@ -1164,8 +1165,16 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
   static bool _ouvreUneDemande(CompteAdmin c) => c.admissionATraiter;
 
   /// Vrai quand la ligne a au moins une action.
-  static bool _aUneAction(CompteAdmin c) =>
-      _ouvreUnDossier(c) || _ouvreUneDemande(c) || _supprimable(c);
+  bool _aUneAction(CompteAdmin c) =>
+      _ouvreUnDossier(c) || _ouvreUneDemande(c) || _supprimableIci(c);
+
+  /// Au telephone en Interface guidee (cibles de 72), ni case ni « Supprimer
+  /// ce compte » : une colonne de plus sur chaque ligne couperait
+  /// l'identifiant (garde coupe-mots). La suppression se fait au bureau, ou
+  /// en interface standard. Recalcule a chaque rendu.
+  bool _suppressionOfferte = true;
+
+  bool _supprimableIci(CompteAdmin c) => _suppressionOfferte && _supprimable(c);
 
   /// Les comptes choisis sur la page affichee, compte au dernier rendu.
   int _choisisSurLaPage = 0;
@@ -1245,10 +1254,12 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
     if (_suppressionEnCours || comptes.isEmpty) return;
     final r = t.admin.comptes.retrait;
     final bool un = comptes.length == 1;
+    final CompteAdmin premier = comptes.first;
+    final String? nomDuCompte = un ? premier.libelle : null;
     final bool oui = await ConfirmDestructive.demander(
       context,
-      question: un
-          ? r.questionUn(nom: comptes.single.libelle)
+      question: nomDuCompte != null
+          ? r.questionUn(nom: nomDuCompte)
           : r.questionPlusieurs(n: comptes.length),
       consequence: r.consequence,
       libelleConfirmer: un
@@ -1325,7 +1336,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
                     .go(Routes.adminPersonnesDossiers, extra: c.profilId),
           ),
         // Le destructif en dernier, separe (MenuActions).
-        if (_supprimable(c) && !_suppressionEnCours)
+        if (_supprimableIci(c) && !_suppressionEnCours)
           EntreeAction(
             libelle: t.admin.comptes.retrait.actionLigne,
             destructif: true,
