@@ -19,7 +19,7 @@ ROUTES = ("/fr/articles/apprendre-le-coran-a-son-enfant", "/fr/articles/enfant-f
           "/fr/articles/apprendre-le-coran-seul-sans-enseignant", "/fr/articles/apprendre-le-coran-en-groupe")
 # Sources externes admises dans un article : references que l'on peut verifier (versets, hadiths, travaux, ouvrages).
 HOTES_SOURCES = {"doi.org", "quran.com", "sunnah.com", "hadeethenc.com", "dorar.net", "fr.wikisource.org", "gallica.bnf.fr",
-                 "archive.org", "shamela.ws", "arabiclexicon.hawramani.com"}
+                 "archive.org", "shamela.ws", "arabiclexicon.hawramani.com", "pmc.ncbi.nlm.nih.gov"}
 
 
 def _charger(nom: str):
@@ -112,7 +112,13 @@ class Contenu(unittest.TestCase):
         liens = [l["href"] for s in PAGES[ROUTES[1]]["sections"] for l in s.get("links", [])]
         self.assertIn("https://doi.org/10.1037/0033-2909.132.3.354", liens)  # Cepeda et coll., 2006
         self.assertIn("https://doi.org/10.1177/1529100612453266", liens)    # Dunlosky et coll., 2013
-        self.assertIn("pas sur le Coran", texte(PAGES[ROUTES[1]]))           # la limite est dite
+        # Directeur, 03/11/2026 : « ne portent pas sur le Coran » est technique, le public n'en a pas besoin.
+        self.assertNotIn("pas sur le Coran", texte(PAGES[ROUTES[1]]))
+        # Les sources ajoutees le meme soir : al-Ghazali (Ihya, Shamela), Ibn Khaldun (De Slane, p. 290), le sommeil (Paruthi 2016).
+        for href in ("https://shamela.ws/book/9472/819", "https://archive.org/details/lesprolgomne03abdauoft/page/290/mode/1up",
+                     "https://doi.org/10.5664/jcsm.5866"):
+            self.assertIn(href, liens)
+        self.assertIn("traduction du sens", texte(PAGES[ROUTES[1]]))  # al-Ghazali : aucune traduction francaise publiee
 
     def test_le_hub_genere_la_liste_et_n_annonce_plus_le_vide(self) -> None:
         hub = PAGES["/fr/articles"]
@@ -169,7 +175,22 @@ class Page(unittest.TestCase):
         html = self.lire(ROUTES[0])
         self.assertNotIn("**", html)
         hub = (OUTPUT / "fr" / "articles.html").read_text(encoding="utf-8")
-        self.assertEqual(hub.count('class="article-carte"'), len(ROUTES))  # la liste du hub est generee, un article par carte
+        self.assertEqual(hub.count('<li class="article-carte'), len(ROUTES))  # la liste du hub est generee, un article par carte
+
+    def test_les_cartes_du_hub_sont_illustrees_et_disent_ou_cliquer(self) -> None:
+        # Directeur, 03/11/2026 : « je ne vois pas ou cliquer » ; « couleurs et formes uniformes ». Le plus recent a la une ;
+        # chaque carte a son illustration, un seul lien (le titre, etire sur la carte) et le bouton « Lire l'article ».
+        self.construire(True)
+        hub = (OUTPUT / "fr" / "articles.html").read_text(encoding="utf-8")
+        cartes = re.findall(r'<li class="article-carte[^"]*">.*?</li>', hub, re.S)
+        self.assertEqual(len(cartes), len(ROUTES))
+        self.assertIn("article-carte--une", cartes[0])
+        self.assertTrue(all("article-carte--une" not in c for c in cartes[1:]))
+        for carte in cartes:
+            self.assertIn('class="article-carte__visuel" aria-hidden="true"', carte)
+            self.assertIn("Lire l’article", carte)
+            self.assertEqual(len(re.findall(r"<a ", carte)), 1)
+        self.assertIn('href="#catalogue"', hub)  # le bouton du haut de la page mene a la liste
 
     def test_mise_en_valeur_non_fermee_arrete_le_build(self) -> None:
         with self.assertRaises(ValueError):
@@ -216,7 +237,7 @@ class Parution(unittest.TestCase):
         hub = self.html("/fr/articles")
         # La configuration d'aiguillage que le build ecrit dans sa sortie (lue ici, jamais ecrite).
         config = (OUTPUT / "vercel.json").read_text(encoding="utf-8")
-        self.assertEqual(hub.count('class="article-carte"'), len(parus))
+        self.assertEqual(hub.count('<li class="article-carte'), len(parus))
         for route in a_venir:
             self.assertNotIn(route, plan)
             self.assertNotIn(route, config)

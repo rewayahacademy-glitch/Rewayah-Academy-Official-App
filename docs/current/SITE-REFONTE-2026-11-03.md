@@ -21,9 +21,14 @@ correction groupée après la première relecture du directeur.
 | **Quatre articles signés du directeur** (troisième relecture : valeur et service d'abord) | `content/pages.json`, `content/direction.json`, `build_site.py` | présent dans le code ; chaque verset et chaque hadith vérifiés (§6) ; relecture du directeur à faire avant fusion |
 | **Page « Autres chemins pour apprendre le Coran »** | `content/pages.json` | présent dans le code, 5 sites lus sur 6 (voir §4) |
 | **Texte arabe de chaque verset et de chaque hadith cité** (quatrième message : « on a besoin de l'arabe ») | `build_site.py`, `content/pages.json`, `styles/site.css` | présent dans le code ; 17 versets identiques, lettre pour lettre, aux données du Mushaf de l'application ; 11 extraits de hadiths retrouvés mot pour mot dans le texte complet des recueils ; captures bureau et mobile |
+| **Pied de page lisible** (cinquième message : « presque illisible, l'arrière-plan doit être moins foncé ») | fin de `styles/site.css` | présent dans le code ; fond violet profond `#4E2983` au lieu du prune `#25113F` ; texte blanc à 10,7:1, lavande à 8,0:1 ; la carte s'efface sous le petit texte ; captures bureau et mobile |
+| **Bouton d'en-tête d'un seul mot** (« S'inscrire », à toutes les largeurs) | `build_site.py`, `styles/site.css` | présent dans le code ; « Commencer mon inscription » reste dans le corps (haut de l'accueil, fin des pages) |
+| **Lumière lointaine à travers la porte, contenu qui flotte, lumières animées** | fin de `styles/site.css`, `build_site.py` | présent dans le code ; halo derrière l'arche de l'accueil, lueur dans l'embrasure, rayons qui tombent sur le chemin, porte de lumière lointaine au fond des pages, ombres portées des cartes et des illustrations, reflet sur le bouton principal ; captures, y compris pendant le passage de la porte |
+| **Cartes du hub redessinées** (« je ne vois pas où cliquer » ; « trop moches, couleurs et formes uniformes ») | `build_site.py`, `styles/site.css`, `content/pages.json` | présent dans le code ; le plus récent à la une sur lavande claire ; les suivants illustrés, en verre clair en arche, violet profond, lavande au grand coin ; toute la carte est le lien, bouton « Lire l'article » ; le bouton du haut de la page mène à la liste ; captures bureau, mobile et production au 8 novembre |
+| **Article « enfant fatigué » réécrit en profondeur** (« trop court, aucune valeur ») | `content/pages.json` | présent dans le code ; 1 985 mots au lieu de 865 ; al-Ghazâlî, Ibn Khaldûn, cinq hadiths et quatre versets de plus, le sommeil (Paruthi 2016), tous vérifiés (§6) ; la phrase « ne portent pas sur le Coran » est retirée |
 | **Parution programmée, deux jours d'écart au moins** | `build_site.py`, `content/pages.json` | présent dans le code ; 5, 8, 11 et 14 novembre ; testé localement à chaque date ; **automatique seulement si la production se reconstruit ces jours-là** (§7, point 6) |
 
-Testé localement : 120 tests `python3 -m unittest discover -s site-public/tests` (80 au départ, 40 ajoutés), et 92 vues (23 routes à 360, 390, 768 et
+Testé localement : 121 tests `python3 -m unittest discover -s site-public/tests` (80 au départ, 41 ajoutés), et 92 vues (23 routes à 360, 390, 768 et
 1440 px) sans débordement horizontal, sans ressource en erreur, sans erreur JavaScript, refaites sur ce commit (blocs arabes et polices compris ;
 captures des blocs arabes à 390 et 1366 px). Testé sur staging : l'aperçu de la PR 187 a servi les deux premiers commits ; les suivants
 ne sont pas encore vus. Déployé : non.
@@ -42,6 +47,10 @@ ne sont pas encore vus. Déployé : non.
 - **Quatrième message (03/11, soir)** : « Là on a besoin de l'arabe, donc il le faut » : exception datée au registre M-29, **dans les articles
   seulement**, pour le texte original des versets et des hadiths cités. Et « si tous les articles sont publiés le même jour, à la même heure et par le
   même auteur, ça ne va pas marcher » : publication automatique séparée de deux jours au moins.
+- **Cinquième message (03/11, soir)** : pied de page moins foncé ; bouton d'en-tête d'un seul mot, la formule longue dans le corps ; la phrase
+  « ne portent pas sur le Coran » est technique, le public n'en a pas besoin ; l'article sur l'enfant fatigué est trop court ; la flottaison ne
+  se voit pas : une lumière lointaine à travers la porte, un contenu qui flotte au-dessus d'une grande profondeur, des lumières animées pour
+  souligner ce qui compte (cinq images d'inspiration : halos chauds, porte de lumière, faisceau, grand cercle lumineux lointain).
 
 ## 3. Choix de l'agent, modifiables en une ligne
 
@@ -79,6 +88,15 @@ ne sont pas encore vus. Déployé : non.
   L'accueil n'est pas modifié : il porte la promesse de la marque.
 - **« at-talaqqî »** : le terme est du directeur (sa demande du 03/11). Il apparaît une fois, dans « Notre manière » de la page des autres chemins. Il n'est pas au
   registre des mots : à confirmer.
+
+- **Lumières (cinquième message)** : la lumière n'entre que par les portes, motif de la marque : l'arche de l'accueil (halo, lueur, rayons) et une
+  porte lointaine au fond des pages. Aucune lueur derrière les autres illustrations : les puits de lumière du premier essai avaient été retirés
+  (`UX_REVIEW_SITE-MOUV-1.md`, V4). Teintes : blanc et lavandes des jetons ; l'orange des images d'inspiration est hors de la palette (M-16), on en
+  garde la douceur. Là où un texte peut passer, une lumière ne dépasse pas 12 % de blanc (texte blanc mesuré à 5:1 au moins) ; sous les liens de
+  l'en-tête, 10 %. **Exception datée au contrat E** (plafond de 400 ms, règle gelée) : respirations de 6 à 11 s et reflet du bouton principal toutes
+  les 8 s, sur le site public seulement, demandées par le directeur le 03/11 ; en mouvement réduit, tout s'arrête (règle générale du site).
+- **Bouton d'en-tête** : « S'inscrire » partout. La compétence `mots-rewayah` dit encore « S'inscrire sous 1100 px, Commencer mon inscription
+  au-delà » : à mettre à jour par le pilote (§7).
 
 ## 4. Écarts avec la demande initiale (vérité d'abord)
 
@@ -132,6 +150,17 @@ le texte arabe complet (chaîne comprise) d'al-Bukhârî 5027, 893, 6, 5000, 499
 source écrit la chadda avant la voyelle, la forme publiée est celle de la source. Le hadith du vendeur de musc, évoqué sans guillemets, reçoit
 l'arabe de la comparaison seule (al-Bukhârî 2101, signalé « extrait »).
 
+**Article « enfant fatigué », sources ajoutées le 03/11 au soir** (agent de vérification dédié, aucun blocage contourné ; sunnah.com,
+le journal de l'AASM et Springer n'ont pas pu être lus). Versets (Hamidullah, quran.com) : 2:286, 94:5-6, 25:74 (« Notre Seigneur! »), 14:40.
+Hadiths : « Allah est Doux, et Il aime la douceur en toute chose » est **al-Bukhârî 6927** (et non Muslim : 2165 n'a pas « Doux », 2593
+continue autrement), traduction du sens ; Muslim 2594 (traduction HadeethEnc 5796) ; Anas, al-Bukhârî 6038 et Muslim 2309 (traduction du
+sens) ; « N'est pas des nôtres… » cité d'après **at-Tirmidhî 1920 et Abû Dâwûd 4943** (traduction HadeethEnc 3083 ; at-Tirmidhî 1919 est
+« gharîb » selon at-Tirmidhî lui-même, 1921 est faible, non cités) ; la prière abrégée, al-Bukhârî 707 et Muslim 470 (HadeethEnc 4249).
+Ibn Khaldûn : De Slane, troisième partie, p. 290-291, chapitre « Trop de sévérité dans l'enseignement des élèves leur est nuisible » (relu
+sur les images des pages ; l'article dit qu'il met en garde contre l'excès, pas contre toute exigence, comme son texte). Al-Ghazâlî :
+*Iḥyâ'*, éd. Dâr al-Ma'rifa, t. 3, p. 73 (Shamela 9472/819) ; aucune traduction française publiée trouvée : traduction du sens, signalée.
+Sommeil : Paruthi et coll., *J Clin Sleep Med* 2016, DOI 10.5664/jcsm.5866 (9 à 12 heures de 6 à 12 ans, 8 à 10 heures de 13 à 18 ans).
+
 **Faits sur Rewayah** dans les articles : seulement ceux que le site publie déjà (classes de 3 à 5 enfants de 6 à 17 ans, trois séances d'une heure ;
 classes de 3 à 6 adultes, trois séances d'1 h 30 ; ouverture dès trois inscrits ; observation du parent, deux minutes ; compte rendu de fin de semaine ;
 les étapes des bases).
@@ -162,6 +191,9 @@ ferait doublon). Les aperçus des PR sont toujours `noindex`. C'est ce que signa
    `fr/assets/UthmanicHafs-v-3.0.ttf` et `fr/assets/UthmanTahaNaskh-Regular.otf` à cette liste (le test du site le dit, et vérifie déjà les fichiers octet
    pour octet).
 8. **Pour le pilote : registre de marque M-29.** Y inscrire l'exception datée du 03/11 (arabe des citations, dans les articles seulement).
+9. **Pour le pilote : `mots-rewayah`**, ligne « S'inscrire » : le bouton court vaut désormais à toutes les largeurs (directeur, 03/11).
+10. **Pour le pilote : `DESIGN-GOV-2026-09-26.md`, contrat E.** Y noter l'exception datée du 03/11 pour le site public (lumières lentes, reflet du
+    bouton principal), si le directeur la confirme comme règle et non comme essai.
 
 ## 8. Vérifier
 

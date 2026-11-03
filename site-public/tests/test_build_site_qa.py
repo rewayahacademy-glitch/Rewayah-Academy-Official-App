@@ -261,7 +261,7 @@ class GeneratedSiteQA(unittest.TestCase):
         # Exception datee (directeur, 03/11/2026 : \u00AB la on a besoin de l'arabe, donc il le faut \u00BB) : dans un article, le
         # texte original d'un verset ou d'un hadith cite, dans son bloc (lang="ar"), et nulle part ailleurs.
         arabe = re.compile(r"[\u0600-\u06FF\u0750-\u077F\u0870-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]")
-        bloc_citation = r'<figure class="citation-arabe citation-arabe--(?:coran|hadith)"><blockquote lang="ar" dir="rtl">.*?</blockquote>'
+        bloc_citation = r'<figure class="citation-arabe citation-arabe--(?:coran|hadith|texte)"><blockquote lang="ar" dir="rtl">.*?</blockquote>'
         for route in self.pages:
             source = re.sub(r'<span class="parcours__arabe"[^>]*>(?:<span[^>]*>[^<]*</span>|[^<])*</span>|<script type="application/ld\+json">.*?</script>', "",
                             self.page_file(route).read_text(encoding="utf-8"), flags=re.S)

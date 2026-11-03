@@ -472,6 +472,9 @@ _ARTICLES: list[tuple[str, dict]] = []
 # construction (ni sa page, ni sa carte, ni sa place dans le plan du site, ni les liens qui y menent) ; un apercu le montre,
 # marque « à paraître », pour la relecture. Remplie par build().
 _A_PARAITRE: set[str] = set()
+# Pour la liste du hub : l'illustration de chaque article (direction.json) et le catalogue des images. Remplis par build().
+_ILLUSTRATIONS_ARTICLES: dict[str, str] = {}
+_IMAGES: dict = {}
 
 
 def article_a_paraitre(route: str, page: dict, jour: date) -> bool:
@@ -514,16 +517,32 @@ def signature_article(page: dict, route: str = "") -> str:
             f' · Lecture : {temps_de_lecture(page)} min</span></p>')
 
 
+FLECHE_CARTE = ('<svg viewBox="0 0 24 24" width="20" height="20"><path d="M5 12h13m-5-6 6 6-6 6" fill="none" '
+                'stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>')
+
+
 def liste_articles() -> str:
+    """Directeur, 03/11/2026 : « trop moches, couleurs et formes uniformes ». Le plus recent a la une, en grand, sur un fond clair ;
+    les suivants en cartes illustrees dont la surface et la forme changent d'une carte a l'autre (verre, violet profond,
+    arche). Toute la carte est le lien (le titre s'etire sur elle) ; le bouton « Lire l'article » dit ou aller."""
     if not _ARTICLES:
         return "<p>Aucun article n’est encore publié.</p>"
-    cartes = "".join(
-        f'<li class="article-carte"><h3><a href="{esc(route)}">{titre_html(page["h1"])}</a></h3>'
-        f'<p>{texte_html(page["description"])}</p>'
-        f'<p class="article-carte__meta">{esc(page["auteur"]["nom"])} · '
-        f'{date_de_parution(route, page) if route in _A_PARAITRE else esc(avis_mod.fmt_date(page["date"]))} · '
-        f'{temps_de_lecture(page)} min</p></li>' for route, page in _ARTICLES)
-    return f'<ul class="articles-liste" data-revele-enfants>{cartes}</ul>'
+    cartes = []
+    for rang, (route, page) in enumerate(_ARTICLES):
+        une = rang == 0
+        ident = _ILLUSTRATIONS_ARTICLES.get(route)
+        visuel = (f'<div class="article-carte__visuel" aria-hidden="true">'
+                  f'{scene(_IMAGES, ident, "(max-width: 839px) 80vw, 440px" if une else "(max-width: 839px) 70vw, 300px", "article-carte__scene")}'
+                  f'</div>') if ident and _IMAGES else ""
+        quand = date_de_parution(route, page) if route in _A_PARAITRE else esc(avis_mod.fmt_date(page["date"]))
+        surtitre = '<p class="article-carte__surtitre">Le plus récent</p>' if une else ""
+        cartes.append(
+            f'<li class="article-carte{" article-carte--une" if une else ""}">{visuel}<div class="article-carte__texte">{surtitre}'
+            f'<h3><a href="{esc(route)}">{titre_html(page["h1"])}</a></h3>'
+            f'<p>{texte_html(page["description"])}</p>'
+            f'<p class="article-carte__meta">{esc(page["auteur"]["nom"])} · {quand} · {temps_de_lecture(page)}\u00a0min</p>'
+            f'<span class="article-carte__lire" aria-hidden="true">Lire l’article{FLECHE_CARTE}</span></div></li>')
+    return f'<ul class="articles-liste" data-revele-enfants>{"".join(cartes)}</ul>'
 
 
 # Citations en arabe des articles (directeur, 03/11/2026 : « là on a besoin de l'arabe, donc il le faut », exception datee
@@ -531,7 +550,7 @@ def liste_articles() -> str:
 # du Roi Fahd (KFGQPC UthmanicHafs v3.0, celui du Mushaf de l'application), un hadith dans Uthman Taha Naskh du meme
 # editeur ; chacun suit, en bloc, le paragraphe qui le cite en francais.
 CHIFFRES_ARABES = "٠١٢٣٤٥٦٧٨٩"
-GENRES_CITATION = ("coran", "hadith")
+GENRES_CITATION = ("coran", "hadith", "texte")  # texte : un ouvrage savant cite en arabe (al-Ghazali, Ihya)
 
 
 def chiffres_arabes(nombre: int) -> str:
@@ -600,6 +619,10 @@ def render_section(section: dict, number: int, tarifs: dict | None = None, today
     titre = sans_numero(section["title"])
     genere = corps_genere(section, sid, tarifs, today, avis)
     corps = f'{paragraphes(section)}{genere}{points_liste(section)}{liens_section(section)}'
+    if section.get("generated") == "articles":
+        return (f'<section class="section section--articles" id="{esc(sid)}" aria-labelledby="heading-{number}">'
+                f'<div class="articles__tete" data-revele-enfants><h2 id="heading-{number}">{titre_html(titre)}</h2>{paragraphes(section)}</div>'
+                f'{genere}{liens_section(section)}</section>')
     if gabarit == "question":
         ouvert = " open" if number == 1 else ""
         return (f'<details class="tuile" name="aide" id="{esc(sid)}"{ouvert}><summary><h2 id="heading-{number}">'
@@ -658,6 +681,7 @@ def accueil_porte(page: dict, images: dict, cta: str) -> str:
     <div class="porte__vue">
       <div class="porte__arche" aria-hidden="true"></div>
       {scene(images, "chemin", "(max-width: 839px) 150vw, 112vw", "porte__scene", prioritaire=True)}
+      <div class="porte__rayons" aria-hidden="true"></div>
     </div>
     <div class="porte__texte" data-lignes>
       <h1>{titre_html(page['h1'])}</h1>
@@ -1537,7 +1561,8 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
         tete_couleurs = ('<meta name="color-scheme" content="dark">\n'
                          '  <meta name="theme-color" content="#6538E4">')
         # Le halo qui suit la souris, puis l'arche geante de fond (directeur, 03/11/2026) : deux calques decoratifs.
-        halo = '<div class="halo" aria-hidden="true"></div><div class="fond-arche" aria-hidden="true"></div>'
+        halo = ('<div class="halo" aria-hidden="true"></div><div class="fond-arche" aria-hidden="true"></div>'
+                '<div class="fond-lumiere" aria-hidden="true"></div>')
     else:
         tete_couleurs = ('<meta name="color-scheme" content="light dark">\n'
                          '  <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">\n'
@@ -1569,7 +1594,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
     <div class="site-header__inner">
       <a class="brand site-header__brand" href="/fr/" aria-label="Rewayah Academy, accueil">{logo_entete(ambiance)}</a>
       <nav class="site-nav" aria-label="Navigation principale">{nav_items}</nav>
-      {connexion}<a class="site-header__inscription" href="/connexion"><span class="site-header__long">Commencer mon inscription</span><span class="site-header__court">S’inscrire</span></a>
+      {connexion}<a class="site-header__inscription" href="/connexion">S’inscrire</a>
       <details class="mobile-menu"><summary><span class="mobile-menu__libelle sr-only">Menu</span><span class="mobile-menu__icone" aria-hidden="true"></span></summary><nav aria-label="Navigation mobile">{nav_items}{anchor(NAV[-1][0], NAV[-1][1])}</nav></details>
     </div>
   </header>
@@ -1629,6 +1654,10 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
     _ARTICLES[:] = sorted(((r, p) for r, p in pages.items() if r.startswith("/fr/articles/")),
                           key=lambda article: article[1]["date"], reverse=True)
     direction, images = load_direction(contenu)
+    _IMAGES.clear()
+    _IMAGES.update(images)
+    _ILLUSTRATIONS_ARTICLES.clear()
+    _ILLUSTRATIONS_ARTICLES.update({r: d["image"] for r, d in direction["pages"].items() if r.startswith("/fr/articles/") and d.get("image")})
     # Le mot du directeur (page Academie) : l'accueil en reprend une phrase, signee, a cote de sa photo.
     mot = next((s for p in pages.values() for s in p["sections"] if s.get("citation")), None)
     # Les deux autres fondateurs (page Academie), avec leur portrait : l'accueil les montre a cote du directeur.
