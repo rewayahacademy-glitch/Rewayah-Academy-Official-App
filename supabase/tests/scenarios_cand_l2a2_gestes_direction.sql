@@ -385,16 +385,16 @@ SELECT pg_temp.garde('cap_a4', pg_temp.en(pg_temp.p('a4'), 'admin', $$SELECT pub
 SELECT pg_temp.garde('cap_k1', pg_temp.en(pg_temp.p('c1'), 'accountant', $$SELECT public.capacites_candidatures()$$));
 SELECT pg_temp.garde('cap_e1', pg_temp.en(pg_temp.p('e1'), 'guardian', $$SELECT public.capacites_candidatures()$$));
 SELECT pg_temp.vrai(pg_temp.lu('cap_a1') @> '{"peutLire": true, "peutDecider": true, "peutEcrireReferentiel": true,
-    "peutImporter": false, "peutMenerEntretien": false, "doubleVerificationRequise": false,
+    "peutImporter": false, "peutMenerEntretien": true, "doubleVerificationRequise": false,
     "gestesGroupables": ["mettreEnPause", "leverPause", "refuser"]}'::jsonb
   AND pg_temp.lu('cap_a1') -> 'gestes' = '{"demanderComplement": true, "cloreComplement": true, "admettreVerifications": true,
     "confirmerMoyenPaiement": true, "infirmerMoyenPaiement": true, "mettreEnPause": true, "leverPause": true,
     "refuser": true, "consignerRetrait": true, "rouvrir": true, "definirResponsable": true, "agirEnLot": true,
     "inviter": false, "consignerPrevenu": true, "garderPourSuivi": true, "rattacher": true,
-    "planifierEntretien": false, "consignerEntretien": false, "pieceACorriger": false, "validerPiece": false,
+    "planifierEntretien": true, "consignerEntretien": true, "pieceACorriger": false, "validerPiece": false,
     "restreindre": false, "leverRestriction": false, "noterIndisponibilite": false,
     "leverIndisponibilite": false}'::jsonb,
-  'direction homme : decide de son cote ; une capacite par geste, vraie pour les seuls gestes que le serveur sait faire (CAND-L3 : prevenu, garder pour suivi et rattacher le sont desormais)');
+  'direction homme : decide de son cote ; une capacite par geste, vraie pour les seuls gestes que le serveur sait faire (CAND-L3 : prevenu, garder pour suivi et rattacher le sont desormais ; V1 : planifier et consigner un entretien)');
 SELECT pg_temp.vrai(pg_temp.lu('cap_a1') -> 'listes' = '{
     "modelesRefus": ["refus_general", "refus_niveau", "refus_besoins", "refus_sans_reponse"],
     "modelesPause": ["pause_attente_besoin", "pause_attente_informations", "pause_demande_candidat", "pause_general"],
