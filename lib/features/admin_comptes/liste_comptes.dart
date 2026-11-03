@@ -73,7 +73,8 @@ String? nomClasseEleve(CompteAdmin c) {
 /// decision (un enseignant en attente ; depuis l'admission du 27/10, une
 /// demande d'admission recue). Un autre compte `pending_kyc` dont le role est
 /// lu n'attend aucune decision : il se dit « Sans décision ». Un compte
-/// `pending_kyc` au role illisible se dit « État inconnu ».
+/// `pending_kyc` au role illisible se dit « État du compte pas encore connu »
+/// (TXT-1).
 enum EtatAffiche {
   /// Un compte qui attend une decision.
   attente,

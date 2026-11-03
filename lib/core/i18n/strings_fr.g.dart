@@ -548,8 +548,8 @@ class Traductions$presence$fr {
 	/// fr: 'Définitif'
 	String get finalisee => 'Définitif';
 
-	/// fr: 'État inconnu'
-	String get inconnu => 'État inconnu';
+	/// fr: 'Présence pas encore connue'
+	String get inconnu => 'Présence pas encore connue';
 
 	/// fr: 'en salle à l'instant'
 	String get entreeInstant => 'en salle à l\'instant';
@@ -10516,8 +10516,8 @@ class Traductions$admin$comptes$fr {
 	/// fr: 'Suspendu'
 	String get etatSuspendu => 'Suspendu';
 
-	/// fr: 'État inconnu'
-	String get etatInconnu => 'État inconnu';
+	/// fr: 'État du compte pas encore connu'
+	String get etatInconnu => 'État du compte pas encore connu';
 
 	/// fr: 'Sans décision'
 	String get etatSansDecision => 'Sans décision';
@@ -18512,7 +18512,7 @@ class Traductions$com$messages$fr {
 	late final Traductions$com$messages$fil$fr fil = Traductions$com$messages$fil$fr.internal(_root);
 	late final Traductions$com$messages$demo$fr demo = Traductions$com$messages$demo$fr.internal(_root);
 
-	/// fr: 'Messages métier'
+	/// fr: 'Messages'
 	String get titre => _root.com.socle.lexique.messagesMetier;
 
 	/// fr: 'Aucune conversation pour le moment.'
@@ -29811,8 +29811,8 @@ class Traductions$tc$classe$etat$fr {
 
 	// Translations
 
-	/// fr: 'État inconnu'
-	String get inconnu => 'État inconnu';
+	/// fr: 'Présence pas encore connue'
+	String get inconnu => 'Présence pas encore connue';
 
 	/// fr: 'Attendu'
 	String get attendu => 'Attendu';
@@ -31505,8 +31505,8 @@ class Traductions$com$socle$lexique$fr {
 	/// fr: 'Messages'
 	String get messages => 'Messages';
 
-	/// fr: 'Messages métier'
-	String get messagesMetier => 'Messages métier';
+	/// fr: 'Messages'
+	String get messagesMetier => 'Messages';
 
 	/// fr: 'Communauté enseignants'
 	String get communaute => 'Communauté enseignants';
@@ -34403,8 +34403,8 @@ class Traductions$comptable$beneficiaires$profil$fr {
 	/// fr: 'Relancer {nom}'
 	String relancer({required Object nom}) => 'Relancer ${nom}';
 
-	/// fr: 'Ouvre le fil « Profil de paiement » avec un message prérempli, dans les Messages métier.'
-	String get relancerDetail => 'Ouvre le fil « Profil de paiement » avec un message prérempli, dans les Messages métier.';
+	/// fr: 'Ouvre le fil « Profil de paiement » avec un message prérempli, dans les Messages.'
+	String get relancerDetail => 'Ouvre le fil « Profil de paiement » avec un message prérempli, dans les Messages.';
 
 	/// fr: 'Demander une mise à jour à {nom}'
 	String demanderMiseAJour({required Object nom}) => 'Demander une mise à jour à ${nom}';
@@ -40396,7 +40396,7 @@ class Traductions$com$studio$aujourdhui$acces$fr {
 
 	// Translations
 
-	/// fr: 'Messages métier'
+	/// fr: 'Messages'
 	String get messages => _root.com.socle.lexique.messagesMetier;
 
 	/// fr: 'Les conversations avec les familles, les enseignants et les contrôleurs'
@@ -43306,7 +43306,7 @@ extension on Traductions {
 			'presence.confirmationEnAttente' => 'À confirmer',
 			'presence.corrigeeManuel' => 'Correction manuelle',
 			'presence.finalisee' => 'Définitif',
-			'presence.inconnu' => 'État inconnu',
+			'presence.inconnu' => 'Présence pas encore connue',
 			'presence.entreeInstant' => 'en salle à l\'instant',
 			'presence.entreeMinutes' => ({required Object minutes}) => 'en salle depuis ${minutes} min',
 			'presence.retardMinutes' => ({required Object minutes}) => '${minutes} min après l\'heure',
@@ -46546,7 +46546,7 @@ extension on Traductions {
 			'admin.comptes.etatActif' => 'Actif',
 			'admin.comptes.etatProvisoire' => 'Provisoire',
 			'admin.comptes.etatSuspendu' => 'Suspendu',
-			'admin.comptes.etatInconnu' => 'État inconnu',
+			'admin.comptes.etatInconnu' => 'État du compte pas encore connu',
 			'admin.comptes.etatSansDecision' => 'Sans décision',
 			'admin.comptes.roleAdmin' => 'Administration',
 			'admin.comptes.roleComptable' => 'Comptable',
@@ -49715,7 +49715,7 @@ extension on Traductions {
 			'tc.classe.roster.videDetail' => 'Cette séance n\'a aucun élève inscrit.',
 			'tc.classe.roster.ouvrirFiche' => ({required Object dePrenom}) => 'Ouvrir la fiche ${dePrenom}',
 			'tc.classe.roster.places' => ({required Object inscrits, required Object plafond}) => '${inscrits} / ${plafond} places',
-			'tc.classe.etat.inconnu' => 'État inconnu',
+			'tc.classe.etat.inconnu' => 'Présence pas encore connue',
 			'tc.classe.etat.attendu' => 'Attendu',
 			'tc.classe.etat.enConnexion' => 'En connexion',
 			'tc.classe.etat.present' => 'Présent',
@@ -50770,7 +50770,7 @@ extension on Traductions {
 			'com.socle.composants.espace.panneauContexte' => 'Contexte',
 			'com.socle.composants.espace.retourListe' => 'Retour à la liste',
 			'com.socle.lexique.messages' => 'Messages',
-			'com.socle.lexique.messagesMetier' => 'Messages métier',
+			'com.socle.lexique.messagesMetier' => 'Messages',
 			'com.socle.lexique.communaute' => 'Communauté enseignants',
 			'com.socle.lexique.studio' => 'Le Studio',
 			'com.socle.lexique.aujourdhui' => 'Aujourd\'hui',
@@ -52138,7 +52138,7 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.journalVide' => 'Aucune modification enregistrée sur ce profil pour l\'instant.',
 			'comptable.beneficiaires.profil.actionsTitre' => 'Que faire pour ce profil',
 			'comptable.beneficiaires.profil.relancer' => ({required Object nom}) => 'Relancer ${nom}',
-			'comptable.beneficiaires.profil.relancerDetail' => 'Ouvre le fil « Profil de paiement » avec un message prérempli, dans les Messages métier.',
+			'comptable.beneficiaires.profil.relancerDetail' => 'Ouvre le fil « Profil de paiement » avec un message prérempli, dans les Messages.',
 			'comptable.beneficiaires.profil.demanderMiseAJour' => ({required Object nom}) => 'Demander une mise à jour à ${nom}',
 			'comptable.beneficiaires.profil.suspendre' => ({required Object nom}) => 'Suspendre les paiements de ${nom}',
 			'comptable.beneficiaires.profil.reprendre' => ({required Object nom}) => 'Reprendre les paiements de ${nom}',

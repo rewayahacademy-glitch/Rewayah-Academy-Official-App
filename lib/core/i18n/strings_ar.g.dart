@@ -288,7 +288,7 @@ class _Traductions$presence$ar extends Traductions$presence$fr {
 	@override String get confirmationEnAttente => 'للتأكيد';
 	@override String get corrigeeManuel => 'تصحيح يدوي';
 	@override String get finalisee => 'نهائي';
-	@override String get inconnu => 'حالة غير معروفة';
+	@override String get inconnu => 'الحضور غير معروف بعد';
 	@override String get entreeInstant => 'دخل القاعة للتو';
 	@override String entreeMinutes({required Object minutes}) => 'في القاعة منذ ⁨${minutes}⁩ د';
 	@override String retardMinutes({required Object minutes}) => '⁨${minutes}⁩ د بعد الموعد';
@@ -5328,7 +5328,7 @@ class _Traductions$admin$comptes$ar extends Traductions$admin$comptes$fr {
 	@override String get etatActif => 'نشط';
 	@override String get etatProvisoire => 'مؤقت';
 	@override String get etatSuspendu => 'موقوف';
-	@override String get etatInconnu => 'حالة غير معروفة';
+	@override String get etatInconnu => 'حالة الحساب غير معروفة بعد';
 	@override String get roleAdmin => 'الإدارة';
 	@override String get roleComptable => 'محاسب';
 	@override String get roleControleur => 'مراقب';
@@ -10971,7 +10971,7 @@ class _Traductions$tc$classe$etat$ar extends Traductions$tc$classe$etat$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get inconnu => 'حالة غير معروفة';
+	@override String get inconnu => 'الحضور غير معروف بعد';
 	@override String get attendu => 'منتظَر';
 	@override String get enConnexion => 'جارٍ الاتصال';
 	@override String get present => 'حاضر';
@@ -11499,7 +11499,7 @@ class _Traductions$com$socle$lexique$ar extends Traductions$com$socle$lexique$fr
 
 	// Translations
 	@override String get messages => 'الرسائل';
-	@override String get messagesMetier => 'رسائل العمل';
+	@override String get messagesMetier => 'الرسائل';
 	@override String get communaute => 'مجتمع المعلّمين';
 	@override String get studio => 'الاستوديو';
 	@override String get aujourdhui => 'اليوم';
@@ -14456,7 +14456,7 @@ class _Traductions$comptable$beneficiaires$profil$ar extends Traductions$comptab
 	@override String get journalVide => 'لا يوجد أي تعديل مسجل على هذا الملف حتى الآن.';
 	@override String get actionsTitre => 'ما العمل لهذا الملف';
 	@override String relancer({required Object nom}) => 'تذكير ${nom}';
-	@override String get relancerDetail => 'يفتح محادثة «ملف الدفع» برسالة معدّة مسبقًا، في رسائل العمل.';
+	@override String get relancerDetail => 'يفتح محادثة «ملف الدفع» برسالة معدّة مسبقًا، في الرسائل.';
 	@override String demanderMiseAJour({required Object nom}) => 'طلب تحديث من ${nom}';
 	@override String suspendre({required Object nom}) => 'إيقاف مدفوعات ${nom}';
 	@override String reprendre({required Object nom}) => 'استئناف مدفوعات ${nom}';
@@ -20633,7 +20633,7 @@ extension on TraductionsAr {
 			'presence.confirmationEnAttente' => 'للتأكيد',
 			'presence.corrigeeManuel' => 'تصحيح يدوي',
 			'presence.finalisee' => 'نهائي',
-			'presence.inconnu' => 'حالة غير معروفة',
+			'presence.inconnu' => 'الحضور غير معروف بعد',
 			'presence.entreeInstant' => 'دخل القاعة للتو',
 			'presence.entreeMinutes' => ({required Object minutes}) => 'في القاعة منذ ⁨${minutes}⁩ د',
 			'presence.retardMinutes' => ({required Object minutes}) => '⁨${minutes}⁩ د بعد الموعد',
@@ -22567,7 +22567,7 @@ extension on TraductionsAr {
 			'tc.classe.roster.videDetail' => 'لا طالب مسجَّل في هذه الحصة.',
 			'tc.classe.roster.ouvrirFiche' => ({required Object dePrenom}) => 'فتح بطاقة ⁨${dePrenom}⁩',
 			'tc.classe.roster.places' => ({required Object inscrits, required Object plafond}) => 'المقاعد: ⁨${inscrits}⁩ من ⁨${plafond}⁩',
-			'tc.classe.etat.inconnu' => 'حالة غير معروفة',
+			'tc.classe.etat.inconnu' => 'الحضور غير معروف بعد',
 			'tc.classe.etat.attendu' => 'منتظَر',
 			'tc.classe.etat.enConnexion' => 'جارٍ الاتصال',
 			'tc.classe.etat.present' => 'حاضر',
@@ -22895,7 +22895,7 @@ extension on TraductionsAr {
 			'com.socle.composants.espace.panneauContexte' => 'السياق',
 			'com.socle.composants.espace.retourListe' => 'العودة إلى القائمة',
 			'com.socle.lexique.messages' => 'الرسائل',
-			'com.socle.lexique.messagesMetier' => 'رسائل العمل',
+			'com.socle.lexique.messagesMetier' => 'الرسائل',
 			'com.socle.lexique.communaute' => 'مجتمع المعلّمين',
 			'com.socle.lexique.studio' => 'الاستوديو',
 			'com.socle.lexique.aujourdhui' => 'اليوم',
@@ -25066,7 +25066,7 @@ extension on TraductionsAr {
 			'admin.comptes.etatActif' => 'نشط',
 			'admin.comptes.etatProvisoire' => 'مؤقت',
 			'admin.comptes.etatSuspendu' => 'موقوف',
-			'admin.comptes.etatInconnu' => 'حالة غير معروفة',
+			'admin.comptes.etatInconnu' => 'حالة الحساب غير معروفة بعد',
 			'admin.comptes.roleAdmin' => 'الإدارة',
 			'admin.comptes.roleComptable' => 'محاسب',
 			'admin.comptes.roleControleur' => 'مراقب',
@@ -26412,7 +26412,7 @@ extension on TraductionsAr {
 			'comptable.beneficiaires.profil.journalVide' => 'لا يوجد أي تعديل مسجل على هذا الملف حتى الآن.',
 			'comptable.beneficiaires.profil.actionsTitre' => 'ما العمل لهذا الملف',
 			'comptable.beneficiaires.profil.relancer' => ({required Object nom}) => 'تذكير ${nom}',
-			'comptable.beneficiaires.profil.relancerDetail' => 'يفتح محادثة «ملف الدفع» برسالة معدّة مسبقًا، في رسائل العمل.',
+			'comptable.beneficiaires.profil.relancerDetail' => 'يفتح محادثة «ملف الدفع» برسالة معدّة مسبقًا، في الرسائل.',
 			'comptable.beneficiaires.profil.demanderMiseAJour' => ({required Object nom}) => 'طلب تحديث من ${nom}',
 			'comptable.beneficiaires.profil.suspendre' => ({required Object nom}) => 'إيقاف مدفوعات ${nom}',
 			'comptable.beneficiaires.profil.reprendre' => ({required Object nom}) => 'استئناف مدفوعات ${nom}',
