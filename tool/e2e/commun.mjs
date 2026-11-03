@@ -40,10 +40,23 @@ export function sql(requete) {
 
 const TYPES = { '.js': 'text/javascript', '.wasm': 'application/wasm', '.mjs': 'text/javascript' };
 
+/// REJEU-E2E (03/11/2026) : E2E_VUE (« 1440x900 », « 390x844 ») impose une
+/// taille a tous les contextes d'un parcours, pour le rejouer a une taille
+/// donnee. Sans elle, chaque role garde la sienne, comme avant.
+const VUE_FORCEE = process.env.E2E_VUE
+  ? (([w, h]) => ({ width: w, height: h }))(process.env.E2E_VUE.split('x').map(Number))
+  : null;
+
 /// Un parcours : un navigateur, un contexte par role, des captures numerotees,
 /// un journal d'etapes. `fin()` ecrit le verdict et rend le code de sortie.
 export async function parcours(nom, dossierCaptures) {
-  const sortie = path.join(DEPOT, 'docs/current/captures/E2E', dossierCaptures);
+  // REJEU-E2E (03/11/2026) : E2E_REJEU nomme un dossier de rejeu date ; les
+  // captures vont alors dans <E2E_REJEU>/<dossier du parcours>/<largeur>.
+  // Sans lui, comme avant.
+  const sortie = process.env.E2E_REJEU
+    ? path.join(DEPOT, 'docs/current/captures/E2E', process.env.E2E_REJEU, dossierCaptures,
+      String(VUE_FORCEE?.width ?? 'defaut'))
+    : path.join(DEPOT, 'docs/current/captures/E2E', dossierCaptures);
   // On ne retire que les captures et le journal du passage precedent : les
   // fichiers ecrits a la main (pieges.md) restent.
   fs.mkdirSync(sortie, { recursive: true });
@@ -74,7 +87,7 @@ export async function parcours(nom, dossierCaptures) {
   // francais, comme avant.
   async function contexte(role, { telephone = false, vue = null, sombre = false, langue = 'fr-FR' } = {}) {
     const ctx = await navigateur.newContext({
-      viewport: vue ?? (telephone ? { width: 390, height: 780 } : { width: 1200, height: 760 }),
+      viewport: VUE_FORCEE ?? vue ?? (telephone ? { width: 390, height: 780 } : { width: 1200, height: 760 }),
       colorScheme: sombre ? 'dark' : 'light',
       deviceScaleFactor: 1,
       locale: langue,
