@@ -67,6 +67,9 @@ REQUIRED = {
     "/fr/accessibilite",
 }
 APP_LINKS = {"/connexion"}
+# Formule institutionnelle publiable telle quelle (registre de marque M-19, 29/09 et 14/10/2026).
+PIED_ACCROCHE = "Rewayah Academy enseigne le Coran en ligne depuis le 1er mai 2024."
+
 NAV = (
     ("Cours", "/fr/cours"),
     ("Familles", "/fr/familles"),
@@ -775,8 +778,19 @@ def bande_finale(titre: str, phrase: str, label: str, href: str, identifiant: st
 </section>'''
 
 
+# Les extraits d'avis vivent sur les pages ou une famille hesite (directeur, 03/11/2026) ; la page /fr/avis reste le depot
+# central. Rien ne s'affiche tant que bloc_avis.AVIS_APERCU_MIN avis ne sont pas publies.
+PAGES_APERCU_AVIS = ("/fr/cours", "/fr/familles", "/fr/tarifs")
+
+
+def apercu_avis(avis: dict | None) -> str:
+    if not avis:
+        return ""
+    return avis_mod.rendre_avis_apercu(avis, lien_fleche("Lire tous les avis", "/fr/avis"))
+
+
 def render_home(page: dict, images: dict, tarifs: dict, cta: str, mot: dict | None = None,
-                fondateurs: list | None = None) -> str:
+                fondateurs: list | None = None, avis: dict | None = None) -> str:
     fin = _sections_par_id(page)["footer"]
     return "".join((
         accueil_porte(page, images, cta),
@@ -785,6 +799,7 @@ def render_home(page: dict, images: dict, tarifs: dict, cta: str, mot: dict | No
         accueil_etapes(page, images),
         accueil_tarifs(page, tarifs),
         accueil_confiance(page, images, mot, fondateurs),
+        apercu_avis(avis),
         accueil_faq(page, tarifs),
         # Comme les pages principales, l'accueil se referme sur une phrase qui est le lien : elle dit pour qui.
         bande_finale((fin.get("paragraphs") or [fin["title"]])[0], "L’inscription se fait dans l’application Rewayah.",
@@ -1240,6 +1255,28 @@ def donnees_structurees(origin: str) -> str:
             + json.dumps(donnees, ensure_ascii=False).replace("</", "<\\/") + "</script>")
 
 
+def fil_ariane(route: str, page: dict, origin: str) -> str:
+    """Fil d'Ariane (accueil, puis la page) pour les pages interieures : Google l'affiche sous le titre, surtout sur
+    telephone. Jamais sur /fr/avis : aucun balisage schema.org n'accompagne les avis (decision du 19/10/2026)."""
+    if route in ("/fr/", "/fr/avis"):
+        return ""
+    base = origin.rstrip("/")
+    noms = {href: label for label, href in (*NAV, *FOOTER)}
+    noms.update({"/fr/comment-ca-marche": "Comment ça marche", "/fr/academie": "L’académie", "/fr/aide": "Aide",
+                 "/fr/recrutement": "Recrutement", "/fr/contact": "Contact"})
+    nom = noms.get(route) or page["h1"]
+    donnees = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Accueil", "item": base + "/fr/"},
+            {"@type": "ListItem", "position": 2, "name": nom, "item": base + route},
+        ],
+    }
+    return ('<script type="application/ld+json">'
+            + json.dumps(donnees, ensure_ascii=False).replace("</", "<\\/") + "</script>")
+
+
 def page_indexee(route: str, page: dict, allow_indexing: bool, avis: dict | None) -> bool:
     """Production seulement, page prete et indexable ; une page vide ne s'offre pas aux moteurs (les avis tant
     qu'aucun n'est publie)."""
@@ -1287,10 +1324,12 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
         if page.get("status") == "blocked" else ""
     )
     if route == "/fr/":
-        main = render_home(page, images, tarifs, cta, mot, fondateurs)
+        main = render_home(page, images, tarifs, cta, mot, fondateurs, avis)
         classe_page = "page-accueil"
     else:
         main = hero_interieur(route, page, reglage, images, cta, status, tarifs, today) + render_inner(route, page, reglage, images, tarifs, today, avis)
+        if route in PAGES_APERCU_AVIS:
+            main += apercu_avis(avis)
         fin = reglage.get("fin")
         if fin:
             # Une page qui a deja une section « inscription » (l'aide) donne un autre identifiant a sa fin.
@@ -1330,20 +1369,26 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
         simulator = ""
     image_partage = reglage.get("image") or "chemin"
     largeur_partage = image_largeurs(images, image_partage)[-1]
+    source_partage = images["images"][image_partage]
+    hauteur_partage = round(largeur_partage * source_partage["hauteur"] / source_partage["largeur"])
     meta_partage = (
         f'<meta property="og:type" content="website"><meta property="og:site_name" content="Rewayah Academy">'
         f'<meta property="og:locale" content="fr_FR"><meta property="og:title" content="{esc(page["title"])}">'
         f'<meta property="og:description" content="{esc(page["description"])}"><meta property="og:url" content="{esc(canonical)}">'
         f'<meta property="og:image" content="{esc(origin.rstrip("/") + ASSETS + "/scene-" + image_partage + "-" + str(largeur_partage) + ".webp")}">'
+        f'<meta property="og:image:type" content="image/webp">'
+        f'<meta property="og:image:width" content="{largeur_partage}">'
+        f'<meta property="og:image:height" content="{hauteur_partage}">'
         f'<meta property="og:image:alt" content="{esc(images["images"][image_partage]["alt"])}">'
         '<meta name="twitter:card" content="summary_large_image">'
     )
-    jsonld = donnees_structurees(origin) if route == "/fr/" else ""
+    jsonld = donnees_structurees(origin) if route == "/fr/" else fil_ariane(route, page, origin)
     ambiance = direction.get("ambiance", "clair")
     if ambiance == "violet":
         tete_couleurs = ('<meta name="color-scheme" content="dark">\n'
                          '  <meta name="theme-color" content="#6538E4">')
-        halo = '<div class="halo" aria-hidden="true"></div>'
+        # Le halo qui suit la souris, puis l'arche geante de fond (directeur, 03/11/2026) : deux calques decoratifs.
+        halo = '<div class="halo" aria-hidden="true"></div><div class="fond-arche" aria-hidden="true"></div>'
     else:
         tete_couleurs = ('<meta name="color-scheme" content="light dark">\n'
                          '  <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">\n'
@@ -1376,15 +1421,15 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
       <a class="brand site-header__brand" href="/fr/" aria-label="Rewayah Academy, accueil">{logo_entete(ambiance)}</a>
       <nav class="site-nav" aria-label="Navigation principale">{nav_items}</nav>
       {connexion}<a class="site-header__inscription" href="/connexion"><span class="site-header__long">Commencer mon inscription</span><span class="site-header__court">S’inscrire</span></a>
-      <details class="mobile-menu"><summary><span class="mobile-menu__libelle">Menu</span><span class="mobile-menu__icone" aria-hidden="true"></span></summary><nav aria-label="Navigation mobile">{nav_items}{anchor(NAV[-1][0], NAV[-1][1])}</nav></details>
+      <details class="mobile-menu"><summary><span class="mobile-menu__libelle sr-only">Menu</span><span class="mobile-menu__icone" aria-hidden="true"></span></summary><nav aria-label="Navigation mobile">{nav_items}{anchor(NAV[-1][0], NAV[-1][1])}</nav></details>
     </div>
   </header>
   <main class="site-main" id="contenu">
     {main}
   </main>
   {simulator}
-  <footer class="site-footer"><div class="site-footer__inner">
-     <div class="footer-identity"><a class="brand" href="/fr/" aria-label="Rewayah Academy, accueil"><img src="{ASSETS}/logo-horizontal-white.svg" width="1027" height="287" alt=""></a></div>
+  <footer class="site-footer"><div class="pied-carte" aria-hidden="true"><span class="pied-carte__points"></span></div><span class="pied-symbole" aria-hidden="true"></span><div class="site-footer__inner">
+     <div class="footer-identity"><a class="brand" href="/fr/" aria-label="Rewayah Academy, accueil"><img src="{ASSETS}/logo-horizontal-white.svg" width="1027" height="287" alt=""></a><p class="pied-accroche">{esc(PIED_ACCROCHE)}</p></div>
     <details class="pied-volet pied-volet--liens" open><summary class="footer-title">Découvrir</summary><nav aria-label="Découvrir Rewayah"><ul>{discovery_links}</ul></nav></details>
     <details class="pied-volet pied-volet--legal" open><summary class="footer-title">Informations légales</summary><div class="pied-legal"><nav class="footer-legal" aria-label="Navigation légale"><ul>{footer_links}</ul></nav>
       <div class="pied-societe"><p><span>REWAYAH ACADEMY LTD</span> <span>Société\u00a0n°\u00a016624644</span></p><address><span>71-75 Shelton Street</span> <span>Covent Garden, London</span> <span>WC2H 9JQ, Royaume-Uni</span></address><p>{anchor(academy_facebook['label'], academy_facebook['href'])}</p><p>{anchor(academy_instagram['label'], academy_instagram['href'])}</p><p>{anchor(author_facebook['label'], author_facebook['href'])}</p><p class="pied-credit"><span>Français</span> <span>{esc(site['author_credit'])}</span></p></div></div></details>

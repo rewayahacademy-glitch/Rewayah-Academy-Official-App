@@ -141,6 +141,10 @@ class GeneratedSiteQA(unittest.TestCase):
                 "logo-vertical.svg",
                 "ornement-contour.svg",
                 "ornement-contour-white.svg",
+                # Refonte du 03/11/2026 : le symbole en contour (filigrane du pied de page, copie du fichier officiel) et la
+                # carte du monde en points (generee par carte_monde.py, donnees Natural Earth du domaine public).
+                "symbole-contour-white.svg",
+                "carte-monde-points.svg",
                 "dm-sans-latin-ext.woff2",
                 "dm-sans-latin.woff2",
                 "plus-jakarta-sans-latin-ext.woff2",
@@ -164,6 +168,7 @@ class GeneratedSiteQA(unittest.TestCase):
             ("logo-horizontal-white.svg", "blanc/logo-horizontal.svg"),
             ("ornement-contour.svg", "violet/ornement-contour.svg"),
             ("ornement-contour-white.svg", "blanc/ornement-contour.svg"),
+            ("symbole-contour-white.svg", "blanc/symbole-contour.svg"),
         ):
             with self.subTest(copie=copie):
                 self.assertEqual((SITE / "assets" / copie).read_bytes(), (officiels / source).read_bytes())

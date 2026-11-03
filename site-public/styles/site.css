@@ -258,7 +258,7 @@ p { text-wrap: wrap; max-width: 60ch; }
   border: 2px solid transparent; border-radius: var(--r-full);
   background: var(--action); color: var(--sur-action);
   font-weight: 600; text-decoration: none; line-height: 1.2;
-  transition: background-color var(--mv-micro) var(--mv-entree), color var(--mv-micro) var(--mv-entree), transform var(--mv-retour) var(--mv-entree);
+  transition: background-color var(--mv-micro) var(--mv-entree), color var(--mv-micro) var(--mv-entree), transform var(--mv-retour) var(--mv-entree), translate var(--mv-apparition) var(--mv-entree), box-shadow var(--mv-apparition) var(--mv-entree);
 }
 .cta:hover { background: var(--action-survol); color: var(--sur-action-survol); }
 .cta:active { transform: scale(.98); }
@@ -290,14 +290,18 @@ p { text-wrap: wrap; max-width: 60ch; }
 .site-header__connexion { display: inline-flex; align-items: center; min-height: 48px; padding-inline: var(--e-5); border: 2px solid var(--contour); border-radius: var(--r-full); font-weight: 600; text-decoration: none; transition: background-color var(--mv-micro) var(--mv-entree); }
 .site-header__connexion:hover { background: var(--champ); }
 .mobile-menu { display: none; margin-inline-start: auto; }
-.mobile-menu summary { list-style: none; display: inline-flex; align-items: center; gap: var(--e-3); min-height: 48px; padding-inline: var(--e-4); border-radius: var(--r-full); border: 2px solid var(--contour); font-weight: 600; cursor: pointer; }
+/* Le mot « Menu » n'est plus affiche (directeur, 03/11/2026) : l'icone seule suffit, dans un rond de 48 px (cible tactile
+   minimale). Le mot reste lu par les lecteurs d'ecran (.sr-only dans le <summary>) et n'est jamais retire du balisage. */
+.mobile-menu summary { list-style: none; display: inline-flex; align-items: center; justify-content: center; width: 48px; min-height: 48px; padding-inline: 0; border-radius: var(--r-full); border: 2px solid var(--contour); font-weight: 600; cursor: pointer; transition: background-color var(--mv-apparition) var(--mv-entree), transform var(--mv-micro) var(--mv-entree); }
+.mobile-menu summary:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
+.mobile-menu summary:active { transform: scale(.94); }
 .mobile-menu summary::-webkit-details-marker { display: none; }
-.mobile-menu__icone { position: relative; width: 18px; height: 12px; }
+.mobile-menu__icone { position: relative; width: 20px; height: 14px; }
 .mobile-menu__icone::before, .mobile-menu__icone::after { content: ''; position: absolute; left: 0; right: 0; height: 2px; border-radius: 2px; background: currentColor; transition: transform var(--mv-apparition) var(--mv-entree); }
-.mobile-menu__icone::before { top: 1px; }
-.mobile-menu__icone::after { bottom: 1px; }
+.mobile-menu__icone::before { top: 2px; }
+.mobile-menu__icone::after { bottom: 2px; }
 .mobile-menu[open] .mobile-menu__icone::before { transform: translateY(4px) rotate(45deg); }
-.mobile-menu[open] .mobile-menu__icone::after { transform: translateY(-5px) rotate(-45deg); }
+.mobile-menu[open] .mobile-menu__icone::after { transform: translateY(-4px) rotate(-45deg); }
 .mobile-menu:not([open]) nav { display: none; }
 .mobile-menu nav { position: absolute; left: var(--marge); right: var(--marge); top: calc(var(--entete) - 4px); display: grid; padding: var(--e-4); border-radius: var(--r-lg); background: var(--fond); box-shadow: var(--ombre-2); }
 .mobile-menu nav a { display: flex; align-items: center; min-height: 56px; padding-inline: var(--e-4); border-radius: var(--r-md); text-decoration: none; font-family: var(--police-titre); font-size: var(--t-moyen); font-weight: 600; }
@@ -910,22 +914,44 @@ li, dd { text-wrap: wrap; }
 @keyframes entree-feuille { from { opacity: 0; transform: translateY(16px); } }
 
 /* --- Pied de page --------------------------------------------------------------- */
-.site-footer { background: var(--pied); color: var(--sur-pied); padding: var(--e-16) var(--marge) var(--e-8); position: relative; overflow: hidden; }
+/* Pied de page, refonte du 03/11/2026 (directeur) : grand, aere ; la carte du monde en points et le filigrane du symbole
+   sont des calques de fond tamises, pour que le texte garde la priorite. Les calques vivent dans le contexte
+   d'empilement du pied (isolation), ne recoivent jamais le pointeur, et la carte n'a ni nom ni frontiere
+   (carte_monde.py). Les teintes sont celles des jetons du pied (--sur-pied, --sur-pied-doux). */
+.site-footer { background: var(--pied); color: var(--sur-pied); padding: var(--e-16) var(--marge) var(--e-8); position: relative; overflow: hidden; isolation: isolate; }
 /* Rideau : la page glisse et decouvre le pied de page, deja en place dessous. Aucun mouvement ajoute,
    seulement l'ordre des couches ; reserve aux ecrans ou le pied tient en entier. */
 @media (min-width: 840px) and (min-height: 820px) {
   .site-main { position: relative; z-index: 1; background: var(--fond); }
   .site-footer { position: sticky; bottom: 0; z-index: 0; }
 }
-.site-footer__inner { position: relative; max-width: var(--contenu); margin-inline: auto; display: grid; gap: var(--e-6); font-size: var(--t-petit); }
-.site-footer .brand img { width: 150px; }
-.footer-identity { display: flex; align-items: center; }
+.pied-carte { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%); }
+.pied-carte__points { position: absolute; left: 50%; top: 52%; translate: -50% -50%; width: max(104%, 1180px); aspect-ratio: 170 / 83; background: var(--sur-pied-doux); opacity: .26;
+  -webkit-mask: url('carte-monde-points.svg') center / 100% 100% no-repeat; mask: url('carte-monde-points.svg') center / 100% 100% no-repeat; }
+.pied-symbole { position: absolute; z-index: -1; pointer-events: none; left: 38%; top: 50%; translate: -50% -50%; height: 150%; aspect-ratio: 743 / 734; background: var(--sur-pied); opacity: .05;
+  -webkit-mask: url('symbole-contour-white.svg') center / contain no-repeat; mask: url('symbole-contour-white.svg') center / contain no-repeat; }
+@media (max-width: 599px) {
+  .pied-carte { -webkit-mask-image: linear-gradient(to bottom, transparent 0, transparent 34%, #000 66%, #000 84%, transparent 100%); mask-image: linear-gradient(to bottom, transparent 0, transparent 34%, #000 66%, #000 84%, transparent 100%); }
+  .pied-carte__points { width: 190%; top: 72%; opacity: .26; }
+  .pied-symbole { left: 50%; top: 62%; height: 100%; opacity: .045; }
+}
+@media print, (forced-colors: active) { .pied-carte, .pied-symbole { display: none; } }
+.site-footer__inner { position: relative; z-index: 1; max-width: var(--contenu); margin-inline: auto; display: grid; gap: var(--e-6); font-size: var(--t-petit); }
+.site-footer .brand img { width: 180px; }
+.footer-identity { display: grid; gap: var(--e-4); align-content: start; justify-items: start; }
+.pied-accroche { margin: 0; max-width: 30ch; color: var(--sur-pied-doux); font-size: var(--t-corps); line-height: 1.5; text-wrap: balance; }
 .footer-title { font-weight: 700; font-size: var(--t-corps); }
 .pied-volet > summary { list-style: none; }
 .pied-volet > summary::-webkit-details-marker { display: none; }
 .site-footer ul { display: grid; }
 .site-footer a { display: inline-flex; align-items: center; min-height: 40px; text-decoration: none; }
 .site-footer a:hover { text-decoration: underline; }
+/* Les liens de navigation du pied se soulignent en glissant, comme ceux de l'en-tete (.site-nav) ; la societe garde son soulignement. */
+.pied-volet--liens a, .footer-legal a { background: linear-gradient(currentColor, currentColor) 0 calc(100% - 7px) / 0 1px no-repeat; transition: background-size var(--mv-apparition) var(--mv-entree); }
+.pied-volet--liens a:hover, .footer-legal a:hover, .pied-volet--liens a:focus-visible, .footer-legal a:focus-visible { background-size: 100% 1px; text-decoration: none; }
+@media (prefers-reduced-motion: reduce) { .pied-volet--liens a, .footer-legal a { transition: none; } }
 .footer-contacts { gap: var(--e-3); }
 .footer-contacts strong { display: block; }
 .footer-contacts a { display: grid; gap: 2px; align-content: center; min-height: 0; color: var(--sur-pied-doux); }
@@ -941,17 +967,20 @@ li, dd { text-wrap: wrap; }
 .pied-societe a { min-height: 32px; color: var(--sur-pied-doux); text-decoration: underline; }
 .site-footer .site-footer__inner .footer-bottom { display: flex; flex-wrap: wrap; gap: 0 var(--e-5); margin: 0; color: var(--sur-pied-doux); font-size: 16px; }
 .footer-bottom span { white-space: nowrap; }
-/* Bureau : le logo et les pages ; les quatre adresses ; les pages legales, la societe et Facebook ; la langue et
-   l'auteur du site. Les volets restent ouverts et leur titre s'efface (chaque navigation garde son nom). */
+/* Bureau : l'identite (logo et accroche) a gauche, les pages en trois colonnes a droite ; sous un filet, les pages legales,
+   la societe, puis la langue et l'auteur du site. Les volets restent ouverts et leur titre s'efface. */
 @media (min-width: 1100px) {
-  .site-footer { padding-top: var(--e-12); padding-bottom: var(--e-8); }
-  .site-footer__inner { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-6); row-gap: var(--e-5); }
+  .site-footer { padding-top: calc(var(--e-16) * 2); padding-bottom: var(--e-12); }
+  .site-footer__inner { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--e-8); row-gap: var(--e-16); }
+  .site-footer .brand img { width: 208px; }
   .pied-volet > summary { display: none; }
-  .footer-identity { grid-column: 1 / span 2; }
-  .pied-volet--liens { grid-column: 3 / -1; align-self: center; }
-  .pied-volet--liens ul { display: flex; flex-wrap: wrap; justify-content: end; gap: 0 var(--e-6); }
-  .pied-volet--liens a { color: var(--sur-pied); }
-  .pied-volet--contacts, .pied-volet--legal, .footer-bottom { grid-column: 1 / -1; }
+  .footer-identity { grid-column: 1 / span 4; }
+  .pied-volet--liens { grid-column: 6 / -1; }
+  .pied-volet--liens ul { grid-template-columns: repeat(3, auto); justify-content: space-between; column-gap: var(--e-8); }
+  .pied-volet--liens a { color: var(--sur-pied); font-size: var(--t-moyen); min-height: 52px; }
+  .pied-volet--contacts, .footer-bottom { grid-column: 1 / -1; }
+  .pied-volet--legal { grid-column: 1 / -1; padding-top: var(--e-8); border-top: 1px solid color-mix(in srgb, var(--sur-pied-doux) 24%, transparent); }
+  .pied-legal { gap: var(--e-5); }
   .site-footer .footer-contacts { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--e-4) var(--e-10); }
   .site-footer .footer-contacts a { font-size: 16px; }
   .site-footer .pied-societe { font-size: 16px; }
@@ -970,7 +999,7 @@ li, dd { text-wrap: wrap; }
 }
 /* Tablette : le logo a gauche, les trois volets a droite. */
 @media (min-width: 600px) and (max-width: 1099px) {
-  .site-footer { padding-top: var(--e-12); }
+  .site-footer { padding-top: var(--e-16); }
   .site-footer__inner { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto auto auto 1fr; column-gap: var(--e-8); }
   .footer-identity { grid-column: 1; grid-row: 1 / span 4; align-self: start; padding-top: var(--e-2); }
   .pied-volet { grid-column: 2; }
@@ -978,8 +1007,8 @@ li, dd { text-wrap: wrap; }
 }
 /* Telephone : plus serre. */
 @media (max-width: 599px) {
-  .site-footer { padding: var(--e-10) var(--marge) var(--e-6); }
-  .site-footer .brand img { width: 140px; }
+  .site-footer { padding: var(--e-12) var(--marge) var(--e-8); }
+  .site-footer .brand img { width: 160px; }
   .footer-legal a { font-size: 15px; min-height: 32px; }
   .pied-volet--liens a { min-height: 36px; }
   .footer-contacts a { font-size: 16px; }
@@ -2412,15 +2441,13 @@ li, dd { text-wrap: wrap; }
   .fiches-bloc .fiche__lignes li:nth-child(3):not(.fiche__court) { grid-column: 1 / -1; margin-bottom: var(--e-3); }
 }
 
-/* Pied de page au bureau : moins haut (trois jures). Les memes rangees, serrees ; la societe, ses deux pages Facebook
-   et le credit sur une seule ligne qui peut passer a la suivante. */
+/* Pied de page au bureau : la societe, ses deux pages Facebook et le credit sur une seule ligne qui peut passer a la
+   suivante. Le pied n'est plus compact : il avait ete resserre apres la revue de trois jures ; la demande du directeur du
+   03/11/2026 (« grand, aere, magistral ») est plus recente et l'emporte. Hauteurs et ecarts : bloc « Pied de page » plus haut. */
 @media (min-width: 1100px) {
-  .site-footer { padding-top: var(--e-10); padding-bottom: var(--e-6); }
-  .site-footer__inner { row-gap: var(--e-4); }
-  .site-footer .site-footer__inner a { min-height: 32px; }
-  .pied-legal { gap: var(--e-1); }
+  .site-footer .footer-legal a, .site-footer .pied-societe a { min-height: 36px; }
   .site-footer .pied-societe { column-gap: var(--e-5); }
-  .site-footer .pied-societe a { min-height: 28px; }
+  .site-footer .pied-societe a { min-height: 32px; }
 }
 /* Au bureau, la langue et le credit rejoignent la ligne des deux pages Facebook (une rangee de moins) ; ailleurs, le
    credit reste sous les volets, toujours visible. Un seul des deux est affiche, et donc lu. */
@@ -2485,3 +2512,107 @@ li, dd { text-wrap: wrap; }
   .page-cours :is(#groupes, #methode).section--pleine .section-links, .page-academie :is(#projet, #famille).section--pleine .section-links { justify-content: center; }
   .page-cours :is(#groupes, #methode).section--pleine .pleine__image, .page-academie :is(#projet, #famille).section--pleine .pleine__image { order: 3; width: 100%; }
 }
+
+
+/* === Profondeur (directeur, 03/11/2026) =====================================================================
+   Trois calques de fond, du plus loin au plus proche, puis des cartes qui flottent. Ambiance violette seulement (l'ambiance
+   claire ne les recoit pas). Aucune teinte nouvelle : ce sont les jetons de l'ambiance (#BA98FB, #E8D8FF, #25113F, blanc),
+   et aucun degrade de decor de plus que la derogation O-16 : les halos sont des taches de lumiere douces (radial-gradient)
+   du meme ordre que celles de body::before. Mouvement : seulement des animations liees au defilement de la personne,
+   jamais en boucle ; en mouvement reduit tout est fixe (contrat E : duree 0 et translation 0).
+   1. .fond-arche : l'arche geante, tres loin, tres pale, vue en perspective (ornement-contour, fichier du directeur).
+   2. body::after : deux halos d'ambiance, hors de l'axe de la lumiere de body::before.
+   3. .halo : le halo qui suit la souris (deja en place). */
+[data-ambiance="violet"] body::after { content: ''; position: fixed; inset: 0; z-index: -2; pointer-events: none;
+  background:
+    radial-gradient(38% 30% at 84% 34%, rgb(186 152 251 / .20), transparent 70%),
+    radial-gradient(34% 28% at 6% 74%, rgb(232 216 255 / .11), transparent 70%); }
+.fond-arche { display: none; }
+[data-ambiance="violet"] .fond-arche { display: block; position: fixed; z-index: -1; pointer-events: none; right: -6vw; top: -34vh; height: 170vh; aspect-ratio: 494 / 777; background: #FFFFFF; opacity: .045;
+  -webkit-mask: url('ornement-contour-white.svg') center / contain no-repeat; mask: url('ornement-contour-white.svg') center / contain no-repeat;
+  transform: perspective(1400px) rotateY(-16deg) rotateX(3deg); transform-origin: 30% 60%; }
+@media (max-width: 839px) { [data-ambiance="violet"] .fond-arche { right: -52vw; top: -22vh; height: 150vh; opacity: .05; } }
+/* L'arche s'eloigne un peu quand on descend : elle monte moins vite que la page, donc elle parait lointaine. */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-ambiance="violet"] .fond-arche { animation: arche-lointaine linear both; animation-timeline: scroll(root block); will-change: transform; }
+    @keyframes arche-lointaine {
+      from { transform: perspective(1400px) rotateY(-16deg) rotateX(3deg) translate3d(0, 0, 0); }
+      to   { transform: perspective(1400px) rotateY(-9deg) rotateX(1deg) translate3d(0, -14vh, 0); }
+    }
+  }
+}
+@media print, (forced-colors: active) { .fond-arche, [data-ambiance="violet"] body::after { display: none; } }
+
+/* Cartes qui flottent : un liseré de lumiere en haut, un filet d'ombre en bas, et l'ombre portee du site (--ombre-2).
+   Seuls les elements qui ont deja leur propre surface sont des cartes (fond plein) : .fiche, .parcours__etape, .avis-carte.
+   Les blocs ouverts (les prix de l'accueil, .champ) n'ont pas de cadre voulu : leur donner une ombre ferait apparaitre un
+   rectangle contre lequel le texte bute (constate sur capture, 03/11/2026). .parcours__etape, que l'apparition au
+   defilement gere deja, ne recoit que l'ombre, sans toucher a sa transition ; .fiche et .avis-carte montent un peu au
+   survol, 220 ms. */
+[data-ambiance="violet"] :is(.fiche, .parcours__etape, .avis-carte) {
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / .18), inset 0 -1px 0 rgb(37 17 63 / .22), var(--ombre-2); }
+[data-ambiance="violet"] :is(.fiche, .avis-carte) {
+  transition: translate var(--mv-navigation) var(--mv-entree), box-shadow var(--mv-navigation) var(--mv-entree); }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  [data-ambiance="violet"] :is(.fiche, .avis-carte):hover { translate: 0 -6px;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / .24), inset 0 -1px 0 rgb(37 17 63 / .22), 0 30px 64px -14px rgb(37 17 63 / .6); }
+  [data-ambiance="violet"] .cta:hover { translate: 0 -2px; box-shadow: 0 12px 28px -10px rgb(37 17 63 / .55); }
+  [data-ambiance="violet"] .cta:active { translate: 0 0; box-shadow: none; }
+}
+
+
+/* === Avis (directeur, 03/11/2026) =============================================================================
+   « 5,0 sur 5, 2 avis » etait froid : des etoiles dessinees, la citation en vedette, qui parle. Les couleurs sont celles des
+   jetons de l'ambiance (--sous, --champ, --champ-encre) ; les seuils d'affichage sont dans bloc_avis.py. Une grille,
+   jamais un carrousel : aucun contenu ne defile dans un cadre (decision du 01/11/2026). */
+.avis-grille { display: grid; gap: var(--e-6); grid-template-columns: minmax(0, 1fr); margin-top: var(--e-8); }
+@media (min-width: 840px) { .avis-grille { grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: var(--e-8); } }
+.avis-carte { position: relative; display: flex; flex-direction: column; gap: var(--e-4); padding: var(--e-10) var(--e-6) var(--e-6); border-radius: var(--r-lg); background: var(--sous); color: var(--encre); overflow: hidden; }
+.avis-guillemet { position: absolute; top: -4px; inset-inline-end: var(--e-5); font-family: var(--police-titre); font-weight: 700; font-size: 112px; line-height: 1; color: var(--champ-encre); opacity: .2; pointer-events: none; user-select: none; }
+.avis-note { display: inline-flex; gap: 3px; color: var(--champ-encre); }
+.avis-note .etoile, .avis-moyenne .etoile { width: 22px; height: 22px; fill: currentColor; stroke: currentColor; stroke-width: 1.4; stroke-linejoin: round; }
+.etoile--vide { fill: none; opacity: .45; }
+.avis-carte h3 { margin: 0; font-family: var(--police-titre); font-size: var(--t-moyen); line-height: 1.2; }
+.avis-texte { margin: 0; flex: 1 1 auto; font-style: normal; }
+.avis-texte p { margin: 0; font-size: var(--t-corps); line-height: 1.55; font-weight: 500; text-wrap: pretty; }
+.avis-auteur { display: flex; align-items: center; gap: var(--e-4); padding-top: var(--e-4); border-top: 1px solid color-mix(in srgb, var(--champ-encre) 30%, transparent); }
+.avis-initiale { flex: none; display: grid; place-items: center; width: 48px; height: 48px; border-radius: var(--r-full); background: var(--champ); color: var(--champ-encre); font-family: var(--police-titre); font-weight: 700; font-size: 20px; }
+.avis-auteur > div { display: grid; gap: 2px; min-width: 0; }
+.avis-auteur strong { font-size: var(--t-petit); }
+.avis-auteur span:not(.avis-initiale) { font-size: 16px; color: var(--encre-douce); overflow-wrap: anywhere; }
+.avis-auteur .avis-date { font-size: 15px; opacity: .85; }
+.avis-intro { margin: 0; font-size: var(--t-corps); color: var(--encre-douce); max-width: 60ch; }
+.avis-moyenne { display: grid; gap: var(--e-2); justify-items: start; margin-bottom: var(--e-2); }
+.avis-moyenne__note { display: flex; align-items: center; gap: var(--e-4); margin: 0; }
+.avis-moyenne__chiffre { font-family: var(--police-titre); font-weight: 700; font-size: clamp(56px, 8vw, 88px); line-height: 1; }
+.avis-moyenne .avis-note .etoile { width: 30px; height: 30px; }
+.avis-moyenne__texte { margin: 0; font-size: var(--t-petit); color: var(--encre-douce); }
+.avis-apercu { max-width: calc(var(--contenu) + 2 * var(--marge)); margin-inline: auto; padding: var(--respire) var(--marge); }
+.avis-apercu__tete { display: grid; gap: var(--e-3); max-width: 60ch; }
+.avis-apercu__tete h2 { margin: 0; font-size: var(--t-titre); line-height: 1.08; text-wrap: balance; }
+.avis-apercu__tete p { margin: 0; font-size: var(--t-corps); color: var(--encre-douce); }
+.avis-apercu__lien { margin: var(--e-8) 0 0; }
+@media (max-width: 599px) {
+  .avis-carte { padding: var(--e-10) var(--e-5) var(--e-5); }
+  .avis-guillemet { font-size: 96px; }
+  .avis-apercu { padding-block: var(--e-16); }
+}
+
+
+/* === Jonctions douces entre les bandes de couleur (directeur, 03/11/2026) =====================================
+   Chaque bande pleine (prune, lavande, bande d'appel, pied de page) avait des bords francs : un violet qui s'arrete net sur un
+   fond sombre. Une seule regle pour toutes : la bande fond dans ce qui l'entoure, en haut et en bas, sur --jonction
+   de hauteur. Le fond de la bande va de transparent a sa couleur : dessous, on voit la page violette. Deux bandes qui se
+   suivent (lavande puis prune) passent donc par le violet de la page, au lieu d'un saut de 0,81 de luminance.
+   La zone fondue est toujours dans le padding de la bande (--jonction ne depasse jamais --respire) : aucun texte
+   n'est jamais pose sur une partie transparente. Aucune teinte nouvelle : #25113F et #EEE6FA sont deja celles des bandes. */
+:root { --jonction: clamp(48px, 7vw, 112px); }
+[data-ambiance="violet"] :is(.panneau, .fond--prune, .appel--sombre, .site-footer) { --bande-couleur: #25113F; }
+[data-ambiance="violet"] :is(.fond--lavande, .appel--centre) { --bande-couleur: #EEE6FA; }
+[data-ambiance="violet"] :is(.panneau, .fond--prune, .fond--lavande, .appel--centre, .appel--sombre, .site-footer) {
+  background: linear-gradient(to bottom, transparent 0, var(--bande-couleur) var(--jonction), var(--bande-couleur) calc(100% - var(--jonction)), transparent 100%); }
+/* Le pied de page n'a rien dessous : il fond seulement par le haut, et reste plein jusqu'en bas. */
+[data-ambiance="violet"] .site-footer { background: linear-gradient(to bottom, transparent 0, var(--bande-couleur) var(--jonction), var(--bande-couleur) 100%); }
+@media print { [data-ambiance="violet"] :is(.panneau, .fond--prune, .fond--lavande, .appel--centre, .appel--sombre, .site-footer) { background: var(--bande-couleur); } }
+
