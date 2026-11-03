@@ -350,8 +350,9 @@ BEGIN
     'la cle des jetons de lot : une ligne engendree par la base, 64 signes au moins');
   -- Les regles de l'admission (lot C, gestes *_admission) ont leur scenario.
   PERFORM pg_temp.vrai((SELECT count(*) FROM private.candidature_gestes_regles
-                         WHERE geste NOT LIKE '%admission') = 26,
-    'la table des regles de CAND-L2A1 est inchangee (vingt-six variantes)');
+                         WHERE geste NOT LIKE '%admission') = 27,
+    -- V1-b (03/11) : planifier_entretien variante 2, auteur candidat (reservation d'un creneau).
+    'la table des regles de CAND-L2A1 est inchangee, plus la reservation du candidat de V1-b (vingt-sept variantes)');
 END $f86$;
 
 SELECT pg_temp.refus_en(NULL, NULL, $$SELECT public.refuser_candidat(pg_temp.c('15'), 'Motif', 'refus_general', 1, 'cle-anon-0001')$$,

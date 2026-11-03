@@ -1337,6 +1337,8 @@ class _Traductions$kyc$ar extends Traductions$kyc$fr {
 	@override String get envoiEnCours => 'جارٍ الإرسال';
 	@override String get deposee => 'استُلمت الوثيقة';
 	@override String get erreur => 'لم يكتمل الإرسال. أعد المحاولة بعد لحظة.';
+	@override String get erreurFormat => 'لم يُقبل هذا الملف لأن نوعه غير مقبول: تُقبل الصور وملفات المستندات فقط. اختر صورة أخرى لوثيقتك.';
+	@override String get erreurReseau => 'لم يكتمل الإرسال: لم يستجب الخادم. اضغط «إرسال وثيقتي» مرة أخرى بعد لحظة.';
 	@override String tropVolumineux({required Object taille}) => 'هذه الصورة تتجاوز ⁨${taille}⁩ ميغابايت. التقطها بجودة أقل.';
 	@override String get manquePhoto => 'اختر أولًا صورة وثيقتك.';
 	@override String get manqueType => 'اختر أولًا الوثيقة التي تودعها.';
@@ -28612,6 +28614,8 @@ extension on TraductionsAr {
 			'kyc.envoiEnCours' => 'جارٍ الإرسال',
 			'kyc.deposee' => 'استُلمت الوثيقة',
 			'kyc.erreur' => 'لم يكتمل الإرسال. أعد المحاولة بعد لحظة.',
+			'kyc.erreurFormat' => 'لم يُقبل هذا الملف لأن نوعه غير مقبول: تُقبل الصور وملفات المستندات فقط. اختر صورة أخرى لوثيقتك.',
+			'kyc.erreurReseau' => 'لم يكتمل الإرسال: لم يستجب الخادم. اضغط «إرسال وثيقتي» مرة أخرى بعد لحظة.',
 			'kyc.tropVolumineux' => ({required Object taille}) => 'هذه الصورة تتجاوز ⁨${taille}⁩ ميغابايت. التقطها بجودة أقل.',
 			'kyc.manquePhoto' => 'اختر أولًا صورة وثيقتك.',
 			'kyc.manqueType' => 'اختر أولًا الوثيقة التي تودعها.',
@@ -29023,10 +29027,10 @@ extension on TraductionsAr {
 			'suiviDemandes.jalon.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'بعد أقل من دقيقة', one: 'بعد دقيقة', two: 'بعد دقيقتين', few: 'بعد ⁨${n}⁩ دقائق', many: 'بعد ⁨${n}⁩ دقيقة', other: 'بعد ⁨${n}⁩ دقيقة', ), 
 			'suiviDemandes.jalon.heures' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'بعد أقل من ساعة', one: 'بعد ساعة', two: 'بعد ساعتين', few: 'بعد ⁨${n}⁩ ساعات', many: 'بعد ⁨${n}⁩ ساعة', other: 'بعد ⁨${n}⁩ ساعة', ), 
 			'suiviDemandes.jalon.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'في اليوم نفسه', one: 'بعد يوم', two: 'بعد يومين', few: 'بعد ⁨${n}⁩ أيام', many: 'بعد ⁨${n}⁩ يومًا', other: 'بعد ⁨${n}⁩ يوم', ), 
-			'suiviDemandes.changement.titrePage' => 'تغيّر الفصل',
-			'suiviDemandes.changement.titre' => ({required Object dePrenom}) => 'تغيّر فصل ⁨${dePrenom}⁩',
 			_ => null,
 		} ?? switch (path) {
+			'suiviDemandes.changement.titrePage' => 'تغيّر الفصل',
+			'suiviDemandes.changement.titre' => ({required Object dePrenom}) => 'تغيّر فصل ⁨${dePrenom}⁩',
 			'suiviDemandes.changement.fusion' => ({required Object prenom}) => 'دُمج فصلكم مع فصل آخر. هذا هو فصل ⁨${prenom}⁩ الآن.',
 			'suiviDemandes.changement.transfert' => ({required Object prenom}) => 'نقلت الإدارة ⁨${prenom}⁩ إلى فصل آخر. هذا هو فصله الجديد.',
 			'suiviDemandes.changement.classe' => 'الفصل الجديد',
@@ -29537,10 +29541,10 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.debutPossible.options.mois_prochain.libelle' => 'الشهر القادم',
 			'recrutement.parcours.q.debutPossible.options.mois_prochain.description' => 'ستكون متفرغًا ابتداءً من الشهر القادم.',
 			'recrutement.parcours.q.debutPossible.options.mois_prochain.exemple' => 'تنهي عملًا آخر في نهاية هذا الشهر.',
-			'recrutement.parcours.q.debutPossible.options.sous_3_mois.libelle' => 'خلال أقل من ثلاثة أشهر',
-			'recrutement.parcours.q.debutPossible.options.sous_3_mois.description' => 'ستكون متفرغًا خلال الأشهر الثلاثة القادمة.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.q.debutPossible.options.sous_3_mois.libelle' => 'خلال أقل من ثلاثة أشهر',
+			'recrutement.parcours.q.debutPossible.options.sous_3_mois.description' => 'ستكون متفرغًا خلال الأشهر الثلاثة القادمة.',
 			'recrutement.parcours.q.debutPossible.options.sous_3_mois.exemple' => 'تكون مسافرًا أو في امتحانات لبضعة أسابيع.',
 			'recrutement.parcours.q.debutPossible.options.inconnu.libelle' => 'لا أعرف بعد',
 			'recrutement.parcours.q.debutPossible.options.inconnu.description' => 'لا تعرف بعد تاريخ بدئك.',
@@ -30051,10 +30055,10 @@ extension on TraductionsAr {
 			'avis.form.indisponiblePhrase' => 'ستتوفر هذه الخاصية عند ربط الخادم.',
 			'avis.admin.titre' => 'الآراء',
 			'avis.admin.sousTitre' => 'آراء الأسر والطلاب. تقرؤها الإدارة وتنشرها أو ترفضها. ولا تعدّل أي نص أبدًا.',
-			'avis.admin.outil' => 'آراء الأسر',
-			'avis.admin.outilDetail' => 'إنشاء رابط لجمع الآراء، وقراءتها، ونشرها أو رفضها',
 			_ => null,
 		} ?? switch (path) {
+			'avis.admin.outil' => 'آراء الأسر',
+			'avis.admin.outilDetail' => 'إنشاء رابط لجمع الآراء، وقراءتها، ونشرها أو رفضها',
 			'avis.admin.sections.libelle' => 'أقسام الآراء',
 			'avis.admin.sections.avis' => 'الآراء',
 			'avis.admin.sections.liens' => 'الروابط',
