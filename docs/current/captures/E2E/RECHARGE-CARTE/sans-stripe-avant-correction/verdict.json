@@ -1,0 +1,7 @@
+{
+  "parcours": "RECHARGE-CARTE : la carte et le recapitulatif concordent pendant une commande engagee (sans Stripe, chemin du rejeu C1)",
+  "verdict": "rouge",
+  "cause": "manque : 390 : carte « flt-semantics:Montant pour Hamza 0 $ » pendant la commande (avant : « flt-semantics:Montant pour Hamza 55 $ ») ; 1440 : carte « flt-semantics:Montant pour Hamza 0 $ » pendant la commande (avant : « flt-semantics:Montant pour Hamza 55 $ »)",
+  "debut": "2026-11-03T14:36:30.695Z",
+  "fin": "2026-11-03T14:37:37.960Z"
+}
