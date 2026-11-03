@@ -435,3 +435,65 @@ Deno.test('invitation_famille_importee : connexion avec la meme adresse, aucune 
   assert(texte.includes('cette adresse e-mail') && texte.includes('sans rien ressaisir'), texte)
   assert(texte.includes('Bonjour,'), texte)
 })
+
+// COURRIELS-UX (UX-026, FN-108, 03/11/2026) : ce que pose notifier_classe
+// (migration 20261108100000) arrive dans le texte de chaque langue.
+const CLASSE_UX = { classe: 'Les bases, lundi 18 h', fuseau: 'Europe/Paris',
+  debut_local: '2026-11-22T10:00:00', prochaine_local: '2026-11-09T18:00:00' }
+const ZONE: Record<string, string> = {
+  fr: 'heure d’Europe centrale', en: 'Central European Time', ar: 'توقيت وسط أوروبا',
+  es: 'hora de Europa central', pt: 'Hora da Europa Central' }
+const ux = (modele: string, langue: string, donnees: Record<string, unknown>) =>
+  composer(rendre({ modele, categorie: 'classes', essentielle: false, donnees: { prenom: 'Samira', ...CLASSE_UX, ...donnees } }, langue).contenu)
+
+Deno.test('UX-026 : chaque avis de classe nomme la classe, l enfant et l heure avec son fuseau, dans les cinq langues', () => {
+  for (const l of ECRITES) {
+    const foyer = { portee: 'foyer', eleves: ['Lina', 'Yanis'] }
+    for (const m of ['classe_creee', 'eleve_inscrit', 'seance_annulee', 'classe_supprimee']) {
+      const { texte } = ux(m, l, foyer)
+      assert(texte.includes('Les bases, lundi 18 h'), `${l} ${m} : classe\n${texte}`)
+      assert(texte.includes('Lina') && texte.includes('Yanis'), `${l} ${m} : enfants\n${texte}`)
+    }
+    // L'heure est dite avec le nom de son fuseau, dans la langue.
+    assert(ux('seance_annulee', l, foyer).texte.includes(`10:00 (${ZONE[l]})`), `${l} : seance annulee, fuseau`)
+    assert(ux('classe_creee', l, foyer).texte.includes(`18:00 (${ZONE[l]})`), `${l} : classe creee, premiere seance`)
+    assert(ux('eleve_inscrit', l, foyer).texte.includes(`18:00 (${ZONE[l]})`), `${l} : eleve inscrit, premiere seance`)
+    // Sans fuseau connu, l'heure reste, sans parenthese inventee.
+    const sans = ux('seance_annulee', l, { portee: 'foyer', fuseau: undefined }).texte
+    assert(sans.includes('10:00') && !sans.includes('10:00 ('), `${l} : sans fuseau`)
+  }
+})
+
+Deno.test('FN-108 : eleve_inscrit, un texte par public ; la famille ne recoit jamais celui de l enseignant', () => {
+  const enseignant: Record<string, string> = { fr: 'Un élève rejoint votre classe', en: 'A student joins your class',
+    ar: 'ينضم طالب إلى فصلك', es: 'Un alumno se une a su clase', pt: 'Um aluno junta-se à sua turma' }
+  for (const l of ECRITES) {
+    const f = ux('eleve_inscrit', l, { portee: 'foyer', eleves: ['Lina'],
+      destination: '/tuteur/classes/f27b0000-0000-0000-0000-000000000202' })
+    assert(!f.texte.includes(enseignant[l]), `${l} : famille, texte de l enseignant\n${f.texte}`)
+    assert(!f.html.includes('/enseignant/'), `${l} : famille, lien de l enseignant`)
+    assert(f.html.includes('https://app.rewayahacademy.com/tuteur/classes/f27b0000-0000-0000-0000-000000000202'), `${l} : famille, lien`)
+    const s = ux('eleve_inscrit', l, { portee: 'soi' })
+    assert(!s.texte.includes(enseignant[l]) && s.html.includes('https://app.rewayahacademy.com/eleve'), `${l} : eleve`)
+    const e = ux('eleve_inscrit', l, { portee: 'classe' })
+    assert(e.texte.includes(enseignant[l]) && e.html.includes('/enseignant/classes'), `${l} : enseignant`)
+    // L'enseignant ne recoit aucun prenom d'enfant par e-mail.
+    assert(!ux('classe_creee', l, { portee: 'classe', eleves: ['Lina'] }).texte.includes('Lina'), `${l} : classe creee, enseignant`)
+    assert(!e.texte.includes('Lina'), `${l} : eleve inscrit, enseignant`)
+  }
+})
+
+Deno.test('UX-026 : un avis sans les nouvelles donnees garde son texte d avant, sans trou', () => {
+  for (const l of ECRITES) {
+    for (const m of ['classe_creee', 'eleve_inscrit', 'seance_annulee', 'classe_supprimee']) {
+      const { texte } = composer(rendre({ modele: m, categorie: 'classes', essentielle: false, donnees: {} }, l).contenu)
+      assert(!/undefined|null|«\s*»|“”|\(\)/.test(texte), `${l} ${m}\n${texte}`)
+    }
+  }
+})
+
+Deno.test('UX-026 : en arabe, le nom latin de la classe et les prenoms sont isoles pour l ordre de lecture', () => {
+  const { texte } = ux('seance_annulee', 'ar', { portee: 'foyer', eleves: ['Lina'] })
+  assert(texte.includes('«\u2068Les bases, lundi 18 h\u2069»'), texte)
+  assert(texte.includes('\u2068Lina\u2069'), texte)
+})

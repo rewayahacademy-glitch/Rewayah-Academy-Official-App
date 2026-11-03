@@ -7,7 +7,8 @@
 // l'application, ou l'information vit derriere la connexion.
 
 import { APP } from './gabarit.ts'
-import { avisDans, bonjour, dateLongue, type Donnees, type Fabrique, type LangueEcrite, libre, PAROLE_FR, montantLisible } from './outils.ts'
+import { avec, avisDans, bonjour, dateLongue, type Donnees, type Fabrique, type LangueEcrite, libre, PAROLE_FR, montantLisible,
+  precisions, type Precisions, quandLocal } from './outils.ts'
 
 export const RAISON: Record<string, string> = {
   compte: 'Vous recevez cet e-mail parce qu’il concerne votre compte Rewayah Academy.',
@@ -35,11 +36,19 @@ export const REFUS_ADMISSION_FR: Record<string, string> = {
 /// dans le fuseau de la personne, migration 20261027120000) : « 6 novembre
 /// 2026 a 18:00 » ; `null` quand elle manque. Le jour vient de `dateLongue`,
 /// l'heure est lue telle quelle (elle est deja locale, aucun fuseau a appliquer).
+/// COURRIELS-UX (UX-026) : suivie du nom du fuseau quand le serveur le pose
+/// (`fuseau`, migration 20261108100000).
 export function quandSeance(d: Donnees, locale = 'fr-FR', a = 'à'): string | null {
-  const v = d.debut_local
-  if (typeof v !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(v)) return null
-  const jour = dateLongue(v.slice(0, 10), locale)
-  return jour ? `${jour} ${a} ${v.slice(11, 16)}` : null
+  return quandLocal(d, 'debut_local', locale, a)
+}
+
+/// Les mots des precisions d'un avis de classe (COURRIELS-UX, UX-026).
+export const PRECISIONS_FR: Precisions = {
+  locale: 'fr-FR',
+  a: 'à',
+  classe: (n) => `Classe : « ${n} ».`,
+  eleves: (n, plusieurs) => plusieurs ? `Élèves : ${n}.` : `Élève : ${n}.`,
+  premiere: (q) => `Première séance : le ${q}.`,
 }
 
 export const MODELES: Record<string, Fabrique> = {
@@ -90,15 +99,46 @@ export const MODELES: Record<string, Fabrique> = {
   // lien reel vient de `destination` (accueil de l'eleve, classe ou planning
   // du tuteur, classes ou journee de l'enseignant) ; le repli suit le
   // destinataire que l'evenement vise d'abord.
-  classe_creee: (d) => avis(d, 'Votre classe est créée', 'Votre classe est créée',
-    'Une classe vient d’être créée. Son horaire et son enseignant sont dans l’application.',
-    'Voir l’horaire', '/tuteur'),
+  // COURRIELS-UX (UX-026) : la classe, l'enfant et la premiere seance, avec
+  // son fuseau ; le texte suit la portee (FN-108).
+  classe_creee: (d) => {
+    const P = PRECISIONS_FR
+    if (d.portee === 'classe') {
+      return avis(d, 'Une classe est créée', 'Une classe est créée',
+        avec('Une classe vient d’être créée.', precisions(d, P, { eleves: false, premiere: true }))
+          + ' Ses élèves et son horaire sont dans l’application.',
+        'Voir mes classes', '/enseignant/classes')
+    }
+    return avis(d, 'Votre classe est créée', 'Votre classe est créée',
+      avec(d.portee === 'foyer' ? 'Une classe est créée pour votre foyer.' : 'Votre classe est créée.',
+        precisions(d, P, { premiere: true }))
+        + ' Son enseignant et tout son horaire sont dans l’application.',
+      'Voir l’horaire', '/tuteur')
+  },
   enseignant_change: (d) => avis(d, 'L’enseignant de la classe change', 'L’enseignant de la classe change',
     'Un autre enseignant prend la classe, au même horaire. Son nom est dans l’application.',
     'Voir la classe', '/tuteur'),
-  eleve_inscrit: (d) => avis(d, 'Un élève rejoint votre classe', 'Un élève rejoint votre classe',
-    'Un élève rejoint votre classe. Sa fiche est dans l’application.',
-    'Voir mes classes', '/enseignant/classes'),
+  // FN-108 : la famille et l'eleve recoivent leur propre texte, jamais celui
+  // ecrit pour l'enseignant.
+  eleve_inscrit: (d) => {
+    const P = PRECISIONS_FR
+    if (d.portee === 'foyer') {
+      return avis(d, 'Une inscription dans une classe', 'Une inscription dans une classe',
+        avec('Un élève de votre foyer rejoint une classe.', precisions(d, P, { premiere: true }))
+          + ' Son enseignant et tout son horaire sont dans l’application.',
+        'Voir la classe', '/tuteur')
+    }
+    if (d.portee === 'soi') {
+      return avis(d, 'Vous rejoignez une classe', 'Vous rejoignez une classe',
+        avec('Vous rejoignez une classe.', precisions(d, P, { premiere: true }))
+          + ' Votre enseignant et tout votre horaire sont dans l’application.',
+        'Voir ma classe', '/eleve')
+    }
+    return avis(d, 'Un élève rejoint votre classe', 'Un élève rejoint votre classe',
+      avec('Un élève rejoint votre classe.', precisions(d, P, { eleves: false }))
+        + ' Sa fiche est dans l’application.',
+      'Voir mes classes', '/enseignant/classes')
+  },
   eleve_retire: (d) => avis(d, 'Un élève quitte votre classe', 'Un élève quitte votre classe',
     'Un élève quitte votre classe. La liste à jour est dans l’application.',
     'Voir mes classes', '/enseignant/classes'),
@@ -108,7 +148,8 @@ export const MODELES: Record<string, Fabrique> = {
   seance_annulee: (d) => {
     const quand = quandSeance(d)
     return avis(d, 'Une séance est annulée', 'Une séance est annulée',
-      quand ? `La séance du ${quand} est annulée.` : 'Une séance de la classe est annulée.',
+      avec(quand ? `La séance du ${quand} est annulée.` : 'Une séance de la classe est annulée.',
+        precisions(d, PRECISIONS_FR)),
       'Voir le planning', '/tuteur')
   },
   seance_deplacee: (d) => {
@@ -167,7 +208,7 @@ export const MODELES: Record<string, Fabrique> = {
     'Un remplaçant arrive : restez dans la salle.',
     'Ouvrir l’application', '/tuteur'),
   classe_supprimee: (d) => avis(d, 'La classe est fermée', 'La classe est fermée',
-    'La classe est fermée. La direction vous contacte pour la suite.',
+    avec('La classe est fermée.', precisions(d, PRECISIONS_FR)) + ' La direction vous contacte pour la suite.',
     'Ouvrir l’application', '/tuteur'),
   remplacement_propose: (d) => avis(d, 'Un remplacement vous est proposé', 'Un remplacement vous est proposé',
     'Un remplacement de cours vous est proposé. Répondez dans l’application pour que la classe soit assurée.',

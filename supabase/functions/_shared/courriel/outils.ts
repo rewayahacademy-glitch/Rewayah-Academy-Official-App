@@ -87,6 +87,82 @@ export function montantLisible(d: Donnees, locale = 'fr-FR'): string | null {
   }
 }
 
+/// COURRIELS-UX (UX-026, 03/11/2026) : le nom du fuseau IANA `fuseau` dans
+/// la langue du destinataire (« heure d’Europe centrale », « توقيت وسط أوروبا »),
+/// tel qu'Intl le donne ; nul quand le fuseau manque ou est inconnu.
+export function nomFuseau(d: Donnees, locale = 'fr-FR'): string | null {
+  const z = d.fuseau
+  if (typeof z !== 'string' || !/^[A-Za-z_]+(\/[A-Za-z0-9_+-]+)*$/.test(z)) return null
+  try {
+    const nom = new Intl.DateTimeFormat(locale, { timeZone: z, timeZoneName: 'longGeneric' })
+      .formatToParts(new Date()).find((p) => p.type === 'timeZoneName')?.value
+    return nom && nom.trim() ? nom.trim() : null
+  } catch {
+    return null
+  }
+}
+
+/// Le nom de la classe (`classe`, pose par le serveur), ou nul.
+export function nomClasse(d: Donnees): string | null {
+  return typeof d.classe === 'string' && d.classe.trim() ? d.classe.trim() : null
+}
+
+/// Les prenoms des eleves du foyer concernes (`eleves`, portee `foyer`
+/// seulement), joints dans la langue (« Lina et Yanis ») ; nul sans prenom.
+export function prenomsEleves(d: Donnees, locale = 'fr-FR'): { texte: string; plusieurs: boolean } | null {
+  const v = Array.isArray(d.eleves) ? d.eleves.filter((x): x is string => typeof x === 'string' && x.trim() !== '') : []
+  if (v.length === 0) return null
+  const noms = v.map((x) => x.trim())
+  let texte = noms.join(', ')
+  try {
+    texte = new Intl.ListFormat(locale, { style: 'long', type: 'conjunction' }).format(noms)
+  } catch { /* liste simple */ }
+  return { texte, plusieurs: noms.length > 1 }
+}
+
+/// Les mots, dans une langue, des precisions ajoutees a un avis de classe.
+export interface Precisions {
+  locale: string
+  /// Mot entre la date et l'heure (« à », « at », « الساعة »).
+  a: string
+  classe: (nom: string) => string
+  eleves: (noms: string, plusieurs: boolean) => string
+  premiere: (quand: string) => string
+}
+
+/// La date et l'heure locales d'une cle (`debut_local` ou `prochaine_local`,
+/// « AAAA-MM-JJTHH:MM:SS », deja dans le fuseau du destinataire), suivies du
+/// nom de ce fuseau entre parentheses quand le serveur le donne (UX-026) :
+/// « 6 novembre 2026 à 18:00 (heure d’Europe centrale) ». Nul sans date.
+export function quandLocal(d: Donnees, cle: string, locale = 'fr-FR', a = 'à'): string | null {
+  const v = d[cle]
+  if (typeof v !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(v)) return null
+  const jour = dateLongue(v.slice(0, 10), locale)
+  if (!jour) return null
+  const zone = nomFuseau(d, locale)
+  return `${jour} ${a} ${v.slice(11, 16)}${zone ? ` (${zone})` : ''}`
+}
+
+/// Les precisions d'un avis de classe, en phrases courtes : la classe, les
+/// eleves du foyer, la prochaine seance. Chaine vide quand rien n'est connu.
+export function precisions(
+  d: Donnees, p: Precisions, quoi: { eleves?: boolean; premiere?: boolean } = {},
+): string {
+  const parts: string[] = []
+  const c = nomClasse(d)
+  if (c) parts.push(p.classe(c))
+  const e = quoi.eleves === false ? null : prenomsEleves(d, p.locale)
+  if (e) parts.push(p.eleves(e.texte, e.plusieurs))
+  const q = quoi.premiere ? quandLocal(d, 'prochaine_local', p.locale, p.a) : null
+  if (q) parts.push(p.premiere(q))
+  return parts.join(' ')
+}
+
+/// Une phrase suivie de ses precisions, separees d'une espace.
+export function avec(phrase: string, suite: string): string {
+  return suite ? `${phrase} ${suite}` : phrase
+}
+
 /// Un message court qui renvoie vers l'application, dans la langue de `p`.
 export function avisDans(p: Parole) {
   return (
