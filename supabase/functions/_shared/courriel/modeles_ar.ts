@@ -123,6 +123,23 @@ const MODELES: Record<string, Fabrique> = {
     d.portee === 'direction' ? 'معلم أصلي لم يدخل قاعته. يجري البحث عن بديل.' : 'تبحث الأكاديمية عن بديل: ابقوا في القاعة.',
     'فتح التطبيق', '/tuteur'),
   // A3-bis (02/11/2026).
+  // SNT (03/11/2026).
+  seance_reportee: (d) => {
+    const quand = quandSeance(d, 'ar', 'الساعة')
+    return avis(d, 'أُجّلت حصة', 'أُجّلت حصة',
+      (quand ? `لم تُعقد حصة ${quand}: لقد أُجّلت.` : 'لم تُعقد إحدى حصص الفصل: لقد أُجّلت.')
+        + ' سيُعلَن الموعد الجديد في التطبيق.',
+      'عرض الجدول', '/tuteur')
+  },
+  seance_reportee_direction: (d) => {
+    const quand = quandSeance(d, 'ar', 'الساعة')
+    const classe = typeof d.classe === 'string' ? ` للفصل ${d.classe}` : ''
+    const ens = typeof d.enseignant === 'string' ? ` معلم الفصل: ${d.enseignant}.` : ''
+    const delai = typeof d.minutes === 'string' ? ` خلال ${d.minutes} دقيقة` : ''
+    return avis(d, 'حصة مؤجلة: حدّدوا موعدًا جديدًا', 'حصة مؤجلة: حدّدوا موعدًا جديدًا',
+      `لم يدخل أي معلم القاعة${classe}${quand ? `، حصة ${quand}` : ''}${delai}: أُجّلت الحصة.${ens} حدّدوا الموعد الجديد في الجدول.`,
+      'عرض الجدول', '/admin/operations/planning')
+  },
   remplacement_personne_en_salle: (d) => {
     const quand = quandSeance(d, 'ar', 'الساعة')
     const classe = typeof d.classe === 'string' ? ` للفصل ${d.classe}` : ''

@@ -13,8 +13,11 @@
 // `titulaire_entre`, `remplacant_entre` (A3-bis, 03/11/2026) : apres une prise
 // de remplacement, le premier des deux enseignants entre ferme la porte a
 // l'autre, qui lit qui est entre (decision du directeur du 03/11).
+// `seance_reportee` (SNT, 03/11/2026) : personne n'est entre a T+30, la seance
+// est reportee ; quiconque y avait droit lit pourquoi la salle ne s'ouvre plus.
 export const MOTIFS_SALLE = [
   'pas_encore_ouverte', 'terminee', 'annulee', 'acces_perdu', 'titulaire_entre', 'remplacant_entre',
+  'seance_reportee',
 ] as const
 export type MotifSalle = (typeof MOTIFS_SALLE)[number]
 
