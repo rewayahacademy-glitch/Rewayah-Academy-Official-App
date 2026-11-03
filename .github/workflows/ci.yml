@@ -215,6 +215,17 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_notifications_classes.sql
         
+      - name: Scenario SQL N2 (role dans le foyer)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_n2_mon_role_foyer.sql
+      - name: Scenario SQL D1-bis (traiter un signalement)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_d1bis_traiter_signalement.sql
+      - name: Scenario SQL SNT (seance non tenue, report, nouvelle date)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_snt_seance_non_tenue.sql
+
+        
       - name: Scenarios FN-115b (remboursements et contestations Stripe)
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_fn115b_remboursements.sql

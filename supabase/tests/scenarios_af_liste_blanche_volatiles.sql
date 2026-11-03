@@ -133,6 +133,10 @@ declare
     'demarrer_mission_controle(uuid)',
     'deposer_reprise_foyer(uuid)',
     'deposer_student_concern(text,uuid,uuid,text,text,text)',
+    -- D1-bis (03/11) : la direction active traite un signalement (examiner, rediger le message pour la famille, clore) ; garde role ET app_account_valid, journal a chaque geste.
+    'examiner_student_concern(uuid)',
+    'rediger_resume_student_concern(uuid,text)',
+    'clore_student_concern(uuid,text)',
     'designer_remplacant_admin(uuid,uuid,uuid)',
     -- Remplacements direction (31/10) : R12, libre a l'heure exacte, genre souple sur choix explicite trace ; direction active.
     'designer_remplacant_admin(uuid,uuid,uuid,boolean)',

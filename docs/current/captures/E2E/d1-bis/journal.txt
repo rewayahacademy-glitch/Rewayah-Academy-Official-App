@@ -1,0 +1,44 @@
+== D1-bis : traiter un signalement : 2026-11-03T04:42:02.533Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+  amorce : classe 26ddbb40-9538-4e13-abdb-bbf76ead51bb, eleve RA-26-5115
+-- 1. pedagogique, 1440 clair
+  OK enseignant : signalement envoye (Yasmine ne suit plus la lectur...)
+  OK base : signalement enregistre (student_concern)
+  OK direction : le signalement est dans les alertes
+  OK direction : la feuille s ouvre
+  OK feuille : « À examiner »
+  OK feuille : « Signalement en examen »
+  OK base : statut en_examen
+  OK base : journal de l examen
+  OK seconde confirmation de la transmission
+  OK feuille : « Message enregistré »
+  OK base : transmis au tuteur avec le message ecrit par la direction
+  OK base : journal du message et de la transmission
+  OK seconde confirmation de la cloture
+  OK feuille : « Signalement clos »
+  OK base : statut clos
+  OK base : journal de la cloture, avec son motif
+  OK direction : le signalement clos est sorti de la file
+-- 2. securite d un enfant, 390 sombre
+  OK enseignant : signalement envoye (Yasmine semble inquiète en arr...)
+  OK base : signalement enregistre (student_concern)
+  OK direction (390) : la securite d un enfant est dans les alertes
+  OK feuille : la securite d un enfant ne se transmet pas
+  OK feuille : aucun « Transmettre »
+  OK feuille : le motif manque, il est dit
+  OK base : rien n est parti sans motif
+  OK feuille (390) : « Signalement clos »
+  OK base : securite d un enfant close
+  OK base : le motif est au journal
+  OK direction (390) : sortie de la file
+-- 3. arabe, 1440 sombre
+  OK enseignant : signalement envoye (Connexion coupée trois fois pe...)
+  OK base : signalement enregistre (student_concern)
+  OK direction (ar) : la ligne est dans les alertes
+  OK feuille (ar) : « معالجة البلاغ »
+  OK feuille (ar) : « البلاغ قيد الفحص »
+  OK base : examine en arabe
+  OK base : clos en arabe
+  OK 390 clair : « Yasmine ne suit plus la l... » hors de la file
+  OK 390 clair : « Yasmine semble inquiète e... » hors de la file
+  OK 390 clair : « Connexion coupée trois fo... » hors de la file
+== D1-bis : traiter un signalement : vert

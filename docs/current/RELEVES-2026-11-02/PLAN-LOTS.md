@@ -212,6 +212,7 @@ Numéros de migration : table des réservations du garde-cap (2026110510 à 2026
 | 5 | D1-ter : la famille lit ce qui lui est transmis (carte dans la fiche de l'enfant, plus une notification) ; `concern_famille_v` n'est lue par aucun écran aujourd'hui. Emplacement « proposé » : l'Historique de la fiche de l'enfant (SM-51), modifiable ; jamais de résumé pour la sécurité d'un enfant | S/M | après D1-bis, zone foyer, à coordonner avec N2 |
 | 6 | N2 : foyer et élève adulte (E1, FA5, FA1-FA3), puis NIV1 (niveau demandé une fois, UX-032), même agent | M + M | |
 | 7 | ADM-UX (UX-006, 007, 014) | S | |
+| 7 bis | DEFIL-FEUILLE : une boîte ou une feuille trop haute devient l'écran, une seule barre de défilement (fiche §10 ; constat de C1 au rejeu du 03/11) | S/M | prochain agent libre ; suite complète (lib/core) |
 | 8 | N3 : pause programmée, mission du contrôleur, photo de l'enseignant | M | |
 | 9 | CAHIER-UX (UX-028, 041 ; UX-029 vérifié d'abord en lecture) | S | |
 | 10 | N4 : Bibliothèque, coffre R2 de la pièce, publication des évaluations, interface standard, Interface guidée | L | r2-selftest lu avant |
@@ -242,3 +243,37 @@ Estimation : environ 14 jours-agent, soit 3 jours et demi à 4 agents ; avec la 
 - **Fusion :** un lot sans texte nouveau passe dès qu'il est vert ; les lots avec texte passent un par un.
 - **À faire avant toute hausse :** `verifier_branchement` et la présence des captures R3 dans `ci.yml` (collage du directeur, page du pilote) ; lot outil `libelles_sources.json` sans conflit (S).
 - **Les 17 chantiers sans serveur** (finance du comptable, communauté, recherche, B3.3, salle 3, CAND-04, B2.4, etc.) commencent après la file du §7, pas en parallèle.
+
+## 9. Fiche NIV1 : le niveau demandé une seule fois (garde-cap, 02/11/2026 vers 18:15 UTC ; acceptée par le pilote à 18:19)
+
+**Constat du directeur** (02/11, chat, sans capture) : « quand on ajoute un profil (en tant que tuteur) il y a des questions pour déterminer le niveau mais qui ne mènent nulle part (deux types de questionnaires je pense)… c'est lorsque tu rentres dans les paramètres que tu les trouves, et tu peux les zapper ».
+
+**Code relevé** (main 8da94f560) : questionnaire 1, `/commencer` (`inscrire_titulaire` → `candidature_apprenants`, puis `lier_apprenant_profil` copie le niveau dans `student_profiles.niveau_declare`, `admission_lot_c.sql:562-565`) ; questionnaire 2, le « Questionnaire » de `ParcoursOffresPage` (`/tuteur/parcours/:eleveId`), qui repose tout parce que `lier_apprenant_profil` ne pose pas `onboarding_fait_le`.
+
+**Règles écrites** : `programme-rewayah/SKILL.md:21` (le profil répond une fois, à l'inscription) ; `FICHE-ONBOARDING-2026-10-29.md:53` (le Parcours s'ouvre sur les horaires) ; `DECISION-CLASSES-SIMULTANEES-2026-10-10.md:14` (niveau dans la clé de regroupement) ; REGISTRE D0 (diagnostic oral choisi par la direction, 03/11).
+
+**Lot**, sans toucher la zone gardée `parcours_offres` :
+1. `lier_apprenant_profil` pose `onboarding_fait_le` quand niveau, objectif et langue sont repris (le Parcours saute alors les questions sans être modifié ; à vérifier en lecture).
+2. Ajout d'un profil (zone foyer, après N2) : l'enfant sans niveau répond aux mêmes questions dans l'ajout ; enregistrement par `enregistrer_profil_apprentissage` et `onboarding_fait_le` posé.
+3. Le niveau d'un adulte (« pour moi », parent qui suit des cours) quitte la demande vers `student_profiles`.
+4. UX-032 (« 5 ans » accepté), même zone.
+5. Rien à changer dans `parcours_offres` ; sinon, modification de zone gardée portée au directeur.
+6. Migration `20261106800000` (renumérotée par le pilote le 03/11, après N2 `20261106700000` ; `20261106000000` est libéré). R3 : enfant venu de la demande → Parcours sur les horaires ; enfant ajouté → questions dans l'ajout, puis horaires.
+
+## 10. Fiche DEFIL-FEUILLE : une boîte trop haute devient l'écran (garde-cap, 03/11/2026, 11:00 UTC)
+
+Constat (C1, rejeu du 03/11, lu dans le code) : `AppBottomSheet` (`lib/core/widgets/app_bottom_sheet.dart`) met tout contenu long dans un `Flexible(SingleChildScrollView)`. Le contenu défile alors **dans** la feuille ou la boîte de dialogue, bornée par l'écran. Preuve : « Ajouter un élève » (`groupes_page.dart:1665` et `:2111`), capture `rejeu-2026-11-03/parcours-4/1440/02`, la 5e carte est coupée. Le composant est le seul point d'entrée des surfaces modales (environ 110 appels).
+
+Règle appliquée, sans arbitrage : `DECISION-DEFILEMENT-2026-11-01.md` règles 1 à 3 (aucun contenu ne défile dans un cadre ; une seule barre de défilement par écran ; rien de gros ne reste collé).
+
+Correctif, comme les grands systèmes (feuille « grande » d'Apple, boîte plein écran de Material sur petit écran), dans le composant seul :
+1. Le contenu tient dans l'écran : la feuille ou la boîte prend la hauteur de son contenu, rien ne défile. C'est le cas courant, inchangé.
+2. Le contenu ne tient pas : la surface prend **toute la hauteur** de l'écran (téléphone : feuille plein écran ; tablette : feuille bornée en largeur, pleine hauteur ; bureau : boîte pleine hauteur de la fenêtre, marges du gabarit). Elle **est** alors l'écran : le voile cache la page dessous, qui ne défile pas, et le corps de la surface porte la seule barre de défilement.
+3. Le titre et les phrases d'aide défilent avec le corps. Seule une barre fine reste en haut, avec la croix « Fermer » quand elle existe, sans cacher une ligne. Les boutons d'action restent au pied du contenu, sauf s'ils sont déjà collés au pied aujourd'hui (on ne change pas leur place).
+4. Aucun appel n'est modifié, sauf celui qui fixe lui-même une hauteur autour d'une liste : l'agent en fait l'inventaire (`grep` des hauteurs fixes dans les contenus passés à `AppBottomSheet`) et le joint à la PR.
+5. La garde `cadre-defilant` de `tool/verifier_revue.dart` existe déjà ; l'agent dit dans la PR si elle peut reconnaître ce cas (feuille modale dont le corps défile sans être pleine hauteur), et l'ajoute si c'est une règle simple. Sinon, un test de widget suffit.
+
+Hors du lot (pas de dispersion) : `SelecteurPersonne` (`selecteur_personne.dart:235`, 6 personnes montrées puis « N autres… » et la recherche). Rien n'y défile dans un cadre, donc la règle du défilement n'est pas touchée ; c'est la ligne 29 de `DECISION-LISTES-2026-10-23.md` (« à suivre avec Comptes »), qui reste à sa place.
+
+Preuves (R3) : « Ajouter un élève » à 1440 et 390, avant et après, avec cinq cartes ou plus visibles en faisant défiler la seule barre de l'écran ; une boîte courte (une confirmation) inchangée à 1440 et 390. Suite complète avant de pousser (`lib/core`). Sans migration. Le bilan de la PR dit « une seule barre de défilement, celle de l'écran ».
+

@@ -40,6 +40,7 @@ import 'core/candidature/port_candidatures_direction.dart';
 import 'core/candidature/port_ma_candidature.dart';
 import 'core/capacites/acces_supabase.dart';
 import 'core/capacites/avis_supabase.dart';
+import 'core/capacites/capacite_indisponible.dart';
 import 'core/capacites/classes_foyer_supabase.dart';
 import 'core/capacites/courriels_supabase.dart';
 import 'core/capacites/enseignants_classe_supabase.dart';
@@ -185,6 +186,10 @@ import 'features/demo/racine_demonstrable.dart';
 import 'features/demo/repere_demonstration.dart';
 import 'features/foyer/invitation_conjoint.dart';
 import 'features/foyer/invitation_conjoint_supabase.dart';
+import 'features/foyer/reponse_invitation_supabase.dart';
+import 'features/foyer/reprise_foyer_supabase.dart';
+import 'features/foyer/role_foyer.dart';
+import 'features/foyer/role_foyer_supabase.dart';
 
 /// Les surcharges de l'application reelle (jamais le mode demonstration) :
 /// le port des classes du foyer bascule sur l'adaptateur Supabase des que le
@@ -505,6 +510,39 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portInvitationConjointProvider.overrideWithValue(
     InvitationConjointSupabase(Supabase.instance.client),
+  ),
+  // N2 (03/11/2026) : le second adulte du foyer. L'invitation recue
+  // (`mon_invitation_en_cours`, `repondre_invitation_conjoint`, 0053), la
+  // reprise du foyer (`etat_reprise_foyer`, `deposer_reprise_foyer`,
+  // `refuser_reprise_foyer`, 0098/0099) et le role dans le foyer
+  // (`mon_role_foyer`, 20261106700000), qui decide des lignes du Foyer.
+  portReponseInvitationProvider.overrideWithValue(
+    ReponseInvitationSupabase(Supabase.instance.client),
+  ),
+  invitationRecueProvider.overrideWith(
+    (Ref _) => ReponseInvitationSupabase(Supabase.instance.client).lire(),
+  ),
+  portRepriseFoyerProvider.overrideWithValue(
+    RepriseFoyerSupabase(Supabase.instance.client),
+  ),
+  repriseFoyerProvider.overrideWith(
+    (Ref _) async => etatRepriseDepuis(
+      await RepriseFoyerSupabase(Supabase.instance.client).lireBrut(),
+    ),
+  ),
+  demandeRepriseRecueProvider.overrideWith((Ref _) async {
+    final DemandeRepriseRecue? demande = demandeRepriseDepuis(
+      await RepriseFoyerSupabase(Supabase.instance.client).lireBrut(),
+    );
+    // Aucune demande n'attend le titulaire : la page le dit indisponible ;
+    // la carte du Foyer, qui y mene, n'est alors pas posee.
+    if (demande == null) {
+      throw const CapaciteIndisponible('reprise_a_traiter');
+    }
+    return demande;
+  }),
+  roleFoyerProvider.overrideWith(
+    (Ref _) => lireRoleFoyer(Supabase.instance.client),
   ),
   portCapaciteEleveProvider.overrideWithValue(
     PortCapaciteEleveSupabase(Supabase.instance.client),

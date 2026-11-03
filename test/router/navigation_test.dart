@@ -38,7 +38,7 @@ import 'package:rewayah_academy/features/compte/paiements_page.dart';
 import 'package:rewayah_academy/features/compte/preferences_page.dart';
 import 'package:rewayah_academy/features/compte/securite_page.dart';
 import 'package:rewayah_academy/features/consentements/consentement_observation_page.dart';
-import 'package:rewayah_academy/features/foyer/creer_mon_profil_indisponible.dart';
+import 'package:rewayah_academy/features/foyer/creer_mon_profil_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/acces_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/camera_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/finances_page.dart';
@@ -260,7 +260,7 @@ void main() {
       (Routes.classeSousPage('g1', 'progression'), ProgressionClassePage, 0),
       (Routes.tuteurFoyer, FoyerPage, 1),
       (Routes.tuteurAjouterEnfant, AjouterEnfantPage, 1),
-      (Routes.tuteurAjouterPourMoi, CreerMonProfilIndisponible, 1),
+      (Routes.tuteurAjouterPourMoi, CreerMonProfilPage, 1),
       (Routes.tuteurFoyerAppareils, AppareilsPage, 1),
       (Routes.appairerPour('e1'), AppairagePage, 1),
       (Routes.ficheElevePour('e1'), FicheElevePage, 1),
@@ -324,7 +324,7 @@ void main() {
       FoyerPage: partage,
       AjouterEnfantPage:
           'test/features/foyer/formulaire_profil_eleve_test.dart',
-      CreerMonProfilIndisponible: compte,
+      CreerMonProfilPage: compte,
       AppareilsPage: 'test/features/foyer/foyer_page_test.dart',
       AppairagePage: 'test/features/appareils/emetteur_qr_test.dart',
       FicheElevePage: partage,

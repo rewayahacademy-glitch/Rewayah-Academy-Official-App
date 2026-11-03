@@ -87,16 +87,19 @@ CREATE TEMP TABLE o1_note (cle text PRIMARY KEY, valeur text);
 GRANT ALL ON o1_note TO authenticated;
 
 -- (0) Ouverture aux parents fermee (app_config.observation.ouverture_parents,
--- posee a faux par la migration ; observation.activee vaut vrai) : le serveur
+-- creee par la migration O1 ; la migration 20261106900000 l'ouvre ensuite en
+-- production, donc le scenario la referme lui-meme ici ; observation.activee
+-- vaut vrai) : le serveur
 -- refuse le tuteur, le budget se dit `fermee` (pas « fermee pour cette
 -- classe »), aucune visite n'est ouverte ; la direction, elle, entre. Puis on
 -- ouvre.
 DO $o1$
 BEGIN
-  IF (SELECT value FROM public.app_config WHERE key = 'observation.ouverture_parents') IS DISTINCT FROM 'false'::jsonb THEN
-    RAISE EXCEPTION 'O1 ROUGE : la migration n''a pas pose observation.ouverture_parents a faux';
+  IF NOT EXISTS (SELECT 1 FROM public.app_config WHERE key = 'observation.ouverture_parents') THEN
+    RAISE EXCEPTION 'O1 ROUGE : cle observation.ouverture_parents absente apres les migrations';
   END IF;
-  RAISE NOTICE 'O1 OK : (0) la migration pose observation.ouverture_parents a faux';
+  UPDATE public.app_config SET value = 'false'::jsonb WHERE key = 'observation.ouverture_parents';
+  RAISE NOTICE 'O1 OK : (0) cle observation.ouverture_parents presente, refermee pour le scenario';
 END $o1$;
 SELECT pg_temp.etre('01000000-0000-4000-8000-0000000000f1', 'guardian', '01000000-0000-4000-8000-00000000f001');
 SET LOCAL ROLE authenticated;

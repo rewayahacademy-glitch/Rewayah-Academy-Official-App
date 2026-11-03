@@ -30,6 +30,8 @@ import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart
 import 'package:rewayah_academy/features/accueil_eleve/accueil_eleve_page.dart';
 import 'package:rewayah_academy/features/demo/coran_demo_adulte.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
+import 'package:rewayah_academy/features/foyer/routes_n2_foyer_adulte.dart';
+import 'package:rewayah_academy/features/ma_classe_adulte/ma_classe_adulte_page.dart';
 import 'package:rewayah_academy/features/tc_mushaf/mushaf_page.dart';
 import 'package:rewayah_academy/features/tc_mushaf/vue_page_mushaf.dart';
 
@@ -166,6 +168,24 @@ void main() {
       expect(find.byType(AccueilAdultePage), findsOneWidget);
       expect(find.byType(MushafPage), findsNothing);
       expect(_actif(tester), 0);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('N2 (E1) : « Voir ma classe » ouvre Ma classe sous Apprendre, '
+        'l\'onglet Apprendre allume', (WidgetTester tester) async {
+      final GoRouter routeur = await monterReel(tester);
+      final Finder lien = find.byKey(AccueilAdultePage.voirMaClasseKey);
+      await tester.ensureVisible(lien);
+      await _poser(tester);
+      expect(find.text(t.accessibilite.accueil.voirMaClasse), findsOneWidget);
+
+      await tester.tap(lien);
+      await _poser(tester);
+
+      expect(lieu(routeur), RoutesN2.eleveAdulteClasse);
+      expect(find.byType(MaClasseAdultePage), findsOneWidget);
+      expect(find.byType(MushafPage), findsNothing);
+      expect(_actif(tester), 1);
       expect(tester.takeException(), isNull);
     });
 
