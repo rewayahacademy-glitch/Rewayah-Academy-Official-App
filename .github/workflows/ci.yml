@@ -311,6 +311,21 @@ jobs:
       - name: Scenario SQL PHOTOS (photos des personnes, regle des camarades)
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_photos_personnes.sql
+      - name: Scenario SQL FN-DIVERS, signature au nom du compte
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_fn_divers_signature.sql
+      - name: Scenario SQL courriels, classe, fuseau et prenoms
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_courriels_ux.sql
+      - name: Scenario SQL N4, Bibliotheque et evaluations hors direction
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_n4_lectures.sql
+      - name: Scenario SQL Salle 3, valider la piece
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_salle3_prets.sql
+      - name: Scenario SQL SUPPRIMER, retrait des comptes
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_supprimer_comptes.sql
 
   edge-r2:
     name: Fonctions Edge -- stockage R2 (Deno)
@@ -346,6 +361,8 @@ jobs:
             supabase/functions/piece-identite-acces/index.ts \
             supabase/functions/piece-identite-depot/index.ts \
             supabase/functions/piece-identite-confirme/index.ts \
+                        supabase/functions/r2-selftest/index.ts \
+
             supabase/functions/archive-seance-acces/index.ts
 
       # Aucune valeur de secret ne doit exister dans le depot. Les NOMS des
