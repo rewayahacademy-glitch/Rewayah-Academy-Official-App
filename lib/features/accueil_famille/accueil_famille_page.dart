@@ -42,6 +42,7 @@ import '../acces_finance/acces_finance.dart'
 import '../acces_finance/carte_acces_finance.dart';
 import '../classe_tuteur/rejoindre_avec_eleve.dart';
 import '../consentements/consentement_observation_page.dart';
+import '../foyer/foyer_second_adulte.dart';
 import '../parcours_offres/bloc_parcours.dart';
 import '../presentation_tuteur/demandes_presentation_page.dart'
     show CarteDemandePresentation;
@@ -145,19 +146,32 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage>
 
     return PageShell(
       titre: t.tuteur.accueil.titre,
-      child: BlocAsynchrone<List<ProfilEleveFoyer>>(
-        valeur: profils,
-        squelette: const _Squelette(),
-        onReessayer: () => ref.invalidate(elevesDuFoyerProvider),
-        vide: EtatSysteme(
-          nature: NatureEtat.aucunResultat,
-          titre: t.tuteur.accueil.foyerVideTitre,
-          phrase: t.tuteur.accueil.foyerVidePhrase,
-          libelleAction: t.tuteur.accueil.ajouterProfil,
-          onAction: () => GoRouter.of(context).go(Routes.tuteurAjouterEnfant),
-        ),
-        construire: (List<ProfilEleveFoyer> liste) =>
-            _Contenu(profils: liste, maintenantServeurUtc: maintenant),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          // N2 (FA2) : une invitation au forfait famille attend la reponse,
+          // en tete, meme quand le foyer est encore vide.
+          AlertesSecondAdulte(
+            aller: (String chemin) => GoRouter.of(context).go(chemin),
+            avecReprise: false,
+          ),
+          BlocAsynchrone<List<ProfilEleveFoyer>>(
+            valeur: profils,
+            squelette: const _Squelette(),
+            onReessayer: () => ref.invalidate(elevesDuFoyerProvider),
+            vide: EtatSysteme(
+              nature: NatureEtat.aucunResultat,
+              titre: t.tuteur.accueil.foyerVideTitre,
+              phrase: t.tuteur.accueil.foyerVidePhrase,
+              libelleAction: t.tuteur.accueil.ajouterProfil,
+              onAction: () =>
+                  GoRouter.of(context).go(Routes.tuteurAjouterEnfant),
+            ),
+            construire: (List<ProfilEleveFoyer> liste) =>
+                _Contenu(profils: liste, maintenantServeurUtc: maintenant),
+          ),
+        ],
       ),
     );
   }

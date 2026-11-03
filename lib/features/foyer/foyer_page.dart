@@ -35,6 +35,7 @@ import '../../core/widgets/skeleton.dart';
 import '../compte/compte_tuteur_page.dart' show CarteIdentiteCompte;
 import '../compte/donnees_compte.dart' show identiteTitulaireProvider;
 import 'finances_foyer.dart';
+import 'foyer_second_adulte.dart';
 import 'ligne_membre.dart';
 import 'photo_eleve.dart';
 import 'place_adulte.dart';
@@ -78,8 +79,8 @@ final FutureProviderFamily<List<ClasseFoyer>, String> classesMembreProvider =
 /// demande », E5), les profils eleves, « Ajouter un profil eleve » sous eux
 /// sur telephone (planche 3.1), puis « Paiements du foyer », les appareils,
 /// et au pied « A propos du forfait famille » (planche 2.1) et « Creer mon
-/// profil eleve » (garde, planche 2.3 G, decision E6 ; il ouvre la page
-/// indisponible existante, DB-FOY-01, EA-BR-19). Sans valeur (le cas du tuteur
+/// profil eleve » (garde, planche 2.3 G, decision E6 ; il ouvre
+/// `CreerMonProfilPage`, N2, FA5). Sans valeur (le cas du tuteur
 /// aujourd'hui, EA-BR-14), rien ne change.
 class FoyerPage extends ConsumerWidget {
   /// Cree la page.
@@ -302,6 +303,9 @@ class FoyerPage extends ConsumerWidget {
           ),
           Ecart.vSection,
         ],
+        // N2 (FA1, FA3) : inviter (titulaire) ou demander la reprise (second
+        // adulte), selon `mon_role_foyer()`.
+        LignesSecondAdulte(aller: aller),
         KeyedSubtree(
           key: appareilsKey,
           child: GroupeReglages(
@@ -317,11 +321,10 @@ class FoyerPage extends ConsumerWidget {
           ),
         ),
         // Garde pour le titulaire adulte aussi (planche 2.3 G, decision E6).
-        // Le serveur ne dit pas encore s'il a deja son profil eleve, ni ne
-        // sait le creer (DB-FOY-01, EA-BR-19) : la page dit qu'elle est
-        // indisponible, avec les textes de l'adulte quand l'appelant les
-        // demande (`CreerMonProfilIndisponible.titulaireAdulte`). « A propos du forfait famille » le precede, en lien
-        // d'information au pied de la page (planche 2.1 P, decision E6).
+        // Il ouvre `CreerMonProfilPage` (N2, FA5), qui lit l'existence du
+        // profil et le cree (`creer_profil_eleve_titulaire`, 0052).
+        // « A propos du forfait famille » le precede, en lien d'information
+        // au pied de la page (planche 2.1 P, decision E6).
         Ecart.vXxl,
         if (adulte != null) ...<Widget>[
           Align(
@@ -368,6 +371,8 @@ class FoyerPage extends ConsumerWidget {
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
+                // N2 : ce qui attend une reponse, en tete (alerte d'abord).
+                AlertesSecondAdulte(aller: aller),
                 membres,
                 Ecart.vSection,
                 _RangeeBureau(
@@ -380,7 +385,13 @@ class FoyerPage extends ConsumerWidget {
             )
           : Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[membres, Ecart.vSection, annexes],
+              children: <Widget>[
+                // N2 : ce qui attend une reponse, en tete (alerte d'abord).
+                AlertesSecondAdulte(aller: aller),
+                membres,
+                Ecart.vSection,
+                annexes,
+              ],
             ),
     );
   }

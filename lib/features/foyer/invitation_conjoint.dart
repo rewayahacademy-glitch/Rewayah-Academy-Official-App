@@ -219,10 +219,18 @@ class InviterConjointPage extends ConsumerStatefulWidget {
     required this.onAbandon,
     required this.onTerminee,
     super.key,
+    this.depuisFoyer = false,
   });
 
-  /// Vrai pour une conjointe, faux pour un conjoint (F3).
-  final bool placeFeminine;
+  /// Vrai pour une conjointe, faux pour un conjoint (F3) ; `null` quand le
+  /// genre du titulaire n'est pas enregistre : une forme neutre, jamais
+  /// devinee d'apres le prenom (N2, decision du pilote du 03/11/2026).
+  final bool? placeFeminine;
+
+  /// Vrai quand la page s'ouvre depuis le Foyer du tuteur (N2, FA1) : le
+  /// refus et le retour parlent du foyer, pas de Ma famille ni de la place,
+  /// que le tuteur ne voit pas.
+  final bool depuisFoyer;
 
   /// Quitter depuis la premiere etape.
   final VoidCallback onAbandon;
@@ -449,21 +457,28 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
   }
 
   Widget _pageCoordonnees(BuildContext context) {
-    final bool f = widget.placeFeminine;
+    final bool? f = widget.placeFeminine;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         _Titre(
-          // Decision E4 : « Inviter ma conjointe / Inviter mon conjoint ».
-          titre: f
-              ? t.adulte.invitation.titreElle
-              : t.adulte.invitation.titreLui,
-          sousTitre: f
-              ? t.adulte.invitation.enteteElle
-              : t.adulte.invitation.enteteLui,
-          phrase: f
-              ? t.adulte.invitation.phraseElle
-              : t.adulte.invitation.phraseLui,
+          // Decision E4 : « Inviter ma conjointe / Inviter mon conjoint » ;
+          // N2 : la forme neutre quand le genre n'est pas enregistre.
+          titre: switch (f) {
+            true => t.adulte.invitation.titreElle,
+            false => t.adulte.invitation.titreLui,
+            null => t.adulte.invitation.titreNeutre,
+          },
+          sousTitre: switch (f) {
+            true => t.adulte.invitation.enteteElle,
+            false => t.adulte.invitation.enteteLui,
+            null => t.adulte.invitation.enteteNeutre,
+          },
+          phrase: switch (f) {
+            true => t.adulte.invitation.phraseElle,
+            false => t.adulte.invitation.phraseLui,
+            null => t.adulte.invitation.phraseNeutre,
+          },
         ),
         Ecart.vXxl,
         TextField(
@@ -512,9 +527,11 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
           // L'aide de la planche 2.2, accordee au genre de la place.
           decoration: InputDecoration(
             labelText: t.adulte.invitation.courriel,
-            helperText: f
-                ? t.adulte.invitation.courrielAideElle
-                : t.adulte.invitation.courrielAideLui,
+            helperText: switch (f) {
+              true => t.adulte.invitation.courrielAideElle,
+              false => t.adulte.invitation.courrielAideLui,
+              null => t.adulte.invitation.courrielAideNeutre,
+            },
             helperMaxLines: ZoneSaisie.lignesAideMax,
             errorText: _erreurCourriel,
             errorMaxLines: ZoneSaisie.lignesAideMax,
@@ -549,8 +566,12 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
       _Echec.refus => EtatSysteme(
         nature: NatureEtat.accesRefuse,
         titre: t.adulte.invitation.refusTitre,
-        phrase: t.adulte.invitation.refusPhrase,
-        libelleAction: t.adulte.invitation.revenirMaFamille,
+        phrase: widget.depuisFoyer
+            ? t.adulte.invitation.refusPhraseFoyer
+            : t.adulte.invitation.refusPhrase,
+        libelleAction: widget.depuisFoyer
+            ? t.foyer.monProfil.retour
+            : t.adulte.invitation.revenirMaFamille,
         onAction: widget.onAbandon,
       ),
       _Echec.indisponible => const EtatSysteme(

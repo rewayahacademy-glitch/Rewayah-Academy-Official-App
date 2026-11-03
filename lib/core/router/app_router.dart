@@ -190,7 +190,7 @@ import '../../features/eleve_connexion/saisie_code_page.dart';
 import '../../features/eleve_connexion/scanner_page.dart';
 import '../../features/enseignant_classes/mes_classes_page.dart';
 import '../../features/fiche_groupe/fiche_groupe_page.dart';
-import '../../features/foyer/creer_mon_profil_indisponible.dart';
+import '../../features/foyer/creer_mon_profil_page.dart';
 import '../../features/foyer/fiche/acces_page.dart';
 import '../../features/foyer/fiche/camera_page.dart';
 import '../../features/foyer/fiche/couleur_page.dart';
@@ -204,6 +204,7 @@ import '../../features/foyer/finances_foyer.dart' show financesFoyerProvider;
 import '../../features/foyer/foyer_page.dart';
 import '../../features/foyer/invitation_conjoint.dart';
 import '../../features/foyer/nos_prix_page.dart';
+import '../../features/foyer/routes_n2_foyer_adulte.dart';
 import '../../features/inscription/etapes/genre_etape.dart';
 import '../../features/inscription/etapes/identite_etape.dart';
 import '../../features/inscription/etapes/recapitulatif_etape.dart';
@@ -762,6 +763,9 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                   construire: () => d_mushaf_page.MushafPage(),
                 ),
               ),
+              // N2 (E1) : Ma classe de l'eleve adulte, sous Apprendre. Apres le
+              // Coran : la premiere route d'une branche est sa destination.
+              ...routesN2Apprendre(),
             ],
           ),
         ],
@@ -1003,14 +1007,16 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 path: Routes.tuteurFoyer,
                 pageBuilder: glissee((GoRouterState _) => const FoyerPage()),
                 routes: <RouteBase>[
+                  // N2 (FA1 a FA3) : le second adulte du foyer.
+                  ...routesN2Foyer(),
                   GoRoute(
                     path: 'ajouter',
-                    // `?pour=moi` : le profil eleve du titulaire lui-meme,
-                    // indisponible tant que DB-FOY-01 manque (mapping 7.1).
+                    // `?pour=moi` : le profil eleve du titulaire lui-meme
+                    // (N2, FA5 : creer_profil_eleve_titulaire, 0052).
                     pageBuilder: glissee(
                       (GoRouterState etat) =>
                           etat.uri.queryParameters['pour'] == 'moi'
-                          ? const CreerMonProfilIndisponible()
+                          ? const CreerMonProfilPage()
                           : AjouterEnfantPage(
                               depuisAccueilInscrits:
                                   etat.extra is AjoutDepuisAccueilInscrits

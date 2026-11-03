@@ -181,6 +181,23 @@ class SessionControleur extends Notifier<SessionState> {
     }
   }
 
+  /// Relit la capacite « eleve autonome » du profil connecte, apres un geste
+  /// qui la change sur le serveur (N2, FA5 : le titulaire vient de creer son
+  /// profil eleve). L'ancienne reponse est oubliee ; la nouvelle est publiee
+  /// des qu'elle arrive.
+  void relireCapaciteEleve() {
+    final String? profil = state.profileId;
+    if (profil == null) {
+      return;
+    }
+    _autonomes.remove(profil);
+    _lusCompteActif.remove(profil);
+    _lectureFinieCompteActif.remove(profil);
+    unawaited(
+      _lireCapacite(profil, compteActif: state.porte == PorteAcces.actif),
+    );
+  }
+
   /// Ferme la session locale et indique si une session demo etait active.
   bool fermerDemo() {
     if (!_demoActive) {

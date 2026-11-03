@@ -20,6 +20,7 @@ import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../foyer/nos_prix_page.dart';
+import '../foyer/routes_n2_foyer_adulte.dart' show RoutesN2;
 import '../mon_espace_adulte/mes_finances_page.dart';
 import '../suivi_famille/suivi_famille_page.dart';
 import '../tc_catalogue/routes_tc_b.dart' show RoutesTcB;
@@ -61,6 +62,9 @@ List<GoRoute> routesAccueilAdulte() => <GoRoute>[
       onVoirDernieresSeances: () =>
           GoRouter.of(contexte).go(Routes.eleveAdulteSeances),
       onMesFinances: () => GoRouter.of(contexte).go(Routes.eleveFinances),
+      // N2 (E1) : Ma classe, dans la branche Apprendre.
+      onVoirMaClasse: () =>
+          GoRouter.of(contexte).go(RoutesN2.eleveAdulteClasse),
     ),
   ),
   GoRoute(
