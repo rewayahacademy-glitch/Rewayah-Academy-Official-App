@@ -14,14 +14,21 @@
 // L'etat engage lui-meme est prouve par le test widget « RECHARGE-CARTE »
 // (test/features/foyer/recharge_multi_profils_test.dart).
 //
-// Usage : node tool/e2e/recharge_carte.mjs
+// Mode « --sans-stripe » (le chemin du rejeu C1 du 03/11, parcours 7) : le
+// faux Stripe est arrete, le paiement echoue (« Le paiement n'a pas ete
+// confirme »), la commande reste engagee et la page reste a l'ecran. La carte
+// du profil coche doit y dire le meme montant que le recapitulatif.
+//
+// Usage : node tool/e2e/recharge_carte.mjs [--sans-stripe]
+const SANS_STRIPE = process.argv.includes('--sans-stripe');
 import { parcours, trouver, libelles, activerSemantique, amenerEnVue, sql, MDP, connecter }
   from './commun.mjs';
 
 const FAUX = 'http://127.0.0.1:12111';
 const DELAI_STRIPE_JS = 0;
 const tampon = new Date().toISOString().slice(5, 19).replace(/[-T:]/g, '');
-const p = await parcours('RECHARGE-CARTE : la carte et le recapitulatif concordent pendant une commande engagee', 'RECHARGE-CARTE');
+const p = await parcours(`RECHARGE-CARTE : la carte et le recapitulatif concordent pendant une commande engagee${SANS_STRIPE ? ' (sans Stripe, chemin du rejeu C1)' : ' (faux Stripe)'}`,
+  `RECHARGE-CARTE/${SANS_STRIPE ? 'sans-stripe' : 'faux-stripe'}`);
 const manque = [];
 const limites = [];
 const un = (requete) => sql(requete).split('\n')[0].trim();
@@ -145,21 +152,25 @@ async function passage(taille, nom) {
   await p.capture(a, `${taille}_commande_engagee_carte_et_recapitulatif`);
   const montantDe = (x) => (x?.match(/\d+(?:[.,]\d+)?\s?\$/) ?? [null])[0];
   if (!commandePendant) manque.push(`${taille} : « Payer » n'engage aucune commande`);
-  if (pendant.carte) {
+  if (SANS_STRIPE && !pendant.carte) {
+    manque.push(`${taille} : sans Stripe, la carte n'est pas lisible apres « Payer »`);
+  } else if (pendant.carte) {
     if (montantDe(pendant.carte) !== montantDe(avant.carte)) {
       manque.push(`${taille} : carte « ${pendant.carte} » pendant la commande (avant : « ${avant.carte} »)`);
     }
   } else {
     limites.push(`${taille} : page de recharge recouverte par le formulaire pendant la commande, carte non lisible sur le banc`);
   }
-  try {
-    await a.page.waitForFunction(() => window.__fauxStripeMonte !== undefined, null, { timeout: 30000 });
-  } catch { manque.push(`${taille} : le formulaire (faux Stripe) ne se monte pas`); }
+  if (!SANS_STRIPE) {
+    try {
+      await a.page.waitForFunction(() => window.__fauxStripeMonte !== undefined, null, { timeout: 30000 });
+    } catch { manque.push(`${taille} : le formulaire (faux Stripe) ne se monte pas`); }
+  }
   await a.page.waitForTimeout(2000);
   const commande = un(`select etat from public.commandes_recharge where titulaire = '${f.id}' order by cree_le desc limit 1`);
   p.dire(`[${taille}] commande en base : ${commande || 'aucune'}`);
   if (!commande) manque.push(`${taille} : aucune commande engagee`);
-  await p.capture(a, `${taille}_formulaire`);
+  if (!SANS_STRIPE) await p.capture(a, `${taille}_formulaire`);
   await a.ctx.close();
 }
 
