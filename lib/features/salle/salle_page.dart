@@ -3531,22 +3531,30 @@ class _Scene extends StatelessWidget {
         AppSpacing.lg,
         AppSpacing.lg,
       ),
-      child: _pile(distants, moi),
+      child: _pile(distants, moi, ActionSousLaScene.de(context)),
     );
   }
 
-  Widget _pile(List<ParticipantSalle> distants, ParticipantSalle? moi) {
+  Widget _pile(
+    List<ParticipantSalle> distants,
+    ParticipantSalle? moi,
+    ({String libelle, VoidCallback onPress})? action,
+  ) {
     return Stack(
       children: <Widget>[
         Positioned.fill(
           child: distants.isEmpty
-              ? _Seul(role: vue.role, attendu: attendu)
+              ? _Seul(role: vue.role, attendu: attendu, action: action)
               : _Galerie(
                   participants: distants,
                   recitant: recitant,
                   menuPour: menuPour,
                 ),
         ),
+        // Au telephone, avec un eleve a l'image : l'action au centre de la
+        // video, ou il n'y a rien a lire.
+        if (distants.isNotEmpty && action != null)
+          Center(child: ActionSousLaScene.bouton(action)),
         if (moi case final ParticipantSalle local)
           PositionedDirectional(
             bottom: AppSpacing.lg,
@@ -3876,9 +3884,13 @@ class _SansImage extends StatelessWidget {
 /// phrase : ce qui se passe et quoi faire. Encre de la surface (contraste
 /// > 4,5:1, clair et sombre). Le depart de l'enseignant ramene ici.
 class _Seul extends StatelessWidget {
-  const _Seul({required this.role, this.attendu});
+  const _Seul({required this.role, this.attendu, this.action});
 
   final RoleSalle role;
+
+  /// N3 : l'action de la scene au telephone (« Ouvrir le Coran »), posee
+  /// sous la phrase d'attente, jamais dessus ; `null` ailleurs.
+  final ({String libelle, VoidCallback onPress})? action;
 
   /// Le prenom de l'enseignant attendu (eleve), s'il est connu. Le titre
   /// Sayyid / Sayyida n'est pas lu dans `/salle` : le prenom seul, jamais
@@ -3946,6 +3958,9 @@ class _Seul extends StatelessWidget {
                   textes.bodyMedium ?? const TextStyle(),
                 ),
               ),
+              if (action
+                  case final ({String libelle, VoidCallback onPress})
+                      a) ...<Widget>[Ecart.vLg, ActionSousLaScene.bouton(a)],
             ],
           ),
         ),
