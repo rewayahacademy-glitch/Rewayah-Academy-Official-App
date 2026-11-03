@@ -1,13 +1,14 @@
 // Captures de recette des corrections du 08/10 de FORM-L1-7-13 : le refus de
 // dossier (02D, focus dans la zone du motif apres « Refuser » a vide) et les
-// deux signalements L7 passes en categorie « Autre » apres une phrase-type
-// (champ libre seul). 320 a texte x2, clair et sombre (K-61).
+// signalement L7 de la fiche eleve passe en categorie « Autre » apres une
+// phrase-type (champ libre seul). La seconde capture, sur l'ancienne feuille
+// `tc_flux_academique/feuille_signalement.dart` jamais atteinte par
+// l'application, est retiree avec elle (M1-SUPPR, 03/11/2026). 320 a texte x2, clair et sombre (K-61).
 // Saute sans CAPTURE_DIR (voir `test/capture/LISEZ-MOI.md`).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/admin/admin_domaine.dart';
@@ -15,9 +16,6 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
-import 'package:rewayah_academy/core/tc_parcours/libelles_parcours.dart';
-import 'package:rewayah_academy/core/tc_parcours/port_signalement.dart';
-import 'package:rewayah_academy/core/tc_parcours/student_concern.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
@@ -26,7 +24,6 @@ import 'package:rewayah_academy/features/demo/demo_classe_page.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 import 'package:rewayah_academy/features/fiche_groupe/fiche_eleve_enseignant.dart';
-import 'package:rewayah_academy/features/tc_flux_academique/feuille_signalement.dart';
 
 import 'outil_capture.dart';
 
@@ -104,54 +101,6 @@ Future<void> _refus(WidgetTester tester, ThemeMode mode) async {
   await stabiliser(tester);
 }
 
-class _Ouvreur extends StatelessWidget {
-  const _Ouvreur();
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    body: Center(
-      child: TextButton(
-        onPressed: () => FeuilleSignalement.ouvrir(
-          context,
-          groupeId: 'g1',
-          academyId: 'RA-AB0012',
-          prenomEleve: 'Amina',
-          sessionId: 's1',
-        ),
-        child: const Text('ouvrir'),
-      ),
-    ),
-  );
-}
-
-/// Le signalement du Teaching Core : une phrase-type, puis « Autre ».
-Future<void> _signalementTc(WidgetTester tester, ThemeMode mode) async {
-  await tester.pumpWidget(
-    hoteCapture(
-      const _Ouvreur(),
-      surcharges: <Override>[
-        portSignalementProvider.overrideWithValue(SignalementMemoire('ens-1')),
-      ],
-      themeMode: mode,
-      echelleTexte: 2,
-    ),
-  );
-  await stabiliser(tester);
-  await _toucher(tester, find.text('ouvrir'));
-  await _toucher(
-    tester,
-    find.text(t.motifs.signalement.pedagogique.renforcement),
-  );
-  await _toucher(
-    tester,
-    find.text(libelleCategorieSignalement(CategorieSignalement.autre)).first,
-  );
-  expect(find.byKey(SelecteurMotif.cleAutre), findsNothing);
-  expect(find.byType(TextField), findsNWidgets(2));
-  await tester.ensureVisible(find.byType(TextField).last);
-  await stabiliser(tester);
-}
-
 /// Le signalement de la fiche eleve (« Resume partageable »).
 Future<void> _signalementFiche(WidgetTester tester, ThemeMode mode) async {
   await tester.pumpWidget(
@@ -191,7 +140,6 @@ void main() {
       for (final (String nom, Future<void> Function(WidgetTester, ThemeMode) f)
           in <(String, Future<void> Function(WidgetTester, ThemeMode))>[
             ('refus_dossier', _refus),
-            ('signalement_tc_autre', _signalementTc),
             ('signalement_fiche_autre', _signalementFiche),
           ]) {
         testWidgets('320x1400 @2 texte x2, $nom, ${mode.name}', (

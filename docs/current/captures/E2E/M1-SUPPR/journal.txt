@@ -1,0 +1,49 @@
+== M1-SUPPR : Signaler un besoin, securite d un enfant : 2026-11-03T16:34:16.572Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+  amorce : classe 5e33e537-3681-41d5-92b8-2658f339a3a5
+-- 1440_clair
+  OK feuille ouverte, categories visibles
+  OK 1 : le resume pour la famille est la avant le choix
+  OK 2 : la phrase-type pedagogique est proposee
+  OK 2 : la notice « Signalement prioritaire »
+  OK 2 : la phrase d urgence
+  OK 2 : plus de resume pour la famille
+  OK 2 : plus de phrase-type
+  OK 3 : responsable vide, « La direction reçoit votre signalement. »
+  OK feuille ouverte, categories visibles
+  OK 4 : le nom du responsable
+  OK 4 : son courriel
+  OK feuille ouverte, categories visibles
+  OK 5 : la panne de lecture se dit
+  OK 5 : la panne ne passe pas pour un reglage vide
+  OK 5 : « Réessayer » relit le responsable
+  OK feuille ouverte, categories visibles
+  OK 6 : envoi confirme
+  OK 6 : base, categorie securite_enfant
+  OK 6 : base, aucun message pour la famille malgre la phrase choisie avant
+  OK 7 : la direction le voit dans ses alertes
+  OK 7 : ni la famille ni l enseignant ne le lisent
+  OK 7 : aucun « Transmettre »
+-- 390_sombre
+  OK feuille ouverte, categories visibles
+  OK 1 : le resume pour la famille est la avant le choix
+  OK 2 : la phrase-type pedagogique est proposee
+  OK 2 : la notice « Signalement prioritaire »
+  OK 2 : la phrase d urgence
+  OK 2 : plus de resume pour la famille
+  OK 2 : plus de phrase-type
+  OK 3 : responsable vide, « La direction reçoit votre signalement. »
+  OK feuille ouverte, categories visibles
+  OK 4 : le nom du responsable
+  OK 4 : son courriel
+  OK feuille ouverte, categories visibles
+  OK 5 : la panne de lecture se dit
+  OK 5 : la panne ne passe pas pour un reglage vide
+  OK 5 : « Réessayer » relit le responsable
+  OK feuille ouverte, categories visibles
+  OK 6 : envoi confirme
+  OK 6 : base, categorie securite_enfant
+  OK 6 : base, aucun message pour la famille malgre la phrase choisie avant
+  OK 7 : la direction le voit dans ses alertes
+  OK 7 : ni la famille ni l enseignant ne le lisent
+  OK 7 : aucun « Transmettre »
+== M1-SUPPR : Signaler un besoin, securite d un enfant : vert

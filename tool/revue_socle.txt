@@ -34,7 +34,6 @@ bouton-grise|lib/features/salle_seance/rail_seance.dart|onPress: groupe == null 
 bouton-grise|lib/features/salle_seance/selecteur_ressources.dart|onPress: ouvrir == null ? null : () => ouvrir(s)
 bouton-grise|lib/features/tc_catalogue/detail_ressource_page.dart|onPress: null
 bouton-grise|lib/features/tc_catalogue/surface_bibliotheque.dart|onPress: ouvrable ? () => widget.onChoisir(r, position) : null
-bouton-grise|lib/features/tc_flux_academique/bloc_avant_prochain_cours.dart|onPress: rappel == null ? null : () => rappel(action)
 erreur-sans-action|assets/i18n/fr.i18n.json|admin.agents.erreur : La liste des jetons n'a pas pu être lue.
 erreur-sans-action|assets/i18n/fr.i18n.json|admin.attribution.erreur : L'attribution n'a pas abouti : {message}
 erreur-sans-action|assets/i18n/fr.i18n.json|admin.conservationDonnees.erreurEcriture : L'enregistrement n'a pas abouti : {message}

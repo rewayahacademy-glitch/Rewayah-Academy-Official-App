@@ -2,25 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/core/tc_parcours/feedback_memoire.dart';
 import 'package:rewayah_academy/core/tc_parcours/port_feedback.dart';
 import 'package:rewayah_academy/core/tc_parcours/session_feedback.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/features/tc_flux_academique/carte_feedback_seance.dart';
 
+import 'support/faux_feedback.dart';
 import 'support/hote_h.dart';
 
 const String _seance = 's1';
-const String _groupe = 'g1';
+// La seance hors echantillon : le serveur ne rend aucune question.
+FauxFeedback _depot({required bool echantillonnee}) =>
+    FauxFeedback(question: echantillonnee ? questionCours() : null);
 
-FeedbackMemoire _depot({required int cadence, int rang = 1}) => FeedbackMemoire(
-  cadence: cadence,
-  seances: <String, ContexteSeanceFeedback>{
-    _seance: ContexteSeanceFeedback(groupeId: _groupe, rangSeance: rang),
-  },
-);
-
-List<Override> _surcharges(FeedbackMemoire depot) => <Override>[
+List<Override> _surcharges(FauxFeedback depot) => <Override>[
   portFeedbackProvider.overrideWithValue(depot),
 ];
 
@@ -34,7 +29,7 @@ void main() {
       await tester.pumpWidget(
         hoteH(
           const CarteFeedbackSeance(sessionId: _seance),
-          surcharges: _surcharges(_depot(cadence: 4)),
+          surcharges: _surcharges(_depot(echantillonnee: false)),
         ),
       );
       await tester.pumpAndSettle();
@@ -56,7 +51,7 @@ void main() {
       await tester.pumpWidget(
         hoteH(
           const CarteFeedbackSeance(sessionId: _seance),
-          surcharges: _surcharges(_depot(cadence: 1)),
+          surcharges: _surcharges(_depot(echantillonnee: true)),
         ),
       );
       await tester.pumpAndSettle();
@@ -77,7 +72,7 @@ void main() {
       WidgetTester tester,
     ) async {
       telephone(tester);
-      final FeedbackMemoire depot = _depot(cadence: 1);
+      final FauxFeedback depot = _depot(echantillonnee: true);
 
       await tester.pumpWidget(
         hoteH(
@@ -97,7 +92,7 @@ void main() {
       );
 
       final TendanceFeedback tendance = await depot.tendance(
-        groupeId: _groupe,
+        groupeId: 'g1',
       );
       expect(tendance.nombreEchantillons, 1);
     });
