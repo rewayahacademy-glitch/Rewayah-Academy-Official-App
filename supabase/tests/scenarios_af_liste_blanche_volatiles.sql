@@ -363,7 +363,11 @@ declare
     'direction_supprimer_comptes(uuid[],text,boolean)',
     -- SUPPRIMER (03/11) : un tuteur retire le profil d'un mineur de son foyer
     -- (garde positive app_role() = 'guardian' et app_account_valid()).
-    'tuteur_supprimer_profil_enfant(uuid)'
+    'tuteur_supprimer_profil_enfant(uuid)',
+    -- SUPPRIMER-bis (03/11) : la direction restaure des retraits non encore
+    -- anonymises (garde positive app_role() = 'admin', app_account_valid() et
+    -- app_aal() = 'aal2').
+    'direction_restaurer_comptes(uuid[])'
   ];
   -- Ouvertes a anon par choix : la desinscription d'un e-mail et le depot d'un
   -- avis se font sans compte.
