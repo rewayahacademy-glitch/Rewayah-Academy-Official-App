@@ -253,10 +253,18 @@ SELECT pg_temp.vrai(private.c29_enseignant_effectif_session('a3000000-0000-0000-
 -- Aucune annulation, meme apres la fin prevue.
 SELECT private.remplacement_auto_passer(clock_timestamp() + interval '2 hours');
 -- A3-bis : le jeton de R1 a ouvert S1 (in_progress) ; aucune n'est annulee.
-SELECT pg_temp.vrai((SELECT bool_and(status IN ('planned', 'in_progress')) FROM public.sessions
-                      WHERE id IN ('a3000000-0000-0000-0000-000000000201','a3000000-0000-0000-0000-000000000202','a3000000-0000-0000-0000-000000000203'))
-  AND (SELECT status FROM public.sessions WHERE id = 'a3000000-0000-0000-0000-000000000204') = 'in_progress',
-  'aucune seance annulee par le remplacement automatique');
+-- SNT (03/11/2026, 20261106500000) : deux heures apres, S2, S3 et S4, ou aucun
+-- enseignant n'est entre, sont des seances non tenues : teacher_absent et
+-- reportees (decision du directeur du 03/11), jamais annulees.
+SELECT pg_temp.vrai((SELECT bool_and(status NOT IN ('canceled', 'canceled_late')) FROM public.sessions
+                      WHERE id::text LIKE 'a3000000-0000-0000-0000-00000000020%')
+  AND (SELECT status FROM public.sessions WHERE id = 'a3000000-0000-0000-0000-000000000201') = 'in_progress'
+  AND (SELECT bool_and(s.status = 'teacher_absent'
+                       AND EXISTS (SELECT 1 FROM public.seances_reportees r WHERE r.session_id = s.id))
+         FROM public.sessions s
+        WHERE s.id IN ('a3000000-0000-0000-0000-000000000202','a3000000-0000-0000-0000-000000000203',
+                       'a3000000-0000-0000-0000-000000000204')),
+  'aucune seance annulee par le remplacement automatique ; sans enseignant entre, reportee (SNT)');
 
 -- Droits.
 SELECT pg_temp.vrai(

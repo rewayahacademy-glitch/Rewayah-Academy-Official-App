@@ -339,7 +339,10 @@ declare
     'avis_lien_creer(text,integer,integer)',
     'avis_lien_fermer(uuid)',
     'avis_moderer(uuid,text,text)',
-    'avis_deposer(text,text,text,text,date,integer,text,text,boolean)'
+    'avis_deposer(text,text,text,text,date,integer,text,text,boolean)',
+    -- SNT (03/11) : la direction fixe la nouvelle date d'une seance reportee
+    -- (garde positive app_account_valid() et app_role() = 'admin', celle de C1).
+    'fixer_nouvelle_date_seance(uuid,timestamp with time zone)'
   ];
   -- Ouvertes a anon par choix : la desinscription d'un e-mail et le depot d'un
   -- avis se font sans compte.

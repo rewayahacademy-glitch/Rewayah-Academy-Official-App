@@ -58,3 +58,10 @@ Deno.test('titulaire_entre et remplacant_entre (A3-bis) passent : l autre enseig
     )
   }
 })
+
+Deno.test('seance_reportee (SNT) passe : la salle d une seance reportee dit pourquoi elle ne s ouvre plus', () => {
+  assertEquals(
+    lireMotifSalle({ motif: 'seance_reportee', fin_utc: '2026-11-03T19:00:00+00:00', ouverture_utc: null, grace_minutes: 15 }),
+    { motif: 'seance_reportee', fin_utc: '2026-11-03T19:00:00+00:00', ouverture_utc: null, grace_minutes: 15 },
+  )
+})
