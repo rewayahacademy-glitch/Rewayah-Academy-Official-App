@@ -357,7 +357,13 @@ declare
     'avis_deposer(text,text,text,text,date,integer,text,text,boolean)',
     -- SNT (03/11) : la direction fixe la nouvelle date d'une seance reportee
     -- (garde positive app_account_valid() et app_role() = 'admin', celle de C1).
-    'fixer_nouvelle_date_seance(uuid,timestamp with time zone)'
+    'fixer_nouvelle_date_seance(uuid,timestamp with time zone)',
+    -- SUPPRIMER (03/11) : la direction retire une selection de comptes (garde
+    -- positive app_role() = 'admin', app_account_valid() et app_aal() = 'aal2').
+    'direction_supprimer_comptes(uuid[],text,boolean)',
+    -- SUPPRIMER (03/11) : un tuteur retire le profil d'un mineur de son foyer
+    -- (garde positive app_role() = 'guardian' et app_account_valid()).
+    'tuteur_supprimer_profil_enfant(uuid)'
   ];
   -- Ouvertes a anon par choix : la desinscription d'un e-mail et le depot d'un
   -- avis se font sans compte.
