@@ -142,7 +142,7 @@ void main() {
       );
       final Finder restaurer = find.byKey(RetraitsSection.restaurerKey('r-a'));
       expect(restaurer, findsOneWidget);
-      expect(find.text('Restaurer le compte de Awa Bah'), findsOneWidget);
+      expect(find.text("Restaurer le compte d'Awa Bah"), findsOneWidget);
       verifierUnSeulBoutonPlein(tester);
       await tester.ensureVisible(restaurer);
       await tester.tap(restaurer);
@@ -151,7 +151,7 @@ void main() {
       final String retour = tester
           .widget<Text>(find.byKey(RetraitsSection.retourKey))
           .data!;
-      expect(retour, contains('Le compte de Awa Bah est restauré'));
+      expect(retour, contains("Le compte d'Awa Bah est restauré"));
       expect(retour, contains('Il avait quitté 2 classes'));
       // La liste est relue apres le geste.
       expect(port.lectures.length, 2);

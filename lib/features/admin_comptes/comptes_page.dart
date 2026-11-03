@@ -13,6 +13,7 @@ import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
 import '../../core/capacites/port_retraits_comptes.dart';
 import '../../core/domain/enums.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/identifiant_insecable.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -1222,9 +1223,8 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
             compacte: true,
             pleineLargeur: false,
             enCours: _suppressionEnCours,
-            onPress: _suppressionEnCours
-                ? null
-                : () => unawaited(_supprimer(choisis)),
+            // Un envoi en cours ignore le second toucher (`_supprimer`).
+            onPress: () => unawaited(_supprimer(choisis)),
           ),
       ],
     );
@@ -1259,7 +1259,12 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
     final bool oui = await ConfirmDestructive.demander(
       context,
       question: nomDuCompte != null
-          ? r.questionUn(nom: nomDuCompte)
+          ? r.questionUn(
+              deNom: deDevant(
+                nomDuCompte,
+                cle: 'admin.comptes.retrait.questionUn',
+              ),
+            )
           : r.questionPlusieurs(n: comptes.length),
       consequence: r.consequence,
       libelleConfirmer: un

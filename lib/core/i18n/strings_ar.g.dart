@@ -13958,8 +13958,8 @@ class _Traductions$admin$suppressions$retraits$ar extends Traductions$admin$supp
 	@override String get anonymiseLe => 'جُهِّل في';
 	@override String get restaureLe => 'استُعيد في';
 	@override String get nonRestaurable => 'حُذف هذا الحساب قبل أن يحفظ التطبيق حالته السابقة. لا يمكن استعادته من هنا.';
-	@override String restaurer({required Object nom}) => 'استعادة حساب ⁨${nom}⁩';
-	@override String restaure({required Object nom}) => 'استُعيد حساب ⁨${nom}⁩. يستطيع الشخص الدخول من جديد.';
+	@override String restaurer({required Object deNom}) => 'استعادة حساب ⁨${deNom}⁩';
+	@override String restaure({required Object deNom}) => 'استُعيد حساب ⁨${deNom}⁩. يستطيع الشخص الدخول من جديد.';
 	@override String classesQuittees({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
 		zero: 'كان قد غادر ⁨${n}⁩ فصلًا: لم يُعَد إليها. أضفه إلى فصل من الفصول.',
 		one: 'كان قد غادر فصلًا واحدًا: لم يُعَد إليه. أضفه إلى فصل من الفصول.',
@@ -14006,7 +14006,7 @@ class _Traductions$admin$comptes$retrait$ar extends Traductions$admin$comptes$re
 		many: 'حذف ⁨${n}⁩ حسابًا',
 		other: 'حذف ⁨${n}⁩ حسابًا',
 	);
-	@override String questionUn({required Object nom}) => 'حذف حساب ⁨${nom}⁩؟';
+	@override String questionUn({required Object deNom}) => 'حذف حساب ⁨${deNom}⁩؟';
 	@override String questionPlusieurs({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
 		zero: 'حذف هذه الحسابات الـ⁨${n}⁩؟',
 		one: 'حذف حساب واحد؟',
@@ -25657,8 +25657,8 @@ extension on TraductionsAr {
 			'admin.suppressions.retraits.anonymiseLe' => 'جُهِّل في',
 			'admin.suppressions.retraits.restaureLe' => 'استُعيد في',
 			'admin.suppressions.retraits.nonRestaurable' => 'حُذف هذا الحساب قبل أن يحفظ التطبيق حالته السابقة. لا يمكن استعادته من هنا.',
-			'admin.suppressions.retraits.restaurer' => ({required Object nom}) => 'استعادة حساب ⁨${nom}⁩',
-			'admin.suppressions.retraits.restaure' => ({required Object nom}) => 'استُعيد حساب ⁨${nom}⁩. يستطيع الشخص الدخول من جديد.',
+			'admin.suppressions.retraits.restaurer' => ({required Object deNom}) => 'استعادة حساب ⁨${deNom}⁩',
+			'admin.suppressions.retraits.restaure' => ({required Object deNom}) => 'استُعيد حساب ⁨${deNom}⁩. يستطيع الشخص الدخول من جديد.',
 			'admin.suppressions.retraits.classesQuittees' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'كان قد غادر ⁨${n}⁩ فصلًا: لم يُعَد إليها. أضفه إلى فصل من الفصول.', one: 'كان قد غادر فصلًا واحدًا: لم يُعَد إليه. أضفه إلى فصل من الفصول.', two: 'كان قد غادر فصلين: لم يُعَد إليهما. أضفه إلى فصل من الفصول.', few: 'كان قد غادر ⁨${n}⁩ فصول: لم يُعَد إليها. أضفه إلى فصل من الفصول.', many: 'كان قد غادر ⁨${n}⁩ فصلًا: لم يُعَد إليها. أضفه إلى فصل من الفصول.', other: 'كان قد غادر ⁨${n}⁩ فصلًا: لم يُعَد إليها. أضفه إلى فصل من الفصول.', ), 
 			'admin.suppressions.retraits.refus.aucunRetrait' => 'هذا الحساب لم يعد محذوفًا. القائمة محدَّثة.',
 			'admin.suppressions.retraits.refus.dejaAnonymise' => 'هذا الحساب مُجهَّل من قبل: لا يمكن استعادته.',
@@ -25719,7 +25719,7 @@ extension on TraductionsAr {
 			'admin.comptes.retrait.actionLigne' => 'حذف هذا الحساب',
 			'admin.comptes.retrait.retenus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ حسابًا مختارًا', one: 'حساب واحد مختار', two: 'حسابان مختاران', few: '⁨${n}⁩ حسابات مختارة', many: '⁨${n}⁩ حسابًا مختارًا', other: '⁨${n}⁩ حسابًا مختارًا', ), 
 			'admin.comptes.retrait.supprimerSelection' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'حذف ⁨${n}⁩ حسابًا', one: 'حذف حساب واحد', two: 'حذف حسابين', few: 'حذف ⁨${n}⁩ حسابات', many: 'حذف ⁨${n}⁩ حسابًا', other: 'حذف ⁨${n}⁩ حسابًا', ), 
-			'admin.comptes.retrait.questionUn' => ({required Object nom}) => 'حذف حساب ⁨${nom}⁩؟',
+			'admin.comptes.retrait.questionUn' => ({required Object deNom}) => 'حذف حساب ⁨${deNom}⁩؟',
 			'admin.comptes.retrait.questionPlusieurs' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'حذف هذه الحسابات الـ⁨${n}⁩؟', one: 'حذف حساب واحد؟', two: 'حذف هذين الحسابين؟', few: 'حذف هذه الحسابات الـ⁨${n}⁩؟', many: 'حذف هذه الحسابات الـ⁨${n}⁩؟', other: 'حذف هذه الحسابات الـ⁨${n}⁩؟', ), 
 			'admin.comptes.retrait.consequence' => 'لا يستطيع الشخص الدخول بعد الآن، فورًا. ويغادر الطالب فصوله. ويُجهَّل الحساب عند انتهاء مدة الحفظ. وحتى ذلك الحين، يمكن للإدارة استعادته من الأشخاص، الحذف. وتُحفظ الفواتير والمدفوعات.',
 			'admin.comptes.retrait.confirmerUn' => 'حذف الحساب',

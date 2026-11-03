@@ -5032,8 +5032,8 @@
         "anonymiseLe": "Anonymisé le",
         "restaureLe": "Restauré le",
         "nonRestaurable": "Ce compte a été supprimé avant que l'application garde son état d'avant. Il ne peut pas être restauré ici.",
-        "restaurer": "Restaurer le compte de {nom}",
-        "restaure": "Le compte de {nom} est restauré. La personne peut se reconnecter.",
+        "restaurer": "Restaurer le compte {deNom}",
+        "restaure": "Le compte {deNom} est restauré. La personne peut se reconnecter.",
         "classesQuittees(param=n)": {
           "one": "Il avait quitté {n} classe : il n'y est pas remis. Ajoutez-le à une classe depuis Classes.",
           "other": "Il avait quitté {n} classes : il n'y est pas remis. Ajoutez-le à une classe depuis Classes."
@@ -5127,7 +5127,7 @@
           "one": "Supprimer {n} compte",
           "other": "Supprimer {n} comptes"
         },
-        "questionUn": "Supprimer le compte de {nom} ?",
+        "questionUn": "Supprimer le compte {deNom} ?",
         "questionPlusieurs(param=n)": {
           "one": "Supprimer {n} compte ?",
           "other": "Supprimer ces {n} comptes ?"

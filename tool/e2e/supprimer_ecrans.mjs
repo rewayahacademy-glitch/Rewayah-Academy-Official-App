@@ -198,8 +198,8 @@ try {
   // Le relevé des libellés coupe un noeud à 160 signes : le début de la phrase.
   await voir(d, /Les comptes supprimés par la direction ou par un tuteur/, 'phrase de contexte de la section');
   await p.capture(d, '1440_comptes_supprimes');
-  await toucher(d, new RegExp(`^Restaurer le compte de ${adam}`), `« Restaurer le compte de ${adam} »`, { role: 'button', pause: 5000 });
-  await voir(d, new RegExp(`Le compte de ${adam} est restauré`), 'résultat de la restauration');
+  await toucher(d, new RegExp(`^Restaurer le compte (de |d')${adam}`), `« Restaurer le compte de ${adam} »`, { role: 'button', pause: 5000 });
+  await voir(d, new RegExp(`Le compte (de |d')${adam} est restauré`), 'résultat de la restauration');
   await p.capture(d, '1440_restaure');
   const etat = un(`select account_status || '|' || (deleted_at is null) from public.profiles where id = '${f1.enfants.Adam}'`);
   p.dire(`Base locale : Adam ${etat}`);

@@ -24,6 +24,7 @@ import '../../core/capacites/permission_insuffisante.dart';
 import '../../core/capacites/port_retraits_comptes.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/dates_appareil.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/identifiant_insecable.dart';
 import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
@@ -171,7 +172,9 @@ class _RetraitsSectionState extends ConsumerState<RetraitsSection> {
       } else if (x.restaure) {
         echec = false;
         retour = <String>[
-          a.restaure(nom: nom),
+          a.restaure(
+            deNom: deDevant(nom, cle: 'admin.suppressions.retraits.restaure'),
+          ),
           if (x.classesQuittees > 0) a.classesQuittees(n: x.classesQuittees),
         ].join(' ');
       } else {
@@ -314,9 +317,8 @@ class _RetraitsSectionState extends ConsumerState<RetraitsSection> {
                   LienFleche(
                     key: RetraitsSection.plusKey,
                     libelle: a.voirPlus,
-                    onPress: _lectureSuite
-                        ? null
-                        : () => unawaited(_lirePlus(suivant)),
+                    // Une lecture en cours ignore le second toucher.
+                    onPress: () => unawaited(_lirePlus(suivant)),
                   ),
                 ],
               ],
@@ -453,7 +455,12 @@ class _CarteRetrait extends StatelessWidget {
             if (r.restaurable && (enCours || !occupe))
               ActionPrincipale(
                 key: RetraitsSection.restaurerKey(r.retraitId),
-                libelle: a.restaurer(nom: nom),
+                libelle: a.restaurer(
+                  deNom: deDevant(
+                    nom,
+                    cle: 'admin.suppressions.retraits.restaurer',
+                  ),
+                ),
                 niveau: NiveauAction.secondaire,
                 enCours: enCours,
                 onPress: enCours ? null : onRestaurer,
