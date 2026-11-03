@@ -759,7 +759,9 @@ begin
      or v_signature.accepted_at is distinct from v_rejouee.accepted_at then
     raise exception 'CONTRAT ECHEC : le rejeu n''a pas renvoye la signature initiale';
   end if;
-  if v_signature.signer_name is distinct from 'Yasmine Test'
+  -- FN-102 (migration 20261108400000) : le nom signe est celui du compte
+  -- (Moussa Barry), jamais le nom saisi (« Yasmine Test »).
+  if v_signature.signer_name is distinct from 'Moussa Barry'
      or v_signature.signed_sha256 is distinct from (
        select t.sha256 from public.contract_texts t
        where t.contract_kind = 'teacher_nda'
