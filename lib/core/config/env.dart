@@ -58,51 +58,50 @@ abstract final class Env {
     'AUTH_PAR_MOT_DE_PASSE',
   );
 
-  /// Active l'observation reelle par le tuteur (visite d'une seance en
-  /// direct, contrat K4).
+  /// Ancien interrupteur de compilation de l'observation par le tuteur
+  /// (contrat K4, point P3 du chantier Tuteur V1).
   ///
-  /// **Faux par defaut, et force a faux hors developpement et staging quoi
-  /// qu'on passe** (point P3 du chantier Tuteur V1) : l'observation ne
-  /// s'ouvre pas sur une
-  /// protection locale tant que le serveur ne garantit ni la presence de
-  /// l'enfant, ni la fin de visite, ni l'emission du jeton video (dependances
-  /// DB-OBS-01, 02, 03, 05). Faux, le bloc Observation dit « pas encore
-  /// ouverte » ; le parcours complet se montre en simulation (tests,
-  /// Playground). Le forcage vit ici, dans le code, et non dans la seule
-  /// commande de deploiement : une compilation de production ou d'apercu qui
-  /// passerait `OBSERVATION_TUTEUR_REELLE=true` n'ouvrirait rien.
+  /// **Sans effet depuis le lot O1 (02/11/2026).** L'observation ne s'ouvre
+  /// plus par un drapeau de compilation : elle s'ouvre quand le serveur la
+  /// permet (politique `politique_observation_effective`, budget
+  /// `budget_observation`, porte `entrer_observation`, jeton sans
+  /// publication), et elle se coupe cote serveur a la duree de la politique
+  /// (`couper_visites_observation_echues`, tache `observation-coupure`). Les
+  /// garanties que ce drapeau attendait (DB-OBS-01, 02, 03, 05) sont prouvees
+  /// par `supabase/tests/scenarios_o1_observation.sql`. Le garder declare
+  /// evite de casser une commande de compilation qui le passerait encore ;
+  /// il ne ferme ni n'ouvre plus rien. L'interrupteur d'arret est en base :
+  /// `app_config.observation.activee`, ou la politique d'une classe.
   static const bool observationTuteurReelle = bool.fromEnvironment(
     'OBSERVATION_TUTEUR_REELLE',
   );
 
-  /// L'interrupteur d'observation reelle effectivement applique.
+  /// L'observation par le tuteur est-elle ouverte cote client ?
   ///
-  /// Faux partout sauf en `developpement` et `staging`, quelle que soit la
-  /// valeur compilee de [observationTuteurReelle]. Les ecrans le lisent par
-  /// `observationTuteurReelleProvider`, jamais ici.
+  /// **Toujours vrai depuis le lot O1** : le client n'en decide plus, le
+  /// serveur dit oui ou non (politique fermee, quota, seance, acces paye) et
+  /// l'ecran affiche sa reponse. Les ecrans le lisent par
+  /// `observationTuteurReelleProvider`, jamais ici ; la demonstration le
+  /// force a faux.
+  ///
+  /// Attention : les apercus de pull request sont compiles avec les cles de
+  /// la production (`flutter-deploy.yml`) ; un apercu ouvre donc
+  /// l'observation reelle, comme la production.
   static bool get observationTuteurReelleActive => observationTuteurReelleSelon(
     demandee: observationTuteurReelle,
     environnement: environnement,
   );
 
-  /// La regle de forcage, pure pour etre verifiee sans compilation dediee.
+  /// La regle d'ouverture, pure pour etre verifiee sans compilation dediee.
   ///
-  /// **Liste d'autorisation, pas d'exclusion.** `developpement` depuis le
-  /// debut ; `staging` depuis la decision A-09 (audit final du 16/10/2026,
-  /// apres la vague 1 de securite) pour recetter l'observation a quatre
-  /// roles sur la preversion. `production` reste fermee tant qu'aucune
-  /// recette n'a ete signee. Une valeur mal orthographiee (`Production`,
-  /// `Staging`) reste fermee : c'est pour cela qu'on ne passe pas par une
-  /// liste d'exclusion. Attention : les apercus de pull request sont compiles
-  /// avec `ENVIRONNEMENT=staging` et, a ce jour, les memes cles Supabase que
-  /// la production (`flutter-deploy.yml`) ; n'y passer
-  /// `OBSERVATION_TUTEUR_REELLE=true` qu'une fois l'apercu pointe sur STAGING.
+  /// O1 (02/11/2026) : ouverte dans tous les environnements, quelle que soit
+  /// la valeur compilee ; c'est le serveur qui ferme (voir
+  /// [observationTuteurReelle]). Les parametres restent pour ne pas casser
+  /// les appelants ; ils ne changent plus le resultat.
   static bool observationTuteurReelleSelon({
     required bool demandee,
     required String environnement,
-  }) =>
-      demandee &&
-      (environnement == 'developpement' || environnement == 'staging');
+  }) => true;
 
   /// L'adresse du site public (`https://hote`), sans chemin : l'origine des
   /// liens que l'application donne a partager (CAND-06, la carte « Faites
