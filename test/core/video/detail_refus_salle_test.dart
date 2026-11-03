@@ -34,6 +34,17 @@ void main() {
       DetailRefusSalle.depuis(<String, dynamic>{'motif': 'acces_perdu'})?.motif,
       MotifServeurSalle.accesPerdu,
     );
+    // A3-bis (03/11/2026) : le premier enseignant entre ferme la porte.
+    expect(
+      DetailRefusSalle.depuis(<String, dynamic>{'motif': 'titulaire_entre'})
+          ?.motif,
+      MotifServeurSalle.titulaireEntre,
+    );
+    expect(
+      DetailRefusSalle.depuis(<String, dynamic>{'motif': 'remplacant_entre'})
+          ?.motif,
+      MotifServeurSalle.remplacantEntre,
+    );
   });
 
   test('le refus generique, ou une forme inattendue : aucun motif', () {

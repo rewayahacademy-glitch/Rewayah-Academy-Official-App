@@ -105,9 +105,10 @@ bool budgetUtile(EtatSeanceFamille etat) => switch (etat) {
 /// d'autre** : le CTA n'existe que si une visite peut commencer, sinon une
 /// phrase dit pourquoi (un bouton qui ne peut pas aboutir n'est pas rendu).
 ///
-/// - Interrupteur `OBSERVATION_TUTEUR_REELLE` ferme (production, point P3) :
-///   **aucune porte serveur n'est appelee**, ni budget, ni politique ; la
-///   phrase dit que l'observation n'est pas encore ouverte.
+/// - Interrupteur ferme (demonstration seulement depuis le lot O1 ; la
+///   production l'ouvre et le serveur decide) : **aucune porte serveur n'est
+///   appelee**, ni budget, ni politique ; la phrase dit que l'observation
+///   n'est pas encore ouverte.
 /// - Ouvert : budget (`budget_observation`, lecture sans effet) seulement
 ///   quand la salle est ou peut etre ouverte, politique de la classe si elle
 ///   se lit, presence de l'eleve **indicative**.

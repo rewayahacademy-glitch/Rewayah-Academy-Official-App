@@ -82,7 +82,7 @@ const MODELES: Record<string, Fabrique> = {
   },
   // A3 (31/10/2026) : le titulaire n’est pas entré dans la salle.
   remplacement_avertissement: (d) => avis(d, 'Ainda não está na sala', 'Ainda não está na sala',
-    (typeof d.minutes === 'string' ? `Entre nos próximos ${d.minutes} minutos` : 'Entre o quanto antes') + ': caso contrário, perde o acesso à sessão de hoje.',
+    (typeof d.minutes === 'string' ? `Entre nos próximos ${d.minutes} minutos` : 'Entre o quanto antes') + ': depois desse prazo, se um professor se tiver oferecido para o substituir, perde o acesso à sessão de hoje.',
     'Ver o meu dia', '/enseignant/journee'),
   remplacement_pre_alerte: (d) => avis(d, 'Está a preparar-se uma substituição', 'Está a preparar-se uma substituição',
     'Um professor ainda não está na sua sala. Indique que está pronto em Substituições.',
@@ -93,6 +93,15 @@ const MODELES: Record<string, Fabrique> = {
   titulaire_en_retard: (d) => avis(d, 'O professor titular está atrasado', 'O professor titular está atrasado',
     d.portee === 'direction' ? 'Um professor titular não entrou na sua sala. Procura-se um substituto.' : 'A academia procura um substituto: fiquem na sala.',
     'Abrir a aplicação', '/tuteur'),
+  // A3-bis (02/11/2026).
+  remplacement_personne_en_salle: (d) => {
+    const quand = quandSeance(d, 'pt-PT', 'às')
+    const classe = typeof d.classe === 'string' ? ` da turma ${d.classe}` : ''
+    const ens = typeof d.enseignant === 'string' ? ` Professor da turma: ${d.enseignant}.` : ''
+    return avis(d, 'Ninguém está na sala', 'Ninguém está na sala',
+      `Nem o professor nem um substituto entrou na sala${classe}${quand ? `, sessão de ${quand}` : ''}.${ens} Procure um substituto ou avise as famílias.`,
+      'Ver o calendário', '/admin/operations/planning')
+  },
   remplacant_arrive: (d) => avis(d, 'Chega um professor substituto', 'Chega um professor substituto',
     'Chega um professor substituto: fiquem na sala.',
     'Abrir a aplicação', '/tuteur'),

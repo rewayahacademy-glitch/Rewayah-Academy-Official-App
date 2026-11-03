@@ -440,6 +440,12 @@ verify_jwt = false
 [functions.courriels-envoi]
 verify_jwt = false
 
+# O1 (02/11/2026) : appelee par pg_cron chaque minute, sans jeton Supabase ;
+# la porte est le secret OBSERVATION_COUPURE_SECRET (en-tete
+# x-observation-secret), verifie dans la fonction en temps constant.
+[functions.observation-coupure]
+verify_jwt = false
+
 # COURRIELS-1 : desinscription en un clic (RFC 8058) et bouton de la page
 # publique, sans compte ; la RPC est appelee avec la cle publique.
 [functions.courriel-desinscription]

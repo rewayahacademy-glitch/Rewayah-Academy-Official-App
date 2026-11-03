@@ -46,6 +46,14 @@ enum MotifServeurSalle {
   /// Le titulaire n'est pas entre a temps : la seance de ce jour lui est
   /// retiree (absence automatique, A3). Il reste l'enseignant de la classe.
   accesPerdu,
+
+  /// A3-bis (03/11/2026) : apres une prise de remplacement, l'enseignant de
+  /// la classe est entre le premier ; le remplacant ne peut plus entrer.
+  titulaireEntre,
+
+  /// A3-bis (03/11/2026) : le remplacant qui a pris la classe est entre le
+  /// premier ; le titulaire ne peut plus entrer.
+  remplacantEntre,
 }
 
 /// FN-025 : le motif d'un refus et les heures du serveur qui l'accompagnent.
@@ -68,6 +76,8 @@ class DetailRefusSalle {
       'terminee' => MotifServeurSalle.terminee,
       'annulee' => MotifServeurSalle.annulee,
       'acces_perdu' => MotifServeurSalle.accesPerdu,
+      'titulaire_entre' => MotifServeurSalle.titulaireEntre,
+      'remplacant_entre' => MotifServeurSalle.remplacantEntre,
       _ => null,
     };
     if (motif == null) return null;

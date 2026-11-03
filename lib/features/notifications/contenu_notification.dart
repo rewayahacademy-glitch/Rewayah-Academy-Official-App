@@ -132,14 +132,15 @@ NotificationContenu contenuNotificationPour(
       quand == null
           ? evenements.enseignanteAbsente
           : evenements.enseignanteAbsenteQuand(quand: quand),
-    // A3 (31/10/2026) : le titulaire n'est pas entre dans la salle.
+    // A3 (31/10/2026) : le titulaire n'est pas entre dans la salle. A3-bis
+    // (02/11/2026) : il ne perd la seance que si un enseignant s'est propose.
     'remplacement_avertissement' => switch (int.tryParse(
       '${params['minutes'] ?? ''}',
     )) {
-      final int minutes => evenements.remplacementAvertissementMinutes(
+      final int minutes => t.a3bis.notifications.avertissementMinutes(
         minutes: minutes,
       ),
-      null => evenements.remplacementAvertissement,
+      null => t.a3bis.notifications.avertissement,
     },
     'remplacement_pre_alerte' => evenements.remplacementPreAlerte,
     'remplacement_inutile' => evenements.remplacementInutile,

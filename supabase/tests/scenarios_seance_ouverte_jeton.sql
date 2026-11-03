@@ -201,19 +201,11 @@ begin
   raise notice 'JT OK J4 : jeton apres webhook, une seule ouverture';
 end $$;
 
--- J5 : titulaire remplace, puis remplacant.
+-- J5 : remplacant, puis titulaire remplace. A3-bis (decision du directeur du
+-- 03/11/2026) : c'est l'ENTREE qui ferme la porte ; le remplacant entre le
+-- premier, le titulaire est ensuite refuse.
 do $$
 begin
-  begin
-    perform pg_temp.jeton('1e70a000-0000-4000-8000-00000000000c',
-                          '1e700000-0000-4000-8000-000000000003');
-    raise exception 'JT ROUGE J5 : le titulaire remplace a obtenu un jeton';
-  exception when insufficient_privilege then
-    null;
-  end;
-  if pg_temp.statut('1e70a000-0000-4000-8000-00000000000c') <> 'planned' then
-    raise exception 'JT ROUGE J5 : le titulaire remplace a ouvert la seance';
-  end if;
   if pg_temp.jeton('1e70a000-0000-4000-8000-00000000000c',
                    '1e700000-0000-4000-8000-000000000004')->>'role' <> 'teacher' then
     raise exception 'JT ROUGE J5 : le remplacant n''a pas de jeton enseignant';
@@ -221,7 +213,14 @@ begin
   if pg_temp.statut('1e70a000-0000-4000-8000-00000000000c') <> 'in_progress' then
     raise exception 'JT ROUGE J5 : le jeton du remplacant n''a pas ouvert la seance';
   end if;
-  raise notice 'JT OK J5 : le titulaire remplace n''ouvre rien, le remplacant ouvre';
+  begin
+    perform pg_temp.jeton('1e70a000-0000-4000-8000-00000000000c',
+                          '1e700000-0000-4000-8000-000000000003');
+    raise exception 'JT ROUGE J5 : le titulaire remplace a obtenu un jeton apres l''entree du remplacant';
+  exception when insufficient_privilege then
+    null;
+  end;
+  raise notice 'JT OK J5 : le remplacant entre et ouvre, le titulaire est ensuite refuse';
 end $$;
 
 -- J7 : salle ouverte en avance, seance dans 3 jours.
@@ -253,33 +252,40 @@ begin
   raise notice 'JT OK J8 : avant l''heure, le jeton ne change rien';
 end $$;
 
--- J11 : titulaire ecarte a T+8, puis remplacant.
+-- J11 : titulaire ecarte a T+8, puis remplacant. Depuis A3-bis
+-- (20261105700000), le titulaire n'est ecarte que si un remplacant est pret :
+-- l'enseignant 8 s'est declare pret pendant la pre-alerte ; la seance a ete
+-- creee la veille (pas « creee tard »).
+update public.sessions set created_at = now() - interval '1 day'
+ where id = '1e70a000-0000-4000-8000-00000000000f';
+insert into public.remplacements_preparation (session_id, evenement) values
+  ('1e70a000-0000-4000-8000-00000000000f', 'pre_alerte');
+insert into public.remplacements_preparation (session_id, evenement, enseignant_id) values
+  ('1e70a000-0000-4000-8000-00000000000f', 'pret', '1e700000-0000-4000-8000-000000000008');
 do $$
 declare
   v_passage jsonb;
 begin
   v_passage := private.remplacement_auto_passer(now());
-  if not private.remplacement_titulaire_ecarte('1e70a000-0000-4000-8000-00000000000f',
-                                               '1e700000-0000-4000-8000-000000000007') then
+  -- A3-bis : absence et prise posees ensemble ; le titulaire est ecarte par
+  -- la prise (c29), le refus du jeton ci-dessous le prouve.
+  if not exists (select 1 from public.remplacements_seance
+                  where session_id = '1e70a000-0000-4000-8000-00000000000f'
+                    and evenement = 'absence_declaree' and origine = 'auto') then
     raise exception 'JT ROUGE J11 : absence automatique non posee (%)', v_passage;
   end if;
-  begin
-    perform pg_temp.jeton('1e70a000-0000-4000-8000-00000000000f',
-                          '1e700000-0000-4000-8000-000000000007');
-    raise exception 'JT ROUGE J11 : le titulaire ecarte a obtenu un jeton';
-  exception when insufficient_privilege then
-    null;
-  end;
   if pg_temp.statut('1e70a000-0000-4000-8000-00000000000f') <> 'planned'
      or pg_temp.debut_paye('1e70a000-0000-4000-8000-00000000000f') is not null then
-    raise exception 'JT ROUGE J11 : le titulaire ecarte a ouvert la seance (%)',
+    raise exception 'JT ROUGE J11 : la prise a ouvert la seance (%)',
       pg_temp.statut('1e70a000-0000-4000-8000-00000000000f');
   end if;
-  insert into public.remplacements_seance
-    (session_id, evenement, enseignant_titulaire_id, enseignant_remplacant_id, acteur_id, cle_idempotence)
-  values ('1e70a000-0000-4000-8000-00000000000f', 'remplacement_pris',
-          '1e700000-0000-4000-8000-000000000007', '1e700000-0000-4000-8000-000000000008',
-          '1e700000-0000-4000-8000-000000000008', '1e70e000-0000-4000-8000-000000000011');
+  -- A3-bis : la prise par l'enseignant pret est posee par le meme passage.
+  if not exists (select 1 from public.remplacements_seance
+                  where session_id = '1e70a000-0000-4000-8000-00000000000f'
+                    and evenement = 'remplacement_pris'
+                    and enseignant_remplacant_id = '1e700000-0000-4000-8000-000000000008') then
+    raise exception 'JT ROUGE J11 : la prise par l''enseignant pret n''est pas posee (%)', v_passage;
+  end if;
   if pg_temp.jeton('1e70a000-0000-4000-8000-00000000000f',
                    '1e700000-0000-4000-8000-000000000008')->>'role' <> 'teacher' then
     raise exception 'JT ROUGE J11 : le remplacant n''a pas de jeton enseignant';
@@ -288,6 +294,15 @@ begin
     raise exception 'JT ROUGE J11 : le jeton du remplacant n''a pas ouvert la seance (%)',
       pg_temp.statut('1e70a000-0000-4000-8000-00000000000f');
   end if;
+  -- A3-bis (03/11/2026) : le remplacant est entre le premier ; le titulaire
+  -- est ensuite refuse.
+  begin
+    perform pg_temp.jeton('1e70a000-0000-4000-8000-00000000000f',
+                          '1e700000-0000-4000-8000-000000000007');
+    raise exception 'JT ROUGE J11 : le titulaire a obtenu un jeton apres l''entree du remplacant';
+  exception when insufficient_privilege then
+    null;
+  end;
   raise notice 'JT OK J11 : titulaire ecarte a T+8 sans jeton ni ouverture, le remplacant ouvre';
 end $$;
 

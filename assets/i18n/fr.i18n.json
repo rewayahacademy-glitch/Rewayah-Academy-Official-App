@@ -5588,6 +5588,9 @@
       }
     },
     "planning": {
+      "o1": {
+        "regarder": "Regarder la salle {deClasse}"
+      },
       "titre": "Planning",
       "sousTitre": "Les séances de la semaine, toutes classes confondues, jour par jour.",
       "semaine": "Semaine du {date}",
@@ -8820,6 +8823,11 @@
       }
     },
     "observation": {
+      "o1": {
+        "regardeInvisible": "Vous regardez sans être vu\u00a0: ni micro, ni caméra, aucune annonce aux participants.",
+        "videoIndisponible": "La vidéo de la séance n'a pas pu s'ouvrir. Quittez, puis entrez de nouveau dans un instant.",
+        "reconnexion": "Reconnexion à la salle en cours."
+      },
       "entree": {
         "titre": "Observer la séance",
         "tuteurIntro": "Vous pouvez regarder un court moment le cours de votre enfant. Votre micro et votre caméra restent fermés.",
@@ -13236,6 +13244,31 @@
       "dejaServiTitre": "Ce lien a déjà servi ou a expiré",
       "dejaServiDetail": "Un lien de connexion ne sert qu'une fois, et pour peu de temps. Demandez-en un nouveau : saisissez votre adresse e-mail sur la page de connexion.",
       "nouveauLien": "Recevoir un nouveau lien"
+    }
+  },
+  "a3bis": {
+    "salle": {
+      "titulaireEntreTitre": "L'enseignant de la classe est arrivé",
+      "titulaireEntre": "L'enseignant de la classe a rejoint la salle le premier\u00a0: le remplacement n'est plus nécessaire. Merci d'avoir été prêt.",
+      "remplacantEntreTitre": "Un remplaçant a pris la classe",
+      "remplacantEntre": "Le remplaçant qui a pris la classe a rejoint la salle le premier\u00a0: la séance de ce jour vous est retirée. Vous restez l'enseignant de la classe."
+    },
+    "notifications": {
+      "avertissement": "Vous n'êtes pas encore dans la salle. Entrez vite\u00a0: si un enseignant s'est proposé pour vous remplacer, vous perdez l'accès à la séance de ce jour.",
+      "avertissementMinutes(param=minutes)": {
+        "one": "Vous n'êtes pas encore dans la salle. Entrez dans la minute\u00a0: passé ce délai, si un enseignant s'est proposé pour vous remplacer, vous perdez l'accès à la séance de ce jour.",
+        "other": "Vous n'êtes pas encore dans la salle. Entrez dans les {minutes} minutes\u00a0: passé ce délai, si un enseignant s'est proposé pour vous remplacer, vous perdez l'accès à la séance de ce jour."
+      }
+    },
+    "regles": {
+      "perteDetail": "Si un enseignant s'est proposé, il remplace l'enseignant, qui ne peut plus rejoindre la séance de ce jour, et les familles sont prévenues. Si personne ne s'est proposé, l'enseignant peut encore entrer\u00a0: la séance reste ouverte au remplacement jusqu'à sa fin.",
+      "alerteDirection": "Alerte de la direction",
+      "alerteDirectionDetail": "Si ni l'enseignant ni un remplaçant n'a rejoint la salle, la direction reçoit un e-mail, une seule fois par séance.",
+      "avertissementDetail": "L'enseignant est prévenu qu'il risque de perdre la séance. Les enseignants libres peuvent se proposer pour le remplacer.",
+      "seanceTardive": "Séance créée tard",
+      "seanceTardiveDetail": "Une séance créée moins de ce délai avant son début n'est jamais retirée à l'enseignant automatiquement. L'alerte de la direction part quand même.",
+      "bornesAlerte": "Entre {min} et {max} après le début.",
+      "bornesTardive": "Entre {min} et {max} avant le début."
     }
   },
   "payUx": {

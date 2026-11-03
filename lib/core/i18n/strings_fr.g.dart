@@ -109,6 +109,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$accueilInscrits$fr accueilInscrits = Traductions$accueilInscrits$fr.internal(_root);
 	late final Traductions$n1$fr n1 = Traductions$n1$fr.internal(_root);
 	late final Traductions$i1$fr i1 = Traductions$i1$fr.internal(_root);
+	late final Traductions$a3bis$fr a3bis = Traductions$a3bis$fr.internal(_root);
 	late final Traductions$payUx$fr payUx = Traductions$payUx$fr.internal(_root);
 }
 
@@ -3748,6 +3749,18 @@ class Traductions$i1$fr {
 	late final Traductions$i1$familles$fr familles = Traductions$i1$familles$fr.internal(_root);
 	late final Traductions$i1$import$fr import = Traductions$i1$import$fr.internal(_root);
 	late final Traductions$i1$lien$fr lien = Traductions$i1$lien$fr.internal(_root);
+}
+
+// Path: a3bis
+class Traductions$a3bis$fr {
+	Traductions$a3bis$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$a3bis$salle$fr salle = Traductions$a3bis$salle$fr.internal(_root);
+	late final Traductions$a3bis$notifications$fr notifications = Traductions$a3bis$notifications$fr.internal(_root);
+	late final Traductions$a3bis$regles$fr regles = Traductions$a3bis$regles$fr.internal(_root);
 }
 
 // Path: payUx
@@ -10985,6 +10998,7 @@ class Traductions$admin$planning$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$admin$planning$o1$fr o1 = Traductions$admin$planning$o1$fr.internal(_root);
 
 	/// fr: 'Planning'
 	String get titre => 'Planning';
@@ -16488,6 +16502,7 @@ class Traductions$tc$observation$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$tc$observation$o1$fr o1 = Traductions$tc$observation$o1$fr.internal(_root);
 	late final Traductions$tc$observation$entree$fr entree = Traductions$tc$observation$entree$fr.internal(_root);
 	late final Traductions$tc$observation$explication$fr explication = Traductions$tc$observation$explication$fr.internal(_root);
 	late final Traductions$tc$observation$disponibilite$fr disponibilite = Traductions$tc$observation$disponibilite$fr.internal(_root);
@@ -21121,6 +21136,78 @@ class Traductions$i1$lien$fr {
 
 	/// fr: 'Recevoir un nouveau lien'
 	String get nouveauLien => 'Recevoir un nouveau lien';
+}
+
+// Path: a3bis.salle
+class Traductions$a3bis$salle$fr {
+	Traductions$a3bis$salle$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'L'enseignant de la classe est arrivé'
+	String get titulaireEntreTitre => 'L\'enseignant de la classe est arrivé';
+
+	/// fr: 'L'enseignant de la classe a rejoint la salle le premier : le remplacement n'est plus nécessaire. Merci d'avoir été prêt.'
+	String get titulaireEntre => 'L\'enseignant de la classe a rejoint la salle le premier : le remplacement n\'est plus nécessaire. Merci d\'avoir été prêt.';
+
+	/// fr: 'Un remplaçant a pris la classe'
+	String get remplacantEntreTitre => 'Un remplaçant a pris la classe';
+
+	/// fr: 'Le remplaçant qui a pris la classe a rejoint la salle le premier : la séance de ce jour vous est retirée. Vous restez l'enseignant de la classe.'
+	String get remplacantEntre => 'Le remplaçant qui a pris la classe a rejoint la salle le premier : la séance de ce jour vous est retirée. Vous restez l\'enseignant de la classe.';
+}
+
+// Path: a3bis.notifications
+class Traductions$a3bis$notifications$fr {
+	Traductions$a3bis$notifications$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vous n'êtes pas encore dans la salle. Entrez vite : si un enseignant s'est proposé pour vous remplacer, vous perdez l'accès à la séance de ce jour.'
+	String get avertissement => 'Vous n\'êtes pas encore dans la salle. Entrez vite : si un enseignant s\'est proposé pour vous remplacer, vous perdez l\'accès à la séance de ce jour.';
+
+	/// fr: '(one) {Vous n'êtes pas encore dans la salle. Entrez dans la minute : passé ce délai, si un enseignant s'est proposé pour vous remplacer, vous perdez l'accès à la séance de ce jour.} (other) {Vous n'êtes pas encore dans la salle. Entrez dans les {minutes} minutes : passé ce délai, si un enseignant s'est proposé pour vous remplacer, vous perdez l'accès à la séance de ce jour.}'
+	String avertissementMinutes({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(minutes,
+		one: 'Vous n\'êtes pas encore dans la salle. Entrez dans la minute : passé ce délai, si un enseignant s\'est proposé pour vous remplacer, vous perdez l\'accès à la séance de ce jour.',
+		other: 'Vous n\'êtes pas encore dans la salle. Entrez dans les ${minutes} minutes : passé ce délai, si un enseignant s\'est proposé pour vous remplacer, vous perdez l\'accès à la séance de ce jour.',
+	);
+}
+
+// Path: a3bis.regles
+class Traductions$a3bis$regles$fr {
+	Traductions$a3bis$regles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Si un enseignant s'est proposé, il remplace l'enseignant, qui ne peut plus rejoindre la séance de ce jour, et les familles sont prévenues. Si personne ne s'est proposé, l'enseignant peut encore entrer : la séance reste ouverte au remplacement jusqu'à sa fin.'
+	String get perteDetail => 'Si un enseignant s\'est proposé, il remplace l\'enseignant, qui ne peut plus rejoindre la séance de ce jour, et les familles sont prévenues. Si personne ne s\'est proposé, l\'enseignant peut encore entrer : la séance reste ouverte au remplacement jusqu\'à sa fin.';
+
+	/// fr: 'Alerte de la direction'
+	String get alerteDirection => 'Alerte de la direction';
+
+	/// fr: 'Si ni l'enseignant ni un remplaçant n'a rejoint la salle, la direction reçoit un e-mail, une seule fois par séance.'
+	String get alerteDirectionDetail => 'Si ni l\'enseignant ni un remplaçant n\'a rejoint la salle, la direction reçoit un e-mail, une seule fois par séance.';
+
+	/// fr: 'L'enseignant est prévenu qu'il risque de perdre la séance. Les enseignants libres peuvent se proposer pour le remplacer.'
+	String get avertissementDetail => 'L\'enseignant est prévenu qu\'il risque de perdre la séance. Les enseignants libres peuvent se proposer pour le remplacer.';
+
+	/// fr: 'Séance créée tard'
+	String get seanceTardive => 'Séance créée tard';
+
+	/// fr: 'Une séance créée moins de ce délai avant son début n'est jamais retirée à l'enseignant automatiquement. L'alerte de la direction part quand même.'
+	String get seanceTardiveDetail => 'Une séance créée moins de ce délai avant son début n\'est jamais retirée à l\'enseignant automatiquement. L\'alerte de la direction part quand même.';
+
+	/// fr: 'Entre {min} et {max} après le début.'
+	String bornesAlerte({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début.';
+
+	/// fr: 'Entre {min} et {max} avant le début.'
+	String bornesTardive({required Object min, required Object max}) => 'Entre ${min} et ${max} avant le début.';
 }
 
 // Path: commun.etats.recharge1
@@ -27363,6 +27450,18 @@ class Traductions$admin$finance$fac$fr {
 	String get inconnuPhrase => 'La réponse n\'est pas arrivée. Touchez « Réessayer » : une facture déjà émise ne l\'est jamais deux fois.';
 }
 
+// Path: admin.planning.o1
+class Traductions$admin$planning$o1$fr {
+	Traductions$admin$planning$o1$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Regarder la salle {deClasse}'
+	String regarder({required Object deClasse}) => 'Regarder la salle ${deClasse}';
+}
+
 // Path: admin.planning.remplacement
 class Traductions$admin$planning$remplacement$fr {
 	Traductions$admin$planning$remplacement$fr.internal(this._root);
@@ -30208,6 +30307,24 @@ class Traductions$tc$realtime$etat$fr {
 
 	/// fr: 'Impossible de retrouver le support en cours. Demandez à l’enseignant de le présenter à nouveau.'
 	String get restauration_impossible => 'Impossible de retrouver le support en cours. Demandez à l’enseignant de le présenter à nouveau.';
+}
+
+// Path: tc.observation.o1
+class Traductions$tc$observation$o1$fr {
+	Traductions$tc$observation$o1$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vous regardez sans être vu : ni micro, ni caméra, aucune annonce aux participants.'
+	String get regardeInvisible => 'Vous regardez sans être vu : ni micro, ni caméra, aucune annonce aux participants.';
+
+	/// fr: 'La vidéo de la séance n'a pas pu s'ouvrir. Quittez, puis entrez de nouveau dans un instant.'
+	String get videoIndisponible => 'La vidéo de la séance n\'a pas pu s\'ouvrir. Quittez, puis entrez de nouveau dans un instant.';
+
+	/// fr: 'Reconnexion à la salle en cours.'
+	String get reconnexion => 'Reconnexion à la salle en cours.';
 }
 
 // Path: tc.observation.entree
@@ -47327,6 +47444,7 @@ extension on Traductions {
 			'admin.finance.fac.refusSansPrix' => 'Aucun prix publié ne s\'applique à ce mois. Rien n\'a été émis : publiez d\'abord les prix dans l\'onglet des prix, puis réessayez.',
 			'admin.finance.fac.inconnuTitre' => 'Émission non confirmée',
 			'admin.finance.fac.inconnuPhrase' => 'La réponse n\'est pas arrivée. Touchez « Réessayer » : une facture déjà émise ne l\'est jamais deux fois.',
+			'admin.planning.o1.regarder' => ({required Object deClasse}) => 'Regarder la salle ${deClasse}',
 			'admin.planning.titre' => 'Planning',
 			'admin.planning.sousTitre' => 'Les séances de la semaine, toutes classes confondues, jour par jour.',
 			'admin.planning.semaine' => ({required Object date}) => 'Semaine du ${date}',
@@ -47487,9 +47605,9 @@ extension on Traductions {
 			'admin.fusion.motif.ciblePleine' => 'la classe qui accueille n\'a plus assez de place',
 			'admin.fusion.motif.eleveAbsent' => 'l\'élève ne fait plus partie de cette classe',
 			'admin.fusion.motif.inconnu' => 'Rewayah a refusé l\'opération sans en préciser la raison',
-			'admin.fusion.fusionNonConfirmee' => 'La fusion n\'est pas confirmée : la réponse du serveur n\'est pas arrivée. Pressez de nouveau : la même demande sera reprise, sans fusion en double.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.fusion.fusionNonConfirmee' => 'La fusion n\'est pas confirmée : la réponse du serveur n\'est pas arrivée. Pressez de nouveau : la même demande sera reprise, sans fusion en double.',
 			'admin.fusion.manqueCible' => 'Il manque la classe qui accueille les élèves : choisissez-la dans la liste.',
 			'admin.fusion.transfertTitre' => ({required Object deLibelle}) => 'Transférer un élève ${deLibelle}',
 			'admin.fusion.transfertContexte' => 'Choisissez l\'élève, puis la classe parallèle qui l\'accueille. Le transfert est tracé, et la famille en est prévenue.',
@@ -48001,9 +48119,9 @@ extension on Traductions {
 			'nav.controleur.echanges' => 'Échanges',
 			'nav.controleur.compte' => 'Compte',
 			'nav.admin.tableauDeBord' => 'Tableau de bord',
-			'nav.admin.dossiers' => 'Dossiers',
 			_ => null,
 		} ?? switch (path) {
+			'nav.admin.dossiers' => 'Dossiers',
 			'nav.admin.demandes' => 'Demandes',
 			'nav.admin.journal' => 'Journal',
 			'nav.admin.comptes' => 'Comptes',
@@ -48515,9 +48633,9 @@ extension on Traductions {
 			'notifications.types.changementMission' => 'Changement de mission',
 			'notifications.types.reponseAdministration' => 'Réponse de l\'Administration',
 			'notifications.types.mentionStudio' => 'Mention dans Le Studio',
-			'notifications.types.reponseStudio' => 'Réponse dans Le Studio',
 			_ => null,
 		} ?? switch (path) {
+			'notifications.types.reponseStudio' => 'Réponse dans Le Studio',
 			'notifications.types.decisionDemandee' => 'Décision demandée',
 			'notifications.types.elementAssigne' => 'Élément assigné',
 			'notifications.types.annonceInterne' => 'Annonce interne',
@@ -49029,9 +49147,9 @@ extension on Traductions {
 			'enseignant.journee.rienAujourdhui' => 'Rien de prévu aujourd\'hui',
 			'enseignant.journee.rienAujourdhuiDetail' => ({required Object jour, required Object heure}) => 'Votre prochain cours est ${jour} à ${heure}.',
 			'enseignant.journee.journeeTerminee' => ({required Object nombre}) => '${nombre} cours donnés aujourd\'hui.',
-			'enseignant.journee.journeeTermineeUn' => '1 cours donné aujourd\'hui.',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.journee.journeeTermineeUn' => '1 cours donné aujourd\'hui.',
 			'enseignant.journee.voirCreneaux' => 'Voir mes créneaux',
 			'enseignant.journee.erreur' => 'La journée n\'a pas pu être lue en entier. Réessayez dans un instant.',
 			'enseignant.journee.coursIndividuel' => 'Cours individuel',
@@ -49543,9 +49661,9 @@ extension on Traductions {
 			'controleur.historique.sectionComplements' => 'Compléments',
 			'controleur.historique.sectionEchanges' => 'Échanges avec l\'administration',
 			'controleur.historique.cleClasse' => 'Classe',
-			'controleur.historique.cleEnseignant' => 'Enseignant',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.historique.cleEnseignant' => 'Enseignant',
 			'controleur.historique.cleDate' => 'Date',
 			'controleur.historique.cleDuree' => 'Durée observée',
 			'controleur.historique.cleElevesPresents' => 'Présents',
@@ -50008,6 +50126,9 @@ extension on Traductions {
 			'tc.classe.prevol.reessayer' => 'Vérifier à nouveau',
 			'tc.realtime.transport.partage_indisponible' => 'Le partage du support n’est pas disponible sur ce serveur. Le cours continue, mais les autres appareils ne suivront pas la page.',
 			'tc.realtime.etat.restauration_impossible' => 'Impossible de retrouver le support en cours. Demandez à l’enseignant de le présenter à nouveau.',
+			'tc.observation.o1.regardeInvisible' => 'Vous regardez sans être vu : ni micro, ni caméra, aucune annonce aux participants.',
+			'tc.observation.o1.videoIndisponible' => 'La vidéo de la séance n\'a pas pu s\'ouvrir. Quittez, puis entrez de nouveau dans un instant.',
+			'tc.observation.o1.reconnexion' => 'Reconnexion à la salle en cours.',
 			'tc.observation.entree.titre' => 'Observer la séance',
 			'tc.observation.entree.tuteurIntro' => 'Vous pouvez regarder un court moment le cours de votre enfant. Votre micro et votre caméra restent fermés.',
 			'tc.observation.entree.adminIntro' => 'Choisissez votre mode avant d\'entrer. Il ne change plus ensuite.',
@@ -50054,12 +50175,12 @@ extension on Traductions {
 			'tc.observation.disponibilite.desactivee' => 'L\'administration a fermé l\'observation de cette classe.',
 			'tc.observation.disponibilite.lienAbsentTitre' => 'Aucun de vos enfants dans cette séance',
 			'tc.observation.disponibilite.lienAbsent' => 'L\'observation est réservée aux parents des élèves de la séance.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.disponibilite.enfantAbsentTitre' => 'Votre enfant n\'est pas dans la séance',
 			'tc.observation.disponibilite.enfantAbsent' => 'L\'observation s\'ouvre quand votre enfant est présent.',
 			'tc.observation.disponibilite.presenceTitre' => 'Présence en cours de vérification',
 			'tc.observation.disponibilite.presence' => 'L\'observation s\'ouvre dès que la présence de votre enfant est confirmée.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.disponibilite.visiteOuverteTitre' => 'Une visite est déjà ouverte',
 			'tc.observation.disponibilite.visiteOuverte' => 'Une de vos visites est encore ouverte pour cette séance, sur cet appareil ou sur un autre. Elle compte parmi vos visites.',
 			'tc.observation.disponibilite.fermeeTitre' => 'Observation pas encore ouverte',
@@ -50568,12 +50689,12 @@ extension on Traductions {
 			'adulte.demo.titulaireFemme' => 'La titulaire est une femme, son conjoint est le second adulte.',
 			'adulte.demo.vueConjointe' => 'Mon espace vu par la conjointe, second adulte du foyer.',
 			'adulte.demo.vueConjoint' => 'Mon espace vu par le conjoint, second adulte du foyer.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.demo.invitationRecueConjointe' => 'L\'invitation reçue par la conjointe, dans son propre compte.',
 			'adulte.demo.invitationRecueConjoint' => 'L\'invitation reçue par le conjoint, dans son propre compte.',
 			'adulte.demo.invitationSansCompte' => 'L\'invitation ouverte sans compte.',
 			'adulte.demo.reseauCoupe' => 'Le réseau est coupé : l\'Accueil et Ma classe hors ligne.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.donnees.soldeTitulaire' => 'Solde de démonstration 1',
 			'adulte.demo.donnees.soldeSecondAdulte' => 'Solde de démonstration 2',
 			'adulte.demo.donnees.soldeAicha' => 'Solde de démonstration 3',
@@ -51082,12 +51203,12 @@ extension on Traductions {
 			'com.socle.motifs.titre' => 'Pourquoi signalez-vous ce contenu ?',
 			'com.socle.motifs.publicite' => 'Publicité',
 			'com.socle.motifs.lienAffilie' => 'Lien affilié',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.motifs.venteNonAutorisee' => 'Vente non autorisée',
 			'com.socle.motifs.sollicitationCommerciale' => 'Sollicitation commerciale',
 			'com.socle.motifs.horsSujet' => 'Contenu sans rapport avec la communauté',
 			'com.socle.motifs.harcelement' => 'Harcèlement ou langage inapproprié',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.motifs.donneesPersonnelles' => 'Données personnelles d\'un élève ou d\'une famille',
 			'com.socle.motifs.autre' => 'Autre contenu à examiner',
 			'com.socle.signalement.titre' => 'Signaler ce contenu',
@@ -51596,12 +51717,12 @@ extension on Traductions {
 			'com.studio.demo.f.mariam' => 'Mariam',
 			'com.studio.demo.f.fonctionCoordination' => 'Coordination générale',
 			'com.studio.demo.f.youssef' => 'Youssef',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.demo.f.fonctionProduit' => 'Produit et technique',
 			'com.studio.demo.f.amina' => 'Amina',
 			'com.studio.demo.f.fonctionPedagogie' => 'Pédagogie',
 			'com.studio.demo.f.samira' => 'Samira',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.f.fonctionAdmissions' => 'Admissions',
 			'com.studio.demo.f.ibrahim' => 'Ibrahim',
 			'com.studio.demo.f.fonctionPlanning' => 'Planning',
@@ -52110,12 +52231,12 @@ extension on Traductions {
 			'comptable.paiements.confirmation.fermer' => 'Fermer',
 			'comptable.paiements.confirmation.soumisTitre' => 'Envoyé au prestataire',
 			'comptable.paiements.confirmation.soumisPhrase' => 'Un paiement envoyé n\'est pas encore reçu : son état vient du suivi du prestataire. Actualisez le suivi pour le voir avancer.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.confirmation.actualiser' => 'Actualiser le suivi',
 			'comptable.paiements.confirmation.suiviEchoue' => 'Le suivi n\'a pas pu être lu. Le paiement reste envoyé : actualisez de nouveau dans un moment.',
 			'comptable.paiements.confirmation.referenceCle' => 'Référence du prestataire',
 			'comptable.paiements.confirmation.recalculeTitre' => 'Le montant a été recalculé',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.confirmation.recalculePhrase' => 'Un calcul a changé à la source depuis le contrôle. Rien n\'est parti. Relancez le contrôle pour confirmer le nouveau montant.',
 			'comptable.paiements.confirmation.nouveauMontant' => ({required Object nom}) => 'Nouveau montant pour ${nom}',
 			'comptable.paiements.confirmation.refusTitre' => 'Paiement refusé par la source',
@@ -52624,12 +52745,12 @@ extension on Traductions {
 			'comptable.validation.erreurMotifAutre' => 'Précisez le motif pour refuser.',
 			'comptable.validation.decisionValidee' => 'Votre décision est enregistrée : la demande est validée.',
 			'comptable.validation.decisionRefusee' => 'Votre décision est enregistrée : la demande est refusée, avec son motif.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.validation.refusTitre' => 'Décision non enregistrée',
 			'comptable.validation.refusDemandeur' => 'Vous avez fait cette demande : une autre personne habilitée doit la décider. Rien n\'a changé.',
 			'comptable.validation.refusMotif' => 'Un refus demande un motif. Choisissez-en un, puis confirmez.',
 			'comptable.validation.refusDejaDecidee' => 'Cette demande a déjà été décidée. Relisez la liste.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.validation.inconnuTitre' => 'Décision non confirmée',
 			'comptable.validation.inconnuPhrase' => 'Nous ne savons pas si votre décision a été enregistrée. Relisez la liste avant de décider à nouveau.',
 			'comptable.validation.relireListe' => 'Relire la liste',
@@ -53138,12 +53259,12 @@ extension on Traductions {
 			'juridique.enfants.s5.blocs.0' => 'Si une chose vous inquiète, écrivez-nous. Dites ce que vous avez vu, quand, et dans quelle Classe.',
 			'juridique.enfants.s5.blocs.1' => 'En cas de danger immédiat, contactez d\'abord les services d\'urgence de votre pays.',
 			'avis.form.titre' => 'Donnez votre avis',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.sousTitre' => 'Quelques lignes sur votre expérience à Rewayah Academy. Deux minutes suffisent.',
 			'avis.form.nom.libelle' => 'Nom affiché',
 			'avis.form.nom.aide' => 'Votre prénom et l\'initiale de votre nom suffisent.',
 			'avis.form.nom.erreur' => 'Entrez un nom de 2 à 60 caractères.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.qualite.libelle' => 'Vous êtes',
 			'avis.form.qualite.parent' => 'Parent ou tuteur',
 			'avis.form.qualite.eleveAdulte' => 'Élève adulte',
@@ -53524,6 +53645,20 @@ extension on Traductions {
 			'i1.lien.dejaServiTitre' => 'Ce lien a déjà servi ou a expiré',
 			'i1.lien.dejaServiDetail' => 'Un lien de connexion ne sert qu\'une fois, et pour peu de temps. Demandez-en un nouveau : saisissez votre adresse e-mail sur la page de connexion.',
 			'i1.lien.nouveauLien' => 'Recevoir un nouveau lien',
+			'a3bis.salle.titulaireEntreTitre' => 'L\'enseignant de la classe est arrivé',
+			'a3bis.salle.titulaireEntre' => 'L\'enseignant de la classe a rejoint la salle le premier : le remplacement n\'est plus nécessaire. Merci d\'avoir été prêt.',
+			'a3bis.salle.remplacantEntreTitre' => 'Un remplaçant a pris la classe',
+			'a3bis.salle.remplacantEntre' => 'Le remplaçant qui a pris la classe a rejoint la salle le premier : la séance de ce jour vous est retirée. Vous restez l\'enseignant de la classe.',
+			'a3bis.notifications.avertissement' => 'Vous n\'êtes pas encore dans la salle. Entrez vite : si un enseignant s\'est proposé pour vous remplacer, vous perdez l\'accès à la séance de ce jour.',
+			'a3bis.notifications.avertissementMinutes' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(minutes, one: 'Vous n\'êtes pas encore dans la salle. Entrez dans la minute : passé ce délai, si un enseignant s\'est proposé pour vous remplacer, vous perdez l\'accès à la séance de ce jour.', other: 'Vous n\'êtes pas encore dans la salle. Entrez dans les ${minutes} minutes : passé ce délai, si un enseignant s\'est proposé pour vous remplacer, vous perdez l\'accès à la séance de ce jour.', ), 
+			'a3bis.regles.perteDetail' => 'Si un enseignant s\'est proposé, il remplace l\'enseignant, qui ne peut plus rejoindre la séance de ce jour, et les familles sont prévenues. Si personne ne s\'est proposé, l\'enseignant peut encore entrer : la séance reste ouverte au remplacement jusqu\'à sa fin.',
+			'a3bis.regles.alerteDirection' => 'Alerte de la direction',
+			'a3bis.regles.alerteDirectionDetail' => 'Si ni l\'enseignant ni un remplaçant n\'a rejoint la salle, la direction reçoit un e-mail, une seule fois par séance.',
+			'a3bis.regles.avertissementDetail' => 'L\'enseignant est prévenu qu\'il risque de perdre la séance. Les enseignants libres peuvent se proposer pour le remplacer.',
+			'a3bis.regles.seanceTardive' => 'Séance créée tard',
+			'a3bis.regles.seanceTardiveDetail' => 'Une séance créée moins de ce délai avant son début n\'est jamais retirée à l\'enseignant automatiquement. L\'alerte de la direction part quand même.',
+			'a3bis.regles.bornesAlerte' => ({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début.',
+			'a3bis.regles.bornesTardive' => ({required Object min, required Object max}) => 'Entre ${min} et ${max} avant le début.',
 			'payUx.repriseTitre' => 'Vous avez quitté le formulaire sans payer ?',
 			'payUx.reprisePhrase' => 'Reprenez le paiement : un formulaire neuf s\'ouvre. Si le paiement était déjà passé, rien n\'est payé deux fois ; actualisez pour voir son état.',
 			'payUx.reprendre' => 'Reprendre le paiement',
