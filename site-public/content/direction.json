@@ -304,7 +304,13 @@
       "cote": "droite",
       "champ": "blanc"
     },
-    "/fr/articles/choisir-un-cours-de-coran-en-ligne": {
+    "/fr/autres-chemins": {
+      "gabarit": "lecture",
+      "image": "halqa-cercle",
+      "cote": "droite",
+      "champ": "blanc"
+    },
+    "/fr/articles/apprendre-le-coran-a-son-enfant": {
       "gabarit": "lecture",
       "image": "petite-classe",
       "cote": "droite",
@@ -316,10 +322,16 @@
       "cote": "gauche",
       "champ": "blanc"
     },
-    "/fr/autres-chemins": {
+    "/fr/articles/apprendre-le-coran-seul-sans-enseignant": {
       "gabarit": "lecture",
-      "image": "halqa-cercle",
+      "image": "transmission-lavande",
       "cote": "droite",
+      "champ": "blanc"
+    },
+    "/fr/articles/apprendre-le-coran-en-groupe": {
+      "gabarit": "lecture",
+      "image": "halqa-haut",
+      "cote": "gauche",
       "champ": "blanc"
     }
   }

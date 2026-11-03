@@ -18,10 +18,10 @@ correction groupée après la première relecture du directeur.
 | **Jonctions douces, version 2 (retour du directeur : « encore très fort »)** | fin de `styles/site.css` | présent dans le code ; fondus de 200 à 400 px, adoucis en S, derrière le contenu ; captures bureau et mobile sur 6 vues |
 | Avis chaleureux, aperçus sur l'accueil et trois pages | `bloc_avis.py`, `build_site.py`, `site.css` | présent dans le code ; testé avec des avis **fictifs** (jamais commités) |
 | SEO technique | `build_site.py` | présent dans le code : dimensions de l'image de partage, fil d'Ariane, balisage `Article`, date de mise à jour au plan du site pour les articles |
-| **Deux articles professionnels** | `content/pages.json`, `content/direction.json`, `build_site.py` | présent dans le code ; relecture par le directeur à faire avant fusion |
+| **Quatre articles signés du directeur** (troisième relecture : valeur et service d'abord) | `content/pages.json`, `content/direction.json`, `build_site.py` | présent dans le code ; chaque verset et chaque hadith vérifiés (§6) ; relecture du directeur à faire avant fusion |
 | **Page « Autres chemins pour apprendre le Coran »** | `content/pages.json` | présent dans le code, 5 sites lus sur 6 (voir §4) |
 
-Testé localement : 107 tests `python3 -m unittest discover -s site-public/tests` (80 au départ, 27 ajoutés), et 84 vues (21 routes à 360, 390, 768 et
+Testé localement : 110 tests `python3 -m unittest discover -s site-public/tests` (80 au départ, 30 ajoutés), et 92 vues (23 routes à 360, 390, 768 et
 1440 px) sans débordement horizontal, sans ressource en erreur, sans erreur JavaScript. Testé sur staging : l'aperçu de la PR 187 a servi le premier
 commit ; le second n'est pas encore vu. Déployé : non.
 
@@ -32,6 +32,10 @@ commit ; le second n'est pas encore vu. Déployé : non.
   tant qu'il reste moins de 3 avis publiés, aucun aperçu ne s'affiche (seuil volontaire).
 - **Articles** : au moins deux, professionnels, fidèles aux valeurs de l'académie.
 - **Le reste** : délégué à l'agent (« tu choisis le meilleur »). Les choix de l'agent sont au §3.
+- **Troisième relecture (03/11, soir)** : les articles sont signés du directeur ; ils ne citent pas les autres sites, ils disent seulement que
+  d'autres existent et renvoient à la page « Autres chemins » (dont la manière de citer est validée) ; ils donnent de la valeur avant de parler de
+  Rewayah (langage éducatif, profondeur spirituelle, historique et sociale, peu de listes) ; deux articles de plus : apprendre seul sans maître, et
+  le pouvoir du groupe (avec le fonctionnement des classes de Rewayah) ; « n'invente rien ».
 
 ## 3. Choix de l'agent, modifiables en une ligne
 
@@ -41,7 +45,14 @@ commit ; le second n'est pas encore vu. Déployé : non.
 - **Pas de mesure d'audience ajoutée.** Elle exige d'activer Vercel Web Analytics (geste du directeur) et de dire la mesure dans la politique de confidentialité
   (texte juridique). Google Analytics et Microsoft Clarity restent déconseillés (consentement exigé en France ; sessions enregistrées sur un site pour des familles).
   Tant qu'elle n'existe pas, aucune donnée de trafic n'est lisible : seule la Search Console compte les impressions.
-- **Auteur des articles : l'académie**, pas une personne : aucun enseignant n'a approuvé de signature. Date de publication : 2026-11-03 (celle du fichier).
+- **Auteur des articles : le directeur** (signature sous le titre, lien vers « Le mot du directeur », balisage `Person`). Date : 2026-11-03.
+- **« Occident »** est employé, comme le directeur l'a demandé, avec « et partout où les musulmans vivent en minorité » pour ne pas exclure les
+  familles qui vivent ailleurs. La règle de marque vise les noms de pays et de continents ; « Occident » n'en est pas un.
+- **Pas d'écriture arabe sur les pages françaises** (registre M-29, test existant) : l'eulogie s'écrit « (paix et bénédictions sur lui) », à chaque
+  mention ; les mots arabes s'écrivent en lettres latines (qalb, kalb).
+- **Citations** : un extrait de verset n'est accepté que s'il est mot pour mot dans le texte vérifié (sinon le script s'arrête) ; un hadith est cité
+  dans la traduction publiée par HadeethEnc quand elle existe, sinon dans une traduction du sens, signalée comme telle. Script :
+  `articles_v3.py` (hors dépôt, dans le dossier de travail de la session), qui lit `sources_verifiees.json`.
 - **Aucune règle de l'académie dans un article si le site ne la publie pas déjà.** Exemple : l'absence d'un élève et le rattrapage (règle décidée, non publiée) ne
   sont pas écrits. Un test le garde.
 - **Aucun prix dans un article ni dans la page des autres chemins** (source unique : `DECISION-TARIFS-2026-10-18.md`).
@@ -70,24 +81,41 @@ commit ; le second n'est pas encore vu. Déployé : non.
 
 - **Passe mobile générale** (paddings, tailles de police, espacement des cartes) : seul le menu est traité. Revue page par page à 360 et 390 px à faire.
 - **Refonte des animations** au-delà des cartes, des boutons et des liens du pied.
-- **Hub : 2 articles sur 15 sujets** proposés (4 piliers, 11 articles liés). Les autres sont à écrire un par un, signés et relus ; aucun n'est publié en série.
+- **Hub : 4 articles** (2 réécrits, 2 nouveaux). Les autres sujets du plan sont à écrire un par un, signés et relus ; aucun n'est publié en série.
 - **Mesure d'audience** (voir §3).
 - **Rendu vérifié sur l'aperçu Vercel du second commit** : non ; seules mes captures locales existent.
 
-## 6. Sources des articles
+## 6. Sources des articles (vérifiées le 03/11/2026)
 
-L'article « Mon enfant est fatigué » cite deux travaux, **vérifiés dans le registre Crossref** le 03/11/2026 : Cepeda et coll., *Psychological Bulletin* 132, 2006, p. 354-380
-(DOI 10.1037/0033-2909.132.3.354) ; Dunlosky et coll., *Psychological Science in the Public Interest* 14, 2013, p. 4-58 (DOI 10.1177/1529100612453266). L'article dit lui-même
-que ces travaux portent sur l'apprentissage en général, pas sur le Coran. L'article « Comment choisir » ne cite aucune étude et le dit.
+Vérification par un agent dédié, sans contourner aucun blocage (sunnah.com refuse la lecture automatique : numéros confirmés par l'index de
+recherche de sunnah.com, par le jeu de données public hadith-api qui en recopie les textes, et par HadeethEnc). Résultat : 17 versets sur 17 et
+11 hadiths sur 11 vérifiés ; Ibn Khaldûn (De Slane, *Les Prolégomènes*, III, 1868, p. 285, relu sur l'image de la page) ; le kuttâb (Essam Ayyad,
+*Journal of the Royal Asiatic Society*, 2022) ; Ibn al-Jazarî, *at-Tamhîd*, p. 21-22 (faute apparente, faute cachée). Corrections appliquées :
+Muslim 783 **b** (et non 783 a) ; H3 cité dans la formulation de Muslim 798 a ; « vendeur de musc et forgeron » rapporté en al-Bukhârî 2101 ;
+« Prenez le Coran de quatre » en al-Bukhârî 4999, d'après ‘Abd Allâh ibn ‘Amr ; « Facilitez… annoncez la bonne nouvelle » en al-Bukhârî 69 seul ;
+le hadith « l'homme suit la religion de son ami » est dit **hasan** ; la première révélation cite al-Bukhârî 3 et 4953, et mentionne l'autre récit
+(al-Bukhârî 4922). L'exemple qalb/kalb est de l'article, pas d'Ibn al-Jazarî, qui illustre par « an‘amta » (Al-Fâtiha). Deux coquilles de l'édition
+en ligne de Hamidullah (54:17 : « médiation », « Y a-t- il ») sont corrigées et signalées dans la section Sources de l'article. L'article sur la fatigue
+cite aussi Cepeda 2006 et Dunlosky 2013 (Crossref), en disant qu'ils ne portent pas sur le Coran.
+
+**Faits sur Rewayah** dans les articles : seulement ceux que le site publie déjà (classes de 3 à 5 enfants de 6 à 17 ans, trois séances d'une heure ;
+classes de 3 à 6 adultes, trois séances d'1 h 30 ; ouverture dès trois inscrits ; observation du parent, deux minutes ; compte rendu de fin de semaine ;
+les étapes des bases).
+
+## 6 bis. Pages non indexées (question du directeur, 03/11)
+
+En production, 20 pages sur 23 sont indexables, dont `/fr/contact`, les pages légales et les articles. Non indexées, volontairement : `/fr/avis`
+tant qu'aucun avis n'est publié (elle s'indexe d'elle-même au premier avis), la page 404, et `/fr/courriels/desinscription`. Deux domaines entiers
+répondent `noindex` : `app.rewayahacademy.com` (l'application, ses écrans de connexion) et `rewayah-academy.vercel.app` (copie technique du site, qui
+ferait doublon). Les aperçus des PR sont toujours `noindex`. C'est ce que signale la Search Console le 26/10 : pas une panne.
 
 ## 7. Décisions encore ouvertes
 
-1. Relire les deux articles et la page des autres chemins (mots, ton). Rien ne se fusionne sans cette relecture.
+1. Relire les quatre articles (citations, ton, et la signature) et la page des autres chemins. Rien ne se fusionne sans cette relecture.
 2. Qui relit `le-coran.com` avant de le citer ?
 3. Activer Vercel Web Analytics, avec le texte de confidentialité correspondant ?
-4. Signer les articles d'un enseignant nommé (meilleur pour la confiance) ou garder l'académie ?
-5. Vercel : le plan Pro règle la saturation des déploiements (le pilote l'a déjà proposé).
-6. Lancer la passe mobile et les animations après cette tranche ?
+4. Vercel : le plan Pro règle la saturation des déploiements (le pilote l'a déjà proposé).
+5. Lancer la passe mobile et les animations après cette tranche ?
 
 ## 8. Vérifier
 

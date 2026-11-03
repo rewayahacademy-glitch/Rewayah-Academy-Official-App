@@ -196,6 +196,10 @@ def load_content() -> tuple[dict[str, dict], dict]:
             if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(page.get("date", ""))):
                 raise ValueError(f"Article without a publication date (AAAA-MM-JJ): {route}")
             date.fromisoformat(page["date"])
+            auteur = page.get("auteur") or {}
+            if not all(isinstance(auteur.get(c), str) and auteur.get(c) for c in ("nom", "role", "href")):
+                raise ValueError(f"Article without its author (nom, role, href): {route}")
+            validate_link(auteur["href"], pages)
         validate_link(page["cta"]["href"], pages)
         for section in page["sections"]:
             for link in section.get("links", []):
@@ -432,6 +436,40 @@ def texte_riche(value: str) -> str:
     return re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", texte_html(value), flags=re.S)
 
 
+# Les articles publies, du plus recent au plus ancien : remplie par build() avant le rendu, lue par la section
+# generee « articles » du hub (/fr/articles). Un nouvel article y entre seul, sans retouche du hub.
+_ARTICLES: list[tuple[str, dict]] = []
+
+
+def temps_de_lecture(page: dict) -> int:
+    """Minutes de lecture, a 200 mots par minute (lecture attentive d'un texte qui cite des sources)."""
+    morceaux = [page.get("intro", "")] + [t for s in page["sections"]
+                                          for t in [s["title"], *s.get("paragraphs", []), *s.get("points", [])]]
+    mots = len(re.findall(r"\w+", " ".join(morceaux)))
+    return max(1, -(-mots // 200))
+
+
+def signature_article(page: dict) -> str:
+    """Sous le titre d'un article : qui l'a ecrit (lien vers sa presentation), quand, et combien de temps il demande."""
+    auteur = page.get("auteur")
+    if not auteur:
+        return ""
+    return (f'<p class="article-signature"><span>Par <a href="{esc(auteur["href"])}">{esc(auteur["nom"])}</a>, {esc(auteur["role"])}</span>'
+            f'<span class="article-signature__meta"><time datetime="{esc(page["date"])}">Publié le {esc(avis_mod.fmt_date(page["date"]))}</time>'
+            f' · Lecture : {temps_de_lecture(page)}\u00a0min</span></p>')
+
+
+def liste_articles() -> str:
+    if not _ARTICLES:
+        return "<p>Aucun article n’est encore publié.</p>"
+    cartes = "".join(
+        f'<li class="article-carte"><h3><a href="{esc(route)}">{titre_html(page["h1"])}</a></h3>'
+        f'<p>{texte_html(page["description"])}</p>'
+        f'<p class="article-carte__meta">{esc(page["auteur"]["nom"])} · {esc(avis_mod.fmt_date(page["date"]))} · '
+        f'{temps_de_lecture(page)}\u00a0min</p></li>' for route, page in _ARTICLES)
+    return f'<ul class="articles-liste" data-revele-enfants>{cartes}</ul>'
+
+
 def paragraphes(section: dict) -> str:
     return "".join(f"<p>{texte_riche(p)}</p>" for p in section.get("paragraphs", []))
 
@@ -461,6 +499,8 @@ def corps_genere(section: dict, sid: str, tarifs: dict | None, today: date | Non
         if avis is None:
             raise ValueError(f"Section generated without avis: {sid}")
         return avis_mod.rendre_avis_section(section["generated"][len("avis-"):], avis)
+    if section.get("generated") == "articles":
+        return liste_articles()
     if section.get("generated"):
         if tarifs is None:
             raise ValueError(f"Section generated without tarifs: {sid}")
@@ -855,7 +895,7 @@ def blocs_prix(tarifs: dict) -> str:
 
 def hero_interieur(route: str, page: dict, reglage: dict, images: dict, cta: str, status: str,
                    tarifs: dict | None = None, today: date | None = None) -> str:
-    intro = f'<p class="hero-intro">{texte_html(page["intro"])}</p>' if page.get("intro") else ""
+    intro = signature_article(page) + (f'<p class="hero-intro">{texte_html(page["intro"])}</p>' if page.get("intro") else "")
     haut = reglage.get("haut")
     titre_long = (" entete-page__texte--long" if len(page["h1"]) > 22 else "") + (" entete-page__texte--tres-long" if len(page["h1"]) > 33 else "")
     texte = (f'<div class="entete-page__texte{titre_long}" data-lignes><h1>{titre_html(page["h1"])}</h1>'
@@ -1271,7 +1311,7 @@ def donnees_structurees(origin: str) -> str:
 def fil_ariane(route: str, page: dict, origin: str, image: str = "") -> str:
     """Fil d'Ariane (accueil, puis la page) pour les pages interieures : Google l'affiche sous le titre, surtout sur
     telephone. Jamais sur /fr/avis : aucun balisage schema.org n'accompagne les avis (decision du 19/10/2026).
-    Un article porte en plus son balisage Article : l'auteur est l'academie (aucun enseignant n'a approuve de signature),
+    Un article porte en plus son balisage Article : l'auteur est la personne qui le signe (le directeur, 03/11/2026),
     la date est celle du fichier de contenu."""
     if route in ("/fr/", "/fr/avis"):
         return ""
@@ -1286,11 +1326,14 @@ def fil_ariane(route: str, page: dict, origin: str, image: str = "") -> str:
         {"@type": "ListItem", "position": i, "name": nom, "item": url} for i, (nom, url) in enumerate(chemin, 1)]}
     if article:
         organisation = {"@type": "Organization", "name": "Rewayah Academy", "url": base + "/fr/"}
+        auteur = page.get("auteur")
+        personne = ({"@type": "Person", "name": auteur["nom"], "jobTitle": auteur["role"][:1].upper() + auteur["role"][1:],
+                     "url": base + auteur["href"], "worksFor": organisation} if auteur else organisation)
         donnees = {"@context": "https://schema.org", "@graph": [fil, {
             "@type": "Article", "headline": page["h1"], "description": page["description"], "inLanguage": "fr",
             "datePublished": page["date"], "dateModified": page["date"], "image": [image],
             "mainEntityOfPage": {"@type": "WebPage", "@id": base + route},
-            "author": organisation, "publisher": organisation}]}
+            "author": personne, "publisher": organisation}]}
     else:
         donnees = {"@context": "https://schema.org", **fil}
     return ('<script type="application/ld+json">'
@@ -1478,6 +1521,9 @@ def build(output: Path, origin: str, allow_indexing: bool, tarifs: dict | None =
     if parsed.scheme != "https" or not parsed.netloc or parsed.path not in ("", "/"):
         raise ValueError("Canonical origin must be an HTTPS origin")
     pages, site = load_content()
+    # Le hub liste les articles du plus recent au plus ancien (a date egale : l'ordre du fichier de contenu).
+    _ARTICLES[:] = sorted(((r, p) for r, p in pages.items() if r.startswith("/fr/articles/")),
+                          key=lambda article: article[1]["date"], reverse=True)
     direction, images = load_direction(pages)
     # Le mot du directeur (page Academie) : l'accueil en reprend une phrase, signee, a cote de sa photo.
     mot = next((s for p in pages.values() for s in p["sections"] if s.get("citation")), None)

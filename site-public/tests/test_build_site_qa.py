@@ -421,8 +421,9 @@ class ProductionSiteQA(unittest.TestCase):
         self.assertIn("/fr/tarifs", attendues)
         # /fr/articles etait hors de l'index tant qu'il annoncait « Aucun article » ; il y entre avec ses deux premiers articles.
         self.assertIn("/fr/articles", attendues)
-        self.assertIn("/fr/articles/choisir-un-cours-de-coran-en-ligne", attendues)
-        self.assertIn("/fr/articles/enfant-fatigue-assiduite", attendues)
+        for article in ("apprendre-le-coran-a-son-enfant", "enfant-fatigue-assiduite", "apprendre-le-coran-seul-sans-enseignant",
+                        "apprendre-le-coran-en-groupe"):
+            self.assertIn(f"/fr/articles/{article}", attendues)
         for route in self.pages:
             with self.subTest(route=route):
                 parser = PageParser()

@@ -1,4 +1,4 @@
-"""Le hub d'articles (directeur, 03/11/2026) : deux articles publies, relus par la direction avant fusion.
+"""Le hub d'articles (directeur, 03/11/2026) : quatre articles signes du directeur, relus par lui avant fusion.
 
 Ces tests gardent ce qui ne doit jamais deriver : la date, l'auteur, les sources, le vocabulaire de l'academie, l'absence de prix
 et de promesses, et la regle « une regle n'est publiee dans un article que si le site la publie deja »."""
@@ -15,7 +15,11 @@ from pathlib import Path
 
 SITE = Path(__file__).resolve().parents[1]
 OUTPUT = SITE / "tests" / ".qa-articles"
-ROUTES = ("/fr/articles/choisir-un-cours-de-coran-en-ligne", "/fr/articles/enfant-fatigue-assiduite")
+ROUTES = ("/fr/articles/apprendre-le-coran-a-son-enfant", "/fr/articles/enfant-fatigue-assiduite",
+          "/fr/articles/apprendre-le-coran-seul-sans-enseignant", "/fr/articles/apprendre-le-coran-en-groupe")
+# Sources externes admises dans un article : references que l'on peut verifier (versets, hadiths, travaux, ouvrages).
+HOTES_SOURCES = {"doi.org", "quran.com", "sunnah.com", "hadeethenc.com", "dorar.net", "fr.wikisource.org", "gallica.bnf.fr",
+                 "archive.org", "shamela.ws", "arabiclexicon.hawramani.com"}
 
 
 def _charger(nom: str):
@@ -51,8 +55,11 @@ class Contenu(unittest.TestCase):
 
     def test_vocabulaire_et_promesses(self) -> None:
         # mots-rewayah : jamais ces mots ; marque : jamais de promesse, de superlatif, de pays ou de continent.
-        interdits = ("meilleur", "garanti", "certifié", "gratuit", "100 %", "devoirs", "groupe", "mode enfant", "échec",
-                     "ce n’est pas grave", "ce n'est pas grave", "rattraper", "Occident", "Afrique", "Europe", "Amérique", "Asie")
+        # Directeur, 03/11/2026 : « groupe » (le pouvoir du groupe) et « Occident » sont demandes ; « meilleur » ne paraît que dans
+        # la citation du hadith « Le meilleur d'entre vous est celui qui apprend le Coran et l'enseigne », jamais comme argument.
+        interdits = ("meilleure académie", "le meilleur cours", "meilleur prix", "le meilleur choix", "garanti", "certifié",
+                     "gratuit", "100 %", "devoirs", "mode enfant", "échec", "ce n’est pas grave", "ce n'est pas grave",
+                     "rattraper", "Afrique", "Europe", "Amérique", "Asie")
         for route in ROUTES:
             brut = texte(PAGES[route])
             for mot in interdits:
@@ -68,25 +75,47 @@ class Contenu(unittest.TestCase):
             for mot in ("absence de l’élève", "manque une séance", "remboursé de l’absence"):
                 self.assertNotIn(mot, brut, route)
 
-    def test_sources_externes_seulement_des_doi(self) -> None:
+    def test_sources_externes_seulement_des_references(self) -> None:
+        from urllib.parse import urlparse
         for route in ROUTES:
             for section in PAGES[route]["sections"]:
                 for lien in section.get("links", []):
                     if lien["href"].startswith("https://"):
-                        self.assertRegex(lien["href"], r"^https://doi\.org/10\.\d{4,}/\S+$", route)
+                        self.assertIn(urlparse(lien["href"]).hostname, HOTES_SOURCES, (route, lien["href"]))
 
-    def test_l_article_sur_l_assiduite_cite_ses_deux_sources(self) -> None:
+    def test_chaque_article_est_signe_du_directeur_et_cite_ses_sources(self) -> None:
+        for route in ROUTES:
+            with self.subTest(route=route):
+                page = PAGES[route]
+                self.assertEqual(page["auteur"]["nom"], "Abdoulaye Mouhidine Sow")
+                self.assertEqual(page["sections"][-1]["id"], "sources")
+                self.assertTrue(page["sections"][-1].get("links"), "la section Sources donne des liens")
+
+    def test_aucun_autre_site_cite_dans_un_article(self) -> None:
+        # Directeur, 03/11/2026 : les articles ne citent pas les autres sites ; ils renvoient a la page « Autres chemins ».
+        from urllib.parse import urlparse
+        for route in ROUTES:
+            brut = json.dumps(PAGES[route], ensure_ascii=False)
+            for hote in ("noorelbayanacademy", "quranweblearning", "institutalrayhan", "institut-assahaba", "houseofquran", "le-coran.com"):
+                self.assertNotIn(hote, brut, route)
+
+    def test_les_versets_sont_cites_avec_leur_traduction(self) -> None:
+        for route in ROUTES:
+            brut = texte(PAGES[route])
+            for m in re.finditer(r"\(Coran (\d+:\d+(?:-\d+)?)", brut):
+                self.assertIn("Hamidullah", brut[m.start():m.start() + 120], (route, m.group(1)))
+            self.assertNotIn("⟦", brut, "aucun repere de citation non remplace")
+
+    def test_l_article_sur_l_assiduite_cite_ses_deux_travaux(self) -> None:
         liens = [l["href"] for s in PAGES[ROUTES[1]]["sections"] for l in s.get("links", [])]
         self.assertIn("https://doi.org/10.1037/0033-2909.132.3.354", liens)  # Cepeda et coll., 2006
         self.assertIn("https://doi.org/10.1177/1529100612453266", liens)    # Dunlosky et coll., 2013
         self.assertIn("pas sur le Coran", texte(PAGES[ROUTES[1]]))           # la limite est dite
 
-    def test_le_hub_liste_les_deux_articles_et_n_annonce_plus_le_vide(self) -> None:
+    def test_le_hub_genere_la_liste_et_n_annonce_plus_le_vide(self) -> None:
         hub = PAGES["/fr/articles"]
         self.assertTrue(hub["indexable"])
-        liens = [l["href"] for s in hub["sections"] for l in s.get("links", [])]
-        for route in ROUTES:
-            self.assertIn(route, liens)
+        self.assertIn("articles", [s.get("generated") for s in hub["sections"]])
         self.assertNotIn("Aucun article", texte(hub))
 
 
@@ -112,7 +141,10 @@ class Page(unittest.TestCase):
                 self.assertEqual([x["@type"] for x in graphe], ["BreadcrumbList", "Article"])
                 article = graphe[1]
                 self.assertEqual(article["datePublished"], PAGES[route]["date"])
-                self.assertEqual(article["author"]["name"], "Rewayah Academy")  # aucune signature personnelle inventee
+                self.assertEqual(article["author"]["@type"], "Person")
+                self.assertEqual(article["author"]["name"], "Abdoulaye Mouhidine Sow")
+                self.assertEqual(article["publisher"]["name"], "Rewayah Academy")
+                self.assertIn('class="article-signature"', html)
                 self.assertEqual(len(graphe[0]["itemListElement"]), 3)
                 self.assertIn('content="index,follow"', html)
                 self.assertNotIn("AggregateRating", html)
@@ -122,7 +154,7 @@ class Page(unittest.TestCase):
         plan = (OUTPUT / "sitemap.xml").read_text(encoding="utf-8")
         for route in ROUTES:
             self.assertIn(f"<loc>https://rewayahacademy.com{route}</loc><lastmod>{PAGES[route]['date']}</lastmod>", plan)
-        self.assertEqual(plan.count("<lastmod>"), 2)
+        self.assertEqual(plan.count("<lastmod>"), len(ROUTES))
 
     def test_apercu_hors_de_l_index(self) -> None:
         self.construire(False)
@@ -132,8 +164,9 @@ class Page(unittest.TestCase):
     def test_mise_en_valeur_des_debuts_de_points(self) -> None:
         self.construire(True)
         html = self.lire(ROUTES[0])
-        self.assertIn("<strong>Un enseignant attitré.</strong>", html.replace("\u00a0", " "))
         self.assertNotIn("**", html)
+        hub = (OUTPUT / "fr" / "articles.html").read_text(encoding="utf-8")
+        self.assertEqual(hub.count('class="article-carte"'), len(ROUTES))  # la liste du hub est generee, un article par carte
 
     def test_mise_en_valeur_non_fermee_arrete_le_build(self) -> None:
         with self.assertRaises(ValueError):

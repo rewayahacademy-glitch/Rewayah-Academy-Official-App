@@ -571,7 +571,7 @@
     },
     "/fr/articles": {
       "title": "Conseils et articles | Rewayah Academy",
-      "description": "Articles pour les familles qui apprennent le Coran à distance : choisir un cours, tenir l’assiduité. Chaque article indique ses sources.",
+      "description": "Articles pour les familles et les adultes qui apprennent le Coran : transmettre à ses enfants, tenir dans la durée, apprendre avec un maître et en groupe.",
       "h1": "Articles et repères pour apprendre",
       "intro": "Un article ne paraît ici qu’après sa relecture par l’académie.",
       "sections": [
@@ -579,18 +579,9 @@
           "id": "catalogue",
           "title": "Les articles",
           "paragraphs": [
-            "Chaque article indique ses sources."
+            "Chaque article est signé et indique ses sources."
           ],
-          "links": [
-            {
-              "label": "Cours de Coran en ligne : comment choisir sans se tromper",
-              "href": "/fr/articles/choisir-un-cours-de-coran-en-ligne"
-            },
-            {
-              "label": "Mon enfant est fatigué : comment garder l’assiduité sans conflit",
-              "href": "/fr/articles/enfant-fatigue-assiduite"
-            }
-          ]
+          "generated": "articles"
         },
         {
           "id": "orientation",
@@ -625,107 +616,84 @@
       "indexable": true,
       "status": "ready"
     },
-    "/fr/articles/choisir-un-cours-de-coran-en-ligne": {
-      "title": "Cours de Coran en ligne : comment choisir | Rewayah Academy",
-      "description": "Le présentiel d’abord quand c’est possible. Sinon, voici les critères et les questions à poser avant d’inscrire votre enfant à un cours de Coran en ligne.",
-      "h1": "Cours de Coran en ligne : comment choisir sans se tromper",
-      "intro": "Vous cherchez un cours de Coran et rien ne convient près de chez vous : pas d’enseignant disponible, des horaires impossibles, une école trop loin. Voici comment choisir un cours en ligne avec sérieux, et ce qu’il faut demander avant de vous inscrire.",
-      "date": "2026-11-03",
+    "/fr/articles/apprendre-le-coran-a-son-enfant": {
+      "title": "Apprendre le Coran à son enfant : pourquoi et comment | Rewayah Academy",
+      "description": "Pourquoi transmettre le Coran à son enfant, ce que la tradition en a fait pendant des siècles, et comment s’y prendre, près de chez soi ou à distance.",
+      "h1": "Apprendre le Coran à son enfant : pourquoi c’est essentiel, et comment s’y prendre",
+      "intro": "Transmettre le Coran à son enfant, c’est lui donner une langue pour prier, un texte qui l’accompagnera toute sa vie et une mémoire qui le relie à ceux qui l’ont précédé. Loin des écoles coraniques, cette transmission ne se fait plus d’elle-même : elle se décide. Voici pourquoi elle compte autant, ce que la tradition musulmane en a fait pendant des siècles, et comment la mettre en place aujourd’hui.",
       "sections": [
         {
-          "id": "pres-de-chez-vous",
-          "title": "Si vous le pouvez, commencez près de chez vous",
+          "id": "lis",
+          "title": "« Lis » : le premier mot révélé",
           "paragraphs": [
-            "Rien ne remplace une salle, une mosquée, un enseignant que l’enfant croise et que la famille connaît. Si vous avez près de chez vous un bon enseignement du Coran, en présence, choisissez-le d’abord.",
-            "Un cours en ligne est une solution pour les familles pour qui ce n’est pas possible. Nous l’écrivons nous-mêmes parce que c’est vrai, et parce qu’une famille bien informée choisit mieux.",
-            "Les critères ci-dessous valent dans les deux cas : un enseignant dont on connaît le parcours, une classe stable, un suivi régulier."
+            "La révélation du Coran commence par un ordre de lire. Les premiers versets descendus sur le Prophète (paix et bénédictions sur lui) ouvrent la sourate Al-‘Alaq : « Lis, au nom de ton Seigneur qui a créé, qui a créé l’homme d’une adhérence. Lis! Ton Seigneur est le Très Noble, qui a enseigné par la plume [le calame], a enseigné à l’homme ce qu’il ne savait pas » (Coran 96:1-5, traduction de Muhammad Hamidullah).",
+            "Le hadith de ‘Â’isha, rapporté par al-Bukhârî au tout début de son recueil (n° 3, et n° 4953 pour le passage entier), raconte que la révélation a commencé par ces versets ; un autre récit, rapporté lui aussi par al-Bukhârî (n° 4922), mentionne le début de la sourate Al-Muddaththir. Le message s’ouvre donc sur la lecture, le savoir et la plume. Apprendre à un enfant à lire le Coran, c’est le faire entrer dans cette histoire par sa première porte."
+          ]
+        },
+        {
+          "id": "responsabilite",
+          "title": "Une responsabilité confiée aux parents",
+          "paragraphs": [
+            "Le Coran s’adresse directement aux croyants à propos de leur famille : « Ô vous qui avez cru ! Préservez vos personnes et vos familles, d’un Feu dont le combustible sera les gens et les pierres … » (Coran 66:6, extrait, traduction de Muhammad Hamidullah).",
+            "Le Prophète (paix et bénédictions sur lui) a résumé cette responsabilité dans une image simple : « Chacun de vous est un berger, et chacun de vous est responsable de son troupeau » (rapporté par al-Bukhârî, n° 893, et Muslim, n° 1829 a ; traduction du sens). Le parent n’a pas à tout enseigner lui-même. Mais c’est à lui de veiller à ce que son enfant apprenne, auprès de qui, et avec quelle régularité.",
+            "Cette responsabilité est aussi une chance. Le Prophète (paix et bénédictions sur lui) a dit : « Le meilleur d’entre vous est celui qui a appris le Coran et l’a enseigné » (rapporté par al-Bukhârî, n° 5027 ; traduction publiée par HadeethEnc). Le parent qui fait apprendre le Coran à son enfant, et qui l’apprend parfois en même temps que lui, entre dans cette parole."
+          ]
+        },
+        {
+          "id": "tradition",
+          "title": "Ce que la tradition a bâti autour du Coran",
+          "paragraphs": [
+            "Pendant des siècles, dans les villes musulmanes, l’instruction d’un enfant commençait par le Coran. Il l’apprenait au kuttâb, une modeste école élémentaire où l’on apprenait surtout le Coran par cœur, auprès d’un maître.",
+            "Au XIVe siècle, l’historien Ibn Khaldûn l’écrivait déjà dans sa Muqaddima : « Une des marques distinctives de la civilisation musulmane est l’habitude d’enseigner le Coran aux enfants. Les vrais croyants l’ont adoptée et s’y sont conformés dans toutes leurs grandes villes, parce que certains versets de ce livre et le texte de certaines traditions, étant appris de bonne heure, établissent solidement dans le cœur de l’enfant la croyance aux dogmes de la foi. Donc le Coran forme la base de l’enseignement et sert de fondation à toutes les connaissances qui s’acquièrent plus tard. » (Les Prolégomènes, traduction de William Mac Guckin de Slane, troisième partie, 1868, p. 285 ; là où la traduction écrit « de la civilisation musulmane », l’arabe dit littéralement « de la religion »).",
+            "Le Coran ne s’est pas transmis seulement par les livres. Les savants de la récitation le rappellent : il s’est transmis de bouche à oreille, de maître à élève, par des chaînes ininterrompues qui remontent au Prophète (paix et bénédictions sur lui). Chaque enfant qui apprend auprès d’un enseignant prend sa place dans cette chaîne."
+          ]
+        },
+        {
+          "id": "aujourd-hui",
+          "title": "Pourquoi c’est urgent aujourd’hui",
+          "paragraphs": [
+            "Beaucoup de familles vivent désormais en Occident, et partout où les musulmans sont en minorité, loin de ces écoles. L’enfant grandit entre deux mondes : la maison, et une société où la langue du Coran ne s’entend presque jamais. Sans transmission, la prière devient une suite de sons que l’on ne sait plus lire, et le Coran un livre que l’on respecte sans pouvoir l’ouvrir.",
+            "Ce déracinement, religieux et culturel, ne se fait pas en un jour. Il avance en silence, d’une génération à l’autre, quand personne ne prend le relais. À l’inverse, un enfant qui sait lire le Coran, qui en connaît des sourates par cœur et qui sait d’où vient ce qu’il récite garde un point d’appui. Il sait à quoi il appartient, même quand tout autour de lui parle une autre langue.",
+            "C’est pourquoi la manière d’enseigner compte autant que la décision d’enseigner."
+          ]
+        },
+        {
+          "id": "choisir",
+          "title": "Près de chez soi ou à distance : comment choisir",
+          "paragraphs": [
+            "Si un bon enseignement du Coran existe près de chez vous, en présence, commencez par lui. Rien ne remplace une salle, une mosquée, un enseignant que l’enfant croise et que la famille connaît. L’enseignement à distance est une solution précieuse pour les familles pour qui ce n’est pas possible ; il ne devrait pas être un choix par défaut.",
+            "Dans les deux cas, regardez ce que l’enseignement organise plutôt que ce qu’il promet : un enseignant attitré, qui connaît les erreurs de votre enfant et suit sa progression ; une petite classe stable, où chacun est entendu ; un horaire fixe, qui revient chaque semaine, parce que l’assiduité se construit sur un rituel ; un programme par étapes, avec des dates ; un suivi visible, et des conditions écrites.",
+            "Posez vos questions par écrit avant de vous engager. Qui sera l’enseignant, et restera-t-il le même ? Que se passe-t-il s’il est absent ? Comment serez-vous informé des progrès ? Pouvez-vous assister à une séance ? Méfiez-vous en revanche d’une promesse de résultat rapide, d’une pression pour payer tout de suite, ou d’un titre mis en avant sans que l’on sache à quel parcours il se rattache."
+          ]
+        },
+        {
+          "id": "maison",
+          "title": "Ce que la maison peut faire, chaque jour",
+          "paragraphs": [
+            "L’enseignant enseigne ; la maison fait durer. Quelques minutes par jour, à heure fixe, valent mieux qu’une longue préparation la veille du cours. Écoutez votre enfant réciter, sans le corriger à la place de son enseignant, et nommez ses progrès.",
+            "Et, quand vous le pouvez, laissez-le vous entendre lire. Un enfant apprend aussi par ce qu’il voit faire : un parent qui ouvre le Coran à la maison enseigne, sans un mot, que ce Livre a sa place dans la vie de tous les jours."
+          ],
+          "links": [
+            {
+              "label": "Mon enfant est fatigué : comment garder l’assiduité au Coran sans conflit",
+              "href": "/fr/articles/enfant-fatigue-assiduite"
+            }
+          ]
+        },
+        {
+          "id": "notre-maniere",
+          "title": "Si notre manière ne vous convient pas",
+          "paragraphs": [
+            "À Rewayah Academy, nous enseignons le Coran en ligne, en petites classes stables, avec un enseignant attitré et un horaire fixe. Cette manière convient à beaucoup de familles, pas à toutes. Si elle ne vous convient pas, d’autres existent, tenues par d’autres personnes : nous en citons quelques-unes, avec ce qu’elles disent d’elles-mêmes."
           ],
           "links": [
             {
               "label": "Autres chemins pour apprendre le Coran",
               "href": "/fr/autres-chemins"
-            }
-          ]
-        },
-        {
-          "id": "en-ligne",
-          "title": "Ce que permet un cours en ligne, et ce qu’il ne remplace pas",
-          "points": [
-            "Il permet d’apprendre sans déplacement, à un horaire fixe, avec un enseignant que l’on n’aurait pas trouvé près de chez soi.",
-            "Il permet au parent d’être dans la maison, présent sans être dans la classe.",
-            "Il ne remplace pas la vie d’une communauté : la mosquée, les amis, les fêtes. Gardez-la à côté, même si le cours est en ligne.",
-            "Il demande un coin calme, un appareil qui fonctionne et une connexion stable. Ces conditions sont simples, mais elles comptent."
-          ]
-        },
-        {
-          "id": "criteres",
-          "title": "Sept critères qui comptent vraiment",
-          "paragraphs": [
-            "Un bon cours se reconnaît à ce qu’il organise, pas à ce qu’il promet."
-          ],
-          "points": [
-            "**Un enseignant attitré.** La même personne à chaque séance : elle connaît les erreurs de l’élève et suit sa progression.",
-            "**Une petite classe stable.** Les mêmes élèves, une classe où chacun est entendu. Les élèves s’encouragent sans se comparer.",
-            "**Un horaire fixe, qui revient chaque semaine.** L’assiduité se construit sur un rituel.",
-            "**Un programme par étapes, avec des dates limites et des évaluations.** On sait où en est l’élève, et quand l’étape doit être terminée.",
-            "**Un suivi visible.** Ce qui a été fait en séance, et le travail à préparer avant le prochain cours.",
-            "**Un cadre de sécurité clair.** Le parent peut observer, les règles de conduite sont écrites, et l’on vous dit ce que devient l’image de votre enfant.",
-            "**Des conditions écrites : prix, paiement, annulation, remboursement.** Rien ne doit se découvrir après l’inscription."
-          ]
-        },
-        {
-          "id": "questions",
-          "title": "Les questions à poser avant de vous inscrire",
-          "paragraphs": [
-            "Posez-les par écrit. Une académie sérieuse y répond sans difficulté."
-          ],
-          "points": [
-            "Qui sera l’enseignant de mon enfant, et restera-t-il le même ?",
-            "Combien d’élèves dans la classe, et la classe change-t-elle en cours d’année ?",
-            "À quel horaire, et que se passe-t-il si l’enseignant est absent ?",
-            "Comment serai-je informé des progrès de mon enfant ?",
-            "Puis-je assister à une séance ?",
-            "Quel est le programme, étape par étape, et combien de temps prévoit-il ?",
-            "Quelles sont les conditions de paiement, d’annulation et de remboursement ?",
-            "Qui peut me répondre, et comment le joindre ?"
-          ]
-        },
-        {
-          "id": "alertes",
-          "title": "Les signaux qui doivent vous faire hésiter",
-          "points": [
-            "Une promesse de résultat rapide ou assuré : « votre enfant lira en un mois ».",
-            "Une pression pour payer tout de suite.",
-            "Des prix ou des conditions introuvables par écrit.",
-            "Un enseignant différent à chaque séance, ou des classes qui changent sans cesse.",
-            "Un titre ou une autorisation d’enseigner mis en avant, sans que l’on sache à quel parcours il se rattache. Demandez-le.",
-            "Personne de réel à qui parler."
-          ]
-        },
-        {
-          "id": "chez-rewayah",
-          "title": "Comment Rewayah répond à ces critères",
-          "paragraphs": [
-            "Rewayah Academy enseigne le Coran en ligne depuis le 1er mai 2024. Nous sommes une académie jeune, et nous préférons le dire.",
-            "Chaque élève suit trois séances par semaine, à heure fixe, avec le même enseignant, dans une petite classe. Le parent peut entrer dans la séance en observateur silencieux, deux minutes par séance, et reçoit chaque fin de semaine le compte rendu de l’enseignant dans l’application.",
-            "Les détails, les prix et les conditions sont publiés. Vous pouvez nous poser vos questions par écrit."
-          ],
-          "links": [
+            },
             {
-              "label": "Les cours",
+              "label": "Les cours de Rewayah",
               "href": "/fr/cours"
-            },
-            {
-              "label": "Les tarifs",
-              "href": "/fr/tarifs"
-            },
-            {
-              "label": "Les conditions",
-              "href": "/fr/legal/conditions"
-            },
-            {
-              "label": "Nous contacter",
-              "href": "/fr/contact"
             }
           ]
         },
@@ -733,10 +701,58 @@
           "id": "sources",
           "title": "Sources",
           "paragraphs": [
-            "Cet article ne cite aucune étude : il propose des critères de bon sens, à vérifier par vous-même. Les faits sur Rewayah viennent de nos pages Cours, Tarifs et Conditions, publiées sur ce site."
+            "Les versets sont cités dans la traduction de Muhammad Hamidullah, telle que la publie quran.com. Les hadiths sont cités avec leur recueil et leur numéro (numérotation de sunnah.com) ; leur texte est la traduction publiée par HadeethEnc quand elle existe, sinon une traduction du sens, signalée comme telle."
+          ],
+          "links": [
+            {
+              "label": "Ṣaḥîḥ al-Bukhârî, n° 5027 (sunnah.com)",
+              "href": "https://sunnah.com/bukhari:5027"
+            },
+            {
+              "label": "Traduction française publiée par HadeethEnc (al-Bukhârî, n° 5027)",
+              "href": "https://hadeethenc.com/fr/browse/hadith/5913"
+            },
+            {
+              "label": "Ṣaḥîḥ al-Bukhârî, n° 893 (sunnah.com)",
+              "href": "https://sunnah.com/bukhari:893"
+            },
+            {
+              "label": "Ṣaḥîḥ Muslim, n° 1829 a (sunnah.com)",
+              "href": "https://sunnah.com/muslim:1829a"
+            },
+            {
+              "label": "Coran 66:6, traduction de Muhammad Hamidullah (quran.com)",
+              "href": "https://quran.com/66/6"
+            },
+            {
+              "label": "Coran 96:1-5, traduction de Muhammad Hamidullah (quran.com)",
+              "href": "https://quran.com/96/1-5"
+            },
+            {
+              "label": "Ibn Khaldûn, Les Prolégomènes, trad. de Slane, 1868, troisième partie, p. 285 (archive.org)",
+              "href": "https://archive.org/details/lesprolgomne03abdauoft/page/285/mode/1up"
+            },
+            {
+              "label": "Essam Ayyad, « How were young Muslim minds shaped? A critical study of the kuttāb in Medieval Islam », Journal of the Royal Asiatic Society, 2022",
+              "href": "https://doi.org/10.1017/S135618632100002X"
+            },
+            {
+              "label": "Le hadith de la première révélation, al-Bukhârî, n° 3 et n° 4953 (sunnah.com)",
+              "href": "https://sunnah.com/bukhari:3"
+            },
+            {
+              "label": "L’autre récit, al-Bukhârî, n° 4922 (sunnah.com)",
+              "href": "https://sunnah.com/bukhari:4922"
+            }
           ]
         }
       ],
+      "date": "2026-11-03",
+      "auteur": {
+        "nom": "Abdoulaye Mouhidine Sow",
+        "role": "directeur et fondateur de Rewayah Academy",
+        "href": "/fr/academie#mot"
+      },
       "cta": {
         "label": "Découvrir les cours",
         "href": "/fr/cours"
@@ -745,70 +761,69 @@
       "status": "ready"
     },
     "/fr/articles/enfant-fatigue-assiduite": {
-      "title": "Enfant fatigué : l’assiduité au Coran | Rewayah Academy",
-      "description": "Séances régulières, préparation courte, parent présent sans corriger : des gestes simples pour aider votre enfant à tenir, avec fermeté et bienveillance.",
-      "h1": "Mon enfant est fatigué : comment garder l’assiduité sans conflit",
-      "intro": "Trois séances par semaine, après l’école, c’est exigeant. Un enfant fatigué n’est pas un enfant qui refuse. Voici comment l’aider à tenir, avec fermeté et avec bienveillance.",
-      "date": "2026-11-03",
+      "title": "Enfant fatigué : l’assiduité au Coran sans conflit | Rewayah Academy",
+      "description": "Fatigue, ennui ou refus : comprendre ce que vit votre enfant et l’aider à tenir, avec fermeté et douceur, à la lumière de la tradition et de la recherche.",
+      "h1": "Mon enfant est fatigué : comment garder l’assiduité au Coran sans conflit",
+      "intro": "Trois séances par semaine, après l’école, c’est exigeant. Un enfant fatigué n’est pas un enfant qui refuse, et un parent inquiet n’est pas un mauvais parent. Voici comment comprendre ce qui se passe, et comment aider votre enfant à tenir, avec fermeté et avec douceur.",
       "sections": [
         {
           "id": "distinguer",
-          "title": "Fatigue, ennui ou refus : distinguer avant d’agir",
-          "points": [
-            "**La fatigue.** Les yeux piquent, l’attention tombe en fin de séance, mais l’enfant veut y aller. Regardez le sommeil, le repas, le moment de la journée.",
-            "**L’ennui.** Il sait déjà, ou il ne comprend pas. Parlez-en à l’enseignant : le niveau est-il juste ?",
-            "**Le refus.** Il dit non avant d’essayer. Cherchez la cause : la peur de se tromper devant les autres, un conflit à la maison autour de la séance. Écoutez avant de répondre."
-          ],
+          "title": "Fatigue, ennui ou refus : trois situations différentes",
           "paragraphs": [
+            "Avant d’agir, il faut savoir de quoi l’on parle. La fatigue se voit en fin de séance : l’attention baisse, les yeux piquent, mais l’enfant veut y aller. Elle appelle des réponses simples : le sommeil, le repas, le moment de la journée.",
+            "L’ennui est autre chose. L’enfant sait déjà, ou au contraire ne suit plus. Il faut alors en parler avec l’enseignant, pour vérifier que le niveau est juste. Le refus, enfin, s’exprime avant même d’essayer. Il cache souvent une cause précise : la peur de se tromper devant les autres, une tension à la maison autour de la séance. On commence par écouter.",
             "Si la fatigue dure, dépasse l’apprentissage ou s’accompagne d’angoisse, parlez-en à un professionnel de santé. Aucune méthode ne remplace cet avis."
+          ]
+        },
+        {
+          "id": "deux-recompenses",
+          "title": "Celui qui récite avec peine a deux récompenses",
+          "paragraphs": [
+            "La tradition offre ici un réconfort précieux. Le Prophète (paix et bénédictions sur lui) a dit : « Celui qui récite le Coran avec habileté sera avec les nobles et vertueux anges scribes ; et celui qui le récite en butant, et pour qui c’est difficile, aura deux récompenses » (rapporté par Muslim, n° 798 a ; en des termes proches par al-Bukhârî, n° 4937 ; traduction du sens).",
+            "Cette parole change le regard. L’effort de l’enfant qui bute sur les lettres n’est pas un retard : il est récompensé. Dites-le à votre enfant, avec des mots simples. Et dites-le-vous aussi : votre patience fait partie de ce travail.",
+            "Le Coran lui-même le répète quatre fois dans la sourate Al-Qamar : « En effet, Nous avons rendu le Coran facile pour la méditation. Y a-t-il quelqu’un pour réfléchir ? » (Coran 54:17, traduction de Muhammad Hamidullah)."
           ]
         },
         {
           "id": "regularite",
           "title": "La régularité vaut mieux que la durée",
           "paragraphs": [
-            "Les travaux sur l’apprentissage montrent, en général, que répartir son travail dans le temps aide à mieux retenir que le concentrer en une seule fois. Une préparation courte, souvent, vaut mieux qu’une longue préparation la veille de la séance.",
-            "Ces travaux placent aussi parmi les méthodes les plus utiles le fait de se tester sur ce que l’on vient d’apprendre. Demandez à votre enfant de vous réciter, sans regarder, ce qu’il sait déjà.",
-            "Ces études portent sur l’apprentissage en général, pas sur le Coran. Prenez-les comme une indication, pas comme une règle."
+            "Le Prophète (paix et bénédictions sur lui) a dit : « Les œuvres les plus aimées d’Allah sont celles que l’on accomplit avec constance, même si elles sont peu nombreuses » (rapporté par al-Bukhârî, n° 6464, et Muslim, n° 783 b ; traduction du sens). Cette parole vaut pour l’apprentissage du Coran comme pour toutes les œuvres : peu, mais chaque jour.",
+            "La recherche sur l’apprentissage va dans le même sens. Les travaux qui comparent les méthodes montrent, en général, que répartir son travail dans le temps aide à mieux retenir que le concentrer en une seule fois ; ils placent aussi parmi les méthodes les plus utiles le fait de se tester sur ce que l’on vient d’apprendre. Demandez à votre enfant de vous réciter, sans regarder, ce qu’il sait déjà.",
+            "Ces études portent sur l’apprentissage en général, pas sur le Coran : prenez-les comme une indication, pas comme une règle."
           ]
         },
         {
-          "id": "gestes",
-          "title": "Cinq gestes qui aident",
-          "points": [
-            "**Un rituel.** Même moment, même place, même matériel. On ne négocie pas la séance : on ajuste la préparation.",
-            "**La veille.** Préparez ce qu’il faut et vérifiez la connexion avant l’heure, pour que la séance commence dans le calme.",
-            "**Une préparation courte.** Le travail à préparer avant le prochain cours, sans en rajouter. Mieux vaut peu, et chaque jour.",
-            "**Une écoute sans correction.** Votre rôle n’est pas d’être l’enseignant. Écoutez, encouragez, demandez-lui de vous réciter. Les corrections reviennent à l’enseignant.",
-            "**Une petite victoire, nommée.** Une sourate terminée, une étape validée, une lecture sans hésiter : dites-le, simplement."
+          "id": "maison",
+          "title": "Ce que vous pouvez faire à la maison",
+          "paragraphs": [
+            "Installez un rituel : le même moment, la même place, le même matériel. Un cadre fixe épargne à l’enfant la négociation de chaque jour. On ne discute pas de la séance ; on ajuste la préparation.",
+            "Préparez la veille ce qui est nécessaire, et vérifiez la connexion avant l’heure, pour que la séance commence dans le calme. Gardez la préparation courte : le travail à préparer avant le prochain cours, sans en rajouter.",
+            "Écoutez sans corriger. Votre rôle n’est pas d’être l’enseignant : demandez à votre enfant de vous réciter ce qu’il sait, encouragez-le, et laissez les corrections à celui qui enseigne. Nommez enfin ses petites victoires : une sourate terminée, une étape validée, une lecture sans hésitation."
           ]
         },
         {
           "id": "eviter",
           "title": "Ce qu’il vaut mieux éviter",
-          "points": [
-            "Comparer votre enfant à ses frères, à ses sœurs ou aux autres élèves.",
-            "Utiliser le Coran comme une punition, ou menacer de le retirer.",
-            "Reprendre ses erreurs devant la classe ou devant l’enseignant.",
-            "Crier juste avant la séance : il arrive tendu, et la séance en souffre.",
-            "Laisser tout le travail à préparer pour la veille de la séance."
+          "paragraphs": [
+            "Ne comparez pas votre enfant à ses frères et sœurs, ni aux autres élèves. N’utilisez jamais le Coran comme une punition, et ne menacez pas de le retirer : l’enfant ne doit pas associer le Livre à la peur. Évitez de reprendre ses erreurs devant la classe ou devant l’enseignant, et de crier juste avant la séance.",
+            "La consigne du Prophète (paix et bénédictions sur lui) résume cette attitude : « Facilitez et ne rendez pas difficile ! Annoncez de bonnes nouvelles et ne faites pas fuir ! » (rapporté par al-Bukhârî, n° 69 ; traduction publiée par HadeethEnc)."
           ]
         },
         {
           "id": "en-parler",
-          "title": "Quand en parler à l’enseignant ou à la direction",
+          "title": "Quand en parler à l’enseignant",
           "paragraphs": [
-            "Parlez-en dès que la fatigue ou le refus dure plus de quelques semaines, ou dès que votre enfant dit qu’il a peur de la séance. Décrivez ce que vous observez, avec des faits, et demandez un point.",
-            "Chez Rewayah, vous pouvez écrire à l’assistance, qui vous répond par écrit."
+            "Parlez-en dès que la fatigue ou le refus dure plus de quelques semaines, ou dès que votre enfant dit qu’il a peur de la séance. Décrivez ce que vous observez, avec des faits, et demandez un point. Chez Rewayah, vous pouvez écrire à l’assistance, qui vous répond par écrit."
           ],
           "links": [
             {
-              "label": "L’aide et les questions fréquentes",
-              "href": "/fr/aide"
+              "label": "Apprendre le Coran en groupe : pourquoi une classe ambitieuse vous porte plus loin",
+              "href": "/fr/articles/apprendre-le-coran-en-groupe"
             },
             {
-              "label": "Nous contacter",
-              "href": "/fr/contact"
+              "label": "L’aide et les questions fréquentes",
+              "href": "/fr/aide"
             }
           ]
         },
@@ -816,9 +831,39 @@
           "id": "sources",
           "title": "Sources",
           "paragraphs": [
-            "Ces références sont des travaux de recherche sur l’apprentissage en général. Ils ne portent pas sur le Coran."
+            "Les versets sont cités dans la traduction de Muhammad Hamidullah, telle que la publie quran.com. Les hadiths sont cités avec leur recueil et leur numéro (numérotation de sunnah.com) ; leur texte est la traduction publiée par HadeethEnc quand elle existe, sinon une traduction du sens, signalée comme telle.",
+            "En 54:17, l’édition en ligne porte « médiation » et « Y a-t- il » : deux coquilles, corrigées ici ; la note de la même édition écrit bien « méditation ».",
+            "Les deux travaux de recherche cités portent sur l’apprentissage en général. Ils ne portent pas sur le Coran."
           ],
           "links": [
+            {
+              "label": "Ṣaḥîḥ al-Bukhârî, n° 69 (sunnah.com)",
+              "href": "https://sunnah.com/bukhari:69"
+            },
+            {
+              "label": "Traduction française publiée par HadeethEnc (al-Bukhârî, n° 69)",
+              "href": "https://hadeethenc.com/fr/browse/hadith/5866"
+            },
+            {
+              "label": "Ṣaḥîḥ Muslim, n° 798 a (sunnah.com)",
+              "href": "https://sunnah.com/muslim:798a"
+            },
+            {
+              "label": "Ṣaḥîḥ al-Bukhârî, n° 4937 (sunnah.com)",
+              "href": "https://sunnah.com/bukhari:4937"
+            },
+            {
+              "label": "Ṣaḥîḥ al-Bukhârî, n° 6464 (sunnah.com)",
+              "href": "https://sunnah.com/bukhari:6464"
+            },
+            {
+              "label": "Ṣaḥîḥ Muslim, n° 783 b (sunnah.com)",
+              "href": "https://sunnah.com/muslim:783b"
+            },
+            {
+              "label": "Coran 54:17, traduction de Muhammad Hamidullah (quran.com)",
+              "href": "https://quran.com/54/17"
+            },
             {
               "label": "Cepeda et coll., 2006 : Distributed practice in verbal recall tasks, Psychological Bulletin",
               "href": "https://doi.org/10.1037/0033-2909.132.3.354"
@@ -830,6 +875,286 @@
           ]
         }
       ],
+      "date": "2026-11-03",
+      "auteur": {
+        "nom": "Abdoulaye Mouhidine Sow",
+        "role": "directeur et fondateur de Rewayah Academy",
+        "href": "/fr/academie#mot"
+      },
+      "cta": {
+        "label": "Découvrir les cours",
+        "href": "/fr/cours"
+      },
+      "indexable": true,
+      "status": "ready"
+    },
+    "/fr/articles/apprendre-le-coran-seul-sans-enseignant": {
+      "title": "Apprendre le Coran seul, sans enseignant : les risques | Rewayah Academy",
+      "description": "Pourquoi le Coran se transmet de maître à élève depuis le Prophète, ce qu’un élève seul ne peut pas entendre, et comment se faire corriger, même de loin.",
+      "h1": "Apprendre le Coran seul, sans enseignant : les risques, et comment les éviter",
+      "intro": "Applications, vidéos, cours enregistrés : il n’a jamais été aussi simple de se lancer seul dans la lecture du Coran. C’est une bonne nouvelle, à une condition : ne pas confondre les outils avec un maître. Voici pourquoi le Coran s’est toujours transmis de bouche à oreille, ce qu’un élève seul ne peut pas entendre, et comment se faire corriger, même de loin.",
+      "sections": [
+        {
+          "id": "transmission",
+          "title": "Le Coran s’est transmis de bouche à oreille",
+          "paragraphs": [
+            "Le Prophète (paix et bénédictions sur lui) lui-même a reçu le Coran par l’écoute. Allah lui dit : « Ne remue pas ta langue pour hâter sa récitation : Son rassemblement (dans ton cœur et sa fixation dans ta mémoire) Nous incombent, ainsi que la façon de le réciter. Quand donc Nous le récitons, suis sa récitation » (Coran 75:16-18, traduction de Muhammad Hamidullah).",
+            "Chaque Ramadan, il l’étudiait avec l’ange Jibrîl, comme le rapporte Ibn ‘Abbâs : « Jibrîl le rencontrait chaque nuit du Ramadan et étudiait avec lui le Coran » (rapporté par al-Bukhârî, n° 6 ; traduction du sens). Celui qui a reçu le Coran avait donc, lui aussi, quelqu’un avec qui l’étudier.",
+            "Les compagnons ont suivi ce modèle. ‘Abd Allâh ibn Mas‘ûd disait : « Par Allah, j’ai appris de la bouche même du Messager d’Allah (paix et bénédictions sur lui) soixante-dix et quelques sourates » (rapporté par al-Bukhârî, n° 5000 ; traduction du sens). Et le Prophète (paix et bénédictions sur lui) orientait ceux qui voulaient apprendre vers des maîtres précis ; ‘Abd Allâh ibn ‘Amr rapporte qu’il disait : « Prenez le Coran de quatre : de ‘Abd Allâh ibn Mas‘ûd, de Sâlim, de Mu‘âdh et d’Ubayy ibn Ka‘b » (rapporté par al-Bukhârî, n° 4999 ; traduction du sens)."
+          ]
+        },
+        {
+          "id": "role-du-maitre",
+          "title": "Ce que fait un enseignant, et qu’un livre ne fait pas",
+          "paragraphs": [
+            "Le Coran décrit ainsi la mission du Prophète (paix et bénédictions sur lui) : « C’est Lui qui a envoyé à des gens sans Livre (les Arabes) un Messager des leurs qui leur récite Ses versets, les purifie et leur enseigne le Livre et la Sagesse … » (Coran 62:2, extrait, traduction de Muhammad Hamidullah). Réciter, purifier, enseigner : la transmission n’est pas seulement un texte que l’on reçoit, c’est une personne qui récite devant vous, qui vous écoute et qui vous reprend.",
+            "Le Coran demande aussi une récitation posée : « … Et récite le Coran, lentement et clairement » (Coran 73:4, extrait, traduction de Muhammad Hamidullah). Cette manière de réciter ne s’apprend pas en lisant des règles ; elle s’entend, s’imite et se corrige.",
+            "Et quand on ne sait pas, le Coran indique la voie : « … Demandez donc aux gens du rappel si vous ne savez pas » (Coran 16:43, extrait, traduction de Muhammad Hamidullah)."
+          ]
+        },
+        {
+          "id": "ce-qu-on-n-entend-pas",
+          "title": "Ce qu’un élève seul ne peut pas entendre",
+          "paragraphs": [
+            "La première difficulté n’est pas de lire, mais de bien prononcer. L’arabe distingue des sons que le français confond. Le qâf et le kâf ne se prononcent pas au même endroit de la bouche : qalb, avec un qâf, veut dire « cœur » ; kalb, avec un kâf, veut dire « chien ». Le même écart sépare le ḥâ’ du hâ’, le ‘ayn de la hamza, le ṣâd du sîn. Une seule lettre mal placée peut changer le sens d’un mot.",
+            "Le grand maître de la récitation Ibn al-Jazarî, mort en 1429, distingue deux sortes de fautes. La faute apparente (al-laḥn al-jaliyy) touche les mots, et elle peut en changer le sens : lire « an‘amtu » ou « an‘amti » au lieu de « an‘amta » dans Al-Fâtiha fait dire « j’ai comblé » au lieu de « Tu as comblé ». La faute cachée (al-laḥn al-khafiyy) ne change pas le sens, mais elle altère la récitation : des r trop roulés, des n nasillés, des l épaissis. Et il précise que cette faute cachée, seul la reconnaît le récitant accompli et rigoureux, qui a reçu la récitation de la bouche des maîtres (at-Tamhîd fî ‘ilm at-tajwîd, p. 21-22 ; traduction du sens).",
+            "Il y a enfin l’habitude. Une erreur répétée cent fois ne s’entend plus : elle devient la manière de lire. Plus elle est ancienne, plus il faut de temps pour la corriger. C’est vrai de toute langue ; ce l’est davantage d’un texte que l’on récite chaque jour dans la prière."
+          ]
+        },
+        {
+          "id": "outils",
+          "title": "Applications, vidéos, lettres latines : de bons outils, pas des maîtres",
+          "paragraphs": [
+            "Écouter des récitateurs reconnus, réviser avec une application, suivre une explication en vidéo : tout cela aide, et beaucoup y ont trouvé leur premier élan. Mais un outil ne connaît pas vos erreurs. Il ne vous demande pas de recommencer, il ne vous dit pas que vous confondez deux lettres, et il ne s’adapte pas à votre voix.",
+            "La lecture en lettres latines pose un problème particulier : plusieurs lettres arabes n’ont pas d’équivalent en français, et la transcription les écrit de façon approchée. Lire le Coran en lettres latines installe souvent ces approximations. Mieux vaut apprendre les lettres arabes, même lentement."
+          ]
+        },
+        {
+          "id": "nuance",
+          "title": "Lire seul n’est pas interdit ; apprendre sans être entendu est risqué",
+          "paragraphs": [
+            "Il ne s’agit pas de décourager celui qui lit seul. Le Prophète (paix et bénédictions sur lui) a promis une double récompense à celui qui récite avec peine : « Celui qui récite le Coran avec habileté sera avec les nobles et vertueux anges scribes ; et celui qui le récite en butant, et pour qui c’est difficile, aura deux récompenses » (rapporté par Muslim, n° 798 a ; en des termes proches par al-Bukhârî, n° 4937 ; traduction du sens). La lecture personnelle, la révision, l’écoute : tout cela est bon.",
+            "Ce qui est risqué, c’est d’apprendre sans jamais être entendu par quelqu’un qui sait. La réponse n’est pas de tout arrêter, mais de faire entendre sa récitation, régulièrement, à un enseignant."
+          ]
+        },
+        {
+          "id": "se-faire-corriger",
+          "title": "Comment se faire corriger, même de loin",
+          "paragraphs": [
+            "Cherchez d’abord un enseignant près de chez vous : une mosquée, une association, une école coranique. Si ce n’est pas possible, un enseignement à distance peut jouer ce rôle, à condition qu’il vous fasse réciter et qu’il vous corrige.",
+            "Récitez à heure fixe, devant la même personne, et commencez par ce que vous croyez déjà savoir : c’est là que se cachent les habitudes. Notez les corrections, revenez-y, et demandez à être réentendu. C’est lent, et c’est ainsi que l’on progresse.",
+            "Chez Rewayah Academy, chaque élève récite devant le même enseignant, trois fois par semaine. Si notre manière ne vous convient pas, d’autres existent, tenues par d’autres personnes."
+          ],
+          "links": [
+            {
+              "label": "Apprendre le Coran en groupe : pourquoi une classe ambitieuse vous porte plus loin",
+              "href": "/fr/articles/apprendre-le-coran-en-groupe"
+            },
+            {
+              "label": "Autres chemins pour apprendre le Coran",
+              "href": "/fr/autres-chemins"
+            }
+          ]
+        },
+        {
+          "id": "sources",
+          "title": "Sources",
+          "paragraphs": [
+            "Les versets sont cités dans la traduction de Muhammad Hamidullah, telle que la publie quran.com. Les hadiths sont cités avec leur recueil et leur numéro (numérotation de sunnah.com) ; leur texte est la traduction publiée par HadeethEnc quand elle existe, sinon une traduction du sens, signalée comme telle."
+          ],
+          "links": [
+            {
+              "label": "Ṣaḥîḥ al-Bukhârî, n° 4999 (sunnah.com)",
+              "href": "https://sunnah.com/bukhari:4999"
+            },
+            {
+              "label": "Ṣaḥîḥ Muslim, n° 798 a (sunnah.com)",
+              "href": "https://sunnah.com/muslim:798a"
+            },
+            {
+              "label": "Ṣaḥîḥ al-Bukhârî, n° 4937 (sunnah.com)",
+              "href": "https://sunnah.com/bukhari:4937"
+            },
+            {
+              "label": "Ṣaḥîḥ al-Bukhârî, n° 6 (sunnah.com)",
+              "href": "https://sunnah.com/bukhari:6"
+            },
+            {
+              "label": "Ṣaḥîḥ al-Bukhârî, n° 5000 (sunnah.com)",
+              "href": "https://sunnah.com/bukhari:5000"
+            },
+            {
+              "label": "Coran 16:43, traduction de Muhammad Hamidullah (quran.com)",
+              "href": "https://quran.com/16/43"
+            },
+            {
+              "label": "Coran 62:2, traduction de Muhammad Hamidullah (quran.com)",
+              "href": "https://quran.com/62/2"
+            },
+            {
+              "label": "Coran 73:4, traduction de Muhammad Hamidullah (quran.com)",
+              "href": "https://quran.com/73/4"
+            },
+            {
+              "label": "Coran 75:16-18, traduction de Muhammad Hamidullah (quran.com)",
+              "href": "https://quran.com/75/16-18"
+            },
+            {
+              "label": "Ibn al-Jazarî, at-Tamhîd fî ‘ilm at-tajwîd, p. 21 (Shamela)",
+              "href": "https://shamela.ws/book/8194/21"
+            },
+            {
+              "label": "Ibn al-Jazarî, at-Tamhîd fî ‘ilm at-tajwîd, p. 22 (Shamela)",
+              "href": "https://shamela.ws/book/8194/22"
+            },
+            {
+              "label": "E. W. Lane, An Arabic-English Lexicon : qalb (cœur)",
+              "href": "https://arabiclexicon.hawramani.com/%D9%82%D9%84%D8%A8/"
+            },
+            {
+              "label": "E. W. Lane, An Arabic-English Lexicon : kalb (chien)",
+              "href": "https://arabiclexicon.hawramani.com/%D9%83%D9%84%D8%A8/"
+            }
+          ]
+        }
+      ],
+      "date": "2026-11-03",
+      "auteur": {
+        "nom": "Abdoulaye Mouhidine Sow",
+        "role": "directeur et fondateur de Rewayah Academy",
+        "href": "/fr/academie#mot"
+      },
+      "cta": {
+        "label": "Découvrir les cours",
+        "href": "/fr/cours"
+      },
+      "indexable": true,
+      "status": "ready"
+    },
+    "/fr/articles/apprendre-le-coran-en-groupe": {
+      "title": "Apprendre le Coran en groupe : pourquoi on va plus loin | Rewayah Academy",
+      "description": "Tout est disponible, mais peu de gens avancent. Pourquoi un groupe encadré et ambitieux aide à commencer et à continuer, à la lumière de la tradition.",
+      "h1": "Apprendre le Coran en groupe : pourquoi une classe ambitieuse vous porte plus loin",
+      "intro": "Jamais le Coran n’a été aussi accessible : en ligne, sur le téléphone, en audio, avec ses explications et toutes les sciences qui l’entourent. Pourtant, beaucoup commencent et peu continuent. Le problème n’est plus de trouver quoi lire. Il est de commencer, et de continuer. C’est là qu’un groupe encadré change tout.",
+      "sections": [
+        {
+          "id": "abondance",
+          "title": "Tout est disponible, et pourtant on n’avance pas",
+          "paragraphs": [
+            "Le Coran se lit aujourd’hui en quelques secondes sur un écran, avec de nombreuses récitations et traductions. Les cours, les conférences et les explications abondent. Cette abondance est une grâce ; elle n’a pas rendu les gens plus instruits pour autant. Avoir accès à un savoir ne veut pas dire l’acquérir.",
+            "Ce qui manque le plus souvent n’est pas le contenu, mais la constance. Le Prophète (paix et bénédictions sur lui) a dit : « Les œuvres les plus aimées d’Allah sont celles que l’on accomplit avec constance, même si elles sont peu nombreuses » (rapporté par al-Bukhârî, n° 6464, et Muslim, n° 783 b ; traduction du sens). Cette parole dit bien ce qui compte quand on apprend : non pas l’élan d’un soir, mais ce que l’on fait encore six mois plus tard."
+          ]
+        },
+        {
+          "id": "seul-ensemble",
+          "title": "Seul, on part vite ; ensemble, on va loin",
+          "paragraphs": [
+            "Un proverbe souvent cité le dit simplement : seul, on va plus vite ; ensemble, on va plus loin. Celui qui apprend seul avance à son rythme, mais il porte tout : l’envie, la régularité, la correction. Le jour où l’élan retombe, rien ne le retient.",
+            "Dans un groupe, chacun porte un peu les autres. On vient parce qu’on est attendu. On prépare parce que les autres auront préparé. On entend un camarade réciter une sourate que l’on croyait trop longue, et l’on se dit que c’est possible."
+          ]
+        },
+        {
+          "id": "tradition",
+          "title": "Ce que la tradition dit des cercles de Coran",
+          "paragraphs": [
+            "Se réunir autour du Coran est une pratique que la tradition honore particulièrement. Le Prophète (paix et bénédictions sur lui) a dit : « Il n’est pas de groupe de gens qui se réunissent dans l’une des demeures d’Allah afin d’y réciter le Livre d’Allah et de l’étudier ensemble sans que la sérénité ne descende sur eux, la miséricorde ne les couvre, les Anges ne les entourent et Allah ne les mentionne auprès de ceux qui sont auprès de Lui » (rapporté par Muslim, n° 2699 a ; traduction publiée par HadeethEnc).",
+            "Le Coran invite aussi à choisir ses compagnons : « Fais preuve de patience [en restant] avec ceux qui invoquent leur Seigneur matin et soir, désirant Sa Face … » (Coran 18:28, extrait, traduction de Muhammad Hamidullah). Le Prophète (paix et bénédictions sur lui) a comparé le bon compagnon au vendeur de musc et le mauvais au forgeron (rapporté par al-Bukhârî, n° 2101 ; voir aussi al-Bukhârî, n° 5534, et Muslim, n° 2628). Et il a averti : « L’homme suit la religion de son ami intime ; que chacun de vous regarde donc qui il prend pour ami » (rapporté par Abû Dâwûd, n° 4833, et at-Tirmidhî, n° 2378 ; hadith jugé hasan ; traduction du sens).",
+            "Le groupe n’est donc pas seulement un moyen commode d’apprendre. Il fait partie de la manière dont la tradition conçoit le savoir : on apprend avec d’autres, et l’on s’entraide, comme le Coran y invite : « … Entraidez-vous dans la bonté et la piété et ne vous entraidez pas dans le péché et la transgression … » (Coran 5:2, extrait, traduction de Muhammad Hamidullah)."
+          ]
+        },
+        {
+          "id": "ambitieux",
+          "title": "Un groupe ambitieux, pas seulement un groupe",
+          "paragraphs": [
+            "Tous les groupes ne portent pas. Un groupe qui se retrouve sans objectif, sans horaire et sans enseignant finit souvent par se disperser. Ce qui fait la force d’une classe, c’est un but commun, un rendez-vous fixe, et quelqu’un qui guide et qui corrige.",
+            "L’émulation y a toute sa place. Le Coran le dit sans détour : « … Rivalisez donc dans les bonnes œuvres … » (Coran 2:148, extrait, traduction de Muhammad Hamidullah). Et, à propos des délices promis aux croyants : « … Que ceux qui la convoitent entrent en compétition [pour l’acquérir] » (Coran 83:26, extrait, traduction de Muhammad Hamidullah). Rivaliser dans le bien, ce n’est pas se comparer pour se rabaisser ; c’est se tirer les uns les autres vers le haut.",
+            "La taille compte aussi. Trop grand, le groupe laisse chacun disparaître ; trop petit, il dépend d’une seule absence. Une petite classe permet à chaque élève de réciter, d’être entendu et d’être corrigé à chaque séance."
+          ]
+        },
+        {
+          "id": "chez-rewayah",
+          "title": "Comment fonctionnent les classes de Rewayah Academy",
+          "paragraphs": [
+            "C’est sur ce principe que Rewayah Academy a construit ses classes. Chaque élève rejoint une classe stable, avec le même enseignant et le même horaire chaque semaine. La classe avance ensemble, étape par étape, et chaque étape a une durée prévue et une date limite : le programme avance, il ne s’étire pas sans fin.",
+            "Pour les enfants et les adolescents, de 6 à 17 ans : trois séances d’une heure par semaine, dont cinq minutes de pause, dans une classe de 3 à 5 élèves. Pour les adultes : trois séances d’une heure trente par semaine, dont dix minutes de pause, dans une classe de 3 à 6 élèves. Une classe ouvre dès trois inscrits.",
+            "Le débutant commence par les bases : les lettres, la lecture avec les voyelles, la lecture dans le Coran, puis les sourates courtes, d’Al-Fatiha à Az-Zalzalah. Pour un enfant, le parent peut entrer dans la séance en observateur silencieux, deux minutes par séance, et reçoit chaque fin de semaine le compte rendu de l’enseignant.",
+            "Si cette manière ne vous convient pas, d’autres existent, tenues par d’autres personnes."
+          ],
+          "links": [
+            {
+              "label": "Les cours de Rewayah",
+              "href": "/fr/cours"
+            },
+            {
+              "label": "Les tarifs",
+              "href": "/fr/tarifs"
+            },
+            {
+              "label": "Autres chemins pour apprendre le Coran",
+              "href": "/fr/autres-chemins"
+            },
+            {
+              "label": "Apprendre le Coran seul, sans enseignant : les risques",
+              "href": "/fr/articles/apprendre-le-coran-seul-sans-enseignant"
+            }
+          ]
+        },
+        {
+          "id": "sources",
+          "title": "Sources",
+          "paragraphs": [
+            "Les versets sont cités dans la traduction de Muhammad Hamidullah, telle que la publie quran.com. Les hadiths sont cités avec leur recueil et leur numéro (numérotation de sunnah.com) ; leur texte est la traduction publiée par HadeethEnc quand elle existe, sinon une traduction du sens, signalée comme telle."
+          ],
+          "links": [
+            {
+              "label": "Ṣaḥîḥ al-Bukhârî, n° 6464 (sunnah.com)",
+              "href": "https://sunnah.com/bukhari:6464"
+            },
+            {
+              "label": "Ṣaḥîḥ Muslim, n° 783 b (sunnah.com)",
+              "href": "https://sunnah.com/muslim:783b"
+            },
+            {
+              "label": "Ṣaḥîḥ Muslim, n° 2699 a (sunnah.com)",
+              "href": "https://sunnah.com/muslim:2699a"
+            },
+            {
+              "label": "Traduction française publiée par HadeethEnc (Muslim, n° 2699 a)",
+              "href": "https://hadeethenc.com/fr/browse/hadith/4801"
+            },
+            {
+              "label": "Sunan Abî Dâwûd, n° 4833 (sunnah.com)",
+              "href": "https://sunnah.com/abudawud:4833"
+            },
+            {
+              "label": "Jâmi‘ at-Tirmidhî, n° 2378 (sunnah.com)",
+              "href": "https://sunnah.com/tirmidhi:2378"
+            },
+            {
+              "label": "Coran 18:28, traduction de Muhammad Hamidullah (quran.com)",
+              "href": "https://quran.com/18/28"
+            },
+            {
+              "label": "Coran 2:148, traduction de Muhammad Hamidullah (quran.com)",
+              "href": "https://quran.com/2/148"
+            },
+            {
+              "label": "Coran 5:2, traduction de Muhammad Hamidullah (quran.com)",
+              "href": "https://quran.com/5/2"
+            },
+            {
+              "label": "Coran 83:26, traduction de Muhammad Hamidullah (quran.com)",
+              "href": "https://quran.com/83/26"
+            }
+          ]
+        }
+      ],
+      "date": "2026-11-03",
+      "auteur": {
+        "nom": "Abdoulaye Mouhidine Sow",
+        "role": "directeur et fondateur de Rewayah Academy",
+        "href": "/fr/academie#mot"
+      },
       "cta": {
         "label": "Découvrir les cours",
         "href": "/fr/cours"
@@ -852,8 +1177,8 @@
           ],
           "links": [
             {
-              "label": "Cours de Coran en ligne : comment choisir sans se tromper",
-              "href": "/fr/articles/choisir-un-cours-de-coran-en-ligne"
+              "label": "Apprendre le Coran à son enfant : pourquoi c’est essentiel, et comment s’y prendre",
+              "href": "/fr/articles/apprendre-le-coran-a-son-enfant"
             }
           ]
         },
