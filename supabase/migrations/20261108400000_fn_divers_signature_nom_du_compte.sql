@@ -1,5 +1,6 @@
 -- FN-DIVERS, partie serveur (rang 21 de PLAN-LOTS, garde-cap, 03/11/2026) :
--- FN-102, « signature au nom d'un autre ».
+-- FN-102, « signature au nom d'un autre » ; FN-101, « PDF accepte comme piece »
+-- (partie 2, en fin de fichier).
 --
 -- Constat (UX-CONSTATS, FN-102, 31/10/2026) : la signature du contrat
 -- enseignant (`teacher_nda`) accepte un nom sans rapport avec le compte
@@ -27,7 +28,8 @@
 -- Les signatures deja posees ne changent pas (la table est en ajout seul).
 --
 -- FICHIER SANS EFFACEMENT (regle B5) : deux fonctions remplacees a signature
--- et droits egaux ; aucune table, ligne, contrainte ni declencheur retire.
+-- et droits egaux, un UPDATE du reglage du seau kyc ; aucune table, ligne,
+-- contrainte ni declencheur retire.
 
 BEGIN;
 
@@ -176,6 +178,43 @@ begin
 end;
 $function$;
 
+-- FN-101 (decision du garde-cap du 03/11, choix (i)) ---------------------------
+-- La regle des formats ecrite (TYPES_PIECE_IDENTITE, _shared/r2/signature.ts,
+-- plafond de 8 Mio) n'etait appliquee que sur le chemin Edge
+-- piece-identite-depot, qu'aucun ecran n'appelle. L'application depose dans le
+-- seau Supabase `kyc` (service_dossier.dart), cree sans liste ni plafond
+-- (0004). La meme liste et le meme plafond y sont poses, plus image/webp : le
+-- selecteur de l'application propose aujourd'hui le WebP
+-- (selecteur_fichier.dart), et le refuser ici casserait le seul chemin utilise.
+-- L'ecart avec TYPES_PIECE_IDENTITE (webp), la verification du contenu reel et
+-- le passage de l'application par le chemin Edge reviennent a N4. Le PDF reste
+-- permis, comme la regle l'ecrit.
+-- Sur un Postgres nu (CI), storage.buckets manque ou n'est qu'un bouchon sans
+-- ces colonnes (stub_auth.sql) : rien a faire.
+CREATE FUNCTION pg_temp.seau_reglable() RETURNS boolean
+LANGUAGE sql STABLE AS $f$
+  SELECT pg_catalog.count(*) = 2
+    FROM pg_catalog.pg_attribute a
+   WHERE a.attrelid = pg_catalog.to_regclass('storage.buckets')
+     AND a.attname IN ('allowed_mime_types', 'file_size_limit')
+     AND NOT a.attisdropped
+$f$;
+
+DO $seau_kyc$
+BEGIN
+  IF NOT pg_temp.seau_reglable() THEN
+    RAISE NOTICE 'FN-101 : storage.buckets absent ou sans reglage (Postgres nu), seau kyc non regle';
+    RETURN;
+  END IF;
+  EXECUTE $u$
+    UPDATE storage.buckets
+       SET allowed_mime_types = ARRAY['image/jpeg', 'image/png', 'image/heic', 'image/webp', 'application/pdf'],
+           file_size_limit = 8388608
+     WHERE id = 'kyc'
+  $u$;
+END;
+$seau_kyc$;
+
 -- Postflight ----------------------------------------------------------------
 -- Aucun nombre ecrit en dur : on lit les fonctions installees et leurs droits.
 DO $postflight$
@@ -197,6 +236,19 @@ BEGIN
      OR pg_catalog.has_function_privilege('authenticated', v_declencheur, 'EXECUTE')
      OR pg_catalog.has_function_privilege('anon', v_declencheur, 'EXECUTE') THEN
     RAISE EXCEPTION 'FN-102 : droits d''execution modifies';
+  END IF;
+  -- FN-101 : le seau kyc, s'il existe, porte la liste et le plafond.
+  IF pg_temp.seau_reglable() THEN
+    EXECUTE $q$
+      SELECT 1 FROM storage.buckets b
+       WHERE b.id = 'kyc'
+         AND (b.file_size_limit IS DISTINCT FROM 8388608
+              OR NOT (b.allowed_mime_types @> ARRAY['image/jpeg', 'image/png', 'image/heic', 'image/webp', 'application/pdf']
+                      AND b.allowed_mime_types <@ ARRAY['image/jpeg', 'image/png', 'image/heic', 'image/webp', 'application/pdf']))
+    $q$;
+    IF FOUND THEN
+      RAISE EXCEPTION 'FN-101 : le seau kyc ne porte pas la liste des formats et le plafond';
+    END IF;
   END IF;
 END;
 $postflight$;
