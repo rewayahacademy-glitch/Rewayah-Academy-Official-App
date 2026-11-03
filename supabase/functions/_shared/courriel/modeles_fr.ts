@@ -138,6 +138,23 @@ export const MODELES: Record<string, Fabrique> = {
     d.portee === 'direction' ? 'Un professeur titulaire n’est pas entré dans sa salle. Un remplaçant est recherché.' : 'L’académie cherche un remplaçant : restez dans la salle.',
     'Ouvrir l’application', '/tuteur'),
   // A3-bis (02/11/2026) : ni le titulaire ni un remplaçant n’est dans la salle ; pour la direction.
+  // SNT (03/11/2026) : seance non tenue a T+30, reportee.
+  seance_reportee: (d) => {
+    const quand = quandSeance(d)
+    return avis(d, 'Une séance est reportée', 'Une séance est reportée',
+      (quand ? `La séance du ${quand} n’a pas eu lieu : elle est reportée.` : 'Une séance de la classe n’a pas eu lieu : elle est reportée.')
+        + ' La nouvelle date vous sera donnée dans l’application.',
+      'Voir le planning', '/tuteur')
+  },
+  seance_reportee_direction: (d) => {
+    const quand = quandSeance(d)
+    const classe = typeof d.classe === 'string' ? ` de la classe ${d.classe}` : ''
+    const ens = typeof d.enseignant === 'string' ? ` Enseignant de la classe : ${d.enseignant}.` : ''
+    const delai = typeof d.minutes === 'string' ? ` en ${d.minutes} minutes` : ''
+    return avis(d, 'Séance reportée : nouvelle date à fixer', 'Séance reportée : nouvelle date à fixer',
+      `Aucun enseignant n’a rejoint la salle${classe}${quand ? `, séance du ${quand}` : ''}${delai} : la séance est reportée.${ens} Fixez la nouvelle date dans le planning.`,
+      'Voir le planning', '/admin/operations/planning')
+  },
   remplacement_personne_en_salle: (d) => {
     const quand = quandSeance(d)
     const classe = typeof d.classe === 'string' ? ` de la classe ${d.classe}` : ''

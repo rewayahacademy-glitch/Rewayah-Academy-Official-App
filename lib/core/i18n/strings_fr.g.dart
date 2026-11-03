@@ -3088,6 +3088,8 @@ class Traductions$alertes$fr {
 
 	/// fr: 'Alertes, {nombre} urgentes'
 	String clocheUrgentes({required Object nombre}) => 'Alertes, ${nombre} urgentes';
+
+	late final Traductions$alertes$traitement$fr traitement = Traductions$alertes$traitement$fr.internal(_root);
 }
 
 // Path: argent
@@ -18327,6 +18329,140 @@ class Traductions$alertes$gravite$fr {
 	String get info => 'Pour information';
 }
 
+// Path: alertes.traitement
+class Traductions$alertes$traitement$fr {
+	Traductions$alertes$traitement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Traiter le signalement'
+	String get titre => 'Traiter le signalement';
+
+	/// fr: 'Catégorie'
+	String get categorie => 'Catégorie';
+
+	/// fr: 'Élève'
+	String get eleve => 'Élève';
+
+	/// fr: 'Reçu'
+	String get recu => 'Reçu';
+
+	/// fr: 'Où il en est'
+	String get statut => 'Où il en est';
+
+	late final Traductions$alertes$traitement$statutValeur$fr statutValeur = Traductions$alertes$traitement$statutValeur$fr.internal(_root);
+
+	/// fr: 'Note de l'enseignant'
+	String get note => 'Note de l\'enseignant';
+
+	/// fr: 'Lue par la direction seulement.'
+	String get noteAide => 'Lue par la direction seulement.';
+
+	/// fr: 'Ni la famille ni l'enseignant ne lisent ce signalement. Il ne se transmet pas.'
+	String get securitePhrase => 'Ni la famille ni l\'enseignant ne lisent ce signalement. Il ne se transmet pas.';
+
+	/// fr: 'Message pour la famille'
+	String get message => 'Message pour la famille';
+
+	/// fr: 'Écrit pour {cible}. La note de l'enseignant ne part jamais.'
+	String messageAide({required Object cible}) => 'Écrit pour ${cible}. La note de l\'enseignant ne part jamais.';
+
+	/// fr: 'Écrivez le message pour la famille avant de le transmettre.'
+	String get messageManque => 'Écrivez le message pour la famille avant de le transmettre.';
+
+	/// fr: 'le tuteur de l'élève'
+	String get cibleTuteur => 'le tuteur de l\'élève';
+
+	/// fr: 'l'élève'
+	String get cibleAdulte => 'l\'élève';
+
+	/// fr: 'Aucun écran de la famille n'affiche encore ce message.'
+	String get pasEncoreAffiche => 'Aucun écran de la famille n\'affiche encore ce message.';
+
+	/// fr: 'Motif de la clôture'
+	String get motif => 'Motif de la clôture';
+
+	/// fr: 'Obligatoire pour ce signalement. Lu par la direction seulement.'
+	String get motifRequisAide => 'Obligatoire pour ce signalement. Lu par la direction seulement.';
+
+	/// fr: 'Facultatif. Lu par la direction seulement.'
+	String get motifFacultatifAide => 'Facultatif. Lu par la direction seulement.';
+
+	/// fr: 'Écrivez le motif de la clôture.'
+	String get motifManque => 'Écrivez le motif de la clôture.';
+
+	/// fr: 'Examiner'
+	String get examiner => 'Examiner';
+
+	/// fr: 'Transmettre'
+	String get transmettre => 'Transmettre';
+
+	/// fr: 'Clore'
+	String get clore => 'Clore';
+
+	/// fr: 'Transmettre ce message au tuteur de l'élève ?'
+	String get transmettreQuestionTuteur => 'Transmettre ce message au tuteur de l\'élève ?';
+
+	/// fr: 'Transmettre ce message à l'élève ?'
+	String get transmettreQuestionAdulte => 'Transmettre ce message à l\'élève ?';
+
+	/// fr: 'Une transmission ne se reprend pas. Aucun écran de la famille ne l'affiche encore.'
+	String get transmettreConsequence => 'Une transmission ne se reprend pas. Aucun écran de la famille ne l\'affiche encore.';
+
+	/// fr: 'Oui, transmettre'
+	String get transmettreOui => 'Oui, transmettre';
+
+	/// fr: 'Clore ce signalement ?'
+	String get cloreQuestion => 'Clore ce signalement ?';
+
+	/// fr: 'Il sort des alertes. Un signalement clos ne se rouvre pas.'
+	String get cloreConsequence => 'Il sort des alertes. Un signalement clos ne se rouvre pas.';
+
+	/// fr: 'Oui, clore'
+	String get cloreOui => 'Oui, clore';
+
+	/// fr: 'Signalement en examen'
+	String get faitExamenTitre => 'Signalement en examen';
+
+	/// fr: 'Il reste dans les alertes jusqu'à sa clôture.'
+	String get faitExamenPhrase => 'Il reste dans les alertes jusqu\'à sa clôture.';
+
+	/// fr: 'Message enregistré'
+	String get faitTransmisTitre => 'Message enregistré';
+
+	/// fr: 'Enregistré pour {cible}. Aucun écran de la famille ne l'affiche encore.'
+	String faitTransmisPhrase({required Object cible}) => 'Enregistré pour ${cible}. Aucun écran de la famille ne l\'affiche encore.';
+
+	/// fr: 'Signalement clos'
+	String get faitClosTitre => 'Signalement clos';
+
+	/// fr: 'Il a quitté les alertes.'
+	String get faitClosPhrase => 'Il a quitté les alertes.';
+
+	/// fr: 'Ce signalement a changé'
+	String get refuseTitre => 'Ce signalement a changé';
+
+	/// fr: 'Les alertes ont été relues.'
+	String get refusePhrase => 'Les alertes ont été relues.';
+
+	/// fr: 'L'action n'a pas abouti'
+	String get erreurTitre => 'L\'action n\'a pas abouti';
+
+	/// fr: 'Réessayez dans un instant.'
+	String get erreurPhrase => 'Réessayez dans un instant.';
+
+	/// fr: 'Traitement indisponible'
+	String get indisponibleTitre => 'Traitement indisponible';
+
+	/// fr: 'Le traitement des signalements n'est pas encore ouvert.'
+	String get indisponiblePhrase => 'Le traitement des signalements n\'est pas encore ouvert.';
+
+	/// fr: 'Les actions reviennent avec la connexion.'
+	String get horsLigne => 'Les actions reviennent avec la connexion.';
+}
+
 // Path: argent.transparence
 class Traductions$argent$transparence$fr {
 	Traductions$argent$transparence$fr.internal(this._root);
@@ -31689,6 +31825,24 @@ class Traductions$suiviDemandes$close$motif$fr {
 
 	/// fr: 'Cette demande est close.'
 	String get inconnu => 'Cette demande est close.';
+}
+
+// Path: alertes.traitement.statutValeur
+class Traductions$alertes$traitement$statutValeur$fr {
+	Traductions$alertes$traitement$statutValeur$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À examiner'
+	String get aExaminer => 'À examiner';
+
+	/// fr: 'En examen'
+	String get enExamen => 'En examen';
+
+	/// fr: 'Message transmis'
+	String get transmis => 'Message transmis';
 }
 
 // Path: argent.transparence.postes
@@ -50932,6 +51086,50 @@ extension on Traductions {
 			'alertes.cloche' => 'Alertes',
 			'alertes.clocheUneUrgente' => 'Alertes, une urgente',
 			'alertes.clocheUrgentes' => ({required Object nombre}) => 'Alertes, ${nombre} urgentes',
+			'alertes.traitement.titre' => 'Traiter le signalement',
+			'alertes.traitement.categorie' => 'Catégorie',
+			'alertes.traitement.eleve' => 'Élève',
+			'alertes.traitement.recu' => 'Reçu',
+			'alertes.traitement.statut' => 'Où il en est',
+			'alertes.traitement.statutValeur.aExaminer' => 'À examiner',
+			'alertes.traitement.statutValeur.enExamen' => 'En examen',
+			'alertes.traitement.statutValeur.transmis' => 'Message transmis',
+			'alertes.traitement.note' => 'Note de l\'enseignant',
+			'alertes.traitement.noteAide' => 'Lue par la direction seulement.',
+			'alertes.traitement.securitePhrase' => 'Ni la famille ni l\'enseignant ne lisent ce signalement. Il ne se transmet pas.',
+			'alertes.traitement.message' => 'Message pour la famille',
+			'alertes.traitement.messageAide' => ({required Object cible}) => 'Écrit pour ${cible}. La note de l\'enseignant ne part jamais.',
+			'alertes.traitement.messageManque' => 'Écrivez le message pour la famille avant de le transmettre.',
+			'alertes.traitement.cibleTuteur' => 'le tuteur de l\'élève',
+			'alertes.traitement.cibleAdulte' => 'l\'élève',
+			'alertes.traitement.pasEncoreAffiche' => 'Aucun écran de la famille n\'affiche encore ce message.',
+			'alertes.traitement.motif' => 'Motif de la clôture',
+			'alertes.traitement.motifRequisAide' => 'Obligatoire pour ce signalement. Lu par la direction seulement.',
+			'alertes.traitement.motifFacultatifAide' => 'Facultatif. Lu par la direction seulement.',
+			'alertes.traitement.motifManque' => 'Écrivez le motif de la clôture.',
+			'alertes.traitement.examiner' => 'Examiner',
+			'alertes.traitement.transmettre' => 'Transmettre',
+			'alertes.traitement.clore' => 'Clore',
+			'alertes.traitement.transmettreQuestionTuteur' => 'Transmettre ce message au tuteur de l\'élève ?',
+			'alertes.traitement.transmettreQuestionAdulte' => 'Transmettre ce message à l\'élève ?',
+			'alertes.traitement.transmettreConsequence' => 'Une transmission ne se reprend pas. Aucun écran de la famille ne l\'affiche encore.',
+			'alertes.traitement.transmettreOui' => 'Oui, transmettre',
+			'alertes.traitement.cloreQuestion' => 'Clore ce signalement ?',
+			'alertes.traitement.cloreConsequence' => 'Il sort des alertes. Un signalement clos ne se rouvre pas.',
+			'alertes.traitement.cloreOui' => 'Oui, clore',
+			'alertes.traitement.faitExamenTitre' => 'Signalement en examen',
+			'alertes.traitement.faitExamenPhrase' => 'Il reste dans les alertes jusqu\'à sa clôture.',
+			'alertes.traitement.faitTransmisTitre' => 'Message enregistré',
+			'alertes.traitement.faitTransmisPhrase' => ({required Object cible}) => 'Enregistré pour ${cible}. Aucun écran de la famille ne l\'affiche encore.',
+			'alertes.traitement.faitClosTitre' => 'Signalement clos',
+			'alertes.traitement.faitClosPhrase' => 'Il a quitté les alertes.',
+			'alertes.traitement.refuseTitre' => 'Ce signalement a changé',
+			'alertes.traitement.refusePhrase' => 'Les alertes ont été relues.',
+			'alertes.traitement.erreurTitre' => 'L\'action n\'a pas abouti',
+			'alertes.traitement.erreurPhrase' => 'Réessayez dans un instant.',
+			'alertes.traitement.indisponibleTitre' => 'Traitement indisponible',
+			'alertes.traitement.indisponiblePhrase' => 'Le traitement des signalements n\'est pas encore ouvert.',
+			'alertes.traitement.horsLigne' => 'Les actions reviennent avec la connexion.',
 			'argent.transparence.titre' => 'Nos prix, en toute transparence',
 			'argent.transparence.lien' => 'Nos prix, en toute transparence',
 			'argent.transparence.intro' => 'Voici ce que devient chaque paiement d\'un élève, poste par poste, en pourcentages.',
@@ -51081,6 +51279,8 @@ extension on Traductions {
 			'com.socle.composants.espace.ouvrirPanneau' => 'Ouvrir le panneau de contexte',
 			'com.socle.composants.espace.fermerPanneau' => 'Fermer le panneau de contexte',
 			'com.socle.composants.espace.panneauContexte' => 'Contexte',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.composants.espace.retourListe' => 'Retour à la liste',
 			'com.socle.lexique.messages' => 'Messages',
 			'com.socle.lexique.messagesMetier' => 'Messages',
@@ -51125,8 +51325,6 @@ extension on Traductions {
 			'com.socle.navigation.ouvrirStudio' => 'Ouvrir Le Studio',
 			'com.socle.navigation.quitterStudio' => 'Quitter Le Studio',
 			'com.socle.navigation.messages' => _root.com.socle.lexique.messages,
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.navigation.communaute' => _root.com.socle.lexique.communaute,
 			'com.socle.navigation.communications' => 'Communications',
 			'com.socle.navigation.communicationsDetail' => 'Annonces, modération et messages des Classes',
@@ -51595,6 +51793,8 @@ extension on Traductions {
 			'com.studio.recherche.aucunDansFiltre' => 'Rien de ce type ne correspond. Choisissez Tout pour voir les autres résultats.',
 			'com.studio.recherche.resultatUn' => '1 résultat',
 			'com.studio.recherche.resultats' => ({required Object nombre}) => '${nombre} résultats',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.recherche.filtre' => 'Type de résultat',
 			'com.studio.recherche.tout' => 'Tout',
 			'com.studio.recherche.canaux' => 'Canaux',
@@ -51639,8 +51839,6 @@ extension on Traductions {
 			'com.studio.demo.f.canalRemplacements' => 'Remplacements',
 			'com.studio.demo.f.canalRemplacementsDetail' => 'Absences et remplacements de la semaine',
 			'com.studio.demo.f.canalCloture' => 'Clôture du mois',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.f.canalClotureDetail' => 'Préparation de la clôture mensuelle',
 			'com.studio.demo.f.canalDirection' => 'Direction stratégique',
 			'com.studio.demo.f.canalDirectionDetail' => 'Orientations de la direction',
@@ -52109,6 +52307,8 @@ extension on Traductions {
 			'comptable.paiements.confirmation.change' => 'Coût du change',
 			'comptable.paiements.confirmation.montantEnvoye' => 'Total envoyé',
 			'comptable.paiements.confirmation.montantRecu' => 'Montant reçu attendu',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.confirmation.controlesTitre' => 'Contrôles passés',
 			'comptable.paiements.confirmation.controlesPhrase' => 'Montant calculé, méthode vérifiée, délégation et doublons contrôlés par la source. Seuls les paiements prêts partiront.',
 			'comptable.paiements.confirmation.sensiblePhrase' => 'Ce paiement est sensible : une autre personne habilitée doit le valider. Demandez la validation, il ne part pas avant.',
@@ -52153,8 +52353,6 @@ extension on Traductions {
 			'comptable.paiements.filtres.contractuels' => 'Contractuels',
 			'comptable.paiements.filtres.statut' => 'Statut',
 			'comptable.paiements.filtres.tousStatuts' => 'Tous les statuts',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.filtres.prets' => 'Prêts',
 			'comptable.paiements.filtres.infos' => 'Infos manquantes',
 			'comptable.paiements.filtres.verification' => 'Vérification',
@@ -52623,6 +52821,8 @@ extension on Traductions {
 			'comptable.validation.detail.raison' => 'Raison',
 			'comptable.validation.detail.montant' => 'Montant exact',
 			'comptable.validation.detail.etat' => 'État',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.validation.detail.historique' => 'Historique',
 			'comptable.validation.detail.historiqueVide' => 'Aucune entrée pour l\'instant.',
 			'comptable.validation.detail.historiqueErreur' => 'L\'historique n\'a pas pu être lu : ce n\'est pas qu\'il est vide. Réessayez dans un instant.',
@@ -52667,8 +52867,6 @@ extension on Traductions {
 			'comptable.direction.auteur' => ({required Object auteur}) => 'Enregistrée par ${auteur}',
 			'comptable.direction.enregistrer' => 'Enregistrer une nouvelle version',
 			'comptable.direction.aucuneModification' => 'Aucune modification à enregistrer.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.corrigezChamps' => 'Corrigez les champs signalés pour enregistrer.',
 			'comptable.direction.enregistree' => 'Nouvelle version enregistrée.',
 			'comptable.direction.erreurEnregistrement' => 'Nous ne savons pas si cette version a été enregistrée. Relisez la version en vigueur, puis réessayez.',
@@ -53137,6 +53335,8 @@ extension on Traductions {
 			'juridique.cookies.s6.titre' => '6. Services tiers',
 			'juridique.cookies.s6.blocs.0' => 'Si vous quittez Rewayah Academy pour un autre service, par exemple le paiement, ce service applique ses propres règles.',
 			'juridique.enfants.titre' => 'Protection des enfants',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.enfants.resume' => 'Comment nous protégeons les élèves mineurs.',
 			'juridique.enfants.intro' => 'Les élèves mineurs suivent leurs cours sous la responsabilité d\'un adulte. Voici les règles que nous appliquons et comment nous faire part d\'une inquiétude.',
 			'juridique.enfants.s1.titre' => '1. Un adulte responsable',
@@ -53181,8 +53381,6 @@ extension on Traductions {
 			'avis.form.note.libelle' => 'Votre note',
 			'avis.form.note.aide' => 'Touchez une étoile : 1 est la note la plus basse, 5 la plus haute.',
 			'avis.form.note.etoile' => ({required Object n}) => 'Donner la note ${n} sur 5',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.note.lue' => ({required Object n}) => 'Note : ${n} sur 5',
 			'avis.form.note.surCinq' => ({required Object n}) => '${n} sur 5',
 			'avis.form.note.erreur' => 'Choisissez une note de 1 à 5 étoiles.',

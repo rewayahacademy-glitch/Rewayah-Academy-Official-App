@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/alertes/alerte.dart';
+import '../../core/alertes/traitement_signalement.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_palette.dart';
@@ -11,6 +12,7 @@ import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/status_pill.dart';
 import '../suivi_foyer/filtres_historique.dart';
+import 'feuille_signalement.dart';
 
 /// Le mot de la gravite, toujours ecrit : la couleur ne dit jamais seule
 /// qu'une alerte est urgente.
@@ -47,6 +49,7 @@ class ListeAlertes extends StatelessWidget {
   const ListeAlertes({
     required this.alertes,
     required this.onOuvrir,
+    this.onTraiter,
     super.key,
   });
 
@@ -56,6 +59,10 @@ class ListeAlertes extends StatelessWidget {
   /// Ouvre la page ou une alerte se traite.
   final void Function(String chemin) onOuvrir;
 
+  /// Opt-in (D1-bis) : traite sur place une alerte qui porte un signalement,
+  /// au lieu de suivre sa destination. Sans lui, la destination est suivie.
+  final void Function(Alerte alerte)? onTraiter;
+
   @override
   Widget build(BuildContext context) => CarteLignes(
     lignes: <Widget>[
@@ -63,9 +70,10 @@ class ListeAlertes extends StatelessWidget {
         LigneAlerte(
           key: ValueKey<String>('alerte-${a.id}'),
           alerte: a,
-          onPress: switch (a.destination) {
-            final String chemin => () => onOuvrir(chemin),
-            null => null,
+          onPress: switch ((onTraiter, a.signalement, a.destination)) {
+            (final void Function(Alerte) traiter, _?, _) => () => traiter(a),
+            (_, _, final String chemin) => () => onOuvrir(chemin),
+            _ => null,
           },
         ),
     ],
@@ -114,6 +122,10 @@ class LigneAlerte extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final bool actif = etat != null && (etat.survole || etat.presse);
+    final StatutSignalement? statut = switch (alerte.signalement?.statut) {
+      StatutSignalement.ouvert || null => null,
+      final StatutSignalement s => s,
+    };
     return ColoredBox(
       color: actif
           ? Color.alphaBlend(
@@ -136,9 +148,21 @@ class LigneAlerte extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      StatusPill(
-                        libelle: libelleGravite(alerte.gravite),
-                        ton: tonGravite(alerte.gravite),
+                      Wrap(
+                        spacing: AppSpacing.sm,
+                        runSpacing: AppSpacing.xs,
+                        children: <Widget>[
+                          StatusPill(
+                            libelle: libelleGravite(alerte.gravite),
+                            ton: tonGravite(alerte.gravite),
+                          ),
+                          // D1-bis : un signalement deja pris en main le dit.
+                          if (statut != null)
+                            StatusPill(
+                              libelle: libelleStatutSignalement(statut),
+                              ton: tonStatutSignalement(statut),
+                            ),
+                        ],
                       ),
                       Ecart.vSm,
                       // Un mot trop long pour la place se reduit, jamais

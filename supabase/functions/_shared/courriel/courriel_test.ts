@@ -21,7 +21,9 @@ const EVENEMENTS = ['demande_recue', 'classe_validee', 'enseignant_affecte', 'de
   // Parcours 7 (03/11/2026, migration 20261103400000).
   'paiement_recu',
   // FN-115b (02/11/2026, migration 20261104300000).
-  'remboursement_effectue', 'litige_ouvert', 'litige_clos']
+  'remboursement_effectue', 'litige_ouvert', 'litige_clos',
+  // SNT (03/11/2026, migration 20261106500001).
+  'seance_reportee']
 
 Deno.test('paiement recu : le montant est ecrit dans la devise de la commande, ou tu quand il manque', () => {
   const avec = contenuPour({ modele: 'paiement_recu', categorie: 'facturation', essentielle: true,

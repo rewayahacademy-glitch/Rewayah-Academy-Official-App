@@ -9,8 +9,9 @@
 //   lue que par la direction : la fonction refuse toute autre personne.
 // * Suivi : une lecture a l'ouverture, puis une par minute tant que l'ecran
 //   ecoute. Le temps reel (DASH-BR-04) n'existe pas encore.
-// * Pas de destination : aucune page ne traite encore un signalement ; la
-//   ligne n'est donc pas une cible (jamais un lien qui ne mene nulle part).
+// * D1-bis (03/11/2026) : la ligne mene a la page des alertes, ou le
+//   signalement se traite en feuille (examiner, transmettre, clore) ; cet
+//   adaptateur sait aussi traiter (`PortTraitementSignalement`).
 // * Une personne qui n'est pas de la direction, ou une fonction absente, rend
 //   « indisponible » : la cloche et le bandeau ne s'affichent pas.
 
@@ -21,11 +22,13 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../capacites/capacite_indisponible.dart';
 import '../communications/communications_supabase.dart';
 import '../i18n/strings.g.dart';
+import '../router/routes.dart';
 import 'alerte.dart';
 import 'port_alertes.dart';
+import 'traitement_signalement.dart';
 
 /// Les alertes servies par Supabase.
-class AlertesSupabase implements PortAlertes {
+class AlertesSupabase implements PortAlertes, PortTraitementSignalement {
   /// Cree l'adaptateur sur un appel RPC ; [intervalle] separe deux lectures.
   const AlertesSupabase(
     this._appel, {
@@ -98,7 +101,75 @@ class AlertesSupabase implements PortAlertes {
     );
     return flux.stream;
   }
+
+  /// Un geste de traitement : un refus de garde (P0001) est une transition
+  /// refusee, un refus de droit ou une fonction absente, l'indisponibilite.
+  Future<void> _geste(String fonction, Map<String, dynamic> params) async {
+    try {
+      await _appel(fonction, params);
+    } on Object catch (e) {
+      if (estRefusOuAbsence(e)) throw manque;
+      if (e is PostgrestException && e.code == 'P0001') {
+        throw TransitionRefusee(e.message);
+      }
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> examiner(String id) =>
+      _geste('examiner_student_concern', <String, dynamic>{'p_concern_id': id});
+
+  @override
+  Future<void> rediger(String id, String resume) => _geste(
+    'rediger_resume_student_concern',
+    <String, dynamic>{'p_concern_id': id, 'p_resume': resume},
+  );
+
+  @override
+  Future<void> transmettre(String id, CibleTransmission cible) =>
+      _geste('transmettre_student_concern', <String, dynamic>{
+        'p_concern_id': id,
+        'p_cible': switch (cible) {
+          CibleTransmission.tuteurDuMineur => 'tuteur_du_mineur',
+          CibleTransmission.eleveAdulte => 'eleve_adulte',
+        },
+      });
+
+  @override
+  Future<void> clore(String id, {String? motif}) => _geste(
+    'clore_student_concern',
+    <String, dynamic>{'p_concern_id': id, 'p_motif': motif},
+  );
 }
+
+/// Le signalement d'une ligne de la file, avec ses capacites.
+SignalementATraiter signalementJson(Map<String, dynamic> m) =>
+    SignalementATraiter(
+      id: texteJson(m, 'id'),
+      categorie: texteJson(m, 'categorie'),
+      prioritaire: m['prioritaire'] == true,
+      matricule: texteJson(m, 'academy_id'),
+      note: (texteOptionnel(m, 'internal_details') ?? '').trim(),
+      statut: switch (texteOptionnel(m, 'statut')) {
+        'en_examen' => StatutSignalement.enExamen,
+        'transmis' => StatutSignalement.transmis,
+        _ => StatutSignalement.ouvert,
+      },
+      recuLe: instantJson(m, 'cree_le'),
+      resume: texteOptionnel(m, 'family_summary'),
+      cible: switch (texteOptionnel(m, 'cible')) {
+        'tuteur_du_mineur' => CibleTransmission.tuteurDuMineur,
+        'eleve_adulte' => CibleTransmission.eleveAdulte,
+        _ => null,
+      },
+      peutExaminer: m['peut_examiner'] == true,
+      peutRediger: m['peut_rediger'] == true,
+      peutTransmettre: m['peut_transmettre'] == true,
+      peutClore: m['peut_clore'] == true,
+      // Absent (serveur d'avant D1-bis) : le motif est exige, par prudence.
+      motifRequis: m['motif_cloture_requis'] != false,
+    );
 
 /// Une alerte redigee depuis une ligne de `signalements_ouverts_direction`.
 Alerte alerteSignalementJson(Map<String, dynamic> m) {
@@ -122,5 +193,7 @@ Alerte alerteSignalementJson(Map<String, dynamic> m) {
       note: (texteOptionnel(m, 'internal_details') ?? '').trim(),
     ),
     creeeLe: instantJson(m, 'cree_le'),
+    destination: Routes.adminAlertes,
+    signalement: signalementJson(m),
   );
 }

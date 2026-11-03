@@ -11,6 +11,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show LogicalKeyboardKey;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admission/port_admissions_direction.dart';
@@ -75,9 +76,26 @@ class _Port implements PortAdmissionsDirection {
     return e == null ? Future<void>.value() : Future<void>.error(e);
   }
 
+  /// ADM-UX : le serveur fait vraiment passer la demande a « Acceptee ».
+  bool accepterChangeEtat = false;
+
   @override
-  Future<void> accepter(DemandeAdmission d, {required String cle}) =>
-      _geste('accepter:${d.id}');
+  Future<void> accepter(DemandeAdmission d, {required String cle}) {
+    if (accepterChangeEtat) {
+      for (final List<DemandeAdmission> l in parPopulation.values) {
+        for (int i = 0; i < l.length; i++) {
+          if (l[i].id == d.id) {
+            l[i] = _demande(
+              id: d.id,
+              nom: d.nom,
+              etat: EtatDemandeAdmission.acceptee,
+            );
+          }
+        }
+      }
+    }
+    return _geste('accepter:${d.id}');
+  }
 
   @override
   Future<void> refuser(
@@ -621,6 +639,73 @@ void main() {
         await _ouvrir(tester);
         expect(tester.takeException(), isNull);
         verifierEcranSansMotCoupe(tester);
+      });
+    }
+  });
+
+  // ADM-UX (03/11/2026) : UX-006, UX-007, UX-014 (docs/current/UX-CONSTATS.md).
+  group('ADM-UX', () {
+    testWidgets('UX-006 : apres « Accepter », la boite dit l etat relu '
+        '(Acceptee), plus « A traiter »', (tester) async {
+      final _Port p = _Port(<PopulationAdmission, List<DemandeAdmission>>{
+        PopulationAdmission.famille: <DemandeAdmission>[_demande()],
+        PopulationAdmission.eleveAdulte: <DemandeAdmission>[],
+      })..accepterChangeEtat = true;
+      await _monter(tester, p);
+      await _ouvrir(tester);
+      await _toucher(tester, 'admission-accepter');
+      final Finder boite = find.byType(FeuilleDemandeAdmission);
+      expect(
+        find.descendant(of: boite, matching: find.text(a.etat.acceptee)),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: boite, matching: find.text(a.etat.aTraiter)),
+        findsNothing,
+      );
+    });
+
+    testWidgets('UX-007 : la recherche garde le focus pendant que la liste '
+        'se relit', (tester) async {
+      final _Port p = _port();
+      await _monter(tester, p);
+      await tester.tap(find.byType(TextField).first);
+      await tester.pump();
+      p.retenue = Completer<PageAdmissions>();
+      await tester.enterText(find.byType(TextField).first, 'A');
+      await tester.pump();
+      await tester.pump();
+      final EditableText champ = tester.widget<EditableText>(
+        find.byType(EditableText).first,
+      );
+      expect(champ.focusNode.hasFocus, isTrue);
+      expect(champ.controller.text, 'A');
+      p.retenue!.complete(
+        const PageAdmissions(
+          lignes: <DemandeAdmission>[],
+          total: 0,
+          aTraiter: 0,
+          page: 1,
+          parPage: 50,
+        ),
+      );
+      await laisser(tester);
+    });
+
+    for (final double largeur in <double>[390, 1440]) {
+      testWidgets('UX-014 : la boite se ferme par « Fermer » et par Echap '
+          '(${largeur.toInt()})', (tester) async {
+        await _monter(tester, _port(), largeur: largeur);
+        await _ouvrir(tester);
+        expect(find.byType(FeuilleDemandeAdmission), findsOneWidget);
+        await tester.tap(find.bySemanticsLabel(t.commun.fermer));
+        await laisser(tester);
+        expect(find.byType(FeuilleDemandeAdmission), findsNothing);
+        await _ouvrir(tester);
+        expect(find.byType(FeuilleDemandeAdmission), findsOneWidget);
+        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+        await laisser(tester);
+        expect(find.byType(FeuilleDemandeAdmission), findsNothing);
       });
     }
   });

@@ -43,6 +43,7 @@ Sources : les décisions du directeur (annexe 10 du dossier maître, spécificat
 | Nos prix, en toute transparence (répartition du paiement en pourcentages, jamais en montants ; 30/10/2026) | grille de coûts, détail des charges |
 | Messages (la page des conversations de chacun ; directeur, 31/10/2026, UX-001) | Messages métier, messages de l'académie quand « Messages » suffit |
 | Présence pas encore connue (une présence que l'application n'a pas pu lire ; jamais une absence, invariant J3 ; TXT-1, 02/11/2026) | État inconnu |
+| Traiter le signalement · Examiner · Transmettre · Clore ; « Message pour la famille » (ce que la direction écrit et transmet) ; « Note de l'enseignant » (lue par la direction seulement) ; en arabe, « Clore » se dit « إغلاق البلاغ », jamais « إغلاق » seul, qui est « Fermer » (D1-bis, 03/11/2026) | résumé famille, détails internes, clôturer, archiver |
 
 ## 3. Les mots du programme
 

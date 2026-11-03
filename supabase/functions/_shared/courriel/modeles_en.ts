@@ -93,6 +93,23 @@ const MODELES: Record<string, Fabrique> = {
     d.portee === 'direction' ? 'A class teacher has not entered their room. A replacement is being sought.' : 'The academy is looking for a replacement: stay in the room.',
     'Open the app', '/tuteur'),
   // A3-bis (02/11/2026).
+  // SNT (03/11/2026).
+  seance_reportee: (d) => {
+    const quand = quandSeance(d, 'en-GB', 'at')
+    return avis(d, 'A session is postponed', 'A session is postponed',
+      (quand ? `The session of ${quand} did not take place: it is postponed.` : 'A class session did not take place: it is postponed.')
+        + ' The new date will be given in the app.',
+      'View the schedule', '/tuteur')
+  },
+  seance_reportee_direction: (d) => {
+    const quand = quandSeance(d, 'en-GB', 'at')
+    const classe = typeof d.classe === 'string' ? ` of the class ${d.classe}` : ''
+    const ens = typeof d.enseignant === 'string' ? ` Class teacher: ${d.enseignant}.` : ''
+    const delai = typeof d.minutes === 'string' ? ` within ${d.minutes} minutes` : ''
+    return avis(d, 'Session postponed: set the new date', 'Session postponed: set the new date',
+      `No teacher joined the room${classe}${quand ? `, session of ${quand}` : ''}${delai}: the session is postponed.${ens} Set the new date in the schedule.`,
+      'See the schedule', '/admin/operations/planning')
+  },
   remplacement_personne_en_salle: (d) => {
     const quand = quandSeance(d, 'en-GB', 'at')
     const classe = typeof d.classe === 'string' ? ` of the class ${d.classe}` : ''

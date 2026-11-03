@@ -100,6 +100,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$courriels$ar courriels = _Traductions$courriels$ar._(_root);
 	@override late final _Traductions$admissions$ar admissions = _Traductions$admissions$ar._(_root);
 	@override late final _Traductions$accueilInscrits$ar accueilInscrits = _Traductions$accueilInscrits$ar._(_root);
+	@override late final _Traductions$alertes$ar alertes = _Traductions$alertes$ar._(_root);
 	@override late final _Traductions$n1$ar n1 = _Traductions$n1$ar._(_root);
 	@override late final _Traductions$i1$ar i1 = _Traductions$i1$ar._(_root);
 	@override late final _Traductions$a3bis$ar a3bis = _Traductions$a3bis$ar._(_root);
@@ -1849,6 +1850,16 @@ class _Traductions$accueilInscrits$ar extends Traductions$accueilInscrits$fr {
 	@override String get echecTitre => 'تعذر التحقق من تسجيلكم';
 	@override String get echecPhrase => 'السبب المحتمل: انقطع الاتصال بالخادم (غير مؤكد). أعيدوا المحاولة بعد قليل: لا يُنشأ أي شيء مرتين.';
 	@override String get sansDonnees => 'التحقق من تسجيلكم';
+}
+
+// Path: alertes
+class _Traductions$alertes$ar extends Traductions$alertes$fr {
+	_Traductions$alertes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$alertes$traitement$ar traitement = _Traductions$alertes$traitement$ar._(_root);
 }
 
 // Path: n1
@@ -9129,6 +9140,57 @@ class _Traductions$admissions$modeles$ar extends Traductions$admissions$modeles$
 	@override String get niveauPhrase => '«المستوى المطلوب غير متاح بعد.»';
 	@override String get sansReponse => 'لا رد';
 	@override String get sansReponsePhrase => '«لم نتلق ردًا على رسالتنا الأخيرة.»';
+}
+
+// Path: alertes.traitement
+class _Traductions$alertes$traitement$ar extends Traductions$alertes$traitement$fr {
+	_Traductions$alertes$traitement$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'معالجة البلاغ';
+	@override String get categorie => 'الفئة';
+	@override String get eleve => 'الطالب';
+	@override String get recu => 'وصل';
+	@override String get statut => 'حالته';
+	@override late final _Traductions$alertes$traitement$statutValeur$ar statutValeur = _Traductions$alertes$traitement$statutValeur$ar._(_root);
+	@override String get note => 'ملاحظة المعلم';
+	@override String get noteAide => 'لا تقرؤها إلا الإدارة.';
+	@override String get securitePhrase => 'لا تقرأ الأسرة ولا المعلم هذا البلاغ، ولا يُحال إلى أحد.';
+	@override String get message => 'رسالة إلى الأسرة';
+	@override String messageAide({required Object cible}) => 'مكتوبة إلى ⁨${cible}⁩. ملاحظة المعلم لا تُرسل أبدًا.';
+	@override String get messageManque => 'اكتب الرسالة إلى الأسرة قبل إحالتها.';
+	@override String get cibleTuteur => 'وليّ أمر الطالب';
+	@override String get cibleAdulte => 'الطالب';
+	@override String get pasEncoreAffiche => 'لا تعرض أي شاشة من شاشات الأسرة هذه الرسالة بعد.';
+	@override String get motif => 'سبب الإغلاق';
+	@override String get motifRequisAide => 'إلزامي لهذا البلاغ. لا تقرؤه إلا الإدارة.';
+	@override String get motifFacultatifAide => 'اختياري. لا تقرؤه إلا الإدارة.';
+	@override String get motifManque => 'اكتب سبب الإغلاق.';
+	@override String get examiner => 'فحص';
+	@override String get transmettre => 'إحالة';
+	@override String get clore => 'إغلاق البلاغ';
+	@override String get transmettreQuestionTuteur => 'إحالة هذه الرسالة إلى وليّ أمر الطالب؟';
+	@override String get transmettreQuestionAdulte => 'إحالة هذه الرسالة إلى الطالب؟';
+	@override String get transmettreConsequence => 'لا يمكن التراجع عن الإحالة. ولا تعرضها أي شاشة من شاشات الأسرة بعد.';
+	@override String get transmettreOui => 'نعم، إحالة';
+	@override String get cloreQuestion => 'إغلاق هذا البلاغ؟';
+	@override String get cloreConsequence => 'يخرج من التنبيهات، ولا يُعاد فتح بلاغ مغلق.';
+	@override String get cloreOui => 'نعم، إغلاق البلاغ';
+	@override String get faitExamenTitre => 'البلاغ قيد الفحص';
+	@override String get faitExamenPhrase => 'يبقى في التنبيهات حتى إغلاقه.';
+	@override String get faitTransmisTitre => 'سُجِّلت الرسالة';
+	@override String faitTransmisPhrase({required Object cible}) => 'سُجِّلت إلى ⁨${cible}⁩. ولا تعرضها أي شاشة من شاشات الأسرة بعد.';
+	@override String get faitClosTitre => 'أُغلق البلاغ';
+	@override String get faitClosPhrase => 'خرج من التنبيهات.';
+	@override String get refuseTitre => 'تغيّر هذا البلاغ';
+	@override String get refusePhrase => 'أُعيدت قراءة التنبيهات.';
+	@override String get erreurTitre => 'لم يتم الإجراء';
+	@override String get erreurPhrase => 'أعد المحاولة بعد قليل.';
+	@override String get indisponibleTitre => 'المعالجة غير متاحة';
+	@override String get indisponiblePhrase => 'معالجة البلاغات غير متاحة بعد.';
+	@override String get horsLigne => 'تعود الإجراءات مع عودة الاتصال.';
 }
 
 // Path: n1.regles
@@ -16979,6 +17041,18 @@ class _Traductions$courriels$admin$adresses$ar extends Traductions$courriels$adm
 	@override String get vide => 'لا توجد فئات حاليًا.';
 	@override String get erreur => 'تعذّر تحميل عناوين الإرسال. أعد المحاولة.';
 	@override String get sansDonnees => 'تعذّر تحميل عناوين الإرسال';
+}
+
+// Path: alertes.traitement.statutValeur
+class _Traductions$alertes$traitement$statutValeur$ar extends Traductions$alertes$traitement$statutValeur$fr {
+	_Traductions$alertes$traitement$statutValeur$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get aExaminer => 'للفحص';
+	@override String get enExamen => 'قيد الفحص';
+	@override String get transmis => 'أُحيلت الرسالة';
 }
 
 // Path: n1.regles.auteurs
@@ -29851,6 +29925,50 @@ extension on TraductionsAr {
 			'accueilInscrits.echecTitre' => 'تعذر التحقق من تسجيلكم',
 			'accueilInscrits.echecPhrase' => 'السبب المحتمل: انقطع الاتصال بالخادم (غير مؤكد). أعيدوا المحاولة بعد قليل: لا يُنشأ أي شيء مرتين.',
 			'accueilInscrits.sansDonnees' => 'التحقق من تسجيلكم',
+			'alertes.traitement.titre' => 'معالجة البلاغ',
+			'alertes.traitement.categorie' => 'الفئة',
+			'alertes.traitement.eleve' => 'الطالب',
+			'alertes.traitement.recu' => 'وصل',
+			'alertes.traitement.statut' => 'حالته',
+			'alertes.traitement.statutValeur.aExaminer' => 'للفحص',
+			'alertes.traitement.statutValeur.enExamen' => 'قيد الفحص',
+			'alertes.traitement.statutValeur.transmis' => 'أُحيلت الرسالة',
+			'alertes.traitement.note' => 'ملاحظة المعلم',
+			'alertes.traitement.noteAide' => 'لا تقرؤها إلا الإدارة.',
+			'alertes.traitement.securitePhrase' => 'لا تقرأ الأسرة ولا المعلم هذا البلاغ، ولا يُحال إلى أحد.',
+			'alertes.traitement.message' => 'رسالة إلى الأسرة',
+			'alertes.traitement.messageAide' => ({required Object cible}) => 'مكتوبة إلى ⁨${cible}⁩. ملاحظة المعلم لا تُرسل أبدًا.',
+			'alertes.traitement.messageManque' => 'اكتب الرسالة إلى الأسرة قبل إحالتها.',
+			'alertes.traitement.cibleTuteur' => 'وليّ أمر الطالب',
+			'alertes.traitement.cibleAdulte' => 'الطالب',
+			'alertes.traitement.pasEncoreAffiche' => 'لا تعرض أي شاشة من شاشات الأسرة هذه الرسالة بعد.',
+			'alertes.traitement.motif' => 'سبب الإغلاق',
+			'alertes.traitement.motifRequisAide' => 'إلزامي لهذا البلاغ. لا تقرؤه إلا الإدارة.',
+			'alertes.traitement.motifFacultatifAide' => 'اختياري. لا تقرؤه إلا الإدارة.',
+			'alertes.traitement.motifManque' => 'اكتب سبب الإغلاق.',
+			'alertes.traitement.examiner' => 'فحص',
+			'alertes.traitement.transmettre' => 'إحالة',
+			'alertes.traitement.clore' => 'إغلاق البلاغ',
+			'alertes.traitement.transmettreQuestionTuteur' => 'إحالة هذه الرسالة إلى وليّ أمر الطالب؟',
+			'alertes.traitement.transmettreQuestionAdulte' => 'إحالة هذه الرسالة إلى الطالب؟',
+			'alertes.traitement.transmettreConsequence' => 'لا يمكن التراجع عن الإحالة. ولا تعرضها أي شاشة من شاشات الأسرة بعد.',
+			'alertes.traitement.transmettreOui' => 'نعم، إحالة',
+			'alertes.traitement.cloreQuestion' => 'إغلاق هذا البلاغ؟',
+			'alertes.traitement.cloreConsequence' => 'يخرج من التنبيهات، ولا يُعاد فتح بلاغ مغلق.',
+			'alertes.traitement.cloreOui' => 'نعم، إغلاق البلاغ',
+			'alertes.traitement.faitExamenTitre' => 'البلاغ قيد الفحص',
+			'alertes.traitement.faitExamenPhrase' => 'يبقى في التنبيهات حتى إغلاقه.',
+			'alertes.traitement.faitTransmisTitre' => 'سُجِّلت الرسالة',
+			'alertes.traitement.faitTransmisPhrase' => ({required Object cible}) => 'سُجِّلت إلى ⁨${cible}⁩. ولا تعرضها أي شاشة من شاشات الأسرة بعد.',
+			'alertes.traitement.faitClosTitre' => 'أُغلق البلاغ',
+			'alertes.traitement.faitClosPhrase' => 'خرج من التنبيهات.',
+			'alertes.traitement.refuseTitre' => 'تغيّر هذا البلاغ',
+			'alertes.traitement.refusePhrase' => 'أُعيدت قراءة التنبيهات.',
+			'alertes.traitement.erreurTitre' => 'لم يتم الإجراء',
+			'alertes.traitement.erreurPhrase' => 'أعد المحاولة بعد قليل.',
+			'alertes.traitement.indisponibleTitre' => 'المعالجة غير متاحة',
+			'alertes.traitement.indisponiblePhrase' => 'معالجة البلاغات غير متاحة بعد.',
+			'alertes.traitement.horsLigne' => 'تعود الإجراءات مع عودة الاتصال.',
 			'n1.regles.auteurs.direction' => 'الإدارة',
 			'n1.regles.auteurs.enseignants' => 'المعلمون',
 			'n1.regles.auteurs.familles' => 'الأسر',

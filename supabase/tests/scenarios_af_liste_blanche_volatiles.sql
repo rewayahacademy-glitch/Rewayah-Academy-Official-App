@@ -133,6 +133,10 @@ declare
     'demarrer_mission_controle(uuid)',
     'deposer_reprise_foyer(uuid)',
     'deposer_student_concern(text,uuid,uuid,text,text,text)',
+    -- D1-bis (03/11) : la direction active traite un signalement (examiner, rediger le message pour la famille, clore) ; garde role ET app_account_valid, journal a chaque geste.
+    'examiner_student_concern(uuid)',
+    'rediger_resume_student_concern(uuid,text)',
+    'clore_student_concern(uuid,text)',
     'designer_remplacant_admin(uuid,uuid,uuid)',
     -- Remplacements direction (31/10) : R12, libre a l'heure exacte, genre souple sur choix explicite trace ; direction active.
     'designer_remplacant_admin(uuid,uuid,uuid,boolean)',
@@ -339,7 +343,10 @@ declare
     'avis_lien_creer(text,integer,integer)',
     'avis_lien_fermer(uuid)',
     'avis_moderer(uuid,text,text)',
-    'avis_deposer(text,text,text,text,date,integer,text,text,boolean)'
+    'avis_deposer(text,text,text,text,date,integer,text,text,boolean)',
+    -- SNT (03/11) : la direction fixe la nouvelle date d'une seance reportee
+    -- (garde positive app_account_valid() et app_role() = 'admin', celle de C1).
+    'fixer_nouvelle_date_seance(uuid,timestamp with time zone)'
   ];
   -- Ouvertes a anon par choix : la desinscription d'un e-mail et le depot d'un
   -- avis se font sans compte.
