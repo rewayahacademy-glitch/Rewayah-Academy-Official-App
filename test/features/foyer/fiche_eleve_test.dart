@@ -100,7 +100,7 @@ _AppairagePilote _foyerA() =>
 
 /// PHOTOS-2a : le serveur de photos du foyer A. Une pose reussie ecrit la
 /// cle que la vue du foyer relit, comme `poser_photo_eleve` en base ; le
-/// client, lui, n'ecrit plus jamais la colonne (droit ferme, 20261107400000).
+/// client, lui, n'ecrit plus jamais la colonne (droit ferme, 20261107900000).
 FauxPhotos _photosDe(_AppairagePilote appairage) => FauxPhotos(
   surPose: (String id, String? cle) => appairage.elevesRendus = <EleveDuFoyer>[
     for (final EleveDuFoyer e in appairage.elevesRendus)
@@ -485,7 +485,7 @@ void main() {
       expect(avatar.depots.single.eleveId, a1);
       expect(avatar.depots.single.photo.typeMime, 'image/png');
       // PHOTOS-2a : la cle se pose par `poser_photo_eleve`, jamais par une
-      // ecriture directe du client (droit ferme, 20261107400000).
+      // ecriture directe du client (droit ferme, 20261107900000).
       expect(photos.posesEleve.single.eleveId, a1);
       expect(photos.posesEleve.single.cle, '$a1/1.png');
       expect(appairage.reglagesEcrits, isEmpty);

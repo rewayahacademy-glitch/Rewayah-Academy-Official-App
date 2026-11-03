@@ -396,7 +396,7 @@ end
 $sources$;
 
 -- ===========================================================================
--- 10. PHOTOS-2a (20261107400000) : la photo d'un eleve ne s'ecrit plus en
+-- 10. PHOTOS-2a (20261107900000) : la photo d'un eleve ne s'ecrit plus en
 --     direct ; les deux reglages du foyer, si
 -- ===========================================================================
 set local role authenticated;

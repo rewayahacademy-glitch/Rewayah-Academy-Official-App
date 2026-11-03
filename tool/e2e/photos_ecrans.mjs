@@ -6,7 +6,7 @@
 //   1. le tuteur (Samir) pose SA photo depuis son Compte (poser_ma_photo) ;
 //   2. il pose celle de son enfant Hakim depuis sa fiche (poser_photo_eleve) ;
 //      son ecriture directe de la cle, elle, est refusee (droit ferme,
-//      migration 20261107400000) ;
+//      migration 20261107900000) ;
 //   3. l'enseignant voit les photos de Hakim et de Camil dans la fiche de la
 //      Classe, et la sienne dans son Profil ;
 //   4. la salle : l'enseignant et les deux enfants y sont ; Camil voit la

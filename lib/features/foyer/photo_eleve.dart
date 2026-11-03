@@ -252,7 +252,7 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
     setState(() => _phase = _Phase.enregistrement);
     // PHOTOS-2a : la cle se pose par la porte nommee du serveur, qui verifie
     // le foyer, l'age et le dossier ; plus jamais par une ecriture directe
-    // (droit ferme, migration 20261107400000).
+    // (droit ferme, migration 20261107900000).
     final PortPhotos port = ref.read(portPhotosProvider);
     try {
       if (_moi) {
