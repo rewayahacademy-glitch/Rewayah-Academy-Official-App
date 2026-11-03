@@ -54,6 +54,10 @@ enum MotifServeurSalle {
   /// A3-bis (03/11/2026) : le remplacant qui a pris la classe est entre le
   /// premier ; le titulaire ne peut plus entrer.
   remplacantEntre,
+
+  /// SNT (03/11/2026) : aucun enseignant n'a rejoint la salle a temps, la
+  /// seance est reportee ; la salle ne s'ouvre plus pour personne.
+  seanceReportee,
 }
 
 /// FN-025 : le motif d'un refus et les heures du serveur qui l'accompagnent.
@@ -78,6 +82,7 @@ class DetailRefusSalle {
       'acces_perdu' => MotifServeurSalle.accesPerdu,
       'titulaire_entre' => MotifServeurSalle.titulaireEntre,
       'remplacant_entre' => MotifServeurSalle.remplacantEntre,
+      'seance_reportee' => MotifServeurSalle.seanceReportee,
       _ => null,
     };
     if (motif == null) return null;

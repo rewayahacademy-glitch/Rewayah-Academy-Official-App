@@ -121,6 +121,9 @@ const List<String> clesRegles = <String>[
   // quand personne n'est dans la salle, et la seance creee tard. Un serveur
   // d'avant A3-bis ne les rend pas.
   ...clesRemplacementA3bis,
+  // SNT (03/11/2026, migration 20261106500000) : la seance non tenue,
+  // reportee. Un serveur d'avant SNT ne la rend pas.
+  cleRemplacementSeanceNonTenue,
 ];
 
 /// La cle du reglage « Classes au plus par enseignant ».
@@ -160,6 +163,13 @@ const List<String> clesRemplacementA3bis = <String>[
   cleRemplacementAlerteDirection,
   cleRemplacementSeanceTardive,
 ];
+
+/// SNT (03/11/2026) : a ce delai depuis le debut, si aucun enseignant n'a
+/// rejoint la salle, la seance n'est pas tenue : elle est reportee et la
+/// direction fixe la nouvelle date (30 par defaut, decision du directeur du
+/// 03/11). Le serveur exige qu'il vienne apres [cleRemplacementObjectif].
+const String cleRemplacementSeanceNonTenue =
+    'remplacement.seance_non_tenue_minutes';
 
 /// Les cles du domaine Configuration > Fonctionnalites.
 const List<String> clesFonctionnalites = <String>[

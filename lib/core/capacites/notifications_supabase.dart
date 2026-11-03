@@ -68,6 +68,9 @@ const Set<String> evenementsNotificationConnus = <String>{
   // FN-028 (01/11/2026, migration 20261103600000) : la fin de seance,
   // application seulement.
   'seance_terminee',
+  // SNT (03/11/2026, migrations 20261106500000 et 20261106500001) : la
+  // seance non tenue, reportee.
+  'seance_reportee',
 };
 
 const Set<String> _destinationsAutorisees = <String>{
@@ -478,6 +481,7 @@ TypeNotification _typePour(String evenement) => switch (evenement) {
   'classe_supprimee' => TypeNotification.changementPlanning,
   'seance_annulee' ||
   'seance_deplacee' ||
+  'seance_reportee' ||
   'enseignante_absente' ||
   'remplacement_avertissement' ||
   'titulaire_en_retard' ||

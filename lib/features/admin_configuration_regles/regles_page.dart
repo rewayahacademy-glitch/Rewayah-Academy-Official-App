@@ -207,6 +207,10 @@ class _Corps extends StatelessWidget {
     final int avertissement = v[cleRemplacementAvertissement]!;
     final int perte = v[cleRemplacementPerteAcces]!;
     final int objectif = v[cleRemplacementObjectif]!;
+    // SNT : absente d'un serveur d'avant le lot ; la ligne n'est pas montree.
+    final int? nonTenue = absentes.contains(cleRemplacementSeanceNonTenue)
+        ? null
+        : v[cleRemplacementSeanceNonTenue];
     String m(int n) => sansAncre(uniteMinutesRegle(n));
     ConfigLigneEntiere ligne({
       required String titre,
@@ -282,11 +286,28 @@ class _Corps extends StatelessWidget {
               cle: cleRemplacementObjectif,
               valeur: objectif,
               min: perte + 1,
-              max: _delaiRemplacementMax,
-              aide: t.admin.regles.remplacementBornesObjectif(
-                min: m(perte + 1),
-              ),
+              max: nonTenue == null ? _delaiRemplacementMax : nonTenue - 1,
+              aide: nonTenue == null
+                  ? t.admin.regles.remplacementBornesObjectif(min: m(perte + 1))
+                  : t.snt.regles.bornesObjectif(
+                      min: m(perte + 1),
+                      max: m(nonTenue - 1),
+                    ),
             ),
+            // SNT (03/11/2026) : la seance non tenue, apres l'objectif.
+            if (nonTenue != null)
+              ligne(
+                titre: t.snt.regles.nonTenue,
+                description: t.snt.regles.nonTenueDetail,
+                cle: cleRemplacementSeanceNonTenue,
+                valeur: nonTenue,
+                min: objectif + 1,
+                max: _delaiRemplacementMax,
+                aide: t.snt.regles.bornesNonTenue(
+                  min: m(objectif + 1),
+                  max: m(_delaiRemplacementMax),
+                ),
+              ),
             // A3-bis : un serveur d'avant ce lot ne rend pas ces deux cles ;
             // les lignes ne sont alors pas montrees.
             if (!absentes.contains(cleRemplacementAlerteDirection))

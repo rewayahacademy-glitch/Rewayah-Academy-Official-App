@@ -25,7 +25,9 @@ import 'core/admin/port_incidents_seances.dart';
 import 'core/admin/port_pilotage.dart';
 import 'core/admin/port_planning_direction.dart';
 import 'core/admin/port_remplacements_direction.dart';
+import 'core/admin/port_seances_reportees.dart';
 import 'core/admin/remplacements_direction_supabase.dart';
+import 'core/admin/seances_reportees_supabase.dart';
 import 'core/agent/amorce_agent.dart';
 import 'core/agent/session_agent.dart';
 import 'core/alertes/alertes_supabase.dart';
@@ -216,6 +218,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // le planning, et bilan de la semaine par titulaire et par classe.
   portRemplacementsDirectionProvider.overrideWithValue(
     RemplacementsDirectionSupabase(Supabase.instance.client),
+  ),
+  // SNT (03/11/2026) : les seances reportees et la nouvelle date que la
+  // direction fixe (RPC lister_seances_reportees, fixer_nouvelle_date_seance).
+  portSeancesReporteesProvider.overrideWithValue(
+    SeancesReporteesSupabase(Supabase.instance.client),
   ),
   portReprisesAdminProvider.overrideWithValue(
     ReprisesAdminSupabase(Supabase.instance.client),

@@ -109,6 +109,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$accueilInscrits$fr accueilInscrits = Traductions$accueilInscrits$fr.internal(_root);
 	late final Traductions$n1$fr n1 = Traductions$n1$fr.internal(_root);
 	late final Traductions$i1$fr i1 = Traductions$i1$fr.internal(_root);
+	late final Traductions$snt$fr snt = Traductions$snt$fr.internal(_root);
 	late final Traductions$a3bis$fr a3bis = Traductions$a3bis$fr.internal(_root);
 	late final Traductions$payUx$fr payUx = Traductions$payUx$fr.internal(_root);
 }
@@ -3747,6 +3748,19 @@ class Traductions$i1$fr {
 	late final Traductions$i1$familles$fr familles = Traductions$i1$familles$fr.internal(_root);
 	late final Traductions$i1$import$fr import = Traductions$i1$import$fr.internal(_root);
 	late final Traductions$i1$lien$fr lien = Traductions$i1$lien$fr.internal(_root);
+}
+
+// Path: snt
+class Traductions$snt$fr {
+	Traductions$snt$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$snt$regles$fr regles = Traductions$snt$regles$fr.internal(_root);
+	late final Traductions$snt$notifications$fr notifications = Traductions$snt$notifications$fr.internal(_root);
+	late final Traductions$snt$salle$fr salle = Traductions$snt$salle$fr.internal(_root);
+	late final Traductions$snt$planning$fr planning = Traductions$snt$planning$fr.internal(_root);
 }
 
 // Path: a3bis
@@ -21000,6 +21014,144 @@ class Traductions$i1$lien$fr {
 
 	/// fr: 'Recevoir un nouveau lien'
 	String get nouveauLien => 'Recevoir un nouveau lien';
+}
+
+// Path: snt.regles
+class Traductions$snt$regles$fr {
+	Traductions$snt$regles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Séance non tenue'
+	String get nonTenue => 'Séance non tenue';
+
+	/// fr: 'Si aucun enseignant n'a rejoint la salle à ce délai, la séance est reportée : la classe est prévenue et la direction fixe la nouvelle date dans le planning.'
+	String get nonTenueDetail => 'Si aucun enseignant n\'a rejoint la salle à ce délai, la séance est reportée : la classe est prévenue et la direction fixe la nouvelle date dans le planning.';
+
+	/// fr: 'Entre {min} et {max} après le début.'
+	String bornesNonTenue({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début.';
+
+	/// fr: 'Entre {min} et {max} après le début. Pour aller au-delà de {max}, allongez d'abord la séance non tenue.'
+	String bornesObjectif({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début. Pour aller au-delà de ${max}, allongez d\'abord la séance non tenue.';
+}
+
+// Path: snt.notifications
+class Traductions$snt$notifications$fr {
+	Traductions$snt$notifications$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Une séance n'a pas eu lieu : elle est reportée. Nouvelle date à venir.'
+	String get seanceReportee => 'Une séance n\'a pas eu lieu : elle est reportée. Nouvelle date à venir.';
+
+	/// fr: 'La séance du {quand} n'a pas eu lieu : elle est reportée. Nouvelle date à venir.'
+	String seanceReporteeQuand({required Object quand}) => 'La séance du ${quand} n\'a pas eu lieu : elle est reportée. Nouvelle date à venir.';
+}
+
+// Path: snt.salle
+class Traductions$snt$salle$fr {
+	Traductions$snt$salle$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Séance reportée'
+	String get reporteeTitre => 'Séance reportée';
+
+	/// fr: 'Aucun enseignant n'a rejoint la salle à temps : la séance est reportée. Nouvelle date à venir, la classe en sera prévenue.'
+	String get reportee => 'Aucun enseignant n\'a rejoint la salle à temps : la séance est reportée. Nouvelle date à venir, la classe en sera prévenue.';
+}
+
+// Path: snt.planning
+class Traductions$snt$planning$fr {
+	Traductions$snt$planning$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Séances reportées'
+	String get section => 'Séances reportées';
+
+	/// fr: 'Aucun enseignant n'a rejoint la salle à temps. Fixez la nouvelle date de chaque séance : elle se tiendra avec l'enseignant de la classe.'
+	String get intro => 'Aucun enseignant n\'a rejoint la salle à temps. Fixez la nouvelle date de chaque séance : elle se tiendra avec l\'enseignant de la classe.';
+
+	/// fr: 'Séance reportée de la classe {classe}'
+	String ligne({required Object classe}) => 'Séance reportée de la classe ${classe}';
+
+	/// fr: 'Prévue le {quand}'
+	String ligneQuand({required Object quand}) => 'Prévue le ${quand}';
+
+	/// fr: 'Fixer la nouvelle date'
+	String get fixer => 'Fixer la nouvelle date';
+
+	/// fr: 'Les séances reportées n'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreurLecture => 'Les séances reportées n\'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: 'Fixer la nouvelle date'
+	String get feuilleTitre => 'Fixer la nouvelle date';
+
+	/// fr: 'Classe {classe}, séance prévue le {quand}'
+	String feuilleSeance({required Object classe, required Object quand}) => 'Classe ${classe}, séance prévue le ${quand}';
+
+	/// fr: 'La nouvelle séance se tient avec {enseignant}, l'enseignant de la classe, et dure {minutes} minutes, comme la séance reportée. La classe est prévenue de la nouvelle date.'
+	String feuilleContexte({required Object enseignant, required Object minutes}) => 'La nouvelle séance se tient avec ${enseignant}, l\'enseignant de la classe, et dure ${minutes} minutes, comme la séance reportée. La classe est prévenue de la nouvelle date.';
+
+	/// fr: 'La nouvelle séance se tient avec l'enseignant de la classe et dure {minutes} minutes, comme la séance reportée. La classe est prévenue de la nouvelle date.'
+	String feuilleContexteSansNom({required Object minutes}) => 'La nouvelle séance se tient avec l\'enseignant de la classe et dure ${minutes} minutes, comme la séance reportée. La classe est prévenue de la nouvelle date.';
+
+	/// fr: 'Jour de la nouvelle séance'
+	String get jour => 'Jour de la nouvelle séance';
+
+	/// fr: 'Heure'
+	String get heure => 'Heure';
+
+	/// fr: 'À l'heure de cet appareil.'
+	String get heureAppareil => 'À l\'heure de cet appareil.';
+
+	/// fr: '{jour} à {heure}'
+	String quand({required Object jour, required Object heure}) => '${jour} à ${heure}';
+
+	/// fr: 'Choisissez le jour et l'heure de la nouvelle séance.'
+	String get choixManquant => 'Choisissez le jour et l\'heure de la nouvelle séance.';
+
+	/// fr: 'Fixer cette date'
+	String get confirmer => 'Fixer cette date';
+
+	/// fr: 'Connexion absente : la date sera fixée une fois l'appareil reconnecté.'
+	String get horsLigne => 'Connexion absente : la date sera fixée une fois l\'appareil reconnecté.';
+
+	/// fr: 'Nouvelle date fixée : {quand}. La classe est prévenue.'
+	String fixee({required Object quand}) => 'Nouvelle date fixée : ${quand}. La classe est prévenue.';
+
+	/// fr: 'La date n'est pas fixée : l'enseignant a déjà une séance à ce moment. Choisissez une autre heure ou un autre jour.'
+	String get refusChevauchement => 'La date n\'est pas fixée : l\'enseignant a déjà une séance à ce moment. Choisissez une autre heure ou un autre jour.';
+
+	/// fr: 'La date n'est pas fixée : l'enseignant a déjà une séance de la classe {classe} le {quand}. Choisissez une autre heure ou un autre jour.'
+	String refusChevauchementNomme({required Object classe, required Object quand}) => 'La date n\'est pas fixée : l\'enseignant a déjà une séance de la classe ${classe} le ${quand}. Choisissez une autre heure ou un autre jour.';
+
+	/// fr: 'La date n'est pas fixée : l'enseignant a déjà une séance le {quand}. Choisissez une autre heure ou un autre jour.'
+	String refusChevauchementDate({required Object quand}) => 'La date n\'est pas fixée : l\'enseignant a déjà une séance le ${quand}. Choisissez une autre heure ou un autre jour.';
+
+	/// fr: 'La date n'est pas fixée : ce moment est déjà passé. Choisissez un jour et une heure à venir.'
+	String get refusDatePassee => 'La date n\'est pas fixée : ce moment est déjà passé. Choisissez un jour et une heure à venir.';
+
+	/// fr: 'La nouvelle date de cette séance est déjà fixée, peut-être depuis un autre appareil. Fermez cette fenêtre : la séance est dans le planning.'
+	String get refusDejaFixee => 'La nouvelle date de cette séance est déjà fixée, peut-être depuis un autre appareil. Fermez cette fenêtre : la séance est dans le planning.';
+
+	/// fr: 'La date n'est pas fixée : la classe est close. Aucune séance ne peut plus y être prévue.'
+	String get refusClasseClose => 'La date n\'est pas fixée : la classe est close. Aucune séance ne peut plus y être prévue.';
+
+	/// fr: 'La date n'est pas fixée : ce compte ne peut pas fixer de date. Connectez-vous avec un compte de la direction.'
+	String get refusNonAutorisee => 'La date n\'est pas fixée : ce compte ne peut pas fixer de date. Connectez-vous avec un compte de la direction.';
+
+	/// fr: 'La date n'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'La date n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 }
 
 // Path: a3bis.salle
@@ -53447,6 +53599,40 @@ extension on Traductions {
 			'i1.lien.dejaServiTitre' => 'Ce lien a déjà servi ou a expiré',
 			'i1.lien.dejaServiDetail' => 'Un lien de connexion ne sert qu\'une fois, et pour peu de temps. Demandez-en un nouveau : saisissez votre adresse e-mail sur la page de connexion.',
 			'i1.lien.nouveauLien' => 'Recevoir un nouveau lien',
+			'snt.regles.nonTenue' => 'Séance non tenue',
+			'snt.regles.nonTenueDetail' => 'Si aucun enseignant n\'a rejoint la salle à ce délai, la séance est reportée : la classe est prévenue et la direction fixe la nouvelle date dans le planning.',
+			'snt.regles.bornesNonTenue' => ({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début.',
+			'snt.regles.bornesObjectif' => ({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début. Pour aller au-delà de ${max}, allongez d\'abord la séance non tenue.',
+			'snt.notifications.seanceReportee' => 'Une séance n\'a pas eu lieu : elle est reportée. Nouvelle date à venir.',
+			'snt.notifications.seanceReporteeQuand' => ({required Object quand}) => 'La séance du ${quand} n\'a pas eu lieu : elle est reportée. Nouvelle date à venir.',
+			'snt.salle.reporteeTitre' => 'Séance reportée',
+			'snt.salle.reportee' => 'Aucun enseignant n\'a rejoint la salle à temps : la séance est reportée. Nouvelle date à venir, la classe en sera prévenue.',
+			'snt.planning.section' => 'Séances reportées',
+			'snt.planning.intro' => 'Aucun enseignant n\'a rejoint la salle à temps. Fixez la nouvelle date de chaque séance : elle se tiendra avec l\'enseignant de la classe.',
+			'snt.planning.ligne' => ({required Object classe}) => 'Séance reportée de la classe ${classe}',
+			'snt.planning.ligneQuand' => ({required Object quand}) => 'Prévue le ${quand}',
+			'snt.planning.fixer' => 'Fixer la nouvelle date',
+			'snt.planning.erreurLecture' => 'Les séances reportées n\'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'snt.planning.feuilleTitre' => 'Fixer la nouvelle date',
+			'snt.planning.feuilleSeance' => ({required Object classe, required Object quand}) => 'Classe ${classe}, séance prévue le ${quand}',
+			'snt.planning.feuilleContexte' => ({required Object enseignant, required Object minutes}) => 'La nouvelle séance se tient avec ${enseignant}, l\'enseignant de la classe, et dure ${minutes} minutes, comme la séance reportée. La classe est prévenue de la nouvelle date.',
+			'snt.planning.feuilleContexteSansNom' => ({required Object minutes}) => 'La nouvelle séance se tient avec l\'enseignant de la classe et dure ${minutes} minutes, comme la séance reportée. La classe est prévenue de la nouvelle date.',
+			'snt.planning.jour' => 'Jour de la nouvelle séance',
+			'snt.planning.heure' => 'Heure',
+			'snt.planning.heureAppareil' => 'À l\'heure de cet appareil.',
+			'snt.planning.quand' => ({required Object jour, required Object heure}) => '${jour} à ${heure}',
+			'snt.planning.choixManquant' => 'Choisissez le jour et l\'heure de la nouvelle séance.',
+			'snt.planning.confirmer' => 'Fixer cette date',
+			'snt.planning.horsLigne' => 'Connexion absente : la date sera fixée une fois l\'appareil reconnecté.',
+			'snt.planning.fixee' => ({required Object quand}) => 'Nouvelle date fixée : ${quand}. La classe est prévenue.',
+			'snt.planning.refusChevauchement' => 'La date n\'est pas fixée : l\'enseignant a déjà une séance à ce moment. Choisissez une autre heure ou un autre jour.',
+			'snt.planning.refusChevauchementNomme' => ({required Object classe, required Object quand}) => 'La date n\'est pas fixée : l\'enseignant a déjà une séance de la classe ${classe} le ${quand}. Choisissez une autre heure ou un autre jour.',
+			'snt.planning.refusChevauchementDate' => ({required Object quand}) => 'La date n\'est pas fixée : l\'enseignant a déjà une séance le ${quand}. Choisissez une autre heure ou un autre jour.',
+			'snt.planning.refusDatePassee' => 'La date n\'est pas fixée : ce moment est déjà passé. Choisissez un jour et une heure à venir.',
+			'snt.planning.refusDejaFixee' => 'La nouvelle date de cette séance est déjà fixée, peut-être depuis un autre appareil. Fermez cette fenêtre : la séance est dans le planning.',
+			'snt.planning.refusClasseClose' => 'La date n\'est pas fixée : la classe est close. Aucune séance ne peut plus y être prévue.',
+			'snt.planning.refusNonAutorisee' => 'La date n\'est pas fixée : ce compte ne peut pas fixer de date. Connectez-vous avec un compte de la direction.',
+			'snt.planning.erreur' => 'La date n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'a3bis.salle.titulaireEntreTitre' => 'L\'enseignant de la classe est arrivé',
 			'a3bis.salle.titulaireEntre' => 'L\'enseignant de la classe a rejoint la salle le premier : le remplacement n\'est plus nécessaire. Merci d\'avoir été prêt.',
 			'a3bis.salle.remplacantEntreTitre' => 'Un remplaçant a pris la classe',
