@@ -215,8 +215,10 @@ Numéros de migration : table des réservations du garde-cap (2026110510 à 2026
 | 7 bis | DEFIL-FEUILLE : une boîte ou une feuille trop haute devient l'écran, une seule barre de défilement (fiche §10 ; constat de C1 au rejeu du 03/11) | S/M | prochain agent libre ; suite complète (lib/core) |
 | 7 ter | RECHARGE-CARTE : pendant une commande en attente de paiement, la carte du profil affiche « 0 $ » alors que le récapitulatif du serveur dit 55 $ (`lib/features/foyer/recharge_foyer.dart:869`). La carte garde en lecture seule le montant retenu par le serveur, sans calcul côté Flutter. Constat du rejeu du 03/11, parcours 7 | S | premier agent libre après DEFIL-FEUILLE ; sans migration ; R3 : carte et récapitulatif concordants, 390 et 1440 |
 | 7 quater | PHOTOS-1 : une seule photo par personne, tous les rôles (serveur) (fiche §11, demande du directeur du 03/11) | M | premier agent libre après RECHARGE-CARTE ; migration 20261107300000 |
-| 7 quinquies | PHOTOS-2 : la même photo sur tous les écrans, l'envoi pour chaque rôle (fiche §11) | L | après PHOTOS-1 ; une PR par domaine si plus de 1 500 lignes |
-| 8 | N3 : pause programmée, mission du contrôleur (la photo de l'enseignant passe dans PHOTOS, 03/11) | M | |
+| 7 quinquies | PHOTOS-2a : le fournisseur unique, l'envoi pour chaque rôle, la fermeture du droit client de 0005 sur `avatar_storage_key` (migration 20261107400000), les écrans de la preuve (tuteur, appareil de l'enfant, enseignant, camarade, direction) (fiche §11) | M-L | après PHOTOS-1 (en production) |
+| 7 sexies | PHOTOS-2b : le reste des écrans (cahier, cartes, espace de classe, messages, communauté) | M | après PHOTOS-2a |
+| 7 bis-a | ADM-UX-bis : Échap ne fermait plus la boîte de Personnes > Demandes après « Accepter » (focus perdu quand le bouton disparaît) ; focus sur la phrase « … est acceptée » (constat du rejeu du 03/11) | S | C1, PR 179 ; sans migration |
+| 8 | N3 : pause programmée, mission du contrôleur (la photo de l'enseignant passe dans PHOTOS, 03/11) | M | C1, migration 20261105800000 |
 | 9 | CAHIER-UX (UX-028, 041 ; UX-029 vérifié d'abord en lecture) | S | |
 | 10 | N4 : Bibliothèque, coffre R2 de la pièce, publication des évaluations, interface standard, Interface guidée | L | r2-selftest lu avant |
 | 11 | FN-SERVEUR (FN-106 et 107 d'abord, puis FN-003, 019, 104) | M | |
@@ -227,7 +229,7 @@ Numéros de migration : table des réservations du garde-cap (2026110510 à 2026
 | 16 | FOYER-UX (UX-009, 023, 024), plus le numéro de version en bas du Profil (directeur, 03/11, registre 08) | S/M | après N2 et NIV1 |
 | 17 | M1 : liste des doublons à supprimer, soumise au directeur | S | rien n'est supprimé sans son « oui » |
 | 18 | COURRIELS-UX (UX-026, FN-108) | M | après A3-bis et SNT |
-| 19 | Scénarios SQL rouges (FN-004, 005, 020, 021, bf1_finance_backend ; `scenarios_af_liste_blanche_volatiles.sql`, rouge sur main pour `accorder_tarif_particulier`, `ajouter_creneau_classe_admin`, `remboursement_confirmer`, `seance_a_rejoindre`, plus les 3 lignes de D1-bis) | M | |
+| 19 | Scénarios SQL rouges (FN-004, 005, 020, 021, bf1_finance_backend ; `scenarios_af_liste_blanche_volatiles.sql`, rouge sur main pour `accorder_tarif_particulier`, `ajouter_creneau_classe_admin`, `remboursement_confirmer`, `seance_a_rejoindre`, plus les 3 lignes de D1-bis) ; `test/features/finance_recette/recette_fi_test.dart:1871` rouge dans un clone peu profond (`git merge-base` sur 65cf51d2), à faire sauter aussi quand `git rev-parse --is-shallow-repository` vaut true (CI verte, pas un rouge de main) ; `scenarios_fn115c_rembourser.sql` dépendait de l'heure le mardi (corrigé dans la PR 172) | M | |
 | 20 | V1 puis V2 : entretien et réunion dans `/salle`, sans les outils de cours | L + L | |
 | 21 | FN-DIVERS, un point par lot : FN-102, FN-101, FN-018, puis FN-111, FN-027 (FN-013 rattaché à RECHARGE-1) | S, puis M | |
 
@@ -300,6 +302,7 @@ Demande du directeur (03/11) : « pour les photos il faut penser à les synchron
 ### Règles de lecture appliquées (écrites, aucune question au directeur, G12)
 
 - **Photo d'un élève, mineur ou adulte** : son foyer, ses enseignants, la direction et ses camarades de classe (K-44, tableau du directeur du 09/10, « elle s'affiche chez son enseignant, à l'administration et chez ses camarades de Classe » ; `02_ARCHITECTURE_ET_SECURITE.md` §6, « portraits visibles en classe ; accès restreint »). Jamais une autre famille hors de la classe. L'ADR-012, archivé, est caduc sur ce point. La photo n'est jamais montrée au public.
+- **Précision du 03/11 (garde-cap, à la relecture de PHOTOS-1)** : « camarades » veut dire l'élève camarade dans sa propre session, jamais les adultes de son foyer (moindre accès pour un mineur ; scénario : le parent d'un camarade ne voit pas la photo).
 - **Photo d'un enseignant** : inchangée (ses élèves et leurs foyers, la direction : `0032_tc_catalogue.sql:642-655`).
 - **Photo d'un adulte du foyer** (titulaire et second adulte) : lui-même, son foyer, la direction et les enseignants des enfants du foyer. Réglage « proposé ». La demande du 03/11 (« tous les rôles », « le parent ») remplace la règle Q4 (« le second adulte : ses initiales, jamais sa photo ») ; le directeur en est informé et peut la rétablir d'un mot.
 - **Photo d'un membre de la direction** : visible des comptes qui voient son nom (messages, annonces, alertes). Réglage « proposé ».
@@ -328,14 +331,15 @@ Demande du directeur (03/11) : « pour les photos il faut penser à les synchron
 1. **Un seul fournisseur**, `photoPersonneProvider(id)`, lu par `AvatarTile` sur **tous** les écrans du relevé, sans initiales imposées : accueil et appareil de l'enfant, compte du tuteur, Foyer, salle (panneau des élèves, vignettes, capsule), fiche de classe, fiche élève, cahier, cartes de classe, espace de classe, écrans de la direction, messages.
    - Les initiales restent seulement quand la personne n'a pas de photo, ou quand l'appelant n'a pas le droit de la voir.
    - Aucun nouveau composant : `AvatarTile`, `PhotoEleve` et `PhotoEnseignant` sont réunis derrière ce fournisseur.
-2. **Envoi pour chaque rôle** :
+2. **Fermer la seconde porte d'écriture** : le droit client de `0005` sur `student_profiles.avatar_storage_key` est retiré en même temps que le client passe à `poser_photo_eleve` (PHOTOS-2a, migration 20261107400000), jamais avant.
+3. **Envoi pour chaque rôle** :
    - le tuteur depuis son Compte ;
    - l'élève adulte depuis son Profil ;
    - l'enseignant depuis `photo_publique.dart`, branché ;
    - la direction depuis son compte ;
    - le tuteur pour un enfant, depuis la fiche élève (déjà là).
-3. **Synchronisation** : après un envoi, toutes les vues de cette personne sont relues. L'URL signée est rafraîchie avant son expiration (`autoDispose` et délai), jamais gardée au-delà de 600 s.
-4. **R3** : Hakim visible avec sa photo :
+4. **Synchronisation** : après un envoi, toutes les vues de cette personne sont relues. L'URL signée est rafraîchie avant son expiration (`autoDispose` et délai), jamais gardée au-delà de 600 s.
+5. **R3** : Hakim visible avec sa photo :
    - chez le tuteur ;
    - sur l'appareil de Hakim ;
    - chez son enseignant (fiche de classe, salle) ;
@@ -343,7 +347,7 @@ Demande du directeur (03/11) : « pour les photos il faut penser à les synchron
    - chez la direction.
 
    Et invisible chez une autre famille. Plus la photo du tuteur et de l'élève adulte posée, puis vue à deux endroits. À 1440 et à 390.
-5. **Hors du lot** :
+6. **Hors du lot** :
    - la compression côté serveur (question ouverte de l'ADR-012, archivée) ;
    - la suppression des anciens fichiers, qui suit M1 et le « oui » du directeur.
 
