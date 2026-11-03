@@ -118,6 +118,7 @@ class SourceSessionSupabase implements SourceSession {
       // les autres comptes, et pour une session d'observation d'agent.
       mfaRequise:
           role == AppRole.controller && claims.niveauAssurance != 'aal2',
+      doubleVerificationFaite: claims.niveauAssurance == 'aal2',
       householdId: claims.householdId,
       accountStatus: profil.statut,
       interfaceMode: profil.mode,

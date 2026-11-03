@@ -398,7 +398,9 @@ class _MoyensAccessibles extends StatelessWidget {
           key: ValueKey<String>('q-${champ.code}'),
           autoriserSaisieLibre: false,
           selectionMultiple: true,
-          valeurInitiale: choisis.isEmpty ? null : ReponseChoix(valeurs: choisis),
+          valeurInitiale: choisis.isEmpty
+              ? null
+              : ReponseChoix(valeurs: choisis),
           options: <OptionChoix>[
             for (final OptionQuestionnaire o in moyens)
               OptionChoix(

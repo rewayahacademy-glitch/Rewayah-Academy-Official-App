@@ -54,6 +54,7 @@ import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/zone_saisie.dart';
+import '../mfa_controleur/double_verification.dart';
 import '../salle_seance/information_controle.dart' show coupuresAdresse;
 import 'familles_importees.dart';
 import 'invitations_familles.dart';
@@ -137,7 +138,17 @@ class _InvitationsPageState extends ConsumerState<InvitationsPage> {
     String? erreur;
     String? succes;
     try {
-      final Invitation inv = await port.inviter(_email.text.trim());
+      final String courriel = _email.text.trim();
+      // MFA-DIRECTION : inviter un comptable demande la double verification ;
+      // en aal1, le code est demande puis le geste rejoue.
+      final Invitation inv = comptable
+          ? await avecDoubleVerification(
+              context,
+              ref,
+              () => port.inviter(courriel),
+              refus: (Object e) => e is NonAutorise,
+            )
+          : await port.inviter(courriel);
       // I1 : l'invitation d'un enseignant part par e-mail des sa creation ;
       // celle d'un comptable reste a transmettre.
       succes = comptable
