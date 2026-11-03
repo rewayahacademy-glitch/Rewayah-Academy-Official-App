@@ -391,3 +391,37 @@ Pour chaque lot, l'agent cherche d'abord dans le dépôt ce qui fait déjà la c
 - Pas de bouton « tout supprimer ».
 - Les migrations prennent des numéros au-dessus de la dernière installée. Une migration dont le texte contient DELETE suit la règle du collage par le directeur.
 
+### Relevé « déjà codé » (garde-cap, 03/11/2026 vers 19:00 UTC, lecture seule sur main 222c763d8)
+
+Le directeur avait raison : l'essentiel existe, il manque la donnée ou le branchement. Chaque agent part de ce relevé.
+
+**DRAPEAUX : le client est prêt, le serveur ne donne pas le pays aux familles.**
+- Existe : le composant `PaysEnseignant` (`lib/core/widgets/pays_enseignant.dart:45`, images `assets/flags/`, `.parCode`, `codesIsoDesPays`), repris par `AvatarNom(pays:)` (`avatar_nom.dart:168-175`). Les cartes famille passent déjà `pays:`. Les modèles lisent déjà `teacher_country` (`groupes_supabase.dart:55`, `service_planning.dart:139`, `service_groupes.dart:76`).
+- Manque : `mes_groupes_famille_v` (`0033:140-170`) et `mes_seances_v` (`20261107500000:193`) n'ont pas `teacher_country`. Le drapeau ne se voit aujourd'hui que dans Personnes > Comptes. La migration est déjà décrite dans `ENS-PAYS-1_BR.md:15-26` (masquée comme le prénom). Numéro : **20261108700000**.
+- Puis : passer `pays` aux deux `AvatarNom` de la salle (`capsule_seance.dart:65,230`, `chrome_seance.dart:813`).
+- Défaut joint : `historique_controleur_supabase.dart:72` lit `pays_enseignant`, colonne qui n'existe dans aucune migration.
+
+**FUSEAUX : deux heures déjà calculées par le serveur, mais la seconde ne correspond pas à son libellé.**
+- Existe : `SessionClockVM` (`lib/core/tc_horloge/session_clock_vm.dart:107-125`), `horloge_classe` (`20261025040000:27-45`), `horloge_seance` (`0033:463`), `mon_fuseau()` (`0005:407-417`), la ligne « Chez Sayyid X » (`carte_session.dart:300-345, 686-695`), la mise à jour par bascules (`horloge_vivante.dart`, `ancre_horloge_serveur.dart`), la ville traduite `villeDuFuseauLibelle` (`lib/core/i18n/villes_fuseau.dart:39`).
+- Défaut central : « Chez Sayyid X » affiche le fuseau de la **classe** (`groupes.timezone_iana`), pas celui de l'enseignant (`teacher_profiles.timezone_iana`). Il tombe juste seulement si la classe a été créée au fuseau de l'enseignant.
+- La « pagaille » relevée :
+  - Accueil famille et planning : heure du foyer, puis « Heure de la classe » (`bloc_seance.dart:52-90`).
+  - Mes classes : une seule heure (`carte_groupe.dart:400-427`).
+  - Heure de l'appareil (`toLocal`) : accueil élève, historique tuteur, journée et classes de l'enseignant, salle, notifications, rejoindre avec l'élève.
+  - Historique adulte : l'heure vient de l'appareil et la date du serveur (`service_planning.dart:164`), qui peuvent se contredire vers minuit.
+  - Un second helper de ville, non traduit (`villeDeFuseau`, `horloge_supabase.dart:26`), sert toutes les cartes de séance.
+  - Aucune heure courante qui avance : seulement un compte à rebours.
+- À faire :
+  - serveur : `horloge_classe` et `horloge_seance` donnent le fuseau, le titre et le pays de l'interlocuteur (l'enseignant pour la famille, chaque famille pour l'enseignant). Numéro : **20261108800000** ;
+  - client : un seul composant d'heure double à la place de `bloc_seance`, `carte_groupe` et des `toLocal`, `villeDeFuseau` remplacé par `villeDuFuseauLibelle`, une ligne d'heure courante animée qui s'arrête si l'appareil demande moins de mouvement ;
+  - `pubspec.yaml` est gelé, donc aucune conversion IANA côté client : tout vient du serveur.
+
+**SUPPRIMER : la demande de l'intéressé est branchée, la suppression par la direction ou le tuteur ne l'est pas.**
+- En production : « Mes données » (`/compte/mes-donnees`, `demander_suppression_compte`) et Personnes > Suppressions (`SuppressionsPage`, `traiter_demande_suppression`, `private.cpt_anonymiser`).
+- Branche `claude/supprimer-serveur` (20261108600000) : retrait, anonymisation à 30 jours par pg_cron, `direction_supprimer_comptes(uuid[])` (aal2, 200 au plus), `tuteur_supprimer_profil_enfant(uuid)`. **Écart à corriger avant la PR** : pas de restauration pendant le délai, ni de liste des retraits. Ajouter `direction_restaurer_comptes(uuid[])` et une liste paginée des retraits, avec leurs tests.
+- Client à brancher ensuite :
+  - un port et un adaptateur sur le modèle de `MesDonneesSupabase`, branchés dans `main.dart` ;
+  - dans Comptes, `SelectionCollection` (`data_collection.dart:158`) et `BarreSelection` (`barre_selection.dart:42`), comme dans les candidatures, une entrée dans le menu de ligne (`comptes_page.dart:1060-1084`) et `ConfirmDestructive` avec le nombre de profils ;
+  - dans la fiche enfant du tuteur (`fiche_eleve_page.dart:549-601`), une ligne « Supprimer ce profil » ;
+  - la restauration se fait depuis Personnes > Suppressions.
+
