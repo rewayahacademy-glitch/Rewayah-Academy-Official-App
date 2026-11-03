@@ -18,6 +18,7 @@ import '../../../core/session/session_controleur.dart';
 import '../../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/groupe_reglages.dart';
+import '../../candidature/libelles_parcours.dart' show nomDeLangue;
 import '../../parcours_offres/libelles_parcours.dart' show libelleNiveau;
 import '../brouillon_inscription.dart';
 import '../code_comptable_retenu.dart';
@@ -232,14 +233,21 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
   String _question(EtapeQuestionnaire etape) =>
       QuestionnairePage.adresse(etape);
 
-  /// Le nom d'une langue, lu dans le referentiel deja charge par l'etape de
-  /// la langue ; son code sinon.
+  /// Le nom d'une langue (UX-005, TXT-1) : d'abord son libelle i18n, dans
+  /// la langue de l'interface (`recrutement.parcours.langues`, deja utilise
+  /// par la candidature) ; sinon le nom du referentiel des langues de cours,
+  /// suivi meme quand l'etape de la langue ne l'a pas charge (application
+  /// rouverte sur le recapitulatif) ; le code seulement pour une langue
+  /// inconnue des deux.
   String _nomLangue(String? code) {
     if (code == null) {
       return '';
     }
+    if (nomDeLangue(code) case final String nom) {
+      return nom;
+    }
     final List<LangueCours> langues =
-        ref.read(languesCoursProvider).value ?? const <LangueCours>[];
+        ref.watch(languesCoursProvider).value ?? const <LangueCours>[];
     return langues.where((LangueCours l) => l.code == code).firstOrNull?.nom ??
         code;
   }

@@ -13,6 +13,10 @@ import {
   Stripe,
   verifierEvenement,
   adresseBanc,
+  couleurFond,
+  fermerAncienneSession,
+  nomLigne,
+  type SessionsCheckout,
   parametresRemboursementDirection,
 } from './stripe.ts'
 import { parametres, parametresRemboursement, remboursementsDeLaCharge } from '../stripe-webhook/index.ts'
@@ -80,7 +84,7 @@ Deno.test('session : une ligne par profil, montants en unites mineures', () => {
     devise: 'USD',
     lignes: [{ prenom: 'Bilal', mineur: 5000 }, { prenom: 'Yasmine', mineur: 10000 }],
     retour: 'https://app.test/#/r?commande=c1',
-    libelle: (prenom) => `Rewayah Academy · ${prenom}`,
+    libelle: (l) => `Rewayah Academy · ${l.prenom}`,
     expireA: 1,
   })
   assertEquals(p.line_items?.length, 2)
@@ -105,7 +109,7 @@ Deno.test('formulaire integre : embedded_page, retour seulement si un moyen l ex
     devise: 'USD',
     lignes: [{ prenom: 'Bilal', mineur: 5000 }],
     retour: 'https://app.test/#/r?commande=c1',
-    libelle: (prenom) => `Rewayah Academy · ${prenom}`,
+    libelle: (l) => `Rewayah Academy · ${l.prenom}`,
     expireA: 1,
     integre: true,
   })
@@ -198,4 +202,76 @@ Deno.test('charge.refunded : les remboursements portes, le plus recent d abord',
     ['re_b', 're_a'],
   )
   assertEquals(remboursementsDeLaCharge(charge({})), [])
+})
+
+// PAY-UX (02/11/2026) : nom des lignes, fond du formulaire, nouveau depart.
+Deno.test('PAY-UX : le nom d une ligne dit ce qu on paie, jamais un prenom', () => {
+  assertEquals(nomLigne({ prenom: 'H', mineur: 5500, formule: 'mois', mois: '2026-11-01' }), 'Mensualité de novembre 2026')
+  assertEquals(nomLigne({ prenom: 'H', mineur: 5500, formule: 'mois', mois: '2027-04-01' }), 'Mensualité d’avril 2027')
+  assertEquals(nomLigne({ prenom: 'H', mineur: 5500, formule: 'mois', mois: '2026-10-01' }), 'Mensualité d’octobre 2026')
+  assertEquals(nomLigne({ prenom: 'H', mineur: 5500, formule: 'mois', mois: '2026-11-01' }, 'ar'), 'رسوم شهر نوفمبر 2026')
+  assertEquals(nomLigne({ prenom: 'H', mineur: 1, formule: 'trimestriel' }), 'Trois mois payés d’avance')
+  assertEquals(nomLigne({ prenom: 'H', mineur: 1, formule: 'annuel' }), 'Une année payée d’avance')
+  assertEquals(nomLigne({ prenom: 'H', mineur: 1, formule: 'libre' }), 'Paiement des cours')
+  // Une base d'avant le lot (sans formule ni mois) : un nom sans prenom.
+  assertEquals(nomLigne({ prenom: 'Yasmine', mineur: 1 }), 'Paiement des cours')
+  assertEquals(nomLigne({ prenom: 'H', mineur: 1, formule: 'mois', mois: 'n importe' }), 'Mensualité')
+})
+
+Deno.test('PAY-UX : le formulaire integre prend le fond de la page et le nom de l academie', () => {
+  const p = parametresSession({
+    commandeId: 'c1', reference: 'RWY-ABCD1234', devise: 'USD',
+    lignes: [{ prenom: 'H', mineur: 5500, formule: 'mois', mois: '2026-11-01' }],
+    retour: 'https://app.test/#/r?commande=c1',
+    libelle: (l) => nomLigne(l), expireA: 1, integre: true, fond: '#F7F4FB',
+  })
+  assertEquals(p.branding_settings?.background_color, '#f7f4fb')
+  assertEquals(p.branding_settings?.display_name, 'Rewayah Academy')
+  assertEquals(p.line_items?.[0].price_data?.product_data?.name, 'Mensualité de novembre 2026')
+  const sansFond = parametresSession({
+    commandeId: 'c1', reference: 'R', devise: 'USD', lignes: [{ prenom: 'H', mineur: 1 }],
+    retour: 'https://app.test/', libelle: (l) => nomLigne(l), expireA: 1, integre: true, fond: 'red;}',
+  })
+  assertEquals(sansFond.branding_settings?.background_color, undefined)
+  assertEquals(couleurFond('#123abc'), '#123abc')
+  assertEquals(couleurFond('url(x)'), null)
+  assertEquals(couleurFond(12), null)
+})
+
+function fauxSessions(statut: string, expireRefuse = false) {
+  const appels: string[] = []
+  return {
+    appels,
+    sessions: {
+      retrieve: (id: string) => { appels.push(`retrieve:${id}`); return Promise.resolve({ id, status: statut }) },
+      expire: (id: string) => {
+        appels.push(`expire:${id}`)
+        return expireRefuse ? Promise.reject(new Error('session deja payee')) : Promise.resolve({ id, status: 'expired' })
+      },
+    } as SessionsCheckout,
+  }
+}
+
+Deno.test('PAY-UX : nouveau depart, la session ouverte est expiree puis remplacee', async () => {
+  const f = fauxSessions('open')
+  assertEquals(await fermerAncienneSession(f.sessions, 'cs_a'), 'remplacer')
+  assertEquals(f.appels, ['retrieve:cs_a', 'expire:cs_a'])
+})
+
+Deno.test('PAY-UX : session payee, aucune expiration, aucune nouvelle session', async () => {
+  const f = fauxSessions('complete')
+  assertEquals(await fermerAncienneSession(f.sessions, 'cs_a'), 'payee')
+  assertEquals(f.appels, ['retrieve:cs_a'])
+})
+
+Deno.test('PAY-UX : session deja expiree, remplacee sans nouvel appel d expiration', async () => {
+  const f = fauxSessions('expired')
+  assertEquals(await fermerAncienneSession(f.sessions, 'cs_a'), 'remplacer')
+  assertEquals(f.appels, ['retrieve:cs_a'])
+})
+
+Deno.test('PAY-UX : expiration refusee par Stripe, l erreur remonte (rien n est cree)', async () => {
+  const f = fauxSessions('open', true)
+  await assertRejects(() => fermerAncienneSession(f.sessions, 'cs_a'))
+  assertEquals(f.appels, ['retrieve:cs_a', 'expire:cs_a'])
 })

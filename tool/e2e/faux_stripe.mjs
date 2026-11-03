@@ -10,6 +10,15 @@
 //   GET  /v1/refunds        la liste, filtree par payment_intent ;
 //   GET  /__journal         ce qu'il a recu (pour le robot) : methode, chemin,
 //                           cle d'idempotence, corps decode.
+// PAY-UX (02/11/2026) : les sessions Checkout du formulaire integre.
+//   POST /v1/checkout/sessions             cree une session `open` (une meme cle
+//                                          d'idempotence rend la meme session) ;
+//   GET  /v1/checkout/sessions/:id         la relit ;
+//   POST /v1/checkout/sessions/:id/expire  l'expire si elle est ouverte ; refuse
+//                                          (400) si elle ne l'est pas, ou si le
+//                                          robot a demande le refus ;
+//   POST /__payer/:id                      la marque `complete` (paiement simule) ;
+//   POST /__refuser_expiration?oui=1|0     fait refuser (ou non) les expirations.
 // Il ne prouve que la forme de la requete : l'appel au vrai Stripe n'est pas
 // prouve ici.
 //
@@ -20,11 +29,14 @@ const port = Number(process.argv[2] ?? 12111);
 const journal = [];
 const parCle = new Map();
 const remboursements = [];
+const sessions = new Map();
+let refuserExpiration = false;
 let n = 0;
 const lancement = Date.now().toString(36);
 
 function repondre(res, statut, corps) {
-  res.writeHead(statut, { 'Content-Type': 'application/json' });
+  // PAY-UX : le faux formulaire du navigateur relit sa session (fond, noms).
+  res.writeHead(statut, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
   res.end(JSON.stringify(corps));
 }
 
@@ -61,6 +73,57 @@ http.createServer((req, res) => {
       remboursements.push(r);
       if (cle) parCle.set(cle, r);
       return repondre(res, 200, r);
+    }
+    if (u.pathname === '/v1/checkout/sessions' && req.method === 'POST') {
+      if (cle && parCle.has(cle)) return repondre(res, 200, parCle.get(cle));
+      n += 1;
+      // Forme des vrais identifiants (cs_test_ puis lettres et chiffres).
+      const id = `cs_test_banc${lancement}x${n}`;
+      const session = {
+        id,
+        object: 'checkout.session',
+        status: 'open',
+        livemode: false,
+        ui_mode: corps.ui_mode ?? null,
+        url: corps.ui_mode === 'embedded_page' ? null : `http://127.0.0.1:${port}/payer/${id}`,
+        client_secret: corps.ui_mode === 'embedded_page' ? `${id}_secret_banc` : null,
+        // Ce que le serveur a demande, relu par le robot.
+        branding_settings: {
+          background_color: corps['branding_settings[background_color]'] ?? null,
+          display_name: corps['branding_settings[display_name]'] ?? null,
+        },
+        noms: Object.entries(corps)
+          .filter(([k]) => /^line_items\[\d+\]\[price_data\]\[product_data\]\[name\]$/.test(k))
+          .map(([, v]) => v),
+      };
+      sessions.set(id, session);
+      if (cle) parCle.set(cle, session);
+      return repondre(res, 200, session);
+    }
+    const mSession = u.pathname.match(/^\/v1\/checkout\/sessions\/([^/]+)(\/expire)?$/);
+    if (mSession) {
+      const session = sessions.get(mSession[1]);
+      if (!session) return repondre(res, 404, { error: { type: 'invalid_request_error', message: 'No such checkout.session' } });
+      if (!mSession[2] && req.method === 'GET') return repondre(res, 200, session);
+      if (mSession[2] && req.method === 'POST') {
+        if (refuserExpiration || session.status !== 'open') {
+          return repondre(res, 400, { error: { type: 'invalid_request_error',
+            message: `Only Checkout Sessions with a status of open can be expired (${session.status}).` } });
+        }
+        session.status = 'expired';
+        return repondre(res, 200, session);
+      }
+    }
+    const mPayer = u.pathname.match(/^\/__payer\/([^/]+)$/);
+    if (mPayer && req.method === 'POST') {
+      const session = sessions.get(mPayer[1]);
+      if (!session) return repondre(res, 404, { error: { message: 'session inconnue' } });
+      session.status = 'complete';
+      return repondre(res, 200, session);
+    }
+    if (u.pathname === '/__refuser_expiration' && req.method === 'POST') {
+      refuserExpiration = u.searchParams.get('oui') === '1';
+      return repondre(res, 200, { refuserExpiration });
     }
     if (u.pathname === '/v1/refunds' && req.method === 'GET') {
       const pi = u.searchParams.get('payment_intent');

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/conformite/representant_ue.dart';
+import '../../core/finance/delai_retractation.dart';
 import '../../core/i18n/jour_du_mois.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -131,6 +132,11 @@ class TexteJuridiquePage extends ConsumerWidget {
       renseignes: renseignes,
       responsable: responsable,
       representantUe: ref.watch(representantUeProvider).asData?.value,
+      // REMB-14 : le delai de retractation de la politique en vigueur ; non
+      // lu, la phrase sans duree s'affiche (aucun etat d'erreur sur un texte).
+      delaiJours: texte == TexteJuridique.annulation
+          ? ref.watch(delaiRetractationProvider).asData?.value
+          : null,
     );
     return PageShell(
       titre: texte.titre,

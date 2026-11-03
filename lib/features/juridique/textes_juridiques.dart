@@ -20,6 +20,7 @@ import '../../core/conformite/representant_ue.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/protection_enfants/responsable_protection.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart' show LibellesGroupe;
 import '../dossier/politique_controle.dart' show SectionPolitique;
 import '../salle_seance/information_controle.dart';
 
@@ -192,13 +193,16 @@ String _champ(ChampJuridique c, Map<ChampJuridique, String> renseignes) =>
 /// les reperes a completer a la place prevue. [responsable] est la lecture
 /// du reglage de la direction (`null` : le defaut). [representantUe] est celle
 /// du representant dans l'Union europeenne (vide ou `null` : « Rewayah
-/// Academy »).
+/// Academy »). [delaiJours] est le delai de retractation de la politique en
+/// vigueur (REMB-14) : `null` (non lu), la phrase dit le delai sans duree,
+/// jamais un nombre invente.
 List<SectionPolitique> sectionsJuridiques(
   TexteJuridique texte, {
   String contact = InformationControle.contactConfidentialite,
   Map<ChampJuridique, String>? renseignes,
   ResponsableProtection? responsable,
   String? representantUe,
+  int? delaiJours,
 }) {
   final Map<ChampJuridique, String> donnes =
       renseignes ??
@@ -254,8 +258,20 @@ List<SectionPolitique> sectionsJuridiques(
       ];
     case TexteJuridique.annulation:
       final j = t.juridique.annulation;
+      // REMB-14 (directeur, 02/11/2026) : le delai de retractation vient de
+      // la politique (`remboursement_delai_jours`), jamais du texte.
+      final String delai = delaiJours == null
+          ? j.s1.delaiSansDuree
+          : LibellesGroupe.insecable(j.s1.delai(jours: delaiJours));
       return <SectionPolitique>[
-        (titre: j.s1.titre, blocs: j.s1.blocs),
+        (
+          titre: j.s1.titre,
+          blocs: <String>[
+            if (j.s1.blocs.isNotEmpty) j.s1.blocs.first,
+            delai,
+            ...j.s1.blocs.skip(1),
+          ],
+        ),
         (titre: j.s2.titre, blocs: j.s2.blocs),
         (titre: j.s3.titre, blocs: j.s3.blocs),
         (titre: j.s4.titre, blocs: j.s4.blocs),

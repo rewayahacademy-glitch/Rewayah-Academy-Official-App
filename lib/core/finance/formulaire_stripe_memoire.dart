@@ -2,6 +2,9 @@ import 'package:flutter/widgets.dart';
 
 import 'formulaire_paiement.dart';
 
+/// Hors web : rien a precharger.
+void prechargerStripe() {}
+
 /// Hors web : aucun formulaire ne se monte (aucun achat integre hors web au
 /// lancement, guide Finance V4 §1.6).
 class FormulaireStripe extends StatelessWidget {
@@ -14,6 +17,7 @@ class FormulaireStripe extends StatelessWidget {
     required this.titre,
     required this.phrase,
     required this.libelleRetour,
+    required this.rassurance,
     super.key,
   });
 
@@ -33,6 +37,9 @@ class FormulaireStripe extends StatelessWidget {
   final String titre;
   final String phrase;
   final String libelleRetour;
+
+  /// PAY-UX : la ligne sous le formulaire, deja traduite.
+  final String rassurance;
 
   @override
   Widget build(BuildContext context) => const SizedBox.shrink();
