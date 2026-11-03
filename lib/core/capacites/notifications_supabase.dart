@@ -71,6 +71,9 @@ const Set<String> evenementsNotificationConnus = <String>{
   // SNT (03/11/2026, migrations 20261106500000 et 20261106500001) : la
   // seance non tenue, reportee.
   'seance_reportee',
+  // D1-ter (03/11/2026, migrations 20261106600000 et 20261106600001) : la
+  // direction a transmis un message sur l'eleve.
+  'message_academie_eleve',
 };
 
 const Set<String> _destinationsAutorisees = <String>{
@@ -89,6 +92,10 @@ const Set<String> _destinationsAutorisees = <String>{
   '/admin/operations/planning',
   // FN-115b : la finance de la direction (remboursements, contestations).
   '/admin/finance',
+  // D1-ter : l'Historique du tuteur, le Suivi de l'eleve adulte (la carte
+  // « Messages de l'académie »).
+  '/tuteur/suivi',
+  '/eleve/suivi',
 };
 
 /// La classe d'un eleve du foyer, et son planning : `/tuteur/classes/<uuid>`
@@ -447,6 +454,9 @@ Map<String, dynamic> _parametresAffichables(Map<dynamic, dynamic> bruts) {
     // identifiant.
     'cause',
     'issue',
+    // D1-ter : le prenom de l'eleve concerne par un message de l'academie
+    // (jamais le message, jamais un identifiant).
+    'prenom',
   };
   // FN-028 : des comptes et un drapeau, jamais un identifiant.
   const Set<String> clesNombres = <String>{'presents', 'inscrits'};
@@ -491,7 +501,8 @@ TypeNotification _typePour(String evenement) => switch (evenement) {
   'remplacement_pris' ||
   'remplacement_pre_alerte' ||
   'remplacement_inutile' => TypeNotification.remplacement,
-  'demande_presentation' => TypeNotification.messageMetier,
+  'demande_presentation' ||
+  'message_academie_eleve' => TypeNotification.messageMetier,
   'controle_mission_attribuee' => TypeNotification.mission,
   'controle_mission_non_controlee' => TypeNotification.evenementOperationnel,
   'paiement_relance' ||

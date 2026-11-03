@@ -109,6 +109,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$accueilInscrits$fr accueilInscrits = Traductions$accueilInscrits$fr.internal(_root);
 	late final Traductions$n1$fr n1 = Traductions$n1$fr.internal(_root);
 	late final Traductions$i1$fr i1 = Traductions$i1$fr.internal(_root);
+	late final Traductions$d1ter$fr d1ter = Traductions$d1ter$fr.internal(_root);
 	late final Traductions$snt$fr snt = Traductions$snt$fr.internal(_root);
 	late final Traductions$a3bis$fr a3bis = Traductions$a3bis$fr.internal(_root);
 	late final Traductions$payUx$fr payUx = Traductions$payUx$fr.internal(_root);
@@ -3751,6 +3752,17 @@ class Traductions$i1$fr {
 	late final Traductions$i1$familles$fr familles = Traductions$i1$familles$fr.internal(_root);
 	late final Traductions$i1$import$fr import = Traductions$i1$import$fr.internal(_root);
 	late final Traductions$i1$lien$fr lien = Traductions$i1$lien$fr.internal(_root);
+}
+
+// Path: d1ter
+class Traductions$d1ter$fr {
+	Traductions$d1ter$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$d1ter$messages$fr messages = Traductions$d1ter$messages$fr.internal(_root);
+	late final Traductions$d1ter$notifications$fr notifications = Traductions$d1ter$notifications$fr.internal(_root);
 }
 
 // Path: snt
@@ -21223,6 +21235,51 @@ class Traductions$i1$lien$fr {
 
 	/// fr: 'Recevoir un nouveau lien'
 	String get nouveauLien => 'Recevoir un nouveau lien';
+}
+
+// Path: d1ter.messages
+class Traductions$d1ter$messages$fr {
+	Traductions$d1ter$messages$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Messages de l'académie sur {prenom}'
+	String titre({required Object prenom}) => 'Messages de l\'académie sur ${prenom}';
+
+	/// fr: 'Messages de l'académie'
+	String get titreSoi => 'Messages de l\'académie';
+
+	/// fr: 'La direction vous a transmis ces messages sur {prenom}.'
+	String intro({required Object prenom}) => 'La direction vous a transmis ces messages sur ${prenom}.';
+
+	/// fr: 'La direction vous a transmis ces messages.'
+	String get introSoi => 'La direction vous a transmis ces messages.';
+
+	/// fr: 'Transmis le {date}'
+	String transmisLe({required Object date}) => 'Transmis le ${date}';
+
+	/// fr: 'Les messages de l'académie n'ont pas pu être lus : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Les messages de l\'académie n\'ont pas pu être lus : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+}
+
+// Path: d1ter.notifications
+class Traductions$d1ter$notifications$fr {
+	Traductions$d1ter$notifications$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La direction vous a transmis un message.'
+	String get message => 'La direction vous a transmis un message.';
+
+	/// fr: 'La direction vous a transmis un message sur {prenom}.'
+	String messageEnfant({required Object prenom}) => 'La direction vous a transmis un message sur ${prenom}.';
+
+	/// fr: 'La direction vous a transmis un message.'
+	String get messageSoi => 'La direction vous a transmis un message.';
 }
 
 // Path: snt.regles
@@ -53891,6 +53948,15 @@ extension on Traductions {
 			'i1.lien.dejaServiTitre' => 'Ce lien a déjà servi ou a expiré',
 			'i1.lien.dejaServiDetail' => 'Un lien de connexion ne sert qu\'une fois, et pour peu de temps. Demandez-en un nouveau : saisissez votre adresse e-mail sur la page de connexion.',
 			'i1.lien.nouveauLien' => 'Recevoir un nouveau lien',
+			'd1ter.messages.titre' => ({required Object prenom}) => 'Messages de l\'académie sur ${prenom}',
+			'd1ter.messages.titreSoi' => 'Messages de l\'académie',
+			'd1ter.messages.intro' => ({required Object prenom}) => 'La direction vous a transmis ces messages sur ${prenom}.',
+			'd1ter.messages.introSoi' => 'La direction vous a transmis ces messages.',
+			'd1ter.messages.transmisLe' => ({required Object date}) => 'Transmis le ${date}',
+			'd1ter.messages.erreur' => 'Les messages de l\'académie n\'ont pas pu être lus : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'd1ter.notifications.message' => 'La direction vous a transmis un message.',
+			'd1ter.notifications.messageEnfant' => ({required Object prenom}) => 'La direction vous a transmis un message sur ${prenom}.',
+			'd1ter.notifications.messageSoi' => 'La direction vous a transmis un message.',
 			'snt.regles.nonTenue' => 'Séance non tenue',
 			'snt.regles.nonTenueDetail' => 'Si aucun enseignant n\'a rejoint la salle à ce délai, la séance est reportée : la classe est prévenue et la direction fixe la nouvelle date dans le planning.',
 			'snt.regles.bornesNonTenue' => ({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début.',

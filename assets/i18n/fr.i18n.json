@@ -13269,6 +13269,21 @@
       "nouveauLien": "Recevoir un nouveau lien"
     }
   },
+  "d1ter": {
+    "messages": {
+      "titre": "Messages de l'académie sur {prenom}",
+      "titreSoi": "Messages de l'académie",
+      "intro": "La direction vous a transmis ces messages sur {prenom}.",
+      "introSoi": "La direction vous a transmis ces messages.",
+      "transmisLe": "Transmis le {date}",
+      "erreur": "Les messages de l'académie n'ont pas pu être lus\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant."
+    },
+    "notifications": {
+      "message": "La direction vous a transmis un message.",
+      "messageEnfant": "La direction vous a transmis un message sur {prenom}.",
+      "messageSoi": "La direction vous a transmis un message."
+    }
+  },
   "snt": {
     "regles": {
       "nonTenue": "Séance non tenue",

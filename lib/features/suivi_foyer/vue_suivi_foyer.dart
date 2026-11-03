@@ -135,22 +135,22 @@ class VueSuiviFoyer {
     // fois.
     final Map<String, PresenceParticipant> parCours =
         <String, PresenceParticipant>{};
-    for (final PresenceParticipant ligne in presences ?? const <PresenceParticipant>[]) {
+    for (final PresenceParticipant ligne
+        in presences ?? const <PresenceParticipant>[]) {
       parCours['${ligne.seanceId}|${ligne.profilId}'] = ligne;
     }
 
-    final List<LigneSuivi> toutes =
-        <LigneSuivi>[
-          for (final Seance seance in seances)
-            LigneSuivi(
-              seance: seance,
-              sort: sortDe(seance),
-              presence: VuePresence.depuis(
-                ligne: parCours['${seance.id}|${seance.eleveId}'],
-                maintenant: maintenant,
-              ),
-            ),
-        ]..sort(_ordre);
+    final List<LigneSuivi> toutes = <LigneSuivi>[
+      for (final Seance seance in seances)
+        LigneSuivi(
+          seance: seance,
+          sort: sortDe(seance),
+          presence: VuePresence.depuis(
+            ligne: parCours['${seance.id}|${seance.eleveId}'],
+            maintenant: maintenant,
+          ),
+        ),
+    ]..sort(_ordre);
 
     final Map<String, FacetteEnfant> facettes = <String, FacetteEnfant>{};
     for (final LigneSuivi ligne in toutes) {

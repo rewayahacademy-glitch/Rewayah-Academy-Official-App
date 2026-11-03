@@ -145,6 +145,8 @@ import 'core/session/session_controleur.dart';
 import 'core/session/session_state.dart';
 import 'core/session/source_session.dart' show terminerSessionRefusee;
 import 'core/session/source_session_agent.dart';
+import 'core/suivi/messages_academie_supabase.dart';
+import 'core/suivi/port_messages_academie.dart';
 import 'core/tc_bibliotheque/port_support_actif.dart';
 import 'core/tc_bibliotheque/support_actif_supabase.dart';
 import 'core/tc_etat_partage/etat_partage_supabase.dart';
@@ -228,6 +230,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // direction fixe (RPC lister_seances_reportees, fixer_nouvelle_date_seance).
   portSeancesReporteesProvider.overrideWithValue(
     SeancesReporteesSupabase(Supabase.instance.client),
+  ),
+  // D1-ter (03/11/2026) : les messages de l'academie transmis a la famille
+  // (vue concern_famille_v, lecture seule).
+  portMessagesAcademieProvider.overrideWithValue(
+    MessagesAcademieSupabase(Supabase.instance.client),
   ),
   portReprisesAdminProvider.overrideWithValue(
     ReprisesAdminSupabase(Supabase.instance.client),

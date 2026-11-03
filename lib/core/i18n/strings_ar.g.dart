@@ -103,6 +103,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$alertes$ar alertes = _Traductions$alertes$ar._(_root);
 	@override late final _Traductions$n1$ar n1 = _Traductions$n1$ar._(_root);
 	@override late final _Traductions$i1$ar i1 = _Traductions$i1$ar._(_root);
+	@override late final _Traductions$d1ter$ar d1ter = _Traductions$d1ter$ar._(_root);
 	@override late final _Traductions$snt$ar snt = _Traductions$snt$ar._(_root);
 	@override late final _Traductions$a3bis$ar a3bis = _Traductions$a3bis$ar._(_root);
 	@override late final _Traductions$payUx$ar payUx = _Traductions$payUx$ar._(_root);
@@ -1885,6 +1886,17 @@ class _Traductions$i1$ar extends Traductions$i1$fr {
 	@override late final _Traductions$i1$familles$ar familles = _Traductions$i1$familles$ar._(_root);
 	@override late final _Traductions$i1$import$ar import = _Traductions$i1$import$ar._(_root);
 	@override late final _Traductions$i1$lien$ar lien = _Traductions$i1$lien$ar._(_root);
+}
+
+// Path: d1ter
+class _Traductions$d1ter$ar extends Traductions$d1ter$fr {
+	_Traductions$d1ter$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$d1ter$messages$ar messages = _Traductions$d1ter$messages$ar._(_root);
+	@override late final _Traductions$d1ter$notifications$ar notifications = _Traductions$d1ter$notifications$ar._(_root);
 }
 
 // Path: snt
@@ -9298,6 +9310,33 @@ class _Traductions$i1$lien$ar extends Traductions$i1$lien$fr {
 	@override String get dejaServiTitre => 'استُعمل هذا الرابط من قبل أو انتهت صلاحيته';
 	@override String get dejaServiDetail => 'لا يصلح رابط تسجيل الدخول إلا مرة واحدة ولمدة قصيرة. اطلب رابطًا جديدًا: أدخل عنوان بريدك الإلكتروني في صفحة تسجيل الدخول.';
 	@override String get nouveauLien => 'الحصول على رابط جديد';
+}
+
+// Path: d1ter.messages
+class _Traductions$d1ter$messages$ar extends Traductions$d1ter$messages$fr {
+	_Traductions$d1ter$messages$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String titre({required Object prenom}) => 'رسائل الأكاديمية عن ⁨${prenom}⁩';
+	@override String get titreSoi => 'رسائل الأكاديمية';
+	@override String intro({required Object prenom}) => 'أرسلت إليكم الإدارة هذه الرسائل عن ⁨${prenom}⁩.';
+	@override String get introSoi => 'أرسلت إليكم الإدارة هذه الرسائل.';
+	@override String transmisLe({required Object date}) => 'أُرسلت في ⁨${date}⁩';
+	@override String get erreur => 'تعذّرت قراءة رسائل الأكاديمية: قد لا يكون الطلب قد وصل إلى أكاديمية الرواية. أعيدوا المحاولة بعد لحظة.';
+}
+
+// Path: d1ter.notifications
+class _Traductions$d1ter$notifications$ar extends Traductions$d1ter$notifications$fr {
+	_Traductions$d1ter$notifications$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get message => 'أرسلت إليكم الإدارة رسالة.';
+	@override String messageEnfant({required Object prenom}) => 'أرسلت إليكم الإدارة رسالة عن ⁨${prenom}⁩.';
+	@override String get messageSoi => 'أرسلت إليكم الإدارة رسالة.';
 }
 
 // Path: snt.regles
@@ -30101,6 +30140,15 @@ extension on TraductionsAr {
 			'i1.lien.dejaServiTitre' => 'استُعمل هذا الرابط من قبل أو انتهت صلاحيته',
 			'i1.lien.dejaServiDetail' => 'لا يصلح رابط تسجيل الدخول إلا مرة واحدة ولمدة قصيرة. اطلب رابطًا جديدًا: أدخل عنوان بريدك الإلكتروني في صفحة تسجيل الدخول.',
 			'i1.lien.nouveauLien' => 'الحصول على رابط جديد',
+			'd1ter.messages.titre' => ({required Object prenom}) => 'رسائل الأكاديمية عن ⁨${prenom}⁩',
+			'd1ter.messages.titreSoi' => 'رسائل الأكاديمية',
+			'd1ter.messages.intro' => ({required Object prenom}) => 'أرسلت إليكم الإدارة هذه الرسائل عن ⁨${prenom}⁩.',
+			'd1ter.messages.introSoi' => 'أرسلت إليكم الإدارة هذه الرسائل.',
+			'd1ter.messages.transmisLe' => ({required Object date}) => 'أُرسلت في ⁨${date}⁩',
+			'd1ter.messages.erreur' => 'تعذّرت قراءة رسائل الأكاديمية: قد لا يكون الطلب قد وصل إلى أكاديمية الرواية. أعيدوا المحاولة بعد لحظة.',
+			'd1ter.notifications.message' => 'أرسلت إليكم الإدارة رسالة.',
+			'd1ter.notifications.messageEnfant' => ({required Object prenom}) => 'أرسلت إليكم الإدارة رسالة عن ⁨${prenom}⁩.',
+			'd1ter.notifications.messageSoi' => 'أرسلت إليكم الإدارة رسالة.',
 			'snt.regles.nonTenue' => 'حصة لم تُعقد',
 			'snt.regles.nonTenueDetail' => 'إذا لم ينضمّ أي معلم إلى القاعة عند هذه المدة، تؤجَّل الحصة: يُبلَّغ الفصل وتحدّد الإدارة الموعد الجديد في الجدول.',
 			'snt.regles.bornesNonTenue' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية.',

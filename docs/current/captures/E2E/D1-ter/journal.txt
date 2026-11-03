@@ -1,0 +1,34 @@
+== D1-ter : la famille lit ce qui lui est transmis : 2026-11-03T12:26:39.767Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+-- 1. banc : un foyer, deux enfants, un eleve adulte, une classe
+  signalements : {"enfant":"054052a0-640c-4c2c-87a0-f88a1a8de231","adulte":"973f109d-307c-4546-bddd-a582541a2bec","securite":"845ec45b-12ca-4631-8b6c-037f54bebb50"}
+  OK base : le titulaire du foyer est prevenu, vers son Historique
+  OK base : l'eleve adulte est prevenu, vers son Suivi
+  OK base : aucune notification ne porte le message ni la note interne
+  OK base : aucune notification aux enfants
+-- 2. le tuteur : la carte en tete de l'Historique
+  OK 1440_clair : « Messages de l'académie sur Yasmine »
+  OK 1440_clair : le message transmis
+  OK 1440_clair : jamais la note interne
+  OK la notification nomme Yasmine, sans le message
+  OK le selecteur propose Ines
+  OK securite d'un enfant : aucune carte pour Ines, aucun resume
+  OK 1440_sombre : « Messages de l'académie sur Yasmine »
+  OK 1440_sombre : le message transmis
+  OK 1440_sombre : jamais la note interne
+  OK 390_clair : « Messages de l'académie sur Yasmine »
+  OK 390_clair : le message transmis
+  OK 390_clair : jamais la note interne
+  OK 390_sombre : « Messages de l'académie sur Yasmine »
+  OK 390_sombre : le message transmis
+  OK 390_sombre : jamais la note interne
+-- 4. l'eleve adulte : la carte dans son Suivi
+  OK 1440_clair : « Messages de l'académie » pour l'eleve adulte
+  OK 1440_clair : son message
+  OK 390_clair : « Messages de l'académie » pour l'eleve adulte
+  OK 390_clair : son message
+-- 5. l'enfant ne voit rien
+  OK base : la vue ne rend rien a l'enfant (son jeton)
+  OK base : la vue ne rend rien a la soeur (son jeton)
+  vus par l'enfant : flt-semantics:Suivi de mes cours | flt-semantics:27/11/2026, 07:00 Cours de Coran · E2E Enseignant · E2E-PROF-1 Présence : Cours à venir | flt-semantics:20/11/2026, 07:00 Cours de Coran · E2E Enseignant · E2E-PROF-1 Présence : Cours à venir | flt-semantics:13/11/2026, 07:00 Cours de Coran · E2E Ense
+  OK l'enfant connecte ne voit ni carte ni message
+== D1-ter : la famille lit ce qui lui est transmis : vert

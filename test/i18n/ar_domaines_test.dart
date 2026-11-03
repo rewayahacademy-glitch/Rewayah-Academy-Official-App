@@ -103,6 +103,8 @@ const Map<String, int> _domaines = <String, int>{
   'a3bis': 13,
   // SNT (03/11/2026) : seance non tenue, reportee.
   'snt': 33,
+  // D1-ter (03/11/2026) : messages de l'academie a la famille.
+  'd1ter': 8,
   // PAY-UX, la page de paiement (02/11/2026).
   'payUx': 5,
 };
