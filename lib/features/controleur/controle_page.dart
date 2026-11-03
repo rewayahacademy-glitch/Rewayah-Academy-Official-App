@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -9,6 +11,7 @@ import '../../core/mouvement/apparition_douce.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -242,12 +245,35 @@ class _CarteMission extends StatelessWidget {
   /// CTRL-SALLE-1 : la seance est en direct, mais deja controlee.
   bool get _dejaControlee => mission.etat == EtatMissionControle.dejaControlee;
 
-  void _commencer(BuildContext context) => GoRouter.of(context).go(
-    Routes.salle,
-    // Le billet passe par `extra`, jamais par l'URL (ADR-005) ; le serveur
-    // reste seul juge de l'entree (BR-1).
-    extra: BilletSalle(sessionId: mission.seanceId, emisA: DateTime.now()),
-  );
+  /// N3, D3 : la visite commence au serveur (`demarrer_mission_controle`)
+  /// avant l'entree en salle ; sans cela la mission finirait « non
+  /// controlee ». Refusee ou sans reponse : on ne part pas, la mission est
+  /// relue et l'ecran dit son etat reel (indisponible, ou aucune mission).
+  Future<void> _commencer(BuildContext context) async {
+    final ProviderContainer conteneur = ProviderScope.containerOf(
+      context,
+      listen: false,
+    );
+    final GoRouter routeur = GoRouter.of(context);
+    final String? id = mission.id;
+    if (id != null && !mission.commencee) {
+      try {
+        await conteneur
+            .read(portMissionControleProvider)
+            .demarrer(id)
+            .timeout(AppDelais.requeteMax);
+      } on Object {
+        conteneur.invalidate(missionControleProvider);
+        return;
+      }
+    }
+    routeur.go(
+      Routes.salle,
+      // Le billet passe par `extra`, jamais par l'URL (ADR-005) ; le serveur
+      // reste seul juge de l'entree (BR-1).
+      extra: BilletSalle(sessionId: mission.seanceId, emisA: DateTime.now()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -359,7 +385,11 @@ class _CarteMission extends StatelessWidget {
                               .read(visitesObserveesProvider.notifier)
                               .noter(CompteRenduEnSuspens.deMission(mission));
                           final void Function(MissionControle)? f = onCommencer;
-                          f == null ? _commencer(context) : f(mission);
+                          if (f == null) {
+                            unawaited(_commencer(context));
+                          } else {
+                            f(mission);
+                          }
                         },
                       ),
                     )

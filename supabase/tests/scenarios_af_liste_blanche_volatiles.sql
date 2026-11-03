@@ -137,6 +137,8 @@ declare
     'demander_upload_bibliotheque(uuid,text,text,text,bigint,text)',
     'demandes_en_attente()',
     'demarrer_mission_controle(uuid)',
+    -- N3 (03/11) : le controleur de la mission joint son compte rendu (aal2, capacite active, visite commencee).
+    'controleur_envoyer_compte_rendu(uuid,text,jsonb,uuid)',
     'deposer_reprise_foyer(uuid)',
     'deposer_student_concern(text,uuid,uuid,text,text,text)',
     -- PHOTOS-1 (03/11) : chaque adulte au compte valide pose sa photo ; le tuteur actif celle de son enfant mineur (garde role ET app_account_valid).
