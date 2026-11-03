@@ -227,4 +227,5 @@ Numéros de migration : table des réservations du garde-cap (2026110510 à 2026
 | 20 | FN-DIVERS, un point par lot : FN-102, FN-101, FN-018, puis FN-111, FN-027 (FN-013 rattaché à RECHARGE-1) | S, puis M | |
 
 En cours hors de cette liste : O1 (secrets du directeur avant ouverture), PAY-UX puis REMB-14, A3-bis.
+CI : 4 lots de tests en parallèle, environ 15 minutes au lieu de 55, depuis main c4aee81c (PR 155, fusionnée par le directeur le 03/11 à 01:32 UTC) ; preuve du rouge en cours (PR 159, branche jetable, jamais fusionnée).
 Estimation : environ 14 jours-agent, soit 3 jours et demi à 4 agents ; avec la fusion une à une comme goulot, 4 à 5 jours.
