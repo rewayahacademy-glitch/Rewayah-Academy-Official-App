@@ -82,8 +82,9 @@ class _CarteFeedbackSeanceState extends ConsumerState<CarteFeedbackSeance> {
                   libelle: question.libelles[reponse] ?? reponse.valeurSql,
                 ),
             ],
-            onChange: (ReponseChoix choix) =>
-                unawaited(_repondre(question, _reponseDepuisChoix(choix))),
+            onChange: (ReponseChoix choix) => unawaited(
+              _repondre(question, _reponseDepuisChoix(choix)),
+            ),
           ),
         ],
       ),
