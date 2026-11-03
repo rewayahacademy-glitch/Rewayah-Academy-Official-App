@@ -227,7 +227,7 @@ Numéros de migration : table des réservations du garde-cap (2026110510 à 2026
 | 14 | Captures des trois salles (noms côté candidat du 02/11) | S | |
 | 15 | SALLE-UX (UX-011, 033, 034, 038 à 040, 042, 043) | M | après O1 |
 | 16 | FOYER-UX (UX-009, 023, 024), plus le numéro de version en bas du Profil (directeur, 03/11, registre 08) | S/M | après N2 et NIV1 |
-| 17 | M1 : liste des doublons à supprimer, soumise au directeur | S | rien n'est supprimé sans son « oui » |
+| 17 | M1 : liste des doublons (PR 184), « oui » du directeur le 03/11 (registre 08) ; puis M1-SUPPR (`lib/` : 7 cas de protection des enfants portés sur « Signaler un besoin » d'abord, puis 13 fichiers et leurs tests retirés, B1 et B2 gardés) et M1-A8 (serveur du support actif retiré seulement sans autre lecteur, B5 20261107600000 collé par le directeur) | S, puis M + S | N1 ; file `lib/` pour M1-SUPPR |
 | 18 | COURRIELS-UX (UX-026, FN-108) | M | après A3-bis et SNT |
 | 19 | Scénarios SQL rouges (FN-004, 005, 020, 021, bf1_finance_backend ; `scenarios_af_liste_blanche_volatiles.sql`, rouge sur main pour `accorder_tarif_particulier`, `ajouter_creneau_classe_admin`, `remboursement_confirmer`, `seance_a_rejoindre`, plus les 3 lignes de D1-bis) ; `test/features/finance_recette/recette_fi_test.dart:1871` rouge dans un clone peu profond (`git merge-base` sur 65cf51d2), à faire sauter aussi quand `git rev-parse --is-shallow-repository` vaut true (CI verte, pas un rouge de main) ; `scenarios_fn115c_rembourser.sql` dépendait de l'heure le mardi (corrigé dans la PR 172) | M | |
 | 20 | V1 puis V2 : entretien et réunion dans `/salle`, sans les outils de cours | L + L | |
