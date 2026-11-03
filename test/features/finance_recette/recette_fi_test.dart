@@ -1839,8 +1839,10 @@ void main() {
       }
       // Rang 19 (03/11/2026) : la base et la pointe peuvent etre presentes
       // dans un clone peu profond (recuperees une a une) sans l'histoire qui
-      // les relie a HEAD ; « merge-base --is-ancestor » y echoue a tort. La
-      // CI clone en entier et joue la comparaison.
+      // les relie a HEAD ; « merge-base --is-ancestor » y echoue a tort. Le
+      // job flutter-tests de la CI clone en profondeur 1 (actions/checkout
+      // sans fetch-depth, ci.yml) : ce test ne s'y joue pas. Il ne se joue
+      // que sur un clone complet, nulle part en CI.
       final ProcessResult peuProfond = Process.runSync('git', <String>[
         'rev-parse',
         '--is-shallow-repository',
