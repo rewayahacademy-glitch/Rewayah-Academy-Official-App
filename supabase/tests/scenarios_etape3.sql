@@ -40,6 +40,17 @@ insert into auth.users (id, email) values
   ('66666666-6666-6666-6666-666666666666', 'enseignante@example.test'),
   ('77777777-7777-7777-7777-777777777777', 'sansgenre@example.test');
 
+-- Les comptes de ce scenario. La CI rejoue tous les scenarios sur la meme
+-- base : les comptages ne portent que sur eux, pas sur les dossiers laisses
+-- par les scenarios precedents.
+create function pg_temp.du_scenario(p_id uuid) returns boolean
+language sql immutable as $$
+  select p_id in ('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222',
+                  '33333333-3333-3333-3333-333333333333', '44444444-4444-4444-4444-444444444444',
+                  '55555555-5555-5555-5555-555555555555', '66666666-6666-6666-6666-666666666666',
+                  '77777777-7777-7777-7777-777777777777')
+$$;
+
 -- ============================================================
 -- S3 : une inscription publique est bornee a deux roles (tuteur actif, D4)
 -- ============================================================
@@ -253,7 +264,8 @@ where id = '33333333-3333-3333-3333-333333333333';
 do $$
 declare v_n int;
 begin
-  select count(*) into v_n from public.read_kyc_documents();
+  select count(*) into v_n from public.read_kyc_documents() k
+   where pg_temp.du_scenario(k.profile_id);
   if v_n <> 2 then
     raise exception 'S5 ECHEC : % dossiers masculins lus au lieu de 2', v_n;
   end if;
@@ -315,7 +327,7 @@ begin
   -- ici les pièces que cet administrateur peut réellement traiter.
   select count(*) into v_n
   from public.dossiers_en_attente()
-  where document_id is not null;
+  where document_id is not null and pg_temp.du_scenario(profile_id);
   if v_n <> 2 then
     raise exception 'ADM-02 ECHEC : % pièces visibles au lieu de 2', v_n;
   end if;
