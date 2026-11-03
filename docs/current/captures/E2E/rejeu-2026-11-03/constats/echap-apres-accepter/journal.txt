@@ -1,0 +1,4 @@
+== Constat : Echap ne ferme plus la boite d une demande apres Accepter : 2026-11-03T13:33:00.797Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+1440 : Echap avant geste ferme=true ; focus apres Accepter=BODY: ; Echap apres Accepter ferme=false
+390 : Echap avant geste ferme=true ; focus apres Accepter=BODY: ; Echap apres Accepter ferme=false
+== Constat : Echap ne ferme plus la boite d une demande apres Accepter : joué

@@ -175,10 +175,15 @@ try {
     await d.page.keyboard.press('Escape');
     await d.page.waitForTimeout(1000);
     if (await trouver(d.page, /^Demande d.E2E/, { delai: 800 })) {
-      await d.page.mouse.click(1150, 700);
-      await d.page.waitForTimeout(1500);
+      // REJEU-E2E (03/11) : apres le geste, le focus tombe sur la page et Echap
+      // ne ferme plus la boite (defaut signale, non corrige) ; la croix
+      // « Fermer » (ADM-UX) la ferme, au bureau comme au telephone.
+      p.dire('  ECART : Echap sans effet apres « Accepter » (focus perdu) ; fermeture par la croix « Fermer »');
+      const fermer = await trouver(d.page, /^Fermer$/, { delai: 2000 });
+      if (fermer) { await fermer.click(); await d.page.waitForTimeout(1500); }
+      else { await d.page.mouse.click(1150, 700); await d.page.waitForTimeout(1500); }
     }
-    if (await trouver(d.page, /^Demande d.E2E/, { delai: 800 })) p.dire('  ECART : la boite de la demande ne se ferme ni par Echap ni par un toucher dehors');
+    if (await trouver(d.page, /^Demande d.E2E/, { delai: 800 })) p.dire('  ECART : la boite de la demande ne se ferme ni par Echap, ni par « Fermer », ni par un toucher dehors');
   }
   const etats = sql(`select string_agg(u.email || '=' || p.account_status || '/' || p.role, ' ; ')
     from auth.users u join public.profiles p on p.id = u.id where u.email in ('${FAMILLE.courriel}', '${ADULTE.courriel}')`);
