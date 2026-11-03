@@ -1,0 +1,27 @@
+{
+  "lot": "ADM-UX : Personnes > Demandes (UX-006, UX-007, UX-014)",
+  "banc": "pile locale tool/e2e (jamais un apercu Vercel, jamais la production)",
+  "robot": "tool/e2e/adm_ux.mjs",
+  "date": "2026-11-03",
+  "avant": {
+    "construction": "main c9d81c25",
+    "verdict": "joue",
+    "constat": "UX-007 : le champ reste vide apres une saisie lettre a lettre au clavier ; UX-006 : apres Accepter, la boite dit Etat A traiter ; UX-014 : aucune croix Fermer (Echap fermait deja la boite sur ce banc)"
+  },
+  "apres": {
+    "1440_clair": "vert",
+    "1440_sombre": "vert",
+    "390_clair": "vert",
+    "390_sombre": "vert"
+  },
+  "prouve_ici": [
+    "UX-007 : le nom tape lettre a lettre au clavier entre en entier",
+    "UX-006 : apres Accepter, la boite dit Etat Acceptee (relu au serveur), plus A traiter",
+    "UX-014 : la boite se ferme par Echap et par la croix Fermer"
+  ],
+  "non_prouve_ici": [
+    "rien en production",
+    "UX-014, Echap : il fermait deja la boite sur ce banc avant le lot ; le constat (Echap sans effet) n est pas reproduit ici",
+    "UX-007 au clavier reel d un humain : non joue ; reproduit en test de widget (focus perdu) et sous Playwright"
+  ]
+}

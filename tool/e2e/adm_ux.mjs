@@ -17,8 +17,10 @@ import { parcours, connecter, trouver, libelles, ouvrir, activerSemantique,
   amenerEnVue, sql, COMPTES } from './commun.mjs';
 
 const date = new Date().toISOString().slice(0, 10);
-const p = await parcours('ADM-UX : Personnes > Demandes (recherche, fermeture, etat apres acceptation)',
-  `adm-ux/${date}`);
+// PHASE=avant : la meme preuve sur une construction de main, sans le lot.
+const phase = process.env.PHASE ?? 'apres';
+const p = await parcours(`ADM-UX (${phase}) : Personnes > Demandes (recherche, fermeture, etat apres acceptation)`,
+  `adm-ux/${date}/${phase}`);
 const lus = async (page, n = 80) => (await libelles(page)).slice(0, n).join(' | ');
 const verdicts = {};
 
@@ -56,6 +58,14 @@ try {
       const champ = await trouver(c.page, /^Rechercher/, { delai: 8000, role: 'textbox' });
       if (!champ) throw new Error(`${cle} : champ de recherche absent ; ${await lus(c.page, 40)}`);
       await champ.click();
+      // Le champ de Flutter web prend le focus apres le clic : on attend
+      // qu'un vrai champ de saisie ait le focus, comme un humain qui commence
+      // a taper apres avoir vu le curseur.
+      await c.page.waitForFunction(() => {
+        const e = document.activeElement;
+        return !!e && (e.tagName === 'INPUT' || e.tagName === 'TEXTAREA');
+      }, null, { timeout: 5000 }).catch(() => {});
+      await c.page.waitForTimeout(300);
       await c.page.keyboard.type(personne.nom, { delay: 120 });
       await c.page.waitForTimeout(2500); await activerSemantique(c.page);
       const valeur = await c.page.evaluate(() => {
@@ -109,7 +119,8 @@ try {
   }
   p.dire(`Verdicts : ${JSON.stringify(verdicts)}`);
   const ok = Object.values(verdicts).every((v) => v === true);
-  code = await p.fin(ok ? 'vert' : 'rouge', ok ? '' : JSON.stringify(verdicts));
+  code = await p.fin(phase === 'avant' ? 'joué' : (ok ? 'vert' : 'rouge'), ok ? '' : JSON.stringify(verdicts));
+  if (phase === 'avant') code = 0;
 } catch (e) {
   p.dire(`Verdicts partiels : ${JSON.stringify(verdicts)}`);
   code = await p.fin('rouge', String(e).slice(0, 400));
