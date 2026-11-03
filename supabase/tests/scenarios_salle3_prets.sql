@@ -264,9 +264,13 @@ SELECT pg_temp.vrai(
 SELECT pg_temp.garde('t01', pg_temp.trace('01'));
 SELECT pg_temp.garde('r_b', pg_temp.valider('a2', '01', 'cle-salle3-b-0001'));
 SELECT pg_temp.vrai(pg_temp.lu('r_b') ->> 'erreur' = 'controles_non_satisfaits'
-  AND pg_temp.lu('r_b') -> 'controles' = '[{"nom": "entretien_conclu", "cause": "entretien_non_disponible"},
-                                          {"nom": "evaluation_validee", "cause": "entretien_non_disponible"}]'::jsonb,
-  'sans entretien : controles_non_satisfaits, entretien_conclu et evaluation_validee nommes (entretien_non_disponible)');
+  -- V1-a absente : entretien_non_disponible ; V1-a installee (20261108000001,
+  -- PR 189), sans entretien tenu : entretien_non_tenu.
+  AND pg_temp.lu('r_b') -> 'controles' = pg_catalog.replace(
+        '[{"nom": "entretien_conclu", "cause": "X"}, {"nom": "evaluation_validee", "cause": "X"}]',
+        'X', CASE WHEN pg_catalog.to_regprocedure('private.entretien_conclusion(uuid)') IS NULL
+                  THEN 'entretien_non_disponible' ELSE 'entretien_non_tenu' END)::jsonb,
+  'sans entretien : controles_non_satisfaits, entretien_conclu et evaluation_validee nommes (non disponible ou non tenu)');
 SELECT pg_temp.vrai(pg_temp.trace('01') = pg_temp.lu('t01')
   AND (SELECT kyc_status FROM public.teacher_profiles WHERE profile_id = pg_temp.p('01')) = 'pending'
   AND (SELECT count(*) FROM public.weekly_availability WHERE profile_id = pg_temp.p('01')) = 0
@@ -298,8 +302,9 @@ SELECT pg_temp.vrai(pg_temp.lu('r_d') ->> 'erreur' = 'transition_interdite' AND 
 --     absente
 -- ------------------------------------------------------------
 -- La fonction que pose V1-a (accord du 03/11 avec Fin de seance), simulee
--- ici : sa conclusion se regle par test.conclusion.
-CREATE FUNCTION private.entretien_conclusion(p_candidature uuid)
+-- ici : sa conclusion se regle par test.conclusion. OR REPLACE : V1-a peut
+-- deja etre installee ; la transaction est annulee a la fin.
+CREATE OR REPLACE FUNCTION private.entretien_conclusion(p_candidature uuid)
 RETURNS jsonb
 LANGUAGE sql
 STABLE
