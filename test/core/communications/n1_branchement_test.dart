@@ -13,6 +13,7 @@ import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/communications/capacites_communication.dart';
 import 'package:rewayah_academy/core/communications/capacites_communication_supabase.dart';
 import 'package:rewayah_academy/core/communications/communications_supabase.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/features/com_annonces/port_regles_audience.dart';
 import 'package:rewayah_academy/features/com_annonces/regles_audience_supabase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -189,7 +190,10 @@ void main() {
           "Sécurité d'un enfant : signalement pour l'élève RA-26-4817. "
           'Note interne : « Une note »',
         );
-        expect(triees.first.destination, isNull);
+        // D1-bis : la ligne mene a la page des alertes, ou le signalement
+        // se traite en feuille.
+        expect(triees.first.destination, Routes.adminAlertes);
+        expect(triees.first.signalement?.matricule, 'RA-26-4817');
         expect(triees.first.creeeLe, DateTime.utc(2026, 11, 2, 9));
       },
     );
