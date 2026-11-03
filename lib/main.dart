@@ -130,6 +130,8 @@ import 'core/offres/regroupements_c11bis_supabase.dart';
 import 'core/offres/regroupements_pages_supabase.dart';
 import 'core/partage_offre/genre_partageur_supabase.dart';
 import 'core/partage_offre/port_genre_partageur.dart';
+import 'core/pause_seance/pause_seance_supabase.dart';
+import 'core/pause_seance/port_pause_seance.dart';
 import 'core/recrutement/invitations_comptable_supabase.dart';
 import 'core/recrutement/invitations_enseignant_supabase.dart';
 import 'core/recrutement/port_invitations_comptable.dart';
@@ -457,6 +459,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // paiement saisi par la comptabilite est credite apres validation.
   portValidationsFinanceProvider.overrideWithValue(
     ValidationsFinanceSupabase(Supabase.instance.client),
+  ),
+  // N3, S2 : la pause programmee de la classe (LIVE-PAUSE-01), sur les cinq
+  // fonctions `pause_*` de `20261012061517_x2_22_pause_seance.sql`.
+  portPauseSeanceProvider.overrideWithValue(
+    PauseSeanceSupabase(Supabase.instance.client),
   ),
   portHistoriqueObservationsProvider.overrideWithValue(
     HistoriqueObservationsSupabase(() => Supabase.instance.client),

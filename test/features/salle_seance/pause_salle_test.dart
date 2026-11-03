@@ -76,6 +76,7 @@ Future<void> _poser(
   VoidCallback? onPause,
   BornesChrono? bornes,
   bool attendre = true,
+  String? echecPause,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -83,7 +84,7 @@ Future<void> _poser(
   final VueSeance vue = DonneesSeanceDemo.vue(
     role,
     EtatDemoSalle.repos,
-  ).copyWith(chrono: bornes ?? _bornes, pause: pause);
+  ).copyWith(chrono: bornes ?? _bornes, pause: pause, echecPause: echecPause);
   await tester.pumpWidget(
     ProviderScope(
       overrides: <Override>[
@@ -318,4 +319,37 @@ void main() {
       }
     }
   }
+
+  testWidgets('N3 : un geste sur la pause non confirme se dit sous la ligne '
+      '(K-59), a 320 et 1440, texte x2', (WidgetTester tester) async {
+    for (final Size taille in <Size>[
+      const Size(320, 800),
+      const Size(1440, 900),
+    ]) {
+      final _Horloge h = _Horloge(_t0.add(const Duration(minutes: 22)));
+      await _poser(
+        tester,
+        h,
+        _enCours(),
+        taille: taille,
+        echelle: 2,
+        onPause: () {},
+        echecPause: t.salle.seance.pause.echec,
+      );
+      expect(find.byKey(ChronoSalle.cleEchecPause), findsOneWidget);
+      expect(find.text(t.salle.seance.pause.echec), findsOneWidget);
+      expect(find.byKey(ChronoSalle.cleCommandePause), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    }
+  });
+
+  testWidgets('N3 : sans echec, aucune phrase', (WidgetTester tester) async {
+    await _poser(
+      tester,
+      _Horloge(_t0.add(const Duration(minutes: 22))),
+      _enCours(),
+      onPause: () {},
+    );
+    expect(find.byKey(ChronoSalle.cleEchecPause), findsNothing);
+  });
 }

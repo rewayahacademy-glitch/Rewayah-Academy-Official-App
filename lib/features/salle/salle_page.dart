@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../core/accessibilite/age_eleve.dart';
 import '../../core/accessibilite/mode_accessibilite.dart';
@@ -21,6 +22,7 @@ import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/observabilite/journal_dev.dart';
+import '../../core/pause_seance/port_pause_seance.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/presence/vue_presence.dart';
 import '../../core/profil/service_profil_enseignant.dart'
@@ -47,6 +49,7 @@ import '../../core/tc_outils/etat_outils.dart';
 import '../../core/tc_outils/operations_personnelles.dart';
 import '../../core/tc_outils/port_annotations.dart';
 import '../../core/theme/app_color_pair.dart';
+import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_mouvement.dart';
@@ -292,6 +295,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// Plan de composition du 26/10/2026 : le dernier rappel discret qui n'a
   /// pas pu partir depuis le panneau Eleves, ou `null`.
   String? _echecRappel;
+
+  /// N3, S2 : le dernier geste sur la pause n'est pas confirme (K-59).
+  String? _echecPause;
 
   /// S1 : la synchronisation de l'ecriture de cette seance, creee a la
   /// premiere composition dans la salle, liberee a la sortie.
@@ -1282,9 +1288,17 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             tableauLibre: TableauLibre.classe,
           )
         : base.copyWith(panneau: _panneau, contexte: _contexte);
+    // N3, S2 : la pause programmee de la classe, lue au serveur pour
+    // l'enseignant seulement (`pause_seance_etat` refuse les autres roles).
+    // Sans reponse, le chrono reste sans pause : jamais une pause inventee.
+    final PauseSeance? pause = enseignant
+        ? ref.watch(pauseSeanceProvider(widget.seanceId)).value
+        : null;
     final VueSeance seance = enseignant
         ? seanceSansFiches.copyWith(
             eleves: _avecFiches(seanceSansFiches.eleves, _roster(ref)),
+            pause: pause,
+            echecPause: _echecPause,
           )
         : seanceSansFiches;
     final VideoSessionProvider moteur = ref.watch(moteurSalleProvider);
@@ -1308,6 +1322,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           ? () => unawaited(_basculerCamera(moi?.camera ?? false))
           : null,
       onAgrandir: () => setState(() => _agrandi = !_agrandi),
+      // N3, S2 : demarrer ou terminer la pause ; le chrono ne rend la commande
+      // que si le serveur a donne `peut_piloter`.
+      onPause: enseignant && pause != null
+          ? () => unawaited(_basculerPause(pause))
+          : null,
       onZoomPlus: plus == null ? null : () => setState(() => _zoom = plus),
       onZoomMoins: moins == null ? null : () => setState(() => _zoom = moins),
       // B' : un seul affichage, « Avec notes » ; aucun bouton d'affichage.
@@ -1582,6 +1601,33 @@ class _SallePageEtat extends ConsumerState<SallePage> {
 
   /// Le rappel discret depuis le panneau Eleves ; l'echec se dit sous son
   /// titre, la reussite ne dit rien (spec section 10.2).
+  /// N3, S2 : demarre la pause programmee, ou la termine si elle est en
+  /// cours. Le serveur horodate ; on relit son etat dans tous les cas.
+  Future<void> _basculerPause(PauseSeance pause) async {
+    final PortPauseSeance port = ref.read(portPauseSeanceProvider);
+    final String cle = const Uuid().v4();
+    String? echec;
+    setState(() => _echecPause = null);
+    try {
+      if (pause.statut == StatutPause.enCours) {
+        await port
+            .terminer(seanceId: widget.seanceId, cleIdempotence: cle)
+            .timeout(AppDelais.requeteMax);
+      } else {
+        await port
+            .demarrer(seanceId: widget.seanceId, cleIdempotence: cle)
+            .timeout(AppDelais.requeteMax);
+      }
+    } on Object {
+      // Non confirme : la phrase le dit, et l'etat relu ci-dessous dit ce
+      // que le serveur sait.
+      echec = t.salle.seance.pause.echec;
+    }
+    if (!mounted) return;
+    setState(() => _echecPause = echec);
+    ref.invalidate(pauseSeanceProvider(widget.seanceId));
+  }
+
   Future<void> _rappeler(EleveSeance eleve) async {
     final String? id = eleve.id;
     if (id == null) return;

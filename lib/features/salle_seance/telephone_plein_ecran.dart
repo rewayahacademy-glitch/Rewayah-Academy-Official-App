@@ -439,7 +439,11 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
           final Widget laCapsule = _profil
               ? KeyedSubtree(
                   key: _cleProfil,
-                  child: ProfilTelephone(vue: vue, onReduire: _replier),
+                  child: ProfilTelephone(
+                    vue: vue,
+                    onReduire: _replier,
+                    onPause: actions.onPause,
+                  ),
                 )
               : Center(
                   child: CapsuleVideoTelephone(
@@ -943,6 +947,7 @@ class _Haut extends StatelessWidget {
       ),
       cle: const ValueKey<String>('ligne-etat-telephone'),
       avecChrono: true,
+      onPause: actions.onPause,
     );
     final Widget ligne = presence == null
         ? pilule
