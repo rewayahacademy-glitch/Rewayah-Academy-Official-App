@@ -112,3 +112,74 @@ Pour chaque ligne, oui ou non :
    garder.
 3. **B1 et B2** : les garder, et corriger leur ligne dans `tool/branchement_tolere.txt` (étape de
    branchement au lieu de « supprimé le 08/11 »).
+
+## Décision du directeur, 03/11/2026
+
+Réponses relayées par le pilote le 03/11/2026 vers 16:10, mot pour mot :
+
+1. Liste A : « Oui, tout ». Lot à part, les 7 cas de protection des enfants portés sur
+   `SignalerBesoin` **avant** toute suppression.
+2. A8 : « le retirer et supprimer son backend si cela ne cause pas problème. »
+3. B1 et B2 : « Les garder ». Leurs lignes de `tool/branchement_tolere.txt` sont à corriger.
+
+Le lot de suppression sera planifié par garde-cap. Il ne commence pas sans son ordre.
+
+### Point 2 : inventaire du backend du support actif
+
+Relevé sur `main` `54a64ff2b`, dans le dépôt seulement. La base de production n'a pas été lue.
+
+#### Faux, bloqué ou non prouvé, d'abord
+
+- **La table n'appartient pas au support actif.** `public.session_shared_content` est l'état
+  partagé de la séance (0032), lu en production par `lib/core/tc_etat_partage/etat_partage_supabase.dart`
+  (posé dans `lib/main.dart`). Elle fait aussi partie de la publication temps réel
+  (`20261016101000`, `20261027100000`) et porte la politique `ssc_participant_read`, durcie par
+  l'accès payé (`20261104600000`). **Elle ne doit pas être touchée.** Le « backend du support
+  actif » se réduit à cinq fonctions.
+- **Retirer ces fonctions demande un `DROP FUNCTION`, donc un mot d'effacement.** Il faut un
+  fichier B5 à part, que le directeur colle lui-même (CLAUDE.md, migrations sur staging).
+- **Aucun appel en production n'est prouvé, ni écarté.** Dans le code de `main`, aucun écran
+  atteint n'appelle ces fonctions (§A8). Une ancienne version de l'application encore ouverte
+  dans un navigateur pourrait les appeler. La seule preuve possible côté base est une lecture
+  seule, par exemple `pg_stat_user_functions` si le suivi des fonctions est actif. Elle n'a pas
+  été faite.
+
+#### Ce que serait le retrait
+
+| Objet | Où il est défini | Autres lecteurs | Effet du retrait |
+|---|---|---|---|
+| `public.support_actif_capacites(uuid)` | `supabase/migrations/20261016100400_contrats_support_actif.sql:78` | `SupportActifSupabase` seul (`lib/core/tc_bibliotheque/support_actif_supabase.dart:50`) | aucun en production (A8) |
+| `public.presenter_support(uuid, uuid, integer, text, jsonb)` | même fichier, `:102` | `SupportActifSupabase` seul (`:66`) ; liste blanche des fonctions de `supabase/tests/scenarios_af_liste_blanche_volatiles.sql:264` | la ligne de la liste blanche est à retirer |
+| `public.support_actif(uuid)` | même fichier, `:190` | `SupportActifSupabase` seul (`:94`) | aucun en production |
+| `app_private.support_actif_json(uuid)` | même fichier, `:56` ; complétée par `20261104600000_acces_paye_porte_serveur.sql:271` (porte d'accès payé) | lue seulement par les trois fonctions ci-dessus | les contrôles de `20261104600000` (`:288`, `:512`) ne s'exécutent qu'à l'installation de cette migration, déjà faite : un retrait posé **après** elle ne les fait pas échouer |
+| `app_private.support_refus(uuid, uuid)` | même fichier, `:31` | lue seulement par `presenter_support` | aucun |
+| Lignes de `public.pedagogie_partage_idempotence` dont l'opération vaut `'presenter_support'` | écrites par `presenter_support` (`:181`) | aucune contrainte sur `operation` (`20261012060429_x2_20_ped_apres_partage.sql:46`) | **on les laisse** : aucun `DELETE`, elles sont inertes |
+
+#### Ce qui change avec le retrait
+
+- **Tests SQL à amender** : `supabase/tests/scenarios_contrats_seance.sql:161-191`,
+  `scenarios_lot_b_acces_paye.sql:183` et `scenarios_af_liste_blanche_volatiles.sql:264`. Aucun
+  des trois n'est rejoué par `.github/workflows/ci.yml`. Le banc local `tool/e2e/` les rejoue
+  tous.
+- **Flutter** : il faut retirer, en plus des deux fichiers d'A8 :
+  - `lib/core/tc_bibliotheque/support_actif_supabase.dart` ;
+  - `lib/core/tc_bibliotheque/port_support_actif.dart` ;
+  - `lib/features/demo/support_actif_demo.dart`, que l'application n'atteint pas ;
+  - la surcharge de `lib/main.dart:568`.
+
+  Il faut aussi amender `test/core/contrats_manquants_supabase_test.dart`.
+- **Ordre d'installation** : d'abord la fusion du code Flutter qui n'appelle plus ces
+  fonctions, puis le fichier B5. Dans l'autre sens, l'application en production appellerait des
+  fonctions absentes. Le code de `main` ne les appelle déjà pas : en pratique, le risque porte
+  seulement sur une ancienne version encore ouverte.
+
+#### Conclusion pour le point 2
+
+Le retrait ne cause pas de problème dans le dépôt, à trois conditions :
+
+- garder `session_shared_content` et sa publication ;
+- poser le retrait des cinq fonctions dans un fichier B5, après la fusion du code Flutter ;
+- amender les trois scénarios SQL.
+
+Une lecture seule de la production reste à faire avant le B5 : elle dira si ces fonctions sont
+encore appelées.
