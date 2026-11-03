@@ -4,7 +4,8 @@
 // Deux passages, a 390 et a 1440 :
 //   1. reglage vide (`securite.turnstile_cle_site` = "") : aucun widget de
 //      Cloudflare dans la page ; le lien de connexion part sans jeton
-//      (`gotrue_meta_security` absent de la demande) ; la connexion par mot
+//      (`gotrue_meta_security.captcha_token` nul dans la demande : le client
+//      Supabase envoie toujours la cle, a `null` sans jeton) ; la connexion par mot
 //      de passe (banc de demonstration) aboutit ;
 //   2. la cle de TEST publique de Cloudflare (reglage du BANC seulement,
 //      jamais d'une migration) : le widget est dans la page (cadre
@@ -66,6 +67,15 @@ const cadreCloudflare = async (page) => {
   return false;
 };
 
+/// Le jeton porte par une demande de lien (`null` : aucun jeton).
+function jeton(corps) {
+  try {
+    return JSON.parse(corps)?.gotrue_meta_security?.captcha_token ?? null;
+  } catch {
+    return null;
+  }
+}
+
 async function demanderLien(a, champ, bouton, attendu) {
   await taper(a.page, champ, `e2e-anti-robot-${Date.now() % 100000}@example.com`);
   await cliquer(a.page, bouton, { pause: 6000 });
@@ -86,7 +96,7 @@ async function passage(vue, cle) {
   await p.capture(a, `${vue.nom}_${etiquette}_1_connexion`);
   await demanderLien(a, 'input[autocomplete=email], input[inputmode=email]', /^Recevoir le lien$/, 'Lien envoyé');
   const demande = a.demandes.at(-1) ?? '';
-  verifier(cle ? /captcha_token/.test(demande) : !/captcha_token/.test(demande),
+  verifier(cle ? typeof jeton(demande) === 'string' && jeton(demande).length > 0 : jeton(demande) === null,
     cle ? 'la demande de lien porte le jeton (captcha_token)' : 'la demande de lien part sans jeton, comme avant');
   await p.capture(a, `${vue.nom}_${etiquette}_2_lien_envoye`);
 
@@ -97,7 +107,7 @@ async function passage(vue, cle) {
   await p.capture(a, `${vue.nom}_${etiquette}_3_recuperation`);
   await demanderLien(a, 'input[autocomplete=email], input[inputmode=email]', /^Recevoir un nouveau lien$/, 'Nouveau lien envoyé');
   const demande2 = a.demandes.at(-1) ?? '';
-  verifier(cle ? /captcha_token/.test(demande2) : !/captcha_token/.test(demande2),
+  verifier(cle ? typeof jeton(demande2) === 'string' && jeton(demande2).length > 0 : jeton(demande2) === null,
     cle ? 'la recuperation porte le jeton' : 'la recuperation part sans jeton');
   await p.capture(a, `${vue.nom}_${etiquette}_4_recuperation_envoyee`);
   await a.ctx.close();

@@ -1,0 +1,30 @@
+== ANTI-ROBOT : controle Turnstile a la connexion : 2026-11-03T21:31:39.314Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+-- 390, reglage vide
+  OK aucun widget de Cloudflare
+  OK « Lien envoyé » apres l'envoi
+  OK la demande de lien part sans jeton, comme avant
+  OK « Nouveau lien envoyé » apres l'envoi
+  OK la recuperation part sans jeton
+  OK connexion par mot de passe aboutie (/#/enseignant/journee)
+-- 390, reglage cle_test
+  OK le widget de Cloudflare est dans la page
+  OK « Lien envoyé » apres l'envoi
+  OK la demande de lien porte le jeton (captcha_token)
+  OK « Nouveau lien envoyé » apres l'envoi
+  OK la recuperation porte le jeton
+  OK connexion par mot de passe aboutie (/#/enseignant/journee)
+-- 1440, reglage vide
+  OK aucun widget de Cloudflare
+  OK « Lien envoyé » apres l'envoi
+  OK la demande de lien part sans jeton, comme avant
+  OK « Nouveau lien envoyé » apres l'envoi
+  OK la recuperation part sans jeton
+  OK connexion par mot de passe aboutie (/#/enseignant/journee)
+-- 1440, reglage cle_test
+  OK le widget de Cloudflare est dans la page
+  OK « Lien envoyé » apres l'envoi
+  OK la demande de lien porte le jeton (captcha_token)
+  OK « Nouveau lien envoyé » apres l'envoi
+  OK la recuperation porte le jeton
+  OK connexion par mot de passe aboutie (/#/enseignant/journee)
+== ANTI-ROBOT : controle Turnstile a la connexion : vert
