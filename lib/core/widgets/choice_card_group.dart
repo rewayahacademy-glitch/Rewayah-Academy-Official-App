@@ -127,6 +127,7 @@ class ChoiceCardGroup extends StatefulWidget {
     this.coteACote = false,
     this.choixEgaux = false,
     this.enLigne = false,
+    this.lettres = false,
     this.indicationMultiple = true,
   });
 
@@ -135,6 +136,12 @@ class ChoiceCardGroup extends StatefulWidget {
   /// largeur, cote a cote meme sur telephone, sans bento ni pile. La carte
   /// « Autre », si elle est permise, reste pleine largeur dessous.
   final bool enLigne;
+
+  /// Mode du questionnaire d'inscription sur ordinateur (UX-046, fiche
+  /// ONBOARDING §2) : chaque carte montre en tete la lettre (A, B, C...) qui
+  /// la choisit au clavier. La lettre est dessinee, pas lue : le lecteur
+  /// d'ecran garde le libelle seul. Le clavier lui-meme est tenu par l'ecran.
+  final bool lettres;
 
   /// Vrai (par defaut) : en selection multiple, la phrase « Plusieurs reponses
   /// possibles » se lit en tete du groupe. Faux quand l'ecran empile plusieurs
@@ -287,6 +294,7 @@ class _ChoiceCardGroupState extends State<ChoiceCardGroup> {
     _FormeBento? bento,
   }) => _Carte(
     key: option.cle,
+    lettre: widget.lettres ? lettreChoix(widget.options.indexOf(option)) : null,
     bento: bento,
     coteACote: widget.coteACote,
     explication: option.explication,
@@ -537,7 +545,11 @@ class _Carte extends StatelessWidget {
     this.coteACote = false,
     this.voisinsLibelle = const <String>[],
     this.voisinsDescription = const <String>[],
+    this.lettre,
   });
+
+  /// La lettre du clavier ([ChoiceCardGroup.lettres]), a la place de l'icone.
+  final String? lettre;
 
   /// Non nul en disposition bento : la forme de la tuile.
   final _FormeBento? bento;
@@ -778,7 +790,9 @@ extension on _Carte {
       styleSecondaire,
       survole: survole,
     );
-    final Widget? symbole = icone == null
+    final Widget? symbole = lettre != null
+        ? LettreChoix(lettre: lettre!)
+        : icone == null
         ? null
         : IconTheme(
             data: _disponible
@@ -1353,6 +1367,41 @@ class _Croissance extends StatelessWidget {
       child: child,
       builder: (BuildContext _, double f, Widget? enfant) =>
           Transform.scale(scale: f, child: enfant),
+    );
+  }
+}
+
+/// La lettre qui choisit l'option de rang [rang] au clavier : A, B, C...
+String lettreChoix(int rang) => String.fromCharCode(0x41 + rang);
+
+/// La lettre du clavier d'une option (UX-046) : un carre a filet fin, la
+/// lettre au centre, exclue du lecteur d'ecran (le libelle suffit).
+class LettreChoix extends StatelessWidget {
+  /// Cree la lettre.
+  const LettreChoix({required this.lettre, super.key});
+
+  /// La lettre.
+  final String lettre;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    return ExcludeSemantics(
+      child: Container(
+        width: AppSpacing.xl,
+        height: AppSpacing.xl,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          borderRadius: AppRadius.arrondiSm,
+          border: Border.fromBorderSide(palette.borderStrong.asBorderSide()),
+        ),
+        child: Text(
+          lettre,
+          style: palette.inkMuted.applyTo(
+            Theme.of(context).textTheme.labelMedium ?? const TextStyle(),
+          ),
+        ),
+      ),
     );
   }
 }
