@@ -9957,10 +9957,10 @@
       "refuseTitre": "Ce signalement a changé",
       "refusePhrase": "Les alertes ont été relues.",
       "erreurTitre": "L'action n'a pas abouti",
-      "erreurPhrase": "Vérifiez la connexion, puis réessayez.",
+      "erreurPhrase": "Réessayez dans un instant.",
       "indisponibleTitre": "Traitement indisponible",
       "indisponiblePhrase": "Le traitement des signalements n'est pas encore ouvert.",
-      "horsLigne": "Hors ligne\u00a0: les actions reviennent avec la connexion."
+      "horsLigne": "Les actions reviennent avec la connexion."
     }
   },
   "argent": {

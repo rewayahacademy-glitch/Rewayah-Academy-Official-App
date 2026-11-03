@@ -9140,10 +9140,10 @@ class _Traductions$alertes$traitement$ar extends Traductions$alertes$traitement$
 	@override String get refuseTitre => 'تغيّر هذا البلاغ';
 	@override String get refusePhrase => 'أُعيدت قراءة التنبيهات.';
 	@override String get erreurTitre => 'لم يتم الإجراء';
-	@override String get erreurPhrase => 'تحقّق من الاتصال، ثم أعد المحاولة.';
+	@override String get erreurPhrase => 'أعد المحاولة بعد قليل.';
 	@override String get indisponibleTitre => 'المعالجة غير متاحة';
 	@override String get indisponiblePhrase => 'معالجة البلاغات غير متاحة بعد.';
-	@override String get horsLigne => 'غير متصل: تعود الإجراءات مع عودة الاتصال.';
+	@override String get horsLigne => 'تعود الإجراءات مع عودة الاتصال.';
 }
 
 // Path: n1.regles
@@ -29822,10 +29822,10 @@ extension on TraductionsAr {
 			'alertes.traitement.refuseTitre' => 'تغيّر هذا البلاغ',
 			'alertes.traitement.refusePhrase' => 'أُعيدت قراءة التنبيهات.',
 			'alertes.traitement.erreurTitre' => 'لم يتم الإجراء',
-			'alertes.traitement.erreurPhrase' => 'تحقّق من الاتصال، ثم أعد المحاولة.',
+			'alertes.traitement.erreurPhrase' => 'أعد المحاولة بعد قليل.',
 			'alertes.traitement.indisponibleTitre' => 'المعالجة غير متاحة',
 			'alertes.traitement.indisponiblePhrase' => 'معالجة البلاغات غير متاحة بعد.',
-			'alertes.traitement.horsLigne' => 'غير متصل: تعود الإجراءات مع عودة الاتصال.',
+			'alertes.traitement.horsLigne' => 'تعود الإجراءات مع عودة الاتصال.',
 			'n1.regles.auteurs.direction' => 'الإدارة',
 			'n1.regles.auteurs.enseignants' => 'المعلمون',
 			'n1.regles.auteurs.familles' => 'الأسر',

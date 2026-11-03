@@ -18359,8 +18359,8 @@ class Traductions$alertes$traitement$fr {
 	/// fr: 'L'action n'a pas abouti'
 	String get erreurTitre => 'L\'action n\'a pas abouti';
 
-	/// fr: 'Vérifiez la connexion, puis réessayez.'
-	String get erreurPhrase => 'Vérifiez la connexion, puis réessayez.';
+	/// fr: 'Réessayez dans un instant.'
+	String get erreurPhrase => 'Réessayez dans un instant.';
 
 	/// fr: 'Traitement indisponible'
 	String get indisponibleTitre => 'Traitement indisponible';
@@ -18368,8 +18368,8 @@ class Traductions$alertes$traitement$fr {
 	/// fr: 'Le traitement des signalements n'est pas encore ouvert.'
 	String get indisponiblePhrase => 'Le traitement des signalements n\'est pas encore ouvert.';
 
-	/// fr: 'Hors ligne : les actions reviennent avec la connexion.'
-	String get horsLigne => 'Hors ligne : les actions reviennent avec la connexion.';
+	/// fr: 'Les actions reviennent avec la connexion.'
+	String get horsLigne => 'Les actions reviennent avec la connexion.';
 }
 
 // Path: argent.transparence
@@ -50907,10 +50907,10 @@ extension on Traductions {
 			'alertes.traitement.refuseTitre' => 'Ce signalement a changé',
 			'alertes.traitement.refusePhrase' => 'Les alertes ont été relues.',
 			'alertes.traitement.erreurTitre' => 'L\'action n\'a pas abouti',
-			'alertes.traitement.erreurPhrase' => 'Vérifiez la connexion, puis réessayez.',
+			'alertes.traitement.erreurPhrase' => 'Réessayez dans un instant.',
 			'alertes.traitement.indisponibleTitre' => 'Traitement indisponible',
 			'alertes.traitement.indisponiblePhrase' => 'Le traitement des signalements n\'est pas encore ouvert.',
-			'alertes.traitement.horsLigne' => 'Hors ligne : les actions reviennent avec la connexion.',
+			'alertes.traitement.horsLigne' => 'Les actions reviennent avec la connexion.',
 			'argent.transparence.titre' => 'Nos prix, en toute transparence',
 			'argent.transparence.lien' => 'Nos prix, en toute transparence',
 			'argent.transparence.intro' => 'Voici ce que devient chaque paiement d\'un élève, poste par poste, en pourcentages.',
