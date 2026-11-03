@@ -133,11 +133,30 @@ REVOKE ALL ON FUNCTION private.niv1_reprendre_profils()
 
 -- 4. Une fois, maintenant ---------------------------------------------------
 
+-- Le nombre de profils touches est compare a ce que la lecture prevoit sur
+-- la base ou la migration tourne, jamais a un nombre ecrit en dur.
 DO $reprise$
 DECLARE
-  v_r jsonb := private.niv1_reprendre_profils();
+  v_prevus integer;
+  v_prevus_remplis integer;
+  v_r jsonb;
 BEGIN
-  RAISE NOTICE 'NIV1-reprise : % profils touches, dont % marques remplis',
+  SELECT pg_catalog.count(*),
+         pg_catalog.count(*) FILTER (WHERE k.cohorte IS NOT NULL AND k.langue IS NOT NULL
+                                       AND k.objectif IS NOT NULL)
+    INTO v_prevus, v_prevus_remplis
+    FROM private.niv1_reprise_connu k
+   WHERE k.niveau IS NOT NULL
+     AND (k.niveau_avant IS NULL
+          OR k.objectif_avant IS DISTINCT FROM k.objectif
+          OR k.langue_avant IS DISTINCT FROM k.langue
+          OR (k.cohorte IS NOT NULL AND k.langue IS NOT NULL AND k.objectif IS NOT NULL));
+  v_r := private.niv1_reprendre_profils();
+  IF (v_r ->> 'touches')::integer <> v_prevus OR (v_r ->> 'remplis')::integer <> v_prevus_remplis THEN
+    RAISE EXCEPTION 'NIV1-reprise : % profils touches (% prevus), % remplis (% prevus)',
+      v_r ->> 'touches', v_prevus, v_r ->> 'remplis', v_prevus_remplis;
+  END IF;
+  RAISE NOTICE 'NIV1-reprise : % profils touches, dont % marques remplis, comme prevu',
     v_r ->> 'touches', v_r ->> 'remplis';
 END;
 $reprise$;
