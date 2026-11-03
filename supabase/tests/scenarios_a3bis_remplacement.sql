@@ -195,6 +195,52 @@ SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.remplacements_seance WHERE 
   AND NOT private.remplacement_titulaire_ecarte('a3b00000-0000-0000-0000-000000000204', 'a3b00000-0000-0000-0000-000000000004'),
   '4. S4 creee tard : aucun automatisme, le titulaire n''est pas ecarte');
 
+-- 6. Decision du directeur du 03/11 : le premier qui entre ferme la porte a
+--    l'autre, qui voit un message clair.
+-- 6a. Le remplacant a pris S2 : le titulaire refuse lit « acces_perdu », le
+--     motif que /salle traduit par « Vous n'avez pas rejoint la salle a temps ».
+SELECT pg_temp.vrai(public.motif_refus_salle('a3b00000-0000-0000-0000-000000000202',
+                      'a3b00000-0000-0000-0000-000000000002')->>'motif' = 'acces_perdu',
+  '6a. S2 : le titulaire remplace lit le motif acces_perdu, jamais le refus generique');
+SELECT pg_temp.vrai(public.motif_refus_salle('a3b00000-0000-0000-0000-000000000201',
+                      'a3b00000-0000-0000-0000-000000000001') IS NULL,
+  '6a. S1 : le titulaire non remplace n''a aucun motif de refus (il entre)');
+-- 6b. R2 se declare pret pour S1, puis le titulaire entre le premier : le
+--     remplacement n'est plus necessaire, R2 est prevenu et ne peut plus entrer.
+SELECT pg_temp.en_tant_que('a3b00000-0000-0000-0000-000000000008', 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(public.se_declarer_pret_remplacement('a3b00000-0000-0000-0000-000000000201')->>'etat' = 'retenu',
+  '6b. R2 pret pour S1 (authenticated)');
+RESET ROLE;
+SELECT pg_temp.personne();
+INSERT INTO public.session_events (session_id, profile_id, event_type, source)
+VALUES ('a3b00000-0000-0000-0000-000000000201','a3b00000-0000-0000-0000-000000000001','joined','livekit_webhook');
+SELECT private.remplacement_auto_passer(pg_temp.debut('a3b00000-0000-0000-0000-000000000201') + interval '11 minutes');
+SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.remplacements_seance WHERE session_id = 'a3b00000-0000-0000-0000-000000000201')
+  AND EXISTS (SELECT 1 FROM public.notifications n
+               WHERE n.destinataire = 'a3b00000-0000-0000-0000-000000000008' AND n.evenement = 'remplacement_inutile'
+                 AND n.params->>'session_id' = 'a3b00000-0000-0000-0000-000000000201'),
+  '6b. le titulaire entre le premier : aucune prise, R2 recoit « remplacement inutile »');
+DO $porte$
+BEGIN
+  BEGIN
+    PERFORM public.autoriser_jeton_video('a3b00000-0000-0000-0000-000000000201', 'a3b00000-0000-0000-0000-000000000008',
+                                         'wss://a3b.cloud.test', 'wss://a3b.auto.test');
+    RAISE EXCEPTION 'ROUGE : 6b. R2 a recu un jeton alors que le titulaire est entre';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+  RAISE NOTICE 'OK 6b. R2 ne peut plus entrer dans S1';
+END;
+$porte$;
+SELECT pg_temp.en_tant_que('a3b00000-0000-0000-0000-000000000008', 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(public.se_declarer_pret_remplacement('a3b00000-0000-0000-0000-000000000201')->>'etat' IN ('fermee', 'retenu')
+  AND NOT EXISTS (SELECT 1 FROM jsonb_array_elements(public.offres_remplacement()) e
+                   WHERE e->>'seance_id' = 'a3b00000-0000-0000-0000-000000000201'),
+  '6b. S1 sort du tableau des remplacements de R2');
+RESET ROLE;
+SELECT pg_temp.personne();
+
 -- 5. Les deux delais se reglent par la direction, en authenticated.
 SELECT pg_temp.en_tant_que('a3b00000-0000-0000-0000-000000000013', 'admin');
 SET LOCAL ROLE authenticated;

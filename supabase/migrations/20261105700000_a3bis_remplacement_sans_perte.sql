@@ -42,6 +42,11 @@
 --    Valeur 15 : reglage technique propose par l'agent, NON tranche par le
 --    directeur ; modifiable dans Configuration > Regles.
 --
+-- 4. public.motif_refus_salle (20261104100000) : le titulaire remplace par un
+--    collegue (prise posee avec l'absence) lit « acces_perdu », et non plus
+--    le refus generique (decision du directeur du 03/11 : « l'autre ne peut
+--    plus rentrer mais voit un message clair de ce qui l'empeche »).
+--
 -- private.reglages_remplacement_valider (20261104200000) accepte les deux
 -- nouvelles cles : un entier de 0 a 999, sans contrainte d'ordre.
 --
@@ -228,6 +233,28 @@ SELECT pg_temp.remplacer('private.remplacement_auto_passer(timestamptz)',
   RETURN pg_catalog.jsonb_build_object(
     'alertes_direction', v_alertes,$b$, 1);
 
+-- ---------------------------------------------------------------------------
+-- 2e. Le motif du refus de la salle (decision du directeur du 03/11 : « l'autre
+--     ne peut plus rentrer mais voit un message clair de ce qui l'empeche »).
+--     public.motif_refus_salle (20261104100000) dit « acces_perdu » au seul
+--     titulaire que remplacement_titulaire_ecarte designe : le DERNIER
+--     evenement est son absence automatique. Avec A3-bis, l'absence et la
+--     prise sont posees ensemble : le dernier evenement est la prise, et le
+--     titulaire remplace retombait sur le refus generique. Le motif vaut
+--     desormais aussi pour le titulaire dont un remplacant a pris la seance
+--     et qui n'est plus l'enseignant effectif.
+-- ---------------------------------------------------------------------------
+SELECT pg_temp.remplacer('public.motif_refus_salle(uuid,uuid,uuid)',
+  $a$     and private.remplacement_titulaire_ecarte(p_session_id, p_profile_id) then$a$,
+  $b$     and (private.remplacement_titulaire_ecarte(p_session_id, p_profile_id)
+          -- A3-bis (03/11/2026) : remplace par un collegue qui a pris la seance.
+          or (exists (select 1 from public.remplacements_seance r
+                       where r.session_id = p_session_id
+                         and r.evenement = 'remplacement_pris'
+                         and r.enseignant_titulaire_id = p_profile_id)
+              and private.c29_enseignant_effectif_session(p_session_id)
+                  is distinct from p_profile_id)) then$b$, 1);
+
 ALTER FUNCTION private.remplacement_auto_passer(timestamptz) OWNER TO postgres;
 REVOKE ALL ON FUNCTION private.remplacement_auto_passer(timestamptz)
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
@@ -256,6 +283,14 @@ BEGIN
   IF pg_catalog.strpos(v_valider, 'remplacement.alerte_direction_minutes') = 0
      OR pg_catalog.strpos(v_valider, 'remplacement.seance_tardive_minutes') = 0 THEN
     RAISE EXCEPTION 'A3-bis : la validation des reglages ignore les nouvelles cles';
+  END IF;
+  IF pg_catalog.strpos(pg_catalog.pg_get_functiondef('public.motif_refus_salle(uuid,uuid,uuid)'::regprocedure),
+       'A3-bis (03/11/2026) : remplace par un collegue') = 0
+     OR pg_catalog.has_function_privilege('authenticated',
+          'public.motif_refus_salle(uuid,uuid,uuid)'::regprocedure, 'EXECUTE')
+     OR pg_catalog.has_function_privilege('anon',
+          'public.motif_refus_salle(uuid,uuid,uuid)'::regprocedure, 'EXECUTE') THEN
+    RAISE EXCEPTION 'A3-bis : motif_refus_salle incomplet, ou expose';
   END IF;
   IF NOT EXISTS (SELECT 1 FROM public.app_config WHERE key = 'remplacement.alerte_direction_minutes')
      OR NOT EXISTS (SELECT 1 FROM public.app_config WHERE key = 'remplacement.seance_tardive_minutes') THEN
