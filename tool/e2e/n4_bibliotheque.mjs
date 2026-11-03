@@ -7,7 +7,7 @@
 // l'enseignant de test sur l'un d'eux. Les supports d'un passage precedent sont
 // archives (jamais effaces).
 // Puis par l'interface, connecte comme l'enseignant de test :
-//   1. /tc/bibliotheque : les trois supports, lus par
+//   1. /#/tc/bibliotheque : les trois supports, lus par
 //      `bibliotheque_catalogue_lecteur`, et la reprise ;
 //   2. recherche « tajwid » : seul le support de cette categorie reste ;
 //   3. recherche sans resultat : l'etat vide.
@@ -15,7 +15,7 @@
 //
 // Usage : E2E_VUE=1440x900 node tool/e2e/n4_bibliotheque.mjs (puis 390x844)
 import { parcours, connecter, trouver, libelles, ouvrir, activerSemantique,
-  amenerEnVue, sql, COMPTES } from './commun.mjs';
+  sql, COMPTES } from './commun.mjs';
 
 const [largeur, hauteur] = (process.env.E2E_VUE ?? '1440x900').split('x').map(Number);
 const vue = { width: largeur, height: hauteur };
@@ -61,12 +61,16 @@ function amorcer() {
   p.dire(`Amorce : supports ${ID.supports.join(', ')} ; enseignant ${ID.prof} ; reprise sur le deuxieme`);
 }
 
-/// La zone de recherche de la Bibliotheque : on la vide puis on tape.
+/// La zone de recherche de la Bibliotheque. Le champ actif porte l'aide
+/// « Titre, niveau, sourate ou page » ; « Rechercher un support » est son
+/// etiquette, rendue desactivee dans l'arbre d'accessibilite.
 async function chercher(page, texte) {
-  const champ = await trouver(page, /^Rechercher/, { delai: 10000 });
-  if (!champ) throw new Error(`champ de recherche absent ; ${await lus(page, 40)}`);
-  await amenerEnVue(page, champ);
-  await champ.click();
+  // Une fois du texte saisi, l'aide disparait : le champ garde alors le focus.
+  const champ = page.getByRole('textbox', { name: /^Titre, niveau/ });
+  if (await champ.count()) {
+    await champ.first().click();
+    await page.waitForTimeout(300);
+  }
   await page.keyboard.press('Control+A');
   await page.keyboard.press('Backspace');
   await page.keyboard.type(texte, { delay: 40 });
@@ -79,25 +83,25 @@ try {
   amorcer();
   const e = await p.contexte('enseignant', { vue });
   await connecter(e.page, COMPTES.enseignant);
-  await ouvrir(e.page, '/tc/bibliotheque');
+  await ouvrir(e.page, '/#/tc/bibliotheque');
   await e.page.waitForTimeout(4000);
   await activerSemantique(e.page);
   const ecran = await lus(e.page, 120);
   p.dire(`Bibliotheque : ${ecran}`);
-  verdicts.troisSupports = SUPPORTS.every((s) => ecran.includes(s.court) || ecran.includes(s.titre));
-  verdicts.reprise = /Lecture/.test(ecran);
+  verdicts.troisSupports = /Tous les supports \| flt-semantics:3 \|/.test(ecran);
+  verdicts.reprise = /Continuer \| button:E2E N4 Lecture guidée/.test(ecran);
   await p.capture(e, 'bibliotheque_catalogue');
 
   await chercher(e.page, 'tajwid');
   const filtre = await lus(e.page, 120);
   p.dire(`Recherche « tajwid » : ${filtre}`);
-  verdicts.rechercheFiltre = filtre.includes('Tajwid') && !filtre.includes('Invocations');
+  verdicts.rechercheFiltre = filtre.includes('Règles du tajwid') && !filtre.includes('Invocations du matin');
   await p.capture(e, 'bibliotheque_recherche');
 
   await chercher(e.page, `introuvable${n}`);
   const vide = await lus(e.page, 80);
   p.dire(`Recherche sans resultat : ${vide}`);
-  verdicts.rechercheVide = !SUPPORTS.some((s) => vide.includes(s.court));
+  verdicts.rechercheVide = !SUPPORTS.some((s) => vide.includes(s.titre));
   await p.capture(e, 'bibliotheque_recherche_vide');
 
   p.dire(`Verdicts : ${JSON.stringify(verdicts)}`);

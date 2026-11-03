@@ -1,0 +1,7 @@
+== N4 : Bibliotheque du lecteur (1440 x 900) : 2026-11-03T21:22:42.456Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Amorce : supports 97123bbe-3c6e-4ace-808e-a7f507a57690, e265f14e-1980-4042-9b83-9934d6036db5, a4b15a3a-f307-41be-8162-dc16801834e1 ; enseignant af258a50-bfc1-422a-ad9d-7d3ad2a5b1a1 ; reprise sur le deuxieme
+Bibliotheque : flt-semantics:Bibliothèque | input:Rechercher un support | input:Titre, niveau, sourate ou page | button:Coran | button:Texte | button:PDF | button:Plus | flt-semantics:Continuer | button:E2E N4 Lecture guidée 962457, PDF, Hors ligne indisponible | flt-semantics:Récents | flt-semantics:1 | button:E2E N4 Lecture guidée 962457, PDF, Hors ligne indisponible | flt-semantics:Tous les supports | flt-semantics:3 | button:E2E N4 Invocations du matin 962457, PDF, Hors ligne indisponible | button:E2E N4 Lecture guidée 962457, PDF, Hors ligne indisponible
+Recherche « tajwid » : flt-semantics:Bibliothèque | input:Rechercher un support | button:Coran | button:Texte | button:PDF | button:Plus | flt-semantics:Résultats | flt-semantics:1 | button:E2E N4 Règles du tajwid 962457, Leçon, Hors ligne indisponible
+Recherche sans resultat : flt-semantics:Bibliothèque | input:Rechercher un support | button:Coran | button:Texte | button:PDF | button:Plus | flt-semantics:Aucun support ne correspond | flt-semantics:Essayez un autre mot, ou relâchez les filtres. | button:Tout afficher
+Verdicts : {"troisSupports":true,"reprise":true,"rechercheFiltre":true,"rechercheVide":true}
+== N4 : Bibliotheque du lecteur (1440 x 900) : vert
