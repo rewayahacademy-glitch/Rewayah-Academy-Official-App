@@ -1127,6 +1127,8 @@ class _Traductions$accords$ar extends Traductions$accords$fr {
 	// Translations
 	@override String get titre => 'شروطنا';
 	@override String get intro => 'يلزم قراءة كل النص، والموافقة على اللوائح قبل المتابعة.';
+	@override String get caseManquante => 'حدّدوا هذا المربع للمتابعة.';
+	@override String get introCases => 'اقرؤوا كل نص، ثم حدّدوا المربع الذي يليه.';
 	@override String get caseSavoir => 'قرأت وفهمت ما يجب أن أعرفه.';
 	@override String get sectionContrat => 'عقدك';
 	@override String get caseContrat => 'قرأت عقدي وأوافق عليه، بما في ذلك زيارات المراقبة.';
@@ -7035,6 +7037,7 @@ class _Traductions$inscription$questionnaire$ar extends Traductions$inscription$
 	@override String ans({required Object n}) => '⁨${n}⁩ سنة';
 	@override String get adulte => '18 سنة أو أكثر';
 	@override String get adulteDetail => 'ابتداء من 18 سنة، يسجل كل شخص نفسه، باختيار «أسجل نفسي».';
+	@override String get clavierLettres => 'من لوحة المفاتيح، اضغطوا على حرف الإجابة لاختيارها.';
 	@override String genreQuestion({required Object prenom}) => 'هل ⁨${prenom}⁩ ولد أم بنت؟';
 	@override String get garcon => 'ولد';
 	@override String get fille => 'بنت';
@@ -27006,6 +27009,8 @@ extension on TraductionsAr {
 			'attente.horsLigne' => 'أنت غير متصل. ستظهر حالة ملفك بمجرد عودة الشبكة.',
 			'accords.titre' => 'شروطنا',
 			'accords.intro' => 'يلزم قراءة كل النص، والموافقة على اللوائح قبل المتابعة.',
+			'accords.caseManquante' => 'حدّدوا هذا المربع للمتابعة.',
+			'accords.introCases' => 'اقرؤوا كل نص، ثم حدّدوا المربع الذي يليه.',
 			'accords.caseSavoir' => 'قرأت وفهمت ما يجب أن أعرفه.',
 			'accords.sectionContrat' => 'عقدك',
 			'accords.caseContrat' => 'قرأت عقدي وأوافق عليه، بما في ذلك زيارات المراقبة.',
@@ -27021,6 +27026,7 @@ extension on TraductionsAr {
 			'inscription.questionnaire.ans' => ({required Object n}) => '⁨${n}⁩ سنة',
 			'inscription.questionnaire.adulte' => '18 سنة أو أكثر',
 			'inscription.questionnaire.adulteDetail' => 'ابتداء من 18 سنة، يسجل كل شخص نفسه، باختيار «أسجل نفسي».',
+			'inscription.questionnaire.clavierLettres' => 'من لوحة المفاتيح، اضغطوا على حرف الإجابة لاختيارها.',
 			'inscription.questionnaire.genreQuestion' => ({required Object prenom}) => 'هل ⁨${prenom}⁩ ولد أم بنت؟',
 			'inscription.questionnaire.garcon' => 'ولد',
 			'inscription.questionnaire.fille' => 'بنت',
@@ -27184,11 +27190,11 @@ extension on TraductionsAr {
 			'foyer.finances.sansDonnees' => 'تعذّر تحميل أرصدة أسرتك',
 			'foyer.transactions.sansDonnees' => 'تعذّر تحميل آخر حركات الأسرة',
 			'adulte.nav.accueil' => 'الرئيسية',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.nav.maClasse' => 'فصلي',
 			'adulte.nav.coran' => 'القرآن',
 			'adulte.nav.monEspace' => 'مساحتي',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.accueil.salutation' => ({required Object prenom}) => 'مرحبًا ⁨${prenom}⁩',
 			'adulte.accueil.prochaineSeance' => 'الحصة القادمة',
 			'adulte.accueil.parcours' => 'مساري',
@@ -27698,11 +27704,11 @@ extension on TraductionsAr {
 			'creneaux.mesEleves' => ({required num nombre, required Object plafond}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا تتابع أي طالب، والحد الأقصى ⁨${plafond}⁩.', one: 'تتابع طالبًا واحدًا، والحد الأقصى ⁨${plafond}⁩.', two: 'تتابع طالبين، والحد الأقصى ⁨${plafond}⁩.', few: 'تتابع ⁨${nombre}⁩ طلاب، والحد الأقصى ⁨${plafond}⁩.', many: 'تتابع ⁨${nombre}⁩ طالبًا، والحد الأقصى ⁨${plafond}⁩.', other: 'تتابع ⁨${nombre}⁩ طالب، والحد الأقصى ⁨${plafond}⁩.', ), 
 			'creneaux.aucunEleve' => 'لا طالب في الانتظار في ساعاتك',
 			'creneaux.aucunEleveDetail' => 'اقترح ساعات أخرى لترى أسرًا أكثر.',
+			_ => null,
+		} ?? switch (path) {
 			'creneaux.attendDepuis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'ينتظر منذ اليوم', one: 'ينتظر منذ يوم واحد', two: 'ينتظر منذ يومين', few: 'ينتظر منذ ⁨${jours}⁩ أيام', many: 'ينتظر منذ ⁨${jours}⁩ يومًا', other: 'ينتظر منذ ⁨${jours}⁩ يوم', ), 
 			'creneaux.attendUnJour' => 'ينتظر منذ يوم',
 			'creneaux.attendAujourdhui' => 'قُدِّم الطلب اليوم',
-			_ => null,
-		} ?? switch (path) {
 			'creneaux.niveau' => ({required Object niveau}) => 'المستوى ⁨${niveau}⁩',
 			'creneaux.prendre' => ({required Object jour, required Object heure}) => 'قبول ⁨${jour}⁩ الساعة ⁨${heure}⁩',
 			'creneaux.priseEnCours' => 'جارٍ الحفظ',
@@ -28212,11 +28218,11 @@ extension on TraductionsAr {
 			'recrutement.partage.titre' => 'ساعد شخصًا على تعلّم كلام الله',
 			'recrutement.partage.titreFemme' => 'ساعدي أختًا على تعلّم كلام الله',
 			'recrutement.partage.facultatif' => 'اختياري: المشاركة لا تغيّر شيئًا في طلب ترشحك.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.partage.langueCarte' => 'لغة البطاقة',
 			'recrutement.partage.apercu' => 'معاينة البطاقة المراد مشاركتها',
 			'recrutement.partage.partager' => 'أشارك',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.partage.partagerLaCarte' => 'مشاركة بطاقة العرض',
 			'recrutement.partage.enregistrer' => 'حفظ الصورة',
 			'recrutement.partage.copier' => 'نسخ الرابط',
@@ -28726,11 +28732,11 @@ extension on TraductionsAr {
 			'recrutement.talents.c.assistance_technique.description' => 'حلّ المشكلات التقنية عن بُعد لمن يواجهها.',
 			'recrutement.talents.c.assistance_technique.exemple' => 'المساعدة على الاتصال، ضبط الصوت والكاميرا',
 			'recrutement.talents.c.donnees_tableurs.libelle' => 'البيانات والجداول',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.talents.c.donnees_tableurs.description' => 'تنظيم الأرقام واستخلاص جداول واضحة منها.',
 			'recrutement.talents.c.donnees_tableurs.exemple' => 'جدول متابعة، إحصاءات، تقرير',
 			'recrutement.talents.c.autre.libelle' => 'مجال آخر',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.c.autre.description' => 'مهارة غير مذكورة في القائمة.',
 			'recrutement.talents.niveaux.titre' => 'ما مستواك؟',
 			'recrutement.talents.niveaux.explication' => 'لكل مهارة، أخبرنا أين أنت منها. يساعد ذلك الأكاديمية على اقتراح مهمة تناسبك.',
@@ -29240,11 +29246,11 @@ extension on TraductionsAr {
 			'courriels.admin.file.vide' => 'لا توجد رسائل في هذه القائمة.',
 			'courriels.admin.file.erreur' => 'تعذّر تحميل الإرسال. أعد المحاولة.',
 			'courriels.admin.file.sansDonnees' => 'تعذّر تحميل الإرسال',
+			_ => null,
+		} ?? switch (path) {
 			'courriels.admin.file.retour.relance' => 'أُعيدت إلى الطابور. الإرسال خلال دقيقة.',
 			'courriels.admin.file.retour.introuvable' => 'لم تعد هذه الرسالة قابلة لإعادة المحاولة. تم تحديث القائمة.',
 			'courriels.admin.file.retour.echec' => 'لم تتأكد إعادتها إلى الطابور. أُعيدت قراءة القائمة: تحقق من حالة الرسالة قبل أن تحاول من جديد.',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.file.retour.refus' => 'الإدارة المتصلة وحدها تستطيع إعادة إرسال رسالة.',
 			'courriels.admin.file.retour.horsLigne' => 'لم يُرسل شيء: الشبكة غير متوفرة. أعد المحاولة عند عودتها.',
 			'courriels.admin.adresses.intro' => 'تخرج كل فئة من عنوانها، وتصل الردود إلى الصندوق المذكور. تُقرأ هذه القائمة هنا ولا تُعدَّل داخل التطبيق.',

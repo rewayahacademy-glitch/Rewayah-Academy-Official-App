@@ -1,0 +1,6 @@
+== ONBOARDING-FIN : questionnaire habille comme la connexion, accords signales : 2026-11-02T17:19:12.110Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+1440 : {"voletMarque":true,"voletParchemin":true,"lettresAffichees":true,"toucheBChoisitEnfant":true,"puces":true,"pasDePhraseGenerale":true,"suivantSignale":true,"focusSurLaCase":true,"phraseEnVue":true,"secondeCaseSignalee":true}
+390 : {"puces":true,"pasDePhraseGenerale":true,"suivantSignale":true,"focusSurLaCase":true,"phraseEnVue":true,"secondeCaseSignalee":true}
+1440_ar : {"questionArabe":true,"pasDePhraseGenerale":true,"suivantSignale":true,"focusSurLaCase":true,"phraseEnVue":true,"secondeCaseSignalee":true}
+390_ar : {"questionArabe":true,"pasDePhraseGenerale":true,"suivantSignale":true,"focusSurLaCase":true,"phraseEnVue":true,"secondeCaseSignalee":true}
+== ONBOARDING-FIN : questionnaire habille comme la connexion, accords signales : vert

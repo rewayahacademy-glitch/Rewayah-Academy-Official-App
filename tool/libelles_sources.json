@@ -6924,5 +6924,8 @@
   "notifications.toutMarquerLu": "NOTIFS-L6 (pilote, 02/11/2026 ; demande du directeur du 02/11)",
   "notifications.ecarter": "NOTIFS-L6 (pilote, 02/11/2026 ; demande du directeur du 02/11)",
   "notifications.ecartNonConfirme": "NOTIFS-L6 (pilote, 02/11/2026 ; demande du directeur du 02/11)",
-  "notifications.repetitions": "NOTIFS-L6 (pilote, 02/11/2026 ; demande du directeur du 02/11)"
+  "notifications.repetitions": "NOTIFS-L6 (pilote, 02/11/2026 ; demande du directeur du 02/11)",
+  "inscription.questionnaire.clavierLettres": "UX-046 (pilote, 02/11/2026) : questionnaire d'inscription, lettres A, B, C au clavier sur ordinateur (fiche ONBOARDING-2026-10-29 §2)",
+  "accords.introCases": "UX-047 (pilote, 02/11/2026) : page des accords, « Suivant » reste actif ; la case qui manque est signalée sous elle",
+  "accords.caseManquante": "UX-047 (pilote, 02/11/2026) : page des accords, « Suivant » reste actif ; la case qui manque est signalée sous elle"
 }
