@@ -34,24 +34,23 @@ void main() {
     final SemanticsNode titre = tester.getSemantics(
       find.text('Titre du bandeau'),
     );
-    expect(titre.hasFlag(SemanticsFlag.isHeader), isTrue);
+    expect(titre.flagsCollection.isHeader, isTrue);
     expect(titre.label, isNot(contains('Message du bandeau')));
     expect(titre.label, isNot(contains('Voir la suite')));
     final SemanticsNode bandeau = tester.getSemantics(
       find.byType(BandeauAttention),
     );
-    expect(bandeau.hasFlag(SemanticsFlag.isHeader), isFalse);
+    expect(bandeau.flagsCollection.isHeader, isFalse);
     // Le lien est un bouton a part, nomme par son seul libelle ; le bandeau
     // garde son message, sans le lien.
     final SemanticsNode lien = tester.getSemantics(find.byType(LienFleche));
     expect(lien.label, 'Voir la suite');
     expect(
-      lien.hasFlag(SemanticsFlag.isButton) ||
-          lien.hasFlag(SemanticsFlag.isLink),
+      lien.flagsCollection.isButton || lien.flagsCollection.isLink,
       isTrue,
     );
     expect(bandeau.label, isNot(contains('Voir la suite')));
-    expect(bandeau.hasFlag(SemanticsFlag.isButton), isFalse);
+    expect(bandeau.flagsCollection.isButton, isFalse);
     await tester.tap(find.byType(LienFleche));
     await tester.pumpAndSettle();
     expect(touche, 1);
