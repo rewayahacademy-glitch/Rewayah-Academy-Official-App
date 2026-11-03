@@ -213,6 +213,7 @@ Numéros de migration : table des réservations du garde-cap (2026110510 à 2026
 | 6 | N2 : foyer et élève adulte (E1, FA5, FA1-FA3), puis NIV1 (niveau demandé une fois, UX-032), même agent | M + M | |
 | 7 | ADM-UX (UX-006, 007, 014) | S | |
 | 7 bis | DEFIL-FEUILLE : une boîte ou une feuille trop haute devient l'écran, une seule barre de défilement (fiche §10 ; constat de C1 au rejeu du 03/11) | S/M | prochain agent libre ; suite complète (lib/core) |
+| 7 ter | RECHARGE-CARTE : pendant une commande en attente de paiement, la carte du profil affiche « 0 $ » alors que le récapitulatif du serveur dit 55 $ (`lib/features/foyer/recharge_foyer.dart:869`). La carte garde en lecture seule le montant retenu par le serveur, sans calcul côté Flutter. Constat du rejeu du 03/11, parcours 7 | S | premier agent libre après DEFIL-FEUILLE ; sans migration ; R3 : carte et récapitulatif concordants, 390 et 1440 |
 | 8 | N3 : pause programmée, mission du contrôleur, photo de l'enseignant | M | |
 | 9 | CAHIER-UX (UX-028, 041 ; UX-029 vérifié d'abord en lecture) | S | |
 | 10 | N4 : Bibliothèque, coffre R2 de la pièce, publication des évaluations, interface standard, Interface guidée | L | r2-selftest lu avant |
