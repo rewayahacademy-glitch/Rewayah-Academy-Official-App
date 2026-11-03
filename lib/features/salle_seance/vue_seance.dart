@@ -517,6 +517,7 @@ class VueSeance {
     this.horloge,
     this.chrono,
     this.pause,
+    this.echecPause,
     this.connexion = ConnexionSeance.enLigne,
     this.videoSuspendue = false,
     this.enregistrementConfirme = true,
@@ -635,6 +636,10 @@ class VueSeance {
   /// la sert, ou `null` sans source. Elle ne s'affiche que dans la ligne du
   /// chrono. Jamais une preuve de presence.
   final PauseSeance? pause;
+
+  /// N3, S2 : le dernier geste sur la pause n'est pas confirme par le serveur
+  /// (phrase K-59), ou `null`. Dit sous la ligne de la pause.
+  final String? echecPause;
   final ConnexionSeance connexion;
 
   /// Lot salle 3 (audit reseau du 25/10/2026) : le repli audio est en cours
@@ -1498,6 +1503,7 @@ class VueSeance {
     bool sansChrono = false,
     PauseSeance? pause,
     bool sansPause = false,
+    String? echecPause,
     ConnexionSeance? connexion,
     bool? videoSuspendue,
     VisiteSeance? visite,
@@ -1537,6 +1543,7 @@ class VueSeance {
     horloge: sansHorloge ? null : horloge ?? this.horloge,
     chrono: sansChrono ? null : chrono ?? this.chrono,
     pause: sansPause ? null : pause ?? this.pause,
+    echecPause: echecPause ?? this.echecPause,
     connexion: connexion ?? this.connexion,
     videoSuspendue: videoSuspendue ?? this.videoSuspendue,
     enregistrementConfirme:
