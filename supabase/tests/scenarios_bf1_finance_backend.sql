@@ -145,8 +145,15 @@ DECLARE r jsonb := public.mes_revenus_enseignant(NULL);
 BEGIN
   PERFORM pg_temp.vrai(r ->> 'devise' = 'USD' AND r -> 'allocationInternet' = 'null'::jsonb,
     'revenus : devise USD, aucune aide Internet');
-  PERFORM pg_temp.vrai(r #>> '{regle,base,mineur}' = '400' AND r #>> '{regle,plafond,mineur}' = '400',
-    'revenus : base et plafond = taux de la regle en vigueur');
+  -- FAC-E-02 (18/10) puis PAIE-REMPLACANT (02/11) : sous la politique
+  -- « par eleve present » posee par les migrations, la regle rendue est la
+  -- fourchette de paie horaire d'une classe (plus petite et plus grande
+  -- classe), plus le taux global de BF1. On garde ce que l'ecran affiche :
+  -- une base et un plafond en USD, positifs, la base sous le plafond.
+  PERFORM pg_temp.vrai(r #>> '{regle,base,devise}' = 'USD' AND r #>> '{regle,plafond,devise}' = 'USD'
+    AND (r #>> '{regle,base,mineur}')::bigint > 0
+    AND (r #>> '{regle,base,mineur}')::bigint <= (r #>> '{regle,plafond,mineur}')::bigint,
+    'revenus : base et plafond de la regle en vigueur, en USD, base sous le plafond');
   PERFORM pg_temp.vrai(pg_catalog.jsonb_array_length(r -> 'classes') = 2, 'revenus : deux classes, rien de l''autre enseignant');
   c := r -> 'classes' -> 0;
   PERFORM pg_temp.vrai(c ->> 'classe' = 'Al-Fajr BF1' AND (c ->> 'enRemplacement')::boolean

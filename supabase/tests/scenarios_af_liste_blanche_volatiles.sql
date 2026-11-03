@@ -43,6 +43,8 @@ declare
     -- FAC-E-01 (18/10) : la direction accorde et retire les bourses, note les parrainages.
     'accorder_bourse(uuid,text)',
     'accorder_capacite_controle(uuid,timestamp with time zone,timestamp with time zone,boolean,uuid[],uuid[],uuid)',
+    -- Lot (A) tarifs particuliers (02/11) : acces offert ou prix special saisi par la direction ; garde private.fac_direction() (admin, compte valide).
+    'accorder_tarif_particulier(uuid,text,integer,bigint,date,text)',
     'admin_library_review_rights(uuid,uuid,jsonb,integer)',
     'affecter_enseignant_classe_c11bis(uuid,uuid)',
     -- CAND-L2A2 (22/10) : admission en Salle de verification (transition 10), direction active de son cote (moteur, controles nommes).
@@ -93,6 +95,8 @@ declare
     'creer_classe_creneaux_admin(uuid,text,text,smallint,text,jsonb,text,smallint)',
     'modifier_creneau_classe_admin(uuid,integer,integer,integer,integer,integer,text)',
     'ajouter_creneau_classe_admin(uuid,integer,integer,integer)',
+    -- Surcharge a 3 arguments (20261025020000), toujours presente a cote de celle a 4 : direction active seulement (app_account_valid ET admin).
+    'ajouter_creneau_classe_admin(uuid,integer,integer)',
     'retirer_creneau_classe_admin(uuid,integer,integer,text)',
     'regler_genre_classe_admin(uuid,text,text)',
     'creer_jeton_agent(text,uuid,integer,boolean)',
@@ -145,6 +149,10 @@ declare
     'designer_remplacant_admin(uuid,uuid,uuid,boolean)',
     -- A3 (31/10) : un enseignant actif candidat se declare pret pendant la pre-alerte ; le premier gagne.
     'se_declarer_pret_remplacement(uuid)',
+    -- FN-115c (02/11) : « Rembourser » confirme par la direction ; garde private.fn115c_direction() (admin, compte valide), plafond arrete par le serveur.
+    'remboursement_confirmer(uuid,uuid,bigint,uuid)',
+    -- Horloge de classe (25/10) : la seance a rejoindre d'une classe, lue par la direction, l'enseignant, l'eleve ou le tuteur de la classe ; compte valide exige (lecture non declaree STABLE).
+    'seance_a_rejoindre(uuid)',
     'dossiers_en_attente()',
     'effacer_etat_partage(uuid)',
     'eleves_sans_enseignant()',
