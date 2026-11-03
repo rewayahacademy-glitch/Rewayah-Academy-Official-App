@@ -1,6 +1,6 @@
-== D1-ter : la famille lit ce qui lui est transmis : 2026-11-03T12:26:39.767Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+== D1-ter : la famille lit ce qui lui est transmis : 2026-11-03T13:16:41.614Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
 -- 1. banc : un foyer, deux enfants, un eleve adulte, une classe
-  signalements : {"enfant":"054052a0-640c-4c2c-87a0-f88a1a8de231","adulte":"973f109d-307c-4546-bddd-a582541a2bec","securite":"845ec45b-12ca-4631-8b6c-037f54bebb50"}
+  signalements : {"enfant":"76a215fb-d8a9-4c0a-a530-b2239651efed","adulte":"2c258f53-ac8e-4434-a7f9-e1d965805ea8","securite":"bfa36b0e-87ea-4bd2-901b-e31b042b98d1"}
   OK base : le titulaire du foyer est prevenu, vers son Historique
   OK base : l'eleve adulte est prevenu, vers son Suivi
   OK base : aucune notification ne porte le message ni la note interne
