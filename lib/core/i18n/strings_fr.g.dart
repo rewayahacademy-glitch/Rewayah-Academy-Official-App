@@ -26335,6 +26335,15 @@ class Traductions$admin$finance$pol$fr {
 	/// fr: 'Un mois non réglé à cette date suspend l'accès au cours ; la place reste gardée le temps de la conservation.'
 	String get suspensionDetail => 'Un mois non réglé à cette date suspend l\'accès au cours ; la place reste gardée le temps de la conservation.';
 
+	/// fr: 'Délai de rétractation'
+	String get retractation => 'Délai de rétractation';
+
+	/// fr: 'Pendant ce délai, compté à partir du paiement, la famille est remboursée de ce qu'elle a payé, moins les séances suivies. Le texte Annulation et remboursement affiche cette valeur.'
+	String get retractationDetail => 'Pendant ce délai, compté à partir du paiement, la famille est remboursée de ce qu\'elle a payé, moins les séances suivies. Le texte Annulation et remboursement affiche cette valeur.';
+
+	/// fr: 'Saisissez un délai de 0 à 60 jours.'
+	String get erreurRetractation => 'Saisissez un délai de 0 à 60 jours.';
+
 	/// fr: 'Saisissez 100 % au plus.'
 	String get erreurPourcentMax => 'Saisissez 100 % au plus.';
 
@@ -35493,7 +35502,7 @@ class Traductions$juridique$conditions$s4$fr {
 		'Les prix figurent sur la page Tarifs et dans l\'application, au moment de choisir une formule. Ils sont en dollars américains et hors taxes. La taxe due selon votre pays est ajoutée au paiement.',
 		'L\'abonnement se renouvelle chaque mois. Les remises sont calculées par le système sur la facture du foyer.',
 		'Le paiement passe par un prestataire de paiement.',
-		'Il n\'y a pas d\'essai gratuit. La première semaine est remboursée si le cours ne convient pas, sauf les séances déjà suivies.',
+		'Il n\'y a pas d\'essai gratuit. Pendant le délai de rétractation, qui court à partir du paiement, vous êtes remboursé de ce que vous avez payé, sauf les séances déjà suivies (voir le texte Annulation et remboursement).',
 		'Sans paiement, l\'élève n\'a plus accès aux séances ni aux ressources. Son espace reste ouvert pour voir son profil, son historique et payer.',
 		'Pour arrêter, être remboursé ou payer en retard, voir le texte Annulation et remboursement.',
 	];
@@ -35555,12 +35564,21 @@ class Traductions$juridique$annulation$s1$fr {
 
 	// Translations
 
-	/// fr: '1. Première semaine remboursée'
-	String get titre => '1. Première semaine remboursée';
+	/// fr: '1. Délai de rétractation'
+	String get titre => '1. Délai de rétractation';
+
+	/// fr: '(one) {Le délai de rétractation est de {jours} jour à compter du paiement, selon la politique tarifaire en vigueur (page Tarifs).} (other) {Le délai de rétractation est de {jours} jours à compter du paiement, selon la politique tarifaire en vigueur (page Tarifs).}'
+	String delai({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours,
+		one: 'Le délai de rétractation est de ${jours} jour à compter du paiement, selon la politique tarifaire en vigueur (page Tarifs).',
+		other: 'Le délai de rétractation est de ${jours} jours à compter du paiement, selon la politique tarifaire en vigueur (page Tarifs).',
+	);
+
+	/// fr: 'Le délai de rétractation court à compter du paiement. Sa durée est celle de la politique tarifaire en vigueur (page Tarifs).'
+	String get delaiSansDuree => 'Le délai de rétractation court à compter du paiement. Sa durée est celle de la politique tarifaire en vigueur (page Tarifs).';
 
 	List<String> get blocs => [
-		'Il n\'y a pas d\'essai gratuit. À la place, la première semaine est remboursée si le cours ne convient pas.',
-		'Vous pouvez arrêter pendant la première semaine qui suit la première séance, selon la politique tarifaire en vigueur (page Tarifs). Vous êtes alors remboursé de ce que vous avez payé, sauf les séances déjà suivies.',
+		'Il n\'y a pas d\'essai gratuit. À la place, vous pouvez arrêter pendant le délai de rétractation si le cours ne convient pas.',
+		'Pendant ce délai, vous êtes remboursé de ce que vous avez payé, sauf les séances déjà suivies.',
 		'Après ce délai, le mois commencé est dû.',
 	];
 }
@@ -35578,7 +35596,7 @@ class Traductions$juridique$annulation$s2$fr {
 
 	List<String> get blocs => [
 		'L\'abonnement mensuel s\'arrête à tout moment, sans justification. Il prend fin à la fin du mois en cours.',
-		'Les formules payées d\'avance, au trimestre ou à l\'année, ne sont plus remboursées après la première semaine, sauf geste de la direction. Dans ce cas, les mois déjà suivis sont comptés au prix mensuel normal, sans la remise de la formule, et le reste est remboursé.',
+		'Après le délai de rétractation, arrêter une formule payée d\'avance, au trimestre ou à l\'année, reste un droit. Les mois commencés sont comptés au prix mensuel normal, sans la remise de la formule, et le reste est remboursé.',
 		'Une inscription en cours de mois paie seulement les séances restantes du mois.',
 	];
 }
@@ -46832,6 +46850,9 @@ extension on Traductions {
 			'admin.finance.pol.dureeDueDetail' => 'La présence minimale pour qu\'une séance compte dans la paie.',
 			'admin.finance.pol.suspension' => 'Accès suspendu le',
 			'admin.finance.pol.suspensionDetail' => 'Un mois non réglé à cette date suspend l\'accès au cours ; la place reste gardée le temps de la conservation.',
+			'admin.finance.pol.retractation' => 'Délai de rétractation',
+			'admin.finance.pol.retractationDetail' => 'Pendant ce délai, compté à partir du paiement, la famille est remboursée de ce qu\'elle a payé, moins les séances suivies. Le texte Annulation et remboursement affiche cette valeur.',
+			'admin.finance.pol.erreurRetractation' => 'Saisissez un délai de 0 à 60 jours.',
 			'admin.finance.pol.erreurPourcentMax' => 'Saisissez 100 % au plus.',
 			'admin.finance.pol.erreurDureeDue' => 'Saisissez une durée de 1 à 240 minutes.',
 			'admin.finance.pol.erreurBourseDuree' => 'Saisissez une durée de 1 à 24 mois.',
@@ -47277,11 +47298,11 @@ extension on Traductions {
 			'admin.fusion.transfertContexte' => 'Choisissez l\'élève, puis la classe parallèle qui l\'accueille. Le transfert est tracé, et la famille en est prévenue.',
 			'admin.fusion.eleveTitre' => 'Élève à transférer',
 			'admin.fusion.aucunEleve' => 'Cette classe n\'a aucun élève',
+			_ => null,
+		} ?? switch (path) {
 			'admin.fusion.aucunEleveDetail' => 'Il n\'y a personne à transférer.',
 			'admin.fusion.erreurEleves' => 'Les élèves de la classe n\'ont pas pu être lus. Réessayez dans un instant.',
 			'admin.fusion.transfertCibleTitre' => 'Classe qui accueille l\'élève',
-			_ => null,
-		} ?? switch (path) {
 			'admin.fusion.manqueEleve' => 'Il manque l\'élève : choisissez-le dans la liste.',
 			'admin.fusion.confirmerTransfert' => 'Transférer l\'élève',
 			'admin.fusion.transfertHorsLigne' => 'Le transfert pourra être confirmé quand la connexion sera revenue. Votre choix reste affiché.',
@@ -47791,11 +47812,11 @@ extension on Traductions {
 			'nav.admin.comptes' => 'Comptes',
 			'nav.admin.accesAgents' => 'Accès des agents',
 			'nav.admin.accueil' => 'Accueil',
+			_ => null,
+		} ?? switch (path) {
 			'nav.admin.operations' => 'Opérations',
 			'nav.admin.personnes' => 'Personnes',
 			'nav.admin.pedagogie' => 'Pédagogie',
-			_ => null,
-		} ?? switch (path) {
 			'nav.admin.finance' => 'Finance',
 			'nav.admin.configuration' => 'Configuration',
 			'nav.admin.securite' => 'Sécurité et audit',
@@ -48305,11 +48326,11 @@ extension on Traductions {
 			'notifications.types.annonceInterne' => 'Annonce interne',
 			'notifications.types.evenementContextuel' => 'Événement',
 			'notifications.types.autre' => 'Notification',
+			_ => null,
+		} ?? switch (path) {
 			'notifications.titre' => 'Notifications',
 			'notifications.quand' => ({required Object date, required Object heure}) => '${date} à ${heure}',
 			'notifications.indisponibleTitre' => 'Les notifications ne sont pas encore disponibles',
-			_ => null,
-		} ?? switch (path) {
 			'notifications.indisponiblePhrase' => 'Les rappels de séance et les messages de l\'académie s\'afficheront ici dès qu\'ils seront ouverts.',
 			'notifications.videTitre' => 'Aucune notification',
 			'notifications.videPhrase' => 'Les rappels de séance et les messages de l\'académie s\'afficheront ici.',
@@ -48819,11 +48840,11 @@ extension on Traductions {
 			'enseignant.journee.coursIndividuel' => 'Cours individuel',
 			'enseignant.journee.effectifUn' => '1 élève',
 			'enseignant.journee.preflightOk' => 'Micro prêt',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.journee.preflightBloque' => 'Le micro est bloqué par votre navigateur. Autorisez-le pour lancer le cours.',
 			'enseignant.journee.preflightSansMicro' => 'Aucun micro n\'est détecté. Branchez-en un pour lancer le cours.',
 			'enseignant.journee.preflightIndisponible' => 'La vérification du matériel n\'a pas abouti. Réessayez avant de lancer le cours.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.journee.lancerHorsLigne' => 'Le cours pourra être lancé quand la connexion reviendra.',
 			'enseignant.journee.erreurPartielle' => 'Les horaires de prière et vos pauses n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.',
 			'enseignant.journee.erreurPartielleTout' => 'Les horaires de prière, vos pauses et vos cahiers de transmission à terminer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.',
@@ -49333,11 +49354,11 @@ extension on Traductions {
 			'controleur.historique.cleElevesPresents' => 'Présents',
 			'controleur.historique.cleReponse' => 'Réponse',
 			'controleur.historique.sansComplement' => 'Aucun complément.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.historique.faitsIndisponibles' => 'Le relevé automatique de cette visite (heures, élèves présents, reconnexions) n\'est pas encore reçu : la séance vient de se terminer ou la connexion a été coupée. Il s\'affichera ici dès sa réception. Le reste du rapport reste fiable.',
 			'controleur.historique.motif' => ({required Object motif}) => 'Motif : ${motif}',
 			'controleur.historique.ajouterComplement' => 'Ajouter un complément',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.complement.bandeau' => 'Ce complément sera ajouté au rapport existant.',
 			'controleur.complement.questionMotif' => 'Pourquoi ajoutez-vous ce complément ?',
 			'controleur.complement.contexteMotif' => 'Facultatif : le motif aide l\'administration à lire le complément. Le rapport d\'origine ne change pas.',
@@ -49847,11 +49868,11 @@ extension on Traductions {
 			'tc.observation.disponibilite.fermeeTitre' => 'Observation pas encore ouverte',
 			'tc.observation.disponibilite.fermee' => 'L\'observation des séances par les parents n\'est pas encore ouverte. Elle sera proposée ici dès son ouverture.',
 			'tc.observation.disponibilite.reseauTitre' => 'Vérification impossible',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.disponibilite.reseau' => 'La disponibilité de l\'observation n\'a pas pu être vérifiée. Aucune visite n\'a commencé.',
 			'tc.observation.disponibilite.capaciteTitre' => 'Observation indisponible',
 			'tc.observation.disponibilite.capacite' => 'L\'observation ne peut pas s\'ouvrir pour cette séance. Aucune visite n\'a commencé.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.connexion.titre' => 'Connexion et vérification',
 			'tc.observation.connexion.phrase' => 'Vos visites restantes sont vérifiées. La visite commence dès que l\'entrée est acceptée, connexion vidéo comprise.',
 			'tc.observation.connexion.enCours' => 'Connexion et vérification en cours',
@@ -50361,11 +50382,11 @@ extension on Traductions {
 			'adulte.demo.donnees.soldeAicha' => 'Solde de démonstration 3',
 			'adulte.demo.donnees.soldeOumar' => 'Solde de démonstration 4',
 			'adulte.demo.donnees.totalAvecSecondAdulte' => 'Total de démonstration A',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.demo.donnees.totalSansSecondAdulte' => 'Total de démonstration B',
 			'adulte.demo.donnees.prixOffreA' => '5,00 € (démonstration)',
 			'adulte.demo.donnees.prixOffreB' => '10,00 € (démonstration)',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.donnees.detailOffreA' => 'Solde de démonstration A',
 			'adulte.demo.donnees.detailOffreB' => 'Solde de démonstration B',
 			'adulte.demo.donnees.totalRecharge5' => '5,00 € (démonstration)',
@@ -50875,11 +50896,11 @@ extension on Traductions {
 			'com.messages.entree.toutes' => 'Toutes vos conversations',
 			'com.messages.entree.aLireUne' => '1 conversation à lire',
 			'com.messages.entree.aLire' => ({required Object nombre}) => '${nombre} conversations à lire',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.entree.ouverture' => 'Ouverture de la conversation',
 			'com.messages.entree.inaccessibleTitre' => 'Conversation inaccessible',
 			'com.messages.entree.inaccessible' => 'Cette conversation n\'est plus ouverte pour vous. Choisissez une autre personne dans la liste.',
-			_ => null,
-		} ?? switch (path) {
 			'com.messages.entree.erreurOuvertureTitre' => 'Impossible d\'ouvrir cette conversation.',
 			'com.messages.entree.ouvertureEchouee' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'com.messages.videDetail' => 'Une conversation s\'ouvre depuis une Classe, un élève ou un dossier.',
@@ -51389,11 +51410,11 @@ extension on Traductions {
 			'com.studio.demo.f.objetClasseSamedi' => 'Classe du samedi matin',
 			'com.studio.demo.f.activiteCloture' => 'Clôture du mois de septembre',
 			'com.studio.demo.f.objetCloture' => 'Clôture de septembre',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.demo.f.activiteBilans' => 'Bilans de mi-parcours à relire',
 			'com.studio.demo.f.objetBilans' => 'Bilans de mi-parcours',
 			'com.studio.demo.f.activiteMessages' => '2 nouveaux messages',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.f.activiteAnnonce' => 'Annonce publiée : l\'académie ferme le 1er novembre',
 			'com.studio.demo.f.objetFermeture' => 'Fermeture du 1er novembre',
 			'com.studio.demo.f.activiteFichier' => ({required Object nom, required Object fichier}) => '${nom} a partagé ${fichier}',
@@ -51903,11 +51924,11 @@ extension on Traductions {
 			'comptable.paiements.actions.payerSelection' => 'Payer la sélection',
 			'comptable.paiements.actions.viderSelection' => 'Vider la sélection',
 			'comptable.paiements.actions.voirProfil' => 'Voir le profil de paiement',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.selection' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Un paiement sélectionné', other: '${n} paiements sélectionnés', ), 
 			'comptable.paiements.selectionPhrase' => 'Le total et les exclusions sont rendus par le contrôle, avant tout envoi.',
 			'comptable.paiements.horsLigneCourt' => 'Paiement impossible maintenant',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.vide.message' => 'Aucun paiement à effectuer.',
 			'comptable.paiements.vide.invitation' => 'Les obligations apparaissent ici dès qu\'elles sont calculées à la source.',
 			'comptable.paiements.vide.filtreMessage' => 'Aucun paiement ne correspond à ces filtres.',
@@ -52417,11 +52438,11 @@ extension on Traductions {
 			'comptable.direction.reservePanneau.regle.montantFixe' => 'Somme fixe',
 			'comptable.direction.reservePanneau.regle.montantFixeDetail' => 'La même somme à chaque échéance.',
 			'comptable.direction.reservePanneau.regle.pourcentage' => 'Pourcentage',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.reservePanneau.regle.pourcentageDetail' => 'Une part de l\'encaissement consolidé.',
 			'comptable.direction.reservePanneau.regle.jusquAObjectif' => 'Jusqu\'à l\'objectif',
 			'comptable.direction.reservePanneau.regle.jusquAObjectifDetail' => 'Compléter ce qui manque pour atteindre l\'objectif.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.reservePanneau.regle.proposee' => 'Proposée',
 			'comptable.direction.reservePanneau.regle.proposeeDetail' => 'Une proposition que le Comptable confirme.',
 			'comptable.direction.reservePanneau.montantAuto' => 'Montant à affecter',
@@ -52753,7 +52774,7 @@ extension on Traductions {
 			'juridique.conditions.s4.blocs.0' => 'Les prix figurent sur la page Tarifs et dans l\'application, au moment de choisir une formule. Ils sont en dollars américains et hors taxes. La taxe due selon votre pays est ajoutée au paiement.',
 			'juridique.conditions.s4.blocs.1' => 'L\'abonnement se renouvelle chaque mois. Les remises sont calculées par le système sur la facture du foyer.',
 			'juridique.conditions.s4.blocs.2' => 'Le paiement passe par un prestataire de paiement.',
-			'juridique.conditions.s4.blocs.3' => 'Il n\'y a pas d\'essai gratuit. La première semaine est remboursée si le cours ne convient pas, sauf les séances déjà suivies.',
+			'juridique.conditions.s4.blocs.3' => 'Il n\'y a pas d\'essai gratuit. Pendant le délai de rétractation, qui court à partir du paiement, vous êtes remboursé de ce que vous avez payé, sauf les séances déjà suivies (voir le texte Annulation et remboursement).',
 			'juridique.conditions.s4.blocs.4' => 'Sans paiement, l\'élève n\'a plus accès aux séances ni aux ressources. Son espace reste ouvert pour voir son profil, son historique et payer.',
 			'juridique.conditions.s4.blocs.5' => 'Pour arrêter, être remboursé ou payer en retard, voir le texte Annulation et remboursement.',
 			'juridique.conditions.s5.titre' => '5. Respect en séance',
@@ -52765,13 +52786,15 @@ extension on Traductions {
 			'juridique.annulation.titre' => 'Annulation et remboursement',
 			'juridique.annulation.resume' => 'Arrêter, être remboursé, et ce qui se passe si un paiement n\'arrive pas.',
 			'juridique.annulation.intro' => 'Vous pouvez arrêter quand vous voulez. Voici ce qui est remboursé, ce qui ne l\'est pas, et ce qui se passe si un paiement n\'arrive pas.',
-			'juridique.annulation.s1.titre' => '1. Première semaine remboursée',
-			'juridique.annulation.s1.blocs.0' => 'Il n\'y a pas d\'essai gratuit. À la place, la première semaine est remboursée si le cours ne convient pas.',
-			'juridique.annulation.s1.blocs.1' => 'Vous pouvez arrêter pendant la première semaine qui suit la première séance, selon la politique tarifaire en vigueur (page Tarifs). Vous êtes alors remboursé de ce que vous avez payé, sauf les séances déjà suivies.',
+			'juridique.annulation.s1.titre' => '1. Délai de rétractation',
+			'juridique.annulation.s1.delai' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Le délai de rétractation est de ${jours} jour à compter du paiement, selon la politique tarifaire en vigueur (page Tarifs).', other: 'Le délai de rétractation est de ${jours} jours à compter du paiement, selon la politique tarifaire en vigueur (page Tarifs).', ), 
+			'juridique.annulation.s1.delaiSansDuree' => 'Le délai de rétractation court à compter du paiement. Sa durée est celle de la politique tarifaire en vigueur (page Tarifs).',
+			'juridique.annulation.s1.blocs.0' => 'Il n\'y a pas d\'essai gratuit. À la place, vous pouvez arrêter pendant le délai de rétractation si le cours ne convient pas.',
+			'juridique.annulation.s1.blocs.1' => 'Pendant ce délai, vous êtes remboursé de ce que vous avez payé, sauf les séances déjà suivies.',
 			'juridique.annulation.s1.blocs.2' => 'Après ce délai, le mois commencé est dû.',
 			'juridique.annulation.s2.titre' => '2. Arrêter l\'abonnement',
 			'juridique.annulation.s2.blocs.0' => 'L\'abonnement mensuel s\'arrête à tout moment, sans justification. Il prend fin à la fin du mois en cours.',
-			'juridique.annulation.s2.blocs.1' => 'Les formules payées d\'avance, au trimestre ou à l\'année, ne sont plus remboursées après la première semaine, sauf geste de la direction. Dans ce cas, les mois déjà suivis sont comptés au prix mensuel normal, sans la remise de la formule, et le reste est remboursé.',
+			'juridique.annulation.s2.blocs.1' => 'Après le délai de rétractation, arrêter une formule payée d\'avance, au trimestre ou à l\'année, reste un droit. Les mois commencés sont comptés au prix mensuel normal, sans la remise de la formule, et le reste est remboursé.',
 			'juridique.annulation.s2.blocs.2' => 'Une inscription en cours de mois paie seulement les séances restantes du mois.',
 			'juridique.annulation.s3.titre' => '3. Absences et séances annulées',
 			'juridique.annulation.s3.blocs.0' => 'Une place manquée n\'est pas remboursée : elle est réservée pour l\'élève dans une Classe fixe.',
@@ -52929,13 +52952,13 @@ extension on Traductions {
 			'avis.form.ferme.phrase' => ({required Object courriel}) => 'Il est fermé, arrivé à échéance, ou le nombre d\'avis prévu est atteint. Pour donner votre avis, demandez un nouveau lien à la direction : ${courriel}.',
 			'avis.form.envoye.titre' => 'Merci pour votre avis',
 			'avis.form.envoye.phrase' => ({required Object courriel}) => 'La direction le lira avant de le publier sur le site, avec votre nom affiché, votre pays et la date. Pour le faire retirer, écrivez à ${courriel}.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.erreurChargement' => 'Le formulaire n\'a pas pu s\'ouvrir. Réessayez dans un moment.',
 			'avis.form.sansDonnees' => 'Le formulaire n\'a pas pu s\'ouvrir',
 			'avis.form.indisponibleTitre' => 'Avis indisponibles',
 			'avis.form.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
 			'avis.admin.titre' => 'Avis',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.sousTitre' => 'Les avis des familles et des élèves. La direction les lit, les publie ou les refuse. Elle ne modifie jamais un texte.',
 			'avis.admin.outil' => 'Avis des familles',
 			'avis.admin.outilDetail' => 'Créer un lien de collecte, lire les avis, les publier ou les refuser',

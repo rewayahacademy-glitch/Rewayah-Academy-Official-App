@@ -73,7 +73,9 @@ const String _v2Serveur =
     '"objectif": 450}, "plafondEleveHeureAdulte": {"devise": "USD", '
     '"mineur": 150}, "plafondEleveHeureEnfant": {"devise": "USD", '
     '"mineur": 130}, "prepaiementAnnuelPourMille": 100, '
-    '"prepaiementTrimestrielPourMille": 50}';
+    '"prepaiementTrimestrielPourMille": 50, '
+    // REMB-14 (migration 20261106100000) : le delai de retractation.
+    '"remboursementDelaiJours": 7}';
 
 // Les cles de la v2, nulles dans une version qui ne les porte pas.
 const List<String> _clesV2 = <String>[
@@ -91,6 +93,7 @@ const List<String> _clesV2 = <String>[
   'bourseDureeMois',
   'cumulMaxPourMille',
   'jourSuspension',
+  'remboursementDelaiJours',
 ];
 
 List<Object?> _versions() => jsonDecode(_versionsServeur) as List<Object?>;
@@ -170,6 +173,7 @@ void main() {
       expect(p.bourseDureeMois, 6);
       expect(p.cumulMaxPourMille, 250);
       expect(p.jourSuspension, 4);
+      expect(p.remboursementDelaiJours, 7);
       expect(p.joursRelance, <int>[7, 3, 1]);
     });
 

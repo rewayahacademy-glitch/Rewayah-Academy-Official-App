@@ -70,7 +70,7 @@ SELECT pg_temp.refus('SELECT public.politique_commerciale_active()', '42501',
   'tuteur : la fonction de la direction reste refusee');
 
 CREATE TEMP TABLE lue AS SELECT public.politique_commerciale_famille() AS j;
-SELECT pg_temp.vrai((SELECT j ->> 'version' FROM lue) IN ('v1.0.0', 'v2.0.0'),
+SELECT pg_temp.vrai((SELECT j ->> 'version' FROM lue) IN ('v1.0.0', 'v2.0.0', 'v2.1.0'),
   'tuteur : la version en vigueur est rendue');
 SELECT pg_temp.vrai((SELECT j -> 'tarifEnfant' ? 'mineur' AND j -> 'tarifAdulte' ? 'mineur' FROM lue),
   'tuteur : tarifs enfant et adulte rendus');
@@ -102,8 +102,11 @@ SELECT pg_temp.vrai((SELECT p ->> 'poste' = 'benefice'
                             WITH ORDINALITY AS x(p, o)
                       ORDER BY o DESC LIMIT 1),
   'repartition : le benefice en dernier');
-SELECT pg_temp.vrai((SELECT j -> 'repartition' ->> 'politiqueVersion' = 'v2.0.0'
-                        AND j -> 'repartition' ->> 'dateEffet' = '2026-11-01'
+-- REMB-14 (migration 20261106100000) : la version en vigueur est v2.1.0
+-- (copie de la v2, delai de 14 jours), avec sa propre repartition.
+SELECT pg_temp.vrai((SELECT j -> 'repartition' ->> 'politiqueVersion' = j ->> 'version'
+                        AND j ->> 'version' IN ('v2.0.0', 'v2.1.0')
+                        AND j -> 'repartition' ->> 'dateEffet' = j ->> 'dateEffet'
                         AND (j -> 'repartition' ->> 'baseElevesEnfants')::integer = 50
                         AND (j -> 'repartition' ->> 'baseElevesAdultes')::integer = 50 FROM lue),
   'repartition : version des prix, date d effet et base de calcul dites');
@@ -130,7 +133,10 @@ RESET ROLE;
 
 SELECT pg_temp.vrai(private.rp_repartition_json(DATE '2026-10-30') ->> 'politiqueVersion' = 'v2.0.0',
   'repartition : avant le 1er novembre, celle de la prochaine version (v2.0.0)');
-SELECT pg_temp.vrai(private.rp_repartition_json(DATE '2026-12-15') ->> 'politiqueVersion' = 'v2.0.0',
+-- REMB-14 : la version en vigueur le 15/12 (v2.1.0 depuis la migration
+-- 20261106100000) a sa propre repartition.
+SELECT pg_temp.vrai(private.rp_repartition_json(DATE '2026-12-15') ->> 'politiqueVersion'
+                    = (private.fac_politique_au(DATE '2026-12-15')).version,
   'repartition : apres le 1er novembre, celle de la version en vigueur');
 SELECT pg_temp.refus($q$INSERT INTO public.repartitions_paiement VALUES ('v1.0.0', 50, 50,
   '[{"poste":"enseignant","pour_mille":470},{"poste":"benefice","pour_mille":529}]')$q$, '23514',

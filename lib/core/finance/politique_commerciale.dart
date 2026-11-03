@@ -135,6 +135,7 @@ class PolitiqueCommerciale {
     this.bourseDureeMois,
     this.cumulMaxPourMille,
     this.jourSuspension,
+    this.remboursementDelaiJours,
   });
 
   /// L'identifiant de la version, tel que rendu.
@@ -262,6 +263,12 @@ class PolitiqueCommerciale {
 
   /// Le jour du mois ou l'acces d'un mois non regle est suspendu.
   final int? jourSuspension;
+
+  /// REMB-14 (directeur, 02/11/2026) : le delai de retractation, en jours a
+  /// compter du paiement. `null` : base d'avant la migration 20261106100000 ;
+  /// a la publication, le serveur reprend alors celui de la version
+  /// precedente.
+  final int? remboursementDelaiJours;
 
   /// La remise de rang qui s'applique au membre payant de rang [rang]
   /// (1 = premier), ou `null` quand ce rang n'en a aucune.

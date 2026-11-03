@@ -7038,5 +7038,11 @@
   "payUx.precedentOuvertPhrase": "PAY-UX (pilote, 02/11/2026 ; constats du directeur en production sur la page de paiement)",
   "payUx.reprendre": "PAY-UX (pilote, 02/11/2026 ; constats du directeur en production sur la page de paiement)",
   "payUx.repriseTitre": "PAY-UX (pilote, 02/11/2026 ; constats du directeur en production sur la page de paiement)",
-  "payUx.reprisePhrase": "PAY-UX (pilote, 02/11/2026 ; constats du directeur en production sur la page de paiement)"
+  "payUx.reprisePhrase": "PAY-UX (pilote, 02/11/2026 ; constats du directeur en production sur la page de paiement)",
+  "juridique.annulation.s1.delai(param=jours).one": "REMB-14 (directeur, 02/11/2026, DECISION-TARIFS-2026-10-18.md) : 14 jours de retractation a compter du paiement, delai lu dans la politique (remboursement_delai_jours), jamais en dur",
+  "juridique.annulation.s1.delai(param=jours).other": "REMB-14 (directeur, 02/11/2026, DECISION-TARIFS-2026-10-18.md) : 14 jours de retractation a compter du paiement, delai lu dans la politique (remboursement_delai_jours), jamais en dur",
+  "juridique.annulation.s1.delaiSansDuree": "REMB-14 (directeur, 02/11/2026, DECISION-TARIFS-2026-10-18.md) : 14 jours de retractation a compter du paiement, delai lu dans la politique (remboursement_delai_jours), jamais en dur",
+  "admin.finance.pol.retractation": "REMB-14 (pilote, 02/11/2026, decision (c)) : champ du delai de retractation dans Finance > Politique commerciale, prerempli avec la valeur en vigueur (DECISION-TARIFS-2026-10-18.md, decision du directeur du 02/11/2026)",
+  "admin.finance.pol.retractationDetail": "REMB-14 (pilote, 02/11/2026, decision (c)) : champ du delai de retractation dans Finance > Politique commerciale, prerempli avec la valeur en vigueur (DECISION-TARIFS-2026-10-18.md, decision du directeur du 02/11/2026)",
+  "admin.finance.pol.erreurRetractation": "REMB-14 (pilote, 02/11/2026, decision (c)) : champ du delai de retractation dans Finance > Politique commerciale, prerempli avec la valeur en vigueur (DECISION-TARIFS-2026-10-18.md, decision du directeur du 02/11/2026)"
 }

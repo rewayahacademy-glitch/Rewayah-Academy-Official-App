@@ -13050,6 +13050,9 @@ class _Traductions$admin$finance$pol$ar extends Traductions$admin$finance$pol$fr
 	@override String get dureeDueDetail => 'الحد الأدنى من الحضور لتُحتسب الحصة في الراتب.';
 	@override String get suspension => 'يُعلَّق الوصول في';
 	@override String get suspensionDetail => 'الشهر غير المسدَّد في هذا التاريخ يعلّق الوصول إلى الدرس؛ ويبقى المقعد محجوزًا طوال مدة الحفظ.';
+	@override String get retractation => 'مهلة التراجع';
+	@override String get retractationDetail => 'خلال هذه المهلة، التي تبدأ من يوم الدفع، يُرد للأسرة ما دفعته بعد خصم الحصص المحضورة. ويعرض نص الإلغاء والاسترداد هذه القيمة.';
+	@override String get erreurRetractation => 'أدخل مهلة من 0 إلى 60 يومًا.';
 	@override String get erreurPourcentMax => 'أدخل 100 % على الأكثر.';
 	@override String get erreurDureeDue => 'أدخل مدة من 1 إلى 240 دقيقة.';
 	@override String get erreurBourseDuree => 'أدخل مدة من 1 إلى 24 شهرًا.';
@@ -15972,7 +15975,7 @@ class _Traductions$juridique$conditions$s4$ar extends Traductions$juridique$cond
 		'الأسعار موجودة في صفحة الأسعار وفي التطبيق عند اختيار الصيغة. وهي بالدولار الأمريكي وبدون ضرائب. وتُضاف الضريبة المستحقة حسب بلدكم عند الدفع.',
 		'يتجدد الاشتراك كل شهر. ويحسب النظام الخصومات على فاتورة الأسرة.',
 		'يتم الدفع عبر مزوّد للدفع.',
-		'لا توجد تجربة مجانية. يُسترد مبلغ الأسبوع الأول إذا لم يناسبكم الدرس، ما عدا الحصص التي حضرها الطالب.',
+		'لا توجد تجربة مجانية. خلال مهلة التراجع، التي تبدأ من يوم الدفع، يُسترد لكم ما دفعتم، ما عدا الحصص التي حضرها الطالب (انظروا نص الإلغاء والاسترداد).',
 		'دون دفع لا يبقى للطالب دخول إلى الحصص ولا إلى الموارد. ويبقى فضاؤه مفتوحًا للاطلاع على ملفه وسجلّه وللدفع.',
 		'للإيقاف أو الاسترداد أو الدفع المتأخر، انظروا نص الإلغاء والاسترداد.',
 	];
@@ -16024,10 +16027,19 @@ class _Traductions$juridique$annulation$s1$ar extends Traductions$juridique$annu
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get titre => '١. الأسبوع الأول مسترد';
+	@override String get titre => '١. مهلة التراجع';
+	@override String delai({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours,
+		zero: 'لا مهلة للتراجع في سياسة الأسعار المعمول بها (صفحة الأسعار).',
+		one: 'مهلة التراجع يوم واحد من يوم الدفع، وفق سياسة الأسعار المعمول بها (صفحة الأسعار).',
+		two: 'مهلة التراجع يومان من يوم الدفع، وفق سياسة الأسعار المعمول بها (صفحة الأسعار).',
+		few: 'مهلة التراجع ⁨${jours}⁩ أيام من يوم الدفع، وفق سياسة الأسعار المعمول بها (صفحة الأسعار).',
+		many: 'مهلة التراجع ⁨${jours}⁩ يومًا من يوم الدفع، وفق سياسة الأسعار المعمول بها (صفحة الأسعار).',
+		other: 'مهلة التراجع ⁨${jours}⁩ يوم من يوم الدفع، وفق سياسة الأسعار المعمول بها (صفحة الأسعار).',
+	);
+	@override String get delaiSansDuree => 'تبدأ مهلة التراجع من يوم الدفع، وتحدد مدتها سياسة الأسعار المعمول بها (صفحة الأسعار).';
 	@override List<String> get blocs => [
-		'لا توجد تجربة مجانية. وبدلًا منها يُسترد مبلغ الأسبوع الأول إذا لم يناسبكم الدرس.',
-		'يمكنكم التوقف خلال الأسبوع الأول بعد الحصة الأولى، وفق سياسة الأسعار المعمول بها (صفحة الأسعار)، فيُسترد لكم ما دفعتم، ما عدا الحصص التي حضرها الطالب.',
+		'لا توجد تجربة مجانية. وبدلًا منها يمكنكم التوقف خلال مهلة التراجع إذا لم يناسبكم الدرس.',
+		'خلال هذه المهلة يُسترد لكم ما دفعتم، ما عدا الحصص التي حضرها الطالب.',
 		'بعد هذه المهلة يُستحق الشهر الذي بدأ.',
 	];
 }
@@ -16042,7 +16054,7 @@ class _Traductions$juridique$annulation$s2$ar extends Traductions$juridique$annu
 	@override String get titre => '٢. إيقاف الاشتراك';
 	@override List<String> get blocs => [
 		'يتوقف الاشتراك الشهري في أي وقت دون تبرير. وينتهي بنهاية الشهر الجاري.',
-		'الصيغ المدفوعة مسبقًا، كل ثلاثة أشهر أو كل سنة، لا تُسترد بعد الأسبوع الأول إلا بقرار من الإدارة. وفي هذه الحالة تُحتسب الأشهر التي حضرها الطالب بالسعر الشهري العادي دون خصم الصيغة، ويُسترد الباقي.',
+		'بعد مهلة التراجع يبقى إيقاف الصيغة المدفوعة مسبقًا، كل ثلاثة أشهر أو كل سنة، حقًا لكم. تُحتسب الأشهر التي بدأت بالسعر الشهري العادي دون خصم الصيغة، ويُسترد الباقي.',
 		'التسجيل في منتصف الشهر لا يدفع إلا ثمن الحصص المتبقية من الشهر.',
 	];
 }
@@ -24135,6 +24147,9 @@ extension on TraductionsAr {
 			'admin.finance.pol.dureeDueDetail' => 'الحد الأدنى من الحضور لتُحتسب الحصة في الراتب.',
 			'admin.finance.pol.suspension' => 'يُعلَّق الوصول في',
 			'admin.finance.pol.suspensionDetail' => 'الشهر غير المسدَّد في هذا التاريخ يعلّق الوصول إلى الدرس؛ ويبقى المقعد محجوزًا طوال مدة الحفظ.',
+			'admin.finance.pol.retractation' => 'مهلة التراجع',
+			'admin.finance.pol.retractationDetail' => 'خلال هذه المهلة، التي تبدأ من يوم الدفع، يُرد للأسرة ما دفعته بعد خصم الحصص المحضورة. ويعرض نص الإلغاء والاسترداد هذه القيمة.',
+			'admin.finance.pol.erreurRetractation' => 'أدخل مهلة من 0 إلى 60 يومًا.',
 			'admin.finance.pol.erreurPourcentMax' => 'أدخل 100 % على الأكثر.',
 			'admin.finance.pol.erreurDureeDue' => 'أدخل مدة من 1 إلى 240 دقيقة.',
 			'admin.finance.pol.erreurBourseDuree' => 'أدخل مدة من 1 إلى 24 شهرًا.',
@@ -24351,11 +24366,11 @@ extension on TraductionsAr {
 			'admin.groupes.intro' => 'يجمع كل فصل معلمًا وطلابه حول موعد مشترك: هناك يُقدَّم الدرس.',
 			'admin.groupes.colonneGroupe' => 'الفصل',
 			'admin.groupes.colonneEnseignant' => 'المعلم',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.colonneType' => 'الفئة',
 			'admin.groupes.colonneMembres' => 'الأعضاء',
 			'admin.groupes.colonneCreneau' => 'الموعد',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.colonneEtat' => 'الحالة',
 			'admin.groupes.typeEnfant' => 'أطفال',
 			'admin.groupes.typeAdulte' => 'بالغون',
@@ -24865,11 +24880,11 @@ extension on TraductionsAr {
 			'admin.progression.champMotif' => 'السبب',
 			'admin.progression.motifRequis' => 'السبب مطلوب، ويُدوَّن في سجل التدقيق.',
 			'admin.progression.journalisation' => 'يُدوَّن كل استثناء موضوع ومغلق، وكل تغيير مستوى، في سجل التدقيق.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.programmes.titre' => 'المناهج',
 			'admin.programmes.intro' => 'منهج Rewayah، بإصدارات: الإصدار المنشور لا يُعدَّل، وكل تطور أكاديمي ينشئ إصدارًا جديدًا.',
 			'admin.programmes.aucuneVersion' => 'لا إصدار من المنهج',
-			_ => null,
-		} ?? switch (path) {
 			'admin.programmes.aucuneVersionDetail' => 'أنشئ الإصدار الأول، كمسودة، لتبدأ بإضافة المستويات إليه.',
 			'admin.programmes.erreur' => 'تعذّرت قراءة المنهج. أعد المحاولة بعد لحظة.',
 			'admin.programmes.statutBrouillon' => 'مسودة',
@@ -25379,11 +25394,11 @@ extension on TraductionsAr {
 			'admin.planning.remplacement.reaffecter.horsLigne' => 'لا يوجد اتصال: سيُتخذ القرار بعد عودة الاتصال بالجهاز.',
 			'admin.planning.remplacement.reaffecter.fait' => ({required Object nom}) => 'يتولى ⁨${nom}⁩ هذا الفصل من الآن. أُسندت إليه الحصص القادمة.',
 			'admin.planning.remplacement.reaffecter.dejaEnPlace' => ({required Object nom}) => 'يتولى ⁨${nom}⁩ هذا الفصل مسبقًا: لم يتغير شيء.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.planning.remplacement.reaffecter.refusOccupe' => 'لم يعد هذا المعلم متاحًا في مواعيد الفصل: أُعيدت قراءة القائمة. اختر معلمًا آخر.',
 			'admin.planning.remplacement.reaffecter.refusIncompatible' => 'لا يمكن لهذا المعلم تولي هذا الفصل (الحساب أو اللغة أو الفئة أو عدد الفصول): أُعيدت قراءة القائمة. اختر معلمًا آخر.',
 			'admin.planning.remplacement.reaffecter.refusClasse' => 'لم يعد هذا الفصل نشطًا أو لم يعد له معلم: لم يتغير شيء.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.planning.remplacement.reaffecter.erreur' => 'القرار غير مؤكد: ربما لم يصل الطلب إلى رواية. أعد المحاولة بعد قليل.',
 			'admin.incidents.titre' => 'حوادث آخر 24 ساعة',
 			'admin.incidents.sousTitre' => 'الحصص التي صارت عطلًا تقنيًا أو غياب معلم أو غياب طالب منذ 24 ساعة: هذا ما تعدّه بطاقة «حوادث (24 س)».',
@@ -25893,11 +25908,11 @@ extension on TraductionsAr {
 			'comptable.onglets.contractuels' => 'المتعاقدون',
 			'comptable.onglets.beneficiaires' => 'المستفيدون',
 			'comptable.onglets.coffres' => 'الصناديق',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.onglets.encaissements' => 'المقبوضات',
 			'comptable.onglets.rapprochement' => 'المطابقة',
 			'comptable.onglets.rapports' => 'التقارير',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.commun.montantMasque' => 'مبلغ مخفي',
 			'comptable.commun.afficherMontants' => 'إظهار المبالغ',
 			'comptable.commun.masquerMontants' => 'إخفاء المبالغ',
@@ -26407,11 +26422,11 @@ extension on TraductionsAr {
 			'comptable.beneficiaires.colonneEtat' => 'حالة الملف',
 			'comptable.beneficiaires.colonneEnAttente' => 'مدفوعات قيد الانتظار',
 			'comptable.beneficiaires.typeEnseignant' => 'معلم',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.typeContractuel' => 'متعاقد',
 			'comptable.beneficiaires.enAttente' => ({required Object n}) => '${n} قيد الانتظار',
 			'comptable.beneficiaires.aucunEnAttente' => 'لا شيء',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.vide' => 'لا يوجد مستفيد حاليًا.',
 			'comptable.beneficiaires.videDetail' => 'يظهر المعلمون والمتعاقدون هنا بمجرد وجود دفعة تخصهم.',
 			'comptable.beneficiaires.videFiltre' => 'لا يوجد مستفيد بعامل التصفية هذا.',
@@ -26921,11 +26936,11 @@ extension on TraductionsAr {
 			'ficheEleve.inscription.classeEchec' => 'تعذّرت قراءة الفصل.',
 			'ficheEleve.inscription.relireClasse' => 'إعادة قراءة الفصل',
 			'ficheEleve.interface.titre' => 'الواجهة',
+			_ => null,
+		} ?? switch (path) {
 			'ficheEleve.interface.intro' => ({required Object dePrenom}) => 'اختر كيف يظهر Rewayah على جهاز ⁨${dePrenom}⁩. يمكنك تغيير هذا الاختيار في أي وقت.',
 			'ficheEleve.interface.guidee' => 'الواجهة الموجَّهة',
 			'ficheEleve.interface.guideeDescription' => ({required Object prenom}) => 'حين يفضّل ⁨${prenom}⁩ شاشات خفيفة: نصوص أكبر، وإجراء واحد في كل مرة. الأقسام نفسها والصلاحيات نفسها.',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.interface.standard' => 'العرض العادي',
 			'ficheEleve.interface.standardDescription' => ({required Object prenom}) => 'حين يرتاح ⁨${prenom}⁩ لشاشات أكثف: معلومات أكثر في كل شاشة. الأقسام نفسها والصلاحيات نفسها.',
 			'ficheEleve.interface.politique' => 'أنت من يختار هذا الإعداد. لا يُطلب أي سبب، ولا يرى المعلم إلا اسم الوضع.',
@@ -27435,11 +27450,11 @@ extension on TraductionsAr {
 			'consentement.compte.inviteAction' => 'قراءة',
 			'foyer.titre' => 'الأسرة',
 			'foyer.ajouterProfil' => 'إضافة ملف طالب',
+			_ => null,
+		} ?? switch (path) {
 			'foyer.sousTitre' => 'ملفات الطلاب في أسرتك',
 			'foyer.membres' => 'ملفات الطلاب',
 			'foyer.vide.titre' => 'لا ملف طالب حتى الآن',
-			_ => null,
-		} ?? switch (path) {
 			'foyer.vide.phrase' => 'أضف ملف طالب لتسجيله في فصل وربط جهازه.',
 			'foyer.membre.sansClasse' => 'لا فصل بعد',
 			'foyer.membre.classeEchec' => 'تعذّرت قراءة الفصل',
@@ -27949,11 +27964,11 @@ extension on TraductionsAr {
 			'kyc.manquePhoto' => 'اختر أولًا صورة وثيقتك.',
 			'kyc.manqueType' => 'اختر أولًا الوثيقة التي تودعها.',
 			'protectionEnfants.categorie' => 'سلامة طفل',
+			_ => null,
+		} ?? switch (path) {
 			'protectionEnfants.prioritaireTitre' => 'إبلاغ ذو أولوية',
 			'protectionEnfants.prioritaireDetail' => 'تقرؤه الإدارة والمسؤول عن حماية الأطفال فورًا. لا يراه المعلم المعني ولا الأسر الأخرى أبدًا. لا تُرسل أي رسالة إلى الأسرة.',
 			'protectionEnfants.urgence' => 'في حال وجود خطر داهم، اتصل أولًا بخدمات الطوارئ في بلدك.',
-			_ => null,
-		} ?? switch (path) {
 			'protectionEnfants.direction' => 'تتلقى الإدارة بلاغك.',
 			'protectionEnfants.recuPar' => ({required Object nom}) => '⁨${nom}⁩ والإدارة يتلقيان بلاغك.',
 			'protectionEnfants.contact' => ({required Object courriel}) => 'البريد الإلكتروني للتواصل: ⁨${courriel}⁩',
@@ -28463,11 +28478,11 @@ extension on TraductionsAr {
 			'recherche.contexte.remplacementMien' => 'استبدالك',
 			'recherche.contexte.mission' => 'مهمة مراقبة',
 			'recherche.contexte.missionEnseignant' => ({required Object enseignant}) => 'مهمة مراقبة · ⁨${enseignant}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.contexte.eleveDeClasse' => ({required Object classe}) => 'طالب في فصل ⁨${classe}⁩',
 			'recherche.contexte.enseignantDeClasse' => ({required Object classe}) => 'معلّم فصل ⁨${classe}⁩',
 			'recherche.contexte.personneFoyer' => 'ملف من أسرتك',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.contexte.personneFoyerClasse' => ({required Object classe}) => 'ملف من أسرتك · ⁨${classe}⁩',
 			'recherche.contexte.personneParIdentifiant' => 'وُجد بمعرّفه',
 			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'وُجد بمعرّفه · ⁨${classe}⁩',
@@ -28977,11 +28992,11 @@ extension on TraductionsAr {
 			'recrutement.talents.c.montage_video.libelle' => 'مونتاج الفيديو والتحريك',
 			'recrutement.talents.c.montage_video.description' => 'مونتاج مقاطع فيديو قصيرة وتحريكها.',
 			'recrutement.talents.c.montage_video.exemple' => 'قصّ فيديو، إضافة ترجمة نصية، تحريك عنوان',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.talents.c.photographie.libelle' => 'التصوير',
 			'recrutement.talents.c.photographie.description' => 'التقاط صور وفيديوهات وتسجيلات صوتية بجودة جيدة.',
 			'recrutement.talents.c.photographie.exemple' => 'تصوير فعالية، تسجيل عرض قصير',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.c.redaction_contenus.libelle' => 'كتابة المحتوى وصناعته',
 			'recrutement.talents.c.redaction_contenus.description' => 'كتابة نصوص سليمة وممتعة للقراءة.',
 			'recrutement.talents.c.redaction_contenus.exemple' => 'مقال، نص لوسائل التواصل، رسالة إخبارية',
@@ -29202,7 +29217,7 @@ extension on TraductionsAr {
 			'juridique.conditions.s4.blocs.0' => 'الأسعار موجودة في صفحة الأسعار وفي التطبيق عند اختيار الصيغة. وهي بالدولار الأمريكي وبدون ضرائب. وتُضاف الضريبة المستحقة حسب بلدكم عند الدفع.',
 			'juridique.conditions.s4.blocs.1' => 'يتجدد الاشتراك كل شهر. ويحسب النظام الخصومات على فاتورة الأسرة.',
 			'juridique.conditions.s4.blocs.2' => 'يتم الدفع عبر مزوّد للدفع.',
-			'juridique.conditions.s4.blocs.3' => 'لا توجد تجربة مجانية. يُسترد مبلغ الأسبوع الأول إذا لم يناسبكم الدرس، ما عدا الحصص التي حضرها الطالب.',
+			'juridique.conditions.s4.blocs.3' => 'لا توجد تجربة مجانية. خلال مهلة التراجع، التي تبدأ من يوم الدفع، يُسترد لكم ما دفعتم، ما عدا الحصص التي حضرها الطالب (انظروا نص الإلغاء والاسترداد).',
 			'juridique.conditions.s4.blocs.4' => 'دون دفع لا يبقى للطالب دخول إلى الحصص ولا إلى الموارد. ويبقى فضاؤه مفتوحًا للاطلاع على ملفه وسجلّه وللدفع.',
 			'juridique.conditions.s4.blocs.5' => 'للإيقاف أو الاسترداد أو الدفع المتأخر، انظروا نص الإلغاء والاسترداد.',
 			'juridique.conditions.s5.titre' => '٥. الاحترام في الحصة',
@@ -29214,13 +29229,15 @@ extension on TraductionsAr {
 			'juridique.annulation.titre' => 'الإلغاء والاسترداد',
 			'juridique.annulation.resume' => 'الإيقاف والاسترداد، وما يحدث إذا تأخر الدفع.',
 			'juridique.annulation.intro' => 'يمكنكم التوقف متى شئتم. هذا ما يُسترد وما لا يُسترد، وما يحدث إذا لم يصل الدفع.',
-			'juridique.annulation.s1.titre' => '١. الأسبوع الأول مسترد',
-			'juridique.annulation.s1.blocs.0' => 'لا توجد تجربة مجانية. وبدلًا منها يُسترد مبلغ الأسبوع الأول إذا لم يناسبكم الدرس.',
-			'juridique.annulation.s1.blocs.1' => 'يمكنكم التوقف خلال الأسبوع الأول بعد الحصة الأولى، وفق سياسة الأسعار المعمول بها (صفحة الأسعار)، فيُسترد لكم ما دفعتم، ما عدا الحصص التي حضرها الطالب.',
+			'juridique.annulation.s1.titre' => '١. مهلة التراجع',
+			'juridique.annulation.s1.delai' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'لا مهلة للتراجع في سياسة الأسعار المعمول بها (صفحة الأسعار).', one: 'مهلة التراجع يوم واحد من يوم الدفع، وفق سياسة الأسعار المعمول بها (صفحة الأسعار).', two: 'مهلة التراجع يومان من يوم الدفع، وفق سياسة الأسعار المعمول بها (صفحة الأسعار).', few: 'مهلة التراجع ⁨${jours}⁩ أيام من يوم الدفع، وفق سياسة الأسعار المعمول بها (صفحة الأسعار).', many: 'مهلة التراجع ⁨${jours}⁩ يومًا من يوم الدفع، وفق سياسة الأسعار المعمول بها (صفحة الأسعار).', other: 'مهلة التراجع ⁨${jours}⁩ يوم من يوم الدفع، وفق سياسة الأسعار المعمول بها (صفحة الأسعار).', ), 
+			'juridique.annulation.s1.delaiSansDuree' => 'تبدأ مهلة التراجع من يوم الدفع، وتحدد مدتها سياسة الأسعار المعمول بها (صفحة الأسعار).',
+			'juridique.annulation.s1.blocs.0' => 'لا توجد تجربة مجانية. وبدلًا منها يمكنكم التوقف خلال مهلة التراجع إذا لم يناسبكم الدرس.',
+			'juridique.annulation.s1.blocs.1' => 'خلال هذه المهلة يُسترد لكم ما دفعتم، ما عدا الحصص التي حضرها الطالب.',
 			'juridique.annulation.s1.blocs.2' => 'بعد هذه المهلة يُستحق الشهر الذي بدأ.',
 			'juridique.annulation.s2.titre' => '٢. إيقاف الاشتراك',
 			'juridique.annulation.s2.blocs.0' => 'يتوقف الاشتراك الشهري في أي وقت دون تبرير. وينتهي بنهاية الشهر الجاري.',
-			'juridique.annulation.s2.blocs.1' => 'الصيغ المدفوعة مسبقًا، كل ثلاثة أشهر أو كل سنة، لا تُسترد بعد الأسبوع الأول إلا بقرار من الإدارة. وفي هذه الحالة تُحتسب الأشهر التي حضرها الطالب بالسعر الشهري العادي دون خصم الصيغة، ويُسترد الباقي.',
+			'juridique.annulation.s2.blocs.1' => 'بعد مهلة التراجع يبقى إيقاف الصيغة المدفوعة مسبقًا، كل ثلاثة أشهر أو كل سنة، حقًا لكم. تُحتسب الأشهر التي بدأت بالسعر الشهري العادي دون خصم الصيغة، ويُسترد الباقي.',
 			'juridique.annulation.s2.blocs.2' => 'التسجيل في منتصف الشهر لا يدفع إلا ثمن الحصص المتبقية من الشهر.',
 			'juridique.annulation.s3.titre' => '٣. الغياب والحصص الملغاة',
 			'juridique.annulation.s3.blocs.0' => 'المقعد الذي فاتَ لا يُسترد ثمنه: فهو محجوز للطالب في فصل ثابت.',
@@ -29489,13 +29506,13 @@ extension on TraductionsAr {
 			'courriels.admin.outil' => 'البريد الإلكتروني',
 			'courriels.admin.outilDetail' => 'كتابة رسالة، ومتابعة الإرسال، وعرض عناوين الإرسال',
 			'courriels.admin.sections.libelle' => 'أقسام البريد الإلكتروني',
+			_ => null,
+		} ?? switch (path) {
 			'courriels.admin.sections.ecrire' => 'كتابة',
 			'courriels.admin.sections.file' => 'الإرسال',
 			'courriels.admin.sections.adresses' => 'عناوين الإرسال',
 			'courriels.admin.refuse' => 'الإدارة المتصلة وحدها تكتب الرسائل وتتابعها. أعد الاتصال بالحساب المناسب ثم أعد المحاولة.',
 			'courriels.admin.indisponibleTitre' => 'البريد الإلكتروني غير متاح',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.indisponiblePhrase' => 'ستتوفر هذه الخاصية عند ربط الخادم.',
 			'courriels.admin.ecrire.titre' => 'رسالة جديدة',
 			'courriels.admin.ecrire.intro' => 'توضع الرسالة في الطابور ثم تخرج من عنوان فئتها خلال دقيقة. لا تُعدّ مرسلة إلا حين تعرض قائمة الإرسال «أُرسلت».',

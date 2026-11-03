@@ -2,8 +2,8 @@
 // avant de payer. Usage : node tool/e2e/fn115a_conditions.mjs
 // Prerequis : le parcours 3 a cree la famille (comptes_parcours3.json).
 // Pile LOCALE seulement. Rien n'est paye : le lien sous « Payer » ouvre le texte
-// « Annulation et remboursement », qui dit la premiere semaine (sauf les
-// seances suivies), l'acces sans paiement et la contestation aupres de la banque.
+// « Annulation et remboursement », qui dit le delai de retractation (REMB-14 :
+// ce qui a ete paye, sauf les seances suivies), l'acces sans paiement et la contestation aupres de la banque.
 import fs from 'node:fs';
 import { parcours, connecterParLien, ouvrir, trouver, trouverTexte, libelles,
   activerSemantique, TRAVAIL } from './commun.mjs';
@@ -45,12 +45,12 @@ else {
   const frais = await trouverTexte(f.page, /ajoutés au solde de votre foyer[^|]*/, 5000);
   const sansPaiement = await trouverTexte(f.page, /accès aux séances et aux ressources est suspendu[^|]*/, 5000);
   await p.capture(f, 'annulation_contestation');
-  p.dire(`Texte : ${url} ; premiere semaine : ${semaine ?? 'absente'} ; contestation : ${litige ?? 'absente'} ; frais : ${frais ? 'oui' : 'non'} ; sans paiement : ${sansPaiement ? 'oui' : 'non'}`);
+  p.dire(`Texte : ${url} ; delai de retractation : ${semaine ?? 'absent'} ; contestation : ${litige ?? 'absente'} ; frais : ${frais ? 'oui' : 'non'} ; sans paiement : ${sansPaiement ? 'oui' : 'non'}`);
   // GoRouter.push ne change pas l'adresse affichee (retour arriere vers la
   // page de paiement) : on verifie le titre du texte ouvert, pas l'URL.
   const titreTexte = await trouverTexte(f.page, /^Annulation et remboursement$/, 5000);
   if (!titreTexte) manque.push(`le lien n ouvre pas le texte (${url})`);
-  if (!semaine) manque.push('premiere semaine « sauf les seances deja suivies » absente');
+  if (!semaine) manque.push('delai de retractation « sauf les seances deja suivies » absent');
   if (!litige) manque.push('section contestation absente');
   if (!frais) manque.push('frais de contestation au solde du foyer absents');
   if (!sansPaiement) manque.push('« acces aux seances et aux ressources suspendu » absent');
@@ -59,4 +59,4 @@ p.dire(`Ecran : ${(await libelles(f.page)).slice(0, 6).join(' | ')}`);
 await f.ctx.close();
 process.exit(manque.length
   ? await p.fin('rouge', `manque : ${manque.join(' ; ')}`)
-  : await p.fin('vert', 'le lien sous « Payer » ouvre les conditions : premiere semaine, acces sans paiement, contestation'));
+  : await p.fin('vert', 'le lien sous « Payer » ouvre les conditions : delai de retractation, acces sans paiement, contestation'));
