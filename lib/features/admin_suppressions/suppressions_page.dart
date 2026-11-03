@@ -37,14 +37,17 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bandeau_attention.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/confirm_destructive.dart';
+import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pile_cartes.dart';
+import '../../core/widgets/selecteur_section.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
+import 'retraits_section.dart';
 
 /// Les demandes de suppression, lues au serveur (`demandes_suppression_lister`).
 /// Relues a chaque ouverture de l'ecran et apres chaque decision.
@@ -81,6 +84,16 @@ enum RetourSuppression {
   horsLigne,
 }
 
+/// Les deux sections de l'ecran (SUPPRIMER-bis, 03/11/2026).
+enum SectionSuppressions {
+  /// Les demandes de l'interesse (CPT-SUPPR-EXPORT).
+  demandes,
+
+  /// Les comptes supprimes par la direction ou un tuteur, a restaurer
+  /// pendant le delai.
+  supprimes,
+}
+
 /// L'ecran « Suppressions de compte ».
 class SuppressionsPage extends ConsumerStatefulWidget {
   /// Cree l'ecran.
@@ -101,6 +114,7 @@ class SuppressionsPage extends ConsumerStatefulWidget {
 }
 
 class _SuppressionsPageState extends ConsumerState<SuppressionsPage> {
+  SectionSuppressions _section = SectionSuppressions.demandes;
   String? _enCours;
   RetourSuppression? _retour;
 
@@ -180,7 +194,8 @@ class _SuppressionsPageState extends ConsumerState<SuppressionsPage> {
     final RetourSuppression? retour = _retour;
     return PageShell(
       titre: a.titre,
-      sousTitre: a.sousTitre,
+      // La section des comptes supprimes porte sa propre phrase de contexte.
+      sousTitre: _section == SectionSuppressions.demandes ? a.sousTitre : null,
       entete: SousNavigationDomaine(onglets: ongletsPersonnes(), indexActif: 5),
       child: Align(
         alignment: AlignmentDirectional.topStart,
@@ -189,95 +204,121 @@ class _SuppressionsPageState extends ConsumerState<SuppressionsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              if (retour != null)
-                Semantics(
-                  liveRegion: true,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                    child: Text(
-                      _message(retour),
-                      key: SuppressionsPage.retourKey,
-                      style:
-                          (retour == RetourSuppression.traitee
-                                  ? palette.inkStrong
-                                  : palette.inkAlert)
-                              .applyTo(textes.bodyMedium ?? const TextStyle()),
+              SelecteurSection<SectionSuppressions>(
+                key: const ValueKey<String>('suppressions-sections'),
+                libelle: t.admin.suppressions.retraits.sections,
+                valeur: _section,
+                onChange: (SectionSuppressions s) =>
+                    setState(() => _section = s),
+                sections: <Segment<SectionSuppressions>>[
+                  Segment<SectionSuppressions>(
+                    valeur: SectionSuppressions.demandes,
+                    libelle: t.admin.suppressions.retraits.sectionDemandes,
+                  ),
+                  Segment<SectionSuppressions>(
+                    valeur: SectionSuppressions.supprimes,
+                    libelle: t.admin.suppressions.retraits.sectionSupprimes,
+                  ),
+                ],
+              ),
+              Ecart.vLg,
+              if (_section == SectionSuppressions.supprimes)
+                const RetraitsSection(nomRole: _nomRole)
+              else ...<Widget>[
+                if (retour != null)
+                  Semantics(
+                    liveRegion: true,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                      child: Text(
+                        _message(retour),
+                        key: SuppressionsPage.retourKey,
+                        style:
+                            (retour == RetourSuppression.traitee
+                                    ? palette.inkStrong
+                                    : palette.inkAlert)
+                                .applyTo(
+                                  textes.bodyMedium ?? const TextStyle(),
+                                ),
+                      ),
                     ),
                   ),
-                ),
-              BlocAsynchrone<List<DemandeSuppressionAdmin>>(
-                key: const ValueKey<String>('suppressions-bloc'),
-                valeur: valeur,
-                squelette: const Skeleton.liste(lignes: 3),
-                onReessayer: () => ref.invalidate(suppressionsAdminProvider),
-                vide: EmptyState(
-                  key: const ValueKey<String>('suppressions-vide'),
-                  message: a.vide,
-                  icone: AppIcons.rienAAfficher,
-                  registre: RegistreVide.subi,
-                ),
-                erreurVersEtat: (Object e, VoidCallback? reessayer) {
-                  if (e is CapaciteIndisponible) {
-                    return EtatSysteme(
-                      key: const ValueKey<String>('suppressions-indisponible'),
-                      nature: NatureEtat.indisponible,
-                      titre: a.indisponibleTitre,
-                      phrase: a.indisponiblePhrase,
-                      dependance: e.dependance,
-                    );
-                  }
-                  if (e is PermissionInsuffisante) {
-                    return EtatSysteme(
-                      key: const ValueKey<String>('suppressions-refuse'),
-                      nature: NatureEtat.echecServeur,
-                      phrase: a.refuse,
-                    );
-                  }
-                  return horsLigne
-                      ? EtatSansDonnees(
-                          key: const ValueKey<String>(
-                            'suppressions-sans-donnees',
-                          ),
-                          quoi: a.sansDonnees,
-                          onAction: reessayer,
-                        )
-                      : EtatSysteme(
-                          key: const ValueKey<String>('suppressions-erreur'),
-                          nature: NatureEtat.echecServeur,
-                          phrase: a.erreur,
-                          onAction: reessayer,
-                        );
-                },
-                construire: (List<DemandeSuppressionAdmin> lues) {
-                  final int attendent = lues
-                      .where((DemandeSuppressionAdmin d) => d.enAttente)
-                      .length;
-                  return Column(
-                    key: const ValueKey<String>('suppressions-contenu'),
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      if (attendent > 0) ...<Widget>[
-                        Text(
-                          a.attente(n: attendent),
-                          style: textes.titleMedium,
+                BlocAsynchrone<List<DemandeSuppressionAdmin>>(
+                  key: const ValueKey<String>('suppressions-bloc'),
+                  valeur: valeur,
+                  squelette: const Skeleton.liste(lignes: 3),
+                  onReessayer: () => ref.invalidate(suppressionsAdminProvider),
+                  vide: EmptyState(
+                    key: const ValueKey<String>('suppressions-vide'),
+                    message: a.vide,
+                    icone: AppIcons.rienAAfficher,
+                    registre: RegistreVide.subi,
+                  ),
+                  erreurVersEtat: (Object e, VoidCallback? reessayer) {
+                    if (e is CapaciteIndisponible) {
+                      return EtatSysteme(
+                        key: const ValueKey<String>(
+                          'suppressions-indisponible',
                         ),
-                        Ecart.vLg,
-                      ],
-                      PileCartes(
-                        children: <Widget>[
-                          for (final DemandeSuppressionAdmin d in lues)
-                            _CarteSuppression(
-                              demande: d,
-                              enCours: _enCours == d.id,
-                              occupe: _enCours != null,
-                              onTraiter: () => unawaited(_traiter(d)),
+                        nature: NatureEtat.indisponible,
+                        titre: a.indisponibleTitre,
+                        phrase: a.indisponiblePhrase,
+                        dependance: e.dependance,
+                      );
+                    }
+                    if (e is PermissionInsuffisante) {
+                      return EtatSysteme(
+                        key: const ValueKey<String>('suppressions-refuse'),
+                        nature: NatureEtat.echecServeur,
+                        phrase: a.refuse,
+                      );
+                    }
+                    return horsLigne
+                        ? EtatSansDonnees(
+                            key: const ValueKey<String>(
+                              'suppressions-sans-donnees',
                             ),
+                            quoi: a.sansDonnees,
+                            onAction: reessayer,
+                          )
+                        : EtatSysteme(
+                            key: const ValueKey<String>('suppressions-erreur'),
+                            nature: NatureEtat.echecServeur,
+                            phrase: a.erreur,
+                            onAction: reessayer,
+                          );
+                  },
+                  construire: (List<DemandeSuppressionAdmin> lues) {
+                    final int attendent = lues
+                        .where((DemandeSuppressionAdmin d) => d.enAttente)
+                        .length;
+                    return Column(
+                      key: const ValueKey<String>('suppressions-contenu'),
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        if (attendent > 0) ...<Widget>[
+                          Text(
+                            a.attente(n: attendent),
+                            style: textes.titleMedium,
+                          ),
+                          Ecart.vLg,
                         ],
-                      ),
-                    ],
-                  );
-                },
-              ),
+                        PileCartes(
+                          children: <Widget>[
+                            for (final DemandeSuppressionAdmin d in lues)
+                              _CarteSuppression(
+                                demande: d,
+                                enCours: _enCours == d.id,
+                                occupe: _enCours != null,
+                                onTraiter: () => unawaited(_traiter(d)),
+                              ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ],
             ],
           ),
         ),
