@@ -68,6 +68,12 @@
       "autresPlusieurs": "{n} autres personnes correspondent\u00a0: précisez la recherche pour les voir."
     },
     "etats": {
+      "recharge1": {
+        "ouvertureTitre": "Cet écran ne s'est pas ouvert",
+        "ouverturePhrase": "Son chargement a été interrompu. Réessayez\u00a0; si cela se répète, rechargez la page.",
+        "repetePhrase": "Le chargement a de nouveau été interrompu. Rechargez la page pour ouvrir cet écran\u00a0: vous restez connecté.",
+        "versionPhrase": "Rechargez la page pour ouvrir cet écran\u00a0: vous restez connecté."
+      },
       "branchementServeur": "Disponible au branchement serveur",
       "chargementProlonge": {
         "titre": "La connexion prend plus de temps que prévu",
@@ -737,6 +743,9 @@
         "cahierACompleter": "Cahier de transmission à compléter",
         "ouvrirCahier": "Ouvrir le cahier de transmission",
         "revenirJournee": "Revenir à ma journée",
+        "recharge1": {
+          "erreurCahier": "Le cahier de transmission ne s'ouvre pas depuis cet écran. Revenez à votre journée\u00a0: vous le remplirez depuis la carte de la séance."
+        },
         "erreurCahier": "Le cahier de transmission ne peut pas être ouvert pour le moment. Réessayez dans un instant."
       }
     },
@@ -5282,6 +5291,9 @@
         "dureeDueDetail": "La présence minimale pour qu'une séance compte dans la paie.",
         "suspension": "Accès suspendu le",
         "suspensionDetail": "Un mois non réglé à cette date suspend l'accès au cours\u00a0; la place reste gardée le temps de la conservation.",
+        "retractation": "Délai de rétractation",
+        "retractationDetail": "Pendant ce délai, compté à partir du paiement, la famille est remboursée de ce qu'elle a payé, moins les séances suivies. Le texte Annulation et remboursement affiche cette valeur.",
+        "erreurRetractation": "Saisissez un délai de 0 à 60\u00a0jours.",
         "erreurPourcentMax": "Saisissez 100 % au plus.",
         "erreurDureeDue": "Saisissez une durée de 1 à 240 minutes.",
         "erreurBourseDuree": "Saisissez une durée de 1 à 24 mois.",
@@ -12462,7 +12474,7 @@
           "Les prix figurent sur la page Tarifs et dans l'application, au moment de choisir une formule. Ils sont en dollars américains et hors taxes. La taxe due selon votre pays est ajoutée au paiement.",
           "L'abonnement se renouvelle chaque mois. Les remises sont calculées par le système sur la facture du foyer.",
           "Le paiement passe par un prestataire de paiement.",
-          "Il n'y a pas d'essai gratuit. La première semaine est remboursée si le cours ne convient pas, sauf les séances déjà suivies.",
+          "Il n'y a pas d'essai gratuit. Pendant le délai de rétractation, qui court à partir du paiement, vous êtes remboursé de ce que vous avez payé, sauf les séances déjà suivies (voir le texte Annulation et remboursement).",
           "Sans paiement, l'élève n'a plus accès aux séances ni aux ressources. Son espace reste ouvert pour voir son profil, son historique et payer.",
           "Pour arrêter, être remboursé ou payer en retard, voir le texte Annulation et remboursement."
         ]
@@ -12491,10 +12503,15 @@
       "resume": "Arrêter, être remboursé, et ce qui se passe si un paiement n'arrive pas.",
       "intro": "Vous pouvez arrêter quand vous voulez. Voici ce qui est remboursé, ce qui ne l'est pas, et ce qui se passe si un paiement n'arrive pas.",
       "s1": {
-        "titre": "1. Première semaine remboursée",
+        "titre": "1. Délai de rétractation",
+        "delai(param=jours)": {
+          "one": "Le délai de rétractation est de {jours}\u00a0jour à compter du paiement, selon la politique tarifaire en vigueur (page Tarifs).",
+          "other": "Le délai de rétractation est de {jours}\u00a0jours à compter du paiement, selon la politique tarifaire en vigueur (page Tarifs)."
+        },
+        "delaiSansDuree": "Le délai de rétractation court à compter du paiement. Sa durée est celle de la politique tarifaire en vigueur (page Tarifs).",
         "blocs": [
-          "Il n'y a pas d'essai gratuit. À la place, la première semaine est remboursée si le cours ne convient pas.",
-          "Vous pouvez arrêter pendant la première semaine qui suit la première séance, selon la politique tarifaire en vigueur (page Tarifs). Vous êtes alors remboursé de ce que vous avez payé, sauf les séances déjà suivies.",
+          "Il n'y a pas d'essai gratuit. À la place, vous pouvez arrêter pendant le délai de rétractation si le cours ne convient pas.",
+          "Pendant ce délai, vous êtes remboursé de ce que vous avez payé, sauf les séances déjà suivies.",
           "Après ce délai, le mois commencé est dû."
         ]
       },
@@ -12502,7 +12519,7 @@
         "titre": "2. Arrêter l'abonnement",
         "blocs": [
           "L'abonnement mensuel s'arrête à tout moment, sans justification. Il prend fin à la fin du mois en cours.",
-          "Les formules payées d'avance, au trimestre ou à l'année, ne sont plus remboursées après la première semaine, sauf geste de la direction. Dans ce cas, les mois déjà suivis sont comptés au prix mensuel normal, sans la remise de la formule, et le reste est remboursé.",
+          "Après le délai de rétractation, arrêter une formule payée d'avance, au trimestre ou à l'année, reste un droit. Les mois commencés sont comptés au prix mensuel normal, sans la remise de la formule, et le reste est remboursé.",
           "Une inscription en cours de mois paie seulement les séances restantes du mois."
         ]
       },

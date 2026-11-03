@@ -54,6 +54,19 @@ void main() {
     expect(empreinteVersion('{"app_name":"x"}'), isNull);
   });
 
+  // RECHARGE-1 (03/11/2026) : en production, `version.json` ne change pas
+  // d'un deploiement a l'autre (pas de --build-number) ; l'ETag du code, si.
+  test('empreinte servie : version.json et ETag du code', () {
+    const String version = '0.2.0+1';
+    final String? avant = empreinteServie(version, '"aaa"');
+    final String? apres = empreinteServie(version, '"bbb"');
+    expect(avant, isNot(apres), reason: 'meme version.json, code change');
+    expect(empreinteServie(version, '"aaa"'), avant);
+    expect(empreinteServie(version, null), isNotNull);
+    expect(empreinteServie(version, '  '), empreinteServie(version, null));
+    expect(empreinteServie(null, null), isNull);
+  });
+
   testWidgets('meme version apres 15 minutes : aucun bandeau', (
     WidgetTester tester,
   ) async {
