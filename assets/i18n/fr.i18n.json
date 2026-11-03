@@ -4957,7 +4957,7 @@
       "vide": "Aucune demande de suppression.",
       "erreur": "Les demandes n'ont pas pu être chargées. Réessayez.",
       "sansDonnees": "Les demandes de suppression n'ont pas pu être chargées",
-      "refuse": "Seule la direction connectée avec la double vérification traite ces demandes. Reconnectez-vous avec votre code de vérification, puis réessayez.",
+      "refuse": "Cette action demande la double vérification. Activez-la dans Compte > Sécurité.",
       "indisponibleTitre": "Suppressions de compte indisponibles",
       "indisponiblePhrase": "Cette fonction sera disponible au branchement serveur.",
       "etat": {
@@ -5154,7 +5154,7 @@
           },
           "erreur": "le serveur n'a pas pu le supprimer. Réessayez pour ce compte."
         },
-        "refuse": "Seule la direction connectée avec la double vérification supprime des comptes. Reconnectez-vous avec votre code de vérification, puis réessayez.",
+        "refuse": "Cette action demande la double vérification. Activez-la dans Compte > Sécurité.",
         "indisponible": "La suppression de comptes n'est pas encore installée sur le serveur. Rien n'a été supprimé.",
         "echec": "La suppression n'a pas pu être confirmée. Vérifiez la liste et Personnes, Suppressions avant de réessayer.",
         "horsLigne": "Rien n'est parti : le réseau est absent. Réessayez dès son retour."

@@ -233,7 +233,7 @@ void main() {
     await tester.tap(find.text('Supprimer le compte').last);
     await tester.pumpAndSettle();
     expect(
-      find.textContaining('double vérification supprime des comptes'),
+      find.textContaining('Activez-la dans Compte > Sécurité'),
       findsOneWidget,
     );
   });
