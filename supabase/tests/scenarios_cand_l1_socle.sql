@@ -286,17 +286,19 @@ RESET ROLE;
 -- CAND-L2A2 (22/10) : les gestes de la direction existent ; peutDecider et
 -- peutEcrireReferentiel (private.paiement_gestionnaire de L6) s'ouvrent, une
 -- capacite par geste et les listes fermees s'ajoutent (spec 8.1). Les
--- capacites sans RPC (import, entretien, double verification) restent
--- fausses ; le detail des gestes est mesure par le scenario de CAND-L2A2.
+-- capacites sans RPC (import, double verification) restent fausses ; mener
+-- un entretien suit peutDecider depuis V1 (03/11/2026) ; V1-a ajoute la coche
+-- fondateur, le choix des participants et le minimum de fondateurs ; le detail des gestes est mesure par le scenario de CAND-L2A2.
 SELECT pg_temp.qui('ca1d0000-0000-4000-8000-0000000000a1', 'admin', 'aal1');
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(public.capacites_candidatures() - 'gestes' - 'gestesGroupables' - 'listes'
     = '{"peutLire": true, "peutVoirContact": true,
   "peutLireHorsGenre": false, "genreLecteurConnu": true, "peutDecider": true, "peutImporter": false,
-  "doubleVerificationRequise": false, "peutMenerEntretien": false, "peutEcrireReferentiel": true}'::jsonb
+  "doubleVerificationRequise": false, "peutMenerEntretien": true, "peutEcrireReferentiel": true,
+  "peutPoserFondateur": true, "peutChoisirParticipants": true, "fondateursExiges": 2}'::jsonb
   AND (public.capacites_candidatures() #>> '{gestes,inviter}') = 'false'
   AND (public.capacites_candidatures() #>> '{gestes,refuser}') = 'true',
-  'direction homme nommee aal1 : lit son cote et le contact, decide de son cote ; ni import, ni entretien, ni double verification promis');
+  'direction homme nommee aal1 : lit son cote et le contact, decide de son cote, mene un entretien (V1, 03/11) ; ni import, ni double verification promis');
 SELECT pg_temp.qui('ca1d0000-0000-4000-8000-0000000000a1', 'admin', 'aal2');
 SELECT pg_temp.vrai((public.capacites_candidatures() ->> 'doubleVerificationRequise') = 'false'
   AND (public.capacites_candidatures() ->> 'peutImporter') = 'false'
@@ -327,7 +329,8 @@ SELECT pg_temp.qui('ca1d0000-0000-4000-8000-0000000000e1', 'guardian', 'aal1');
 SELECT pg_temp.vrai(public.capacites_candidatures() - 'gestes' - 'gestesGroupables' - 'listes'
     = '{"peutLire": false, "peutVoirContact": false,
   "peutLireHorsGenre": false, "genreLecteurConnu": false, "peutDecider": false, "peutImporter": false,
-  "doubleVerificationRequise": false, "peutMenerEntretien": false, "peutEcrireReferentiel": false}'::jsonb
+  "doubleVerificationRequise": false, "peutMenerEntretien": false, "peutEcrireReferentiel": false,
+  "peutPoserFondateur": false, "peutChoisirParticipants": false, "fondateursExiges": null}'::jsonb
   AND NOT EXISTS (SELECT 1 FROM jsonb_each(public.capacites_candidatures() -> 'gestes') g WHERE g.value <> 'false'::jsonb)
   AND public.capacites_candidatures() -> 'gestesGroupables' = '[]'::jsonb,
   'tuteur : aucune capacite, aucun geste');

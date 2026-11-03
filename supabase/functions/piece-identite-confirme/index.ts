@@ -16,8 +16,16 @@
 // d'envoyer >> ne serait qu'une affirmation, et la confirmation ne vaudrait
 // pas mieux que l'absence de confirmation.
 //
-// Un HEAD ne rend que des en-tetes : aucun octet de piece d'identite ne
-// transite par ce serveur.
+// Le HEAD ne rend que des en-tetes. Il est suivi d'une seconde lecture, la
+// seule qui fasse passer des octets de la piece par ce serveur (decision de la
+// direction du 03/11/2026, option a) : un GET borne aux 16 premiers octets
+// (`Range: bytes=0-15`), compares au type signe au depot (`%PDF`, `FF D8 FF`,
+// `89 50 4E 47`, boite `ftyp` HEIC/HEIF). R2 verifie l'en-tete `Content-Type`
+// annonce, jamais le contenu : sans cette lecture, un texte renomme en `.pdf`
+// entrerait dans la file de validation. Une piece non conforme est refusee et
+// sa reservation reste non confirmee, donc invisible. Les 16 octets ne sont ni
+// conserves, ni journalises, ni renvoyes : ils ne quittent pas la fonction
+// `contenuConforme`.
 //
 // La cle n'est pas recue, elle est relue en base : `autoriser_lecture_piece_identite()`
 // la resout depuis le `document_id` et rejoue au passage la porte de lecture,
@@ -30,7 +38,13 @@ import { clientService } from '../_shared/clients.ts'
 import { appelantR2 } from '../_shared/r2/client_appelant.ts'
 import { cleDe } from '../_shared/r2/cles.ts'
 import { stockageConfigure } from '../_shared/r2/domaines.ts'
-import { journaliser, messagePourClient, objetExiste } from '../_shared/r2/signature.ts'
+import { contenuConforme, OCTETS_ENTETE } from '../_shared/r2/contenu_piece.ts'
+import {
+  journaliser,
+  lireEnteteObjet,
+  messagePourClient,
+  objetExiste,
+} from '../_shared/r2/signature.ts'
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -126,6 +140,20 @@ Deno.serve(async (requete: Request) => {
         dureeMs: Date.now() - debut,
       })
       return refus('aucun objet depose sous cette reservation', 409)
+    }
+
+    // Seconde lecture, bornee : au plus 16 octets, compares puis oublies.
+    const entete = await lireEnteteObjet('pieceIdentite', cle, OCTETS_ENTETE)
+    if (!entete || !contenuConforme(entete.typeContenu, entete.octets)) {
+      journaliser({
+        domaine: 'pieceIdentite',
+        operation: 'depot',
+        statut: 'refuse',
+        ressource: reservation.id,
+        classeErreur: 'contenu_non_conforme',
+        dureeMs: Date.now() - debut,
+      })
+      return refus('le contenu ne correspond pas au type annonce', 422)
     }
 
     const { error: erreurConfirmation } = await service.rpc('confirmer_depot_piece_identite', {

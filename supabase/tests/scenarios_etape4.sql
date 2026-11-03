@@ -1113,11 +1113,20 @@ declare
   v_foyers int;
   v_demandes int;
 begin
+  -- Le lecteur est pose avant les agregats : depuis CAND-L1B, la portee du
+  -- compteur depend de lui.
+  perform set_config('test.uid', 'dddddddd-0000-0000-0000-000000000001', true);
+  perform set_config('test.jwt', '{"app_metadata":{"role":"admin"}}', true);
+
   -- Depuis 0015, ce compteur désigne les personnes en attente de validation,
-  -- avec ou sans pièce déposée; il ne compte pas les lignes KYC.
+  -- avec ou sans pièce déposée; il ne compte pas les lignes KYC. Depuis
+  -- CAND-L1B (20261021220000), un compte candidat hors de la portee du
+  -- lecteur, ou en salle d'examen, n'est pas compte.
   select count(*)::int into v_personnes_en_attente
   from public.profiles p
-  where p.deleted_at is null and p.account_status = 'pending_kyc';
+  where p.deleted_at is null and p.account_status = 'pending_kyc'
+    and not app_private.compte_candidat_hors_portee(p.id)
+    and private.candidature_permet_depot_piece(p.id);
 
   select count(distinct p.household_id)::int into v_foyers
   from public.profiles p

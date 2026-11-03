@@ -1,4 +1,5 @@
--- Rétablir les ACL des migrations pour authenticated et service_role
+-- Rétablir les ACL des migrations pour authenticated et service_role,
+-- droits par colonne compris
 -- (photographie prise par _acl_photo.sql).
 do $acl_restauration$
 declare
@@ -22,6 +23,18 @@ begin
       else
         execute format('grant %s on function %s to %I', v_priv.privilege_type, v.oid::regprocedure, v_priv.rolname);
       end if;
+    end loop;
+  end loop;
+  -- Droits par colonne, retirés par le « revoke all on table » ci-dessus.
+  for v in select k.oid, k.attname, k.acl from pg_temp.acl_colonnes_avant_scenario k loop
+    for v_priv in
+      select x.privilege_type, r.rolname
+        from pg_catalog.aclexplode(v.acl) x
+        join pg_catalog.pg_roles r on r.oid = x.grantee
+       where r.rolname in ('authenticated', 'service_role')
+    loop
+      execute format('grant %s (%I) on table %s to %I',
+        v_priv.privilege_type, v.attname, v.oid::regclass, v_priv.rolname);
     end loop;
   end loop;
 end
