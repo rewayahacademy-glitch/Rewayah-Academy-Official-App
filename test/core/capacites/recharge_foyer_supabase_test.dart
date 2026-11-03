@@ -180,6 +180,34 @@ void main() {
     expect(pages.single.host, 'checkout.stripe.com');
   });
 
+  // PAY-UX (02/11/2026) : le fond de la page du formulaire et la langue des
+  // lignes partent avec la demande ; un ancien formulaire non ferme se dit.
+  test(
+    'PAY-UX : le fond clair du formulaire et la langue partent au serveur',
+    () async {
+      final List<Map<String, dynamic>> corps = <Map<String, dynamic>>[];
+      await _port(
+        fonction: <String, dynamic>{'commandeId': 'c1', 'url': null},
+        corps: corps,
+        pages: <Uri>[],
+      ).payer(recapitulatifId: 'r1', cle: 'k1');
+      expect(corps.single['fond'], fondFormulairePaiement());
+      expect(corps.single['fond'], matches(RegExp(r'^#[0-9a-f]{6}$')));
+      expect(corps.single['langue'], anyOf('fr', 'ar'));
+    },
+  );
+
+  test(
+    'PAY-UX : ancien formulaire non ferme, l erreur dediee remonte',
+    () async {
+      await expectLater(
+        _port(fonction: const PaiementPrecedentOuvert())
+            .payer(recapitulatifId: 'r1', cle: 'k1'),
+        throwsA(isA<PaiementPrecedentOuvert>()),
+      );
+    },
+  );
+
   test(
     'payer, commande deja decidee : aucune page, le resultat le dira',
     () async {
