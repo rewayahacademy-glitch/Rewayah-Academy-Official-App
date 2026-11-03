@@ -1134,6 +1134,8 @@ class _Traductions$accords$ar extends Traductions$accords$fr {
 	// Translations
 	@override String get titre => 'شروطنا';
 	@override String get intro => 'يلزم قراءة كل النص، والموافقة على اللوائح قبل المتابعة.';
+	@override String get caseManquante => 'حدّدوا هذا المربع للمتابعة.';
+	@override String get introCases => 'اقرؤوا كل نص، ثم حدّدوا المربع الذي يليه.';
 	@override String get caseSavoir => 'قرأت وفهمت ما يجب أن أعرفه.';
 	@override String get sectionContrat => 'عقدك';
 	@override String get caseContrat => 'قرأت عقدي وأوافق عليه، بما في ذلك زيارات المراقبة.';
@@ -27293,6 +27295,8 @@ extension on TraductionsAr {
 			'attente.horsLigne' => 'أنت غير متصل. ستظهر حالة ملفك بمجرد عودة الشبكة.',
 			'accords.titre' => 'شروطنا',
 			'accords.intro' => 'يلزم قراءة كل النص، والموافقة على اللوائح قبل المتابعة.',
+			'accords.caseManquante' => 'حدّدوا هذا المربع للمتابعة.',
+			'accords.introCases' => 'اقرؤوا كل نص، ثم حدّدوا المربع الذي يليه.',
 			'accords.caseSavoir' => 'قرأت وفهمت ما يجب أن أعرفه.',
 			'accords.sectionContrat' => 'عقدك',
 			'accords.caseContrat' => 'قرأت عقدي وأوافق عليه، بما في ذلك زيارات المراقبة.',
@@ -27417,10 +27421,10 @@ extension on TraductionsAr {
 			'foyer.membres' => 'ملفات الطلاب',
 			'foyer.vide.titre' => 'لا ملف طالب حتى الآن',
 			'foyer.vide.phrase' => 'أضف ملف طالب لتسجيله في فصل وربط جهازه.',
-			'foyer.membre.sansClasse' => 'لا فصل بعد',
-			'foyer.membre.classeEchec' => 'تعذّرت قراءة الفصل',
 			_ => null,
 		} ?? switch (path) {
+			'foyer.membre.sansClasse' => 'لا فصل بعد',
+			'foyer.membre.classeEchec' => 'تعذّرت قراءة الفصل',
 			'foyer.membre.accesSansEcheance' => 'وصول دون موعد انتهاء',
 			'foyer.membre.accesJusquau' => ({required Object date}) => 'وصول حتى ⁨${date}⁩',
 			'foyer.membre.accesExpire' => ({required Object date}) => 'انتهى الوصول منذ ⁨${date}⁩',
@@ -27931,10 +27935,10 @@ extension on TraductionsAr {
 			'protectionEnfants.prioritaireDetail' => 'تقرؤه الإدارة والمسؤول عن حماية الأطفال فورًا. لا يراه المعلم المعني ولا الأسر الأخرى أبدًا. لا تُرسل أي رسالة إلى الأسرة.',
 			'protectionEnfants.urgence' => 'في حال وجود خطر داهم، اتصل أولًا بخدمات الطوارئ في بلدك.',
 			'protectionEnfants.direction' => 'تتلقى الإدارة بلاغك.',
-			'protectionEnfants.recuPar' => ({required Object nom}) => '⁨${nom}⁩ والإدارة يتلقيان بلاغك.',
-			'protectionEnfants.contact' => ({required Object courriel}) => 'البريد الإلكتروني للتواصل: ⁨${courriel}⁩',
 			_ => null,
 		} ?? switch (path) {
+			'protectionEnfants.recuPar' => ({required Object nom}) => '⁨${nom}⁩ والإدارة يتلقيان بلاغك.',
+			'protectionEnfants.contact' => ({required Object courriel}) => 'البريد الإلكتروني للتواصل: ⁨${courriel}⁩',
 			'protectionEnfants.erreurLecture' => 'لا يظهر اسم المسؤول في الوقت الحالي. أعد المحاولة بعد قليل.',
 			'codeConduite.titre' => 'مدونة سلوك المعلم',
 			'codeConduite.lien' => 'قراءة مدونة السلوك',
@@ -28445,10 +28449,10 @@ extension on TraductionsAr {
 			'recherche.contexte.enseignantDeClasse' => ({required Object classe}) => 'معلّم فصل ⁨${classe}⁩',
 			'recherche.contexte.personneFoyer' => 'ملف من أسرتك',
 			'recherche.contexte.personneFoyerClasse' => ({required Object classe}) => 'ملف من أسرتك · ⁨${classe}⁩',
-			'recherche.contexte.personneParIdentifiant' => 'وُجد بمعرّفه',
-			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'وُجد بمعرّفه · ⁨${classe}⁩',
 			_ => null,
 		} ?? switch (path) {
+			'recherche.contexte.personneParIdentifiant' => 'وُجد بمعرّفه',
+			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'وُجد بمعرّفه · ⁨${classe}⁩',
 			'recherche.contexte.canalStudio' => 'قناة الاستوديو',
 			'recherche.contexte.encaissement' => ({required Object famille}) => 'تحصيل · ⁨${famille}⁩',
 			'recrutement.invitations.onglet' => 'الدعوات',
@@ -28959,10 +28963,10 @@ extension on TraductionsAr {
 			'recrutement.talents.c.photographie.description' => 'التقاط صور وفيديوهات وتسجيلات صوتية بجودة جيدة.',
 			'recrutement.talents.c.photographie.exemple' => 'تصوير فعالية، تسجيل عرض قصير',
 			'recrutement.talents.c.redaction_contenus.libelle' => 'كتابة المحتوى وصناعته',
-			'recrutement.talents.c.redaction_contenus.description' => 'كتابة نصوص سليمة وممتعة للقراءة.',
-			'recrutement.talents.c.redaction_contenus.exemple' => 'مقال، نص لوسائل التواصل، رسالة إخبارية',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.talents.c.redaction_contenus.description' => 'كتابة نصوص سليمة وممتعة للقراءة.',
+			'recrutement.talents.c.redaction_contenus.exemple' => 'مقال، نص لوسائل التواصل، رسالة إخبارية',
 			'recrutement.talents.c.publicite_en_ligne.libelle' => 'الإعلان عبر الإنترنت',
 			'recrutement.talents.c.publicite_en_ligne.description' => 'إعداد حملات إعلانية على الإنترنت ومتابعتها.',
 			'recrutement.talents.c.publicite_en_ligne.exemple' => 'تحديد الجمهور المستهدف، إطلاق حملة، متابعة النتائج',
@@ -29473,10 +29477,10 @@ extension on TraductionsAr {
 			'courriels.admin.refuse' => 'الإدارة المتصلة وحدها تكتب الرسائل وتتابعها. أعد الاتصال بالحساب المناسب ثم أعد المحاولة.',
 			'courriels.admin.indisponibleTitre' => 'البريد الإلكتروني غير متاح',
 			'courriels.admin.indisponiblePhrase' => 'ستتوفر هذه الخاصية عند ربط الخادم.',
-			'courriels.admin.ecrire.titre' => 'رسالة جديدة',
-			'courriels.admin.ecrire.intro' => 'توضع الرسالة في الطابور ثم تخرج من عنوان فئتها خلال دقيقة. لا تُعدّ مرسلة إلا حين تعرض قائمة الإرسال «أُرسلت».',
 			_ => null,
 		} ?? switch (path) {
+			'courriels.admin.ecrire.titre' => 'رسالة جديدة',
+			'courriels.admin.ecrire.intro' => 'توضع الرسالة في الطابور ثم تخرج من عنوان فئتها خلال دقيقة. لا تُعدّ مرسلة إلا حين تعرض قائمة الإرسال «أُرسلت».',
 			'courriels.admin.ecrire.adresse' => 'عنوان المستلم',
 			'courriels.admin.ecrire.adresseAide' => 'عنوان واحد فقط. حساب الطفل لا يتلقى أي رسالة أبدًا.',
 			'courriels.admin.ecrire.categorie' => 'الفئة',
