@@ -962,7 +962,10 @@ DECLARE
   v jsonb;
   n integer := 0;
 BEGIN
-  FOR a IN SELECT * FROM (VALUES (pg_temp.p('a1'), 'direction homme'), (pg_temp.p('a4'), 'super-admin homme'))
+  -- V1-a-bis (20261109100000, directeur, 03/11) : le super-admin de 0088 agit
+  -- desormais des deux cotes, au journal sensible ; il est prouve dans
+  -- scenarios_v1_entretiens.sql. Ici, la direction homme seule reste bornee.
+  FOR a IN SELECT * FROM (VALUES (pg_temp.p('a1'), 'direction homme'))
            AS t(id, nom) LOOP
     FOREACH q IN ARRAY ARRAY[
         $$SELECT public.demander_complement_candidat(pg_temp.c('06'), ARRAY['langues'], 'Motif', 1, 'cle-hp-' || md5(random()::text))$$,
@@ -981,16 +984,16 @@ BEGIN
         'hors portee (' || a.nom || ') : ' || split_part(split_part(q, '(', 1), '.', 2));
     END LOOP;
   END LOOP;
-  PERFORM pg_temp.vrai(n = 20, 'vingt gestes de l''autre cote, super-admin compris');
+  PERFORM pg_temp.vrai(n = 10, 'dix gestes de l''autre cote, refuses a la direction homme non super-admin');
 END $portee$;
 SELECT pg_temp.vrai((pg_temp.trace(pg_temp.c('06')) ->> 'ligne') = pg_temp.lu('t06') ->> 'ligne'
   AND (pg_temp.trace(pg_temp.c('06')) ->> 'decisions') = pg_temp.lu('t06') ->> 'decisions'
   AND (pg_temp.trace(pg_temp.c('06')) ->> 'gestes') = pg_temp.lu('t06') ->> 'gestes'
   AND (SELECT count(*) FROM public.candidature_evenements
-        WHERE candidature_id = pg_temp.c('06') AND type = 'lecture_hors_portee') = 20
+        WHERE candidature_id = pg_temp.c('06') AND type = 'lecture_hors_portee') = 10
   AND (SELECT count(*) FROM public.audit_logs
         WHERE row_id = pg_temp.c('06')::text AND action = 'candidature_hors_portee'
-          AND payload ->> 'lecture' LIKE 'geste:%') = 20
+          AND payload ->> 'lecture' LIKE 'geste:%') = 10
   AND (SELECT count(DISTINCT payload ->> 'lecture') FROM public.audit_logs
         WHERE row_id = pg_temp.c('06')::text AND action = 'candidature_hors_portee') = 10,
   'hors portee : candidature intacte, 0 cle, 0 decision ; chaque tentative tracee comme une lecture hors portee, geste nomme');
@@ -1799,8 +1802,10 @@ END $classes_plafond_controle$;
 
 DO $fin$
 BEGIN
-  IF current_setting('test.n')::int <> 244 THEN
-    RAISE EXCEPTION 'CAND-L2A2 ROUGE : % controles executes, 244 attendus', current_setting('test.n');
+  -- 234 depuis V1-a-bis (03/11) : les dix refus du super-admin hors cote ne
+  -- sont plus attendus (il agit des deux cotes, prouve dans scenarios_v1_entretiens).
+  IF current_setting('test.n')::int <> 234 THEN
+    RAISE EXCEPTION 'CAND-L2A2 ROUGE : % controles executes, 234 attendus', current_setting('test.n');
   END IF;
   RAISE NOTICE 'CAND-L2A2 : % controles verts', current_setting('test.n');
 END $fin$;

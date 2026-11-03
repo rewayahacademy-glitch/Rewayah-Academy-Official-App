@@ -282,12 +282,18 @@ SELECT pg_temp.vrai(pg_temp.trace('01') = pg_temp.lu('t01')
 -- ------------------------------------------------------------
 SELECT pg_temp.garde('r_c', pg_temp.valider('a1', '01', 'cle-salle3-c-0001'));
 SELECT pg_temp.garde('r_c4', pg_temp.valider('a4', '01', 'cle-salle3-c-0004'));
+-- V1-a-bis (20261109100000, directeur, 03/11) : le super-admin de 0088 agit
+-- des deux cotes ; il passe la borne de genre et bute, comme la direction de
+-- ce cote en (b), sur les controles ; son geste est au journal sensible.
 SELECT pg_temp.vrai(pg_temp.lu('r_c') = '{"erreur": "hors_portee"}'::jsonb
-  AND pg_temp.lu('r_c4') = '{"erreur": "hors_portee"}'::jsonb
+  AND pg_temp.lu('r_c4') ->> 'erreur' = 'controles_non_satisfaits'
   AND pg_temp.trace('01') = pg_temp.lu('t01')
   AND (SELECT count(*) FROM public.candidature_evenements
-        WHERE candidature_id = pg_temp.c('01') AND type = 'lecture_hors_portee') = 2,
-  'CAND-Q07 : direction homme et super-admin hors de leur cote : hors_portee trace, rien d''autre n''est ecrit');
+        WHERE candidature_id = pg_temp.c('01') AND type = 'lecture_hors_portee') = 1
+  AND EXISTS (SELECT 1 FROM public.audit_logs a
+               WHERE a.action = 'super_admin_hors_cote' AND a.row_id = pg_temp.c('01')::text
+                 AND a.actor = pg_temp.p('a4') AND a.payload ->> 'geste' = 'valider_piece'),
+  'CAND-Q07 : direction homme hors de son cote : hors_portee trace ; super-admin : passe la borne, controles, journal hors cote ; rien d''autre n''est ecrit');
 
 -- ------------------------------------------------------------
 -- (d) Hors de decision_en_attente

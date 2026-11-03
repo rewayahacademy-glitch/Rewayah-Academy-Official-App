@@ -1651,17 +1651,23 @@ SELECT pg_temp.qui('ca2a0000-0000-4000-8000-0000000000a4', 'admin');
 SELECT pg_temp.garde('g2', private.candidature_geste_ouvrir('ca2acccc-0000-4000-8000-000000000006', 'refuser',
   'direction', 'ca2a0000-0000-4000-8000-0000000000a4', 1, 'cle-geste-c06-2', 'Motif de test', 'refus_test'));
 SELECT pg_temp.vrai(public.kyc_super_admin_exception_active(), 'fixture : exception super-admin active pour a4');
+-- V1-a-bis (20261109100000, directeur, 03/11) : le super-admin de 0088 agit
+-- des deux cotes ; il passe la borne de genre (son geste est au journal
+-- sensible, « super-admin hors côté »). La direction homme reste bornee.
 SELECT pg_temp.vrai(pg_temp.lu('g1') = '{"erreur": "hors_portee"}'::jsonb
-  AND pg_temp.lu('g2') = '{"erreur": "hors_portee"}'::jsonb
+  AND NOT coalesce(pg_temp.lu('g2') ->> 'erreur' = 'hors_portee', false)
   AND (pg_temp.trace('ca2acccc-0000-4000-8000-000000000006') ->> 'ligne') = pg_temp.lu('t06') ->> 'ligne'
   AND (pg_temp.trace('ca2acccc-0000-4000-8000-000000000006') ->> 'evenements')::int
-      = (pg_temp.lu('t06') ->> 'evenements')::int + 2
+      = (pg_temp.lu('t06') ->> 'evenements')::int + 1
   AND (SELECT count(*) FROM public.candidature_evenements
-        WHERE candidature_id = 'ca2acccc-0000-4000-8000-000000000006' AND type = 'lecture_hors_portee') = 2
+        WHERE candidature_id = 'ca2acccc-0000-4000-8000-000000000006' AND type = 'lecture_hors_portee') = 1
   AND (SELECT count(*) FROM public.audit_logs
         WHERE row_id = 'ca2acccc-0000-4000-8000-000000000006' AND action = 'candidature_hors_portee'
-          AND payload ->> 'lecture' = 'geste:refuser') = 2,
-  'geste de l''autre cote, super-admin compris : hors_portee rendu, trace comme une lecture hors portee, candidature inchangee');
+          AND payload ->> 'lecture' = 'geste:refuser') = 1
+  AND (SELECT count(*) FROM public.audit_logs
+        WHERE row_id = 'ca2acccc-0000-4000-8000-000000000006' AND action = 'super_admin_hors_cote'
+          AND actor = 'ca2a0000-0000-4000-8000-0000000000a4' AND payload ->> 'geste' = 'refuser') = 1,
+  'geste de l''autre cote : hors_portee rendu a la direction homme, trace comme une lecture hors portee ; le super-admin passe la borne, au journal hors cote ; candidature inchangee');
 SELECT pg_temp.qui('ca2a0000-0000-4000-8000-0000000000a3', 'admin');
 SELECT pg_temp.refus($$SELECT private.candidature_geste_ouvrir('ca2acccc-0000-4000-8000-000000000006', 'refuser',
   'direction', 'ca2a0000-0000-4000-8000-0000000000a3', 1, 'cle-geste-c06-3', 'Motif', 'refus_test')$$, '42501',
@@ -2042,7 +2048,8 @@ SELECT pg_temp.garde('k_a2', jsonb_build_object(
 RESET ROLE;
 SELECT pg_temp.vrai(pg_temp.lu('k_a1') = '{"traces": 0, "listes_a2": 0, "hors_portee_c06": 0}'::jsonb
   AND pg_temp.lu('k_a2') @> '{"traces": 0, "listes_a2": 1}'::jsonb
-  AND pg_temp.lu('k_a2') -> 'hors_portee_c06' = '["Direction Homme", "Super Admin"]'::jsonb,
+  -- V1-a-bis (03/11) : le super-admin passe la borne, il n'est plus trace hors portee.
+  AND pg_temp.lu('k_a2') -> 'hors_portee_c06' = '["Direction Homme"]'::jsonb,
   'C15 : traces de l''exception (super-admin seul), liste lue par a2 et tentatives hors portee sur c06 : lues du seul cote de c06, auteurs de la direction nommes');
 
 -- Les deux formes de la regle (ligne a ligne pour journal_audit et la
