@@ -205,11 +205,16 @@ SELECT pg_temp.vrai(pg_temp.notifie('a3000000-0000-0000-0000-000000000012', 'tit
 SELECT pg_temp.vrai(pg_temp.notifie('a3000000-0000-0000-0000-000000000012', 'remplacant_arrive', 'a3000000-0000-0000-0000-000000000201')
   AND pg_temp.notifie('a3000000-0000-0000-0000-000000000011', 'remplacant_arrive', 'a3000000-0000-0000-0000-000000000201'),
   'minute 8 : eleve et tuteur prevenus qu''un remplacant arrive');
+-- A3-bis (decision du directeur du 03/11/2026) : c'est l'ENTREE qui ferme la
+-- porte ; R1 (pris) entre le premier, le titulaire est ensuite refuse.
 DO $jeton$
 BEGIN
+  IF public.autoriser_jeton_video('a3000000-0000-0000-0000-000000000201', 'a3000000-0000-0000-0000-000000000009', 'wss://a', 'wss://b')->>'role' <> 'teacher' THEN
+    RAISE EXCEPTION 'ROUGE : R1 (pris) n''a pas son jeton enseignant';
+  END IF;
   BEGIN
     PERFORM public.autoriser_jeton_video('a3000000-0000-0000-0000-000000000201', 'a3000000-0000-0000-0000-000000000001', 'wss://a', 'wss://b');
-    RAISE EXCEPTION 'ROUGE : le titulaire ecarte a recu un jeton';
+    RAISE EXCEPTION 'ROUGE : le titulaire ecarte a recu un jeton apres l''entree de R1';
   EXCEPTION WHEN insufficient_privilege THEN NULL;
   END;
   RAISE NOTICE 'OK minute 8 : le titulaire ecarte (remplacant pret) n''a plus de jeton';
@@ -247,7 +252,8 @@ SELECT pg_temp.vrai(private.c29_enseignant_effectif_session('a3000000-0000-0000-
 
 -- Aucune annulation, meme apres la fin prevue.
 SELECT private.remplacement_auto_passer(clock_timestamp() + interval '2 hours');
-SELECT pg_temp.vrai((SELECT bool_and(status = 'planned') FROM public.sessions
+-- A3-bis : le jeton de R1 a ouvert S1 (in_progress) ; aucune n'est annulee.
+SELECT pg_temp.vrai((SELECT bool_and(status IN ('planned', 'in_progress')) FROM public.sessions
                       WHERE id IN ('a3000000-0000-0000-0000-000000000201','a3000000-0000-0000-0000-000000000202','a3000000-0000-0000-0000-000000000203'))
   AND (SELECT status FROM public.sessions WHERE id = 'a3000000-0000-0000-0000-000000000204') = 'in_progress',
   'aucune seance annulee par le remplacement automatique');

@@ -42,10 +42,12 @@
 --    Valeur 15 : reglage technique propose par l'agent, NON tranche par le
 --    directeur ; modifiable dans Configuration > Regles.
 --
--- 4. public.motif_refus_salle (20261104100000) : le titulaire remplace par un
---    collegue (prise posee avec l'absence) lit « acces_perdu », et non plus
---    le refus generique (decision du directeur du 03/11 : « l'autre ne peut
---    plus rentrer mais voit un message clair de ce qui l'empeche »).
+-- 4. Le premier qui entre ferme la porte a l'autre (decision du directeur du
+--    03/11/2026, section 2e) : c29 (enseignant effectif, donc paie et cahier),
+--    autoriser_jeton_video (verrou, porte du titulaire) et motif_refus_salle
+--    (« titulaire_entre », « remplacant_entre »). ORDRE : la fonction Edge
+--    create-room-token (_shared/motif_salle.ts, deux motifs de plus) se
+--    deploie avant cette migration, comme courriels-envoi.
 --
 -- private.reglages_remplacement_valider (20261104200000) accepte les deux
 -- nouvelles cles : un entier de 0 a 999, sans contrainte d'ordre.
@@ -234,26 +236,154 @@ SELECT pg_temp.remplacer('private.remplacement_auto_passer(timestamptz)',
     'alertes_direction', v_alertes,$b$, 1);
 
 -- ---------------------------------------------------------------------------
--- 2e. Le motif du refus de la salle (decision du directeur du 03/11 : « l'autre
---     ne peut plus rentrer mais voit un message clair de ce qui l'empeche »).
---     public.motif_refus_salle (20261104100000) dit « acces_perdu » au seul
---     titulaire que remplacement_titulaire_ecarte designe : le DERNIER
---     evenement est son absence automatique. Avec A3-bis, l'absence et la
---     prise sont posees ensemble : le dernier evenement est la prise, et le
---     titulaire remplace retombait sur le refus generique. Le motif vaut
---     desormais aussi pour le titulaire dont un remplacant a pris la seance
---     et qui n'est plus l'enseignant effectif.
+-- 2e. Le premier qui entre ferme la porte a l'autre (decision du directeur du
+--     03/11/2026 : « si quelqu'un rentre en classe (que ca soit le titulaire ou
+--     le remplacant) l'autre ne peut plus rentrer mais voit un message clair de
+--     ce qui l'empeche »).
+--
+--     « Entrer », c'est recevoir le jeton enseignant de la salle : aucune
+--     arrivee n'est possible sans lui, et il est delivre sous un verrou de la
+--     seance (un seul gagnant). Les webhooks LiveKit arrivent apres et ne
+--     changent rien : le gagnant est le plus ancien jeton enseignant
+--     (video_token_grants, emis_le puis id) : tout jeton du remplacant pris,
+--     ou un jeton du titulaire delivre depuis la prise.
+--
+--     Enseignant effectif (private.c29_enseignant_effectif_session), apres une
+--     prise (remplacement_pris ou remplacement_designe_admin) :
+--       * personne n'est entre : le remplacant pris (comme avant) ;
+--       * sinon : le premier des deux entre, une fois pour toutes.
+--     La paie (pai_*, bf1_prestations), le cahier, la presence et la cloture
+--     lisent cet enseignant : le titulaire qui donne le cours est paye, le
+--     remplacant pris qui n'est pas entre ne l'est pas. Regle ecrite :
+--     DECISION-TARIFS-2026-10-18.md, paie du 19/10 (payé par élève présent et
+--     par heure).
+--
+--     Porte du jeton (public.autoriser_jeton_video) : tant que personne n'est
+--     entre apres la prise, le titulaire peut encore recevoir son jeton.
+--     Motif du refus (public.motif_refus_salle) : « titulaire_entre » pour le
+--     remplacant, « remplacant_entre » pour le titulaire.
 -- ---------------------------------------------------------------------------
+CREATE FUNCTION private.a3bis_premier_entre(
+  p_session_id uuid, p_titulaire uuid, p_remplacant uuid, p_depuis timestamptz)
+RETURNS uuid
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path = '' AS $function$
+  SELECT g.profile_id
+    FROM public.video_token_grants g
+   WHERE g.session_id = p_session_id
+     AND g.role = 'teacher'
+     AND g.profile_id IN (p_titulaire, p_remplacant)
+     -- Le remplacant ne recoit un jeton enseignant qu'une fois la seance
+     -- prise : tous les siens comptent. Ceux du titulaire, seulement depuis
+     -- la prise (emis_le vaut now() de la demande, cree_le clock_timestamp()).
+     AND (g.profile_id = p_remplacant OR g.emis_le >= p_depuis)
+   ORDER BY g.emis_le, g.id
+   LIMIT 1;
+$function$;
+
+-- Le titulaire d'une seance prise, tant que personne n'est entre.
+CREATE FUNCTION private.a3bis_titulaire_peut_entrer(p_session_id uuid, p_profile_id uuid)
+RETURNS boolean
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path = '' AS $function$
+  SELECT coalesce((
+    SELECT x.evenement IN ('remplacement_pris', 'remplacement_designe_admin')
+           AND private.a3bis_premier_entre(s.id, s.teacher_id, x.enseignant_remplacant_id, x.cree_le) IS NULL
+      FROM public.sessions s
+      JOIN LATERAL (
+        SELECT r.evenement, r.enseignant_remplacant_id, r.cree_le
+          FROM public.remplacements_seance r
+         WHERE r.session_id = s.id
+         ORDER BY r.cree_le DESC, r.id DESC
+         LIMIT 1) x ON true
+     WHERE s.id = p_session_id AND s.deleted_at IS NULL
+       AND s.teacher_id = p_profile_id), false);
+$function$;
+
+DO $droits_entree$
+DECLARE v text;
+BEGIN
+  FOREACH v IN ARRAY ARRAY[
+    'private.a3bis_premier_entre(uuid,uuid,uuid,timestamptz)',
+    'private.a3bis_titulaire_peut_entrer(uuid,uuid)'] LOOP
+    EXECUTE pg_catalog.format('ALTER FUNCTION %s OWNER TO postgres', v);
+    EXECUTE pg_catalog.format(
+      'REVOKE ALL ON FUNCTION %s FROM PUBLIC, anon, authenticated, service_role, agent_ro', v);
+  END LOOP;
+END;
+$droits_entree$;
+
+-- c29 : apres une prise, le premier entre l'emporte.
+SELECT pg_temp.remplacer('private.c29_enseignant_effectif_session(uuid)',
+  $a$    SELECT x.evenement, x.enseignant_remplacant_id$a$,
+  $b$    SELECT x.evenement, x.enseignant_remplacant_id, x.cree_le$b$, 1);
+SELECT pg_temp.remplacer('private.c29_enseignant_effectif_session(uuid)',
+  $a$      THEN r.enseignant_remplacant_id$a$,
+  $b$      -- A3-bis (03/11/2026) : le premier des deux entre apres la prise,
+      -- sinon le remplacant pris.
+      THEN coalesce(private.a3bis_premier_entre(s.id, s.teacher_id,
+                      r.enseignant_remplacant_id, r.cree_le),
+                    r.enseignant_remplacant_id)$b$, 1);
+
+-- Jeton : un seul enseignant gagne l'entree (verrou de la seance), et le
+-- titulaire peut entrer tant que personne n'est entre apres la prise.
+SELECT pg_temp.remplacer('public.autoriser_jeton_video(uuid,uuid,text,text)',
+  $a$  select * into v_seance from public.sessions s
+   where s.id = p_session_id and s.deleted_at is null;
+$a$,
+  $b$  select * into v_seance from public.sessions s
+   where s.id = p_session_id and s.deleted_at is null;
+  -- A3-bis (03/11/2026) : deux enseignants qui demandent leur jeton au meme
+  -- instant passent l'un apres l'autre ; le second lit le jeton du premier.
+  if found and exists (select 1 from public.profiles p
+                        where p.id = p_profile_id and p.role = 'teacher') then
+    perform 1 from public.sessions s where s.id = p_session_id for update;
+  end if;
+$b$, 1);
+SELECT pg_temp.remplacer('public.autoriser_jeton_video(uuid,uuid,text,text)',
+  $a$    if private.c29_enseignant_effectif_session(p_session_id) = p_profile_id then$a$,
+  $b$    if private.c29_enseignant_effectif_session(p_session_id) = p_profile_id
+       -- A3-bis : le titulaire d'une seance prise, tant que personne n'est entre.
+       or private.a3bis_titulaire_peut_entrer(p_session_id, p_profile_id) then$b$, 1);
+
+-- Motif du refus : dire a l'autre qui est entre.
 SELECT pg_temp.remplacer('public.motif_refus_salle(uuid,uuid,uuid)',
-  $a$     and private.remplacement_titulaire_ecarte(p_session_id, p_profile_id) then$a$,
-  $b$     and (private.remplacement_titulaire_ecarte(p_session_id, p_profile_id)
-          -- A3-bis (03/11/2026) : remplace par un collegue qui a pris la seance.
-          or (exists (select 1 from public.remplacements_seance r
-                       where r.session_id = p_session_id
-                         and r.evenement = 'remplacement_pris'
-                         and r.enseignant_titulaire_id = p_profile_id)
-              and private.c29_enseignant_effectif_session(p_session_id)
-                  is distinct from p_profile_id)) then$b$, 1);
+  $a$  v_motif     text;
+$a$,
+  $b$  v_motif     text;
+  v_a3_titulaire  uuid;
+  v_a3_remplacant uuid;
+  v_a3_premier    uuid;
+$b$, 1);
+SELECT pg_temp.remplacer('public.motif_refus_salle(uuid,uuid,uuid)',
+  $a$  -- A3 (31/10/2026, 20261102500000) : le titulaire qui n'est pas entre a$a$,
+  $b$  -- A3-bis (03/11/2026) : apres une prise, le premier des deux enseignants
+  -- entre ferme la porte a l'autre, qui lit qui est entre.
+  if p_eleve_id is null then
+    select s2.teacher_id, x.enseignant_remplacant_id,
+           private.a3bis_premier_entre(p_session_id, s2.teacher_id,
+                                       x.enseignant_remplacant_id, x.cree_le)
+      into v_a3_titulaire, v_a3_remplacant, v_a3_premier
+      from public.sessions s2
+      join lateral (
+        select r.evenement, r.enseignant_remplacant_id, r.cree_le
+          from public.remplacements_seance r
+         where r.session_id = s2.id
+         order by r.cree_le desc, r.id desc
+         limit 1) x on true
+     where s2.id = p_session_id
+       and x.evenement in ('remplacement_pris', 'remplacement_designe_admin');
+    if v_a3_premier is not null and v_a3_premier <> p_profile_id
+       and p_profile_id in (v_a3_titulaire, v_a3_remplacant) then
+      return jsonb_build_object(
+        'motif', case when v_a3_premier = v_a3_titulaire
+                      then 'titulaire_entre' else 'remplacant_entre' end,
+        'fin_utc', v_seance.ended_at,
+        'ouverture_utc', null,
+        'grace_minutes', v_grace
+      );
+    end if;
+  end if;
+
+  -- A3 (31/10/2026, 20261102500000) : le titulaire qui n'est pas entre a$b$, 1);
 
 ALTER FUNCTION private.remplacement_auto_passer(timestamptz) OWNER TO postgres;
 REVOKE ALL ON FUNCTION private.remplacement_auto_passer(timestamptz)
@@ -285,12 +415,20 @@ BEGIN
     RAISE EXCEPTION 'A3-bis : la validation des reglages ignore les nouvelles cles';
   END IF;
   IF pg_catalog.strpos(pg_catalog.pg_get_functiondef('public.motif_refus_salle(uuid,uuid,uuid)'::regprocedure),
-       'A3-bis (03/11/2026) : remplace par un collegue') = 0
+       'titulaire_entre') = 0
+     OR pg_catalog.strpos(pg_catalog.pg_get_functiondef('private.c29_enseignant_effectif_session(uuid)'::regprocedure),
+       'a3bis_premier_entre') = 0
+     OR pg_catalog.strpos(pg_catalog.pg_get_functiondef('public.autoriser_jeton_video(uuid,uuid,text,text)'::regprocedure),
+       'a3bis_titulaire_peut_entrer') = 0
+     OR pg_catalog.strpos(pg_catalog.pg_get_functiondef('public.autoriser_jeton_video(uuid,uuid,text,text)'::regprocedure),
+       'for update') = 0
+     OR pg_catalog.has_function_privilege('authenticated',
+          'private.a3bis_premier_entre(uuid,uuid,uuid,timestamptz)'::regprocedure, 'EXECUTE')
      OR pg_catalog.has_function_privilege('authenticated',
           'public.motif_refus_salle(uuid,uuid,uuid)'::regprocedure, 'EXECUTE')
      OR pg_catalog.has_function_privilege('anon',
           'public.motif_refus_salle(uuid,uuid,uuid)'::regprocedure, 'EXECUTE') THEN
-    RAISE EXCEPTION 'A3-bis : motif_refus_salle incomplet, ou expose';
+    RAISE EXCEPTION 'A3-bis : porte d''entree (c29, jeton, motif) incomplete, ou exposee';
   END IF;
   IF NOT EXISTS (SELECT 1 FROM public.app_config WHERE key = 'remplacement.alerte_direction_minutes')
      OR NOT EXISTS (SELECT 1 FROM public.app_config WHERE key = 'remplacement.seance_tardive_minutes') THEN

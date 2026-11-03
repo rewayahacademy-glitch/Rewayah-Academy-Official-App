@@ -13171,6 +13171,12 @@
     }
   },
   "a3bis": {
+    "salle": {
+      "titulaireEntreTitre": "L'enseignant de la classe est arrivé",
+      "titulaireEntre": "L'enseignant de la classe a rejoint la salle le premier\u00a0: le remplacement n'est plus nécessaire. Merci d'avoir été prêt.",
+      "remplacantEntreTitre": "Un remplaçant a pris la classe",
+      "remplacantEntre": "Le remplaçant qui a pris la classe a rejoint la salle le premier\u00a0: la séance de ce jour vous est retirée. Vous restez l'enseignant de la classe."
+    },
     "notifications": {
       "avertissement": "Vous n'êtes pas encore dans la salle. Entrez vite\u00a0: si un enseignant s'est proposé pour vous remplacer, vous perdez l'accès à la séance de ce jour.",
       "avertissementMinutes(param=minutes)": {

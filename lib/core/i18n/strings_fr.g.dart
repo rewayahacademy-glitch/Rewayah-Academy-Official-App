@@ -3749,6 +3749,7 @@ class Traductions$a3bis$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$a3bis$salle$fr salle = Traductions$a3bis$salle$fr.internal(_root);
 	late final Traductions$a3bis$notifications$fr notifications = Traductions$a3bis$notifications$fr.internal(_root);
 	late final Traductions$a3bis$regles$fr regles = Traductions$a3bis$regles$fr.internal(_root);
 }
@@ -20959,6 +20960,27 @@ class Traductions$i1$lien$fr {
 
 	/// fr: 'Recevoir un nouveau lien'
 	String get nouveauLien => 'Recevoir un nouveau lien';
+}
+
+// Path: a3bis.salle
+class Traductions$a3bis$salle$fr {
+	Traductions$a3bis$salle$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'L'enseignant de la classe est arrivé'
+	String get titulaireEntreTitre => 'L\'enseignant de la classe est arrivé';
+
+	/// fr: 'L'enseignant de la classe a rejoint la salle le premier : le remplacement n'est plus nécessaire. Merci d'avoir été prêt.'
+	String get titulaireEntre => 'L\'enseignant de la classe a rejoint la salle le premier : le remplacement n\'est plus nécessaire. Merci d\'avoir été prêt.';
+
+	/// fr: 'Un remplaçant a pris la classe'
+	String get remplacantEntreTitre => 'Un remplaçant a pris la classe';
+
+	/// fr: 'Le remplaçant qui a pris la classe a rejoint la salle le premier : la séance de ce jour vous est retirée. Vous restez l'enseignant de la classe.'
+	String get remplacantEntre => 'Le remplaçant qui a pris la classe a rejoint la salle le premier : la séance de ce jour vous est retirée. Vous restez l\'enseignant de la classe.';
 }
 
 // Path: a3bis.notifications
@@ -53285,6 +53307,10 @@ extension on Traductions {
 			'i1.lien.dejaServiTitre' => 'Ce lien a déjà servi ou a expiré',
 			'i1.lien.dejaServiDetail' => 'Un lien de connexion ne sert qu\'une fois, et pour peu de temps. Demandez-en un nouveau : saisissez votre adresse e-mail sur la page de connexion.',
 			'i1.lien.nouveauLien' => 'Recevoir un nouveau lien',
+			'a3bis.salle.titulaireEntreTitre' => 'L\'enseignant de la classe est arrivé',
+			'a3bis.salle.titulaireEntre' => 'L\'enseignant de la classe a rejoint la salle le premier : le remplacement n\'est plus nécessaire. Merci d\'avoir été prêt.',
+			'a3bis.salle.remplacantEntreTitre' => 'Un remplaçant a pris la classe',
+			'a3bis.salle.remplacantEntre' => 'Le remplaçant qui a pris la classe a rejoint la salle le premier : la séance de ce jour vous est retirée. Vous restez l\'enseignant de la classe.',
 			'a3bis.notifications.avertissement' => 'Vous n\'êtes pas encore dans la salle. Entrez vite : si un enseignant s\'est proposé pour vous remplacer, vous perdez l\'accès à la séance de ce jour.',
 			'a3bis.notifications.avertissementMinutes' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(minutes, one: 'Vous n\'êtes pas encore dans la salle. Entrez dans la minute : passé ce délai, si un enseignant s\'est proposé pour vous remplacer, vous perdez l\'accès à la séance de ce jour.', other: 'Vous n\'êtes pas encore dans la salle. Entrez dans les ${minutes} minutes : passé ce délai, si un enseignant s\'est proposé pour vous remplacer, vous perdez l\'accès à la séance de ce jour.', ), 
 			'a3bis.regles.perteDetail' => 'Si un enseignant s\'est proposé, il remplace l\'enseignant, qui ne peut plus rejoindre la séance de ce jour, et les familles sont prévenues. Si personne ne s\'est proposé, l\'enseignant peut encore entrer : la séance reste ouverte au remplacement jusqu\'à sa fin.',

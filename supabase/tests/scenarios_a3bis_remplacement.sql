@@ -58,7 +58,9 @@ INSERT INTO auth.users (id, email) VALUES
  ('a3b00000-0000-0000-0000-000000000001','a3b-t1@test.invalid'), ('a3b00000-0000-0000-0000-000000000002','a3b-t2@test.invalid'),
  ('a3b00000-0000-0000-0000-000000000003','a3b-t3@test.invalid'), ('a3b00000-0000-0000-0000-000000000004','a3b-t4@test.invalid'),
  ('a3b00000-0000-0000-0000-000000000009','a3b-r1@test.invalid'), ('a3b00000-0000-0000-0000-000000000008','a3b-r2@test.invalid'),
- ('a3b00000-0000-0000-0000-000000000013','a3b-a@test.invalid'), ('a3b00000-0000-0000-0000-000000000014','a3b-c@test.invalid');
+ ('a3b00000-0000-0000-0000-000000000013','a3b-a@test.invalid'), ('a3b00000-0000-0000-0000-000000000014','a3b-c@test.invalid'),
+ ('a3b00000-0000-0000-0000-000000000005','a3b-t5@test.invalid'), ('a3b00000-0000-0000-0000-000000000006','a3b-t6@test.invalid'),
+ ('a3b00000-0000-0000-0000-000000000015','a3b-r3@test.invalid'), ('a3b00000-0000-0000-0000-000000000016','a3b-r4@test.invalid');
 INSERT INTO public.profiles
  (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
 VALUES
@@ -66,6 +68,10 @@ VALUES
  ('a3b00000-0000-0000-0000-000000000002','A3B-T2','teacher',NULL,'Titulaire','Deux','provisional_active','male'),
  ('a3b00000-0000-0000-0000-000000000003','A3B-T3','teacher',NULL,'Titulaire','Trois','provisional_active','male'),
  ('a3b00000-0000-0000-0000-000000000004','A3B-T4','teacher',NULL,'Titulaire','Quatre','provisional_active','male'),
+ ('a3b00000-0000-0000-0000-000000000005','A3B-T5','teacher',NULL,'Titulaire','Cinq','provisional_active','male'),
+ ('a3b00000-0000-0000-0000-000000000006','A3B-T6','teacher',NULL,'Titulaire','Six','provisional_active','male'),
+ ('a3b00000-0000-0000-0000-000000000015','A3B-R3','teacher',NULL,'Remplacant','Trois','provisional_active','male'),
+ ('a3b00000-0000-0000-0000-000000000016','A3B-R4','teacher',NULL,'Remplacant','Quatre','provisional_active','male'),
  ('a3b00000-0000-0000-0000-000000000009','A3B-R1','teacher',NULL,'Pret','Un','provisional_active','male'),
  ('a3b00000-0000-0000-0000-000000000008','A3B-R2','teacher',NULL,'Pret','Deux','provisional_active','male'),
  ('a3b00000-0000-0000-0000-000000000013','A3B-A','admin',NULL,'Direction','A','active','female'),
@@ -97,17 +103,18 @@ SELECT ('a3b00000-0000-0000-0000-00000000010' || n)::uuid, ('a3b00000-0000-0000-
        'enfant', 5, 'A3B classe ' || n,
        extract(isodow FROM (now() AT TIME ZONE 'Europe/Paris') + interval '3 days')::int, 18, 'Europe/Paris', 'hommes',
        now() - interval '1 day'
-  FROM generate_series(1, 4) n;
+  FROM generate_series(1, 6) n;
 -- S1 : sans pret. S2 : R1 pret. S3 : titulaire entre. S4 : creee tard, R2 pret.
 -- Toutes commencent il y a 2 minutes ; S1 a S3 ont ete creees la veille.
 INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type, groupe_id)
 SELECT ('a3b00000-0000-0000-0000-00000000020' || n)::uuid, ('a3b00000-0000-0000-0000-00000000000' || n)::uuid,
        now() - interval '2 minutes', now() + interval '43 minutes', 'planned', 'standard',
        ('a3b00000-0000-0000-0000-00000000010' || n)::uuid
-  FROM generate_series(1, 4) n;
+  FROM generate_series(1, 6) n;
 UPDATE public.sessions SET created_at = now() - interval '1 day'
  WHERE id IN ('a3b00000-0000-0000-0000-000000000201', 'a3b00000-0000-0000-0000-000000000202',
-              'a3b00000-0000-0000-0000-000000000203');
+              'a3b00000-0000-0000-0000-000000000203', 'a3b00000-0000-0000-0000-000000000205',
+              'a3b00000-0000-0000-0000-000000000206');
 UPDATE public.sessions SET created_at = started_at - interval '5 minutes'
  WHERE id = 'a3b00000-0000-0000-0000-000000000204';
 INSERT INTO public.session_events (session_id, profile_id, event_type, source)
@@ -168,19 +175,21 @@ SELECT pg_temp.vrai(EXISTS (SELECT 1 FROM public.remplacements_seance
                  AND enseignant_remplacant_id = 'a3b00000-0000-0000-0000-000000000009' AND origine = 'auto')
   AND private.c29_enseignant_effectif_session('a3b00000-0000-0000-0000-000000000202') = 'a3b00000-0000-0000-0000-000000000009',
   '2. S2 avec R1 pret : absence et prise ensemble, R1 enseignant effectif');
+-- Decision du 03/11 : c'est l'ENTREE qui ferme la porte. R1 (pris) entre le
+-- premier ; le titulaire est ensuite refuse.
 DO $jeton$
 BEGIN
-  BEGIN
-    PERFORM public.autoriser_jeton_video('a3b00000-0000-0000-0000-000000000202', 'a3b00000-0000-0000-0000-000000000002',
-                                         'wss://a3b.cloud.test', 'wss://a3b.auto.test');
-    RAISE EXCEPTION 'ROUGE : 2. le titulaire ecarte de S2 a recu un jeton';
-  EXCEPTION WHEN insufficient_privilege THEN NULL;
-  END;
   IF public.autoriser_jeton_video('a3b00000-0000-0000-0000-000000000202', 'a3b00000-0000-0000-0000-000000000009',
                                   'wss://a3b.cloud.test', 'wss://a3b.auto.test')->>'role' <> 'teacher' THEN
     RAISE EXCEPTION 'ROUGE : 2. le remplacant de S2 n''a pas de jeton enseignant';
   END IF;
-  RAISE NOTICE 'OK 2. S2 : titulaire sans jeton, remplacant avec jeton';
+  BEGIN
+    PERFORM public.autoriser_jeton_video('a3b00000-0000-0000-0000-000000000202', 'a3b00000-0000-0000-0000-000000000002',
+                                         'wss://a3b.cloud.test', 'wss://a3b.auto.test');
+    RAISE EXCEPTION 'ROUGE : 2. le titulaire de S2 est entre apres le remplacant';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+  RAISE NOTICE 'OK 2. S2 : le remplacant entre le premier, le titulaire est ensuite refuse';
 END;
 $jeton$;
 
@@ -198,10 +207,10 @@ SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.remplacements_seance WHERE 
 -- 6. Decision du directeur du 03/11 : le premier qui entre ferme la porte a
 --    l'autre, qui voit un message clair.
 -- 6a. Le remplacant a pris S2 : le titulaire refuse lit « acces_perdu », le
---     motif que /salle traduit par « Vous n'avez pas rejoint la salle a temps ».
+--     motif que /salle traduit par « Un remplacant a pris la classe ».
 SELECT pg_temp.vrai(public.motif_refus_salle('a3b00000-0000-0000-0000-000000000202',
-                      'a3b00000-0000-0000-0000-000000000002')->>'motif' = 'acces_perdu',
-  '6a. S2 : le titulaire remplace lit le motif acces_perdu, jamais le refus generique');
+                      'a3b00000-0000-0000-0000-000000000002')->>'motif' = 'remplacant_entre',
+  '6a. S2 : le titulaire refuse lit remplacant_entre (un remplacant a pris la classe), jamais le refus generique');
 SELECT pg_temp.vrai(public.motif_refus_salle('a3b00000-0000-0000-0000-000000000201',
                       'a3b00000-0000-0000-0000-000000000001') IS NULL,
   '6a. S1 : le titulaire non remplace n''a aucun motif de refus (il entre)');
@@ -240,6 +249,98 @@ SELECT pg_temp.vrai(public.se_declarer_pret_remplacement('a3b00000-0000-0000-000
   '6b. S1 sort du tableau des remplacements de R2');
 RESET ROLE;
 SELECT pg_temp.personne();
+
+-- 7. Decision du 03/11 : la prise ne ferme pas la porte, l'ENTREE la ferme.
+--    S5 (T5, pris par R3) et S6 (T6, pris par R4) : prises posees sans entree.
+-- Les prises datent d'une minute : le jeton du titulaire, demande dans cette
+-- meme transaction (emis_le = now()), vient apres elles.
+INSERT INTO public.remplacements_seance
+  (session_id, evenement, enseignant_titulaire_id, enseignant_remplacant_id, acteur_id, cle_idempotence, origine, cree_le)
+VALUES
+  ('a3b00000-0000-0000-0000-000000000205','absence_declaree','a3b00000-0000-0000-0000-000000000005',NULL,
+   'a3b00000-0000-0000-0000-000000000005','a3b00000-0000-0000-0000-00000000a051','auto', now() - interval '2 minutes'),
+  ('a3b00000-0000-0000-0000-000000000206','absence_declaree','a3b00000-0000-0000-0000-000000000006',NULL,
+   'a3b00000-0000-0000-0000-000000000006','a3b00000-0000-0000-0000-00000000a061','auto', now() - interval '2 minutes');
+INSERT INTO public.remplacements_seance
+  (session_id, evenement, enseignant_titulaire_id, enseignant_remplacant_id, acteur_id, cle_idempotence, origine, cree_le)
+VALUES
+  ('a3b00000-0000-0000-0000-000000000205','remplacement_pris','a3b00000-0000-0000-0000-000000000005',
+   'a3b00000-0000-0000-0000-000000000015','a3b00000-0000-0000-0000-000000000015','a3b00000-0000-0000-0000-00000000a052','auto', now() - interval '1 minute'),
+  ('a3b00000-0000-0000-0000-000000000206','remplacement_pris','a3b00000-0000-0000-0000-000000000006',
+   'a3b00000-0000-0000-0000-000000000016','a3b00000-0000-0000-0000-000000000016','a3b00000-0000-0000-0000-00000000a062','auto', now() - interval '1 minute');
+
+-- 7c. Prise sans aucune entree : comportement d'avant, l'enseignant effectif
+--     est le remplacant pris.
+SELECT pg_temp.vrai(private.c29_enseignant_effectif_session('a3b00000-0000-0000-0000-000000000205') = 'a3b00000-0000-0000-0000-000000000015'
+  AND private.c29_enseignant_effectif_session('a3b00000-0000-0000-0000-000000000206') = 'a3b00000-0000-0000-0000-000000000016',
+  '7c. prise sans entree : l''enseignant effectif reste le remplacant pris');
+
+-- 7a. Prise, puis entree du titulaire T5 : il entre, R3 est refuse, et la
+--     paie et le cahier sont au nom du titulaire.
+DO $entree_titulaire$
+BEGIN
+  IF public.autoriser_jeton_video('a3b00000-0000-0000-0000-000000000205', 'a3b00000-0000-0000-0000-000000000005',
+                                  'wss://a3b.cloud.test', 'wss://a3b.auto.test')->>'role' <> 'teacher' THEN
+    RAISE EXCEPTION 'ROUGE : 7a. le titulaire de S5 (seance prise, personne entre) n''a pas son jeton';
+  END IF;
+  BEGIN
+    PERFORM public.autoriser_jeton_video('a3b00000-0000-0000-0000-000000000205', 'a3b00000-0000-0000-0000-000000000015',
+                                         'wss://a3b.cloud.test', 'wss://a3b.auto.test');
+    RAISE EXCEPTION 'ROUGE : 7a. R3 est entre apres le titulaire';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+  RAISE NOTICE 'OK 7a. S5 : le titulaire entre malgre la prise, R3 est ensuite refuse';
+END;
+$entree_titulaire$;
+SELECT pg_temp.vrai(private.c29_enseignant_effectif_session('a3b00000-0000-0000-0000-000000000205') = 'a3b00000-0000-0000-0000-000000000005'
+  AND private.salle_enseignant_effectif('a3b00000-0000-0000-0000-000000000205') = 'a3b00000-0000-0000-0000-000000000005',
+  '7a. S5 : l''enseignant effectif (salle, paie, cahier) est le titulaire');
+SELECT pg_temp.vrai(public.motif_refus_salle('a3b00000-0000-0000-0000-000000000205',
+                      'a3b00000-0000-0000-0000-000000000015')->>'motif' = 'titulaire_entre',
+  '7a. S5 : R3 refuse lit titulaire_entre (l''enseignant de la classe est arrive)');
+
+-- 7b. Prise, puis entree du remplacant R4 : il entre, le titulaire T6 est
+--     refuse avec le bon motif, et tout est au nom du remplacant.
+DO $entree_remplacant$
+BEGIN
+  IF public.autoriser_jeton_video('a3b00000-0000-0000-0000-000000000206', 'a3b00000-0000-0000-0000-000000000016',
+                                  'wss://a3b.cloud.test', 'wss://a3b.auto.test')->>'role' <> 'teacher' THEN
+    RAISE EXCEPTION 'ROUGE : 7b. R4 n''a pas son jeton';
+  END IF;
+  BEGIN
+    PERFORM public.autoriser_jeton_video('a3b00000-0000-0000-0000-000000000206', 'a3b00000-0000-0000-0000-000000000006',
+                                         'wss://a3b.cloud.test', 'wss://a3b.auto.test');
+    RAISE EXCEPTION 'ROUGE : 7b. le titulaire T6 est entre apres R4';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+  RAISE NOTICE 'OK 7b. S6 : R4 entre, le titulaire est ensuite refuse';
+END;
+$entree_remplacant$;
+SELECT pg_temp.vrai(private.c29_enseignant_effectif_session('a3b00000-0000-0000-0000-000000000206') = 'a3b00000-0000-0000-0000-000000000016'
+  AND public.motif_refus_salle('a3b00000-0000-0000-0000-000000000206',
+        'a3b00000-0000-0000-0000-000000000006')->>'motif' = 'remplacant_entre',
+  '7b. S6 : tout au nom de R4 ; le titulaire lit remplacant_entre');
+
+-- 7d. Une fois fixe, l'enseignant effectif ne bouge plus : c29 rappele, un
+--     second jeton du gagnant, une arrivee (webhook) tardive du perdant n'y
+--     changent rien.
+SELECT public.autoriser_jeton_video('a3b00000-0000-0000-0000-000000000205', 'a3b00000-0000-0000-0000-000000000005',
+                                    'wss://a3b.cloud.test', 'wss://a3b.auto.test');
+INSERT INTO public.session_events (session_id, profile_id, event_type, source)
+VALUES ('a3b00000-0000-0000-0000-000000000205','a3b00000-0000-0000-0000-000000000015','joined','livekit_webhook');
+SELECT pg_temp.vrai(private.c29_enseignant_effectif_session('a3b00000-0000-0000-0000-000000000205') = 'a3b00000-0000-0000-0000-000000000005'
+  AND private.c29_enseignant_effectif_session('a3b00000-0000-0000-0000-000000000205') = 'a3b00000-0000-0000-0000-000000000005',
+  '7d. c29 appele deux fois apres l''entree, apres un second jeton et un webhook tardif : meme resultat');
+
+-- 7e. La paie : seances closes, relevee au nom de celui qui est entre.
+UPDATE public.sessions SET status = 'ended'
+ WHERE id IN ('a3b00000-0000-0000-0000-000000000205', 'a3b00000-0000-0000-0000-000000000206');
+SELECT pg_temp.vrai(
+  (SELECT r.enseignant FROM private.pai_releve_seances(now() - interval '1 day', now() + interval '1 day') r
+    WHERE r.seance = 'a3b00000-0000-0000-0000-000000000205') = 'a3b00000-0000-0000-0000-000000000005'
+  AND (SELECT r.enseignant FROM private.pai_releve_seances(now() - interval '1 day', now() + interval '1 day') r
+        WHERE r.seance = 'a3b00000-0000-0000-0000-000000000206') = 'a3b00000-0000-0000-0000-000000000016',
+  '7e. paie : S5 au titulaire entre, S6 au remplacant entre');
 
 -- 5. Les deux delais se reglent par la direction, en authenticated.
 SELECT pg_temp.en_tant_que('a3b00000-0000-0000-0000-000000000013', 'admin');

@@ -7039,5 +7039,9 @@
   "a3bis.regles.bornesTardive": "A3-bis (02/11/2026) : remplacement sans perte de seance, decision du directeur du 02/11 (« OUI »), consigne du pilote ; seance_tardive : reglage technique propose par l'agent",
   "a3bis.regles.avertissementDetail": "A3-bis (02/11/2026) : remplacement sans perte de seance, decision du directeur du 02/11 (« OUI »), consigne du pilote ; seance_tardive : reglage technique propose par l'agent",
   "a3bis.notifications.avertissement": "A3-bis (02/11/2026) : consigne du pilote du 03/11, point (d) : l'avertissement dit vrai dans les deux cas (avec ou sans remplacant pret)",
-  "a3bis.notifications.avertissementMinutes": "A3-bis (02/11/2026) : consigne du pilote du 03/11, point (d) : l'avertissement dit vrai dans les deux cas (avec ou sans remplacant pret)"
+  "a3bis.notifications.avertissementMinutes": "A3-bis (02/11/2026) : consigne du pilote du 03/11, point (d) : l'avertissement dit vrai dans les deux cas (avec ou sans remplacant pret)",
+  "a3bis.salle.titulaireEntreTitre": "A3-bis (03/11/2026) : decision du directeur du 03/11 (« l'autre ne peut plus rentrer mais voit un message clair de ce qui l'empeche »), relayee par le pilote",
+  "a3bis.salle.titulaireEntre": "A3-bis (03/11/2026) : decision du directeur du 03/11 (« l'autre ne peut plus rentrer mais voit un message clair de ce qui l'empeche »), relayee par le pilote",
+  "a3bis.salle.remplacantEntreTitre": "A3-bis (03/11/2026) : decision du directeur du 03/11 (« l'autre ne peut plus rentrer mais voit un message clair de ce qui l'empeche »), relayee par le pilote",
+  "a3bis.salle.remplacantEntre": "A3-bis (03/11/2026) : decision du directeur du 03/11 (« l'autre ne peut plus rentrer mais voit un message clair de ce qui l'empeche »), relayee par le pilote"
 }

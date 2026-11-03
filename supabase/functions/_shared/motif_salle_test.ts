@@ -49,3 +49,12 @@ Deno.test('acces_perdu (A3, PR 124) passe : le titulaire ecarte lit la vraie rai
     },
   )
 })
+
+Deno.test('titulaire_entre et remplacant_entre (A3-bis) passent : l autre enseignant lit qui est entre', () => {
+  for (const motif of ['titulaire_entre', 'remplacant_entre'] as const) {
+    assertEquals(
+      lireMotifSalle({ motif, fin_utc: '2026-11-03T19:00:00+00:00', ouverture_utc: null, grace_minutes: 15 }),
+      { motif, fin_utc: '2026-11-03T19:00:00+00:00', ouverture_utc: null, grace_minutes: 15 },
+    )
+  }
+})

@@ -4303,6 +4303,15 @@ class _Impasse extends StatelessWidget {
         t.salle.refusAccesPerduTitre,
         t.salle.refusAccesPerdu,
       ),
+      // A3-bis (03/11/2026) : le refus dit qui est entre le premier.
+      MotifServeurSalle.titulaireEntre => (
+        t.a3bis.salle.titulaireEntreTitre,
+        t.a3bis.salle.titulaireEntre,
+      ),
+      MotifServeurSalle.remplacantEntre => (
+        t.a3bis.salle.remplacantEntreTitre,
+        t.a3bis.salle.remplacantEntre,
+      ),
       _ => (t.salle.refusAcces, t.salle.refusAccesDetail),
     };
   }

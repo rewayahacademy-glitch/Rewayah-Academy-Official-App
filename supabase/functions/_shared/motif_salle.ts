@@ -10,7 +10,12 @@
 // `acces_perdu` (PR 124, 01/11/2026) : le titulaire ecarte par l'absence
 // automatique (A3). Sans lui dans cette liste, la base le rendait mais l'ecran
 // retombait sur le refus generique (capture R3 du banc local).
-export const MOTIFS_SALLE = ['pas_encore_ouverte', 'terminee', 'annulee', 'acces_perdu'] as const
+// `titulaire_entre`, `remplacant_entre` (A3-bis, 03/11/2026) : apres une prise
+// de remplacement, le premier des deux enseignants entre ferme la porte a
+// l'autre, qui lit qui est entre (decision du directeur du 03/11).
+export const MOTIFS_SALLE = [
+  'pas_encore_ouverte', 'terminee', 'annulee', 'acces_perdu', 'titulaire_entre', 'remplacant_entre',
+] as const
 export type MotifSalle = (typeof MOTIFS_SALLE)[number]
 
 /// Ce qui accompagne le 403 quand la base donne un motif.

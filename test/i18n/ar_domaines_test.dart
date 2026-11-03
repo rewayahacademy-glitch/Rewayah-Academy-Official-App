@@ -100,7 +100,7 @@ const Map<String, int> _domaines = <String, int>{
   // I1 « Inviter quelqu'un » (02/11/2026).
   'i1': 40,
   // A3-bis (02/11/2026) : remplacement sans perte de seance, page Regles.
-  'a3bis': 9,
+  'a3bis': 13,
 };
 
 /// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) :
