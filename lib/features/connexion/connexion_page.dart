@@ -9,6 +9,7 @@ import '../../core/auth/anti_robot.dart';
 import '../../core/auth/service_auth.dart';
 import '../../core/config/env.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/icons/app_icons.dart';
 import '../../core/marque/logo_google.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
@@ -25,6 +26,7 @@ import '../demo/racine_demonstrable.dart';
 import '../inscription/invitation_en_cours.dart';
 import '../inscription/questionnaire/questionnaire_inscription.dart'
     show questionnaireInscriptionProvider;
+import '../juridique/textes_juridiques.dart';
 import 'coquille_entree.dart';
 import 'feuille_appareil_eleve.dart';
 import 'recuperation_page.dart';
@@ -80,6 +82,10 @@ enum ModeConnexion {
   /// « Creer un compte ».
   creation,
 }
+
+/// La largeur des onglets « J'ai deja un compte » / « Creer un compte » sur
+/// ordinateur (CONNEXION-UX, 03/11/2026 : « plus petits »).
+const double largeurOngletsBureau = AppSpacing.respiration * 6;
 
 /// Le parametre d'adresse qui ouvre la connexion en mode creation
 /// (`/connexion?mode=creer`), depuis le site public par exemple.
@@ -449,11 +455,43 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
               onEleve: () => unawaited(_entreeEleve()),
               onProbleme: _versRecuperation,
             ),
+      // CONNEXION-UX (directeur, 03/11/2026) : tout ce qui n'est pas le
+      // titre, le champ et les boutons descend ici, en petits liens.
       pied: <Widget>[
         Ecart.vXxl,
-        LienEntree(
-          libelle: t.juridique.titre,
-          onPress: () => GoRouter.of(context).push(Routes.juridique),
+        LiensPied(
+          liens: <Widget>[
+            if (!_envoye &&
+                !_demo &&
+                _mode == ModeConnexion.connexion) ...<Widget>[
+              // Une sortie discrete : la recuperation d'acces (lien expire ou
+              // jamais recu).
+              LienPied(
+                cle: const ValueKey<String>('connexion-probleme'),
+                libelle: t.connexion.probleme,
+                onPress: _versRecuperation,
+              ),
+              LienPied(
+                cle: const ValueKey<String>('connexion-appareil-eleve-aide'),
+                libelle: t.connexion.appareilEleveAide,
+                onPress: () => unawaited(_entreeEleve()),
+              ),
+            ],
+            LienPied(
+              libelle: t.juridique.titre,
+              onPress: () => GoRouter.of(context).push(Routes.juridique),
+            ),
+            // Le consentement (pilote, 03/11/2026, voie a) : la page de
+            // confidentialite, ou ira la phrase sur la verification de
+            // securite une fois validee par le directeur.
+            LienPied(
+              cle: const ValueKey<String>('connexion-confidentialite'),
+              libelle: t.juridique.confidentialite.titre,
+              onPress: () =>
+                  GoRouter.of(context)
+                      .push(TexteJuridique.confidentialite.chemin),
+            ),
+          ],
         ),
         // Hors production seulement : sans lanceur, rien.
         const EntreeDemonstration(),
@@ -535,35 +573,51 @@ class _Saisie extends StatelessWidget {
           creation ? t.connexion.titreCreation : t.connexion.titre,
           style: textes.headlineMedium,
         ),
-        Ecart.vMd,
-        Text(
-          !versLien
-              ? t.connexion.introDemo
-              : creation
-              ? t.connexion.introCreation
-              : t.connexion.intro,
-          style: palette.inkMuted.applyTo(
-            textes.bodyMedium ?? const TextStyle(),
+        // CONNEXION-UX (directeur, 03/11/2026) : la page est simple ; la
+        // phrase d'introduction ne reste qu'en demonstration (hors
+        // production), ou elle dit qu'aucun lien ne part.
+        if (!versLien) ...<Widget>[
+          Ecart.vMd,
+          Text(
+            t.connexion.introDemo,
+            style: palette.inkMuted.applyTo(
+              textes.bodyMedium ?? const TextStyle(),
+            ),
+          ),
+        ],
+        Ecart.vXl,
+        // L4 : deux chemins distincts, choisis avant de saisir. Plus petits
+        // (CONNEXION-UX) : le registre de legende, sur ordinateur a la
+        // largeur de leurs libelles.
+        Theme(
+          data: Theme.of(context).copyWith(
+            textTheme: textes.copyWith(labelLarge: textes.labelMedium),
+          ),
+          child: Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: bureau ? largeurOngletsBureau : double.infinity,
+              ),
+              child: ControleSegmente<ModeConnexion>(
+                key: const ValueKey<String>('connexion-mode'),
+                segments: <Segment<ModeConnexion>>[
+                  Segment<ModeConnexion>(
+                    valeur: ModeConnexion.connexion,
+                    libelle: t.connexion.modeConnexion,
+                  ),
+                  Segment<ModeConnexion>(
+                    valeur: ModeConnexion.creation,
+                    libelle: t.connexion.modeCreation,
+                  ),
+                ],
+                valeur: mode,
+                onChange: onMode,
+              ),
+            ),
           ),
         ),
-        Ecart.vXxl,
-        // L4 : deux chemins distincts, choisis avant de saisir.
-        ControleSegmente<ModeConnexion>(
-          key: const ValueKey<String>('connexion-mode'),
-          segments: <Segment<ModeConnexion>>[
-            Segment<ModeConnexion>(
-              valeur: ModeConnexion.connexion,
-              libelle: t.connexion.modeConnexion,
-            ),
-            Segment<ModeConnexion>(
-              valeur: ModeConnexion.creation,
-              libelle: t.connexion.modeCreation,
-            ),
-          ],
-          valeur: mode,
-          onChange: onMode,
-        ),
-        Ecart.vXxl,
+        Ecart.vXl,
         ChampEntree(
           cle: 'connexion-courriel',
           etiquette: t.connexion.courriel,
@@ -590,7 +644,9 @@ class _Saisie extends StatelessWidget {
             masque: true,
           ),
         ],
-        if (controle != null) ...<Widget>[Ecart.vLg, controle!],
+        // ANTI-ROBOT : le controle se pose entre le champ et les boutons ; il
+        // ne prend de place que s'il se montre (CONNEXION-UX).
+        ?controle,
         Ecart.vLg,
         // Une rangee au bord de fin sur ordinateur, Google puis le lien ;
         // empiles pleine largeur sur telephone (correctif du 25/10/2026). Le
@@ -618,40 +674,30 @@ class _Saisie extends StatelessWidget {
                   onPress: onGoogle,
                   niveau: NiveauAction.secondaire,
                   pleineLargeur: !bureau,
+                  // Sur ordinateur, a cote du bouton de l'eleve : compacts,
+                  // les deux tiennent dans la colonne de 560.
+                  compacte: bureau && !creation,
                   // Une marque tierce se montre, elle ne se decrit pas : le
                   // logo est ce que l'usager cherche des yeux avant de lire
                   // le libelle.
                   prefixe: const LogoGoogle(),
                 ),
+          // CONNEXION-UX (directeur, 03/11/2026) : l'entree de l'eleve devient
+          // un bouton, a cote de Google (avant lui dans le sens de lecture) ;
+          // la feuille qui s'ouvre explique le code. L4 : en creation, elle
+          // s'efface (reservee aux comptes existants).
+          tierce: demo || creation
+              ? null
+              : ActionPrincipale(
+                  key: const ValueKey<String>('connexion-appareil-eleve'),
+                  libelle: t.connexion.appareilEleve,
+                  onPress: onEleve,
+                  niveau: NiveauAction.secondaire,
+                  pleineLargeur: !bureau,
+                  compacte: bureau,
+                  prefixe: Icon(AppIcons.enfant.repos, size: AppSpacing.xl),
+                ),
         ),
-        if (!demo) ...<Widget>[
-          // L4 : en creation, les sorties reservees aux comptes existants
-          // s'effacent (appareil d'un eleve, lien expire).
-          if (!creation) ...<Widget>[
-            // L'entree de l'eleve : un parcours different, pas une autre
-            // facon de faire le meme. Un lien avec fleche, sous la phrase qui
-            // dit a qui il s'adresse ; la feuille qui s'ouvre explique le code.
-            Ecart.vXxl,
-            Text(
-              t.connexion.appareilEleveAide,
-              style: palette.inkMuted.applyTo(
-                textes.bodySmall ?? const TextStyle(),
-              ),
-            ),
-            LienEntree(
-              cle: const ValueKey<String>('connexion-appareil-eleve'),
-              libelle: t.connexion.appareilEleve,
-              onPress: onEleve,
-            ),
-            // Une sortie discrete : la recuperation d'acces (lien expire ou
-            // jamais recu).
-            LienEntree(
-              cle: const ValueKey<String>('connexion-probleme'),
-              libelle: t.connexion.probleme,
-              onPress: onProbleme,
-            ),
-          ],
-        ],
       ],
     );
   }
@@ -718,7 +764,7 @@ class _LienEnvoye extends StatelessWidget {
             ),
           ),
         ],
-        if (controle != null) ...<Widget>[Ecart.vXxl, controle!],
+        ?controle,
         Ecart.vXxl,
         BoutonEntree(
           bureau: bureau,

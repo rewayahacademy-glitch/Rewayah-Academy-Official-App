@@ -69,55 +69,64 @@ class _ControleAntiRobotState extends State<ControleAntiRobot> {
         };
         final bool echec =
             etat == EtatAntiRobot.erreur || etat == EtatAntiRobot.horsLigne;
+        // CONNEXION-UX (03/11/2026) : l'ecart avec le champ qui precede ne se
+        // pose que quand la case ou une phrase se montre ; sinon le controle
+        // ne prend qu'un point de haut et la page reste celle d'avant.
+        final bool montre = _visible || phrase != null;
         return Semantics(
           key: ControleAntiRobot.cleControle,
           container: true,
           label: t.connexion.controle.libelle,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              // La case garde une place minime tant qu'elle est cachee : le
-              // widget de Cloudflare doit rester dans la page pour travailler.
-              Center(
-                child: SizedBox(
-                  width: ControleAntiRobot.tailleCase.width,
-                  height: _visible ? ControleAntiRobot.tailleCase.height : 1,
-                  child: RenduTurnstile(
-                    cle: widget.cle,
-                    langue: langue,
-                    controleur: widget.controleur,
-                    onVisible: (bool v) {
-                      if (mounted && v != _visible) {
-                        setState(() => _visible = v);
-                      }
-                    },
+          child: Padding(
+            padding: EdgeInsetsDirectional.only(
+              top: montre ? AppSpacing.lg : 0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                // La case garde une place minime tant qu'elle est cachee : le
+                // widget de Cloudflare doit rester dans la page pour travailler.
+                Center(
+                  child: SizedBox(
+                    width: ControleAntiRobot.tailleCase.width,
+                    height: _visible ? ControleAntiRobot.tailleCase.height : 1,
+                    child: RenduTurnstile(
+                      cle: widget.cle,
+                      langue: langue,
+                      controleur: widget.controleur,
+                      onVisible: (bool v) {
+                        if (mounted && v != _visible) {
+                          setState(() => _visible = v);
+                        }
+                      },
+                    ),
                   ),
                 ),
-              ),
-              if (phrase != null) ...<Widget>[
-                Ecart.vSm,
-                Semantics(
-                  liveRegion: true,
-                  child: Text(
-                    phrase,
-                    key: echec ? ControleAntiRobot.cleErreur : null,
-                    style: (echec ? palette.inkAlert : palette.inkMuted)
-                        .applyTo(textes.bodyMedium ?? const TextStyle()),
+                if (phrase != null) ...<Widget>[
+                  Ecart.vSm,
+                  Semantics(
+                    liveRegion: true,
+                    child: Text(
+                      phrase,
+                      key: echec ? ControleAntiRobot.cleErreur : null,
+                      style: (echec ? palette.inkAlert : palette.inkMuted)
+                          .applyTo(textes.bodyMedium ?? const TextStyle()),
+                    ),
                   ),
-                ),
+                ],
+                if (echec) ...<Widget>[
+                  Ecart.vXs,
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: LienFleche(
+                      libelle: t.commun.reessayer,
+                      onPress: widget.controleur.relancer,
+                    ),
+                  ),
+                ],
               ],
-              if (echec) ...<Widget>[
-                Ecart.vXs,
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: LienFleche(
-                    libelle: t.commun.reessayer,
-                    onPress: widget.controleur.relancer,
-                  ),
-                ),
-              ],
-            ],
+            ),
           ),
         );
       },

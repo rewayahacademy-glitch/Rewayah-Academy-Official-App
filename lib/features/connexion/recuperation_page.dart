@@ -415,7 +415,7 @@ class _Saisie extends StatelessWidget {
           Ecart.vMd,
           _PhraseErreur(erreurEnvoi!),
         ],
-        if (controle != null) ...<Widget>[Ecart.vLg, controle!],
+        ?controle,
         Ecart.vLg,
         BoutonEntree(
           bureau: bureau,
@@ -491,7 +491,7 @@ class _Envoye extends StatelessWidget {
         Ecart.vMd,
         Text(t.connexion.recuperation.envoyeEncart, style: discret),
         if (erreur != null) ...<Widget>[Ecart.vMd, _PhraseErreur(erreur!)],
-        if (controle != null) ...<Widget>[Ecart.vXxl, controle!],
+        ?controle,
         Ecart.vXxl,
         BoutonEntree(
           bureau: bureau,
