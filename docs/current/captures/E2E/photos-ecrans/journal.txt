@@ -1,0 +1,38 @@
+== PHOTOS-2a : la meme photo partout : 2026-11-03T16:19:23.997Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Amorce : classe E2E Photos An-Nour 763997 (df47a5d4-2830-467b-abcb-af0649b6e9dd), seance 092d5c77-0785-4364-b337-8fcdea5b3475 ; Samir 12cef5dc-88b7-4ec7-a3e3-2ce55f0880e8, Hakim 8f6b557f-4e02-424d-981d-ea90c6ceea1a, Leila 6921edb9-5aa6-48bb-92ff-73f4c3e48bb8, Camil cbf4d000-7923-4bac-869e-2d238a89004d, Nadia 1a3fdc88-49a0-4c75-a090-0d517e9f7eb4, Omar 5e8bc4f6-50b6-4fa6-8ec1-ee6391317172
+  OK le tuteur pose sa photo (poser_ma_photo)
+  OK sa cle est dans son dossier (profiles.photo_storage_key)
+  OK le tuteur pose la photo de Hakim (poser_photo_eleve)
+  OK la cle de Hakim est dans son dossier
+  ecriture directe du tuteur : HTTP 403 {"code":"42501","details":null,"hint":"Grant the required privileges to the current role with: GRANT UPDATE ON public.student_profiles TO authenticated;","messa
+  OK ecriture directe de la cle refusee (droit 0005 ferme)
+  OK 1440 : la fiche montre la photo de Hakim
+  1440 enseignant, fiche de la Classe : avatars/8f6b557f-4e02-424d-981d-ea90c6ceea1a/1793722810007.png | avatars/cbf4d000-7923-4bac-869e-2d238a89004d/amorce.png
+  OK 1440 : l'enseignant voit les photos de Hakim et de Camil
+  OK 1440 : le Profil de l'enseignant montre sa photo
+  enseignant, salle : entre
+  hakim : null
+  camil : null
+  enseignant, photos en salle : avatars/8f6b557f-4e02-424d-981d-ea90c6ceea1a/1793722810007.png | avatars/cbf4d000-7923-4bac-869e-2d238a89004d/amorce.png | photos_enseignants/961a434e-4311-47e5-b95b-41b658c54a31/amorce-763997.png
+  Camil, photos en salle : photos_enseignants/961a434e-4311-47e5-b95b-41b658c54a31/amorce-763997.png | avatars/8f6b557f-4e02-424d-981d-ea90c6ceea1a/1793722810007.png
+  OK salle : Camil voit la photo de Hakim
+  OK 1440 : Hakim voit sa photo sur son appareil
+  OK 1440 : aucun « Changer ma photo » pour un mineur
+  OK la direction pose sa photo
+  OK 1440 : le Compte de la direction montre sa photo
+  Nadia (autre famille) : photos_personnes HTTP 200 [] ; URL signee HTTP 400 {"statusCode":"404","error":"not_found","message":"Object not found","code":"NoSuchKey"}
+  OK Nadia (autre famille) ne lit pas la source de Hakim
+  OK Nadia (autre famille) n'obtient pas le fichier de Hakim
+  Leila (parent du camarade) : photos_personnes HTTP 200 [] ; URL signee HTTP 400 {"statusCode":"404","error":"not_found","message":"Object not found","code":"NoSuchKey"}
+  OK Leila (parent du camarade) ne lit pas la source de Hakim
+  OK Leila (parent du camarade) n'obtient pas le fichier de Hakim
+  OK aucune photo de Hakim chez une autre famille
+  OK 390 : la fiche montre la photo de Hakim
+  390 enseignant, fiche de la Classe : avatars/8f6b557f-4e02-424d-981d-ea90c6ceea1a/1793722810007.png | avatars/cbf4d000-7923-4bac-869e-2d238a89004d/amorce.png
+  OK 390 : l'enseignant voit les photos de Hakim et de Camil
+  OK 390 : le Profil de l'enseignant montre sa photo
+  OK 390 : Hakim voit sa photo sur son appareil
+  OK 390 : aucun « Changer ma photo » pour un mineur
+  OK 390 : le Compte de la direction montre sa photo
+Verdicts : {"le tuteur pose sa photo (poser_ma_photo)":true,"sa cle est dans son dossier (profiles.photo_storage_key)":true,"le tuteur pose la photo de Hakim (poser_photo_eleve)":true,"la cle de Hakim est dans son dossier":true,"ecriture directe de la cle refusee (droit 0005 ferme)":true,"1440 : la fiche montre la photo de Hakim":true,"1440 : l'enseignant voit les photos de Hakim et de Camil":true,"1440 : le Profil de l'enseignant montre sa photo":true,"salle : Camil voit la photo de Hakim":true,"1440 : Hakim voit sa photo sur son appareil":true,"1440 : aucun « Changer ma photo » pour un mineur":true,"la direction pose sa photo":true,"1440 : le Compte de la direction montre sa photo":true,"Nadia (autre famille) ne lit pas la source de Hakim":true,"Nadia (autre famille) n'obtient pas le fichier de Hakim":true,"Leila (parent du camarade) ne lit pas la source de Hakim":true,"Leila (parent du camarade) n'obtient pas le fichier de Hakim":true,"aucune photo de Hakim chez une autre famille":true,"390 : la fiche montre la photo de Hakim":true,"390 : l'enseignant voit les photos de Hakim et de Camil":true,"390 : le Profil de l'enseignant montre sa photo":true,"390 : Hakim voit sa photo sur son appareil":true,"390 : aucun « Changer ma photo » pour un mineur":true,"390 : le Compte de la direction montre sa photo":true}
+== PHOTOS-2a : la meme photo partout : vert
