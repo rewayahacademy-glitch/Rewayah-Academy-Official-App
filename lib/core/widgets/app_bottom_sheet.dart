@@ -57,6 +57,7 @@ class AppBottomSheet extends StatefulWidget {
     super.key,
     this.actions,
     this.forme = FormeModale.feuille,
+    this.libelleFermer,
   });
 
   /// Le titre de la feuille, en une phrase.
@@ -67,6 +68,11 @@ class AppBottomSheet extends StatefulWidget {
 
   /// La zone d'action, collee en bas de la feuille.
   final Widget? actions;
+
+  /// ADM-UX (03/11/2026, UX-014, WCAG 2.1.2) : quand il est donne, une croix
+  /// « Fermer » se pose a cote du titre (la meme que la surface de lecture) ;
+  /// elle ferme comme Echap, par `Navigator.maybePop`. Nul : rien ne change.
+  final String? libelleFermer;
 
   /// La forme rendue. [ouvrir] la choisit d'apres le gabarit ; la galerie la
   /// fixe pour montrer les trois.
@@ -84,6 +90,9 @@ class AppBottomSheet extends StatefulWidget {
 
   /// Hauteur de la poignee de glissement.
   static const double hauteurPoignee = AppSpacing.xs;
+
+  /// La cle de la croix « Fermer » (tests).
+  static const ValueKey<String> cleFermer = ValueKey<String>('feuille-fermer');
 
   /// Ouvre une feuille modale et rend ce que sa fermeture renvoie.
   ///
@@ -125,6 +134,7 @@ class AppBottomSheet extends StatefulWidget {
     required String titre,
     required Widget Function(BuildContext context) constructeur,
     Widget Function(BuildContext context)? actions,
+    String? libelleFermer,
   }) {
     final AppPalette palette = AppPalette.of(context);
     final FormeModale forme = formePour(AppGabarit.de(context));
@@ -144,6 +154,7 @@ class AppBottomSheet extends StatefulWidget {
             titre: titre,
             forme: FormeModale.dialogue,
             actions: actions?.call(contexte),
+            libelleFermer: libelleFermer,
             child: constructeur(contexte),
           ),
         ),
@@ -194,6 +205,7 @@ class AppBottomSheet extends StatefulWidget {
             titre: titre,
             forme: forme,
             actions: actions?.call(contexte),
+            libelleFermer: libelleFermer,
             child: constructeur(contexte),
           ),
         ),
@@ -335,15 +347,7 @@ class _AppBottomSheetEtat extends State<AppBottomSheet> {
                 ),
                 Ecart.vLg,
               ],
-              Semantics(
-                header: true,
-                child: TexteSansCoupure(
-                  widget.titre,
-                  style: surface.applyTo(
-                    textes.headlineSmall ?? const TextStyle(),
-                  ),
-                ),
-              ),
+              _titreEtFermer(context, palette, surface, textes),
               Ecart.vLg,
               if (basse)
                 corps
@@ -357,6 +361,51 @@ class _AppBottomSheetEtat extends State<AppBottomSheet> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _titreEtFermer(
+    BuildContext context,
+    AppPalette palette,
+    AppColorPair surface,
+    TextTheme textes,
+  ) {
+    final Widget titre = Semantics(
+      header: true,
+      child: TexteSansCoupure(
+        widget.titre,
+        style: surface.applyTo(textes.headlineSmall ?? const TextStyle()),
+      ),
+    );
+    final String? libelle = widget.libelleFermer;
+    if (libelle == null) return titre;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Expanded(child: titre),
+        Ecart.hMd,
+        Tooltip(
+          message: libelle,
+          excludeFromSemantics: true,
+          child: Pressable(
+            key: AppBottomSheet.cleFermer,
+            onPress: () => unawaited(Navigator.of(context).maybePop()),
+            libelleSemantique: libelle,
+            arrondiFocus: AppRadius.arrondiFull,
+            child: ExcludeSemantics(
+              child: SizedBox.square(
+                dimension: AppTouchTarget.standard,
+                child: Center(
+                  child: IconTheme(
+                    data: palette.inkMuted.asIconTheme(size: AppSpacing.xxl),
+                    child: Icon(AppIcons.effacer.repos),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

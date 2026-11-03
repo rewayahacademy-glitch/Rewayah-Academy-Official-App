@@ -123,6 +123,11 @@ class AdmissionsPage extends ConsumerStatefulWidget {
   static ValueKey<String> cleCarte(String id) =>
       ValueKey<String>('admission-$id');
 
+  /// La cle du champ de recherche (ADM-UX, UX-007).
+  static const ValueKey<String> cleRecherche = ValueKey<String>(
+    'admissions-recherche',
+  );
+
   @override
   ConsumerState<AdmissionsPage> createState() => _AdmissionsPageState();
 }
@@ -135,6 +140,10 @@ class _AdmissionsPageState extends ConsumerState<AdmissionsPage> {
   );
   late String _rechercheAppliquee = widget.ouvrir?.recherche.trim() ?? '';
   int _page = 1;
+
+  /// La derniere page lue : son compteur reste en place pendant qu'une
+  /// nouvelle recherche se lit (ADM-UX, UX-007).
+  PageAdmissions? _dernierePage;
 
   /// Ouverte depuis Comptes : la population est deduite du compte (un
   /// titulaire qui apprend, sans enfant, est un eleve adulte). Un parent qui
@@ -162,7 +171,9 @@ class _AdmissionsPageState extends ConsumerState<AdmissionsPage> {
       pageAdmissionsProvider(_cle),
     );
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    if (lecture.value case final PageAdmissions lue) _dernierePage = lue;
     final PageAdmissions? page = lecture.value;
+    final PageAdmissions? compteur = page ?? _dernierePage;
     if (_essaiAutre && page != null) {
       _essaiAutre = false;
       if (page.total == 0) {
@@ -211,15 +222,18 @@ class _AdmissionsPageState extends ConsumerState<AdmissionsPage> {
                 }),
               ),
               Ecart.vLg,
-              if (page != null) ...<Widget>[
+              if (compteur != null) ...<Widget>[
                 Text(
-                  a.aTraiter(n: page.aTraiter),
+                  a.aTraiter(n: compteur.aTraiter),
                   key: const ValueKey<String>('admissions-a-traiter'),
                   style: textes.titleMedium,
                 ),
                 Ecart.vMd,
               ],
+              // ADM-UX (UX-007) : une cle, pour que le champ garde son etat
+              // (et le focus) quand la colonne change au-dessus de lui.
               ChampEtiquete(
+                key: AdmissionsPage.cleRecherche,
                 libelle: a.rechercher,
                 controller: _recherche,
                 aide: a.rechercherAide,
@@ -299,13 +313,29 @@ class _AdmissionsPageState extends ConsumerState<AdmissionsPage> {
     );
   }
 
+  /// La demande [id] relue par la liste du serveur (ADM-UX, UX-006) :
+  /// `null` si elle n'y est plus.
+  Future<DemandeAdmission?> _relireDemande(String id) async {
+    final PageAdmissions page = await ref.refresh(
+      pageAdmissionsProvider(_cle).future,
+    );
+    for (final DemandeAdmission d in page.lignes) {
+      if (d.id == id) return d;
+    }
+    return null;
+  }
+
   void _ouvrir(BuildContext context, DemandeAdmission d) {
     unawaited(
       AppBottomSheet.ouvrir<void>(
         context,
         titre: t.admissions.feuilleTitre(deNom: deDevant(d.nom)),
-        constructeur: (BuildContext _) =>
-            FeuilleDemandeAdmission(demande: d, onFait: _relire),
+        constructeur: (BuildContext _) => FeuilleDemandeAdmission(
+          demande: d,
+          onFait: _relire,
+          relireDemande: () => _relireDemande(d.id),
+        ),
+        libelleFermer: t.commun.fermer,
       ),
     );
   }
@@ -371,6 +401,7 @@ class FeuilleDemandeAdmission extends ConsumerStatefulWidget {
   const FeuilleDemandeAdmission({
     required this.demande,
     required this.onFait,
+    this.relireDemande,
     super.key,
   });
 
@@ -379,6 +410,11 @@ class FeuilleDemandeAdmission extends ConsumerStatefulWidget {
 
   /// Appele apres un geste accepte par le serveur (la liste se relit).
   final VoidCallback onFait;
+
+  /// Relit la demande au serveur apres un geste (ADM-UX, UX-006) : la boite
+  /// dit alors l'etat relu, jamais celui d'avant le geste. Sans elle, ou si la
+  /// relecture echoue, la ligne d'etat disparait plutot que de mentir.
+  final Future<DemandeAdmission?> Function()? relireDemande;
 
   @override
   ConsumerState<FeuilleDemandeAdmission> createState() =>
@@ -400,6 +436,9 @@ class _FeuilleDemandeAdmissionState
   /// Vrai apres un geste qui change l'etat : la feuille porte une version
   /// perimee, elle ne propose plus rien (la liste relue a l'etat juste).
   bool _gesteFait = false;
+
+  /// L'etat relu apres un geste ; `null` tant qu'il n'est pas relu.
+  EtatDemandeAdmission? _etatRelu;
 
   @override
   void dispose() {
@@ -495,8 +534,18 @@ class _FeuilleDemandeAdmissionState
       }
       _cles.remove(v);
       if (v != _Vue.contacter) _gesteFait = true;
-      widget.onFait();
       if (mounted) setState(() => _vue = _Vue.resume);
+      final Future<DemandeAdmission?> Function()? relire = widget.relireDemande;
+      if (relire == null) {
+        widget.onFait();
+      } else {
+        try {
+          final DemandeAdmission? relue = await relire();
+          if (mounted) setState(() => _etatRelu = relue?.etat);
+        } on Object {
+          // La ligne d'etat disparait (voir [relireDemande]).
+        }
+      }
     } on GesteAdmissionRefuse catch (r) {
       if (mounted) setState(() => _erreur = _phraseRefus(r.raison));
       // Une demande traitee ailleurs : la liste se relit.
@@ -551,8 +600,15 @@ class _FeuilleDemandeAdmissionState
             ),
             Ecart.vLg,
           ],
-          LigneCleValeur(cle: a.etatLibelle, valeur: _etat(d.etat)),
-          Ecart.vSm,
+          // UX-006 : apres un geste, l'etat est celui relu au serveur ; tant
+          // qu'il ne l'est pas, la ligne ne dit rien plutot qu'un etat perime.
+          if (!_gesteFait || _etatRelu != null) ...<Widget>[
+            LigneCleValeur(
+              cle: a.etatLibelle,
+              valeur: _etat(_etatRelu ?? d.etat),
+            ),
+            Ecart.vSm,
+          ],
           LigneCleValeur(cle: a.recueLe, valeur: _date(d.recueLe)),
           Ecart.vSm,
           LigneCleValeur(cle: a.reference, valeur: d.reference),
