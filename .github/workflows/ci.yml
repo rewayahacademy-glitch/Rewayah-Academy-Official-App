@@ -225,6 +225,14 @@ jobs:
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_snt_seance_non_tenue.sql
         
+      - name: Scenario SQL D1-bis, vue famille en lecture seule et fermee aux mineurs
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_d1bis_vue_lecture_seule.sql
+      - name: Scenario SQL D1-ter, la famille lit ce qui lui est transmis
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_d1ter_famille_lit_transmis.sql
+
+        
       - name: Scenario SQL NIV1 (niveau demande une seule fois)
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_niv1_niveau_une_fois.sql
@@ -296,6 +304,13 @@ jobs:
       - name: Scenarios C1 cloturer et recreer une classe
         shell: bash
         run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_c1_cloture_recreer.sql
+        
+      - name: Scenario SQL FN-SERVEUR (FN-003, FN-019, FN-106)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_fn_serveur.sql
+      - name: Scenario SQL PHOTOS (photos des personnes, regle des camarades)
+        shell: bash
+        run: psql -h postgres -U postgres -v ON_ERROR_STOP=1 -f supabase/tests/scenarios_photos_personnes.sql
 
   edge-r2:
     name: Fonctions Edge -- stockage R2 (Deno)
