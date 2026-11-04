@@ -337,6 +337,9 @@ class HeuresSeance extends StatelessWidget {
           libelle: LibellesGroupe.dureeLibelle,
           valeur: LibellesGroupe.dureeSeule(duree),
         ),
+        // L'heure qui avance, chez soi et chez chaque interlocuteur : rien
+        // quand tout le monde vit a la meme heure.
+        if (!annulee) HeureCouranteDouble(groupeId: groupeId),
       ],
     );
   }

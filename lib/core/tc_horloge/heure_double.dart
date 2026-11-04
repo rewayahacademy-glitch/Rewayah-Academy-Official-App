@@ -218,7 +218,7 @@ class HeureDouble extends StatelessWidget {
 /// minute. L'instant vient du serveur (lu avec les interlocuteurs), avance du
 /// temps ecoule sur l'appareil ; le chiffre qui change passe en fondu, sans
 /// mouvement si l'appareil demande moins d'animations.
-class HeureCouranteDouble extends ConsumerStatefulWidget {
+class HeureCouranteDouble extends StatelessWidget {
   /// Cree la ligne de l'heure courante de la classe [groupeId].
   const HeureCouranteDouble({
     required this.groupeId,
@@ -236,11 +236,29 @@ class HeureCouranteDouble extends ConsumerStatefulWidget {
   static const Key cle = ValueKey<String>('heure-courante-double');
 
   @override
-  ConsumerState<HeureCouranteDouble> createState() =>
-      _HeureCouranteDoubleState();
+  Widget build(BuildContext context) {
+    // Hors ProviderScope (une carte posee seule) : rien a lire, rien a
+    // montrer.
+    try {
+      ProviderScope.containerOf(context, listen: false);
+    } on StateError {
+      return const SizedBox.shrink();
+    }
+    return _HeureCourante(groupeId: groupeId, horlogeAppareil: horlogeAppareil);
+  }
 }
 
-class _HeureCouranteDoubleState extends ConsumerState<HeureCouranteDouble> {
+class _HeureCourante extends ConsumerStatefulWidget {
+  const _HeureCourante({required this.groupeId, required this.horlogeAppareil});
+
+  final String groupeId;
+  final DateTime Function() horlogeAppareil;
+
+  @override
+  ConsumerState<_HeureCourante> createState() => _HeureCouranteState();
+}
+
+class _HeureCouranteState extends ConsumerState<_HeureCourante> {
   Timer? _minuteur;
   InterlocuteursClasse? _lus;
   DateTime? _appareilALaLecture;
@@ -292,29 +310,34 @@ class _HeureCouranteDoubleState extends ConsumerState<HeureCouranteDouble> {
     _armer(maintenant);
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
-    return Column(
-      key: HeureCouranteDouble.cle,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      spacing: AppSpacing.sm,
-      children: <Widget>[
-        Text(
-          t.tc.groupe.horloges.enCeMoment,
-          style: palette.inkMuted.applyTo(
-            textes.labelMedium ?? const TextStyle(),
+    // Son ecart au-dessus vient avec elle : absente, elle ne laisse aucun
+    // trou dans la carte.
+    return Padding(
+      padding: const EdgeInsetsDirectional.only(top: AppSpacing.md),
+      child: Column(
+        key: HeureCouranteDouble.cle,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        spacing: AppSpacing.sm,
+        children: <Widget>[
+          Text(
+            t.tc.groupe.horloges.enCeMoment,
+            style: palette.inkMuted.applyTo(
+              textes.labelMedium ?? const TextStyle(),
+            ),
           ),
-        ),
-        _Ligne(
-          LigneHeure(
-            libelle: t.tc.groupe.horloges.chezVous,
-            heure: moi.heureA(maintenant),
-            ville: villeDuFuseauLibelle(moi.fuseau),
+          _Ligne(
+            LigneHeure(
+              libelle: t.tc.groupe.horloges.chezVous,
+              heure: moi.heureA(maintenant),
+              ville: villeDuFuseauLibelle(moi.fuseau),
+            ),
+            vivante: true,
           ),
-          vivante: true,
-        ),
-        for (final LigneHeure l in lignesInterlocuteurs(lus, maintenant))
-          _Ligne(l, vivante: true),
-      ],
+          for (final LigneHeure l in lignesInterlocuteurs(lus, maintenant))
+            _Ligne(l, vivante: true),
+        ],
+      ),
     );
   }
 }
