@@ -54,6 +54,7 @@ import '../profil_enseignant/profil_enseignant_page.dart';
 import '../revenus_enseignant/entree_revenus.dart';
 import '../revenus_enseignant/revenus_enseignant_page.dart';
 import 'classe_demo.dart' show DonneesClasseDemo, EtatDemoClasse;
+import 'classes_disponibles_demo.dart';
 import 'demo_classe_page.dart' show adresseDemoClasse;
 import 'enseignant_demo.dart';
 import 'finance_demo.dart' show RevenusEnseignantDemo;
@@ -230,8 +231,10 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
           vide ? const <Creneau>[] : DonneesEnseignantDemo.disponibilites,
     ),
     // Classes disponibles (ENS-06), une par etat.
-    offresClassesProvider.overrideWithValue(
-      vide ? const <OffreClasseDemo>[] : DonneesEnseignantDemo.offres,
+    sectionClassesDisponiblesProvider.overrideWithValue(
+      ClassesDisponiblesDemo(
+        offres: vide ? const <OffreClasseDemo>[] : DonneesEnseignantDemo.offres,
+      ),
     ),
     // Mes revenus (FI-10) : le double de la Finance (FI-BR-11), calcule dans
     // la demonstration, jamais dans l'ecran. Le provider de l'ecran est

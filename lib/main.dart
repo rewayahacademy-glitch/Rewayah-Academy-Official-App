@@ -206,6 +206,7 @@ import 'features/foyer/reprise_foyer_supabase.dart';
 import 'features/foyer/role_foyer.dart';
 import 'features/foyer/role_foyer_supabase.dart';
 import 'features/profil_enseignant/photo_publique.dart';
+import 'racine_reelle.dart';
 
 /// Les surcharges de l'application reelle (jamais le mode demonstration) :
 /// le port des classes du foyer bascule sur l'adaptateur Supabase des que le
@@ -783,10 +784,15 @@ Future<void> main() async {
     return;
   }
 
-  // Hors production, la racine porte l'entree « Essayer la demonstration »
-  // (P2-07) ; en production elle n'a aucun lanceur et se comporte comme
-  // l'application seule.
-  runApp(RacineDemonstrable(surchargesReelles: _surchargesAppReelle()));
+  // En production, la racine reelle seule (lot DEMO-PROD, 04/11/2026) :
+  // `Env.demoCompilee` est une constante, la branche de la demonstration
+  // n'est pas compilee. Hors production, la racine porte l'entree « Essayer
+  // la demonstration » (P2-07).
+  runApp(
+    Env.demoCompilee
+        ? RacineDemonstrable(surchargesReelles: _surchargesAppReelle())
+        : RacineReelle(surcharges: _surchargesAppReelle()),
+  );
   // Les polices arabes et du Coran, apres la premiere image seulement
   // (`polices_differees.dart` ; sans effet tant que le pubspec les declare
   // dans `fonts`).
