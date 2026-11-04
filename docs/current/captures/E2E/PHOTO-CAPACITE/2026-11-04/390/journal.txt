@@ -1,0 +1,10 @@
+== PHOTO-CAPACITE : le lien selon le serveur (390 x 844) : 2026-11-04T13:39:27.382Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+Amorce : tuteur e2e-pc-tuteur-567382@example.com, Hakim 37f83d5d-42ff-44da-ad89-2b9d64a455fd (mineur, interface standard), Yasmine e04e1c31-42de-472f-94c6-873c1825e3d4 (mineure, Interface guidee)
+Base : photo_adulte_moi() tuteur=t, Hakim=f ; poser_ma_photo (Hakim) : ERROR:  un eleve mineur ne pose pas de photo
+Base : photo_adulte_moi() Yasmine=f
+Interface en base : Hakim standard, Yasmine child
+Compte du tuteur : flt-semantics:Mon compte | h2:Mon compte | button:Préférences | button:Notifications | group:Samira Capacite567382 Tuteur Accès et paiements Connexion et sécurité Mes données Informations personnelles Mon foyer Bibliothèque Aide et support | h2:Samira Capacite567382 Tuteur | flt-semantics:Compte validé | flt-semantics:e2e-pc-tuteur-567382@example.com Méthode de connexion non précisée | button:Choi
+Compte de Yasmine : flt-semantics:Mon compte | flt-semantics:Vos informations, vos préférences et vos accès, au même endroit. | flt-semantics:Yasmine | flt-semantics:Élève · Actif | flt-semantics:Suit ses cours et son Coran | flt-semantics:Informations | button:Profil Profil Voir et gérer vos informations | button:Réglages Réglages Apparence, notifications et accessibilité | button:Bibliothèque Bibliothèque Toutes vo
+Compte de Hakim : flt-semantics:Mon compte | flt-semantics:Vos informations, vos préférences et vos accès, au même endroit. | flt-semantics:Hakim | flt-semantics:Élève · Actif | flt-semantics:Suit ses cours et son Coran | flt-semantics:Informations | button:Profil Profil Voir et gérer vos informations | button:Réglages Réglages Apparence, notifications et accessibilité | button:Bibliothèque Bibliothèque Toutes vos 
+Verdicts : {"baseTuteurPeut":true,"baseHakimNePeutPas":true,"baseYasmineNePeutPas":true,"baseRefusePoserHakim":true,"hakimHorsInterfaceGuidee":true,"yasmineEnInterfaceGuidee":true,"tuteurVoitChoisir":true,"yasmineCompteOuvert":true,"yasmineSansChoisir":true,"hakimCompteOuvert":true,"hakimSansChoisir":true}
+== PHOTO-CAPACITE : le lien selon le serveur (390 x 844) : vert

@@ -409,7 +409,6 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
     return CoquilleEntree(
       formulaire: (bool bureau) => _envoye
           ? _LienEnvoye(
-              bureau: bureau,
               controle: controle(_renvoi),
               courriel: _courriel.text.trim(),
               renvoi: _renvoi,
@@ -717,7 +716,6 @@ class _Saisie extends StatelessWidget {
 
 class _LienEnvoye extends StatelessWidget {
   const _LienEnvoye({
-    required this.bureau,
     required this.controle,
     required this.courriel,
     required this.renvoi,
@@ -727,8 +725,6 @@ class _LienEnvoye extends StatelessWidget {
     required this.onChangerAdresse,
     required this.onProbleme,
   });
-
-  final bool bureau;
 
   /// Le controle anti-robot, ou nul (aucun controle : l'ecran d'avant).
   final Widget? controle;
@@ -778,16 +774,15 @@ class _LienEnvoye extends StatelessWidget {
         ],
         ?controle,
         Ecart.vXxl,
-        BoutonEntree(
-          bureau: bureau,
-          child: ActionPrincipale(
-            key: const ValueKey<String>('connexion-renvoyer'),
-            libelle: t.connexion.renvoyer,
-            onPress: onRenvoyer,
-            enCours: renvoi,
-            niveau: NiveauAction.secondaire,
-            pleineLargeur: !bureau,
-          ),
+        // ALIGN-RENVOI (04/11/2026) : le bouton seul a la largeur du champ,
+        // sur ordinateur comme sur telephone (meme regle que CONNEXION-ALIGN).
+        ActionPrincipale(
+          key: const ValueKey<String>('connexion-renvoyer'),
+          libelle: t.connexion.renvoyer,
+          onPress: onRenvoyer,
+          enCours: renvoi,
+          niveau: NiveauAction.secondaire,
+          pleineLargeur: true,
         ),
         Ecart.vLg,
         LienEntree(
