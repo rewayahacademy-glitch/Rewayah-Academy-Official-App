@@ -12109,7 +12109,7 @@ class Traductions$compte$doubleVerification$fr {
 	String get titreEnrolement => 'Activez la double vérification';
 
 	/// fr: 'Un lien de connexion volé ne doit pas suffire pour supprimer un compte. Ajoutez une seconde étape avec une application d'authentification sur votre téléphone. Vous ne le faites qu'une fois ; le code vous est ensuite demandé au moment d'un geste sensible.'
-	String get introEnrolement => 'Un lien de connexion volé ne doit pas suffire pour supprimer un compte. Ajoutez une seconde étape avec une application d\'authentification sur votre téléphone. Vous ne le faites qu\'une fois ; le code vous est ensuite demandé au moment d\'un geste sensible.';
+	String get introEnrolement => 'Un lien de connexion volé ne doit pas suffire pour supprimer un compte. Ajoutez une seconde étape avec une application d\'authentification sur votre téléphone. Vous ne le faites qu\'une fois ; le code vous est ensuite demandé au moment d\'un geste sensible.';
 
 	/// fr: 'Installez-en une sur votre téléphone, par exemple Google Authenticator, Microsoft Authenticator ou Aegis, puis revenez ici.'
 	String get videPhrase => 'Installez-en une sur votre téléphone, par exemple Google Authenticator, Microsoft Authenticator ou Aegis, puis revenez ici.';
@@ -28440,8 +28440,8 @@ class Traductions$compte$doubleVerification$feuille$fr {
 	/// fr: 'Ouvrir Compte > Sécurité'
 	String get ouvrirSecurite => 'Ouvrir Compte > Sécurité';
 
-	/// fr: 'Le code n'a pas pu être vérifié : le serveur n'a pas répondu comme prévu. Réessayez dans un instant.'
-	String get erreur => 'Le code n\'a pas pu être vérifié : le serveur n\'a pas répondu comme prévu. Réessayez dans un instant.';
+	/// fr: 'Le code n'est pas confirmé : la demande n'est peut-être pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Le code n\'est pas confirmé : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 
 	/// fr: 'Rien n'est parti : le réseau est absent. Réessayez dès son retour.'
 	String get horsLigne => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.';
@@ -48591,7 +48591,7 @@ extension on Traductions {
 			'compte.doubleVerification.titre' => 'Sécurité',
 			'compte.doubleVerification.sousTitre' => 'La double vérification protège les gestes sensibles de la direction : supprimer ou restaurer un compte, traiter une demande de suppression, publier la politique commerciale, importer des formulaires, inviter un comptable.',
 			'compte.doubleVerification.titreEnrolement' => 'Activez la double vérification',
-			'compte.doubleVerification.introEnrolement' => 'Un lien de connexion volé ne doit pas suffire pour supprimer un compte. Ajoutez une seconde étape avec une application d\'authentification sur votre téléphone. Vous ne le faites qu\'une fois ; le code vous est ensuite demandé au moment d\'un geste sensible.',
+			'compte.doubleVerification.introEnrolement' => 'Un lien de connexion volé ne doit pas suffire pour supprimer un compte. Ajoutez une seconde étape avec une application d\'authentification sur votre téléphone. Vous ne le faites qu\'une fois ; le code vous est ensuite demandé au moment d\'un geste sensible.',
 			'compte.doubleVerification.videPhrase' => 'Installez-en une sur votre téléphone, par exemple Google Authenticator, Microsoft Authenticator ou Aegis, puis revenez ici.',
 			'compte.doubleVerification.activeeTitre' => 'La double vérification est activée',
 			'compte.doubleVerification.activeePhrase' => 'Le code de votre application d\'authentification vous sera demandé au moment d\'un geste sensible, une fois par connexion.',
@@ -48601,7 +48601,7 @@ extension on Traductions {
 			'compte.doubleVerification.feuille.aActiverTitre' => 'Activez d\'abord la double vérification',
 			'compte.doubleVerification.feuille.aActiverPhrase' => 'Ce geste demande la double vérification. Activez-la une fois dans Compte > Sécurité, puis recommencez le geste.',
 			'compte.doubleVerification.feuille.ouvrirSecurite' => 'Ouvrir Compte > Sécurité',
-			'compte.doubleVerification.feuille.erreur' => 'Le code n\'a pas pu être vérifié : le serveur n\'a pas répondu comme prévu. Réessayez dans un instant.',
+			'compte.doubleVerification.feuille.erreur' => 'Le code n\'est pas confirmé : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'compte.doubleVerification.feuille.horsLigne' => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.',
 			'compte.identifiant' => 'Identifiant',
 			'compte.nonDisponible' => 'Non disponible',

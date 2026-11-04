@@ -6536,7 +6536,7 @@
       "titre": "Sécurité",
       "sousTitre": "La double vérification protège les gestes sensibles de la direction : supprimer ou restaurer un compte, traiter une demande de suppression, publier la politique commerciale, importer des formulaires, inviter un comptable.",
       "titreEnrolement": "Activez la double vérification",
-      "introEnrolement": "Un lien de connexion volé ne doit pas suffire pour supprimer un compte. Ajoutez une seconde étape avec une application d'authentification sur votre téléphone. Vous ne le faites qu'une fois ; le code vous est ensuite demandé au moment d'un geste sensible.",
+      "introEnrolement": "Un lien de connexion volé ne doit pas suffire pour supprimer un compte. Ajoutez une seconde étape avec une application d'authentification sur votre téléphone. Vous ne le faites qu'une fois ; le code vous est ensuite demandé au moment d'un geste sensible.",
       "videPhrase": "Installez-en une sur votre téléphone, par exemple Google Authenticator, Microsoft Authenticator ou Aegis, puis revenez ici.",
       "activeeTitre": "La double vérification est activée",
       "activeePhrase": "Le code de votre application d'authentification vous sera demandé au moment d'un geste sensible, une fois par connexion.",
@@ -6547,7 +6547,7 @@
         "aActiverTitre": "Activez d'abord la double vérification",
         "aActiverPhrase": "Ce geste demande la double vérification. Activez-la une fois dans Compte > Sécurité, puis recommencez le geste.",
         "ouvrirSecurite": "Ouvrir Compte > Sécurité",
-        "erreur": "Le code n'a pas pu être vérifié : le serveur n'a pas répondu comme prévu. Réessayez dans un instant.",
+        "erreur": "Le code n'est pas confirmé : la demande n'est peut-être pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
         "horsLigne": "Rien n'est parti : le réseau est absent. Réessayez dès son retour."
       }
     },

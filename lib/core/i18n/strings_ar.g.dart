@@ -3886,7 +3886,7 @@ class _Traductions$compte$doubleVerification$ar extends Traductions$compte$doubl
 	@override String get sousTitre => 'يحمي التحقق المزدوج الإجراءات الحساسة للإدارة: حذف حساب أو استعادته، ومعالجة طلب حذف، ونشر السياسة التجارية، واستيراد الاستمارات، ودعوة محاسب.';
 	@override String get titreEnrolement => 'فعّل التحقق المزدوج';
 	@override String get introEnrolement => 'لا ينبغي أن يكفي رابط دخول مسروق لحذف حساب. أضف خطوة ثانية بتطبيق مصادقة على هاتفك. تفعل ذلك مرة واحدة؛ ثم يُطلب منك الرمز عند إجراء حساس.';
-	@override String get videPhrase => 'ثبّت تطبيقًا على هاتفك، مثل Google Authenticator أو Microsoft Authenticator أو Aegis، ثم عد إلى هنا.';
+	@override String get videPhrase => 'ثبّت تطبيق مصادقة على هاتفك، ثم عد إلى هنا.';
 	@override String get activeeTitre => 'التحقق المزدوج مفعّل';
 	@override String get activeePhrase => 'سيُطلب منك رمز تطبيق المصادقة عند إجراء حساس، مرة واحدة في كل دخول.';
 	@override late final _Traductions$compte$doubleVerification$feuille$ar feuille = _Traductions$compte$doubleVerification$feuille$ar._(_root);
@@ -22417,7 +22417,7 @@ extension on TraductionsAr {
 			'compte.doubleVerification.sousTitre' => 'يحمي التحقق المزدوج الإجراءات الحساسة للإدارة: حذف حساب أو استعادته، ومعالجة طلب حذف، ونشر السياسة التجارية، واستيراد الاستمارات، ودعوة محاسب.',
 			'compte.doubleVerification.titreEnrolement' => 'فعّل التحقق المزدوج',
 			'compte.doubleVerification.introEnrolement' => 'لا ينبغي أن يكفي رابط دخول مسروق لحذف حساب. أضف خطوة ثانية بتطبيق مصادقة على هاتفك. تفعل ذلك مرة واحدة؛ ثم يُطلب منك الرمز عند إجراء حساس.',
-			'compte.doubleVerification.videPhrase' => 'ثبّت تطبيقًا على هاتفك، مثل Google Authenticator أو Microsoft Authenticator أو Aegis، ثم عد إلى هنا.',
+			'compte.doubleVerification.videPhrase' => 'ثبّت تطبيق مصادقة على هاتفك، ثم عد إلى هنا.',
 			'compte.doubleVerification.activeeTitre' => 'التحقق المزدوج مفعّل',
 			'compte.doubleVerification.activeePhrase' => 'سيُطلب منك رمز تطبيق المصادقة عند إجراء حساس، مرة واحدة في كل دخول.',
 			'compte.doubleVerification.feuille.titre' => 'رمز التحقق',
