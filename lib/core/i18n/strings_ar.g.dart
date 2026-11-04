@@ -13200,9 +13200,9 @@ class _Traductions$admin$candidatures$entretien$ar extends Traductions$admin$can
 	// Translations
 	@override String get aucun => 'لم تُحدَّد أي مقابلة.';
 	@override String get planifier => 'تحديد موعد المقابلة';
-	@override String quand({required Object date, required Object heure, required Object duree}) => 'يوم ${date} على الساعة ${heure} (توقيت هذا الجهاز)، لمدة ${duree} د.';
-	@override String fondateurs({required Object n}) => 'المؤسسون بين المشاركين: ${n}';
-	@override String minimum({required Object n}) => 'الحد الأدنى المطلوب: ${n}';
+	@override String quand({required Object date, required Object heure, required Object duree}) => 'يوم ⁨${date}⁩ على الساعة ⁨${heure}⁩ (توقيت هذا الجهاز)، لمدة ⁨${duree}⁩ د.';
+	@override String fondateurs({required Object n}) => 'المؤسسون بين المشاركين: ⁨${n}⁩';
+	@override String minimum({required Object n}) => 'الحد الأدنى المطلوب: ⁨${n}⁩';
 	@override String get regleInactive => 'قاعدة المؤسسين معطَّلة.';
 	@override String get participants => 'المشاركون';
 	@override String get fondateur => 'مؤسس';
@@ -13214,10 +13214,10 @@ class _Traductions$admin$candidatures$entretien$ar extends Traductions$admin$can
 	@override String get auteurInconnu => 'أحد المشاركين';
 	@override String get presences => 'الدخول إلى القاعة والخروج منها';
 	@override String get aucunePresence => 'لم يدخل أحد القاعة بعد.';
-	@override String entree({required Object nom, required Object heure}) => 'دخول ⁨${nom}⁩ على الساعة ${heure}';
-	@override String sortie({required Object nom, required Object heure}) => 'خروج ⁨${nom}⁩ على الساعة ${heure}';
+	@override String entree({required Object nom, required Object heure}) => 'دخول ⁨${nom}⁩ على الساعة ⁨${heure}⁩';
+	@override String sortie({required Object nom, required Object heure}) => 'خروج ⁨${nom}⁩ على الساعة ⁨${heure}⁩';
 	@override String get consigner => 'تسجيل نتيجة المقابلة';
-	@override String dernier({required Object date, required Object issue}) => 'آخر مقابلة: ${date}. ${issue}.';
+	@override String dernier({required Object date, required Object issue}) => 'آخر مقابلة: ⁨${date}⁩. ⁨${issue}⁩.';
 	@override String get lectureEchec => 'تعذّرت قراءة المقابلة.';
 	@override late final _Traductions$admin$candidatures$entretien$avis$ar avis = _Traductions$admin$candidatures$entretien$avis$ar._(_root);
 	@override late final _Traductions$admin$candidatures$entretien$issues$ar issues = _Traductions$admin$candidatures$entretien$issues$ar._(_root);
@@ -18556,9 +18556,9 @@ class _Traductions$admin$candidatures$entretien$feuille$ar extends Traductions$a
 	@override String get heure => 'الساعة';
 	@override String get heureAide => 'توقيت هذا الجهاز.';
 	@override String get duree => 'المدة';
-	@override String dureeValeur({required Object n}) => '${n} د';
+	@override String dureeValeur({required Object n}) => '⁨${n}⁩ د';
 	@override String get participantsAide => 'اختر بحرية من الفريق في هذا الجانب.';
-	@override String fondateursChoisis({required Object n}) => 'المؤسسون المختارون: ${n}';
+	@override String fondateursChoisis({required Object n}) => 'المؤسسون المختارون: ⁨${n}⁩';
 	@override String get jourManquant => 'اختر يومًا.';
 	@override String get heureManquante => 'اختر ساعة.';
 	@override String get dureeManquante => 'اختر مدة.';
@@ -18585,8 +18585,8 @@ class _Traductions$admin$candidatures$entretien$refus$ar extends Traductions$adm
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String fondateurs({required Object exiges, required Object presents}) => 'يجب أن يكون بين المشاركين ${exiges} مؤسسين على الأقل. المؤسسون المختارون: ${presents}.';
-	@override String fondateursRetrait({required Object exiges, required Object presents}) => 'يجب أن يكون بين المشاركين ${exiges} مؤسسين على الأقل. بعد هذه الإزالة سيبقى ${presents}.';
+	@override String fondateurs({required Object exiges, required Object presents}) => 'يجب أن يكون بين المشاركين ⁨${exiges}⁩ مؤسسين على الأقل. المؤسسون المختارون: ⁨${presents}⁩.';
+	@override String fondateursRetrait({required Object exiges, required Object presents}) => 'يجب أن يكون بين المشاركين ⁨${exiges}⁩ مؤسسين على الأقل. بعد هذه الإزالة سيبقى ⁨${presents}⁩.';
 	@override String get debut => 'اختر موعدًا بعد خمس دقائق على الأقل من الآن، خلال الأيام التسعين القادمة.';
 	@override String get duree => 'تتراوح المدة بين 15 و120 دقيقة.';
 	@override String get tropNombreux => 'اثنا عشر مشاركًا على الأكثر.';
@@ -24589,9 +24589,9 @@ extension on TraductionsAr {
 			'admin.candidatures.retours.rejoue' => 'سبق تنفيذ هذا الإجراء: لم يُكتب شيء مرة ثانية.',
 			'admin.candidatures.entretien.aucun' => 'لم تُحدَّد أي مقابلة.',
 			'admin.candidatures.entretien.planifier' => 'تحديد موعد المقابلة',
-			'admin.candidatures.entretien.quand' => ({required Object date, required Object heure, required Object duree}) => 'يوم ${date} على الساعة ${heure} (توقيت هذا الجهاز)، لمدة ${duree} د.',
-			'admin.candidatures.entretien.fondateurs' => ({required Object n}) => 'المؤسسون بين المشاركين: ${n}',
-			'admin.candidatures.entretien.minimum' => ({required Object n}) => 'الحد الأدنى المطلوب: ${n}',
+			'admin.candidatures.entretien.quand' => ({required Object date, required Object heure, required Object duree}) => 'يوم ⁨${date}⁩ على الساعة ⁨${heure}⁩ (توقيت هذا الجهاز)، لمدة ⁨${duree}⁩ د.',
+			'admin.candidatures.entretien.fondateurs' => ({required Object n}) => 'المؤسسون بين المشاركين: ⁨${n}⁩',
+			'admin.candidatures.entretien.minimum' => ({required Object n}) => 'الحد الأدنى المطلوب: ⁨${n}⁩',
 			'admin.candidatures.entretien.regleInactive' => 'قاعدة المؤسسين معطَّلة.',
 			'admin.candidatures.entretien.participants' => 'المشاركون',
 			'admin.candidatures.entretien.fondateur' => 'مؤسس',
@@ -24603,10 +24603,10 @@ extension on TraductionsAr {
 			'admin.candidatures.entretien.auteurInconnu' => 'أحد المشاركين',
 			'admin.candidatures.entretien.presences' => 'الدخول إلى القاعة والخروج منها',
 			'admin.candidatures.entretien.aucunePresence' => 'لم يدخل أحد القاعة بعد.',
-			'admin.candidatures.entretien.entree' => ({required Object nom, required Object heure}) => 'دخول ⁨${nom}⁩ على الساعة ${heure}',
-			'admin.candidatures.entretien.sortie' => ({required Object nom, required Object heure}) => 'خروج ⁨${nom}⁩ على الساعة ${heure}',
+			'admin.candidatures.entretien.entree' => ({required Object nom, required Object heure}) => 'دخول ⁨${nom}⁩ على الساعة ⁨${heure}⁩',
+			'admin.candidatures.entretien.sortie' => ({required Object nom, required Object heure}) => 'خروج ⁨${nom}⁩ على الساعة ⁨${heure}⁩',
 			'admin.candidatures.entretien.consigner' => 'تسجيل نتيجة المقابلة',
-			'admin.candidatures.entretien.dernier' => ({required Object date, required Object issue}) => 'آخر مقابلة: ${date}. ${issue}.',
+			'admin.candidatures.entretien.dernier' => ({required Object date, required Object issue}) => 'آخر مقابلة: ⁨${date}⁩. ⁨${issue}⁩.',
 			'admin.candidatures.entretien.lectureEchec' => 'تعذّرت قراءة المقابلة.',
 			'admin.candidatures.entretien.avis.favorable' => 'رأي إيجابي',
 			'admin.candidatures.entretien.avis.reserve' => 'رأي متحفّظ',
@@ -24621,9 +24621,9 @@ extension on TraductionsAr {
 			'admin.candidatures.entretien.feuille.heure' => 'الساعة',
 			'admin.candidatures.entretien.feuille.heureAide' => 'توقيت هذا الجهاز.',
 			'admin.candidatures.entretien.feuille.duree' => 'المدة',
-			'admin.candidatures.entretien.feuille.dureeValeur' => ({required Object n}) => '${n} د',
+			'admin.candidatures.entretien.feuille.dureeValeur' => ({required Object n}) => '⁨${n}⁩ د',
 			'admin.candidatures.entretien.feuille.participantsAide' => 'اختر بحرية من الفريق في هذا الجانب.',
-			'admin.candidatures.entretien.feuille.fondateursChoisis' => ({required Object n}) => 'المؤسسون المختارون: ${n}',
+			'admin.candidatures.entretien.feuille.fondateursChoisis' => ({required Object n}) => 'المؤسسون المختارون: ⁨${n}⁩',
 			'admin.candidatures.entretien.feuille.jourManquant' => 'اختر يومًا.',
 			'admin.candidatures.entretien.feuille.heureManquante' => 'اختر ساعة.',
 			'admin.candidatures.entretien.feuille.dureeManquante' => 'اختر مدة.',
@@ -24641,8 +24641,8 @@ extension on TraductionsAr {
 			'admin.candidatures.entretien.feuille.envoyerPlanifier' => 'تحديد الموعد',
 			'admin.candidatures.entretien.feuille.envoyerAjouter' => 'إضافة',
 			'admin.candidatures.entretien.feuille.envoyerConsigner' => 'تسجيل',
-			'admin.candidatures.entretien.refus.fondateurs' => ({required Object exiges, required Object presents}) => 'يجب أن يكون بين المشاركين ${exiges} مؤسسين على الأقل. المؤسسون المختارون: ${presents}.',
-			'admin.candidatures.entretien.refus.fondateursRetrait' => ({required Object exiges, required Object presents}) => 'يجب أن يكون بين المشاركين ${exiges} مؤسسين على الأقل. بعد هذه الإزالة سيبقى ${presents}.',
+			'admin.candidatures.entretien.refus.fondateurs' => ({required Object exiges, required Object presents}) => 'يجب أن يكون بين المشاركين ⁨${exiges}⁩ مؤسسين على الأقل. المؤسسون المختارون: ⁨${presents}⁩.',
+			'admin.candidatures.entretien.refus.fondateursRetrait' => ({required Object exiges, required Object presents}) => 'يجب أن يكون بين المشاركين ⁨${exiges}⁩ مؤسسين على الأقل. بعد هذه الإزالة سيبقى ⁨${presents}⁩.',
 			'admin.candidatures.entretien.refus.debut' => 'اختر موعدًا بعد خمس دقائق على الأقل من الآن، خلال الأيام التسعين القادمة.',
 			'admin.candidatures.entretien.refus.duree' => 'تتراوح المدة بين 15 و120 دقيقة.',
 			'admin.candidatures.entretien.refus.tropNombreux' => 'اثنا عشر مشاركًا على الأكثر.',

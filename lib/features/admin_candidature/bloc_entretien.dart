@@ -39,6 +39,7 @@ import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
 import '../../core/i18n/dates_appareil.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -409,10 +410,12 @@ class _EntretienOuvert extends ConsumerWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         TexteSansCoupure(
-          e.quand(
-            date: dateCourteCandidature(entretien.debut),
-            heure: heureDeLAppareil(local),
-            duree: '${entretien.dureeMinutes}',
+          LibellesGroupe.insecable(
+            e.quand(
+              date: dateCourteCandidature(entretien.debut),
+              heure: heureDeLAppareil(local),
+              duree: '${entretien.dureeMinutes}',
+            ),
           ),
           style: textes.bodyLarge,
         ),
@@ -779,47 +782,50 @@ class _EtatPlanifier extends ConsumerState<FeuillePlanifierEntretien>
         ),
         if (tente && _jour == null) _erreurChamp(context, f.jourManquant),
         Ecart.vLg,
-        Wrap(
-          spacing: AppSpacing.md,
-          runSpacing: AppSpacing.md,
-          children: <Widget>[
-            MenuFiltre<int>(
-              key: const ValueKey<String>('entretien-heure'),
-              libelle: f.heure,
-              valeur: _heure,
-              entrees: <EntreeFiltre<int>>[
-                for (final int m in heuresEntretien)
-                  EntreeFiltre<int>(
-                    valeur: m,
-                    libelle: heureDeLAppareil(
-                      DateTime(2000, 1, 1, m ~/ 60, m % 60),
-                    ),
+        // Des choix de formulaire, pas des filtres : un menu par ligne,
+        // comme l'heure d'un creneau de Classe (feuille_creneau.dart).
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: MenuFiltre<int>(
+            key: const ValueKey<String>('entretien-heure'),
+            libelle: f.heure,
+            valeur: _heure,
+            entrees: <EntreeFiltre<int>>[
+              for (final int m in heuresEntretien)
+                EntreeFiltre<int>(
+                  valeur: m,
+                  libelle: heureDeLAppareil(
+                    DateTime(2000, 1, 1, m ~/ 60, m % 60),
                   ),
-              ],
-              onChoix: (int? m) {
-                if (m != null) modifie(() => _heure = m);
-              },
-            ),
-            MenuFiltre<int>(
-              key: const ValueKey<String>('entretien-duree'),
-              libelle: f.duree,
-              valeur: _duree,
-              entrees: <EntreeFiltre<int>>[
-                for (final int d in dureesEntretien)
-                  EntreeFiltre<int>(
-                    valeur: d,
-                    libelle: f.dureeValeur(n: '$d'),
-                  ),
-              ],
-              onChoix: (int? d) {
-                if (d != null) modifie(() => _duree = d);
-              },
-            ),
-          ],
+                ),
+            ],
+            onChoix: (int? m) {
+              if (m != null) modifie(() => _heure = m);
+            },
+          ),
         ),
+        if (tente && _heure == null) _erreurChamp(context, f.heureManquante),
         Ecart.vSm,
         _Muet(f.heureAide),
-        if (tente && _heure == null) _erreurChamp(context, f.heureManquante),
+        Ecart.vMd,
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: MenuFiltre<int>(
+            key: const ValueKey<String>('entretien-duree'),
+            libelle: f.duree,
+            valeur: _duree,
+            entrees: <EntreeFiltre<int>>[
+              for (final int d in dureesEntretien)
+                EntreeFiltre<int>(
+                  valeur: d,
+                  libelle: LibellesGroupe.insecable(f.dureeValeur(n: '$d')),
+                ),
+            ],
+            onChoix: (int? d) {
+              if (d != null) modifie(() => _duree = d);
+            },
+          ),
+        ),
         Ecart.vLg,
         _titreChamp(context, e.participants),
         Ecart.vSm,
