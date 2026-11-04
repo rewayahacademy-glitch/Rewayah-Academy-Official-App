@@ -79,7 +79,10 @@ void main() {
         <String, Object?>{
           'maintenant': '2026-10-20T06:00:00Z',
           'moi': _paris(),
-          'enseignant': <String, Object?>{..._abidjan, 'source': 'enseignant'},
+          'enseignant': const <String, Object?>{
+            ..._abidjan,
+            'source': 'enseignant',
+          },
         },
       );
       expect(lus.relireA, DateTime.utc(2026, 10, 25, 1));
@@ -92,7 +95,7 @@ void main() {
         <String, Object?>{
           'maintenant': '2026-10-20T06:00:00Z',
           'moi': _paris(),
-          'enseignant': <String, Object?>{
+          'enseignant': const <String, Object?>{
             ..._abidjan,
             'titre': 'sayyid',
             'prenom': 'Karim',
@@ -118,7 +121,7 @@ void main() {
         <String, Object?>{
           'maintenant': '2026-10-20T06:00:00Z',
           'moi': _paris(),
-          'enseignant': <String, Object?>{
+          'enseignant': const <String, Object?>{
             ..._abidjan,
             'prenom': 'Amina',
             'source': 'enseignant',
@@ -136,7 +139,7 @@ void main() {
         <String, Object?>{
           'maintenant': '2026-10-20T06:00:00Z',
           'moi': _paris(),
-          'enseignant': <String, Object?>{
+          'enseignant': const <String, Object?>{
             ..._abidjan,
             'titre': 'sayyida',
             'prenom': 'Amina',
@@ -160,7 +163,7 @@ void main() {
           'moi': _abidjan,
           'familles': <Object?>[
             <String, Object?>{..._paris(), 'familles': 2},
-            <String, Object?>{..._abidjan, 'familles': 1},
+            const <String, Object?>{..._abidjan, 'familles': 1},
           ],
         },
       );

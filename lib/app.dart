@@ -13,6 +13,7 @@ import 'core/preferences/preferences_locales.dart';
 import 'core/router/app_router.dart';
 import 'core/session/session_controleur.dart';
 import 'core/session/session_state.dart';
+import 'core/tc_horloge/mon_horloge.dart';
 import 'core/theme/app_palette.dart';
 import 'core/theme/app_theme.dart';
 import 'core/version/bandeau_nouvelle_version.dart';
@@ -62,6 +63,9 @@ class RewayahApp extends ConsumerWidget {
     // Fraicheur (27/10/2026) : une seule veille des classes et des seances,
     // ouverte avec la session, fermee avec elle.
     ref.watch(veilleFraicheurProvider);
+    // FUSEAUX (04/11/2026) : l'heure de chacun vient du fuseau de son profil.
+    // Lue ici une fois, pour que chaque ecran se redessine quand elle arrive.
+    ref.watch(monHorlogeProvider);
     final ThemeMode mode = themeMode ?? ref.watch(modeThemeProvider);
     // MA-2 (question 2 de MA-1b) : la presentation vient du fournisseur
     // unique du Mode Accessibilite, et le theme reste celui d'`AppTheme.pour`

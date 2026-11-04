@@ -20,7 +20,7 @@ class _Port implements PortInterlocuteurs {
   Future<InterlocuteursClasse?> lire(String groupeId) async =>
       InterlocuteursClasse.lire(<String, Object?>{
         'maintenant': '2026-11-04T07:00:30Z',
-        'moi': <String, Object?>{
+        'moi': const <String, Object?>{
           'fuseau': 'Europe/Paris',
           'decalage_secondes': 3600,
           'prochain_changement': '2027-03-28T01:00:00Z',

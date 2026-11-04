@@ -53,7 +53,7 @@ class _Interlocuteurs implements PortInterlocuteurs {
 
   @override
   Future<InterlocuteursClasse?> lire(String groupeId) async =>
-      InterlocuteursClasse.lire(<String, Object?>{
+      InterlocuteursClasse.lire(const <String, Object?>{
         'maintenant': '2026-11-04T10:00:00Z',
         'moi': <String, Object?>{
           'fuseau': 'Asia/Riyadh',
