@@ -11,6 +11,7 @@ import '../../core/presence/vue_presence.dart';
 import '../../core/seance_famille/seance_famille.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/heure_double.dart';
 import '../../core/tc_horloge/horloge_vivante.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/theme/app_color_pair.dart';
@@ -215,6 +216,7 @@ class CarteSeanceClasse extends ConsumerWidget {
     final AffichageSeance affichage = AffichageSeance.depuis(
       laSeance,
       maintenantServeurUtc: maintenantServeurUtc,
+      groupeId: contexte.classeId,
     );
     final EtatPresence? presence = presenceUtile(affichage.etat)
         ? maPresence(
@@ -247,7 +249,19 @@ class CarteSeanceClasse extends ConsumerWidget {
         compact: compact,
         annulee: affichage.etatPastille == EtatPastilleSeance.annulee,
       ),
-      if (affichage.heureClasse != null) ...<Widget>[
+      // FUSEAUX (04/11/2026) : l'heure de l'enseignant chez lui ; tant qu'elle
+      // n'est pas lue, celle de la classe.
+      if (affichage.groupeId != null && affichage.debutUtc != null) ...<Widget>[
+        Ecart.vSm,
+        HeureDouble(
+          groupeId: affichage.groupeId!,
+          instantUtc: affichage.debutUtc!,
+          moi: affichage.horlogeFoyer,
+          classe: affichage.horlogeClasse,
+          avecLaSienne: false,
+          annulee: affichage.etatPastille == EtatPastilleSeance.annulee,
+        ),
+      ] else if (affichage.heureClasse != null) ...<Widget>[
         Ecart.vSm,
         Text(affichage.heureClasse!, style: discret),
       ],

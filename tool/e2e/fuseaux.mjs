@@ -54,6 +54,13 @@ async function voir(c, motif, quoi, delai = 25000) {
   verifier(ok, quoi);
 }
 
+/// La connexion, reprise une fois si le champ du mot de passe est encore la
+/// (une lettre perdue a la saisie, deja vu dans tool/e2e/mfa_direction.mjs).
+async function entrer(c, courriel) {
+  await connecter(c.page, courriel);
+  if (await c.page.locator('input[type=password]').count()) await connecter(c.page, courriel);
+}
+
 function creerCompte(courriel) {
   return sql(`with nouveau as (
     insert into auth.users (instance_id, id, aud, role, email, encrypted_password,
@@ -143,7 +150,7 @@ try {
       const nom = `${v.nom}_${l.code}`;
       p.dire(`-- 2. ${nom} : le tuteur a Paris`);
       const c = await p.contexte('tuteur', { vue: v.vue, langue: l.langue });
-      await connecter(c.page, TUTEUR);
+      await entrer(c, TUTEUR);
       await vers(c.page, `/tuteur/classes/${G}?eleve=${E}`);
       await voir(c, ABIDJAN, `${nom} : fiche de la classe, l'heure de l'enseignant a Abidjan`);
       await voir(c, CHEZ_SAYYID, `${nom} : fiche de la classe, « Chez Sayyid »`, 5000);
@@ -155,7 +162,7 @@ try {
 
       p.dire(`-- 3. ${nom} : l'enseignant a Abidjan`);
       const e = await p.contexte('enseignant', { vue: v.vue, langue: l.langue });
-      await connecter(e.page, COMPTES.enseignant);
+      await entrer(e, COMPTES.enseignant);
       await vers(e.page, `/enseignant/groupe/${G}`);
       await voir(e, PARIS, `${nom} : fiche de la classe, l'heure de la famille a Paris`);
       await voir(e, FAMILLE, `${nom} : « 1 famille », jamais un nom`, 5000);
@@ -169,7 +176,7 @@ try {
   p.dire('-- 5. un profil sans fuseau : la Journee le dit');
   sql(`update public.teacher_profiles set timezone_iana = '' where profile_id = '${prof}'`);
   const s = await p.contexte('enseignant', { vue: VUES[0].vue });
-  await connecter(s.page, COMPTES.enseignant);
+  await entrer(s, COMPTES.enseignant);
   await vers(s.page, '/enseignant/journee');
   await voir(s, APPAREIL, 'profil sans fuseau : « Heure de cet appareil »');
   await p.capture(s, '390_fr_4_sans_fuseau_journee');

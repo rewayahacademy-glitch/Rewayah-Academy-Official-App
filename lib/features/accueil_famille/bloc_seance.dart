@@ -54,9 +54,14 @@ class AffichageSeance {
   /// `null` pour l'instant : aucune horloge serveur, l'etat est
   /// `horaireIncertain` et l'heure est celle de l'appareil, **dite comme
   /// telle** (« Heure de cet appareil »), jamais un fuseau devine.
+  ///
+  /// [groupeId] : la classe connue de l'ecran, quand la seance ne la porte
+  /// pas (`mes_seances_v` n'a pas `groupe_id`) ; elle sert a lire l'heure de
+  /// l'enseignant (FUSEAUX, 04/11/2026).
   factory AffichageSeance.depuis(
     SeanceFamille seance, {
     required DateTime? maintenantServeurUtc,
+    String? groupeId,
   }) {
     final HorlogeAffichee? foyer = seance.heureFoyer;
     final HorlogeAffichee? classe = seance.heureGroupe;
@@ -67,7 +72,7 @@ class AffichageSeance {
         maintenantServeurUtc: maintenantServeurUtc,
       ),
       restant: restantAvant(seance, maintenantServeurUtc: maintenantServeurUtc),
-      groupeId: seance.groupeId,
+      groupeId: seance.groupeId ?? groupeId,
       debutUtc: seance.debutUtc,
       horlogeFoyer: foyer,
       horlogeClasse: classe,
@@ -334,9 +339,9 @@ class BlocSeance extends StatelessWidget {
       heures,
       // FUSEAUX (04/11/2026) : l'heure de chaque interlocuteur (l'enseignant
       // chez lui) ; tant qu'elle n'est pas lue, celle de la classe.
-      if (affichage.groupeId != null &&
-          affichage.debutUtc != null &&
-          affichage.horlogeFoyer != null) ...<Widget>[
+      // L'heure du foyer peut manquer (« Heure de cet appareil ») : la ligne
+      // de l'enseignant reste, lue par la classe (R3 FUSEAUX, 04/11/2026).
+      if (affichage.groupeId != null && affichage.debutUtc != null) ...<Widget>[
         Ecart.vSm,
         HeureDouble(
           groupeId: affichage.groupeId!,
