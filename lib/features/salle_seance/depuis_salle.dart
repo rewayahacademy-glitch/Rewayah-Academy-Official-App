@@ -118,6 +118,8 @@ abstract final class DepuisSalle {
                   EleveSeance(
                     prenom: p.nom,
                     statut: StatutEleveSeance.connecte,
+                    // L'identite LiveKit est l'identifiant de profil.
+                    profilId: p.identite.isEmpty ? null : p.identite,
                   ),
             ]
           : enseignant
@@ -132,6 +134,7 @@ abstract final class DepuisSalle {
                     id: p.identifiantImmuable.isEmpty
                         ? null
                         : p.identifiantImmuable,
+                    profilId: p.profilId.isEmpty ? null : p.profilId,
                   ),
             ]
           : const <EleveSeance>[],

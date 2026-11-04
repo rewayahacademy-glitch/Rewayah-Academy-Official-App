@@ -21,6 +21,7 @@ import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pin_pad.dart';
+import '../foyer/photo_eleve.dart';
 import 'saisie_code_page.dart';
 
 /// Les moments successifs de `ELV-01`.
@@ -601,6 +602,13 @@ class _CarteProfil extends StatelessWidget {
         child: AvatarNom.vertical(
           prenom: profil.prenom,
           diametre: AppAvatar.grand,
+          // PHOTOS-2a : la photo de l'enfant sur son appareil.
+          avatar: PhotoEleve(
+            prenom: profil.prenom,
+            cleAvatar: null,
+            personneId: profil.id,
+            diametre: AppAvatar.grand,
+          ),
           styleNom: Theme.of(context).textTheme.titleLarge,
         ),
       ),
@@ -654,6 +662,12 @@ class _Pave extends StatelessWidget {
             child: AvatarNom.vertical(
               prenom: profil!.prenom,
               diametre: AppAvatar.grand,
+              avatar: PhotoEleve(
+                prenom: profil!.prenom,
+                cleAvatar: null,
+                personneId: profil!.id,
+                diametre: AppAvatar.grand,
+              ),
               styleNom: Theme.of(context).textTheme.titleMedium,
             ),
           ),

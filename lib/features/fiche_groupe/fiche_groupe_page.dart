@@ -901,6 +901,7 @@ LigneRubrique _ligneMembre(
       child: PhotoEleve(
         prenom: membre.libelle,
         cleAvatar: projection?.cleAvatar,
+        personneId: membre.studentId,
         diametre: AppAvatar.petit,
       ),
     ),

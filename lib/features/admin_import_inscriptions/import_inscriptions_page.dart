@@ -59,6 +59,7 @@ import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/zone_saisie.dart';
 import '../admin_invitations/invitations_familles.dart';
+import '../mfa_controleur/double_verification.dart';
 import '../salle_seance/information_controle.dart' show coupuresAdresse;
 import 'selecteur_csv.dart';
 
@@ -389,12 +390,25 @@ class _ImportInscriptionsPageState
             },
             construire: (CapacitesImport c) {
               if (!c.peutImporter) {
+                // MFA-DIRECTION : la direction en aal1 saisit son code ici, puis
+                // les capacites sont relues.
+                final bool monter = peutMonterIci(ref);
                 return c.doubleVerificationRequise
                     ? EtatSysteme(
                         key: const ValueKey<String>('import-double'),
                         nature: NatureEtat.accesRefuse,
                         titre: a.acces.doubleTitre,
                         phrase: a.acces.doublePhrase,
+                        libelleAction: monter
+                            ? t.compte.doubleVerification.saisirCode
+                            : null,
+                        onAction: monter
+                            ? () async {
+                                if (await demanderDoubleVerification(context)) {
+                                  ref.invalidate(capacitesImportProvider);
+                                }
+                              }
+                            : null,
                       )
                     : const EtatSysteme(
                         key: ValueKey<String>('import-refuse'),

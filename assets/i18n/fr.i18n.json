@@ -2088,7 +2088,7 @@
         "comptableExplication": "Il suit les paiements, les encaissements et la trésorerie. Il n'anime aucune classe.",
         "champEmail": "Adresse de courriel du comptable",
         "creee": "Invitation créée. Transmettez ce code au comptable\u00a0: {code}",
-        "doubleVerification": "Double vérification requise\u00a0: seule la direction connectée avec sa double vérification peut inviter un comptable ou révoquer son invitation. Reconnectez-vous avec la double vérification, puis réessayez.",
+        "doubleVerification": "Rien n'est parti : inviter un comptable demande la double vérification. Activez-la dans Compte > Sécurité, puis réessayez.",
         "liste": "Invitations de comptables",
         "vide": "Aucune invitation de comptable pour le moment",
         "videDetail": "Invitez un comptable avec son adresse e-mail\u00a0: le code apparaît ici."
@@ -3738,7 +3738,7 @@
       },
       "echec": {
         "horsLigne": "L'import n'a pas pu être confirmé\u00a0: relancez la confirmation dès le retour du réseau. Rien ne sera créé en double.",
-        "refuse": "Le serveur refuse cet import. Vérifiez que vous êtes connecté avec la double vérification, puis réessayez.",
+        "refuse": "Rien n'a été importé : cet import demande la double vérification. Activez-la dans Compte > Sécurité, puis réessayez.",
         "invalide": "Le serveur ne peut pas lire ces fichiers. Vérifiez l'en-tête et les guillemets, puis réessayez.",
         "serveur": "L'import n'a pas pu être confirmé. Réessayez\u00a0: rien ne sera créé en double.",
         "apercu": "L'essai à blanc du serveur n'a pas abouti. Réessayez dans un instant."
@@ -4951,7 +4951,7 @@
       "vide": "Aucune demande de suppression.",
       "erreur": "Les demandes n'ont pas pu être chargées. Réessayez.",
       "sansDonnees": "Les demandes de suppression n'ont pas pu être chargées",
-      "refuse": "Seule la direction connectée avec la double vérification traite ces demandes. Reconnectez-vous avec votre code de vérification, puis réessayez.",
+      "refuse": "Cette action demande la double vérification. Activez-la dans Compte > Sécurité.",
       "indisponibleTitre": "Suppressions de compte indisponibles",
       "indisponiblePhrase": "Cette fonction sera disponible au branchement serveur.",
       "etat": {
@@ -5433,7 +5433,7 @@
         "publicationFaite": "Version publiée",
         "publicationFaiteDetail": "Rewayah a enregistré la nouvelle version. Elle s'appliquera à partir de sa date d'effet\u00a0; d'ici là, la version active continue de s'appliquer.",
         "publicationRefusee": "Publication refusée",
-        "publicationRefuseeDetail": "Seule la direction, connectée avec la double vérification, publie les prix. Rien n'a été publié\u00a0: reconnectez-vous avec votre code de vérification, puis réessayez.",
+        "publicationRefuseeDetail": "Rien n'a été publié : publier les prix demande la double vérification. Activez-la dans Compte > Sécurité, puis réessayez.",
         "publicationInvalide": "Une valeur ne convient pas",
         "publicationInvalideDetail": "Rewayah a refusé cette version\u00a0: la date d'effet doit être à venir et après la dernière version, et chaque remise doit rester inférieure au tarif. Rien n'a été publié\u00a0: corrigez puis réessayez.",
         "champsACorriger": "Corrigez d'abord les champs signalés",
@@ -6536,6 +6536,27 @@
     "habilitation": "Habilité",
     "deconnexion": "Se déconnecter",
     "deconnexionDetail": "Mettre fin à la session sur cet appareil",
+    "doubleVerification": {
+      "rubriqueDetail": "La double vérification des gestes sensibles de la direction",
+      "saisirCode": "Saisir mon code de vérification",
+      "titre": "Sécurité",
+      "sousTitre": "La double vérification protège les gestes sensibles de la direction : supprimer ou restaurer un compte, traiter une demande de suppression, publier la politique commerciale, importer des formulaires, inviter un comptable.",
+      "titreEnrolement": "Activez la double vérification",
+      "introEnrolement": "Un lien de connexion volé ne doit pas suffire pour supprimer un compte. Ajoutez une seconde étape avec une application d'authentification sur votre téléphone. Vous ne le faites qu'une fois ; le code vous est ensuite demandé au moment d'un geste sensible.",
+      "videPhrase": "Installez-en une sur votre téléphone, par exemple Google Authenticator, Microsoft Authenticator ou Aegis, puis revenez ici.",
+      "activeeTitre": "La double vérification est activée",
+      "activeePhrase": "Le code de votre application d'authentification vous sera demandé au moment d'un geste sensible, une fois par connexion.",
+      "feuille": {
+        "titre": "Code de vérification",
+        "intro": "Ce geste demande la double vérification. Ouvrez votre application d'authentification et saisissez le code à six chiffres affiché pour ce compte.",
+        "confirmer": "Confirmer le code et continuer",
+        "aActiverTitre": "Activez d'abord la double vérification",
+        "aActiverPhrase": "Ce geste demande la double vérification. Activez-la une fois dans Compte > Sécurité, puis recommencez le geste.",
+        "ouvrirSecurite": "Ouvrir Compte > Sécurité",
+        "erreur": "Le code n'est pas confirmé : la demande n'est peut-être pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+        "horsLigne": "Rien n'est parti : le réseau est absent. Réessayez dès son retour."
+      }
+    },
     "identifiant": "Identifiant",
     "nonDisponible": "Non disponible",
     "contact": "Contact",

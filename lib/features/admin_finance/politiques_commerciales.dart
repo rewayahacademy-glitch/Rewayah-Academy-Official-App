@@ -80,6 +80,7 @@ import '../../core/widgets/ligne_finance.dart';
 import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../mfa_controleur/double_verification.dart';
 import 'reserve_delegation/saisie_politique.dart'
     show caracteresSaisie, deviseDeLancement, lireMontant, texteMontant;
 import 'vue_globale_finance.dart' show pourMilleEnTexte;
@@ -1036,9 +1037,13 @@ class _PolitiquesCommercialesContenuState
     setState(() => _enCours = true);
     _Publication resultat;
     try {
-      await ref
-          .read(portPolitiquesCommercialesProvider)
-          .publier(_brouillonAEcran());
+      // MFA-DIRECTION : en aal1, le code est demande puis le geste rejoue.
+      final PolitiqueCommerciale brouillon = _brouillonAEcran();
+      await avecDoubleVerification(
+        context,
+        ref,
+        () => ref.read(portPolitiquesCommercialesProvider).publier(brouillon),
+      );
       // Le serveur rend la version qu'il a inscrite (FAC-A-01) : la
       // publication est faite. Les versions sont relues pour proposer le
       // brouillon suivant.
