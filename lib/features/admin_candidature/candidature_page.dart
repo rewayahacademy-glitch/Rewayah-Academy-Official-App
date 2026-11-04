@@ -91,6 +91,10 @@ class _EtatCandidatureDirectionPage
   /// serveur.
   String? _retour;
 
+  /// V2-a : le retour local du dernier geste d'entretien, dit dans la section
+  /// Entretien.
+  String? _retourEntretien;
+
   DemandeDossier get _demande =>
       DemandeDossier(widget.reference, id: widget.identifiant);
 
@@ -129,6 +133,7 @@ class _EtatCandidatureDirectionPage
     );
     if (!mounted || sortie == null) return;
     _relire(identifiant: detail.ligne.id);
+    _retourEntretien = null;
     if (sortie.issue == IssueFeuille.fait) {
       setState(
         () => _retour = sortie.rejoue
@@ -244,9 +249,13 @@ class _EtatCandidatureDirectionPage
           retour: _retour,
           onGeste: (GesteCandidature g) => _geste(g, d, capacites),
           onOuvrirDossier: () => context.go(Routes.adminPersonnesDossiers),
+          retourEntretien: _retourEntretien,
           onEntretien: (String message) {
             _relire(identifiant: d.ligne.id);
-            setState(() => _retour = message);
+            setState(() {
+              _retour = null;
+              _retourEntretien = message;
+            });
           },
         ),
       ),
@@ -268,6 +277,7 @@ class _Contenu extends ConsumerWidget {
     required this.onOuvrirDossier,
     required this.onEntretien,
     this.retour,
+    this.retourEntretien,
   });
 
   final DetailCandidature detail;
@@ -279,6 +289,9 @@ class _Contenu extends ConsumerWidget {
 
   /// V2-a : un geste d'entretien est fait, avec son retour local.
   final ValueChanged<String> onEntretien;
+
+  /// V2-a : le retour local du dernier geste d'entretien.
+  final String? retourEntretien;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -320,6 +333,7 @@ class _Contenu extends ConsumerWidget {
         capacites: capacites,
         horsLigne: horsLigne,
         onFait: onEntretien,
+        retour: retourEntretien,
       ),
     );
     final Widget responsable = BlocResponsable(detail: detail);

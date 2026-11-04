@@ -18,7 +18,9 @@
 //      le dernier entretien.
 // Puis Configuration > Regles, section Entretiens, aux deux largeurs.
 //
-// Amorce (SQL local) : une enseignante active, fondatrice, du meme cote que
+// Amorce (SQL local) : une comptable active (le personnel compte direction,
+// enseignants, comptables et controleurs ; un enseignant actif exige ses
+// signatures), fondatrice, du meme cote que
 // la direction (CAND-Q07) ; la direction cochee fondatrice ; une candidate par
 // largeur. Rien n'est efface.
 // Usage : node tool/e2e/v2a_entretien.mjs
@@ -61,7 +63,7 @@ function amorcer() {
   direction = sql(`select id from auth.users where email = '${COMPTES.direction}'`);
   hafsa = creerCompte(`e2e-v2a-hafsa-${n}@example.com`);
   sql(`insert into public.profiles (id, immutable_id, role, first_name, last_name, account_status, gender)
-       values ('${hafsa}', '${matricule()}', 'teacher', 'Hafsa', 'Fondatrice${n}', 'active', 'female')`);
+       values ('${hafsa}', '${matricule()}', 'accountant', 'Hafsa', 'Fondatrice${n}', 'active', 'female')`);
   for (const id of [direction, hafsa]) {
     sql(`insert into public.personnel_fondateurs (profile_id, fondateur, modifie_par)
          values ('${id}', true, '${direction}')
@@ -94,12 +96,15 @@ async function voir(c, texte, nom) {
   await p.capture(c, nom);
 }
 
-async function choisirJourEtHeure(page) {
+// Un jour et une heure propres a chaque passage : la seance d'entretien est
+// au nom de la direction, qui ne peut pas avoir deux seances au meme moment
+// (un passage precedent garde les siennes, rien n'est efface).
+async function choisirJourEtHeure(page, decalage) {
   const jour = await trouver(page, /^Jour\b/, { delai: 8000 });
   verifier(jour !== null, 'le champ « Jour »');
   await amenerEnVue(page, jour); await jour.click(); await page.waitForTimeout(1200);
   await activerSemantique(page);
-  const dans = new Date(Date.now() + 3 * 86400000);
+  const dans = new Date(Date.now() + (3 + ((n + decalage) % 20)) * 86400000);
   if (dans.getMonth() !== new Date().getMonth()) {
     const suivant = await trouver(page, /mois suivant|Next month/i, { delai: 4000 });
     if (suivant) { await suivant.click(); await page.waitForTimeout(800); }
@@ -113,9 +118,11 @@ async function choisirJourEtHeure(page) {
   const heure = await trouver(page, /^Heure\b/, { delai: 8000, role: 'button' });
   verifier(heure !== null, 'le menu « Heure »');
   await amenerEnVue(page, heure); await heure.click(); await page.waitForTimeout(900);
-  const h = await trouver(page, /^14:30$/, { delai: 6000, role: 'menuitem' })
-    ?? await trouver(page, /^14:30$/, { delai: 3000 });
-  verifier(h !== null, 'menu : 14:30');
+  const minutes = 6 * 60 + 30 * ((n + decalage) % 32);
+  const libelle = `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
+  const h = await trouver(page, new RegExp(`^${libelle}$`), { delai: 6000, role: 'menuitem' })
+    ?? await trouver(page, new RegExp(`^${libelle}$`), { delai: 3000 });
+  verifier(h !== null, `menu : ${libelle}`);
   await amenerEnVue(page, h); await h.click(); await page.waitForTimeout(900);
 }
 
@@ -129,6 +136,13 @@ async function passage(largeur, hauteur) {
   const tag = `${JOUR}_${largeur}`;
   const cand = candidate(largeur);
   const c = await p.contexte('direction', { vue: { width: largeur, height: hauteur } });
+  // Les appels au serveur des gestes d'entretien, au journal.
+  c.page.on('response', async (r) => {
+    if (/rpc\/(planifier|ajouter|retirer|consigner|lire)_/.test(r.url())) {
+      p.dire(`  rpc ${r.status()} ${r.url().replace(/^.*rpc\//, '')} ${(await r.text().catch(() => '')).slice(0, 300)}`);
+    }
+  });
+  c.page.on('console', (m) => { if (m.type() === 'error') p.dire(`  console ${m.text().slice(0, 300)}`); });
   await connecter(c.page, COMPTES.direction);
   await ouvrir(c.page, `/#/admin/personnes/candidatures/${encodeURIComponent(cand.ref)}`);
   await c.page.waitForTimeout(4000); await activerSemantique(c.page);
@@ -142,7 +156,7 @@ async function passage(largeur, hauteur) {
   verifier(await attendreTexte(c.page, /Minimum exigé\s*:\s*2/, 10000),
     `${largeur} : la feuille dit le minimum (2)`);
   await p.capture(c, `${tag}_2_feuille`);
-  await choisirJourEtHeure(c.page);
+  await choisirJourEtHeure(c.page, largeur);
   await cocher(c.page, /E2E Direction Locale/);
   await cliquer(c.page, /^Planifier$/, { pause: 2500 });
   verifier(await attendreTexte(c.page, /Il faut au moins 2 fondateurs/, 10000),

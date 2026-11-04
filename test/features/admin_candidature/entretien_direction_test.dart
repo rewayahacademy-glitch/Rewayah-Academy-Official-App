@@ -432,6 +432,32 @@ void main() {
     });
   });
 
+  testWidgets('un creneau qui chevauche une autre seance : dit en mots', (
+    WidgetTester tester,
+  ) async {
+    final _FauxEntretiens port = _FauxEntretiens(
+      refusPlanifier: const CreneauOccupe(),
+    );
+    await _monter(tester, port);
+    await _toucher(tester, find.byKey(SectionEntretien.clePlanifier));
+    tester
+        .widget<ChampDate>(find.byType(ChampDate))
+        .onChoix(DateTime(2026, 10, 30));
+    tester.widget<MenuFiltre<int>>(_cle('entretien-heure')).onChoix(10 * 60);
+    await tester.pumpAndSettle();
+    await _toucher(tester, _cle('personnel-p-hafsa'));
+    await _toucher(tester, _cle('personnel-p-salma'));
+    await _toucher(tester, _cle('entretien-valider'));
+    expect(
+      find.text(t.admin.candidatures.entretien.refus.creneauOccupe),
+      findsOneWidget,
+    );
+    expect(
+      find.text(t.admin.candidatures.erreurs.nonConfirmeTitre),
+      findsNothing,
+    );
+  });
+
   group('Entretien ouvert', () {
     testWidgets('date, fondateurs, participants, compte rendu, entrees', (
       WidgetTester tester,

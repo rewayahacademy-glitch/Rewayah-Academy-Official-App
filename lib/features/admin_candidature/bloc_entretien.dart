@@ -48,6 +48,7 @@ import '../../core/widgets/champ_date.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
@@ -64,6 +65,7 @@ class SectionEntretien extends ConsumerWidget {
     required this.capacites,
     required this.horsLigne,
     required this.onFait,
+    this.retour,
     super.key,
   });
 
@@ -76,8 +78,12 @@ class SectionEntretien extends ConsumerWidget {
   /// Hors ligne : aucun geste.
   final bool horsLigne;
 
-  /// Un geste est fait : la page relit la candidature et dit [message].
+  /// Un geste est fait : la page relit la candidature et garde [message].
   final ValueChanged<String> onFait;
+
+  /// Le retour local du dernier geste d'entretien, dit apres la reponse du
+  /// serveur, sous la section (pres du geste), ou `null`.
+  final String? retour;
 
   /// La cle de la section.
   static const Key cle = ValueKey<String>('entretien-section');
@@ -182,7 +188,18 @@ class SectionEntretien extends ConsumerWidget {
     } else {
       corps = const Skeleton.texte(lignes: 2);
     }
-    return KeyedSubtree(key: cle, child: corps);
+    return Column(
+      key: cle,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        corps,
+        if (retour case final String m) ...<Widget>[
+          Ecart.vMd,
+          LocalFeedback(message: m),
+        ],
+      ],
+    );
   }
 }
 
@@ -479,6 +496,7 @@ String messageRefusEntretien(Object refus) {
     DernierParticipant() => r.dernier,
     ParticipantAbsent() => r.absent,
     CompteRenduRequis() => r.compteRendu,
+    CreneauOccupe() => r.creneauOccupe,
     EntretienIntrouvable() => r.introuvable,
     final RefusGeste geste => messageRefus(geste),
     CandidatureHorsPortee() => g.horsPortee,

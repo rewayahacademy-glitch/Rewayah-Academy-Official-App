@@ -3706,7 +3706,8 @@
           "dernier": "L'entretien garde au moins un participant.",
           "absent": "Cette personne ne prend déjà plus part à l'entretien.",
           "compteRendu": "«\u00a0Entretien tenu\u00a0» demande au moins un compte rendu d'un participant.",
-          "introuvable": "Cet entretien n'existe plus de ce côté."
+          "introuvable": "Cet entretien n'existe plus de ce côté.",
+          "creneauOccupe": "Vous avez déjà une séance ou un entretien qui chevauche cette heure. Choisissez une autre heure."
         },
         "retours": {
           "planifie": "Entretien planifié.",

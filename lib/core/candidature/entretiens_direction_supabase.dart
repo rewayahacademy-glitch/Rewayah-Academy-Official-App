@@ -198,7 +198,11 @@ class EntretiensDirectionSupabase implements PortEntretiensDirection {
       rethrow;
     } on CapaciteIndisponible {
       rethrow;
-    } on PostgrestException {
+    } on PostgrestException catch (e) {
+      // La seance d'entretien est au nom de la direction qui planifie : la
+      // contrainte d'exclusion des seances refuse un creneau qui chevauche une
+      // autre de ses seances. Un refus nomme, rien n'a ete ecrit.
+      if (e.code == '23P01') throw const CreneauOccupe();
       rethrow;
     } on Exception {
       // Pas de reponse : le geste est non confirme ; la meme cle le rejoue.

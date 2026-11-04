@@ -471,6 +471,14 @@ final class CompteRenduRequis extends RefusEntretien {
   const CompteRenduRequis();
 }
 
+/// La direction qui planifie porte deja une seance ou un entretien qui
+/// chevauche ce creneau (contrainte d'exclusion des seances, `23P01`) : la
+/// seance d'entretien est a son nom.
+final class CreneauOccupe extends RefusEntretien {
+  /// Cree le refus.
+  const CreneauOccupe();
+}
+
 /// L'entretien n'existe pas, ou plus, de ce cote.
 final class EntretienIntrouvable extends RefusEntretien {
   /// Cree le refus.
