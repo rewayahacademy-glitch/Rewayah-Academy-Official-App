@@ -38,9 +38,11 @@ import 'core/auth/anti_robot.dart';
 import 'core/auth/anti_robot_supabase.dart';
 import 'core/candidature/autres_competences_supabase.dart';
 import 'core/candidature/candidatures_direction_supabase.dart';
+import 'core/candidature/entretiens_direction_supabase.dart';
 import 'core/candidature/ma_candidature_supabase.dart';
 import 'core/candidature/port_autres_competences.dart';
 import 'core/candidature/port_candidatures_direction.dart';
+import 'core/candidature/port_entretiens_direction.dart';
 import 'core/candidature/port_ma_candidature.dart';
 import 'core/capacites/acces_supabase.dart';
 import 'core/capacites/avis_supabase.dart';
@@ -400,6 +402,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // branchement serveur ».
   portCandidaturesDirectionProvider.overrideWithValue(
     CandidaturesDirectionSupabase(Supabase.instance.client),
+  ),
+  // V2-a : les entretiens de la direction (ADM-21, bloc Entretien), sur les
+  // RPC de V1-a et V1-a-bis.
+  portEntretiensDirectionProvider.overrideWithValue(
+    EntretiensDirectionSupabase(Supabase.instance.client),
   ),
   // Ports a defaut « indisponible » (ou en memoire) dont l'adaptateur
   // serveur existe : compte, tresorerie, observations, controleur, support

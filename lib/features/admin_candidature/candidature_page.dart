@@ -50,6 +50,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../admin_candidatures/libelles_candidatures.dart';
 import 'bloc_autres_competences.dart';
+import 'bloc_entretien.dart';
 import 'blocs_candidature.dart';
 import 'feuille_geste.dart';
 import 'gestes_proposes.dart';
@@ -90,6 +91,10 @@ class _EtatCandidatureDirectionPage
   /// serveur.
   String? _retour;
 
+  /// V2-a : le retour local du dernier geste d'entretien, dit dans la section
+  /// Entretien.
+  String? _retourEntretien;
+
   DemandeDossier get _demande =>
       DemandeDossier(widget.reference, id: widget.identifiant);
 
@@ -128,6 +133,7 @@ class _EtatCandidatureDirectionPage
     );
     if (!mounted || sortie == null) return;
     _relire(identifiant: detail.ligne.id);
+    _retourEntretien = null;
     if (sortie.issue == IssueFeuille.fait) {
       setState(
         () => _retour = sortie.rejoue
@@ -243,6 +249,14 @@ class _EtatCandidatureDirectionPage
           retour: _retour,
           onGeste: (GesteCandidature g) => _geste(g, d, capacites),
           onOuvrirDossier: () => context.go(Routes.adminPersonnesDossiers),
+          retourEntretien: _retourEntretien,
+          onEntretien: (String message) {
+            _relire(identifiant: d.ligne.id);
+            setState(() {
+              _retour = null;
+              _retourEntretien = message;
+            });
+          },
         ),
       ),
     );
@@ -261,7 +275,9 @@ class _Contenu extends ConsumerWidget {
     required this.horsLigne,
     required this.onGeste,
     required this.onOuvrirDossier,
+    required this.onEntretien,
     this.retour,
+    this.retourEntretien,
   });
 
   final DetailCandidature detail;
@@ -270,6 +286,12 @@ class _Contenu extends ConsumerWidget {
   final String? retour;
   final ValueChanged<GesteCandidature> onGeste;
   final VoidCallback onOuvrirDossier;
+
+  /// V2-a : un geste d'entretien est fait, avec son retour local.
+  final ValueChanged<String> onEntretien;
+
+  /// V2-a : le retour local du dernier geste d'entretien.
+  final String? retourEntretien;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -306,6 +328,13 @@ class _Contenu extends ConsumerWidget {
     final Widget pieceEntretien = BlocPieceEntretien(
       detail: detail,
       onOuvrirDossier: onOuvrirDossier,
+      entretien: SectionEntretien(
+        detail: detail,
+        capacites: capacites,
+        horsLigne: horsLigne,
+        onFait: onEntretien,
+        retour: retourEntretien,
+      ),
     );
     final Widget responsable = BlocResponsable(detail: detail);
     const Widget affectation = BlocAffectation();
