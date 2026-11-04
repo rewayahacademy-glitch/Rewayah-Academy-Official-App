@@ -329,8 +329,20 @@ abstract final class LibellesGroupe {
   /// puis « imminent ». Les jours se comptent en dates civiles depuis
   /// [debut] (l'heure locale du cours) ; sans [debut], une duree d'un jour ou
   /// plus se dit en jours entiers.
-  static String compteARebours(Duration reste, {DateTime? debut}) =>
-      compteAReboursAvec(reste, debut: debut, textes: textesClasse);
+  ///
+  /// [heureRendue] (FUSEAUX, 04/11/2026) : l'heure du cours deja rendue par le
+  /// serveur dans le fuseau de la personne ; « Demain à » la reprend, pour ne
+  /// jamais dire l'heure de l'appareil sous l'heure du foyer.
+  static String compteARebours(
+    Duration reste, {
+    DateTime? debut,
+    String? heureRendue,
+  }) => compteAReboursAvec(
+    reste,
+    debut: debut,
+    heureRendue: heureRendue,
+    textes: textesClasse,
+  );
 
   /// Les mots du compte a rebours d'une Classe (« Cours dans 12 min »).
   static final TextesCompteARebours textesClasse = (
@@ -347,6 +359,7 @@ abstract final class LibellesGroupe {
     Duration reste, {
     required TextesCompteARebours textes,
     DateTime? debut,
+    String? heureRendue,
   }) {
     final int minutes = minutesAvant(reste);
     if (minutes <= 0) {
@@ -368,7 +381,7 @@ abstract final class LibellesGroupe {
       );
     }
     if (jours == 1 && debut != null) {
-      return insecable(textes.demain(heureDeLAppareil(debut)));
+      return insecable(textes.demain(heureRendue ?? heureDeLAppareil(debut)));
     }
     return insecable(textes.jours(jours));
   }
@@ -439,7 +452,11 @@ abstract final class LibellesGroupe {
       PhaseSeance.avantFenetre =>
         restant == null
             ? prochainCours
-            : compteARebours(restant, debut: horloge.debutUtc.toLocal()),
+            : compteARebours(
+                restant,
+                debut: horloge.debutUtc.toLocal(),
+                heureRendue: horloge.horlogeUtilisateur.heureLocaleRendue,
+              ),
       PhaseSeance.salleOuverte => salleOuverte(
         restant == null ? salleOuverteCourt : compteARebours(restant),
       ),

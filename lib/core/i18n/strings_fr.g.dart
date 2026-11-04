@@ -29813,6 +29813,24 @@ class Traductions$tc$groupe$horloges$fr {
 
 	/// fr: '{heure} {ville}'
 	String heureEtVille({required Object heure, required Object ville}) => '${heure} ${ville}';
+
+	/// fr: 'Chez vous'
+	String get chezVous => 'Chez vous';
+
+	/// fr: 'Chez votre enseignant'
+	String get chezEnseignantAnonyme => 'Chez votre enseignant';
+
+	/// fr: '(one) {{n} famille} (other) {{n} familles}'
+	String familles({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} famille',
+		other: '${n} familles',
+	);
+
+	/// fr: 'Heure à confirmer'
+	String get aConfirmer => 'Heure à confirmer';
+
+	/// fr: 'En ce moment'
+	String get enCeMoment => 'En ce moment';
 }
 
 // Path: tc.groupe.dst
@@ -50743,6 +50761,11 @@ extension on Traductions {
 			'tc.groupe.horloges.chezEnseignant' => ({required Object nomme}) => 'Chez ${nomme}',
 			'tc.groupe.horloges.heureGroupe' => 'Heure de la classe',
 			'tc.groupe.horloges.heureEtVille' => ({required Object heure, required Object ville}) => '${heure} ${ville}',
+			'tc.groupe.horloges.chezVous' => 'Chez vous',
+			'tc.groupe.horloges.chezEnseignantAnonyme' => 'Chez votre enseignant',
+			'tc.groupe.horloges.familles' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} famille', other: '${n} familles', ), 
+			'tc.groupe.horloges.aConfirmer' => 'Heure à confirmer',
+			'tc.groupe.horloges.enCeMoment' => 'En ce moment',
 			'tc.groupe.dst.j30' => 'Changement d\'heure dans un mois',
 			'tc.groupe.dst.j7' => 'Changement d\'heure la semaine prochaine',
 			'tc.groupe.dst.j1' => 'Changement d\'heure demain',
@@ -50888,6 +50911,8 @@ extension on Traductions {
 			'tc.outils.trait.gomme' => 'Gomme',
 			'tc.outils.trait.annuler' => 'Annuler',
 			'tc.outils.trait.plus' => 'Plus',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.trait.ardoise' => 'Ardoise d\'annotation, facultative : le cours reste lisible sans elle',
 			_ => null,
 		} ?? switch (path) {
@@ -51402,6 +51427,8 @@ extension on Traductions {
 			'adulte.invitation.annuler' => 'Annuler l\'invitation',
 			'adulte.invitation.annulerQuestion' => ({required Object dePrenom}) => 'Annuler l\'invitation ${dePrenom} ?',
 			'adulte.invitation.annulerQuestionSansPrenom' => 'Annuler cette invitation ?',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.invitation.annulerHorsLigne' => 'Rien n\'est annulé. Vous pourrez annuler l\'invitation vous-même quand la connexion sera revenue.',
 			_ => null,
 		} ?? switch (path) {
@@ -51916,6 +51943,8 @@ extension on Traductions {
 			'argent.etat.essai' => 'Essai',
 			'argent.etat.essaiCompte' => ({required Object n, required Object max}) => 'Essai : ${n}/${max}',
 			'argent.etat.manque' => 'À financer',
+			_ => null,
+		} ?? switch (path) {
 			'argent.etat.enConfirmation' => 'En confirmation',
 			_ => null,
 		} ?? switch (path) {
@@ -52430,6 +52459,8 @@ extension on Traductions {
 			'com.studio.aujourdhui.blocs.mentions' => 'Mentions et réponses',
 			'com.studio.aujourdhui.blocs.decisions' => 'Décisions en attente',
 			'com.studio.aujourdhui.blocs.echeances' => 'Échéances proches',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.aujourdhui.blocs.activite' => 'Activité récente',
 			_ => null,
 		} ?? switch (path) {
@@ -52944,6 +52975,8 @@ extension on Traductions {
 			'comptable.statuts.profil.verifie' => 'Vérifié',
 			'comptable.statuts.profil.suspendu' => 'Suspendu',
 			'comptable.statuts.profil.actionRequise' => 'Action requise',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.profil.invitationEnvoyee' => 'Invitation envoyée',
 			_ => null,
 		} ?? switch (path) {
@@ -53458,6 +53491,8 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.erreurAction' => 'Le changement n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'comptable.beneficiaires.recevoir.erreurIndisponible' => 'Ce changement n\'est pas encore branché sur le service de paiement. Réessayez plus tard.',
 			'comptable.beneficiaires.recevoir.journalTitre' => 'Historique de mes changements',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.journalVide' => 'Aucun changement enregistré pour l\'instant.',
 			_ => null,
 		} ?? switch (path) {
@@ -53972,6 +54007,8 @@ extension on Traductions {
 			'juridique.conditions.s3.titre' => '3. Les séances',
 			'juridique.conditions.s3.blocs.0' => 'Les séances ont lieu à heure fixe, avec le même enseignant. Être présent et à l\'heure fait partie de l\'engagement.',
 			'juridique.conditions.s3.blocs.1' => 'Une séance écourtée reste due si l\'élève a été présent assez longtemps. Une séance annulée par l\'académie ou par l\'enseignant est remplacée.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.conditions.s3.blocs.2' => 'Un contrôleur qualité peut assister aux séances sans être vu, et un cours peut être enregistré. Si l\'enregistrement devient réel, nous vous le disons avant.',
 			_ => null,
 		} ?? switch (path) {
@@ -54486,6 +54523,8 @@ extension on Traductions {
 			'i1.familles.sansDonnees' => 'Les familles importées',
 			'i1.familles.indisponible' => 'L\'envoi des invitations aux familles n\'est pas encore branché sur ce serveur.',
 			'i1.import.invitationsAide' => 'Chaque nouvelle famille attend votre invitation. La liste juste en dessous l\'envoie à une famille ou à toutes. Rien ne part tout seul.',
+			_ => null,
+		} ?? switch (path) {
 			'i1.lien.dejaServiTitre' => 'Ce lien a déjà servi ou a expiré',
 			_ => null,
 		} ?? switch (path) {

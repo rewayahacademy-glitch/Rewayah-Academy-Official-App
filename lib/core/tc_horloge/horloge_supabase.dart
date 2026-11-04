@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../i18n/strings.g.dart';
+import '../i18n/villes_fuseau.dart';
 import 'port_horloge_seance.dart';
 import 'session_clock_vm.dart';
 
@@ -19,13 +20,6 @@ String dateRendue({required int jourIso, required String dateIso}) {
     numero: jour,
     mois: t.commun.dates.mois[(mois - 1).clamp(0, 11)],
   );
-}
-
-/// Le nom de ville lisible d'un identifiant IANA : `Asia/Riyadh` donne
-/// « Riyadh ». Jamais un décalage numérique.
-String villeDeFuseau(String fuseauIana) {
-  final String dernier = fuseauIana.split('/').last;
-  return dernier.replaceAll('_', ' ');
 }
 
 /// Lit une ligne de `horloge_seance()` en horloge de seance.
@@ -55,7 +49,7 @@ SessionClockVM horlogeDepuisLigne(Map<String, dynamic> ligne) {
     sessionId: ligne['session_id'] as String?,
     horlogeUtilisateur: HorlogeAffichee(
       fuseauIana: tzUtilisateur,
-      libelleVille: villeDeFuseau(tzUtilisateur),
+      libelleVille: villeDuFuseauLibelle(tzUtilisateur),
       heureLocaleRendue: ligne['heure_utilisateur'] as String,
       dateLocaleRendue: dateRendue(
         jourIso: (ligne['jour_iso_utilisateur'] as int?) ?? 1,
@@ -64,7 +58,7 @@ SessionClockVM horlogeDepuisLigne(Map<String, dynamic> ligne) {
     ),
     horlogeContrepartie: HorlogeAffichee(
       fuseauIana: tzGroupe,
-      libelleVille: villeDeFuseau(tzGroupe),
+      libelleVille: villeDuFuseauLibelle(tzGroupe),
       heureLocaleRendue: ligne['heure_groupe'] as String,
       dateLocaleRendue: dateRendue(
         jourIso: (ligne['jour_iso_groupe'] as int?) ?? 1,
