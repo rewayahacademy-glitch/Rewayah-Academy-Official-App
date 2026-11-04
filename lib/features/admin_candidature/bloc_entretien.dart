@@ -505,7 +505,12 @@ String messageRefusEntretien(Object refus, {bool retrait = false}) {
     DernierParticipant() => r.dernier,
     ParticipantAbsent() => r.absent,
     CompteRenduRequis() => r.compteRendu,
-    CreneauOccupe() => r.creneauOccupe,
+    PersonneOccupee(
+      :final String nom,
+      :final DateTime? debut,
+      :final DateTime? fin,
+    ) =>
+      _messageOccupee(nom, debut, fin),
     EntretienIntrouvable() => r.introuvable,
     final RefusGeste geste => messageRefus(geste),
     CandidatureHorsPortee() => g.horsPortee,
@@ -513,6 +518,25 @@ String messageRefusEntretien(Object refus, {bool retrait = false}) {
     PermissionInsuffisante() => g.permission,
     _ => g.generique,
   };
+}
+
+/// V1-c : « {nom} a deja une seance ou un entretien le {date}, de {debut} a
+/// {fin} », l'heure remise dans le fuseau de l'appareil. Sans heure rendue,
+/// la phrase ne dit que le nom ; sans nom, « une personne choisie ».
+String _messageOccupee(String nom, DateTime? debut, DateTime? fin) {
+  final r = t.admin.candidatures.entretien.refus;
+  final String qui = nom.isEmpty ? r.personneChoisie : nom;
+  if (debut == null || fin == null) {
+    return r.personneOccupeeSansHeure(nom: qui);
+  }
+  return LibellesGroupe.insecable(
+    r.personneOccupee(
+      nom: qui,
+      date: dateCourteCandidature(debut),
+      debut: heureDeLAppareil(debut.toLocal()),
+      fin: heureDeLAppareil(fin.toLocal()),
+    ),
+  );
 }
 
 // ---------------------------------------------------------------------------

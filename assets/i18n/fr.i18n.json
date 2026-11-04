@@ -3699,7 +3699,9 @@
           "absent": "Cette personne ne prend déjà plus part à l'entretien.",
           "compteRendu": "«\u00a0Entretien tenu\u00a0» demande au moins un compte rendu d'un participant.",
           "introuvable": "Cet entretien n'existe plus de ce côté.",
-          "creneauOccupe": "Vous avez déjà une séance ou un entretien qui chevauche cette heure. Choisissez une autre heure."
+          "personneOccupee": "\u2068{nom}\u2069 a déjà une séance ou un entretien le {date}, de {debut} à {fin} (heure de cet appareil). Choisissez une autre heure ou une autre personne.",
+          "personneOccupeeSansHeure": "\u2068{nom}\u2069 a déjà une séance ou un entretien à ce moment. Choisissez une autre heure ou une autre personne.",
+          "personneChoisie": "Une personne choisie"
         },
         "retours": {
           "planifie": "Entretien planifié.",
