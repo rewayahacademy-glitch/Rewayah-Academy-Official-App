@@ -201,9 +201,63 @@ class _Corps extends StatelessWidget {
             ),
       ],
     );
+    final TextTheme textes = Theme.of(context).textTheme;
+    // V2-a : la regle des fondateurs d'un entretien (V1-a). Un serveur d'avant
+    // V1-a ne rend pas ces cles ; la section n'est alors pas montree.
+    final ValeurConfig? regleFondateurs = _valeur(
+      valeurs,
+      cleEntretiensRegleFondateurs,
+    );
+    final List<Widget> entretiens =
+        absentes.contains(cleEntretiensRegleFondateurs) ||
+            absentes.contains(cleEntretiensFondateursMinimum)
+        ? const <Widget>[]
+        : <Widget>[
+            Ecart.vXl,
+            Text(
+              t.admin.regles.entretiensSection,
+              key: const ValueKey<String>('regles-entretiens'),
+              style: textes.titleMedium,
+            ),
+            Ecart.vSm,
+            Text(t.admin.regles.entretiensIntro, style: textes.bodyMedium),
+            Ecart.vMd,
+            CarteLignes(
+              lignes: <Widget>[
+                ConfigLigneBooleenne(
+                  titre: t.admin.regles.regleFondateurs,
+                  description: t.admin.regles.regleFondateursDetail,
+                  cle: cleEntretiensRegleFondateurs,
+                  valeur: regleFondateurs?.versBooleen ?? false,
+                  erreurEcriture: erreurEcriture,
+                  onEcrit: onEcrit,
+                ),
+                ConfigLigneEntiere(
+                  titre: t.admin.regles.fondateursMinimum,
+                  description: t.admin.regles.fondateursMinimumDetail,
+                  cle: cleEntretiensFondateursMinimum,
+                  valeur: v[cleEntretiensFondateursMinimum]!,
+                  min: 1,
+                  max: 99,
+                  aideBornes: t.admin.regles.fondateursBornes,
+                  affichage: (int n) => t.admin.regles.uniteNombre(n: '$n'),
+                  champValeur: t.admin.regles.champValeur,
+                  envoyer: t.admin.regles.envoyer,
+                  valeurInvalide: t.admin.regles.valeurInvalide,
+                  erreurEcriture: erreurEcriture,
+                  onEcrit: onEcrit,
+                ),
+              ],
+            ),
+          ];
     // A3 : un serveur d'avant la regle ne rend pas ces cles ; alors la section
     // n'est pas montree, plutot qu'un « 0 min » que rien n'ecrirait.
-    if (clesRemplacement.any(absentes.contains)) return generales;
+    if (clesRemplacement.any(absentes.contains)) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[generales, ...entretiens],
+      );
+    }
     final int avertissement = v[cleRemplacementAvertissement]!;
     final int perte = v[cleRemplacementPerteAcces]!;
     final int objectif = v[cleRemplacementObjectif]!;
@@ -240,7 +294,6 @@ class _Corps extends StatelessWidget {
           : erreurEcriture(message),
       onEcrit: onEcrit,
     );
-    final TextTheme textes = Theme.of(context).textTheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -338,7 +391,15 @@ class _Corps extends StatelessWidget {
               ),
           ],
         ),
+        ...entretiens,
       ],
     );
   }
+}
+
+ValeurConfig? _valeur(List<ValeurConfig> valeurs, String cle) {
+  for (final ValeurConfig c in valeurs) {
+    if (c.cle == cle) return c;
+  }
+  return null;
 }
