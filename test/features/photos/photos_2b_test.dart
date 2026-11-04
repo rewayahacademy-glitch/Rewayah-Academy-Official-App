@@ -2,6 +2,8 @@
 // restaient (cartes, espace de classe, cahier, messages, communaute), par le
 // fournisseur unique ; et le Compte qui dit le prenom, jamais « Eleve ».
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -28,9 +30,16 @@ import 'package:rewayah_academy/features/tc_mes_groupes/photo_enseignant.dart';
 import '../../support/harnais.dart';
 
 class _FauxPort implements PortPhotos {
-  _FauxPort(this.connues);
+  _FauxPort(this.connues, {this.capacite});
 
   final Map<String, SourcePhoto> connues;
+
+  /// La capacite « poser sa photo » rendue (PHOTO-CAPACITE) ; `null` : non.
+  final Future<bool> Function()? capacite;
+
+  @override
+  Future<bool> peutPoserMaPhoto() =>
+      capacite?.call() ?? Future<bool>.value(false);
 
   @override
   Future<Map<String, SourcePhoto>> sources(List<String> profileIds) async =>
@@ -191,7 +200,11 @@ void main() {
     List<Override> surcharges({
       IdentiteTitulaire? identite,
       InterfaceMode mode = InterfaceMode.standard,
+      Future<bool> Function()? capacite,
     }) => <Override>[
+      portPhotosProvider.overrideWithValue(
+        _FauxPort(const <String, SourcePhoto>{}, capacite: capacite),
+      ),
       sourceSessionProvider.overrideWithValue(
         FausseSourceSession(
           SessionState(
@@ -215,6 +228,7 @@ void main() {
         hote(
           const ComptePage(),
           surcharges: surcharges(
+            capacite: () async => true,
             identite: const IdentiteTitulaire(
               prenom: 'Hakim',
               nom: 'Ba',
@@ -235,35 +249,66 @@ void main() {
         LibellesGroupe.joindre(t.compte.roles.student, t.compte.statutActif),
       );
       expect(find.text('Hakim'), findsWidgets);
-      // Hors Interface guidee, la personne pose sa photo.
+      // La capacite servie dit oui : la personne pose sa photo.
       expect(find.byKey(LienMaPhoto.choisirKey), findsOneWidget);
     });
 
-    testWidgets('Interface guidee : l enfant ne change pas sa photo', (
-      WidgetTester tester,
-    ) async {
-      tester.view.physicalSize = const Size(390, 900);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.reset);
-      await tester.pumpWidget(
-        hote(
-          const ComptePage(),
-          mode: InterfaceMode.enfant,
-          surcharges: surcharges(
-            mode: InterfaceMode.enfant,
-            identite: const IdentiteTitulaire(
-              prenom: 'Hakim',
-              nom: 'Ba',
-              methodeConnexion: MethodeConnexion.inconnue,
+    // PHOTO-CAPACITE : le lien se lit sur la capacite servie, jamais sur un
+    // role ni sur l'Interface guidee ; il n'est propose que sur un oui lu.
+    for (final (
+          String cas,
+          InterfaceMode mode,
+          Future<bool> Function() capacite,
+        )
+        in <(String, InterfaceMode, Future<bool> Function())>[
+          (
+            'eleve mineur en Interface guidee : le serveur dit non',
+            InterfaceMode.enfant,
+            () async => false,
+          ),
+          (
+            'eleve mineur hors Interface guidee : le serveur dit non',
+            InterfaceMode.standard,
+            () async => false,
+          ),
+          (
+            'lecture en erreur : rien n est propose',
+            InterfaceMode.standard,
+            () async => throw StateError('lecture refusee'),
+          ),
+          (
+            'reponse pas encore lue : rien n est propose',
+            InterfaceMode.standard,
+            () => Completer<bool>().future,
+          ),
+        ]) {
+      testWidgets('$cas : pas de « Choisir une photo »', (
+        WidgetTester tester,
+      ) async {
+        tester.view.physicalSize = const Size(390, 900);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await tester.pumpWidget(
+          hote(
+            const ComptePage(),
+            mode: mode,
+            surcharges: surcharges(
+              mode: mode,
+              capacite: capacite,
+              identite: const IdentiteTitulaire(
+                prenom: 'Hakim',
+                nom: 'Ba',
+                methodeConnexion: MethodeConnexion.inconnue,
+              ),
             ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
-      expect(find.text('Hakim'), findsWidgets);
-      expect(find.byKey(LienMaPhoto.choisirKey), findsNothing);
-      expect(find.text(t.ficheEleve.informations.choisir), findsNothing);
-    });
+        );
+        await tester.pumpAndSettle();
+        expect(find.text('Hakim'), findsWidgets);
+        expect(find.byKey(LienMaPhoto.choisirKey), findsNothing);
+        expect(find.text(t.ficheEleve.informations.choisir), findsNothing);
+      });
+    }
   });
 
   test(

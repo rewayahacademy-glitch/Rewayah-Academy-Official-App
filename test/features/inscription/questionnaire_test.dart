@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/auth/service_auth.dart'
+    show serviceAuthProvider;
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/foyer/profil_eleve_brouillon.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -24,6 +26,7 @@ import 'package:rewayah_academy/features/connexion/connexion_page.dart'
     show parametreModeCreation;
 import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart'
     show UsageInscription;
+import 'package:rewayah_academy/features/inscription/questionnaire/acces_questionnaire.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/memoire_appareil.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_inscription.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_page.dart';
@@ -39,8 +42,13 @@ const EnfantQuestionnaire _yasmine = EnfantQuestionnaire(
   niveau: NiveauDeclare.debutLettres,
 );
 
-Future<GoRouter> _monter(WidgetTester tester, String depart) async {
-  tester.view.physicalSize = const Size(390, 844);
+Future<GoRouter> _monter(
+  WidgetTester tester,
+  String depart, {
+  FauxServiceAuth? auth,
+  Size taille = const Size(390, 844),
+}) async {
+  tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   late GoRouter routeur;
@@ -49,6 +57,7 @@ Future<GoRouter> _monter(WidgetTester tester, String depart) async {
       depart: depart,
       surcharges: <Override>[
         sourceSessionProvider.overrideWithValue(FausseSourceSession()),
+        serviceAuthProvider.overrideWithValue(auth ?? FauxServiceAuth()),
         // La liste publique des langues (lue sans compte).
         languesCoursProvider.overrideWith(
           (_) async => const <LangueCours>[
@@ -211,12 +220,19 @@ void main() {
   });
 
   group('l ecran', () {
-    testWidgets('une famille d un enfant va jusqu a la creation du compte', (
+    testWidgets('une famille d un enfant va jusqu au dernier ecran, l acces, '
+        'dans le questionnaire (QUESTIONNAIRE-FIN)', (
       WidgetTester tester,
     ) async {
-      final GoRouter routeur = await _monter(tester, Routes.commencer);
+      final FauxServiceAuth auth = FauxServiceAuth();
+      final GoRouter routeur = await _monter(
+        tester,
+        Routes.commencer,
+        auth: auth,
+      );
       expect(find.text(t.inscription.usage.question), findsOneWidget);
-      expect(find.text('1 sur 5'), findsOneWidget);
+      // Le dernier ecran, l'acces, compte dans la barre.
+      expect(find.text('1 sur 6'), findsOneWidget);
       verifierUnSeulBoutonPlein(tester);
       // Jamais grise : sans reponse, « Continuer » le dit et reste ici.
       await _continuer(tester);
@@ -232,7 +248,7 @@ void main() {
         find.text(t.inscription.questionnaire.prenomQuestion),
         findsOneWidget,
       );
-      expect(find.text('2 sur 9'), findsOneWidget);
+      expect(find.text('2 sur 10'), findsOneWidget);
       await tester.enterText(
         find.byKey(const Key('questionnaire-prenom')),
         'Yasmine',
@@ -278,12 +294,24 @@ void main() {
       await _continuer(tester);
 
       expect(find.text(t.parcours.momentsQuestion), findsOneWidget);
-      expect(find.text('9 sur 9'), findsOneWidget);
+      expect(find.text('9 sur 10'), findsOneWidget);
       await _taper(tester, find.text(t.parcours.momentSoir));
       await _continuer(tester);
 
-      expect(routeur.state.uri.path, Routes.connexion);
-      expect(routeur.state.uri.queryParameters['mode'], parametreModeCreation);
+      // Avant : la page passait a la connexion (`/connexion?mode=creer`).
+      // Le dernier ecran reste dans le questionnaire, la barre au bout.
+      expect(routeur.state.uri.path, Routes.commencer);
+      expect(routeur.state.uri.queryParameters['etape'], codeEtapeAcces);
+      expect(find.byKey(EcranAccesQuestionnaire.cle), findsOneWidget);
+      expect(find.text('10 sur 10'), findsOneWidget);
+      final a = t.inscription.questionnaire.acces;
+      expect(find.text('${a.reponsesGardees} ${a.resteAcces}'), findsOneWidget);
+      expect(find.text(t.connexion.avecGoogle), findsOneWidget);
+      // Ni onglets ni bouton eleve : seulement l'acces.
+      expect(find.text(t.connexion.modeCreation), findsNothing);
+      expect(find.text(t.connexion.modeConnexion), findsNothing);
+      expect(find.text(t.connexion.appareilEleve), findsNothing);
+      verifierUnSeulBoutonPlein(tester);
       // Les reponses attendent la connexion sur l'appareil.
       final QuestionnaireInscription garde =
           QuestionnaireInscription.depuisTexte(
@@ -293,6 +321,77 @@ void main() {
       expect(garde.enfants.single.genre, Genre.femme);
       expect(garde.langue, 'poular');
       expect(garde.moments, <MomentJournee>{MomentJournee.soir});
+
+      // Le lien envoye reste dans le meme habillage.
+      await tester.enterText(
+        find.byKey(const Key('questionnaire-acces-courriel')),
+        'famille@exemple.com',
+      );
+      await tester.pump();
+      await _taper(
+        tester,
+        find.byKey(const ValueKey<String>('questionnaire-acces-envoyer')),
+      );
+      expect(auth.liensEnvoyes, <String>['famille@exemple.com']);
+      expect(find.text(t.connexion.lienEnvoye), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('questionnaire-acces-envoye')),
+        findsOneWidget,
+      );
+      // Le lien parti : seulement « Vos reponses sont gardees. ».
+      expect(find.text(a.reponsesGardees), findsOneWidget);
+      expect(find.textContaining(a.resteAcces), findsNothing);
+      expect(find.byKey(EcranAccesQuestionnaire.cle), findsOneWidget);
+      expect(routeur.state.uri.queryParameters['etape'], codeEtapeAcces);
+    });
+
+    testWidgets('ALIGN-RENVOI : a l ordinateur, « Renvoyer le lien » prend la '
+        'largeur du champ', (WidgetTester tester) async {
+      ecrireMemoireAppareil(
+        clefQuestionnaire,
+        const QuestionnaireInscription(
+          usage: UsageInscription.famille,
+          enfants: <EnfantQuestionnaire>[_yasmine],
+          parentSuitDesCours: false,
+          objectif: ObjectifApprentissage.apprendreALire,
+          moments: <MomentJournee>{MomentJournee.soir},
+          langue: 'poular',
+        ).versTexte(),
+      );
+      await _monter(
+        tester,
+        '${Routes.commencer}?etape=$codeEtapeAcces',
+        taille: const Size(1280, 800),
+      );
+      expect(find.byKey(EcranAccesQuestionnaire.cle), findsOneWidget);
+      await tester.enterText(
+        find.byKey(const Key('questionnaire-acces-courriel')),
+        'famille@exemple.com',
+      );
+      await tester.pump();
+      await _taper(
+        tester,
+        find.byKey(const ValueKey<String>('questionnaire-acces-envoyer')),
+      );
+      final Rect texte = tester.getRect(
+        find.byKey(const ValueKey<String>('questionnaire-acces-envoye')),
+      );
+      final Rect bouton = tester.getRect(
+        find.byKey(const ValueKey<String>('questionnaire-acces-renvoyer')),
+      );
+      // Avant : compact au bord de fin (`BoutonEntree`, largeur du libelle).
+      expect(bouton.left, texte.left);
+      expect(bouton.right, texte.right);
+    });
+
+    testWidgets('QUESTIONNAIRE-FIN : l acces ouvert trop tot ramene a la '
+        'premiere question manquante', (WidgetTester tester) async {
+      final GoRouter routeur = await _monter(
+        tester,
+        '${Routes.commencer}?etape=$codeEtapeAcces',
+      );
+      expect(find.byKey(EcranAccesQuestionnaire.cle), findsNothing);
+      expect(routeur.state.uri.queryParameters['etape'], 'pourQui');
     });
 
     testWidgets('INSCRIPTION-3 : un toucher sur « Pour qui » choisit la carte '
