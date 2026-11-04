@@ -23,10 +23,10 @@ import 'package:rewayah_academy/core/tc_groupe/group_home_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/tc_horloge/session_clock_vm.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/features/demo/classe_demo.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/carte_session.dart';
 
 import '../features/classe_tuteur/support_classe.dart' as classe;
+import '../support/demo/classe_demo.dart';
 import 'outil_capture.dart';
 
 Widget _cadre({

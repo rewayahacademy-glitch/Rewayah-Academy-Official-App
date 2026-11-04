@@ -16,11 +16,11 @@ import 'package:rewayah_academy/core/router/billet_salle.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_groupe/concierge_seance.dart';
 import 'package:rewayah_academy/core/widgets/pastille_etat_seance.dart';
-import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
 import 'package:rewayah_academy/features/enseignant_classes/mes_classes_page.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart'
     show maintenantJourneeProvider;
 
+import '../../support/demo/enseignant_demo.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 

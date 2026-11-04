@@ -10,8 +10,8 @@ import 'package:rewayah_academy/core/recrutement/port_invitations_comptable.dart
 import 'package:rewayah_academy/core/recrutement/port_invitations_enseignant.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/features/admin_candidatures/candidatures_page.dart';
-import 'package:rewayah_academy/features/demo/recrutement_demo.dart';
 
+import '../../support/demo/recrutement_demo.dart';
 import '../../support/monter_recrutement.dart';
 
 /// Monte la file des candidatures.
@@ -37,10 +37,8 @@ Future<void> monterCandidatures(
 }) => monterRecrutement(
   tester,
   chemin: Routes.adminPersonnesCandidatures,
-  ecran: (_) => CandidaturesPage(
-    ouvrirCandidature: ouvrir,
-    agirSurSelection: agir,
-  ),
+  ecran: (_) =>
+      CandidaturesPage(ouvrirCandidature: ouvrir, agirSurSelection: agir),
   autres: const <String>[Routes.adminPersonnesInvitations],
   surcharges: <Override>[
     portCandidaturesDirectionProvider.overrideWithValue(port),

@@ -21,10 +21,10 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/consentements/texte_observation.dart';
-import 'package:rewayah_academy/features/demo/recrutement_demo.dart';
 import 'package:rewayah_academy/features/recrutement/signature_contrat_page.dart';
 
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/recrutement_demo.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 import '../../support/monter_recrutement.dart';

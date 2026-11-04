@@ -38,7 +38,6 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/cahier/cahier_page.dart';
-import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
 import 'package:rewayah_academy/features/fiche_groupe/fiche_eleve_enseignant.dart';
 import 'package:rewayah_academy/features/fiche_groupe/fiche_groupe_page.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
@@ -46,6 +45,7 @@ import 'package:rewayah_academy/features/profil_enseignant/photo_publique.dart';
 import 'package:rewayah_academy/features/profil_enseignant/profil_enseignant_page.dart';
 import 'package:rewayah_academy/features/revue_groupe/revue_groupe_page.dart';
 
+import '../../support/demo/enseignant_demo.dart';
 import '../../support/harnais.dart';
 
 /// Le groupe et les deux eleves de la demonstration reutilises ici (An-Nour) :

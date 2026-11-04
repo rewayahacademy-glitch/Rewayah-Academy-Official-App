@@ -5,7 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/port_obligations_contractuels.dart';
 import 'package:rewayah_academy/core/comptable/statuts_comptable.dart';
 import 'package:rewayah_academy/features/comptable/contractuels/contractuels_commun.dart';
-import 'package:rewayah_academy/features/demo/comptable/contractuels_demo.dart';
+
+import '../../../support/demo/comptable/contractuels_demo.dart';
 
 void main() {
   group('lireMontantSaisi', () {

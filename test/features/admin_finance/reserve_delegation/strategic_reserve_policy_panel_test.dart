@@ -16,8 +16,8 @@ import 'package:rewayah_academy/core/finance/montant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/choice_card_group.dart';
 import 'package:rewayah_academy/features/admin_finance/reserve_delegation/strategic_reserve_policy_panel.dart';
-import 'package:rewayah_academy/features/demo/comptable/direction_demo.dart';
 
+import '../../../support/demo/comptable/direction_demo.dart';
 import 'support_direction.dart';
 
 final c = t.comptable.direction;

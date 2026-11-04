@@ -15,12 +15,12 @@ import 'package:rewayah_academy/core/recherche/moteurs_demo_recherche.dart';
 import 'package:rewayah_academy/core/recherche/port_recherche.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/features/controleur/mission_controle.dart';
-import 'package:rewayah_academy/features/demo/comptable/encaissements_demo.dart';
 import 'package:rewayah_academy/features/recherche/domaines/enseignants_pedagogie_controle/moteur_controle_mission.dart';
 import 'package:rewayah_academy/features/recherche/domaines/finance_communications/moteur_finances.dart';
 import 'package:rewayah_academy/features/recherche/entree_recherche.dart';
 
 import '../../router/support_routeur.dart';
+import '../../support/demo/comptable/encaissements_demo.dart';
 import '../../support/harnais.dart';
 
 List<MoteurRechercheDomaine> _moteursControle() => <MoteurRechercheDomaine>[

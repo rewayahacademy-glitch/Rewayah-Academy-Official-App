@@ -28,7 +28,8 @@ import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_personne.dart';
 import 'package:rewayah_academy/features/controleur/controle_page.dart';
 import 'package:rewayah_academy/features/controleur/mission_controle.dart';
-import 'package:rewayah_academy/features/demo/tirage_demo.dart';
+
+import '../../support/demo/tirage_demo.dart';
 
 final DateTime _debut = DateTime(2026, 10, 12, 18);
 

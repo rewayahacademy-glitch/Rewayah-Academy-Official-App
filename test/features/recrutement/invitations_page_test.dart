@@ -17,11 +17,11 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_invitations/invitations_page.dart';
-import 'package:rewayah_academy/features/demo/recrutement_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/information_controle.dart'
     show coupuresAdresse;
 
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/recrutement_demo.dart';
 import '../../support/garde_interface.dart';
 import '../../support/monter_recrutement.dart';
 

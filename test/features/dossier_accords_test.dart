@@ -31,11 +31,11 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/features/code_conduite/code_conduite.dart';
 import 'package:rewayah_academy/features/consentements/texte_observation.dart';
-import 'package:rewayah_academy/features/demo/recrutement_demo.dart';
 import 'package:rewayah_academy/features/dossier/accords_page.dart';
 import 'package:rewayah_academy/features/dossier/signature_page.dart';
 
 import '../capture/outil_capture.dart';
+import '../support/demo/recrutement_demo.dart';
 import '../support/harnais.dart';
 
 /// Un service qui echoue a l'appel numero [echecAu] de `accepterContrat`

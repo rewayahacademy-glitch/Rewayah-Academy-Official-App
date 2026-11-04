@@ -15,8 +15,8 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/montant_sensible.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
-import 'package:rewayah_academy/features/demo/comptable/socle_comptable_demo.dart';
 
+import '../../../support/demo/comptable/socle_comptable_demo.dart';
 import 'support_contractuels.dart';
 
 String _adresse(String id) => Routes.comptableContractuelObligationPour(id);

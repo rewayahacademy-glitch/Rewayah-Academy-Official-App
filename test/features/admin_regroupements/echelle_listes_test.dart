@@ -31,11 +31,10 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/features/admin_regroupements/regroupements_libelles.dart';
 import 'package:rewayah_academy/features/admin_regroupements/regroupements_page.dart';
-import 'package:rewayah_academy/features/demo/regroupements_demo.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
-
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/regroupements_demo.dart';
 import '../../support/rangee_plus.dart';
 
 class _SansEnseignants implements PortEnseignantsClasse {

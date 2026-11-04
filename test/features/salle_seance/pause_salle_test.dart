@@ -16,13 +16,14 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/pause_seance/port_pause_seance.dart';
 import 'package:rewayah_academy/core/tc_horloge/chrono_seance.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/chrome_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/chrono_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart'
     show TeteSalleBornee;
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
+
+import '../../support/demo/seance_demo.dart';
 
 final DateTime _t0 = DateTime.utc(2026, 10, 12, 18);
 final BornesChrono _bornes = BornesChrono(
