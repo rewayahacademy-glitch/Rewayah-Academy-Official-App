@@ -446,8 +446,10 @@ class TuileSansImage extends StatelessWidget {
 
     return Semantics(
       container: true,
+      // Sans nom (un camarade dont l'appelant ne lit pas le prenom,
+      // PHOTOS-2b), la phrase ne commence pas par une virgule.
       label: <String>[
-        nom,
+        if (nom.trim().isNotEmpty) nom,
         if (libelleMicroCoupe case final String micro) micro,
         if (libelleSansImage case final String sans) sans,
       ].join(', '),

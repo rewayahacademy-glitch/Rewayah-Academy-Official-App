@@ -29,6 +29,7 @@ import '../../core/widgets/skeleton.dart';
 import '../foyer/photo_eleve.dart';
 import '../paiements_recus/rubrique_recevoir_paiements.dart';
 import '../salle_seance/libelles_salle_b.dart';
+import 'donnees_compte.dart' show identiteTitulaireProvider;
 import 'espaces_compte.dart';
 import 'ligne_matricule.dart';
 import 'ma_photo.dart';
@@ -592,22 +593,33 @@ class ProfilEnfantPage extends ConsumerWidget {
   }
 }
 
-class _EnteteCompte extends StatelessWidget {
+class _EnteteCompte extends ConsumerWidget {
   const _EnteteCompte({required this.projection});
 
   final _CompteProjection projection;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // AVATAR-1 : couple avatar + nom du composant partage, nom et une ligne de
     // role (le statut). L'identifiant du profil a sa propre ligne plus bas.
     final String? id = projection.profileId;
+    // PHOTOS-2b (defaut R3 de PHOTOS-2a) : le prenom de la personne
+    // (`profiles` par soi), jamais « Eleve » a sa place ; le libelle du role
+    // reste seulement tant que le prenom n'est pas lu, ou s'il est vide.
+    final String? prenomLu = ref
+        .watch(identiteTitulaireProvider)
+        .value
+        ?.prenom
+        .trim();
+    final String prenom = prenomLu == null || prenomLu.isEmpty
+        ? projection.libelleRole
+        : prenomLu;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         AvatarNom.enLigne(
-          prenom: projection.libelleRole,
+          prenom: prenom,
           role: projection.statut,
           diametre: AppAvatar.grand,
           // PHOTOS-2a : sa photo, la meme partout ; « Choisir une photo »
@@ -615,7 +627,7 @@ class _EnteteCompte extends StatelessWidget {
           avatar: id == null
               ? null
               : PhotoEleve(
-                  prenom: projection.libelleRole,
+                  prenom: prenom,
                   cleAvatar: null,
                   personneId: id,
                   diametre: AppAvatar.grand,
