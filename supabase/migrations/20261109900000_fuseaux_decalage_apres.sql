@@ -14,8 +14,16 @@
 --     client dit « heure a confirmer », jamais une heure calculee a un
 --     decalage perime.
 --
+-- `public.mon_horloge()` (garde-cap, 04/11/2026) : l'instant serveur et le
+-- fuseau de l'appelant seul, lu dans son profil (foyer, sinon profil
+-- enseignant), avec son decalage et ses changements d'heure. Elle sert les
+-- ecrans sans classe (notifications, Journee, accueil eleve, salle), qui
+-- lisaient jusqu'ici l'heure de l'appareil. Aucun fuseau dans le profil, ou un
+-- fuseau inconnu : `moi` nul, sans erreur, et le client dit « heure de cet
+-- appareil ». Elle ne lit aucune donnee d'une autre personne.
+--
 -- FICHIER SANS EFFACEMENT (regle B5) : une fonction remplacee par sa copie
--- complete ; aucun objet retire.
+-- complete, une fonction creee ; aucun objet retire.
 
 BEGIN;
 
@@ -110,20 +118,77 @@ BEGIN
 END;
 $function$;
 
+-- L'horloge de l'appelant -------------------------------------------------------
+CREATE FUNCTION public.mon_horloge()
+RETURNS jsonb
+LANGUAGE plpgsql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+DECLARE
+  v_fuseau text;
+BEGIN
+  IF NOT coalesce(public.app_account_valid(), false) THEN
+    RAISE EXCEPTION 'horloge non autorisee' USING ERRCODE = '42501';
+  END IF;
+  -- Le meme ordre que public.mon_fuseau(), sans son repli sur Paris : un
+  -- profil sans fuseau ne recoit pas une ville inventee.
+  SELECT nullif(pg_catalog.btrim(h.timezone), '') INTO v_fuseau
+    FROM public.households h
+   WHERE h.id = public.app_household_id() AND h.deleted_at IS NULL;
+  IF v_fuseau IS NULL THEN
+    SELECT nullif(pg_catalog.btrim(tp.timezone_iana), '') INTO v_fuseau
+      FROM public.teacher_profiles tp
+     WHERE tp.profile_id = auth.uid() AND tp.deleted_at IS NULL;
+  END IF;
+  RETURN pg_catalog.jsonb_build_object(
+    'maintenant', pg_catalog.now(),
+    'moi', private.fuseau_info(v_fuseau));
+END;
+$function$;
+
+DO $droits$
+DECLARE
+  v_oid pg_catalog.regprocedure := 'public.mon_horloge()'::pg_catalog.regprocedure;
+  v_role text;
+BEGIN
+  EXECUTE pg_catalog.format('ALTER FUNCTION %s OWNER TO postgres', v_oid);
+  EXECUTE pg_catalog.format('REVOKE ALL ON FUNCTION %s FROM PUBLIC', v_oid);
+  FOREACH v_role IN ARRAY ARRAY['anon', 'service_role', 'agent_ro'] LOOP
+    IF EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = v_role) THEN
+      EXECUTE pg_catalog.format('REVOKE ALL ON FUNCTION %s FROM %I', v_oid, v_role);
+    END IF;
+  END LOOP;
+  EXECUTE pg_catalog.format('GRANT EXECUTE ON FUNCTION %s TO authenticated', v_oid);
+  EXECUTE pg_catalog.format('COMMENT ON FUNCTION %s IS %L', v_oid, pg_catalog.format(
+    'F86 candidate allowlist: signature=%s; md5_functiondef=%s; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-11-04. FUSEAUX : l''instant serveur et le fuseau de l''appelant seul (decalage actuel, changements d''heure), lu dans son profil ; moi nul sans fuseau.',
+    v_oid::text, pg_catalog.md5(pg_catalog.pg_get_functiondef(v_oid))));
+END;
+$droits$;
+
 -- Postflight ----------------------------------------------------------------
--- Aucun nombre ecrit en dur hors des calculs connus : on relit la fonction
--- installee, ses droits, et trois fuseaux de reference.
+-- Les dates de Paris ci-dessous sont ecrites en dur, et c'est voulu : ce
+-- sont des changements d'heure connus. On relit aussi les fonctions
+-- installees et leurs droits.
 DO $postflight$
 DECLARE
   v_prive pg_catalog.regprocedure := 'private.fuseau_info(text,timestamptz)'::pg_catalog.regprocedure;
   v_public pg_catalog.regprocedure := 'public.horloge_interlocuteurs(uuid)'::pg_catalog.regprocedure;
+  v_mien pg_catalog.regprocedure := 'public.mon_horloge()'::pg_catalog.regprocedure;
   v_p record;
   v_paris jsonb := private.fuseau_info('Europe/Paris', '2026-10-01 12:00+00');
   v_abidjan jsonb := private.fuseau_info('Africa/Abidjan', '2026-10-01 12:00+00');
 BEGIN
-  SELECT p.prosecdef, p.proconfig, p.provolatile INTO v_p FROM pg_catalog.pg_proc p WHERE p.oid = v_prive;
-  IF NOT v_p.prosecdef OR NOT ('search_path=""' = ANY (v_p.proconfig)) OR v_p.provolatile <> 's' THEN
-    RAISE EXCEPTION 'FUSEAUX-bis : private.fuseau_info doit rester SECURITY DEFINER, STABLE, search_path vide';
+  FOR v_p IN SELECT p.oid, p.prosecdef, p.proconfig, p.provolatile FROM pg_catalog.pg_proc p
+              WHERE p.oid IN (v_prive, v_mien) LOOP
+    IF NOT v_p.prosecdef OR NOT ('search_path=""' = ANY (v_p.proconfig)) OR v_p.provolatile <> 's' THEN
+      RAISE EXCEPTION 'FUSEAUX-bis : % doit etre SECURITY DEFINER, STABLE, search_path vide', v_p.oid::pg_catalog.regprocedure;
+    END IF;
+  END LOOP;
+  IF pg_catalog.has_function_privilege('anon', v_mien, 'EXECUTE')
+     OR NOT pg_catalog.has_function_privilege('authenticated', v_mien, 'EXECUTE') THEN
+    RAISE EXCEPTION 'FUSEAUX-bis : droits d''execution de public.mon_horloge incorrects';
   END IF;
   IF pg_catalog.has_function_privilege('authenticated', v_prive, 'EXECUTE')
      OR pg_catalog.has_function_privilege('anon', v_prive, 'EXECUTE')
