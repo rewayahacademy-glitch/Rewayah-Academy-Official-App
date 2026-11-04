@@ -269,7 +269,7 @@ class _EntretienOuvert extends ConsumerWidget {
       String nom(String id) => d.nomDe(id) ?? e.auteurInconnu;
       lu = <Widget>[
         Ecart.vLg,
-        titre(e.participants),
+        titre(t.com.messages.panneau.participants),
         Ecart.vSm,
         for (final ParticipantEntretien p in d.actifs)
           Padding(
@@ -286,7 +286,7 @@ class _EntretienOuvert extends ConsumerWidget {
                 if (choisir && d.actifs.length > 1)
                   LienFleche(
                     key: ValueKey<String>('entretien-retirer-${p.profilId}'),
-                    libelle: e.retirer,
+                    libelle: t.admin.groupes.actionRetirer,
                     libelleSemantique: e.retirerNom(nom: p.nomComplet),
                     fleche: false,
                     onPress: () async {
@@ -769,7 +769,7 @@ class _EtatPlanifier extends ConsumerState<FeuillePlanifierEntretien>
         _consequence(context, f.planifierConsequence),
         Ecart.vLg,
         ChampDate(
-          libelle: f.jour,
+          libelle: t.admin.groupes.formulaire.jour,
           valeur: _jour,
           aujourdhui: aujourdhui,
           dernier: DateTime(
@@ -788,7 +788,7 @@ class _EtatPlanifier extends ConsumerState<FeuillePlanifierEntretien>
           alignment: AlignmentDirectional.centerStart,
           child: MenuFiltre<int>(
             key: const ValueKey<String>('entretien-heure'),
-            libelle: f.heure,
+            libelle: t.admin.groupes.formulaire.heure,
             valeur: _heure,
             entrees: <EntreeFiltre<int>>[
               for (final int m in heuresEntretien)
@@ -812,13 +812,15 @@ class _EtatPlanifier extends ConsumerState<FeuillePlanifierEntretien>
           alignment: AlignmentDirectional.centerStart,
           child: MenuFiltre<int>(
             key: const ValueKey<String>('entretien-duree'),
-            libelle: f.duree,
+            libelle: t.admin.groupes.formulaire.duree,
             valeur: _duree,
             entrees: <EntreeFiltre<int>>[
               for (final int d in dureesEntretien)
                 EntreeFiltre<int>(
                   valeur: d,
-                  libelle: LibellesGroupe.insecable(f.dureeValeur(n: '$d')),
+                  libelle: LibellesGroupe.insecable(
+                    t.admin.regles.uniteMinutes(n: '$d'),
+                  ),
                 ),
             ],
             onChoix: (int? d) {
@@ -827,7 +829,7 @@ class _EtatPlanifier extends ConsumerState<FeuillePlanifierEntretien>
           ),
         ),
         Ecart.vLg,
-        _titreChamp(context, e.participants),
+        _titreChamp(context, t.com.messages.panneau.participants),
         Ecart.vSm,
         _Muet(f.participantsAide),
         if (exiges != null) _Muet(e.minimum(n: '$exiges')),
@@ -864,7 +866,7 @@ class _EtatPlanifier extends ConsumerState<FeuillePlanifierEntretien>
           _etatPersonnel(ref, _candidature, personnel),
         ...bandeauRefus(),
         ...boutons(
-          libelle: f.envoyerPlanifier,
+          libelle: t.admin.evaluations.planifierEnvoyer,
           onEnvoyer: _valider,
           onAnnuler: widget.onAnnuler,
         ),
@@ -967,7 +969,7 @@ class _EtatAjouter extends ConsumerState<FeuilleAjouterParticipant>
         ...bandeauRefus(),
         if (servi)
           ...boutons(
-            libelle: f.envoyerAjouter,
+            libelle: t.admin.groupes.ajouterEnvoyer,
             onEnvoyer: () {
               final PersonnelEntretien? p = _choisi;
               if (p == null) {
@@ -1036,7 +1038,7 @@ class _EtatRetirer extends ConsumerState<FeuilleRetirerParticipant>
         _consequence(context, e.feuille.retirerConsequence(nom: nom)),
         ...bandeauRefus(retrait: true),
         ...boutons(
-          libelle: e.retirer,
+          libelle: t.admin.groupes.actionRetirer,
           destructif: true,
           onEnvoyer: () => envoyer((
             PortEntretiensDirection port,
@@ -1109,7 +1111,7 @@ class _EtatConsigner extends ConsumerState<FeuilleConsignerEntretien>
       children: <Widget>[
         _consequence(context, f.consignerConsequence),
         Ecart.vLg,
-        _titreChamp(context, f.issue),
+        _titreChamp(context, t.admin.candidatures.filtres.issue),
         Ecart.vSm,
         ChoiceCardGroup(
           autoriserSaisieLibre: false,

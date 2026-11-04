@@ -4866,9 +4866,7 @@
         "fondateurs": "المؤسسون بين المشاركين: \u2068{n}\u2069",
         "minimum": "الحد الأدنى المطلوب: \u2068{n}\u2069",
         "regleInactive": "قاعدة المؤسسين معطَّلة.",
-        "participants": "المشاركون",
         "fondateur": "مؤسس",
-        "retirer": "إزالة",
         "retirerNom": "إزالة \u2068{nom}\u2069",
         "ajouter": "إضافة مشارك",
         "comptesRendus": "التقارير",
@@ -4894,12 +4892,8 @@
         },
         "feuille": {
           "planifierConsequence": "يتلقى المترشح موعد المقابلة، ويجدها المشاركون ضمن مقابلاتهم.",
-          "jour": "اليوم",
           "jourAide": "خلال الأيام التسعين القادمة.",
-          "heure": "الساعة",
           "heureAide": "توقيت هذا الجهاز.",
-          "duree": "المدة",
-          "dureeValeur": "\u2068{n}\u2069 د",
           "participantsAide": "اختر بحرية من الفريق في هذا الجانب.",
           "fondateursChoisis": "المؤسسون المختارون: \u2068{n}\u2069",
           "jourManquant": "اختر يومًا.",
@@ -4914,10 +4908,7 @@
           "personneManquante": "اختر شخصًا.",
           "retirerConsequence": "لن يشارك \u2068{nom}\u2069 في هذه المقابلة بعد الآن.",
           "consignerConsequence": "تُسجَّل النتيجة في سجلّ الترشح ولا تتغيّر بعد ذلك.",
-          "issue": "النتيجة",
           "issueManquante": "اختر النتيجة.",
-          "envoyerPlanifier": "تحديد الموعد",
-          "envoyerAjouter": "إضافة",
           "envoyerConsigner": "تسجيل"
         },
         "refus": {

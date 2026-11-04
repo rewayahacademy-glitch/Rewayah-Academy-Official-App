@@ -3639,9 +3639,7 @@
         "fondateurs": "Fondateurs parmi les participants\u00a0: {n}",
         "minimum": "Minimum exigé\u00a0: {n}",
         "regleInactive": "La règle des fondateurs est désactivée.",
-        "participants": "Participants",
         "fondateur": "Fondateur",
-        "retirer": "Retirer",
         "retirerNom": "Retirer \u2068{nom}\u2069",
         "ajouter": "Ajouter un participant",
         "comptesRendus": "Comptes rendus",
@@ -3667,12 +3665,8 @@
         },
         "feuille": {
           "planifierConsequence": "La personne reçoit la date de l'entretien. Les participants le retrouvent parmi leurs entretiens.",
-          "jour": "Jour",
           "jourAide": "Dans les 90 prochains jours.",
-          "heure": "Heure",
           "heureAide": "Heure de cet appareil.",
-          "duree": "Durée",
-          "dureeValeur": "{n} min",
           "participantsAide": "Choisissez librement dans le personnel de ce côté.",
           "fondateursChoisis": "Fondateurs choisis\u00a0: {n}",
           "jourManquant": "Choisissez un jour.",
@@ -3687,10 +3681,7 @@
           "personneManquante": "Choisissez une personne.",
           "retirerConsequence": "\u2068{nom}\u2069 ne prendra plus part à cet entretien.",
           "consignerConsequence": "L'issue est inscrite à l'historique de la candidature et ne change plus.",
-          "issue": "Issue",
           "issueManquante": "Choisissez l'issue.",
-          "envoyerPlanifier": "Planifier",
-          "envoyerAjouter": "Ajouter",
           "envoyerConsigner": "Consigner"
         },
         "refus": {
