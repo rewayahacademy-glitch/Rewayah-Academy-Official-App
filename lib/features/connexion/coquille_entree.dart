@@ -33,9 +33,10 @@ const double largeurFormulaireEntree = AppPage.largeurDialogue;
 const double largeurSceneBureau = AppSpacing.respiration * 7;
 
 /// La largeur de la scene sur telephone (CONNEXION-UX, 03/11/2026) : 320
-/// avant ([PorteLumiere.largeurScene]), 256 desormais, pour que le formulaire
-/// remonte.
-const double largeurSceneTelephone = AppSpacing.respiration * 4;
+/// avant ([PorteLumiere.largeurScene]), 256 ensuite, pour que le formulaire
+/// remonte ; 204 depuis CONNEXION-ALIGN (directeur, 03/11/2026 : « diminuer
+/// un peu », environ -20 %, pilote du 04/11/2026).
+const double largeurSceneTelephone = AppSpacing.respiration * 3 + AppSpacing.md;
 
 /// L'habillage unique du parcours d'entree (connexion, lien envoye,
 /// recuperation d'acces), celui de la page « Ne plus recevoir ces e-mails » du

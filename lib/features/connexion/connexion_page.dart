@@ -669,7 +669,10 @@ class _Saisie extends StatelessWidget {
             affirmee: true,
             pleineLargeur: true,
             margeHorizontaleReduite: true,
-            libelleReduit: true,
+            // Texte reduit seulement quand le bouton partage sa rangee
+            // (ordinateur, ou creation sur telephone) ; seul en pleine
+            // largeur sur telephone, il garde son texte (garde-cap, 04/11).
+            libelleReduit: !demo && (bureau || creation),
           ),
           secondaire: demo
               ? null
