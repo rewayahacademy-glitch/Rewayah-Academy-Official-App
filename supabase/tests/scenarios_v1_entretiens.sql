@@ -357,7 +357,10 @@ BEGIN
            ARRAY['7e100000-0000-4000-8000-0000000000a2', '7e100000-0000-4000-8000-0000000000b1']::uuid[], 1, 'v1-cle-sa-hp');
   PERFORM pg_temp.vrai(v_r ->> 'erreur' = 'participant_autre_cote',
     '2 bis. meme pour le super-admin, un participant homme sur une candidate est refuse (CAND-Q07)');
-  v_r := public.planifier_entretien('7e100000-0000-4000-8000-000000000103', now() + interval '1 day', 45,
+  -- V1-c (20261109800000) : A2 et T2 sont deja dans un entretien a J+1 ; une
+  -- personne n'est jamais dans deux entretiens qui se chevauchent, celui-ci
+  -- se pose donc a J+4.
+  v_r := public.planifier_entretien('7e100000-0000-4000-8000-000000000103', now() + interval '4 days', 45,
            ARRAY['7e100000-0000-4000-8000-0000000000a2', '7e100000-0000-4000-8000-0000000000d2']::uuid[], 1, 'v1-cle-sa');
   PERFORM pg_temp.vrai(v_r -> 'entretien' ? 'sessionId',
     '2 bis. le super-admin (homme) planifie l''entretien d''une candidate : ' || coalesce(v_r::text, 'null'));
