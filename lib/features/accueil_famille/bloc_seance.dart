@@ -9,6 +9,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/seance_famille/seance_famille.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/heure_double.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_palette.dart';
@@ -42,6 +43,10 @@ class AffichageSeance {
     required this.dureeEnPhrase,
     this.heureClasse,
     this.debutAppareil,
+    this.groupeId,
+    this.debutUtc,
+    this.horlogeFoyer,
+    this.horlogeClasse,
   });
 
   /// Calcule l'affichage de [seance] a [maintenantServeurUtc].
@@ -62,6 +67,10 @@ class AffichageSeance {
         maintenantServeurUtc: maintenantServeurUtc,
       ),
       restant: restantAvant(seance, maintenantServeurUtc: maintenantServeurUtc),
+      groupeId: seance.groupeId,
+      debutUtc: seance.debutUtc,
+      horlogeFoyer: foyer,
+      horlogeClasse: classe,
       heure: foyer?.heureLocaleRendue ?? heureDeLAppareil(local),
       ville: foyer?.libelleVille,
       fuseau: foyer == null
@@ -124,6 +133,19 @@ class AffichageSeance {
 
   /// L'heure dans le fuseau de la classe quand il differe, sinon `null`.
   final String? heureClasse;
+
+  /// La classe de la seance, pour lire ses interlocuteurs (FUSEAUX,
+  /// 04/11/2026) ; `null` hors classe.
+  final String? groupeId;
+
+  /// Le debut de la seance, en UTC.
+  final DateTime? debutUtc;
+
+  /// L'heure du foyer et celle de la classe, deja rendues par le serveur.
+  final HorlogeAffichee? horlogeFoyer;
+
+  /// L'heure de la classe, deja rendue par le serveur.
+  final HorlogeAffichee? horlogeClasse;
 
   /// Le debut a l'heure de l'appareil, quand c'est l'heure affichee ; sinon
   /// `null`, et le compte a rebours ne dit pas « Demain à ».
@@ -310,7 +332,20 @@ class BlocSeance extends StatelessWidget {
       tete,
       Ecart.vMd,
       heures,
-      if (affichage.heureClasse != null) ...<Widget>[
+      // FUSEAUX (04/11/2026) : l'heure de chaque interlocuteur (l'enseignant
+      // chez lui) ; tant qu'elle n'est pas lue, celle de la classe.
+      if (affichage.groupeId != null &&
+          affichage.debutUtc != null &&
+          affichage.horlogeFoyer != null) ...<Widget>[
+        Ecart.vSm,
+        HeureDouble(
+          groupeId: affichage.groupeId!,
+          instantUtc: affichage.debutUtc!,
+          moi: affichage.horlogeFoyer,
+          classe: affichage.horlogeClasse,
+          avecLaSienne: false,
+        ),
+      ] else if (affichage.heureClasse != null) ...<Widget>[
         Ecart.vSm,
         Text(
           affichage.heureClasse!,

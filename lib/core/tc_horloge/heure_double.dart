@@ -18,6 +18,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../i18n/isolat_bidi.dart';
 import '../i18n/strings.g.dart';
 import '../i18n/villes_fuseau.dart';
 import '../tc_groupe/libelles_tc_groupe.dart';
@@ -109,7 +110,7 @@ List<LigneHeure> lignesInterlocuteurs(
 /// L'heure d'une seance (ou de maintenant) pour soi et pour chaque
 /// interlocuteur de la classe [groupeId]. Un appel serveur par classe,
 /// partage par toutes les instances ([interlocuteursClasseProvider]).
-class HeureDouble extends ConsumerWidget {
+class HeureDouble extends StatelessWidget {
   /// Cree le bloc pour l'instant [instantUtc] (le debut d'une seance).
   const HeureDouble({
     required this.groupeId,
@@ -119,7 +120,12 @@ class HeureDouble extends ConsumerWidget {
     this.classe,
     this.tutoiement = false,
     this.annulee = false,
+    this.avecLaSienne = true,
   });
+
+  /// Faux quand l'ecran affiche deja sa propre heure en grand (bloc seance
+  /// de l'Accueil) : seules les lignes des interlocuteurs.
+  final bool avecLaSienne;
 
   /// La classe dont on lit les interlocuteurs.
   final String groupeId;
@@ -145,10 +151,23 @@ class HeureDouble extends ConsumerWidget {
   static const Key cle = ValueKey<String>('heure-double');
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final InterlocuteursClasse? lus = ref
-        .watch(interlocuteursClasseProvider(groupeId))
-        .value;
+  Widget build(BuildContext context) {
+    // Une carte posee hors de toute ProviderScope (un test de composant) garde
+    // l'heure de la classe rendue par le serveur : jamais une panne.
+    try {
+      ProviderScope.containerOf(context, listen: false);
+    } on StateError {
+      return _corps(context, null);
+    }
+    return Consumer(
+      builder: (BuildContext context, WidgetRef ref, Widget? _) => _corps(
+        context,
+        ref.watch(interlocuteursClasseProvider(groupeId)).value,
+      ),
+    );
+  }
+
+  Widget _corps(BuildContext context, InterlocuteursClasse? lus) {
     final String libelleMoi = tutoiement
         ? t.accessibilite.tutoiement.tonHeure
         : t.tc.groupe.horloges.chezVous;
@@ -182,9 +201,14 @@ class HeureDouble extends ConsumerWidget {
       mainAxisSize: MainAxisSize.min,
       spacing: AppSpacing.sm,
       children: <Widget>[
-        if (premiere != null) _Ligne(premiere, annulee: annulee),
+        if (avecLaSienne && premiere != null)
+          _Ligne(premiere, annulee: annulee),
         for (final LigneHeure l in autres)
-          _Ligne(l, annulee: annulee, annoncer: false),
+          _Ligne(
+            l,
+            annulee: annulee,
+            annoncer: !avecLaSienne && l == autres.first,
+          ),
       ],
     );
   }
@@ -341,7 +365,12 @@ class _Ligne extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Text(ligne.libelle, style: styleLibelle),
+              // Un intitule francais ponctue reste dans son sens en arabe
+              // (DUREE-INSECABLE-4, reprise 2).
+              Text(
+                isolerDansInterface(ligne.libelle, Directionality.of(context)),
+                style: styleLibelle,
+              ),
               if (pays != null)
                 PaysEnseignant.codeValide(pays) != null
                     ? PaysEnseignant.parCode(codeIso: pays, style: styleLibelle)

@@ -515,11 +515,11 @@ String premier(int n) => lu(LibellesGroupe.dureeSeule(Duration(minutes: n)), nul
           t.classe.entree.dst(avant: '18:00', apres: '17:00'),
           // Le conseil d'appareil
           LibellesGroupe.conseilAppareil,
-          // Les intitules de _LigneValeur
+          // Les intitules des heures (HeureDouble, FUSEAUX) et de _LigneValeur
           if (tutoiement)
             t.accessibilite.tutoiement.tonHeure
           else
-            LibellesGroupe.votreHeure,
+            t.tc.groupe.horloges.chezVous,
           LibellesGroupe.dureeLibelle,
         ];
         for (final String libelle in attendus) {
