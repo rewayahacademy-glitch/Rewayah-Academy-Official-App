@@ -27,10 +27,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/tc_horloge/port_horloge_seance.dart';
 import 'package:rewayah_academy/features/accueil_famille/accueil_famille_page.dart';
+import 'package:rewayah_academy/features/demo/racine_demonstrable.dart';
 import 'package:rewayah_academy/features/suivi_famille/suivi_famille_page.dart';
 
 import '../router/support_routeur.dart';
-import '../support/demo/racine_demonstrable.dart';
 import '../support/harnais.dart' show FausseSourceSession;
 import '../teaching_core/a/faux/faux_groupes.dart' show PortHorlogeMuet;
 
@@ -127,7 +127,9 @@ void main() {
       await tester.tap(find.text(onglet).first);
       for (int frame = 0; frame < 20; frame++) {
         await tester.pump(const Duration(milliseconds: 16));
-        final ({int transparents, double luminance}) m = await _mesurer(tester);
+        final ({int transparents, double luminance}) m = await _mesurer(
+          tester,
+        );
         if (m.transparents > 0 || m.luminance > 128) {
           constats.add(
             '$onglet, frame $frame : ${m.transparents} pixels transparents, '
@@ -166,7 +168,9 @@ void main() {
             'nouvelle ${b.toStringAsFixed(2)}',
           );
         }
-        final ({int transparents, double luminance}) m = await _mesurer(tester);
+        final ({int transparents, double luminance}) m = await _mesurer(
+          tester,
+        );
         if (m.transparents > 0) {
           constats.add('$sens, frame $frame : ${m.transparents} transparents');
         }

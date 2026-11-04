@@ -16,13 +16,13 @@ import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/tc_horloge/port_horloge_seance.dart';
 import 'package:rewayah_academy/features/accueil_famille/carte_classe_seance.dart';
 import 'package:rewayah_academy/features/classe_tuteur/classe_tuteur_page.dart';
+import 'package:rewayah_academy/features/demo/cartes_classe_demo.dart';
+import 'package:rewayah_academy/features/demo/racine_demonstrable.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/bloc_cartes_classe.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/feuille_carte_classe.dart';
 
 import '../../capture/outil_capture.dart' as capture;
 import '../../router/support_routeur.dart';
-import '../../support/demo/cartes_classe_demo.dart';
-import '../../support/demo/racine_demonstrable.dart';
 import '../../support/harnais.dart' show FausseSourceSession;
 import '../../teaching_core/a/faux/faux_groupes.dart' show PortHorlogeMuet;
 
