@@ -69,7 +69,11 @@ RapportControle _rapport(Map<String, dynamic> row) {
     seanceId: row['seance_id'] as String?,
     classe: _string(row, 'classe'),
     enseignant: _string(row, 'enseignant'),
-    paysEnseignant: row['pays_enseignant'] as String?,
+    // DRAPEAUX (04/11/2026) : la cle du contrat commun (ENS-PAYS-1_BR.md),
+    // `teacher_country`, et non `pays_enseignant` qu'aucune migration ne
+    // rend. `controleur_lister_rapports()` ne rend encore aucun pays
+    // (production, lecture du 04/11) : nul jusqu'a ce qu'il le rende.
+    paysEnseignant: row['teacher_country'] as String?,
     debut: _date(row, 'debut'),
     dureeObservee: Duration(seconds: _integer(row, 'duree_observee_secondes')),
     statut: switch (row['statut']) {

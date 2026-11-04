@@ -45,6 +45,39 @@ recette en production** : la dernière colonne ne se remplit que quand le direct
 | 130 | FN-115a : conditions de remboursement et de contestation, lues avant de payer | 7 | fusionnée le 02/11 (25a84dc8), aucune migration. Ordre du directeur du 01/11 : « oui pour les 7 points » (`DECISION-TARIFS-2026-10-18.md`, section du 01/11) |
 | 131 | FN-115b : remboursements et contestations Stripe traités par le serveur | 7 | fusionnée le 02/11 (9ffbacf1) ; fichier 1 collé par le directeur, fichier 2 posé par le pilote, tous deux vérifiés en production avant la fusion. En ligne **sous réserve de la preuve du directeur** (un vrai remboursement ou un vrai litige) ; reste à ajouter `charge.refunded`, `charge.dispute.created` et `charge.dispute.closed` au webhook Stripe de production |
 
+## Fusions du 03/11 (après REJEU-E2E, 13:51 UTC) au 04/11 (04:50 UTC)
+
+Relevé du garde-cap, le 04/11, d'après `git log --first-parent origin/main` (main ec208f5c). **Aucun parcours n'a été rejoué de bout en bout depuis REJEU-E2E (PR 178)** : la colonne « Vert en local » du tableau ci-dessus reste celle du 03/11. Le prochain rejeu daté, sur les parcours 4, 5, 5 bis, A et B, vient après FN-006 (décision du pilote et du garde-cap, 04/11). « En production » veut dire fusionné et migration installée, jamais recetté : la recette reste au directeur.
+
+| PR | Objet | Parcours servi | État au 04/11 |
+| --- | --- | --- | --- |
+| 180 | PHOTOS-1 : une seule photo par personne (serveur) | 3, 7 | en production |
+| 177 | DEFIL-FEUILLE : la feuille est la page | tous | en production |
+| 176, 182, 188, 193, 200, 203 | Plan, registre, fiches (documentation seule) | sans objet | fusionnées |
+| 179 | ADM-UX-bis : Échap après « Accepter » | 3 | en production. C'était le rouge application du parcours 3, à rejouer |
+| 183 | FN-SERVEUR : présence bornée, remplaçant, Classe quittée | 5, 6 | en production |
+| 174 | D1-ter : la famille lit ce qui lui est transmis | 7 | en production |
+| 185 | Déploiement sans application ; scénarios dans la CI | sans objet | fusionnée (fichier du directeur) |
+| 184, 204 | M1 : liste des doublons, puis 13 modules en double retirés | hors ligne (décision du 03/11) | en production. L'adaptateur `SupportActifSupabase` est resté branché dans main.dart : retiré par M1-A8-lib, puis M1-A8 serveur (B5 20261109700000, collage du directeur) |
+| 186, 190 | Rang 19 : scénarios SQL rouges remis au vert | sans objet | fusionnées |
+| 181 | RECHARGE-CARTE | 7 | en production |
+| 192 | COURRIELS-UX (UX-026, FN-108) | M, 7 | en production |
+| 195 | FN-DIVERS serveur (FN-102, FN-101) | 1 | en production. Le client SIGNATURE-UX reste à faire |
+| 191 | Captures des trois salles du candidat | 1 | fusionnée |
+| 196, 194, 207 | N4 : coffre R2, lectures serveur, écrans de la Bibliothèque | 1, 7 | en production. Le dépôt de la pièce passe par le seau kyc : son contenu n'est pas vérifié, et c'est écrit au registre |
+| 197 | Salle 3 serveur : « Valider la pièce » | 1 | en production |
+| 199, 202 | N3 : D3 (mission du contrôleur), S2 (pause de séance) | 5 | en production |
+| 189, 205, 208 | V1-a, V1-a-bis (super-admin des deux côtés), V1-b (créneaux) : entretiens, serveur | 1 | en production. Les écrans V2 sont en cours, V2-e (PR 216) attend son tour |
+| 198, 201 | SUPPRIMER serveur, puis SUPPRIMER-bis (restaurer, lister) | hors ligne (demande du 03/11) | en production. Les écrans (PR 210) attendent l'enrôlement du téléphone du directeur |
+| 206, 209 | ANTI-ROBOT (Turnstile), CONNEXION-UX, CHARGEMENT | 3 | en production, avec la clé Turnstile vide : le contrôle n'est pas actif tant que le directeur n'a pas posé les clés |
+| 211 | MFA-DIRECTION : double vérification de la direction | 1, 3 (gestes aal2) | en production. Il manque l'enrôlement du directeur |
+| 212 | PHOTOS-2a : photo synchronisée, écriture directe fermée | 3, 7 | en production. Le client est déployé avant la migration |
+| 214 | FUSEAUX serveur : `horloge_interlocuteurs` | 5, 7 | en production. Le client est en cours |
+| 213 | DEFIL-FEUILLE-bis | tous | en production |
+| 218 | Scénario cand_l3 aligné (27 variantes) | sans objet | fusionnée |
+
+Installées sans PR fusionnée à cette heure : DRAPEAUX serveur (20261109400000, PR 215 en file) et V2-e serveur (20261109600000, PR 216 en file).
+
 ## Écart entre les migrations du dépôt et la production
 
 Contrôle en lecture seule du 31/10 à 19 h 30 (UTC) : 288 fichiers de `supabase/migrations` sur
