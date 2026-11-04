@@ -219,7 +219,8 @@ les copie dans chaque consigne d'agent, et un agent qui en enfreint une voit sa 
 - **P6. En-cours avec les trains (pilote, 04/11/2026).** Une PR que le garde-cap a déclarée
   conforme et qui attend son train ne compte pas dans la limite d'une PR ouverte par agent. Un agent
   ne commence pas pour autant un troisième lot : au plus une PR en travail et une PR en attente de
-  train.
+  train. Une PR qui attend un geste du directeur compte comme une PR en attente. Seule exception,
+  nommée : I1 garde la PR 210 jusqu'à l'enrôlement du directeur dans la double vérification.
 
 ## 4. Risque accepté, dit tel quel
 
