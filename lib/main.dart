@@ -157,8 +157,6 @@ import 'core/suivi/messages_academie_supabase.dart';
 import 'core/suivi/port_messages_academie.dart';
 import 'core/tc_bibliotheque/catalogue_supabase.dart';
 import 'core/tc_bibliotheque/donnees_catalogue.dart';
-import 'core/tc_bibliotheque/port_support_actif.dart';
-import 'core/tc_bibliotheque/support_actif_supabase.dart';
 import 'core/tc_etat_partage/etat_partage_supabase.dart';
 import 'core/tc_etat_partage/providers_tc_etat_partage.dart';
 import 'core/tc_observation/historique_observations_admin_supabase.dart';
@@ -647,11 +645,8 @@ List<Override> _surchargesAppReelle() => <Override>[
   portSignalementProvider.overrideWithValue(
     SignalementSupabase(Supabase.instance.client),
   ),
-  // Support actif de la seance (CAP29-G) et travail a venir de la classe
-  // (« Avant le prochain cours ») : assignations ouvertes et reprise.
-  portSupportActifProvider.overrideWithValue(
-    SupportActifSupabase(Supabase.instance.client),
-  ),
+  // Travail a venir de la classe (« Avant le prochain cours ») : assignations
+  // ouvertes et reprise.
   portTravailAVenirProvider.overrideWithValue(
     travailAVenirSupabase(Supabase.instance.client),
   ),

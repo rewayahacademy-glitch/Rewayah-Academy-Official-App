@@ -1,6 +1,6 @@
 // L'adaptateur Supabase de la veille de fraicheur : un canal Realtime, abonne
 // aux changements Postgres des quatre tables publiees par la migration
-// 20261027100000. Meme mecanisme que `support_actif_supabase.dart`, etendu.
+// 20261027100000 : le paquet temps reel ne sert que de signal de relecture.
 //
 // Le filtre est la RLS : Realtime l'applique a chaque insertion et chaque
 // modification avec le jeton de l'abonne. Aucun filtre cote client ne la
