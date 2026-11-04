@@ -3034,3 +3034,79 @@ li, dd { text-wrap: wrap; }
 /* Le bouton principal s'eclaire : une lueur violette autour, et un reflet blanc, etroit, qui le traverse toutes les 8 s. */
 [data-teinte="jour"] .cta:not(.cta--secondary) { box-shadow: 0 10px 30px -8px rgb(134 82 230 / .5); }
 [data-teinte="jour"] .cta:not(.cta--secondary)::after { background: linear-gradient(105deg, rgb(255 255 255 / 0) 40%, rgb(255 255 255 / .3) 50%, rgb(255 255 255 / 0) 60%); }
+
+/* === Le chemin de lumiere (directeur, 04/11/2026) ================================================================
+   « Ce qui manque vraiment, c'est d'elever le niveau de l'arriere-plan pour que ce ne soit pas un simple PDF d'un document
+   Word, les interactions entre les sections » ; puis, devant le prototype en video : « j'aime bien le proto avec la ligne qui
+   cree le mouvement » ; « si cette ligne pouvait aussi aller avec une lumiere : tout ce qu'elle touche devient plus clair
+   (mais lisible), et plus elle s'eloigne d'un element, plus celui-ci s'attenue ». Polices, logo et couleurs de marque :
+   inchanges ; chaque teinte est un jeton du theme clair de l'app. Le dessin est ici ; styles/motion.js (preparerVoyage) pose
+   la classe voyage-actif, cree les calques et lit seulement la position de la page. Sans script, rien de ceci ne s'applique.
+   1. Un fond continu : une couche fixe (.voyage) dont la teinte passe d'une section a l'autre en suivant la lecture, au lieu
+      de bandes posees l'une sous l'autre. Chaque section donne sa teinte par --teinte-voyage (alternance douce, la lavande
+      aux sections qui l'avaient). Quatre lumieres a des profondeurs differentes et un grain tres fin, comme le papier d'un
+      livre. Les bandes claires (lavande, blanches) deviennent transparentes : la couche les dessine, sans jonction.
+   2. Le fil : un trait violet fin part du bas de l'en-tete de la page, longe une marge et ne traverse la page que dans un vide
+      (aucun texte ni image sur toute la largeur) ; il se dessine jusqu'a la ligne de lecture.
+   3. La lumiere du fil : sa pointe porte une lumiere blanche, sous le contenu ; elle eclaircit le fond de ce qu'on lit (un
+      texte sombre n'y gagne que du contraste). Les titres et les illustrations eloignes de la pointe s'attenuent : un titre
+      ne descend jamais sous le seuil WCAG AA, calcule pour sa couleur sur le fond le plus fonce du parcours ; le texte
+      courant ne s'attenue jamais.
+   4. Deux sections s'ouvrent en arche, qui s'aplanit quand elles montent : le panneau du directeur, de nuit (#25113F, la
+      teinte la plus sombre de la marque, avec la lueur d'une porte), et les bandes d'appel de fin, en lavande.
+   Mouvement reduit : la teinte suit toujours la lecture (une couleur, pas un mouvement) ; le fil est entier, sans pointe ni
+   lumiere ; les arches sont plates ; rien ne s'attenue. */
+.voyage, .chemin-fil { display: none; }
+/* Variables lues par l'element qui les porte, sans heritage : changer l'arche ou l'eclat d'un titre ne recalcule pas tout ce qu'il contient. */
+@property --courbe { syntax: '<length>'; inherits: false; initial-value: 0px; }
+@property --eclat { syntax: '<number>'; inherits: false; initial-value: 1; }
+.voyage-actif .voyage { display: block; position: fixed; inset: 0; z-index: -3; pointer-events: none; overflow: hidden; background: var(--voyage, #F7F5FE); }
+.voyage__lumiere, .voyage__eclat { position: absolute; left: 0; top: 0; border-radius: 50%; will-change: transform; }
+.voyage__lumiere--1 { width: 70vw; height: 70vw; margin-left: -22vw; background: radial-gradient(closest-side, rgb(255 255 255 / .95), rgb(255 255 255 / 0)); }
+.voyage__lumiere--2 { width: 56vw; height: 56vw; margin-left: 62vw; background: radial-gradient(closest-side, rgb(220 202 253 / .5), rgb(220 202 253 / 0)); }
+.voyage__lumiere--3 { width: 48vw; height: 48vw; margin-left: 18vw; background: radial-gradient(closest-side, rgb(238 230 250 / .9), rgb(238 230 250 / 0)); }
+.voyage__lumiere--4 { width: 30vw; height: 30vw; margin-left: 56vw; background: radial-gradient(closest-side, rgb(186 152 251 / .22), rgb(186 152 251 / 0)); }
+/* La lumiere de la pointe : un ovale large (elle eclaire la ligne lue, pas seulement la marge), blanc au coeur, ourle de lilas. */
+.voyage__eclat { width: 130vw; height: 96vh; margin: -48vh 0 0 -65vw; opacity: var(--eclat-fil, 0);
+  background: radial-gradient(closest-side, rgb(255 255 255 / .92), rgb(255 255 255 / .7) 34%, rgb(255 255 255 / .3) 58%, rgb(220 202 253 / .18) 78%, rgb(220 202 253 / 0)); }
+.voyage__grain { position: absolute; inset: 0; opacity: .06; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .14 0 0 0 0 .07 0 0 0 0 .25 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+/* Les decors fixes d'avant (degrade, halos, arche geante, porte lointaine) laissent la place a la couche. */
+.voyage-actif body::before, .voyage-actif body::after, .voyage-actif .fond-arche, .voyage-actif .fond-lumiere { display: none !important; }
+
+/* 1. La teinte de chaque section, et les bandes claires sans fond ni jonction. */
+/* La toile de l'app (#F1EFF4) est la base : la lumiere du fil, blanche, s'y voit ; une section sur quatre, et celles qui
+   etaient lavande, passent a la lavande ; les bandes blanches d'avant prennent la mise en avant (#F7F5FE). */
+[data-teinte="jour"] .site-main > * { --teinte-voyage: #F1EFF4; }
+[data-teinte="jour"] .site-main > :nth-child(4n+3) { --teinte-voyage: #EEE6FA; }
+[data-teinte="jour"] .site-main > :is(.pousse, .fond--lavande) { --teinte-voyage: #EEE6FA; }
+[data-teinte="jour"] .site-main > :is(.enonce, .deux-champs, .fond--prune, .appel--sombre) { --teinte-voyage: #F7F5FE; }
+[data-teinte="jour"] .site-main > :is(.panneau, .faq-ouverte, .appel--porte, .appel--centre) { --teinte-voyage: #F1EFF4; }
+[data-teinte="jour"].voyage-actif :is(.fond--lavande, .fond--prune, .appel--sombre) { background: none; }
+[data-teinte="jour"].voyage-actif :is(.panneau, .fond--prune, .appel--sombre)::before,
+[data-teinte="jour"].voyage-actif :is(.panneau, .fond--prune, .appel--sombre)::after { display: none; }
+
+/* 2 et 3. Le fil, sa pointe, et ce qui s'attenue loin d'elle (filter, pour ne pas toucher l'opacite des entrees). */
+.voyage-actif .chemin-fil { display: block; position: absolute; left: 0; width: 100%; z-index: -1; pointer-events: none; overflow: visible; }
+.chemin-fil__trace { fill: none; stroke: #8652E6; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; opacity: .55; }
+.chemin-fil__bout { fill: #8652E6; }
+@media (max-width: 599px) { .chemin-fil__trace { stroke-width: 2; } }
+.voyage-actif [data-attenue] { filter: opacity(var(--eclat, 1)); }
+
+/* 4. Les arches qui s'ouvrent. --courbe : 0 a plat (motion.js la fait passer de la grande arche a plat). */
+[data-teinte="jour"].voyage-actif .panneau { --inverse: #25113F; --sur-inverse: #FFFFFF; --sur-inverse-doux: #E8D8FF;
+  background: #25113F; color: #FFFFFF; position: relative; isolation: isolate; overflow: hidden;
+  border-radius: 50% 50% 50% 50% / var(--courbe, 0px) var(--courbe, 0px) 96px 96px; }
+@media (max-width: 599px) { [data-teinte="jour"].voyage-actif .panneau { border-radius: 50% 50% 50% 50% / var(--courbe, 0px) var(--courbe, 0px) 48px 48px; } }
+[data-teinte="jour"].voyage-actif .panneau .cta--secondary { color: #FFFFFF; border-color: #E8D8FF; background: transparent; box-shadow: none; }
+[data-teinte="jour"].voyage-actif .panneau .cta--secondary:hover { background: #4E2983; color: #FFFFFF; }
+[data-teinte="jour"].voyage-actif .panneau :focus-visible { outline-color: #E8D8FF; }
+[data-teinte="jour"].voyage-actif .panneau :is(.portrait__cadre, .scene__cadre) { background: #4E2983; }
+.panneau__lueur { display: none; }
+.voyage-actif .panneau__lueur { display: block; position: absolute; z-index: -1; left: 50%; top: 0; width: 70vw; height: 70vw; translate: -50% -38%;
+  border-radius: 50%; pointer-events: none; background: radial-gradient(closest-side, rgb(186 152 251 / .45), rgb(134 82 230 / .18) 45%, rgb(134 82 230 / 0)); }
+[data-teinte="jour"].voyage-actif :is(.appel--porte, .appel--centre) { background: #EEE6FA; border-radius: 50% 50% 0 0 / var(--courbe, 0px) var(--courbe, 0px) 0 0; }
+@media print, (forced-colors: active) {
+  .voyage-actif .voyage, .voyage-actif .chemin-fil, .voyage-actif .panneau__lueur { display: none; }
+  .voyage-actif [data-attenue] { filter: none; }
+}

@@ -25,12 +25,14 @@ correction groupée après la première relecture du directeur.
 | **Bouton d'en-tête d'un seul mot** (« S'inscrire », à toutes les largeurs) | `build_site.py`, `styles/site.css` | présent dans le code ; « Commencer mon inscription » reste dans le corps (haut de l'accueil, fin des pages) |
 | **Lumière lointaine à travers la porte, contenu qui flotte, lumières animées** | fin de `styles/site.css`, `build_site.py` | présent dans le code ; halo derrière l'arche de l'accueil, lueur dans l'embrasure, rayons qui tombent sur le chemin, porte de lumière lointaine au fond des pages, ombres portées des cartes et des illustrations, reflet sur le bouton principal ; captures, y compris pendant le passage de la porte |
 | **Cartes du hub redessinées** (« je ne vois pas où cliquer » ; « trop moches, couleurs et formes uniformes ») | `build_site.py`, `styles/site.css`, `content/pages.json` | présent dans le code ; le plus récent à la une sur lavande claire ; les suivants illustrés, en verre clair en arche, violet profond, lavande au grand coin ; toute la carte est le lien, bouton « Lire l'article » ; le bouton du haut de la page mène à la liste ; captures bureau, mobile et production au 8 novembre |
-| **Article « enfant fatigué » réécrit en profondeur** (« trop court, aucune valeur ») | `content/pages.json` | présent dans le code ; 1 985 mots au lieu de 865 ; al-Ghazâlî, Ibn Khaldûn, cinq hadiths et quatre versets de plus, le sommeil (Paruthi 2016), tous vérifiés (§6) ; la phrase « ne portent pas sur le Coran » est retirée |
+| **Article « enfant fatigué » réécrit en profondeur** (« trop court, aucune valeur ») | `content/pages.json` | présent dans le code ; 2 032 mots au lieu de 865 (après la correction du 04/11) ; al-Ghazâlî, Ibn Khaldûn, cinq hadiths et quatre versets de plus, le sommeil (Paruthi 2016), tous vérifiés (§6) ; la phrase « ne portent pas sur le Coran » est retirée |
 | **Parution programmée, deux jours d'écart au moins** | `build_site.py`, `content/pages.json` | présent dans le code ; 5, 8, 11 et 14 novembre ; testé localement à chaque date ; **automatique seulement si la production se reconstruit ces jours-là** (§7, point 6) |
 | **Tout le site au mode clair de l'application** (sixième message, 04/11 : « le thème violet ne permet pas la lecture facile » ; « le violet devient rare, juste pour les CTA principaux ») | `content/direction.json` (`teinte: jour`), `build_site.py`, fin de `styles/site.css`, `DESIGN.md` | présent dans le code ; mise en page, images, mouvements et lumières inchangés, couleurs seules du thème clair de l'app ; violet plein sur les boutons seulement ; contraste de chaque texte mesuré sur 16 pages à 1440 et 390 px, appareil clair et sombre : aucun texte sous le seuil WCAG AA ; un test vérifie que chaque couleur du bloc vient de `app_palette.dart` |
 | **Correction à la maison, avec sagesse** (relecture du directeur, 04/11) | `content/pages.json` | présent dans le code ; « enfant fatigué » et « apprendre le Coran à son enfant » : le parent peut corriger, doucement, une erreur à la fois, sans que l'enfant sente que le cours le suit partout ni que le Coran est une corvée ; une erreur qui revient se signale à l'enseignant |
+| **Défauts signalés le 04/11** (cercles du simulateur déformés ; fiche « Les cours en bref », texte au bord, « ombre de PowerPoint des années 90 ») | fin de `styles/site.css` (commit `cfef9fa3`) | présent dans le code ; boutons « − » et « + » à 52 × 52 ; la fiche sans cadre ne reçoit plus d'ombre ; ombres des cartes courtes et centrées ; vu sur l'aperçu Vercel à 1440 et 390 px |
+| **Le chemin de lumière** (septième message, 04/11 : élever l'arrière-plan et les liaisons entre les sections ; « j'aime bien le proto de la vidéo avec la ligne qui crée le mouvement » ; une lumière sur la ligne, qui éclaire ce qu'elle touche et laisse s'atténuer ce qui s'éloigne) | bloc « Le chemin de lumière » de `styles/site.css`, `preparerVoyage` dans `styles/motion.js`, `DESIGN.md` | présent dans le code, sur toutes les pages en teinte jour ; polices, logo et couleurs de marque inchangés. Fond continu dont la teinte suit la lecture, quatre lumières en profondeur, grain fin ; un fil violet qui longe les marges et ne traverse la page que dans un vide, dessiné jusqu'à la ligne de lecture ; sa lumière blanche sous ce qu'on lit ; titres et illustrations sans texte qui s'atténuent loin d'elle (jamais le texte courant) ; le panneau du directeur de nuit, qui s'ouvre en arche, et les bandes d'appel de fin en arche lavande. Contraste mesuré au pire cas (fond lavande, titres au plus atténué) sur 16 pages à 1440 et 390 px : aucun texte sous le seuil WCAG AA. Mouvement réduit : fil entier, sans pointe ni lumière, arches plates, rien d'atténué. Sans script : la page d'avant. Défilement : autant d'images lentes qu'avant (mesuré dans le navigateur sans carte graphique du conteneur) ; vidéo de l'accueil montrée au directeur |
 
-Testé localement : 122 tests `python3 -m unittest discover -s site-public/tests` (80 au départ, 42 ajoutés), et 92 vues (23 routes à 360, 390, 768 et
+Testé localement : 123 tests `python3 -m unittest discover -s site-public/tests` (80 au départ, 43 ajoutés), et 92 vues (23 routes à 360, 390, 768 et
 1440 px) sans débordement horizontal, sans ressource en erreur, sans erreur JavaScript, refaites sur ce commit (blocs arabes et polices compris ;
 captures des blocs arabes à 390 et 1366 px). Testé sur staging : l'aperçu de la PR 187 a servi les deux premiers commits ; les suivants
 ne sont pas encore vus. Déployé : non.
@@ -59,6 +61,14 @@ ne sont pas encore vus. Déployé : non.
   violet ne permet pas la lecture facile » : tout le site au mode clair de l'application, le reste ne change pas, seules les couleurs s'adaptent
   (filigrane, texte) ; le violet devient rare, pour souligner les choses très importantes comme les CTA principaux.
 
+- **Septième message (04/11)** : le nouveau style est « trop banal », l'ancien « trop cheap » ; « crois-moi, ce qui manque vraiment c'est comment
+  élever le niveau de l'arrière-plan pour ne pas que ça soit un simple PDF d'un document ms.word, les interactions entre les sections » ; « ne change
+  pas le style de marque : utilise les polices et le branding de la marque, c'est pas ça que tu dois changer » (la maquette au titre en serif est
+  abandonnée). Devant le prototype en vidéo : « j'aime bien le proto de la vidéo avec la ligne qui crée le mouvement » ; puis « si cette ligne pouvait
+  aussi aller avec une lumière, tout ce qu'elle touche devient plus clair (mais lisible) et plus elle s'éloigne d'un élément celui-ci devient
+  atténué ». L'agent a répondu : oui pour la lumière ; l'atténuation pour les titres et les illustrations, pas pour le texte courant, dont le gris
+  passerait sous le seuil de lisibilité.
+
 ## 3. Choix de l'agent, modifiables en une ligne
 
 - **Teinte jour (04/11)** : réglage `teinte` de `direction.json`, réversible en une ligne (`violet`). Choix faits pour rester dans le mode clair de
@@ -67,6 +77,14 @@ ne sont pas encore vus. Déployé : non.
   tuiles, parcours, dates du paiement) vont du blanc au lilas #BA98FB sans aplat violet ; la carte « Le plus récent » est lavande, les autres blanche,
   lilas ou blanche selon leur rang ; le site reste clair même si l'appareil est en mode sombre (c'est le mode clair de l'app qui est demandé). Le
   violet plein : boutons principaux, « S'inscrire », bouton des bandes d'appel, « Lire l'article », puces, étoiles, filet des citations du Coran, focus.
+
+- **Chemin de lumière (04/11)** : la toile de l'app (#F1EFF4) sert de base et une section sur quatre, avec celles qui étaient lavande, passe à
+  la lavande (#EEE6FA), pour que la lumière blanche du fil se voie (sur du blanc, elle est invisible) ; les bandes blanches d'avant prennent la mise
+  en avant (#F7F5FE). La lumière se tient sur la ligne de lecture (58 % de l'écran), entre le milieu de la page et la pointe du fil. S'atténuent :
+  les titres de section, jusqu'au plancher qui garde leur contraste WCAG AA (calculé pour leur couleur sur le fond le plus foncé du parcours), et
+  les illustrations qui ne portent aucun texte (jusqu'à 55 %). Le dégradé fixe, les halos, l'arche géante et la porte lointaine du fond laissent la
+  place à la couche continue (le prototype vu par le directeur les retirait). Le panneau du directeur devient une bande de nuit #25113F, la seule
+  grande surface sombre du site, comme dans la vidéo ; s'il la trouve trop forte, une ligne la rend à la bande blanche.
 
 - `bloc_avis.AVIS_MOYENNE_MIN = 5` et `AVIS_APERCU_MIN = 3` : pas de moyenne avant 5 avis, pas d'aperçu avant 3 ; les trois plus récents, jamais les mieux notés.
 - **Filigrane géant derrière du texte conservé** (4 à 6 % d'opacité) : le README du logo l'autorise pour `ornement-contour` et `symbole-contour` (« filigrane
@@ -140,7 +158,8 @@ ne sont pas encore vus. Déployé : non.
 - **Refonte des animations** au-delà des cartes, des boutons et des liens du pied.
 - **Hub : 4 articles** (2 réécrits, 2 nouveaux). Les autres sujets du plan sont à écrire un par un, signés et relus ; aucun n'est publié en série.
 - **Mesure d'audience** (voir §3).
-- **Rendu vérifié sur l'aperçu Vercel des derniers commits** : non ; seules mes captures locales existent.
+- **Rendu du chemin de lumière vérifié sur l'aperçu Vercel** : pas encore (le commit qui l'apporte est le dernier) ; captures et vidéo locales seulement.
+- **Fil sur un vrai téléphone** : vérifié seulement à 390 px dans le navigateur ; la fluidité sur un téléphone d'entrée de gamme n'est pas mesurée.
 - **Construction automatique les jours de parution** : non. Elle touche `.github/workflows/flutter-deploy.yml`, zone interdite aux agents (§7, point 6).
 - **Registre de marque M-29** : l'exception datée du 03/11 est écrite ici et dans les tests, pas encore au registre (`docs/current/marque/`), hors de ma zone.
 
@@ -210,6 +229,8 @@ ferait doublon). Les aperçus des PR sont toujours `noindex`. C'est ce que signa
     bouton principal), si le directeur la confirme comme règle et non comme essai.
 11. **Pour le pilote : registre de marque (O-16 et cahier visuel).** Le site passe au mode clair de l'app (directeur, 04/11) ; il garde un
     dégradé de fond très léger (blanc en haut à gauche, lavande en bas à droite), dans la dérogation O-16 déjà inscrite.
+12. **Pour le directeur : le chemin de lumière sur l'aperçu.** Garder la nuit du panneau du directeur et l'atténuation des titres ? Chacun se
+    retire en une ligne. **Pour le pilote** : le registre de marque (cahier visuel) n'a ni fil ni fond continu ; à y inscrire si le directeur garde.
 
 ## 8. Vérifier
 

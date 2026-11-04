@@ -223,6 +223,7 @@
     demande = false;
     var h = window.innerHeight;
     if (entete) enteteSuit(window.scrollY);
+    sceneVoyage(h);
     if (reduit.matches) return;
     scenePorte(h);
     sceneChapitres(h);
@@ -484,7 +485,305 @@
     });
   }
 
+  /* Le chemin de lumiere (teinte jour ; directeur, 04/11/2026). Le dessin et ses raisons sont dans styles/site.css (« Le
+     chemin de lumiere ») ; ici, on mesure la page (au chargement et quand elle change de taille), puis, a chaque image, on
+     ne lit que la position de defilement. */
+  var voyage = null;
+  var LECTURE = 0.58; // la ligne de lecture, ou se tient la pointe du fil : 58 % de la hauteur de l'ecran
+  var hexa = function (t) { var m = /^#([0-9a-f]{6})$/i.exec(t || ''); if (!m) return null; var n = parseInt(m[1], 16); return [n >> 16, (n >> 8) & 255, n & 255]; };
+  var lisse = function (t) { return t * t * (3 - 2 * t); };
+  var lin = function (x) { x /= 255; return x <= 0.04045 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); };
+  var lum = function (c) { return 0.2126 * lin(c[0]) + 0.7152 * lin(c[1]) + 0.0722 * lin(c[2]); };
+  var ecart = function (a, b) { var x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
+  var rvb = function (s) { var m = /rgba?\(([^)]+)\)/.exec(s || ''); if (!m) return null; var v = m[1].split(/[\s,/]+/).filter(Boolean).map(Number); return v.length > 3 && v[3] < 1 ? null : v.slice(0, 3); };
+  // Fonds du parcours sous un titre sans fond propre : les teintes des sections, et la lavande ourlee de lilas de la lumiere.
+  var FONDS = [[255, 255, 255], [247, 245, 254], [241, 239, 244], [238, 230, 250], [233, 222, 251]];
+
+  function preparerVoyage() {
+    if (racine.getAttribute('data-teinte') !== 'jour' || !contenu) return;
+    var NS = 'http://www.w3.org/2000/svg';
+    var couche = document.createElement('div');
+    couche.className = 'voyage';
+    couche.setAttribute('aria-hidden', 'true');
+    couche.innerHTML = '<span class="voyage__lumiere voyage__lumiere--1"></span><span class="voyage__lumiere voyage__lumiere--2"></span>' +
+      '<span class="voyage__lumiere voyage__lumiere--3"></span><span class="voyage__lumiere voyage__lumiere--4"></span>' +
+      '<span class="voyage__eclat"></span><span class="voyage__grain"></span>';
+    document.body.insertBefore(couche, document.body.firstChild);
+    var fil = document.createElementNS(NS, 'svg');
+    fil.setAttribute('class', 'chemin-fil');
+    fil.setAttribute('aria-hidden', 'true');
+    fil.setAttribute('focusable', 'false');
+    var trace = document.createElementNS(NS, 'path');
+    trace.setAttribute('class', 'chemin-fil__trace');
+    var bout = document.createElementNS(NS, 'circle');
+    bout.setAttribute('class', 'chemin-fil__bout');
+    fil.appendChild(trace);
+    fil.appendChild(bout);
+    contenu.parentNode.insertBefore(fil, contenu);
+    var panneau = contenu.querySelector(':scope > .panneau');
+    if (panneau) {
+      var lueur = document.createElement('span');
+      lueur.className = 'panneau__lueur';
+      lueur.setAttribute('aria-hidden', 'true');
+      panneau.insertBefore(lueur, panneau.firstChild);
+    }
+    voyage = {
+      couche: couche, fil: fil, trace: trace, bout: bout, eclat: couche.querySelector('.voyage__eclat'),
+      lumieres: Array.prototype.map.call(couche.querySelectorAll('.voyage__lumiere'), function (el, i) {
+        return { el: el, vitesse: [0.06, 0.14, 0.22, 0.32][i], depart: [-0.3, 0.18, 0.62, 0.92][i], h: 0 };
+      }),
+      arches: Array.prototype.slice.call(contenu.querySelectorAll(':scope > :is(.panneau, .appel--porte, .appel--centre)')),
+      blocs: [], points: [], longueur: 0, attenues: [], debut: 0, fin: 0, y0: 0, l: 0, couleur: '', mesure: false
+    };
+    racine.classList.add('voyage-actif');
+    mesurerVoyage();
+    var attente = null;
+    var remesurer = function () { clearTimeout(attente); attente = setTimeout(function () { mesurerVoyage(); auDefilement(); }, 120); };
+    if ('ResizeObserver' in window) new ResizeObserver(remesurer).observe(contenu);
+    window.addEventListener('resize', remesurer, { passive: true });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(remesurer);
+    window.addEventListener('load', remesurer);
+  }
+
+  /* Les zones occupees de la page, sur toute sa largeur : un texte, une image, un champ, une surface peinte. Un element colle
+     (sticky) occupe toute la hauteur ou il peut glisser. */
+  function zonesOccupees(sy) {
+    var zones = [];
+    var collants = new Map();
+    var colle = function (el) {
+      if (collants.has(el)) return collants.get(el);
+      var r = null;
+      if (el !== contenu && el.parentElement) r = getComputedStyle(el).position === 'sticky' ? el : colle(el.parentElement);
+      collants.set(el, r);
+      return r;
+    };
+    // Une bande qui coupe ce qui deborde (overflow) borne ce qu'elle contient : la lueur du panneau ne deborde pas.
+    var bornes = new Map();
+    Array.prototype.forEach.call(contenu.children, function (bloc) {
+      var o = getComputedStyle(bloc).overflowY;
+      if (o !== 'visible') { var rb = bloc.getBoundingClientRect(); bornes.set(bloc, [rb.top, rb.bottom]); }
+    });
+    contenu.querySelectorAll('*').forEach(function (el) {
+      if (el.closest('svg') && el.tagName.toLowerCase() !== 'svg') return;
+      var r = el.getBoundingClientRect();
+      if (r.width < 2 || r.height < 2) return; // ni vide, ni texte reserve aux lecteurs d'ecran (1 px)
+      var cs = getComputedStyle(el);
+      if (cs.visibility === 'hidden') return;
+      var nom = el.tagName.toLowerCase();
+      var visuel = /^(img|svg|video|canvas|picture|input|select|textarea|button|iframe)$/.test(nom) ||
+        cs.backgroundColor !== 'rgba(0, 0, 0, 0)' || cs.backgroundImage !== 'none' || cs.boxShadow !== 'none' ||
+        parseFloat(cs.borderTopWidth) > 0 || parseFloat(cs.borderBottomWidth) > 0;
+      if (!visuel) {
+        for (var n = el.firstChild; n; n = n.nextSibling) { if (n.nodeType === 3 && n.textContent.trim()) { visuel = true; break; } }
+      }
+      if (!visuel) return;
+      var haut = r.top, bas = r.bottom;
+      var c = colle(el);
+      if (c) { haut = Math.min(haut, c.getBoundingClientRect().top); bas = Math.max(bas, c.parentElement.getBoundingClientRect().bottom); }
+      var bloc = el;
+      while (bloc.parentElement && bloc.parentElement !== contenu) bloc = bloc.parentElement;
+      var lim = bornes.get(bloc);
+      if (lim) { haut = Math.max(haut, lim[0]); bas = Math.min(bas, lim[1]); if (bas <= haut) return; }
+      // 24 px au-dessus : un texte qui n'est pas encore entre est 24 px plus bas que sa place (il monte en entrant).
+      zones.push([haut + sy - 24, bas + sy + 8]);
+    });
+    zones.sort(function (a, b) { return a[0] - b[0]; });
+    var fusion = [];
+    zones.forEach(function (z) {
+      var der = fusion[fusion.length - 1];
+      if (der && z[0] <= der[1]) der[1] = Math.max(der[1], z[1]); else fusion.push([z[0], z[1]]);
+    });
+    return fusion;
+  }
+
+  function mesurerVoyage() {
+    var v = voyage;
+    var sy = window.scrollY, vh = window.innerHeight, W = racine.clientWidth;
+    var y0 = contenu.getBoundingClientRect().top + sy;
+    v.y0 = y0;
+    v.fil.style.top = y0 + 'px';
+    v.blocs = Array.prototype.filter.call(contenu.children, function (e) { return e.getClientRects().length; }).map(function (e) {
+      var r = e.getBoundingClientRect();
+      return { el: e, haut: r.top + sy, bas: r.bottom + sy, c: hexa(getComputedStyle(e).getPropertyValue('--teinte-voyage').trim()) || [247, 245, 254] };
+    });
+    v.lumieres.forEach(function (l) { l.h = l.el.offsetHeight; });
+    if (!v.blocs.length) return;
+    // Le fil : la moitie de la marge, de chaque cote du contenu.
+    var largeur = parseFloat(getComputedStyle(racine).getPropertyValue('--contenu')) || 1200;
+    var marge = parseFloat(getComputedStyle(racine).getPropertyValue('--marge')) || 16;
+    var bord = Math.max(marge, (W - largeur) / 2) / 2;
+    var gauche = bord, droite = W - bord;
+    var premier = v.blocs[0], dernier = v.blocs[v.blocs.length - 1];
+    var debut = premier.bas - 40;
+    var finBloc = dernier.bas - 160;
+    var petit = W < 600;
+    var vide = petit ? 56 : 64, pas = vh * 0.35;
+    var libres = [];
+    var occupees = zonesOccupees(sy);
+    var y = debut;
+    occupees.forEach(function (z) { if (z[0] > y) libres.push([y, z[0]]); y = Math.max(y, z[1]); });
+    if (y < finBloc) libres.push([y, finBloc]);
+    // L'appel de fin : le fil vient se poser au milieu, dans le vide juste au-dessus de la derniere bande d'appel ; sans ce
+    // vide, il entre dans l'arche de l'appel par sa marge (l'arche le recouvre), ou s'arrete dans sa marge.
+    var appel = /\bappel\b/.test(dernier.el.className) ? dernier : null;
+    var arche = appel && v.arches.indexOf(appel.el) >= 0;
+    var arrivee = null;
+    if (appel) {
+      for (var a = libres.length - 1; a >= 0; a--) {
+        var g = libres[a];
+        if (g[1] <= appel.haut + 240 && g[1] >= appel.haut - vh * 0.5 && g[1] - g[0] >= vide && g[0] > debut + vh * 0.5) { arrivee = g; break; }
+      }
+    }
+    if (arche && !arrivee) finBloc = Math.min(finBloc, appel.haut + 80);
+    var x = gauche, d = 'M ' + x.toFixed(1) + ' ' + (debut - y0).toFixed(1), dernierPassage = debut;
+    libres.forEach(function (g) {
+      if (arrivee && g[0] >= arrivee[0]) return;
+      var h = g[1] - g[0];
+      if (h < vide || g[0] - dernierPassage < pas || g[1] > finBloc) return;
+      var course = Math.min(h - 24, 240);
+      var ya = g[0] + (h - course) / 2, yb = ya + course, nx = x === gauche ? droite : gauche;
+      d += ' L ' + x.toFixed(1) + ' ' + (ya - y0).toFixed(1) +
+        ' C ' + x.toFixed(1) + ' ' + ((ya + yb) / 2 - y0).toFixed(1) + ', ' + nx.toFixed(1) + ' ' + ((ya + yb) / 2 - y0).toFixed(1) + ', ' + nx.toFixed(1) + ' ' + (yb - y0).toFixed(1);
+      x = nx;
+      dernierPassage = yb;
+    });
+    var finY;
+    if (arrivee) {
+      var hA = arrivee[1] - arrivee[0], ca = Math.min(hA - 24, 240), ya2 = arrivee[0] + (hA - ca) / 2;
+      finY = ya2 + ca;
+      d += ' L ' + x.toFixed(1) + ' ' + (ya2 - y0).toFixed(1) +
+        ' C ' + x.toFixed(1) + ' ' + ((ya2 + finY) / 2 - y0).toFixed(1) + ', ' + (W / 2).toFixed(1) + ' ' + ((ya2 + finY) / 2 - y0).toFixed(1) + ', ' + (W / 2).toFixed(1) + ' ' + (finY - y0).toFixed(1);
+    } else {
+      finY = Math.max(finBloc, dernierPassage + 40);
+      d += ' L ' + x.toFixed(1) + ' ' + (finY - y0).toFixed(1);
+    }
+    v.trace.setAttribute('d', d);
+    var H = Math.max(contenu.offsetHeight, finY - y0 + 20);
+    v.fil.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    v.fil.setAttribute('width', W);
+    v.fil.setAttribute('height', H);
+    v.fil.style.height = H + 'px';
+    v.longueur = v.trace.getTotalLength();
+    v.trace.style.strokeDasharray = v.longueur + ' ' + (v.longueur + 2);
+    // Le fil, echantillonne : sa hauteur ne fait que croitre le long du trace, on y cherche la pointe par dichotomie.
+    v.points = [];
+    for (var l = 0; l <= v.longueur; l += 6) { var p = v.trace.getPointAtLength(l); v.points.push([l, p.x, p.y + y0]); }
+    var pf = v.trace.getPointAtLength(v.longueur);
+    v.points.push([v.longueur, pf.x, pf.y + y0]);
+    v.debut = debut;
+    v.fin = finY;
+    v.l = -1;
+    // Ce qui s'attenue loin de la pointe : les titres de section et les illustrations, hors de l'en-tete de page et des cartes.
+    v.attenues.forEach(function (a) { a.el.removeAttribute('data-attenue'); a.el.style.removeProperty('--eclat'); });
+    v.attenues = [];
+    contenu.querySelectorAll('h2, figure, .bande-image').forEach(function (el) {
+      if (premier.el.contains(el) || el.closest('a, .article-carte, .avis-carte, .fiche, summary, figure figure')) return;
+      if (el.tagName.toLowerCase() === 'figure' && el.parentElement.closest('figure, .bande-image')) return;
+      // Une illustration ne s'attenue que si elle ne porte aucun texte (legende, citation) : le texte ne s'attenue jamais.
+      if (el.tagName.toLowerCase() !== 'h2' && el.textContent.trim()) return;
+      var r = el.getBoundingClientRect();
+      if (r.height < 1) return;
+      var plancher = 0.55;
+      if (el.tagName.toLowerCase() === 'h2') {
+        var cs = getComputedStyle(el), couleur = rvb(cs.color);
+        if (!couleur) return;
+        var fonds = null;
+        for (var n = el; n && n !== contenu.parentElement; n = n.parentElement) { var f = rvb(getComputedStyle(n).backgroundColor); if (f) { fonds = [f]; break; } }
+        var grand = parseFloat(cs.fontSize) >= 24 || (parseFloat(cs.fontSize) >= 18.66 && parseInt(cs.fontWeight, 10) >= 700);
+        var seuil = (grand ? 3 : 4.5) + 0.15;
+        plancher = 0.6;
+        (fonds || FONDS).forEach(function (fond) {
+          var o = plancher;
+          while (o < 1 && ecart(couleur.map(function (c, i) { return c * o + fond[i] * (1 - o); }), fond) < seuil) o += 0.02;
+          plancher = Math.min(1, Math.max(plancher, o));
+        });
+      }
+      var c = el.closest('[data-chapitre-image], .chapitres__fenetre, .section__titre, .faq-ouverte__tete');
+      el.setAttribute('data-attenue', '');
+      el.style.setProperty('--eclat-min', plancher.toFixed(2));
+      v.attenues.push({ el: el, haut: r.top + sy, bas: r.bottom + sy, plancher: plancher, vivant: !!c, o: -1 });
+    });
+    v.mesure = true;
+  }
+
+  function sceneVoyage(h) {
+    var v = voyage;
+    if (!v || !v.mesure || !v.blocs.length) return;
+    var sy = window.scrollY, bas = sy + h;
+    // 1. La teinte : d'une section a la suivante, pendant que la jonction monte du bas de l'ecran jusqu'a 40 % de sa hauteur
+    //    (au plus la hauteur de la section qui arrive : deux passages ne se chevauchent jamais).
+    var c = v.blocs[0].c.slice();
+    for (var k = 1; k < v.blocs.length; k++) {
+      var b = v.blocs[k], w = Math.min(h * 0.6, Math.max(1, b.bas - b.haut));
+      var t = borne((bas - b.haut) / w);
+      if (t <= 0) break;
+      t = lisse(t);
+      c = c.map(function (x, i) { return x + (b.c[i] - x) * t; });
+    }
+    var couleur = 'rgb(' + c.map(Math.round).join(' ') + ')';
+    if (couleur !== v.couleur) { v.couche.style.setProperty('--voyage', couleur); v.couleur = couleur; }
+    if (reduit.matches) {
+      if (v.l !== v.longueur) {
+        v.l = v.longueur;
+        v.trace.style.strokeDashoffset = '0';
+        v.bout.setAttribute('r', '0');
+        v.eclat.style.setProperty('--eclat-fil', '0');
+        v.arches.forEach(function (a) { a.__courbe = '0px'; a.style.setProperty('--courbe', '0px'); });
+        v.attenues.forEach(function (a) { a.el.style.removeProperty('--eclat'); a.o = -1; });
+      }
+      return;
+    }
+    // Les lumieres a quatre profondeurs : plus elles sont loin, plus elles vont lentement ; elles reviennent par le bas.
+    v.lumieres.forEach(function (l) {
+      var periode = h + l.h + h * 0.4;
+      var y = ((l.depart * h + l.h - sy * l.vitesse) % periode + periode) % periode - l.h;
+      l.el.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,0)';
+    });
+    // 2. Le fil se dessine jusqu'a la ligne de lecture.
+    var cible = sy + h * LECTURE, pts = v.points, lo = 0, hi = pts.length - 1;
+    if (cible <= pts[0][2]) hi = 0;
+    else if (cible >= pts[hi][2]) lo = hi;
+    else { while (hi - lo > 1) { var mi = (lo + hi) >> 1; if (pts[mi][2] < cible) lo = mi; else hi = mi; } }
+    var a0 = pts[lo], a1 = pts[hi], u = a1[2] > a0[2] ? (cible - a0[2]) / (a1[2] - a0[2]) : 1;
+    u = borne(u);
+    var L = a0[0] + (a1[0] - a0[0]) * u, px = a0[1] + (a1[1] - a0[1]) * u, py = a0[2] + (a1[2] - a0[2]) * u;
+    if (Math.abs(L - v.l) > 0.5) {
+      v.l = L;
+      v.trace.style.strokeDashoffset = (v.longueur - L).toFixed(1);
+      v.bout.setAttribute('cx', px.toFixed(1));
+      v.bout.setAttribute('cy', (py - v.y0).toFixed(1));
+      v.bout.setAttribute('r', L > 1 ? '4' : '0');
+    }
+    // 3. Sa lumiere, sous le contenu, toujours sur la ligne de lecture (meme apres la fin du fil : l'appel de fin reste eclaire) ;
+    //    elle s'allume quand le fil part. Elle se tient entre le milieu de la page et la pointe : elle eclaire ce qu'on lit, et
+    //    glisse d'un cote a l'autre avec le fil ; le fil fini, elle revient au milieu.
+    var allume = borne((cible - v.debut) / 200);
+    v.eclat.style.setProperty('--eclat-fil', allume.toFixed(3));
+    var finie = borne((cible - v.fin) / (h * 0.3));
+    var lx = window.innerWidth / 2 + (px - window.innerWidth / 2) * 0.45 * (1 - finie);
+    v.eclat.style.transform = 'translate3d(' + lx.toFixed(1) + 'px,' + (h * LECTURE).toFixed(1) + 'px,0)';
+    // Ce qui est loin de la lumiere s'attenue : pleinement eclaire a moins de 10 % d'ecran, au plus bas a 50 %.
+    var r0 = h * 0.1, r1 = h * 0.5;
+    v.attenues.forEach(function (a) {
+      var haut = a.haut, fin = a.bas;
+      if (a.vivant) { var r = a.el.getBoundingClientRect(); haut = r.top + sy; fin = r.bottom + sy; }
+      if (fin < sy - h || haut > bas + h) return;
+      var dist = Math.max(0, haut - cible, cible - fin);
+      var o = a.plancher + (1 - a.plancher) * (1 - lisse(borne((dist - r0) / (r1 - r0))));
+      o = Math.round(o * 100) / 100;
+      if (o !== a.o) { a.o = o; a.el.style.setProperty('--eclat', o.toFixed(2)); }
+    });
+    // 4. Les arches : la grande courbe quand la section entre par le bas, a plat quand son haut atteint le tiers de l'ecran.
+    var courbe = Math.min(260, window.innerWidth * 0.18);
+    v.arches.forEach(function (el) {
+      var top = el.getBoundingClientRect().top;
+      var val = Math.round(courbe * borne((top - h * 0.33) / (h * 0.67))) + 'px';
+      if (el.__courbe !== val) { el.__courbe = val; el.style.setProperty('--courbe', val); }
+    });
+  }
+
   preparerEntrees();
+  preparerVoyage();
   preparerArches();
   preparerTapis();
   preparerHalo();

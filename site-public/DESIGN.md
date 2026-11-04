@@ -14,6 +14,12 @@ l'application (`lib/core/theme/app_palette.dart`) : encre #110E20 sur la toile #
 page lavande, logo violet. Le violet plein ne reste qu'aux boutons principaux. Toujours clair, même si l'appareil est en mode sombre. Le bloc
 « Teinte jour » est à la fin de `styles/site.css` ; revenir au violet, c'est remettre `teinte` à `violet`.
 
+Le chemin de lumière (directeur, 04/11/2026), en teinte jour seulement : `styles/motion.js` (`preparerVoyage`) pose la classe `voyage-actif`
+sur la racine, crée la couche de fond (`.voyage`) et le fil (`svg.chemin-fil`, avant `.site-main`), mesure la page au chargement et à chaque
+changement de taille, puis ne lit plus que la position de défilement. Chaque section enfant de `.site-main` donne sa teinte par
+`--teinte-voyage` (fin de `site.css`) ; le fil ne traverse la page que dans une bande vide sur toute la largeur ; ce qui s'atténue porte
+`data-attenue` (titres `h2`, illustrations sans texte). Une nouvelle section n'a rien à déclarer : elle prend la teinte de son rang.
+
 ## Le motif
 
 Un seul motif : l'arche du symbole (M-21 : l'arche est le livre, la porte ouverte est l'accès, le cercle est la halqa). Les 13 illustrations fournies par le directeur le 21/10 portent déjà cette arche ; elles sont détourées, l'arche ramenée au lavande des jetons, et légendées « Illustration ». Aucune autre forme décorative ; aucun dégradé dans la version claire.

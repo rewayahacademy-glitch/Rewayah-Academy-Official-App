@@ -363,6 +363,31 @@ class GeneratedSiteQA(unittest.TestCase):
                     self.assertRegex(selecteur, r"(cta|inscription|appel__bouton)")
         self.assertIn(':root[data-teinte="jour"] {\n  color-scheme: light;', bloc)
 
+    def test_chemin_de_lumiere_reserve_au_script_et_immobile_en_mouvement_reduit(self) -> None:
+        # Le chemin de lumiere (directeur, 04/11/2026) : fond continu, fil, lumiere de sa pointe, arches. Sans script, la page
+        # d'avant, telle quelle ; en mouvement reduit, un etat fixe ; le texte courant ne s'attenue jamais.
+        css = (SITE / "styles" / "site.css").read_text(encoding="utf-8")
+        bloc = css.split("/* === Le chemin de lumiere", 1)[1]
+        self.assertIn(".voyage, .chemin-fil { display: none; }", bloc)
+        for selecteurs, corps in re.findall(r"([^{}]+)\{([^{}]*)\}", bloc.split("*/", 1)[1]):
+            selecteur = selecteurs.strip().split("\n")[-1].strip()
+            if selecteur.startswith("@") or "voyage-actif" in selecteur:
+                continue
+            with self.subTest(selecteur=selecteur):
+                # Hors de .voyage-actif : seulement la teinte de chaque section (une variable), le dessin des calques que seul
+                # le script cree, et leur masquage.
+                self.assertTrue("--teinte-voyage" in corps or re.search(r"\.(voyage__|chemin-fil__|panneau__lueur)", selecteur)
+                                or corps.strip() in ("display: none;", "display: none !important;"), corps)
+        motion = (SITE / "styles" / "motion.js").read_text(encoding="utf-8")
+        self.assertIn("if (racine.getAttribute('data-teinte') !== 'jour' || !contenu) return;", motion)
+        reduit = motion.split("if (reduit.matches) {\n      if (v.l !== v.longueur) {", 1)[1].split("return;", 1)[0]
+        for etat in ("strokeDashoffset = '0'", "setAttribute('r', '0')", "--eclat-fil', '0'", "'--courbe', '0px'", "removeProperty('--eclat')"):
+            self.assertIn(etat, reduit)
+        # Ce qui s'attenue : les titres de section (jamais sous le seuil WCAG AA) et les illustrations sans aucun texte.
+        self.assertIn("contenu.querySelectorAll('h2, figure, .bande-image')", motion)
+        self.assertIn("if (el.tagName.toLowerCase() !== 'h2' && el.textContent.trim()) return;", motion)
+        self.assertIn("var seuil = (grand ? 3 : 4.5) + 0.15;", motion)
+
     def test_bundle_gate_covers_every_local_font_requested_by_css(self) -> None:
         css = (SITE / "styles" / "site.css").read_text(encoding="utf-8")
         fonts = set(re.findall(r"\.\./assets/([A-Za-z0-9.-]+\.(?:woff2|ttf|otf))", css))
