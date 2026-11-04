@@ -1,6 +1,8 @@
--- CONTRATS-MANQUANTS : support actif (PortSupportActif), travail a venir
--- (PortTravailAVenir via assignations_a_venir) et prerequis de l'enseignant
--- (PrerequisEnseignant). Chaque garde a un controle de refus.
+-- CONTRATS-MANQUANTS : travail a venir (PortTravailAVenir via
+-- assignations_a_venir) et prerequis de l'enseignant (PrerequisEnseignant).
+-- Chaque garde a un controle de refus. Le support actif (PortSupportActif) a
+-- ete retire (M1-A8, B5 20261109700000) : ses cinq fonctions doivent etre
+-- absentes.
 -- A rejouer sur une base NEUVE (fixtures inserees puis annulees).
 \o /dev/null
 BEGIN;
@@ -158,26 +160,20 @@ INSERT INTO public.learning_assignment(id, group_id, student_id, resource_id, pu
 DO $acl$
 DECLARE f regprocedure;
 BEGIN
-  FOREACH f IN ARRAY ARRAY['public.presenter_support(uuid,uuid,integer,text,jsonb)'::regprocedure,
-                           'public.support_actif(uuid)'::regprocedure,
-                           'public.prerequis_enseignant()'::regprocedure] LOOP
+  FOREACH f IN ARRAY ARRAY['public.prerequis_enseignant()'::regprocedure] LOOP
     IF NOT (SELECT prosecdef AND proconfig @> ARRAY['search_path=""'] FROM pg_proc WHERE oid = f)
        OR coalesce(obj_description(f, 'pg_proc'), '') NOT LIKE '%md5_functiondef=' || md5(pg_get_functiondef(f)) || '%' THEN
       RAISE EXCEPTION 'ROUGE : DEFINER ou empreinte de %', f;
     END IF;
   END LOOP;
-  PERFORM pg_temp.ok('trois RPC DEFINER avec empreinte F86 reelle');
-  FOREACH f IN ARRAY ARRAY['public.support_actif_capacites(uuid)'::regprocedure,
-                           'public.assignations_a_venir(uuid,uuid,integer)'::regprocedure] LOOP
+  PERFORM pg_temp.ok('une RPC DEFINER avec empreinte F86 reelle');
+  FOREACH f IN ARRAY ARRAY['public.assignations_a_venir(uuid,uuid,integer)'::regprocedure] LOOP
     IF (SELECT prosecdef OR NOT proconfig @> ARRAY['search_path=""'] FROM pg_proc WHERE oid = f) THEN
       RAISE EXCEPTION 'ROUGE : % doit etre INVOKER a search_path vide', f;
     END IF;
   END LOOP;
-  PERFORM pg_temp.ok('deux lectures INVOKER');
-  FOREACH f IN ARRAY ARRAY['public.presenter_support(uuid,uuid,integer,text,jsonb)'::regprocedure,
-                           'public.support_actif(uuid)'::regprocedure,
-                           'public.prerequis_enseignant()'::regprocedure,
-                           'public.support_actif_capacites(uuid)'::regprocedure,
+  PERFORM pg_temp.ok('une lecture INVOKER');
+  FOREACH f IN ARRAY ARRAY['public.prerequis_enseignant()'::regprocedure,
                            'public.assignations_a_venir(uuid,uuid,integer)'::regprocedure] LOOP
     IF NOT has_function_privilege('authenticated', f, 'EXECUTE')
        OR has_function_privilege('anon', f, 'EXECUTE')
@@ -187,108 +183,25 @@ BEGIN
     END IF;
   END LOOP;
   PERFORM pg_temp.ok('ACL : authenticated seul');
-  FOREACH f IN ARRAY ARRAY['app_private.support_refus(uuid,uuid)'::regprocedure,
-                           'app_private.support_actif_json(uuid)'::regprocedure] LOOP
-    IF (SELECT prosecdef FROM pg_proc WHERE oid = f)
-       OR has_function_privilege('authenticated', f, 'EXECUTE')
-       OR has_function_privilege('anon', f, 'EXECUTE') THEN
-      RAISE EXCEPTION 'ROUGE : aide interne % DEFINER ou ouverte', f;
-    END IF;
-  END LOOP;
-  PERFORM pg_temp.ok('aides internes INVOKER fermees aux clients');
+  -- M1-A8 : les cinq fonctions du support actif sont retirees.
+  IF to_regprocedure('public.support_actif_capacites(uuid)') IS NOT NULL
+     OR to_regprocedure('public.presenter_support(uuid,uuid,integer,text,jsonb)') IS NOT NULL
+     OR to_regprocedure('public.support_actif(uuid)') IS NOT NULL
+     OR to_regprocedure('app_private.support_actif_json(uuid)') IS NOT NULL
+     OR to_regprocedure('app_private.support_refus(uuid,uuid)') IS NOT NULL THEN
+    RAISE EXCEPTION 'ROUGE : une fonction du support actif existe encore (M1-A8)';
+  END IF;
+  PERFORM pg_temp.ok('support actif retire : cinq fonctions absentes');
 END $acl$;
 
 SET LOCAL ROLE anon;
-SELECT pg_temp.refus($$SELECT public.support_actif('cd000000-0000-4000-8000-000000000051')$$, '42501', 'anon : support actif refuse');
 SELECT pg_temp.refus($$SELECT public.prerequis_enseignant()$$, '42501', 'anon : prerequis refuses');
 SELECT pg_temp.refus($$SELECT * FROM public.assignations_a_venir('cd000000-0000-4000-8000-0000000000c1')$$, '42501', 'anon : travail refuse');
 RESET ROLE;
 
 -- ------------------------------------------------------------
--- 2. Support actif
+-- 2. Support actif : retire (M1-A8), voir le controle d'absence en 1.
 -- ------------------------------------------------------------
-SELECT pg_temp.qui('cd000000-0000-4000-8000-0000000000b4','teacher');
-SET LOCAL ROLE authenticated;
-SELECT pg_temp.refus($$SELECT public.support_actif_capacites('cd000000-0000-4000-8000-000000000051')$$, '42501',
-  'compte desactive : capacites refusees (garde compte actif)');
-RESET ROLE;
-
-SELECT pg_temp.qui('cd000000-0000-4000-8000-0000000000b2','teacher');
-SET LOCAL ROLE authenticated;
-SELECT pg_temp.vrai(public.support_actif_capacites('cd000000-0000-4000-8000-000000000051') = '{"peut_presenter": false}'::jsonb,
-  'autre enseignant : ne peut pas presenter');
-SELECT pg_temp.refus($$SELECT public.presenter_support('cd000000-0000-4000-8000-000000000051','cd000000-0000-4000-8000-000000000071',0,'k-b2')$$,
-  '42501', 'autre enseignant : presentation refusee (garde enseignant de la seance)');
-SELECT pg_temp.refus($$SELECT public.support_actif('cd000000-0000-4000-8000-000000000051')$$, '42501',
-  'autre enseignant : lecture refusee (garde participant)');
-RESET ROLE;
-
-SELECT pg_temp.qui('cd000000-0000-4000-8000-0000000000e1','student','cd000000-0000-4000-8000-0000000000f1');
-SET LOCAL ROLE authenticated;
-SELECT pg_temp.vrai(public.support_actif_capacites('cd000000-0000-4000-8000-000000000051') = '{"peut_presenter": false}'::jsonb,
-  'eleve : ne peut pas presenter');
-SELECT pg_temp.refus($$SELECT public.presenter_support('cd000000-0000-4000-8000-000000000051','cd000000-0000-4000-8000-000000000071',0,'k-e1')$$,
-  '42501', 'eleve : presentation refusee');
-SELECT pg_temp.vrai(public.support_actif('cd000000-0000-4000-8000-000000000051') IS NULL,
-  'eleve participant : aucun support presente (null)');
-RESET ROLE;
-
-SELECT pg_temp.qui('cd000000-0000-4000-8000-0000000000b1','teacher');
-SET LOCAL ROLE authenticated;
-SELECT pg_temp.vrai(public.support_actif_capacites('cd000000-0000-4000-8000-000000000051') = '{"peut_presenter": true}'::jsonb,
-  'enseignant de la seance : peut presenter');
-SELECT pg_temp.refus($$SELECT public.presenter_support('cd000000-0000-4000-8000-000000000051','cd000000-0000-4000-8000-000000000071',0,'k-pos',
-  '{"resource_id": "cd000000-0000-4000-8000-000000000074", "type_ancrage": "page", "page": 2}')$$,
-  '22023', 'position d''une autre ressource refusee');
-DO $presenter$
-DECLARE r jsonb;
-BEGIN
-  PERFORM pg_temp.vrai(public.presenter_support('cd000000-0000-4000-8000-000000000051','cd000000-0000-4000-8000-000000000074',0,'k1')
-    = '{"statut": "refusee", "raison": "non_attribue"}'::jsonb, 'support non attribue a la classe : refuse');
-  PERFORM pg_temp.vrai(public.presenter_support('cd000000-0000-4000-8000-000000000051','cd000000-0000-4000-8000-000000000072',0,'k2')
-    = '{"statut": "refusee", "raison": "droits_echus"}'::jsonb, 'support aux droits echus : refuse');
-  PERFORM pg_temp.vrai(public.presenter_support('cd000000-0000-4000-8000-000000000051','cd000000-0000-4000-8000-000000000073',0,'k3')
-    = '{"statut": "refusee", "raison": "retire"}'::jsonb, 'support retire du catalogue : refuse');
-  PERFORM pg_temp.vrai(public.presenter_support('cd000000-0000-4000-8000-000000000051','cd000000-0000-4000-8000-000000000071',5,'k4')
-    = '{"statut": "conflit"}'::jsonb, 'revision perimee : conflit');
-  r := public.presenter_support('cd000000-0000-4000-8000-000000000051','cd000000-0000-4000-8000-000000000071',0,'k5');
-  PERFORM pg_temp.vrai(r ->> 'statut' = 'faite' AND (r -> 'actif' ->> 'revision')::int = 1
-    AND r -> 'actif' ->> 'titre' = 'Support un' AND r -> 'actif' ->> 'type' = 'pdf'
-    AND (r -> 'actif' ->> 'numero_version')::int = 1 AND NOT (r -> 'actif' ->> 'retire')::boolean
-    AND r -> 'actif' -> 'position' ->> 'resource_version_id' = 'cd000000-0000-4000-8000-000000000081'
-    AND NOT r::text LIKE '%supports/%',
-    'presentation faite : revision 1, version publiee, aucune cle de stockage');
-  PERFORM pg_temp.vrai(public.presenter_support('cd000000-0000-4000-8000-000000000051','cd000000-0000-4000-8000-000000000071',0,'k5') = r,
-    'meme cle : meme reponse');
-  PERFORM pg_temp.vrai(public.presenter_support('cd000000-0000-4000-8000-000000000051','cd000000-0000-4000-8000-000000000071',0,'k6')
-    = '{"statut": "conflit"}'::jsonb, 'nouvelle tentative sur l''ancienne revision : conflit');
-  r := public.presenter_support('cd000000-0000-4000-8000-000000000051','cd000000-0000-4000-8000-000000000071',1,'k7',
-         '{"resource_id": "cd000000-0000-4000-8000-000000000071", "type_ancrage": "page", "page": 4}');
-  PERFORM pg_temp.vrai(r ->> 'statut' = 'faite' AND (r -> 'actif' ->> 'revision')::int = 2
-    AND (r -> 'actif' -> 'position' ->> 'page')::int = 4, 'page suivante presentee : revision 2');
-END $presenter$;
-RESET ROLE;
-
-SELECT pg_temp.qui('cd000000-0000-4000-8000-0000000000e1','student','cd000000-0000-4000-8000-0000000000f1');
-SET LOCAL ROLE authenticated;
-SELECT pg_temp.vrai((public.support_actif('cd000000-0000-4000-8000-000000000051') ->> 'revision')::int = 2
-  AND NOT (public.support_actif('cd000000-0000-4000-8000-000000000051') ->> 'retire')::boolean,
-  'la classe recoit le support sans rien faire');
-RESET ROLE;
-SELECT pg_temp.qui('cd000000-0000-4000-8000-0000000000d2','guardian','cd000000-0000-4000-8000-0000000000f2');
-SET LOCAL ROLE authenticated;
-SELECT pg_temp.refus($$SELECT public.support_actif('cd000000-0000-4000-8000-000000000051')$$, '42501',
-  'tuteur d''un autre foyer : lecture refusee');
-RESET ROLE;
-UPDATE public.library_version_rights SET expire_le = now() - interval '1 minute'
- WHERE resource_version_id = 'cd000000-0000-4000-8000-000000000081';
-SELECT pg_temp.qui('cd000000-0000-4000-8000-0000000000e1','student','cd000000-0000-4000-8000-0000000000f1');
-SET LOCAL ROLE authenticated;
-SELECT pg_temp.vrai((public.support_actif('cd000000-0000-4000-8000-000000000051') ->> 'retire')::boolean,
-  'droits echus en cours de seance : la classe le sait (retire)');
-RESET ROLE;
-SELECT pg_temp.vrai((SELECT count(*) FROM public.pedagogie_partage_idempotence WHERE operation = 'presenter_support') = 7,
-  'une trace d''idempotence par cle');
 
 -- ------------------------------------------------------------
 -- 3. Travail a venir (plafond 3, filtre par eleve a la source)
@@ -351,8 +264,10 @@ RESET ROLE;
 
 DO $fin$
 BEGIN
-  IF current_setting('test.n')::int <> 38 THEN
-    RAISE EXCEPTION 'ROUGE : % controles executes, 38 attendus', current_setting('test.n');
+  -- 38 avant M1-A8 ; 16 depuis le retrait du support actif (22 controles
+  -- du support actif retires, un controle d'absence ajoute dans la section 1).
+  IF current_setting('test.n')::int <> 16 THEN
+    RAISE EXCEPTION 'ROUGE : % controles executes, 16 attendus', current_setting('test.n');
   END IF;
   RAISE NOTICE 'CONTRATS seance : % controles verts', current_setting('test.n');
 END $fin$;
