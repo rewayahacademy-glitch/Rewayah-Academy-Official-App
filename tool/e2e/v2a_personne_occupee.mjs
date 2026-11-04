@@ -14,7 +14,10 @@
 //      candidate ;
 //   3. la meme feuille, trois heures plus tard : l'entretien est planifie.
 // Le navigateur est a l'heure de Paris (commun.mjs) : l'heure dite est celle
-// de l'appareil, pas l'UTC du serveur.
+// de l'appareil, pas l'UTC du serveur. Les deux largeurs tournent dans ce meme
+// fuseau, mais chacune choisit son propre moment (`moment(largeur)`) : deux
+// candidates, deux seances, deux heures differentes, voulues, pour que le
+// second passage ne tombe pas sur l'entretien planifie par le premier.
 //
 // Amorce (SQL local) : deux comptables actives, fondatrices, du meme cote que
 // la direction (Hafsa, occupee, et Salma, libre) ; une candidate par largeur ; la
@@ -174,9 +177,9 @@ async function passage(largeur, hauteur) {
   const attendu = new RegExp(`Hafsa Occupee${n}.{0,3} a déjà une séance ou un entretien le .*de\\s${m.libelle}\\sà\\s${fin}\\s\\(heure de cet appareil\\)`);
   verifier(await attendreTexte(c.page, attendu, 10000),
     `${largeur} : le refus dit le nom et l'heure de l'appareil (${m.libelle} à ${fin})`);
-  const refus = await trouver(c.page, /a déjà une séance ou un entretien/, { delai: 5000 });
-  if (refus) await amenerEnVue(c.page, refus);
-  await c.page.waitForTimeout(600);
+  // Le robot ne fait pas defiler : la feuille ramene elle-meme le bandeau en
+  // vue (reserve de garde-cap du 04/11, coupe a 390).
+  await c.page.waitForTimeout(900);
   await p.capture(c, `${tag}_1_refus_personne_occupee`);
   verifier(sql(`select count(*) from public.entretiens where candidature_id = '${cand.cid}'`) === '0',
     `${largeur} : la base n'a aucun entretien pour la candidate`);

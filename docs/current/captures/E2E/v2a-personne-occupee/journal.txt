@@ -1,37 +1,37 @@
-== V2-a-bis (personne occupee, nom et heure) : 2026-11-04T10:39:06.716Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+== V2-a-bis (personne occupee, nom et heure) : 2026-11-04T11:22:58.591Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
   OK amorce : V1-c est appliquee sur la pile locale
-Amorce 1440 : Khadija Occ1440x746717, CAND-00011
-  Hafsa occupee le 2026-11-10 a 14:30 (Paris), seance 9a169649-61cd-494f-b53d-5d430d66e8cf
+Amorce 1440 : Khadija Occ1440x378591, CAND-00013
+  Hafsa occupee le 2026-11-14 a 15:30 (Paris), seance c87f0686-c3de-4256-9352-9b189e6211a9
   OK 1440 : « Aucun entretien planifié »
   OK le champ « Jour »
-  OK calendrier : le jour 10
+  OK calendrier : le jour 14
   OK le menu de l'heure
-  OK menu : 14:30
-  OK l'option /Salma Libre746717/
-  OK l'option /Hafsa Occupee746717/
-  rpc 200 planifier_entretien {"fin": "2026-11-10T14:15:00+00:00", "nom": "Hafsa Occupee746717", "debut": "2026-11-10T13:30:00+00:00", "erreur": "personne_occupee", "profil": "fa813e4f-1846-48a2-a8b2-3d9e492fae14", "message": "Hafsa Occupee746717 a déjà une séance ou un entretien le 10/11/2026 de 13:30 à 14:15 (UTC)."}
-  OK 1440 : le refus dit le nom et l'heure de l'appareil (14:30 à 15:15)
+  OK menu : 15:30
+  OK l'option /Salma Libre378591/
+  OK l'option /Hafsa Occupee378591/
+  rpc 200 planifier_entretien {"fin": "2026-11-14T15:15:00+00:00", "nom": "Hafsa Occupee378591", "debut": "2026-11-14T14:30:00+00:00", "erreur": "personne_occupee", "profil": "c75d8671-4bb2-4bf4-8e20-a201b347f136", "message": "Hafsa Occupee378591 a déjà une séance ou un entretien le 14/11/2026 de 14:30 à 15:15 (UTC)."}
+  OK 1440 : le refus dit le nom et l'heure de l'appareil (15:30 à 16:15)
   OK 1440 : la base n'a aucun entretien pour la candidate
   OK le menu de l'heure
-  OK menu : 17:30
-  rpc 200 planifier_entretien {"rejoue": false, "entretien": {"fin": "2026-11-10T17:15:00+00:00", "debut": "2026-11-10T16:30:00+00:00", "sessionId": "d20929a2-916c-4da7-854c-0895fb68caa0", "fondateurs": 2, "participants": ["20b7bf26-8cd1-4932-81e2-99d488574f56", "fa813e4f-1846-48a2-a8b2-3d9e492fae14"]}, "candidature": {"id": "70
+  OK menu : 18:30
+  rpc 200 planifier_entretien {"rejoue": false, "entretien": {"fin": "2026-11-14T18:15:00+00:00", "debut": "2026-11-14T17:30:00+00:00", "sessionId": "68c38e0f-54dd-44be-a0e7-56807575e5c4", "fondateurs": 2, "participants": ["602ab957-091a-41f2-95f1-3bf8cee2f04c", "c75d8671-4bb2-4bf4-8e20-a201b347f136"]}, "candidature": {"id": "a0
   OK 1440 : trois heures plus tard, l'entretien est planifié
   OK 1440 : la base porte l'entretien
-Amorce 390 : Khadija Occ390x746717, CAND-00012
-  Hafsa occupee le 2026-11-10 a 09:30 (Paris), seance e10609e4-234f-4358-8445-186002c65600
+Amorce 390 : Khadija Occ390x378591, CAND-00014
+  Hafsa occupee le 2026-11-14 a 10:30 (Paris), seance ae1d3645-32d3-4015-9460-9f0d7223a7cf
   OK 390 : « Aucun entretien planifié »
   OK le champ « Jour »
-  OK calendrier : le jour 10
+  OK calendrier : le jour 14
   OK le menu de l'heure
-  OK menu : 09:30
-  OK l'option /Salma Libre746717/
-  OK l'option /Hafsa Occupee746717/
-  rpc 200 planifier_entretien {"fin": "2026-11-10T09:15:00+00:00", "nom": "Hafsa Occupee746717", "debut": "2026-11-10T08:30:00+00:00", "erreur": "personne_occupee", "profil": "fa813e4f-1846-48a2-a8b2-3d9e492fae14", "message": "Hafsa Occupee746717 a déjà une séance ou un entretien le 10/11/2026 de 08:30 à 09:15 (UTC)."}
-  OK 390 : le refus dit le nom et l'heure de l'appareil (09:30 à 10:15)
+  OK menu : 10:30
+  OK l'option /Salma Libre378591/
+  OK l'option /Hafsa Occupee378591/
+  rpc 200 planifier_entretien {"fin": "2026-11-14T10:15:00+00:00", "nom": "Hafsa Occupee378591", "debut": "2026-11-14T09:30:00+00:00", "erreur": "personne_occupee", "profil": "c75d8671-4bb2-4bf4-8e20-a201b347f136", "message": "Hafsa Occupee378591 a déjà une séance ou un entretien le 14/11/2026 de 09:30 à 10:15 (UTC)."}
+  OK 390 : le refus dit le nom et l'heure de l'appareil (10:30 à 11:15)
   OK 390 : la base n'a aucun entretien pour la candidate
   OK le menu de l'heure
-  OK menu : 12:30
-  rpc 200 planifier_entretien {"rejoue": false, "entretien": {"fin": "2026-11-10T12:15:00+00:00", "debut": "2026-11-10T11:30:00+00:00", "sessionId": "a454baa4-d5ff-4f38-ae26-c81b041a4c30", "fondateurs": 2, "participants": ["20b7bf26-8cd1-4932-81e2-99d488574f56", "fa813e4f-1846-48a2-a8b2-3d9e492fae14"]}, "candidature": {"id": "83
+  OK menu : 13:30
+  rpc 200 planifier_entretien {"rejoue": false, "entretien": {"fin": "2026-11-14T13:15:00+00:00", "debut": "2026-11-14T12:30:00+00:00", "sessionId": "7331a551-7b44-44e0-b590-23cd0a49fd44", "fondateurs": 2, "participants": ["602ab957-091a-41f2-95f1-3bf8cee2f04c", "c75d8671-4bb2-4bf4-8e20-a201b347f136"]}, "candidature": {"id": "da
   OK 390 : trois heures plus tard, l'entretien est planifié
   OK 390 : la base porte l'entretien
 == V2-a-bis (personne occupee, nom et heure) : vert

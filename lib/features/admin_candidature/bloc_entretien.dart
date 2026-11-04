@@ -23,6 +23,8 @@
 // serveur »).
 library;
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -551,6 +553,18 @@ mixin _EnvoiEntretien<W extends ConsumerStatefulWidget> on ConsumerState<W> {
   Object? refus;
   String? cle;
 
+  /// Le bandeau du refus, ramene en vue apres un refus (garde-cap, 04/11 :
+  /// a 390, il etait coupe en bas de la feuille).
+  final GlobalKey _cleBandeauRefus = GlobalKey();
+
+  void _ramenerRefusEnVue() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final BuildContext? contexte = _cleBandeauRefus.currentContext;
+      if (!mounted || contexte == null || !contexte.mounted) return;
+      unawaited(Scrollable.ensureVisible(contexte, alignment: 0.5));
+    });
+  }
+
   /// Un champ change : c'est une autre demande, avec une autre cle.
   void modifie(VoidCallback changement) => setState(() {
     changement();
@@ -584,6 +598,7 @@ mixin _EnvoiEntretien<W extends ConsumerStatefulWidget> on ConsumerState<W> {
         enCours = false;
         refus = e;
       });
+      _ramenerRefusEnVue();
     } on Object catch (e) {
       if (!mounted) return;
       setState(() {
@@ -593,6 +608,7 @@ mixin _EnvoiEntretien<W extends ConsumerStatefulWidget> on ConsumerState<W> {
         // demande. Une panne inconnue garde la cle, pour rejouer.
         if (e is RefusEntretien || e is RefusGeste) cle = null;
       });
+      _ramenerRefusEnVue();
     }
   }
 
@@ -608,11 +624,14 @@ mixin _EnvoiEntretien<W extends ConsumerStatefulWidget> on ConsumerState<W> {
     final g = t.admin.candidatures.erreurs;
     return <Widget>[
       Ecart.vLg,
-      BandeauAttention(
-        key: const ValueKey<String>('entretien-refus'),
-        titre: nonConfirme ? g.nonConfirmeTitre : g.titre,
-        message: messageRefusEntretien(r, retrait: retrait),
-        ton: nonConfirme ? TonEtat.avertissement : TonEtat.alerte,
+      KeyedSubtree(
+        key: _cleBandeauRefus,
+        child: BandeauAttention(
+          key: const ValueKey<String>('entretien-refus'),
+          titre: nonConfirme ? g.nonConfirmeTitre : g.titre,
+          message: messageRefusEntretien(r, retrait: retrait),
+          ton: nonConfirme ? TonEtat.avertissement : TonEtat.alerte,
+        ),
       ),
     ];
   }

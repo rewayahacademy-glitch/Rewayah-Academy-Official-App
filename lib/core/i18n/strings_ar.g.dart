@@ -18592,7 +18592,7 @@ class _Traductions$admin$candidatures$entretien$refus$ar extends Traductions$adm
 	@override String get introuvable => 'لم تعد هذه المقابلة موجودة في هذا الجانب.';
 	@override String personneOccupee({required Object nom, required Object date, required Object debut, required Object fin}) => 'لدى ⁨${nom}⁩ حصة أو مقابلة يوم ⁨${date}⁩، من ⁨${debut}⁩ إلى ⁨${fin}⁩ (توقيت هذا الجهاز). اختر وقتًا آخر أو شخصًا آخر.';
 	@override String personneOccupeeSansHeure({required Object nom}) => 'لدى ⁨${nom}⁩ حصة أو مقابلة في هذا الوقت. اختر وقتًا آخر أو شخصًا آخر.';
-	@override String get personneChoisie => 'أحد المختارين';
+	@override String get personneChoisie => 'شخص مختار';
 }
 
 // Path: admin.candidatures.entretien.retours
@@ -24641,7 +24641,7 @@ extension on TraductionsAr {
 			'admin.candidatures.entretien.refus.introuvable' => 'لم تعد هذه المقابلة موجودة في هذا الجانب.',
 			'admin.candidatures.entretien.refus.personneOccupee' => ({required Object nom, required Object date, required Object debut, required Object fin}) => 'لدى ⁨${nom}⁩ حصة أو مقابلة يوم ⁨${date}⁩، من ⁨${debut}⁩ إلى ⁨${fin}⁩ (توقيت هذا الجهاز). اختر وقتًا آخر أو شخصًا آخر.',
 			'admin.candidatures.entretien.refus.personneOccupeeSansHeure' => ({required Object nom}) => 'لدى ⁨${nom}⁩ حصة أو مقابلة في هذا الوقت. اختر وقتًا آخر أو شخصًا آخر.',
-			'admin.candidatures.entretien.refus.personneChoisie' => 'أحد المختارين',
+			'admin.candidatures.entretien.refus.personneChoisie' => 'شخص مختار',
 			'admin.candidatures.entretien.retours.planifie' => 'حُدِّد موعد المقابلة.',
 			'admin.candidatures.entretien.retours.ajoute' => ({required Object nom}) => 'يشارك ⁨${nom}⁩ في المقابلة.',
 			'admin.candidatures.entretien.retours.retire' => ({required Object nom}) => 'لم يعد ⁨${nom}⁩ مشاركًا في المقابلة.',
