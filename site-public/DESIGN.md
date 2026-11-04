@@ -8,6 +8,12 @@ Statut : brouillon (M-20), pas une référence de marque. Direction posée par l
 - `clair` : fond blanc et lavande, clair ou sombre selon le système ;
 - `violet` : l'essai demandé par le directeur le 21/10/2026, en cours. Fond violet en dégradé léger (lumière en haut à gauche, ombre en bas à droite), illustrations qui flottent sans fenêtre, halo qui suit la souris, texte et logo blancs. La dérogation au « sans dégradé » est inscrite au registre (O-16).
 
+Clé `teinte` (directeur, 04/11/2026 : « le thème violet ne permet pas la lecture facile ») : `violet` (par défaut) ou `jour`. Avec `jour`,
+la mise en page, les images, les mouvements et les lumières de l'ambiance `violet` ne changent pas ; seules les couleurs passent au mode clair de
+l'application (`lib/core/theme/app_palette.dart`) : encre #110E20 sur la toile #F1EFF4, cartes blanches qui flottent, bandes lavande, pied de
+page lavande, logo violet. Le violet plein ne reste qu'aux boutons principaux. Toujours clair, même si l'appareil est en mode sombre. Le bloc
+« Teinte jour » est à la fin de `styles/site.css` ; revenir au violet, c'est remettre `teinte` à `violet`.
+
 ## Le motif
 
 Un seul motif : l'arche du symbole (M-21 : l'arche est le livre, la porte ouverte est l'accès, le cercle est la halqa). Les 13 illustrations fournies par le directeur le 21/10 portent déjà cette arche ; elles sont détourées, l'arche ramenée au lavande des jetons, et légendées « Illustration ». Aucune autre forme décorative ; aucun dégradé dans la version claire.

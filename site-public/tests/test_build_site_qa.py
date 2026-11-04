@@ -182,11 +182,22 @@ class GeneratedSiteQA(unittest.TestCase):
         # En-tete web : logo horizontal (violet sur clair, blanc sur sombre), symbole seul sur telephone
         # (assets/brand/logo/README.md, M-25). Pied de page sombre : logo horizontal blanc.
         self.assertIn('site-header__brand" href="/fr/"', home)
-        ambiance = json.loads((SITE / "content" / "direction.json").read_text(encoding="utf-8")).get("ambiance", "clair")
-        self.assertIn(f'<html lang="fr" data-ambiance="{ambiance}">', home)
-        if ambiance == "violet":
+        direction = json.loads((SITE / "content" / "direction.json").read_text(encoding="utf-8"))
+        ambiance = direction.get("ambiance", "clair")
+        jour = ambiance == "violet" and direction.get("teinte", "violet") == "jour"
+        self.assertIn(f'<html lang="fr" data-ambiance="{ambiance}"{" data-teinte=" + chr(34) + "jour" + chr(34) if jour else ""}>', home)
+        entete = home.split('<header', 1)[1].split('</header>', 1)[0]
+        pied = home.split('<footer', 1)[1].split('</footer>', 1)[0]
+        if jour:
+            # Teinte jour (directeur, 04/11/2026) : la page est toujours claire, donc le logo violet officiel partout,
+            # en-tete, symbole du telephone et pied de page (lavande) ; jamais le fichier blanc.
+            self.assertIn('src="/fr/assets/logo-horizontal.svg"', entete)
+            self.assertIn('srcset="/fr/assets/symbole.svg"', entete)
+            self.assertIn('src="/fr/assets/logo-horizontal.svg"', pied)
+            self.assertNotIn("-white.svg", entete + pied.split('class="site-footer__inner"', 1)[1])
+            self.assertIn('<meta name="color-scheme" content="light">', home)
+        elif ambiance == "violet":
             # Sur le violet, le logo de l'en-tete est toujours le fichier blanc officiel (M-25).
-            entete = home.split('<header', 1)[1].split('</header>', 1)[0]
             self.assertIn('src="/fr/assets/logo-horizontal-white.svg"', entete)
             self.assertIn('srcset="/fr/assets/symbole-white.svg"', entete)
             self.assertNotIn('logo-horizontal.svg"', entete)
@@ -194,7 +205,9 @@ class GeneratedSiteQA(unittest.TestCase):
             self.assertIn('src="/fr/assets/logo-horizontal.svg"', home)
             self.assertIn('srcset="/fr/assets/logo-horizontal-white.svg"', home)
             self.assertIn('srcset="/fr/assets/symbole.svg"', home)
-        self.assertIn('src="/fr/assets/logo-horizontal-white.svg"', home)
+        if not jour:
+            # Pied de page sombre : logo horizontal blanc.
+            self.assertIn('src="/fr/assets/logo-horizontal-white.svg"', pied)
         # Le nom de l'academie est dit dans le premier ecran (sur telephone, l'en-tete ne montre que le symbole) : dans la
         # phrase sous le titre ; la date et les fondateurs sont dits plus bas, dans le bandeau « Accompagné à chaque étape ».
         intro = re.search(r'<p class="hero-intro">(.*?)</p>', home.split('class="porte"', 1)[1], re.S).group(1)
@@ -323,6 +336,32 @@ class GeneratedSiteQA(unittest.TestCase):
         racine = re.search(r":root\s*\{(.*?)\n\}", css, re.S).group(1)
         for nom in ("--police-titre", "--police-corps", "--police-arabe-ornement"):
             self.assertIn(nom + ":", racine)
+
+    def test_teinte_jour_n_emploie_que_les_couleurs_de_l_application(self) -> None:
+        # Teinte jour (directeur, 04/11/2026) : seules les couleurs passent au mode clair de l'app, et toutes viennent de
+        # lib/core/theme/app_palette.dart (M-16) ; aucune grande surface violette (le violet plein reste aux boutons).
+        css = (SITE / "styles" / "site.css").read_text(encoding="utf-8")
+        bloc = css.split("/* === Teinte « jour »", 1)[1]
+        palette = (SITE.parent / "lib" / "core" / "theme" / "app_palette.dart").read_text(encoding="utf-8").upper()
+        couleurs = {c.upper() for c in re.findall(r"#[0-9A-Fa-f]{6}\b", bloc)}
+        self.assertTrue(couleurs)
+        for couleur in couleurs:
+            with self.subTest(couleur=couleur):
+                self.assertIn(f"0XFF{couleur[1:]}", palette)
+        for r, g, b in re.findall(r"rgb\((\d+) (\d+) (\d+)", bloc):
+            with self.subTest(rgb=(r, g, b)):
+                self.assertIn(f"0XFF{int(r):02X}{int(g):02X}{int(b):02X}", palette)
+        # Le violet plein n'est jamais le fond d'une bande, d'une carte ou d'une marche : seulement d'un bouton, ou d'un
+        # filigrane presque transparent (arche du fond, carte et symbole du pied, moins de 20 % d'opacite).
+        for selecteurs, corps in re.findall(r"([^{}]+)\{([^{}]*background: #8652E6[^{}]*)\}", bloc):
+            selecteur = selecteurs.strip().split("\n")[-1]
+            opacite = re.search(r"opacity: ([.\d]+)", corps)
+            with self.subTest(selecteur=selecteur):
+                if opacite:
+                    self.assertLess(float(opacite.group(1)), .2)
+                else:
+                    self.assertRegex(selecteur, r"(cta|inscription|appel__bouton)")
+        self.assertIn(':root[data-teinte="jour"] {\n  color-scheme: light;', bloc)
 
     def test_bundle_gate_covers_every_local_font_requested_by_css(self) -> None:
         css = (SITE / "styles" / "site.css").read_text(encoding="utf-8")

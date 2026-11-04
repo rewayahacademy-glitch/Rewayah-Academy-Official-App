@@ -251,6 +251,10 @@ def load_direction(pages: dict[str, dict]) -> tuple[dict, dict]:
             raise ValueError(f"Image {ident}: unknown animation {calques.get('anime')}")
     if direction.get("ambiance", "clair") not in ("clair", "violet"):
         raise ValueError("direction.json: ambiance must be clair or violet")
+    if direction.get("teinte", "violet") not in ("violet", "jour"):
+        raise ValueError("direction.json: teinte must be violet or jour")
+    if direction.get("teinte", "violet") == "jour" and direction.get("ambiance", "clair") != "violet":
+        raise ValueError("direction.json: teinte jour only applies to the violet ambiance")
     if not isinstance(direction.get("dessins", False), bool):
         raise ValueError("direction.json: dessins must be true or false")
     for route, reglage in direction["pages"].items():
@@ -383,12 +387,23 @@ def scene(images: dict, ident: str, tailles: str, css: str = "", prioritaire: bo
             '</figure>')
 
 
-def logo_entete(ambiance: str = "clair") -> str:
+def teinte_jour(direction: dict) -> bool:
+    """Teinte « jour » (directeur, 04/11/2026) : la mise en page de l'ambiance violette sur le fond clair de l'application ;
+    le violet ne reste que sur les actions principales et ce qui compte le plus."""
+    return direction.get("ambiance", "clair") == "violet" and direction.get("teinte", "violet") == "jour"
+
+
+def logo_entete(ambiance: str = "clair", jour: bool = False) -> str:
     """En-tete : logo horizontal (violet sur clair, blanc sur sombre ou sur le violet), symbole seul sur telephone."""
     h, hw, hh = LOGO["horizontal"]
     hb = LOGO["horizontal-blanc"][0]
     s, sw, sh = LOGO["symbole"]
     sb = LOGO["symbole-blanc"][0]
+    if jour:
+        # Teinte jour : toujours clair (color-scheme light), donc toujours le logo violet officiel.
+        return ('<picture>'
+                f'<source media="(max-width: 599px)" srcset="{ASSETS}/{s}" width="{sw}" height="{sh}">'
+                f'<img src="{ASSETS}/{h}" width="{hw}" height="{hh}" alt=""></picture>')
     if ambiance == "violet":
         return ('<picture>'
                 f'<source media="(max-width: 599px)" srcset="{ASSETS}/{sb}" width="{sw}" height="{sh}">'
@@ -1557,8 +1572,11 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
     )
     jsonld = donnees_structurees(origin) if route == "/fr/" else fil_ariane(route, page, origin, url_image_partage)
     ambiance = direction.get("ambiance", "clair")
+    jour = teinte_jour(direction)
     if ambiance == "violet":
-        tete_couleurs = ('<meta name="color-scheme" content="dark">\n'
+        tete_couleurs = ('<meta name="color-scheme" content="light">\n'
+                         '  <meta name="theme-color" content="#F7F5FE">') if jour else (
+                        '<meta name="color-scheme" content="dark">\n'
                          '  <meta name="theme-color" content="#6538E4">')
         # Le halo qui suit la souris, puis l'arche geante de fond (directeur, 03/11/2026) : deux calques decoratifs.
         halo = ('<div class="halo" aria-hidden="true"></div><div class="fond-arche" aria-hidden="true"></div>'
@@ -1569,7 +1587,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
                          '  <meta name="theme-color" content="#16161E" media="(prefers-color-scheme: dark)">')
         halo = ""
     return masquer_courriels(f'''<!doctype html>
-<html lang="fr" data-ambiance="{esc(ambiance)}">
+<html lang="fr" data-ambiance="{esc(ambiance)}"{' data-teinte="jour"' if jour else ''}>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -1592,7 +1610,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
   <a class="skip-link" href="#contenu">Aller au contenu</a>
   <header class="site-header" data-entete>
     <div class="site-header__inner">
-      <a class="brand site-header__brand" href="/fr/" aria-label="Rewayah Academy, accueil">{logo_entete(ambiance)}</a>
+      <a class="brand site-header__brand" href="/fr/" aria-label="Rewayah Academy, accueil">{logo_entete(ambiance, jour)}</a>
       <nav class="site-nav" aria-label="Navigation principale">{nav_items}</nav>
       {connexion}<a class="site-header__inscription" href="/connexion">S’inscrire</a>
       <details class="mobile-menu"><summary><span class="mobile-menu__libelle sr-only">Menu</span><span class="mobile-menu__icone" aria-hidden="true"></span></summary><nav aria-label="Navigation mobile">{nav_items}{anchor(NAV[-1][0], NAV[-1][1])}</nav></details>
@@ -1603,7 +1621,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
   </main>
   {simulator}
   <footer class="site-footer"><div class="pied-calques" aria-hidden="true"><div class="pied-carte"><span class="pied-carte__points"></span></div><span class="pied-symbole"></span></div><div class="site-footer__inner">
-     <div class="footer-identity"><a class="brand" href="/fr/" aria-label="Rewayah Academy, accueil"><img src="{ASSETS}/logo-horizontal-white.svg" width="1027" height="287" alt=""></a><p class="pied-accroche">{esc(PIED_ACCROCHE)}</p></div>
+     <div class="footer-identity"><a class="brand" href="/fr/" aria-label="Rewayah Academy, accueil"><img src="{ASSETS}/{LOGO["horizontal"][0] if jour else "logo-horizontal-white.svg"}" width="1027" height="287" alt=""></a><p class="pied-accroche">{esc(PIED_ACCROCHE)}</p></div>
     <details class="pied-volet pied-volet--liens" open><summary class="footer-title">Découvrir</summary><nav aria-label="Découvrir Rewayah"><ul>{discovery_links}</ul></nav></details>
     <details class="pied-volet pied-volet--legal" open><summary class="footer-title">Informations légales</summary><div class="pied-legal"><nav class="footer-legal" aria-label="Navigation légale"><ul>{footer_links}</ul></nav>
       <div class="pied-societe"><p><span>REWAYAH ACADEMY LTD</span> <span>Société\u00a0n°\u00a016624644</span></p><address><span>71-75 Shelton Street</span> <span>Covent Garden, London</span> <span>WC2H 9JQ, Royaume-Uni</span></address><p>{anchor(academy_facebook['label'], academy_facebook['href'])}</p><p>{anchor(academy_instagram['label'], academy_instagram['href'])}</p><p>{anchor(author_facebook['label'], author_facebook['href'])}</p><p class="pied-credit"><span>Français</span> <span>{esc(site['author_credit'])}</span></p></div></div></details>
@@ -1743,16 +1761,20 @@ FONCTION_DESINSCRIPTION = "https://gggmtelinlpseweouyav.supabase.co/functions/v1
 def page_etat(titre: str, classe: str, direction: dict, contenu: str, figure: str, script: str = "") -> str:
     """Page d'etat autonome (introuvable, desinscription) : fond de l'ambiance, logo, texte, puis la porte et sa lumiere."""
     ambiance = direction.get("ambiance", "clair")
-    couleurs = ('<meta name="color-scheme" content="dark"><meta name="theme-color" content="#6538E4">' if ambiance == "violet"
+    jour = teinte_jour(direction)
+    couleurs = ('<meta name="color-scheme" content="light"><meta name="theme-color" content="#F7F5FE">' if jour
+                else '<meta name="color-scheme" content="dark"><meta name="theme-color" content="#6538E4">' if ambiance == "violet"
                 else '<meta name="color-scheme" content="light dark">')
+    logo = LOGO["horizontal"][0] if jour else "logo-horizontal-white.svg"
+    attribut_teinte = ' data-teinte="jour"' if jour else ""
     return (
-        f'<!doctype html><html lang="fr" data-ambiance="{esc(ambiance)}"><head><meta charset="utf-8">'
+        f'<!doctype html><html lang="fr" data-ambiance="{esc(ambiance)}"{attribut_teinte}><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width, initial-scale=1">'
         f'{couleurs}<meta name="robots" content="noindex,nofollow">'
         f'<link rel="stylesheet" href="{ASSETS}/site.css">'
         f'<title>{esc(titre)}</title></head><body class="{classe}">'
         '<main class="etat" id="contenu"><a class="etat__marque" href="/fr/" aria-label="Rewayah Academy, accueil">'
-        f'<img src="{ASSETS}/logo-horizontal-white.svg" width="1027" height="287" alt=""></a>'
+        f'<img src="{ASSETS}/{logo}" width="1027" height="287" alt=""></a>'
         f'{contenu}<div class="etat__scene">{figure}</div></main>{script}</body></html>')
 
 

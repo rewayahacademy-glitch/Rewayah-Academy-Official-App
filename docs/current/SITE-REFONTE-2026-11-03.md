@@ -27,8 +27,10 @@ correction groupée après la première relecture du directeur.
 | **Cartes du hub redessinées** (« je ne vois pas où cliquer » ; « trop moches, couleurs et formes uniformes ») | `build_site.py`, `styles/site.css`, `content/pages.json` | présent dans le code ; le plus récent à la une sur lavande claire ; les suivants illustrés, en verre clair en arche, violet profond, lavande au grand coin ; toute la carte est le lien, bouton « Lire l'article » ; le bouton du haut de la page mène à la liste ; captures bureau, mobile et production au 8 novembre |
 | **Article « enfant fatigué » réécrit en profondeur** (« trop court, aucune valeur ») | `content/pages.json` | présent dans le code ; 1 985 mots au lieu de 865 ; al-Ghazâlî, Ibn Khaldûn, cinq hadiths et quatre versets de plus, le sommeil (Paruthi 2016), tous vérifiés (§6) ; la phrase « ne portent pas sur le Coran » est retirée |
 | **Parution programmée, deux jours d'écart au moins** | `build_site.py`, `content/pages.json` | présent dans le code ; 5, 8, 11 et 14 novembre ; testé localement à chaque date ; **automatique seulement si la production se reconstruit ces jours-là** (§7, point 6) |
+| **Tout le site au mode clair de l'application** (sixième message, 04/11 : « le thème violet ne permet pas la lecture facile » ; « le violet devient rare, juste pour les CTA principaux ») | `content/direction.json` (`teinte: jour`), `build_site.py`, fin de `styles/site.css`, `DESIGN.md` | présent dans le code ; mise en page, images, mouvements et lumières inchangés, couleurs seules du thème clair de l'app ; violet plein sur les boutons seulement ; contraste de chaque texte mesuré sur 16 pages à 1440 et 390 px, appareil clair et sombre : aucun texte sous le seuil WCAG AA ; un test vérifie que chaque couleur du bloc vient de `app_palette.dart` |
+| **Correction à la maison, avec sagesse** (relecture du directeur, 04/11) | `content/pages.json` | présent dans le code ; « enfant fatigué » et « apprendre le Coran à son enfant » : le parent peut corriger, doucement, une erreur à la fois, sans que l'enfant sente que le cours le suit partout ni que le Coran est une corvée ; une erreur qui revient se signale à l'enseignant |
 
-Testé localement : 121 tests `python3 -m unittest discover -s site-public/tests` (80 au départ, 41 ajoutés), et 92 vues (23 routes à 360, 390, 768 et
+Testé localement : 122 tests `python3 -m unittest discover -s site-public/tests` (80 au départ, 42 ajoutés), et 92 vues (23 routes à 360, 390, 768 et
 1440 px) sans débordement horizontal, sans ressource en erreur, sans erreur JavaScript, refaites sur ce commit (blocs arabes et polices compris ;
 captures des blocs arabes à 390 et 1366 px). Testé sur staging : l'aperçu de la PR 187 a servi les deux premiers commits ; les suivants
 ne sont pas encore vus. Déployé : non.
@@ -52,7 +54,19 @@ ne sont pas encore vus. Déployé : non.
   se voit pas : une lumière lointaine à travers la porte, un contenu qui flotte au-dessus d'une grande profondeur, des lumières animées pour
   souligner ce qui compte (cinq images d'inspiration : halos chauds, porte de lumière, faisceau, grand cercle lumineux lointain).
 
+- **Sixième message (04/11)** : relecture de l'article sur la fatigue : « très bon article avec de la valeur » ; une seule chose à changer : le
+  parent peut rectifier, mais avec sagesse ; l'enfant ne doit pas sentir que le cours le suit partout, ni que le Coran est une corvée. Et « le thème
+  violet ne permet pas la lecture facile » : tout le site au mode clair de l'application, le reste ne change pas, seules les couleurs s'adaptent
+  (filigrane, texte) ; le violet devient rare, pour souligner les choses très importantes comme les CTA principaux.
+
 ## 3. Choix de l'agent, modifiables en une ligne
+
+- **Teinte jour (04/11)** : réglage `teinte` de `direction.json`, réversible en une ligne (`violet`). Choix faits pour rester dans le mode clair de
+  l'app : le pied de page passe sur la lavande #EEE6FA (encre #110E20, carte du monde et symbole en violet pâle), pas sur un fond sombre, puisque le
+  pied sombre gênait déjà la lecture ; les bandes sombres (prune, panneau du directeur, appel) deviennent des bandes blanches ; les progressions (étapes,
+  tuiles, parcours, dates du paiement) vont du blanc au lilas #BA98FB sans aplat violet ; la carte « Le plus récent » est lavande, les autres blanche,
+  lilas ou blanche selon leur rang ; le site reste clair même si l'appareil est en mode sombre (c'est le mode clair de l'app qui est demandé). Le
+  violet plein : boutons principaux, « S'inscrire », bouton des bandes d'appel, « Lire l'article », puces, étoiles, filet des citations du Coran, focus.
 
 - `bloc_avis.AVIS_MOYENNE_MIN = 5` et `AVIS_APERCU_MIN = 3` : pas de moyenne avant 5 avis, pas d'aperçu avant 3 ; les trois plus récents, jamais les mieux notés.
 - **Filigrane géant derrière du texte conservé** (4 à 6 % d'opacité) : le README du logo l'autorise pour `ornement-contour` et `symbole-contour` (« filigrane
@@ -194,6 +208,8 @@ ferait doublon). Les aperçus des PR sont toujours `noindex`. C'est ce que signa
 9. **Pour le pilote : `mots-rewayah`**, ligne « S'inscrire » : le bouton court vaut désormais à toutes les largeurs (directeur, 03/11).
 10. **Pour le pilote : `DESIGN-GOV-2026-09-26.md`, contrat E.** Y noter l'exception datée du 03/11 pour le site public (lumières lentes, reflet du
     bouton principal), si le directeur la confirme comme règle et non comme essai.
+11. **Pour le pilote : registre de marque (O-16 et cahier visuel).** Le site passe au mode clair de l'app (directeur, 04/11) ; il garde un
+    dégradé de fond très léger (blanc en haut à gauche, lavande en bas à droite), dans la dérogation O-16 déjà inscrite.
 
 ## 8. Vérifier
 

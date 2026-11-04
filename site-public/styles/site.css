@@ -2853,3 +2853,176 @@ li, dd { text-wrap: wrap; }
   .fond-lumiere, .porte__rayons, [data-ambiance="violet"] .porte__scene::before, [data-ambiance="violet"] .porte__scene::after, [data-ambiance="violet"] .porte__collant::before,
   [data-ambiance="violet"] .cta::after { display: none; }
 }
+
+
+/* === Teinte « jour » (directeur, 04/11/2026) =====================================================================
+   « Le theme violet ne permet pas la lecture facile. Peux-tu changer le theme du site entier au mode clair utilise par l'app ?
+   Tout le reste ne change pas, tu adaptes juste les couleurs (filigrane, texte, etc.) ; le violet devient rare, juste pour
+   souligner les choses tres importantes comme les CTA principaux. »
+   Mise en page, images, mouvements et lumieres de l'ambiance violette : inchanges. Seules les couleurs passent ici, et toutes
+   viennent du theme clair de lib/core/theme/app_palette.dart (M-16) : encre #110E20, encre douce #655E70, toile #F1EFF4,
+   carte #FFFFFF, mise en avant #F7F5FE, lavande #EEE6FA (encre #4E2983), action douce #DCCAFD, filet #E3DEE9, contour #84798F,
+   violet du logo #8652E6 et #6538E4 au survol. Le violet plein ne reste que sur : le bouton principal (et son reflet), le bouton
+   S'inscrire de l'en-tete, le bouton des bandes d'appel, « Lire l'article », la puce d'arche, les etoiles des avis, le filet des
+   citations du Coran et le contour du focus. Aucune grande surface n'est violette.
+   Contrastes (WCAG, calcules) : #110E20 sur #F1EFF4 16:1 ; #655E70 sur #F1EFF4 5,4:1, sur #EEE6FA 5,1:1 ; blanc sur #8652E6
+   4,8:1 ; #4E2983 sur #DCCAFD 7,1:1 ; #110E20 sur #BA98FB 8,1:1. Les lumieres posees sous du texte restent claires (jamais plus de la moitie de #DCCAFD).
+   Les bandes sombres (prune, panneau, appel) deviennent des bandes blanches ; le pied de page passe sur la lavande.
+   Toujours clair (color-scheme: light) : c'est le mode clair de l'application, meme si l'appareil est en mode sombre. */
+:root[data-teinte="jour"] {
+  color-scheme: light;
+  background: #F1EFF4;
+  --fond: #FFFFFF; --toile: #F1EFF4; --sous: #FFFFFF; --avant: #F7F5FE;
+  --champ: #EEE6FA; --champ-encre: #4E2983; --champ-fort: #DCCAFD;
+  --marque: #8652E6; --sur-marque: #FFFFFF;
+  --inverse: #211E28; --sur-inverse: #F5F2FA; --sur-inverse-doux: #AEB1CE;
+  --encre: #110E20; --encre-douce: #655E70; --encre-accent: #6538E4;
+  --action: #8652E6; --sur-action: #FFFFFF; --action-survol: #6538E4; --sur-action-survol: #FFFFFF;
+  --contour: #84798F; --filet: #E3DEE9;
+  --pied: #EEE6FA; --sur-pied: #110E20; --sur-pied-doux: #655E70;
+  --ombre-1: 0 2px 10px rgb(33 30 40 / .04), 0 8px 29px -4px rgb(33 30 40 / .06);
+  --ombre-2: 0 4px 15px rgb(33 30 40 / .08), 0 16px 47px -8px rgb(33 30 40 / .10);
+  --ombre-3: 0 12px 38px rgb(33 30 40 / .22);
+  --voile: rgb(33 30 40 / .32);
+  /* La lumiere vient toujours d'en haut a gauche (blanc) ; l'ombre douce se pose en bas a droite (lavande). */
+  --degrade:
+    radial-gradient(110% 70% at 10% -10%, rgb(255 255 255 / .95) 0%, rgb(255 255 255 / 0) 62%),
+    radial-gradient(85% 65% at 95% 110%, rgb(238 230 250 / .95) 0%, rgb(238 230 250 / 0) 66%),
+    radial-gradient(55% 45% at 100% 0%, rgb(220 202 253 / .22) 0%, rgb(220 202 253 / 0) 70%),
+    #F1EFF4;
+}
+[data-teinte="jour"] body { font-weight: 400; }
+[data-teinte="jour"] body::after {
+  background:
+    radial-gradient(38% 30% at 84% 34%, rgb(220 202 253 / .30), transparent 70%),
+    radial-gradient(34% 28% at 6% 74%, rgb(255 255 255 / .55), transparent 70%); }
+/* Le halo qui suit la souris : une tache de lumiere blanche (le texte ne peut qu'y gagner en contraste). */
+[data-teinte="jour"] .halo { background: radial-gradient(closest-side, rgb(255 255 255 / .7), rgb(255 255 255 / .28) 55%, rgb(255 255 255 / 0)); }
+/* L'arche geante du fond : le meme filigrane, en violet du logo, tres pale. */
+[data-teinte="jour"] .fond-arche { background: #8652E6; opacity: .06; }
+@media (max-width: 839px) { [data-teinte="jour"] .fond-arche { opacity: .06; } }
+
+/* En-tete : le bouton S'inscrire est l'action principale, en violet. */
+[data-teinte="jour"] .site-header__inscription { background: #8652E6; color: #FFFFFF; }
+[data-teinte="jour"] .site-header__inscription:hover { background: #6538E4; }
+[data-teinte="jour"] .site-header[data-flotte] { box-shadow: 0 1px 0 #E3DEE9, var(--ombre-1); }
+
+/* Boutons : le principal en violet, le secondaire en contour neutre. */
+[data-teinte="jour"] .porte .cta--secondary:hover, [data-teinte="jour"] .cta--secondary:hover { background: #EEE6FA; color: #110E20; }
+[data-teinte="jour"] .porte__texte .pause-anim { border-color: #84798F; background: rgb(255 255 255 / .7); }
+[data-teinte="jour"] .porte__texte .pause-anim:hover { background: #FFFFFF; }
+[data-teinte="jour"] .appel--centre .cta { background: #8652E6; border-color: #8652E6; color: #FFFFFF; }
+[data-teinte="jour"] .appel--centre .cta:hover, [data-teinte="jour"] .appel--centre .cta:focus-visible { background: #6538E4; border-color: #6538E4; }
+/* Bande d'appel (toute la bande est le lien) : la lavande, et son bouton en violet. */
+[data-teinte="jour"] .appel__lien { background: #EEE6FA; color: #110E20; }
+[data-teinte="jour"] .appel__lien:hover, [data-teinte="jour"] .appel__lien:focus-visible { background: #DCCAFD; color: #110E20; }
+[data-teinte="jour"] .appel__bouton { background: #8652E6; color: #FFFFFF; }
+[data-teinte="jour"] .simulator__fields select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%23110E20' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+
+/* Illustrations : la meme ombre portee, plus legere sur le clair. */
+[data-teinte="jour"] .section__figure::after,
+[data-teinte="jour"] .entete-page__arche::after { background: radial-gradient(closest-side, rgb(37 17 63 / .16), rgb(37 17 63 / 0)); }
+[data-teinte="jour"] .scene:not(.porte__scene):not(.porte__halqa) .scene__cadre { filter: drop-shadow(-14px 30px 34px rgb(37 17 63 / .14)); }
+
+/* Progressions (etapes, tuiles qui grandissent, parcours, echeances) : du blanc vers le lilas, sans aplat violet (le violet
+   plein reste aux boutons). */
+[data-teinte="jour"] .etape:nth-child(1) { background: #FFFFFF; }
+[data-teinte="jour"] .etape:nth-child(2) { background: #EEE6FA; }
+[data-teinte="jour"] .etape:nth-child(3) { background: #DCCAFD; color: #110E20; }
+[data-teinte="jour"] .etape:nth-child(4) { background: #BA98FB; color: #110E20; }
+[data-teinte="jour"] .pousse__etape--0 .pousse__tuile { background: #FFFFFF; }
+[data-teinte="jour"] .pousse__etape--1 .pousse__tuile { background: #EEE6FA; }
+[data-teinte="jour"] .pousse__etape--2 .pousse__tuile { background: #DCCAFD; }
+[data-teinte="jour"] .parcours__etape:nth-child(1) { background: #FFFFFF; }
+[data-teinte="jour"] .parcours__etape:nth-child(2) { background: #EEE6FA; }
+[data-teinte="jour"] .parcours__etape:nth-child(3) { background: #DCCAFD; color: #110E20; }
+[data-teinte="jour"] .parcours__etape:nth-child(4),
+[data-teinte="jour"] .parcours--haut .parcours__etape:nth-child(4) { background: #BA98FB; color: #110E20; }
+[data-teinte="jour"] .parcours--haut .parcours__etape:nth-child(4) .parcours__arabe { color: #110E20; }
+@media (min-width: 0px) {
+  [data-teinte="jour"] #echeances .remises--echeances .remise__valeur { background: #FFFFFF; color: #110E20; box-shadow: inset 0 0 0 1px #E3DEE9, var(--ombre-1); }
+  [data-teinte="jour"] #echeances .remises--echeances .remise:nth-child(2) .remise__valeur { background: #EEE6FA; color: #110E20; box-shadow: none; }
+  [data-teinte="jour"] #echeances .remises--echeances .remise:nth-child(3) .remise__valeur { background: #E8D8FF; color: #110E20; box-shadow: none; }
+  [data-teinte="jour"] #echeances .remises--echeances .remise:nth-child(4) .remise__valeur { background: #DCCAFD; color: #110E20; box-shadow: none; }
+  [data-teinte="jour"] #echeances .remises--echeances .remise:nth-child(5) .remise__valeur { background: #BA98FB; color: #110E20; box-shadow: none; }
+}
+
+/* Cartes et tuiles pleines : des cartes blanches qui flottent (elles etaient violet profond). */
+[data-teinte="jour"] .tuile[open] { background: #EEE6FA; color: #110E20; }
+[data-teinte="jour"] .lecture__sommaire a:hover { background: #F0EDF4; }
+[data-teinte="jour"] .faq-ouverte__question details,
+[data-teinte="jour"] .appel__note { background: #FFFFFF; color: #110E20; }
+[data-teinte="jour"] .faq-ouverte__question summary:focus-visible { outline-color: #6538E4; }
+[data-teinte="jour"] .chapitre ul li { background: #FFFFFF; color: #110E20; box-shadow: 0 0 0 1px #E3DEE9; }
+[data-teinte="jour"] .citation-arabe { background: #FFFFFF; }
+@media screen {
+  [data-teinte="jour"] .fiches__choix { background: #E3DEE9; }
+  [data-teinte="jour"] .fiches__choix input:checked + label { background: #FFFFFF; color: #110E20; box-shadow: var(--ombre-1); }
+  [data-teinte="jour"] .fiches__choix input:focus-visible + label { outline-color: #6538E4; }
+}
+
+/* Bandes : la lavande garde sa place (encre neutre, bouton violet) ; les bandes sombres deviennent blanches. */
+[data-teinte="jour"] .fond--lavande {
+  color: #110E20;
+  --encre: #110E20; --encre-douce: #655E70; --encre-accent: #6538E4; --contour: #84798F; --filet: #DCCAFD;
+  --action: #8652E6; --sur-action: #FFFFFF; --action-survol: #6538E4; --sur-action-survol: #FFFFFF;
+  --sous: #FFFFFF; --champ: #FFFFFF; --champ-fort: #DCCAFD; --marque: #8652E6; --sur-marque: #FFFFFF; --avant: #FFFFFF;
+}
+[data-teinte="jour"] .fond--lavande .section__figure::after, [data-teinte="jour"] .fond--lavande .pleine__image::after { opacity: 1; }
+[data-teinte="jour"] .fond--prune {
+  background: #FFFFFF; color: #110E20;
+  --sous: #F7F5FE; --champ: #EEE6FA; --champ-fort: #DCCAFD; --avant: #F7F5FE;
+}
+[data-teinte="jour"] .fond--prune .fiche, [data-teinte="jour"] .fond--prune .fiche:nth-child(2) { color: inherit; }
+[data-teinte="jour"] .panneau { background: #FFFFFF; color: #110E20; --inverse: #FFFFFF; --sur-inverse: #110E20; --sur-inverse-doux: #655E70; }
+[data-teinte="jour"] .panneau .cta--secondary:hover { background: #EEE6FA; color: #110E20; }
+[data-teinte="jour"] .appel--sombre { background: #FFFFFF; color: #110E20; }
+[data-teinte="jour"] :is(.panneau, .fond--prune, .appel--sombre) { --bande-couleur: #FFFFFF; }
+[data-teinte="jour"] .site-footer { --bande-couleur: #EEE6FA; }
+
+/* Pied de page sur la lavande : encre neutre, carte du monde et filigrane du symbole en violet tres pale. */
+[data-teinte="jour"] .pied-carte__points { background: #8652E6; opacity: .16; }
+[data-teinte="jour"] .pied-symbole { background: #8652E6; opacity: .05; }
+[data-teinte="jour"] .pied-volet--legal { border-top-color: #DCCAFD; }
+
+/* Liste des articles : des cartes claires, aux surfaces et aux formes qui changent (lavande, blanc en arche, lilas, blanc au
+   grand coin) ; le bouton « Lire l'article » est l'action de chaque carte, en violet. */
+[data-teinte="jour"] .article-carte { border-color: #E3DEE9; background: #FFFFFF; --encre: #110E20; --encre-douce: #655E70; }
+[data-teinte="jour"] .article-carte:has(a:focus-visible),
+[data-teinte="jour"] .article-carte--une:has(a:focus-visible),
+[data-teinte="jour"] .article-carte:nth-child(3n+1):has(a:focus-visible) { outline-color: #6538E4; }
+[data-teinte="jour"] .article-carte--une,
+[data-teinte="jour"] .article-carte:not(.article-carte--une):nth-child(3n+1) {
+  --encre: #110E20; --encre-douce: #655E70; --action: #8652E6; --sur-action: #FFFFFF; --action-survol: #6538E4; --sur-action-survol: #FFFFFF; }
+[data-teinte="jour"] .article-carte--une { border-color: transparent; background: #EEE6FA; }
+[data-teinte="jour"] .article-carte:not(.article-carte--une):nth-child(3n) { border-color: transparent; background: #DCCAFD; --encre-douce: #4E2983; }
+[data-teinte="jour"] .article-carte:not(.article-carte--une):nth-child(3n+1) { border-color: #E3DEE9; background: #FFFFFF; }
+[data-teinte="jour"] .article-carte__surtitre { background: #FFFFFF; color: #4E2983; }
+
+/* Cartes qui flottent : un filet clair et deux ombres douces, vers le bas a gauche (la lumiere vient de la porte lointaine). */
+[data-teinte="jour"] :is(.fiche, .parcours__etape, .avis-carte, .article-carte, .citation-arabe) {
+  box-shadow: inset 0 0 0 1px rgb(227 222 233 / .6), -4px 10px 18px -8px rgb(37 17 63 / .10), -22px 44px 72px -24px rgb(37 17 63 / .16); }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  [data-teinte="jour"] :is(.fiche, .avis-carte, .article-carte):hover {
+    box-shadow: inset 0 0 0 1px rgb(227 222 233 / .6), -6px 14px 22px -8px rgb(37 17 63 / .12), -30px 60px 90px -26px rgb(37 17 63 / .22); }
+  [data-teinte="jour"] .cta:hover { box-shadow: 0 14px 30px -10px rgb(134 82 230 / .55); }
+}
+
+/* Lumieres : la porte de l'accueil s'ouvre sur une lumiere blanche cerclee de lilas ; la porte lointaine du fond aussi. Les
+   rayons et la lueur de l'embrasure, poses sur l'illustration, ne changent pas. */
+[data-teinte="jour"] .porte__scene::before {
+  background: radial-gradient(25% 44% at calc(var(--fx, .7) * 100%) calc(var(--fy, .5) * 100%), rgb(255 255 255 / .95), rgb(255 255 255 / .8) 26%, rgb(220 202 253 / .5) 52%, rgb(220 202 253 / .16) 78%, rgb(220 202 253 / 0) 100%); }
+@media (min-width: 840px) {
+  [data-teinte="jour"] .porte__collant::before {
+    background: radial-gradient(closest-side, rgb(255 255 255 / .95), rgb(255 255 255 / .7) 30%, rgb(220 202 253 / .32) 56%, rgb(220 202 253 / .1) 80%, rgb(220 202 253 / 0) 100%); }
+}
+[data-teinte="jour"] .fond-lumiere {
+  background: radial-gradient(70% 60% at 50% 62%, rgb(255 255 255 / .95), rgb(255 255 255 / .6) 58%, rgb(238 230 250 / .5) 100%);
+  box-shadow: 0 0 90px 30px rgb(220 202 253 / .45), inset 0 0 0 1px rgb(220 202 253 / .5); }
+[data-teinte="jour"] .fond-lumiere::after {
+  background: conic-gradient(from 150deg at 50% 0%, transparent 0deg, rgb(220 202 253 / .22) 9deg, transparent 17deg, rgb(220 202 253 / .16) 27deg,
+    transparent 35deg, rgb(220 202 253 / .2) 45deg, transparent 53deg, rgb(220 202 253 / .14) 61deg, transparent 70deg, transparent 360deg); }
+
+/* Le bouton principal s'eclaire : une lueur violette autour, et un reflet blanc, etroit, qui le traverse toutes les 8 s. */
+[data-teinte="jour"] .cta:not(.cta--secondary) { box-shadow: 0 10px 30px -8px rgb(134 82 230 / .5); }
+[data-teinte="jour"] .cta:not(.cta--secondary)::after { background: linear-gradient(105deg, rgb(255 255 255 / 0) 40%, rgb(255 255 255 / .3) 50%, rgb(255 255 255 / 0) 60%); }
