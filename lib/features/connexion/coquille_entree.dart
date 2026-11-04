@@ -563,15 +563,22 @@ class ActionsEntree extends StatelessWidget {
 
 /// Un petit lien discret du bas de page (CONNEXION-UX, 03/11/2026) : texte de
 /// legende souligne, sans fleche, a l'encre attenuee de la surface. La cible
-/// tactile reste celle de [Pressable] (48 au moins).
+/// tactile reste celle de [Pressable] (48 au moins), sauf avec [cibleReduite].
 class LienPied extends StatelessWidget {
   /// Cree le lien ; [cle] est posee sur le lien lui-meme (tests).
   const LienPied({
     required this.libelle,
     required this.onPress,
     this.cle,
+    this.cibleReduite = false,
     super.key,
   });
+
+  /// Cible de 40 au lieu de 48, sans chevauchement (au-dessus des 24 de
+  /// WCAG 2.2 AA, critere 2.5.8) : les petits liens empiles du pied de la
+  /// connexion, pour des ecarts plus courts (CONNEXION-ALIGN, decision du
+  /// pilote du 04/11/2026). Faux par defaut : 48 ailleurs.
+  final bool cibleReduite;
 
   /// Le libelle.
   final String libelle;
@@ -593,18 +600,27 @@ class LienPied extends StatelessWidget {
         key: cle,
         onPress: onPress,
         arrondiFocus: AppRadius.arrondiSm,
-        constructeur: (BuildContext _, EtatPression etat) => Align(
-          alignment: AlignmentDirectional.centerStart,
-          widthFactor: 1,
-          heightFactor: 1,
-          child: Text(
-            libelle,
-            style: palette.inkMuted
-                .applyTo(base)
-                .copyWith(
-                  decoration: TextDecoration.underline,
-                  decorationColor: palette.inkMuted.applyTo(base).color,
-                ),
+        respecterCibleTactile: !cibleReduite,
+        constructeur: (BuildContext _, EtatPression etat) => ConstrainedBox(
+          constraints: cibleReduite
+              ? const BoxConstraints(
+                  minWidth: AppSpacing.section,
+                  minHeight: AppSpacing.section,
+                )
+              : const BoxConstraints(),
+          child: Align(
+            alignment: AlignmentDirectional.centerStart,
+            widthFactor: 1,
+            heightFactor: 1,
+            child: Text(
+              libelle,
+              style: palette.inkMuted
+                  .applyTo(base)
+                  .copyWith(
+                    decoration: TextDecoration.underline,
+                    decorationColor: palette.inkMuted.applyTo(base).color,
+                  ),
+            ),
           ),
         ),
       ),

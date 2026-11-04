@@ -467,11 +467,13 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
               // Une sortie discrete : la recuperation d'acces (lien expire ou
               // jamais recu).
               LienPied(
+                cibleReduite: true,
                 cle: const ValueKey<String>('connexion-probleme'),
                 libelle: t.connexion.probleme,
                 onPress: _versRecuperation,
               ),
               LienPied(
+                cibleReduite: true,
                 cle: const ValueKey<String>('connexion-appareil-eleve-aide'),
                 libelle: t.connexion.appareilEleveAide,
                 onPress: () => unawaited(_entreeEleve()),
@@ -480,6 +482,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
             Row(
               children: <Widget>[
                 LienPied(
+                  cibleReduite: true,
                   libelle: t.juridique.titre,
                   onPress: () => GoRouter.of(context).push(Routes.juridique),
                 ),
@@ -488,6 +491,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
                 // confidentialite, ou ira la phrase sur la verification de
                 // securite une fois validee par le directeur.
                 LienPied(
+                  cibleReduite: true,
                   cle: const ValueKey<String>('connexion-confidentialite'),
                   libelle: t.juridique.confidentialite.titre,
                   onPress: () =>
