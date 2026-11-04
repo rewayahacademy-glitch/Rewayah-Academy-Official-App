@@ -12,14 +12,17 @@ import 'package:rewayah_academy/core/communications/communications_supabase.dart
 import 'package:rewayah_academy/core/communications/libelles_communication_slang.dart';
 import 'package:rewayah_academy/core/communications/modeles_communication.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/photos/photo_personne.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/avatar_nom.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
 import 'package:rewayah_academy/features/compte/compte_page.dart';
+import 'package:rewayah_academy/features/compte/ma_photo.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/photo_enseignant.dart';
 
 import '../../support/harnais.dart';
@@ -185,14 +188,18 @@ void main() {
   });
 
   group('Compte : le prenom, jamais « Eleve » a sa place', () {
-    List<Override> surcharges({IdentiteTitulaire? identite}) => <Override>[
+    List<Override> surcharges({
+      IdentiteTitulaire? identite,
+      InterfaceMode mode = InterfaceMode.standard,
+    }) => <Override>[
       sourceSessionProvider.overrideWithValue(
         FausseSourceSession(
-          const SessionState(
+          SessionState(
             resolue: true,
             role: AppRole.student,
             profileId: 'p1',
             accountStatus: AccountStatus.active,
+            interfaceMode: mode,
           ),
         ),
       ),
@@ -222,7 +229,40 @@ void main() {
         find.byType(AvatarNom).first,
       );
       expect(entete.prenom, 'Hakim');
+      // La ligne du dessous : « {role} · {statut} », des mots existants.
+      expect(
+        entete.role,
+        LibellesGroupe.joindre(t.compte.roles.student, t.compte.statutActif),
+      );
       expect(find.text('Hakim'), findsWidgets);
+      // Hors Interface guidee, la personne pose sa photo.
+      expect(find.byKey(LienMaPhoto.choisirKey), findsOneWidget);
+    });
+
+    testWidgets('Interface guidee : l enfant ne change pas sa photo', (
+      WidgetTester tester,
+    ) async {
+      tester.view.physicalSize = const Size(390, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        hote(
+          const ComptePage(),
+          mode: InterfaceMode.enfant,
+          surcharges: surcharges(
+            mode: InterfaceMode.enfant,
+            identite: const IdentiteTitulaire(
+              prenom: 'Hakim',
+              nom: 'Ba',
+              methodeConnexion: MethodeConnexion.inconnue,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Hakim'), findsWidgets);
+      expect(find.byKey(LienMaPhoto.choisirKey), findsNothing);
+      expect(find.text(t.ficheEleve.informations.choisir), findsNothing);
     });
   });
 

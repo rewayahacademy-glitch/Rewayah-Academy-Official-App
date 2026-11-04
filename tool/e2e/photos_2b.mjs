@@ -32,7 +32,10 @@ const vue = { width: largeur, height: hauteur };
 const date = new Date().toISOString().slice(0, 10);
 const p = await parcours(`PHOTOS-2b : la meme photo partout (${largeur} x ${hauteur})`,
   `PHOTOS-2b/${date}/${largeur}`);
-const PHOTO = readFileSync(path.join(DEPOT, 'tool/e2e/piece_factice.png'));
+// Un portrait synthetique tres contraste (vert, visage, epaules) : la
+// capture se lit comme une photo (la piece d'identite factice donnait un
+// rectangle gris pale).
+const PHOTO = readFileSync(path.join(DEPOT, 'tool/e2e/portrait_factice.png'));
 const statut = Object.fromEntries(readFileSync(path.join(TRAVAIL, 'statut.env'), 'utf8')
   .split('\n').filter((l) => l.includes('=')).map((l) => {
     const i = l.indexOf('=');
@@ -223,6 +226,12 @@ try {
   const iTitre = textes.indexOf('Mon compte');
   verdicts.compteDitLePrenom = iTitre >= 0 && textes.slice(iTitre, iTitre + 4).includes('Hakim');
   verdicts.compteSansEleveEnTete = iTitre >= 0 && !textes.slice(iTitre, iTitre + 4).includes('Élève');
+  // Garde-cap (04/11) : la ligne du dessous dit « {role} · {statut} ».
+  verdicts.compteRoleEtStatut = textes.slice(iTitre, iTitre + 5).includes('Élève · Actif');
+  // Fiche §11 : l'enfant en Interface guidee ne change pas sa photo.
+  verdicts.enfantSansChoisirPhoto = !textes.includes('Choisir une photo');
+  ID.modeHakim = sql(`select interface_mode from public.student_profiles where profile_id = '${ID.hakim}'`);
+  p.dire(`Interface de Hakim en base : ${ID.modeHakim}`);
   constats.comptePhotoHakim = await attendrePhoto(ch, 'avatars', ID.cleHakim, 10000);
   await p.capture(h, '05_enfant_compte');
 
