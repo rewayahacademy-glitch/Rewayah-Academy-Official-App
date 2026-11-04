@@ -1,4 +1,4 @@
-== FUSEAUX : la meme seance a Paris et a Abidjan : 2026-11-04T12:57:21.330Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+== FUSEAUX : la meme seance a Paris et a Abidjan : 2026-11-04T13:13:47.018Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
 -- 1. banc : un foyer a Paris, deux enfants, deux classes, l'enseignant a Abidjan
   OK base : le tuteur lit l'enseignant a Abidjan, titre enregistre, aucun fuseau de famille
   OK base : l'enseignant lit 1 famille a Paris, sans nom
@@ -39,6 +39,12 @@
   OK 1440_ar : « 1 famille », jamais un nom
   OK 1440_ar : « En ce moment », l'heure qui avance
   OK 1440_ar : aucun nom de famille chez l'enseignant
+-- 6. deux comptes, le meme onglet : rien du premier ne reste
+  OK le tuteur voit « Chez Sayyid … Abidjan »
+  OK le tuteur est deconnecte
+  OK meme onglet : l'enseignant voit « 1 famille », la lecture de son compte
+  OK meme onglet : plus aucun « Chez Sayyid » du tuteur
+  OK meme onglet : aucun nom du foyer du tuteur
 -- 5. un profil sans fuseau : la Journee le dit
   OK profil sans fuseau : « Heure de cet appareil »
 == FUSEAUX : la meme seance a Paris et a Abidjan : vert

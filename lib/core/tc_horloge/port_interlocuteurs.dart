@@ -13,6 +13,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../config/env.dart';
 import 'fuseaux_interlocuteurs.dart';
 import 'interlocuteurs_supabase.dart';
+import 'mon_horloge.dart';
 
 /// L'acces aux fuseaux des interlocuteurs d'une classe.
 abstract class PortInterlocuteurs {
@@ -53,6 +54,10 @@ interlocuteursClasseProvider =
       Ref ref,
       String groupeId,
     ) async {
+      // Une lecture par compte : monHorlogeProvider se relit a chaque
+      // connexion et deconnexion ; le suivre jette la lecture du compte
+      // precedent (meme classe, meme onglet, autre personne).
+      ref.watch(monHorlogeProvider);
       final InterlocuteursClasse? lus = await ref
           .watch(portInterlocuteursProvider)
           .lire(groupeId);

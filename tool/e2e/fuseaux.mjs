@@ -11,14 +11,17 @@
 //      nom ; « En ce moment », l'heure courante des deux cotes ;
 //   4. changement d'heure : une seance du 01/04/2027 (Paris passe a l'heure
 //      d'ete le 28/03/2027) : 09:00 a Paris, 07:00 a Abidjan ;
-//   5. un profil sans fuseau : la Journee dit « Heure de cet appareil ».
+//   5. un profil sans fuseau : la Journee dit « Heure de cet appareil » ;
+//   6. deux comptes sur le meme onglet (garde-cap) : le tuteur a Paris se
+//      deconnecte, l'enseignant a Abidjan se connecte ; aucune heure ni
+//      ville du premier ne reste a l'ecran.
 //
 // Prerequis : pile LOCALE avec les migrations 20261109500000 et
 // 20261109900000, comptes amorces (tool/e2e/amorcer.sh). L'enseignant du banc
 // retrouve a la fin son fuseau, son titre et son pays d'avant.
 // Usage : node tool/e2e/fuseaux.mjs
 import { parcours, activerSemantique, connecter, attendreTexte, libelles,
-  nettoyerClassesE2E, sql, COMPTES, MDP } from './commun.mjs';
+  nettoyerClassesE2E, sql, cliquer, trouver, COMPTES, MDP } from './commun.mjs';
 
 const p = await parcours('FUSEAUX : la meme seance a Paris et a Abidjan', 'fuseaux/2026-11-04');
 const n = Date.now() % 1000000;
@@ -171,6 +174,31 @@ try {
       await p.capture(e, `${nom}_3_enseignant_classe`);
       await e.ctx.close();
     }
+  }
+
+  p.dire('-- 6. deux comptes, le meme onglet : rien du premier ne reste');
+  {
+    const o = await p.contexte('tuteur', { vue: VUES[0].vue });
+    await entrer(o, TUTEUR);
+    await vers(o.page, `/tuteur/classes/${G}?eleve=${E}`);
+    await voir(o, CHEZ_SAYYID, 'le tuteur voit « Chez Sayyid … Abidjan »');
+    await p.capture(o, '390_fr_5_meme_onglet_tuteur');
+    await vers(o.page, '/compte');
+    await cliquer(o.page, /^Se déconnecter$/, { pause: 2500 });
+    // Une confirmation, s'il y en a une.
+    const confirmer = await trouver(o.page, /^Me déconnecter$/, { delai: 5000 });
+    if (confirmer) { await confirmer.click(); await o.page.waitForTimeout(3000); }
+    await activerSemantique(o.page);
+    await voir(o, /J'ai déjà un compte|Se connecter|Créer un compte/, 'le tuteur est deconnecte', 12000);
+    await entrer(o, COMPTES.enseignant);
+    await vers(o.page, `/enseignant/groupe/${G}`);
+    await voir(o, FAMILLE, 'meme onglet : l\'enseignant voit « 1 famille », la lecture de son compte');
+    verifier(!(await attendreTexte(o.page, /Chez Sayyid/, 2000)),
+      'meme onglet : plus aucun « Chez Sayyid » du tuteur');
+    verifier(!(await attendreTexte(o.page, /Yasmine · Sayyid|Amina/, 1500)),
+      'meme onglet : aucun nom du foyer du tuteur');
+    await p.capture(o, '390_fr_6_meme_onglet_enseignant');
+    await o.ctx.close();
   }
 
   p.dire('-- 5. un profil sans fuseau : la Journee le dit');
