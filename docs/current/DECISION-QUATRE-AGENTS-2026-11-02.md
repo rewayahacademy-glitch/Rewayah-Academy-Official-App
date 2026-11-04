@@ -207,6 +207,19 @@ les copie dans chaque consigne d'agent, et un agent qui en enfreint une voit sa 
   collage, en mots simples.
 - **P4. Le garde-cap relit le plan de lots** avant tout lancement. Sans sa relecture, aucun
   agent ne part.
+- **P5. Trains de déploiement (pilote, 04/11/2026).** Chaque déploiement change `main.dart.js`, que
+  chaque visiteur retélécharge (environ 2,5 Mo) : c'est la première cause de lenteur relevée par le
+  garde-cap (71 déploiements depuis le 03/11).
+  - Une fusion qui touche `lib/`, `web/` ou `assets/` part dans un train : au plus deux
+    déploiements de production par jour, sauf correctif urgent demandé par le directeur.
+  - Les fusions d'un train s'enchaînent sans attendre chaque déploiement (le workflow n'en garde
+    qu'un en attente) ; cela amende la dernière phrase de P2 pour ces seules fusions.
+  - Une fusion qui ne touche que le serveur ou la documentation reste libre, une à la fois (P2).
+  - Avant le train, le garde-cap compare chaque écran à sa demande, capture contre capture.
+- **P6. En-cours avec les trains (pilote, 04/11/2026).** Une PR que le garde-cap a déclarée
+  conforme et qui attend son train ne compte pas dans la limite d'une PR ouverte par agent. Un agent
+  ne commence pas pour autant un troisième lot : au plus une PR en travail et une PR en attente de
+  train.
 
 ## 4. Risque accepté, dit tel quel
 
