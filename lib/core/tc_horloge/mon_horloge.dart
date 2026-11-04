@@ -69,6 +69,11 @@ String heureChezMoi(DateTime instant) => heureDeLAppareil(chezMoi(instant));
 bool estHeureDeLAppareil(DateTime instant) =>
     _derniere?.moi?.muraleA(instant.toUtc()) == null;
 
+/// Le fuseau du profil qui rend [instant], ou `null` quand [chezMoi]
+/// retombe sur l'appareil.
+String? fuseauChezMoi(DateTime instant) =>
+    estHeureDeLAppareil(instant) ? null : _derniere?.moi?.fuseau;
+
 /// Pose la lecture courante, pour les tests.
 void poserMonHorlogePourTest(MonHorloge? lecture) => _derniere = lecture;
 

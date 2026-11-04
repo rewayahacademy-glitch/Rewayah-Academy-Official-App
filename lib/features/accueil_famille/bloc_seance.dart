@@ -6,10 +6,12 @@ import '../../core/i18n/dates_appareil.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/i18n/villes_fuseau.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/seance_famille/seance_famille.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_horloge/heure_double.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_palette.dart';
@@ -65,7 +67,17 @@ class AffichageSeance {
   }) {
     final HorlogeAffichee? foyer = seance.heureFoyer;
     final HorlogeAffichee? classe = seance.heureGroupe;
-    final DateTime local = seance.debutUtc.toLocal();
+    // Sans heure du foyer rendue par horloge_seance, le fuseau du profil
+    // (mon_horloge, FUSEAUX 04/11/2026), et l'appareil seulement en dernier :
+    // un tuteur a Paris lit « Heure de Paris », jamais « Heure de cet
+    // appareil » quand son profil la connait.
+    final DateTime local = chezMoi(seance.debutUtc);
+    final String? profil = foyer == null
+        ? fuseauChezMoi(seance.debutUtc)
+        : null;
+    final String? ville =
+        foyer?.libelleVille ??
+        (profil == null ? null : villeDuFuseauLibelle(profil));
     return AffichageSeance._(
       etat: etatSeanceFamille(
         seance,
@@ -77,14 +89,11 @@ class AffichageSeance {
       horlogeFoyer: foyer,
       horlogeClasse: classe,
       heure: foyer?.heureLocaleRendue ?? heureDeLAppareil(local),
-      ville: foyer?.libelleVille,
-      fuseau: foyer == null
+      ville: ville,
+      fuseau: ville == null
           ? t.tuteur.accueil.heureAppareil
           : t.tuteur.accueil.heureDe(
-              deVille: deDevant(
-                foyer.libelleVille,
-                cle: 'tuteur.accueil.heureDe',
-              ),
+              deVille: deDevant(ville, cle: 'tuteur.accueil.heureDe'),
             ),
       date: foyer?.dateLocaleRendue ?? dateDeLAppareil(local),
       duree: LibellesGroupe.dureeSeule(seance.dureePrevue),

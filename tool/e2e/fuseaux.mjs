@@ -157,9 +157,14 @@ try {
       await vers(c.page, `/tuteur/classes/${G}?eleve=${E}`);
       await voir(c, ABIDJAN, `${nom} : fiche de la classe, l'heure de l'enseignant a Abidjan`);
       await voir(c, CHEZ_SAYYID, `${nom} : fiche de la classe, « Chez Sayyid »`, 5000);
+      await voir(c, PARIS, `${nom} : fiche de la classe, sa propre heure a Paris (garde-cap)`, 5000);
+      verifier(!(await attendreTexte(c.page, APPAREIL, 1500)),
+        `${nom} : jamais « Heure de cet appareil » pour un tuteur dont le foyer est a Paris`);
       await p.capture(c, `${nom}_1_tuteur_classe`);
       await vers(c.page, `/tuteur/classes/${G2}/planning?eleve=${E2}`);
       await voir(c, /07:00/, `${nom} : seance du 01/04/2027, 07:00 a Abidjan (heure d'ete a Paris)`);
+      verifier(!(await attendreTexte(c.page, APPAREIL, 1500)),
+        `${nom} : le planning dit l'heure de Paris, pas celle de l'appareil`);
       await p.capture(c, `${nom}_2_tuteur_heure_ete`);
       await c.ctx.close();
 

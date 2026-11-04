@@ -1,4 +1,4 @@
-== FUSEAUX : la meme seance a Paris et a Abidjan : 2026-11-04T13:13:47.018Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+== FUSEAUX : la meme seance a Paris et a Abidjan : 2026-11-04T15:00:43.462Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
 -- 1. banc : un foyer a Paris, deux enfants, deux classes, l'enseignant a Abidjan
   OK base : le tuteur lit l'enseignant a Abidjan, titre enregistre, aucun fuseau de famille
   OK base : l'enseignant lit 1 famille a Paris, sans nom
@@ -6,7 +6,10 @@
 -- 2. 390_fr : le tuteur a Paris
   OK 390_fr : fiche de la classe, l'heure de l'enseignant a Abidjan
   OK 390_fr : fiche de la classe, « Chez Sayyid »
+  OK 390_fr : fiche de la classe, sa propre heure a Paris (garde-cap)
+  OK 390_fr : jamais « Heure de cet appareil » pour un tuteur dont le foyer est a Paris
   OK 390_fr : seance du 01/04/2027, 07:00 a Abidjan (heure d'ete a Paris)
+  OK 390_fr : le planning dit l'heure de Paris, pas celle de l'appareil
 -- 3. 390_fr : l'enseignant a Abidjan
   OK 390_fr : fiche de la classe, l'heure de la famille a Paris
   OK 390_fr : « 1 famille », jamais un nom
@@ -15,7 +18,10 @@
 -- 2. 390_ar : le tuteur a Paris
   OK 390_ar : fiche de la classe, l'heure de l'enseignant a Abidjan
   OK 390_ar : fiche de la classe, « Chez Sayyid »
+  OK 390_ar : fiche de la classe, sa propre heure a Paris (garde-cap)
+  OK 390_ar : jamais « Heure de cet appareil » pour un tuteur dont le foyer est a Paris
   OK 390_ar : seance du 01/04/2027, 07:00 a Abidjan (heure d'ete a Paris)
+  OK 390_ar : le planning dit l'heure de Paris, pas celle de l'appareil
 -- 3. 390_ar : l'enseignant a Abidjan
   OK 390_ar : fiche de la classe, l'heure de la famille a Paris
   OK 390_ar : « 1 famille », jamais un nom
@@ -24,7 +30,10 @@
 -- 2. 1440_fr : le tuteur a Paris
   OK 1440_fr : fiche de la classe, l'heure de l'enseignant a Abidjan
   OK 1440_fr : fiche de la classe, « Chez Sayyid »
+  OK 1440_fr : fiche de la classe, sa propre heure a Paris (garde-cap)
+  OK 1440_fr : jamais « Heure de cet appareil » pour un tuteur dont le foyer est a Paris
   OK 1440_fr : seance du 01/04/2027, 07:00 a Abidjan (heure d'ete a Paris)
+  OK 1440_fr : le planning dit l'heure de Paris, pas celle de l'appareil
 -- 3. 1440_fr : l'enseignant a Abidjan
   OK 1440_fr : fiche de la classe, l'heure de la famille a Paris
   OK 1440_fr : « 1 famille », jamais un nom
@@ -33,7 +42,10 @@
 -- 2. 1440_ar : le tuteur a Paris
   OK 1440_ar : fiche de la classe, l'heure de l'enseignant a Abidjan
   OK 1440_ar : fiche de la classe, « Chez Sayyid »
+  OK 1440_ar : fiche de la classe, sa propre heure a Paris (garde-cap)
+  OK 1440_ar : jamais « Heure de cet appareil » pour un tuteur dont le foyer est a Paris
   OK 1440_ar : seance du 01/04/2027, 07:00 a Abidjan (heure d'ete a Paris)
+  OK 1440_ar : le planning dit l'heure de Paris, pas celle de l'appareil
 -- 3. 1440_ar : l'enseignant a Abidjan
   OK 1440_ar : fiche de la classe, l'heure de la famille a Paris
   OK 1440_ar : « 1 famille », jamais un nom
