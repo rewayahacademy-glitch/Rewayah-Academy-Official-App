@@ -50,6 +50,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../admin_candidatures/libelles_candidatures.dart';
 import 'bloc_autres_competences.dart';
+import 'bloc_entretien.dart';
 import 'blocs_candidature.dart';
 import 'feuille_geste.dart';
 import 'gestes_proposes.dart';
@@ -243,6 +244,10 @@ class _EtatCandidatureDirectionPage
           retour: _retour,
           onGeste: (GesteCandidature g) => _geste(g, d, capacites),
           onOuvrirDossier: () => context.go(Routes.adminPersonnesDossiers),
+          onEntretien: (String message) {
+            _relire(identifiant: d.ligne.id);
+            setState(() => _retour = message);
+          },
         ),
       ),
     );
@@ -261,6 +266,7 @@ class _Contenu extends ConsumerWidget {
     required this.horsLigne,
     required this.onGeste,
     required this.onOuvrirDossier,
+    required this.onEntretien,
     this.retour,
   });
 
@@ -270,6 +276,9 @@ class _Contenu extends ConsumerWidget {
   final String? retour;
   final ValueChanged<GesteCandidature> onGeste;
   final VoidCallback onOuvrirDossier;
+
+  /// V2-a : un geste d'entretien est fait, avec son retour local.
+  final ValueChanged<String> onEntretien;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -306,6 +315,12 @@ class _Contenu extends ConsumerWidget {
     final Widget pieceEntretien = BlocPieceEntretien(
       detail: detail,
       onOuvrirDossier: onOuvrirDossier,
+      entretien: SectionEntretien(
+        detail: detail,
+        capacites: capacites,
+        horsLigne: horsLigne,
+        onFait: onEntretien,
+      ),
     );
     final Widget responsable = BlocResponsable(detail: detail);
     const Widget affectation = BlocAffectation();
