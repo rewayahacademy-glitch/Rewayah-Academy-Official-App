@@ -20,7 +20,6 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/avatar_nom.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
 import 'package:rewayah_academy/features/compte/compte_page.dart';
-import 'package:rewayah_academy/features/compte/donnees_compte.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/photo_enseignant.dart';
 
 import '../../support/harnais.dart';
@@ -71,6 +70,19 @@ EnseignantVM _enseignant({String? cle}) => EnseignantVM(
 
 String? _urlAffichee(WidgetTester tester) =>
     tester.widget<AvatarTile>(find.byType(AvatarTile)).urlSignee;
+
+class _Identite implements PortIdentiteTitulaire {
+  const _Identite(this.identite);
+
+  final IdentiteTitulaire? identite;
+
+  @override
+  Future<IdentiteTitulaire> lire() async =>
+      identite ?? (throw StateError('lecture refusee'));
+
+  @override
+  Future<void> modifier({String? prenom, String? nom}) async {}
+}
 
 void main() {
   group('PhotoEnseignant lit le fournisseur unique', () {
@@ -185,7 +197,7 @@ void main() {
         ),
       ),
       if (identite != null)
-        identiteTitulaireProvider.overrideWith((Ref _) async => identite),
+        portIdentiteTitulaireProvider.overrideWithValue(_Identite(identite)),
     ];
 
     testWidgets('le prenom lu dans le profil', (WidgetTester tester) async {
@@ -213,4 +225,34 @@ void main() {
       expect(find.text('Hakim'), findsWidgets);
     });
   });
+
+  test(
+    'Compte : une lecture refusee rend null, sans nouvelle tentative',
+    () async {
+      final ProviderContainer c = ProviderContainer(
+        overrides: <Override>[
+          sourceSessionProvider.overrideWithValue(
+            FausseSourceSession(
+              const SessionState(
+                resolue: true,
+                role: AppRole.student,
+                profileId: 'p1',
+                accountStatus: AccountStatus.active,
+              ),
+            ),
+          ),
+          portIdentiteTitulaireProvider.overrideWithValue(
+            const _Identite(null),
+          ),
+        ],
+      );
+      addTearDown(c.dispose);
+      final ProviderSubscription<AsyncValue<String?>> abonnement = c.listen(
+        prenomDuCompteProvider,
+        (_, _) {},
+      );
+      addTearDown(abonnement.close);
+      expect(await c.read(prenomDuCompteProvider.future), isNull);
+    },
+  );
 }

@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/mode_accessibilite.dart';
 import '../../core/appairage/service_appairage.dart';
+import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
@@ -29,7 +30,6 @@ import '../../core/widgets/skeleton.dart';
 import '../foyer/photo_eleve.dart';
 import '../paiements_recus/rubrique_recevoir_paiements.dart';
 import '../salle_seance/libelles_salle_b.dart';
-import 'donnees_compte.dart' show identiteTitulaireProvider;
 import 'espaces_compte.dart';
 import 'ligne_matricule.dart';
 import 'ma_photo.dart';
@@ -593,6 +593,22 @@ class ProfilEnfantPage extends ConsumerWidget {
   }
 }
 
+/// PHOTOS-2b : le prenom de l'en-tete du Compte, lu par le port de
+/// l'identite (`profiles` par soi). Une lecture refusee ou impossible rend
+/// `null` (le libelle du role reste), sans nouvelle tentative automatique :
+/// l'en-tete n'a pas d'etat d'erreur a montrer.
+final FutureProvider<String?> prenomDuCompteProvider =
+    FutureProvider.autoDispose<String?>((Ref ref) async {
+      ref.watch(
+        sessionProvider.select((SessionState session) => session.profileId),
+      );
+      try {
+        return (await ref.watch(portIdentiteTitulaireProvider).lire()).prenom;
+      } on Object {
+        return null;
+      }
+    }, retry: (int _, Object _) => null);
+
 class _EnteteCompte extends ConsumerWidget {
   const _EnteteCompte({required this.projection});
 
@@ -606,11 +622,7 @@ class _EnteteCompte extends ConsumerWidget {
     // PHOTOS-2b (defaut R3 de PHOTOS-2a) : le prenom de la personne
     // (`profiles` par soi), jamais « Eleve » a sa place ; le libelle du role
     // reste seulement tant que le prenom n'est pas lu, ou s'il est vide.
-    final String? prenomLu = ref
-        .watch(identiteTitulaireProvider)
-        .value
-        ?.prenom
-        .trim();
+    final String? prenomLu = ref.watch(prenomDuCompteProvider).value?.trim();
     final String prenom = prenomLu == null || prenomLu.isEmpty
         ? projection.libelleRole
         : prenomLu;
