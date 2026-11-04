@@ -11,12 +11,25 @@
 // Usage : node tool/e2e/questionnaire_fin.mjs avant|apres
 // (construire et servir d'abord la version voulue : `main` pour « avant », la
 // branche pour « apres »).
+import fs from 'node:fs';
+import path from 'node:path';
 import { parcours, trouver, cliquer, attendreTexte, ouvrir, activerSemantique,
   amenerEnVue } from './commun.mjs';
 
 const mode = process.argv[2] === 'avant' ? 'avant' : 'apres';
 const p = await parcours(`QUESTIONNAIRE-FIN (${mode})`, `questionnaire-fin/${mode}`);
 const n = Date.now() % 1000000;
+
+// LOGO-G (04/11/2026) : `alleger` (commun.mjs) ramene chaque capture a 96
+// couleurs ; les quelques centaines de pixels du logo Google y prenaient le
+// violet et les gris de la page (garde-cap mesurait un G gris et violet). La
+// fin du questionnaire et « Lien envoye » sont donc aussi gardees en couleurs
+// pleines, dans `brut/`, que `alleger` ne parcourt pas.
+async function brute(c, etiquette) {
+  const dossier = path.join(p.sortie, 'brut');
+  fs.mkdirSync(dossier, { recursive: true });
+  await c.page.screenshot({ path: path.join(dossier, `${etiquette}.png`) });
+}
 
 function verifier(condition, message) {
   if (!condition) throw new Error(`ROUGE : ${message}`);
@@ -84,6 +97,7 @@ async function passage(largeur, hauteur, sombre) {
     verifier(/connexion/.test(c.page.url()), `${tag} : la fin mene a la connexion (avant)`);
   }
   await p.capture(c, `${tag}_3_fin_du_questionnaire`);
+  await brute(c, `${tag}_3_fin_du_questionnaire`);
 
   // 4. Apres : le lien envoye, dans le meme habillage.
   if (mode === 'apres') {
@@ -104,6 +118,7 @@ async function passage(largeur, hauteur, sombre) {
     }
     verifier(await attendreTexte(c.page, /Lien envoyé/, 1000), `${tag} : « Lien envoyé »`);
     await p.capture(c, `${tag}_4_lien_envoye`);
+    await brute(c, `${tag}_4_lien_envoye`);
   }
   await c.ctx.close();
 }
