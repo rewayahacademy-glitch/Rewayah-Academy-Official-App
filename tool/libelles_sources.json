@@ -7200,5 +7200,12 @@
   "connexion.controle.libelle": "Lot ANTI-ROBOT (03/11/2026), fiche PLAN-LOTS \u00a713 et decision du directeur du 03/11 (\u00ab Oui pour la s\u00e9curit\u00e9 \u00bb) : controle Cloudflare Turnstile devant l envoi du lien de connexion ; phrase d echec donnee par la fiche, jamais le mot robot a une famille ; redige par l agent, a valider par le directeur",
   "connexion.controle.chargement": "Lot ANTI-ROBOT (03/11/2026), fiche PLAN-LOTS \u00a713 et decision du directeur du 03/11 (\u00ab Oui pour la s\u00e9curit\u00e9 \u00bb) : controle Cloudflare Turnstile devant l envoi du lien de connexion ; phrase d echec donnee par la fiche, jamais le mot robot a une famille ; redige par l agent, a valider par le directeur",
   "connexion.controle.erreur": "Lot ANTI-ROBOT (03/11/2026), fiche PLAN-LOTS \u00a713 et decision du directeur du 03/11 (\u00ab Oui pour la s\u00e9curit\u00e9 \u00bb) : controle Cloudflare Turnstile devant l envoi du lien de connexion ; phrase d echec donnee par la fiche, jamais le mot robot a une famille ; redige par l agent, a valider par le directeur",
-  "connexion.controle.horsLigne": "Lot ANTI-ROBOT (03/11/2026), fiche PLAN-LOTS \u00a713 et decision du directeur du 03/11 (\u00ab Oui pour la s\u00e9curit\u00e9 \u00bb) : controle Cloudflare Turnstile devant l envoi du lien de connexion ; phrase d echec donnee par la fiche, jamais le mot robot a une famille ; redige par l agent, a valider par le directeur"
+  "connexion.controle.horsLigne": "Lot ANTI-ROBOT (03/11/2026), fiche PLAN-LOTS \u00a713 et decision du directeur du 03/11 (\u00ab Oui pour la s\u00e9curit\u00e9 \u00bb) : controle Cloudflare Turnstile devant l envoi du lien de connexion ; phrase d echec donnee par la fiche, jamais le mot robot a une famille ; redige par l agent, a valider par le directeur",
+  "admin.comptes.actionMarquerFondateur": "V2-e",
+  "admin.comptes.actionRetirerFondateur": "V2-e",
+  "admin.comptes.fondateurMarque": "V2-e",
+  "admin.comptes.fondateurRetire": "V2-e",
+  "admin.comptes.fondateurRefuseDirection": "V2-e",
+  "admin.comptes.fondateurRefuseInactif": "V2-e",
+  "admin.comptes.fondateurRefuseInconnu": "V2-e"
 }
