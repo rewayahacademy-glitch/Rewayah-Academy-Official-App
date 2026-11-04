@@ -1,0 +1,14 @@
+== DRAPEAUX : le pays de l'enseignant vu par la famille : 2026-11-04T01:55:32.655Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+-- 1. banc : un foyer, un enfant, une classe, une seance
+  OK base : mes_groupes_famille_v rend le pays au tuteur
+  OK base : mes_seances_v rend le pays au tuteur
+-- 2. le tuteur : Accueil, fiche de la classe
+  OK 390 fr : Accueil, le pays de l'enseignant
+  OK 390 fr : fiche de la classe, le pays de l'enseignant
+  OK 390 ar : Accueil, le pays de l'enseignant
+  OK 390 ar : fiche de la classe, le pays de l'enseignant
+  OK 1440 fr : Accueil, le pays de l'enseignant
+  OK 1440 fr : fiche de la classe, le pays de l'enseignant
+  OK 1440 ar : Accueil, le pays de l'enseignant
+  OK 1440 ar : fiche de la classe, le pays de l'enseignant
+== DRAPEAUX : le pays de l'enseignant vu par la famille : vert

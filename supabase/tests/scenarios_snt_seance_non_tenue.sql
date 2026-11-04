@@ -349,11 +349,16 @@ BEGIN
   RAISE NOTICE 'OK 7. chevauchement (refus nomme de C1, classe SNT classe 5) et date passee refuses';
 END;
 $refus$;
+-- La nouvelle date : midi, heure de Paris, dans quatre jours. Jamais a 7 h
+-- (heure de la classe 5, quatre jours plus tard) : l'heure courante + 4 jours
+-- tombait sur ce cours quand le scenario tournait entre 6 h et 7 h UTC.
+SELECT set_config('snt.d4', ((date_trunc('day', now() AT TIME ZONE 'Europe/Paris')
+  + interval '4 days 12 hours') AT TIME ZONE 'Europe/Paris')::text, true);
 SELECT set_config('snt.k1', (SELECT e->>'id' FROM jsonb_array_elements(public.lister_seances_reportees()) e
                               WHERE e->>'session_id' = 'b5e00000-0000-0000-0000-000000000201'), true);
 CREATE TEMP TABLE nouvelle AS
 SELECT public.fixer_nouvelle_date_seance(current_setting('snt.k1')::uuid,
-  date_trunc('hour', now()) + interval '4 days') AS id;
+  current_setting('snt.d4')::timestamptz) AS id;
 DO $second$
 BEGIN
   BEGIN
@@ -375,7 +380,7 @@ SELECT pg_temp.vrai(
   (SELECT s.teacher_id = 'b5e00000-0000-0000-0000-000000000001'
           AND s.groupe_id = 'b5e00000-0000-0000-0000-000000000101'
           AND s.status = 'planned'
-          AND s.started_at = date_trunc('hour', now()) + interval '4 days'
+          AND s.started_at = current_setting('snt.d4')::timestamptz
           AND s.ended_at - s.started_at = interval '60 minutes'
      FROM public.sessions s WHERE s.id = (SELECT id FROM nouvelle))
   AND EXISTS (SELECT 1 FROM public.session_participants p

@@ -504,10 +504,14 @@ enum CommandeDock { micro, camera, agrandir, reseau, tableau, quitter }
 /// Un compte affiche en haut a droite : celui de la personne devant l'ecran.
 @immutable
 class CompteSeance {
-  const CompteSeance({required this.nom, required this.initiales});
+  const CompteSeance({required this.nom, required this.initiales, this.pays});
 
   final String nom;
   final String initiales;
+
+  /// Le pays de l'enseignant quand le compte est le sien (DRAPEAUX) ; `null`
+  /// pour un eleve.
+  final String? pays;
 }
 
 /// Tout ce qu'une salle affiche, pour UN role. Immuable et pure.
@@ -518,6 +522,7 @@ class VueSeance {
     required this.nomClasse,
     required this.nomEnseignant,
     required this.initialesEnseignant,
+    this.paysEnseignant,
     this.prenomEleve,
     this.horloge,
     this.chrono,
@@ -625,6 +630,10 @@ class VueSeance {
   final RoleSeance role;
   final String nomClasse;
   final String nomEnseignant;
+
+  /// Le pays de l'enseignant (DRAPEAUX, 04/11/2026), lu sous son nom avec son
+  /// drapeau ; `null` : rien n'est ecrit.
+  final String? paysEnseignant;
   final String initialesEnseignant;
 
   /// L'eleve devant l'ecran (vues eleve et guidee). `null` pour l'enseignant.
@@ -1009,7 +1018,11 @@ class VueSeance {
   /// Le compte en haut a droite : TOUJOURS celui de la personne devant
   /// l'ecran (I-9). L'enseignant ne voit jamais le compte d'un eleve.
   CompteSeance get compte => _enseignant || prenomEleve == null
-      ? CompteSeance(nom: nomEnseignant, initiales: initialesEnseignant)
+      ? CompteSeance(
+          nom: nomEnseignant,
+          initiales: initialesEnseignant,
+          pays: paysEnseignant,
+        )
       : CompteSeance(
           nom: prenomEleve!,
           // Un grapheme entier (lettre arabe avec haraka) ; vide sans prenom.

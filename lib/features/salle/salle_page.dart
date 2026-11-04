@@ -1212,6 +1212,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       prenom: profil?.prenom ?? deLaClasse?.nomAffichage ?? '',
       titre: TitreEnseignant.depuisSql(profil?.titre) ?? deLaClasse?.titre,
       clePhoto: profil?.clePhoto ?? deLaClasse?.photoUrlOuCle,
+      // DRAPEAUX (04/11/2026) : son propre profil pour l'enseignant, sinon la
+      // Classe de la famille (`mes_groupes_famille_v.teacher_country`, masque
+      // comme le prenom).
+      pays: profil?.pays ?? deLaClasse?.pays,
     );
   }
 
@@ -1994,6 +1998,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         salle: vue,
         mode: AppMetriques.of(context).mode,
         nomEnseignantConnu: annuaire.enseignant,
+        paysEnseignant: annuaire.paysEnseignant,
         nomClasse: nomClasse,
         titreEnseignant: ficheEnseignant?.titre,
         presence: presence,

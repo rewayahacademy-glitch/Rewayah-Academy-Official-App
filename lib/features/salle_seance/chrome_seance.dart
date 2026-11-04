@@ -814,6 +814,9 @@ class _Identite extends StatelessWidget {
     // d'initiales maison), le nom centre verticalement sur le cercle.
     return AvatarNom.enLigne(
       prenom: compte.nom,
+      // DRAPEAUX (04/11/2026) : le pays de l'enseignant, quand le compte est
+      // le sien.
+      pays: compte.pays,
       ajuste: true,
       styleNom: palette.inkStrong.applyTo(
         theme.textTheme.titleSmall ?? const TextStyle(),
