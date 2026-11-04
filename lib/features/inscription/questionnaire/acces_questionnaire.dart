@@ -306,7 +306,10 @@ class _EcranAccesQuestionnaireState
           onPress: () => unawaited(_google()),
           niveau: NiveauAction.secondaire,
           pleineLargeur: !bureau,
-          prefixe: const _LogoGoogleSurBlanc(),
+          // Sur le violet du telephone, le logo se pose sur un disque blanc ;
+          // sur le parchemin de l'ordinateur, il se pose seul (le disque y
+          // prendrait le violet de `surfacePrimary`), comme la connexion.
+          prefixe: bureau ? const LogoGoogle() : const _LogoGoogleSurBlanc(),
         ),
       ),
     ],
@@ -372,8 +375,9 @@ class _EcranAccesQuestionnaireState
 /// Le logo Google pose sur un disque blanc. Sur le violet de la marque, ses
 /// couleurs officielles (bleu, rouge) se fondaient dans le fond (garde-cap,
 /// 04/11) ; les regles de Google demandent un logo en couleur, lisible. Le
-/// disque prend le blanc de la palette (`surfacePrimary`), et le logo reste
-/// tel quel.
+/// disque prend le blanc de la palette de la marque (`surfacePrimary`), et
+/// le logo reste tel quel. Au telephone seulement : sur le parchemin de
+/// l'ordinateur, `surfacePrimary` est violet.
 class _LogoGoogleSurBlanc extends StatelessWidget {
   const _LogoGoogleSurBlanc();
 
