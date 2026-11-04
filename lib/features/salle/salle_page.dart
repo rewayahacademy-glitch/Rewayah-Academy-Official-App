@@ -23,6 +23,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/observabilite/journal_dev.dart';
 import '../../core/pause_seance/port_pause_seance.dart';
+import '../../core/photos/photo_personne.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/presence/vue_presence.dart';
 import '../../core/profil/service_profil_enseignant.dart'
@@ -1577,6 +1578,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           statut: e.statut,
           id: e.id,
           cleAvatar: e.cleAvatar,
+          profilId: e.profilId,
           peutEcrire: e.peutEcrire,
           fiche: ficheDeSeance(p),
         ),
@@ -1585,6 +1587,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           statut: e.statut,
           id: e.id,
           cleAvatar: e.cleAvatar,
+          profilId: e.profilId,
           peutEcrire: e.peutEcrire,
           fiche: const FicheEleveSeance(
             niveau: '',
@@ -3737,10 +3740,15 @@ class _Cadre extends ConsumerWidget {
     final String nom = moi ? t.salle.vousMeme : participant.nom;
     // Directeur, 26/10/2026 : la photo du profil quand l'annuaire en a la
     // cle ; sinon le cercle des initiales.
+    // PHOTOS-2a : sinon la photo de la personne par le fournisseur unique
+    // (l'identite LiveKit est son identifiant de profil) ; le serveur dit si
+    // l'appelant a le droit de la voir (un camarade de Classe, K-44).
     final String? cle = participant.clePhotoEnseignant;
-    final String? photo = cle == null
+    final String? photo = cle != null
+        ? ref.watch(photoEnseignantUrlProvider(cle)).value
+        : participant.identite.isEmpty
         ? null
-        : ref.watch(photoEnseignantUrlProvider(cle)).value;
+        : ref.watch(photoPersonneProvider(participant.identite)).value;
     final Widget? gestes = menu;
     return DecoratedBox(
       decoration: palette.surfaceSunken.decoration(

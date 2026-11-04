@@ -136,6 +136,8 @@ import 'core/partage_offre/genre_partageur_supabase.dart';
 import 'core/partage_offre/port_genre_partageur.dart';
 import 'core/pause_seance/pause_seance_supabase.dart';
 import 'core/pause_seance/port_pause_seance.dart';
+import 'core/photos/photo_personne.dart';
+import 'core/photos/photos_supabase.dart';
 import 'core/recrutement/invitations_comptable_supabase.dart';
 import 'core/recrutement/invitations_enseignant_supabase.dart';
 import 'core/recrutement/port_invitations_comptable.dart';
@@ -205,6 +207,7 @@ import 'features/foyer/reponse_invitation_supabase.dart';
 import 'features/foyer/reprise_foyer_supabase.dart';
 import 'features/foyer/role_foyer.dart';
 import 'features/foyer/role_foyer_supabase.dart';
+import 'features/profil_enseignant/photo_publique.dart';
 
 /// Les surcharges de l'application reelle (jamais le mode demonstration) :
 /// le port des classes du foyer bascule sur l'adaptateur Supabase des que le
@@ -290,6 +293,20 @@ List<Override> _surchargesAppReelle() => <Override>[
   // `ressources_du_groupe`. Remplace le catalogue local vide.
   portCatalogueProvider.overrideWithValue(
     CatalogueSupabase(Supabase.instance.client),
+  ),
+  // Une seule photo par personne, la meme partout (PHOTOS-2a) : la regle de
+  // qui voit quoi est au serveur (`photos_personnes`, 20261107300000).
+  portPhotosProvider.overrideWithValue(
+    PhotosSupabase(Supabase.instance.client),
+  ),
+  // L'enseignant envoie sa photo publique (PHOTOS-2a), qui remplace l'envoi
+  // non branche de photo_publique.dart.
+  envoiPhotoPubliqueProvider.overrideWith(
+    (Ref ref) => EnvoiPhotoPubliqueServeur(
+      port: ref.watch(portPhotosProvider),
+      moi: () => ref.read(sessionProvider).profileId,
+      relire: (String id) => ref.invalidate(photoPersonneProvider(id)),
+    ),
   ),
   // Classes de la direction (CONTRATS-MANQUANTS) : liste paginee et
   // numerotee (R16, R17), fusion et transfert (R9, R10), pilotage par
