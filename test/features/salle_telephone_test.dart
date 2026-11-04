@@ -174,6 +174,7 @@ Future<FauxMoteurSalle> _monter(
   ThemeMode theme = ThemeMode.light,
   bool presenter = true,
   bool donnees = true,
+  bool eleves = true,
 }) async {
   fixerVueCapture(tester, taille, 1);
   final FauxMoteurSalle moteur = FauxMoteurSalle();
@@ -188,8 +189,10 @@ Future<FauxMoteurSalle> _monter(
   await tester.pumpAndSettle();
   moteur.publier(<ParticipantSalle>[
     _personne('t1', 'teacher', role == 'teacher'),
-    _personne('e1', 'student', role == 'student'),
-    _personne('e2', 'student', false),
+    if (eleves) ...<ParticipantSalle>[
+      _personne('e1', 'student', role == 'student'),
+      _personne('e2', 'student', false),
+    ],
   ]);
   await tester.pumpAndSettle();
   if (!presenter) return moteur;
@@ -1656,5 +1659,40 @@ void main() {
       await tester.pumpAndSettle();
       await capturerVue(tester, 'fiche1-$taille-eleves');
     });
+  }
+
+  // N3 (03/11/2026, constat du rejeu a 390) : sans eleve dans la salle et
+  // sans page presentee, « Ouvrir le Coran » se pose SOUS la phrase
+  // d'attente, jamais dessus (aucun element ne recouvre un contenu a lire).
+  for (final Size taille in <Size>[const Size(320, 568), _telephone]) {
+    for (final double texte in <double>[1, 2]) {
+      testWidgets('N3 : « Ouvrir le Coran » sous la phrase d\'attente, '
+          '${taille.width.toInt()} px, texte x${texte.toInt()}', (
+        WidgetTester tester,
+      ) async {
+        await _monter(
+          tester,
+          taille: taille,
+          texte: texte,
+          presenter: false,
+          eleves: false,
+        );
+        final Finder ouvrir = find.byKey(
+          const ValueKey<String>('action-scene'),
+        );
+        expect(ouvrir, findsOneWidget);
+        final Finder titre = find.text(t.salle.seulEleve);
+        final Finder detail = find.text(t.salle.seulEleveDetail);
+        expect(titre, findsOneWidget);
+        expect(detail, findsOneWidget);
+        verifierSansChevauchement(tester, <Finder>[ouvrir, titre, detail]);
+        expect(
+          tester.getRect(ouvrir).top,
+          greaterThanOrEqualTo(tester.getRect(detail).bottom),
+        );
+        verifierUnSeulBoutonPlein(tester);
+        expect(tester.takeException(), isNull);
+      });
+    }
   }
 }

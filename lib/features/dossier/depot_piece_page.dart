@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/domain/enums.dart';
+import '../../core/dossier/echec_depot.dart';
 import '../../core/dossier/selecteur_fichier.dart';
 import '../../core/dossier/service_dossier.dart';
 import '../../core/i18n/strings.g.dart';
@@ -80,9 +81,20 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
       if (mounted) {
         GoRouter.of(context).go(Routes.attente);
       }
-    } on Object {
+    } on Object catch (erreur) {
       if (mounted) {
-        setState(() => _erreur = t.kyc.erreur);
+        setState(
+          () => _erreur = switch (causeEchecDepot(erreur)) {
+            CauseEchecDepot.format => t.kyc.erreurFormat,
+            CauseEchecDepot.taille => t.kyc.tropVolumineux(
+              taille: (ServiceDossier.tailleMaximaleOctets / (1024 * 1024))
+                  .round()
+                  .toString(),
+            ),
+            CauseEchecDepot.reseau => t.kyc.erreurReseau,
+            CauseEchecDepot.autre => t.kyc.erreur,
+          },
+        );
       }
     } finally {
       if (mounted) {

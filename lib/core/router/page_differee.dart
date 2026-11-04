@@ -10,6 +10,7 @@ import '../observabilite/journal_dev.dart';
 import '../reseau/service_reseau.dart';
 import '../theme/app_delais.dart';
 import '../theme/app_spacing.dart';
+import '../version/nouvelle_version.dart';
 import '../widgets/etat_systeme.dart';
 
 /// Un ecran dont le code arrive a la demande (`import ... deferred as`).
@@ -71,6 +72,17 @@ EchecMorceau classerEchecMorceau(
     return EchecMorceau.versionChangee;
   }
   return echecsEnLigne >= 2 ? EchecMorceau.repete : EchecMorceau.ouverture;
+}
+
+/// Vrai si la version servie n'est plus celle du demarrage, apres une
+/// relecture ([SurveillanceVersion.verifier]).
+Future<bool> versionReellementChangee(WidgetRef ref) async {
+  try {
+    await ref.read(nouvelleVersionProvider.notifier).verifier();
+  } on Object {
+    return false;
+  }
+  return ref.read(nouvelleVersionProvider);
 }
 
 class PageDifferee extends ConsumerStatefulWidget {
@@ -153,11 +165,21 @@ class _PageDiffereeState extends ConsumerState<PageDifferee> {
       journalDev('Chargement du morceau ${widget.cle} impossible : $erreur');
       final bool horsLigne = ref.read(horsLigneProvider).value ?? false;
       if (!horsLigne) _echecsEnLigne++;
-      _echec = classerEchecMorceau(
+      EchecMorceau echec = classerEchecMorceau(
         erreur,
         horsLigne: horsLigne,
         echecsEnLigne: _echecsEnLigne,
       );
+      // CHARGEMENT (directeur, 03/11/2026) : « Une nouvelle version est
+      // prete » ne se dit que si une nouvelle version est reellement servie.
+      // La signature « not loaded » ne fait que la soupconner : la version
+      // servie est relue ; si elle n'a pas change (ou ne se lit pas),
+      // l'echec se dit comme un echec ordinaire, avec « Recharger ».
+      if (echec == EchecMorceau.versionChangee &&
+          !await versionReellementChangee(ref)) {
+        echec = EchecMorceau.repete;
+      }
+      _echec = echec;
     }
     _enCours = false;
     _minuterie?.cancel();

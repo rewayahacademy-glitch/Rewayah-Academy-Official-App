@@ -469,6 +469,11 @@ verify_jwt = true
 [functions.bibliotheque-upload]
 verify_jwt = true
 
+# N4 (03/11/2026) : etat des connexions R2, direction seulement, aucune
+# ecriture. La porte `admin` est rejouee dans la fonction.
+[functions.r2-selftest]
+verify_jwt = true
+
 # OAuth server configuration
 [auth.oauth_server]
 # Enable OAuth server functionality

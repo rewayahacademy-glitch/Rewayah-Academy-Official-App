@@ -20,8 +20,14 @@ class PiluleEtatSalle extends StatelessWidget {
     this.aLaLigne = false,
     this.surface,
     this.avecChrono = false,
+    this.onPause,
     super.key,
   });
+
+  /// N3, S2 : demarrer ou terminer la pause programmee, depuis le chrono.
+  /// Rendue seulement si le serveur a donne `peut_piloter` (ChronoSalle) ;
+  /// nulle : la pause se lit, sans commande.
+  final VoidCallback? onPause;
 
   /// FN-023 : la pilule porte aussi le chrono du temps restant
   /// (LIVE-CHRONO-01), quand la vue a ses bornes. Les salles du 26/10
@@ -68,6 +74,8 @@ class PiluleEtatSalle extends StatelessWidget {
             bornes: vue.chrono!,
             connexion: vue.connexion,
             pause: vue.pause,
+            onPause: onPause,
+            echecPause: vue.echecPause,
             style: style,
             garderCouleur: true,
           )

@@ -215,10 +215,11 @@ Numéros de migration : table des réservations du garde-cap (2026110510 à 2026
 | 7 bis | DEFIL-FEUILLE : une boîte ou une feuille trop haute devient l'écran, une seule barre de défilement (fiche §10 ; constat de C1 au rejeu du 03/11) | S/M | prochain agent libre ; suite complète (lib/core) |
 | 7 ter | RECHARGE-CARTE : pendant une commande en attente de paiement, la carte du profil affiche « 0 $ » alors que le récapitulatif du serveur dit 55 $ (`lib/features/foyer/recharge_foyer.dart:869`). La carte garde en lecture seule le montant retenu par le serveur, sans calcul côté Flutter. Constat du rejeu du 03/11, parcours 7 | S | premier agent libre après DEFIL-FEUILLE ; sans migration ; R3 : carte et récapitulatif concordants, 390 et 1440 |
 | 7 quater | PHOTOS-1 : une seule photo par personne, tous les rôles (serveur) (fiche §11, demande du directeur du 03/11) | M | premier agent libre après RECHARGE-CARTE ; migration 20261107300000 |
-| 7 quinquies | PHOTOS-2a : le fournisseur unique, l'envoi pour chaque rôle, la fermeture du droit client de 0005 sur `avatar_storage_key` (migration 20261107400000), les écrans de la preuve (tuteur, appareil de l'enfant, enseignant, camarade, direction) (fiche §11) | M-L | après PHOTOS-1 (en production) |
-| 7 sexies | PHOTOS-2b : le reste des écrans (cahier, cartes, espace de classe, messages, communauté) | M | après PHOTOS-2a |
+| 7 quinquies | PHOTOS-2a : le fournisseur unique, l'envoi pour chaque rôle, la fermeture du droit client de 0005 sur `avatar_storage_key` (migration 20261107900000), les écrans de la preuve (tuteur, appareil de l'enfant, enseignant, camarade, direction) (fiche §11) | M-L | après PHOTOS-1 (en production) |
+| 7 sexies | PHOTOS-2b : le reste des écrans (cahier, cartes, espace de classe, messages, communauté), plus deux défauts relevés en R3 : la vignette du camarade nommée « Participant » en salle, et le Compte de l'enfant qui affiche « Élève » au lieu de son prénom | M | après PHOTOS-2a |
+| 7 septies | DEFIL-FEUILLE-bis : « Signaler un besoin » défile encore dans une boîte à 1440 (forme dialogue) ; R3 sur « Signaler un besoin » et les deux écrans de la PR 177 | S | Fin de séance |
 | 7 bis-a | ADM-UX-bis : Échap ne fermait plus la boîte de Personnes > Demandes après « Accepter » (focus perdu quand le bouton disparaît) ; focus sur la phrase « … est acceptée » (constat du rejeu du 03/11) | S | C1, PR 179 ; sans migration |
-| 8 | N3 : pause programmée, mission du contrôleur (la photo de l'enseignant passe dans PHOTOS, 03/11) | M | C1, migration 20261105800000 |
+| 8 | N3 : pause programmée, mission du contrôleur (la photo de l'enseignant passe dans PHOTOS, 03/11) | M | C1, migration 20261107800000 (renumérotée : toute migration nouvelle prend un numéro au-dessus de la dernière installée) |
 | 9 | CAHIER-UX (UX-028, 041 ; UX-029 vérifié d'abord en lecture) | S | |
 | 10 | N4 : Bibliothèque, coffre R2 de la pièce, publication des évaluations, interface standard, Interface guidée | L | r2-selftest lu avant |
 | 11 | FN-SERVEUR (FN-106 et 107 d'abord, puis FN-003, 019, 104) | M | |
@@ -247,6 +248,9 @@ Estimation : environ 14 jours-agent, soit 3 jours et demi à 4 agents ; avec la 
 - **En-cours :** au plus une PR ouverte non fusionnée par agent.
 - **Fusion :** un lot sans texte nouveau passe dès qu'il est vert ; les lots avec texte passent un par un.
 - **À faire avant toute hausse :** `verifier_branchement` et la présence des captures R3 dans `ci.yml` (collage du directeur, page du pilote) ; lot outil `libelles_sources.json` sans conflit (S).
+- **Fiche tenue (03/11, 19:45) :** une fiche du garde-cap avec un « exige » non tenu bloque la fusion. Le garde-cap relit chaque PR serveur contre sa fiche avant le feu vert.
+- **Numéros plus bas (03/11, 19:23, corrigé à 20:05) :** un numéro réservé plus bas que la dernière migration de main est accepté si la CI est verte et si aucun objet n'est commun avec les migrations installées après lui. Cela se vérifie contre la **production** au moment de l'installation, pas contre main. Sinon, on renumérote.
+- **Fonction déjà retouchée (pilote, 03/11, 20:04) :** une migration qui remplace une fonction déjà retouchée par un autre lot le fait par ancres, ou elle est préflightée contre le prosrc de production. Une CI verte ne le prouve pas, car l'ordre des fichiers diffère de l'ordre d'installation. Cas réel : V1-a recopiait `capacites_candidatures` et aurait éteint « Valider la pièce » posé par salle 3. Le préflight l'a arrêtée. La relecture du garde-cap compte chaque `CREATE OR REPLACE` d'une fonction existante.
 - **Les 17 chantiers sans serveur** (finance du comptable, communauté, recherche, B3.3, salle 3, CAND-04, B2.4, etc.) commencent après la file du §7, pas en parallèle.
 
 ## 9. Fiche NIV1 : le niveau demandé une seule fois (garde-cap, 02/11/2026 vers 18:15 UTC ; acceptée par le pilote à 18:19)
@@ -350,4 +354,119 @@ Demande du directeur (03/11) : « pour les photos il faut penser à les synchron
 6. **Hors du lot** :
    - la compression côté serveur (question ouverte de l'ADR-012, archivée) ;
    - la suppression des anciens fichiers, qui suit M1 et le « oui » du directeur.
+
+## 12. Fiches DRAPEAUX, FUSEAUX et SUPPRIMER (demandes du directeur, 03/11/2026 vers 17:50 UTC)
+
+Mots du directeur : « ajoute aussi les drapeau des pays des enseignants (demandé depuis le début, mais pas appliqué, c'est été codé en plus, je le sais). et aussi le fuseau horaire qui est une pagaille pas possible actuellement (et pourtant j'avais demandé que chacun voit son fuseau et celui de son interlocuteur: exemple, 08h chez vous (paris), et 06h chez "Sayyid/sayda" (C.Ivoire) et vice versa; avec de belles animations en directs si possible, et que cela soit syncronisé partout où nécessaire. il est actuellement impossible de supprimer quelque chose surtout un profil, et pourtant on devra supprimer la plupart des profils de tests actuellement, mais y'a pas moins depuis l'interface. »
+
+Pour chaque lot, l'agent cherche d'abord dans le dépôt ce qui fait déjà la chose (INVENTAIRE-NON-BRANCHE), réutilise, et dit dans son bilan ce qui a été repris ou écarté.
+
+### DRAPEAUX (S, `lib/`, groupé avec FOYER-UX, rang 16)
+
+- Le drapeau du pays de l'enseignant s'affiche à côté de son nom partout où une famille ou un élève le voit : cartes de classe, Accueil, fiche de la classe, salle.
+- Il reprend le composant de drapeau qui existe déjà (cité par le directeur comme « codé ») et la donnée du pays de l'enseignant déjà lue par la direction (`comptes_admin_par_role`, pays d'un enseignant). Aucun drapeau nouveau dessiné.
+- Le pays seul, jamais une adresse ni une ville.
+
+### FUSEAUX (M-L, `lib/` et serveur si besoin)
+
+- Partout où une heure concerne deux personnes (famille et enseignant, enseignant et classe, direction et personne), on affiche les deux heures, la sienne d'abord : « 08:00 chez vous (Paris) · 06:00 chez Sayyid Nom (Côte d'Ivoire) », et l'inverse pour l'autre. « Sayyid » ou « Sayyida », selon le profil enregistré, jamais déduit du nom.
+- **Un seul composant** d'heure double, lu partout : séance du jour, cartes, planning, salle, notifications à l'écran, e-mails (avec COURRIELS-UX, même règle de ville qu'UX-030). Plus aucun calcul de fuseau dispersé.
+- Les sources :
+  - `timezone_iana` du profil (`0005:401`) pour chaque personne ;
+  - le fuseau de la classe pour la séance ;
+  - le stockage reste en IANA et en UTC (`02_ARCHITECTURE` §7) ;
+  - la ville en clair, comme UX-030 ;
+  - le pays par le drapeau (DRAPEAUX).
+- Animation en direct (l'horloge avance), sobre, et coupée si l'appareil demande moins d'animations (`DESIGN-GOV`, `03_DESIGN_SYSTEM`).
+- Le relevé d'abord : la liste de chaque écran qui affiche une heure, avec sa source actuelle. C'est la « pagaille » à corriger, jointe à la PR.
+- R3 : la même séance vue par un tuteur à Paris et par un enseignant à Abidjan, à 390 et à 1440, plus un changement d'heure d'été.
+
+### SUPPRIMER (M, serveur puis `lib/`)
+
+- **La direction** supprime un compte ou un profil depuis Personnes, un à un ou **par sélection** (DECISION-LISTES, sélection et actions de masse) : c'est le moyen de retirer les profils de test.
+- **Le tuteur** supprime le profil d'un enfant de son foyer, ou demande la suppression de son propre compte (`demander_suppression_compte`, `20261018150000`, déjà là).
+- **Côté serveur :**
+  - une suppression est d'abord un **retrait** : accès coupé, profil masqué partout, journal sensible ;
+  - puis une anonymisation au délai de conservation réglable (CAND-Q21, modèle existant) ;
+  - un profil qui porte des paiements ou des factures n'est jamais effacé : il est retiré et anonymisé, et les écritures comptables restent (obligation légale) ;
+  - confirmation à l'écran, avec le nombre de profils touchés ;
+  - réversible pendant le délai de conservation.
+- Pas de bouton « tout supprimer ».
+- Les migrations prennent des numéros au-dessus de la dernière installée. Une migration dont le texte contient DELETE suit la règle du collage par le directeur.
+
+### Relevé « déjà codé » (garde-cap, 03/11/2026 vers 19:00 UTC, lecture seule sur main 222c763d8)
+
+Le directeur avait raison : l'essentiel existe, il manque la donnée ou le branchement. Chaque agent part de ce relevé.
+
+**DRAPEAUX : le client est prêt, le serveur ne donne pas le pays aux familles.**
+- Existe : le composant `PaysEnseignant` (`lib/core/widgets/pays_enseignant.dart:45`, images `assets/flags/`, `.parCode`, `codesIsoDesPays`), repris par `AvatarNom(pays:)` (`avatar_nom.dart:168-175`). Les cartes famille passent déjà `pays:`. Les modèles lisent déjà `teacher_country` (`groupes_supabase.dart:55`, `service_planning.dart:139`, `service_groupes.dart:76`).
+- Manque : `mes_groupes_famille_v` (`0033:140-170`) et `mes_seances_v` (`20261107500000:193`) n'ont pas `teacher_country`. Le drapeau ne se voit aujourd'hui que dans Personnes > Comptes. La migration est déjà décrite dans `ENS-PAYS-1_BR.md:15-26` (masquée comme le prénom). Numéro : **20261108700000**.
+- Puis : passer `pays` aux deux `AvatarNom` de la salle (`capsule_seance.dart:65,230`, `chrome_seance.dart:813`).
+- Défaut joint : `historique_controleur_supabase.dart:72` lit `pays_enseignant`, colonne qui n'existe dans aucune migration.
+
+**FUSEAUX : deux heures déjà calculées par le serveur, mais la seconde ne correspond pas à son libellé.**
+- Existe : `SessionClockVM` (`lib/core/tc_horloge/session_clock_vm.dart:107-125`), `horloge_classe` (`20261025040000:27-45`), `horloge_seance` (`0033:463`), `mon_fuseau()` (`0005:407-417`), la ligne « Chez Sayyid X » (`carte_session.dart:300-345, 686-695`), la mise à jour par bascules (`horloge_vivante.dart`, `ancre_horloge_serveur.dart`), la ville traduite `villeDuFuseauLibelle` (`lib/core/i18n/villes_fuseau.dart:39`).
+- Défaut central : « Chez Sayyid X » affiche le fuseau de la **classe** (`groupes.timezone_iana`), pas celui de l'enseignant (`teacher_profiles.timezone_iana`). Il tombe juste seulement si la classe a été créée au fuseau de l'enseignant.
+- La « pagaille » relevée :
+  - Accueil famille et planning : heure du foyer, puis « Heure de la classe » (`bloc_seance.dart:52-90`).
+  - Mes classes : une seule heure (`carte_groupe.dart:400-427`).
+  - Heure de l'appareil (`toLocal`) : accueil élève, historique tuteur, journée et classes de l'enseignant, salle, notifications, rejoindre avec l'élève.
+  - Historique adulte : l'heure vient de l'appareil et la date du serveur (`service_planning.dart:164`), qui peuvent se contredire vers minuit.
+  - Un second helper de ville, non traduit (`villeDeFuseau`, `horloge_supabase.dart:26`), sert toutes les cartes de séance.
+  - Aucune heure courante qui avance : seulement un compte à rebours.
+- À faire :
+  - serveur : `horloge_classe` et `horloge_seance` donnent le fuseau, le titre et le pays de l'interlocuteur (l'enseignant pour la famille, chaque famille pour l'enseignant). Numéro : **20261108800000** ;
+  - client : un seul composant d'heure double à la place de `bloc_seance`, `carte_groupe` et des `toLocal`, `villeDeFuseau` remplacé par `villeDuFuseauLibelle`, une ligne d'heure courante animée qui s'arrête si l'appareil demande moins de mouvement ;
+  - `pubspec.yaml` est gelé, donc aucune conversion IANA côté client : tout vient du serveur.
+
+**SUPPRIMER : la demande de l'intéressé est branchée, la suppression par la direction ou le tuteur ne l'est pas.**
+- En production : « Mes données » (`/compte/mes-donnees`, `demander_suppression_compte`) et Personnes > Suppressions (`SuppressionsPage`, `traiter_demande_suppression`, `private.cpt_anonymiser`).
+- Branche `claude/supprimer-serveur` (20261108600000) : retrait, anonymisation à 30 jours par pg_cron, `direction_supprimer_comptes(uuid[])` (aal2, 200 au plus), `tuteur_supprimer_profil_enfant(uuid)`. **Écart à corriger avant la PR** : pas de restauration pendant le délai, ni de liste des retraits. Ajouter `direction_restaurer_comptes(uuid[])` et une liste paginée des retraits, avec leurs tests.
+- Client à brancher ensuite :
+  - un port et un adaptateur sur le modèle de `MesDonneesSupabase`, branchés dans `main.dart` ;
+  - dans Comptes, `SelectionCollection` (`data_collection.dart:158`) et `BarreSelection` (`barre_selection.dart:42`), comme dans les candidatures, une entrée dans le menu de ligne (`comptes_page.dart:1060-1084`) et `ConfirmDestructive` avec le nombre de profils ;
+  - dans la fiche enfant du tuteur (`fiche_eleve_page.dart:549-601`), une ligne « Supprimer ce profil » ;
+  - la restauration se fait depuis Personnes > Suppressions.
+
+## 13. Fiche ANTI-ROBOT : un contrôle « je ne suis pas un robot » aux portes ouvertes (garde-cap, 03/11/2026 vers 20:00 UTC)
+
+Mot du directeur, 03/11 vers 19:55 : « Oui pour la sécurité ». C'est sa réponse à la proposition d'ajouter Cloudflare Turnstile et des plafonds d'envoi. Le contrôle était noté « ouvert, pour plus tard » dans `DECISION-DOMAINE-2026-10-23.md` §4. Il est décidé désormais.
+
+### Constat (lecture sur main e2a25bf45)
+
+- Le site et l'application sont des fichiers fixes chez Vercel. La protection contre la saturation est automatique, sur tous les plans. Aucune règle de pare-feu personnalisée n'est posée, et ce n'est pas nécessaire.
+- Le DNS est chez Cloudflare, sans le proxy : les enregistrements A pointent directement sur Vercel. On ne change rien.
+- Les portes ouvertes à un robot sont chez Supabase, appelé directement par le navigateur :
+  - la connexion par lien e-mail (`signInWithOtp`, qui crée aussi le compte) ;
+  - la connexion par mot de passe (`signInWithPassword`), dans `lib/core/auth/service_auth.dart:56-60`.
+  Un robot peut y créer des comptes et faire envoyer des e-mails en masse.
+- Déjà fermés :
+  - le formulaire d'avis, ouvert seulement par un lien de la direction (`DECISION-AVIS`) ;
+  - les webhooks signés (Stripe, LiveKit) ;
+  - les fonctions publiques en lecture seule (tarifs, langues).
+- Aucune politique de sécurité des contenus (CSP) dans `vercel.json` ni dans `web/index.html`. Le script de Turnstile se charge donc sans toucher à la zone du directeur.
+
+### ANTI-ROBOT (M, `lib/` + `web/index.html` + une migration de réglage ; numéro 20261109000000)
+
+- **Client :**
+  - le widget Turnstile en mode « géré », presque invisible, devant l'envoi du lien de connexion et la connexion par mot de passe ;
+  - le jeton passe à Supabase par `captchaToken` ;
+  - le script `challenges.cloudflare.com/turnstile` se charge dans `web/index.html`, par `dart:js_interop` et `dart:ui_web` du SDK, sans nouveau paquet (`pubspec.yaml` est gelé) ;
+  - les états chargement, erreur et hors ligne sont présents, avec des textes FR/AR passés par `mots-rewayah`. En cas d'échec : « La vérification n'a pas abouti. Réessayez. », sans jamais parler de robot à une famille.
+- **Rien en dur :**
+  - la clé publique du site est un réglage de la console, `securite.turnstile_cle_site`, lu sans compte par une fonction publique en lecture seule ;
+  - réglage vide = contrôle absent côté client. C'est ce qui permet de livrer le client AVANT d'activer le contrôle.
+  - La clé secrète ne va jamais dans le dépôt : le directeur la pose dans Supabase.
+- **Ordre obligatoire, sinon plus personne ne peut se connecter :**
+  1. fusion et déploiement du client, avec le réglage vide ;
+  2. le directeur crée le widget Turnstile dans Cloudflare (noms d'hôte `app.rewayahacademy.com` et `rewayahacademy.com`) ;
+  3. le directeur colle la clé publique dans la console, puis vérifie qu'il se connecte ;
+  4. le directeur colle la clé secrète dans Supabase (Authentication, protection contre les attaques) et active le captcha ;
+  5. le pilote vérifie une connexion réelle. En cas d'échec, désactiver le captcha dans Supabase rétablit tout à l'instant.
+  Le pilote fait une seule page pour ces gestes.
+- **Aperçus Vercel :** la clé de test publique de Cloudflare, qui passe toujours, puisque les aperçus visent la même base.
+- **Plafonds :** relevé des fonctions Edge qui envoient un e-mail ou écrivent sans compte. Chacune a un plafond par adresse et par heure, réglable dans la console. Celles qui n'en ont pas en reçoivent un. La liste va dans la PR.
+- **Données personnelles :** Cloudflare traite l'adresse IP et des signaux du navigateur. La phrase de la politique de confidentialité est proposée dans la PR, et le directeur la valide avant la mise en production. Pas de cookie de suivi publicitaire.
+- **Hors périmètre :** pare-feu personnalisé Vercel, proxy Cloudflare, plan payant.
+- **R3 :** la connexion par lien et la connexion par mot de passe à 390 et à 1440, avec le réglage vide (aucun widget) et avec la clé de test (widget présent).
 

@@ -140,7 +140,7 @@ class FauxServiceAuth implements ServiceAuth {
   Object? erreurAJeter;
 
   @override
-  Future<void> envoyerLienCourriel(String courriel) async {
+  Future<void> envoyerLienCourriel(String courriel, {String? jetonControle}) async {
     final Object? erreur = erreurAJeter;
     if (erreur != null) {
       // ignore: only_throw_errors
@@ -150,7 +150,11 @@ class FauxServiceAuth implements ServiceAuth {
   }
 
   @override
-  Future<void> connexionMotDePasse(String courriel, String motDePasse) async {
+  Future<void> connexionMotDePasse(
+    String courriel,
+    String motDePasse, {
+    String? jetonControle,
+  }) async {
     final Object? erreur = erreurAJeter;
     if (erreur != null) {
       // ignore: only_throw_errors

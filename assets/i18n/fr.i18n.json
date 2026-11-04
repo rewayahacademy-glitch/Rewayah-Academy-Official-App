@@ -425,7 +425,8 @@
         "annonceEnCours": "Pause en cours, reprise à {heure}.",
         "recapTitre": "Pause",
         "recapPrise": "Pause prise, {minutes} min",
-        "recapNonPrise": "Pause prévue, non prise"
+        "recapNonPrise": "Pause prévue, non prise",
+        "echec": "La pause n'est pas confirmée\u00a0: la demande n'est peut-être pas parvenue jusqu'à Rewayah. Réessayez."
       },
       "enLigne": "En ligne",
       "reconnexion": "Reconnexion",
@@ -967,6 +968,12 @@
     "inscriptionFermee": "Les inscriptions se font pour l'instant sur invitation. Vous avez proposé votre candidature pour enseigner ? Vous recevrez un courriel personnel de notre part : vous n'avez rien à faire. Vous êtes une famille ? Les inscriptions rouvrent bientôt.",
     "erreurTropTot": "Un lien vient déjà de partir. Attendez un moment avant d'en demander un autre.",
     "horsLigne": "Le lien ne peut pas partir pour l'instant. Réessayez quand la connexion sera revenue.",
+    "controle": {
+      "libelle": "Vérification de sécurité",
+      "chargement": "Vérification de sécurité en cours.",
+      "erreur": "La vérification n'a pas abouti. Réessayez.",
+      "horsLigne": "La vérification ne peut pas se faire pour l'instant. Réessayez quand la connexion sera revenue."
+    },
     "probleme": "Lien expiré ou jamais reçu\u00a0?",
     "recuperation": {
       "titre": "Retrouver mon accès",
@@ -1392,6 +1399,8 @@
     "envoiEnCours": "Envoi en cours",
     "deposee": "Pièce reçue",
     "erreur": "L'envoi n'a pas abouti. Réessayez dans un instant.",
+    "erreurFormat": "Ce fichier n'a pas été accepté\u00a0: seules les photos JPEG, PNG, HEIC ou WebP et les fichiers PDF le sont. Choisissez une autre photo de votre pièce.",
+    "erreurReseau": "L'envoi n'a pas abouti\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Touchez «\u00a0Envoyer ma pièce\u00a0» à nouveau dans un instant.",
     "tropVolumineux": "Cette photo dépasse {taille} Mo. Reprenez-la en qualité plus basse.",
     "manqueType": "Choisissez d'abord la pièce que vous déposez.",
     "manquePhoto": "Choisissez d'abord la photo de votre pièce."

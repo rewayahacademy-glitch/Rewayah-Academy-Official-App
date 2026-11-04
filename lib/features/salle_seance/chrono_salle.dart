@@ -52,6 +52,7 @@ class ChronoSalle extends StatefulWidget {
     this.connexion = ConnexionSeance.enLigne,
     this.pause,
     this.onPause,
+    this.echecPause,
     this.garderCouleur = false,
     super.key,
   });
@@ -66,6 +67,10 @@ class ChronoSalle extends StatefulWidget {
 
   /// Demarre ou termine la pause ; `null` sans capacite (rien n'est rendu).
   final VoidCallback? onPause;
+
+  /// N3, S2 : le dernier « Demarrer / Terminer la pause » n'est pas confirme
+  /// par le serveur (K-59) ; la phrase dit quoi faire. `null` : rien a dire.
+  final String? echecPause;
 
   /// Le style du texte (celui de la ligne d'etat voisine).
   final TextStyle style;
@@ -84,6 +89,9 @@ class ChronoSalle extends StatefulWidget {
 
   /// La cle du texte de pause.
   static const Key clePause = ValueKey<String>('chrono-salle-pause');
+
+  /// La cle de la phrase « pause non confirmee » (N3).
+  static const Key cleEchecPause = ValueKey<String>('chrono-salle-echec-pause');
 
   /// La cle du noeud de pause lu par le lecteur d'ecran.
   static const Key cleAnnoncePause = ValueKey<String>(
@@ -337,6 +345,16 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
                 : d.pause.demarrer,
             onPress: commande,
             fleche: false,
+          ),
+        if (widget.echecPause != null)
+          Semantics(
+            container: true,
+            liveRegion: true,
+            child: Text(
+              widget.echecPause!,
+              key: ChronoSalle.cleEchecPause,
+              style: style,
+            ),
           ),
       ],
     );

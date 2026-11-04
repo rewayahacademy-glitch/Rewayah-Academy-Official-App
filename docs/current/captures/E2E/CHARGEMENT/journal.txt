@@ -1,0 +1,20 @@
+== CHARGEMENT : ouverture de l'application web : 2026-11-03T22:36:15.226Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+-- francais, envoi lent, moteur retenu
+  OK phrase de depart (Chargement de l'application…)
+  OK la barre a avance avec les octets (44 %)
+  OK la barre avance encore (44 % puis 61 %)
+  OK code recu, moteur retenu : « Encore un peu… » (Encore un peu…)
+  phrases vues : Chargement de l'application… > Encore un peu… > (application)
+  OK aucun « Recharger » tant que les octets arrivent
+  OK aucune autre phrase
+  OK les phrases dans l'ordre
+  OK l'application s'ouvre
+  OK main.dart.js envoye une fois, puis 304 (200,304)
+-- francais, plus aucun octet pendant 40 s
+  OK a 20 s sans octet : pas encore de « Recharger »
+  OK apres 30 s sans octet : « Recharger » et sa phrase
+  OK les octets reviennent : « Recharger » repart
+-- arabe, envoi lent, mouvement reduit
+  OK arabe, de droite a gauche (جارٍ تحميل التطبيق…)
+  OK mouvement reduit : la barre ne s'anime pas (0s)
+== CHARGEMENT : ouverture de l'application web : vert

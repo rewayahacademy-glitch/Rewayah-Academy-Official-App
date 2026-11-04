@@ -136,25 +136,35 @@ void main() {
                 } else {
                   expect(bouton.left, moreOrLessEquals(champ2.left));
                 }
-                // Connexion : Google puis le lien sur une rangee au bord de
-                // fin ; si elle ne tient pas (police de test tres large,
-                // texte agrandi), empilees pleine largeur.
+                // Connexion (CONNEXION-UX, 03/11/2026) : le lien au bord de
+                // fin, puis l'appareil d'un eleve et Google sur une rangee au
+                // bord de fin, l'eleve avant Google ; si elle ne tient pas
+                // (police de test tres large, texte agrandi), empiles pleine
+                // largeur.
                 final Finder google = find.widgetWithText(
                   ActionPrincipale,
                   t.connexion.avecGoogle,
                 );
-                if (google.evaluate().isNotEmpty) {
+                final Finder eleve = find.byKey(
+                  const ValueKey<String>('connexion-appareil-eleve'),
+                );
+                if (google.evaluate().isNotEmpty &&
+                    eleve.evaluate().isNotEmpty) {
                   final Rect g = tester.getRect(google);
-                  if (g.top == bouton.top) {
-                    expect(g.height, bouton.height);
+                  final Rect e = tester.getRect(eleve);
+                  expect(g.top, greaterThanOrEqualTo(bouton.bottom));
+                  if (g.top == e.top) {
+                    expect(g.height, e.height);
                     if (sens == TextDirection.ltr) {
-                      expect(bouton.left - g.right, moreOrLessEquals(8));
+                      expect(g.left - e.right, moreOrLessEquals(8));
+                      expect(g.right, moreOrLessEquals(champ2.right));
                     } else {
-                      expect(g.left - bouton.right, moreOrLessEquals(8));
+                      expect(e.left - g.right, moreOrLessEquals(8));
+                      expect(g.left, moreOrLessEquals(champ2.left));
                     }
                   } else {
                     expect(g.width, moreOrLessEquals(champ2.width));
-                    expect(bouton.width, moreOrLessEquals(champ2.width));
+                    expect(e.width, moreOrLessEquals(champ2.width));
                   }
                 }
               } else {

@@ -5,7 +5,8 @@
 // Chiffres latins, comme dans l'application ; dates en `ar-u-nu-latn`.
 
 import { APP } from './gabarit.ts'
-import { avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole, montantLisible } from './outils.ts'
+import { avec, avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole, montantLisible,
+  precisions, type Precisions } from './outils.ts'
 import { quandSeance } from './modeles_fr.ts'
 
 const PAROLE: Parole = {
@@ -16,6 +17,16 @@ const PAROLE: Parole = {
   sujetLibre: 'رسالة من Rewayah Academy',
   locale: 'ar-u-nu-latn',
 }
+export const PRECISIONS_AR: Precisions = {
+  locale: 'ar',
+  a: 'الساعة',
+  // Un nom en lettres latines dans une phrase arabe est isole (U+2068 ... U+2069) :
+  // sans cela, l'ordre de lecture se brise autour des guillemets.
+  classe: (n) => `الفصل: «\u2068${n}\u2069».`,
+  eleves: (n, plusieurs) => plusieurs ? `الطلاب: \u2068${n}\u2069.` : `الطالب: \u2068${n}\u2069.`,
+  premiere: (q) => `الحصة الأولى: ${q}.`,
+}
+
 const avis = avisDans(PAROLE)
 
 const RAISON: Record<string, string> = {
@@ -75,15 +86,35 @@ const MODELES: Record<string, Fabrique> = {
     'انتقل أحد طلاب أسرتك إلى فصل آخر في الموعد نفسه.',
     'عرض التفاصيل', '/tuteur/demandes'),
   // بطاقة 27/10/2026، السطر 15: الأحداث التسعة للفصول والحصص.
-  classe_creee: (d) => avis(d, 'تم إنشاء فصلك', 'تم إنشاء فصلك',
-    'تم إنشاء فصل للتو. موعده ومعلمه في التطبيق.',
-    'عرض الموعد', '/tuteur'),
+  // COURRIELS-UX (UX-026, FN-108) : la classe, l'enfant, la premiere seance et son fuseau.
+  classe_creee: (d) => {
+    if (d.portee === 'classe') {
+      return avis(d, 'تم إنشاء فصل', 'تم إنشاء فصل',
+        avec('تم إنشاء فصل للتو.', precisions(d, PRECISIONS_AR, { eleves: false, premiere: true })) + ' طلابه وموعده في التطبيق.',
+        'عرض فصولي', '/enseignant/classes')
+    }
+    return avis(d, 'تم إنشاء فصلك', 'تم إنشاء فصلك',
+      avec(d.portee === 'foyer' ? 'تم إنشاء فصل لأسرتك.' : 'تم إنشاء فصلك.', precisions(d, PRECISIONS_AR, { premiere: true })) + ' معلمه وموعده كاملًا في التطبيق.',
+      'عرض الموعد', '/tuteur')
+  },
   enseignant_change: (d) => avis(d, 'يتغيّر معلم الفصل', 'يتغيّر معلم الفصل',
     'يتولى معلم آخر الفصل في الموعد نفسه. اسمه في التطبيق.',
     'عرض الفصل', '/tuteur'),
-  eleve_inscrit: (d) => avis(d, 'ينضم طالب إلى فصلك', 'ينضم طالب إلى فصلك',
-    'ينضم طالب إلى فصلك. ملفه في التطبيق.',
-    'عرض فصولي', '/enseignant/classes'),
+  eleve_inscrit: (d) => {
+    if (d.portee === 'foyer') {
+      return avis(d, 'تسجيل في فصل', 'تسجيل في فصل',
+        avec('ينضم أحد طلاب أسرتك إلى فصل.', precisions(d, PRECISIONS_AR, { premiere: true })) + ' معلمه وموعده كاملًا في التطبيق.',
+        'عرض الفصل', '/tuteur')
+    }
+    if (d.portee === 'soi') {
+      return avis(d, 'تنضم إلى فصل', 'تنضم إلى فصل',
+        avec('تنضم إلى فصل.', precisions(d, PRECISIONS_AR, { premiere: true })) + ' معلمك وموعدك كاملًا في التطبيق.',
+        'عرض فصلي', '/eleve')
+    }
+    return avis(d, 'ينضم طالب إلى فصلك', 'ينضم طالب إلى فصلك',
+      avec('ينضم طالب إلى فصلك.', precisions(d, PRECISIONS_AR, { eleves: false })) + ' ملفه في التطبيق.',
+      'عرض فصولي', '/enseignant/classes')
+  },
   eleve_retire: (d) => avis(d, 'يغادر طالب فصلك', 'يغادر طالب فصلك',
     'يغادر طالب فصلك. القائمة المحدّثة في التطبيق.',
     'عرض فصولي', '/enseignant/classes'),
@@ -93,7 +124,7 @@ const MODELES: Record<string, Fabrique> = {
   seance_annulee: (d) => {
     const quand = quandSeance(d, 'ar', 'الساعة')
     return avis(d, 'أُلغيت حصة', 'أُلغيت حصة',
-      quand ? `أُلغيت حصة ${quand}.` : 'أُلغيت إحدى حصص الفصل.',
+      avec(quand ? `أُلغيت حصة ${quand}.` : 'أُلغيت إحدى حصص الفصل.', precisions(d, PRECISIONS_AR)),
       'عرض الجدول', '/tuteur')
   },
   seance_deplacee: (d) => {
@@ -152,7 +183,7 @@ const MODELES: Record<string, Fabrique> = {
     'بديل في الطريق: ابقوا في القاعة.',
     'فتح التطبيق', '/tuteur'),
   classe_supprimee: (d) => avis(d, 'أُغلق الفصل', 'أُغلق الفصل',
-    'أُغلق الفصل. تتواصل الإدارة معكم بشأن ما يلي.',
+    avec('أُغلق الفصل.', precisions(d, PRECISIONS_AR)) + ' تتواصل الإدارة معكم بشأن ما يلي.',
     'فتح التطبيق', '/tuteur'),
   remplacement_propose: (d) => avis(d, 'عُرض عليك تعويض', 'عُرض عليك تعويض',
     'عُرض عليك تعويض حصة. أجب في التطبيق حتى يكون الفصل مضمونًا.',

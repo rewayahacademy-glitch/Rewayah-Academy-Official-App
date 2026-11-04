@@ -1,7 +1,11 @@
 // COUPE-MOTS-4 (1), les autres appelants de `ChoiceCardGroup` : inscription
 // (usage, genre), cahier de l'enseignant (performance, faiblesses, point
 // phonetique), feuille d'une carte de classe, entree et reglages de
-// l'observation, feuille de choix du dock, micro-feedback et signalement.
+// l'observation, feuille de choix du dock et micro-feedback. Le cas de
+// l'ancienne feuille de signalement (`tc_flux_academique/feuille_signalement.dart`,
+// jamais atteinte par l'application) est retire avec elle (M1-SUPPR,
+// 03/11/2026) : la feuille branchee, `SignalerBesoin`, n'emploie pas
+// `ChoiceCardGroup`.
 // 320 px, texte x2, francais (LTR) et arabe (RTL), Interface standard et
 // guidee : aucun mot coupe dans les cartes de choix rendues.
 //
@@ -24,9 +28,7 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_groupe/cartes_classe.dart';
 import 'package:rewayah_academy/core/tc_observation/guardian_observation_policy.dart';
-import 'package:rewayah_academy/core/tc_parcours/feedback_memoire.dart';
 import 'package:rewayah_academy/core/tc_parcours/port_feedback.dart';
-import 'package:rewayah_academy/core/tc_parcours/port_signalement.dart';
 import 'package:rewayah_academy/features/demo/cartes_classe_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_enseignant_page.dart';
 import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
@@ -37,13 +39,13 @@ import 'package:rewayah_academy/features/inscription/etapes/usage_etape.dart';
 import 'package:rewayah_academy/features/tc_dock/feuille_choix.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/bloc_cartes_classe.dart';
 import 'package:rewayah_academy/features/tc_flux_academique/carte_feedback_seance.dart';
-import 'package:rewayah_academy/features/tc_flux_academique/feuille_signalement.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/choix_entree_observation.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/module_reglages_observation.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/options_entree_observation.dart';
 
 import '../../capture/outil_capture.dart' show stabiliser;
 import '../../support/harnais.dart';
+import '../../teaching_core/h/support/faux_feedback.dart';
 import 'support_coupe_mots_4.dart';
 
 /// Un bouton qui ouvre une feuille, pour les feuilles sans ecran propre.
@@ -274,43 +276,11 @@ void main() {
           interface: interface,
           surcharges: <Override>[
             portFeedbackProvider.overrideWithValue(
-              FeedbackMemoire(
-                cadence: 1,
-                seances: <String, ContexteSeanceFeedback>{
-                  's1': const ContexteSeanceFeedback(
-                    groupeId: 'g1',
-                    rangSeance: 1,
-                  ),
-                },
-              ),
+              FauxFeedback(question: questionCours()),
             ),
           ],
         );
         await tester.pumpAndSettle();
-        verifierCartesDeChoixEntieres(tester);
-      });
-
-      testWidgets('$cas : feuille de signalement', (WidgetTester tester) async {
-        await monterCoupeMots4(
-          tester,
-          () => _Ouvreur(
-            (BuildContext c) => FeuilleSignalement.ouvrir(
-              c,
-              groupeId: 'g1',
-              academyId: 'RA-AB0012',
-              prenomEleve: 'Amina',
-              sessionId: 's1',
-            ),
-          ),
-          langue: langue,
-          interface: interface,
-          surcharges: <Override>[
-            portSignalementProvider.overrideWithValue(
-              SignalementMemoire('ens-1'),
-            ),
-          ],
-        );
-        await _toucher(tester, find.text('ouvrir'));
         verifierCartesDeChoixEntieres(tester);
       });
     }

@@ -35,6 +35,21 @@
 \o /dev/null
 BEGIN;
 
+-- Rang 19 B (03/11/2026) : ce scenario eprouve la politique v2.0.0 (en vigueur
+-- le 1er novembre 2026). Les versions publiees apres elle (v2.1.0 de REMB14, et
+-- toute autre a venir) rendraient ses conditions « perimees » : elles sont
+-- retirees le temps du scenario, annule par le ROLLBACK final.
+ALTER TABLE public.politiques_commerciales DISABLE TRIGGER politiques_commerciales_immuable;
+ALTER TABLE public.politique_part_enseignant DISABLE TRIGGER politique_part_enseignant_immuable;
+CREATE TEMP TABLE politiques_apres_v2 ON COMMIT DROP AS
+  SELECT p.version FROM public.politiques_commerciales p
+   WHERE p.date_effet > (SELECT q.date_effet FROM public.politiques_commerciales q WHERE q.version = 'v2.0.0');
+DELETE FROM public.repartitions_paiement WHERE politique_version IN (SELECT version FROM politiques_apres_v2);
+DELETE FROM public.politique_part_enseignant WHERE politique_version IN (SELECT version FROM politiques_apres_v2);
+DELETE FROM public.politiques_commerciales WHERE version IN (SELECT version FROM politiques_apres_v2);
+ALTER TABLE public.politique_part_enseignant ENABLE TRIGGER politique_part_enseignant_immuable;
+ALTER TABLE public.politiques_commerciales ENABLE TRIGGER politiques_commerciales_immuable;
+
 CREATE FUNCTION pg_temp.qui(p_id uuid, p_role text, p_aal text DEFAULT 'aal1') RETURNS void
 LANGUAGE plpgsql AS $$
 DECLARE v_jwt text;
@@ -335,8 +350,9 @@ BEGIN
     'la cle des jetons de lot : une ligne engendree par la base, 64 signes au moins');
   -- Les regles de l'admission (lot C, gestes *_admission) ont leur scenario.
   PERFORM pg_temp.vrai((SELECT count(*) FROM private.candidature_gestes_regles
-                         WHERE geste NOT LIKE '%admission') = 26,
-    'la table des regles de CAND-L2A1 est inchangee (vingt-six variantes)');
+                         WHERE geste NOT LIKE '%admission') = 27,
+    -- V1-b (03/11) : planifier_entretien variante 2, auteur candidat (reservation d'un creneau).
+    'la table des regles de CAND-L2A1 est inchangee, plus la reservation du candidat de V1-b (vingt-sept variantes)');
 END $f86$;
 
 SELECT pg_temp.refus_en(NULL, NULL, $$SELECT public.refuser_candidat(pg_temp.c('15'), 'Motif', 'refus_general', 1, 'cle-anon-0001')$$,
@@ -385,16 +401,16 @@ SELECT pg_temp.garde('cap_a4', pg_temp.en(pg_temp.p('a4'), 'admin', $$SELECT pub
 SELECT pg_temp.garde('cap_k1', pg_temp.en(pg_temp.p('c1'), 'accountant', $$SELECT public.capacites_candidatures()$$));
 SELECT pg_temp.garde('cap_e1', pg_temp.en(pg_temp.p('e1'), 'guardian', $$SELECT public.capacites_candidatures()$$));
 SELECT pg_temp.vrai(pg_temp.lu('cap_a1') @> '{"peutLire": true, "peutDecider": true, "peutEcrireReferentiel": true,
-    "peutImporter": false, "peutMenerEntretien": false, "doubleVerificationRequise": false,
+    "peutImporter": false, "peutMenerEntretien": true, "doubleVerificationRequise": false,
     "gestesGroupables": ["mettreEnPause", "leverPause", "refuser"]}'::jsonb
   AND pg_temp.lu('cap_a1') -> 'gestes' = '{"demanderComplement": true, "cloreComplement": true, "admettreVerifications": true,
     "confirmerMoyenPaiement": true, "infirmerMoyenPaiement": true, "mettreEnPause": true, "leverPause": true,
     "refuser": true, "consignerRetrait": true, "rouvrir": true, "definirResponsable": true, "agirEnLot": true,
     "inviter": false, "consignerPrevenu": true, "garderPourSuivi": true, "rattacher": true,
-    "planifierEntretien": false, "consignerEntretien": false, "pieceACorriger": false, "validerPiece": false,
+    "planifierEntretien": true, "consignerEntretien": true, "pieceACorriger": false, "validerPiece": true,
     "restreindre": false, "leverRestriction": false, "noterIndisponibilite": false,
     "leverIndisponibilite": false}'::jsonb,
-  'direction homme : decide de son cote ; une capacite par geste, vraie pour les seuls gestes que le serveur sait faire (CAND-L3 : prevenu, garder pour suivi et rattacher le sont desormais)');
+  'direction homme : decide de son cote ; une capacite par geste, vraie pour les seuls gestes que le serveur sait faire (CAND-L3 : prevenu, garder pour suivi et rattacher le sont desormais ; V1 : planifier et consigner un entretien ; salle 3 du 03/11 : valider la piece)');
 SELECT pg_temp.vrai(pg_temp.lu('cap_a1') -> 'listes' = '{
     "modelesRefus": ["refus_general", "refus_niveau", "refus_besoins", "refus_sans_reponse"],
     "modelesPause": ["pause_attente_besoin", "pause_attente_informations", "pause_demande_candidat", "pause_general"],
@@ -947,7 +963,10 @@ DECLARE
   v jsonb;
   n integer := 0;
 BEGIN
-  FOR a IN SELECT * FROM (VALUES (pg_temp.p('a1'), 'direction homme'), (pg_temp.p('a4'), 'super-admin homme'))
+  -- V1-a-bis (20261109100000, directeur, 03/11) : le super-admin de 0088 agit
+  -- desormais des deux cotes, au journal sensible ; il est prouve dans
+  -- scenarios_v1_entretiens.sql. Ici, la direction homme seule reste bornee.
+  FOR a IN SELECT * FROM (VALUES (pg_temp.p('a1'), 'direction homme'))
            AS t(id, nom) LOOP
     FOREACH q IN ARRAY ARRAY[
         $$SELECT public.demander_complement_candidat(pg_temp.c('06'), ARRAY['langues'], 'Motif', 1, 'cle-hp-' || md5(random()::text))$$,
@@ -966,16 +985,16 @@ BEGIN
         'hors portee (' || a.nom || ') : ' || split_part(split_part(q, '(', 1), '.', 2));
     END LOOP;
   END LOOP;
-  PERFORM pg_temp.vrai(n = 20, 'vingt gestes de l''autre cote, super-admin compris');
+  PERFORM pg_temp.vrai(n = 10, 'dix gestes de l''autre cote, refuses a la direction homme non super-admin');
 END $portee$;
 SELECT pg_temp.vrai((pg_temp.trace(pg_temp.c('06')) ->> 'ligne') = pg_temp.lu('t06') ->> 'ligne'
   AND (pg_temp.trace(pg_temp.c('06')) ->> 'decisions') = pg_temp.lu('t06') ->> 'decisions'
   AND (pg_temp.trace(pg_temp.c('06')) ->> 'gestes') = pg_temp.lu('t06') ->> 'gestes'
   AND (SELECT count(*) FROM public.candidature_evenements
-        WHERE candidature_id = pg_temp.c('06') AND type = 'lecture_hors_portee') = 20
+        WHERE candidature_id = pg_temp.c('06') AND type = 'lecture_hors_portee') = 10
   AND (SELECT count(*) FROM public.audit_logs
         WHERE row_id = pg_temp.c('06')::text AND action = 'candidature_hors_portee'
-          AND payload ->> 'lecture' LIKE 'geste:%') = 20
+          AND payload ->> 'lecture' LIKE 'geste:%') = 10
   AND (SELECT count(DISTINCT payload ->> 'lecture') FROM public.audit_logs
         WHERE row_id = pg_temp.c('06')::text AND action = 'candidature_hors_portee') = 10,
   'hors portee : candidature intacte, 0 cle, 0 decision ; chaque tentative tracee comme une lecture hors portee, geste nomme');
@@ -1784,8 +1803,10 @@ END $classes_plafond_controle$;
 
 DO $fin$
 BEGIN
-  IF current_setting('test.n')::int <> 244 THEN
-    RAISE EXCEPTION 'CAND-L2A2 ROUGE : % controles executes, 244 attendus', current_setting('test.n');
+  -- 234 depuis V1-a-bis (03/11) : les dix refus du super-admin hors cote ne
+  -- sont plus attendus (il agit des deux cotes, prouve dans scenarios_v1_entretiens).
+  IF current_setting('test.n')::int <> 234 THEN
+    RAISE EXCEPTION 'CAND-L2A2 ROUGE : % controles executes, 234 attendus', current_setting('test.n');
   END IF;
   RAISE NOTICE 'CAND-L2A2 : % controles verts', current_setting('test.n');
 END $fin$;

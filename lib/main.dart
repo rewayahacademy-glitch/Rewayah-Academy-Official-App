@@ -32,6 +32,8 @@ import 'core/agent/amorce_agent.dart';
 import 'core/agent/session_agent.dart';
 import 'core/alertes/alertes_supabase.dart';
 import 'core/alertes/port_alertes.dart';
+import 'core/auth/anti_robot.dart';
+import 'core/auth/anti_robot_supabase.dart';
 import 'core/candidature/autres_competences_supabase.dart';
 import 'core/candidature/candidatures_direction_supabase.dart';
 import 'core/candidature/ma_candidature_supabase.dart';
@@ -130,6 +132,8 @@ import 'core/offres/regroupements_c11bis_supabase.dart';
 import 'core/offres/regroupements_pages_supabase.dart';
 import 'core/partage_offre/genre_partageur_supabase.dart';
 import 'core/partage_offre/port_genre_partageur.dart';
+import 'core/pause_seance/pause_seance_supabase.dart';
+import 'core/pause_seance/port_pause_seance.dart';
 import 'core/recrutement/invitations_comptable_supabase.dart';
 import 'core/recrutement/invitations_enseignant_supabase.dart';
 import 'core/recrutement/port_invitations_comptable.dart';
@@ -147,6 +151,8 @@ import 'core/session/source_session.dart' show terminerSessionRefusee;
 import 'core/session/source_session_agent.dart';
 import 'core/suivi/messages_academie_supabase.dart';
 import 'core/suivi/port_messages_academie.dart';
+import 'core/tc_bibliotheque/catalogue_supabase.dart';
+import 'core/tc_bibliotheque/donnees_catalogue.dart';
 import 'core/tc_bibliotheque/port_support_actif.dart';
 import 'core/tc_bibliotheque/support_actif_supabase.dart';
 import 'core/tc_etat_partage/etat_partage_supabase.dart';
@@ -178,10 +184,15 @@ import 'features/com_annonces/port_regles_audience.dart';
 import 'features/com_annonces/regles_audience_supabase.dart';
 import 'features/com_messages/messages_metier_supabase.dart';
 import 'features/com_messages/port_messages_metier.dart';
+import 'features/controleur/compte_rendu_controle.dart';
+import 'features/controleur/compte_rendu_controle_supabase.dart';
 import 'features/controleur/echanges_controleur.dart';
 import 'features/controleur/echanges_controleur_supabase.dart';
 import 'features/controleur/historique_controleur.dart';
 import 'features/controleur/historique_controleur_supabase.dart';
+import 'features/controleur/mission_controle.dart';
+import 'features/controleur/mission_controle_supabase.dart';
+import 'features/controleur/observation_controle.dart';
 import 'features/demo/dossiers_demo.dart';
 import 'features/demo/mode_demonstration.dart';
 import 'features/demo/racine_demonstrable.dart';
@@ -200,6 +211,11 @@ import 'features/foyer/role_foyer_supabase.dart';
 /// comportement par defaut ; ce branchement se fait ici et nulle part
 /// ailleurs.
 List<Override> _surchargesAppReelle() => <Override>[
+  // ANTI-ROBOT (03/11/2026) : la cle PUBLIQUE du controle Turnstile, lue sans
+  // compte (migration 20261109000000) ; reglage vide : aucun controle.
+  portCleTurnstileProvider.overrideWithValue(
+    CleTurnstileSupabase(Supabase.instance.client),
+  ),
   portClassesFoyerProvider.overrideWithValue(
     ClassesFoyerSupabase(Supabase.instance.client),
   ),
@@ -260,6 +276,13 @@ List<Override> _surchargesAppReelle() => <Override>[
   // publication, attribution, retrait).
   portBibliothequeAdminProvider.overrideWithValue(
     BibliothequeAdminSupabase(Supabase.instance.client),
+  ),
+  // Bibliotheque du lecteur (N4, migration 20261108200000) : le catalogue,
+  // les recents et la reprise lus au serveur, qui rejoue la regle de lecture
+  // de `library_resource` et l'acces paye ; les supports d'une classe par
+  // `ressources_du_groupe`. Remplace le catalogue local vide.
+  portCatalogueProvider.overrideWithValue(
+    CatalogueSupabase(Supabase.instance.client),
   ),
   // Classes de la direction (CONTRATS-MANQUANTS) : liste paginee et
   // numerotee (R16, R17), fusion et transfert (R9, R10), pilotage par
@@ -465,6 +488,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   portValidationsFinanceProvider.overrideWithValue(
     ValidationsFinanceSupabase(Supabase.instance.client),
   ),
+  // N3, S2 : la pause programmee de la classe (LIVE-PAUSE-01), sur les cinq
+  // fonctions `pause_*` de `20261012061517_x2_22_pause_seance.sql`.
+  portPauseSeanceProvider.overrideWithValue(
+    PauseSeanceSupabase(Supabase.instance.client),
+  ),
   portHistoriqueObservationsProvider.overrideWithValue(
     HistoriqueObservationsSupabase(() => Supabase.instance.client),
   ),
@@ -477,6 +505,31 @@ List<Override> _surchargesAppReelle() => <Override>[
   portHistoriqueProvider.overrideWithValue(
     HistoriqueControleurSupabase(Supabase.instance.client),
   ),
+  // N3, D3 : la mission du controleur et l'envoi de son compte rendu
+  // (migration 20261107800000).
+  portMissionControleProvider.overrideWithValue(
+    MissionControleSupabase(Supabase.instance.client),
+  ),
+  envoiCompteRenduProvider.overrideWithValue(
+    EnvoiCompteRenduSupabase(Supabase.instance.client),
+  ),
+  // Le roster de la visite (CTR-03A) : prenom et initiale, par seance.
+  rosterControleProvider.overrideWith(
+    (Ref _, String seanceId) =>
+        rosterVisiteSupabase(Supabase.instance.client, seanceId),
+  ),
+  // Le releve automatique de la visite (CTR-03) : celui du rapport que le
+  // serveur cree a la fin de la seance (`controleur_lister_rapports`). Avant
+  // la fin, aucun rapport : l'ecran dit que le releve n'est pas encore recu.
+  faitsVisiteProvider.overrideWith((Ref ref, String seanceId) async {
+    final List<RapportControle> rapports = await ref
+        .watch(portHistoriqueProvider)
+        .rapports();
+    for (final RapportControle r in rapports) {
+      if (r.seanceId == seanceId) return r.faits;
+    }
+    return null;
+  }),
   portSupportProvider.overrideWithValue(
     SupportSupabase(Supabase.instance.client),
   ),

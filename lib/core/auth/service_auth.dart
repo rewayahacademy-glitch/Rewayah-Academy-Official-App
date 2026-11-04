@@ -16,14 +16,22 @@ import '../observabilite/journal_dev.dart';
 /// `DEMO_AUTH`; la validation du compte et des droits reste cote Supabase.
 abstract interface class ServiceAuth {
   /// Envoie un lien de connexion a usage unique.
-  Future<void> envoyerLienCourriel(String courriel);
+  ///
+  /// [jetonControle] : le jeton du controle anti-robot (Turnstile, lot
+  /// ANTI-ROBOT du 03/11/2026), passe a Supabase comme `captchaToken` ; nul
+  /// quand aucun controle n'est pose (reglage vide).
+  Future<void> envoyerLienCourriel(String courriel, {String? jetonControle});
 
   /// Ouvre une session avec un courriel et un mot de passe.
   ///
   /// Ce chemin est reserve a la demonstration locale et reste masque quand
   /// `DEMO_AUTH` n'est pas active. La validation du compte et des droits reste
   /// entierement cote Supabase.
-  Future<void> connexionMotDePasse(String courriel, String motDePasse);
+  Future<void> connexionMotDePasse(
+    String courriel,
+    String motDePasse, {
+    String? jetonControle,
+  });
 
   /// Ouvre le parcours Google.
   Future<void> connexionGoogle();
@@ -52,14 +60,23 @@ class ServiceAuthSupabase implements ServiceAuth {
   String? get _retour => kIsWeb ? Uri.base.origin : null;
 
   @override
-  Future<void> envoyerLienCourriel(String courriel) => _client.auth
-      .signInWithOtp(email: courriel.trim(), emailRedirectTo: _retour);
+  Future<void> envoyerLienCourriel(String courriel, {String? jetonControle}) =>
+      _client.auth.signInWithOtp(
+        email: courriel.trim(),
+        emailRedirectTo: _retour,
+        captchaToken: jetonControle,
+      );
 
   @override
-  Future<void> connexionMotDePasse(String courriel, String motDePasse) async {
+  Future<void> connexionMotDePasse(
+    String courriel,
+    String motDePasse, {
+    String? jetonControle,
+  }) async {
     await _client.auth.signInWithPassword(
       email: courriel.trim(),
       password: motDePasse,
+      captchaToken: jetonControle,
     );
   }
 

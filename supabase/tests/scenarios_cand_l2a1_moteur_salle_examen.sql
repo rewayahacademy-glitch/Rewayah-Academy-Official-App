@@ -41,6 +41,21 @@
 \o /dev/null
 BEGIN;
 
+-- Rang 19 B (03/11/2026) : ce scenario eprouve la politique v2.0.0 (en vigueur
+-- le 1er novembre 2026). Les versions publiees apres elle (v2.1.0 de REMB14, et
+-- toute autre a venir) rendraient ses conditions « perimees » : elles sont
+-- retirees le temps du scenario, annule par le ROLLBACK final.
+ALTER TABLE public.politiques_commerciales DISABLE TRIGGER politiques_commerciales_immuable;
+ALTER TABLE public.politique_part_enseignant DISABLE TRIGGER politique_part_enseignant_immuable;
+CREATE TEMP TABLE politiques_apres_v2 ON COMMIT DROP AS
+  SELECT p.version FROM public.politiques_commerciales p
+   WHERE p.date_effet > (SELECT q.date_effet FROM public.politiques_commerciales q WHERE q.version = 'v2.0.0');
+DELETE FROM public.repartitions_paiement WHERE politique_version IN (SELECT version FROM politiques_apres_v2);
+DELETE FROM public.politique_part_enseignant WHERE politique_version IN (SELECT version FROM politiques_apres_v2);
+DELETE FROM public.politiques_commerciales WHERE version IN (SELECT version FROM politiques_apres_v2);
+ALTER TABLE public.politique_part_enseignant ENABLE TRIGGER politique_part_enseignant_immuable;
+ALTER TABLE public.politiques_commerciales ENABLE TRIGGER politiques_commerciales_immuable;
+
 CREATE FUNCTION pg_temp.qui(p_id uuid, p_role text, p_aal text DEFAULT 'aal1') RETURNS void
 LANGUAGE plpgsql AS $$
 DECLARE v_jwt text;
@@ -1636,17 +1651,23 @@ SELECT pg_temp.qui('ca2a0000-0000-4000-8000-0000000000a4', 'admin');
 SELECT pg_temp.garde('g2', private.candidature_geste_ouvrir('ca2acccc-0000-4000-8000-000000000006', 'refuser',
   'direction', 'ca2a0000-0000-4000-8000-0000000000a4', 1, 'cle-geste-c06-2', 'Motif de test', 'refus_test'));
 SELECT pg_temp.vrai(public.kyc_super_admin_exception_active(), 'fixture : exception super-admin active pour a4');
+-- V1-a-bis (20261109100000, directeur, 03/11) : le super-admin de 0088 agit
+-- des deux cotes ; il passe la borne de genre (son geste est au journal
+-- sensible, « super-admin hors côté »). La direction homme reste bornee.
 SELECT pg_temp.vrai(pg_temp.lu('g1') = '{"erreur": "hors_portee"}'::jsonb
-  AND pg_temp.lu('g2') = '{"erreur": "hors_portee"}'::jsonb
+  AND NOT coalesce(pg_temp.lu('g2') ->> 'erreur' = 'hors_portee', false)
   AND (pg_temp.trace('ca2acccc-0000-4000-8000-000000000006') ->> 'ligne') = pg_temp.lu('t06') ->> 'ligne'
   AND (pg_temp.trace('ca2acccc-0000-4000-8000-000000000006') ->> 'evenements')::int
-      = (pg_temp.lu('t06') ->> 'evenements')::int + 2
+      = (pg_temp.lu('t06') ->> 'evenements')::int + 1
   AND (SELECT count(*) FROM public.candidature_evenements
-        WHERE candidature_id = 'ca2acccc-0000-4000-8000-000000000006' AND type = 'lecture_hors_portee') = 2
+        WHERE candidature_id = 'ca2acccc-0000-4000-8000-000000000006' AND type = 'lecture_hors_portee') = 1
   AND (SELECT count(*) FROM public.audit_logs
         WHERE row_id = 'ca2acccc-0000-4000-8000-000000000006' AND action = 'candidature_hors_portee'
-          AND payload ->> 'lecture' = 'geste:refuser') = 2,
-  'geste de l''autre cote, super-admin compris : hors_portee rendu, trace comme une lecture hors portee, candidature inchangee');
+          AND payload ->> 'lecture' = 'geste:refuser') = 1
+  AND (SELECT count(*) FROM public.audit_logs
+        WHERE row_id = 'ca2acccc-0000-4000-8000-000000000006' AND action = 'super_admin_hors_cote'
+          AND actor = 'ca2a0000-0000-4000-8000-0000000000a4' AND payload ->> 'geste' = 'refuser') = 1,
+  'geste de l''autre cote : hors_portee rendu a la direction homme, trace comme une lecture hors portee ; le super-admin passe la borne, au journal hors cote ; candidature inchangee');
 SELECT pg_temp.qui('ca2a0000-0000-4000-8000-0000000000a3', 'admin');
 SELECT pg_temp.refus($$SELECT private.candidature_geste_ouvrir('ca2acccc-0000-4000-8000-000000000006', 'refuser',
   'direction', 'ca2a0000-0000-4000-8000-0000000000a3', 1, 'cle-geste-c06-3', 'Motif', 'refus_test')$$, '42501',
@@ -1695,8 +1716,9 @@ SELECT pg_temp.vrai((SELECT string_agg(DISTINCT transition::text, ',' ORDER BY t
     = '12,15,16,17,18,19,20,21,23,25,7'
   AND (SELECT string_agg(geste, ',' ORDER BY geste) FROM private.candidature_gestes_regles WHERE pause <> 'interdite' AND geste NOT LIKE '%admission')
     = 'lever_pause,refuser,retirer'
+  -- V1-b (03/11) : le candidat planifie aussi son entretien, en reservant un creneau.
   AND (SELECT string_agg(geste, ',' ORDER BY geste) FROM private.candidature_gestes_regles WHERE 'candidat' = ANY (auteurs) AND geste NOT LIKE '%admission')
-    = 'enregistrer_reponses,envoyer_reponses,retirer'
+    = 'enregistrer_reponses,envoyer_reponses,planifier_entretien,retirer'
   AND NOT EXISTS (SELECT 1 FROM private.candidature_gestes_regles WHERE 'candidat' = ANY (motif_requis)),
   'regles : motif exige ou la section 4.2 le dit (7, 12, 15, 16, 17 direction, 18 pose, 19, 20, 21, 23, 25) ; en pause seuls lever, refuser, retirer');
 
@@ -1789,7 +1811,9 @@ BEGIN
         'L2-9 : ' || r.geste || ' permis pendant une pause');
     END IF;
   END LOOP;
-  PERFORM pg_temp.vrai(v_n = 26, 'L2-9 : les vingt-six variantes de la table des regles');
+  -- 27 depuis V1-b (03/11) : planifier_entretien variante 2, auteur candidat
+  -- (un controle de plus dans la boucle : 418 au total).
+  PERFORM pg_temp.vrai(v_n = 27, 'L2-9 : les vingt-sept variantes de la table des regles');
 END $l2_9$;
 
 -- Un geste de la direction de bout en bout par le moteur (c10) : refus avec
@@ -2027,7 +2051,8 @@ SELECT pg_temp.garde('k_a2', jsonb_build_object(
 RESET ROLE;
 SELECT pg_temp.vrai(pg_temp.lu('k_a1') = '{"traces": 0, "listes_a2": 0, "hors_portee_c06": 0}'::jsonb
   AND pg_temp.lu('k_a2') @> '{"traces": 0, "listes_a2": 1}'::jsonb
-  AND pg_temp.lu('k_a2') -> 'hors_portee_c06' = '["Direction Homme", "Super Admin"]'::jsonb,
+  -- V1-a-bis (03/11) : le super-admin passe la borne, il n'est plus trace hors portee.
+  AND pg_temp.lu('k_a2') -> 'hors_portee_c06' = '["Direction Homme"]'::jsonb,
   'C15 : traces de l''exception (super-admin seul), liste lue par a2 et tentatives hors portee sur c06 : lues du seul cote de c06, auteurs de la direction nommes');
 
 -- Les deux formes de la regle (ligne a ligne pour journal_audit et la
@@ -2298,8 +2323,8 @@ SELECT pg_temp.vrai(pg_temp.lu('cond3') = '{"disponible": false}'::jsonb
 
 DO $fin$
 BEGIN
-  IF current_setting('test.n')::int <> 417 THEN
-    RAISE EXCEPTION 'CAND-L2A1 ROUGE : % controles executes, 417 attendus', current_setting('test.n');
+  IF current_setting('test.n')::int <> 418 THEN
+    RAISE EXCEPTION 'CAND-L2A1 ROUGE : % controles executes, 418 attendus', current_setting('test.n');
   END IF;
   RAISE NOTICE 'CAND-L2A1 : % controles verts', current_setting('test.n');
 END $fin$;

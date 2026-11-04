@@ -384,10 +384,14 @@ class _ServiceAuthEspion implements ServiceAuth {
   int appels = 0;
 
   @override
-  Future<void> envoyerLienCourriel(String courriel) async => appels++;
+  Future<void> envoyerLienCourriel(String courriel, {String? jetonControle}) async => appels++;
 
   @override
-  Future<void> connexionMotDePasse(String courriel, String motDePasse) async =>
+  Future<void> connexionMotDePasse(
+    String courriel,
+    String motDePasse, {
+    String? jetonControle,
+  }) async =>
       appels++;
 
   @override
