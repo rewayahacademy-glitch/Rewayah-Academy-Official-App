@@ -22,6 +22,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
 import '../appairage/service_avatar.dart';
+import '../session/session_controleur.dart';
+import '../session/session_state.dart';
 
 /// Ou vit la photo d'une personne : son seau et sa cle (nulle sans photo).
 @immutable
@@ -58,6 +60,12 @@ abstract interface class PortPhotos {
 
   /// Le tuteur pose (ou retire) la photo d'un enfant mineur de son foyer.
   Future<SourcePhoto?> poserPhotoEleve(String eleveId, String? cle);
+
+  /// PHOTO-CAPACITE (04/11/2026) : vrai si la personne connectee peut poser
+  /// sa propre photo. C'est la regle du serveur (`photo_adulte_moi()` :
+  /// compte valide et adulte, `private.photo_adulte`), la meme que celle de
+  /// `poser_ma_photo` et de l'ecriture dans le seau.
+  Future<bool> peutPoserMaPhoto();
 }
 
 /// Aucune source : les ecrans montrent les initiales. Remplace dans
@@ -88,6 +96,10 @@ class PhotosNeutres implements PortPhotos {
   @override
   Future<SourcePhoto?> poserPhotoEleve(String eleveId, String? cle) =>
       Future<SourcePhoto?>.error(UnsupportedError('photos non branchees'));
+
+  /// Sans serveur, aucun geste n'est propose.
+  @override
+  Future<bool> peutPoserMaPhoto() async => false;
 }
 
 /// Le port employe par l'application.
@@ -121,6 +133,19 @@ final FutureProviderFamily<String?, String> photoPersonneProvider =
       ref.onDispose(relecture.cancel);
       return url;
     });
+
+/// PHOTO-CAPACITE : la personne connectee peut-elle poser sa photo ? Relue
+/// quand la personne change. Une lecture refusee ou impossible n'est jamais
+/// un oui : le lien « Choisir une photo » reste cache tant que la reponse
+/// n'est pas lue, et en cas d'erreur (aucune nouvelle tentative
+/// automatique : on ne propose pas un geste qu'on n'a pas verifie).
+final FutureProvider<bool> peutPoserMaPhotoProvider =
+    FutureProvider.autoDispose<bool>((Ref ref) {
+      ref.watch(
+        sessionProvider.select((SessionState session) => session.profileId),
+      );
+      return ref.watch(portPhotosProvider).peutPoserMaPhoto();
+    }, retry: (int _, Object _) => null);
 
 /// Le seau ou un adulte range sa propre photo : celui que le serveur rend pour
 /// lui (`photos_enseignants` pour un enseignant, `avatars` sinon).

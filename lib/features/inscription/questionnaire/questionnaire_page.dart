@@ -25,6 +25,7 @@ import '../../connexion/coquille_entree.dart';
 import '../../parcours_offres/libelles_parcours.dart';
 import '../brouillon_inscription.dart' show UsageInscription;
 import '../invitation_en_cours.dart';
+import 'acces_questionnaire.dart';
 import 'questionnaire_inscription.dart';
 
 /// `/commencer` : le questionnaire d'inscription, une question par ecran,
@@ -42,6 +43,12 @@ class QuestionnairePage extends ConsumerWidget {
   /// Le code de l'ecran, lu dans l'adresse.
   final String? code;
 
+  /// L'adresse du dernier ecran, l'acces (QUESTIONNAIRE-FIN).
+  static String get adresseAcces => Uri(
+    path: Routes.commencer,
+    queryParameters: <String, String>{'etape': codeEtapeAcces},
+  ).toString();
+
   /// L'adresse d'un ecran.
   static String adresse(EtapeQuestionnaire etape) => Uri(
     path: Routes.commencer,
@@ -54,6 +61,32 @@ class QuestionnairePage extends ConsumerWidget {
       questionnaireInscriptionProvider,
     );
     final List<EtapeQuestionnaire> etapes = q.etapes;
+    // QUESTIONNAIRE-FIN (directeur, 04/11/2026) : sans compte, le dernier
+    // ecran est l'acces, DANS le questionnaire ; un compte deja cree (porte
+    // inscription) revient a l'inscription, comme avant.
+    final bool compteCree =
+        ref.watch(sessionProvider).porte == PorteAcces.inscription;
+    final int ecransEnPlus = compteCree ? 0 : 1;
+    if (code == codeEtapeAcces) {
+      if (!compteCree && q.complet) {
+        return EcranAccesQuestionnaire(
+          numero: etapes.length + 1,
+          total: etapes.length + 1,
+          onRetour: () => context.go(adresse(etapes.last)),
+        );
+      }
+      // Ouvert trop tot (ou avec un compte) : la suite normale.
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        if (context.mounted) {
+          context.go(
+            compteCree
+                ? Routes.inscription
+                : adresse(q.premiereManquante ?? etapes.first),
+          );
+        }
+      });
+      return const SizedBox.shrink();
+    }
     final EtapeQuestionnaire? demandee = EtapeQuestionnaire.depuisCode(code);
     final EtapeQuestionnaire? manquante = q.premiereManquante;
     int rang = demandee == null ? -1 : etapes.indexOf(demandee);
@@ -118,17 +151,10 @@ class QuestionnairePage extends ConsumerWidget {
         context.go(adresse(suivante));
         return;
       }
-      final bool compteCree =
-          ref.read(sessionProvider).porte == PorteAcces.inscription;
       context.go(
-        compteCree
+        ref.read(sessionProvider).porte == PorteAcces.inscription
             ? Routes.inscription
-            : Uri(
-                path: Routes.connexion,
-                queryParameters: <String, String>{
-                  'mode': parametreModeCreation,
-                },
-              ).toString(),
+            : adresseAcces,
       );
     }
 
@@ -152,11 +178,13 @@ class QuestionnairePage extends ConsumerWidget {
       numero: rang + 1,
       // Avant « Pour qui », le parcours le plus court (« pour moi ») : un
       // total ne se devine pas, il ne gonfle pas non plus.
-      total: q.usage == null
-          ? const QuestionnaireInscription(usage: UsageInscription.moi)
-                .etapes
-                .length
-          : etapes.length,
+      total:
+          (q.usage == null
+              ? const QuestionnaireInscription(usage: UsageInscription.moi)
+                    .etapes
+                    .length
+              : etapes.length) +
+          ecransEnPlus,
       etape: etape,
       questionnaire: q,
       controleur: controleur,
@@ -579,7 +607,9 @@ class _EcranQuestionState extends ConsumerState<_EcranQuestion> {
       return ChampEntree(
         cle: 'questionnaire-prenom',
         etiquette: t.inscription.prenom,
-        indice: null,
+        // QUESTIONNAIRE-FIN : une indication dans le champ (5,4:1 sur le
+        // blanc du champ), jamais un rectangle vide.
+        indice: t.inscription.questionnaire.prenomIndice,
         controleur: _prenom,
         erreur: null,
         onChanged: () => setState(() {}),
@@ -714,6 +744,9 @@ typedef _Reponse = ({
   bool retenue,
   VoidCallback choisir,
 });
+
+/// Le code du dernier ecran du questionnaire, l'acces (`?etape=acces`).
+const String codeEtapeAcces = 'acces';
 
 /// Le parametre de la connexion qui dit « j'ai un code d'invitation » : la
 /// creation du compte s'ouvre sans le questionnaire.

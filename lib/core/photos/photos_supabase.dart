@@ -84,4 +84,11 @@ class PhotosSupabase implements PortPhotos {
           params: <String, dynamic>{'p_eleve': eleveId, 'p_cle': cle},
         ),
       ).values.firstOrNull;
+
+  /// PHOTO-CAPACITE : `photo_adulte_moi()` (PHOTOS-1), la regle de
+  /// `poser_ma_photo` et de l'ecriture dans le seau. Seul un `true` explicite
+  /// vaut oui.
+  @override
+  Future<bool> peutPoserMaPhoto() async =>
+      await _client.rpc<Object?>('photo_adulte_moi') == true;
 }
