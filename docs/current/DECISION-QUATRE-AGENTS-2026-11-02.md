@@ -218,8 +218,10 @@ les copie dans chaque consigne d'agent, et un agent qui en enfreint une voit sa 
   - Avant le train, le garde-cap compare chaque écran à sa demande, capture contre capture.
   - **Méthode du train (pilote et garde-cap, 04/11/2026).** Le pilote crée une branche
     `train/AAAA-MM-JJ` depuis `main`, y fusionne les PR du train dans l'ordre par des commits de
-    fusion (pas d'écrasement), ouvre une seule PR `train → main`, attend une CI verte, puis fusionne :
-    un seul déploiement de production par train. Raison : le train du 04/11 a fusionné cinq PR une
+    fusion (pas d'écrasement), ouvre une seule PR `train → main`, attend une CI verte, puis la fusionne
+    elle aussi par un commit de fusion, jamais par écrasement : les commits des PR du train arrivent
+    tels quels dans `main` et GitHub marque ces PR comme fusionnées. Un seul déploiement de
+    production par train. Avant d'ouvrir la PR `train`, le garde-cap a comparé chaque écran du train. Raison : le train du 04/11 a fusionné cinq PR une
     à une dans `main` ; deux déploiements sont partis, et le second a été refusé par le plafond
     quotidien de Vercel (offre gratuite, 100 déploiements par jour), laissant quatre lots dans
     `main` sans être en ligne.
