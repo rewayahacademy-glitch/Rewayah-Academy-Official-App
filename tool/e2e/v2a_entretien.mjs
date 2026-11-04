@@ -167,10 +167,12 @@ async function passage(largeur, hauteur) {
 
   // 3. Deux fondateurs : planifie.
   await cocher(c.page, new RegExp(`Hafsa Fondatrice${n}`));
-  await cliquer(c.page, /^Planifier$/, { pause: 3500 });
+  // Le retour local reste 3 secondes : il se cherche et se capture aussitot.
+  await cliquer(c.page, /^Planifier$/, { pause: 400 });
   await activerSemantique(c.page);
-  verifier(await attendreTexte(c.page, /Entretien planifié\./, 15000),
+  verifier(await attendreTexte(c.page, /Entretien planifié\./, 6000),
     `${largeur} : le retour local dit « Entretien planifié »`);
+  await p.capture(c, `${tag}_4a_retour_planifie`);
   const session = sql(`select session_id from public.entretiens where candidature_id = '${cand.cid}' and issue is null`);
   verifier(session !== '', `${largeur} : la base porte l'entretien`);
   verifier(sql(`select count(*) from public.entretien_participants
@@ -200,9 +202,9 @@ async function passage(largeur, hauteur) {
   await amenerEnVue(c.page, retirer); await retirer.click(); await c.page.waitForTimeout(1500);
   await activerSemantique(c.page);
   await cliquer(c.page, /^Retirer$/, { pause: 2500 });
-  verifier(await attendreTexte(c.page, /Il faut au moins 2 fondateurs/, 10000),
+  verifier(await attendreTexte(c.page, /Après ce retrait, il en resterait 1/, 10000),
     `${largeur} : retirer sous le minimum est refuse, en mots`);
-  await voir(c, /Il faut au moins 2 fondateurs/, `${tag}_6_retrait_refuse`);
+  await voir(c, /Après ce retrait/, `${tag}_6_retrait_refuse`);
   verifier(sql(`select count(*) from public.entretien_participants
                 where session_id = '${session}' and retire_le is null`) === '2',
     `${largeur} : la base garde les deux participantes`);
@@ -213,10 +215,11 @@ async function passage(largeur, hauteur) {
   await cliquer(c.page, /^Consigner l'issue$/, { pause: 1500 });
   await activerSemantique(c.page);
   await cocher(c.page, /^Entretien tenu$/);
-  await cliquer(c.page, /^Consigner$/, { pause: 3500 });
+  await cliquer(c.page, /^Consigner$/, { pause: 400 });
   await activerSemantique(c.page);
-  verifier(await attendreTexte(c.page, /Issue consignée\./, 15000),
+  verifier(await attendreTexte(c.page, /Issue consignée\./, 6000),
     `${largeur} : le retour local dit « Issue consignée »`);
+  await p.capture(c, `${tag}_7a_retour_consigne`);
   verifier(sql(`select issue from public.entretiens where session_id = '${session}'`) === 'tenu',
     `${largeur} : la base porte l'issue « tenu »`);
   verifier(await attendreTexte(c.page, /Dernier entretien.*Entretien tenu/, 15000),

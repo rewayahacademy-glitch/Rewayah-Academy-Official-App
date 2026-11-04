@@ -18586,6 +18586,7 @@ class _Traductions$admin$candidatures$entretien$refus$ar extends Traductions$adm
 
 	// Translations
 	@override String fondateurs({required Object exiges, required Object presents}) => 'يجب أن يكون بين المشاركين ${exiges} مؤسسين على الأقل. المؤسسون المختارون: ${presents}.';
+	@override String fondateursRetrait({required Object exiges, required Object presents}) => 'يجب أن يكون بين المشاركين ${exiges} مؤسسين على الأقل. بعد هذه الإزالة سيبقى ${presents}.';
 	@override String get debut => 'اختر موعدًا بعد خمس دقائق على الأقل من الآن، خلال الأيام التسعين القادمة.';
 	@override String get duree => 'تتراوح المدة بين 15 و120 دقيقة.';
 	@override String get tropNombreux => 'اثنا عشر مشاركًا على الأكثر.';
@@ -24641,6 +24642,7 @@ extension on TraductionsAr {
 			'admin.candidatures.entretien.feuille.envoyerAjouter' => 'إضافة',
 			'admin.candidatures.entretien.feuille.envoyerConsigner' => 'تسجيل',
 			'admin.candidatures.entretien.refus.fondateurs' => ({required Object exiges, required Object presents}) => 'يجب أن يكون بين المشاركين ${exiges} مؤسسين على الأقل. المؤسسون المختارون: ${presents}.',
+			'admin.candidatures.entretien.refus.fondateursRetrait' => ({required Object exiges, required Object presents}) => 'يجب أن يكون بين المشاركين ${exiges} مؤسسين على الأقل. بعد هذه الإزالة سيبقى ${presents}.',
 			'admin.candidatures.entretien.refus.debut' => 'اختر موعدًا بعد خمس دقائق على الأقل من الآن، خلال الأيام التسعين القادمة.',
 			'admin.candidatures.entretien.refus.duree' => 'تتراوح المدة بين 15 و120 دقيقة.',
 			'admin.candidatures.entretien.refus.tropNombreux' => 'اثنا عشر مشاركًا على الأكثر.',
@@ -24904,9 +24906,9 @@ extension on TraductionsAr {
 			'admin.finance.fac.moisCourant' => 'الشهر الجاري.',
 			'admin.finance.fac.moisSuivant' => 'الشهر القادم، تُصدر قبل بدايته.',
 			'admin.finance.fac.emettre' => 'إصدار',
-			'admin.finance.fac.emettreMois' => ({required Object deMois}) => 'إصدار فواتير ⁨${deMois}⁩',
 			_ => null,
 		} ?? switch (path) {
+			'admin.finance.fac.emettreMois' => ({required Object deMois}) => 'إصدار فواتير ⁨${deMois}⁩',
 			'admin.finance.fac.explication' => 'يتلقى كل طالب مسجّل فاتورة شهره، بالسعر المنشور الساري، مع تخفيض الأسرة. وتسوّي الأرصدة المستلمة سابقًا فورًا الأشهر التي تغطيها. ولا تُصدر فاتورة صدرت من قبل مرة ثانية أبدًا.',
 			'admin.finance.fac.faitTitre' => 'اكتمل الإصدار',
 			'admin.finance.fac.faitPhrase' => 'ترى الأسر فاتورتها وما بقي عليها دفعه.',
@@ -25418,9 +25420,9 @@ extension on TraductionsAr {
 			'admin.protectionEnfants.courrielInvalide' => 'هذا العنوان غير صالح. يجب أن يحتوي البريد على @ ونقطة.',
 			'admin.protectionEnfants.erreurEcriture' => ({required Object message}) => 'لم يُحفظ التغيير: ⁨${message}⁩. أعد المحاولة.',
 			'admin.protectionEnfants.erreur' => 'تعذّرت قراءة المسؤول. أعد المحاولة بعد قليل.',
-			'admin.protectionEnfants.representantTitre' => 'الممثل في الاتحاد الأوروبي',
 			_ => null,
 		} ?? switch (path) {
+			'admin.protectionEnfants.representantTitre' => 'الممثل في الاتحاد الأوروبي',
 			'admin.protectionEnfants.representantDetail' => 'الاسم الذي يظهر في النصوص القانونية. إذا تُرك فارغًا، تعرض النصوص «أكاديمية رواية».',
 			'admin.protectionEnfants.representantChamp' => 'اسم الممثل',
 			'admin.protectionEnfants.representantVideAide' => 'اتركه فارغًا لعرض «أكاديمية رواية».',
@@ -25932,9 +25934,9 @@ extension on TraductionsAr {
 			'admin.regroupements.refusAffectation.plafondClasses' => ({required num n, required Object maximum}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم يُؤكَّد المعلم: لديه ⁨${n}⁩ من الفصول النشطة، والحد الأقصى ⁨${maximum}⁩. أغلقوا أحد فصوله، أو ارفعوا الحد الأقصى في القواعد. وإلا فاختاروا شخصًا آخر.', one: 'لم يُؤكَّد المعلم: لديه ⁨${n}⁩ من الفصول النشطة، والحد الأقصى ⁨${maximum}⁩. أغلقوا أحد فصوله، أو ارفعوا الحد الأقصى في القواعد. وإلا فاختاروا شخصًا آخر.', two: 'لم يُؤكَّد المعلم: لديه ⁨${n}⁩ من الفصول النشطة، والحد الأقصى ⁨${maximum}⁩. أغلقوا أحد فصوله، أو ارفعوا الحد الأقصى في القواعد. وإلا فاختاروا شخصًا آخر.', few: 'لم يُؤكَّد المعلم: لديه ⁨${n}⁩ من الفصول النشطة، والحد الأقصى ⁨${maximum}⁩. أغلقوا أحد فصوله، أو ارفعوا الحد الأقصى في القواعد. وإلا فاختاروا شخصًا آخر.', many: 'لم يُؤكَّد المعلم: لديه ⁨${n}⁩ من الفصول النشطة، والحد الأقصى ⁨${maximum}⁩. أغلقوا أحد فصوله، أو ارفعوا الحد الأقصى في القواعد. وإلا فاختاروا شخصًا آخر.', other: 'لم يُؤكَّد المعلم: لديه ⁨${n}⁩ من الفصول النشطة، والحد الأقصى ⁨${maximum}⁩. أغلقوا أحد فصوله، أو ارفعوا الحد الأقصى في القواعد. وإلا فاختاروا شخصًا آخر.', ), 
 			'admin.regroupements.refusAffectation.plafondClassesSansNombre' => 'لم يُؤكَّد المعلم: بلغ الحد الأقصى من الفصول النشطة. أغلقوا أحد فصوله، أو ارفعوا الحد الأقصى في القواعد. وإلا فاختاروا شخصًا آخر.',
 			'admin.regroupements.refusAffectation.inconnu' => 'لم يُؤكَّد المعلم. اختاروا معلمًا آخر.',
-			'admin.regroupements.demandes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا طلب', one: 'طلب واحد', two: 'طلبان', few: '⁨${n}⁩ طلبات', many: '⁨${n}⁩ طلبًا', other: '⁨${n}⁩ طلب', ), 
 			_ => null,
 		} ?? switch (path) {
+			'admin.regroupements.demandes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا طلب', one: 'طلب واحد', two: 'طلبان', few: '⁨${n}⁩ طلبات', many: '⁨${n}⁩ طلبًا', other: '⁨${n}⁩ طلب', ), 
 			'admin.regroupements.voirClasse' => 'عرض الفصل',
 			'admin.regroupements.manquentCourt' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا ينقص أي طلب.', one: 'ينقص طلب واحد.', two: 'ينقص طلبان.', few: 'ينقص ⁨${n}⁩ طلبات.', many: 'ينقص ⁨${n}⁩ طلبًا.', other: 'ينقص ⁨${n}⁩ طلب.', ), 
 			'admin.regroupements.classesPossibles' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا فصل ممكن', one: 'فصل واحد ممكن', two: 'فصلان ممكنان', few: '⁨${n}⁩ فصول ممكنة', many: '⁨${n}⁩ فصلًا ممكنًا', other: '⁨${n}⁩ فصل ممكن', ), 
@@ -26446,9 +26448,9 @@ extension on TraductionsAr {
 			'admin.bibliotheque.publication.titre' => 'التحقق والنشر',
 			'admin.bibliotheque.publication.intro' => 'يتحقق الخادم من كل نقطة. النشر يثبّت الإصدار.',
 			'admin.bibliotheque.publication.apercuTitre' => 'المصدر والملف',
-			'admin.bibliotheque.publication.apercuAucunFichier' => 'لا يوجد ملف مودَع: لا يمكن فحص العرض.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.bibliotheque.publication.apercuAucunFichier' => 'لا يوجد ملف مودَع: لا يمكن فحص العرض.',
 			'admin.bibliotheque.publication.apercuFichier' => 'ملف مودَع. يُفحص عرضه في قارئ نوعه؛ ويبيّن الخادم أدناه إن كان قد اختُبر.',
 			'admin.bibliotheque.publication.empreinte' => ({required Object valeur}) => 'البصمة ⁨${valeur}⁩',
 			'admin.bibliotheque.publication.droitsTitre' => 'مراجعة الحقوق',
@@ -26960,9 +26962,9 @@ extension on TraductionsAr {
 			'comptable.tresorerie.transfert.indisponible' => 'الحركات بين الصناديق غير مربوطة بالخادم بعد. لم يُنقَل أي شيء.',
 			'comptable.tresorerie.transfert.aucunCouple' => 'لا تسمح السياسة بأي حركة لحسابك.',
 			'comptable.tresorerie.titre' => 'الخزينة والصناديق',
-			'comptable.tresorerie.sousTitre' => 'الخزينة الحرة هي الرقم الوحيد القابل للإنفاق.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.tresorerie.sousTitre' => 'الخزينة الحرة هي الرقم الوحيد القابل للإنفاق.',
 			'comptable.tresorerie.alimenter' => 'تغذية الاحتياطي الاستراتيجي',
 			'comptable.tresorerie.erreurPartielle' => 'تعذّرت قراءة جزء من الصفحة: الباقي محدَّث. أعد المحاولة للإكمال.',
 			'comptable.tresorerie.erreurPartielleAction' => 'إعادة المحاولة',
@@ -27474,9 +27476,9 @@ extension on TraductionsAr {
 			'comptable.direction.delegationPanneau.exceptionRetirerPhrase' => 'يعود التفويض إلى السياسة العامة. لا يُحفظ شيء قبل «حفظ».',
 			'comptable.direction.delegationPanneau.sensiblesTitre' => 'حساس دائمًا',
 			'comptable.direction.delegationPanneau.sensiblesDetail' => 'هذه الحالات الخمس تتطلب دائمًا تحققًا إضافيًا مهما كانت الإعدادات أعلاه. الدفعة الأولى والبيانات الحديثة تُضبط في الأعلى.',
-			'comptable.direction.delegationPanneau.sensibleHorsSeuil' => 'مبلغ فوق الحد',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.direction.delegationPanneau.sensibleHorsSeuil' => 'مبلغ فوق الحد',
 			'comptable.direction.delegationPanneau.sensibleHorsSeuilDetail' => 'دفعة تتجاوز الحدود المضبوطة أعلاه.',
 			'comptable.direction.delegationPanneau.sensibleHorsCycle' => 'دفعة خارج الدورة',
 			'comptable.direction.delegationPanneau.sensibleHorsCycleDetail' => 'دفعة لا تتبع فترة الدفع المعتادة.',
@@ -27988,9 +27990,9 @@ extension on TraductionsAr {
 			'accords.caseSavoir' => 'قرأت وفهمت ما يجب أن أعرفه.',
 			'accords.sectionContrat' => 'عقدك',
 			'accords.caseContrat' => 'قرأت عقدي وأوافق عليه، بما في ذلك زيارات المراقبة.',
-			'accords.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم تبق أي موافقة للتحديد.', one: 'بقيت موافقة واحدة للتحديد.', two: 'بقيت موافقتان للتحديد.', few: 'بقيت ⁨${n}⁩ موافقات للتحديد.', many: 'بقيت ⁨${n}⁩ موافقة للتحديد.', other: 'بقيت ⁨${n}⁩ موافقة للتحديد.', ), 
 			_ => null,
 		} ?? switch (path) {
+			'accords.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم تبق أي موافقة للتحديد.', one: 'بقيت موافقة واحدة للتحديد.', two: 'بقيت موافقتان للتحديد.', few: 'بقيت ⁨${n}⁩ موافقات للتحديد.', many: 'بقيت ⁨${n}⁩ موافقة للتحديد.', other: 'بقيت ⁨${n}⁩ موافقة للتحديد.', ), 
 			'accords.toutCoche' => 'تم تحديد كل المربعات.',
 			'accords.suivant' => 'التالي',
 			'accords.dejaAcceptes' => 'موافقاتك محفوظة بالفعل.',
@@ -28502,9 +28504,9 @@ extension on TraductionsAr {
 			'adulte.demo.etats.departsSuivants' => 'بعد المغادرة الثالثة، تنطبق المهلة التالية دائمًا.',
 			'adulte.demo.etats.repriseDemandee' => 'قُدِّم طلب لاستلام الأسرة.',
 			'adulte.demo.etats.repriseRefuseeParTitulaire' => 'رفض صاحب الحساب طلب الاستلام.',
-			'adulte.demo.etats.repriseSansReponse' => 'دون رد في المهلة، ينتظر الطلب الإدارة.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.demo.etats.repriseSansReponse' => 'دون رد في المهلة، ينتظر الطلب الإدارة.',
 			'adulte.demo.etats.repriseValidee' => 'اعتُمد استلام الأسرة.',
 			'adulte.demo.etats.repriseRefusee' => 'رُفض استلام الأسرة.',
 			'adulte.demo.etats.dejaDansUnAutreFoyer' => 'البالغ المدعو جزء من أسرة أخرى بالفعل.',
@@ -29016,9 +29018,9 @@ extension on TraductionsAr {
 			'suiviDemandes.contexte' => 'يتقدّم كل طلب خطوة بعد خطوة. نُبلغكم عند كل انتقال.',
 			'suiviDemandes.carteTitre' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩',
 			'suiviDemandes.joursChoisis' => 'الأيام المختارة',
-			'suiviDemandes.heureChoisie' => 'الساعة المختارة',
 			_ => null,
 		} ?? switch (path) {
+			'suiviDemandes.heureChoisie' => 'الساعة المختارة',
 			'suiviDemandes.joursEt' => ({required Object debut, required Object dernier}) => '⁨${debut}⁩ و⁨${dernier}⁩',
 			'suiviDemandes.heureFuseau' => ({required Object heure, required Object deVille}) => '⁨${heure}⁩، بتوقيت ⁨${deVille}⁩',
 			'suiviDemandes.creneauxChoisis' => 'الأيام والساعات المختارة',
@@ -29530,9 +29532,9 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.experienceDebutants.options.oui.exemple' => 'علّمت الأطفال أو الكبار الحروف العربية.',
 			'recrutement.parcours.q.experienceDebutants.options.non.libelle' => 'لا، ليس بعد',
 			'recrutement.parcours.q.experienceDebutants.options.non.description' => 'لم تعلّم مبتدئين من قبل.',
-			'recrutement.parcours.q.experienceDebutants.options.non.explication' => 'يمكنك مع ذلك إرسال طلب ترشحك.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.q.experienceDebutants.options.non.explication' => 'يمكنك مع ذلك إرسال طلب ترشحك.',
 			'recrutement.parcours.q.experienceDebutants.options.non.exemple' => 'علّمت فقط طلابًا يجيدون القراءة من قبل.',
 			'recrutement.parcours.q.fuseauIana.titre' => 'منطقتك الزمنية',
 			'recrutement.parcours.q.fuseauIana.explication' => 'أوقات تفرّغك بتوقيت مكان إقامتك. لذلك يجب أن يكون الوقت صحيحًا.',
@@ -30044,9 +30046,9 @@ extension on TraductionsAr {
 			'avis.form.note.libelle' => 'تقييمك',
 			'avis.form.note.aide' => 'المس نجمة: 1 أدنى تقييم و5 أعلاه.',
 			'avis.form.note.etoile' => ({required Object n}) => 'إعطاء التقييم ⁨${n}⁩ من 5',
-			'avis.form.note.lue' => ({required Object n}) => 'التقييم: ⁨${n}⁩ من 5',
 			_ => null,
 		} ?? switch (path) {
+			'avis.form.note.lue' => ({required Object n}) => 'التقييم: ⁨${n}⁩ من 5',
 			'avis.form.note.surCinq' => ({required Object n}) => '⁨${n}⁩ من 5',
 			'avis.form.note.erreur' => 'اختر تقييمًا من نجمة إلى 5 نجوم.',
 			'avis.form.titreAvis.libelle' => 'العنوان (اختياري)',

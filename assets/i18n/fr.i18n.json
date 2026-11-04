@@ -3695,6 +3695,7 @@
         },
         "refus": {
           "fondateurs": "Il faut au moins {exiges} fondateurs parmi les participants. Fondateurs choisis\u00a0: {presents}.",
+          "fondateursRetrait": "Il faut au moins {exiges} fondateurs parmi les participants. Après ce retrait, il en resterait {presents}.",
           "debut": "Choisissez un début au moins 5 minutes après maintenant, dans les 90 prochains jours.",
           "duree": "La durée va de 15 à 120 minutes.",
           "tropNombreux": "Douze participants au plus.",

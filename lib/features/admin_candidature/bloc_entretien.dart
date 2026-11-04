@@ -307,28 +307,31 @@ class _EntretienOuvert extends ConsumerWidget {
             ),
           ),
         if (choisir)
-          LienFleche(
-            key: const ValueKey<String>('entretien-ajouter'),
-            libelle: e.ajouter,
-            alignerEnDebut: true,
-            onPress: () async {
-              final String? m = await _ouvrir(
-                context,
-                e.ajouter,
-                (VoidCallback fermer, ValueChanged<String> fini) =>
-                    FeuilleAjouterParticipant(
-                      sessionId: entretien.sessionId,
-                      candidatureId: detail.ligne.id,
-                      deja: <String>{
-                        for (final ParticipantEntretien p in d.actifs)
-                          p.profilId,
-                      },
-                      onFini: fini,
-                      onAnnuler: fermer,
-                    ),
-              );
-              if (m != null) _relu(ref, m);
-            },
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: LienFleche(
+              key: const ValueKey<String>('entretien-ajouter'),
+              libelle: e.ajouter,
+              alignerEnDebut: true,
+              onPress: () async {
+                final String? m = await _ouvrir(
+                  context,
+                  e.ajouter,
+                  (VoidCallback fermer, ValueChanged<String> fini) =>
+                      FeuilleAjouterParticipant(
+                        sessionId: entretien.sessionId,
+                        candidatureId: detail.ligne.id,
+                        deja: <String>{
+                          for (final ParticipantEntretien p in d.actifs)
+                            p.profilId,
+                        },
+                        onFini: fini,
+                        onAnnuler: fermer,
+                      ),
+                );
+                if (m != null) _relu(ref, m);
+              },
+            ),
           ),
         Ecart.vLg,
         titre(e.comptesRendus),
@@ -476,13 +479,16 @@ String libelleIssueEntretien(IssueEntretien i) {
   };
 }
 
-/// Un refus d'un geste d'entretien, en mots (jamais par son code).
-String messageRefusEntretien(Object refus) {
+/// Un refus d'un geste d'entretien, en mots (jamais par son code). [retrait] :
+/// le refus des fondateurs compte ceux qui resteraient, pas ceux choisis.
+String messageRefusEntretien(Object refus, {bool retrait = false}) {
   final r = t.admin.candidatures.entretien.refus;
   final g = t.admin.candidatures.erreurs;
   return switch (refus) {
     FondateursInsuffisants(:final int exiges, :final int presents) =>
-      r.fondateurs(exiges: '$exiges', presents: '$presents'),
+      retrait
+          ? r.fondateursRetrait(exiges: '$exiges', presents: '$presents')
+          : r.fondateurs(exiges: '$exiges', presents: '$presents'),
     DebutInvalide() => r.debut,
     DureeInvalide() => r.duree,
     ParticipantsRequis() =>
@@ -564,7 +570,7 @@ mixin _EnvoiEntretien<W extends ConsumerStatefulWidget> on ConsumerState<W> {
   }
 
   /// Le bandeau du refus, ou rien.
-  List<Widget> bandeauRefus() {
+  List<Widget> bandeauRefus({bool retrait = false}) {
     final Object? r = refus;
     if (r == null) return const <Widget>[];
     final bool nonConfirme =
@@ -578,7 +584,7 @@ mixin _EnvoiEntretien<W extends ConsumerStatefulWidget> on ConsumerState<W> {
       BandeauAttention(
         key: const ValueKey<String>('entretien-refus'),
         titre: nonConfirme ? g.nonConfirmeTitre : g.titre,
-        message: messageRefusEntretien(r),
+        message: messageRefusEntretien(r, retrait: retrait),
         ton: nonConfirme ? TonEtat.avertissement : TonEtat.alerte,
       ),
     ];
@@ -1022,7 +1028,7 @@ class _EtatRetirer extends ConsumerState<FeuilleRetirerParticipant>
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         _consequence(context, e.feuille.retirerConsequence(nom: nom)),
-        ...bandeauRefus(),
+        ...bandeauRefus(retrait: true),
         ...boutons(
           libelle: e.retirer,
           destructif: true,
