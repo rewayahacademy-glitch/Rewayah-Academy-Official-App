@@ -27,7 +27,6 @@ import 'package:rewayah_academy/features/com_studio/port_studio.dart';
 import 'package:rewayah_academy/features/com_studio/studio_page.dart';
 
 import '../../support/demo/communications/com_studio_demo.dart';
-
 import '../../support/harnais.dart';
 
 /// L'heure fixe des tests.

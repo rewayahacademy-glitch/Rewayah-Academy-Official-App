@@ -35,7 +35,6 @@ import 'package:rewayah_academy/features/com_vocal/lecteur_vocal.dart';
 import 'package:rewayah_academy/features/com_vocal/port_enregistreur_vocal.dart';
 
 import '../../support/demo/communications/com_vocal_demo.dart';
-
 import '../com_messages/support_messages.dart' as msg;
 import '../com_studio/support_focus.dart' as focus;
 import '../com_studio/support_studio.dart' as studio;

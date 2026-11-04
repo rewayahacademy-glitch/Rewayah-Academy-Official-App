@@ -21,7 +21,8 @@ import 'package:rewayah_academy/features/salle_seance/salle_seance.dart'
     show TeteSalleBornee;
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
-import '../../support/demo/demo_salle_page.dart' show SalleDemo;
+import '../../support/demo/demo_salle_page.dart'
+    show SalleDemo;
 import '../../support/demo/seance_demo.dart';
 
 void _rien() {}

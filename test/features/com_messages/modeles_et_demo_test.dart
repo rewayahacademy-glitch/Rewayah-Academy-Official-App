@@ -22,7 +22,6 @@ import 'package:rewayah_academy/features/com_messages/recherche_fils.dart';
 
 import '../../support/demo/communications/com_messages_demo.dart';
 import '../../support/demo/communications/demo_communications_page.dart';
-
 import '../../support/harnais.dart';
 import 'support_messages.dart';
 

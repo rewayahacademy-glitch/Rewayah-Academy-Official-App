@@ -30,7 +30,6 @@ import '../support/demo/demo_enseignant_page.dart';
 import '../support/demo/enseignant_demo.dart';
 import '../support/demo/mode_demonstration.dart';
 import '../support/demo/repere_demonstration.dart';
-
 import '../support/harnais.dart';
 import 'outil_capture.dart';
 

@@ -51,7 +51,6 @@ import 'package:rewayah_academy/features/com_vocal/port_enregistreur_vocal.dart'
 
 import '../../support/demo/communications/com_vocal_demo.dart';
 import '../../support/demo/communications/demo_communications_page.dart';
-
 import '../../support/envoi_fil.dart';
 import '../../support/harnais.dart' show FauxServiceReseau;
 import '../com_studio/support_studio.dart' as studio;
