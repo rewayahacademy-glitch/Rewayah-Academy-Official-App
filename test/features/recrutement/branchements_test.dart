@@ -18,11 +18,11 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/recrutement/port_invitations_enseignant.dart';
 import 'package:rewayah_academy/core/recrutement/port_signature_contrat.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
-import 'package:rewayah_academy/features/demo/recrutement_demo.dart';
 import 'package:rewayah_academy/features/dossier/signature_page.dart';
 import 'package:rewayah_academy/features/inscription/etapes/usage_etape.dart';
 import 'package:rewayah_academy/features/recrutement/signature_contrat_page.dart';
 
+import '../../support/demo/recrutement_demo.dart';
 import '../../support/harnais.dart';
 import '../../support/monter_recrutement.dart';
 

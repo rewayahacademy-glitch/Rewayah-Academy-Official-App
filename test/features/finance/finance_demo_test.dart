@@ -27,7 +27,8 @@ import 'package:rewayah_academy/core/finance/montant.dart';
 import 'package:rewayah_academy/core/finance/mouvements_profil.dart';
 import 'package:rewayah_academy/core/finance/politique_commerciale.dart';
 import 'package:rewayah_academy/core/finance/suivi_paiement.dart';
-import 'package:rewayah_academy/features/demo/finance_demo.dart';
+
+import '../../support/demo/finance_demo.dart';
 
 Matcher get _indisponible => throwsA(isA<CapaciteIndisponible>());
 

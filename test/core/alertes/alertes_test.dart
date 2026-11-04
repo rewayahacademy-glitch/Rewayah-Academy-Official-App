@@ -9,7 +9,8 @@ import 'package:rewayah_academy/core/alertes/alerte.dart';
 import 'package:rewayah_academy/core/alertes/port_alertes.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/features/alertes/section_alertes.dart';
-import 'package:rewayah_academy/features/demo/alertes_demo.dart';
+
+import '../../support/demo/alertes_demo.dart';
 
 final DateTime _midi = DateTime(2026, 10, 5, 12);
 

@@ -29,13 +29,13 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/pastille_financiere.dart';
-import 'package:rewayah_academy/features/demo/finance_demo.dart';
 import 'package:rewayah_academy/features/foyer/finances_foyer.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
 import 'package:rewayah_academy/features/foyer/ligne_membre.dart';
 
 import '../../router/support_routeur.dart';
+import '../../support/demo/finance_demo.dart';
 import '../../support/harnais.dart';
 
 /// Le 4 octobre 2026 a midi, dans le mois de reference de la demonstration.

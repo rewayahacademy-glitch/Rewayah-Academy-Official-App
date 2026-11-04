@@ -40,11 +40,11 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/bloc_asynchrone.dart';
 import 'package:rewayah_academy/features/accueil_eleve/accueil_accessibilite.dart';
-import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 
 import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../router/support_routeur.dart';
 import '../support/aucun_mot_coupe.dart';
+import '../support/demo/accessibilite_demo.dart';
 import '../support/harnais.dart';
 
 const PortAccueilAccessibilite _contenu = PortAccueilAccessibiliteDemo(

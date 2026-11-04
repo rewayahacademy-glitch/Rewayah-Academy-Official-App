@@ -26,10 +26,10 @@ import 'package:rewayah_academy/core/widgets/empty_state.dart';
 import 'package:rewayah_academy/core/widgets/pied_de_liste.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_groupes/groupes_page.dart';
-import 'package:rewayah_academy/features/demo/classes_admin_demo.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/classes_admin_demo.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 

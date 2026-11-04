@@ -11,8 +11,8 @@ import 'package:rewayah_academy/core/capacites/port_delegation_finance.dart';
 import 'package:rewayah_academy/core/finance/montant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/features/admin_finance/reserve_delegation/finance_delegation_policy_panel.dart';
-import 'package:rewayah_academy/features/demo/comptable/direction_demo.dart';
 
+import '../../../support/demo/comptable/direction_demo.dart';
 import 'support_direction.dart';
 
 final c = t.comptable.direction;

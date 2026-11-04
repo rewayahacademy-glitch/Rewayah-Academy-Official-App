@@ -33,12 +33,12 @@ import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
-import 'package:rewayah_academy/features/demo/remplacements_demo.dart';
 import 'package:rewayah_academy/features/journee/absence_remplacement_vue.dart';
 import 'package:rewayah_academy/features/remplacements/remplacements_page.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/remplacements_demo.dart';
 import '../../support/garde_interface.dart';
 import '../../support/hors_ligne_une_fois.dart';
 

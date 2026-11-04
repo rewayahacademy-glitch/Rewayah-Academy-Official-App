@@ -29,7 +29,8 @@ import 'package:rewayah_academy/core/widgets/menu_actions.dart';
 import 'package:rewayah_academy/features/admin_regroupements/feuille_classe_regroupement.dart';
 import 'package:rewayah_academy/features/admin_regroupements/regroupements_libelles.dart';
 import 'package:rewayah_academy/features/admin_regroupements/regroupements_page.dart';
-import 'package:rewayah_academy/features/demo/regroupements_demo.dart';
+
+import '../../support/demo/regroupements_demo.dart';
 
 /// Un UUID de version 4, variante RFC 4122.
 final RegExp _uuidV4 = RegExp(

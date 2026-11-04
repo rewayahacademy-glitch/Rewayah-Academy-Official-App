@@ -11,10 +11,11 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_horloge/chrono_seance.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/chrono_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/pilule_etat_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
+
+import '../../support/demo/seance_demo.dart';
 
 final DateTime _t0 = DateTime.utc(2026, 11, 1, 17);
 final BornesChrono _bornes = BornesChrono(

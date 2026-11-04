@@ -5,9 +5,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_gabarit.dart';
-import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle/vue_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
+
+import '../../support/demo/seance_demo.dart';
 
 VueSeance _vue(RoleSeance r, [EtatDemoSalle e = EtatDemoSalle.visite]) =>
     DonneesSeanceDemo.vue(r, e);

@@ -18,10 +18,10 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/etat_sans_donnees.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
-import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
 
 import '../support/aucun_mot_coupe.dart';
+import '../support/demo/adulte_demo.dart';
 import '../support/hors_ligne_une_fois.dart';
 import 'outil_capture.dart';
 

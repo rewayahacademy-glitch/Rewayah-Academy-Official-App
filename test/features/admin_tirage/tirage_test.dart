@@ -29,10 +29,10 @@ import 'package:rewayah_academy/core/widgets/choix_nombre.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/admin_tirage/tirage_libelles.dart';
 import 'package:rewayah_academy/features/admin_tirage/tirage_page.dart';
-import 'package:rewayah_academy/features/demo/tirage_demo.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/demo/tirage_demo.dart';
 import '../../support/rangee_plus.dart';
 
 Future<void> _monter(
