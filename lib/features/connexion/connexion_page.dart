@@ -601,6 +601,7 @@ class _Saisie extends StatelessWidget {
           ),
           child: ControleSegmente<ModeConnexion>(
             key: const ValueKey<String>('connexion-mode'),
+            dense: true,
             segments: <Segment<ModeConnexion>>[
               Segment<ModeConnexion>(
                 valeur: ModeConnexion.connexion,
