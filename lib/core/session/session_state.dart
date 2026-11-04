@@ -85,6 +85,7 @@ class SessionState {
     this.eleveAutonome = false,
     this.capaciteEleveEnLecture = false,
     this.mfaRequise = false,
+    this.doubleVerificationFaite = false,
   });
 
   /// L'etat initial, avant toute resolution.
@@ -143,6 +144,18 @@ class SessionState {
   /// que le serveur exige en `aal2`, L1-10). Calculee a la lecture du jeton,
   /// faux par defaut. Un widget lit cette capacite, jamais le role.
   final bool mfaRequise;
+
+  /// Le jeton de cette session est en `aal2` : la double verification a ete
+  /// faite pendant cette connexion (MFA-DIRECTION, 03/11/2026). Lu dans le
+  /// jeton, jamais devine ; le serveur re-verifie (`app_aal()`).
+  final bool doubleVerificationFaite;
+
+  /// Capacite « activer la double verification depuis Compte > Securite » :
+  /// la direction (MFA-DIRECTION). Le controleur la fait a l'entree
+  /// ([mfaRequise]) ; les autres comptes n'en ont pas l'usage. Un widget lit
+  /// cette capacite, jamais le role.
+  bool get peutActiverDoubleVerification =>
+      role == AppRole.admin && observation == null;
 
   /// Vrai quand une session existe.
   bool get connecte => profileId != null;
@@ -248,6 +261,7 @@ class SessionState {
     bool? eleveAutonome,
     bool? capaciteEleveEnLecture,
     bool? mfaRequise,
+    bool? doubleVerificationFaite,
   }) {
     return SessionState(
       resolue: resolue ?? this.resolue,
@@ -262,6 +276,8 @@ class SessionState {
       capaciteEleveEnLecture:
           capaciteEleveEnLecture ?? this.capaciteEleveEnLecture,
       mfaRequise: mfaRequise ?? this.mfaRequise,
+      doubleVerificationFaite:
+          doubleVerificationFaite ?? this.doubleVerificationFaite,
     );
   }
 
@@ -278,7 +294,8 @@ class SessionState {
       other.observation == observation &&
       other.eleveAutonome == eleveAutonome &&
       other.capaciteEleveEnLecture == capaciteEleveEnLecture &&
-      other.mfaRequise == mfaRequise;
+      other.mfaRequise == mfaRequise &&
+      other.doubleVerificationFaite == doubleVerificationFaite;
 
   @override
   int get hashCode => Object.hash(
@@ -293,6 +310,7 @@ class SessionState {
     eleveAutonome,
     capaciteEleveEnLecture,
     mfaRequise,
+    doubleVerificationFaite,
   );
 }
 

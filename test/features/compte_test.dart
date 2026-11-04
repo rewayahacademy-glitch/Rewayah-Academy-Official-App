@@ -188,6 +188,41 @@ void main() {
     expect(find.text(t.compte.roles.accountant), findsNothing);
   });
 
+  // MFA-DIRECTION : la rubrique Securite (double verification) pour la
+  // direction seulement (capacite de la session).
+  for (final (AppRole role, bool visible) cas in <(AppRole, bool)>[
+    (AppRole.admin, true),
+    (AppRole.guardian, false),
+    (AppRole.teacher, false),
+  ]) {
+    testWidgets('rubrique Securite : ${cas.$1.name} -> ${cas.$2}', (
+      WidgetTester tester,
+    ) async {
+      final SessionState session = SessionState(
+        resolue: true,
+        role: cas.$1,
+        profileId: 'p-1',
+        accountStatus: AccountStatus.active,
+        lectureProfil: LectureProfil.presente,
+      );
+      await tester.pumpWidget(
+        hote(
+          const ComptePage(),
+          surcharges: <Override>[
+            sourceSessionProvider.overrideWithValue(
+              FausseSourceSession(session),
+            ),
+          ],
+        ),
+      );
+      await tester.pump();
+      expect(
+        find.byKey(const ValueKey<String>('compte-securite')),
+        cas.$2 ? findsOneWidget : findsNothing,
+      );
+    });
+  }
+
   testWidgets('les reglages d un profil enfant menent a sa fiche du Foyer', (
     WidgetTester tester,
   ) async {

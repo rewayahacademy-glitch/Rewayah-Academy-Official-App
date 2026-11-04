@@ -879,6 +879,8 @@ class Traductions$connexion$fr {
 	/// fr: 'Le lien ne peut pas partir pour l'instant. Réessayez quand la connexion sera revenue.'
 	String get horsLigne => 'Le lien ne peut pas partir pour l\'instant. Réessayez quand la connexion sera revenue.';
 
+	late final Traductions$connexion$controle$fr controle = Traductions$connexion$controle$fr.internal(_root);
+
 	/// fr: 'Lien expiré ou jamais reçu ?'
 	String get probleme => 'Lien expiré ou jamais reçu ?';
 
@@ -2249,6 +2251,8 @@ class Traductions$compte$fr {
 
 	/// fr: 'Mettre fin à la session sur cet appareil'
 	String get deconnexionDetail => 'Mettre fin à la session sur cet appareil';
+
+	late final Traductions$compte$doubleVerification$fr doubleVerification = Traductions$compte$doubleVerification$fr.internal(_root);
 
 	/// fr: 'Identifiant'
 	String get identifiant => 'Identifiant';
@@ -4881,6 +4885,27 @@ class Traductions$salle$visiteControle$fr {
 
 	/// fr: 'Réduire le document'
 	String get reduire => 'Réduire le document';
+}
+
+// Path: connexion.controle
+class Traductions$connexion$controle$fr {
+	Traductions$connexion$controle$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vérification de sécurité'
+	String get libelle => 'Vérification de sécurité';
+
+	/// fr: 'Vérification de sécurité en cours.'
+	String get chargement => 'Vérification de sécurité en cours.';
+
+	/// fr: 'La vérification n'a pas abouti. Réessayez.'
+	String get erreur => 'La vérification n\'a pas abouti. Réessayez.';
+
+	/// fr: 'La vérification ne peut pas se faire pour l'instant. Réessayez quand la connexion sera revenue.'
+	String get horsLigne => 'La vérification ne peut pas se faire pour l\'instant. Réessayez quand la connexion sera revenue.';
 }
 
 // Path: connexion.recuperation
@@ -12134,6 +12159,44 @@ class Traductions$compte$donnees$fr {
 
 	late final Traductions$compte$donnees$copie$fr copie = Traductions$compte$donnees$copie$fr.internal(_root);
 	late final Traductions$compte$donnees$suppression$fr suppression = Traductions$compte$donnees$suppression$fr.internal(_root);
+}
+
+// Path: compte.doubleVerification
+class Traductions$compte$doubleVerification$fr {
+	Traductions$compte$doubleVerification$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La double vérification des gestes sensibles de la direction'
+	String get rubriqueDetail => 'La double vérification des gestes sensibles de la direction';
+
+	/// fr: 'Saisir mon code de vérification'
+	String get saisirCode => 'Saisir mon code de vérification';
+
+	/// fr: 'Sécurité'
+	String get titre => 'Sécurité';
+
+	/// fr: 'La double vérification protège les gestes sensibles de la direction : supprimer ou restaurer un compte, traiter une demande de suppression, publier la politique commerciale, importer des formulaires, inviter un comptable.'
+	String get sousTitre => 'La double vérification protège les gestes sensibles de la direction : supprimer ou restaurer un compte, traiter une demande de suppression, publier la politique commerciale, importer des formulaires, inviter un comptable.';
+
+	/// fr: 'Activez la double vérification'
+	String get titreEnrolement => 'Activez la double vérification';
+
+	/// fr: 'Un lien de connexion volé ne doit pas suffire pour supprimer un compte. Ajoutez une seconde étape avec une application d'authentification sur votre téléphone. Vous ne le faites qu'une fois ; le code vous est ensuite demandé au moment d'un geste sensible.'
+	String get introEnrolement => 'Un lien de connexion volé ne doit pas suffire pour supprimer un compte. Ajoutez une seconde étape avec une application d\'authentification sur votre téléphone. Vous ne le faites qu\'une fois ; le code vous est ensuite demandé au moment d\'un geste sensible.';
+
+	/// fr: 'Installez-en une sur votre téléphone, par exemple Google Authenticator, Microsoft Authenticator ou Aegis, puis revenez ici.'
+	String get videPhrase => 'Installez-en une sur votre téléphone, par exemple Google Authenticator, Microsoft Authenticator ou Aegis, puis revenez ici.';
+
+	/// fr: 'La double vérification est activée'
+	String get activeeTitre => 'La double vérification est activée';
+
+	/// fr: 'Le code de votre application d'authentification vous sera demandé au moment d'un geste sensible, une fois par connexion.'
+	String get activeePhrase => 'Le code de votre application d\'authentification vous sera demandé au moment d\'un geste sensible, une fois par connexion.';
+
+	late final Traductions$compte$doubleVerification$feuille$fr feuille = Traductions$compte$doubleVerification$feuille$fr.internal(_root);
 }
 
 // Path: compte.langueCourriels
@@ -23232,8 +23295,8 @@ class Traductions$recrutement$invitations$comptable$fr {
 	/// fr: 'Invitation créée. Transmettez ce code au comptable : {code}'
 	String creee({required Object code}) => 'Invitation créée. Transmettez ce code au comptable : ${code}';
 
-	/// fr: 'Double vérification requise : seule la direction connectée avec sa double vérification peut inviter un comptable ou révoquer son invitation. Reconnectez-vous avec la double vérification, puis réessayez.'
-	String get doubleVerification => 'Double vérification requise : seule la direction connectée avec sa double vérification peut inviter un comptable ou révoquer son invitation. Reconnectez-vous avec la double vérification, puis réessayez.';
+	/// fr: 'Rien n'est parti : inviter un comptable demande la double vérification. Activez-la dans Compte > Sécurité, puis réessayez.'
+	String get doubleVerification => 'Rien n\'est parti : inviter un comptable demande la double vérification. Activez-la dans Compte > Sécurité, puis réessayez.';
 
 	/// fr: 'Invitations de comptables'
 	String get liste => 'Invitations de comptables';
@@ -25238,8 +25301,8 @@ class Traductions$admin$importInscriptions$echec$fr {
 	/// fr: 'L'import n'a pas pu être confirmé : relancez la confirmation dès le retour du réseau. Rien ne sera créé en double.'
 	String get horsLigne => 'L\'import n\'a pas pu être confirmé : relancez la confirmation dès le retour du réseau. Rien ne sera créé en double.';
 
-	/// fr: 'Le serveur refuse cet import. Vérifiez que vous êtes connecté avec la double vérification, puis réessayez.'
-	String get refuse => 'Le serveur refuse cet import. Vérifiez que vous êtes connecté avec la double vérification, puis réessayez.';
+	/// fr: 'Rien n'a été importé : cet import demande la double vérification. Activez-la dans Compte > Sécurité, puis réessayez.'
+	String get refuse => 'Rien n\'a été importé : cet import demande la double vérification. Activez-la dans Compte > Sécurité, puis réessayez.';
 
 	/// fr: 'Le serveur ne peut pas lire ces fichiers. Vérifiez l'en-tête et les guillemets, puis réessayez.'
 	String get invalide => 'Le serveur ne peut pas lire ces fichiers. Vérifiez l\'en-tête et les guillemets, puis réessayez.';
@@ -27430,8 +27493,8 @@ class Traductions$admin$finance$pol$fr {
 	/// fr: 'Publication refusée'
 	String get publicationRefusee => 'Publication refusée';
 
-	/// fr: 'Seule la direction, connectée avec la double vérification, publie les prix. Rien n'a été publié : reconnectez-vous avec votre code de vérification, puis réessayez.'
-	String get publicationRefuseeDetail => 'Seule la direction, connectée avec la double vérification, publie les prix. Rien n\'a été publié : reconnectez-vous avec votre code de vérification, puis réessayez.';
+	/// fr: 'Rien n'a été publié : publier les prix demande la double vérification. Activez-la dans Compte > Sécurité, puis réessayez.'
+	String get publicationRefuseeDetail => 'Rien n\'a été publié : publier les prix demande la double vérification. Activez-la dans Compte > Sécurité, puis réessayez.';
 
 	/// fr: 'Une valeur ne convient pas'
 	String get publicationInvalide => 'Une valeur ne convient pas';
@@ -28584,6 +28647,39 @@ class Traductions$compte$donnees$suppression$fr {
 
 	/// fr: 'Ce compte ne peut pas demander sa suppression ici.'
 	String get refuse => 'Ce compte ne peut pas demander sa suppression ici.';
+}
+
+// Path: compte.doubleVerification.feuille
+class Traductions$compte$doubleVerification$feuille$fr {
+	Traductions$compte$doubleVerification$feuille$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Code de vérification'
+	String get titre => 'Code de vérification';
+
+	/// fr: 'Ce geste demande la double vérification. Ouvrez votre application d'authentification et saisissez le code à six chiffres affiché pour ce compte.'
+	String get intro => 'Ce geste demande la double vérification. Ouvrez votre application d\'authentification et saisissez le code à six chiffres affiché pour ce compte.';
+
+	/// fr: 'Confirmer le code et continuer'
+	String get confirmer => 'Confirmer le code et continuer';
+
+	/// fr: 'Activez d'abord la double vérification'
+	String get aActiverTitre => 'Activez d\'abord la double vérification';
+
+	/// fr: 'Ce geste demande la double vérification. Activez-la une fois dans Compte > Sécurité, puis recommencez le geste.'
+	String get aActiverPhrase => 'Ce geste demande la double vérification. Activez-la une fois dans Compte > Sécurité, puis recommencez le geste.';
+
+	/// fr: 'Ouvrir Compte > Sécurité'
+	String get ouvrirSecurite => 'Ouvrir Compte > Sécurité';
+
+	/// fr: 'Le code n'est pas confirmé : la demande n'est peut-être pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Le code n\'est pas confirmé : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: 'Rien n'est parti : le réseau est absent. Réessayez dès son retour.'
+	String get horsLigne => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.';
 }
 
 // Path: compte.langueCourriels.retour
@@ -44383,6 +44479,10 @@ extension on Traductions {
 			'connexion.inscriptionFermee' => 'Les inscriptions se font pour l\'instant sur invitation. Vous avez proposé votre candidature pour enseigner ? Vous recevrez un courriel personnel de notre part : vous n\'avez rien à faire. Vous êtes une famille ? Les inscriptions rouvrent bientôt.',
 			'connexion.erreurTropTot' => 'Un lien vient déjà de partir. Attendez un moment avant d\'en demander un autre.',
 			'connexion.horsLigne' => 'Le lien ne peut pas partir pour l\'instant. Réessayez quand la connexion sera revenue.',
+			'connexion.controle.libelle' => 'Vérification de sécurité',
+			'connexion.controle.chargement' => 'Vérification de sécurité en cours.',
+			'connexion.controle.erreur' => 'La vérification n\'a pas abouti. Réessayez.',
+			'connexion.controle.horsLigne' => 'La vérification ne peut pas se faire pour l\'instant. Réessayez quand la connexion sera revenue.',
 			'connexion.probleme' => 'Lien expiré ou jamais reçu ?',
 			'connexion.recuperation.titre' => 'Retrouver mon accès',
 			'connexion.recuperation.intro' => 'Il n\'y a pas de mot de passe à réinitialiser : indiquez votre adresse, nous vous envoyons un nouveau lien de connexion.',
@@ -44620,12 +44720,12 @@ extension on Traductions {
 			'accessibilite.coran.demoSansTexte' => 'Le texte du Coran n\'est pas chargé dans la démonstration',
 			'accessibilite.coran.demoSansTexteDetail' => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte. Tu n\'as rien à faire. Dans l\'application, le Coran s\'ouvre ici, à ta page, et tes réglages de lecture restent enregistrés.',
 			'accessibilite.coran.demoSansTexteDetailVous' => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte. Vous n\'avez rien à faire. Dans l\'application, le Coran s\'ouvre ici, à votre page, et vos réglages de lecture restent enregistrés.',
+			_ => null,
+		} ?? switch (path) {
 			'accessibilite.coran.indisponibleDetailVous' => 'Dès que le réseau revient, votre page se rouvre ici.',
 			'accessibilite.coran.absentDetailVous' => 'Le texte n\'a pas été installé sur cette page. Signalez-le : ce n\'est pas vous.',
 			'accessibilite.maClasse.titre' => 'Ma classe',
 			'accessibilite.maClasse.suivi' => 'Mon suivi',
-			_ => null,
-		} ?? switch (path) {
 			'accessibilite.maClasse.suiviDetail' => 'Les séances passées et la présence',
 			'accessibilite.tutoiement.tonHeure' => 'Ton heure',
 			'accessibilite.tutoiement.attenteDetail' => 'Ce temps d\'attente ne compte pas dans ta présence.',
@@ -45134,12 +45234,12 @@ extension on Traductions {
 			'creneaux.ongletEleves' => 'Élèves en attente',
 			'creneaux.aucunEleve' => 'Aucun élève en attente sur vos heures',
 			'creneaux.aucunEleveDetail' => 'Proposez d\'autres heures pour voir plus de familles.',
+			_ => null,
+		} ?? switch (path) {
 			'creneaux.attendUnJour' => 'Attend depuis 1 jour',
 			'creneaux.attendAujourdhui' => 'Demande déposée aujourd\'hui',
 			'creneaux.niveau' => ({required Object niveau}) => 'Niveau ${niveau}',
 			'creneaux.prendre' => ({required Object jour, required Object heure}) => 'Prendre ${jour} à ${heure} h',
-			_ => null,
-		} ?? switch (path) {
 			'creneaux.priseEnCours' => 'Enregistrement',
 			'creneaux.plafondDemander' => 'Demander à suivre plus d\'élèves',
 			'creneaux.demandeTitre' => 'Combien d\'élèves pouvez-vous suivre ?',
@@ -45280,7 +45380,7 @@ extension on Traductions {
 			'recrutement.invitations.comptable.comptableExplication' => 'Il suit les paiements, les encaissements et la trésorerie. Il n\'anime aucune classe.',
 			'recrutement.invitations.comptable.champEmail' => 'Adresse de courriel du comptable',
 			'recrutement.invitations.comptable.creee' => ({required Object code}) => 'Invitation créée. Transmettez ce code au comptable : ${code}',
-			'recrutement.invitations.comptable.doubleVerification' => 'Double vérification requise : seule la direction connectée avec sa double vérification peut inviter un comptable ou révoquer son invitation. Reconnectez-vous avec la double vérification, puis réessayez.',
+			'recrutement.invitations.comptable.doubleVerification' => 'Rien n\'est parti : inviter un comptable demande la double vérification. Activez-la dans Compte > Sécurité, puis réessayez.',
 			'recrutement.invitations.comptable.liste' => 'Invitations de comptables',
 			'recrutement.invitations.comptable.vide' => 'Aucune invitation de comptable pour le moment',
 			'recrutement.invitations.comptable.videDetail' => 'Invitez un comptable avec son adresse e-mail : le code apparaît ici.',
@@ -45648,12 +45748,12 @@ extension on Traductions {
 			'recrutement.parcours.q.riwayat.options.ibn_dhakwan.description' => 'Transmise d\'après Ibn Amir',
 			'recrutement.parcours.q.riwayat.options.khalaf_an_hamza.libelle' => 'Khalaf (Hamza)',
 			'recrutement.parcours.q.riwayat.options.khalaf_an_hamza.description' => 'Transmise d\'après Hamza',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.khallad.libelle' => 'Khallad',
 			'recrutement.parcours.q.riwayat.options.khallad.description' => 'Transmise d\'après Hamza',
 			'recrutement.parcours.q.riwayat.options.abu_al_harith.libelle' => 'Abu al-Harith',
 			'recrutement.parcours.q.riwayat.options.abu_al_harith.description' => 'Transmise d\'après Al-Kisai',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.ad_duri_al_kisai.libelle' => 'Ad-Duri (Al-Kisai)',
 			'recrutement.parcours.q.riwayat.options.ad_duri_al_kisai.description' => 'Transmise d\'après Al-Kisai',
 			'recrutement.parcours.q.riwayat.options.ibn_wardan.libelle' => 'Ibn Wardan',
@@ -46162,12 +46262,12 @@ extension on Traductions {
 			'admin.candidatures.etats.provenance.formulairesImportes' => 'Formulaires importés',
 			'admin.candidatures.etats.versement.inconnu' => 'Aucun moyen déclaré',
 			'admin.candidatures.etats.versement.aVerifier' => 'À vérifier',
+			_ => null,
+		} ?? switch (path) {
 			'admin.candidatures.etats.versement.compatible' => 'Confirmé',
 			'admin.candidatures.etats.versement.incompatible' => 'Aucun moyen possible',
 			'admin.candidatures.detail.retour' => 'Retour aux candidatures',
 			'admin.candidatures.detail.recue' => ({required Object date}) => 'Reçue le ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.candidatures.detail.provenance' => ({required Object provenance}) => 'Provenance : ${provenance}',
 			'admin.candidatures.detail.messagePause' => ({required Object nom}) => 'Message choisi pour la pause : ${nom}',
 			'admin.candidatures.detail.messageRefus' => ({required Object nom}) => 'Message choisi pour le refus : ${nom}',
@@ -46453,7 +46553,7 @@ extension on Traductions {
 			'admin.importInscriptions.resultat.refusAide' => 'Ces lignes n\'ont pas été importées. Corrigez le fichier, puis rejouez l\'import : les personnes déjà présentes ne sont pas recréées.',
 			'admin.importInscriptions.resultat.recommencer' => 'Importer d\'autres fichiers',
 			'admin.importInscriptions.echec.horsLigne' => 'L\'import n\'a pas pu être confirmé : relancez la confirmation dès le retour du réseau. Rien ne sera créé en double.',
-			'admin.importInscriptions.echec.refuse' => 'Le serveur refuse cet import. Vérifiez que vous êtes connecté avec la double vérification, puis réessayez.',
+			'admin.importInscriptions.echec.refuse' => 'Rien n\'a été importé : cet import demande la double vérification. Activez-la dans Compte > Sécurité, puis réessayez.',
 			'admin.importInscriptions.echec.invalide' => 'Le serveur ne peut pas lire ces fichiers. Vérifiez l\'en-tête et les guillemets, puis réessayez.',
 			'admin.importInscriptions.echec.serveur' => 'L\'import n\'a pas pu être confirmé. Réessayez : rien ne sera créé en double.',
 			'admin.importInscriptions.echec.apercu' => 'L\'essai à blanc du serveur n\'a pas abouti. Réessayez dans un instant.',
@@ -46676,12 +46776,12 @@ extension on Traductions {
 			'admin.groupes.c1.fuseauDefaut' => ({required Object deVille}) => 'Heures à l\'heure ${deVille}, le fuseau retenu par défaut.',
 			'admin.groupes.c1.fuseauNonTransmis' => ({required Object deVille}) => 'Heures à l\'heure ${deVille}, le fuseau que le serveur retient pour l\'instant. Le fuseau de l\'enseignant sera pris en compte dès que le serveur l\'acceptera.',
 			'admin.groupes.c1.abandonQuestion' => 'Abandonner la nouvelle classe ?',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.c1.abandonConsequence' => 'Les choix faits dans ce formulaire (public, enseignant, créneaux, nom) seront perdus.',
 			'admin.groupes.c1.abandonConfirmer' => 'Abandonner la nouvelle classe',
 			'admin.groupes.c1.abandonContinuer' => 'Continuer la saisie',
 			'admin.groupes.c1.eleveDejaEnClasse' => 'cet élève est déjà dans une classe active. Retirez-le d\'abord de cette classe, ou transférez-le, puis pressez de nouveau.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.c1.eleveInvalide' => 'le compte de cet élève n\'existe plus ou n\'est pas actif. Choisissez un autre élève dans la liste.',
 			'admin.groupes.c1.eleveNonMembre' => 'cet élève n\'est déjà plus dans cette classe. Rechargez la liste pour voir ses membres.',
 			'admin.groupes.c1.classeDejaClose' => 'cette classe est déjà clôturée. Rechargez la liste des classes.',
@@ -47190,12 +47290,12 @@ extension on Traductions {
 			'admin.regles.remplacementBornesAvertissement' => ({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début. Pour aller au-delà de ${max}, relevez d\'abord la perte de la séance.',
 			'admin.regles.remplacementBornesPerte' => ({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début. Pour descendre sous ${min}, baissez d\'abord l\'avertissement. Pour aller au-delà de ${max}, relevez d\'abord l\'objectif.',
 			'admin.regles.remplacementBornesObjectif' => ({required Object min}) => 'Au moins ${min} après le début. Pour descendre sous ${min}, baissez d\'abord la perte de la séance.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regles.remplacementOrdreRefuse' => 'L\'ordre des délais n\'est plus respecté : un autre réglage a changé entre-temps. Fermez cette fenêtre, puis rouvrez la ligne pour voir les valeurs à jour.',
 			'admin.fonctionnalites.titre' => 'Fonctionnalités',
 			'admin.fonctionnalites.intro' => 'Les fonctionnalités qui changent le comportement de toute la plateforme.',
 			'admin.fonctionnalites.erreur' => 'Les fonctionnalités n\'ont pas pu être lues. Réessayez dans un instant.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.fonctionnalites.erreurEcriture' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
 			'admin.fonctionnalites.valeurInvalide' => 'Entrez un nombre valide.',
 			'admin.fonctionnalites.envoyer' => 'Enregistrer',
@@ -47704,12 +47804,12 @@ extension on Traductions {
 			'admin.agents.termine' => 'J\'ai copié le lien',
 			'admin.agents.erreurEmission' => 'Le jeton n\'a pas pu être émis. Réessayez dans un instant.',
 			'admin.agents.colonneLibelle' => 'Jeton',
+			_ => null,
+		} ?? switch (path) {
 			'admin.agents.colonneQui' => 'Observe',
 			'admin.agents.colonneParcours' => 'Parcours',
 			'admin.agents.colonneIdentite' => 'Prénoms',
 			'admin.agents.colonneExpire' => 'Jusqu\'à',
-			_ => null,
-		} ?? switch (path) {
 			'admin.agents.colonneUsage' => 'Ouvertures',
 			'admin.agents.colonneEtat' => 'État',
 			'admin.agents.parcoursEleve' => 'Élève',
@@ -47984,7 +48084,7 @@ extension on Traductions {
 			'admin.finance.pol.publicationFaite' => 'Version publiée',
 			'admin.finance.pol.publicationFaiteDetail' => 'Rewayah a enregistré la nouvelle version. Elle s\'appliquera à partir de sa date d\'effet ; d\'ici là, la version active continue de s\'appliquer.',
 			'admin.finance.pol.publicationRefusee' => 'Publication refusée',
-			'admin.finance.pol.publicationRefuseeDetail' => 'Seule la direction, connectée avec la double vérification, publie les prix. Rien n\'a été publié : reconnectez-vous avec votre code de vérification, puis réessayez.',
+			'admin.finance.pol.publicationRefuseeDetail' => 'Rien n\'a été publié : publier les prix demande la double vérification. Activez-la dans Compte > Sécurité, puis réessayez.',
 			'admin.finance.pol.publicationInvalide' => 'Une valeur ne convient pas',
 			'admin.finance.pol.publicationInvalideDetail' => 'Rewayah a refusé cette version : la date d\'effet doit être à venir et après la dernière version, et chaque remise doit rester inférieure au tarif. Rien n\'a été publié : corrigez puis réessayez.',
 			'admin.finance.pol.champsACorriger' => 'Corrigez d\'abord les champs signalés',
@@ -48218,12 +48318,12 @@ extension on Traductions {
 			'admin.incidents.titre' => 'Incidents des 24 dernières heures',
 			'admin.incidents.sousTitre' => 'Les séances passées en incident technique, enseignant absent ou élève absent depuis 24 heures : ce que compte la tuile « Incidents (24 h) ».',
 			'admin.incidents.liste' => 'Séances en incident',
+			_ => null,
+		} ?? switch (path) {
 			'admin.incidents.natureTechnique' => 'Incident technique',
 			'admin.incidents.natureEnseignantAbsent' => 'Enseignant absent',
 			'admin.incidents.natureEleveAbsent' => 'Élève absent',
 			'admin.incidents.survenu' => ({required Object date, required Object heure}) => '${date}, ${heure}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.incidents.vide' => 'Aucun incident depuis 24 heures',
 			'admin.incidents.videDetail' => 'Une séance passée en incident, en absence d\'enseignant ou en absence d\'élève apparaît ici dès qu\'elle change de statut.',
 			'admin.incidents.sansDonnees' => 'Les incidents n\'ont pas pu être chargés',
@@ -48732,12 +48832,12 @@ extension on Traductions {
 			'parcours.introuvableTitre' => 'Ce profil élève est introuvable',
 			'parcours.introuvableDetail' => 'Il a peut-être été retiré du foyer. Revenez au Foyer pour choisir un profil élève.',
 			'parcours.finTitre' => ({required Object prenom}) => 'Préférence enregistrée pour ${prenom}',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.finDetail' => 'Cet horaire est noté comme votre préférence. Il ne réserve pas encore de place.',
 			'parcours.finAjouterDetail' => 'Une autre personne du foyer souhaite apprendre ?',
 			'parcours.finAjouterProfil' => 'Ajouter un profil élève',
 			'parcours.ageQuestion' => ({required Object prenom}) => 'Quel âge a ${prenom} ?',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.ageRaison' => 'L\'âge décide de la durée des séances et du nombre d\'élèves par classe. Nous ne demandons pas de date de naissance : l\'âge en années suffit.',
 			'parcours.ageAide' => 'Choisissez l\'âge en années dans la liste, comme à l\'ajout du profil.',
 			'parcours.ageSansTranche' => 'Aucune classe n\'est prévue pour cet âge pour l\'instant. L\'équipe de l\'académie peut vous orienter.',
@@ -48907,6 +49007,23 @@ extension on Traductions {
 			'compte.habilitation' => 'Habilité',
 			'compte.deconnexion' => 'Se déconnecter',
 			'compte.deconnexionDetail' => 'Mettre fin à la session sur cet appareil',
+			'compte.doubleVerification.rubriqueDetail' => 'La double vérification des gestes sensibles de la direction',
+			'compte.doubleVerification.saisirCode' => 'Saisir mon code de vérification',
+			'compte.doubleVerification.titre' => 'Sécurité',
+			'compte.doubleVerification.sousTitre' => 'La double vérification protège les gestes sensibles de la direction : supprimer ou restaurer un compte, traiter une demande de suppression, publier la politique commerciale, importer des formulaires, inviter un comptable.',
+			'compte.doubleVerification.titreEnrolement' => 'Activez la double vérification',
+			'compte.doubleVerification.introEnrolement' => 'Un lien de connexion volé ne doit pas suffire pour supprimer un compte. Ajoutez une seconde étape avec une application d\'authentification sur votre téléphone. Vous ne le faites qu\'une fois ; le code vous est ensuite demandé au moment d\'un geste sensible.',
+			'compte.doubleVerification.videPhrase' => 'Installez-en une sur votre téléphone, par exemple Google Authenticator, Microsoft Authenticator ou Aegis, puis revenez ici.',
+			'compte.doubleVerification.activeeTitre' => 'La double vérification est activée',
+			'compte.doubleVerification.activeePhrase' => 'Le code de votre application d\'authentification vous sera demandé au moment d\'un geste sensible, une fois par connexion.',
+			'compte.doubleVerification.feuille.titre' => 'Code de vérification',
+			'compte.doubleVerification.feuille.intro' => 'Ce geste demande la double vérification. Ouvrez votre application d\'authentification et saisissez le code à six chiffres affiché pour ce compte.',
+			'compte.doubleVerification.feuille.confirmer' => 'Confirmer le code et continuer',
+			'compte.doubleVerification.feuille.aActiverTitre' => 'Activez d\'abord la double vérification',
+			'compte.doubleVerification.feuille.aActiverPhrase' => 'Ce geste demande la double vérification. Activez-la une fois dans Compte > Sécurité, puis recommencez le geste.',
+			'compte.doubleVerification.feuille.ouvrirSecurite' => 'Ouvrir Compte > Sécurité',
+			'compte.doubleVerification.feuille.erreur' => 'Le code n\'est pas confirmé : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'compte.doubleVerification.feuille.horsLigne' => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.',
 			'compte.identifiant' => 'Identifiant',
 			'compte.nonDisponible' => 'Non disponible',
 			'compte.contact' => 'Contact',
@@ -49229,6 +49346,8 @@ extension on Traductions {
 			'notifications.evenements.demandeRecue' => 'Une nouvelle demande de créneau a été reçue.',
 			'notifications.evenements.demandePresentation' => 'Une demande de présentation standard a été reçue.',
 			'notifications.evenements.classeValidee' => 'La classe est prête et attend son enseignant.',
+			_ => null,
+		} ?? switch (path) {
 			'notifications.evenements.enseignantAffecte' => 'Un enseignant a été affecté à la classe.',
 			'notifications.evenements.demandeClose' => 'Une demande de créneau a été clôturée.',
 			'notifications.evenements.remplacementPropose' => 'Un remplacement de cours vous est proposé.',
@@ -49250,8 +49369,6 @@ extension on Traductions {
 			'notifications.evenements.litigeClosPerdu' => 'La contestation est close : le paiement est remboursé, les frais vont au solde du foyer.',
 			'notifications.evenements.litigeClosDirection' => 'Une contestation de paiement est close.',
 			'notifications.evenements.enseignantAffecteSoi' => 'Un enseignant a été affecté à votre classe.',
-			_ => null,
-		} ?? switch (path) {
 			'notifications.evenements.enseignantAffecteClasse' => 'Une classe vous est confiée.',
 			'notifications.evenements.remplacementPrisQuand' => ({required Object quand}) => 'La séance du ${quand} sera assurée par un enseignant remplaçant.',
 			'notifications.evenements.classeCreee' => 'Une classe vient d\'être créée.',
@@ -49743,6 +49860,8 @@ extension on Traductions {
 			'enseignant.classes.videDetail' => 'Les Classes confirmées apparaîtront ici.',
 			'enseignant.classes.erreur' => 'Vos Classes n\'ont pas pu être lues. Réessayez dans un instant.',
 			'enseignant.classes.chargement' => 'Chargement de vos Classes.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.classes.niveau' => ({required Object niveau}) => 'Niveau ${niveau}',
 			'enseignant.classes.eleveUn' => '1 élève',
 			'enseignant.classes.prochaine' => ({required Object jour, required Object heure}) => 'Prochaine séance : ${jour} à ${heure}',
@@ -49764,8 +49883,6 @@ extension on Traductions {
 			'enseignant.eleve.niveau' => 'Niveau',
 			'enseignant.eleve.objectif' => 'Objectif',
 			'enseignant.eleve.presence' => 'Présence récente',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.eleve.travail' => 'Travail',
 			'enseignant.eleve.travailReprise' => ({required Object page}) => 'Reprise à la ${page}',
 			'enseignant.eleve.derniereSeance' => 'Dernière séance',
@@ -50257,6 +50374,8 @@ extension on Traductions {
 			'enseignant.ficheGroupe.pause.etatActif' => 'Programmée',
 			'enseignant.ficheGroupe.pause.etatInactif' => 'Aucune pause',
 			'enseignant.ficheGroupe.pause.moment' => 'Moment de la pause',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.ficheGroupe.pause.momentAide' => 'Minutes après le début de la séance.',
 			'enseignant.ficheGroupe.pause.duree' => 'Durée de la pause',
 			'enseignant.ficheGroupe.pause.resume' => ({required Object duree, required Object moment}) => 'Pause de ${duree} min, ${moment} min après le début.',
@@ -50278,8 +50397,6 @@ extension on Traductions {
 			'enseignant.revue.typeCorridor' => 'Élève hors corridor',
 			'enseignant.revue.typeTransfert' => 'Proposition de transfert',
 			'enseignant.revue.typeReorientation' => 'Proposition de réorientation',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.revenus.titre' => 'Revenus estimés',
 			'enseignant.revenus.intro' => 'Une estimation de votre rémunération du mois choisi, Classe par Classe.',
 			'enseignant.revenus.introSansChoix' => 'Une estimation de votre rémunération du mois en cours, Classe par Classe.',
@@ -50771,6 +50888,8 @@ extension on Traductions {
 			'tc.outils.revision.groupeEntier' => 'Toute la classe',
 			'tc.outils.revision.consigne' => 'Consigne courte (facultatif)',
 			'tc.outils.revision.creer' => 'Poser le travail',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.revision.posee' => 'Travail à préparer posé',
 			'tc.outils.masquer.reveler' => 'Révéler',
 			'tc.outils.masquer.refermer' => 'Masquer de nouveau',
@@ -50792,8 +50911,6 @@ extension on Traductions {
 			'tc.classe.etat.inconnu' => 'Présence pas encore connue',
 			'tc.classe.etat.attendu' => 'Attendu',
 			'tc.classe.etat.enConnexion' => 'En connexion',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.etat.present' => 'Présent',
 			'tc.classe.etat.enRetard' => 'En retard',
 			'tc.classe.etat.deconnecte' => 'Déconnecté',
@@ -51285,6 +51402,8 @@ extension on Traductions {
 			'adulte.acceptation.pourquoiLui' => ({required Object prenom}) => '${prenom} gère le foyer et paie pour ses membres. Pour payer vos cours, il doit voir votre solde.',
 			'adulte.acceptation.verraTitre' => ({required Object quePrenom}) => 'Ce ${quePrenom} verra',
 			'adulte.acceptation.verraElle' => 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L\'offre qui vous concerne. L\'état de votre accès, s\'il empêche de payer. Elle saura aussi si vous quittez le forfait famille.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.acceptation.verraLui' => 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L\'offre qui vous concerne. L\'état de votre accès, s\'il empêche de payer. Il saura aussi si vous quittez le forfait famille.',
 			'adulte.acceptation.verraPasTitre' => ({required Object quePrenom}) => 'Ce ${quePrenom} ne verra pas',
 			'adulte.acceptation.verraPas' => 'Votre Classe. Votre niveau. Vos séances et votre présence. Vos progrès. Vos messages. Vos notifications. Vos moyens de paiement personnels. Vos pièces d\'identité.',
@@ -51306,8 +51425,6 @@ extension on Traductions {
 			'adulte.acceptation.acceptationEchecTitre' => 'L\'acceptation n\'a pas été confirmée.',
 			'adulte.acceptation.refusEchecTitre' => 'Le refus n\'a pas été confirmé.',
 			'adulte.acceptation.echecPhrase' => 'Vérifiez avant de réessayer.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.acceptation.accepteeTitre' => 'Invitation acceptée',
 			'adulte.acceptation.rejoint' => ({required Object dePrenom}) => 'Vous avez rejoint le forfait famille ${dePrenom}.',
 			'adulte.acceptation.refuseeTitre' => 'Invitation refusée',
@@ -51799,6 +51916,8 @@ extension on Traductions {
 			'argent.soldes.aPayer' => 'À payer ce mois',
 			'argent.soldes.profilsFinances' => 'Profils financés',
 			'argent.soldes.profilsFinancesValeur' => ({required Object n, required Object total}) => '${n} sur ${total}',
+			_ => null,
+		} ?? switch (path) {
 			'argent.soldes.paiements' => 'Paiements du mois',
 			'argent.acces.enfantTitre' => 'Accès à cette classe temporairement indisponible',
 			'argent.acces.enfantMessage' => 'Ton tuteur peut gérer l\'accès.',
@@ -51820,8 +51939,6 @@ extension on Traductions {
 			'argent.acces.reactiveTuteurSansDate' => ({required Object prenom}) => '${prenom} peut de nouveau rejoindre ses séances.',
 			'argent.acces.reactiveAdulte' => ({required Object date}) => 'Vous pouvez de nouveau rejoindre vos séances depuis le ${date}.',
 			'argent.acces.reactiveAdulteSansDate' => 'Vous pouvez de nouveau rejoindre vos séances.',
-			_ => null,
-		} ?? switch (path) {
 			'argent.acces.suspenduPaiementTuteur' => ({required Object prenom}) => 'Le paiement du mois n\'est pas reçu. ${prenom} ne peut plus rejoindre ses séances. Son espace reste ouvert pour voir son profil, son historique et payer.',
 			'argent.acces.suspenduPaiementAdulte' => 'Le paiement du mois n\'est pas reçu. Vous ne pouvez plus rejoindre vos séances. Votre espace reste ouvert pour voir votre profil, votre historique et payer.',
 			'argent.acces.pastilleSuspendu' => 'Suspendu',
@@ -52313,6 +52430,8 @@ extension on Traductions {
 			'com.studio.aujourdhui.seTraiteDans' => ({required Object module}) => 'Se traite dans ${module}',
 			'com.studio.aujourdhui.ouvrirDans' => ({required Object module, required Object libelle}) => 'Ouvrir dans ${module} : ${libelle}',
 			'com.studio.aujourdhui.modules.studio' => _root.com.socle.lexique.studio,
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.aujourdhui.modules.finance' => 'Finance',
 			'com.studio.aujourdhui.modules.planning' => 'Planning',
 			'com.studio.aujourdhui.modules.dossiers' => 'Dossiers',
@@ -52334,8 +52453,6 @@ extension on Traductions {
 			'com.studio.brouillons.detail' => 'Les messages commencés dans un canal et pas encore envoyés. Ils restent sur cet appareil le temps de la session, sans synchronisation.',
 			'com.studio.brouillons.dansCanal' => ({required Object nom}) => 'Brouillon dans ${nom}',
 			'com.studio.brouillons.canalInconnu' => 'Brouillon dans un canal',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.brouillons.canalIndisponible' => 'Brouillon dans un canal qui n\'est plus disponible',
 			'com.studio.brouillons.modifie' => ({required Object moment}) => 'Modifié le ${moment}',
 			'com.studio.brouillons.reprendre' => ({required Object nom}) => 'Reprendre le brouillon dans ${nom}',
@@ -52827,6 +52944,8 @@ extension on Traductions {
 			'comptable.statuts.reserve.mouvementSensible' => 'Mouvement sensible',
 			'comptable.statuts.obligation.brouillon' => 'Brouillon',
 			'comptable.statuts.obligation.aApprouver' => 'À approuver',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.obligation.approuvee' => 'Approuvée',
 			'comptable.statuts.obligation.refusee' => 'Refusée',
 			'comptable.statuts.obligation.payable' => 'Payable',
@@ -52848,8 +52967,6 @@ extension on Traductions {
 			'comptable.statuts.raison.fournisseurIndisponible' => 'Fournisseur indisponible',
 			'comptable.statuts.raison.fondsInsuffisants' => 'Fonds insuffisants',
 			'comptable.statuts.raison.doublonPotentiel' => 'Doublon potentiel',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.statuts.raison.nonApprouvee' => 'Obligation non approuvée',
 			'comptable.statuts.raison.capaciteAbsente' => 'Capacité absente',
 			'comptable.statuts.raison.delegationsSuspendues' => 'Délégations suspendues par la direction',
@@ -53341,6 +53458,8 @@ extension on Traductions {
 			'comptable.contractuels.colonneBeneficiaire' => 'Bénéficiaire',
 			'comptable.contractuels.colonneObjet' => 'Objet',
 			'comptable.contractuels.colonneMontant' => 'Montant',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.colonneEcheance' => 'Échéance',
 			'comptable.contractuels.colonneStatut' => 'Statut',
 			'comptable.contractuels.typeRecurrente' => 'Récurrente',
@@ -53362,8 +53481,6 @@ extension on Traductions {
 			'comptable.contractuels.montantDefini' => 'Montant défini à la création, figé après approbation.',
 			'comptable.contractuels.montantFige' => 'Montant figé à l\'approbation : il ne se modifie plus.',
 			'comptable.contractuels.montantTitre' => 'Montant',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.sectionLignes' => 'Détail du montant',
 			'comptable.contractuels.sectionInfos' => 'Informations',
 			'comptable.contractuels.sectionHistorique' => 'Historique de l\'obligation',
@@ -53855,6 +53972,8 @@ extension on Traductions {
 			'juridique.conditions.s6.titre' => '6. Vos informations',
 			'juridique.conditions.s6.blocs.0' => 'La façon dont nous utilisons vos informations est expliquée dans le texte Confidentialité.',
 			'juridique.conditions.s7.titre' => '7. Droit applicable',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.conditions.s7.blocs.0' => 'Cette partie précise la loi qui s\'applique et le tribunal compétent.',
 			'juridique.annulation.titre' => 'Annulation et remboursement',
 			'juridique.annulation.resume' => 'Arrêter, être remboursé, et ce qui se passe si un paiement n\'arrive pas.',
@@ -53876,8 +53995,6 @@ extension on Traductions {
 			'juridique.annulation.s4.titre' => '4. Paiement en retard',
 			'juridique.annulation.s4.blocs.0' => 'Avant le renouvellement, vous recevez des rappels automatiques.',
 			'juridique.annulation.s4.blocs.1' => 'Après la date de renouvellement, un court délai de grâce s\'applique : l\'élève suit ses cours et l\'impayé s\'affiche chez le tuteur.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.annulation.s4.blocs.2' => 'Si le paiement n\'arrive toujours pas, l\'accès aux séances et aux ressources est suspendu. L\'espace reste ouvert pour voir le profil, l\'historique et payer. La place est gardée quelque temps.',
 			'juridique.annulation.s4.blocs.3' => 'Ensuite, la place est libérée pour la liste d\'attente. Le retour reste possible sans frais, dans une nouvelle Classe.',
 			'juridique.annulation.s4.blocs.4' => 'Les dates exactes sont celles de la politique tarifaire en vigueur (page Tarifs).',
@@ -54369,6 +54486,8 @@ extension on Traductions {
 			'd1ter.notifications.messageSoi' => 'La direction vous a transmis un message.',
 			'snt.regles.nonTenue' => 'Séance non tenue',
 			'snt.regles.nonTenueDetail' => 'Si aucun enseignant n\'a rejoint la salle à ce délai, la séance est reportée : la classe est prévenue et la direction fixe la nouvelle date dans le planning.',
+			_ => null,
+		} ?? switch (path) {
 			'snt.regles.bornesNonTenue' => ({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début.',
 			'snt.regles.bornesObjectif' => ({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début. Pour aller au-delà de ${max}, allongez d\'abord la séance non tenue.',
 			'snt.notifications.seanceReportee' => 'Une séance n\'a pas eu lieu : elle est reportée. Nouvelle date à venir.',
@@ -54390,8 +54509,6 @@ extension on Traductions {
 			'snt.planning.heureAppareil' => 'À l\'heure de cet appareil.',
 			'snt.planning.quand' => ({required Object jour, required Object heure}) => '${jour} à ${heure}',
 			'snt.planning.choixManquant' => 'Choisissez le jour et l\'heure de la nouvelle séance.',
-			_ => null,
-		} ?? switch (path) {
 			'snt.planning.confirmer' => 'Fixer cette date',
 			'snt.planning.horsLigne' => 'Connexion absente : la date sera fixée une fois l\'appareil reconnecté.',
 			'snt.planning.fixee' => ({required Object quand}) => 'Nouvelle date fixée : ${quand}. La classe est prévenue.',

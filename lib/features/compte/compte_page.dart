@@ -88,6 +88,16 @@ class ComptePage extends ConsumerWidget {
                 icon: AppIcons.reglages,
                 onPress: () => context.push(Routes.compteReglages),
               ),
+              // MFA-DIRECTION : la double verification de la direction
+              // (capacite de la session, jamais le role).
+              if (session.peutActiverDoubleVerification)
+                SettingRow(
+                  key: const ValueKey<String>('compte-securite'),
+                  title: t.compte.securite,
+                  description: t.compte.doubleVerification.rubriqueDetail,
+                  icon: AppIcons.verrou,
+                  onPress: () => context.push(Routes.compteSecurite),
+                ),
               // BIBLIO-LECTURE : la Bibliotheque se rejoint depuis la navigation,
               // pas seulement par une adresse (eleve, tuteur, adulte eleve
               // autonome ; capacite de la session, jamais le role).
