@@ -152,6 +152,7 @@ import '../../features/compte/aide_page.dart';
 import '../../features/compte/apparence_page.dart';
 import '../../features/compte/compte_page.dart';
 import '../../features/compte/compte_tuteur_page.dart';
+import '../../features/compte/double_verification_page.dart';
 import '../../features/compte/espaces_compte.dart';
 import '../../features/compte/informations_legales_page.dart';
 import '../../features/compte/informations_page.dart';
@@ -659,6 +660,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.compteLangueCourriels,
         builder: (BuildContext _, GoRouterState _) =>
             const _CoquilleSecondaire(child: LangueCourrielsPage()),
+      ),
+      GoRoute(
+        path: Routes.compteSecurite,
+        builder: (BuildContext _, GoRouterState _) =>
+            const _CoquilleSecondaire(child: DoubleVerificationPage()),
       ),
       GoRoute(
         path: Routes.compteMesDonnees,
