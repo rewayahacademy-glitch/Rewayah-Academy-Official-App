@@ -18595,8 +18595,8 @@ class _Traductions$admin$candidatures$entretien$refus$ar extends Traductions$adm
 	@override String get debut => 'اختر موعدًا بعد خمس دقائق على الأقل من الآن، خلال الأيام التسعين القادمة.';
 	@override String get duree => 'تتراوح المدة بين 15 و120 دقيقة.';
 	@override String get tropNombreux => 'اثنا عشر مشاركًا على الأكثر.';
-	@override String get nonAutorise => 'أحد المختارين ليس عضوًا نشطًا في الفريق.';
-	@override String get autreCote => 'أحد المختارين ليس من جانب هذا الترشح.';
+	@override String get nonAutorise => 'شخص مختار ليس عضوًا نشطًا في الفريق.';
+	@override String get autreCote => 'شخص مختار ليس من جانب هذا الترشح.';
 	@override String get sansCompte => 'ليس للمترشح حساب بعد: لا يمكن تحديد موعد المقابلة.';
 	@override String get dejaPlanifie => 'هناك مقابلة محدَّدة بالفعل لهذا الترشح.';
 	@override String get consigne => 'سُجّلت نتيجة هذه المقابلة: لم تعد تتغيّر.';
@@ -24644,8 +24644,8 @@ extension on TraductionsAr {
 			'admin.candidatures.entretien.refus.debut' => 'اختر موعدًا بعد خمس دقائق على الأقل من الآن، خلال الأيام التسعين القادمة.',
 			'admin.candidatures.entretien.refus.duree' => 'تتراوح المدة بين 15 و120 دقيقة.',
 			'admin.candidatures.entretien.refus.tropNombreux' => 'اثنا عشر مشاركًا على الأكثر.',
-			'admin.candidatures.entretien.refus.nonAutorise' => 'أحد المختارين ليس عضوًا نشطًا في الفريق.',
-			'admin.candidatures.entretien.refus.autreCote' => 'أحد المختارين ليس من جانب هذا الترشح.',
+			'admin.candidatures.entretien.refus.nonAutorise' => 'شخص مختار ليس عضوًا نشطًا في الفريق.',
+			'admin.candidatures.entretien.refus.autreCote' => 'شخص مختار ليس من جانب هذا الترشح.',
 			'admin.candidatures.entretien.refus.sansCompte' => 'ليس للمترشح حساب بعد: لا يمكن تحديد موعد المقابلة.',
 			'admin.candidatures.entretien.refus.dejaPlanifie' => 'هناك مقابلة محدَّدة بالفعل لهذا الترشح.',
 			'admin.candidatures.entretien.refus.consigne' => 'سُجّلت نتيجة هذه المقابلة: لم تعد تتغيّر.',
