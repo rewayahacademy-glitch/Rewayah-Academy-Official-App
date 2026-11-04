@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/accessibilite/mode_accessibilite.dart';
-
 import '../../core/appairage/service_avatar.dart';
+import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/photos/photo_personne.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -79,11 +78,16 @@ class _LienMaPhotoState extends ConsumerState<LienMaPhoto> {
     // PHOTOS-2b (fiche §11, « Qui pose la photo ») : l'enfant en Interface
     // guidee ne change pas sa photo. Aucune capacite « poser sa photo »
     // n'existe cote client : la capacite d'Interface guidee en tient lieu
-    // (un widget lit une capacite, jamais un role). Le serveur refuse de
-    // toute facon `poser_ma_photo` a un eleve mineur (`photo_adulte`).
-    if (ref.watch(modeAccessibiliteActifProvider)) {
-      return const SizedBox.shrink();
-    }
+    // (un widget lit une capacite, jamais un role), lue dans la session
+    // (`interfaceMode`, celle que lit `accessibiliteProvider`). Le serveur
+    // refuse de toute facon `poser_ma_photo` a un eleve mineur
+    // (`photo_adulte`).
+    final bool interfaceGuidee = ref.watch(
+      sessionProvider.select(
+        (SessionState e) => e.interfaceMode == InterfaceMode.enfant,
+      ),
+    );
+    if (interfaceGuidee) return const SizedBox.shrink();
     final AppPalette palette = AppPalette.of(context);
     final TextStyle corps =
         Theme.of(context).textTheme.bodyMedium ?? const TextStyle();
