@@ -479,14 +479,16 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
                 onPress: () => unawaited(_entreeEleve()),
               ),
             ],
-            Row(
+            // Sur une ligne quand elle tient ; a texte agrandi, le second lien
+            // passe dessous plutot que de deborder.
+            Wrap(
+              spacing: AppSpacing.lg,
               children: <Widget>[
                 LienPied(
                   cibleReduite: true,
                   libelle: t.juridique.titre,
                   onPress: () => GoRouter.of(context).push(Routes.juridique),
                 ),
-                Ecart.hLg,
                 // Le consentement (pilote, 03/11/2026, voie a) : la page de
                 // confidentialite, ou ira la phrase sur la verification de
                 // securite une fois validee par le directeur.

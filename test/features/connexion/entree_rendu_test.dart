@@ -124,48 +124,40 @@ void main() {
                   expect(image.center.dx, greaterThan(vue.width / 2));
                   expect(champ.center.dx, lessThan(vue.width / 2));
                 }
-                // Le bouton plein a la largeur de son contenu, au bord de fin.
-                expect(
-                  tester.widget<ActionPrincipale>(plein).pleineLargeur,
-                  isFalse,
-                );
-                final Rect bouton = tester.getRect(plein);
+                // CONNEXION-ALIGN (fiche du garde-cap, 04/11/2026) : une
+                // rangee de trois boutons egaux, de meme hauteur, aux bords
+                // du champ ; l'eleve, Google, puis le lien au bord de fin.
                 final Rect champ2 = tester.getRect(find.byType(TextField));
-                if (sens == TextDirection.ltr) {
-                  expect(bouton.right, moreOrLessEquals(champ2.right));
-                } else {
-                  expect(bouton.left, moreOrLessEquals(champ2.left));
-                }
-                // Connexion (CONNEXION-UX, 03/11/2026) : le lien au bord de
-                // fin, puis l'appareil d'un eleve et Google sur une rangee au
-                // bord de fin, l'eleve avant Google ; si elle ne tient pas
-                // (police de test tres large, texte agrandi), empiles pleine
-                // largeur.
-                final Finder google = find.widgetWithText(
-                  ActionPrincipale,
-                  t.connexion.avecGoogle,
+                final Rect bouton = tester.getRect(plein);
+                final Finder google = find.byWidgetPredicate(
+                  (Widget w) =>
+                      w is ActionPrincipale &&
+                      w.libelle == t.connexion.avecGoogle,
                 );
                 final Finder eleve = find.byKey(
                   const ValueKey<String>('connexion-appareil-eleve'),
                 );
-                if (google.evaluate().isNotEmpty &&
-                    eleve.evaluate().isNotEmpty) {
-                  final Rect g = tester.getRect(google);
-                  final Rect e = tester.getRect(eleve);
-                  expect(g.top, greaterThanOrEqualTo(bouton.bottom));
-                  if (g.top == e.top) {
-                    expect(g.height, e.height);
-                    if (sens == TextDirection.ltr) {
-                      expect(g.left - e.right, moreOrLessEquals(8));
-                      expect(g.right, moreOrLessEquals(champ2.right));
-                    } else {
-                      expect(e.left - g.right, moreOrLessEquals(8));
-                      expect(g.left, moreOrLessEquals(champ2.left));
-                    }
-                  } else {
-                    expect(g.width, moreOrLessEquals(champ2.width));
-                    expect(e.width, moreOrLessEquals(champ2.width));
-                  }
+                // La recuperation d'acces n'a qu'un bouton : rien a aligner.
+                if (google.evaluate().isEmpty || eleve.evaluate().isEmpty) {
+                  return;
+                }
+                final Rect g = tester.getRect(google);
+                final Rect e = tester.getRect(eleve);
+                for (final Rect r in <Rect>[g, bouton]) {
+                  expect(r.top, moreOrLessEquals(e.top));
+                  expect(r.height, moreOrLessEquals(e.height));
+                  expect(r.width, moreOrLessEquals(e.width, epsilon: 1));
+                }
+                if (sens == TextDirection.ltr) {
+                  expect(e.left, moreOrLessEquals(champ2.left));
+                  expect(bouton.right, moreOrLessEquals(champ2.right));
+                  expect(g.left - e.right, moreOrLessEquals(8));
+                  expect(bouton.left - g.right, moreOrLessEquals(8));
+                } else {
+                  expect(e.right, moreOrLessEquals(champ2.right));
+                  expect(bouton.left, moreOrLessEquals(champ2.left));
+                  expect(e.left - g.right, moreOrLessEquals(8));
+                  expect(g.left - bouton.right, moreOrLessEquals(8));
                 }
               } else {
                 // Telephone : le logo est centre, le bouton pleine largeur.
