@@ -284,7 +284,6 @@ declare
     'poser_regle(uuid,text,integer,text)',
     'prendre_remplacement(uuid,uuid)',
     'preparer_depot_piece_identite(uuid,text)',
-    'presenter_support(uuid,uuid,integer,text,jsonb)',
     'previsualiser_import_inscriptions(text,text)',
     'progression_promouvoir(uuid,uuid,text)',
     'publier_etat_partage(uuid,uuid,uuid,jsonb,jsonb,text,jsonb,jsonb,jsonb,integer)',

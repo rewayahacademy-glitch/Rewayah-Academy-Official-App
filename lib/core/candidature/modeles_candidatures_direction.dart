@@ -36,6 +36,9 @@ class CapacitesCandidatures {
     this.peutImporter = false,
     this.peutMenerEntretien = false,
     this.peutEcrireReferentiel = false,
+    this.peutPoserFondateur = false,
+    this.peutChoisirParticipants = false,
+    this.fondateursExiges,
     this.gestes = const <String, bool>{},
     this.listes = const ListesGestes(),
   });
@@ -57,6 +60,12 @@ class CapacitesCandidatures {
       peutImporter: vrai('peutImporter'),
       peutMenerEntretien: vrai('peutMenerEntretien'),
       peutEcrireReferentiel: vrai('peutEcrireReferentiel'),
+      peutPoserFondateur: vrai('peutPoserFondateur'),
+      peutChoisirParticipants: vrai('peutChoisirParticipants'),
+      fondateursExiges: switch (json['fondateursExiges']) {
+        final int n when n > 0 => n,
+        _ => null,
+      },
       gestes: <String, bool>{
         if (brutGestes is Map)
           for (final MapEntry<Object?, Object?> e in brutGestes.entries)
@@ -91,6 +100,17 @@ class CapacitesCandidatures {
 
   /// `paiement.referentiel.ecrire`.
   final bool peutEcrireReferentiel;
+
+  /// V1-a : la direction active pose la coche « fondateur ».
+  final bool peutPoserFondateur;
+
+  /// V1-a : le lecteur choisit les participants d'un entretien (suit
+  /// `peutDecider`).
+  final bool peutChoisirParticipants;
+
+  /// V1-a : le minimum de fondateurs exige pour planifier un entretien, ou
+  /// `null` quand la regle est desactivee (ou que le lecteur ne decide pas).
+  final int? fondateursExiges;
 
   /// Une capacite par geste, vraie pour ceux que le serveur sait faire. Les
   /// noms sont ceux du serveur ; une cle absente vaut faux.

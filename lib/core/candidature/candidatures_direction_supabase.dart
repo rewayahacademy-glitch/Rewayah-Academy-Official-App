@@ -185,7 +185,7 @@ class CandidaturesDirectionSupabase implements PortCandidaturesDirection {
       throw const GesteNonConfirme();
     }
     final Map<String, dynamic> corps = _objet(brut);
-    _refusDeGeste(corps);
+    refusDeGesteCandidature(corps);
     return ResultatGeste.depuisJson(corps);
   }
 
@@ -341,7 +341,9 @@ void _refusDeLecture(Map<String, dynamic> brut) {
 }
 
 /// Traduit un refus rendu par le serveur pour un geste en exception typee.
-void _refusDeGeste(Map<String, dynamic> brut) {
+/// Public pour les gestes d'entretien (V2-a), qui passent par le meme moteur :
+/// un seul endroit dit les refus du moteur.
+void refusDeGesteCandidature(Map<String, dynamic> brut) {
   final Object? erreur = brut['erreur'];
   if (erreur == null) {
     return;

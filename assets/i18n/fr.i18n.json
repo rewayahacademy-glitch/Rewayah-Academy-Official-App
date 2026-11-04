@@ -3631,6 +3631,82 @@
         "rouvrir": "La candidature est rouverte.",
         "responsable": "Le responsable est enregistré.",
         "rejoue": "Ce geste avait déjà été fait : rien n'a été écrit une seconde fois."
+      },
+      "entretien": {
+        "aucun": "Aucun entretien planifié.",
+        "planifier": "Planifier l'entretien",
+        "quand": "Le {date} à {heure} (heure de cet appareil), pour {duree} min.",
+        "fondateurs": "Fondateurs parmi les participants\u00a0: {n}",
+        "minimum": "Minimum exigé\u00a0: {n}",
+        "regleInactive": "La règle des fondateurs est désactivée.",
+        "fondateur": "Fondateur",
+        "retirerNom": "Retirer \u2068{nom}\u2069",
+        "ajouter": "Ajouter un participant",
+        "comptesRendus": "Comptes rendus",
+        "aucunCompteRendu": "Aucun compte rendu pour l'instant.",
+        "auteurInconnu": "Un participant",
+        "presences": "Entrées et sorties de la salle",
+        "aucunePresence": "Personne n'est encore entré dans la salle.",
+        "entree": "Entrée de \u2068{nom}\u2069 à {heure}",
+        "sortie": "Sortie de \u2068{nom}\u2069 à {heure}",
+        "consigner": "Consigner l'issue",
+        "dernier": "Dernier entretien\u00a0: {date}. {issue}.",
+        "lectureEchec": "L'entretien n'a pas pu être lu.",
+        "avis": {
+          "favorable": "Avis favorable",
+          "reserve": "Avis réservé",
+          "defavorable": "Avis défavorable"
+        },
+        "issues": {
+          "tenu": "Entretien tenu",
+          "annule": "Entretien annulé",
+          "manqueCandidat": "Le candidat était absent",
+          "manqueIntervieweur": "Une personne qui menait l'entretien était absente"
+        },
+        "feuille": {
+          "planifierConsequence": "La personne reçoit la date de l'entretien. Les participants le retrouvent parmi leurs entretiens.",
+          "jourAide": "Dans les 90 prochains jours.",
+          "heureAide": "Heure de cet appareil.",
+          "participantsAide": "Choisissez librement dans le personnel de ce côté.",
+          "fondateursChoisis": "Fondateurs choisis\u00a0: {n}",
+          "jourManquant": "Choisissez un jour.",
+          "heureManquante": "Choisissez une heure.",
+          "dureeManquante": "Choisissez une durée.",
+          "participantsManquants": "Choisissez au moins un participant.",
+          "personnelVide": "Aucun membre du personnel ne peut prendre part à cet entretien.",
+          "personnelEchec": "Le personnel n'a pas pu être lu.",
+          "ajouterConsequence": "Cette personne prend part à l'entretien et le retrouve parmi ses entretiens.",
+          "aucunAAjouter": "Tout le personnel de ce côté prend déjà part à l'entretien.",
+          "personne": "Personne à ajouter",
+          "personneManquante": "Choisissez une personne.",
+          "retirerConsequence": "\u2068{nom}\u2069 ne prendra plus part à cet entretien.",
+          "consignerConsequence": "L'issue est inscrite à l'historique de la candidature et ne change plus.",
+          "issueManquante": "Choisissez l'issue.",
+          "envoyerConsigner": "Consigner"
+        },
+        "refus": {
+          "fondateurs": "Il faut au moins {exiges} fondateurs parmi les participants. Fondateurs choisis\u00a0: {presents}.",
+          "fondateursRetrait": "Il faut au moins {exiges} fondateurs parmi les participants. Après ce retrait, il en resterait {presents}.",
+          "debut": "Choisissez un début au moins 5 minutes après maintenant, dans les 90 prochains jours.",
+          "duree": "La durée va de 15 à 120 minutes.",
+          "tropNombreux": "Douze participants au plus.",
+          "nonAutorise": "Une personne choisie n'est pas un membre actif du personnel.",
+          "autreCote": "Une personne choisie n'est pas du côté de cette candidature.",
+          "sansCompte": "La personne n'a pas encore de compte\u00a0: l'entretien ne peut pas être planifié.",
+          "dejaPlanifie": "Un entretien est déjà planifié pour cette candidature.",
+          "consigne": "Cet entretien est déjà consigné\u00a0: il ne change plus.",
+          "dernier": "L'entretien garde au moins un participant.",
+          "absent": "Cette personne ne prend déjà plus part à l'entretien.",
+          "compteRendu": "«\u00a0Entretien tenu\u00a0» demande au moins un compte rendu d'un participant.",
+          "introuvable": "Cet entretien n'existe plus de ce côté.",
+          "creneauOccupe": "Vous avez déjà une séance ou un entretien qui chevauche cette heure. Choisissez une autre heure."
+        },
+        "retours": {
+          "planifie": "Entretien planifié.",
+          "ajoute": "\u2068{nom}\u2069 prend part à l'entretien.",
+          "retire": "\u2068{nom}\u2069 ne prend plus part à l'entretien.",
+          "consigne": "Issue consignée."
+        }
       }
     },
     "importInscriptions": {
@@ -4601,7 +4677,14 @@
       "remplacementBornesAvertissement": "Entre {min} et {max} après le début. Pour aller au-delà de {max}, relevez d'abord la perte de la séance.",
       "remplacementBornesPerte": "Entre {min} et {max} après le début. Pour descendre sous {min}, baissez d'abord l'avertissement. Pour aller au-delà de {max}, relevez d'abord l'objectif.",
       "remplacementBornesObjectif": "Au moins {min} après le début. Pour descendre sous {min}, baissez d'abord la perte de la séance.",
-      "remplacementOrdreRefuse": "L'ordre des délais n'est plus respecté\u00a0: un autre réglage a changé entre-temps. Fermez cette fenêtre, puis rouvrez la ligne pour voir les valeurs à jour."
+      "remplacementOrdreRefuse": "L'ordre des délais n'est plus respecté\u00a0: un autre réglage a changé entre-temps. Fermez cette fenêtre, puis rouvrez la ligne pour voir les valeurs à jour.",
+      "entretiensSection": "Entretiens",
+      "entretiensIntro": "Les fondateurs se cochent dans les Comptes, vues Direction et Enseignants.",
+      "regleFondateurs": "Exiger des fondateurs",
+      "regleFondateursDetail": "Activée, un entretien ne se planifie pas, et un participant ne se retire pas, avec moins de fondateurs que le minimum.",
+      "fondateursMinimum": "Fondateurs au minimum",
+      "fondateursMinimumDetail": "Le nombre de fondateurs exigé parmi les participants d'un entretien.",
+      "fondateursBornes": "De 1 à 99."
     },
     "fonctionnalites": {
       "titre": "Fonctionnalités",

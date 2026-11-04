@@ -449,4 +449,100 @@ void main() {
       ]);
     });
   });
+
+  group('V2-a : la regle des fondateurs d un entretien', () {
+    const Map<String, Object?> entretiens = <String, Object?>{
+      'entretiens.regle_fondateurs_active': true,
+      'entretiens.fondateurs_minimum': 2,
+    };
+
+    testWidgets('la section montre la regle et le minimum', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        _Config(<String, Object?>{..._toutesLesCles(), ...entretiens}),
+        taille: const Size(1440, 2600),
+      );
+      expect(find.text(t.admin.regles.entretiensSection), findsOneWidget);
+      expect(find.text(t.admin.regles.regleFondateurs), findsOneWidget);
+      expect(find.text(t.admin.regles.fondateursMinimum), findsOneWidget);
+      expect(clesRegles, contains(cleEntretiensRegleFondateurs));
+      expect(clesRegles, contains(cleEntretiensFondateursMinimum));
+    });
+
+    testWidgets('un serveur d avant V1-a : la section ne se montre pas', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        _Config(_toutesLesCles()),
+        taille: const Size(1440, 2400),
+      );
+      expect(find.text(t.admin.regles.entretiensSection), findsNothing);
+    });
+
+    testWidgets('sans A3, la section des entretiens se montre quand meme', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        _Config(<String, Object?>{
+          ..._toutesLesCles(remplacement: null),
+          ...entretiens,
+        }),
+        taille: const Size(1440, 2400),
+      );
+      expect(find.text(t.admin.regles.remplacementSection), findsNothing);
+      expect(find.text(t.admin.regles.entretiensSection), findsOneWidget);
+    });
+
+    testWidgets('desactiver la regle l ecrit sous sa cle', (
+      WidgetTester tester,
+    ) async {
+      final _Config config = _Config(<String, Object?>{
+        ..._toutesLesCles(),
+        ...entretiens,
+      });
+      await _monter(tester, config, taille: const Size(1440, 2600));
+      final Finder interrupteur = find.descendant(
+        of: find
+            .ancestor(
+              of: find.text(t.admin.regles.regleFondateurs),
+              matching: find.byType(Row),
+            )
+            .first,
+        matching: find.byType(Switch),
+      );
+      await tester.ensureVisible(interrupteur);
+      await tester.pump();
+      await tester.tap(interrupteur);
+      await tester.pumpAndSettle();
+      expect(config.ecritures, <(String, Object)>[
+        ('entretiens.regle_fondateurs_active', false),
+      ]);
+    });
+
+    testWidgets('modifier le minimum l ecrit sous sa cle', (
+      WidgetTester tester,
+    ) async {
+      final _Config config = _Config(<String, Object?>{
+        ..._toutesLesCles(),
+        ...entretiens,
+      });
+      await _monter(tester, config, taille: const Size(1440, 2600));
+      final Finder f = find.text(t.admin.regles.fondateursMinimum);
+      await tester.ensureVisible(f);
+      await tester.pump();
+      await tester.tap(f);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(ChoixNombre.clePlus));
+      await tester.pump();
+      await tester.tap(find.text(t.admin.regles.envoyer));
+      await tester.pumpAndSettle();
+      expect(config.ecritures, <(String, Object)>[
+        ('entretiens.fondateurs_minimum', 3),
+      ]);
+    });
+  });
 }
