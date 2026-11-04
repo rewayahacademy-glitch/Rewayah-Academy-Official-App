@@ -21,8 +21,6 @@ import 'package:rewayah_academy/core/enseignant/remplacements_supabase.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/recrutement/invitations_enseignant_supabase.dart';
 import 'package:rewayah_academy/core/recrutement/port_invitations_enseignant.dart';
-import 'package:rewayah_academy/core/tc_bibliotheque/port_support_actif.dart';
-import 'package:rewayah_academy/core/tc_bibliotheque/support_actif_supabase.dart';
 import 'package:rewayah_academy/features/bienvenue_enseignant/prerequis_enseignant_supabase.dart';
 import 'package:rewayah_academy/features/notifications/contenu_notification.dart';
 
@@ -288,41 +286,6 @@ void main() {
       resultatInvitationJson(<String, dynamic>{'resultat': 'inconnue'}),
       isA<InvitationInconnue>(),
     );
-  });
-
-  test('support actif : presentation, refus, conflit et absence', () {
-    final ResultatActivation faite = resultatActivationJson(<String, dynamic>{
-      'statut': 'faite',
-      'actif': <String, dynamic>{
-        'resource_id': 'r1',
-        'titre': 'Tajwid',
-        'type': 'pdf',
-        'revision': 2,
-        'numero_version': 1,
-        'position': <String, dynamic>{
-          'resource_id': 'r1',
-          'type_ancrage': 'page',
-          'page': 3,
-          'resource_version_id': 'v1',
-        },
-        'retire': false,
-      },
-    });
-    final SupportActif actif = (faite as ActivationFaite).actif;
-    expect(actif.type, TypeRessource.pdf);
-    expect(actif.position?.page, 3);
-    expect(
-      (resultatActivationJson(<String, dynamic>{
-        'statut': 'refusee',
-        'raison': 'droits_echus',
-      }) as ActivationRefusee).raison,
-      RefusActivation.droitsEchus,
-    );
-    expect(
-      resultatActivationJson(<String, dynamic>{'statut': 'conflit'}),
-      isA<ActivationEnConflit>(),
-    );
-    expect(supportActifJson(null), isNull);
   });
 
   test('prerequis de l enseignant', () {

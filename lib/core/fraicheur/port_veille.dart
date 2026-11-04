@@ -3,9 +3,9 @@
 // des seances change, et par quel port l'application l'ecoute.
 //
 // Le signal ne porte aucune donnee a afficher : a chaque signal, l'application
-// relit ses lectures habituelles, sous RLS. C'est le meme principe que le
-// support actif de la salle (`support_actif_supabase.dart`), etendu aux
-// quatre tables publiees par la migration 20261027100000.
+// relit ses lectures habituelles, sous RLS : le signal declenche une
+// relecture, il n'apporte jamais la donnee, pour les quatre tables publiees
+// par la migration 20261027100000.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

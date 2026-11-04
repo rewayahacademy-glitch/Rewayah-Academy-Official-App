@@ -14,12 +14,14 @@ import 'core/accessibilite/port_reponse_presentation.dart';
 import 'core/accessibilite/reponse_presentation_supabase.dart';
 import 'core/admin/bibliotheque_admin_supabase.dart';
 import 'core/admin/classes_admin_supabase.dart';
+import 'core/admin/fondateurs_supabase.dart';
 import 'core/admin/fusion_classes_supabase.dart';
 import 'core/admin/incidents_seances_supabase.dart';
 import 'core/admin/pilotage_supabase.dart';
 import 'core/admin/planning_direction_supabase.dart';
 import 'core/admin/port_bibliotheque_admin.dart';
 import 'core/admin/port_classes_admin.dart';
+import 'core/admin/port_fondateurs.dart';
 import 'core/admin/port_fusion_classes.dart';
 import 'core/admin/port_incidents_seances.dart';
 import 'core/admin/port_pilotage.dart';
@@ -155,8 +157,6 @@ import 'core/suivi/messages_academie_supabase.dart';
 import 'core/suivi/port_messages_academie.dart';
 import 'core/tc_bibliotheque/catalogue_supabase.dart';
 import 'core/tc_bibliotheque/donnees_catalogue.dart';
-import 'core/tc_bibliotheque/port_support_actif.dart';
-import 'core/tc_bibliotheque/support_actif_supabase.dart';
 import 'core/tc_etat_partage/etat_partage_supabase.dart';
 import 'core/tc_etat_partage/providers_tc_etat_partage.dart';
 import 'core/tc_observation/historique_observations_admin_supabase.dart';
@@ -249,6 +249,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // direction fixe (RPC lister_seances_reportees, fixer_nouvelle_date_seance).
   portSeancesReporteesProvider.overrideWithValue(
     SeancesReporteesSupabase(Supabase.instance.client),
+  ),
+  // V2-e (04/11/2026) : la coche fondateur du personnel, tenue par la
+  // direction dans les Comptes (RPC fondateurs_personnel, poser_fondateur).
+  portFondateursProvider.overrideWithValue(
+    FondateursSupabase(Supabase.instance.client),
   ),
   // D1-ter (03/11/2026) : les messages de l'academie transmis a la famille
   // (vue concern_famille_v, lecture seule).
@@ -640,11 +645,8 @@ List<Override> _surchargesAppReelle() => <Override>[
   portSignalementProvider.overrideWithValue(
     SignalementSupabase(Supabase.instance.client),
   ),
-  // Support actif de la seance (CAP29-G) et travail a venir de la classe
-  // (« Avant le prochain cours ») : assignations ouvertes et reprise.
-  portSupportActifProvider.overrideWithValue(
-    SupportActifSupabase(Supabase.instance.client),
-  ),
+  // Travail a venir de la classe (« Avant le prochain cours ») : assignations
+  // ouvertes et reprise.
   portTravailAVenirProvider.overrideWithValue(
     travailAVenirSupabase(Supabase.instance.client),
   ),

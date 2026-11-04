@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/admin/admin_domaine.dart';
+import '../../core/admin/port_fondateurs.dart';
 import '../../core/admin/service_comptes.dart';
 import '../../core/admission/port_admissions_direction.dart'
     show PopulationAdmission;
@@ -26,6 +27,7 @@ import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
+import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
@@ -138,6 +140,13 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
   /// LISTES-3 : au bureau, le panneau des filtres et de la recherche est
   /// deplie.
   bool _filtresOuverts = false;
+
+  /// V2-e : les fondateurs connus au dernier rendu, ou `null` tant que le
+  /// serveur ne les a pas rendus (alors la coche n'est pas proposee).
+  Set<String>? _fondateurs;
+
+  /// V2-e : le retour local de la coche fondateur.
+  String? _retour;
 
   @override
   void initState() {
@@ -326,6 +335,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
   @override
   Widget build(BuildContext context) {
     final AsyncValue<List<CompteAdmin>> comptes = ref.watch(comptesProvider);
+    _fondateurs = ref.watch(fondateursProvider).value;
 
     return PageShell(
       titre: t.admin.comptes.titre,
@@ -481,6 +491,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
     final Widget commandes = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        LocalFeedback(message: _retour),
         if (comptes.length >= plafondComptesServeur) ...<Widget>[
           BandeauAttention(
             key: const ValueKey<String>('comptes-plafond'),
@@ -1051,8 +1062,52 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
   static bool _ouvreUneDemande(CompteAdmin c) => c.admissionATraiter;
 
   /// Vrai quand la ligne a au moins une action.
-  static bool _aUneAction(CompteAdmin c) =>
-      _ouvreUnDossier(c) || _ouvreUneDemande(c);
+  bool _aUneAction(CompteAdmin c) =>
+      _ouvreUnDossier(c) || _ouvreUneDemande(c) || _porteLaCoche(c);
+
+  /// V2-e (directeur, 03/11/2026) : la coche « fondateur », tenue par la
+  /// direction, sur un membre du personnel au compte actif, dans les vues
+  /// Direction et Enseignants. Proposee seulement quand le serveur a rendu
+  /// les fondateurs : sans eux, la ligne ne saurait pas quoi proposer.
+  bool _porteLaCoche(CompteAdmin c) =>
+      _fondateurs != null &&
+      (_vue == VueComptes.direction || _vue == VueComptes.enseignants) &&
+      c.etat == AccountStatus.active &&
+      (c.role == AppRole.admin ||
+          c.role == AppRole.teacher ||
+          c.role == AppRole.accountant ||
+          c.role == AppRole.controller);
+
+  /// Coche ou decoche [c] ; le retour local apres la reponse du serveur
+  /// seulement. Remis a nul d'abord : deux gestes de suite rejouent
+  /// l'apparition.
+  Future<void> _poserFondateur(CompteAdmin c, {required bool fondateur}) async {
+    final PortFondateurs? port = ref.read(portFondateursProvider);
+    if (port == null) return;
+    String message;
+    try {
+      await port.poser(c.profilId, fondateur: fondateur);
+      message = fondateur
+          ? t.admin.comptes.fondateurMarque(nom: c.libelle)
+          : t.admin.comptes.fondateurRetire(nom: c.libelle);
+      ref.invalidate(fondateursProvider);
+    } on FondateurRefuse catch (e) {
+      message = switch (e.motif) {
+        MotifFondateurRefuse.nonAutorise =>
+          t.admin.comptes.fondateurRefuseDirection,
+        MotifFondateurRefuse.personnelInactif =>
+          t.admin.comptes.fondateurRefuseInactif,
+        MotifFondateurRefuse.inconnu => t.admin.comptes.fondateurRefuseInconnu,
+      };
+    } on Object {
+      message = t.admin.comptes.fondateurRefuseInconnu;
+    }
+    if (!mounted) return;
+    setState(() => _retour = null);
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (mounted) setState(() => _retour = message);
+    });
+  }
 
   /// La population de la demande d'un compte : un adulte qui apprend pour
   /// lui-meme, sans enfant au foyer, est un eleve adulte ; sinon, une
@@ -1089,6 +1144,19 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
                 GoRouter.of(context)
                     .go(Routes.adminPersonnesDossiers, extra: c.profilId),
           ),
+        if (_porteLaCoche(c))
+          if (_fondateurs!.contains(c.profilId))
+            EntreeAction(
+              libelle: t.admin.comptes.actionRetirerFondateur,
+              icone: AppIcons.etoile,
+              onChoix: () => unawaited(_poserFondateur(c, fondateur: false)),
+            )
+          else
+            EntreeAction(
+              libelle: t.admin.comptes.actionMarquerFondateur,
+              icone: AppIcons.etoile,
+              onChoix: () => unawaited(_poserFondateur(c, fondateur: true)),
+            ),
       ],
     );
   }

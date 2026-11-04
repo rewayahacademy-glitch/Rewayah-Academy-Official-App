@@ -330,8 +330,9 @@ BEGIN
     'dix tables du lot : RLS active, aucun privilege client, aucune policy');
   -- Les regles de l'admission (lot C, gestes *_admission) ont leur scenario.
   PERFORM pg_temp.vrai((SELECT count(*) FROM private.candidature_gestes_regles
-                         WHERE geste NOT LIKE '%admission') = 26,
-    'la table des regles de CAND-L2A1 est inchangee (vingt-six variantes)');
+                         WHERE geste NOT LIKE '%admission') = 27,
+    -- V1-b (20261109200000, 03/11) : planifier_entretien variante 2, auteur candidat (reservation d'un creneau).
+    'la table des regles de CAND-L2A1 est inchangee, plus la reservation du candidat de V1-b (vingt-sept variantes)');
 END $f86$;
 
 -- Le journal de l'import, des lots et des accords ne se modifie pas (ajout seul).
@@ -1140,13 +1141,21 @@ SELECT pg_temp.vrai(pg_temp.en(pg_temp.p('d2'), 'admin',
     $$SELECT public.consigner_prevenu_candidat((pg_temp.lu('c4') #>> '{}')::uuid, 'whatsapp', 'lien_inscription', pg_temp.jour(), 2, 'cle-prev-0013')$$)
     #>> '{candidature,version}' = '3',
   'un second envoi se consigne, sous sa propre cle');
--- Le super-admin consigne de son cote (r8), pas de l'autre.
+-- Le super-admin consigne de son cote (r8). V1-a-bis (20261109100000,
+-- directeur, 03/11) : il agit aussi de l'autre cote, au journal sensible ;
+-- ici avec une version perimee, pour le prouver sans rien ecrire : la borne
+-- de genre passe, la version refuse.
+-- (Deux instructions : la trace ecrite pendant l'appel n'est visible qu'a
+-- l'instruction suivante.)
+SELECT pg_temp.garde('sa8', pg_temp.en(pg_temp.p('d4'), 'admin', $$SELECT public.consigner_prevenu_candidat((pg_temp.lu('c8') #>> '{}')::uuid, 'whatsapp', 'lien_inscription', pg_temp.jour(), 1, 'cle-prev-0014')$$, 'aal2'));
+SELECT pg_temp.garde('sa4', pg_temp.en(pg_temp.p('d4'), 'admin', $$SELECT public.consigner_prevenu_candidat((pg_temp.lu('c4') #>> '{}')::uuid, 'whatsapp', 'lien_inscription', pg_temp.jour(), 99, 'cle-prev-0015')$$, 'aal2'));
 SELECT pg_temp.vrai(
-  pg_temp.en(pg_temp.p('d4'), 'admin', $$SELECT public.consigner_prevenu_candidat((pg_temp.lu('c8') #>> '{}')::uuid, 'whatsapp', 'lien_inscription', pg_temp.jour(), 1, 'cle-prev-0014')$$, 'aal2')
-    #>> '{candidature,version}' = '2'
-  AND pg_temp.en(pg_temp.p('d4'), 'admin', $$SELECT public.consigner_prevenu_candidat((pg_temp.lu('c4') #>> '{}')::uuid, 'whatsapp', 'lien_inscription', pg_temp.jour(), 3, 'cle-prev-0015')$$, 'aal2')
-    = '{"erreur": "hors_portee"}'::jsonb,
-  'le super-admin consigne de son cote ; l''autre cote lui est hors portee (il le lit, il ne decide pas)');
+  pg_temp.lu('sa8') #>> '{candidature,version}' = '2'
+  AND pg_temp.lu('sa4') ->> 'erreur' = 'conflit_candidature'
+  AND EXISTS (SELECT 1 FROM public.audit_logs a
+               WHERE a.action = 'super_admin_hors_cote' AND a.actor = pg_temp.p('d4')
+                 AND a.row_id = (pg_temp.lu('c4') #>> '{}') AND a.payload ->> 'geste' = 'consigner_prevenu'),
+  'le super-admin consigne de son cote ; de l''autre cote, la borne de genre ne l''arrete plus (journal hors cote), la version perimee refuse sans ecrire');
 -- L'action groupee ne prend pas le geste : il reste hors du lot (GesteNonGroupable de CAND-L2A2).
 SELECT pg_temp.vrai(
   pg_temp.en(pg_temp.p('d2'), 'admin', $$SELECT public.apercu_lot_candidats('consigner_prevenu', ARRAY[(pg_temp.lu('c4') #>> '{}')::uuid])$$)
