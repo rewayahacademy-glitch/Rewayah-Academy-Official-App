@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/mode_accessibilite.dart';
 import '../../core/appairage/service_appairage.dart';
+import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
@@ -15,6 +16,7 @@ import '../../core/router/routes.dart';
 import '../../core/session/deconnexion.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
@@ -592,30 +594,58 @@ class ProfilEnfantPage extends ConsumerWidget {
   }
 }
 
-class _EnteteCompte extends StatelessWidget {
+/// PHOTOS-2b : le prenom de l'en-tete du Compte, lu par le port de
+/// l'identite (`profiles` par soi). Une lecture refusee ou impossible rend
+/// `null` (le libelle du role reste), sans nouvelle tentative automatique :
+/// l'en-tete n'a pas d'etat d'erreur a montrer.
+final FutureProvider<String?> prenomDuCompteProvider =
+    FutureProvider.autoDispose<String?>((Ref ref) async {
+      ref.watch(
+        sessionProvider.select((SessionState session) => session.profileId),
+      );
+      try {
+        return (await ref.watch(portIdentiteTitulaireProvider).lire()).prenom;
+      } on Object {
+        return null;
+      }
+    }, retry: (int _, Object _) => null);
+
+class _EnteteCompte extends ConsumerWidget {
   const _EnteteCompte({required this.projection});
 
   final _CompteProjection projection;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // AVATAR-1 : couple avatar + nom du composant partage, nom et une ligne de
     // role (le statut). L'identifiant du profil a sa propre ligne plus bas.
     final String? id = projection.profileId;
+    // PHOTOS-2b (defaut R3 de PHOTOS-2a) : le prenom de la personne
+    // (`profiles` par soi), jamais « Eleve » a sa place ; le libelle du role
+    // reste seulement tant que le prenom n'est pas lu, ou s'il est vide.
+    final String? prenomLu = ref.watch(prenomDuCompteProvider).value?.trim();
+    final bool prenomConnu = prenomLu != null && prenomLu.isNotEmpty;
+    final String prenom = prenomConnu ? prenomLu : projection.libelleRole;
+    // Garde-cap (04/11/2026) : la ligne du dessous dit « {role} · {statut} »,
+    // un repere pour un adulte a plusieurs roles et pour la direction ; le
+    // role n'est pas repete quand il tient deja lieu de nom.
+    final String ligneRole = prenomConnu
+        ? LibellesGroupe.joindre(projection.libelleRole, projection.statut)
+        : projection.statut;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         AvatarNom.enLigne(
-          prenom: projection.libelleRole,
-          role: projection.statut,
+          prenom: prenom,
+          role: ligneRole,
           diametre: AppAvatar.grand,
           // PHOTOS-2a : sa photo, la meme partout ; « Choisir une photo »
           // dessous pour la poser ou la changer.
           avatar: id == null
               ? null
               : PhotoEleve(
-                  prenom: projection.libelleRole,
+                  prenom: prenom,
                   cleAvatar: null,
                   personneId: id,
                   diametre: AppAvatar.grand,

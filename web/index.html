@@ -76,6 +76,20 @@
         for (var i = 0; i < etat.ecouteurs.length; i++) etat.ecouteurs[i]();
       }
       etat.signaler = signaler;
+      // CHARGEMENT-bis (directeur, 04/11/2026) : premiere visite, nouvelle
+      // version ou meme version. La version est l'ETag de main.dart.js, gardee
+      // dans le navigateur une fois le code recu en entier. Aucune version
+      // gardee : premiere visite, rien n'est mis a jour (garde-cap et pilote,
+      // 04/11). Une version gardee qui differe : nouvelle version. Stockage
+      // illisible (navigation privee bloquee) : on ne sait pas, et on ne dit
+      // pas « mise a jour ».
+      var CLE_VERSION = 'rewayah.ouverture.version';
+      var versionGardee = null;
+      var stockageLisible = true;
+      try { versionGardee = window.localStorage.getItem(CLE_VERSION); } catch (e) { stockageLisible = false; }
+      etat.premiere = stockageLisible && versionGardee === null;
+      etat.nouvelle = false;
+      etat.version = null;
       function amorcer() {
         if (etat.amorce) return;
         etat.amorce = true;
@@ -105,6 +119,12 @@
       if (!window.fetch || !window.ReadableStream) { prechargerCommeAvant(); return; }
       fetch('main.dart.js', { priority: 'high' }).then(function (reponse) {
         if (!reponse.ok || !reponse.body) throw new Error('main.dart.js ' + reponse.status);
+        var version = reponse.headers.get('etag') || reponse.headers.get('last-modified');
+        if (version) {
+          etat.version = version;
+          etat.nouvelle = stockageLisible && versionGardee !== null && versionGardee !== version;
+          signaler();
+        }
         // Une taille annoncee ne vaut que sans compression : avec brotli ou
         // gzip, elle compte les octets compresses et le pourcentage mentirait.
         var taille = parseInt(reponse.headers.get('content-length') || '0', 10);
@@ -120,6 +140,9 @@
         }
         return lire();
       }).then(function () {
+        if (etat.version) {
+          try { window.localStorage.setItem(CLE_VERSION, etat.version); } catch (e) { /* rien a garder */ }
+        }
         etat.codeFini = true;
         signaler();
         amorcer();
@@ -208,6 +231,12 @@
       transition: width 300ms ease-out;
     }
     #ouverture .ouverture-phrase { margin: 0; min-height: 24px; font-size: 16px; line-height: 1.5; }
+    /* Lu par le lecteur d'ecran a chaque changement d'etat, jamais a chaque
+       phrase qui tourne : une annonce toutes les 2,5 s serait du bruit. */
+    #ouverture .ouverture-annonce {
+      position: absolute; width: 1px; height: 1px; overflow: hidden;
+      clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+    }
     #ouverture .ouverture-lent { display: none; max-width: 400px; }
     #ouverture.lent .ouverture-lent { display: block; }
     #ouverture .ouverture-lent p { margin: 0 0 16px; font-size: 16px; line-height: 1.5; }
@@ -266,7 +295,8 @@
 <path d="M644.594 488.06L653.573 467.912H651.456L636.929 435.208H644.813L656.347 461.926L667.954 435.208H675.619L652.259 488.06H644.594Z" fill="#FFFFFF"/>
 </svg>
     <div class="ouverture-barre" aria-hidden="true"><span></span></div>
-    <p class="ouverture-phrase" id="ouverture-phrase">Chargement de l'application…</p>
+    <p class="ouverture-phrase" id="ouverture-phrase" aria-hidden="true">Ouverture de Rewayah…</p>
+    <span class="ouverture-annonce" id="ouverture-annonce">Ouverture de Rewayah…</span>
     <div class="ouverture-lent">
       <p><strong data-ar="لم يصل أي شيء منذ قليل">Plus rien n'arrive depuis un moment</strong>
       <span data-ar="تحقّق من اتصالك ثم أعد تحميل الصفحة.">Vérifiez votre connexion, puis rechargez la page.</span></p>
@@ -275,22 +305,41 @@
   </div>
   <script>
     // L'ouverture : retiree a la premiere image de Flutter. CHARGEMENT
-    // (directeur, 03/11/2026) : des phrases vraies, tirees de ce qui est
-    // reellement recu ; une barre qui avance avec les octets recus (un
-    // pourcentage seulement si la taille est connue, sans compression) ;
+    // (directeur, 03/11/2026) : une barre qui avance avec les octets recus
+    // (un pourcentage seulement si la taille est connue, sans compression) ;
     // « Recharger » seulement quand plus aucun octet n'arrive depuis 30 s, et
-    // il repart des que les octets reviennent. Jamais de compte a rebours. En
-    // arabe si la premiere langue du navigateur l'est.
+    // il repart des que les octets reviennent. En arabe si la premiere langue
+    // du navigateur l'est.
+    // CHARGEMENT-bis (directeur, 04/11/2026) : la phrase n'est jamais figee.
+    // L'etat reel choisit la liste (nouvelle version, meme version, code
+    // recu) ; dans la liste, la phrase change toutes les 2,5 s. Un changement
+    // d'etat montre tout de suite la premiere phrase de la nouvelle liste.
     (function () {
       var ouverture = document.getElementById('ouverture');
       var phrase = document.getElementById('ouverture-phrase');
+      var annonce = document.getElementById('ouverture-annonce');
       var barre = ouverture.querySelector('.ouverture-barre span');
       var etat = window.__ouverture || { recus: 0, total: 0, ecouteurs: [], derniereActivite: Date.now() };
       var BLOCAGE = 30000;
+      var TOUR = 2500;
       var arabe = /^ar\b/i.test((navigator.languages && navigator.languages[0]) || navigator.language || '');
-      var PHRASES = arabe
-        ? ['جارٍ تحميل التطبيق…', 'قليلًا بعد…', 'أوشك على الجاهزية…']
-        : ['Chargement de l\'application…', 'Encore un peu…', 'Presque prêt…'];
+      var T = arabe ? {
+        chargement: 'جارٍ تحميل التطبيق…',
+        miseAJour: 'جارٍ تحديث التطبيق…',
+        installation: 'جارٍ تثبيت الإصدار الجديد…',
+        presque: 'اقتربتم، التحديث على وشك الانتهاء',
+        ouverture: 'جارٍ فتح Rewayah…',
+        espace: 'جارٍ تجهيز مساحتكم…',
+        affichage: 'جارٍ تجهيز العرض…'
+      } : {
+        chargement: 'Chargement de l\'application…',
+        miseAJour: 'Mise à jour de l\'application…',
+        installation: 'Installation de la nouvelle version…',
+        presque: 'Vous y êtes presque, la mise à jour est presque terminée',
+        ouverture: 'Ouverture de Rewayah…',
+        espace: 'Préparation de votre espace…',
+        affichage: 'Préparation de l\'affichage…'
+      };
       if (arabe) {
         ouverture.dir = 'rtl';
         ouverture.lang = 'ar';
@@ -300,25 +349,51 @@
           textes[i].textContent = textes[i].getAttribute('data-ar');
         }
       }
-      var etape = -1;
-      function montrer() {
-        // L'etape suit ce qui est recu : le code de l'application, puis le
-        // moteur de rendu ; jamais l'horloge.
-        var e = etat.codeFini ? (etat.moteurFini ? 2 : 1) : 0;
-        if (e !== etape) { etape = e; phrase.textContent = PHRASES[e]; }
-        var part;
-        if (etat.codeFini) part = 1;
-        else if (etat.total > 0) part = Math.min(1, etat.recus / etat.total);
+      function partRecue() {
+        if (etat.codeFini) return 1;
+        if (etat.total > 0) return Math.min(1, etat.recus / etat.total);
         // Taille inconnue (fichier compresse) : la barre avance avec les
         // octets recus, sans jamais pretendre a la fin.
-        else part = etat.recus / (etat.recus + 4 * 1024 * 1024);
-        barre.style.width = Math.round(part * 100) + '%';
+        return etat.recus / (etat.recus + 4 * 1024 * 1024);
+      }
+      // L'etat reel et ses phrases. « Mise a jour » et « Presque » seulement
+      // quand une version gardee differe. « Presque » : plus de 80 % recus
+      // (taille connue seulement) ou le code recu.
+      function liste() {
+        if (etat.codeFini) {
+          if (etat.nouvelle) return { cle: 'nouvelle-recue', phrases: [T.presque, T.affichage] };
+          return { cle: etat.premiere ? 'premiere-recue' : 'meme-recue', phrases: [T.affichage, T.espace] };
+        }
+        if (etat.premiere) return { cle: 'premiere', phrases: [T.chargement, T.espace] };
+        if (etat.nouvelle) {
+          return etat.total > 0 && partRecue() > 0.8
+            ? { cle: 'nouvelle-presque', phrases: [T.presque] }
+            : { cle: 'nouvelle', phrases: [T.miseAJour, T.installation] };
+        }
+        return { cle: 'meme', phrases: [T.ouverture, T.espace] };
+      }
+      var cleCourante = null;
+      var rang = 0;
+      function montrer(tourner) {
+        var l = liste();
+        if (l.cle !== cleCourante) {
+          cleCourante = l.cle;
+          rang = 0;
+          annonce.textContent = l.phrases[0];
+        } else if (tourner) {
+          rang = (rang + 1) % l.phrases.length;
+        }
+        var texte = l.phrases[rang % l.phrases.length];
+        if (phrase.textContent !== texte) phrase.textContent = texte;
+        ouverture.setAttribute('data-etat', l.cle);
+        barre.style.width = Math.round(partRecue() * 100) + '%';
       }
       etat.ecouteurs.push(function () {
         ouverture.classList.remove('lent');
-        montrer();
+        montrer(false);
       });
-      montrer();
+      montrer(false);
+      var tour = setInterval(function () { montrer(true); }, TOUR);
       var veille = setInterval(function () {
         if (Date.now() - etat.derniereActivite >= BLOCAGE) ouverture.classList.add('lent');
       }, 1000);
@@ -327,6 +402,7 @@
       });
       window.addEventListener('flutter-first-frame', function () {
         clearInterval(veille);
+        clearInterval(tour);
         ouverture.classList.add('partie');
         setTimeout(function () { ouverture.remove(); }, 250);
       }, { once: true });

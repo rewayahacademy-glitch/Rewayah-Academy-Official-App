@@ -33,6 +33,7 @@ import '../../core/widgets/selecteur_section.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/vue_etat_communication.dart';
+import '../foyer/photo_eleve.dart' show PhotoEleve;
 import 'port_communaute.dart';
 import 'regles_communaute.dart';
 
@@ -353,6 +354,13 @@ class _CartePublication extends StatelessWidget {
             prenom: p.auteur.nomAffiche,
             role: ligneAuteurCommunaute(p.auteur.fonction, moment),
             diametre: AppAvatar.petit,
+            // PHOTOS-2b : la photo de l'auteur par le fournisseur unique.
+            avatar: PhotoEleve(
+              prenom: p.auteur.nomAffiche,
+              cleAvatar: null,
+              personneId: p.auteur.profilId,
+              diametre: AppAvatar.petit,
+            ),
           ),
           Ecart.vMd,
           Text(

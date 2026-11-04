@@ -146,6 +146,7 @@ Participant participantJson(
               )
             : prenom,
         estSoi: soi,
+        profilId: id.isEmpty ? null : id,
       );
     default:
       throw const FormatException('Nature de participant inconnue.');

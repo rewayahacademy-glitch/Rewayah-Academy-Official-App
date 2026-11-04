@@ -56,6 +56,7 @@ class ControleSegmente<T> extends StatelessWidget {
     required this.onChange,
     super.key,
     this.rectangle = false,
+    this.dense = false,
   });
 
   /// Vrai : un petit rectangle a coins arrondis (`AppRadius.md`) au lieu de la
@@ -63,6 +64,12 @@ class ControleSegmente<T> extends StatelessWidget {
   /// (choix du theme, THEME-SW-1). Le segment actif prend le rayon `sm`, plus
   /// petit que celui de la piste.
   final bool rectangle;
+
+  /// Densite visuelle (CONNEXION-ALIGN, decision du pilote du 04/11/2026) :
+  /// la piste visible fait 40 de haut et la pastille active 32, centrees dans
+  /// la zone tactile de 48, qui ne change pas. Faux par defaut : rien ne
+  /// change ailleurs.
+  final bool dense;
 
   /// Les segments, dans l'ordre de lecture : deux a quatre. Un seul segment
   /// n'est pas un choix, et au-dela de quatre les libelles ne tiennent plus
@@ -79,35 +86,49 @@ class ControleSegmente<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
 
-    return DecoratedBox(
-      decoration: palette.surfaceSunken.decoration(
-        borderRadius: rectangle ? AppRadius.arrondiMd : AppRadius.arrondiFull,
-      ),
-      // Hauteur intrinseque : les segments prennent tous la hauteur du plus
-      // haut (un libelle qui passe a la ligne a 200 %), sans exiger du parent
-      // une hauteur bornee. Deux a quatre segments : le cout est negligeable.
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            for (final Segment<T> segment in segments)
-              Expanded(
-                child: _Segment<T>(
-                  segment: segment,
-                  voisins: <String>[
-                    for (final Segment<T> s in segments)
-                      if (!identical(s, segment)) s.libelle,
-                  ],
-                  selectionne: segment.valeur == valeur,
-                  onChange: onChange,
-                  arrondi: rectangle
-                      ? AppRadius.arrondiSm
-                      : AppRadius.arrondiFull,
-                ),
+    final BoxDecoration piste = palette.surfaceSunken.decoration(
+      borderRadius: rectangle ? AppRadius.arrondiMd : AppRadius.arrondiFull,
+    );
+    // Hauteur intrinseque : les segments prennent tous la hauteur du plus
+    // haut (un libelle qui passe a la ligne a 200 %), sans exiger du parent
+    // une hauteur bornee. Deux a quatre segments : le cout est negligeable.
+    final Widget rangee = IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          for (final Segment<T> segment in segments)
+            Expanded(
+              child: _Segment<T>(
+                segment: segment,
+                voisins: <String>[
+                  for (final Segment<T> s in segments)
+                    if (!identical(s, segment)) s.libelle,
+                ],
+                selectionne: segment.valeur == valeur,
+                onChange: onChange,
+                arrondi: rectangle
+                    ? AppRadius.arrondiSm
+                    : AppRadius.arrondiFull,
+                dense: dense,
               ),
-          ],
-        ),
+            ),
+        ],
       ),
+    );
+    if (!dense) {
+      return DecoratedBox(decoration: piste, child: rangee);
+    }
+    // La piste est peinte 4 en retrait de la zone tactile, en haut et en bas.
+    return Stack(
+      children: <Widget>[
+        Positioned.fill(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+            child: DecoratedBox(decoration: piste),
+          ),
+        ),
+        rangee,
+      ],
     );
   }
 }
@@ -119,6 +140,7 @@ class _Segment<T> extends StatelessWidget {
     required this.selectionne,
     required this.onChange,
     required this.arrondi,
+    required this.dense,
   });
 
   final Segment<T> segment;
@@ -128,6 +150,7 @@ class _Segment<T> extends StatelessWidget {
   final bool selectionne;
   final ValueChanged<T> onChange;
   final BorderRadius arrondi;
+  final bool dense;
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +173,13 @@ class _Segment<T> extends StatelessWidget {
         constructeur: (BuildContext contexte, EtatPression etat) => Padding(
           // La cible fait toute la hauteur de la piste ; la pastille active
           // est posee dedans, a 4 du bord.
-          padding: const EdgeInsets.all(AppSpacing.xs),
+          // Dense : 4 de piste et 4 de marge, la pastille fait 48 - 16 = 32.
+          padding: dense
+              ? const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.xs,
+                  vertical: AppSpacing.sm,
+                )
+              : const EdgeInsets.all(AppSpacing.xs),
           child: DecoratedBox(
             decoration: selectionne
                 ? palette.washAccent.decoration(
@@ -169,9 +198,9 @@ class _Segment<T> extends StatelessWidget {
                 // reduit au besoin son echelle (jamais sous 0,85) au lieu
                 // d'etre coupe, sans toucher le contour de la pastille
                 // (relecture COUPE-MOTS-1 : a 4, « Systeme » le touchait).
-                padding: const EdgeInsets.symmetric(
+                padding: EdgeInsets.symmetric(
                   horizontal: AppSpacing.sm,
-                  vertical: AppSpacing.sm,
+                  vertical: dense ? 0 : AppSpacing.sm,
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,

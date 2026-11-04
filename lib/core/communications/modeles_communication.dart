@@ -218,10 +218,17 @@ class Participant {
     required this.nomAffiche,
     this.fonction,
     this.estSoi = false,
+    this.profilId,
   });
 
   /// Identifiant stable.
   final String id;
+
+  /// L'identifiant de profil quand le participant est **une personne**
+  /// (nature `profil`), source de sa photo par le fournisseur unique
+  /// (PHOTOS-2b) ; `null` pour l'Administration ou une famille, qui gardent
+  /// leurs initiales.
+  final String? profilId;
 
   /// Le nom tel qu'il s'affiche, deja autorise (prenom, ou titre et nom).
   final String nomAffiche;

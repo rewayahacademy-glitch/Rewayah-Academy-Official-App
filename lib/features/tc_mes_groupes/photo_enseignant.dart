@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/icons/app_icons.dart';
+import '../../core/photos/photo_personne.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_color_pair.dart';
@@ -22,6 +24,12 @@ import '../../core/widgets/avatar_tile.dart';
 ///   jamais une URL signee qui expire ; la resolution demande une capacite
 ///   serveur qui n'existe pas encore (section 5 de `TC_CONTRACT_REQUEST_A.md`).
 ///   Les initiales sont alors un etat de chargement, pas un cache-misere.
+///
+/// PHOTOS-2b (04/11/2026) : sans [urlSignee] fournie par l'hote, la photo se
+/// lit par le fournisseur unique (`photoPersonneProvider`, par
+/// [EnseignantVM.enseignantId]) : la meme photo sur toutes les cartes, et le
+/// serveur dit seul si l'appelant a le droit de la voir. Hors d'un
+/// `ProviderScope` (galerie, tests de composant), les initiales restent.
 ///
 /// `AvatarTile` est **reutilise tel quel** pour le second cas : son repli, son
 /// contour et son cadrage sont deja calibres, et le redessiner ferait diverger
@@ -55,10 +63,29 @@ class PhotoEnseignant extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!enseignant.photoManquante || repliInitiales) {
-      return AvatarTile(
-        prenom: enseignant.nomAffichage,
-        urlSignee: enseignant.photoManquante ? null : urlSignee,
-        diametre: diametre,
+      final String? fournie = enseignant.photoManquante ? null : urlSignee;
+      final bool lirePhoto =
+          // En repli (eleve, famille), la cle peut manquer a la vue lue et la
+          // photo exister : le fournisseur est lu aussi, le serveur decide.
+          fournie == null &&
+          enseignant.enseignantId.isNotEmpty &&
+          context.findAncestorWidgetOfExactType<UncontrolledProviderScope>() !=
+              null;
+      if (!lirePhoto) {
+        return AvatarTile(
+          prenom: enseignant.nomAffichage,
+          urlSignee: fournie,
+          diametre: diametre,
+        );
+      }
+      return Consumer(
+        builder: (BuildContext context, WidgetRef ref, _) => AvatarTile(
+          prenom: enseignant.nomAffichage,
+          urlSignee: ref
+              .watch(photoPersonneProvider(enseignant.enseignantId))
+              .value,
+          diametre: diametre,
+        ),
       );
     }
 

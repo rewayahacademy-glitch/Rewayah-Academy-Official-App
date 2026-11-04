@@ -12,6 +12,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/billet_salle.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
@@ -300,7 +301,18 @@ void main() {
         ),
         findsNothing,
       );
-      expect(find.byType(PhotoEnseignant), findsNothing);
+      // PHOTOS-2b : l'identite passe par `PhotoEnseignant` en repli
+      // (fournisseur unique) ; sans photo, ses initiales, jamais l'etat
+      // « photo manquante ».
+      for (final PhotoEnseignant photo in tester.widgetList<PhotoEnseignant>(
+        find.byType(PhotoEnseignant),
+      )) {
+        expect(photo.repliInitiales, isTrue);
+      }
+      expect(
+        find.bySemanticsLabel(LibellesGroupe.photoManquante),
+        findsNothing,
+      );
       // Le lien vers la revue du groupe est garde, au bord de fin, sous la
       // carte.
       final Finder revue = find.widgetWithText(
