@@ -46,8 +46,9 @@ Future<GoRouter> _monter(
   WidgetTester tester,
   String depart, {
   FauxServiceAuth? auth,
+  Size taille = const Size(390, 844),
 }) async {
-  tester.view.physicalSize = const Size(390, 844);
+  tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   late GoRouter routeur;
@@ -342,6 +343,45 @@ void main() {
       expect(find.textContaining(a.resteAcces), findsNothing);
       expect(find.byKey(EcranAccesQuestionnaire.cle), findsOneWidget);
       expect(routeur.state.uri.queryParameters['etape'], codeEtapeAcces);
+    });
+
+    testWidgets('ALIGN-RENVOI : a l ordinateur, « Renvoyer le lien » prend la '
+        'largeur du champ', (WidgetTester tester) async {
+      ecrireMemoireAppareil(
+        clefQuestionnaire,
+        const QuestionnaireInscription(
+          usage: UsageInscription.famille,
+          enfants: <EnfantQuestionnaire>[_yasmine],
+          parentSuitDesCours: false,
+          objectif: ObjectifApprentissage.apprendreALire,
+          moments: <MomentJournee>{MomentJournee.soir},
+          langue: 'poular',
+        ).versTexte(),
+      );
+      await _monter(
+        tester,
+        '${Routes.commencer}?etape=$codeEtapeAcces',
+        taille: const Size(1280, 800),
+      );
+      expect(find.byKey(EcranAccesQuestionnaire.cle), findsOneWidget);
+      await tester.enterText(
+        find.byKey(const Key('questionnaire-acces-courriel')),
+        'famille@exemple.com',
+      );
+      await tester.pump();
+      await _taper(
+        tester,
+        find.byKey(const ValueKey<String>('questionnaire-acces-envoyer')),
+      );
+      final Rect texte = tester.getRect(
+        find.byKey(const ValueKey<String>('questionnaire-acces-envoye')),
+      );
+      final Rect bouton = tester.getRect(
+        find.byKey(const ValueKey<String>('questionnaire-acces-renvoyer')),
+      );
+      // Avant : compact au bord de fin (`BoutonEntree`, largeur du libelle).
+      expect(bouton.left, texte.left);
+      expect(bouton.right, texte.right);
     });
 
     testWidgets('QUESTIONNAIRE-FIN : l acces ouvert trop tot ramene a la '
