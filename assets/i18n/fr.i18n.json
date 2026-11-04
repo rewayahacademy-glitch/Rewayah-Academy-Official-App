@@ -968,6 +968,12 @@
     "inscriptionFermee": "Les inscriptions se font pour l'instant sur invitation. Vous avez proposé votre candidature pour enseigner ? Vous recevrez un courriel personnel de notre part : vous n'avez rien à faire. Vous êtes une famille ? Les inscriptions rouvrent bientôt.",
     "erreurTropTot": "Un lien vient déjà de partir. Attendez un moment avant d'en demander un autre.",
     "horsLigne": "Le lien ne peut pas partir pour l'instant. Réessayez quand la connexion sera revenue.",
+    "controle": {
+      "libelle": "Vérification de sécurité",
+      "chargement": "Vérification de sécurité en cours.",
+      "erreur": "La vérification n'a pas abouti. Réessayez.",
+      "horsLigne": "La vérification ne peut pas se faire pour l'instant. Réessayez quand la connexion sera revenue."
+    },
     "probleme": "Lien expiré ou jamais reçu\u00a0?",
     "recuperation": {
       "titre": "Retrouver mon accès",

@@ -53,7 +53,9 @@ void _verifierEtatVide(WidgetTester tester) {
     findsOneWidget,
   );
   expect(find.text(t.connexion.entrerDemo), findsNothing);
-  expect(find.text(t.connexion.intro), findsOneWidget);
+  // CONNEXION-UX (directeur, 03/11/2026) : la page est simple, sans phrase
+  // d'introduction hors demonstration.
+  expect(find.text(t.connexion.intro), findsNothing);
   expect(find.text(t.connexion.introDemo), findsNothing);
 }
 

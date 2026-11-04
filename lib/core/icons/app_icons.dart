@@ -344,6 +344,13 @@ abstract final class AppIcons {
     IconData(0xe3e6, fontFamily: _actif),
   );
 
+  /// L'appareil d'un eleve, a la connexion (CONNEXION-UX, 03/11/2026) :
+  /// Phosphor `baby` (0xe774), un visage d'enfant.
+  static const AppIcon enfant = AppIcon._(
+    IconData(0xe774, fontFamily: _repos),
+    IconData(0xe774, fontFamily: _actif),
+  );
+
   /// Appareil appaire.
   static const AppIcon appareil = AppIcon._(
     IconData(0xe1e0, fontFamily: _repos),

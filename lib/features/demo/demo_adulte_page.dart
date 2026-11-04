@@ -573,10 +573,14 @@ class _ServiceAuthDemo implements ServiceAuth {
   final VoidCallback _quitter;
 
   @override
-  Future<void> envoyerLienCourriel(String courriel) async {}
+  Future<void> envoyerLienCourriel(String courriel, {String? jetonControle}) async {}
 
   @override
-  Future<void> connexionMotDePasse(String courriel, String motDePasse) async {}
+  Future<void> connexionMotDePasse(
+    String courriel,
+    String motDePasse, {
+    String? jetonControle,
+  }) async {}
 
   @override
   Future<void> connexionGoogle() async {}
